@@ -44,7 +44,7 @@ en:
   signup_title: "Sign up to %{current_portal}"
   trial_expired_on: Your trial has expired on
   upgrade_trial: Upgrade your trial!
-  upgrade_plan: Upgrade Plan
+  upgrade_plan: Upgrade
   go_back: Go Back
   add_note: Add Note
   contact_name: Contact Name
@@ -1034,8 +1034,8 @@ en:
       mark_this_idea_as: Mark this idea as
     last_reply: Last reply %{post_time} ago by %{user_link}
     posted_at: Posted %{post_time} ago
-  non_covered_feature_error: Your current Freshdesk plan does not cover this feature
-  unavailable_feature: %{feature} is available for your account. To use %{feature} now, upgrade your account  
+  non_covered_feature_error: This feature is currently locked
+  unavailable_feature: The %{feature} feature is not supported in your plan. Please upgrade your account to use it.  
   requester_replies: Requester replies to Ticket
   start_typing_a_question: Start typing a question and see answers in real time
   delete_topic_msg: Delete this topic forever
@@ -1456,8 +1456,8 @@ en:
     error: 
       lesser_agents: Your freshdesk account currently has %{agent_count} agents, you cannot subscribe to a lesser number of agents. Please delete some agents and try again.
     upgrade:
-      message: To unlock this feature, please Upgrade
-      cname: Upgrade your account to map your Helpdesk URL to a custom domain
+      message: Upgrade your account to unlock this feature.
+      cname: Want to use your own domain here? Please upgrade your account.
     billing: Billing
     agents: Agents
     total: Total

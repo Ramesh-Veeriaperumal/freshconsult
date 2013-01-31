@@ -158,6 +158,7 @@ nl:
         timer_stopped: 
           long: "{{user_path}} stopte timer op {{timesheet_path}} op het ticket {{notable_path}}"
           short: "{{user_path}} stopte timer op  {{timesheet_path}}"
+  add: Toevoegen
   add_a_topic: "Begin onderwerp"
   add_cc: "Cc toevoegen"
   add_holiday: "Feestdag toevoegen"
@@ -265,6 +266,7 @@ nl:
         rebrand_bg_invalid: "Kleurcode van achtergrond is ongeldig."
         rebrand_color_background: Achtergrond
         rebrand_color_header: Koptekst
+        rebrand_color_tabs: Tabbladen
         rebrand_company_field_placeholder: "Vul hier uw bedrijfsnaam in"
         rebrand_company_label: Bedrijfsnaam
         rebrand_header: "Uw helpdesk naam en logo"
@@ -409,7 +411,7 @@ nl:
       index: 
         click_to_disable: "Klik om SSL uit te schakelen"
         click_to_enable: "Klik om SSL in te schakelen"
-        customer_portal_ssl_warning: "Omdat aangepaste helpdesk -URL is geconfigureerd voor uwaccount, wordt u doorverwezen naar "
+        customer_portal_ssl_warning: "Omdat de standaard helpdesk URL is aangepast voor uw account, wordt u doorverwezen naar "
         disabled: Uitgeschakeld
         enable_SSL: "SSL activeren"
         enable_SSL_anon: "Met SSL kunt u gegevens coderen die naar en van freshdesk-portalen worden overgezet."
@@ -469,6 +471,7 @@ nl:
         edit_twitter: "Twitter bewerken"
         screen_name: Schermnaam
       index: 
+        add_search: "Zoekopdracht toevoegen"
         new: "Twitter-account toevoegen"
         search_keys: "Zoeken in sleutels"
         title: Twitter-accounts
@@ -563,7 +566,7 @@ nl:
     info: "<b>We hebben wellicht al een antwoord op uw vraag. </b><br/>. Bekijk de onderstaande antwoorden."
   automations: 
     available_placeholders: Variabelen
-    info1: "Elke helpdesk heeft een aantal scenario's die vaker voorkomen - Bijv. escaleer naar level 2, ken toe aan QA, stuur door naar Sales, etc. Deze scenario's bevatten meestal meerdere updates voor het ticket"
+    info1: "Elke helpdesk heeft een aantal scenario's die vaker voorkomen - Bijv. escaleer naar niveau 2, wijs toe aan QA, stuur door naar Sales, etc. Deze scenario's bevatten meestal meerdere updates voor het ticket"
     info2: "Bijvoorbeeld voordat je een ticket toekent aan QA wil je het type op 'bug' zetten, toekennen aan de QA-groep en de QA manager mailen over de nieuwe bug."
     info3: "Scenario's zorgen ervoor dat al deze acties worden uitgevoerd met één klik"
     info4: "Selecteer de onderstaande variabelen om ze toe te voegen aan de e-mail en deze zullen worden gevuld met de juiste data"
@@ -655,7 +658,7 @@ nl:
     info9: "Freshdesk zal automatisch gebruikers aan dit bedrijf koppelen als de e-mailadressen deze domeinnamen bevatten"
     name: Bedrijfsnaam
     new: "Nieuw Bedrijf"
-    notes: Notities
+    notes: Aantekeningen
     quick_company: "Snel zoeken"
     title: Bedrijven
   company_name: Bedrijfsnaam
@@ -693,6 +696,7 @@ nl:
       info: "Kan alle tickets van dit bedrijf zien "
     save_changes: "Sla wijzigingen op"
     send_activation: "E-mail voor activering versturen"
+    show_more: "Toon meer tickets van %{nick_name} »"
     showing: "Toont:"
     status: 
       active: Actief
@@ -713,6 +717,7 @@ nl:
   current_plan_details: "%{plan_name} Plan met %{agent_limit} medewerkers"
   customers: Klanten
   date: 
+    ago: geleden
     day: Dag
     days: Dagen
     from: "Vanaf nu"
@@ -811,7 +816,7 @@ nl:
     help_link_info: "U vindt hierover meer informatie in het artikel e-mailinstellingen..."
     inactive_info1: "Uw ondersteuningsmails zijn nog niet geverifieerd. U moet minstens één e-mail verifiëren."
     inactive_info2: "Tot dan wordt de standaard e-mail '%{default_email}' gebruikt als de antwoord e-mail."
-    info1: "Je gebruikers sturen helpdesk e-mails naar"
+    info1: "Je gebruikers sturen e-mails voor ondersteuning naar"
     info10: "Nieuwe tickets naar dit adres worden automatisch aan een groep toegekend"
     info11: "Configureer inkomende en uitgaande support e-mailadressen"
     info12: "Voeg nog een e-mailadres toe"
@@ -911,7 +916,7 @@ nl:
   feedbackwidget_help_para2: "Het aanpasbare tabblad wordt in een ondersteuningsticketformulier geopend. "
   feedbackwidget_help_title: Feedback-widget
   feedbackwidget_intro: "Pas uw freshdesk-widget aan en bekijk een realtime voorbeeld."
-  feedbackwidget_offset_info: "De marge is de afstand van de widget-knop (pixels) van de linker-of bovenkant van het scherm op basis van de uitlijning die u kiest"
+  feedbackwidget_offset_info: "De marge wordt de afstand van de widget-knop (pixels) vanaf de linker- of bovenkant van het scherm, gebaseerd op de door uw gekozen uitlijning."
   feedbackwidget_offset_label: "Met een compensatie van"
   feedbackwidget_position: Positie
   feedbackwidget_text: Tekst
@@ -1117,6 +1122,7 @@ nl:
       mark_answer: "Als antwoord markeren"
       post_accepted_as_a_good_answer: "Dit bericht is geaccepteerd als goed antwoord voor dit onderwerp"
       posted_on: "%{user_name} over %{post_date}"
+      unmark_answer: "Dit is niet het antwoord"
     topic_vote: 
       howto: 
         vote_button: "Ik heb deze vraag"
@@ -1131,7 +1137,7 @@ nl:
         vote_info_2: "<a id='users-voted' href='#' title='See who like this'> %{vote} Mensen</a> vinden dit idee leuk"
         vote_info_include_1: "U vindt dit idee leuk"
         vote_info_include_2: "U en <a id='users-voted' href='#' title='See who like this'> %{vote} Mensen</a> vinden dit idee leuk"
-        voted_users_widget_title: "Mensen die dit een leuk idee vinden"
+        voted_users_widget_title: "Mensen die dit idee leuk vinden"
       problem: 
         vote_button: "Ik heb dit probleem"
         vote_info_1: "<a id='users-voted' href='#' title='See who has this'> %{vote} Persoon</a> heeft dit probleem"
@@ -1139,6 +1145,7 @@ nl:
         vote_info_include_1: "U heeft dit probleem"
         vote_info_include_2: "U en <a id='users-voted' href='#' title='See who have this'> %{vote} Mensen</a> hebben dit probleem"
         voted_users_widget_title: "Mensen die dit probleem hebben"
+      unlike: "Niet leuk"
   forums: 
     form: 
       type: Forumtype
@@ -1206,6 +1213,7 @@ nl:
       customers: Klanten
       dashboard: Overzicht
       forums: Forums
+      home: Startpagina
       reports: Rapporten
       social: Sociaal
       solutions: Oplossingen
@@ -1217,8 +1225,10 @@ nl:
       index: 
         todo_title: "Te doen"
       summary: 
+        due_today: "Streefdatum vandaag"
         open: Open
         overdue: Achterstallig
+        pending: "In afwachting van"
         title: "Ticket samenvatting"
         unassigned: "Niet toegewezen"
     flash: 
@@ -1242,6 +1252,7 @@ nl:
         will_be_merged_into: "Zal worden samengevoegd met..."
       merge: 
         enter_ticket_id: "Geef een ticket id in"
+        merge: Samenvoegen
         merge_into: "Samenvoegen met?"
         other_tickets: "Andere tickets ingediend door %{requester}"
     rebranding: 
@@ -1284,6 +1295,7 @@ nl:
         view_ticket: "Ticket weergeven"
       components: 
         due_date: 
+          due: Streefdatum
           earlier_date_and_time: "U dient een datum en tijd in te geven welke nieuwer is dan de aanmaaktdatum van het ticket."
           next_week: "Volgende week"
           set_date_time: "Geef datum en tijd"
@@ -1383,12 +1395,14 @@ nl:
       form: 
         agent: Medewerker
         hours: Uren
+        note: Opmerking
       group_by: "Groeperen op"
       hours: Uren
       index: 
         no_timeentry: "Geen tijdsinvoer voor dit ticket geregistreed"
       new: 
         title: "Nieuwe tijdsinvoer"
+      note: Opmerking
       report: 
         no_timeentry: "Geen data beschikbaar"
         total: Totaal
@@ -1461,6 +1475,7 @@ nl:
       desc: "U kunt tijd die is besteed aan tickets registreren in uw Freshbooks-projecten en taken."
       form: 
         api_key: "Token voor authenticatie"
+        api_key_info: "&quot;&quot;"
         api_url: API-URL
         api_url_info: "Voer complete API URL met https in. Bijv.: https://example.freshbooks.com/api/2.1/xml-in"
         freshbooks_note: "Tekst opmerkingen"
@@ -1541,6 +1556,7 @@ nl:
         modified: gewijzigd
       sync_type: "Hoe te synchroniseren?"
       syncing_in_progress: "Bezig met synchroniseren"
+      tag: synchroniseren
       tag_label: "Sync label"
       update_action: 
         also: Ook
@@ -1628,7 +1644,7 @@ nl:
   last_draft: "Uw laatste concept"
   last_name: Achternaam
   latest_ticket: "nieuwe update"
-  latest_tickets: "Nieuwe updates"
+  latest_tickets: "nieuwe updates"
   left: Links
   less_than: "Minder dan"
   level_label: Niveau
@@ -1796,7 +1812,7 @@ nl:
       fcr_count: "Eerste oplossingscontact"
       helptext: "Statistieken berekend in dit rapport hebben betrekking op het aantal opgeloste tickets. <br /> Tickets opgelost binnen SLA's worden samengevat als &quot;Tijdige oplossing&quot;. <br /> De kolom &quot;Oplossing eerste contact&quot; geeft tickets weer die bij de eerste reactie zijn opgelost.<br /> &quot;Gemiddelde eerste reactietijd&quot; geeft de verstreken tijd weer tussen wanneer het ticket werd gecreëerd en wanneer de agent er voor het eerste op antwoordde."
       on_time_resolution: "Tijdige oplossing"
-      show_report: "Bekijk rapport"
+      show_report: "Rapport weergeven"
       tickets_resolved: "Opgeloste Tickets"
     survey_reports: 
       back_to: "Terug naar lijst"
@@ -1872,6 +1888,7 @@ nl:
   set_priority_as: "Prioriteit instellen als"
   set_status_as: "Status instellen als"
   set_type_as: "Type instellen als"
+  settings: "instellingen        "
   show_quoted_text: "Aangehaalde tekst tonen"
   sign_in_info: "U wordt aangemeld met"
   signup: aanmelden
@@ -1884,7 +1901,7 @@ nl:
     calendar_time: Kalenderuren
     edit: "Wijzig SLA Beleid"
     escalate_to: "Escaleren naar"
-    info1: "	SLA beleid zijn regels over responstijd en afhandeltijd gebasseerd op de prioriteit van een ticket. Het is gebruikelijk om Service Levels in te delen naar ticket prioriteit. Het SLA beleid zou zo simpel kunnen zijn als: \"Tickets met een hoge prioriteit worden binnen 2 uur opgelost\", etc"
+    info1: "  SLA beleid zijn regels over responstijd en afhandeltijd gebasseerd op de prioriteit van een ticket. Het is gebruikelijk om Service Levels in te delen naar ticket prioriteit. Het SLA beleid zou zo simpel kunnen zijn als: \"Tickets met een hoge prioriteit worden binnen 2 uur opgelost\", etc"
     info2: "Freshdesk gebruikt het SLA beleid om de “Oplostermijn“ van tickets te bepalen. Een standaard SLA beleid voor alle klanten is mogelijk, maar het is ook mogelijk om voor een specifieke klant, die bijvoorbeeld snellere reactie- en afhandeltijden vereist, een apart SLA beleid te maken."
     info3: "SLA beleid maakt gebruik van Werktijden"
     new: "Nieuw SLA Beleid"
@@ -2037,7 +2054,7 @@ nl:
   suspended_plan_admin_info: "Uw account is geblokkeerd. Neem alstublieft contact op met de beheerder %{email}!"
   suspended_plan_info: "Uw account is geblokkeerd. Selecteer a.u.b. een plan om verder te gaan!"
   switch_heading: "Wissel medewerker"
-  swith_agent_msg: "Schakel naar een andere medewerker"
+  swith_agent_msg: "Schakelen naar andere medewerker"
   tag: 
     title: Labels
   this_ticket_has_been_closed: "Dit ticket is gesloten"
@@ -2088,6 +2105,7 @@ nl:
     integrations: 
       jira: 
         tooltip: "Bekijk het gerelateerde JIRA issue"
+    merge_btn: Samenvoegen
     monitor_btn_title: "Dit ticket monitoren"
     note_content: "Inhoud van aantekening"
     note_form: 
@@ -2133,12 +2151,12 @@ nl:
     submit_ticket_title: "Een ticket indienen"
     suggest_solutions: "Mogelijke oplossingen"
     suggested_solutions: 
-      insert_content: "Inhoud Invoegen"
+      insert_content: "Inhoud invoegen"
       insert_content_tip: "Dit oplossingsbericht invoegen in uw reactie of aantekening"
       insert_url: "URL invoegen"
       insert_url_tip: "Deze oplossings-URL invoegen in uw reactie of aantekening"
       no_result: "Geen oplossingen gevonden"
-      title: "Voorgestelde oplossingen"
+      title: "Mogelijke oplossingen"
     tags: 
       add_tag: "Een label toevoegen:"
       create_success: "Het labels is toegevoegd"
@@ -2299,6 +2317,7 @@ nl:
   unable_to_charge: "Kan de kaart voor de toegevoegde agent niet opladen!"
   unauthorized_msg: "Autorisatie is mislukt"
   undelete: Herstel
+  undo: Herstel
   update: Opslaan
   update_and_login: "Bijwerken en aanmelden"
   update_multiple_tickets: "Meerdere tickets actualiseren"
@@ -2375,3 +2394,4 @@ nl:
   zendesk_credentials: Zendesk-credentialen
   zendesk_url: Zendesk-URL
   zendesk_url_info: "bijv.:- http://acme.zendesk.com"
+  zip: Postcode

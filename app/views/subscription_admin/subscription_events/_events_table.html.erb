@@ -1,0 +1,95 @@
+<div class = 'event-container'>
+  
+  <div id="slide-down">
+    <a id="slide-down"><img src="/images/symbols/drrow-down.png" /></a> <%= t[1] %>
+  </div>
+
+  <div class="event-overview"> 
+    <ul>
+      <li><%= pluralize(count[t[0]].size, "Account") %></li>
+      
+      <% if count[t[0]].size > 0 %>
+        <li> <%= link_to 'Download CSV', export_to_csv_admin_subscription_events_path(
+                                              :data => count[t[0]], :title => t[1]) %> </li>
+      <% end %>
+    </ul>
+
+  </div>
+
+  <div class="event-details hide">  
+    <!-- No accounts -->
+    <% if (count[t[0]].size.eql?(0)) %>
+      <center>No accounts to display</center>
+
+    <% else %>
+
+      <table class="table table-striped table-details">
+
+        <!-- Free accounts -->
+        <% if t[0].eql?(:free) %>
+          <tr>
+            <th>Company</th>
+            <th>URL</th>
+            <th>Active since</th>
+          </tr>
+            
+          <% count[t[0]].each do |record| %>
+            
+            <% if record.account %>
+              <tr>
+                <td><%= link_to(h(record.account.name), [:admin, record.account]) %></td>
+                <td><%= record.account.full_domain %></td>
+                <td><%= record.account.created_at.strftime("%b %d, %Y") %></td>
+              </tr>
+            <% else %>
+              <% deleted_account = DeletedCustomers.find_by_account_id(record.account_id) %>
+              <tr style="color : red">
+                <td><%= deleted_account.full_domain.split(%r \(|\) ).first %></td>
+                <td><%= deleted_account.full_domain.split(%r \(|\) ).last %></td>
+                <td><%= deleted_account.account_info[:account_created_on].strftime("%b %d, %Y") %></td>
+              </tr>           
+            <% end %>
+
+          <% end %> 
+
+        <!-- Other accounts -->
+        <% else %> 
+          <tr>
+            <th>Company</th>
+            <th>URL</th>
+            <th>On</th>
+            <th>Monthly revenue</th>
+            <th>Active since</th>
+            <th>First paid on</th>
+          </tr>
+          
+          <% count[t[0]].each do |record| %>
+            
+            <% if record.account %>
+             <tr>
+                <td><%= link_to(h(record.account.name), [:admin, record.account]) %></td>
+                <td><%= record.account.full_domain %></td>
+                <td><%= record.created_at.strftime("%b %d, %Y") %></td>
+                <td><%= record.cmrr.abs %></td>
+                <td><%= record.account.created_at.strftime("%b %d, %Y") %></td>
+                <td><%= record.account.subscription_payments.first.created_at.strftime("%b %d, %Y") %></td>
+              </tr>
+            <% else 
+              deleted_account = DeletedCustomers.find_by_account_id(record.account_id) %>
+              <tr style="color : red">
+                <td><%= deleted_account.full_domain.split(%r \(|\) ).first %></td>
+                <td><%= deleted_account.full_domain.split(%r \(|\) ).last %></td>
+                <td><%= record.created_at.strftime("%b %d, %Y") %></td>
+                <td><%= record.cmrr.abs %></td>
+                <td><%= deleted_account.account_info[:account_created_on].strftime("%b %d, %Y") %></td>
+                <td></td>
+              </tr>
+            <% end %>
+
+          <% end %>
+        <% end %>  
+      </table> 
+
+    <% end %>
+  </div>
+</div>
