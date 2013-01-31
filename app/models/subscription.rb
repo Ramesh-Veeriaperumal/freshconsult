@@ -4,7 +4,15 @@ class Subscription < ActiveRecord::Base
   
   SUBSCRIPTION_TYPES = ["active","trial","free"]
   
-  AGENTS_FOR_FREE_PLAN = 1
+  AGENTS_FOR_FREE_PLAN = 3
+
+  NO_PRORATION_PERIOD_CYCLES = [1, 3]
+
+  SUBSCRIPTION_ATTRIBUTES = { :account_id => :account_id, :amount => :amount, :state => :state,
+                              :subscription_plan_id => :subscription_plan_id, :agent_limit => :agent_limit,
+                              :free_agents => :free_agents, :renewal_period => :renewal_period, 
+                              :subscription_discount_id => :subscription_discount_id }
+
   
   ACTIVE = "active"
   TRIAL = "trial"
@@ -19,7 +27,7 @@ class Subscription < ActiveRecord::Base
   has_one :billing_address,:class_name => 'Address',:as => :addressable,:dependent => :destroy
   
   before_create :set_renewal_at
-  before_update  :cache_old_model,:charge_plan_change_mis
+  before_update :cache_old_model, :charge_plan_change_mis
   before_update :set_discount_expiry, :if => :subscription_discount_id_changed?
     
   
@@ -27,6 +35,14 @@ class Subscription < ActiveRecord::Base
   before_validation :update_amount
   after_update :update_features,:send_invoice
   after_update :add_to_crm, :if => :free_customer?
+  
+  after_update :update_billing, :if => :active?
+  after_update :add_card_to_billing, :if => :card_number_changed?
+  after_update :activate_paid_customer_in_billing, :if => :card_number_changed?
+  after_update :activate_free_customer_in_billing, :if => :free_plan_selected?
+
+  after_update :add_subscription_event
+  before_destroy :add_churn
 
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
@@ -38,7 +54,8 @@ class Subscription < ActiveRecord::Base
   validate_on_create :card_storage
   validates_inclusion_of :state, :in => SUBSCRIPTION_TYPES
   validates_numericality_of :amount, :if => :free?, :equal_to => 0.00, :message => I18n.t('not_eligible_for_free_plan')
-  
+  validates_numericality_of :agent_limit, :if => :free?, :less_than_or_equal_to => AGENTS_FOR_FREE_PLAN, :message => I18n.t('not_eligible_for_free_plan')
+
   def self.customer_count
    count(:conditions => [ " state != 'trial' and next_renewal_at > '#{(Time.zone.now.ago 5.days).to_s(:db)}'"])
  end
@@ -252,23 +269,29 @@ class Subscription < ActiveRecord::Base
     state == 'free'
   end
 
-  def eligible_for_free_plan?
-    (account.full_time_agents.count == AGENTS_FOR_FREE_PLAN) and (!active?)
+  def sprout?
+    subscription_plan.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout]
   end
 
-  #Need to re visit
+  def classic?
+    subscription_plan.classic
+  end
+
+  def eligible_for_free_plan?
+    (account.full_time_agents.count <= AGENTS_FOR_FREE_PLAN)
+  end
+
   def convert_to_free
-    self.state = FREE
+    self.state = FREE if card_number.blank?
     self.agent_limit = AGENTS_FOR_FREE_PLAN
     self.renewal_period = 1
     self.next_renewal_at = Time.now.advance(:months => 1)
   end
-  
+
   protected
   
     def set_billing
       self.billing_id = @response.params['customer_vault_id'] unless @response.params['customer_vault_id'].blank?
-      
       if new_record?
         if !next_renewal_at? || next_renewal_at < 1.day.from_now.at_midnight
           if subscription_plan.trial_period?
@@ -368,6 +391,21 @@ class Subscription < ActiveRecord::Base
       if(agent_limit && agent_limit < account.full_time_agents.count)
        errors.add_to_base(I18n.t("subscription.error.lesser_agents", {:agent_count => account.agents.count}))
       end         
+    end
+
+    def available_free_agents
+      agents = agent_limit || account.full_time_agents.count
+      if (free_agents >= agents) 
+        available_free_slots = (free_agents - agents).to_s + " available"
+      else
+        available_free_slots = free_agents
+      end
+      available_free_slots
+    end
+
+    def non_free_agents 
+      non_free_agents =  (agent_limit || account.full_time_agents.count) - free_agents
+      (non_free_agents > 0) ? non_free_agents : 0
     end
     
     def charge_if_free
@@ -479,12 +517,54 @@ class Subscription < ActiveRecord::Base
   end
 
   private
+
+    #CRM
     def free_customer?
       (amount == 0 and active? ) || free?
     end
 
+    def free_plan_selected?
+      state_changed? and free?
+    end
+
+    def no_prorate?
+      (amount < @old_subscription.amount) and 
+        NO_PRORATION_PERIOD_CYCLES.include?(@old_subscription.renewal_period) unless @old_subscription.blank?
+    end
+
     def add_to_crm
       Resque.enqueue(CRM::AddToCRM::FreeCustomer, id)
+    end
+
+    #Billing
+    def update_billing
+      Resque.enqueue(Billing::AddToBilling::UpdateSubscription, id, !no_prorate?)
+    end 
+
+    def add_card_to_billing
+      Resque.enqueue(Billing::AddToBilling::StoreCard, id)
+    end
+
+    def activate_paid_customer_in_billing
+      Resque.enqueue(Billing::AddToBilling::ActivateSubscription, id) if @old_subscription.state.eql?("trial")
+    end
+
+    def activate_free_customer_in_billing
+      Resque.enqueue(Billing::AddToBilling::ActivateSubscription, id)
+    end
+
+    #Subscription Events
+    def subscription_info(subscription)
+      subscription_attributes = SUBSCRIPTION_ATTRIBUTES.inject({}) { |h, (k, v)| h[k] = subscription.send(v); h }
+      subscription_attributes.merge!( :next_renewal_at => subscription.next_renewal_at.to_s(:db) )
+    end
+
+    def add_subscription_event
+      Resque.enqueue(Subscription::Events::AddEvent, id, subscription_info(@old_subscription))
+    end
+
+    def add_churn
+      Resque.enqueue(Subscription::Events::AddDeletedEvent, subscription_info(self)) if active?
     end
 
  end

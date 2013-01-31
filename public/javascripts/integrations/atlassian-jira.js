@@ -264,7 +264,8 @@ JiraWidget.prototype= {
 	displayIssue:function(resData){
 		resJson = resData.responseJSON;
 		var value="";
-		var issueLink = jiraBundle.domain + "/browse/" + jiraBundle.remote_integratable_id;
+		var issueLink = jiraBundle.domain + "/browse/" + resJson["key"];
+		jiraBundle.remote_integratable_id = resJson["key"];
 		jiraVer = JsonUtil.getMultiNodeValue(resJson, "fields.issuetype.value.name");
 		if(jiraVer != ""){
 			value = ".value";
@@ -279,9 +280,9 @@ JiraWidget.prototype= {
 		this.displayCustomFieldData(resJson, value);
 		}
 		if(issueStatus == "Resolved" || issueStatus == "Closed")
-			issueIdHtml = "<a class='strikethrough' target='_blank' href='" + issueLink + "'>" + jiraBundle.remote_integratable_id +"</a>";
+			issueIdHtml = "<a class='strikethrough' target='_blank' href='" + issueLink + "'>" + resJson["key"] +"</a>";
 		else
-			issueIdHtml = "<a target='_blank' href='" + issueLink + "'>" + jiraBundle.remote_integratable_id +"</a>";
+			issueIdHtml = "<a target='_blank' href='" + issueLink + "'>" + resJson["key"] +"</a>";
 		jQuery('#jira-issue-id').html(issueIdHtml) ;
 		jQuery('#jira-view').attr("href",issueLink);
 		jQuery('#jira-issue-type').text(issueType);

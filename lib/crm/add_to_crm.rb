@@ -37,15 +37,11 @@ class CRM::AddToCRM
     end
   end
 
-  class DeletedCustomer < Customer
+  class DeletedCustomer 
     @queue = QUEUE
 
-    def self.scoper
-      DeletedCustomers
-    end
-
-    def self.perform_job(crm, item)
-      crm.update_deleted_account_to_crm(item)
+    def self.perform(account_id)
+      CRM::Salesforce.new.update_deleted_account_to_crm(account_id)
     end
   end
 

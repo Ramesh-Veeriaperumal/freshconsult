@@ -17,6 +17,7 @@ stylesheets:
 
   app:
     - public/stylesheets/app/lib/chosen.css    
+    - public/stylesheets/app/lib/select2.css    
     - public/stylesheets/app/satisfaction.css
     - public/stylesheets/app/gamification.css
     - public/stylesheets/app/lib/hacks.css
@@ -73,6 +74,7 @@ stylesheets:
     - public/stylesheets/subscription/bootstrap.css
     - public/stylesheets/subscription/bootstrap-responsive.css
     - public/stylesheets/subscription/subscription.css
+    - public/stylesheets/app/lib/buttons.css
 
   reports:
     - public/stylesheets/app/reports.css
@@ -108,20 +110,23 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.overlabel.js
     - public/javascripts/frameworks/plugins/jquery.pageless.js
     - public/javascripts/frameworks/plugins/jquery.qtip.js
-    - public/javascripts/frameworks/plugins/jquery.tinymce.js
     - public/javascripts/frameworks/plugins/jquery.tweetfeed.js
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
     - public/javascripts/frameworks/plugins/jquery.itoggle.js
     - public/javascripts/frameworks/plugins/jquery.ui.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
+    - public/javascripts/frameworks/plugins/select2.js
     - public/javascripts/hackz.js
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/helpdesk/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/frameworks/socket.io.js
+    - public/javascripts/sisyphus.js
+    - public/javascripts/ticket_list.js
+    - public/javascripts/AsyncJSLoader.js
   visitor:
     - public/javascripts/frameworks/session.js            
-  workspace: 
+  workspace:  
     - public/javascripts/bootstrap/twipsy.js
     - public/javascripts/bootstrap/modal.js
     - public/javascripts/bootstrap/tabs.js
@@ -170,6 +175,8 @@ javascripts:
     - public/javascripts/prototype.js  
     - public/javascripts/jquery-1.7.1.min.js
     - public/javascripts/bootstrap.js
+    - public/javascripts/frameworks/plugins/jquery.livequery.js
+    - public/javascripts/frameworks/plugins/jquery.itoggle.js
   conditional:
     - public/javascripts/autosuggest.js    
     - public/javascripts/frameworks/plugins/jquery.nestedselect.js
@@ -206,7 +213,6 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.overlabel.js
     - public/javascripts/frameworks/plugins/jquery.pageless.js
     - public/javascripts/frameworks/plugins/jquery.qtip.js
-    - public/javascripts/frameworks/plugins/jquery.tinymce.js
     - public/javascripts/frameworks/plugins/jquery.tweetfeed.js
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
     - public/javascripts/frameworks/plugins/jquery.itoggle.js

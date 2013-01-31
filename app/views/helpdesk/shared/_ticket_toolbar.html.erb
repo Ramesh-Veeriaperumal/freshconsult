@@ -33,6 +33,11 @@
             <button class="button dialog2" data-url="/helpdesk/tickets/update_multiple_tickets" data-width="667" title="<%=t('bulk_actions')%>" disabled="disabled"><%=t('bulk_actions')%></button>
 
           <% end %>
+
+          <% if @current_view == "monitored_by" %>
+          <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/multiple/subscriptions/unwatch_multiple', 'delete');" type="button" value="<%=t('ticket.unwatch')%>" disabled="disabled">
+
+          <% end %>
           	</th>
           	<th class="toolbar_right">
               <% if @current_view == "deleted" %>

@@ -12,6 +12,7 @@ var $J = jQuery.noConflict();
     var widgetPopup = null;
     var hoverPopup =  false;
     var hidePopoverTimer;
+    var hideWatcherTimer;
 
     $("body").click(function(ev){
       hideWidgetPopup(ev);
@@ -30,6 +31,17 @@ var $J = jQuery.noConflict();
           hidePopoverTimer = setTimeout(function() {widgetPopup.popover('hide'); hoverPopup = false;},1000);
         }
       }
+    };
+
+    hideActivePopovers = function (ev) {
+      $("#new_watcher_page").hide();
+      $('[rel=widget-popover],[rel=contact-hover],[rel=hover-popover]').each(function(){
+        if (ev.target != $(this).get(0))
+          $(this).popover('hide');
+
+        //Not hiding the popup if the current event is actually trying to trigger the same popup
+        //That would result in Hiding the popover and immediately showing it again.
+      });
     };
 
     $('div.popover').live('mouseleave',hidePopover).live('mouseenter',function (ev) {
@@ -95,26 +107,22 @@ var $J = jQuery.noConflict();
       if(!document.getElementById('remote_loaded_dom_elements'))
         $("<div id='remote_loaded_dom_elements' class='hide' />").appendTo("body");
 
-        $(this)
+      var $this = jQuery(this)
+
+      $(this)
         .load($(this).data("url"), function(){
           $(this).attr("rel", "");
           $(this).removeClass("loading-box");
-          $(this).clone().prependTo('#remote_loaded_dom_elements');          
+          
+          if(!$this.data("loadUnique"))            
+            $(this).clone().prependTo('#remote_loaded_dom_elements');
         });
     });
 
-      $("a[rel=contact-hover]").live('mouseenter',function(ev) {
+      $("a[rel=contact-hover],[rel=hover-popover]").live('mouseenter',function(ev) {
         ev.preventDefault();
-        hideWidgetPopup(ev);
-        widgetPopup = $(this).popover('show');
-        hoverPopup = true;
-      }).live('mouseleave',function(ev) {
-          hidePopoverTimer = setTimeout(function() {widgetPopup.popover('hide'); hoverPopup = false;},1000);
-      });
-
-      $("[rel=hover-popover]").live('mouseenter',function(ev) {
-        ev.preventDefault();
-        hideWidgetPopup(ev);
+        clearTimeout(hidePopoverTimer);
+        hideActivePopovers(ev);
         widgetPopup = $(this).popover('show');
         hoverPopup = true;
       }).live('mouseleave',function(ev) {
@@ -126,11 +134,25 @@ var $J = jQuery.noConflict();
         e.stopPropagation(); 
         clearTimeout(hidePopoverTimer);
         hoverPopup = false;
-        $('[rel=widget-popover],[rel=contact-hover],[rel=hover-popover]').each(function(){
-          $(this).popover('hide');
-        });
+        hideActivePopovers(e);
         widgetPopup = $(this).popover('show');
       });
+
+    // - Add Watchers
+    $("#monitor").live('mouseenter',function(ev) {
+        clearTimeout(hidePopoverTimer);
+        hideActivePopovers(ev);
+        $("#new_watcher_page").show();
+      }).live('mouseleave',function(ev) {
+          hidePopoverTimer = setTimeout(function() { $("#new_watcher_page").hide(); },1000);
+      });    
+
+    $("#new_watcher_page").live('mouseenter',function(ev) {
+      clearTimeout(hideWatcherTimer);
+      clearTimeout(hidePopoverTimer);
+    }).live('mouseleave',function(ev) {
+        hideWatcherTimer = setTimeout(function() { $("#new_watcher_page").hide(); },1000);
+    });
 
       // - Labels with overlabel will act a Placeholder for form elements
       $("label.overlabel").livequery(function(){ $(this).overlabel(); });
@@ -145,6 +167,7 @@ var $J = jQuery.noConflict();
 
       $("input.datepicker").livequery(function(){ $(this).datepicker($(this).data()) });
 
+      $('.contact_tickets .detailed_view .quick-action').removeClass('dynamic-menu quick-action').attr('title','');
       $('.quick-action.ajax-menu').livequery(function() { $(this).showAsDynamicMenu();});
       $('.quick-action.dynamic-menu').livequery(function() { $(this).showAsDynamicMenu();});
 
@@ -388,12 +411,18 @@ var $J = jQuery.noConflict();
       }
 
       $(document).pjax('a[data-pjax]',{
-          timeout: -1
+          timeout: -1,
+          push : false,
+          maxCacheLength: 0,
+          replace: true
         }).bind('pjax:beforeSend',function(evnt,xhr,settings){
+          jQuery(document).data("requestDone",false);
+          jQuery(document).data("parallelData",undefined);
           start_time = new Date();
           jQuery('#cf_cache').remove();
           jQuery('#response_dialog').remove();
-          jQuery('#agent_collision_container').remove();
+          jQuery('.ui-dialog').remove();
+          jQuery('#bulkcontent').remove();
           var bHeight = $('#body-container').height(),
               clkdLI = $(evnt.relatedTarget).parent();
           $('ul.header-tabs li.active').removeClass('active');
@@ -401,22 +430,25 @@ var $J = jQuery.noConflict();
           jQuery('.top-loading-wrapper').switchClass('fadeOutRight','fadeInLeft',100,'easeInBounce',function(){
             jQuery('.top-loading-wrapper').removeClass('hide');
           });
-          // $('#body-container .wrapper').css('visibility','hidden');
           $(document).trigger('ticket_list');
           $(document).trigger('ticket_show');
-
+          initParallelRequest($(evnt.relatedTarget))
           return true;
-      }).bind('pjax:end',function(){
-        //$('.load-mask').hide();
+      }).bind('pjax:end',function(evnt,xhr,settings){
+
+        jQuery('.popover').remove();
         jQuery('.top-loading-wrapper').switchClass('fadeInLeft','fadeOutRight');
         jQuery('.top-loading-wrapper').addClass('hide','slow');
-        // $('#body-container .wrapper').css('visibility','visible');
         end_time = new Date();
         setTimeout(function() {
           $('#benchmarkresult').html('Finally This page took ::: <b>'+(end_time-start_time)/1000+' s</b> to load.') 
         },10);
-        //clearing the pageless of previous page.
         jQuery(window).unbind('.pageless');
+        var options = jQuery(document).data();
+        jQuery(document).data("requestDone",true);
+        if(options.parallelData && $(evnt.relatedTarget).data()){
+          $($(evnt.relatedTarget).data().parallelPlaceholder).html(options.parallelData) 
+        }
         return true;
       })
    });
@@ -432,4 +464,22 @@ function closeableFlash(flash){
       if(flash.css("display") != 'none')
          flash.hide('blind', {}, 500);
     }, 20000);
+}
+
+function initParallelRequest(target){
+  if(!target.data('parallelUrl')){
+    return;
+  }
+  var options = target.data();
+  jQuery.get(options.parallelUrl,
+    function(data){
+      if(jQuery(document).data("requestDone")){
+        console.log("parent request done")
+        jQuery(options.parallelPlaceholder).html(data)
+      }
+      else{
+        console.log("parallel request done")
+        jQuery(document).data("parallelData",data);
+      }
+  })
 }

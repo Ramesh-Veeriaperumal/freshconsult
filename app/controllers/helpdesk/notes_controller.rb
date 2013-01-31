@@ -8,7 +8,7 @@ class Helpdesk::NotesController < ApplicationController
   include Helpdesk::Social::Facebook
   include Helpdesk::Social::Twitter
   
-  before_filter :validate_attachment_size , :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
+  before_filter :fetch_item_attachments, :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
   before_filter :set_mobile, :prepare_mobile_note, :only => [:create]
     
   uses_tiny_mce :options => Helpdesk::TICKET_EDITOR

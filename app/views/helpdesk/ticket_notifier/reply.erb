@@ -1,3 +1,6 @@
 <%= @body %>
 
+
 <%=render :partial => "satisfaction_survey", :locals => {:ticket => @ticket, :survey_handle => @survey_handle}%>
+<br/>
+<%= link_to "Refreshing Support, Powered by Freshdesk", "http://freshdesk.com/free-support-software/?utm_source=email&utm_medium=referral&utm_campaign=freemium" if Account.current.subscription.sprout? %>

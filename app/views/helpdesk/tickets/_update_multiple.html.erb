@@ -3,11 +3,6 @@
 <div class="bulktickets" id="bulktickets">
 <div class="dialog-special small_curve " id="update-fields">
   <div class="content clearfix scrollbar">
-    <%= include_stylesheets :redactor  %>
-    <%= include_javascripts :redactor  %>
-
-    <script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
-  	
     <% helpdesk_submit_options = []%>
   	<% current_portal.ticket_fields.each  do |field| %>
   		<% if field.visible_in_view_form? %>
@@ -62,8 +57,8 @@
 </div>
 
 <% javascript_tag do %> 
-  
-  jQuery('#ticket_cancel_multiple_button').click(
+  jQuery('#ticket_cancel_multiple_button').die('click')
+  jQuery('#ticket_cancel_multiple_button').live('click',
    	function(){
   		active_dialog.dialog('close');
    	});
@@ -77,8 +72,8 @@
       jQuery('#loader').removeClass("hide");
     }
   }
-
-  jQuery('#no-response').bind('click', function(){
+  jQuery('#no-response').die('click');
+  jQuery('#no-response').live('click', function(){
     jQuery('#bulkcontent').css('height','auto');
     jQuery('#bulktickets').animate({marginLeft: '+=688px'}, 300, function() {
       jQuery('#bulk-response-group').addClass('hide');
@@ -87,7 +82,8 @@
     jQuery('#clear-search').trigger('click');
 });
 
- jQuery("[rel=inputselectbox]").bind('change',  function(ev){
+  jQuery("[rel=inputselectbox]").die('change');
+ jQuery("[rel=inputselectbox]").live('change',  function(ev){
     if(jQuery(this).attr('id')=="helpdesk_ticket_group_id")
     {
       if(jQuery('#helpdesk_ticket_responder_id_label').is(':checked'))
@@ -101,8 +97,9 @@
     jQuery(this).parent().find("input").prop("checked", true);
     jQuery(this).parent().find("label").addClass("active");
   }); 
- 
-  jQuery("[rel=inputcheckbox]").bind('change',  function(ev){
+  
+  jQuery("[rel=inputcheckbox]").die('click');
+  jQuery("[rel=inputcheckbox]").live('click',  function(ev){
     if(jQuery(this).parent().find("input").is(':checked'))
     {
       jQuery(this).addClass("active");
@@ -142,8 +139,8 @@ function groupchange(value){
                     }
      });
    }
-
-jQuery('.ui-icon-closethick').bind('click', function(){
+jQuery('.ui-icon-closethick').die('click');
+jQuery('.ui-icon-closethick').live('click', function(){
   if(!jQuery('#no-response').is(':hidden'))
     jQuery('#no-response').click();
 });

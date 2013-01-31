@@ -1,0 +1,115 @@
+<div id="page-header">
+	<h3>Subscription Events</h3>
+
+  <div class = "pull-right" id ="pick_period" >
+    <% form_tag "/events", :method => 'get' do %>
+      <%= date_select("date", "period", { :discard_day => true, :order => [:month, :year], 
+                                            :start_year => 2012 , :prompt => true}) %>
+      <%= submit_tag "Show Stats", :class => "btn" %>
+    <% end %>
+  </div>
+</div><!-- end of page-header -->
+
+<%  summary    = [ [:events, "Events - Count"], [:revenue, "Revenue Summary"] ]
+
+    events     = [ [:free, "Free Customers"], [:paid, 'Paid Customers'], [:free_to_paid, "Free to Paid"], 
+                    [:recurring, "Recurring"], [:deleted, "Deleted Customers"] ]
+    
+    upgrades   = [ [:agents, 'Added Agents'], [:plan, 'Upgraded Plan' ], 
+                    [:period, 'Upgraded Period'], [:agents_plan, 'Added agents & Upgraded Plan'], 
+                    [:plan_period, 'Upgraded Plan & Period'], 
+                    [:agents_period, 'Added agents & Upgraded Period'], 
+                    [:all, 'Added agents, Upgraded Plan & Period' ] ]
+    
+    downgrades = [ [:agents, 'Reduced Agents'], [:plan, 'Downgraded Plan' ], 
+                    [:period, 'Downgraded Period'],[:agents_plan, 'Removed agents & Downgraded Plan'], 
+                    [:plan_period, 'Downgraded Plan & Period'],
+                    [:agents_period, 'Removed agents & Downgraded Period'], 
+                    [:all, 'Removed agents, Downgraded Plan & Period' ] ]
+%>
+
+<br/>
+  
+<div id="page-content">
+  
+  <% if (params[:date].blank?) %>
+
+    <h4>Summary for the last 30 days</h4>
+    <% summary.map { |t| %>
+      <%= render :partial => "summary_table",  
+                  :locals => { :count => @events, :revenue => @revenue, :t => t } %>
+      
+    <% } %>
+
+  <% else %>
+    
+    <h4><%= %(#{I18n.t("date.month_names")[params[:date]["period(2i)"].to_i]}, #{params[:date]["period(1i)"]}) %></h4>
+    <br/>
+
+    <div class="event-container">
+      
+      <h4>Summary</h4>
+
+      <div class="event-details">
+        <table class="table table-striped table-details event-summary">
+          <tr>
+            <th>CMRR</th>
+            <th>Affiliates</th>          
+            <th>Paid</th>
+            <th>Free to Paid</th>
+            <th>Upgrades</th>
+            <th>Downgrades</th>
+            <th>Churn</th>
+          </tr>
+            
+          <tr>
+            <td>$<%= @metrics[:cmrr] %></td>
+            <td>$<%= @events_revenue[:affiliates] %></td> 
+            <td>$<%= @events_revenue[:paid] %></td>
+            <td>$<%= @events_revenue[:free_to_paid] %></td> 
+            <td>$<%= @revenue[:upgrades] %></td>
+            <td>$<%= @revenue[:downgrades].abs %></td>
+            <td>$<%= @events_revenue[:deleted] %></td>
+          </tr>
+        </table>
+      </div>
+
+    </div>
+
+    <h4>Events </h4>
+    
+    <% events.map { |t| %>
+        <%= render :partial => "events_table",  
+                  :locals => { :count => @events_count, :revenue => @events_revenue, :t => t } %>
+    <% } %>
+
+    <br/>
+    <h4>Upgrades </h4>
+
+    <% upgrades.map { |t| %> 
+        <%= render :partial => "events_table",  
+                  :locals => { :count => @upgrades_count, :revenue => @upgrades_revenue, :t => t } %>
+    <% } %>
+
+    <br/>
+    <h4>Downgrades </h4>
+
+    <% downgrades.map { |t| %>
+        <%= render :partial => "events_table",  
+                  :locals => { :count => @downgrades_count, :revenue => @downgrades_revenue, :t => t } %>
+    <% } %>
+    
+    <i>*accounts in red are deleted customers</i>
+
+    <%= include_javascripts :subscription%>
+    
+    <% javascript_tag do %>
+      jQuery("#slide-down").live('click', function(ev){
+        ev.preventDefault();
+        jQuery(this).parent().find('.event-details').slideToggle();
+      });
+    <% end %>
+
+  <% end %>
+
+</div><!--end of page-content --> 

@@ -155,13 +155,24 @@
         resque.failed_show '/failed/:queue_name/show', :controller => 'failed', :action => 'show'
         resque.resources :failed, :member => { :destroy => :delete , :requeue => :put }, :collection => { :destroy_all => :delete }
       end
-      admin.resources :analytics 
+      # admin.resources :analytics 
+      admin.resources :spam_watch, :only => :index
+      admin.spam_details '/spam_watch/:user_id/:type', :controller => :spam_watch, :action => :spam_details
+      admin.spam_user '/spam_user/:user_id', :controller => :spam_watch, :action => :spam_user
+      admin.block_user '/block_user/:user_id', :controller => :spam_watch, :action => :block_user
+      admin.resources :subscription_events, :as => 'events', :collection => { :export_to_csv => :get }
     end
   end
   
   map.with_options(:conditions => {:subdomain => AppConfig['partner_subdomain']}) do |subdom|
     subdom.with_options(:namespace => 'partner_admin/', :name_prefix => 'partner_', :path_prefix => nil) do |partner|
       partner.resources :affiliates, :collection => {:add_affiliate_transaction => :post}
+    end
+  end
+
+  map.with_options(:conditions => { :subdomain => AppConfig['billing_subdomain'] }) do |subdom|
+    subdom.with_options(:namespace => 'billing/', :path_prefix => nil) do |billing|
+      billing.resources :billing, :collection => { :trigger => :post }
     end
   end
 
@@ -174,7 +185,7 @@
   map.thanks '/signup/thanks', :controller => 'accounts', :action => 'thanks'
   map.create '/signup/create/:discount', :controller => 'accounts', :action => 'create', :discount => nil
   map.resource :account, :collection => {:rebrand => :put, :dashboard => :get, :thanks => :get,   :cancel => :any, :canceled => :get , :signup_google => :any }
-  map.resource :subscription, :collection => { :plans => :get, :billing => :any, :plan => :any, :calculate_amount => :any, :free => :get, :convert_subscription_to_free => :put }
+  map.resource :subscription, :collection => { :plans => :get, :billing => :any, :plan => :any, :calculate_amount => :any, :convert_subscription_to_free => :put }
 
   map.new_account '/signup/:plan/:discount', :controller => 'accounts', :action => 'new', :plan => nil, :discount => nil
   
@@ -251,7 +262,11 @@
 
 
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
-      ticket.resources :subscriptions, :name_prefix => 'helpdesk_ticket_helpdesk_'
+      ticket.resources :subscriptions, :collection => { :create_watchers => :post, 
+                                                        :unsubscribe => :get,
+                                                        :unwatch => :delete,
+                                                        :unwatch_multiple => :delete },
+                                       :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :tag_uses, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :reminders, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :time_sheets, :name_prefix => 'helpdesk_ticket_helpdesk_' 
@@ -276,6 +291,7 @@
     helpdesk.filter_tickets        '/tickets/filter/tags', :controller => 'tags', :action => 'index'
     helpdesk.filter_view_default   '/tickets/filter/:filter_name', :controller => 'tickets', :action => 'index'
     helpdesk.filter_view_custom    '/tickets/view/:filter_key', :controller => 'tickets', :action => 'index'
+    helpdesk.requester_filter      '/tickets/filter/requester/:requester_id', :controller => 'tickets', :action => 'index'
 
     #helpdesk.filter_issues '/issues/filter/*filters', :controller => 'issues', :action => 'index'
 
@@ -335,6 +351,12 @@
   
   map.namespace :anonymous do |anonymous|
     anonymous.resources :requests
+  end
+
+  map.namespace :public do |p|
+     p.resources :tickets do |ticket|
+        ticket.resources :notes
+    end
   end
 
   map.namespace :mobile do |mobile|

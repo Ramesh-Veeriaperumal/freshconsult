@@ -45,10 +45,9 @@
 			<div class="info-data tabbed">
 				<%= t('import_user_org_text') %>				
 			</div>
-			<label class="tabbed">
-				<%= check_box( "import", "files", { :multiple => true, :checked => false }, "user_notify" , nil) %>
-				<%= t('import_user_notification') %>
-			</label>
+			<div class="info-data tabbed">
+				<%= t('note')%><%= t('import_user_notification') %>
+			</div>
 		</li>		
 		<li>	
 			<label>		  

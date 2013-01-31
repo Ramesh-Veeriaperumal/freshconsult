@@ -18,6 +18,7 @@ module Reports::ConstructReport
     responder_hash.store(:average_first_response_time, rec.afrt)
     responder_hash.store(:fcr, rec.fcr)
     responder_hash.store(:tkt_res_on_time, rec.otr)
+    responder_hash.store(:average_response_time, rec.art)
     data.store(responder,responder_hash)
   end
   data
@@ -34,6 +35,7 @@ module Reports::ConstructReport
      :include => @val, 
      :joins => "INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id", 
      :select => "#{@val}_id, 
+                avg(helpdesk_ticket_states.avg_response_time) art,
                 avg(TIME_TO_SEC(TIMEDIFF(helpdesk_ticket_states.first_response_time, helpdesk_tickets.created_at))) afrt, 
                 sum(case when helpdesk_ticket_states.inbound_count = 1 then 1 else 0 end ) fcr, 
                 sum(case when (helpdesk_tickets.due_by >= helpdesk_ticket_states.resolved_at) then 1 else 0 end) otr, 

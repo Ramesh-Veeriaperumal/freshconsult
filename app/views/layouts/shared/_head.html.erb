@@ -18,8 +18,8 @@
 	<% unless page_canonical.blank? %>
 		<link rel="canonical" href="<%= page_canonical %>" />
 	<% end %>
-	<% cache(["v1","portal","fav_ico",current_portal]) do %>
-		<link rel="shortcut icon" href="<%=current_portal.fav_icon.nil? ? '/images/favicon.ico' : current_portal.fav_icon.content.url%>" />
+	<% cache(["v2","portal","fav_ico",current_portal]) do %>
+		<link rel="shortcut icon" href="<%=current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' : current_portal.fav_icon.content.url%>" />
 	<%end%>
 	<%= include_stylesheets :non_pattern_1 %>
 	<%= include_stylesheets :non_pattern_2 %>
@@ -32,7 +32,8 @@
 	<%= include_javascripts :frameworks %>
 	<%= include_javascripts :workspace %>
 	<%= include_javascripts :notifications %>
-	
+	<%= include_stylesheets :redactor  %>
+	<%= include_javascripts :redactor  %>
 <script type="text/javascript">
 	PROFILE_BLANK_THUMB_PATH = '<%= image_path("fillers/profile_blank_thumb.gif") %>';
 	PROFILE_BLANK_MEDIUM_PATH = '<%= image_path("fillers/profile_blank_medium.gif") %>';

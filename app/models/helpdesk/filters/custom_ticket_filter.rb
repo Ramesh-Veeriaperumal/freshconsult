@@ -109,6 +109,20 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     'created_at'
   end
   
+  def order_clause
+    @order_clause ||= begin
+      order_columns = order
+      #Performence reseason we are using id instead of created_at.
+      order_columns = "id" if "created_at".eql?(order_columns)
+      order_parts = order_columns.split('.')
+      if order_parts.size > 1
+        "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
+      else
+        "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}"
+      end
+    end  
+  end
+
   def default_filter(filter_name)
      self.name = filter_name.blank? ? "new_my_open" : filter_name
      if "on_hold".eql?filter_name
@@ -142,7 +156,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     
     self.id   =  params[:wf_id].to_i      unless params[:wf_id].blank?
     self.name =  params[:filter_name]     unless params[:filter_name].blank?
-    
+
     @fields = []
     unless params[:wf_export_fields].blank?
       params[:wf_export_fields].split(",").each do |fld|
@@ -268,7 +282,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                                       :conditions => all_conditions, :joins => all_joins)
       end
 
-      select = "helpdesk_tickets.* "
+      select = "helpdesk_tickets.*"
       select = "DISTINCT(helpdesk_tickets.id) as 'unique_id' , #{select}" if all_conditions[0].include?("helpdesk_tags.name")
 
       recs = model_class.paginate(:select => select,
@@ -287,7 +301,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
   
   def get_joins(all_conditions)
-    all_joins = joins
+    all_joins = [""]
+    all_joins = joins if all_conditions[0].include?("flexifields")
     all_joins[0].concat(monitor_ships_join) if all_conditions[0].include?("helpdesk_subscriptions.user_id")
     all_joins[0].concat(schema_less_join) if all_conditions[0].include?("helpdesk_schema_less_tickets.boolean_tc02")
     all_joins[0].concat(users_join) if all_conditions[0].include?("users.customer_id")
@@ -321,6 +336,19 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   
   def order_field
     "helpdesk_tickets.#{@order}"    
+  end
+
+  def order_clause
+    @order_clause ||= begin
+      order_columns = order
+      order_columns = "id" if "created_at".eql?(order_columns)
+      order_parts = order_columns.split('.')
+      if order_parts.size > 1
+        "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
+      else
+        "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}"
+      end
+    end  
   end
   
   def previous_ticket_sql(ticket, account, user)   

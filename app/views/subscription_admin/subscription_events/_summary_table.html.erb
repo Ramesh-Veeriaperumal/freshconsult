@@ -1,0 +1,52 @@
+<div class="event-container">
+  <h4><%= t[1] %></h4>
+  <br/>
+  
+  <% codes = { :free => 100, :affiliates => 125, :paid => 150, :free_to_paid => 200, :deleted => 0 } %>
+
+  <table class="table table-striped table-details event-summary">
+
+    <% if t[0].eql?(:events) %>
+      <tr>
+        <th>Free</th>
+        <th>Affiliates</th>          
+        <th>Paid</th>
+        <th>Free to Paid</th>
+        <th>Upgrades</th>
+        <th>Downgrades</th>
+        <th>Deleted</th>
+      </tr>
+      <tr>
+        <td><%= handle_nil(@events[codes[:free]]) %></td>
+        <td><%= handle_nil(@events[codes[:affiliates]]) %></td> 
+        <td><%= handle_nil(@events[codes[:paid]]) %></td>
+        <td><%= handle_nil(@events[codes[:free_to_paid]]) %></td> 
+        <td><%= @events[:upgrades] %></td>
+        <td><%= @events[:downgrades] %></td>
+        <td><%= handle_nil(@events[codes[:deleted]]) %></td>
+      </tr>
+    <% else %>
+      <tr>
+        <th>CMRR</th>
+        <th>Affiliates</th>          
+        <th>Paid</th>
+        <th>Free to Paid</th>
+        <th>Upgrades</th>
+        <th>Downgrades</th>
+        <th>Churn</th>
+      </tr>
+      <tr>
+        <td>$<%= @revenue[:cmrr] %></td>
+        <td>$<%= handle_nil(@revenue[codes[:affiliates]]) %></td> 
+        <td>$<%= handle_nil(@revenue[codes[:paid]]) %></td>
+        <td>$<%= handle_nil(@revenue[codes[:free_to_paid]]) %></td> 
+        <td>$<%= @revenue[:upgrades] %></td>
+        <td>$<%= @revenue[:downgrades].abs %></td>
+        <td>$<%= handle_nil(@revenue[codes[:deleted]]) %></td>
+      </tr>
+
+    <% end %>
+    
+   </table>
+
+</div>
