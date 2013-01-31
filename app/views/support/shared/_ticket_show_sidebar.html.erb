@@ -46,10 +46,6 @@
 	
   <%- end %>
 <% end %>
-<%= include_stylesheets :redactor  %>
-<%= include_javascripts :redactor  %>
-
-<script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
 <% content_for :onload_script do -%>
 jQuery('#add_cc_btn').bind("click", function(ev){
 		ev.preventDefault();

@@ -9,16 +9,16 @@ class SubscriptionsController < ApplicationController
   before_filter :load_discount, :only => [ :plans, :plan, :show, :calculate_amount ]
   before_filter :load_plans, :only => [:show, :plans, :free]
   before_filter :admin_selected_tab, :only => [ :billing, :show, :edit, :plan, :cancel, :free ]
-  before_filter :load_subscription_plan, :only => [:plan, :calculate_amount,:convert_subscription_to_free] 
-  before_filter :check_free_agent_limit, :only => [:free,:convert_subscription_to_free]
+  before_filter :load_subscription_plan, :only => [:plan, :calculate_amount, :convert_subscription_to_free]
+  before_filter :check_free_agent_limit, :only => [:convert_subscription_to_free]
   before_filter :check_credit_card_for_free, :only => [:plan,:plans] 
   
   filter_parameter_logging :creditcard,:password
 
   ssl_required :billing
-  
+
   def convert_subscription_to_free
-    @subscription.subscription_plan = @subscription_plan 
+    @subscription.subscription_plan = SubscriptionPlan.find(:first, :conditions => {:name => SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout]})
     @subscription.convert_to_free
     if @subscription.save
       flash[:notice] = t('plan_is_selected', :plan => @subscription.subscription_plan.name )
@@ -39,14 +39,14 @@ class SubscriptionsController < ApplicationController
   def billing
   	if request.post?
     	@address.first_name = @creditcard.first_name
-        @address.last_name = @creditcard.last_name
-        if @creditcard.valid? & @address.valid?
-          if @subscription.store_card(@creditcard, :billing_address => @address.to_activemerchant, :ip => request.remote_ip, :charge_now => params[:charge_now])
-            flash[:notice] = t('billing_info_update')
-            flash[:notice] = t('card_process') if params[:charge_now].eql?("true")
-            redirect_to :action => "show"
-          end
+      @address.last_name = @creditcard.last_name
+      if @creditcard.valid? & @address.valid?
+        if @subscription.store_card(@creditcard, :billing_address => @address.to_activemerchant, :ip => request.remote_ip, :charge_now => params[:charge_now])
+          flash[:notice] = t('billing_info_update')
+          flash[:notice] = t('card_process') if params[:charge_now].eql?("true")
+          redirect_to :action => "show"
         end
+      end
     end
   end
 
@@ -72,12 +72,16 @@ class SubscriptionsController < ApplicationController
         render :action => "plan" and return
       end
       
-      unless  @subscription.active?
-        redirect_to :action => "billing"
+      if params[:agent_limit].to_i <= @subscription.free_agents and @subscription.sprout?
+        convert_subscription_to_free
       else
-        flash[:notice] = t('plan_info_update')
-        redirect_to :action => "show"
-      end 
+        if !@subscription.active? or @subscription.card_number.blank?
+          redirect_to :action => "billing"
+        else
+          flash[:notice] = t('plan_info_update')
+          redirect_to :action => "show"
+        end 
+      end
     else
       load_plans
     end
@@ -85,12 +89,12 @@ class SubscriptionsController < ApplicationController
 
   protected
   
-  def load_subscription_plan
-     @subscription_plan = SubscriptionPlan.find_by_id(params[:plan_id])
-     @subscription_plan ||= current_account.subscription.subscription_plan
-  end
+    def load_subscription_plan
+       @subscription_plan = SubscriptionPlan.find_by_id(params[:plan_id])
+       @subscription_plan ||= current_account.subscription.subscription_plan
+    end
 
-  def load_billing
+    def load_billing
       @creditcard = ActiveMerchant::Billing::CreditCard.new(params[:creditcard])
       @address = SubscriptionAddress.new(params[:address])
     end
@@ -114,15 +118,16 @@ class SubscriptionsController < ApplicationController
       @selected_tab = :admin
     end  
 
+  
     def check_free_agent_limit
       unless @subscription.eligible_for_free_plan?
-        flash[:notice] = t('not_eligible_for_free_plan')
-        redirect_to plans_subscription_url
+        flash[:notice] = t('not_eligible_for_sprout_plan')
+        redirect_to :action => "show"
       end
     end
 
     def check_credit_card_for_free
-      if @subscription.free? 
+      if @subscription.free? and @subscription.card_number.blank?
         flash[:notice] = t('enter_billing_for_free')
         redirect_to :action => "billing"
       end

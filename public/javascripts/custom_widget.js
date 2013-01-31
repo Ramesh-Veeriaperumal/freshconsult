@@ -1120,7 +1120,7 @@ var CustomWidget =  {
 	include_js: function(jslocation) {
 		widget_script = document.createElement('script');
 		widget_script.type = 'text/javascript';
-		widget_script.src = jslocation + "?" + (new Date().getTime());
+		widget_script.src = jslocation;
 		document.getElementsByTagName('head')[0].appendChild(widget_script);
 	}
 };

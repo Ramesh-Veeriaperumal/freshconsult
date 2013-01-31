@@ -3,32 +3,51 @@
 	   	<table>
 			<tr> 
 				<% plans.each do |plan| %>
-				<% plan_name = plan.name.downcase %>
-				<% unless plan_name == "free" %>
-				<td id = "plan-<%= plan.name %>" width='<%="#{(100/plans.size.to_f).to_i}%"%>'>
-					<div class="plan-details">			
-						<div class="plan-title">
-							<% bool_beta_plan = (plan_name == "premium" && @discount  && @discount.name.downcase == "beta users special") %>
-							<%= content_tag(:h2, plan.name ) %>
-							<% if(bool_beta_plan) %>
-								<%= content_tag(:h3, "<span class='discount-strikethrough'>$29 </span> $19 " +  content_tag(:span, t('plan_amount'), :class => "info-data")) %>
-							<% else %>
-								<%= content_tag(:h3, "$#{plan.amount.to_i} " + content_tag(:span, t('plan_amount'), :class => "info-data")) %>
-							<% end %>								
-							<%= content_tag(:h4, t("#{plan_name}_brief") ) %>
-							<%= content_tag(:div, (plan_name == "premium") ? t("special_beta_offer") : "&nbsp;", :class => "discount-info-text" ) if(@discount && @discount.name.downcase == "beta users special")  %>
-						</div>
-						<%= content_tag(:p,  t("#{plan_name}_details"), :class => "plan-details" ) %>
-						<p><br>
-							<%= "First #{ plan.free_agents == 1 ? 'agent' : pluralize(plan.free_agents, 'agent')} will be free" %>
-						</p>
-					</div>
-					<button data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id = "<%= plan.id %>" class="plan-button" id='<%= "#{ plan.name }_button" %>'><%=t('choose_plan')%></button>
-					<div id="billing-<%= plan.name %>"></div>
-				</td>
-				<% else %>
-				  <% @free_plan_id = plan.id %>
-				<% end %>  
+					<% plan_name = plan.name.downcase %>
+					<% unless plan_name == "free"  %>
+						<% unless plan.id == subscription.subscription_plan_id and !subscription.trial? %>
+							<% unless subscription.trial? and plan.classic? %>
+								<td class="pricelist" id = "plan-<%= plan.name %>" width='<%="#{(100/(plans.size.to_f)).to_i}%"%>'>
+										<div class="plan-details">			
+											<div class="plan-title">
+												<% bool_beta_plan = (plan_name == "premium" && @discount  && @discount.name.downcase == "beta users special") %>
+												<%= content_tag(:h2, plan.name) %>
+												<%= content_tag(:div, t("#{plan_name}_brief"), :class => "plan-brief" ) %>
+												<% if(bool_beta_plan) %>
+													<%= content_tag(:h3, "<span class='discount-strikethrough'>$29 </span> $19 " +  content_tag(:span, t('plan_amount'), :class => "info-data")) %>
+												<% else %> 
+														<% if plan_name == "sprout" %>
+															<%= content_tag(:h3, "Free") %>
+															<%= content_tag(:div, t('free_plan_agents', :free_agents => plan.free_agents), :class => "info-data") %>
+														<% else %>
+															<%= content_tag(:h3, "$#{plan.amount.to_i}") %>
+															<%= content_tag(:div, t('plan_amount'), :class => "info-data") %>
+														<% end %>
+												<% end %>								
+												<%= content_tag(:div, (plan_name == "premium") ? t("special_beta_offer") : "&nbsp;", :class => "discount-info-text" ) if(@discount && @discount.name.downcase == "beta users special")  %>
+											</div>
+											<%= content_tag(:p,  t("#{plan_name}_details"), :class => "plan-details" ) %>
+										</div>
+										<% subscribe_direct_flag =  (current_account.full_time_agents.count) <= plan.free_agents %>
+										<% if subscribe_direct_flag %> 
+											<div class="activate-options">
+												<%= content_tag(:div, " #{plan.free_agents} Agents Free") %>
+												<div class = "add-more">
+													<a href="javascript:;" data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id = "<%= plan.id %>" class="plan-button1" id='<%= "#{ plan.name }_button" %>' data-current-plan=false><%= t("add_more_free", :free_agents => plan.free_agents) %></a>
+												</div>
+												<%= content_tag(:h2, t('total_price') + " : $0") %>
+												<% downgrade_confirm_text = ( plan.id < current_account.subscription.subscription_plan_id ) ? t('downgrade_confirm') : nil%>
+												<%= link_to( t('select_plan'), convert_subscription_to_free_subscription_url, :method => :put, :class => "uiButton", :confirm => downgrade_confirm_text  ) %>
+											</div>
+										<% end %>
+										<button data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id="<%= plan.id %>" class="plan-button" id='<%= "#{ plan.name }_button" %>' data-current-plan=false data-free-plan='<%= subscribe_direct_flag %>'><%=t('choose_plan')%></button>
+										<div id="billing-<%= plan.name %>"></div>
+								</td>
+							<% end %>
+						<% end %>
+					<% else %>
+					  <% @free_plan_id = plan.id %>
+					<% end %>  
 			<%end%>
 			</tr> 
 		</table>
@@ -39,58 +58,113 @@
   <%= render :partial => "calculate_amount", :locals => { :amount => 0 } %>
 </div>
 
-<% javascript_tag do %>
+<script type="text/javascript">
+
 	(function($){	
 		selected_plan 	= null;
 		agents		  	  = null;
 		plan_cost	  	  = null;
 		plan_billing  	= null; 
 		current_plan_id = null;
+		original_data = null;
+		current_active_plan_flag = false;
+		cache_agent_value = 0;
 		billing_cycle   = <%= @subscription.renewal_period %>;
-		
+
 		function IsNumeric(input){
 		   return (input - 0) == input && input.length > 0;
 		}
-		
-		$(".plan-button").click(function(){
-			if(selected_plan != null) selected_plan.removeClass('active');
 
-			current_plan 	  = this.getAttribute("data-plan");
+		$(".billing-cancel").live("click", function(ev){
+			ev.preventDefault();
+			$("#billing-template").detach().appendTo('#Pagearea').hide();
+			$(".subscribed-plan-details").html(original_data);
+		});
+
+		choosePlan = function(button) {
+			var btn = $(button);
+			if(selected_plan != null) selected_plan.removeClass('active');
+			current_plan 	  = btn.data("plan");
+			
+			plan_cost 		  = btn.data("planCost");
+			current_plan_id = btn.data("planId");
+			current_active_plan_flag = btn.data("currentPlan");
+			has_free_agents = btn.data("freePlan");
+			if(!has_free_agents ){
+				if(selected_plan != null) selected_plan.removeClass('free-plan-options');
+			}
 			selected_plan 	= $("#plan-"+current_plan).addClass('active'); 
-			plan_cost 		  = this.getAttribute("data-plan-cost");
-			current_plan_id = this.getAttribute("data-plan-id");
-			agents			    = $("#agents-text-box").val();
-			$("#billing-template").addClass("loading-amount");
-      $("#billing-template").detach().appendTo(selected_plan).show();
+			agents = $("#agents-text-box").val();
+			if(has_free_agents && !current_active_plan_flag){
+				if($(button).attr('class').indexOf("plan-button1") >= 0)
+					$('.active').removeClass("free-plan-options");	
+				else
+					$('.active').addClass("free-plan-options");
+			}else{
+				$("#billing-template").addClass("loading-amount");
+			}
+			if(current_active_plan_flag){
+				original_data = $(".subscribed-plan-details").html();
+				$(".subscribed-plan-details").html($("#billing-template").show());
+				$("#billing-template .billing-cancel").show();
+			}
+			else {
+				$("#billing-template").detach().appendTo(selected_plan).show();
+				$("#billing-template .billing-cancel").hide();
+				if (original_data != null) {
+					$(".subscribed-plan-details").html(original_data);
+					original_data = null;
+				}
+			}	
 			calculateCost();
+		}
+
+		$(".plan-button, .plan-button1").live('click',function(ev){
+			ev.stopPropagation();
+			choosePlan(this);
 		});
 		
+
+		$('.pricelist').click(function(ev){
+			if (!$(ev.srcElement).is('a') && !$(this).hasClass('active')){
+				choosePlan($(this).find('.plan-button').first().get(0));	
+			}
+		});
+		
+
 		$("#agents-text-box").live("change", function(){
-			                                      if(IsNumeric(this.value) && this.value != 0){
-                                              this.value = Math.abs(this.value);
-                                              agents = this.value;
-                                              calculateCost();
-                                            }else{
-                                              this.value = agents;
-                                            }
-                                          });
+      if(IsNumeric(this.value) && this.value != 0){
+        this.value = Math.abs(this.value);
+        agents = this.value;
+        $(".billing-submit").attr("disabled", "true")
+        calculateCost();
+      }else{
+        this.value = agents;
+      }
+    });
 
     $("#billing_cycle").live("change", function(){
-                                          billing_cycle = this.value;
-                                          calculateCost();
-                                       });
+      billing_cycle = this.value;
+      $(".billing-submit").attr("disabled", "true")
+      calculateCost();
+   });
 
     function calculateCost(){
-      //$("#cost-per-agent").text("$"+plan_cost);
-      //$("#total-cost-per-agent").text("$"+(agents * plan_cost));			
       $.post( "/subscription/calculate_amount",
               { "billing_cycle": billing_cycle, "agent_limit" : agents, "plan_id" : current_plan_id },              
               function(data){
+              		$(".billing-submit").removeAttr("disabled");
 									$("#billing-template").removeClass("loading-amount");
                   $("#billing-template").html(data);
             			$("#plan_id").val(current_plan_id);
+            			if(current_active_plan_flag) {
+            				$("#billing-template .billing-cancel").show();
+            				$("#billing-template .billing-submit").val("Update Plan");
+            			} else {
+            				$("#billing-template .billing-cancel").hide();
+            			}
                 } );
     }
-
   })(jQuery);
-<% end %>
+
+</script>

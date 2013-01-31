@@ -40,6 +40,12 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
   RESOLUTIONTIME_NAMES_BY_KEY = Hash[*RESOLUTIONTIME.map { |i| [i[2], i[1]] }.flatten]
   RESOLUTIONTIME_KEYS_BY_TOKEN = Hash[*RESOLUTIONTIME.map { |i| [i[0], i[2]] }.flatten]
 
+  PREMIUM_TIME_OPTIONS = [ 
+    [I18n.t('premium_sla_times.five_minutes'),300], 
+    [I18n.t('premium_sla_times.ten_minutes'),600], 
+    [I18n.t('premium_sla_times.fifteen_minutes'), 900] 
+  ]
+
   PRIORITIES = [
     [ 'low',       "Low",         1 ], 
     [ 'medium',    "Medium",      2 ], 

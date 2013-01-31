@@ -17,7 +17,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	serialize :to_emails
 	serialize :header_info
 
-	validates_uniqueness_of :string_tc01, :scope => :account_id
+	validates_uniqueness_of :string_tc01, :scope => :account_id,:allow_nil => true
 
 	def self.trashed_column
 		:boolean_tc02
@@ -25,5 +25,10 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 
 	def self.find_by_access_token(token)
 		find_by_string_tc01(token)
+	end
+
+	#updating access_token for old tickets
+	def update_access_token(token)  #for avoiding call back have put as separate method
+		update_attribute(:string_tc01, token)
 	end
 end

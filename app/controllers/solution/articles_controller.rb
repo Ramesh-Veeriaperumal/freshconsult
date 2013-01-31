@@ -175,7 +175,7 @@ end
     
     @article.tags.clear    
     tags = params[:tags][:name]
-    ar_tags =  tags.scan(/\w+/)    
+    ar_tags =  tags.scan(/\w+/).uniq
     new_tag = nil
     ar_tags.each do |tag|    
       

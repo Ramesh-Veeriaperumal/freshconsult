@@ -314,6 +314,7 @@ include RedisKeys
       @contact.name = options[:name] unless options[:name].blank? 
       @contact.email = email
       @contact.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
+      @contact.language = current_portal.language
       return @contact
     end
     TOKEN_TYPE = "OpenSocialFirstTimeAccessToken"  

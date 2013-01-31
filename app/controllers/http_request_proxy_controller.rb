@@ -19,7 +19,7 @@ class HttpRequestProxyController < ApplicationController
           key_hash = (YAML::load_file config)["icontact"]
           params[:custom_auth_header] = {"API-Version" => "2.0", "API-AppId" => key_hash["app_id"] , "API-Username" => installed_app.configs_username, "API-Password" => installed_app.configsdecrypt_password}
         else
-          params[:password] = URI.escape(installed_app.configsdecrypt_password)  
+          params[:password] = installed_app.configsdecrypt_password
         end
       end
     end

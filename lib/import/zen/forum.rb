@@ -15,6 +15,9 @@ module Import::Zen::Forum
    element :id , :as => :import_id  
  end
 
+  class Attachment < Import::FdSax
+    element :url
+  end
   
  class Post < Import::FdSax 
    element :body
@@ -22,6 +25,9 @@ module Import::Zen::Forum
    element "user-id" , :as => :user_id
    element "created-at" , :as => :created_at
    element "updated-at" , :as => :updated_at
+   element "forum-id", :as => :forum_id
+   element "entry-id", :as => :entry_id
+   elements :attachment , :as => :attachments , :class => Attachment
  end
 
  class TopicProp < Import::FdSax 
@@ -34,6 +40,7 @@ module Import::Zen::Forum
    element "updated-at" , :as => :updated_at
    element "flag-type-id", :as => :stamp_type
    elements :post , :as =>:posts , :class => Post
+   elements :attachment , :as => :attachments , :class => Attachment
  end
  
 
@@ -83,29 +90,38 @@ module Import::Zen::Forum
           post = topic.posts.build(post_hash)
           post.account_id = @current_account.id
           post.save
+          topic_prop.attachments.each do |attachment|   
+              Resque.enqueue( Import::Zen::ZendeskAttachmentImport,post.id ,URI.encode(attachment.url), :post, @current_account.id)
+          end 
        end
    else
        topic.update_attribute(:import_id , topic_prop.import_id )
-   end
-   #saving posts
-   save_posts topic , topic_prop  
+   end 
  end
  
- def save_posts topic,topic_prop   
-   topic_prop.posts.each do |post_prop|
-     user = @current_account.all_users.find_by_import_id(post_prop.user_id.to_i())
-     post = topic.posts.find_by_import_id(post_prop.imp_id)     
-     unless post
-       user = @current_account.all_users.find_by_import_id(topic_prop.user_id)
-       post_hash = post_prop.to_hash.merge({:user_id =>user.id ,:forum_id => topic.forum_id, :body_html =>post_prop.body})
-       post = topic.posts.build(post_hash)
-       post.account_id = @current_account.id
-       post.save
-     else
-       post.update_attribute(:import_id , post_prop.import_id )
-     end
-   end   
+
+#changed by me
+ def save_post post_xml   
+  post_prop = Post.parse(post_xml)
+  topic = Topic.find_by_import_id_and_account_id(post_prop.entry_id, @current_account.id)
+  if topic
+    post = topic.posts.find_by_import_id(post_prop.import_id) 
+    unless post
+      user = @current_account.all_users.find_by_import_id(post_prop.user_id)
+      post_hash = post_prop.to_hash.tap { |hs| hs.delete(:entry_id) }.merge({:user_id =>user.id ,:forum_id => topic.forum_id, :body_html =>post_prop.body})
+      post = topic.posts.build(post_hash)
+      post.account_id = @current_account.id
+      post.save
+    
+      post_prop.attachments.each do |attachment|   
+        Resque.enqueue( Import::Zen::ZendeskAttachmentImport,post.id ,URI.encode(attachment.url), :post, @current_account.id)
+      end 
+    else
+      post.update_attribute(:import_id , post_prop.import_id )
+    end
+  end 
  end
+
 
 def save_solution_folder forum_prop
   category = @current_account.solution_categories.find_by_import_id(forum_prop.category_id)
@@ -132,6 +148,10 @@ def save_solution_article topic_prop
     article = sol_folder.articles.build(article_hash)
     article.account_id = @current_account.id 
     article.save
+
+    topic_prop.attachments.each do |attachment|   
+        Resque.enqueue( Import::Zen::ZendeskAttachmentImport,article.id ,URI.encode(attachment.url), :article, @current_account.id)
+    end 
   else
     article.update_attribute(:import_id , topic_prop.import_id )
   end

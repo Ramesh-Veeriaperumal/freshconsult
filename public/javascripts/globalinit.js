@@ -134,7 +134,7 @@ var $J = jQuery.noConflict();
         e.stopPropagation(); 
         clearTimeout(hidePopoverTimer);
         hoverPopup = false;
-        hideActivePopovers(ev);
+        hideActivePopovers(e);
         widgetPopup = $(this).popover('show');
       });
 
@@ -416,7 +416,9 @@ var $J = jQuery.noConflict();
           start_time = new Date();
           jQuery('#cf_cache').remove();
           jQuery('#response_dialog').remove();
-          jQuery('#agent_collision_container').remove();
+          jQuery('.ui-dialog').remove();
+          jQuery('#bulkcontent').remove();
+          // jQuery('#agent_collision_container').remove();
           var bHeight = $('#body-container').height(),
               clkdLI = $(evnt.relatedTarget).parent();
           $('ul.header-tabs li.active').removeClass('active');
@@ -428,9 +430,13 @@ var $J = jQuery.noConflict();
           $(document).trigger('ticket_list');
           $(document).trigger('ticket_show');
 
+          hideActivePopovers();
+
           return true;
       }).bind('pjax:end',function(){
         //$('.load-mask').hide();
+
+        jQuery('.popover').remove();
         jQuery('.top-loading-wrapper').switchClass('fadeInLeft','fadeOutRight');
         jQuery('.top-loading-wrapper').addClass('hide','slow');
         // $('#body-container .wrapper').css('visibility','visible');

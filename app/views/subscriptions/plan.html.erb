@@ -22,14 +22,7 @@ Downgrading from a higher plan to a lower plan will result in loss of configurat
 <% end %>
 
 <h3 class="title"><%= @page_title = t('change_plan') %></h3>
-<%= render :partial => "select_plans", :locals => { :plans => @plans } %>
-
-<% javascript_tag do %>
-  jQuery(document).ready(function(){
-    jQuery('<%="##{@subscription.subscription_plan.name}_button"%>')
-      .trigger("click");
-  })  
-<% end %>
+<%= render :partial => "select_plans", :locals => { :plans => @plans, :subscription => @subscription } %>
 
 <div class="button-container">
 	<%= link_to( t('back_plans_billing'), subscription_url, :class => "uiButton floatl" ) %>

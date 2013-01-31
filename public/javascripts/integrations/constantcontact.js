@@ -41,7 +41,7 @@ ConstantContactWidget.prototype= {
 	
 	getUserInfo: function(){
 		contactInfoEndpoint = "contacts?email=#{email}";
-		return { rest_url: contactInfoEndpoint.interpolate({email:encodeURIComponent(ccBundle.reqEmail)}), content_type: "application/atom+xml" };
+		return { rest_url: contactInfoEndpoint.interpolate({email:ccBundle.reqEmail}), content_type: "application/atom+xml" };
 	},
 
 	getCampaigns: function(){
@@ -158,6 +158,7 @@ ConstantContactWidget.prototype= {
 
 	handleUser: function(response){
 		entry = XmlUtil.extractEntities(response.responseXML, "entry");
+		console.log(response.responseXML);
 		if(entry.length > 0){
 			id = (XmlUtil.getNodeValue(entry[0], "id")).split("/contacts/")[1];
 			name = (XmlUtil.getNodeValue(entry[0], "Name"));

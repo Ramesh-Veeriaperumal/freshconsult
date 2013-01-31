@@ -9,7 +9,7 @@ bulkActionButtonsDisabled = function () {
 ticksymbol = "<span class='icon ticksymbol'></span>";
 priority_ids = {1: "low", 2:"medium", 3:"high", 4:"urgent"}
 
-jQuery(document).ready(function() {
+TicketListEvents = function() {
 
 jQuery('body').append('<div id="agent_collision_container" class="hide"></div>');
 
@@ -258,7 +258,6 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 		filter_opts_sisyphus.manuallyReleaseData();
 	});
 	
-});
 
 if (getCookie('ticket_list_updated') == "true") {
 	if (supports_html5_storage()) {
@@ -269,4 +268,5 @@ if (getCookie('ticket_list_updated') == "true") {
 		}
 		setCookie('ticket_list_updated',true);
 	}
+}
 }

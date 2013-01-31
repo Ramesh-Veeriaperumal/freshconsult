@@ -11,6 +11,10 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::Ticketfields::TicketStatus
   include RedisKeys
   include Helpdesk::AdjacentTickets
+  include Helpdesk::ToggleEmailNotification
+  include SeamlessDatabasePool::ControllerFilter
+
+  use_database_pool [:user_ticket, :export_csv] => :persistent
 
   before_filter :set_mobile, :only => [:index, :show,:update, :create, :execute_scenario, :assign, :spam ]
   before_filter :check_user, :load_installed_apps, :only => [:show, :forward_conv]

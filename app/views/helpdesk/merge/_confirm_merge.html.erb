@@ -1,5 +1,3 @@
-<%= include_stylesheets :redactor  %>
-<%= include_javascripts :redactor  %>
  <% form_tag :action => :complete_merge, :controller => 'helpdesk/tickets', :method => :post do |f| %>
    <%= hidden_field_tag 'source[ticket_id]', params[:id] %>
    <%= hidden_field_tag 'target[ticket_id]', params[:target_id] %>
