@@ -6,11 +6,11 @@
 
   <div class="event-overview"> 
     <ul>
-      <li><%= pluralize(count[t[0]].size, "Account") %></li>
+      <li><%= pluralize(events[t[0]].size, "Account") %></li>
       
-      <% if count[t[0]].size > 0 %>
+      <% if events[t[0]].size > 0 %>
         <li> <%= link_to 'Download CSV', export_to_csv_admin_subscription_events_path(
-                                              :data => count[t[0]], :title => t[1]) %> </li>
+                                              :data => events[t[0]], :title => t[1]) %> </li>
       <% end %>
     </ul>
 
@@ -18,7 +18,7 @@
 
   <div class="event-details hide">  
     <!-- No accounts -->
-    <% if (count[t[0]].size.eql?(0)) %>
+    <% if (events[t[0]].size.eql?(0)) %>
       <center>No accounts to display</center>
 
     <% else %>
@@ -33,7 +33,7 @@
             <th>Active since</th>
           </tr>
             
-          <% count[t[0]].each do |record| %>
+          <% events[t[0]].each do |record| %>
             
             <% if record.account %>
               <tr>
@@ -58,12 +58,16 @@
             <th>Company</th>
             <th>URL</th>
             <th>On</th>
-            <th>Monthly revenue</th>
+            <% if revenue %>
+              <th>CMRR</th>
+            <% else %>
+              <th>Downgrade amount</th>
+            <% end %>
             <th>Active since</th>
             <th>First paid on</th>
           </tr>
           
-          <% count[t[0]].each do |record| %>
+          <% events[t[0]].each do |record| %>
             
             <% if record.account %>
              <tr>

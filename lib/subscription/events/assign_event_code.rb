@@ -80,12 +80,14 @@ module Subscription::Events::AssignEventCode
 
 		#Upgrades & Downgrades
 		def upgrade?(subscription, old_subscription)
-			previously_active?(old_subscription) and (subscription.amount > old_subscription[:amount])
+			previously_active?(old_subscription) and 
+				((subscription.amount/subscription.renewal_period) > (old_subscription[:amount]/old_subscription[:renewal_period]))
 		end
 
 		def downgrade?(subscription, old_subscription)
-			previously_active?(old_subscription) and (subscription.amount < old_subscription[:amount]) and
-																						!additive(subscription, old_subscription).eql?(0)
+			previously_active?(old_subscription) and !additive(subscription, old_subscription).eql?(0) and 
+				((subscription.amount/subscription.renewal_period) < (old_subscription[:amount]/old_subscription[:renewal_period]))
+																						
 		end
 
 		def additive(subscription, old_subscription)
