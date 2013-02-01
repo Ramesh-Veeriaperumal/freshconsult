@@ -5,7 +5,7 @@ class FreshdeskErrorsMailer < ActionMailer::Base
     from          "rachel@freshdesk.com"
     subject       (options[:subject] || "Error in #{object.class.name}")
     sent_on       Time.now
-    body(:object => object, :params => params, :error => e, :additional_info => options[:additional_info])
+    body(:object => object, :params => params, :error => e, :additional_info => options[:additional_info], :query => options[:query])
     content_type  "text/html"
   end 
   

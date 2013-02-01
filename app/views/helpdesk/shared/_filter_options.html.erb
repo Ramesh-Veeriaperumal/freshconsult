@@ -1,6 +1,9 @@
+<div id="all-views-tmpl" class="hide">
+    <%= render :partial => "filters", :locals =>{ :selected => @current_view, :custom_filters => @filters_options } %>
 
+    <%= link_to(t("save_this_view"), "/helpdesk/tickets/custom_view_save", :title => t("save_this_view_tooltip"), :class => "hide dialog2", :dialogWidth => "540px", :id => "save_filter") %>
+</div>
   <script type="text/javascript">
-
   function getFilterData(){
     query_hash = $A(); 
     jQuery("div.ff_item").map(function () {
@@ -125,7 +128,9 @@
       jQuery('#empty_trash').hide();
     }	
 
-  });
+    jQuery('#all-views').html($J('#all-views-tmpl').html());
+    jQuery('#all-views-tmpl').html('');
+    });
   
   jQuery("#FilterOptions").change(function(){
     jQuery("#ticket-list").html("<div class='loading-box'></div>");
@@ -154,4 +159,5 @@
       }
     }); 
   });
+
 </script>

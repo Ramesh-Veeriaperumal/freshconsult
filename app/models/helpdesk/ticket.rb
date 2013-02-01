@@ -35,8 +35,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_create :assign_schema_less_attributes, :assign_email_config_and_product, :set_dueby, :save_ticket_states
 
   has_many_attachments
-
-  has_many_dropboxes
   
   after_create :refresh_display_id, :create_meta_note
 
@@ -214,6 +212,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
             :conditions => ["helpdesk_tags.name in (?)",tag_names] } 
   }            
 
+  named_scope :spam_created_in, lambda { |user| { :conditions => [ 
+    "helpdesk_tickets.created_at > ? and helpdesk_tickets.spam = true and requester_id = ?", user.deleted_at, user.id ] } }
+
   def self.agent_permission user
     
     permissions = {:all_tickets => [] , 
@@ -309,6 +310,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, 
   #:allow_nil => false, :allow_blank => false
 
+  validate_on_create do |ticket|
+    ticket.spam = true if ticket.requester.deleted?
+    if ticket.requester.blocked?
+        Rails.logger.debug "User blocked! No more tickets allowed for this user" 
+        ticket.errors.add_to_base("User blocked! No more tickets allowed for this user")
+    end
+  end
+
   def set_default_values
     self.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(account).key?(self.status) or ticket_status.try(:deleted?))
     self.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal] if self.source == 0
@@ -378,6 +387,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def priority_key
     PRIORITY_TOKEN_BY_KEY[priority]
+  end
+
+  def populate_access_token #for generating access_token for old tickets
+    set_token
+    schema_less_ticket.update_access_token(self.access_token) # wrote a separate method for avoiding callback
   end
 
   def create_activity(user, description, activity_data = {}, short_descr = nil)
@@ -1184,11 +1198,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def generate_token(secret)
       Digest::MD5.hexdigest(secret + Time.now.to_f.to_s)
-    end
-
-    def populate_access_token
-      set_token
-      save
     end
     
     def populate_requester

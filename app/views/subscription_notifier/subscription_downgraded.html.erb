@@ -1,0 +1,19 @@
+<%= "The email of the admin is  #{@subscription.account.account_admin.email} "%>
+<br>
+Account id : <%= @subscription.account_id %>
+
+<div>
+	<p>
+		Previously,<br>
+		Plan : <%= SubscriptionPlan.find(@old_subscription[:subscription_plan_id]).name %><br> 
+		Renewal Period : <%= @old_subscription[:renewal_period] %><br> 
+		Agents : <%= @old_subscription[:agent_limit] %>
+	</p>
+
+	<p>
+		Now,<br>
+		Plan : <%= SubscriptionPlan.find(@subscription[:subscription_plan_id]).name %><br> 
+		Renewal Period : <%= @subscription.renewal_period %><br>
+		Agents : <%= @subscription.agent_limit %>
+	</p>
+</div>

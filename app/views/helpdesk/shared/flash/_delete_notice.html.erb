@@ -1,4 +1,4 @@
-<% if @items.size == 1 and !@items.first.name.nil? %>
+<% if @items.size == 1 and @items.first.respond_to?("name") and !@items.first.name.blank? %>
 	<%= "#{@items.first.name} was deleted" %>
 <% else %>
 	<%= pluralize(@items.length, "#{ @cname } was", "#{ @cname.pluralize } were")%> deleted

@@ -52,10 +52,6 @@ module Helpdesk::TicketActions
   #we are getting the mass-assignment warning right now..
   def build_ticket_attachments
     handle_screenshot_attachments unless params[:screenshot].blank?
-      (params[:dropbox_url] || []).each do |urls|
-        decoded_url =  URI.unescape(urls)
-         @ticket.dropboxes.build(:url => decoded_url)
-      end
     (params[:helpdesk_ticket][:attachments] || []).each do |a|
       @ticket.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @ticket.account_id)
     end

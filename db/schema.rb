@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130123072203) do
+ActiveRecord::Schema.define(:version => 20130129095650) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -577,15 +577,6 @@ ActiveRecord::Schema.define(:version => 20130123072203) do
     t.binary "data"
   end
 
- create_table "helpdesk_dropboxes", :force => true do |t|
-    t.text     "url"
-    t.integer  "account_id",     :limit => 8
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "droppable_id"
-    t.string   "droppable_type"
-  end
-  
   create_table "helpdesk_form_customizers", :force => true do |t|
     t.string   "name"
     t.text     "json_data"
@@ -905,6 +896,9 @@ ActiveRecord::Schema.define(:version => 20130123072203) do
     t.datetime "sla_timer_stopped_at"
     t.integer  "outbound_count",                      :default => 0
     t.float    "avg_response_time"
+    t.integer  "first_resp_time_by_bhrs"
+    t.integer  "resolution_time_by_bhrs"
+    t.float    "avg_response_time_by_bhrs"
   end
 
   add_index "helpdesk_ticket_states", ["id"], :name => "helpdesk_ticket_states_id"
@@ -1285,13 +1279,21 @@ ActiveRecord::Schema.define(:version => 20130123072203) do
   end
 
   create_table "subscription_events", :force => true do |t|
-    t.integer  "account_id"
-    t.string   "code"
+    t.integer  "account_id",                :limit => 8
+    t.integer  "code"
     t.text     "info"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "subscription_plan_id"
+    t.integer  "renewal_period"
+    t.integer  "total_agents"
+    t.integer  "free_agents"
+    t.integer  "subscription_affiliate_id"
+    t.integer  "subscription_discount_id"
+    t.boolean  "revenue_type"
+    t.decimal  "cmrr",                                   :precision => 10, :scale => 2
   end
-  
+
   create_table "subscription_payments", :force => true do |t|
     t.integer  "account_id",                :limit => 8
     t.integer  "subscription_id",           :limit => 8
