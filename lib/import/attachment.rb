@@ -30,9 +30,11 @@ class Import::Attachment
         puts "Attachmnet exceed the limit!"
         NewRelic::Agent.notice_error(e)
       ensure
-        file.unlink_open_uri if file.open_uri_path
-        file.close
-        file.unlink
+        if file
+          file.unlink_open_uri if file.open_uri_path
+          file.close
+          file.unlink
+        end
       end
     end
   end
