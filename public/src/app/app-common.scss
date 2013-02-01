@@ -1085,6 +1085,7 @@ h4.title{
 	a{
 		background: #666666;
 		color:#ffffff;
+		display: inline-block;
 	}
 	
 	.stamp{
@@ -1098,13 +1099,19 @@ h4.title{
 	}
 	
 	.stamp.stamp_type_1{
-		background: #3EA9E0;
+		background: #5077b3;
 	} 		
 	.stamp.stamp_type_2{
-		background:lighten(#336600, 10%);
+		background: #cf8e00;
 	} 	
 	.stamp.stamp_type_3{
-		background:#993333;
+		background: #a23330;
+	}
+	.stamp.stamp_type_4{
+		background: #597300;
+	}
+	.stamp.stamp_type_5{
+		background: #735000;
 	}
 }
 
@@ -4212,22 +4219,26 @@ div.addReminder{
 		@include min-width(80px);
 		text-align:center; 
 		color:#ffffff;
-		text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+		text-shadow: -1px -1px 0 rgba(0,0,0,0.25);
 		text-decoration:none;
 		border-right-width:0px;  
 		position:relative;
 	} 
 	.stamp.stamp_type_1{
-		background-color: #3EA9E0;
+		background: #5077b3;
 	} 		
 	.stamp.stamp_type_2{
-		background-color: #346600;
-	} 
-	
-	.stamp.stamp_type_3{ 
-		background-color: #993531;
-	} 
-	
+		background: #cf8e00;
+	} 	
+	.stamp.stamp_type_3{
+		background: #a23330;
+	}
+	.stamp.stamp_type_4{
+		background: #597300;
+	}
+	.stamp.stamp_type_5{
+		background: #735000;
+	}
 	
 }
 
