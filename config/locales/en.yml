@@ -1171,6 +1171,8 @@ en:
       planned: Planned
       implemented: Implemented
       nottaken: Not Taken
+      deferred: Deferred
+      inprogress: In Progress
     name: Topic Name
     new: New Topic
     open: Re-open this Discussion
