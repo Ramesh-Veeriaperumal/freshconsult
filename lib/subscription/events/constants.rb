@@ -26,4 +26,6 @@ module Subscription::Events::Constants
 
 	STATES            = { :trial => "trial", :free => "free", :active => "active" }			
 
+	EVENTS 						= { :affiliates => 125, :paid => 150, :free_to_paid => 200, :deleted => 0 }		
+
 end
