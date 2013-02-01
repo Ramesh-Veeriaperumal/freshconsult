@@ -1,3 +1,14 @@
+def all_instances_of(engine)
+  utility_instances = []
+  node['utility_instances'].each do |utility|
+    if utility['name'].include?(engine)
+      utility_instances << utility['name']
+    end
+  end
+  utility_instances << 'freshdesk_utility' if utility_instances
+  utility_instances
+end
+
 #To restart delayed_job workers..
 on_utilities("freshdesk_utility") do
   run "sudo monit -g dj_helpkit restart all"
@@ -21,6 +32,6 @@ on_utilities(utility_name) do
 end
 
 
-on_utilities(utility_name) do
+on_utilities(all_instances_of('resque')) do
 	run "sudo monit restart all -g helpkit_resque" 
 end
