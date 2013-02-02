@@ -8,7 +8,8 @@
 		<% if !allowed_in_portal?(:anonymous_tickets) %>
 			<%= content_tag(:p, t(feature?(:signup_link) ? 'no_anonymous_tickets' : 'no_signup', {:signup => new_support_registration_path, :login => login_path}), :class => "title force_signup") %>
 		<% end %>
-	<div class="search-grey-box  ignore-margin-20">
+
+	<div class="search-grey-box  set-width-99 ignore-margin-20">
 		<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('portal.search.placeholder') } %>
 	</div>
 	<div class="two_col_cont">
