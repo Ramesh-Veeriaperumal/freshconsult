@@ -29,7 +29,7 @@ def extract_zendesk_zip
       end    
       import_files_from_zendesk @out_dir  
       delete_zip_file
-    rescue
+    rescue => e
       puts "Error in extract_zendesk_zip"
       NewRelic::Agent.notice_error(e)
     ensure
