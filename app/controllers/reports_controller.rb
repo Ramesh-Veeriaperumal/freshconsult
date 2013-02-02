@@ -1,6 +1,6 @@
 class ReportsController < ApplicationController
  
-  #include ReadsToSlave
+  include ReadsToSlave
   
   before_filter { |c| c.requires_permission :manage_reports }
   before_filter :report_list,:set_selected_tab, :only => [ :index, :show ]

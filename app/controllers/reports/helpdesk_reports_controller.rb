@@ -1,6 +1,6 @@
 class Reports::HelpdeskReportsController < ApplicationController
 
-  #include ReadsToSlave
+  include ReadsToSlave
   include Reports::HelpdeskReport
   
   
