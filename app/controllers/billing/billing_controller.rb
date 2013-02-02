@@ -56,9 +56,6 @@ class Billing::BillingController < ApplicationController
 
     def subscription_renewed(content)
       #@account.subscription.update_attributes(:next_renewal_at => next_billing(content[:subscription]))
-      SubscriptionEvent.create(:account_id => content[:subscription][:id],
-                                :code => EVENTS[0],
-                                :info => content)
     end
 
     def next_billing(subscription)
@@ -68,9 +65,6 @@ class Billing::BillingController < ApplicationController
 
     def payment_succeeded(content)
       #@account.subscription.subscription_payments.create(payment_info(content))
-      SubscriptionEvent.create(:account_id => content[:subscription][:id], 
-                                :code => EVENTS[1],
-                                :info => content)
     end
 
     def payment_info(content)
