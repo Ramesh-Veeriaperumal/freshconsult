@@ -430,7 +430,7 @@ var $J = jQuery.noConflict();
           $(document).trigger('ticket_list');
           $(document).trigger('ticket_show');
 
-          hideActivePopovers();
+          // hideActivePopovers();
 
           return true;
       }).bind('pjax:end',function(){
