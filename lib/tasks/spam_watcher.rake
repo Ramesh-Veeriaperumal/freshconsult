@@ -92,8 +92,10 @@ def check_for_spam(table,column_name, id_limit, threshold)
       end
     end
     puts "deleted_users::::#{deleted_users.inspect}::::#{deleted_users.blank?}"
-    ActiveRecord::Base.connection.execute("update users set blocked = 1,blocked_at = '#{current_time.to_s(:db)}', deleted=0 where id IN (#{blocked_users*","}) ") unless blocked_users.blank?
-    ActiveRecord::Base.connection.execute("update users set deleted = 1,deleted_at = '#{current_time.to_s(:db)}' where id IN (#{deleted_users*","}) ") unless deleted_users.blank?
+    User.update_all({:blocked => true, :blocked_at => Time.now, :deleted => 0 , :deleted_at => nil }, [" id in (?)", blocked_users]) unless blocked_users.blank?
+    User.update_all({:deleted => true , :deleted_at => Time.now }, [" id in (?)", deleted_users]) unless deleted_users.blank?
+    # ActiveRecord::Base.connection.execute("update users set blocked = 1,blocked_at = '#{current_time.to_s(:db)}', deleted=0 where id IN (#{blocked_users*","}) ") unless blocked_users.blank?
+    # ActiveRecord::Base.connection.execute("update users set deleted = 1,deleted_at = '#{current_time.to_s(:db)}' where id IN (#{deleted_users*","}) ") unless deleted_users.blank?
     deliver_spam_alert(table, query_str, {:actual_requesters => user_ids, 
       :deleted_users => deleted_users, :blocked_users => blocked_users}) unless user_ids.empty?
 
