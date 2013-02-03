@@ -1,9 +1,9 @@
 SPAM_TICKETS_THRESHOLD = 50 #Allowed number of tickets in 30 minutes window..
 SPAM_CONVERSATIONS_THRESHOLD = 50
-TICKETS_ID_LIMIT = 7000000
-NOTES_ID_LIMIT = 6000000
-# TICKETS_ID_LIMIT = 1
-# NOTES_ID_LIMIT = 1
+# TICKETS_ID_LIMIT = 7000000
+# NOTES_ID_LIMIT = 6000000
+TICKETS_ID_LIMIT = 1
+NOTES_ID_LIMIT = 1
 DB_SLAVE = "slave"
 
 #We might need to make the time window also as configurable. Right now, 30 minutes looks like a good guess!
@@ -82,7 +82,7 @@ def check_for_spam(table,column_name, id_limit, threshold)
     users = execute_sql_on_slave(user_sql)
     deleted_users = []
     blocked_users = []
-    puts "::::::::#{users.inspect}"
+    puts "::::::::->#{users.inspect}"
     users.each do |usr|
       blocked_users << usr["id"] if "1".eql?(usr["deleted"]) and (usr["deleted_at"] and Time.zone.parse(usr["deleted_at"]) < 60.minutes.ago(current_time))
       unless "1".eql?(usr["deleted"])
@@ -92,8 +92,8 @@ def check_for_spam(table,column_name, id_limit, threshold)
       end
     end
     puts "deleted_users::::#{deleted_users.inspect}::::#{deleted_users.blank?}"
-    User.update_all({:blocked => true, :blocked_at => Time.now, :deleted => 0 , :deleted_at => nil }, [" id in (?)", blocked_users]) unless blocked_users.blank?
-    User.update_all({:deleted => true , :deleted_at => Time.now }, [" id in (?)", deleted_users]) unless deleted_users.blank?
+    User.update_all({:blocked => true, :blocked_at => Time.zone.now, :deleted => 0 , :deleted_at => nil }, [" id in (?)", blocked_users]) unless blocked_users.blank?
+    User.update_all({:deleted => true , :deleted_at => Time.zone.now }, [" id in (?)", deleted_users]) unless deleted_users.blank?
     # ActiveRecord::Base.connection.execute("update users set blocked = 1,blocked_at = '#{current_time.to_s(:db)}', deleted=0 where id IN (#{blocked_users*","}) ") unless blocked_users.blank?
     # ActiveRecord::Base.connection.execute("update users set deleted = 1,deleted_at = '#{current_time.to_s(:db)}' where id IN (#{deleted_users*","}) ") unless deleted_users.blank?
     deliver_spam_alert(table, query_str, {:actual_requesters => user_ids, 
