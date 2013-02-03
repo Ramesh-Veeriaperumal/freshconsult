@@ -1,9 +1,9 @@
 SPAM_TICKETS_THRESHOLD = 50 #Allowed number of tickets in 30 minutes window..
 SPAM_CONVERSATIONS_THRESHOLD = 50
-# TICKETS_ID_LIMIT = 7000000
-# NOTES_ID_LIMIT = 6000000
-TICKETS_ID_LIMIT = 1
-NOTES_ID_LIMIT = 1
+TICKETS_ID_LIMIT = 7000000
+NOTES_ID_LIMIT = 6000000
+# TICKETS_ID_LIMIT = 1
+# NOTES_ID_LIMIT = 1
 DB_SLAVE = "slave"
 
 #We might need to make the time window also as configurable. Right now, 30 minutes looks like a good guess!
