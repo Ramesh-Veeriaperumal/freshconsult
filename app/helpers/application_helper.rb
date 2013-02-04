@@ -544,7 +544,7 @@ module ApplicationHelper
   end
   
   def add_requester_field
-    render(:partial => "/shared/add_requester") if (params[:format] != 'widget' && current_user && current_user.can_view_all_tickets?)
+    render(:partial => "/shared/add_requester") if (params[:format] != 'widget' && privilege?(:manage_contacts))
   end
   
   def add_name_field
@@ -665,7 +665,6 @@ module ApplicationHelper
     end
     
   def company_tickets_tab
-    # this should be handled in self service portal
     tab = ['support/company_tickets', :company_tickets , !privilege?(:manage_tickets) , current_user.customer.name] if privilege?(:client_manager)
     tab || ""
   end

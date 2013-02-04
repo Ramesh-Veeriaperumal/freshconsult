@@ -30,7 +30,7 @@ class Helpdesk::Tag < ActiveRecord::Base
     :source => :taggable,
     :source_type => "User",
     :through => :tag_uses,
-    :conditions =>{:user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer], :deleted =>false}
+    :conditions => { :helpdesk_agent => false, :deleted => false }
 
   named_scope :with_taggable_type, lambda { |taggable_type| { 
             :include => :tag_uses,

@@ -5,8 +5,6 @@ class AgentsController < ApplicationController
   
   include Gamification::GamificationUtil
 
-  before_filter :authorized_to_view_agents, :only => :show
- 
   skip_before_filter :check_account_state, :only => :destroy
   
   before_filter :load_object, :only => [:update, :destroy, :restore, :edit, :reset_password, 
@@ -49,7 +47,7 @@ class AgentsController < ApplicationController
       format.xml  { render :xml => @agents.to_xml({:except=>[:account_id,:google_viewer_id],:include=>:user}) }
       format.json  { render :json => @agents.to_json({:except=>[:account_id,:google_viewer_id] ,:include=>{:user=>{:only=>[:id,:name,:email,:created_at,:updated_at,:job_title,
                     :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
-                    :user_role,:fb_profile_id,:external_id,:language,:address] }}}) } #Adding the attributes from user as that is what is needed
+                    :helpdesk_agent,:fb_profile_id,:external_id,:language,:address] }}}) } #Adding the attributes from user as that is what is needed
     end
   end
 
@@ -117,7 +115,13 @@ class AgentsController < ApplicationController
       @new_users = [];
       @agent_emails.each do |agent_email|        
         @user  = current_account.users.new
-        if @user.signup!(:user => { :email => agent_email, :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:poweruser] })
+        if @user.signup!(:user => { 
+            :email => agent_email,
+            :helpdesk_agent => true,
+            :user_roles_attributes => { 
+              :role_id => [current_account.roles.find_by_name("Agent").id]  
+            }
+        })
           @user.create_agent
           @new_users << @user
         else
@@ -224,9 +228,12 @@ class AgentsController < ApplicationController
   def load_roles
     @roles = current_account.roles.all
   end
-
+  
   def restrict_current_user
-    if @agent.user == current_user
+    # 1. User cannot edit himself
+    # 2. To edit and agent with manage_account, the current_user must also have manage_account
+    if @agent.user == current_user || 
+      (@agent.user.privilege?(:manage_account) && !current_user.privilege?(:manage_account))
       flash[:notice] = t(:'flash.agents.edit.not_allowed')
       redirect_to :back  
     end    

@@ -55,7 +55,8 @@
 	}
 <% end %>
 <div class="customers-toolbar" id="customers-toolbar">
-  <% if privilege?(:manage_users) || privilege?(:delete_contact) %>
+  <% if (params[:state].eql?("unverified") && privilege?(:manage_users)) ||
+      privilege?(:delete_contact) %>
   	<input type="checkbox" id="customers-select-all" />
   	<div class="bulk-action">
       <% if privilege?(:manage_users) %>

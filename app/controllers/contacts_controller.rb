@@ -35,7 +35,7 @@ class ContactsController < ApplicationController
       format.json  do
         render :json => @contacts.to_json({:except=>[:account_id] ,:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
                     :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
-                    :user_role,:fb_profile_id,:external_id,:language,:address] })#avoiding the secured attributes like tokens
+                    :helpdesk_agent,:fb_profile_id,:external_id,:language,:address] })#avoiding the secured attributes like tokens
       end
       format.atom do
         @contacts = @contacts.newest(20)
@@ -146,7 +146,7 @@ class ContactsController < ApplicationController
   
   def make_agent    
     @item.update_attributes(:delete =>false,
-     :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:agent],
+     :helpdesk_agent => true,
      :user_roles_attributes => { 
         :role_id => [current_account.roles.find_by_name("Agent").id] 
       }
@@ -194,7 +194,7 @@ protected
 
   def initialize_new_user
     @user = current_account.users.new
-    @user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
+    @user.helpdesk_agent = false
     @user.avatar = Helpdesk::Attachment.new
     @user.time_zone = current_account.time_zone
     @user.language = current_account.language

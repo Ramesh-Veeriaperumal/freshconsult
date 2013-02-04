@@ -24,7 +24,7 @@ def add_tweet_as_ticket twt , twt_handle , twt_type
       user = @account.contacts.new
       user.signup!({:user => {:twitter_id => screen_name, :name => screen_name, 
                     :active => true,
-                    :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+                    :helpdesk_agent => false}})
       end
      user
   end

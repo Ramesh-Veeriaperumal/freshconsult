@@ -1,265 +1,198 @@
 module Admin::RolesHelper
   
-  def refactored
-    privilege_hash = [
+  ROLE_SECTIONS = 
+    [
 
       # *************************** Tickets **************************
 
-      { :privilege => "-1", :label => "Tickets" , :dom_type => "label", :id => "tickets",
-    
+      { :dom_type => "label", :id => "tickets",
         :children => 
 
-          [{ :privilege => "manage_tickets", :label => "Basic agent privileges", :dom_type => "hidden",
-            :id => "manage_tickets" },
+          [{ :dom_type => "hidden_field", :id => "manage_tickets" },
+           { :dom_type => "check_box",    :id => "reply_ticket" },
+           { :dom_type => "check_box",    :id => "forward_ticket" },
+           { :dom_type => "check_box",    :id => "edit_note_choice",
+             :privilege => "0", :class => "nested permanent_disable", 
+             :children => 
 
-          { :privilege => "reply_ticket", :label => "Send reply to a ticket", :dom_type => "checkbox",
-            :id => "reply_ticket" },
-
-          { :privilege => "forward_ticket", :label => "Forward a conversation", :dom_type => "checkbox",
-            :id => "forward_ticket" },
-
-          { :privilege => "-1", :label => "Edit notes", :dom_type => "checkbox",
-            :id => "edit_note", :class => "nested permanent_disable",
-
-            :children => 
-
-              [{ :privilege => "edit_note", :label => "Edit everyone's notes", :dom_type => "radio",
-                :id => "edit_note_true" },
-
-              { :privilege => "-1", :label => "Edit only their own notes", :dom_type => "radio",
-                :id => "edit_note_false", :class => "default" }]
-
-          },
-
-          { :privilege => "edit_conversation", :label => "Edit conversation", :dom_type => "checkbox",
-            :id => "edit_conversation"  },
+              [{ :dom_type => "radio_button", :id => "edit_note" },
+               { :dom_type => "radio_button", :id => "edit_note_false",
+                 :privilege => "0", :class => "default" }]
+           },
+           { :dom_type => "check_box", :id => "edit_conversation"  },
+           { :dom_type => "check_box", :id => "merge_or_split_ticket" },
+           { :dom_type => "check_box", :id => "edit_ticket_properties" },
+           { :dom_type => "check_box", :id => "view_time_entries", :class => "nested",
+             :children => 
           
-          { :privilege => "merge_or_split_ticket", :label => "Merge / split a ticket", :dom_type => "checkbox",
-            :id => "merge_or_split_ticket" },
-          
-          { :privilege => "edit_ticket_properties", :label => "Edit ticket properties", :dom_type => "checkbox",
-            :id => "edit_ticket_properties" },
-          
-          { :privilege => "view_time_entries", :label => "View or edit time entries ", :dom_type => "checkbox",
-            :id => "view_time_entries", :class => "nested",
-
-            :children => 
-          
-              [{ :privilege => "edit_time_entries", :label => "Edit everyone's time entries", :dom_type => "radio",
-                :id => "edit_time_entries" },
-              
-              { :privilege => "-1", :label => "Edit only their time entries", :dom_type => "radio",
-                :id => "edit_time_entries", :class => "default" }]
-
-          },
-
-          { :privilege => "delete_ticket", :label => "Delete a ticket", :dom_type => "checkbox",
-            :id => "delete_ticket" }]
+              [{ :dom_type => "radio_button", :id => "edit_time_entries" },
+               { :dom_type => "radio_button", :id => "edit_time_entries_false",
+                 :privilege => "0", :class => "default" }]
+           },
+           { :dom_type => "check_box", :id => "delete_ticket" }]
       },
-
+            
       # *************************** Solutions **************************  
-
-      { :privilege => "-1", :label => "Solutions" , :dom_type => "label", :id => "solutions",
-      
+                            
+      { :dom_type => "label", :id => "solutions",
         :children =>
-
-          [{ :privilege => "view_solutions", :label => "View solutions tab", :dom_type => "checkbox",
-            :id => "view_solutions", :class => "nested",
-
-            :children => 
-
-              [{ :privilege => "publish_solution", :label => "Publish a solution",
-                :dom_type => "checkbox", :id => "publish_solution" },
-
-              { :privilege => "delete_solution", :label => "Delete a solution",
-                :dom_type => "checkbox", :id => "delete_solution" },        
-
-              { :privilege => "create_edit_category_folder", :label => "Create / Edit category or forum",
-                :dom_type => "checkbox", :id => "create_edit_category_folder" }]
-          }]
-      },
-
-      # *************************** Forums **************************
-
-      { :privilege => "-1", :label => "Forums" , :dom_type => "label", :id => "forums",
-        
-        :children =>
-
-          [{ :privilege => "view_forums", :label => "View forums tab",
-            :dom_type => "checkbox", :id => "view_forums",
-            :class => "nested",
-
-            :children => 
-
-              [{ :privilege => "create_edit_forum_category", :label => "Create / Edit category or forum",
-                :dom_type => "checkbox", :id => "create_edit_forum_category" },
-
-                { :privilege => "create_forum_topic", :label => "Create or Edit a forum topic",
-                  :dom_type => "checkbox", :id => "create_forum_topic", :class => "nested",
-
-                  :children => 
-
-                    [{ :privilege => "edit_forum_topic", :label => "Edit everyone's forum topic",
-                      :dom_type => "radio", :id => "edit_forum_topic_true" },
-
-                    { :privilege => "-1", :label => "Edit only their own forum topic",
-                      :dom_type => "radio", :id => "edit_forum_topic_false", :class => "default" }]
-                },  
-
-                { :privilege => "delete_forum_topic", :label => "Delete a forum topic", :dom_type => "checkbox",
-                  :id => "delete_forum_topic" }]
-          }]
-      },
-
-      # *************************** Customers **************************
-
-      { :privilege => "-1", :label => "Customers" , :dom_type => "label", :id => "customers",
-        
-        :children =>
-
-          [{ :privilege => "view_contacts", :label => "View customers tab",
-            :dom_type => "checkbox", :id => "view_contacts", :class => "nested",
-
-            :children => 
-
-              [{ :privilege => "add_or_edit_contact", :label => "Create or edit new contact or company",
-                :dom_type => "checkbox", :id => "add_or_edit_contact" },
-
-              { :privilege => "delete_contact", :label => "Delete contact or company",
-                :dom_type => "checkbox", :id => "delete_contact" }]
-          }]
-      },
-
-      # *************************** Reports **************************
-
-      { :privilege => "-1", :label => "Reports" , :dom_type => "label", :id => "reports",
-        
-        :children => 
-
-          [{ :privilege => "view_reports", :label => "View reports tab",
-            :dom_type => "checkbox", :id => "view_reports" }]
-      },
-
-      # *************************** Admin **************************
-
-      { :privilege => "-1", :label => "Admin", :dom_type => "label", :id => "admin",
-
-        :children =>
-
-          [{ :privilege => "-1", :label => "Not an administrator", :dom_type => "radio",
-             :id => "not_administrator", :class => "default"},
-
-            { :privilege => "view_admin", :label => "An operational admin", :dom_type => "radio",
-              :id => "operational_admin", :class => "nested",
-
-              :children =>
-
-                [ { :privilege => "manage_users", :label => "Manage Agents", :dom_type => "checkbox",
-                    :id => "manage_users" },
-
-                  { :privilege => "manage_canned_responses", :label => "Manage canned responses",
-                    :dom_type => "checkbox", :id => "manage_canned_responses" },
-
-                  { :privilege => "manage_dispatch_rules", :label => "Manage Dispatch'r rules",
-                    :dom_type => "checkbox", :id => "manage_dispatch_rules" },
-
-                  { :privilege => "manage_supervisor_rules", :label => "Manage Supervisor rules",
-                    :dom_type => "checkbox", :id => "manage_supervisor_rules" },
-
-                  { :privilege => "manage_scenario_automation_rules", :label => "Manage Scenario automation rules",
-                    :dom_type => "checkbox", :id => "manage_scenario_automation_rules" },
-
-                  { :privilege => "manage_email_settings", :label => "Manage Email Commands",
-                    :dom_type => "checkbox", :id => "manage_email_settings" }]
-
-            },
-
-            { :privilege => "super_admin", :label => "A Super admin", :dom_type => "radio",
-              :id => "super_admin", :class => "nested",
-
-              :children =>
-
-                [ { :privilege => "view_admin", :label => "Manage Agents", :dom_type => "hidden",
-                    :id => "view_admin" },
-
-                  { :privilege => "manage_users", :label => "Manage Agents", :dom_type => "hidden",
-                    :id => "manage_users" },
-
-                  { :privilege => "manage_canned_responses", :label => "Manage canned responses",
-                    :dom_type => "hidden", :id => "manage_canned_responses" },
-
-                  { :privilege => "manage_dispatch_rules", :label => "Manage Dispatch'r rules",
-                    :dom_type => "hidden", :id => "manage_dispatch_rules" },
-
-                  { :privilege => "manage_supervisor_rules", :label => "Manage Supervisor rules",
-                    :dom_type => "hidden", :id => "manage_supervisor_rules" },
-
-                  { :privilege => "manage_scenario_automation_rules", :label => "Manage Scenario automation rules",
-                    :dom_type => "hidden", :id => "manage_scenario_automation_rules" },
-
-                  { :privilege => "manage_email_settings", :label => "Manage Email Commands",
-                    :dom_type => "hidden", :id => "manage_email_settings" },
-
-                  { :privilege => "manage_account", :label => "Include account management",
-                    :dom_type => "checkbox", :id => "manage_account" }]
-
+                            
+            [{ :dom_type => "check_box", :id => "view_solutions", :class => "nested",
+               :children => 
+                            
+                [{ :dom_type => "check_box", :id => "publish_solution" },
+                 { :dom_type => "check_box", :id => "delete_solution" },        
+                 { :dom_type => "check_box", :id => "manage_solutions" }]
             }]
-      }
-
+        },
+                       
+       # *************************** Forums **************************
+                             
+       { :dom_type => "label", :id => "forums",
+         :children =>
+                             
+           [{ :dom_type => "check_box", :id => "view_forums", :class => "nested",
+             :children => 
+                             
+               [{ :dom_type => "check_box", :id => "manage_forums" },             
+                { :dom_type => "check_box", :id => "create_topic", :class => "nested",
+                  :children => 
+                             
+                     [{ :dom_type => "radio_button", :id => "edit_topic" },
+                      { :dom_type => "radio_button", :id => "edit_topic_false",
+                        :privilege => "0", :class => "default" }]
+                 },  
+                 { :dom_type => "check_box", :id => "delete_topic" }]
+           }]
+       },
+                             
+       # *************************** Customers **************************
+                             
+       { :dom_type => "label", :id => "customers",
+         :children =>
+                             
+           [{ :dom_type => "check_box", :id => "view_contacts", :class => "nested",
+              :children => 
+                             
+               [{ :dom_type => "check_box", :id => "manage_contacts" },
+                { :dom_type => "check_box", :id => "delete_contact" }]
+           }]
+       },
+                             
+       # *************************** Reports **************************
+                             
+       { :dom_type => "label", :id => "reports", :children => 
+                             
+           [{ :dom_type => "check_box", :id => "view_reports" }]
+       },
+                             
+       # *************************** Admin **************************
+                             
+       { :dom_type => "label", :id => "admin",
+         :children =>
+                             
+           [{ :dom_type => "radio_button", :id => "not_administrator",
+              :privilege => "0", :class => "default"},
+                             
+            { :dom_type => "radio_button", :id => "operational_admin",
+              :privilege => "view_admin", :class => "nested",
+              :children =>
+                             
+                 [{ :dom_type => "check_box", :id => "manage_users" },
+                  { :dom_type => "check_box", :id => "manage_canned_responses" },
+                  { :dom_type => "check_box", :id => "manage_dispatch_rules" },
+                  { :dom_type => "check_box", :id => "manage_supervisor_rules" },
+                  { :dom_type => "check_box", :id => "manage_scenario_automation_rules" },
+                  { :dom_type => "check_box", :id => "manage_email_settings" }]
+                             
+             },
+                             
+             { :dom_type => "radio_button", :id => "admin_tasks", :class => "nested",
+               :children =>
+                             
+                 [{ :dom_type => "hidden_field", :id => "view_admin" },
+                  { :dom_type => "hidden_field", :id => "manage_users" },
+                  { :dom_type => "hidden_field", :id => "manage_canned_responses" },
+                  { :dom_type => "hidden_field", :id => "manage_dispatch_rules" },
+                  { :dom_type => "hidden_field", :id => "manage_supervisor_rules" },
+                  { :dom_type => "hidden_field", :id => "manage_scenario_automation_rules" },
+                  { :dom_type => "hidden_field", :id => "manage_email_settings" },
+                  { :dom_type => "check_box",    :id => "manage_account" }]
+                             
+             }]
+       }
+      
     ]
-  end
-
-  def new_role_form
-    @html = ""
-    build_roles_form(refactored, "privileges", false)
-    @html
-  end
-
-  private
-
-    def build_roles_form(array, parent, disabled)
-      array.each do |element|
-        case element[:dom_type] 
-        when "label"
-          @html += build_label(element, parent)
-        when "checkbox"
-          @html += build_checkbox(element, parent, disabled)
-        when "radio"
-          @html += build_radio(element, parent, disabled)
-        when "hidden"
-          @html += build_hidden(element, parent, disabled)
-        end
-        if element.key?(:children)
-          @html.safe_concat("<ul class = 'children'>")
-          temp = (parent != "privileges")
-          build_roles_form(element[:children], element[:id], temp)
-          @html.safe_concat("</ul></li>")
+  
+  def build_role_form
+    form = ""
+    ROLE_SECTIONS.each do |section|
+      
+     form +=  content_tag( :div, {:class => "row-fluid margin-bottom", :id => section[:id] }) do
+        content_tag( :div, content_tag( :p, t('admin.roles.privilege.'+ section[:id]), :class => "lead"), :class => "span2") +
+        content_tag( :div, :class => "span10 role-section") do
+          value = label(:agent, :signature_html, "<b>Agent can</b>") 
+          if section[:children]
+            value += process_children(section[:children], section[:id], false)
+          end
+          value
         end
       end
-      @html
+      
     end
-
-    def build_radio(element, parent, disabled)
-      content_tag("li", "<br /><br />" + radio_button_tag("admin_role[privilege_list][#{parent}][]",
-        element[:privilege], @role.abilities.include?(element[:privilege].to_sym),
-        { :class => "#{parent} #{element[:class]} radio", :id => element[:id],
-        :disabled => disabled }) + " #{element[:label].humanize}")
+    form
+  end
+  
+  
+  def process_children(children, parent, disabled)
+    content_tag(:ul, :class => "nested-ul") do
+      children.map do |child|
+        content_tag(:li) do
+          content_tag(:label, :class => "#{child[:dom_type]} #{style(child[:dom_type])}") do
+            element = ""
+            case child[:dom_type]
+            when "check_box", "radio_button"
+              element += build_element(child, parent, disabled)
+            when "hidden_field"
+              element += build_hidden(child, parent, disabled)
+            end
+            if child[:children]
+              element += process_children(child[:children], child[:id], true) 
+            end
+            element
+          end # label
+        end # li
+      end # map
+    end #ul
+  end
+  
+  private
+  
+    def build_element(element, parent, disabled)
+      privilege = element[:privilege] || element[:id]    
+      name = (element[:dom_type] == "radio_button") ? "admin_role[privilege_list][#{parent}][]" : "admin_role[privilege_list][]"
+      
+      html = eval "#{element[:dom_type]}_tag('#{name}', '#{privilege}',
+      #{@role.abilities.include?(privilege.to_sym)}, { :class => '#{parent} #{element[:class]}',
+      :id => '#{element[:id]}', :disabled => #{disabled}})" 
+      html += t('admin.roles.privilege.'+ element[:id])
     end
-
-    def build_checkbox(element, parent, disabled)
-      content_tag("li", "<br /><br />" + check_box_tag("admin_role[privilege_list][]",
-        element[:privilege], @role.abilities.include?(element[:privilege].to_sym),
-        { :class => "#{parent} #{element[:class]}", :id => element[:id],
-        :disabled => disabled }) + " #{element[:label].humanize}")
-    end
-
-    def build_label(element, parent)
-      "<br /><br /><h1 class='title #{parent}'>#{element[:label]}</h1>"
-    end
-
+    
     def build_hidden(element, parent, disabled)
-      hidden_field_tag("admin_role[privilege_list][]", element[:privilege], 
-      { :class => "#{parent} #{element[:class]}", :id => element[:id],
-        :disabled => !(@role.abilities.include?(element[:privilege].to_sym) || !disabled) })
+      privilege = element[:privilege] || element[:id]
+      hidden_field_tag("admin_role[privilege_list][]", privilege, 
+            { :class => "#{parent} #{element[:class]}", :id => element[:id],
+              :disabled => !(@role.abilities.include?(privilege.to_sym) || !disabled) })
     end
-end
+    
+    def style(dom)
+      case dom
+      when "check_box"
+        "checkbox"
+      when "radio_button"
+        "radio"
+      else
+        ""
+      end
+    end
+end      

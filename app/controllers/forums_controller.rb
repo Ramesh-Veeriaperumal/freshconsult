@@ -5,8 +5,6 @@ class ForumsController < ApplicationController
 
   rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
  
-  before_filter :portal_check
-
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
   before_filter :find_or_initialize_forum, :except => :index
@@ -19,8 +17,7 @@ class ForumsController < ApplicationController
   end
 
   def show
-   
-   (session[:forums] ||= {})[@forum.id] = Time.now.utc if logged_in?
+   (session[:forums] ||= {})[@forum.id] = Time.now.utc
    (session[:forum_page] ||= Hash.new(1))[@forum.id] = params[:page].to_i if params[:page]
 
     if @forum.ideas? and params[:order].blank?
@@ -96,21 +93,21 @@ class ForumsController < ApplicationController
       format.xml  { head 200 }
     end
   end
-  
-  def scoper
-    current_account.forum_categories
-  end
-  
-  def reorder_scoper
-    scoper.find(params[:category_id]).forums
-  end
-  
-  def reorder_redirect_url
-    category_path(params[:category_id])  
-  end
- 
-  
+
   protected
+
+    def scoper
+      current_account.forum_categories
+    end
+    
+    def reorder_scoper
+      scoper.find(params[:category_id]).forums
+    end
+    
+    def reorder_redirect_url
+      category_path(params[:category_id])  
+    end
+
     def find_or_initialize_forum # Shan - Should split-up find & initialize as separate methods.
       if params[:category_id]
         wrong_portal unless(main_portal? || 
@@ -119,8 +116,7 @@ class ForumsController < ApplicationController
             
       @forum_category = params[:category_id] ? scoper.find(params[:category_id]) : nil
       @forum = params[:id] ? @forum_category.forums.find(params[:id]) : nil
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) if !@forum.nil? and  !@forum.visible?(current_user) 
-   end
+    end
     
     def set_selected_tab
       @selected_tab = :forums
@@ -129,13 +125,5 @@ class ForumsController < ApplicationController
     def RecordNotFoundHandler
       flash[:notice] = I18n.t(:'flash.forum.page_not_found')
       redirect_to categories_path
-    end
-
-  private
-    def portal_check
-      if current_user.nil? || current_user.customer?
-        @forum = params[:id] ? current_account.portal_forums.find(params[:id]) : nil
-        return redirect_to support_discussions_forum_path(@forum)
-      end
     end
 end

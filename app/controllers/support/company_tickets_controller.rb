@@ -99,7 +99,7 @@ class Support::CompanyTicketsController < SupportController
   
     def verify_permission
       params.symbolize_keys!      
-      unless current_user && current_user.client_manager?
+      unless privilege?(:client_manager)
         flash[:notice] = t("flash.general.access_denied")
         #redirect_to Helpdesk::ACCESS_DENIED_ROUTE 
         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 

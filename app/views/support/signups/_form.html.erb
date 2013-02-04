@@ -1,7 +1,6 @@
 <% unless current_user %>
 	<% form_for :user, :url => support_signup_path, :html => { :class => "form-portal", :rel => "validate" } do |f| -%>
 		<%= error_messages_for :user %>
-		<%= hidden_field_tag "user[user_role]", User::USER_ROLES_KEYS_BY_TOKEN[:customer], :id => "user[user_role]" %>
 		<fieldset>
 			<div class="control-group"> 
 				<label class="control-label" for="user_name"><%=t('user.full_name')%></label> 

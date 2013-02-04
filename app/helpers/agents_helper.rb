@@ -38,13 +38,4 @@ module AgentsHelper
   def can_reset_password?(agent)
    agent.user.active? and (current_user != agent.user)
   end
- 
-  def authorized_to_manage_agents
-    access_denied unless  privilege?(:manage_users)
-  end
-
-  def authorized_to_view_agents
-    access_denied unless privilege?(:view_contacts)
-  end
-
 end

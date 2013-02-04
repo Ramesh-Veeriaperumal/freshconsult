@@ -68,6 +68,11 @@ module Helpdesk::TimeSheetsHelper
     end
     script
   end
+
+  def agent_list
+    privilege?(:edit_time_entries) ?
+      current_account.users.technicians.visible : [current_user]
+  end
   
   private 
     def integrated_apps 

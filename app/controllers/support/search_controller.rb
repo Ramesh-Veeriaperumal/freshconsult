@@ -140,7 +140,7 @@ class Support::SearchController < SupportController
                 :deleted => false }
       
       if @current_user 
-        if @current_user.client_manager?
+        if privilege?(:client_manager)
           opts[:customer_id] = [@def_search_val, current_user.customer_id]
         else
           # Buggy hack... The first users tickets in the first account will also be searched 

@@ -152,7 +152,7 @@ class Forum < ActiveRecord::Base
   end
     
   def visible?(user)
-    return true if (user and user.privilege?(:manage_tickets))
+    return true if (user and user.agent?)
     return true if self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
     return true if (user and (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))
     return true if (user && (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && 

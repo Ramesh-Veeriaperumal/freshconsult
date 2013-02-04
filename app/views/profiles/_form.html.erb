@@ -23,7 +23,6 @@
 		<li class="medium">
 			<%= label(:user, :email, t("user.email")) %>			
 			<%= text_field(:user, :email, :class => "text required email disabled", :id => "email_primary" , :value => user.email , :disabled =>true) %>
-			<%= hidden_field(:user, :user_role, :id=>"user_role", :value => user.user_role) %>			
 		</li>
 		<li class="small">
 			<%= label(:user, :phone, t("user.phone_no")) %>	

@@ -1,6 +1,7 @@
 class SupportController < ApplicationController
   layout 'portal'
-
+  
+  skip_before_filter :check_privilege
   before_filter :portal_context, :redactor_form_builder, :page_message
  
   protected

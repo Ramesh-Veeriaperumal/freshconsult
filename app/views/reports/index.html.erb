@@ -5,7 +5,7 @@
 	<% @t_reports.each_with_index do |report, index| %>
 		<%= report_item({:label => report[:label], :class => report[:object], :url => report_path(index+1)}) %>
 	<% end %>
-	<% if feature?(:timesheets) %>
+	<% if feature?(:timesheets) && privilege?(:view_time_entries) %>
 		<%= report_item({:label => t('reports.timesheet_reports.index.title'), :class => 'timesheet', :url => timesheet_reports_url}) %>
 	<% end %>
 	<% if feature?(:advanced_reporting) %>

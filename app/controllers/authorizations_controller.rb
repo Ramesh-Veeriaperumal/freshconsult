@@ -190,7 +190,7 @@ class AuthorizationsController < ApplicationController
       user.twitter_id = hash['info']['nickname'] if hash['provider'] == 'twitter'
       user.fb_profile_id = hash['info']['nickname'] if hash['provider'] == 'facebook'
     end
-    user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
+    user.helpdesk_agent = false
     user.active = true
     user.save 
     user.reset_persistence_token! 

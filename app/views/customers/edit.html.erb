@@ -4,7 +4,9 @@
 	<%= render :partial => "form", :locals => { :f => f } %>
 	<div class="button-container">
 	   <div class="floatl">
+    <% if privilege?(:delete_contact) %>
 			<%= link_to (t('delete'), @customer, :confirm => "#{t('company.info1')}?", :method => :delete, :class => "uiButton red" ) %>
+    <% end %>
 	   </div>
 	   <%= f.submit t('save'), {:class => "uiButton"} %> 
 	   <%= link_to t('cancel'), customer_path(@customer), :class => "uiButton grey" %>

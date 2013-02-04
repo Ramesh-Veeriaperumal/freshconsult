@@ -58,7 +58,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
  
   belongs_to :responder,
     :class_name => 'User',
-    :conditions => ['users.user_role not in (?)',User::USER_ROLES_KEYS_BY_TOKEN[:customer]]
+    :conditions => 'users.helpdesk_agent = true'
     
   belongs_to :requester,
     :class_name => 'User'
@@ -1176,7 +1176,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
         requester.signup!({:user => {
           :email => email , :twitter_id => twitter_id, :external_id => external_id,
           :name => name || twitter_id || @requester_name || external_id,
-          :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer], :active => email.blank? }}, 
+          :helpdesk_agent => false, :active => email.blank? }}, 
           portal) # check @requester_name and active
         
         self.requester = requester

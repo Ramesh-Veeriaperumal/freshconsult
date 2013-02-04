@@ -1,6 +1,7 @@
 class Support::Discussions::PostsController < SupportController
 	before_filter { |c| c.requires_feature :forums }
  	before_filter { |c| c.check_portal_scope :open_forums }
+  before_filter :require_user
  	before_filter :load_topic
  	before_filter :find_post, :except => :create
 

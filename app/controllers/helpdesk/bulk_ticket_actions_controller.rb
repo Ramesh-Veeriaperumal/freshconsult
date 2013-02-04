@@ -12,23 +12,25 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
   def update_multiple             
     # params[nscname][:custom_field].delete_if {|key,value| value.blank? } unless 
     #           params[nscname][:custom_field].nil?
-    reply_content = params[:helpdesk_note][:body_html]
     failed_tickets = []
     @items.each do |ticket|
       params[nscname].each do |key, value|
         ticket.send("#{key}=", value) if !value.blank? and ticket.respond_to?("#{key}=")
       end
       ticket.save
-      begin
-        reply_multiple reply_content, ticket if privilege?(:reply_ticket)
-      rescue Exception => e
-        if e.is_a?(HelpdeskExceptions::AttachmentLimitException)
-          flash[:notice] = t('helpdesk.tickets.note.attachment_size.exceed')  
-          redirect_to helpdesk_tickets_path and return 
+      if privilege?(:reply_ticket)
+        begin
+          reply_content = params[:helpdesk_note][:body_html]
+          reply_multiple reply_content, ticket
+        rescue Exception => e
+          if e.is_a?(HelpdeskExceptions::AttachmentLimitException)
+            flash[:notice] = t('helpdesk.tickets.note.attachment_size.exceed')  
+            redirect_to helpdesk_tickets_path and return 
+          end
+          failed_tickets.push(ticket)
+          NewRelic::Agent.notice_error(e)
+          Rails.logger.error("Error while sending reply")
         end
-        failed_tickets.push(ticket)
-        NewRelic::Agent.notice_error(e)
-        Rails.logger.error("Error while sending reply")
       end
     end
     flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/bulk_actions_notice', 

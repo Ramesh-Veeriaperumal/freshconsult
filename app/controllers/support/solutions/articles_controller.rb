@@ -2,7 +2,6 @@ class Support::Solutions::ArticlesController < SupportController
   
   include Helpdesk::TicketActions
   
-  before_filter { |c| c.requires_permission :portal_knowledgebase }
   before_filter :load_and_check_permission
 
   rescue_from ActionController::UnknownAction, :with => :handle_unknown

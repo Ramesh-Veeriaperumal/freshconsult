@@ -26,11 +26,7 @@ class Post < ActiveRecord::Base
   #format_attribute :body
   
   attr_protected	:topic_id , :account_id , :attachments
-  
-  def editable_by?(user)
-    user && (user.id == user_id || user.privilege?(:edit_forum_topic) || user.moderator_of?(forum_id))
-  end
-  
+    
   def to_xml(options = {})
     options[:except] ||= []
     options[:except] << :topic_title << :forum_name

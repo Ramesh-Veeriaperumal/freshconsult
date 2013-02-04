@@ -31,15 +31,6 @@ module Conversations::Email
     end
     @parent.update_attribute(:cc_email, cc_email_hash_value)      
   end
-    
-  def validate_attachment_size
-    fetch_item_attachments if @item.fwd_email?
-    total_size = (params[nscname][:attachments] || []).collect{|a| a[:resource].size}.sum
-    if total_size > Helpdesk::Note::Max_Attachment_Size    
-      flash[:notice] = t('helpdesk.tickets.note.attachment_size.exceed')
-      redirect_to :back  
-    end
-  end
 
   def validate_fwd_to_email
     if(@item.fwd_email? and fetch_valid_emails(params[:helpdesk_note][:to_emails]).blank?)

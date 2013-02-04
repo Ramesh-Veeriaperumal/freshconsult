@@ -15,7 +15,7 @@
 
 <div class="contact-box clearfix">
 		<div class="action_buttons hide">
-      <% if privilege?(:add_or_edit_contact) %>
+      <% if privilege?(:manage_contacts) %>
 			  <%= link_to t('contacts.edit_contact'), edit_contact_path(@user) %>
       <% end %>
       <% if is_allowed_to_assume?(@user) %>
@@ -58,7 +58,7 @@
 		<% form_for @user do |f| %>
 			<%= f.label :description, t("contacts.form_placeholder.description"), :class => "overlabel" %>
 			<%= f.text_area :description, :class=> "sp_paragraph" %>
-      <% if privilege?(:add_or_edit_contact) %>
+      <% if privilege?(:manage_contacts) %>
 			  <div class="alignright"> 
 				  <%= f.submit t('save'), :class=>"uiButton small"  %> &nbsp;
 			  </div>

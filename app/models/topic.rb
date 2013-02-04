@@ -149,14 +149,6 @@ class Topic < ActiveRecord::Base
   def last_page
     [(posts_count.to_f / Post.per_page).ceil.to_i, 1].max
   end
-
-  def editable_by?(user)
-    user && (user.id == user_id || user.privilege?(:edit_forum_topic) || user.moderator_of?(forum_id))
-  end
-
-  def deletable_by?(user)
-    user && (user.id == user_id || user.privilege?(:delete_forum_topic) || user.moderator_of?(forum_id))
-  end
   
   def update_cached_post_fields(post)
     # these fields are not accessible to mass assignment

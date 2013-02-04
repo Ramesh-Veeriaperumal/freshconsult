@@ -316,7 +316,7 @@ include RedisKeys
       @contact = account.users.new
       @contact.name = options[:name] unless options[:name].blank? 
       @contact.email = email
-      @contact.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
+      @contact.helpdesk_agent = false
       return @contact
     end
     TOKEN_TYPE = "OpenSocialFirstTimeAccessToken"  
