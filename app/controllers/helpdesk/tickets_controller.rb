@@ -13,9 +13,9 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::AdjacentTickets
   include Helpdesk::Activities
 
-  before_filter :set_mobile, :only => [:index, :show, :details, :update, :create, :execute_scenario, :assign, :spam, :get_agents ]
+  before_filter :set_mobile, :only => [:index, :show, :update, :create, :execute_scenario, :assign, :spam, :get_agents ]
   before_filter :set_show_version
-  before_filter :check_user, :load_installed_apps, :only => [:show, :details, :forward_conv]
+  before_filter :check_user, :load_installed_apps, :only => [:show, :forward_conv]
 
 
   before_filter { |c| c.requires_permission :manage_tickets }
@@ -34,7 +34,7 @@ class Helpdesk::TicketsController < ApplicationController
   
   skip_before_filter :load_item
   alias :load_ticket :load_item
-  before_filter :load_ticket, :verify_permission, :only => [:show, :details, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :activities, :status]
+  before_filter :load_ticket, :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :activities, :status]
 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
@@ -42,9 +42,9 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :check_ticket_status, :only => [:update]
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
 
-  before_filter :load_email_params, :only => [:show, :details, :reply_to_conv, :forward_conv]
+  before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv]
   before_filter :load_conversation_params, :only => [:reply_to_conv, :forward_conv]
-  before_filter :load_reply_to_all_emails, :only => [:show, :details, :reply_to_conv]
+  before_filter :load_reply_to_all_emails, :only => [:show, :reply_to_conv]
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
 
@@ -216,34 +216,6 @@ class Helpdesk::TicketsController < ApplicationController
 
           render :action => "details"
         end
-      }
-      format.atom
-      format.xml  { 
-        render :xml => @item.to_xml  
-      }
-      format.json {
-        render :json => @item.to_json
-      }
-      format.js
-      format.mobile {
-        render :json => @item.to_mob_json
-      }
-    end
-  end
-  
-
-  def details
-    @to_emails = @ticket.to_emails
-
-    @draft = get_key(draft_key)
-
-    @subscription = current_user && @item.subscriptions.find(
-      :first, 
-      :conditions => {:user_id => current_user.id})
-      
-    respond_to do |format|
-      format.html  {
-        
       }
       format.atom
       format.xml  { 
@@ -881,7 +853,15 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def set_show_version
-    @new_show_page = cookies[:new_details_view].present? && cookies[:new_details_view].eql?("true")
+    if cookies[:new_details_view].present?
+      set_key(show_version_key, cookies[:new_details_view].eql?("true") ? "1" : "0")
+      cookies.delete(:new_details_view) 
+    end
+    @new_show_page = (get_key(show_version_key) == "1")
+  end
+
+  def show_version_key
+    HELPDESK_TKTSHOW_VERSION % { :account_id => current_account.id, :user_id => current_user.id }
   end
 
   def set_selected_tab

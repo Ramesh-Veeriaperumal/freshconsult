@@ -16,8 +16,8 @@
 	<% end %>
 	<p>
 		<% changed_time = ticket.ticket_states.send(status_changed_time_value_hash(ticket)[:method]) %>
-		<%# t('since') %> <%# distance_of_time_in_words(Time.now(), changed_time) %>
-		from <%# formated_date(changed_time) %>
+		<%= t('since') %> <%= distance_of_time_in_words(Time.now(), changed_time) %>
+		from <%= formated_date(changed_time) %>
 	</p>
 <% end %>
 </div>
