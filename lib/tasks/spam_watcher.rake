@@ -82,22 +82,27 @@ def check_for_spam(table,column_name, id_limit, threshold)
     users = execute_sql_on_slave(user_sql)
     deleted_users = []
     blocked_users = []
+    ignore_list = []
     puts "::::::::->#{users.inspect}"
     users.each do |usr|
-      # blocked_users << usr["id"] if "1".eql?(usr["deleted"]) and (usr["deleted_at"] and Time.zone.parse(usr["deleted_at"]) < 60.minutes.ago(current_time))
-      unless "1".eql?(usr["deleted"])
+      puts "#{current_time.to_s(:db)}::::::::->#{ActiveSupport::TimeZone.new('UTC').parse(usr["deleted_at"])} ::::: #{60.minutes.ago(current_time.utc)}" if usr["deleted_at"]
+      puts "#{current_time.to_s(:db)}::::::::->#{ActiveSupport::TimeZone.new('UTC').parse(usr["deleted_at"])} ::::: #{60.minutes.ago(current_time.utc)}" if usr["deleted_at"] and ActiveSupport::TimeZone.new('UTC').parse(usr["deleted_at"]) < 60.minutes.ago(current_time.utc)
+      if "1".eql?(usr["deleted"]) 
+        blocked_users << usr["id"] if (usr["deleted_at"] && ActiveSupport::TimeZone.new('UTC').parse(usr["deleted_at"]) < 60.minutes.ago(current_time.utc))
+      else
         deleted_users << usr["id"] 
         account_ids[usr["account_id"]] << usr["id"] if account_ids[usr["account_id"]]
         account_ids[usr["account_id"]] = [usr["id"]] unless account_ids[usr["account_id"]]
       end
     end
+    ignore_list = user_ids - blocked_users - deleted_users
     puts "deleted_users::::#{deleted_users.inspect}::::#{deleted_users.blank?}"
-    # User.update_all({:blocked => true, :blocked_at => Time.zone.now, :deleted => 0 , :deleted_at => nil }, [" id in (?)", blocked_users]) unless blocked_users.blank?
+    User.update_all({:blocked => true, :blocked_at => Time.zone.now, :deleted => 0 , :deleted_at => nil }, [" id in (?)", blocked_users]) unless blocked_users.blank?
     User.update_all({:deleted => true , :deleted_at => Time.zone.now }, [" id in (?)", deleted_users]) unless deleted_users.blank?
     # ActiveRecord::Base.connection.execute("update users set blocked = 1,blocked_at = '#{current_time.to_s(:db)}', deleted=0 where id IN (#{blocked_users*","}) ") unless blocked_users.blank?
     # ActiveRecord::Base.connection.execute("update users set deleted = 1,deleted_at = '#{current_time.to_s(:db)}' where id IN (#{deleted_users*","}) ") unless deleted_users.blank?
     deliver_spam_alert(table, query_str, {:actual_requesters => user_ids, 
-      :deleted_users => deleted_users, :blocked_users => blocked_users}) unless user_ids.empty?
+      :deleted_users => deleted_users, :blocked_users => blocked_users, :ignore_list => ignore_list}) unless user_ids.empty?
 
     account_ids.keys.each do |account_id|
       account = Account.find(account_id)    
@@ -164,8 +169,9 @@ def deliver_spam_alert(table, query_str,additional_info)
       :subject          => "Abnormal load by spam watcher #{table}",
       :additional_info  => {
         :actual_requesters  => additional_info[:actual_requesters].inspect,
-        :deleted_users  => additional_info[:deleted_users].inspect,
-        :blocked_users  => additional_info[:blocked_users].inspect
+        :deleted_users_in_this_run  => additional_info[:deleted_users].inspect,
+        :blocked_users_in_this_run  => additional_info[:blocked_users].inspect,
+        :ignore_list => additional_info[:ignore_list].inspect
       },
       :query => query_str
     }
