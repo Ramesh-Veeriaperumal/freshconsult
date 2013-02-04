@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130129095650) do
+ActiveRecord::Schema.define(:version => 20130123072203) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -575,6 +575,15 @@ ActiveRecord::Schema.define(:version => 20130129095650) do
     t.string "name",       :null => false
     t.string "categories", :null => false
     t.binary "data"
+  end
+
+ create_table "helpdesk_dropboxes", :force => true do |t|
+    t.text     "url"
+    t.integer  "account_id",     :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "droppable_id"
+    t.string   "droppable_type"
   end
 
   create_table "helpdesk_form_customizers", :force => true do |t|
