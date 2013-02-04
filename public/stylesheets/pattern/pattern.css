@@ -2120,9 +2120,9 @@ table [class*=span],
   z-index: 1000;
   display: none;
   float: left;
-  min-width: 160px;
-  padding: 5px 0;
-  margin: 2px 0 0;
+  min-width: 195px;
+  padding: 4px 0;
+  margin: 1px 0 0;
   list-style: none;
   background-color: white;
   border: 1px solid #ccc;
@@ -2154,7 +2154,7 @@ table [class*=span],
   /* line 74, ../../src/pattern/lib/_dropdowns.scss */
   .dropdown-menu a {
     display: block;
-    padding: 3px 20px;
+    padding: 3px 24px;
     clear: both;
     font-weight: normal;
     line-height: 16px;
@@ -2180,60 +2180,63 @@ table [class*=span],
 /* line 99, ../../src/pattern/lib/_dropdowns.scss */
 .dropdown-menu .active > a,
 .dropdown-menu .active > a:hover {
-  color: white;
+  /*color: $dropdownLinkColorHover;
   text-decoration: none;
   outline: 0;
-  background-color: #999999;
-  background-color: #909090;
-  background-image: -moz-linear-gradient(top, #8c8c8c, #999999);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#8c8c8c), to(#999999));
-  background-image: -webkit-linear-gradient(top, #8c8c8c, #999999);
-  background-image: -o-linear-gradient(top, #8c8c8c, #999999);
-  background-image: linear-gradient(to bottom, #8c8c8c, #999999);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF8C8C8C', endColorstr='#FF999999', GradientType=0); }
+  background-color: $dropdownLinkBackgroundActive;
+  @include gradient-vertical(darken($dropdownLinkBackgroundActive,5%), $dropdownLinkBackgroundActive);*/ }
+  /* line 105, ../../src/pattern/lib/_dropdowns.scss */
+  .dropdown-menu .active > a:before,
+  .dropdown-menu .active > a:hover:before {
+    content: "";
+    position: absolute;
+    vertical-align: text-top;
+    margin-left: -20px;
+    background: url('/images/symbols-s72a0594a3f.png') 0 -673px no-repeat;
+    height: 16px;
+    width: 16px; }
 
-/* line 111, ../../src/pattern/lib/_dropdowns.scss */
+/* line 120, ../../src/pattern/lib/_dropdowns.scss */
 .dropdown-menu .disabled > a,
 .dropdown-menu .disabled > a:hover {
   color: #999999; }
 
-/* line 115, ../../src/pattern/lib/_dropdowns.scss */
+/* line 124, ../../src/pattern/lib/_dropdowns.scss */
 .dropdown-menu .disabled > a:hover {
   text-decoration: none;
   background-color: transparent;
   cursor: default; }
 
-/* line 123, ../../src/pattern/lib/_dropdowns.scss */
+/* line 132, ../../src/pattern/lib/_dropdowns.scss */
 .open {
   *z-index: 1000; }
-  /* line 128, ../../src/pattern/lib/_dropdowns.scss */
+  /* line 137, ../../src/pattern/lib/_dropdowns.scss */
   .open > .dropdown-menu {
     display: block; }
 
-/* line 135, ../../src/pattern/lib/_dropdowns.scss */
+/* line 144, ../../src/pattern/lib/_dropdowns.scss */
 .pull-right > .dropdown-menu {
   right: 0;
   left: auto; }
 
-/* line 147, ../../src/pattern/lib/_dropdowns.scss */
+/* line 156, ../../src/pattern/lib/_dropdowns.scss */
 .dropup .caret,
 .navbar-fixed-bottom .dropdown .caret {
   border-top: 0;
   border-bottom: 4px solid black;
   content: ""; }
-/* line 153, ../../src/pattern/lib/_dropdowns.scss */
+/* line 162, ../../src/pattern/lib/_dropdowns.scss */
 .dropup .dropdown-menu,
 .navbar-fixed-bottom .dropdown .dropdown-menu {
   top: auto;
   bottom: 100%;
   margin-bottom: 1px; }
 
-/* line 162, ../../src/pattern/lib/_dropdowns.scss */
+/* line 171, ../../src/pattern/lib/_dropdowns.scss */
 .dropdown-submenu {
   position: relative; }
 
-/* line 165, ../../src/pattern/lib/_dropdowns.scss */
+/* line 174, ../../src/pattern/lib/_dropdowns.scss */
 .dropdown-submenu > .dropdown-menu {
   top: 0;
   left: 100%;
@@ -2243,11 +2246,11 @@ table [class*=span],
   -moz-border-radius: 0 6px 6px 6px;
   border-radius: 0 6px 6px 6px; }
 
-/* line 174, ../../src/pattern/lib/_dropdowns.scss */
+/* line 183, ../../src/pattern/lib/_dropdowns.scss */
 .dropdown-submenu:hover > .dropdown-menu {
   display: block; }
 
-/* line 178, ../../src/pattern/lib/_dropdowns.scss */
+/* line 187, ../../src/pattern/lib/_dropdowns.scss */
 .dropdown-submenu > a:after {
   display: block;
   content: " ";
@@ -2261,16 +2264,16 @@ table [class*=span],
   margin-top: 5px;
   margin-right: -10px; }
 
-/* line 191, ../../src/pattern/lib/_dropdowns.scss */
+/* line 200, ../../src/pattern/lib/_dropdowns.scss */
 .dropdown-submenu:hover > a:after {
   border-left-color: white; }
 
-/* line 199, ../../src/pattern/lib/_dropdowns.scss */
+/* line 208, ../../src/pattern/lib/_dropdowns.scss */
 .dropdown .dropdown-menu .nav-header {
   padding-left: 20px;
   padding-right: 20px; }
 
-/* line 206, ../../src/pattern/lib/_dropdowns.scss */
+/* line 215, ../../src/pattern/lib/_dropdowns.scss */
 .typeahead {
   margin-top: 2px;
   -webkit-border-radius: 4px;

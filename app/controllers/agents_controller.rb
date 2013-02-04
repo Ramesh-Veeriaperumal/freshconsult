@@ -40,12 +40,13 @@ class AgentsController < ApplicationController
   def index    
     unless params[:query].blank?
       #for using query string in api calls
-      @agents = current_account.all_agents.with_conditions(convert_query_to_conditions(params[:query])).filter(params[:page], params.fetch(:state, "active")) 
+      @agents = scoper.with_conditions(convert_query_to_conditions(params[:query])).filter 
     else
-      @agents = current_account.all_agents.filter(params[:page], params.fetch(:state, "active"))
+      @agents = scoper.filter(params[:state], current_agent_order, current_agent_order_type, params[:page])
     end
     respond_to do |format|
       format.html # index.html.erb
+      format.js
       format.xml  { render :xml => @agents.to_xml({:except=>[:account_id,:google_viewer_id],:include=>:user}) }
       format.json  { render :json => @agents.to_json({:except=>[:account_id,:google_viewer_id] ,:include=>{:user=>{:only=>[:id,:name,:email,:created_at,:updated_at,:job_title,
                     :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,

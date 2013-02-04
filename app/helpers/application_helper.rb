@@ -132,6 +132,24 @@ module ApplicationHelper
     link_to(text, url, :class => class_name)
   end
 
+  def dropdown_menu(list, options = {})
+    return if list.blank?
+    output = ""
+    output << %(<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">)
+    
+    list.each do |item|
+      unless item.blank?
+        if item[0] == :divider
+          output << %(<li class="divider"></li>)
+        else
+          output << %(<li class="#{item[2] ? "active" : ""}">#{ link_to item[0], item[1], options, "tabindex" => "-1" }</li>)
+        end
+      end
+    end
+    output << %(</ul>)
+    output.html_safe
+  end
+
   def navigation_tabs
     tabs = [
       ['/home',               :home,        !privilege?(:manage_tickets) ],
@@ -648,8 +666,9 @@ module ApplicationHelper
     
   def company_tickets_tab
     # this should be handled in self service portal
-    tab = ['support/company_tickets', :company_tickets , !privilege?(:manage_tickets) , current_user.customer.name] if privilege?(:client_manager)
-    tab || ""
+    # tab = ['support/company_tickets', :company_tickets , !privilege?(:manage_tickets) , current_user.customer.name] if privilege?(:client_manager)
+    # tab || ""
+    ""
   end
 
   def tour_button(text, tour_id)

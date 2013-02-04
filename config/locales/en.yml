@@ -1157,6 +1157,17 @@ en:
   portal_customizer_option_sol_i: Disable this feature if you want users to login to view solutions
   portal_customizer_auto_suggest_solutions: Enable this feature if you want to suggest existing solutions when user creates a new ticket.
   show_me_how: Show me how
+  agent_list:
+    tab:
+      active: "Full time Agents"
+      occasional: "Occasional Agents"
+      deleted: "Deleted agents"
+    sort:
+      name: "Name"
+      last_login_at: "Last logged in"
+      created_at: "Agent created"
+      asc: Ascending
+      desc: Descending
   topic:
     ideas_stamps:
       planned: Planned

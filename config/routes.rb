@@ -31,7 +31,7 @@
       agent.resources :time_sheets, :controller=>'helpdesk/time_sheets'
   end
 
-  map.connect '/agents/filter/:state' ,:controller => 'agents' ,:action => 'index'
+  map.connect '/agents/filter/:state/*letter', :controller => 'agents', :action => 'index'
   map.resources :sla_details
   
 #  map.mobile '/mob', :controller => 'home', :action => 'mobile_index'
