@@ -272,7 +272,7 @@ a.addchoice:hover{
 	background-color:#F8F8F8; 
 	div.field-box{
 		padding:6px 2% 10px 2%;
-		@include clearfix; 		
+		@include pie-clearfix; 		
 	}
 	li{
 		padding:8px 2% 8px 2%; 
