@@ -542,6 +542,13 @@ $(document).ready(function() {
 		$active.click();
 	});
 
+	$('.widget.load_on_click.inactive').live('click', function(ev){
+		var widget_code = $(this).find('textarea');
+		$(this).find('.content').append(widget_code.val());
+		widget_code.remove();
+		$(this).removeClass('inactive');
+	})
+
 	$("select").data('placeholder','');
 	$("#TicketProperties select.dropdown, #TicketProperties select.dropdown_blank, #TicketProperties select.nested_field, select.select2").livequery(function(){
 		if (this.id == 'helpdesk_ticket_priority') {

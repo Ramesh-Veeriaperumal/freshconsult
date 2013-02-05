@@ -1176,12 +1176,12 @@ div.panel_area{
 	.spam_active { 
 		background: sprite($ticketicon, flag-spam_active) no-repeat;
 	}
-	.jira img{ 
-		background: sprite($ticketicon, jira) no-repeat;
-	}
-	.jira_active img{ 
-		background: sprite($ticketicon, jira_active) no-repeat;
-	}
+}
+.jira img{ 
+	background: sprite($ticketicon, jira) no-repeat;
+}
+.jira_active img{ 
+	background: sprite($ticketicon, jira_active) no-repeat;
 } 
 
 .request_panel_list{

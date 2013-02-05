@@ -1,3 +1,46 @@
-<div class="jira-wrap">
-	<span>Not Linked - <a href="#">Link a Jira Ticket</a></span>
+<% if is_application_installed?("jira")  %>
+<% installedApp = get_app_details("jira") %>
+<% jira_integrated_resource = Integrations::IntegratedResource.find_by_installed_application_id_and_local_integratable_id(installedApp, @ticket.id) %>
+
+<div class="widget load_on_click inactive" id="jira_issue">
+	<h3 class="title">
+		<span id="jira_issue_icon"> 
+			<%= link_to image_tag("/images/spacer.gif", :width => "24px", :height => "24px"), "#", :class=> (jira_integrated_resource.nil?) ? 'jira' : 'jira_active' %>
+		</span>  
+		<%= h(installedApp.configs_title)%>
+	</h3>
+	<div class="content"></div>
+	<textarea style="display:none">
+	  <div class="content"><div class="negtive-margin">
+	    <%
+	    @liquid_objects = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => @agent, "integrated_resource" => jira_integrated_resource} %>
+	    <% widget_code = get_app_widget_script("jira", "jira_widget", @liquid_objects) 
+	    widget_code = widget_code.gsub("}}", " | encode_html}}")
+	    %>
+	    <%= Liquid::Template.parse(widget_code).render({"ticket" => @ticket}, :filters => [Integrations::FDTextFilter]) %>
+	    <div class="loading-box" id="jira_issue_loading"></div>
+	  </div></div>
+	</textarea>
 </div>
+<% end %>
+
+<% @installed_apps_hash.each do |key,installed_app|
+  app = installed_app.application
+  unless app.blank?
+    app.widgets.each do |widget|
+      dip = widget.display_in_pages_option
+      if !dip.blank? && dip.include?('helpdesk_tickets_show_page_side_bar')
+        ticket.load_flexifield
+        liquid_objects = {"ticket" => ticket, "requester" => user}
+        widget_code = widget_script(installed_app, widget, liquid_objects) %>
+        <div id="<%=app.name%>" class="widget load_on_click inactive">
+        	<h3 class="title"><%= h(installedApp.configs_title)%></h3>
+			<div class="content"></div>
+			<textarea style="display:none">
+				<%=widget_code%>
+			</textarea>
+        </div>
+  <%  end
+    end
+  end
+end %>
