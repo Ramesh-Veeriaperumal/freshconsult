@@ -1,5 +1,6 @@
 <%= @body %>
 
+<%=render :partial => 'dropbox_template', :locals => { :dropboxes => @dropboxes} %>
 
 <%=render :partial => "satisfaction_survey", :locals => {:ticket => @ticket, :survey_handle => @survey_handle}%>
 <br/>

@@ -1,6 +1,7 @@
 en:
   meta:
    language_name: 'English'
+  any: Any
   unspam: "Unspam"
   unblock: "Whitelist"
   enabled: "Enabled"
@@ -31,11 +32,12 @@ en:
     customers: "Customers"
     tags: "Tags"
     requester: "Requesters"
+    created_at: "Created"
   proceed_now: "\n\nProceed now?"
   forward: "Forward"
   apply: "Apply"
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
-  attachment_help_info: Attachment(s) size can be up to 20 MB
+  attachment_help_info: "File size < 15 MB"
   feedbackwidget_offset_info: The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
   no_twitter_handle: Please configure atleast one twitter account
   reset_my_password: Reset my password 
@@ -60,6 +62,9 @@ en:
   working: Working at
   attachment: Attachment
   attachments: Attachments
+  attach_file_local: Attach a file from your computer
+  dropbox_attach_label: Attach from
+  dropbox_choose_file: Choose file
   show_quoted_text: Show Quoted text
   cancel_my_account: Cancel my account
   resolved_on_time: Resolved on time
@@ -1172,6 +1177,8 @@ en:
       planned: Planned
       implemented: Implemented
       nottaken: Not Taken
+      deferred: Deferred
+      inprogress: In Progress
     name: Topic Name
     new: New Topic
     open: Re-open this Discussion
@@ -2694,6 +2701,13 @@ en:
         api_password: "API Password"
         api_url: "API URL"
         api_url_info: "To get your API URL, go to https://app.icontact.com/icp/core/externallogin and copy the API URL from &quot;Account Information&quot; section. "
+    dropbox:
+      label: "DropBox"
+      desc: "Attach and Share your data/files from DropBox."
+      helptext: "<h4>Dropbox Integration Help</h4> <p><br/> To integrate with Dropbox, Log in to your Dropbox account, go to <strong><a href='https://www.dropbox.com/developers/apps' target='_blank' alt='developers'>Dropbox</a></strong>.</p> <p>Select My apps-> <b>Create an app</b>.</p><p> Select you 'App type' as <b>Chooser</b></p><p>Fill in your <b>App name, Description and Domains</b> <i>(eg: mycompany.freshdesk.com)</i></p><p>press 'Create'.</p><p>This will create an App and a corresponding app_key for your domains.</p> <p>Copy and paste the app key from dropbox site in the app_key field here box and click Update.</p>"
+      form:
+        app_key: "Registered Application key for your domain"
+        app_key_info: "Create an App in the dropbox and provide the app key here."
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
@@ -2801,6 +2815,7 @@ en:
       info1: "When replying to notification emails from your mailbox, you can include \"Email Commands\" to instruct Freshdesk to perform certain actions on a ticket. The Email Command text will be stripped by Freshdesk and will not be seen by the requestor, while the rest of the text will become a part of the conversation."
       info2: "Email commands must follow the correct syntax and must be placed within the pre-configured delimiter text. For example the command - \"@simonsays agent : John Roberts Status:Resolved @simonsays\" will assign the ticket to the agent John Roberts and mark the Ticket as Resolved."
       info3: "The rest of your email content will be added as a conversation to Freshdesk and also sent to the Requestor via email."
+      ticket_type_example: "Question"
   email_command_delimeter_label: "Email Commands Delimeter"
   email_command_preview_to_email: "To"
   email_command_preview_to_email_value: "support@acme.freshdesk.com"
@@ -2930,3 +2945,20 @@ en:
     create_new: "Create New"
     no_response_admin: "No responses in this folder <a href={{link}} id='new_resp'>Create New</a>"
     select_folder: "Select Folder"
+  created_within:
+    any_time: Any Time
+    five_minutes: Within 5 minutes
+    fifteen_minutes: Within 15 minutes
+    thirty_minutes: Within 30 minutes
+    one_hour: Within 1 hour
+    four_hours: Within 4 hours
+    twelve_hours: Within 12 hours
+    twentyfour_hours: Within 24 hours
+    today: Today
+    yesterday: Yesterday
+    seven_days: This Week
+    thirty_days: This Month
+    two_months: Last 2 months
+    six_months: Last 6 months
+    any_time: Any time
+  any: Any

@@ -20,6 +20,12 @@ GIT
     deadlock_retry (1.2.0)
 
 GIT
+  remote: git://github.com/freshdesk/large-hadron-migrator.git
+  revision: 0e646a1bfda99dc7fe0d6ba95600fc7afedf1bed
+  specs:
+    lhm (1.2.0)
+
+GIT
   remote: git://github.com/freshdesk/ruby-yui-compressor.git
   revision: 8e1d110528c986cb5cd13487bded7a7449bdcd2e
   specs:
@@ -345,6 +351,7 @@ DEPENDENCIES
   jammit (= 0.6.5)
   jira4r (= 0.3.0)
   koala (~> 1.0.0)
+  lhm!
   lockfile (= 1.4.3)
   map-fields (= 1.0.0)
   marketo!

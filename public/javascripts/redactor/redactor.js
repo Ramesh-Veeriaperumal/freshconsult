@@ -1529,6 +1529,9 @@ Redactor.prototype = {
 	// PASTE CLEANUP
 	pasteCleanUp: function(html)
 	{	
+		var wordpaste = false;
+		if(html.match(/class="?Mso|style="[^"]*\bmso-|w:WordDocument/i))
+			wordpaste = true;
 		// remove comments and php tags		
 		html = html.replace(/<!--[\s\S]*?-->|<\?(?:php)?[\s\S]*?\?>/gi, '');
 	
@@ -1583,7 +1586,20 @@ Redactor.prototype = {
 		html = html.replace(/<p><p>/g, '<p>');
 		html = html.replace(/<\/p><\/p>/g, '</p>');	
 	
+		if(wordpaste) {
+			html = this.cleanWordHTML(html);
+			html = html.replace(/\n/g, ' ');
+			if($.browser.msie) {
+				html = html.replace(/<br>\s*<br>/g,'<BR><BR>');
+				html = html.replace(/<br>/g,' ');
+				html = html.replace(/<BR><BR>/g,'<br>');
+			}
+		}
+
 		this.execCommand('inserthtml', html);	
+		
+		if(wordpaste)
+			this.setCode(this.getCode());
 		
 		if (this.opts.autoresize === true)
 		{
@@ -1595,8 +1611,35 @@ Redactor.prototype = {
 		}
 		
 	},	
+
+	//From http://www.1stclassmedia.co.uk/developers/clean-ms-word-formatting.php
 	
-		
+	cleanWordHTML : function (str)
+	{
+		str = str.replace(/<o:p>\s*<\/o:p>/g, "") ;
+		str = str.replace(/<o:p>.*?<\/o:p>/g, "&nbsp;") ;
+		str = str.replace( /\s*mso-[^:]+:[^;"]+;?/gi, "" ) ;
+		str = str.replace( /\s*MARGIN: 0cm 0cm 0pt\s*;/gi, "" ) ;
+		str = str.replace( /\s*MARGIN: 0cm 0cm 0pt\s*"/gi, "\"" ) ;
+		str = str.replace( /\s*TEXT-INDENT: 0cm\s*;/gi, "" ) ;
+		str = str.replace( /\s*TEXT-INDENT: 0cm\s*"/gi, "\"" ) ;
+		str = str.replace( /\s*TEXT-ALIGN: [^\s;]+;?"/gi, "\"" ) ;
+		str = str.replace( /\s*PAGE-BREAK-BEFORE: [^\s;]+;?"/gi, "\"" ) ;
+		str = str.replace( /\s*FONT-VARIANT: [^\s;]+;?"/gi, "\"" ) ;
+		str = str.replace( /\s*tab-stops:[^;"]*;?/gi, "" ) ;
+		str = str.replace( /\s*tab-stops:[^"]*/gi, "" ) ;
+		str = str.replace( /\s*face="[^"]*"/gi, "" ) ;
+		str = str.replace( /\s*face=[^ >]*/gi, "" ) ;
+		str = str.replace(/<(\w[^>]*) class=([^ |>]*)([^>]*)/gi, "<$1$3") ;
+		str = str.replace( /<FONT\s*>(.*?)<\/FONT>/gi, '$1' ) ;
+		str = str.replace(/<\\?\?xml[^>]*>/gi, "") ; 
+		str = str.replace(/<\/?\w+:[^>]*>/gi, "") ; 
+		// str = str.replace( /<([^\s>]+)[^>]*>\s*<\/\1>/g, '' ) ;
+		// str = str.replace( /<([^\s>]+)[^>]*>\s*<\/\1>/g, '' ) ;
+		// str = str.replace( /<([^\s>]+)[^>]*>\s*<\/\1>/g, '' ) ;
+		return str ;
+	},
+
 	// TEXTAREA CODE FORMATTING
 	formattingRemove: function(html)
 	{
@@ -1618,7 +1661,7 @@ Redactor.prototype = {
 		html = html.replace(/\n\s*\n/g, "\n");
 		html = html.replace(/^[\s\n]*/g, '');
 		html = html.replace(/[\s\n]*$/g, '');	
-		html = html.replace(/>\s+</g, '><');
+		// html = html.replace(/>\s+</g, '><');
 		
 		if (prebuffer)
 		{
@@ -1643,7 +1686,7 @@ Redactor.prototype = {
 	},
 	formattingEmptyTags: function(html)		
 	{
-		var etags = ["<pre></pre>","<blockquote>\\s*</blockquote>","<em>\\s*</em>","<ul></ul>","<ol></ol>","<li></li>","<table></table>","<tr></tr>","<span>\\s*<span>", "<span>&nbsp;<span>", "<b>\\s*</b>", "<b>&nbsp;</b>", "<p>\\s*</p>", "<p>&nbsp;</p>",  "<p>\\s*<br>\\s*</p>", "<div>\\s*</div>", "<div>\\s*<br>\\s*</div>"];
+		var etags = ["<pre></pre>","<blockquote>\\s*</blockquote>","<em>\\s*</em>","<ul></ul>","<ol></ol>","<li></li>","<table></table>","<tr></tr>","<span>\\s*<span>", "<span>&nbsp;<span>", "<b>\\s*</b>", "<b>&nbsp;</b>", "<div>\\s*</div>"];
 		for (var i = 0; i < etags.length; ++i)
 		{
 			var bbb = etags[i];
@@ -2068,7 +2111,7 @@ Redactor.prototype = {
 			var isnotfirst = 0;
 			// split based on new lines
 			$.each(replacestring.split("\n"), function() {	
-				if(this.toString().trim() != "") {	
+				if($.trim(this.toString()) != "") {	
 					if (isnotfirst == 1) {
 						if ($.browser.msie)
 							replacehtml += "</p><p>";
@@ -2084,7 +2127,7 @@ Redactor.prototype = {
 				}
 			});
 			// Replace multiple new line characters with single new line character
-			replacehtml = replacehtml.replace(/\n+/g,'\n');
+			replacehtml = replacehtml.replace(/\n+/g,'<br/>');
 			// Special condition for mozilla and I.E.
 			// Removes the unclosed <p> tag from replacehtml
 			if($.browser.mozilla || $.browser.msie)
@@ -2105,7 +2148,8 @@ Redactor.prototype = {
 		else
 			var selectedhtml = $("<span>" + this.getSelectedHtml() + "</span>"); // Replace selected content
 
-		selectedhtml.html(this.formatting(selectedhtml.html().replace(/<br>/g,'\n'))); // Format the html
+		selectedhtml.html(this.formatting(selectedhtml.html())); // Format the html
+
 		replacehtml = selectedhtml.text().replace(/\n+/g,'\n'); // Obtain innertext of the selected content
 
 		return replacehtml;
@@ -2792,7 +2836,7 @@ Redactor.prototype = {
 			
 			if (this.opts.imageUpload !== false)
 			{
-				
+				$('#redactor_image_choose_help_text').hide();	
 				// dragupload
 				if (this.opts.uploadCrossDomain === false && this.isMobile() === false)
 				{
@@ -2816,6 +2860,7 @@ Redactor.prototype = {
 				$('.redactor_tab').hide();
 				if (this.opts.imageGetJson === false) 
 				{
+					$('#redactor_image_choose_help_text').hide();
 					$('#redactor_tabs').remove();
 					$('#redactor_tab3').show();
 				}
@@ -2838,6 +2883,9 @@ Redactor.prototype = {
 			{
 				$('#redactor_file_link').focus();
 			}				
+			else {
+				$('#redactor_upload_btn').hide();
+			}
 		}, this);
 
 		this.modalInit(RLANG.image, 'image', 570, handler, endCallback, true);
@@ -3204,10 +3252,6 @@ Redactor.prototype = {
 			$('#redactor_modal').css({ position: 'fixed', width: '100%', height: '100%', top: '0', left: '0', margin: '0', minHeight: '300px' }).show();			
 		}
 		
-		if (url == "image") { 
-			$('#redactor_upload_btn').hide();
-			$('#redactor_image_choose_help_text').hide();
-		}
 		// end callback
 		if (typeof(endCallback) === 'function')
 		{
@@ -3442,6 +3486,7 @@ Redactor.prototype = {
 			if($(this).attr('style') == undefined || $(this).attr('style') == "")
 				$(this).replaceWith($(this).html());
 		});
+		this.syncCode();
 	},
 	// Used to replace Font tags with span tags
 	cleanUpFont: function(css_property)
@@ -3461,6 +3506,7 @@ Redactor.prototype = {
 		});
 		this.cleanUpRedundant();
 		this.cleanUpSpan();
+		this.syncCode();
 	},
 	// Used to clean up unnecessary tags
 	cleanUpRedundant: function() 
@@ -3471,7 +3517,7 @@ Redactor.prototype = {
 		$.each(this.$editor.find('[rel=tempredactor]'), function() {
 			_element = $(this);
 			$.each(["li", "ol", "ul", "h1", "h2", "h3", "h4", "h5", "h6"], function() {
-				if(_element.text() == _element.parent().text().trim() && _element.parent().is(this.toString())) {
+				if(_element.text() == $.trim(_element.parent().text()) && _element.parent().is(this.toString())) {
 					_element.parent().replaceWith(_element);
 				}
 			});
@@ -3512,6 +3558,7 @@ Redactor.prototype = {
 				$(this).css('background-color','');
 			}
 		});
+		this.syncCode();
 	}
 	
 };

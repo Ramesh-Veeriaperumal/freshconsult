@@ -44,11 +44,10 @@ private
   end
 
 	def remove_tag response, tag
-	    doc = Nokogiri::HTML response
-	    node = doc.search(".//#{tag}")
+	    doc = Nokogiri::HTML.fragment(response)
+	    node = doc.search(tag)
 	    node.remove
-	    node = doc.search(".//body")
-	    node.to_s.gsub(/(<\/?body>)?\n?\r?/, "")
+	    doc.to_html
   	end
 
   	def remove_script_tags(article)
