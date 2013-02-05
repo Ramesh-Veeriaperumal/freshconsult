@@ -75,7 +75,7 @@ class SubscriptionNotifier < ActionMailer::Base
   end
 
   def subscription_downgraded(subscription, old_subscription)
-    setup_email("support@freshdesk.com", "#{subscription.account.full_domain} downgraded")
+    setup_email(AppConfig['from_email'], "#{subscription.account.full_domain} downgraded")
     @body = { :subscription => subscription, :old_subscription => old_subscription }
     @content_type = "text/html"
   end 

@@ -63,9 +63,7 @@ class SubscriptionAdmin::SubscriptionEventsController < ApplicationController
     #Monthly Revenue
     def monthly_revenue_info(date)
       @metrics = overall_revenue(METRICS, date)
-      @events_revenue = revenue_stats(CODES, date)
-      @upgrades_revenue = revenue_stats(UPGRADES, date)
-      @downgrades_revenue = revenue_stats(DOWNGRADES, date)
+      @events_revenue = revenue_stats(EVENTS, date)
     end                                        
 
     def set_selected_tab
