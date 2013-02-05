@@ -262,6 +262,14 @@ module Paperclip
       instance.send(getter) if responds || attr.to_s == "file_name"
     end
 
+
+    def after_flush_writes
+      @queued_for_write.each do |style, file|
+       file.close unless file.closed?
+       file.unlink if file.respond_to?(:unlink) && File.exist?(file.path)
+      end  
+    end
+    
     private
 
     def ensure_required_accessors! #:nodoc:

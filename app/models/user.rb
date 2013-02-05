@@ -391,12 +391,21 @@ class User < ActiveRecord::Base
              :order => 'name'
   end
 
+  def spam?
+    deleted && !deleted_at.nil?
+  end
+
   def self.filter_condition(state, letter)
     case state
       when "verified", "unverified"
-        [ ' name like ? and deleted = ? and active = ? and email is not ? ', "#{letter}%", false , state.eql?("verified"), nil ]
+        [ ' name like ? and deleted = ? and active = ? and email is not ? and deleted_at IS NULL and blocked = false ', 
+          "#{letter}%", false , state.eql?("verified"), nil ]
       when "deleted", "all"
-        [ ' name like ? and deleted = ? ', "#{letter}%", state.eql?("deleted") ]
+        [ ' name like ? and deleted = ? and deleted_at IS NULL and blocked = false', 
+          "#{letter}%", state.eql?("deleted")]
+      when "blocked"
+        [ ' name like ? and ((blocked = ? and blocked_at <= ?) or (deleted = ? and  deleted_at <= ?)) and whitelisted = false ', 
+          "#{letter}%", true, (Time.now+5.days).to_s(:db), true, (Time.now+5.days).to_s(:db)  ]
     end                                      
   end
   

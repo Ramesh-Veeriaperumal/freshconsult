@@ -10,5 +10,6 @@ Some useful information are,
 	<% @additional_info.each_pair do |k, v| %>
 		<li><%= k.to_s.humanize %> : <%= v %></li>
 	<% end %>
+	<li>Query::::<%=@query%></li>
 </ul>
 <% end %>

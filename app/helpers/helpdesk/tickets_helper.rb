@@ -10,7 +10,13 @@ module Helpdesk::TicketsHelper
 
   def view_menu_links( view, cls = "", selected = false )
     unless(view[:id] == -1)
-      link_to( (content_tag(:span, "", :class => "icon ticksymbol") if selected).to_s + strip_tags(view[:name]), (view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])) , :class => ( selected ? "active #{cls}": "#{cls}"), :rel => (view[:default] ? "default_filter" : "" ), :"data-pjax" => "#body-container")
+      parallel_url = "/helpdesk/tickets/filter_options"
+      query_str = view[:default] ? "?filter_name=#{view[:id]}" : "?filter_key=#{view[:id]}"
+      link_to( (content_tag(:span, "", :class => "icon ticksymbol") if selected).to_s + strip_tags(view[:name]), 
+        (view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])) , 
+        :class => ( selected ? "active #{cls}": "#{cls}"), :rel => (view[:default] ? "default_filter" : "" ), 
+        :"data-pjax" => "#body-container", :"data-parallel-url" => "#{parallel_url}#{query_str}", 
+        :"data-parallel-placeholder" => "#ticket-leftFilter")
     else
       content_tag(:span, "", :class => "seperator")
     end  

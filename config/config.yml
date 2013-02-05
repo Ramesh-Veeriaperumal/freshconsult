@@ -74,8 +74,8 @@ chargebee:
     site: "freshpo-test"
     api_key: "fmjVVijvPTcP0RxwEwWV3aCkk1kxVg8e"
   production:
-    site: "freshdesk-test"
-    api_key: "P8rYAajFFj7ydjFK7S3aGNrP4ZQLjrzv"
+    site: "fd_pre_production-test"
+    api_key: "nXCFiuuDju8YnhL7G1BjJrF61cdY3xe2S"
 
 
 integrations_url:

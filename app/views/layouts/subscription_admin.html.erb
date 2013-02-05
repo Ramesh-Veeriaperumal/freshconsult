@@ -33,7 +33,9 @@
 										      [admin_subscription_announcements_path, :announcements, "Announcements" ],
 										      [admin_subscription_plans_path, :plans, "Plans" ],      
 											  [admin_conversion_metrics_path, :metrics, "Metrics" ],
-											  [admin_analytics_path, :analytics, "Analytics" ]
+											  # [admin_analytics_path, :analytics, "Analytics" ]
+											  [admin_subscription_events_path, :events, "Events"]
+
 
 										    ].map do |s| 
 										      content_tag(:li, link_to(s[2], s[0]), :class => ((@selected_tab == s[1]) ? "active" : ""))
@@ -55,5 +57,6 @@
 		<% javascript_tag do %>
 			jQuery.noConflict();
 		<% end %>
+		<%= yield :pagefixed %>
 	</body>
 </html>

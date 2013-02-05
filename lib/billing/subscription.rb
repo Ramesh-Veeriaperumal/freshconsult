@@ -1,32 +1,7 @@
 class Billing::Subscription 
 
-  #$CHARGEBEE_DOMAIN = "testcb.com"
-  
-  PLAN_CODES  = { :Sprout =>  { 1 => "sprout_monthly", 3 => "sprout_quarterly", 
-                                6 => "sprout_half_yearly", 12 => "sprout_annual" },
+  BILLING_PERIOD  = { 1 => "_monthly", 3 => "_quarterly", 6 => "_half_yearly", 12 => "_annual" }
 
-                  :Blossom => { 1 => "blossom_monthly", 3 => "blossom_quarterly",  
-                                6 => "blossom_half_yearly", 12 => "blossom_annual" },
-
-                  :Garden =>  { 1 => "garden_monthly", 3 => "garden_quarterly",  
-                                6 => "garden_half_yearly", 12 => "garden_annual" },
-
-                  :Estate =>  { 1 => "estate_monthly", 3 => "estate_quarterly",  
-                                6 => "estate_half_yearly", 12 => "estate_annual" }, 
-
-                  :Basic =>   { 1 => "basic_monthly", 3 => "basic_quarterly", 
-                                6 => "basic_half_yearly", 12 => "basic_annual" },
-
-                  :Pro =>     { 1 => "pro_monthly", 3 => "pro_quarterly", 
-                                6 => "pro_half_yearly", 12 => "pro_annual" },
-
-                  :Premium => { 1 => "premium_monthly", 3 => "premium_quarterly", 
-                                6 => "premium_half_yearly", 12 => "premium_annual" } }
-
-  DAY_PASSES  = { :Sprout => "sprout", :Blossom => "blossom", :Garden => "garden", :Estate => "estate",
-                    :Basic => "basic", :Pro => "pro", :Premium => "premium" }
-
-  
   #dummy card for initial testing
   CREDITCARD_INFO = { :number => "4111111111111111", :expiry_month => 5.months.from_now.month, 
                       :expiry_year => 5.years.from_now.year, :gateway => "chargebee" }   
@@ -35,7 +10,7 @@ class Billing::Subscription
                       :billing_addr2 => :address2, :billing_city => :city, :billing_state => :state, 
                       :billing_country => :country, :billing_zip => :zip }
 
-  TRIAL_PLAN_QUANTITY = "2"
+  TRIAL_PLAN_QUANTITY = "1"
 
   TRIAL_END = "0"
 
@@ -46,10 +21,7 @@ class Billing::Subscription
   end
 
   def create_subscription(account)
-    data = subscription_data(account.subscription)
-    data.merge!( { :plan_quantity => TRIAL_PLAN_QUANTITY, :customer => customer_data(account) } )
-    
-    ChargeBee::Subscription.create(data)
+    ChargeBee::Subscription.create(account_info(account))
   end
 
   def update_subscription(subscription, prorate)
@@ -75,31 +47,42 @@ class Billing::Subscription
   end
 
   def delete_subscription(account_id)
-    ChargeBee::Subscription.cancel(account_id)
+    begin
+      ChargeBee::Subscription.cancel(account_id)
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e)
+    end
   end
 
   
   private
 
+    def account_info(account)
+      {
+        :id => account.id,
+        :customer => customer_data(account),
+        :plan_id => plan_code(account),
+        :plan_quantity => TRIAL_PLAN_QUANTITY
+      }
+    end
+    
     def customer_data(account)
       {
         :first_name => account.account_admin.name,
         :email => %(vijayaraj+#{account.id}@freshdesk.com),  #account.account_admin.email,  
-        :company => account.name
+        :company => %(#{account.name} (#{account.full_domain}))
       }
     end
-
+    
     def subscription_data(subscription)
       { 
-        :id => subscription.account_id,
-        :plan_id => plan_code(subscription), 
+        :plan_id => plan_code(subscription.account), 
         :plan_quantity => subscription.agent_limit 
       }
     end
 
-    def plan_code(subscription)
-      plan = subscription.subscription_plan.name.to_sym
-      PLAN_CODES[plan][subscription.renewal_period]
+    def plan_code(account)
+      (account.plan_name.to_s).concat(BILLING_PERIOD[account.subscription.renewal_period])
     end
 
     def billing_address(subscription)
@@ -107,10 +90,11 @@ class Billing::Subscription
     end
 
     def add_on_data(day_pass_purchase)
-      plan = day_pass_purchase.account.subscription_plan.name.to_sym
-      add_on_attributes = { :subscription_id => day_pass_purchase.account_id,
-                            :addon_id => DAY_PASSES[plan], 
-                            :addon_quantity => day_pass_purchase.quantity_purchased }
+      { 
+        :subscription_id => day_pass_purchase.account_id,
+        :addon_id => day_pass_purchase.account.plan_name.to_s, 
+        :addon_quantity => day_pass_purchase.quantity_purchased 
+      }
     end
 
 end

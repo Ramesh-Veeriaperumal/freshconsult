@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121218133527) do
+ActiveRecord::Schema.define(:version => 20130123072203) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(:version => 20121218133527) do
     t.text     "sso_options"
     t.string   "google_domain"
     t.boolean  "ssl_enabled",                    :default => false
+    t.boolean  "premium",                        :default => false
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
@@ -576,6 +577,15 @@ ActiveRecord::Schema.define(:version => 20121218133527) do
     t.binary "data"
   end
 
+ create_table "helpdesk_dropboxes", :force => true do |t|
+    t.text     "url"
+    t.integer  "account_id",     :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "droppable_id"
+    t.string   "droppable_type"
+  end
+
   create_table "helpdesk_form_customizers", :force => true do |t|
     t.string   "name"
     t.text     "json_data"
@@ -895,6 +905,9 @@ ActiveRecord::Schema.define(:version => 20121218133527) do
     t.datetime "sla_timer_stopped_at"
     t.integer  "outbound_count",                      :default => 0
     t.float    "avg_response_time"
+    t.integer  "first_resp_time_by_bhrs"
+    t.integer  "resolution_time_by_bhrs"
+    t.float    "avg_response_time_by_bhrs"
   end
 
   add_index "helpdesk_ticket_states", ["id"], :name => "helpdesk_ticket_states_id"
@@ -1154,6 +1167,7 @@ ActiveRecord::Schema.define(:version => 20121218133527) do
     t.datetime "updated_at"
     t.integer  "account_id"
     t.string   "tweet_type",                  :default => "mention"
+    t.integer  "twitter_handle_id", :limit => 8
   end
 
   add_index "social_tweets", ["account_id", "tweetable_id", "tweetable_type"], :name => "index_social_tweets_account_id_tweetable_id_tweetable_type", :length => {"tweetable_type"=>"15", "account_id"=>nil, "tweetable_id"=>nil}
@@ -1274,13 +1288,21 @@ ActiveRecord::Schema.define(:version => 20121218133527) do
   end
 
   create_table "subscription_events", :force => true do |t|
-    t.integer  "account_id"
-    t.string   "code"
+    t.integer  "account_id",                :limit => 8
+    t.integer  "code"
     t.text     "info"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "subscription_plan_id"
+    t.integer  "renewal_period"
+    t.integer  "total_agents"
+    t.integer  "free_agents"
+    t.integer  "subscription_affiliate_id"
+    t.integer  "subscription_discount_id"
+    t.boolean  "revenue_type"
+    t.decimal  "cmrr",                                   :precision => 10, :scale => 2
   end
-  
+
   create_table "subscription_payments", :force => true do |t|
     t.integer  "account_id",                :limit => 8
     t.integer  "subscription_id",           :limit => 8

@@ -155,7 +155,12 @@
         resque.failed_show '/failed/:queue_name/show', :controller => 'failed', :action => 'show'
         resque.resources :failed, :member => { :destroy => :delete , :requeue => :put }, :collection => { :destroy_all => :delete }
       end
-      admin.resources :analytics 
+      # admin.resources :analytics 
+      admin.resources :spam_watch, :only => :index
+      admin.spam_details '/spam_watch/:user_id/:type', :controller => :spam_watch, :action => :spam_details
+      admin.spam_user '/spam_user/:user_id', :controller => :spam_watch, :action => :spam_user
+      admin.block_user '/block_user/:user_id', :controller => :spam_watch, :action => :block_user
+      admin.resources :subscription_events, :as => 'events', :collection => { :export_to_csv => :get }
     end
   end
   
@@ -180,7 +185,7 @@
   map.thanks '/signup/thanks', :controller => 'accounts', :action => 'thanks'
   map.create '/signup/create/:discount', :controller => 'accounts', :action => 'create', :discount => nil
   map.resource :account, :collection => {:rebrand => :put, :dashboard => :get, :thanks => :get,   :cancel => :any, :canceled => :get , :signup_google => :any }
-  map.resource :subscription, :collection => { :plans => :get, :billing => :any, :plan => :any, :calculate_amount => :any, :free => :get, :convert_subscription_to_free => :put }
+  map.resource :subscription, :collection => { :plans => :get, :billing => :any, :plan => :any, :calculate_amount => :any, :convert_subscription_to_free => :put }
 
   map.new_account '/signup/:plan/:discount', :controller => 'accounts', :action => 'new', :plan => nil, :discount => nil
   
@@ -298,6 +303,8 @@
     helpdesk.resources :articles, :collection => { :autocomplete => :get }
 
     helpdesk.resources :attachments
+
+    helpdesk.resources :dropboxes
     
     helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get, :requester_autocomplete => :get }
     

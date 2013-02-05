@@ -8,7 +8,7 @@
     	<td> : </td>
     	<td> 
             <a href='<%=helpdesk_ticket_url(@ticket,:host => @ticket.account.host)%>'> 
-                #<%=@ticket.id%> <%=@ticket.subject%> 
+                #<%=@ticket.display_id%> <%=@ticket.subject%> 
             </a>
         </td>
     </tr>

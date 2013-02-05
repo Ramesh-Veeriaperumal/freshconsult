@@ -8,7 +8,7 @@ module Helpdesk::Social::Twitter
         latest_comment = ticket.notes.latest_twitter_comment.first
         status_id = latest_comment.nil? ? ticket.tweet.tweet_id : latest_comment.tweet.tweet_id
         twt = twitter.update(validate_tweet(note.body, ticket), {:in_reply_to_status_id => status_id})
-        process_tweet note, twt
+        process_tweet note, twt, reply_twitter_handle(ticket)
       rescue
         return false
       end
@@ -25,7 +25,7 @@ module Helpdesk::Social::Twitter
         status_id = latest_comment.nil? ? ticket.tweet.tweet_id : latest_comment.tweet.tweet_id    
         req_twt_id = latest_comment.nil? ? ticket.requester.twitter_id : latest_comment.user.twitter_id
         resp = twitter.direct_message_create(req_twt_id, note.body)
-        process_tweet note, twt
+        process_tweet note, twt, reply_twitter_handle(ticket)
       rescue  
         return false
       end
@@ -48,7 +48,7 @@ module Helpdesk::Social::Twitter
       #params.key?(:twitter_handle)
     end
 
-    def process_tweet note, twt
-      note.create_tweet({:tweet_id => twt.id, :account_id => current_account.id})
+    def process_tweet note, twt, handle
+      note.create_tweet({:tweet_id => twt.id, :twitter_handle_id => handle })
     end
 end
