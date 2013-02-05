@@ -26,6 +26,7 @@ module EmailCommands
       end
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
+      Rails.logger.debug "!!!ERROR!!! Error in processing email_commands -> #{e}"
     end
   end
   
@@ -38,6 +39,11 @@ module EmailCommands
   
   def source(ticket, value, user, note)
     ticket.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[value.to_sym] unless TicketConstants::SOURCE_KEYS_BY_TOKEN[value.to_sym].blank?    
+  end
+  
+  def type(ticket, value, user, note)
+    ticket_types = ticket.account.ticket_types_from_cache.collect {|type| type.value}
+    ticket.ticket_type = value if ticket_types.include?(value)
   end
   
   def status(ticket, value, user, note)

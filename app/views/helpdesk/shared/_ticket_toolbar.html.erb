@@ -24,9 +24,6 @@
     			<% end %> 
 			
     			<% if @current_view != "deleted" && @current_view != "spam" %>
-            <% unless dropbox_app_key.blank? %>
-              <script type="text/javascript" src="https://www.dropbox.com/static/api/1/dropbox.js" id="dropboxjs" data-app-key="<%=dropbox_app_key%>"></script>
-            <%end%>
             <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/multiple/close_multiple', 'put' , [{name: 'disable_notification' , value: event.shiftKey}]);" type="button" value="<%=t('close')%>" disabled="disabled">
 
             <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/multiple/pick_tickets', 'put');" type="button" value="<%=t('ticket.pick_up')%>" disabled="disabled">

@@ -82,6 +82,7 @@ gem 'chargebee', "~> 1.1.1"
 
 gem 'memcache-client', '1.8.5'
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
+gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
 
 group :development,:test do
    #gem "rspec", "1.3.1"
