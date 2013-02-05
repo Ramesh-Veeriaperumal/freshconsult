@@ -11,9 +11,8 @@
       </div>
     </div>
     <% unless dropbox_app_key.blank?  %>
-    <div  class="dropbox_div">
-       <script type="text/javascript" src="https://www.dropbox.com/static/api/1/dropbox.js" id="dropboxjs" data-app-key="<%=dropbox_app_key%>"></script>
-      <div class="db-chooser">
+    <div class="dropbox_div">       
+      <div class="db-chooser" id="dropboxjs" data-app-key="<%=dropbox_app_key%>">
         <label><%= t('dropbox_attach_label') %></label>
           <input type="hidden"  id="<%=attach_id%>_url" name="dropboxURL" nameWhenFilled="[dropbox_url][]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body">
           <input type="button" class="dropbox_button" name="selected-file" id="db-chooser" data-holder="<%=attach_id%>_url" onclick='initDropbox(this);' value="<%=t('dropbox_choose_file')%>">
@@ -50,3 +49,6 @@
 	  </span>
   </div>
 </script>
+<% unless dropbox_app_key.blank? %>
+  <script type="text/javascript" src="https://www.dropbox.com/static/api/1/dropbox.js"></script>
+<% end %>
