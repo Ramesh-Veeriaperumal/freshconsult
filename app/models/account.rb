@@ -286,17 +286,17 @@ class Account < ActiveRecord::Base
     
     :blossom_classic => {
       :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets],
-      :inherits => [ :sprout ]
+      :inherits => [ :sprout_classic ]
     },
     
     :garden_classic => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :advanced_reporting ],
-      :inherits => [ :blossom ]
+      :inherits => [ :blossom_classic ]
     },
 
     :estate_classic => {
       :features => [ :gamification, :agent_collision ],
-      :inherits => [ :garden ]
+      :inherits => [ :garden_classic ]
     }
 
   }

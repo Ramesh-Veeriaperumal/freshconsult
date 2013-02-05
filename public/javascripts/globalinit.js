@@ -434,6 +434,9 @@ var $J = jQuery.noConflict();
           $(document).trigger('ticket_list');
           $(document).trigger('ticket_show');
           initParallelRequest($(evnt.relatedTarget))
+
+          // hideActivePopovers();
+
           return true;
       }).bind('pjax:end',function(evnt,xhr,settings){
 
