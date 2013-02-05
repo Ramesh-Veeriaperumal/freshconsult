@@ -1,6 +1,7 @@
 en:
   meta:
    language_name: 'English'
+  any: Any
   unspam: "Unspam"
   unblock: "Whitelist"
   enabled: "Enabled"
@@ -31,6 +32,7 @@ en:
     customers: "Customers"
     tags: "Tags"
     requester: "Requesters"
+    created_at: "Created"
   proceed_now: "\n\nProceed now?"
   forward: "Forward"
   apply: "Apply"
@@ -2938,3 +2940,20 @@ en:
     create_new: "Create New"
     no_response_admin: "No responses in this folder <a href={{link}} id='new_resp'>Create New</a>"
     select_folder: "Select Folder"
+  created_within:
+    any_time: Any Time
+    five_minutes: Within 5 minutes
+    fifteen_minutes: Within 15 minutes
+    thirty_minutes: Within 30 minutes
+    one_hour: Within 1 hour
+    four_hours: Within 4 hours
+    twelve_hours: Within 12 hours
+    twentyfour_hours: Within 24 hours
+    today: Today
+    yesterday: Yesterday
+    seven_days: This Week
+    thirty_days: This Month
+    two_months: Last 2 months
+    six_months: Last 6 months
+    any_time: Any time
+  any: Any
