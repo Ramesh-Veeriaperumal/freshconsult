@@ -5109,6 +5109,12 @@ a.close{
 			margin:0 6px 0 0;
 			padding:4px 2px 10px;
 		}
+		.ff_item.level_2, .ff_item.level_3{
+			padding-left:10px;
+			padding-bottom:0;
+			padding-top:10px;
+			border-left:1px dotted #afafaf;
+		}
 	   	.item{
 			padding-bottom:2px;
 			padding-top:2px;
@@ -8978,4 +8984,14 @@ div.db-chooser{
 	.attach_file{
 		float:left; padding-right:20px
 	}
+}
+
+#s2id_created_at{
+	width: 190px;
+}
+div.select2-search{
+	display: none;
+}
+.select2{
+	width: 190px;
 }
