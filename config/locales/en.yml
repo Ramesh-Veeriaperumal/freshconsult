@@ -2799,6 +2799,7 @@ en:
       info1: "When replying to notification emails from your mailbox, you can include \"Email Commands\" to instruct Freshdesk to perform certain actions on a ticket. The Email Command text will be stripped by Freshdesk and will not be seen by the requestor, while the rest of the text will become a part of the conversation."
       info2: "Email commands must follow the correct syntax and must be placed within the pre-configured delimiter text. For example the command - \"@simonsays agent : John Roberts Status:Resolved @simonsays\" will assign the ticket to the agent John Roberts and mark the Ticket as Resolved."
       info3: "The rest of your email content will be added as a conversation to Freshdesk and also sent to the Requestor via email."
+      ticket_type_example: "Question"
   email_command_delimeter_label: "Email Commands Delimeter"
   email_command_preview_to_email: "To"
   email_command_preview_to_email_value: "support@acme.freshdesk.com"
