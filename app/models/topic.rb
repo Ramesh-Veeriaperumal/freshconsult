@@ -36,12 +36,16 @@ class Topic < ActiveRecord::Base
 
   named_scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
 
-  # Popular topics in the forum
+  # Popular topics in forums
   # Filtered based on last replied and user_votes
   # !FORUM ENHANCE Removing hits from orderby of popular as it will return all time
-  # It would be better if i can be tracked month wise
-  named_scope :popular, :order => 'hits DESC, user_votes DESC, replied_at DESC', :include => :last_post, 
-    :conditions => ["replied_at >= ?", DateTime.now - 30.days] #Convert to lambda
+  # It would be better if it can be tracked month wise
+  # Generally with days before DateTime.now - 30.days
+  named_scope :popular, lambda{ |days_before| 
+    { :conditions => ["replied_at >= ?", days_before], 
+      :order => 'hits DESC, user_votes DESC, replied_at DESC', 
+      :include => :last_post } 
+  }
 
   # The below named scopes are used in fetching topics with a specific stamp used for portal topic list  
   named_scope :by_stamp, lambda { |stamp_type| 

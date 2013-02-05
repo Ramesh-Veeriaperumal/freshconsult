@@ -61,7 +61,8 @@ $linkColor:             $blue !default; //#08c
 $linkColorHover:        darken($linkColor, 15%) !default;
 
 // -------------------------
-$sansFontFamily:        "Helvetica Neue", Helvetica, Arial, sans-serif !default;
+$baseFont: 				"Helvetica Neue" !default;
+$sansFontFamily:        $baseFont, Helvetica, Arial, sans-serif !default;
 $serifFontFamily:       Georgia, "Times New Roman", Times, serif !default;
 $monoFontFamily:        Menlo, Monaco, Consolas, "Courier New", monospace !default;
 
@@ -70,7 +71,8 @@ $baseFontFamily:        $sansFontFamily !default;
 $baseLineHeight:        $baseFontSize * 1.5625 !default;
 $altFontFamily:         $serifFontFamily !default;
 
-$headingsFontFamily:    'Open Sans Condensed', Helvetica, sans-serif !default; // empty to use BS default, $baseFontFamily
+$headingsFont:			'Open Sans Condensed' !default;
+$headingsFontFamily:    $headingsFont, Helvetica, sans-serif !default; // empty to use BS default, $baseFontFamily
 $headingsFontWeight:    bold !default;    // instead of browser default, bold
 $headingsColor:         inherit !default; // empty to use BS default, $textColor
 

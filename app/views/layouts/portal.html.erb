@@ -17,6 +17,9 @@
 		<link href="/theme.css" media="screen" rel="stylesheet" type="text/css">
 		<%= include_stylesheets :portal %>
 		<%= include_javascripts :portal_head %>		
+		<!--[if lt IE 9]>
+			<script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
+		<![endif]-->
 	</head>
 	<body>
 		<% if session[:preview_button].present? && current_user && current_user.agent? %>

@@ -7,7 +7,7 @@ class ThemeController < SupportController
 	ALLOWED_THEME_OPTIONS = %w( bg_color header_color help_center_color footer_color 
 								tab_color tab_hover_color
 								btn_background btn_primary_background 
-								baseFontFamily textColor headingsFontFamily headingsColor
+								baseFont baseFontFamily textColor headingsFont headingsFontFamily headingsColor
 								linkColor linkColorHover inputFocusRingColor)
 
 	def index		

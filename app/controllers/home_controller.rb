@@ -8,19 +8,18 @@ class HomeController < ApplicationController
     if (current_user && current_user.permission?(:manage_tickets))
       redirect_to helpdesk_dashboard_path
     else
-      redirect_to support_home_path
-    end   
-    redirect_to login_path and return unless (allowed_in_portal?(:open_solutions) || allowed_in_portal?(:open_forums))
+      redirect_to support_home_path and return
+    end    
     
     # @categories = current_portal.solution_categories.customer_categories if allowed_in_portal?(:open_solutions)
-    if allowed_in_portal?(:open_solutions)
-      @categories = main_portal? ? current_portal.solution_categories.customer_categories : current_portal.solution_categories
-    end
+    # if allowed_in_portal?(:open_solutions)
+    #   @categories = main_portal? ? current_portal.solution_categories.customer_categories : current_portal.solution_categories
+    # end
 
-    if params[:format] == "mob"
-      @user_session = current_account.user_sessions.new
-      redirect_to login_path
-    end
+    # if params[:format] == "mob"
+    #   @user_session = current_account.user_sessions.new
+    #   redirect_to login_path
+    # end
     
   end
  

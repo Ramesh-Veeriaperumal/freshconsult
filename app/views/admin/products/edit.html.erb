@@ -1,13 +1,15 @@
 <% content_for :sidebar do -%>
   <%= render :partial => "helpnote_without_tour" %>
 <%-end %>
+<%= include_stylesheets :pattern %>
+<%= include_javascripts :pattern %>
 <% @page_title = t('.title') %>
 <%= content_tag :h3, @page_title, :class => "title" %>
 <% form_for :product, @product, :url => admin_product_path, :html => { :multipart => true, :rel => "validate", :method => :put, :id => "ProductForm" } do |f| %>
   <%= render :partial => "form", :object => f %>
   <div class="button-container">
     <%= link_to(t('cancel'), admin_products_path, :class => "btn pull-left", :id => "email-form-cancel" )  %>
-  	<%= f.submit t('update'), :class => "btn primary "  %>  	
+  	<%= f.submit t('update'), :class => "btn btn-primary "  %>  	
   </div>
 <% end %>
 

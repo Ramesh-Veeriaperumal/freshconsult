@@ -1,12 +1,12 @@
 <section class="main content rounded-6 min-height-on-desktop">
 	<h2 class="heading">Knowledge base</h2>
-	{% if portal.total_articles > 0 %}				
+	{% if portal.articles_count > 0 %}				
 		{% for category in portal.solution_categories %}
 			<div class="cs-s">
 				<h3 class="heading">{{ category.name }}</h3>
 				<div class="cs-g-c">
 					{% for folder in category.folders %}
-						{% if folder.total_articles > 0 %}
+						{% if folder.articles_count > 0 %}
 							<section class="cs-g article-list">
 								<div class="list-lead">
 									<a href="{{folder.url}}">{{folder.name}} ({{ folder.total_articles }})</a>

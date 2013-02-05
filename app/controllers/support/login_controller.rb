@@ -1,6 +1,8 @@
 class Support::LoginController < SupportController
 
 	include RedisKeys
+
+	skip_before_filter :check_account_state
 	
 	def new
 		if current_account.sso_enabled? and (request.request_uri != "/login/normal") 

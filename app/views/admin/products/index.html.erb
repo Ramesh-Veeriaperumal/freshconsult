@@ -1,13 +1,25 @@
+<%= include_stylesheets :pattern %>
+<%= include_javascripts :pattern %>
+<% @page_title = t('.title') %>
+<div class="cust_list_table" id="multi-product-index">
+	<div class="cust_list_table_header">
+		<div class="row-fluid">
+			<div class="span6">			
+				<%= content_tag :h3, @page_title, :class => "title" %>
+			</div>
+			<div class="span6 pull-right align-right">
+				<%= link_to(t('.add_product'), new_admin_product_path, :class => "btn") %>
+			</div>
+		</div>
+	</div>
+
+	<div class="cust_list_table_body" id="multi-product-list">
+		<table class="table table-striped">
+			<%= each_or_message("product", @products, t("no_message.products")) %>
+		</table>
+	</div>
+</div>
+
 <% content_for :sidebar do -%>
   <%= render :partial => "helpnote" %>
 <%-end %>
-<% @page_title = t('.title') %>
-<div class="floatr">
-	<%= link_to(t('.add_product'), new_admin_product_path, :class => "uiButton") %>
-</div>
-<%= content_tag :h3, @page_title, :class => "title" %>
-<div>	
-	<ul class="admin_list">
-	  <%= each_or_message("product", @products, t("no_message.products")) %>
-	</ul>
-</div>

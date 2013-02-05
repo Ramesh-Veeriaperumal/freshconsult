@@ -54,29 +54,33 @@ $forum-questions-color: #00aad5;
 	}
 }
 
-.badge-announcement, .badge-ideas, .badge-problems, .badge-questions{	
-	@include inline-block;
-	@include border-radius(2em);
-	width: 26px;
-	height: 26px;
-	margin-right: 1px;
-	margin-top: -2px;
-	margin-left: -2px;
-	&:before{
-		content:"";
-		@include inline-block;
+.badge-announcement, .badge-ideas, .badge-problems, .badge-questions{
+	position: relative;
+	margin-left: 30px;
+	&:before, &:after{
+		content:"";	
 		vertical-align: text-top;
-		margin-left: 4px;
+		position: absolute;		
+		left: -32px;
+		top: 1px;
+	}
+	&:before{			
+		width: 26px;
+		height: 26px;
+		@include border-radius(2em);
+	}	
+	&:after{
+		margin: 3px 4px;
 	}
 }
 
 .page-stamp-article{ background-color: $article-color; }
-.badge-announcement, .page-stamp-announcement{ background-color: $forum-announcement-color; }
-.badge-ideas, .page-stamp-ideas{ background-color: $forum-ideas-color; }
-.badge-problems, .page-stamp-problems{ background-color: $forum-problems-color; }
-.badge-questions, .page-stamp-questions{ background-color: $forum-questions-color; }
+.badge-announcement:before, .page-stamp-announcement{ background-color: $forum-announcement-color; }
+.badge-ideas:before, .page-stamp-ideas{ background-color: $forum-ideas-color; }
+.badge-problems:before, .page-stamp-problems{ background-color: $forum-problems-color; }
+.badge-questions:before, .page-stamp-questions{ background-color: $forum-questions-color; }
 
-.badge-announcement:before{ @extend .icon-forum-a; } 
-.badge-ideas:before{ @extend .icon-forum-i; }
-.badge-problems:before{ @extend .icon-forum-p; }
-.badge-questions:before{ @extend .icon-forum-q; }
+.badge-announcement:after{ @extend .icon-forum-a; } 
+.badge-ideas:after{ @extend .icon-forum-i; }
+.badge-problems:after{ @extend .icon-forum-p; }
+.badge-questions:after{ @extend .icon-forum-q; }

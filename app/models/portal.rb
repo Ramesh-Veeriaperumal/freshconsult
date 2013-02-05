@@ -64,6 +64,11 @@ class Portal < ActiveRecord::Base
       forum_category ? forum_category.forums : []
   end
 
+  def recent_popular_topics( days_before = (DateTime.now - 30.days) )
+    main_portal ? account.portal_topics.popular(days_before).limit(10) :
+        forum_category ? forum_category.portal_topics.popular(days_before).limit(10) : []
+  end
+
   #Yeah.. It is ugly.
   def ticket_fields(additional_scope = :all)
     filter_fields account.ticket_fields.send(additional_scope)

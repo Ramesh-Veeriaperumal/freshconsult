@@ -1,29 +1,45 @@
 <% form_for @profile, :url => support_profile_path, 
 	:html => { :class => "form-portal", :multipart => true, :rel => "validate"} do |f| %>
 	<%= f.error_messages %>
+
+	<% javascript_tag do %>
+		function changeProfilePic(){
+			jQuery('#AvatarPic').toggle();
+			jQuery('#AvatarInput').toggle();		
+		}
+
+		deletePic = function() {
+		    jQuery("#AvatarControls").remove();
+			jQuery('#AvatarPic').remove();
+			jQuery('#AvatarInput').show();
+		}
+	<% end %>
+
 	<% fields_for "users", @profile do |usr| %>
     <div class="row-fluid">
     	<fieldset class="span4">
-			<% if(@profile.avatar) %>
-				<div class="user-pic-original" id="AvatarPic">					  
-					<%= image_tag @profile.avatar.expiring_url(:medium, 300) %>						
-				</div>
-				<span class="dropdown">
-	              	<a class="dropdown-toggle btn" data-toggle="dropdown" href="#">
-	              		Change photo <b class="caret"></b>
-	              	</a>
-					<ul class="dropdown-menu">
-						<li><%= link_to_function("Choose another photo", "changeProfilePic()") %></li>
-						<li>
-							<%= link_to_remote('Remove photo', 
-									:url => { :action => "delete_avatar", :id => @profile.id },
-									:success => "deletePic()",
-									:confirm => 'Are you sure you want to delete this Profile Photo',
-									:method => 'delete' ) %>
-						</li>
-					</ul>
-	            </span>
-			<% end %>		
+    		<div id="AvatarPic">
+				<% if(@profile.avatar) %>
+					<div class="user-pic-original">					  
+						<%= image_tag @profile.avatar.expiring_url(:medium, 300) %>						
+					</div>
+					<span class="dropdown">
+		              	<a class="dropdown-toggle btn" data-toggle="dropdown" href="#">
+		              		Change photo <b class="caret"></b>
+		              	</a>
+						<ul class="dropdown-menu">
+							<li><%= link_to_function("Choose another photo", "changeProfilePic()") %></li>
+							<li>
+								<%= link_to_remote('Remove photo', 
+										:url => delete_avatar_user_path(@profile.id),
+										:success => "deletePic()",
+										:confirm => 'Are you sure you want to delete this Profile Photo',
+										:method => 'delete' ) %>
+							</li>
+						</ul>
+		            </span>
+				<% end %>
+			</div>	
 			<div id="AvatarInput" class="<%= (@profile.avatar) ? 'hide' : '' %>">
 				<% fields_for "user[avatar_attributes]", @profile.avatar do |avatar_form| %>
 					<div class="info-data"><%=t('user.info1')%></div>

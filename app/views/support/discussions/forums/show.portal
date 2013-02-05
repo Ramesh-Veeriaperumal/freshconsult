@@ -1,21 +1,21 @@
-<section class="content rounded-6 min-height-on-desktop">
-	<a href="{{ portal.new_topic_path }}" class="start-topic"> 
-		{% translate portal.topic.start_new_topic %}
-	</a>
+<section class="content rounded-6 min-height-on-desktop">	
+	<b class="pull-right">
+		{{ portal | link_to_start_topic }}
+	</b>
 	<div class="breadcrumb">
 		<a href="/">Home</a>
 		<a href="{{ forum.forum_category.url }}">{{ forum.forum_category.name }}</a>
-	</div>		
+	</div>	
 	<i class="page-stamp page-stamp-{{ forum.type_name }}">
 		<i class="icon-page-{{ forum.type_name }}"></i>
-	</i>	
+	</i>
 	<div class="list-lead">
-		{{ forum.name }} ({{ forum.topics_count }})			
+		{{ forum.name }} ({{ forum.topics_count }})
 	</div>
 	<p class="intro ellipsis" title="{{forum.description}}">
 		{{ forum.description }}
 	</p>
-
+	
 	{{ forum | default_topic_filters }}
 
 	{% paginate forum.topics by 10 %}
@@ -45,7 +45,7 @@
 						<a class="c-link" title="{{topic.title}}" href="{{topic.url}}">{{topic.title}}</a>
 					</div>				
 					<div class="help-text"> 
-						{{ topic | topic_full_brief: topic.last_post }}
+						{{ topic | topic_info_with_votes }}
 					</div>
 				</div>
 			{% endfor %}

@@ -4075,21 +4075,29 @@ input[type="submit"].btn {
   visibility: hidden; }
 
 /* line 28, ../../src/pattern/lib/_utilities.scss */
+.align-right {
+  text-align: right; }
+
+/* line 32, ../../src/pattern/lib/_utilities.scss */
+.align-left {
+  text-align: left; }
+
+/* line 37, ../../src/pattern/lib/_utilities.scss */
 .affix {
   position: fixed; }
 
-/* line 33, ../../src/pattern/lib/_utilities.scss */
+/* line 42, ../../src/pattern/lib/_utilities.scss */
 .clearfix {
   overflow: hidden;
   *zoom: 1; }
 
-/* line 38, ../../src/pattern/lib/_utilities.scss */
+/* line 47, ../../src/pattern/lib/_utilities.scss */
 .hide-text {
   text-indent: -119988px;
   overflow: hidden;
   text-align: left; }
 
-/* line 43, ../../src/pattern/lib/_utilities.scss */
+/* line 52, ../../src/pattern/lib/_utilities.scss */
 .input-block-level {
   display: block;
   width: 100%;
@@ -4097,6 +4105,10 @@ input[type="submit"].btn {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box; }
+
+/* line 56, ../../src/pattern/lib/_utilities.scss */
+.alert-text {
+  color: #e84444; }
 
 /* Theme Colors and layout Defaults */
 /* Bullet icon */

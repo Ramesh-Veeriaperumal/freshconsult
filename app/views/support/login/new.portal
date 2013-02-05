@@ -10,16 +10,19 @@
 			<p>Give us your email address and instructions to reset your password will be emailed to you. </p>
 			{% snippet forgot_password_form %}
 		</div>
-	</div>	
-	<div class="alt-login-button">
-		<h2 class="heading">...or login using</h2>
-		{{ "Google" | login_via_google }}
-		{{ "Facebook" | login_via_facebook }}
-		{{ "Twitter" | login_via_twitter }}
 	</div>
+	{% if portal.has_alternate_login %}
+		<div class="alt-login-button">
+			<h2 class="heading">...or login using</h2>
+			{{ "Google" | login_via_google }}
+			{{ "Facebook" | login_via_facebook }}
+			{{ "Twitter" | login_via_twitter }}
+		</div>
+	{% endif %}
 </section>
+<section class="sidebar">
 {% if portal.can_signup_feature? %}
-	<section id="signup-container" class="content-form rounded-6 sidebar">
+	<section id="signup-container" class="content-form rounded-6">
 		<h2 class="heading">{% translate signup %}</h2>
 		<p>
 			<a href="{{ portal.signup_path }}" class="btn btn-signup">
@@ -31,3 +34,4 @@
 		</p>
 	</section>
 {% endif %}
+</section>

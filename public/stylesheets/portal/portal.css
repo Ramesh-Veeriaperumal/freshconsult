@@ -2040,7 +2040,7 @@ input[type="submit"].btn {
 /* Importing admin icons */
 /* line 322, portal/icon/*.png */
 .icon-sprite, .icon-article-list, .article-list li:before, li.article-item:before, .ticket-list li:before, li.ticket-item:before, .icon-check-status, .check-status:before, .icon-cog-dark, .icon-cog-drop-dark, .icon-cog-drop-light, .icon-cog-light, .icon-dd-tick-dark, .dropdown-menu .active > a:before,
-.dropdown-menu .active > a:hover:before, .icon-dd-tick-light, .icon-dual-arrow, .see-more:before, .icon-forum-a, .badge-announcement:before, .icon-forum-i, .badge-ideas:before, .icon-forum-p, .badge-problems:before, .icon-forum-q, .badge-questions:before, .icon-like-arrow-right, .icon-more-details-light, .icon-more-details, .icon-new-ticket, .new-ticket:before, .icon-page-announcement, .icon-page-article, .icon-page-ideas, .icon-page-problems, .icon-page-questions, .icon-phone, .contact-info:before, .icon-quote, .icon-search-dark, .icon-search-light, .mobile-icon-search:before, .icon-sign-in-facebook, .btn-facebook:before, .icon-sign-in-google, .btn-google:before, .icon-sign-in-twitter, .btn-twitter:before, .icon-smiley-happy-small, .icon-smiley-happy, .icon-smiley-neutral-small, .icon-smiley-neutral, .icon-smiley-unhappy-small, .icon-smiley-unhappy, .icon-topic-list, .topic-list li:before, li.topic-item:before {
+.dropdown-menu .active > a:hover:before, .icon-dd-tick-light, .icon-dual-arrow, .see-more:before, .icon-forum-a, .badge-announcement:after, .icon-forum-i, .badge-ideas:after, .icon-forum-p, .badge-problems:after, .icon-forum-q, .badge-questions:after, .icon-like-arrow-right, .icon-more-details-light, .icon-more-details, .icon-new-ticket, .new-ticket:before, .icon-page-announcement, .icon-page-article, .icon-page-ideas, .icon-page-problems, .icon-page-questions, .icon-phone, .contact-info:before, .icon-quote, .icon-search-dark, .icon-search-light, .mobile-icon-search:before, .icon-sign-in-facebook, .btn-facebook:before, .icon-sign-in-google, .btn-google:before, .icon-sign-in-twitter, .btn-twitter:before, .icon-smiley-happy-small, .icon-smiley-happy, .icon-smiley-neutral-small, .icon-smiley-neutral, .icon-smiley-unhappy-small, .icon-smiley-unhappy, .icon-topic-list, .topic-list li:before, li.topic-item:before {
   background: url('/images/portal/icon-sa4e1c51433.png') no-repeat; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
@@ -2099,25 +2099,25 @@ input[type="submit"].btn {
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
-.icon-forum-a, .badge-announcement:before {
+.icon-forum-a, .badge-announcement:after {
   background-position: 0 -544px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
-.icon-forum-i, .badge-ideas:before {
+.icon-forum-i, .badge-ideas:after {
   background-position: 0 -324px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
-.icon-forum-p, .badge-problems:before {
+.icon-forum-p, .badge-problems:after {
   background-position: 0 -617px;
   height: 20px;
   width: 20px; }
 
 /* line 60, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
-.icon-forum-q, .badge-questions:before {
+.icon-forum-q, .badge-questions:after {
   background-position: 0 -454px;
   height: 20px;
   width: 20px; }
@@ -2295,52 +2295,46 @@ input[type="submit"].btn {
       border-right-color: #6c6c6c; } }
 /* line 57, ../../src/portal/lib/_sprites.scss */
 .badge-announcement, .badge-ideas, .badge-problems, .badge-questions {
-  display: -moz-inline-stack;
-  display: inline-block;
-  vertical-align: middle;
-  *vertical-align: auto;
-  zoom: 1;
-  *display: inline;
-  -webkit-border-radius: 2em;
-  -moz-border-radius: 2em;
-  -ms-border-radius: 2em;
-  -o-border-radius: 2em;
-  border-radius: 2em;
-  width: 26px;
-  height: 26px;
-  margin-right: 1px;
-  margin-top: -2px;
-  margin-left: -2px; }
-  /* line 65, ../../src/portal/lib/_sprites.scss */
-  .badge-announcement:before, .badge-ideas:before, .badge-problems:before, .badge-questions:before {
+  position: relative;
+  margin-left: 30px; }
+  /* line 60, ../../src/portal/lib/_sprites.scss */
+  .badge-announcement:before, .badge-announcement:after, .badge-ideas:before, .badge-ideas:after, .badge-problems:before, .badge-problems:after, .badge-questions:before, .badge-questions:after {
     content: "";
-    display: -moz-inline-stack;
-    display: inline-block;
-    vertical-align: middle;
-    *vertical-align: auto;
-    zoom: 1;
-    *display: inline;
     vertical-align: text-top;
-    margin-left: 4px; }
+    position: absolute;
+    left: -32px;
+    top: 1px; }
+  /* line 67, ../../src/portal/lib/_sprites.scss */
+  .badge-announcement:before, .badge-ideas:before, .badge-problems:before, .badge-questions:before {
+    width: 26px;
+    height: 26px;
+    -webkit-border-radius: 2em;
+    -moz-border-radius: 2em;
+    -ms-border-radius: 2em;
+    -o-border-radius: 2em;
+    border-radius: 2em; }
+  /* line 72, ../../src/portal/lib/_sprites.scss */
+  .badge-announcement:after, .badge-ideas:after, .badge-problems:after, .badge-questions:after {
+    margin: 3px 4px; }
 
-/* line 73, ../../src/portal/lib/_sprites.scss */
+/* line 77, ../../src/portal/lib/_sprites.scss */
 .page-stamp-article {
   background-color: #a249c5; }
 
-/* line 74, ../../src/portal/lib/_sprites.scss */
-.badge-announcement, .page-stamp-announcement {
+/* line 78, ../../src/portal/lib/_sprites.scss */
+.badge-announcement:before, .page-stamp-announcement {
   background-color: #008b00; }
 
-/* line 75, ../../src/portal/lib/_sprites.scss */
-.badge-ideas, .page-stamp-ideas {
+/* line 79, ../../src/portal/lib/_sprites.scss */
+.badge-ideas:before, .page-stamp-ideas {
   background-color: #f4af1a; }
 
-/* line 76, ../../src/portal/lib/_sprites.scss */
-.badge-problems, .page-stamp-problems {
+/* line 80, ../../src/portal/lib/_sprites.scss */
+.badge-problems:before, .page-stamp-problems {
   background-color: #ff5959; }
 
-/* line 77, ../../src/portal/lib/_sprites.scss */
-.badge-questions, .page-stamp-questions {
+/* line 81, ../../src/portal/lib/_sprites.scss */
+.badge-questions:before, .page-stamp-questions {
   background-color: #00aad5; }
 
 /* line 6, ../../src/portal/lib/_dropdowns.scss */
@@ -3916,20 +3910,17 @@ li.article-item, li.topic-item, li.ticket-item {
 /* line 55, ../../src/portal/lib/_content.scss */
 .start-topic {
   float: right;
-  font-weight: bold; }
+  font-weight: bold;
+  margin-top: -35px; }
 
-/* line 60, ../../src/portal/lib/_content.scss */
+/* line 61, ../../src/portal/lib/_content.scss */
 .tabbed {
   margin-left: 15px; }
 
-/* line 64, ../../src/portal/lib/_content.scss */
-#home-community-sidebar .start-topic {
-  margin-top: -30px; }
-
-/* line 68, ../../src/portal/lib/_content.scss */
+/* line 65, ../../src/portal/lib/_content.scss */
 .see-more {
   color: rgba(4, 156, 219, 0.5); }
-  /* line 70, ../../src/portal/lib/_content.scss */
+  /* line 67, ../../src/portal/lib/_content.scss */
   .see-more:before {
     content: "";
     display: -moz-inline-stack;
@@ -3941,21 +3932,21 @@ li.article-item, li.topic-item, li.ticket-item {
     vertical-align: text-top;
     margin-right: 8px; }
 
-/* line 79, ../../src/portal/lib/_content.scss */
+/* line 76, ../../src/portal/lib/_content.scss */
 .help-text, .p-info, .info-text, .list-noinfo {
   color: #999999;
   font-weight: 200;
   line-height: 19.88636px; }
 
-/* line 85, ../../src/portal/lib/_content.scss */
+/* line 82, ../../src/portal/lib/_content.scss */
 .help-text {
   font-size: 12px; }
 
-/* line 86, ../../src/portal/lib/_content.scss */
+/* line 83, ../../src/portal/lib/_content.scss */
 .p-info strong {
   color: #333333; }
 
-/* line 87, ../../src/portal/lib/_content.scss */
+/* line 84, ../../src/portal/lib/_content.scss */
 .list-noinfo {
   text-align: center; }
 
@@ -3985,20 +3976,20 @@ li.article-item, li.topic-item, li.ticket-item {
 	a{ color: #a1913f; }
 	a:hover{ color: darken(#a1913f, 10%); }
 }*/
-/* line 118, ../../src/portal/lib/_content.scss */
+/* line 115, ../../src/portal/lib/_content.scss */
 #vote-toolbar #topic-vote-down-button {
   display: none; }
-/* line 119, ../../src/portal/lib/_content.scss */
+/* line 116, ../../src/portal/lib/_content.scss */
 #vote-toolbar:hover #topic-vote-down-button {
   display: inline; }
 
 /* A small colen is added in front of the 
    up-vote button if its next to the atleast 1 user is voted label */
-/* line 124, ../../src/portal/lib/_content.scss */
+/* line 121, ../../src/portal/lib/_content.scss */
 #topic-vote-up-button:nth-child(3) {
   margin-left: 10px;
   position: relative; }
-  /* line 127, ../../src/portal/lib/_content.scss */
+  /* line 124, ../../src/portal/lib/_content.scss */
   #topic-vote-up-button:nth-child(3):before {
     content: " : ";
     color: #333333;
@@ -4007,19 +3998,19 @@ li.article-item, li.topic-item, li.ticket-item {
     top: -3px; }
 
 /* Background for a sticky topic in the list view */
-/* line 137, ../../src/portal/lib/_content.scss */
+/* line 134, ../../src/portal/lib/_content.scss */
 .c-topic-sticky {
   background-color: #fffff6; }
 
-/* line 139, ../../src/portal/lib/_content.scss */
+/* line 136, ../../src/portal/lib/_content.scss */
 .user-comment {
   margin: 5px 0 20px; }
-  /* line 141, ../../src/portal/lib/_content.scss */
+  /* line 138, ../../src/portal/lib/_content.scss */
   .user-comment .user-pic-thumb {
     clear: right;
     z-index: 3; }
 
-/* line 147, ../../src/portal/lib/_content.scss */
+/* line 144, ../../src/portal/lib/_content.scss */
 .user-info {
   *zoom: 1;
   margin-bottom: 10px; }
@@ -4030,12 +4021,12 @@ li.article-item, li.topic-item, li.ticket-item {
   /* line 19, ../../src/portal/lib/_mixins.scss */
   .user-info:after {
     clear: both; }
-  /* line 150, ../../src/portal/lib/_content.scss */
+  /* line 147, ../../src/portal/lib/_content.scss */
   .user-info .user-details {
     margin-left: 55px;
     margin-top: 2px; }
 
-/* line 153, ../../src/portal/lib/_content.scss */
+/* line 150, ../../src/portal/lib/_content.scss */
 .p-content {
   background-color: #fafafa;
   padding: 0.8em 1em;
@@ -4048,10 +4039,10 @@ li.article-item, li.topic-item, li.ticket-item {
   position: relative;
   margin: 0 0 10px;
   /* To handle the paragraph tags coming in from redactor */ }
-  /* line 162, ../../src/portal/lib/_content.scss */
+  /* line 159, ../../src/portal/lib/_content.scss */
   .p-content p {
     margin: 0; }
-  /* line 163, ../../src/portal/lib/_content.scss */
+  /* line 160, ../../src/portal/lib/_content.scss */
   .p-content hr {
     margin-top: 10px;
     margin-bottom: 10px;
@@ -4059,7 +4050,7 @@ li.article-item, li.topic-item, li.ticket-item {
     margin-right: -1em;
     border-top: 1px solid #efefef; }
 
-/* line 172, ../../src/portal/lib/_content.scss */
+/* line 169, ../../src/portal/lib/_content.scss */
 .comment-by-agent .p-content {
   background-color: #fffdf8;
   border-color: #cccccc;
@@ -4067,14 +4058,14 @@ li.article-item, li.topic-item, li.ticket-item {
   -moz-box-shadow: rgba(0, 0, 0, 0.05) 0 3px 3px;
   box-shadow: rgba(0, 0, 0, 0.05) 0 3px 3px; }
 
-/* line 178, ../../src/portal/lib/_content.scss */
+/* line 175, ../../src/portal/lib/_content.scss */
 .c-list {
   border-bottom: 1px solid #f3f3f3;
   margin-bottom: 12px;
   margin-top: 5px;
   margin-bottom: 1em; }
 
-/* line 185, ../../src/portal/lib/_content.scss */
+/* line 182, ../../src/portal/lib/_content.scss */
 .c-row {
   *zoom: 1;
   padding: 10px 0;
@@ -4084,57 +4075,57 @@ li.article-item, li.topic-item, li.ticket-item {
     content: "";
     display: table;
     clear: both; }
-  /* line 189, ../../src/portal/lib/_content.scss */
+  /* line 186, ../../src/portal/lib/_content.scss */
   .c-row .help-text {
     font-size: 0.96em; }
-  /* line 190, ../../src/portal/lib/_content.scss */
+  /* line 187, ../../src/portal/lib/_content.scss */
   .c-row:hover {
     background-color: rgba(241, 239, 236, 0.3); }
 
-/* line 193, ../../src/portal/lib/_content.scss */
+/* line 190, ../../src/portal/lib/_content.scss */
 .c-user-thumb, .uv-user-thumb {
   padding-left: 55px; }
-  /* line 195, ../../src/portal/lib/_content.scss */
+  /* line 192, ../../src/portal/lib/_content.scss */
   .c-user-thumb .user-pic-thumb, .uv-user-thumb .user-pic-thumb {
     margin-left: -53px; }
-    /* line 197, ../../src/portal/lib/_content.scss */
+    /* line 194, ../../src/portal/lib/_content.scss */
     .c-user-thumb .user-pic-thumb img, .uv-user-thumb .user-pic-thumb img {
       width: 35px;
       height: 35px; }
 
-/* line 201, ../../src/portal/lib/_content.scss */
+/* line 198, ../../src/portal/lib/_content.scss */
 .uv-user-thumb {
   padding-left: 45px; }
-  /* line 203, ../../src/portal/lib/_content.scss */
+  /* line 200, ../../src/portal/lib/_content.scss */
   .uv-user-thumb .user-pic-thumb {
     margin-left: -40px; }
-    /* line 205, ../../src/portal/lib/_content.scss */
+    /* line 202, ../../src/portal/lib/_content.scss */
     .uv-user-thumb .user-pic-thumb img {
       width: 30px;
       height: 30px; }
 
-/* line 209, ../../src/portal/lib/_content.scss */
+/* line 206, ../../src/portal/lib/_content.scss */
 .c-link {
   font-size: 1.16em;
   font-weight: 200; }
 
 /* Solution voting button */
-/* line 215, ../../src/portal/lib/_content.scss */
+/* line 212, ../../src/portal/lib/_content.scss */
 .vote-up, .vote-down {
   font-weight: bold;
   margin-left: 10px; }
-  /* line 218, ../../src/portal/lib/_content.scss */
+  /* line 215, ../../src/portal/lib/_content.scss */
   .vote-up:hover, .vote-down:hover {
     text-decoration: none; }
 
-/* line 222, ../../src/portal/lib/_content.scss */
+/* line 219, ../../src/portal/lib/_content.scss */
 .vote-down:before {
   content: "-";
   color: #e5e5e5;
   margin-right: 10px; }
 
 /* File attachment based styles */
-/* line 229, ../../src/portal/lib/_content.scss */
+/* line 226, ../../src/portal/lib/_content.scss */
 .attachment {
   *zoom: 1;
   margin-bottom: 15px; }
@@ -4145,28 +4136,28 @@ li.article-item, li.topic-item, li.ticket-item {
   /* line 19, ../../src/portal/lib/_mixins.scss */
   .attachment:after {
     clear: both; }
-  /* line 232, ../../src/portal/lib/_content.scss */
+  /* line 229, ../../src/portal/lib/_content.scss */
   .attachment a {
     display: block; }
-  /* line 233, ../../src/portal/lib/_content.scss */
+  /* line 230, ../../src/portal/lib/_content.scss */
   .attachment .file-thumbnail {
     float: left;
     margin-right: 10px;
     margin-top: 2px;
     width: 30px;
     height: 32px; }
-  /* line 240, ../../src/portal/lib/_content.scss */
+  /* line 237, ../../src/portal/lib/_content.scss */
   .attachment .file-image {
     border: 1px solid #afafaf;
     width: 50px;
     height: 50px; }
 
 /* User voted list in topic details page */
-/* line 248, ../../src/portal/lib/_content.scss */
+/* line 245, ../../src/portal/lib/_content.scss */
 .user-list {
   margin-top: -10px; }
 
-/* line 251, ../../src/portal/lib/_content.scss */
+/* line 248, ../../src/portal/lib/_content.scss */
 .uv-row {
   *zoom: 1;
   border-bottom: 1px solid #f3f3f3;
@@ -4177,16 +4168,16 @@ li.article-item, li.topic-item, li.ticket-item {
     content: "";
     display: table;
     clear: both; }
-  /* line 256, ../../src/portal/lib/_content.scss */
+  /* line 253, ../../src/portal/lib/_content.scss */
   .uv-row:last-child {
     border-bottom: 0; }
-  /* line 259, ../../src/portal/lib/_content.scss */
+  /* line 256, ../../src/portal/lib/_content.scss */
   .uv-row .lead-small {
     margin-top: 7px;
     margin-bottom: 0; }
 
 /* Pointer that shows up near the user pic in Ticket and Topic details page */
-/* line 267, ../../src/portal/lib/_content.scss */
+/* line 264, ../../src/portal/lib/_content.scss */
 .user-pointer-bottom:before, .user-pointer-bottom:after, .user-pointer-right:before, .user-pointer-right:after {
   content: "";
   border: 8px solid transparent;
@@ -4194,102 +4185,113 @@ li.article-item, li.topic-item, li.ticket-item {
   height: 0;
   position: absolute;
   z-index: 1; }
-/* line 275, ../../src/portal/lib/_content.scss */
+/* line 272, ../../src/portal/lib/_content.scss */
 .user-pointer-bottom:after, .user-pointer-right:after {
   border-width: 7px;
   z-index: 2; }
 
-/* line 281, ../../src/portal/lib/_content.scss */
+/* line 278, ../../src/portal/lib/_content.scss */
 .user-pointer-bottom:before, .user-pointer-bottom:after {
   bottom: -12px;
   right: 14px;
   border-bottom-color: #ebebeb; }
-/* line 286, ../../src/portal/lib/_content.scss */
+/* line 283, ../../src/portal/lib/_content.scss */
 .user-pointer-bottom:after {
   right: 15px;
   border-bottom-color: #fafafa; }
 
-/* line 293, ../../src/portal/lib/_content.scss */
+/* line 290, ../../src/portal/lib/_content.scss */
 .user-pointer-right:before {
   top: 14px;
   right: -18px;
   border-right-color: #ebebeb; }
-/* line 298, ../../src/portal/lib/_content.scss */
+/* line 295, ../../src/portal/lib/_content.scss */
 .user-pointer-right:after {
   top: 15px;
   right: -19px;
   border-right-color: #fafafa; }
 
-/* line 307, ../../src/portal/lib/_content.scss */
+/* line 304, ../../src/portal/lib/_content.scss */
 .comment-by-agent .user-pointer-bottom:before {
   border-bottom-color: #cccccc; }
-/* line 308, ../../src/portal/lib/_content.scss */
+/* line 305, ../../src/portal/lib/_content.scss */
 .comment-by-agent .user-pointer-bottom:after {
   border-bottom-color: #fffdf8; }
-/* line 311, ../../src/portal/lib/_content.scss */
+/* line 308, ../../src/portal/lib/_content.scss */
 .comment-by-agent .user-pointer-right:before {
   border-right-color: #cccccc; }
-/* line 312, ../../src/portal/lib/_content.scss */
+/* line 309, ../../src/portal/lib/_content.scss */
 .comment-by-agent .user-pointer-right:after {
   border-right-color: #fffdf8; }
 
-/* line 316, ../../src/portal/lib/_content.scss */
+/* line 313, ../../src/portal/lib/_content.scss */
 hr.content-divider {
   margin-top: 30px;
   margin-bottom: 20px;
   border-bottom-color: #f6f6f6; }
 
-/* line 322, ../../src/portal/lib/_content.scss */
+/* line 319, ../../src/portal/lib/_content.scss */
 .post-actions {
   margin-top: 15px;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
   opacity: 0.4; }
 
-/* line 326, ../../src/portal/lib/_content.scss */
+/* line 323, ../../src/portal/lib/_content.scss */
 .user-comment:hover .post-actions {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
   opacity: 1; }
 
 /* Media styles for tablet and above */
 @media (min-width: 45em) {
-  /* line 330, ../../src/portal/lib/_content.scss */
+  /* line 327, ../../src/portal/lib/_content.scss */
   .content, .content-form, .content-light {
     padding: 1.8em 2.2em;
     margin-top: 10px; }
 
-  /* line 335, ../../src/portal/lib/_content.scss */
+  /* line 332, ../../src/portal/lib/_content.scss */
   .user-comment .user-pic-thumb {
     clear: none;
     margin: 0; }
 
-  /* line 340, ../../src/portal/lib/_content.scss */
+  /* line 337, ../../src/portal/lib/_content.scss */
   .c-user-thumb {
     padding-left: 60px; }
-    /* line 342, ../../src/portal/lib/_content.scss */
+    /* line 339, ../../src/portal/lib/_content.scss */
     .c-user-thumb .user-pic-thumb {
       padding: 2px; }
 
-  /* line 345, ../../src/portal/lib/_content.scss */
+  /* line 342, ../../src/portal/lib/_content.scss */
   hr.content-divider {
     margin-left: -2.2em;
     margin-right: -2.2em; }
 
-  /* line 350, ../../src/portal/lib/_content.scss */
+  /* line 347, ../../src/portal/lib/_content.scss */
   .topic-actions, .ticket-actions {
     float: right;
     margin-bottom: -50px;
     margin-top: 15px; } }
 @media (min-width: 60em) {
+  /* line 356, ../../src/portal/lib/_content.scss */
+  .sidebar .community-sidebar .cs-s {
+    border-top: 0;
+    margin: 0; }
+  /* line 357, ../../src/portal/lib/_content.scss */
+  .sidebar .community-sidebar h3.heading {
+    display: none; }
   /* line 358, ../../src/portal/lib/_content.scss */
-  #home-page-discussions .topic-list:nth-child(n+3) ul {
-    display: none; } }
+  .sidebar .community-sidebar .topic-list:nth-child(n+3) ul {
+    display: none; }
+  /* line 359, ../../src/portal/lib/_content.scss */
+  .sidebar .community-sidebar .start-topic {
+    margin-top: 0;
+    float: none; } }
 @media (max-width: 30em) {
-  /* line 362, ../../src/portal/lib/_content.scss */
+  /* line 365, ../../src/portal/lib/_content.scss */
   .topic-actions {
     margin-top: 15px;
     margin-bottom: 15px; }
 
-  /* line 363, ../../src/portal/lib/_content.scss */
+  /* line 366, ../../src/portal/lib/_content.scss */
   .topic-actions .btn {
     min-width: 30%; } }
 /* line 1, ../../src/portal/lib/_login.scss */

@@ -29,7 +29,7 @@
     </div>
 
     <h3 class="title"><%=t("portalcss.cosmetic.subheader_portal_fonts")%></h3>
-    <% pref_bgs = [:baseFontFamily, :textColor, :headingsFontFamily, :headingsColor] %>
+    <% pref_bgs = [:baseFont, :textColor, :headingsFont, :headingsColor] %>
     <div class='srow-fluid'>
     <% pref_bgs.each_with_index do |p, i| %>    
       <div class="sgrid3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">

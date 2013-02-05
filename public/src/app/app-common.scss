@@ -1069,10 +1069,6 @@ h4.title{
 	}
 }
 
-
-
-@include all-admin-icon-sprites;
-
 .mark_action{ 
 	a, .stamp{
 		padding:2px 6px; 
@@ -3284,12 +3280,9 @@ div.addReminder{
 			width:24px;
 			height:18px;
 		}
-
-		@include all-ticket-view-sprites;
-
 	}
-
 }
+
 .tickets {
 	th.toolbar_right{
       text-align:right;
@@ -3973,86 +3966,7 @@ div.addReminder{
 		 	position:absolute;
 		 	left:8px;
 		 	top:10px;
-		 }
-		 a.big-text{
-		    font-size:1.85em;
-		    display:block;
-		    padding-left:24px;
-		    padding-bottom:2px;
-		 } 
-		 .portal-logo{
-		    width:90px;
-		    padding-right:12px;
-		    text-align:right;
-		    border-right:1px solid #efefef;
-		    padding-top:3px;
-		 }
-		 .portal-text{
-		    padding-left:12px;
-		    .channel-text{
-		       position:relative;
-		       font-size:1.35em; 
-		       padding-left:24px;
-		       span.icon{
-   		       position:absolute;
-   		       left:0px; 
-   		       top:3px;
-   		       width:18px;
-   		       height:18px;
-   		    }   
-   		    span.email{
-                background: sprite($symbol, product-email) no-repeat;	
-   		    }	    
-   		    span.url{
-                 background: sprite($symbol, product-url) no-repeat;	
-    		    }
-    		    span.twitter{
-                  background: sprite($symbol, product-twitter) no-repeat;	
-     		    }
-   		    span.email-active{
-                background: sprite($symbol, product-email-active) no-repeat;	
-   		    }	    
-   		    span.url-active{
-                 background: sprite($symbol, product-url-active) no-repeat;	
-    		    }
-    		    span.twitter-active{
-                  background: sprite($symbol, product-twitter-active) no-repeat;	
-     		    }
-    		    span.facebook-active{
-                  background: sprite($symbol, product-facebook-active) no-repeat;	
-     		    }
-		    }
-		    .not-verified{
-		       padding:12px 0px;
-		    }
-		    .inactive_email{
-		       margin:0px;
-		    }
-		    .slim-button{
-		       margin-top:0px;
-		       margin-left:-2px;
-		       color:$default_txt_color;
-		    }
-		 }
-		 .color_box{
-		    @include clearfix;
-		 }
-		 .color_item{
-		    width:11px;
-		    height:11px;
-		    float:right;
-		    margin-left:2px;
-		 }
-		 .image_logo, .color_item{
-		    border:1px solid #dbdbdb;
-		 }
-		 .image_logo{
-		    max-height:40px;
-		    max-width:90px;
-		 }
-/*		 div.item_actions{
- 			visibility:hidden;
- 		}*/
+		 }		 
 	}
 	li:hover{
 		div.item_actions{
@@ -4101,7 +4015,32 @@ div.addReminder{
    }
 }
 
-@include all-application-logo-sprites;
+#multi-product-list{
+	.portal-logo{ width:90px; }
+	.channel{ width:27%; vertical-align: top; }
+	.channel-text{
+		position: relative;
+	   	padding-left:20px;
+	   	padding-bottom: 8px;
+	   	
+	   	.not-verified{ margin-top:-3px; font-size: 11px; }
+		.inactive_email{ margin:0px; }	
+
+	   	span.icon{
+			position:absolute;
+			left:0; 
+			top:0;
+			width:14px;
+			height:14px;
+	    }
+	}
+	.image_logo{
+		@include border-radius(5px);
+		border:1px solid #dbdbdb;
+		max-height:40px;
+		max-width:90px;
+	}
+}
 
 .deactivated{
    li{
@@ -5400,8 +5339,7 @@ a.close{
 	padding-right: 30px;
 }
 .report_items {
-	border-top: 1px solid #F2F2F2;
-	@include all-reports-icon-sprites;
+	border-top: 1px solid #F2F2F2;	
 	@include pie-clearfix;
 	li {
 		margin: 25px 40px 25px 20px;

@@ -33,6 +33,12 @@ module SupportHelper
 		
 	end
 
+	# No content information for forums
+	def filler_for_forums portal		
+		%( <div class='lead'> #{I18n.t('portal.no_forums_info_1')} </div>
+		   <div class='lead-small'> #{ I18n.t('portal.no_forums_info_2', :start_topic_link => link_to_start_topic(portal))} </div> )
+	end
+
 	# Logo for the portal
 	def logo portal
 		_output = []
@@ -99,16 +105,78 @@ module SupportHelper
     	content_tag :a, label, { :href => portal['new_topic_path'], :title => label }.merge(options)
 	end
 
-	def topic_full_brief topic, last_post
+	def article_list folder, limit = 5
+		if(folder['articles_count'] > 0)
+			articles = folder['articles']
+			output = []
+			output << %(<ul>#{ articles.take(limit).map { |a| article_list_item a.to_liquid } }</ul>)
+			if articles.size > limit
+				output << %(<a href="#{folder['url']}" class="see-more">) 
+				output << %(#{ I18n.t('portal.article.see_all_articles', :count => folder['article_count']) })
+				output << %(</a>) 
+			end
+			output.join("")
+		end
+	end
+
+	def article_list_item article
+		output = <<HTML
+			<li>
+				<div class="ellipsis">
+					<a href="#{article['url']}">#{article['title']}</a>
+				</div>
+			</li>
+HTML
+		output.html_safe
+	end
+
+
+
+	def topic_list forum, limit = 5
+		if(forum['topics_count'] > 0)
+			topics = forum['topics']
+			output = []
+			output << %(<ul>#{ topics.take(limit).map { |t| topic_list_item t.to_liquid } }</ul>)
+			if topics.size > limit
+				output << %(<a href="#{forum['url']}" class="see-more">) 
+				output << %(#{ I18n.t('portal.topic.see_all_topics', :count => forum['topics_count']) })
+				output << %(</a>) 
+			end
+			output.join("")
+		end
+	end
+
+	def topic_list_item topic
+		output = <<HTML
+			<li>
+				<div class="ellipsis">
+					<a href="#{topic['url']}">#{topic['title']}</a>
+				</div>
+				<div class="help-text">
+					#{ topic_info topic }
+				</div>
+			</li>
+HTML
+		output.html_safe
+	end
+
+	def topic_info topic
 		output = []
 		output << topic_brief(topic)
-		output << post_brief(last_post) if topic.has_comments
+		output << %(<div> #{post_brief(topic.last_post.to_liquid)} </div>) if topic.has_comments
+		output.join(", ")
+	end
+
+	def topic_info_with_votes topic
+		output = []
+		output << topic_brief(topic)
+		output << post_brief(topic.last_post.to_liquid) if topic.has_comments
 		output << bold(topic_votes(topic)) if(topic.votes > 0)
 		output.join(", ")
 	end
 		
 	def topic_brief topic
-		"Posted by #{bold topic.user.name}, #{time_ago topic.created_on}"
+		%(Posted by #{bold topic.user.name}, #{time_ago topic.created_on})
 	end
 
 	def topic_votes topic
@@ -122,12 +190,9 @@ module SupportHelper
 	end
 
 	def post_brief post, link_label = "Last reply"
-		output = ""
 		if post.present?
-			output += "<a href='#{post.url}'>#{link_label}</a> "
-			output += "by #{post.user.name} #{time_ago post.created_on}"
+			%(<a href="#{post.url}"> #{link_label} </a> by #{post.user.name} #{time_ago post.created_on})
 		end
-		output
 	end
 
 	def post_actions post
@@ -164,13 +229,6 @@ HTML
 			Account.current.survey.title(survey_result)
 		end
 	end
-	
-	def is_file_restricted file_name
-    	_files = {  :new_topic => "/support/discussions/topics/form", 
-    				:request_form => "/support/tickets/request_form" }
-
-    	_files[file_name.to_sym]
-  	end
 
 	# Construct ticket form UI
 	def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)

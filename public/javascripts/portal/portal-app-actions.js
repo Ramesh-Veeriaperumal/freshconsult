@@ -7,6 +7,7 @@
 
 	// If no sidebar is present make the main content to stretch to full-width
 	if(!$(".sidebar").get(0)) $(".main").removeClass("main")
+	if(!$(".main").get(0)) $(".sidebar").removeClass("sidebar")
 
 	$(function () {
 
