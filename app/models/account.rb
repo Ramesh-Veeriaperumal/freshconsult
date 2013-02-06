@@ -69,6 +69,8 @@ class Account < ActiveRecord::Base
   authenticates_many :user_sessions
   
   has_many :attachments, :class_name => 'Helpdesk::Attachment'
+
+  has_many :dropboxes,  :class_name=> 'Helpdesk::Dropbox'
   
   has_many :users, :conditions =>{:deleted =>false}, :order => :name
   has_many :all_users , :class_name => 'User'
@@ -113,6 +115,7 @@ class Account < ActiveRecord::Base
   
   has_many :email_notifications
   has_many :groups
+  has_many :agent_groups
   has_many :forum_categories, :order => "position"
   
   has_one :business_calendar
@@ -179,13 +182,15 @@ class Account < ActiveRecord::Base
 
   delegate :bcc_email, :ticket_id_delimiter, :email_cmds_delimeter, :pass_through_enabled, :to => :account_additional_settings
 
+  has_many :subscription_events 
+  
   #Scope restriction ends
   
   validates_format_of :domain, :with => /(?=.*?[A-Za-z])[a-zA-Z0-9]*\Z/
   validates_exclusion_of :domain, :in => RESERVED_DOMAINS, :message => "The domain <strong>{{value}}</strong> is not available."
   validates_length_of :helpdesk_url, :maximum=>255, :allow_blank => true
   validate :valid_domain?
-  validate :valid_helpdesk_url?
+  validate :valid_helpdesk_url? 
   validate :valid_sso_options?
   validate_on_create :valid_user?
   validate_on_create :valid_plan?
@@ -225,6 +230,10 @@ class Account < ActiveRecord::Base
   named_scope :active_accounts,
               :conditions => [" subscriptions.next_renewal_at > now() "], 
               :joins => [:subscription]
+
+  named_scope :premium_accounts, {:conditions => {:premium => true}}
+              
+  named_scope :non_premium_accounts, {:conditions => {:premium => false}}
              
   
   Limits = {
@@ -239,7 +248,7 @@ class Account < ActiveRecord::Base
   end
   
   PLANS_AND_FEATURES = {
-    :basic => { :features => [ :twitter ] },
+    :basic => { :features => [ :twitter, :custom_domain, :multiple_emails ] },
     
     :pro => {
       :features => [ :scenario_automations, :customer_slas, :business_hours, :forums, 
@@ -257,7 +266,7 @@ class Account < ActiveRecord::Base
     },
     
     :blossom => {
-      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets ],
+      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, :custom_domain, :multiple_emails ],
       :inherits => [ :sprout ]
     },
     
@@ -265,10 +274,31 @@ class Account < ActiveRecord::Base
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :advanced_reporting ],
       :inherits => [ :blossom ]
     },
+
     :estate => {
       :features => [ :gamification, :agent_collision ],
       :inherits => [ :garden ]
+    },
+
+    :sprout_classic => {
+      :features => [ :scenario_automations, :business_hours, :custom_domain, :multiple_emails ]
+    },
+    
+    :blossom_classic => {
+      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets],
+      :inherits => [ :sprout_classic ]
+    },
+    
+    :garden_classic => {
+      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :advanced_reporting ],
+      :inherits => [ :blossom_classic ]
+    },
+
+    :estate_classic => {
+      :features => [ :gamification, :agent_collision ],
+      :inherits => [ :garden_classic ]
     }
+
   }
   
 # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E

@@ -3,6 +3,7 @@ module Helpdesk::TicketActions
   include Helpdesk::Ticketfields::TicketStatus
   include ParserUtil
   include ExportCsvUtil
+  include Helpdesk::ToggleEmailNotification
   
   def create_the_ticket(need_captcha = nil)
     cc_emails = fetch_valid_emails(params[:cc_emails])
@@ -51,6 +52,10 @@ module Helpdesk::TicketActions
   #we are getting the mass-assignment warning right now..
   def build_ticket_attachments
     handle_screenshot_attachments unless params[:screenshot].blank?
+      (params[:dropbox_url] || []).each do |urls|
+        decoded_url =  URI.unescape(urls)
+         @ticket.dropboxes.build(:url => decoded_url)
+      end
     (params[:helpdesk_ticket][:attachments] || []).each do |a|
       @ticket.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @ticket.account_id)
     end
@@ -121,13 +126,14 @@ module Helpdesk::TicketActions
                                }  
     unless @note.tweet.nil?
       tweet_hash = {:twitter_id => @note.user.twitter_id,
-                    :tweet_attributes => {:tweet_id => @note.tweet.tweet_id, 
-                                          :account_id => current_account.id}}
+                    :tweet_attributes => {:tweet_id => @note.tweet.tweet_id,
+                                          :twitter_handle_id => @note.tweet.twitter_handle_id }}
       params[:helpdesk_ticket] = params[:helpdesk_ticket].merge(tweet_hash)
       @note.tweet.destroy
     end
     build_item
     move_attachments   
+    move_dropboxes
     if @item.save
       flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
     else
@@ -145,6 +151,12 @@ module Helpdesk::TicketActions
       end
       @item.attachments.build(:content => io, :description => "", 
         :account_id => @item.account_id)
+    end
+  end
+
+  def move_dropboxes #added to support dropbox while spliting tickets
+    @note.dropboxes.each do |dropbox|
+      @item.dropboxes.build(:url => dropbox.url)
     end
   end
   
@@ -201,9 +213,9 @@ module Helpdesk::TicketActions
   end
   
   def close_source_ticket
-    EmailNotification.disable_notification(current_account)
+    disable_notification
     @source_ticket.update_attribute(:status , CLOSED)
-    EmailNotification.enable_notification(current_account)
+    enable_notification
   end
   
   def add_note_to_source_ticket

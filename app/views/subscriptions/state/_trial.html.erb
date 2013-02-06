@@ -1,24 +1,35 @@
-<li class="inline-field">
-    <div class="info-highlight">
-      <%= content_tag(:h3, t('upgrade_trial'), :class => "title") %>       
+<ul class="ui-form">
+  <li class="inline-field">
+    <div class="trial-info">
+      <div class="caption">
+        <%= t('current_plan') %>
+        <div class="plan-name">
+          <% if @subscription.classic? %>
+          <b class="big-text"> <%= " #{ @subscription.subscription_plan.name.split(" Classic").first }" %></b>
+          <%= content_tag(:span, "Classic", :class => "classic-account") %>
+          <% else %>
+            <b class="big-text"> <%= " #{ @subscription.subscription_plan.name }" %></b>
+          <% end %>
+        </div>
+      </div>
       <% unless subscription.finished_trial? %>
-        <%= t('your_trial_account') %> 
-        <%= "#{t('will_expire_in')} #{pluralize(subscription.trial_days, t('day'), t('days'))}" %>.
+        <div class="trial-message">
+          <%= t('your_trial_account') %> 
+          <%= "#{t('will_expire_in')} #{pluralize(subscription.trial_days, t('day'), t('days'))}" %>.
+        </div>
       <% else %>
         <%= "#{t('trial_expired_on')} #{subscription.next_renewal_at.to_s(:long_day)} " %>.
       <% end %>
-      <br />
-      <%= t('select_a_plan_gain_access') %> 
-      <% if subscription.eligible_for_free_plan? %>
-        <span class="free-plan-info">
-      ~ or ~
-          <%= t('continue_using_free') %>
-          <%= link_to t('free_account'), free_subscription_url %>
-        </span>
-      <% end %>
+      <div class = "choose-plan">
+        <%= t('choose_plan_trial') %>
+      </div>
     </div>    
-    <%= content_tag(:h3, t('select_a_plan'), :class => "title") %>
-    <%= render :partial => "select_plans", :locals => { :plans => plans } %>
-    <br />
-    <br />
+    <br /><br />
   </li> 
+</ul>
+
+<div class="choose-plan-title">
+  <%= content_tag(:h4, t('choose_plan'), :class => "title") %>
+  <%= t('downgrade_plan') %>
+</div>
+<%= render :partial => "select_plans", :locals => { :plans => plans, :subscription => @subscription, :show_all => false } %>

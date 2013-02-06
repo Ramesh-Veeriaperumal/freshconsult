@@ -27,12 +27,9 @@
 
     invokeRedactor('<%= "#{id}-#{cntid}-body" %>');
     
-    jQuery('#ticket_cancel_multiple_button').click(
-    function(){
-        active_dialog.dialog('close');
-    }); 
-
-    jQuery('#canned_show').bind('click', function(ev){
+   
+    jQuery('#canned_show').die('click');
+    jQuery('#canned_show').live('click', function(ev){
         ev.preventDefault();
         jQuery('#bulk-response-group').removeClass('hide');
         jQuery('#bulktickets').animate({marginLeft: '-=688px'}, 300);

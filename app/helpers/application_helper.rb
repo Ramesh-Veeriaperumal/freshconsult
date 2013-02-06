@@ -86,7 +86,11 @@ module ApplicationHelper
   end
 
   def tab(title, url, cls = false, tab_name="")
-    content_tag('li', content_tag('span') + link_to(strip_tags(title), url,  :"data-pjax" => "#body-container"), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
+    options = {:"data-pjax" => "#body-container"}
+    if tab_name.eql?(:tickets)
+      options.merge!({:"data-parallel-url" => "/helpdesk/tickets/filter_options", :"data-parallel-placeholder" => "#ticket-leftFilter"})
+    end
+    content_tag('li', content_tag('span') + link_to(strip_tags(title), url, options ), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
   end
   
   def show_ajax_flash(page)
@@ -337,8 +341,8 @@ module ApplicationHelper
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)
     end 
-    avatar_content = MemcacheKeys.fetch(["v2","avatar",profile_size,user],options.fetch(:expiry,300)) do
-      content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,options.fetch(:expiry,300)) : is_user_social(user, profile_size), img_tag_options ), :class => profile_class, :size_type => profile_size )
+    avatar_content = MemcacheKeys.fetch(["v3","avatar",profile_size,user],30.days.to_i) do
+      content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size), img_tag_options ), :class => profile_class, :size_type => profile_size )
     end
     avatar_content
   end
@@ -413,6 +417,12 @@ module ApplicationHelper
   def get_app_details(app_name)
     installed_app = @installed_apps_hash[app_name.to_sym]
     return installed_app
+  end
+
+  #This one checks for installed apps in account
+  def dropbox_app_key
+    app = Integrations::InstalledApplication.with_name("dropbox").find(:all,:conditions =>["installed_applications.account_id = ?",current_account])
+    app.first.configs[:inputs]['app_key']  unless (app.empty?)
   end
 
   def get_app_widget_script(app_name, widget_name, liquid_objs) 
@@ -507,9 +517,12 @@ module ApplicationHelper
           element = label + select(object_name, field_name, field.choices, {:selected => field_value},{:class => element_class})
         end
       when "dropdown_blank" then
-        element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
+        element = label + select(object_name, field_name, 
+                                              field.choices(@ticket), 
+                                              {:include_blank => "...", :selected => field_value}, 
+                                              {:class => element_class})
       when "nested_field" then
-        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal)
+        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => t('any'), :selected => field_value}, {:class => element_class}, field_value, in_portal)
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then

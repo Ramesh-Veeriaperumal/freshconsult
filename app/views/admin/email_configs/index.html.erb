@@ -3,7 +3,13 @@
 <% end %>
 <div class="flash_info notice" id="notice_id" style="display: none; "><%=t('email_configs.Personalized_email_replies_message') %><a class="close" href="#"></a></div>
 <div id="emailconfig-list" class="email-settings-header">
-  <%= link_to t('email_configs.new_support_email'), new_admin_email_config_path, :class => "floatr uiButton" %>
+  <% if feature?(:multiple_emails) %>
+    <%= link_to t('email_configs.new_support_email'), new_admin_email_config_path, :class => "floatr uiButton"%>
+  <% else %>
+    <%= link_to t('email_configs.new_support_email'), "javascript:;", :class => "floatr button locked tooltip", "data-placement" => 'below', :title => t('non_covered_feature_error') %>
+    <% options =  ( current_user.account_admin? ) ? {:tag => :a, :href => subscription_url } : {:tag => :p} %>
+    <%= content_tag(options[:tag], t('subscription.upgrade.message'), :href => options[:href], :class => "upgrade-message" ) %>
+  <% end %>
   <h3 class="title"><%=t('email_configs.title')%></h3>
   <div class="intro"><%=t('email_configs.info11')%></div>
 </div>

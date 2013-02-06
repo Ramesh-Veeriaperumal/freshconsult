@@ -1,0 +1,110 @@
+<table>
+<tr>
+	<td class="well well-small">
+	<form action="/spam_watch" method="get" onsubmit="return validate_spam_form()" id="spam_watcher">
+    <input rel="toggle" type="checkbox" name="spam_type" id="spam_type" <%= "checked" unless "notes".eql? params["type"] %> >
+	<input autocompelete="off" class="search-query span3" id="spam_watcher_id" name="id" placeholder="Spam requester id" 
+	type="number" value="<%=params[:user_id]%>"> 
+</form>
+
+<%unless @spam_tickets.blank? %>
+		<h4>Recent Tickets :: </h4>
+		<table class="table-bordered table-striped table">
+			<thead>
+				<tr>
+					<th><strong>Created on</strong></th>
+					<th><strong>Subject</strong></th>
+					<th><strong>Description</strong></th>
+				</tr>
+			</thead>
+			<tbody>
+				<%@spam_tickets.each do |ticket|%>
+					<tr>
+						<td>
+							<%=time_ago_in_words(ticket['created_at'])%> ago
+						</td>
+						<td>
+							<%=ticket['subject']%>
+						</td>
+						<td>
+							<%=ticket['description_html']%>
+						</td>
+					</tr>
+				<%end%>
+			</tbody>
+		</table>
+<%end%>
+<%unless @spam_notes.blank? %>
+		<h4>Recent Notes :: </h4>
+		<table class="table-bordered table-striped table">
+			<thead>
+				<tr>
+					<th width="20%"><strong>Created on</strong></th>
+					<th><strong>Note body</strong></th>
+				</tr>
+			</thead>
+			<tbody>
+				<%@spam_notes.each do |ticket|%>
+					<tr>
+						<td>
+							<%=time_ago_in_words(ticket['created_at'])%> ago
+						</td>
+						<td>
+							<%=ticket['body_html'][0,1000]%>
+						</td>
+					</tr>
+				<%end%>
+			</tbody>
+		</table>
+<%end%>
+</td>
+<td width="20%" style="vertical-align:top">
+<%if @user%>
+		<ul class="nav nav-list well well-large">
+			<li class="nav-header">User Details</li>
+			<li ><%=h(@user.name)%></li>
+			<li ><%=h(@user.email)%></li>
+			<li ><%=User::USER_ROLES_NAMES_BY_KEY[@user.user_role]%></li>
+			<li ><%=@user.account.name%>(<%=@user.account_id%>)</li>
+			<li>
+				<%if @user.whitelisted?%>
+					<b>Whitelisted</b>
+				<%else %>
+					<%if !@user.spam?%>
+						<a class="btn" style="width: 20%;display: inline-block;margin-left: 1px;" href="/spam_user/<%=@user.id%>">Spam</a> 
+					<% else%>
+						<b>Deleted</b>
+					<%end
+					if !@user.blocked?%>
+						<a class="btn" style="width: 20%;display: inline-block;margin-left: 50px;" href="/block_user/<%=@user.id%>">Block</a>
+					<%else%>
+						<b>Blocked</b>
+					<%end%>
+				<%end%>
+			</li>
+		</ul>
+<%end%>
+</td>
+</tr>
+</table>
+<% content_for :pagefixed do %>
+	<% javascript_tag do %>
+jQuery(document).ready(function() {
+	jQuery.fn.itoggle.defaults = {
+		buttonClass: "toggle-button",
+    checkedLabel: "Tickets",
+    uncheckedLabel: "Notes",
+    activeClass: "",
+    inactiveClass: "",
+    inverted: false
+	}
+	jQuery("input[rel=toggle]").livequery(function(){ jQuery(this).itoggle(); });
+})
+	function validate_spam_form(){
+		requester_id = jQuery('#spam_watcher_id').val();
+		type = jQuery('#spam_type').is(':checked') ? "tickets" : "notes";
+		window.location.href="/spam_watch/"+requester_id+"/"+type
+		return false;
+	}
+<% end %>
+<% end %>

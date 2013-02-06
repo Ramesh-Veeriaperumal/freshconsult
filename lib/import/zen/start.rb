@@ -8,10 +8,11 @@ class Import::Zen::Start < Struct.new(:params)
     include Import::Zen::FileUtil
     include Import::Zen::Group
     include Import::Zen::Organization
+    include Helpdesk::ToggleEmailNotification
     
     OBJECT_FILE_MAP = {:organization => "organizations.xml" ,:user => "users.xml" , :group => "groups.xml" ,:ticket => "tickets.xml" ,
-                       :record => "ticket_fields.xml"  , :category => "categories.xml",:forum => "forums.xml"  , :entry=>"entries.xml" }
-    SUB_FUNCTION_MAP = {:customers =>[:organization, :user] , :tickets =>[:group , :record, :ticket] , :forums => [:category,:forum,:entry] }
+                       :record => "ticket_fields.xml"  , :category => "categories.xml",:forum => "forums.xml"  , :entry=>"entries.xml", :post=>"posts.xml" }
+    SUB_FUNCTION_MAP = {:customers =>[:organization, :user] , :tickets =>[:group , :record, :ticket] , :forums => [:category,:forum,:entry,:post] }
  
   
   def perform
@@ -23,9 +24,9 @@ class Import::Zen::Start < Struct.new(:params)
     return if @current_account.blank?
     begin
       @base_dir = extract_zendesk_zip
-      disable_notification 
+      disable_notification(@current_account)
       handle_migration(params[:zendesk][:files] , @base_dir)
-      enable_notification
+      enable_notification(@current_account)
       send_success_email(params[:email] , params[:domain])
       delete_import_files @base_dir
     rescue => e
@@ -65,15 +66,6 @@ def read_data(obj_node)
 end
 
 private
- 
-  def disable_notification        
-     Thread.current["notifications_#{@current_account.id}"] = EmailNotification::DISABLE_NOTIFICATION   
-     Thread.current["notifications_#{@current_account.id}"][EmailNotification::USER_ACTIVATION][:requester_notification] = params[:zendesk][:files].include?("user_notify")   
-  end
-  
-  def enable_notification
-    Thread.current["notifications_#{@current_account.id}"] = nil
-  end
 
   def solution_import?
     params[:zendesk][:files].include?("solution")

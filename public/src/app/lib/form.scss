@@ -137,6 +137,15 @@ form table {
     width: 100%;
 }
 
+
+.auto_bcc_email{
+	padding-left: 10px !important;
+
+	input.text{
+		width: 94%;
+	}	
+}
+
 div.ui-form ul{
 	padding:0px;
 }
@@ -263,7 +272,7 @@ a.addchoice:hover{
 	background-color:#F8F8F8; 
 	div.field-box{
 		padding:6px 2% 10px 2%;
-		@include clearfix; 		
+		@include pie-clearfix; 		
 	}
 	li{
 		padding:8px 2% 8px 2%; 

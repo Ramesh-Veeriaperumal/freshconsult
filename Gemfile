@@ -9,7 +9,7 @@ gem "html2textile", "~> 1.0.0.beta1"
 
 gem "RedCloth", "4.2.3"
 gem "authlogic", "2.1.6"
-gem "httparty", "0.6.1"
+gem "httparty", "0.10.0"
 gem "omniauth", "1.0"
 gem "omniauth-oauth"
 gem "rufus-scheduler", :require =>"rufus/scheduler"
@@ -22,6 +22,7 @@ gem "omniauth-facebook"
 gem "omniauth-salesforce"
 gem "omniauth-mailchimp", "~> 1.0.3"
 gem "omniauth-constantcontact2", "~> 1.0.4"
+gem "nori", "1.1.4"
 
 gem "jira4r", "0.3.0"
 gem "ruby-openid", "2.1.8", :require => "openid"
@@ -81,6 +82,7 @@ gem 'chargebee', "~> 1.1.1"
 
 gem 'memcache-client', '1.8.5'
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
+gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
 
 group :development,:test do
    #gem "rspec", "1.3.1"

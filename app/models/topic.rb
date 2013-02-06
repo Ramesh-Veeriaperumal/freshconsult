@@ -89,6 +89,8 @@ class Topic < ActiveRecord::Base
   
   IDEAS_STAMPS = [
     [ :planned,      I18n.t("topic.ideas_stamps.planned"),       1 ], 
+    [ :inprogress,   I18n.t("topic.ideas_stamps.inprogress"),    4 ],
+    [ :deferred,     I18n.t("topic.ideas_stamps.deferred"),      5 ],
     [ :implemented,  I18n.t("topic.ideas_stamps.implemented"),   2 ],
     [ :nottaken,     I18n.t("topic.ideas_stamps.nottaken"),      3 ]
   ]

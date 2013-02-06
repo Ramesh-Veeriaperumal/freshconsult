@@ -301,7 +301,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
   
   def get_joins(all_conditions)
-    all_joins = joins
+    all_joins = [""]
+    all_joins = joins if all_conditions[0].include?("flexifields")
     all_joins[0].concat(monitor_ships_join) if all_conditions[0].include?("helpdesk_subscriptions.user_id")
     all_joins[0].concat(schema_less_join) if all_conditions[0].include?("helpdesk_schema_less_tickets.boolean_tc02")
     all_joins[0].concat(users_join) if all_conditions[0].include?("users.customer_id")

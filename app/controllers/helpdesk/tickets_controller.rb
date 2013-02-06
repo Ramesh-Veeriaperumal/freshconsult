@@ -11,6 +11,10 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::Ticketfields::TicketStatus
   include RedisKeys
   include Helpdesk::AdjacentTickets
+  include Helpdesk::ToggleEmailNotification
+  include SeamlessDatabasePool::ControllerFilter
+
+  use_database_pool [:user_ticket, :export_csv] => :persistent
 
   before_filter :set_mobile, :only => [:index, :show,:update, :create, :execute_scenario, :assign, :spam ]
   before_filter :check_user, :load_installed_apps, :only => [:show, :forward_conv]
@@ -86,7 +90,10 @@ class Helpdesk::TicketsController < ApplicationController
       format.html  do
         @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
         @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
-        @show_options = show_options
+        unless request.headers['X-PJAX']
+          # Bad code need to rethink. Pratheep
+          @show_options = show_options
+        end
         @current_view = @ticket_filter.id || @ticket_filter.name unless params[:requester_id]
         @is_default_filter = (!is_num?(@template.current_filter))
         # if request.headers['X-PJAX']
