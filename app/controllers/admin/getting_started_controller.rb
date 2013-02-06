@@ -1,6 +1,6 @@
 class Admin::GettingStartedController < Admin::AdminController
   
-  before_filter :build_twitter_item, :twitter_wrapper, :build_fb_item, :fb_client
+  before_filter :build_twitter_item, :twitter_wrapper, :build_fb_item, :set_session_state ,:fb_client
 
   helper Admin::GettingStartedHelper
   
@@ -73,5 +73,9 @@ class Admin::GettingStartedController < Admin::AdminController
     def build_fb_item
       @fb_item = current_account.facebook_pages.build
     end
-  
+    
+    def set_session_state
+      session[:state] = Digest::MD5.hexdigest(Helpdesk::SECRET_3+ Time.now.to_f.to_s)
+    end
+
 end
