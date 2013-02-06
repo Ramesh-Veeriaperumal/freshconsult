@@ -41,7 +41,7 @@ function toggleGroup(access_id)
 <ul class="ui-form">
 	<li>
     		<%= f.label(:title, t('.response_name')) %>
-    		<%= f.text_field :title, :class => "text required" %>
+    		<%= f.text_field :title, :class => "text required", "minlength" => "3" %>
 	</li>
 	<li>
 			<label for="ca-content">

@@ -17,7 +17,7 @@
 		    <tr>
 		      <td class='queue'><%= queue %></td>
 		      <td class='size'><%= Resque.size queue %></td>
-		      <td class="failed_inqueue"> <%= link_to "Failed" , admin_resque_failed_show_path(:queue_name => queue) %></td>
+		      <td class="failed_inqueue"> <%= link_to "Failed" , admin_resque_failed_show_path(:queue_name => queue) %> - (<%=failed_queue_count(queue)%>)</td>
 		    </tr>
 	    <% end %>
 	    <tr class="<%= Resque::Failure.count.zero? ? "failed" : "failure" %>">

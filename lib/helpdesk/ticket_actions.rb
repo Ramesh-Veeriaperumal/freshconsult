@@ -122,6 +122,7 @@ module Helpdesk::TicketActions
                                 :status =>@source_ticket.status,
                                 :source =>@source_ticket.source,
                                 :ticket_type =>@source_ticket.ticket_type,                             
+                                :cc_email => @note.cc_emails                             
                                 
                                }  
     unless @note.tweet.nil?

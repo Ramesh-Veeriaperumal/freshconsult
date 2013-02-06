@@ -17,8 +17,13 @@ class SubscriptionAdmin::Resque::FailedController < ApplicationController
 	end
 
 	def requeue		
-		Resque::Failure.requeue(params[:id])
-		redirect_to :back
+	  Resque::Failure.requeue(params[:id])
+	  redirect_to :back
+	end	
+
+	def requeue_all	
+	  Resque::Failure.requeue_queue(params[:name])
+	  redirect_to :back
 	end	
 
 	def show
