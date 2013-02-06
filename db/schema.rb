@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121218133527) do
+ActiveRecord::Schema.define(:version => 20130206040552) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1518,7 +1518,6 @@ ActiveRecord::Schema.define(:version => 20121218133527) do
     t.integer  "posts_count",                      :default => 0
     t.datetime "last_seen_at"
     t.boolean  "deleted",                          :default => false
-    t.integer  "user_role"
     t.boolean  "delta",                            :default => true,  :null => false
     t.integer  "import_id",           :limit => 8
     t.string   "fb_profile_id"
@@ -1528,11 +1527,13 @@ ActiveRecord::Schema.define(:version => 20121218133527) do
     t.string   "address"
     t.datetime "deleted_at"
     t.boolean  "whitelisted",                      :default => false
-    t.string   "privileges"
     t.boolean  "account_admin",                    :default => false
     t.string   "external_id"
     t.string   "string_uc01"
     t.text     "text_uc01"
+    t.integer  "user_role"
+    t.boolean  "helpdesk_agent",                   :default => false
+    t.string   "privileges",                       :default => "0"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true

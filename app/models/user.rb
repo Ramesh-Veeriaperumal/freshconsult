@@ -162,7 +162,7 @@ class User < ActiveRecord::Base
   # FIXME: is the user_roles, :client_manager, :helpdesk_agent correct?
   attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, 
                   :twitter_id, :description, :time_zone, :avatar_attributes,:customer_id,:import_id,
-                  :deleted , :fb_profile_id , :language, :address, :user_roles, :client_manager,
+                  :deleted , :fb_profile_id , :language, :address, :user_roles_attributes, :client_manager,
                   :helpdesk_agent
 
   #Sphinx configuration starts
