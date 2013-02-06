@@ -2,6 +2,10 @@ require "httparty"
 
 class Admin::EmailConfigsController < Admin::AdminController
   include ModelControllerMethods
+
+  before_filter :only => [:new] do |c|
+    c.requires_feature :multiple_emails
+  end
   
   def index
     @email_config = current_account.primary_email_config

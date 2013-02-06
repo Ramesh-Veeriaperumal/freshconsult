@@ -97,9 +97,15 @@
               <% if is_application_installed?("jira")  %>   
                   <%= render :partial => "/helpdesk/integrations/jira_issue"%>
               <% end %>             
-              <span id="monitor">
-                <%= render :partial => "/helpdesk/subscriptions/monitor" %>
-              </span>
+              <div class="monitor_div">
+                <span id="monitor">
+                  <%= render :partial => "/helpdesk/subscriptions/monitor" %>
+                </span>
+                <div class="watchers_tooltip " id="new_watcher_page" style="display:none" rel="remote-load" 
+                     data-url= "<%=helpdesk_ticket_helpdesk_subscriptions_path(@ticket)%>" data-load-unique="true" >
+                  <span class="arrow-top"></span>
+                </div>
+              </div>
               <span id="spamicon">
                 <%= render :partial => "spam", :locals => { :ticket => @ticket, :page => params[:page] } %>
               </span>

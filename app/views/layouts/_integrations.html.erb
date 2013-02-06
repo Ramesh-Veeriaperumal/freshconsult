@@ -9,6 +9,7 @@
 		<script type="text/javascript">
 		var _gaq = _gaq || [];
 		    _gaq.push(['_setAccount', '<%= app_config[current_portal.id.to_s]['account_number'] %>']);
+		    _gaq.push(['_addDevId', '00P19']);
 		    <% unless app_config[current_portal.id.to_s]['domain'].blank? %>
 		    _gaq.push(['_setDomainName', '<%= app_config[current_portal.id.to_s]['domain'] %>']);
 		    <% end %>

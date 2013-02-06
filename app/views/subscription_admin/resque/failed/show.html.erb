@@ -5,6 +5,7 @@
 <%= link_to "Overview", admin_resque_home_path(), {:class => "uiButton", :id => "overview_button" } %>
 
     <%= link_to "#{t('remove')} #{@name}" , destroy_all_admin_resque_failed_path(:name => @name), { :method => :delete, :class => "uiButton" , :id => "resque_btn"} %>
+    <%= link_to "Requeue" , requeue_all_admin_resque_failed_path(:name => @name), { :method => :put, :class => "uiButton" , :id => "resque_btn"} %>
 
 <h1 class="failed_heading">Failed Jobs</h1>
 

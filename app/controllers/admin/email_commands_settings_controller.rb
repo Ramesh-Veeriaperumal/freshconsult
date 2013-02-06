@@ -3,7 +3,7 @@ class Admin::EmailCommandsSettingsController < Admin::AdminController
   def index
     @email_commands_setting = current_account.account_additional_settings
 
-    @email_content_commands = "status:pending, priority:medium, agent:John Robert"
+    @email_content_commands = '"status":"pending", "priority":"medium", "agent":"John Robert"'
     
     delimeter = current_account.email_cmds_delimeter
 

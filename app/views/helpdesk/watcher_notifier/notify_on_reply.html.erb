@@ -1,0 +1,41 @@
+<% if @note.user_id == @ticket.requester_id %>
+	<% @responder = t('helpdesk.tickets.add_watcher.mail.customer') %>
+<% else %>
+	<% @responder = @note.user.name %>
+<% end %>
+
+<%=t('helpdesk.tickets.add_watcher.mail.hi') %> <%=@subscription.user.name%>,<br /><br />
+<%=t('helpdesk.tickets.add_watcher.mail.response', :responder => @responder) %><br /><br />
+<table>
+	<tr>
+    	<td> <b> <%=t('helpdesk.tickets.add_watcher.mail.ticket') %> </b> </td>
+    	<td> : </td>
+    	<td> 
+            <a href='<%=helpdesk_ticket_url(@ticket,:host => @ticket.account.host)%>'> 
+                #<%=@ticket.display_id%> <%=@ticket.subject%> 
+            </a> 
+        </td>
+    </tr>
+    <tr>
+    	<td> <b> <%=t('helpdesk.tickets.add_watcher.mail.requester') %> </b> </td>
+    	<td> : </td>
+    	<td> 
+            <%=@ticket.requester.name%>  
+            &lt;<%=@ticket.requester.email unless @ticket.requester.email.blank? %>&gt;
+        </td> <br /><br />
+    </tr>
+</table>
+
+<% if @note.user_id == @ticket.requester_id %>
+    ---------- <%=t('helpdesk.tickets.add_watcher.mail.customer_response')%> ---------- <br /><br />
+<% else %>
+    ---------- <%= t('helpdesk.tickets.add_watcher.mail.agent_response') %> ---------- <br /> <br />
+<% end %>
+
+<%= @note.body_html%> <br /> <br /> 
+---------- ---------- ----------<br /><br />
+
+<a href="<%=unsubscribe_helpdesk_ticket_helpdesk_subscriptions_url(@ticket,
+                                                                :host => @ticket.account.host)%>">
+    <%=t('helpdesk.tickets.add_watcher.mail.stop_emails') %>
+</a> <br /> <br />

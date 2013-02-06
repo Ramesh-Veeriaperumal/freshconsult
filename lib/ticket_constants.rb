@@ -48,7 +48,7 @@ module TicketConstants
   TYPE_KEYS_BY_TOKEN = Hash[*TYPE.map { |i| [i[0], i[2]] }.flatten]
   TYPE_NAMES_BY_SYMBOL = Hash[*TYPE.map { |i| [i[0], i[1]] }.flatten]
   
-  DEFAULT_COLUMNS_ORDER = [:responder_id,:group_id,:due_by,:status,:priority,:ticket_type,:source,"helpdesk_tags.name","users.customer_id"]
+  DEFAULT_COLUMNS_ORDER = [:responder_id,:group_id,:due_by,:status,:priority,:ticket_type,:source,"helpdesk_tags.name","users.customer_id",:requester_id]
   
   DEFAULT_COLUMNS =  [
     [ :status,              'status',   :dropdown],
@@ -61,6 +61,7 @@ module TicketConstants
     [ "helpdesk_tags.name", "tags",     :dropdown],
     [ "users.customer_id",  "customers", :dropdown],
     #[ :created_at,          "Created At", :created_at]
+    [ :requester_id,        'requester', :requester]
   ]
   
   DEFAULT_COLUMNS_OPTIONS = Hash[*DEFAULT_COLUMNS.map { |i| [i[0], i[1]] }.flatten]

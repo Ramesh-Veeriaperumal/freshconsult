@@ -20,11 +20,8 @@ class Post < ActiveRecord::Base
         :conditions => ["posts.user_id = ? and posts.user_id != topics.user_id", user.id ] 
       }
   }
-
-  has_many :attachments,
-    :as => :attachable,
-    :class_name => 'Helpdesk::Attachment',
-    :dependent => :destroy
+  
+  has_many_attachments
 
   #format_attribute :body
   

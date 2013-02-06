@@ -10,8 +10,11 @@ class ContactsController < ApplicationController
 
     before_filter :requires_all_tickets_access 
     
+   include APIHelperMethods
    include HelpdeskControllerMethods
    include ExportCsvUtil
+   include RedisKeys
+
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
    before_filter :set_selected_tab
    before_filter :check_agent_limit, :only =>  :make_agent
@@ -42,7 +45,9 @@ class ContactsController < ApplicationController
       end
 
       format.json  do
-        render :json => @contacts.to_json
+        render :json => @contacts.to_json({:except=>[:account_id] ,:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
+                    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
+                    :user_role,:fb_profile_id,:external_id,:language,:address] })#avoiding the secured attributes like tokens
       end
       format.atom do
         @contacts = @contacts.newest(20)
@@ -86,6 +91,19 @@ class ContactsController < ApplicationController
     end
   end
 
+  def unblock
+    ids = params[:ids] || Array(params[:id])
+    if ids
+      User.update_all({ :blocked => false, :whitelisted => true,:deleted => false, :blocked_at => nil }, 
+        [" id in (?) and (blocked_at IS NULL OR blocked_at <= ?) and (deleted_at IS NULL OR deleted_at <= ?) and account_id = ? ",
+         ids, (Time.now+5.days).to_s(:db), (Time.now+5.days).to_s(:db), current_account.id])
+      enqueue_worker(Workers::RestoreSpamTickets, current_account.id, ids)
+      flash[:notice] = t(:'flash.contacts.whitelisted')
+    end
+    redirect_to contacts_path and return if params[:ids]
+    redirect_to contact_path and return if params[:id]
+  end
+
   def hover_card
     @user = current_account.all_users.find(params[:id])    
     render :partial => "hover_card"
@@ -114,7 +132,9 @@ class ContactsController < ApplicationController
     @user = nil # reset the user object.
     @user = current_account.all_users.find_by_email(email) unless email.blank?
     @user = current_account.all_users.find(params[:id]) if @user.blank?
-    @user_tickets_open_pending = current_account.tickets.requester_active(@user).visible.newest(5)
+    @user_tickets = current_account.tickets.requester_active(@user).visible.newest(5).find(:all, 
+      :include => [ :ticket_states,:ticket_status,:responder,:requester ])
+    
     respond_to do |format|
       format.html { }
       format.xml  { render :xml => @user.to_xml} # bad request
@@ -244,33 +264,6 @@ protected
   end
 
   private
-    def convert_query_to_conditions(query_str)
-      matches = query_str.split(/((\S+)\s*(is|like)\s*("([^\\"]|\\"|\\\\)*"|(\S+))\s*(or|and)?\s*)/)
-      if matches.size > 1
-        conditions = []; c_i=0
-        matches.size.times{|i| 
-          pos = i%7
-          conditions[0] = "#{conditions[0]}#{matches[i]} " if(pos == 2) # property
-          if(pos == 3) # operator
-            oper = matches[i] == "is" ? "=" : matches[i]
-            conditions[0] = "#{conditions[0]}#{oper} "
-          end
-          if(pos == 4) # match value
-            conditions[0] = "#{conditions[0]}? "
-            matches[i] = matches[i][1..-1] if matches[i][0] == 34 # remove opening double quote
-            matches[i] = matches[i][0..-2] if matches[i][-1] == 34 # remove closing double quote
-            matches[i] = matches[i].gsub("\\\\", "\\") # remove escape chars
-            matches[i] = matches[i].gsub("\\\"", "\"") # remove escape chars
-            matches[i] = "%#{matches[i]}%" if matches[i-1] == "like"
-            conditions[c_i+=1] = matches[i]
-          end
-          conditions[0] = "#{conditions[0]}#{matches[i]} " if(pos == 6) # condition and/or
-        }
-        conditions
-      else
-        raise "Not able to parse the query."
-      end
-    end
 
     def get_formatted_message(exception)
       exception.message # TODO: Proper error reporting.

@@ -1,115 +1,64 @@
-<% content_for :pagefixed do %>
-  <%= javascript_include_tag "helpdesk/expanding_textarea.js" %>
-  <%= javascript_include_tag "helpdesk/page_switcher" %>
-  <% javascript_tag do -%>
-    document.observe("dom:loaded", function(){
-      new Helpdesk.PageSwitcher({
-        toggleMode: true,
-        pages: ['attachment-options']
-      });
-    });	
-
-	function closeTicket(ticket_id)
-	{
-		jQuery.ajax({
-  					type: 'POST',
-							url: '/support/tickets/close_ticket/'+ticket_id,
-							contentType: 'application/text',
-  					success: function(data){											
-								if(data.success)
-								{
-									jQuery('#status_name_id').text(data.status).show("highlight", 500);
-									jQuery('#close_ticket_btn').css("display", "none");
-								
-								}								
-								//Need to show the message some where data.message
-							}
-	    			});	
-	}	
-
-	show_ticket_props_form = function()
-	{
-		jQuery("#edit_button").hide();
-		jQuery("#ticket_props_form").show();	
-		jQuery("#ticket_props").hide();			
-	}	
-	
-	hide_ticket_props_form = function()
-	{
-		jQuery("#edit_button").show();
-		jQuery("#ticket_props_form").hide();	
-		jQuery("#ticket_props").show();	
-	}	
-    jQuery(document).ready(function(){
-      jQuery('#ticket_props_form').validate(); 
-    });
-	
-  <%- end %>
-<% end %>
-<%= include_stylesheets :redactor  %>
-<%= include_javascripts :redactor  %>
-
-<script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
-<% content_for :onload_script do -%>
-jQuery('#add_cc_btn').bind("click", function(ev){
-		ev.preventDefault();
-		jQuery("#cc_emails_sec").toggle();
-		jQuery("#cc_emails").val("");
-		jQuery("#cc_emails").trigger("liszt:updated");
-	});
-<%- end %>
-
-
-	<section class="main">
-		<% if @ticket.deleted %>
-			<div class="info-highlight-deleted">		
-				This ticket has been deleted
-			</div>
-		<% end %>
+<%= render :partial => "/support/shared/ticket_show_sidebar" %>	
+<div class="request_details">
+	<% if @ticket.deleted %>
+		<div class="info-highlight-deleted">		
+			This ticket has been deleted
+		</div>
+	<% end %>
     <div class="requestCnt request-cnt-first">
-				<h3 class="forum-title">
-					<em><%= "##{@ticket.display_id}" %></em>
-					<b><%= h(@ticket.subject) %></b>
-				</h3>
-				<div class="description">
-					<div class="ticket_actions action_icons" id="close_ticket_btn"></div>	 
-		        <div class="user_details">
-		        	<%= user_avatar(@ticket.requester)  %>
-		        	Reported by <%= link_to_user(@ticket.requester, :class => "user_name") %> 
-		        	<div class="info"> 
-								Created on <%= formated_date(@ticket.created_at) %>    
-					 		</div>					
-		        </div>                       
-						<div class="request-wrapper">
-		        	<div id="description-full" class="details min_height">
-								<span class="seperator"></span>
-			    			<%= @ticket.description_html %>
-			    		</div>  
-		 			  </div>
-					
-			
-			<% unless @ticket.attachments.empty? %>
-				<span class="seperator"></span>
-				<h4><%= @ticket.attachments.size %> attachments</h4>
-				<ul class="attachment_list">
-				     <%= render :partial => '/helpdesk/shared/attachment', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@item] } %>
-				</ul>
-			<% end %> 
-	    </div>               
-	</div>                
 		<% unless @ticket.deleted %>
-			<div class="request-wrapper">				
-				<% unless (@ticket.status == 5) %>
-					<%= link_to "Close this ticket", '/support/tickets/close_ticket/'+@ticket.display_id.to_s, :class =>"uiButton" %>
-				<% end %>
-				<a href="javascript:void(0)" class="uiButton" onclick="jQuery('#ReplyToTicket').show(); jQuery(this).hide();invokeRedactor('portal_ticket_note');">Add note</a>
-				<a href="javascript:void(0)" class="uiButton" onclick="jQuery('#AddCcToTicket').show(); jQuery(this).hide();">Add Cc</a>
-			</div>  
+    	 <!-- <div class="request_status">
+					<span class="ltSlant"></span>
+						<ul>
+							<li>
+								<b>Status</b>: <span id="status_name_id"><%= h(@ticket.status_name) %></span>
+							</li>
+						</ul>
+				</div> -->
 		<% end %>
-		<br />
+		<h3 class="forum-title">
+			<em><%= "##{@ticket.display_id}" %></em>
+			<b><%= h(@ticket.subject) %></b>
+		</h3>
+		<div class="description">
+			<div class="ticket_actions action_icons" id="close_ticket_btn"></div>	 
+		    <div class="user_details">
+		        <%= user_avatar(@ticket.requester)  %>
+		        Reported by <%= link_to_user(@ticket.requester, :class => "user_name") %> 
+		        <div class="info"> 
+					Created on <%= formated_date(@ticket.created_at) %>    
+				</div>					
+		    </div>                       
+			<div class="request-wrapper">
+		        <div id="description-full" class="details min_height">
+					<span class="seperator"></span>
+			    	<%= @ticket.description_html %>
+			    </div>  
+		 		
+		 		<% unless @ticket.attachments.empty? %>
+					<span class="seperator"></span>
+					<h4><%= @ticket.attachments.size %> attachments</h4>
+					<ul class="attachment_list">
+				    	<%= render :partial => '/helpdesk/shared/attachment', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@item] } %>
+					</ul>
+				<% end %>
+			</div> 
+	    </div>               
+	</div>  
 
-		<div id="AddCcToTicket" class="request_panel" style="display:none;">
-			<% form_for :ticket, @ticket, :url => support_ticket_add_cc_url(:id => @ticket.id), :html => {:id => "add_cc_form"} do |f| %>
+	<% unless @ticket.deleted %>
+		<div class="request-wrapper">				
+			<% unless (@ticket.status == 5) %>
+				<%= link_to "Close this ticket", '/support/tickets/close_ticket/'+@ticket.display_id.to_s, :class =>"uiButton" %>
+			<% end %>
+			<a href="javascript:void(0)" class="uiButton" onclick="jQuery('#ReplyToTicket').show(); jQuery(this).hide();invokeRedactor('portal_ticket_note');">Add note</a>
+			<a href="javascript:void(0)" class="uiButton" onclick="jQuery('#AddCcToTicket').show(); jQuery(this).hide();">Add Cc</a>
+		</div>  
+	<% end %>
+	<br />
+
+	<div id="AddCcToTicket" class="request_panel" style="display:none;">
+		<% form_for :ticket, @ticket, :url => support_ticket_add_cc_url(:id => @ticket.id), :html => {:id => "add_cc_form"} do |f| %>
 				<ul class="ui-form">
 					<li>			
 					       <% f.fields_for :cc_email do |cc| %>
@@ -121,14 +70,14 @@ jQuery('#add_cc_btn').bind("click", function(ev){
 					</li>
 				</ul>
 			<% end %>
-		</div>
+	</div>
 
-		<div id="ReplyToTicket" class="request_panel" style="display:none;">
-			<% form_for Helpdesk::Note.new, :url => support_ticket_helpdesk_notes_path(@ticket), :html => {:multipart => true }  do |f| %>
+	<div id="ReplyToTicket" class="request_panel" style="display:none;">
+		<% form_for Helpdesk::Note.new, :url => support_ticket_helpdesk_notes_path(@ticket), :html => {:multipart => true }  do |f| %>
 				<%= f.error_messages %>
 				<ul class="ui-form">
-			    <li> 
-							<%= content_tag( :h4, "Add a note", :class => "title" ) %>
+			    	<li> 
+						<%= content_tag( :h4, "Add a note", :class => "title" ) %>
 			  			<%= f.text_area :body_html, :id=>"portal_ticket_note" %>
 					</li>
 					<li class="attachment-options"  id="attachment-options">
@@ -141,126 +90,15 @@ jQuery('#add_cc_btn').bind("click", function(ev){
 					</li>
 				</ul>
 			<% end %>		
-		</div>
+	</div>
     <div class="seperator-shadow"></div>
-		<% unless @ticket.notes.public.exclude_source('meta').newest_first.blank? then %>
-			<h3 class="forum-title">Conversation</h3>
-			<div class="requestCnt request-conversation">
+	<% unless @ticket.notes.public.exclude_source('meta').newest_first.blank? then %>
+		<h3 class="forum-title">Conversation</h3>
+		<div class="requestCnt request-conversation">
 				<%= render :partial => '/helpdesk/tickets/note', :collection => @ticket.notes.public.exclude_source('meta') %>
-		    </div>
-		<% end %>
-	</section>
-
-	<section class="sidebar">
-    <% if @ticket.responder && !@ticket.deleted %>
-		<div class="sidepanel clearfix">
-			<h4 class="title"><%=t('agent_working_on_this_ticket')%></h4>
-			<%= user_avatar(@ticket.responder, :thumb)  %>
-			<%= content_tag(:b, h(@ticket.responder.name)) %>			
 		</div>
-  	<% end %>
-	<%
-		has_visible_field = false;
-		has_editable_field = false;
-
-		current_portal.ticket_fields.each do |field|
-			field_value = (field.is_default_field?) ? @ticket.send(field.field_name) : @ticket.get_ff_value(field.name)
-			has_visible_field = true if (field.visible_in_view_form? && field.visible_in_portal && !field_value.blank?)
-			has_editable_field = true if (field.visible_in_view_form? && field.editable_in_portal)
-		end
-	%>
-	
-	<%if has_visible_field%>
-		<div id="ticket_" class="sidepanel clearfix">
-			<%= link_to_function("Edit", "show_ticket_props_form()", 
-					:class => "button floatr", :id => "edit_button") if has_editable_field %>
-			
-			<h4 class="border_title"><%=t('ticket.properties')%></h4>
-			
-			<div id="ticket_props">
-			   <ul class="cnt">
-				   <% current_portal.ticket_fields.each do |field| %>
-				     <% if (field.visible_in_view_form? && field.visible_in_portal)%>
-				       <% 
-				          field_value = (field.is_default_field?) ? @ticket.send(field.field_name) : @ticket.get_ff_value(field.name)
-				          dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
-				          if(field.field_type == "nested_field")
-				          	field_value = {}
-				          	field.nested_levels.each do |ff|
-				          		field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = @ticket.get_ff_value(ff[:name])
-				          	end
-				          	field_value.merge!({:category_val => @ticket.get_ff_value(field.name)})
-				          end
-				       %>
-		          	   <%= construct_ticket_text_element :helpdesk_ticket, field, field.label_in_portal, dom_type, field.required_in_portal, field_value %>
-		          	   <%#= render(:partial => "/shared/nested_fields", :locals => { :ticket => @ticket, :category => field, :category_field_value =>  field_value, :type => "view"}) if field.field_type == "nested_field"%>
-		             <% end %>
-		           <% end %>
-			   </ul>
-		    </div>
-			
-			<%if has_editable_field%>	
-				<div id="ticket_props_form" style="display:none;">
-					<% form_for @ticket, :url => {:action => "update", :controller => "support/tickets"}, :html => { :id => 'portal_ticket_form' } do |f| %>
-					   <ul class="cnt">
-						   <% current_portal.ticket_fields.each do |field| %>
-						     <% if (field.visible_in_view_form? && field.editable_in_portal)%>
-						       <% 
-						          field_value = (field.is_default_field?) ? @ticket.send(field.field_name) : @ticket.get_ff_value(field.name)
-						          if(field.field_type == "nested_field")
-						          	field_value = {}
-						          	field.nested_levels.each do |ff|
-						          	field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = @ticket.get_ff_value(ff[:name])
-						          	end
-						          	field_value.merge!({:category_val => @ticket.get_ff_value(field.name)})
-						          end
-						          dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
-						       %>
-				          	   <%= construct_ticket_element :helpdesk_ticket, field, field.label_in_portal, dom_type, field.required_in_portal, field_value %>
-				          	   <%#= render(:partial => "/shared/nested_fields", :locals => { :ticket => @ticket, :category => field, :category_field_value =>  field_value, :type => "edit"}) if field.field_type == "nested_field"%>
-				             <% end %>
-				           <% end %>
-							<li class="button-container">
-								<%= link_to_function("Cancel", "hide_ticket_props_form()", :class => "uiButton floatl" )  %>
-								<%= f.submit t('update'), :class => "uiButton special" %>
-							</li>
-									
-					       <% javascript_tag do %>  
-					       	validateOptions = {
-								onkeyup: false,
-								focusCleanup: true,
-								focusInvalid: false,
-								ignore:":not(:visible)"
-						    };
-							jQuery('#portal_ticket_form').validate(validateOptions);
-					         jQuery('#helpdesk_ticket_group_id')
-					           .bind("change", function(e){
-					             jQuery('#helpdesk_ticket_responder_id')
-					                     .html("<option value=''>...</option>");
-					             jQuery.ajax({
-					               type:        'POST',
-					               url: 		     '/helpdesk/commons/group_agents/'+this.value,
-					               contentType: 'application/text',
-					               success:     function(data){
-					                               jQuery('#helpdesk_ticket_responder_id')
-					                                 .html(data);
-					                            }
-					             });
-					           });
-					    	<% if @ticket.ticket_status.deleted? %>
-         					jQuery("#helpdesk_ticket_status")
-         					.append('<option disabled="disabled" value = "<%= @ticket.status %>"> <%= @ticket.status_name %> </option>')
-         					.val("<%=@ticket.status%>")
-         					<% end %>
-					       <% end %>
-					   </ul>
-					<% end %> 	   	
-				</div>
-			<%end%>
-		</div>
-	<%end%>
-</section>
-	
+	<% end %>
+</div>
  <% javascript_tag do %>
  	jQuery("#add_cc_form").validate();
  <% end %>

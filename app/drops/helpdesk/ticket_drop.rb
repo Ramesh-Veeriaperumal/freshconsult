@@ -81,6 +81,12 @@ class Helpdesk::TicketDrop < BaseDrop
 		helpdesk_ticket_url(@source, :host => @source.account.host, :protocol=> @source.url_protocol)
 	end
 
+	def public_url
+		@source.populate_access_token if @source.access_token.blank?
+
+		public_ticket_url(@source.access_token,:host => @source.portal_host, :protocol=> @source.url_protocol)
+	end
+
 	def portal_url
 		support_ticket_url(@source, :host => @source.portal_host, :protocol=> @source.url_protocol)
 	end

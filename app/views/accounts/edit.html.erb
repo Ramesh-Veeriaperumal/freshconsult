@@ -94,17 +94,29 @@
 			<li class="inline-field">
 				<span class="seperator"></span>
 				<%= portal.label :portal_url, t('account.helpdesk_url'), :class => "caption" %>
-				<div class="fields">			    
-					<label class="overlabel" for="account_main_portal_attributes_portal_url">
-						Eg. support.mycompanyname.com						
-					</label>
-			    	<%= portal.text_field :portal_url, :class => "text portal_url url_without_protocol auto", :size => "50" %> 
-					<div class="info-data">
-						<%=t('account.info2',:full_domain => @account.full_domain)%>
-					</div>	
-			 </div>
-			</li>		
+				<div class="fields">
+					<% if feature?(:custom_domain) %>
+						<label class="overlabel" for="account_main_portal_attributes_portal_url">
+							Eg. support.mycompanyname.com						
+						</label>
+				    <%= portal.text_field :portal_url, :class => "text portal_url url_without_protocol" %> 
 
+						<div class="info-data">
+							<%=t('account.info2', :full_domain => @account.full_domain)%>
+						</div>	
+				 </div>
+				</li>		
+				<% else %>
+				<div class = "label-locked-feature">
+					<%= content_tag(:label, @account.full_domain, :class => "caption") %>
+					<div class="info-data">
+						
+					<% options =  ( current_user.account_admin? ) ? {:tag => :a, :href => subscription_url } : {:tag => :span} %>
+    				<%= content_tag(options[:tag], t('subscription.upgrade.cname'), :href => options[:href] ) %>
+
+					</div>
+				</div>
+				<% end %>
 			<li class="inline-field">
 				<%= portal.label :language, t('account.language'), :class => "caption"  %>
 				<div class="fields">

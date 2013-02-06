@@ -2,32 +2,40 @@ module Import::Zen::FileUtil
   
 def extract_zendesk_zip    
     puts "extract_zen_zip :: curr time:: #{Time.now}"  
-    file=  @current_account.data_import.attachments.first.content.to_file    
-    @upload_file_name = file.original_filename
-    zip_file_name = "#{RAILS_ROOT}/public/files/#{@upload_file_name}"
-    File.open(zip_file_name , "wb") do |f|
-      f.write(file.read)
-    end    
-    @file_list = Array.new       
-    @out_dir = "#{RAILS_ROOT}/public/files/extract/#{@upload_file_name.gsub('.zip','')}"
-    FileUtils.mkdir_p @out_dir    
-    zf = Zip::ZipFile.open(zip_file_name)
+    begin
+      file=  @current_account.data_import.attachments.first.content.to_file    
+      @upload_file_name = file.original_filename
+      zip_file_name = "#{RAILS_ROOT}/public/files/#{@upload_file_name}"
+      File.open(zip_file_name , "wb") do |f|
+        f.write(file.read)
+      end    
+      @file_list = Array.new       
+      @out_dir = "#{RAILS_ROOT}/public/files/extract/#{@upload_file_name.gsub('.zip','')}"
+      FileUtils.mkdir_p @out_dir    
+      zf = Zip::ZipFile.open(zip_file_name)
     
-    zf.each do |zip_file|        
-      report_name = File.basename(zip_file.name).gsub('zip','xml')
-      fpath = File.join(@out_dir , report_name)    
+      zf.each do |zip_file|        
+        report_name = File.basename(zip_file.name).gsub('zip','xml')
+        fpath = File.join(@out_dir , report_name)    
       
-      if(File.exists?(fpath))
-        FileUtils.rm_f(fpath)
-      end
-      zf.extract(zip_file, fpath)
-      file_det = Hash.new
-      file_det["file_name"] = report_name
-      file_det["file_path"] = fpath
-      @file_list.push(file_det)
-    end    
-    import_files_from_zendesk @out_dir  
-    delete_zip_file
+        if(File.exists?(fpath))
+          FileUtils.rm_f(fpath)
+        end
+        zf.extract(zip_file, fpath)
+        file_det = Hash.new
+        file_det["file_name"] = report_name
+        file_det["file_path"] = fpath
+        @file_list.push(file_det)
+      end    
+      import_files_from_zendesk @out_dir  
+      delete_zip_file
+    rescue => e
+      puts "Error in extract_zendesk_zip"
+      NewRelic::Agent.notice_error(e)
+    ensure
+      file.close
+      file.unlink
+    end  
     return @out_dir
 end
 

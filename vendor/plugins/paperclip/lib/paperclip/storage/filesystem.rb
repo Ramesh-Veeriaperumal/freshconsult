@@ -41,6 +41,7 @@ module Paperclip
           FileUtils.mv(file.path, path(style_name))
           FileUtils.chmod(0644, path(style_name))
         end
+        after_flush_writes # allows attachment to clean up temp files
         @queued_for_write = {}
       end
 

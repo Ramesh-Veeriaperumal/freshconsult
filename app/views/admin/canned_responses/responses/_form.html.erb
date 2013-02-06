@@ -1,7 +1,5 @@
 <% content_for :sidebar do -%><%- end %>
-<%= include_stylesheets :redactor  %>
-<%= include_javascripts :redactor  %>
-<script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
+
 <% javascript_tag do %>
 
 jQuery(document).ready(function(){
@@ -43,7 +41,7 @@ function toggleGroup(access_id)
 <ul class="ui-form">
 	<li>
     		<%= f.label(:title, t('.response_name')) %>
-    		<%= f.text_field :title, :class => "text required" %>
+    		<%= f.text_field :title, :class => "text required", "minlength" => "3" %>
 	</li>
 	<li>
 			<label for="ca-content">

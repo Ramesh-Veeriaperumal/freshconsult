@@ -1,8 +1,21 @@
 <!DOCTYPE html>
-  	<%= render :partial => "layouts/shared/html" %>
+	<%= include_stylesheets :non_pattern_1 %>
+	<%= include_stylesheets :non_pattern_2 %>
+	<%= include_stylesheets :app  %>
+	<%= include_stylesheets :common  %>
+	<%= include_javascripts :defaults  %>
+	<%= include_javascripts :frameworks %>
+	<%= include_javascripts :workspace %>
+	<%= include_javascripts :notifications %>
+	<%= render :partial => "layouts/shared/html" %>
+
 	<body>
-		<%= stylesheet_link_tag "app/admin.css" %>
-		<%= yield %>
-    </div>		 
-  </body>
+		<div style=" width:95%; margin: 10px auto;" > 
+			<%= stylesheet_link_tag "app/admin.css" %>
+			<%= yield %>
+			<div class='load-mask' style='display:none'><img src='/images/ajax-loader.gif'/></div>
+			<%= render :partial => "layouts/shared/scripts" %>  
+		</div>	
+	</body> 
+	<div id="footer" class="wrapper"> </div>
 </html>

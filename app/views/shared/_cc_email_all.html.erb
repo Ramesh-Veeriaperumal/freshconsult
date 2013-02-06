@@ -1,4 +1,5 @@
-<% javascript_tag do -%>
+<% content_for :onload_script do -%>
+
 jQuery('#add_cc_btn').bind("click", function(ev){
 		ev.preventDefault();
 		jQuery("#cc_emails_sec").toggle();
@@ -29,8 +30,12 @@ jQuery('#add_cc_btn').bind("click", function(ev){
 </div>
 <div id="cc_emails_sec" class="hide">
 	<label for="ticket_cc_list">Cc:</label>
-	<% javascript_tag do -%>
-        new Autocompleter.MultiValue("cc_emails", cachedLookup, $A(),{frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
-	<%- end %>
+	<% if current_user.agent? %>
+		<% content_for :onload_script do -%>
+	        new Autocompleter.MultiValue("cc_emails", cachedLookup, 
+	        							  $A(),{frequency: 0.1, 
+	        							  acceptNewValues: true,separatorRegEx:/;|,/});
+		<%- end %>
+	<% end %>
     <input type="text" id="cc_emails" name="cc_emails" />
 </div>

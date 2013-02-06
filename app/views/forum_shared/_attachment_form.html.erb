@@ -1,12 +1,13 @@
 <% attach_id = attach_id || "post" %>
 
-<label class="control-label">Attach files</label>	
-<div class="controls">
-	<input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="post[attachments][][resource]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
-	<div class="attachments" id="<%=attach_id%>-container" style="display:none">
-	  <div id="<%=attach_id%>-attachments"></div>
-	</div>
-</div>	
+<label>Attach files</label>
+<input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="post[attachments][][resource]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
+<div class="info-data">
+  <%=t('attachment_help_info')%>
+</div>
+<div class="attachments" id="<%=attach_id%>-container" style="display:none">
+  <div id="<%=attach_id%>-attachments"></div>
+</div>
 
 <%# 
   The following is a template used by multifile.js to create rows in

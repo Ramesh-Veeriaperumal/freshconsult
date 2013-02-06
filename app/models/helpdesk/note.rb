@@ -11,13 +11,9 @@ class Helpdesk::Note < ActiveRecord::Base
 
   belongs_to :user
   
-  Max_Attachment_Size = 15.megabyte
   include Mobile::Actions::Note
 
-  has_many :attachments,
-    :as => :attachable,
-    :class_name => 'Helpdesk::Attachment',
-    :dependent => :destroy
+  has_many_attachments
     
   has_one :tweet,
     :as => :tweetable,
@@ -40,7 +36,7 @@ class Helpdesk::Note < ActiveRecord::Base
   before_create :validate_schema_less_note
   before_save :load_schema_less_note, :update_category
   after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
-  after_commit_on_create :update_ticket_states   
+  after_commit_on_create :update_ticket_states, :notify_ticket_monitor
 
   accepts_nested_attributes_for :tweet , :fb_post
   
@@ -347,6 +343,15 @@ class Helpdesk::Note < ActiveRecord::Base
       fire_event(:create) unless disable_observer
     end
 
+    def notify_ticket_monitor
+      notable.subscriptions.each do |subscription|
+        if subscription.user.id != user_id
+          Helpdesk::WatcherNotifier.send_later(:deliver_notify_on_reply, 
+                                                notable, subscription, self)
+        end
+      end
+    end
+
     def update_category
       schema_less_note.category = CATEGORIES[:meta_response]
       return unless human_note_for_ticket?
@@ -361,7 +366,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end 
 
     def update_ticket_states
-      Resque.enqueue(Helpdesk::UpdateTicketStates, { :id => id }) unless private?
+      Resque.enqueue(Helpdesk::UpdateTicketStates, { :id => id }) unless private? || zendesk_import?
     end
 
     def update_avg_response_time(ticket_state)

@@ -1,34 +1,42 @@
 class Workers::Sla 
   extend Resque::Plugins::Retry
-  @queue = 'sla_worker'
 
   @retry_limit = 3
   @retry_delay = 60*2
   
-  include ::NewRelic::Agent::Instrumentation::ControllerInstrumentation  
- 
-  def self.perform(account_id)
-    begin
-      account = Account.find(account_id)
-      account.make_current
-      NewRelic::Agent.manual_start 
-      # perform_action_with_newrelic_trace(:name => "RakeTasks::Sla", :category => "OtherTransaction/Rake") do 
-      run(account)
-      # end
-    rescue Exception => e
-      puts "something is wrong: #{e.message}"
-    rescue 
-      puts "something went wrong"
-    end
-    NewRelic::Agent.shutdown
-    Account.reset_current_account 
-  end
+ class PremiumSLA 
+  @queue = 'premium_sla_worker'
 
-  def self.run account
+  def self.perform(account_id)
+    Workers::Sla.sla_escalate(account_id)
+  end
+ end
+
+ class AccountSLA
+  @queue = 'sla_worker'
+
+  def self.perform(account_id)
+   SeamlessDatabasePool.use_persistent_read_connection do
+    Workers::Sla.sla_escalate(account_id)
+   end
+  end
+ end
+
+ def self.sla_escalate(account_id)
+  begin
+    account = Account.find(account_id)
+    account.make_current
+    run(account)
+  rescue Exception => e
+    puts "something is wrong: #{e.message}"
+  rescue 
+    puts "something went wrong"
+    end
+   Account.reset_current_account 
+ end
+ 
+ def self.run account
     overdue_tickets = account.tickets.visible.find(:all, 
-                                                   :joins => "inner join helpdesk_ticket_states 
-                                                     on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
-                                                     and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id", 
                                                     :readonly => false, 
                                                     :conditions =>['due_by <=? AND isescalated=? AND status IN (?)',
                                                      Time.zone.now.to_s(:db),false, Helpdesk::TicketStatus::donot_stop_sla_statuses(account)] )
@@ -48,7 +56,9 @@ class Workers::Sla
       ticket.update_attribute(:isescalated , true)
     end
     
-    froverdue_tickets = account.tickets.visible.find(:all, :joins => :ticket_states , :readonly => false , 
+    froverdue_tickets = account.tickets.visible.find(:all, :joins => "inner join helpdesk_ticket_states 
+                                                     on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
+                                                     and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id" , :readonly => false , 
                         :conditions =>['frDueBy <=? AND fr_escalated=? AND status IN (?) AND 
                           helpdesk_ticket_states.first_response_time IS ?', 
                           Time.zone.now.to_s(:db),false,Helpdesk::TicketStatus::donot_stop_sla_statuses(account),nil] )

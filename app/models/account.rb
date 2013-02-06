@@ -114,6 +114,7 @@ class Account < ActiveRecord::Base
   
   has_many :email_notifications
   has_many :groups
+  has_many :agent_groups
   has_many :forum_categories, :order => "position"
   
   has_one :business_calendar
@@ -180,13 +181,15 @@ class Account < ActiveRecord::Base
 
   delegate :bcc_email, :ticket_id_delimiter, :email_cmds_delimeter, :pass_through_enabled, :to => :account_additional_settings
 
+  has_many :subscription_events 
+  
   #Scope restriction ends
   
   validates_format_of :domain, :with => /(?=.*?[A-Za-z])[a-zA-Z0-9]*\Z/
   validates_exclusion_of :domain, :in => RESERVED_DOMAINS, :message => "The domain <strong>{{value}}</strong> is not available."
   validates_length_of :helpdesk_url, :maximum=>255, :allow_blank => true
   validate :valid_domain?
-  validate :valid_helpdesk_url?
+  validate :valid_helpdesk_url? 
   validate :valid_sso_options?
   validate_on_create :valid_user?
   validate_on_create :valid_plan?
@@ -213,6 +216,11 @@ class Account < ActiveRecord::Base
   after_create :send_welcome_email
   after_update :update_users_language
 
+  before_destroy :update_crm
+
+  after_commit_on_create :add_to_billing
+  before_destroy :update_billing
+
   after_commit_on_update :clear_cache
   after_commit_on_destroy :clear_cache
   before_update :backup_changes
@@ -221,6 +229,10 @@ class Account < ActiveRecord::Base
   named_scope :active_accounts,
               :conditions => [" subscriptions.next_renewal_at > now() "], 
               :joins => [:subscription]
+
+  named_scope :premium_accounts, {:conditions => {:premium => true}}
+              
+  named_scope :non_premium_accounts, {:conditions => {:premium => false}}
              
   
   Limits = {
@@ -235,7 +247,7 @@ class Account < ActiveRecord::Base
   end
   
   PLANS_AND_FEATURES = {
-    :basic => { :features => [ :twitter ] },
+    :basic => { :features => [ :twitter, :custom_domain, :multiple_emails ] },
     
     :pro => {
       :features => [ :scenario_automations, :customer_slas, :business_hours, :forums, 
@@ -253,7 +265,7 @@ class Account < ActiveRecord::Base
     },
     
     :blossom => {
-      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets ],
+      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, :custom_domain, :multiple_emails ],
       :inherits => [ :sprout ]
     },
     
@@ -261,10 +273,31 @@ class Account < ActiveRecord::Base
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :advanced_reporting, :css_customization ],
       :inherits => [ :blossom ]
     },
+
     :estate => {
       :features => [ :gamification, :agent_collision, :layout_customization ],
       :inherits => [ :garden ]
+    },
+
+    :sprout_classic => {
+      :features => [ :scenario_automations, :business_hours, :custom_domain, :multiple_emails ]
+    },
+    
+    :blossom_classic => {
+      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets],
+      :inherits => [ :sprout_classic ]
+    },
+    
+    :garden_classic => {
+      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :advanced_reporting ],
+      :inherits => [ :blossom_classic ]
+    },
+
+    :estate_classic => {
+      :features => [ :gamification, :agent_collision ],
+      :inherits => [ :garden_classic ]
     }
+
   }
   
 # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
@@ -604,11 +637,24 @@ class Account < ActiveRecord::Base
        subscription.next_renewal_at
    end
 
-   
     def backup_changes
       @old_object = self.clone
       @all_changes = self.changes.clone
       @all_changes.symbolize_keys!
+    end
+
+  private 
+
+    def add_to_billing
+      Resque.enqueue(Billing::AddToBilling::CreateSubscription, id)
+    end 
+
+    def update_billing
+      Resque.enqueue(Billing::AddToBilling::DeleteSubscription, id)
+    end
+
+    def update_crm
+      Resque.enqueue(CRM::AddToCRM::DeletedCustomer, id)
     end
 
 end
