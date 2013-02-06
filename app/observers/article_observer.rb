@@ -47,7 +47,7 @@ private
 	    doc = Nokogiri::HTML.fragment(response)
 	    node = doc.search(tag)
 	    node.remove
-	    doc.to_html.gsub(/([^\r])\n/, '\1')
+	    doc.to_html
   	end
 
   	def remove_script_tags(article)

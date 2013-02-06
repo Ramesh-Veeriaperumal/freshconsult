@@ -389,7 +389,7 @@ class Subscription < ActiveRecord::Base
     def validate_on_update
       chk_change_billing_cycle
       if(agent_limit && agent_limit < account.full_time_agents.count)
-       errors.add_to_base(I18n.t("subscription.error.lesser_agents", {:agent_count => account.agents.count}))
+       errors.add_to_base(I18n.t("subscription.error.lesser_agents", {:agent_count => account.full_time_agents.count}))
       end         
     end
 
