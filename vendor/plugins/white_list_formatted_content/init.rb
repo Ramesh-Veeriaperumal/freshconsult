@@ -51,7 +51,7 @@ ActiveRecord::Base.class_eval do
       text = Nokogiri::HTML(self.body_html)
       text.xpath("//del").each { |div|  div.name= "span";}
       text.xpath("//p").each { |div|  div.name= "div";}
-      self.body_html = text.at_css("body").inner_html.gsub(/([^\r])\n/, '\1')
+      self.body_html = text.at_css("body").inner_html
     end
     
     def update_content # To do :: need to use changed_body_html?

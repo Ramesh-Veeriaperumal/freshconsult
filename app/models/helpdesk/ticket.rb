@@ -35,6 +35,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_create :assign_schema_less_attributes, :assign_email_config_and_product, :set_dueby, :save_ticket_states
 
   has_many_attachments
+
+  has_many_dropboxes
   
   after_create :refresh_display_id, :create_meta_note
 
@@ -936,7 +938,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return [] if emails_hash.nil?
     to_emails_array = []
     cc_emails_array = emails_hash[:cc_emails].blank? ? [] : emails_hash[:cc_emails]
-    to_emails_array = (self.to_emails || []).clone
+    ticket_to_emails = (self.to_emails || []).collect {|e| e.tr('"','').strip}
+    to_emails_array = (ticket_to_emails || []).clone
 
     reply_to_all_emails = (cc_emails_array + to_emails_array).uniq
 

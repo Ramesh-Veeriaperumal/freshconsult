@@ -4,7 +4,7 @@
   <div class = "pull-right" id ="pick_period" >
     <% form_tag "/events", :method => 'get' do %>
       <%= date_select("date", "period", { :discard_day => true, :order => [:month, :year], 
-                                            :start_year => 2012 , :prompt => true}) %>
+                                            :start_year => 2013, :prompt => true}) %>
       <%= submit_tag "Show Stats", :class => "btn" %>
     <% end %>
   </div>
@@ -43,6 +43,7 @@
 
   <% else %>
     
+  <% unless params[:date]["period(2i)"].blank? or params[:date]["period(1i)"].blank? %>
     <h4><%= %(#{I18n.t("date.month_names")[params[:date]["period(2i)"].to_i]}, #{params[:date]["period(1i)"]}) %></h4>
     <br/>
 
@@ -80,7 +81,7 @@
     
     <% events.map { |t| %>
         <%= render :partial => "events_table",  
-                  :locals => { :count => @events_count, :revenue => @events_revenue, :t => t } %>
+                  :locals => { :events => @events_count, :t => t, :revenue => true } %>
     <% } %>
 
     <br/>
@@ -88,7 +89,7 @@
 
     <% upgrades.map { |t| %> 
         <%= render :partial => "events_table",  
-                  :locals => { :count => @upgrades_count, :revenue => @upgrades_revenue, :t => t } %>
+                  :locals => { :events => @upgrades_count, :t => t, :revenue => true } %>
     <% } %>
 
     <br/>
@@ -96,7 +97,7 @@
 
     <% downgrades.map { |t| %>
         <%= render :partial => "events_table",  
-                  :locals => { :count => @downgrades_count, :revenue => @downgrades_revenue, :t => t } %>
+                  :locals => { :events => @downgrades_count, :t => t, :revenue => false } %>
     <% } %>
     
     <i>*accounts in red are deleted customers</i>
@@ -109,6 +110,7 @@
         jQuery(this).parent().find('.event-details').slideToggle();
       });
     <% end %>
+  <% end %>
 
   <% end %>
 

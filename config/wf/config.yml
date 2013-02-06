@@ -42,6 +42,7 @@ defaults: &defaults
     dropdown:             Wf::Containers::TextDelimited
     due_by:               Wf::Containers::DueBy
     requester:            Wf::Containers::TextDelimited
+    created_at:           Wf::Containers::Time
     
   data_types:             # mapping between data types and containers 
     nil:                  [nil]
@@ -66,7 +67,7 @@ defaults: &defaults
          dropdown:           [text_delimited]
          due_by:             [due_by]
          boolean:            [boolean]
- 
+         created_at:         [created_at]
          requester:          [requester]
     
 

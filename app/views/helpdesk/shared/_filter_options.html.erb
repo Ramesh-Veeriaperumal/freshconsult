@@ -21,6 +21,10 @@
       else if(container == "requester"){
         value = jQuery('#requester_filter').val().toString() || '';
       }
+      else if(container == "single_select"){
+        if(jQuery('#created_at option:selected').val() != "any_time")
+          value =  jQuery('#created_at option:selected').val();
+      }
       else {
         value = jQuery(this).find(_selector).map(function(){ return this.value; }).get();
       }
@@ -63,7 +67,9 @@
         <%
           if ((!c_hash[:field_type].nil?) && (c_hash[:field_type] == "nested_field"))
             container = "nested_field"
-          elsif     
+          elsif c_hash[:name] == 'created_at'
+            container = "single_select"
+          elsif  
             container = (c_hash[:name] == 'requester') ? 'requester': (c_hash[:options].size < 5)? "dropdown" : "multi_select" 
           end
         %> 

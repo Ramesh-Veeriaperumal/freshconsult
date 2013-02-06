@@ -52,6 +52,10 @@ module Helpdesk::TicketActions
   #we are getting the mass-assignment warning right now..
   def build_ticket_attachments
     handle_screenshot_attachments unless params[:screenshot].blank?
+      (params[:dropbox_url] || []).each do |urls|
+        decoded_url =  URI.unescape(urls)
+         @ticket.dropboxes.build(:url => decoded_url)
+      end
     (params[:helpdesk_ticket][:attachments] || []).each do |a|
       @ticket.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @ticket.account_id)
     end
@@ -118,6 +122,7 @@ module Helpdesk::TicketActions
                                 :status =>@source_ticket.status,
                                 :source =>@source_ticket.source,
                                 :ticket_type =>@source_ticket.ticket_type,                             
+                                :cc_email => @note.cc_emails                             
                                 
                                }  
     unless @note.tweet.nil?
@@ -129,6 +134,7 @@ module Helpdesk::TicketActions
     end
     build_item
     move_attachments   
+    move_dropboxes
     if @item.save
       flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
     else
@@ -146,6 +152,12 @@ module Helpdesk::TicketActions
       end
       @item.attachments.build(:content => io, :description => "", 
         :account_id => @item.account_id)
+    end
+  end
+
+  def move_dropboxes #added to support dropbox while spliting tickets
+    @note.dropboxes.each do |dropbox|
+      @item.dropboxes.build(:url => dropbox.url)
     end
   end
   

@@ -153,7 +153,7 @@
       admin.namespace :resque do |resque|
         resque.home '', :controller => 'home', :action => 'index'
         resque.failed_show '/failed/:queue_name/show', :controller => 'failed', :action => 'show'
-        resque.resources :failed, :member => { :destroy => :delete , :requeue => :put }, :collection => { :destroy_all => :delete }
+        resque.resources :failed, :member => { :destroy => :delete , :requeue => :put }, :collection => { :destroy_all => :delete, :requeue_all => :put }
       end
       # admin.resources :analytics 
       admin.resources :spam_watch, :only => :index
@@ -303,6 +303,8 @@
     helpdesk.resources :articles, :collection => { :autocomplete => :get }
 
     helpdesk.resources :attachments
+
+    helpdesk.resources :dropboxes
     
     helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get, :requester_autocomplete => :get }
     

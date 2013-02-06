@@ -161,6 +161,7 @@ var $J = jQuery.noConflict();
  
       // - Custom select boxs will use a plugin called chosen to render with custom CSS and interactions
       $("select.customSelect").livequery(function(){ $(this).chosen(); });
+      $("select.select2").livequery(function(){ $(this).select2(); });
 
       // - Quote Text in the document as they are being loaded
       $("div.request_mail").livequery(function(){ quote_text(this); }); 
@@ -433,6 +434,9 @@ var $J = jQuery.noConflict();
           $(document).trigger('ticket_list');
           $(document).trigger('ticket_show');
           initParallelRequest($(evnt.relatedTarget))
+
+          // hideActivePopovers();
+
           return true;
       }).bind('pjax:end',function(evnt,xhr,settings){
 
