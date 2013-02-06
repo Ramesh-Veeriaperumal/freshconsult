@@ -533,6 +533,7 @@ en:
     automations:
       edit:
         title: Edit Scenario
+      failure: You are not permitted to perform certain actions in the scenario. Please contact the administrator 
     security: 
       index: 
         shared_secret: Shared Secret
@@ -644,6 +645,61 @@ en:
         capture_dm: Convert direct messages as tickets
         screen_name: Screen Name
         default_group : Default Group 
+    roles:
+      new: New Role
+      scroll:
+        scroll_to : Scroll to
+        tickets: Tickets
+        solutions: Solutions
+        forums: Forums
+        customers: Customers
+        reports: Reports
+        administration: Administration
+      permissions: Permissions
+      privilege:
+        tickets: Tickets
+        manage_tickets: Manage tickets
+        reply_ticket: Send reply to a ticket
+        forward_ticket: Forward a conversation
+        edit_note_choice: Edit notes
+        edit_note: Edit everyone's notes
+        edit_note_false: Edit only their own notes
+        edit_conversation: Edit conversation
+        merge_or_split_ticket: Merge / split a ticket
+        edit_ticket_properties: Edit ticket properties
+        view_time_entries: View or edit time entries
+        edit_time_entries: Edit everyone's time entries
+        edit_time_entries_false: Edit only their time
+        delete_ticket: Delete a ticket
+        solutions: Solutions
+        view_solutions: View solutions tab
+        publish_solution: Publish a solution
+        delete_solution: Delete a solution
+        manage_solutions: Create / Edit category or folder
+        forums: Forums
+        view_forums: View forums tab
+        manage_forums: Create / Edit category or topic
+        create_topic: Create or Edit a forum topic
+        edit_topic: Edit everyone's forum topic
+        edit_topic_false: Edit only their own forum topic
+        delete_topic: Delete a forum topic
+        customers: Customers
+        view_contacts: View customers tab
+        manage_contacts: Create or edit new contact or company
+        delete_contact: Delete contact or company
+        reports: Reports
+        view_reports: View reports tab
+        admin: Admin
+        not_administrator: Not an administrator
+        operational_admin: An operational admin
+        manage_users: Manage Agents
+        manage_canned_responses: Manage canned responses
+        manage_dispatch_rules: Manage Dispatch'r rules
+        manage_supervisor_rules: Manage Supervisor rules   
+        manage_scenario_automation_rules: Manage Scenario automation rules
+        manage_email_settings: Manage Email Commands
+        admin_tasks: A Super admin
+        manage_account: Include account management 
     home:
       index: 
         group: Groups
@@ -671,6 +727,7 @@ en:
         email-settings: Email Setup
         everything: Everything
         helpdesk: Helpdesk
+        roles: Roles
         else: else
         settings: Settings
         productivity: Productivity
@@ -784,6 +841,16 @@ en:
         not_allowed: You don't have access to delete it!
       create: 
         success: The Agent has been created and activation instructions sent to %{email}!
+      edit:
+        not_allowed: You cannot edit this agent
+    roles:
+      create:
+        success: The role "%{name}" has been created
+      update:
+        success: The role "%{name}" has been updated
+      default_roles: You cannot modify default roles    
+      delete:
+        not_allowed: You cannot delete this role. There are other users are associated with it.
     contacts_import: 
       failure: Please try again
       no_file: Please upload a file
@@ -798,6 +865,7 @@ en:
         wrong_ticket_id: Please enter a valid ticket id
       reply: 
         success: The reply has been sent.
+        without_kbase: The reply has been sent. However, you are not permitted to create solutions.
       notes: 
         create: 
           failure: There was a problem adding the note to your ticket. Please try again.
@@ -806,6 +874,7 @@ en:
         success: All tickets in the spam folder were deleted.
       timesheet:
         timer_stopped: ticket timers has been stopped
+        create_error: You are not permitted to create timesheets for other agents.
       monitor: 
         stop: You are no longer monitoring this ticket
         start: You are now monitoring this ticket
@@ -1368,6 +1437,8 @@ en:
     add_signature: Add signature
     update: Update
     permissions: Permissions
+    role: Role
+    scope: Agent scope
     admin: Administrator
     supervisor: Supervisor
     global: Agent (Global Access)

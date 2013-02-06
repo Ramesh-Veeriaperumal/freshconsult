@@ -146,7 +146,7 @@
           <h3 class="title border"><%=t('agent.role')%></h3>
           <ul>
             <!-- UserRoles Form -->
-            <% usr.fields_for :user_roles do |user_role| %>
+            <% usr.fields_for :user_roles_attributes do |user_role| %>
               <% @roles.each do |role|%>
                 <li>
                  <%= user_role.check_box :role_id, { :multiple => true, :checked => @agent.user.roles.include?(role) }, role.id, nil %>
