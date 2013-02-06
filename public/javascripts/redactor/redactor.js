@@ -1586,10 +1586,15 @@ Redactor.prototype = {
 		html = html.replace(/<p><p>/g, '<p>');
 		html = html.replace(/<\/p><\/p>/g, '</p>');	
 	
+		if($.browser.msie && document.documentMode >= 9) {
+			html = html.replace(/\n/g, ' ');
+			html = html.replace(/>\s+</g, '><');
+		}
+
 		if(wordpaste) {
 			html = this.cleanWordHTML(html);
 			html = html.replace(/\n/g, ' ');
-			if($.browser.msie) {
+			if($.browser.msie && document.documentMode >= 9) {
 				html = html.replace(/<br>\s*<br>/g,'<BR><BR>');
 				html = html.replace(/<br>/g,' ');
 				html = html.replace(/<BR><BR>/g,'<br>');
@@ -1597,9 +1602,6 @@ Redactor.prototype = {
 		}
 
 		this.execCommand('inserthtml', html);	
-		
-		if(wordpaste)
-			this.setCode(this.getCode());
 		
 		if (this.opts.autoresize === true)
 		{
@@ -1661,7 +1663,7 @@ Redactor.prototype = {
 		html = html.replace(/\n\s*\n/g, "\n");
 		html = html.replace(/^[\s\n]*/g, '');
 		html = html.replace(/[\s\n]*$/g, '');	
-		// html = html.replace(/>\s+</g, '><');
+		html = html.replace(/>\s+</g, '><');
 		
 		if (prebuffer)
 		{
