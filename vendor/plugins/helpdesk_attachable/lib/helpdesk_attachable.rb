@@ -22,6 +22,14 @@ module HelpdeskAttachable
 
         include InstanceMethods
       end
+
+      def has_many_dropboxes
+        has_many :dropboxes,
+          :as => :droppable,
+          :class_name => 'Helpdesk::Dropbox',
+          :dependent => :destroy 
+      end
+
     end
     
     module InstanceMethods

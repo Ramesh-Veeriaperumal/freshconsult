@@ -18,7 +18,8 @@ class SubscriptionEvent < ActiveRecord::Base
     end
 
     def list_accounts(month, year, code)
-      find(:all, :conditions => ['MONTH(created_at) = ? AND YEAR(created_at) = ? 
+      find(:all, :include => [ :account, { :account => :subscription_payments } ],
+                  :conditions => ['MONTH(created_at) = ? AND YEAR(created_at) = ? 
                                                       AND code = ?', month, year, code])
     end
 

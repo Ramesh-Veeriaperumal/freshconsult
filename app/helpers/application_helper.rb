@@ -86,7 +86,11 @@ module ApplicationHelper
   end
 
   def tab(title, url, cls = false, tab_name="")
-    content_tag('li', content_tag('span') + link_to(strip_tags(title), url,  :"data-pjax" => "#body-container"), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
+    options = {:"data-pjax" => "#body-container"}
+    if tab_name.eql?(:tickets)
+      options.merge!({:"data-parallel-url" => "/helpdesk/tickets/filter_options", :"data-parallel-placeholder" => "#ticket-leftFilter"})
+    end
+    content_tag('li', content_tag('span') + link_to(strip_tags(title), url, options ), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
   end
   
   def show_ajax_flash(page)
@@ -415,6 +419,12 @@ module ApplicationHelper
     return installed_app
   end
 
+  #This one checks for installed apps in account
+  def dropbox_app_key
+    app = Integrations::InstalledApplication.with_name("dropbox").find(:all,:conditions =>["installed_applications.account_id = ?",current_account])
+    app.first.configs[:inputs]['app_key']  unless (app.empty?)
+  end
+
   def get_app_widget_script(app_name, widget_name, liquid_objs) 
     installed_app = @installed_apps_hash[app_name.to_sym]
     if installed_app.blank? or installed_app.application.blank?
@@ -512,7 +522,7 @@ module ApplicationHelper
                                               {:include_blank => "...", :selected => field_value}, 
                                               {:class => element_class})
       when "nested_field" then
-        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal)
+        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => t('any'), :selected => field_value}, {:class => element_class}, field_value, in_portal)
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
