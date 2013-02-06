@@ -72,7 +72,7 @@ $header_border_color: rgba(#fff, 0.2);
 }
 
 .logo{
-	background: url("/images/portal/#{$logo-url}.png");
+	background: image-url("/images/logo.png");
 	width: 50px;
 }
 

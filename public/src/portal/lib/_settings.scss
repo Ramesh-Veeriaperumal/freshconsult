@@ -48,8 +48,6 @@ $tab_hover_text_color: 	if(lightness($tab_hover_color) > 50, black, white) !defa
 $footer_color: 			#777777 !default;
 $footer_text_color: 	if(lightness($footer_color) > 50, black, white) !default;
 
-$logo-url: 				if(lightness($header_color) > 50, "logo-color", "logo-white") !default;
-
 $help_center_color: 	#f5f5f5 !default;
 $page-background: 		$white !default;
 $page-light-background: rgba($white, 0.9) !default;
