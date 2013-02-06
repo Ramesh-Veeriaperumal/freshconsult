@@ -1336,7 +1336,7 @@ en:
     full_time: Full time
     occasional: Occasionally
     day_pass_expired: Your day pass has expired, please login to acquire a new day pass.
-    insufficient_day_pass: Unable to allocate a day pass for you, please contct your administrator.
+    insufficient_day_pass: Unable to allocate a day pass for you, please contact your administrator.
     password_reset_message: "Do you want to reset %{requester}'s password?"
     password_reset_note: "Note: A reset mail with instructions will be sent to %{requester}"
   account_admin: Account admin
