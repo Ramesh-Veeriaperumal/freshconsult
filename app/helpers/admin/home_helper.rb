@@ -25,7 +25,7 @@ HTML
     admin_links = [
 
       [ [t(".helpdesk")], [ 
-          ['/account/edit',               'rebranding',              privilege?(:manage_account) ],
+          ['/account/edit',               'rebranding',              privilege?(:admin_tasks) ],
           ['/admin/email_configs',        'email-settings',          privilege?(:manage_email_settings) ],
           ['/admin/email_notifications',  'email-notifications',     privilege?(:manage_email_settings) ],      
           ['/ticket_fields',              'ticket-fields',           privilege?(:admin_tasks) ],

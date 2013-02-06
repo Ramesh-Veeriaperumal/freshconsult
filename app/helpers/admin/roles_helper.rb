@@ -170,7 +170,7 @@ module Admin::RolesHelper
   
     def build_element(element, parent, disabled)
       privilege = element[:privilege] || element[:id]    
-      name = (element[:dom_type] == "radio_button") ? "admin_role[privilege_list][#{parent}][]" : "admin_role[privilege_list][]"
+      name = (element[:dom_type] == "radio_button") ? "role[privilege_list][#{parent}][]" : "role[privilege_list][]"
       
       html = eval "#{element[:dom_type]}_tag('#{name}', '#{privilege}',
       #{@role.abilities.include?(privilege.to_sym)}, { :class => '#{parent} #{element[:class]}',
@@ -180,7 +180,7 @@ module Admin::RolesHelper
     
     def build_hidden(element, parent, disabled)
       privilege = element[:privilege] || element[:id]
-      hidden_field_tag("admin_role[privilege_list][]", privilege, 
+      hidden_field_tag("role[privilege_list][]", privilege, 
             { :class => "#{parent} #{element[:class]}", :id => element[:id],
               :disabled => !(@role.abilities.include?(privilege.to_sym) || !disabled) })
     end

@@ -90,6 +90,13 @@ def self.filter(page, state = "active", per_page = 20)
            :conditions => { :users => { :deleted  => !state.eql?("active") } }
 end
 
+def assumable_agents
+  account.users.technicians.select do |agent|
+    user.can_assume?(agent)
+  end
+end
+
+
 protected
   
   def update_agents_level

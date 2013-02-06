@@ -35,7 +35,7 @@
 				<span class="seperator"></span>
 				<%= link_to t('revert_identity_link_msg'), revert_identity_users_path, :class => "link" %>
       		<% elsif !is_assumed_user? && (privilege?(:manage_users) || current_user.account_admin?) %>
-      			<% @allowed_to_assume = current_account.users.technicians.visible.allowed_to_assume(current_user) %>
+      			<% @allowed_to_assume = current_user.agent.assumable_agents %>
       			<% unless @allowed_to_assume.blank? %>
 					<span class="seperator"></span>
 					<div class="info">

@@ -23,7 +23,7 @@ class Account < ActiveRecord::Base
   has_many :global_email_configs, :class_name => 'EmailConfig', :conditions => {:product_id => nil}, :order => "primary_role desc"
   has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true, :product_id => nil }
   has_many :products, :order => "name"
-  has_many :roles, :class_name => 'Admin::Role', :dependent => :delete_all
+  has_many :roles, :dependent => :delete_all
   has_many :portals
   has_one  :main_portal, :class_name => 'Portal', :conditions => { :main_portal => true}
 
@@ -76,7 +76,7 @@ class Account < ActiveRecord::Base
   has_many :all_users , :class_name => 'User'
   
   has_one :account_admin, :class_name => "User", :conditions => { :account_admin => true } #has_one ?!?!?!?!
-  has_many :technicians, :class_name => "User", :conditions => ["user_role in (?) and deleted = ?", User::USER_ROLES_KEYS_BY_TOKEN[:agent], false] ,:order => "name desc"
+  has_many :technicians, :class_name => "User", :conditions => { :helpdesk_agent => true, :deleted => false }, :order => "name desc"
   
   has_one :subscription
   has_many :subscription_payments
@@ -85,12 +85,11 @@ class Account < ActiveRecord::Base
   
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
   has_many :customers
-  has_many :contacts, :class_name => 'User' , :conditions =>{:user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer] , :deleted =>false}
-  has_many :all_agents, :through =>:users, :order => "users.name"
+  has_many :contacts, :class_name => 'User' , :conditions => { :helpdesk_agent => false , :deleted =>false }
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}, :order => "users.name"
   has_many :full_time_agents, :through =>:users, :conditions => { :occasional => false, 
       :users=> { :deleted => false } }
-  has_many :all_contacts , :class_name => 'User', :conditions =>{:user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}
+  has_many :all_contacts , :class_name => 'User', :conditions => { :helpdesk_agent => false }
   has_many :all_agents, :class_name => 'Agent', :through =>:all_users  , :source =>:agent
   has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy' 
   has_one  :default_sla ,  :class_name => 'Helpdesk::SlaPolicy' , :conditions => { :is_default => true }
@@ -322,6 +321,12 @@ class Account < ActiveRecord::Base
     dis_max_id = get_max_display_id
     if self.ticket_display_id.blank? or (self.ticket_display_id < dis_max_id)
        self.ticket_display_id = dis_max_id
+    end
+  end
+  
+  def account_managers
+    technicians.select do |user|
+      user.privilege?(:manage_account)
     end
   end
   
@@ -582,7 +587,7 @@ class Account < ActiveRecord::Base
     def self.create_admin(account)
       account.user.active = true  
       account.user.account = account #?!?!?!
-      account.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:agent]  
+      account.user.helpdesk_agent =  true
       account.user.account_admin = true
       account.user.build_agent()
       account.user.agent.account = account

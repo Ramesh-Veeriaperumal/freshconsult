@@ -49,5 +49,13 @@
       </tr>
     </thead>
   </table>
+  <script>
+  // need to convert this to util
+  jQuery(document).ready(function(){
+    if (jQuery('th.bulk_action_buttons input').length == 0) {
+      jQuery('.check input').hide();
+    }
+  });
+  </script>
 
 

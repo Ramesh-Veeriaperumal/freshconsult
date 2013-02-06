@@ -1,4 +1,4 @@
-class Admin::Role < ActiveRecord::Base
+class Role < ActiveRecord::Base
   
   # FIXME: Prompt if users are associated with role during delete ?
   # FIXME: valid if we stick to account_admin flag
@@ -23,7 +23,7 @@ class Admin::Role < ActiveRecord::Base
 
   def privilege_list=(privilege_data)
     privilege_data = privilege_data.collect {|p| p.to_sym unless p.blank?}.compact
-    self.privileges = Admin::Role.privileges_mask(privilege_data).to_s
+    self.privileges = Role.privileges_mask(privilege_data).to_s
   end
 
   def self.privileges_mask(privilege_data)

@@ -30,6 +30,7 @@ Authority::Authorization::PrivilegeList.draw do
 
     resource :"helpdesk/conversation", :only => [:note]
     resource :"helpdesk/canned_response"
+    resource :"helpdesk/ca_folder"
 	end
 
   reply_ticket do
@@ -50,7 +51,8 @@ Authority::Authorization::PrivilegeList.draw do
   edit_ticket_properties do
     resource :"helpdesk/ticket", :only => [:update_ticket_properties, :assign_to_agent, :assign, :close,
                                    :close_multiple, :update_multiple_tickets, :change_due_by]
-    resource :"helpdesk/bulk_ticket_action"                                   
+    resource :"helpdesk/bulk_ticket_action" 
+    resource :"helpdesk/common", :only => [:group_agents]                                  
   end
 
   edit_conversation do
@@ -62,11 +64,11 @@ Authority::Authorization::PrivilegeList.draw do
   end
 
   view_time_entries do
-    resource :"helpdesk/time_sheet", :only => [:index, :toggle_timer]
+    resource :"helpdesk/time_sheet", :only => [:index, :create, :toggle_timer]
   end
 
   edit_time_entries do
-    resource :"helpdesk/time_sheet", :only => [:create, :edit, :update, :destroy], :owned_by => 
+    resource :"helpdesk/time_sheet", :only => [:edit, :update, :destroy], :owned_by => 
                                             { :scoper => :"Helpdesk::TimeSheet" }
   end
 
@@ -93,7 +95,7 @@ Authority::Authorization::PrivilegeList.draw do
                                   { :scoper => :solution_articles }
   end
 
-  create_edit_category_folder do
+  manage_solutions do
     resource :"solution/category", :only => [:new, :create, :edit, :update, :destroy, :reorder]
     resource :"solution/folder", :only => [:new, :create, :edit, :update, :destroy, :reorder]
   end
@@ -105,32 +107,30 @@ Authority::Authorization::PrivilegeList.draw do
     resource :forum, :only => [:index, :show]
     resource :topic, :only => [:index, :show, :vote, :destroy_vote, :users_voted]
     resource :post, :only => [:index, :show, :create, :toggle_answer, :monitored]
+    # review code for monitorship?
+    resource :monitorship
   end
 
-  create_edit_forum_category do
+  # create_edit_forum_category
+  manage_forums do
     resource :forum_category, :only => [:new, :create, :edit, :update, :destroy, :reorder]
     resource :forum, :only => [:new, :create, :edit, :update, :destroy, :reorder]
   end
 
-  # create_or_edit_forum_topic do
-  #   resource :topic, :only => [:new, :create, :update_stamp, :remove_stamp]
-  #   resource :topic, :only => [:edit, :update, :update_lock], :owned_by => { :scoper => :topics }
-  #   resource :post, :only => [:destroy, :edit, :update], :owned_by => { :scoper => :posts }
-  #   resource :monitorship
-  # end
-
-  create_forum_topic do
+  # create_forum_topic
+  create_topic do
     resource :topic, :only => [:new, :create ]
-    resource :monitorship
   end
 
-  edit_forum_topic do
+  # edit_forum_topic
+  edit_topic do
     resource :topic, :only => [:edit, :update, :update_lock, 
           :update_stamp, :remove_stamp], :owned_by => { :scoper => :topics }
     resource :post, :only => [:destroy, :edit, :update], :owned_by => { :scoper => :posts }
   end
 
-  delete_forum_topic do
+  # delete_forum_topic
+  delete_topic do
     resource :topic, :only => [:destroy], :owned_by => { :scoper => :topics }
   end
 
@@ -143,17 +143,20 @@ Authority::Authorization::PrivilegeList.draw do
     resource :user, :only => [:index, :show]
 	end
 
-  add_or_edit_contact do
+  # add_or_edit_contact
+  manage_contacts do
     resource :contact, :only => [:new, :create, :autocomplete, :quick_customer,
                :contact_email, :edit, :update]
     resource :customer, :only => [:new, :create, :edit, :update, :quick]
     resource :contact_import
+    # is this the correct place to put this ?
     resource :user, :only => [:new, :create, :edit, :update]
   end
 
   delete_contact do
     resource :contact, :only => [:destroy, :restore]
     resource :customer, :only => [:destroy]
+    # is this the correct place to put this ?
     resource :user, :only => [:destroy]
   end
 
@@ -184,7 +187,8 @@ Authority::Authorization::PrivilegeList.draw do
   end
 
   manage_canned_responses do
-    resource :"admin/canned_response"
+    resource :"admin/canned_responses/folder"
+    resource :"admin/canned_responses/response"
   end
 
   manage_dispatch_rules do
@@ -206,8 +210,8 @@ Authority::Authorization::PrivilegeList.draw do
   end
 
   # **************** super admin *******************
-
-  super_admin do
+  # super_admin
+  admin_tasks do
     resource :"admin/account_additional_setting"
     resource :"admin/business_calendar"
     resource :"admin/supervisor_rule"
@@ -228,20 +232,22 @@ Authority::Authorization::PrivilegeList.draw do
     resource :"admin/gamification"
     resource :"admin/quest"
     resource :"helpdesk/sla_policy"
+    resource :account, :only => [:update, :edit, :delete_logo, :delete_fav]
   end
 
   manage_account do
-    
-    resource :account, :only => [:show, :cancel, :update, :edit, :delete_logo, :delete_fav]
+    resource :account, :only => [:show, :cancel]
     resource :"admin/data_export"
+    resource :"admin/template"
     resource :user, :only => [:change_account_admin]
     resource :subscription # plans and billing
     resource :"admin/zen_import"
-
     # new item day passes && getting started
     resource :"admin/day_pass"
     resource :"admin/getting_started"
+  end
 
+  client_manager do
   end
 
   # Authority::Authorization::PrivilegeList.privileges.each { |privilege| puts privilege}

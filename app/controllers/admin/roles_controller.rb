@@ -33,7 +33,7 @@ class Admin::RolesController < Admin::AdminController
   end
   
   def update
-  	if @role.update_attributes(params[:admin_role])
+  	if @role.update_attributes(params[:role])
       flash[:notice] = t(:'flash.roles.update.success', :name => @role.name)
   		respond_to do |format|
         format.html { redirect_to admin_roles_url }
@@ -61,7 +61,7 @@ class Admin::RolesController < Admin::AdminController
     end
 
     def build_and_save
-      @role = scoper.build(params[:admin_role])
+      @role = scoper.build(params[:role])
       @role.save
     end
 
