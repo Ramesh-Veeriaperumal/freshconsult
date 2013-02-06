@@ -7,6 +7,7 @@ body{
   font-size: 21px;
   font-weight: 200;
   line-height: 30px;
+  text-transform: capitalize;
 }
 
 small {
@@ -114,6 +115,13 @@ strong {
   vertical-align: middle;
 }
 
+.admin-breadcrumb{
+  margin: -14px -20px;
+  margin-bottom: 10px;
+  &.breadcum-footer{
+    margin-bottom: -14px;
+  }
+}
 
 /* This class overriding app-common css. */
 

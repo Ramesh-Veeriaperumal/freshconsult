@@ -8149,6 +8149,15 @@ height: auto;
 		}
 	}
 }
+
+.table-striped-body{
+	table td{
+		width:75%;
+		&:last-child{
+			width:25%;
+		}
+	}
+}
 .agent_edit{
 	label{
 		font-weight: bold;
@@ -8231,16 +8240,33 @@ height: auto;
 		margin-bottom:0;
 	}
 }
+.new-role{
+	padding:15px 0;
+	.role-section{
+		border-left:1px solid #bebebe;
+		padding-left:20px;
+		margin-bottom:40px;
+	}
+}
 .role-nav{
-	padding:0px 0 35px 0;
-	border-left:1px solid #ccc;
 	li{
-		padding:10px;
-		background:#f6f6f6;
-		border-top:1px solid #fff;
-		padding-right:20px;
-		&:hover{
-			background:#f3f3f3;
+		padding:0px 0px 30px 10px;
+		float:left;
+		background:#fff;
+		&:first-child{
+			padding-left:0;
+		}
+		&:last-child{
+			a{
+				border:0;
+			}
+		}
+		a{
+			padding-right:10px;
+			border-right:1px solid #f6f6f6;
+			&:hover{
+				text-decoration:underline;
+			}
 		}
 	}
 }

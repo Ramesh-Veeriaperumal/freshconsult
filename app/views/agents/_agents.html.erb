@@ -1,0 +1,38 @@
+<div class="cust_list_table_body">
+	<% if agents.present? %>
+		<table class="table table-striped">
+			<% agents.each do |agent| %>
+				<tr>
+					<td>
+						<a href="#" class="cust-list-avatar">
+							<%= user_avatar(agent.user)%> <!-- class="img-circle" have to add in img tag for circle-->
+						</a>
+						<p class="text-info"><strong><%= link_to(h(agent.user.display_name), agent_path(agent), :class => "item_info") %> </strong><br/><small class="muted"><%= h agent.user.job_title %></small></p>
+					</td>
+					<td>
+						<p><%= h(agent.user.email) %><br/><%= h(agent.user.phone) %></p>
+					</td>
+					<td>
+						<p>
+							<%= agent.user.last_login_at ? "Last logged in "+distance_of_time_in_words_to_now(agent.user.last_login_at)+" ago" : "Never logged in" %><br/>
+								
+								Used <%= agent.user.day_pass_usages.length %> day pass till date
+						</p>
+					</td>
+					<td>
+						<%= link_to t('edit'), edit_agent_path(agent), :class => "btn btn-mini" %>
+						<%= link_to ("<i class='icon-trash'></i>", agent, :confirm => "#{t('agent.info3')}?", 
+												 :method => :delete, :class => "btn btn-mini") unless (agent.user == current_user)  %>
+					</td>
+				</tr>
+			<% end %>
+		</table>  
+		<%= will_paginate agents, 
+					:renderer => BootstrapPaginationRenderer, 
+					:previous_label => "<b class='arrow-left'></b>",
+					:next_label => "<b class='arrow-right'></b>",
+					:class => "pagination pagination-centered" %>	
+	<% else %>
+		No Agents in this list
+	<% end %>
+</div>

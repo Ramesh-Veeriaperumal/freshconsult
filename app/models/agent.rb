@@ -84,10 +84,20 @@ def signature_htm
   self.signature_html
 end
 
-def self.filter(page, state = "active", per_page = 20)
-  paginate :per_page => per_page, :page => page,
-           :include => [ {:user => :avatar} ], 
-           :conditions => { :users => { :deleted  => !state.eql?("active") } }
+# State => Fulltime, Occational or Deleted
+# 
+def self.filter(state = "active", order = "name", order_type = "ASC", page = 1, per_page = 20)
+  order = "name" unless order
+  order_type = "ASC" unless order_type
+  paginate :per_page => per_page, 
+           :page => page,
+           :include => { :user => :avatar },
+           :conditions => filter_condition(state),
+           :order => "#{order} #{order_type}"
+end
+
+def self.filter_condition(state)
+  return ["users.deleted = ? and agents.occasional =?", "deleted".eql?(state), "occasional".eql?(state)]
 end
 
 def assumable_agents

@@ -1,0 +1,2 @@
+page.replace_html "agents-list", :partial => "agents", :object => @agents
+page.replace_html "agent-filters", :partial => "filter"

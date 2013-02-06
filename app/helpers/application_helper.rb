@@ -150,6 +150,24 @@ module ApplicationHelper
     output.html_safe
   end
 
+  def dropdown_menu(list, options = {})
+    return if list.blank?
+    output = ""
+    output << %(<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">)
+    
+    list.each do |item|
+      unless item.blank?
+        if item[0] == :divider
+          output << %(<li class="divider"></li>)
+        else
+          output << %(<li class="#{item[2] ? "active" : ""}">#{ link_to item[0], item[1], options, "tabindex" => "-1" }</li>)
+        end
+      end
+    end
+    output << %(</ul>)
+    output.html_safe
+  end
+
   def navigation_tabs
     tabs = [
       ['/home',               :home,        !privilege?(:manage_tickets) ],
@@ -162,7 +180,6 @@ module ApplicationHelper
       ['/support/tickets',     :checkstatus, !privilege?(:manage_tickets)],
       ['/reports',            :reports,      privilege?(:view_reports) ],
       ['/admin/home',         :admin,        privilege?(:view_admin)],
-      company_tickets_tab
     ]
 
 #    history_active = false;
@@ -664,11 +681,6 @@ module ApplicationHelper
       privilege?(:manage_tickets) && !current_account.twitter_handles.blank? && feature?(:twitter)
     end
     
-  def company_tickets_tab
-    tab = ['support/company_tickets', :company_tickets , !privilege?(:manage_tickets) , current_user.customer.name] if privilege?(:client_manager)
-    tab || ""
-  end
-
   def tour_button(text, tour_id)
     link_to(content_tag(:div, text, :class=> 'guided-tour-start') , '#', 
               :rel => 'guided-tour',
