@@ -201,10 +201,6 @@ private
 
   end
 
-  def load_installed_apps
-    @installed_apps_hash = current_account.installed_apps_hash
-  end
-
 
   def check_agents_in_account
     #ADDED for SECURITY ISSUE: Users from other account are allowed to be added
