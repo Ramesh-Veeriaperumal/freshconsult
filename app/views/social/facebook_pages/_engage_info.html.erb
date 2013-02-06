@@ -10,7 +10,7 @@
        		<%=t('.associate_account', :account_name => current_account.name)%>
 
         </p>
-        <a href="<%= @fb_client.authorize_url %>" class="uiButton special medium"><%=t('.add_facebook')%></a>
+        <a href="<%= @fb_client.authorize_url(session[:state]) %>" class="uiButton special medium"><%=t('.add_facebook')%></a>
       </div>
     </div>
   </li>

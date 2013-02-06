@@ -197,7 +197,7 @@
 								<h4><%=t('.social_sub_title')%></h4>
 								<div class="textbox-note"><%=t('.social_info')%></div>
 								
-								<div class="social"><a href="<%=@fb_client.authorize_url%>" class="facebook simple" target="_blank"><%=t('.social_add_account')%></a></div>
+								<div class="social"><a href="<%=@fb_client.authorize_url(session[:state])%>" class="facebook simple" target="_blank"><%=t('.social_add_account')%></a></div>
 								<div class="social"><a href="<%=@auth_redirect_url%>" class="twitter simple" target="_blank"><%=t('.social_add_account')%></a></div>
 						</div>
 
