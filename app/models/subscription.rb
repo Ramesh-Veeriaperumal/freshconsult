@@ -285,6 +285,7 @@ class Subscription < ActiveRecord::Base
     self.state = FREE if card_number.blank?
     self.agent_limit = AGENTS_FOR_FREE_PLAN
     self.renewal_period = 1
+    self.day_pass_amount = subscription_plan.day_pass_amount
     self.next_renewal_at = Time.now.advance(:months => 1)
   end
 
