@@ -32,7 +32,7 @@
         <%= t('.direct_messages')%>
       </label>
       <div class="info-data tabbed">
-      	<%= t('.direct_messages_info' , :reauth_url => @fb_client.authorize_url )%>
+      	<%= t('.direct_messages_info' , :reauth_url => @fb_client.authorize_url(session[:state]) )%>
       </div>
 	  <!--import direct message ends -->
 	   <span class="seperator"></span>
