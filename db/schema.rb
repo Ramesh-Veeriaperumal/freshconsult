@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130123072203) do
+ActiveRecord::Schema.define(:version => 20130206100722) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -577,7 +577,8 @@ ActiveRecord::Schema.define(:version => 20130123072203) do
     t.binary "data"
   end
 
- create_table "helpdesk_dropboxes", :force => true do |t|
+  create_table "helpdesk_dropboxes", :id => false, :force => true do |t|
+    t.integer  "id",             :limit => 8, :null => false
     t.text     "url"
     t.integer  "account_id",     :limit => 8
     t.datetime "created_at"
@@ -585,6 +586,9 @@ ActiveRecord::Schema.define(:version => 20130123072203) do
     t.integer  "droppable_id"
     t.string   "droppable_type"
   end
+
+  add_index "helpdesk_dropboxes", ["account_id", "droppable_id", "droppable_type"], :name => "index_helpdesk_dropboxes_on_droppable_id"
+  add_index "helpdesk_dropboxes", ["id"], :name => "helpdesk_dropboxes_id"
 
   create_table "helpdesk_form_customizers", :force => true do |t|
     t.string   "name"
