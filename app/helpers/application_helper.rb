@@ -632,6 +632,17 @@ module ApplicationHelper
     nodejs_port = Rails.env.development? ? 5000 : (current_account.ssl_enabled ? 2050 : 1050)      
     "#{nodejs_protocol}://#{request.host}:#{nodejs_port}/#{namespace}"
   end  
+
+  def assumed_identity_message
+    _output = []
+    if current_user && is_assumed_user?
+      _output << %( <div class="alert alert-assume-agent alert-solid"> )
+      _output << %( #{t('header.assumed_text')} <b> #{current_user.name}</b> - )
+      _output << link_to(t('revert_identity_link_msg'), revert_identity_users_path, :class => "link")
+      _output << %( </div> )
+    end
+    _output.join("")
+  end
    
   private
     def solutions_tab

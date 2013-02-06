@@ -22,13 +22,10 @@
 		<![endif]-->
 	</head>
 	<body>
-		<% if session[:preview_button].present? && current_user && current_user.agent? %>
-			<div class="alert">
-				You are currently previewing the customisation changes.
-				<a href="javascript:window.close()">Click here</a> to go back to the editing page.
-			</div>
-		<%end%>
+		<%= preview_message %>
 
+		<%= assumed_identity_message %>
+		
 		<%= @layout %>
 
 		<%= include_javascripts :portal_bottom, :redactor %>

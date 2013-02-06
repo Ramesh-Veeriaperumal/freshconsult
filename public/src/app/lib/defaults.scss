@@ -130,7 +130,7 @@ label.error{
   position:relative;
 }
 .alert, .alert-heading {
-  color: #c09853;
+  color: #82683c;
 }
 .alert .close-text {
   position: absolute;
@@ -172,6 +172,16 @@ label.error{
 }
 .alert-block p + p {
   margin-top: 5px;
+}
+
+.alert-solid{
+  @include border-radius(0);
+}
+
+.alert-assume-agent{
+  font-size: 13px;
+  margin: 0;
+  text-align: center;
 }
 
 .underline{

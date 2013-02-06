@@ -335,6 +335,16 @@ HTML
 		end
 	end
 
+	# Preview message html construction
+	def preview_message
+		_output = []
+		if session[:preview_button].present? && current_user && current_user.agent?
+			_output << %( <div id="preview-message" class="alert alert-solid"> )
+			_output << t('portal.header.preview_message')
+			_output << %( </div> )
+		end
+	end
+
 	private
 		def link_args_to_options(args)
 	      options = {}

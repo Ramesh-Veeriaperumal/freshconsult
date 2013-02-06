@@ -65,3 +65,9 @@
 .alert-block p + p {
   margin-top: 5px;
 }
+
+.alert-solid{
+  text-align: center;
+  margin: 0;  
+  @include border-radius(0);
+}
