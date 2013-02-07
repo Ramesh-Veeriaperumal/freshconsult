@@ -3,7 +3,7 @@ module HelpdeskAttachable
     include HelpdeskExceptions
 
     # MAX_ATTACHMENT_SIZE = 1024
-    MAX_ATTACHMENT_SIZE = 20.megabyte
+    MAX_ATTACHMENT_SIZE = 15.megabyte
     def self.included(base) 
       base.extend ClassMethods
     end
