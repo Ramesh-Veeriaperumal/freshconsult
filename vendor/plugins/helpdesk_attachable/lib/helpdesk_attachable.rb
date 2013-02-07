@@ -40,7 +40,7 @@ module HelpdeskAttachable
         end
         @total_attachment_size += args[:content].size
         if @total_attachment_size > MAX_ATTACHMENT_SIZE
-          raise HelpdeskExceptions::AttachmentLimitException, "Attachment limit exceeded!.. We allow only 20MB." 
+          raise HelpdeskExceptions::AttachmentLimitException, "Attachment limit exceeded!.. We allow only 15MB." 
         end
       end
     end
