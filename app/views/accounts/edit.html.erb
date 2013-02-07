@@ -78,7 +78,8 @@
 						<label class="overlabel" for="account_main_portal_attributes_portal_url">
 							Eg. support.mycompanyname.com						
 						</label>
-				    <%= portal.text_field :portal_url, :class => "text portal_url url_without_protocol" %> 
+				    <%= portal.text_field :portal_url, :class => "text portal_url url_without_protocol", 
+				    		:"data-domain" => Helpdesk::HOST[Rails.env.to_sym] %> 
 
 						<div class="info-data">
 							<%=t('account.info2', :full_domain => @account.full_domain)%>
