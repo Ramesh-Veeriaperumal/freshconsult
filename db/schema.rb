@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130122103655) do
+ActiveRecord::Schema.define(:version => 20130206100722) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -577,6 +577,19 @@ ActiveRecord::Schema.define(:version => 20130122103655) do
     t.binary "data"
   end
 
+  create_table "helpdesk_dropboxes", :id => false, :force => true do |t|
+    t.integer  "id",             :limit => 8, :null => false
+    t.text     "url"
+    t.integer  "account_id",     :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "droppable_id"
+    t.string   "droppable_type"
+  end
+
+  add_index "helpdesk_dropboxes", ["account_id", "droppable_id", "droppable_type"], :name => "index_helpdesk_dropboxes_on_droppable_id"
+  add_index "helpdesk_dropboxes", ["id"], :name => "helpdesk_dropboxes_id"
+
   create_table "helpdesk_form_customizers", :force => true do |t|
     t.string   "name"
     t.text     "json_data"
@@ -896,6 +909,9 @@ ActiveRecord::Schema.define(:version => 20130122103655) do
     t.datetime "sla_timer_stopped_at"
     t.integer  "outbound_count",                      :default => 0
     t.float    "avg_response_time"
+    t.integer  "first_resp_time_by_bhrs"
+    t.integer  "resolution_time_by_bhrs"
+    t.float    "avg_response_time_by_bhrs"
   end
 
   add_index "helpdesk_ticket_states", ["id"], :name => "helpdesk_ticket_states_id"

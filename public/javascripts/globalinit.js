@@ -161,6 +161,7 @@ var $J = jQuery.noConflict();
  
       // - Custom select boxs will use a plugin called chosen to render with custom CSS and interactions
       $("select.customSelect").livequery(function(){ $(this).chosen(); });
+      $("select.select2").livequery(function(){ $(this).select2(); });
 
       // - Quote Text in the document as they are being loaded
       $("div.request_mail").livequery(function(){ quote_text(this); }); 
@@ -411,14 +412,18 @@ var $J = jQuery.noConflict();
       }
 
       $(document).pjax('a[data-pjax]',{
-          timeout: -1
+          timeout: -1,
+          push : false,
+          maxCacheLength: 0,
+          replace: true
         }).bind('pjax:beforeSend',function(evnt,xhr,settings){
+          jQuery(document).data("requestDone",false);
+          jQuery(document).data("parallelData",undefined);
           start_time = new Date();
           jQuery('#cf_cache').remove();
           jQuery('#response_dialog').remove();
           jQuery('.ui-dialog').remove();
           jQuery('#bulkcontent').remove();
-          // jQuery('#agent_collision_container').remove();
           var bHeight = $('#body-container').height(),
               clkdLI = $(evnt.relatedTarget).parent();
           $('ul.header-tabs li.active').removeClass('active');
@@ -426,26 +431,28 @@ var $J = jQuery.noConflict();
           jQuery('.top-loading-wrapper').switchClass('fadeOutRight','fadeInLeft',100,'easeInBounce',function(){
             jQuery('.top-loading-wrapper').removeClass('hide');
           });
-          // $('#body-container .wrapper').css('visibility','hidden');
           $(document).trigger('ticket_list');
           $(document).trigger('ticket_show');
+          initParallelRequest($(evnt.relatedTarget))
 
-          hideActivePopovers();
+          // hideActivePopovers();
 
           return true;
-      }).bind('pjax:end',function(){
-        //$('.load-mask').hide();
+      }).bind('pjax:end',function(evnt,xhr,settings){
 
         jQuery('.popover').remove();
         jQuery('.top-loading-wrapper').switchClass('fadeInLeft','fadeOutRight');
         jQuery('.top-loading-wrapper').addClass('hide','slow');
-        // $('#body-container .wrapper').css('visibility','visible');
         end_time = new Date();
         setTimeout(function() {
           $('#benchmarkresult').html('Finally This page took ::: <b>'+(end_time-start_time)/1000+' s</b> to load.') 
         },10);
-        //clearing the pageless of previous page.
         jQuery(window).unbind('.pageless');
+        var options = jQuery(document).data();
+        jQuery(document).data("requestDone",true);
+        if(options.parallelData && $(evnt.relatedTarget).data()){
+          $($(evnt.relatedTarget).data().parallelPlaceholder).html(options.parallelData) 
+        }
         return true;
       })
    });
@@ -461,4 +468,22 @@ function closeableFlash(flash){
       if(flash.css("display") != 'none')
          flash.hide('blind', {}, 500);
     }, 20000);
+}
+
+function initParallelRequest(target){
+  if(!target.data('parallelUrl')){
+    return;
+  }
+  var options = target.data();
+  jQuery.get(options.parallelUrl,
+    function(data){
+      if(jQuery(document).data("requestDone")){
+        console.log("parent request done")
+        jQuery(options.parallelPlaceholder).html(data)
+      }
+      else{
+        console.log("parallel request done")
+        jQuery(document).data("parallelData",data);
+      }
+  })
 }
