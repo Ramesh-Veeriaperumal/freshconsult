@@ -2531,14 +2531,19 @@ input[type="text"].number{
 	.config_item { 
 		@include min-height(80px);
 	}
+	.select2-container{ width:100%; }
 	.chzn-container-single .chzn-single{
 		height: 30px; line-height: 30px;
 	}
 	.chzn-container-single .chzn-single div{
 		right: 3px;
 		top: 2px;
-	}
-	.chzn-container-single .chzn-search { display: none; }
+	}	
+	/*.chzn-container-single .chzn-search { display: none; }*/
+}
+
+.font-select-container, .font-select-dropdown{
+	font-size: 16px;
 }
 
 .customize-pages{

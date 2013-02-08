@@ -29,7 +29,7 @@ stylesheets:
   portal:                
     # - public/stylesheets/portal/portal.css
     - public/stylesheets/redactor.css
-    - public/stylesheets/app/lib/qtip.css
+    # - public/stylesheets/app/lib/qtip.css
     # - public/stylesheets/portal/responsive.css 
 
   # !PATTERN TODO These css files will be migrated in to the pattern library at a later point

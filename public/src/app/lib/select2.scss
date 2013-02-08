@@ -112,7 +112,7 @@ Version: 3.2 Timestamp: Mon Sep 10 10:38:04 PDT 2012
     box-shadow: 0 4px 5px rgba(0, 0, 0, .15);
     z-index: 9999;
     width:100%;
-    margin-top:-5px;
+    margin-top:-1px;
 
   -webkit-border-radius: 0 0 4px 4px;
   -moz-border-radius: 0 0 4px 4px;
@@ -181,7 +181,8 @@ Version: 3.2 Timestamp: Mon Sep 10 10:38:04 PDT 2012
   left: -10000px;
 }
 
-.select2-search input {
+.select2-search input,
+.select2-search input[type="text"] {
     background: #fff url('/images/select2.png') no-repeat 100% -22px;
     background: url('/images/select2.png') no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, white), color-stop(0.99, #eeeeee));
     background: url('/images/select2.png') no-repeat 100% -22px, -webkit-linear-gradient(center bottom, white 85%, #eeeeee 99%);

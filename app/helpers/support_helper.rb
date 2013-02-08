@@ -2,6 +2,21 @@ module SupportHelper
 	include ActionView::Helpers::TagHelper
 	include Portal::PortalFilters
 
+	FONT_INCLUDES = { "Source Sans Pro" => "Source+Sans+Pro:regular,italic,700,700italic",
+					  "Droid Sans" => "Droid+Sans:regular,700",
+					  "Lato" => "Lato:regular,italic,900,900italic",
+					  "Arvo" => "Arvo:regular,italic,700,700italic",
+					  "Droid Serif" => "Droid+Serif:regular,italic,700,700italic",
+					  "Oswald" => "Oswald:regular,700",
+					  "Open Sans Condensed" => "Open+Sans+Condensed:300,300italic,700",
+					  "Open Sans" => "Open+Sans:regular,italic,700,700italic",
+					  "Merriweather" => "Merriweather:regular,700",
+					  "Roboto Condensed" => "Roboto+Condensed:regular,italic,700,700italic",
+					  "Roboto" => "Roboto:regular,italic,700,700italic",
+					  "Varela Round" => "Varela+Round:regular",
+					  "Vast Shadow" => "Vast+Shadow:regular",
+					  "Helvetica Neue" => "Helvetica+Neue:regular,italic,700,700italic" }
+
 	# Top page login, signup and user welcome information
 	def welcome_navigation portal
 		output = []
@@ -345,7 +360,31 @@ HTML
 		end
 	end
 
+	# Including google font for portal
+	def include_google_font *args
+		font_url = args.map { |f| FONT_INCLUDES[f] }
+		unless font_url.blank?
+			"<link href='http://fonts.googleapis.com/css?family=#{font_url.join("|")}' rel='stylesheet' type='text/css'>"
+		end
+	end
+
+	def portal_fonts
+		include_google_font portal_preferences.fetch(:baseFont, ""), 
+			portal_preferences.fetch(:headingsFont, ""), "Helvetica Neue"
+	end
+
 	private
+
+		def portal_preferences
+			preferences = current_portal.template.preferences
+		    preferences = current_portal.template.get_draft.preferences if preview? && current_portal.template.get_draft
+		    preferences || []
+		end
+
+		def preview?
+	      !session[:preview_button].blank? && !current_user.blank? && current_user.agent?
+	    end
+
 		def link_args_to_options(args)
 	      options = {}
 	      [:label, :title, :id, :class, :rel].zip(args) {|key, value| options[key] = h(value) unless value.blank?}

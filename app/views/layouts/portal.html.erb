@@ -13,9 +13,11 @@
 		<link rel="shortcut icon" href="<%= current_portal.fav_icon_url %>" />
 		
 		<%#= include_stylesheets :portal, :redactor %>
-		<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:700' rel='stylesheet' type='text/css'>
-		<link href="/theme.css" media="screen" rel="stylesheet" type="text/css">
 		<%= include_stylesheets :portal %>
+		<link href="/theme.css" media="screen" rel="stylesheet" type="text/css">
+		<%= portal_fonts %>
+
+		
 		<%= include_javascripts :portal_head %>		
 		<!--[if lt IE 9]>
 			<script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>

@@ -1,3 +1,5 @@
+<%= javascript_include_tag "portal/google-fonts" %>
+<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:700|Source+Sans+Pro|Droid+Sans|Lato|Arvo|Droid+Serif|Oswald|Open+Sans|Merriweather|Roboto+Condensed|Roboto|Varela+Round|Vast+Shadow' rel='stylesheet' type='text/css'>
 <div id="portal-simple-template-options">
   <% form_for [:admin, @portal_template], :url => { :action => :update }, 
       :html => { :method => :put, :rel => "portal_form", :target => "_blank" } do |f| -%>
@@ -31,21 +33,46 @@
     <h3 class="title"><%=t("portalcss.cosmetic.subheader_portal_fonts")%></h3>
     <% pref_bgs = [:baseFont, :textColor, :headingsFont, :headingsColor] %>
     <div class='srow-fluid'>
-    <% pref_bgs.each_with_index do |p, i| %>    
-      <div class="sgrid3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">
-        <label><%= t("admin.portal_settings.simple.#{p}") %></label>
-        <% if((i+1) % 2 != 0) %>          
-          <select class="customSelect" name="portal_template[preferences][<%= p %>]" id="portal_template_prefereces_<%= p %>">
-            <%= options_for_select([ "Helvetica Neue", "Droid Sans", "Open Sans", "Open Sans Condensed" ], 
-                portal_simple.preferences[p]) %>
-          </select>
-        <% else %>
-          <div class="color">
-            <input type="color" maxlength="7" id="portal_template_prefereces_<%= p %>" class="color_field required" name="portal_template[preferences][<%= p %>]" value="<%= portal_simple.preferences[p] %>" data-hex="true" />
-          </div>
-        <% end %>
-      </div>
-    <% end %>
+      <% pref_bgs.each_with_index do |p, i| %>    
+        <div class="sgrid3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">
+          <label><%= t("admin.portal_settings.simple.#{p}") %></label>
+          <% if((i+1) % 2 != 0) %>
+            <select rel="google-fonts" data-saved-font="<%=portal_simple.preferences[p]%>" name="portal_template[preferences][<%= p %>]" id="portal_template_prefereces_<%= p %>">
+              <%= options_for_select([ "Helvetica Neue", "Helvetica", "Verdana", "Georgia", "Tahoma", "Trebuchet MS" ]) %>
+            </select>
+          <% else %>
+            <div class="color">
+              <input type="color" maxlength="7" id="portal_template_prefereces_<%= p %>" class="color_field required" name="portal_template[preferences][<%= p %>]" value="<%= portal_simple.preferences[p] %>" data-hex="true" />
+            </div>
+          <% end %>          
+        </div>
+      <% end %>
+      <script type='text/javascript'>
+        jQuery.each(google_fonts, function(i, item){
+          jQuery("<option value='"+item.family+"'>"+item.family+"</option>")
+            .data("webFont", item)
+            .appendTo("select[rel=google-fonts]")
+        })
+        
+        fontSelects = jQuery("select[rel=google-fonts]")
+
+        jQuery.each(fontSelects, function(i, item){
+          jQuery(this).val(jQuery(this).data("savedFont"))
+        })       
+
+        var fontFormat = function(state) {
+          if (!state.id) return state.text; // optgroup
+          return "<span style='font-family:"+state.text+";'>"+state.text+"</span>";
+        }
+        fontSelects.select2({
+          formatResult: fontFormat,
+          formatSelection: fontFormat,
+          specialFormatting: true,
+          escapeMarkup: function(m) { console.log(m); return m; },
+          containerCssClass: "font-select-container",
+          dropdownCssClass: "font-select-dropdown"
+        })
+      </script>
     </div>
 
     <h3 class="title"><%=t("portalcss.cosmetic.subheader_link_color")%></h3>

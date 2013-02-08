@@ -36,6 +36,6 @@ jQuery.noConflict()
 			})
 		}
 		
-	))
+	})
 
 }(window.jQuery)
