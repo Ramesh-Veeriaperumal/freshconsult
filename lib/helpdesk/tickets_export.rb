@@ -5,6 +5,13 @@ class Helpdesk::TicketsExport < Resque::FreshdeskBase
   def self.perform(export_params)
     SeamlessDatabasePool.use_persistent_read_connection do
       export_params.symbolize_keys!
+      #Need to be removed - kiran 
+      if export_params[:data_hash] and !export_params[:data_hash].is_a?(Array)
+        json_conditions = ActiveSupport::JSON.decode export_params[:data_hash]
+        json_conditions.delete_if {|condition_hash| condition_hash["condition"] == "created_at"}
+        export_params[:data_hash] = json_conditions
+      end
+      #####
       index_filter =  Account.current.ticket_filters.new(Helpdesk::Filters::CustomTicketFilter::MODEL_NAME).deserialize_from_params(export_params)
       sql_conditions = index_filter.sql_conditions
       sql_conditions[0].concat(%(and helpdesk_ticket_states.#{export_params[:ticket_state_filter]} 
@@ -22,7 +29,6 @@ class Helpdesk::TicketsExport < Resque::FreshdeskBase
                      helpdesk_ticket_states.ticket_id = helpdesk_tickets.id AND 
                      helpdesk_tickets.account_id = helpdesk_ticket_states.account_id))
       csv_hash = export_params[:export_fields]
-      puts "$$$$$$$$$ csv_hash : #{csv_hash.inspect}"
       headers = csv_hash.keys.sort
       select = "helpdesk_tickets.* "
       select = "DISTINCT(helpdesk_tickets.id) as 'unique_id' , #{select}" if sql_conditions[0].include?("helpdesk_tags.name")
