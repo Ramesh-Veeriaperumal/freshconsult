@@ -6,8 +6,9 @@ class Helpdesk::TicketsExport < Resque::FreshdeskBase
     SeamlessDatabasePool.use_persistent_read_connection do
       export_params.symbolize_keys!
       #Need to be removed - kiran 
-      if export_params[:data_hash] and !export_params[:data_hash].is_a?(Array)
-        json_conditions = ActiveSupport::JSON.decode export_params[:data_hash]
+      if export_params[:data_hash]
+        json_conditions = []
+        json_conditions = ActiveSupport::JSON.decode(export_params[:data_hash]) if export_params[:data_hash].length > 2 and !export_params[:data_hash].is_a?(Array)
         json_conditions.delete_if {|condition_hash| condition_hash["condition"] == "created_at"}
         export_params[:data_hash] = json_conditions
       end
