@@ -58,15 +58,8 @@ module SupportHelper
 	def logo portal
 		_output = []
 		_output << %(<a href='#{portal['linkback_url']}'>)
-		if portal['logo_url'].blank?
-			# Showing default logo directly applied from class
-			# This is done like a class so that a darker and lighter variation 
-			# can be shown based on the header color
-			_output << %(<span class='logo'></span>)
-		else
-			# Showing the customer uploaded logo within an image tag
-			_output << %(<img src='#{portal['logo_url']}' class='portal-logo' />)
-		end
+		# Showing the customer uploaded logo or default logo within an image tag
+		_output << %(<img src='#{portal['logo_url']}' class='portal-logo' />)
 		_output << %(</a>)
 		_output.join(" ")
 	end

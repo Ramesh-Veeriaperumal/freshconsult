@@ -111,7 +111,7 @@
 			$("#forgot_password").trigger('click')
 
 		// Page search autocompelete        
-		$( "[rel=page-search]" ).autocomplete({
+		$( "input[rel=page-search]" ).autocomplete({
         	minLength: 3,
         	source: function( request, response ) {
                 var term = request.term.trim(),
@@ -146,6 +146,21 @@
                 .addClass(item.type.toLowerCase()+'-item')
                 .appendTo( ul )
         }
+
+        //mobile search box focus style
+		$("input[rel='page-search']").focus(function () {
+			$(".hc-search").addClass("onfocus-mobile")
+			$(".hc-search-button").addClass("onfocus-mobile-button")
+			if (Modernizr.mq('only screen and (max-width: 768px)')) {
+				$(".hc-nav").hide('fast')
+			}
+		}).blur(function(){
+	    	$(".hc-search").removeClass("onfocus-mobile")
+	    	$(".hc-search-button").removeClass("onfocus-mobile-button")
+	    	if (Modernizr.mq('only screen and (max-width: 768px)')) {
+				$(".hc-nav").show()
+			}
+		})
 	})
 
 }(window.jQuery);

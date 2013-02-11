@@ -2,10 +2,8 @@
 // Headings, body text, lists, code, and more for a versatile and durable typography system
 // ----------------------------------------------------------------------------------------
 
-
 // BODY TEXT
 // ---------
-
 p {
   margin: 0 0 $baseLineHeight / 2;
   small {
@@ -69,7 +67,7 @@ h2 {
 }
 h3 {
   font-size: 20px;
-  line-height: $baseLineHeight * 1.9;
+  line-height: $baseLineHeight * 1.4;
   small {
     font-size: 14px;
   }
@@ -257,3 +255,6 @@ cite {
 }
 /* Match css in autocompelete */
 .match{ background-color:$acHighlightBg; }
+
+
+

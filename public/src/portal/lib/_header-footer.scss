@@ -1,19 +1,31 @@
+
 $header_border_color: rgba(#fff, 0.2);
+$header_border_color_dark: rgba(#000, 0.2);
+
 .banner{
+	text-align:center;
 	background-color: $header_color;
 	padding: $header-padding;
-	border: 1px solid $header_border_color;
+	@if lightness($header_color) > 50% {
+		border: 1px solid $header_border_color_dark;	
+	} @else{
+		border: 1px solid $header_border_color;
+	}
+	
 	border-bottom-width: 0;
 	color: $header_text_color;
 	@include box-shadow( rgba(#fff, 0.5) 0 1px inset );		
 	@include clearfix;
-	
-	@if(lightness($header_color) < 50){
-		@include text-shadow(rgba(#000, 0.9) -1px -1px 1px);
+
+	@if(lightness($header_color) < 50%){
+		@include text-shadow(rgba(#000, 0.9) -1px -1px 1px);	
 	}
-	
+	h1{
+		font-size:26px;
+		line-height: $baseLineHeight;
+	}
 	a{ color: inherit; font-size: 13px; }
-	a:hover{ color: inherit; }
+    a:hover{ color: inherit; }
 }
 
 .banner-title .heading{ color: inherit; }
@@ -25,60 +37,55 @@ $header_border_color: rgba(#fff, 0.2);
 		display: inline-block;
 		&:after{ content:" - "; }
 	}
-	a{ color: inherit; }
+	a{ color: inherit;}
 }
 
 .page-tabs{
 	background-color: $tab_color;
 	color: #fff;
 	line-height: 35px;
-	border:1px solid $header_border_color;
-	@include clearfix;
-	a{ 
-		padding:0 15px; 
-		color:inherit; 
-		@include min-width(100px); 
-	}	
-	a:hover, a.active{
-		text-decoration: none;
-		background-color: $tab_hover_color;
-		color: $tab_hover_text_color;
+	width: 100%;
+	@if lightness($tab_color) > 50% {
+		border: 1px solid $header_border_color;	
+	} @else{
+		border: 1px solid $header_border_color_dark;
 	}
-	a{ display: none; }
-	a.active{ display: block; }
-}
-
-@include at-breakpoint($break-tablet){
-	.banner{ @include border-top-radius(6px); }
-	.banner-nav { 
-		margin-top: 5px;
-		.welcome{ 
-			display: block;
-			&:after{ content:none; }
+	@include clearfix;
+	.nav-link{
+		background-color:$tab_color;
+		a{ 
+			width: 100%;
+			@if lightness($tab_color) > 50% {
+				color:#333;		
+			} @else{
+				color:#fff;
+			}
+			padding: 5px 10px;
+		}	
+	}
+	@include mobile-icon(icon-nav-menu, $tab_color);
+	.menu-for-mobile{
+		&:before{
+			@extend .icon-nav-menu;
 		}
 	}
-	.page-tabs{ 
-		@include border-bottom-radius(6px); 
-		a:first-child{ @include border-bottom-left-radius(6px); }
-		a{ display: block; float: left; border-right: 1px solid $header_border_color; text-align: center;  }
+	a:hover, a.active{
+		text-decoration: none;
 	}
 }
-
 .logo, .portal-logo{
-	@include float-left;	
-	margin: -3px 10px 0 -5px;	
+	display: inline;
+	float: left;
+	margin: -3px 10px 0 -5px;
 	height: 50px;
+	text-align:center;
 	width: auto;
 }
 
-.logo{
-	background: image-url("/images/logo.png");
-	width: 50px;
-}
-
 footer{
+	margin-top:10px;
 	background-color: $footer_color;
-	padding: $content-padding;
+	padding: $content-padding-mobile;
 	border: 1px solid darken($footer_color, 10%);
 	color: $footer_text_color;
 	text-align: center;
@@ -100,7 +107,174 @@ footer{
 }
 
 .copyright{
-	padding: $content-padding;
+	padding: $content-padding-mobile;
 	text-align: center;
 	color: $gray;
+}
+
+/* Applying styles only for mobile */
+@include at-breakpoint($media-mobile){
+	.banner{
+		border:0;
+		box-shadow:none;
+		.banner-nav {
+			margin-top: 11px;
+			a{
+				color:inherit;
+				@include border-radius(20px);
+				padding: 1px 10px;
+				padding-bottom: 3px;
+				@if lightness($header_color) > 50% {
+					border: 1px solid rgba(#000, 0.2);	
+				} @else{
+					border: 1px solid rgba(255, 255, 255, 0.2);	
+				}
+			}
+		}
+	}
+	.page-tabs{
+		width: 100%;
+		padding:$content-padding-mobile/2 + 0.15;
+		text-align: right;
+		cursor: pointer;
+		position:relative; // fix for bottom box shadow
+		z-index:2; // fix for bottom box shadow
+		
+		@if lightness($help_center_color) > 50% {
+			border: 1px solid rgba(#000, 0.2);
+		} @else{
+			border: 1px solid rgba(#fff, 0.3);
+		}
+		border-right: 0;
+		border-left: 0;
+		box-shadow: 0px 3px 4px 0px #EEE;
+		.menu-for-mobile{
+			padding: $content-padding-mobile $content-padding-mobile/2;
+			z-index:3;
+			@extend .show-in-mobile;
+			&:before{
+				content:"";
+				@include inline-block;
+			}
+		}
+		.nav-link{
+			display:none;
+			a{ 
+				display: block;
+				text-align: left;
+				padding-left: 0;
+				@if lightness($tab_color) > 50% {
+					border-bottom: 1px solid rgba(#333, 0.3);
+				} @else{
+					border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+				}
+				border-top:0;
+				&:last-child{
+					border:0;
+					padding-bottom:0;
+				}
+			}	
+		}
+	}	
+	.logo, .portal-logo{
+		display:block;
+		float:none;
+		margin: 0 auto;	
+		text-align:center;
+		margin-bottom:5px;
+	}
+	footer{
+		margin-top:0;
+		padding:$content-padding-mobile $content-padding-mobile/2;
+		a{
+			box-shadow: inset 0px 1px 3px $footer_color, 0px 0px 2px darken($footer_color, 30%);
+			background: $footer_text_color;
+			color:$footer_color;
+			border-radius: 20px;
+			padding: 4px 10px;
+			margin:0 4px;
+			&:before{
+				content:none;
+				margin:0;
+			}
+			&:hover{
+				text-decoration: underline;
+				color:$footer_color;
+			}
+		}
+	}
+}
+/* Applying styles for tablet and above */
+@include at-breakpoint($break-tablet){
+	.banner{ 
+		text-align:left; @include border-top-radius(6px); 
+		h1{
+			font-size:30px;
+			line-height: $baseLineHeight * 2;
+		}
+		.banner-title{ @include span-columns(7); }
+		.banner-nav{ 
+			@include span-columns(3 omega);
+			margin-top: 5px;
+			.welcome{ 
+				display: block;
+				&:after{ content:none; }
+			}
+		}
+		nav{ text-align: right; }
+	}
+	.page-tabs{ 
+	/*	@include border-bottom-radius(6px); 
+		a:first-child{ @include border-bottom-left-radius(6px); }
+		a{ display: block; float: left; border-right: 1px solid $header_border_color; text-align: center;  }
+		*/
+		display:inline-block;
+		@include border-bottom-radius(6px); 
+		@if lightness($tab_color) > 50% {
+			border: 1px solid $header_border_color;	
+		} @else{
+			border: 1px solid $header_border_color_dark;
+		}
+		&:before{
+			background:none;
+			height:auto;
+			width:auto;
+		}
+		.nav-link{
+			display:block !important; /* overwrite mobile inline style in desktop view */
+			background:none;
+			padding:0;
+			margin:0;
+			a{ 
+				display: inline-block; 
+				float: left; 
+				border: 0;
+				border-right: 1px solid $header_border_color; 
+				text-align: center; 
+				width: auto;
+				padding: 0 15px;
+				background:none;
+				&:first-child{
+					border-top: 0;
+					@include border-top-radius(0px);
+					@include border-bottom-left-radius(6px); 
+				}
+				
+			}
+			a:hover, a.active{
+				text-decoration: none;
+				background-color: $tab_hover_color;
+				color: $tab_hover_text_color;
+			}
+			a{ 
+				padding:0 15px; 
+				color:inherit; 
+				@include min-width(100px); 
+			}	
+			a.active{ display: block; }
+		}
+	}
+	footer{
+		padding: 1.8em 2.2em;
+	}
 }

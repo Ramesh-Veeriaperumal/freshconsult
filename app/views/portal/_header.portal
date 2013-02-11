@@ -7,8 +7,13 @@
 		{{ portal | welcome_navigation }}
 	</nav>
 </header>
-<nav class="page-tabs">
-	{% for tab in portal.tabs %}
-		<a href="{{tab.url}}" class="{% if tab.tab_type == current_tab %}active{% endif %}">{{ tab.label }}</a>
-	{% endfor %}
+<nav class="page-tabs" >
+	<a data-toggle-dom="#header-tabs" href="#" data-animated class="menu-for-mobile"></a>
+	<div class="nav-link" id="header-tabs">
+		{% for tab in portal.tabs %}
+			{% if tab.url %}
+				<a href="{{tab.url}}" class="{% if tab.tab_type == current_tab %}active{% endif %}">{{ tab.label }}</a>
+			{% endif %}
+		{% endfor %}
+	</div>
 </nav>
