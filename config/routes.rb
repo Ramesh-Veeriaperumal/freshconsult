@@ -349,6 +349,9 @@
   map.namespace :support do |support|
     # Portal home
     support.home 'home', :controller => "home"
+
+    # Portal preview
+    support.preview 'preview', :controller => "preview"
     
     # Login for users in the portal
     support.resource :login, :controller => "login", :only => [:new, :create]

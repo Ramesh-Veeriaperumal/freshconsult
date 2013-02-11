@@ -1,0 +1,61 @@
+// Base settings for portal styles
+@import "lib/settings";
+@import "lib/mixins";
+
+// CSS Reset
+@import "lib/reset";
+
+// Type and some util functions
+@import "lib/type";
+@import "lib/utilities";
+@import "lib/scaffolding";
+@import "lib/buttons";
+
+@import "portal/preview/*.png";
+
+body{ 
+	overflow: hidden; 
+	background: #505050; 
+}
+#iframe-preview{
+	position: relative;
+	border: 0;
+	width: 100%;
+	display: block;
+	margin: auto;
+}
+
+$preview-sprite-dimensions: true;
+$preview-layout:horizontal;
+@include all-preview-sprites;
+
+#responsive-buttons{
+	@include clearfix;
+	span{ @include inline-block; } 
+	a{ 
+		float: left;
+		border-left:1px solid rgba(#fff, 0.2); 
+		border-right:1px solid rgba(#000, 0.2); 
+		padding:5px 4px 5px 6px;
+		@include box-shadow(rgba(0, 0, 0, 0.2) 0 0 10px inset);
+		span{ @include opacity(0.4); }
+	}
+	a.active{
+		background-color: rgba(#333, 0.5);
+		span{ @include opacity(1); }
+	}
+}
+
+.preview-message{
+	background: image-url("/images/portal/preview-bg.png");
+	border-bottom:5px solid #313131;
+}
+.page{
+	@include container($total-columns); 
+}
+.preview-exit{
+	margin-top: 10px;
+	@include border-radius(2em);
+	padding-left: 20px;
+	padding-right: 20px;
+}

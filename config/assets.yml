@@ -26,11 +26,14 @@ stylesheets:
   codemirror:
     - public/stylesheets/codemirror.css
 
-  portal:                
+  portal:
     # - public/stylesheets/portal/portal.css
     - public/stylesheets/redactor.css
     # - public/stylesheets/app/lib/qtip.css
     # - public/stylesheets/portal/responsive.css 
+
+  preview:
+    - public/stylesheets/portal/preview.css
 
   # !PATTERN TODO These css files will be migrated in to the pattern library at a later point
   non_pattern_1:
@@ -193,6 +196,11 @@ javascripts:
     - public/javascripts/prototype.js
     - public/javascripts/portal/jquery-1.8.3.js    
     - public/javascripts/modernizr-2.5.3-respond-1.1.0.min.js
+
+  preview:
+    - public/javascripts/portal/jquery-1.8.3.js
+    - public/javascripts/modernizr-2.5.3-respond-1.1.0.min.js
+    - public/javascripts/portal/preview.js
 
   portal_bottom:
     - public/javascripts/frameworks/plugins/jquery.livequery.js

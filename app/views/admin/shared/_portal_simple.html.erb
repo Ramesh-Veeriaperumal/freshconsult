@@ -1,5 +1,8 @@
-<%= javascript_include_tag "portal/google-fonts" %>
-<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:700|Source+Sans+Pro|Droid+Sans|Lato|Arvo|Droid+Serif|Oswald|Open+Sans|Merriweather|Roboto+Condensed|Roboto|Varela+Round|Vast+Shadow' rel='stylesheet' type='text/css'>
+<% content_for :head do %>
+  <%= javascript_include_tag "portal/google-fonts" %>
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:700|Source+Sans+Pro|Droid+Sans|Lato|Arvo|Droid+Serif|Oswald|Open+Sans|Merriweather|Roboto+Condensed|Roboto|Varela+Round|Vast+Shadow' rel='stylesheet' type='text/css'>
+<% end %>
+
 <div id="portal-simple-template-options">
   <% form_for [:admin, @portal_template], :url => { :action => :update }, 
       :html => { :method => :put, :rel => "portal_form", :target => "_blank" } do |f| -%>

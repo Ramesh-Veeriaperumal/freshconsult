@@ -36,5 +36,6 @@ module Portal::TemplateActions
 
   def clear_preview_session
     session.delete(:preview_button)
+    session.delete(:preview_url)    
   end
 end

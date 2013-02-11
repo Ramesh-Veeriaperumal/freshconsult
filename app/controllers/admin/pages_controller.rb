@@ -20,7 +20,8 @@ class Admin::PagesController < Admin::AdminController
       format.html { 
         if params[:preview_button]
           session[:preview_button] = true
-          redirect_to get_redirect_portal_url
+          session[:preview_url] = get_redirect_portal_url
+          redirect_to support_preview_url
         end
       }
     end

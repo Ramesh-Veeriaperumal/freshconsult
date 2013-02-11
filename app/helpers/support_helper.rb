@@ -350,16 +350,6 @@ HTML
 		end
 	end
 
-	# Preview message html construction
-	def preview_message
-		_output = []
-		if session[:preview_button].present? && current_user && current_user.agent?
-			_output << %( <div id="preview-message" class="alert alert-solid"> )
-			_output << t('portal.header.preview_message')
-			_output << %( </div> )
-		end
-	end
-
 	# Including google font for portal
 	def include_google_font *args
 		font_url = args.map { |f| FONT_INCLUDES[f] }

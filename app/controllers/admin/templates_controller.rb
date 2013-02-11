@@ -33,7 +33,8 @@ class Admin::TemplatesController < Admin::AdminController
       format.html { 
         if params[:preview_button]
           session[:preview_button] = true
-          redirect_to support_home_url
+          session[:preview_url] = support_home_url
+          redirect_to support_preview_url
         end
       }
     end

@@ -1555,6 +1555,8 @@ en:
   no_anonymous_tickets: "To submit a ticket, <a href={{signup}}><b>Sign up</b></a> as a new user or <a href={{login}}><b>Login</b></a>."
   no_signup: "To submit a ticket, please <a href={{login}}><b>Login</b></a>."
   portal: 
+    header: 
+      preview_message: "<b>Preview mode</b> - <a href='javascript:window.close()'>Click here</a> to go back."
     search: 
       filters:
         all: "All"
