@@ -39,6 +39,10 @@
   display: none;
 }
 
+.show-in-tablet{
+  display: none; 
+}
+
 /* Loading content */
 .loading-box, .loading, .ui-autocomplete-loading{
   background-image:url('/images/load.gif');
@@ -67,7 +71,7 @@ input[type="text"].loading, .ui-autocomplete-loading{
   .pull-right-tablet{ float: right; }
   .pull-left-tablet{ float: left; }
   .hide-tablet{ display: none; }
-  .show-tablet{ display: block; }
+  .show-in-tablet{ display: block; }
   .invisible-tablet { visibility: hidden; }
   .align-right-tablet{ text-align:right; }
   .align-left-tablet{ text-align:left; }

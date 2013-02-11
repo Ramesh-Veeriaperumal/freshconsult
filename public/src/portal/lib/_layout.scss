@@ -22,15 +22,6 @@
     margin-bottom: 10px;  
     /*@include susy-grid-background;*/
   }
-  .banner {    
-    .banner-title{ @include span-columns(7); }
-    .banner-nav{ 
-      @include span-columns(3 omega);
-    }
-    nav{ text-align: right; }
-  }
-  
-  footer{ margin-top: 10px; }
   
   @include layout(4) {
     /*.content{ @include susy-grid-background; }*/

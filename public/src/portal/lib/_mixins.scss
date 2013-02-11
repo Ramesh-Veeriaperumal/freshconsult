@@ -387,7 +387,7 @@
   .mobile-#{$class}{
     &:before{
       content:"";
-      @if lightness($bg_color) > 50{
+      @if lightness($bg_color) > 50% {
         @extend .#{$class}-dark;
       } @else {
         @extend .#{$class}-light;

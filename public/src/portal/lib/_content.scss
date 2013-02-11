@@ -364,4 +364,13 @@ hr.content-divider{
 @include at-breakpoint($media-mobile){
 	.topic-actions{ margin-top: 15px; margin-bottom: 15px; }
 	.topic-actions .btn{ min-width: 30%; }
+
+	.cs-s{
+		border-top:1px solid $orange;
+		margin:0.5em 0;
+		h3{
+			border-top:4px solid $orange;
+			@include inline-block;
+	}
+}
 }

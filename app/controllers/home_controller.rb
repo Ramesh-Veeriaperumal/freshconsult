@@ -6,10 +6,11 @@ class HomeController < ApplicationController
   def index
     # redirect_to MOBILE_URL and return if (current_user && mobile?)
     if (current_user && current_user.permission?(:manage_tickets))
-      redirect_to helpdesk_dashboard_path
+      redirect_to helpdesk_dashboard_path and return
     else
       redirect_to support_home_path and return
-    end    
+    end   
+    # redirect_to login_path and return unless (allowed_in_portal?(:open_solutions) || allowed_in_portal?(:open_forums))
     
     # @categories = current_portal.solution_categories.customer_categories if allowed_in_portal?(:open_solutions)
     # if allowed_in_portal?(:open_solutions)

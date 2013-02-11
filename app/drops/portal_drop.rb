@@ -54,7 +54,7 @@ class PortalDrop < BaseDrop
 
   # Portal branding related information
   def logo_url
-    @logo_url ||= source.logo.content.url(:logo) if source.logo.present?
+    @logo_url ||= source.logo.present? ? source.logo.content.url(:logo) : "/images/logo.png"
   end
 
   def linkback_url

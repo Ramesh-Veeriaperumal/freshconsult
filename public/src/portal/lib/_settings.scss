@@ -53,6 +53,25 @@ $page-background: 		$white !default;
 $page-light-background: rgba($white, 0.9) !default;
 $page-form-background: 	rgba(#f4f4f4, 0.9) !default;
 
+// GRID SYSTEM FOR SUSY
+// --------------------------------------------------
+
+$total-columns: 4;
+$column-width: 60px;
+$gutter-width: 10px;
+$grid-padding: 10px;
+
+$container-style: magic;
+
+$default-container-width: 1140px !default;
+$container-width: $default-container-width;
+
+
+$media-mobile: 		0 45em; // Applying styles only for mobile
+$break-tablet:		45em 12; // Applying styles for Tablets to Medium & Large desktops 
+$break-desktop:		60em 12; // Applying styles for Medium & Large desktops 
+$break-large:		75em 16; // Applying styles for Large desktops and above
+
 // Links
 // -------------------------
 $linkColor:             $blue !default; //#08c
@@ -65,12 +84,15 @@ $serifFontFamily:       Georgia, "Times New Roman", Times, serif !default;
 $monoFontFamily:        Menlo, Monaco, Consolas, "Courier New", monospace !default;
 
 $baseFontSize:          14px !default;
+$baseFontSizeForMobile: 13px !default;
 $baseFontFamily:        $sansFontFamily !default;
 $baseLineHeight:        $baseFontSize * 1.5625 !default;
+$baseLineHeightForMobile: $baseFontSizeForMobile * 1.5625 !default;
 $altFontFamily:         $serifFontFamily !default;
 
 $headingsFont:			'Open Sans Condensed' !default;
 $headingsFontFamily:    $headingsFont, Helvetica, sans-serif !default; // empty to use BS default, $baseFontFamily
+
 $headingsFontWeight:    bold !default;    // instead of browser default, bold
 $headingsColor:         inherit !default; // empty to use BS default, $textColor
 
@@ -167,24 +189,6 @@ $zindexFixedNavbar:       1030 !default;
 $zindexModalBackdrop:     1040 !default;
 $zindexModal:             1050 !default;
 
-// GRID SYSTEM FOR SUSY
-// --------------------------------------------------
-
-$total-columns: 4;
-$column-width: 60px;
-$gutter-width: 10px;
-$grid-padding: 10px;
-
-$container-style: magic;
-
-$default-container-width: 1140px !default;
-$container-width: $default-container-width;
-
-
-$media-mobile: 		0 30em; // Applying styles only for mobile
-$break-tablet:		45em 12; // Applying styles for Tablets to Medium & Large desktops 
-$break-desktop:		60em 12; // Applying styles for Medium & Large desktops 
-$break-large:		75em 16; // Applying styles for Large desktops and above
 
 // PAGE RELATED STYLES
 // --------------------------------------------------
