@@ -158,8 +158,8 @@ p strong{
 			.monitor, .monitor_active {
 				background-repeat: no-repeat;
 				@include hide-text();
-				width: 23px;
-				height: 21px;
+				width: 33px;
+				height: 20px;
 				margin-right: 10px;
 				display: inline-block;
 				margin-bottom:  -4px;
@@ -2396,10 +2396,7 @@ label.custom-select {
 // Overriding common elements for new details page
 .ticket_details {
 	div.watchers_tooltip {
-		margin: -11px 0px 0px 25px;
-
-		.arrow-right {display:none}
-
+		margin: 30px 0px 0px -10px;
 	}
 }
 

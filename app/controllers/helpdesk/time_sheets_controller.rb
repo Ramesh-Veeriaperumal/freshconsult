@@ -1,5 +1,7 @@
 class Helpdesk::TimeSheetsController < ApplicationController
   
+  include RedisKeys
+  
   before_filter { |c| c.requires_feature :timesheets }
   before_filter { |c| c.requires_permission :manage_tickets }  
   before_filter :set_show_version
@@ -178,9 +180,13 @@ private
   end
 
   def set_show_version
-    @new_show_page = cookies[:new_details_view].present? && cookies[:new_details_view].eql?("true")
+    @new_show_page = (get_key(show_version_key) == "1")
   end
   
+  def show_version_key
+    HELPDESK_TKTSHOW_VERSION % { :account_id => current_account.id, :user_id => current_user.id }
+  end
+
   def respond_to_format result
     respond_to do |format|
       format.js

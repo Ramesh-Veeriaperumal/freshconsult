@@ -547,7 +547,13 @@ $(document).ready(function() {
 		$(this).find('.content').append(widget_code.val());
 		widget_code.remove();
 		$(this).removeClass('inactive');
-	})
+	});
+
+	$('.widget.load_remote.inactive').live('click', function(ev){
+		console.log($(this).children('.content'));
+		$(this).children('.content').trigger('afterShow');
+		$(this).removeClass('inactive');
+	});
 
 	$("select").data('placeholder','');
 	$("#TicketProperties select.dropdown, #TicketProperties select.dropdown_blank, #TicketProperties select.nested_field, select.select2").livequery(function(){

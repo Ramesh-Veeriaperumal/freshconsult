@@ -23,8 +23,17 @@
 				<%= render :partial => "helpdesk/tickets/show/ticket_fields.html.erb" %>
 				<%= render :partial => "helpdesk/tickets/show/integrations.html.erb" %> 
 				<% if feature?(:timesheets) %>
-				<div class="widget time-tracked" id="TimesheetTab" data-remote="/helpdesk/tickets/<%= @ticket.display_id %>/components/timesheetss">
-					<%= render :partial => "helpdesk/time_sheets/v2/index" %>
+				<div class="widget time-tracked inactive load_remote" id="TimesheetTab" data-remote="/helpdesk/tickets/<%= @ticket.display_id %>/components/timesheetss">
+					<h3>
+						Time Tracked
+						<div class="tracked_time">
+							<span class="time" id="timeentry_timer_total"><%= @ticket.time_tracked %></span>
+							<span class="time_unit">Hrs </span>
+						</div>
+					</h3>
+					<div class="content" rel="remote" data-remote-url="<%= helpdesk_ticket_helpdesk_time_sheets_path(@ticket) %>"></div>
+
+					<%# render :partial => "helpdesk/time_sheets/v2/index" %>
 				</div>
 				<% end %>
 			</div>
