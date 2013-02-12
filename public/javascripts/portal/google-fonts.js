@@ -167,11 +167,4 @@ var google_fonts = [{
         "regular"],
     "subsets": [
         "latin"]
-}, {
-    "kind": "webfonts#webfont",
-    "family": "Vast Shadow",
-    "variants": [
-        "regular"],
-    "subsets": [
-        "latin"]
 }]

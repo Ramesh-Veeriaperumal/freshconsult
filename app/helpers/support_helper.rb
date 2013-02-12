@@ -14,7 +14,6 @@ module SupportHelper
 					  "Roboto Condensed" => "Roboto+Condensed:regular,italic,700,700italic",
 					  "Roboto" => "Roboto:regular,italic,700,700italic",
 					  "Varela Round" => "Varela+Round:regular",
-					  "Vast Shadow" => "Vast+Shadow:regular",
 					  "Helvetica Neue" => "Helvetica+Neue:regular,italic,700,700italic" }
 
 	# Top page login, signup and user welcome information
