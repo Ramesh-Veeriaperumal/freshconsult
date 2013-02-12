@@ -140,8 +140,7 @@ class AgentsController < ApplicationController
       
       if @agent.update_attributes(params[nscname])            
           @user = current_account.all_users.find(@agent.user_id)
-          if @user.update_attributes(params[:user])
-             puts @user.valid?
+          if @user.update_attributes(params[:user])        
              flash[:notice] = t(:'flash.general.update.success', :human_name => 'Agent')
              redirect_to :action => 'index'
          else
@@ -150,7 +149,6 @@ class AgentsController < ApplicationController
              render :action => :edit 
          end
       else
-        puts "INSIDE"
         @agent.user =@user       
         render :action => :edit
       end    

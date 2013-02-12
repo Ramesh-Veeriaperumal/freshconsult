@@ -8,14 +8,6 @@ module AgentsHelper
   def can_destroy?(agent)
      (agent.user != current_user) && (!agent.user.account_admin?)
   end
-  
-  def available_agents
-    current_account.subscription.agent_limit - current_account.full_time_agents.size
-  end
-  
-  def available_passes
-    current_account.day_pass_config.available_passes
-  end
 
   def fetch_upgrade_error_msg
     if privilege?(:manage_account)
