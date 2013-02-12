@@ -1309,7 +1309,8 @@ en:
     add_signature: Add signature
     update: Update
     permissions: Permissions
-    role: Role
+    roles: Roles
+    roles_description: Associate a role to an agent, an agent can play multiple role.
     scope: Agent scope
     admin: Administrator
     supervisor: Supervisor

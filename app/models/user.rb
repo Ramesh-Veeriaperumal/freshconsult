@@ -98,9 +98,15 @@ class User < ActiveRecord::Base
   validates_presence_of :user_roles, :unless => [:customer?, :account_admin?]
 
   def user_roles_attributes=(user_attr)
+    return if user_attr.empty?
+    role_ids = user_attr[:role_id].delete_if { |id| id.blank? }
+    if role_ids.blank?
+      self.errors.add_to_base("User roles should be set")
+      puts "SETT"
+      return false
+    end
     # delete records if update
     user_roles.destroy_all unless user_roles.blank?
-    role_ids = user_attr[:role_id].delete_if { |id| id.blank? }
     # build user_roles
     role_ids.each { |id| user_roles.build({:role_id => id}) }
     # set privileges based on chosen roles
