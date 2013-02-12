@@ -113,19 +113,20 @@ module SupportHelper
     	content_tag :a, label, { :href => portal['new_topic_path'], :title => label }.merge(options)
 	end
 
-	def article_list folder, limit = 5
-		if(folder['articles_count'] > 0)
+	def article_list folder, limit = 5, reject_article = nil
+		if(folder.present? && folder['articles_count'] > 0)
 			articles = folder['articles']
-			output = []
+			articles.reject!{|a| a['id'] == reject_article['id']} if(reject_article != nil)
+ 			output = []
 			output << %(<ul>#{ articles.take(limit).map { |a| article_list_item a.to_liquid } }</ul>)
 			if articles.size > limit
 				output << %(<a href="#{folder['url']}" class="see-more">) 
-				output << %(#{ I18n.t('portal.article.see_all_articles', :count => folder['article_count']) })
+				output << %(#{ I18n.t('portal.article.see_all_articles', :count => folder['articles_count']) })
 				output << %(</a>) 
 			end
 			output.join("")
 		end
-	end
+	end	
 
 	def article_list_item article
 		output = <<HTML
@@ -137,8 +138,6 @@ module SupportHelper
 HTML
 		output.html_safe
 	end
-
-
 
 	def topic_list forum, limit = 5
 		if(forum['topics_count'] > 0)

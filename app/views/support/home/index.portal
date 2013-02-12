@@ -12,7 +12,7 @@
 									<div class="list-lead">
 										<a href="{{folder.url}}">{{folder.name}} ({{ folder.articles_count }})</a>
 									</div>
-									{{ folder | article_list:5 }}									
+									{{ folder | article_list:5 }}
 								</section>
 							{% endif %}
 						{% endfor %}

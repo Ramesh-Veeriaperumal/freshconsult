@@ -31,7 +31,9 @@ module Portal::TemplateActions
   def css_syntax?(custom_css)
     _options = Compass.configuration.to_sass_engine_options.merge(:syntax => :scss, 
         :always_update => true, :style => :compact)
-    syntax_rescue { Sass::Engine.new("@import \"compass\";@import \"susy\";#{custom_css}", _options).render }
+    _options[:load_paths] << "#{RAILS_ROOT}/public/src/portal"
+
+    syntax_rescue { Sass::Engine.new("@import \"lib/settings\"; #{custom_css}", _options).render }
   end
 
   def clear_preview_session
