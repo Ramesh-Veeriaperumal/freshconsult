@@ -7,31 +7,48 @@ class SubscriptionEvent < ActiveRecord::Base
 
     include Subscription::Events::Constants
 
-    def events_for_last_30_days
-      count(:conditions => {:created_at => (30.days.ago..Time.now.end_of_day)}, 
-            :group => "code")
+    def events(start_date = 30.days.ago, end_date = Time.now.end_of_day)
+      {
+        :list => find(:all, :include => :account, 
+                      :conditions => { :created_at => (start_date..end_date) } ), 
+        
+        :revenue => calculate(:sum, :cmrr, 
+                              :group => "code",
+                              :conditions => {:created_at => (start_date..end_date)})
+      }
     end
 
-    def revenue_for_last_30_days
-      sum(:cmrr, :group => "code", 
-                 :conditions => {:created_at => (30.days.ago..Time.now.end_of_day)})
+    def upgrades(start_date = 30.days.ago, end_date = Time.now.end_of_day)
+      {
+        :list => find(:all, :conditions => { :created_at => (start_date..end_date),
+                                              :code => (METRICS[:upgrades]) }), 
+        
+        :revenue => calculate(:sum, :cmrr, :conditions => { :created_at => (start_date..end_date),
+                                                            :code => (METRICS[:upgrades]) }), 
+      }
     end
 
-    def list_accounts(month, year, code)
-      find(:all, :include => [ :account, { :account => :subscription_payments } ],
-                  :conditions => ['MONTH(created_at) = ? AND YEAR(created_at) = ? 
-                                                      AND code = ?', month, year, code])
+    def downgrades(start_date = 30.days.ago, end_date = Time.now.end_of_day)
+      {
+        :list => find(:all, :conditions => { :created_at => (start_date..end_date),
+                                              :code => (METRICS[:downgrades]) }), 
+        
+        :revenue => calculate(:sum, :cmrr, :conditions => { :created_at => (start_date..end_date),
+                                                            :code => (METRICS[:downgrades]) }), 
+      }
     end
 
-    def monthly_revenue(month, year, code)
-      sum(:cmrr, :conditions => ['MONTH(created_at) = ? AND 
-                                  YEAR(created_at) = ? AND code = ?', month, year, code])
+    def cmrr_last_30_days
+      sum(:cmrr, :conditions => { :created_at => (30.days.ago..Time.now.end_of_day),
+                                  :code => (METRICS[:cmrr]) })
     end
 
-    def overall_monthly_revenue(month, year, code_range)
-      sum(:cmrr, :conditions => ['MONTH(created_at) = ? AND 
-                                  YEAR(created_at) = ? AND code IN (?)', month, year, code_range]) 
+    def cmrr(start_date, end_date)
+      sum(:cmrr, :conditions => { :created_at => (start_date..end_date),
+                                  :code => (METRICS[:cmrr]) })
     end
+
+
 
     #Adding Event to db
     def add_event(account, attributes)
