@@ -1,5 +1,6 @@
 <!--Fixed Starp-->
 <div class="fixedStrap">
+	<div class="fixedbg"></div>
 	<div id="firstchild">
 		<div class="controls">
 		<!--Pagination-->
@@ -10,7 +11,8 @@
 				</ul>
 			</div>
 			<div id="activity_toggle" class="activity_toggle custom-tip-bottom clearfix" title="Toggle Activities">
-				<%= t('ticket.activities') %>: <span class="visible"><%= t('ticket.activity_toggle.visible') %></span><span><%= t('ticket.activity_toggle.hidden') %></span>
+				<div class="text"><%= t('ticket.activities') %></div>
+				<input rel="toggle" type="checkbox" data-checked-label="Yes" data-unchecked-label="No" />
 			</div>
 			<!--Breadcrumb-->
 			<div class="bread-crumb-wrap clearfix">

@@ -1,9 +1,7 @@
 <% unless user.job_title.blank? %>
-   <b><%= h user.job_title %></b>
-<% end %>
-<% if user.job_title.blank? && !user.customer.blank? %>
-   <%= t("working") %>
+   <%= h user.job_title %>
 <% end %>
 <% unless user.customer.blank? %>
-   <%= t("at") %> <%= link_to(h(user.customer.name), user.customer)  %>
+	<%= "<br >" unless user.job_title.blank? %>
+	<%= link_to(h(user.customer.name), user.customer)  %>
 <% end %>

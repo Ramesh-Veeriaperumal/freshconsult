@@ -8,6 +8,7 @@
 	margin-top: -11px;
 	border: none;
 	@include box-shadow(0px 5px 6px #ccc);
+
 }
 
 ol, ul, li{
@@ -133,7 +134,7 @@ p strong{
 				color: #333;
 				text-shadow: 0px 1px 0px #fff;
 				line-height: 21px;
-				font-weight: 300;
+				font-weight: bold;
 				height: 21px;
 				overflow: hidden;
 				word-break: break-all;
@@ -176,7 +177,7 @@ p strong{
 			.source-badge-wrap{
 				position: absolute;
 				left: -30px;
-				top: -8px;
+				top: -3px;
 				width: 48px;
 				height: 48px;
 				@include border-radius(42px);
@@ -257,14 +258,15 @@ p strong{
 			@include border-radius(4px, 4px);
 			h4{
 				font-size: 18px;
-				padding-left: 10px;
-				padding-bottom: 5px;
+				padding: 0 10px;
+				font-weight: 300;
 			}
 
 			p{
 				font-size: 13px;
 				padding-left: 10px;
-				line-height: 20px;
+				line-height: 16px;
+				color: #999;
 			}
 		}
 	}
@@ -361,7 +363,7 @@ p strong{
 
 .ticket-actions{
 	display: block;
-	margin: 10px 0px 0px;
+	margin: 19px 0px 0px;
 	.forward, .reply{
 		float: left;
 		font-size: 12px;
@@ -466,15 +468,15 @@ p strong{
 .pseudo_reply {
 	height: 15px;
 	background: #FFF;
-	padding: 25px;
-	font-size: 13px;
+	padding: 10px 10px 13px;
+	font-size: 16px;
 	color: #999;
 	border-radius: 5px;
 	cursor: pointer;
-
+	@include box-shadow( inset 0 1px 3px rgba(0,0,0,.1));
+	border: 1px solid #ccc;
 	a {
-		color: #666;
-		border-bottom: dotted 1px #999;
+		margin: 10px;
 	}
 }
 
@@ -704,6 +706,10 @@ ol.conversation_thread{
     	border: none;
     	overflow:visible;
     	padding: 0;
+
+    	textarea.body_html {
+    		height: 185px;
+    	}
     }
 
 
@@ -1279,6 +1285,7 @@ ol.conversation_thread{
 				height:19px;
 				font-size: 13px;
 				padding: 5px 0px;
+				font-weight:500;
 			}
 
 			&.checkbox {
@@ -1301,7 +1308,7 @@ ol.conversation_thread{
 			.customSelect, select, input.text, input.number{
 				width: 310px;
 				color: #333;
-				@include box-shadow(0 1px 5px rgba(0,0,0,.15));
+				@include box-shadow(0 1px 3px rgba(0,0,0,.1));
 				border: 1px solid #ccc;
 			}
 
@@ -1315,13 +1322,13 @@ ol.conversation_thread{
 
 			& > input[type=text] {
 				width: 295px;
-				@include box-shadow( inset 0 1px 5px rgba(0,0,0,.15));
+				@include box-shadow( inset 0 1px 3px rgba(0,0,0,.1));
 			}
 
 			textarea {
 				width: 295px;
 				height: 100px;
-				@include box-shadow( inset 0 1px 5px rgba(0,0,0,.15));
+				@include box-shadow( inset 0 1px 3px rgba(0,0,0,.1));
 			}
 
 			&.nested_field{
@@ -1369,7 +1376,7 @@ ol.conversation_thread{
 	}
 
 	.widget{
-		border-top: 2px #838383 solid;
+		border-top: 2px #AAA solid;
 		width: 100%;
 		@include min-height(130px);
 		clear: both;
@@ -1377,9 +1384,36 @@ ol.conversation_thread{
 
 		h3{
 			font-size: 16px;
-			font-weight: bold;
-			padding-top: 5px;
+			font-weight: 300;
+			padding-top: 2px;
 			padding-bottom: 5px;
+		}
+
+		.user_name {
+			font-size: 14px;
+		}
+
+		&.inactive {
+			min-height: 60px;
+			h3 {
+				padding-left: 15px;
+
+				&:before {
+					@include triangle(right, #000, 6px);
+					content: "";
+					margin: 6px 0 0 -14px;
+					padding: 0;
+					position: absolute;
+				}
+			}
+		}
+
+		#jira_widget .content {
+			width: 310px;
+		}
+
+		#jira_widget .heading .current_form {
+			font-weight: normal;
 		}
 
 		.tkt-tabs-wrap{
@@ -1566,7 +1600,7 @@ ol.conversation_thread{
 	border: 1px solid #cccccc;
 	@include min-height(30px);
 	@include border-radius(4px);
-	@include box-shadow(0px 5px 8px rgba(130,130,130,0.24));
+	@include box-shadow(0px 4px 6px rgba(130,130,130,0.1));
 
 	blockquote.freshdesk_quote {
 		font-size: 13px;
@@ -1641,22 +1675,6 @@ ol.conversation_thread{
 	}
 }
 
-.commentbox-gray{
-	background: #fafafa;
-	border: 1px #ebebeb solid;
-	@include box-shadow(0px 0px 0px #ffffff);
-}
-
-.commentbox-gray:after{
-	border-color: rgba(255, 253, 248, 0);
-	border-right-color: #ebebeb;
-}
-
-.commentbox-gray:before{
-	border-color: rgba(255, 253, 248, 0);
-	border-right-color: #333333;
-}
-
 .commentbox:after, .commentbox:before {
 	right: 100%;
 	border: solid transparent;
@@ -1726,6 +1744,43 @@ ol.conversation_thread{
 	    -ms-transition: all 0.5s ease;
 			transition: all 0.5s ease;
 }
+
+
+
+.commentbox-gray{
+	background: #fafafa;
+	border: 1px #ebebeb solid;
+	@include box-shadow(0px 0px 0px #ffffff);
+}
+
+.commentbox-gray:after{
+	border-color: rgba(255, 253, 248, 0);
+	border-right-color: #fafafa;
+}
+
+.commentbox-gray:before{
+	border-color: rgba(255, 253, 248, 0);
+	border-right-color: #ebebeb;
+}
+
+
+.commentbox-dark{
+	min-height: 30px !important;
+	background: #e9e9e9;
+	border: 1px #cecece solid;
+	@include box-shadow(none);
+}
+
+.commentbox-dark:after{
+	border-color: rgba(255, 253, 248, 0);
+	border-right-color: #e9e9e9;
+}
+
+.commentbox-dark:before{
+	border-color: rgba(255, 253, 248, 0);
+	border-right-color: #cecece;
+}
+
 
 #ticket_original_request div {
 	margin: 10px 0;
@@ -1899,31 +1954,45 @@ label.custom-select {
 	}
 }
 
+.add_attachment {
+	height: 22px;
+	span{
+		background: #fae5bb;
+		border: 1px #cfcfcf solid;
+		@include corners(3px);
+		padding: 0 5px 4px;
+		color: #000;
+		font-weight: bold;
+		margin-right: 3px;
+	}
+}
+
 .activity_toggle {
 	float: right;
-	text-align: center;
-	width: 120px;
-	@include border-radius(4px);
-	border: 1px #eaeaea solid;
-	background-color: #f7f7f7;
-	padding: 7px 10px;
+	width: 140px;
+	padding: 7px;
 	cursor: pointer;
-	margin: 5px 15px;
-	span {
-		font-weight: bold;
-	}
+	margin: 5px 35px 5px 15px;
 
-	.visible { display: none; }
-	&.visible {
-		span { display: none; }
-		.visible { display: inline; }
+	.text {
+		float: left;
+		width: 65px;
+		margin: 3px 0;
 	}
-
+	.toggle_button {
+		float: left;
+		margin-left: 0;
+		display: block;
+	}
 	&.loading-center {
 		@include hide-text();
 		font-size: 0.1em;
 		color: #f7f7f7;
 		height:15px;
+
+		.toggle-button {
+			display: none;
+		}
 	}
 }
 
@@ -2142,6 +2211,18 @@ label.custom-select {
 
 /***** FIXED HEADER CSS ******/
 
+.fixedbg {
+	display: none;
+	z-index:0;
+	width: 100%;
+	height: 143px;
+	position: fixed;
+	top:0;
+	left:0;
+	background: #fff;
+	border-bottom: solid 1px #DADADA;
+	@include box-shadow( 0px 0px 20px 0px #e5e5e5);
+}
 .fixedStrap.at_the_top{
 	position: fixed;
 	top: 0;
@@ -2150,12 +2231,15 @@ label.custom-select {
 	width: 85.5%;
 	min-width: 1000px;
 	background: #fff;
-	@include box-shadow
-		(300px 0px 0px 0px #fff, 
-		-300px 0px 0px 0px #fff,
-		0px 0px 20px 0px #e5e5e5,
-		-37px 2px 10px rgba(0, 0, 0, 0.1),
-		10px 2px 10px rgba(0, 0, 0, 0.1));
+
+	.fixedbg {
+		
+		display: block;
+	}
+
+	.firstchild {
+		position: relative;
+	}
 }
 .tkt-sidebar .at_the_top{
 	background-color:#fff;
@@ -2188,10 +2272,10 @@ label.custom-select {
     position: absolute;
     display: inline-block;
     color: #fff;
-    left: -12px;
+    left: -15px;
     @include perspective(1000);
-    width: 20px;
-    height: 20px;
+    width: 35px;
+    height: 34px;
     border-radius: 50%;
     border: 2px #ccc solid;
     @include opacity(0.15);
@@ -2200,10 +2284,10 @@ label.custom-select {
 	@include opacity(1);
 }
 .view-flip {
-    top: -5px;
+    top: -12px;
 }
 .reply-flip {
-    top: 30px;
+    top: 28px;
 }
 
 .reply-flip, .view-flip {
@@ -2225,21 +2309,22 @@ label.custom-select {
 	   border-radius: 50%;
 	   background: #333;
 	   color: #fff;
-	   width: 20px;
-	   height: 20px;
+	   width: 35px;
+	   height: 34px;
 	   background-repeat: no-repeat;
 	}
 
 	.flip-back {
 		z-index: 0;
 		border-radius: 50%;
-		font-size: 10px;
+		font-size: 15px;
+		font-weight: bold;
 		vertical-align: middle;
 		text-align: center;
-		padding-top: 5px;
+		padding: 7px 0;
 		color: #fff;
-		width: 20px;
-		height: 15px;
+		width: 35px;
+		height: 20px;
 		@include rotateY(-180deg);
 		background: #333;
 		color: #fff;
@@ -2260,11 +2345,11 @@ label.custom-select {
 
 }
 .reply-flip .flip-front {
-   background-image: inline-image('collision/show-reply.png', 'image/png');
+   background-image: url(/images/collision/show-reply.png);
 }
 
 .view-flip .flip-front {
-	background-image: inline-image('collision/show-viewing.png', 'image/png');
+	background-image: url(/images/collision/show-viewing.png);
 }
 
 /* Keyframes for Agent Collision in Ticket view */

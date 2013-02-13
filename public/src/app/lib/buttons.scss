@@ -28,7 +28,7 @@ button.ui-button-icon-only { width: 2.4em; } /* button elements seem to need a l
 button.ui-button-icons-only { width: 3.7em; } 
 
 /*button text element */
-.ui-button .ui-button-text { display: block; line-height: 1.4;  }
+.ui-button .ui-button-text { display: block; line-height: 1.4; font-family:inherit; }
 .ui-button-text-only .ui-button-text { padding: .4em 1em; }
 .ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: .4em; text-indent: -9999999px; }
 .ui-button-text-icon-primary .ui-button-text, .ui-button-text-icons .ui-button-text { padding: .4em 1em .4em 2.1em; }
@@ -72,6 +72,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 	cursor: pointer;
 	@include corners(4px);
 	text-align:center;
+  font-family:inherit;
 }
 .uiButton:hover, .uiButton-active:hover { background-color:$tab_color; border-color: darken($tab_color, 10%); color:#ffffff; @include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px); }
 
@@ -131,6 +132,7 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
    background-repeat:repeat-x;
    padding-right:40px;
    position:relative;
+   font-family:inherit;
 
    span.other{
       position:absolute;
@@ -258,7 +260,8 @@ div.action_buttons:hover{
 	background-color:#f8f8f8;
 	img{ width:auto; height:auto; margin: 0 3px -3px 0 !important; }	
   border: 1px solid #cfcfcf;
-  position:relative;   
+  position:relative; 
+  font-family:inherit;  
 }
 
  .button[disabled]:hover {
@@ -288,6 +291,7 @@ div.action_buttons:hover{
 .slim-button{
 	padding:1px 8px;
 	font-size:10px;
+  font-family:inherit;
 	@include corners(8px);
 }
 
@@ -317,6 +321,7 @@ div.action_buttons:hover{
 }
 
 .toolbar .button{
+   font-family:inherit;
    padding:5px 10px;
    @include single-text-shadow(#ffffff);
    @include single-box-shadow(#ffffff, 1px, 0, 1px);   
@@ -433,6 +438,7 @@ div.action_buttons:hover{
   @include border-radius(14px);
   @include text-shadow(-1px -1px 0 #666);
   @include inline-block;
+  font-family:inherit;
   -webkit-mask-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,1)));
   .toggle-container, .toggle-handle{
     position:absolute; top:0;

@@ -5316,6 +5316,12 @@ a.close{
 	}
 }
 
+.required_start {
+	font-size: 24px;
+	line-height: 2px;
+	color: #d00;
+	display: inline-block;
+}
 
 .fd-menu, .fd-ajaxmenu, #tickets-expanded .fd-menu, #tickets-expanded .fd-ajaxmenu{
    position:absolute;

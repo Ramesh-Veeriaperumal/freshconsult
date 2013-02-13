@@ -3,13 +3,13 @@
 	nsc_param = nsc_param || "helpdesk_ticket"
 %>
 <div class="attachments-wrap">
-  <div id="<%=attach_id%>-container" class="attachments-container" style="display:none">
-    <label><i></i> Attachment(s): </label>
+  <div id="<%=attach_id%>-container" class="attachments-container">
+    <label><i>0</i> Attachment(s): </label>
     <div class="attachment_list" id="<%=attach_id%>-attachments"></div>
   </div>
 
   <div class="hidden_upload custom_tip_bottom" title='<%=t('attachment_help_info')%>' class='custom-tip-top'>
-    <div><span>+</span> Add Attachment</div>
+    <div class="add_attachment"><span>+</span> Add </div>
     <input type="file" id="<%=attach_id%>_file" name="emptyfile"
             nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
             fileContainer="<%=attach_id%>-container" 

@@ -143,9 +143,27 @@
       </div>
       <div class="btn-toolbar">
         <div class="btn-group">
-          <%= submit_tag(t('ticket.reply_form.send'), :class => "btn btn-inverse" ) %>
+          <a class="btn btn-primary submit_btn">
+            <%= t('ticket.reply_form.send') %>
+            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+              <span class="caret"></span>
+            </a>
+          </button>
+          <ul class="dropdown-menu">
+            <%
+            ticket_statuses = current_account.ticket_statuses.reject{|status| status.status_id == 2 }
+            %>
+            <% ticket_statuses.each do |status| %>
+            <li>
+              <a href="#" rel="custom-reply-status" data-status-name='<%= status.name %>' data-status-val='<%= status.status_id %>' >
+                &amp; Set as <%= status.name %>
+              </a>
+            </li>
+            <% end %>
+          </ul>
+          <%# submit_tag(t('ticket.reply_form.send'), :class => "btn btn-inverse" ) %>
         </div>
-        <div class="btn-group">
+       <!--  <div class="btn-group">
           <a class="btn" rel="custom-reply-status" data-status-name='resolved' data-status-val="4">
             <%= t('ticket.reply_form.send_and_resolve') %>
             <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
@@ -164,9 +182,9 @@
             </li>
             <% end %>
           </ul>
-        </div>
+        </div> -->
         <div class="btn-group">
-          <%= submit_tag(t('cancel'), :class => "btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true') %>
+          <%= link_to(t('cancel'), '#', :class => "btn cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true') %>
         </div>
         
       </div>

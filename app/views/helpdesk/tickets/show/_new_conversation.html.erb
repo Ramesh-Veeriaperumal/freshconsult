@@ -1,7 +1,7 @@
 <ol class="redactor conversation_thread">
 	<li class="conversation">
 		<%= link_to user_avatar(current_user), "javascript:void()", :class => 'avatar-wrap' %>
-		<div class="commentbox commentbox-gray">
+		<div class="commentbox commentbox-dark">
 			<div id="TicketForms">
 			  	<%= render(	:partial => '/helpdesk/tickets/show/reply_form', 
 			  				:locals => { 	:id => 'send-email', 

@@ -620,6 +620,7 @@ $(document).ready(function() {
 
 		container.toggle();
 		if (container.is(':visible')) {
+			container.find('.search_field_item input').focus();
 			$('#' + $(this).data('toggle-button')).hide();
 		} else {
 			$('#' + $(this).data('toggle-button')).show();
@@ -636,8 +637,11 @@ $(document).ready(function() {
 
 	//Loading Ticket Activities
 	$('.ticket_show #activity_toggle').live('click', function(ev) {
+		if ($(ev.target).is('.toggle-button')) return false;
+
 		ev.preventDefault();
 		var _toggle = $(this);
+		$('.ticket_show #activity_toggle .toggle-button').trigger('click');
 		_toggle.addClass('loading-center');
 
 		var showing_notes = $('#all_notes').length > 0;
@@ -658,6 +662,11 @@ $(document).ready(function() {
 
 	$('.collision_refresh').live('click', function(ev) {
 		window.location = TICKET_DETAILS_DATA['ticket_path'];
+	});
+
+	$(".conversation_thread .request_panel form .submit_btn").live('click', function(ev) {
+		ev.preventDefault();
+		$(this).parents('form').trigger('submit');
 	});
 
 	$(".conversation_thread .request_panel form .cancel_btn").live('click', function(ev) {
@@ -911,9 +920,6 @@ $(document).ready(function() {
 	//ScrollTo the latest conversation
 
 	updatePagination();
-
-
-
 
 	//Previous Next Buttons request
 	$.getScript("/helpdesk/tickets/prevnext/" + TICKET_DETAILS_DATA['displayId']);
