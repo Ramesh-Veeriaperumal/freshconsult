@@ -538,6 +538,7 @@ en:
         configure_email: Configure Email
         product_support_emails: Product Support Emails
         product_name: Product name
+        product_desc: Product description
         forwarding_email_info: "Your forwarding email address:"
       product:
         email_not_verified: Email not verified  

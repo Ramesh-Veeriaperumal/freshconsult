@@ -318,12 +318,14 @@ module ApplicationHelper
       ['{{ticket.requester.name}}',     'Requester name',       'Name of the requester who raised the ticket.'],
       ['{{ticket.requester.email}}',    'Requester email',      "Requester's email."],
       ['{{ticket.requester.company_name}}', 'Requester company name',   "Requester's company name."], #??? should it be requester.company.name?!
+      ['{{ticket.requester.phone}}', 'Requester phone number',   "Requester's phone number."],
       ['{{ticket.group.name}}',       'Group name',       'Ticket group.'],
       ['{{ticket.agent.name}}',       'Agent name',       'Name of the agent who is currently working on the ticket.'],
       ['{{ticket.agent.email}}',      'Agent email',        "Agent's email."],
       ['{{ticket.latest_public_comment}}',  'Last public comment',  'Latest public comment for this ticket.'],
       ['{{helpdesk_name}}', 'Helpdesk name', 'Your main helpdesk portal name.'],
-      ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.']      
+      ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.'],
+      ['{{ticket.product_description}}', 'Product description', 'Product specific description in multiple product/brand environments.']
     ]
     place_holders << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey', 'Includes satisfaction survey.'] if current_account.features?(:surveys, :survey_links)
     current_account.ticket_fields.custom_fields.each { |custom_field|
