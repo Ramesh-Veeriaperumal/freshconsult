@@ -1,4 +1,4 @@
-<% if session[:preview_button].present? && current_user && current_user.agent? %>
+<% if @preview %>
     <div id="preview-message" class="preview-message">
         <div class="page">
         <a href="#" onclick="window.close();return false;" 
@@ -23,5 +23,9 @@
         </div>
     </div>
 <% end %>
-
-<iframe id="iframe-preview" src="<%= session[:preview_url].presence || support_home_url %>" class="" style="height: 100%; max-width: none;"></iframe>
+<script>
+    jQuery(window).unload(function(){
+        jQuery.get("/admin/portal/<%=current_portal.id%>/template/clear_preview")
+    });
+</script>
+<iframe id="iframe-preview" src="<%= @preview_url %>" class="" style="height: 100%; max-width: none;"></iframe>

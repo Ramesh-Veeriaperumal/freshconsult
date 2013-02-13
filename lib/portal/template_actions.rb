@@ -1,4 +1,5 @@
 module Portal::TemplateActions
+  include RedisKeys
 	
 	# setting portal
 	def scoper
@@ -37,7 +38,26 @@ module Portal::TemplateActions
   end
 
   def clear_preview_session
-    session.delete(:preview_button)
-    session.delete(:preview_url)    
+    remove_key(is_preview_key)
+    remove_key(preview_url_key)
+  end
+
+  def set_preview_and_redirect(preview_url)
+    set_key(is_preview_key, true)
+    set_key(preview_url_key, preview_url)
+    redirect_url = support_preview_url
+    redirect_url = support_preview_url(:host => @portal.portal_url) unless @portal.portal_url.blank?
+    Rails.logger.debug "::::#{redirect_url}"
+    redirect_to redirect_url and return
+  end
+
+  def is_preview_key
+    IS_PREVIEW % { :account_id => current_account.id, 
+      :user_id => User.current.id, :portal_id => scoper.id}
+  end
+
+  def preview_url_key
+    PREVIEW_URL % { :account_id => current_account.id, 
+      :user_id => User.current.id, :portal_id => scoper.id}
   end
 end
