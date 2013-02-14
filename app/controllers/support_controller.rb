@@ -2,6 +2,7 @@ class SupportController < ApplicationController
   layout 'portal'
 
   before_filter :portal_context, :redactor_form_builder, :page_message
+  include RedisKeys
  
   protected
     def set_portal_page page_token
@@ -16,13 +17,18 @@ class SupportController < ApplicationController
     end
 
     def preview?
-      !session[:preview_button].blank? && !current_user.blank? && current_user.agent?
+      if User.current
+        is_preview = IS_PREVIEW % { :account_id => current_account.id, 
+        :user_id => User.current.id, :portal_id => @portal.id}
+        !get_key(is_preview).blank? && !current_user.blank? && current_user.agent?
+      end
     end
 
   private
 
     def portal_context
       @portal ||= current_portal
+      @preview = preview?
     end
 
     def redactor_form_builder

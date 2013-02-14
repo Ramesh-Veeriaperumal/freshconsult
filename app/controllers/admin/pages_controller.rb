@@ -18,11 +18,7 @@ class Admin::PagesController < Admin::AdminController
     get_raw_page
     respond_to do |format|
       format.html { 
-        if params[:preview_button]
-          session[:preview_button] = true
-          session[:preview_url] = get_redirect_portal_url
-          redirect_to support_preview_url
-        end
+        set_preview_and_redirect(get_redirect_portal_url) if params[:preview_button]
       }
     end
   end
@@ -69,15 +65,15 @@ class Admin::PagesController < Admin::AdminController
 
     def get_redirect_portal_url
       method_name = Portal::Page::PAGE_REDIRECT_ACTION_BY_TOKEN[@portal_page_label.to_sym]
-      portal_redirect_url = send(method_name)
+      portal_redirect_url = send(method_name, :host => @portal.portal_url)
       begin
         cname = Portal::Page::PAGE_MODEL_ACTION_BY_TOKEN[@portal_page_label.to_sym]
         unless cname.blank?
           data = current_account.send(cname).first if !cname.blank? && current_account.respond_to?(cname) 
           id = data.id unless data.blank?
-          portal_redirect_url = send(method_name, :id => id)  
+          portal_redirect_url = send(method_name, :id => id, :host => @portal.portal_url)  
         else
-          portal_redirect_url = send(method_name)
+          portal_redirect_url = send(method_name, :host => @portal.portal_url)
         end
       rescue Exception => e
         # NewRelic::Agent.notice_error(e)

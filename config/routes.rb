@@ -108,7 +108,7 @@
     admin.resources :portal, :only => [ :index, :update] do |portal|
       portal.resource :template, 
                       :collection => { :show =>:get, :update => :put, :soft_reset => :put, 
-                                        :restore_default => :get, :publish => :get } do |template|
+                                        :restore_default => :get, :publish => :get, :clear_preview => :get } do |template|
         template.resources :pages, :member => { :edit_by_page_type => :get, :soft_reset => :put }
       end
     end

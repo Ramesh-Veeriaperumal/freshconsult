@@ -3,6 +3,7 @@ class Admin::TemplatesController < Admin::AdminController
 
   before_filter :build_objects,  :only => [:show, :update, :soft_reset, :restore_default, :publish]
   before_filter :clear_preview_session, :default_liquids, :set_forum_builder, :only => :show
+  before_filter :clear_preview_session, :only => :clear_preview
 
   
   before_filter(:only => :update) do |c| #validating the syntax before persisting.
@@ -31,15 +32,14 @@ class Admin::TemplatesController < Admin::AdminController
     flash[:notice] = "Portal template saved successfully." unless params[:preview_button]
     respond_to do |format|
       format.html { 
-        if params[:preview_button]
-          session[:preview_button] = true
-          session[:preview_url] = support_home_url
-          redirect_to support_preview_url
-        end
+        set_preview_and_redirect(support_home_url(:host => @portal.portal_url)) if params[:preview_button]
       }
     end
   end  
 
+  def clear_preview
+    render :text => "success"
+  end
   def soft_reset
     properties = params[:portal_template]
     @portal_template.soft_reset!(properties)
