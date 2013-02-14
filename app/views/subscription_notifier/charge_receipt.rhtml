@@ -13,7 +13,7 @@
           <tr>
             <td style="width:40%">
               <font style="font-size:40px; color:#63a579; font-weight:bold;">
-                <img src="https://s3.amazonaws.com/assets.freshdesk.com/images/#{Rails.env}/logo.png" width="170" height="50"  alt="Freshdesk"/>
+                <img src=<%="https://s3.amazonaws.com/assets.freshdesk.com/images/#{Rails.env}/logo.gif"%> width="170" height="50"  alt="Freshdesk"/>
               </font>
             </td>
             <td style="width:60%; text-align:right; color:#63a579">
@@ -50,14 +50,14 @@
                   </td>
                   <td style="width:25%; text-align:center">
                     <font style="font-size:20px; color:#9363dd; font-weight:bold;">
-                      <img src="https://s3.amazonaws.com/assets.freshdesk.com/images/#{Rails.env}/paid.png" width="90" height="50" alt="PAID"/>
+                      <img src=<%="https://s3.amazonaws.com/assets.freshdesk.com/images/#{Rails.env}/paid.gif"%> width="90" height="50" alt="PAID"/>
                     </font>
                   </td>      
                   <td style="text-align:right;width:35%">
                     <table cellspacing="0" cellpadding="0" border="0"  style="width:100%">
                       <tr>
                         <td  style="width:50%">Invoice :</td>
-                        <td  style="width:50%;text-align:left; padding-left:2px;"><b>FD000<%=@subscription_payment.id%></b></td>
+                        <td  style="width:50%;text-align:left; padding-left:2px;"><b>FD000<%=@subscription_payment.id %></b></td>
                       </tr>
                       <tr>
                         <td  style="width:50%">Issued on:</td>
@@ -99,14 +99,6 @@
                         <td style=" padding:5px; vertical-align:top; color:#d0d0d0">All prices in USD</td>
                         <td style=" padding:5px; text-align:right;">
                           <table cellspacing="0" cellpadding="0" border="0" style="text-align:right; width:100%;">
-                            <% if @subscription.discount %>
-                            <tr>
-                              <td style="padding:5px;text-align:right;">Subtotal: $<%=@subscription.amount%></td>
-                            </tr>
-                            <tr>
-                              <td style="padding:5px;text-align:right;">Discount: $<%= @subscription.discount.amount%></td>
-                            </tr>
-                            <% end %>
                             <tr>
                               <td style="text-align:right; padding:5px; font-size:16px;"><b style="padding:5px;background-color:#fffecd;">Total: $<%=@subscription.amount%></b></td>
                             </tr>
