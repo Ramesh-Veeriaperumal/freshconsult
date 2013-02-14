@@ -223,6 +223,8 @@ class Helpdesk::TicketsController < ApplicationController
 
           render :action => "details"
         end
+
+        @page_title = "[##{@ticket.display_id}] #{@ticket.subject}"
       }
       format.atom
       format.xml  { 

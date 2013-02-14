@@ -3,7 +3,14 @@
 				:method => 'delete', :confirm => "You're about to permanently delete this attachment. Continue?")  if local_assigns[:show_delete] %>
 	<% 
 	extname = attachment.content_file_name.split('.')[-1] 
-	extname = (["pdf", "doc", "chm", "mov", "avi", "swf", "wmv", "xls", "zip", "txt", "log", "exe"].include?(extname)) ? extname : "def" 
+	extname = (["asf", "ai", "apk", "bmp", "avi", "cdr", "chm", "csv",
+				"dmg", "dwg", "eps", "exe", "fla", "flv", "gz","htm", 
+				"iso", "jar", "jpg", "js", "key", "m4a", "mdb", "mid", 
+				"mov", "mp3", "mp4", "mpg", "msi", "otf", "pdf", "php", 
+				"png", "ppt", "pptx", "html", "ps", "psd", "pub", "rar", 
+				"rb", "rtf", "sql", "svg", "swf", "tex", "tga", "tif", "ttf", "txt",
+				"vcf", "wav", "wma", "wmv", "xls", "xml", "doc",
+				"zip", "log" ].include?(extname)) ? extname : "def" 
 	%>
 	<div class="attachment-type file-types-<%= extname %>">
 		<%= link_to truncate(h(attachment.content_file_name), 23), attachment, :popup => true %>

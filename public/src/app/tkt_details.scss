@@ -132,7 +132,7 @@ p strong{
 			h2{
 				font-size: 18px;
 				color: #333;
-				text-shadow: 0px 1px 0px #fff;
+				@include text-shadow(0px 1px 0px #fff);
 				line-height: 21px;
 				font-weight: bold;
 				height: 21px;
@@ -1015,10 +1015,22 @@ ol.conversation_thread{
 
 #show_more {
 
+	cursor: pointer;
+	height: 36px;
+	padding: 20px 10px 40px;
+
 	.avatar-wrap-collapse {
 		background: #1272de;
-		border-color: #0155b2;
+		border-color: #FFF;
 		color: #FFF;
+		@include box-shadow(-8px 0px 12px 8px white);
+		-webkit-transition: all 0.2s linear;
+	}
+
+	&:hover {
+		.avatar-wrap-collapse {
+			border-color: #0155b2;
+		}
 	}
 
 	&.loading {
@@ -1080,13 +1092,19 @@ ol.conversation_thread{
 	@include box-shadow(0px 0px 5px #ccc);
 	top: -12px;
 	p{
-		padding-top: 10px;
+		padding-top: 13px;
 		font-size: 13px;
+		line-height: 110%;
 		.count_number{
 			font-size: 16px;
 			clear: both;
 			font-weight: bold;
 			display: block;
+			@include text-shadow(-1px -1px 0px #093b73);
+		}
+
+		.count_more {
+			color: #7ebbff;
 		}
 	}
 }
@@ -1380,6 +1398,7 @@ ol.conversation_thread{
 		width: 100%;
 		@include min-height(130px);
 		clear: both;
+		margin-bottom: 20px;
 
 
 		h3{
@@ -1394,6 +1413,7 @@ ol.conversation_thread{
 		}
 
 		&.inactive {
+			margin-bottom: 0;
 			min-height: 60px;
 			h3 {
 				padding-left: 15px;
@@ -1597,7 +1617,7 @@ ol.conversation_thread{
 	padding: 10px;
 	line-height: 150%;
 	background: #fffdf8;
-	border: 1px solid #cccccc;
+	border: 1px solid #bbb;
 	@include min-height(30px);
 	@include border-radius(4px);
 	@include box-shadow(0px 4px 6px rgba(130,130,130,0.1));
@@ -1650,14 +1670,21 @@ ol.conversation_thread{
 	}
 
 	.author-mail-detail{
-		margin: 0 0 2px 0;
+		margin: 0;
 		color: #a2a19f;
 		text-align: left;
 		padding: 0px;
+		line-height: 130%;
 		a {
 			font-weight:bold;
 		}
 	}
+
+	.details, #ticket_original_request {
+		margin-top: 30px;
+	}
+
+
 
 	.tag {
 		float:right;
@@ -1695,7 +1722,7 @@ ol.conversation_thread{
 
 .commentbox:before {
 	border-color: rgba(204, 204, 204, 0);
-	border-right-color: #cccccc;
+	border-right-color: #bbb;
 	border-width: 9px;
 	top: 25px;
 	margin-top: -9px;
@@ -1710,14 +1737,13 @@ ol.conversation_thread{
 	margin-top:0;
 	width: 100px;
 	line-height: 100%;
-	font-size: 13px;
-	font-weight: bold;
+	font-size: 14px;
 	color: #fff;
 	text-align: center;
-	text-shadow: 0px 1px 0px #000;
-	&:hover{
-		color: #fff;
-		@include box-shadow(0px 3px 8px #ccc);
+	@include text-shadow(-1px -1px 0px #093b73);
+
+	&:hover {
+		color: #FFF;
 	}
 }
 
@@ -2098,7 +2124,7 @@ label.custom-select {
 	    border: 1px #8a8a8a solid;
 	    color: #fff;
 	    cursor: pointer;
-	    text-shadow: -1px -1px -1px #6c6c6c;
+	    @include text-shadow(-1px -1px -1px #6c6c6c);
 		background-color: rgb(178,178,178); // Old browsers
 		@include filter-gradient(#b2b2b2, #5a5a5a, vertical); // IE6-8
 		$experimental-support-for-svg: true;
@@ -2206,8 +2232,6 @@ label.custom-select {
 }
 
 
-.symbols-ac-show-reply{  background: sprite($symbol, ac-show-reply);  }
-.symbols-ac-show-view{  background: sprite($symbol, ac-show-viewing);  }
 
 /***** FIXED HEADER CSS ******/
 
@@ -2274,14 +2298,9 @@ label.custom-select {
     color: #fff;
     left: -15px;
     @include perspective(1000);
-    width: 35px;
-    height: 34px;
+    width: 34px;
+    height: 35px;
     border-radius: 50%;
-    border: 2px #ccc solid;
-    @include opacity(0.15);
-}
-.reply-flip.active, .view-flip.active {
-	@include opacity(1);
 }
 .view-flip {
     top: -12px;
@@ -2326,7 +2345,7 @@ label.custom-select {
 		width: 35px;
 		height: 20px;
 		@include rotateY(-180deg);
-		background: #333;
+		background: #f5f5f5;
 		color: #fff;
 	}
 
@@ -2343,13 +2362,26 @@ label.custom-select {
 		}
 	}
 
+	&.active {
+		.flip-back {
+			background: #333;
+		}
+	}
+
 }
 .reply-flip .flip-front {
-   background-image: url(/images/collision/show-reply.png);
+	background: inline-image('collision/show-reply-inactive.png', 'image/png');
 }
 
 .view-flip .flip-front {
-	background-image: url(/images/collision/show-viewing.png);
+	background: inline-image('collision/show-viewing-inactive.png', 'image/png');
+}
+.reply-flip.active .flip-front {
+	background: inline-image('collision/show-reply.png', 'image/png');
+}
+
+.view-flip.active .flip-front {
+	background: inline-image('collision/show-viewing.png', 'image/png');
 }
 
 /* Keyframes for Agent Collision in Ticket view */
