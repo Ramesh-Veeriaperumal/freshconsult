@@ -194,6 +194,9 @@ table.selected_to_yellow tbody tr td {
   border-bottom: 8px solid #f1f1f1;
   @include corners(5px);
 
+  table td {
+    padding: 6px 15px;
+  }
   .actions-menu {
     float: right;
   }

@@ -9,7 +9,6 @@ $modal_heading_color: #000;
 .modal.in.fade {
 	.modal-header {
 		border-bottom: none;
-		@include vertical-gradient(#e8e8e8, #FFF);
 		@include corners(7px);
 
 		h3 {
