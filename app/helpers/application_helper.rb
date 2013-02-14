@@ -316,6 +316,8 @@ module ApplicationHelper
       ['{{ticket.tags}}',           'Tags',           'Ticket tags.'],
       ['{{ticket.due_by_time}}',      'Due by time',        'Ticket due by time.'],
       ['{{ticket.requester.name}}',     'Requester name',       'Name of the requester who raised the ticket.'],
+      ['{{ticket.requester.firstname}}' , 'Requester first name', 'First name of the requester who raised the ticket'],
+      ['{{ticket.requester.lastname}}' , 'Requester last name', 'Last name of the requester who raised the ticket'],
       ['{{ticket.requester.email}}',    'Requester email',      "Requester's email."],
       ['{{ticket.requester.company_name}}', 'Requester company name',   "Requester's company name."], #??? should it be requester.company.name?!
       ['{{ticket.requester.phone}}', 'Requester phone number',   "Requester's phone number."],
