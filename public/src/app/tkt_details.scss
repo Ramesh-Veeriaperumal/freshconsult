@@ -1035,15 +1035,29 @@ ol.conversation_thread{
 
 	&.loading {
 		background: none;
-		.avatar-wrap {
-			@include hide-text();
-			background-image:url('/images/ajax-loader.gif');
-			background-repeat:no-repeat;
-			background-position: center;
+		
+		.avatar-wrap-collapse {
+			background-image: -webkit-gradient(linear, 0 0, 100% 100%, color-stop(.26, rgba(255, 255, 255, 0.1)), color-stop(.26, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .1)), color-stop(.76, rgba(255, 255, 255, .1)), color-stop(.76, transparent), to(transparent) );
+			-webkit-background-size: 19px 19px;
+			-webkit-animation: animate-stripes .4s linear infinite, fade-in .4s linear 1;
 
-			p {
-				display: none;
-			}
+			background-image: -moz-gradient(linear, 0 0, 100% 100%, color-stop(.26, rgba(255, 255, 255, 0.1)), color-stop(.26, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .1)), color-stop(.76, rgba(255, 255, 255, .1)), color-stop(.76, transparent), to(transparent) );
+			-moz-background-size: 19px 19px;
+			-moz-animation: animate-stripes .4s linear infinite, fade-in .4s linear 1;
+
+			background-image: -ms-gradient(linear, 0 0, 100% 100%, color-stop(.26, rgba(255, 255, 255, 0.1)), color-stop(.26, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .1)), color-stop(.76, rgba(255, 255, 255, .1)), color-stop(.76, transparent), to(transparent) );
+			-ms-background-size: 19px 19px;
+			-ms-animation: animate-stripes .4s linear infinite, fade-in .4s linear 1;
+
+			-o-background-size: 19px 19px;
+			-o-animation: animate-stripes .4s linear infinite, fade-in .4s linear 1;
+
+			background-image: gradient(linear, 0 0, 100% 100%, color-stop(.26, rgba(255, 255, 255, 0.1)), color-stop(.26, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .1)), color-stop(.76, rgba(255, 255, 255, .1)), color-stop(.76, transparent), to(transparent) );
+			background-size: 19px 19px;
+			animation: animate-stripes .4s linear infinite, fade-in .4s ease-in 1;
+
+			border-color: #0155b2;
+
 		}
 
 	}

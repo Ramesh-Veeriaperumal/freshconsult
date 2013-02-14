@@ -1,7 +1,6 @@
 (function($) {
 // Initialisation
 TICKET_DETAILS_DATA['updating_properties'] = false;
-$('#helpdesk_ticket_submit').hide();
 //Ticket Properties Update Ajax Function
 var ticket_update_timeout;
 var tmp_count = 0;
