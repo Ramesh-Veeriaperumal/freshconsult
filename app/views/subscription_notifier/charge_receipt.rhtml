@@ -87,7 +87,7 @@
                         <td style="background-color:#f8f8f8; padding:5px; margin-right:5px;">Amount</td>
                       </tr>
                       <tr>
-                        <td style=" padding:5px;margin-left:5px;"><%=@subscription.subscription_plan.name%> (<%=@subscription.free_agents%> agent Free)</td>
+                        <td style=" padding:5px;margin-left:5px;"><%=@subscription.subscription_plan.name%> <%= "(#{pluralize( @subscription.free_agents, 'agent' )} free)" if @subscription.free_agents > 0 %></td>
                         <td style=" padding:5px;"><%= SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[@subscription.renewal_period] %></td>
                         <td style=" padding:5px;"><%=@subscription.paid_agents%></td>
                         <td style=" padding:5px;">$<%=(@subscription.amount/(@subscription.paid_agents * @subscription.renewal_period)).round.to_f%></td>
