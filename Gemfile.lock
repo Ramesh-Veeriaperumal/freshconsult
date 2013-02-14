@@ -11,7 +11,7 @@ GIT
   revision: af3e83dc6f071ae261478dbb7134d2ff534bc0a9
   specs:
     after_commit (1.0.11)
-      activerecord (< 3.0.0, >= 1.15.6)
+      activerecord (>= 1.15.6, < 3.0.0)
 
 GIT
   remote: git://github.com/freshdesk/deadlock_retry.git
@@ -24,6 +24,12 @@ GIT
   revision: 0e646a1bfda99dc7fe0d6ba95600fc7afedf1bed
   specs:
     lhm (1.2.0)
+
+GIT
+  remote: git://github.com/freshdesk/rinku.git
+  revision: 49cf3588bb7ce9d4626e67b70a5f8cb90308b7c2
+  specs:
+    rinku (1.7.2)
 
 GIT
   remote: git://github.com/freshdesk/ruby-yui-compressor.git
@@ -381,6 +387,7 @@ DEPENDENCIES
   resque-status (= 0.3.0)
   resque_mailer (= 1.0.1)
   rforce
+  rinku!
   ruby-debug (= 0.10.3)
   ruby-openid (= 2.1.8)
   ruby-openid-apps-discovery (= 1.2.0)
