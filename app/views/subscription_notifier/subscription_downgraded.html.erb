@@ -1,19 +1,27 @@
-<%= "The email of the admin is  #{@subscription.account.account_admin.email} "%>
-<br>
-Account id : <%= @subscription.account_id %>
+<% period = { 1 => "Monthly", 3 => "Quarterly", 6 => "Half Yearly", 12 => "Annual" } %>
+
+<p>
+The customer was paying us <b>$<%= @old_subscription[:amount]/@old_subscription[:renewal_period] %></b> every month.
+This downgrade will drop our monthly revenue by <b>$<%= (@subscription[:amount]/@subscription[:renewal_period] - @old_subscription[:amount]/@old_subscription[:renewal_period]).abs %></b>. 
+</p>
+
+Admin email id : <%= @subscription.account.account_admin.email %><br>
+Account id : <%= @subscription.account_id %><br>
+Domain : <%= @subscription.account.full_domain %><br>
+&nbsp;<br>
 
 <div>
-	<p>
-		Previously,<br>
+	Previously,
+	<div style="margin-left:8px;">
 		Plan : <%= SubscriptionPlan.find(@old_subscription[:subscription_plan_id]).name %><br> 
-		Renewal Period : <%= @old_subscription[:renewal_period] %><br> 
-		Agents : <%= @old_subscription[:agent_limit] %>
-	</p>
+		Billing Period : <%= period[@old_subscription[:renewal_period]] %><br> 
+		Agents : <%= @old_subscription[:agent_limit]%> <%= "(#{pluralize(@old_subscription[:free_agents], 'free agent')})" if @old_subscription[:free_agents] > 0 %>
+	</div><br>
 
-	<p>
-		Now,<br>
-		Plan : <%= SubscriptionPlan.find(@subscription[:subscription_plan_id]).name %><br> 
-		Renewal Period : <%= @subscription.renewal_period %><br>
-		Agents : <%= @subscription.agent_limit %>
-	</p>
+	Now,
+	<div style="margin-left:8px;">
+		Plan : <%= @subscription.subscription_plan.name %><br> 
+		Billing Period : <%= period[@subscription.renewal_period] %><br>
+		Agents : <%= @subscription.agent_limit %> <%= "(#{pluralize(@subscription.free_agents, 'free agent')})" if @subscription.free_agents > 0 %>
+	</div>
 </div>
