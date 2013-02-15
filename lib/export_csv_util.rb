@@ -45,20 +45,27 @@ module ExportCsvUtil
   def export_contact_data(csv_hash)
     csv_string = ""
     items = current_account.contacts
+
     unless csv_hash.blank?
       csv_string = FasterCSV.generate do |csv|
         headers = csv_hash.keys
         csv << headers
-        items.each do |record|
-          csv_data = []
-          headers.each do |val|
-            if csv_hash[val] == "customer_id"
-              (record.customer.blank?) ? csv_data << nil : csv_data << record.customer.name
-            else
-              csv_data << record.send(csv_hash[val])
-            end
+        if headers.size == 1 and csv_hash[headers.first] == "customer_id"
+          current_account.customers.each do |customers|
+            csv << customers.name
           end
-          csv << csv_data if csv_data.any?
+        else
+          items.each do |record|
+            csv_data = []
+            headers.each do |val|
+              if csv_hash[val] == "customer_id"
+                (record.customer.blank?) ? csv_data << nil : csv_data << record.customer.name
+              else
+                csv_data << record.send(csv_hash[val])
+              end
+            end
+            csv << csv_data if csv_data.any?
+          end
         end
       end
     end
