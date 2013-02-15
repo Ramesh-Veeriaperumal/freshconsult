@@ -19,7 +19,7 @@ module Reports::TimesheetReport
   end
   
   def list_view_items
-   [:ticket , :customer_name , :note , :group_by_day_criteria ,:agent_name, :hours]
+   [:workable , :customer_name , :note , :group_by_day_criteria ,:agent_name, :hours]
   end
   
   private
