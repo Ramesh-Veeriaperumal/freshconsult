@@ -255,6 +255,14 @@ en:
     js_solution_txt: Create $$questvalue$$ knowledge base article in a span of $$questtime$$ and matching these conditions.
     js_forum_txt: $$questmode$$ $$questvalue$$ forum posts in a span of $$questtime$$ and matching these conditions.
     js_quest_txt: On successful completion of the quest you can unlock $$badgename$$ badge and $$questpoints$$ bonus points. 
+  any_val:
+    any: Any
+    any_value: Any Value
+    any_feedback: Any Feedback
+    any_priority: Any Priority
+    any_status: Any Status
+    any_ticket_type: Any Type
+    any_group: Any Group
   admin:
     quests:
       index:
@@ -476,6 +484,34 @@ en:
         title: Supervisor - New Rule
       edit:
         title: Supervisor - Edit Rule
+    observer_rules:
+      index:
+        title: Observer - Rules
+      helpnote:
+        tour: Help me create a new observer rule
+        help_title: Observer
+        help_info_1: The Observer performs actions on tickets that you specify based on time and event driven triggers. Use the Supervisor to perform actions like sending reminders to customers for pending tickets, or escalating overdue tickets to the right person in your team.
+        help_info_2: The Observer will run on every event trigger.
+        help_info_3: Observer help_info_3
+        help_info_4: Observer rule orders are not important.
+      new:
+        title: Observer - New Rule
+      edit:
+        title: Observer - Edit Rule
+      add_new_event: Add new event
+      performed_by: Event Performed by
+      agent: Agent
+      requester: Requester
+      anyone: Anyone
+      filter_jsinit:
+        insert_placeholder: Insert Placeholder
+        body: Body
+        to: To
+        selected: Selected
+        not_selected: Not selected
+        checked: Checked
+        unchecked: Unchecked
+        deselected: Deselected
     shared:
       filter_jsinit:
         insert_placeholder: Insert Placeholder
@@ -874,6 +910,7 @@ en:
   zendesk_url: Zendesk URL
   special_beta_offer: Special offer for Beta accounts
   click_to_select_filter: Click to Select Filter
+  click_to_select_event: Click to Select Event
   select_another_plan: Select another plan
   threeday: 3 Days
   resolved: Resolved
@@ -1131,6 +1168,7 @@ en:
     info2: All Subscription related tickets will be assigned to Susan
     new_rule: New Rule
     info3: When should this rule be applied
+    info4: On what events should this rule be triggered
     helpcard:
       tour: Help me create a new Dispatch’r rule
       info1: The Dispatch’r lets you bring your business rules into your support workflow by performing a predefined set of actions on newly created tickets. For example, you could use the Dispatch’r to automatically categorize, prioritize and assign every incoming ticket to the right agent in your team, based on the conditions you specify.
@@ -1747,6 +1785,15 @@ en:
   logo: Logo
   ok: Ok
   back: Back
+  event:
+    confirm_message: If you choose 'Any', the selected agents in the list will be discarded. Click OK to proceed.
+    received: Received
+    updated: Updated
+    added: Added
+    sent: Sent
+    from: From
+    to: To
+    by: By
   ticket:
     reported_on: "from %{username}, Last updated: on %{date}"
     ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago</span>"
@@ -1762,8 +1809,22 @@ en:
     thanks: Thank you for submitting a feedback
     portal_created_on: "Created by <span class='emphasize'>%{username}</span> on <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Created on <span class='emphasize'>%{date}</span>"
+    due_date: Due date
+    updated: Updated
+    deleted: Deleted
+    marked_spam: Marked as Spam
+    time_entry: Time Entry
+    new_time_entry: New time entry
+    updated_time_entry: Updated time entry
+    feedback: Customer feedback
+    ticket: Ticket
     group: Group
-    agent: Agent 
+    agent: Agent
+    reply: Reply
+    note: Note 
+    any_note: Any Note
+    private_note: Private Note
+    public_note: Public Note
     none: None
     spam_btn_title: Mark as spam
     assigned_to: Assigned To

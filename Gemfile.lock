@@ -11,7 +11,7 @@ GIT
   revision: af3e83dc6f071ae261478dbb7134d2ff534bc0a9
   specs:
     after_commit (1.0.11)
-      activerecord (< 3.0.0, >= 1.15.6)
+      activerecord (>= 1.15.6, < 3.0.0)
 
 GIT
   remote: git://github.com/freshdesk/deadlock_retry.git

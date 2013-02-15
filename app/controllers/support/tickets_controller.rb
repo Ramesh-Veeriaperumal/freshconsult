@@ -29,7 +29,7 @@ class Support::TicketsController < ApplicationController
   end
 
   def update
-    if @item.update_attributes(params[:helpdesk_ticket])
+    if @item.update_attributes(params[:helpdesk_ticket].merge(params[:helpdesk_ticket][:custom_field]))
       respond_to do |format|
         format.html { 
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)

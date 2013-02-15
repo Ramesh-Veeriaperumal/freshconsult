@@ -1,4 +1,7 @@
 class Helpdesk::TimeSheet < ActiveRecord::Base
+
+  include Va::ObserverUtil
+
   set_table_name "helpdesk_time_sheets"
   belongs_to :ticket , :class_name =>'Helpdesk::Ticket', :foreign_key =>'ticket_id'
   belongs_to :user
@@ -6,8 +9,10 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   before_validation :set_default_values 
 
   after_create :create_new_activity
-  after_update :update_timer_activity , :if  => :timer_running_changed?
-  
+  after_update :update_timer_activity , :if => :timer_running_changed?
+  before_save :update_observer_events
+  after_commit :filter_observer_events, :if => :current_user?
+
   has_many :integrated_resources, 
     :class_name => 'Integrations::IntegratedResource',
     :as => 'local_integratable',
@@ -49,6 +54,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   end
 
   def running_time
+    p "running time"
     total_time = time_spent
     if timer_running
       from_time = start_time
@@ -77,6 +83,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   end
   
   def stop_timer
+    p "stop timer"
      self.timer_running=false
      self.time_spent = calculate_time_spent
      self.save
@@ -114,6 +121,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   private
   
    def calculate_time_spent
+    p "calculate time spent"
     to_time = Time.zone.now.to_time
     from_time = start_time.to_time 
     running_time =  ((to_time - from_time).abs).round 
@@ -121,7 +129,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
    end
 
   def update_timer_activity
-     
+     p "update_activity"
       if timer_running
          ticket.create_activity(User.current, 'activities.tickets.timesheet.timer_started.long', 
           {'eval_args' => {'timesheet_path' => ['timesheet_path', 
@@ -133,20 +141,34 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
           {'eval_args' => {'timesheet_path' => ['timesheet_path', 
                                 {'ticket_id' => ticket.display_id, 'timesheet_id' => id}]}},
                                 'activities.tickets.timesheet.timer_stopped.short')
-      end 
+      end
   end
   
   def create_new_activity
+    p "create_activity"
       ticket.create_activity(User.current, 'activities.tickets.timesheet.new.long', 
           {'eval_args' => {'timesheet_path' => ['timesheet_path', 
                                 {'ticket_id' => ticket.display_id, 'timesheet_id' => id}]}},
                                 'activities.tickets.timesheet.new.short')
-                                
-   
  end
 
   def set_default_values
     self.executed_at ||= self.created_at
+  end
+
+  # VA - Observer Rule 
+
+  def update_observer_events
+    from, to = time_spent_change    # Should find another way - Hari
+    if from == nil
+      unless to == 0
+        @observer_changes = {:time_sheet => :created} 
+      end
+    elsif from == 0
+      @observer_changes = {:time_sheet => :created}
+    else
+      @observer_changes = {:time_sheet => :updated}
+    end unless time_spent_change.nil?
   end
   
 end

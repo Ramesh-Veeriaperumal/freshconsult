@@ -2,6 +2,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   include ParserUtil
   include BusinessRulesObserver
+  include Va::ObserverUtil
 
   set_table_name "helpdesk_notes"
 
@@ -35,10 +36,12 @@ class Helpdesk::Note < ActiveRecord::Base
   attr_accessor :nscname, :disable_observer
   attr_protected :attachments, :notable_id
   
-  before_create :validate_schema_less_note
+  before_create :validate_schema_less_note, :update_observer_events
   before_save :load_schema_less_note, :update_category
   after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
+
   after_commit_on_create :update_ticket_states, :notify_ticket_monitor
+  after_commit_on_create :filter_observer_events, :if => :current_user?
 
   accepts_nested_attributes_for :tweet , :fb_post
   
@@ -66,6 +69,8 @@ class Helpdesk::Note < ActiveRecord::Base
               :order => "created_at desc"
 
   SOURCES = %w{email form note status meta twitter feedback facebook forward_email}
+
+  NOTE_TYPE = { true => :private, false => :public }
   
   SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.zip((0..SOURCES.size-1).to_a).flatten]
   
@@ -117,10 +122,6 @@ class Helpdesk::Note < ActiveRecord::Base
 
   def note?
   	source == SOURCE_KEYS_BY_TOKEN["note"]
-  end
-  
-  def note?
-    source == SOURCE_KEYS_BY_TOKEN["note"]
   end
   
   def tweet?
@@ -327,6 +328,7 @@ class Helpdesk::Note < ActiveRecord::Base
         super
       rescue NoMethodError => e
         logger.debug "method_missing :: args is #{args.inspect} and method:: #{method}"  
+        p logger.debug "method_missing :: args is #{args.inspect} and method:: #{method}"  
         if (load_schema_less_note && schema_less_note.respond_to?(method))
           args = args.first if args && args.is_a?(Array)
           (method.to_s.include? '=') ? schema_less_note.send(method, args) : schema_less_note.send(method)
@@ -385,6 +387,15 @@ class Helpdesk::Note < ActiveRecord::Base
         :select => 'count(*) as outbounds, avg(helpdesk_schema_less_notes.int_nc02) as avg_resp_time')
       ticket_state.outbound_count = notable_values.outbounds
       ticket_state.avg_response_time = notable_values.avg_resp_time
+    end
+    
+    # VA - Observer Rule 
+    def update_observer_events
+      if note?
+        @observer_changes = {:note => NOTE_TYPE[private]}
+      else
+        @observer_changes = {:reply => :sent}
+      end
     end
 
 end

@@ -1,0 +1,137 @@
+<% content_for :pagefixed do %>
+  <%= stylesheet_link_tag "autosuggest_inquisitor" %>
+  <%= include_javascripts :observer %>
+  <% javascript_tag do %>
+    // Condition Parsing 
+    // This template contains the dom population information 
+    var conditional_dom = function(filter, id, compName, val, initFeed, className){
+      var value = val || "value";
+      var type      = filter.domtype;
+      var initFeed  = initFeed || {};
+      var compName  = compName || "filter";
+      className = className || "dummy";
+      // Conditional Dom created based on the options available 
+      c_dom = "";
+      switch (type) {
+        case 'label':
+          c_dom = FactoryUI.label(label, type);
+          break;
+        case 'text':
+        case 'number':
+        case 'autocompelete':
+          c_dom = FactoryUI.text("", value, initFeed[value], type);
+          jQuery(c_dom).prop("id", id);     
+          break;
+        case 'dropdown':
+          var choices = [];
+          initFeed[value] = initFeed[value] || " ";
+          filter.choices.each(function(arrayItem){
+            choices.push({
+              name: arrayItem[0],
+              value: arrayItem[1]
+            });
+          });
+          c_dom = FactoryUI.dropdown(choices, value);
+          jQuery(c_dom).addClass(className).val(initFeed[value]);
+        break;
+        case 'paragraph':
+          c_dom = FactoryUI.paragraph("", value, initFeed[value]);
+          break;
+        case 'comment':     
+          c_dom = jQuery("<div class=\"s_comment\" />")
+                .append(FactoryUI.paragraph("", "comment", initFeed["comment"]))
+                .append(FactoryUI.checkbox("<%= t('ticket.note_form.private_note') %>", "private", initFeed["private"]));
+          break;
+        case 'email_select':
+        case 'email_text':
+        case 'email':
+          var control = "";
+          if (type == 'email_select') {     
+            var choices = [];
+            filter.choices.each(function(arrayItem){
+              choices.push({
+                name: arrayItem[0],
+                value: arrayItem[1]
+              });
+            });
+            control = FactoryUI.dropdown(choices, "email_to");        
+          }else{
+            control = FactoryUI.text("", "email_to");       
+          }     
+        
+          if (type != 'email') {
+            jQuery(control).val(initFeed["email_to"]);
+            var to = jQuery('<div />').append("<b><%= t(".to") %> </b>").append(control);
+          }
+        
+          var body  = jQuery('<div />')
+                  .append("<b><%= t('.body') %>*</b>")
+                  .append(FactoryUI.paragraph("", "email_body", initFeed["email_body"], "paragraph required"))
+                  .append("<a class='l_placeholder slim-button' href='javascript:void(0)'><%= t('.insert_placeholder') %> &raquo;</a>");
+
+          c_dom = jQuery("<div class=\"s_email\" />")
+                .append(to || "")
+                .append(body);
+          break;  
+      
+        case 'checkbox':
+          if (compName == 'action' || compName == 'event') {
+            var choices = [{
+              name: 1,
+              value: compName == 'action' ? "<%= t(".selected") %>" : "<%= t(".checked") %>"
+            }, {
+              name: 0,
+              value: compName == 'action' ? "<%= t(".not_selected") %>" : "<%= t(".unchecked") %>"
+            }];
+            c_dom = FactoryUI.dropdown(choices, value);
+            jQuery(c_dom).val(initFeed[value]);
+          } 
+        break;
+        case 'nested_field':
+          value = value || "value"
+          nested_fields_name = ""
+          switch (value)
+          {
+          case undefined:
+          case 'value':
+            nested_fields_name = 'nested_rules'
+            break;
+          default :
+            nested_fields_name = value+"_nested_rules"
+          }
+          initFeed['nested_rules'] = initFeed[nested_fields_name]
+          initFeed['value'] = initFeed[value]
+          _opts = { category_name: filter.name, 
+                    nested_fields: filter.nested_fields,
+                    type: compName, 
+                    initData: initFeed };
+          className = '';
+          if (compName == 'event')
+            { className = 'event_nested_field'; }
+          else
+            { className = 'nested_field'; }
+
+          if(!filter.tree) filter.tree = new NestedField(filter.choices);
+          c_dom = jQuery("<div />").addClass(className).nestedselect(filter.tree, _opts, value);
+
+        break;
+        
+        default:
+        c_dom = "";
+      }     
+      return c_dom;
+    }
+    var active_email_body = null;
+  <% end %>
+
+<% end %>
+
+<% content_for :onload_script do %>
+  set_observer_keywords ("<%= t('event.from') %>", "<%= t('event.to') %>", "<%= t('event.updated') %>", "<%= t('event.confirm_message') %>");
+  event_rule = new rules_filter("event", $A(<%= @event_defs %>), "#eventDOM", { "init_feed":$A(<%= @event_input %>)});
+  var op_hash = preProcessCondition(<%= @op_types %>, <%= @op_list %>);
+  filter_rule = new rules_filter("filter", $A(<%= @filter_defs %>), "#filterDOM", {"operators": op_hash, 
+    "init_feed":$A(<%= @filter_input %>)});
+  action_rule = new rules_filter("action", $A(<%= @action_defs %>), "#actionDOM", {"init_feed":$A(<%= @action_input %>)});
+  selectPerformedBy();
+<% end %>

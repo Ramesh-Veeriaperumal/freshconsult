@@ -64,6 +64,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
   named_scope :status_field, :conditions => { :name => "status" }
   named_scope :nested_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'nested_field'"]
   named_scope :nested_and_dropdown_fields, :conditions=>["flexifield_def_entry_id is not null and (field_type = 'nested_field' or field_type='custom_dropdown')"]
+  named_scope :event_fields, :conditions=>["flexifield_def_entry_id is not null and (field_type = 'nested_field' or field_type='custom_dropdown' or field_type='custom_checkbox')"]
+
 
   # Enumerator constant for mapping the CSS class name to the field type
   FIELD_CLASS = { :default_subject      => { :type => :default, :dom_type => "text",
@@ -80,17 +82,20 @@ class Helpdesk::TicketField < ActiveRecord::Base
                   :default_product      => { :type => :default, :dom_type => "dropdown_blank",
                                              :form_field => "product_id" },
                   :custom_text          => { :type => :custom, :dom_type => "text", 
-                                             :va_handler => "text" },
+                                             :handler => "text"},
                   :custom_paragraph     => { :type => :custom, :dom_type => "paragraph", 
-                                             :va_handler => "text" },
+                                             :handler => "text"},
                   :custom_checkbox      => { :type => :custom, :dom_type => "checkbox", 
-                                             :va_handler => "checkbox" },
+                                             :handler => "checkbox",
+                                             :event_handler => "value", :event_rule_handler => "checkbox"},
                   :custom_number        => { :type => :custom, :dom_type => "number", 
-                                             :va_handler => "numeric"},
+                                             :handler => "numeric"},
                   :custom_dropdown      => { :type => :custom, :dom_type => "dropdown", 
-                                             :va_handler => "dropdown"},
-                  :nested_field         => {:type => :custom, :dom_type => "dropdown_blank",
-                                              :va_handler => "nested_field"}
+                                             :handler => "dropdown", 
+                                             :event_handler => "update", :event_rule_handler => "dropdown"},
+                  :nested_field         => { :type => :custom, :dom_type => "dropdown_blank",
+                                             :handler => "nested_field",
+                                             :event_handler => "update", :event_rule_handler => "dropdown"}
                 }
 
   def dom_type
@@ -135,12 +140,23 @@ class Helpdesk::TicketField < ActiveRecord::Base
      end
   end  
   
-  def nested_choices
-    self.picklist_values.collect { |c| 
-      [c.value, c.value, c.sub_picklist_values.collect { |sub_c|
-            [sub_c.value, sub_c.value, sub_c.sub_picklist_values.collect { |i_c| [i_c.value,i_c.value] } ] }
-      ]
-    }
+  def nested_choices defaults = nil
+    if defaults.nil?
+      category_any, subcategory_any, item_any = [], [], []
+    else
+      item_any = defaults
+      subcategory_any = [[ defaults[0][0], defaults[0][1], item_any ]]
+      category_any = [[ defaults[0][0], defaults[0][1], subcategory_any ]]
+    end
+    category_any+self.picklist_values.collect { |c| 
+      subcategory_val = c.sub_picklist_values.collect { |sub_c|
+        item_val = sub_c.sub_picklist_values.collect { |i_c| 
+            [i_c.value, i_c.value] 
+          }; 
+        [sub_c.value, sub_c.value, item_any+item_val ] 
+        };
+      [c.value, c.value, subcategory_any+subcategory_val ]
+    };
   end
 
   def all_status_choices(disp_col_name=nil)

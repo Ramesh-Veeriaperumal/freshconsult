@@ -327,6 +327,13 @@ a.addchoice:hover{
 		font-size:13px;
 		font-weight:400;
 	}
+	label.rule_label {
+		font-weight: 600 !important;
+		background: none;
+		text-transform: none;
+		opacity: 0.7;
+		padding: 0;
+	}
 
 
 	label.label-title{	
@@ -455,6 +462,31 @@ a.addchoice:hover{
 				clear: left;
 			}
 			
+			.event_nested_field{
+				/* border-left: 1px dotted #aaa; */
+				margin-left: 5px;
+				margin-right: 20px;
+				div {
+					border-left: 1px dotted;
+					border-bottom: 1px dotted;
+					width: 14px;
+					margin-top: -1px;
+					height: 11px;
+				}
+				select {
+					float: none;
+					display: block;
+					margin: 5px 0 5px 20px;
+				
+					&:first-child{
+						position:relative;
+						left:-2px;
+						margin-left:0;
+						margin-top:0;	
+					}
+				}
+			}
+
 			label.error, label.warning{
 			   clear:left;
 			}
@@ -467,10 +499,17 @@ a.addchoice:hover{
 				top:10px;
 			}
 			.add{
-				left:6px;
+				left:3px;
+			}
+			.delete {
+				position:relative;
+				right:0px;
+				top:5px;
+				opacity:0.8;
 			}
 			div.controls{
-				width:95%;
+				/*width:95%;*/
+				width: auto;
 			}
 			
 			input.text{

@@ -19,15 +19,21 @@ default_fields:
 
     priority:
         handler: numeric
+        event_rule_handler: numeric
+        event_handler: update
       
     tag_names:
         handler: text_array
         
     ticket_type:
         handler: text
+        event_rule_handler: text
+        event_handler: update
     
     status:
         handler: numeric
+        event_rule_handler: numeric
+        event_handler: update
 
     source:
         handler: numeric
@@ -40,12 +46,36 @@ default_fields:
 
     company:
         handler: text
-        
+
     responder_id:
         handler: object_id
-        
+        event_rule_handler: object_id
+        event_handler: change
+
     group_id:
         handler: object_id
+        event_rule_handler: object_id
+        event_handler: update
+
+    note:
+        event_rule_handler: symbol
+        event_handler: value
+
+    reply:
+        event_rule_handler: symbol
+        event_handler: change
+
+    ticket:
+        event_rule_handler: symbol
+        event_handler: value
+
+    time_sheet:
+        event_rule_handler: symbol
+        event_handler: value
+
+    int_tc01::
+        event_rule_handler: numeric
+        event_handler: value
 
     created_at:
         <<: *date_time
@@ -69,6 +99,8 @@ default_fields:
         <<: *date_time
     due_by:
         <<: *date_time
+        event_rule_handler: symbol
+        event_handler: change
     inbound_count:
         handler: numeric
     any:
@@ -95,3 +127,8 @@ handlers:
     object_id: Va::Handlers::ObjectId
     nested_field: Va::Handlers::NestedField
     allow_all: Va::Handlers::AllowAll
+    symbol: Va::Handlers::Symbol
+# event_handlers
+    update: Va::EventHandlers::Update # [:from, :to] comparison handler
+    value: Va::EventHandlers::Value # :value comparison handler
+    change: Va::EventHandlers::Change # doesn't matter what the change is..

@@ -40,6 +40,7 @@ class Account < ActiveRecord::Base
  
   has_many :features
   has_many :flexi_field_defs, :class_name => 'FlexifieldDef'
+  has_many :flexifield_def_entries
   
   has_one :data_export
   
@@ -108,6 +109,11 @@ class Account < ActiveRecord::Base
     :rule_type => VAConfig::SUPERVISOR_RULE, :active => true }, :order => "position"
   has_many :all_supervisor_rules, :class_name => 'VARule', :conditions => {
     :rule_type => VAConfig::SUPERVISOR_RULE }, :order => "position"
+
+  has_many :observer_rules, :class_name => 'VARule', :conditions => { 
+    :rule_type => VAConfig::OBSERVER_RULE, :active => true }, :order => "position"
+  has_many :all_observer_rules, :class_name => 'VARule', :conditions => {
+    :rule_type => VAConfig::OBSERVER_RULE }, :order => "position"
   
   has_many :scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
   
@@ -134,7 +140,6 @@ class Account < ActiveRecord::Base
   has_many :posts
 
  
-  
   has_one :form_customizer , :class_name =>'Helpdesk::FormCustomizer'
   has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', 
     :include => [:picklist_values, :flexifield_def_entry], :order => "position"

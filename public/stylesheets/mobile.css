@@ -3,15 +3,15 @@
 .mobile-sprite, .mobile-icon-facebook, .mobile-icon-google, .mobile-icon-twitter {
   background: url('/images/mobile-s4266a33ded.png') no-repeat; }
 
-/* line 60, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+/* line 60, ../../../../.rvm/gems/ruby-1.8.7-p371/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .mobile-icon-facebook {
   background-position: 0 -52px; }
 
-/* line 60, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+/* line 60, ../../../../.rvm/gems/ruby-1.8.7-p371/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .mobile-icon-google {
   background-position: 0 0; }
 
-/* line 60, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
+/* line 60, ../../../../.rvm/gems/ruby-1.8.7-p371/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/sprites/_base.scss */
 .mobile-icon-twitter {
   background-position: 0 -26px; }
 

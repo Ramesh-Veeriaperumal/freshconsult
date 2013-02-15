@@ -86,11 +86,11 @@ class Admin::AutomationsController < Admin::AdminController
     end
     
     def load_config
-      agents = current_account.users.technicians.collect { |au| [au.id, au.name] }
-      agents << ([0, '{{ticket.agent}}'])
+      @agents = current_account.users.technicians.collect { |au| [au.id, au.name] }
+      @agents << ([0, '{{ticket.agent}}'])
 
-      groups  = current_account.groups.find(:all, :order=>'name' ).collect { |g| [g.id, g.name]}
-      groups << ([0, '{{ticket.group}}'])
+      @groups  = current_account.groups.find(:all, :order=>'name' ).collect { |g| [g.id, g.name]}
+      @groups << ([0, '{{ticket.group}}'])
 
       @products = current_account.products.collect {|p| [p.id, p.name]}
       
@@ -106,14 +106,14 @@ class Admin::AutomationsController < Admin::AdminController
         { :name => "add_tag", :value => t('add_tags'), :domtype => 'text' },
         { :name => -1, :value => "------------------------------" },
         { :name => "responder_id", :value => t('ticket.assign_to_agent'), 
-          :domtype => 'dropdown', :choices => agents },
+          :domtype => 'dropdown', :choices => @agents },
         { :name => "group_id", :value => t('email_configs.info9'), :domtype => 'dropdown', 
-          :choices => groups },
+          :choices => @groups },
         { :name => -1, :value => "------------------------------" },
         { :name => "send_email_to_group", :value => t('send_email_to_group'), 
-          :domtype => 'email_select', :choices => groups },
+          :domtype => 'email_select', :choices => @groups },
         { :name => "send_email_to_agent", :value => t('send_email_to_agent'), 
-          :domtype => 'email_select', :choices => agents },
+          :domtype => 'email_select', :choices => @agents },
         { :name => "send_email_to_requester", :value => t('send_email_to_requester'), 
           :domtype => 'email' },
         { :name => -1, :value => "------------------------------" },
@@ -162,5 +162,4 @@ class Admin::AutomationsController < Admin::AdminController
       end
       nestedfields
     end
-
 end

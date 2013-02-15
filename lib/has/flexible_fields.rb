@@ -18,13 +18,13 @@ module Has #:nodoc:
           
           has_many :flexifield_def_entry, :class_name => 'FlexifieldDefEntry'
          
-          delegate :assign_ff_values, :set_ff_value, :get_ff_value, :ff_def=, :ff_def, :to_ff_alias, :ff_aliases, :to_ff_field, :ff_fields, :to => :flexifield
+          delegate :assign_ff_values, :retrieve_ff_values, :set_ff_value, :get_ff_value, :ff_def=, :ff_def, :to_ff_alias, :ff_aliases, :to_ff_field, :ff_fields, :to => :flexifield
           
                   
           accepts_nested_attributes_for :flexifield
                     
-          after_create :create_flexifield
-          after_save :save_flexifield
+          # after_create :create_flexifield
+          # after_save :save_flexifield
           
 #          if options[:some_option]
 #
@@ -105,13 +105,13 @@ module Has #:nodoc:
       
       protected
       
-      def save_flexifield
-        self.flexifield.save
-      end
+      # def save_flexifield
+      #   self.flexifield.save
+      # end
       
-      def create_flexifield
-        self.flexifield = Flexifield.new()
-      end
+      # def create_flexifield
+      #   self.flexifield = Flexifield.new()
+      # end
       
     end
   end

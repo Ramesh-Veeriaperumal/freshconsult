@@ -12,6 +12,11 @@ window.fdUtil	 = {
 };
 
 window.FactoryUI = {
+	label:function(_name, _className){
+		return jQuery("<label />")
+				.addClass(_className)
+				.text(_name);
+	},
 	text:function(_placeholder, _name, _value, _className){
 		var className	= _className || "text",
 			placeholder = _placeholder || "",
@@ -26,6 +31,7 @@ window.FactoryUI = {
 	// Template json for choices 
 	// ['choice1', 'choice2'...]
 	dropdown: function(choices, _name, _className){
+
 		if(!choices) return;
 		var className   = _className	|| "dropdown",
 			name		= _name			|| "",
@@ -35,7 +41,7 @@ window.FactoryUI = {
 		
 		choices.each(function(item){
 			jQuery( "<option />" )
-				.text( item.value )				
+				.text( item.value )
 				.appendTo(select)
 				.get(0).value = item.name;  
 		});

@@ -18,8 +18,8 @@ module Has #:nodoc:
           
           accepts_nested_attributes_for :flexifield
           
-          after_create :create_flexifield
-          after_save :save_flexifield
+          # after_create :create_flexifield
+          # after_save :save_flexifield
           
 #          if options[:some_option]
 #
@@ -81,13 +81,13 @@ module Has #:nodoc:
       
       protected
       
-      def save_flexifield
-        self.flexifield.save
-      end
+      # def save_flexifield
+      #   self.flexifield.save
+      # end
       
-      def create_flexifield
-        self.flexifield = Flexifield.new()
-      end
+      # def create_flexifield
+      #   self.flexifield = Flexifield.new()
+      # end
       
     end
   end

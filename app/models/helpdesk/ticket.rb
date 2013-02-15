@@ -14,10 +14,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Mobile::Actions::Ticket
   include Gamification::GamificationUtil
   include RedisKeys
+  include Va::ObserverUtil
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification", 
-                            "header_info", "st_survey_rating", "trashed", "access_token"]
+                            "header_info", "st_survey_rating", "trashed", "access_token", "ticket"]
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+  OBSERVER_ATTR = []
 
   set_table_name "helpdesk_tickets"
   
@@ -32,7 +34,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   before_validation :populate_requester, :set_default_values
   
-  before_create :assign_schema_less_attributes, :assign_email_config_and_product, :set_dueby, :save_ticket_states
+  before_create :assign_flexifield, :assign_schema_less_attributes, :assign_email_config_and_product, :set_dueby, :save_ticket_states
 
   has_many_attachments
 
@@ -43,17 +45,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_update :assign_email_config, :load_ticket_status, :update_dueby
 
   before_validation_on_create :set_token
+
+  before_update :update_observer_events
+
   
   before_save :update_ticket_changes
-
-  after_save :save_custom_field
-
+  
   after_commit_on_create :create_initial_activity,  :update_content_ids, :pass_thro_biz_rules,
     :support_score_on_create, :process_quests
   
   after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity, 
     :stop_timesheet_timers, :fire_update_event, :support_score_on_update, 
     :process_quests, :publish_to_update_channel
+  after_commit_on_update :filter_observer_events, :if => :current_user?
 
   has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
 
@@ -497,6 +501,46 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
+  def populate_requester #by Shan temp  
+    portal =  self.product.portal if self.product
+    if email.present?
+      self.email = parse_email email
+      if(requester_id.nil? or !email.eql?(requester.email))
+        @requester = account.all_users.find_by_email(email) unless email.nil?
+        if @requester.nil?
+          @requester = account.users.new
+          @requester.signup!({:user => {
+            :email => self.email, 
+            :name => (name || ''), 
+            :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}},portal)
+        end
+      end
+      self.requester = @requester  if @requester.valid?
+    elsif twitter_id.present?
+     logger.debug "twitter_handle :: #{twitter_id.inspect} "
+      if(requester_id.nil? or twitter_id.eql?(requester.twitter_id))
+        @requester = account.all_users.find_by_twitter_id(twitter_id)
+        if @requester.nil?
+          @requester = account.users.new
+          @requester.signup!({:user => {:twitter_id =>twitter_id , :name => twitter_id ,
+          :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer], :active => true, :email => nil}})
+        end
+      end
+      self.requester = @requester
+    elsif external_id.present? # Added for storing iOS user id from MobiHelp
+     logger.debug "external_id :: #{external_id.inspect} "
+      if(requester_id.nil? or external_id.eql?(requester.external_id))
+        @requester = account.all_users.find_by_external_id(external_id)
+        if @requester.nil?
+          @requester = account.users.new
+          @requester.signup!({:user => {:external_id =>external_id , :name => @requester_name || external_id,
+          :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer], :active => true, :email => nil}})
+        end
+      end
+      self.requester = @requester
+    end
+  end
+
   def create_meta_note
     if meta_data.present?  # Added for storing metadata from MobiHelp
       self.notes.create(
@@ -607,7 +651,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Helpdesk::TicketNotifier.notify_by_email(notification_type, self) if notify_enabled?(notification_type)
   end
   
-  def notify_by_email(notification_type)    
+  def notify_by_email(notification_type)
     Helpdesk::TicketNotifier.send_later(:notify_by_email, notification_type, self) if notify_enabled?(notification_type)
   end
   
@@ -678,63 +722,37 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #virtual agent things end here..
   
   def pass_thro_biz_rules
-     send_later(:delayed_rule_check) unless import_id
+    send_later(:delayed_rule_check) unless import_id
   end
   
   def delayed_rule_check
-   begin
-    evaluate_on = check_rules     
-    update_custom_field evaluate_on unless evaluate_on.nil?
-    autoreply
-   rescue Exception => e #better to write some rescue code 
-    NewRelic::Agent.notice_error(e)
-   end
-    save #Should move this to unless block.. by Shan
+    begin
+      evaluate_on = check_rules
+      autoreply
+    rescue Exception => e #better to write some rescue code 
+      NewRelic::Agent.notice_error(e)
+    end
+    save # Should move this to unless block.. by Shan
   end
  
   def check_rules
-    load_flexifield 
-    evaluate_on = self  
+    evaluate_on = self
     account.va_rules.each do |vr|
-      evaluate_on= vr.pass_through(self)
+      evaluate_on = vr.pass_through(self)
       return evaluate_on unless evaluate_on.nil?
-    end  
-    return evaluate_on       
+    end
+    return evaluate_on
+  end
+
+  def custom_field
+    @custom_field ||= retrieve_ff_values
   end
   
-  def load_flexifield 
-    flexi_arr = Hash.new
-    self.ff_aliases.each do |label|    
-      value = self.get_ff_value(label.to_sym())    
-      flexi_arr[label] = value
-      self.write_attribute label, value
-    end
-    
-    self.custom_field = flexi_arr
+  def set_ff_value field, arg
+    custom_field[field] = arg
+    flexifield.set_ff_value field, arg
   end
-  
-  def update_custom_field  evaluate_on
-    flexi_field = evaluate_on.custom_field      
-    evaluate_on.custom_field.each do |key,value|    
-      flexi_field[key] = evaluate_on.read_attribute(key)      
-    end
-    
-    ff_def_id = FlexifieldDef.find_by_account_id(evaluate_on.account_id).id    
-    evaluate_on.ff_def = ff_def_id       
-    unless flexi_field.nil?     
-      evaluate_on.assign_ff_values flexi_field    
-    end
-  end
-  
-  def save_custom_field   
-    ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id    
-    self.ff_def = ff_def_id
-    self.flexifield.account_id = account_id
-    unless self.custom_field.nil?          
-      self.assign_ff_values self.custom_field    
-    end
-  end
-  
+
   #To use liquid template...
   #Might be darn expensive db queries, need to revisit - shan.
   def to_liquid
@@ -791,16 +809,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def custom_field_attribute attribute, args    
     logger.debug "method_missing :: custom_field_attribute  args is #{args.inspect}  and attribute: #{attribute}"
-    
-    load_flexifield if custom_field.nil?
+
     attribute = attribute.to_s
     return custom_field[attribute] unless attribute.include?("=")
       
-    ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id
     field = attribute.to_s.chomp("=")
     args = args.first if !args.blank? && args.is_a?(Array) 
-    self.ff_def = ff_def_id
-    custom_field[field] = args
+    self.ff_def = FlexifieldDef.find_by_account_id_and_module(self.account_id, 'Ticket').id
+    set_ff_value field, args
   end
 
   def method_missing(method, *args, &block)
@@ -808,7 +824,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       super
     rescue NoMethodError => e
       logger.debug "method_missing :: args is #{args.inspect} and method:: #{method} "
-
+      
       return schema_less_attributes(method, args) if SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("=").chomp("?"))
       return ticket_states.send(method) if ticket_states.respond_to?(method)
       return custom_field_attribute(method, args) if self.ff_aliases.include?(method.to_s.chomp("=").chomp("?"))
@@ -832,7 +848,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       return json_str
     end
     if deep
-      self.load_flexifield
       self[:notes] = self.notes
       options[:include] = [:attachments]
       options[:except] = [:account_id,:import_id]
@@ -1095,7 +1110,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def update_ticket_changes
       @ticket_changes = self.changes.clone
-      @ticket_changes.merge!(schema_less_ticket.changes.clone) if schema_less_ticket
+      @ticket_changes.merge!(schema_less_ticket.changes.clone) unless schema_less_ticket.nil?
       @ticket_changes.symbolize_keys!
     end
     
@@ -1142,8 +1157,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       else email =~ EMAIL_REGEX
         email = $1
       end
-
-      { :email => email, :name => name }
+      email
   end 
 
   def set_dueby_on_priority_change(sla_detail)
@@ -1162,6 +1176,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def assign_schema_less_attributes
       build_schema_less_ticket unless schema_less_ticket
       schema_less_ticket.account_id ||= account_id
+    end
+
+    def assign_flexifield
+      build_flexifield
+      self.ff_def = FlexifieldDef.find_by_account_id_and_module(self.account_id, 'Ticket').id
+      assign_ff_values custom_field
     end
 
     def assign_email_config_and_product
@@ -1235,6 +1255,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
         
         self.requester = requester
       end
+    end
+    
+    # VA - Observer Rules 
+    def update_observer_events
+      @observer_changes = @ticket_changes.clone
+      @observer_changes.merge!(flexifield.changes) unless flexifield.nil?
     end
 
     def can_add_requester?

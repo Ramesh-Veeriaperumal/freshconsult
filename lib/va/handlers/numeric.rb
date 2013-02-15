@@ -1,10 +1,11 @@
 class Va::Handlers::Numeric < Va::RuleHandler
 
   private
+    
     def numeric_value
       value.to_i
     end
-  
+
     def is(evaluate_on_value)
       evaluate_on_value == numeric_value
     end

@@ -177,6 +177,12 @@ javascripts:
     - public/javascripts/bootstrap.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.itoggle.js
+
+  observer:
+    - public/javascripts/autosuggest.js    
+    - public/javascripts/frameworks/plugins/jquery.nestedselect.js
+    - public/javascripts/observer-condition-filter.js  
+
   conditional:
     - public/javascripts/autosuggest.js    
     - public/javascripts/frameworks/plugins/jquery.nestedselect.js

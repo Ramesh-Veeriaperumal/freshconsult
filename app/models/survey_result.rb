@@ -1,6 +1,8 @@
 class SurveyResult < ActiveRecord::Base
 
   include Gamification::GamificationUtil
+  include Va::ObserverUtil
+  
 
   belongs_to_account
     
@@ -121,6 +123,8 @@ class SurveyResult < ActiveRecord::Base
                                                       :conditions => conditional_params,
                                                       :order => "survey_results.created_at DESC"
                                                    }}                                                   
+
+                                                     
   private                                                   
 
     def add_support_score

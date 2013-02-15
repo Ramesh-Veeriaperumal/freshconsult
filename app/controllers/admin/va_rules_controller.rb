@@ -69,7 +69,7 @@ class Admin::VaRulesController < Admin::AutomationsController
           :data_url => autocomplete_helpdesk_authorizations_path, :operatortype => "email" },
         { :name => "to_email", :value => t('to_email'), :domtype => "text",
           :operatortype => "email" },
-        { :name => -1, :value => "--------------------------" },
+        { :name => -1, :value => "------------------------------" },
         { :name => "subject", :value => t('ticket.subject'), :domtype => "text",
           :operatortype => "text" },
         { :name => "description", :value => t('description'), :domtype => "text",
