@@ -94,6 +94,7 @@ Rails::Initializer.run do |config|
 end
 
 ActiveRecord::ConnectionAdapters::MysqlAdapter::NATIVE_DATABASE_TYPES[:primary_key] = "BIGINT UNSIGNED DEFAULT NULL auto_increment PRIMARY KEY"
+Authlogic::Session::Base.controller = Authlogic::ControllerAdapters::RailsAdapter.new(self)
 
 GC.enable_stats if defined?(GC) && GC.respond_to?(:enable_stats)
 
