@@ -3,7 +3,18 @@ source "http://gems.github.com"
 
 gem "rake", "0.8.7"
 gem "rack", "~> 1.1.6"
-gem "rails", "2.3.8"
+
+git 'git://github.com/freshdesk/rails.git', :branch => "rails_2_3_8"  do
+  # Note: load-order is essential for dependencies
+  gem 'activesupport', :branch => "rails_2_3_8" 
+  gem 'actionpack',     :branch => "rails_2_3_8" 
+  gem 'actionmailer',    :branch => "rails_2_3_8" 
+  gem 'activerecord',   :branch => "rails_2_3_8" 
+  gem 'activeresource',  :branch => "rails_2_3_8" 
+  gem 'rails', :branch => "rails_2_3_8" 
+end
+
+gem "json", "~> 1.5.5"
 gem "mysql"
 gem "i18n", "0.4.2"
 gem "html2textile", "~> 1.0.0.beta1"
