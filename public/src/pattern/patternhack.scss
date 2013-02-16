@@ -116,6 +116,10 @@ strong {
 
 /*  overriding buttons styles from Bootstrap v1.4 */
 
+.btn-group .btn {
+  float: none;
+}
+
 .btn-group.open {
   overflow: visible;
 }

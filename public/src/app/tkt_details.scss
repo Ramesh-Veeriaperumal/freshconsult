@@ -533,34 +533,52 @@ p strong{
 }
 
 .hidden_upload {
-	display: inline-block;
+	display: block;
 	width: 200px;
-	margin: 0 10px;
+	margin-left: 6px;
+	float: left;
+	clear: both;
+	margin-top: -10px;
 	div {
-		cursor: pointer;
 		color: #1272de;
 		width: 200px;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		-o-text-overflow: ellipsis;
 		-webkit-text-overflow: ellipsis;
-		top: 16px;
+		top: 14px;
 		position:relative;
-
 	}
 
 	span {
-		color: #434343;
+		color: #1272de;
+		font-size: 22px;
 	}
 
 	input[type=file] {
-		height: 17px;
+		height: 22px;
 		width: 200px;
 		position:relative;
+		top: -10px;
 		@include opacity(0);
+		cursor: pointer;
 	}
 	
 }   
+
+
+.add_attachment {
+	cursor: pointer;
+	height: 22px;
+	span{
+		padding: 0 5px 5px;
+		color: #1272de;
+		font-size: 22px;
+		font-weight: bold;
+		margin-right: 0px;
+	}
+}
+
 .conversation_thread.redactor{
 	border:none;
 	margin-bottom: 30px;
@@ -962,6 +980,26 @@ ol.conversation_thread{
     			padding: 3px;
     			background: none;
     		}
+
+    		.attachment_list {
+    			margin:2px 0 5px;
+    			float: left;
+    			display: block;
+    			width: auto;
+    		}
+
+    		.item {
+    			display: block;
+    			background: none;
+    			border: none;
+
+    			a {
+    				color: #000;
+    				cursor: default;
+    			}
+    		}
+
+
     	}
 
     }
@@ -1035,7 +1073,7 @@ ol.conversation_thread{
 
 	&.loading {
 		background: none;
-		
+
 		.avatar-wrap-collapse {
 			background-image: -webkit-gradient(linear, 0 0, 100% 100%, color-stop(.26, rgba(255, 255, 255, 0.1)), color-stop(.26, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .1)), color-stop(.76, rgba(255, 255, 255, .1)), color-stop(.76, transparent), to(transparent) );
 			-webkit-background-size: 19px 19px;
@@ -1832,13 +1870,18 @@ ol.conversation_thread{
 		display: inline;
 	}
 
+	.attachment_contents {
+		float: left;
+		width: auto;
+	}
+
 	.attachment_list {
 		display: inline;
 	}
 
 	color: #333333;
 	span{
-		margin-right: 10px;
+		margin-right: 0px;
 		b{
 			color: #999999;
 		}
@@ -1859,11 +1902,11 @@ ol.conversation_thread{
 	}
 
 	.attachment-close{
-		background: url(/images/ticket-details/attachment-close.png) no-repeat;
+		background: inline-image('ticket-details/attachment-close.png', 'image/png') no-repeat;
 		display: inline-block;
-		width: 7px;
-		height: 7px;
-		margin-right: 10px;
+		width: 9px;
+		height: 9px;
+		margin-right: 3px;
 	}
 
 	ul{
@@ -1991,19 +2034,6 @@ label.custom-select {
 		a {
 			font-weight: normal;
 		}
-	}
-}
-
-.add_attachment {
-	height: 22px;
-	span{
-		background: #fae5bb;
-		border: 1px #cfcfcf solid;
-		@include corners(3px);
-		padding: 0 5px 4px;
-		color: #000;
-		font-weight: bold;
-		margin-right: 3px;
 	}
 }
 
@@ -2266,13 +2296,14 @@ label.custom-select {
 	top: 0;
 	z-index: 99;
 	margin: 0 auto;
-	width: 85.5%;
+	width: 86%;
 	min-width: 1000px;
 	background: #fff;
 
 	.fixedbg {
 		
 		display: block;
+		-webkit-transition: all 1s linear;
 	}
 
 	.firstchild {
@@ -2378,7 +2409,7 @@ label.custom-select {
 
 	&.active {
 		.flip-back {
-			background: #333;
+			background: #800;
 		}
 	}
 

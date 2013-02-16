@@ -5,16 +5,19 @@
 <div class="attachments-wrap">
   <div id="<%=attach_id%>-container" class="attachments-container">
     <label><i>0</i> Attachment(s): </label>
-    <div class="attachment_list" id="<%=attach_id%>-attachments"></div>
-  </div>
+    <div class="attachment_contents">
 
-  <div class="hidden_upload custom_tip_bottom" title='<%=t('attachment_help_info')%>' class='custom-tip-top'>
-    <div class="add_attachment"><span>+</span> Add </div>
-    <input type="file" id="<%=attach_id%>_file" name="emptyfile"
-            nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
-            fileContainer="<%=attach_id%>-container" 
-            fileList="<%=attach_id%>-attachments" 
-            sendFocusTo="<%=attach_id%>-body"/>
+      <div class="attachment_list" id="<%=attach_id%>-attachments"></div>
+
+      <div class="hidden_upload custom_tip_bottom" title='<%=t('attachment_help_info')%>' class='custom-tip-top'>
+        <div class="add_attachment"><span>+</span> Add </div>
+        <input type="file" id="<%=attach_id%>_file" name="emptyfile"
+                nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
+                fileContainer="<%=attach_id%>-container" 
+                fileList="<%=attach_id%>-attachments" 
+                sendFocusTo="<%=attach_id%>-body"/>
+      </div>
+    </div>
   </div>
 </div>
 
