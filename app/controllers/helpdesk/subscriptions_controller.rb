@@ -44,7 +44,8 @@ class Helpdesk::SubscriptionsController < ApplicationController
   end
 
   def unwatch_multiple
-    if Helpdesk::Subscription.destroy_all(:ticket_id => params[:ids],
+    if Helpdesk::Subscription.destroy_all(:ticket_id => current_account.tickets.find( :all, 
+                                              :conditions => { :display_id => params[:ids] }).map(&:id),
                                          :user_id => current_user.id,
                                          :account_id => current_account.id)
       flash[:notice] = render_to_string(

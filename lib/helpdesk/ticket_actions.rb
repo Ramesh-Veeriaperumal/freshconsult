@@ -63,7 +63,6 @@ module Helpdesk::TicketActions
   
   def split_the_ticket        
     create_ticket_from_note
-    @note.destroy #delete the notes
     update_split_activity
     redirect_to @item
   end
@@ -136,6 +135,7 @@ module Helpdesk::TicketActions
     move_attachments   
     move_dropboxes
     if @item.save
+      @note.destroy
       flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
     else
       puts @item.errors.to_json

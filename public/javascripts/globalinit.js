@@ -178,11 +178,6 @@ var $J = jQuery.noConflict();
            $(this).addClass('next_button_arrow').text('Next');
       });
 
-      // - Tour My App 'slash' replaced by 'of'
-      $('.tourmyapp-step-index').livequery(function() { 
-        $(this).text($(this).text().replace('/',' of '));
-      });
-
       // !PULP to be moved into the pulp framework as a sperate util or plugin function
       $("[rel=remote]").livequery(function(){
         $(this).bind("afterShow", function(ev){
