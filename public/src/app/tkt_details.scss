@@ -564,8 +564,7 @@ p strong{
 		cursor: pointer;
 	}
 	
-}   
-
+}  
 
 .add_attachment {
 	cursor: pointer;
@@ -999,6 +998,15 @@ ol.conversation_thread{
     			}
     		}
 
+    		.dropbox_div {
+				float: left;
+				width: 300px;
+				label {
+					width: auto;
+					margin: 0 5px;
+				}
+			} 
+
 
     	}
 
@@ -1172,6 +1180,8 @@ ol.conversation_thread{
 			margin-top: 3px;
 			border: 1px #bbb solid;
 		}
+
+
 	}
 
 	.requester-details{
@@ -1549,8 +1559,8 @@ ol.conversation_thread{
 				height: 54px;
 				display: inline-block !important;
 				text-align: center;
-				.preview_pic img{
-					@include border-radius(6px);
+				img{
+					@include border-radius(5px);
 					width: 54px;
 					height: 54px;
 				}
