@@ -143,7 +143,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_many :survey_results, :as => :surveyable, :dependent => :destroy
   has_many :support_scores, :as => :scorable, :dependent => :destroy
   
-  has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet', :dependent => :destroy, :order => "executed_at"
+
+  has_many :time_sheets, 
+    :class_name => 'Helpdesk::TimeSheet',
+    :as => 'workable',
+    :dependent => :destroy,
+    :order => "executed_at"
+  
 
   attr_protected :attachments #by Shan - need to check..
   

@@ -1,7 +1,10 @@
 class Product < ActiveRecord::Base
   
+  include CRM::TotangoModulesAndActions 
 
   before_destroy :remove_primary_email_config_role
+
+  after_create :notify_totango
 
   belongs_to :account
   has_one    :portal               , :dependent => :destroy
@@ -55,4 +58,10 @@ class Product < ActiveRecord::Base
       primary_email_config.update_attribute(:primary_role, false)
     end
 
+    def notify_totango
+      Resque::enqueue(CRM::Totango::SendUserAction, 
+                                        account.id, 
+                                        account.account_admin.email, 
+                                        totango_activity(:multiple_products))
+    end
 end

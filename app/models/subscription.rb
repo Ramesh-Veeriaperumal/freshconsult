@@ -35,6 +35,7 @@ class Subscription < ActiveRecord::Base
   before_validation :update_amount
   after_update :update_features,:send_invoice
   after_update :add_to_crm, :if => :free_customer?
+  after_update :notify_totango, :if => :free_customer?
   
   after_update :update_billing, :if => :active?
   after_update :add_card_to_billing, :if => :card_number_changed?
@@ -534,6 +535,10 @@ class Subscription < ActiveRecord::Base
 
     def add_to_crm
       Resque.enqueue(CRM::AddToCRM::FreeCustomer, id)
+    end
+
+    def notify_totango
+      Resque.enqueue(CRM::Totango::FreeCustomer, id)
     end
 
     #Billing
