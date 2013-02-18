@@ -9,7 +9,7 @@
 </head>
 
 <body style="font: 12px/1.4 Verdana, serif; padding: 20px; margin: 0; padding: 0;">
-  <table cellpadding="0" cellspacing="10" border="0" style="background-color:#f3f8ef; margin:0 auto;  -webkit-border-radius: 5px;-moz-border-radius: 5px;-ms-border-radius: 5px;-o-border-radius: 5px;border-radius: 5px; width:100%; word-wrap: break-word;">
+  <table cellpadding="0" cellspacing="10" border="0" style="background-color:#f3f8ef; margin:0 auto;  -webkit-border-radius: 5px;-moz-border-radius: 5px;-ms-border-radius: 5px;-o-border-radius: 5px;border-radius: 5px; width:100%; word-wrap: break-word; max-width:650px;">
     <tr>
       <td>
         <table cellspacing="0" cellpadding="0" border="0" style="width:100%">
@@ -56,15 +56,15 @@
                       <img src= <%="https://s3.amazonaws.com/assets.freshdesk.com/images/#{Rails.env}/paid.gif"%> width="90" height="50" alt="PAID"/>
                     </font>
                   </td>      
-                  <td style="text-align:right;width:35%">
+                  <td style="text-align:left;width:35%">
                     <table cellspacing="0" cellpadding="0" border="0"  style="width:100%">
                       <tr>
-                        <td  style="width:50%">Invoice :</td>
-                        <td  style="width:50%;text-align:left; padding-left:2px;"><b>FD000<%= @subscription_payment.id%></b></td>
+                        <td  style="width:38%">Invoice :</td>
+                        <td  style="width:62%;text-align:left; padding-left:2px;"><b>FD000<%= @subscription_payment.id%></b></td>
                       </tr>
                       <tr>
-                        <td  style="width:50%">Issued on:</td>
-                        <td  style="width:50%;text-align:left; padding-left:2px;"><div id="date"><b><%= Time.now.to_s(:short_day).strip %></b></div></td>
+                        <td  style="width:38%">Issued on:</td>
+                        <td  style="width:62%;text-align:left; padding-left:2px;"><div id="date"><b><%= Time.now.to_s(:short_day).strip %></b></div></td>
                       </tr>
                     </table>
                   </td>
@@ -73,33 +73,33 @@
             </td>
           </tr>
           <tr>
-            <td>
+            <td style="padding-top:30px;">
               <table cellspacing="0" cellpadding="0" border="0" style="width:100%">
                 <tr>
                   <td>
                     <table cellspacing="0" cellpadding="0" border="0" style="width:100%">
                       <tr>
-                        <td style="background-color:#f8f8f8; padding:5px; border-right: 1px solid #fff; margin-left:5px;">Item</td>
-                        <td style="background-color:#f8f8f8; padding:5px; border-right: 1px solid #fff;">Description</td>
-                        <td style="background-color:#f8f8f8; padding:5px; border-right: 1px solid #fff;">No. of Units</td>
-                        <td style="background-color:#f8f8f8; padding:5px; border-right: 1px solid #fff;">Unit Price</td>
-                        <td style="background-color:#f8f8f8; padding:5px; margin-right:5px;">Amount</td>
+                        <td style="background-color:#f8f8f8; color: #888; padding:5px; border-right: 1px solid #fff; margin-left:5px;">Item</td>
+                        <td style="background-color:#f8f8f8; color: #888; padding:5px; border-right: 1px solid #fff;">Description</td>
+                        <td style="background-color:#f8f8f8; color: #888; padding:5px; border-right: 1px solid #fff; text-align:right;">No. of Units</td>
+                        <td style="background-color:#f8f8f8; color: #888; padding:5px; border-right: 1px solid #fff; text-align:right;">Unit Price</td>
+                        <td style="background-color:#f8f8f8; color: #888; padding:5px; margin-right:5px; text-align:right;">Amount</td>
                       </tr>
                       <tr>
                         <td style=" padding:5px;margin-left:5px;">Freshdesk Day Pass charges</td>
                         <td style=" padding:5px;"><%=@subscription.subscription_plan.name%> <%= SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[@subscription.renewal_period] %> Plan</td>
-                        <td style=" padding:5px;"><%= @units %></td>
-                        <td style=" padding:5px;"><%= @subscription_payment.subscription.day_pass_amount %></td>
-                        <td style=" padding:5px;margin-right:5px;">$<%=@subscription_payment.amount%></td>
+                        <td style=" padding:5px; text-align:right;"><%= @units %></td>
+                        <td style=" padding:5px; text-align:right;"><%= @subscription_payment.subscription.day_pass_amount %></td>
+                        <td style=" padding:5px;margin-right:5px; text-align:right;">$<%=@subscription_payment.amount%></td>
                       </tr>
                     </table>
                     <table cellspacing="0" cellpadding="0" border="0" style="width:100%; border-top:5px solid #f8f8f8; margin-top:5px;">
                       <tr>
                         <td style=" padding:5px; vertical-align:top; color:#d0d0d0">All prices in USD</td>
-                        <td style=" padding:5px; text-align:right;">
+                        <td style=" padding:5px; padding-right: 0; text-align:right;">
                           <table cellspacing="0" cellpadding="0" border="0" style="text-align:right; width:100%;">
                             <tr>
-                              <td style="text-align:right; padding:5px; font-size:16px;"><b style="padding:5px;background-color:#fffecd;">Total: $<%=@subscription_payment.amount%></b></td>
+                              <td style="text-align:right; padding:5px; padding-right: 0; font-size:16px;"><b style="padding:5px;background-color:#fffecd;">Total: $<%=@subscription_payment.amount%></b></td>
                             </tr>
                           </table>
                         </td>
