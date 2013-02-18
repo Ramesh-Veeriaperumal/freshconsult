@@ -31,7 +31,6 @@ window.FactoryUI = {
 	// Template json for choices 
 	// ['choice1', 'choice2'...]
 	dropdown: function(choices, _name, _className){
-
 		if(!choices) return;
 		var className   = _className	|| "dropdown",
 			name		= _name			|| "",

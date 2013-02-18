@@ -4,7 +4,6 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 
 	belongs_to :ticket, :class_name => 'Helpdesk::Ticket', :foreign_key => 'ticket_id'
 	belongs_to :product
-
 	belongs_to_account
 
 	attr_protected :account_id

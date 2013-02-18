@@ -1,8 +1,6 @@
 class SurveyResult < ActiveRecord::Base
 
-  include Gamification::GamificationUtil
-  include Va::ObserverUtil
-  
+  include Gamification::GamificationUtil  
 
   belongs_to_account
     
