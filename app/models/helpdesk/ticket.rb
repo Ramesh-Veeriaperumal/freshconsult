@@ -145,7 +145,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_many :survey_results, :as => :surveyable, :dependent => :destroy
   has_many :support_scores, :as => :scorable, :dependent => :destroy
   
-  has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet', :dependent => :destroy, :order => "executed_at"
+
+  has_many :time_sheets, 
+    :class_name => 'Helpdesk::TimeSheet',
+    :as => 'workable',
+    :dependent => :destroy,
+    :order => "executed_at"
+  
 
   attr_protected :attachments #by Shan - need to check..
   
@@ -977,7 +983,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return [] if emails_hash.nil?
     to_emails_array = []
     cc_emails_array = emails_hash[:cc_emails].blank? ? [] : emails_hash[:cc_emails]
-    to_emails_array = (self.to_emails || []).clone
+    ticket_to_emails = (self.to_emails || []).collect {|e| e.tr('"','').strip}
+    to_emails_array = (ticket_to_emails || []).clone
 
     reply_to_all_emails = (cc_emails_array + to_emails_array).uniq
 

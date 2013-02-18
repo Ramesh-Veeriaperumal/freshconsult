@@ -76,5 +76,11 @@ class Customer < ActiveRecord::Base
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id,:delta]) 
   end
+
+  def to_json(options = {})
+    options[:except] = [:account_id,:import_id,:delta]
+    json_str = super options
+    json_str
+  end
   
 end

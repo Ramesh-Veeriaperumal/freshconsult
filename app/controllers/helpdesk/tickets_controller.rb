@@ -17,11 +17,9 @@ class Helpdesk::TicketsController < ApplicationController
 
   use_database_pool [:user_ticket, :export_csv] => :persistent
 
-  before_filter :set_mobile, :only => [:index, :show, :update, :create, :execute_scenario, :assign, :spam, :get_agents ]
+  before_filter :set_mobile, :only => [:index, :show,:update, :create, :execute_scenario, :assign, :spam ]
   before_filter :set_show_version
-  before_filter :check_user, :load_installed_apps, :only => [:show, :forward_conv]
-
-
+  before_filter :check_user, :only => [:show, :forward_conv]
   before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index, :filter_options]
   before_filter :clear_filter, :only => :index
@@ -877,7 +875,4 @@ class Helpdesk::TicketsController < ApplicationController
     @selected_tab = :tickets
   end
 
-  def load_installed_apps
-    @installed_apps_hash = current_account.installed_apps_hash
-  end
 end

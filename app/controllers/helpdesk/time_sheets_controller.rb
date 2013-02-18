@@ -6,8 +6,12 @@ class Helpdesk::TimeSheetsController < ApplicationController
   before_filter { |c| c.requires_permission :manage_tickets }  
   before_filter :set_show_version
   before_filter :load_time_entry, :only => [ :show,:edit, :update, :destroy, :toggle_timer ] 
+<<<<<<< HEAD
   before_filter :load_ticket, :only => [:create, :index, :edit, :new, :update, :toggle_timer] 
   before_filter :load_installed_apps, :only => [:index, :create, :new, :edit, :update, :toggle_timer, :destroy]
+=======
+  before_filter :load_ticket, :only => [:create, :index, :edit, :update, :toggle_timer] 
+>>>>>>> origin/pre_staging
   before_filter :check_agents_in_account, :only =>[:create]
 
   rescue_from ActiveRecord::UnknownAttributeError , :with => :handle_error
@@ -51,10 +55,11 @@ class Helpdesk::TimeSheetsController < ApplicationController
     update_running_timer params[:time_entry][:user_id] if hours_spent.blank?
     
     #Added for API calls where user will not be knowing the id for ticket, instead provide only the display id.
-    if params[:time_entry][:ticket_id].blank? #this will be always present when called from portal's 'Add Time'
+    #Need to think about another way of handling this
+    if params[:time_entry][:workable_id].blank? #this will be always present when called from portal's 'Add Time'
       check_ticket = current_account.tickets.find_by_display_id(params[:ticket_id]) unless params[:ticket_id].nil?
       unless check_ticket.blank?
-        params[:time_entry][:ticket_id] = check_ticket.id
+        params[:time_entry][:workable_id] = check_ticket.id
       else
           raise ActiveRecord::RecordNotFound
       end
@@ -236,10 +241,6 @@ private
       @time_sheets = current_account.time_sheets.for_customers(customer_id).by_agent(agent_id).created_at_inside(start_date,end_date).hour_billable(billable)
     end
 
-  end
-
-  def load_installed_apps
-    @installed_apps_hash = current_account.installed_apps_hash
   end
 
 

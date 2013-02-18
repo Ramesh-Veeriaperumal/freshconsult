@@ -35,6 +35,7 @@ class Subscription < ActiveRecord::Base
   before_validation :update_amount
   after_update :update_features,:send_invoice
   after_update :add_to_crm, :if => :free_customer?
+  after_update :notify_totango, :if => :free_customer?
   
   after_update :update_billing, :if => :active?
   after_update :add_card_to_billing, :if => :card_number_changed?
@@ -389,7 +390,7 @@ class Subscription < ActiveRecord::Base
     def validate_on_update
       chk_change_billing_cycle
       if(agent_limit && agent_limit < account.full_time_agents.count)
-       errors.add_to_base(I18n.t("subscription.error.lesser_agents", {:agent_count => account.agents.count}))
+       errors.add_to_base(I18n.t("subscription.error.lesser_agents", {:agent_count => account.full_time_agents.count}))
       end         
     end
 
@@ -534,6 +535,10 @@ class Subscription < ActiveRecord::Base
 
     def add_to_crm
       Resque.enqueue(CRM::AddToCRM::FreeCustomer, id)
+    end
+
+    def notify_totango
+      Resque.enqueue(CRM::Totango::FreeCustomer, id)
     end
 
     #Billing

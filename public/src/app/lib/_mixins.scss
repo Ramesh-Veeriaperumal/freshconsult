@@ -89,12 +89,15 @@
       line-height: 18px;
       font-style: normal;
       margin:0;
-   }                          
-   code, pre, p, li,span { 
-      @include force-wrap; 
-      white-space:pre-line !important;
-      white-space:pre-wrap !important;
    }              
+   code, pre, p, li, div{ 
+    word-break: normal;
+    word-wrap: break-word;
+   }              
+   pre {
+    white-space: pre-wrap;       /* css-3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+   }
    h1 {font-size: 2em}
    h2 {font-size: 1.5em}
    h3 {font-size: 1.17em}

@@ -5,20 +5,19 @@ class FBClient
    DEFAULT_PAGE_IMG_URL = "http://profile.ak.fbcdn.net/static-ak/rsrc.php/v1/yG/r/2lIfT16jRCO.jpg"
 
   def initialize(fb_page  , options = {} )
-    #@product = options[:product] || fb_user.product
-    #@account = options[:current_account]  || fb_user.product.account
     @config = File.join(Rails.root, 'config', 'facebook.yml')
     @tokens = (YAML::load_file @config)[Rails.env]
-    #@callback_url = @tokens['callback_url']
-    @callback_url = "#{options[:callback_url]}"
-
-    RAILS_DEFAULT_LOGGER.debug "app id::#{@tokens['app_id']} and secret: #{@tokens['secret_key']} and call_back_url: #{@callback_url}"
+    @callback_url = URI.encode("#{options[:callback_url]}")
+    #@callback_url =  URI.encode(@tokens['callback_url'])
+    RAILS_DEFAULT_LOGGER.debug "app id::#{@tokens['app_id']} and secret: #{@tokens['secret_key']} and call_back_url: #{@callback_url}" 
     @oauth = Koala::Facebook::OAuth.new(@tokens['app_id'], @tokens['secret_key'], @callback_url)
     @fb_page = fb_page
   end
   
-  def authorize_url
-    @oauth.url_for_oauth_code(:permissions => ["manage_pages","offline_access","read_stream","publish_stream","manage_notifications","read_mailbox","read_page_mailboxes"])
+  def authorize_url(state)
+    permissions = "manage_pages,offline_access,read_stream,publish_stream,manage_notifications,read_mailbox,read_page_mailboxes"
+    url = "https://www.facebook.com/dialog/oauth?client_id=#{@tokens['app_id']}&redirect_uri=#{@callback_url}&state=#{state}&scope=#{permissions}"
+    return url
   end
   
   def auth(code)

@@ -11,13 +11,25 @@ GIT
   revision: af3e83dc6f071ae261478dbb7134d2ff534bc0a9
   specs:
     after_commit (1.0.11)
-      activerecord (< 3.0.0, >= 1.15.6)
+      activerecord (>= 1.15.6, < 3.0.0)
 
 GIT
   remote: git://github.com/freshdesk/deadlock_retry.git
   revision: 801e84f45aed2ccde10aa085af0aa94f1bf46975
   specs:
     deadlock_retry (1.2.0)
+
+GIT
+  remote: git://github.com/freshdesk/large-hadron-migrator.git
+  revision: 0e646a1bfda99dc7fe0d6ba95600fc7afedf1bed
+  specs:
+    lhm (1.2.0)
+
+GIT
+  remote: git://github.com/freshdesk/rinku.git
+  revision: 49cf3588bb7ce9d4626e67b70a5f8cb90308b7c2
+  specs:
+    rinku (1.7.2)
 
 GIT
   remote: git://github.com/freshdesk/ruby-yui-compressor.git
@@ -206,6 +218,7 @@ GEM
       omniauth (~> 1.0)
       omniauth-oauth2 (~> 1.0)
     open4 (1.3.0)
+    people (0.2.1)
     rack (1.1.3)
     rack-openid (1.3.1)
       rack (>= 1.1.0)
@@ -345,6 +358,7 @@ DEPENDENCIES
   jammit (= 0.6.5)
   jira4r (= 0.3.0)
   koala (~> 1.0.0)
+  lhm!
   lockfile (= 1.4.3)
   map-fields (= 1.0.0)
   marketo!
@@ -363,6 +377,7 @@ DEPENDENCIES
   omniauth-oauth2 (= 1.0)
   omniauth-openid
   omniauth-salesforce
+  people (= 0.2.1)
   rails (= 2.3.8)
   rake (= 0.8.7)
   redis (= 2.2.2)
@@ -372,6 +387,7 @@ DEPENDENCIES
   resque-status (= 0.3.0)
   resque_mailer (= 1.0.1)
   rforce
+  rinku!
   ruby-debug (= 0.10.3)
   ruby-openid (= 2.1.8)
   ruby-openid-apps-discovery (= 1.2.0)

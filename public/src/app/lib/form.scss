@@ -2027,8 +2027,11 @@ ul.ui-form .inputs-list{
 				font: 13px "Helvetica Neue", sans-serif;
 			}
 		}
-		input[type=text], input.text { 
-		   width: 93%;
+		input[type=text], input.text{ 
+		   width: 92%;
+		}
+		textarea.text { 
+			width: 93%;
 		}
 		div.color{
 			input{

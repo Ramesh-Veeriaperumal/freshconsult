@@ -113,6 +113,10 @@ module Search::TicketSearch
       return @selected_requesters || [[1,""]]
     end
 
+    if criteria_key == :created_at
+      return TicketConstants::CREATED_AT_OPTIONS
+    end
+
     return []
   end
   

@@ -217,7 +217,7 @@ class Account < ActiveRecord::Base
   after_create :send_welcome_email
   after_update :update_users_language
 
-  before_destroy :update_crm
+  before_destroy :update_crm, :notify_totango
 
   after_commit_on_create :add_to_billing
   before_destroy :update_billing
@@ -286,17 +286,17 @@ class Account < ActiveRecord::Base
     
     :blossom_classic => {
       :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets],
-      :inherits => [ :sprout ]
+      :inherits => [ :sprout_classic ]
     },
     
     :garden_classic => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :advanced_reporting ],
-      :inherits => [ :blossom ]
+      :inherits => [ :blossom_classic ]
     },
 
     :estate_classic => {
       :features => [ :gamification, :agent_collision ],
-      :inherits => [ :garden ]
+      :inherits => [ :garden_classic ]
     }
 
   }
@@ -656,6 +656,10 @@ class Account < ActiveRecord::Base
 
     def update_crm
       Resque.enqueue(CRM::AddToCRM::DeletedCustomer, id)
+    end
+
+    def notify_totango
+      Resque.enqueue(CRM::Totango::CanceledCustomer, id)
     end
 
 end

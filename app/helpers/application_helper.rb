@@ -318,14 +318,18 @@ module ApplicationHelper
       ['{{ticket.tags}}',           'Tags',           'Ticket tags.'],
       ['{{ticket.due_by_time}}',      'Due by time',        'Ticket due by time.'],
       ['{{ticket.requester.name}}',     'Requester name',       'Name of the requester who raised the ticket.'],
+      ['{{ticket.requester.firstname}}' , 'Requester first name', 'First name of the requester who raised the ticket'],
+      ['{{ticket.requester.lastname}}' , 'Requester last name', 'Last name of the requester who raised the ticket'],
       ['{{ticket.requester.email}}',    'Requester email',      "Requester's email."],
       ['{{ticket.requester.company_name}}', 'Requester company name',   "Requester's company name."], #??? should it be requester.company.name?!
+      ['{{ticket.requester.phone}}', 'Requester phone number',   "Requester's phone number."],
       ['{{ticket.group.name}}',       'Group name',       'Ticket group.'],
       ['{{ticket.agent.name}}',       'Agent name',       'Name of the agent who is currently working on the ticket.'],
       ['{{ticket.agent.email}}',      'Agent email',        "Agent's email."],
       ['{{ticket.latest_public_comment}}',  'Last public comment',  'Latest public comment for this ticket.'],
       ['{{helpdesk_name}}', 'Helpdesk name', 'Your main helpdesk portal name.'],
-      ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.']      
+      ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.'],
+      ['{{ticket.product_description}}', 'Product description', 'Product specific description in multiple product/brand environments.']
     ]
     place_holders << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey', 'Includes satisfaction survey.'] if current_account.features?(:surveys, :survey_links)
     current_account.ticket_fields.custom_fields.each { |custom_field|
@@ -424,18 +428,22 @@ module ApplicationHelper
   end
 
   def get_app_details(app_name)
-    installed_app = @installed_apps_hash[app_name.to_sym]
+    installed_app = installed_apps[app_name.to_sym]
     return installed_app
   end
 
   #This one checks for installed apps in account
   def dropbox_app_key
-    app = Integrations::InstalledApplication.with_name("dropbox").find(:all,:conditions =>["installed_applications.account_id = ?",current_account])
-    app.first.configs[:inputs]['app_key']  unless (app.empty?)
+    app = installed_apps[:dropbox]
+    app.configs[:inputs]['app_key']  unless (app.blank?)
   end
 
+  def installed_apps 
+    @installed_apps ||= current_account.installed_apps_hash
+  end
+  
   def get_app_widget_script(app_name, widget_name, liquid_objs) 
-    installed_app = @installed_apps_hash[app_name.to_sym]
+    installed_app = installed_apps[app_name.to_sym]
     if installed_app.blank? or installed_app.application.blank?
       return ""
     else
@@ -535,7 +543,7 @@ module ApplicationHelper
                                               {:include_blank => "...", :selected => field_value}, 
                                               {:class => element_class})
       when "nested_field" then
-        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal)
+        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => t('any'), :selected => field_value}, {:class => element_class}, field_value, in_portal)
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then

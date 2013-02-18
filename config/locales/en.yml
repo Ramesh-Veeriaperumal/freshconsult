@@ -1,6 +1,7 @@
 en:
   meta:
    language_name: 'English'
+  any: Any
   unspam: "Unspam"
   unblock: "Whitelist"
   enabled: "Enabled"
@@ -31,6 +32,7 @@ en:
     customers: "Customers"
     tags: "Tags"
     requester: "Requesters"
+    created_at: "Created"
   proceed_now: "\n\nProceed now?"
   forward: "Forward"
   apply: "Apply"
@@ -40,11 +42,11 @@ en:
   no_twitter_handle: Please configure atleast one twitter account
   reset_my_password: Reset my password 
   assign: Assign
-  signup: sign up
+  signup: <b>Sign up</b>
   signup_title: "Sign up to %{current_portal}"
   trial_expired_on: Your trial has expired on
   upgrade_trial: Upgrade your trial!
-  upgrade_plan: Upgrade Plan
+  upgrade_plan: Upgrade
   go_back: Go Back
   add_note: Add Note
   contact_name: Contact Name
@@ -57,7 +59,7 @@ en:
   facebook_user: Facebook User
   mobi_help: MobiHelp
   logmein_source: LogMeIn Rescue
-  working: Working at
+  working: Working
   attachment: Attachment
   attachments: Attachments
   attach_file_local: Attach a file from your computer
@@ -537,6 +539,7 @@ en:
         configure_email: Configure Email
         product_support_emails: Product Support Emails
         product_name: Product name
+        product_desc: Product description
         forwarding_email_info: "Your forwarding email address:"
       product:
         email_not_verified: Email not verified  
@@ -1086,8 +1089,8 @@ en:
       mark_this_idea_as: Mark this idea as
     last_reply: Last reply %{post_time} ago by %{user_link}
     posted_at: Posted %{post_time} ago
-  non_covered_feature_error: Your current Freshdesk plan does not cover this feature
-  unavailable_feature: %{feature} is available for your account. To use %{feature} now, upgrade your account  
+  non_covered_feature_error: This feature is currently locked
+  unavailable_feature: The %{feature} feature is not supported in your plan. Please upgrade your account to use it.  
   requester_replies: Requester replies to Ticket
   start_typing_a_question: Start typing a question and see answers in real time
   delete_topic_msg: Delete this topic forever
@@ -1513,8 +1516,8 @@ en:
     error: 
       lesser_agents: Your freshdesk account currently has %{agent_count} agents, you cannot subscribe to a lesser number of agents. Please delete some agents and try again.
     upgrade:
-      message: To unlock this feature, please Upgrade
-      cname: Upgrade your account to map your Helpdesk URL to a custom domain
+      message: Upgrade your account to unlock this feature.
+      cname: Want to use your own domain here? Please upgrade your account.
     billing: Billing
     agents: Agents
     total: Total
@@ -1530,6 +1533,8 @@ en:
   import: Import
   contains: Contains
   import_solution_article_info: "Note: We will not save the forum comments"
+  no_anonymous_tickets: "To submit a ticket, <a href={{signup}}><b>Sign up</b></a> as a new user or <a href={{login}}><b>Login</b></a>."
+  no_signup: "To submit a ticket, please <a href={{login}}><b>Login</b></a>."
   portal: 
     search: 
       placeholder: Search using a keyword or a full question
@@ -1643,7 +1648,7 @@ en:
     welcome: Welcome
     new_ticket: New Ticket
     submit_a_ticket: Submit a ticket
-    login: login
+    login: <b>Login</b>
     assumed_text: "You are viewing as"
     tabs:
       reports: Reports
@@ -2334,7 +2339,7 @@ en:
         inbound_email: Incoming email
         outbound_email: Outbound email
         attachment_size: 
-           exceed: Oops! Your attachment exceeds 20 MB. Please attach a smaller file.
+           exceed: Oops! Your attachment exceeds 15 MB. Please attach a smaller file.
     merge:
       merge:
         merge_into: Merge into?
@@ -2822,7 +2827,7 @@ en:
     dropbox:
       label: "DropBox"
       desc: "Attach and Share your data/files from DropBox."
-      helptext: "<h4>Dropbox Integration Help</h4> <p><br/> To integrate with Dropbox, Log in to your Dropbox account, go to <strong><a href='https://www.dropbox.com/developers/apps' target='_blank' alt='developers'>Dropbox</a></strong>.</p> <p>Select My apps-> <b>Create an app</b>.</p><p> Select you 'App type' as <b>Chooser</b></p><p>Fill in your <b>App name, Description and Domains</b> <i>(eg: mycompany.freshdesk.com)</i></p><p>press 'Create'.</p><p>This will create an App and a corresponding app_key for your domains.</p> <p>Copy and paste the app key from dropbox site in the app_key field here box and click Update.</p>"
+      helptext: "<h4>Dropbox integration help</h4><br/><p>The Dropbox Integration lets you use the Dropbox Chooser from within Freshdesk, allowing requesters and agents to attach files from their accounts to ticket conversations directly.</p><p>Before you setup the integration, go to the <strong><a href='https://www.dropbox.com/developers/apps' target='_blank' alt='developers'>Dropbox Developers page</a></strong>.</p><p>1. From the My Apps section, click on the 'Create an App'.</p><p>2. Select the app type as 'Chooser'.</p><p>3. Enter a name and description.</p><p>4. Type in your support URL under Domains <i>(for eg. http://yourcompany.freshdesk.com)</i></p><p>5. Click on the Create button.</p><p>Finally, copy paste the Application Key of the new app into this page, and Save changes. Your Dropbox Chooser should now be ready. You can check it out in the New Ticket form.</p>"
       form:
         app_key: "Registered Application key for your domain"
         app_key_info: "Create an App in the dropbox and provide the app key here."
@@ -2933,6 +2938,7 @@ en:
       info1: "When replying to notification emails from your mailbox, you can include \"Email Commands\" to instruct Freshdesk to perform certain actions on a ticket. The Email Command text will be stripped by Freshdesk and will not be seen by the requestor, while the rest of the text will become a part of the conversation."
       info2: "Email commands must follow the correct syntax and must be placed within the pre-configured delimiter text. For example the command - \"@simonsays agent : John Roberts Status:Resolved @simonsays\" will assign the ticket to the agent John Roberts and mark the Ticket as Resolved."
       info3: "The rest of your email content will be added as a conversation to Freshdesk and also sent to the Requestor via email."
+      ticket_type_example: "Question"
   email_command_delimeter_label: "Email Commands Delimeter"
   email_command_preview_to_email: "To"
   email_command_preview_to_email_value: "support@acme.freshdesk.com"
@@ -3063,3 +3069,20 @@ en:
     create_new: "Create New"
     no_response_admin: "No responses in this folder <a href={{link}} id='new_resp'>Create New</a>"
     select_folder: "Select Folder"
+  created_within:
+    any_time: Any Time
+    five_minutes: Within 5 minutes
+    fifteen_minutes: Within 15 minutes
+    thirty_minutes: Within 30 minutes
+    one_hour: Within 1 hour
+    four_hours: Within 4 hours
+    twelve_hours: Within 12 hours
+    twentyfour_hours: Within 24 hours
+    today: Today
+    yesterday: Yesterday
+    seven_days: This Week
+    thirty_days: This Month
+    two_months: Last 2 months
+    six_months: Last 6 months
+    any_time: Any time
+  any: Any

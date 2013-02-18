@@ -83,6 +83,10 @@ class Helpdesk::TicketDrop < BaseDrop
 		@source.portal_name
 	end
 
+	def product_description
+		@source.product ? @source.product.description : ""
+	end
+
 	def latest_public_comment
 		@source.liquidize_comment(@source.latest_public_comment)
 	end
