@@ -17,7 +17,7 @@ var ensure_performed_by = function(){
 	// Couldn't get the last added element in chozen.. Hence used _any_present
 	if(element.val() == null)
 	{
-		element.val(" ").trigger("liszt:updated");
+		element.val("--").trigger("liszt:updated");
 		_any_present = true;
 	}	
 	else if (_any_present)

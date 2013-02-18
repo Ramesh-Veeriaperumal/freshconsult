@@ -68,19 +68,15 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
     end
 
     def set_filter_data
-      p params
-      p "hey"
-      p params[:va_rule][:performed_by], params[:performed_by]
       filter_data = {
         :performed_by => params[:va_rule][:performed_by],
-        :events => (ActiveSupport::JSON.decode params[:event_data]) || [],
-        :conditions => (ActiveSupport::JSON.decode params[:filter_data])|| []
+        :events => params[:event_data].blank? ? [] : (ActiveSupport::JSON.decode params[:event_data]),
+        :conditions => params[:filter_data].blank? ? [] : (ActiveSupport::JSON.decode params[:filter_data]),
       }
       set_nested_fields_data filter_data[:events]
       set_nested_fields_data filter_data[:conditions]
       @va_rule.filter_data = 
                 filter_data.blank? ? [] : filter_data
-      p @va_rule.filter_data
     end
     
     def add_custom_events event_hash

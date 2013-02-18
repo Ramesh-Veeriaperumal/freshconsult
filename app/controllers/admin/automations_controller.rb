@@ -13,7 +13,7 @@ class Admin::AutomationsController < Admin::AdminController
   end
 
   def create
-    @va_rule.action_data = ActiveSupport::JSON.decode params[:action_data]
+    @va_rule.action_data = params[:action_data].blank? ? [] : (ActiveSupport::JSON.decode params[:action_data])
     @va_rule.match_type ||= :all
     set_nested_fields_data @va_rule.action_data if @va_rule.action_data
     if @va_rule.save
@@ -31,7 +31,7 @@ class Admin::AutomationsController < Admin::AdminController
   end
 
   def update
-    @va_rule.action_data = ActiveSupport::JSON.decode params[:action_data]    
+    @va_rule.action_data = params[:action_data].blank? ? [] : (ActiveSupport::JSON.decode params[:action_data])
     set_nested_fields_data @va_rule.action_data
     if @va_rule.update_attributes(params[:va_rule])
       flash[:notice] = t(:'flash.general.update.success', :human_name => human_name)

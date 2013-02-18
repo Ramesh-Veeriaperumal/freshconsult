@@ -3,7 +3,7 @@ module Va::ObserverUtil
 	private
 
 		TICKET_EVENTS = [ :status, :priority, :ticket_type, :group_id, :responder_id, :due_by,
-																				 :survey_result, :time_sheet, :deleted, :spam, :reply, :note, :int_tc01 ]
+														:survey_result, :time_sheet, :deleted, :spam, :reply, :note, :int_tc01 ]
 
 		TICKET_UPDATED = { :ticket => :updated }
 		TICKET_DELETED = { :ticket => :deleted }
@@ -36,8 +36,7 @@ module Va::ObserverUtil
 	  end
 
 	  def filter_event z, k
-	  	( 
-	  		TICKET_EVENTS.include?( k[0] ) ||
+	  	(	TICKET_EVENTS.include?( k[0] ) ||
 	  			@evaluate_on.account.flexifield_def_entries.event_fields.map(&:flexifield_name).include?( k[0] ) 
 	  				) ? z.merge({k[0] => k[1]}) : z 
 	  end

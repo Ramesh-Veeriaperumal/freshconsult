@@ -1,4 +1,5 @@
 <% content_for :onload_script do %>
+
 	jQuery("#VirtualAgent").submit(function(e){
 		var performed_by = jQuery('input[name=va_rule[performed_by]]:checked').val();
 		if ( performed_by != "agent")
@@ -7,7 +8,7 @@
 		}
 		else if( performed_by == "agent")
 		{ 
-			if ( jQuery('#va_rule_performed_by').val().first() == " " ) 
+			if ( jQuery('#va_rule_performed_by').val().first() == "--" ) 
 			{	
 				jQuery('#va_rule_performed_by').remove(); 
 			}
@@ -18,4 +19,5 @@
 		}				
 		return true;
 	});
+	
 <% end %>

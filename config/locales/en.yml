@@ -2327,6 +2327,7 @@ en:
     canned_responses: No canned responses available.
     products: You have not created any product yet.
   errors: 
+    events_empty: "Events can't be empty"
     conditions_empty: "Conditions can't be empty"
     actions_empty: "Actions can't be empty"
   export_data:
