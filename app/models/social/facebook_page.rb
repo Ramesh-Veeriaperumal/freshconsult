@@ -2,6 +2,7 @@ class Social::FacebookPage < ActiveRecord::Base
   set_table_name "social_facebook_pages" 
   belongs_to :account 
   belongs_to :product
+  has_many :fb_posts, :class_name => 'Social::FbPost'
   
   named_scope :active, :conditions => ["enable_page=?", true] 
    
