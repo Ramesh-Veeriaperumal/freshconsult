@@ -18,7 +18,7 @@ class Va::RuleHandler
   end
 
   def event_matches? check_value, check_var
-    return true if rule_hash[check_var]==" "
+    return true if rule_hash[check_var]=="--"
     @val = check_var
     return is check_value
   end

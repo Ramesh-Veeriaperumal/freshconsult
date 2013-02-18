@@ -26,26 +26,26 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
     def load_config
       super
 
-      @agents[0] = [' ', t('any_val.any') ]
-      @note_types = [ [' ', t('ticket.any_note')], [:public, t('ticket.public_note')],
+      @agents[0] = ['--', t('any_val.any') ]
+      @note_types = [ ['--', t('ticket.any_note')], [:public, t('ticket.public_note')],
                        [:private, t('ticket.private_note')] ]
       @ticket_actions = [ [:updated, t('ticket.updated')], [:deleted, t('ticket.deleted')],
                            [:marked_as_spam, t('ticket.marked_spam')] ]
-      @time_sheet_actions = [ [:new, t('ticket.new_time_entry')], [:updated, t('ticket.updated_time_entry')] ]
+      @time_sheet_actions = [ [:added, t('ticket.new_time_entry')], [:updated, t('ticket.updated_time_entry')] ]
 
       event_hash   = [
         { :name => -1, :value => "--- #{t('click_to_select_event')} ---" },
         { :name => 'priority', :value => t('ticket.priority'), :domtype => 'dropdown', 
-          :choices => [ [' ', t('any_val.any_priority')] ]+Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort, :type => 2, 
+          :choices => [ ['--', t('any_val.any_priority')] ]+Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort, :type => 2, 
           :postlabel => t('event.updated') },
         { :name => 'ticket_type', :value => t('ticket.type'), :domtype => 'dropdown', 
-          :choices => [ [' ', t('any_val.any_ticket_type')] ]+current_account.ticket_type_values.collect { |c| [ c.value, c.value ] },
+          :choices => [ ['--', t('any_val.any_ticket_type')] ]+current_account.ticket_type_values.collect { |c| [ c.value, c.value ] },
           :type => 2, :postlabel => t('event.updated') },
         { :name => 'status', :value => t('ticket.status'), :domtype => 'dropdown', 
-          :choices => [ [' ', t('any_val.any_status')] ]+Helpdesk::TicketStatus.status_names(current_account), :type => 2,
+          :choices => [ ['--', t('any_val.any_status')] ]+Helpdesk::TicketStatus.status_names(current_account), :type => 2,
           :postlabel => t('event.updated') },
         { :name => 'group_id', :value => t('ticket.group'), :domtype => 'dropdown',
-          :choices => [ [' ', t('any_val.any_group')] ]+@groups, :type => 2, :postlabel => t('event.updated') },
+          :choices => [ ['--', t('any_val.any_group')] ]+@groups, :type => 2, :postlabel => t('event.updated') },
         { :name => 'responder_id', :value => t('ticket.assigned_agent'),
           :type => 0, :postlabel => t('event.updated')},
         { :name => 'note', :value => t('ticket.note'), :domtype => 'dropdown',
@@ -57,7 +57,7 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
         { :name => 'ticket', :value => t('ticket.ticket'), :domtype => 'dropdown',
           :choices => @ticket_actions, :type => 1 },
         { :name => 'int_tc01', :value => t('ticket.feedback'), :domtype => 'dropdown',
-          :choices =>[ [' ', t('any_val.any_feedback')] ]+Survey.survey_names(current_account), :type => 1,
+          :choices =>[ ['--', t('any_val.any_feedback')] ]+Survey.survey_names(current_account), :type => 1,
           :postlabel => t('event.received') },
         { :name => 'time_sheet', :value => t('ticket.time_entry'), :domtype => 'dropdown',
           :choices => @time_sheet_actions, :type => 1 },
@@ -68,6 +68,9 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
     end
 
     def set_filter_data
+      p params
+      p "hey"
+      p params[:va_rule][:performed_by], params[:performed_by]
       filter_data = {
         :performed_by => params[:va_rule][:performed_by],
         :events => (ActiveSupport::JSON.decode params[:event_data]) || [],
@@ -77,10 +80,11 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
       set_nested_fields_data filter_data[:conditions]
       @va_rule.filter_data = 
                 filter_data.blank? ? [] : filter_data
+      p @va_rule.filter_data
     end
     
     def add_custom_events event_hash
-      any_value = [[' ', t('any_val.any_value')]]
+      any_value = [['--', t('any_val.any_value')]]
       event_hash.push({ :name => -1,
                         :value => "------------------------------" 
                         }) unless current_account.ticket_fields.event_fields.blank? 

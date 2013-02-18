@@ -1814,8 +1814,8 @@ en:
     deleted: Deleted
     marked_spam: Marked as Spam
     time_entry: Time Entry
-    new_time_entry: New time entry
-    updated_time_entry: Updated time entry
+    new_time_entry: Added
+    updated_time_entry: Updated
     feedback: Customer feedback
     ticket: Ticket
     group: Group

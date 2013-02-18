@@ -26,7 +26,7 @@
              nested_rules = $("<input type='hidden' name='"+nested_rules_name+"' value='' />");
 
            (tree.getCategoryList()||[]).each(function(key){
-              value = ((key == ' ') ? 'Any Value' : key);
+              value = ((key == '--') ? 'Any Value' : key);
               $("<option />")
                 .html(value)
                 .val(key)

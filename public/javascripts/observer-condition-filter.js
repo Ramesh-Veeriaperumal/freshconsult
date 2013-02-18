@@ -50,13 +50,13 @@ var disableOtherSelectValue = function(){
 		jQuery(this).prop('disabled', false);
 	});
 	// Disable the only option
-	if (selection != ' ')
+	if (selection != '--')
 	{ jQuery(this).siblings('select[name="'+target+'"]').find('option[value="'+selection+'"]').prop('disabled',true); }
 	return this;
 }
 
 var hideEmptySelectBoxes = function(){
-	if (this.options.length == 1 && this.options[0].value == " ")
+	if (this.options.length == 1 && this.options[0].value == "--")
 	{	jQuery(this).prev().css('display','none');
 		jQuery(this).css('display','none');	}
 	else
@@ -67,10 +67,10 @@ var hideEmptySelectBoxes = function(){
 
 var performed_by_change = function(){ 
 	if ( jQuery( this ).val() == "agent")
- 	  // { jQuery("#va_rule_performed_by_chzn, #va_rule_performed_by_chzn > ul ").slideDown('slow'); }
- 	  	{ 
- 	  		jQuery("#va_rule_performed_by_chzn > ul").slideDown('slow');
- 	  		jQuery("#va_rule_performed_by_chzn, #va_rule_performed_by_chzn > ul ").slideDown('fast'); }
+		{ 
+			jQuery("#va_rule_performed_by_chzn > ul").slideDown('slow');
+			jQuery("#va_rule_performed_by_chzn, #va_rule_performed_by_chzn > ul ").slideDown('fast');
+	 	}
  	else
 	  { 
 	  	jQuery("#va_rule_performed_by_chzn, #va_rule_performed_by_chzn > ul ").slideUp('fast'); 
@@ -236,8 +236,11 @@ rules_filter = function(_name, filter_data, parentDom, options){
 	                  	hg_data.get(rule.name).postlabel = _updated;
 	                  	from_select = conditional_dom(hg_data.get(rule.name), data_id, name, "from", rule);
 	                  	to_select = conditional_dom(hg_data.get(rule.name), data_id, name, "to", rule);
-		                  from_select.find('option[value="'+to_select.val()+'"]').prop('disabled',true);
-		                  to_select.find('option[value="'+from_select.val()+'"]').prop('disabled',true);
+	                  	if ( from_select.val()!='--' )
+		                  	from_select.find('option[value="'+to_select.val()+'"]').prop('disabled',true);
+		                  if ( to_select.val()!='--' )
+		                  	to_select.find('option[value="'+from_select.val()+'"]').prop('disabled',true);
+	                  	
 	                  	inner.append(FactoryUI.label(hg_data.get(rule.name).postlabel, 'rule_label')).append(FactoryUI.label(_from, 'rule_label')).append(from_select).append(FactoryUI.label(_to, 'rule_label')).append(to_select);
 	                  	if (rule.nested_rule)
 		                  {
@@ -435,21 +438,6 @@ rules_filter = function(_name, filter_data, parentDom, options){
 						function(){
 							domUtil.add_dom();							
 						});
-
-			jQuery('#VirtualAgent').submit(function(e){			
-				var performed_by = jQuery('input[name=va_rule[performed_by]]:checked').val();
-				if ( performed_by != "agent")
-				{	
-					{ jQuery('#va_rule_performed_by').remove(); }
-				}
-				else
-				{ 
-					if ( jQuery('#va_rule_performed_by').val().length == 1 && jQuery('#va_rule_performed_by').val().first() == " " ) 
-					{	jQuery('#va_rule_performed_by').remove(); }
-					else
-					{	jQuery('input[name="va_rule[performed_by]"]').remove(); }
-				}
-			});
 
 			jQuery('input[name = "va_rule[performed_by]"]').bind ( "change", performed_by_change	);
 			jQuery("#va_rule_performed_by").bind ( "change", ensure_performed_by );

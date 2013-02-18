@@ -32,7 +32,7 @@ class VARule < ActiveRecord::Base
   def deserialize_all
     if rule_type == VAConfig::OBSERVER_RULE
       filter_data.symbolize_keys!
-      performed_by = filter_data[:performed_by]
+      @performed_by = filter_data[:performed_by]
       events_array = filter_data[:events]
       @filter_array = filter_data[:conditions]
       
@@ -70,12 +70,11 @@ class VARule < ActiveRecord::Base
   end
 
   def check_performed_by current_user
-    # return true # for now - Hari
     case performed_by
       when Array
-        return performed_by.include? user.id
-      when Symbol
-        return ( performed_by == 'anyone' || (user.send "#{performed_by}?") )
+        return ( performed_by.include? current_user.id.to_s )# && current_user.agent?
+      when String
+        return ( performed_by == 'anyone' || (current_user.send "#{performed_by}?") )
     end
   end
 
@@ -87,7 +86,6 @@ class VARule < ActiveRecord::Base
   end
   
   def pass_through(evaluate_on, actions=nil)
-    p "WHOOOOOOOOO HOOOOOOOOO -----> NAILED IT :-P"
     RAILS_DEFAULT_LOGGER.debug "INSIDE pass_through WITH evaluate_on : #{evaluate_on.inspect}, actions #{actions}"
     is_a_match = matches(evaluate_on, actions)
     trigger_actions(evaluate_on) if is_a_match

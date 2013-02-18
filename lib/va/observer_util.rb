@@ -43,9 +43,8 @@ module Va::ObserverUtil
 	  end
 
 	  def send_events
-	  	(@observer_changes.merge! ticket_event @observer_changes ).symbolize_keys!
-	    trigger_observer( User.current, @observer_changes, @evaluate_on, self.class.name)
-	    # send_later(:trigger_observer, User.current, @observer_changes, @evaluate_on , self.class.name) unless @observer_changes.blank?
+	  	@observer_changes.merge! ticket_event @observer_changes
+	    Resque.enqueue( Workers::Observer, @evaluate_on.id, User.current.id, @observer_changes )
 	  end
 
 	  def ticket_event current_events
@@ -57,19 +56,6 @@ module Va::ObserverUtil
 			end 
 			return TICKET_UPDATED
 		end
-
-		def trigger_observer current_user, current_events, evaluate_on, where 
-			p evaluate_on, current_events
-			evaluate_on.account.observer_rules.each do |vr|
-				p vr.id, vr.name
-				vr.check_events current_user, evaluate_on, current_events
-				p "Changes in Trigger observer"
-	      p evaluate_on.changes
-	    end
-	    p evaluate_on.changes
-	    p evaluate_on
-	    evaluate_on.save unless evaluate_on.changes.blank?
-		end
-
+		
 end
 

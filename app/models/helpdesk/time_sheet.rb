@@ -162,10 +162,10 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     from, to = time_spent_change    # Should find another way - Hari
     if from == nil
       unless to == 0
-        @observer_changes = {:time_sheet => :created} 
+        @observer_changes = {:time_sheet => :added} 
       end
     elsif from == 0
-      @observer_changes = {:time_sheet => :created}
+      @observer_changes = {:time_sheet => :added}
     else
       @observer_changes = {:time_sheet => :updated}
     end unless time_spent_change.nil?
