@@ -2,8 +2,8 @@ var FreshbooksWidget = Class.create();
 FreshbooksWidget.prototype = {
 	FRESHBOOKS_FORM:new Template('<form id="freshbooks-timeentry-form"><div class="field first"><label>Staff</label><select name="staff-id" id="freshbooks-timeentry-staff" onchange="freshbooksWidget.staffChanged(this.options[this.selectedIndex].value)" disabled class="full hide"></select> <div class="loading-fb" id="freshbooks-staff-spinner"></div></div><div class="field"><label>Client</label><select name="client-id" id="freshbooks-timeentry-clients" class="full hide" disabled onchange="freshbooksWidget.clientChanged(this.options[this.selectedIndex].value)"></select> <div class="loading-fb" id="freshbooks-clients-spinner"></div></div><div class="field"><label>Project</label><select class="full hide" name="project-id" id="freshbooks-timeentry-projects" onchange="freshbooksWidget.projectChanged(this.options[this.selectedIndex].value)" disabled></select> <div class="loading-fb" id="freshbooks-projects-spinner"></div></div><div class="field last"><label>Task</label><select class="full hide" disabled name="task-id" id="freshbooks-timeentry-tasks" onchange="freshbooksWidget.taskChanged(this.options[this.selectedIndex].value)"></select> <div class="loading-fb" id="freshbooks-tasks-spinner" ></div></div><div class="field"><label id="freshbooks-timeentry-notes-label">Notes</label><textarea disabled name="notes" id="freshbooks-timeentry-notes" wrap="virtual">'+freshbooksBundle.freshbooksNote.escapeHTML()+'</textarea></div><div class="field"><label id="freshbooks-timeentry-hours-label">Hours</label><input type="text" disabled name="hours" id="freshbooks-timeentry-hours"></div><input type="submit" disabled id="freshbooks-timeentry-submit" value="Submit" onclick="freshbooksWidget.logTimeEntry($(\'freshbooks-timeentry-form\'));return false;"></form>'),
 	STAFF_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="staff.list"></request>'),
-	CLIENT_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="client.list"> <page>#{page}</page><per_page>10000000</per_page></request>'),
-	PROJECT_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="project.list"> <page>#{page}</page><per_page>10000000</per_page></request>'),
+	CLIENT_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="client.list"> <page>#{page}</page><per_page>100</per_page></request>'),
+	PROJECT_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="project.list"> <page>#{page}</page><per_page>100</per_page></request>'),
 	TASK_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?> <request method="task.list" > <project_id>#{project_id}</project_id> </request>'),
 	CREATE_TIMEENTRY_REQ:new Template('<?xml version="1.0" encoding="ISO-8859-1"?><request method="time_entry.create"> <time_entry> <project_id>#{project_id}</project_id> <task_id>#{task_id}</task_id> <hours>#{hours}</hours> <notes><![CDATA[#{notes}]]></notes> <staff_id>#{staff_id}</staff_id> </time_entry></request>'),
 	RETRIEVE_TIMEENTRY_REQ:new Template('<?xml version="1.0" encoding="ISO-8859-1"?><request method="time_entry.get"> <time_entry_id>#{time_entry_id}</time_entry_id> </request>'),
@@ -13,7 +13,7 @@ FreshbooksWidget.prototype = {
 
 	initialize:function(freshbooksBundle, loadInline){
 		widgetInst = this; // Assigning to some variable so that it will be accessible inside custom_widget.
-		this.projectData = ""; init_reqs = []; this.executed_date = new Date();
+		this.projectData = ""; init_reqs = []; this.executed_date = new Date(); this.projectResults = "";
 		init_reqs = [null, {
 			body: widgetInst.STAFF_LIST_REQ.evaluate({}),
 			content_type: "application/xml",
@@ -97,13 +97,13 @@ FreshbooksWidget.prototype = {
 
 	loadProjectList:function(resData) {
 		tot_pages = this.fetchMultiPages(resData, "projects", this.PROJECT_LIST_REQ, this.loadProjectList)
-		if (tot_pages > 1)
-			mergePagedProjects(resData)
-		else
+		if (tot_pages > 1){
+			this.mergePagedProjects(resData)
+		}
+		else{
 			this.projectData=resData;
-		UIUtil.hideLoading('freshbooks','projects','-timeentry');
-		$("freshbooks-timeentry-projects").enable();		
-		this.handleLoadProject();
+			this.loadProjects();
+		}
 	},
 
 	fetchMultiPages: function(resData, dataNodeName, reqTemplate, success_fun) {
@@ -112,6 +112,8 @@ FreshbooksWidget.prototype = {
 			dataNode = XmlUtil.extractEntities(resData.responseXML, dataNodeName)[0];
 			curr_page = dataNode.getAttribute("page");
 			tot_pages = dataNode.getAttribute("pages");
+			this.tot_items = dataNode.getAttribute("total");
+			this.curr_page = curr_page; this.tot_pages = tot_pages;
 			if (tot_pages > 1 && curr_page == 1) {
 				for (var p = 2; p <= tot_pages; p++) {
 					this.freshdeskWidget.request({
@@ -130,12 +132,30 @@ FreshbooksWidget.prototype = {
 
 	mergePagedProjects: function(resData) {
 		try{
-			projectsNode = XmlUtil.extractEntities(this.projectData.responseXML, "projects")[0]
-			var projectsArray = XmlUtil.extractEntities(resData.responseXML, "project")
-			for (i = 0; i < projectsArray.length; i++) {
-				projectsNode.appendChild(projectsArray[i]);
+			if(this.curr_page == 1)
+				this.projectResults = "<projects>";
+
+			resText = resData.responseText;
+			projectPattern =  '<projects page="' + this.curr_page + '" per_page="100" pages="' + this.tot_pages + '" total="' + this.tot_items + '">';
+			resText = resText.replace(projectPattern, "<projects>");
+			projResults = resText.split("<projects>")[1];
+			projResults = projResults.split("</projects>")[0];
+
+			this.projectResults += projResults;
+
+			if(this.curr_page == this.tot_pages){
+				this.projectResults += "</projects>";
+				this.projectData = XmlUtil.loadXMLString(this.projectResults);
+				this.loadProjects();
 			}
+
 		}catch(e) {}
+	},
+
+	loadProjects: function(){
+		UIUtil.hideLoading('freshbooks','projects','-timeentry');
+		$("freshbooks-timeentry-projects").enable();		
+		this.handleLoadProject();
 	},
 
 	loadTaskList:function(resData) {
@@ -324,8 +344,12 @@ FreshbooksWidget.prototype = {
 
 	// Utility methods
 	loadFreshbooksEntries:function(resData, dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries) {
-		if(this.isRespSuccessful(resData.responseXML)){
-			UIUtil.constructDropDown(resData.responseXML, 'xml', dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries);
+		if(resData.responseXML == undefined)
+			responseData = resData;
+		else
+			responseData = resData.responseXML;
+		if(this.isRespSuccessful(responseData)){
+			UIUtil.constructDropDown(responseData, 'xml', dropDownBoxId, entityName, entityId, dispNames, filterBy, searchTerm, keepOldEntries);
 		}
 		return foundEntity;
 	},
