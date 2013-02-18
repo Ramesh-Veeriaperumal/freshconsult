@@ -1,20 +1,5 @@
 module Subscription::Events::ControllerMethods
 
-  def event_stats(events, date)
-    events.inject({}) { |h, (k, v)| h[k] = SubscriptionEvent.list_accounts(
-                                                date["period(2i)"], date["period(1i)"], v); h }
-  end
-
-  def revenue_stats(events, date)
-    events.inject({}) { |h, (k, v)| h[k] = SubscriptionEvent.monthly_revenue(
-                                                date["period(2i)"], date["period(1i)"], v); h }
-  end
-
-  def overall_revenue(metrics, date)
-    metrics.inject({}) { |h, (k, v)| h[k] = SubscriptionEvent.overall_monthly_revenue(
-                                                date["period(2i)"], date["period(1i)"], v); h }
-  end  
-    
   #CSV
   def export_to_csv
     csv_string = FasterCSV.generate do |csv|
@@ -36,13 +21,13 @@ module Subscription::Events::ControllerMethods
   
     def csv_columns
       [ "name", "full_domain", "created_at", "admin_name", "admin_email", 
-        "monthly_revenue", "plan", "renewal_period", "total_agents", "free_agents", 
+        "amount/month", "plan", "renewal_period", "total_agents", "free_agents", 
         "affiliate_id", "discount" ]
     end
 
     def account_details(event)
       event.account ? account_info(event.account) :
-                deleted_account_info(DeletedCustomers.find_by_account_id(event.account_id))
+                deleted_account_info(DeletedCustomers.find_by_account_id(event.account_id), event.account_id)
     end
 
     def account_info(account)
@@ -50,7 +35,9 @@ module Subscription::Events::ControllerMethods
         account.account_admin.name, account.account_admin.email ]
     end
 
-    def deleted_account_info(account)
+    def deleted_account_info(account, account_id)
+      return ["Account_id : #{account_id}", "", "", "", ""] if account.blank?
+      
       [ account.full_domain.split(%r \(|\) ).first, account.full_domain.split(%r \(|\) ).last,
         account.account_info[:account_created_on].strftime('%Y-%m-%d'), account.admin_name, 
         account.admin_email ]

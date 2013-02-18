@@ -2,6 +2,8 @@ class Portal < ActiveRecord::Base
   serialize :preferences, Hash
   
   validates_uniqueness_of :portal_url, :allow_blank => true, :allow_nil => true
+  validates_format_of :portal_url, :with => %r"^(?!.*\.#{Helpdesk::HOST[Rails.env.to_sym]}$)[/\w\.-]+$", 
+  :allow_nil => true, :allow_blank => true
 
   delegate :friendly_email, :to => :product, :allow_nil => true
   

@@ -59,7 +59,7 @@ en:
   facebook_user: Facebook User
   mobi_help: MobiHelp
   logmein_source: LogMeIn Rescue
-  working: Working at
+  working: Working
   attachment: Attachment
   attachments: Attachments
   attach_file_local: Attach a file from your computer
@@ -538,6 +538,7 @@ en:
         configure_email: Configure Email
         product_support_emails: Product Support Emails
         product_name: Product name
+        product_desc: Product description
         forwarding_email_info: "Your forwarding email address:"
       product:
         email_not_verified: Email not verified  
@@ -2214,7 +2215,7 @@ en:
         inbound_email: Incoming email
         outbound_email: Outbound email
         attachment_size: 
-           exceed: Oops! Your attachment exceeds 20 MB. Please attach a smaller file.
+           exceed: Oops! Your attachment exceeds 15 MB. Please attach a smaller file.
     merge:
       merge:
         merge_into: Merge into?

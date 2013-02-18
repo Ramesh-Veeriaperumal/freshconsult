@@ -9,7 +9,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130206100722) do
+
+ActiveRecord::Schema.define(:version => 20130213101949) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -976,7 +977,6 @@ ActiveRecord::Schema.define(:version => 20130206100722) do
   add_index "helpdesk_tickets", ["responder_id", "account_id"], :name => "index_helpdesk_tickets_on_responder_id_and_account_id"
 
   create_table "helpdesk_time_sheets", :force => true do |t|
-    t.integer  "ticket_id",     :limit => 8
     t.datetime "start_time"
     t.integer  "time_spent",    :limit => 8
     t.boolean  "timer_running",              :default => false
@@ -987,10 +987,12 @@ ActiveRecord::Schema.define(:version => 20130206100722) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "executed_at"
+    t.integer  "workable_id",   :limit => 8
+    t.string   "workable_type",              :default => "Helpdesk::Ticket"
   end
 
-  add_index "helpdesk_time_sheets", ["account_id", "ticket_id"], :name => "index_time_sheets_on_account_id_and_ticket_id"
-  add_index "helpdesk_time_sheets", ["ticket_id"], :name => "index_time_sheets_on_ticket_id"
+  add_index "helpdesk_time_sheets", ["account_id", "workable_type", "workable_id"], :name => "index_helpdesk_sheets_on_workable_account"
+  add_index "helpdesk_time_sheets", ["workable_type", "workable_id"], :name => "index_helpdesk_sheets_on_workable"
   add_index "helpdesk_time_sheets", ["user_id"], :name => "index_time_sheets_on_user_id"
 
   create_table "installed_applications", :force => true do |t|
