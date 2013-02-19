@@ -116,24 +116,6 @@
 		</table>    
 	</div>	
  	<div class="span4">
-		<h3>Charge Subscription</h3>
-		<p>
-		  Use this form to make a one-time charge against the card on file for the subscription.  A transaction will happen as soon as you submit this form.  Amounts should be entered as dollars and cents, without the dollar sign or commas: e.g., 1.50 to charge $1.50.
-		</p>
-		<% if @subscription.errors.any? %>
-		<div class="errorExplanation" id="errorExplanation">
-		  <h3>Errors encountered while charging the card:</h3>
-		  <ul>
-		    <%= @subscription.errors.full_messages.map {|e| content_tag(:li, e)} %>
-		  </ul>
-		</div>
-		<% end %>
-
-		<% form_tag({:action => 'charge'}, :id => 'charge_form', :class => "well form-inline", :onsubmit => 'return checkForm()') do %>
-		  <input type="text" name="amount" id="amount" placeholder="Amount" />
-		  <input type="submit" value="Charge card" class="btn" />
-		<% end %>
-
 		<h3>Extend trial</h3>
 
 		<% form_tag({:action => 'extend_trial'}, :id => 'trial_form', :class => "well form-inline") do %>

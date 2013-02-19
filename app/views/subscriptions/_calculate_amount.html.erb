@@ -30,9 +30,25 @@
 	
 	<dl><dd>
 		<input type="hidden" id="plan_id" name="plan_id" value="" />
-		<% downgrade_confirm_text = ( @subscription.subscription_plan_id < Subscription.find(current_account.subscription.id).subscription_plan_id ) ? t('downgrade_confirm') : nil%>
+		<% current_subscription = Subscription.find(current_account.subscription.id) %>
+		<% downgrade_confirm = ( (@subscription.subscription_plan_id < current_subscription.subscription_plan_id) or (current_subscription.classic? and @subscription.sprout?) ) ? true : false %>
+		<% submit_text = ((@subscription.state == 'trial' and !(@subscription.non_free_agents <= @subscription.free_agents)) ? t('enter_payment') : t('change_my_plan')) %>
 		<input type="submit" class="uiButton billing-cancel" value="Cancel"/>
-		<%= submit_tag( ((@subscription.state == 'trial' and !(@subscription.non_free_agents <= @subscription.free_agents)) ? t('enter_payment') : t('change_my_plan')), :class => "uiButton billing-submit", :id => "commit", :name => "commit", :confirm => downgrade_confirm_text ) %>
+		<% if downgrade_confirm %>
+			<%= link_to(submit_text, "javascript:confirm(#{downgrade_confirm}, false)", :class => "uiButton billing-submit") %>		
+		<% else %>
+			<%= submit_tag(submit_text, :class => "uiButton billing-submit", :id => "commit", :name => "commit") %>
+		<% end %>
+		
 	</dd></dl>
+</div>
+<div class="confirm-dialog-calculate" style="display:none;">
+  <div class="downgrade-message">
+  	<%= t('downgrade_confirm', :from => current_subscription.subscription_plan.name , :to => @subscription.subscription_plan.name) %>
+  </div>
+  <div class="downgrade-actions">
+  	<%= link_to( t('cancel'), 'javascript:;', :class => "uiButton", :id => 'confirm-cancel'  ) %>
+  	<%= submit_tag( t('downgrade'), :class => "uiButton billing-confirm", :id => "commit", :name => "commit" ) %>
+  </div>
 </div>
 <% end %>	

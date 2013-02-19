@@ -59,7 +59,7 @@
 </ul>
 <div class="choose-plan-title"><a class="plan-expand" href="#"> <%= t('choose_different_plan') %> </a></div>
 <%= t('downgrade_plan') %>
-<div class="choose-plan-drop" style="display:none;" ><%= render :partial => "/subscriptions/select_plans", :locals => {:plans => @plans, :subscription => @subscription } %></div>
+<div class="choose-plan-drop" style="display:none;" ><%= render :partial => "/subscriptions/select_plans", :locals => {:plans => @plans, :subscription => @subscription, :show_all => false } %></div>
 
 
 <script type="text/javascript">

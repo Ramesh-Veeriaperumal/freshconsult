@@ -15,6 +15,14 @@ module VAConfig
   APP_BUSINESS_RULE = 11
   INSTALLED_APP_BUSINESS_RULE = 12
 
+  CREATED_DURING_VALUES = [
+    [ :business_hours, I18n.t('ticket.created_during.business_hours'), "business_hours"],
+    [ :non_business_hours, I18n.t('ticket.created_during.non_business_hours'), "non_business_hours"],
+    [ :holidays, I18n.t('ticket.created_during.holidays'), "holidays"]
+  ]
+
+  CREATED_DURING_NAMES_BY_KEY = Hash[*CREATED_DURING_VALUES.map { |i| [i[2], i[1]] }.flatten]
+
   def self.handler(field, account)
     field_type = DEFAULT_FIELDS[field]
     
@@ -32,6 +40,8 @@ module VAConfig
       'text'
   end
 end
+
+
 
 YAML.load_file("#{RAILS_ROOT}/config/virtual_agent.yml").each do |k, v|
   VAConfig.const_set(k.upcase, Helpdesk::prepare(v))
