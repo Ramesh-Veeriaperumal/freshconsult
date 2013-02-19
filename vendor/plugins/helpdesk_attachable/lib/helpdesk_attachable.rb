@@ -3,7 +3,7 @@ module HelpdeskAttachable
     include HelpdeskExceptions
 
     # MAX_ATTACHMENT_SIZE = 1024
-    MAX_ATTACHMENT_SIZE = 20.megabyte
+    MAX_ATTACHMENT_SIZE = 15.megabyte
     def self.included(base) 
       base.extend ClassMethods
     end
@@ -22,6 +22,14 @@ module HelpdeskAttachable
 
         include InstanceMethods
       end
+
+      def has_many_dropboxes
+        has_many :dropboxes,
+          :as => :droppable,
+          :class_name => 'Helpdesk::Dropbox',
+          :dependent => :destroy 
+      end
+
     end
     
     module InstanceMethods
@@ -32,7 +40,7 @@ module HelpdeskAttachable
         end
         @total_attachment_size += args[:content].size
         if @total_attachment_size > MAX_ATTACHMENT_SIZE
-          raise HelpdeskExceptions::AttachmentLimitException, "Attachment limit exceeded!.. We allow only 20MB." 
+          raise HelpdeskExceptions::AttachmentLimitException, "Attachment limit exceeded!.. We allow only 15MB." 
         end
       end
     end

@@ -21,12 +21,19 @@
 
     <% unless @current_view == "new_my_open" %>
       <span class="small"><%= t('wf.messages.no_tickets_subtext', 
-                              :view_1 => link_to(t("helpdesk.tickets.views.new_my_open"), helpdesk_filter_view_default_path('new_my_open'), :"data-pjax" => "#body-container"), 
-                              :view_2 => link_to(t("helpdesk.tickets.views.all_tickets"), helpdesk_filter_view_default_path('all_tickets'), :"data-pjax" => "#body-container")
+                              :view_1 => link_to(t("helpdesk.tickets.views.new_my_open"), helpdesk_filter_view_default_path('new_my_open'), :"data-pjax" => "#body-container", 
+                                :"data-parallel-url" => "/helpdesk/tickets/filter_options?filter_name=new_my_open", 
+                                :"data-parallel-placeholder" => "#ticket-leftFilter"), 
+                              :view_2 => link_to(t("helpdesk.tickets.views.all_tickets"), helpdesk_filter_view_default_path('all_tickets'), :"data-pjax" => "#body-container",
+                                :"data-parallel-url" => "/helpdesk/tickets/filter_options?filter_name=all_tickets", 
+                                :"data-parallel-placeholder" => "#ticket-leftFilter")
                           ) %></span>
     <% else %>
       <span class="small"><%= t('wf.messages.no_tickets_subtext_single', 
-                                :view_1 => link_to(t("helpdesk.tickets.views.all_tickets"), helpdesk_filter_view_default_path('all_tickets'))
+                                :view_1 => link_to(t("helpdesk.tickets.views.all_tickets"), helpdesk_filter_view_default_path('all_tickets',
+                                  :"data-pjax" => "#body-container",
+                                  :"data-parallel-url" => "/helpdesk/tickets/filter_options?filter_name=all_tickets", 
+                                  :"data-parallel-placeholder" => "#ticket-leftFilter"))
                           ) %></span>
     <% end %>
 	</div>

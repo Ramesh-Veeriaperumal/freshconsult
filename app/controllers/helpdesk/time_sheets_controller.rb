@@ -4,7 +4,6 @@ class Helpdesk::TimeSheetsController < ApplicationController
   before_filter { |c| c.requires_permission :manage_tickets }  
   before_filter :load_time_entry, :only => [ :show,:edit, :update, :destroy, :toggle_timer ] 
   before_filter :load_ticket, :only => [:create, :index, :edit, :update, :toggle_timer] 
-  before_filter :load_installed_apps, :only => [:index, :create, :edit, :update, :toggle_timer, :destroy]  
   before_filter :check_agents_in_account, :only =>[:create]
 
   rescue_from ActiveRecord::UnknownAttributeError , :with => :handle_error
@@ -199,10 +198,6 @@ private
       @time_sheets = current_account.time_sheets.for_customers(customer_id).by_agent(agent_id).created_at_inside(start_date,end_date).hour_billable(billable)
     end
 
-  end
-
-  def load_installed_apps
-    @installed_apps_hash = current_account.installed_apps_hash
   end
 
 

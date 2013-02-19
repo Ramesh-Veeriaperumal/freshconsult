@@ -125,12 +125,13 @@
 								<div class="textbox-note"><%=t(".agents_title_info")%></div>
 								<div class="email-textbox">
 									<textarea name="agents_invite_email" id="agents_invite_email" placeholder="<%=t('.agent_invite_field_placeholder')%>" onclick = "javascript:jQuery(this).removeClass('gs_error_highlight');" class="customSelect"  data-shift-tab-ignore="true"></textarea>
-									<% javascript_tag do %>											 
-				                  var agent_cachedBackend = new Autocompleter.Cache(function(searchString, callback) {}, {choices: 10});
-				                  var agent_cachedLookup = agent_cachedBackend.lookup.bind(agent_cachedBackend);
+									<% javascript_tag do %>
+										jQuery(document).ready(function(){
+				                  			var agent_cachedBackend = new Autocompleter.Cache(function(searchString, callback) {}, {choices: 10});
+				                  			var agent_cachedLookup = agent_cachedBackend.lookup.bind(agent_cachedBackend);
                 					 
-							   		new Autocompleter.MultiValue("agents_invite_email",  agent_cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,|\\n/});
-												
+							   				new Autocompleter.MultiValue("agents_invite_email",  agent_cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,|\\n/});
+							   			})						
 									<%-end%>
 									<div id="agent_box">
 										<input type="submit" value="<%=t('.send_invite')%>" class="submit-btn textbox-radius f-right" id="agent_invite_submit" data-tab-ignore="true">
@@ -197,7 +198,7 @@
 								<h4><%=t('.social_sub_title')%></h4>
 								<div class="textbox-note"><%=t('.social_info')%></div>
 								
-								<div class="social"><a href="<%=@fb_client.authorize_url%>" class="facebook simple" target="_blank"><%=t('.social_add_account')%></a></div>
+								<div class="social"><a href="<%=@fb_client.authorize_url(session[:state])%>" class="facebook simple" target="_blank"><%=t('.social_add_account')%></a></div>
 								<div class="social"><a href="<%=@auth_redirect_url%>" class="twitter simple" target="_blank"><%=t('.social_add_account')%></a></div>
 						</div>
 
@@ -215,10 +216,7 @@
 			<strong>Note:<strong> You can change these details anytime by going to Admin tab
 		</div>
 
-   <!--[if lt IE 10]>
-    		<script src="/javascripts/lib/PIE.js"></script>
-   <![endif]-->
-
+  
   <% javascript_tag do %>
 	  jQuery(document).ready(function(){
 			jQuery("#reply_to_id").bind("change keyup", function(ev){
@@ -230,25 +228,13 @@
 	         }
 			});			
 
-		   /* PIE */
-        if (window.PIE && (jQuery('html').hasClass('ie7') || jQuery('html').hasClass('ie8'))) {
-            jQuery('.circle').each(function(){
-                PIE.attach(this);
-            });
-            jQuery('.simple').each(function(){
-                PIE.attach(this);
-            });
-        }
-
-        <%if params["activeSlide"]%>
-        		  activeSlide=<%=params["activeSlide"]%>;
-        <%end%>
-        setTimeout(function(){                  
+			<%= "activeSlide=#{params["activeSlide"]};" if params["activeSlide"] %>
+	        
+        	setTimeout(function(){                  
         				jQuery("#slide1-"+activeSlide).trigger("click");
         			}, 200);
-	     	<%unless params["error"].blank?%>	     			
-	     		  show_rebrand_error("<%=params["error"]%>")
-	     <%end%>
+	     	
+	     	<%= "show_rebrand_error('#{params["error"]}')" unless params["error"].blank? %>
 		});	
 	<%- end %> 
 

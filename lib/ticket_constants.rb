@@ -48,7 +48,8 @@ module TicketConstants
   TYPE_KEYS_BY_TOKEN = Hash[*TYPE.map { |i| [i[0], i[2]] }.flatten]
   TYPE_NAMES_BY_SYMBOL = Hash[*TYPE.map { |i| [i[0], i[1]] }.flatten]
   
-  DEFAULT_COLUMNS_ORDER = [:responder_id,:group_id,:due_by,:status,:priority,:ticket_type,:source,"helpdesk_tags.name","users.customer_id",:requester_id]
+  DEFAULT_COLUMNS_ORDER = [:responder_id,:group_id,:created_at,:due_by,:status,:priority,:ticket_type,:source,
+                            "helpdesk_tags.name","users.customer_id",:requester_id]
   
   DEFAULT_COLUMNS =  [
     [ :status,              'status',   :dropdown],
@@ -60,7 +61,7 @@ module TicketConstants
     [ :due_by,              'due_by',  :due_by],
     [ "helpdesk_tags.name", "tags",     :dropdown],
     [ "users.customer_id",  "customers", :dropdown],
-    #[ :created_at,          "Created At", :created_at]
+    [ :created_at,          "created_at", :created_at],
     [ :requester_id,        'requester', :requester]
   ]
   
@@ -92,6 +93,26 @@ module TicketConstants
   CREATED_BY_KEYS_BY_TOKEN = Hash[*CREATED_BY_VALUES.map { |i| [i[0], i[2]] }.flatten]
   CREATED_BY_NAMES_BY_SYMBOL = Hash[*CREATED_BY_VALUES.map { |i| [i[0], i[1]] }.flatten]
   
+
+  CREATED_WITHIN_VALUES = [
+    [ :any_time,       I18n.t('created_within.any_time'),        "any_time"],
+    [ :five_minutes,   I18n.t('created_within.five_minutes'),            5 ],
+    [ :ten_minutes,    I18n.t('created_within.fifteen_minutes'),        15 ],
+    [ :thirty_minutes, I18n.t('created_within.thirty_minutes'),         30 ],
+    [ :one_hour,       I18n.t('created_within.one_hour'),               60 ],
+    [ :four_hour,      I18n.t('created_within.four_hours'),            240 ],
+    [ :twelve_hour,    I18n.t('created_within.twelve_hours'),          720 ],
+    [ :twentyfour_hour,I18n.t('created_within.twentyfour_hours'),     1440 ],
+    [ :today,          I18n.t('created_within.today'),             "today" ],
+    [ :yesterday,      I18n.t('created_within.yesterday'),     "yesterday" ],
+    [ :this_week,      I18n.t('created_within.seven_days'),         "week" ],
+    [ :this_month,     I18n.t('created_within.thirty_days'),       "month" ],
+    [ :two_months,     I18n.t('created_within.two_months'),   "two_months" ], 
+    [ :six_months,     I18n.t('created_within.six_months'),   "six_months" ]
+  ]
+
+  CREATED_AT_OPTIONS = CREATED_WITHIN_VALUES.map { |i| [i[2], i[1]] }
+
   STATES_HASH = {
     :closed_at => I18n.t("export_data.closed_at"),
     :resolved_at => I18n.t("export_data.resolved_at"),

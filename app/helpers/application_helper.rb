@@ -86,7 +86,11 @@ module ApplicationHelper
   end
 
   def tab(title, url, cls = false, tab_name="")
-    content_tag('li', content_tag('span') + link_to(strip_tags(title), url,  :"data-pjax" => "#body-container"), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
+    options = {:"data-pjax" => "#body-container"}
+    if tab_name.eql?(:tickets)
+      options.merge!({:"data-parallel-url" => "/helpdesk/tickets/filter_options", :"data-parallel-placeholder" => "#ticket-leftFilter"})
+    end
+    content_tag('li', content_tag('span') + link_to(strip_tags(title), url, options ), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
   end
   
   def show_ajax_flash(page)
@@ -429,12 +433,22 @@ module ApplicationHelper
   end
 
   def get_app_details(app_name)
-    installed_app = @installed_apps_hash[app_name.to_sym]
+    installed_app = installed_apps[app_name.to_sym]
     return installed_app
   end
 
+  #This one checks for installed apps in account
+  def dropbox_app_key
+    app = installed_apps[:dropbox]
+    app.configs[:inputs]['app_key']  unless (app.blank?)
+  end
+
+  def installed_apps 
+    @installed_apps ||= current_account.installed_apps_hash
+  end
+  
   def get_app_widget_script(app_name, widget_name, liquid_objs) 
-    installed_app = @installed_apps_hash[app_name.to_sym]
+    installed_app = installed_apps[app_name.to_sym]
     if installed_app.blank? or installed_app.application.blank?
       return ""
     else

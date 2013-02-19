@@ -128,6 +128,13 @@
             <%= render :partial => '/helpdesk/shared/attachment', :collection => attachments, :locals => {:show_delete => true, :url => [@item] } %>
           </ul>
         <% end %>
+        <% unless @ticket.dropboxes.empty? %>
+        <ul class="attachment_list">
+        <%@ticket.dropboxes.each do |dropbox| %> 
+          <%= render :partial => '/helpdesk/shared/dropbox', :locals => {:dropbox => dropbox, :show_delete => true, :url => [@item] } %>
+        <%end%> 
+        </ul>
+      <% end %>
         <% unless @ticket.ticket_topic.nil? %>
           <div class="info-highlight">
             <%= t("helpdesk.tickets.show.linked_ticket") %>
