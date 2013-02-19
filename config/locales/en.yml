@@ -21,6 +21,7 @@ en:
   sales: "Sales"
   preview: "Preview"
   your_email: "Your email"
+  please_wait: Please wait...
   filter_options:
     status: "Status"
     responder_id: "Agents"
@@ -772,7 +773,8 @@ en:
       unwatch: 
         success: %{tickets} removed from the watch-list.
         failure: Ticket unwatch action failed.
-        unsubscribe_success: This ticket has been removed from your watch-list.
+        unsubscribe_success: The ticket has been removed from your watch-list.
+      bulk_merge_success : 'The tickets with ids %{merged_tickets} were merged into  <a href="/helpdesk/tickets/%{target_ticket}">%{target_ticket_subject} #%{target_ticket}</a> '
     custom_fields: 
       update: 
         failure: Ticket fields update failed.
@@ -1762,6 +1764,20 @@ en:
     ticket_user_list_status_agent_responded_at: "Agent responded: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_user_list_status_requester_responded_at: "Customer responded: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_user_list_status_created_at: "Created: <span class='emphasize'>%{time_ago} ago</span>"
+    merge_ticket_list_status_closed_at: "From: %{username}<br /> Closed: <span class='emphasize'>%{time_ago} ago</span>"
+    merge_ticket_list_status_resolved_at: "From: %{username}<br /> Resolved: <span class='emphasize'>%{time_ago} ago</span>"
+    merge_ticket_list_status_agent_responded_at: "From: %{username}<br /> Agent responded: <span class='emphasize'>%{time_ago} ago</span>"
+    merge_ticket_list_status_requester_responded_at: "From: %{username}<br /> Customer responded: <span class='emphasize'>%{time_ago} ago</span>"
+    merge_ticket_list_status_created_at: "From: %{username}<br /> Created: <span class='emphasize'>%{time_ago} ago</span>"
+    id : Id
+    ticket_selected: " ticket selected"
+    tickets_selected: " tickets selected"
+    subject_placeholder: "Look up tickets by their subject"
+    id_placeholder: "Type in an ID to find tickets"
+    requester_placeholder: "Find tickets by requester"
+    default_note_text : Default Note will be added
+    note_saved : Note saved
+    edit_note: "<b>Edit Note</b>"
     thanks: Thank you for submitting a feedback
     portal_created_on: "Created by <span class='emphasize'>%{username}</span> on <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Created on <span class='emphasize'>%{date}</span>"
@@ -1876,6 +1892,7 @@ en:
     submit_ticket: Submit 
     stop_monitor_btn_title: Stop monitoring this ticket
     merge_btn: Merge
+    merge_title: Merge Tickets
     split_ticket: Split
     tweets: Tweets
     agent_notify: added a note and wants you to have a look
@@ -2063,6 +2080,7 @@ en:
       assigned_reassigned: "%{type} to %{username}"
       flagged_spam: "%{tickets} flagged as spam. %{undo}"
       flagged_unspam: "%{tickets} removed from the spam folder."
+
     shared:
       reply_form:
         title: Reply to %{email}
@@ -2232,13 +2250,24 @@ en:
         enter_ticket_id: Enter a ticket id #
         merge: Merge
       confirm_merge:
-        source_merge_description: This ticket is closed and merged into ticket %{ticket_id}.
+        source_merge_description: "This ticket is closed and merged into ticket <a href='/helpdesk/tickets/%{ticket_id}' target='_blank' class='merge_links'>%{ticket_id}</a>."
         source_ticket_close_info: This ticket will be closed with the following note
         target_ticket_updated_info: This ticket will be updated with the following note and all conversations will be moved
         will_be_merged_into: Will be merged into...
         target_merge_description1: Ticket %{ticket_id} %{ticket_subject} is merged with this request
         target_merge_description2: Description in ticket %{ticket_id}
-        confirm_and_merge: Confirm and merge    
+        confirm_and_merge: Confirm and merge  
+      bulk_merge:
+        target_merge_description:  "Ticket {{ticket.id}} {{ticket.subject}} is merged with this request"
+        target_note_description1: 
+          one: "Ticket with id"
+          other: "Tickets with ids"
+        target_note_description2: 
+          one: "is merged with this request."
+          other: "are merged with this request."
+        target_note_description3:
+          one: "Ticket with id %{source_tickets} is merged into ticket %{target_ticket_id} with this request"
+          other: "Tickets with ids %{source_tickets} are merged into ticket %{target_ticket_id} with this request"
   import_ticket_group: Tickets &amp; Group
   or: or
   tickets_filter:

@@ -22,7 +22,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   set_table_name "helpdesk_tickets"
   
   serialize :cc_email
-  
+
   has_flexiblefields
   
   unhtml_it :description
@@ -132,7 +132,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState',:dependent => :destroy
   delegate :closed_at, :resolved_at, :to => :ticket_states, :allow_nil => true
-  
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
   delegate :active?, :open?, :is_closed, :closed?, :resolved?, :pending?, :onhold?, :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
   
@@ -223,13 +222,22 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :spam_created_in, lambda { |user| { :conditions => [ 
     "helpdesk_tickets.created_at > ? and helpdesk_tickets.spam = true and requester_id = ?", user.deleted_at, user.id ] } }
 
+  named_scope :with_merge_criteria, lambda { |search_string, search_field| {  
+    :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id 
+                                and users.account_id = helpdesk_tickets.account_id", 
+    :include => :ticket_states,
+    :conditions => ["#{search_field} like ? and helpdesk_tickets.deleted is false","%#{search_string}%" ],
+    :select => "helpdesk_tickets.*, users.name as requester_name",
+    :limit => 1000
+    } 
+  }
+  
   def self.agent_permission user
-    
     permissions = {:all_tickets => [] , 
                    :group_tickets => ["group_id in (?) OR responder_id=?", user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id] , 
                    :assigned_tickets =>["responder_id=?", user.id] }
                   
-     return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
+    return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
   end
   
   def agent_permission_condition user
@@ -270,6 +278,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :subject      => 10
      }
   end
+
+  sphinx_scope(:with_subject) { |search_string| { 
+    :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id 
+                                and users.account_id = helpdesk_tickets.account_id",
+    :include => :ticket_states,
+    :conditions => { :subject => "%#{search_string}%" }, 
+    :with => { :deleted => false }, 
+    :star => true,
+    :select => "helpdesk_tickets.*, users.name as requester_name"
+    } 
+  }
   #Sphinx configuration ends here..
 
 

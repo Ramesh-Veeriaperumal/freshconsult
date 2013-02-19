@@ -161,108 +161,6 @@ module Helpdesk::TicketActions
     end
   end
   
-  def show_tickets_from_same_user
-    @source_ticket = current_account.tickets.find_by_display_id(params[:id])    
-    @items = @source_ticket.requester.tickets.find(:all,:conditions => [" id != ? and deleted = ?", @source_ticket.id, false], :order => :status)
-    @items = @items.paginate(:page => params[:page], :per_page => 5) #or tickets from customer
-    if params[:page]
-      render :partial => "helpdesk/merge/same_user_tickets"
-    else
-      render :partial => "helpdesk/merge/merge"
-    end      
-  end
-  
-  def confirm_merge    
-    @source_ticket = current_account.tickets.find_by_display_id(params[:id])
-    @target_ticket = current_account.tickets.find_by_display_id(params[:target_id])    
-    render :partial => "helpdesk/merge/merge_script"
-  end
-  
-  def complete_merge    
-    @source_ticket = current_account.tickets.find_by_display_id(params[:source][:ticket_id])
-    @target_ticket = current_account.tickets.find_by_display_id(params[:target][:ticket_id])   
-    handle_merge
-    flash.now[:notice] = t(:'flash.tickets.merge.success')
-    redirect_to @target_ticket
-  end
-  
-  def handle_merge      
-    add_note_to_target_ticket
-    move_source_notes_to_target   
-    move_source_time_sheets_to_traget
-    add_note_to_source_ticket
-    close_source_ticket 
-    update_merge_activity  
-  end
-  
-  def update_merge_activity    
-    @source_ticket.create_activity(current_user, 'activities.tickets.ticket_merge.long',
-            {'eval_args' => {'merge_ticket_path' => ['merge_ticket_path', 
-            {'ticket_id' => @target_ticket.display_id, 'subject' => @target_ticket.subject}]}}, 'activities.tickets.ticket_merge.short') 
-  end
-  
-  def move_source_notes_to_target
-    @source_ticket.notes.each do |note|
-      note.update_attribute(:notable_id, @target_ticket.id)
-    end
-  end
-
-  def move_source_time_sheets_to_traget
-    @source_ticket.time_sheets.each do |time_sheet|
-      time_sheet.update_attribute(:ticket_id, @target_ticket.id)
-    end
-  end
-  
-  def close_source_ticket
-    disable_notification
-    @source_ticket.update_attribute(:status , CLOSED)
-    enable_notification
-  end
-  
-  def add_note_to_source_ticket
-    pvt_note = params[:source][:is_private]
-      @soucre_note = @source_ticket.notes.create(
-        :body => params[:source][:note],
-        :private => pvt_note || false,
-        :source => pvt_note ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
-        :account_id => current_account.id,
-        :user_id => current_user && current_user.id,
-        :from_email => @source_ticket.reply_email,
-        :to_emails => pvt_note ? [] : @source_ticket.requester.email.to_a,
-        :cc_emails => pvt_note ? [] : @source_ticket.cc_email_hash && @source_ticket.cc_email_hash[:cc_emails]
-      )
-      if !@soucre_note.private
-        Helpdesk::TicketNotifier.send_later(:deliver_reply, @source_ticket, @soucre_note ,{:include_cc => true})
-      end
-  end
-  
-  def add_note_to_target_ticket
-    target_pvt_note = params[:target][:is_private]
-    @target_note = @target_ticket.notes.build(
-        :body_html => params[:target][:note],
-        :private => target_pvt_note || false,
-        :source => target_pvt_note ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
-        :account_id => current_account.id,
-        :user_id => current_user && current_user.id,
-        :from_email => @target_ticket.reply_email,
-        :to_emails => target_pvt_note ? [] : @target_ticket.requester.email.to_a,
-        :cc_emails => target_pvt_note ? [] : @target_ticket.cc_email_hash && @target_ticket.cc_email_hash[:cc_emails]
-      )
-      ## handling attachemnt..need to check this
-     @source_ticket.attachments.each do |attachment|      
-      url = attachment.authenticated_s3_get_url
-      io = open(url) #Duplicate code from helpdesk_controller_methods. Refactor it!
-      if io
-        def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
-      end
-      @target_note.attachments.build(:content => io, :description => "", :account_id => @target_note.account_id)
-    end
-    @target_note.save
-    if !@target_note.private
-      Helpdesk::TicketNotifier.send_later(:deliver_reply, @target_ticket, @target_note , {:include_cc => true})
-    end
-  end
-  
   def search_tweets
     @search_keys = (current_account.twitter_handles.first.search_keys) || [] 
     @search_keys
@@ -319,5 +217,4 @@ module Helpdesk::TicketActions
       @requester_id_param = params[:requester_id]
     end
   end
-
 end

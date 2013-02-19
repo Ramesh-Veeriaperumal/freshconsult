@@ -72,7 +72,8 @@ Autocompleter.Cache = Class.create({
     this.rateLimiter = new Autocompleter.RateLimiting();
     this.options = Object.extend({
       choices: 10,
-      fuzzySearch: false
+      fuzzySearch: false,
+      searchKey: "searchKey"
     }, options || {});
   },
   
@@ -111,7 +112,7 @@ Autocompleter.Cache = Class.create({
     var name = null;
     for (var i = 0, len = data.length; i < len; ++i) {
       item = data[i];
-      if (exp.test(item)) {
+      if (exp.test((typeof item == "object") ? item[this.options.searchKey] : item)) {
         foundItems.push(item);
       };
     }
@@ -760,5 +761,4 @@ Autocompleter.PanedSearch = Class.create({
       this.choicesHolderList.update('<div class="list-noinfo">No Matching Results</div>');
     }
   }
-  
 });

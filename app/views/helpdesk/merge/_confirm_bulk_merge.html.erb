@@ -1,0 +1,151 @@
+<% form_tag :action => :complete_merge, :controller => 'merge_tickets', 
+                                        :html => { :id => "complete_merge_tickets" } do |f| %>  
+  <div class="contact-special">
+  	  <br>
+    <div id="primary-contact">
+      <div id="merge-ticket" data-id=<%= h(@target_ticket.id) %>>
+        <%= link_to("#{@target_ticket.subject} ##{@target_ticket.display_id}", @target_ticket, :title => @target_ticket.subject, 
+          :class =>"item_info", :target=>"_blank" ) %>
+        <%= hidden_field_tag 'target[ticket_id]', @target_ticket.to_param %>
+        <div class="info-data hideForList">
+          <span>
+            <%= t("ticket.merge_ticket_list_status_"+@target_ticket.ticket_states.current_state, 
+            :username => "<span class = 'muted'>#{h(@target_ticket.requester.display_name)}</span>", 
+            :time_ago => time_ago_in_words(@target_ticket.ticket_states.send(@target_ticket.ticket_states.current_state))) %>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div id="merge-ready">
+    <% @source_tickets.each do |source| %>
+      <div id="one-contact">
+        <% if source == @source_tickets.last %>
+        <span class="line last-line"></span>
+        <% else %>
+        <span class="line"></span>
+        <% end %>
+        <div id="contact-area">
+          <div id="merge-ticket" data-id=<%= h(source.id) %>>
+            <%= link_to("#{source.subject} ##{source.display_id}", source, :title => source.subject, :class =>"item_info", 
+                    :target=>"_blank" ) %>
+            <%= hidden_field_tag 'source_tickets[]', source.to_param %>
+            <div class="info-data hideForList">
+              <span>
+                <%= t("ticket.merge_ticket_list_status_"+source.ticket_states.current_state, 
+                :username => "<span class = 'muted'>#{h(source.requester.display_name)}</span>",
+                :time_ago => time_ago_in_words(source.ticket_states.send(source.ticket_states.current_state))) %>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+     <% end %>
+   </div>
+  </div>
+  <div class="merge-info-text">
+    <div class="source-target-note">
+      <div class="content-note content">
+        <span class="arrow-left merge-left"></span>
+        <span class="default-note-text"><%= t("ticket.default_note_text") %></span>
+        <div class="note-button-container-test">
+            <a id="edit-target"><%= t("email_configs.edit") %></a>
+            <div class= "ok-cancel hide">
+              <a class="btn btn-small ok" id="ok-target-note"><%= t('save_this_view') %></a>
+              <a class="btn btn-small" id="cancel-target-note"><%= t('cancel') %></a>
+            </div>
+        </div>
+        <div id="target-note-content" class="hide">
+          <textarea id="target-note-body" class="target-source-text" name="target[note]">
+            <%= t("helpdesk.merge.bulk_merge.target_note_description1", :count => @source_tickets.length) %>
+            
+            <%= @source_tickets.map{ |t| link_to t.display_id, "/helpdesk/tickets/#{t.display_id}", 
+              :target => '_blank', :title => t.description, :class => "merge_links" }.to_sentence %>
+
+            <%= t("helpdesk.merge.bulk_merge.target_note_description2", :count => @source_tickets.length, :ticket_id => 
+            @target_ticket.display_id) %>
+          </textarea>
+          <div>
+            <input id="target_private" checked="checked" name="target[is_private]" value="true" type="checkbox"> 
+            <%= t("ticket.note_form.private_note") %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="source-target-note source-note">
+      <div class="content-note content">
+        <span class="arrow-left merge-left"></span>
+        <span class="default-note-text"><%= t("ticket.default_note_text") %></span>
+        <div class="note-button-container-test">
+            <a id="edit-source"><%= t("email_configs.edit") %></a>
+            <div class= "ok-cancel hide">
+              <a class="btn btn-small ok" id="ok-source-note"><%= t('save_this_view') %></a>
+              <a class="btn btn-small" id="cancel-source-note"><%= t('cancel') %></a>
+            </div>
+        </div>
+        <div id="target-note-content" class="hide">
+          <textarea id="source-note-body" class="target-source-text" name="source[note]">
+            <%= t("helpdesk.merge.confirm_merge.source_merge_description", :ticket_id => @target_ticket.display_id) %>
+          </textarea>
+          <div>
+            <input id="source_private" checked="checked" name="source[is_private]" value="true" type="checkbox"> 
+            <%= t("ticket.note_form.private_note") %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="button-container">
+    <%= button_to_function(t("back"), "jQuery('#mergeboxconfirm').hide(); jQuery('#mergebox').show();", :class => "btn", :id  => "back-user-merge") %> 
+    <a class="btn" id="cancel-user-merge"><%= t('cancel') %></a>
+  	<%= submit_tag "Confirm and Merge", :class => "btn btn-primary", :id => "merge_completion", 
+    "data-loading-text" => t('please_wait')  %>
+  </div>
+<% end %>
+<% javascript_tag do %>
+  var value="";
+  var label="";
+
+  invokeRedactor('target-note-body');
+  invokeRedactor('source-note-body');
+
+  jQuery("#merge_completion").live('click', function(){
+    jQuery(this).button('loading');
+    jQuery("#cancel-user-merge, #back-user-merge").attr("disabled", true).addClass("disabled");
+  })
+
+  jQuery('#edit-target, #edit-source').click(function(){
+    console.log("hi");
+    parent = jQuery(this).parent().parent();
+    parent.find('#target-note-content').slideDown();
+    jQuery(this).hide();
+    parent.find('.ok-cancel').show();
+    label = parent.find('.default-note-text').html();
+    console.log("label = "+label);
+    parent.find('.default-note-text').html('<%= t("ticket.edit_note") %>');
+    value = parent.find('.redactor_editor').html();
+    if(jQuery(this).attr("id") == "edit-target")
+      jQuery('.source-note').hide();
+    else
+      jQuery('#edit-target').hide(); 
+  });
+
+  jQuery('#ok-target-note, #ok-source-note, #cancel-target-note, #cancel-source-note').click(function(){
+    console.log("hello");
+    parent = jQuery(this).closest('.content-note');
+    parent.find('#target-note-content').slideUp();
+    setTimeout(function(){                  
+      jQuery('.source-note').show();
+    }, 500);
+    if(jQuery(this).hasClass("ok"))
+      note_label = ( (parent.find('.redactor_editor').html() != value ) ? '<%= t("ticket.note_saved") %>' : label )
+    else
+    { 
+      parent.find('.redactor_editor').html(value);
+      note_label = label
+    }
+    console.log("note_label = "+note_label);
+    parent.find('.default-note-text').html(note_label);
+    jQuery('#edit-target, #edit-source').show();
+    parent.find('.ok-cancel').hide();
+  });
+<% end %>
