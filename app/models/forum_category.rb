@@ -60,7 +60,7 @@ class ForumCategory < ActiveRecord::Base
   end
 
   def to_liquid
-    Forum::CategoryDrop.new self
+    @forum_categoru_drop ||= Forum::CategoryDrop.new self
   end
 
   def to_s

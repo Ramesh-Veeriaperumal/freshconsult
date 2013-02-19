@@ -7,7 +7,6 @@
 
 // Type and some util functions
 @import "lib/type";
-@import "lib/utilities";
 
 // Layout and scaffolding
 @import "lib/scaffolding";
@@ -50,5 +49,6 @@
 @import "lib/ticket";
 @import "lib/survey";
 
+@import "lib/utilities";
 // Debug styles
 /*@import "lib/debug";*/
