@@ -32,4 +32,4 @@
   <%= content_tag(:h4, t('choose_plan'), :class => "title") %>
   <%= t('downgrade_plan') %>
 </div>
-<%= render :partial => "select_plans", :locals => { :plans => plans, :subscription => @subscription } %>
+<%= render :partial => "select_plans", :locals => { :plans => plans, :subscription => @subscription, :show_all => false } %>

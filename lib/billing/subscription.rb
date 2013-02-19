@@ -37,7 +37,8 @@ class Billing::Subscription
   end
 
   def activate_subscription(subscription)
-    ChargeBee::Subscription.update(subscription.account_id, { :trial_end => TRIAL_END })
+    ChargeBee::Subscription.update(subscription.account_id, 
+          subscription_data(subscription).merge({ :trial_end => TRIAL_END }))
   end
 
   def update_admin(user)
@@ -72,7 +73,7 @@ class Billing::Subscription
       {
         :first_name => account.account_admin.name,
         :email => %(vijayaraj+#{account.id}@freshdesk.com),  #account.account_admin.email,  
-        :company => %(#{account.name} (#{account.full_domain}))
+        :company => account.name
       }
     end
     

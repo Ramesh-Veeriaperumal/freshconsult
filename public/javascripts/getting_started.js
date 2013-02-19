@@ -396,7 +396,7 @@ function update_image(input) {
 
        reader.onload = function (e) {
            jQuery("div.custom-upload").css("background-image", 'url(' + e.target.result + ')');                    
-           jQuery("div.custom-upload").css("background-size", '50px 50px');                    
+           jQuery("div.custom-upload").css("background-size", 'contain');                    
            jQuery("#logo-preview").attr("src",e.target.result);
            totango.track("Logo Changed", "Getting Started Page");
            rebrand();
@@ -408,7 +408,7 @@ function update_image(input) {
 
 function update_logo(url){
 	jQuery("div.custom-upload").css("background-image", 'url(' + url + ')');
-   jQuery("div.custom-upload").css("background-size", '50px 50px');
+   jQuery("div.custom-upload").css("background-size", 'contain');
    jQuery("#logo-preview").attr("src",url);
 }
 

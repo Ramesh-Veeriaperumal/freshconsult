@@ -4478,6 +4478,26 @@ div.addReminder{
 
 .activate-options{ display: none;}
 
+.dialog-alert{
+	.downgrade-message{
+		margin: 10px;
+		font-size: 13px;
+		line-height: 1.3;
+	}
+
+	.downgrade-actions{
+		margin: 10px;
+		text-align: right;
+		#confirm-cancel{
+			font-weight: normal;
+		}
+	}
+	
+	.confirm-dialog{
+		min-height: 100px !important;
+	}
+}
+
 .free-plan-options{
 	.activate-options{
 		display: block;

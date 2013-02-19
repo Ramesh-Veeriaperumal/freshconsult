@@ -6,7 +6,7 @@ module EmailCommands
       email_cmds_regex = get_email_cmd_regex(ticket.account)
       if email_cmds_regex && (content =~ email_cmds_regex)
         custom_ff_fields = {}
-        email_cmds = $1.gsub("\\r\\n","").gsub("\\n","") unless $1.blank?
+        email_cmds = $1.gsub("\\r\\n","").gsub("\\n","").gsub(/[”“]/,'"') unless $1.blank?
         cmds = ActiveSupport::JSON.decode("{ #{email_cmds} }")  
         RAILS_DEFAULT_LOGGER.debug "The email commands are : #{cmds}"
         cmds.each_pair do |cmd, value|

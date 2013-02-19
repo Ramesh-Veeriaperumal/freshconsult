@@ -530,7 +530,7 @@ module ApplicationHelper
                                               {:include_blank => "...", :selected => field_value}, 
                                               {:class => element_class})
       when "nested_field" then
-        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => t('any'), :selected => field_value}, {:class => element_class}, field_value, in_portal)
+        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal)
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then

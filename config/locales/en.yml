@@ -162,6 +162,7 @@ en:
   agent_deleted_message: This is a deleted agent
   cancel: Cancel
   confirm: Confirm
+  downgrade_dialog_title: Sure you want to downgrade?
   yes_password_reset: "Yes"
   no_password_reset: "No"
   last: last
@@ -1225,6 +1226,7 @@ en:
   company_name: Company Name
   expires: Expires
   total_price: Total
+  downgrade: Downgrade
   update: Update
   save_reply: Save Reply
   forum_shared:
@@ -1346,7 +1348,7 @@ en:
     full_time: Full time
     occasional: Occasionally
     day_pass_expired: Your day pass has expired, please login to acquire a new day pass.
-    insufficient_day_pass: Unable to allocate a day pass for you, please contct your administrator.
+    insufficient_day_pass: Unable to allocate a day pass for you, please contact your administrator.
     password_reset_message: "Do you want to reset %{requester}'s password?"
     password_reset_note: "Note: A reset mail with instructions will be sent to %{requester}"
   account_admin: Account admin
@@ -1647,7 +1649,7 @@ en:
   last_renewed_on: "Last Renewed on"
   update_and_login: Update and login
   enter_payment: Enter Payment details...
-  downgrade_confirm: "Some of your current features and the corresponding data will be deleted by downgrading to this plan. \nAre you sure you want to continue?"
+  downgrade_confirm: "<span class=\"label label-important\">Important</span>&nbsp;&nbsp;You are currently downgrading from <b>{{from}}</b> plan to the <b>{{to}}</b> plan. Please note that all data and configurations associated with features available in {{from}} plan will be lost permanently.<br /><br /> To see the full list of plans and features, please visit <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plans and Pricing</a>. <br />Still not sure? <a href = \"mailto:support@freshdesk.com\" >Let us help you decide</a>"
   errors_in_payment: "Errors encountered with your payment:"
   email_configs:
     title: Email Settings
