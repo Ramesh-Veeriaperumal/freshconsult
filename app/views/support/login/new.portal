@@ -21,11 +21,11 @@
 	{% endif %}
 </section>
 <section class="sidebar">
-{% if portal.can_signup_feature? %}
+{% if portal.can_signup_feature %}
 	<section id="signup-container" class="content-form rounded-6">
 		<h2 class="heading">{% translate signup %}</h2>
 		<p>
-			<a href="{{ portal.signup_path }}" class="btn btn-signup">
+			<a href="{{ portal.signup_url }}" class="btn btn-signup">
 				{% translate signup_up_with_us %}
 			</a>
 		</p>

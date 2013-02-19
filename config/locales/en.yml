@@ -1902,6 +1902,9 @@ en:
     ham_btn_title: This is not spam
     reported_from_source: Reported via %{source}
     add_time: Add time
+    support:
+      reply: "Reply"
+      reply_and_open: "Reply & re-open"
     suggested_solutions: 
       insert_url: Insert URL
       title: Suggested Solutions

@@ -46,41 +46,26 @@ strong {
   padding: 12px; }
 
 /* line 42, ../../src/pattern/patternhack.scss */
-.table-striped tbody tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
-  background-color: #fbfbfb; }
-
-/* line 45, ../../src/pattern/patternhack.scss */
-.pagination ul > li > a:hover, .pagination ul > .active > a, .pagination ul > .active > span {
-  background-color: #7f7f7f;
-  border-color: #7f7f7f;
-  color: #fff; }
-
-/* line 50, ../../src/pattern/patternhack.scss */
-.pagination ul > li > a:hover {
-  background-color: #c6c6c6;
-  border-color: #c6c6c6; }
-
-/* line 54, ../../src/pattern/patternhack.scss */
 .tabs {
   margin-right: -20px;
   margin-left: -20px;
   padding-right: 20px;
   padding-left: 20px; }
 
-/* line 61, ../../src/pattern/patternhack.scss */
+/* line 49, ../../src/pattern/patternhack.scss */
 .pagination ul > li > a:hover .arrow-up {
   border-bottom-color: #fff; }
-/* line 64, ../../src/pattern/patternhack.scss */
+/* line 50, ../../src/pattern/patternhack.scss */
 .pagination ul > li > a:hover .arrow-right {
   border-left-color: #fff; }
-/* line 67, ../../src/pattern/patternhack.scss */
+/* line 51, ../../src/pattern/patternhack.scss */
 .pagination ul > li > a:hover .arrow-down {
   border-top-color: #fff; }
-/* line 70, ../../src/pattern/patternhack.scss */
+/* line 52, ../../src/pattern/patternhack.scss */
 .pagination ul > li > a:hover .arrow-left {
   border-right-color: #fff; }
 
-/* line 77, ../../src/pattern/patternhack.scss */
+/* line 57, ../../src/pattern/patternhack.scss */
 .arrow-right,
 .arrow-left,
 .arrow-up,
@@ -106,57 +91,57 @@ strong {
   vertical-align: middle;
   width: 0; }
 
-/* line 100, ../../src/pattern/patternhack.scss */
+/* line 80, ../../src/pattern/patternhack.scss */
 .arrow-up {
   border-bottom-width: 1em;
   border-bottom-style: solid;
   border-bottom-color: #666;
   bottom: 0.25em; }
 
-/* line 107, ../../src/pattern/patternhack.scss */
+/* line 87, ../../src/pattern/patternhack.scss */
 .arrow-right {
   border-left-width: 1em;
   border-left-style: solid;
   border-left-color: #666;
   left: 0.35em; }
 
-/* line 114, ../../src/pattern/patternhack.scss */
+/* line 94, ../../src/pattern/patternhack.scss */
 .arrow-down {
   border-top-width: 1em;
   border-top-style: solid;
   border-top-color: #666;
   top: 0.25em; }
 
-/* line 121, ../../src/pattern/patternhack.scss */
+/* line 101, ../../src/pattern/patternhack.scss */
 .arrow-left {
   border-right-width: 1em;
   border-right-style: solid;
   border-right-color: #666;
   right: 0.35em; }
 
-/* line 127, ../../src/pattern/patternhack.scss */
+/* line 107, ../../src/pattern/patternhack.scss */
 .text-info {
   width: 75%;
   word-wrap: break-word;
   overflow: hidden; }
 
-/* line 132, ../../src/pattern/patternhack.scss */
+/* line 112, ../../src/pattern/patternhack.scss */
 .cust-list-avatar, .text-info {
   display: inline-block;
   vertical-align: middle; }
 
 /* This class overriding app-common css. */
-/* line 140, ../../src/pattern/patternhack.scss */
+/* line 120, ../../src/pattern/patternhack.scss */
 .pagination {
   border-bottom: 0; }
-  /* line 142, ../../src/pattern/patternhack.scss */
+  /* line 122, ../../src/pattern/patternhack.scss */
   .pagination a {
     font-weight: normal; }
-    /* line 144, ../../src/pattern/patternhack.scss */
+    /* line 124, ../../src/pattern/patternhack.scss */
     .pagination a:hover, .pagination a:focus {
       text-decoration: none; }
 
 /* This class overriding app-bootstrap css. */
-/* line 152, ../../src/pattern/patternhack.scss */
+/* line 132, ../../src/pattern/patternhack.scss */
 .dropdown-toggle:after {
   border-top: 0; }

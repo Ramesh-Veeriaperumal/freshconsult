@@ -71,3 +71,11 @@
   margin: 0;  
   @include border-radius(0);
 }
+
+.alert-ticket-status{
+  margin-bottom: 6px;
+  color: #333;
+  font-size: 15px;
+  font-weight: bold;
+  a{ font-weight: 300; }
+}

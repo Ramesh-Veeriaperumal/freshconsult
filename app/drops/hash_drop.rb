@@ -1,4 +1,4 @@
-class TabDrop < Liquid::Drop
+class HashDrop < Liquid::Drop
   
   def initialize(options = {})
     @options = options

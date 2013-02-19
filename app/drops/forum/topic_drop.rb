@@ -8,18 +8,17 @@ class Forum::TopicDrop < BaseDrop
     super source
   end
 
-  def render_topic
-    default_context.inspect
+  def stamps
+    # stamps = [ source.stamp_name, source.stamp_key ]
+    # tabs.map { |s|
+    #     HashDrop.new( :name => s[1].to_s, :label => (s[3] || I18n.t("header.tabs.#{s[1].to_s}")), :tab_type => s[1].to_s ) if s[2]
+    #   }
   end
 
   def stamp_name
   	source.stamp_name
   end
-
-  def stamp_type
-  	source.stamp_type
-  end
-
+  
   def stamp_key
     source.stamp_key
   end
@@ -55,20 +54,20 @@ class Forum::TopicDrop < BaseDrop
   def posts
     source.posts
   end
-  
-  def url
-  	support_discussions_topic_path(source)
-  end
 
   def id
     source.id
+  end
+
+  def url
+  	support_discussions_topic_path(source)
   end
 
   def forum
     source.forum
   end
 
-  def voted_by_current_user?
+  def voted_by_current_user
     source.voted_by_user? portal_user
   end
 

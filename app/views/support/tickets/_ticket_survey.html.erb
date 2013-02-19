@@ -37,16 +37,16 @@
     	<div id="survey-feedback" class="<%= form_display %>">        
             <p><%= t('.survey_title') %></p>
             <div class="survey-buttons">
-                <a href="#" id="happy_tab" class="lead" data-rating="<%=Survey::HAPPY%>">
-                    <i class="icon-smiley-happy"></i>
+                <a href="#" id="happy_tab" data-rating="<%=Survey::HAPPY%>">
+                    <i class="icon-smiley-happy-small"></i>
                     <%=current_account.survey.happy_text%>
                 </a>
-                <a href="#" id="neutral_tab" class="lead" data-rating="<%=Survey::NEUTRAL%>">
-                    <i class="icon-smiley-neutral"></i>
+                <a href="#" id="neutral_tab" data-rating="<%=Survey::NEUTRAL%>">
+                    <i class="icon-smiley-neutral-small"></i>
                     <%=current_account.survey.neutral_text%>
                 </a>
-                <a href="#" id="unhappy_tab" class="lead" data-rating="<%=Survey::UNHAPPY%>">
-                    <i class="icon-smiley-unhappy"></i>
+                <a href="#" id="unhappy_tab" data-rating="<%=Survey::UNHAPPY%>">
+                    <i class="icon-smiley-unhappy-small"></i>
                     <%=current_account.survey.unhappy_text%>
                 </a>
             </div>
@@ -68,9 +68,15 @@
     jQuery(document).ready(function () {
         jQuery('#happy_tab, #neutral_tab, #unhappy_tab').click(function (ev) {
         	ev.preventDefault()
-        	jQuery(this).addClass("active").siblings().removeClass("active")
-        	jQuery('#survey-comment').slideDown()
-        	jQuery('#survey-rating').val(jQuery(this).data("rating"))
+            if(jQuery(ev.target).hasClass("active")){
+                jQuery(this).removeClass("active")
+                jQuery('#survey-comment').slideUp()
+                jQuery('#survey-rating').val("")
+            }else{
+            	jQuery(this).addClass("active").siblings().removeClass("active")
+            	jQuery('#survey-comment').slideDown()
+            	jQuery('#survey-rating').val(jQuery(this).data("rating"))
+            }
         });
 
         jQuery('#survey-cancel').click(function(ev){

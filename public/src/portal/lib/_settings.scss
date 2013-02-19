@@ -195,7 +195,8 @@ $zindexModal:             1050 !default;
 
 $content-padding-mobile: 1em;
 $content-padding-side: 2.2em;
-$content-padding: 1.8em $content-padding-side;
+$content-padding-top: 1.8em;
+$content-padding: $content-padding-top $content-padding-side;
 
 $header-padding: 0.9em 1.6em;
 

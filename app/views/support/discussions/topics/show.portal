@@ -2,30 +2,37 @@
 {% assign forum_category = forum.forum_category %}
 
 <section class="content main rounded-6 min-height-on-desktop">
-	<a href="{{portal.new_topic_path}}" class="start-topic">
-		{% translate portal.topic.start_new_topic %}
-	</a>
+	{% if forum.type_name != 'announcement' %}
+		<b class="pull-right">{{ portal | link_to_start_topic }}</b>
+	{% endif %}
 	<div class="breadcrumb">
-		<a href="/">Home</a>
+		<a href="{{ portal.discussions_home_url }}">{% translate portal_pages.groups.discussions %}</a>
 		<a href="{{ forum_category.url }}">{{ forum_category.name }}</a>
 		<a href="{{ forum.url }}">{{ forum.name }}</a>
 	</div>
 	
 	<section class="topic-header clearfix">
+		<div class="topic-stamp">
+		{% if topic.sticky? %}
+			<span class="label label-sticky">
+				Sticky
+			</span>
+		{% endif %}
+		{% if topic.stamp_name %}
+			<span class="label label-{{ topic.stamp_key | downcase }}">
+				{{ topic.stamp_name }}
+			</span>
+		{% endif %}
+		</div>
 		<b class="page-stamp page-stamp-{{ forum.type_name }}">
-			<b class="icon-page-{{ forum.type_name }}"></b>
+			<i class="icon-page-{{ forum.type_name }}"></i>
 		</b>
 		<h2 class="post-title heading">
-			{% if topic.stamp_name %}
-				<span class="label label-{{ topic.stamp_name | downcase }}">
-					{{ topic.stamp_name }}
-				</span>
-			{% endif %}
-			
 			{{ topic.title }}
 		</h2>
 
-		{% if current_user %}
+
+		{% if portal.user %}
 			<div class="topic-actions btn-group" id="topic-toolbar">
 				<a href="#reply-to-post" class="btn btn-small" data-proxy-for="#new-post-form">Reply</a>
 				{{ topic | follow_topic_button }}
@@ -36,7 +43,7 @@
 
 	<section id="topic-comments">
 		{% for post in topic.posts %}
-			<section class="user-comment {% if post.user.is_agent?? %} comment-by-agent {% endif %}" id="post-{{post.id}}">
+			<section class="user-comment {% if post.user.is_agent %} comment-by-agent {% endif %}" id="post-{{post.id}}">
 				<div class="user-info">					
 					<div class="user-pic-thumb user-pointer-bottom">
 						<img src="{{ post.user.profile_url }}" width="40px" height="40px" />
@@ -122,9 +129,9 @@
 		</section>
 	{% else %}	
 		<section class="list-lead">
-			<a href="{{ portal.login_path }}">Login</a>
-			{% if portal.can_signup_feature? %}
-				 or <a href="{{ portal.signup_path }}">Signup</a> for an account
+			<a href="{{ portal.login_url }}">Login</a>
+			{% if portal.can_signup_feature %}
+				 or <a href="{{ portal.signup_url }}">Signup</a> for an account
 			{% endif %}
 			to post a comment			
 		</section>

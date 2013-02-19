@@ -1,9 +1,9 @@
-<section class="content ticket-page rounded-6 min-height-on-desktop">
+<section class="main content rounded-6 min-height-on-desktop">
 	<div class="breadcrumb">
 		<a href="/">Home</a>
-		<a href="{{ portal.tickets_path }}">Tickets list</a>
+		<a href="{{ portal.tickets_home_url }}">Tickets list</a>
 	</div>
-	<h2 class="heading">#{{ ticket.id }} {{ ticket.subject }}</h2>
+	{{ ticket | status_alert }}
 	
 	{% if current_user %}
 	<section class="ticket-main" id="ticket-toolbar">
@@ -15,29 +15,22 @@
 				</a>
 			</span>
 			<div class="btn-group" id="ticket-toolbar">
-				<a href="#reply-to-ticket" class="btn btn-small" data-proxy-for="#add-note-form">Reply</a>		
-				
 				{% unless ticket.closed? %}
-					<a href="{{ ticket.close_ticket_url }}" data-method="post" class="btn btn-small">Mark ticket as closed</a>
+					<a href="#reply-to-ticket" class="btn btn-small" data-proxy-for="#add-note-form">Reply</a>
+					<a href="{{ ticket.close_ticket_url }}" data-method="post" class="btn btn-small">
+						Mark ticket as closed
+					</a>
+					<a href="#add-people" rel="freshdialog" title="Add people to conversation" 
+						data-width="400" class="btn btn-small" data-submit-label="Add people">Add people</a>
 				{% endunless %}
-				
-				<a href="#add-people" rel="freshdialog" title="Add people to conversation" 
-					data-width="400" class="btn btn-small" data-submit-label="Add people">Add people</a>
 			</div>			
 		</section>
 	</section>
-	{% endif %}
+	{% endif %}	
 	
-	<section class="ticket-sidebar hide-in-mobile" id="ticket-sidebar">
-		{% snippet ticket_survey %}
-		
-		{% snippet ticket_details %}
+	<section class="ticket-main">
+		<h2 class="heading">#{{ ticket.id }} {{ ticket.subject }}</h2>
 
-		{% snippet ticket_edit %}
-
-		<hr class="hide-tablet" />
-	</section>
-	<section class="ticket-main">		
 		<section class="user-comment" id="ticket-description">			
 			<div class="user-info">
 				<div class="user-pic-thumb user-pointer-bottom">
@@ -55,7 +48,7 @@
 
 		<section id="ticket-comments">
 			{% for comment in ticket.public_comments %}
-				<section class="user-comment {% if comment.user.is_agent? %} comment-by-agent {% endif %}" 
+				<section class="user-comment {% if comment.user.is_agent %} comment-by-agent {% endif %}" 
 						 id="ticket-note-{{comment.id}}">
 
 					<div class="user-info">
@@ -93,8 +86,10 @@
 					</div>
 				</section>
 			{% endfor %}
-
-			<section id="reply-to-ticket" name="reply-to-ticket" class="user-comment">
+			{% if ticket.closed? %}
+				{{ ticket | status_alert }}
+			{% endif %}
+			<section id="reply-to-ticket" name="reply-to-ticket" class="user-comment {% if ticket.closed? %}hide{% endif %}">
 				<div class="user-info">
 					<div class="user-pic-thumb user-pointer-bottom">
 						<img src="{{ current_user.profile_url }}" width="40px" height="40px" />
@@ -115,6 +110,16 @@
 			</section>
 		</section>
 	</section>
+</section>
+
+<section class="sidebar content rounded-6" id="ticket-sidebar">
+	{% snippet ticket_survey %}
+	
+	{% snippet ticket_details %}
+
+	{% unless ticket.closed? %}
+		{% snippet ticket_edit %}
+	{% endunless %}
 </section>
 
 {% snippet ticket_add_people %}

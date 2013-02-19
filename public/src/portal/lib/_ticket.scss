@@ -40,9 +40,4 @@ $sources-sprite-dimensions:true;
 	}
 	.ticket-brief{ padding-top: 7px; }
 	.label-status{ margin-top: 6px; }
-
-	@include layout(7) {
-		.ticket-main{ @include span-columns(5); }
-		.ticket-sidebar{ @include span-columns(2 omega); }
-	}
 }

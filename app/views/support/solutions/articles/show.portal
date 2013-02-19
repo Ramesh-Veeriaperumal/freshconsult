@@ -1,6 +1,6 @@
 <section class="main content rounded-6 min-height-on-desktop">
 	<div class="breadcrumb">
-		<a href="{{ portal.solutions_home_path }}">Solution home</a>
+		<a href="{{ portal.solutions_home_url }}">Solution home</a>
 		<a href="{{ article.category.url }}">{{ article.category.name }}</a>
 		<a href="{{ article.folder.url }}">{{ article.folder.name }}</a>
 	</div>

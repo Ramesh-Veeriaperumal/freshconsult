@@ -24,19 +24,19 @@ module SupportHelper
 		output << %(<div class="welcome">#{ t('header.welcome') })
 
 		# Showing logged in user name or displaying as Guest
-		output << %(<b>#{ portal['current_user'] || t('header.guest') }</b> </div> )
+		output << %(<b>#{ portal['user'] || t('header.guest') }</b> </div> )
 
 		# Showing portal login link or signout link based on user logged in condition 
-		if portal['current_user']
+		if portal['user']
 			# Showing profile settings path for loggedin user
-			output << %(<b><a href="#{ portal['profile_path'] }">#{ t('header.edit_profile') }</a></b>)
+			output << %(<b><a href="#{ portal['profile_url'] }">#{ t('header.edit_profile') }</a></b>)
 			# Showing Signout path for loggedin user
-			output << %(- <b><a href="#{ portal['logout_path'] }">#{ t('header.signout') }</a></b>)
+			output << %(- <b><a href="#{ portal['logout_url'] }">#{ t('header.signout') }</a></b>)
 		else
 			# Showing login path for non-loggedin user
-			output << %(<b><a href="#{ portal['login_path'] }">#{ t('header.login') }</a></b>)
+			output << %(<b><a href="#{ portal['login_url'] }">#{ t('header.login') }</a></b>)
 			# Showing signup url based on customer portal settings feature
-			output << %(or <b><a href="#{ portal['signup_path'] }">#{ t('signup') }</a></b>) if portal['can_signup_feature?']
+			output << %(or <b><a href="#{ portal['signup_url'] }">#{ t('signup') }</a></b>) if portal['can_signup_feature']
 		end
 
 		output.join(" ")
@@ -234,6 +234,12 @@ HTML
 		if survey_result != 0
 			Account.current.survey.title(survey_result)
 		end
+	end
+
+	def status_alert ticket
+		_text = ticket['status'] + (ticket['closed?'] ? 
+			", <a href='#reply-to-ticket' data-proxy-for='#add-note-form' data-show-dom='#reply-to-ticket'>Reply to re-open ticket</a>" : "")
+		content_tag :div, _text, :class => "alert alert-ticket-status"
 	end
 
 	# Construct ticket form UI

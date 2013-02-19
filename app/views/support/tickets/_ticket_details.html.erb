@@ -1,16 +1,9 @@
 <section class="widget" id="ticket-sidebar-details">
-	<% if @editable_ticket_fields.present? %>
-		<div class="pull-right">
-			<a href="#" data-toggle-dom="#ticket-sidebar-edit, #ticket-sidebar-details" data-animated>Edit</a>
-		</div>
-	<% end %>
 	<h3 class="light">Ticket details</h4>
-	<% status_index = @visible_ticket_fields.index{ |f| f.field_type == 'default_status' } %>
-	<% @visible_ticket_fields.unshift(@visible_ticket_fields.delete_at(status_index)) if status_index.present? %>
 	<% @visible_ticket_fields.each do |field| %>
-		<div class="<%= field.field_type == 'default_status' ? "alert" : "" %>">
-			<% field_value = ticket_field_display_value(field, @ticket) %>
-			<% if field_value.present? %>
+		<% field_value = ticket_field_display_value(field, @ticket) %>
+		<% if field_value.present? %>
+			<div id="ticket-field-<%= field.name %>">
 	 			<h4><%= field.label_in_portal %></h4>
 				<div class="lead-small"><%= field_value %></div>
 				<% if field.field_type == "nested_field" %>				
@@ -24,7 +17,7 @@
 						<% end %>
 					</div>				
 				<% end %>
-			<% end %>
-		</div>
+			</div>
+		<% end %>
 	<% end %>
 </section>

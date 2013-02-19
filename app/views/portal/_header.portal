@@ -12,7 +12,7 @@
 	<div class="nav-link" id="header-tabs">
 		{% for tab in portal.tabs %}
 			{% if tab.url %}
-				<a href="{{tab.url}}" class="{% if tab.tab_type == current_tab %}active{% endif %}">{{ tab.label }}</a>
+				<a href="{{tab.url}}" class="{% if tab.tab_type == portal.current_tab %}active{% endif %}">{{ tab.label }}</a>
 			{% endif %}
 		{% endfor %}
 	</div>

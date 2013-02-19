@@ -20,8 +20,8 @@ class Solution::CategoryDrop < BaseDrop
     @folders ||= @source.folders.visible(portal_user)
   end
 
-  def total_folders
-    @total_folders ||= @source.folders.visible(portal_user).size
+  def folders_count
+    @folders_count ||= @source.folders.visible(portal_user).size
   end
   
 end

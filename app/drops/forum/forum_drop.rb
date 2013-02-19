@@ -22,9 +22,14 @@ class Forum::ForumDrop < BaseDrop
   def id
     source.id
   end
+
+  def url
+    support_discussions_forum_path(source)
+  end
   
-  def type
-    source.forum_type
+  # Type of the forum (Announcements, Feature requests, Problems, Questions)
+  def type_name
+    source.type_name.downcase
   end
 
   def current_topic_filter
@@ -40,28 +45,10 @@ class Forum::ForumDrop < BaseDrop
               :url  => support_discussions_forum_path(source, :filter_topics_by => f.to_s)
             }}
   end
-
-  # This is mainly used to hide "Start a topic button" in announcements forums
-  # Can be extended to be used if we are giving permissions to users
-  def users_can_start_topic
-    !source.announcement?
-  end
   
-  def visibility
-    source.forum_visibility
-  end
-  
-  def type_name
-    source.type_name.downcase
-  end
-
-  def url
-    support_discussions_forum_path(source)
-  end
-
-  def create_topic_url
-    new_support_discussions_forum_topic_path(source)
-  end
+  # def visibility
+  #   source.forum_visibility
+  # end
 
   def forum_category
     source.forum_category

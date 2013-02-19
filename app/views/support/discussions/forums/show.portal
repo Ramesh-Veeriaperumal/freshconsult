@@ -1,9 +1,9 @@
-<section class="content rounded-6 min-height-on-desktop">	
-	<b class="pull-right">
-		{{ portal | link_to_start_topic }}
-	</b>
+<section class="content rounded-6 min-height-on-desktop">
+	{% if forum.type_name != 'announcement' %}
+		<b class="pull-right">{{ portal | link_to_start_topic }}</b>
+	{% endif %}
 	<div class="breadcrumb">
-		<a href="/">Home</a>
+		<a href="{{ portal.discussions_home_url }}">{% translate portal_pages.groups.discussions %}</a>
 		<a href="{{ forum.forum_category.url }}">{{ forum.forum_category.name }}</a>
 	</div>	
 	<i class="page-stamp page-stamp-{{ forum.type_name }}">
@@ -25,7 +25,7 @@
 				<div class="c-row c-user-thumb {% if topic.sticky? %} c-topic-sticky {% endif %}">					
 					<div class="user-pic-thumb">
 						<img src="{{ topic.user.profile_url }}" width="50px" height="50px" />
-					</div>					
+					</div>	
 					{% if topic.sticky? %}
 						<span class="pull-right-tablet label label-small label-sticky">
 							Sticky
@@ -36,7 +36,7 @@
 							Answered
 						</span>
 					{% endif %}
-					{% if topic.stamp_type %}
+					{% if topic.stamp_key != empty %}
 						<span class="pull-right-tablet label label-small label-{{topic.stamp_key | downcase}}">
 							{{ topic.stamp_name }}
 						</span>

@@ -5,5 +5,5 @@
 		<h3 class="heading">{% translate topic.edit %}</h3>
 	{% endif %}
 
-	{% snippet new_topic %}
+	{% snippet new_topic_form %}
 </section>

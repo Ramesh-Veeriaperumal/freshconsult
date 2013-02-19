@@ -1,12 +1,14 @@
 class Portal::Tags::Snippet < Liquid::Tag  
 
   # Snippets will work only if its value is present in the below hash
-  RESTRICTED_FILE_HASH = {  :new_topic    => "/support/discussions/topics/form", 
-                            :request_form => "/support/tickets/request_form",
-                            :login_form   => "/support/login/form",
-                            :forgot_password_form => "/support/login/forgot_password", 
+  RESTRICTED_FILE_HASH = {  
+                            :new_ticket_form => "/support/tickets/request_form",
+                            :new_topic_form    => "/support/discussions/topics/form", 
                             :signup_form  => "/support/signups/form",
+                            :login_form   => "/support/login/form",
+                            :forgot_password_form => "/support/login/forgot_password",                             
                             :search_form  => "/support/search",
+                            # Partials that work only in topic details page
                             :topic_reply  => "/support/discussions/topics/reply_to_post",
                             :topic_vote   => "/support/discussions/topics/topic_vote",
                             # Partials that work only in ticket details and list page
