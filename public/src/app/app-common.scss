@@ -9008,13 +9008,11 @@ div.db-chooser{
 		float:left; padding-right:20px
 	}
 }
-
-#s2id_created_at{
-	width: 190px;
-}
-div.select2-search{
-	display: none;
-}
-.select2{
-	width: 190px;
+.ff_item{
+	.select2{
+		width: 190px;
+	}
+	&.level_2 .select2, &.level_3 .select2{
+		width: 179px;
+	}
 }
