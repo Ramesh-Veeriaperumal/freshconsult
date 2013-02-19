@@ -98,6 +98,7 @@ en:
       description: Description
       product: Product
       ticket_type: Type
+      created_at: Created
     untitled: Untitled
     first_choice: First Choice
     second_choice: Second Choice
@@ -993,6 +994,7 @@ en:
   username: Username
   reply: reply
   is_not: Is not
+  during: during
   less_than: Less than
   greater_than: Greater than
   feedbackwidget_bgcolor: Background Color
@@ -1796,6 +1798,11 @@ en:
     subject: Subject
     created_at: Hours since created
     opened_at: Hours since reopened
+    created_during: 
+      title: Created
+      business_hours: Business Hours
+      non_business_hours: Non-Business Hours
+      holidays: Holidays
     pending_since: Hours since pending
     resolved_at: Hours since resolved
     closed_at: Hours since closed
