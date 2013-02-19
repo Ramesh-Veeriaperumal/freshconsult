@@ -64,6 +64,7 @@ en:
   attachments: Attachments
   attach_file_local: Attach a file from your computer
   dropbox_attach_label: Attach from
+  dropbox_attach_from: Attach from Dropbox
   dropbox_choose_file: Choose file
   show_quoted_text: Show Quoted text
   cancel_my_account: Cancel my account

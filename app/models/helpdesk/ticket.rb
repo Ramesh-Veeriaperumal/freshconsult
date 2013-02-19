@@ -487,7 +487,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     time_sheets.each do |entry|
       time_spent += entry.time_spent
     end
-    sprintf( "%0.02f", time_spent/3600)
+    time_spent
   end
 
   def train(category)

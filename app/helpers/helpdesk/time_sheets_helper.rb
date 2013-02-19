@@ -74,6 +74,18 @@ module Helpdesk::TimeSheetsHelper
     end
     script
   end
+
+  def timesheet_integrations_enabled?
+    integrated_apps.each do |app|
+      app_detail = get_app_details(app[0])
+      unless app_detail.blank?
+        return true
+      end
+    end
+
+    return false
+  end
+
   
   private 
     def integrated_apps 

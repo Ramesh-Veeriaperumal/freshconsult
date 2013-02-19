@@ -127,6 +127,18 @@
 		display:none;
 	}
    .fd-menu{ border:1px solid #afafaf; a:hover{ background: #5469f9; } }
+
+   .reply-flip, .view-flip {
+   		.flip-back {
+   			display: none;
+   		}
+
+   		&:hover {
+   			.flip-back {
+   				display: block;
+   			}
+   		}
+   }
 }
 
 .ie6, .ie7, .ie8, .ie9{
@@ -160,5 +172,15 @@
 				}
 			}
 		}
+	}
+
+	.hidden_upload {
+		width: 250px;
+		margin-top: 0;
+		input[type=file] {
+			@include opacity(1);
+			top: 0;
+		}
+		div { display: none;}
 	}
 }

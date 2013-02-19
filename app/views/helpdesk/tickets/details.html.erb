@@ -27,7 +27,7 @@
 					<h3>
 						Time Tracked
 						<div class="tracked_time">
-							<span class="time" id="timeentry_timer_total"><%= @ticket.time_tracked %></span>
+							<span class="time" id="timeentry_timer_total"><%= get_time_in_hours(@ticket.time_tracked) %></span>
 							<span class="time_unit">Hrs </span>
 						</div>
 					</h3>

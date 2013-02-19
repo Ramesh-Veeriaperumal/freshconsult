@@ -1,6 +1,9 @@
 @import "lib/settings";
 /*Requester Info Tabs in Ticket Details page */
 @import "requester-info/*.png";
+@import "conv-actions/*.png";
+
+$tktdetailicon: sprite-map("ticket-details/*.png");
 
 .ticket_details .pagearea{
 	min-width: 1100px;
@@ -11,6 +14,9 @@
 
 }
 
+.ticket_details #inner {
+	z-index: 0;
+}
 ol, ul, li{
 	margin: 0px;
 	list-style: none;
@@ -434,7 +440,7 @@ p strong{
 
 	.forward{
 		padding: 10px 0px 10px 25px;
-		background: url(/images/ticket-details/forward-icon.png) no-repeat 0px 5px;
+		background: sprite($tktdetailicon,forward-icon) no-repeat;
 	}
 
 	.reply .down-arrow{
@@ -450,10 +456,10 @@ p strong{
 	}
 
 	.reply-inner{
-		background: url(/images/ticket-details/reply-icon.png) no-repeat 0px 6px;
+		background: sprite($tktdetailicon,reply-icon) no-repeat;
 		display: inline-block;
 		width: 18px;
-		height: 18px;
+		height: 13px;
 		margin: -5px 4px -1px 0;
 	}
 }
@@ -534,14 +540,14 @@ p strong{
 
 .hidden_upload {
 	display: block;
-	width: 200px;
+	width: 120px;
 	margin-left: 6px;
 	float: left;
 	clear: both;
 	margin-top: -10px;
 	div {
 		color: #1272de;
-		width: 200px;
+		width: 120px;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		-o-text-overflow: ellipsis;
@@ -557,14 +563,15 @@ p strong{
 
 	input[type=file] {
 		height: 22px;
-		width: 200px;
+		width: 120px;
 		position:relative;
 		top: -10px;
+		right: 0;
 		@include opacity(0);
 		cursor: pointer;
 	}
 	
-}  
+}
 
 .add_attachment {
 	cursor: pointer;
@@ -692,7 +699,7 @@ ol.conversation_thread{
     	border: none;
     	box-shadow: none;
     }
-
+	
     .freshdesk_quote {
     	// display: none;
     }
@@ -1003,7 +1010,12 @@ ol.conversation_thread{
 				width: 300px;
 				label {
 					width: auto;
-					margin: 0 5px;
+					margin: 8px 5px 0;
+					background: sprite($tktdetailicon, dropbox) no-repeat;
+					padding:0 0 0 25px;
+					cursor: pointer;
+					color: #1272de;
+					font-weight: normal;
 				}
 			} 
 
@@ -1211,7 +1223,7 @@ ol.conversation_thread{
 		span{
 			font-size: 13px;
 			color: #777;
-			background: url(/images/ticket-details/jira-icon.png) no-repeat 7px 7px;
+			background: sprite($tktdetailicon,jira-icon) no-repeat;
 			padding: 12px 12px 12px 38px;
 			display: block;
 		}
@@ -1695,22 +1707,34 @@ ol.conversation_thread{
 
 	.actions {
 		float: right;
-		display: inline-block;
+		display: block;
 		width: auto;
 		visibility: hidden;
 
-		a {
-			color: #1272de;
-			font-weight: bold;
-			font-size: 13px;
-			padding: 2px;
-			margin: 3px;
+		margin-top: -15px;
+		margin-right: -15px;
+	}
+
+
+	@include all-conv-actions-sprites;
+	a.conv-action-icon {
+		height:32px;
+		width: 50px;
+		@include hide-text();
+		float: right;
+		display: block;
+		border-right: solid 1px #ebebeb;
+
+		&:first-child {
+			border-right: none;
 		}
 
-		.red_links {
-			color: #933;
+		&:hover {
+			background-color: #FFF;
 		}
 	}
+
+
 
 	&:hover {
 		.actions {
@@ -1762,6 +1786,10 @@ ol.conversation_thread{
 		font-weight: 600;
 		margin-top: 5px;
 	}
+}
+
+.touch .commentbox .actions {
+	visibility: visible;
 }
 
 .commentbox:after, .commentbox:before {
@@ -1912,7 +1940,7 @@ ol.conversation_thread{
 	}
 
 	.attachment-close{
-		background: inline-image('ticket-details/attachment-close.png', 'image/png') no-repeat;
+		background: sprite($tktdetailicon,attachment-close) no-repeat;
 		display: inline-block;
 		width: 9px;
 		height: 9px;
@@ -2014,8 +2042,8 @@ label.custom-select {
 }
 
 .comment-lock{
-	background: url(/images/ticket-details/mail-lock.png) no-repeat 0px 0px;
-	margin-top: -50px;
+	background: sprite($tktdetailicon,mail-lock) no-repeat;
+	top: -23px;
 	display: inline-block;
 	position: relative;
 	z-index: 100;
@@ -2098,11 +2126,11 @@ label.custom-select {
 		}
 
 		span.arrow-next{
-			background: url(/images/ticket-details/arrow-next.png) no-repeat;
+			background: sprite($tktdetailicon,arrow-next) no-repeat;
 		}
 
 		span.arrow-previous{
-			background: url(/images/ticket-details/arrow-previous.png) no-repeat;
+			background: sprite($tktdetailicon,arrow-previous) no-repeat;
 		}
 		&:hover{
 			background: #f6f4f4;
@@ -2155,7 +2183,7 @@ label.custom-select {
 		width: 78%;
 
 		.addnew{
-			background: url(/images/ticket-details/addnew-btn.png) no-repeat;
+			background: sprite($tktdetailicon,addnew-btn) no-repeat;
 			padding: 2px 0px;
 			margin-left: 10px;
 			padding-left: 25px;
@@ -2422,10 +2450,10 @@ label.custom-select {
 			background: #800;
 		}
 	}
-
 }
 .reply-flip .flip-front {
 	background: inline-image('collision/show-reply-inactive.png', 'image/png');
+	background: url(/images/collision/show-reply-inactive.png) transparent no-repeat;
 }
 
 .view-flip .flip-front {

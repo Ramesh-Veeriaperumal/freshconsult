@@ -2,7 +2,12 @@
  * @author venom
  */
 var $J = jQuery.noConflict();
- 
+
+is_touch_device = function() {
+  return !!('ontouchstart' in window) // works on most browsers 
+      || !!('onmsgesturechange' in window); // works on ie10
+};
+
 (function($){
    // Global Jquery Plugin initialisation
    // $.fn.qtip.baseIndex = 10000;   
@@ -13,6 +18,11 @@ var $J = jQuery.noConflict();
     var hoverPopup =  false;
     var hidePopoverTimer;
     var hideWatcherTimer;
+
+
+    if (is_touch_device()) {
+      $('html').addClass('touch');
+    }
 
     $("body").click(function(ev){
       hideWidgetPopup(ev);

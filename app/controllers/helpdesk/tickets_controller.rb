@@ -18,9 +18,9 @@ class Helpdesk::TicketsController < ApplicationController
   use_database_pool [:user_ticket, :export_csv] => :persistent
 
   before_filter :set_mobile, :only => [:index, :show,:update, :create, :execute_scenario, :assign, :spam ]
-  before_filter :set_show_version
   before_filter :check_user, :only => [:show, :forward_conv]
   before_filter { |c| c.requires_permission :manage_tickets }
+  before_filter :set_show_version
   before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index, :filter_options]
   before_filter :clear_filter, :only => :index
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
@@ -861,7 +861,8 @@ class Helpdesk::TicketsController < ApplicationController
 
   def set_show_version
     if cookies[:new_details_view].present?
-      set_key(show_version_key, cookies[:new_details_view].eql?("true") ? "1" : "0")
+      set_key(show_version_key, cookies[:new_details_view].eql?("true") ? "1" : "0", 86400 * 50)
+      # Expiry set to 50 days
       cookies.delete(:new_details_view) 
     end
     @new_show_page = (get_key(show_version_key) == "1")
