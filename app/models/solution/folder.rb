@@ -64,7 +64,10 @@ class Solution::Folder < ActiveRecord::Base
   end
   
   named_scope :visible, lambda {|user| {
-                    :include => :customer_folders ,
+                    :order => "position",
+                    :joins => "LEFT JOIN `solution_customer_folders` ON 
+                                solution_customer_folders.folder_id = solution_folders.id and  
+                                solution_customer_folders.account_id = solution_folders.account_id",
                     :conditions => visiblity_condition(user) } }
 
 
@@ -105,7 +108,7 @@ class Solution::Folder < ActiveRecord::Base
   end
 
   def to_liquid
-    Solution::FolderDrop.new self
+    @solution_folder_drop ||= Solution::FolderDrop.new self
   end
 
   private

@@ -45,7 +45,7 @@ class Post < ActiveRecord::Base
   end
 
   def to_liquid
-    Forum::PostDrop.new self
+    forum_post_drop ||= Forum::PostDrop.new self
   end
 
   def to_s

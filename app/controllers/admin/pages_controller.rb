@@ -65,15 +65,15 @@ class Admin::PagesController < Admin::AdminController
 
     def get_redirect_portal_url
       method_name = Portal::Page::PAGE_REDIRECT_ACTION_BY_TOKEN[@portal_page_label.to_sym]
-      portal_redirect_url = send(method_name, :host => @portal.portal_url)
+      portal_redirect_url = send(method_name)
       begin
         cname = Portal::Page::PAGE_MODEL_ACTION_BY_TOKEN[@portal_page_label.to_sym]
         unless cname.blank?
           data = current_account.send(cname).first if !cname.blank? && current_account.respond_to?(cname) 
           id = data.id unless data.blank?
-          portal_redirect_url = send(method_name, :id => id, :host => @portal.portal_url)  
+          portal_redirect_url = send(method_name, :id => id)  
         else
-          portal_redirect_url = send(method_name, :host => @portal.portal_url)
+          portal_redirect_url = send(method_name)
         end
       rescue Exception => e
         # NewRelic::Agent.notice_error(e)

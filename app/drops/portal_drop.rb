@@ -22,13 +22,13 @@ class PortalDrop < BaseDrop
   end
 
   def folders
-    @folders ||= (solution_categories.map{ |c| c.folders.visible(portal_user) }.reject(&:blank?) || []).flatten
+    @folders ||= (portal_account.folders.visible(portal_user).reject(&:blank?) || []).flatten
   end
 
   # !MODEL-ENHANCEMENT Need to make published articles for a 
   # folder to be tracked inside the folder itself... similar to fourms
   def articles_count
-    @articles_count ||= folders.map{ |f| f.published_articles.size }.sum
+    @articles_count ||= portal_account.published_articles.count
   end
 
   # Discussions related attributes for portal

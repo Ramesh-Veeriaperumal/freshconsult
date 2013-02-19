@@ -6,6 +6,7 @@ class SupportController < ApplicationController
  
   protected
     def set_portal_page page_token
+      @skip_liquid_compile = false
       # Setting up page layout variable
       process_page_liquid page_token
 
@@ -14,6 +15,7 @@ class SupportController < ApplicationController
 
       # Setting dynamic header, footer, layout and misc. information
       process_template_liquid
+      @skip_liquid_compile = true
     end
 
     def preview?

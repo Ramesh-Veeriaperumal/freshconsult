@@ -202,7 +202,7 @@ class Topic < ActiveRecord::Base
 
   # Added for portal customisation
   def to_liquid
-    Forum::TopicDrop.new self
+    @forum_topic_drop ||= Forum::TopicDrop.new self
   end
 
   def to_s

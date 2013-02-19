@@ -83,7 +83,8 @@ class Portal < ActiveRecord::Base
   end
   
   def to_liquid
-    PortalDrop.new self
+    @portal_drop ||= (PortalDrop.new self)
+    # PortalDrop.new self
   end
   
   def portal_login_path

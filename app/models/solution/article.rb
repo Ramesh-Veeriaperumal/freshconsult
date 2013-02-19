@@ -144,7 +144,7 @@ class Solution::Article < ActiveRecord::Base
   end
   
   def to_liquid
-    Solution::ArticleDrop.new self
+    @solution_article_drop ||= Solution::ArticleDrop.new self
   end
   
   def article_title

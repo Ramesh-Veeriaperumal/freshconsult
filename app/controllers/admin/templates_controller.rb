@@ -32,7 +32,8 @@ class Admin::TemplatesController < Admin::AdminController
     flash[:notice] = "Portal template saved successfully." unless params[:preview_button]
     respond_to do |format|
       format.html { 
-        set_preview_and_redirect(support_home_url(:host => @portal.portal_url)) if params[:preview_button]
+        preview_url = support_home_path
+        set_preview_and_redirect(preview_url) if params[:preview_button]
       }
     end
   end  

@@ -81,7 +81,7 @@ class Portal::Page < ActiveRecord::Base
   	end 
 
 	def to_liquid
-	    PageDrop.new self
+	  @page_drop ||= PageDrop.new self
 	end
 
 end

@@ -356,7 +356,7 @@ class User < ActiveRecord::Base
   end
   
   def to_liquid
-    UserDrop.new self
+    @user_drop ||= UserDrop.new self
   end
   
   def has_manage_forums?
