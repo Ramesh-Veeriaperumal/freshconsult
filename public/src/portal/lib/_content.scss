@@ -318,11 +318,15 @@ hr.content-divider{
 	border-bottom-color:#f6f6f6;
 }
 
+/* Post edit and delete dropdown styles */
 .post-actions{
 	margin-top: 15px;
 	@include opacity(0.4);
 }
 .user-comment:hover .post-actions{ @include opacity(1); }
+
+/* Topic label styles in forum list view */
+.topic-list .topic-labels .label{ @extend .label-small; }
 
 /* Media styles for tablet and above */
 @include at-breakpoint($break-tablet){
@@ -350,6 +354,10 @@ hr.content-divider{
 		float: right;
 		margin-bottom: -50px;
 		margin-top: 15px;
+	}
+
+	.topic-list .topic-labels{
+		float: right;
 	}
 }
 

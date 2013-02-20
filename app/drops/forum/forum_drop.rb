@@ -73,15 +73,24 @@ class Forum::ForumDrop < BaseDrop
     @not_taken_topics ||= filter_topics(:nottaken)
   end
 
+  def inprogress
+    @inprogress ||= filter_topics(:inprogress)
+  end
+
+  def deferred
+    @deferred ||= filter_topics(:deferred)
+  end
+
   private
     def filter_topics filter = self.current_topic_filter
       case filter
         when :popular
           @source.topics.popular.filter(@per_page, @page)
 
-        when :planned, :implemented, :nottaken
+        when :planned, :implemented, :nottaken, :deferred, :inprogress
           _stamp = Topic::IDEAS_STAMPS_BY_TOKEN[filter.to_sym]
           @source.topics.newest.by_stamp(_stamp).filter(@per_page, @page)
+          
         else
           @source.recent_topics.filter(@per_page, @page)
       end

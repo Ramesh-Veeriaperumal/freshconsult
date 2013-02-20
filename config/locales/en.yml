@@ -190,6 +190,8 @@ en:
     planned: Planned
     implemented: Implemented
     nottaken: Not Taken
+    deferred: Deferred
+    inprogress: In Progress
   payment_info: Payment information
   billing_address: Billing Address
   support:
@@ -1268,6 +1270,7 @@ en:
     msg1: Comments are closed for this topic
     sticky: Sticky
     locked: Locked
+    answered: Answered
   activerecord: 
     errors: 
       messages: 

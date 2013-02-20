@@ -12,26 +12,13 @@
 	</div>
 	
 	<section class="topic-header clearfix">
-		<div class="topic-stamp">
-		{% if topic.sticky? %}
-			<span class="label label-sticky">
-				Sticky
-			</span>
-		{% endif %}
-		{% if topic.stamp_name %}
-			<span class="label label-{{ topic.stamp_key | downcase }}">
-				{{ topic.stamp_name }}
-			</span>
-		{% endif %}
-		</div>
+		{{ topic | topic_labels }}
 		<b class="page-stamp page-stamp-{{ forum.type_name }}">
 			<i class="icon-page-{{ forum.type_name }}"></i>
 		</b>
 		<h2 class="post-title heading">
 			{{ topic.title }}
 		</h2>
-
-
 		{% if portal.user %}
 			<div class="topic-actions btn-group" id="topic-toolbar">
 				<a href="#reply-to-post" class="btn btn-small" data-proxy-for="#new-post-form">Reply</a>

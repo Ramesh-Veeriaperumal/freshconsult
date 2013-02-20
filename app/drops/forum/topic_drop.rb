@@ -8,21 +8,6 @@ class Forum::TopicDrop < BaseDrop
     super source
   end
 
-  def stamps
-    # stamps = [ source.stamp_name, source.stamp_key ]
-    # tabs.map { |s|
-    #     HashDrop.new( :name => s[1].to_s, :label => (s[3] || I18n.t("header.tabs.#{s[1].to_s}")), :tab_type => s[1].to_s ) if s[2]
-    #   }
-  end
-
-  def stamp_name
-  	source.stamp_name
-  end
-  
-  def stamp_key
-    source.stamp_key
-  end
-
   def user
   	source.user
   end
@@ -33,6 +18,11 @@ class Forum::TopicDrop < BaseDrop
 
   def created_on
     source.created_at
+  end
+
+  # Stamp key for the topic (planned, inprogress, deferred, implemented, nottaken)
+  def stamp
+    source.stamp_key
   end
 
   def has_comments

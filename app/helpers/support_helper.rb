@@ -189,6 +189,19 @@ HTML
 		pluralize topic.votes, "vote"
 	end
 
+	def topic_labels topic
+		output = []
+		output << %(<div class="topic-labels">)
+		output << %(<span class="label label-sticky">
+				#{t('topic.sticky')}</span>) if topic['sticky?']
+		output << %(<span class="label label-answered">
+				#{t('topic.answered')}</span>) if topic['answered?']
+		output << %(<span class="label label-#{topic['stamp']}">
+				#{t('topic.ideas_stamps.'+topic['stamp'])}</span>) if topic['stamp'].present?
+		output << %(</div>)
+		output.join('')
+	end
+
 	def link_to_topic_edit topic, label = I18n.t("topic.edit")
 		if User.current == topic.user
 			link_to label, topic['edit_url'], :title => label, :class => "btn btn-small"
