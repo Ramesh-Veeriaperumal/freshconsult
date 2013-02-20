@@ -48,6 +48,9 @@ default_fields:
         handler: object_id
 
     created_at:
+        handler: date_time
+
+    created_at:
         <<: *date_time
     opened_at:
         <<: *date_time

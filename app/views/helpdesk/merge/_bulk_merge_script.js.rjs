@@ -1,0 +1,7 @@
+page.hide :mergebox
+page.hide :invaliduser 
+page.replace_html :mergeboxconfirm, :partial => "/helpdesk/merge/confirm_bulk_merge"
+page.show :mergeboxconfirm
+page << "jQuery('#bulk_merge').button('reset')"
+page << "jQuery('#cancel').attr('disabled', false).removeClass('disabled')"
+page << "jQuery('.src').remove()"

@@ -723,7 +723,7 @@ input.submit-btn:active {
 .custom-upload {
   position: relative;
   margin-top: 30px;
-  height: 50px;
+  height: 70px;
   width: 300px;
   background: url(/images/gs/upload-logo.png) no-repeat;
 }
@@ -741,10 +741,8 @@ input.submit-btn:active {
 /* line 518, ../sass/screen.scss */
 .custom-upload .fake-file {
   display: inline-block;
-  position: absolute;
-  top: -5px;
-  left: 68px;
   width: 350px;
+  margin-top: 10px;
   padding: 0;
   margin: 0;
   z-index: 1;
@@ -1070,6 +1068,6 @@ p{
 }
 
 #logo-preview{
-   width:50px;
-   height:50px;
+   max-width:180px;
+   max-height:50px;
 }

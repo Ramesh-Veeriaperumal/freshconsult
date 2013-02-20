@@ -161,7 +161,7 @@ var $J = jQuery.noConflict();
  
       // - Custom select boxs will use a plugin called chosen to render with custom CSS and interactions
       $("select.customSelect").livequery(function(){ $(this).chosen(); });
-      $("select.select2").livequery(function(){ $(this).select2(); });
+      $("select.select2").livequery(function(){ $(this).select2($(this).data()); });
 
       // - Quote Text in the document as they are being loaded
       $("div.request_mail").livequery(function(){ quote_text(this); }); 
@@ -176,11 +176,6 @@ var $J = jQuery.noConflict();
       $(".tourmyapp-toolbar .tourmyapp-next_button").livequery(function(){ 
         if($(this).text() == "Next »")
            $(this).addClass('next_button_arrow').text('Next');
-      });
-
-      // - Tour My App 'slash' replaced by 'of'
-      $('.tourmyapp-step-index').livequery(function() { 
-        $(this).text($(this).text().replace('/',' of '));
       });
 
       // !PULP to be moved into the pulp framework as a sperate util or plugin function
