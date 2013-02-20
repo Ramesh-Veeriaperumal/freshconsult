@@ -755,6 +755,25 @@ h4.title{
 	div.description{  
 			position: relative; 
 			.details{ 
+				.ticket-details-twitter{
+					margin-top: 30px;
+					display: inline-block;
+					vertical-align: middle;
+					.twitter-logo{
+						background: url(/images/twitter.png) no-repeat; 
+						width:22px;	
+						display: inline-block;
+						height: 15px;
+						vertical-align: middle;
+						padding-right: 3px;
+						opacity: 0.3;
+					}
+					a{
+						vertical-align: middle;
+						display: inline-block;
+					}
+				}
+
 				@include text-formatting;
 				font-size:13px;
 				line-height:18px;

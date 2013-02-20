@@ -118,6 +118,13 @@
           <div class="request_mail">
             <%= @ticket.description_html %>
           </div>
+          <% if @ticket.requester && @ticket.is_twitter? %>
+          <div class="ticket-details-twitter">
+            <span class="twitter-logo"></span><%= link_to(t('ticket.view_twitter'),
+                "http://twitter.com/#{@ticket.requester.twitter_id}/status/#{@ticket.tweet.tweet_id}", 
+                 :id => "ViewConvo", :target => "_blank") %>
+          </div>
+          <% end %>
         </div>      
         <% 
           attachments = @ticket.attachments
