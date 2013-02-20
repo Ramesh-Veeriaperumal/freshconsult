@@ -282,7 +282,7 @@ p strong{
 #toggle-note-visibility {
 	display: inline-block;
 	float: right;
-	margin: 0 5px;
+	margin: -30px 0 5px;
 
 	.note-visible, .note-hidden {
 		i {
@@ -2414,8 +2414,8 @@ label.custom-select {
 	   border-radius: 50%;
 	   background: #333;
 	   color: #fff;
-	   width: 35px;
-	   height: 34px;
+	   width: 37px;
+	   height: 37px;
 	   background-repeat: no-repeat;
 	}
 
@@ -2428,8 +2428,8 @@ label.custom-select {
 		text-align: center;
 		padding: 7px 0;
 		color: #fff;
-		width: 35px;
-		height: 20px;
+		width: 37px;
+		height: 23px;
 		@include rotateY(-180deg);
 		background: #f5f5f5;
 	}
