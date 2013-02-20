@@ -212,7 +212,9 @@ class Helpdesk::TicketsController < ApplicationController
     @subscription = current_user && @item.subscriptions.find(
       :first, 
       :conditions => {:user_id => current_user.id})
-      
+
+    @page_title = "[##{@ticket.display_id}] #{@ticket.subject}"
+    
     respond_to do |format|
       format.html  {
         if @new_show_page
@@ -221,8 +223,6 @@ class Helpdesk::TicketsController < ApplicationController
 
           render :action => "details"
         end
-
-        @page_title = "[##{@ticket.display_id}] #{@ticket.subject}"
       }
       format.atom
       format.xml  { 

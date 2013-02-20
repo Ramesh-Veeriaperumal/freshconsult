@@ -121,6 +121,10 @@
 //		@include pie;
 	}
    .fd-menu{ z-index:999999 }
+
+   .content .controls .control-left .source-badge-wrap .source {
+   		display:block;
+   }
 }
 .ie6, .ie7, .ie8{
 	.ie8plusonly {

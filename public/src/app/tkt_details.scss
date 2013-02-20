@@ -4,6 +4,7 @@
 @import "conv-actions/*.png";
 
 $tktdetailicon: sprite-map("ticket-details/*.png");
+$collision: sprite-map("collision/*.png");
 
 .ticket_details .pagearea{
 	min-width: 1100px;
@@ -1770,8 +1771,6 @@ ol.conversation_thread{
 		margin-top: 30px;
 	}
 
-
-
 	.tag {
 		float:right;
 		background: #b5b5b5;
@@ -2381,15 +2380,15 @@ label.custom-select {
     color: #fff;
     left: -15px;
     @include perspective(1000);
-    width: 34px;
-    height: 35px;
+    width: 37px;
+    height: 37px;
     border-radius: 50%;
 }
 .view-flip {
-    top: -12px;
+    top: -14px;
 }
 .reply-flip {
-    top: 28px;
+    top: 30px;
 }
 
 .reply-flip, .view-flip {
@@ -2400,10 +2399,14 @@ label.custom-select {
 	    left: 0;
 	    @include transform-style(preserve-3d);
 	    @include backface-visibility(hidden);
-	    -webkit-transition: 0.75s;
-	    -moz-transition: 0.75s;
-	    -o-transition: 0.75s;
-	    transition: 0.75s;
+		-webkit-transition-property: -webkit-transform;
+		   -moz-transition-property: -moz-transform;
+		     -o-transition-property: -o-transform;
+		        transition-property: transform;
+	    -webkit-transition-duration: 0.75s;
+		   -moz-transition-duration: 0.75s;
+	    	 -o-transition-duration: 0.75s;
+    			transition-duration: 0.75s;
 	}
 
 	.flip-front{
@@ -2429,14 +2432,12 @@ label.custom-select {
 		height: 20px;
 		@include rotateY(-180deg);
 		background: #f5f5f5;
-		color: #fff;
 	}
 
 	&:hover {
 		.flip-front {
 		    z-index: 5;
 		    @include rotateY(180deg);
-		    background: #333;
 		}
 
 		.flip-back  {
@@ -2452,109 +2453,22 @@ label.custom-select {
 	}
 }
 .reply-flip .flip-front {
-	background: inline-image('collision/show-reply-inactive.png', 'image/png');
-	background: url(/images/collision/show-reply-inactive.png) transparent no-repeat;
+	background: sprite($collision, show-reply-inactive);
+	// background: url(/images/collision/show-reply-inactive.png) transparent no-repeat;
 }
 
 .view-flip .flip-front {
-	background: inline-image('collision/show-viewing-inactive.png', 'image/png');
+	background: sprite($collision, show-viewing-inactive);
+	// background: inline-image('collision/show-viewing-inactive.png', 'image/png');
 }
 .reply-flip.active .flip-front {
-	background: inline-image('collision/show-reply.png', 'image/png');
+	background: sprite($collision, show-reply-active);
+	// background: inline-image('collision/show-reply.png', 'image/png');
 }
 
 .view-flip.active .flip-front {
-	background: inline-image('collision/show-viewing.png', 'image/png');
-}
-
-/* Keyframes for Agent Collision in Ticket view */
-
-@-webkit-keyframes flipauto{
-    0% {
-        -webkit-transform: rotateY(0deg);
-        z-index: 0;
-    }
-  100% {
-        -webkit-transform: rotateY(180deg);
-        z-index: 20;
-    }
-}
-
-@-webkit-keyframes flipauto-back{
-    0% {
-        -webkit-transform: rotateY(0deg);
-        z-index: 10;
-    }
-  100% {
-        -webkit-transform: rotateY(180deg);
-        z-index:10;
-    }
-}
-
-@-moz-keyframes flipauto{
-    0% {
-        -moz-transform: rotateY(0deg);
-        z-index: 0;
-    }
-  100% {
-        -moz-transform: rotateY(180deg);
-        z-index: 20;
-    }
-}
-
-@-moz-keyframes flipauto-back{
-    0% {
-        -webkit-transform: rotateY(0deg);
-        z-index: 10;
-    }
-  100% {
-        -moz-transform: rotateY(180deg);
-        z-index:10;
-    }
-}
-
-@-ms-keyframes flipauto{
-    0% {
-        -ms-transform: rotateY(0deg);
-        z-index: 0;
-    }
-  100% {
-        -ms-transform: rotateY(180deg);
-        z-index: 20;
-    }
-}
-
-@-ms-keyframes flipauto-back{
-    0% {
-        -ms-transform: rotateY(0deg);
-        z-index: 10;
-    }
-  100% {
-        -ms-transform: rotateY(180deg);
-        z-index:10;
-    }
-}
-
-@keyframes flipauto{
-    0% {
-        transform: rotateY(0deg);
-        z-index: 0;
-    }
-  100% {
-        transform: rotateY(180deg);
-        z-index: 20;
-    }
-}
-
-@keyframes flipauto-back{
-    0% {
-        transform: rotateY(0deg);
-        z-index: 10;
-    }
-  100% {
-        transform: rotateY(180deg);
-        z-index:10;
-    }
+	background: sprite($collision, show-viewing-active);
+	// background: inline-image('collision/show-viewing.png', 'image/png');
 }
 
 .dropdown.open .dropdown-toggle {

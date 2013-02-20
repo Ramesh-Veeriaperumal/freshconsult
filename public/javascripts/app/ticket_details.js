@@ -232,8 +232,10 @@ swapEmailNote = function(formid, link){
 			$('#'+formid+"-body").insertHtml("<div/>");//to avoid the jumping line on start typing 
 		}
 		$('#'+formid+"-body").getEditor().on('blur',function(){
-			$('#'+formid+"-body").data('focus_node',document.getSelection().getRangeAt(0).endContainer);
-			$('#'+formid+"-body").data('focus_node_offSet',document.getSelection().getRangeAt(0).endOffset);
+			try{
+				$('#'+formid+"-body").data('focus_node',document.getSelection().getRangeAt(0).endContainer);
+				$('#'+formid+"-body").data('focus_node_offSet',document.getSelection().getRangeAt(0).endOffset);
+			} catch (e) {}
 		});
 	}
 
@@ -562,7 +564,7 @@ $(document).ready(function() {
 				formatResult: formatPriority,
 				escapeMarkup: escapePriority,
 				specialFormatting: true,
-				minimumResultsForSearch: 5,
+				minimumResultsForSearch: 5
 			});
 		} else {
 			$(this).select2({
@@ -686,7 +688,6 @@ $(document).ready(function() {
 	});
 
 	$(".conversation_thread .request_panel form").live('submit', function(ev) {
-		ev.preventDefault();
 
 		var _form = $(this);
 		_form.find('input[type=submit]').prop('disabled', true);
@@ -701,7 +702,6 @@ $(document).ready(function() {
 					return false;
 				}
 			}
-
 
 			//Blocking the Form:
 			if (_form.data('panel'))
@@ -720,6 +720,11 @@ $(document).ready(function() {
 					}
 				});
 			}
+
+			if ($('html').hasClass('ie6') || $('html').hasClass('ie7') || $('html').hasClass('ie8') || $('html').hasClass('ie9')) {
+				return true;
+			}
+			ev.preventDefault();
 
 			_form.ajaxSubmit({
 				dataType: 'script',

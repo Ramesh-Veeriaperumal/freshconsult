@@ -7663,6 +7663,10 @@ a[rel="load-rjs"] {
 
 div.monitor_div{
 	display: inline-block;
+	zoom: 1;
+	*display: block;
+	*float: left;
+	*width: 43px;
 }
 
 div.watchers_tooltip{
