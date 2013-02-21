@@ -74,7 +74,7 @@ class AuthorizationsController < ApplicationController
 
   def create_for_oauth2(provider, params)
     Account.reset_current_account
-    portal_id = request.env["rack.session"]["omniauth.origin"] unless request.env["rack.session"]["omniauth.origin"].blank?
+    portal_id = request.env["omniauth.origin"] unless request.env["omniauth.origin"].blank?
     access_token = get_oauth2_access_token(provider, @omniauth.credentials.refresh_token)
     portal = Portal.find_by_id(portal_id)
     account = portal.account
@@ -96,7 +96,7 @@ class AuthorizationsController < ApplicationController
     def create_for_email_marketing_oauth(provider, params)
     config_params = {}
     Account.reset_current_account
-    portal_id = request.env["rack.session"]["omniauth.origin"] unless request.env["rack.session"]["omniauth.origin"].blank?
+    portal_id = request.env["omniauth.origin"] unless request.env["omniauth.origin"].blank?
     portal = Portal.find_by_id(portal_id)
     account = portal.account
     domain = portal.host
@@ -116,7 +116,7 @@ class AuthorizationsController < ApplicationController
 
   def create_for_facebook(params)
     Account.reset_current_account
-    portal_id = request.env["rack.session"]["omniauth.origin"] unless request.env["rack.session"]["omniauth.origin"].blank?
+    portal_id = request.env["omniauth.origin"] unless request.env["omniauth.origin"].blank?
     portal = Portal.find_by_id(portal_id)
     user_account = portal.account
     portal_url = portal.host
