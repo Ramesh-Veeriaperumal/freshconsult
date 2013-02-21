@@ -103,6 +103,8 @@ default_fields:
         event_handler: change
     inbound_count:
         handler: numeric
+    outbound_count:
+        handler: numeric
     any:
         handler: allow_all
     st_survey_rating:

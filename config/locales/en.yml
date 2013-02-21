@@ -519,6 +519,9 @@ en:
         to: To
         selected: Selected
         not_selected: Not selected
+        checked: Checked
+        unchecked: Unchecked
+        deselected: Deselected
     automations:
       edit:
         title: Edit Scenario
@@ -653,6 +656,7 @@ en:
         integrations: "Integrations"
         dispatcher: Dispatch'r
         supervisor: Supervisor
+        observer: Observer
         sla: SLA Policies
         ticket-fields: Ticket Fields
         remote-authentication: Remote Authentication
@@ -1787,13 +1791,13 @@ en:
   back: Back
   event:
     confirm_message: If you choose 'Any', the selected agents in the list will be discarded. Click OK to proceed.
-    received: Received
-    updated: Updated
-    added: Added
-    sent: Sent
-    from: From
-    to: To
-    by: By
+    received: is received
+    updated: is updated
+    added: is added
+    sent: is sent
+    from: from
+    to: to
+    by: by
   ticket:
     reported_on: "from %{username}, Last updated: on %{date}"
     ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago</span>"
@@ -1868,6 +1872,7 @@ en:
     first_response_due: Hours since first response due
     due_by: Hours since ticket overdue
     inbound_count: Number of requester interactions
+    outbound_count: Number of agent interactions
     recent_tickets: Recent tickets
     unflag_spam: Not Spam
     pick_up: Pick Up

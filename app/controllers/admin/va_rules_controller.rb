@@ -120,18 +120,24 @@ class Admin::VaRulesController < Admin::AutomationsController
     end
   
     def add_custom_filters filter_hash
-      current_account.ticket_fields.custom_fields.each do |field|
-        filter_hash.push({
-          :id => field.id,
-          :name => field.name,
-          :value => field.label,
-          :field_type => field.field_type,
-          :domtype => (field.field_type == "nested_field") ? "nested_field" : field.flexifield_def_entry.flexifield_coltype,
-          :choices =>  (field.field_type == "nested_field") ? field.nested_choices : field.picklist_values.collect { |c| [c.value, c.value ] },
-          :action => "set_custom_field",
-          :operatortype => CF_OPERATOR_TYPES.fetch(field.field_type, "text"),
-          :nested_fields => nested_fields(field)
-        })
+      cf = current_account.ticket_fields.custom_fields
+      unless cf.blank? 
+        filter_hash.push({ :name => -1,
+                          :value => "------------------------------" 
+                          })
+        cf.each do |field|
+          filter_hash.push({
+            :id => field.id,
+            :name => field.name,
+            :value => field.label,
+            :field_type => field.field_type,
+            :domtype => (field.field_type == "nested_field") ? "nested_field" : field.flexifield_def_entry.flexifield_coltype,
+            :choices =>  (field.field_type == "nested_field") ? field.nested_choices : field.picklist_values.collect { |c| [c.value, c.value ] },
+            :action => "set_custom_field",
+            :operatortype => CF_OPERATOR_TYPES.fetch(field.field_type, "text"),
+            :nested_fields => nested_fields(field)
+          })
+        end
       end
     end
   

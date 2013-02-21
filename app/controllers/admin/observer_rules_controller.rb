@@ -3,6 +3,13 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
 	protected
     
     NESTED_FIELDS = ['nested_rules', 'from_nested_rules', 'to_nested_rules']
+    OBSERVER_FILTERS = [
+      { :name => -1, :value => "------------------------------" },
+      { :name => "inbound_count", :value => I18n.t('ticket.inbound_count'), :domtype => "number",
+      :operatortype => "hours" },
+      { :name => "outbound_count", :value => I18n.t('ticket.outbound_count'), :domtype => "number",
+      :operatortype => "hours" }
+    ]
 
     def scoper
       current_account.observer_rules
@@ -81,23 +88,26 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
     
     def add_custom_events event_hash
       any_value = [['--', t('any_val.any_value')]]
-      event_hash.push({ :name => -1,
-                        :value => "------------------------------" 
-                        }) unless current_account.ticket_fields.event_fields.blank? 
-      current_account.ticket_fields.event_fields.each do |field|
-        event_hash.push({
-          :name => field.flexifield_def_entry.flexifield_name,
-          :value => field.label,
-          :field_type => field.field_type,
-          :domtype => (field.field_type == "nested_field") ? 
-                        "nested_field" :
-                          field.flexifield_def_entry.flexifield_coltype,
-          :choices => (field.field_type == "nested_field") ? 
-                        (field.nested_choices any_value) : 
-                          any_value+field.picklist_values.collect { |c| [c.value, c.value ] },
-          :type => (field.field_type == "custom_checkbox") ? 1 : 2,
-          :nested_fields => nested_fields(field)
-        })
+      cf = current_account.ticket_fields.event_fields
+      unless cf.blank? 
+        event_hash.push({ :name => -1,
+                          :value => "------------------------------" 
+                          })
+        cf.each do |field|
+          event_hash.push({
+            :name => field.flexifield_def_entry.flexifield_name,
+            :value => field.label,
+            :field_type => field.field_type,
+            :domtype => (field.field_type == "nested_field") ? 
+                          "nested_field" :
+                            field.flexifield_def_entry.flexifield_coltype,
+            :choices => (field.field_type == "nested_field") ? 
+                          (field.nested_choices any_value) : 
+                            any_value+field.picklist_values.collect { |c| [c.value, c.value ] },
+            :type => (field.field_type == "custom_checkbox") ? 1 : 2,
+            :nested_fields => nested_fields(field)
+          })
+        end
       end
     end
 
@@ -135,7 +145,7 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
     end
 
     def additional_filters
-    	[]
+      OBSERVER_FILTERS
     end
 
     def additional_actions

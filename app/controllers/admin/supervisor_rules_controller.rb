@@ -26,7 +26,8 @@ class Admin::SupervisorRulesController < Admin::VaRulesController
       :operatortype => "hours" },
     { :name => "inbound_count", :value => I18n.t('ticket.inbound_count'), :domtype => "number",
       :operatortype => "hours" },
-    { :name => -1, :value => "------------------------------" }
+    { :name => "outbound_count", :value => I18n.t('ticket.outbound_count'), :domtype => "number",
+      :operatortype => "hours" },
   ]
   
   protected

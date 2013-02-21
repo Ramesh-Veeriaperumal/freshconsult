@@ -10,7 +10,7 @@ class Va::EventHandler
 	
 		def init_handler 
 			handler_class = VAConfig.handler @event.name.to_sym, @account, :event_rule_handler
-	    @handler = handler_class.constantize.new( @event, rule )
+	    @handler = handler_class.constantize.new @event, rule
 		end
 	
 end

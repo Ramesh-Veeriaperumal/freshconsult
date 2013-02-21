@@ -19,9 +19,9 @@ class Va::EventHandlers::NestedField < Va::EventHandler
 		end
 
 		def matches? current_events, evaluate_on, event, rule
-			current_value = evaluate_on.flexifield.send( event.name )
+			current_value = evaluate_on.flexifield.send(event.name)
 			current_events[event.name] ||= [current_value, current_value]
-			return ( event.event_matches? current_events, evaluate_on )
+			return (event.event_matches? current_events, evaluate_on)
 		end
 
 end

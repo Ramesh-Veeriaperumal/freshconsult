@@ -1,8 +1,6 @@
 <% content_for :sidebar do -%><%- end %>
-<!--%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "observer_rule" } %-->
-<!--%= render :partial => "filter_data_manip", :locals => { :filter_type => "observer_rule" } %-->
-<%= render :partial => "filter_jsinit" %>
-<%= render :partial => "filter_data_manip" %>
+<%= include_javascripts :observer_event %>
+<%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "observer"} %>
 
 
 <%= f.error_messages :object_name => 'rule' %>

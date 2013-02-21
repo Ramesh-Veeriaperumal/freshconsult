@@ -14,7 +14,9 @@ class VARule < ActiveRecord::Base
 
   named_scope :disabled, :conditions => { :active => false }
 
-  named_scope :observer_biz_rules, :conditions => { "va_rules.rule_type" => [VAConfig::INSTALLED_APP_BUSINESS_RULE], "va_rules.active" => true }, :order => "va_rules.position"
+  named_scope :observer_biz_rules, :conditions => { 
+    "va_rules.rule_type" => [VAConfig::INSTALLED_APP_BUSINESS_RULE], 
+    "va_rules.active" => true }, :order => "va_rules.position"
 
   acts_as_list
   
@@ -33,7 +35,6 @@ class VARule < ActiveRecord::Base
       @performed_by = filter_data[:performed_by]
       events_array = filter_data[:events]
       @filter_array = filter_data[:conditions]
-      p @filter_array
       @events = []
       events_array.each do |e|
         e.symbolize_keys!
@@ -127,19 +128,16 @@ class VARule < ActiveRecord::Base
   
   private
     def has_events?
-      p "events"
       return unless(rule_type == VAConfig::OBSERVER_RULE)
       errors.add_to_base(I18n.t("errors.events_empty")) if(filter_data[:events].blank?)
     end
     
     def has_conditions?
-      p "conditions"
       return unless(rule_type == VAConfig::SUPERVISOR_RULE)
       errors.add_to_base(I18n.t("errors.conditions_empty")) if(filter_data.blank?)
     end
     
     def has_actions?
-      p "actions"
       deserialize_all
       errors.add_to_base(I18n.t("errors.actions_empty")) if(action_data.blank?)
     end
