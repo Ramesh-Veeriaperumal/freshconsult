@@ -1,9 +1,14 @@
 <% @ticket = current_account.tickets.new %>
 <% @ticket.email = current_user.email if current_user %>
-<% form_for @ticket, :url => support_tickets_path, :html => { :multipart => true, :class => "form-portal ticket-form",:rel => "validate" } do |f| %>
+<% form_for @ticket, :url => support_tickets_path, :html => { :multipart => true, 
+    :class => "form-portal ticket-form", :rel => "validate", "data-live-query" => "select-boxes" } do |f| %>
   <%= f.error_messages %>
-  <% current_portal.customer_editable_ticket_fields.each do |field| %>    
-      <%= construct_ticket_element :helpdesk_ticket, field, 
+  <% current_portal.customer_editable_ticket_fields.each do |field| %>
+    <div class="control-group">
+      <%= ticket_label :helpdesk_ticket, field %>
+      <%= ticket_form_element :helpdesk_ticket, field, ticket_field_form_value(field, @ticket) %>
+    </div>
+      <%#= construct_ticket_element :helpdesk_ticket, field, 
                                    field.label_in_portal,
                                    field.dom_type, 
                                    field.required_in_portal, 

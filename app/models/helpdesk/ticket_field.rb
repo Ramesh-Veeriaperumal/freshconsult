@@ -155,11 +155,14 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end
 
   def nested_levels
-    nested_ticket_fields.map{ |l| { :id => l.id, :label => l.label, :label_in_portal => l.label_in_portal, :name => l.name, :level => l.level } } if field_type == "nested_field"
+    nested_ticket_fields.map{ |l| { :id => l.id, :label => l.label, :label_in_portal => l.label_in_portal, 
+      :name => l.name, :level => l.level, :field_type => "nested_child" } } if field_type == "nested_field"
   end
 
   def levels
-    nested_ticket_fields.map{ |l| { :id => l.id, :label => l.label, :label_in_portal => l.label_in_portal , :description => l.description, :level => l.level, :position => 1, :type => "dropdown" } } if field_type == "nested_field"
+    nested_ticket_fields.map{ |l| { :id => l.id, :label => l.label, :label_in_portal => l.label_in_portal, 
+      :description => l.description, :level => l.level, :position => 1, :field_type => "nested_child", 
+      :type => "dropdown" } } if field_type == "nested_field"
   end
 
   def level_three_present

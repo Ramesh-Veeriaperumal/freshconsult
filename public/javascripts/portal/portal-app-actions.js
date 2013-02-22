@@ -92,6 +92,12 @@
 		// This is used in the place when the user can cc only people from his company
 		$("select#cc_emails").select2(_closed_list_cc_emails_opts)
 
+		$("select.custom-select").livequery(function(){ 
+			$(this).select2({
+				minimumResultsForSearch: 10
+			})
+		})
+
 		// Hacks for overriding Bootstrap defaults
 		// Changing the default loading button text
 		$.fn.button.defaults = { loadingText: 'Please wait...'  }

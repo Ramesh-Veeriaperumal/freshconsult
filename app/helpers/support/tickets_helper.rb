@@ -91,11 +91,12 @@ module Support::TicketsHelper
     _field_type = field.field_type
     _field_value = (field.is_default_field?) ? ticket.send(field.field_name) : ticket.get_ff_value(field.name)
     _dom_type = (_field_type == "default_source") ? "dropdown" : field.dom_type
+    
     case _dom_type
       when "dropdown", "dropdown_blank"
         if(_field_type == "default_agent")
           ticket.responder.name if ticket.responder
-        elsif(_field_type == "nested_field")
+        elsif(_field_type == "nested_field" || _field_type == "nested_child")
           ticket.get_ff_value(field.name)
         else
           field.dropdown_selected(((_field_type == "default_status") ? 
@@ -104,6 +105,21 @@ module Support::TicketsHelper
     else
       _field_value
     end
+  end
+
+  def ticket_field_form_value(field, ticket)
+    form_value = (field.is_default_field?) ? 
+                  ticket.send(field.field_name) : ticket.get_ff_value(field.name)
+    
+    if(field.field_type == "nested_field")
+      form_value = {}
+      field.nested_levels.each do |ff|
+        form_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = ticket.get_ff_value(ff[:name])
+      end
+      form_value.merge!({:category_val => ticket.get_ff_value(field.name)})
+    end
+    
+    return form_value
   end
 
 end

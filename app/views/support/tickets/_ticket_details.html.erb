@@ -1,23 +1,34 @@
 <section class="widget" id="ticket-sidebar-details">
 	<h3 class="light">Ticket details</h4>
-	<% @visible_ticket_fields.each do |field| %>
-		<% field_value = ticket_field_display_value(field, @ticket) %>
-		<% if field_value.present? %>
-			<div id="ticket-field-<%= field.name %>">
-	 			<h4><%= field.label_in_portal %></h4>
-				<div class="lead-small"><%= field_value %></div>
-				<% if field.field_type == "nested_field" %>				
-					<div class="tabbed">
-						<% field.nested_levels.each do |ff|%>
-							<% _nest_field_value = @ticket.get_ff_value(ff[:name]) %>
-							<% if _nest_field_value.present? %>
-								<h4><%= ff[:label_in_portal] %></h4>
-								<div class="lead-small"><%= _nest_field_value %></div>
+	<% form_for @ticket, :url => { :action => "update", :controller => "support/tickets" }, 
+				:html => { :id => 'portal_ticket_form', :rel => "validate", "data-live-query" => "select-boxes"  } do |f| %>	
+		<% @visible_ticket_fields.each do |field| %>			
+			<div id="ticket-field-<%= field.name %>">				
+				<% if field.visible_in_view_form? %>					
+					<% if field.editable_in_portal %>
+						<%= ticket_label :helpdesk_ticket, field %>
+						<%= ticket_form_element :helpdesk_ticket, field, ticket_field_form_value(field, @ticket) %>
+					<% elsif field.visible_in_portal %>
+						<% field_value = ticket_field_display_value(field, @ticket) %>						
+						<% if field_value.present? %>
+							<%= ticket_label :helpdesk_ticket, field %>
+							<div class="lead-small"><%= field_value %></div>
+							<% if field.field_type == "nested_field" %>
+								<div class="tabbed">
+									<% field.nested_ticket_fields.each do |ff|%>
+										<% _nest_field_value = ticket_field_display_value(ff, @ticket) %>
+										<% if _nest_field_value.present? %>
+											<%= ticket_label :helpdesk_ticket, ff %>
+											<div class="lead-small"><%= _nest_field_value %></div>
+										<% end %>
+									<% end %>
+								</div>
 							<% end %>
 						<% end %>
-					</div>				
-				<% end %>
-			</div>
+					<% end %>
+	      		<% end %>
+	      	</div>
 		<% end %>
+		<%= f.submit t('update'), :class => "btn btn-small btn-primary pull-right" %>
 	<% end %>
 </section>

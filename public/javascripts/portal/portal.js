@@ -175,6 +175,17 @@ jQuery.noConflict()
 				}
 			})
 		})
+	
+		// Live query utility
+		$("[data-live-query]").livequery(function(ev){
+			switch($(this).data("liveQuery")){
+				// Adds custom-select class that will in-turn call another live query 
+				// that will init select2 plugin for all the select boxes in the form
+				case "select-boxes":
+					$(this).find("select").addClass("custom-select")
+				break
+			}
+		})
 
 	})
 

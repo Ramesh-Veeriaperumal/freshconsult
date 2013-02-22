@@ -1,4 +1,4 @@
-class Widgets::FeedbackWidgetsController < ApplicationController
+class Widgets::FeedbackWidgetsController < SupportController
   skip_before_filter :verify_authenticity_token
   include SupportTicketControllerMethods 
   

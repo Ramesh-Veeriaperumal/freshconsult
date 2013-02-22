@@ -1,9 +1,17 @@
 /*
 Version: 3.2 Timestamp: Mon Sep 10 10:38:04 PDT 2012
 */
-$select-sprite-bg-url: "images/select2/select2.png";
-$select-sprite-bg2x2-url: "images/select2/select2x2.png";
-$select-sprite-spinner-url: "images/select2/spinner.gif";
+$select-sprite-bg-url: "select2/select2.png";
+$select-sprite-bg2x2-url: "select2/select2x2.png";
+$select-sprite-spinner-url: "select2/spinner.gif";
+
+.dropdown.custom-select{
+  @include min-width(100%);
+}
+
+.error-group .select2-choice{ 
+  border-color:#b94a48;
+}
 
 .select2-container {
     position: relative;
@@ -31,16 +39,14 @@ $select-sprite-spinner-url: "images/select2/spinner.gif";
   box-sizing: border-box;         /* css3 */
 }
 
-.select2-container .select2-choice {
-    background-color: #fff;
-    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(0.5, white));
-    background-image: -webkit-linear-gradient(center bottom, #eeeeee 0%, white 50%);
-    background-image: -moz-linear-gradient(center bottom, #eeeeee 0%, white 50%);
-    background-image: -o-linear-gradient(bottom, #eeeeee 0%, #ffffff 50%);
-    background-image: -ms-linear-gradient(top, #eeeeee 0%, #ffffff 50%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#eeeeee', endColorstr = '#ffffff', GradientType = 0);
-    background-image: linear-gradient(top, #eeeeee 0%, #ffffff 50%);
-    @include border-radius($inputBorderRadius);
+.select2-container .select2-choice {    
+    background-color: #ffffff; // Old browsers
+    @include filter-gradient(#ffffff, #ededed, vertical); // IE6-8
+    // IE9 SVG, needs conditional override of 'filter' to 'none'
+    $experimental-support-for-svg: true;
+    @include background-image(linear-gradient(top,  hsla(0,0%,100%,1) 0%,hsla(0,0%,96%,1) 47%,hsla(0,0%,93%,1) 100%));
+
+    @include border-radius($selectBorderRadius);
     -moz-background-clip: padding;
     -webkit-background-clip: padding-box;
     background-clip: padding-box;
@@ -49,7 +55,7 @@ $select-sprite-spinner-url: "images/select2/spinner.gif";
     overflow: hidden;
     white-space: nowrap;
     position: relative;
-    height: $baseLineHeight+8px;
+    height: 31px;    
     line-height: 26px;
     padding: 0 0 0 8px;
     color: #444;
@@ -59,7 +65,7 @@ $select-sprite-spinner-url: "images/select2/spinner.gif";
 .select2-container.select2-drop-above .select2-choice
 {
     border-bottom-color: #aaa;
-    @include border-bottom-radius($inputBorderRadius);
+    @include border-bottom-radius($selectBorderRadius);
     background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(0.9, white));
     background-image: -webkit-linear-gradient(center bottom, #eeeeee 0%, white 90%);
     background-image: -moz-linear-gradient(center bottom, #eeeeee 0%, white 90%);
@@ -113,11 +119,11 @@ $select-sprite-spinner-url: "images/select2/spinner.gif";
   width:100%;
   margin-top:-1px;
 
-  @include border-bottom-radius($inputBorderRadius);
+  @include border-bottom-radius($selectBorderRadius);
 }
 
 .select2-drop.select2-drop-above {
-  @include border-top-radius($inputBorderRadius);
+  @include border-top-radius($selectBorderRadius);
   margin-top:1px;
   border-top: 1px solid $inputBorder;
   border-bottom: 0;
@@ -125,11 +131,11 @@ $select-sprite-spinner-url: "images/select2/spinner.gif";
 }
 
 .select2-container .select2-choice div {
-    @include border-right-radius($inputBorderRadius);
+    @include border-right-radius($selectBorderRadius);
     -moz-background-clip: padding;
     -webkit-background-clip: padding-box;
     background-clip: padding-box;
-    background: #ccc;
+   /* background: #ccc;
     background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #ccc), color-stop(0.6, #eee));
     background-image: -webkit-linear-gradient(center bottom, #ccc 0%, #eee 60%);
     background-image: -moz-linear-gradient(center bottom, #ccc 0%, #eee 60%);
@@ -137,7 +143,7 @@ $select-sprite-spinner-url: "images/select2/spinner.gif";
     background-image: -ms-linear-gradient(top, #cccccc 0%, #eeeeee 60%);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#cccccc', endColorstr = '#eeeeee', GradientType = 0);
     background-image: linear-gradient(top, #cccccc 0%, #eeeeee 60%);
-    border-left: 1px solid $inputBorder;
+    border-left: 1px solid $inputBorder;*/
     position: absolute;
     right: 0;
     top: 0;
@@ -286,8 +292,8 @@ $select-sprite-spinner-url: "images/select2/spinner.gif";
 }
 
 .select2-results .select2-highlighted {
-  background: $autocomeplete-highlight;
-  color: $autocomeplete-highlight-text;
+  background: $autocomplete-highlight;
+  color: $autocomplete-highlight-text;
 }
 .select2-results li em {
   background: #feffde;
@@ -350,7 +356,7 @@ disabled look for already selected choices in the results dropdown
 
 .select2-container-multi .select2-choices {
     background-color: $inputBackground;
-    @include border-radius($inputBorderRadius);
+    @include border-radius($selectBorderRadius);
     @include box-shadow(inset 0 1px 1px rgba(0,0,0,.075));
     @include transition(#{border linear .2s, box-shadow linear .2s});
     border: 1px solid $inputBorder;
@@ -361,7 +367,7 @@ disabled look for already selected choices in the results dropdown
     height: auto !important;
     height: 1%;
     position: relative;
-    @include border-radius($inputBorderRadius);
+    @include border-radius($selectBorderRadius);
 }
 
 .select2-container-multi .select2-choices {

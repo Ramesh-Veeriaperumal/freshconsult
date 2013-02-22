@@ -32,6 +32,13 @@ $sources-sprite-dimensions:true;
 .name_label{ font-weight: bold; margin-top: 4px; }
 .value_label{ margin-bottom: 10px; }
 
+#ticket-sidebar-details .control-label{
+	margin-top: 8px;
+	margin-bottom: 0;
+	line-height: 28px;
+	font-weight: bold;
+}
+
 /* Media styles for tablet and above */
 @include at-breakpoint($break-tablet){	
 	.c-ticket-row{ 

@@ -117,9 +117,11 @@
 	
 	{% snippet ticket_details %}
 
-	{% unless ticket.closed? %}
-		{% snippet ticket_edit %}
-	{% endunless %}
+	{% comment %}
+		{% unless ticket.closed? %}
+			{% snippet ticket_edit %}
+		{% endunless %}
+	{% endcomment %}
 </section>
 
 {% snippet ticket_add_people %}

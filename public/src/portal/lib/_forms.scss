@@ -303,7 +303,7 @@ input[type="checkbox"][readonly] {
 // --------------------------
 
 // Warning
-div.error{ padding: 8px 0 0; margin-top: -15px; }
+div.error{ padding: 5px 0 0; }
 
 .control-group.warning-group {
   @include formFieldState($warningText, $warningText, $warningBackground);
