@@ -1,7 +1,7 @@
 <% @ticket = current_account.tickets.new %>
 <% @ticket.email = current_user.email if current_user %>
 <% form_for @ticket, :url => support_tickets_path, :html => { :multipart => true, 
-    :class => "form-portal ticket-form", :rel => "validate", "data-live-query" => "select-boxes" } do |f| %>
+    :class => "form-portal ticket-form", :rel => "validate" } do |f| %>
   <%= f.error_messages %>
   <% current_portal.customer_editable_ticket_fields.each do |field| %>
     <div class="control-group">
