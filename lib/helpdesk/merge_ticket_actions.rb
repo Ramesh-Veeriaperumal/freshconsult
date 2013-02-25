@@ -35,7 +35,7 @@ module Helpdesk::MergeTicketActions
 
 		def move_source_time_sheets_to_target source_ticket
 		  source_ticket.time_sheets.each do |time_sheet|
-		    time_sheet.update_attribute(:ticket_id, @target_ticket.id)
+		    time_sheet.update_attribute(:workable_id, @target_ticket.id)
 		  end
 		end
 
