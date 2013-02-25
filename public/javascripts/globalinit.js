@@ -229,10 +229,10 @@ var $J = jQuery.noConflict();
          onkeyup: false,
          focusCleanup: true,
          focusInvalid: false,
-         ignore:":not(:visible)"
+         ignore:".nested_field:not(:visible)"
       };
       
-      $("ul.ui-form").livequery(function(ev){
+      $("ul.ui-form, .cnt").livequery(function(ev){
         $(this).not(".dont-validate").parents('form:first').validate(validateOptions);
       })
       $("div.ui-form").livequery(function(ev){
