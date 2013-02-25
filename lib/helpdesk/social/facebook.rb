@@ -12,7 +12,8 @@ module Helpdesk::Social::Facebook
     	message.symbolize_keys!
     	process_facebook_message note , message , ticket unless message.blank?
     rescue => e
-    	fb_page.update_attributes({ :reauth_required => true, :last_error => e.message})
+    	fb_page.attributes = { :reauth_required => true, :last_error => e.message}
+      fb_page.save
     	return false
     end
     return true
@@ -28,7 +29,8 @@ module Helpdesk::Social::Facebook
 		comment.symbolize_keys!
     	process_facebook_comment note, comment, ticket unless comment.blank?
     rescue => e
-    	fb_page.update_attributes({ :reauth_required => true, :last_error => e.message})
+    	fb_page.attributes = { :reauth_required => true, :last_error => e.message}
+      fb_page.save
     	return false
     end
     return true

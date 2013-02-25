@@ -609,7 +609,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
     if @ticket_changes.key?(:status)
-      if (status == OPEN)
+      if reopened_now?
         ticket_states.opened_at=Time.zone.now
         ticket_states.reset_tkt_states
       end

@@ -2374,6 +2374,8 @@ en:
     twitter_handles:
       index:
         title: "Twitter Accounts"
+        reauthorize: Reauthorize
+        reauth_required: Reauthorization required
         remove_handle_msg: Are you sure you want to remove this twitter account?
       signin_info:
         title: Sign in using twitter

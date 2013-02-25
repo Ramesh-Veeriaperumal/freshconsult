@@ -123,14 +123,16 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     end  
   end
 
-  def default_filter(filter_name)
-     self.name = filter_name.blank? ? "new_my_open" : filter_name
+  def default_filter(filter_name, from_export = false)
+     default_value = from_export ? "all_tickets" : "new_my_open"
+     self.name = filter_name.blank? ? default_value : filter_name
+
      if "on_hold".eql?filter_name
        on_hold_filter
      elsif "unresolved".eql?filter_name
        unresolved_filter
      else
-       DEFAULT_FILTERS.fetch(filter_name, DEFAULT_FILTERS["new_my_open"])
+       DEFAULT_FILTERS.fetch(filter_name, DEFAULT_FILTERS[default_value])
      end
   end
   
@@ -182,7 +184,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       action_hash.push({ "condition" => "deleted", "operator" => "is", "value" => false})
     end
 
-    action_hash = default_filter(params[:filter_name])  if params[:data_hash].blank?
+    action_hash = default_filter(params[:filter_name], !!params[:export_fields])  if params[:data_hash].blank?
     self.query_hash = action_hash
 
     action_hash.each do |filter|

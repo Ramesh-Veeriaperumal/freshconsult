@@ -12,7 +12,7 @@ class Social::FacebookPagesController < Admin::AdminController
   before_filter :load_item,  :only => [:edit, :update, :destroy]  
   
   def index
-    @fb_pages = scoper.active 
+    @fb_pages = scoper 
   end
 
   def authdone
