@@ -13,6 +13,8 @@ var $J = jQuery.noConflict();
     var hoverPopup =  false;
     var hidePopoverTimer;
     var hideWatcherTimer;
+    var insideCalendar = false;
+    var closeCalendar = false;
 
     $("body").click(function(ev){
       hideWidgetPopup(ev);
@@ -20,8 +22,16 @@ var $J = jQuery.noConflict();
 
     hideWidgetPopup = function(ev) {
       if((widgetPopup != null) && !$(ev.target).parents().hasClass("popover")){
-        widgetPopup.popover('hide');
-        widgetPopup = null;
+        if(!insideCalendar)
+        {
+          widgetPopup.popover('hide');
+          widgetPopup = null;
+        }
+      }
+      if (closeCalendar)
+      {
+        insideCalendar = false;
+        closeCalendar = false;
       }
     }
 
@@ -119,7 +129,34 @@ var $J = jQuery.noConflict();
         });
     });
 
-      $("a[rel=contact-hover],[rel=hover-popover]").live('mouseenter',function(ev) {
+    $("input.datepicker_popover").livequery(function() {
+      $(this).datepicker({
+        dateFormat: 'yy-mm-dd',
+        beforeShow: function(){
+          insideCalendar=true;
+          closeCalendar=false;
+        },
+        onClose: function(){
+          closeCalendar=true;
+        }
+      });
+    });
+
+    $('input.datetimepicker_popover').livequery(function() {
+      $(this).datetimepicker({
+        timeFormat: "HH:mm:ss",
+        dateFormat: 'MM dd,yy',
+        beforeShow: function(){
+          insideCalendar=true;
+          closeCalendar=false;
+        },
+        onClose: function(){
+          closeCalendar=true;
+        }
+      });
+    });
+
+    $("a[rel=contact-hover],[rel=hover-popover]").live('mouseenter',function(ev) {
         ev.preventDefault();
         clearTimeout(hidePopoverTimer);
         hideActivePopovers(ev);
