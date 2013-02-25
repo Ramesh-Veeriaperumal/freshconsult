@@ -169,7 +169,7 @@
 			
 			container.innerHTML = '<div class="widget-ovelay" id="freshwidget-overlay">&nbsp;</div>' +
 						'<div class="freshwidget-dialog" id="freshwidget-dialog">' +
-						' <img id="freshwidget-close" class="widget-close" src="'+options.assetUrl+'/widget_close.png" />' +
+						' <img id="freshwidget-close" class="widget-close" src="../images/widget_close_left.png" />' +
 						' <div class="frame-container">' +
 						' 	<iframe id="freshwidget-frame" src="about:blank" frameborder="0" scrolling="auto" allowTransparency="true"/>' +
 						' </div>'
@@ -249,7 +249,7 @@
 			createButton();
 			createContainer();
 		});
-		loadcssfile(options.assetUrl+"/freshwidget.css");
+		loadcssfile("/stylesheets/freshwidget.css");
 	 }
 	 
 	 function updateWidget(params){

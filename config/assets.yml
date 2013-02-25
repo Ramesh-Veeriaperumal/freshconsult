@@ -10,6 +10,7 @@ stylesheets:
     - public/stylesheets/print/print.css
 
   common:
+<<<<<<< Updated upstream
     - public/stylesheets/app/lib/validation.css    
     - public/stylesheets/app/lib/autocomplete.css
     - public/stylesheets/app/lib/jquery-ui.css
@@ -63,6 +64,30 @@ stylesheets:
     - public/stylesheets/app/lib/form.css
     - public/stylesheets/app/lib/buttons.css
     - public/stylesheets/app/lib/ie.css 
+=======
+    - public/stylesheets/reset.css
+    - public/stylesheets/layout.css
+    - public/stylesheets/defaults.css
+    - public/stylesheets/application.css
+    - public/stylesheets/search-results.css
+    - public/stylesheets/test.css
+    - public/stylesheets/validation.css
+    - public/stylesheets/form.css
+    - public/stylesheets/buttons.css
+    - public/stylesheets/chosen.css
+    - public/stylesheets/table.css
+    - public/stylesheets/autocomplete.css
+    - public/stylesheets/jquery-ui.css
+    - public/stylesheets/jquery.qtip.css
+    - public/stylesheets/ie.css
+
+  widget:
+    - public/stylesheets/reset.css   
+    - public/stylesheets/defaults.css
+    - public/stylesheets/search-results.css
+    - public/stylesheets/widget.css
+    - public/stylesheets/ie.css 
+>>>>>>> Stashed changes
 
   freshwidget:
     - public/stylesheets/freshwidget.css
@@ -187,8 +212,12 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/helpdesk/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
+<<<<<<< Updated upstream
     - public/javascripts/feedback_widget_form.js
 
+=======
+    - public/javascripts/utils.js
+>>>>>>> Stashed changes
   custom_widget:
     - public/javascripts/custom_widget.js
 

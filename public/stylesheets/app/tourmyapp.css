@@ -1,0 +1,144 @@
+/* This import applies a global reset to any page that imports this stylesheet.*/
+/* Theme Colors and layout Defaults */
+/* Bullet icon */
+/* Priority Color Codes */
+/* Sprite variables used inside the sheet */
+/* line 114, walkthru/*.png */
+.walkthru-sprite, #tourmyapp .tourmyapp .tourmyapp-pointer-bottom, #tourmyapp .tourmyapp .tourmyapp-pointer-right, #tourmyapp .tourmyapp .tourmyapp-pointer-top, #tourmyapp .tourmyapp .tourmyapp-pointer-left, #tourmyapp .tourmyapp .tourmyapp-content h3 {
+  background: url('/images/walkthru-s06fe00f95e.png') no-repeat; }
+
+/* line 5, ../../src/app/tourmyapp.scss */
+#tourmyapp {
+  z-index: 1000000 !important; }
+
+/* line 8, ../../src/app/tourmyapp.scss */
+#tourmyapp .tourmyapp {
+  background: url(/images/walkthru/pattern-bg.png);
+  border: 1px solid #666;
+  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+  width: 400px;
+  margin-top: -5px;
+  box-shadow: 0px 8px 40px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0px 8px 40px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0px 8px 40px rgba(0, 0, 0, 0.5); }
+  /* line 18, ../../src/app/tourmyapp.scss */
+  #tourmyapp .tourmyapp .tourmyapp-title {
+    background: url(/images/walkthru/patten_green_top.jpg);
+    -webkit-border-radius: 5px 5px 0 0;
+    -moz-border-radius: 5px 5px 0 0;
+    -ms-border-radius: 5px 5px 0 0;
+    -o-border-radius: 5px 5px 0 0;
+    border-radius: 5px 5px 0 0;
+    height: 40px;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) inset; }
+  /* line 25, ../../src/app/tourmyapp.scss */
+  #tourmyapp .tourmyapp .tourmyapp-close {
+    background: url(/images/walkthru/tour-close.png);
+    background-repeat: no-repeat;
+    background-position: 3px 0px;
+    margin: 14px 17px 0 0; }
+  /* line 33, ../../src/app/tourmyapp.scss */
+  #tourmyapp .tourmyapp .tourmyapp-pointer-border {
+    border: none;
+    position: absolute;
+    background-repeat: no-repeat; }
+  /* line 39, ../../src/app/tourmyapp.scss */
+  #tourmyapp .tourmyapp .tourmyapp-pointer-top {
+    height: 25px;
+    width: 31px;
+    left: 184px; }
+  /* line 46, ../../src/app/tourmyapp.scss */
+  #tourmyapp .tourmyapp .tourmyapp-pointer-bottom {
+    height: 21px;
+    width: 26px;
+    left: 184px; }
+  /* line 53, ../../src/app/tourmyapp.scss */
+  #tourmyapp .tourmyapp .tourmyapp-pointer-right, #tourmyapp .tourmyapp .tourmyapp-pointer-left {
+    margin-top: -4px;
+    height: 29px;
+    width: 26px; }
+  /* line 59, ../../src/app/tourmyapp.scss */
+  #tourmyapp .tourmyapp .tourmyapp-pointer-bottom {
+    background-position: 0 -240px;
+    top: -18px; }
+  /* line 65, ../../src/app/tourmyapp.scss */
+  #tourmyapp .tourmyapp .tourmyapp-pointer-right {
+    background-position: 0 -80px;
+    left: -25px;
+    height: 32px;
+    width: 27px;
+    margin-top: -3px; }
+  /* line 73, ../../src/app/tourmyapp.scss */
+  #tourmyapp .tourmyapp .tourmyapp-pointer-top {
+    background-position: 0 0;
+    margin-top: -14px; }
+  /* line 78, ../../src/app/tourmyapp.scss */
+  #tourmyapp .tourmyapp .tourmyapp-pointer-left {
+    background-position: 0 -160px;
+    left: 387px; }
+  /* line 85, ../../src/app/tourmyapp.scss */
+  #tourmyapp .tourmyapp .tourmyapp-pointer-fill {
+    display: none; }
+  /* line 89, ../../src/app/tourmyapp.scss */
+  #tourmyapp .tourmyapp .tourmyapp-content, #tourmyapp .tourmyapp .tourmyapp-toolbar {
+    padding: 10px;
+    font-size: 13px;
+    line-height: 20px;
+    color: #333; }
+    /* line 95, ../../src/app/tourmyapp.scss */
+    #tourmyapp .tourmyapp .tourmyapp-content p, #tourmyapp .tourmyapp .tourmyapp-toolbar p {
+      margin: 0; }
+  /* line 100, ../../src/app/tourmyapp.scss */
+  #tourmyapp .tourmyapp .tourmyapp-content {
+    margin-top: -40px; }
+    /* line 104, ../../src/app/tourmyapp.scss */
+    #tourmyapp .tourmyapp .tourmyapp-content h3 {
+      background-position: 0 -414px;
+      color: #FFF;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 0 0 20px 29px;
+      margin: -1px 2px;
+      text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.4);
+      line-height: 23px; }
+    /* line 115, ../../src/app/tourmyapp.scss */
+    #tourmyapp .tourmyapp .tourmyapp-content p {
+      padding: 0px 10px 0px 10px;
+      margin-bottom: 10px; }
+    /* line 120, ../../src/app/tourmyapp.scss */
+    #tourmyapp .tourmyapp .tourmyapp-content strong {
+      font-size: inherit; }
+  /* line 125, ../../src/app/tourmyapp.scss */
+  #tourmyapp .tourmyapp .tourmyapp-step-index {
+    font-weight: normal;
+    font-size: 12px; }
+  /* line 130, ../../src/app/tourmyapp.scss */
+  #tourmyapp .tourmyapp button {
+    -moz-border-radius: 5px 5px 5px 5px;
+    -webkit-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px;
+    background: #338484;
+    background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #338484), color-stop(100%, #166666));
+    background: -webkit-linear-gradient(#338484, #166666);
+    background: -moz-linear-gradient(#338484, #166666);
+    background: -o-linear-gradient(#338484, #166666);
+    background: linear-gradient(#338484, #166666);
+    border: solid 1px #005454;
+    padding: 5px 18px;
+    font-weight: normal;
+    font-size: 13px;
+    text-shadow: 1px 0 0 #3a3a3a;
+    text-decoration: none; }
+  /* line 142, ../../src/app/tourmyapp.scss */
+  #tourmyapp .tourmyapp .tourmyapp-branding {
+    display: none !important; }
+  /* line 146, ../../src/app/tourmyapp.scss */
+  #tourmyapp .tourmyapp .next_button_arrow:after {
+    content: "";
+    background-image: url("/images/walkthru/nav-arrow-right.png");
+    background-repeat: no-repeat;
+    background-position: 5px 5px;
+    padding-left: 9px; }
+  /* line 154, ../../src/app/tourmyapp.scss */
+  #tourmyapp .tourmyapp .tourmyapp-next_button:hover {
+    cursor: pointer; }

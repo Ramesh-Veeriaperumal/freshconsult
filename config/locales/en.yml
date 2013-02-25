@@ -2141,7 +2141,10 @@ en:
   reply_comment: Add Comment
   password: Password
   import_step2_info: Map the following CSV fields with database fields and import.
-  feedbackwidget_defaulttitle: Help &amp; Support
+  feedbackwidget_defaulttitle: How can we help you?
+  feedbackwidget_choice:
+    default: Submit a request
+    solution_search: Search our help articles
   two: 2 Hours
   set_status_as: Set Status as
   selected: Selected

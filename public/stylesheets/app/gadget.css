@@ -1,0 +1,134 @@
+/* Theme Colors and layout Defaults */
+/* Bullet icon */
+/* Priority Color Codes */
+/* Sprite variables used inside the sheet */
+/* line 50, gmail-gadget/*.png */
+.gmail-gadget-sprite, body#gcgadget #maxmin.maximize, body#gcgadget #maxmin.minimize {
+  background: url('/images/gmail-gadget-sf5a4909ae1.png') no-repeat; }
+
+/* line 10, ../../src/app/gadget.scss */
+body#gcgadget {
+  color: #333;
+  background: none;
+  min-width: 620px; }
+  /* line 15, ../../src/app/gadget.scss */
+  body#gcgadget .ui-form {
+    background: none;
+    margin: 0 25px; }
+  /* line 20, ../../src/app/gadget.scss */
+  body#gcgadget ul.tabs {
+    margin: 0; }
+  /* line 24, ../../src/app/gadget.scss */
+  body#gcgadget h3.title {
+    margin: 0 25px; }
+  /* line 28, ../../src/app/gadget.scss */
+  body#gcgadget .quick-action {
+    cursor: default; }
+    /* line 30, ../../src/app/gadget.scss */
+    body#gcgadget .quick-action label {
+      cursor: default; }
+  /* line 36, ../../src/app/gadget.scss */
+  body#gcgadget .tickets ul li.quick-action:hover .result, body#gcgadget .tickets ul li.quick-action.selected .result {
+    background: none; }
+  /* line 41, ../../src/app/gadget.scss */
+  body#gcgadget #maxmin_tip {
+    position: absolute;
+    top: 1px;
+    right: 16px;
+    width: 300px;
+    height: 20px;
+    text-align: right;
+    padding-right: 10px;
+    cursor: pointer;
+    color: #666;
+    font-weight: bold; }
+  /* line 56, ../../src/app/gadget.scss */
+  body#gcgadget #maxmin {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 13px;
+    height: 13px;
+    cursor: pointer; }
+    /* line 63, ../../src/app/gadget.scss */
+    body#gcgadget #maxmin.maximize {
+      background-position: 0 0; }
+    /* line 67, ../../src/app/gadget.scss */
+    body#gcgadget #maxmin.minimize {
+      background-position: 0 -13px; }
+  /* line 72, ../../src/app/gadget.scss */
+  body#gcgadget .contact-box div.profile_pic {
+    position: static; }
+  /* line 76, ../../src/app/gadget.scss */
+  body#gcgadget #fullbody .alert-message {
+    margin: 0 10px; }
+
+/* line 82, ../../src/app/gadget.scss */
+body.minimized #content_div {
+  display: none; }
+/* line 86, ../../src/app/gadget.scss */
+body.minimized ul.tabs {
+  display: none; }
+/* line 90, ../../src/app/gadget.scss */
+body.minimized .tabs > li > a, body.minimized .tabs .active > a, body.minimized .tabs .active > a:hover {
+  background: #EEE;
+  border: 1px solid #DDD;
+  border-bottom: none;
+  color: #999; }
+/* line 97, ../../src/app/gadget.scss */
+body.minimized #auth {
+  display: none; }
+
+/* line 102, ../../src/app/gadget.scss */
+#auth {
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+  background: #fafafa;
+  padding: 20px;
+  text-align: center; }
+  /* line 108, ../../src/app/gadget.scss */
+  #auth .uiButton {
+    padding: 10px 30px;
+    font-size: 120%; }
+
+/* line 114, ../../src/app/gadget.scss */
+#fullbody {
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+  /* Hiding the div by default */ }
+  /* line 118, ../../src/app/gadget.scss */
+  #fullbody .company_box, #fullbody .contact-box {
+    margin: 15px 25px; }
+  /* line 122, ../../src/app/gadget.scss */
+  #fullbody .request_details {
+    margin: 5px 0; }
+    /* line 125, ../../src/app/gadget.scss */
+    #fullbody .request_details .actions, #fullbody .request_details #TimesheetTab, #fullbody .request_details .conversation-sprite {
+      display: none; }
+  /* line 130, ../../src/app/gadget.scss */
+  #fullbody .alert-message {
+    margin: 0 -20px; }
+    /* line 133, ../../src/app/gadget.scss */
+    #fullbody .alert-message .alert-actions-right {
+      display: none; }
+  /* line 139, ../../src/app/gadget.scss */
+  #fullbody .tickets input[type=checkbox] {
+    display: none; }
+
+/* line 145, ../../src/app/gadget.scss */
+#content_div {
+  background: white;
+  padding: 10px 0;
+  border-color: #DDD;
+  border-width: 0 1px 1px;
+  border-style: solid; }
+
+/* line 153, ../../src/app/gadget.scss */
+.button-container {
+  margin: 0 25px; }

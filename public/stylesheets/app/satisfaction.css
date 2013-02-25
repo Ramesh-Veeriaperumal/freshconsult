@@ -1,0 +1,515 @@
+/* This import applies a global reset to any page that imports this stylesheet.*/
+/* Theme Colors and layout Defaults */
+/* Bullet icon */
+/* Priority Color Codes */
+/* Sprite variables used inside the sheet */
+/* Satisfaction reports and admin css */
+/* line 1, ../../src/app/lib/_satisfaction.scss */
+.top-title, .top-time, .topic-head, .box-title, .cote, .tab-text {
+  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+  color: #303030;
+  font-weight: bold;
+  line-height: 24px; }
+
+/* line 8, ../../src/app/lib/_satisfaction.scss */
+.top-title {
+  font-size: 20px;
+  padding-bottom: 3px; }
+
+/* line 13, ../../src/app/lib/_satisfaction.scss */
+.top-date {
+  font-size: 11px;
+  color: #303030;
+  font-weight: bold;
+  line-height: 24px; }
+
+/* line 20, ../../src/app/lib/_satisfaction.scss */
+.topic-head {
+  font-size: 14px;
+  max-width: 150px;
+  text-align: left;
+  margin: 15px 0 0 25px;
+  line-height: 18px; }
+
+/* line 28, ../../src/app/lib/_satisfaction.scss */
+.tab-text {
+  font-size: 12px;
+  color: #333;
+  font-weight: normal;
+  display: block;
+  padding-top: 13px;
+  white-space: nowrap; }
+
+/* line 37, ../../src/app/lib/_satisfaction.scss */
+.agent-img {
+  width: 39px;
+  height: 39px;
+  display: block;
+  margin: 10px 5px 0 15px;
+  float: left; }
+
+/* line 46, ../../src/app/lib/_satisfaction.scss */
+#report_list .tabs .active > a, #report_list .tabs .active > a:hover {
+  height: 60px;
+  line-height: 30px;
+  font-weight: bold; }
+/* line 52, ../../src/app/lib/_satisfaction.scss */
+#report_list .tabs > li > a {
+  height: 60px;
+  line-height: 30px; }
+
+/* line 58, ../../src/app/lib/_satisfaction.scss */
+.happy-smily {
+  background: url("/images/happy-smily-tab.png") no-repeat;
+  float: left;
+  padding-left: 10px;
+  position: relative;
+  width: 42px;
+  height: 42px;
+  margin-left: -8px;
+  margin-top: 10px; }
+
+/* line 69, ../../src/app/lib/_satisfaction.scss */
+.neutral-smily {
+  background: url("/images/neutral-smily-tab.png") no-repeat;
+  float: left;
+  padding-left: 10px;
+  position: relative;
+  width: 42px;
+  height: 42px;
+  margin-left: -8px;
+  margin-top: 10px; }
+
+/* line 80, ../../src/app/lib/_satisfaction.scss */
+.unhappy-smily {
+  background: url("/images/unhappy-smily-tab.png") no-repeat;
+  float: left;
+  padding-left: 10px;
+  position: relative;
+  width: 42px;
+  height: 42px;
+  margin-left: -8px;
+  margin-top: 10px; }
+
+/* line 92, ../../src/app/lib/_satisfaction.scss */
+#report_list .tabs, .pills {
+  margin: 0 0 0px;
+  padding: 0;
+  list-style: none;
+  zoom: 1; }
+
+/* line 94, ../../src/app/lib/_satisfaction.scss */
+.content-area {
+  margin: 30px 0; }
+
+/* line 98, ../../src/app/lib/_satisfaction.scss */
+.left-box {
+  background-color: #f3f3f3;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  border: 1px solid #f3f3f3;
+  min-height: 39px;
+  min-width: 211px;
+  float: left; }
+
+/* line 109, ../../src/app/lib/_satisfaction.scss */
+.right-box {
+  background-color: #f3f3f3;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  border: 1px solid #f3f3f3;
+  min-height: 39px;
+  margin: 0 25px 0 222px;
+  position: relative; }
+
+/* line 120, ../../src/app/lib/_satisfaction.scss */
+.content-set {
+  margin: 15px 0 0 25px;
+  overflow: hidden;
+  *zoom: 1; }
+
+/* line 125, ../../src/app/lib/_satisfaction.scss */
+.content-img {
+  width: 39px;
+  height: 39px;
+  display: block;
+  float: left; }
+
+/* line 132, ../../src/app/lib/_satisfaction.scss */
+.content-img div.preview_pic img, .agent-img div.preview_pic img {
+  width: 39px;
+  height: 39px;
+  border-radius: 5px; }
+
+/* line 138, ../../src/app/lib/_satisfaction.scss */
+.content-2-img {
+  background: url("/images/content-2-img.png") no-repeat;
+  width: 39px;
+  height: 39px;
+  display: block;
+  float: left; }
+
+/* line 146, ../../src/app/lib/_satisfaction.scss */
+.inner-box {
+  background-color: #fff;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  min-height: 37px;
+  max-width: 142px;
+  margin: 1px 0 1px 40px; }
+
+/* line 156, ../../src/app/lib/_satisfaction.scss */
+.happy-smily-small {
+  background: url("/images/happy-smily-small.png") no-repeat; }
+
+/* line 160, ../../src/app/lib/_satisfaction.scss */
+.unhappy-smily-small {
+  background: url("/images/unhappy-smily-small.png") no-repeat; }
+
+/* line 164, ../../src/app/lib/_satisfaction.scss */
+.neutral-smily-small {
+  background: url("/images/neutral-smily-small.png") no-repeat; }
+
+/* line 168, ../../src/app/lib/_satisfaction.scss */
+.happy-smily-small, .unhappy-smily-small, .neutral-smily-small {
+  top: 9px;
+  left: -65px;
+  width: 20px;
+  height: 21px;
+  display: block;
+  float: right;
+  position: relative; }
+
+/* line 180, ../../src/app/lib/_satisfaction.scss */
+#report_feedback .happy-smily-small, #report_feedback .unhappy-smily-small, #report_feedback .neutral-smily-small {
+  left: -4px; }
+
+/* line 184, ../../src/app/lib/_satisfaction.scss */
+.box-title {
+  font-size: 13px;
+  position: relative;
+  left: 5px;
+  display: block;
+  line-height: 15px;
+  padding-top: 2px;
+  margin-right: 5px;
+  width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis; }
+
+/* line 197, ../../src/app/lib/_satisfaction.scss */
+.box-date {
+  font-size: 11px;
+  font-weight: normal;
+  text-align: left;
+  margin: 1px 0 0px 5px;
+  display: block;
+  color: #999; }
+
+/* line 206, ../../src/app/lib/_satisfaction.scss */
+.box-content {
+  font-size: 13px;
+  font-weight: normal;
+  margin: 0px 0 0px 18px;
+  color: #333;
+  padding: 5px;
+  text-align: left; }
+
+/* line 215, ../../src/app/lib/_satisfaction.scss */
+.container-arrow {
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 8px solid #f3f3f3;
+  left: -9px;
+  top: 11px;
+  position: absolute; }
+
+/* line 227, ../../src/app/lib/_satisfaction.scss */
+.cote {
+  margin-top: 2px;
+  margin-left: 5px;
+  background: url("/images/cote-img.png") no-repeat;
+  width: 16px;
+  height: 13px;
+  display: block;
+  position: absolute; }
+
+/* line 237, ../../src/app/lib/_satisfaction.scss */
+.tab-width {
+  width: 21%; }
+
+/* line 241, ../../src/app/lib/_satisfaction.scss */
+.tab-width .active {
+  font-weight: bold; }
+
+/* line 245, ../../src/app/lib/_satisfaction.scss */
+.tab-bottom {
+  margin-top: -10px; }
+
+/* line 249, ../../src/app/lib/_satisfaction.scss */
+.report-grid {
+  width: 10%; }
+
+/* line 253, ../../src/app/lib/_satisfaction.scss */
+.top-p {
+  padding-top: 18px;
+  position: absolute;
+  left: 12px; }
+
+/* line 259, ../../src/app/lib/_satisfaction.scss */
+.min-width {
+  min-width: 184px; }
+
+/* line 263, ../../src/app/lib/_satisfaction.scss */
+.bottom-ticket-title {
+  color: #999; }
+
+/* line 267, ../../src/app/lib/_satisfaction.scss */
+.customer-opinion {
+  margin: -12px -15px 0 0;
+  border: 1px solid #e5e5e5;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  padding: 2px; }
+
+/* line 276, ../../src/app/lib/_satisfaction.scss */
+.request-title .customer-opinion {
+  background-position: 50% 50% !important;
+  background-color: white !important; }
+
+/* line 281, ../../src/app/lib/_satisfaction.scss */
+.survey-option-conf li {
+  display: inline;
+  width: 25%;
+  margin-right: 10px;
+  padding: 6px; }
+
+/* line 288, ../../src/app/lib/_satisfaction.scss */
+.survey-option-conf input {
+  width: 60%; }
+
+/* line 292, ../../src/app/lib/_satisfaction.scss */
+.survey-option-conf .happy-smily, .survey-option-conf .unhappy-smily, .survey-option-conf .neutral-smily {
+  margin-top: -10px; }
+
+/* SURVEY FORM FOR SELF SERVICE PORTAL */
+/* line 1, ../../src/app/lib/_survey.scss */
+.survey-form {
+  width: 98%;
+  margin: 5px 0;
+  padding: 0px 0px 10px 0px;
+  min-height: 50px;
+  background: #f1f1f1;
+  clear: both;
+  border: 4px #d5d5d5 solid;
+  -webkit-box-shadow: inset 0px 0px 5px #dfdfdf;
+  -moz-box-shadow: inset 0px 0px 5px #dfdfdf;
+  -ms-box-shadow: inset 0px 0px 5px #dfdfdf;
+  box-shadow: inset 0px 0px 5px #dfdfdf; }
+
+/* line 15, ../../src/app/lib/_survey.scss */
+.clear {
+  clear: both; }
+
+/* line 19, ../../src/app/lib/_survey.scss */
+.survey-form-left {
+  width: 260px;
+  float: left; }
+
+/* line 23, ../../src/app/lib/_survey.scss */
+.survey-form-left h3 {
+  font: normal 13px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  color: #000;
+  padding: 19px 0px 10px 10px;
+  min-height: 30px; }
+
+/* line 30, ../../src/app/lib/_survey.scss */
+.survey-form-right {
+  width: 530px;
+  float: left; }
+
+/* line 35, ../../src/app/lib/_survey.scss */
+ul.survey-options {
+  width: 100%;
+  display: block; }
+
+/* line 40, ../../src/app/lib/_survey.scss */
+ul.survey-options li {
+  float: left;
+  padding: 8px 0px 0px 0px; }
+
+/* line 46, ../../src/app/lib/_survey.scss */
+.survey-form-close ul.survey-options li a:hover, .survey-form-close ul.survey-options li.active a {
+  background-color: transparent;
+  border: 0;
+  height: 30px;
+  -webkit-box-shadow: inset 0px 0px 0px #ccc;
+  -moz-box-shadow: inset 0px 0px 0px #ccc;
+  -ms-box-shadow: inset 0px 0px 0px #ccc;
+  box-shadow: inset 0px 0px 0px #ccc; }
+
+/* line 58, ../../src/app/lib/_survey.scss */
+ul.survey-options li a {
+  display: inline-block;
+  color: #333;
+  height: 30px;
+  padding: 10px 20px 0px 41px;
+  background-color: #f4f4f4;
+  border: 1px #e8e8e8 solid;
+  margin-right: 5px;
+  font-size: 14px;
+  background-repeat: no-repeat;
+  background-position: 11px 8px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  border-radius: 3px; }
+
+/* line 77, ../../src/app/lib/_survey.scss */
+ul.survey-options li a:hover {
+  background-color: #f9f9f9; }
+
+/* line 81, ../../src/app/lib/_survey.scss */
+ul.survey-options li.active a {
+  background-color: #a5a5a5;
+  color: #fff;
+  height: 30px;
+  border: 1px #a5a5a5 solid;
+  -webkit-box-shadow: inset 1px 1px 3px #7c7c7c;
+  -moz-box-shadow: inset 1px 1px 3px #7c7c7c;
+  -ms-box-shadow: inset 1px 1px 3px #7c7c7c;
+  box-shadow: inset 1px 1px 3px #7c7c7c;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  border-radius: 3px; }
+
+/* line 96, ../../src/app/lib/_survey.scss */
+ul.survey-options li a.happy {
+  background-image: url(/images/portal/smiley-good.png); }
+
+/* line 100, ../../src/app/lib/_survey.scss */
+ul.survey-options li a.neutral {
+  background-image: url(/images/portal/smiley-neutral.png); }
+
+/* line 104, ../../src/app/lib/_survey.scss */
+ul.survey-options li a.unhappy {
+  background-image: url(/images/portal/smiley-bad.png); }
+
+/* line 108, ../../src/app/lib/_survey.scss */
+span.happy, span.neutral, span.unhappy {
+  padding: 5px 20px 10px 30px;
+  margin: 4px 0px 0px 10px;
+  display: inline-block; }
+
+/* line 114, ../../src/app/lib/_survey.scss */
+span.happy {
+  background: url(/images/portal/smiley-good.png) no-repeat; }
+
+/* line 118, ../../src/app/lib/_survey.scss */
+span.neutral {
+  background: url(/images/portal/smiley-neutral.png) no-repeat; }
+
+/* line 122, ../../src/app/lib/_survey.scss */
+span.unhappy {
+  background: url(/images/portal/smiley-bad.png) no-repeat; }
+
+/* line 126, ../../src/app/lib/_survey.scss */
+.survey-comment {
+  display: none;
+  width: 559px; }
+
+/* line 131, ../../src/app/lib/_survey.scss */
+.survey-form-right {
+  min-height: 50px; }
+
+/* line 135, ../../src/app/lib/_survey.scss */
+.survey-form-right h4 {
+  font: normal 13px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  color: #000;
+  padding-top: 10px;
+  padding-bottom: 5px;
+  clear: both;
+  display: inline-block;
+  width: 100%; }
+
+/* line 145, ../../src/app/lib/_survey.scss */
+.survey-comment textarea {
+  width: 500px;
+  height: 40px;
+  clear: both; }
+
+/* line 151, ../../src/app/lib/_survey.scss */
+.survey-comment input[type="button"], .survey-comment input[type="submit"] {
+  width: 80px;
+  margin: 10px 10px 10px 0px;
+  text-transform: capitalize;
+  padding: 4px 0px 4px 0px;
+  display: inline-block;
+  border: 1px #8a8a8a solid;
+  color: #252525;
+  cursor: pointer;
+  text-shadow: 0px 1px 0px #fff;
+  font: normal 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  border-radius: 3px;
+  background-color: #e8e8e8;
+  *zoom: 1;
+  filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFE8E8E8', endColorstr='#FFD9D9D9');
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjUwJSIgeTE9IjAlIiB4Mj0iNTAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2U4ZThlOCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2Q5ZDlkOSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+  background-size: 100%;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #e8e8e8), color-stop(100%, #d9d9d9));
+  background-image: -webkit-linear-gradient(top, #e8e8e8 0%, #d9d9d9 100%);
+  background-image: -moz-linear-gradient(top, #e8e8e8 0%, #d9d9d9 100%);
+  background-image: -o-linear-gradient(top, #e8e8e8 0%, #d9d9d9 100%);
+  background-image: linear-gradient(top, #e8e8e8 0%, #d9d9d9 100%); }
+
+/* line 174, ../../src/app/lib/_survey.scss */
+.survey-comment input[type="button"]:hover, .survey-comment input[type="submit"]:hover {
+  background: #e8e8e8; }
+
+/* line 178, ../../src/app/lib/_survey.scss */
+.survey-comment input[type="button"]:active, .survey-comment input[type="submit"]:active {
+  background-color: #ababab;
+  *zoom: 1;
+  filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFABABAB', endColorstr='#FF646464');
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjUwJSIgeTE9IjAlIiB4Mj0iNTAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2FiYWJhYiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzY0NjQ2NCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+  background-size: 100%;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ababab), color-stop(100%, #646464));
+  background-image: -webkit-linear-gradient(top, #ababab 0%, #646464 100%);
+  background-image: -moz-linear-gradient(top, #ababab 0%, #646464 100%);
+  background-image: -o-linear-gradient(top, #ababab 0%, #646464 100%);
+  background-image: linear-gradient(top, #ababab 0%, #646464 100%);
+  border-bottom: 1px #8a8a8a solid;
+  color: #fff;
+  text-shadow: 0px 1px 0px #333; }
+
+/* line 190, ../../src/app/lib/_survey.scss */
+.close-comment {
+  width: 500px;
+  float: left;
+  margin-top: 10px;
+  padding: 5px 3px 0px 0px;
+  line-height: 20px;
+  border-right: 1px #c2c2c2 solid; }
+
+/* line 199, ../../src/app/lib/_survey.scss */
+.close-comment span {
+  color: #777; }
+
+/* line 203, ../../src/app/lib/_survey.scss */
+.rate-again {
+  width: 140px;
+  float: left;
+  border-left: 1px #fff solid;
+  margin-top: 10px;
+  padding: 5px 3px 0px 5px;
+  line-height: 20px; }

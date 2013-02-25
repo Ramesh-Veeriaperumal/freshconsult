@@ -1,0 +1,143 @@
+@import "reset";
+@import "defaults";
+@import "ie";
+
+input.text, input[type=text], textarea{
+	border: 1px solid #C6C6C6;
+	padding: 5px;
+	width: 98%;
+	@include border-radius(5px);
+	@include box-shadow(#dfdfdf 1px 1px 2px inset);
+	font: 14px "Helvetica Neue",Arial,Helvetica,sans-serif;
+	margin-bottom: 4px;
+}
+
+input:focus, textarea:focus{
+	border-color: #006063; 
+}
+
+textarea{  
+   overflow: auto;
+   resize: none;
+   padding: 3px;
+   width: 99%;
+   height: 130px;
+}
+
+input:focus, select:focus, textarea:focus{ 
+	-moz-box-shadow: #006063 0 0 3px;
+	-webkit-box-shadow: #006063 0 0 3px;
+	box-shadow: #006063 0 0 3px;
+}
+
+.uiButton-feedbackwidget{
+	@include button-base; 
+	background-image: url(../images/overlay-button.png);
+	background-color: #f8f8f8;
+	background-repeat: repeat-x; 
+	color: #333333;
+	display: inline-block;
+	text-decoration: none;
+	margin: 1px; 
+	line-height: 17px;
+	border: 1px solid #d4d4d4;
+	padding: 5px 18px 6px;
+	font-size: 11px;
+	cursor: pointer;
+	text-shadow: 1px 1px 0 white;
+	@include corners(4px);
+	text-align: center;
+
+	&:hover
+  	{
+	    background-color: #000;
+	    border-color: darken(#000, 10%);
+	    color: #ffffff;
+	    @include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px); 
+	    @include vertical-gradient(#919191, #3a3a3a);
+	    font-weight: bold;
+  	}
+}
+
+.feedback-widget-form{
+	padding-bottom: 1em;
+}
+
+.feedback-widget-formtitle{
+	padding: 5px 0 10px;
+	border-bottom: 2px solid #b9b9b9;
+}
+
+.feedback-widget-choice{
+	padding-bottom: 20px;
+	ul{
+		li{
+			float: left;
+			padding: 14px 20px 22px 0;
+			a{
+				font-size: 15px;
+				font-weight: normal;
+				color: #5198e7;
+				padding-top: 10px;
+				&.active{
+					border-top: 5px solid #b9b9b9;
+					font-weight: bold;
+					color: #000;
+				}
+			}
+		}
+	}
+}
+
+.feedback-widget-container{
+	margin: 10px auto;
+	padding: 10px 22px 21px;
+	@include vertical-gradient(#ffffff, #ffffff);
+	@include corners(6px, 6px, 6px, 6px); 
+	@include shadows(rgba(0,0,0,0.5), -3px, 5px, 10px); 
+	border: 2px solid #4b4b4b;
+	width:500px;
+}
+
+.feedbackwidget-footer{
+	color: #adadad;
+	font-size: 11px;
+	a{
+		color: #adadad;
+		text-decoration: underline;
+	}
+}
+
+.feedbackwidget-tooltip{
+	position: absolute;
+	padding: 10px 22px;
+	background-color: #f9f9f9;
+	@include corners(0px, 6px, 6px, 0px); 
+	border: 1px solid #7b7b7b;
+	border-left: none;
+	width: 274px;
+	height: 380px;
+	top: 28px;
+	margin-left: 907px;
+	display: none;
+}
+
+.footerContent{
+	color: #000000;
+	a{
+		color: #000000;
+		text-decoration: none;
+		border-bottom: 1px dotted #000000;
+		&:hover{
+			color: #000000;
+			border-bottom: none;
+		}
+	}
+	@include opacity(0.6);
+}
+
+.button-container{
+	@include clearfix;
+	text-align: right;
+	padding:1em 0em 1em 0; 
+}

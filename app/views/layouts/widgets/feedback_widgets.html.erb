@@ -12,6 +12,7 @@
 	  
 	  	<title><%= "#{h(current_account.name)} Widget" %></title>
 
+<<<<<<< Updated upstream
 		<%= include_stylesheets :widget %>
 		<%= include_javascripts :fdwidget %>		
 		<!--[if IE]><%= include_javascripts :excanvas %><![endif]-->
@@ -28,5 +29,61 @@
 		</div>
 		<div class="content ui-widget-container" id="ui-thanks-container" name="ui-widget-container" style="display:none">
 		</div>
+=======
+		<%#= stylesheet_link_tag "widget", :media => "screen, projection" %>
+		<%= include_stylesheets :widget %>
+		<%= include_javascripts :fdwidget %>
+	  <%= yield :head %>
+	  <script type="text/javascript">
+	  	document.domain = document.domain;
+	  	var $J = jQuery.noConflict();
+	  </script>
+	</head>
+    <body>
+    	<style> body{ background:transparent; }</style>
+    	  <div class="feedbackwidget-tooltip" id="widget_search_results"></div>
+		  <div class="content feedback-widget-container" id="ui-widget-container" name="ui-widget-container">
+		  	<%= yield%> 
+			<%= render :partial => "layouts/shared/footer" %>
+		  </div>
+		  <div class="content ui-widget-container" id="ui-thanks-container" name="ui-widget-container" style="display:none">
+		  </div>
+>>>>>>> Stashed changes
     </body>
 </html>
+<% javascript_tag do %>
+	(function($){
+		$J(document).ready(function(){	
+			callbackToSolutionSearch = function(string){
+				$J.ajax({ 
+					url: "/search/solutions?search_key="+string,
+					success: function(data){
+						var data_available = $J(data).find("a").length;
+						if(data_available)
+						{
+							$J("#widget_search_results").show();
+							$J("#widget_search_results").html('<%= t('auto_suggest_solutions.info') %>' + data);
+						}
+						else{
+							$J("#widget_search_results").hide()
+						}
+						$J("#helpdesk_ticket_subject").removeClass("loading-right");
+					}
+				});
+			}
+			
+			$J("#helpdesk_ticket_subject").bind("keyup", function(ev){
+				var searchString = this.value.replace(/^\s+|\s+$/g, "");
+					if(searchString != '' && searchString.length > 1){
+						$J(this).addClass("loading-right");
+						delay(function(){
+					      callbackToSolutionSearch(searchString);
+					    }, 200 ); 
+					}else{
+						$J("#widget_search_results").hide()
+						$J(this).removeClass("loading-right");				
+					}
+			});
+		}); 
+	})($J);
+<% end %>
