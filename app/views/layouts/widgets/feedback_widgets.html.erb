@@ -12,27 +12,10 @@
 	  
 	  	<title><%= "#{h(current_account.name)} Widget" %></title>
 
-<<<<<<< Updated upstream
-		<%= include_stylesheets :widget %>
-		<%= include_javascripts :fdwidget %>		
-		<!--[if IE]><%= include_javascripts :excanvas %><![endif]-->
-	  	<%= yield :head %>
-		<script type="text/javascript">
-			document.domain = document.domain;
-			var $J = jQuery.noConflict();
-		</script>
-	</head>
-    <body>
-		<style> body{ background:transparent; }</style>
-		<div class="content ui-widget-container" id="ui-widget-container" name="ui-widget-container">
-			<%= yield %>
-		</div>
-		<div class="content ui-widget-container" id="ui-thanks-container" name="ui-widget-container" style="display:none">
-		</div>
-=======
 		<%#= stylesheet_link_tag "widget", :media => "screen, projection" %>
 		<%= include_stylesheets :widget %>
 		<%= include_javascripts :fdwidget %>
+		<!--[if IE]><%= include_javascripts :excanvas %><![endif]-->
 	  <%= yield :head %>
 	  <script type="text/javascript">
 	  	document.domain = document.domain;
@@ -41,14 +24,13 @@
 	</head>
     <body>
     	<style> body{ background:transparent; }</style>
-    	  <div class="feedbackwidget-tooltip" id="widget_search_results"></div>
+    	<div class="feedbackwidget-tooltip" id="widget_search_results"></div>
 		  <div class="content feedback-widget-container" id="ui-widget-container" name="ui-widget-container">
 		  	<%= yield%> 
 			<%= render :partial => "layouts/shared/footer" %>
 		  </div>
 		  <div class="content ui-widget-container" id="ui-thanks-container" name="ui-widget-container" style="display:none">
 		  </div>
->>>>>>> Stashed changes
     </body>
 </html>
 <% javascript_tag do %>
