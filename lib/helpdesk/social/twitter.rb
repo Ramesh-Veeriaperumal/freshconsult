@@ -9,7 +9,10 @@ module Helpdesk::Social::Twitter
         status_id = latest_comment.nil? ? ticket.tweet.tweet_id : latest_comment.tweet.tweet_id
         twt = twitter.update(validate_tweet(note.body, ticket), {:in_reply_to_status_id => status_id})
         process_tweet note, twt, reply_twitter_handle(ticket)
-      rescue
+      rescue => e
+        reply_twitter.attributes = {:state => Social::TwitterHandle::TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required],
+                                    :last_error => e.to_s}
+        reply_twitter.save
         return false
       end
     end
@@ -26,7 +29,10 @@ module Helpdesk::Social::Twitter
         req_twt_id = latest_comment.nil? ? ticket.requester.twitter_id : latest_comment.user.twitter_id
         resp = twitter.direct_message_create(req_twt_id, note.body)
         process_tweet note, twt, reply_twitter_handle(ticket)
-      rescue  
+      rescue => e
+        reply_twitter.attributes = {:state => Social::TwitterHandle::TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required],
+                                    :last_error => e.to_s }
+        reply_twitter.save
         return false
       end
     end

@@ -34,6 +34,9 @@
 	<%= include_javascripts :notifications %>
 	<%= include_stylesheets :redactor  %>
 	<%= include_javascripts :redactor  %>
+	
+	<%= yield :totango %>
+
 <script type="text/javascript">
 	PROFILE_BLANK_THUMB_PATH = '<%= image_path("fillers/profile_blank_thumb.gif") %>';
 	PROFILE_BLANK_MEDIUM_PATH = '<%= image_path("fillers/profile_blank_medium.gif") %>';

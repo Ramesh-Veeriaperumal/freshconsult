@@ -39,12 +39,12 @@ VALID_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/
     end
   end
 
-  def validate_emails email_array
+  def validate_emails(email_array, ticket = @parent)
     unless email_array.blank?
       if email_array.is_a? String
         email_array = email_array.split(/,|;/)
       end
-        email_array.delete_if {|x| (extract_email(x) == @parent.requester.email or !(valid_email?(x))) }
+        email_array.delete_if {|x| (extract_email(x) == ticket.requester.email or !(valid_email?(x))) }
         email_array = email_array.collect{|e| e.gsub(/\,/,"")}
         email_array = email_array.uniq
     end

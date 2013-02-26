@@ -47,6 +47,7 @@ class AccountsController < ApplicationController
    create_account 
    if @account.save
       add_to_crm
+      notify_totango(@account.id)
       render :json => { :success => true, 
       :url => signup_complete_url(:token => @account.account_admin.perishable_token,:host => @account.full_domain) }, 
       :callback => params[:callback]
@@ -247,6 +248,9 @@ class AccountsController < ApplicationController
     params[:account][:main_portal_attributes][:updated_at] = Time.now
     @account.main_portal_attributes = params[:account][:main_portal_attributes]
     if @account.save
+      Resque::enqueue(CRM::Totango::SendUserAction, current_account.id, 
+                                                    current_user.email, 
+                                                    totango_activity(:helpdesk_rebranding))
       flash[:notice] = t(:'flash.account.update.success')
       redirect_to admin_home_index_path
     else
@@ -429,4 +433,8 @@ class AccountsController < ApplicationController
       def add_to_crm
         Resque.enqueue(Marketo::AddLead, @account.id, ThirdCRM.fetch_cookie_info(request.cookies))
       end   
+
+      def notify_totango(account_id)
+        Resque.enqueue(CRM::Totango::TrialCustomer, account_id)
+      end
 end

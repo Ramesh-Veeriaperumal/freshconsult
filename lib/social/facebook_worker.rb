@@ -5,6 +5,8 @@ class Social::FacebookWorker
   @retry_limit = 3
   @retry_delay = 60*2
 
+  ERROR_MESSAGES = {:access_token_error => "access token", :permission_error => "manage_pages"}
+  
   def self.perform(account_id)
     account = Account.find(account_id)
     account.make_current
@@ -36,8 +38,11 @@ class Social::FacebookWorker
   def self.sandbox
     begin
       yield
-    rescue Koala::Facebook::APIError => e
-        @fan_page.update_attributes({ :reauth_required => true, :last_error => e.to_s})
+    rescue Koala::Facebook::APIError => e      
+        @fan_page.attributes = {:enable_page => false} if e.to_s.include?(ERROR_MESSAGES[:access_token_error]) ||
+                                                          e.to_s.include?(ERROR_MESSAGES[:permission_error])
+        @fan_page.attributes = { :reauth_required => true, :last_error => e.to_s }
+        @fan_page.save 
         NewRelic::Agent.notice_error(e)
         puts "Error while processing facebook"
         puts e.to_s
