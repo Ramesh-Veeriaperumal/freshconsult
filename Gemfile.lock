@@ -26,29 +26,6 @@ GIT
     lhm (1.2.0)
 
 GIT
-  remote: git://github.com/freshdesk/rails.git
-  revision: 2a31d57f921f2d2ecbef48a7430aba0b58c7e015
-  branch: rails_2_3_8
-  specs:
-    actionmailer (2.3.8)
-      actionpack (= 2.3.8)
-    actionpack (2.3.8)
-      activesupport (= 2.3.8)
-      rack (~> 1.1.0)
-    activerecord (2.3.8)
-      activesupport (= 2.3.8)
-    activeresource (2.3.8)
-      activesupport (= 2.3.8)
-    activesupport (2.3.8)
-    rails (2.3.8)
-      actionmailer (= 2.3.8)
-      actionpack (= 2.3.8)
-      activerecord (= 2.3.8)
-      activeresource (= 2.3.8)
-      activesupport (= 2.3.8)
-      rake (>= 0.8.3)
-
-GIT
   remote: git://github.com/freshdesk/rinku.git
   revision: 67f54898fe7270f96900a3fa9a4dd50b6b351f25
   specs:
@@ -102,6 +79,16 @@ GEM
     Platform (0.4.0)
     RedCloth (4.2.3)
     SystemTimer (1.2.3)
+    actionmailer (2.3.17)
+      actionpack (= 2.3.17)
+    actionpack (2.3.17)
+      activesupport (= 2.3.17)
+      rack (~> 1.1.0)
+    activerecord (2.3.17)
+      activesupport (= 2.3.17)
+    activeresource (2.3.17)
+      activesupport (= 2.3.17)
+    activesupport (2.3.17)
     addressable (2.2.7)
     akami (1.2.0)
       gyoku (>= 0.4.0)
@@ -236,6 +223,13 @@ GEM
     rack-openid (1.3.1)
       rack (>= 1.1.0)
       ruby-openid (>= 2.1.8)
+    rails (2.3.17)
+      actionmailer (= 2.3.17)
+      actionpack (= 2.3.17)
+      activerecord (= 2.3.17)
+      activeresource (= 2.3.17)
+      activesupport (= 2.3.17)
+      rake (>= 0.8.3)
     rake (0.8.7)
     rdoc (3.12)
       json (~> 1.4)
@@ -344,11 +338,6 @@ PLATFORMS
 DEPENDENCIES
   RedCloth (= 4.2.3)
   SystemTimer (= 1.2.3)
-  actionmailer!
-  actionpack!
-  activerecord!
-  activeresource!
-  activesupport!
   after_commit!
   arel (= 2.0.7)
   authlogic (= 2.1.6)
@@ -391,7 +380,7 @@ DEPENDENCIES
   omniauth-salesforce
   people (= 0.2.1)
   rack (~> 1.1.6)
-  rails!
+  rails (= 2.3.17)
   rake (= 0.8.7)
   redis (= 2.2.2)
   resque (= 1.22.0)
