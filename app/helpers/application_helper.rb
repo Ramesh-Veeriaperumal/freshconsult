@@ -498,6 +498,7 @@ module ApplicationHelper
   def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
+    element_class  += " required_closure" if (field.required_for_closure && !field.required)
     field_label    += '<span class="required_start">*</span>' if required
     field_label    += "#{add_requester_field}" if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
     field_name      = (field_name.blank?) ? field.field_name : field_name
@@ -681,4 +682,26 @@ module ApplicationHelper
               "data-tour-id" => tour_id)
   end
   
+  def check_fb_reauth_required
+    fb_page = current_account.fb_reauth_check_from_cache
+    if fb_page
+      return content_tag('div', "<a href='javascript:void(0)'></a>  Your Facebook channel is inaccessible. 
+        It looks like username, password, or permission has been changed recently.Kindly 
+        <a href='/social/facebook' target='_blank'> fix </a> it.  ", :id => type, :class => 
+        "alert-message block-message warning full-width")
+    end
+    return
+  end
+ 
+  def check_twitter_reauth_required
+    twt_handle= current_account.twitter_reauth_check_from_cache
+    if twt_handle
+      return content_tag('div', "<a href='javascript:void(0)'></a>  Your Twitter channel is inaccessible. 
+        It looks like username or password has been changed recently. Kindly 
+        <a href='/social/twitters' target='_blank'> fix </a> it.  ", :id => type, :class => 
+        "alert-message block-message warning full-width")
+    end
+    return
+  end
+
 end

@@ -124,6 +124,7 @@ javascripts:
     - public/javascripts/sisyphus.js
     - public/javascripts/ticket_list.js
     - public/javascripts/AsyncJSLoader.js
+    - public/javascripts/frameworks/plugins/jquery-ui-timepicker-addon.js
   visitor:
     - public/javascripts/frameworks/session.js            
   workspace:  

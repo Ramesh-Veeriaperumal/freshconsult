@@ -93,7 +93,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       self[:agent_email] = user.email
       self[:customer_name] = self.customer_name
       self[:contact_email] = workable.requester.email
-      options[:except] = [:account_id,:workable_id,:time_spent]
+      options[:except] = [:account_id,:workable_id]
       options[:root] =:time_entry
     end
     json_str = super options
