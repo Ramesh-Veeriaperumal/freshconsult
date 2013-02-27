@@ -17,14 +17,4 @@ class Widgets::FeedbackWidgetsController < SupportController
     end
     
   end
-
-  def search_solutions
-    render :partial => "/search/pagesearch", :locals => { :placeholder => '', :url => "/search/solutions?search_key=" }
-  end
-
-  def submit_feedback
-    @ticket = Helpdesk::Ticket.new 
-    @ticket.email = current_user.email if current_user
-    render :partial => "feedbackwidget_form"
-  end
 end

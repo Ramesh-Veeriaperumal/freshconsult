@@ -114,22 +114,22 @@
 .freshwidget-dialog{
 	position:absolute;
 	padding:8px 0px; 
-	left:0;
+	left:50%;
+	margin-left:-260px;
 	top:100px;
 	z-index:900010; 
-	width:100%; 
+	 
 	iframe{
-		width:100%; 
+		width:612px; 
 		height:900px;
 	}    
 	
 	.widget-close{
 		position:absolute;
-		left:50%;
-		top:30px;
-		width: 24px;
-		height: 29px; 
+		right:5px;
+		top:6px;
+		width: 28px;
+		height: 28px; 
 		cursor:pointer;
-		margin-left:-298px;
 	}
 }

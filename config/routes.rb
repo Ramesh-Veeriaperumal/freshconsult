@@ -185,7 +185,7 @@
   end
 
   map.namespace :widgets do |widgets|
-    widgets.resource :feedback_widget, :member => { :loading => :get, :search_solutions => :post, :submit_feedback => :post } 
+    widgets.resource :feedback_widget, :member => { :loading => :get } 
   end 
 
   map.plans '/signup', :controller => 'accounts', :action => 'plans'

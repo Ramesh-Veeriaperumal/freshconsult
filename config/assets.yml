@@ -63,8 +63,7 @@ stylesheets:
     - public/stylesheets/app/lib/defaults.css
     - public/stylesheets/app/lib/form.css
     - public/stylesheets/app/lib/buttons.css
-    - public/stylesheets/app/lib/ie.css 
-    - public/stylesheets/search-results.css
+    - public/stylesheets/app/lib/ie.css
 
   freshwidget:
     - public/stylesheets/freshwidget.css

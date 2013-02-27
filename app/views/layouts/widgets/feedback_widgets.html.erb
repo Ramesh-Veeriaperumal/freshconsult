@@ -33,39 +33,3 @@
 		  </div>
     </body>
 </html>
-<% javascript_tag do %>
-	(function($){
-		$J(document).ready(function(){	
-			callbackToSolutionSearch = function(string){
-				$J.ajax({ 
-					url: "/search/solutions?search_key="+string,
-					success: function(data){
-						var data_available = $J(data).find("a").length;
-						if(data_available)
-						{
-							$J("#widget_search_results").show();
-							$J("#widget_search_results").html('<%= t('auto_suggest_solutions.info') %>' + data);
-						}
-						else{
-							$J("#widget_search_results").hide()
-						}
-						$J("#helpdesk_ticket_subject").removeClass("loading-right");
-					}
-				});
-			}
-			
-			$J("#helpdesk_ticket_subject").bind("keyup", function(ev){
-				var searchString = this.value.replace(/^\s+|\s+$/g, "");
-					if(searchString != '' && searchString.length > 1){
-						$J(this).addClass("loading-right");
-						delay(function(){
-					      callbackToSolutionSearch(searchString);
-					    }, 200 ); 
-					}else{
-						$J("#widget_search_results").hide()
-						$J(this).removeClass("loading-right");				
-					}
-			});
-		}); 
-	})($J);
-<% end %>
