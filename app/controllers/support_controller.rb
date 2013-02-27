@@ -21,7 +21,7 @@ class SupportController < ApplicationController
     def preview?
       if User.current
         is_preview = IS_PREVIEW % { :account_id => current_account.id, 
-        :user_id => User.current.id, :portal_id => @portal.id}
+          :user_id => current_user.id, :portal_id => @portal.id}
         !get_key(is_preview).blank? && !current_user.blank? && current_user.agent?
       end
     end

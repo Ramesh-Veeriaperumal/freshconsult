@@ -65,7 +65,7 @@ input[type="text"].loading, .ui-autocomplete-loading{
 
 @include at-breakpoint($break-tablet){
   // Rounded options only for tablet and desktop
-	.rounded-6{ @include border-radius(6px); }
+	.rounded-6{ @include border-radius($content-border-radius); }
 
   // Some utility class that will be applicable from tablet to desktop
   .pull-right-tablet{ float: right; }

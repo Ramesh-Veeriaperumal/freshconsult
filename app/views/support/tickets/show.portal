@@ -3,33 +3,33 @@
 		<a href="/">Home</a>
 		<a href="{{ portal.tickets_home_url }}">Tickets list</a>
 	</div>
-	{{ ticket | status_alert }}
-	
-	{% if current_user %}
-	<section class="ticket-main" id="ticket-toolbar">
-		<section class="ticket-actions">
-			<span class="hide-tablet pull-right">
-				<a href="#" class="btn btn-icon btn-small btn-primary" 
-					data-toggle-dom="#ticket-sidebar" data-animated>
-					<i class="icon-cog-drop-light"></i>
-				</a>
-			</span>
-			<div class="btn-group" id="ticket-toolbar">
-				{% unless ticket.closed? %}
-					<a href="#reply-to-ticket" class="btn btn-small" data-proxy-for="#add-note-form">Reply</a>
-					<a href="{{ ticket.close_ticket_url }}" data-method="post" class="btn btn-small">
-						Mark ticket as closed
-					</a>
-					<a href="#add-people" rel="freshdialog" title="Add people to conversation" 
-						data-width="400" class="btn btn-small" data-submit-label="Add people">Add people</a>
-				{% endunless %}
-			</div>			
-		</section>
-	</section>
-	{% endif %}	
 	
 	<section class="ticket-main">
 		<h2 class="heading">#{{ ticket.id }} {{ ticket.subject }}</h2>
+		{% if current_user %}
+		<section class="ticket-main" id="ticket-toolbar">
+			<section class="ticket-actions">
+				<span class="hide-tablet pull-right">
+					<a href="#" class="btn btn-icon btn-small btn-primary" 
+						data-toggle-dom="#ticket-sidebar" data-animated>
+						<i class="icon-cog-drop-light"></i>
+					</a>
+				</span>
+				<div class="btn-group" id="ticket-toolbar">
+					{% unless ticket.closed? %}
+						<a href="#reply-to-ticket" class="btn btn-small" data-proxy-for="#add-note-form">Reply</a>
+						<a href="{{ ticket.close_ticket_url }}" data-method="post" class="btn btn-small">
+							Mark ticket as closed
+						</a>
+						<a href="#add-people" rel="freshdialog" title="Add people to conversation" 
+							data-width="400" class="btn btn-small" data-submit-label="Add people">Add people</a>
+					{% endunless %}
+				</div>			
+			</section>
+		</section>
+		{% endif %}	
+
+		{{ ticket | status_alert }}
 
 		<section class="user-comment" id="ticket-description">			
 			<div class="user-info">
@@ -113,6 +113,18 @@
 </section>
 
 <section class="sidebar content rounded-6" id="ticket-sidebar">
+	{% assign agent = ticket.agent %}
+	{% if agent %}
+		<div class="widget agent-details">
+			<h3 class="lead">Agent working on this ticket</h4>
+			<div class="user-pic-thumb">
+				<img src="{{ agent.profile_url }}" width="40px" height="40px" />
+			</div>
+			<div><b>{{ agent.name }}</b></div>
+			<div>{{ agent.job_title }}</div>
+		</div>
+	{% endif %}
+
 	{% snippet ticket_survey %}
 	
 	{% snippet ticket_details %}

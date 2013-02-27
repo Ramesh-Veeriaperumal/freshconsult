@@ -109,7 +109,7 @@ module SupportHelper
 	def link_to_start_topic portal, *args
 		options = link_args_to_options(args)
     	label = options.delete(:label) || I18n.t('portal.topic.start_new_topic')
-    	content_tag :a, label, { :href => portal['new_topic_path'], :title => label }.merge(options)
+    	content_tag :a, label, { :href => portal['new_topic_url'], :title => label }.merge(options)
 	end
 
 	def article_list folder, limit = 5, reject_article = nil
@@ -250,9 +250,12 @@ HTML
 	end
 
 	def status_alert ticket
-		_text = ticket['status'] + (ticket['closed?'] ? 
-			", <a href='#reply-to-ticket' data-proxy-for='#add-note-form' data-show-dom='#reply-to-ticket'>Reply to re-open ticket</a>" : "")
-		content_tag :div, _text, :class => "alert alert-ticket-status"
+		_text = []
+		_text << %( <b> #{ ticket['status'] } </b> )
+		_text << I18n.t('since_last_time', :time_words => timediff_in_words(Time.now() - ticket['status_changed_on']))
+		_text << %( <a href='#reply-to-ticket' data-proxy-for='#add-note-form' 
+			data-show-dom='#reply-to-ticket'>Reopen and reply</a> ) if ticket['closed?']
+		content_tag :div, _text.join(" "), :class => "alert alert-ticket-status"
 	end
 
 	def ticket_label object_name, field
@@ -379,6 +382,59 @@ HTML
 	def portal_fonts
 		include_google_font portal_preferences.fetch(:baseFont, ""), 
 			portal_preferences.fetch(:headingsFont, ""), "Helvetica Neue"
+	end
+
+	def ticket_field_display_value(field, ticket)
+		_field_type = field.field_type
+		_field_value = (field.is_default_field?) ? ticket.send(field.field_name) : ticket.get_ff_value(field.name)
+		_dom_type = (_field_type == "default_source") ? "dropdown" : field.dom_type
+
+		case _dom_type
+			when "dropdown", "dropdown_blank"
+			    if(_field_type == "default_agent")
+					ticket.responder.name if ticket.responder
+			    elsif(_field_type == "nested_field" || _field_type == "nested_child")
+					ticket.get_ff_value(field.name)
+			    else
+					field.dropdown_selected(((_field_type == "default_status") ? 
+						field.all_status_choices : field.choices), _field_value)
+			    end
+			else
+			  	_field_value
+		end
+	end
+
+	def ticket_field_form_value(field, ticket)
+		form_value = (field.is_default_field?) ? 
+		              ticket.send(field.field_name) : ticket.get_ff_value(field.name)
+
+		if(field.field_type == "nested_field")
+			form_value = {}
+			field.nested_levels.each do |ff|
+			form_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = ticket.get_ff_value(ff[:name])
+			end
+			form_value.merge!({:category_val => ticket.get_ff_value(field.name)})
+		end
+
+		return form_value
+	end
+
+	# Portal placeholders to access dynamic data inside javascripts
+	def portal_access_varibles
+		output = []
+		output << %( <script type="text/javascript"> )
+		output << %(  	portal = #{portal_javascript_object}; )
+		output << %( 	console.log(portal); )
+		output << %( </script> )
+		output.join("")
+	end
+
+	def portal_javascript_object
+		{ :language => @portal['language'],
+		  :name => @portal['name'],
+		  :contact_info => @portal['contact_info'],
+		  :page => @portal['page'],
+		}.to_json
 	end
 
 	private

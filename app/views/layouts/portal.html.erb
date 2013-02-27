@@ -16,9 +16,10 @@
 		<%= include_stylesheets :portal %>
 		<link href="/theme.css" media="screen" rel="stylesheet" type="text/css">
 		<%= portal_fonts %>
+		<%= include_javascripts :portal_head %>
 
-		
-		<%= include_javascripts :portal_head %>		
+		<!-- Access variables for the portal -->
+		<%= portal_access_varibles %>
 	</head>
 	<body>
 		<%= assumed_identity_message %>

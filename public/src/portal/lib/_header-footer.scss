@@ -190,7 +190,7 @@ footer{
 			box-shadow: inset 0px 1px 3px $footer_color, 0px 0px 2px darken($footer_color, 30%);
 			background: $footer_text_color;
 			color:$footer_color;
-			border-radius: 20px;
+			@include border-radius(20px);
 			padding: 4px 10px;
 			margin:0 4px;
 			&:before{
@@ -207,7 +207,7 @@ footer{
 /* Applying styles for tablet and above */
 @include at-breakpoint($break-tablet){
 	.banner{ 
-		text-align:left; @include border-top-radius(6px); 
+		text-align:left; @include border-top-radius($content-border-radius); 
 		h1{
 			font-size:30px;
 			line-height: $baseLineHeight * 2;
@@ -223,13 +223,9 @@ footer{
 		}
 		nav{ text-align: right; }
 	}
-	.page-tabs{ 
-	/*	@include border-bottom-radius(6px); 
-		a:first-child{ @include border-bottom-left-radius(6px); }
-		a{ display: block; float: left; border-right: 1px solid $header_border_color; text-align: center;  }
-		*/
+	.page-tabs{	
 		display:inline-block;
-		@include border-bottom-radius(6px); 
+		@include border-bottom-radius($content-border-radius); 
 		@if lightness($tab_color) > 50% {
 			border: 1px solid $header_border_color;	
 		} @else{
@@ -257,7 +253,7 @@ footer{
 				&:first-child{
 					border-top: 0;
 					@include border-top-radius(0px);
-					@include border-bottom-left-radius(6px); 
+					@include border-bottom-left-radius($content-border-radius); 
 				}
 				
 			}

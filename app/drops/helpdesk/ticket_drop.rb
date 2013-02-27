@@ -34,11 +34,11 @@ class Helpdesk::TicketDrop < BaseDrop
 	end
 
 	def requester
-		@source.requester
+		@source.requester.presence
 	end
 
 	def agent
-		@source.responder
+		@source.responder.presence
 	end
 
 	def status
@@ -120,6 +120,10 @@ class Helpdesk::TicketDrop < BaseDrop
 
 	def modified_on
 		@source.updated_at
+	end
+
+	def status_changed_on
+		@source.ticket_states.status_updated_at
 	end
 
 	def freshness

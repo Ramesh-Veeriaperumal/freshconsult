@@ -84,7 +84,6 @@
 		// This is used in the place when the user can cc anybody
 		$("input#cc_emails").select2(_static_cc_emails_opts)
 
-
 		var _closed_list_cc_emails_opts = {
 			tokenSeparators: [",", " "],
 			formatNoMatches: function () { return ""; }
@@ -92,10 +91,8 @@
 		// This is used in the place when the user can cc only people from his company
 		$("select#cc_emails").select2(_closed_list_cc_emails_opts)
 
-		$("select.custom-select").livequery(function(){ 
-			$(this).select2({
-				minimumResultsForSearch: 10
-			})
+		$("select.custom-select").livequery(function(){			
+			$(this).select2($.extend({ minimumResultsForSearch: 10, allowClear: true }, $(this).data()))
 		})
 
 		// Hacks for overriding Bootstrap defaults

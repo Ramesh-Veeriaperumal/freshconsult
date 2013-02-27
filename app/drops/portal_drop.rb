@@ -10,7 +10,8 @@ class PortalDrop < BaseDrop
 
   def context=(current_context)
     @current_tab = current_context['current_tab']
-
+    @context = current_context
+    
     super
   end
 
@@ -20,7 +21,7 @@ class PortalDrop < BaseDrop
   end
 
   def linkback_url
-    @linkback_url ||= source.preferences[:logo_link] || support_home_path
+    @linkback_url ||= source.preferences.fetch(:logo_link, support_home_path)
   end
 
   def contact_info
@@ -29,7 +30,7 @@ class PortalDrop < BaseDrop
 
   # Portal links
   def login_url
-    @login_url ||= source.portal_login_path
+    @login_url ||= support_login_path(url_options)
   end
   
   def can_signup_feature
@@ -37,23 +38,24 @@ class PortalDrop < BaseDrop
   end
   
   def signup_url
-    @signup_url ||= source.signup_path
+    @signup_url ||= support_signup_path(url_options)
   end
 
   def logout_url
-    @logout_url ||= source.portal_logout_path
+    @logout_url ||= logout_path(url_options)
   end
   
   def new_ticket_url
-    @new_ticket_url ||= source.new_ticket_path
+    @new_ticket_url ||= new_support_ticket_path(url_options)
   end
 
-  def new_topic_url
-    @new_topic_url ||= source.new_topic_path
+  def new_topic_url    
+    _opts = url_options.merge({ :forum_id => @context['forum'].id }) if @context['forum'].present?
+    @new_topic_url ||= new_support_discussions_topic_path( _opts )
   end
 
   def profile_url
-    @profile_url ||= source.profile_path
+    @profile_url ||= edit_support_profile_path(url_options)
   end
 
   def user
@@ -127,6 +129,10 @@ class PortalDrop < BaseDrop
   def articles_count
     @articles_count ||= portal_account.published_articles.count
   end
+
+  def url_options
+    { :host => source.host }    
+  end 
   
   private
     def load_tabs
@@ -139,6 +145,6 @@ class PortalDrop < BaseDrop
   	    HashDrop.new( :name => s[1].to_s, :url => s[0], 
           :label => (s[3] || I18n.t("header.tabs.#{s[1].to_s}")), :tab_type => s[1].to_s ) if s[2]
       }.reject(&:blank?)
-    end    
+    end
     
 end

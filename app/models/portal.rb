@@ -87,30 +87,6 @@ class Portal < ActiveRecord::Base
     # PortalDrop.new self
   end
   
-  def portal_login_path
-    support_login_path(:host => portal_url)
-  end
-  
-  def portal_logout_path
-    logout_path(:host => portal_url)
-  end
-  
-  def signup_path
-    support_signup_path(:host => portal_url)
-  end
-  
-  def new_ticket_path
-    new_support_ticket_path(:host => portal_url)
-  end
-
-  def new_topic_path
-    new_support_discussions_topic_path(:host => portal_url)
-  end
-
-  def profile_path
-    edit_support_profile_path(:host => portal_url)
-  end
-
   def host
     portal_url.blank? ? account.full_domain : portal_url
   end
@@ -127,10 +103,6 @@ class Portal < ActiveRecord::Base
     fav_icon.content.url unless fav_icon.nil?
   end
   
-  def portal_page
-    self.template
-  end
-
   private
     def handle_icon(icon_field, icon_attr)
       unless send(icon_field)

@@ -198,7 +198,7 @@ en:
     shared:
     tickets:    
       ticket_survey:
-        title: "Survey feedback"
+        title: "Customer survey"
         rating_sub_title: "Your have rated us"
         survey_title: Please take a minute to rate our support
         feedback_title: Describe your support experience (optional)
@@ -3013,6 +3013,7 @@ en:
   since: "Since"
   for: "for"
   since_time: "Since %{time_words}"
+  since_last_time: "since last %{time_words}"
   change_deleted_status_msg: "Please change the status as the current status is deleted"
   ticket_cc_email_more: "more"
   fwd_to: "Forward"

@@ -6,7 +6,7 @@
   <% current_portal.customer_editable_ticket_fields.each do |field| %>
     <div class="control-group">
       <%= ticket_label :helpdesk_ticket, field %>
-      <%= ticket_form_element :helpdesk_ticket, field, ticket_field_form_value(field, @ticket) %>
+      <%= ticket_form_element :helpdesk_ticket, field %>
     </div>
       <%#= construct_ticket_element :helpdesk_ticket, field, 
                                    field.label_in_portal,

@@ -5,8 +5,9 @@ $select-sprite-bg-url: "select2/select2.png";
 $select-sprite-bg2x2-url: "select2/select2x2.png";
 $select-sprite-spinner-url: "select2/spinner.gif";
 
-.dropdown.custom-select{
-  @include min-width(100%);
+.custom-select{
+  @include min-width(300px);
+  max-width: 100%;
 }
 
 .error-group .select2-choice{ 
@@ -55,7 +56,7 @@ $select-sprite-spinner-url: "select2/spinner.gif";
     overflow: hidden;
     white-space: nowrap;
     position: relative;
-    height: 31px;    
+    height: 30px;    
     line-height: 26px;
     padding: 0 0 0 8px;
     color: #444;

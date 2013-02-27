@@ -30,9 +30,13 @@
 				Post topic in
 			</label>
 			<div class="controls">
-				<%= form.select :forum_id, grouped_options_for_select(forum_options, @topic.forum_id), 
-					{ :include_blank => "--- Select a forum ---" }, 
-					{ :class => "required", :disabled => !@topic.new_record? } %>
+				<%= form.select :forum_id, grouped_options_for_select(forum_options), 
+					{ :include_blank => "Select a forum type" },
+					{ :class => "required custom-select", 
+					  :disabled => !@topic.new_record? } %>
+				<% javascript_tag do %>
+					jQuery("#topic_forum_id").val(<%= params[:forum_id] %>)
+				<% end %>
 			</div>
 		</div>
 		<div class="control-group">
