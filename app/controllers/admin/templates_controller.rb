@@ -5,6 +5,7 @@ class Admin::TemplatesController < Admin::AdminController
   before_filter :clear_preview_session, :default_liquids, :set_forum_builder, :only => :show
   before_filter :clear_preview_session, :only => :clear_preview
 
+  cache_sweeper Cache::Sweepers::ThemeSweeper, :only => [:publish, :update, :restore_default]
   
   before_filter(:only => :update) do |c| #validating the syntax before persisting.
     custom_css = c.request.params[:portal_template][:custom_css]
@@ -50,7 +51,7 @@ class Admin::TemplatesController < Admin::AdminController
  
   private
     def build_objects
-      @portal_template = scoper.template.get_draft || scoper.template
+      @portal_template = scoper.fetch_template.get_draft || scoper.fetch_template
     end
 
     def default_liquids

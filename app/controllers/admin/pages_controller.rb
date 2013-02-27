@@ -13,7 +13,7 @@ class Admin::PagesController < Admin::AdminController
 
   def update
     @portal_page.attributes= params[:portal_page]
-    scoper.template.cache_page(@portal_page_label, @portal_page)    
+    @portal_template.cache_page(@portal_page_label, @portal_page)    
     flash[:notice] = "Page saved successfully." unless params[:preview_button]
     get_raw_page
     respond_to do |format|
@@ -24,7 +24,7 @@ class Admin::PagesController < Admin::AdminController
   end
 
   def soft_reset
-    scoper.template.clear_page_cache!(@portal_page_label)
+    @portal_template.clear_page_cache!(@portal_page_label)
     flash[:notice] = "Page reseted successfully."
     redirect_to "#{admin_portal_template_path( @portal )}#header#pages"
   end
@@ -45,10 +45,10 @@ class Admin::PagesController < Admin::AdminController
         flash[:warning] = t('flash.general.access_denied')
         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
       end
-
-      @portal_page = scoper.template.page_from_cache(@portal_page_label) ||
-                      scoper.template.pages.find_by_page_type(page_type) || 
-                      scoper.template.pages.new( :page_type => page_type )
+      @portal_template = scoper.fetch_template
+      @portal_page = @portal_template.page_from_cache(@portal_page_label) ||
+                      @portal_template.fetch_page_by_type(page_type) || 
+                      @portal_template.pages.new( :page_type => page_type )
     end
 
 

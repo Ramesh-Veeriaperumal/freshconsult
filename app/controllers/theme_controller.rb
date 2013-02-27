@@ -1,6 +1,6 @@
 class ThemeController < SupportController
 
-	# caches_page :index
+	caches_page :index
 	before_filter :theme_colors, :merged_scss
 
 	# Precautionary settings override

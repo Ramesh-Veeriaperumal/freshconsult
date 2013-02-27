@@ -3,6 +3,8 @@ class Portal::Template < ActiveRecord::Base
 	set_table_name "portal_templates"
 
   include RedisKeys
+  include Cache::Memcache::Portal::Template
+
   belongs_to_account
   belongs_to :portal
   
@@ -11,6 +13,7 @@ class Portal::Template < ActiveRecord::Base
   serialize :preferences, Hash
 
   before_create :set_defaults
+  after_commit :clear_memcache_cache
 
   TEMPLATE_MAPPING = [ 
     [:header,  "portal/header.portal"],    

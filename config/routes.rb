@@ -345,7 +345,7 @@
   # map.resources :home, :only => :index 
 
   # Theme for the support portal
-  map.connect "/theme.:format", :controller => 'theme'
+  map.connect "/theme/:id.:format", :controller => 'theme', :action => :index
 
   # Support Portal routes  
   map.namespace :support do |support|

@@ -9,12 +9,11 @@
 		<meta name="author" content="">
 		<meta name="keywords" content="<%= page_keywords %>">
 
-		<meta name="viewport" content="width=device-width">  
-		<link rel="shortcut icon" href="<%= current_portal.fav_icon_url %>" />
-		
+		<meta name="viewport" content="width=device-width">
+		<%=portal_fav_ico%>
 		<%#= include_stylesheets :portal, :redactor %>
 		<%= include_stylesheets :portal %>
-		<link href="/theme.css" media="screen" rel="stylesheet" type="text/css">
+		<link href="<%=theme_url%>" media="screen" rel="stylesheet" type="text/css">
 		<%= portal_fonts %>
 		<%= include_javascripts :portal_head %>
 

@@ -31,6 +31,7 @@ class SupportController < ApplicationController
     def portal_context
       @portal ||= current_portal
       @preview = preview?
+      @portal_template = @portal.fetch_template
     end
 
     def redactor_form_builder
@@ -63,11 +64,10 @@ class SupportController < ApplicationController
 
     def page_data(page_token)
       page_type ||= Portal::Page::PAGE_TYPE_KEY_BY_TOKEN[ page_token ]
-      @current_page = current_portal.template.pages.find_by_page_type( page_type ) || 
-                        current_portal.template.pages.new
+      @current_page = @portal_template.fetch_page_by_type( page_type )
       page_template = @current_page.content unless @current_page.blank?
       if preview?
-        draft_page = current_portal.template.page_from_cache(page_token)
+        draft_page = @portal_template.page_from_cache(page_token)
         page_template = draft_page[:content] unless draft_page.nil?
       end
       page_template
@@ -88,7 +88,7 @@ class SupportController < ApplicationController
     end
 
     def process_template_liquid
-      Portal::Template::TEMPLATE_MAPPING.each_with_index do |t, t_i|
+      Portal::Template::TEMPLATE_MAPPING.each do |t|
         dynamic_template = template_data(t[0]) if feature?(:layout_customization)
         _content = render_to_string :partial => t[1], 
                     :locals => { :dynamic_template => dynamic_template }
@@ -97,8 +97,8 @@ class SupportController < ApplicationController
     end
 
     def template_data(sym)
-      data = current_portal.template[sym] 
-      data = current_portal.template.get_draft[sym] if preview? && current_portal.template.get_draft
+      data = @portal_template[sym] 
+      data = @portal_template.get_draft[sym] if preview? && @portal_template.get_draft
       data
     end
     

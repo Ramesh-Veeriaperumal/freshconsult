@@ -17,7 +17,9 @@ class PortalDrop < BaseDrop
 
   # Portal branding related information
   def logo_url
-    @logo_url ||= source.logo.present? ? source.logo.content.url(:logo) : "/images/logo.png"
+    @logo_url ||= MemcacheKeys.fetch(["v1","portal","logo_href",source]) do
+      source.logo.present? ? source.logo.content.url(:logo) : "/images/logo.png"
+    end
   end
 
   def linkback_url
