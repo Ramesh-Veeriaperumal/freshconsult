@@ -32,6 +32,15 @@ module MemcacheKeys
   ACCOUNT_CUSTOM_DROPDOWN_FIELDS = "v1/ACCOUNT_CUSTOM_DROPDOWN_FIELDS:%{account_id}"
 
   ACCOUNT_NESTED_FIELDS = "v1/ACCOUNT_NESTED_FIELDS:%{account_id}"
+
+
+  # Portal customization related keys
+  PORTAL_TEMPLATE = "v1/PORTAL_TEMPLATE:%{account_id}:%{portal_id}"
+
+  PORTAL_TEMPLATE_PAGE = "v1/PORTAL_TEMPLATE_PAGE:%{account_id}:%{template_id}:%{page_type}"
+
+  SOLUTION_CATEGORIES = "v1/SOLUTION_CATEGORIES:%{portal_id}"
+
   
   class << self
 
@@ -75,11 +84,10 @@ module MemcacheKeys
     def fetch(key, expiry=0,&block)
       key = ActiveSupport::Cache.expand_cache_key(key) if key.is_a?(Array)
       cache_data = get_from_cache(key)
-      unless cache_data
+      if cache_data.nil?
         Rails.logger.debug "Cache hit missed :::::: #{key}"
-        cache(key, (cache_data = block.call),expiry)
+        cache(key, (cache_data = block.call), expiry)
       end
-
       cache_data
     end
   end

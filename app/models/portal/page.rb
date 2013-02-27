@@ -1,10 +1,14 @@
 class Portal::Page < ActiveRecord::Base
 	set_table_name "portal_pages"
 	
+	include MemcacheKeys
+
 	belongs_to_account
 	belongs_to :template	
 	
 	validates_uniqueness_of :page_type, :scope => [:template_id]	
+
+	after_commit :clear_cache
   
 	#!PORTALCSS Need to move these constances to lib
 
@@ -83,5 +87,12 @@ class Portal::Page < ActiveRecord::Base
 	def to_liquid
 	  @page_drop ||= PageDrop.new self
 	end
+
+	private
+	  def clear_cache
+	    key = PORTAL_TEMPLATE_PAGE % { :account_id => self.account_id, 
+	    	:template_id => self.template_id, :page_type => self.page_type }
+	    MemcacheKeys.delete_from_cache key
+	  end
 
 end

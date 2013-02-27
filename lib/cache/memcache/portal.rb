@@ -29,4 +29,9 @@ module Cache::Memcache::Portal
     MemcacheKeys.delete_from_cache key
   end
 
+  def fetch_template
+    key = PORTAL_TEMPLATE % { :account_id => self.account_id, :portal_id => self.id }
+    MemcacheKeys.fetch(key) { self.template }
+  end
+
 end

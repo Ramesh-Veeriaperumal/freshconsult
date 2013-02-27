@@ -4,7 +4,10 @@ module Mobile::MobileHelperMethods
 
   MOBILE_VIEWS = { :tickets => { 
                       :show => "#{MOBILE_URL}#tickets/show/{{params.id}}"
-                    } 
+                    },
+                   :dashboard => {
+                      :index  => MOBILE_URL
+                    }
                   }
 
   DOMAINS =  [ :localhost, :"192.168.1.28", :"siva.freshbugs.com", :"freshvikram.freshbugs.com", :"m.freshbugs.com" ]
@@ -56,7 +59,7 @@ module Mobile::MobileHelperMethods
     end
 
     def redirect_to_mobile_url
-      if !current_user.nil? and mobile? and !"mobile".eql?(params[:format]) and !"mob".eql?(params[:format]) and mobile_view?
+      if !current_user.nil? && current_user.agent? and mobile? and !"mobile".eql?(params[:format]) and !"mob".eql?(params[:format]) and mobile_view?
          redirect_to mobile_url
       end
     end

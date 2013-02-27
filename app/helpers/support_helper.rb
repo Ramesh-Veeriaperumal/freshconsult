@@ -1,6 +1,7 @@
 module SupportHelper
 	include ActionView::Helpers::TagHelper
 	include Portal::PortalFilters
+	include RedisKeys
 
 	FONT_INCLUDES = { "Source Sans Pro" => "Source+Sans+Pro:regular,italic,700,700italic",
 					  "Droid Sans" => "Droid+Sans:regular,700",
@@ -60,7 +61,15 @@ module SupportHelper
 		# Showing the customer uploaded logo or default logo within an image tag
 		_output << %(<img src='#{portal['logo_url']}' class='portal-logo' />)
 		_output << %(</a>)
-		_output.join(" ")
+		_output.to_s
+	end
+
+	def portal_fav_ico
+		fav_icon_content = MemcacheKeys.fetch(["v2","portal","fav_ico",current_portal]) do
+			url = current_portal.fav_icon.nil? ? '/images/favicon.ico' : current_portal.fav_icon.content.url
+			"<link rel='shortcut icon' href='#{url}' />"
+		end
+		fav_icon_content
 	end
 
 	# Default search filters for portal
@@ -381,6 +390,11 @@ HTML
 			portal_preferences.fetch(:headingsFont, ""), "Helvetica Neue"
 	end
 
+	def theme_url
+		preview? ? "/theme/#{current_portal.template.id}-#{current_user.id}-preview.css" : 
+			"/theme/#{current_portal.template.id}.css?v=current_portal.template.updated_at.to_i"
+	end
+
 	private
 
 		def portal_preferences
@@ -390,8 +404,12 @@ HTML
 		end
 
 		def preview?
-	      !session[:preview_button].blank? && !current_user.blank? && current_user.agent?
-	    end
+			if User.current
+        is_preview = IS_PREVIEW % { :account_id => current_account.id, 
+        :user_id => User.current.id, :portal_id => @portal.id}
+        !get_key(is_preview).blank? && !current_user.blank? && current_user.agent?
+      end
+    end
 
 		def link_args_to_options(args)
 	      options = {}
