@@ -11,7 +11,7 @@ jQuery(document).ready(function(){
 });
 
 function initialize_autocompleter(){
-  this.ContactsSearch = new Template(
+  ContactsSearch = new Template(
       '<li><div class="contactdiv" data-id="#{display_id}">'+
       '<span id="resp-icon"></span>'+
       '<div id="merge-ticket" class="merge_element" data-id="#{display_id}">'+
@@ -27,10 +27,16 @@ function bind_autocompleter(){
   var idcachedBackend,requestercachedBackend,subjectcachedBackend;
   var idcachedLookup,requestercachedLookup,subjectcachedLookup;
 
-  var auto = [[ idcachedLookup, idcachedBackend, 'select-id', 'display_id_results'],
-              [ requestercachedLookup, requestercachedBackend, 'select-requester', 'requester_results'],
-              [ subjectcachedLookup, subjectcachedBackend, 'select-subject', 'subject_results']
-              ]
+  var autocompleter_hash = {  id :  { cache : idcachedLookup, backend : idcachedBackend, 
+                                      searchBox : 'select-id', searchResults : 'display_id_results',
+                                      disableLocal : true, minChars : 1 },
+                  requester :  {  cache : requestercachedLookup, backend : requestercachedBackend, 
+                                  searchBox : 'select-requester', searchResults : 'requester_results',
+                                  disableLocal : false, minChars : 2 },
+                  subject :  {  cache : subjectcachedLookup, backend : subjectcachedBackend, 
+                                searchBox : 'select-subject', searchResults : 'subject_results',
+                                disableLocal : false, minChars : 2 }
+              }
 
   var aftershow = function(){
     x = jQuery('.contactdiv');
@@ -41,17 +47,18 @@ function bind_autocompleter(){
         if(jQuery(this).data('id') == y.data('id'))
         {
           y.children('#resp-icon').addClass('clicked');
+          y.addClass('clicked');
         }
       });
     });
   }
 
-  auto.map(function(a){
-    a[1] = new Autocompleter.Cache(lookup, {choices: 10});
-    a[0] = a[1].lookup.bind(a[1]);
-    global[a[2]] = new Autocompleter.PanedSearch( a[2], a[0], this.ContactsSearch, a[3], 
-    $A(<%= @ticket_search.map{|item|[item, item]}.to_json %>), {frequency: 0.1, acceptNewValues: true,
-    afterPaneShow: aftershow, separatorRegEx:/;|,/});
+  jQuery.each(autocompleter_hash, function(){
+    this.backend = new Autocompleter.Cache(lookup, {choices: 15, disableLocalSearch : this.disableLocal});
+    this.cache = this.backend.lookup.bind(this.backend);
+    global[this.searchBox] = new Autocompleter.PanedSearch( this.searchBox, this.cache, ContactsSearch,
+    this.searchResults, $A(<%= @ticket_search.map{|item|[item, item]}.to_json %>), {frequency: 0.1, acceptNewValues: true,
+    afterPaneShow: aftershow, minChars: this.minChars, separatorRegEx:/;|,/});
   })
 }
 
@@ -118,17 +125,17 @@ function change_ticket_count(){
                                                 placeholder='<%=t[2]%>' /><span class="searchicon"></span>
         </div>
       <% } %>
-      <% form_remote_tag (:url =>{ :controller => "merge_tickets", :action=>"merge" },:html => {:id=>"bulk_merge_tickets"}) do -%>
-        <input type="hidden" name="target[ticket_id]" id="target_ticket" />
-        <div id="display_id_results" class="merge_results hide"></div>
-        <div id="requester_results" class="merge_results hide"></div>
-        <div id="subject_results" class="merge_results hide"></div>
+      <div id="display_id_results" class="merge_results hide"></div>
+      <div id="requester_results" class="merge_results hide"></div>
+      <div id="subject_results" class="merge_results hide"></div>
     </div>
-    <div class="button-container">
-      <a class="btn" id="cancel_new_merge"><%= t('cancel') %></a>
-      <%= submit_tag "Continue",:class => "btn btn-primary",:id => "bulk_merge",:onclick => "bulk_merge_submit()", :disabled => "disabled", "data-loading-text" => t('please_wait') %>
-      <%- end %>
-    </div>
+
+      <% form_remote_tag (:url =>{ :controller => "merge_tickets", :action=>"merge" },:html => {:id=>"bulk_merge_tickets"}) do -%>  <input type="hidden" name="target[ticket_id]" id="target_ticket" />
+        <div class="button-container">
+          <a class="btn" id="cancel_new_merge"><%= t('cancel') %></a>
+          <%= submit_tag "Continue",:class => "btn btn-primary",:id => "bulk_merge",:onclick => "bulk_merge_submit()", :disabled => "disabled", "data-loading-text" => t('please_wait') %>
+          <%- end %>
+        </div>
       <div id="invaliduser" class="info-highlight" style="display:none;"></div>
   </div>   
 </div>
