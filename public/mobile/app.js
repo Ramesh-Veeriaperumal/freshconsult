@@ -8013,7 +8013,7 @@ Ext.define('Ext.util.SizeMonitor', {
         }
     },
 
-    refreshbugssition: function(name) {
+    refreshPosition: function(name) {
         var detector = this.detectors[name],
             position = this.position[name],
             left, top;
@@ -8026,8 +8026,8 @@ Ext.define('Ext.util.SizeMonitor', {
     },
 
     refresh: function() {
-        this.refreshbugssition('expand');
-        this.refreshbugssition('shrink');
+        this.refreshPosition('expand');
+        this.refreshPosition('shrink');
     },
 
     onDetectorScroll: function(name) {
@@ -15052,16 +15052,16 @@ Ext.define('Ext.LoadMask', {
     onPainted: function() {
         this.getParent().on({
             scope: this,
-            resize: this.refreshbugssition
+            resize: this.refreshPosition
         });
 
-        this.refreshbugssition();
+        this.refreshPosition();
     },
 
     onErased: function() {
         this.getParent().un({
             scope: this,
-            resize: this.refreshbugssition
+            resize: this.refreshPosition
         });
     },
 
@@ -15069,7 +15069,7 @@ Ext.define('Ext.LoadMask', {
      * @private
      * Updates the location of the indicator
      */
-    refreshbugssition: function() {
+    refreshPosition: function() {
         var parent = this.getParent(),
             scrollable = parent.getScrollable(),
             scroller = (scrollable) ? scrollable.getScroller() : null,
