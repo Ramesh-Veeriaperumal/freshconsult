@@ -87,7 +87,7 @@
         <li class="inline-field field">
             <div class="attachment-options fields" id="attachment-options-forward-<%=cntid%>">
               <% attachments = conv_item.attachments %>
-              <% if(attachments.size > 0) %>
+              <% if(attachments.length > 0) %>
                 Attachments
                 <div class="attachments">
                   <% attachments.each do |attachment| %>
@@ -101,7 +101,7 @@
                 </div>
               <% end %>
               <% dropbox = conv_item.dropboxes %>
-              <% if(dropbox.size > 0) %>
+              <% if(dropbox.length > 0) %>
                 <div class="attachments">
                   <% dropbox.each do |dbox| %>
                     <div class="item">
