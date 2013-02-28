@@ -113,7 +113,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     @order_clause ||= begin
       order_columns = order
       #Performence reseason we are using id instead of created_at.
-      order_columns = "id" if "created_at".eql?(order_columns)
+      #order_columns = "id" if "created_at".eql?(order_columns) #Removing to check if the performace hit was because of 
+                                                                # this causing mysql to use id index instead of account_id index
       order_parts = order_columns.split('.')
       if order_parts.size > 1
         "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
@@ -343,7 +344,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   def order_clause
     @order_clause ||= begin
       order_columns = order
-      order_columns = "id" if "created_at".eql?(order_columns)
+      #order_columns = "id" if "created_at".eql?(order_columns) #Removing to check if the performace hit was because of 
+                                                                # this causing mysql to use id index instead of account_id index
       order_parts = order_columns.split('.')
       if order_parts.size > 1
         "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"

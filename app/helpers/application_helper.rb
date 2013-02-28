@@ -498,6 +498,7 @@ module ApplicationHelper
   def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
+    element_class  += " required_closure" if (field.required_for_closure && !field.required)
     field_label    += '<span class="required_start">*</span>' if required
     field_label    += "#{add_requester_field}" if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
     field_name      = (field_name.blank?) ? field.field_name : field_name
@@ -513,7 +514,7 @@ module ApplicationHelper
       when "email" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
         element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit && controller_name.singularize != "feedback_widget") #dirty fix
-        element += add_name_field unless is_edit
+        element += add_name_field if !is_edit and !current_user
       when "text", "number" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
       when "paragraph" then
@@ -557,7 +558,7 @@ module ApplicationHelper
   end
   
   def add_name_field
-    content_tag(:li, content_tag(:div, render(:partial => "/shared/name_field")),
+    content_tag(:li, (content_tag(:div, render(:partial => "/shared/name_field"))).to_s,
                 :id => "name_field", :class => "hide") unless current_user
   end
 

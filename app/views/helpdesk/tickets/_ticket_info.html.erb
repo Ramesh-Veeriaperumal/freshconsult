@@ -136,9 +136,10 @@
             <%= render :partial => '/helpdesk/shared/attachment', :collection => attachments, :locals => {:show_delete => true, :url => [@item] } %>
           </ul>
         <% end %>
-        <% unless @ticket.dropboxes.empty? %>
+        <% dropboxes = @ticket.dropboxes
+        unless dropboxes.length == 0 %>
         <ul class="attachment_list">
-        <%@ticket.dropboxes.each do |dropbox| %> 
+        <%dropboxes.each do |dropbox| %> 
           <%= render :partial => '/helpdesk/shared/dropbox', :locals => {:dropbox => dropbox, :show_delete => true, :url => [@item] } %>
         <%end%> 
         </ul>

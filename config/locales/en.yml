@@ -348,52 +348,52 @@ en:
         enter_unhappy_text: Enter the unhappy text
     getting_started:
         send_mail_content:
-            title: "Your forwarding email:"
-            info: "You must forward a copy of your Support emails to the email address shown below:"
-            note: "<strong>Note:</strong> For FreshDesk to convert incoming emails to tickets you must configure an email forwarding rule in your mail server."
-            test_info1: If you think everything is good so far, try sending a test mail
+            test_info_1: Think everything looks okay until now? Try sending a test email.
             button_title: Send Test Mail
             button_again_title: ...or Send test mail again
             button_sending: Sending...
             send_test_mail_info1: Make sure you've set up your emails to forward to <b> %{to_email} </b>.
-            send_test_mail_info2: Learn How
             send_test_mail_info3: If you think everything is good so far, try sending a test mail. <br>%{send_test_mail_link}
             send_test_mail_link_title: Send test email
-            send_test_mail_response1: We've sent a test email to <b><span id=reply_email_1>%{reply_email}</span></b>. If everything goes well, you  can see  the <a href="/helpdesk/tickets" target="_blank">new ticket</a> in the tickets view.
+            send_test_mail_response_1: We just sent a test email to <b><span id=reply_email_1>%{reply_email}</span></b>. If all went well, you  should see  a new ticket in your help desk. <a href="/helpdesk/tickets" target="_blank">Check to see if it's there</a>.
             send_test_mail_confirm_yes: Yes, i got it.
             send_test_mail_confirm_no: No, i can't see any ticket.
-            send_test_mail_response_yes: Congratulations!!! You have successfully connected your support email with your help desk portal. Happy Supporting!!!
+            send_test_mail_yes_response: Good job! You have successfully setup your support email to work with Freshdesk. Happy Supporting!
             send_test_mail_response_no1: There seems to be a problem ->
             send_test_mail_response_no2: Learn how
-            send_test_mail_response_no3: <strong>Bummer! There seems to be a problem!</strong><br>If you did not receive the email in your inbox, please wait for a couple of minutes. If the problem persists, <a href="https://support.freshdesk.com/" target="_blank">let us know</a>.
+            send_test_mail_response_no_3: <strong>Bummer! There seems to be a problem!</strong><br>Check your forwarding rule to make sure everything is ok. If you don't get a test ticket in a couple of minutes, <a href="https://support.freshdesk.com/" target="_blank">get in touch with us</a>.
         index:
-            congrats: Congratulations! Your “fresh” helpdesk is ready.
-            title_msg: Just fill in a few details to get started.
+            congratulations: Congrats! Your Freshdesk is ready!
+            send_test_mail_info2: "Here is <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>how you can do it</a>."
+            title_message: Jump start your customer support in four steps...
             support_email_title: Support<br> e-mail
-            agents_title: Agents
+            agents_title_1: Adding<br> Agents
             rebrand_title: Logo <br>&amp; colors
-            social_title: Social
-            skip_link: Skip and go to your helpdesk
+            social_title_1: Going<br> Social
+            skip_text: No thanks, take me to my helpdesk.
             back_link: Back
             next_link: Next
-            next_alt_link: Go to helpdesk
+            next_alt_text: Jump right in!
             next_please_wait: Please wait...
-            support_email_sub_title: Tell us your support e-mail.
-            support_email_sub_msg: Your support e-mail is required for the helpdesk to function properly.
-            save: Change
-            agents_sub_title: Invite your helpdesk agents
-            agents_title_info: Invite your agents to use Freshdesk, separate each email address with a comma
-            rebrand_sub_title: Logo &amp; colors
-            rebrand_header: Your helpdesk name and logo
-            helpdesk_preview: Helpdesk preview
-            social_sub_title: Go Social
-            social_info: Take Your Help Desk to Facebook, Twitter, your communities and just about everywhere your Customers go
+            support_email_subtitle: Add your primary support email address
+            support_email_submsg: This will also be the default reply-to address when you respond to<br> queries from Freshdesk.
+            save_text: Save
+            agents_subtitle: Invite your team to join in on the fun
+            agent_title_info: Add the emails of your team members to invite them over to Freshdesk. Separate multiple emails with a comma.
+            rebrand_subtitle: Rebrand with your logo and colors!
+            rebranding_header: Enter a fancy name for your helpdesk
+            helpdesk_preview_text: "Preview"
+            social_subtitle: Go social with your customer support!
+            social_info_text: Add your Facebook and Twitter accounts to start monitoring all your social interactions, and bring in wall posts, tweets, DMs and messages into Freshdesk.
             social_add_account: Add Account
             config-support-email-address: "Configure your support email address"
             save-and-next: "Save and Go to next"
             send_verification_email: Send verification email
             send_invite: Send Invite
             title: Cool! Looks like your help desk is ready to roll...
+            title1: "Now let's get those emails into Freshdesk"
+            info: "You'll need to create a simple rule in your support mailbox to forward emails to this address."
+            info2:  Not happy with it? Enter a new email and hit "Save"
             sub_title: Here's a bunch of stuff to help you get started
             email_config_title: What's your support email?
             email_config_sub_title: Let Freshdesk handle your Support Emails!
@@ -408,6 +408,7 @@ en:
             social_facebook_add: Add a Page            
             rebrand_company_label: Company Name
             rebrand_company_field_placeholder: Enter your company name
+            footer_msg: "<strong>Note:<strong> You can change these settings anytime by going to the <a href='/admin/home' target='_blank' style='text-decoration:none; color:#1272DE'>Admin tab</a>" 
             rebrand_paint_title: Paint your helpdesk
             rebrand_color_header: Header
             rebrand_color_tabs: Tabs
@@ -1989,6 +1990,7 @@ en:
     info1: You can use this field to setup custom domain mapping for Freshdesk
     info2: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point support.mycompanyname.com to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
     info3: Reset to Default colors
+    info5: Reset colors
     info4: The next ticket ID counter will start with this number (Should be greater than the last ticket ID created). This affects tickets created henceforth.
     save: Save changes
     time_zone: Time Zone
