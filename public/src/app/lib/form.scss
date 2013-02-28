@@ -355,9 +355,9 @@ a.addchoice:hover{
 	label.overlabel{
 		color: #999;
 		margin-left: 7px;
-		font-weight: 300;
-		font-size:14px;	
+		line-height: 28px;
 	}	 
+
 	li.checkbox{
 		@include clearfix;
 		padding-left: 18px;
@@ -623,9 +623,6 @@ li.nested_field{
 		position:relative;
 		textarea.required{
 		height:200px;
-		}
-		label{
-			font-size:1.2em;
 		}
 		div.action_buttons{
 			margin-top:0;

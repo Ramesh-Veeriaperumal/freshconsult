@@ -2,24 +2,20 @@
 	position: relative;
 	z-index: 3; 
 	background-color: $help_center_color;
-	padding: $content-padding-mobile;	
 	border: 1px solid darken($help_center_color, 10%);
+	color: $help_center_text_color;
 	@include clearfix;
 }
 
 // PORTAL BASED SEARCH CSS
-
 .hc-search{	position: relative; }
 
 .hc-search-form{
 	background-color: rgba(#e3e3e3, 0.3);
-	border:1px solid #cdcccc;
+	border:1px solid rgba(#cdcccc, 0.3);
 	padding:5px;
 	@include border-radius(6px);
 	@include pie-clearfix;
-	input{
-	  @extend .icon-search;
-	}
 }
 
 .hc-search-form.active{
@@ -37,8 +33,6 @@
 	font-size: 12px;
 }
 
-@include mobile-icon(icon-search, $btnPrimaryBackground);
-
 .hc-nav	nav{ @include clearfix;}
 .new-ticket, .check-status{ font-weight: bold; }
 .new-ticket, .check-status, .contact-info{ 	
@@ -51,34 +45,32 @@
 		margin-right: 5px;
 		@include border-radius(2em);
 		margin-top: -1px;
-		background-color: #696767;
+		background-color: $tab_color;
 	}
 	&:hover{ text-decoration:none; }
 }
 
+@include mobile-icon(icon-search, $btnPrimaryBackground);
 @include mobile-icon(icon-nav-contact, $tab_color);
 @include mobile-icon(icon-nav-newticket, $tab_color);
 @include mobile-icon(icon-nav-status, $tab_color);
-
-.new-ticket:before{ @extend .icon-nav-newticket; }
-.check-status:before{ @extend .icon-nav-status; }
-.contact-info:before{ @extend .icon-nav-contact; }
 
 /* Applying styles only for mobile */
 @include at-breakpoint($media-mobile){
 	.help-center{
 		border:0;
-		padding: $content-padding-mobile/2;
-		background-color: $tab_color;
+		padding:0;
+		padding-left:$content-padding-mobile;
+		background-color: transparent;
 		position: absolute;
 		width: 90%;
-		top: 129px;
+		top: 135px;
 	}
 	@include layout(12) {
 		.hc-search{ @include span-columns(7); }
 		.hc-nav{ @include span-columns(5 omega); }
 	}
-	 .hc-search-form{
+	.hc-search-form{
 		background-color: transparent;
 		border:0;
 		padding:0;
@@ -108,7 +100,7 @@
 		@include border-left-radius(0);
 	} 
 	.hc-search-button .btn-primary {
-		background: url(images/portal/icon/search-dark.png) no-repeat;
+		background: image-url('portal/icon/search-dark.png') no-repeat;
 		background-position-x: 50%;
 		border: 0;
 		margin:7px 0;
@@ -137,19 +129,15 @@
 	.hc-nav{
 		opacity: 1;
 		@include transition(opacity 1s ease-in-out);
-		&.nav-with-contact{
-			nav a{
-				width:45%;	
-			}
+		&.nav-with-contact nav a{
+			width:45%;
 		}
 		nav{ 
-			span{
-				display:none;
-			}
+			span{ display:none; }
 			a{
 				text-align:center;
 				padding:0.5em 0;
-				border-right:1px solid rgba(#000, 0.2);
+				border-right: 1px solid rgba($tab_text_color, 0.2);
 				@if lightness($help_center_color) < 50% {
 					@include box-shadow(1px 0px 0px #fff);
 				}@else{
@@ -178,7 +166,7 @@
 		border-right:1px solid darken($help_center_color, 10%);
 	}
 	.hc-nav{
-		width: 31%;
+		width: 30%;
 		padding-left: 1%;
 		a, span{
 			@include inline-block;
@@ -198,7 +186,7 @@
 	.hc-search-button{ 
 		position: relative;
 		width:16%; float:left; 
-		@extend .hide-in-mobile;
+		/*@extend .hide-in-mobile;*/
 		.btn{
 			@include border-top-left-radius(0);
 			@include border-bottom-left-radius(0);

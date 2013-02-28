@@ -382,7 +382,7 @@ HTML
 
 	# Including google font for portal
 	def include_google_font *args
-		font_url = args.map { |f| FONT_INCLUDES[f] }
+		font_url = args.uniq.map { |f| FONT_INCLUDES[f] }.reject{ |c| c.nil? }
 		unless font_url.blank?
 			"<link href='http://fonts.googleapis.com/css?family=#{font_url.join("|")}' rel='stylesheet' type='text/css'>"
 		end

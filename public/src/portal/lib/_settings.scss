@@ -33,25 +33,26 @@ $purple:                #7a43b6 !default;
 
 // Scaffolding
 // -------------------------
-$bg_color:        		#ffffff !default;
-$textColor:             $grayDark !default;
+$bg_color:        			#ffffff !default;
+$textColor:             	$grayDark !default;
 
-$header_color: 			$greenDark !default;
-$header_text_color: 	if(lightness($header_color) > 50, black, white) !default;
+$header_color: 				$greenDark !default;
+$header_text_color: 		if(lightness($header_color) > 50, black, white) !default;
 
-$tab_color:				$green !default;
-$tab_text_color: 		if(lightness($tab_color) > 50, black, white) !default;
+$tab_color:					$green !default;
+$tab_text_color: 			if(lightness($tab_color) > 50, black, white) !default;
 
-$tab_hover_color: 		$header_color !default;
-$tab_hover_text_color: 	if(lightness($tab_hover_color) > 50, black, white) !default;
+$tab_hover_color: 			$header_color !default;
+$tab_hover_text_color: 		if(lightness($tab_hover_color) > 50, black, white) !default;
 
-$footer_color: 			#777777 !default;
-$footer_text_color: 	if(lightness($footer_color) > 50, black, white) !default;
+$footer_color: 				#777777 !default;
+$footer_text_color: 		if(lightness($footer_color) > 50, black, white) !default;
 
-$help_center_color: 	#f5f5f5 !default;
-$page-background: 		$white !default;
-$page-light-background: rgba($white, 0.9) !default;
-$page-form-background: 	rgba(#f4f4f4, 0.9) !default;
+$help_center_color: 		#f5f5f5 !default;
+$help_center_text_color: 	if(lightness($help_center_color) > 50, black, white) !default;
+$page-background: 			$white !default;
+$page-light-background: 	rgba($white, 0.9) !default;
+$page-form-background: 		rgba(#f4f4f4, 0.9) !default;
 
 // GRID SYSTEM FOR SUSY
 // --------------------------------------------------
@@ -205,7 +206,7 @@ $content-border-radius: 6px;
 
 $content-border: 1px solid $grayLighter;
 
-$page-lead-padding: 1em 2.2em;
+$page-lead-padding: 1em $content-padding-side;
 $row-border-color: #f3f3f3;
 
 // TOPIC AND TICKET COMMENTS RELATED STYLES

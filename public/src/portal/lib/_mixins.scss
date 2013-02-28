@@ -390,10 +390,17 @@
       @if lightness($bg_color) > 50% {
         @extend .#{$class}-dark;
       } @else {
-        @extend .#{$class}-light;
+        @extend .#{$class};
       }
       @include inline-block;
       vertical-align: text-top;
     }
   }
 }
+
+// Netural text color for the text that can be used in the page
+@mixin netural-color($color){
+  /*if(lightness($color) > 50, black, white)*/
+}
+
+

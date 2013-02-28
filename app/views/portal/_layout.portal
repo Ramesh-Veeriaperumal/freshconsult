@@ -15,14 +15,14 @@
 		<div class="hc-nav">
 		{% endif %}
 			<nav>
-				<a href="{{ portal.new_ticket_url }}" class="new-ticket ellipsis">
+				<a href="{{ portal.new_ticket_url }}" class="mobile-icon-nav-newticket new-ticket ellipsis">
 					<span>{% translate header.new_support_ticket %}</span>
 				</a>
-				<a href="{{ portal.tickets_home_url }}" class="check-status ellipsis">
+				<a href="{{ portal.tickets_home_url }}" class="mobile-icon-nav-status check-status ellipsis">
 					<span>{% translate header.check_ticket_status %}</span>
 				</a>
 				{% unless portal.contact_info == empty %}
-					<a href="#" class="contact-info  ellipsis">
+					<a href="#" class="mobile-icon-nav-contact contact-info ellipsis">
 						<span>{{ portal.contact_info }}</span>
 					</a>
 				{% endunless %}

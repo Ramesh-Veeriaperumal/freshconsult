@@ -221,14 +221,15 @@
       'id': 'mColorPickerBg'
     }).css({
       'display': 'none',
-      'background':'black',
-      'opacity': .01,
-      'position':'absolute',
+      'background':'white',
+      'opacity': .3,
+      'position':'fixed',
       'top':0,
       'right':0,
       'bottom':0,
       'left':0,
       'height': '100%',
+      'width': '100%',
       'zIndex': 999990
     }).appendTo($b);
 
@@ -374,7 +375,7 @@
 
     if ($i.attr('disabled')) return false;
 
-    $o.currentColor = $i.css('background-color')
+    $o.currentColor = $i.css('border-right-color')
     $o.changeColor = true;
     $o.currentInput = $i;
     $o.currentId = id;
