@@ -448,7 +448,7 @@ HTML
 
 	def theme_url
 		preview? ? "/theme/#{current_portal.template.id}-#{current_user.id}-preview.css" : 
-			"/theme/#{current_portal.template.id}.css?v=current_portal.template.updated_at.to_i"
+			"/theme/#{current_portal.template.id}.css?v=#{current_portal.template.updated_at.to_i}"
 	end
 
 	private
