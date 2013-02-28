@@ -9568,3 +9568,11 @@ div.db-chooser{
 		}
 	}
 }
+
+
+//Overriding for configure_export to fix the Dropdown fields overlapping.
+.configure_export {
+	select {
+		width: auto;
+	}
+}
