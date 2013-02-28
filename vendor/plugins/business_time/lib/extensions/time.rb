@@ -120,9 +120,9 @@ class Time
  
     # Both times are in different dates
 
-    result = Time::parse(time_a.strftime('%Y-%m-%d ') + 
+    result = Time.zone.parse(time_a.strftime('%Y-%m-%d ') + 
         BusinessCalendar.config.end_of_workday(time_a.wday)) - time_a   # First day
-    result += time_b - Time::parse(time_b.strftime('%Y-%m-%d  ') + 
+    result += time_b - Time.zone.parse(time_b.strftime('%Y-%m-%d  ') + 
         BusinessCalendar.config.beginning_of_workday(time_b.wday)) # Last day
 
     time_b = Time.end_of_workday(Time.roll_backward(time_b-1.day)) #To preceed the time_b since last day is calculated - Abhinav
