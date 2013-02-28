@@ -23,5 +23,5 @@ function AsyncJSLoader(url, callback){
     }
 
     script.src = url;
-    document.body.appendChild(script);
+    document.getElementsByTagName("head")[0].appendChild(script);
 }

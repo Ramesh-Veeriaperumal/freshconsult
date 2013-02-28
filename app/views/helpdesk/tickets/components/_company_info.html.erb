@@ -5,5 +5,5 @@
    <%= t("working") %>
 <% end %>
 <% unless user.customer.blank? %>
-   <%= t("at") %> <%= link_to(h(user.customer.name), user.customer)  %>
+  <%= link_to(h(user.customer.name), user.customer)  %>
 <% end %>

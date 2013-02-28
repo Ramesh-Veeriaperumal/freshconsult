@@ -1,7 +1,7 @@
 <% form_tag({:action => :export_csv, :a=>params[:a], :i=>params[:i] }, { :method => :post, :id => 'exportFilter' }) do %>
   <input type="hidden" name="data_hash" value="" />
 	<div class="info-highlight"><%=t('export_data.info')%></div>
-	<ul class="ui-form">
+	<ul class="ui-form configure_export">
 		<li class="inline-field">
 			<% if logged_in? and current_user.agent? %>
 				<h4 class="caption title"><%=t('export_data.filter_label_agent')%></h4>

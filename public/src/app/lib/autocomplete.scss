@@ -98,3 +98,43 @@ ul.multi_value_field li.choice:hover {
   border-color: #6D95E0;
 }
 
+/* based on paned search */
+
+div.autocompletepane{ position: relative; }
+
+div.autocompletepane ul {
+  list-style-type: none;
+  z-index:99999;
+  padding: 0;
+  margin: 0;
+  width:100%;
+}
+
+div.autocompletepane ul li {
+  border: 1px solid #CCC;
+  padding: 4px 12px 5px;
+  font-size: 11px;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  cursor: pointer;
+  overflow: hidden;
+  &:hover{
+    background: #D4E2E0;
+    border: none;
+    padding: 4px 12px 5px;
+    color: #FFF;
+  }
+}
+
+div.autocompletepane ul li.selected {
+  background: #B1CECB;
+  border: none;
+  padding: 4px 12px 5px;
+  color: #FFF;
+}
+
+loading-center{
+  background-image:url('/images/load.gif');
+  background-repeat:no-repeat;
+  background-position: center center;
+}

@@ -60,12 +60,12 @@ class SubscriptionEvent < ActiveRecord::Base
    
     def update_record?(record)      
       record.size.eql?(1) and (record.first.created_at > 30.days.ago) and 
-                        record.first.code.between?(CODES[:free], CODES[:paid])
+                        record.first.code.eql?(CODES[:free])
     end   
 
     def create_new_record(account, attributes)
       account.subscription_events.create(attributes)
     end 
-
+    
   end
 end
