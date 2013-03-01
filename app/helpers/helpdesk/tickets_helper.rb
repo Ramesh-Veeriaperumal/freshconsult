@@ -70,7 +70,7 @@ module Helpdesk::TicketsHelper
     ul tabs.map{ |t| 
                   next if !t[4].nil? && !t[4]
                   link_to t[1] + (content_tag :span, t[2], :class => "pill #{ t[2] == 0 ? 'hide' : ''}", :id => "#{t[0]}Count"), "##{t[0]}", "data-remote-load" => t[3], :id => "#{t[0]}Tab"
-                }, { :class => "tabs", "data-tabs" => "tabs" }
+                }, { :class => "tabs ticket_tabs", "data-tabs" => "tabs" }
                 
   end
   

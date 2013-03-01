@@ -990,7 +990,7 @@ h4.title{
 			padding:0px 10px 8px 10px;
 			li{
 				border-bottom:1px solid #f3f3f3;
-				padding:6px 0px 10px;
+				padding:0px;
 				a{ text-decoration:none; }
 				label{
 					display:block;
@@ -1002,6 +1002,10 @@ h4.title{
 					font-size:11px;
 					max-width:100%;
 				} 
+				textarea{
+					height: 100px;
+					width:180px;
+				}
 			}
 			li.button-container{
 				border-bottom:0px;
@@ -8679,6 +8683,7 @@ height: auto;
     table{
         background:#fff;
     	margin:0;
+    	table-layout: fixed;
     }
     .item_actions{
     	padding-right: 5px;
@@ -8849,11 +8854,14 @@ height: auto;
 	}
 	#contacts-table{
 		tr td{
-				width: 33%;
+				width: 32%;
 		    	vertical-align: middle;
 		    	word-wrap:break-word;
 			    &:first-child{
-			        width:1%;
+			        width:5%;
+				}
+				&:last-child{
+					width: 31%;
 				}
 		}
 		.customers_selector{
@@ -9593,5 +9601,16 @@ div.db-chooser{
 .configure_export {
 	select {
 		width: auto;
+	}
+}
+//overriding class check box in ticket show page sidebar 
+.edit_helpdesk_ticket{
+	.checkbox input[type="checkbox"]{
+		margin-top: 7px;
+		margin-right: 5px;
+		margin-left: 0px;
+	}
+	.text input[type="text"]{
+		width: 180px;
 	}
 }
