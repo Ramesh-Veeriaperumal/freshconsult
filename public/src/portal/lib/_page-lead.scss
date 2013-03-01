@@ -178,8 +178,7 @@
 	}
 	.hc-search-button{ 
 		position: relative;
-		width:16%; float:left; 
-		/*@extend .hide-in-mobile;*/
+		width:16%; float:left; 		
 		.btn{
 			@include border-top-left-radius(0);
 			@include border-bottom-left-radius(0);

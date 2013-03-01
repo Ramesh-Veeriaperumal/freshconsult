@@ -1,5 +1,5 @@
 <% @user_session ||= current_account.user_sessions.new %>
-<% form_for @user_session, :url => support_login_path do |f| %>
+<% form_for @user_session, :url => user_session_path do |f| %>
   	<%= f.error_messages %>
 	<fieldset>
 	  	<div class="control-group">

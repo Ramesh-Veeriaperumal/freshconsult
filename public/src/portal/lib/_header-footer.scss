@@ -1,8 +1,6 @@
 $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 
-.page-tabs, .banner{
-	border: 1px solid rgba($header_border_color, 0.2);
-}
+
 .banner{
 	text-align:center;
 	background-color: $header_color;
@@ -11,6 +9,7 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 	border-bottom-width: 0;	
 	@include box-shadow( rgba(#fff, 0.5) 0 1px inset );		
 	@include clearfix;
+	border: 1px solid rgba($header_border_color, 0.2);
 	@if(lightness($header_color) < 50%){
 		@include text-shadow(rgba(#000, 0.9) -1px -1px 1px);	
 	}
@@ -40,6 +39,7 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 	line-height: 35px;
 	width: 100%;	
 	@include clearfix;
+	border: 1px solid rgba($tab_text_color, 0.2);
 	.nav-link{
 		background-color:$tab_color;
 		a{ 
