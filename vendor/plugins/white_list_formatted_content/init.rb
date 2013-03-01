@@ -56,7 +56,7 @@ ActiveRecord::Base.class_eval do
     
     def update_content # To do :: need to use changed_body_html?
       if body_f_html_changed?
-        self.body_html = auto_link(self.body_html, :link => :urls)
+        self.body_html = Rinku.auto_link(self.body_html, :urls)
         self.body = Helpdesk::HTMLSanitizer.plain(body_html) 
       end
     end
