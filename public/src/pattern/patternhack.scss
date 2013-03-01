@@ -132,3 +132,9 @@ strong {
 .dropdown-toggle:after{
   border-top:0;
 }
+
+/* Fix for tickets show page data-tabs */
+.ticket_tabs{
+  margin-left: 0px;
+  margin-right: 0px;
+}
