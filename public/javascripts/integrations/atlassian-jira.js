@@ -251,6 +251,8 @@ JiraWidget.prototype = {
 		} else {
 			jiraException = self.jiraExceptionFilter(resJ['error'])
 			if(jiraException == false) alert("Unknown server error. Please contact support@freshdesk.com.");
+			jiraWidget.displayCreateWidget();
+			return
 		}
 
 		jQuery('#jira_issue_icon a.jira').removeClass('jira').addClass('jira_active');
@@ -643,9 +645,9 @@ JiraWidget.prototype = {
 	processJiraFieldTimetracking:function(fieldKey,fieldData){
 		jiraWidget.fieldContainer += '<label>'+fieldData["name"]+'</label>';
 		jiraWidget.fieldContainer += '<label>Orginal Estimate</label>'+
-				'<input type="text" name="fields['+fieldKey+'][originalEstimate]" id="fields['+ fieldKey+'][originalEstimate]" value="enter the input in hours ex:10"/>';
+				'<input type="text" name="fields['+fieldKey+'][originalEstimate]" id="fields['+ fieldKey+'][originalEstimate]" value="" placeholder="1d 10h 20m"/>';
 		jiraWidget.fieldContainer += '<label>Remaining Estimate</label>'+
-				'<input type="text" name="fields['+fieldKey+'][remainingEstimate]" id="fields['+ fieldKey+'][remainingEstimate]" value="enter the input in hours ex:10"/>';
+				'<input type="text" name="fields['+fieldKey+'][remainingEstimate]" id="fields['+ fieldKey+'][remainingEstimate]" value="" placeholder="1d 5h 5m"/>';
 		
 	},
 	processJiraFieldDate:function(fieldKey,fieldData){
@@ -662,7 +664,10 @@ JiraWidget.prototype = {
 		}	
 		else{	
 		jiraWidget.fieldContainer += '<label>'+fieldData["name"]+'</label>';
-		jiraWidget.fieldContainer += '<input type="text" name="fields['+fieldKey+']" id="fields['+ fieldKey+']	"/>';
+		if(fieldData["name"] == "Summary")
+			jiraWidget.fieldContainer += '<input type="text" name="fields['+fieldKey+']" id="fields['+ fieldKey+']	" value="'+jQuery(".request-title .subject").text()+'"/>';
+		else
+			jiraWidget.fieldContainer += '<input type="text" name="fields['+fieldKey+']" id="fields['+ fieldKey+']	"/>';
 		}
 	},
 	processJiraFieldNumber:function(fieldKey,fieldData){
@@ -689,7 +694,7 @@ JiraWidget.prototype = {
 	},
 	processJiraFieldArrayString:function(fieldKey,fieldData){
 		jiraWidget.fieldContainer += '<label>' + fieldData["name"] + '</label>';
-		jiraWidget.fieldContainer += '<input type="text" class ="array" name="fields[' + fieldKey + ']" id="fields[' + fieldKey + '] " value="for multiple entries enter comma separated values"/>';
+		jiraWidget.fieldContainer += '<input type="text" class ="array" name="fields[' + fieldKey + ']" id="fields[' + fieldKey + '] " value="" placeholder="label1,label2"/>';
 	}, 
 	processJiraFieldArrayObject: function(fieldKey, fieldData) {
 		jiraWidget.fieldContainer += '<label>' + fieldData["name"] + '</label>';

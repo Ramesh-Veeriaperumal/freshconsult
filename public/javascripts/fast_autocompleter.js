@@ -88,8 +88,6 @@ Autocompleter.Cache = Class.create({
     var result = this.cache.get(partialTerm);
 
     if (result == null) {
-      if(this.options.newSearch)
-        return false
       if (partialTerm.length > 1) {
         return this._lookupInCache(fullTerm, partialTerm.substr(0, partialTerm.length - 1), callback);
       } else {

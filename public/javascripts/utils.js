@@ -725,8 +725,8 @@ jQuery.fn.serializeObject = function(){
             }
             return push_counters[key]++;
         };
-
-        jQuery.each(jQuery(this).serializeArray(), function(){
+        var serializedArray = jQuery(this).serializeArray();
+        jQuery.each(serializedArray, function(){
 
             // skip invalid keys
             if(!patterns.validate.test(this.name)){
@@ -737,9 +737,12 @@ jQuery.fn.serializeObject = function(){
                 keys = this.name.match(patterns.key),
                 merge = this.value,
                 reverse_key = this.name;
-            if (jQuery('[name="'+this.name+'"]').hasClass("array"))
+            if (jQuery(self).find('[name="'+this.name+'"]').hasClass("array"))
+            {
+              merge = merge.replace(/\s/g, '');
               merge = merge.split(',');
-            else if(jQuery('[name="'+this.name+'"]').hasClass("datetimepicker_popover")){
+            }
+            else if(jQuery(self).find('[name="'+this.name+'"]').hasClass("datetimepicker_popover")){
               merge = new Date(merge);
               epoch_sec = merge.getTime() + (1100*60000);
               merge = (new Date(epoch_sec)).toISOStringCustom().trim();
