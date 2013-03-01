@@ -14,6 +14,8 @@ class Billing::Subscription
 
   TRIAL_END = "0"
 
+  VALID_CARD = "valid"
+
 
   def initialize
     ChargeBee.configure(:site => AppConfig['chargebee'][RAILS_ENV]['site'],
@@ -26,7 +28,7 @@ class Billing::Subscription
 
   def update_subscription(subscription, prorate)
     data = (subscription_data(subscription)).merge({ :prorate => prorate })
-    ChargeBee::Subscription.update(subscription.account_id, data)
+    ChargeBee::Subscription.update(subscription.account_id, data) if has_valid_card?(subscription.account)
   end 
 
   def store_card(subscription)
@@ -35,7 +37,8 @@ class Billing::Subscription
   end
 
   def activate_subscription(subscription)
-    ChargeBee::Subscription.update(subscription.account_id, { :trial_end => TRIAL_END })
+    ChargeBee::Subscription.update(subscription.account_id, 
+          subscription_data(subscription).merge({ :trial_end => TRIAL_END }))
   end
 
   def update_admin(user)
@@ -70,7 +73,7 @@ class Billing::Subscription
       {
         :first_name => account.account_admin.name,
         :email => %(vijayaraj+#{account.id}@freshdesk.com),  #account.account_admin.email,  
-        :company => %(#{account.name} (#{account.full_domain}))
+        :company => account.name
       }
     end
     
@@ -83,6 +86,10 @@ class Billing::Subscription
 
     def plan_code(account)
       (account.plan_name.to_s).concat(BILLING_PERIOD[account.subscription.renewal_period])
+    end
+
+    def has_valid_card?(account)
+      ChargeBee::Subscription.retrieve(account.id).customer.card_status.eql?(VALID_CARD)
     end
 
     def billing_address(subscription)

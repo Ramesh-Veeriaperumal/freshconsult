@@ -135,6 +135,7 @@ jQuery(document).ready(function(){
 		{
 			Loading.updateStatus(statusBox,"update",GettingStarted.translate("updating"));
 			loadingDiv.show();
+			totango.track( "Support Email Changed", "Getting Started Page");
 		}
 		else{
 			Loading.updateStatus(statusBox,"failure",GettingStarted.translate("email_invalid"));
@@ -178,6 +179,7 @@ jQuery(document).ready(function(){
 
 		if(!invalid_emails_exist)
 		{			  	Loading.updateStatus(statusBox,"update",GettingStarted.translate("agent_email_sending"));
+						totango.track( "Agents Added", "Getting Started Page");
 
 		}
 		else{
@@ -394,8 +396,9 @@ function update_image(input) {
 
        reader.onload = function (e) {
            jQuery("div.custom-upload").css("background-image", 'url(' + e.target.result + ')');                    
-           jQuery("div.custom-upload").css("background-size", '50px 50px');                    
+           jQuery("div.custom-upload").css("background-size", 'contain');                    
            jQuery("#logo-preview").attr("src",e.target.result);
+           totango.track("Logo Changed", "Getting Started Page");
            rebrand();
        }
 
@@ -405,7 +408,7 @@ function update_image(input) {
 
 function update_logo(url){
 	jQuery("div.custom-upload").css("background-image", 'url(' + url + ')');
-   jQuery("div.custom-upload").css("background-size", '50px 50px');
+   jQuery("div.custom-upload").css("background-size", 'contain');
    jQuery("#logo-preview").attr("src",url);
 }
 

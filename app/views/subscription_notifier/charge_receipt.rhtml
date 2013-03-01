@@ -3,103 +3,117 @@
 
 <head>
 	<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
-	
 	<title>Freshdesk Invoice</title>
-	
 </head>
-
-<body style="font: 12px/1.4 Verdana, serif; background-color:#f4f4f4; padding: 20px; margin: 0; padding: 0;">
-
-	<div style="width: 800px; margin: 0 auto; background-color:#ffffff; margin:0 auto; padding:0 20px 80px 20px; border:1px solid #dfdfdf;">
-
-		<div style="height: 15px; width: 100%; margin: 20px 0 0 0; background: #036265; text-align: center; color: white; font-weight:bold; font-size:12px; text-decoration: uppercase; letter-spacing: 10px; padding: 8px 0px;">INVOICE</div>
-
-  		<div style="float:left; border:1px solid #FFF;">
-        <img src="https://s3.amazonaws.com/assets.freshdesk.com/images/logo.gif" width="246" height="60" />
-        </div>
-		
-        <div style=" float:left; margin-left:50px; margin-top:70px;">
-        <img src="https://s3.amazonaws.com/assets.freshdesk.com/images/paid.gif" width="172" height="80" /></div>
-		<div id="identity">		
-      <div style="width: 250px; height: 150px; float: right;">
-        <table style="border-collapse: collapse; margin-top: 1px; width: 300px; float: right;">
+<body style="font: 12px/1.4 Verdana, serif; padding: 20px; margin: 0; padding: 0;">
+  <table cellpadding="0" cellspacing="10" border="0" style="background-color:#f3f8ef; margin:0 auto;  -webkit-border-radius: 5px;-moz-border-radius: 5px;-ms-border-radius: 5px;-o-border-radius: 5px;border-radius: 5px; width:100%; word-wrap: break-word;">
+    <tr>
+      <td>
+        <table cellspacing="0" cellpadding="0" border="0" style="width:100%">
           <tr>
-            <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top; background: #f4f4f4; width:40%;">From</td>
-            <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top;">
-              <div><strong>Freshdesk Inc.</strong></div>
-              <div>340 S Lemon Ave #7585</div>
-              <div>Walnut CA 91789</div>
-              <div>USA</div>
-			  <div>Tax ID 33-1218825</div>
+            <td style="width:40%">
+              <font style="font-size:40px; color:#63a579; font-weight:bold;">
+                <img src=<%="https://s3.amazonaws.com/assets.freshdesk.com/images/logo.png"%> width="170" height="50"  alt="Freshdesk"/>
+              </font>
+            </td>
+            <td style="width:60%; text-align:right; color:#63a579">
+                    <div>
+                      <strong>Freshdesk&nbsp;Inc.</strong><br/>&nbsp;340&nbsp;S&nbsp;Lemon&nbsp;Ave&nbsp;#7585&nbsp;Walnut&nbsp;CA&nbsp;91789,&nbsp;USA
+                    </div>
+                    <div>Phone:&nbsp;+1&nbsp;877&nbsp;485&nbsp;0317,Tax&nbsp;ID:&nbsp;33-1218825</div>
             </td>
           </tr>
-        </table>              
-      </div>
-
-		</div>
-		
-		<div style="clear:both"></div>
-		
-		<div style="overflow: hidden;">
-      <table style="border-collapse: collapse; float: left; margin-top: 1px; width: 300px; float: left;">
-        <tr>
-          <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top; background: #f4f4f4; width:40%;">Name</td>
-          <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top;">
-            <div><strong><strong><%=@subscription.account.account_admin.name%></strong></strong></div>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td style="background-color:#fff; width:100%; -webkit-border-radius: 5px;-moz-border-radius: 5px;-ms-border-radius: 5px;-o-border-radius: 5px;border-radius: 5px; " colspan="2">
+        <table cellpadding="10" cellspacing="0" border="0" style="width:100%">
+          <tr>
+            <td>
+             <table cellspacing="0" cellpadding="0" border="0" style="width:100%">
+                <tr>
+                  <td style="text-align:left; width:40%">
+                    <table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+                      <tr>
+                        <td style="vertical-align:top; width:20px;"> To:&nbsp; </td>
+                        <td>
+                          <strong><%=@subscription.account.account_admin.name%><br/></strong>
+                          <%if @subscription.billing_address%>
+                            <%=@subscription.billing_address.humanize.gsub("\n","<br>")%>
+                          <%else%>
+                            <strong><%=@subscription.account.name%></strong>
+                          <%end%>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td style="width:25%; text-align:center">
+                    <font style="font-size:20px; color:#9363dd; font-weight:bold;">
+                      <img src=<%="https://s3.amazonaws.com/assets.freshdesk.com/images/#{Rails.env}/paid.png"%> width="90" height="50" alt="PAID"/>
+                    </font>
+                  </td>      
+                  <td style="text-align:right;width:35%">
+                    <table cellspacing="0" cellpadding="0" border="0"  style="width:100%">
+                      <tr>
+                        <td  style="width:50%">Invoice :</td>
+                        <td  style="width:50%;text-align:left; padding-left:2px;"><b>FD000<%=@subscription_payment.id %></b></td>
+                      </tr>
+                      <tr>
+                        <td  style="width:50%">Issued on:</td>
+                        <td  style="width:50%;text-align:left; padding-left:2px;"><div id="date"><b><%= Time.now.to_s(:short_day).strip %></b></div></td>
+                      </tr>
+                      <tr>
+                        <td  style="width:50%">Next Renewal:</td>
+                        <td  style="width:50%;text-align:left; padding-left:2px;"><%=@subscription.next_renewal_at.to_s(:short_day).strip %></td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
             </td>
-        </tr>
-		<%if @subscription.billing_address%>
-		<tr>
-		  <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top; background: #f4f4f4; width:40%;">Address</td>
-		  <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top;">
-              <div><%=@subscription.billing_address.humanize.gsub("\n","<br>")%></div>
-            </td>	
-		</tr>
-		<%else%>
-		<tr>
-          <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top; background: #f4f4f4; width:40%;">Company Name</td>
-          <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top;">
-            <div><strong><strong><%=@subscription.account.name%></strong></strong></div>
-          </td>
-        </tr>
-		<%end%>
-      </table>
-      <table style="border-collapse: collapse; margin-top: 1px; width: 300px; float: right;">
-          <tr>
-              <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top; background: #f4f4f4; width:40%;">Invoice #</td>
-              <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top;">FD000<%=@subscription_payment.id%></td>
           </tr>
           <tr>
-      
-              <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top; background: #f4f4f4; width:40%;">Issue Date</td>
-              <td style="border: 1px solid #dfdfdf; padding: 5px; text-align: left; vertical-align:top;"><div id="date"><%= Time.now.to_s(:short_day).strip %></div></td>
+            <td>
+              <table cellspacing="0" cellpadding="0" border="0" style="width:100%">
+                <tr>
+                  <td>
+                    <table cellspacing="0" cellpadding="0" border="0" style="width:100%">
+                      <tr>
+                        <td style="background-color:#f8f8f8; padding:5px; border-right: 1px solid #fff; margin-left:5px;">Item</td>
+                        <td style="background-color:#f8f8f8; padding:5px; border-right: 1px solid #fff;">Subscription</td>
+                        <td style="background-color:#f8f8f8; padding:5px; border-right: 1px solid #fff;">No. of Paid Agents</td>
+                        <td style="background-color:#f8f8f8; padding:5px; border-right: 1px solid #fff;">Unit price</td>
+                        <td style="background-color:#f8f8f8; padding:5px; margin-right:5px;">Amount</td>
+                      </tr>
+                      <tr>
+                        <td style=" padding:5px;margin-left:5px;"><%=@subscription.subscription_plan.name%> <%= "(#{pluralize( @subscription.free_agents, 'agent' )} free)" if @subscription.free_agents > 0 %></td>
+                        <td style=" padding:5px;"><%= SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[@subscription.renewal_period] %></td>
+                        <td style=" padding:5px;"><%=@subscription.paid_agents%></td>
+                        <td style=" padding:5px;">$<%=(@subscription.amount/(@subscription.paid_agents * @subscription.renewal_period)).round.to_f%></td>
+                        <td style=" padding:5px;margin-right:5px;">$<%=@subscription.amount%></td>
+                      </tr>
+                    </table>
+                    <table cellspacing="0" cellpadding="0" border="0" style="width:100%; border-top:5px solid #f8f8f8; margin-top:5px;">
+                      <tr>
+                        <td style=" padding:5px; vertical-align:top; color:#d0d0d0">All prices in USD</td>
+                        <td style=" padding:5px; text-align:right;">
+                          <table cellspacing="0" cellpadding="0" border="0" style="text-align:right; width:100%;">
+                            <tr>
+                              <td style="text-align:right; padding:5px; font-size:16px;"><b style="padding:5px;background-color:#fffecd;">Total: $<%=@subscription.amount%></b></td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
           </tr>
-      </table>
-    </div>
-
-    <table style="border-collapse: collapse; clear: both; width: 100%; margin: 30px 0 0 0; border: 1px solid #dfdfdf;">		
-		  <tr>
-		      <th style="border: 1px solid #dfdfdf; padding: 5px; background: #f4f4f4; text-align:left;">Type</th>
-		      <th style="border: 1px solid #dfdfdf; padding: 5px; background: #f4f4f4; text-align:left;">Description</th>
-		      <th style="border: 1px solid #dfdfdf; padding: 5px; background: #f4f4f4; text-align:left;">No. of Paid Agents</th>
-		      <th style="border: 1px solid #dfdfdf; padding: 5px; background: #f4f4f4; text-align:left;">Unit Price</th>
-		      <th style="border: 1px solid #dfdfdf; padding: 5px; background: #f4f4f4; text-align:left;">Amount</th>
-		  </tr>
-		  
-		  <tr style="border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf;">
-		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf; width: 250px;">Freshdesk <%=SubscriptionPlan::BILLING_CYCLE_NAMES_BY_KEY[@subscription.renewal_period]%> Subscription Plan - <%=@subscription.subscription_plan.name%> <%= "(#{pluralize( @subscription.free_agents, 'agent' )}  Free)" if @subscription.free_agents > 0 %></td>
-		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf; width: 225px;"> </td>
-		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf;"><div class="qty"><%=@subscription.paid_agents%></div></td>
-		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf;"><div class="cost">$<%=(@subscription.amount/(@subscription.paid_agents * @subscription.renewal_period)).round.to_f%></div></td>
-		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0; vertical-align: top; border-bottom: 1px solid #dfdfdf;"><span class="price">$<%=@subscription.amount%></span></td>
-		  </tr>
-		  <tr>
-		      <td style="border: 1px solid #dfdfdf; padding: 5px; border: 0;" colspan="2"> </td>
-		      <td style="border: 1px solid #dfdfdf; padding: 5px; border-right: 0; text-align: right;" colspan="2">Subtotal</td>
-		      <td style="border: 1px solid #dfdfdf; padding: 5px; border-left: 0; padding: 10px;"><div id="subtotal">$<%=@subscription.amount%></div></td>
-		  </tr>
-		</table> 
-	</div>
+        </table>
+      </td>
+    </tr>
+  </table>
 </body>
-
 </html>

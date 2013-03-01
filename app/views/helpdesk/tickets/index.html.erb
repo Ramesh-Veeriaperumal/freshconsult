@@ -1,3 +1,5 @@
+<%= include_stylesheets :pattern %>
+<%= include_javascripts :pattern %>
 <% content_for :onload_script do %>
   $J('#rightCol').css("minHeight", $J('#leftcol').height());
   $J("#helpdesk-select-all").on("click", function(ev){

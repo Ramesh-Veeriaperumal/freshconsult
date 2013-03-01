@@ -18,6 +18,10 @@
 		<% end %>  
 		<div class="leftcontent">  
 			<%= show_announcements %>
+			<% if current_user && current_user.admin? %>
+			<%= check_fb_reauth_required  %>
+			<%= check_twitter_reauth_required %>
+			<% end %>
 			<%= show_flash %>
 			<div class="flash_info notice" id="noticeajax" style="display:none;"></div>
 			<%= yield :pagetop %>

@@ -1587,6 +1587,8 @@ Redactor.prototype = {
 		html = html.replace(/<\/p><\/p>/g, '</p>');	
 	
 		if($.browser.msie && document.documentMode >= 9) {
+			//IE 9 converts \n to <br> and multiple ' ' between tags to &nbsp;
+			//So we remove these from content
 			html = html.replace(/\n/g, ' ');
 			html = html.replace(/>\s+</g, '><');
 		}

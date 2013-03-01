@@ -93,12 +93,14 @@ class Admin::VaRulesController < Admin::AutomationsController
         { :name => "contact_name", :value => t('contact_name'), :domtype => "text", 
           :operatortype => "text" },
         { :name => "company_name", :value => t('company_name'), :domtype => "text", 
-          :operatortype => "text"}]
+          :operatortype => "text"}
+        ]
 
       filter_hash.insert(11, { :name => "product_id", :value => t('admin.products.product_label_msg'),:domtype => 'dropdown', 
         :choices => @products, :operatortype => "choicelist" }) if current_account.features?(:multi_product)
                                                    
       filter_hash = filter_hash + additional_filters
+      business_hours_filter filter_hash
       add_custom_filters filter_hash
       @filter_defs  = ActiveSupport::JSON.encode filter_hash
       @op_types     = ActiveSupport::JSON.encode OPERATOR_TYPES
@@ -133,6 +135,11 @@ class Admin::VaRulesController < Admin::AutomationsController
           :nested_fields => nested_fields(field)
         })
       end
+    end
+
+    def business_hours_filter filter_hash
+        filter_hash.insert(12,{ :name=> "created_at", :value => t('ticket.created_during.title'), :domtype => "dropdown",
+          :operatortype => "date_time", :choices => VAConfig::CREATED_DURING_NAMES_BY_KEY.sort })
     end
   
 end

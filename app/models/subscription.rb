@@ -35,8 +35,9 @@ class Subscription < ActiveRecord::Base
   before_validation :update_amount
   after_update :update_features,:send_invoice
   after_update :add_to_crm, :if => :free_customer?
+  after_update :notify_totango, :if => :free_customer?
   
-  after_update :update_billing, :if => :active?
+  after_update :update_billing
   after_update :add_card_to_billing, :if => :card_number_changed?
   after_update :activate_paid_customer_in_billing, :if => :card_number_changed?
   after_update :activate_free_customer_in_billing, :if => :free_plan_selected?
@@ -285,6 +286,7 @@ class Subscription < ActiveRecord::Base
     self.state = FREE if card_number.blank?
     self.agent_limit = AGENTS_FOR_FREE_PLAN
     self.renewal_period = 1
+    self.day_pass_amount = subscription_plan.day_pass_amount
     self.next_renewal_at = Time.now.advance(:months => 1)
   end
 
@@ -536,9 +538,13 @@ class Subscription < ActiveRecord::Base
       Resque.enqueue(CRM::AddToCRM::FreeCustomer, id)
     end
 
+    def notify_totango
+      Resque.enqueue(CRM::Totango::FreeCustomer, id)
+    end
+
     #Billing
     def update_billing
-      Resque.enqueue(Billing::AddToBilling::UpdateSubscription, id, !no_prorate?)
+      Resque.enqueue(Billing::AddToBilling::UpdateSubscription, id, !no_prorate?) if (free? or active?)
     end 
 
     def add_card_to_billing

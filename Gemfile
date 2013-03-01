@@ -2,7 +2,10 @@ source :gemcutter
 source "http://gems.github.com"
 
 gem "rake", "0.8.7"
-gem "rails", "2.3.8"
+gem "rack", "~> 1.1.6"
+gem "rails","2.3.17"
+
+gem "json", "~> 1.5.5"
 gem "mysql"
 gem "i18n", "0.4.2"
 gem "html2textile", "~> 1.0.0.beta1"
@@ -83,6 +86,9 @@ gem 'chargebee', "~> 1.1.1"
 gem 'memcache-client', '1.8.5'
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
 gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
+gem "rinku", :git => "git://github.com/freshdesk/rinku.git"
+
+gem "people", '0.2.1' #https://github.com/mericson/people/tree/master/lib
 
 group :development,:test do
    #gem "rspec", "1.3.1"

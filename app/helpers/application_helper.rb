@@ -316,14 +316,18 @@ module ApplicationHelper
       ['{{ticket.tags}}',           'Tags',           'Ticket tags.'],
       ['{{ticket.due_by_time}}',      'Due by time',        'Ticket due by time.'],
       ['{{ticket.requester.name}}',     'Requester name',       'Name of the requester who raised the ticket.'],
+      ['{{ticket.requester.firstname}}' , 'Requester first name', 'First name of the requester who raised the ticket'],
+      ['{{ticket.requester.lastname}}' , 'Requester last name', 'Last name of the requester who raised the ticket'],
       ['{{ticket.requester.email}}',    'Requester email',      "Requester's email."],
       ['{{ticket.requester.company_name}}', 'Requester company name',   "Requester's company name."], #??? should it be requester.company.name?!
+      ['{{ticket.requester.phone}}', 'Requester phone number',   "Requester's phone number."],
       ['{{ticket.group.name}}',       'Group name',       'Ticket group.'],
       ['{{ticket.agent.name}}',       'Agent name',       'Name of the agent who is currently working on the ticket.'],
       ['{{ticket.agent.email}}',      'Agent email',        "Agent's email."],
       ['{{ticket.latest_public_comment}}',  'Last public comment',  'Latest public comment for this ticket.'],
       ['{{helpdesk_name}}', 'Helpdesk name', 'Your main helpdesk portal name.'],
-      ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.']      
+      ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.'],
+      ['{{ticket.product_description}}', 'Product description', 'Product specific description in multiple product/brand environments.']
     ]
     place_holders << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey', 'Includes satisfaction survey.'] if current_account.features?(:surveys, :survey_links)
     current_account.ticket_fields.custom_fields.each { |custom_field|
@@ -415,18 +419,22 @@ module ApplicationHelper
   end
 
   def get_app_details(app_name)
-    installed_app = @installed_apps_hash[app_name.to_sym]
+    installed_app = installed_apps[app_name.to_sym]
     return installed_app
   end
 
   #This one checks for installed apps in account
   def dropbox_app_key
-    app = Integrations::InstalledApplication.with_name("dropbox").find(:all,:conditions =>["installed_applications.account_id = ?",current_account])
-    app.first.configs[:inputs]['app_key']  unless (app.empty?)
+    app = installed_apps[:dropbox]
+    app.configs[:inputs]['app_key']  unless (app.blank?)
   end
 
+  def installed_apps 
+    @installed_apps ||= current_account.installed_apps_hash
+  end
+  
   def get_app_widget_script(app_name, widget_name, liquid_objs) 
-    installed_app = @installed_apps_hash[app_name.to_sym]
+    installed_app = installed_apps[app_name.to_sym]
     if installed_app.blank? or installed_app.application.blank?
       return ""
     else
@@ -490,6 +498,7 @@ module ApplicationHelper
   def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
+    element_class  += " required_closure" if (field.required_for_closure && !field.required)
     field_label    += '<span class="required_start">*</span>' if required
     field_label    += "#{add_requester_field}" if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
     field_name      = (field_name.blank?) ? field.field_name : field_name
@@ -505,7 +514,7 @@ module ApplicationHelper
       when "email" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
         element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit && controller_name.singularize != "feedback_widget") #dirty fix
-        element += add_name_field unless is_edit
+        element += add_name_field if !is_edit and !current_user
       when "text", "number" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
       when "paragraph" then
@@ -522,7 +531,7 @@ module ApplicationHelper
                                               {:include_blank => "...", :selected => field_value}, 
                                               {:class => element_class})
       when "nested_field" then
-        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => t('any'), :selected => field_value}, {:class => element_class}, field_value, in_portal)
+        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal)
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
@@ -549,7 +558,7 @@ module ApplicationHelper
   end
   
   def add_name_field
-    content_tag(:li, content_tag(:div, render(:partial => "/shared/name_field")),
+    content_tag(:li, (content_tag(:div, render(:partial => "/shared/name_field"))).to_s,
                 :id => "name_field", :class => "hide") unless current_user
   end
 
@@ -673,4 +682,26 @@ module ApplicationHelper
               "data-tour-id" => tour_id)
   end
   
+  def check_fb_reauth_required
+    fb_page = current_account.fb_reauth_check_from_cache
+    if fb_page
+      return content_tag('div', "<a href='javascript:void(0)'></a>  Your Facebook channel is inaccessible. 
+        It looks like username, password, or permission has been changed recently.Kindly 
+        <a href='/social/facebook' target='_blank'> fix </a> it.  ", :id => type, :class => 
+        "alert-message block-message warning full-width")
+    end
+    return
+  end
+ 
+  def check_twitter_reauth_required
+    twt_handle= current_account.twitter_reauth_check_from_cache
+    if twt_handle
+      return content_tag('div', "<a href='javascript:void(0)'></a>  Your Twitter channel is inaccessible. 
+        It looks like username or password has been changed recently. Kindly 
+        <a href='/social/twitters' target='_blank'> fix </a> it.  ", :id => type, :class => 
+        "alert-message block-message warning full-width")
+    end
+    return
+  end
+
 end

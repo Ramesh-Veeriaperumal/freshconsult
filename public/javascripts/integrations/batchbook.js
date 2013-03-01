@@ -69,6 +69,7 @@ BatchbookWidget.prototype= {
 				city = contact.locations[primaryIndex].location.city;
 				state = contact.locations[primaryIndex].location.state;
 				country = contact.locations[primaryIndex].location.country;
+				postal_code = contact.locations[primaryIndex].location.postal_code;
 				bAddressAvailableForDisplay = true;
 				addressType = DEFAULT_ADDRESS;
 			}
@@ -88,6 +89,7 @@ BatchbookWidget.prototype= {
 					city = contact.locations[workIndex].location.city;
 					state = contact.locations[workIndex].location.state;
 					country = contact.locations[workIndex].location.country;
+					postal_code = contact.locations[workIndex].location.postal_code;
 					bAddressAvailableForDisplay = true;
 					addressType = WORK_ADDRESS;
 				}
@@ -108,6 +110,7 @@ BatchbookWidget.prototype= {
 					city = contact.locations[homeIndex].location.city;
 					state = contact.locations[homeIndex].location.state;
 					country = contact.locations[homeIndex].location.country;
+					postal_code = contact.locations[homeIndex].location.postal_code;
 					bAddressAvailableForDisplay = true;
 					addressType = HOME_ADDRESS;
 				}
@@ -116,7 +119,7 @@ BatchbookWidget.prototype= {
 
 		}
 		 
-		address = bAddressAvailableForDisplay ? batchbookWidget.getFormattedAddress(street, city, state, country) : null;
+		address = bAddressAvailableForDisplay ? batchbookWidget.getFormattedAddress(street, city, state, country, postal_code) : null;
 		_address_type_span = "";
 		if(bAddressAvailableForDisplay){
 			if(addressType == WORK_ADDRESS)
@@ -155,11 +158,14 @@ BatchbookWidget.prototype= {
 			fullName = trim((contact.first_name || "") + " " +(contact.middle_name || ""));
 			fullName = trim((fullName || "") + " " +(contact.last_name || ""));
 			cLink = "http://" + this.batchbookBundle.domain + "/contacts/" + contact.id;
+			companyLink = "http://" + this.batchbookBundle.domain + "/contacts/" ;
 			companyName = null; title = null; companyId=0;
 			contact.company_affiliations.each(function(aff){
-				if(aff.current)
+				if(aff.current || aff.primary)
 				{	companyId = aff.company_id;
+					companyName = aff.company_name;
 					title = aff.job_title;
+					companyLink += aff.company_id;
 				}
 			});
 			cAddress = null; _address_type_span = "", addr_type = null;
@@ -171,12 +177,13 @@ BatchbookWidget.prototype= {
 				city = address.city;
 				state = address.state;
 				country = address.country;
+				postal_code = address.postal_code;
 				street_1 = (street_1 && street_1.length) ? street_1 : null;
 				street_2 = (street_2 && street_2.length) ? street_1 : null;
 				street = (isValidStreet(street_1) ? (street_1 + ", " ) : "") + (isValidStreet(street_2) ? street_2 : "") ;
 				if(typeof(street)!='string' || street.length==0)
 					street = null;
-				cAddress = crm_widget.getFormattedAddress(street, city, state, country);
+				cAddress = crm_widget.getFormattedAddress(street, city, state, country, postal_code);
 				_address_type_span = address.primary?"":label_mark(address.label);
 				addr_type = address.label;
 			});
@@ -212,7 +219,7 @@ BatchbookWidget.prototype= {
 				designation: title,
 				company: companyName,
 				company_id: companyId,
-				company_url: null,
+				company_url: companyLink,
 				address: cAddress,
 				address_type_span: _address_type_span,
 				phone: cPhone,
@@ -223,21 +230,40 @@ BatchbookWidget.prototype= {
 		return contacts;
 	},
 
-	getFormattedAddress:function(street, city, state, country){
+	getFormattedAddress:function(street, city, state, country, pincode){
 		street = (street) ? (street + "<br />")  : "";
 		city = (city) ? (city)  : "";
 		state = (state) ? (state)  : "";
 		country = (country) ? (country)  : "";
+		pincode = (pincode) ? (pincode)  : "";
 
-		line1 = street;
-		line2 = (	city
-					+ ((city.length>0 && state.length>0) ? ", " : "")
-					+ (state)
-					+ ((city.length>0 || state.length>0) ? "<br/>" : "")
-				);
-		line3 = country;
+		var line1 = street;
+		
+		var line2 = city;
+		if(state.length>0){
+			if(pincode.length>0){
+				if(city.length>0)
+					line2 += "<br>";
+				else
+					line2 = state + ', ' + pincode + '<br>';
+			}
+			else
+				line2 += ", " + state + "<br>";
+		}
+		else{
+			if(pincode.length>0)
+				line2 += ", " + pincode + "<br>";
+			else
+				line2 += "<br>";
+		}
 
-		address = line1 + line2 + line3;
+		if(city.length>0 && state.length>0 && pincode.length>0){
+			var line3 = ( state + ', ' + pincode + '<br>' );
+		} else { var line3 = ''; }
+		
+		line4 = country;
+
+		var address = line1 + line2 + line3 + line4;
 		address = (address == "") ? null : address ;
 		return address;
 	}

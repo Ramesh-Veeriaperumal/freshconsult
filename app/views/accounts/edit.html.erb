@@ -1,6 +1,11 @@
 <% content_for :sidebar do %>
 <%= render :partial => "helpnote" %>
 <% end %>
+
+<% content_for :totango do %>
+    <%= render :partial => "layouts/totango" %>
+<% end %>
+
 <%= javascript_include_tag "mColorPicker.min.js" %>
 <%= render :partial => "shared/colorpicker" %>
 <% javascript_tag do %>
@@ -20,10 +25,18 @@
 			    jQuery('#account_main_portal_attributes_portal_url').val(result_url);
 			}
 		});
+		jQuery("#account_submit").bind('click', function(){
+		    if ((jQuery("#edit_form").valid()) && (jQuery('.portal_url').val() != "")) {
+		        totango.track("CName Updated", "Helpdesk Rebranding");
+	      	}
+    	});
 	}); 
 <% end %>
 <h3 class="title"><%=t('account.rebrand')%></h3> 
-	<% form_for :account, @account, :url => { :action => 'update' }, :html => { :multipart => true ,:method => :put } do |f| %>
+	<% form_for :account, @account, :url => { :action => 'update' }, 
+									:html => { :multipart => true ,
+											   :method => :put, 
+											   :id => "edit_form"  } do |f| %>
 	  <%= f.error_messages %>
 		<ul class="ui-form">
 			
@@ -78,7 +91,8 @@
 						<label class="overlabel" for="account_main_portal_attributes_portal_url">
 							Eg. support.mycompanyname.com						
 						</label>
-				    <%= portal.text_field :portal_url, :class => "text portal_url url_without_protocol" %> 
+				    <%= portal.text_field :portal_url, :class => "text portal_url url_without_protocol", 
+				    		:"data-domain" => Helpdesk::HOST[Rails.env.to_sym] %> 
 
 						<div class="info-data">
 							<%=t('account.info2', :full_domain => @account.full_domain)%>

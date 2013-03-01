@@ -88,6 +88,7 @@ module Search::TicketSearch
       groups = []
       groups.push([0, "My Groups" ])
       groups.concat(Account.current.groups_from_cache.collect { |g| [g.id, g.name]})
+      groups.push([-1, "Unassigned" ])
       return groups
     end
 
