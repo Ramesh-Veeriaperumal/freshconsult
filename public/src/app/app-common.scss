@@ -9112,6 +9112,8 @@ div.db-chooser{
 	border: 1px solid #b7b7b7;
 	@include corners(4px);
 	display: none;
+	clear: both;
+
 }
 
 .added-contact{
@@ -9137,6 +9139,7 @@ div.db-chooser{
 		border-top: 1px solid #cecece;
 		width: 100% !important;
 		margin-left: 0px;
+		clear: both;
 	}
 }
 
@@ -9311,20 +9314,24 @@ div.db-chooser{
 	margin-top: 8px;
 }
 
-.info-text{
-	float: right;
-	background-color: #fffcdb;
-	margin-top: 14px;
-	margin-right: 10px;
-	margin-bottom: 30px;
-	width: 240px;
-	height: 200px;
-	padding: 15px;
-	border: 1px solid #eeeeee;
-	@include corners(4px);
-	h3{
-		display: block;
-		font-weight: bold;
+#mergebox_confirm
+{
+	.info-text{
+		float: right;
+		background-color: #fffcdb;
+		margin-top: 14px;
+		margin-right: 10px;
+		margin-bottom: 30px;
+		width: 240px;
+		height: 200px;
+		padding: 15px;
+		line-height: 17px;
+		border: 1px solid #eeeeee;
+		@include corners(4px);
+		h3{
+			display: block;
+			font-weight: bold;
+		}
 	}
 }
 
@@ -9349,11 +9356,12 @@ div.db-chooser{
 	.button-container{
 		border-top: 1px solid #cecece;
 		margin-left: 10px;
+		clear: both;
 	}
 }
 
 .line{
-	width: 32px;
+	width: 31px;
 	border-top: 1px solid #b7b7b7;
 	height: 1px;
 	float: left;
@@ -9365,7 +9373,7 @@ div.db-chooser{
 	margin-left: -9px;
 	height: 30px;
 	margin-top: 40px;
-	width: 26px;
+	width: 25px;
 	border-left: 15px solid #f4f4f4;
 }
 
@@ -9373,7 +9381,7 @@ div.db-chooser{
 	height: 60px;
 	#contact-area{
 		float: right;
-		width: 285px;
+		width: 89%;
 		height: 60px;
 		vertical-align: middle;
 		border: 1px solid #eeeeee;
@@ -9398,6 +9406,7 @@ div.db-chooser{
 
 /* end */
 #ticket-merge{
+	overflow: hidden;
 	#complete_merge_tickets{
 		margin-bottom: 0px !important;
 	}
@@ -9415,7 +9424,7 @@ div.db-chooser{
 			max-width:78%;
 			white-space: nowrap;
 			overflow: hidden;
-			display: inline-block;
+			display: block;
 			-webkit-text-overflow: ellipsis;
 			-moz-text-overflow: ellipsis;
 			-ms-text-overflow: ellipsis;
@@ -9455,6 +9464,7 @@ div.db-chooser{
 	.merge_results{
 		width:100%;
 		max-height: 327px;
+		clear: both !important;
 	}
 	.search-content{
 		width: 340px !important;
@@ -9490,10 +9500,13 @@ div.db-chooser{
 				max-width:98%;
 				overflow: hidden;
 				text-overflow: ellipsis;
-				display: inline-block;
+				display: block;
 			}
 		}
 
+	}
+	.contactdiv.clicked{
+		cursor: default;
 	}
 	#select-user{
 		width: 309px;
@@ -9503,9 +9516,11 @@ div.db-chooser{
 	}
 	.info-data{
 		line-height: 15px;
+		padding-bottom: 2px;
 	}
 	#resp-icon{
 		margin-top: 14px;
+		margin-bottom: 14px;
 	}
 	.merge-info-text{
 		margin-right: 10px;
