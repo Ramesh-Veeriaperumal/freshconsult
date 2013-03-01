@@ -8918,11 +8918,12 @@ height: auto;
 }
 #customers-page{
 	#companies{
+		table-layout: fixed;
 		tr td{
-				width: 75%;
+				width: 71%;
 		    	vertical-align: middle;
 			    &:first-child{
-			        width:4.7%;
+			        width:7%;
 				}
 			    &:last-child{
 			    	min-width: 22%;
