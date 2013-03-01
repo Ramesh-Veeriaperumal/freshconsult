@@ -16,7 +16,7 @@ class Integrations::Application < ActiveRecord::Base
     :dependent => :destroy
 
   def to_liquid
-    Hash.from_xml(self.to_xml)['integrations_application']
+    JSON.parse(self.to_json)["application"]
   end
 
   def self.install_or_update(app_name, account_id, params={})

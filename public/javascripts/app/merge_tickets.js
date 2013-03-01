@@ -7,12 +7,13 @@ jQuery('.typed').live('click', function(){
 });
 
 jQuery('.search_merge').bind('keyup', function(){
-  var type = jQuery('#search-type option:selected').val();
+  var search_type = jQuery('#search-type option:selected').val();
+  var minChars = ( search_type == "display_id" ) ? 1 : 2
   jQuery('.merge_results').hide();
-  if((jQuery(this).val() != "") && (jQuery(this).val().length >= 2))
-    jQuery('#'+type+'_results').show();
+  if((jQuery(this).val() != "") && (jQuery(this).val().length >= minChars))
+    jQuery('#'+search_type+'_results').show();
   else
-    jQuery('#'+type+'_results').hide();
+    jQuery('#'+search_type+'_results').hide();
   jQuery(this).closest('.searchicon').toggleClass('typed', jQuery(this).val()!="");
 })
 
@@ -56,10 +57,7 @@ function bulk_merge_submit(){
   });
 }
 
-jQuery('#search-type').focus(function () {
-    previous = this.value;
-    text = jQuery('.'+previous).find('.search_merge').val()
-}).change(function() {
+jQuery('#search-type').change(function () {
     jQuery('.searchticket').hide();
     jQuery('.merge_results').hide();
     type = jQuery('#search-type option:selected').val()
@@ -69,13 +67,8 @@ jQuery('#search-type').focus(function () {
       else
         jQuery(this).hide();
     });
-    if( text != "")
-    {
-      var txt_box = jQuery('.'+type).find('.search_merge');
-      var txt_box_id = txt_box.attr("id");
-      txt_box.val(text).keyup();
-      global[txt_box_id].onSearchFieldKeyDown(42);
-    }
+    if(jQuery('.'+type).find('.search_merge').val() != "")
+      jQuery('#'+type+'_results').show() 
 });
 
 jQuery('.merge-cont:not(".cont-primary") #resp-icon').live("click",function(){
@@ -89,6 +82,7 @@ jQuery('.merge-cont:not(".cont-primary") #resp-icon').live("click",function(){
 jQuery('.contactdiv').live("click",function(){
   if(!jQuery(this).find('#resp-icon').hasClass("clicked"))
   {
+    jQuery(this).addClass("clicked");
     element = jQuery(".cont-primary").clone();
     append_to_merge_list(element, jQuery(this));
     replace_element = element.find('.item_info');
