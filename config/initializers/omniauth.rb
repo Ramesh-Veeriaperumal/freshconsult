@@ -7,7 +7,12 @@ require 'omniauth/strategies/nimble'
 ActionController::Dispatcher.middleware.use OmniAuth::Builder do
   oauth_keys = Integrations::OauthHelper::get_oauth_keys
   oauth_keys.map { |oauth_provider, key_hash|
-    provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"]
+  if key_hash["options"].blank?
+	  provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"]
+	else
+	  Rails.logger.debug "key_hash #{key_hash.inspect}"
+	  provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"], key_hash["options"]
+	end
   }
   provider :open_id,  :store => OpenID::Store::Filesystem.new('./omnitmp')
 end
