@@ -11,8 +11,7 @@
 .hc-search{	position: relative; }
 
 .hc-search-form{
-	background-color: rgba(#e3e3e3, 0.3);
-	border:1px solid rgba(#cdcccc, 0.3);
+	background-color: $help_center_icons_bg;
 	padding:5px;
 	@include border-radius(6px);
 	@include pie-clearfix;
@@ -45,15 +44,15 @@
 		margin-right: 5px;
 		@include border-radius(2em);
 		margin-top: -1px;
-		background-color: $tab_color;
+		background-color: $help_center_icons_bg;
 	}
 	&:hover{ text-decoration:none; }
 }
 
-@include mobile-icon(icon-search, $btnPrimaryBackground);
-@include mobile-icon(icon-nav-contact, $tab_color);
-@include mobile-icon(icon-nav-newticket, $tab_color);
-@include mobile-icon(icon-nav-status, $tab_color);
+@include mobile-icon(search, $btnPrimaryBackground);
+@include mobile-icon(nav-contact, $help_center_icons_bg);
+@include mobile-icon(nav-newticket, $help_center_icons_bg);
+@include mobile-icon(nav-status, $help_center_icons_bg);
 
 /* Applying styles only for mobile */
 @include at-breakpoint($media-mobile){
@@ -100,19 +99,16 @@
 		@include border-left-radius(0);
 	} 
 	.hc-search-button .btn-primary {
-		background: image-url('portal/icon/search-dark.png') no-repeat;
+		background: sprite($icon-sprites, search-dark) no-repeat;
 		background-position-x: 50%;
+		height: 20px;
 		border: 0;
-		margin:7px 0;
+		margin: 7px 0;
 		box-shadow: none;
 	}
 
-	.mobile-icon-search{
-		display:none;
-	}
-	.onfocus-mobile{
-		width:96%;
-	}
+	.mobile-icon-search{ display:none; }
+	.onfocus-mobile{ width:96%; }
 	.onfocus-hide{
 		opacity: 0;
 		display:none;
@@ -138,11 +134,7 @@
 				text-align:center;
 				padding:0.5em 0;
 				border-right: 1px solid rgba($tab_text_color, 0.2);
-				@if lightness($help_center_color) < 50% {
-					@include box-shadow(1px 0px 0px #fff);
-				}@else{
-					@include box-shadow (1px 0px 0px rgba(255, 255, 255, 0.2));
-				}
+				@include box-shadow(1px 0px 0px rgba( invert($tab_text_color), 0.2));
 				width:32.5%;
 			}
 		}
@@ -156,21 +148,22 @@
 			background-color: transparent;
 		}
 	}
+	@include mobile-icon(nav-contact, $tab_color);
+	@include mobile-icon(nav-newticket, $tab_color);
+	@include mobile-icon(nav-status, $tab_color);
 }
 /* Applying styles for tablet and above */
 @include at-breakpoint($break-tablet){
-    .help-center{ margin-top: 10px; padding: $page-lead-padding; }
+    .help-center{ margin-top: 5px; padding: $page-lead-padding; }
 	.hc-search{ 
 		width: 68%;
 		padding-right: 2%;
-		border-right:1px solid darken($help_center_color, 10%);
+		border-right:1px solid $help_center_icons_bg;
 	}
 	.hc-nav{
 		width: 30%;
 		padding-left: 1%;
-		a, span{
-			@include inline-block;
-		}
+		a, span{ @include inline-block; }
 	}
 	.hc-search, .hc-nav{
 	  display: inline-block !important; /* It will overwrite mobile focus inline style*/

@@ -75,7 +75,8 @@ jQuery.noConflict()
 			var _form = $("<form class='hide' method='post' />")
 							.attr("action", this.href)
 							.append("<input type='hidden' name='_method' value='"+$(this).data("method")+"' />")
-							.get(0).submit()			
+							.appendTo("body")
+							.get(0).submit()
 		})
 
 		// Data api for onclick showing dom elements

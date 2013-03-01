@@ -45,9 +45,10 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 		a{ 
 			width: 100%;
 			padding: 5px 10px;
+			border: 1px solid rgba($tab_text_color, 0.2);
 		}	
 	}
-	@include mobile-icon(icon-nav-menu, $tab_color);
+	@include mobile-icon(nav-menu, $tab_color);
 	a:hover, a.active{
 		text-decoration: none;
 	}
@@ -117,15 +118,9 @@ footer{
 		text-align: right;
 		cursor: pointer;
 		position:relative; // fix for bottom box shadow
-		z-index:2; // fix for bottom box shadow
-		
-		@if lightness($help_center_color) > 50% {
-			border: 1px solid rgba(#000, 0.2);
-		} @else{
-			border: 1px solid rgba(#fff, 0.3);
-		}
-		border-right: 0;
-		border-left: 0;
+		z-index:2; // fix for bottom box shadow		
+		border: 1px solid rgba($tab_text_color, 0.2);
+		border-width:1px 0;
 		@include box-shadow(0 3px 4px 0 #eeeeee);
 		.mobile-icon-nav-menu{
 			padding: $content-padding-mobile 3%;
@@ -142,7 +137,9 @@ footer{
 				display: block;
 				text-align: left;
 				padding-left: $content-padding-mobile;
-				border-top: 1px solid rgba($tab_text_color, 0.2);
+				border-width: 1px 0 0 0;
+				font-weight: 300;
+				font-size: $baseFontSize * 1.3;
 				&:last-child{ padding-bottom:0; }
 			}	
 		}
@@ -197,8 +194,7 @@ footer{
 	}
 	.page-tabs{	
 		display:inline-block;
-		@include border-bottom-radius($content-border-radius);
-		&, .nav-link a{ border: 1px solid darken($tab_color, 10%); }
+		@include border-bottom-radius($content-border-radius);		
 		&:before{
 			background:none;
 			height:auto;

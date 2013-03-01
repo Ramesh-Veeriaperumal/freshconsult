@@ -21,7 +21,7 @@ $icon-layout:horizontal;
 @include all-icon-sprites;
 
 [class^="icon-"],
-[class*=" icon-"],{
+[class*=" icon-"]{
   display: inline-block;
   @include ie7-restore-right-whitespace();
   vertical-align: text-top;

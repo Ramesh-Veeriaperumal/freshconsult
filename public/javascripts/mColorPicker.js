@@ -222,7 +222,7 @@
     }).css({
       'display': 'none',
       'background':'white',
-      'opacity': .3,
+      'opacity': 0,
       'position':'fixed',
       'top':0,
       'right':0,

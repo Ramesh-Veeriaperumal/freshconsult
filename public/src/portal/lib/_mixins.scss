@@ -384,23 +384,16 @@
 // -------------------------------------------------------------
 
 @mixin mobile-icon($class, $bg_color: $white) {
-  .mobile-#{$class}{
+  .mobile-icon-#{$class}{
     &:before{
       content:"";
-      @if lightness($bg_color) > 50% {
-        @extend .#{$class}-dark;
+      @if lightness($bg_color) > 50% {        
+        @include icon-sprite(#{$class}-dark);
       } @else {
-        @extend .#{$class};
+        @include icon-sprite(#{$class});
       }
       @include inline-block;
       vertical-align: text-top;
     }
   }
 }
-
-// Netural text color for the text that can be used in the page
-@mixin netural-color($color){
-  /*if(lightness($color) > 50, black, white)*/
-}
-
-

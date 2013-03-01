@@ -151,12 +151,13 @@ HTML
 		if(forum['topics_count'] > 0)
 			topics = forum['topics']
 			output = []
-			output << %(<ul>#{ topics.take(limit).map { |t| topic_list_item t.to_liquid } }</ul>)
+			output << %(<ul>#{ topics.take(limit).map { |t| topic_list_item t.to_liquid } })
 			if topics.size > limit
 				output << %(<a href="#{forum['url']}" class="see-more">) 
 				output << %(#{ I18n.t('portal.topic.see_all_topics', :count => forum['topics_count']) })
 				output << %(</a>) 
 			end
+			output << %(</ul>)
 			output.join("")
 		end
 	end
