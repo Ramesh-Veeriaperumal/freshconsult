@@ -60,23 +60,25 @@ class Helpdesk::Activity < ActiveRecord::Base
     description.chomp('.long').gsub('activities.tickets.','')
   end
 
-  def type
+  def activity_type
     description.split('.')[1]
   end
 
-  def is_ticket?
-    type == 'tickets'
+  def ticket?
+    activity_type == 'tickets'
   end
 
-  def is_note?
+  def note?
     ticket_activity_type.start_with?('conversation.')
   end
 
   def note
-    if is_note?
-      key = activity_data["eval_args"].keys.first
-      return Helpdesk::Note.find(activity_data['eval_args'][key][1]['comment_id'])
-    end
+    return Helpdesk::Note.find(note_id) if note?
+  end
+
+  def note_id
+    key = activity_data["eval_args"].keys.first
+    return activity_data['eval_args'][key][1]['comment_id']
   end
 
   private

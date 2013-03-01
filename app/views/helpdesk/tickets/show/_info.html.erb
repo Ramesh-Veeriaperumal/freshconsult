@@ -29,7 +29,9 @@
 			<div class="control-left-outer">
 				<div class="control-left">
 					<div class="source-badge-wrap">
-						<a href="#" class='source <%= "priority_color_#{@ticket.priority} source-#{@ticket.source_name.to_s.downcase}" %>'></a>
+						<div href="#" class='source <%= "priority_color_#{@ticket.priority} status_#{@ticket.status}" %>'>
+							<span class="source_<%= @ticket.source %>"></span>
+						</div>
 					</div>
 					<div class="commentbox-info" id="ticket_status_box">
 						<%= render :partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @ticket} %>

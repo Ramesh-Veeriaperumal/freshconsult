@@ -2,12 +2,13 @@
 	<h3 class="title"><%=t('ticket.properties')%></h3>	
 	<% form_for @ticket, :html => { :id => 'custom_ticket_form', :class => 'ui-form'} do |f| %>
 	<ul class="cnt">
-		<!-- <li class="button-container">
-			<%= f.submit t('update'), :class => "uiButton grey small", :id => "helpdesk_ticket_submit_dup",
-			"data-saving-text" => "Updating properties ...", 
+
+		<li class="button-container top">
+			<%= f.submit t('update'), :class => "btn btn-primary", :id => "helpdesk_ticket_submit_dup",
+			"data-loading-text" => "Updating properties ...", 
 			"data-saved-text" => "Updated", 
 			"data-default-text" => t('update') %>
-		</li> -->
+		</li>
 		<!--form values starts here-->
 		<% 
 			default_field_order = [
@@ -72,8 +73,8 @@
 		<!--form values ends here-->
 		<!-- Custom fields ends here-->
 		<li class="button-container">
-			<%= f.submit t('update'), :class => "uiButton grey small", 
-			"data-saving-text" => "Updating properties ...", 
+			<%= f.submit t('update'), :class => "btn btn-primary", :id => "helpdesk_ticket_submit",
+			"data-loading-text" => "Updating properties ...", 
 			"data-saved-text" => "Updated", 
 			"data-default-text" => t('update') %>
 		</li>		

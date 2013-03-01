@@ -5,3 +5,6 @@ page << "try {
 	jQuery('#execute_scenario [data-submit=modal]').button('reset');
 	jQuery('#execute_scenario .loading-box').remove();
 } catch(e) {}"
+
+page.replace "TicketProperties", render(:partial => "helpdesk/tickets/show/ticket_fields.html.erb")
+page.replace "due-by-element-parent", render(:partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @ticket})

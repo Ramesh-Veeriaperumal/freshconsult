@@ -82,7 +82,7 @@
 
 			if(form.get(0)){
 				if(this.options.submitLoading != "") this.$submitBtn.button('loading');
-				form.submit();
+					form.submit();
 			} 
 		}
 	}

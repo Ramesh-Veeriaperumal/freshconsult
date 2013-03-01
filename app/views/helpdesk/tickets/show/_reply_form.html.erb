@@ -195,14 +195,6 @@
 <% content_for :pagefixed do %>
   <% javascript_tag do %>
 
-    jQuery('[rel=custom-reply-status]').bind('click', function(ev){
-      ev.preventDefault();
-      ev.stopPropagation();
-
-      jQuery('#reply_ticket_status_<%= cntid %>}').val(jQuery(this).data('statusVal'));
-      changeStatusTo(jQuery(this).data('statusVal'));
-      jQuery("#HelpdeskReply").trigger('submit');
-    });
     jQuery("#HelpdeskReply")      
       .bind("submit", function(ev){
       if(!jQuery('#include_cc').is(':checked'))

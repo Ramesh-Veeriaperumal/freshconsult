@@ -1,13 +1,13 @@
 <dl>
 	<dt><%= form.label :user_id, t('.agent') %>: </label></dt>
 	<dd>
-		<%= form.collection_select( :user_id, current_account.users.technicians.visible, :id, :name, { :selected => current_user.id }, {:class => "select2"}) %>
+		<%= form.collection_select( :user_id, current_account.users.technicians.visible, :id, :name,  {:class => "select2"}) %>
 	</dd>
 
-	<dt><%= form.label :hours, t('.hours')%>: </dt>
+	<dt><%= form.label :hhmm, t('.hours')%>: </dt>
 	<dd class="hours">
-		<%= form.text_field(:hours, { 
-				:size => 6, :class => "auto number #{(type == :new) ? 'custom-tip' : ''}", :autocomplete => "off",
+		<%= form.text_field(:hhmm, { 
+				:size => 6, :class => "auto number #{(type == :new) ? 'custom-tip' : ''}", :autocomplete => "off", :placeholder => "01:30",
 				:title => type == :new ? '!V2 - Leave this blank to start a timer. You can also enter time as 1.5 or 1:30 (they both mean 1 hour and 30 minutes).' : '',
 				} ) %>
 		<label class="billing_hours floatr">
@@ -30,7 +30,7 @@
 </dl>
 <% if type == :new %>
 <script type="text/javascript">
-	jQuery('#time_entry_hours').qtip({
+	jQuery('#time_entry_hhmm').qtip({
 	    style: {
 	      position: {
 	      	my: 'top left',
@@ -48,7 +48,7 @@
 
 	jQuery('#new_timeentry [data-submit=modal]').attr('data-start-text', '<%= t(".start_timer") %>');
 	jQuery('#new_timeentry [data-submit=modal]').button('start');
-	jQuery('#time_entry_hours').keyup(function(ev) {
+	jQuery('#time_entry_hhmm').keyup(function(ev) {
 		if (trim(jQuery(this).val()) == '')
 			jQuery('#new_timeentry [data-submit=modal]').button('start');
 		else

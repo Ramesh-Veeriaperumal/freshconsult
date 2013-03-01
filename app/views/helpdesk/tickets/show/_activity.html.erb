@@ -1,5 +1,5 @@
 <%
-note = activity[:is_note] ? activity[:stack].first.note : nil
+note = activity[:is_note] ? @prefetched_notes[activity[:stack].first.note_id] : nil
 %>
 <li class="conversation activity <%= 'hide' if activity[:important][:type] == 'new_ticket' %>">
 	<%= link_to user_avatar(activity[:user]), activity[:user], :class => 'avatar-wrap'  if activity[:user] %>

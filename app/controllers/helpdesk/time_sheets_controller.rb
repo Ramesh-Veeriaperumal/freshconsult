@@ -44,8 +44,8 @@ class Helpdesk::TimeSheetsController < ApplicationController
   end
   
   def create
-    hours_spent = params[:time_entry][:hours]
-    params[:time_entry].delete(:hours)
+    hours_spent = params[:time_entry][:hhmm]
+    params[:time_entry].delete(:hhmm)
 
     update_running_timer params[:time_entry][:user_id] if hours_spent.blank?
     
@@ -77,8 +77,8 @@ class Helpdesk::TimeSheetsController < ApplicationController
   end
 
   def update  
-    hours_spent = params[:time_entry][:hours]
-    params[:time_entry].delete(:hours)
+    hours_spent = params[:time_entry][:hhmm]
+    params[:time_entry].delete(:hhmm)
     time_entry = params[:time_entry].merge!({:time_spent => convert_duration(hours_spent)})
 
     unless params[:time_entry][:user_id].blank?

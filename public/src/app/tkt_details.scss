@@ -9,14 +9,23 @@ $collision: sprite-map("collision/*.png");
 .ticket_details .pagearea{
 	min-width: 1100px;
 	margin: 0 auto;
-	margin-top: -11px;
+	margin-top: -13px;
 	border: none;
 	@include box-shadow(0px 5px 6px #ccc);
-
+	@include corners(0);
 }
 
 .ticket_details #inner {
 	z-index: 0;
+}
+
+.ticket_details .flash_info {
+	margin: 0 -1px 11px;
+	border-radius: 0;
+	margin-top: -13px;
+	border-top: none;
+	border-bottom: none;
+	@include box-shadow(0px 5px 6px #ccc);
 }
 ol, ul, li{
 	margin: 0px;
@@ -89,9 +98,9 @@ p strong{
 	margin: 8px 0px 0px 0px;
 	padding-right: 318px;
 	.tkt-sidebar{
-		width:310px;
+		width:320px;
 		float:right;
-		margin-right:-310px;
+		margin-right:-318px;
 	}
 	.leftcontent{
 		float: left;
@@ -203,29 +212,6 @@ p strong{
 					width: 46px;
 					height: 46px;
 
-					background-repeat: no-repeat;
-					&.source-email {
-						background: sprite($symbol, source-badge-email);
-					}
-					&.source-facebook {
-						background: sprite($symbol, source-badge-email);
-					}
-					&.source-twitter {
-						background: sprite($symbol, source-badge-email);
-					}
-					&.source-portal {
-						background: sprite($symbol, source-badge-email);
-					}
-					&.source-phone {
-						background: sprite($symbol, source-badge-email);
-					}
-					&.source-chat {
-						background: sprite($symbol, source-badge-email);
-					}
-					&.source-forum {
-						background: sprite($symbol, source-badge-email);
-					}
-
 					&.collision_refresh {
 						background: sprite($symbol, collision_refresh);
 					}
@@ -238,20 +224,58 @@ p strong{
 					&.priority_color_2 {
 						background-color: $COL_PRI_MEDIUM;
 					}
-					&.priority_color_4 {
-						background-color: $COL_PRI_URGENT;
-					}
 					&.priority_color_3 {
 						background-color: $COL_PRI_HIGH;
 					}
-
-					&.resolved, &.closed {
-						background-color: $COL_RESOLVED_CLOSED !important;
+					&.priority_color_4 {
+						background-color: $COL_PRI_URGENT;
 					}
 
-					&:hover{
+					&.status_4, &.status_5 {
+						background-color: $COL_RESOLVED_CLOSED !important;
+					}
+					@include box-shadow(0 2px 6px rgba(0,0,0,0.4) inset);
+					background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAGElEQVQIW2NkQIA0Rig7DUjPAnHADJAgACFnAmoWZrn+AAAAAElFTkSuQmCC);
 
-					}	
+					span{
+						display:inline-block;
+						width: 46px;
+						height: 46px;
+
+						&.source_1 {
+							// Email
+							background: sprite($symbol, source-badge-email);
+						}
+						&.source_2 {
+							// Portal
+							background: sprite($symbol, source-badge-portal);
+						}
+						&.source_3 {
+							// Phone
+							background: sprite($symbol, source-badge-phone);
+						}
+						&.source_4 {
+							// Forum
+							background: sprite($symbol, source-badge-forum);
+						}
+						&.source_5 {
+							// Twitter
+							background: sprite($symbol, source-badge-twitter);
+						}
+						&.source_6 {
+							// Facebook
+							background: sprite($symbol, source-badge-facebook);
+						}
+						&.source_7 {
+							// Chat
+							background: sprite($symbol, source-badge-chat);
+						}
+						&.source_8 {
+							// Mobihelp
+							background: sprite($symbol, source-badge-mobihelp);
+						}
+
+					}
 				}
 			}
 		}
@@ -267,6 +291,7 @@ p strong{
 				font-size: 18px;
 				padding: 0 10px;
 				font-weight: 300;
+				color: #000;
 			}
 
 			p{
@@ -282,13 +307,14 @@ p strong{
 #toggle-note-visibility {
 	display: inline-block;
 	float: right;
-	margin: -30px 0 5px;
+	margin: -30px 0 5px 20px;
 
 	.note-visible, .note-hidden {
+		background-repeat: no-repeat;
 		i {
 			display: block;
-			width: 30px;
-			height: 26px;
+			width: 32px;
+			height: 28px;
 			float: right;
 		}
 		label {
@@ -303,11 +329,9 @@ p strong{
 	
 	.note-visible i {
 		background:sprite($symbol, note-visible);
-		background-repeat: no-repeat;
 	}
 	.note-hidden i {
 		background:sprite($symbol, note-hidden);
-		background-repeat: no-repeat;
 	}
 
 	.note-visible {
@@ -328,45 +352,6 @@ p strong{
 		display: none;
 	}
 }
-
-
-
-// .btn {
-// 	margin: 0;
-// 	padding: 5px 10px;
-// 	color: #333;
-// 	font-family: inherit;
-// 	font-weight: 500;
-// 	@include text-shadow(1px 0 0 rgba(255,255,255,0.49));
-// 	@include box-shadow(1px 0 1px #FFF);
-
-// 	&.tall {
-// 		padding: 5px 10px 6px;
-// 		font-size: 12px;
-// 	}
-
-// }
-
-// .btn-group {
-// 	overflow: visible;
-// 	display: inline-block;
-// 	position: relative;
-// 	.btn.dropdown-toggle:after {
-// 	 	width: 0;
-// 		height: 0;
-// 		display: inline-block;
-// 		content: "&darr;";
-// 		text-indent: -99999px;
-// 		vertical-align: top;
-// 		margin-top: 6px;
-// 		margin-left: 0px;
-// 		border-left: 6px solid transparent;
-// 		border-right: 6px solid transparent;
-// 		border-top: 6px solid #6f6f6f;
-// 		@include opacity(1);
-// 	}
-// }
-
 
 .ticket-actions{
 	display: block;
@@ -389,10 +374,7 @@ p strong{
 		@include filter-gradient(#ffffff, #e5e5e5, vertical);
 		$experimental-support-for-svg: true;
 		@include background-image(linear-gradient(top,  #ffffff 0%,#e5e5e5 100%));
-		-webkit-box-shadow: 0px 0px 1px #fff;
-		   -moz-box-shadow: 0px 0px 1px #fff;
-		    -ms-box-shadow: 0px 0px 1px #fff;
-		        box-shadow: 0px 0px 1px #fff;
+		@include box-shadow(0px 0px 1px #fff);
 	}
 	.menu-dropdown, .dropdown-menu { 
 	float: left;
@@ -685,14 +667,11 @@ p strong{
 	display: inline-block;
 }
 
-ol.conversation_thread{
-	padding: 10px 10px 10px 10px;
+.conversation_thread{
+	padding: 10px 30px 10px 10px;
 	margin-top:-20px;
 	border-left: 1px #d8d8d8 solid;
-	-webkit-box-shadow: -4px 0px 0px #f0f0f0;
-	   -moz-box-shadow: -4px 0px 0px #f0f0f0;
-	    -ms-box-shadow: -4px 0px 0px #f0f0f0;
-	        box-shadow: -4px 0px 0px #f0f0f0;
+	@include box-shadow(-4px 0px 0px #f0f0f0);
      
     &.loading-center {
     	li { display: none; }
@@ -705,7 +684,7 @@ ol.conversation_thread{
     	// display: none;
     }
 
-	li.conversation{
+	.conversation{
 		margin-bottom: 22px;
 		position: relative;
 	}
@@ -725,6 +704,7 @@ ol.conversation_thread{
 		@include corners(5px);
 		margin: 20px 0 10px;
 		background: #fdfdfd;
+		padding: 5px 10px;
     }
 
     .request_panel {
@@ -1066,7 +1046,7 @@ ol.conversation_thread{
     .note-forward-form {
     	padding: 5px;
     	margin: 0 0 20px;
-    	background: #fdfdfd;
+    	background: transparent;
     	@include corners(5px);
 
     }
@@ -1083,7 +1063,7 @@ ol.conversation_thread{
 		border-color: #FFF;
 		color: #FFF;
 		@include box-shadow(-8px 0px 12px 8px white);
-		-webkit-transition: all 0.2s linear;
+		@include transition(all 0.2s linear);
 	}
 
 	&:hover {
@@ -1092,26 +1072,38 @@ ol.conversation_thread{
 		}
 	}
 
+	.loading_only {
+		display: none;
+	}
+
 	&.loading {
 		background: none;
 
+		.loading_only {
+			display: block;
+		}
+
+		.not_on_loading {
+			display: none;
+		}
+
 		.avatar-wrap-collapse {
-			background-image: -webkit-gradient(linear, 0 0, 100% 100%, color-stop(.26, rgba(255, 255, 255, 0.1)), color-stop(.26, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .1)), color-stop(.76, rgba(255, 255, 255, .1)), color-stop(.76, transparent), to(transparent) );
+			background-image: -webkit-gradient(linear, 0 0, 100% 100%, color-stop(.26, rgba(255, 255, 255, 0.3)), color-stop(.26, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .3)), color-stop(.76, rgba(255, 255, 255, .3)), color-stop(.76, transparent), to(transparent) );
 			-webkit-background-size: 19px 19px;
 			-webkit-animation: animate-stripes .4s linear infinite, fade-in .4s linear 1;
 
-			background-image: -moz-gradient(linear, 0 0, 100% 100%, color-stop(.26, rgba(255, 255, 255, 0.1)), color-stop(.26, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .1)), color-stop(.76, rgba(255, 255, 255, .1)), color-stop(.76, transparent), to(transparent) );
+			background-image: -moz-gradient(linear, 0 0, 100% 100%, color-stop(.26, rgba(255, 255, 255, 0.3)), color-stop(.26, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .3)), color-stop(.76, rgba(255, 255, 255, .3)), color-stop(.76, transparent), to(transparent) );
 			-moz-background-size: 19px 19px;
 			-moz-animation: animate-stripes .4s linear infinite, fade-in .4s linear 1;
 
-			background-image: -ms-gradient(linear, 0 0, 100% 100%, color-stop(.26, rgba(255, 255, 255, 0.1)), color-stop(.26, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .1)), color-stop(.76, rgba(255, 255, 255, .1)), color-stop(.76, transparent), to(transparent) );
+			background-image: -ms-gradient(linear, 0 0, 100% 100%, color-stop(.26, rgba(255, 255, 255, 0.3)), color-stop(.26, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .3)), color-stop(.76, rgba(255, 255, 255, .3)), color-stop(.76, transparent), to(transparent) );
 			-ms-background-size: 19px 19px;
 			-ms-animation: animate-stripes .4s linear infinite, fade-in .4s linear 1;
 
 			-o-background-size: 19px 19px;
 			-o-animation: animate-stripes .4s linear infinite, fade-in .4s linear 1;
 
-			background-image: gradient(linear, 0 0, 100% 100%, color-stop(.26, rgba(255, 255, 255, 0.1)), color-stop(.26, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .1)), color-stop(.76, rgba(255, 255, 255, .1)), color-stop(.76, transparent), to(transparent) );
+			background-image: gradient(linear, 0 0, 100% 100%, color-stop(.26, rgba(255, 255, 255, 0.3)), color-stop(.26, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .3)), color-stop(.76, rgba(255, 255, 255, .3)), color-stop(.76, transparent), to(transparent) );
 			background-size: 19px 19px;
 			animation: animate-stripes .4s linear infinite, fade-in .4s ease-in 1;
 
@@ -1359,7 +1351,14 @@ ol.conversation_thread{
 	}
 
 	#TicketProperties {
+		.button-container {
+			padding: 0;
+			width: 100%;
 
+			&.top {
+				margin-top: -33px;
+			}
+		}
 		.ui-form {
 			position: static;
 			background: none;
@@ -1386,7 +1385,7 @@ ol.conversation_thread{
 				label {
 					width: auto;
 					display: inline-block;
-					margin-top: 3px;
+					padding: 0;
 				}
 			}
 
@@ -1477,7 +1476,7 @@ ol.conversation_thread{
 
 
 		h3{
-			font-size: 16px;
+			font-size: 18px;
 			font-weight: 300;
 			padding-top: 2px;
 			padding-bottom: 5px;
@@ -1489,7 +1488,8 @@ ol.conversation_thread{
 
 		&.inactive {
 			margin-bottom: 0;
-			min-height: 60px;
+			min-height: 30px;
+			cursor: pointer;
 			h3 {
 				padding-left: 15px;
 
@@ -1682,7 +1682,6 @@ ol.conversation_thread{
     }
 }
 
-
 /*Comment-box*/
 .commentbox{
 	position: relative;
@@ -1711,6 +1710,8 @@ ol.conversation_thread{
 		display: block;
 		width: auto;
 		visibility: hidden;
+		@include opacity(0);
+		@include transition(opacity 0.7s linear); 
 
 		margin-top: -15px;
 		margin-right: -15px;
@@ -1740,6 +1741,7 @@ ol.conversation_thread{
 	&:hover {
 		.actions {
 			visibility: visible;
+			@include opacity(1);
 		}
 	}
 
@@ -2326,7 +2328,7 @@ label.custom-select {
 	left:0;
 	background: #fff;
 	border-bottom: solid 1px #DADADA;
-	@include box-shadow( 0px 0px 20px 0px #e5e5e5);
+	@include box-shadow( 0px 0px 10px 0px #e5e5e5);
 }
 .fixedStrap.at_the_top{
 	position: fixed;
@@ -2454,21 +2456,17 @@ label.custom-select {
 }
 .reply-flip .flip-front {
 	background: sprite($collision, show-reply-inactive);
-	// background: url(/images/collision/show-reply-inactive.png) transparent no-repeat;
 }
 
 .view-flip .flip-front {
 	background: sprite($collision, show-viewing-inactive);
-	// background: inline-image('collision/show-viewing-inactive.png', 'image/png');
 }
 .reply-flip.active .flip-front {
 	background: sprite($collision, show-reply-active);
-	// background: inline-image('collision/show-reply.png', 'image/png');
 }
 
 .view-flip.active .flip-front {
 	background: sprite($collision, show-viewing-active);
-	// background: inline-image('collision/show-viewing.png', 'image/png');
 }
 
 .dropdown.open .dropdown-toggle {

@@ -1,6 +1,8 @@
-<li>
-	<%= link_to("", helpdesk_attachment_path(attachment), :class =>"attachment-close", 
-				:method => 'delete', :confirm => "You're about to permanently delete this attachment. Continue?")  if local_assigns[:show_delete] %>
+<li id="<%= dom_id(attachment) %>">
+	<%= link_to_remote("", 
+						:url => helpdesk_attachment_path(attachment), :method => 'delete', 
+						:html => { :class =>"attachment-close" },
+						:confirm => "You're about to permanently delete this attachment. Continue?")  if local_assigns[:show_delete] %>
 	<% 
 	extname = attachment.content_file_name.split('.')[-1] 
 	extname = (["asf", "ai", "apk", "bmp", "avi", "cdr", "chm", "csv",

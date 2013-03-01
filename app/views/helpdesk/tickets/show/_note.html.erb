@@ -1,10 +1,10 @@
-<% note_view_id = "helpdesk_note_"+note.id.to_s() %>
+<% note_view_id = dom_id(note) %>
 <% notedetails  = "note_details_#{note.id.to_s()}" %>
 <% forward_note_id = "cnt-fwd-#{note.id.to_s()}" %>
 <% edit_id = "edit-#{note.id.to_s()}" %>
 <li id="<%= note_view_id %>" class="conversation">
 	<%= link_to user_avatar(note.user), note.user, :class => 'avatar-wrap', :name => "note#{note.id}"  if note.user %>
-	<div class="commentbox <%= 'commentbox-gray' if note.user.blank? or note.user.agent? %>">
+	<div class="commentbox <%= 'commentbox-gray' if note.user.blank? or note.user.agent? %> <%= 'private-note' if note.private_note? %>">
 		<%= content_tag(:span, "", :class => "comment-lock") if note.private_note? %>
 
 		<div class="actions">
@@ -24,7 +24,7 @@
 
 
 				<%= link_to_function(t("edit"), 
-							"jQuery('##{notedetails}').hide(); jQuery('##{edit_id}').show().trigger('afterShow');",
+							"jQuery('##{notedetails}').hide(); jQuery('##{edit_id}').show().trigger('afterShow')",
 							:class => "conv-action-icon conv-actions-edit") if(note.note? && note.user && note.user.agent?) %>
 
 			<% end %>
@@ -66,6 +66,14 @@
 				    <%= render :partial => '/helpdesk/tickets/show/attachment.html', :collection => note.attachments, :locals => {:show_delete => true, :url => [@item] } %>
 				</ul>
 			</div>
+		<% end %>
+
+		<% unless note.dropboxes.empty? %>
+			<ul class="attachment_list">
+				<%note.dropboxes.each do |dropbox| %> 
+					<%= render :partial => '/helpdesk/shared/dropbox.html',:locals => {:dropbox=>dropbox, :show_delete => true, :url => [@item] } %>
+				<%end%>
+			</ul>
 		<% end %>
 	</div>
 

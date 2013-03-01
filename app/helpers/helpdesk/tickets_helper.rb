@@ -252,7 +252,7 @@ module Helpdesk::TicketsHelper
       end 
     end
 
-    return default_reply unless quoted
+    return default_reply unless quoted or forward
     
     content = default_reply+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
               "<span class='separator' /> , "+ last_reply_by +" wrote:"+

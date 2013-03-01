@@ -177,7 +177,7 @@ $('#helpdesk_ticket_group_id').bind("change", function(e){
 		.addClass('loading-right');
 
 	$.ajax({type: 'POST',
-		url: '/helpdesk/tickets/get_agents/'+this.value,
+		url: '/helpdesk/commons/group_agents/'+this.value,
 		contentType: 'application/text',
 		success: function(data){
 			$('#TicketProperties .default_agent select')
@@ -361,7 +361,7 @@ var updateShowMore = function() {
 	var showing_notes = $('#all_notes').length > 0;
 	var total_count, loaded_items;
 	if (showing_notes){
-		loaded_items = $('#all_notes li.conversation').length;
+		loaded_items = $('[rel=activity_container] .conversation').length;
 		total_count = TICKET_DETAILS_DATA['total_notes'];
 	} else {
 		total_count = TICKET_DETAILS_DATA['total_activities'];
@@ -551,7 +551,6 @@ $(document).ready(function() {
 	});
 
 	$('.widget.load_remote.inactive').live('click', function(ev){
-		console.log($(this).children('.content'));
 		$(this).children('.content').trigger('afterShow');
 		$(this).removeClass('inactive');
 	});
@@ -687,11 +686,21 @@ $(document).ready(function() {
 		$(this).parent().siblings('.integration_container').toggle($(this).prop('checked'));
 	});
 
+
+    jQuery('.ticket_details').on('click','[rel=custom-reply-status]', function(ev){
+      ev.preventDefault();
+      ev.stopPropagation();
+
+      jQuery('#reply_ticket_status_<%= cntid %>}').val(jQuery(this).data('statusVal'));
+      jQuery('body').trigger('click');
+
+      changeStatusTo(jQuery(this).data('statusVal'));
+      jQuery("#HelpdeskReply").trigger('submit');
+    });
+
 	$(".conversation_thread .request_panel form").live('submit', function(ev) {
 
 		var _form = $(this);
-		_form.find('input[type=submit]').prop('disabled', true);
-
 		if (_form.valid()) {
 
 			if (_form.attr('rel') == 'forward_form')  {
@@ -702,6 +711,10 @@ $(document).ready(function() {
 					return false;
 				}
 			}
+
+
+			_form.find('input[type=submit]').prop('disabled', true);
+
 
 			//Blocking the Form:
 			if (_form.data('panel'))
@@ -743,9 +756,6 @@ $(document).ready(function() {
 				},
 				success: function(response) {
 
-					// if (_form.data('fetchLatest'))
-						// fetchLatestNotes();
-
 					if (_form.data('panel')) {
 						$('#' + _form.data('panel')).unblock();
 						$('#' + _form.data('panel')).hide();
@@ -771,9 +781,7 @@ $(document).ready(function() {
 
 				},
 				error: function(response) {
-					console.log(response);
-					alert('Error');
-
+					
 					_form.find('input[type=submit]').prop('disabled', false);
 
 					if (_form.data('panel')) {
@@ -848,10 +856,23 @@ $(document).ready(function() {
 		dontAjaxUpdate = false;
 	} );
 
+
+    jQuery('.ticket_details').on('click', '[rel=custom-reply-status]', function(ev){
+      ev.preventDefault();
+      ev.stopPropagation();
+
+      jQuery('#reply_ticket_status_<%= cntid %>}').val(jQuery(this).data('statusVal'));
+      jQuery('body').click();
+
+      changeStatusTo(jQuery(this).data('statusVal'));
+      jQuery("#HelpdeskReply").trigger('submit');
+    });
+
 	$('#custom_ticket_form').on('submit', function(ev) {
 		ev.preventDefault(); 
-		var submit = $('#helpdesk_ticket_submit');
-		submit.val(submit.data('saving-text')).prop('disabled',true);
+		var submit = $('#custom_ticket_form .btn-primary');
+		submit.button('loading');
+		submit.attr('disabled','disabled');
 		var tkt_form = $('#custom_ticket_form');
 		$.ajax({
 			type: 'POST',
@@ -860,18 +881,28 @@ $(document).ready(function() {
 			dataType: 'json',
 			success: function(response) {
 				TICKET_DETAILS_DATA['updating_properties'] = false;
-				submit.val(submit.data('saved-text'))
-					.prop('disabled',true)
-					.hide('highlight',1500, function() {
-						submit.val(submit.data('default-text')).prop('disabled',false);
-					});
+				submit.button('saved');
+				submit.show('highlight',5000, function() {
+					submit.button('reset');
+				});
 
 				var updateStatusBox = false;
 				if ($('.ticket_show #helpdesk_ticket_priority').data('updated') || $('.ticket_show #helpdesk_ticket_status').data('updated')) {
-					$('.ticket_show .source-badge-wrap a')
-							.removeClass('priority_color_1 priority_color_2 priority_color_3 priority_color_4')
-							.addClass('priority_color_' + $('.ticket_show #helpdesk_ticket_priority').val());
+					$('.ticket_show .source-badge-wrap .source')
+							.attr('class','')
+							.addClass('source ')
+							.addClass('priority_color_' + $('.ticket_show #helpdesk_ticket_priority').val())
+							.addClass('status_' + $('.ticket_show #helpdesk_ticket_status').val());
+
 					updateStatusBox = true;
+				}
+
+				if ($('.ticket_show #helpdesk_ticket_source').data('updated')) {
+
+					$('.ticket_show .source-badge-wrap .source span')
+							.attr('class','')
+							.addClass('source_' + $('.ticket_show #helpdesk_ticket_source').val());
+
 				}
 
 				tkt_form.find('input, select, textarea').each(function() {
@@ -881,7 +912,6 @@ $(document).ready(function() {
 				if (updateStatusBox) {
 					refreshStatusBox();
 				}
-
 
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
