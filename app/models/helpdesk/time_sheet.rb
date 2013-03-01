@@ -89,11 +89,11 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     if deep
       self[:ticket_id] = self.workable.display_id
       self[:agent_name] = self.agent_name
-      self[:time_spent] = sprintf( "%0.02f", self.time_spent/3600) # converting to hours as in UI
+      self[:timespent] = sprintf( "%0.02f", self.time_spent/3600) # converting to hours as in UI
       self[:agent_email] = user.email
       self[:customer_name] = self.customer_name
       self[:contact_email] = workable.requester.email
-      options[:except] = [:account_id,:workable_id]
+      options[:except] = [:account_id,:workable_id,:time_spent]
       options[:root] =:time_entry
     end
     json_str = super options
