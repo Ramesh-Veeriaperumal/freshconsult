@@ -222,13 +222,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :spam_created_in, lambda { |user| { :conditions => [ 
     "helpdesk_tickets.created_at > ? and helpdesk_tickets.spam = true and requester_id = ?", user.deleted_at, user.id ] } }
 
-  named_scope :with_merge_criteria, lambda { |search_string, search_field| {  
-    :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id 
-                                and users.account_id = helpdesk_tickets.account_id", 
-    :include => :ticket_states,
-    :conditions => ["#{search_field} like ? and helpdesk_tickets.deleted is false","%#{search_string}%" ],
-    :select => "helpdesk_tickets.*, users.name as requester_name",
+  named_scope :with_display_id, lambda { |search_string| {  
+    :include => [ :ticket_states, :requester ],
+    :conditions => ["helpdesk_tickets.display_id like ? and helpdesk_tickets.deleted is false","#{search_string}%" ],
+    :order => 'helpdesk_tickets.display_id',
     :limit => 1000
+    } 
+  }
+
+  named_scope :with_requester, lambda { |search_string| {  
+    :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id 
+                        and users.account_id = helpdesk_tickets.account_id and users.deleted = false",
+    :include => :ticket_states,
+    :conditions => ["users.name like ? and helpdesk_tickets.deleted is false","%#{search_string}%" ],
+    :limit => 1000,
+    :select => "helpdesk_tickets.*, users.name as requester_name"
     } 
   }
   
@@ -280,13 +288,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   sphinx_scope(:with_subject) { |search_string| { 
-    :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id 
-                                and users.account_id = helpdesk_tickets.account_id",
-    :include => :ticket_states,
+    :include => [:ticket_states, :requester],
     :conditions => { :subject => "%#{search_string}%" }, 
     :with => { :deleted => false }, 
     :star => true,
-    :select => "helpdesk_tickets.*, users.name as requester_name"
+    :limit => 1000
     } 
   }
   #Sphinx configuration ends here..

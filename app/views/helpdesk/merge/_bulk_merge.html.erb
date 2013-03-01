@@ -29,13 +29,13 @@ function bind_autocompleter(){
 
   var autocompleter_hash = {  id :  { cache : idcachedLookup, backend : idcachedBackend, 
                                       searchBox : 'select-id', searchResults : 'display_id_results',
-                                      disableLocal : true, minChars : 1 },
+                                      minChars : 1 },
                   requester :  {  cache : requestercachedLookup, backend : requestercachedBackend, 
                                   searchBox : 'select-requester', searchResults : 'requester_results',
-                                  disableLocal : false, minChars : 2 },
+                                  minChars : 2 },
                   subject :  {  cache : subjectcachedLookup, backend : subjectcachedBackend, 
                                 searchBox : 'select-subject', searchResults : 'subject_results',
-                                disableLocal : false, minChars : 2 }
+                                minChars : 2 }
               }
 
   var aftershow = function(){
@@ -54,7 +54,7 @@ function bind_autocompleter(){
   }
 
   jQuery.each(autocompleter_hash, function(){
-    this.backend = new Autocompleter.Cache(lookup, {choices: 15, disableLocalSearch : this.disableLocal});
+    this.backend = new Autocompleter.Cache(lookup, {choices: 15});
     this.cache = this.backend.lookup.bind(this.backend);
     global[this.searchBox] = new Autocompleter.PanedSearch( this.searchBox, this.cache, ContactsSearch,
     this.searchResults, $A(<%= @ticket_search.map{|item|[item, item]}.to_json %>), {frequency: 0.1, acceptNewValues: true,
@@ -70,6 +70,7 @@ function lookup(searchString, callback) {
   new Ajax.Request('<%= merge_search_helpdesk_merge_tickets_path %>',{ parameters: {
                                                         search_string: searchString,
                                                         key: jQuery('#search-type option:selected').val(),
+                                                        search_method: "with_"+jQuery('#search-type option:selected').val(),
                                                         rand: (new Date()).getTime()},
                                             onSuccess: function(response) {       
                                               jQuery('.merge_results:visible').removeClass("loading-center");
