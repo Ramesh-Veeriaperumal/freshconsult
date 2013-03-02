@@ -47,7 +47,7 @@ ActiveRecord::Base.class_eval do
         self.body = self.body_html = "Not given."
       end
       
-      self.body_html = auto_link(Nokogiri::HTML(self.body_html).at_css("body").inner_html, :link => :urls)
+      self.body_html = Rinku.auto_link(Nokogiri::HTML(self.body_html).at_css("body").inner_html, :urls)
       text = Nokogiri::HTML(self.body_html)
       text.xpath("//del").each { |div|  div.name= "span";}
       text.xpath("//p").each { |div|  div.name= "div";}
@@ -56,7 +56,7 @@ ActiveRecord::Base.class_eval do
     
     def update_content # To do :: need to use changed_body_html?
       if body_f_html_changed?
-        self.body_html = auto_link(self.body_html, :link => :urls)
+        self.body_html = Rinku.auto_link(self.body_html, :urls)
         self.body = Helpdesk::HTMLSanitizer.plain(body_html) 
       end
     end

@@ -22,6 +22,7 @@ select {
    font-size:13px; 
    font-weight:normal;
    width:auto;
+   max-width: 100%;
 }
 
 .full{
@@ -2022,8 +2023,11 @@ ul.ui-form .inputs-list{
 				font: 13px "Helvetica Neue", sans-serif;
 			}
 		}
-		input[type=text], input.text { 
-		   width: 93%;
+		input[type=text], input.text{ 
+		   width: 92%;
+		}
+		textarea.text { 
+			width: 93%;
 		}
 		div.color{
 			input{
@@ -2482,7 +2486,7 @@ input[type="text"].number{
     }
     #update-fields
     {
-        max-height : 132px;
+        max-height : 160px;
         overflow : auto;
         margin-top: 10px;
         margin-bottom: 10px;

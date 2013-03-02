@@ -13,6 +13,7 @@ class SubscriptionPaymentObserver < ActiveRecord::Observer
 
   def after_commit_on_create(payment)
     add_to_crm(payment)
+    notify_totango(payment)
   end
 
   private
@@ -63,6 +64,10 @@ class SubscriptionPaymentObserver < ActiveRecord::Observer
 
     def add_to_crm(payment)
       Resque.enqueue(CRM::AddToCRM::PaidCustomer, payment.id)
+    end
+
+    def notify_totango(payment)
+      Resque.enqueue(CRM::Totango::PaidCustomer, payment.id)
     end
 
 end

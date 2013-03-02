@@ -26,6 +26,12 @@ GIT
     lhm (1.2.0)
 
 GIT
+  remote: git://github.com/freshdesk/rinku.git
+  revision: 67f54898fe7270f96900a3fa9a4dd50b6b351f25
+  specs:
+    rinku (1.7.2)
+
+GIT
   remote: git://github.com/freshdesk/ruby-yui-compressor.git
   revision: 8e1d110528c986cb5cd13487bded7a7449bdcd2e
   specs:
@@ -212,6 +218,7 @@ GEM
       omniauth (~> 1.0)
       omniauth-oauth2 (~> 1.0)
     open4 (1.3.0)
+    people (0.2.1)
     rack (1.1.6)
     rack-openid (1.3.1)
       rack (>= 1.1.0)
@@ -371,6 +378,7 @@ DEPENDENCIES
   omniauth-oauth2 (= 1.0)
   omniauth-openid
   omniauth-salesforce
+  people (= 0.2.1)
   rack (~> 1.1.6)
   rails (= 2.3.17)
   rake (= 0.8.7)
@@ -381,6 +389,7 @@ DEPENDENCIES
   resque-status (= 0.3.0)
   resque_mailer (= 1.0.1)
   rforce
+  rinku!
   ruby-debug (= 0.10.3)
   ruby-openid (= 2.1.8)
   ruby-openid-apps-discovery (= 1.2.0)

@@ -132,3 +132,15 @@ strong {
 .dropdown-toggle:after{
   border-top:0;
 }
+
+select{
+  height: 20px;
+  line-height: 20px;
+  padding:1px;
+}
+
+/* Fix for tickets show page data-tabs */
+.ticket_tabs{
+  margin-left: 0px;
+  margin-right: 0px;
+}

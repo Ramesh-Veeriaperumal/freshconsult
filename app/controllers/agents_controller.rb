@@ -93,6 +93,9 @@ class AgentsController < ApplicationController
       @agent.user_id = @user.id
       @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id]
       if @agent.save
+         Resque::enqueue(CRM::Totango::SendUserAction, current_account.id, 
+                                                    current_user.email, 
+                                                    totango_activity(:agents))
          flash[:notice] = t(:'flash.agents.create.success', :email => @user.email)
          redirect_to :action => 'index'
       else      

@@ -9,62 +9,63 @@ class SubscriptionAdmin::SubscriptionEventsController < ApplicationController
 
   helper_method :handle_nil
 
-
   def index
-    @events = SubscriptionEvent.events_for_last_30_days
-    @events.merge!(total_upgardes_and_downgrades)
+    # params[:date].blank? last_30_days_summary : monthly_summary(params[:date])
 
-    @revenue = SubscriptionEvent.revenue_for_last_30_days
-    @revenue.merge!(revenue_details)
-    
-    monthly_events_info(params[:date]) unless params[:date].blank?
-    monthly_revenue_info(params[:date]) unless params[:date].blank?
+    if params[:date].blank? 
+      last_30_days_summary
+    else
+      monthly_summary(params[:date])
+    end
   end
 
   def handle_nil(value)
-    (value.blank?)? 0 : value
+    (value.blank?)? 0.0 : value
   end
 
 
   private
 
-    #Upgrades & downgrades
-    def total_upgardes_and_downgrades
-      {
-        :upgrades => count_events(METRICS[:upgrades]),
-        :downgrades => count_events(METRICS[:downgrades])
-      }
+    def last_30_days_summary  
+      @records_last_30_days = SubscriptionEvent.events
+
+      @events_last_30_days = categorize_events(@records_last_30_days[:list])
+      @upgrades_last_30_days = categorize_upgrades(@records_last_30_days[:list])
+      @downgrades_last_30_days = categorize_downgrades(@records_last_30_days[:list])
+
+      @overall_upgrades_last_30_days = SubscriptionEvent.upgrades
+      @overall_downgrades_last_30_days = SubscriptionEvent.downgrades
+      @cmrr_last_30_days = SubscriptionEvent.cmrr_last_30_days
     end
 
-    def count_events(range)
-      @events.inject(0) { |count, (k,v)| count += 1 if range.include?(k); count }
+    def monthly_summary(date)
+      date = Date.new(date["period(1i)"].to_i, date["period(2i)"].to_i)
+      @records_month = SubscriptionEvent.events(date.beginning_of_month, date.end_of_month)
+
+      @events_month = categorize_events(@records_month[:list])
+      @upgrades_month = categorize_upgrades(@records_month[:list])
+      @downgrades_month = categorize_downgrades(@records_month[:list])
+
+      @overall_upgrades_month = SubscriptionEvent.upgrades(date.beginning_of_month, date.end_of_month)
+      @overall_downgrades_month = SubscriptionEvent.downgrades(date.beginning_of_month, date.end_of_month)
+      @cmrr_month = SubscriptionEvent.cmrr(date.beginning_of_month, date.end_of_month)
+    end 
+
+    def categorize_events(events)
+      CODES.inject({}) { |h, (k, v)| h[k] = build_category(events, v); h }
     end
 
-    #Revenue Metrics
-    def revenue_details     
-      {
-        :cmrr => calculate_revenue(METRICS[:cmrr]),
-        :upgrades => calculate_revenue(METRICS[:upgrades]),
-        :downgrades => calculate_revenue(METRICS[:downgrades])
-      }
-    end
+    def categorize_upgrades(events)
+      UPGRADES.inject({}) { |h, (k, v)| h[k] = build_category(events, v); h }
+    end     
 
-    def calculate_revenue(range)
-      @revenue.inject(0) { |sum, (k,v)| sum += v.to_i if range.include?(k); sum }
-    end
+    def categorize_downgrades(events)
+      DOWNGRADES.inject({}) { |h, (k, v)| h[k] = build_category(events, v); h }
+    end     
 
-    #Monthly Events Count
-    def monthly_events_info(date)
-      @events_count = event_stats(CODES, date) 
-      @upgrades_count = event_stats(UPGRADES, date)
-      @downgrades_count = event_stats(DOWNGRADES, date)
-    end
-
-    #Monthly Revenue
-    def monthly_revenue_info(date)
-      @metrics = overall_revenue(METRICS, date)
-      @events_revenue = revenue_stats(EVENTS, date)
-    end                                        
+    def build_category(events, code)
+      events.inject([]) { |category, event| category.push(event) if event.code.eql?(code); category }
+    end                           
 
     def set_selected_tab
       @selected_tab = :events
