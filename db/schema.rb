@@ -9,8 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130219063556) do
-
+ActiveRecord::Schema.define(:version => 20130226092117) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1013,6 +1012,15 @@ ActiveRecord::Schema.define(:version => 20130219063556) do
     t.integer  "account_id",               :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "integrations_user_credentials", :force => true do |t|
+    t.integer  "installed_application_id", :limit => 8
+    t.integer  "user_id",                  :limit => 8
+    t.text     "auth_info"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "account_id",               :limit => 8
   end
 
   create_table "key_value_pairs", :force => true do |t|

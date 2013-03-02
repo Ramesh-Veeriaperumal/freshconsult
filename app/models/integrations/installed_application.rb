@@ -5,7 +5,8 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   belongs_to :application, :class_name => 'Integrations::Application'
   belongs_to :account
   has_many :integrated_resources, :class_name => 'Integrations::IntegratedResource', :dependent => :destroy
-  attr_protected :application_id, :account_id
+  has_many :user_credentials, :class_name => 'Integrations::UserCredential', :dependent => :destroy
+  attr_protected :application_id
 
   before_destroy :before_destroy_customize
   after_destroy :delete_google_accounts, :after_destroy_customize
@@ -13,10 +14,12 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   after_save :after_save_customize
 
   named_scope :with_name, lambda { |app_name| {:joins=>"INNER JOIN applications ON applications.id=installed_applications.application_id", :conditions=>["applications.name = ?", app_name]}}
-
+  
   def to_liquid
     configs[:inputs]
   end
+
+  liquid_methods :user_access_token
 
   def set_configs(inputs_hash)
     unless inputs_hash.blank?
@@ -46,6 +49,16 @@ class Integrations::InstalledApplication < ActiveRecord::Base
         matched[1].blank? ? self.configs[:inputs][input_key] : self.send(matched[1], self.configs[:inputs][input_key])
       end
     end
+  end
+
+  def user_access_token(current_user_id)
+    user_cred = user_credentials.find(:first, :conditions => {:user_id => current_user_id})
+    return user_cred.auth_info['oauth_token'] if user_cred and user_cred.auth_info
+  end
+
+  def user_registered_email(current_user_id)
+    user_cred = user_credentials.find(:first, :conditions => {:user_id => current_user_id})
+    return user_cred.auth_info['email'] if user_cred and user_cred.auth_info
   end
 
   private

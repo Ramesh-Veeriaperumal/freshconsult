@@ -11,6 +11,9 @@ oauth_options:
   nimble:
     token_method: :get
     site: "https://api.nimble.com"
+  google_oauth2:
+    site: https://accounts.google.com
+    token_url: /o/oauth2/token
 
 development:
  salesforce:
@@ -28,6 +31,17 @@ development:
  nimble:
   consumer_token: 086decd7b63c4293c766674099b84061
   consumer_secret: 27b2144bd5c63ee7
+ google_oauth2:
+  consumer_token: 663183371165-dh9ct05c08k8q00lra341g46asffkaaf.apps.googleusercontent.com
+  consumer_secret: 5c7UOsdl0okTN22LcNX0d99i
+  options:
+    scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email
+  app_options:
+   google_calendar:
+    scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email
+   google_doc: 
+    scope: https://www.googleapis.com/auth/docs https://www.googleapis.com/auth/userinfo.email
+
 
 defaults: &defaults
  salesforce:

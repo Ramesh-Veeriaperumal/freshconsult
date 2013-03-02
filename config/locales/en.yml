@@ -2645,6 +2645,13 @@ en:
         widget_title: "Widget Title"
         username: "Username"
         password: "Password"
+    google_calendar:
+      label: "Google Calendar"
+      desc: "You can manage events for each ticket with Google Calendar."
+      helptext: "Google calendar lets you keep track of events associated with tickets. Agents need to connect their Google account with Freshdesk to manage events with Google Calendar."
+      form:
+        google_calendar_settings_info: ""
+        google_calendar_settings: "Google Calendar Settings"
     batchbook:
       label: "Batchbook"
       helptext: "<h4>Batchbook Integration</h4><p><br>Link your Batchbook account with Freshdesk to display contact information on the Contacts and Tickets pages. Please specify your domain and API key in this page to configure the integration. <br><br>Freshdesk pulls in the Name, Title, Company Name, Contact Address, Phone Number &amp; Mobile Numbers from Batchbook and makes it available for your agents.<br><br>You can lookup contacts from Batchbook by searching with their email address. If multiple contacts exist with the same address, all of them will be displayed in the form of a list.</p><br/> "

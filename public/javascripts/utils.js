@@ -701,7 +701,43 @@ function fetchResponses(url, element){
   }
 }
 
-function trim(s){return s.replace(/^\s+|\s+$/g, '');}
+function trim(s){
+  return s.replace(/^\s+|\s+$/g, '');
+}
+
+function typeString(o) {
+  if (typeof o != 'object')
+    return typeof o;
+
+  if (o === null)
+      return "null";
+  //object, array, function, date, regexp, string, number, boolean, error
+  var internalClass = Object.prototype.toString.call(o)
+                                               .match(/\[object\s(\w+)\]/)[1];
+  return internalClass.toLowerCase();
+}
+
+function trimArray(s){
+  if(typeString(s) == 'array'){
+    for(i=0; i<s.length; i++)
+      s[i] = trimArray(s[i]);
+    return s;
+  }
+  return s.replace(/^\s+|\s+$/g, '');
+}
+
+
+function escapeJSON(str) {
+  return str
+    .replace(/[\\]/g, '\\\\')
+    .replace(/[\"]/g, '\\\"')
+    .replace(/[\/]/g, '\\/')
+    .replace(/[\b]/g, '\\b')
+    .replace(/[\f]/g, '\\f')
+    .replace(/[\n]/g, '\\n')
+    .replace(/[\r]/g, '\\r')
+    .replace(/[\t]/g, '\\t');
+};
 
 jQuery.fn.serializeObject = function(){
 

@@ -15,8 +15,23 @@ class Integrations::Application < ActiveRecord::Base
     :class_name => 'Integrations::AppBusinessRule',
     :dependent => :destroy
 
+  has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
+
   def to_liquid
     JSON.parse(self.to_json)["application"]
+  end
+
+  def oauth_provider
+    case self.name
+    when 'google_calendar'
+      'google_oauth2'
+    else
+      self.name
+    end
+  end
+
+  def user_specific_auth?
+    !!self.options[:user_specific_auth]
   end
 
   def self.install_or_update(app_name, account_id, params={})
@@ -27,7 +42,7 @@ class Integrations::Application < ActiveRecord::Base
       installed_application.application = app
       installed_application.account_id = account_id
     end
-    installed_application.configs = {:inputs => params}.to_hash
+    installed_application.configs = {:inputs => params}
     installed_application.save!
   end
 

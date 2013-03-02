@@ -990,7 +990,7 @@ h4.title{
 			padding:0px 10px 8px 10px;
 			li{
 				border-bottom:1px solid #f3f3f3;
-				padding:6px 0px 10px;
+				padding:0px;
 				a{ text-decoration:none; }
 				label{
 					display:block;
@@ -1002,6 +1002,10 @@ h4.title{
 					font-size:11px;
 					max-width:100%;
 				} 
+				textarea{
+					height: 100px;
+					width:180px;
+				}
 			}
 			li.button-container{
 				border-bottom:0px;
@@ -8679,6 +8683,7 @@ height: auto;
     table{
         background:#fff;
     	margin:0;
+    	table-layout: fixed;
     }
     .item_actions{
     	padding-right: 5px;
@@ -8849,11 +8854,14 @@ height: auto;
 	}
 	#contacts-table{
 		tr td{
-				width: 33%;
+				width: 32%;
 		    	vertical-align: middle;
 		    	word-wrap:break-word;
 			    &:first-child{
-			        width:1%;
+			        width:5%;
+				}
+				&:last-child{
+					width: 31%;
 				}
 		}
 		.customers_selector{
@@ -8910,11 +8918,12 @@ height: auto;
 }
 #customers-page{
 	#companies{
+		table-layout: fixed;
 		tr td{
-				width: 75%;
+				width: 71%;
 		    	vertical-align: middle;
 			    &:first-child{
-			        width:4.7%;
+			        width:7%;
 				}
 			    &:last-child{
 			    	min-width: 22%;
@@ -9595,3 +9604,221 @@ div.db-chooser{
 		width: auto;
 	}
 }
+//overriding class check box in ticket show page sidebar 
+.edit_helpdesk_ticket{
+	.checkbox input[type="checkbox"]{
+		margin-top: 7px;
+		margin-right: 5px;
+		margin-left: 0px;
+	}
+	.text input[type="text"]{
+		width: 180px;
+	}
+}
+
+/* Google Calendar Styles */
+
+#google_calendar_widget div.title{
+	padding-left: 30px;
+	background-image: url('/images/google-small.png');
+	background-position: 0px 2px;
+	background-repeat: no-repeat;
+	padding-top: 0px;
+	min-height: 30px;
+	height: 40px;
+	width: 223px;
+	display: block;
+
+	a{
+		font-weight: normal;
+	}
+
+	span:first-child{
+		font-size: 12pt;
+		vertical-align: baseline;
+		position: relative;
+		top: -2px; 
+	}
+
+	.error{
+	    display: block;
+	    color: #999999;
+	    font-weight: normal;
+	    margin-left: -35px;
+	    margin-top: -5px;
+	    a{font-weight: bold;}
+	}
+
+}
+
+#gcal-email-container{
+	font-weight: normal;	
+	color: #999999;
+	font-size: 11px;
+	position: relative;
+	top: -3px;
+}
+
+#gcal-change-account-link{
+	font-size: 11px;
+	position: relative;
+	top: -6px;
+}
+
+.gcal-content-body{
+	max-height: 300px;
+	overflow-y: scroll;
+	overflow: -moz-scrollbars-vertical; 
+}
+
+.date-section{
+	color: #666;
+	border-top: #e5e5e5 solid 1px;
+	margin:10px 0;
+	padding-top:5px;
+	.lead{
+		margin-bottom: 0px;
+		margin-top: -3px;
+		font-size: 28px;
+	}
+	div.day-month-year{
+		font-size: 11px;
+		margin-left: -2px;
+	}
+	.date-closeness{
+		font-size: 16px;
+		font-weight: lighter;
+		margin-top: -1px;
+	}
+}
+.event{
+	margin-bottom:10px;
+	.time-container{
+		color: #333;
+	}
+	.event-summary{
+		margin-bottom: 2px;
+		a{font-size: 14px; font-weight: 500;}	
+		a:hover{font-size: 14px; font-weight: 500;}	
+	}
+	.event-description{
+		color: #666;
+	}
+}
+div.past-event{
+	div.event-description, div > span.time-container{
+		color: #AAA;
+	}	
+	div.event-summary a{color:#AAA;}
+}
+
+#gcal-older-events-link-container{
+	.arrow-right{
+		top: -2px;
+	}
+	#gcal-older-events-link{
+		display: inline-block;
+		margin: 5px;
+	}
+}
+#gcal-other-events-link-container{
+	margin:10px 0;
+	.label.notice{
+		margin-right:5px;
+		margin-left: 5px;
+		background-color: #336699;
+	}
+}
+#gcal-old-events{
+	display: none;
+}
+	
+div#google_calendar_add_event_modal{
+
+	margin-top: 10px;
+	
+	.field-label{
+		position: relative;
+		top: 4px;
+		left: 8px;
+	}
+
+	input.hasDatepicker[readonly]{
+		background-color: white;
+		cursor: default;
+	}
+
+	.hyphen-container{
+		position: relative;
+		top: -4px;
+		margin-left: 5px;
+		margin-right: 5px;
+	}
+
+	textarea{
+
+	}
+
+	div.gcal-validation-errors, div.gcal-custom-errors{
+		/*margin-top: 10px;*/
+	}
+	
+	.date-time-selection-container{
+		padding-bottom: 5px;
+		overflow: hidden;
+
+		div{
+			width: 50%; float:left;
+			div{
+				float: left;
+				width: 100%;
+			}
+			div:first-child{
+				padding-right: 10px;
+			}
+
+			#gcal-start-date-field, #end_date_field{ cursor: default!important; }
+			#gcal-start-date, #end_date {float: left;}
+		}
+	}
+
+	.typeahead{
+		z-index: 1100;
+		max-height: 150px;
+		overflow: 'scroll';
+	}
+
+	#gcal-event-duration{
+		margin-left: 0px;
+		position: relative;
+		top: -5px;
+		color: #666666;
+	}
+
+	#gcal-end-time-field, #gcal-start-time-field{
+		z-index: 1001;
+	}
+	.g-time{
+		width:18%;
+	}
+	span.add-on-meridian {
+		padding-top: 5px;
+		padding-bottom: 7px;
+		display: none;
+	}
+
+	#gcal-add-update-modal-cancel-button{
+		margin-right: 10px;
+	}
+
+	.gcal-form-contents{
+		margin-top: 10px;
+	}
+}
+
+div.gcal-confirm-modal-content{ width: 100%; }
+.confirm-modal-yes-button{ margin-right: 10px; } 
+.confirm-modal-no-button{ margin-left: 7px !important;	 }
+
+/* Google Calendar Styles end */
+
