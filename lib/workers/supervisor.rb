@@ -38,7 +38,7 @@ class Workers::Supervisor
       end
     end
     end_time = Time.now.utc
-    if((end_time - start_time) > 1)
+    if((end_time - start_time) > 250)
       total_time = Time.at(Time.now.utc - start_time).gmtime.strftime('%R:%S')
       puts "Time total time it took to execute the supervisor rules for, #{account.id}, #{account.full_domain}, #{total_time}"
     end
