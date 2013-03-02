@@ -47,7 +47,6 @@ class AccountsController < ApplicationController
    create_account 
    if @account.save
       add_to_crm
-      notify_totango(@account.id)
       render :json => { :success => true, 
       :url => signup_complete_url(:token => @account.account_admin.perishable_token,:host => @account.full_domain) }, 
       :callback => params[:callback]
@@ -433,8 +432,4 @@ class AccountsController < ApplicationController
       def add_to_crm
         Resque.enqueue(Marketo::AddLead, @account.id, ThirdCRM.fetch_cookie_info(request.cookies))
       end   
-
-      def notify_totango(account_id)
-        Resque.enqueue(CRM::Totango::TrialCustomer, account_id)
-      end
 end
