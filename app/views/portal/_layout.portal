@@ -9,11 +9,8 @@
 				{% snippet search_form %}
 			</div>
 		</div>		
-		{% if portal.contact_info == empty %}
-		<div class="hc-nav nav-with-contact">
-		{% else %}
-		<div class="hc-nav">
-		{% endif %}
+		
+		<div class="hc-nav {% if portal.contact_info %} nav-with-contact {% endif %}">
 			<nav>
 				<a href="{{ portal.new_ticket_url }}" class="mobile-icon-nav-newticket new-ticket ellipsis">
 					<span>{% translate header.new_support_ticket %}</span>
@@ -21,11 +18,11 @@
 				<a href="{{ portal.tickets_home_url }}" class="mobile-icon-nav-status check-status ellipsis">
 					<span>{% translate header.check_ticket_status %}</span>
 				</a>
-				{% unless portal.contact_info == empty %}
+				{% if portal.contact_info %}
 					<a href="#" class="mobile-icon-nav-contact contact-info ellipsis">
 						<span>{{ portal.contact_info }}</span>
 					</a>
-				{% endunless %}
+				{% endif %}
 			</nav>
 		</div>
 	</section>

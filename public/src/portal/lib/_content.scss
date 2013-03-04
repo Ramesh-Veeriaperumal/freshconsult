@@ -323,7 +323,7 @@ hr.content-divider{
 		margin-right: -$content-padding-side; 
 	}
 
-	.topic-actions, .ticket-actions{
+	.toolbar-actions{
 		float: right;
 		margin-bottom: -50px;
 		margin-top: 15px;
@@ -349,8 +349,8 @@ hr.content-divider{
 }
 
 @include at-breakpoint($media-mobile){
-	.topic-actions{ margin-top: 15px; margin-bottom: 15px; }
-	.topic-actions .btn{ min-width: 30%; }
+	.toolbar-actions{ margin-top: 15px; margin-bottom: 15px; }
+	#topic-toolbar .btn{ min-width: 30%; }
 
 	.cs-s{
 		border-top:1px solid $orange;
@@ -358,6 +358,6 @@ hr.content-divider{
 		h3{
 			border-top:4px solid $orange;
 			@include inline-block;
+		}
 	}
-}
 }

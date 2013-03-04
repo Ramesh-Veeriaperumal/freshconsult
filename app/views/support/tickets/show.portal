@@ -9,26 +9,24 @@
 		
 		<h2 class="heading">#{{ ticket.id }} {{ ticket.subject }}</h2>
 
-		{% if current_user %}
-			<section class="ticket-main" id="ticket-toolbar">
-				<section class="ticket-actions">
-					<span class="hide-tablet pull-right">
-						<a href="#" class="btn btn-icon btn-small btn-primary" 
-							data-toggle-dom="#ticket-sidebar" data-animated>
-							<i class="icon-cog-drop-light"></i>
+		{% if portal.user %}
+			<section class="toolbar-actions" id="ticket-toolbar">
+				<span class="hide-tablet pull-right">
+					<a href="#ticket-sidebar" class="btn btn-icon btn-small btn-primary"
+						title="More ticket details">
+						<i class="icon-cog-drop-light"></i>
+					</a>
+				</span>
+				<div class="btn-group" id="ticket-toolbar">
+					{% unless ticket.closed? %}
+						<a href="#reply-to-ticket" class="btn btn-small" data-proxy-for="#add-note-form">Reply</a>
+						<a href="{{ ticket.close_ticket_url }}" data-method="post" class="btn btn-small">
+							Mark ticket as closed
 						</a>
-					</span>
-					<div class="btn-group" id="ticket-toolbar">
-						{% unless ticket.closed? %}
-							<a href="#reply-to-ticket" class="btn btn-small" data-proxy-for="#add-note-form">Reply</a>
-							<a href="{{ ticket.close_ticket_url }}" data-method="post" class="btn btn-small">
-								Mark ticket as closed
-							</a>
-							<a href="#add-people" rel="freshdialog" title="Add people to conversation" 
-								data-width="400" class="btn btn-small" data-submit-label="Add people">Add people</a>
-						{% endunless %}
-					</div>			
-				</section>
+						<a href="#add-people" rel="freshdialog" title="Add people to conversation" 
+							data-width="400" class="btn btn-small" data-submit-label="Add people">Add people</a>
+					{% endunless %}
+				</div>			
 			</section>
 		{% endif %}
 

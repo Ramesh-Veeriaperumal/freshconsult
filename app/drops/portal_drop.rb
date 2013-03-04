@@ -27,7 +27,7 @@ class PortalDrop < BaseDrop
   end
 
   def contact_info
-    @contact_info ||= source.preferences.fetch(:contact_info, "")
+    @contact_info ||= source.preferences.fetch(:contact_info, false)
   end
 
   # Portal links

@@ -116,12 +116,13 @@
 		// Page search autocompelete
 		window['portal-search-boxes'] = $( "input[rel=page-search]" )
 		if(window['portal-search-boxes'].get().size() > 0){
+			window['portal-search-cache'] = {}
 			window['portal-search-boxes'].autocomplete({
 	        	minLength: 3,
 	        	source: function( request, response ) {
 	                var term = request.term.trim(),
 	                	$element = this.element,
-	                	cache = $element.data('search-cache') || {},
+	                	cache = window['portal-search-cache'],
 	                	url = $element.parents('form:first').attr('action') || "/support/search.json"
 
 	                if( term in cache || term == '' ) {
@@ -132,17 +133,15 @@
 	                request['max_matches'] = $element.data("maxMatches")
 
 	                $.getJSON(url, request, function( data, status, xhr ) {
-						if(!$element.data('search-cache'))
-							$element.data('search-cache', {})
-
-						$element.data('search-cache')[ term ] = data
+						window['portal-search-cache'][ term ] = data
 						response( data )
 	                });
 	            },
 	            focus: function( event, ui ) { event.preventDefault() }
 	        })
 	        .on( "autocompleteselect", function( event, ui ) { window.location = ui.item.url } )
-			.data( "autocomplete" )._renderItem = function( ul, item ) {			
+			
+			window['portal-search-render-ui'] = function( ul, item ) {
 	            return $( "<li>" )
 	                .data( "item.autocomplete", item )
 	                .append("<a href='"+item.url+"'>" + item.title + "</a> ")
@@ -151,10 +150,14 @@
 	                .addClass(item.type.toLowerCase()+'-item')
 	                .appendTo( ul )
 	        }
+
+			$.each(window['portal-search-boxes'], function(i, searchItem){
+				$(searchItem).data( "autocomplete" )._renderItem = window['portal-search-render-ui']
+			})
     	}
 
         //mobile search box focus style
-		$("input[rel='page-search']").focus(function () {
+		$(".help-center input[rel='page-search']").focus(function () {
 			$(".hc-search").addClass("onfocus-mobile")
 			$(".hc-search-button").addClass("onfocus-mobile-button")
 			if (Modernizr.mq('only screen and (max-width: 768px)')) {
