@@ -3,7 +3,22 @@ class SupportController < ApplicationController
 
   before_filter :portal_context, :redactor_form_builder, :page_message
   include RedisKeys
+
+
+
+  caches_action :show, :index, :new,
+  :if => proc { |controller|
+    controller.cache_enabled? && !controller.send(:current_user)
+  }, 
+  :cache_path => proc { |c| 
+    "#{c.send(:current_portal).cache_prefix}#{c.request.request_uri}" 
+  }
+
  
+  def cache_enabled?
+    !(get_key(PORTAL_CACHE_ENABLED) === "false")
+  end
+
   protected
     def set_portal_page page_token
       @skip_liquid_compile = false
@@ -25,7 +40,6 @@ class SupportController < ApplicationController
         !get_key(is_preview).blank? && !current_user.blank? && current_user.agent?
       end
     end
-
   private
 
     def portal_context

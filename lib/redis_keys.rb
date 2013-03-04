@@ -11,6 +11,9 @@ module RedisKeys
 	PORTAL_PREVIEW = "PORTAL_PREVIEW:%{account_id}:%{user_id}:%{template_id}:%{label}"
 	IS_PREVIEW = "IS_PREVIEW:%{account_id}:%{user_id}:%{portal_id}"
 	PREVIEW_URL = "PREVIEW_URL:%{account_id}:%{user_id}:%{portal_id}"
+
+	PORTAL_CACHE_ENABLED = "PORTAL_CACHE_ENABLED"
+	PORTAL_CACHE_VERSION = "PORTAL_CACHE_VERSION:%{account_id}"
 	
 	def newrelic_begin_rescue
     begin
@@ -23,6 +26,10 @@ module RedisKeys
 
 	def enqueue_worker(worker, *args)
 		newrelic_begin_rescue { Resque.enqueue(worker, *args) }
+	end
+
+	def increment(key)
+		newrelic_begin_rescue { $redis.INCR(key) }
 	end
 
 	def get_key(key)
