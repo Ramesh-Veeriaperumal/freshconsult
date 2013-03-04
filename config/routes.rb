@@ -374,6 +374,10 @@
     # Forums for the portal, the items will be name spaced by discussions
     support.resources :discussions, :only => [:index, :show]
     support.namespace :discussions do |discussion|
+      discussion.filter_topics "/forums/:id/:filter_topics_by", :controller => :forums,
+        :action => :show
+      discussion.connect "/forums/:id/page/:page", :controller => :forums,
+        :action => :show
       discussion.resources :forums, :only => :show
       discussion.resources :topics, :except => :index, :member => { :like => :put, 
           :unlike => :put, :toggle_monitor => :put, :users_voted => :get } do |topic|
@@ -385,6 +389,8 @@
     # Solutions for the portal
     support.resources :solutions, :only => [:index, :show]
     support.namespace :solutions do |solution|
+      solution.connect "/folders/:id/page/:page", :controller => :folders,
+        :action => :show
       solution.resources :folders, :only => :show
       solution.resources :articles, :only => :show, :member => { :thumbs_up => :put, 
         :thumbs_down => :put , :create_ticket => :post }

@@ -43,6 +43,7 @@ class Portal::Tags::Paginate < ::Liquid::Block
       page_count, current_page = pagination.total_pages, pagination.current_page
 
       path = context.registers[:controller].request.path
+      path = path.gsub(/\/page\/[0-9]+/,"") #TO STRIP PAGINATION RELATED STRING
       params.delete(:page) if params[:page]
       params.delete(:action) if params[:action]
       params.delete(:controller) if params[:controller]            
@@ -112,7 +113,9 @@ class Portal::Tags::Paginate < ::Liquid::Block
   end
 
   def link(title, page, path, params = {})
-    params[:page] = page
-    { 'title' => title, 'url' => "#{path}?#{params.to_query}", 'is_link' => true}
+    # params[:page] = page
+    url = "#{path}/page/#{page}"
+    url = "#{url}?#{params.to_query}" unless params.blank?
+    { 'title' => title, 'url' => url, 'is_link' => true}
   end
 end

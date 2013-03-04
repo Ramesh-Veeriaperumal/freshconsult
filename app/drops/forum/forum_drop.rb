@@ -42,7 +42,7 @@ class Forum::ForumDrop < BaseDrop
 
     @allowed_filters ||= def_list.map{ |f| { 
               :name => f, 
-              :url  => support_discussions_forum_path(source, :filter_topics_by => f.to_s)
+              :url  => support_discussions_filter_topics_path(source, :filter_topics_by => f.to_s)
             }}
   end
   

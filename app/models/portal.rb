@@ -9,6 +9,7 @@ class Portal < ActiveRecord::Base
   
   include Mobile::Actions::Portal
   include Cache::Memcache::Portal
+  include RedisKeys
 
   after_commit_on_update :clear_portal_cache
   after_commit_on_destroy :clear_portal_cache
@@ -38,6 +39,9 @@ class Portal < ActiveRecord::Base
   belongs_to :forum_category
 
   after_create :create_template
+
+
+  APP_CACHE_VERSION = "FD1"
     
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
@@ -103,6 +107,10 @@ class Portal < ActiveRecord::Base
     fav_icon.content.url unless fav_icon.nil?
   end
   
+  def cache_prefix
+    "#{APP_CACHE_VERSION}/v#{cache_version}/#{language}/#{self.id}"
+  end
+
   private
     def handle_icon(icon_field, icon_attr)
       unless send(icon_field)
@@ -133,5 +141,9 @@ class Portal < ActiveRecord::Base
       @all_changes = self.changes.clone
       @all_changes.symbolize_keys!
     end
-  
+
+    def cache_version
+      key = PORTAL_CACHE_VERSION % { :account_id => self.account_id }
+      get_key(key) || "0"
+    end
 end
