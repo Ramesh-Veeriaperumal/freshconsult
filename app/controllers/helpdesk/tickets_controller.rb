@@ -26,6 +26,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :disable_notification, :if => :notification_not_required?
   after_filter  :enable_notification, :if => :notification_not_required?
   before_filter :set_selected_tab
+  before_filter :store_location, :only => [:show]
 
 
   layout :choose_layout 
@@ -633,7 +634,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def load_reply_to_all_emails
-    @ticket_notes = @ticket.conversation(nil,5,[:survey_remark, :user, :attachments, :schema_less_note])
+    @ticket_notes = @ticket.conversation(nil,5,[:survey_remark, :user, :attachments, :schema_less_note, :dropboxes])
     reply_to_all_emails
   end
 

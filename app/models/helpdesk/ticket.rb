@@ -23,7 +23,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   set_table_name "helpdesk_tickets"
   
   serialize :cc_email
-  
+
   has_flexiblefields
   
   unhtml_it :description
@@ -133,7 +133,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState',:dependent => :destroy
   delegate :closed_at, :resolved_at, :to => :ticket_states, :allow_nil => true
-  
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
   delegate :active?, :open?, :is_closed, :closed?, :resolved?, :pending?, :onhold?, :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
   
@@ -144,7 +143,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_many :survey_results, :as => :surveyable, :dependent => :destroy
   has_many :support_scores, :as => :scorable, :dependent => :destroy
   
-  has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet', :dependent => :destroy, :order => "executed_at"
+
+  has_many :time_sheets, 
+    :class_name => 'Helpdesk::TimeSheet',
+    :as => 'workable',
+    :dependent => :destroy,
+    :order => "executed_at"
+  
 
   attr_protected :attachments #by Shan - need to check..
   
@@ -218,13 +223,30 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :spam_created_in, lambda { |user| { :conditions => [ 
     "helpdesk_tickets.created_at > ? and helpdesk_tickets.spam = true and requester_id = ?", user.deleted_at, user.id ] } }
 
+  named_scope :with_display_id, lambda { |search_string| {  
+    :include => [ :ticket_states, :requester ],
+    :conditions => ["helpdesk_tickets.display_id like ? and helpdesk_tickets.deleted is false","#{search_string}%" ],
+    :order => 'helpdesk_tickets.display_id',
+    :limit => 1000
+    } 
+  }
+
+  named_scope :with_requester, lambda { |search_string| {  
+    :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id 
+                        and users.account_id = helpdesk_tickets.account_id and users.deleted = false",
+    :include => :ticket_states,
+    :conditions => ["users.name like ? and helpdesk_tickets.deleted is false","%#{search_string}%" ],
+    :limit => 1000,
+    :select => "helpdesk_tickets.*, users.name as requester_name"
+    } 
+  }
+  
   def self.agent_permission user
-    
     permissions = {:all_tickets => [] , 
                    :group_tickets => ["group_id in (?) OR responder_id=?", user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id] , 
                    :assigned_tickets =>["responder_id=?", user.id] }
                   
-     return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
+    return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
   end
   
   def agent_permission_condition user
@@ -265,6 +287,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :subject      => 10
      }
   end
+
+  sphinx_scope(:with_subject) { |search_string| { 
+    :include => [:ticket_states, :requester],
+    :conditions => { :subject => "%#{search_string}%" }, 
+    :with => { :deleted => false }, 
+    :star => true,
+    :limit => 1000
+    } 
+  }
   #Sphinx configuration ends here..
 
 
@@ -616,7 +647,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
     if @ticket_changes.key?(:status)
-      if (status == OPEN)
+      if reopened_now?
         ticket_states.opened_at=Time.zone.now
         ticket_states.reset_tkt_states
       end

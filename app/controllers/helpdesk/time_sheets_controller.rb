@@ -34,10 +34,11 @@ class Helpdesk::TimeSheetsController < ApplicationController
     update_running_timer params[:time_entry][:user_id] if hours_spent.blank?
     
     #Added for API calls where user will not be knowing the id for ticket, instead provide only the display id.
-    if params[:time_entry][:ticket_id].blank? #this will be always present when called from portal's 'Add Time'
+    #Need to think about another way of handling this
+    if params[:time_entry][:workable_id].blank? #this will be always present when called from portal's 'Add Time'
       check_ticket = current_account.tickets.find_by_display_id(params[:ticket_id]) unless params[:ticket_id].nil?
       unless check_ticket.blank?
-        params[:time_entry][:ticket_id] = check_ticket.id
+        params[:time_entry][:workable_id] = check_ticket.id
       else
           raise ActiveRecord::RecordNotFound
       end
@@ -46,8 +47,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
     time_entry = params[:time_entry].merge!({:start_time => Time.zone.now(),
                                              :executed_at => Time.zone.now(),
                                              :time_spent => get_time_in_second(hours_spent),
-                                             :timer_running => hours_spent.blank?,
-                                             :billable => true})
+                                             :timer_running => hours_spent.blank?})
       @time_entry = scoper.new(time_entry)    #throws unknown attribute error
     if @time_entry.save!
       respond_to_format @time_entry

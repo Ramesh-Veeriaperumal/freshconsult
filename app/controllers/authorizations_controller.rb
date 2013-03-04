@@ -1,4 +1,7 @@
 require 'httparty'
+require 'cgi'
+require 'json'
+
 class AuthorizationsController < ApplicationController
   include Integrations::GoogleContactsUtil
   include Integrations::OauthHelper
@@ -74,29 +77,49 @@ class AuthorizationsController < ApplicationController
 
   def create_for_oauth2(provider, params)
     Account.reset_current_account
-    portal_id = request.env["rack.session"]["omniauth.origin"] unless request.env["rack.session"]["omniauth.origin"].blank?
-    access_token = get_oauth2_access_token(provider, @omniauth.credentials.refresh_token)
+    origin = request.env["omniauth.origin"] unless request.env["omniauth.origin"].blank?
+    if provider == 'google_oauth2'
+      origin = CGI.parse(origin)
+      portal_id = origin['pid'][0].to_i
+      app_name = origin['app_name'][0].to_s
+      Rails.logger.debug "origin: #{origin.inspect}"
+    else
+      portal_id = origin
+      app_name = Integrations::Constants::APP_NAMES[provider.to_sym]
+    end
+
+    access_token = get_oauth2_access_token(provider, @omniauth.credentials.refresh_token, app_name)
+
     portal = Portal.find_by_id(portal_id)
     account = portal.account
     domain = portal.host
     protocol = (account.ssl_enabled?) ? "https://" : "http://"
-    instance_url = access_token.params['instance_url']
-    config_params = "{'app_name':'#{provider}', 'refresh_token':'#{@omniauth.credentials.refresh_token}', 'oauth_token':'#{access_token.token}', 'instance_url':'#{instance_url}'}"
-    config_params = config_params.gsub("'","\"")
-    key_value_pair = KeyValuePair.find_by_account_id_and_key(account.id, provider+'_oauth_config')
+
+    config_params = { 
+      'app_name' => "#{app_name}",
+      'refresh_token' => "#{@omniauth.credentials.refresh_token}",
+      'oauth_token' => "#{access_token.token}"
+    }
+    config_params['instance_url'] = "#{access_token.params['instance_url']}" if provider=='salesforce'
+    config_params = config_params.to_json
+    Rails.logger.debug "config_params: #{config_params}"
+
+    # KeyValuePair is used to store oauth2 configurations since we redirect from login.freshdesk.com to the
+    # user's account and install the application from inside the user's account.
+   
+    key_value_pair = KeyValuePair.find_by_account_id_and_key(account.id, "#{app_name}_oauth_config")
     key_value_pair.delete unless key_value_pair.blank?
-    #KeyValuePair is used to store salesforce/nimble configurations since we redirect from login.freshdesk.com to the user's account and install the application from inside the user's account.
-    create_key_value_pair(provider+"_oauth_config", config_params, account.id) 
-    
-    redirect_url = protocol +  domain + "/integrations/applications/oauth_install/"+provider
-     
+    create_key_value_pair("#{app_name}_oauth_config", config_params, account.id) 
+    port = (Rails.env.development? ? ":#{request.port}" : '')
+    controller = ( Integrations::Application.find_by_name(app_name).user_specific_auth? ? 'integrations/user_credentials' : 'integrations/applications' )
+    redirect_url = protocol +  domain + port + "/#{controller}/oauth_install/#{app_name}"
     redirect_to redirect_url
   end
 
     def create_for_email_marketing_oauth(provider, params)
     config_params = {}
     Account.reset_current_account
-    portal_id = request.env["rack.session"]["omniauth.origin"] unless request.env["rack.session"]["omniauth.origin"].blank?
+    portal_id = request.env["omniauth.origin"] unless request.env["omniauth.origin"].blank?
     portal = Portal.find_by_id(portal_id)
     account = portal.account
     domain = portal.host
@@ -116,7 +139,7 @@ class AuthorizationsController < ApplicationController
 
   def create_for_facebook(params)
     Account.reset_current_account
-    portal_id = request.env["rack.session"]["omniauth.origin"] unless request.env["rack.session"]["omniauth.origin"].blank?
+    portal_id = request.env["omniauth.origin"] unless request.env["omniauth.origin"].blank?
     portal = Portal.find_by_id(portal_id)
     user_account = portal.account
     portal_url = portal.host

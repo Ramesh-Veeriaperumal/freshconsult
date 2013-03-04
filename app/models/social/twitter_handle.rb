@@ -1,11 +1,14 @@
 class Social::TwitterHandle < ActiveRecord::Base
 
+  include Cache::Memcache::Twitter
   set_table_name "social_twitter_handles" 
   serialize  :search_keys, Array
   belongs_to :product
   belongs_to :account 
 
   before_create :add_default_search
+  before_save :set_default_state
+  after_commit :clear_cache
 
   validates_uniqueness_of :twitter_user_id, :scope => :account_id
   validates_presence_of :twitter_user_id, :account_id, :screen_name
@@ -27,6 +30,17 @@ class Social::TwitterHandle < ActiveRecord::Base
   DM_THREADTIME_OPTIONS = DM_THREADTIME.map { |i| [i[1], i[2]] }
   DM_THREADTIME_NAMES_BY_KEY = Hash[*DM_THREADTIME.map { |i| [i[2], i[1]] }.flatten]
   DM_THREADTIME_KEYS_BY_TOKEN = Hash[*DM_THREADTIME.map { |i| [i[0], i[2]] }.flatten]
+  
+  TWITTER_STATES = [
+           [:active, "Active Account", 1],
+           [:reauth_required, "Reauthorization Required",2],
+           [:disabled, "Disabled Account", 3]
+          ]
+  TWITTER_STATE_KEYS_BY_TOKEN = Hash[*TWITTER_STATES.map { |i| [i[0], i[2]] }.flatten]
+
+  named_scope :active, :conditions => { :state => TWITTER_STATE_KEYS_BY_TOKEN[:active] }
+  named_scope :disabled, :conditions => {:state => TWITTER_STATE_KEYS_BY_TOKEN[:disabled] }
+  named_scope :reauth_required, :conditions => {:state => TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required]}
 
   def search_keys_string
     search_keys.blank? ? "" : search_keys.join(",")
@@ -40,4 +54,11 @@ class Social::TwitterHandle < ActiveRecord::Base
     end
   end
 
+  def reauth_required?
+    state == TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required]
+  end
+  
+  def set_default_state
+    self.state ||= TWITTER_STATE_KEYS_BY_TOKEN[:active]
+  end
 end

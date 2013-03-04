@@ -9,6 +9,7 @@
   map.resources :authorizations
   map.google_sync '/google_sync', :controller=> 'authorizations', :action => 'sync'
   map.callback '/auth/:provider/callback', :controller => 'authorizations', :action => 'create'
+  map.calender '/oauth2callback', :controller => 'authorizations', :action => 'create', :provider => 'google_oauth2'
   map.failure '/auth/failure', :controller => 'authorizations', :action => 'failure'
   
   map.resources :uploaded_images, :controller => 'uploaded_images'
@@ -78,7 +79,7 @@
     integration.resources :jira_issue, :collection => {:get_issue_types => :get, :unlink => :put, :notify => :post, :register => :get}
     integration.resources :salesforce, :collection => {:fields_metadata => :get}
     integration.resources :logmein, :collection => {:rescue_session => :get, :update_pincode => :put, :refresh_session => :get, :tech_console => :get, :authcode => :get}
-    integration.oauth_action '/refresh_access_token/:provider', :controller => 'oauth_util', :action => 'get_access_token'
+    integration.oauth_action '/refresh_access_token/:app_name', :controller => 'oauth_util', :action => 'get_access_token'
     integration.custom_install 'oauth_install/:provider', :controller => 'applications', :action => 'oauth_install'
   end
 
@@ -252,7 +253,7 @@
     helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, 
                                     :delete_forever => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, 
                                     :export_csv => :post, :latest_ticket_count => :post, :add_requester => :post,
-                                    :filter_options => :get, :full_paginate => :get },  
+                                    :filter_options => :get, :full_paginate => :get},  
                                  :member => { :reply_to_conv => :get, :forward_conv => :get, :view_ticket => :get, 
                                     :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :post, 
                                     :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put, 
@@ -281,7 +282,8 @@
       :collection => { :active => :get, :unachieved => :get }
 
     helpdesk.resources :notes
-    helpdesk.resources :bulk_ticket_actions , :collection => {:update_multiple => :put}
+    helpdesk.resources :bulk_ticket_actions , :collection => {:update_multiple => :put }
+    helpdesk.resources :merge_tickets, :collection => { :complete_merge => :post, :merge_search => :get, :merge => :put }
     helpdesk.resources :ca_folders
     helpdesk.resources :canned_responses, :collection => {:search => :get, :recent => :get}
     helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }

@@ -15,7 +15,7 @@ var GettingStarted = {
 var Validate = {	
 	email:function(emails){
 	   var emailArray = emails.split(",");
-	   var filter = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9]+[a-zA-Z0-9.-]+[a-zA-Z0-9]+.[a-z]{1,4}$/;
+	   var filter = /\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/;
 	   for(var e=0;e < emailArray.length;e++)
 	   {
 		
@@ -121,29 +121,49 @@ jQuery(document).ready(function(){
 		jQuery("#TabColor").val("#006063").trigger("keyup");
 		jQuery("#BackgroundColor").val("#efefef").trigger("keyup");
 	});		
-				
-	jQuery('input#email_config_submit').click( function(event) {						
+
+	jQuery('input#email_config_submit').click( function(event) {	
 		var form = jQuery('form#email_config');
-		var loadingDiv = jQuery("#email_config_status");
-		loadingDiv = (loadingDiv.length>0)? loadingDiv:Loading.getContainer("email_config_status","#email_config_box");
-		var statusBox = loadingDiv.find("#status_update");
-		Loading.updateStatus(statusBox,"update",GettingStarted.translate("validating"));
-		loadingDiv.show();
 		var reply_email_ele = form.find("#reply_to_id");
 		var reply_email = reply_email_ele.val();
+		var to_email = form.find("#hidden_reply_to").val();
+		var url = jQuery(this).data('test-url');
+		var save_button = jQuery(this);
+		jQuery(this).val("").addClass("loading")
 		if(Validate.email(reply_email))
 		{
-			Loading.updateStatus(statusBox,"update",GettingStarted.translate("updating"));
-			loadingDiv.show();
+			totango.track( "Support Email Changed", "Getting Started Page");
+			jQuery.ajax({
+			  type: "PUT",
+			  url: url,
+			  data : {"email_config[reply_email]" : reply_email, "email_config[to_email]" : to_email },
+			  success: function(){
+			  				save_button.removeClass("loading").addClass("saved")
+			  				setTimeout(function(){
+			  					save_button.removeClass("saved").fadeOut();
+			  				},1500);
+			  				setTimeout(function(){
+			  					save_button.val("Save");
+			  				},2000);
+			  			}
+			});
 		}
 		else{
-			Loading.updateStatus(statusBox,"failure",GettingStarted.translate("email_invalid"));
-			reply_email_ele.addClass("gs_error_highlight");
-			reply_email_ele.focus();
-			loadingDiv.delay(hideDelay).hide(1);
+			save_button.removeClass("loading").addClass("warning");
+			jQuery('.warning-tip').show();
+			reply_email_ele.addClass("gs_error_highlight").focus();
+			setTimeout(function(){
+			  	save_button.removeClass("warning").hide().val("Save");
+			  	jQuery('.warning-tip').hide();
+			 },2500);
 			event.stopPropagation();
 		    return false;
 		}
+	});
+
+	jQuery('input#reply_to_id').live("keyup",function(){
+		submit = jQuery('#email_config_submit')
+		jQuery(this).val() == "" ? submit.fadeOut() : submit.fadeIn();
 	});
 
 	jQuery('input#agent_invite_submit').click( function(event) {
@@ -178,6 +198,7 @@ jQuery(document).ready(function(){
 
 		if(!invalid_emails_exist)
 		{			  	Loading.updateStatus(statusBox,"update",GettingStarted.translate("agent_email_sending"));
+						totango.track( "Agents Added", "Getting Started Page");
 
 		}
 		else{
@@ -207,6 +228,7 @@ jQuery(document).ready(function(){
 		jQuery("#indicator-arrow").css("left", jQuery(this).data("translateArrow"));
 		activeSlide = parseInt(this.id.split("-")[1]);
 		if(activeSlide>1){
+			jQuery("a#back").removeClass("inactive");
 			jQuery("a#back").addClass("active");		
 		}
 		else{
@@ -274,7 +296,7 @@ jQuery(document).bind('keydown', function(e)
 	});
 
 	jQuery("input.change-logo-but[type=button]").bind("click",function(e){
-					 jQuery("input#account_main_portal_attributes_logo_attributes_content[type=file]").click();
+	   jQuery("input#account_main_portal_attributes_logo_attributes_content[type=file]").click();					 
 	});	
 
 	if(jQuery.browser.msie){ 
@@ -394,18 +416,22 @@ function update_image(input) {
 
        reader.onload = function (e) {
            jQuery("div.custom-upload").css("background-image", 'url(' + e.target.result + ')');                    
-           jQuery("div.custom-upload").css("background-size", '50px 50px');                    
+           jQuery("div.custom-upload").css("background-size", 'contain');                    
            jQuery("#logo-preview").attr("src",e.target.result);
+           totango.track("Logo Changed", "Getting Started Page");
            rebrand();
        }
 
        reader.readAsDataURL(input.files[0]);
    }
+   	setTimeout(function(){
+   	 jQuery("input.change-logo-but[type=button]").val("Change Logo");
+   	}, 1);
 }
 
 function update_logo(url){
 	jQuery("div.custom-upload").css("background-image", 'url(' + url + ')');
-   jQuery("div.custom-upload").css("background-size", '50px 50px');
+   jQuery("div.custom-upload").css("background-size", 'contain');
    jQuery("#logo-preview").attr("src",url);
 }
 

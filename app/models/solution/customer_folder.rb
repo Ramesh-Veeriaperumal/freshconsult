@@ -5,6 +5,7 @@ class Solution::CustomerFolder < ActiveRecord::Base
 	before_validation :set_account_id
 
 
+	belongs_to_account
 	belongs_to :folder, :class_name => 'Solution::Folder'
 	belongs_to :customer
 	belongs_to :account

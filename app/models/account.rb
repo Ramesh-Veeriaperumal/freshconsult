@@ -85,6 +85,7 @@ class Account < ActiveRecord::Base
   has_many :solution_articles , :class_name =>'Solution::Article'
   
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
+  has_many :user_credentials, :class_name => 'Integrations::UserCredential'
   has_many :customers
   has_many :contacts, :class_name => 'User' , :conditions =>{:user_role =>[User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]] , :deleted =>false}
   has_many :all_agents, :through =>:users, :order => "users.name"
@@ -217,7 +218,7 @@ class Account < ActiveRecord::Base
   after_create :send_welcome_email
   after_update :update_users_language
 
-  before_destroy :update_crm
+  before_destroy :update_crm, :notify_totango
 
   after_commit_on_create :add_to_billing
   before_destroy :update_billing
@@ -656,6 +657,10 @@ class Account < ActiveRecord::Base
 
     def update_crm
       Resque.enqueue(CRM::AddToCRM::DeletedCustomer, id)
+    end
+
+    def notify_totango
+      Resque.enqueue(CRM::Totango::CanceledCustomer, id)
     end
 
 end

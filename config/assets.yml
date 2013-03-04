@@ -124,6 +124,7 @@ javascripts:
     - public/javascripts/sisyphus.js
     - public/javascripts/ticket_list.js
     - public/javascripts/AsyncJSLoader.js
+    - public/javascripts/frameworks/plugins/jquery-ui-timepicker-addon.js
   visitor:
     - public/javascripts/frameworks/session.js            
   workspace:  
@@ -140,6 +141,8 @@ javascripts:
     - public/javascripts/custom_validators.js
     - public/javascripts/globalinit.js
     - public/javascripts/navsearch.js
+    - public/javascripts/report/date.js
+
   pattern:
     - public/javascripts/pattern/bootstrap-affix.js
     # - public/javascripts/pattern/bootstrap-alert.js
@@ -238,20 +241,20 @@ javascripts:
     - public/javascripts/application.js
 
   gs_defaults: 
-    - public/javascripts/prototype.js
-    - public/javascripts/frameworks/plugins/jquery.livequery.js
+    - public/javascripts/prototype.js    
     - public/javascripts/effects.js
-    - public/javascripts/controls.js
-    - public/javascripts/utils.js
+    - public/javascripts/controls.js    
   gs_frameworks:
-    - public/javascripts/fast_autocompleter.js
-    - public/javascripts/hackz.js
     - public/javascripts/jquery-1.7.1.min.js
+    - public/javascripts/utils.js
+    - public/javascripts/fast_autocompleter.js
+    - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.form.js
     - public/javascripts/frameworks/plugins/jquery.chosen.js
     - public/javascripts/frameworks/plugins/jquery.validate.js      
     - public/javascripts/utils.js
+    - public/javascripts/hackz.js
   getting_started:        
     - public/javascripts/mColorPicker.min.js
     - public/javascripts/getting_started.js

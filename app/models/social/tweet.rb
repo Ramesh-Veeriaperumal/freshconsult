@@ -23,6 +23,13 @@ class Social::Tweet < ActiveRecord::Base
     tweetable_type.eql?('Helpdesk::Note')
   end
   
+   def is_mention?
+    tweet_type.eql?('mention')
+  end
+
+  def is_dm?
+    tweet_type.eql?('dm')
+  end
   
   def get_ticket
     

@@ -72,7 +72,8 @@ Autocompleter.Cache = Class.create({
     this.rateLimiter = new Autocompleter.RateLimiting();
     this.options = Object.extend({
       choices: 10,
-      fuzzySearch: false
+      fuzzySearch: false,
+      searchKey: "searchKey"
     }, options || {});
   },
   
@@ -85,7 +86,7 @@ Autocompleter.Cache = Class.create({
   _lookupInCache: function(fullTerm, partialTerm, callback) {
     var partialTerm = partialTerm || fullTerm;
     var result = this.cache.get(partialTerm);
-    
+
     if (result == null) {
       if (partialTerm.length > 1) {
         return this._lookupInCache(fullTerm, partialTerm.substr(0, partialTerm.length - 1), callback);
@@ -111,7 +112,7 @@ Autocompleter.Cache = Class.create({
     var name = null;
     for (var i = 0, len = data.length; i < len; ++i) {
       item = data[i];
-      if (exp.test(item)) {
+      if (exp.test((typeof item == "object") ? item[this.options.searchKey] : item)) {
         foundItems.push(item);
       };
     }
@@ -488,4 +489,279 @@ Autocompleter.MultiValue = Class.create({
     return Object.isArray(obj) ? obj[1] : obj;
   }
   
+});
+
+Autocompleter.PanedSearch = Class.create({
+  options: $H({}),
+  element: null,
+  dataFetcher: null,
+  
+  initialize: function(element, dataFetcher, resultTemplate, resultPane, values, options) {
+    this.options = options || { };
+    this.resultTemplate = resultTemplate;
+    var outputElement = $(element);
+    var result = $(resultPane);
+    this.result = result;
+    this.name = outputElement.name;
+    this.dataFetcher = dataFetcher;
+    this.active = false;
+    this.acceptNewValues      = this.options.acceptNewValues || false;
+    this.options.frequency    = this.options.frequency || 0.4;
+    this.options.allowSpaces  = this.options.allowSpaces || false;
+    this.options.minChars     = this.options.minChars || 2;
+    this.options.tabindex     = this.options.tabindex || outputElement.readAttribute('tabindex') || '';
+    this.options.onShow       = this.options.onShow ||
+      function(element, update) {
+        if(!update.style.position || update.style.position=='absolute') {
+          update.style.position = 'absolute';
+          try {
+            // To be changed later
+            update.clonePosition(element, {setHeight: false, offsetTop: element.offsetHeight});            
+          } catch(e) {
+          }
+        }
+        Effect.Appear(update,{duration: 0.15});
+      };
+    this.options.afterPaneShow = this.options.afterPaneShow || function(){};
+    this.options.onHide = this.options.onHide ||
+      function(element, update){/* TO DEFINE LATER */};
+
+    this.searchField = outputElement;
+    
+    this.choicesHolderList = new Element('ul');
+    this.choicesHolder = new Element('div').update(this.choicesHolderList);
+    this.choicesHolder.className = 'autocompletepane';
+    $(result).insert(this.choicesHolder);
+    
+    Event.observe(this.searchField, 'click', Form.Element.focus.curry(this.searchField));
+    Event.observe(this.searchField, 'keydown', this.onSearchFieldKeyDown.bindAsEventListener(this));
+    if (this.acceptNewValues) {
+      Event.observe(this.searchField, 'keyup', this.onSearchFieldKeyUp.bindAsEventListener(this));
+    };
+    
+    Event.observe(this.searchField, 'focus', this.getUpdatedChoices.bindAsEventListener(this));
+    Event.observe(this.searchField, 'focus', this.show.bindAsEventListener(this));
+    Event.observe(this.searchField, 'blur', this.hide.bindAsEventListener(this));
+    
+    (values || []).each(function(value) {
+      this.addEntry(this.getValue(value), this.getTitle(value));
+    }, this);
+  },
+  
+  show: function() {
+    if (!this.choicesHolderList.empty()) {
+      this.choicesHolder.addClassName('loading-center');
+      if(Element.getStyle(this.choicesHolder, 'display')=='none') { 
+        this.choicesHolder.update();
+        this.options.onShow(this.holder, this.choicesHolder);
+      }
+    this.options.afterPaneShow();
+    this.choicesHolder.removeClassName('loading-center');
+    };
+  },
+
+  hide: function() {
+    this.stopIndicator();
+    if(Element.getStyle(this.choicesHolder, 'display')!='none') {
+      this.options.onHide(this.element, this.choicesHolder);
+    }
+    if(this.iefix) Element.hide(this.iefix);
+  },
+  
+  onSearchFieldKeyDown: function(event) {
+    if(this.active) {
+      switch(event.keyCode) {
+       case Event.KEY_TAB:
+       case Event.KEY_RETURN:
+         this.getEntry(this.index).click();
+         event.stop();
+       case Event.KEY_ESC:
+         this.hide();
+         this.active = false;
+         event.stop();
+         return;
+       case Event.KEY_LEFT:
+       case Event.KEY_RIGHT:
+         return;
+       case Event.KEY_UP:
+         this.markPrevious();
+         this.render();
+         event.stop();
+         return;
+       case Event.KEY_DOWN:
+         this.markNext();
+         this.render();
+         event.stop();
+         return;
+      }
+    } else if(event.keyCode==Event.KEY_TAB || event.keyCode==Event.KEY_RETURN ||
+              (Prototype.Browser.WebKit > 0 && event.keyCode == 0)) {
+      return;
+    } else if (event.keyCode==Event.KEY_BACKSPACE) {
+      if (event.element().getValue().blank()) {
+          /* TO DEFINE LATER */
+      };
+    }
+
+    this.changed = true;
+    this.hasFocus = true;
+
+    if(this.observer) clearTimeout(this.observer);
+      this.observer =
+        setTimeout(this.onObserverEvent.bind(this), this.options.frequency*1000);
+  },
+  
+  onSearchFieldKeyUp: function(event) {
+    var newValue = '';
+    if(event.keyCode == 188 || event.keyCode == 32) {
+      var fieldValue = $F(event.element());
+      var separatorIndex = 0;
+      if (event.keyCode == 188) {
+        separatorIndex = fieldValue.indexOf(',');
+      } else if (event.keyCode == 32 && !this.options.allowSpaces) {
+        separatorIndex = fieldValue.indexOf(' ');
+      };
+      newValue = fieldValue.substr(0, separatorIndex).toLowerCase().strip();
+    }
+
+    if (!newValue.blank()) {
+      this.addEntry(newValue, newValue);
+      event.element().value = fieldValue.substring(separatorIndex + 1, fieldValue.length);
+    };
+  },
+
+  onObserverEvent: function() {
+    this.changed = false;
+    this.tokenBounds = null;
+    if(this.getToken().length>=this.options.minChars) {
+      this.getUpdatedChoices();
+    } else {
+      this.active = false;
+      this.hide();
+    }
+  },
+  
+  getToken: function() {
+    return this.searchField.value;
+  },
+
+  markPrevious: function() {
+    if(this.index > 0) this.index--;
+      else this.index = this.entryCount-1;
+
+    if ((this.getEntry(this.index).offsetTop+this.getEntry(this.index).getHeight()) < this.result.getHeight() )
+      this.result.scrollTop -= this.getEntry(this.index).getHeight();
+      if(this.index == this.entryCount-1)
+        this.result.scrollTop = this.getEntry(0).getHeight()*this.entryCount
+  },
+
+  markNext: function() {
+    if(this.index < this.entryCount-1) this.index++;
+      else this.index = 0;
+      if (((this.getEntry(this.index).offsetTop)+this.getEntry(this.index).getHeight()) > (this.result.getHeight() - 10))
+      this.result.scrollTop += this.getEntry(this.index).getHeight();
+      if((this.getEntry(this.index).offsetTop)+ this.getEntry(this.index).getHeight() == this.getEntry(0).getHeight()+this.getEntry(0).offsetTop)
+        this.result.scrollTop = 0;
+  },
+
+  getEntry: function(index) {
+    return this.choicesHolderList.childNodes[index];
+  },
+
+  getCurrentEntry: function() {
+    return this.getEntry(this.index);
+  },
+
+  
+  removeEntry: function(entryElement) {
+    entryElement = Object.isElement(entryElement) ? entryElement : this.holder.down("li[choice_id=" + entryElement + "]");
+    if (entryElement) {
+      entryElement.remove();
+      if (this.selectedEntries().length == 0) {
+        this.setEmptyValue();
+      };
+    };
+  },
+  
+  clear: function() {
+    this.holder.select('li.choice').each(function(e) { this.removeEntry(e); }, this);
+  },
+
+  startIndicator: function() {},
+  stopIndicator: function() {},
+
+  getUpdatedChoices: function() {
+    this.startIndicator();
+    var term = this.getToken();
+    if (term.length > 0) {
+      this.dataFetcher(term, this.updateChoices.curry(term).bind(this));
+    } else {
+      this.choicesHolderList.update();
+    };
+  },
+  
+  updateChoices: function(term, choices) {
+    if(!this.changed && this.hasFocus) {
+      this.entryCount = choices.length;
+      
+      this.choicesHolderList.innerHTML = '';
+      choices.each(function(choice, choiceIndex) {
+        this.choicesHolderList.insert(this.createChoiceElement(choice, choiceIndex, term));
+      }.bind(this));
+      
+      for (var i = 0; i < this.entryCount; i++) {
+        var entry = this.getEntry(i);
+        entry.choiceIndex = i;
+        this.addObservers(entry);
+      }
+      
+      this.stopIndicator();
+      this.index = 0;
+
+      if(this.entryCount==1 && this.options.autoSelect) {
+        this.selectEntry();
+        this.hide();
+      } else {
+        this.render();
+      }
+    }
+  },
+  
+  addObservers: function(element) {
+    Event.observe(element, "mouseover", this.onHover.bindAsEventListener(this));
+    Event.observe(element, "click", this.onClick.bindAsEventListener(this));
+  },
+
+  onHover: function(event) {
+
+  },
+
+  onClick: function(event) {
+    var element = Event.findElement(event, 'LI');
+    this.index = element.autocompleteIndex;
+  },
+
+  createChoiceElement: function(choice, choiceIndex, searchTerm) {
+    var node = this.resultTemplate.evaluate(choice);
+    node.choiceId = choice.id || choiceIndex;
+    node.autocompleteIndex = choiceIndex;
+    return node;
+  },
+  
+  render: function() {
+    if(this.entryCount > 0) {
+      for (var i = 0; i < this.entryCount; i++)
+        this.index==i ?
+          Element.addClassName(this.getEntry(i),"selected") :
+          Element.removeClassName(this.getEntry(i),"selected");
+      if(this.hasFocus) {
+        this.show();
+        this.active = true;
+      }
+    } else {
+      this.active = false;
+      this.hide();
+      this.choicesHolderList.update('<div class="list-noinfo">No Matching Results</div>');
+    }
+  }
 });

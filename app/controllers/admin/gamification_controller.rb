@@ -35,6 +35,9 @@ class Admin::GamificationController < Admin::AdminController
       end
     end
 
+    Resque::enqueue(CRM::Totango::SendUserAction, current_account.id, 
+                                                    current_user.email, 
+                                                    totango_activity(:arcade))
     flash[:notice] = t(:'admin.gamification.successfully_updated')
     redirect_back_or_default '/admin/gamification'
   end
