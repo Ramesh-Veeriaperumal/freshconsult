@@ -14,9 +14,9 @@
 .user-pic-thumb img{ width:40px; height:40px;  }
 .user-pic-normal img{ width:auto; height:auto; }
 
-.user-pic-original img{ 
-	@include float-left;
-	border:1px solid #e9e9e9; 
-	padding:4px; 
+.user-pic-original img{
+	border:1px solid #dddddd; 
+	padding:3px; 
 	@include border-radius(3px); 
+	margin-bottom: 10px;
 }

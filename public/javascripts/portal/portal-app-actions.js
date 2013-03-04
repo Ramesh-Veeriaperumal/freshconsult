@@ -113,42 +113,45 @@
 		if(/forgot_password/.test(window.location.hash))
 			$("#forgot_password").trigger('click')
 
-		// Page search autocompelete        
-		$( "input[rel=page-search]" ).autocomplete({
-        	minLength: 3,
-        	source: function( request, response ) {
-                var term = request.term.trim(),
-                	$element = this.element,
-                	cache = $element.data('search-cache') || {},
-                	url = $element.parents('form:first').attr('action') || "/support/search.json"
+		// Page search autocompelete
+		window['portal-search-boxes'] = $( "input[rel=page-search]" )
+		if(window['portal-search-boxes'].get().size() > 0){
+			window['portal-search-boxes'].autocomplete({
+	        	minLength: 3,
+	        	source: function( request, response ) {
+	                var term = request.term.trim(),
+	                	$element = this.element,
+	                	cache = $element.data('search-cache') || {},
+	                	url = $element.parents('form:first').attr('action') || "/support/search.json"
 
-                if( term in cache || term == '' ) {
-                    response( cache[ term ] )
-                    return
-                }
+	                if( term in cache || term == '' ) {
+	                    response( cache[ term ] )
+	                    return
+	                }
 
-                request['max_matches'] = $element.data("maxMatches")
+	                request['max_matches'] = $element.data("maxMatches")
 
-                $.getJSON(url, request, function( data, status, xhr ) {
-					if(!$element.data('search-cache'))
-						$element.data('search-cache', {})
+	                $.getJSON(url, request, function( data, status, xhr ) {
+						if(!$element.data('search-cache'))
+							$element.data('search-cache', {})
 
-					$element.data('search-cache')[ term ] = data
-					response( data )
-                });
-            },
-            focus: function( event, ui ) { event.preventDefault() }
-        })
-        .on( "autocompleteselect", function( event, ui ) { window.location = ui.item.url } )
-		.data( "autocomplete" )._renderItem = function( ul, item ) {			
-            return $( "<li>" )
-                .data( "item.autocomplete", item )
-                .append("<a href='"+item.url+"'>" + item.title + "</a> ")
-                .append('<span class="label label-small label-light">'+ item.group +'</span>')
-                // .append('<div>'+ item.desc +'</div>')
-                .addClass(item.type.toLowerCase()+'-item')
-                .appendTo( ul )
-        }
+						$element.data('search-cache')[ term ] = data
+						response( data )
+	                });
+	            },
+	            focus: function( event, ui ) { event.preventDefault() }
+	        })
+	        .on( "autocompleteselect", function( event, ui ) { window.location = ui.item.url } )
+			.data( "autocomplete" )._renderItem = function( ul, item ) {			
+	            return $( "<li>" )
+	                .data( "item.autocomplete", item )
+	                .append("<a href='"+item.url+"'>" + item.title + "</a> ")
+	                .append('<span class="label label-small label-light">'+ item.group +'</span>')
+	                // .append('<div>'+ item.desc +'</div>')
+	                .addClass(item.type.toLowerCase()+'-item')
+	                .appendTo( ul )
+	        }
+    	}
 
         //mobile search box focus style
 		$("input[rel='page-search']").focus(function () {

@@ -31,6 +31,8 @@ jQuery.noConflict()
 					"_method" : $(this).data("method")
 				}
 
+			if(_o_data.confirm && !confirm(_o_data.confirm)) return
+
 			if(!_o_data.loadonce){
 				// Setting the submit button to a loading state
 				$(this).button("loading")
@@ -46,6 +48,7 @@ jQuery.noConflict()
 					success: function(data){					
 						$(_o_data.showDom||"").show()
 						$(_o_data.hideDom||"").hide()
+						$(_o_data.toggleDom||"").toggle()
 						$(_o_data.update||"").html(_o_data.updateWithMessage || data)	
 
 						// Executing any unique dom related callback

@@ -334,6 +334,10 @@ hr.content-divider{
 	}
 }
 
+.avatar-span{
+	margin-bottom: 15px;
+}
+
 @include at-breakpoint($break-desktop){
 	.sidebar .community-sidebar{
 		.cs-s{ border-top:0; margin: 0; }

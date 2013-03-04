@@ -365,7 +365,8 @@
     support.connect "/signup", :controller => 'signups', :action => :new
 
     # Signed in user profile edit and update routes
-    support.resource :profile, :only => [:edit, :update]
+    support.resource :profile, :only => [:edit, :update],
+      :member => { :delete_avatar => :delete }
 
     # Search for the portal, can search Articles, Topics and Tickets
     support.resource :search, :controller => 'search', :only => :show, 

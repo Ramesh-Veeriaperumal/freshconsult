@@ -21,6 +21,18 @@ class Support::ProfilesController < SupportController
     end
   end
 
+  def delete_avatar
+    @profile.avatar.destroy
+
+    respond_to do |format|
+      format.html{ 
+        flash[:notice] = t("user.remove_profile_image")
+        redirect_to :back
+      }
+      format.js { render :text => t("user.remove_profile_image") }
+    end
+  end
+
   private
 
   def set_profile

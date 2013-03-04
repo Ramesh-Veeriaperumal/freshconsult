@@ -96,6 +96,11 @@ en:
     address: Address
     work: Work
     email: Email
+    choose_another_photo: "Choose another photo"
+    change_photo: "Change photo"
+    remove_photo: "Remove photo"
+    remove_profile_image: "Profile image successfully removed"
+    remove_profile_image_confirm: "Are you sure you want to delete this Profile Picture?"
   ticket_fields:
     fields:
       source: Source
