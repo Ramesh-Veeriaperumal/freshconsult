@@ -19,8 +19,6 @@ class Integrations::InstalledApplication < ActiveRecord::Base
     configs[:inputs]
   end
 
-  liquid_methods :user_access_token
-
   def set_configs(inputs_hash)
     unless inputs_hash.blank?
       self.configs = {} if self.configs.blank?
