@@ -170,6 +170,24 @@
 				$(".hc-nav").show()
 			}
 		})
+
+
+		// Recapcha fix for multiple forms
+		// Fix for reCapcha !!! should be removed if it is removed
+		window['portal-recaptcha'] = $('.recaptcha-control')
+
+		if(window['portal-recaptcha'].size() > 1){			
+	    	$.each(window['portal-recaptcha'], function(i, item){
+	    		if(i > 0){
+		    		$(item).find("#recaptcha_widget_div")
+		    			.show()
+		    			.html(window['portal-recaptcha']
+		    				.first()
+		    				.find("#recaptcha_widget_div")
+		    				.clone(true, true))
+		    	}
+	    	})
+	    }
 	})
 
 }(window.jQuery);

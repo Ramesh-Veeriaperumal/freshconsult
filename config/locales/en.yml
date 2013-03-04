@@ -1574,6 +1574,11 @@ en:
   portal: 
     header: 
       preview_message: "<b>Preview mode</b> - <a href='javascript:window.close()'>Click here</a> to go back."
+    login: Login
+    signup: Signup
+    or_signup: " or %{signup} for an account"
+    to_post_comment: " to post a comment"
+    to_post_topic: " to post a topic"
     search: 
       filters:
         all: "All"

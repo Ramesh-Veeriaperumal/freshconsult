@@ -1,7 +1,5 @@
 <% unless current_user %>
-	<div class="lead">
-		<a href="<%= support_login_path %>">Login</a> to post a new topic
-	</div>
+	<%= post_topic_in_portal current_portal.to_liquid, true %>
 <% else %>
 	<% @topic ||= current_account.topics.new %>
 	<% form_for @topic, :url => @topic.new_record? ? support_discussions_topics_path : support_discussions_topic_path(@topic), 

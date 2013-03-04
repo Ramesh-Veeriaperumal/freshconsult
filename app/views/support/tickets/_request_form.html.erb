@@ -1,4 +1,4 @@
-<% @ticket = current_account.tickets.new %>
+<% @ticket ||= current_account.tickets.new %>
 <% @ticket.email = current_user.email if current_user %>
 <% form_for @ticket, :url => support_tickets_path, :html => { :multipart => true, 
     :class => "form-portal ticket-form", :rel => "validate" } do |f| %>
@@ -8,21 +8,14 @@
       <%= ticket_label :helpdesk_ticket, field %>
       <%= ticket_form_element :helpdesk_ticket, field %>
     </div>
-      <%#= construct_ticket_element :helpdesk_ticket, field, 
-                                   field.label_in_portal,
-                                   field.dom_type, 
-                                   field.required_in_portal, 
-                                   (field.dom_type == "requester") ? @ticket.email : 
-                                    (field.is_default_field?) ? @ticket.send(field.field_name) : 
-                                    (@ticket.custom_field) ? @ticket.custom_field[field.field_name] : "", 
-                                   "",
-                                   true %>
   <% end %>
      
   <% if feature?(:captcha) && !logged_in? %>
     <div class="control-group">
-        <%= content_tag ( :label, t('ticket.verify_human') ) %>
-        <%= recaptcha_tags :display => { :theme => "white" }, :ssl => current_account.ssl_enabled? %>
+        <%= content_tag ( :label, t('ticket.verify_human'), :class => "control-label" ) %>
+        <div class="controls recaptcha-control">
+          <%= recaptcha_tags :display => { :theme => "white" }, :ssl => current_account.ssl_enabled? %>
+        </div>
     </div>
   <% end %>
   <%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>

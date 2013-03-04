@@ -15,7 +15,7 @@ class Support::SignupsController < SupportController
   end
   
   def create
-    @user = current_account.users.new
+    @user = current_account.users.new(params[:user])
     
     if verify_recaptcha(:model => @user, :message => t("captcha_verify_message")) && @user.signup!(params, current_portal)
       flash[:notice] = t("signup_complete_activate_info")

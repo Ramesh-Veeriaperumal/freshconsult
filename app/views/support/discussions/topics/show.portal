@@ -115,13 +115,7 @@
 			</div>
 		</section>
 	{% else %}	
-		<section class="list-lead">
-			<a href="{{ portal.login_url }}">Login</a>
-			{% if portal.can_signup_feature %}
-				 or <a href="{{ portal.signup_url }}">Signup</a> for an account
-			{% endif %}
-			to post a comment			
-		</section>
+		{{ portal | post_topic_in_portal }}
 	{% endif %}
 </section>
 

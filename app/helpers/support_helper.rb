@@ -212,6 +212,24 @@ HTML
 		output.join('')
 	end
 
+	def post_topic_in_portal portal, post_topic = false
+		output = []
+		output << %(<section class="list-lead">)
+		output << %(<a href="#{portal['login_url']}">#{I18n.t('portal.login')}</a>)
+		output << I18n.t('portal.or_signup', :signup => 
+				"<a href=\"#{portal['signup_url'] }\">#{I18n.t('portal.signup')}</a>") if 
+					portal['can_signup_feature']
+		if post_topic
+			output << I18n.t("portal.to_post_topic")
+		else
+			output << I18n.t("portal.to_post_comment")
+		end
+
+		output << %(</section>)
+
+		output.join('')
+	end
+
 	def link_to_topic_edit topic, label = I18n.t("topic.edit")
 		if User.current == topic.user
 			link_to label, topic['edit_url'], :title => label, :class => "btn btn-small"

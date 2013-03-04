@@ -28,7 +28,10 @@ module SupportTicketControllerMethods
       render :json => { :item => @ticket, :success => true }.to_json if mobile?
     else
       logger.debug "Ticket Errors is #{@ticket.errors}"
-      render :action => :new unless mobile?
+      unless mobile?
+        set_portal_page :submit_ticket
+        render :action => :new
+      end 
       render :json => { :errors => @response_errors, :failure => true }.to_json if mobile?
     end
   end
