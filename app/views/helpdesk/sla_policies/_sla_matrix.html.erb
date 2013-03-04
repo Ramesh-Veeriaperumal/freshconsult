@@ -1,0 +1,31 @@
+<%= "<td class='level-holder'>
+			<span class='lb-number escalation-level'>#{index}</span>
+		 </td>" if options[:type] == "resolution" %>
+			
+<td class="delete-button-holder">
+	<span class='delete'></span>
+</td>
+<td class='escalations-time-holder'> 
+	<label for='select_<%= options[:type] %>_time_<%= index %>' class='inline_text'>
+		<%= t('sla_policy.escalate_after') %>
+	</label> 
+	<%= i.select 'time', options[:time_options] || {}, {}, 
+			{:rel => "#{options[:type]}_time", 
+			'data-level' => index, 
+			:id => "select_#{options[:type]}_time_#{index}",
+			:name => "time",
+			:'data-name' => "time",} %>
+</td>
+<td>
+	<%= i.text_field 'agents_id', 
+			{ 'data-level' => index, 
+				'data-type' => options[:type], 
+				'data-value' => options[:value], 
+			  :value => options[:value] ? " " : nil, 
+			  :name => "agents_id_#{index}",
+			  :'data-name' => "agents_id",
+			  :id => options[:id],
+			  :class => 'agents_id'
+			 } 
+	%>
+</td>

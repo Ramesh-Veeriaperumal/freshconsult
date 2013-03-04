@@ -6,15 +6,17 @@
 		  <input name="reorderlist" type="hidden" value="" />
 		  <ul class="sort-list" rel="sortlist">
 			  <% items.each do |item| %>
-			  	<% content_tag :li, :item_id => item.id do %>
+			  	<% disabled ||= nil %>
+			  	<% content_tag :li, :item_id => item.id, 
+			  	:class => (disabled && item.respond_to?(disabled) && item.send(disabled) && "disabled") do %>
 			  		<span class="sort_handle"></span>
 			  		<%= h(item.send(title)) %> 
 			  	<% end %>
 			  <% end %>
 		  </ul>
 		  <div class="button-container">
-			<%= link_to  t("cancel"), "#", :id => "#{container_id}_cancel", :class => "uiButton"  %>
-		    <input type="submit" class="uiButton" value="<%= t("save") %>" />				
+			<%= link_to  t("cancel"), "#", :id => "#{container_id}_cancel", :class => "btn"  %>
+		    <input type="submit" class="btn btn-primary" value="<%= t("save") %>" />				
 		  </div>
 		<% end %>
 	</div>
@@ -28,7 +30,8 @@
 		var reorder_form = jQuery("#" + container_id + ' ul');
 		reorder_form.sortable({
 	        	containment: "parent", 
-	        	tolerance: "pointer"
+	        	tolerance: "pointer",
+	        	items: "li:not(.disabled)"
 	      	}).parents("form")
 			  .submit(function(ev){
 	      		var position_hash = $H();

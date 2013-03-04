@@ -815,6 +815,7 @@ ActiveRecord::Schema.define(:version => 20130206100722) do
     t.integer  "sla_policy_id",   :limit => 8
     t.boolean  "override_bhrs",                :default => false
     t.integer  "account_id",      :limit => 8
+    t.boolean  "escalation_enabled",              :default => true
   end
 
   create_table "helpdesk_sla_policies", :force => true do |t|
@@ -824,6 +825,10 @@ ActiveRecord::Schema.define(:version => 20130206100722) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "is_default",               :default => false
+    t.text     "escalations"
+    t.text     "conditions"
+    t.integer  "position"
+    t.boolean  "active",                   :default => true
   end
 
   add_index "helpdesk_sla_policies", ["account_id", "name"], :name => "index_helpdesk_sla_policies_on_account_id_and_name", :unique => true
