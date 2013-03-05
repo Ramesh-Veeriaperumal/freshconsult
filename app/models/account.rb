@@ -85,6 +85,7 @@ class Account < ActiveRecord::Base
   has_many :solution_articles , :class_name =>'Solution::Article'
   
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
+  has_many :user_credentials, :class_name => 'Integrations::UserCredential'
   has_many :customers
   has_many :contacts, :class_name => 'User' , :conditions =>{:user_role =>[User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]] , :deleted =>false}
   has_many :all_agents, :through =>:users, :order => "users.name"

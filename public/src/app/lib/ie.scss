@@ -6,6 +6,16 @@
 		// width: expression((document.body.clientWidth < 982)? "982px" : "#{$blueprint-liquid-container-width}");
 		width: 980px; 
 	}
+
+	.search-content{
+		.searchicon{
+			top: 45px;
+		}
+	}
+
+	.typed{
+		top: 48px !important;
+	}
 	
 	ul.header-tabs{
 		li.active a, li.active a:hover{
@@ -127,6 +137,18 @@
 		display:none;
 	}
    .fd-menu{ border:1px solid #afafaf; a:hover{ background: #5469f9; } }
+}
+
+.ie8, .ie9{
+		.search-content{
+		.searchicon{
+			top: 28px;
+		}
+	}
+
+	.typed{
+		top: 31px !important;
+	}
 }
 
 .ie6, .ie7, .ie8, .ie9{

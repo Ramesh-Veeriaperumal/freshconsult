@@ -74,14 +74,14 @@ class Helpdesk::TicketState <  ActiveRecord::Base
 
   def set_first_response_time(time)
     self.first_response_time ||= time
-    self.first_resp_time_by_bhrs ||= Time.parse(created_at.to_s).
-                        business_time_until(Time.parse(first_response_time.to_s))
+    self.first_resp_time_by_bhrs ||= Time.zone.parse(created_at.to_s).
+                        business_time_until(Time.zone.parse(first_response_time.to_s))
   end
 
   def set_resolution_time_by_bhrs
     return unless resolved_at
-    self.resolution_time_by_bhrs = Time.parse(created_at.to_s).
-                        business_time_until(Time.parse(resolved_at.to_s))
+    self.resolution_time_by_bhrs = Time.zone.parse(created_at.to_s).
+                        business_time_until(Time.zone.parse(resolved_at.to_s))
   end
 
   def set_avg_response_time

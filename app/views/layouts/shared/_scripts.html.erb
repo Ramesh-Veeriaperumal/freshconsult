@@ -26,5 +26,12 @@
 			jQuery(this).dialog2();
 		})
     <%= yield :onload_script -%>
+    <% if flash[:highlight] %>
+		var ele = jQuery("#<%= flash[:highlight] %>");
+		if(ele.is('tr'))
+			ele = ele.find('td');
+		ele.addClass('record_highlight');
+	<% end %>
+		
   });
 <%- end -%>

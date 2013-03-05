@@ -91,6 +91,7 @@ Freshdesk.Widget.prototype={
 				merge_sym = (reqData.resource.indexOf('?') == -1) ? '?' : '&'
 				reqData.rest_url = reqData.resource + merge_sym + this.options.url_token_key + '=' + this.options.oauth_token;
 			} else
+				
 				reqHeader.Authorization = "OAuth " + this.options.oauth_token;
 		}
 		else if(this.options.auth_type == 'NoAuth'){}
@@ -103,17 +104,21 @@ Freshdesk.Widget.prototype={
 			reqHeader.Authorization = "Basic " + Base64.encode(this.options.username + ":" + this.options.password);
 		}
 		url = reqData.source_url ? reqData.source_url : "/http_request_proxy/fetch"
-		new Ajax.Request(url, {
-      asynchronous: true,
+		var custom_callbacks = jQuery.extend(false, {}, reqData.custom_callbacks); // onXXX
+		reqData.custom_callbacks = null
+		var reqHeader_copy = jQuery.extend(false, {}, reqHeader)
+		var reqObj=null;
+		new Ajax.Request(url, reqObj=jQuery.extend(false, {
+		    asynchronous: true,
 			parameters:reqData,
 			requestHeaders:reqHeader,
 			onSuccess:function(evt) {
 				this.resource_success(evt, reqName, reqData)
 			}.bind(this),
 			onFailure:function(evt) {
-				this.resource_failure(evt, reqData)
+				this.resource_failure(evt, reqData, reqHeader_copy)
 			}.bind(this)
-		});
+		}, custom_callbacks));
 	},
 
 	resource_success:function(evt, reqName, reqData) {
@@ -128,17 +133,10 @@ Freshdesk.Widget.prototype={
 		}
 	},
 
-	resource_failure:function(evt, reqData){
+	resource_failure:function(evt, reqData, reqHeader){
 		resJ = evt.responseJSON;
-		loading_elem = jQuery('div[class^="loading-"]').attr('class');
-		if(loading_elem){
-			loading_class_elems = loading_elem.split();
-			for(i=0; i<loading_class_elems.length; i++){
-				if(loading_class_elems[i].startsWith("loading-")){
-					jQuery('div[class^="loading-"]').removeClass(loading_class_elems[i]);
-				}
-			}
-		}
+		
+		var req_sent_again = false;
 
 		if (evt.status == 401) {
 			this.options.username = null;
@@ -148,14 +146,16 @@ Freshdesk.Widget.prototype={
 			if (typeof reqData.on_failure != 'undefined' && reqData.on_failure != null) {
 				reqData.on_failure(evt);
 			} else if (this.options.auth_type == 'OAuth'){
-				cw = this; 
+				cw = this;
+				req_sent_again = true;						
 				this.refresh_access_token(function(){
-					if(cw.options.oauth_token) {
-						cw.request(reqData);
+					if(this.options.oauth_token) {
+						this.request(reqData);
 					} else {
-						cw.alert_failure("Problem in connecting to "+cw.app_name+". Please try again later.");
+						this.alert_failure("Problem in connecting to "+this.app_name+". Please try again later.");
+						reqData.after_failure(evt);
 					}
-				});
+				}.bind(this), reqHeader);
 			} else { this.alert_failure("Given user credentials for "+this.app_name+" are incorrect. Please verify your integration settings and try again."); }
 		}
 		else if (evt.status == 403) {
@@ -186,6 +186,18 @@ Freshdesk.Widget.prototype={
 				errorStr = evt.responseText;
 				this.alert_failure(this.app_name+" reports the below error: \n\n" + errorStr + ".\n\nTry fixing the error or Contact Support.");
 		}
+		if(!req_sent_again){
+			loading_elem = jQuery('div[class^="loading-"]').attr('class');
+			if(loading_elem){
+				loading_class_elems = loading_elem.split();
+				for(i=0; i<loading_class_elems.length; i++){
+					if(loading_class_elems[i].startsWith("loading-")){
+						jQuery('div[class^="loading-"]').removeClass(loading_class_elems[i]);
+					}
+				}
+			}			
+			if(reqData.after_failure) reqData.after_failure(evt);
+		}
 	},
 
 	alert_failure:function(errorMsg) {
@@ -198,8 +210,18 @@ Freshdesk.Widget.prototype={
 		jQuery("#" + this.options.widget_name).removeClass('loading-fb');
 	},
 
-	refresh_access_token:function(callback){
+	refresh_access_token:function(callback, reqHeader){
+		
 		cw = this;
+		// Retry with new access_token; if we have one
+		if(typeof reqHeader != 'undefined'){
+			reqHeader = reqHeader.Authorization.split(' ');
+			if(reqHeader[1] != this.options.oauth_token && !this.awaiting_access_token)
+			{
+				if(callback) callback(); 
+				return;
+			}
+		}
 		this.options.oauth_token = null;
 		this.callbacks_awaiting_access_token.push(callback);
 		if(this.awaiting_access_token)	return;
@@ -209,21 +231,21 @@ Freshdesk.Widget.prototype={
 				method: "get",
 				onSuccess: function(evt){
 					resJ = evt.responseJSON;
-					cw.options.oauth_token = resJ.access_token;
-					cw.awaiting_access_token = false;
-					cw.callbacks_awaiting_access_token.each(function(callback){						
+					this.options.oauth_token = resJ.access_token;
+					this.awaiting_access_token = false;
+					this.callbacks_awaiting_access_token.each(function(callback){						
 						if(callback) callback();
 					});
-					cw.callbacks_awaiting_access_token = [];
-				},
+					this.callbacks_awaiting_access_token = [];
+				}.bind(this),
 				onFailure: function(evt){
-					cw.options.oauth_token = null;
-					cw.awaiting_access_token = false;
-					cw.callbacks_awaiting_access_token.each(function(callback){						
+					this.options.oauth_token = null;
+					this.awaiting_access_token = false;
+					this.callbacks_awaiting_access_token.each(function(callback){						
 						if(callback) callback();
 					});
-					cw.callbacks_awaiting_access_token = [];
-				}
+					this.callbacks_awaiting_access_token = [];
+				}.bind(this)
 			});
 	},
 
@@ -254,10 +276,29 @@ Freshdesk.Widget.prototype={
 		}
 	},
 
-	delete_integrated_resource:function(last_fetched_id, resultCallback) {
-		if(last_fetched_id != null && last_fetched_id != ""){
+	update_integrated_resource: function(integrated_resource_id, local_integratable_id, remote_integratable_id, resultCallback) {
+		if(integrated_resource_id != null && integrated_resource_id != ""){
+			reqData = { "integrated_resource[id]": integrated_resource_id };
+			if(local_integratable_id) reqData["integrated_resource[local_integratable_id]"] = local_integratable_id;
+			if(remote_integratable_id) reqData["integrated_resource[remote_integratable_id]"] = remote_integratable_id;
+			
+			new Ajax.Request("/integrations/integrated_resources/update",{
+		        asynchronous: true,
+				method: "put",
+				parameters:reqData,
+				onSuccess:function(evt) { if(resultCallback) resultCallback(evt);
+				},
+				onFailure:function(evt){ if(resultCallback) resultCallback(evt);
+				}
+			});	
+		}
+		
+	},
+
+	delete_integrated_resource:function(integrated_resource_id, resultCallback) {
+		if(integrated_resource_id != null && integrated_resource_id != ""){
 			reqData = {
-			"integrated_resource[id]":last_fetched_id
+			"integrated_resource[id]":integrated_resource_id
 			};
 			new Ajax.Request("/integrations/integrated_resources/delete",{
         asynchronous: true,
