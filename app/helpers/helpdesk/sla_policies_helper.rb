@@ -10,13 +10,18 @@ module Helpdesk::SlaPoliciesHelper
     Helpdesk::SlaDetail::PREMIUM_TIME_OPTIONS+ Helpdesk::SlaDetail::RESOLUTIONTIME_OPTIONS
   end
 
+  def escalation_time_options
+    (current_account.premium ? Helpdesk::SlaPolicy::ESCALATION_PREMIUM_TIME_OPTIONS :
+    	Helpdesk::SlaPolicy::ESCALATION_TIME_OPTIONS)
+  end
+
 	def groups
-		(current_account.groups || {}).map{|group| [group.name, group.id]}
+		(current_account.groups || {}).map{ |group| [group.name, group.id] }
 	end
 	alias_method :group_id_list, :groups
 
 	def products
-		(current_account.products || {}).map{|product| [product.name, product.id]}
+		(current_account.products || {}).map{ |product| [product.name, product.id] }
 	end
 	alias_method :product_id_list, :products
 	

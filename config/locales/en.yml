@@ -1289,6 +1289,9 @@ en:
     five_minutes: 5 Minutes
     ten_minutes: 10 Minutes
     fifteen_minutes: 15 Minutes
+    after_five_minutes: After 5 minutes
+    after_ten_minutes: After 10 Minutes
+    after_fifteen_minutes: After 15 Minutes
   between_range: Between Range
   back_to_admin: Back to Admin
   group: 

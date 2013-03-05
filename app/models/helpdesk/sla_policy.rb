@@ -43,7 +43,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
   ESCALATION_LEVELS_OPTIONS = ESCALATION_LEVELS.map { |i| i[1] }
   ESCALATION_LEVELS_MAX = ESCALATION_LEVELS_OPTIONS.last
 
-  ESCALATIONTIME = [
+  ESCALATION_TIME = [
     [ :immediately,    I18n.t('immediately'),  0 ], 
     [ :half,    I18n.t('after_half'),  1800 ], 
     [ :one,      I18n.t('after_one'),      3600 ], 
@@ -59,7 +59,15 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
     [ :onemonth, I18n.t('after_onemonth'),   2592000 ]
   ]
 
-  ESCALATIONTIME_OPTIONS = ESCALATIONTIME.map { |i| [i[1], i[2]] }
+  ESCALATION_TIME_OPTIONS = ESCALATION_TIME.map { |i| [i[1], i[2]] }
+
+  PREMIUM_TIME = [ 
+    [I18n.t('premium_sla_times.after_five_minutes'),300], 
+    [I18n.t('premium_sla_times.after_ten_minutes'),600], 
+    [I18n.t('premium_sla_times.after_fifteen_minutes'), 900] 
+  ]
+  ESCALATION_PREMIUM_TIME_OPTIONS = (ESCALATION_TIME_OPTIONS + PREMIUM_TIME).sort{|a, b|
+                                                                      a[1] <=> b[1] } 
 
   ESCALATION_TYPES = [:resolution, :response]
 

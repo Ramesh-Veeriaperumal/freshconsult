@@ -124,7 +124,7 @@
 			<div class="grid">
 				<table data-max-level=1 data-type="response" class="sla_policies">
 					<%= select_tag('response_time', 
-									options_for_select(Helpdesk::SlaPolicy::ESCALATIONTIME_OPTIONS), 
+									options_for_select(escalation_time_options), 
 									{:class => "hide"}) %>
 				 	<% f.fields_for :escalations do |e| %>
 				 		<% e.fields_for "response" do |response|%>	
@@ -140,7 +140,7 @@
 																	 :value => (@esc_agents || {})['response_1'],
 																	 :id => "agents_0",
 																	 :time_options => options_for_select(
-																	 	Helpdesk::SlaPolicy::ESCALATIONTIME_OPTIONS, 
+																	 	escalation_time_options, 
 				 													 :selected => (@time || {})['response_1']) }} %>
 								</tr>
 							<% end %>
@@ -159,7 +159,7 @@
 				<table data-max-level = <%= Helpdesk::SlaPolicy::ESCALATION_LEVELS_MAX %> 
 							 class="sla_policies">
 						<%= select_tag('resolution_time', 
-								options_for_select(Helpdesk::SlaPolicy::ESCALATIONTIME_OPTIONS), 
+								options_for_select(escalation_time_options), 
 								{:class => "hide"}) %>
 
 			 			<% (Helpdesk::SlaPolicy::ESCALATION_LEVELS_OPTIONS).each do |index| %>
