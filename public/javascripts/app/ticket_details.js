@@ -686,18 +686,6 @@ $(document).ready(function() {
 		$(this).parent().siblings('.integration_container').toggle($(this).prop('checked'));
 	});
 
-
-    jQuery('.ticket_details').on('click','[rel=custom-reply-status]', function(ev){
-      ev.preventDefault();
-      ev.stopPropagation();
-
-      jQuery('#reply_ticket_status_<%= cntid %>}').val(jQuery(this).data('statusVal'));
-      jQuery('body').trigger('click');
-
-      changeStatusTo(jQuery(this).data('statusVal'));
-      jQuery("#HelpdeskReply").trigger('submit');
-    });
-
 	$(".conversation_thread .request_panel form").live('submit', function(ev) {
 
 		var _form = $(this);
@@ -735,6 +723,11 @@ $(document).ready(function() {
 			}
 
 			if ($('html').hasClass('ie6') || $('html').hasClass('ie7') || $('html').hasClass('ie8') || $('html').hasClass('ie9')) {
+				stopDraftSaving();
+				$.ajax({
+					url: TICKET_DETAILS_DATA['draft']['clear_path'],
+					type: 'delete'
+				});
 				return true;
 			}
 			ev.preventDefault();
@@ -768,9 +761,15 @@ $(document).ready(function() {
 						$('#note_details_' + _form.data('cntId')).show();
 					}
 
+
 					if (_form.data('cntId') && _form.data('destroyEditor')){
 						$('#' + _form.data('cntId') + '-body').destroyEditor(); //Redactor
 						_form.resetForm();
+					}
+
+					if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
+						stopDraftSaving();
+						clearSavedDraft();
 					}
 
 					_form.find('[rel=ajax_params]').remove();
@@ -778,6 +777,7 @@ $(document).ready(function() {
 					_form.find('input[type=submit]').prop('disabled', false);
 					if (_form.data('showPseudoReply'))
 						$('#TicketPseudoReply').show();
+
 
 				},
 				error: function(response) {
@@ -861,7 +861,7 @@ $(document).ready(function() {
       ev.preventDefault();
       ev.stopPropagation();
 
-      jQuery('#reply_ticket_status_<%= cntid %>}').val(jQuery(this).data('statusVal'));
+      jQuery('#reply_ticket_status_' + jQuery(this).data('cntId')).val(jQuery(this).data('statusVal'));
       jQuery('body').click();
 
       changeStatusTo(jQuery(this).data('statusVal'));
