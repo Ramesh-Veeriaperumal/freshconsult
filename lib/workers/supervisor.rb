@@ -9,6 +9,7 @@ class Workers::Supervisor
     account = Account.find(account_id)
     account.make_current
     SeamlessDatabasePool.use_persistent_read_connection do
+      start_time = Time.now.utc
     account.supervisor_rules.each do |rule|
       begin
         conditions = rule.filter_query
@@ -35,6 +36,11 @@ class Workers::Supervisor
       rescue
         puts "something went wrong"
       end
+    end
+    end_time = Time.now.utc
+    if((end_time - start_time) > 250)
+      total_time = Time.at(Time.now.utc - start_time).gmtime.strftime('%R:%S')
+      puts "Time total time it took to execute the supervisor rules for, #{account.id}, #{account.full_domain}, #{total_time}"
     end
   end
     Account.reset_current_account

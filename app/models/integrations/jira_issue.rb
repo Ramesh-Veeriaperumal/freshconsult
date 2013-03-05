@@ -3,7 +3,7 @@ require 'jira4r'
 require 'json'
 
 class Integrations::JiraIssue
-
+  include Integrations::AppsUtil
   def initialize(installed_app)
     @http_request_proxy = HttpRequestProxy.new
     @installed_app = installed_app unless installed_app.blank?
@@ -89,21 +89,62 @@ class Integrations::JiraIssue
     res_issue_json = JSON.parse(make_rest_call(params_issue,request)[:text])
   end
 
+  def add_comment(issueId, ticketData)
+    req_data = {
+        :body => ticketData
+      }
+      comment_data = construct_params_for_http("post","rest/api/2/issue/" + issueId + "/comment")
+      comment_data[:body] = req_data.to_json
+    make_rest_call(comment_data, nil)
+  end
+
+  def update_status(issue_id, new_status)
+      ava_actions = get_available_status(issue_id)
+      Rails.logger.debug "AvailableActions for #{issue_id}: #{ava_actions.inspect}"
+      ava_actions["transitions"].each { |action|
+        return progress_work_flow_action(issue_id, action["id"]) if (action["name"] == new_status)
+      }
+      Rails.logger.error "JIRA Issue not updated for #{issue_id}.  #{new_status} is not a valid status."
+  end
+
+  def get_available_status(issue_id)
+    ava_actions_data = construct_params_for_http("get","rest/api/2/issue/"+issue_id+"/transitions?transitionId")
+    JSON.parse(make_rest_call(ava_actions_data, nil)[:text])
+  end
+
+  def progress_work_flow_action(issue_id, action)
+    req_data = {
+      "transition" => {
+        "id" => action
+      }
+    }
+    progress_work_flow_data = construct_params_for_http("post",("rest/api/2/issue/"+issue_id+"/transitions?expand=transitions.fields"))
+    progress_work_flow_data[:body] = req_data.to_json
+    make_rest_call(progress_work_flow_data, nil)
+  end
+
+  def register_webhooks(current_portal)
+    req_data = {
+          "name" => "Freshdesk webhook",
+          "url"  =>  "https://"+current_portal.host+"/notify",
+          "events" =>  [
+              "jira:issue_created",
+              "jira:issue_updated",
+              "jira:issue_deleted",
+              "jira:worklog_updated"
+          ],
+          "excludeIssueDetails" => true
+        }
+    webhook_data = construct_params_for_http("post","rest/webhooks/1.0/webhook")
+    webhook_data[:body] = req_data.to_json
+    make_rest_call(webhook_data, nil)
+  end
+
+  def delete_webhooks
+  end
+  
   private
 
-  def construct_params_for_http(method,rest_url,body=nil)
-    fieldData = {
-      :username => @installed_app.configs_username,
-      :password => @installed_app.configsdecrypt_password,
-      :domain => @installed_app.configs_domain,
-      :rest_url => rest_url,
-      :method => method
-    }
-    if(body)
-      fieldData[:body] = body
-    end
-    fieldData
-  end
   def getCustomFieldId(request)
     fieldData = construct_params_for_http("get","rest/api/2/field")
     customData=make_rest_call(fieldData,request)
@@ -142,7 +183,4 @@ class Integrations::JiraIssue
     end
   end
 
-  def make_rest_call(params, request)
-    @http_request_proxy.fetch(params, request)
-  end
 end
