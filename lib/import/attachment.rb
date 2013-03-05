@@ -26,7 +26,7 @@ class Import::Attachment
         file = RemoteFile.new(attach_url)
         attachment = @item.attachments.build(:content => file , :description => "", :account_id => @item.account_id)
         attachment.save!
-      rescue
+      rescue => e
         puts "Attachmnet exceed the limit!"
         NewRelic::Agent.notice_error(e)
       ensure
