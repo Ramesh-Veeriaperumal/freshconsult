@@ -72,6 +72,19 @@ en:
   resolved_late: Resolved late
   remove: Remove
   no_tags: No tags found.
+  immediately: Immediately
+  after_half: After 30 Minutes
+  after_one: After 1 Hour
+  after_two: After 2 Hours
+  after_four: After 4 Hours
+  after_eight: After 8 Hours
+  after_twelve: After 12 Hours
+  after_day: After 1 Day
+  after_twoday: After 2 Days
+  after_threeday: After 3 Days
+  after_oneweek: After 1 Week
+  after_twoweek: After 2 Weeks
+  after_onemonth: After 1 Month
   user: 
     company: Company
     photo: Photo
@@ -831,6 +844,12 @@ en:
       insufficient_privilege: 
         admin: You don't have sufficient privilage to change this. Please login as Administrator..!!
       login_not_needed: You must be logged out to access this page
+      deactivation:
+        failure: The %{human_name} could not be deactivated
+        success: The %{human_name} has been deactivated.
+      activation:
+        failure: The %{human_name} could not be activated
+        success: The %{human_name} has been activated.
       destroy: 
         failure: The %{human_name} could not be deleted
         success: The %{human_name} has been deleted.
@@ -1270,6 +1289,9 @@ en:
     five_minutes: 5 Minutes
     ten_minutes: 10 Minutes
     fifteen_minutes: 15 Minutes
+    after_five_minutes: After 5 minutes
+    after_ten_minutes: After 10 Minutes
+    after_fifteen_minutes: After 15 Minutes
   between_range: Between Range
   back_to_admin: Back to Admin
   group: 
@@ -1299,7 +1321,10 @@ en:
   oneweek: 1 Week
   twoweek: 2 Weeks
   onemonth: 1 Month
-  threemonth: 3 Month
+  twomonth: 2 Months
+  threemonth: 3 Months
+  sixmonth: 6 Months
+  oneyear: 1 Year
   problem: Problem
   change_plan_info: You can change your plan at any time, your next bill date is %{date}.
   created_on: Created on
@@ -1449,6 +1474,7 @@ en:
   no_forum_category: No forums in this category
   sla_policy: 
     sla_targets: SLA Targets
+    sla_targets_details: Set Service Level Targets for each ticket priority
     new: New SLA Policy
     edit: Edit SLA Policy
     select_policy: Select policy
@@ -1466,6 +1492,28 @@ en:
     info3: SLA Policy works in conjunction with Business Hours
     tickets_with: Tickets with
     escalate_to: Escalate to
+    applicable_to: Apply this to
+    applicable_details: Choose when this SLA policy must be enforced
+    applicable_error: You need to add at least 1 condition
+    response_escalation: Escalation rules when a ticket is not <b>responded to</b> on time
+    resolution_escalation: Escalation rules when a ticket is not <b>resolved</b> on time
+    respond_within: Respond within
+    resolve_within: Resolve within
+    op_hrs: Operational Hrs
+    escalation_email: Escalation email
+    add_new: Add new
+    add_level: Add level
+    escalate_after: Escalate
+    add_response_esc:  Add rule
+    add_resolution_esc: rule
+    company_placeholder: "Enter Company names"
+    group_id_placeholder: "Enter Group names"
+    product_id_placeholder: "Enter Product names"
+    source_placeholder: "Enter Source names"
+    agent_placeholder: Pick Agents to escalate to...
+    applicable_info: Select at least one trigger condition.
+    disabled_old_policy: Set a trigger condition to enable this SLA policy.
+    default_policy: Default SLA Policy cannot be turned off.
   left: Left
   subscription: 
     error: 
@@ -2645,6 +2693,13 @@ en:
         widget_title: "Widget Title"
         username: "Username"
         password: "Password"
+    google_calendar:
+      label: "Google Calendar"
+      desc: "You can manage events for each ticket with Google Calendar."
+      helptext: "Google calendar lets you keep track of events associated with tickets. Agents need to connect their Google account with Freshdesk to manage events with Google Calendar."
+      form:
+        google_calendar_settings_info: ""
+        google_calendar_settings: "Google Calendar Settings"
     batchbook:
       label: "Batchbook"
       helptext: "<h4>Batchbook Integration</h4><p><br>Link your Batchbook account with Freshdesk to display contact information on the Contacts and Tickets pages. Please specify your domain and API key in this page to configure the integration. <br><br>Freshdesk pulls in the Name, Title, Company Name, Contact Address, Phone Number &amp; Mobile Numbers from Batchbook and makes it available for your agents.<br><br>You can lookup contacts from Batchbook by searching with their email address. If multiple contacts exist with the same address, all of them will be displayed in the form of a list.</p><br/> "

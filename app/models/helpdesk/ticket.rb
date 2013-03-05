@@ -15,8 +15,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Gamification::GamificationUtil
   include RedisKeys
 
-  SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification", 
-                            "header_info", "st_survey_rating", "trashed", "access_token"]
+  SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
+                            "header_info", "st_survey_rating", "trashed", "access_token", 
+                            "escalation_level", "sla_policy_id", "sla_policy"]
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
   set_table_name "helpdesk_tickets"
@@ -32,7 +33,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   before_validation :populate_requester, :set_default_values
   
-  before_create :assign_schema_less_attributes, :assign_email_config_and_product, :set_dueby, :save_ticket_states
+  before_create :assign_schema_less_attributes, :assign_email_config_and_product, :save_ticket_states
 
   has_many_attachments
 
@@ -40,11 +41,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   after_create :refresh_display_id, :create_meta_note
 
-  before_update :assign_email_config, :load_ticket_status, :update_dueby
+  before_update :assign_email_config, :load_ticket_status
 
   before_validation_on_create :set_token
   
-  before_save :update_ticket_changes
+  before_save :update_ticket_changes, :set_sla_policy, :update_dueby
 
   after_save :save_custom_field
 
@@ -357,6 +358,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.ticket_type ||= account.ticket_types_from_cache.first.value
     self.subject ||= ''
     self.group_id ||= email_config.group_id unless email_config.nil?
+    self.priority ||= PRIORITY_KEYS_BY_TOKEN[:low]
     #self.description = subject if description.blank?
   end
   
@@ -492,27 +494,57 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
-  #shihab-- date format may need to handle later. methode will set both due_by and first_resp
-  def update_dueby
-    set_dueby if priority_changed?
-    set_dueby(true) if status_changed?
-  end
-  
-  def set_dueby(start_sla_timer=nil)
-    set_account_time_zone   
-    self.priority = PRIORITY_KEYS_BY_TOKEN[:low] if priority.nil?
-    
-    sla_policy_id = requester.customer.sla_policy_id unless requester.customer.nil?
-    sla_policy_id = Helpdesk::SlaPolicy.find_by_account_id_and_is_default(account_id, true) if sla_policy_id.nil?     
-    sla_detail = Helpdesk::SlaDetail.find(:first, :conditions =>{:sla_policy_id =>sla_policy_id, :priority =>self.priority})
-    
-    set_dueby_on_priority_change(sla_detail) if start_sla_timer.nil?
-    set_dueby_on_status_change(sla_detail) unless start_sla_timer.nil? 
-    
-    set_user_time_zone if User.current
-    logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} "   
+  #SLA Related changes..
+
+  def set_sla_policy
+    return if !(changed_condition? || self.sla_policy.nil?)
+
+    new_match = nil
+    account.sla_policies.rule_based.active.each do |sp|
+      if sp.matches? self
+        new_match = sp
+        break
+      end
+    end
+
+    self.sla_policy = (new_match || account.sla_policies.default.first)
   end
 
+  def changed_condition?
+    group_id_changed? || source_changed? || has_product_changed?
+  end
+
+  def has_product_changed?
+    self.schema_less_ticket.changes.key?('product_id') 
+  end
+
+  #shihab-- date format may need to handle later. methode will set both due_by and first_resp
+  def update_dueby
+
+    if self.new_record?
+      set_account_time_zone   
+      sla_detail = self.sla_policy.sla_details.find(:first, :conditions => {:priority => priority})
+      set_dueby_on_priority_change(sla_detail)
+
+      set_user_time_zone if User.current
+      logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
+      
+    elsif priority_changed? || changed_condition? || status_changed?
+
+      set_account_time_zone   
+      sla_detail = self.sla_policy.sla_details.find(:first, :conditions => {:priority => priority})
+
+      set_dueby_on_priority_change(sla_detail) if (priority_changed? || changed_condition?)
+      set_dueby_on_status_change(sla_detail) if status_changed?
+      set_user_time_zone if User.current
+      logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
+      
+    end
+
+  end
+
+  #end of SLA
+  
   def set_account_time_zone  
     self.account.make_current
     Time.zone = self.account.time_zone    
@@ -705,6 +737,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def company_name
     requester.customer.name if (requester && requester.customer)
+  end
+  
+  def company_id
+    requester.customer_id if requester
   end
   #virtual agent things end here..
   

@@ -26,6 +26,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :disable_notification, :if => :notification_not_required?
   after_filter  :enable_notification, :if => :notification_not_required?
   before_filter :set_selected_tab
+  before_filter :store_location, :only => [:show]
 
 
   layout :choose_layout 
