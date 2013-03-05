@@ -15,7 +15,7 @@
 				"zip", "log" ].include?(extname)) ? extname : "def" 
 	%>
 	<div class="attachment-type file-types-<%= extname %>">
-		<%= link_to truncate(h(attachment.content_file_name), 23), attachment, :popup => true %>
+		<%= link_to truncate_filename(h(attachment.content_file_name)), attachment, :popup => true %>
 		<span>(<%= number_to_human_size attachment.content_file_size %>)</span>
 	</div>
 </li>

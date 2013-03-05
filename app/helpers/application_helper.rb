@@ -651,6 +651,15 @@ module ApplicationHelper
     nodejs_port = Rails.env.development? ? 5000 : (current_account.ssl_enabled ? 2050 : 1050)      
     "#{nodejs_protocol}://#{request.host}:#{nodejs_port}/#{namespace}"
   end  
+
+  def truncate_filename filename
+    extension = filename.include?('.') ? filename.split('.').last : nil
+    simple_name = extension ? filename[0..-(extension.length + 2)] : filename
+    if filename.length > 13
+      return simple_name[0,7] + "..." + simple_name[-3..-1] + (extension ? ".#{extension}" : "")
+    end
+    filename
+  end
    
   private
     def solutions_tab
