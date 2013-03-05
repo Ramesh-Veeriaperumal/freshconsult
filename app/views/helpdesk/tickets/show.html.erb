@@ -47,7 +47,7 @@
 				                                                callback(choices);
 				                                              } });
 				                                            }
-				  var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10});
+				  var cachedBackend = new Autocompleter.Cache(lookup, {searchKey: 0, choices: 10});
 				  var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
 				<% end %>
 		  	<%= render(:partial => '/helpdesk/shared/reply_form', :locals => { :id => 'send-email', :cntid => 'cnt-reply', :note => [@ticket, Helpdesk::Note.new(:private => false)], :conv_id => nil }) if @item.from_email.present? or @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobi_help] %>

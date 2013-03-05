@@ -135,8 +135,10 @@ jQuery(document).ready(function(){
 			totango.track( "Support Email Changed", "Getting Started Page");
 			jQuery.ajax({
 			  type: "PUT",
-			  url: url,
+			  cache: false,
+			  url: url,	
 			  data : {"email_config[reply_email]" : reply_email, "email_config[to_email]" : to_email },
+			  dataType: "script",
 			  success: function(){
 			  				save_button.removeClass("loading").addClass("saved")
 			  				setTimeout(function(){
