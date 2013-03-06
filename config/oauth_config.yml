@@ -36,12 +36,6 @@ development:
   consumer_secret: 5c7UOsdl0okTN22LcNX0d99i
   options:
     scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email
-  app_options:
-   google_calendar:
-    scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email
-   google_doc: 
-    scope: https://www.googleapis.com/auth/docs https://www.googleapis.com/auth/userinfo.email
-
 
 defaults: &defaults
  salesforce:
@@ -65,6 +59,11 @@ staging:
  google:
   consumer_token: freshpo.com
   consumer_secret: mZ4Mvav/PzfC5X2lOn2+Qi+o
+ google_oauth2:
+  consumer_token: freshpo.com
+  consumer_secret: mZ4Mvav/PzfC5X2lOn2+Qi+o
+  options:
+    scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email
  mailchimp:
   consumer_token: 187267923355
   consumer_secret: 0c8b6473fe421fa60dbd0f3befc4f219
@@ -82,6 +81,11 @@ production:
  google:
   consumer_token: freshdesk.com
   consumer_secret: f7NgGAv6TKqew3O5Xb85SadF
+ google_oauth2:
+  consumer_token: freshdesk.com
+  consumer_secret: f7NgGAv6TKqew3O5Xb85SadF
+  options:
+    scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email
  mailchimp:
   consumer_token: 560756408749
   consumer_secret: d30b60816fe878cf6ea67489b7c47dad
