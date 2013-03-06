@@ -11,21 +11,14 @@ class AgentsController < ApplicationController
     :convert_to_contact ]
   before_filter :load_roles, :only => [:new, :create, :edit, :update]
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
-  before_filter :restrict_current_user, :only => [ :edit, :update ]
-  before_filter :check_user_permission, :only => [:destroy,:convert_to_contact]
+  before_filter :restrict_current_user, :only => [ :edit, :update, :destroy,
+    :restore, :convert_to_contact ]
   before_filter :check_agent_limit, :only =>  :restore
   before_filter :set_selected_tab
   
   def load_object
     @agent = scoper.find(params[:id])
     @scoreboard_levels = current_account.scoreboard_levels.level_up_for @agent.level
-  end
-  
-  def check_user_permission
-    unless can_destroy?(@agent)
-      flash[:notice] = t(:'flash.agents.delete.not_allowed')
-      redirect_to :back  
-    end    
   end
 
   def check_demo_site
@@ -139,25 +132,24 @@ class AgentsController < ApplicationController
   end
   
   def update
-      @agent.occasional = params[:agent][:occasional]
-      #check_agent_limit
-      @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id] if gamification_feature?(current_account)
+    @agent.occasional = params[:agent][:occasional]
+    #check_agent_limit
+    @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id] if gamification_feature?(current_account)
       
-      if @agent.update_attributes(params[nscname])            
-          @user = current_account.all_users.find(@agent.user_id)
-          if @user.update_attributes(params[:user])        
-             flash[:notice] = t(:'flash.general.update.success', :human_name => 'Agent')
-             redirect_to :action => 'index'
-         else
-             check_email_exist     
-             @agent.user =@user       
-             render :action => :edit 
-         end
-      else
-        @agent.user =@user       
-        render :action => :edit
-      end    
-     
+    if @agent.update_attributes(params[nscname])            
+        @user = current_account.all_users.find(@agent.user_id)
+        if @user.update_attributes(params[:user])
+          flash[:notice] = t(:'flash.general.update.success', :human_name => 'Agent')
+          redirect_to :action => 'index'
+        else
+           check_email_exist
+           @agent.user =@user       
+           render :action => :edit 
+       end
+    else
+      @agent.user = @user       
+      render :action => :edit
+    end    
   end
 
   def convert_to_contact
@@ -177,9 +169,13 @@ class AgentsController < ApplicationController
     redirect_to :back
   end
 
- def restore
+ def restore  
    @agent = current_account.all_agents.find(params[:id])
-   if @agent.user.update_attribute(:deleted, false)   
+   if @agent.user.update_attributes(:deleted => false,
+     :user_roles_attributes => { 
+        :role_id => [current_account.roles.find_by_name("Agent").id] 
+      }
+    )   
     flash[:notice] = render_to_string(:partial => '/agents/flash/restore_notice')
    else
     flash[:notice] = t(:'flash.general.restore.failure', :human_name => 'Agent')
@@ -210,16 +206,16 @@ class AgentsController < ApplicationController
   end
   
   def check_email_exist
-     if("has already been taken".eql?(@user.errors["email"]))        
-           @existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => @user.email}})
-     end    
+    if("has already been taken".eql?(@user.errors["email"]))        
+      @existing_user = current_account.all_users.find(:first, :conditions =>{:users =>{:email => @user.email}})
+    end    
   end
   
   def check_agent_limit
-   if current_account.reached_agent_limit? and !@agent.occasional?
-    flash[:notice] = t('maximum_agents_msg')
-    redirect_to :back 
-   end
+    if current_account.reached_agent_limit? and !@agent.occasional?
+      flash[:notice] = t('maximum_agents_msg')
+      redirect_to :back 
+    end
   end
 
   def set_selected_tab
@@ -231,10 +227,7 @@ class AgentsController < ApplicationController
   end
   
   def restrict_current_user
-    # 1. User cannot edit himself
-    # 2. To edit and agent with manage_account, the current_user must also have manage_account
-    if @agent.user == current_user || 
-      (@agent.user.privilege?(:manage_account) && !current_user.privilege?(:manage_account))
+    unless can_edit?(@agent)
       flash[:notice] = t(:'flash.agents.edit.not_allowed')
       redirect_to :back  
     end    

@@ -8,15 +8,16 @@
     		 <div class="span6 pull-right pagination-right">
     		 	<% unless @current_account.subscription.agent_limit.blank? %>
     		 	<span>
-                    <%= @current_account.subscription.agent_limit - @current_account.full_time_agents.count  %>
-                    Agent seats available, 
-                    <a href="" class="margin-right">Buy more</a> 
-                </span>
-                <% else %>
-                    In trial version
-                <% end %>
-                <b><%= link_to t('agent.new'), new_agent_path, :class => "btn btn-primary"  %></b> 
-            </div>
+            <%= t('agent.available_seats', :count => available_agents) %>
+            <% if privilege?(:manage_account) %>
+              ,<%= link_to t('agent.buy'), subscription_path, :class => "margin-right" %></a> 
+            <% end %>
+          </span>
+          <% else %>
+            <%= t('agent.trial') %>
+          <% end %>
+          <b><%= link_to t('agent.new'), new_agent_path, :class => "btn btn-primary"  %></b> 
+         </div>
     	</div>
     </div>
     <div id="agent-filters">

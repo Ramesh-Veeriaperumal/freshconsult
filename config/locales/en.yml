@@ -647,6 +647,8 @@ en:
         default_group : Default Group 
     roles:
       new: New Role
+      edit: Edit Role
+      default_role: Default Role
       scroll:
         scroll_to : Scroll to
         tickets: Tickets
@@ -1428,6 +1430,15 @@ en:
       no_agents: You have not added any agents to the list
     deleted:
       no_agents: You dont have any deleted agents
+    trial: In trial version
+    buy: Buy more
+    available_seats: %{count} Agent seats available
+    last_logged_in: Last logged in %{time} ago.
+    never_logged_in: Never logged in
+    day_pass_used: Used %{count} day pass till date
+    day_pass_available: %{count} Day pass available
+    assign_role: Assign role
+    add_role: + Add role
     title: Agents
     info1: This is a deleted Agent
     info2: Email has already been taken
@@ -1448,7 +1459,8 @@ en:
     add_signature: Add signature
     update: Update
     permissions: Permissions
-    role: Role
+    roles: Roles
+    roles_description: Associate a role to an agent, an agent can play multiple role.
     scope: Agent scope
     admin: Administrator
     supervisor: Supervisor

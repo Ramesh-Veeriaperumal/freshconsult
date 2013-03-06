@@ -7,7 +7,7 @@ class User < ActiveRecord::Base
   include Helpdesk::Ticketfields::TicketStatus
   include Mobile::Actions::User
   include Users::Activator
-  include Authority::ModelHelpers
+  include Authority::Rails::ModelHelpers
   include Cache::Memcache::User
   
   USER_ROLES = [
@@ -59,6 +59,8 @@ class User < ActiveRecord::Base
   before_create :set_time_zone , :set_company_name , :set_language
   before_create :account_admin_privilege, :if => :account_admin?
   before_save :set_customer_privilege, :if => :customer?
+  # FIXME: before_save ?
+  before_update :destroy_user_roles, :if => :deleted?
   before_save :set_contact_name, :check_email_value
   after_update :drop_authorization , :if => :email_changed?
   after_update :update_admin_in_crm , :if => :account_admin_changed?
@@ -89,12 +91,20 @@ class User < ActiveRecord::Base
   
   validates_presence_of :email, :unless => :customer?
   validates_presence_of :user_roles, :unless => [:customer?, :account_admin?]
+  validate :roles_assigned?
 
   def user_roles_attributes=(user_attr)
     return if user_attr.empty?
+    role_ids = user_attr[:role_id].delete_if { |id| id.blank? }
+    # !user_roles is added to prevent from raising this error on create
+    # when user_roles will be empty, This error should be raised only
+    # on update
+    if role_ids.blank? && !user_roles.blank?
+      @user_roles_error = "can't be blank"
+      return false
+    end
     # delete records if update
     user_roles.destroy_all unless user_roles.blank?
-    role_ids = user_attr[:role_id].delete_if { |id| id.blank? }
     # build user_roles
     role_ids.each { |id| user_roles.build({:role_id => id}) }
     # set privileges based on chosen roles
@@ -102,7 +112,11 @@ class User < ActiveRecord::Base
                  :conditions => ["id IN (?)", role_ids])
     self.privileges = union_privileges(privilege_masks).to_s
   end
-
+  
+  def roles_assigned?
+    self.errors.add(:user_roles, @user_roles_error) if @user_roles_error
+  end
+    
   def client_manager=(checked)
     if customer? && checked == "true"
       self.privileges = Role.privileges_mask([:client_manager])
@@ -462,7 +476,6 @@ class User < ActiveRecord::Base
     return if customer?
     
     update_attributes({:helpdesk_agent => false, :deleted => false})
-    user_roles.destroy_all
     agent.destroy
   end
 
@@ -532,10 +545,14 @@ class User < ActiveRecord::Base
       self.privileges = Role.privileges_mask(Helpdesk::Roles::ACCOUNT_ADMINISTRATOR).to_s  
     end
     
-    # FIXME: might leave stale user_role rows, as of now only used my make_customer
     def set_customer_privilege
       if(!(abilities.length == 1) && !privilege?(:client_manager))
-        self.privileges = "0"
+        destroy_user_roles
       end
+    end
+    
+    def destroy_user_roles
+      self.privileges = "0"
+      user_roles.destroy_all
     end
 end

@@ -8,9 +8,20 @@ module AgentsHelper
   def check_agents_limit
     content_tag(:div, fetch_upgrade_error_msg,:class => "errorExplanation") if current_account.reached_agent_limit?
   end
+    
+  # 1. User cannot edit himself
+  # 2. To edit and agent with manage_account, the current_user must also have manage_account
+  def can_edit?(agent)
+    !(agent.user == current_user || 
+      (agent.user.privilege?(:manage_account) && !current_user.privilege?(:manage_account)))
+  end
   
-  def can_destroy?(agent)
-     (agent.user != current_user) && (!agent.user.account_admin?)
+  def available_agents
+    current_account.subscription.agent_limit - current_account.full_time_agents.count
+  end
+  
+  def available_passes
+    current_account.day_pass_config.available_passes
   end
 
   def fetch_upgrade_error_msg
@@ -40,7 +51,7 @@ module AgentsHelper
  end
 
   def can_reset_password?(agent)
-   agent.user.active? and (current_user != agent.user)
+   agent.user.active? and can_edit?(agent)
   end
   
   def agent_list_tabs

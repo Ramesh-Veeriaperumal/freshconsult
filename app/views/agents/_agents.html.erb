@@ -14,15 +14,22 @@
 					</td>
 					<td>
 						<p>
-							<%= agent.user.last_login_at ? "Last logged in "+distance_of_time_in_words_to_now(agent.user.last_login_at)+" ago" : "Never logged in" %><br/>
-								
-								Used <%= agent.user.day_pass_usages.length %> day pass till date
+							<%= agent.user.last_login_at ? t('agent.last_logged_in', :time => distance_of_time_in_words_to_now(agent.user.last_login_at)) : t('agent.never_logged_in') %><br/>
+              <% if agent.occasional? %>
+                <%= t('agent.day_pass_used', :count => agent.user.day_pass_usages.length) %>
+              <% end %>
 						</p>
 					</td>
 					<td>
-						<%= link_to t('edit'), edit_agent_path(agent), :class => "btn btn-mini" %>
-						<%= link_to ("<i class='icon-trash'></i>", agent, :confirm => "#{t('agent.info3')}?", 
-												 :method => :delete, :class => "btn btn-mini") unless (agent.user == current_user)  %>
+            <% if can_edit?(agent) %>
+						  <%= link_to t('edit'), edit_agent_path(agent), :class => "btn btn-mini" %>
+              <% if (params[:state] == "deleted") %>
+                <%= link_to t('agent.restore'), restore_agent_path(agent), :method => 'put', :class => "btn btn-mini" %>
+              <% else %>
+  						  <%= link_to ("<i class='icon-trash'></i>", agent, :confirm => "#{t('agent.info3')}?", 
+  												 :method => :delete, :class => "btn btn-mini") %>
+              <% end %>
+            <% end %>
 					</td>
 				</tr>
 			<% end %>
@@ -33,6 +40,10 @@
 					:next_label => "<b class='arrow-right'></b>",
 					:class => "pagination pagination-centered" %>	
 	<% else %>
-		No Agents in this list
-	<% end %>
+    <% unless params[:state] == "deleted" %>
+      <%= t('agent.active.no_agents') %>
+    <% else %>
+      <%= t('agent.deleted.no_agents') %>
+    <% end %>
+  <% end %>
 </div>

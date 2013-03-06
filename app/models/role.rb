@@ -5,7 +5,7 @@ class Role < ActiveRecord::Base
     # FIXME: a role with which account_admin is associated is deleted
     # FIXME: user is changed to a role without manage_account
   
-  include Authority::ModelHelpers
+  include Authority::Rails::ModelHelpers
   before_destroy :destroy_user_privileges
   after_save :update_user_privileges
 

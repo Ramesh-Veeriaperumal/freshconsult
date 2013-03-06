@@ -1,4 +1,4 @@
-Authority::Authorization::PrivilegeList.draw do
+Authority::Authorization::PrivilegeList.build do
  
   # *************** TICKETS **********************
 
@@ -69,7 +69,7 @@ Authority::Authorization::PrivilegeList.draw do
 
   edit_time_entries do
     resource :"helpdesk/time_sheet", :only => [:edit, :update, :destroy], :owned_by => 
-                                            { :scoper => :"Helpdesk::TimeSheet" }
+                                            { :scoper => :time_sheets }
   end
 
   delete_ticket do

@@ -5,7 +5,8 @@
 <%= include_javascripts :pattern  %>
 <%= include_stylesheets :redactor  %>
 <%= include_javascripts :redactor  %>
-<% form_for @agent, :html => { :multipart => true } do |f| %>
+<% form_for @agent, :html => { :id => "agent_form", :rel => "validate", :multipart => true, 
+    "data-focus-invalid" => false,  "data-ignore" => "" } do |f| %>
 <%= f.error_messages %>
 <ul class="admin-breadcrumb">
   <li class="non-arrow"><a href="/admin/home">Home</a><span class="divider"></span></li>
