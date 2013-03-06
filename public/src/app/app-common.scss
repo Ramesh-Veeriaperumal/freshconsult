@@ -9601,13 +9601,15 @@ div.db-chooser{
 	}
 }
 //overriding class check box in ticket show page sidebar 
-.edit_helpdesk_ticket{
-	.checkbox input[type="checkbox"]{
-		margin-top: 7px;
-		margin-right: 5px;
-		margin-left: 0px;
-	}
-	.text input[type="text"]{
-		width: 180px;
+#TicketProperties{
+	.edit_helpdesk_ticket{
+		.checkbox input[type="checkbox"]{
+			margin-top: 7px;
+			margin-right: 5px;
+			margin-left: 0px;
+		}
+		.text input[type="text"]{
+			width: 180px;
+		}
 	}
 }
