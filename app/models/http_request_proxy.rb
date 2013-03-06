@@ -1,9 +1,11 @@
 class HttpRequestProxy
 
   def fetch(params, request)
-    method = request.env["REQUEST_METHOD"].downcase
-    auth_header = request.headers['HTTP_AUTHORIZATION']
-    user_agent = request.headers['HTTP_USER_AGENT']
+    if(request)
+      method = request.env["REQUEST_METHOD"].downcase
+      auth_header = request.headers['HTTP_AUTHORIZATION']
+      user_agent = request.headers['HTTP_USER_AGENT']
+    end
     requestParams = {:method => method, :auth_header => auth_header, :user_agent => user_agent}
     fetch_using_req_params(params, requestParams)
   end
@@ -16,7 +18,7 @@ class HttpRequestProxy
     begin
       method = requestParams[:method]
       auth_header = requestParams[:auth_header]
-      user_agent = requestParams[:user_agent] + " Freshdesk"
+      user_agent = requestParams[:user_agent]? requestParams[:user_agent] + " Freshdesk" :  "Freshdesk"
       domain = params[:domain]
       method = params[:method] || method
       ssl_enabled = params[:ssl_enabled]

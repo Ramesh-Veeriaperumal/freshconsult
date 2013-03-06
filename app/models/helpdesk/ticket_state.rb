@@ -80,7 +80,8 @@ class Helpdesk::TicketState <  ActiveRecord::Base
 
   def set_resolution_time_by_bhrs
     return unless resolved_at
-    self.resolution_time_by_bhrs = Time.zone.parse(created_at.to_s).
+    time = created_at || Time.zone.now
+    self.resolution_time_by_bhrs = Time.zone.parse(time.to_s).
                         business_time_until(Time.zone.parse(resolved_at.to_s))
   end
 

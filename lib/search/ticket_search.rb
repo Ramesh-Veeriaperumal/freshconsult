@@ -69,11 +69,11 @@ module Search::TicketSearch
     end
 
     if criteria_key == :source
-      return TicketConstants::SOURCE_NAMES_BY_KEY.sort
+      return TicketConstants.source_list.sort
     end
 
     if criteria_key == :priority
-      return TicketConstants::PRIORITY_NAMES_BY_KEY.sort
+      return TicketConstants.priority_list.sort
     end
 
     if criteria_key == :responder_id
@@ -93,7 +93,7 @@ module Search::TicketSearch
     end
 
     if criteria_key == :due_by
-       return TicketConstants::DUE_BY_TYPES_NAMES_BY_KEY
+       return TicketConstants.due_by_list
     end
 
     if criteria_key == "helpdesk_tags.name"
@@ -115,7 +115,7 @@ module Search::TicketSearch
     end
 
     if criteria_key == :created_at
-      return TicketConstants::CREATED_AT_OPTIONS
+      return TicketConstants.created_within_list
     end
 
     return []
