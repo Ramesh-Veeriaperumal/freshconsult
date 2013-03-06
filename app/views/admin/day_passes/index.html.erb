@@ -32,10 +32,10 @@
         	</div>       
   				<% else %>
              <p class="alert alert-error">  
-								<strong>No credit card on file. </strong> <br /> Enter payment information to add more day passes    
+								<strong><%= t('admin.day_passes.index.no_credit_card') %> </strong> <br /> <%= t('admin.day_passes.index.payment_info') %>   
 								<br />                
 								<br />                                               
-								<%= link_to( "Enter payment information", subscription_url, :class => "btn" ) %> 
+								<%= link_to( t('admin.day_passes.index.add_payment_info'), subscription_url, :class => "btn" ) %> 
 						 </p>
 					<% end %>
         </div>
@@ -80,7 +80,7 @@
       <%= select :day_pass_config, :recharge_quantity, options_for_select([ "5", "10", "25", "50" ], @day_pass_config.recharge_quantity.to_s)  %>
       <%= t(".day_passes") %>
       <br />      
-      <button class='button' style="margin-left:-2px;"><%= t("update") %></button> or <a href="javascript:void(0)" onclick="$('update_daypass').hide(); $('text_daypass').show()" >cancel</a>
+      <button class='button' style="margin-left:-2px;"><%= t("update") %></button> or <a href="javascript:void(0)" onclick="$('update_daypass').hide(); $('text_daypass').show()" ><%= t('cancel') %></a>
     <% end %>
     </div>
     <span class="seperator"></span>

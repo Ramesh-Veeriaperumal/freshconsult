@@ -7,8 +7,8 @@
 %>
 <table id="jira_sync_settings">
 	<tr><td colspan="2" width="40%" >
-		<label><strong>Sync Updates</strong></label>
-		<div class="info-data">When a Freshdesk ticket is linked with JIRA issue, perform the below actions.<br></div>
+		<label><strong><%= t("integrations.jira_settings.sync_pdates") %></strong></label>
+		<div class="info-data"><%= t("integrations.jira_settings.info1") %><br></div>
 	</td></tr>
 	<tr><td>&nbsp;</td><td></td></tr>
 	<tr><td colspan="2" ></td></tr>
@@ -22,12 +22,12 @@
 	</tr>
 	<tr><td>&nbsp;</td><td></td></tr>
  -->	<tr>
-		<td><label for="configs_fd_status_sync" >When ticket status is updated in Freshdesk </label></td>
+		<td><label for="configs_fd_status_sync" ><%= t("integrations.jira_settings.info2") %></label></td>
 		<td><%=select_tag "configs[fd_status_sync]", options_for_select(fd_status_sync_opts, installed_app.configs_fd_status_sync) %></td>
 	</tr>
 
 	<tr>
-		<td><label for="configs_fd_comment_sync" >When a comment is added in Freshdesk </label></td>
+		<td><label for="configs_fd_comment_sync" ><%= t("integrations.jira_settings.info3") %></label></td>
 		<td><%=select_tag "configs[fd_comment_sync]", options_for_select(fd_comment_sync_opts, installed_app.configs_fd_comment_sync) %></td>
 	</tr>
 </table>

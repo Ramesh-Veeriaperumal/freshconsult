@@ -6,9 +6,9 @@
     </div>
     <% unless @items.total_entries == 0 %>
     <div class="offset">
-      Showing 
+      <%= t('showing') %> 
       <b><%= @items.offset + 1 %></b> - <b><%= @items.offset + @items.length %></b>
-        of
+        <%= t('of') %>
         <a rel="load-rjs" href="javscript:void(0)" id="ticket_list_count"><img src="/images/ticketCount.gif"></a>
     </div>   
     <% end %>
@@ -17,7 +17,7 @@
   <div class="fd-menu" id="SortMenu" style="display:none; margin-left:-5px; margin-top:18px;">
     <ul>             
        <% current_sort_name = "" %>
-       <% TicketsFilter::SORT_FIELD_OPTIONS.each do |sort_item| %> 
+       <% TicketsFilter.sort_fields_options.each do |sort_item| %> 
           <% wf_order = sort_item[1]
             current_sort_name = sort_item[0] if wf_order == current_wf_order 
           %>
@@ -33,7 +33,7 @@
     </ul>
     <span class="seperator"></span>
     <ul>
-      <% TicketsFilter::SORT_ORDER_FIELDS_OPTIONS.each do |sort_order_item| %>
+      <% TicketsFilter.sort_order_fields_options.each do |sort_order_item| %>
         <% wf_order_type = sort_order_item[1]
             current_sort_name = sort_order_item[0] if wf_order_type == current_wf_order 
           %>

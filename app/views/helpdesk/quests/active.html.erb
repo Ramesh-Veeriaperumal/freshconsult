@@ -3,8 +3,8 @@
 
 	<% unless load_available_quests.empty? %>
 		<div id="quests-section">
-		  	<%= link_to "See all", helpdesk_quests_path, :class => "action-right" %>
-		  	<h3 class="title">Available Quests</h3>  
+		  	<%= link_to t('helpdesk_quests.see_all'), helpdesk_quests_path, :class => "action-right" %>
+		  	<h3 class="title"><%= t('helpdesk_quests.available_quests') %></h3>  
 		  	<div id="quests-container" class="panel-list">
 		  		<% @quests.each do |quest| %>
 			  		<div id="active-quest" class="panel-row row-fluid">

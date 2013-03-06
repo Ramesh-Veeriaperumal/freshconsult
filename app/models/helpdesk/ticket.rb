@@ -388,9 +388,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Helpdesk::TicketStatus.translate_status_name(ticket_status, "customer_display_name")
   end
 
-  def source_name
-    SOURCE_NAMES_BY_KEY(source)
-  end
 
    def is_twitter?
     (tweet) and (!account.twitter_handles.blank?) 
@@ -417,7 +414,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def priority_name
-    PRIORITY_NAMES_BY_KEY[priority]
+    TicketConstants.translate_priority_name(priority)
   end
   
   def priority_key
@@ -451,7 +448,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def source_name
-    SOURCE_NAMES_BY_KEY[source]
+    TicketConstants.translate_source_name(source)
   end
 
   def nickname
@@ -981,9 +978,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       requester.customer.nil? ? "No company" : requester.customer.name
     end
     
-    def priority_name
-      PRIORITY_NAMES_BY_KEY[priority]
-    end
     
    def stop_timesheet_timers
     if @ticket_changes.key?(:status) && [RESOLVED, CLOSED].include?(status)
