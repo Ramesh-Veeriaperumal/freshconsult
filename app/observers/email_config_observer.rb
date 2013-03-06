@@ -22,7 +22,7 @@ class EmailConfigObserver < ActiveRecord::Observer
   end
 
   def after_update(email_config)
-    notify_totango email_config
+    notify_totango email_config unless email_config.changes.blank?
   end
 
   #Methods used for the callbacks
