@@ -1,0 +1,83 @@
+<div id="portal-simple-template-options">
+  <% form_for [:admin, @portal_template], :url => { :action => :update }, 
+      :html => { :method => :put, :rel => "portal_form", :target => "_blank" } do |f| -%>
+    <%= hidden_field_tag 'portal_tab', :preferences %>
+    <h3 class="title"><%=t("portalcss.cosmetic.subheader_background_color")%></h3>
+    <% pref_bgs = [:header_color, :bg_color, :footer_color, :help_center_color, :btn_primary_background, :btn_background] %>
+    <div class='srow-fluid'>
+    <% pref_bgs.each_with_index do |p, i| %>
+      <div class="sgrid3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">
+        <label><%= t("admin.portal_settings.simple.#{p}") %></label>  
+        <div class="color">
+          <input type="color" maxlength="7" id="portal_template_prefereces_<%= p %>" class="color_field required" name="portal_template[preferences][<%= p %>]" value="<%= portal_simple.preferences[p] %>" data-hex="true" />
+        </div> 
+      </div>
+    <% end %>
+    </div>
+
+    <h3 class="title"><%=t("portalcss.cosmetic.subheader_tab_color")%></h3>
+    <% pref_bgs = [:tab_color, :tab_hover_color] %>
+    <div class='srow-fluid'>
+    <% pref_bgs.each_with_index do |p, i| %>
+      <div class="sgrid3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">
+        <label><%= t("admin.portal_settings.simple.#{p}") %></label>  
+        <div class="color">
+          <input type="color" maxlength="7" id="portal_template_prefereces_<%= p %>" class="color_field required" name="portal_template[preferences][<%= p %>]" value="<%= portal_simple.preferences[p] %>" data-hex="true" />
+        </div> 
+      </div>
+    <% end %>
+    </div>
+
+    <h3 class="title"><%=t("portalcss.cosmetic.subheader_portal_fonts")%></h3>
+    <% pref_bgs = [:baseFontFamily, :textColor, :headingsFontFamily, :headingsColor] %>
+    <div class='srow-fluid'>
+    <% pref_bgs.each_with_index do |p, i| %>    
+      <div class="sgrid3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">
+        <label><%= t("admin.portal_settings.simple.#{p}") %></label>
+        <% if((i+1) % 2 != 0) %>          
+          <select class="customSelect" name="portal_template[preferences][<%= p %>]" id="portal_template_prefereces_<%= p %>">
+            <%= options_for_select([ "Helvetica Neue", "Droid Sans", "Open Sans", "Open Sans Condensed" ], 
+                portal_simple.preferences[p]) %>
+          </select>
+        <% else %>
+          <div class="color">
+            <input type="color" maxlength="7" id="portal_template_prefereces_<%= p %>" class="color_field required" name="portal_template[preferences][<%= p %>]" value="<%= portal_simple.preferences[p] %>" data-hex="true" />
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+    </div>
+
+    <h3 class="title"><%=t("portalcss.cosmetic.subheader_link_color")%></h3>
+    <% pref_bgs = [:linkColor, :linkColorHover] %>
+    <div class='srow-fluid'>
+    <% pref_bgs.each_with_index do |p, i| %>
+      <div class="sgrid3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">
+        <label><%= t("admin.portal_settings.simple.#{p}") %></label>  
+        <div class="color">
+          <input type="color" maxlength="7" id="portal_template_prefereces_<%= p %>" class="color_field required" name="portal_template[preferences][<%= p %>]" value="<%= portal_simple.preferences[p] %>" data-hex="true" />
+        </div> 
+      </div>
+    <% end %>
+    </div>
+
+    <h3 class="title"><%=t("portalcss.cosmetic.subheader_form_elements")%></h3>
+    <% pref_bgs = [:inputFocusRingColor] %>
+    <div class='srow-fluid'>
+    <% pref_bgs.each_with_index do |p, i| %>
+      <div class="sgrid3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">
+        <label><%= t("admin.portal_settings.simple.#{p}") %></label>  
+        <div class="color">
+          <input type="color" maxlength="7" id="portal_template_prefereces_<%= p %>" class="color_field required" name="portal_template[preferences][<%= p %>]" value="<%= portal_simple.preferences[p] %>" data-hex="true" />
+        </div> 
+      </div>
+    <% end %>
+    </div>
+
+    <br />
+    <div class="well" id="preferences_btns">
+      <%= render :partial => "/admin/shared/customization_buttons", 
+          :locals => { :type => :template, :active_tab => :preferences } %>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,29 @@
+<% form_for [:admin, @portal_template], :url => { :action => :update }, 
+  :html => { :method => :put, :target => "_blank", :rel => "portal_form" } do |f| -%>
+  <%= f.error_messages %>
+  <%= hidden_field_tag 'portal_tab', :layout %>
+
+  <label><%=t("portalcss.layout_pages.header_layout_title")%></label>  
+  <p class="help-text"><%=t("portalcss.layout_pages.header_layout_help_message")%></p>
+
+  <%= f.code_editor :header, :height => "150px",
+        "data-fullscreen-title" => "<span class='light'>"<<t("portalcss.editing")<<"</span>"<<t("portalcss.layout_pages.header_layout_title"),
+        "data-fullscreen-actions" => "layout_btns" %>          
+  <br />
+  <label><%=t("portalcss.layout_pages.footer_layout_title")%></label>
+  <p class="help-text"><%=t("portalcss.layout_pages.footer_layout_help_message")%></p>  
+  <%= f.code_editor :footer, :height => "80px",
+        "data-fullscreen-title" =>  "<span class='light'>"<<t("portalcss.editing")<<"</span>"<<t("portalcss.layout_pages.footer_layout_title"),
+        "data-fullscreen-actions" => "layout_btns" %>
+  <br />
+  <label><%=t("portalcss.layout_pages.pagelayout_title")%></label>
+  <p class="help-text"><%=t("portalcss.layout_pages.pagelayout_help_message")%></p> 
+  <%= f.code_editor :layout,
+        "data-fullscreen-title" =>  "<span class='light'>"<<t("portalcss.editing")<<"</span>"<<t("portalcss.layout_pages.pagelayout_title"),
+        "data-fullscreen-actions" => "layout_btns" %>  
+  <br />
+  <div class="well" id="layout_btns">
+    <%= render :partial => "/admin/shared/customization_buttons", 
+      :locals => { :type => :template, :active_tab => :layout } %>
+  </div>
+<% end %>

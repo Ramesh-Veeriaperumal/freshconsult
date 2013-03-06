@@ -1,0 +1,159 @@
+{% assign forum = topic.forum %}
+{% assign forum_category = forum.forum_category %}
+
+<section class="content main rounded-6 min-height-on-desktop">
+	<a href="{{portal.new_topic_path}}" class="start-topic">
+		{% translate portal.topic.start_new_topic %}
+	</a>
+	<div class="breadcrumb">
+		<a href="/">Home</a>
+		<a href="{{ forum_category.url }}">{{ forum_category.name }}</a>
+		<a href="{{ forum.url }}">{{ forum.name }}</a>
+	</div>
+	
+	<section class="topic-header clearfix">
+		<b class="page-stamp page-stamp-{{ forum.type_name }}">
+			<b class="icon-page-{{ forum.type_name }}"></b>
+		</b>
+		<h2 class="post-title heading">
+			{% if topic.stamp_name %}
+				<span class="label label-{{ topic.stamp_name | downcase }}">
+					{{ topic.stamp_name }}
+				</span>
+			{% endif %}
+			
+			{{ topic.title }}
+		</h2>
+
+		{% if current_user %}
+			<div class="topic-actions btn-group" id="topic-toolbar">
+				<a href="#reply-to-post" class="btn btn-small" data-proxy-for="#new-post-form">Reply</a>
+				{{ topic | follow_topic_button }}
+				{{ topic | link_to_topic_edit }}				
+			</div>
+		{% endif %}
+	</section>
+
+	<section id="topic-comments">
+		{% for post in topic.posts %}
+			<section class="user-comment {% if post.user.is_agent?? %} comment-by-agent {% endif %}" id="post-{{post.id}}">
+				<div class="user-info">					
+					<div class="user-pic-thumb user-pointer-bottom">
+						<img src="{{ post.user.profile_url }}" width="40px" height="40px" />
+					</div>
+					<div class="user-details">
+						{% unless forloop.first %}
+							{{ post | post_actions }}
+						{% endunless %}
+						<h4 class="user-name">{{ post.user.name }}</h4>
+						<div class="p-info">
+							{% if forloop.first %}
+								started a topic {{ topic.first_post.created_on | time_ago }}
+							{% else %}
+								said {{ post.created_on | time_ago }}
+							{% endif %}
+						</div>
+					</div>
+				</div>
+				<div class="p-content" id="post-{{post.id}}-description">
+					<div class="p-desc">
+						{% if post.answer? %}
+							<span class="label label-small label-answered pull-left">
+								Answer
+							</span>
+						{% endif %}
+						{{ post.body_html }}
+					</div>
+
+					{% if forloop.first %}						
+						{% snippet topic_vote %}
+					{% endif %}
+
+					{% if post.attachments.size > 0 %}
+					<hr />
+					<div class="cs-g-c attachments" id="post-{{post.id}}-attachments">
+						{% for attachment in post.attachments %}
+							<div class="cs-g-3 attachment">
+								<img src="{{ attachment.thumbnail }}" 
+									 class="file-thumbnail {% if attachment.image? %} file-image {% endif %}"
+									 width="50px" height="50px"  />
+								<a href="{{ attachment.url }}" class="ellipsis file-name" target="_blank">
+									{{ attachment.filename }}
+								</a>
+								<div class="help-text file-size">
+									{{ attachment.size }}
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+					{% endif %}
+				</div>
+				<div class="p-content hide" id="post-{{post.id}}-edit">
+					<div class="loading-box"></div>
+				</div>
+			</section>
+		{% endfor %}
+	</section>
+
+	<hr class="content-divider" />
+
+	{% if topic.locked? %}
+		<section class="lead-small">
+			{% translate topic.comments_closed %} 
+		</section>
+	{% elsif current_user %}
+		<section id="reply-to-post" class="user-comment">
+			<div class="user-info">
+				<div class="user-pic-thumb user-pointer-bottom">
+					<img src="{{ current_user.profile_url }}" width="40px" height="40px" />
+				</div>
+				<div class="user-details">						
+					<h4 class="user-name">{{ current_user.name }}</h4>
+				</div>
+			</div>
+			<div class="p-content">
+				<input type="text" class="special span12" 
+						placeholder="Click here to add a comment" id="reply-form-proxy" 
+						data-proxy-for="#new-post-form" />
+				<section id="new-post-form" class="hide">
+					{% snippet topic_reply %}
+				</section>
+			</div>
+		</section>
+	{% else %}	
+		<section class="list-lead">
+			<a href="{{ portal.login_path }}">Login</a>
+			{% if portal.can_signup_feature? %}
+				 or <a href="{{ portal.signup_path }}">Signup</a> for an account
+			{% endif %}
+			to post a comment			
+		</section>
+	{% endif %}
+</section>
+
+{% if forum.total_topics > 1 %}
+<section class="sidebar content rounded-6 min-height-on-desktop">	
+	<div class="cs-g-c">
+		<section class="topic-list">
+			<div class="list-lead">
+			 	More topics in {{ forum.name }}
+			</div>
+			<ul>
+				{% assign topic_count = 10 %}
+				{% for o_topic in forum.topics limit:topic_count %}
+					{% if topic.id != o_topic.id %}
+					<li class="cs-g-3">
+						<div class="ellipsis">
+							<a href="{{o_topic.url}}" title="{{o_topic.title}}">{{o_topic.title}}</a>
+						</div>
+					</li>
+					{% endif %}
+				{% endfor %}
+			</ul>
+			{% if forum.total_topics > topic_count %}
+				<a href="{{forum.url}}" class="see-more">See all {{ forum.total_topics }} topics</a>
+			{% endif %}
+		</section>
+	</div>
+</section>
+{% endif %}

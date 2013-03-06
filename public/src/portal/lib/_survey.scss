@@ -1,0 +1,19 @@
+.survey-buttons a{
+    display: block;
+    color: #333;
+    padding: 5px 15px 5px 5px;
+    background-color: #f4f4f4;
+    border: 1px #e8e8e8 solid;
+    margin-bottom: 5px;
+    text-decoration: none;
+    @include border-radius(2em);
+    &:hover{ background-color: #f9f9f9; }    
+    &.active{
+        background-color: #a5a5a5;
+        color: #fff;
+        border-color: #a5a5a5;
+        @include box-shadow(inset 1px 1px 3px #7c7c7c);
+    }
+}
+
+#survey-description{ margin-bottom: 5px; height: 130px; width: 100% }

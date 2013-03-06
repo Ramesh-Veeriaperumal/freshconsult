@@ -19,3 +19,12 @@ $ticket-view-layout:smart;
 
 /* !IMPORTANT ALL GAMIFICATION RELATED STYLES WILL BE UNDER "app/gamification.scss" 
 * These sprites are moved there so that they can be imported only if the feature is enabled */
+
+/* !PATTERN need to moved these symbols later in to magic sprites */
+.symbols-article-list{
+	@include inline-block;
+	width: 20px; height: 20px;
+	background:sprite($symbol, article-list) no-repeat #ffffff;
+	/* Hack to be removed later */
+	margin-top: -2px;
+}

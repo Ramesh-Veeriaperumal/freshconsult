@@ -49,7 +49,7 @@ staging:
   consumer_token: 3MVG9Y6d_Btp4xp58zBbA.yojzeEqoR3qkUeKQ7WcT5etA69USZCdVPz1gpkLxxdYRYYU3zPsrJd1bzoVRLZf
   consumer_secret: 7527225363657893740
  google:
-  consumer_token: freshpo.com
+  consumer_token: freshbugs.com
   consumer_secret: mZ4Mvav/PzfC5X2lOn2+Qi+o
  mailchimp:
   consumer_token: 187267923355

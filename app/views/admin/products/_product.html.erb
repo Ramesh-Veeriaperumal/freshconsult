@@ -1,5 +1,7 @@
 <li>
   <div class="item_actions">
+    <%= link_to "Advanced style and layout customization", 
+                  admin_portal_template_path( product.portal ), :class => "button" if product.portal_enabled? %>
     <%= link_to(t('edit'), edit_admin_product_path(product), :class => "button") %>
     <%= link_to(t('delete'), admin_product_path(product), :method => 'delete', :confirm => t(".delete"), :class => "button" ) %>
   </div>

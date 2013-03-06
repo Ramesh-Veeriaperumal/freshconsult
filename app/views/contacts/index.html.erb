@@ -2,7 +2,7 @@
 <%= include_javascripts :pattern %>
 <div class="cust_list_table" id="contacts-page">
 	<% content_for :sidebar do %>
-  	<% if privilege?(:add_or_edit_contact) %>
+  	<% if privilege?(:manage_contacts) %>
     	<div class="sidepanel">
     		<h3 class="title"><%=t('contacts.quick_contact')%></h3>	
     		<% form_tag :url  => contacts_path, :method => :post do %>
@@ -21,7 +21,6 @@
     					<input class="require_from_group user_info text" id="phone_work" name="user[phone]" size="30" 
     					type="text" /> 
     				</li>
-    				<%= hidden_field(:user, :user_role, :id=>"user_role", :value => User::USER_ROLES_KEYS_BY_TOKEN[:customer] ) %>
     			</ul>
     		  	<div class="button-container"><%= submit_tag t('create'), :class => "uiButton small" %></div>
     		<% end %>
@@ -58,7 +57,7 @@
 										<%= t('contacts.verified.no_contacts_with_letter', :alphabet => params[:letter]) if !params[:letter].blank? %>
 										<% if params[:letter].blank? %>
 											<%= t('contacts.verified.no_contacts') %><br />
-                      <% if privilege?(:add_or_edit_contact) %>
+                      <% if privilege?(:manage_contacts) %>
 											  <span class="small">Create a <a href= "/contacts/new" >new contact</a></span>
                       <% end %>
 										<% end %>

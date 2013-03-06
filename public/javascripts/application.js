@@ -1,83 +1,148 @@
-// Place your application-specific JavaScript functions and classes here
-// This file is automatically included by javascript_include_tag :defaults
+/*
+ * @author venom
+ * Application common page scripts
+ */
 
-//Content copied from Savage_beast..
+jQuery.noConflict()
+ 
+!function( $ ) {
 
-var TopicForm = {
-  editNewTitle: function(txtField) {
-    $('new_topic').innerHTML = (txtField.value.length > 5) ? txtField.value : 'New Topic';
-  }
-}
+  $(function () {
 
-var LoginForm = {
-  setToPassword: function() {
-    $('openid_fields').hide();
-    $('password_fields').show();
-  },
-  
-  setToOpenID: function() {
-    $('password_fields').hide();
-    $('openid_fields').show();
-  }
-}
+    "use strict"
+    
+    // Attaching dom ready events
 
-var EditForm = {
-  // show the form
-  init: function(postId) {
-    $('edit-post-' + postId + '_spinner').show();
-    this.clearReplyId();
-  },
+    // Preventing default click & event handlers for disabled or active links
+    $(".pagination, .dropdown-menu") 
+    		.find(".disabled a, .active a")
+    		.on("click", function(ev){
+    				ev.preventDefault()
+    				ev.stopImmediatePropagation()
+    		})    
 
-  // sets the current post id we're editing
-  setReplyId: function(postId) {
-    $('edit').setAttribute('post_id', postId.toString());
-    $('post_' + postId + '-row').addClassName('editing');
-    if($('reply')) $('reply').hide();
-  },
-  
-  // clears the current post id
-  clearReplyId: function() {
-    var currentId = this.currentReplyId()
-    if(!currentId || currentId == '') return;
+    // Remote ajax for links
+    $("a[data-remote]").live("click", function(ev){
+      ev.preventDefault()
 
-    var row = $('post_' + currentId + '-row');
-    if(row) row.removeClassName('editing');
-    $('edit').setAttribute('post_id', '');
-  },
-  
-  // gets the current post id we're editing
-  currentReplyId: function() {
-    return $('edit').getAttribute('post_id');
-  },
-  
-  // checks whether we're editing this post already
-  isEditing: function(postId) {
-    if (this.currentReplyId() == postId.toString())
-    {
-      $('edit').show();
-      $('edit_post_body').focus();
-      return true;
-    }
-    return false;
-  },
+      var _o_data = $(this).data(),
+        _self = $(this),
+        _post_data = { 
+          "_method" : $(this).data("method")
+        }
 
-  // close reply, clear current reply id
-  cancel: function() {
-    this.clearReplyId();
-    $('edit').hide()
-  }
-}
+      if(!_o_data.loadonce){
+        // Setting the submit button to a loading state
+        if($(this).hasClass('btn')) $(this).button("loading")
 
-var ReplyForm = {
-  // yes, i use setTimeout for a reason
-  init: function() {
-    EditForm.cancel();
-    $('reply').toggle();
-    // for Safari which is sometime weird
-//    setTimeout('$(\"post_body\").focus();',50);
-  }
-}
+        // A data-loading-box will show a loading box in the specified container
+        $(_o_data.loadingBox||"").html("<div class='loading-box'></div>")
 
-/*Event.addBehavior({
-  '#search,#monitor_submit': function() { this.hide(); }
-})*/
+        $.ajax({
+          type: _o_data.type || 'POST',
+          url: this.href,
+          data: _post_data,
+          dataType: _o_data.responseType || "html",
+          success: function(data){          
+            $(_o_data.showDom||"").show()
+            $(_o_data.hideDom||"").hide()
+            $(_o_data.update||"").html(_o_data.updateWithMessage || data) 
+
+            // Executing any unique dom related callback
+            if(_o_data.callback != undefined)
+              window[_o_data.callback](data)
+
+            // Resetting the submit button to its default state
+            if($(this).hasClass('btn'))  _self.button("reset")
+            _self.html(_self.hasClass("active") ? 
+                    _o_data.buttonActiveLabel : _o_data.buttonInactiveLabel)
+
+          }
+        })
+      }else{
+        $(_o_data.showDom||"").show()
+        $(_o_data.hideDom||"").hide()
+      }
+    })
+
+    // Data api for rails button submit with method passing
+    $("a[data-method], button[data-method]").live("click", function(ev){
+      ev.preventDefault()
+      if($(this).data("remote")) return
+
+      if($(this).data("confirm") && !confirm($(this).data("confirm"))) return
+
+      var _form = $("<form class='hide' method='post' />")
+              .attr("action", this.href)
+              .append("<input type='hidden' name='_method' value='"+$(this).data("method")+"' />")
+              .get(0).submit()      
+    })
+
+    // Data api for onclick showing dom elements
+    $("a[data-show-dom], button[data-show-dom]").live("click", function(ev){
+      ev.preventDefault()
+      if($(this).data("remote")) return
+
+      $($(this).data("showDom")).show()
+    })
+
+    // Data api for onclick hiding dom elements
+    $("a[data-hide-dom], button[data-hide-dom]").live("click", function(ev){
+      ev.preventDefault()
+      if($(this).data("remote")) return
+
+      $($(this).data("hideDom")).hide()
+    })
+
+    // Data api for onclick toggle of dom elements
+    $("a[data-toggle-dom], button[data-toggle-dom]").live("click", function(ev){
+      ev.preventDefault()
+      if($(this).data("remote")) return
+
+      if($(this).data("animated") != undefined)
+        $($(this).data("toggleDom")).slideToggle()
+      else  
+        $($(this).data("toggleDom")).toggle()
+    })
+
+    // Data api for onclick change of html text inside the dom element
+    $("[data-toggle-text]").live("click", function(ev){
+      ev.preventDefault()
+      if($(this).data("remote")) return
+
+      var _oldText = $(this).data("toggleText"),
+        _currentText = $(this).html()
+
+      $(this)
+        .data("toggleText", _currentText)
+        .html(_oldText)
+    })
+
+    // Data api for onclick for show hiding a proxy input box to show inplace of a redactor or textarea
+    $("input[data-proxy-for], a[data-proxy-for]").live("click", function(ev){
+      var proxyDom = $(this).data("proxyFor")
+
+      // Checking if the clicked element is a link so that the 
+      // proper input element can be triggered
+      if(this.nodeName.toLowerCase() == 'a'){
+        // !PORTALCSS REFACTOR The below call may be too expensive need to think of better way
+        jQuery("input[data-proxy-for="+proxyDom+"]").trigger("click") 
+        return
+      }
+
+      ev.preventDefault()     
+
+      $(this).hide()
+
+      // Getting if there is any textarea in the proxy div
+      var _textarea = $(proxyDom)
+                .show()
+                .find("textarea")
+
+            // Setting the focus to the editor if it is redactor with a pre check for undefined
+      if(_textarea.getEditor()) _textarea.getEditor().focus()
+    })
+
+  })
+
+}(window.jQuery)

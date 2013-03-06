@@ -1,0 +1,14 @@
+<header class="banner">
+	<div class="banner-title">
+		{{ portal | logo }}
+		<h1 class="ellipsis heading">{{ portal.name }}</h1>
+	</div>
+	<nav class="banner-nav">
+		{{ portal | welcome_navigation }}
+	</nav>
+</header>
+<nav class="page-tabs">
+	{% for tab in portal.tabs %}
+		<a href="{{tab.url}}" class="{% if tab.tab_type == current_tab %}active{% endif %}">{{ tab.label }}</a>
+	{% endfor %}
+</nav>

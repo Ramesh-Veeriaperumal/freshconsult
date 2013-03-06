@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<%= render :partial => "layouts/shared/html" %>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<title><%= page_title %></title>
+		<meta name="description" content="<%= page_description %>">
+		<meta name="author" content="">
+		<meta name="keywords" content="<%= page_keywords %>">
+
+		<meta name="viewport" content="width=device-width">  
+		<link rel="shortcut icon" href="<%= current_portal.fav_icon_url %>" />
+		
+		<%#= include_stylesheets :portal, :redactor %>
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:700' rel='stylesheet' type='text/css'>
+		<link href="/theme.css" media="screen" rel="stylesheet" type="text/css">
+		<%= include_stylesheets :portal %>
+		<%= include_javascripts :portal_head %>		
+	</head>
+	<body>
+		<% if session[:preview_button].present? && current_user && current_user.agent? %>
+			<div class="alert">
+				You are currently previewing the customisation changes.
+				<a href="javascript:window.close()">Click here</a> to go back to the editing page.
+			</div>
+		<%end%>
+
+		<%= @layout %>
+
+		<%= include_javascripts :portal_bottom, :redactor %>
+		<%= render :partial => "layouts/integrations" %>
+	</body>
+</html>

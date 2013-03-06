@@ -1,0 +1,15 @@
+<form class="hc-search-form" autocomplete="off" action="<%= tab_based_search_url %>" id="hc-search-form">
+	<div class="hc-search-input">
+		<input placeholder="<%= t('portal.search.placeholder') %>" type="text" 
+			name="term" class="special" value="<%= params[:term] %>" 
+            rel="page-search" data-max-matches="10">
+	</div>
+	<div class="hc-search-button">
+		<button class="btn btn-primary" type="button" autocomplete="off">
+			<i class="mobile-icon-search hide-tablet"></i>
+			<span class="hide-in-mobile">
+				<%= t('header.search') %>
+			</span>
+		</button>	
+	</div>
+</form>

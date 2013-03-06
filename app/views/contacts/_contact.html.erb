@@ -1,6 +1,7 @@
 <tr>
 	<td class="selector-box">
-    <% if privilege?(:manage_users) || privilege?(:delete_contact) %>
+    <% if (params[:state].eql?("unverified") && privilege?(:manage_users)) ||
+        privilege?(:delete_contact) %>
 		  <%= check_box_tag('ids[]', contact.to_param, false, :class => 'customers_selector') %>
     <% end %>
 	</td>
@@ -38,7 +39,7 @@
   					"data-loading-text" => t('admin.getting_started.index.next_please_wait'), 
   					"data-complete-text" => "<i class='icon-ok'></i><b class='sent-text'>#{t('users.activations.sent')}</b>") if !contact.active? and !contact.deleted and !contact.email.blank? %>
       <% end %>
-      <% if privilege?(:add_or_edit_contact) %>
+      <% if privilege?(:manage_contacts) %>
 			  <%= link_to(t('edit'), edit_contact_path(contact), :class => "btn btn-mini") if !contact.deleted? %>
       <% end %>
       <% if privilege?(:delete_contact) %>

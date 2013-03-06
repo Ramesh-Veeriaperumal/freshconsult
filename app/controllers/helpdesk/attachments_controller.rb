@@ -1,8 +1,6 @@
 class Helpdesk::AttachmentsController < ApplicationController
   
   include HelpdeskControllerMethods
-  # 1. destroy_permission, i dont know if Account and user have the correct thing
-  # => in what context do they come ? if its account shouldnt he have manage account?
   skip_before_filter :check_privilege
   before_filter :check_download_permission, :only => [:show]  
   before_filter :check_destroy_permission, :only => [:destroy]
@@ -40,7 +38,7 @@ class Helpdesk::AttachmentsController < ApplicationController
         elsif ['Account'].include? attachment.attachable_type
           can_destroy = true if privilege?(:manage_account)
         elsif ['Post'].include? attachment.attachable_type
-          can_destroy = true if privilege?(:edit_forum_topic) or (current_user && attachment.attachable.user_id == current_user.id)
+          can_destroy = true if privilege?(:edit_topic) or (current_user && attachment.attachable.user_id == current_user.id)
         elsif ['User'].include? attachment.attachable_type
           can_destroy = true if privilege?(:manage_users) or (current_user && attachment.attachable.id == current_user.id)
         end
@@ -67,7 +65,7 @@ class Helpdesk::AttachmentsController < ApplicationController
       if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? @attachment.attachable_type
   
         # If the user has high enough permissions, let them download it
-        return true if privilege?(:manage_tickets)
+        return true if(current_user && current_user.agent?)
   
         # Or if the note belogs to a ticket, and the user is the originator of the ticket
         ticket = @attachment.attachable.respond_to?(:notable) ? @attachment.attachable.notable : @attachment.attachable

@@ -1,28 +1,78 @@
-<% form_for @role, :html => {:class => "well", :id => 'new_role'} do |role_form| %>
-  <%= error_messages_for :role %>
-
-  <%= role_form.label :name %> 
-  <%= role_form.text_field :name %>
-
-  <%= role_form.label :description %> 
-  <%= role_form.text_field :description %>
-
-  <!-- default has been set in mysql as false, do i need to pass hidden value ? -->
+<%= error_messages_for :role %>
+<div class="row-fluid new-role">
+	<div>
+		<ul class="clearfix unstyled">
+ 			<li>
+ 				<%= role_form.label :name, t('name'), :class =>'control-label span2' %> 
+				<div class="span10">
+					<%= role_form.text_field :name , :class => "text span10", :placeholder => "Agent Name"%>
+				</div>
+			</li>	
+			<li>
+				<%= role_form.label :description, t('description'), :class =>'control-label span2' %> 
+				<div class="span10">
+					<%= role_form.text_area :description , :class => "text span10", :cols => "40", :rows => "5", 						:placeholder => "Description"%>		
+				</div>
+			</li>	
+		</ul>
+		<div>
+			<p class="lead-title lead">
+				<span><%= t('admin.roles.permissions')%></span>
+			</p>
+		</div>
+	</div>
+	<div class="row-fluid">
+		<ul class="role-nav">
+			<li><%= t('admin.roles.scroll.scroll_to')%></li>
+			<li><a href="#tickets"><%= t('admin.roles.scroll.tickets')%></a></li>
+			<li><a href="#solutions"><%= t('admin.roles.scroll.solutions')%></a></li>
+			<li><a href="#forums"><%= t('admin.roles.scroll.forums')%></a></li>
+			<li><a href="#customers"><%= t('admin.roles.scroll.customers')%></a></li>
+			<li><a href="#reports"><%= t('admin.roles.scroll.reports')%></a></li>
+			<li><a href="#admin"><%= t('admin.roles.scroll.administration')%></a></li>
+		</ul>
+	</div>
+	  
+  <%= build_role_form %>
   
-  <ul class = "parent">
-    <%= new_role_form %>
-  </ul>
-  <%= hidden_field_tag "admin_role[privilege_list][]"%>
-  <div class="button-container">
-    <%= role_form.submit "Register", :class =>"btn" %>
-  </div>
-<% end %>
+  <%= hidden_field_tag "role[privilege_list][]"%>
+</div>
+<ul class="admin-breadcrumb breadcum-footer clearfix">
+  <li class="non-arrow pull-right">
+    <% unless @role.default_role? %>
+      <%= role_form.submit t('save'), :class => "btn btn-primary"%>
+    <% end %>
+  </li>
+  <li class="non-arrow pull-right">
+    <%= link_to t('cancel'), admin_roles_path, :class => "btn"%>
+  </li>
+		
+</ul>
 
 <% javascript_tag do %>
+  /* Scroll functionality */
+  
+  jQuery(function(){ // document ready
+  	jQuery('a[href*=#]:not([href=#])').click(function() {
+  	    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') 
+  	        || location.hostname == this.hostname) {
+
+  	        var target = jQuery(this.hash);
+  	        target = target.length ? target : jQuery('[name=' + this.hash.slice(1) +']');
+  	           if (target.length) {
+  	             jQuery('html,body').animate({
+  	                 scrollTop: target.offset().top
+  	            }, 1000);
+  	            return false;
+  	        }
+  	    }
+  	});
+  });
   
   (function($) {
     $.fn.toggleDisabled = function(status){
         return this.each(function(){
+          // special case, edit notes
           if(!($(this).hasClass('permanent_disable')))
           {
             this.disabled = !status;
@@ -32,7 +82,8 @@
             if(this.type == "radio" && $(this).hasClass('default'))
               this.checked = true;
             else
-              this.checked = status; 
+              this.checked = false;
+            // recursively call for all child values   
             if($(this).hasClass('nested'))
             {
               $('input.' + this.id).toggleDisabled(status);
@@ -42,7 +93,7 @@
         });
     };
 
-    $.fn.specialToggleDisabled = function(status){
+    $.fn.radioGroupToggleDisabled = function(status){
         return this.each(function(){
           if($(this).hasClass('nested'))
           {
@@ -54,39 +105,56 @@
 
     $('#new_role').submit( function(ev) {
 
+      /* If none of the children of operational admin is checked
+         then disable operational admin */
+         
       if($('input.operational_admin:checked').length == 0)
       {
-        $('#operational_admin').prop('checked', false);
-        $('#operational_admin').prop('disabled', true);
+        $('#operational_admin').prop({'checked': false, 'disabled': true });
       }
-
-      $.each($('input.radio:checked'), function() {
+      
+      /* Before form submit, take all the values from checked
+         radio buttons and load it into hidden field with the
+         specified name */
+         
+      $.each($('input:radio:checked'), function() {
         $('<input>').attr({
           type: 'hidden',
-          name: 'admin_role[privilege_list][]',
+          name: 'role[privilege_list][]',
           value: $(this).val()
         }).appendTo('#new_role');
         $(this).removeAttr('name');
       });
+      
     });
 
     $(document).ready(function() {
-
+      
+      /* If element has children and state changes */
+      
       $('input.nested:checkbox, input.nested:radio').change(function() {
         $('input.' + this.id).toggleDisabled(this.checked);
       });
+      
+      /* If radio state changes, then change state of other
+         radio buttons in the group, mainly for the admin set */
 
       $('input:radio').change(function() {
-        $("input[name = '" + this.name + "']:unchecked").specialToggleDisabled(this.checked);
+        $("input[name = '" + this.name + "']:unchecked").radioGroupToggleDisabled(this.checked);
       });
 
+      /* Special case, edit notes */
+      
       $('input.permanent_disable').each(function(){
           this.disabled = true;
           this.checked = true;
           if($(this).hasClass('nested'))
             $('input.' + this.id).prop('disabled', false);
       });
-
+      
+      /* Load the default values for radio button groups
+         on page load */
+         
       var radio_groups = {}
       $(":radio").each(function(){
         radio_groups[this.name] = true;
@@ -105,9 +173,3 @@
   })(jQuery);
 
 <% end %>
-
-<style>
-  ul.children  {
-    margin-left: 25px;
-  }
-</style>

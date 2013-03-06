@@ -61,7 +61,7 @@ makePageNonSelectable = function(source){
 	source.onmousedown = function () { return false; };						// Other browsers
 };
 
-//Image error problem
+// Image error problem
 function imgerror(source){
     if (source.width <= 50) {
       source.src = PROFILE_BLANK_THUMB_PATH;

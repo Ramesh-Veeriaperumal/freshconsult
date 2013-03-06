@@ -53,7 +53,7 @@
 
     <label>
       <%= t(".top_level_solution") %>    
-      <%= portal.collection_select :solution_category_id, @solution_categories, :id, :name, options ={:prompt => t(".select_solution_category")} %>
+      <%= portal.collection_select :solution_category_id, @solution_categories.reject(&:is_default?), :id, :name, options ={:prompt => t(".select_solution_category")} %>
     </label>
     <%= content_tag(:div, t('.top_level_solution_info'), :class => "info-data") %>
   </div>
@@ -75,23 +75,6 @@
     </div>
     <span class="seperator"></span>  
     <%= render :partial => "/shared/fav_image", :locals => { :item => @product.portal, :field_name => "product[portal_attributes]" } %>
-    <span class="seperator"></span>
-
-    <label><%= content_tag(:strong, t('account.page_colors.title') ) %></label>
-      <% portal.fields_for :preferences do |p| %>
-        <%= p.label :header_color, t('account.page_colors.header'), :class => "caption" %>
-        <div class="color fields">
-          <input type="color" maxlength="7" id="HeaderColor" class="color_field required" name="product[portal_attributes][preferences][header_color]" value="<%=portal_pref(@product.portal, :header_color)%>" data-hex="true" />
-  			</div>
-        <%= p.label :header_color_tab, t('account.page_colors.tab_color'), :class => "caption" %>
-        <div class="color fields">
-          <input type="color" maxlength="7" id="TabColor" class="color_field required" name="product[portal_attributes][preferences][tab_color]" value="<%=portal_pref(@product.portal, :tab_color)%>" data-hex="true" /> 
-        </div>
-        <%= p.label :bg_color, t('account.page_colors.background'), :class => "caption" %></td>
-        <div class="color fields"> 
-          <input type="color" maxlength="7" id="BackgroundColor" class="color_field required" name="product[portal_attributes][preferences][bg_color]" value="<%=portal_pref(@product.portal, :bg_color)%>" data-hex="true" />
-          <div><a href="javascript:void(0)" class="slim-button" id="ResetColors"><%=t('account.info3')%> </a></div>
-        </div>
-      <% end %>
+    
   </div>
 </div>

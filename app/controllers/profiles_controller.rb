@@ -85,7 +85,7 @@ def change_password
       redirect_to new_user_session_url      
     else     
       flash[:notice] = t(:'flash.profile.change_password.failure')
-      redirect_to :action => :edit
+      redirect_to edit_support_profile_path
     end
       
 end

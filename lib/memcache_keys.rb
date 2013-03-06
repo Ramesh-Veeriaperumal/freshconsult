@@ -22,6 +22,7 @@ module MemcacheKeys
 
   ACCOUNT_STATUSES = "v2/ACCOUNT_STATUSES:%{account_id}"
 
+
   PORTAL_BY_URL = "v1/PORTAL_BY_URL:%{portal_url}"
 
   ACCOUNT_BY_FULL_DOMAIN = "v1/ACCOUNT_BY_FULL_DOMAIN:%{full_domain}"

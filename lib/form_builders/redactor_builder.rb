@@ -11,6 +11,7 @@ module FormBuilders
         :tabindex => 2,
         :convertDivs => false,
         :imageUpload => "/uploaded_images",
+        :allowedTags => ["a", "div", "b", "i"],
         :imageGetJson => "/uploaded_images",
         :buttons => ['bold','italic','underline', 'deleted','|','unorderedlist', 'orderedlist',  
                       '|','fontcolor', 'backcolor', '|' ,'link','image', 'video']
@@ -24,7 +25,7 @@ module FormBuilders
         :imageGetJson => "/uploaded_images"
       }
 
-      def rich_editor(method, options = {})     
+      def rich_editor(method, options = {})
         options[:id] = field_id( method, options[:index] )  
         rich_editor_tag(field_name(method), @object.send(method), options)
       end
@@ -38,10 +39,11 @@ module FormBuilders
         _javascript_options = redactor_opts.merge(options).to_json
 
         # Height set as :height in the redator helper object will be used as the base height for the js editor
-        options[:style] = "height:#{options[:height]};"
+        options[:style] = "height:#{options[:height]}px;"
 
         output = <<HTML
-#{text_area_tag(name, content, options)}
+#{text_area_tag(name, content, options.merge({:rel => "redactor"})) }
+
 <script type="text/javascript">
     if (window['redactors'] === undefined) window.redactors = {}
     !function( $ ) {

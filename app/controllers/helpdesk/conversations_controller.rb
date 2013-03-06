@@ -9,7 +9,6 @@ class Helpdesk::ConversationsController < ApplicationController
   include Conversations::Twitter
   include Conversations::Facebook
   
-  before_filter :validate_attachment_size, :only => [:reply, :forward]
   before_filter :validate_fwd_to_email, :only => [:forward]
   before_filter :check_for_kbase_email, :only => [:reply]
   before_filter :set_default_source, :set_mobile, :prepare_mobile_note

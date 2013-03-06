@@ -2,9 +2,11 @@ include Helpdesk::Roles
 
 account = Account.current
 
-Admin::Role.seed_many(:account_id, :name, [
-    ["Administrator", ADMINISTRATOR, "Administrator"],
-    ["Agent", AGENT, "Agent"]
+Role.seed_many(:account_id, :name, [
+    ["Account Administrator", ACCOUNT_ADMINISTRATOR, "Account Administrator"],
+    ["Administrator",         ADMINISTRATOR,         "Administrator"],
+    ["Supervisor",            SUPERVISOR,            "Supervisor"],
+    ["Agent",                 AGENT,                 "Agent"]
   ].map do |role|
     {
       :name => role[0],

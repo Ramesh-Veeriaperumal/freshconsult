@@ -1,30 +1,57 @@
-<%= render :partial => 'form' %>
+<%= include_stylesheets :pattern %>
+<%= include_javascripts :pattern  %>
+<% content_for :sidebar do %>
+   <!-- FIXME: need to change content -->
+  <%= render :partial => "agents/helpnote_without_tour" %>
+<% end %>
+<% form_for @role, :url => admin_role_path(@role), :html => { :id => 'new_role' , :method => :put } do |role_form| %>
+	<ul class="admin-breadcrumb">
+	  <li class="non-arrow"><%= link_to t('header.tabs.admin'), admin_home_index_path %><span class="divider"></span></li>
+	  <li><%= link_to t('admin.home.index.roles'), admin_roles_path %><span class="divider"></span></li>
+    <% unless @role.default_role? %>
+	    <li class="active "><%= t('admin.roles.edit') %></li>
+    <% else %>
+      <li class="active "><%= t('admin.roles.default_role') %></li>
+    <% end %>
+	  <li class="non-arrow pull-right">
+      <% unless @role.default_role? %>
+        <%= role_form.submit t('save'), :class => "btn btn-primary" %>
+      <% end %>
+	  </li>
+	  <li class="non-arrow pull-right">
+      <%= link_to t('cancel'), admin_roles_path, :class => "btn"%>
+	  </li>
+	</ul>
+  <%= render :partial => 'form', :locals => { :role_form => role_form} %>
+<% end %>
 
 <% javascript_tag do %>
 
   (function($) {
-    $.fn.editFormSpecial = function(){
+    
+    /* If an element is checked, then enable all
+       its children */
+       
+    $.fn.editFormShowChildren = function(){
       return this.each(function(){
-        if(!($(this).hasClass('permanent_disable')))
-        {
-          this.disabled = false;
-        }
         if($(this).hasClass('nested'))
           $('input.' + this.id).prop('disabled', false);
       });
     };
 
-    $.fn.editFormAnotherSpecial = function(){
+    /* If radio button is not checked, then disable all its children,
+       special case for hidden fields in admin set */
+       
+    $.fn.editFormRadioSpecial = function(){
       return this.each(function(){
         if($(this).hasClass('nested'))
-          $('input.' + this.id).prop('disabled', true);
-          $('input.' + this.id).prop('checked', false);
+          $('input.' + this.id).prop({'disabled': true, 'checked': false});
       });
     };
 
     $(document).ready(function() {
-      $('input:checked').editFormSpecial();
-      $('input:radio:unchecked').editFormAnotherSpecial();
+      $('input:checked').editFormShowChildren();
+      $('input:radio:unchecked').editFormRadioSpecial();
     });
 
   })(jQuery);

@@ -1,6 +1,6 @@
 class Solution::Folder < ActiveRecord::Base
   
-  attr_protected :category_id
+  attr_protected :category_id, :account_id
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :category_id
   
@@ -14,8 +14,8 @@ class Solution::Folder < ActiveRecord::Base
   after_save :set_article_delta_flag
   before_update :clear_customer_folders
   
-  has_many :articles, :class_name =>'Solution::Article' , :dependent => :destroy, :order => "position"
-  has_many :published_articles, :class_name =>'Solution::Article' ,:order => "position",
+  has_many :articles, :class_name =>'Solution::Article', :dependent => :destroy, :order => "position"
+  has_many :published_articles, :class_name =>'Solution::Article', :order => "position",
            :conditions => "solution_articles.status = #{Solution::Article::STATUS_KEYS_BY_TOKEN[:published]}"
 
   has_many :customer_folders , :class_name => 'Solution::CustomerFolder' , :dependent => :destroy
@@ -69,7 +69,7 @@ class Solution::Folder < ActiveRecord::Base
 
 
   def self.visiblity_condition(user)
-    condition =   {:visibility =>self.get_visibility_array(user) }
+    condition =   { :visibility => self.get_visibility_array(user) }
     condition =  Solution::Folder.merge_conditions(condition) + " OR(solution_folders.visibility=#{VISIBILITY_KEYS_BY_TOKEN[:company_users]} AND 
                 solution_customer_folders.customer_id = #{ user.customer_id})" if (user && user.has_company?)
     return condition
@@ -102,6 +102,10 @@ class Solution::Folder < ActiveRecord::Base
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
+  end
+
+  def to_liquid
+    Solution::FolderDrop.new self
   end
 
   private

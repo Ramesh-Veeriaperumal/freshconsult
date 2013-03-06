@@ -1,0 +1,150 @@
+// MODALS
+// ------
+
+// Recalculate z-index where appropriate
+.modal-open {
+  .dropdown-menu {  z-index: $zindexDropdown + $zindexModal; }
+  .dropdown.open { *z-index: $zindexDropdown + $zindexModal; }
+  .popover       {  z-index: $zindexPopover  + $zindexModal; }
+  .tooltip       {  z-index: $zindexTooltip  + $zindexModal; }
+}
+
+// Background
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: $zindexModalBackdrop;
+  background-color: #efefef;
+  background-image: url("/images/dialog/overlay.gif");
+  background-repeat: repeat;
+  // Fade for backdrop
+  &.fade { opacity: 0; }
+}
+
+.modal-backdrop,
+.modal-backdrop.fade.in {
+  @include opacity(0.8);
+}
+
+// Base modal
+.modal {
+  position: absolute;
+  top:   10px;
+  left:  10px;
+  right: 10px;
+  width: auto;
+  margin: 0;  
+  z-index: $zindexModal;
+  background-color: $white;
+  @include background-image(linear-gradient(lighten($grayLighter, 5%), $white 30px) );
+  border: 2px solid #646464;
+  border: 2px solid rgba(#4f4f4f, 0.8);
+  *border: 2px solid #646464; /* IE6-7 */
+  @include border-radius(6px);
+  @include box-shadow(0 3px 7px rgba(0,0,0,0.3), $white 0 0 1px inset);
+  @include background-clip(padding-box);
+
+  &.fade {
+    @include transition(#{opacity .3s linear, top .3s ease-out});
+    top: -25%;
+  }
+  &.fade.in { top: 10px; }
+}
+.modal-header {
+  padding: 9px 40px 0 15px;
+  border-bottom: 1px solid #eee;
+  .close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+  }
+}
+
+// Body (where all modal content resides)
+.modal-body {
+  overflow-y: auto;
+  max-height: 400px;
+  padding: 15px;
+}
+// Remove bottom margin if need be
+.modal-form {
+  margin-bottom: 0;
+}
+
+// Footer (for actions)
+.modal-footer {
+  padding: 14px 15px 15px;
+  margin-bottom: 0;
+  text-align: right; // right align buttons
+  background-color: #f5f5f5;
+  border-top: 1px solid #ddd;
+  @include border-radius(0 0 6px 6px);
+  @include box-shadow(inset 0 1px 0 $white);
+  @include clearfix(); // clear it in case folks use .pull-* classes on buttons
+
+  // Properly space out buttons
+  .btn + .btn {
+    margin-left: 5px;
+    margin-bottom: 0; // account for input[type="submit"] which gets the bottom margin like all other inputs
+  }
+  // but override that for button groups
+  .btn-group .btn + .btn {
+    margin-left: -1px;
+  }
+}
+
+@include at-breakpoint($media-mobile){
+  /* Resetting width and margin so it will be calculated during the dialog wapper */
+  .modal { 
+    width:auto !important; 
+    margin-left: 0 !important;
+  }
+}
+
+@include at-breakpoint($break-tablet){
+  // Modals
+  .modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+
+    &.fade.in { top: 50%; }
+  }
+  .modal-header{ padding: 9px 15px 0 15px; }
+  .modal-header .close {
+    height: 28px;
+    width: 28px;
+    border: none;
+    padding: 8px;
+    text-align:center;    
+    left:-28px;
+    top:15px;
+    @include background-image(linear-gradient(#4f4f4f, #646464));
+    @include border-radius(5px 0 0 5px);
+    @include box-shadow(1px 1px 0 rgba(0, 0, 0, 0.4) inset);
+    @include hide-text();
+    &:focus, &:hover {
+      @include background-image(linear-gradient(#646464, #4b4b4b));
+      left: -30px;
+      width: 30px;
+    }
+    &:before {
+      content: "x";
+      text-indent: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      background: url("/images/dialog/icon-close.gif") no-repeat;
+      display:inline-block;
+      width:11px;
+      height:11px;
+    }
+  }
+}
+
+
+@include at-breakpoint($break-desktop){
+  .modal { width: 710px; margin: -250px 0 0 -355px; }
+}

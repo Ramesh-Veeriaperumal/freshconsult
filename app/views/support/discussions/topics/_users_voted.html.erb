@@ -1,0 +1,10 @@
+<div id="voted-users" class="user-list">	
+	<% @topic.users_who_voted.each do |user| %>
+		<div class="uv-row uv-user-thumb">
+			<%= user_avatar(user, :thumb, "user-pic-thumb") %>
+			<div class="ellipsis lead-small">
+				<%= user.name %>
+			</div>
+		</div>
+	<% end %>
+</div>

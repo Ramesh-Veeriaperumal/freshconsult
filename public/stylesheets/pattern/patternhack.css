@@ -145,13 +145,18 @@ strong {
   display: inline-block;
   vertical-align: middle; }
 
-/* This is class is overriding app-common css. */
-/* line 141, ../../src/pattern/patternhack.scss */
+/* This class overriding app-common css. */
+/* line 140, ../../src/pattern/patternhack.scss */
 .pagination {
   border-bottom: 0; }
-  /* line 143, ../../src/pattern/patternhack.scss */
+  /* line 142, ../../src/pattern/patternhack.scss */
   .pagination a {
     font-weight: normal; }
-    /* line 145, ../../src/pattern/patternhack.scss */
+    /* line 144, ../../src/pattern/patternhack.scss */
     .pagination a:hover, .pagination a:focus {
       text-decoration: none; }
+
+/* This class overriding app-bootstrap css. */
+/* line 152, ../../src/pattern/patternhack.scss */
+.dropdown-toggle:after {
+  border-top: 0; }

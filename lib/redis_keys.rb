@@ -8,7 +8,8 @@ module RedisKeys
 	INTEGRATIONS_JIRA_NOTIFICATION = "INTEGRATIONS_JIRA_NOTIFY:%{account_id}:%{local_integratable_id}:%{remote_integratable_id}"
 	INTEGRATIONS_LOGMEIN = "INTEGRATIONS_LOGMEIN:%{account_id}:%{ticket_id}"
 	HELPDESK_TICKET_UPDATED_NODE_MSG    = "{\"ticket_id\":%{ticket_id},\"agent\":\"%{agent_name}\",\"type\":\"%{type}\"}"
-	
+	PORTAL_PREVIEW = "PORTAL_PREVIEW:%{account_id}:%{user_id}:%{template_id}:%{label}"
+
 	def get_key(key)
 		begin
 			$redis.get(key)
@@ -81,7 +82,6 @@ module RedisKeys
 	  end
 	end
 
-
 	def list_members(key)
 		begin
 			length = $redis.llen(key)
@@ -89,6 +89,22 @@ module RedisKeys
 		rescue Exception => e
       NewRelic::Agent.notice_error(e)
 	  end
+	end
+
+	def exists(key)
+		begin
+			$redis.exists(key)
+		rescue Exception => e
+        	NewRelic::Agent.notice_error(e)
+    	end
+	end
+
+	def array_of_keys(pattern)
+		begin
+			$redis.keys(pattern)
+		rescue Exception => e
+        	NewRelic::Agent.notice_error(e)
+    	end
 	end
 
 	def publish_to_channel channel, message

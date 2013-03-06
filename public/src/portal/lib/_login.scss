@@ -1,0 +1,53 @@
+.alt-login-button .btn{
+	text-align:left;
+	display:block;
+	margin:$baseLineHeight 0;
+} 
+
+.login-form input.special{
+	width: 100%;
+}
+
+.btn-signup{
+	/*color: $linkColor;*/
+	font-weight: bold;
+	margin: 16px 0;
+	width: 100%;
+}
+
+.btn-login{
+	float: none;
+	width: 100%;
+	text-transform: uppercase;
+	margin: 4px 0 10px;
+}
+
+.btn-google:before, .btn-facebook:before, .btn-twitter:before{
+	content: "";	
+	display: inline-block;
+	@include ie7-restore-right-whitespace();
+	vertical-align: text-top;
+	margin:-2px 5px 0 -8px;
+}
+
+.btn-google:before{ @extend .icon-sign-in-google; }
+.btn-facebook:before{ @extend .icon-sign-in-facebook; }
+.btn-twitter:before{ @extend .icon-sign-in-twitter; }
+
+@include at-breakpoint($break-tablet){
+	@include layout(4){
+		.login-form{ @include span-columns(3); }
+		.alt-login-button{ @include span-columns(1 omega); }
+	}
+	.login-form{ padding-right: 2em; }
+	.btn-login{ float: right; margin-top: -20px; } 
+	.btn-login, .btn-signup{ width: auto; }
+	.login-form{
+		border-right:1px solid #dadada;	
+		@include box-shadow(#fff 1px 0 0);
+	}	
+}
+@include at-breakpoint($break-desktop){
+	#login-container, #signup-container{ @include min-height(275px); }
+	#login-container{ margin-bottom: 200px; }
+}

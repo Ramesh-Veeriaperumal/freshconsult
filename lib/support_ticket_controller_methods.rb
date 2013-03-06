@@ -3,7 +3,7 @@ module SupportTicketControllerMethods
   include Helpdesk::TicketActions
   
   def show
-    @ticket = Helpdesk::Ticket.find_by_param(params[:id], current_account)    
+    @ticket = current_account.tickets.find_by_param(params[:id], current_account)    
     unless can_access_support_ticket?
       access_denied
     else
@@ -16,9 +16,8 @@ module SupportTicketControllerMethods
     end
   end
 
-  def new
-    @ticket = Helpdesk::Ticket.new 
-    @ticket.email = current_user.email if current_user
+  def new    
+    set_portal_page :submit_ticket
   end
   
   def create
@@ -41,7 +40,7 @@ module SupportTicketControllerMethods
   end
   
   def show_survey_form
-      render :partial => "/support/shared/survey_form" if customer_survey_required?
+    render :partial => "/support/shared/survey_form" if customer_survey_required?
   end
 
   def customer_survey_required?
@@ -50,10 +49,10 @@ module SupportTicketControllerMethods
 
   def check_email
     items = check_email_scoper.find(
-            :all, 
-            :conditions => ["email = ?", "#{params[:v]}"])
+              :all, 
+              :conditions => ["email = ?", "#{params[:v]}"])
     respond_to do |format|
-      format.json { render :json => { :user_exists => items.blank? }  }
+      format.json { render :json => { :user_exists => items.present? }  }
     end
   end  
 

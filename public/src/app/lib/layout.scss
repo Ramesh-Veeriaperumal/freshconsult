@@ -1,7 +1,21 @@
 @import "settings";
 
+/* !PATTERN box-sizing to be included later and tweeked in all pages */
+/*@include border-box-sizing;*/
+
 // This import applies a global reset to any page that imports this stylesheet.
 html {  height:100%; overflow-y:scroll; }
+
+@include at-breakpoint($break-tablet){
+	// Generic Grid classes
+	.srow-fluid{ @include pie-clearfix; }
+
+	@for $i from 1 through 12 {
+	  	.sgrid#{$i}{ @include span-columns($i); }
+	}
+  	.omega{ @include omega; }
+}
+
 .wrapper{
 	@include container;
 	@include pie-clearfix;
@@ -22,12 +36,7 @@ html {  height:100%; overflow-y:scroll; }
 
 .fixedWidth{
 	max-width:680px;
-}
-
-#wrap{
-	margin-bottom:0px;
-	text-align:center;
-} 
+}                   
 
 #minwidthfix{
 	width:950px;
@@ -131,6 +140,7 @@ div.bg_pulp{
 	position:relative;
 	padding:5px 0px 0px 0px;
 	background:$header_color;
+	color:#ffffff;
 }
 
 .brand{

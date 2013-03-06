@@ -1,14 +1,19 @@
 class HomeController < ApplicationController
 
-  skip_before_filter :check_privilege
-  before_filter :set_content_scope, :set_mobile, :set_selected_tab
+  skip_before_filter :check_privilege	
+ 	before_filter { @hash_of_additional_params = { :format => "html" } }
+  before_filter :set_content_scope, :set_mobile #, :set_selected_tab
   
   def index
-    redirect_to MOBILE_URL and return if (current_user && mobile?)
-    redirect_to helpdesk_dashboard_path if (current_user && current_user.privilege?(:manage_tickets))
+    # redirect_to MOBILE_URL and return if (current_user && mobile?)
+    if (current_user && privilege?(:manage_tickets))
+      redirect_to helpdesk_dashboard_path
+    else
+      redirect_to support_home_path
+    end
     redirect_to login_path and return unless (allowed_in_portal?(:open_solutions) || allowed_in_portal?(:open_forums))
     
-    #@categories = current_portal.solution_categories.customer_categories if allowed_in_portal?(:open_solutions)
+    # @categories = current_portal.solution_categories.customer_categories if allowed_in_portal?(:open_solutions)
     if allowed_in_portal?(:open_solutions)
       @categories = main_portal? ? current_portal.solution_categories.customer_categories : current_portal.solution_categories
     end
@@ -18,7 +23,6 @@ class HomeController < ApplicationController
       redirect_to login_path
     end
     
-    @topics = recent_topics if allowed_in_portal?(:open_forums)
   end
  
   protected
@@ -33,9 +37,10 @@ class HomeController < ApplicationController
         (current_portal.forum_category ? 
             current_portal.forum_category.topics.visible(current_user).newest(5) : [])
     end
+
   private
-    def set_selected_tab
-      @selected_tab = :home
-    end
-  
+    # def set_selected_tab
+    #   @selected_tab = :home
+    # end
+
 end

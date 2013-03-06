@@ -6,7 +6,7 @@ HOST:
     development:    "localhost:3000"
     test:           "localhost:3000"
     production:     "freshdesk.com"
-    staging:        "freshpo.com"
+    staging:        "freshbugs.com"
     
 ASSET_URL: "http://assets.freshdesk.com/widget" 
 
@@ -106,7 +106,7 @@ EMAIL:
           <<: *defaults
         staging:
           <<: *defaults
-          domain: freshpo.com        
+          domain: freshbugs.com        
           
             
 

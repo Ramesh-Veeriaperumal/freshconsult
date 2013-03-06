@@ -1,0 +1,54 @@
+// Base settings for portal styles
+@import "lib/settings";
+@import "lib/mixins";
+
+// CSS Reset
+@import "lib/reset";
+
+// Type and some util functions
+@import "lib/type";
+@import "lib/utilities";
+
+// Layout and scaffolding
+@import "lib/scaffolding";
+@import "lib/layout";
+
+// Patterns
+@import "lib/forms";
+@import "lib/buttons";
+@import "lib/button-groups";
+@import "lib/sprites";
+
+@import "lib/dropdowns";
+@import "lib/navs";
+
+// Components: Misc
+@import "lib/breadcrumbs";
+@import "lib/pagination";
+@import "lib/labels";
+@import "lib/modals";
+@import "lib/component-animations";
+@import "lib/close";
+@import "lib/alerts";
+
+// Profile image styles
+@import "lib/profile";
+
+// Page related styles
+@import "lib/header-footer";
+@import "lib/page-lead";
+@import "lib/content";
+@import "lib/login";
+@import "lib/search";
+@import "lib/autocomplete";
+
+// Date picker
+@import "lib/jquery-ui";
+
+// !PORTALCSS Existing styles from app
+// Need to be optimised
+@import "lib/ticket";
+@import "lib/survey";
+
+// Debug styles
+/*@import "lib/debug";*/

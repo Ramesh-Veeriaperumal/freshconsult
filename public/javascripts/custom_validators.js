@@ -106,4 +106,13 @@ $.validator.addMethod("require_from_group", function(value, element, options) {
 
 $.validator.addClassRules("require_from_group" ,{require_from_group: [1, ".user_info"]});
 
+// Agent role validation
+// To check if atleast one role is present
+$.validator.addMethod("at_least_one_item", function(value, element, options) {
+  return($($(element).data("selector")).size() != 0)
+}, jQuery.format("At least one role is requied for the agent"));
+
+$.validator.addClassRules("at_least_one_item", { at_least_one_item: true});
+
+
 })(jQuery);

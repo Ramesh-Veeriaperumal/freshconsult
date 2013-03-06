@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121218133527) do
+ActiveRecord::Schema.define(:version => 20130206040552) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1025,6 +1025,31 @@ ActiveRecord::Schema.define(:version => 20121218133527) do
     t.datetime "created_at"
   end
 
+  create_table "portal_pages", :force => true do |t|
+    t.integer  "template_id", :limit => 8,        :null => false
+    t.integer  "account_id",  :limit => 8,        :null => false
+    t.integer  "page_type",                       :null => false
+    t.text     "content",     :limit => 65537
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "portal_pages", ["account_id", "template_id", "page_type"], :name => "index_portals_on_account_id_and_template_id_page_type"
+
+  create_table "portal_templates", :force => true do |t|
+    t.integer  "account_id",  :limit => 8,        :null => false
+    t.integer  "portal_id",   :limit => 8,        :null => false
+    t.text     "preferences"
+    t.text     "header"
+    t.text     "footer"
+    t.text     "custom_css",  :limit => 65537
+    t.text     "layout"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "portal_templates", ["account_id", "portal_id"], :name => "index_portals_on_account_id_and_portal_id"
+
   create_table "portals", :force => true do |t|
     t.string   "name"
     t.integer  "product_id",           :limit => 8
@@ -1493,7 +1518,6 @@ ActiveRecord::Schema.define(:version => 20121218133527) do
     t.integer  "posts_count",                      :default => 0
     t.datetime "last_seen_at"
     t.boolean  "deleted",                          :default => false
-    t.integer  "user_role"
     t.boolean  "delta",                            :default => true,  :null => false
     t.integer  "import_id",           :limit => 8
     t.string   "fb_profile_id"
@@ -1503,11 +1527,13 @@ ActiveRecord::Schema.define(:version => 20121218133527) do
     t.string   "address"
     t.datetime "deleted_at"
     t.boolean  "whitelisted",                      :default => false
-    t.string   "privileges"
     t.boolean  "account_admin",                    :default => false
     t.string   "external_id"
     t.string   "string_uc01"
     t.text     "text_uc01"
+    t.integer  "user_role"
+    t.boolean  "helpdesk_agent",                   :default => false
+    t.string   "privileges",                       :default => "0"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true

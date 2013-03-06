@@ -7,8 +7,7 @@
     <%= include_javascripts :redactor  %>
 
     <script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
-  	
-    <% helpdesk_submit_options = []%>
+  	<% helpdesk_submit_options = []%>
   	<% current_portal.ticket_fields.each  do |field| %>
   		<% if field.visible_in_view_form? %>
         <%
@@ -34,6 +33,7 @@
 	   <%end%>
   </div>
 </div>
+<% form_for :helpdesk_note,   :html => {  :multipart => true, :id =>"replymultiple"} do |f|%>
 <% if privilege?(:reply_ticket) %>
   <div class="dialog-special small_curve" id="reply-fields">
     <div id="content-bulk" class="content clearfix">
@@ -43,7 +43,7 @@
         </label> 
       </div>
       <div class="request_panel clearBoth hide" id="bulkreplyform">
-        <%= render :partial => "/helpdesk/tickets/reply_multiple", :locals => { :helpdesk_submit_options=>helpdesk_submit_options, :id => 'reply-multiple', :cntid => "cnt-reply-multiple"} %>
+        <%= render :partial => "/helpdesk/tickets/reply_multiple", :locals => { :helpdesk_submit_options=>helpdesk_submit_options, :id => 'reply-multiple', :cntid => "cnt-reply-multiple", :f => f} %>
       </div>
     </div>  
   </div> 
@@ -62,7 +62,7 @@
 </div>
 </div>
 </div>
-
+<% end %>
 <% javascript_tag do %> 
   
   jQuery('#ticket_cancel_multiple_button').click(
@@ -71,9 +71,10 @@
    	});
 
   jQuery('#no-response').hide();
-
   function submitBulkUpdate(){
-    if(!$('addbulkreply').checked || jQuery("#reply-multiple-cnt-reply-multiple-body").valid()){
+    if( !($('addbulkreply') && $('addbulkreply').checked) ||
+      jQuery("#reply-multiple-cnt-reply-multiple-body").valid())
+    {
       <%= "reply_multiple_submit('#{update_multiple_helpdesk_bulk_ticket_actions_path}', 'put', jQuery('#update-fields .update-check-for-fields:checked').parent().parent().find('select').get() )" %>
       jQuery("#ticket_update_multiple_button, #ticket_cancel_multiple_button").attr('disabled','disabled');
       jQuery('#loader').removeClass("hide");

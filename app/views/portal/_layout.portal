@@ -1,0 +1,37 @@
+<div class="page">
+	{{ header }}
+	
+	{% if current_tab %}	
+	<section class="help-center rounded-6">	
+		<div class="hc-search">
+			<div class="hc-search-c">
+				<h2 class="heading">{% translate header.help_center %}</h2>
+				{% snippet search_form %}
+			</div>
+		</div>		
+		<div class="hc-nav">
+			<nav>
+				<a href="{{ portal.new_ticket_path }}" class="new-ticket ellipsis">
+					{% translate header.new_support_ticket %}
+				</a>
+				<a href="{{ portal.tickets_path }}" class="check-status ellipsis">
+					{% translate header.check_ticket_status %}
+				</a>
+				{% unless portal.contact_info == empty %}
+					<span class="contact-info">{{ portal.contact_info }}</span>
+				{% endunless %}
+			</nav>
+		</div>
+	</section>
+	{% endif %}
+
+	<!-- Notifocation Messages for the page  -->
+	{{ page_message }}
+
+	<div class="c-wrapper">		
+		{{ content_for_layout }}
+	</div>
+
+	{{ footer }}
+
+</div>

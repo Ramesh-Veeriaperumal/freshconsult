@@ -2,6 +2,7 @@
 // Feel free to delete these if you want keep the defaults:
 @import "susy";
 @import "mixins";
+@import "susy";
 @import "compass";
 
 $blueprint-liquid-grid-columns: 24;
@@ -55,12 +56,15 @@ $grid-padding: 10px;
 
 $container-style: magic;
 
-$media-mobile: 		0 30em; 
+$media-mobile: 		0 30em;
 $break-tablet:		45em 12;
 $break-desktop:		60em 12;
 $break-large:		75em 16;
 
 $container-width: 	1140px; 
+
+// Sprite sheet creation
+// --------------------------------------------------
 
 /* Sprite variables used inside the sheet */
 $symbol: sprite-map("symbols/*.png");

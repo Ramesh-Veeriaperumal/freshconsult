@@ -76,7 +76,7 @@ class Admin::CannedResponses::ResponsesController < Admin::AdminController
 		@items.each do |item|
 			item.update_attribute(:folder_id, params[:move_folder_id])
 		end
-		redirect_to (:back, 
+		redirect_to(:back, 
 			:notice => t('canned_folders.folder_update',{:folder_name => @resp_folder.name}))
 	end
 

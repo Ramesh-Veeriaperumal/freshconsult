@@ -1,0 +1,90 @@
+.help-center{
+	background-color: $help_center_color;
+	padding: $content-padding-mobile;	
+	border: 1px solid darken($help_center_color, 10%);
+	@include clearfix;
+}
+
+// PORTAL BASED SEARCH CSS
+
+.hc-search{	position: relative; }
+
+.hc-search-form{
+	background-color: rgba(#e3e3e3, 0.3);
+	border:1px solid #cdcccc;
+	padding:5px;
+	@include border-radius(6px);
+	@include pie-clearfix;
+}
+
+.hc-search-form.active{
+	@include box-shadow(#aaaaaa 0 6px 10px);
+	@include border-radius(6px 6px 0 0);
+}
+
+@include layout(12) {
+	.hc-search-input{ @include span-columns(10); }
+	.hc-search-button{ @include span-columns(2 omega); }
+}
+.hc-search-input{ position: relative; }
+.hc-search-input input, .hc-search-button .btn{	height: 35px; }
+.hc-search-input input{	width: 100%; }
+.hc-search-button .btn{
+	width: 100%;
+	text-transform: uppercase;
+	padding: 5px;
+	font-size: 12px;
+}
+
+@include mobile-icon(icon-search, $btnPrimaryBackground);
+
+.hc-nav	nav{ @include clearfix;	}
+.new-ticket, .check-status{ font-weight: bold; }
+.new-ticket, .check-status, .contact-info{ 	
+	padding: 3px 8px 3px 2px;
+	float: left;
+	margin-right: 15px;
+	&:before{
+		content:"";
+		@include inline-block;		
+		margin-right: 5px;
+		@include border-radius(2em);
+		margin-top: -1px;
+		background-color: #696767;
+	}
+	&:hover{ text-decoration:none; }
+}
+.new-ticket:before{ @extend .icon-new-ticket; }
+.check-status:before{ @extend .icon-check-status; }
+.contact-info:before{ @extend .icon-phone; margin-right: 8px; }
+
+@include at-breakpoint($break-tablet){
+    .help-center{ margin-top: 10px; padding: $page-lead-padding; }
+
+	.hc-search{ 
+		width: 68%;
+		padding-right: 2%;
+		border-right:1px solid darken($help_center_color, 10%);
+	}
+	.hc-nav{
+		width: 31%;
+		padding-left: 1%;
+		a, span{
+			@include inline-block;
+		}
+	}
+	.help-center:before{
+	    content: '';
+	    display: inline-block;
+	    height: 100%; 
+	    vertical-align: middle;
+	}
+	.hc-search, .hc-nav{
+	  display: inline-block;
+	  vertical-align: middle;
+	}
+}
+
+@include at-breakpoint($break-desktop){
+   .hc-search-button .btn{ font-size: $baseFontSize; } 
+}

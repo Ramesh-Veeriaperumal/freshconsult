@@ -2,10 +2,8 @@ class PostsController < ApplicationController
   
   rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
 
-  before_filter :require_user, :only => :create
   before_filter :find_forum_topic, :only => :create
   before_filter :find_post,      :except =>  [:monitored, :create]
-  #before_filter :login_required, :except => [:index, :monitored, :search, :show]
   
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
@@ -70,7 +68,7 @@ class PostsController < ApplicationController
     @post.user = current_user
     @post.account_id = current_account.id
     build_attachments
-    @post.save!
+    @post.save
     respond_to do |format|
       format.html do
         redirect_to category_forum_topic_path(:category_id => params[:category_id],:forum_id => params[:forum_id], :id => params[:topic_id], :anchor => @post.dom_id, :page => params[:page] || '1')
@@ -100,17 +98,17 @@ class PostsController < ApplicationController
   
   def update
     @post.attributes = params[:post]
-    @post.save!
-  rescue ActiveRecord::RecordInvalid
-    flash[:bad_reply] = 'An error occurred'[:error_occured_message]
-  ensure
-    respond_to do |format|
-      format.html do
-        redirect_to category_forum_topic_path(@post.topic.forum.forum_category_id,:forum_id => params[:forum_id], :id => params[:topic_id])
+    @post.save
+    rescue ActiveRecord::RecordInvalid
+      flash[:bad_reply] = 'An error occurred'[:error_occured_message]
+    ensure
+      respond_to do |format|
+        format.html do
+          redirect_to category_forum_topic_path(@post.topic.forum.forum_category_id,:forum_id => params[:forum_id], :id => params[:topic_id])
+        end
+        format.js
+        format.xml { head 200 }
       end
-      format.js
-      format.xml { head 200 }
-    end
   end
 
   def destroy
@@ -154,14 +152,12 @@ class PostsController < ApplicationController
 
       @forum_category = scoper.find(params[:category_id])
       @forum = @forum_category.forums.find(params[:forum_id])
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @forum.visible?(current_user)
       @topic = @forum.topics.find(params[:topic_id]) if params[:topic_id]
     end
     
     def find_post     
       @post = Post.find_by_id_and_topic_id_and_forum_id(params[:id], params[:topic_id], params[:forum_id]) || raise(ActiveRecord::RecordNotFound)
       (raise(ActiveRecord::RecordNotFound) unless (@post.account_id == current_account.id)) || @post
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @post.topic.forum.visible?(current_user)
     end
     
     def render_posts_or_xml(template_name = action_name)

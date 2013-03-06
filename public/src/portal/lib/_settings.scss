@@ -1,0 +1,211 @@
+@import "susy";
+@import "compass";
+
+// GLOBAL VALUES
+// --------------------------------------------------
+
+// Application mode is either debug if its in developement mode
+$app-debug-mode: 		false !default; 
+
+// Grays
+// -------------------------
+$black:                 #000 !default;
+$grayDarker:            #222 !default;
+$grayDark:              #333 !default;
+$gray:                  #555 !default;
+$grayLight:             #999 !default;
+$grayLighter:           #dcdcdc !default;
+$white:                 #fff !default;
+
+
+// Accent colors
+// -------------------------
+$blue:                  #049cdb !default;
+$blueDark:              #0064cd !default;
+$green:                 #006063 !default;
+$red:                   #9d261d !default;
+$greenDark:				#4c4b4b !default;
+$yellow:                #ffc40d !default;
+$orange:                #f4af1a !default;
+$pink:                  #c3325f !default;
+$purple:                #7a43b6 !default;
+
+
+// Scaffolding
+// -------------------------
+$bg_color:        		#ffffff !default;
+$textColor:             $grayDark !default;
+
+$header_color: 			$greenDark !default;
+$header_text_color: 	if(lightness($header_color) > 50, black, white) !default;
+
+$tab_color:				$green !default;
+$tab_text_color: 		if(lightness($tab_color) > 50, black, white) !default;
+
+$tab_hover_color: 		$header_color !default;
+$tab_hover_text_color: 	if(lightness($tab_hover_color) > 50, black, white) !default;
+
+$footer_color: 			#777777 !default;
+$footer_text_color: 	if(lightness($footer_color) > 50, black, white) !default;
+
+$logo-url: 				if(lightness($header_color) > 50, "logo-color", "logo-white") !default;
+
+$help_center_color: 	#f5f5f5 !default;
+$page-background: 		$white !default;
+$page-light-background: rgba($white, 0.9) !default;
+$page-form-background: 	rgba(#f4f4f4, 0.9) !default;
+
+// Links
+// -------------------------
+$linkColor:             $blue !default; //#08c
+$linkColorHover:        darken($linkColor, 15%) !default;
+
+// -------------------------
+$sansFontFamily:        "Helvetica Neue", Helvetica, Arial, sans-serif !default;
+$serifFontFamily:       Georgia, "Times New Roman", Times, serif !default;
+$monoFontFamily:        Menlo, Monaco, Consolas, "Courier New", monospace !default;
+
+$baseFontSize:          14px !default;
+$baseFontFamily:        $sansFontFamily !default;
+$baseLineHeight:        $baseFontSize * 1.5625 !default;
+$altFontFamily:         $serifFontFamily !default;
+
+$headingsFontFamily:    'Open Sans Condensed', Helvetica, sans-serif !default; // empty to use BS default, $baseFontFamily
+$headingsFontWeight:    bold !default;    // instead of browser default, bold
+$headingsColor:         inherit !default; // empty to use BS default, $textColor
+
+// Date picker & jQuery UI widget setting
+// --------------------------------------------------
+$widgetHeaderColor: 	#eee !default;
+$widgetHeaderTextColor: #333 !default;
+
+$widgetBackground: 		$white !default;
+
+// Input placeholder text color
+// -------------------------
+$placeholderText:         #b2b2b2 !default;
+$helpTextColor: 		  #999 !default;
+
+// Hr border color
+// -------------------------
+$hrBorder:                $grayLighter !default;
+
+// Autocompelete
+// -------------------------
+$acHighlightBg: 		  #ffffaa !default;
+
+// Forms
+// -------------------------
+$inputBackground:               $white !default;
+$inputBorder:                   #ccc !default;
+$inputBorderRadius:             3px !default;
+$inputDisabledBackground:       $grayLighter !default;
+$formActionsBackground:         #f5f5f5 !default;
+
+$inputFocusRingColor:  			#f4af1a !default;
+
+$autocomeplete-highlight:		#cccccc !default;
+$autocomeplete-highlight-text:	if(lightness($autocomeplete-highlight) > 50, black, white) !default;
+
+// Dropdowns
+// -------------------------
+$dropdownBackground:            $white !default;
+$dropdownBorder:                rgba(0,0,0,.2) !default;
+$dropdownLinkColor:             $grayDark !default;
+$dropdownLinkColorHover:        $white !default;
+$dropdownLinkBackgroundHover:   #999 !default;
+
+// Form states and alerts
+// -------------------------
+$warningText:             #c09853 !default;
+$warningBackground:       #fcf8e3 !default;
+$warningBorder:           darken(adjust-hue($warningBackground, -10), 3%) !default;
+
+$errorText:               #b94a48 !default;
+$errorBackground:         #f2dede !default;
+$errorBorder:             darken(adjust-hue($errorBackground, -10), 3%) !default;
+
+$successText:             #468847 !default;
+$successBackground:       #dff0d8 !default;
+$successBorder:           darken(adjust-hue($successBackground, -10), 5%) !default;
+
+$infoText:                #3a87ad !default;
+$infoBackground:          #d9edf7 !default;
+$infoBorder:              darken(adjust-hue($infoBackground, -10), 7%) !default;
+
+// Buttons
+// -------------------------
+$btn_background: 					$white !default;
+$btnBackground:                     $btn_background;
+$btnBackgroundHighlight:            darken($btnBackground, 10%);
+$btnBorder:                         darken($btnBackground, 15%);
+$btnTextColor:						if(lightness($btnBackground) > 50, $grayDark, white);
+$btnShadowColor: 					if(lightness($btnBackground) > 50, 0 1px 1px rgba(255,255,255,.75), 0 -1px 0 rgba(0,0,0,.25));
+
+$btn_primary_background:			#6c6a6a !default;
+$btnPrimaryBackground:              $btn_primary_background;
+$btnPrimaryBackgroundHighlight:     darken($btnPrimaryBackground, 10%);
+$btnPrimaryTextColor:				if(lightness($btnPrimaryBackground) > 50, $grayDark, white) !default;
+$btnPrimaryShadowColor: 			if(lightness($btnPrimaryBackground) > 50, 0 1px 1px rgba(255,255,255,.75), 0 -1px 0 rgba(0,0,0,.25));
+
+$btnDangerBackground:              	$red;
+$btnDangerBackgroundHighlight:     	darken($btnDangerBackground, 10%);
+$btnDangerTextColor:				if(lightness($btnDangerBackground) > 50, $grayDark, white) !default;
+$btnDangerShadowColor: 				if(lightness($btnDangerBackground) > 50, 0 1px 1px rgba(255,255,255,.75), 0 -1px 0 rgba(0,0,0,.25));
+
+// COMPONENT VARIABLES
+// --------------------------------------------------
+
+// Z-index master list
+// -------------------------
+// Used for a bird's eye view of components dependent on the z-axis
+// Try to avoid customizing these :)
+$zindexDropdown:          1000 !default;
+$zindexPopover:           1010 !default;
+$zindexTooltip:           1020 !default;
+$zindexFixedNavbar:       1030 !default;
+$zindexModalBackdrop:     1040 !default;
+$zindexModal:             1050 !default;
+
+// GRID SYSTEM FOR SUSY
+// --------------------------------------------------
+
+$total-columns: 4;
+$column-width: 60px;
+$gutter-width: 10px;
+$grid-padding: 10px;
+
+$container-style: magic;
+
+$default-container-width: 1140px !default;
+$container-width: $default-container-width;
+
+
+$media-mobile: 		0 30em; // Applying styles only for mobile
+$break-tablet:		45em 12; // Applying styles for Tablets to Medium & Large desktops 
+$break-desktop:		60em 12; // Applying styles for Medium & Large desktops 
+$break-large:		75em 16; // Applying styles for Large desktops and above
+
+// PAGE RELATED STYLES
+// --------------------------------------------------
+
+$content-padding-mobile: 1em;
+$content-padding-side: 2.2em;
+$content-padding: 1.8em $content-padding-side;
+
+$header-padding: 0.9em 1.6em;
+
+$content-border: 1px solid $grayLighter;
+
+$page-lead-padding: 1em 2.2em;
+$row-border-color: #f3f3f3;
+
+// TOPIC AND TICKET COMMENTS RELATED STYLES
+// --------------------------------------------------
+$comments-padding-side: 1em !default;
+$comments-padding: 0.8em $comments-padding-side !default;
+$comments-border-color: #ebebeb !default;
+$comments-background: #fafafa !default;
+
+$comments-agent-background: #fffdf8 !default;
+$comments-agent-border-color: #cccccc !default;

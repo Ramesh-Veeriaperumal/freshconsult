@@ -2,7 +2,7 @@
 <%= include_javascripts :pattern %>
 <div id="customers-page">
 	<%content_for :sidebar do%>
-		<% if privilege?(:add_or_edit_contact) %>
+		<% if privilege?(:manage_contacts) %>
 		<div class="sidepanel">
 		<h3 class="title"><%=t('company.quick_company')%></h3> 
 		<% form_tag :action=> :quick, :method =>:post do %> 
@@ -46,8 +46,10 @@
 								</td>
 								<td>
 									<div class="item_actions" align="right">
-                    <% if privilege?(:add_or_edit_contact) %>
+                    <% if privilege?(:manage_contacts) %>
 								    	<%= link_to(t('edit'), edit_customer_path(customer), :class => "btn btn-mini") %>
+                    <% end %>
+                    <% if privilege?(:delete_contact) %>
 								    	<%= link_to "<i class='icon-trash'></i>", {:controller => "customers", :action => "destroy", :id => customer}, :confirm =>  
 								    		"#{t('company.info11')} #{customer.name}?\n#{t('company.info10')}", 
 								    		:method => 'delete', :class => "btn btn-mini" %>

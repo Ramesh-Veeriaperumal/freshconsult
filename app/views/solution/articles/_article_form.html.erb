@@ -3,12 +3,12 @@
 <%= f.error_messages %>
 	<ul class="ui-form">
 		<li>
-    		<%= f.label(:title, t('title')) %>
-    		<%= f.text_field :title, :class => "text required", :rel => "cloneSource", 
+    	<%= f.label(:title, t('title')) %>
+    	<%= f.text_field :title, :class => "text required", :rel => "cloneSource", 
 				'data-destination' => "solution_article_seo_data_meta_title", :autofocus => true %>
 		</li>
 		<li>
-    		<%= f.rich_editor  :description,
+    	<%= f.rich_editor  :description,
     		:rel => "cloneSource", 'data-destination' => "solution_article_seo_data_meta_description", 
     		'data-multiline' => true, 'editor-type' => :solution, :height => "350px"  %>		
 		</li>
@@ -70,9 +70,9 @@
 								:value => (@article.seo_data || {})[:meta_description], 
 								:class => "solution-seo-description" %>
 							<div class="solution-seo-message">
-					    		<b><span id="DescriptionCounter"></span> <%= t('solution.char_count') %>.</b>
-					    		<%= t('solution.description_counter_message') %>
-				    		</div>
+				    		<b><span id="DescriptionCounter"></span> <%= t('solution.char_count') %>.</b>
+				    		<%= t('solution.description_counter_message') %>
+				    	</div>
 						</li>
 						<li>
 							<%= s.label(:meta_keywords, t('solution.solution_meta_keywords')) %>

@@ -1,0 +1,17 @@
+<% form_for [:admin, @portal_template], :url => { :action => :update }, 
+  :html => { :method => :put, :target => "_blank", :rel => "portal_form" } do |f| -%>
+  <%= hidden_field_tag 'portal_tab', :custom_css %>
+	<h3 class="title"><%=t("portalcss.cosmetic.css_subheader")%></h3>
+	<p class="help-text">
+    <%=t("portalcss.cosmetic.css_help_message")%>
+  </p>
+	<%= f.code_editor :custom_css, 
+                :value => @default_custom_css, :mode => "css", 
+                "data-fullscreen-title" => "<span class='light'>Editing</span> Custom stylesheet",
+                "data-fullscreen-actions" => "custom_css_btns" %>
+  <br />
+  <div class="well" id="custom_css_btns">
+    <%= render :partial => "/admin/shared/customization_buttons", 
+      :locals => { :type => :template, :active_tab => :custom_css } %>
+  </div>
+<% end -%>

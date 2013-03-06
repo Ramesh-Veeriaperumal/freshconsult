@@ -69,6 +69,10 @@ class Customer < ActiveRecord::Base
       self.sla_policy_id = account.sla_policies.find_by_is_default(true).id      
     end    
   end
+
+  def to_s
+    self.name
+  end
   
   def to_xml(options = {})
      options[:indent] ||= 2

@@ -1,21 +1,10 @@
-<% javascript_tag do %>
-  jQuery(document).ready(function(){
-    if (jQuery.trim( jQuery('div.info-highlight').text() ).length != 0) {
-      jQuery('div.info-highlight').show();
-    }
-
-    if (jQuery.trim( jQuery('div.action_buttons').text() ).length != 0) {
-      jQuery('div.action_buttons').show();
-    }
-});
-<% end %>
 <% content_for :sidebar do -%>
   <%= render :partial => "/integrations/widgets/contacts_show_side_bar_widget", :locals => {:user => @user}%>
 <%- end %>
 
 <div class="contact-box clearfix">
 		<div class="action_buttons hide">
-      <% if privilege?(:add_or_edit_contact) %>
+      <% if privilege?(:manage_contacts) %>
 			  <%= link_to t('contacts.edit_contact'), edit_contact_path(@user) %>
       <% end %>
       <% if is_allowed_to_assume?(@user) %>
@@ -58,7 +47,7 @@
 		<% form_for @user do |f| %>
 			<%= f.label :description, t("contacts.form_placeholder.description"), :class => "overlabel" %>
 			<%= f.text_area :description, :class=> "sp_paragraph" %>
-      <% if privilege?(:add_or_edit_contact) %>
+      <% if privilege?(:manage_contacts) %>
 			  <div class="alignright"> 
 				  <%= f.submit t('save'), :class=>"uiButton small"  %> &nbsp;
 			  </div>
@@ -73,3 +62,16 @@
 		<%= render :partial => "tickets", :object => @user_tickets_open_pending %>
 </div>
 <br><br>
+<% javascript_tag do %>
+  // need to convert this to util
+  jQuery(document).ready(function(){
+    if (jQuery.trim( jQuery('div.info-highlight').text() ).length != 0) {
+      jQuery('div.info-highlight').show();
+    }
+
+    if (jQuery.trim( jQuery('div.action_buttons').text() ).length != 0) {
+      jQuery('div.action_buttons').show();
+    }
+});
+<% end %>
+

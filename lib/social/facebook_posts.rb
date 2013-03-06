@@ -95,7 +95,7 @@ class Social::FacebookPosts
       user = @account.contacts.new
       if user.signup!({:user => {:fb_profile_id => profile_id, :name => profile[:name], 
                     :active => true,
-                    :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+                    :helpdesk_agent => false}})
        else
           puts "unable to save the contact:: #{user.errors.inspect}"
        end   

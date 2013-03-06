@@ -45,10 +45,8 @@
 							</span> 
 						<%end%>
 					</div>
-					<%if @forum.questions?%>  
-						<%if topic.posts.answered_posts.count > 0%>
-							<%= t('answered') %>
-						<%end%>
+					<%if @forum.questions? && topic.answered? %>
+						<%= t('answered') %>
 					<%end%> 
 				  <% if topic.paged? -%>
 				  	<small><%= link_to t('last') %></small>
@@ -59,6 +57,8 @@
   <% else %>
 	<div class="big-info">
 		<div class="no-info-text"><%= t('no_topics_text')%></div>
-		<%= (link_to t('add_a_topic'), new_category_forum_topic_path(category, forum), :class => "uiButton large") if logged_in? && (!forum.announcement? || privilege?(:create_forum_topic)) %>
+    <% if privilege?(:create_topic) %>
+		  <%= (link_to t('add_a_topic'), new_category_forum_topic_path(category, forum), :class => "uiButton large") %>
+    <% end %>
 	</div>
 <% end %>	

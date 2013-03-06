@@ -246,7 +246,7 @@ var $J = jQuery.noConflict();
                                         }
       // Form validation any form append to the dom will be tested via live query and then be validated via jquery
       $("form[rel=validate]").livequery(function(ev){
-        $(this).validate(validateOptions)
+        $(this).validate($.extend( validateOptions, $(this).data()))
       })
 
     $('.single_click_link').live('click',function(ev) {
@@ -272,9 +272,15 @@ var $J = jQuery.noConflict();
          $('#Pagearea').css("minHeight", sidebarHeight);
 
 
-        if(window.location.hash != '')
-          $(window.location.hash + "-tab").trigger('click');
-
+        if(window.location.hash != '') {
+          hash = window.location.hash.split('#');
+          window.location.hash.substr(1).split('#').each(function(value,index){
+            setTimeout(function(){
+              jQuery('#'+value + "-tab").trigger('click');
+            },(index+1)*10)
+          })
+        }
+          
         qtipPositions = {
           normal : {
             my: 'center right',

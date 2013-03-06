@@ -4,12 +4,16 @@ class Helpdesk::TimeSheetsController < ApplicationController
   before_filter :load_time_entry, :only => [ :show,:edit, :update, :destroy, :toggle_timer ] 
   before_filter :load_ticket, :only => [:create, :index, :edit, :update, :toggle_timer] 
   before_filter :load_installed_apps, :only => [:index, :create, :edit, :update, :toggle_timer, :destroy]  
+  before_filter :create_permission, :only => :create 
+  before_filter :timer_permission, :only => :toggle_timer
 
   rescue_from ActiveRecord::UnknownAttributeError , :with => :handle_error
 
   def index
     unless @ticket.nil?
-      @time_sheets = @ticket.time_sheets  unless @ticket.nil?
+      @time_sheets = privilege?(:edit_time_entries) ?
+        @ticket.time_sheets :
+        @ticket.time_sheets.by_agent(current_user.id)
     else
       get_time_sheets #Added for time_sheets API
     end
@@ -197,6 +201,26 @@ private
 
   def load_installed_apps
     @installed_apps_hash = current_account.installed_apps_hash
+  end
+
+  def create_permission
+    if(!privilege?(:edit_time_entries) &&
+      params[:time_entry][:user_id].to_i != current_user.id)
+      flash[:error] = t('flash.timesheet.create_error')
+      respond_to do |format|
+        format.js
+      end
+    end
+  end
+
+  def timer_permission
+    if(!privilege?(:edit_time_entries) &&
+      @time_entry.user_id != current_user.id)
+      flash[:error] = t('flash.timesheet.create_error')
+      respond_to do |format|
+        format.js
+      end
+    end
   end
 
 end

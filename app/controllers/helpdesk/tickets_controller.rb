@@ -347,25 +347,25 @@ class Helpdesk::TicketsController < ApplicationController
           redirect_to :back 
         }
       end
-    end
-    
-    update_custom_field @item    
-    @item.save
-    @item.create_activity(current_user, 'activities.tickets.execute_scenario.long', 
-      { 'scenario_name' => va_rule.name }, 'activities.tickets.execute_scenario.short')
+    else  
+      update_custom_field @item    
+      @item.save
+      @item.create_activity(current_user, 'activities.tickets.execute_scenario.long', 
+        { 'scenario_name' => va_rule.name }, 'activities.tickets.execute_scenario.short')
 
-    respond_to do |format|
-      format.html { 
-        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice', 
-                                      :locals => { :actions_executed => Va::Action.activities, :rule_name => va_rule.name })
-        redirect_to :back 
-      }
-      format.xml { render :xml => @item, :status=>:success }
-      format.json { render :json => @item, :status=>:success }  
-      format.js
-      format.mobile { 
-        render :json => {:success => true, :id => @item.id, :actions_executed => Va::Action.activities, :rule_name => va_rule.name }.to_json 
-      }
+      respond_to do |format|
+        format.html { 
+          flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice', 
+                                        :locals => { :actions_executed => Va::Action.activities, :rule_name => va_rule.name })
+          redirect_to :back 
+        }
+        format.xml { render :xml => @item, :status=>:success }
+        format.json { render :json => @item, :status=>:success }  
+        format.js
+        format.mobile { 
+          render :json => {:success => true, :id => @item.id, :actions_executed => Va::Action.activities, :rule_name => va_rule.name }.to_json 
+        }
+      end
     end
   end 
   

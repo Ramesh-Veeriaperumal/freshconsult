@@ -49,7 +49,7 @@ module ApplicationHelper
   end
   
   def show_flash
-    [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
+    @show_flash = [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
   end
   
   def show_admin_flash
@@ -61,7 +61,7 @@ module ApplicationHelper
       @current_announcements ||= SubscriptionAnnouncement.current_announcements(session[:announcement_hide_time])  
       render :partial => "/shared/announcement", :object => @current_announcements unless @current_announcements.blank?
     end     
-  end         
+  end
 
   def page_title
     portal_name = h(current_portal.portal_name) + " : "
@@ -85,7 +85,7 @@ module ApplicationHelper
   end
   
   def show_ajax_flash(page)
-    page.replace_html :noticeajax, flash[:notice]
+    page.replace_html :noticeajax, ([:notice, :warning, :error].collect {|type| content_tag('div', flash[type])})
     page << "$('noticeajax').show()"
     page << "closeableFlash('#noticeajax')"
     flash.discard
@@ -129,7 +129,43 @@ module ApplicationHelper
   def fd_menu_link(text, url, is_active)
     text << "<span class='icon ticksymbol'></span>" if is_active
     class_name = is_active ? "active" : ""
-    link_to(text, url, :class => class_name)
+    link_to(text, url, :class => class_name, :tabindex => "-1")
+  end
+
+  def dropdown_menu(list, options = {})
+    return if list.blank?
+    output = ""
+    output << %(<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">)
+    
+    list.each do |item|
+      unless item.blank?
+        if item[0] == :divider
+          output << %(<li class="divider"></li>)
+        else
+          output << %(<li class="#{item[2] ? "active" : ""}">#{ link_to item[0], item[1], options, "tabindex" => "-1" }</li>)
+        end
+      end
+    end
+    output << %(</ul>)
+    output.html_safe
+  end
+
+  def dropdown_menu(list, options = {})
+    return if list.blank?
+    output = ""
+    output << %(<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">)
+    
+    list.each do |item|
+      unless item.blank?
+        if item[0] == :divider
+          output << %(<li class="divider"></li>)
+        else
+          output << %(<li class="#{item[2] ? "active" : ""}">#{ link_to item[0], item[1], options, "tabindex" => "-1" }</li>)
+        end
+      end
+    end
+    output << %(</ul>)
+    output.html_safe
   end
 
   def navigation_tabs
@@ -144,7 +180,6 @@ module ApplicationHelper
       ['/support/tickets',     :checkstatus, !privilege?(:manage_tickets)],
       ['/reports',            :reports,      privilege?(:view_reports) ],
       ['/admin/home',         :admin,        privilege?(:view_admin)],
-      company_tickets_tab
     ]
 
 #    history_active = false;
@@ -526,7 +561,7 @@ module ApplicationHelper
   end
   
   def add_requester_field
-    render(:partial => "/shared/add_requester") if (params[:format] != 'widget' && current_user && current_user.can_view_all_tickets?)
+    render(:partial => "/shared/add_requester") if (params[:format] != 'widget' && privilege?(:manage_contacts))
   end
   
   def add_name_field
@@ -577,7 +612,7 @@ module ApplicationHelper
       element = label + label_tag(field_name, field_value, :class => "value_label")
     end
     
-    content_tag :li, element unless display_tag?(element,field,field_value)
+    element unless display_tag?(element,field,field_value)
   end
 
   def display_tag?(element, field, field_value)
@@ -646,14 +681,8 @@ module ApplicationHelper
       privilege?(:manage_tickets) && !current_account.twitter_handles.blank? && feature?(:twitter)
     end
     
-  def company_tickets_tab
-    # this should be handled in self service portal
-    tab = ['support/company_tickets', :company_tickets , !privilege?(:manage_tickets) , current_user.customer.name] if privilege?(:client_manager)
-    tab || ""
-  end
-
   def tour_button(text, tour_id)
-    link_to (content_tag( :div, text, :class=> 'guided-tour-start') , '#', 
+    link_to(content_tag(:div, text, :class=> 'guided-tour-start') , '#', 
               :rel => 'guided-tour',
               "data-tour-id" => tour_id)
   end

@@ -1,7 +1,8 @@
 class Admin::RolesController < Admin::AdminController
-
+  
   before_filter :load_object, :only => [ :show, :edit, :update, :destroy ]
   before_filter :check_default, :only => [ :update, :destroy ]
+  before_filter :check_users, :only => :destroy
   
   def index
     @roles = scoper.all
@@ -32,7 +33,7 @@ class Admin::RolesController < Admin::AdminController
   end
   
   def update
-  	if @role.update_attributes(params[:admin_role])
+  	if @role.update_attributes(params[:role])
       flash[:notice] = t(:'flash.roles.update.success', :name => @role.name)
   		respond_to do |format|
         format.html { redirect_to admin_roles_url }
@@ -60,14 +61,21 @@ class Admin::RolesController < Admin::AdminController
     end
 
     def build_and_save
-      @role = scoper.build(params[:admin_role])
+      @role = scoper.build(params[:role])
       @role.save
     end
 
     def check_default
-      if @role.default?
+      if @role.default_role?
         flash[:notice] = t(:'flash.roles.default_roles')
         redirect_to admin_roles_url
+      end
+    end
+    
+    def check_users
+      unless @role.user_roles.empty?
+        flash[:notice] = t(:'flash.roles.delete.not_allowed')
+        redirect_to :back
       end
     end
 end

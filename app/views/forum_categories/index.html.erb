@@ -1,7 +1,7 @@
-<% @monitoring = logged_in? && !Monitorship.count(:id, :conditions => ['user_id = ? and active = ?', current_user.id, true]).zero? %>
+<% @monitoring = !Monitorship.count(:id, :conditions => ['user_id = ? and active = ?', current_user.id, true]).zero? %>
 <div class="clearfix">
 	<div class="floatr">
-    <% if privilege?(:create_edit_forum_category) -%>  
+    <% if privilege?(:manage_forums) -%>  
 			<%= link_to(t('reorder'),'#', :id => "forum_categories_reorder_button", :class => "uiButton") unless(@forum_categories.size <= 1)%>
 	  		<%= link_to t('category.new'), new_category_path, :class => "uiButton special" %>
 		<% end %> 
@@ -15,7 +15,7 @@
 		</div>
 		<% @forum_categories.each do |forum_category| %>
 			<div class="category-title">
-				<% if privilege?(:create_edit_forum_category) -%>
+				<% if privilege?(:manage_forums) -%>
 					<div class="action_buttons">
 				  		<%= link_to  t('forum.new'), new_category_forum_path(forum_category), :class => "last add_new icon" %>
 					</div>
@@ -26,7 +26,7 @@
 		<% end %>
 	</div>
 </div>
-<% if privilege?(:create_edit_forum_category) -%>	
+<% if privilege?(:manage_forums) -%>	
 	<%= render :partial => "/shared/reorder_list", :locals => { :items => @forum_categories,  :action_url => reorder_categories_path, :title => :name, :container_id => "forum_categories_sort", :reorder_id => "forum_categories_reorder_button", :list_id => "forum_categories_list"} %>
 <% end %>
 

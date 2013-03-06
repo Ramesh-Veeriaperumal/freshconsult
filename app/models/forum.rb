@@ -75,7 +75,7 @@ class Forum < ActiveRecord::Base
 
   # this is used to see if a forum is "fresh"... we can't use topics because it puts
   # stickies first even if they are not the most recently modified
-  has_many :recent_topics, :class_name => 'Topic', :order => 'replied_at DESC'
+  has_many :recent_topics, :class_name => 'Topic', :order => 'sticky desc, replied_at DESC'
   has_one  :recent_topic,  :class_name => 'Topic', :order => 'replied_at DESC'
   has_many :posts,     :order => "#{Post.table_name}.created_at DESC", :dependent => :delete_all
   has_one  :recent_post, :order => "#{Post.table_name}.created_at DESC", :class_name => 'Post'
@@ -152,7 +152,7 @@ class Forum < ActiveRecord::Base
   end
     
   def visible?(user)
-    return true if (user and user.privilege?(:manage_tickets))
+    return true if (user and user.agent?)
     return true if self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
     return true if (user and (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))
     return true if (user && (self.forum_visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && 
@@ -172,6 +172,10 @@ class Forum < ActiveRecord::Base
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
   end
+
+  def to_liquid
+    Forum::ForumDrop.new self
+  end    
 
   def to_s
     name

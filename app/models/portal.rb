@@ -1,4 +1,6 @@
 class Portal < ActiveRecord::Base
+  include ActionController::UrlWriter
+
   serialize :preferences, Hash
   
   validates_uniqueness_of :portal_url, :allow_blank => true, :allow_nil => true
@@ -24,6 +26,8 @@ class Portal < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :conditions => [' description = ?', 'fav_icon' ], 
     :dependent => :destroy
+  
+  has_one :template, :class_name => 'Portal::Template'
 
   belongs_to :account
   belongs_to :product
@@ -32,6 +36,8 @@ class Portal < ActiveRecord::Base
   belongs_to :solution_category, :class_name => 'Solution::Category',
               :foreign_key => 'solution_category_id'
   belongs_to :forum_category
+
+  after_create :create_template
     
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
@@ -39,6 +45,10 @@ class Portal < ActiveRecord::Base
   
   def fav_icon_attributes=(icon_attr)
     handle_icon 'fav_icon', icon_attr
+  end
+
+  def fav_icon_url
+    fav_icon.nil? ? '/images/favicon.ico' : fav_icon.content.url
   end
     
   def solution_categories
@@ -49,6 +59,11 @@ class Portal < ActiveRecord::Base
     main_portal ? account.forum_categories : (forum_category ? [forum_category] : [])
   end
   
+  def portal_forums
+    main_portal ? account.forums : 
+      forum_category ? forum_category.forums : []
+  end
+
   #Yeah.. It is ugly.
   def ticket_fields(additional_scope = :all)
     filter_fields account.ticket_fields.send(additional_scope)
@@ -56,6 +71,38 @@ class Portal < ActiveRecord::Base
   
   def customer_editable_ticket_fields
     filter_fields account.ticket_fields.customer_editable
+  end
+
+  def layout
+    self.template.layout    
+  end
+  
+  def to_liquid
+    PortalDrop.new self
+  end
+  
+  def portal_login_path
+    support_login_path(:host => portal_url)
+  end
+  
+  def portal_logout_path
+    logout_path(:host => portal_url)
+  end
+  
+  def signup_path
+    support_signup_path(:host => portal_url)
+  end
+  
+  def new_ticket_path
+    new_support_ticket_path(:host => portal_url)
+  end
+
+  def new_topic_path
+    new_support_discussions_topic_path(:host => portal_url)
+  end
+
+  def profile_path
+    edit_support_profile_path(:host => portal_url)
   end
 
   def host
@@ -74,6 +121,9 @@ class Portal < ActiveRecord::Base
     fav_icon.content.url unless fav_icon.nil?
   end
   
+  def portal_page
+    self.template
+  end
 
   private
     def handle_icon(icon_field, icon_attr)
@@ -93,6 +143,11 @@ class Portal < ActiveRecord::Base
 
       f_list.each { |field| to_ret.push(field) if checks.fetch(field.name, true) }
       to_ret
+    end
+
+    def create_template
+      self.build_template()
+      self.template.save()
     end
 
     def backup_changes

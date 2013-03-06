@@ -7,18 +7,18 @@ class User < ActiveRecord::Base
   include Helpdesk::Ticketfields::TicketStatus
   include Mobile::Actions::User
   include Users::Activator
-  include Authority::ModelHelpers
+  include Authority::Rails::ModelHelpers
   include Cache::Memcache::User
-
+  
   USER_ROLES = [
-    [ :agent,        "Agent",            2 ],
-    [ :customer,     "Customer",         3 ]
-  ]
+     [ :admin,       "Admin",            1 ],
+     [ :poweruser,   "Power User",       2 ],
+     [ :customer,    "Customer",         3 ],
+     [ :account_admin,"Account admin",   4 ],
+     [ :client_manager,"Client Manager", 5 ],
+     [ :supervisor,    "Supervisor"    , 6 ]
+    ]
 
-  USER_ROLES_OPTIONS = USER_ROLES.map { |i| [i[1], i[2]] }
-  USER_ROLES_NAMES_BY_KEY = Hash[*USER_ROLES.map { |i| [i[2], i[1]] }.flatten]
-  USER_ROLES_KEYS_BY_TOKEN = Hash[*USER_ROLES.map { |i| [i[0], i[2]] }.flatten]
-  USER_ROLES_SYMBOL_BY_KEY = Hash[*USER_ROLES.map { |i| [i[2], i[0]] }.flatten]
   EMAIL_REGEX = /(\A[-A-Z0-9.'’_%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
 
   belongs_to :customer
@@ -32,7 +32,7 @@ class User < ActiveRecord::Base
   has_many :email_notification_agents,  :dependent => :destroy
 
   has_many :user_roles, :dependent => :destroy
-  has_many :roles, :through => :user_roles, :class_name => 'Admin::Role'
+  has_many :roles, :through => :user_roles
   
   validates_uniqueness_of :account_admin, :scope => :account_id, :if => Proc.new { |user| user.account_admin  == true }
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
@@ -58,32 +58,27 @@ class User < ActiveRecord::Base
 
   before_create :set_time_zone , :set_company_name , :set_language
   before_create :account_admin_privilege, :if => :account_admin?
-  before_create :customer_privilege, :if => :customer?
-  before_save :set_contact_name, :check_email_value , :set_default_role
+  before_save :set_customer_privilege, :if => :customer?
+  # FIXME: before_save ?
+  before_update :destroy_user_roles, :if => :deleted?
+  before_save :set_contact_name, :check_email_value
   after_update :drop_authorization , :if => :email_changed?
-  after_update :update_admin_in_crm , :if => :account_admin_updated?
-  after_update :update_admin_to_billing , :if => :account_admin_updated?
+  after_update :update_admin_in_crm , :if => :account_admin_changed?
+  after_update :update_admin_to_billing , :if => :account_admin_changed?
 
   after_commit_on_create :clear_agent_list_cache, :if => :agent?
   after_commit_on_update :clear_agent_list_cache, :if => :agent?
   after_commit_on_destroy :clear_agent_list_cache, :if => :agent?
-  after_commit_on_update :clear_agent_list_cache, :if => :user_role_updated?
+  after_commit_on_update :clear_agent_list_cache, :if => :helpdesk_agent_updated?
   before_update :bakcup_user_changes
   
   named_scope :account_admin, :conditions => [:account_admin => true ]
-  named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]})" ]
-  named_scope :technicians, :conditions => ["user_role not in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]})"]
+  named_scope :contacts, :conditions => { :helpdesk_agent => false }
+  named_scope :technicians, :conditions => { :helpdesk_agent => true }
   named_scope :visible, :conditions => { :deleted => false }
 
-  named_scope :allowed_to_assume, lambda { |user|
-    if user.account_admin?
-      { :conditions => ["id != ?", user.id]}  
-    elsif user.privilege?(:manage_users)   
-      { :conditions => ["id != ? and account_admin = false", user.id]}  
-    end      
-  }
   named_scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
-
+  
   acts_as_authentic do |c|    
     c.validations_scope = :account_id
     c.validates_length_of_password_field_options = {:on => :update, :minimum => 4, :if => :has_no_credentials? }
@@ -96,17 +91,36 @@ class User < ActiveRecord::Base
   
   validates_presence_of :email, :unless => :customer?
   validates_presence_of :user_roles, :unless => [:customer?, :account_admin?]
+  validate :roles_assigned?
 
   def user_roles_attributes=(user_attr)
+    return if user_attr.empty?
+    role_ids = user_attr[:role_id].delete_if { |id| id.blank? }
+    # !user_roles is added to prevent from raising this error on create
+    # when user_roles will be empty, This error should be raised only
+    # on update
+    if role_ids.blank? && !user_roles.blank?
+      @user_roles_error = "can't be blank"
+      return false
+    end
     # delete records if update
     user_roles.destroy_all unless user_roles.blank?
-    role_ids = user_attr[:role_id].delete_if { |id| id.blank? }
     # build user_roles
     role_ids.each { |id| user_roles.build({:role_id => id}) }
     # set privileges based on chosen roles
     privilege_masks = account.roles.find(:all, :select => "privileges",
                  :conditions => ["id IN (?)", role_ids])
     self.privileges = union_privileges(privilege_masks).to_s
+  end
+  
+  def roles_assigned?
+    self.errors.add(:user_roles, @user_roles_error) if @user_roles_error
+  end
+    
+  def client_manager=(checked)
+    if customer? && checked == "true"
+      self.privileges = Role.privileges_mask([:client_manager])
+    end
   end
 
   def check_email_value
@@ -159,9 +173,11 @@ class User < ActiveRecord::Base
   end
 
   attr_accessor :import
+  # FIXME: is the user_roles, :client_manager, :helpdesk_agent correct?
   attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, 
-                  :twitter_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id,
-                  :deleted , :fb_profile_id , :language, :address, :user_roles_attributes
+                  :twitter_id, :description, :time_zone, :avatar_attributes,:customer_id,:import_id,
+                  :deleted , :fb_profile_id , :language, :address, :user_roles_attributes, :client_manager,
+                  :helpdesk_agent
 
   #Sphinx configuration starts
   define_index do
@@ -197,9 +213,9 @@ class User < ActiveRecord::Base
     self.description = params[:user][:description]
     self.customer_id = params[:user][:customer_id]
     self.job_title = params[:user][:job_title]
-    self.user_role = params[:user][:user_role]
-    self.user_roles_attributes = params[:user][:user_roles_attributes] if
-           params[:user].key?(:user_roles_attributes)
+    self.helpdesk_agent = params[:user][:helpdesk_agent] || false
+    self.client_manager = params[:user][:client_manager]
+    self.user_roles_attributes = params[:user][:user_roles_attributes] || {}
     self.time_zone = params[:user][:time_zone]
     self.import_id = params[:user][:import_id]
     self.fb_profile_id = params[:user][:fb_profile_id]
@@ -293,18 +309,26 @@ class User < ActiveRecord::Base
 
   #implement in your user model 
 
+  def agent?
+    helpdesk_agent
+  end
+  alias :is_agent :agent?
+
   def customer?
-    user_role == USER_ROLES_KEYS_BY_TOKEN[:customer]
+    !agent?
   end
   alias :is_customer :customer?
   
-  def agent?
-    user_role == USER_ROLES_KEYS_BY_TOKEN[:agent]
-  end
-  alias :is_agent :agent?
-  
   def account_admin?
     agent? && account_admin
+  end
+  
+  def can_assume?(user)
+    # => Not himself
+    # => User is not an account admin
+    # => User is not deleted
+    # => And the user does not have any admin privileges (He is an agent)
+    !((user == self) or user.account_admin? or user.deleted? or user.privilege?(:view_admin))
   end
   
   def first_login?
@@ -320,9 +344,6 @@ class User < ActiveRecord::Base
   #Search display ends here
 
   ##Authorization copy starts here
-  def role
-    @role ||= Helpdesk::ROLES[USER_ROLES_SYMBOL_BY_KEY[user_role]] || Helpdesk::ROLES[:customer]
-  end
   
   def name_details #changed name_email to name_details
     return "#{name} <#{email}>" unless email.blank?
@@ -416,7 +437,7 @@ class User < ActiveRecord::Base
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml,:root=>options[:root], :skip_instruct => true,:only => [:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
                                                               :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,
-                                                              :user_role,:fb_profile_id,:external_id,:language,:address]) 
+                                                              :helpdesk_agent,:fb_profile_id,:external_id,:language,:address]) 
   end
   
   def company_name
@@ -454,7 +475,7 @@ class User < ActiveRecord::Base
   def make_customer
     return if customer?
     
-    update_attributes({:user_role => USER_ROLES_KEYS_BY_TOKEN[:customer], :deleted => false})
+    update_attributes({:helpdesk_agent => false, :deleted => false})
     agent.destroy
   end
 
@@ -466,10 +487,6 @@ class User < ActiveRecord::Base
     end
   end
  
- def set_default_role
-   self.user_role = USER_ROLES_KEYS_BY_TOKEN[:customer] if self.user_role.blank?
- end
-
  def set_company_name
    if (self.customer_id.nil? && self.email)      
        email_domain =  self.email.split("@")[1]
@@ -505,11 +522,7 @@ class User < ActiveRecord::Base
   end 
   
   private
-
-    def account_admin_updated?
-      user_role_changed? && account_admin?
-    end
-
+    
     def update_admin_in_crm
       Resque.enqueue(CRM::AddToCRM::UpdateAdmin, self.id)
     end
@@ -519,8 +532,8 @@ class User < ActiveRecord::Base
       @all_changes.symbolize_keys!
     end
 
-    def user_role_updated?
-      @all_changes.has_key?(:user_role)
+    def helpdesk_agent_updated?
+      @all_changes.has_key?(:helpdesk_agent)
     end
 
     def update_admin_to_billing
@@ -528,11 +541,18 @@ class User < ActiveRecord::Base
     end
 
     def account_admin_privilege
-      user_roles.build({:role_id => account.roles.find_by_name("Administrator").id})  
-      self.privileges = Admin::Role.privileges_mask(Helpdesk::Roles::ADMINISTRATOR).to_s  
+      user_roles.build({:role_id => account.roles.find_by_name("Account Administrator").id})  
+      self.privileges = Role.privileges_mask(Helpdesk::Roles::ACCOUNT_ADMINISTRATOR).to_s  
     end
-
-    def customer_privilege
-      self.privileges = Admin::Role.privileges_mask(Helpdesk::Roles::CUSTOMER).to_s
+    
+    def set_customer_privilege
+      if(!(abilities.length == 1) && !privilege?(:client_manager))
+        destroy_user_roles
+      end
+    end
+    
+    def destroy_user_roles
+      self.privileges = "0"
+      user_roles.destroy_all
     end
 end

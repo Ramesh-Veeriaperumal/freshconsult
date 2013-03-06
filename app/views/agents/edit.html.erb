@@ -5,34 +5,27 @@
 <%= include_javascripts :pattern  %>
 <%= include_stylesheets :redactor  %>
 <%= include_javascripts :redactor  %>
-<% form_for @agent, :html => { :multipart => true } do |f| %>
+<% form_for @agent, :html => { :id => "agent_form", :rel => "validate", :multipart => true, 
+    "data-focus-invalid" => false,  "data-ignore" => "" } do |f| %>
+<%= f.error_messages %>
 <ul class="admin-breadcrumb">
-  <li class="non-arrow"><a href="#">Home</a><span class="divider"></span></li>
-  <li><a href="#">Agent</a> <span class="divider"></span></li>
-  <li class="active ">Edit Agent</li>
+  <li class="non-arrow"><a href="/admin/home">Home</a><span class="divider"></span></li>
+  <li><a href="/agents/">Agent</a> <span class="divider"></span></li>
+  <li class="active "><%=t('agent.edit')%></li>
   <li class="non-arrow pull-right">
-  		<%= link_to t('cancel'), {:action => 'index'}, :class => "btn btn-primary" %>
+    <%= f.submit t('save'), { :class => "btn  btn-primary" } %>
   </li>
   <li class="non-arrow pull-right">
-		<%= link_to (t('delete'), @agent, :confirm => "#{t('agent.info3')}?", 
-												 :method => :delete, :class => "btn") unless (@agent.user == current_user)  %>
-	</li>
-  <li class="non-arrow pull-right">
-		<%= f.submit t('agent.update'), { :class => "btn " } %>
+  		<%= link_to t('cancel'), {:action => 'index'}, :class => "btn" %>
   </li>
 </ul>
-<%= f.error_messages %>
 <%= render :partial => "agent_form", :locals => { :type => "edit" } %>
 <ul class="admin-breadcrumb breadcum-footer clearfix">
+    <li class="non-arrow pull-right">
+      <%= f.submit t('save'), { :class => "btn  btn-primary" } %>
+    </li>
   	<li class="non-arrow pull-right">
-  		<%= link_to t('cancel'), {:action => 'index'}, :class => "btn btn-primary" %>
-  	</li>
-  	<li class="non-arrow pull-right">
-		<%= link_to (t('delete'), @agent, :confirm => "#{t('agent.info3')}?", 
-												 :method => :delete, :class => "btn") unless (@agent.user == current_user)  %>
-	</li>
-  	<li class="non-arrow pull-right">
-  		<%= f.submit t('agent.update'), { :class => "btn" } %>
+  		<%= link_to t('cancel'), {:action => 'index'}, :class => "btn" %>
   	</li>
 </ul>  
 <%end%>

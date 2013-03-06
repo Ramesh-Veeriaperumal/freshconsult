@@ -81,12 +81,18 @@ gem 'memcache-client', '1.8.5'
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
 
 group :development,:test do
-   #gem "rspec", "1.3.1"
+   gem "ZenTest", "4.4.1"
+   gem "rspec", "1.3.1"
    #gem "thoughtbot-shoulda","2.10.2"
-   #gem "rspec-rails", "1.3.3"
+   gem "rspec-rails", "1.3.3"
+   gem "autotest-fsevent", "0.1.1"
+   gem "autotest-growl", "0.2.0"
+   gem "autotest-rails", "4.1.0"
+   gem "spork", "0.8.5"
    gem "forgery","0.5.0"
    gem "factory_girl", "1.2.3" 
-   gem "mongrel" 
+   gem "mongrel"
+   gem "rr" 
 end
 
 group :assets do
@@ -95,7 +101,3 @@ group :assets do
 	# Portal grid system is done using susy grids
 	gem "susy" 
 end
-
-
-
-

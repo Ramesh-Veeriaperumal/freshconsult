@@ -26,11 +26,7 @@ class Post < ActiveRecord::Base
   #format_attribute :body
   
   attr_protected	:topic_id , :account_id , :attachments
-  
-  def editable_by?(user)
-    user && (user.id == user_id || user.privilege?(:edit_forum_topic) || user.moderator_of?(forum_id))
-  end
-  
+    
   def to_xml(options = {})
     options[:except] ||= []
     options[:except] << :topic_title << :forum_name
@@ -42,6 +38,10 @@ class Post < ActiveRecord::Base
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) 
+  end
+
+  def to_liquid
+    Forum::PostDrop.new self
   end
 
   def to_s

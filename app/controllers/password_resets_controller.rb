@@ -1,10 +1,11 @@
-class PasswordResetsController < ApplicationController
+class PasswordResetsController < SupportController
+  
   skip_before_filter :check_privilege
   before_filter :require_no_user
   before_filter :load_user_using_perishable_token, :only => [:edit, :update]
   
   def new
-    render
+    redirect_to support_login_path(:anchor => "forgot_password")
   end
   
   def create
@@ -24,7 +25,7 @@ class PasswordResetsController < ApplicationController
   end
   
   def edit
-    render
+    set_portal_page :password_reset
   end
 
   def update

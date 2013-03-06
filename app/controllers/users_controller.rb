@@ -1,7 +1,5 @@
 class UsersController < ApplicationController 
   
-  # 1. need to think how to implement customer and account admin
-  # => roles 2. is change account admin correct ?
   include ModelControllerMethods #Need to remove this, all we need is only show.. by Shan. to do must!
   include HelpdeskControllerMethods
 
@@ -11,7 +9,7 @@ class UsersController < ApplicationController
   
   before_filter :load_multiple_items, :only => :block
 
-   ##redirect to contacts
+  ##redirect to contacts
   def index
     redirect_to contacts_url
   end

@@ -1,5 +1,3 @@
-require RAILS_ROOT+'/app/models/solution/folder.rb'
-
 class Solution::Article < ActiveRecord::Base
   set_table_name "solution_articles"
   serialize :seo_data, Hash
@@ -138,6 +136,15 @@ class Solution::Article < ActiveRecord::Base
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) 
   end
 
+  # Added for portal customisation drop
+  def self.filter(_per_page = self.per_page, _page = 1)
+    paginate :per_page => _per_page, :page => _page
+  end
+  
+  def to_liquid
+    Solution::ArticleDrop.new self
+  end
+  
   def article_title
     (seo_data[:meta_title].blank?) ? title : seo_data[:meta_title]
   end
@@ -151,5 +158,4 @@ class Solution::Article < ActiveRecord::Base
     (seo_data[:meta_keywords].blank?) ? tags.join(", ") : seo_data[:meta_keywords]
   end
 
- 
 end

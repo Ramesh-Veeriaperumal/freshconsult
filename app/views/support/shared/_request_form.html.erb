@@ -1,99 +1,103 @@
+<%= include_stylesheets :redactor  %>
+<%= include_javascripts :redactor  %>
+<% form_for @ticket, :url => support_tickets_path, :html => { :multipart => true, :class => "form-horizontal" } do |f| %>
+  <%= f.error_messages %>
+  	<%= content_tag ( :h3, t('ticket.submit_ticket_title') ,:class => "title" ) %>
+	
+    <% current_portal.customer_editable_ticket_fields.each do |field| %>
+        <%= construct_ticket_element :helpdesk_ticket, field, 
+                                     field.label_in_portal,
+                                     (field.dom_type == "requester") ? "email": field.dom_type, 
+                                     field.required_in_portal, 
+                                     (field.dom_type == "requester") ? @ticket.email : (field.is_default_field?) ? @ticket.send(field.field_name) : (@ticket.custom_field) ? @ticket.custom_field[field.field_name] : "", 
+                                     "",
+                                     true  %>
+    <% end %>
+    
+      <%= render :partial=>"/helpdesk/shared/attachment_form"  %>
+    
+    <% if feature?(:captcha) && !logged_in? %>
+	    <div class="control-group">
+	        <%= content_tag ( :label, t('ticket.verify_human') ) %>
+	        <%= recaptcha_tags :display => { :theme => "white" }, :ssl => current_account.ssl_enabled? %>
+	    </div>
+    <% end %>
+	<div class="control-group">
+    	<div class="controls">
+		<%= f.submit t('ticket.submit_ticket'), :class => "btn btn-primary" %>
+		<%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
+		<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
+		<%= link_to t("cancel"), :back, :class => "btn" %>
+		</div>
+	</div>
+<% end %>
 
-		<% @customizer = ActiveSupport::JSON.decode(@ticket.customizer.requester_view)
-		   @customizer.each do |field|
-				#field_class = field["type"] + ((field["customer"]["required"]) ? " required" : "")
-				field_class = field["type"] + (field["type"] != 'dropdown' && (field["customer"]["required"]) ? " required" : "")
-				field_madatory  = (field["agent"]["required"]) ? " *" : " " 
-				case field["label"]
-					 when "Requester" then 
-					%>
-					<li> 	
-				  		<label id="requester-label">Your Email*</label>
-				  		<input type="text" id="helpdesk_ticket_email" class="text email required" name="helpdesk_ticket[email]" value="<%=@ticket.email%>"></input>
-				   	</li>	
-					<% when "Subject" then%>
-						<li>
-				        	<%= request_form.label :subject, t('ticket.subject') + field_madatory  %>
-				          	<%= request_form.text_field :subject, :class => field_class %>
-				   		</li>
-					<%when "Type" then%>		
-						<li class="dropdown">
-          					<%= request_form.label :ticket_type, t('ticket.type')  %>
-         					<%= request_form.select :ticket_type, Helpdesk::Ticket::TYPE_OPTIONS, :class => field_class %>
-        				</li>
-					<%when "Source" then%>
-						<li class="dropdown">
-				  			<%= request_form.label :source, "Source" %>
-				 			<%= request_form.select :source, Helpdesk::Ticket::SOURCE_OPTIONS, :class => field_class %>
-				        </li>
-								
-					<%when "Status" then%>
-						<li class="dropdown">
-				          	<%= request_form.label :status, t('ticket.status') %>
-				         	<%= request_form.select :status, Helpdesk::Ticket::STATUS_OPTIONS, :class => field_class %>
-				        </li>
-						
-					<%when "Group" then%>
-						<li class="dropdown">
-				          	<%= request_form.label :group_id,  t('ticket.group') %>
-				          	<%= request_form.collection_select :group_id, Group.find_all_by_account_id(current_account.id , :order=>'name'), :id, :name,{:include_blank => 'None'}, { :onchange => "changeAggentList(this.options[this.selectedIndex].value)" ,:class => field_class} %>
-				        </li>
-						
-					<%when "Assigned to" then%>	
-						<li class="dropdown" id="assigned_to">
-				          	<%= request_form.label :responder_id, t('ticket.assigned_to') %>
-				          	<%= request_form.collection_select :responder_id, Agent.technician_list(current_account.id), :id, :name, {:include_blank => 'None'}, :class => field_class %>
-				        </li>
-						
-					<%when "Priority" then%>
-						<li class="dropdown">
-				 			<%= request_form.label :priority, t('ticket.priority') %>          
-							<%= request_form.select :priority, Helpdesk::Ticket::PRIORITY_OPTIONS, :class => field_class %>
-				    	</li>
-					
-					<%when "Description" then%>
-						<li>
-							<%= request_form.label :description, t('description') + field_madatory %>
-				    		<%= request_form.text_area :description, :class=> field_class %>
-						</li>				
-					
-					<%else%> 
-						<% request_form.fields_for :custom_field do |cust_form| %>
-						<% 
-							field_label = (field["customer"]["required"]) ? "#{field["display_name"]}*" : "#{field["display_name"]}"  
-							 
-						%>
-							<% case field["type"] when "text","number" then %>				
-								<li class="<%= field['label'] %>">		 
-									<%= cust_form.label "#{field["label"]}", field_label %>  
-				 					<%= cust_form.text_field "#{field["label"]}", :class => field_class %>
-								</li>		 
-										
-							<% when "paragraph" then %>
-								<li class="paragraph">
-									<%= cust_form.label "#{field["label"]}", field_label %>  
-				 					<%= cust_form.text_area "#{field["label"]}" ,:class => field_class %>
-								</li>
-									
-							<% when "dropdown" then %>
-								<li class="dropdown">
-									<% Array values =[]
-										field["choices"].each {|choice| values.push(choice["value"])}%>
-										 <%= cust_form.label "#{field["label"]}", field_label %>  
-				 						 <%= cust_form.select "#{field["label"]}", values ,:class=> field_class %>
-							    </li>
-											
-						   <% when "checkbox" then %>
-								<li class="checkbox">
-									<%= cust_form.check_box "#{field["label"]}" ,:class=>field_class %>					
-									<%= field_label %>
-							     </li>
-						   <% end %>
-						 <% end %>			 
-						<% end %>
-					<% end %>
-					
-					<li>
-						<%= render :partial=>"/helpdesk/shared/attachment_form"  %>
-					</li>	
-					
+<% if feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
+  <% javascript_tag do %>
+    var showTooltip = function(elm, data) {
+      jQuery(elm).qtip({
+          style: {
+            classes:'ui-tooltip-light ui-tooltip-rounded ui-tooltip-shadow ui-solution-suggest',
+            tip: {
+              width: 8,
+              height: 15
+            }
+          },
+          content: {
+            text: '<%= t('auto_suggest_solutions.info') %>' + data,
+          },
+          position: { 
+            type: 'absolute',
+            my: 'left top',
+            at: 'right center',
+            adjust: {
+              x: 40,
+              y: -15          }
+          },
+          show: {
+            event: 'false'
+          },
+          hide: {
+            event: false
+          }
+        });
+    };
+
+    (function($){
+      jQuery(document).ready(function(){  
+        callbackToSolutionSearch = function(string){
+          jQuery.ajax({ url: "/search/widget_solutions?search_key="+string, 
+            success: function(data){
+                var data_available = jQuery(data).find("a").length;
+                if( data_available )
+                {
+                  showTooltip(jQuery("#helpdesk_ticket_subject"), data);
+                  jQuery("#helpdesk_ticket_subject").qtip("show");
+                }
+                else{
+                  jQuery("#helpdesk_ticket_subject").qtip("hide");
+                }
+                jQuery("#helpdesk_ticket_subject").removeClass("loading-right");
+              }
+            });
+          }
+        
+          jQuery("#helpdesk_ticket_subject").live("blur", function(ev){
+              var searchString = this.value.replace(/^\s+|\s+$/g, "");
+              if(searchString != '' && searchString.length > 1){
+                jQuery(this).addClass("loading-right");
+                delay(function(){
+                  callbackToSolutionSearch(searchString);
+                }, 200 ); 
+              }
+              else{
+                jQuery(this).qtip("hide");
+                jQuery(this).removeClass("loading-right");        
+              }
+          });
+
+          invokeRedactor('helpdesk_ticket_description_html');
+      }); 
+    })(jQuery);
+  <% end %>
+<% end %>

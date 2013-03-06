@@ -40,15 +40,16 @@
 	</li>
 	
 	<li>
-		<strong><%=t('.send_while_title')%></strong><br>
-		<label class="radio" style="font-size:12px;"><%= f.radio_button :send_while, Survey::CLOSED_NOTIFICATION %> <%=t('.send_while_option3')%></label>
-		<label class="radio" style="font-size:12px;"><%= f.radio_button :send_while, Survey::RESOLVED_NOTIFICATION %> <%=t('.send_while_option2')%></label>
-		<label class="radio" style="font-size:12px;"><%= f.radio_button :send_while, Survey::ANY_EMAIL_RESPONSE %> <%=t('.send_while_option1')%></label>
-		<label class="radio" style="font-size:12px;"><%= f.radio_button :send_while, Survey::SPECIFIC_EMAIL_RESPONSE %> <%=t('.send_while_option4')%></label>
+		<h5 class="title"><%=t('.send_while_title')%></h5>
+		<label><%= f.radio_button :send_while, Survey::CLOSED_NOTIFICATION %> <%=t('.send_while_option3')%></label>
+		<label><%= f.radio_button :send_while, Survey::RESOLVED_NOTIFICATION %> <%=t('.send_while_option2')%></label>
+		<label><%= f.radio_button :send_while, Survey::ANY_EMAIL_RESPONSE %> <%=t('.send_while_option1')%></label>
+		<label><%= f.radio_button :send_while, Survey::SPECIFIC_EMAIL_RESPONSE %> <%=t('.send_while_option4')%></label>
 	</li>
-	<li class="button-container">
-	<%= submit_tag t('account.save'), :class => 'uiButton' %>
-	<a class="uiButton" href="/admin/home">Cancel</a>
+	<li><span class="seperator"></span></li>
+	<li>
+		<a class="btn" href="/admin/home">Cancel</a>
+		<%= submit_tag t('account.save'), :class => 'btn primary pull-right' %>	
 	</li>
 </ul>
 <%end%>

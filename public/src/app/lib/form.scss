@@ -5,9 +5,17 @@
 	background-position: center 40%;
 }
 label{
-   display: block;
-   padding:5px 0;
-   font-size:1.4em;
+   display: block; 
+   color: #323232;
+   padding:0 0 6px 0;
+   font-size:15px;
+}                
+
+.help-text{
+  font-size:13px;
+  color:#888888;
+  display: block;
+  padding:0 0 5px 0;
 }
 input[type=text], select, input.text { 
    width: 99%;
@@ -47,13 +55,23 @@ textarea[readonly] {
 
 textarea {
    height: 100px;
-   width: 99%;
+   width: 99%;   
+   overflow:auto;
+   font-size:13px;
+   line-height:18px;
+   resize:none;
+   padding:3px;
    font-family:$blueprint-font-family;
 
    &#application_script {
    	height:300px;
    }
 }
+
+textarea.auto{
+   height:auto !important;
+}
+
 
 input:focus { outline: none; }
 textarea, input{ outline:none; }
@@ -79,25 +97,22 @@ div.color{
 	padding-top:0px;
 	.mColorPickerTrigger{ 
 		position:absolute;
-		top:3px;
-		left:230px;
+		top:4px;
+		left:73px;
+		display: none !important;
 	}
 	input{
-		width:220px;
-		font-size:16px;
-		border:1px solid #afafaf;
+		width:110px;
+		font-size:14px;
+		border:1px solid #AFAFAF;
+		border-right-width: 10px;
+		border-right-color: #AFAFAF;
+		color: #777;
+		text-transform: uppercase;
+		padding: 6px 8px;
+		@include box-shadow(#AFAFAF 1px 0px 1px);
 	}
-	span{
-		display:inline;
-	}
-}
-
-textarea{  
-   overflow:auto;
-   font-size:13px;
-   line-height:18px;
-   resize:none;
-   padding:3px;
+	span{ display:inline; }
 }
 
 input.very_small{
@@ -2009,21 +2024,9 @@ ul.ui-form .inputs-list{
 		}
 		div.fields{
 			padding-bottom: 15px;
-			label{
-				font: 13px "Helvetica Neue", sans-serif;
-			}
 		}
-		input[type=text], input.text { 
-		   width: 93%;
-		}
-		div.color{
-			input{
-				width: 220px;
-			}
-		}
-		select{
-			width: auto;
-		}
+		input.text { width: 93%; } 
+		select{ width: auto; }
 		.add-email{
 			margin-left: 210px;
 			margin-top: -25px;
@@ -2508,11 +2511,32 @@ input[type="text"].number{
  	}
 }
 
-#reply-fields{
-	.field-item{
-		min-height: 0px;
-	}
-
+#reply-fields .field-item{
+	min-height: 0px;
 }
  
 /* end */
+
+#portal-simple-template-options{
+	h3.title{ padding:5px 0px 15px; }
+	.config_item { 
+		@include min-height(80px);
+	}
+	.chzn-container-single .chzn-single{
+		height: 30px; line-height: 30px;
+	}
+	.chzn-container-single .chzn-single div{
+		right: 3px;
+		top: 2px;
+	}
+	.chzn-container-single .chzn-search { display: none; }
+}
+
+.customize-pages{
+	h5{ font-weight: bold; color: #b5b5b5; }
+	.portal-pages-list{
+		margin:5px 0 15px;
+		li a{ color:#333333; }
+		li{ line-height: 24px; }
+	}
+}

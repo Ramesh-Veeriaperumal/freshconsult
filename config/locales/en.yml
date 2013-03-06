@@ -14,6 +14,9 @@ en:
   status: "Status"
   sales: "Sales"
   preview: "Preview"
+  send_feedback: "Send feedback"
+  your_email: "Your Email"
+  captcha_verify_message: "Captcha verification failed, try again!"
   filter_options:
     status: "Status"
     responder_id: "Agents"
@@ -27,16 +30,19 @@ en:
   proceed_now: "\n\nProceed now?"
   forward: "Forward"
   apply: "Apply"
+  myself: "Myself"
   meta:
    language_name: 'English'
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
-  attachment_help_info: Attachment(s) size can be up to 20 MB
+  attachment_help_info: File size < 15 MB
   feedbackwidget_offset_info: The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
   no_twitter_handle: Please configure atleast one twitter account
   reset_my_password: Reset my password 
   assign: Assign
-  signup: sign up
+  signup: "Sign up"
   signup_title: "Sign up to %{current_portal}"
+  signup_up_with_us: "Sign up with us"
+  signup_help_information: "This registration gets you full access to our support desk and community. You'll be able to read all our support articles, as well as ask questions in our community forum and comment on our documentation. "
   trial_expired_on: Your trial has expired on
   upgrade_trial: Upgrade your trial!
   add_note: Add Note
@@ -154,7 +160,7 @@ en:
   last: last
   agent_emailnotverified: Email has not been verified for this agent!
   agent_assigned_info: No open and pending tickets for this agent
-  basic_details: Email Response Management, Dispatch'r Rules, Default SLA Policy, Knowledge Base, Self-Service Portal, Domain Mapping, Community Support.
+  basic_details: "Email Response Management, Dispatch'r Rules, Default SLA Policy, Knowledge Base, Self-Service Portal, Domain Mapping, Community Support."
   choose_plan: Choose Plan
   create: Create
   feedbackwidget_custom_image_info: if you are using a custom image the color and text will be ignored.
@@ -163,31 +169,47 @@ en:
     overview: Overview
     recent: Recent
     popular: Popular
+    planned: Planned
+    implemented: Implemented
+    nottaken: Not Taken
   payment_info: Payment information
   support:
-      shared:
-        survey_form:
-          survey_title: Please take a minute to rate our support
-          feedback_title: Also your good words and specific critique can help us better our support in the future
-          rated_on: You gave us this rating on %{rated_on}
-          change_of_mind: Changed your mind?
-          rate_again: Rate us again
-          submit: Submit
-          cancel: Cancel
-      surveys:
-          thanks_for_feedback: "We have received your feedback. Thank you very much."
-          feedback_already_done: "You have already given feedback for this response."
-          new:
-              thanks_info: Thanks for taking time to rate our support experience.
-              feedback_info: Your feedback is very much appreciated.
-              feedback_optional: Feedback is optional
-              send: Send
-              thanks: Thank you very much for rating us!
-              sorry: But, really sorry for the inconvenience.
-              happy_info: It has been our pleasure to serve you, glad you were happy with our service
-              neutral_info: Wish you were a little more happy.
-              unhappy_info: We will ensure that we will take extra care the next time around.
-              additional_info: Additionally, you could also share your experience working with us.
+    shared:
+    tickets:    
+      ticket_survey:
+        title: "Survey feedback"
+        rating_sub_title: "Your have rated us"
+        survey_title: Please take a minute to rate our support
+        feedback_title: Describe your support experience (optional)
+        rated_on: on %{rated_on}
+        change_of_mind: Changed your mind?
+        rate_again: Rate us again
+        submit: Submit
+        cancel: Cancel
+    surveys:
+        thanks_for_feedback: "We have received your feedback. Thank you very much."
+        feedback_already_done: "You have already given feedback for this response."
+        new:
+          thanks_info: Thanks for taking time to rate our support experience.
+          feedback_info: Your feedback is very much appreciated.
+          feedback_optional: Feedback is optional
+          send: Send
+          thanks: Thank you very much for rating us!
+          sorry: But, really sorry for the inconvenience.
+          happy_info: It has been our pleasure to serve you, glad you were happy with our service
+          neutral_info: Wish you were a little more happy.
+          unhappy_info: We will ensure that we will take extra care the next time around.
+          additional_info: Additionally, you could also share your experience working with us.
+    login:      
+      form:      
+        email: Email
+        password: Password
+        remember: Remember me on this computer
+        login: Login
+        forgot: forgot your password?
+        sign_in_using: Sign In
+        sign_in_using_google: Sign in using your Google account
+        help: Help
   gamification:
     levels:
       beginner: Beginner
@@ -239,8 +261,48 @@ en:
     js_ticket_txt: Resolve $$questvalue$$ tickets in a span of $$questtime$$ and matching these conditions.
     js_solution_txt: Create $$questvalue$$ knowledge base article in a span of $$questtime$$ and matching these conditions.
     js_forum_txt: $$questmode$$ $$questvalue$$ forum posts in a span of $$questtime$$ and matching these conditions.
-    js_quest_txt: On successful completion of the quest you can unlock $$badgename$$ badge and $$questpoints$$ bonus points. 
+    js_quest_txt: On successful completion of the quest you can unlock $$badgename$$ badge and $$questpoints$$ bonus points.
+  portal_pages:
+    groups:
+      general: "General pages"
+      solutions: "Solutions"
+      discussions: "Discussions"
+      tickets: "Tickets"
+    pages:
+      portal_home: "Portal home"     
+      user_signup: "New user signup"
+      user_login: "Login page"
+      forgot_password: "Forgot password"
+      profile_edit: "User profile"
+      search: "Search results"
+      solution_home: "Solutions home"
+      article_list: "Article list"
+      article_view: "Article view"
+      discussions_home: "Discussions home"
+      topic_list: "Topic list"
+      topic_view: "Topic view"
+      new_topic: "New topic"
+      submit_ticket: "New ticket"
+      ticket_list: "User tickets"
+      ticket_view: "Ticket details"
   admin:
+    portal_settings:
+      simple:
+        header_color: "Header"
+        bg_color: "Page"
+        footer_color: "Footer"
+        help_center_color: "Help center"
+        btn_primary_background: "Primary action button"
+        btn_background: "Secondary action button"
+        tab_color: "Background"
+        tab_hover_color: "Active tab"
+        baseFontFamily: "Base font"
+        textColor: "Base color"
+        headingsFontFamily: "Heading font"
+        headingsColor: "Heading color"
+        linkColor: "Link text"
+        linkColorHover: "Link text hover"
+        inputFocusRingColor: "On focus border color"
     quests:
       index:
         title: Quest
@@ -471,7 +533,7 @@ en:
     automations:
       edit:
         title: Edit Scenario
-      failure: You do not have the privileges to execute all actions in the scenario  
+      failure: You are not permitted to perform certain actions in the scenario. Please contact the administrator 
     security: 
       index: 
         shared_secret: Shared Secret
@@ -583,6 +645,63 @@ en:
         capture_dm: Convert direct messages as tickets
         screen_name: Screen Name
         default_group : Default Group 
+    roles:
+      new: New Role
+      edit: Edit Role
+      default_role: Default Role
+      scroll:
+        scroll_to : Scroll to
+        tickets: Tickets
+        solutions: Solutions
+        forums: Forums
+        customers: Customers
+        reports: Reports
+        administration: Administration
+      permissions: Permissions
+      privilege:
+        tickets: Tickets
+        manage_tickets: Manage tickets
+        reply_ticket: Send reply to a ticket
+        forward_ticket: Forward a conversation
+        edit_note_choice: Edit notes
+        edit_note: Edit everyone's notes
+        edit_note_false: Edit only their own notes
+        edit_conversation: Edit conversation
+        merge_or_split_ticket: Merge / split a ticket
+        edit_ticket_properties: Edit ticket properties
+        view_time_entries: View or edit time entries
+        edit_time_entries: Edit everyone's time entries
+        edit_time_entries_false: Edit only their time
+        delete_ticket: Delete a ticket
+        solutions: Solutions
+        view_solutions: View solutions tab
+        publish_solution: Publish a solution
+        delete_solution: Delete a solution
+        manage_solutions: Create / Edit category or folder
+        forums: Forums
+        view_forums: View forums tab
+        manage_forums: Create / Edit category or topic
+        create_topic: Create or Edit a forum topic
+        edit_topic: Edit everyone's forum topic
+        edit_topic_false: Edit only their own forum topic
+        delete_topic: Delete a forum topic
+        customers: Customers
+        view_contacts: View customers tab
+        manage_contacts: Create or edit new contact or company
+        delete_contact: Delete contact or company
+        reports: Reports
+        view_reports: View reports tab
+        admin: Admin
+        not_administrator: Not an administrator
+        operational_admin: An operational admin
+        manage_users: Manage Agents
+        manage_canned_responses: Manage canned responses
+        manage_dispatch_rules: Manage Dispatch'r rules
+        manage_supervisor_rules: Manage Supervisor rules   
+        manage_scenario_automation_rules: Manage Scenario automation rules
+        manage_email_settings: Manage Email Commands
+        admin_tasks: A Super admin
+        manage_account: Include account management 
     home:
       index: 
         group: Groups
@@ -732,6 +851,8 @@ en:
       update:
         success: The role "%{name}" has been updated
       default_roles: You cannot modify default roles    
+      delete:
+        not_allowed: You cannot delete this role. There are other users are associated with it.
     contacts_import: 
       failure: Please try again
       no_file: Please upload a file
@@ -746,7 +867,7 @@ en:
         wrong_ticket_id: Please enter a valid ticket id
       reply: 
         success: The reply has been sent.
-        without_kbase: The reply has been sent. You do not have privilege to create solution.
+        without_kbase: The reply has been sent. However, you are not permitted to create solutions.
       notes: 
         create: 
           failure: There was a problem adding the note to your ticket. Please try again.
@@ -755,6 +876,7 @@ en:
         success: All tickets in the spam folder were deleted.
       timesheet:
         timer_stopped: ticket timers has been stopped
+        create_error: You are not permitted to create timesheets for other agents.
       monitor: 
         stop: You are no longer monitoring this ticket
         start: You are now monitoring this ticket
@@ -976,7 +1098,7 @@ en:
         long: "{{user_path}} changed the ticket source of {{notable_path}} to {{source_name}}"
   credit_card_info: Credit card information
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
-  your_email_address: Your email address
+  your_email_address: Your e-mail address
   username: Username
   reply: reply
   is_not: Is not
@@ -1131,6 +1253,12 @@ en:
     skip_notification_yes: "Yes"
     skip_notification_no: "No"
   header_logo: Header Logo
+  feedback:
+      title: "Was this answer helpful?"
+      up_vote_thank_you_message: "Glad we could be helpful. Thanks for the feedback."
+      upvote: "Yes"
+      downvote: "No"
+      down_vote_form_title: "Can you please tell us how we can improve this article?"
   solutions:
     status:
       draft: Draft
@@ -1157,18 +1285,31 @@ en:
   portal_customizer_option_sol_i: Disable this feature if you want users to login to view solutions
   portal_customizer_auto_suggest_solutions: Enable this feature if you want to suggest existing solutions when user creates a new ticket.
   show_me_how: Show me how
+  agent_list:
+    tab:
+      active: "Full time Agents"
+      occasional: "Occasional Agents"
+      deleted: "Deleted agents"
+    sort:
+      name: "Name"
+      last_login_at: "Last logged in"
+      created_at: "Agent created"
+      asc: Ascending
+      desc: Descending
   topic:
     ideas_stamps:
       planned: Planned
       implemented: Implemented
       nottaken: Not Taken
     name: Topic Name
-    new: New Topic
+    new: Post a new topic
+    edit: Edit topic
     open: Re-open this Discussion
     edit: Edit Topic
     close: Close this Discussion
     post: Post Topic
-    add_comment: Add Comment
+    add_comment: Post comment
+    update_comment: "Update comment"
     post_comment: Post
     msg1: Comments are closed for this topic
     sticky: Sticky
@@ -1198,7 +1339,7 @@ en:
         inclusion: is not included in the list
       full_messages: 
         format: "%{attribute} %{message}"
-      template: 
+      template:
         body: "There were problems with the following fields:"
         one: 1 error prohibited this %{model} from being saved
         other: "%{count} errors prohibited this %{model} from being saved"
@@ -1289,6 +1430,15 @@ en:
       no_agents: You have not added any agents to the list
     deleted:
       no_agents: You dont have any deleted agents
+    trial: In trial version
+    buy: Buy more
+    available_seats: %{count} Agent seats available
+    last_logged_in: Last logged in %{time} ago.
+    never_logged_in: Never logged in
+    day_pass_used: Used %{count} day pass till date
+    day_pass_available: %{count} Day pass available
+    assign_role: Assign role
+    add_role: + Add role
     title: Agents
     info1: This is a deleted Agent
     info2: Email has already been taken
@@ -1309,7 +1459,8 @@ en:
     add_signature: Add signature
     update: Update
     permissions: Permissions
-    role: Role
+    roles: Roles
+    roles_description: Associate a role to an agent, an agent can play multiple role.
     scope: Agent scope
     admin: Administrator
     supervisor: Supervisor
@@ -1354,6 +1505,7 @@ en:
   ticket_resolved_at_time: Resolved at
   ticket_closed_at_time: Closed at
   next: Next
+  previous: Previous
   set_password: Set your password
   send_email_to_agent: Send Email to Agent
   import_data: Date Imported
@@ -1451,7 +1603,50 @@ en:
   import_solution_article_info: "Note: We will not save the forum comments"
   portal: 
     search: 
-      placeholder: Search using a keyword or a full question
+      filters:
+        all: "All"
+        solutions: "Solutions"
+        topics: "Topics"
+        tickets: "Tickets"
+      placeholder: Enter your search term here...
+    topic:
+      comments_closed: "Comments to this discussion are now closed!"
+      start_new_topic: "Start a new topic"
+    topic_vote:
+      you: 
+        one: "You"
+        other: "You and"
+      more: 
+        one: "1 other"
+        other: "%{count} others"
+      people:
+        one: "1 person"
+        other: "%{count} people"
+      ideas:
+        one: "likes this idea"
+        other: "like this idea"
+      problem:
+        one: "has this problem"
+        other: "have this problem"
+      howto:
+        one: "has this question"
+        other: "have this question"
+      ideas_button: "Do you like this idea?"
+      problem_button: "Do you have this problem?"
+      howto_button: "Do you have this question as well?"
+      ideas_unlike_button: "unlike!"
+      problem_unlike_button: "I don't have this problem!"
+      howto_unlike_button: "I don't have this question!"
+      ideas_users_voted_title: People who like this idea
+      problem_users_voted_title: People who have this problem
+      howto_users_voted_title: People who have this question
+    knowledge_base: "Knowledge base"
+    community: "Community"
+    showing_recent_updates: "Showing recent updates"
+    tickets:
+      export: "Export tickets"
+      export_ticket_data: "Export ticket data to CSV"
+      export_to_csv: "Export to CSV"
   feedbackwidget_form_title: Widget form title
   cancel_and_back: Cancel and go back
   due_in: Due in %{time_words}
@@ -1559,8 +1754,14 @@ en:
     welcome: Welcome
     new_ticket: New Ticket
     submit_a_ticket: Submit a ticket
-    login: login
+    login: "Login"
+    guest: "Guest"
+    signout: "Sign out"
+    edit_profile: "Edit profile"
     assumed_text: "You are viewing as"
+    help_center: "Help center"
+    new_support_ticket: "New support ticket"
+    check_ticket_status: "Check ticket status"
     tabs:
       reports: Reports
       dashboard: Dashboard
@@ -1572,8 +1773,7 @@ en:
       tickets: Tickets
       home: Home
       company_tickets: Company Tickets
-      social: Social
-    signout: Sign out
+      social: Social    
     search: Search
   agent_adds_comment: Agent adds comment to Ticket
   portal_customizer_anon_tickets: Anybody can submit a ticket
@@ -1606,6 +1806,7 @@ en:
   step1: Step 1
   next_charge_date: "Your next payment will be processed on:"
   update_and_login: Update and login
+  password: "Password"
   enter_payment: Enter Payment details...
   errors_in_payment: "Errors encountered with your payment:"
   email_configs:
@@ -1826,8 +2027,8 @@ en:
   feedbackwidget_embed_code_intro: Please copy and paste the code below anywhere before the &lt;/body&gt; tag in the html template of your site or every page where you'd like to provide the Freshdesk widget.
   import_forum: Forums
   title: Title
-  new_ticket_created: New Ticket Created
-  recent_forum_posts: Recent Forum Posts
+  new_ticket_created: New ticket created
+  recent_forum_posts: Recent forum posts
   description: Description
   tkt_assigned_to_agent: Ticket assigned to Agent
   is: Is
@@ -1895,7 +2096,8 @@ en:
       info2: In addition to the built-in integrations, you can bring in data from any other third party application, legacy system or database into the tickets and contact pages with FreshPlugs. You can customize your FreshPlug widget by pushing relevant information from Freshdesk to your data source with an AJAX call, and format and display information with HTML, CSS and Javascript.
   account: 
     name: Account Name
-    cancel: Cancel and go back
+    cancel: Cancel and go back   
+    customize_portal: "Helpdesk rebranding"
     page_colors: 
       title: Page colors
       background: Background
@@ -2096,8 +2298,8 @@ en:
         my_resolved: My Resolved Tickets
         new_my_open: New & My Open Tickets
         this_view: this view
-        all_tickets: All Tickets
-        all: All Tickets
+        all_tickets: All tickets
+        all: All tickets
         new_and_my_open: New & My Open Tickets
         open: Open tickets
         closed: Closed Tickets
@@ -2131,7 +2333,7 @@ en:
         inbound_email: Incoming email
         outbound_email: Outbound email
         attachment_size: 
-           exceed: Oops! Your attachment exceeds 20 MB. Please attach a smaller file.
+           exceed: Oops! Your attachment exceeds 15 MB. Please attach a smaller file.
     merge:
       merge:
         merge_into: Merge into?
@@ -2151,10 +2353,14 @@ en:
   tickets_filter:
     title: "Filter Tickets"
     unsaved_view: "Untitled View"
+    raised_by: "Tickets created by"
+    everyone_in_company: "Everyone in %{company_name}"
     sort_fields:
       due_by: Due by time
       date_created: Date Created
       last_modified: Last Modified
+      created_at: Date Created
+      updated_at: Last Modified 
       priority: Priority
       status: Status
       asc: Ascending
@@ -2850,3 +3056,34 @@ en:
     create_new: "Create New"
     no_response_admin: "No responses in this folder <a href={{link}} id='new_resp'>Create New</a>"
     select_folder: "Select Folder"
+  portalcss:
+    reset_all_changes: Reset all changes
+    reset_all_confirm_message: This action will reset all your customizations to freshdesk default. Are you sure you want to continue?
+    publish_changes: Publish changes
+    header: Portal template customization
+    color_and_font_header: Color &amp; font
+    css_header: Stylesheet
+    layout_and_pages_header: Layout &amp; pages
+    editing: Editing
+    reset_to_last_published: Reset to last published
+    preview: Preview
+    save_and_continue: Save and continue editing
+    please_wait: Please wait...
+    layout_pages:
+      subheader_layout: Portal layout
+      subheader_pages: Portal pages
+      pages_help_message: Here you will be able to customize body area of individual pages.
+      header_layout_title: Header
+      footer_layout_title: Footer
+      pagelayout_title: Page layout
+      header_layout_help_message: Change the header area of your support portal
+      footer_layout_help_message: Change the footer area of your support portal
+      pagelayout_help_message: Customize the entire layout of your support portal
+    cosmetic:
+      subheader_background_color: Background color
+      subheader_tab_color: Tab colors
+      subheader_portal_fonts: Portal fonts
+      subheader_link_color: Link color
+      subheader_form_elements: Form elements
+      css_subheader: Custom stylesheet
+      css_help_message: Add or overwrite freshdesk default styles with your own custom css.

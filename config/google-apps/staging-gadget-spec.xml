@@ -36,11 +36,11 @@
    "html" and "card" are required for all Gmail contextual gadgets. -->
   <Content type="html" view="card">
     <![CDATA[
-	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshpo.com/packages/gadget.css">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshbugs.com/packages/gadget.css">
 	
-	<script type='text/javascript' src='https://asset.freshpo.com/javascripts/frameworks/jquery.js?1328620567'></script>
-    <script src="https://asset.freshpo.com/javascripts/frameworks/plugins/jquery.tinymce.js?1325848019" type="text/javascript"></script>
-    <script src="https://asset.freshpo.com/javascripts/tiny_mce/tiny_mce_src.js?1325848020" type="text/javascript"></script>
+	<script type='text/javascript' src='https://asset.freshbugs.com/javascripts/frameworks/jquery.js?1328620567'></script>
+    <script src="https://asset.freshbugs.com/javascripts/frameworks/plugins/jquery.tinymce.js?1325848019" type="text/javascript"></script>
+    <script src="https://asset.freshbugs.com/javascripts/tiny_mce/tiny_mce_src.js?1325848020" type="text/javascript"></script>
 
       <style type="text/css">
 		html {
@@ -95,7 +95,7 @@
 		matches = google.contentmatch.getContentMatches();
 		var from_email=""; to_email=""; subject=""; body=""; us_phone=""; ticket_id=""; t=""; var cnt=Math.floor((Math.random()*1000)*(Math.random()*100));
 		var domain = "";
-		var url_root="login.freshpo.com"; 
+		var url_root="login.freshbugs.com"; 
 		var http_s="http";
 		var init_done = false;
 		var current_tab = 'contact';
@@ -419,7 +419,7 @@
 			var loading_div = jQuery('<div></div>')
 					.attr('id',"gcgLoading")
 					.attr('style','text-align:center; padding: 20px;')
-					.html( '<img src="https://asset.freshpo.com/images/load.gif" />' );
+					.html( '<img src="https://asset.freshbugs.com/images/load.gif" />' );
 			
 			jQuery('body').prepend(loading_div);
 			autoHeight();
@@ -439,7 +439,7 @@
 		}
 
 		function imgerror(source){
-			source.src = "https://asset.freshpo.com/images/fillers/profile_blank_thumb.gif";
+			source.src = "https://asset.freshbugs.com/images/fillers/profile_blank_thumb.gif";
 			source.onerror = "";
 			return true;
 		}

@@ -58,7 +58,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   
   named_scope :custom_fields, :conditions => ["flexifield_def_entry_id is not null"]
   named_scope :custom_dropdown_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'custom_dropdown'"]
-  named_scope :customer_visible, :conditions => { :visible_in_portal => true }  
+  named_scope :customer_visible, :conditions => { :visible_in_portal => true }
   named_scope :customer_editable, :conditions => { :editable_in_portal => true }
   named_scope :type_field, :conditions => { :name => "ticket_type" }
   named_scope :status_field, :conditions => { :name => "status" }
@@ -76,7 +76,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
                   :default_group        => { :type => :default, :dom_type => "dropdown_blank", :form_field => "group_id"},
                   :default_agent        => { :type => :default, :dom_type => "dropdown_blank", :form_field => "responder_id"},
                   :default_source       => { :type => :default, :dom_type => "hidden"},
-                  :default_description  => { :type => :default, :dom_type => "html_paragraph", :visible_in_view_form => false, :form_field => "description_html" },
+                  :default_description  => { :type => :default, :dom_type => "html_paragraph", 
+                                              :form_field => "description_html", :visible_in_view_form => false },
                   :default_product      => { :type => :default, :dom_type => "dropdown_blank",
                                              :form_field => "product_id" },
                   :custom_text          => { :type => :custom, :dom_type => "text", 

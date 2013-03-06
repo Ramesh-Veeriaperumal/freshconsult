@@ -1,0 +1,118 @@
+<section class="content rounded-6 min-height-desktop">
+	<h2 class="heading">Search results for "{{ search.term }}"</h2>	
+	{{ search | default_filters }}
+	<hr />
+	{% if search.result_count != 0 %}
+		<ul class="search-results-list">
+			{% for result in search.results %}
+			<li class="{{ result.type | downcase }}-item">				
+				<a href="{{result.url}}">{{ result.title }}</a>
+				<span class="label label-small label-light">{{ result.group }}</span>
+				<div>{{ result.desc }}</div>
+				<p class="help-text">
+					{{ result.source.created_on }}
+				</p>
+			</li>
+			{% endfor %}
+		</ul>
+		{{ search.pagination }}
+	{% else %}
+		<div class="lead">No results found</div>
+	{% endif %}
+
+	{% unless total_results == 0 %}
+		{% if searched_articles %}
+		<section class="article-list">
+			<div class="list-lead">Articles</div>
+			<ul>
+			{% for article in searched_articles %}
+				<li>
+					<div class="ellipsis">
+						<a href="{{article.url}}" title="{{article.title}}">{{article.excerpt_title}}</a>
+					</div>
+					<div>{{ article.excerpt_description }}</div>
+					<p class="help-text">
+						{{ article.modified_on | time_ago }}
+					</p>
+				</li>
+			{% endfor %}
+			</ul>
+		</section>
+		{% endif %}
+		{% if searched_topics %}
+		<section class="topic-list">
+			<div class="list-lead">Forums</div>
+			<ul>
+			{% for topic in searched_topics %}
+				<li>
+					<div class="ellipsis">
+						<a href="{{topic.url}}" title="{{topic.title}}">{{topic.excerpt_title}}</a>
+					</div>
+					<div>{{ topic.excerpt_description | truncate:220 }}</div>
+					<p class="help-text">
+						posted by {{ topic.user.name }}, {{ topic.created_on | time_ago }} <br />
+						{% if topic.has_comments %}
+							<a href="{{topic.last_post.url}}">Last reply</a>
+							by {{ topic.last_post.created_on | time_ago }}
+						{% endif %}
+					</p>
+				</li>
+			{% endfor %}
+			</ul>
+		</section>
+		{% endif %}
+		{% if searched_tickets %}
+		<section class="ticket-list">
+			<div class="list-lead">Tickets</div>
+			<ul>
+			{% for ticket in searched_tickets %}
+				<li>
+					<div class="ellipsis">
+						<a href="{{ticket.portal_url}}" title="{{ticket.subject}}">{{ ticket.subject }} #{{ticket.id}}</a>
+					</div>
+					<div class="help-text">						
+						{{ ticket | brief }} | {{ ticket.status }}
+					</div>
+				</li>
+			{% endfor %}
+			</ul>
+		</section>
+		{% endif %}
+		{% snippet pagination %}
+	{% else %}
+		<div class="lead">No results found for "{{search_key}}"</div>
+	{% endunless %}
+
+	{% comment %}
+
+	<div class="c-row c-ticket-row">
+				<span class="status-source sources-detailed-<%= ticket.source_name.to_s.downcase %>" 
+						 title="<%= t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase) %>"> </span>
+				<span class="label-status label label-small"><%= ticket.status_name %></span>			 
+				<div class="ticket-brief">
+				    <div class="ellipsis">
+				      	<%= link_to(h(ticket.subject) + " ##{ticket.display_id}", support_ticket_path(ticket), :title => truncate(ticket.description, { :length => 350 }), :class => "c-link") %> 
+				    </div>
+				    <div class="help-text">
+						<% unless ticket.requester.nil? or current_user.eql?(ticket.requester) %>
+							<%= t('ticket.portal_created_on', {:username => h(ticket.requester.display_name), :date => formated_date(ticket.created_at)}) %>
+						<% else %>
+							<%= t('ticket.portal_created_on_same_user', {:date => formated_date(ticket.created_at)}) %>
+						<% end %>
+
+						<% unless ticket.freshness == :new %>
+					       <%=t('ticket.assigned_agent')%>: <span class='emphasize'><%=h(ticket.responder.display_name)%></span>
+					    <% end %>
+					</div>
+				</div>	
+			</div>
+	<%= render :partial => "results" %>
+	
+	<%= will_paginate @items, :renderer => BootstrapPaginationRenderer unless @items.blank? %>
+
+	<% if @total_results == 0 %>
+		<div class="list-lead"><%= "No results found for \"#{@search_key}\"" %></div>
+	<% end %>
+
+	{% endcomment %}
+</section>

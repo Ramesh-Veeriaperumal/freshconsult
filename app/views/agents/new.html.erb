@@ -1,14 +1,31 @@
 <% content_for :sidebar do %>
   <%= render :partial => "helpnote_without_tour" %>
 <% end %>
-<h3 class="title"><%=t('agent.new')%></h3>
-<% form_for @agent, :html => { :multipart => true } do |f| %>
+<%= include_stylesheets :pattern %>
+<%= include_javascripts :pattern  %>
+<%= include_stylesheets :redactor  %>
+<%= include_javascripts :redactor  %>
+<% form_for @agent, :html => { :id => "agent_form", :rel => "validate", :multipart => true, 
+    "data-focus-invalid" => false,  "data-ignore" => "" } do |f| %>
 	<%= f.error_messages %>	
-	<%= include_stylesheets :redactor  %>
-	<%= include_javascripts :redactor  %>	
+	<ul class="admin-breadcrumb">
+	  <li class="non-arrow"><a href="/admin/home">Home</a><span class="divider"></span></li>
+	  <li><a href="/agent/">Agent</a> <span class="divider"></span></li>
+	  <li class="active "><%=t('agent.new')%></li>
+	  <li class="non-arrow pull-right">
+			<%= f.submit t('save'), { :class => "btn  btn-primary" } %>
+	  </li>
+	  <li class="non-arrow pull-right">
+	  		<%= link_to t('cancel'), {:action => 'index'}, :class => "btn" %>
+	  </li>
+	</ul>
  	<%= render :partial => "agent_form" %>
-	<div class="button-container">
-   		<%= f.submit 'Save', { :class => "uiButton" } %>
-		<%= link_to "Cancel", {:action => 'index'}, :class => "uiButton" %>
-	</div>  
+	<ul class="admin-breadcrumb breadcum-footer clearfix">
+	  	<li class="non-arrow pull-right">
+	  		<%= f.submit t('save'), { :class => "btn btn-primary" } %>
+	  	</li>
+	  	<li class="non-arrow pull-right">
+	  		<%= link_to t('cancel'), {:action => 'index'}, :class => "btn" %>
+	  	</li>
+	</ul>  
 <%end%>
