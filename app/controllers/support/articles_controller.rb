@@ -47,14 +47,14 @@ class Support::ArticlesController < ApplicationController
      @article = current_account.solution_articles.find(params[:id])
      @article.increment!(:thumbs_up)
      respond_to do |format|
-        format.html { render :text => "Glad we could be helpful. Thanks for the feedback." }
+        format.html { render :text => I18n.t('solution.articles.article_useful') }
         format.xml  { head 200}
       end
   end
   
   def create_ticket
-    render :text => (create_the_ticket) ? "Thanks for the feedback. We will improve this article." : 
-                  "There is an error #{@ticket.errors}"
+    render :text => (create_the_ticket) ? I18n.t('solution.articles.article_not_useful') : 
+                  I18n.t(:'solution.articles.error_message', :error_msg => @ticket.errors )
   end
 
 end

@@ -39,7 +39,7 @@
        			<%= link_to(product.portal.portal_url, "http://#{product.portal.portal_url}", { :target => "_blank" }) %>
 					<% else %>
 						<span class='icon url'></span>
-						<%= link_to("Enable Portal", edit_admin_product_path(product, :enable_portal => true), :class => "slim-button") %>
+						<%= link_to( t('admin.products.index.enable_portal'), edit_admin_product_path(product, :enable_portal => true), :class => "slim-button") %>
 					<% end %>
 				</div>
 				<% product.twitter_handles.each do |twitter_handle| %>

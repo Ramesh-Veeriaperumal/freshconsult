@@ -4,6 +4,6 @@
 	<%= render :partial => 'form', :locals => { :twitter_handle => @item } %>
 	<div class="button-container">
     <%= link_to(t('remove'), social_twitter_path(@item), :method => 'delete', :confirm => t('social.twitter_handles.index.remove_handle_msg'), :class => "uiButton floatl" ) %>
-    <%= submit_tag "Update", :class => "uiButton"  %>
+    <%= submit_tag t('update'), :class => "uiButton"  %>
   </div>
 <% end %>

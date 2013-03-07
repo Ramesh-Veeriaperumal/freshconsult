@@ -1,4 +1,5 @@
-<img src='/images/thumb_up.png' style="position:relative;top:2px;" /> <%= @article.thumbs_up %> <b>likes</b>, 
-<img src='/images/thumb_down.png'  style="position:relative;top:6px;" /> <%= @article.thumbs_down %> <b>dislikes</b>
+<img src='/images/thumb_up.png' style="position:relative;top:2px;" /> <%= @article.thumbs_up %> <b><%= t('likes') %></b>, 
+<img src='/images/thumb_down.png'  style="position:relative;top:6px;" /> <%= @article.thumbs_down %> 
+<b><%= t('dislikes') %></b>
 			 
-For this article
+<%= t('for_this_article') %>

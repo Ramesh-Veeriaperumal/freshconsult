@@ -9,7 +9,7 @@
 </div>
 <div id="ticket_priorities" class="hide">
 	<% 
-	priorities = TicketConstants::PRIORITY_NAMES_BY_KEY
+	priorities = TicketConstants.priority_list
 	priorities.each do |priority_value, priority_name|
 		%>
 		<a data-value="<%= priority_value %>" class="action_assign" data-assign-action="priority" tabindex = '99'><%=priority_name %></a>

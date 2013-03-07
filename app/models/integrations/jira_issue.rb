@@ -120,7 +120,7 @@ class Integrations::JiraIssue
     }
     progress_work_flow_data = construct_params_for_http("post",("rest/api/2/issue/"+issue_id+"/transitions?expand=transitions.fields"))
     progress_work_flow_data[:body] = req_data.to_json
-    JSON.parse(make_rest_call(progress_work_flow_data, nil)[:text])
+    make_rest_call(progress_work_flow_data, nil)
   end
 
   def register_webhooks(current_portal)
