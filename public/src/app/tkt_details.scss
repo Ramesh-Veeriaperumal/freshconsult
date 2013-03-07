@@ -9,24 +9,14 @@ $collision: sprite-map("collision/*.png");
 .ticket_details .pagearea{
 	min-width: 1100px;
 	margin: 0 auto;
-	margin-top: -13px;
 	border: none;
 	@include box-shadow(0px 5px 6px #ccc);
-	@include corners(0);
 }
 
 .ticket_details #inner {
 	z-index: 0;
 }
 
-.ticket_details .flash_info {
-	margin: 0 -1px 11px;
-	border-radius: 0;
-	margin-top: -13px;
-	border-top: none;
-	border-bottom: none;
-	@include box-shadow(0px 5px 6px #ccc);
-}
 ol, ul, li{
 	margin: 0px;
 	list-style: none;
@@ -72,7 +62,6 @@ p strong{
 	width: 98%; /* It must be adjust the width for ".leftcontent .at_the_top" class*/
 	margin: 0 auto;
 	padding-left: 25px;
-	margin-top: -13px;
 }
 
 .tkt-wrap{
@@ -1977,6 +1966,10 @@ p strong{
 		img{
 			vertical-align: middle;
 		}
+
+		&:hover {
+			background: #fbf8f2;
+		}
 	}
 
 }
@@ -2083,13 +2076,13 @@ label.custom-select {
 
 .activity_toggle {
 	float: right;
-	width: 140px;
+	width: 180px;
 	padding: 7px;
 	margin: 5px 35px 5px 15px;
 
 	.text {
 		float: left;
-		width: 65px;
+		width: 100px;
 		margin: 3px 0;
 	}
 	.toggle_button {
@@ -2097,11 +2090,17 @@ label.custom-select {
 		margin-left: 0;
 		display: block;
 	}
-	&.loading-center {
-		@include hide-text();
-		font-size: 0.1em;
-		color: #f7f7f7;
-		height:15px;
+	.loading-center  {
+		display: none;
+		height: 22px;
+		width:50px;
+		margin-top: -3px;
+	}
+	&.loading_activities {
+
+		.loading-center  {
+			display: block;
+		}
 
 		.toggle-button {
 			display: none;
@@ -2114,15 +2113,20 @@ label.custom-select {
 	li{
 		float: right;
 		font-size: 13px;
-		padding: 5px 0px;
-		margin-left: 5px;
+		padding: 10px 0 5px;
 	}
 	.pagi-btn{
-		@include border-radius(4px);
 		border: 1px #d2d2d2 solid;
 		display: inline-block;
-		padding: 7px 10px;
+		padding: 5px 15px;
 		color: #333;
+		&.prev_page {
+			@include border-radius(4px 0 0 4px);
+			border-right: none;
+		}
+		&.next_page {
+			@include border-radius(0 4px 4px 0);
+		}
 		span.arrow-next, span.arrow-previous{
 			width: 7px;
 			height: 9px;
@@ -2131,13 +2135,14 @@ label.custom-select {
 		}
 
 		span.arrow-next{
-			background: sprite($tktdetailicon,arrow-next) no-repeat;
+			@include triangle(right,#333,6px);
 		}
 
 		span.arrow-previous{
-			background: sprite($tktdetailicon,arrow-previous) no-repeat;
+			@include triangle(left,#333,6px);
 		}
 		&:hover{
+			border-color:#888;
 			background: #f6f4f4;
 		}
 		&:active{

@@ -16,9 +16,9 @@ else
 end
 
 content = '<ul><li>'
-content << link_to("#{t('next')} <span class='arrow-next'></span>", next_link, :class => next_class , :rel => 'next')
+content << link_to("<span class='arrow-next'></span>", next_link, :class => "#{next_class} tooltip" , :rel => 'next', :title => t('ticket.next'))
 content << '</li><li>'
-content << link_to(" <span class='arrow-previous'></span> #{t('previous')} ",  previous_link, :class => previous_class , :rel => 'next')
+content << link_to(" <span class='arrow-previous'></span>",  previous_link, :class => "#{previous_class} tooltip" , :rel => 'next', :title => t('ticket.previous'))
 content << '</li></ul>'
 
 page.replace_html 'adjacents', content

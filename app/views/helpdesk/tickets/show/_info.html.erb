@@ -4,15 +4,16 @@
 	<div id="firstchild">
 		<div class="controls">
 		<!--Pagination-->
-			<div class="pagination-link hide" id="adjacents">
+			<div class="pagination-link" id="adjacents">
 				<ul>
-					<li><a href="#" class="pagi-btn"><%= t('.next') %><span class="arrow-next"></span></a></li>
-					<li><a href="#" class="pagi-btn"><span class="arrow-previous"></span><%= t('.previous') %></a></li>
+					<li><a href="#" class="pagi-btn disabled"><span class="arrow-next"></span></a></li>
+					<li><a href="#" class="pagi-btn disabled"><span class="arrow-previous"></span></a></li>
 				</ul>
 			</div>
-			<div id="activity_toggle" class="activity_toggle custom-tip-bottom clearfix" title="Toggle Activities">
-				<div class="text"><%= t('ticket.activities') %></div>
+			<div id="activity_toggle" class="activity_toggle tooltip-bottom clearfix" title="Toggle Activities">
+				<div class="text"><%= t('ticket.activity_toggle') %></div>
 				<input rel="toggle" type="checkbox" data-checked-label="Yes" data-unchecked-label="No" />
+				<div class="loading-center"></div>
 			</div>
 			<!--Breadcrumb-->
 			<div class="bread-crumb-wrap clearfix">

@@ -1800,6 +1800,8 @@ en:
   ok: Ok
   back: Back
   ticket:
+    next: "Next Ticket"
+    previous: "Previous Ticket"
     insert: "Insert"
     switch_view: 
       new_view: "Try the <strong>New Ticket View</strong>"
@@ -1904,9 +1906,7 @@ en:
       tweet_and_resolve: Tweet and Resolve
       user_not_following: This user is not following your twitter account
     activities: Activities
-    activity_toggle:
-      visible: Visible
-      hidden: Hidden
+    activity_toggle: Show Activities
     requestor_info: Requestor Info
     reply_to: Reply
     add_note: Add note
