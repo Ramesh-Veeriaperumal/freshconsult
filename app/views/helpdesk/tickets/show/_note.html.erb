@@ -11,21 +11,21 @@
 			<% if permission?(:manage_tickets) %>
 				<%= link_to_remote(t('delete'), :url => helpdesk_ticket_helpdesk_note_path(note.notable, note), 
 							:method => :delete, :confirm => t(".delete_note"), 
-							:html => {:class => "red_links conv-action-icon conv-actions-delete"}) if note.user && note.user.agent?    %>   
+							:html => {:class => "red_links conv-action-icon conv-actions-delete tooltip", :title => t('delete')}) if note.user && note.user.agent?    %>   
 
 				<%= link_to(t('ticket.split_ticket'), 
 							{ :action => :split_the_ticket , :note_id => note.id }, 
 							:method => :post, :confirm => t(".split_ticket_confirm"),
-							:class => "tooltip conv-action-icon conv-actions-split", :title => t(".split_this_as_new_ticket")) if note.incoming and @item && !@item.fb_post %>
+							:class => "tooltip conv-action-icon conv-actions-split tooltip", :title => t(".split_this_as_new_ticket")) if note.incoming and @item && !@item.fb_post %>
 
 				<%= link_to_function(t("fwd_to"), 
 							"jQuery('##{forward_note_id}').show().trigger('afterShow'); invokeRedactor('#{forward_note_id}-body') " ,
-							:class => "conv-action-icon conv-actions-forward") unless note.private %>
+							:class => "conv-action-icon conv-actions-forward tooltip", :title => t('fwd_to')) unless note.private %>
 
 
 				<%= link_to_function(t("edit"), 
 							"jQuery('##{notedetails}').hide(); jQuery('##{edit_id}').show().trigger('afterShow')",
-							:class => "conv-action-icon conv-actions-edit") if(note.note? && note.user && note.user.agent?) %>
+							:class => "conv-action-icon conv-actions-edit tooltip", :title => t('edit')) if(note.note? && note.user && note.user.agent?) %>
 
 			<% end %>
 	    </div>

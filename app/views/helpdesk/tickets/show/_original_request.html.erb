@@ -1,12 +1,20 @@
 <%= link_to user_avatar(@ticket.requester), @ticket.requester, :class => 'avatar-wrap' %>
 <div class="commentbox">
 	<div class="author-mail-detail">
-		<div><%= show_contact_hovercard(@ticket.requester) %> on <%= formated_date(@ticket.created_at) %> via <%= @ticket.source_name %></div>
+		<div>
+			<%= show_contact_hovercard(@ticket.requester) %> on <%= formated_date(@ticket.created_at) %> via <%= @ticket.source_name %>
+			<% 
+				metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) 
+				humanized_meta = UserAgent.parse(metainfo.body[13..-2]) if metainfo.present?
+			%> 
+
+			<%= content_tag :span, t("helpdesk.tickets.show.meta"), 
+							:title => "#{humanized_meta.browser} #{humanized_meta.version} / #{humanized_meta.os}", 
+							:class => "meta_icon tooltip" unless(metainfo.blank?) %>
+		</div>
 		<div class="info"> 
 			<p>
 				<%= multiple_emails_container(@to_emails)  if (@ticket.source == (Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])) %>
-				<% metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) %> 
-				<%= content_tag :span, t("helpdesk.tickets.show.meta"), :title => metainfo.body, :class => "meta_icon tooltip" unless(metainfo.blank?) %>
 			</p> 
 			<%= content_tag :p, multiple_emails_container(@ticket.cc_email_hash[:cc_emails]) unless @ticket.cc_email_hash.blank? %>
       	</div> 

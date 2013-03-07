@@ -636,12 +636,11 @@ $(document).ready(function() {
 	});
 
 	//Loading Ticket Activities
-	$('.ticket_show #activity_toggle').live('click', function(ev) {
-		if ($(ev.target).is('.toggle-button')) return false;
+	$('.ticket_show #activity_toggle input[type=checkbox]').live('change', function(ev) {
 
 		ev.preventDefault();
-		var _toggle = $(this);
-		$('.ticket_show #activity_toggle .toggle-button').trigger('click');
+		var _toggle = $(this).parent();
+		var _checkbox = $(this);
 		_toggle.addClass('loading-center');
 
 		var showing_notes = $('#all_notes').length > 0;
@@ -654,8 +653,15 @@ $(document).ready(function() {
 			url: url,
 			success: function(response) {
 				$('[rel=activity_container]').replaceWith(response);
+				$('#show_more').data('next-page',null);  //Resetting
 				updatePagination();
-				_toggle.removeClass('loading-center').toggleClass('visible');
+				_toggle.removeClass('loading-center');
+			}, 
+			error: function(response) {
+				$('#show_more').removeClass('hide');
+				_checkbox.prop('checked', !_checkbox.prop('checked'));
+				_toggle.removeClass('loading-center')
+				_checkbox.next().toggleClass('active');
 			}
 		})
 	})
@@ -803,18 +809,23 @@ $(document).ready(function() {
 
 	// -----   START OF TICKET BAR FIXED TOP ------ //
 	//For having the ticket subject and the action bar floating at the top when Scrolling down	
-	REAL_TOP = $("#wrap .header").first().height();
+	var REAL_TOP = $("#wrap .header").first().height() + 10;
+	var outerHeight = $('.fixedStrap').outerHeight();
 	var the_window = $(window);
 
 	the_window.scroll(function () {
 		if (the_window.scrollTop() > REAL_TOP) {
-			$('.fixedStrap').addClass('at_the_top');
-			$('.scollable_content').css({marginTop:$('.fixedStrap').outerHeight()});
-			$('#firstchild').addClass('firstchild');
+			if (!$('.fixedStrap').hasClass('at_the_top')) {
+
+				$('.fixedStrap, .fixedbg').addClass('at_the_top');
+				$('#forFixed').show();
+				$('.fixedStrap, .fixedbg').css({top: -outerHeight}).animate({ top: 0}, 500);
+				$('#firstchild').addClass('firstchild');
+			}
 
 		} else {
-			$('.fixedStrap').removeClass('at_the_top');
-			$('.scollable_content').css({marginTop:''});
+			$('.fixedStrap, .fixedbg').removeClass('at_the_top').css({top: ''});
+			$('#forFixed').hide();
 			$('#firstchild').removeClass('firstchild');
 		}
 	});

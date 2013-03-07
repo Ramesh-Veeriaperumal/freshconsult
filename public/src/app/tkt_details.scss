@@ -923,9 +923,7 @@ p strong{
     				width: auto;
     				display: inline-block;
     			}
-
     		}
-
 
     		input[type=text] {
 	    		display: inline-block;
@@ -1782,10 +1780,17 @@ p strong{
 		max-width: 150px;
 		display: block;
 		@include corners(5px);
-		font-size: 10px;
-		padding: 3px 10px 5px;
-		font-weight: 600;
-		margin-top: 5px;
+		font-size: 12px;
+		padding: 3px 15px 5px;
+		font-weight: bold;
+	}
+}
+
+.activity .commentbox {
+	min-height: 30px;
+
+	.details {
+		margin-top: 0;
 	}
 }
 
@@ -2080,7 +2085,6 @@ label.custom-select {
 	float: right;
 	width: 140px;
 	padding: 7px;
-	cursor: pointer;
 	margin: 5px 35px 5px 15px;
 
 	.text {
@@ -2323,12 +2327,24 @@ label.custom-select {
 	z-index:0;
 	width: 100%;
 	height: 143px;
+	overflow: hidden;
 	position: fixed;
-	top:0;
-	left:0;
 	background: #fff;
 	border-bottom: solid 1px #DADADA;
-	@include box-shadow( 0px 0px 10px 0px #e5e5e5);
+	@include box-shadow( 0 0 6px 0 rgba(0,0,0,0.1));
+	z-index: 99;
+
+	&.at_the_top {
+		top:0;
+		left:0;
+		display: block;
+	}
+
+}
+
+#forFixed {
+	height: 143px;
+	display: none;
 }
 .fixedStrap.at_the_top{
 	position: fixed;
@@ -2339,19 +2355,14 @@ label.custom-select {
 	min-width: 1000px;
 	background: #fff;
 
-	.fixedbg {
-		
-		display: block;
-		-webkit-transition: all 1s linear;
-	}
-
 	.firstchild {
 		position: relative;
 	}
 }
+
 .tkt-sidebar .at_the_top{
 	background-color:#fff;
-	}
+}
 
 .drop-red, .drop-green, .drop-yellow{
 	@include border-radius(3px);
