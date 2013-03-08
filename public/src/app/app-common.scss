@@ -3675,6 +3675,9 @@ div.addReminder{
 					display: inline-block;
 					width: 50px;
 					padding:0 2px 0 0;
+					overflow: hidden;
+					white-space: nowrap;
+					text-overflow:ellipsis;
 				}				
 			}
 		}

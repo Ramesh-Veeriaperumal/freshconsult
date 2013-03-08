@@ -44,7 +44,7 @@
 					</td>
 					<td>
 						<div class="item_actions" align="right">
-					    	<%= link_to(t('edit'), edit_helpdesk_sla_policy_path(policy), :class => "btn btn-mini") %>
+					    	<%= link_to(t('edit'), edit_helpdesk_sla_policy_path(policy), :class => "btn btn-mini #{"default_policy" if policy.is_default}") %>
 
 					    	<%unless policy.is_default?%>
 						    	<%= link_to "<i class='icon-trash'></i>", policy, :confirm => "Are you sure you want to delete SLA policy?", :method => :delete, :class => "btn btn-mini" %>
