@@ -10028,6 +10028,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 	}
 	ul.multi_value_field li.search_field_item input {
 		padding-left:8px !important;
+		min-width: 140px;
 	}
 	li.search_field_item input {
 		&:focus {
@@ -10150,7 +10151,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 	      margin-top: -4px;
 	      padding: 3px;
 	      overflow: hidden;
-	      width: 99%;
+	      width: 98%;
 				li {
 					background:none;
 					border:none;

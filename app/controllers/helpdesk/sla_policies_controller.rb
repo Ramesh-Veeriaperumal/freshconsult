@@ -125,7 +125,8 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
 
       @companies = current_account.customers.find(:all, 
             :conditions => ["id in (?)", @sla_policy.conditions[:company_id]]).map {|company| 
-            [company.name, company.id]} unless @sla_policy.conditions[:company_id].blank?
+            [company.name, company.id]} unless (@sla_policy.is_default || 
+                                                @sla_policy.conditions[:company_id].blank?)
       
       return if @sla_policy.escalations.blank?
 

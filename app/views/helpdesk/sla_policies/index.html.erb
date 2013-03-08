@@ -8,7 +8,7 @@
 		<div class="row-fluid">
 			<div class="span6"><h3 class="title"><%=t('sla_policy.title1')%></h3></div>
 			 <div class="span6 pull-right pagination-right header_buttons align-right" >
-				<%= link_to t('reorder'),'#', :id => "sla_policies_reorder_button", :class => "btn" unless(@sla_policies.active.size <= 1)%>
+				<%= link_to t('reorder'),'#', :id => "sla_policies_reorder_button", :class => "btn" unless(@sla_policies.active.size <= 2)%>
 				<%= (link_to t('sla_policy.new'), new_helpdesk_sla_policy_path, :class => "btn btn-primary") if feature?(:customer_slas) %>
 	        </div>
 		</div>
