@@ -1528,8 +1528,11 @@ en:
     helpcard:
       title: SLA Policy
       tour: Help me create a new SLA policy
-      info1: "A service level agreement (SLA) policy lets you set standards of performance for your support team. You can set SLA policies for the time within which agents should respond to, and resolve tickets based on ticket priorities. You can choose whether you want each SLA rule to be calculated over calendar hours or your business hours, and also create automatic escalation rules to notify specific agents when an SLA rule is violated. "
-      info2: "Your SLA Policies will be used in Freshdesk to determine the “Due By” time for each ticket. You can have a default SLA policy for all customers, or have multiple SLA policies for different customer tiers, like those who have subscribed to your Premium Support package."
+      info1: '<p>A service level agreement (SLA) policy lets you set standards of performance for your support team. You can set SLA policies for the time within which agents should respond to, and resolve tickets based on ticket priorities. You can choose whether you want each SLA rule to be calculated over calendar hours or your business hours.</p> <p>Your SLA Policies will be used in Freshdesk to determine the “Due By” time for each ticket.</p>'
+      title1: 'Enforcing Escalation Rules'
+      info2: '<p>You can optionally set escalation hierarchies for each policy to notify specific agents when an SLA rule is violated.</p>'
+      title2: 'Using Multiple SLA Policies'
+      info3: '<p>You can have a default SLA policy for all customers, or have multiple SLA policies for different customer tiers, like those who have subscribed to your Premium Support package.</p><p>When you add additional SLA Policies (other than the default policy), you will have to specify the conditions for which this policy will be enforced.</p>'
     override: Override
     title1: SLA Policies
     response_time: Response time
