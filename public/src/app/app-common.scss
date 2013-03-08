@@ -10153,7 +10153,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 				float:left;
 				@include hide-text();
 				padding: 2px 2px 2px 0px !important;
-				background: url('/images/select2.png') right top no-repeat !important;
+				background: image-url('/images/select2.png') right top no-repeat !important;
 				width: 12px;
 				height: 8px;
 				left: -2px;

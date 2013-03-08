@@ -437,7 +437,9 @@ Autocompleter.MultiValue = Class.create({
   
   addObservers: function(element) {
     Event.observe(element, "mouseover", this.onHover.bindAsEventListener(this));
-    Event.observe(element, "click", this.onClick.bindAsEventListener(this));
+    
+    Event.observe(element, "mousedown", this.onClick.bindAsEventListener(this));
+    Event.observe(element, "touchend", this.onClick.bindAsEventListener(this));
   },
 
   onHover: function(event) {
