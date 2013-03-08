@@ -153,7 +153,7 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
       unless @agents_id.blank? 
         @agents_cache = {}
         @agents_id.uniq!
-        current_account.users.technicians.find(:all, :conditions => ["id in (?)", @agents_id], 
+        current_account.users.technicians.visible.find(:all, :conditions => ["id in (?)", @agents_id], 
                         :select => "id, name, email").each{|agent| 
                         @agents_cache[agent.id] = {:name => agent.name, :email => agent.email}}
       end

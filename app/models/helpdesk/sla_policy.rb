@@ -99,6 +99,8 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
       if resolution_escalation && escalate_to_agents(ticket, resolution_escalation, 
                                       EmailNotification::RESOLUTION_TIME_SLA_VIOLATION, :due_by)
         ticket.update_attribute(:escalation_level, escalation_level)
+      else 
+        break
       end
     end
 
@@ -148,7 +150,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
     def escalate_to_agents(ticket, escalation, type, due_by)
       if escalation[:time].seconds.since(ticket.send(due_by)) <= Time.zone.now
         unless escalation[:agents_id].blank? ||
-        (agents = account.users.technicians.find(:all, :conditions => ["id in (?)", escalation[:agents_id]])).blank?
+        (agents = account.users.technicians.visible.find(:all, :conditions => ["id in (?)", escalation[:agents_id]])).blank?
           SlaNotifier.send_email(ticket, agents, type)
         end
         return true
