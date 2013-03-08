@@ -291,21 +291,32 @@ active_dialog = null;
             curItem = $(item);
             var dialog = null;
             curItem.click(function(e){
-               e.preventDefault();
-               width = $(this).data("width") || '750px';
-             
-                href = jQuery(this).data('url') || this.href;
+              e.preventDefault();
             
-               if(dialog == null){
+              var $this = $(this),
+                  dialog = $this.data("dialog2"),
+                  width = $this.data("width") || '750px',
+                  href = $this.data('url') || this.href,
+                  params = $this.data('parameters');
+
+              if(dialog == null){
                   dialog = $("<div class='loading-center' />")
                               .html("<br />")
                               .dialog({  modal:true, width: width, height:'auto', position:'top',
-                                         title: this.title, resizable: false });
+                                         title: this.title, resizable: false,
+                                         close: function( event, ui ) {
 
-                   active_dialog = dialog.load(href,{}, function(responseText, textStatus, XMLHttpRequest) {
+                                          if($this.data("destroyOnClose"))
+                                              $this.dialog2("destroy")
+                                         } });
+
+                  active_dialog = dialog.load(href, params || {}, function(responseText, textStatus, XMLHttpRequest) {
                                                    dialog.removeClass("loading-center");
                                                    dialog.css({"height": "auto"});
                                                 });
+
+                  $this.data("dialog2", dialog)
+
                }else{
                   dialog.dialog("open");
                }
@@ -315,10 +326,14 @@ active_dialog = null;
         destroy : function( ) {
           return this.each(function(){
             var $this = $(this),
-                data = $this.data('dialog2');
+                dialog = $this.data('dialog2');
+
             $(window).unbind('.dialog2');
-            data.tooltip.remove();
             $this.removeData('dialog2');
+            $el = dialog.dialog("destroy")
+            $el.remove()
+
+            dialog = null;
           })
         },
         show : function( ) { },

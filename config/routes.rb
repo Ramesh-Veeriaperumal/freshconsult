@@ -252,7 +252,7 @@
     helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, 
                                     :delete_forever => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, 
                                     :export_csv => :post, :latest_ticket_count => :post, :add_requester => :post,
-                                    :filter_options => :get, :full_paginate => :get },  
+                                    :filter_options => :get, :full_paginate => :get},  
                                  :member => { :reply_to_conv => :get, :forward_conv => :get, :view_ticket => :get, 
                                     :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :post, 
                                     :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put, 
@@ -281,7 +281,8 @@
       :collection => { :active => :get, :unachieved => :get }
 
     helpdesk.resources :notes
-    helpdesk.resources :bulk_ticket_actions , :collection => {:update_multiple => :put}
+    helpdesk.resources :bulk_ticket_actions , :collection => {:update_multiple => :put }
+    helpdesk.resources :merge_tickets, :collection => { :complete_merge => :post, :merge_search => :get, :merge => :put }
     helpdesk.resources :ca_folders
     helpdesk.resources :canned_responses, :collection => {:search => :get, :recent => :get}
     helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }

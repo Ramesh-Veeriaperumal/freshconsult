@@ -21,6 +21,7 @@ en:
   sales: "Sales"
   preview: "Preview"
   your_email: "Your email"
+  please_wait: Please wait...
   filter_options:
     status: "Status"
     responder_id: "Agents"
@@ -100,6 +101,7 @@ en:
       description: Description
       product: Product
       ticket_type: Type
+      created_at: Created
     untitled: Untitled
     first_choice: First Choice
     second_choice: Second Choice
@@ -163,6 +165,7 @@ en:
   agent_deleted_message: This is a deleted agent
   cancel: Cancel
   confirm: Confirm
+  downgrade_dialog_title: Sure you want to downgrade?
   yes_password_reset: "Yes"
   no_password_reset: "No"
   last: last
@@ -772,7 +775,8 @@ en:
       unwatch: 
         success: %{tickets} removed from the watch-list.
         failure: Ticket unwatch action failed.
-        unsubscribe_success: This ticket has been removed from your watch-list.
+        unsubscribe_success: The ticket has been removed from your watch-list.
+      bulk_merge_success : 'The tickets with ids %{merged_tickets} were merged into  <a href="/helpdesk/tickets/%{target_ticket}">%{target_ticket_subject} #%{target_ticket}</a> '
     custom_fields: 
       update: 
         failure: Ticket fields update failed.
@@ -1043,6 +1047,7 @@ en:
   username: Username
   reply: reply
   is_not: Is not
+  during: during
   less_than: Less than
   greater_than: Greater than
   feedbackwidget_bgcolor: Background Color
@@ -1273,6 +1278,7 @@ en:
   company_name: Company Name
   expires: Expires
   total_price: Total
+  downgrade: Downgrade
   update: Update
   save_reply: Save Reply
   forum_shared:
@@ -1394,7 +1400,7 @@ en:
     full_time: Full time
     occasional: Occasionally
     day_pass_expired: Your day pass has expired, please login to acquire a new day pass.
-    insufficient_day_pass: Unable to allocate a day pass for you, please contct your administrator.
+    insufficient_day_pass: Unable to allocate a day pass for you, please contact your administrator.
     password_reset_message: "Do you want to reset %{requester}'s password?"
     password_reset_note: "Note: A reset mail with instructions will be sent to %{requester}"
   account_admin: Account admin
@@ -1698,7 +1704,7 @@ en:
   last_renewed_on: "Last Renewed on"
   update_and_login: Update and login
   enter_payment: Enter Payment details...
-  downgrade_confirm: "Some of your current features and the corresponding data will be deleted by downgrading to this plan. \nAre you sure you want to continue?"
+  downgrade_confirm: "<span class=\"label label-important\">Important</span>&nbsp;&nbsp;You are currently downgrading from <b>{{from}}</b> plan to the <b>{{to}}</b> plan. Please note that all data and configurations associated with features available in {{from}} plan will be lost permanently.<br /><br /> To see the full list of plans and features, please visit <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plans and Pricing</a>. <br />Still not sure? <a href = \"mailto:support@freshdesk.com\" >Let us help you decide</a>"
   errors_in_payment: "Errors encountered with your payment:"
   email_configs:
     title: Email Settings
@@ -1820,6 +1826,20 @@ en:
     ticket_user_list_status_agent_responded_at: "Agent responded: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_user_list_status_requester_responded_at: "Customer responded: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_user_list_status_created_at: "Created: <span class='emphasize'>%{time_ago} ago</span>"
+    merge_ticket_list_status_closed_at: "From: %{username}<br /> Closed: <span class='emphasize'>%{time_ago} ago</span>"
+    merge_ticket_list_status_resolved_at: "From: %{username}<br /> Resolved: <span class='emphasize'>%{time_ago} ago</span>"
+    merge_ticket_list_status_agent_responded_at: "From: %{username}<br /> Agent responded: <span class='emphasize'>%{time_ago} ago</span>"
+    merge_ticket_list_status_requester_responded_at: "From: %{username}<br /> Customer responded: <span class='emphasize'>%{time_ago} ago</span>"
+    merge_ticket_list_status_created_at: "From: %{username}<br /> Created: <span class='emphasize'>%{time_ago} ago</span>"
+    id : Id
+    ticket_selected: " ticket selected"
+    tickets_selected: " tickets selected"
+    subject_placeholder: "Look up tickets by their subject"
+    id_placeholder: "Type in an ID to find tickets"
+    requester_placeholder: "Find tickets by requester"
+    default_note_text : Default Note will be added
+    note_saved : Note saved
+    edit_note: "<b>Edit Note</b>"
     thanks: Thank you for submitting a feedback
     portal_created_on: "Created by <span class='emphasize'>%{username}</span> on <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Created on <span class='emphasize'>%{date}</span>"
@@ -1860,6 +1880,11 @@ en:
     subject: Subject
     created_at: Hours since created
     opened_at: Hours since reopened
+    created_during: 
+      title: Created
+      business_hours: Business Hours
+      non_business_hours: Non-Business Hours
+      holidays: Holidays
     pending_since: Hours since pending
     resolved_at: Hours since resolved
     closed_at: Hours since closed
@@ -1908,6 +1933,7 @@ en:
     activities: Activities
     activity_toggle: Show Activities
     requestor_info: Requestor Info
+    view_twitter: View on Twitter 
     reply_to: Reply
     add_note: Add note
     monitor_btn_title: Monitor this ticket
@@ -1932,6 +1958,7 @@ en:
     submit_ticket: Submit 
     stop_monitor_btn_title: Stop monitoring this ticket
     merge_btn: Merge
+    merge_title: Merge Tickets
     split_ticket: Split
     tweets: Tweets
     agent_notify: added a note and wants you to have a look
@@ -2148,6 +2175,7 @@ en:
       assigned_reassigned: "%{type} to %{username}"
       flagged_spam: "%{tickets} flagged as spam. %{undo}"
       flagged_unspam: "%{tickets} removed from the spam folder."
+
     shared:
       reply_form:
         title: Reply to %{email}
@@ -2348,13 +2376,24 @@ en:
         enter_ticket_id: Enter a ticket id #
         merge: Merge
       confirm_merge:
-        source_merge_description: This ticket is closed and merged into ticket %{ticket_id}.
+        source_merge_description: "This ticket is closed and merged into ticket <a href='/helpdesk/tickets/%{ticket_id}' target='_blank' class='merge_links'>%{ticket_id}</a>."
         source_ticket_close_info: This ticket will be closed with the following note
         target_ticket_updated_info: This ticket will be updated with the following note and all conversations will be moved
         will_be_merged_into: Will be merged into...
         target_merge_description1: Ticket %{ticket_id} %{ticket_subject} is merged with this request
         target_merge_description2: Description in ticket %{ticket_id}
-        confirm_and_merge: Confirm and merge    
+        confirm_and_merge: Confirm and merge  
+      bulk_merge:
+        target_merge_description:  "Ticket {{ticket.id}} {{ticket.subject}} is merged with this request"
+        target_note_description1: 
+          one: "Ticket with id"
+          other: "Tickets with ids"
+        target_note_description2: 
+          one: "is merged with this request."
+          other: "are merged with this request."
+        target_note_description3:
+          one: "Ticket with id %{source_tickets} is merged into ticket %{target_ticket_id} with this request"
+          other: "Tickets with ids %{source_tickets} are merged into ticket %{target_ticket_id} with this request"
   import_ticket_group: Tickets &amp; Group
   or: or
   tickets_filter:
@@ -2460,6 +2499,8 @@ en:
     twitter_handles:
       index:
         title: "Twitter Accounts"
+        reauthorize: Reauthorize
+        reauth_required: Reauthorization required
         remove_handle_msg: Are you sure you want to remove this twitter account?
       signin_info:
         title: Sign in using twitter
@@ -2828,7 +2869,7 @@ en:
     dropbox:
       label: "DropBox"
       desc: "Attach and Share your data/files from DropBox."
-      helptext: "<h4>Dropbox integration help</h4><br/><p>The Dropbox Integration lets you use the Dropbox Chooser from within Freshdesk, allowing requesters and agents to attach files from their accounts to ticket conversations directly.</p><p>Before you setup the integration, go to the <strong><a href='https://www.dropbox.com/developers/apps' target='_blank' alt='developers'>Dropbox Developers page</a></strong>.</p><p>1. From the My Apps section, click on the 'Create an App'.</p><p>2. Select the app type as 'Chooser'.</p><p>3. Enter a name and description.</p><p>4. Type in your support URL under Domains <i>(for eg. http://yourcompany.freshdesk.com)</i></p><p>5. Click on the Create button.</p><p>Finally, copy paste the Application Key of the new app into this page, and Save changes. Your Dropbox Chooser should now be ready. You can check it out in the New Ticket form.</p>"
+      helptext: "<h4>Dropbox integration help</h4><br/><p>The Dropbox Integration lets agents and users browse for files from their Dropbox folder and share them when submitting or replying to a ticket in Freshdesk. A direct link to the file is shared in the ticket, removing the need for attachments and email size restrictions.</p><p>Before you setup the integration, go to the <strong><a href='https://www.dropbox.com/developers/apps' target='_blank' alt='developers'>Dropbox Developers page</a></strong>.</p><p>1. From the My Apps section, click on the 'Create an App'.</p><p>2. Select the app type as 'Chooser'.</p><p>3. Enter a name and description.</p><p>4. Type in your support URL under Domains <i>(for eg. yourcompany.freshdesk.com)</i></p><p>5. Click on the Create button.</p><p>Finally, copy paste the Application Key of the new app into this page, and Save changes. Your Dropbox Chooser should now be ready. You can check it out in the New Ticket form.</p>"
       form:
         app_key: "Registered Application key for your domain"
         app_key_info: "Create an App in the dropbox and provide the app key here."

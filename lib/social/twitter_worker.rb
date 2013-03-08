@@ -8,8 +8,9 @@ class Social::TwitterWorker
   def self.perform(account_id)
     account = Account.find(account_id)
     account.make_current
-    twitter_handles = account.twitter_handles.find(:all, :conditions => ["capture_dm_as_ticket = 1 or capture_mention_as_ticket = 1"])    
-    twitter_handles.each do |twt_handle| 
+    twitter_handles = account.twitter_handles.active   
+    twitter_handles.each do |twt_handle|
+      @twt_handle = twt_handle 
       if twt_handle.capture_dm_as_ticket
         fetch_direct_msgs twt_handle
       end
@@ -44,12 +45,17 @@ class Social::TwitterWorker
       rescue Timeout::Error
         puts "TIMEOUT - rescued - wait for 5 seconds and then proceed." 
         sleep(5) 
-      rescue Exception => e
+      rescue Twitter::Error::Unauthorized => e
+        @twt_handle.state = Social::TwitterHandle::TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required]
+        @twt_handle.last_error = e.to_s
+        @twt_handle.save
         NewRelic::Agent.notice_error(e)
         puts "Something wrong happened in twitter!"
         puts e.to_s
-      rescue 
+      rescue Exception => e
         puts "Something wrong happened in twitter!"
+        NewRelic::Agent.notice_error(e)
+        puts e.to_s
       end  
       return return_value   
   end

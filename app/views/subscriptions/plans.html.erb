@@ -1,3 +1,3 @@
 <% content_for :sidebar do -%><%- end %>
 <h3 class="title">Plans & Pricing</h3>
-<%= render :partial => "select_plans", :locals => { :plans => @plans, :subscription => @subscription } %>
+<%= render :partial => "select_plans", :locals => { :plans => @plans, :subscription => @subscription, :show_all => true } %>

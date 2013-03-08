@@ -9,8 +9,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+ActiveRecord::Schema.define(:version => 20130219063556) do
 
-ActiveRecord::Schema.define(:version => 20130213101949) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1193,6 +1193,8 @@ ActiveRecord::Schema.define(:version => 20130213101949) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "dm_thread_time",                         :default => 0
+    t.integer  "state"
+    t.text     "last_error"
   end
 
   add_index "social_twitter_handles", ["account_id", "twitter_user_id"], :name => "social_twitter_handle_product_id", :unique => true

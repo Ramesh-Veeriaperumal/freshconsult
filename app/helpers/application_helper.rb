@@ -543,7 +543,7 @@ module ApplicationHelper
                                               {:include_blank => "...", :selected => field_value}, 
                                               {:class => element_class})
       when "nested_field" then
-        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => t('any'), :selected => field_value}, {:class => element_class}, field_value, in_portal)
+        element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal)
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
@@ -703,4 +703,26 @@ module ApplicationHelper
               "data-tour-id" => tour_id)
   end
   
+  def check_fb_reauth_required
+    fb_page = current_account.fb_reauth_check_from_cache
+    if fb_page
+      return content_tag('div', "<a href='javascript:void(0)'></a>  Your Facebook channel is inaccessible. 
+        It looks like username, password, or permission has been changed recently.Kindly 
+        <a href='/social/facebook' target='_blank'> fix </a> it.  ", :id => type, :class => 
+        "alert-message block-message warning full-width")
+    end
+    return
+  end
+ 
+  def check_twitter_reauth_required
+    twt_handle= current_account.twitter_reauth_check_from_cache
+    if twt_handle
+      return content_tag('div', "<a href='javascript:void(0)'></a>  Your Twitter channel is inaccessible. 
+        It looks like username or password has been changed recently. Kindly 
+        <a href='/social/twitters' target='_blank'> fix </a> it.  ", :id => type, :class => 
+        "alert-message block-message warning full-width")
+    end
+    return
+  end
+
 end

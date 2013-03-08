@@ -14,7 +14,7 @@ module Helpdesk::TimeSheetsHelper
   def renderTimesheetIntegratedApps( liquid_values ) 
     integrated_apps.map do |app|
       widget_code = get_app_widget_script(app[0], app[1], liquid_values)
-      widget_code_with_ticket_id = Liquid::Template.parse(widget_code).render(liquid_values) 
+      widget_code_with_ticket_id = Liquid::Template.parse(widget_code).render(liquid_values, :filters => [Integrations::FDTextFilter])
       unless get_app_details(app[0]).blank?
          content_tag :fieldset, :class => "integration still_loading #{app[0]}_timetracking_widget" do
            "<script type=\"text/javascript\">#{app[0]}inline=true;</script>"+

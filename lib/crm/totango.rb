@@ -1,6 +1,6 @@
 class CRM::Totango
 
-	QUEUE = "totangoQueue"
+	QUEUE = "totango_queue"
 
 	class TotangoUrl
 		extend CRM::SendEventToTotango
