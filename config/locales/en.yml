@@ -1898,6 +1898,7 @@ en:
     group: Group
     agent: Agent 
     none: None
+    myself: Myself
     spam_btn_title: Mark as spam
     assigned_to: Assigned To
     assigned_agent: Agent

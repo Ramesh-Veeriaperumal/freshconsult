@@ -9902,6 +9902,26 @@ div.gcal-confirm-modal-content{ width: 100%; }
 			font-weight: normal;
 		}
 	}
+	// Adding upward arrow buttons to Dropdown menus
+
+	.open > .dropdown-menu:before {
+		@include triangle(up, rgba(0, 0, 0, 0.35), 6px);
+		position:absolute;
+		z-index:2;
+		content:"";
+		top: -6px;
+		left: 25px;
+	}
+
+	.open > .dropdown-menu:after {
+		@include triangle(up, #FFF, 5px);
+		position:absolute;
+		z-index:3;
+		content:"";
+		top: -5px;
+		left: 26px;
+	}
+
 	li.seperator {
 		padding: 2px 1px;
 		border: 0px;
