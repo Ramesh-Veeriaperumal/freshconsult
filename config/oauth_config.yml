@@ -60,8 +60,8 @@ staging:
   consumer_token: freshpo.com
   consumer_secret: mZ4Mvav/PzfC5X2lOn2+Qi+o
  google_oauth2:
-  consumer_token: freshpo.com
-  consumer_secret: mZ4Mvav/PzfC5X2lOn2+Qi+o
+  consumer_token: 663183371165-dh9ct05c08k8q00lra341g46asffkaaf.apps.googleusercontent.com
+  consumer_secret: 5c7UOsdl0okTN22LcNX0d99i
   options:
     scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email
  mailchimp:
@@ -82,8 +82,8 @@ production:
   consumer_token: freshdesk.com
   consumer_secret: f7NgGAv6TKqew3O5Xb85SadF
  google_oauth2:
-  consumer_token: freshdesk.com
-  consumer_secret: f7NgGAv6TKqew3O5Xb85SadF
+  consumer_token: 367378856688.apps.googleusercontent.com
+  consumer_secret: M0tVzcR4cSL-pRxDUqSV2FH1
   options:
     scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email
  mailchimp:

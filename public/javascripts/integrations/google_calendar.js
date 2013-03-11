@@ -98,7 +98,7 @@ GoogleCalendar.prototype = {
 		</form> \
 	</div>'), 
 
-	CONFIG_TEXT: new Template('<span class="error">Please authorize Freshdesk to access your calendar information.<br><a href="#{oauth_url}">Authorize Now</a>.</span>'),
+	CONFIG_TEXT: new Template('<span class="error">Please authorize Freshdesk to access your calendar information.<br><a href="#{oauth_url}" id="gcal-authorize-link">Authorize Now</a>.</span>'),
 
 	NO_EVENT_FOR_TICKET_MSG: new Template('<span class="error">No event linked with this ticket.</span>'),
 	
@@ -1175,6 +1175,12 @@ if(google_calendar_options.oauth_token && google_calendar_options.oauth_token!='
 	jQuery("#gcal-email-container, #gcal-change-account-link").show();
 		
 
+jQuery("#gcal-change-account-link, #gcal-authorize-link").click(function(e){
+	var raw = !!(jQuery.raw);
+	jQuery.raw = true;
+	jQuery.cookie('return_uri', document.location.href, {path: '/'});
+	jQuery.raw = raw;
+});
 /**
  * Date.parse with progressive enhancement for ISO 8601 <https://github.com/csnover/js-iso8601>
  * © 2011 Colin Snover <http://zetafleet.com>

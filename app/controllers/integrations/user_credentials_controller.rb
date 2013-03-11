@@ -25,7 +25,10 @@ class Integrations::UserCredentialsController < ApplicationController
       puts "Something went wrong while configuring an installed application ( #{msg})"
       flash[:error] = t(:'flash.application.install.error')
     end
-  	redirect_back_or_default root_path
+
+    redirect_uri = request.cookies.fetch('return_uri', root_path)
+    cookies.delete('return_uri')
+    redirect_to redirect_uri
   end
 
 end
