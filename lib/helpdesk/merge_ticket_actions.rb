@@ -3,15 +3,19 @@ module Helpdesk::MergeTicketActions
 	include Helpdesk::Ticketfields::TicketStatus
 	include Helpdesk::ToggleEmailNotification
 	include ParserUtil
+	include RedisKeys
 
 	def handle_merge 
+		@header = @target_ticket.header_info || {}
 		@source_tickets.each do |source_ticket|
 		  move_source_time_sheets_to_target(source_ticket)
 		  add_note_to_source_ticket(source_ticket) 
 		  close_source_ticket(source_ticket)
+		  update_header_info(source_ticket.header_info) if source_ticket.header_info
 		  update_merge_activity(source_ticket) 
 		end
-		move_source_requesters_to_target 
+		add_header_to_target if !@header.blank?
+		move_source_requesters_to_target
 		add_note_to_target_ticket
 	end
 
@@ -47,6 +51,22 @@ module Helpdesk::MergeTicketActions
 		  disable_notification
 		  source_ticket.update_attribute(:status , CLOSED)
 		  enable_notification
+		end
+
+		def update_header_info source_header
+			source_header[:message_ids].each do |source|
+				@header[:message_ids] = [] unless @header.key?(:message_ids)
+				unless @header[:message_ids].include? source
+					@header[:message_ids] << source
+					source_key = EMAIL_TICKET_ID % { :account_id => current_account.id, :message_id => source }
+					set_key(source_key, @target_ticket.display_id)
+				end
+			end
+		end
+
+		def add_header_to_target
+			@target_ticket.header_info = @header
+			@target_ticket.schema_less_ticket.save
 		end
 
 		def add_note_to_source_ticket source_ticket
