@@ -1176,10 +1176,7 @@ if(google_calendar_options.oauth_token && google_calendar_options.oauth_token!='
 		
 
 jQuery("#gcal-change-account-link, #gcal-authorize-link").click(function(e){
-	var raw = !!(jQuery.raw);
-	jQuery.raw = true;
 	jQuery.cookie('return_uri', document.location.href, {path: '/'});
-	jQuery.raw = raw;
 });
 /**
  * Date.parse with progressive enhancement for ISO 8601 <https://github.com/csnover/js-iso8601>
