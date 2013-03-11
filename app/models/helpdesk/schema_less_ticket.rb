@@ -15,7 +15,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :access_token, :string_tc01
 
 	serialize :to_emails
-	serialize :header_info
+	serialize :text_tc01, Hash
 
 	validates_uniqueness_of :string_tc01, :scope => :account_id,:allow_nil => true
 
