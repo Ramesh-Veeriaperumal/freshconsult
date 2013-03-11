@@ -39,11 +39,11 @@ module Helpdesk::Social::Facebook
   def send_facebook_reply
     if @parent.is_fb_message?
       unless send_facebook_message 
-        flash[:notice] = @parent.fb_post.facebook_page.last_error
+       return flash[:notice] = @parent.fb_post.facebook_page.last_error
       end
     else
       unless send_facebook_comment 
-        flash[:notice] = @parent.fb_post.facebook_page.last_error
+        return flash[:notice] = @parent.fb_post.facebook_page.last_error
       end
     end
     flash[:notice] = t(:'flash.tickets.reply.success')

@@ -27,20 +27,20 @@
 				<div class="search-grey-box">
 					<div class="live_search">
 						<form action="#" name="search_twitter" id="search_twitter">
-							<label class="overlabel" for="twittersearch">Search twitter</label>
+							<label class="overlabel" for="twittersearch"><%= t('social.twitter_handles.index.search_twitter') %></label>
 							<input class="search" type="text" id="twittersearch" />
-							<input type="submit" value="Search" class="uiButton" />
+							<input type="submit" value="<%= t('social.twitter_handles.index.search') %>" class="uiButton" />
 						</form>
 					</div>
 				</div>
 				<div class="info-results" id="tweet_results_info" style="display:none;">
-					Results for <strong id="tweet_results_string"></strong>
+					<%= t('social.twitter_handles.index.results_for') %> <strong id="tweet_results_string"></strong>
 				</div>
 				<div class="info-highlight" id="tweet_no_search">
-				  No Search Default search keywords are defined for any of your twitter handle.				  
+				 <%= t('social.twitter_handles.index.no_search_default') %>				  
 				</div>
 				<div class="info-highlight" id="tweet_noresults" style="display:none;">
-				  No Tweet results for <strong id="tweet_noresults_string"></strong>.
+				  <%= t('social.twitter_handles.index.no_tweet_results') %><strong id="tweet_noresults_string"></strong>.
 				</div>
 				<div id="twitter_results" class="list-group"></div>
 				<script id="tweetTemplate" type="text/x-jquery-tmpl">
@@ -54,14 +54,14 @@
 						  <div class="floatr">
 						    <span class="item_actions">
 						      <a href="#" data-user="${from_user}" class="button reply_button">
-						        Reply
+						        <%= t('social.twitter_handles.index.reply') %>
 					        </a>
   						    <a href="#" data-text="${text}" data-user="${from_user}" data-id="${id_str}" class="button convert_as_ticket">
-  							    Convert to Ticket
+  							    <%= t('social.twitter_handles.index.convert_to_ticket') %>
   						    </a>
   						  </span>
 						    <a href="#" class="button goto_ticket" style="display:none;" target="_blank">
-						      Go to Ticket
+						      <%= t('social.twitter_handles.index.go_to_ticket') %>
 						    </a>
 						  </div>
 							<span class="prettydate" title="${created_at}">${humaneDate(new Date(created_at))}</span>
@@ -69,7 +69,7 @@
 					</div>
 				</script>
 				<div class="more_results">
-					<a id="moreTweets" style="visibility:hidden;" href="javascript: jQuery('#twitter_results').tweetfeed('nextpage')" class="uiButton">Show more results</a>
+					<a id="moreTweets" style="visibility:hidden;" href="javascript: jQuery('#twitter_results').tweetfeed('nextpage')" class="uiButton"><%= t('social.twitter_handles.index.show_more_results') %></a>
 				</div>
 				</div>
 			</td>
@@ -214,7 +214,7 @@
     <table>
       <tr>
         <td width="120px">
-          From:
+          <%= t('social.twitter_handles.index.from') %>
         </td>
         <td>
           <%= select_tag :twitter_handle, options_from_collection_for_select(current_account.twitter_handles, :id, :screen_name) %>
@@ -227,7 +227,7 @@
         <td>
 	        <%= text_area "tweet", :body, { :class => 'required tweet auto-height', :id => 'tweet_text_area', :rows => "3" } %>
 	        <div class="info-data">
-	          <strong>Note:</strong> The current reply will not be registered as a ticket or a conversation inside Freshdesk.
+	          <strong><%= t('social.twitter_handles.index.note_title') %></strong><%= t('social.twitter_handles.index.note') %>
           </div>
 	      </td>
 	    </tr>

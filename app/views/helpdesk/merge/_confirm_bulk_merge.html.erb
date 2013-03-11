@@ -59,7 +59,7 @@
             <%= t("helpdesk.merge.bulk_merge.target_note_description1", :count => @source_tickets.length) %>
             
             <%= @source_tickets.map{ |t| link_to t.display_id, "/helpdesk/tickets/#{t.display_id}", 
-              :target => '_blank', :title => t.description, :class => "merge_links" }.to_sentence %>
+              :target => '_blank', :title => h(t.description), :class => "merge_links" }.to_sentence %>
 
             <%= t("helpdesk.merge.bulk_merge.target_note_description2", :count => @source_tickets.length, :ticket_id => 
             @target_ticket.display_id) %>

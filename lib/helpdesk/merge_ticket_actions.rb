@@ -25,8 +25,12 @@ module Helpdesk::MergeTicketActions
 			cc_email_array = @source_tickets.collect{ |source| [ source.cc_email[:cc_emails], 
 																	convert_to_cc_format(source) ] if check_source(source) }.flatten()
 			return unless cc_email_array.any?
-			cc_email_array += @target_ticket.cc_email[:cc_emails]
-			@target_ticket.cc_email[:cc_emails] = validate_emails(cc_email_array , @target_ticket)
+			if @target_ticket.cc_email.blank?
+				@target_ticket.cc_email = {:cc_emails => cc_email_array.uniq, :fwd_emails => []}
+			else	
+				cc_email_array += @target_ticket.cc_email[:cc_emails] 
+				@target_ticket.cc_email[:cc_emails] = validate_emails(cc_email_array , @target_ticket)
+			end
 			@target_ticket.save  
 		end  
 
@@ -66,7 +70,7 @@ module Helpdesk::MergeTicketActions
 		end
 
 		def add_note_to_source_ticket source_ticket
-		  pvt_note = params[:source][:is_private]
+		  pvt_note =  source_ticket.requester_has_email? ? params[:source][:is_private] : true
 		    source_note = source_ticket.notes.create(
 		      :body => params[:source][:note],
 		      :private => pvt_note || false,
@@ -79,27 +83,26 @@ module Helpdesk::MergeTicketActions
 		      :cc_emails => pvt_note ? [] : source_ticket.cc_email_hash && source_ticket.cc_email_hash[:cc_emails]
 		    )
 		    if !source_note.private
-		      Helpdesk::TicketNotifier.send_later(:deliver_reply, source_ticket, source_note ,
-		      																																		{:include_cc => true})
+		      Helpdesk::TicketNotifier.send_later(:deliver_reply, source_ticket, source_note , {:include_cc => true})
 		    end
 		end
 
 		def add_note_to_target_ticket
-		  target_pvt_note = params[:target][:is_private]
-		  @target_note = @target_ticket.notes.create(
-	      :body_html => params[:target][:note],
-	      :private => target_pvt_note || false,
-	      :source => target_pvt_note ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : 
-	      														Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
-	      :account_id => current_account.id,
-	      :user_id => current_user && current_user.id,
-	      :from_email => @target_ticket.reply_email,
-	      :to_emails => target_pvt_note ? [] : @target_ticket.requester.email.to_a,
-	      :cc_emails => target_pvt_note ? [] : @target_ticket.cc_email_hash && @target_ticket.cc_email_hash[:cc_emails]
-		  )
-		  if !@target_note.private
-		    Helpdesk::TicketNotifier.send_later(:deliver_reply, @target_ticket, @target_note, {:include_cc => true})
-		  end
+		  target_pvt_note = @target_ticket.requester_has_email? ? params[:target][:is_private] : true
+			@target_note = @target_ticket.notes.create(
+				:body_html => params[:target][:note],
+				:private => target_pvt_note  || false,
+				:source => target_pvt_note ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : 
+																Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
+				:account_id => current_account.id,
+				:user_id => current_user && current_user.id,
+				:from_email => @target_ticket.reply_email,
+				:to_emails => target_pvt_note ? [] : @target_ticket.requester.email.to_a,
+				:cc_emails => target_pvt_note ? [] : @target_ticket.cc_email_hash && @target_ticket.cc_email_hash[:cc_emails]
+			)
+			if !@target_note.private
+			Helpdesk::TicketNotifier.send_later(:deliver_reply, @target_ticket, @target_note, {:include_cc => true})
+			end
 		end
 
 		def convert_to_cc_format ticket

@@ -4,6 +4,9 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 
 	belongs_to :ticket, :class_name => 'Helpdesk::Ticket', :foreign_key => 'ticket_id'
 	belongs_to :product
+
+	belongs_to :sla_policy, :class_name => "Helpdesk::SlaPolicy", :foreign_key => "long_tc01"
+
 	belongs_to_account
 
 	attr_protected :account_id
@@ -13,6 +16,8 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :st_survey_rating, :int_tc01
 	alias_attribute :trashed, :boolean_tc02
 	alias_attribute :access_token, :string_tc01
+	alias_attribute :escalation_level, :int_tc02
+	alias_attribute :sla_policy_id, :long_tc01
 
 	serialize :to_emails
 	serialize :text_tc01, Hash

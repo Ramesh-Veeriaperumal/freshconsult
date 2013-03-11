@@ -96,7 +96,7 @@ class Social::FacebookPosts
       profile =  @rest.get_object(profile_id)
       profile.symbolize_keys!
       user = @account.contacts.new
-      if user.signup!({:user => {:fb_profile_id => profile_id, :name => profile[:name], 
+      if user.signup!({:user => {:fb_profile_id => profile_id, :name => profile[:name] || profile[:id], 
                     :active => true,
                     :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
        else
@@ -155,7 +155,7 @@ class Social::FacebookPosts
   def get_comment_updates(fetch_since)
     @fb_page.fb_posts.find_in_batches(:batch_size => 500,
                 :conditions => [ "social_fb_posts.postable_type = ? and created_at > ?", 
-                  'Helpdesk::Ticket', (Time.now - 30.days).to_s(:db)]) do |retrieved_posts|    
+                  'Helpdesk::Ticket', (Time.now - 7.days).to_s(:db)]) do |retrieved_posts|    
 
       retrieved_posts_id = retrieved_posts.map { |post|  "'#{post.post_id}'" }.join(',') 
       
