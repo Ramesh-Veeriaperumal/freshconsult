@@ -18,7 +18,8 @@ class Integrations::UserCredentialsController < ApplicationController
                                                 Integrations::Application.find_by_name(app_name).id)
                   
         Integrations::UserCredential.add_or_update(installed_application, current_user.id, config_hash)	    
-        flash[:notice] = t(:'flash.application.install.success') if(installed_application)
+        flash[:notice] = t(:'flash.application.install.success') if installed_application and 
+                          request.cookies.fetch('return_uri', '').blank?
   	    app_config.delete
       end	
     rescue Exception => msg
@@ -26,9 +27,7 @@ class Integrations::UserCredentialsController < ApplicationController
       flash[:error] = t(:'flash.application.install.error')
     end
 
-    redirect_uri = request.cookies.fetch('return_uri', root_path)
-    cookies.delete('return_uri')
-    redirect_to redirect_uri
+      redirect_back_using_cookie(request, current_user.admin? ? integrations_applications_path : root_path )
   end
 
 end
