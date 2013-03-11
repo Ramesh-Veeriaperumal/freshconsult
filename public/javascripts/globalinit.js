@@ -293,17 +293,21 @@ var $J = jQuery.noConflict();
 
       sidebarHeight = $('#Sidebar').height();
       if(sidebarHeight !== null && sidebarHeight > $('#Pagearea').height())
-         $('#Pagearea').css("minHeight", sidebarHeight);
+        $('#Pagearea').css("minHeight", sidebarHeight);
 
-
-        if(window.location.hash != '') {
-          hash = window.location.hash.split('#');
-          window.location.hash.substr(1).split('#').each(function(value,index){
-            setTimeout(function(){
-              jQuery('#'+value + "-tab").trigger('click');
-            },(index+1)*10)
-          })
-        }
+      // Tab auto select based on window hash url
+      if(window.location.hash != '') {
+        hash = window.location.hash.split('/');
+        jQuery.each(hash, function(index, value){
+          setTimeout(function(){
+            catchException(function(){ 
+              log(index)
+              log(value)
+              jQuery(value + "-tab").trigger('click') 
+            }, "Error in line 303 File globalinit.js");
+          }, ((index+1)*10) )
+        })
+      }
           
         qtipPositions = {
           normal : {

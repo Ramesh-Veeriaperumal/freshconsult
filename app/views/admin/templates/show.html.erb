@@ -19,7 +19,7 @@
     <%end%>
     <%if feature?(:layout_customization)%>
     <li>
-      <a id="layout-tab" href="#header" data-toggle="tab" data-code-refresh="#portal_template_header, #portal_template_footer, #portal_template_layout"><%=t("portalcss.layout_and_pages_header")%></a>
+      <a id="layout-tab" href="#layout" data-toggle="tab" data-code-refresh="#portal_template_header, #portal_template_footer, #portal_template_layout"><%=t("portalcss.layout_and_pages_header")%></a>
     </li>
     <%end%>
   </ul>        
@@ -34,20 +34,20 @@
       	</div>
       <%end%>
       <%if feature?(:layout_customization)%>
-        <div class="tab-pane" id="header">
+        <div class="tab-pane" id="layout">
           <ul data-tabs="tabs" class="pills">
             <li class="active">
-              <a id="layout-tab" href="#layout" code-refresh-id="portal_template_layout">
+              <a id="template-tab" href="#layout/#template" code-refresh-id="portal_template_layout">
                 <%=t("portalcss.layout_pages.subheader_layout")%>
               </a>
             </li>
             <li>
-              <a id="pages-tab" href="#pages"><%=t("portalcss.layout_pages.subheader_pages")%></a> 
+              <a id="pages-tab" href="#layout/#pages"><%=t("portalcss.layout_pages.subheader_pages")%></a> 
             </li>
           </ul>
 
           <div class="tab-content">
-            <div class="tab-pane active" id="layout">
+            <div class="tab-pane active" id="template">
               <%= render :partial => "layout" %>
             </div>
             <div class="tab-pane" id="pages">

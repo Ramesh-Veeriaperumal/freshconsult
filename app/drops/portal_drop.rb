@@ -64,6 +64,10 @@ class PortalDrop < BaseDrop
     @user ||= portal_user
   end
 
+  def has_user_signed_in
+    @has_user_signed_in ||= user ? true : false
+  end
+
   def has_alternate_login
     (feature?(:twitter_signin) || feature?(:google_signin) || feature?(:facebook_signin))
   end

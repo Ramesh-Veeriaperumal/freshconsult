@@ -9,16 +9,26 @@ if (typeof console === "undefined" || typeof console.log === "undefined") {
     };
 }
 
-function log(entry) {
-  if (console) {
-    console.log(entry);
+function log() {
+  var args = Array.prototype.slice.call(arguments);
+  if (window.console && window.console.log && window.console.log.apply) {
+    console.log(args.join(" "));
   } else {
-    alert(entry);
+    // alert(entry);
   }
 }
 function autoSaveTinyMce(editor){
    tinyMCE.triggerSave();
    return true;
+}
+
+// Utility methods for FreshWidget  
+function catchException(fn, message) {
+  try {
+    return fn();
+  } catch(e) {
+    log(message || "Freshdesk Error:", e);
+  }
 }
 
 function freshdate(str) {

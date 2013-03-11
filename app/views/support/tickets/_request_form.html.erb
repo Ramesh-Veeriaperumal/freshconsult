@@ -27,10 +27,10 @@
 	</div>
 <% end %>
 
-<% if feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
-  <% javascript_tag do %>
-    (function($){
-      jQuery(document).ready(function(){  
+<% javascript_tag do %>
+  (function($){
+    jQuery(document).ready(function(){      
+      <% if feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
         callbackToSolutionSearch = function(string){
           jQuery.ajax({ url: "/search/widget_solutions?search_key="+string, 
             success: function(data){
@@ -62,12 +62,10 @@
                 jQuery(this).removeClass("loading-right");        
               }
           });
-
-          invokeRedactor('helpdesk_ticket_description_html');      
-
-      }); 
-    })(jQuery);
-  <% end %>
+      <% end %>
+      invokeRedactor('helpdesk_ticket_description_html');
+    }); 
+  })(jQuery);
 <% end %>
 
 
