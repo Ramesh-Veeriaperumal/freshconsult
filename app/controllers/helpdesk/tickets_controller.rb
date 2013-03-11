@@ -672,7 +672,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def load_reply_to_all_emails
     default_notes_count = @new_show_page ? 3 : 5
-    @ticket_notes = @ticket.conversation(nil,default_notes_count,[:survey_remark, :user, :attachments, :schema_less_note])
+    @ticket_notes = @ticket.conversation(nil,default_notes_count,[:survey_remark, :user, :attachments, :schema_less_note, :dropboxes])
     reply_to_all_emails
   end
 

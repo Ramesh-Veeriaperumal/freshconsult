@@ -2,7 +2,7 @@
 note = activity[:is_note] ? @prefetched_notes[activity[:stack].first.note_id] : nil
 %>
 <% if note.present? %>
-	<%= render :partial => '/helpdesk/tickets/show/note', :object => note %>
+	<%= render :partial => '/helpdesk/tickets/show/note', :object => note, :locals => { :minimizable => true} %>
 <% else %>
 <li class="conversation activity <%= 'hide' if activity[:important][:type] == 'new_ticket' %>">
 	<%= link_to user_avatar(activity[:user]), activity[:user], :class => 'avatar-wrap'  if activity[:user] %>

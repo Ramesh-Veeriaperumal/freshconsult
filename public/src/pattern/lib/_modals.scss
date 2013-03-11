@@ -62,11 +62,10 @@
     top: 15px;
   }
 }
-
 // Body (where all modal content resides)
 .modal-body {
   overflow-y: auto;
-  max-height: 400px;
+  max-height: 500px;
   padding: 25px 15px 15px;
 
   form {

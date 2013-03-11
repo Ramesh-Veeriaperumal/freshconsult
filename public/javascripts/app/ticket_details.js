@@ -641,7 +641,7 @@ $(document).ready(function() {
 		ev.preventDefault();
 		var _toggle = $(this).parent();
 		var _checkbox = $(this);
-		_toggle.addClass('loading-center');
+		_toggle.addClass('loading_activities');
 
 		var showing_notes = $('#all_notes').length > 0;
 		var url = showing_notes ? TICKET_DETAILS_DATA['activities_pagination_url'] : TICKET_DETAILS_DATA['notes_pagination_url'];
@@ -655,16 +655,20 @@ $(document).ready(function() {
 				$('[rel=activity_container]').replaceWith(response);
 				$('#show_more').data('next-page',null);  //Resetting
 				updatePagination();
-				_toggle.removeClass('loading-center');
+				_toggle.removeClass('loading_activities');
 			}, 
 			error: function(response) {
 				$('#show_more').removeClass('hide');
 				_checkbox.prop('checked', !_checkbox.prop('checked'));
-				_toggle.removeClass('loading-center')
+				_toggle.removeClass('loading_activities')
 				_checkbox.next().toggleClass('active');
 			}
 		})
-	})
+	});
+
+	$('.ticket_details').on('click', '[rel=activity_container] .minimizable', function(){
+		$(this).toggleClass('minimized');
+	});
 
 	$('.collision_refresh').live('click', function(ev) {
 		window.location = TICKET_DETAILS_DATA['ticket_path'];

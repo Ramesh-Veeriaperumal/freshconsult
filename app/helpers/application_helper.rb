@@ -655,8 +655,8 @@ module ApplicationHelper
   def truncate_filename filename
     extension = filename.include?('.') ? filename.split('.').last : nil
     simple_name = extension ? filename[0..-(extension.length + 2)] : filename
-    if filename.length > 13
-      return simple_name[0,7] + "..." + simple_name[-3..-1] + (extension ? ".#{extension}" : "")
+    if filename.length > 20
+      return simple_name[0,15] + "..." + simple_name[-2..-1] + (extension ? ".#{extension}" : "")
     end
     filename
   end

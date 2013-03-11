@@ -253,6 +253,13 @@ class Helpdesk::Note < ActiveRecord::Base
       :response_time_by_bhrs => resp_time_bhrs) unless resp_time.blank?
   end
 
+  def kind
+    return "private_note" if private_note?
+    return "public_note" if public_note?
+    return "forward" if fwd_email?
+    "reply"
+  end
+
   protected
 
     def update_content_ids

@@ -893,7 +893,7 @@ en:
       assigned_to_nobody: "Agent Unassigned"
       reassigned: "Agent Reassigned"
       assigned: "Agent Assigned"
-      priority_change: "::Priority value:: {{value}}"
+      priority_change: "{{value}}"
       new_ticket: "New Ticket"
       conversation:
         out_email: 
@@ -909,7 +909,7 @@ en:
       execute_scenario: "Scenario Executed"
       ticket_merge: "Ticket Merged"
       ticket_split: "Ticket Splitted"
-      status_change: "::Status Value :: {{value}}"
+      status_change: "{{value}}"
       deleted: "Ticket Deleted"
       restored: "Ticket Restored"
       product_change: "Product Updated"
@@ -2359,6 +2359,11 @@ en:
         no_tickets: You don't have any tickets in current view
       note:
         posted_on: "%{user_name} on %{note_date}"
+        created_on:
+          private_note: "%{user_name} added a private note on %{note_date}"
+          public_note: "%{user_name} added a public note on %{note_date}"
+          reply: "%{user_name} replied on %{note_date}"
+          forward: "%{user_name} forwarded on %{note_date}"
         edit_note: Edit Note
         split_this_as_new_ticket: Split this as a new Ticket
         delete_note: "Remove this from the ticket converstion?"

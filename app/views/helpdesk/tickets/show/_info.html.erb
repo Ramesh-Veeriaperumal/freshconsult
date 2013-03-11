@@ -99,8 +99,10 @@
 
 									</li>
 									<li class="ticket-btns">
-										<%= link_to t('ticket.merge_btn'), "/helpdesk/tickets/show_tickets_from_same_user/#{@ticket.display_id}", 
-												:id => "Merge", :title => "Merge ticket", :class => 'btn', "data-ajax-dialog" => true %>
+										<%= link_to t('ticket.merge_btn'), "/helpdesk/merge_tickets/bulk_merge?source_tickets=#{@ticket.display_id}", 
+												:id => "Merge", :title => t('ticket.merge_title'), :class => 'btn',
+												"data-ajax-dialog" => true, "data-width" => "727"
+										%>
 									</li>
 									<li class="ticket-btns">
 										<div class="btn-group">

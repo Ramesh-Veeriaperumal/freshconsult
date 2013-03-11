@@ -40,7 +40,7 @@
 										:note => [@ticket, Helpdesk::Note.new(:private => true)] 
 									}) if @ticket.is_facebook? %>
 			</div> 
-			<div id="TicketPseudoReply" class="pseudo_reply" rel="note-button" data-note-type="reply">
+			<div id="TicketPseudoReply" class="pseudo_reply">
 				<% if (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present? or @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobi_help]) %>
 				<a href="" id="FwdButton" rel="note-button" data-note-type="reply" ><%= t('ticket.reply_to')  %></a> /
 				<% end %>
