@@ -1,4 +1,4 @@
-class ActivationsController < ApplicationController
+class ActivationsController < SupportController
   #before_filter :require_no_user, :only => [:new, :create] #Guess we don't really need this - Shan
 
   before_filter :only => [:send_invite, :test] do |c| 
@@ -21,6 +21,7 @@ class ActivationsController < ApplicationController
 
   def new
     @user = current_account.users.find_using_perishable_token(params[:activation_code], 1.weeks) 
+    set_portal_page :activation_form
     if @user.nil?
       flash[:notice] = t('users.activations.code_expired')
       return redirect_to new_password_reset_path

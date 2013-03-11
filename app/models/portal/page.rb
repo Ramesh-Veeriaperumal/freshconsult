@@ -46,7 +46,9 @@ class Portal::Page < ActiveRecord::Base
 			"support_ticket_path", "tickets"],
 
 		# Password reset with perishable token
-		[:password_reset,       16,  "password_resets/edit.portal"]
+		[:password_reset,       16,  "password_resets/edit.portal"],
+		[:activation_form,      17,  "activations/new.portal"]
+		
 	]
 
 	# Manually organizing them as groups to avoid direct db save dependency
@@ -59,7 +61,7 @@ class Portal::Page < ActiveRecord::Base
 
 	# Restricted pages from editing
 	# Hiding customization for profile_edit, ticket_list, ticket_view and password_reset
-	RESTRICTED_PAGES = [:profile_edit, :ticket_list, :ticket_view, :password_reset]
+	RESTRICTED_PAGES = [:profile_edit, :ticket_list, :ticket_view, :password_reset, :activation_form]
 	
 	# Helper constants for access of PAGE_TYPES
 	PAGE_TYPE_OPTIONS      	= PAGE_TYPES.collect { |i| [i[0], i[1]] }	

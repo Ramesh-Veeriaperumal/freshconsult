@@ -46,6 +46,9 @@ class SupportController < ApplicationController
       @portal ||= current_portal
       @preview = preview?
       @portal_template = @portal.fetch_template
+
+      # !!! Dirty hack Pointing the http_referer to support home if it is in preview mode
+      request.env["HTTP_REFERER"] = support_home_url if @preview
     end
 
     def redactor_form_builder

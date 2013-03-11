@@ -14,6 +14,7 @@ class Portal::Tags::Snippet < Liquid::Tag
                             # Partials that work only in ticket details and list page
                             # Should not be exposed in documentation
                             :reset_password_form => "/password_resets/form",
+                            :activation_form => "/activations/form",
                             :ticket_add_people => "/support/tickets/add_people",
                             :ticket_reply => "/support/tickets/reply",
                             :ticket_survey => "/support/tickets/ticket_survey",
