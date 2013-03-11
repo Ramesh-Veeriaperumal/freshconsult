@@ -33,7 +33,6 @@ module MemcacheKeys
 
   ACCOUNT_NESTED_FIELDS = "v1/ACCOUNT_NESTED_FIELDS:%{account_id}"
 
-
   # Portal customization related keys
   PORTAL_TEMPLATE = "v1/PORTAL_TEMPLATE:%{account_id}:%{portal_id}"
 
@@ -41,6 +40,9 @@ module MemcacheKeys
 
   SOLUTION_CATEGORIES = "v1/SOLUTION_CATEGORIES:%{portal_id}"
 
+  FB_REAUTH_CHECK = "v1/FB_REAUTH_CHECK:%{account_id}"
+
+  TWITTER_REAUTH_CHECK = "v1/TWITTER_REAUTH_CHECK:%{account_id}"
   
   class << self
 

@@ -58,7 +58,12 @@
         <%= link_to( "<span></span> #{t('admin.products.add_another_email')}", "javascript:void(0)", :class => "add-email-icon", :id => "addchoice" ) %>
     </div>
 
-    <span class="seperator"></span>
+    <%= content_tag(:label, t('admin.products.form.product_desc'), :class => "tabbed caption") %>
+    <div class="fields">
+      <%= form.text_area :description, :class => "text", :rows => "5" %>
+    </div>
+
+    <span class="seperator"></span>    
 
     <div class="configure-portal">
       <label>

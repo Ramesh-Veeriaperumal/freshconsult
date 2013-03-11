@@ -13,6 +13,8 @@ var $J = jQuery.noConflict();
     var hoverPopup =  false;
     var hidePopoverTimer;
     var hideWatcherTimer;
+    var insideCalendar = false;
+    var closeCalendar = false;
 
     $("body").click(function(ev){
       hideWidgetPopup(ev);
@@ -20,8 +22,16 @@ var $J = jQuery.noConflict();
 
     hideWidgetPopup = function(ev) {
       if((widgetPopup != null) && !$(ev.target).parents().hasClass("popover")){
-        widgetPopup.popover('hide');
-        widgetPopup = null;
+        if(!insideCalendar)
+        {
+          widgetPopup.popover('hide');
+          widgetPopup = null;
+        }
+      }
+      if (closeCalendar)
+      {
+        insideCalendar = false;
+        closeCalendar = false;
       }
     }
 
@@ -119,7 +129,34 @@ var $J = jQuery.noConflict();
         });
     });
 
-      $("a[rel=contact-hover],[rel=hover-popover]").live('mouseenter',function(ev) {
+    $("input.datepicker_popover").livequery(function() {
+      $(this).datepicker({
+        dateFormat: 'yy-mm-dd',
+        beforeShow: function(){
+          insideCalendar=true;
+          closeCalendar=false;
+        },
+        onClose: function(){
+          closeCalendar=true;
+        }
+      });
+    });
+
+    $('input.datetimepicker_popover').livequery(function() {
+      $(this).datetimepicker({
+        timeFormat: "HH:mm:ss",
+        dateFormat: 'MM dd,yy',
+        beforeShow: function(){
+          insideCalendar=true;
+          closeCalendar=false;
+        },
+        onClose: function(){
+          closeCalendar=true;
+        }
+      });
+    });
+
+    $("a[rel=contact-hover],[rel=hover-popover]").live('mouseenter',function(ev) {
         ev.preventDefault();
         clearTimeout(hidePopoverTimer);
         hideActivePopovers(ev);
@@ -161,7 +198,7 @@ var $J = jQuery.noConflict();
  
       // - Custom select boxs will use a plugin called chosen to render with custom CSS and interactions
       $("select.customSelect").livequery(function(){ $(this).chosen(); });
-      $("select.select2").livequery(function(){ $(this).select2(); });
+      $("select.select2").livequery(function(){ $(this).select2($(this).data()); });
 
       // - Quote Text in the document as they are being loaded
       $("div.request_mail").livequery(function(){ quote_text(this); }); 
@@ -176,11 +213,6 @@ var $J = jQuery.noConflict();
       $(".tourmyapp-toolbar .tourmyapp-next_button").livequery(function(){ 
         if($(this).text() == "Next »")
            $(this).addClass('next_button_arrow').text('Next');
-      });
-
-      // - Tour My App 'slash' replaced by 'of'
-      $('.tourmyapp-step-index').livequery(function() { 
-        $(this).text($(this).text().replace('/',' of '));
       });
 
       // !PULP to be moved into the pulp framework as a sperate util or plugin function
@@ -234,10 +266,10 @@ var $J = jQuery.noConflict();
          onkeyup: false,
          focusCleanup: true,
          focusInvalid: false,
-         ignore:":not(:visible)"
+         ignore:".nested_field:not(:visible)"
       };
       
-      $("ul.ui-form").livequery(function(ev){
+      $("ul.ui-form, .cnt").livequery(function(ev){
         $(this).not(".dont-validate").parents('form:first').validate(validateOptions);
       })
       $("div.ui-form").livequery(function(ev){

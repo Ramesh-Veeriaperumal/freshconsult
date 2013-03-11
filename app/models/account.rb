@@ -218,9 +218,9 @@ class Account < ActiveRecord::Base
   after_create :send_welcome_email
   after_update :update_users_language
 
-  before_destroy :update_crm
+  before_destroy :update_crm, :notify_totango
 
-  after_commit_on_create :add_to_billing
+  after_commit_on_create :add_to_billing, :add_to_totango
   before_destroy :update_billing
 
   after_commit_on_update :clear_cache
@@ -651,12 +651,20 @@ class Account < ActiveRecord::Base
       Resque.enqueue(Billing::AddToBilling::CreateSubscription, id)
     end 
 
+    def add_to_totango
+      Resque.enqueue(CRM::Totango::TrialCustomer, id)
+    end
+
     def update_billing
       Resque.enqueue(Billing::AddToBilling::DeleteSubscription, id)
     end
 
     def update_crm
       Resque.enqueue(CRM::AddToCRM::DeletedCustomer, id)
+    end
+
+    def notify_totango
+      Resque.enqueue(CRM::Totango::CanceledCustomer, id, full_domain)
     end
 
 end

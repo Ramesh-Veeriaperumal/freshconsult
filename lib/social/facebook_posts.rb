@@ -9,15 +9,18 @@ class Social::FacebookPosts
  def fetch
   
    until_time = @fb_page.fetch_since   
-   query = "SELECT post_id,message,actor_id,updated_time,created_time,comments FROM stream WHERE source_id=#{@fb_page.page_id} and actor_id!=#{@fb_page.page_id} and updated_time > #{@fb_page.fetch_since}"
+   query = "SELECT post_id,message,actor_id,updated_time,created_time,comments FROM stream WHERE source_id=#{@fb_page.page_id} and 
+              actor_id!=#{@fb_page.page_id} and (created_time > #{@fb_page.fetch_since} or updated_time > #{@fb_page.fetch_since})"
    
    if @fb_page.import_visitor_posts && @fb_page.import_company_posts
-    query = "SELECT post_id,message,actor_id ,updated_time,created_time,comments FROM stream WHERE source_id=#{@fb_page.page_id} and updated_time > #{@fb_page.fetch_since} "
+    query = "SELECT post_id,message,actor_id ,updated_time,created_time,comments FROM stream WHERE source_id=#{@fb_page.page_id} and  
+                (created_time > #{@fb_page.fetch_since} or updated_time > #{@fb_page.fetch_since})"
    end
           
    feeds = @rest.fql_query(query)
    until_time = feeds.collect {|f| f["updated_time"]}.compact.max unless feeds.blank?  
    create_ticket_from_feeds feeds               
+   #get_comment_updates(@fb_page.fetch_since)      
    @fb_page.update_attribute(:fetch_since, until_time) unless until_time.blank?
  end
  
@@ -149,4 +152,41 @@ class Social::FacebookPosts
     (subject.length > count) ? "#{subject[0..(count - 1)]}..." : subject
   end
     
+  def get_comment_updates(fetch_since)
+    @fb_page.fb_posts.find_in_batches(:batch_size => 500,
+                :conditions => [ "social_fb_posts.postable_type = ? and created_at > ?", 
+                  'Helpdesk::Ticket', (Time.now - 7.days).to_s(:db)]) do |retrieved_posts|    
+
+      retrieved_posts_id = retrieved_posts.map { |post|  "'#{post.post_id}'" }.join(',') 
+      
+      query = "SELECT id,post_fbid,post_id,text,time,fromid FROM comment where post_id in 
+                (#{retrieved_posts_id}) and time > #{fetch_since}"
+      comments =  @rest.fql_query(query)
+      comments.each do |comment|
+        comment.symbolize_keys!
+        post_id = comment[:post_id]
+        post = @account.facebook_posts.find_by_post_id(post_id)
+        @ticket = post.postable unless post.nil?
+        unless @ticket.nil?
+          profile_id = comment[:fromid]
+          user = get_facebook_user(profile_id)
+          @note = @ticket.notes.build(
+                        :body => comment[:text],
+                        :private => true, 
+                        :incoming => true,
+                        :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"],
+                        :account_id => @fb_page.account_id,
+                        :user => user,
+                        :created_at => Time.zone.at(comment[:time]),
+                        :fb_post_attributes => {:post_id => comment[:id], :facebook_page_id =>@fb_page.id,
+                                                :account_id => @account.id}
+                        )
+          unless @note.save
+            puts "error while saving the note :: #{@note.errors.to_json}"
+          end
+        end
+      end
+    end
+  end
+
 end

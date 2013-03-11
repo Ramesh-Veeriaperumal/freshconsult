@@ -135,6 +135,7 @@ jQuery(document).ready(function(){
 		{
 			Loading.updateStatus(statusBox,"update",GettingStarted.translate("updating"));
 			loadingDiv.show();
+			totango.track( "Email Setup", "Helpdesk Settings");
 		}
 		else{
 			Loading.updateStatus(statusBox,"failure",GettingStarted.translate("email_invalid"));
@@ -178,6 +179,7 @@ jQuery(document).ready(function(){
 
 		if(!invalid_emails_exist)
 		{			  	Loading.updateStatus(statusBox,"update",GettingStarted.translate("agent_email_sending"));
+						totango.track( "Agents Added", "Helpdesk Settings");
 
 		}
 		else{
@@ -397,6 +399,7 @@ function update_image(input) {
            jQuery("div.custom-upload").css("background-image", 'url(' + e.target.result + ')');                    
            jQuery("div.custom-upload").css("background-size", 'contain');                    
            jQuery("#logo-preview").attr("src",e.target.result);
+           totango.track("Logo Changed", "Portal Customization");
            rebrand();
        }
 

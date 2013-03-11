@@ -97,13 +97,14 @@ class Time
   def business_time_until(to_time)
 
     # Make sure that we will calculate time from A to B "clockwise"
+    from_time = Time.zone.parse(self.strftime('%Y-%m-%d %H:%M:%S'))
     direction = 1
-    if self < to_time
-      time_a = self
+    if from_time < to_time
+      time_a = from_time
       time_b = to_time
     else
       time_a = to_time
-      time_b = self
+      time_b = from_time
       direction = -1
     end
 
@@ -120,9 +121,9 @@ class Time
  
     # Both times are in different dates
 
-    result = Time::parse(time_a.strftime('%Y-%m-%d ') + 
+    result = Time.zone.parse(time_a.strftime('%Y-%m-%d ') + 
         BusinessCalendar.config.end_of_workday(time_a.wday)) - time_a   # First day
-    result += time_b - Time::parse(time_b.strftime('%Y-%m-%d  ') + 
+    result += time_b - Time.zone.parse(time_b.strftime('%Y-%m-%d  ') + 
         BusinessCalendar.config.beginning_of_workday(time_b.wday)) # Last day
 
     time_b = Time.end_of_workday(Time.roll_backward(time_b-1.day)) #To preceed the time_b since last day is calculated - Abhinav

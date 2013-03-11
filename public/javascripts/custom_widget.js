@@ -102,7 +102,8 @@ Freshdesk.Widget.prototype={
 		else{
 			reqHeader.Authorization = "Basic " + Base64.encode(this.options.username + ":" + this.options.password);
 		}
-		new Ajax.Request("/http_request_proxy/fetch",{
+		url = reqData.source_url ? reqData.source_url : "/http_request_proxy/fetch"
+		new Ajax.Request(url, {
       asynchronous: true,
 			parameters:reqData,
 			requestHeaders:reqHeader,

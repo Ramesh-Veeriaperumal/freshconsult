@@ -478,6 +478,7 @@ class User < ActiveRecord::Base
     return if customer?
     
     update_attributes({:user_role => USER_ROLES_KEYS_BY_TOKEN[:customer], :deleted => false})
+    subscriptions.destroy_all
     agent.destroy
   end
 

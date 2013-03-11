@@ -254,11 +254,25 @@ class Helpdesk::TicketField < ActiveRecord::Base
   protected
 
     def group_agents(ticket)
-      return account.agent_groups.find( :all,
-                      :joins =>:user,
-                      :conditions => { :group_id => ticket.group_id, :users => {:deleted => false}
-                                      }
-                    ).collect{ |c| [c.user.name, c.user.id]} if ticket && ticket.group_id
+      if ticket && ticket.group_id
+        agent_list = account.agent_groups.find(:all, 
+                                               :joins =>"inner join users on 
+                                                          agent_groups.account_id = 
+                                                                    users.account_id and 
+                                                          users.id = agent_groups.user_id",
+                                               :conditions => { :group_id => ticket.group_id, 
+                                                                :users => {:deleted => false}
+                                                              }
+                                              ).collect{ |c| [c.user.name, c.user.id]}
+
+        if !ticket.responder_id || agent_list.any? { |a| a[1] == ticket.responder_id }
+          return agent_list
+        end
+
+        responder = account.agents_from_cache.detect { |a| a.user.id == ticket.responder_id }
+        agent_list += [[ responder.user.name, ticket.responder_id ]] if responder
+        return agent_list
+      end
       
       account.agents_from_cache.collect { |c| [c.user.name, c.user.id] }
     end

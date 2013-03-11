@@ -51,6 +51,16 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) { self.customers.all }
   end
 
+  def twitter_reauth_check_from_cache
+    key = TWITTER_REAUTH_CHECK % {:account_id => self.id }
+    MemcacheKeys.fetch(key) { self.twitter_handles.reauth_required.present? }
+  end
+
+  def fb_reauth_check_from_cache
+    key = FB_REAUTH_CHECK % {:account_id => self.id }
+    MemcacheKeys.fetch(key) { self.facebook_pages.reauth_required.present? }
+  end
+
   def custom_dropdown_fields_from_cache
     key = ACCOUNT_CUSTOM_DROPDOWN_FIELDS % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
