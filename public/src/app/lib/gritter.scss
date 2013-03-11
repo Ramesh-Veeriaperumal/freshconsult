@@ -1,4 +1,5 @@
 @import "settings";
+@import "settings";
 
 /* the norm */
 #gritter-notice-wrapper {
@@ -7,21 +8,27 @@
 	right:20px;
 	z-index:9999;
 	width:301px;
+	&.top-right{
+		bottom: auto;
+		left: auto;
+		top: 20px;
+		right: 6%;
+	}
 	&.top-left{
 		left: 20px;
-    right: auto;
+    	right: auto;
 	}
 	&.bottom-right{
 		top: auto;
-    left: auto;
-    bottom: 20px;
-    right: 20px;
+	    left: auto;
+	    bottom: 20px;
+	    right: 20px;
 	}
 	&.bottom-left {
-    top: auto;
-    right: auto;
-    bottom: 20px;
-    left: 20px;
+	    top: auto;
+	    right: auto;
+	    bottom: 20px;
+	    left: 20px;
 	}
 	.gritter-item-wrapper {
 		border: #4d525d solid 1px;
@@ -78,6 +85,10 @@
 				width: 70%;
 				margin-left: 65px;
 			}
+			.gritter-without-image{
+				margin-left: 10px;
+				margin-bottom: 2px;
+			}
 		}
 
 		&.hover{
@@ -124,6 +135,16 @@
 
 }
 
+
 #gritter-notice-wrapper {
 	max-height:580px;
+	.flash-notice, .flash-error{
+		background-color: #fdfde5;		
+		border-color: #7d7d7d;
+		.gritter-item { color: #333333; }
+		.gritter-item .gritter-close {
+			background:image-url('icons/btn_close_icon.png') no-repeat center 3px;
+		}
+		
+	}
 }

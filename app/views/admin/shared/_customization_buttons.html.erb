@@ -10,26 +10,45 @@ if type == :template
   else
     cached_data = @cached_properties.include?(active_tab)
   end
+  reset_url = soft_reset_admin_portal_template_url(:portal_template => _portal_template, :portal_tab => active_tab)
+  btn_disabled = !cached_data
   reset_btn = link_to t("portalcss.reset_to_last_published"), 
                       {:action => :soft_reset, :portal_template => _portal_template, :portal_tab => active_tab },
-                      :class => "btn #{!cached_data && 'disabled'}", :id => "soft_reset_button", :method => :put
+                      :class => "btn #{!cached_data && 'disabled'}", :method => :put
 else
-  cached_data = @from_cache
+  btn_disabled = !@from_cache
+  reset_url = soft_reset_admin_portal_template_page_url(:page_id => params[:id], :page_type => @portal_page.page_type)
   reset_btn = link_to t("portalcss.reset_to_last_published"),
                       {:action => :soft_reset, :page_id => params[:id], :page_type => @portal_page.page_type },
-                      :class => "btn #{!cached_data && 'disabled'}", :id => "soft_reset_button", :method => :put
+                      :class => "btn #{!cached_data && 'disabled'}", :method => :put
+  active_tab = t("portal_pages.pages.#{@portal_page.token}")
   _coderefresh_ids = "#portal_page_content"
 end 
 %>
 
-<%= submit_tag t("portalcss.preview"),
+<%= link_to "< Go back", (@portal.main_portal? ? edit_account_path : admin_products_path), :class => "btn" %>
+
+<a href="#reset-dialog" role="button" class="btn" 
+  data-toggle="modal" rel="reset-btn" id="soft_reset_button"
+    data-reset-url="<%= reset_url %>" 
+    data-reset-disabled="<%= btn_disabled %>"
+    data-reset-tab="<%= active_tab.to_s %>">
+  Reset
+</a>
+
+<%#= reset_btn %>
+
+<span class="pull-right">
+  <span class="portal-form-actions">
+    <%= submit_tag t("preview"),
               :name => "preview_button",
-              :class => "btn btn-primary pull-right",
-              "data-loading-text" => t("portalcss.please_wait") %>
-
-<%= submit_tag t("portalcss.save_and_continue"),
+              "data-loading-text" => t("portalcss.please_wait"), :class => "btn" %>
+    <%= submit_tag t("portalcss.save_and_continue"),
               "data-loading-text" => t("portalcss.please_wait"),
-              "data-code-refresh" => _coderefresh_ids,              
-              :name => 'save_button', :class => "btn pull-right" %>
-
-<%= reset_btn %>
+              "data-code-refresh" => _coderefresh_ids,
+              :name => 'save_button', :class => "btn btn-primary" %>
+  </span>
+  <%= submit_tag t("portalcss.publish_changes"),
+              "data-loading-text" => t("portalcss.please_wait"),
+              :name => 'publish_button', :class => "btn btn-primary" %>
+</span>

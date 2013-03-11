@@ -282,7 +282,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
   left: 0;
   height: 100%;
   background-color: #fafafa;
-  z-index: 999999;
+  z-index: 999;
   width: 100%; }
   /* line 186, ../src/codemirror.scss */
   #cm-fs-wrapper h3 {
@@ -301,23 +301,24 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
     z-index: 10; }
     /* line 200, ../src/codemirror.scss */
     #cm-fs-wrapper #cm-fs-actions .cm-well {
-      margin: 10px 20px; }
+      margin: 13px 20px;
+      text-align: center; }
 
 /* Code mirror full screen mode */
-/* line 204, ../src/codemirror.scss */
+/* line 207, ../src/codemirror.scss */
 .CodeMirror-fullscreen {
   top: 0;
   left: 0;
   height: 100%;
   overflow: auto; }
-  /* line 208, ../src/codemirror.scss */
+  /* line 211, ../src/codemirror.scss */
   .CodeMirror-fullscreen .cm-s-textmate {
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
     -ms-border-radius: 0;
     -o-border-radius: 0;
     border-radius: 0; }
-    /* line 210, ../src/codemirror.scss */
+    /* line 213, ../src/codemirror.scss */
     .CodeMirror-fullscreen .cm-s-textmate .CodeMirror-gutter {
       -moz-border-radius-topleft: 0;
       -webkit-border-top-left-radius: 0;
@@ -327,7 +328,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
       border-bottom-left-radius: 0; }
 
 /* Codemirror fullscreen styles */
-/* line 215, ../src/codemirror.scss */
+/* line 218, ../src/codemirror.scss */
 .cm-fullscreen {
   position: absolute;
   width: 21px;
@@ -341,7 +342,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
   background: url("/images/codemirror/fullscreen.png") no-repeat white; }
 
 /** Textmate Style Theme **/
-/* line 227, ../src/codemirror.scss */
+/* line 230, ../src/codemirror.scss */
 .cm-s-textmate {
   line-height: 1.3em;
   font-size: 12px;
@@ -359,13 +360,13 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
   /** XML **/
   /** CSS **/
   /** Javascript **/ }
-  /* line 235, ../src/codemirror.scss */
+  /* line 238, ../src/codemirror.scss */
   .cm-s-textmate .CodeMirror-matchhighlight {
     -webkit-box-shadow: #888888 0 0 1px inset;
     -moz-box-shadow: #888888 0 0 1px inset;
     box-shadow: #888888 0 0 1px inset;
     background-color: #f2f8ff; }
-  /* line 240, ../src/codemirror.scss */
+  /* line 243, ../src/codemirror.scss */
   .cm-s-textmate .CodeMirror-gutter {
     background-color: #fafafa;
     padding-left: 8px;
@@ -379,184 +380,184 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {
     -webkit-box-shadow: rgba(0, 0, 0, 0.1) 1px 0px 2px;
     -moz-box-shadow: rgba(0, 0, 0, 0.1) 1px 0px 2px;
     box-shadow: rgba(0, 0, 0, 0.1) 1px 0px 2px; }
-  /* line 248, ../src/codemirror.scss */
+  /* line 251, ../src/codemirror.scss */
   .cm-s-textmate .activeline {
     background: #E8F2FF !important; }
-  /* line 252, ../src/codemirror.scss */
+  /* line 255, ../src/codemirror.scss */
   .cm-s-textmate .CodeMirror-gutter-text {
     color: #d8d8d8;
     min-width: 28px;
     width: auto !important;
     width: 28px;
     padding-right: 8px; }
-  /* line 258, ../src/codemirror.scss */
+  /* line 261, ../src/codemirror.scss */
   .cm-s-textmate span.cm-keyword {
     color: #708; }
-  /* line 259, ../src/codemirror.scss */
+  /* line 262, ../src/codemirror.scss */
   .cm-s-textmate span.cm-atom {
     color: #219; }
-  /* line 260, ../src/codemirror.scss */
+  /* line 263, ../src/codemirror.scss */
   .cm-s-textmate span.cm-number {
     color: #164; }
-  /* line 261, ../src/codemirror.scss */
+  /* line 264, ../src/codemirror.scss */
   .cm-s-textmate span.cm-def {
     color: #00f; }
-  /* line 262, ../src/codemirror.scss */
+  /* line 265, ../src/codemirror.scss */
   .cm-s-textmate span.cm-variable {
     color: black; }
-  /* line 263, ../src/codemirror.scss */
+  /* line 266, ../src/codemirror.scss */
   .cm-s-textmate span.cm-variable-2 {
     color: #05a; }
-  /* line 264, ../src/codemirror.scss */
+  /* line 267, ../src/codemirror.scss */
   .cm-s-textmate span.cm-variable-3 {
     color: #085; }
-  /* line 265, ../src/codemirror.scss */
+  /* line 268, ../src/codemirror.scss */
   .cm-s-textmate span.cm-property {
     color: black; }
-  /* line 266, ../src/codemirror.scss */
+  /* line 269, ../src/codemirror.scss */
   .cm-s-textmate span.cm-operator {
     color: black; }
-  /* line 267, ../src/codemirror.scss */
+  /* line 270, ../src/codemirror.scss */
   .cm-s-textmate span.cm-comment {
     color: #a50; }
-  /* line 268, ../src/codemirror.scss */
+  /* line 271, ../src/codemirror.scss */
   .cm-s-textmate span.cm-string {
     color: #036A07; }
-  /* line 269, ../src/codemirror.scss */
+  /* line 272, ../src/codemirror.scss */
   .cm-s-textmate span.cm-string-2 {
     color: #f50; }
-  /* line 270, ../src/codemirror.scss */
+  /* line 273, ../src/codemirror.scss */
   .cm-s-textmate span.cm-meta {
     color: #555; }
-  /* line 271, ../src/codemirror.scss */
+  /* line 274, ../src/codemirror.scss */
   .cm-s-textmate span.cm-error {
     color: #f00; }
-  /* line 272, ../src/codemirror.scss */
+  /* line 275, ../src/codemirror.scss */
   .cm-s-textmate span.cm-qualifier {
     color: #555; }
-  /* line 273, ../src/codemirror.scss */
+  /* line 276, ../src/codemirror.scss */
   .cm-s-textmate span.cm-builtin {
     color: #30a; }
-  /* line 274, ../src/codemirror.scss */
+  /* line 277, ../src/codemirror.scss */
   .cm-s-textmate span.cm-bracket {
     color: #cc7; }
-  /* line 275, ../src/codemirror.scss */
+  /* line 278, ../src/codemirror.scss */
   .cm-s-textmate span.cm-tag {
     color: #3d4c9f; }
-  /* line 276, ../src/codemirror.scss */
+  /* line 279, ../src/codemirror.scss */
   .cm-s-textmate span.cm-attribute {
     color: teal; }
-  /* line 277, ../src/codemirror.scss */
+  /* line 280, ../src/codemirror.scss */
   .cm-s-textmate span.cm-header {
     color: blue; }
-  /* line 278, ../src/codemirror.scss */
+  /* line 281, ../src/codemirror.scss */
   .cm-s-textmate span.cm-quote {
     color: #090; }
-  /* line 279, ../src/codemirror.scss */
+  /* line 282, ../src/codemirror.scss */
   .cm-s-textmate span.cm-hr {
     color: #999; }
-  /* line 280, ../src/codemirror.scss */
+  /* line 283, ../src/codemirror.scss */
   .cm-s-textmate span.cm-link {
     color: #00c; }
-  /* line 283, ../src/codemirror.scss */
+  /* line 286, ../src/codemirror.scss */
   .cm-s-textmate .cm-liquid-tag {
     color: #708; }
-  /* line 287, ../src/codemirror.scss */
+  /* line 290, ../src/codemirror.scss */
   .cm-s-textmate .cm-liquid-variable {
     color: #29739b; }
-  /* line 292, ../src/codemirror.scss */
+  /* line 295, ../src/codemirror.scss */
   .cm-s-textmate span.xml-tagname {
     color: blue; }
-  /* line 295, ../src/codemirror.scss */
+  /* line 298, ../src/codemirror.scss */
   .cm-s-textmate span.xml-attribute {
     color: #036A07; }
-  /* line 298, ../src/codemirror.scss */
+  /* line 301, ../src/codemirror.scss */
   .cm-s-textmate span.xml-punctuation {
     color: black; }
-  /* line 301, ../src/codemirror.scss */
+  /* line 304, ../src/codemirror.scss */
   .cm-s-textmate span.xml-attname {
     color: blue; }
-  /* line 304, ../src/codemirror.scss */
+  /* line 307, ../src/codemirror.scss */
   .cm-s-textmate span.xml-comment {
     color: #4C886B; }
-  /* line 307, ../src/codemirror.scss */
+  /* line 310, ../src/codemirror.scss */
   .cm-s-textmate span.xml-cdata {
     color: #48A; }
-  /* line 310, ../src/codemirror.scss */
+  /* line 313, ../src/codemirror.scss */
   .cm-s-textmate span.xml-processing {
     color: #999; }
-  /* line 313, ../src/codemirror.scss */
+  /* line 316, ../src/codemirror.scss */
   .cm-s-textmate span.xml-entity {
     color: #A22; }
-  /* line 316, ../src/codemirror.scss */
+  /* line 319, ../src/codemirror.scss */
   .cm-s-textmate span.xml-error {
     color: #F00 !important; }
-  /* line 319, ../src/codemirror.scss */
+  /* line 322, ../src/codemirror.scss */
   .cm-s-textmate span.xml-text {
     color: black; }
-  /* line 323, ../src/codemirror.scss */
+  /* line 326, ../src/codemirror.scss */
   .cm-s-textmate span.css-at {
     color: #0000FF; }
-  /* line 326, ../src/codemirror.scss */
+  /* line 329, ../src/codemirror.scss */
   .cm-s-textmate span.css-unit {
     color: #0000CC; }
-  /* line 329, ../src/codemirror.scss */
+  /* line 332, ../src/codemirror.scss */
   .cm-s-textmate span.css-value {
     color: #000; }
-  /* line 332, ../src/codemirror.scss */
+  /* line 335, ../src/codemirror.scss */
   .cm-s-textmate span.css-constant {
     color: #06960E; }
-  /* line 335, ../src/codemirror.scss */
+  /* line 338, ../src/codemirror.scss */
   .cm-s-textmate span.css-property {
     color: #6D79DE; }
-  /* line 338, ../src/codemirror.scss */
+  /* line 341, ../src/codemirror.scss */
   .cm-s-textmate span.css-color {
     color: #06960E; }
-  /* line 341, ../src/codemirror.scss */
+  /* line 344, ../src/codemirror.scss */
   .cm-s-textmate span.css-identifier {
     color: #6D79DE; }
-  /* line 344, ../src/codemirror.scss */
+  /* line 347, ../src/codemirror.scss */
   .cm-s-textmate span.css-selector {
     color: #318495; }
-  /* line 347, ../src/codemirror.scss */
+  /* line 350, ../src/codemirror.scss */
   .cm-s-textmate span.css-important {
     color: #00F; }
-  /* line 350, ../src/codemirror.scss */
+  /* line 353, ../src/codemirror.scss */
   .cm-s-textmate span.css-colorcode {
     color: #299; }
-  /* line 353, ../src/codemirror.scss */
+  /* line 356, ../src/codemirror.scss */
   .cm-s-textmate span.css-comment {
     color: #0066FF; }
-  /* line 356, ../src/codemirror.scss */
+  /* line 359, ../src/codemirror.scss */
   .cm-s-textmate span.css-string {
     color: #036A07; }
-  /* line 360, ../src/codemirror.scss */
+  /* line 363, ../src/codemirror.scss */
   .cm-s-textmate span.js-punctuation {
     color: #666666; }
-  /* line 363, ../src/codemirror.scss */
+  /* line 366, ../src/codemirror.scss */
   .cm-s-textmate span.js-operator {
     color: #666666; }
-  /* line 366, ../src/codemirror.scss */
+  /* line 369, ../src/codemirror.scss */
   .cm-s-textmate span.js-keyword {
     color: #000999; }
-  /* line 369, ../src/codemirror.scss */
+  /* line 372, ../src/codemirror.scss */
   .cm-s-textmate span.js-atom {
     color: #0000CC; }
-  /* line 372, ../src/codemirror.scss */
+  /* line 375, ../src/codemirror.scss */
   .cm-s-textmate span.js-variable {
     color: #336699; }
-  /* line 375, ../src/codemirror.scss */
+  /* line 378, ../src/codemirror.scss */
   .cm-s-textmate span.js-variabledef {
     color: #000; }
-  /* line 378, ../src/codemirror.scss */
+  /* line 381, ../src/codemirror.scss */
   .cm-s-textmate span.js-localvariable {
     color: #000; }
-  /* line 381, ../src/codemirror.scss */
+  /* line 384, ../src/codemirror.scss */
   .cm-s-textmate span.js-property {
     color: black; }
-  /* line 384, ../src/codemirror.scss */
+  /* line 387, ../src/codemirror.scss */
   .cm-s-textmate span.js-comment {
     color: #4C886B; }
-  /* line 387, ../src/codemirror.scss */
+  /* line 390, ../src/codemirror.scss */
   .cm-s-textmate span.js-string {
     color: #036A07; }

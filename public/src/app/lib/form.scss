@@ -120,10 +120,6 @@ input.very_small{
 	width:200px;
 }
 
-input.portal_url{
-	width: 220px;
-}
-
 textarea.smallpara{
 	height:50px;
 }
@@ -400,11 +396,20 @@ a.addchoice:hover{
 			float:left;
 			margin:5px;
 		}
-	}
-	
+	}	
 	.seperator{
 		margin-bottom:0;
 		padding:1px;
+	}
+	li.seperator{
+		width:99.9%;
+		margin-top: 10px;
+		margin-bottom: 10px;
+		border:1px solid #ccc;
+		border-width: 1px 0;
+		height: 1;
+		padding: 0;
+		border-bottom-color: #fff;
 	}
 	.inline_field{
 		margin:0 0 10px 10px;
@@ -584,6 +589,21 @@ li.nested_field{
 	}
 }
 
+.heading{
+	font-size: 18px;
+	font-weight: 300;
+	line-height: 30px;
+}
+
+.portal-logo{
+	float:left;
+	margin: 0 10px 15px 0;
+}
+
+.logo-actions a{ 
+	line-height: 22px;
+}
+
 .ui-form .inline-field{
 	/*border-bottom:1px dotted #cfcfcf;*/
 	padding-top:8px;
@@ -619,25 +639,13 @@ li.nested_field{
 	}
 
 	div.fields{
-		margin-left:210px;
+		margin-left:180px;
 		clear:right;
 		position:relative;
-		textarea.required{
-		height:200px;
-		}
-		div.action_buttons{
-			margin-top:0;
-		}
-		span.seperator{
-			margin:6px 0;
-		}
-		.info-data{
-			padding-bottom:0;
-		}		
-		div.fields{
-		    padding-top:3px;
-		    margin-left:160px;
-		}
+		textarea.required{ height:200px; }
+		div.action_buttons{ margin-top:0; }
+		span.seperator{ margin:6px 0; }
+		.info-data{ padding-bottom:0; }
 	}
 	span.seperator{
 		border-style:solid;
@@ -2058,11 +2066,7 @@ ul.ui-form .inputs-list{
 			}
 		}
 		.configure-portal{
-			text-align: center;
-			background-color: #efefef;
-			border-bottom: 1px solid #d1d1d1;
-			border-top: 1px solid #d1d1d1;
-			padding: 10px 0; 
+			padding: 5px 18px; 
 			label{				
 				font-weight: 300;
 				font-size: 1.3em;
@@ -2549,6 +2553,20 @@ input[type="text"].number{
 	.portal-pages-list{
 		margin:5px 0 15px;
 		li a{ color:#333333; }
-		li{ line-height: 24px; }
+		li{ line-height: 24px; padding-left: 4px; }
+		li.active{
+			background-color: #eee;
+			@include box-shadow(#888 0 0 1px inset);
+		}
 	}
+}
+
+.reset-modal{
+	padding-top: 30px;
+	p{ 
+		line-height: 22px;
+		padding-left: 2px;
+		padding-top: 6px;
+	}
+	form{ margin-bottom: 0 }
 }

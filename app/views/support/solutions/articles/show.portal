@@ -30,7 +30,7 @@
 	<div class="cs-g-c attachments" id="article-attachments">
 		{% for attachment in article.attachments %}
 			<div class="cs-g-3 attachment">
-				<img src="{{ attachment.thumbnail }}" class="file-thumbnail {% if attachment.image? %} file-image {% endif %} " />
+				<img src="{{ attachment.thumbnail }}" class="file-thumbnail {% if attachment.is_image? %} file-image {% endif %} " />
 				<a href="{{ attachment.url }}" class="ellipsis file-name" target="_blank">{{ attachment.filename }}</a>
 				<p class="help-text file-size">({{ attachment.size }})</p>
 			</div>

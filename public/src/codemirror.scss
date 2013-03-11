@@ -181,7 +181,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
   left: 0;
   height: 100%;
   background-color: #fafafa;
-  z-index: 999999;
+  z-index: 999;
   width: 100%;
   h3{
     font-size: 24px;
@@ -197,7 +197,10 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
   #cm-fs-actions{
     bottom: 0;
     z-index: 10;
-    .cm-well{ margin: 10px 20px; }
+    .cm-well{ 
+      margin: 13px 20px;
+      text-align: center; 
+    }
   }
 }
 /* Code mirror full screen mode */

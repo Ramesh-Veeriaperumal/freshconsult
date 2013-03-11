@@ -8,7 +8,7 @@
 	</nav>
 </header>
 <nav class="page-tabs" >
-	<a data-toggle-dom="#header-tabs" href="#" data-animated class="mobile-icon-nav-menu show-in-mobile"></a>
+	<a data-toggle-dom="#header-tabs" href="#" data-animated="true" class="mobile-icon-nav-menu show-in-mobile"></a>
 	<div class="nav-link" id="header-tabs">
 		{% for tab in portal.tabs %}
 			{% if tab.url %}

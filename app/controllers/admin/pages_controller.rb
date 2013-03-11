@@ -24,6 +24,7 @@ class Admin::PagesController < Admin::AdminController
   end
 
   def soft_reset
+    build_or_find
     @portal_template.clear_page_cache!(@portal_page_label)
     flash[:notice] = "Page reseted successfully."
     redirect_to "#{admin_portal_template_path( @portal )}#header#pages"

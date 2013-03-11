@@ -29,12 +29,21 @@ class Admin::TemplatesController < Admin::AdminController
 
   def update
     @portal_template.attributes = params[:portal_template]
-    @portal_template.draft!    
-    flash[:notice] = "Portal template saved successfully." unless params[:preview_button]
+    @portal_template.draft!
+
+    if params[:publish_button]
+      @portal_template.publish!
+      flash[:notice] = "Portal changes published successfully."
+    else
+      flash[:notice] = "Portal template saved successfully." unless params[:preview_button]
+    end
+
     respond_to do |format|
       format.html { 
-        preview_url = support_home_path
-        set_preview_and_redirect(preview_url) if params[:preview_button]
+        if params[:preview_button]
+          preview_url = support_home_path
+          set_preview_and_redirect(preview_url) 
+        end
       }
     end
   end  
@@ -42,6 +51,7 @@ class Admin::TemplatesController < Admin::AdminController
   def clear_preview
     render :text => "success"
   end
+
   def soft_reset
     properties = params[:portal_template]
     @portal_template.soft_reset!(properties)

@@ -33,7 +33,7 @@ class Helpdesk::AttachmentDrop < BaseDrop
     number_to_human_size source.content_file_size
   end
 
-  def image?
+  def is_image?
     source.image?
   end
 

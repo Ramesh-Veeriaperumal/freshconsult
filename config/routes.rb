@@ -104,7 +104,7 @@
         folder.resources :responses, :collection => { :delete_multiple => :delete, :update_folder => :put }
       end
     end
-    admin.resources :products
+    admin.resources :products, :member => { :delete_logo => :delete, :delete_favicon => :delete }
     admin.resources :portal, :only => [ :index, :update] do |portal|
       portal.resource :template, 
                       :collection => { :show =>:get, :update => :put, :soft_reset => :put, 
@@ -192,7 +192,8 @@
   map.connect '/signup/d/:discount', :controller => 'accounts', :action => 'plans'
   map.thanks '/signup/thanks', :controller => 'accounts', :action => 'thanks'
   map.create '/signup/create/:discount', :controller => 'accounts', :action => 'create', :discount => nil
-  map.resource :account, :collection => {:rebrand => :put, :dashboard => :get, :thanks => :get,   :cancel => :any, :canceled => :get , :signup_google => :any }
+  map.resource :account, :collection => {:rebrand => :put, :dashboard => :get, :thanks => :get, 
+    :cancel => :any, :canceled => :get , :signup_google => :any, :delete_logo => :delete }
   map.resource :subscription, :collection => { :plans => :get, :billing => :any, :plan => :any, :calculate_amount => :any, :convert_subscription_to_free => :put }
 
   map.new_account '/signup/:plan/:discount', :controller => 'accounts', :action => 'new', :plan => nil, :discount => nil

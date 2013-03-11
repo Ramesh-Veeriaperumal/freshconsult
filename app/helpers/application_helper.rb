@@ -100,6 +100,18 @@ module ApplicationHelper
     flash.discard
   end
 
+  def show_growl_flash(page)
+    [:notice, :warning, :error].each do |type|
+      if flash[type].present?      
+        page << "jQuery.gritter.add({ text: '#{flash[type]}' 
+              , fade: true, speed: 'fast', position: 'top-right', class_name: 'flash-#{type}' });"
+      end
+    end
+    flash.discard
+  end
+
+  
+
   def each_or_message(partial, collection, message, locals = {})
     render(:partial => partial, :collection => collection, :locals => locals) || content_tag(:div, message, :class => "list-noinfo")
   end
@@ -662,6 +674,13 @@ module ApplicationHelper
       _output << %( </div> )
     end
     _output.join("")
+  end
+
+  def get_logo
+    unless @account.main_portal.logo.blank?
+      return @account.main_portal.logo.content.url(:logo)
+    end
+    return "/images/logo.png?721013"
   end
    
   private

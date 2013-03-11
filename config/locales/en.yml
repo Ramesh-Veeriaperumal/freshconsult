@@ -2111,7 +2111,7 @@ en:
     cancel: Cancel and go back   
     customize_portal: "Helpdesk rebranding"
     page_colors: 
-      title: Page colors
+      title: Helpdesk colors
       background: Background
       header: Header
       tab_color: Tab Color
@@ -2122,9 +2122,9 @@ en:
     info4: The next ticket ID counter will start with this number (Should be greater than the last ticket ID created). This affects tickets created henceforth.
     save: Save changes
     time_zone: Time Zone
-    helpdesk_name: Helpdesk Name
+    helpdesk_name: Helpdesk/Portal name
     rebrand: Rebrand your Helpdesk
-    helpdesk_url: Helpdesk URL
+    helpdesk_url: Helpdesk/Portal URL
     language: Language
   lead: Lead
   comments: Comments
@@ -3107,17 +3107,17 @@ en:
     no_response_admin: "No responses in this folder <a href={{link}} id='new_resp'>Create New</a>"
     select_folder: "Select Folder"
   portalcss:
-    reset_all_changes: Reset all changes
+    reset_all_changes: Reset ALL changes
     reset_all_confirm_message: This action will reset all your customizations to freshdesk default. Are you sure you want to continue?
-    publish_changes: Publish changes
+    publish_changes: Save and Publish
     header: Portal template customization
     color_and_font_header: Color &amp; font
     css_header: Stylesheet
     layout_and_pages_header: Layout &amp; pages
     editing: Editing
-    reset_to_last_published: Reset to last published
-    preview: Preview
-    save_and_continue: Save and continue editing
+    reset_to_last_published: Reset page to last published
+    preview: Preview portal
+    save_and_continue: Save
     please_wait: Please wait...
     layout_pages:
       subheader_layout: Portal layout

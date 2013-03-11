@@ -5,13 +5,9 @@
 <%= include_javascripts :pattern %>
 <% content_for :sidebar do %><% end %> 
 <%= render :partial => "shared/colorpicker" %>
-<div class="pull-right">
-  <%= link_to t("portalcss.reset_all_changes"), restore_default_admin_portal_template_path, :confirm => t("portalcss.reset_all_confirm_message"), :class => "btn" %>
-  <a href="<%=publish_admin_portal_template_path%>" class="btn btn-primary"><%=t("portalcss.publish_changes")%></a>
-</div>
 <h3 class="sub-title"><%=t("portalcss.header")%></h3>
 <br />
-<div class="clearfix">
+<div>
   <ul data-tabs="tabs" class="tabs">    
     <li class="active">      
       <a href="#preferences" data-toggle="tab" id="preferences-tab"><%=t("portalcss.color_and_font_header")%></a>
@@ -76,6 +72,37 @@
       <%end%>
 </div> 
 
+<% content_for :pagefixed do %>
+  <div id="reset-dialog" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3 id="reset-dialog-header" class="heading title">Reset portal changes</h3>
+    </div>
+    <div class="modal-body reset-modal">
+      <br />
+      <div>
+        <%= link_to t("portalcss.reset_to_last_published"), "", :method => :put, :id => "soft-reset-proxy", :class=>"btn" %>
+        <p class="info-data">
+          This will reset edits for "<b id='reset-tab-type'></b>" to last published version <br />
+          Portal was published <%= @portal_template.updated_at %>
+        </p>
+      </div>
+      <br />
+      <div>
+        <%= link_to t("portalcss.reset_all_changes"), restore_default_admin_portal_template_path, 
+          :confirm => t("portalcss.reset_all_confirm_message"), :class => "btn btn-danger" %>
+        <p class="text_red">
+          <b>Warning:</b> This will reset ALL portal customizations to default.
+        </p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+      <button class="btn btn-primary">Save changes</button>
+    </div>
+  </div>
+<% end %>
+
 <% content_for :onload_script do %>
   jQuery("#custom_css-tab, #layout-tab").bind("click", function(evnt){
     var target = evnt.target;
@@ -88,16 +115,27 @@
       jQuery(this).validate({
         submitHandler: function(form, btn) {
           // Setting the submit button to a loading state
-          $btn = jQuery(btn)
+          var $btn = jQuery(btn)
+              $form = form
+
           if(btn.name != "preview_button"){
+
+            // Disabling all buttons in the form
+            jQuery(form).find(".portal-form-actions .btn").attr("disabled", true)
+            jQuery("#cm-fs-actions .btn").attr("disabled", true)
+
             $btn.button("loading")
+
             jQuery($btn.data("codeRefresh")).codemirror('save');
+
             jQuery(form).ajaxSubmit({
               success: function(response, status){
-                // Resetting the submit button to its default state
-                $btn.button("reset")
-                $btn.parent().find("#soft_reset_button").attr("disabled", false).removeClass("disabled")
-                jQuery('#cm-fs-actions #soft_reset_button').attr("disabled", false).removeClass("disabled")
+                // Resetting the submit buttons to its default state
+                jQuery($form).find(".portal-form-actions .btn").button("reset")
+                jQuery("#cm-fs-actions .btn").button("reset")
+
+                $btn.parent().find("#soft_reset_button").data("resetDisabled", false)
+                jQuery('#cm-fs-actions #soft_reset_button').attr("resetDisabled", false)
               },
               dataType: "script"
             })
@@ -109,20 +147,55 @@
       })
     })
 
+    jQuery("[rel=reset-btn]").live("click", function(ev){
+      var btn_disabled = (jQuery(this).data("resetDisabled") == 'true')
+      jQuery("#soft-reset-proxy")
+        .attr({ "href": jQuery(this).data("resetUrl"), 
+                "disabled": btn_disabled } )
+        .toggleClass("disabled", btn_disabled)
+
+      jQuery("#reset-tab-type").html(jQuery(this).data("resetTab"))
+    })
+
   jQuery("#pages-tab").live("click", function(ev){
     if(jQuery("#Customizepage").html() == "")
       jQuery("#PortalPageList a").first().trigger("click");
   });
 
+  jQuery("#PortalPageList li").live("click", function(ev){
+    jQuery(this).parent().parent().find(".active").removeClass("active")
+    jQuery(this).addClass("active").find("a").trigger("click")
+  })
+
   if(window.Mousetrap){
-    Mousetrap.bind('command+shift+s',function(e){
+    Mousetrap.bind(['command+s', 'ctrl+s'],function(e){
       jQuery('input[name="save_button"]:visible')[0].click();
       return false;
     });
 
-    Mousetrap.bind('command+shift+p',function(e){
+    Mousetrap.bind(['command+shift+p', 'ctrl+shift+p'],function(e){
       jQuery('input[name="preview_button"]:visible')[0].click();
       return false;
     });
   }
+<% end %>
+
+<% content_for :sidebar do %>
+  <div class="sidepanel">
+    <h3 class="title">Shortcut for editor</h3>
+    <p>
+      <b>Shift+cmd+s</b>  <br />
+      Save current changes<br />
+
+      <b>Shift+cmd+p</b> <br /> 
+      Preview current changes<br />
+      
+      <b>Shift+cmd+f</b> <br />
+      Show current editor in full-screen<br />
+      
+      <b>Esc</b> <br />
+      Exit full-screen<br />
+    </p>
+
+  </div>
 <% end %>
