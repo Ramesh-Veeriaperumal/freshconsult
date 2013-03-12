@@ -53,7 +53,7 @@
 										<span class="arrow-top"></span>
 									</div>
 								</div>
-								<%= "<span class='label'>#{t("ticket.spam")}</span>" if @ticket.spam %>
+								<%= "<span class='label spam'>#{t("ticket.spam")}</span>" if @ticket.spam %>
 								<%= h(@ticket.subject) %>
 							</h2>
 							<div class="ticket-actions clearfix">
