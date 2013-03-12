@@ -9443,6 +9443,9 @@ div.db-chooser{
 /* end */
 #ticket-merge{
 	overflow: hidden;
+	.private-note{
+		line-height:20px;
+	}
 	#complete_merge_tickets{
 		margin-bottom: 0px !important;
 	}
@@ -9460,7 +9463,7 @@ div.db-chooser{
 			max-width:78%;
 			white-space: nowrap;
 			overflow: hidden;
-			display: block;
+			display: inline-block;
 			-webkit-text-overflow: ellipsis;
 			-moz-text-overflow: ellipsis;
 			-ms-text-overflow: ellipsis;
