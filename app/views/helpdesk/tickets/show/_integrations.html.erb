@@ -2,15 +2,19 @@
 <% installedApp = get_app_details("jira") %>
 <% jira_integrated_resource = Integrations::IntegratedResource.find_by_installed_application_id_and_local_integratable_id(installedApp, @ticket.id) %>
 
-<div class="widget load_on_click inactive" id="jira_issue">
-	<h3 class="title">
-		<span id="jira_issue_icon"> 
-			<%= link_to image_tag("/images/spacer.gif", :width => "24px", :height => "24px"), "#", :class=> (jira_integrated_resource.nil?) ? 'jira' : 'jira_active' %>
-		</span>  
+<div class="widget dialog-widget" id="jira_issue">
+	<span id="jira_issue_icon"> 
+		<%= link_to image_tag("/images/spacer.gif", :width => "24px", :height => "24px"), "#", :class=> (jira_integrated_resource.nil?) ? 'jira' : 'jira_active' %>
+	</span>  
+	<h3 class="title lazyload" rel="freshdialog" title="<%= h(installedApp.configs_title)%>"
+		data-width="390" data-target="#jira_widget_dialog" 
+		data-lazyload="true" data-template-footer="">
+		
 		<%= h(installedApp.configs_title)%>
 	</h3>
-	<div class="content"></div>
-	<textarea style="display:none">
+</div>
+<div class="hide" id="jira_widget_dialog">
+	<textarea style="display:none" rel="lazyload">
 	  <div class="content"><div class="negtive-margin">
 	    <%
 	    @liquid_objects = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => @agent, "integrated_resource" => jira_integrated_resource} %>

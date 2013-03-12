@@ -1803,10 +1803,13 @@ p strong{
 	.widget{
 		border-top: 2px #AAA solid;
 		width: 100%;
-		@include min-height(130px);
+		@include min-height(40px);
 		clear: both;
 		margin-bottom: 20px;
 
+		&.dialog-widget {
+			cursor: pointer;
+		}
 
 		h3{
 			font-size: 18px;
@@ -1836,12 +1839,11 @@ p strong{
 			}
 		}
 
-		#jira_widget .content {
-			width: 310px;
-		}
-
-		#jira_widget .heading .current_form {
-			font-weight: normal;
+		#jira_issue_icon {
+			display: block;
+			float: left;
+			width: 24px;
+			margin: 2px 10px 0 0;
 		}
 
 		.tkt-tabs-wrap{

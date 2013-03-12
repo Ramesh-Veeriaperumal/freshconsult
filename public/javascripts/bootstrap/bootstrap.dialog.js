@@ -18,8 +18,7 @@
 		this.$dialogid = this.options.targetId.substring(1)
 
 		// Getting static content id and dom if it is present in the document
-		this.$content = $(/#/.test(element.href) && this.options.targetId)
-
+		this.$content = $((/#/.test(element.href) ? element.href : this.options.targetId))
 		// Building the base wrapper for the modal dialog
 		this.$dynamicTarget = $('<div class="modal fade" role="dialog" aria-hidden="true"></div>')
 									.attr('id', this.$dialogid)
@@ -125,6 +124,11 @@
 
 	    var $this = $(this)
 	    ,  	href = $this.attr('href')
+
+	    if ($this.data('lazyload')) {
+	    	var content = $($this.data('target') + ' textarea[rel=lazyload]').first().val()
+	    	$($this.data('target')).hide().html(content)
+	    }
 
 	    // creating the dialog through the api
 	    if(!$this.data('freshdialog')){
