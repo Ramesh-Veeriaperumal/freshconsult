@@ -2,7 +2,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
  
   include EmailCommands
   include ParserUtil
-  include Helpdesk::ProcessByMessageId
   
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
   MESSAGE_LIMIT = 10.megabytes
@@ -17,16 +16,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       encode_stuffs
       kbase_email = account.kbase_email
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
-        email_config = account.email_configs.find_by_to_email(to_email[:email])
-        user = get_user(account, from_email, email_config)
-        if !user.blocked?
-          ticket = fetch_ticket(account, from_email, user)
-          if ticket
-            return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
-            add_email_to_ticket(ticket, from_email, user)
-          else
-            create_ticket(account, from_email, to_email, user, email_config)
-          end
+        display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
+        ticket = Helpdesk::Ticket.find_by_account_id_and_display_id(account.id, display_id) if display_id
+        if ticket
+          return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
+          add_email_to_ticket(ticket, from_email )
+        else
+          create_ticket(account, from_email, to_email)
         end
       end
       
@@ -38,7 +34,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         NewRelic::Agent.notice_error(e)
       end
       Account.reset_current_account
-    end 
+    end
+    
   end
   
   def create_article(account, from_email, to_email)
@@ -153,16 +150,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
       parsed_to_emails
     end
-
-    def fetch_ticket(account, from_email, user)
-      display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
-      ticket = account.tickets.find_by_display_id(display_id) if display_id
-      return ticket if can_be_added_to_ticket?(ticket, user)
-      ticket = ticket_from_headers(from_email, account)
-      return ticket if can_be_added_to_ticket?(ticket, user)
-    end
     
-    def create_ticket(account, from_email, to_email, user, email_config)            
+    def create_ticket(account, from_email, to_email)
+      email_config = account.email_configs.find_by_to_email(to_email[:email])
+      user = get_user(account, from_email, email_config)
+      
+      return if user.blocked? #Mails are dropped if the user is blocked
+      
       if (user.agent? && !user.deleted?)
         e_email = orig_email_from_text
         user = get_user(account, e_email , email_config) unless e_email.nil?
@@ -196,15 +190,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end
-      message_key = message_id
+
       begin
         build_attachments(ticket, ticket)
-        (ticket.header_info ||= {}).merge!(:message_ids => [message_key]) unless message_key.nil?
         ticket.save!
       rescue ActiveRecord::RecordInvalid => e
         FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
       end
-      set_key(message_key(account, message_key), ticket.display_id, 86400*7) unless message_key.nil?
     end
     
     def check_for_spam(ticket)
@@ -233,37 +225,43 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket.skip_notification = true if user && account.support_emails.any? {|email| email.casecmp(user.email) == 0}
     end
 
-    def add_email_to_ticket(ticket, from_email, user)
-      body = show_quoted_text(params[:text],ticket.reply_email)
-      body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html]), ticket.reply_email)
-      from_fwd_recipients = from_fwd_emails?(ticket, from_email)
-      parsed_cc_emails = parse_cc_email
-      parsed_cc_emails.delete(ticket.account.kbase_email)
-      note = ticket.notes.build(
-        :private => (from_fwd_recipients and user.customer?) ? true : false ,
-        :incoming => true,
-        :body => body,
-        :body_html => body_html ,
-        :source => from_fwd_recipients ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] : 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
-        :user => user, #by Shan temp
-        :account_id => ticket.account_id,
-        :from_email => from_email[:email],
-        :to_emails => parse_to_emails,
-        :cc_emails => parsed_cc_emails
-      )       
-      note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
-      
-      begin
-        ticket.cc_email = ticket_cc_emails_hash(ticket)
-        if (user.agent? && !user.deleted?)
-          ticket.responder ||= user
-          process_email_commands(ticket, user, ticket.email_config, note)
-          email_cmds_regex = get_email_cmd_regex(ticket.account)
-          note.body = body.gsub(email_cmds_regex, "") if(!body.blank? && email_cmds_regex)
-          note.body_html = body_html.gsub(email_cmds_regex, "") if(!body_html.blank? && email_cmds_regex)
+    def add_email_to_ticket(ticket, from_email)
+      user = get_user(ticket.account, from_email, ticket.email_config)
+      return if user.blocked? #Mails are dropped if the user is blocked
+      if can_be_added_to_ticket?(ticket,user)        
+        body = show_quoted_text(params[:text],ticket.reply_email)
+        body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html]), ticket.reply_email)
+        from_fwd_recipients = from_fwd_emails?(ticket, from_email)
+        parsed_cc_emails = parse_cc_email
+        parsed_cc_emails.delete(ticket.account.kbase_email)
+        note = ticket.notes.build(
+          :private => (from_fwd_recipients and user.customer?) ? true : false ,
+          :incoming => true,
+          :body => body,
+          :body_html => body_html ,
+          :source => from_fwd_recipients ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] : 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
+          :user => user, #by Shan temp
+          :account_id => ticket.account_id,
+          :from_email => from_email[:email],
+          :to_emails => parse_to_emails,
+          :cc_emails => parsed_cc_emails
+        )       
+        note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] unless user.customer?
+        
+        begin
+          ticket.cc_email = ticket_cc_emails_hash(ticket)
+          if (user.agent? && !user.deleted?)
+            ticket.responder ||= user
+            process_email_commands(ticket, user, ticket.email_config, note)
+            email_cmds_regex = get_email_cmd_regex(ticket.account)
+            note.body = body.gsub(email_cmds_regex, "") if(!body.blank? && email_cmds_regex)
+            note.body_html = body_html.gsub(email_cmds_regex, "") if(!body_html.blank? && email_cmds_regex)
+          end
+        rescue Exception => e
+          NewRelic::Agent.notice_error(e)
         end
-      rescue Exception => e
-        NewRelic::Agent.notice_error(e)
+      else
+        return create_ticket(ticket.account, from_email, parse_to_email)
       end
       build_attachments(ticket, note)
       # ticket.save
@@ -272,11 +270,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def can_be_added_to_ticket?(ticket,user)
-      ticket and
-      ((user.agent? && !user.deleted?) or
+      (user.agent? && !user.deleted?) or
       (ticket.requester.email and ticket.requester.email.include?(user.email)) or 
       (ticket.included_in_cc?(user.email)) or
-      belong_to_same_company?(ticket,user))
+      belong_to_same_company?(ticket,user)
     end
     
     def belong_to_same_company?(ticket,user)
@@ -405,4 +402,5 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         @description_html = "#{@description_html[0,MESSAGE_LIMIT]}<b>[message_cliped]</b>"
       end
     end
+  
 end

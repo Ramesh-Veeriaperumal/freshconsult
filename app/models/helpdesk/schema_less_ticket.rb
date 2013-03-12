@@ -20,7 +20,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :sla_policy_id, :long_tc01
 
 	serialize :to_emails
-	serialize :text_tc01, Hash
+	serialize :header_info
 
 	validates_uniqueness_of :string_tc01, :scope => :account_id,:allow_nil => true
 
