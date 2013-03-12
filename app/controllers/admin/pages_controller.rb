@@ -14,7 +14,12 @@ class Admin::PagesController < Admin::AdminController
   def update
     @portal_page.attributes= params[:portal_page]
     @portal_template.cache_page(@portal_page_label, @portal_page)    
-    flash[:notice] = "Page saved successfully." unless params[:preview_button]
+    if params[:publish_button]
+      @portal_template.publish!
+      flash[:notice] = "Portal changes published successfully."
+    else
+      flash[:notice] = "Page saved successfully." unless params[:preview_button]
+    end
     get_raw_page
     respond_to do |format|
       format.html { 

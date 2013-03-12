@@ -4291,3 +4291,15 @@ strong {
 /* line 132, ../../src/pattern/patternhack.scss */
 .dropdown-toggle:after {
   border-top: 0; }
+
+/* line 136, ../../src/pattern/patternhack.scss */
+select {
+  height: 20px;
+  line-height: 20px;
+  padding: 1px; }
+
+/* Fix for tickets show page data-tabs */
+/* line 143, ../../src/pattern/patternhack.scss */
+.ticket_tabs {
+  margin-left: 0px;
+  margin-right: 0px; }

@@ -1,5 +1,4 @@
 class SupportController < ApplicationController
-  layout 'portal'
 
   before_filter :portal_context, :redactor_form_builder, :page_message
   include RedisKeys
@@ -30,7 +29,7 @@ class SupportController < ApplicationController
 
       # Setting dynamic header, footer, layout and misc. information
       process_template_liquid
-      @skip_liquid_compile = true
+      @skip_liquid_compile = true if active_layout.present?
     end
 
     def preview?

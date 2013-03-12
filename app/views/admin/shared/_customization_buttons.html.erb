@@ -26,29 +26,31 @@ else
 end 
 %>
 
-<%= link_to "< Go back", (@portal.main_portal? ? edit_account_path : admin_products_path), :class => "btn" %>
+<div class="form-buttons">
+  <%= link_to "< Go back", (@portal.main_portal? ? edit_account_path : admin_products_path), :class => "btn" %>
 
-<a href="#reset-dialog" role="button" class="btn" 
-  data-toggle="modal" rel="reset-btn" id="soft_reset_button"
-    data-reset-url="<%= reset_url %>" 
-    data-reset-disabled="<%= btn_disabled %>"
-    data-reset-tab="<%= active_tab.to_s %>">
-  Reset
-</a>
+  <a href="#reset-dialog" role="button" class="btn" 
+    data-toggle="modal" rel="reset-btn" id="soft_reset_button"
+      data-reset-url="<%= reset_url %>" 
+      data-reset-disabled="<%= btn_disabled %>"
+      data-reset-tab="<%= active_tab.to_s %>">
+    Reset
+  </a>
 
-<%#= reset_btn %>
+  <%#= reset_btn %>
 
-<span class="pull-right">
-  <span class="portal-form-actions">
-    <%= submit_tag t("preview"),
-              :name => "preview_button",
-              "data-loading-text" => t("portalcss.please_wait"), :class => "btn" %>
-    <%= submit_tag t("portalcss.save_and_continue"),
-              "data-loading-text" => t("portalcss.please_wait"),
-              "data-code-refresh" => _coderefresh_ids,
-              :name => 'save_button', :class => "btn btn-primary" %>
+  <span class="pull-right">
+    <span class="portal-form-actions">
+      <%= submit_tag t("preview"),
+                :name => "preview_button",
+                "data-loading-text" => t("portalcss.please_wait"), :class => "btn" %>
+      <%= submit_tag t("portalcss.save_and_continue"),
+                "data-loading-text" => t("portalcss.please_wait"),
+                "data-code-refresh" => _coderefresh_ids,
+                :name => 'save_button', :class => "btn btn-primary" %>
+    </span>
+    <%= submit_tag t("portalcss.publish_changes"),
+                "data-loading-text" => t("portalcss.please_wait"),
+                :name => 'publish_button', :class => "btn btn-primary" %>
   </span>
-  <%= submit_tag t("portalcss.publish_changes"),
-              "data-loading-text" => t("portalcss.please_wait"),
-              :name => 'publish_button', :class => "btn btn-primary" %>
-</span>
+</div>

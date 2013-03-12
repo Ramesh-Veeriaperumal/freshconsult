@@ -266,6 +266,16 @@ function construct_reply_url(to_email, account_full_domain){
    return reply_email;
 }
 
+// Utility for setting a post param hidden variable for forms
+function setPostParam(form, name, value){
+  var paramDom = jQuery(form).find("[name="+name+"]")
+  if(!paramDom.get(0))
+    paramDom = jQuery("<input type='hidden' name='"+name+"' />").appendTo(form)
+  
+  paramDom.val(value)
+}
+
+
    // Quoted Addition show hide
    function quote_text(item){
       if (!jQuery(item).attr("data-quoted")) {

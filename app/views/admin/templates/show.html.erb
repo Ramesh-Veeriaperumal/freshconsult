@@ -98,7 +98,6 @@
     </div>
     <div class="modal-footer">
       <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-      <button class="btn btn-primary">Save changes</button>
     </div>
   </div>
 <% end %>
@@ -121,17 +120,20 @@
           if(btn.name != "preview_button"){
 
             // Disabling all buttons in the form
-            jQuery(form).find(".portal-form-actions .btn").attr("disabled", true)
+            jQuery(form).find(".form-buttons .btn").attr("disabled", true)
             jQuery("#cm-fs-actions .btn").attr("disabled", true)
 
             $btn.button("loading")
 
             jQuery($btn.data("codeRefresh")).codemirror('save');
 
+            if(window['codemirror-fullscreen'] !== undefined)
+              setPostParam(form, "cmfullscreen", window['codemirror-fullscreen'])
+
             jQuery(form).ajaxSubmit({
               success: function(response, status){
                 // Resetting the submit buttons to its default state
-                jQuery($form).find(".portal-form-actions .btn").button("reset")
+                jQuery($form).find(".form-buttons .btn").button("reset")
                 jQuery("#cm-fs-actions .btn").button("reset")
 
                 $btn.parent().find("#soft_reset_button").data("resetDisabled", false)
@@ -159,12 +161,13 @@
 
   jQuery("#pages-tab").live("click", function(ev){
     if(jQuery("#Customizepage").html() == "")
-      jQuery("#PortalPageList a").first().trigger("click");
+      jQuery("#PortalPages a").first().trigger("click");
   });
 
-  jQuery("#PortalPageList li").live("click", function(ev){
-    jQuery(this).parent().parent().find(".active").removeClass("active")
-    jQuery(this).addClass("active").find("a").trigger("click")
+  
+  jQuery("#PortalPages a.page-btn").live("click", function(ev){
+    jQuery("#PortalPages").find(".active").removeClass("active")
+    jQuery(this).parent().addClass("active")
   })
 
   if(window.Mousetrap){

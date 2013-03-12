@@ -113,6 +113,8 @@
 
 				document.documentElement.style.overflow = "hidden"
 			}
+
+			window['codemirror-fullscreen'] = true
 			cm.refresh()
 			cm.focus()
 		}
@@ -131,6 +133,7 @@
 				$(document).data("fs-codemirror", false)
 			}
 
+			window['codemirror-fullscreen'] = false
 			cm.refresh()
 			cm.focus()
 		}
