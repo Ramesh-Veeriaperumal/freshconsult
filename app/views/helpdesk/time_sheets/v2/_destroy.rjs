@@ -1,4 +1,4 @@
-page << "jQuery('#timeentry_#{@time_entry.id}').fadeOut(500, function(){ jQuery(this).remove() });"
+page << "jQuery('#timeentry_#{@time_entry.id}').fadeOut(500, function(){ jQuery(this).remove(); totalTime('#timesheetlist .time', '#timeentry_timer_total'); });"
 page << "#{pushToIntegratedAppsWithoutLoading(@time_entry, :delete)}"
 
 @time_entry.destroy

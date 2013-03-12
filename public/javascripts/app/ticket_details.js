@@ -896,10 +896,10 @@ $(document).ready(function() {
 			dataType: 'json',
 			success: function(response) {
 				TICKET_DETAILS_DATA['updating_properties'] = false;
-				submit.button('saved');
-				submit.show('highlight',5000, function() {
+				submit.val(submit.data('saved-text'));
+				setTimeout( function() {
 					submit.button('reset');
-				});
+				}, 1000);
 
 				var updateStatusBox = false;
 				if ($('.ticket_show #helpdesk_ticket_priority').data('updated') || $('.ticket_show #helpdesk_ticket_status').data('updated')) {

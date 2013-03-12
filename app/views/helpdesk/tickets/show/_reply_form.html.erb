@@ -121,22 +121,16 @@
       <div class="clearfix zeroh" ></div>
       <div class="" style="float: left; width: 200px;">
 
-        <div class="reply-draft" id="reply-draft">
-          <div class="close-img" id="clear-draft"><span></span></div>
-          <%= content_tag :div, "#{t("draft")} #{t("saving_draft")}", :class => "sav tooltip", "data-placement" => "below", :id => "draft-save", "title" => t("last_draft") %>
-        </div>
-
-        <%# if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) %>    
+        <% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) %>    
           <label class="post_in_forum">
               <%= check_box_tag :post_forums %><%= t("ticket.reply_form.post_to_linked_forum") %>
           </label>
-        <%# end %>
-        <%# if @ticket.account.survey.can_send?(@ticket, Survey::SPECIFIC_EMAIL_RESPONSE)%>
+        <% end %>
+        <% if @ticket.account.survey.can_send?(@ticket, Survey::SPECIFIC_EMAIL_RESPONSE)%>
           <label class="post_in_forum">
             <%= check_box_tag :send_survey %><%= t("ticket.reply_form.send_satisfaction_survey") %>
           </label>
-        <%# end %> 
-
+        <% end %> 
         <label class="post_in_forum">
           <%= check_box_tag :quoted_text, 1, true %><%= t("ticket.include_quoted_text") %>
         </label>
@@ -165,6 +159,12 @@
         </div>
         <div class="btn-group">
           <%= link_to(t('cancel'), '#', :class => "btn cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true') %>
+        </div>
+        <div class="btn-group">        
+          <div class="reply-draft" id="reply-draft">
+            <div class="close-img" id="clear-draft"><span></span></div>
+            <%= content_tag :div, "#{t("draft")} #{t("saving_draft")}", :class => "sav tooltip", "data-placement" => "below", :id => "draft-save", "title" => t("last_draft") %>
+          </div>
         </div>
         
       </div>

@@ -161,13 +161,26 @@ p strong{
 				span{
 					color: #666666;
 				}
+
+				.label {
+					font-size: 10px;
+					color: #FFF;
+					@include text-shadow(none);
+					background: #555;
+					@include corners(5px);
+					display: inline-block;
+					padding: 0 10px;
+					margin: 0 10px 0 0;
+					position: relative;
+					top: -3px;
+				}
 			}
 
 			.monitor, .monitor_active {
 				background-repeat: no-repeat;
 				@include hide-text();
-				width: 33px;
-				height: 20px;
+				width: 23px;
+				height: 21px;
 				margin-right: 10px;
 				display: inline-block;
 				margin-bottom:  -4px;
@@ -571,10 +584,11 @@ p strong{
     	height: 20px;
     	background: #000;
     }
-// -----------------
+
     #reply-draft {
     	float: left;
-    	padding-left: 0;
+    	padding:5px 0;
+    	font-size: 12px;
 
     	.sav {
     		background: #ededed;
@@ -582,7 +596,7 @@ p strong{
     		color: #333;
     		float:left;
     		margin:0;
-    		padding: 1px 7px;
+    		padding: 1px 7px 0;
     	}
 
     	&.saving {
