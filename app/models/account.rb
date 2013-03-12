@@ -664,7 +664,7 @@ class Account < ActiveRecord::Base
     end
 
     def notify_totango
-      Resque.enqueue(CRM::Totango::CanceledCustomer, id)
+      Resque.enqueue(CRM::Totango::CanceledCustomer, id, full_domain)
     end
 
 end
