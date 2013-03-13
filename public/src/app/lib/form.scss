@@ -103,15 +103,15 @@ div.color{
 		display: none !important;
 	}
 	input{
-		width:110px;
+		width:90px;
 		font-size:14px;
 		border:1px solid #AFAFAF;
-		border-right-width: 10px;
+		border-width: 0 20px 0 0;
 		border-right-color: #AFAFAF;
 		color: #777;
 		text-transform: uppercase;
 		padding: 6px 8px;
-		@include box-shadow(#AFAFAF 1px 0px 1px);
+		@include box-shadow(0 0 0 1px #AFAFAF, 1px 1px 2px #DDDDDD inset);
 	}
 	span{ display:inline; }
 }
@@ -165,7 +165,7 @@ div.ui-form ul{
 div.ui-form ul, ul.ui-form{ 
 	list-style:none; 
 	@include pie-clearfix;
-	margin: -1px -12px;
+	//margin: -1px -12px;
 	@include border-radius(6px);
 }
 

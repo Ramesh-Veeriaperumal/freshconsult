@@ -20,8 +20,7 @@
 				</div>
 			{% endfor %}		
 		{% else %}
-			<div class="lead">{% translate portal.no_articles_info_1 %}</div>
-			<div class="lead-small">{% translate portal.no_articles_info_2 %}</div>
+			{{ portal | filler_for_solutions }}			
 		{% endif %}
 	</section>
 {% endif %}
