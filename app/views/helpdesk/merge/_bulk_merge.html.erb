@@ -102,7 +102,8 @@ function change_ticket_count(){
               <div id="contact-area">
     		        <span id="resp-icon" title="Remove this ticket from the list"></span>
     		       		<div id="merge-ticket" class="merge_element" data-id=<%= h(ticket.display_id) %>>
-                    <%= link_to("##{ticket.display_id} #{ticket.subject}", ticket, :title => ticket.subject, :class =>"item_info", :target=>"_blank" ) %>
+                    <%= link_to("##{ticket.display_id} #{ticket.subject}", ticket, :title => h(ticket.subject), 
+                    :class =>"item_info", :target=>"_blank" ) %>
     			          <div class="info-data hideForList">
     			          	<span>
     			          		<%= t("ticket.merge_ticket_list_status_"+ticket.ticket_states.current_state, 

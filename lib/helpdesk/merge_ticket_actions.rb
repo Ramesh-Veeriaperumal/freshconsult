@@ -53,7 +53,7 @@ module Helpdesk::MergeTicketActions
 
 		def move_source_requesters_to_target
 			cc_email_array = @source_tickets.collect{ |source| [ source.cc_email[:cc_emails], 
-																	convert_to_cc_format(source) ] if check_source(source) }.flatten()
+																	convert_to_cc_format(source) ] if check_source(source) }.flatten().compact
 			return unless cc_email_array.any?
 			if @target_ticket.cc_email.blank?
 				@target_ticket.cc_email = {:cc_emails => cc_email_array.uniq, :fwd_emails => []}

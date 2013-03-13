@@ -4,8 +4,8 @@
   	  <br>
     <div id="primary-contact">
       <div id="merge-ticket" data-id=<%= h(@target_ticket.id) %>>
-        <%= link_to("##{@target_ticket.display_id} #{@target_ticket.subject}", @target_ticket, :title => @target_ticket.subject, 
-          :class =>"item_info", :target=>"_blank" ) %>
+        <%= link_to("##{@target_ticket.display_id} #{@target_ticket.subject}", @target_ticket, 
+                      :title => h(@target_ticket.subject), :class =>"item_info", :target=>"_blank" ) %>
         <%= hidden_field_tag 'target[ticket_id]', @target_ticket.to_param %>
         <div class="info-data hideForList">
           <span>
@@ -26,7 +26,7 @@
         <% end %>
         <div id="contact-area">
           <div id="merge-ticket" data-id=<%= h(source.id) %>>
-            <%= link_to("##{source.display_id} #{source.subject}", source, :title => source.subject, :class =>"item_info", 
+            <%= link_to("##{source.display_id} #{source.subject}", source, :title => h(source.subject), :class =>"item_info", 
                     :target=>"_blank" ) %>
             <%= hidden_field_tag 'source_tickets[]', source.to_param %>
             <div class="info-data hideForList">
