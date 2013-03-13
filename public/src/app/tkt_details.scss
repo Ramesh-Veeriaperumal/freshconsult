@@ -403,6 +403,10 @@ p strong{
 		float: left;
 		margin-right: 10px;
 
+		#spamicon img {
+			display: none; 
+		}
+
 	}
 
 	.ticket-btn{

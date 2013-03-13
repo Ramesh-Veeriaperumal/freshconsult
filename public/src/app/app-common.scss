@@ -1198,16 +1198,14 @@ div.panel_area{
 		background: sprite($ticketicon, monitor_active) no-repeat;
 	}
 	.spam, .spam_active {
-		@include hide-text();
-		width: 24px;
-		height: 24px;
-		display: inline-block;
-
+		span {
+			display: none; //For compatibility with new tkt details !V2
+		}
 	}
-	.spam { 
+	.spam img{ 
 		background: sprite($ticketicon, flag-spam) no-repeat;
 	}
-	.spam_active { 
+	.spam_active img{ 
 		background: sprite($ticketicon, flag-spam_active) no-repeat;
 	}
 }
