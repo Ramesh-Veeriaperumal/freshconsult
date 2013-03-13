@@ -248,6 +248,10 @@ div.contact_hover{
 		height:11px;
 		background:sprite($symbol, reply-tweet) no-repeat #ffffff;
 	}
+
+	.infoblock {
+		display: inline-block;
+	}
 }
 
 .popover.topRight, {

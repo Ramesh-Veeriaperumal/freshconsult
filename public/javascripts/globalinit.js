@@ -243,7 +243,7 @@ is_touch_device = function() {
          onkeyup: false,
          focusCleanup: true,
          focusInvalid: false,
-         ignore:":not(:visible)"
+         ignore:".nested_field:not(:visible)"
       };
       
       $("ul.ui-form").livequery(function(ev){

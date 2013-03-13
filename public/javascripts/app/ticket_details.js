@@ -777,10 +777,14 @@ $(document).ready(function() {
 						_form.resetForm();
 					}
 
-					if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
-						stopDraftSaving();
-						clearSavedDraft();
-					}
+					try {
+						if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
+							stopDraftSaving();
+							clearSavedDraft();
+						}	
+					} catch(e) {}
+					// The above block has been added so that Redactor errors do not restrict further flow.
+					
 
 					_form.find('[rel=ajax_params]').remove();
 						
@@ -885,58 +889,63 @@ $(document).ready(function() {
 
 	$('#custom_ticket_form').on('submit', function(ev) {
 		ev.preventDefault(); 
-		var submit = $('#custom_ticket_form .btn-primary');
-		submit.button('loading');
-		submit.attr('disabled','disabled');
 		var tkt_form = $('#custom_ticket_form');
-		$.ajax({
-			type: 'POST',
-			url: tkt_form.attr('action'),
-			data: tkt_form.serialize(),
-			dataType: 'json',
-			success: function(response) {
-				TICKET_DETAILS_DATA['updating_properties'] = false;
-				submit.val(submit.data('saved-text'));
-				setTimeout( function() {
-					submit.button('reset');
-				}, 1000);
+		if (tkt_form.valid()) {
 
-				var updateStatusBox = false;
-				if ($('.ticket_show #helpdesk_ticket_priority').data('updated') || $('.ticket_show #helpdesk_ticket_status').data('updated')) {
-					$('.ticket_show .source-badge-wrap .source')
-							.attr('class','')
-							.addClass('source ')
-							.addClass('priority_color_' + $('.ticket_show #helpdesk_ticket_priority').val())
-							.addClass('status_' + $('.ticket_show #helpdesk_ticket_status').val());
+			var submit = $('#custom_ticket_form .btn-primary');
+			submit.button('loading');
+			submit.attr('disabled','disabled');
 
-					updateStatusBox = true;
+			$.ajax({
+				type: 'POST',
+				url: tkt_form.attr('action'),
+				data: tkt_form.serialize(),
+				dataType: 'json',
+				success: function(response) {
+					TICKET_DETAILS_DATA['updating_properties'] = false;
+					submit.val(submit.data('saved-text')).addClass('done');
+					setTimeout( function() {
+						submit.button('reset').removeClass('done');
+					}, 1000);
+
+					var updateStatusBox = false;
+					if ($('.ticket_show #helpdesk_ticket_priority').data('updated') || $('.ticket_show #helpdesk_ticket_status').data('updated')) {
+						$('.ticket_show .source-badge-wrap .source')
+								.attr('class','')
+								.addClass('source ')
+								.addClass('priority_color_' + $('.ticket_show #helpdesk_ticket_priority').val())
+								.addClass('status_' + $('.ticket_show #helpdesk_ticket_status').val());
+
+						updateStatusBox = true;
+					}
+
+					if ($('.ticket_show #helpdesk_ticket_source').data('updated')) {
+
+						$('.ticket_show .source-badge-wrap .source span')
+								.attr('class','')
+								.addClass('source_' + $('.ticket_show #helpdesk_ticket_source').val());
+
+					}
+
+					tkt_form.find('input, select, textarea').each(function() {
+						$(this).data('updated', false);
+					});
+
+					if (updateStatusBox) {
+						refreshStatusBox();
+					}
+
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					submit.text(submit.data('default-text')).prop('disabled',false);
+					// console.log('Errors');
+					// console.log(jqXHR);
+					// console.log(textStatus);
+					// console.log(errorThrown);
 				}
-
-				if ($('.ticket_show #helpdesk_ticket_source').data('updated')) {
-
-					$('.ticket_show .source-badge-wrap .source span')
-							.attr('class','')
-							.addClass('source_' + $('.ticket_show #helpdesk_ticket_source').val());
-
-				}
-
-				tkt_form.find('input, select, textarea').each(function() {
-					$(this).data('updated', false);
-				});
-
-				if (updateStatusBox) {
-					refreshStatusBox();
-				}
-
-			},
-			error: function(jqXHR, textStatus, errorThrown) {
-				submit.text(submit.data('default-text')).prop('disabled',false);
-				// console.log('Errors');
-				// console.log(jqXHR);
-				// console.log(textStatus);
-				// console.log(errorThrown);
-			}
-		});
+			});
+		}
+			
 	});
 
 	
