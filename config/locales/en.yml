@@ -2184,6 +2184,10 @@ en:
       note: Note 
       billable_entry: Mark as a billable entry
       billing_type: Billing Type
+      billable: Billable
+      non_billable: Non-Billable
+      product: Product
+      group: Group
       group_by: Group By
       report:
         no_timeentry: "No data available"
