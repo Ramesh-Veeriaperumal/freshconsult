@@ -56,8 +56,7 @@ class User < ActiveRecord::Base
 
   has_many :support_scores, :dependent => :delete_all
 
-  has_many :user_credentials, :class_name => 'Integration::UserCredential', :dependent => :destroy
-
+  has_many :user_credentials, :class_name => 'Integrations::UserCredential', :dependent => :destroy
   before_create :set_time_zone , :set_company_name , :set_language
   before_save :set_contact_name, :check_email_value , :set_default_role
   after_update :drop_authorization , :if => :email_changed?

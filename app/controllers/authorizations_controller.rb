@@ -220,12 +220,21 @@ class AuthorizationsController < ApplicationController
   end
   
   def failure
-    portal = Portal.find_by_id(session["omniauth.origin"])  unless session["omniauth.origin"].blank?
+    origin = params[:origin]
+    portal = Portal.find_by_id(origin) unless origin.blank?
+    unless portal
+      origin = CGI.parse(origin) if origin
+      portal_id = origin['pid'][0].to_i if origin
+      Rails.logger.debug "origin: #{origin.inspect}"  
+      portal = Portal.find_by_id(portal_id) if portal_id
+    end
+
+    port = (Rails.env.development? ? ":#{request.port}" : '')
     flash[:notice] = t(:'flash.g_app.authentication_failed')
     unless portal.blank?
       domain = portal.host
       protocol = (portal.account.ssl_enabled?) ? "https://" : "http://"
-      redirect_to protocol+domain
+      redirect_to protocol+domain+port
     else
       redirect_to root_url
     end

@@ -1528,8 +1528,11 @@ en:
     helpcard:
       title: SLA Policy
       tour: Help me create a new SLA policy
-      info1: "A service level agreement (SLA) policy lets you set standards of performance for your support team. You can set SLA policies for the time within which agents should respond to, and resolve tickets based on ticket priorities. You can choose whether you want each SLA rule to be calculated over calendar hours or your business hours, and also create automatic escalation rules to notify specific agents when an SLA rule is violated. "
-      info2: "Your SLA Policies will be used in Freshdesk to determine the “Due By” time for each ticket. You can have a default SLA policy for all customers, or have multiple SLA policies for different customer tiers, like those who have subscribed to your Premium Support package."
+      info1: '<p>A service level agreement (SLA) policy lets you set standards of performance for your support team. You can set SLA policies for the time within which agents should respond to, and resolve tickets based on ticket priorities. You can choose whether you want each SLA rule to be calculated over calendar hours or your business hours.</p> <p>Your SLA Policies will be used in Freshdesk to determine the “Due By” time for each ticket.</p>'
+      title1: 'Enforcing Escalation Rules'
+      info2: '<p>You can optionally set escalation hierarchies for each policy to notify specific agents when an SLA rule is violated.</p>'
+      title2: 'Using Multiple SLA Policies'
+      info3: '<p>You can have a default SLA policy for all customers, or have multiple SLA policies for different customer tiers, like those who have subscribed to your Premium Support package.</p><p>When you add additional SLA Policies (other than the default policy), you will have to specify the conditions for which this policy will be enforced.</p>'
     override: Override
     title1: SLA Policies
     response_time: Response time
@@ -1898,6 +1901,7 @@ en:
     group: Group
     agent: Agent 
     none: None
+    myself: Myself
     spam_btn_title: Mark as spam
     assigned_to: Assigned To
     assigned_agent: Agent
@@ -1974,7 +1978,8 @@ en:
     type: Type
     execute_scenario: Execute Scenario
     note_form: 
-      private_note: This is a private note,  don't show this to the requester.
+      private_note: "Add as Private Note, and don't notify the requester"
+      description_note: "The Subject and Description of the merged tickets will be added as notes in the primary ticket"
       form_title: Add a Note
       add_and_resolve: Add and Resolve
       notify_agents: Notify Agents
@@ -2382,6 +2387,8 @@ en:
         target_merge_description2: Description in ticket %{ticket_id}
         confirm_and_merge: Confirm and merge  
       bulk_merge:
+        mark_primary: "Mark this ticket as your primary ticket"
+        primary_ticket: "This is your primary ticket"
         target_merge_description:  "Ticket {{ticket.id}} {{ticket.subject}} is merged with this request"
         target_note_description1: 
           one: "Ticket with id"

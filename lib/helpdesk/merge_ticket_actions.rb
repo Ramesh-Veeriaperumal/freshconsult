@@ -6,16 +6,50 @@ module Helpdesk::MergeTicketActions
 
 	def handle_merge 
 		@source_tickets.each do |source_ticket|
-		  move_source_time_sheets_to_target(source_ticket)
-		  add_note_to_source_ticket(source_ticket) 
-		  close_source_ticket(source_ticket)
-		  update_merge_activity(source_ticket) 
+			move_source_notes_to_target(source_ticket)
+			move_source_time_sheets_to_target(source_ticket)
+			move_source_description_to_target(source_ticket)
+			add_note_to_source_ticket(source_ticket) 
+			close_source_ticket(source_ticket)
+			update_merge_activity(source_ticket) 
 		end
-		move_source_requesters_to_target 
+		move_source_requesters_to_target
 		add_note_to_target_ticket
 	end
 
 	private
+
+		def move_source_notes_to_target source_ticket
+	    source_ticket.notes.each do |note|
+	      note.update_attribute( :notable_id , @target_ticket.id )
+	    end
+		end
+
+		def move_source_description_to_target source_ticket
+			desc_pvt_note = params[:target][:is_private]
+			source_description_note = @target_ticket.notes.build(
+				:body_html => %{<b>#{source_ticket.subject}</b><br/><br/>#{source_ticket.description}},
+				:private => desc_pvt_note || false,
+				:source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+				:account_id => current_account.id,
+				:user_id => current_user && current_user.id
+			)
+			add_source_attachments_to_source_description(source_ticket, source_description_note)
+			source_description_note.save
+		end
+
+		def add_source_attachments_to_source_description( source_ticket , source_description_note )
+      ## handling attachemnt..need to check this
+			source_ticket.attachments.each do |attachment|      
+				url = attachment.authenticated_s3_get_url
+				io = open(url) #Duplicate code from helpdesk_controller_methods. Refactor it!
+				if io
+					def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
+				end
+				source_description_note.attachments.build(:content => io, :description => "",
+																									:account_id => source_description_note.account_id)
+			end
+		end
 
 		def move_source_requesters_to_target
 			cc_email_array = @source_tickets.collect{ |source| [ source.cc_email[:cc_emails], 
