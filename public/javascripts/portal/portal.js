@@ -45,7 +45,7 @@ jQuery.noConflict()
 					url: this.href,
 					data: _post_data,
 					dataType: _o_data.responseType || "html",
-					success: function(data){					
+					success: function(data){		
 						$(_o_data.showDom||"").show()
 						$(_o_data.hideDom||"").hide()
 						$(_o_data.toggleDom||"").toggle()

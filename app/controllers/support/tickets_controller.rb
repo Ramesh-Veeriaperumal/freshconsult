@@ -17,11 +17,10 @@ class Support::TicketsController < SupportController
   before_filter :set_date_filter, :only => [:export_csv]  
 
   def show
-
     @visible_ticket_fields = current_portal.ticket_fields(:customer_visible).reject{ |f| !f.visible_in_view_form? }
     @editable_ticket_fields = current_portal.ticket_fields(:customer_editable).reject{ |f| !f.visible_in_view_form? }
 
-    set_portal_page :ticket_view    
+    set_portal_page :ticket_view
   end
   
   def index    

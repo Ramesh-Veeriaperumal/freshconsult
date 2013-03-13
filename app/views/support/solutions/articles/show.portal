@@ -42,12 +42,12 @@
 	<p class="article-vote" id="voting-container">
 		{% translate feedback.title %}
 		<a href="{{ article.thumbs_up_url }}" class="vote-up" 
-			data-remote data-method="put" data-update="#voting-container" 
+			data-remote="true" data-method="put" data-update="#voting-container" 
 			data-update-with-message="{% translate feedback.up_vote_thank_you_message %}">
 			{% translate feedback.upvote %}
 		</a>
 		<a href="{{ article.thumbs_down_url }}" class="vote-down" 
-			data-remote data-method="put" data-update="#vote-feedback-form"
+			data-remote="true" data-method="put" data-update="#vote-feedback-form"
 			data-hide-dom="#voting-container" data-show-dom="#vote-feedback-container">
 			{% translate feedback.downvote %}
 		</a>

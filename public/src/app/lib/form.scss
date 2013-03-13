@@ -595,9 +595,14 @@ li.nested_field{
 	line-height: 30px;
 }
 
-.portal-logo{
+.portal-logo, .portal-favicon{
 	float:left;
-	margin: 0 10px 15px 0;
+	margin-right:10px;
+}
+
+.portal-logo{
+	height: 35px;
+	width: auto;
 }
 
 .logo-actions a{ 

@@ -90,7 +90,10 @@ class Admin::ProductsController < Admin::AdminController
     end
 
     def redirect_url
-      redirect_url = params[:redirect_url].presence || { :action => 'index' }
-      admin_portal_template_path(@product.portal.id) if @product.portal.present? && params[:customize_portal]
+      if params[:customize_portal].presence && @product.portal.present?
+        admin_portal_template_path(@product.portal.id) 
+      else 
+        params[:redirect_url].presence || admin_products_path
+      end
     end
 end
