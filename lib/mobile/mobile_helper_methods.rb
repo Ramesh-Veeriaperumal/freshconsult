@@ -37,8 +37,7 @@ module Mobile::MobileHelperMethods
       mobile_agent? && allowed_domain? &&  !classic_view? 
     end
 
-    def set_mobile
-      return if(current_user && current_user.customer?)
+    def set_mobile      
       Rails.logger.debug "mobile ::: #{mobile?} :: #{request.headers['HTTP_ACCEPT']}"
       if mobile?
         params[:format] = "mob"

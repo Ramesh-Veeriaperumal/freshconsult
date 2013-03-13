@@ -336,12 +336,13 @@ select:focus:required:invalid {
 // ------------
 
 .form-actions {
-  padding: 16px 12px 20px;
-  margin-top: $baseLineHeight;
+  /*padding: 16px 12px 20px;*/
+  margin-top: $baseLineHeight/2;
+  padding-top: $baseLineHeight/2;
   margin-bottom: $baseLineHeight;
-  background-color: $formActionsBackground;
-  /*border-top: 1px solid #e5e5e5;*/
-  @include border-radius(6px);
+  /*background-color: $formActionsBackground;*/
+  border-top: 1px solid #e5e5e5;
+  /*@include border-radius(6px);*/
   @include clearfix(); // Adding clearfix to allow for .pull-right button containers
 }
 

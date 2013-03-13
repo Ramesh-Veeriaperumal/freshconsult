@@ -18,7 +18,9 @@ class Support::TicketsController < SupportController
 
   def show
     @visible_ticket_fields = current_portal.ticket_fields(:customer_visible).reject{ |f| !f.visible_in_view_form? }
-    @editable_ticket_fields = current_portal.ticket_fields(:customer_editable).reject{ |f| !f.visible_in_view_form? }
+
+    @agent_visible = @visible_ticket_fields.any? { |tf| tf[:field_type] == "default_agent" }
+    # @editable_ticket_fields = current_portal.ticket_fields(:customer_editable).reject{ |f| !f.visible_in_view_form? }
 
     set_portal_page :ticket_view
   end

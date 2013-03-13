@@ -3,6 +3,12 @@ class Solution::FolderDrop < BaseDrop
   include ActionController::UrlWriter
   
   liquid_attributes << :name << :description << :visibility
+
+  def context=(current_context)    
+    current_context['paginate_url'] = support_solutions_folder_path(source)
+    
+    super
+  end
   
   def initialize(source)
     super source
