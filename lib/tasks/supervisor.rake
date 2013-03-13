@@ -7,7 +7,7 @@ namespace :supervisor do
       unless  queue_length > 0
         Account.active_accounts.each do |account|
           if account.supervisor_rules.count > 0
-            Resque.enqueue( Workers::Supervisor, account.id)
+            Resque.enqueue( Workers::Supervisor, {:account_id => account.id})
           end
         end
       else

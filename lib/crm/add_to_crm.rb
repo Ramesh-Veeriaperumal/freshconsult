@@ -2,12 +2,10 @@ class CRM::AddToCRM
   QUEUE = "salesforceQueue"
   
   class Customer
-    # def initialize
-    #   @queue = QUEUE
-    # end
+    extend Resque::AroundPerform
 
-    def self.perform(item_id)
-      item = scoper.find(item_id)
+    def self.perform(args)
+      item = scoper.find_by_account_id_and_id(Account.current.id,args[:item_id])
       crm = CRM::Salesforce.new
       perform_job(crm, item)
     end

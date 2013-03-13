@@ -536,7 +536,7 @@ class User < ActiveRecord::Base
     end
 
     def update_admin_in_crm
-      Resque.enqueue(CRM::AddToCRM::UpdateAdmin, self.id)
+      Resque.enqueue(CRM::AddToCRM::UpdateAdmin, {:account_id => account_id, :item_id => id})
     end
 
     def bakcup_user_changes

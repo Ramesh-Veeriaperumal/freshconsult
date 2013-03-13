@@ -652,7 +652,7 @@ class Account < ActiveRecord::Base
     end 
 
     def add_to_totango
-      Resque.enqueue(CRM::Totango::TrialCustomer, id)
+      Resque.enqueue(CRM::Totango::TrialCustomer, {:account_id => id})
     end
 
     def update_billing

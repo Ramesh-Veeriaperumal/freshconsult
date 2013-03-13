@@ -247,9 +247,9 @@ class AccountsController < ApplicationController
     params[:account][:main_portal_attributes][:updated_at] = Time.now
     @account.main_portal_attributes = params[:account][:main_portal_attributes]
     if @account.save
-      Resque::enqueue(CRM::Totango::SendUserAction, current_account.id, 
-                                                    current_user.email, 
-                                                    totango_activity(:helpdesk_rebranding))
+      Resque::enqueue(CRM::Totango::SendUserAction, {:account_id => current_account.id,
+                                                     :email => current_user.email,
+                                                     :activity => totango_activity(:helpdesk_rebranding)})
       flash[:notice] = t(:'flash.account.update.success')
       redirect_to admin_home_index_path
     else
@@ -430,6 +430,6 @@ class AccountsController < ApplicationController
     private
 
       def add_to_crm
-        Resque.enqueue(Marketo::AddLead, @account.id, ThirdCRM.fetch_cookie_info(request.cookies))
+        Resque.enqueue(Marketo::AddLead, { :account_id => @account.id, :cookie => ThirdCRM.fetch_cookie_info(request.cookies) })
       end   
 end

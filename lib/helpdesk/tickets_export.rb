@@ -1,10 +1,14 @@
-class Helpdesk::TicketsExport < Resque::FreshdeskBase
+class Helpdesk::TicketsExport 
+  extend Resque::AroundPerform
   include Helpdesk::Ticketfields::TicketStatus
   @queue = 'ticketsExportQueue'
 
   def self.perform(export_params)
+
     SeamlessDatabasePool.use_persistent_read_connection do
       export_params.symbolize_keys!
+      user = Account.current.users.find(export_params[:current_user_id])
+      user.make_current
       #Need to be removed - kiran 
       if export_params[:data_hash]
         json_conditions = []

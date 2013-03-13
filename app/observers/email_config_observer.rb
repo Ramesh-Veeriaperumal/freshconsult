@@ -50,8 +50,8 @@ class EmailConfigObserver < ActiveRecord::Observer
 
   def notify_totango(email_config)
     Resque::enqueue(CRM::Totango::SendUserAction,
-                                        email_config.account.id, 
-                                        email_config.account.account_admin.email, 
-                                        totango_activity(:email_config))
+                                        {:account_id => email_config.account_id, 
+                                         :email =>  email_config.account.account_admin.email, 
+                                         :activity =>  totango_activity(:email_config) })
   end
 end
