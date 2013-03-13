@@ -32,9 +32,7 @@
 
 		<section class="user-comment" id="ticket-description">			
 			<div class="user-info">
-				<div class="user-pic-thumb user-pointer-bottom">
-					<img src="{{ ticket.requester.profile_url }}" width="40px" height="40px" />
-				</div>
+				{{ ticket.requester | profile_image:'user-pointer-bottom', '40px', '40px' }}
 				<div class="user-details">
 					<h4 class="user-name">{{ ticket.requester.name }}</h4>
 					<div class="p-info">reported {{ ticket.created_on | time_ago }}</div>
@@ -51,9 +49,7 @@
 						 id="ticket-note-{{comment.id}}">
 
 					<div class="user-info">
-						<div class="user-pic-thumb user-pointer-bottom">
-							<img src="{{ comment.user.profile_url }}" width="40px" height="40px" />
-						</div>
+						{{ comment.user | profile_image:'user-pointer-bottom', '40px', '40px' }}
 						<div class="user-details">
 							<h4 class="user-name">{{ comment.user.name }}</h4> 
 							<div class="p-info">said {{ comment.created_on | time_ago }}</div>
@@ -90,11 +86,9 @@
 			{% endif %}
 			<section id="reply-to-ticket" name="reply-to-ticket" class="user-comment {% if ticket.closed? %}hide{% endif %}">
 				<div class="user-info">
-					<div class="user-pic-thumb user-pointer-bottom">
-						<img src="{{ current_user.profile_url }}" width="40px" height="40px" />
-					</div>
+					{{ portal.user | profile_image:'user-pointer-bottom', '40px', '40px' }}
 					<div class="user-details">
-						<h4 class="user-name">{{ current_user.name }}</h4>
+						<h4 class="user-name">{{ portal.user.name }}</h4>
 					</div>
 				</div>
 				<div class="p-content">
@@ -113,12 +107,10 @@
 
 <section class="sidebar content rounded-6" id="ticket-sidebar">
 	{% assign agent = ticket.agent %}
-	{% if agent_visible == true && agent %}
+	{% if agent_visible == true and agent %}
 		<div class="widget agent-details">
 			<h3 class="lead">Agent working on this ticket</h4>
-			<div class="user-pic-thumb">
-				<img src="{{ agent.profile_url }}" width="40px" height="40px" />
-			</div>
+			{{ agent | profile_image:'user-pointer-bottom', '40px', '40px' }}
 			<div><b>{{ agent.name }}</b></div>
 			<div>{{ agent.job_title }}</div>
 		</div>

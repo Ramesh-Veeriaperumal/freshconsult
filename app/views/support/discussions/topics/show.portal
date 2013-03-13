@@ -32,9 +32,7 @@
 		{% assign first_post = topic.first_post %}
 		<section class="user-comment {% if first_post.user.is_agent %} comment-by-agent {% endif %}" id="post-{{first_post.id}}">
 			<div class="user-info">
-				<div class="user-pic-thumb user-pointer-bottom">
-					<img src="{{ first_post.user.profile_url }}" width="40px" height="40px" />
-				</div>
+				{{ first_post.user | profile_image:'user-pointer-bottom', '40px', '40px' }}				
 				<div class="user-details">
 					<h4 class="user-name">{{ first_post.user.name }}</h4>
 					<div class="p-info">
@@ -77,9 +75,7 @@
 			{% for post in paginate.collection %}
 				<section class="user-comment {% if post.user.is_agent %} comment-by-agent {% endif %}" id="post-{{post.id}}">
 					<div class="user-info">
-						<div class="user-pic-thumb user-pointer-bottom">
-							<img src="{{ post.user.profile_url }}" width="40px" height="40px" />
-						</div>
+						{{ post.user | profile_image:'user-pointer-bottom', '40px', '40px' }}
 						<div class="user-details">
 							{{ post | post_actions }}
 							<h4 class="user-name">{{ post.user.name }}</h4>
@@ -132,14 +128,12 @@
 		<section class="lead-small">
 			{% translate topic.comments_closed %} 
 		</section>
-	{% elsif current_user %}
+	{% elsif portal.user %}
 		<section id="reply-to-post" class="user-comment">
 			<div class="user-info">
-				<div class="user-pic-thumb user-pointer-bottom">
-					<img src="{{ current_user.profile_url }}" width="40px" height="40px" />
-				</div>
+				{{ portal.user | profile_image:'user-pointer-bottom', '40px', '40px' }}
 				<div class="user-details">						
-					<h4 class="user-name">{{ current_user.name }}</h4>
+					<h4 class="user-name">{{ portal.user.name }}</h4>
 				</div>
 			</div>
 			<div class="p-content">

@@ -1,4 +1,6 @@
 class UserDrop < BaseDrop	
+	include ActionController::UrlWriter
+
 	liquid_attributes << :name << :email << :phone << :mobile << :job_title << :user_role << 
 						 :time_zone << :twitter_id  
 
@@ -7,7 +9,7 @@ class UserDrop < BaseDrop
 	end
 
 	def profile_url
-		source.avatar.nil? ? "/images/fillers/profile_blank_thumb.gif" : @source.avatar.expiring_url(:thumb, 300)
+		source.avatar.nil? ? false : profile_image_user_path(@source)
 	end
 
 	def id

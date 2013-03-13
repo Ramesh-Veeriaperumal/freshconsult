@@ -216,6 +216,7 @@ javascripts:
     - public/javascripts/portal/bootstrap.js
     - public/javascripts/portal/bootstrap.dialog.js
     - public/javascripts/portal/select2.js
+    - public/javascripts/portal/jail.js
     - public/javascripts/portal/portal.js
     - public/javascripts/portal/portal-app-actions.js
     - public/javascripts/portal/portal-compatibility.js
