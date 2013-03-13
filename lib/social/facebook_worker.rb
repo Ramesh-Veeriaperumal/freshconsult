@@ -5,7 +5,8 @@ class Social::FacebookWorker
   @retry_limit = 3
   @retry_delay = 60*2
 
-  ERROR_MESSAGES = {:access_token_error => "access token", :permission_error => "manage_pages"}
+  ERROR_MESSAGES = {:access_token_error => "access token", :permission_error => "manage_pages", 
+                    :mailbox_error => "read_page_mailboxes" }
   
   def self.perform(account_id)
     account = Account.find(account_id)
@@ -14,7 +15,8 @@ class Social::FacebookWorker
     facebook_pages.each do |fan_page|   
         @fan_page =  fan_page
         fetch_fb_posts fan_page     
-        if fan_page.import_dms
+        if fan_page.import_dms && !(fan_page.last_error && 
+                                fan_page.last_error.include?(ERROR_MESSAGES[:mailbox_error]))
             fetch_fb_messages fan_page
         end         
      end
