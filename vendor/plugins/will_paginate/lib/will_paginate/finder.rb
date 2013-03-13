@@ -63,7 +63,7 @@ module WillPaginate
       # and +count+ calls.
       def paginate(*args, &block)
         options = args.pop
-        page, per_page, total_entries, extra_offset = wp_parse_options(options)
+        page, per_page, total_entries = wp_parse_options(options)
         finder = (options[:finder] || 'find').to_s
 
         if finder == 'find'
@@ -72,13 +72,15 @@ module WillPaginate
           # :all is implicit
           args.unshift(:all) if args.empty?
         end
-        WillPaginate::Collection.create(page, per_page, total_entries, extra_offset) do |pager|
-          count_options = options.except :page, :per_page, :total_entries, :finder, :extra_offset
-          find_options = count_options.except(:count, :extra_offset).update(:offset => pager.offset, :limit => pager.per_page) 
+
+        WillPaginate::Collection.create(page, per_page, total_entries) do |pager|
+          count_options = options.except :page, :per_page, :total_entries, :finder
+          find_options = count_options.except(:count).update(:offset => pager.offset, :limit => pager.per_page) 
           
           args << find_options
           # @options_from_last_find = nil
           pager.replace send(finder, *args, &block)
+          
           # magic counting for user convenience:
           pager.total_entries = wp_count(count_options, args, finder) unless pager.total_entries
         end
@@ -244,8 +246,7 @@ module WillPaginate
         page     = options[:page] || 1
         per_page = options[:per_page] || self.per_page
         total    = options[:total_entries]
-        extra_offset    = options[:extra_offset] || 0
-        [page, per_page, total, extra_offset]
+        [page, per_page, total]
       end
 
     private

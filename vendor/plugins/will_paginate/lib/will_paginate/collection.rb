@@ -40,18 +40,18 @@ module WillPaginate
   #   
   #   # WillPaginate::Collection is now available for use
   class Collection < Array
-    attr_reader :current_page, :per_page, :total_entries, :total_pages, :extra_offset
+    attr_reader :current_page, :per_page, :total_entries, :total_pages
 
     # Arguments to the constructor are the current page number, per-page limit
     # and the total number of entries. The last argument is optional because it
     # is best to do lazy counting; in other words, count *conditionally* after
     # populating the collection using the +replace+ method.
-    def initialize(page, per_page, total = nil, extra_offset = 0)
+    def initialize(page, per_page, total = nil)
       @current_page = page.to_i
       raise InvalidPage.new(page, @current_page) if @current_page < 1
       @per_page = per_page.to_i
       raise ArgumentError, "`per_page` setting cannot be less than 1 (#{@per_page} given)" if @per_page < 1
-      @extra_offset = extra_offset.to_f
+      
       self.total_entries = total if total
     end
 
@@ -82,8 +82,8 @@ module WillPaginate
     #
     # The Array#paginate API has since then changed, but this still serves as a
     # fine example of WillPaginate::Collection usage.
-    def self.create(page, per_page, total = nil, extra_offset = 0, &block)
-      pager = new(page, per_page, total, extra_offset)
+    def self.create(page, per_page, total = nil, &block)
+      pager = new(page, per_page, total)
       yield pager
       pager
     end
@@ -100,7 +100,7 @@ module WillPaginate
     # the offset is 30. This property is useful if you want to render ordinals
     # side by side with records in the view: simply start with offset + 1.
     def offset
-      ((current_page - 1) * per_page) + extra_offset.to_f
+      (current_page - 1) * per_page
     end
 
     # current_page - 1 or nil if there is no previous page
