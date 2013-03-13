@@ -125,7 +125,7 @@ SHARED_SECRET: 7e8c587a5f7aff66519ae35eabb6b76f1632d0f058a84607702
 
 # The names route that the user will be redirect to if they don't
 # have permission to access an area
-ACCESS_DENIED_ROUTE: login_url   
+ACCESS_DENIED_ROUTE: support_login_url   
 
 # These are permissions for the different user roles
 ROLES:

@@ -1,6 +1,6 @@
 class SupportController < ApplicationController
 
-  before_filter :portal_context, :redactor_form_builder, :page_message
+  before_filter :portal_context, :page_message
   include RedisKeys
 
 
@@ -50,9 +50,6 @@ class SupportController < ApplicationController
       request.env["HTTP_REFERER"] = support_home_url if @preview
     end
 
-    def redactor_form_builder
-      ActionView::Base.default_form_builder = FormBuilders::RedactorBuilder
-    end
     
     # Flash message for the page   
     # The helper method can be found in SupportHelper class      
