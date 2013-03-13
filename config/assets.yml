@@ -28,10 +28,7 @@ stylesheets:
     - public/stylesheets/codemirror.css
 
   portal:
-    # - public/stylesheets/portal/portal.css
     - public/stylesheets/redactor.css
-    # - public/stylesheets/app/lib/qtip.css
-    # - public/stylesheets/portal/responsive.css 
 
   preview:
     - public/stylesheets/portal/preview.css
@@ -213,6 +210,7 @@ javascripts:
     - public/javascripts/hackz.js
     - public/javascripts/helpdesk/multifile.js
     - public/javascripts/lib/nestedtree.js
+    - public/javascripts/lib/detectmobilebrowsers.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/portal/jquery-ui-1.9.2.custom.js
     - public/javascripts/portal/bootstrap.js

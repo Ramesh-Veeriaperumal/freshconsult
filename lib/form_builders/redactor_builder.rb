@@ -31,7 +31,7 @@ module FormBuilders
       end
 
       def rich_editor_tag(name, content = nil, options = {})
-        id = options[:id] = options[:id] || field_id( name )          
+        id = options[:id] = options[:id] || field_id( name )
         content = options[:value] if options[:value].present?
 
         redactor_opts = (options['editor-type'] == :solution) ? REDACTOR_SOLUTION_EDITOR : REDACTOR_FORUM_EDITOR
@@ -39,21 +39,25 @@ module FormBuilders
         _javascript_options = redactor_opts.merge(options).to_json
 
         # Height set as :height in the redator helper object will be used as the base height for the js editor
-        options[:style] = "height:#{options[:height]}px;"
+        options[:style] = "height:#{options[:height]}px;" if options[:height]
+        options[:rel] = "redactor"
+        options[:class] = "redactor-textarea #{options[:class]}" 
 
-        output = <<HTML
-#{text_area_tag(name, content, options.merge({:rel => "redactor"})) }
+        output = []
+        output << text_area_tag(name, content, options)
 
-<script type="text/javascript">
-    if (window['redactors'] === undefined) window.redactors = {}
-    !function( $ ) {
-      $(function() {
-        window.redactors['#{id}'] = $('##{id}').redactor(#{_javascript_options})
-      })  
-    }(window.jQuery);
-</script>
-HTML
-        output.html_safe  
+        output << %(<script type="text/javascript">
+                      if( !isMobile.any() ){
+                        if (window['redactors'] === undefined) window.redactors = {}
+                        !function( $ ) {
+                          $(function() {
+                            window.redactors['#{id}'] = $('##{id}').redactor(#{_javascript_options})
+                          })  
+                        }(window.jQuery);
+                      }
+                  </script>)
+
+        output.join('')  
       end
 
       def field_name(label, index = nil)
