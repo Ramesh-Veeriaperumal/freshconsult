@@ -3,6 +3,12 @@ class Forum::TopicDrop < BaseDrop
   include ActionController::UrlWriter
   
   liquid_attributes << :title 
+
+  def context=(current_context)    
+    current_context['paginate_url'] = support_discussions_topic_path(source)
+
+    super
+  end
   
   def initialize(source)
     super source
@@ -42,7 +48,7 @@ class Forum::TopicDrop < BaseDrop
   end
 
   def posts
-    source.posts
+    source.posts.filter(@per_page, @page)
   end
 
   def id

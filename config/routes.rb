@@ -384,6 +384,8 @@
       discussion.resources :forums, :only => :show
       discussion.resources :topics, :except => :index, :member => { :like => :put, 
           :unlike => :put, :toggle_monitor => :put, :users_voted => :get } do |topic|
+        discussion.connect "/topics/:id/page/:page", :controller => :topics, 
+          :action => :show
         topic.resources :posts, :except => [:index, :new, :show], 
           :member => { :toggle_answer => :put }
       end
