@@ -28,7 +28,6 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 	line-height: 1.3em;
 	.welcome{ 
 		display: inline-block;
-		&:after{ content:" - "; }
 	}
 	a{ color: inherit;}
 }
@@ -99,6 +98,13 @@ footer{
 		border:0;
 		box-shadow:none;
 		.banner-nav {
+			.welcome{
+				display: block;
+				margin-bottom:11px;
+				overflow: hidden;
+			    text-overflow: ellipsis;
+			    white-space: nowrap;
+			}
 			margin-top: 11px;
 			a{
 				color:inherit;
@@ -162,6 +168,7 @@ footer{
 			@include border-radius(20px);
 			padding: 4px 10px;
 			margin:0 4px;
+			line-height:$baseLineHeight * 1.5;
 			&:before{
 				content:none;
 				margin:0;
@@ -179,7 +186,6 @@ footer{
 		text-align:left; 
 		@include border-top-radius($content-border-radius); 
 		h1{
-			font-size:30px;
 			line-height: $baseLineHeight * 2;
 		}
 		.banner-title{ @include span-columns(7); }
@@ -188,7 +194,6 @@ footer{
 			margin-top: 5px;
 			.welcome{ 
 				display: block;
-				&:after{ content:none; }
 			}
 		}
 		nav{ text-align: right; }

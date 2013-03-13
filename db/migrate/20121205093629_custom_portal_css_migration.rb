@@ -12,5 +12,6 @@ class CustomPortalCssMigration < ActiveRecord::Migration
   	SQL
   	execute("DROP INDEX `index_portals_on_account_id_and_portal_id` on portal_templates")
   	execute("DROP INDEX `index_portals_on_account_id_and_template_id_page_type` on portal_pages")
+    execute("DELETE FROM portal_templates")
   end
 end

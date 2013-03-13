@@ -37,7 +37,7 @@ module SupportHelper
 			# Showing login path for non-loggedin user
 			output << %(<b><a href="#{ portal['login_url'] }">#{ t('header.login') }</a></b>)
 			# Showing signup url based on customer portal settings feature
-			output << %(or <b><a href="#{ portal['signup_url'] }">#{ t('signup') }</a></b>) if portal['can_signup_feature']
+			output << %(&nbsp;<b><a href="#{ portal['signup_url'] }">#{ t('signup') }</a></b>) if portal['can_signup_feature']
 		end
 
 		output.join(" ")
@@ -50,8 +50,13 @@ module SupportHelper
 
 	# No content information for forums
 	def filler_for_forums portal		
-		%( <div class='lead'> #{I18n.t('portal.no_forums_info_1')} </div>
-		   <div class='lead-small'> #{ I18n.t('portal.no_forums_info_2', :start_topic_link => link_to_start_topic(portal))} </div> )
+		%( <div class='no-results'> #{I18n.t('portal.no_forums_info_1')} </div>
+		   <div class='no-results'> #{ I18n.t('portal.no_forums_info_2', :start_topic_link => link_to_start_topic(portal))} </div> )
+	end
+
+	def filler_for_solutions portal
+		%( <div class="no-results">#{ I18n.t('portal.no_articles_info_1') }</div>
+		   <div class="no-results">#{ I18n.t('portal.no_articles_info_2') }</div> )
 	end
 
 	# Logo for the portal
