@@ -37,7 +37,7 @@ module Mobile::MobileHelperMethods
       mobile_agent? && allowed_domain? &&  !classic_view? 
     end
 
-    def set_mobile
+    def set_mobile      
       Rails.logger.debug "mobile ::: #{mobile?} :: #{request.headers['HTTP_ACCEPT']}"
       if mobile?
         params[:format] = "mob"
@@ -59,7 +59,9 @@ module Mobile::MobileHelperMethods
     end
 
     def redirect_to_mobile_url
-      if !current_user.nil? && current_user.agent? and mobile? and !"mobile".eql?(params[:format]) and !"mob".eql?(params[:format]) and mobile_view?
+      if (!current_user.nil? && current_user.respond_to?('agent?')&& 
+        current_user.agent? && mobile? and !"mobile".eql?(params[:format]) and 
+        !"mob".eql?(params[:format]) and mobile_view?)
          redirect_to mobile_url
       end
     end

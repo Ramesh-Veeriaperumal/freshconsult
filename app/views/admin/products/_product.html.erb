@@ -1,16 +1,13 @@
 <tr>
-  <td class="portal-logo">
-    <% if(product.portal_enabled?) %>
-      <%= image_tag((product.portal.logo.nil?) ? "/images/fillers/logo_blank.gif" : product.portal.logo.content.url(:logo), 
-        :class => "image_logo") %>
-    <% else %>
-      <%= image_tag("/images/fillers/logo_blank.gif", :class => "image_logo") %>
-    <% end %>
+  <td>
+    <%= image_tag (product.portal_enabled? && product.portal.logo) ? 
+        product.portal.logo.content.url(:logo) : "logo-preview.png", :class => "portal-logo" %>
   </td>
   <td class="portal-text">
     <h4 class="title"><%= link_to product.name, edit_admin_product_path(product) %></h4>
   </td>
-  <td class="channel">
+  <% social_present = (product.twitter_handles.present? || product.facebook_pages.present?) %>
+  <td class="channel" colspan="<%= social_present ? 1 : 2 %>">
     <div class="channel-text">
       <% if(product.portal_enabled?) %>
         <span class='icon product-url'></span>
@@ -34,22 +31,24 @@
 			</div>	
     <% end %>	
   </td>
-  <td class="channel">	
-		<% product.twitter_handles.each do |twitter_handle| %>
-  		<div class="channel-text">				
-				<span class='icon product-twitter'></span>				
-				<%= link_to("@#{twitter_handle.screen_name}", edit_social_twitter_path(twitter_handle),          
-          :title => t(".edit_twitter_account", :screen_name => twitter_handle.screen_name )) %> 
-      </div>
-		<% end %>
-		<% product.facebook_pages.each do |facebook_page| %>
-		  <div class="channel-text">				
-				<span class='icon product-facebook'></span>				
-				<%= link_to(facebook_page.page_name, edit_social_facebook_path(facebook_page),          
-          :title => t(".edit_facebook_page", :page_name => facebook_page.page_name )) %> 
-		  </div>
-		<% end %>
-  </td>
+  <% if social_present %>
+    <td class="channel">	
+  		<% product.twitter_handles.each do |twitter_handle| %>
+    		<div class="channel-text">				
+  				<span class='icon product-twitter'></span>				
+  				<%= link_to("@#{twitter_handle.screen_name}", edit_social_twitter_path(twitter_handle),          
+            :title => t(".edit_twitter_account", :screen_name => twitter_handle.screen_name )) %> 
+        </div>
+  		<% end %>
+  		<% product.facebook_pages.each do |facebook_page| %>
+  		  <div class="channel-text">				
+  				<span class='icon product-facebook'></span>				
+  				<%= link_to(facebook_page.page_name, edit_social_facebook_path(facebook_page),          
+            :title => t(".edit_facebook_page", :page_name => facebook_page.page_name )) %> 
+  		  </div>
+  		<% end %>
+    </td>
+  <% end %>
   <td>
     <% if(product.portal_enabled?) %>
       <%= link_to t(".customize_portal"), admin_portal_template_path(product.portal), :class => "btn btn-mini" %>

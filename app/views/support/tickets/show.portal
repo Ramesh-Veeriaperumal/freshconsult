@@ -113,7 +113,7 @@
 
 <section class="sidebar content rounded-6" id="ticket-sidebar">
 	{% assign agent = ticket.agent %}
-	{% if agent %}
+	{% if agent_visible == true && agent %}
 		<div class="widget agent-details">
 			<h3 class="lead">Agent working on this ticket</h4>
 			<div class="user-pic-thumb">
@@ -126,13 +126,7 @@
 
 	{% snippet ticket_survey %}
 	
-	{% snippet ticket_details %}
-
-	{% comment %}
-		{% unless ticket.closed? %}
-			{% snippet ticket_edit %}
-		{% endunless %}
-	{% endcomment %}
+	{% snippet ticket_details %}	
 </section>
 
 {% snippet ticket_add_people %}

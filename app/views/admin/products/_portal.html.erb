@@ -93,8 +93,13 @@
     
       <div class="inline-field">
         <label class="caption">Portal customization</label>
-        <div class="fields">              
-          <p>
+        <div class="fields">
+          <% if @product.portal.template.present? %>
+            <%= submit_tag "Customize portal >", :class => "btn btn-bold", :rel => "customize-portal" %> 
+          <% else %>  
+            <%= submit_tag "Save & Customize portal >", :class => "btn btn-bold" %> 
+          <% end %>
+          <p class="info-data">
             <% if @product.portal.template.present? %>
               Your portal was last published
                 <%= distance_of_time_in_words_to_now(@product.portal.template.updated_at) %>
@@ -102,14 +107,10 @@
               <br />
             <% end %>
           </p>
-          <%= submit_tag !@product.portal.template.present? ? "Save & Customize portal >" : "Customize portal >", 
-            :class => "btn btn-bold", :rel => "customize-portal" %> 
         </div>
       </div>
   </div>
 </div>
-<input type="hidden" name="redirect_url" id="redirect_url" value="" />
-<input type="hidden" name="customize_portal" id="customize_portal" value="" />
 
 <% content_for :onload_script do %>
   jQuery("[data-rebrand-form]").live("change", function(ev){
@@ -121,14 +122,14 @@
     if(form.data('formChanged')){
       ev.preventDefault()
       if(confirm("You have unsaved changes in your form. Do you want to save and continue?")){
-        jQuery("#customize_portal").val(true)
+        setPostParam(form, "customize_portal", true)
         form.submit()
       }
     }
   })
 
-  jQuery('.fileAdminUpload').live("change", function(){ 
-    jQuery("#redirect_url").val(window.location) 
+  jQuery('.fileAdminUpload').live("change", function(){
+    setPostParam(this.form, "redirect_url", window.location)
     jQuery(this.form).submit()
   })
 

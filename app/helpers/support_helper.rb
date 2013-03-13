@@ -457,7 +457,7 @@ HTML
 		output = []
 		output << %( <script type="text/javascript"> )
 		output << %(  	portal = #{portal_javascript_object}; )
-		output << %( 	console.log(portal); )
+		output << %( 	// console.log(portal); )
 		output << %( </script> )
 		output.join("")
 	end

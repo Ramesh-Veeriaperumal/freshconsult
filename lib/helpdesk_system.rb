@@ -16,7 +16,8 @@ module HelpdeskSystem
         flash[:notice] = current_user ? I18n.t(:'flash.general.access_denied') : 
                                         I18n.t(:'flash.general.need_login')
 
-        redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
+        redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless request.headers['X-PJAX']
+        render :text => "abort" if request.headers['X-PJAX']
       }
       format.json { render :json => { :access_denied => true } }
       format.js { 

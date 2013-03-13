@@ -211,9 +211,9 @@ class Support::SearchController < SupportController
     end
 
     def ticket_result ticket
-      { 'title' => ticket.excerpts.subject, 
+      { 'title' => ticket.subject, 
         'group' => "Ticket", 
-        'desc' => ticket.excerpts.description,
+        'desc' => truncate(ticket.description, 120),
         'type' => "TICKET", 
         'url' => support_ticket_path(ticket) }
     end

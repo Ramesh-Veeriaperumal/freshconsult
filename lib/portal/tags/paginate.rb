@@ -42,7 +42,7 @@ class Portal::Tags::Paginate < ::Liquid::Block
 
       page_count, current_page = pagination.total_pages, pagination.current_page
 
-      path = context.registers[:controller].request.path
+      path = context['paginate_url'] || context.registers[:controller].request.path
       path = path.gsub(/\/page\/[0-9]+/,"") #TO STRIP PAGINATION RELATED STRING
       params.delete(:page) if params[:page]
       params.delete(:action) if params[:action]

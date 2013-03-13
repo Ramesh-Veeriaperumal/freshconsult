@@ -108,10 +108,10 @@
   // Modals
   .modal {
     position: fixed;
-    top: 50%;
+    top: 10%;
     left: 50%;
 
-    &.fade.in { top: 50%; }
+    &.fade.in { top: 10%; }
   }
   .modal-header{ padding: 9px 15px 0 15px; }
   .modal-header .close {
@@ -146,5 +146,9 @@
 
 
 @include at-breakpoint($break-desktop){
-  .modal { width: 710px; margin: -250px 0 0 -355px; }
+  .modal { 
+    width: 710px; margin: -250px 0 0 -355px; 
+    top: 50%;
+    &.fade.in { top: 50%; }
+  }
 }

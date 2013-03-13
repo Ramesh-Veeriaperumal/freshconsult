@@ -6,7 +6,8 @@
 
 		<% f.fields_for :cc_email do |cc| %>
 			<%= cc.text_field :cc_emails,
-					:value => (@ticket.cc_email['cc_emails'].join(',') if @ticket.cc_email.present?),
+					:value => (@ticket.cc_email['cc_emails'].join(',') if 
+						(@ticket.cc_email.present? && @ticket.cc_email['cc_emails'].present? )),
 					:class => "required span12", :id => "cc_emails" %>
 		<%end%>
 	<% end %>

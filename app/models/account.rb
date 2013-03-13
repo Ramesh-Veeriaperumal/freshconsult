@@ -253,7 +253,7 @@ class Account < ActiveRecord::Base
     
     :pro => {
       :features => [ :scenario_automations, :customer_slas, :business_hours, :forums, 
-        :surveys, :scoreboard, :facebook, :timesheets ],
+        :surveys, :scoreboard, :facebook, :timesheets, :css_customization ],
       :inherits => [ :basic ]
     },
     
@@ -267,12 +267,14 @@ class Account < ActiveRecord::Base
     },
     
     :blossom => {
-      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, :custom_domain, :multiple_emails ],
+      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
+        :custom_domain, :multiple_emails ],
       :inherits => [ :sprout ]
     },
     
     :garden => {
-      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :advanced_reporting, :css_customization ],
+      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
+        :advanced_reporting, :css_customization ],
       :inherits => [ :blossom ]
     },
 
@@ -291,17 +293,22 @@ class Account < ActiveRecord::Base
     },
     
     :garden_classic => {
-      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :advanced_reporting ],
+      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
+        :advanced_reporting, :css_customization ],
       :inherits => [ :blossom_classic ]
     },
 
     :estate_classic => {
-      :features => [ :gamification, :agent_collision ],
+      :features => [ :gamification, :agent_collision, :layout_customization ],
       :inherits => [ :garden_classic ]
     }
 
   }
   
+
+  has_many :portal_templates,  :class_name=> 'Portal::Template'
+  has_many :portal_pages,  :class_name=> 'Portal::Page'
+
 # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
     
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,

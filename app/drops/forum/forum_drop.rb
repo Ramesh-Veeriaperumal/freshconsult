@@ -9,12 +9,11 @@ class Forum::ForumDrop < BaseDrop
   end
 
   def context=(current_context)    
-    # puts "========> #{current_context['current_page']}"
-    # Making forum page filters to only work in the forum topic list page
-    # if current_context['current_page'].source.type == :topic_list
-      # Setting the default current topic filter based on params or setting it to recent
-      @current_topic_filter = (current_context.registers[:controller].params['filter_topics_by']||"recent").to_sym
-    # end
+
+    # Setting the default current topic filter based on params or setting it to recent
+    @current_topic_filter = (current_context.registers[:controller].params['filter_topics_by']||"recent").to_sym
+
+    current_context['paginate_url'] = support_discussions_forum_path(source)
 
     super
   end

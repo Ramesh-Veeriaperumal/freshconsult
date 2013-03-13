@@ -13,15 +13,16 @@ class Support::TicketsController < SupportController
   before_filter :require_user_login, :only => [:show, :index, :filter, :close, :update, :add_people]
   before_filter :load_item, :only =>[:show, :update, :close, :add_people]
 
-  before_filter :set_mobile, :only => [:filter, :show, :update, :close]
   before_filter :set_date_filter, :only => [:export_csv]  
 
   def show
-
+    return access_denied unless can_access_support_ticket?
     @visible_ticket_fields = current_portal.ticket_fields(:customer_visible).reject{ |f| !f.visible_in_view_form? }
-    @editable_ticket_fields = current_portal.ticket_fields(:customer_editable).reject{ |f| !f.visible_in_view_form? }
 
-    set_portal_page :ticket_view    
+    @agent_visible = @visible_ticket_fields.any? { |tf| tf[:field_type] == "default_agent" }
+    # @editable_ticket_fields = current_portal.ticket_fields(:customer_editable).reject{ |f| !f.visible_in_view_form? }
+
+    set_portal_page :ticket_view
   end
   
   def index    
@@ -41,9 +42,6 @@ class Support::TicketsController < SupportController
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
           redirect_to @item 
         }
-        format.mobile { 
-          render :json => { :success => true, :item => @item }.to_json 
-        }
       end
     end
   end
@@ -55,23 +53,6 @@ class Support::TicketsController < SupportController
     respond_to do |format|
       format.html { render :partial => "ticket_list" }
       format.js
-      format.mobile {
-        unless @response_errors.nil?
-          render :json => {:errors => @response_errors}.to_json
-        else
-          json = "["; sep=""
-          @tickets.each { |tic| 
-            #Removing the root node, so that it conforms to JSON REST API standards
-            # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
-            json << sep + tic.to_json({
-              :except => [ :description_html, :description ],
-              :methods => [ :status_name, :priority_name, :source_name, :requester_name,
-                            :responder_name, :need_attention, :pretty_updated_date ]
-            }, false)[19..-2]; sep=","
-          }
-          render :json => json + "]"
-        end
-      }
     end
   end
 
@@ -137,7 +118,7 @@ class Support::TicketsController < SupportController
           ticket_scope.tickets.created_at_inside(params[:start_date], params[:end_date])
 
       @tickets = TicketsFilter.filter(current_filter, current_user, date_added_ticket_scope)
-      per_page = mobile? ? 30 : params[:wf_per_page] || 10
+      per_page = params[:wf_per_page] || 10
       @tickets = @tickets.paginate(:page => params[:page], :per_page => per_page, 
           :order => "#{current_wf_order} #{current_wf_order_type}") 
 
