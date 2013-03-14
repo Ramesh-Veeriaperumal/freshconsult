@@ -15,7 +15,7 @@
 
 <% content_for :onload_script do %>
 	if(<%=params[:enable_portal]||false%>){
-		jQuery("#EnablePortal").prop("checked", true);
-		jQuery("#product_portal_attributes_portal_url").focus();
+		jQuery("#EnablePortal").prop("checked", true).trigger("change");
+		jQuery("#PortalUrl").trigger("focus");
 	}
 <% end %>
