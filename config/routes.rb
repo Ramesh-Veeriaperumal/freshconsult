@@ -308,7 +308,8 @@
 
     helpdesk.resources :dropboxes
     
-    helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get, :requester_autocomplete => :get }
+    helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get, 
+                  :requester_autocomplete => :get, :company_autocomplete => :get }
     
     helpdesk.resources :mailer, :collection => { :fetch => :get }
     
@@ -316,7 +317,8 @@
     
     helpdesk.resources :support_plans
     
-    helpdesk.resources :sla_policies 
+    helpdesk.resources :sla_policies, :collection => {:reorder => :put}, :member => {:activate => :put},
+                      :except => :show
 
     helpdesk.resources :notifications, :only => :index
 

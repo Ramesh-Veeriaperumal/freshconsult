@@ -1,45 +1,44 @@
 class Workers::Sla 
-  extend Resque::Plugins::Retry
 
-  @retry_limit = 3
-  @retry_delay = 60*2
   
- class PremiumSLA 
+ class PremiumSLA
+  extend Resque::AroundPerform 
   @queue = 'premium_sla_worker'
 
-  def self.perform(account_id)
-    Workers::Sla.sla_escalate(account_id)
+  def self.perform(args)
+    Workers::Sla.sla_escalate
   end
  end
 
  class AccountSLA
+  extend Resque::AroundPerform
   @queue = 'sla_worker'
 
-  def self.perform(account_id)
-   SeamlessDatabasePool.use_persistent_read_connection do
-    Workers::Sla.sla_escalate(account_id)
-   end
+  def self.perform(args)
+    Workers::Sla.sla_escalate
   end
  end
 
- def self.sla_escalate(account_id)
+ def self.sla_escalate
   begin
-    account = Account.find(account_id)
-    account.make_current
+    account = Account.current
     run(account)
   rescue Exception => e
     puts "something is wrong: #{e.message}"
   rescue 
     puts "something went wrong"
     end
-   Account.reset_current_account 
  end
  
  def self.run account
-    overdue_tickets = account.tickets.visible.find(:all, 
-                                                    :readonly => false, 
-                                                    :conditions =>['due_by <=? AND isescalated=? AND status IN (?)',
-                                                     Time.zone.now.to_s(:db),false, Helpdesk::TicketStatus::donot_stop_sla_statuses(account)] )
+    db_name = account.premium? ? "use_master_connection" : "use_persistent_read_connection"
+    overdue_tickets = execute_on_db(db_name) {
+                        account.tickets.visible.find(:all, 
+                        :readonly => false, 
+                        :conditions =>['due_by <=? AND isescalated=? AND status IN (?)',
+                        Time.zone.now.to_s(:db),false, Helpdesk::TicketStatus::donot_stop_sla_statuses(account)] )
+                      }
+
     overdue_tickets.each do |ticket|  
       sla_policy_id = nil
       unless ticket.requester.customer.nil?     
@@ -56,12 +55,14 @@ class Workers::Sla
       ticket.update_attribute(:isescalated , true)
     end
     
-    froverdue_tickets = account.tickets.visible.find(:all, :joins => "inner join helpdesk_ticket_states 
-                                                     on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
+    froverdue_tickets = execute_on_db(db_name) {
+                          account.tickets.visible.find(:all, :joins => "inner join helpdesk_ticket_states 
+                          on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
                                                      and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id" , :readonly => false , 
                         :conditions =>['frDueBy <=? AND fr_escalated=? AND status IN (?) AND 
                           helpdesk_ticket_states.first_response_time IS ?', 
                           Time.zone.now.to_s(:db),false,Helpdesk::TicketStatus::donot_stop_sla_statuses(account),nil] )
+                        }
     froverdue_tickets.each do |fr_ticket|
       fr_sla_policy_id = nil
       unless fr_ticket.requester.customer.nil?     
@@ -81,17 +82,25 @@ class Workers::Sla
     
     ##Tickets left unassigned in group
     
-    tickets_unpicked = account.tickets.visible.find(:all, :joins => [:ticket_states,:group] ,
+    tickets_unpicked = execute_on_db(db_name) {
+                account.tickets.visible.find(:all, :joins => [:ticket_states,:group] ,
      :readonly => false , 
      :conditions =>['DATE_ADD(helpdesk_tickets.created_at, INTERVAL groups.assign_time SECOND)  <=? AND 
       group_escalated=? AND status=? AND helpdesk_ticket_states.first_assigned_at IS ?', 
       Time.zone.now.to_s(:db),false,Helpdesk::Ticketfields::TicketStatus::OPEN,nil] )
+
+      }
     tickets_unpicked.each do |gr_ticket| 
       send_email(gr_ticket, gr_ticket.group.escalate, EmailNotification::TICKET_UNATTENDED_IN_GROUP) unless gr_ticket.group.escalate.nil?
       gr_ticket.ticket_states.update_attribute(:group_escalated , true)
     end
   end
 
+  def self.execute_on_db(db_name)
+    SeamlessDatabasePool.send(db_name.to_sym) do
+      yield
+    end
+  end
 
   def self.send_email(ticket, agent, n_type)
     e_notification = ticket.account.email_notifications.find_by_notification_type(n_type)

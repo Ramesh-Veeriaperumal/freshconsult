@@ -26,7 +26,6 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :disable_notification, :if => :notification_not_required?
   after_filter  :enable_notification, :if => :notification_not_required?
   before_filter :set_selected_tab
-  before_filter :store_location, :only => [:show]
 
 
   layout :choose_layout 
@@ -404,7 +403,7 @@ class Helpdesk::TicketsController < ApplicationController
       st.ticket_id= t.id and st.account_id=#{current_account.id} 
       set st.#{Helpdesk::SchemaLessTicket.trashed_column} = 1 where 
       t.id in (#{@items.map(&:id).join(',')}) and t.account_id=#{current_account.id}")    
-    Resque.enqueue(Workers::ClearTrash, current_account.id)
+    Resque.enqueue(Workers::ClearTrash,{:account_id => current_account.id} )
     flash[:notice] = render_to_string(
         :inline => t("flash.tickets.delete_forever.success", :tickets => get_updated_ticket_count ))
     redirect_to :back
@@ -415,7 +414,7 @@ class Helpdesk::TicketsController < ApplicationController
      st inner join helpdesk_tickets t on st.ticket_id= t.id and st.account_id=#{current_account.id}
        set st.#{Helpdesk::SchemaLessTicket.trashed_column} = 1 
        where t.deleted=1 and t.account_id=#{current_account.id}")
-    Resque.enqueue(Workers::ClearTrash, current_account.id)
+    Resque.enqueue(Workers::ClearTrash, {:account_id => current_account.id} )
     flash[:notice] = t(:'flash.tickets.empty_trash.success')
     redirect_to :back
   end

@@ -6,12 +6,12 @@
 		<!--
 			<%= link_to('Edit', "#", :class => "button") %>		
 		-->
-		<%= link_to('Delete', "#", :method => 'delete', :confirm => 'Are you sure you want to delete this user?', :class => "button") %>		
-		<%= link_to('Add a new user', new_contact_url, :class => "button") %>		
+		<%= link_to( t('delete'), "#", :method => 'delete', :confirm => t('contacts.confirm_delete'), :class => "button") %>		
+		<%= link_to( t('contacts.add_new_user'), new_contact_url, :class => "button") %>		
 	</div>
 	<span class="seperator"></span>
 	<div class="search_box">
-		<input type="search" id="srch_fld" placeholder="Search by Name or Email or Tags..." autosave="applestyle_srch" results="5" />
+		<input type="search" id="srch_fld" placeholder="<%= t('contacts.search_by') %>" autosave="applestyle_srch" results="5" />
 	</div>
 	<ul class="alpha_sort_list">
 		<li class="active"><a href="#">All</a></li>
@@ -57,7 +57,7 @@
 			Bank of America
 		  </td>   
 	      <!--td><%= link_to('Edit', edit_user_path(user)) %></td-->
-	      <td><%= link_to('Delete', contact, :method => 'delete', :confirm => 'Are you sure you want to delete this user?') unless contact == current_user %></td>
+	      <td><%= link_to( t('delete'), contact, :method => 'delete', :confirm => t('contacts.confirm_delete')) unless contact == current_user %></td>
 	    </tr>
 	  <% end %>
 	</table>

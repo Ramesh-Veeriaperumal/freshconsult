@@ -40,4 +40,29 @@ module Integrations::AppsUtil
     end
   end
 
+  def construct_params_for_http(method,rest_url,body=nil)
+    fieldData = {
+      :username => @installed_app.configs_username,
+      :password => @installed_app.configsdecrypt_password,
+      :domain => @installed_app.configs_domain,
+      :rest_url => rest_url,
+      :method => method
+    }
+    if(body)
+      fieldData[:body] = body
+    end
+    fieldData
+  end
+
+  def make_rest_call(params, request)
+    @http_request_proxy.fetch(params, request)
+  end
+
+  def redirect_back_using_cookie(request, default_uri=root_path)
+    redirect_uri = request.cookies.fetch('return_uri', default_uri)
+    cookies.delete('return_uri')
+    puts "redirect_uri: #{redirect_uri}"
+    redirect_to redirect_uri
+  end
+
 end

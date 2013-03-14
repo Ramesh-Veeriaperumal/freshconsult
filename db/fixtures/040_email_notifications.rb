@@ -77,7 +77,7 @@ EmailNotification.seed_many(:account_id, :notification_type, [
     :account_id => account.id, 
     :requester_notification => false, 
     :agent_notification => true,
-    :agent_template => '<p>Hi {{agent.name}},<br /><br />There has been no response from the helpdesk for Ticket ID #{{ticket.id}}. The first response was due by {{ticket.fr_due_by_hrs}} today.<br /><br />Ticket Details: <br /><br />Subject - {{ticket.subject}}<br /><br />Requestor - {{ticket.requester.email}}<br /><br />This is an escalation email from {{helpdesk_name}}</p>',
+    :agent_template => '<p>Hi,<br /><br />There has been no response from the helpdesk for Ticket ID #{{ticket.id}}. The first response was due by {{ticket.fr_due_by_hrs}} today.<br /><br />Ticket Details: <br /><br />Subject - {{ticket.subject}}<br /><br />Requestor - {{ticket.requester.email}}<br /><br />This is an escalation email from {{helpdesk_name}}</p>',
     :agent_subject_template => "Response time SLA violated - [\#{{ticket.id}}] {{ticket.subject}}"
   },
   {
@@ -85,7 +85,7 @@ EmailNotification.seed_many(:account_id, :notification_type, [
     :account_id => account.id, 
     :requester_notification => false, 
     :agent_notification => true,
-    :agent_template => '<p>Hi {{agent.name}},<br /><br />Ticket #{{ticket.id}} has not been resolved within the SLA time period. The ticket was due by {{ticket.due_by_hrs}} today.<br /><br />Ticket Details: <br /><br />Subject - {{ticket.subject}}<br /><br />Requestor - {{ticket.requester.email}}<br /><br />This is an escalation email from {{helpdesk_name}}</p>',
+    :agent_template => '<p>Hi,<br /><br />Ticket #{{ticket.id}} has not been resolved within the SLA time period. The ticket was due by {{ticket.due_by_hrs}} today.<br /><br />Ticket Details: <br /><br />Subject - {{ticket.subject}}<br /><br />Requestor - {{ticket.requester.email}}<br /><br />This is an escalation email from {{helpdesk_name}}</p>',
     :agent_subject_template => "Resolution time SLA violated - [\#{{ticket.id}}] {{ticket.subject}}"
   },
   { :notification_type => EmailNotification::TICKET_RESOLVED, 

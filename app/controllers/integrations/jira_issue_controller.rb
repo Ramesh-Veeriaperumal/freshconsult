@@ -18,7 +18,7 @@ class Integrations::JiraIssueController < ApplicationController
       custom_field_id = @installed_app.configs[:inputs]['customFieldId']
       unless res_data.blank?
         if(res_data["errorMessages"])
-          render :json => {:error=> ""}
+          render :json => {:error=> "Exception:"+res_data["errors"].values.join(",")}
         else 
         params['integrated_resource']={}
         params['integrated_resource']['remote_integratable_id'] = params[:remote_key]
@@ -135,6 +135,7 @@ class Integrations::JiraIssueController < ApplicationController
         render :xml => File.read(cert_file)
       end
     end
+    #@jiraObj.register_webhooks(current_portal.host)
   end
 
   def notify

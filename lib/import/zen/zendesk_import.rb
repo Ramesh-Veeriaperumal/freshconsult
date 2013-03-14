@@ -1,9 +1,7 @@
 class Import::Zen::ZendeskImport 
-	extend Resque::Plugins::Retry
-  @queue = 'zendeskImport'
+	extend Resque::AroundPerform
 
-  @retry_limit = 3
-  @retry_delay = 60*2
+	@queue = "zendeskImport"
 
   def self.perform(zen_params)
     Import::Zen::Start.new(zen_params).perform

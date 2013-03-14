@@ -6,7 +6,7 @@
 	  <div class="timespent"></div>
 	  <div class="note">
 	    <label class="floatr">
-	      <%= button_to_function "Change Date", "jQuery(this).hide().next().show().datepicker();" %>
+	    <%= t('helpdesk.time_sheets.executed_at')%>
  	      <%= f.text_field :executed_at, :value => edit.executed_at.strftime("%m/%d/%Y"), :size => 10, :class => "auto hide datepicker" %>    	    
  	    </label> 
  	  </div>
