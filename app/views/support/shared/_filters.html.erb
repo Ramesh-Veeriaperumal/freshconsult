@@ -21,7 +21,7 @@
        <% current_sort_name = "" %>
        <% sort_fields = []
             vfs = visible_fields
-            TicketsFilter::SORT_FIELD_OPTIONS.each { |field| sort_fields.push(field) if vfs.include?(field[1].to_s) }
+            TicketsFilter.sort_fields_options.each { |field| sort_fields.push(field) if vfs.include?(field[1].to_s) }
        %>
        <% sort_fields.each do |sort_item| %>       
          <% content_tag :li, :class => (( sort_item[1] == current_wf_order ) ? "active" : "" ) do %>
@@ -34,7 +34,7 @@
          <% end %>
        <% end %>
       <li class="divider"></li>
-      <% TicketsFilter::SORT_ORDER_FIELDS_OPTIONS.each do |sort_order_item| %>
+      <% TicketsFilter.sort_order_fields_options.each do |sort_order_item| %>
         <% content_tag :li, :class => (( sort_order_item[1] == current_wf_order_type ) ? "active" : "" ) do %>
           <% link_to "#", :class => "wf_order_type", :wf_order_type => sort_order_item[1] do %>
             <%= sort_order_item[0] %>
