@@ -1,4 +1,4 @@
-<h3 class="title">New Quest</h3>
+<h3 class="title"><%= t('admin.quests.index.new_quest') %></h3>
 <% form_for :quest, @quest, :url => admin_quests_path, :html => { :method => :post , :id => "formQuestNew", :rel => "validate" } do |f| %>
 	<%= render :partial => "/admin/quests/quest_form", :locals => { :f => f } %>
 <% end %>

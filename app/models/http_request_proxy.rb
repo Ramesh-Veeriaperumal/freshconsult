@@ -95,6 +95,7 @@ class HttpRequestProxy
             "get" => Net::HTTP::Get,
             "post" => Net::HTTP::Post,
             "put" => Net::HTTP::Put,
-            "delete" => Net::HTTP::Delete
+            "delete" => Net::HTTP::Delete,
+            "patch" => Net::HTTP::Patch
         }
 end

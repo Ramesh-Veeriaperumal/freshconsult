@@ -8,7 +8,7 @@
 
 // Make all forms have space below them
 form {
-  margin: 0 0 $baseLineHeight;
+  //margin: 0 0 $baseLineHeight;
 }
 
 fieldset {
@@ -93,7 +93,7 @@ input[type="color"],
 input,
 textarea,
 .uneditable-input {
-  width: 206px; // plus 12px padding and 2px border
+  //width: 206px; // plus 12px padding and 2px border
 }
 // Reset height since textareas have rows
 textarea {
@@ -161,7 +161,7 @@ input[type="file"] {
 
 // Make select elements obey height by applying a border
 select {
-  width: 220px; // default input width + 10px of padding that doesn't get applied
+  //width: 220px; // default input width + 10px of padding that doesn't get applied
   border: 1px solid $inputBorder;
   background-color: $inputBackground; // Chrome on Linux and Mobile Safari need background-color
 }

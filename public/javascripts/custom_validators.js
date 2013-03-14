@@ -31,7 +31,7 @@
      return /^([0-9]*):([0-5][0-9])(:[0-5][0-9])?$/.test(hours);
   }, 'Please enter a valid hours.');
   $.validator.addClassRules("hours", { hours: true });
-
+  
 
   //Domain Name Validator 
   $.validator.addMethod("domain_validator", function(value, element) {
@@ -107,5 +107,19 @@ $.validator.addMethod("require_from_group", function(value, element, options) {
 }, jQuery.format("Please enter a Email or Phone Number"));
 
 $.validator.addClassRules("require_from_group" ,{require_from_group: [1, ".user_info"]});
+
+// Time validator
+$.validator.addMethod("time_12", function(value, element){
+  if( ! /^[0-9]{1,2}:[0-9]{1,2} [ap]m$/i.test(value) ) return false;  
+  var t = value.split(' ');
+  var hm = t[0].split(':'), meridian = t[1];
+  var h = hm[0], m = hm[1];
+  if(meridian!='am' && meridian!='pm') return false;
+  if(h<1 || h>12) return false;
+  if(m<0 || m>59) return false;
+  return true;
+}, 'Invalid time.');
+$.validator.addClassRules("time-12", { time_12: true });
+
 
 })(jQuery);

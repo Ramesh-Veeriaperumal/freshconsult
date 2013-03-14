@@ -31,7 +31,7 @@
 				<span><%= truncate(h(current_user.name), :length => 30) %></span>
 			</div>
 			<span class="seperator"></span>
-			<%= link_to "Profile settings", edit_profile_path(current_user), :class => "link" %>
+			<%= link_to t('profile_settings'), edit_profile_path(current_user), :class => "link" %>
 			<% if is_assumed_user? %>    
 				<span class="seperator"></span>
 				<%= link_to t('revert_identity_link_msg'), revert_identity_users_path, :class => "link" %>

@@ -10,6 +10,7 @@
   map.resources :authorizations
   map.google_sync '/google_sync', :controller=> 'authorizations', :action => 'sync'
   map.callback '/auth/:provider/callback', :controller => 'authorizations', :action => 'create'
+  map.calender '/oauth2callback', :controller => 'authorizations', :action => 'create', :provider => 'google_oauth2'
   map.failure '/auth/failure', :controller => 'authorizations', :action => 'failure'
   
   map.resources :uploaded_images, :controller => 'uploaded_images'
@@ -78,7 +79,7 @@
     integration.resources :jira_issue, :collection => {:get_issue_types => :get, :unlink => :put, :notify => :post, :register => :get}
     integration.resources :salesforce, :collection => {:fields_metadata => :get}
     integration.resources :logmein, :collection => {:rescue_session => :get, :update_pincode => :put, :refresh_session => :get, :tech_console => :get, :authcode => :get}
-    integration.oauth_action '/refresh_access_token/:provider', :controller => 'oauth_util', :action => 'get_access_token'
+    integration.oauth_action '/refresh_access_token/:app_name', :controller => 'oauth_util', :action => 'get_access_token'
     integration.custom_install 'oauth_install/:provider', :controller => 'applications', :action => 'oauth_install'
   end
 
@@ -316,7 +317,8 @@
 
     helpdesk.resources :dropboxes
     
-    helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get, :requester_autocomplete => :get }
+    helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get, 
+                  :requester_autocomplete => :get, :company_autocomplete => :get }
     
     helpdesk.resources :mailer, :collection => { :fetch => :get }
     
@@ -324,7 +326,8 @@
     
     helpdesk.resources :support_plans
     
-    helpdesk.resources :sla_policies 
+    helpdesk.resources :sla_policies, :collection => {:reorder => :put}, :member => {:activate => :put},
+                      :except => :show
 
     helpdesk.resources :notifications, :only => :index
 

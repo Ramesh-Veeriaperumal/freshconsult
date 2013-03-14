@@ -46,12 +46,12 @@ ActiveRecord::Base.class_eval do
       elsif body.blank? && body_html.blank?
         self.body = self.body_html = "Not given."
       end
-      
-      self.body_html = Rinku.auto_link(Nokogiri::HTML(self.body_html).at_css("body").inner_html, :urls)
       text = Nokogiri::HTML(self.body_html)
-      text.xpath("//del").each { |div|  div.name= "span";}
-      text.xpath("//p").each { |div|  div.name= "div";}
-      self.body_html = text.at_css("body").inner_html
+      unless text.at_css("body").blank?
+         text.xpath("//del").each { |div|  div.name= "span";}
+         text.xpath("//p").each { |div|  div.name= "div";}
+         self.body_html = Rinku.auto_link(text.at_css("body").inner_html, :urls)
+      end
     end
     
     def update_content # To do :: need to use changed_body_html?

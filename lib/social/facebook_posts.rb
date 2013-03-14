@@ -96,7 +96,7 @@ class Social::FacebookPosts
       profile =  @rest.get_object(profile_id)
       profile.symbolize_keys!
       user = @account.contacts.new
-      if user.signup!({:user => {:fb_profile_id => profile_id, :name => profile[:name], 
+      if user.signup!({:user => {:fb_profile_id => profile_id, :name => profile[:name] || profile[:id], 
                     :active => true,
                     :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
        else

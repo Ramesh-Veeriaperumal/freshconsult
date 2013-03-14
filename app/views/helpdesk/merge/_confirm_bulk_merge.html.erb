@@ -4,8 +4,8 @@
   	  <br>
     <div id="primary-contact">
       <div id="merge-ticket" data-id=<%= h(@target_ticket.id) %>>
-        <%= link_to("#{@target_ticket.subject} ##{@target_ticket.display_id}", @target_ticket, :title => @target_ticket.subject, 
-          :class =>"item_info", :target=>"_blank" ) %>
+        <%= link_to("##{@target_ticket.display_id} #{@target_ticket.subject}", @target_ticket, 
+                      :title => h(@target_ticket.subject), :class =>"item_info", :target=>"_blank" ) %>
         <%= hidden_field_tag 'target[ticket_id]', @target_ticket.to_param %>
         <div class="info-data hideForList">
           <span>
@@ -26,7 +26,7 @@
         <% end %>
         <div id="contact-area">
           <div id="merge-ticket" data-id=<%= h(source.id) %>>
-            <%= link_to("#{source.subject} ##{source.display_id}", source, :title => source.subject, :class =>"item_info", 
+            <%= link_to("##{source.display_id} #{source.subject}", source, :title => h(source.subject), :class =>"item_info", 
                     :target=>"_blank" ) %>
             <%= hidden_field_tag 'source_tickets[]', source.to_param %>
             <div class="info-data hideForList">
@@ -59,12 +59,13 @@
             <%= t("helpdesk.merge.bulk_merge.target_note_description1", :count => @source_tickets.length) %>
             
             <%= @source_tickets.map{ |t| link_to t.display_id, "/helpdesk/tickets/#{t.display_id}", 
-              :target => '_blank', :title => t.description, :class => "merge_links" }.to_sentence %>
+              :target => '_blank'}.to_sentence %>
 
             <%= t("helpdesk.merge.bulk_merge.target_note_description2", :count => @source_tickets.length, :ticket_id => 
             @target_ticket.display_id) %>
           </textarea>
-          <div>
+          <div class="private-note">
+            <%= t("ticket.note_form.description_note") %><br />
             <input id="target_private" checked="checked" name="target[is_private]" value="true" type="checkbox"> 
             <%= t("ticket.note_form.private_note") %>
           </div>
@@ -114,7 +115,6 @@
   })
 
   jQuery('#edit-target, #edit-source').click(function(){
-    console.log("hi");
     parent = jQuery(this).parent().parent();
     parent.find('#target-note-content').slideDown();
     jQuery(this).hide();
@@ -130,7 +130,6 @@
   });
 
   jQuery('#ok-target-note, #ok-source-note, #cancel-target-note, #cancel-source-note').click(function(){
-    console.log("hello");
     parent = jQuery(this).closest('.content-note');
     parent.find('#target-note-content').slideUp();
     setTimeout(function(){                  

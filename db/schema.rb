@@ -9,8 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130219063556) do
-
+ActiveRecord::Schema.define(:version => 20130307133109) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -816,6 +815,7 @@ ActiveRecord::Schema.define(:version => 20130219063556) do
     t.integer  "sla_policy_id",   :limit => 8
     t.boolean  "override_bhrs",                :default => false
     t.integer  "account_id",      :limit => 8
+    t.boolean  "escalation_enabled",              :default => true
   end
 
   create_table "helpdesk_sla_policies", :force => true do |t|
@@ -825,6 +825,10 @@ ActiveRecord::Schema.define(:version => 20130219063556) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "is_default",               :default => false
+    t.text     "escalations"
+    t.text     "conditions"
+    t.integer  "position"
+    t.boolean  "active",                   :default => true
   end
 
   add_index "helpdesk_sla_policies", ["account_id", "name"], :name => "index_helpdesk_sla_policies_on_account_id_and_name", :unique => true
@@ -915,8 +919,8 @@ ActiveRecord::Schema.define(:version => 20130219063556) do
     t.float    "avg_response_time_by_bhrs"
   end
 
+  add_index "helpdesk_ticket_states", ["account_id", "ticket_id"], :name => "index_helpdesk_ticket_states_on_account_and_ticket", :unique => true
   add_index "helpdesk_ticket_states", ["id"], :name => "helpdesk_ticket_states_id"
-  add_index "helpdesk_ticket_states", ["ticket_id"], :name => "index_helpdesk_ticket_states_on_ticket_id"
 
   create_table "helpdesk_ticket_statuses", :force => true do |t|
     t.integer  "status_id",             :limit => 8
@@ -992,7 +996,6 @@ ActiveRecord::Schema.define(:version => 20130219063556) do
   end
 
   add_index "helpdesk_time_sheets", ["account_id", "workable_type", "workable_id"], :name => "index_helpdesk_sheets_on_workable_account"
-  add_index "helpdesk_time_sheets", ["workable_type", "workable_id"], :name => "index_helpdesk_sheets_on_workable"
   add_index "helpdesk_time_sheets", ["user_id"], :name => "index_time_sheets_on_user_id"
 
   create_table "installed_applications", :force => true do |t|
@@ -1013,6 +1016,15 @@ ActiveRecord::Schema.define(:version => 20130219063556) do
     t.integer  "account_id",               :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "integrations_user_credentials", :force => true do |t|
+    t.integer  "installed_application_id", :limit => 8
+    t.integer  "user_id",                  :limit => 8
+    t.text     "auth_info"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "account_id",               :limit => 8
   end
 
   create_table "key_value_pairs", :force => true do |t|

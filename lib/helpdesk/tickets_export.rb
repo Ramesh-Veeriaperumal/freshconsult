@@ -50,11 +50,11 @@ class Helpdesk::TicketsExport < Resque::FreshdeskBase
           end
         end
       end
-      if (export_params[:later])
+      # if (export_params[:later])
         Helpdesk::TicketNotifier.deliver_export(export_params, csv_string, User.current)
-      else
-        csv_string
-      end
+      # else
+      #   csv_string
+      # end
     end
   end
 end

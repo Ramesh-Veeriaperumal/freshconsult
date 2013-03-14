@@ -116,9 +116,9 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "custom_dropdown" then
          picklist_values.collect { |c| [c.value, c.value] }
        when "default_priority" then
-         Helpdesk::Ticket::PRIORITY_OPTIONS
+         TicketConstants.priority_names
        when "default_source" then
-         Helpdesk::Ticket::SOURCE_OPTIONS
+         TicketConstants.source_names
        when "default_status" then
          Helpdesk::TicketStatus.statuses_from_cache(account)
        when "default_ticket_type" then

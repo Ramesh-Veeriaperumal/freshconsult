@@ -1,10 +1,12 @@
 <% content_for :sidebar do -%>
   <%= render :partial => "/helpdesk/integrations/crm_widget", :locals => {:user => @ticket.requester} %>
-  <%= render :partial => "/integrations/widgets/helpdesk_tickets_show_side_bar_widget", :locals => {:ticket => @ticket, :user => @ticket.requester}%>
 
   <div class="rtCnt sidepanel ticket-panel">
     <%= ticket_sidebar unless @ticket.deleted %>
   </div>
+  
+  <%= render :partial => "/integrations/widgets/helpdesk_tickets_show_side_bar_widget", :locals => {:ticket => @ticket, :user => @ticket.requester}%>
+  
   <%= render :partial => "/helpdesk/integrations/remote_support", :locals => {:user => @ticket.requester, :agent => @ticket.responder} %>
 <%- end %>
 <%= include_stylesheets :pattern %>
@@ -59,7 +61,7 @@
 			<%= render(:partial => '/helpdesk/shared/note_form', :locals => { :id => 'add-note',	:cntid => "cnt-note", :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 			<%= render(:partial => '/helpdesk/shared/tweet_form', :locals => { :id => 'send-tweet', :cntid => 'cnt-tweet', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
 			<%= render(:partial => '/helpdesk/shared/facebook_form', :locals => { :id => 'send-fb-post', :cntid => 'cnt-fb-post', :note => [@ticket, Helpdesk::Note.new(:private => true)] }) %>
-			<%= link_to( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "/helpdesk/canned_responses/index/#{@ticket.display_id}", "data-ajax-dialog" => true, "data-width" => "650", :id => "canned_response_show", :title => "Canned Responses", :class => "hide insert-canned-response" ) %> 
+			<%= link_to( t(:'ticket.canned_responses.insert_ca_response') + " &raquo;", "/helpdesk/canned_responses/index/#{@ticket.display_id}", "data-ajax-dialog" => true, "data-width" => "650", :id => "canned_response_show", :title => t('canned_folders.responses'), :class => "hide insert-canned-response" ) %> 
 		</div>
 		<% end %>
 		<% unless @ticket_notes.blank? %>

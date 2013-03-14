@@ -33,8 +33,10 @@
     this.sorter = this.options.sorter || this.sorter
     this.highlighter = this.options.highlighter || this.highlighter
     this.updater = this.options.updater || this.updater
+    this.onComplete = this.options.onComplete
     this.$menu = $(this.options.menu).appendTo('body')
     this.source = this.options.source
+    this.scrollable = this.options.scrollable
     this.shown = false
     this.listen()
   }
@@ -143,6 +145,8 @@
 
       items.first().addClass('active')
       this.$menu.html(items)
+      if(this.onComplete)
+        this.onComplete()
       return this
     }
 
@@ -187,7 +191,7 @@
       if (!this.shown) return
 
       switch(e.keyCode) {
-        case 9: // tab
+        // case 9: // tab
         case 13: // enter
         case 27: // escape
           e.preventDefault()
@@ -203,6 +207,21 @@
           this.next()
           break
       }
+          
+      if(this.scrollable)
+        setTimeout(function(){
+          if(!this || !this.length) return;
+          var target = this;
+          var posTop = target.position().top;
+          var scrollTop = target.parent().scrollTop();
+          var contHt = target.parent().height();
+
+          if((scrollTop+posTop)<scrollTop)
+            target.parent().scrollTop(posTop+scrollTop);
+          else if((scrollTop+posTop) > (scrollTop+contHt-6))
+            target.parent().scrollTop(scrollTop+posTop-contHt+target.height());
+        }.bind(this.$menu.find('li.active').first()), 20);
+
 
       e.stopPropagation()
     }
@@ -223,7 +242,7 @@
         case 38: // up arrow
           break
 
-        case 9: // tab
+        // case 9: // tab
         case 13: // enter
           if (!this.shown) return
           this.select()

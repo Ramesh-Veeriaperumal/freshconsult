@@ -3,8 +3,8 @@
 <%= javascript_include_tag  '/javascripts/report/daterangepicker.jQuery.js' %>
 <%= stylesheet_link_tag 'ui.daterangepicker' %>
   <span class="floatr">
-    <%= submit_tag "Export to CSV",{ :class => "slim-button" , :id =>'export_as_csv' }%>
-  	<%= link_to("&larr; Back to reports", reports_url, :class => "slim-button") %>
+    <%= submit_tag t('export_to_CSV'),{ :class => "slim-button" , :id =>'export_as_csv' }%>
+  	<%= link_to("&larr; #{t('reports.summary_report.back_to_reports')}", reports_url, :class => "slim-button") %>
   </span>
   <h3 class="title">
     <%=t('.title')%>
@@ -16,7 +16,7 @@
 
 <% content_for :sidebar do -%>
 <div class="sidepanel">
-  <h4 class="title">Filter report by<h4>
+  <h4 class="title"><%= t('reports.timesheet_reports.index.filter_report') %><h4>
   <% form_tag(export_csv_timesheet_reports_url, { :method => :post, :id => 'report_filters' }) do %>
     <ul class="ui-form">
       <li>

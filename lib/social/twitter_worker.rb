@@ -49,13 +49,15 @@ class Social::TwitterWorker
         @twt_handle.state = Social::TwitterHandle::TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required]
         @twt_handle.last_error = e.to_s
         @twt_handle.save
-        NewRelic::Agent.notice_error(e)
-        puts "Something wrong happened in twitter!"
-        puts e.to_s
+        NewRelic::Agent.notice_error(e,{:custom_params => {:account_id => @twt_handle.account_id,
+                  :id => @twt_handle.id}})
+        puts "Twitter Api Error -#{e.to_s} :: Account_id => #{@twt_handle.account_id}
+                                  :: id => #{@twt_handle.id} "
       rescue Exception => e
-        puts "Something wrong happened in twitter!"
-        NewRelic::Agent.notice_error(e)
-        puts e.to_s
+        puts "Something wrong happened in twitter! Error-#{e.to_s} :: Account_id => #{@twt_handle.account_id}
+                                  :: id => #{@twt_handle.id} "
+        NewRelic::Agent.notice_error(e,{:custom_params => {:account_id => @twt_handle.account_id,
+                  :id => @twt_handle.id}})
       end  
       return return_value   
   end

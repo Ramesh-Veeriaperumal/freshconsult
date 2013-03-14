@@ -4,7 +4,9 @@
 <% javascript_tag do -%>
 
 jQuery(document).ready(function(){
-  jQuery('.merge-cont').first().addClass('cont-primary');
+  primary_ticket = jQuery('.merge-cont').first()
+  primary_ticket.attr('title','This is your primary ticket').addClass('cont-primary tooltip');
+  primary_ticket.find('.primary-marker').attr('title','');
   enable_continue();
   initialize_autocompleter();
   check_requester();
@@ -15,7 +17,7 @@ function initialize_autocompleter(){
       '<li><div class="contactdiv" data-id="#{display_id}">'+
       '<span id="resp-icon"></span>'+
       '<div id="merge-ticket" class="merge_element" data-id="#{display_id}">'+
-      '<span class="item_info" title="#{subject}">#{subject} ##{display_id}</span>'+
+      '<span class="item_info" title="#{subject}">##{display_id} #{subject}</span>'+
       '<div class="info-data hideForList">'+
       '<span>#{info}</span>'+
       '</div></div></div></li>'
@@ -94,18 +96,19 @@ function change_ticket_count(){
       <div class="content-show merge_entity">
         <% @source_tickets.each do |ticket| %>
           <div class="merge-cont">
-            <div class="primary-marker">
+            <div class="primary-marker tooltip" title='Mark this ticket as primary ticket'>
               <span id="marker"></span>
             </div>
               <div id="contact-area">
     		        <span id="resp-icon" title="Remove this ticket from the list"></span>
     		       		<div id="merge-ticket" class="merge_element" data-id=<%= h(ticket.display_id) %>>
-                    <%= link_to("#{ticket.subject} ##{ticket.display_id}", ticket, :title => ticket.subject, :class =>"item_info", :target=>"_blank" ) %>
+                    <%= link_to("##{ticket.display_id} #{ticket.subject}", ticket, :title => h(ticket.subject), 
+                    :class =>"item_info", :target=>"_blank" ) %>
     			          <div class="info-data hideForList">
     			          	<span>
     			          		<%= t("ticket.merge_ticket_list_status_"+ticket.ticket_states.current_state, 
-          					:username => "<span class='muted requester_name'>#{h(ticket.requester.display_name)}</span>",
-                    :time_ago => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state))) %>
+              					:username => "<span class='muted requester_name'>#{h(ticket.requester.display_name)}</span>",
+                        :time_ago => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state))) %>
           						</span>
     			          </div>
     			        </div>
