@@ -1,5 +1,6 @@
 class Subscription::Events::AddEvent
-  
+  extend Resque::AroundPerform
+
   include Subscription::Events::AssignEventCode
   include Subscription::Events::CalculateRevenue
 
@@ -7,9 +8,26 @@ class Subscription::Events::AddEvent
   
   class << self
 
-    def perform(subscription_id, cached_subscription_hash)
-      subscription = Subscription.find(subscription_id)
-      old_subscription = cached_subscription_hash.symbolize_keys!
+    def on_failure_query_with_args(exception,*args)
+      puts "Came to event specific exception"
+      case exception
+        when NoMethodError
+          if args[0] and !args[0].is_a?(Hash)
+            subscription = Subscription.find(args[0])
+            account_id = subscription.account_id 
+            Resque.enqueue(self.name.constantize, {:account_id => account_id,
+                                                   :subscription_id => args[0],
+                                                   :subscription_hash => args[1]})
+          end
+        else
+        puts "Do nothing"
+      end
+    end
+
+    def perform(args)
+      args.symbolize_keys!
+      subscription = Subscription.find(args[:subscription_id])
+      old_subscription = args[:subscription_hash].symbolize_keys!
       
       event_attributes = assign_event_attributes(subscription, old_subscription)
       SubscriptionEvent.add_event(subscription.account, event_attributes) if event_attributes[:code]

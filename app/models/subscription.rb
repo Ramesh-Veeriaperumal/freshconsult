@@ -535,11 +535,11 @@ class Subscription < ActiveRecord::Base
     end
 
     def add_to_crm
-      Resque.enqueue(CRM::AddToCRM::FreeCustomer, id)
+      Resque.enqueue(CRM::AddToCRM::FreeCustomer, {:item_id => id})
     end
 
     def notify_totango
-      Resque.enqueue(CRM::Totango::FreeCustomer, id)
+      Resque.enqueue(CRM::Totango::FreeCustomer, {:account_id => account_id})
     end
 
     #Billing
@@ -566,11 +566,12 @@ class Subscription < ActiveRecord::Base
     end
 
     def add_subscription_event
-      Resque.enqueue(Subscription::Events::AddEvent, id, subscription_info(@old_subscription))
+      Resque.enqueue(Subscription::Events::AddEvent, {:account_id => account_id, :subscription_id => id, 
+                                                      :subscription_hash => subscription_info(@old_subscription)} )
     end
 
     def add_churn
-      Resque.enqueue(Subscription::Events::AddDeletedEvent, subscription_info(self)) if active?
+      Resque.enqueue(Subscription::Events::AddDeletedEvent, {:account_id => account_id, :subscription_hash =>  subscription_info(self)}) if active?
     end
 
  end

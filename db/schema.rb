@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130226092117) do
+ActiveRecord::Schema.define(:version => 20130307133109) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -919,8 +919,8 @@ ActiveRecord::Schema.define(:version => 20130226092117) do
     t.float    "avg_response_time_by_bhrs"
   end
 
+  add_index "helpdesk_ticket_states", ["account_id", "ticket_id"], :name => "index_helpdesk_ticket_states_on_account_and_ticket", :unique => true
   add_index "helpdesk_ticket_states", ["id"], :name => "helpdesk_ticket_states_id"
-  add_index "helpdesk_ticket_states", ["ticket_id"], :name => "index_helpdesk_ticket_states_on_ticket_id"
 
   create_table "helpdesk_ticket_statuses", :force => true do |t|
     t.integer  "status_id",             :limit => 8
@@ -996,7 +996,6 @@ ActiveRecord::Schema.define(:version => 20130226092117) do
   end
 
   add_index "helpdesk_time_sheets", ["account_id", "workable_type", "workable_id"], :name => "index_helpdesk_sheets_on_workable_account"
-  add_index "helpdesk_time_sheets", ["workable_type", "workable_id"], :name => "index_helpdesk_sheets_on_workable"
   add_index "helpdesk_time_sheets", ["user_id"], :name => "index_time_sheets_on_user_id"
 
   create_table "installed_applications", :force => true do |t|

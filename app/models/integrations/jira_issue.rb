@@ -51,7 +51,7 @@ class Integrations::JiraIssue
     res_data = make_rest_call(params, request)
     if(res_data[:status] == 400 && custom_field_id && JSON.parse(res_data[:text])["errors"][custom_field_id])
       delete_custom_field
-      update(params,request)
+      #update(params,request)
     end
     res_data
   end
