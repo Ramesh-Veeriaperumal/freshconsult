@@ -1,30 +1,8 @@
-
 <%- javascript_tag do -%>
-  // Localizing js elements
-	date_lang = {
-	          ago: "<%= t("date.ago") %>",
-	          from: "<%= t("date.from") %>",
-	          now: "<%= t("date.now") %>",
-	          second: "<%= t("date.second") %>",
-	          seconds: "<%= t("date.seconds") %>",
-	          minute: "<%= t("date.minute") %>",
-	          minutes: "<%= t("date.minutes") %>",
-	          hour: "<%= t("date.hour") %>",
-	          hours: "<%= t("date.hours") %>",
-	          day: "<%= t("date.day") %>",
-	          days: "<%= t("date.days") %>",
-	          week: "<%= t("date.week") %>",
-	          weeks: "<%= t("date.weeks") %>",
-	          month: "<%= t("date.month") %>",
-	          months: "<%= t("date.months") %>",
-	          year: "<%= t("date.year") %>",
-	          years: "<%= t("date.years") %>"
-	};
+  	// Partial Localizing for date elements
+	date_lang = <%= t("date").to_json %>;
 	
-  jQuery(document).ready(function() {
-		jQuery("a.dialog2, a[data-ajax-dialog], button.dialog2").livequery(function(ev){
-			jQuery(this).dialog2();
-		})
-    <%= yield :onload_script -%>
-  });
+	jQuery(document).ready(function() {
+		<%= yield :onload_script -%>
+	});
 <%- end -%>

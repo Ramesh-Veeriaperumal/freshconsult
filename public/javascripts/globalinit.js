@@ -20,6 +20,10 @@ var $J = jQuery.noConflict();
       hideWidgetPopup(ev);
     });
 
+    $("a.dialog2, a[data-ajax-dialog], button.dialog2").livequery(function(ev){
+      $(this).dialog2();
+    })
+
     hideWidgetPopup = function(ev) {
       if((widgetPopup != null) && !$(ev.target).parents().hasClass("popover")){
         if(!insideCalendar)

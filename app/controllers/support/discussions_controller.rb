@@ -15,10 +15,4 @@ class Support::DiscussionsController < SupportController
 		set_portal_page :discussions_home
 	end	
 
-	private
-
-		def scoper
-			# @categories = current_portal.forum_categories
-		end
-
 end

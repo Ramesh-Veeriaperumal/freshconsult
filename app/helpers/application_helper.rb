@@ -11,6 +11,18 @@ module ApplicationHelper
   require "twitter"
   
   ASSETIMAGE = { :help => "/images/helpimages" }
+
+  def open_html_tag
+    html_conditions = [ ["lt IE 7", "ie6"],
+                        ["IE 7", "ie7"],
+                        ["IE 8", "ie8"],
+                        ["IE 9", "ie9"],
+                        ["(gt IE 9)|!(IE)", "", true]]
+
+    html_conditions.map { |h| %( 
+        <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{ 
+          current_portal.language }">#{h[2] ? '<!--' : ''}<![endif]--> ) }
+  end
   
   def format_float_value(val)
     if !(val.is_a? Fixnum)

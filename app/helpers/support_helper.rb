@@ -17,6 +17,12 @@ module SupportHelper
 					  "Varela Round" => "Varela+Round:regular",
 					  "Helvetica Neue" => "Helvetica+Neue:regular,italic,700,700italic" }
 
+    def time_ago date_time 
+		%( <span rel='prettydate' class='prettydate' title='#{date_time}'> 
+			#{distance_of_time_in_words_to_now date_time} #{I18n.t('date.ago')} 
+		   </span> )
+	end
+
 	# Top page login, signup and user welcome information
 	def welcome_navigation portal
 		output = []

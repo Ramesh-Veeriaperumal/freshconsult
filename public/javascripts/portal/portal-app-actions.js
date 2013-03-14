@@ -188,6 +188,10 @@
 		    	}
 	    	})
 	    }
+
+	    // Humanize dates as public pages will be cached
+	    $("[rel=prettydate]").humaneDates()
+
 	})
 
 }(window.jQuery);

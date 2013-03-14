@@ -83,6 +83,7 @@ class Account < ActiveRecord::Base
   has_one :subscription
   has_many :subscription_payments
   has_many :solution_categories, :class_name =>'Solution::Category',:include =>:folders,:order => "position"
+  has_many :portal_solution_categories, :class_name =>'Solution::Category', :order => "position"
   has_many :solution_articles, :class_name =>'Solution::Article'
   
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
