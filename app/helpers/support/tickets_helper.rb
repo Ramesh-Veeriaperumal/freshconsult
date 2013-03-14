@@ -70,14 +70,14 @@ module Support::TicketsHelper
     # Filtering out the visible sorting fields for portal and 
     # preping them for bootstrap dropdown as and array
     vfs = visible_fields
-    sort_fields = TicketsFilter::SORT_FIELD_OPTIONS.map { |field|
+    sort_fields = TicketsFilter.sort_fields_options.map { |field|
                       [ field[0], 
                         filter_support_tickets_path(:wf_order => field[1]),
                         (field[1] == @current_wf_order) ] if vfs.include?(field[1].to_s)
                   }.push([:divider]) # Adding a divider that will show up under the sort list
 
     # Preping the ascending & decending orders for bootstrap dropdown as and array
-    sort_order = TicketsFilter::SORT_ORDER_FIELDS_OPTIONS.map{ |so| 
+    sort_order = TicketsFilter.sort_order_fields_options.map{ |so| 
                       [ so[0], 
                         filter_support_tickets_path(:wf_order_type => so[1]), 
                         (so[1] == @current_wf_order_type)] 
