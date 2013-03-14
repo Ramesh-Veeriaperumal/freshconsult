@@ -159,6 +159,10 @@ p strong{
 					border-radius: 5px;
 				}
 
+				&.show_full {
+					overflow: visible;
+				}
+
 				span{
 					color: #666666;
 				}
@@ -174,6 +178,32 @@ p strong{
 					margin: 0 10px 0 0;
 					position: relative;
 					top: -3px;
+					box-shadow: 1px 1px 0 #FFF;
+
+					&.deleted {
+						background: #D00;
+					}
+
+					a {
+						float: right;
+						width: 7px;
+						background: #FEFEFE;
+						display: block;
+						margin: 1px 1px 0;
+						height: 19px;
+						position: relative;
+						right: -10px;
+						@include border-radius(0 4px 4px 0);
+						padding: 0 7px 0 5px;
+						color: #333;
+						text-transform: lowercase;
+						font-size: 15px;
+						line-height: 15px;
+
+						&:hover {
+							background: #FFF9DA;
+						}
+					}
 				}
 			}
 
@@ -238,6 +268,12 @@ p strong{
 
 					&.status_4, &.status_5 {
 						background-color: $COL_RESOLVED_CLOSED !important;
+					}
+					&.spam {
+						background-color: $COL_SPAM !important;
+					}
+					&.deleted {
+						background-color: $COL_DELETED !important;
 					}
 					@include box-shadow(0 2px 6px rgba(0,0,0,0.4) inset);
 					background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAGElEQVQIW2NkQIA0Rig7DUjPAnHADJAgACFnAmoWZrn+AAAAAElFTkSuQmCC);
@@ -360,7 +396,6 @@ p strong{
 }
 
 .ticket-actions{
-	display: block;
 	margin: 19px 0px 0px;
 	.forward, .reply{
 		float: left;

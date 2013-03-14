@@ -30,36 +30,57 @@
 			<div class="control-left-outer">
 				<div class="control-left">
 					<div class="source-badge-wrap">
-						<div href="#" class='source <%= "priority_color_#{@ticket.priority} status_#{@ticket.status}" %>'>
+						<div href="#" 
+							 class='source 
+							 		<%= "priority_color_#{@ticket.priority} 
+							 		status_#{@ticket.status} " + 
+							 		("spam" if @ticket.spam).to_s + 
+							 		("deleted" if @ticket.deleted).to_s %>' >
 							<span class="source_<%= @ticket.source %>"></span>
 						</div>
 					</div>
 					<div class="commentbox-info" id="ticket_status_box">
-						<%= render :partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @ticket} %>
+						<%= render :partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @ticket} unless @ticket.deleted or @ticket.spam %>
 
 						<div class="ticket-subject">
-							<h2 class="subject">
-								<div class="watchers_tooltip hide" id="new_watcher_page"
-									rel="remote-load" 
-									data-url= "<%=helpdesk_ticket_helpdesk_subscriptions_path(@ticket)%>" >
-									<span class="arrow-right"></span>
-								</div>
-								<div class="monitor_div">
-									<span id="monitor">
-										<%= render :partial => "/helpdesk/subscriptions/monitor" %>
-									</span>
-									<div class="watchers_tooltip " id="new_watcher_page" style="display:none" rel="remote-load" 
-											data-url= "<%=helpdesk_ticket_helpdesk_subscriptions_path(@ticket)%>" data-load-unique="true" >
-										<span class="arrow-top"></span>
+							<h2 class="subject <%= 'show_full' if @ticket.deleted or @ticket.spam %> %>">
+								<% unless @ticket.deleted or @ticket.spam %>
+									<div class="watchers_tooltip hide" id="new_watcher_page"
+										rel="remote-load" 
+										data-url= "<%=helpdesk_ticket_helpdesk_subscriptions_path(@ticket)%>" >
+										<span class="arrow-right"></span>
 									</div>
-								</div>
-								<%= "<span class='label spam'>#{t("ticket.spam")}</span>" if @ticket.spam %>
+									<div class="monitor_div">
+										<span id="monitor">
+											<%= render :partial => "/helpdesk/subscriptions/monitor" %>
+										</span>
+										<div class="watchers_tooltip " id="new_watcher_page" style="display:none" rel="remote-load" 
+												data-url= "<%=helpdesk_ticket_helpdesk_subscriptions_path(@ticket)%>" data-load-unique="true" >
+											<span class="arrow-top"></span>
+										</div>
+									</div>
+								<% end %>
+								<% if @ticket.spam %>
+									<span class='label spam'>
+										<%= link_to("×", unspam_helpdesk_ticket_path(@ticket), :method => :put,
+															:class => "tooltip", "data-placement" => "below", :title => t('ticket.ham_btn_title'))%>
+										<%= t("ticket.spam") %>
+
+									</span>
+								<% end %>
+								<% if @ticket.deleted %>
+									<span class='label deleted'>
+										<%= link_to("×", restore_helpdesk_ticket_path(@ticket), :method => :put, 
+													:class => "tooltip", "data-placement" => "below", :title => t('ticket.restore_btn_title') ) %>
+										<%= t("ticket.deleted") %>
+									</span>
+									
+								<% end %>													
+
 								<%= h(@ticket.subject) %>
 							</h2>
-							<div class="ticket-actions clearfix">
-								<ul>	
-
-									<% unless @ticket.deleted %>
+							<div class="ticket-actions clearfix <%= 'hide' if @ticket.deleted or @ticket.spam %>">
+								<ul>
 									<li class="ticket-btns">
 										<div class="btn-group">
 										<% if @item.from_email.present? %>
@@ -141,15 +162,6 @@
 										  </ul>
 										</div>
 									</li>
-									<% else %>
-									<div class="alert-message block-message warning">
-								      <div class="alert-actions-right">
-								        <%= link_to(t('ticket.restore_btn'), restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "btn small", :title => t('ticket.restore_btn_title') ) %>
-								      </div>
-								      <p><strong><%= t('this_ticket_has_been_deleted') %></strong></p>
-								    </div>
-
-									<% end %>
 								</ul>
 							</div>
 						</div>

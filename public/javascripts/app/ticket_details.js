@@ -906,7 +906,7 @@ $(document).ready(function() {
 					submit.val(submit.data('saved-text')).addClass('done');
 					setTimeout( function() {
 						submit.button('reset').removeClass('done');
-					}, 1000);
+					}, 2000);
 
 					var updateStatusBox = false;
 					if ($('.ticket_show #helpdesk_ticket_priority').data('updated') || $('.ticket_show #helpdesk_ticket_status').data('updated')) {
@@ -957,12 +957,12 @@ $(document).ready(function() {
 
 		Being done to make sure that there is no visible jump in the infobox.
 	*/
-	$('.ticket_show .control-left h2.subject').live('mouseenter', function(){
+	$('body').on('mouseenter.ticket_details', '.ticket_show .control-left h2.subject:not(.show_full)', function(){
 		if ($(this).height() > 30) {
 			$(this).siblings('.ticket-actions').hide();
 		}
 	});
-	$('.ticket_show .control-left h2.subject').live('mouseleave', function() {
+	$('body').on('mouseleave.ticket_details', '.ticket_show .control-left h2.subject:not(.show_full)', function() {
 		if (!$(this).siblings('.ticket-actions').is(':visible')) {
 			$(this).siblings('.ticket-actions').show();
 		}

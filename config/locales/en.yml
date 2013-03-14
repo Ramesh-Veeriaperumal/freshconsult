@@ -1807,6 +1807,7 @@ en:
   back: Back
   ticket:
     spam: "SPAM"
+    deleted: "TRASH"
     next: "Next Ticket"
     previous: "Previous Ticket"
     insert: "Insert"
