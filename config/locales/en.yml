@@ -1978,7 +1978,8 @@ en:
     type: Type
     execute_scenario: Execute Scenario
     note_form: 
-      private_note: This is a private note,  don't show this to the requester.
+      private_note: "Add as Private Note, and don't notify the requester"
+      description_note: "The Subject and Description of the merged tickets will be added as notes in the primary ticket"
       form_title: Add a Note
       add_and_resolve: Add and Resolve
       notify_agents: Notify Agents
@@ -2183,6 +2184,10 @@ en:
       note: Note 
       billable_entry: Mark as a billable entry
       billing_type: Billing Type
+      billable: Billable
+      non_billable: Non-Billable
+      product: Product
+      group: Group
       group_by: Group By
       report:
         no_timeentry: "No data available"
@@ -2386,6 +2391,8 @@ en:
         target_merge_description2: Description in ticket %{ticket_id}
         confirm_and_merge: Confirm and merge  
       bulk_merge:
+        mark_primary: "Mark this ticket as your primary ticket"
+        primary_ticket: "This is your primary ticket"
         target_merge_description:  "Ticket {{ticket.id}} {{ticket.subject}} is merged with this request"
         target_note_description1: 
           one: "Ticket with id"

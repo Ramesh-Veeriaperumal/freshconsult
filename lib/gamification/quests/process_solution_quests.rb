@@ -1,6 +1,7 @@
 module Gamification
 	module Quests
-		class ProcessSolutionQuests < Resque::FreshdeskBase
+		class ProcessSolutionQuests 
+			extend Resque::AroundPerform
 			@queue = "gamificationQueue"
 
 			def self.perform(args)

@@ -1,7 +1,7 @@
 <% time_sheet.each do |group_title, time_entrys| %>
   
 	<tr class="even">
-		<td colspan="4"><%= group_title %></td> 
+		<td colspan="6"><%= group_title %></td> 
 		<td class="hours"><strong class="group_time"><%= get_total_time(time_entrys) %></strong></td>
 	</tr>	
 	<% time_entrys.each do |time_entry| %>
