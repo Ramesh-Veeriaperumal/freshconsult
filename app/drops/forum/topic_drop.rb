@@ -2,7 +2,7 @@ class Forum::TopicDrop < BaseDrop
   
   include ActionController::UrlWriter
   
-  liquid_attributes << :title 
+  liquid_attributes << :title << :posts_count
 
   def context=(current_context)    
     current_context['paginate_url'] = support_discussions_topic_path(source)
@@ -38,17 +38,25 @@ class Forum::TopicDrop < BaseDrop
   def first_post
     source.posts.first
   end
-
+  
   def last_post
   	source.last_post
   end
 
+  # Useful for showing the latest comment in the topic
   def last_post_url
-    source.last_post_url
+    "#{support_discussions_topic_path(source)}/page/last#post-#{source.last_post_id}"
   end
-
+    
   def posts
-    source.posts.filter(@per_page, @page)
+    unless @per_page.blank?
+      # If the page id is last then calculate the number of pages in the topic
+      @page = [(source.posts_count.to_f / @per_page).ceil.to_i, 1].max if @page == "last"
+      source.posts.filter(@per_page, @page)
+    else
+      # If the collection is not paginated then fetch all posts
+      source.posts.all
+    end
   end
 
   def id

@@ -342,10 +342,6 @@
   .container-fluid:after {
     clear: both; }
 
-/* line 10, ../../src/pattern/lib/_forms.scss */
-form {
-  margin: 0 0 16px; }
-
 /* line 14, ../../src/pattern/lib/_forms.scss */
 fieldset {
   padding: 0;
@@ -418,12 +414,6 @@ input[type="color"],
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px; }
-
-/* line 95, ../../src/pattern/lib/_forms.scss */
-input,
-textarea,
-.uneditable-input {
-  width: 206px; }
 
 /* line 99, ../../src/pattern/lib/_forms.scss */
 textarea {
@@ -512,7 +502,6 @@ input[type="file"] {
 
 /* line 163, ../../src/pattern/lib/_forms.scss */
 select {
-  width: 220px;
   border: 1px solid #cccccc;
   background-color: white; }
 
@@ -933,7 +922,7 @@ select:focus:required:invalid {
 /* line 391, ../../src/pattern/lib/_forms.scss */
 .help-block,
 .help-inline {
-  color: #595959; }
+  color: #999999; }
 
 /* line 395, ../../src/pattern/lib/_forms.scss */
 .help-block {
@@ -1194,8 +1183,7 @@ legend + .control-group {
 .form-horizontal .control-label {
   float: left;
   width: 160px;
-  padding-top: 5px;
-  text-align: right; }
+  padding-top: 5px; }
 /* line 623, ../../src/pattern/lib/_forms.scss */
 .form-horizontal .controls {
   *display: inline-block;
@@ -2439,6 +2427,7 @@ input[type="button"].btn-block {
 
 /* line 156, ../../src/pattern/lib/_buttons.scss */
 .btn-primary {
+  font-weight: bold;
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   background-color: #373737;
@@ -2463,7 +2452,7 @@ input[type="button"].btn-block {
   .btn-primary:active, .btn-primary.active {
     background-color: #090909 \9; }
 
-/* line 160, ../../src/pattern/lib/_buttons.scss */
+/* line 161, ../../src/pattern/lib/_buttons.scss */
 .btn-warning {
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
@@ -2489,7 +2478,7 @@ input[type="button"].btn-block {
   .btn-warning:active, .btn-warning.active {
     background-color: #c67605 \9; }
 
-/* line 164, ../../src/pattern/lib/_buttons.scss */
+/* line 165, ../../src/pattern/lib/_buttons.scss */
 .btn-danger {
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
@@ -2515,7 +2504,7 @@ input[type="button"].btn-block {
   .btn-danger:active, .btn-danger.active {
     background-color: #440000 \9; }
 
-/* line 168, ../../src/pattern/lib/_buttons.scss */
+/* line 169, ../../src/pattern/lib/_buttons.scss */
 .btn-success {
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
@@ -2541,7 +2530,7 @@ input[type="button"].btn-block {
   .btn-success:active, .btn-success.active {
     background-color: #408140 \9; }
 
-/* line 172, ../../src/pattern/lib/_buttons.scss */
+/* line 173, ../../src/pattern/lib/_buttons.scss */
 .btn-info {
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
@@ -2567,7 +2556,7 @@ input[type="button"].btn-block {
   .btn-info:active, .btn-info.active {
     background-color: #24748c \9; }
 
-/* line 176, ../../src/pattern/lib/_buttons.scss */
+/* line 177, ../../src/pattern/lib/_buttons.scss */
 .btn-inverse {
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
@@ -2593,33 +2582,33 @@ input[type="button"].btn-block {
   .btn-inverse:active, .btn-inverse.active {
     background-color: #2b2b2b \9; }
 
-/* line 183, ../../src/pattern/lib/_buttons.scss */
+/* line 184, ../../src/pattern/lib/_buttons.scss */
 button.btn,
 input[type="submit"].btn {
   *padding-top: 3px;
   *padding-bottom: 3px; }
-  /* line 186, ../../src/pattern/lib/_buttons.scss */
+  /* line 187, ../../src/pattern/lib/_buttons.scss */
   button.btn::-moz-focus-inner,
   input[type="submit"].btn::-moz-focus-inner {
     padding: 0;
     border: 0; }
-  /* line 195, ../../src/pattern/lib/_buttons.scss */
+  /* line 196, ../../src/pattern/lib/_buttons.scss */
   button.btn.btn-large,
   input[type="submit"].btn.btn-large {
     *padding-top: 7px;
     *padding-bottom: 7px; }
-  /* line 199, ../../src/pattern/lib/_buttons.scss */
+  /* line 200, ../../src/pattern/lib/_buttons.scss */
   button.btn.btn-small,
   input[type="submit"].btn.btn-small {
     *padding-top: 3px;
     *padding-bottom: 3px; }
-  /* line 203, ../../src/pattern/lib/_buttons.scss */
+  /* line 204, ../../src/pattern/lib/_buttons.scss */
   button.btn.btn-mini,
   input[type="submit"].btn.btn-mini {
     *padding-top: 1px;
     *padding-bottom: 1px; }
 
-/* line 216, ../../src/pattern/lib/_buttons.scss */
+/* line 217, ../../src/pattern/lib/_buttons.scss */
 .btn-link,
 .btn-link:active,
 .btn-link[disabled] {
@@ -2629,7 +2618,7 @@ input[type="submit"].btn {
   -moz-box-shadow: none;
   box-shadow: none; }
 
-/* line 221, ../../src/pattern/lib/_buttons.scss */
+/* line 222, ../../src/pattern/lib/_buttons.scss */
 .btn-link {
   border-color: transparent;
   cursor: pointer;
@@ -2638,23 +2627,23 @@ input[type="submit"].btn {
   -moz-border-radius: 0;
   border-radius: 0; }
 
-/* line 227, ../../src/pattern/lib/_buttons.scss */
+/* line 228, ../../src/pattern/lib/_buttons.scss */
 .btn-link:hover {
   color: #204060;
   text-decoration: underline;
   background-color: transparent; }
 
-/* line 232, ../../src/pattern/lib/_buttons.scss */
+/* line 233, ../../src/pattern/lib/_buttons.scss */
 .btn-link[disabled]:hover {
   color: #333333;
   text-decoration: none; }
 
-/* line 237, ../../src/pattern/lib/_buttons.scss */
+/* line 238, ../../src/pattern/lib/_buttons.scss */
 .disabled {
   pointer-events: none;
   cursor: default;
   color: #999999; }
-  /* line 241, ../../src/pattern/lib/_buttons.scss */
+  /* line 242, ../../src/pattern/lib/_buttons.scss */
   .disabled:hover {
     color: #999999; }
 
@@ -4154,7 +4143,7 @@ body {
 
 /* line 5, ../../src/pattern/patternhack.scss */
 .lead {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   font-size: 21px;
   font-weight: 200;
   line-height: 30px; }
@@ -4168,50 +4157,55 @@ strong {
   font-weight: bold; }
 
 /* line 20, ../../src/pattern/patternhack.scss */
+.top-space-none {
+  margin-top: 0;
+  padding-top: 0; }
+
+/* line 25, ../../src/pattern/patternhack.scss */
 .muted {
   color: #999999; }
 
-/* line 23, ../../src/pattern/patternhack.scss */
+/* line 28, ../../src/pattern/patternhack.scss */
 .page-header {
   padding-bottom: 9px;
   margin: 20px 0 30px;
   border-bottom: 1px solid #eeeeee; }
 
-/* line 29, ../../src/pattern/patternhack.scss */
+/* line 34, ../../src/pattern/patternhack.scss */
 .topbar .dropdown-menu a, .dropdown-menu a {
   text-shadow: 0 0 0 white; }
 
-/* line 33, ../../src/pattern/patternhack.scss */
+/* line 38, ../../src/pattern/patternhack.scss */
 .cust_list_table .open .menu, .cust_list_table .dropdown.open .menu, .cust_list_table .open .dropdown-toggle, .cust_list_table .dropdown.open .dropdown-toggle {
   border: 0 solid transparent;
   background: none;
   color: inherit; }
 
-/* line 39, ../../src/pattern/patternhack.scss */
+/* line 44, ../../src/pattern/patternhack.scss */
 .table th, .table td {
   padding: 12px; }
 
-/* line 42, ../../src/pattern/patternhack.scss */
+/* line 47, ../../src/pattern/patternhack.scss */
 .tabs {
   margin-right: -20px;
   margin-left: -20px;
   padding-right: 20px;
   padding-left: 20px; }
 
-/* line 49, ../../src/pattern/patternhack.scss */
+/* line 54, ../../src/pattern/patternhack.scss */
 .pagination ul > li > a:hover .arrow-up {
   border-bottom-color: #fff; }
-/* line 50, ../../src/pattern/patternhack.scss */
+/* line 55, ../../src/pattern/patternhack.scss */
 .pagination ul > li > a:hover .arrow-right {
   border-left-color: #fff; }
-/* line 51, ../../src/pattern/patternhack.scss */
+/* line 56, ../../src/pattern/patternhack.scss */
 .pagination ul > li > a:hover .arrow-down {
   border-top-color: #fff; }
-/* line 52, ../../src/pattern/patternhack.scss */
+/* line 57, ../../src/pattern/patternhack.scss */
 .pagination ul > li > a:hover .arrow-left {
   border-right-color: #fff; }
 
-/* line 57, ../../src/pattern/patternhack.scss */
+/* line 62, ../../src/pattern/patternhack.scss */
 .arrow-right,
 .arrow-left,
 .arrow-up,
@@ -4237,69 +4231,106 @@ strong {
   vertical-align: middle;
   width: 0; }
 
-/* line 80, ../../src/pattern/patternhack.scss */
+/* line 85, ../../src/pattern/patternhack.scss */
 .arrow-up {
   border-bottom-width: 1em;
   border-bottom-style: solid;
   border-bottom-color: #666;
   bottom: 0.25em; }
 
-/* line 87, ../../src/pattern/patternhack.scss */
+/* line 92, ../../src/pattern/patternhack.scss */
 .arrow-right {
   border-left-width: 1em;
   border-left-style: solid;
   border-left-color: #666;
   left: 0.35em; }
 
-/* line 94, ../../src/pattern/patternhack.scss */
+/* line 99, ../../src/pattern/patternhack.scss */
 .arrow-down {
   border-top-width: 1em;
   border-top-style: solid;
   border-top-color: #666;
   top: 0.25em; }
 
-/* line 101, ../../src/pattern/patternhack.scss */
+/* line 106, ../../src/pattern/patternhack.scss */
 .arrow-left {
   border-right-width: 1em;
   border-right-style: solid;
   border-right-color: #666;
   right: 0.35em; }
 
-/* line 107, ../../src/pattern/patternhack.scss */
+/* line 112, ../../src/pattern/patternhack.scss */
 .text-info {
   width: 75%;
   word-wrap: break-word;
   overflow: hidden; }
 
-/* line 112, ../../src/pattern/patternhack.scss */
+/* line 117, ../../src/pattern/patternhack.scss */
 .cust-list-avatar, .text-info {
   display: inline-block;
   vertical-align: middle; }
 
 /* This class overriding app-common css. */
-/* line 120, ../../src/pattern/patternhack.scss */
+/* overriding buttons styles from Bootstrap v1.4 */
+/* line 126, ../../src/pattern/patternhack.scss */
+.btn-group .btn {
+  float: none; }
+
+/* line 129, ../../src/pattern/patternhack.scss */
+.btn-group.open {
+  overflow: visible; }
+
+/* line 132, ../../src/pattern/patternhack.scss */
+.btn.dropdown-toggle {
+  overflow: visible; }
+  /* line 134, ../../src/pattern/patternhack.scss */
+  .btn.dropdown-toggle:after {
+    display: none; }
+  /* line 138, ../../src/pattern/patternhack.scss */
+  .btn.dropdown-toggle .caret {
+    margin: 6px 0 0; }
+
+/* line 142, ../../src/pattern/patternhack.scss */
+.open .dropdown-toggle {
+  color: inherit; }
+
+/* line 146, ../../src/pattern/patternhack.scss */
+.open > .dropdown-menu.right {
+  left: auto;
+  right: 0; }
+  /* line 151, ../../src/pattern/patternhack.scss */
+  .open > .dropdown-menu.right:before {
+    right: 25px;
+    left: auto; }
+  /* line 156, ../../src/pattern/patternhack.scss */
+  .open > .dropdown-menu.right:after {
+    right: 26px;
+    left: auto; }
+
+/*  End of Button overriding */
+/* line 164, ../../src/pattern/patternhack.scss */
 .pagination {
   border-bottom: 0; }
-  /* line 122, ../../src/pattern/patternhack.scss */
+  /* line 166, ../../src/pattern/patternhack.scss */
   .pagination a {
     font-weight: normal; }
-    /* line 124, ../../src/pattern/patternhack.scss */
+    /* line 168, ../../src/pattern/patternhack.scss */
     .pagination a:hover, .pagination a:focus {
       text-decoration: none; }
 
 /* This class overriding app-bootstrap css. */
-/* line 132, ../../src/pattern/patternhack.scss */
+/* line 176, ../../src/pattern/patternhack.scss */
 .dropdown-toggle:after {
   border-top: 0; }
 
-/* line 136, ../../src/pattern/patternhack.scss */
+/* line 180, ../../src/pattern/patternhack.scss */
 select {
   height: 20px;
   line-height: 20px;
   padding: 1px; }
 
 /* Fix for tickets show page data-tabs */
-/* line 143, ../../src/pattern/patternhack.scss */
+/* line 187, ../../src/pattern/patternhack.scss */
 .ticket_tabs {
   margin-left: 0px;
   margin-right: 0px; }

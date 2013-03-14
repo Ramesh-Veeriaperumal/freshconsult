@@ -2,21 +2,21 @@
 	<%= form.error_messages %>
 	<fieldset>
 	  	<div class="control-group">
-			<%= form.label :name, t('user.full_name'), :class => "control-label" %>
+			<%= form.label :name, t('user.full_name'), :class => "control-label required" %>
 			<div class="controls">
-				<%= form.text_field :name, :class => "text special span6" %>
+				<%= form.text_field :name, :class => "required special span6" %>
 			</div>
 		</div>
 		<div class="control-group">
-			<%= form.label :password, t('password'), :class => "control-label" %>
+			<%= form.label :password, t('password'), :class => "control-label required" %>
 			<div class="controls">
-				<%= form.password_field :password, :class => "text special password span6"  %>
+				<%= form.password_field :password, :class => "required special password span6"  %>
 			</div>
 		</div>
 		<div class="control-group">
-			<%= form.label :password_confirmation, t('profile.confirm_password'), :class => "control-label" %>
+			<%= form.label :password_confirmation, t('profile.confirm_password'), :class => "control-label required" %>
 			<div class="controls">
-				<%= form.password_field :password_confirmation, :class => "text special password span6"  %>
+				<%= form.password_field :password_confirmation, :class => "required special password span6"  %>
 			</div>
 		</div>
 		<div class="form-actions">
@@ -24,3 +24,16 @@
 	  	</div>	
 	</fieldset>
 <% end %>
+
+<script type="text/javascript">
+	jQuery(document).ready(function(ev){
+		setTimeout(function(){
+			jQuery("#user_password_confirmation").rules("add", {
+				equalTo: "#user_password",
+				messages: {
+					equalTo: "<%= t('profile.confirm_password_message') %>"
+				}
+			})
+		}, 100)
+	})
+</script>

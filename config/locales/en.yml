@@ -1828,6 +1828,7 @@ en:
     current_password: Current password
     confirm_password: Confirm password
     new_password: New password
+    confirm_password_message: "Must be same as password"
     api_key:
       title: "Your API Key"
       reset: "Reset API Key"
@@ -3336,7 +3337,7 @@ en:
     reset_all_changes: Reset ALL changes
     reset_all_confirm_message: This action will reset all your customizations to freshdesk default. Are you sure you want to continue?
     publish_changes: Save and Publish
-    header: Portal template customization
+    title: "Portal customization \"%{portal}\""
     color_and_font_header: Color &amp; font
     css_header: Stylesheet
     layout_and_pages_header: Layout &amp; pages

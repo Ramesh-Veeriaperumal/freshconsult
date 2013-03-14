@@ -207,16 +207,24 @@ HTML
 	def topic_info topic
 		output = []
 		output << topic_brief(topic)
-		output << %(<div> #{post_brief(topic.last_post.to_liquid)} </div>) if topic.has_comments
+		output << %(<div> #{last_post_brief(topic.to_liquid)} </div>) if topic.has_comments
 		output.join(", ")
 	end
 
 	def topic_info_with_votes topic
 		output = []
 		output << topic_brief(topic)
-		output << post_brief(topic.last_post.to_liquid) if topic.has_comments
+		output << last_post_brief(topic.to_liquid) if topic.has_comments
 		output << bold(topic_votes(topic)) if(topic.votes > 0)
 		output.join(", ")
+	end
+
+	def last_post_brief topic, link_label = "Last reply"
+		if topic.last_post.present?
+			post = topic.last_post.to_liquid
+			%(<a href="#{topic.last_post_url}"> #{link_label} </a> by
+				#{post.user.name} #{time_ago post.created_on})
+		end
 	end
 		
 	def topic_brief topic
@@ -262,13 +270,7 @@ HTML
 		if User.current == topic.user
 			link_to label, topic['edit_url'], :title => label, :class => "btn btn-small"
 		end
-	end
-
-	def post_brief post, link_label = "Last reply"
-		if post.present?
-			%(<a href="#{post.url}"> #{link_label} </a> by #{post.user.name} #{time_ago post.created_on})
-		end
-	end
+	end	
 
 	def post_actions post
 		if User.current == post.user

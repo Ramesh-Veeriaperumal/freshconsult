@@ -1,16 +1,9 @@
-<% content_for :onload_script do %>
-	/* jQuery("#PortalUrl")
-		.rules("add", {
-	  			required: function(element) { return ((!!jQuery("input[@id=EnablePortal]:checked").length)); }
-	   }); */
-<% end %>
 <% javascript_tag do %>
   jQuery(document).ready(function(){ 
     jQuery("#PortalUrl").blur(function(){
       input_url = jQuery('#PortalUrl').val();
       protocol_exists = !(input_url.indexOf('http://') && input_url.indexOf('https://'));
-      if(protocol_exists)
-      {
+      if(protocol_exists){
         get_index = input_url.indexOf("://");
         result_url = input_url.substring(get_index+3);
         jQuery('#PortalUrl').val(result_url);
@@ -23,7 +16,7 @@
   <div class="fields">
     <%= content_tag(:label, t('.portal_url') + "*", :class => "caption") %>
     <div class="fields">
-	    <%= portal.text_field :portal_url, :class => "text url_without_protocol auto", :id => "PortalUrl",
+	    <%= portal.text_field :portal_url, :class => "portal_url url_without_protocol auto required", :id => "PortalUrl",
         :"data-domain" => Helpdesk::HOST[Rails.env.to_sym], :size => "50" %>
 	    <%= content_tag(:div, t('.cname_configure_info', :full_domain => current_account.full_domain), :class => "info-data") %>
     </div>
@@ -104,18 +97,19 @@
         <label class="caption">Portal customization</label>
         <div class="fields">
           <% if @product.portal.template.present? %>
-            <%= submit_tag "Customize portal >", :class => "btn btn-bold", :rel => "customize-portal" %> 
+            <%= link_to "Customize portal >", admin_portal_template_path(@product.portal.id), 
+              :class => "btn btn-bold", :rel => "customize-portal" %> 
           <% else %>  
-            <%= submit_tag "Save & Customize portal >", :class => "btn btn-bold" %> 
+            <%= submit_tag "Save & Customize portal >", :rel => "customize-portal", :class => "btn btn-bold" %> 
           <% end %>
-          <p class="info-data">
-            <% if @product.portal.template.present? %>
+          <% if @product.portal.template.present? %>
+            <p class="info-data">            
               Your portal was last published
                 <%= distance_of_time_in_words_to_now(@product.portal.template.updated_at) %>
                 ago
-              <br />
-            <% end %>
-          </p>
+              <br />            
+            </p>
+          <% end %>
         </div>
       </div>
   </div>
@@ -128,12 +122,16 @@
 
   jQuery("[rel=customize-portal]").live("click", function(ev){
     var form = jQuery(this).parents('form:first')
-    if(form.data('formChanged')){
-      ev.preventDefault()
-      if(confirm("You have unsaved changes in your form. Do you want to save and continue?")){
+    if(form.data('formChanged') && form.valid()){
+      <% if @product.portal.template.present? %>
+        ev.preventDefault()
+        if(confirm("You have unsaved changes in your form. Do you want to save and continue?")){
+          setPostParam(form, "customize_portal", true)
+          form.submit()
+        }
+      <% else %>  
         setPostParam(form, "customize_portal", true)
-        form.submit()
-      }
+      <% end %>
     }
   })
 

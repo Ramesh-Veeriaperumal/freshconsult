@@ -270,7 +270,7 @@ var $J = jQuery.noConflict();
          onkeyup: false,
          focusCleanup: true,
          focusInvalid: false,
-         ignore:".nested_field:not(:visible)"
+         ignore:".nested_field:not(:visible), .portal_url:not(:visible)"
       };
       
       $("ul.ui-form, .cnt").livequery(function(ev){
@@ -337,10 +337,8 @@ var $J = jQuery.noConflict();
         jQuery.each(hash, function(index, value){
           setTimeout(function(){
             catchException(function(){ 
-              log(index)
-              log(value)
               jQuery(value + "-tab").trigger('click') 
-            }, "Error in line 303 File globalinit.js");
+            }, "Error in File globalinit.js");
           }, ((index+1)*10) )
         })
       }

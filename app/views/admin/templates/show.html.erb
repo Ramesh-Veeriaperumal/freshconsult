@@ -5,8 +5,9 @@
 <%= include_javascripts :pattern %>
 <% content_for :sidebar do %><% end %> 
 <%= render :partial => "shared/colorpicker" %>
-<h3 class="sub-title"><%=t("portalcss.header")%></h3>
-<br />
+<h3 class="lead">
+  <%=t("portalcss.title", :portal => @portal.main_portal? ? current_account.name : @portal.product.name)%>
+</h3>
 <div>
   <ul data-tabs="tabs" class="tabs" id="portal-tabs">
     <li class="active">      
@@ -103,6 +104,10 @@
 <% end %>
 
 <% content_for :onload_script do %>
+  jQuery("[rel=portal_form]").live("change", function(ev){
+    jQuery(this).data('formChanged', true)
+  })
+
   jQuery("#custom_css-tab, #layout-tab").bind("click", function(evnt){
     var target = evnt.target;
     setTimeout(function(){
@@ -199,10 +204,10 @@
       Preview current changes<br />
       
       <b>Shift+cmd+f</b> <br />
-      Show current editor in full-screen<br />
+      Show current working editor in fullscreen mode<br />
       
       <b>Esc</b> <br />
-      Exit full-screen<br />
+      Exit fullscreen<br />
     </p> 
     
     <div id="preferences-tab-helpcard" rel="helpcard">
