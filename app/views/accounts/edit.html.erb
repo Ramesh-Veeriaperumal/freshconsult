@@ -31,6 +31,7 @@
     	});
 	}); 
 <% end %>
+<div class="rebrand-page">
 <div class="row-fluid">
 	<h1 class="lead span6"><%=t('account.rebrand')%></h1>
 	<div class="span6">
@@ -46,7 +47,7 @@
 	<%= f.error_messages %>
 	<div class="row-fluid">
 		<% f.fields_for :main_portal do |portal| %>
-			<h3 class="lead lead-title top-space-none"><span>Settings</span></h3>
+			<h3 class="rebrand-head-text top-space-none">Settings</h3>
 			<div>
 					<div class="fields">
 						<div class="control-group">
@@ -104,7 +105,7 @@
 						</div>
 					</div>
 			</div>
-	  		<h3 class="lead lead-title"><span>Logo and colors</span></h3>
+	  		<h3 class="rebrand-head-text">Logo and colors</h3>
 	  		<div class="fields">
 	  			<div class="control-group">
 	  				<label class="control-label">Logo & favicon</label>
@@ -118,7 +119,7 @@
 			        		</div>
 					    </div>  
 					    <div class="row-fluid">
-			        		<div class="span12"><b><%= t("linkback_overlabel") %></b></div>
+			        		<div class="linkback-url"><%= t("linkback_overlabel") %></div>
 			        		<div class="span12 pull-right">
 								<label class="overlabel" for="link_back_text">
 									http://<%= @account.main_portal.portal_url.presence || @account.full_domain %>
@@ -134,19 +135,19 @@
 					<div class="controls">
 						<div class="row-fluid">
 						<% portal.fields_for :preferences do |p| %>
-							<div class="span4">
+							<div class="span3">
 								<%= p.label :header_color, t('account.page_colors.header') %>
 								<div class="color">
 									<input type="color" maxlength="7" id="HeaderColor" class="color_field required" name="account[main_portal_attributes][preferences][header_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :header_color)%>" />
 								</div>
 							</div>
-							<div class="span4">
+							<div class="span3">
 								<%= p.label :header_color_tab, t('account.page_colors.tab_color') %>
 								<div class="color">
 									<input type="color" maxlength="7" id="TabColor" class="color_field required" name="account[main_portal_attributes][preferences][tab_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :tab_color)%>" /> 
 								</div>	
 							</div>
-							<div class="span4 omega">
+							<div class="span3 omega">
 								<%= p.label :bg_color, t('account.page_colors.background') %>
 								<div class="color"> 
 									<input type="color" maxlength="7" id="BackgroundColor" class="color_field required" name="account[main_portal_attributes][preferences][bg_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :bg_color)%>" />
@@ -154,9 +155,9 @@
 							</div>	
 				  		<% end %>
 				  		</div>
-						<p>
+						<div class="reset-color">
 							<a href="javascript:void(0)" id="ResetColors"><%=t('account.info3')%> </a>
-						</p>
+						</div>
 					</div>	
 				</div>
 			    <div class="control-group">
@@ -190,7 +191,7 @@
 	</div>
 
 <% end %>
-
+</div>
 <% content_for :onload_script do %>
 	jQuery("[data-rebrand-form]").live("change", function(ev){
 		jQuery(this).data('formChanged', true)
