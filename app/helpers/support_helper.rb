@@ -24,6 +24,10 @@ module SupportHelper
 		   </span> )
 	end
 
+	def short_day_with_time date_time
+		date_time.to_s(:short_day_with_time)
+	end
+
 	# Top page login, signup and user welcome information
 	def welcome_navigation portal
 		output = []

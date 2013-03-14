@@ -27,13 +27,14 @@
 					{{ topic | topic_labels }}
 					<div class="ellipsis">						
 						<a class="c-link" title="{{topic.title}}" href="{{topic.url}}">{{topic.title}}</a>
+						{{ topic.created_on }}
 					</div>				
 					<div class="help-text"> 
 						{{ topic | topic_info_with_votes }}
 					</div>
 				</div>
 			{% else %}
-				<p class="lead">~ No topics in this view ~</p>
+				<p class="lead">{% translate portal.no_topics_in_this_view %}</p>
 			{% endfor %}
 		</div>			
 		{{ paginate | default_pagination }}

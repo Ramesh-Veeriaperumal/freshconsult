@@ -9,7 +9,7 @@
 	</b>
 
 	<h2 class="heading">{{ article.title }}</h2>
-	<p>Modified on: {{ article.modified_on }}</p>
+	<p>Modified on: {{ article.modified_on | short_day_with_time }}</p>
 
 	<hr />
 	{% comment %}
