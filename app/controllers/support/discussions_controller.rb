@@ -1,5 +1,5 @@
 class Support::DiscussionsController < SupportController
-	before_filter :scoper
+	# before_filter :scoper
 
 	before_filter do |c|
 		c.send(:set_portal_page, :discussions_home)
