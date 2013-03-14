@@ -15,7 +15,8 @@ module SupportHelper
 					  "Roboto Condensed" => "Roboto+Condensed:regular,italic,700,700italic",
 					  "Roboto" => "Roboto:regular,italic,700,700italic",
 					  "Varela Round" => "Varela+Round:regular",
-					  "Helvetica Neue" => "Helvetica+Neue:regular,italic,700,700italic" }
+					  # "Helvetica Neue" => "Helvetica+Neue:regular,italic,700,700italic" 
+					}
 
     def time_ago date_time 
 		%( <span rel='prettydate' class='prettydate' title='#{date_time}'> 
