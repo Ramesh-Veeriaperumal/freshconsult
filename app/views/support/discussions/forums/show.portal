@@ -22,10 +22,8 @@
 		<div class="c-list topic-list" id="forum-topic-list">					
 			{% for topic in paginate.collection %}
 				{% assign last_post_user = topic.last_post.user %}
-				<div class="c-row c-user-thumb {% if topic.sticky? %} c-topic-sticky {% endif %}">					
-					<div class="user-pic-thumb">
-						<img src="{{ topic.user.profile_url }}" width="50px" height="50px" />
-					</div>	
+				<div class="c-row c-user-thumb {% if topic.sticky? %} c-topic-sticky {% endif %}">
+					{{ topic.user | profile_image }}
 					{{ topic | topic_labels }}
 					<div class="ellipsis">						
 						<a class="c-link" title="{{topic.title}}" href="{{topic.url}}">{{topic.title}}</a>

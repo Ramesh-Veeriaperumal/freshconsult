@@ -3,21 +3,23 @@
 		<h2 class="heading">{% translate portal.knowledge_base %}</h2>
 		{% if portal.articles_count > 0 %}				
 			{% for category in portal.solution_categories %}
-				<div class="cs-s">
-					<h3 class="heading">{{ category.name }}</h3>
-					<div class="cs-g-c">
-						{% for folder in category.folders %}
-							{% if folder.articles_count > 0 %}
-								<section class="cs-g article-list">
-									<div class="list-lead">
-										<a href="{{folder.url}}">{{folder.name}} ({{ folder.articles_count }})</a>
-									</div>
-									{{ folder | article_list:5 }}
-								</section>
-							{% endif %}
-						{% endfor %}
+				{% if category.folders_count > 0 %}
+					<div class="cs-s">
+						<h3 class="heading">{{ category.name }}</h3>
+						<div class="cs-g-c">
+							{% for folder in category.folders %}
+								{% if folder.articles_count > 0 %}
+									<section class="cs-g article-list">
+										<div class="list-lead">
+											<a href="{{folder.url}}">{{folder.name}} ({{ folder.articles_count }})</a>
+										</div>
+										{{ folder | article_list:5 }}
+									</section>
+								{% endif %}
+							{% endfor %}
+						</div>
 					</div>
-				</div>
+				{% endif %}
 			{% endfor %}		
 		{% else %}
 			{{ portal | filler_for_solutions }}			
@@ -33,7 +35,7 @@
 			<p class="intro">{% translate portal.showing_recent_updates %}</p>
 			<div class="start-topic">{{ portal | link_to_start_topic }}</div>
 			{% for category in portal.forum_categories %}
-				{% if category.forums != empty %}
+				{% if category.forums_count > 0 %}
 					<div class="cs-s">
 						<h3 class="heading">{{category.name}}</h3>
 						<div class="cs-g-c">

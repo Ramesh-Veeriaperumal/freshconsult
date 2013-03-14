@@ -58,7 +58,7 @@ class Portal < ActiveRecord::Base
   end
     
   def solution_categories
-    main_portal ? account.solution_categories : (solution_category ? [solution_category] : [])
+    main_portal ? account.portal_solution_categories : (solution_category ? [solution_category] : [])
   end
   
   def forum_categories

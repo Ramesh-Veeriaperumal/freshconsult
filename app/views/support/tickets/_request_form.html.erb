@@ -36,12 +36,7 @@
             success: function(data){
                 var data_available = jQuery(data).find("a").length;
                 if(data_available){
-                  //showTooltip(jQuery("#helpdesk_ticket_subject"), data);
-                  //jQuery("#helpdesk_ticket_subject").qtip("show");
                   $("#new-ticket-search").html(data).show()
-                }
-                else{
-                  //jQuery("#helpdesk_ticket_subject").qtip("hide");
                 }
                 jQuery("#helpdesk_ticket_subject").removeClass("loading-right");
               }
@@ -53,17 +48,15 @@
               console.log(searchString)
               if(searchString != '' && searchString.length > 1){
                 jQuery(this).addClass("loading-right");
-                //delay(function(){
-                  callbackToSolutionSearch(searchString);
-                //}, 200 ); 
-              }
-              else{
-                //jQuery(this).qtip("hide");
+                callbackToSolutionSearch(searchString);
+              }else{
                 jQuery(this).removeClass("loading-right");        
               }
           });
       <% end %>
-      invokeRedactor('helpdesk_ticket_description_html');
+      if( !isMobile.any() ){
+        invokeRedactor('helpdesk_ticket_description_html');
+      }
     }); 
   })(jQuery);
 <% end %>

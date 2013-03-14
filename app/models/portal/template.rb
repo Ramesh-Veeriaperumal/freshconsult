@@ -52,7 +52,7 @@ class Portal::Template < ActiveRecord::Base
   end
   
   def reset_to_default
-    self.pages.each(&:delete)
+    self.pages.each(&:destroy)
     self.preferences = default_preferences
     self.header = nil
     self.footer = nil

@@ -28,10 +28,7 @@ stylesheets:
     - public/stylesheets/codemirror.css
 
   portal:
-    # - public/stylesheets/portal/portal.css
     - public/stylesheets/redactor.css
-    # - public/stylesheets/app/lib/qtip.css
-    # - public/stylesheets/portal/responsive.css 
 
   preview:
     - public/stylesheets/portal/preview.css
@@ -199,6 +196,7 @@ javascripts:
     - public/javascripts/prototype.js
     - public/javascripts/portal/jquery-1.8.3.js    
     - public/javascripts/modernizr-2.5.3-respond-1.1.0.min.js
+    - public/javascripts/lib/detectmobilebrowsers.js
 
   preview:
     - public/javascripts/portal/jquery-1.8.3.js
@@ -212,12 +210,14 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
     - public/javascripts/hackz.js
     - public/javascripts/helpdesk/multifile.js
-    - public/javascripts/lib/nestedtree.js
+    - public/javascripts/lib/nestedtree.js    
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/portal/jquery-ui-1.9.2.custom.js
     - public/javascripts/portal/bootstrap.js
     - public/javascripts/portal/bootstrap.dialog.js
     - public/javascripts/portal/select2.js
+    - public/javascripts/portal/jail.js
+    - public/javascripts/humane.js
     - public/javascripts/portal/portal.js
     - public/javascripts/portal/portal-app-actions.js
     - public/javascripts/portal/portal-compatibility.js

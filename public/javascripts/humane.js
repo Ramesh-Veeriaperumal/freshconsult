@@ -11,23 +11,23 @@
  * Licensed under the MIT license.
  */
 var date_lang = {
-          ago: 'Ago',
-          from: 'From Now',
-          now: 'Just Now',
-          second: 'Second',
-          seconds: 'Seconds',
-          minute: 'Minute',
-          minutes: 'Minutes',
-          hour: 'Hour',
-          hours: 'Hours',
-          day: 'Day',
-          days: 'Days',
-          week: 'Week',
-          weeks: 'Weeks',
-          month: 'Month',
-          months: 'Months',
-          year: 'Year',
-          years: 'Years'
+          ago: 'ago',
+          from: 'from now',
+          now: 'just now',
+          second: 'second',
+          seconds: 'seconds',
+          minute: 'minute',
+          minutes: 'minutes',
+          hour: 'hour',
+          hours: 'hours',
+          day: 'day',
+          days: 'days',
+          week: 'week',
+          weeks: 'weeks',
+          month: 'month',
+          months: 'months',
+          year: 'year',
+          years: 'years'
       };
       
 function humaneDate(date, compareTo){

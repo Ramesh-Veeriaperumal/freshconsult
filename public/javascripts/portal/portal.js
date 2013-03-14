@@ -179,13 +179,18 @@ jQuery.noConflict()
 				}
 			})
 		})
+		
+		$("img[rel=lazyloadimage]").jail({
+			// placeholder : '/images/load.gif',
+		})
+
 	
 		// Live query utility
-		$("[data-live-query]").livequery(function(ev){
-			switch($(this).data("liveQuery")){
+		$("[data-livequery]").livequery(function(ev){
+			switch($(this).data("livequery")){
 				// Adds custom-select class that will in-turn call another live query 
 				// that will init select2 plugin for all the select boxes in the form
-				case "select-boxes":
+				case "selectboxes":
 					$(this).find("select").addClass("custom-select")
 				break
 			}

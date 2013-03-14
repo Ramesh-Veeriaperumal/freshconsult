@@ -17,6 +17,12 @@ module SupportHelper
 					  "Varela Round" => "Varela+Round:regular",
 					  "Helvetica Neue" => "Helvetica+Neue:regular,italic,700,700italic" }
 
+    def time_ago date_time 
+		%( <span rel='prettydate' class='prettydate' title='#{date_time}'> 
+			#{distance_of_time_in_words_to_now date_time} #{I18n.t('date.ago')} 
+		   </span> )
+	end
+
 	# Top page login, signup and user welcome information
 	def welcome_navigation portal
 		output = []
@@ -48,10 +54,22 @@ module SupportHelper
 		
 	end
 
+	# User image page
+	def profile_image user, more_classes = "", width = "50px", height = "50px" 
+		output = []
+		output << %( 	<div class="user-pic-thumb #{more_classes}">
+							<img src="/images/fillers/profile_blank_thumb.gif" )
+		output << %(			data-src="#{user['profile_url']}" rel="lazyloadimage" ) if user['profile_url']
+		output << %(			width="#{width}" height="#{height}" />
+						</div> )
+		output.join("")
+	end
+
 	# No content information for forums
 	def filler_for_forums portal		
 		%( <div class='no-results'> #{I18n.t('portal.no_forums_info_1')} </div>
-		   <div class='no-results'> #{ I18n.t('portal.no_forums_info_2', :start_topic_link => link_to_start_topic(portal))} </div> )
+		   <div class='no-results'> #{ I18n.t('portal.no_forums_info_2', 
+		   		:start_topic_link => link_to_start_topic(portal))} </div> )
 	end
 
 	def filler_for_solutions portal
