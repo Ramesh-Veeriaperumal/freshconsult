@@ -237,7 +237,7 @@ HTML
 
 	def post_topic_in_portal portal, post_topic = false
 		output = []
-		output << %(<section class="list-lead">)
+		output << %(<section class="lead">)
 		output << %(<a href="#{portal['login_url']}">#{I18n.t('portal.login')}</a>)
 		output << I18n.t('portal.or_signup', :signup => 
 				"<a href=\"#{portal['signup_url'] }\">#{I18n.t('portal.signup')}</a>") if 

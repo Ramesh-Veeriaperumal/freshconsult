@@ -2263,7 +2263,7 @@ en:
       info2: In addition to the built-in integrations, you can bring in data from any other third party application, legacy system or database into the tickets and contact pages with FreshPlugs. You can customize your FreshPlug widget by pushing relevant information from Freshdesk to your data source with an AJAX call, and format and display information with HTML, CSS and Javascript.
   account: 
     name: Account Name
-    cancel: Cancel and go back   
+    cancel: Cancel   
     customize_portal: "Helpdesk rebranding"
     page_colors: 
       title: Helpdesk colors
@@ -2276,7 +2276,7 @@ en:
     info3: Reset to Default colors
     info5: Reset colors
     info4: The next ticket ID counter will start with this number (Should be greater than the last ticket ID created). This affects tickets created henceforth.
-    save: Save changes
+    save: Save
     time_zone: Time Zone
     helpdesk_name: Helpdesk/Portal name
     rebrand: Rebrand your Helpdesk

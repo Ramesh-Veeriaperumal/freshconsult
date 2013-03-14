@@ -10193,3 +10193,28 @@ div.gcal-confirm-modal-content{ width: 100%; }
 
 /* end of highlight */
 
+.rebrand-head-text{
+	font-size: 20px;
+	color: #999;
+	border-top: 1px solid #ccc;
+	margin-bottom: 20px;
+	padding-top: 2px;
+	font-weight: 200;
+}
+.rebrand-page{
+	label.overlabel {
+		margin: 5px;
+	}
+	.lead{
+		font-weight: 400;
+	}
+	label{
+		margin-bottom:0px;
+	}
+	.linkback-url{
+		margin: 5px 0;
+	}
+	.reset-color{
+			margin-top: 5px;
+	}
+}
