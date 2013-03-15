@@ -19,7 +19,7 @@ module SupportHelper
 					}
 
     def time_ago date_time 
-		%( <span rel='prettydate' class='prettydate' title='#{date_time}'> 
+		%( <span class='timeago' data-timeago='#{date_time}' data-livestamp='#{date_time}'> 
 			#{distance_of_time_in_words_to_now date_time} #{I18n.t('date.ago')} 
 		   </span> )
 	end
@@ -55,8 +55,31 @@ module SupportHelper
 	end
 
 	# Helpcenter search, ticket creation buttons
-	def help_center portal
-		
+	def helpcenter_navigation portal
+		output = []
+		output << %( <nav> )
+		if portal['can_submit_ticket_without_login']
+			output << %( <div>
+							<a href="#{ portal['new_ticket_url'] }" class="mobile-icon-nav-newticket new-ticket ellipsis">
+								<span> #{ I18n.t('header.new_support_ticket') } </span>
+							</a>
+						</div>) 
+		else
+			output << %(<div class="hide-in-mobile"><a href="#{portal['login_url']}">#{I18n.t('portal.login')}</a>)
+			output << %( #{I18n.t('or')} <a href=\"#{portal['signup_url'] }\">
+							#{I18n.t('portal.signup')}</a>) if portal['can_signup_feature']
+			output << %( #{I18n.t('portal.to_submit_ticket')}</div> )
+		end
+		output << %(	<div>
+							<a href="#{ portal['tickets_home_url'] }" class="mobile-icon-nav-status check-status ellipsis">
+								<span>#{ I18n.t('header.check_ticket_status') }</span>
+							</a>
+						</div> )
+		output << %( <div> <a href="#" class="mobile-icon-nav-contact contact-info ellipsis">
+						<span>#{ portal['contact_info'] }</span>
+					 </a> </div> ) if portal['contact_info']
+
+		output << %(</nav>)
 	end
 
 	# User image page

@@ -82,7 +82,7 @@ integrations_url:
     development: "http://localhost:3000"
     production: "https://login.freshdesk.com"
     #staging: "https://login.freshbugs.com"
-    staging: "https://login.freshpo.com"
+    staging: "https://login.freshitil.com"
 
 
 

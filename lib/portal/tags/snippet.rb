@@ -21,7 +21,8 @@ class Portal::Tags::Snippet < Liquid::Tag
                             :ticket_details => "/support/tickets/ticket_details",
                             :ticket_edit => "/support/tickets/ticket_edit",
                             :ticket_list => "/support/tickets/ticket_list",
-                            :ticket_filters => "/support/tickets/filters" }
+                            :ticket_filters => "/support/tickets/filters",
+                            :dropbox_attahment => "/support/tickets/dropbox"  }
 
   def initialize(tag_name, markup, tokens)
     super

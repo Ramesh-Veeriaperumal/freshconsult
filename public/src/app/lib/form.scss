@@ -2013,10 +2013,13 @@ ul.ui-form .inputs-list{
 
 .required_star{
 	color: #d00;
-	font-size:16px;
+	font-size:20px;
 	font-weight:bold;
 	position: relative;
-	top:4px;
+	top:5px;
+	margin-left: 3px;
+	margin-right: 1px;
+	line-height: 0;
 }
 
 .new_ticket_cc_button{

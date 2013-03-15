@@ -33,6 +33,14 @@ class Helpdesk::TicketDrop < BaseDrop
 		@source.description
 	end
 
+	def description_html
+		@source.description_html
+	end
+
+	def attachments
+	    @source.attachments
+	end
+
 	def requester
 		@source.requester.presence
 	end
@@ -50,11 +58,11 @@ class Helpdesk::TicketDrop < BaseDrop
 	end
 
 	def priority
-		PRIORITY_NAMES_BY_KEY[@source.priority]
+		TicketConstants.priority_list[@source.priority]
 	end
 
 	def source
-		SOURCE_NAMES_BY_KEY[@source.source]
+		TicketConstants.source_list[@source.source]
 	end
 
 	def source_name

@@ -3,16 +3,14 @@ class SupportController < ApplicationController
   before_filter :portal_context, :page_message
   include RedisKeys
 
-
-
   caches_action :show, :index, :new,
   :if => proc { |controller|
-    controller.cache_enabled? && !controller.send(:current_user)
+    controller.cache_enabled? && !controller.send(:current_user) && 
+    controller.send('flash').keys.blank?
   }, 
   :cache_path => proc { |c| 
     "#{c.send(:current_portal).cache_prefix}#{c.request.request_uri}" 
   }
-
  
   def cache_enabled?
     !(get_key(PORTAL_CACHE_ENABLED) === "false")

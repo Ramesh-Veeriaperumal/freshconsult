@@ -2,6 +2,7 @@ en:
   meta:
    language_name: 'English'
   any: Any
+  or: or
   unspam: "Unspam"
   unblock: "Whitelist"
   enabled: "Enabled"
@@ -73,6 +74,7 @@ en:
   working: Working
   attachment: Attachment
   attachments: Attachments
+  attachment_delete: "You're about to permanently delete this attachment. Continue?"
   attach_file_local: Attach a file from your computer
   dropbox_attach_label: Attach from
   dropbox_choose_file: Choose file
@@ -1691,6 +1693,7 @@ en:
     signup: Signup
     or_signup: " or %{signup} for an account"
     to_post_comment: " to post a comment"
+    to_submit_ticket: " to submit a new ticket"
     to_post_topic: " to post a topic"
     search: 
       filters:
@@ -1877,7 +1880,7 @@ en:
     signout: "Sign out"
     edit_profile: "Edit profile"
     assumed_text: "You are viewing as"
-    help_center: "Help center"
+    help_center: "How can we help you today?"
     new_support_ticket: "New support ticket"
     check_ticket_status: "Check ticket status"
     tabs:
@@ -2503,8 +2506,8 @@ en:
         my_resolved: My Resolved Tickets
         new_my_open: New & My Open Tickets
         this_view: this view
-        all_tickets: All tickets
-        all: All tickets
+        all_tickets: All Tickets
+        all: All Tickets
         new_and_my_open: New & My Open Tickets
         open: Open tickets
         closed: Closed Tickets
