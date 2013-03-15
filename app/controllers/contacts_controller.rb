@@ -179,7 +179,7 @@ class ContactsController < ApplicationController
     @agent = current_account.agents.new
     @agent.user = @item 
     @item.deleted = false
-    @agent.occasional = false
+    @agent.occasional = params[:occasional]
     respond_to do |format|
       if @agent.save        
         format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
@@ -260,8 +260,8 @@ protected
  end
 
  def check_agent_limit
-   if current_account.reached_agent_limit? 
-    flash[:notice] = t('maximum_agents_msg')
+    if params[:occasional].nil? && current_account.reached_agent_limit? 
+    flash[:notice] = t('maximum_agents_msg') 
     redirect_to :back 
    end
   end

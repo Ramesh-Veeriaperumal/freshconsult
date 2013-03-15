@@ -1436,6 +1436,8 @@ en:
     working: Working at
     info4: Recent tickets from %{nick_name}
     show_more: Show more tickets from %{nick_name} »
+    convert_fulltime: Full-Time Agent
+    convert_occasional: Occasional Agent
     form_placeholder: 
       description: Add specific notes regarding this contact example - LA Lakers fan etc.
     info5: User has not created any ticket till now
@@ -1465,6 +1467,7 @@ en:
     unverified:
       no_contacts: You don't have any unverified contacts.
       no_contacts_with_letter: No matching contacts starting with the letter '%{alphabet}'
+
   between: Between
   portal_key: Portal
   add_new_forum: add a new forum
