@@ -59,7 +59,8 @@ function bulk_merge_submit(){
     target.append(jQuery('<input />').attr({
       name: "source_tickets[]",
       type: 'hidden',
-      value: jQuery(this).find("#merge-ticket").data("id")
+      value: jQuery(this).find("#merge-ticket").data("id"),
+      'class': 'src'
     }));
   });
 }
