@@ -9,6 +9,7 @@ class Helpdesk::TicketsExport
       export_params.symbolize_keys!
       user = Account.current.users.find(export_params[:current_user_id])
       user.make_current
+      TimeZone.set_time_zone
       #Need to be removed - kiran 
       if export_params[:data_hash]
         json_conditions = []
@@ -54,11 +55,11 @@ class Helpdesk::TicketsExport
           end
         end
       end
-      if (export_params[:later])
+      # if (export_params[:later])
         Helpdesk::TicketNotifier.deliver_export(export_params, csv_string, User.current)
-      else
-        csv_string
-      end
+      # else
+      #   csv_string
+      # end
     end
   end
 end
