@@ -5,7 +5,8 @@ class SupportController < ApplicationController
 
   caches_action :show, :index, :new,
   :if => proc { |controller|
-    controller.cache_enabled? && !controller.send(:current_user)
+    controller.cache_enabled? && !controller.send(:current_user) && 
+    controller.send('flash').keys.blank?
   }, 
   :cache_path => proc { |c| 
     "#{c.send(:current_portal).cache_prefix}#{c.request.request_uri}" 

@@ -114,7 +114,7 @@ class PortalDrop < BaseDrop
   end
 
   def recent_popular_topics
-    @recent_popular_topics ||= source.recent_popular_topics(DateTime.now - 30.days)
+    @recent_popular_topics ||= source.recent_popular_topics(portal_user,DateTime.now - 30.days)
   end
 
   def topics_count

@@ -52,7 +52,7 @@ module Helpdesk::MergeTicketActions
 		end
 
 		def move_source_requesters_to_target
-			cc_email_array = @source_tickets.collect{ |source| [ source.cc_email[:cc_emails], 
+			cc_email_array = @source_tickets.collect{ |source| [ get_cc_email_from_hash(source), 
 																	convert_to_cc_format(source) ] if check_source(source) }.flatten().compact
 			return unless cc_email_array.any?
 			if @target_ticket.cc_email.blank?
@@ -123,8 +123,12 @@ module Helpdesk::MergeTicketActions
 		  %{#{ticket.requester} <#{ticket.requester.email}>}
 		end 
 
+		def get_cc_email_from_hash ticket
+			ticket.cc_email ? (ticket.cc_email[:cc_emails] ? ticket.cc_email[:cc_emails] : []) : []
+		end
+
 		def check_source source_ticket
-		  source_ticket.requester_has_email? and ( !source_ticket.requester.eql?(@target_ticket.requester) or 
-		  																									source_ticket.cc_email[:cc_emails].any?)
+		  source_ticket.requester_has_email? && ( !source_ticket.requester.eql?(@target_ticket.requester) or 
+		  																									get_cc_email_from_hash(source_ticket).any?)
 		end
 end	
