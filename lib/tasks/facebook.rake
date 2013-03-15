@@ -9,7 +9,7 @@ namespace :facebook do
     	puts "Facebook Queue is empty... queuing at #{Time.zone.now}"
     	Account.active_accounts.each do |account| 
     	    next if account.facebook_pages.empty?    
-        	Resque.enqueue( Social::FacebookWorker , account.id)              
+        	Resque.enqueue( Social::FacebookWorker ,{:account_id => account.id} )              
      	end 
     else
       puts "Facebook Queue is already running . skipping at #{Time.zone.now}"  

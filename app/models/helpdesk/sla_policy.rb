@@ -43,7 +43,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
   ESCALATION_LEVELS_OPTIONS = ESCALATION_LEVELS.map { |i| i[1] }
   ESCALATION_LEVELS_MAX = ESCALATION_LEVELS_OPTIONS.last
 
-  ESCALATIONTIME = [
+  ESCALATION_TIME = [
     [ :immediately,    I18n.t('immediately'),  0 ], 
     [ :half,    I18n.t('after_half'),  1800 ], 
     [ :one,      I18n.t('after_one'),      3600 ], 
@@ -59,7 +59,15 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
     [ :onemonth, I18n.t('after_onemonth'),   2592000 ]
   ]
 
-  ESCALATIONTIME_OPTIONS = ESCALATIONTIME.map { |i| [i[1], i[2]] }
+  ESCALATION_TIME_OPTIONS = ESCALATION_TIME.map { |i| [i[1], i[2]] }
+
+  PREMIUM_TIME = [ 
+    [I18n.t('premium_sla_times.after_five_minutes'),300], 
+    [I18n.t('premium_sla_times.after_ten_minutes'),600], 
+    [I18n.t('premium_sla_times.after_fifteen_minutes'), 900] 
+  ]
+  ESCALATION_PREMIUM_TIME_OPTIONS = (ESCALATION_TIME_OPTIONS + PREMIUM_TIME).sort{|a, b|
+                                                                      a[1] <=> b[1] } 
 
   ESCALATION_TYPES = [:resolution, :response]
 
@@ -89,8 +97,10 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
       end
 
       if resolution_escalation && escalate_to_agents(ticket, resolution_escalation, 
-                                      EmailNotification::RESOLUTION_TIME_SLA_VIOLATION)
+                                      EmailNotification::RESOLUTION_TIME_SLA_VIOLATION, :due_by)
         ticket.update_attribute(:escalation_level, escalation_level)
+      else 
+        break
       end
     end
 
@@ -108,7 +118,8 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
 
     response_escalation = escalations[:response]["1"]
     if !response_escalation || 
-        escalate_to_agents(ticket, response_escalation, EmailNotification::FIRST_RESPONSE_SLA_VIOLATION)
+        escalate_to_agents(ticket, response_escalation, 
+          EmailNotification::FIRST_RESPONSE_SLA_VIOLATION, :frDueBy)
       ticket.update_attribute(:fr_escalated , true)
     end
   end
@@ -136,10 +147,10 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
       sla_details.find_by_priority(ticket.priority).escalation_enabled?
     end
 
-    def escalate_to_agents(ticket, escalation, type)
-      if escalation[:time].seconds.since(ticket.due_by) <= Time.zone.now
+    def escalate_to_agents(ticket, escalation, type, due_by)
+      if escalation[:time].seconds.since(ticket.send(due_by)) <= Time.zone.now
         unless escalation[:agents_id].blank? ||
-        (agents = account.users.technicians.find(:all, :conditions => ["id in (?)", escalation[:agents_id]])).blank?
+        (agents = account.users.technicians.visible.find(:all, :conditions => ["id in (?)", escalation[:agents_id]])).blank?
           SlaNotifier.send_email(ticket, agents, type)
         end
         return true

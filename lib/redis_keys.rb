@@ -8,6 +8,7 @@ module RedisKeys
 	INTEGRATIONS_JIRA_NOTIFICATION = "INTEGRATIONS_JIRA_NOTIFY:%{account_id}:%{local_integratable_id}:%{remote_integratable_id}"
 	INTEGRATIONS_LOGMEIN = "INTEGRATIONS_LOGMEIN:%{account_id}:%{ticket_id}"
 	HELPDESK_TICKET_UPDATED_NODE_MSG    = "{\"ticket_id\":%{ticket_id},\"agent\":\"%{agent_name}\",\"type\":\"%{type}\"}"
+	EMAIL_TICKET_ID = "EMAIL_TICKET_ID:%{account_id}:%{message_id}"
 	
 	def newrelic_begin_rescue
     begin
@@ -35,6 +36,12 @@ module RedisKeys
 			$redis.set(key, value)
 			$redis.expire(key,expires) if expires
 	  end
+	end
+
+	def set_expiry(key, expires)
+		newrelic_begin_rescue do
+			$redis.expire(key, expires)
+		end
 	end
 
 	def add_to_set(key, values, expires = 86400)

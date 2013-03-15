@@ -1,10 +1,15 @@
-class Helpdesk::TicketsExport < Resque::FreshdeskBase
+class Helpdesk::TicketsExport 
+  extend Resque::AroundPerform
   include Helpdesk::Ticketfields::TicketStatus
   @queue = 'ticketsExportQueue'
 
   def self.perform(export_params)
+
     SeamlessDatabasePool.use_persistent_read_connection do
       export_params.symbolize_keys!
+      user = Account.current.users.find(export_params[:current_user_id])
+      user.make_current
+      TimeZone.set_time_zone
       #Need to be removed - kiran 
       if export_params[:data_hash]
         json_conditions = []
@@ -50,11 +55,11 @@ class Helpdesk::TicketsExport < Resque::FreshdeskBase
           end
         end
       end
-      if (export_params[:later])
+      # if (export_params[:later])
         Helpdesk::TicketNotifier.deliver_export(export_params, csv_string, User.current)
-      else
-        csv_string
-      end
+      # else
+      #   csv_string
+      # end
     end
   end
 end

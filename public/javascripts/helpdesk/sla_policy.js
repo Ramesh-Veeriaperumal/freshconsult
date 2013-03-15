@@ -273,15 +273,15 @@
 					if($(this).val())
 						no_condition = false
 				});
-				if(no_condition) {
-					$('label[for=sla_policy_conditions]').addClass('error').show();
-					$('.add_new_condition .dropdown-toggle').qtip('hide');
-					return false;
-				}
-				else {
-					removeLevel();
-					reconstruct();	
-				}
+			}
+			if(no_condition && !is_default) {
+				$('label[for=sla_policy_conditions]').addClass('error').show();
+				$('.add_new_condition .dropdown-toggle').qtip('hide');
+				return false;
+			}
+			else {
+				removeLevel();
+				reconstruct();	
 			}
 
 		})
@@ -297,13 +297,14 @@
 			
 		}
   	reconstruct = function() {
-  		$('[rel=reconstruct]').each(function() {
-  			var type = $(this).data('type');
-				var level = $(this).data('level')
-  			var name = "helpdesk_sla_policy[escalations][" + type + "][" + 
-							level + "]";
+  		var visible_levels = $('[rel=reconstruct]:visible');
+  		if(visible_levels.length) {
+				visible_levels.each(function() {
+					var type = $(this).data('type');
+					var level = $(this).data('level')
+					var name = "helpdesk_sla_policy[escalations][" + type + "][" + 
+								level + "]";
 
-				if($(this).is(':visible')) {
 					var parent = this;
 					$(this).find('input.agents_id, select').each(function() {
 						if($(this).hasClass('select2-input'))
@@ -322,8 +323,14 @@
 							this.name =  name + "[" + $(this).data('name') + "]";
 						}
 					});
-				}
-			});
+				});
+			}
+			else {
+				$('form.sla_policy_form').append($('<input>').attr({type: 'hidden', 
+					name: 'helpdesk_sla_policy[escalations][response]', value: ""}));
+				$('form.sla_policy_form').append($('<input>').attr({type: 'hidden', 
+					name: 'helpdesk_sla_policy[escalations][resolution]', value: ""}));
+			}
 			
 			return true;
   	}

@@ -1,14 +1,14 @@
 <%= include_stylesheets :pattern %>
 <%= include_javascripts :pattern %>
 <% content_for :sidebar do %>
-	<%= render :partial => "helpnote" %>
+	<%= render :partial => "helpnote_without_tour" %>
 <% end %>
 <div id="cust-list" class="cust_list_table">
 	<div class="cust_list_table_header"	>
 		<div class="row-fluid">
 			<div class="span6"><h3 class="title"><%=t('sla_policy.title1')%></h3></div>
 			 <div class="span6 pull-right pagination-right header_buttons align-right" >
-				<%= link_to t('reorder'),'#', :id => "sla_policies_reorder_button", :class => "btn" unless(@sla_policies.active.size <= 1)%>
+				<%= link_to t('reorder'),'#', :id => "sla_policies_reorder_button", :class => "btn" unless(@sla_policies.active.size <= 2)%>
 				<%= (link_to t('sla_policy.new'), new_helpdesk_sla_policy_path, :class => "btn btn-primary") if feature?(:customer_slas) %>
 	        </div>
 		</div>
@@ -44,7 +44,7 @@
 					</td>
 					<td>
 						<div class="item_actions" align="right">
-					    	<%= link_to(t('edit'), edit_helpdesk_sla_policy_path(policy), :class => "btn btn-mini") %>
+					    	<%= link_to(t('edit'), edit_helpdesk_sla_policy_path(policy), :class => "btn btn-mini #{"default_policy" if policy.is_default}") %>
 
 					    	<%unless policy.is_default?%>
 						    	<%= link_to "<i class='icon-trash'></i>", policy, :confirm => "Are you sure you want to delete SLA policy?", :method => :delete, :class => "btn btn-mini" %>

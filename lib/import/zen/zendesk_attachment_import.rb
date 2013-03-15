@@ -1,8 +1,9 @@
 class Import::Zen::ZendeskAttachmentImport 	
+  extend Resque::AroundPerform
   @queue = 'ImportAttachmentWorker'
 
-  def self.perform(note_id,url,model,account_id)
-  	model = model.to_sym
-    Import::Attachment.new(note_id ,url, model,account_id).perform
+  def self.perform(args)
+  	model = args[:model].to_sym
+    Import::Attachment.new(args[:item_id] ,args[:attachment_url], model).perform
   end
 end

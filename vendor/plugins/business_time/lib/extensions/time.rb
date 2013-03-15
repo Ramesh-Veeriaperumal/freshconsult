@@ -97,13 +97,14 @@ class Time
   def business_time_until(to_time)
 
     # Make sure that we will calculate time from A to B "clockwise"
+    from_time = Time.zone.parse(self.strftime('%Y-%m-%d %H:%M:%S'))
     direction = 1
-    if self < to_time
-      time_a = self
+    if from_time < to_time
+      time_a = from_time
       time_b = to_time
     else
       time_a = to_time
-      time_b = self
+      time_b = from_time
       direction = -1
     end
 

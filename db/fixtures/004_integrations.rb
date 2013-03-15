@@ -480,7 +480,7 @@ if Integrations::Application.count == 0
       </script>
     )
     s.options = {'display_in_pages' => ["helpdesk_tickets_show_page_side_bar"]}
-    s.application_id = googlecalendar_app.application_id
+    s.application_id = googlecalendar_app.id
   end
 
 end

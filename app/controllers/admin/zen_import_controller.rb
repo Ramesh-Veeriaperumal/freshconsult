@@ -24,7 +24,8 @@ before_filter :check_data_import_status, :only => :index
   end
   
   def handle_zen_import 
-    zen_params = {:domain =>current_account.full_domain,
+    zen_params = {:account_id => current_account.id,
+                  :domain =>current_account.full_domain,
                   :email => current_user.email,
                   :zendesk =>{:url => params[:zendesk][:url], 
                               :user_name => params[:zendesk][:user_name],

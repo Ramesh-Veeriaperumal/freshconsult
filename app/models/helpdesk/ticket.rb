@@ -43,6 +43,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_update :assign_email_config, :load_ticket_status
 
+  before_update :update_message_id, :if => :deleted_changed?
+
   before_validation_on_create :set_token
   
   before_save :update_ticket_changes, :set_sla_policy, :update_dueby
@@ -388,9 +390,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Helpdesk::TicketStatus.translate_status_name(ticket_status, "customer_display_name")
   end
 
-  def source_name
-    SOURCE_NAMES_BY_KEY(source)
-  end
 
    def is_twitter?
     (tweet) and (!account.twitter_handles.blank?) 
@@ -417,7 +416,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def priority_name
-    PRIORITY_NAMES_BY_KEY[priority]
+    TicketConstants.translate_priority_name(priority)
   end
   
   def priority_key
@@ -451,7 +450,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def source_name
-    SOURCE_NAMES_BY_KEY[source]
+    TicketConstants.translate_source_name(source)
   end
 
   def nickname
@@ -981,9 +980,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       requester.customer.nil? ? "No company" : requester.customer.name
     end
     
-    def priority_name
-      PRIORITY_NAMES_BY_KEY[priority]
-    end
     
    def stop_timesheet_timers
     if @ticket_changes.key?(:status) && [RESOLVED, CLOSED].include?(status)
@@ -1041,6 +1037,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def unsubscribed_agents
     user_ids = subscriptions.map(&:user_id)
     account.agents_from_cache.reject{ |a| user_ids.include? a.user_id }
+  end
+
+  def update_message_id
+    if self.header_info
+      self.header_info[:message_ids].each do |parent_message|
+        message_key = EMAIL_TICKET_ID % {:account_id => self.account_id, :message_id => parent_message}
+        deleted ? remove_key(message_key) : set_key(message_key, self.display_id, 86400*7)
+      end
+    end
   end
 
 
