@@ -19,7 +19,7 @@ module SupportHelper
 					}
 
     def time_ago date_time 
-		%( <span rel='prettydate' class='prettydate' title='#{date_time}'> 
+		%( <span class='timeago' data-timeago='#{date_time}' data-livestamp='#{date_time}'> 
 			#{distance_of_time_in_words_to_now date_time} #{I18n.t('date.ago')} 
 		   </span> )
 	end

@@ -71,7 +71,7 @@
 			</div>
 		</section>
 
-		{% paginate topic.posts by 10 %}
+		{% paginate topic.posts by 15 %}
 			{% for post in paginate.collection %}
 				{% if post.id != first_post.id %}
 				<section class="user-comment {% if post.user.is_agent %} comment-by-agent {% endif %}" id="post-{{post.id}}">

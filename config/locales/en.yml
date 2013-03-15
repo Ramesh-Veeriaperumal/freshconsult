@@ -73,6 +73,7 @@ en:
   working: Working
   attachment: Attachment
   attachments: Attachments
+  attachment_delete: "You're about to permanently delete this attachment. Continue?"
   attach_file_local: Attach a file from your computer
   dropbox_attach_label: Attach from
   dropbox_choose_file: Choose file
