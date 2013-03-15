@@ -27,7 +27,7 @@ class PortalDrop < BaseDrop
   end
 
   def contact_info
-    @contact_info ||= source.preferences.fetch(:contact_info, false)
+    @contact_info ||= source.preferences[:contact_info].presence
   end
 
   # Portal links
@@ -37,6 +37,10 @@ class PortalDrop < BaseDrop
   
   def can_signup_feature
     allowed_in_portal? :signup_link
+  end
+
+  def can_submit_ticket_without_login
+    allowed_in_portal? :anonymous_tickets
   end
   
   def signup_url
@@ -98,7 +102,7 @@ class PortalDrop < BaseDrop
 
   # Access to Discussions
   def has_forums
-    (allowed_in_portal?(:open_forums) && forums.present?)
+    (feature?(:forums) && allowed_in_portal?(:open_forums) && forums.present?)
   end
 
   def forum_categories
@@ -144,7 +148,7 @@ class PortalDrop < BaseDrop
     def load_tabs
       tabs = [  [ support_home_path,        :home,		    true ],
 					      [ support_solutions_path,   :solutions,	  allowed_in_portal?(:open_solutions) ],
-				        [ support_discussions_path, :forums, 	    allowed_in_portal?(:open_forums) ],
+				        [ support_discussions_path, :forums, 	    (feature?(:forums) && allowed_in_portal?(:open_forums)) ],
 				        [ support_tickets_path,     :tickets,     portal_user ]]
 
 			tabs.map { |s|
