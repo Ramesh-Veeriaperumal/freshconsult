@@ -114,13 +114,13 @@
   })
 
   jQuery('#edit-target, #edit-source').click(function(){
-    parent = jQuery(this).parent().parent();
-    parent.find('#target-note-content').slideDown();
+    parent_object = jQuery(this).parents('.source-target-note');
+    parent_object.find('#target-note-content').slideDown();
     jQuery(this).hide();
-    parent.find('.ok-cancel').show();
-    label = parent.find('.default-note-text').html();
-    parent.find('.default-note-text').html('<%= t("ticket.edit_note") %>');
-    value = parent.find('.redactor_editor').html();
+    parent_object.find('.ok-cancel').show();
+    label = parent_object.find('.default-note-text').html();
+    parent_object.find('.default-note-text').html('<%= t("ticket.edit_note") %>');
+    value = parent_object.find('.redactor_editor').html();
     if(jQuery(this).attr("id") == "edit-target")
       jQuery('.source-note').hide();
     else
@@ -128,20 +128,20 @@
   });
 
   jQuery('#ok-target-note, #ok-source-note, #cancel-target-note, #cancel-source-note').click(function(){
-    parent = jQuery(this).closest('.content-note');
-    parent.find('#target-note-content').slideUp();
+    parent_object = jQuery(this).closest('.content-note');
+    parent_object.find('#target-note-content').slideUp();
     setTimeout(function(){                  
       jQuery('.source-note').show();
     }, 500);
     if(jQuery(this).hasClass("ok"))
-      note_label = ( (parent.find('.redactor_editor').html() != value ) ? '<%= t("ticket.note_saved") %>' : label )
+      note_label = ((parent_object.find('.redactor_editor').html() != value ) ? '<%= t("ticket.note_saved") %>' : label)
     else
     { 
-      parent.find('.redactor_editor').html(value);
+      parent_object.find('.redactor_editor').html(value);
       note_label = label
     }
-    parent.find('.default-note-text').html(note_label);
+    parent_object.find('.default-note-text').html(note_label);
     jQuery('#edit-target, #edit-source').show();
-    parent.find('.ok-cancel').hide();
+    parent_object.find('.ok-cancel').hide();
   });
 <% end %>
