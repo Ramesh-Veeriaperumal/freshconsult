@@ -20,7 +20,8 @@
 				<%= t('message') %>
 			</label>
 			<div class="controls">
-				<%= form.rich_editor :body_html, :value => !@topic.new_record? ? @topic.posts.first.body_html : "", :rows => 12 %>
+				<%= form.rich_editor :body_html, :value => !@topic.new_record? ? @topic.posts.first.body_html : "", 
+					:rows => 12, "editor-type" => :forum %>
 			</div>
 		</div>	
 		<div class="control-group">

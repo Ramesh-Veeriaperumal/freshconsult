@@ -220,7 +220,8 @@ javascripts:
     - public/javascripts/portal/bootstrap.dialog.js
     - public/javascripts/frameworks/plugins/select2.js
     - public/javascripts/portal/jail.js
-    - public/javascripts/humane.js
+    - public/javascripts/portal/moment.js
+    - public/javascripts/portal/livestamp.js
     - public/javascripts/portal/portal.js
     - public/javascripts/portal/portal-app-actions.js
     - public/javascripts/portal/portal-compatibility.js

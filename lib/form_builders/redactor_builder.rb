@@ -25,6 +25,24 @@ module FormBuilders
         :imageGetJson => "/uploaded_images"
       }
 
+      REDACTOR_TICKET_EDITOR = {
+        :focus => true,
+        :autoresize => false,
+        :tabindex => 2,
+        :convertDivs => false,
+        :buttons => ['bold','italic','underline','|','unorderedlist', 'orderedlist',  
+                      '|','fontcolor', 'backcolor', '|' ,'link']
+      }
+
+      REDACTOR_DEFAULT_EDITOR = {
+        :focus => true,
+        :autoresize => false,
+        :tabindex => 2,
+        :convertDivs => false,
+        :buttons => ['bold','italic','underline','|','unorderedlist', 'orderedlist',  
+                      '|','fontcolor', 'backcolor', '|' ,'link']
+      }
+
       def rich_editor(method, options = {})
         options[:id] = field_id( method, options[:index] )  
         rich_editor_tag(field_name(method), @object.send(method), options)
@@ -34,7 +52,7 @@ module FormBuilders
         id = options[:id] = options[:id] || field_id( name )
         content = options[:value] if options[:value].present?
 
-        redactor_opts = (options['editor-type'] == :solution) ? REDACTOR_SOLUTION_EDITOR : REDACTOR_FORUM_EDITOR
+        redactor_opts = redactor_type options['editor-type']
 
         _javascript_options = redactor_opts.merge(options).to_json
 
@@ -66,6 +84,19 @@ module FormBuilders
 
       def field_id(label, index = nil)
         @object_name.to_s + ( index ? "_#{index}" : '' ) + "_#{label}"
+      end
+
+      def redactor_type _type
+        case _type
+          when :solution then
+            REDACTOR_SOLUTION_EDITOR
+          when :forum then
+            REDACTOR_FORUM_EDITOR
+          when :ticket then
+            REDACTOR_TICKET_EDITOR
+          else
+            REDACTOR_DEFAULT_EDITOR
+        end
       end
 
   end

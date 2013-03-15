@@ -541,7 +541,7 @@ module ApplicationHelper
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
     element_class  += " required_closure" if (field.required_for_closure && !field.required)
-    field_label    += '<span class="required_start">*</span>' if required
+    field_label    += '<span class="required_star">*</span>' if required
     field_label    += "#{add_requester_field}" if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
     field_name      = (field_name.blank?) ? field.field_name : field_name
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
