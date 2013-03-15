@@ -119,7 +119,6 @@
     jQuery(this).hide();
     parent.find('.ok-cancel').show();
     label = parent.find('.default-note-text').html();
-    console.log("label = "+label);
     parent.find('.default-note-text').html('<%= t("ticket.edit_note") %>');
     value = parent.find('.redactor_editor').html();
     if(jQuery(this).attr("id") == "edit-target")
@@ -141,7 +140,6 @@
       parent.find('.redactor_editor').html(value);
       note_label = label
     }
-    console.log("note_label = "+note_label);
     parent.find('.default-note-text').html(note_label);
     jQuery('#edit-target, #edit-source').show();
     parent.find('.ok-cancel').hide();
