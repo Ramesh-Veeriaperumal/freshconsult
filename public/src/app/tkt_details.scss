@@ -249,6 +249,11 @@ p strong{
 
 					&.collision_refresh {
 						background: sprite($symbol, collision_refresh);
+						cursor: pointer;
+
+						span {
+							display: none;
+						}
 					}
 
 					background-color: $COL_RESOLVED_CLOSED;		//Fallback
@@ -317,6 +322,8 @@ p strong{
 						}
 
 					}
+
+
 				}
 			}
 		}
@@ -2537,10 +2544,11 @@ label.custom-select {
 		font-weight: bold;
 		vertical-align: middle;
 		text-align: center;
-		padding: 7px 0;
+		padding: 5px 0;
+		border: solid 4px #efefef;
 		color: #fff;
-		width: 37px;
-		height: 23px;
+		width: 30px;
+		height: 20px;
 		@include rotateY(-180deg);
 		background: #f5f5f5;
 	}
@@ -2577,6 +2585,61 @@ label.custom-select {
 .view-flip.active .flip-front {
 	background: sprite($collision, show-viewing-active);
 }
+
+$collision_animation_duration: 4s;
+$collision_delay: 1s;
+.reply-flip.active, .view-flip.active {
+	.flip-front, .flip-back {
+		@include animation-duration($collision_animation_duration);
+		@include animation-delay($collision_delay);
+		@include animation-iteration-count(infinite);
+	}
+
+	.flip-front {
+		@include animation-name(rotateFrontCircle);
+	}
+	.flip-back {
+		@include animation-name(rotateBackCircle);
+	}
+}
+
+
+@-webkit-keyframes rotateFrontCircle {
+	0%, 16%, 83%, 100% {@include rotateY(0deg);}
+	33%, 67% {@include rotateY(180deg);}
+}
+@-webkit-keyframes rotateBackCircle {
+	0%, 16%, 83%, 100% {@include rotateY(180deg);}
+	33%, 67% {@include rotateY(0deg);}
+}
+
+@-moz-keyframes rotateFrontCircle {
+	0%, 16%, 83%, 100% {@include rotateY(0deg);}
+	33%, 67% {@include rotateY(180deg);}
+}
+@-moz-keyframes rotateBackCircle {
+	0%, 16%, 83%, 100% {@include rotateY(180deg);}
+	33%, 67% {@include rotateY(0deg);}
+}
+
+@-o-keyframes rotateFrontCircle {
+	0%, 16%, 83%, 100% {@include rotateY(0deg);}
+	33%, 67% {@include rotateY(180deg);}
+}
+@-o-keyframes rotateBackCircle {
+	0%, 16%, 83%, 100% {@include rotateY(180deg);}
+	33%, 67% {@include rotateY(0deg);}
+}
+
+@keyframes rotateFrontCircle {
+	0%, 16%, 83%, 100% {@include rotateY(0deg);}
+	33%, 67% {@include rotateY(180deg);}
+}
+@keyframes rotateBackCircle {
+	0%, 16%, 83%, 100% {@include rotateY(180deg);}
+	33%, 67% {@include rotateY(0deg);}
+}
+//----- END of Agent of Collision CSS in New Tkt Details View
 
 .dropdown.open .dropdown-toggle {
 	color: #333;

@@ -132,10 +132,16 @@ is_touch_device = function() {
       $("a[rel=contact-hover],[rel=hover-popover]").live('mouseenter',function(ev) {
         ev.preventDefault();
         clearTimeout(hidePopoverTimer);
-        hideActivePopovers(ev);
-        widgetPopup = $(this).popover('show');
-        hoverPopup = true;
+        var element = $(this);
+        var timeoutDelayShow = setTimeout(function(){
+          hideActivePopovers(ev);
+          widgetPopup = element.popover('show');
+          hoverPopup = true;
+        }, 500);
+        element.data('timeoutDelayShow', timeoutDelayShow);
+
       }).live('mouseleave',function(ev) {
+          clearTimeout($(this).data('timeoutDelayShow'));
           hidePopoverTimer = setTimeout(function() { widgetPopup.popover('hide'); hoverPopup = false;},1000);
       });
 
