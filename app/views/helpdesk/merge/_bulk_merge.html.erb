@@ -1,93 +1,10 @@
 <%= javascript_include_tag 'app/merge.js' %>
 <%= javascript_include_tag 'app/merge_tickets.js' %>
 <script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
-<% javascript_tag do -%>
-
-jQuery(document).ready(function(){
-  primary_ticket = jQuery('.merge-cont').first()
-  primary_ticket.addClass('cont-primary');
-  primary_ticket.find('.primary-marker').attr('title','Primary ticket');
-  enable_continue();
-  initialize_autocompleter();
-  check_requester();
-});
-
-function initialize_autocompleter(){
-  ContactsSearch = new Template(
-      '<li><div class="contactdiv" data-id="#{display_id}">'+
-      '<span id="resp-icon"></span>'+
-      '<div id="merge-ticket" class="merge_element" data-id="#{display_id}">'+
-      '<span class="item_info" title="#{title}">##{display_id} #{subject}</span>'+
-      '<div class="info-data hideForList">'+
-      '<span class="merge-ticket-info">#{info}</span>'+
-      '</div></div></div></li>'
-  );
-  bind_autocompleter();
-}
-
-function bind_autocompleter(){
-  var idcachedBackend,requestercachedBackend,subjectcachedBackend;
-  var idcachedLookup,requestercachedLookup,subjectcachedLookup;
-
-  var autocompleter_hash = {  id :  { cache : idcachedLookup, backend : idcachedBackend, 
-                                      searchBox : 'select-id', searchResults : 'display_id_results',
-                                      minChars : 1 },
-                  requester :  {  cache : requestercachedLookup, backend : requestercachedBackend, 
-                                  searchBox : 'select-requester', searchResults : 'requester_results',
-                                  minChars : 2 },
-                  subject :  {  cache : subjectcachedLookup, backend : subjectcachedBackend, 
-                                searchBox : 'select-subject', searchResults : 'subject_results',
-                                minChars : 2 }
-              }
-
-  var aftershow = function(){
-    x = jQuery('.contactdiv');
-    x.each(function(){
-      y = jQuery(this);
-      jQuery('.merge-cont #merge-ticket').each( function(){
-        
-        if(jQuery(this).data('id') == y.data('id'))
-        {
-          y.children('#resp-icon').addClass('clicked');
-          y.addClass('clicked').parents('li').addClass('clicked');
-        }
-      });
-    });
-  }
-
-  jQuery.each(autocompleter_hash, function(){
-    this.backend = new Autocompleter.Cache(lookup, {choices: 15});
-    this.cache = this.backend.lookup.bind(this.backend);
-    global[this.searchBox] = new Autocompleter.PanedSearch( this.searchBox, this.cache, ContactsSearch,
-    this.searchResults, $A(<%= @ticket_search.map{|item|[item, item]}.to_json %>), {frequency: 0.1, acceptNewValues: true,
-    afterPaneShow: aftershow, minChars: this.minChars, separatorRegEx:/;|,/});
-  })
-}
-
-function lookup(searchString, callback) { 
-  var type = jQuery('#search-type option:selected').val();
-  var list =  jQuery('#'+type+'_results').find('ul');
-  list.empty();
-  jQuery('#'+type+'_results').addClass("loading-center");
-  new Ajax.Request('<%= merge_search_helpdesk_merge_tickets_path %>',{ parameters: {
-                                                        search_string: searchString,
-                                                        key: jQuery('#search-type option:selected').val(),
-                                                        search_method: "with_"+jQuery('#search-type option:selected').val(),
-                                                        rand: (new Date()).getTime()},
-                                            onSuccess: function(response) {       
-                                              jQuery('.merge_results:visible').removeClass("loading-center");
-                                              callback(response.responseJSON.results);
-                                            } });
-                                          }
-
-function change_ticket_count(){
-  var count = ""+jQuery('.merge-cont').length
-  var txt = count+(( count == 1 ) ? '<%= t("ticket.ticket_selected") %>' : '<%= t("ticket.tickets_selected") %>' )
-  jQuery('.merge-sub-title').text(txt);
-}                                    
-<%- end %>
 <div id = "ticket-merge">
-  <span class="merge-sub-title">
+  <span class="merge-sub-title" 
+    data-default-text="<%= t('ticket.ticket_selected') %>"
+    data-pluralized-text="<%= t('ticket.tickets_selected') %>" >
     <%= pluralize(@source_tickets.length, t('ticket.ticket_selected'), t('ticket.tickets_selected')) %>
   </span>
   <div id="mergeboxconfirm"></div>
