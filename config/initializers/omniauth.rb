@@ -10,7 +10,6 @@ ActionController::Dispatcher.middleware.use OmniAuth::Builder do
   if key_hash["options"].blank?
 	  provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"]
 	else
-	  Rails.logger.debug "key_hash #{key_hash.inspect}"
 	  provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"], key_hash["options"]
 	end
   }
@@ -19,10 +18,8 @@ ActionController::Dispatcher.middleware.use OmniAuth::Builder do
   # https://github.com/intridea/omniauth/issues/569
   on_failure do |env|
     message_key = env['omniauth.error.type']
-    puts "omniauth.origin: #{env['omniauth.origin']}\n"
     origin = env['omniauth.origin'].split('?').last
     new_path = "#{env['SCRIPT_NAME']}#{OmniAuth.config.path_prefix}/failure?message=#{message_key}&origin=#{URI.escape(origin)}"
-    puts "Newpath: #{new_path}"
     [302, {'Location' => new_path, 'Content-Type'=> 'text/html'}, []]
   end
   
