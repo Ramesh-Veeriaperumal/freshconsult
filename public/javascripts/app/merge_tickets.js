@@ -43,10 +43,9 @@ function enable_continue(){
 
 jQuery('.primary-marker').live('click', function(){
   mark_primary(jQuery(this));
-  jQuery('.primary-marker').attr('data-original-title','Mark this ticket as primary ticket')
-  jQuery(this).attr('data-original-title','')
-  jQuery('.merge-cont').removeClass('tooltip').attr('title','');
-  jQuery('.cont-primary').addClass('tooltip').attr('title', 'This is your primary ticket')
+  jQuery('.twipsy').hide();
+  jQuery('.primary-marker').attr('data-original-title','Mark as primary')
+  jQuery(this).attr('data-original-title','Primary ticket').trigger('mouseover')
   enable_continue();
 });
 
@@ -77,7 +76,8 @@ jQuery('#search-type').change(function () {
 
 jQuery('.merge-cont:not(".cont-primary") #resp-icon').live("click",function(){
   id = jQuery(this).closest("#contact-area").find("#merge-ticket").data("id");
-  jQuery('.contactdiv').find("[data-id = '"+id+"']").parent().find("#resp-icon").removeClass("clicked");
+  element = jQuery('.contactdiv').find("[data-id = '"+id+"']").parent();
+  element.find("#resp-icon").removeClass("clicked").parents('li').removeClass("clicked");
   jQuery(this).closest(".merge-cont").remove();
   enable_continue();
   change_ticket_count();
@@ -86,10 +86,10 @@ jQuery('.merge-cont:not(".cont-primary") #resp-icon').live("click",function(){
 jQuery('.contactdiv').live("click",function(){
   if(!jQuery(this).find('#resp-icon').hasClass("clicked"))
   {
-    jQuery(this).addClass("clicked");
+    jQuery(this).parent().addClass("clicked");
     element = jQuery(".cont-primary").clone();
     append_to_merge_list(element, jQuery(this));
-    add_tooltip_to_element(element);
+    element.find('.primary-marker').attr('title','Mark as primary').addClass('tooltip');
     replace_element = element.find('.item_info');
     title =  replace_element.attr('title');
     ticket_id = element.find("#merge-ticket").data("id")
@@ -100,8 +100,3 @@ jQuery('.contactdiv').live("click",function(){
     change_ticket_count();
   }
 });
-
-function add_tooltip_to_element(element){
-  element.removeClass('tooltip').attr('title','');
-  element.find('.primary-marker').attr('title','Mark this ticket as primary ticket').addClass('tooltip');
-}

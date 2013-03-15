@@ -9147,7 +9147,7 @@ div.db-chooser{
 	display: inline-block;
 }
 #mergebox{
-	#results li, #display_id_results li, #requester_results li, #subject_results li{
+	#results li, .merge_results li{
 		border: none;
 		background-color: white;
 		height: 50px;
@@ -9159,14 +9159,14 @@ div.db-chooser{
 			}
 			#resp-icon.clicked{
 				vertical-align: middle;
-	 			background: sprite($symbol, selected) no-repeat;
+	 			background: sprite($symbol, resp-icon-clicked) no-repeat;
 			}
 		}
 	}
 }
 
 #resp-icon.clicked{
- background: sprite($symbol, selected) no-repeat;
+ background: sprite($symbol, resp-icon-clicked) no-repeat;
 }
 
 #selected-contacts{
@@ -9251,6 +9251,9 @@ div.db-chooser{
 	border: 1px solid #bdbdbd;
 	.primary-marker{
 		background-color: #bdbdbd;
+		&:hover{
+			cursor:pointer;
+		}
 	}
 	#marker{
 		background: sprite($symbol, tickSelect) no-repeat;
@@ -9394,8 +9397,35 @@ div.db-chooser{
 /* end */
 #ticket-merge{
 	overflow: hidden;
+	.merge-ticket-info{
+		font-size:11px;
+	}
+	.ok{
+		font-weight: bold;
+	}
+	.divide{
+		clear: both;
+		width: 97%;
+		margin-left: 10px;
+		margin: 0 0 0 10px;
+		height: 1px;
+		background: #ccc;
+	}
+	.contact-special{
+		width: 48.2%;
+	}
+	#bulk-merge-button-container{
+		padding-bottom: 8px;
+		border:none;
+	}
+	#bulk_merge_tickets{
+		margin-bottom: 0px;
+	}
+	#bulk_merge{
+		margin-right: 10px;
+	}
 	.private-note{
-		line-height:20px;
+		font-size: 12px;
 	}
 	#complete_merge_tickets{
 		margin-bottom: 0px !important;
@@ -9404,7 +9434,7 @@ div.db-chooser{
 		text-decoration: none !important;
 	}
 	.search_merge{
-		width: 93%;
+		width: 89%;
 		padding-right: 20px;
 	}
 	#merge-ticket{
@@ -9422,11 +9452,18 @@ div.db-chooser{
 		}
 	}
 	#mergeboxconfirm{
+		form{
+			margin:0;
+		}
 		#merge-ticket{
 			margin-top: 7px;
 			a.item_info{
 				max-width:98%;
 			}
+		}
+		.button-container{
+			border:none;
+			margin: 3px 0 0 17px;
 		}
 	}
 	.merge-sub-title{
@@ -9444,29 +9481,33 @@ div.db-chooser{
 		}
 	}
 	.primary-marker{
-		height: 38px;
+		height: 33px;
 	}
 	.merge-cont{
-		height: 57px;
+		height: 53px;
 		width: 345px;
 		text-overflow: ellipsis;
 	}
 	.merge_results{
-		width:100%;
+		width:97.4%;
 		max-height: 327px;
 		clear: both !important;
+		li{
+			height:48px;
+		}
 	}
 	.search-content{
 		width: 340px !important;
-		padding-right: 15px;
+		padding-right: 5px;
 		margin-top: 2px;
+		margin-bottom: 10px;
 		.typed{
 			right: 11px !important;
-			top: 45px !important;
+			top: 35px !important;
 		}
 		.searchicon{
 			right: 14px;
-			top:42px;
+			top:32px;
 		}
 		#search-type{
 			width: auto;
@@ -9495,8 +9536,11 @@ div.db-chooser{
 		}
 
 	}
-	.contactdiv.clicked{
+	li.clicked{
 		cursor: default;
+		.item_info{
+			color: #999;
+		}
 	}
 	#select-user{
 		width: 309px;
@@ -9505,19 +9549,21 @@ div.db-chooser{
 		right: 40px;
 	}
 	.info-data{
-		line-height: 15px;
+		line-height: 14px;
 		padding-bottom: 2px;
 	}
 	#resp-icon{
 		margin-top: 14px;
 		margin-bottom: 14px;
 	}
+	#mergebox{
+		margin-top: 10px;
+	}
 	.merge-info-text{
-		margin-right: 10px;
-		float: right;
-		width: 49%;
+		float: left;
+		width: 48%;
 		height: auto;
-		padding-left: 5px;
+		padding-left: 11px;
 		padding-bottom: 12px;
 		.source-target-note{
 			width: 98%;
