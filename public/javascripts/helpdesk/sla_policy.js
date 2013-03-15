@@ -261,12 +261,17 @@
 		// Reconstruct input field on form submit
 		$('form.sla_policy_form').validate({
 			onkeyup: false,
-      focusCleanup: true,
-      focusInvalid: false
+			focusCleanup: true,
+			focusInvalid: false,
+			submitHandler: function(form) {
+				validateAndReconstruct(form);
+			},
+			invalidHandler: function() {
+				$('.add_new_condition .dropdown-toggle').qtip('hide');
+			}
 		});
 
-		$('form.sla_policy_form').on('submit', function(ev) {
-
+		function validateAndReconstruct(form) {
 			var no_condition = true;
 			if(!is_default) {
 				$('[name*="helpdesk_sla_policy[conditions]"]').each(function() {
@@ -277,14 +282,13 @@
 			if(no_condition && !is_default) {
 				$('label[for=sla_policy_conditions]').addClass('error').show();
 				$('.add_new_condition .dropdown-toggle').qtip('hide');
-				return false;
 			}
 			else {
 				removeLevel();
 				reconstruct();	
+				form.submit();
 			}
-
-		})
+		}
 		removeLevel = function() {
 			$('tr.escalations:visible').each(function(){
 				if($.trim($(this).find('input.agents_id').val()) == "" && $(this).is(':visible')) {
