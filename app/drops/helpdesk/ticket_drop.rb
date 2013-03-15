@@ -41,6 +41,10 @@ class Helpdesk::TicketDrop < BaseDrop
 	    @source.attachments
 	end
 
+	def dropboxes
+	    @source.dropboxes if @source.dropboxes.present?
+	end
+
 	def requester
 		@source.requester.presence
 	end

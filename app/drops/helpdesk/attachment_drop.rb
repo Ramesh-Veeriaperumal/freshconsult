@@ -37,4 +37,8 @@ class Helpdesk::AttachmentDrop < BaseDrop
     source.image?
   end
 
+  def delete_url
+    helpdesk_attachment_path(source)
+  end
+
 end

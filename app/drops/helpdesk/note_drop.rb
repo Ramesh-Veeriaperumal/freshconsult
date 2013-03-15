@@ -36,4 +36,8 @@ class Helpdesk::NoteDrop < BaseDrop
 	    @source.attachments
 	end
 
+	def dropboxes
+		@source.dropboxes if @source.dropboxes.present?
+	end
+
 end

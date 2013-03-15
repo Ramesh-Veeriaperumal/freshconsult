@@ -53,12 +53,40 @@
 							</a>
 							<div class="help-text file-size">
 								{{ attachment.size }}
+								{% if ticket.requester and (ticket.requester.id == portal.user.id)  %}
+									<a href="{{ attachment.delete_url }}" data-method="delete" 
+										data-confirm="{% translate attachment_delete %}">
+										{% translate delete %}
+									</a>
+								{% endif %}
 							</div>
 						</div>
 					{% endfor %}
 				</div>
 				{% endif %}
-				{% snippet dropbox_attahment %}
+				{% if ticket.dropboxes.size > 0 %}
+					<hr />
+					<div class="cs-g-c attachments" id="ticket-{{ticket.id}}-dropbox-attachments">
+						{% for dropbox in ticket.dropboxes %}
+							<div class="cs-g-3 attachment">
+								<img src="{{ dropbox.thumbnail }}" 
+									 class="file-thumbnail" width="50px" height="50px"  />
+								<a href="{{ dropbox.url }}" class="ellipsis file-name" target="_blank">
+									<i class="icon-dropbox-small"></i>
+									{{ dropbox.filename }}
+								</a>
+								{% if ticket.requester and (ticket.requester.id == portal.user.id)  %}
+									<div class="help-text file-size">
+										<a href="{{ dropbox.delete_url}}" data-method="delete" 
+											data-confirm="{% translate attachment_delete %}">
+											{% translate delete %}
+										</a>
+									</div>
+								{% endif %}
+							</div>
+						{% endfor %}
+					</div>
+				{% endif %}
 			</div>
 		</section>
 
@@ -92,11 +120,41 @@
 									</a>
 									<div class="help-text file-size">
 										{{ attachment.size }}
+										{% if comment.user and (comment.user.id == portal.user.id)  %}
+											<a href="{{ attachment.delete_url }}" data-method="delete" 
+												data-confirm="{% translate attachment_delete %}">
+												{% translate delete %}
+											</a>
+										{% endif %}
 									</div>
 								</div>
 							{% endfor %}
 						</div>
 						{% endif %}
+						{% if comment.dropboxes.size > 0 %}
+						<hr />
+						<div class="cs-g-c attachments" id="comment-{{comment.id}}-dropbox-attachments">
+							{% for dropbox in comment.dropboxes %}
+								<div class="cs-g-3 attachment">
+									<img src="{{ dropbox.thumbnail }}" 
+										 class="file-thumbnail" width="50px" height="50px"  />
+									<a href="{{ dropbox.url }}" class="ellipsis file-name" target="_blank">
+										<i class="icon-dropbox-small"></i>
+										{{ dropbox.filename }}
+									</a>
+									{% if comment.user and (comment.user.id == portal.user.id)  %}
+										<div class="help-text file-size">
+											<a href="{{ dropbox.delete_url}}" data-method="delete" 
+												data-confirm="{% translate attachment_delete %}">
+												{% translate delete %}
+											</a>
+										</div>
+									{% endif %}
+								</div>
+							{% endfor %}
+						</div>
+						{% endif %}
+
 					</div>
 				</section>
 			{% endfor %}
