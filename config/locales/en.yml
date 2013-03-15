@@ -1828,6 +1828,7 @@ en:
     current_password: Current password
     confirm_password: Confirm password
     new_password: New password
+    confirm_password_message: "Must be same as password"
     api_key:
       title: "Your API Key"
       reset: "Reset API Key"
@@ -2049,8 +2050,8 @@ en:
     merge_ticket_list_status_requester_responded_at: "From: %{username}<br /> Customer responded: <span class='emphasize'>%{time_ago} ago</span>"
     merge_ticket_list_status_created_at: "From: %{username}<br /> Created: <span class='emphasize'>%{time_ago} ago</span>"
     id : Id
-    ticket_selected: " ticket selected"
-    tickets_selected: " tickets selected"
+    ticket_selected: " ticket selected (Conversations from the merged tickets will be added to the primary ticket)"
+    tickets_selected: " tickets selected (Conversations from the merged tickets will be added to the primary ticket)"
     subject_placeholder: "Look up tickets by their subject"
     id_placeholder: "Type in an ID to find tickets"
     requester_placeholder: "Find tickets by requester"
@@ -2553,15 +2554,16 @@ en:
         target_merge_description2: Description in ticket %{ticket_id}
         confirm_and_merge: Confirm and merge  
       bulk_merge:
-        mark_primary: "Mark this ticket as your primary ticket"
+        mark_primary: "Mark as primary"
         primary_ticket: "This is your primary ticket"
+        remove: "Remove this ticket"
         target_merge_description:  "Ticket {{ticket.id}} {{ticket.subject}} is merged with this request"
         target_note_description1: 
           one: "Ticket with id"
           other: "Tickets with ids"
         target_note_description2: 
-          one: "is merged with this request."
-          other: "are merged with this request."
+          one: "is merged into this ticket."
+          other: "are merged into this ticket."
         target_note_description3:
           one: "Ticket with id %{source_tickets} is merged into ticket %{target_ticket_id} with this request"
           other: "Tickets with ids %{source_tickets} are merged into ticket %{target_ticket_id} with this request"
@@ -3336,7 +3338,7 @@ en:
     reset_all_changes: Reset ALL changes
     reset_all_confirm_message: This action will reset all your customizations to freshdesk default. Are you sure you want to continue?
     publish_changes: Save and Publish
-    header: Portal template customization
+    title: "Portal customization \"%{portal}\""
     color_and_font_header: Color &amp; font
     css_header: Stylesheet
     layout_and_pages_header: Layout &amp; pages

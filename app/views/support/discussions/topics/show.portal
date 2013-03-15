@@ -73,6 +73,7 @@
 
 		{% paginate topic.posts by 10 %}
 			{% for post in paginate.collection %}
+				{% if post.id != first_post.id %}
 				<section class="user-comment {% if post.user.is_agent %} comment-by-agent {% endif %}" id="post-{{post.id}}">
 					<div class="user-info">
 						{{ post.user | profile_image:'user-pointer-bottom', '40px', '40px' }}
@@ -117,6 +118,7 @@
 						<div class="loading-box"></div>
 					</div>
 				</section>
+				{% endif %}
 			{% endfor %}
 		{{ paginate | default_pagination }}
 	{% endpaginate %}

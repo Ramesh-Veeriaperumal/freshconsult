@@ -5,8 +5,8 @@
 
 jQuery(document).ready(function(){
   primary_ticket = jQuery('.merge-cont').first()
-  primary_ticket.attr('title','This is your primary ticket').addClass('cont-primary tooltip');
-  primary_ticket.find('.primary-marker').attr('title','');
+  primary_ticket.addClass('cont-primary');
+  primary_ticket.find('.primary-marker').attr('title','Primary ticket');
   enable_continue();
   initialize_autocompleter();
   check_requester();
@@ -19,7 +19,7 @@ function initialize_autocompleter(){
       '<div id="merge-ticket" class="merge_element" data-id="#{display_id}">'+
       '<span class="item_info" title="#{subject}">##{display_id} #{subject}</span>'+
       '<div class="info-data hideForList">'+
-      '<span>#{info}</span>'+
+      '<span class="merge-ticket-info">#{info}</span>'+
       '</div></div></div></li>'
   );
   bind_autocompleter();
@@ -49,7 +49,7 @@ function bind_autocompleter(){
         if(jQuery(this).data('id') == y.data('id'))
         {
           y.children('#resp-icon').addClass('clicked');
-          y.addClass('clicked');
+          y.addClass('clicked').parents('li').addClass('clicked');
         }
       });
     });
@@ -96,16 +96,16 @@ function change_ticket_count(){
       <div class="content-show merge_entity">
         <% @source_tickets.each do |ticket| %>
           <div class="merge-cont">
-            <div class="primary-marker tooltip" title='Mark this ticket as primary ticket'>
+            <div class="primary-marker tooltip" title='<%= t(".mark_primary")%>'>
               <span id="marker"></span>
             </div>
               <div id="contact-area">
-    		        <span id="resp-icon" title="Remove this ticket from the list"></span>
+    		        <span id="resp-icon" title="<%= t('.remove') %>"></span>
     		       		<div id="merge-ticket" class="merge_element" data-id=<%= h(ticket.display_id) %>>
                     <%= link_to("##{ticket.display_id} #{ticket.subject}", ticket, :title => h(ticket.subject), 
                     :class =>"item_info", :target=>"_blank" ) %>
     			          <div class="info-data hideForList">
-    			          	<span>
+    			          	<span class="merge-ticket-info">
     			          		<%= t("ticket.merge_ticket_list_status_"+ticket.ticket_states.current_state, 
               					:username => "<span class='muted requester_name'>#{h(ticket.requester.display_name)}</span>",
                         :time_ago => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state))) %>
@@ -134,8 +134,10 @@ function change_ticket_count(){
       <div id="subject_results" class="merge_results hide"></div>
     </div>
 
-      <% form_remote_tag (:url =>{ :controller => "merge_tickets", :action=>"merge" },:html => {:id=>"bulk_merge_tickets"}) do -%>  <input type="hidden" name="target[ticket_id]" id="target_ticket" />
-        <div class="button-container">
+      <% form_remote_tag (:url =>{ :controller => "merge_tickets", :action=>"merge" },:html => {:id=>"bulk_merge_tickets"}) do -%>  
+      <div class="divide"></div>
+      <input type="hidden" name="target[ticket_id]" id="target_ticket" />
+        <div class="button-container" id="bulk-merge-button-container">
           <a class="btn" id="cancel_new_merge"><%= t('cancel') %></a>
           <%= submit_tag "Continue",:class => "btn btn-primary",:id => "bulk_merge",:onclick => "bulk_merge_submit()", :disabled => "disabled", "data-loading-text" => t('please_wait') %>
           <%- end %>

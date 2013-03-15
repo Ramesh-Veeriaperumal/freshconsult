@@ -75,6 +75,7 @@ class PortalView
     liquid = Liquid::Template.parse(source)
     content = liquid.render(assigns, :filters => filters, :registers => {:action_view => @view, :controller => @view.controller})
     liquid.errors.each do |err|
+      Rails.logger.error err
       Rails.logger.error err.backtrace.join("\n")
       NewRelic::Agent.notice_error(err)
     end

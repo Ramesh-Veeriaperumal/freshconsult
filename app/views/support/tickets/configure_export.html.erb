@@ -4,8 +4,7 @@
 	<fieldset class="row-fluid">
 		<div class="span4">
 			<label class="lead-small"><%=t('export_data.filter_label_customer')%></label>
-			<%= select_tag "date_filter", options_for_select(TicketConstants::CREATED_BY_OPTIONS), 
-				:class => "custom-select" %>
+			<%= select_tag "date_filter", options_for_select(TicketConstants::CREATED_BY_OPTIONS) %>
 		</div>
 		<div id="datepicker" class="hide">
  			<div class="span4">	

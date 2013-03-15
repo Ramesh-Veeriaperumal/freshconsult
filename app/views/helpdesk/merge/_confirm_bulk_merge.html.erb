@@ -1,5 +1,4 @@
-<% form_tag :action => :complete_merge, :controller => 'merge_tickets', 
-                                        :html => { :id => "complete_merge_tickets" } do |f| %>  
+<% form_tag :action => :complete_merge, :controller => 'merge_tickets' do |f| %>  
   <div class="contact-special">
   	  <br>
     <div id="primary-contact">
@@ -50,7 +49,7 @@
         <div class="note-button-container-test">
             <a id="edit-target"><%= t("email_configs.edit") %></a>
             <div class= "ok-cancel hide">
-              <a class="btn btn-small ok" id="ok-target-note"><%= t('save_this_view') %></a>
+              <a class="btn btn-small btn-primary ok" id="ok-target-note"><%= t('save_this_view') %></a>
               <a class="btn btn-small" id="cancel-target-note"><%= t('cancel') %></a>
             </div>
         </div>
@@ -65,9 +64,8 @@
             @target_ticket.display_id) %>
           </textarea>
           <div class="private-note">
-            <%= t("ticket.note_form.description_note") %><br />
-            <input id="target_private" checked="checked" name="target[is_private]" value="true" type="checkbox"> 
-            <%= t("ticket.note_form.private_note") %>
+          <input id="target_private" checked="checked" name="target[is_private]" value="true" type="checkbox"> 
+          <%= t("ticket.note_form.private_note") %>
           </div>
         </div>
       </div>
@@ -79,7 +77,7 @@
         <div class="note-button-container-test">
             <a id="edit-source"><%= t("email_configs.edit") %></a>
             <div class= "ok-cancel hide">
-              <a class="btn btn-small ok" id="ok-source-note"><%= t('save_this_view') %></a>
+              <a class="btn btn-small btn-primary ok" id="ok-source-note"><%= t('save_this_view') %></a>
               <a class="btn btn-small" id="cancel-source-note"><%= t('cancel') %></a>
             </div>
         </div>
@@ -87,7 +85,7 @@
           <textarea id="source-note-body" class="target-source-text" name="source[note]">
             <%= t("helpdesk.merge.confirm_merge.source_merge_description", :ticket_id => @target_ticket.display_id) %>
           </textarea>
-          <div>
+          <div class="private-note">
             <input id="source_private" checked="checked" name="source[is_private]" value="true" type="checkbox"> 
             <%= t("ticket.note_form.private_note") %>
           </div>
@@ -95,6 +93,7 @@
       </div>
     </div>
   </div>
+  <div class="divide"></div>
   <div class="button-container">
     <%= button_to_function(t("back"), "jQuery('#mergeboxconfirm').hide(); jQuery('#mergebox').show();", :class => "btn", :id  => "back-user-merge") %> 
     <a class="btn" id="cancel-user-merge"><%= t('cancel') %></a>

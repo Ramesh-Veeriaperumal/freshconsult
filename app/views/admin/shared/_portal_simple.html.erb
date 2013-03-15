@@ -5,7 +5,7 @@
 
 <div id="portal-simple-template-options">
   <% form_for [:admin, @portal_template], :url => { :action => :update }, 
-      :html => { :method => :put, :rel => "portal_form", :target => "_blank" } do |f| -%>
+      :html => { :method => :put, :rel => "portal_form", :target => "freshdesk_preview" } do |f| -%>
     <%= hidden_field_tag 'portal_tab', :preferences %>
     <h3 class="title"><%=t("portalcss.cosmetic.subheader_background_color")%></h3>
     <% pref_bgs = [:header_color, :bg_color, :footer_color, :help_center_color] %>

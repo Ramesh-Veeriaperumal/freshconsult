@@ -1,5 +1,5 @@
 <% form_for [:admin, @portal_template], :url => { :action => :update }, 
-  :html => { :method => :put, :target => "_blank", :rel => "portal_form" } do |f| -%>
+  :html => { :method => :put, :target => "freshdesk_preview", :rel => "portal_form" } do |f| -%>
   <%= f.error_messages %>
   <%= hidden_field_tag 'portal_tab', :layout %>
 
