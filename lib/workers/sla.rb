@@ -46,7 +46,7 @@ class Workers::Sla
                              Time.zone.now.to_s(:db),false, 
                              Helpdesk::TicketStatus::donot_stop_sla_statuses(account)] )
     overdue_tickets.each do |ticket|  
-
+      ticket.save if ticket.sla_policy_id.blank?
       sla_policy = sla_rule_based[ticket.sla_policy_id] || sla_default
       sla_policy.escalate_resolution_overdue ticket #escalate_rosultion_overdue
     end
@@ -61,7 +61,7 @@ class Workers::Sla
                           Time.zone.now.to_s(:db),false,
                           Helpdesk::TicketStatus::donot_stop_sla_statuses(account),nil] )
     froverdue_tickets.each do |fr_ticket|
-      
+      fr_ticket.save if fr_ticket.sla_policy_id.blank?
       fr_sla_policy = sla_rule_based[fr_ticket.sla_policy_id] || sla_default
       fr_sla_policy.escalate_response_overdue fr_ticket
       #If there is no email-id /agent still escalted will show as true. This is to avoid huge sending if 
