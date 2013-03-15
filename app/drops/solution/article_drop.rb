@@ -17,7 +17,7 @@ class Solution::ArticleDrop < BaseDrop
   end
 
   def modified_on
-    source.updated_at.to_s(:short_day_with_time)
+    source.updated_at
   end
   
   def created_on

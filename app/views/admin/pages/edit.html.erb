@@ -1,5 +1,5 @@
 <% form_for :portal_page, @portal_page, 
     			:url => { :action => :update }, 
-    			:html => { :method => :put, :target => "_blank", :rel => "portal_form" }do |form| %>
+    			:html => { :method => :put, :target => "freshdesk_preview", :rel => "portal_form" }do |form| %>
 	<%= render :partial => 'form', :object => form %>	
 <% end %>

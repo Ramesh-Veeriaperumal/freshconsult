@@ -15,12 +15,17 @@ module SupportHelper
 					  "Roboto Condensed" => "Roboto+Condensed:regular,italic,700,700italic",
 					  "Roboto" => "Roboto:regular,italic,700,700italic",
 					  "Varela Round" => "Varela+Round:regular",
-					  "Helvetica Neue" => "Helvetica+Neue:regular,italic,700,700italic" }
+					  # "Helvetica Neue" => "Helvetica+Neue:regular,italic,700,700italic" 
+					}
 
     def time_ago date_time 
 		%( <span rel='prettydate' class='prettydate' title='#{date_time}'> 
 			#{distance_of_time_in_words_to_now date_time} #{I18n.t('date.ago')} 
 		   </span> )
+	end
+
+	def short_day_with_time date_time
+		date_time.to_s(:short_day_with_time)
 	end
 
 	# Top page login, signup and user welcome information
@@ -202,16 +207,24 @@ HTML
 	def topic_info topic
 		output = []
 		output << topic_brief(topic)
-		output << %(<div> #{post_brief(topic.last_post.to_liquid)} </div>) if topic.has_comments
+		output << %(<div> #{last_post_brief(topic.to_liquid)} </div>) if topic.has_comments
 		output.join(", ")
 	end
 
 	def topic_info_with_votes topic
 		output = []
 		output << topic_brief(topic)
-		output << post_brief(topic.last_post.to_liquid) if topic.has_comments
+		output << last_post_brief(topic.to_liquid) if topic.has_comments
 		output << bold(topic_votes(topic)) if(topic.votes > 0)
 		output.join(", ")
+	end
+
+	def last_post_brief topic, link_label = "Last reply"
+		if topic.last_post.present?
+			post = topic.last_post.to_liquid
+			%(<a href="#{topic.last_post_url}"> #{link_label} </a> by
+				#{post.user.name} #{time_ago post.created_on})
+		end
 	end
 		
 	def topic_brief topic
@@ -257,13 +270,7 @@ HTML
 		if User.current == topic.user
 			link_to label, topic['edit_url'], :title => label, :class => "btn btn-small"
 		end
-	end
-
-	def post_brief post, link_label = "Last reply"
-		if post.present?
-			%(<a href="#{post.url}"> #{link_label} </a> by #{post.user.name} #{time_ago post.created_on})
-		end
-	end
+	end	
 
 	def post_actions post
 		if User.current == post.user

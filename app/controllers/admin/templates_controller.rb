@@ -14,6 +14,10 @@ class Admin::TemplatesController < Admin::AdminController
     end
   end
 
+  def show
+    @portal = @portal_template.portal    
+  end
+
   def publish
     @portal_template.publish!
     flash[:notice] = "Portal changes published successfully."

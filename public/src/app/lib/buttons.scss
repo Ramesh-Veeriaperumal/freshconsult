@@ -495,7 +495,7 @@ div.action_buttons:hover{
     line-height:0;
     font-weight: 200;
     font-size: 13px;
-    span{ display:block; margin-top:10px; font-weight:500; }
+    span{ display:block; margin-top:10px; font-weight:500; line-height: 0.1em; /* Opera fix */ }
   }  
   .on-label{    
     background-color: #40894c; // Old browsers

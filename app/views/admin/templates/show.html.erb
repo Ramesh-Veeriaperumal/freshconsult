@@ -5,10 +5,11 @@
 <%= include_javascripts :pattern %>
 <% content_for :sidebar do %><% end %> 
 <%= render :partial => "shared/colorpicker" %>
-<h3 class="sub-title"><%=t("portalcss.header")%></h3>
-<br />
+<h3 class="lead">
+  <%=t("portalcss.title", :portal => @portal.main_portal? ? current_account.name : @portal.product.name)%>
+</h3>
 <div>
-  <ul data-tabs="tabs" class="tabs">    
+  <ul data-tabs="tabs" class="tabs" id="portal-tabs">
     <li class="active">      
       <a href="#preferences" data-toggle="tab" id="preferences-tab"><%=t("portalcss.color_and_font_header")%></a>
     </li>
@@ -103,6 +104,10 @@
 <% end %>
 
 <% content_for :onload_script do %>
+  jQuery("[rel=portal_form]").live("change", function(ev){
+    jQuery(this).data('formChanged', true)
+  })
+
   jQuery("#custom_css-tab, #layout-tab").bind("click", function(evnt){
     var target = evnt.target;
     setTimeout(function(){
@@ -147,6 +152,11 @@
           return false;
         }
       })
+    })
+
+    jQuery("#portal-tabs a").live("click", function(ev){
+      jQuery("[rel=helpcard]").hide()
+      jQuery("#" + this.id + "-helpcard").show()
     })
 
     jQuery("[rel=reset-btn]").live("click", function(ev){
@@ -194,11 +204,44 @@
       Preview current changes<br />
       
       <b>Shift+cmd+f</b> <br />
-      Show current editor in full-screen<br />
+      Show current working editor in fullscreen mode<br />
       
       <b>Esc</b> <br />
-      Exit full-screen<br />
-    </p>
+      Exit fullscreen<br />
+    </p> 
+    
+    <div id="preferences-tab-helpcard" rel="helpcard">
+      <h3 class="title">Advanced rebranding & customization</h3>
+      <p>
+        Apart from the basic coloring changes you have made to your portal, you can also customize the look and feel of select aspects of the page to further match your brand. 
+
+        You can stylize, color and set the font of almost every element in your support portal, put up your logo and customize your favicon. Just select the color from the color wheel corresponding to an element, or directly type in the hexadecimal color code into the text box.
+
+        Remember to preview your changes before publishing them live. 
+      </p>
+    </div>
+
+    <div id="custom_css-tab-helpcard" class="hide" rel="helpcard">
+      <h3 class="title">Using Custom Stylesheets</h3>
+      <p>
+        You can use your own CSS to override existing styles in your customer portal. For example, you can provide your own style definitions for the header tabs, paragraphs and body of your portal. 
+
+        Entering your custom CSS here allows you to overdiv tags or change the size of your headings. This textbox acts as a global CSS file and is applied across all pages in the theme. 
+
+        <b>Note:</b> If you are having problems with doing any of this, please get help from someone in your design team before you proceed. 
+      </p>
+    </div>
+
+    <div id="layout-tab-helpcard" class="hide" rel="helpcard">
+      <h3 class="title">Page level customizations</h3>
+      <p>
+        Freshdesk users who are looking to get down and customize their portal extensively can use the Layout and Pages tab to modify page contents specifically. 
+
+        You use custom HTML code across all the pages in Freshdesk and even add or remove components completely in your theme. You can also use the Liquid templating engine to your advantage and bring any of your ideas to life.
+
+        Please check out the FreshThemes Guide to learn more about Liquid and customizing portal pages in Freshdesk. 
+      </p>
+    </div>
 
   </div>
 <% end %>

@@ -228,6 +228,7 @@ ul.activityfeed li{
 .ticket_title{ font-weight:bold; color:#527eaa; }
 .popover.topRight { margin-left: -3px;}
 div.contact_hover{
+	@include clearfix;
 	.user_name{ font-weight:bold; font-size:1.25em; color:#527eaa; display: inline-block; }
 	.user_desig, .user_email { margin-top:3px;}
 	.user_phone, .user_mobile, .user_fb, .user_twitter{

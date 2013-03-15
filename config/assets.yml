@@ -134,6 +134,7 @@ javascripts:
     - public/javascripts/sisyphus.js
     - public/javascripts/ticket_list.js
     - public/javascripts/AsyncJSLoader.js
+    - public/javascripts/lib/detectmobilebrowsers.js
     - public/javascripts/frameworks/plugins/jquery-ui-timepicker-addon.js
 
   # Code editor for portal cms
@@ -217,7 +218,7 @@ javascripts:
     - public/javascripts/portal/jquery-ui-1.9.2.custom.js
     - public/javascripts/portal/bootstrap.js
     - public/javascripts/portal/bootstrap.dialog.js
-    - public/javascripts/portal/select2.js
+    - public/javascripts/frameworks/plugins/select2.js
     - public/javascripts/portal/jail.js
     - public/javascripts/humane.js
     - public/javascripts/portal/portal.js
