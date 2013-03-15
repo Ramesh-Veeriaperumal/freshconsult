@@ -33,6 +33,14 @@ class Helpdesk::TicketDrop < BaseDrop
 		@source.description
 	end
 
+	def description_html
+		@source.description_html
+	end
+
+	def attachments
+	    @source.attachments
+	end
+
 	def requester
 		@source.requester.presence
 	end

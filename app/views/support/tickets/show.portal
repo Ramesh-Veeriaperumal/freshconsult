@@ -39,7 +39,26 @@
 				</div>
 			</div>
 			<div class="p-content">
-				<div class="p-desc">{{ ticket.description }}</div>
+				<div class="p-desc">{{ ticket.description_html }}</div>
+				{% if ticket.attachments.size > 0 %}
+				<hr />
+				<div class="cs-g-c attachments" id="ticket-{{ticket.id}}-attachments">
+					{% for attachment in ticket.attachments %}
+						<div class="cs-g-3 attachment">
+							<img src="{{ attachment.thumbnail }}" 
+								 class="file-thumbnail {% if attachment.is_image? %} file-image {% endif %}"
+								 width="50px" height="50px"  />
+							<a href="{{ attachment.url }}" class="ellipsis file-name" target="_blank">
+								{{ attachment.filename }}
+							</a>
+							<div class="help-text file-size">
+								{{ attachment.size }}
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+				{% endif %}
+				{% snippet dropbox_attahment %}
 			</div>
 		</section>
 

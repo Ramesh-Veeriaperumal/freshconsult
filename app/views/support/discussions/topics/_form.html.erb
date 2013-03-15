@@ -16,12 +16,12 @@
 			</div>
 		</div> 	
 		<div class="control-group">
-			<label class="control-label" for="topic_body">
+			<label class="control-label required" for="topic_body">
 				<%= t('message') %>
 			</label>
 			<div class="controls">
 				<%= form.rich_editor :body_html, :value => !@topic.new_record? ? @topic.posts.first.body_html : "", 
-					:rows => 12, "editor-type" => :forum %>
+					:rows => 12, "editor-type" => :forum, :class => "required" %>
 			</div>
 		</div>	
 		<div class="control-group">
