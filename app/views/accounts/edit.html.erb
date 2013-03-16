@@ -163,21 +163,21 @@
 			    <div class="control-group">
 					<label class="control-label">Helpdesk Phone</label>
 					<div class="controls">
-						<label class="overlabel" for="contact_info_text">Contact us @ 888 888 888</label>
+						<label class="overlabel" for="contact_info_text">eg: +1 (877) 485-0317</label>
 						<input name="account[main_portal_attributes][preferences][contact_info]" id="contact_info_text" value="<%=portal_pref(@account.main_portal, :contact_info) %>" class="text auto" size="50" />
 					</div>
 				</div>
 				<div class="control-group">
 					<label class="control-label">Portal customization</label>
 					<div class="controls">
-						<p>
-							Your portal was last published
-							<%= distance_of_time_in_words_to_now(@account.main_portal.template.updated_at) %>
-							ago
-						</p>
-						<br />
 						<%= link_to "Customize portal >", admin_portal_template_path( @account.main_portal ), 
 							:class => "btn btn-bold", :rel => "customize-portal" %> 
+						
+						<span>
+							Portal was last published
+							<%= distance_of_time_in_words_to_now(@account.main_portal.template.updated_at) %>
+							ago
+						</span>
 					</div>
 				</div>
 			</div>
