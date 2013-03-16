@@ -5,9 +5,17 @@
 	background-position: center 40%;
 }
 label{
-   display: block;
-   padding:5px 0;
-   font-size:1.4em;
+   display: block; 
+   color: #323232;
+   padding:0 0 6px 0;
+   font-size:15px;
+}                
+
+.help-text{
+  font-size:13px;
+  color:#888888;
+  display: block;
+  padding:0 0 5px 0;
 }
 input[type=text], select, input.text { 
    width: 99%;
@@ -48,13 +56,23 @@ textarea[readonly] {
 
 textarea {
    height: 100px;
-   width: 99%;
+   width: 99%;   
+   overflow:auto;
+   font-size:13px;
+   line-height:18px;
+   resize:none;
+   padding:3px;
    font-family:$blueprint-font-family;
 
    &#application_script {
    	height:300px;
    }
 }
+
+textarea.auto{
+   height:auto !important;
+}
+
 
 input:focus { outline: none; }
 textarea, input{ outline:none; }
@@ -80,33 +98,26 @@ div.color{
 	padding-top:0px;
 	.mColorPickerTrigger{ 
 		position:absolute;
-		top:3px;
-		left:230px;
+		top:4px;
+		left:73px;
+		display: none !important;
 	}
 	input{
-		width:220px;
-		font-size:16px;
-		border:1px solid #afafaf;
+		width:90px;
+		font-size:14px;
+		border:1px solid #AFAFAF;
+		border-width: 0 20px 0 0;
+		border-right-color: #AFAFAF;
+		color: #777;
+		text-transform: uppercase;
+		padding: 6px 8px;
+		@include box-shadow(0 0 0 1px #AFAFAF, 1px 1px 2px #DDDDDD inset);
 	}
-	span{
-		display:inline;
-	}
-}
-
-textarea{  
-   overflow:auto;
-   font-size:13px;
-   line-height:18px;
-   resize:none;
-   padding:3px;
+	span{ display:inline; }
 }
 
 input.very_small{
 	width:200px;
-}
-
-input.portal_url{
-	width: 220px;
 }
 
 textarea.smallpara{
@@ -154,7 +165,7 @@ div.ui-form ul{
 div.ui-form ul, ul.ui-form{ 
 	list-style:none; 
 	@include pie-clearfix;
-	margin: -1px -12px;
+	//margin: -1px -12px;
 	@include border-radius(6px);
 }
 
@@ -341,9 +352,9 @@ a.addchoice:hover{
 	label.overlabel{
 		color: #999;
 		margin-left: 7px;
-		font-weight: 300;
-		font-size:14px;	
+		line-height: 28px;
 	}	 
+
 	li.checkbox{
 		@include clearfix;
 		padding-left: 18px;
@@ -385,11 +396,20 @@ a.addchoice:hover{
 			float:left;
 			margin:5px;
 		}
-	}
-	
+	}	
 	.seperator{
 		margin-bottom:0;
 		padding:1px;
+	}
+	li.seperator{
+		width:99.9%;
+		margin-top: 10px;
+		margin-bottom: 10px;
+		border:1px solid #ccc;
+		border-width: 1px 0;
+		height: 1;
+		padding: 0;
+		border-bottom-color: #fff;
 	}
 	.inline_field{
 		margin:0 0 10px 10px;
@@ -569,6 +589,26 @@ li.nested_field{
 	}
 }
 
+.heading{
+	font-size: 18px;
+	font-weight: 300;
+	line-height: 30px;
+}
+
+.portal-logo, .portal-favicon{
+	float:left;
+	margin-right:10px;
+}
+
+.portal-logo{
+	height: 35px;
+	width: auto;
+}
+
+.logo-actions a{ 
+	line-height: 22px;
+}
+
 .ui-form .inline-field{
 	/*border-bottom:1px dotted #cfcfcf;*/
 	padding-top:8px;
@@ -604,28 +644,13 @@ li.nested_field{
 	}
 
 	div.fields{
-		margin-left:210px;
+		margin-left:180px;
 		clear:right;
 		position:relative;
-		textarea.required{
-		height:200px;
-		}
-		label{
-			font-size:1.2em;
-		}
-		div.action_buttons{
-			margin-top:0;
-		}
-		span.seperator{
-			margin:6px 0;
-		}
-		.info-data{
-			padding-bottom:0;
-		}		
-		div.fields{
-		    padding-top:3px;
-		    margin-left:160px;
-		}
+		textarea.required{ height:200px; }
+		div.action_buttons{ margin-top:0; }
+		span.seperator{ margin:6px 0; }
+		.info-data{ padding-bottom:0; }
 	}
 	span.seperator{
 		border-style:solid;
@@ -1988,10 +2013,13 @@ ul.ui-form .inputs-list{
 
 .required_star{
 	color: #d00;
-	font-size:16px;
+	font-size:20px;
 	font-weight:bold;
 	position: relative;
-	top:4px;
+	top:5px;
+	margin-left: 3px;
+	margin-right: 1px;
+	line-height: 0;
 }
 
 .new_ticket_cc_button{
@@ -2020,7 +2048,7 @@ ul.ui-form .inputs-list{
 		div.fields{
 			padding-bottom: 15px;
 			label{
-				font: 13px "Helvetica Neue", sans-serif;
+				font-size: 13px;
 			}
 		}
 		input[type=text], input.text{ 
@@ -2034,9 +2062,7 @@ ul.ui-form .inputs-list{
 				width: 220px;
 			}
 		}
-		select{
-			width: auto;
-		}
+		select{ width: auto; }
 		.add-email{
 			margin-left: 210px;
 			margin-top: -25px;
@@ -2061,11 +2087,7 @@ ul.ui-form .inputs-list{
 			}
 		}
 		.configure-portal{
-			text-align: center;
-			background-color: #efefef;
-			border-bottom: 1px solid #d1d1d1;
-			border-top: 1px solid #d1d1d1;
-			padding: 10px 0; 
+			padding: 5px 18px; 
 			label{				
 				font-weight: 300;
 				font-size: 1.3em;
@@ -2521,11 +2543,51 @@ input[type="text"].number{
  	}
 }
 
-#reply-fields{
-	.field-item{
-		min-height: 0px;
-	}
-
+#reply-fields .field-item{
+	min-height: 0px;
 }
  
 /* end */
+
+#portal-simple-template-options{
+	h3.title{ padding:5px 0px 15px; }
+	.config_item { 
+		@include min-height(80px);
+	}
+	.select2-container{ width:100%; }
+	.chzn-container-single .chzn-single{
+		height: 30px; line-height: 30px;
+	}
+	.chzn-container-single .chzn-single div{
+		right: 3px;
+		top: 2px;
+	}	
+	/*.chzn-container-single .chzn-search { display: none; }*/
+}
+
+.font-select-container, .font-select-dropdown{
+	font-size: 16px;
+}
+
+.customize-pages{
+	h5{ font-weight: bold; color: #b5b5b5; }
+	.portal-pages-list{
+		margin:5px 0 15px;
+		li a{ color:#333333; }
+		li{ line-height: 24px; padding-left: 4px; }
+		li.active{
+			background-color: #eee;
+			@include box-shadow(#888 0 0 1px inset);
+		}
+	}
+}
+
+.reset-modal{
+	padding-top: 30px;
+	p{ 
+		line-height: 22px;
+		padding-left: 2px;
+		padding-top: 6px;
+	}
+	form{ margin-bottom: 0 }
+}

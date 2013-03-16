@@ -21,6 +21,7 @@ gem "ruby-debug", "0.10.3"
 gem "omniauth-oauth2", "1.0"
 gem "omniauth-openid"
 gem "omniauth-google"
+gem "omniauth-google-oauth2"
 gem "omniauth-facebook"
 gem "omniauth-salesforce"
 gem "omniauth-mailchimp", "~> 1.0.3"
@@ -105,7 +106,3 @@ group :assets do
 	# Portal grid system is done using susy grids
 	gem "susy" 
 end
-
-
-
-

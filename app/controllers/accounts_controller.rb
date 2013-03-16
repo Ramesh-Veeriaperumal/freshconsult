@@ -242,6 +242,7 @@ class AccountsController < ApplicationController
   end
 
   def update
+    redirect_url = params[:redirect_url].presence || admin_home_index_path
     @account.time_zone = params[:account][:time_zone]
     @account.ticket_display_id = params[:account][:ticket_display_id]
     params[:account][:main_portal_attributes][:updated_at] = Time.now
@@ -251,7 +252,7 @@ class AccountsController < ApplicationController
                                                     current_user.email, 
                                                     totango_activity(:helpdesk_rebranding))
       flash[:notice] = t(:'flash.account.update.success')
-      redirect_to admin_home_index_path
+      redirect_to redirect_url
     else
       render :action => 'edit'
     end
@@ -302,13 +303,20 @@ class AccountsController < ApplicationController
   def delete_logo
     current_account.main_portal.logo.destroy
     current_account.main_portal.touch
-    render :text => "success"
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.js { render :text => "success" }
+    end
   end
   
   def delete_fav
     current_account.main_portal.fav_icon.destroy
     current_account.main_portal.touch
-    render :text => "success"
+    
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.js { render :text => "success" }
+    end    
   end
 
   protected

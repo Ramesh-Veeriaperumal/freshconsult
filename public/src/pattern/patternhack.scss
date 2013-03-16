@@ -3,7 +3,7 @@ body{
   font-size:13px;
 }
 .lead {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   font-size: 21px;
   font-weight: 200;
   line-height: 30px;
@@ -15,6 +15,11 @@ small {
 
 strong {
   font-weight: bold;
+}
+
+.top-space-none{
+  margin-top:0;
+  padding-top:0;
 }
 
 .muted {
@@ -117,6 +122,45 @@ strong {
 
 /* This class overriding app-common css. */
 
+/* overriding buttons styles from Bootstrap v1.4 */
+.btn-group .btn {
+  float: none;
+}
+.btn-group.open {
+  overflow: visible;
+}
+.btn.dropdown-toggle {
+  overflow: visible;
+  &:after { 
+  display: none;
+  }
+
+  .caret {
+  margin: 6px 0 0;
+  }
+}
+.open .dropdown-toggle {
+  color: inherit;
+}
+
+.open > .dropdown-menu.right{
+
+  left: auto;
+  right: 0;
+
+  &:before {
+  right: 25px;
+  left: auto;
+  }
+
+  &:after {
+  right: 26px;
+  left: auto;
+  }
+}
+
+
+/*  End of Button overriding */
 .pagination{
   border-bottom:0 ;
   a{

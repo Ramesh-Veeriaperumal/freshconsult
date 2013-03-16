@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+	<%= render :partial => "layouts/shared/html" %>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<title>Portal preview mode</title>
+
+		<meta name="viewport" content="width=device-width">  
+		<link rel="shortcut icon" href="<%= current_portal.fav_icon_url %>" />		
+		<!-- <link href="/theme.css" media="screen" rel="stylesheet" type="text/css"> -->
+		<%= include_stylesheets :preview %>
+		<%= include_javascripts :preview %>
+	</head>
+	<body>
+		<%= yield %>
+	</body>
+</html>

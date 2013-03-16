@@ -1,0 +1,180 @@
+{% assign forum = topic.forum %}
+{% assign forum_category = forum.forum_category %}
+
+<section class="content main rounded-6 min-height-on-desktop">
+	{% if forum.type_name != 'announcement' %}
+		<b class="pull-right">{{ portal | link_to_start_topic }}</b>
+	{% endif %}
+	<div class="breadcrumb">
+		<a href="{{ portal.discussions_home_url }}">{% translate portal_pages.groups.discussions %}</a>
+		<a href="{{ forum_category.url }}">{{ forum_category.name }}</a>
+		<a href="{{ forum.url }}">{{ forum.name }}</a>
+	</div>
+	
+	<section class="topic-header clearfix">
+		{{ topic | topic_labels }}
+		<b class="page-stamp page-stamp-{{ forum.type_name }}">
+			<i class="icon-page-{{ forum.type_name }}"></i>
+		</b>
+		<h2 class="post-title heading">
+			{{ topic.title }}
+		</h2>
+		{% if portal.user %}
+			<div class="toolbar-actions btn-group" id="topic-toolbar">
+				<a href="#reply-to-post" class="btn btn-small" data-proxy-for="#new-post-form">Reply</a>
+				{{ topic | follow_topic_button }}
+				{{ topic | link_to_topic_edit }}				
+			</div>
+		{% endif %}
+	</section>
+
+	<div id="topic-comments">
+		{% assign first_post = topic.first_post %}
+		<section class="user-comment {% if first_post.user.is_agent %} comment-by-agent {% endif %}" id="post-{{first_post.id}}">
+			<div class="user-info">
+				{{ first_post.user | profile_image:'user-pointer-bottom', '40px', '40px' }}				
+				<div class="user-details">
+					<h4 class="user-name">{{ first_post.user.name }}</h4>
+					<div class="p-info">
+						started a topic {{ first_post.created_on | time_ago }}
+					</div>
+				</div>
+			</div>
+			<div class="p-content" id="post-{{first_post.id}}-description">
+				<div class="p-desc">
+					{{ first_post.body_html }}
+				</div>
+
+				{% snippet topic_vote %}
+
+				{% if first_post.attachments.size > 0 %}
+				<hr />
+				<div class="cs-g-c attachments" id="post-{{first_post.id}}-attachments">
+					{% for attachment in first_post.attachments %}
+						<div class="cs-g-3 attachment">
+							<img src="{{ attachment.thumbnail }}" 
+								 class="file-thumbnail {% if attachment.is_image? %} file-image {% endif %}"
+								 width="50px" height="50px"  />
+							<a href="{{ attachment.url }}" class="ellipsis file-name" target="_blank">
+								{{ attachment.filename }}
+							</a>
+							<div class="help-text file-size">
+								{{ attachment.size }}
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+				{% endif %}
+			</div>
+			<div class="p-content hide" id="post-{{first_post.id}}-edit">
+				<div class="loading-box"></div>
+			</div>
+		</section>
+
+		{% paginate topic.posts by 15 %}
+			{% for post in paginate.collection %}
+				{% if post.id != first_post.id %}
+				<section class="user-comment {% if post.user.is_agent %} comment-by-agent {% endif %}" id="post-{{post.id}}">
+					<div class="user-info">
+						{{ post.user | profile_image:'user-pointer-bottom', '40px', '40px' }}
+						<div class="user-details">
+							{{ post | post_actions }}
+							<h4 class="user-name">{{ post.user.name }}</h4>
+							<div class="p-info">
+								said {{ post.created_on | time_ago }}
+							</div>
+						</div>
+					</div>
+					<div class="p-content" id="post-{{post.id}}-description">
+						<div class="p-desc">
+							{% if post.answer? %}
+								<span class="label label-small label-answered pull-left">
+									Answer
+								</span>
+							{% endif %}
+							{{ post.body_html }}
+						</div>
+
+						{% if post.attachments.size > 0 %}
+						<hr />
+						<div class="cs-g-c attachments" id="post-{{post.id}}-attachments">
+							{% for attachment in post.attachments %}
+								<div class="cs-g-3 attachment">
+									<img src="{{ attachment.thumbnail }}" 
+										 class="file-thumbnail {% if attachment.is_image? %} file-image {% endif %}"
+										 width="50px" height="50px"  />
+									<a href="{{ attachment.url }}" class="ellipsis file-name" target="_blank">
+										{{ attachment.filename }}
+									</a>
+									<div class="help-text file-size">
+										{{ attachment.size }}
+									</div>
+								</div>
+							{% endfor %}
+						</div>
+						{% endif %}
+					</div>
+					<div class="p-content hide" id="post-{{post.id}}-edit">
+						<div class="loading-box"></div>
+					</div>
+				</section>
+				{% endif %}
+			{% endfor %}
+		{{ paginate | default_pagination }}
+	{% endpaginate %}
+	</div>
+
+	<hr class="content-divider" />
+
+	{% if topic.locked? %}
+		<section class="lead-small">
+			{% translate topic.comments_closed %} 
+		</section>
+	{% elsif portal.user %}
+		<section id="reply-to-post" class="user-comment">
+			<div class="user-info">
+				{{ portal.user | profile_image:'user-pointer-bottom', '40px', '40px' }}
+				<div class="user-details">						
+					<h4 class="user-name">{{ portal.user.name }}</h4>
+				</div>
+			</div>
+			<div class="p-content">
+				<input type="text" class="special span12" 
+						placeholder="Click here to add a comment" id="reply-form-proxy" 
+						data-proxy-for="#new-post-form" />
+				<section id="new-post-form" class="hide">
+					{% snippet topic_reply %}
+				</section>
+			</div>
+		</section>
+	{% else %}	
+		{{ portal | post_topic_in_portal }}
+	{% endif %}
+</section>
+
+{% if forum.total_topics > 1 %}
+<section class="sidebar content rounded-6 min-height-on-desktop">	
+	<div class="cs-g-c">
+		<section class="topic-list">
+			<div class="list-lead">
+			 	More topics in {{ forum.name }}
+			</div>
+			<ul>
+				{% assign topic_count = 10 %}
+				{% for o_topic in forum.topics limit:topic_count %}
+					{% if topic.id != o_topic.id %}
+					<li class="cs-g-3">
+						<div class="ellipsis">
+							<a href="{{o_topic.url}}" title="{{o_topic.title}}">{{o_topic.title}}</a>
+						</div>
+					</li>
+					{% endif %}
+				{% endfor %}
+			</ul>
+			{% if forum.total_topics > topic_count %}
+				<a href="{{forum.url}}" class="see-more">See all {{ forum.total_topics }} topics</a>
+			{% endif %}
+		</section>
+	</div>
+</section>
+{% endif %}

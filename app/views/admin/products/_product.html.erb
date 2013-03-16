@@ -1,60 +1,57 @@
-<li>
-  <div class="item_actions">
-    <%= link_to(t('edit'), edit_admin_product_path(product), :class => "button") %>
-    <%= link_to(t('delete'), admin_product_path(product), :method => 'delete', :confirm => t(".delete"), :class => "button" ) %>
-  </div>
-  <table>
-    <tr>
-      <td class="portal-logo">
-        <% if(product.portal_enabled?) %>
-          <%= image_tag((product.portal.logo.nil?) ? "/images/fillers/logo_blank.gif" : product.portal.logo.content.url(:logo), :class => "image_logo") %>
-          <div class="color_box">
-            <span class="color_item" style="background-color:<%=portal_pref(product.portal, :header_color)%>"></span>
-            <span class="color_item" style="background-color:<%=portal_pref(product.portal, :tab_color)%>"></span>
-            <span class="color_item" style="background-color:<%=portal_pref(product.portal, :bg_color)%>"></span>
-          </div>
-        <% else %>
-          <%= image_tag("/images/fillers/logo_blank.gif", :class => "image_logo") %>
-        <% end %>
-      </td>
-      <td class="portal-text">
-        <%= link_to(product.name, edit_admin_product_path(product), :class => "big-text") %>
-        <%product.email_configs.each do | email_config|%>
-  				<div class="channel-text">
-          	<%= email_config.reply_email %>
-  					<% if email_config.active? %>	
-  						<span class='icon email-active'></span>
-  					<% else %>
-  						<span class='icon email'></span>
-          		<span class="not-verified">
-            		<%= content_tag(:span, t(".email_not_verified"), :class => "inactive_email custom-tip-top", :title => t('email_configs.unverified_info1')) %>
-  							<%= link_to(t("email_configs.send_verification_email"), deliver_verification_admin_email_config_path(email_config), :class => "slim-button") %>                
-          		</span> 
-  					 <% end %>
-  				</div>	
-        <% end %>
- 				<div class="channel-text">
-					<% if(product.portal_enabled?) %>
-						<span class='icon url-active'></span>
-       			<%= link_to(product.portal.portal_url, "http://#{product.portal.portal_url}", { :target => "_blank" }) %>
-					<% else %>
-						<span class='icon url'></span>
-						<%= link_to("Enable Portal", edit_admin_product_path(product, :enable_portal => true), :class => "slim-button") %>
-					<% end %>
-				</div>
-				<% product.twitter_handles.each do |twitter_handle| %>
-				<div class="channel-text">				
-						<span class='icon twitter-active'></span>				
-						<%= link_to("@#{twitter_handle.screen_name}", edit_social_twitter_path(twitter_handle), :class => "", :title => "Edit Twitter Account @#{twitter_handle.screen_name}") %> 
-				</div>
- 			  <% end %>
-				<% product.facebook_pages.each do |facebook_page| %>
-				<div class="channel-text">				
-						<span class='icon facebook-active'></span>				
-						<%= link_to(facebook_page.page_name, edit_social_facebook_path(facebook_page), :class => "", :title => "Edit Facebook page #{facebook_page.page_name}") %> 
-				</div>
-				<% end %>
-      </td>
-    </tr>
-  </table>
-</li>
+<tr>
+  <td>
+    <%= image_tag (product.portal_enabled? && product.portal.logo) ? 
+        product.portal.logo.content.url(:logo) : "logo-preview.png", :class => "portal-logo" %>
+  </td>
+  <td class="portal-text">
+    <h4 class="title"><%= link_to product.name, edit_admin_product_path(product) %></h4>
+  </td>  
+  <td class="channel">
+    <div class="channel-text">
+      <% if(product.portal_enabled?) %>
+        <span class='icon product-url'></span>
+        <%= link_to(product.portal.portal_url, "http://#{product.portal.portal_url}", { :target => "_blank" }) %>
+      <% end %>
+    </div>
+    <% product.email_configs.each do | email_config| %>
+			<div class="channel-text">
+      	<%= email_config.reply_email %>
+				<% if email_config.active? %>	
+					<span class='icon email-active'></span>
+				<% else %>
+					<span class='icon product-email'></span>
+      		<div class="not-verified">
+        		<%= content_tag(:span, t(".email_not_verified"), :class => "alert-text", 
+              :title => t('email_configs.unverified_info1')) %> - 
+						<%= link_to(t("email_configs.send_verification_email"), 
+              deliver_verification_admin_email_config_path(email_config)) %>
+      		</div> 
+				 <% end %>
+			</div>	
+    <% end %>	
+    <% product.twitter_handles.each do |twitter_handle| %>
+        <div class="channel-text">        
+          <span class='icon product-twitter'></span>        
+          <%= link_to("@#{twitter_handle.screen_name}", edit_social_twitter_path(twitter_handle),          
+            :title => t(".edit_twitter_account", :screen_name => twitter_handle.screen_name )) %> 
+        </div>
+      <% end %>
+      <% product.facebook_pages.each do |facebook_page| %>
+        <div class="channel-text">        
+          <span class='icon product-facebook'></span>       
+          <%= link_to(facebook_page.page_name, edit_social_facebook_path(facebook_page),          
+            :title => t(".edit_facebook_page", :page_name => facebook_page.page_name )) %> 
+        </div>
+      <% end %>
+  </td>
+  <td>
+    <% if(product.portal_enabled?) %>
+      <%= link_to t(".customize_portal"), admin_portal_template_path(product.portal), :class => "btn btn-mini" %>
+    <% else %>
+      <%= link_to t(".enable_portal"), edit_admin_product_path(product, :enable_portal => true), :class => "btn btn-mini" %>
+    <% end %>
+    <%= link_to(t('edit'), edit_admin_product_path(product), :class => "btn btn-mini") %>
+    <%= link_to('<i class="icon-trash"></i>', admin_product_path(product), :method => 'delete', 
+      :confirm => t(".delete"), :class => "btn btn-mini" ) %>
+  </td>
+</tr>

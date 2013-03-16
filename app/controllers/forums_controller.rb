@@ -5,6 +5,7 @@ class ForumsController < ApplicationController
 
   rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
  
+  before_filter :portal_check
   before_filter :except => [:index, :show] do |c| 
     c.requires_permission :manage_forums
   end
@@ -134,4 +135,12 @@ class ForumsController < ApplicationController
     end
 
     alias authorized? admin?
+
+  private
+    def portal_check
+      if current_user.nil? || current_user.customer?
+        @forum = params[:id] ? current_account.portal_forums.find(params[:id]) : nil
+        return redirect_to support_discussions_forum_path(@forum)
+      end
+    end
 end

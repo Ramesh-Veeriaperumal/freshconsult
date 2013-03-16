@@ -26,6 +26,10 @@ class Helpdesk::NestedTicketField < ActiveRecord::Base
     false
   end
 
+  def field_type
+    "nested_child"
+  end
+
   def dropdown_selected(dropdown_values, selected_value)
       selected_value = dropdown_values.select { |i| i[1] == selected_value }.first
       (selected_value && !selected_value[0].blank?) ?  selected_value[0] : ""

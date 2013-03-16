@@ -1,0 +1,6 @@
+show_ajax_flash page
+@active_tab = params[:portal_tab].to_sym
+_partial = @active_tab.eql?(:preferences) ? "/admin/shared/portal_simple" : @active_tab.to_s
+page.replace_html @active_tab.to_s, :partial => _partial, 
+		:object => @portal_template,
+		:locals => { :type => :template, :active_tab => @active_tab }

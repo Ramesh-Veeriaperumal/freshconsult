@@ -23,8 +23,11 @@ include RedisKeys
       redirect_to current_account.sso_options[:login_url]
     else
       @user_session = current_account.user_sessions.new
-      render :partial => "shared/login" if mobile?
+      # !PORTALCSS move this to another route called agent login
+      # render :partial => "shared/login" if mobile?
     end
+    
+    redirect_to support_login_path
   end
  
   def sso_login
@@ -131,7 +134,7 @@ include RedisKeys
         flash[:error] = I18n.t("mobile.home.sign_in_error")
         redirect_to root_url
       else 
-        render :action => :new
+        redirect_to support_login_path
       end
     end
   end

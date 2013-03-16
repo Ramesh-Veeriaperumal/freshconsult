@@ -36,45 +36,34 @@ class Workers::Sla
  end
  
  def self.run account
+    sla_default = account.sla_policies.default.first
+    sla_rule_based = account.sla_policies.rule_based.active.inject({}) { |sp_hash, sp| 
+                                                                      sp_hash[sp.id] = sp; sp_hash}
+
     overdue_tickets = account.tickets.visible.find(:all, 
-                                                    :readonly => false, 
-                                                    :conditions =>['due_by <=? AND isescalated=? AND status IN (?)',
-                                                     Time.zone.now.to_s(:db),false, Helpdesk::TicketStatus::donot_stop_sla_statuses(account)] )
+                            :readonly => false, 
+                            :conditions =>['due_by <=? AND isescalated=? AND status IN (?)',
+                             Time.zone.now.to_s(:db),false, 
+                             Helpdesk::TicketStatus::donot_stop_sla_statuses(account)] )
     overdue_tickets.each do |ticket|  
-      sla_policy_id = nil
-      unless ticket.requester.customer.nil?     
-        sla_policy_id = ticket.requester.customer.sla_policy_id     
-      end      
-      sla_policy_id = Helpdesk::SlaPolicy.find_by_account_id_and_is_default(ticket.account_id, true) if sla_policy_id.nil?     
-      sla_detail = Helpdesk::SlaDetail.find(:first , 
-                                            :conditions =>{:sla_policy_id =>sla_policy_id, 
-                                                           :priority =>ticket.priority})
-      unless sla_detail.escalateto.nil?
-        agent = User.find(sla_detail.escalateto)   
-        send_email(ticket, agent, EmailNotification::RESOLUTION_TIME_SLA_VIOLATION)
-      end
-      ticket.update_attribute(:isescalated , true)
+      ticket.save if ticket.sla_policy_id.blank?
+      sla_policy = sla_rule_based[ticket.sla_policy_id] || sla_default
+      sla_policy.escalate_resolution_overdue ticket #escalate_rosultion_overdue
     end
     
-    froverdue_tickets = account.tickets.visible.find(:all, :joins => "inner join helpdesk_ticket_states 
-                                                     on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
-                                                     and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id" , :readonly => false , 
-                        :conditions =>['frDueBy <=? AND fr_escalated=? AND status IN (?) AND 
-                          helpdesk_ticket_states.first_response_time IS ?', 
-                          Time.zone.now.to_s(:db),false,Helpdesk::TicketStatus::donot_stop_sla_statuses(account),nil] )
+    froverdue_tickets = account.tickets.visible.find(:all, 
+                            :joins => "inner join helpdesk_ticket_states 
+                                     on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
+                                     and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id" , 
+                            :readonly => false , 
+                            :conditions =>['frDueBy <=? AND fr_escalated=? AND status IN (?) AND 
+                                                helpdesk_ticket_states.first_response_time IS ?', 
+                          Time.zone.now.to_s(:db),false,
+                          Helpdesk::TicketStatus::donot_stop_sla_statuses(account),nil] )
     froverdue_tickets.each do |fr_ticket|
-      fr_sla_policy_id = nil
-      unless fr_ticket.requester.customer.nil?     
-        fr_sla_policy_id = fr_ticket.requester.customer.sla_policy_id     
-      end      
-      fr_sla_policy_id = Helpdesk::SlaPolicy.find_by_account_id_and_is_default(fr_ticket.account_id, true) if fr_sla_policy_id.nil?     
-      fr_sla_detail = Helpdesk::SlaDetail.find(:first , :conditions =>{:sla_policy_id =>fr_sla_policy_id, 
-                           :priority =>fr_ticket.priority})  
-      unless fr_sla_detail.escalateto.nil?
-        fr_agent = User.find(fr_sla_detail.escalateto)
-        send_email(fr_ticket, fr_agent, EmailNotification::FIRST_RESPONSE_SLA_VIOLATION)
-      end
-      fr_ticket.update_attribute(:fr_escalated , true)   
+      fr_ticket.save if fr_ticket.sla_policy_id.blank?
+      fr_sla_policy = sla_rule_based[fr_ticket.sla_policy_id] || sla_default
+      fr_sla_policy.escalate_response_overdue fr_ticket
       #If there is no email-id /agent still escalted will show as true. This is to avoid huge sending if 
       # somebody changes the config.
     end

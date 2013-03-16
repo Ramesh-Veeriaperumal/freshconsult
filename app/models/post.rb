@@ -44,8 +44,17 @@ class Post < ActiveRecord::Base
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) 
   end
 
+  def to_liquid
+    forum_post_drop ||= Forum::PostDrop.new self
+  end
+
   def to_s
     topic.title
+  end
+
+  # Added for portal customisation drop
+  def self.filter(_per_page = self.per_page, _page = 1)
+    paginate :per_page => _per_page, :page => _page
   end
   
 end

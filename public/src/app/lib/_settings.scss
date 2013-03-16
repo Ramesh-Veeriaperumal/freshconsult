@@ -15,7 +15,7 @@ $blueprint-liquid-grid-push-pull: -($blueprint-liquid-grid-margin + $blueprint-l
 $header_color:#2f3733;
 $tab_color:#7cb537;
 $background:#efefef;
-$default_txt_color:#333;
+$default_txt_color:#000;
 
 $sidebar-color:#ffffff;
 $sidebar-width:310px;
@@ -55,15 +55,18 @@ $grid-padding: 10px;
 
 $container-style: magic;
 
-$media-mobile: 		0 30em; 
+$media-mobile: 		0 30em;
 $break-tablet:		45em 12;
 $break-desktop:		60em 12;
 $break-large:		75em 16;
 
 $container-width: 	1140px; 
 
+// Sprite sheet creation
+// --------------------------------------------------
+
 /* Sprite variables used inside the sheet */
 $symbol: sprite-map("symbols/*.png");
 $ticketicon: sprite-map("ticket-icon/*.png");
 $icons: sprite-map("icons/*.png");
- 
+

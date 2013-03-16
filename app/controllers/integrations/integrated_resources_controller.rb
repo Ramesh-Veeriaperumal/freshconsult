@@ -21,6 +21,21 @@ class Integrations::IntegratedResourcesController < ApplicationController
     end
   end
 
+  def update
+    Rails.logger.debug "Editing integrated resource "+params.inspect
+    begin
+      newIntegratedResource = Integrations::IntegratedResource.updateResource(params)
+      if newIntegratedResource.blank?
+        render :json => {:status=>:error}
+      else
+        render :json => newIntegratedResource
+      end
+    rescue Exception => msg
+      puts "Something went wrong while updating an integrated resource ( #{msg})"
+      render :json => {:status=>:error}
+    end
+  end
+
   def delete
     Rails.logger.debug "Deleting integrated resource "+params.inspect
     begin

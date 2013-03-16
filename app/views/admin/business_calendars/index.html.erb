@@ -60,10 +60,8 @@
 
         _parent.find(".time_validate").data("validtime", _condition);
 
-       // console.log(_condition);
-
 		return _condition ?
-				calculate_duration(_time_array) :  "<a href='#' class='error'></a>Please enter a valid time";
+				calculate_duration(_time_array) :  "<a href='#' class='error'></a><%= t('business_hours.valid_time') %>"
 				
 	}
 
@@ -248,7 +246,7 @@
 													{ :selected=> beginning_of_workday }, { :class => "morning_time", :id => "time_morning" } %>
 											<%= select "morning", "range_#{cal_index.to_s}", %w[am pm], 
 													{ :selected => beginning_of_workday_range }, { :class => "morning_time", :id => "morning_range" } %>
-											<span>to </span>
+											<span><%= t('business_hours.to') %></span>
 											<%= select "time","evening_#{cal_index.to_s}", BusinessCalendar::TIME_LIST, 
 													{ :selected => end_of_workday}, { :class => "evening_time", :id => "time_evening" } %> 
 											<%= select "evening", "range_#{cal_index.to_s}", %w[am pm], 

@@ -8,6 +8,10 @@ class Helpdesk::Dropbox < ActiveRecord::Base
 	
 	before_save :set_account_id
 
+	def to_liquid
+	    @helpdesk_dropbox_drop ||= Helpdesk::DropboxDrop.new self
+	end
+
 	private
 
 	def set_account_id

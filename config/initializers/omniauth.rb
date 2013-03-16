@@ -7,8 +7,22 @@ require 'omniauth/strategies/nimble'
 ActionController::Dispatcher.middleware.use OmniAuth::Builder do
   oauth_keys = Integrations::OauthHelper::get_oauth_keys
   oauth_keys.map { |oauth_provider, key_hash|
-    provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"]
+  if key_hash["options"].blank?
+	  provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"]
+	else
+	  provider oauth_provider, key_hash["consumer_token"], key_hash["consumer_secret"], key_hash["options"]
+	end
   }
+
+  # OmniAuth.origin on failure callback; so get it via params
+  # https://github.com/intridea/omniauth/issues/569
+  on_failure do |env|
+    message_key = env['omniauth.error.type']
+    origin = env['omniauth.origin'].split('?').last
+    new_path = "#{env['SCRIPT_NAME']}#{OmniAuth.config.path_prefix}/failure?message=#{message_key}&origin=#{URI.escape(origin)}"
+    [302, {'Location' => new_path, 'Content-Type'=> 'text/html'}, []]
+  end
+  
   provider :open_id,  :store => OpenID::Store::Filesystem.new('./omnitmp')
 end
 

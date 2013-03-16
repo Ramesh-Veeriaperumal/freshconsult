@@ -1,0 +1,76 @@
+<section class="main content rounded-6 min-height-on-desktop">
+	<div class="breadcrumb">
+		<a href="{{ portal.solutions_home_url }}">Solution home</a>
+		<a href="{{ article.category.url }}">{{ article.category.name }}</a>
+		<a href="{{ article.folder.url }}">{{ article.folder.name }}</a>
+	</div>
+	<b class="page-stamp page-stamp-article">
+		<b class="icon-page-article"></b>
+	</b>
+
+	<h2 class="heading">{{ article.title }}</h2>
+	<p>Modified on: {{ article.modified_on | short_day_with_time }}</p>
+
+	<hr />
+	{% comment %}
+	<div>
+		{% for tag in article.tags %}
+			<span class="label label-info">{{tag.name}}</span>
+		{% endfor %}
+	</div>
+	{% endcomment %}
+
+	<article id="article-body">
+		{{ article.body }}
+	</article>
+
+	<hr />
+	
+	{% if article.attachments.size > 1  %}
+	<div class="cs-g-c attachments" id="article-attachments">
+		{% for attachment in article.attachments %}
+			<div class="cs-g-3 attachment">
+				<img src="{{ attachment.thumbnail }}" class="file-thumbnail {% if attachment.is_image? %} file-image {% endif %} " />
+				<a href="{{ attachment.url }}" class="ellipsis file-name" target="_blank">{{ attachment.filename }}</a>
+				<p class="help-text file-size">({{ attachment.size }})</p>
+			</div>
+		{% endfor %}
+	</div>
+	<hr />
+	{% endif %}
+	
+	<p class="article-vote" id="voting-container">
+		{% translate feedback.title %}
+		<a href="{{ article.thumbs_up_url }}" class="vote-up" 
+			data-remote="true" data-method="put" data-update="#voting-container" 
+			data-update-with-message="{% translate feedback.up_vote_thank_you_message %}">
+			{% translate feedback.upvote %}
+		</a>
+		<a href="{{ article.thumbs_down_url }}" class="vote-down" 
+			data-remote="true" data-method="put" data-update="#vote-feedback-form"
+			data-hide-dom="#voting-container" data-show-dom="#vote-feedback-container">
+			{% translate feedback.downvote %}
+		</a>
+	</p>
+
+	<div class="hide" id="vote-feedback-container">
+		<div class="lead">{% translate feedback.down_vote_form_title %}</div>
+		<div id="vote-feedback-form">
+			<div class="loading-box"></div>
+		</div>
+	</div>	
+</section>
+
+{% if article.folder.articles_count > 1 %}
+<section class="sidebar content rounded-6">	
+	<div class="cs-g-c">
+		<section class="article-list">
+			<h3 class="list-lead">
+				More articles in
+				<span class="folder-name">{{ article.folder.name }}</span>
+			</h3>
+			{{ article.folder | article_list: 10, article }}
+		</section>
+	</div>
+</section>
+{% endif %}
