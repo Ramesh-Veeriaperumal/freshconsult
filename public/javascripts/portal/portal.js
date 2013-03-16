@@ -22,7 +22,7 @@ jQuery.noConflict()
 			})
 		
 		// Remote ajax for links
-		$("a[data-remote]").live("click", function(ev){
+		$(".a-link[data-remote], a[data-remote]").live("click", function(ev){
 			ev.preventDefault()
 
 			var _o_data = $(this).data(),
@@ -42,7 +42,7 @@ jQuery.noConflict()
 
 				$.ajax({
 					type: _o_data.type || 'POST',
-					url: this.href,
+					url: this.href || _o_data.href,
 					data: _post_data,
 					dataType: _o_data.responseType || "html",
 					success: function(data){		

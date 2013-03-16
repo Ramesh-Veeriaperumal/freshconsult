@@ -128,7 +128,7 @@
 
 	{% if topic.locked? %}
 		<section class="lead-small">
-			{% translate topic.comments_closed %} 
+			{% translate portal.topic.comments_closed %} 
 		</section>
 	{% elsif portal.user %}
 		<section id="reply-to-post" class="user-comment">

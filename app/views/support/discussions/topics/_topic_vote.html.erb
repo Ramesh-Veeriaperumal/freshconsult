@@ -17,10 +17,16 @@
 		<% if(t_likes > 0) %>		
 			<span class="lead-small" id="topic-voted-information">
 				<%= t_prefix %> 
-					<%= link_to t_middle, users_voted_support_discussions_topic_path(@topic), 
-							"data-target" => "#users-voted", :rel => "freshdialog", 
-							"data-width" => "300", "data-template-footer" => "", 
-							:title => t("portal.topic_vote.#{@forum.type_symbol}_users_voted_title") if t_middle.present? %>
+					<% if t_middle.present? %>
+						<% if current_user %>
+							<%= link_to t_middle, users_voted_support_discussions_topic_path(@topic), 
+									"data-target" => "#users-voted", :rel => "freshdialog", 
+									"data-width" => "300", "data-template-footer" => "", 
+									:title => t("portal.topic_vote.#{@forum.type_symbol}_users_voted_title") %>
+						<% else %>
+							<%= t_middle %>
+						<% end %>
+					<% end %>
 				<%= t_suffix %>
 			</span>
 		<% end %>
