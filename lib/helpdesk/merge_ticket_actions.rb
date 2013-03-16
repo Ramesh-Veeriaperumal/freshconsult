@@ -58,7 +58,7 @@ module Helpdesk::MergeTicketActions
 			if @target_ticket.cc_email.blank?
 				@target_ticket.cc_email = {:cc_emails => cc_email_array.uniq, :fwd_emails => []}
 			else	
-				cc_email_array += @target_ticket.cc_email[:cc_emails] 
+				cc_email_array += get_cc_email_from_hash(@target_ticket)
 				@target_ticket.cc_email[:cc_emails] = validate_emails(cc_email_array , @target_ticket)
 			end
 			@target_ticket.save  

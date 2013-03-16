@@ -31,19 +31,17 @@
     	});
 	}); 
 <% end %>
-<div class="rebrand-page">
-<div class="row-fluid">
-	<h1 class="lead span6"><%=t('account.rebrand')%></h1>
-	<div class="span6">
-		<%= link_to "Customize portal >", admin_portal_template_path( @account.main_portal ), 
-								:class => "btn btn-bold pull-right" %> 
-	</div>
-</div>
-<% form_for :account, @account, :url => { :action => 'update' }, 
+<div id="admin-account-rebraning-page" class="rebrand-page">
+	<% form_for :account, @account, :url => { :action => 'update' }, 
 									:html => { :multipart => true ,
 											   :method => :put, 
 											   "data-rebrand-form" => true, 
 											   :id => "edit_form", :class => "form-horizontal"  } do |f| %>
+
+	<%= link_to "Customize portal >", admin_portal_template_path( @account.main_portal ), 
+					:rel => "customize-portal", :class => "btn btn-bold pull-right" %>
+	<h1 class="lead"><%=t('account.rebrand')%></h1>
+
 	<%= f.error_messages %>
 	<div class="row-fluid">
 		<% f.fields_for :main_portal do |portal| %>
@@ -163,21 +161,21 @@
 			    <div class="control-group">
 					<label class="control-label">Helpdesk Phone</label>
 					<div class="controls">
-						<label class="overlabel" for="contact_info_text">Contact us @ 888 888 888</label>
+						<label class="overlabel" for="contact_info_text">eg: +1 (877) 485-0317</label>
 						<input name="account[main_portal_attributes][preferences][contact_info]" id="contact_info_text" value="<%=portal_pref(@account.main_portal, :contact_info) %>" class="text auto" size="50" />
 					</div>
 				</div>
 				<div class="control-group">
 					<label class="control-label">Portal customization</label>
 					<div class="controls">
-						<p>
-							Your portal was last published
-							<%= distance_of_time_in_words_to_now(@account.main_portal.template.updated_at) %>
-							ago
-						</p>
-						<br />
 						<%= link_to "Customize portal >", admin_portal_template_path( @account.main_portal ), 
 							:class => "btn btn-bold", :rel => "customize-portal" %> 
+						
+						<span>
+							Portal was last published
+							<%= distance_of_time_in_words_to_now(@account.main_portal.template.updated_at) %>
+							ago
+						</span>
 					</div>
 				</div>
 			</div>
