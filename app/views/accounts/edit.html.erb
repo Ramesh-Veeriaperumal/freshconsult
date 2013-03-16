@@ -31,19 +31,17 @@
     	});
 	}); 
 <% end %>
-<div class="rebrand-page">
-<div class="row-fluid">
-	<h1 class="lead span6"><%=t('account.rebrand')%></h1>
-	<div class="span6">
-		<%= link_to "Customize portal >", admin_portal_template_path( @account.main_portal ), 
-								:class => "btn btn-bold pull-right" %> 
-	</div>
-</div>
-<% form_for :account, @account, :url => { :action => 'update' }, 
+<div id="admin-account-rebraning-page" class="rebrand-page">
+	<% form_for :account, @account, :url => { :action => 'update' }, 
 									:html => { :multipart => true ,
 											   :method => :put, 
 											   "data-rebrand-form" => true, 
 											   :id => "edit_form", :class => "form-horizontal"  } do |f| %>
+
+	<%= link_to "Customize portal >", admin_portal_template_path( @account.main_portal ), 
+					:rel => "customize-portal", :class => "btn btn-bold pull-right" %>
+	<h1 class="lead"><%=t('account.rebrand')%></h1>
+
 	<%= f.error_messages %>
 	<div class="row-fluid">
 		<% f.fields_for :main_portal do |portal| %>
