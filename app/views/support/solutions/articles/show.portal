@@ -26,7 +26,7 @@
 
 	<hr />
 	
-	{% if article.attachments.size > 1  %}
+	{% if article.attachments.size > 0  %}
 	<div class="cs-g-c attachments" id="article-attachments">
 		{% for attachment in article.attachments %}
 			<div class="cs-g-3 attachment">
@@ -61,7 +61,7 @@
 	</div>	
 </section>
 
-{% if article.folder.articles_count > 1 %}
+{% if article.folder.articles_count > 0 %}
 <section class="sidebar content rounded-6">	
 	<div class="cs-g-c">
 		<section class="article-list">
