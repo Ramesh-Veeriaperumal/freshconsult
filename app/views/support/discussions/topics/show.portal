@@ -152,7 +152,7 @@
 	{% endif %}
 </section>
 
-{% if forum.total_topics > 1 %}
+{% if forum.total_topics > 0 %}
 <section class="sidebar content rounded-6 min-height-on-desktop">	
 	<div class="cs-g-c">
 		<section class="topic-list">
