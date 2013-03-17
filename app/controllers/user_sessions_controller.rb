@@ -20,7 +20,7 @@ include RedisKeys
   
   def new
     if current_account.sso_enabled? and (request.request_uri != "/login/normal") 
-      redirect_to current_account.sso_options[:login_url]
+      return redirect_to current_account.sso_options[:login_url]
     else
       @user_session = current_account.user_sessions.new
       # !PORTALCSS move this to another route called agent login
