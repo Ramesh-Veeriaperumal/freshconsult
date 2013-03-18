@@ -26,7 +26,7 @@ class Helpdesk::MergeTicketsController < ApplicationController
 		items = (params[:key] == "display_id") ? scope.send( params[:search_method], params[:search_string] ) :
 																						merge_sort(scope.send( params[:search_method], params[:search_string] ))
 		r = {:results => items.map{|i| {
-					:display_id => i.display_id, :subject => i.subject, 
+					:display_id => i.display_id, :subject => i.subject, :title => h(i.subject),
 					:searchKey => (params[:key] == 'requester') ? i[:requester_name] : i.send(params[:key]).to_s, 
 				 	:info => t("ticket.merge_ticket_list_status_"+i.ticket_states.current_state, 
 						:username => "<span class='muted'>#{( (params[:key] == 'requester') ? i[:requester_name] : i.requester )}</span>", 

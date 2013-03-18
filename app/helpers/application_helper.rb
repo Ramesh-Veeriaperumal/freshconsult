@@ -11,6 +11,18 @@ module ApplicationHelper
   require "twitter"
   
   ASSETIMAGE = { :help => "/images/helpimages" }
+
+  def open_html_tag
+    html_conditions = [ ["lt IE 7", "ie6"],
+                        ["IE 7", "ie7"],
+                        ["IE 8", "ie8"],
+                        ["IE 9", "ie9"],
+                        ["(gt IE 9)|!(IE)", "", true]]
+
+    html_conditions.map { |h| %( 
+        <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{ 
+          current_portal.language }">#{h[2] ? '<!--' : ''}<![endif]--> ) }
+  end
   
   def format_float_value(val)
     if !(val.is_a? Fixnum)
@@ -54,7 +66,7 @@ module ApplicationHelper
   end
   
   def show_flash
-    [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
+    @show_flash = [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
   end
   
   def show_admin_flash
@@ -66,7 +78,7 @@ module ApplicationHelper
       @current_announcements ||= SubscriptionAnnouncement.current_announcements(session[:announcement_hide_time])  
       render :partial => "/shared/announcement", :object => @current_announcements unless @current_announcements.blank?
     end     
-  end         
+  end
 
   def page_title
     portal_name = h(current_portal.portal_name) + " : "
@@ -94,11 +106,23 @@ module ApplicationHelper
   end
   
   def show_ajax_flash(page)
-    page.replace_html :noticeajax, flash[:notice]
+    page.replace_html :noticeajax, ([:notice, :warning, :error].collect {|type| content_tag('div', flash[type])})
     page << "$('noticeajax').show()"
     page << "closeableFlash('#noticeajax')"
     flash.discard
   end
+
+  def show_growl_flash(page)
+    [:notice, :warning, :error].each do |type|
+      if flash[type].present?      
+        page << "jQuery.gritter.add({ text: '#{flash[type]}' 
+              , fade: true, speed: 'fast', position: 'top-right', class_name: 'flash-#{type}' });"
+      end
+    end
+    flash.discard
+  end
+
+  
 
   def each_or_message(partial, collection, message, locals = {})
     render(:partial => partial, :collection => collection, :locals => locals) || content_tag(:div, message, :class => "list-noinfo")
@@ -138,7 +162,25 @@ module ApplicationHelper
   def fd_menu_link(text, url, is_active)
     text << "<span class='icon ticksymbol'></span>" if is_active
     class_name = is_active ? "active" : ""
-    link_to(text, url, :class => class_name)
+    link_to(text, url, :class => class_name, :tabindex => "-1")
+  end
+
+  def dropdown_menu(list, options = {})
+    return if list.blank?
+    output = ""
+    output << %(<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">)
+    
+    list.each do |item|
+      unless item.blank?
+        if item[0] == :divider
+          output << %(<li class="divider"></li>)
+        else
+          output << %(<li class="#{item[2] ? "active" : ""}">#{ link_to item[0], item[1], options, "tabindex" => "-1" }</li>)
+        end
+      end
+    end
+    output << %(</ul>)
+    output.html_safe
   end
 
   def navigation_tabs
@@ -499,7 +541,7 @@ module ApplicationHelper
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
     element_class  += " required_closure" if (field.required_for_closure && !field.required)
-    field_label    += '<span class="required_start">*</span>' if required
+    field_label    += '<span class="required_star">*</span>' if required
     field_label    += "#{add_requester_field}" if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
     field_name      = (field_name.blank?) ? field.field_name : field_name
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
@@ -605,7 +647,7 @@ module ApplicationHelper
       element = label + label_tag(field_name, field_value, :class => "value_label")
     end
     
-    content_tag :li, element unless display_tag?(element,field,field_value)
+    element unless display_tag?(element,field,field_value)
   end
 
   def display_tag?(element, field, field_value)
@@ -639,6 +681,24 @@ module ApplicationHelper
     nodejs_port = Rails.env.development? ? 5000 : (current_account.ssl_enabled ? 2050 : 1050)      
     "#{nodejs_protocol}://#{request.host}:#{nodejs_port}/#{namespace}"
   end  
+
+  def assumed_identity_message
+    _output = []
+    if current_user && is_assumed_user?
+      _output << %( <div class="alert alert-assume-agent alert-solid"> )
+      _output << %( #{t('header.assumed_text')} <b> #{current_user.name}</b> - )
+      _output << link_to(t('revert_identity_link_msg'), revert_identity_users_path, :class => "link")
+      _output << %( </div> )
+    end
+    _output.join("")
+  end
+
+  def get_logo
+    unless @account.main_portal.logo.blank?
+      return @account.main_portal.logo.content.url(:logo)
+    end
+    return "/images/logo.png?721013"
+  end
    
   private
     def solutions_tab
@@ -677,7 +737,7 @@ module ApplicationHelper
   end
 
   def tour_button(text, tour_id)
-    link_to (content_tag( :div, text, :class=> 'guided-tour-start') , '#', 
+    link_to(content_tag(:div, text, :class=> 'guided-tour-start') , '#', 
               :rel => 'guided-tour',
               "data-tour-id" => tour_id)
   end

@@ -16,7 +16,8 @@ module Helpdesk::TicketModelExtension
       {:label => "Created Time", :value => "created_at", :selected => false},
       {:label => "Due by Time", :value => "due_by", :selected => false},
       {:label => "Resolved Time", :value => "resolved_at", :selected => false},
-      {:label => "Closed Time", :value => "closed_at", :selected => false}
+      {:label => "Closed Time", :value => "closed_at", :selected => false},
+      {:label => "Last Updated Time", :value => "updated_at", :selected => false}
      ]
    end
 

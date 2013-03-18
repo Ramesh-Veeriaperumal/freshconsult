@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
 
   layout Proc.new { |controller| controller.request.headers['X-PJAX'] ? 'maincontent' : 'application' }
   
-  before_filter :reset_current_account, :redirect_to_mobile_url
+  before_filter :reset_current_account, :redactor_form_builder, :redirect_to_mobile_url
   before_filter :check_account_state, :except => [:show,:index]
   before_filter :set_default_locale
   before_filter :set_time_zone, :check_day_pass_usage 
@@ -47,7 +47,7 @@ class ApplicationController < ActionController::Base
         flash[:notice] = t('suspended_plan_info')
         return redirect_to(plan_subscription_url)
       else
-        flash[:notice] = t('suspended_plan_admin_info',:email => current_account.account_admin.email) 
+        flash[:notice] = t('suspended_plan_admin_info', :email => current_account.admin_email) 
         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
       end
      end
@@ -129,6 +129,10 @@ class ApplicationController < ActionController::Base
 
     def revoke_logging
       logger.level = @bak_log_level 
+    end
+  private
+    def redactor_form_builder
+      ActionView::Base.default_form_builder = FormBuilders::RedactorBuilder
     end
 end
 

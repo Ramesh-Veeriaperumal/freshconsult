@@ -1,9 +1,25 @@
 class Workers::Supervisor
   extend Resque::AroundPerform
-  @queue = 'supervisor_worker'
+  
 
+  @queue = 'supervisor_worker'
+  
+  class PremiumSupervisor
+    extend Resque::AroundPerform
+    @queue = 'premium_supervisor_worker'
+
+    def self.perform(args)
+     Workers::Supervisor.run
+    end
+  end
 
   def self.perform(args)
+    run
+  end
+
+ 
+
+  def self.run
     account = Account.current
     SeamlessDatabasePool.use_persistent_read_connection do
       start_time = Time.now.utc

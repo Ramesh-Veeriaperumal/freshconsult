@@ -3,10 +3,14 @@ class Helpdesk::TicketDrop < BaseDrop
 	include ActionController::UrlWriter
 	include TicketConstants
 
-	liquid_attributes << :subject << :requester << :group << :ticket_type
+	liquid_attributes << :requester << :group << :ticket_type
 
 	def initialize(source)
 		super source
+	end
+
+	def subject
+		h(@source.subject)
 	end
 
 	def id
@@ -29,8 +33,24 @@ class Helpdesk::TicketDrop < BaseDrop
 		@source.description
 	end
 
+	def description_html
+		@source.description_html
+	end
+
+	def attachments
+	    @source.attachments
+	end
+
+	def dropboxes
+	    @source.dropboxes if @source.dropboxes.present?
+	end
+
+	def requester
+		@source.requester.presence
+	end
+
 	def agent
-		@source.responder
+		@source.responder.presence
 	end
 
 	def status
@@ -42,11 +62,15 @@ class Helpdesk::TicketDrop < BaseDrop
 	end
 
 	def priority
-		PRIORITY_NAMES_BY_KEY[@source.priority]
+		TicketConstants.priority_list[@source.priority]
 	end
 
 	def source
-		SOURCE_NAMES_BY_KEY[@source.source]
+		TicketConstants.source_list[@source.source]
+	end
+
+	def source_name
+		@source.source_name
 	end
 
 	def tags
@@ -91,14 +115,43 @@ class Helpdesk::TicketDrop < BaseDrop
 		@source.liquidize_comment(@source.latest_public_comment)
 	end
 
+	def public_comments
+		# source.notes.public.exclude_source('meta').newest_first
+		@source.public_notes.exclude_source('meta')
+	end
+
 	def satisfaction_survey		
 		Survey.satisfaction_survey_html(@source)
 	end
 
 	def in_user_time_zone(time)
-	  return time unless User.current
-	  user_time_zone = User.current.time_zone 
-	  time.in_time_zone(user_time_zone)
+		return time unless portal_user
+		user_time_zone = portal_user.time_zone 
+		time.in_time_zone(user_time_zone)
+	end
+
+	def created_on
+		@source.created_at
+	end
+
+	def modified_on
+		@source.updated_at
+	end
+
+	def status_changed_on
+		@source.ticket_states.status_updated_at
+	end
+
+	def freshness
+		@source.freshness
+	end
+
+	def close_ticket_url
+		@close_ticket_url ||= close_support_ticket_path(@source, :host => @source.portal_host, :protocol=> @source.url_protocol)
+	end
+
+	def closed?
+		@source.closed?
 	end
 
 	def before_method(method)

@@ -48,6 +48,9 @@ class Subscription < ActiveRecord::Base
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
   
+  delegate :contact_info, :admin_first_name, :admin_last_name, :admin_email, :admin_phone, 
+            :invoice_emails, :to => "account.account_configuration"
+
   # renewal_period is the number of months to bill at a time
   # default is 1
   validates_numericality_of :renewal_period, :only_integer => true, :greater_than => 0

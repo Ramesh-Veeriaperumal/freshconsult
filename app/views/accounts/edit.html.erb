@@ -1,12 +1,11 @@
+<%= include_stylesheets :pattern %>
+<%= include_javascripts :pattern %>
 <% content_for :sidebar do %>
 <%= render :partial => "helpnote" %>
 <% end %>
-
 <% content_for :totango do %>
     <%= render :partial => "layouts/totango" %>
 <% end %>
-
-<%= javascript_include_tag "mColorPicker.min.js" %>
 <%= render :partial => "shared/colorpicker" %>
 <% javascript_tag do %>
 	jQuery(document).ready(function(){ 
@@ -32,110 +31,181 @@
     	});
 	}); 
 <% end %>
-<h3 class="title"><%=t('account.rebrand')%></h3> 
+<div id="admin-account-rebraning-page" class="rebrand-page">
 	<% form_for :account, @account, :url => { :action => 'update' }, 
 									:html => { :multipart => true ,
 											   :method => :put, 
-											   :id => "edit_form"  } do |f| %>
-	  <%= f.error_messages %>
-		<ul class="ui-form">
-			
-			<% f.fields_for :main_portal do |portal| %>
-			<li class="inline-field">
-				<%= portal.label :name, t('account.helpdesk_name'), :class => "caption" %>
-				<div class="fields">				    
-					<%= portal.text_field :name, :class => "text auto" %>
-					<div class="info-data">
-						<%= t(:'helpdesk.rebranding.name.info') %>
+											   "data-rebrand-form" => true, 
+											   :id => "edit_form", :class => "form-horizontal"  } do |f| %>
+
+	<%= link_to "Customize portal >", admin_portal_template_path( @account.main_portal ), 
+					:rel => "customize-portal", :class => "btn btn-bold pull-right" %>
+	<h1 class="lead"><%=t('account.rebrand')%></h1>
+
+	<%= f.error_messages %>
+	<div class="row-fluid">
+		<% f.fields_for :main_portal do |portal| %>
+			<h3 class="rebrand-head-text top-space-none">Settings</h3>
+			<div>
+					<div class="fields">
+						<div class="control-group">
+							<%= portal.label :name, t('account.helpdesk_name'), :class => "control-label" %>
+							<div class="controls">				    
+								<%= portal.text_field :name, :class => "text auto", :size => "50" %>
+								<span class="help-block">
+									<%= t(:'helpdesk.rebranding.name.info') %>
+								</span>
+							</div>
+						</div>
+						<div class="control-group">				
+							<%= portal.label :portal_url, t('account.helpdesk_url'), :class => "control-label" %>
+							<div class="controls">
+								<% if feature?(:custom_domain) %>
+									<label class="overlabel" for="account_main_portal_attributes_portal_url">
+										Eg. support.mycompanyname.com						
+									</label>
+							    	<%= portal.text_field :portal_url, :class => "text auto url_without_protocol", 
+							    		"data-domain" => Helpdesk::HOST[Rails.env.to_sym], :size => "50" %> 
+
+									<div class="help-block">
+										<%=t('account.info2', :full_domain => @account.full_domain)%>
+									</div>
+								<% else %>
+									<div class="label-locked-feature">
+										<%= content_tag(:label, @account.full_domain, :class => "control-label") %>
+										<div class="help-block">
+											<% options =  ( current_user.account_admin? ) ? 
+												{:tag => :a, :href => subscription_url } : {:tag => :span} %>
+					    					<%= content_tag(options[:tag], t('subscription.upgrade.cname'), :href => options[:href] ) %>
+										</div>
+									</div>
+								<% end %>
+							</div>
+						</div>
+						<div class="control-group">
+							<%= portal.label :language, t('account.language'), :class => "control-label"  %>
+							<div class="controls">
+								<%= portal.select :language, I18n.available_locales_with_name , {:selected =>  @account.main_portal.language.to_sym() }%>
+							</div>
+						</div>
+						<div class="control-group">
+							<%= f.label :time_zone, t('account.time_zone'), :class => "control-label"  %>
+							<div class="controls">
+								<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all %>
+					 		</div>
+						</div>
+						<div class="control-group">
+							<%= f.label :ticket_display_id, "#{t('next')} Ticket ID #", :class => "control-label" %>
+							<div class="controls">		    	
+								<%= f.text_field :ticket_display_id, :value => @account.get_max_display_id, :class => "text auto", :size => "15" %>
+								<div class="help-block"><%=t('account.info4')%></div>
+					  		</div>
+						</div>
+					</div>
+			</div>
+	  		<h3 class="rebrand-head-text">Logo and colors</h3>
+	  		<div class="fields">
+	  			<div class="control-group">
+	  				<label class="control-label">Logo & favicon</label>
+	  				<div class="controls">
+	  					<div class="row-fluid">
+							<div class="span8">
+								<%= render :partial => "/shared/logo_image", :locals => { :item => @account.main_portal, :field_name => "account[main_portal_attributes]" } %>
+							</div>
+							<div class="span4">
+			        			<%= render :partial => "/shared/fav_image", :locals => { :item => @account.main_portal, :field_name => "account[main_portal_attributes]" } %>
+			        		</div>
+					    </div>  
+					    <div class="row-fluid">
+			        		<div class="linkback-url"><%= t("linkback_overlabel") %></div>
+			        		<div class="span12 pull-right">
+								<label class="overlabel" for="link_back_text">
+									http://<%= @account.main_portal.portal_url.presence || @account.full_domain %>
+								</label>
+								<input name="account[main_portal_attributes][preferences][logo_link]" id="link_back_text" value="<%=portal_pref(@account.main_portal, :logo_link) %>" class="text url auto" size="50" />
+								<div class="help-block"> <%= t("linkback_info") %> </div>
+							</div>
+						</div>
+	  				</div>
+	  			</div>    
+			    <div class="control-group">
+					<%= content_tag(:label, t('account.page_colors.title'), :class => "control-label" ) %>
+					<div class="controls">
+						<div class="row-fluid">
+						<% portal.fields_for :preferences do |p| %>
+							<div class="span3">
+								<%= p.label :header_color, t('account.page_colors.header') %>
+								<div class="color">
+									<input type="color" maxlength="7" id="HeaderColor" class="color_field required" name="account[main_portal_attributes][preferences][header_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :header_color)%>" />
+								</div>
+							</div>
+							<div class="span3">
+								<%= p.label :header_color_tab, t('account.page_colors.tab_color') %>
+								<div class="color">
+									<input type="color" maxlength="7" id="TabColor" class="color_field required" name="account[main_portal_attributes][preferences][tab_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :tab_color)%>" /> 
+								</div>	
+							</div>
+							<div class="span3 omega">
+								<%= p.label :bg_color, t('account.page_colors.background') %>
+								<div class="color"> 
+									<input type="color" maxlength="7" id="BackgroundColor" class="color_field required" name="account[main_portal_attributes][preferences][bg_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :bg_color)%>" />
+								</div>
+							</div>	
+				  		<% end %>
+				  		</div>
+						<div class="reset-color">
+							<a href="javascript:void(0)" id="ResetColors"><%=t('account.info3')%> </a>
+						</div>
+					</div>	
+				</div>
+			    <div class="control-group">
+					<label class="control-label">Helpdesk Phone</label>
+					<div class="controls">
+						<label class="overlabel" for="contact_info_text">eg: +1 (877) 485-0317</label>
+						<input name="account[main_portal_attributes][preferences][contact_info]" id="contact_info_text" value="<%=portal_pref(@account.main_portal, :contact_info) %>" class="text auto" size="50" />
 					</div>
 				</div>
-			</li>
-      <li class="inline-field">
-        <%= render :partial => "/shared/logo_image", :locals => { :item => @account.main_portal, :field_name => "account[main_portal_attributes]" } %>
-        <div class="fields">
-          <span class="seperator"></span>
-          <label class="overlabel" for="link_back_text"><%= t("linkback_overlabel") %></label>
-          <input name="account[main_portal_attributes][preferences][logo_link]" id="link_back_text" value="<%=portal_pref(@account.main_portal, :logo_link) %>" class="text url" size="30" />
-          <div class="info-data">
-            <%= t("linkback_info") %>
-          </div>
-        </div>
-      </li>
-			<li class="inline-field">
-			  <%= render :partial => "/shared/fav_image", :locals => { :item => @account.main_portal, :field_name => "account[main_portal_attributes]" } %>
-			</li>
-			<li class="inline-field">
-				<%= content_tag(:label, t('account.page_colors.title') ) %>
-				<% portal.fields_for :preferences do |p| %>
-					<%= p.label :header_color, t('account.page_colors.header'), :class => "rightalign caption" %>
-					<div class="fields color">
-							<input type="color" maxlength="7" id="HeaderColor" class="color_field required" name="account[main_portal_attributes][preferences][header_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :header_color)%>" />
-					</div>
-					<%= p.label :header_color_tab, t('account.page_colors.tab_color'), :class => "rightalign caption" %>
-					<div class="color fields">
-							<input type="color" maxlength="7" id="TabColor" class="color_field required" name="account[main_portal_attributes][preferences][tab_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :tab_color)%>" /> 
-					</div>	
-					<%= p.label :bg_color, t('account.page_colors.background'), :class => "rightalign caption" %>
-					<div class="color fields"> 
-							<input type="color" maxlength="7" id="BackgroundColor" class="color_field required" name="account[main_portal_attributes][preferences][bg_color]"  data-hex="true" value="<%=portal_pref(@account.main_portal, :bg_color)%>" />
-							<p>
-								<a href="javascript:void(0)" id="ResetColors"><%=t('account.info3')%> </a>
-							</p>
-					</div>	
-			  <% end %>
-			</li>
-			<li class="inline-field">
-				<%= portal.label :portal_url, t('account.helpdesk_url'), :class => "caption" %>
-				<div class="fields">
-					<% if feature?(:custom_domain) %>
-						<label class="overlabel" for="account_main_portal_attributes_portal_url">
-							Eg. support.mycompanyname.com						
-						</label>
-				    <%= portal.text_field :portal_url, :class => "text portal_url url_without_protocol", 
-				    		:"data-domain" => Helpdesk::HOST[Rails.env.to_sym] %> 
-
-						<div class="info-data">
-							<%=t('account.info2', :full_domain => @account.full_domain)%>
-						</div>	
-				 </div>
-				</li>		
-				<% else %>
-				<div class = "label-locked-feature">
-					<%= content_tag(:label, @account.full_domain, :class => "caption") %>
-					<div class="info-data">
+				<div class="control-group">
+					<label class="control-label">Portal customization</label>
+					<div class="controls">
+						<%= link_to "Customize portal >", admin_portal_template_path( @account.main_portal ), 
+							:class => "btn btn-bold", :rel => "customize-portal" %> 
 						
-						<% options =  ( current_user.account_admin? ) ? {:tag => :a, :href => subscription_url } : {:tag => :span} %>
-    				<%= content_tag(options[:tag], t('subscription.upgrade.cname'), :href => options[:href] ) %>
-
+						<span>
+							Portal was last published
+							<%= distance_of_time_in_words_to_now(@account.main_portal.template.updated_at) %>
+							ago
+						</span>
 					</div>
 				</div>
-				<% end %>
-			<li class="inline-field">
-				<%= portal.label :language, t('account.language'), :class => "caption"  %>
-				<div class="fields">
-					<%= portal.select :language, I18n.available_locales_with_name , {:selected =>  @account.main_portal.language.to_sym() }%>
-				</div>
-			</li>
-			<% end %>
-			
-			<li class="inline-field">
-				<%= f.label :time_zone, t('account.time_zone'), :class => "caption"  %>
-				<div class="fields">
-					<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all %>
-		 		</div>
-			</li>
-			
-			
-			<li class="inline-field">
-				<%= f.label :ticket_display_id, "#{t('next')} Ticket ID #", :class => "caption" %>
-				<div class="fields">		    	
-					<%= f.text_field :ticket_display_id, :value => @account.get_max_display_id, :class => "text" %>
-					<div class="info-data"><%=t('account.info4')%></div>
-		  	</div>
-			</li>
-		</ul>
-	  <div class="button-container">
-			<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", :class => "uiButton floatl" %>
-			<%= submit_tag t('account.save'), :class => 'uiButton', :id => 'account_submit' %>
-	  </div>
-	<% end %>
+			</div>
+		<% end %>
+	</div>
+	<hr>
+	<div class="row-fluid">
+  		<input type="hidden" name="redirect_url" id="redirect_url" value="" />
+		<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", :class => "btn floatl" %>
+		<%= submit_tag t('account.save'), :class => 'btn btn-primary pull-right', :id => 'account_submit' %>
+	</div>
+
+<% end %>
+</div>
+<% content_for :onload_script do %>
+	jQuery("[data-rebrand-form]").live("change", function(ev){
+		jQuery(this).data('formChanged', true)
+	})
+	jQuery("[rel=customize-portal]").live("click", function(ev){
+		var form = jQuery(this).parents('form:first')
+		if(form.data('formChanged')){
+			ev.preventDefault()
+			if(confirm("You have unsaved changes in your form. Do you want to save and continue?")){
+				jQuery("#redirect_url").val(this.href)
+				form.submit()
+			}
+		}
+	})
+	jQuery('.fileAdminUpload').live("change", function(){ 
+		jQuery("#redirect_url").val("<%= edit_account_path %>") 
+		this.form.submit()
+	})
+<% end %>

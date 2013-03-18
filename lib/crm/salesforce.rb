@@ -45,10 +45,11 @@ class CRM::Salesforce < Resque::Job
     update_account(crm_ids, account_id, CUSTOMER_STATUS[:deleted])
   end
 
-  def update_admin_info(admin)
-    crm_ids = search_crm_record(admin.account.id)
+  def update_admin_info(config)
+    crm_ids = search_crm_record(config.account.id)
     binding.update('sObject {"xsi:type" => "Contact"}' => { :id => crm_ids[:contact],
-         :LastName => admin.name, :Email => admin.email })
+        :FirstName => config.account.admin_first_name, :LastName => config.account.admin_last_name, 
+        :Email => config.account.admin_email })
   end
 
   
@@ -153,8 +154,9 @@ class CRM::Salesforce < Resque::Job
 
     def contact_attributes(account, crm_account_id)
       { 
-        :LastName => account.account_admin.name, 
-        :Email => account.account_admin.email, 
+        :FirstName => account.admin_first_name,
+        :LastName => account.admin_last_name,
+        :Email => account.admin_email,
         :AccountId => crm_account_id
       }
     end

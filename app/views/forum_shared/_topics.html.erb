@@ -45,10 +45,8 @@
 							</span> 
 						<%end%>
 					</div>
-					<%if @forum.questions?%>  
-						<%if topic.posts.answered_posts.count > 0%>
-							<%= t('answered') %>
-						<%end%>
+					<%if @forum.questions? && topic.answered? %>
+						<%= t('answered') %>
 					<%end%> 
 				  <% if topic.paged? -%>
 				  	<small><%= link_to t('last') %></small>

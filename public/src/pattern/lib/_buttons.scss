@@ -12,6 +12,7 @@
   @include ie7-inline-block();
   padding: 4px 14px;
   margin-bottom: 0; // For input.btn
+  margin-right: 4px;
   font-size: $baseFontSize;
   line-height: $baseLineHeight;
   *line-height: $baseLineHeight;

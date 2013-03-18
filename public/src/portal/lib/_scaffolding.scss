@@ -1,0 +1,30 @@
+// Body reset
+// ----------
+
+body {
+  margin: 0;
+  font-family: $baseFontFamily;
+  font-size: $baseFontSize;
+  line-height: $baseLineHeight;
+  color: $textColor;
+  background-color: $bg_color;
+  background-image: image-url('/images/portal/bgnoise_lg.png');
+}
+
+
+// Links
+// -----
+
+a, .a-link {
+  color: $linkColor;
+  text-decoration: none;
+}
+a:hover, .a-link:hover {
+  color: $linkColorHover;
+  text-decoration: underline;
+}
+.a-link{
+  cursor: pointer;
+}
+
+@import "mobile";

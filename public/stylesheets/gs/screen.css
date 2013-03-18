@@ -999,9 +999,9 @@ input.submit-btn:active {
 
 .colorpicker .mColorPickerTrigger {
   float:left;
-  position: relative;
-  left: 4px;
-  top: 5px;
+  position: absolute;
+  left: 0px;
+  top: 4px;
 }
 
 .colorpicker input[type=text]{

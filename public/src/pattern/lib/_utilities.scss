@@ -24,6 +24,15 @@
   visibility: hidden;
 }
 
+// Alignment options
+.align-right{
+  text-align:right;
+}
+
+.align-left{
+  text-align:left;
+}
+
 // For Affix plugin
 .affix {
   position: fixed;
@@ -43,3 +52,5 @@
 .input-block-level {
   @include input-block-level();
 }
+
+.alert-text{ color:#e84444; }

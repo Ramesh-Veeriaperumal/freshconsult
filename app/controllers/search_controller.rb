@@ -1,4 +1,3 @@
-
 class SearchController < ApplicationController
   
   extend NewRelic::Agent::MethodTracer

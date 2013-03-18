@@ -1,17 +1,13 @@
 class Mobile::TicketsController < ApplicationController  
   include Helpdesk::TicketsHelper
 
-  before_filter :require_user_login, :set_mobile
-  before_filter :check_permistions, :only => :get_suggested_solutions
+  before_filter :require_user_login, :set_mobile, :check_permistions
   
   FILTER_NAMES = [ :new_and_my_open, :all, :monitored_by, :spam, :deleted ]
-  CUSTOMER_FILTER_NAMES = [ :all, :open_or_pending, :resolved_or_closed ]
-
   
 
   def view_list
-    agent_view_list if current_user.agent?
-    customer_view_list if current_user.customer?
+    agent_view_list
   end
 
   def get_portal
@@ -35,13 +31,11 @@ class Mobile::TicketsController < ApplicationController
     is_new =  params[:id].nil?
     @item = current_account.tickets.find_by_display_id(params[:id]) unless params[:id].nil?
     @fields = []
-    all_fields = current_portal.customer_editable_ticket_fields if current_user.customer?
     all_fields = current_portal.ticket_fields if current_user.agent?
     all_fields.each do |field|
       if field.visible_in_view_form? || is_new
         field_value = (field.is_default_field?) ? @item.send(field.field_name) : @item.get_ff_value(field.name) unless @item.nil?
         dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
-        field_value =  current_user.email if (field.field_type.eql?("default_requester") && current_user.customer?)
         if(field.field_type == "nested_field" && !@item.nil?)
           field_value = {}
           field.nested_levels.each do |ff|
@@ -70,8 +64,7 @@ class Mobile::TicketsController < ApplicationController
   private
 
   def add_cc_field field
-    if( current_user.agent? || 
-        (current_user.customer? && (field.all_cc_in_portal?  || field.company_cc_in_portal? ) ) ) 
+    if current_user.agent?
           @fields.push(:ticket_field => {
             :field_value => "",
             :domtype => field.dom_type,
@@ -90,31 +83,6 @@ class Mobile::TicketsController < ApplicationController
     requires_permission :manage_tickets
   end 
 
-  def customer_view_list
-    view_list = []
-    CUSTOMER_FILTER_NAMES.each { |view_name|
-      count = TicketsFilter.filter(view_name.to_sym, current_user, current_user.tickets).size
-      view_list.push( 
-        :id => view_name, 
-        :name => t("helpdesk.tickets.views.#{view_name}"), 
-        :type => :filter, 
-        :count =>  count
-      )
-    }
-
-    CUSTOMER_FILTER_NAMES.each { |view_name|
-      count = TicketsFilter.filter(view_name.to_sym, current_user, current_user.customer.tickets).size
-      view_list.push(
-        :company => current_user.customer.name, 
-        :id => view_name.to_s+' ', 
-        :name => t("helpdesk.tickets.views.#{view_name}"), 
-        :type => :filter, 
-        :count =>  count
-      )
-    } if current_user.is_client_manager
-
-    render :json => view_list.to_json
-  end
 
   def agent_view_list
     #Loading custom views

@@ -739,7 +739,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     def check_user
       if !current_user.nil? and current_user.customer?
-        return redirect_to support_ticket_url(@ticket,:format => params[:format])
+        return redirect_to support_ticket_url(@ticket)
       end
     end
 
