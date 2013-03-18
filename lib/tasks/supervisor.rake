@@ -6,7 +6,7 @@ namespace :supervisor do
       puts "Supervisor called at #{Time.zone.now}."
       Account.active_accounts.non_premium_accounts.each do |account| 
         if account.supervisor_rules.count > 0       
-          Resque.enqueue(Workers::Supervisor, account.id)
+          Resque.enqueue(Workers::Supervisor, {:account_id => account.id })
         end
       end
     end
@@ -18,7 +18,7 @@ namespace :supervisor do
         puts "Supervisor Premium accounts called at #{Time.zone.now}."
         Account.active_accounts.premium_accounts.each do |account|
           if account.supervisor_rules.count > 0 
-            Resque.enqueue(Workers::Supervisor::PremiumSupervisor, account.id)
+            Resque.enqueue(Workers::Supervisor::PremiumSupervisor, {:account_id => account.id })
           end
         end
     end

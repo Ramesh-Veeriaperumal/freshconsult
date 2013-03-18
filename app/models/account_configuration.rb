@@ -40,7 +40,7 @@ class AccountConfiguration < ActiveRecord::Base
   	end
 
   	def update_crm
-  		Resque.enqueue(CRM::AddToCRM::UpdateAdmin, id)
+  		Resque.enqueue(CRM::AddToCRM::UpdateAdmin, {:account_id => account_id, :item_id => id})
   	end
 
   	def update_billing
