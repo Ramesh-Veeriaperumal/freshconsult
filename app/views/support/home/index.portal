@@ -40,7 +40,7 @@
 						<h3 class="heading">{{category.name}}</h3>
 						<div class="cs-g-c">
 						{% for forum in category.forums %}
-							{% if forum.topics_count %}
+							{% if forum.topics_count > 0 %}
 								<section class="cs-g topic-list">
 									<div class="list-lead badge-{{ forum.type_name }}">
 										<a href="{{ forum.url }}">

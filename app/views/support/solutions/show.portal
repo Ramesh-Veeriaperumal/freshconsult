@@ -1,7 +1,4 @@
 <section class="main content rounded-6 min-height-on-desktop">
-	<div class="breadcrumb">
-		<a href="{{ portal.solutions_home_url }}">Solution home</a>
-	</div>
 	<h2>{{ category.name }}</h2>	
 	<div class="cs-g-c">
 		{% for folder in category.folders %}

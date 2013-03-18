@@ -158,6 +158,10 @@ jQuery.noConflict()
 					// Removed bootstraps error class from the container of the error element
 					$(element).parent().parent().removeClass(errorClass+"-group")
 				},
+				onkeyup: false,
+         		focusCleanup: true,
+         		focusInvalid: false,
+         		ignore:".nested_field:not(:visible), .portal_url:not(:visible)",
 				errorElement: "div", // Adding div as the error container to highlight it in red
 				submitHandler: function(form, btn) {
 					// Setting the submit button to a loading state

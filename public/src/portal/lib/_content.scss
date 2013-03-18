@@ -29,6 +29,11 @@
 	}	
 }
 
+.article-body{
+	font-size: 14px;
+	big{ font-size: inherit; }
+}
+
 .article-list li, .topic-list li, .ticket-list li, 
 li.article-item, li.topic-item, li.ticket-item {
 	list-style: none;	
@@ -181,6 +186,15 @@ li.article-item, li.topic-item, li.ticket-item {
 .c-link{ 
 	font-size: 1.16em; 
 	font-weight: 200;
+}
+
+/* Solutions table row */
+.c-article-row{
+	padding-left: 38px;
+	.icon-article-table-row{
+		margin-left: -38px;
+		float: left;
+	}	
 }
 
 /* Solution voting button */
