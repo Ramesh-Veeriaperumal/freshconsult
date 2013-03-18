@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130307133109) do
+ActiveRecord::Schema.define(:version => 20130308075546) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -22,6 +22,14 @@ ActiveRecord::Schema.define(:version => 20130307133109) do
   end
 
   add_index "account_additional_settings", ["account_id"], :name => "index_account_id_on_account_additional_settings"
+
+  create_table "account_configurations", :force => true do |t|
+    t.integer  "account_id",     :limit => 8, :null => false
+    t.text     "contact_info"
+    t.text     "billing_emails"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "accounts", :force => true do |t|
     t.string   "name"

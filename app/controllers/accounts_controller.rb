@@ -278,8 +278,8 @@ class AccountsController < ApplicationController
      DeletedCustomers.create(
        :full_domain => "#{current_account.name}(#{current_account.full_domain})",
        :account_id => current_account.id,
-       :admin_name => current_account.account_admin.name,
-       :admin_email => current_account.account_admin.email,
+       :admin_name => current_account.admin_first_name,
+       :admin_email => current_account.admin_email,
        :account_info => {:plan => sub.subscription_plan_id,
                          :discount => sub.subscription_discount_id,
                          :agents_count => current_account.agents.count,

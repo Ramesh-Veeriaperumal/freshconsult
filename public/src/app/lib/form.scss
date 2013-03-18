@@ -2529,3 +2529,88 @@ input[type="text"].number{
 }
  
 /* end */
+
+
+.account-content{
+	.ui-form{
+		padding: 6px 0 6px 0;
+		
+		.normal{
+				font-weight : normal;
+		}
+
+		.inline-field{
+			div.fields{
+				margin-left : 115px;
+			}
+
+			#change-link{
+				padding: 8px;
+				position: relative;
+				top: 8px;
+			}
+
+			#account-admin-form, #account-details-form{
+				margin : 0px;
+				select{
+					width : auto;
+					margin : 0px;
+				}
+			}
+
+			.bold{
+				font-weight : bold;
+				font-size : 13px;
+			}
+
+			label.error{
+				border-radius: 4px;
+				margin: 2px 255px 0px 2px;
+			}
+		}
+	}
+
+	.account-configs{	
+
+		#field-info{
+			margin: -10px 0px;
+		}
+
+		.fields{
+			.inline-field{
+				padding : 2px 0px;
+			}
+		}
+		
+		.contact-fields{
+			margin-left : 115px;
+			input{
+				width: 56%;
+				margin : 2px;
+			}
+		}
+
+		#account_form_submit{
+			float: right;
+		}
+	
+		.select2-container{
+			width : 360px;
+			margin-bottom: 2px;
+		}
+
+		.select2-choices{
+			border-radius: 5px;
+		}
+
+		.select2-search-field{
+			height: 27px;
+		}
+
+		.select2-search-choice{
+			width: auto;
+		}
+	}
+}
+
+

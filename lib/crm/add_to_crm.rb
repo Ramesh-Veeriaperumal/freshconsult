@@ -47,7 +47,7 @@ class CRM::AddToCRM
     @queue = QUEUE
 
     def self.scoper
-      User
+      AccountConfiguration
     end
 
     def self.perform_job(crm, item)

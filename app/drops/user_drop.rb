@@ -1,6 +1,7 @@
 class UserDrop < BaseDrop	
-	liquid_attributes << :name << :email << :phone << :mobile << :job_title << :user_role << 
-						 :time_zone << :twitter_id  
+	
+	liquid_attributes << :name  << :first_name << :last_name << :email << :phone << :mobile << 
+						:job_title << :user_role << :time_zone << :twitter_id
 
   include Integrations::AppsUtil
 
