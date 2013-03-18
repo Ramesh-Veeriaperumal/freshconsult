@@ -20,6 +20,10 @@ var $J = jQuery.noConflict();
       hideWidgetPopup(ev);
     });
 
+    $("a.dialog2, a[data-ajax-dialog], button.dialog2").livequery(function(ev){
+      $(this).dialog2();
+    })
+
     hideWidgetPopup = function(ev) {
       if((widgetPopup != null) && !$(ev.target).parents().hasClass("popover")){
         if(!insideCalendar)
@@ -266,7 +270,7 @@ var $J = jQuery.noConflict();
          onkeyup: false,
          focusCleanup: true,
          focusInvalid: false,
-         ignore:".nested_field:not(:visible)"
+         ignore:".nested_field:not(:visible), .portal_url:not(:visible)"
       };
       
       $("ul.ui-form, .cnt").livequery(function(ev){
@@ -325,12 +329,20 @@ var $J = jQuery.noConflict();
 
       sidebarHeight = $('#Sidebar').height();
       if(sidebarHeight !== null && sidebarHeight > $('#Pagearea').height())
-         $('#Pagearea').css("minHeight", sidebarHeight);
+        $('#Pagearea').css("minHeight", sidebarHeight);
 
-
-        if(window.location.hash != '')
-          $(window.location.hash + "-tab").trigger('click');
-
+      // Tab auto select based on window hash url
+      if(window.location.hash != '') {
+        hash = window.location.hash.split('/');
+        jQuery.each(hash, function(index, value){
+          setTimeout(function(){
+            catchException(function(){ 
+              jQuery(value + "-tab").trigger('click') 
+            }, "Error in File globalinit.js");
+          }, ((index+1)*10) )
+        })
+      }
+          
         qtipPositions = {
           normal : {
             my: 'center right',

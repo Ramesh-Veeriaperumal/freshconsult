@@ -9,6 +9,13 @@ module RedisKeys
 	INTEGRATIONS_LOGMEIN = "INTEGRATIONS_LOGMEIN:%{account_id}:%{ticket_id}"
 	HELPDESK_TICKET_UPDATED_NODE_MSG    = "{\"ticket_id\":%{ticket_id},\"agent\":\"%{agent_name}\",\"type\":\"%{type}\"}"
 	EMAIL_TICKET_ID = "EMAIL_TICKET_ID:%{account_id}:%{message_id}"
+	PORTAL_PREVIEW = "PORTAL_PREVIEW:%{account_id}:%{user_id}:%{template_id}:%{label}"
+	IS_PREVIEW = "IS_PREVIEW:%{account_id}:%{user_id}:%{portal_id}"
+	PREVIEW_URL = "PREVIEW_URL:%{account_id}:%{user_id}:%{portal_id}"
+
+	PORTAL_CACHE_ENABLED = "PORTAL_CACHE_ENABLED"
+	PORTAL_CACHE_VERSION = "PORTAL_CACHE_VERSION:%{account_id}"
+
 	
 	def newrelic_begin_rescue
     begin
@@ -21,6 +28,10 @@ module RedisKeys
 
 	def enqueue_worker(worker, *args)
 		newrelic_begin_rescue { Resque.enqueue(worker, *args) }
+	end
+
+	def increment(key)
+		newrelic_begin_rescue { $redis.INCR(key) }
 	end
 
 	def get_key(key)
@@ -78,12 +89,27 @@ module RedisKeys
 	  end
 	end
 
-
 	def list_members(key)
 		newrelic_begin_rescue do
 			length = $redis.llen(key)
 			$redis.lrange(key,0,length - 1)
 	  end
+	end
+
+	def exists(key)
+		begin
+			$redis.exists(key)
+		rescue Exception => e
+        	NewRelic::Agent.notice_error(e)
+    	end
+	end
+
+	def array_of_keys(pattern)
+		begin
+			$redis.keys(pattern)
+		rescue Exception => e
+        	NewRelic::Agent.notice_error(e)
+    	end
 	end
 
 	def publish_to_channel channel, message

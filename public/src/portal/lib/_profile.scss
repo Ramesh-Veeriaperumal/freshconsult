@@ -1,0 +1,22 @@
+.user-pic-thumb, .user-pic-normal{
+	@include float-left;
+	margin-right:10px;
+	margin-left:-3px;
+	@include border-radius(3em);
+	border:1px solid #dddddd;
+	padding:3px;
+	background-color:$white;
+    position: relative;
+	img{
+		@include border-radius(3em);
+	}
+}
+.user-pic-thumb img{ width:40px; height:40px;  }
+.user-pic-normal img{ width:auto; height:auto; }
+
+.user-pic-original img{
+	border:1px solid #dddddd; 
+	padding:3px; 
+	@include border-radius(3px); 
+	margin-bottom: 10px;
+}

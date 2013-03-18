@@ -347,10 +347,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #:allow_nil => false, :allow_blank => false
 
   validate_on_create do |ticket|
-    ticket.spam = true if ticket.requester.deleted?
-    if ticket.requester.blocked?
+    req = ticket.requester
+    if req
+      ticket.spam = true if req.deleted?
+      if req.blocked?
         Rails.logger.debug "User blocked! No more tickets allowed for this user" 
         ticket.errors.add_to_base("User blocked! No more tickets allowed for this user")
+      end
     end
   end
 
@@ -804,9 +807,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #To use liquid template...
   #Might be darn expensive db queries, need to revisit - shan.
   def to_liquid
-
-    Helpdesk::TicketDrop.new self
-    
+    @helpdek_ticket_drop ||= Helpdesk::TicketDrop.new self    
   end
 
   def url_protocol
@@ -963,6 +964,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
   
+  def support_path
+    support_tickets_path(:host => portal_url)
+  end
    
    def group_name
       group.nil? ? "No Group" : group.name

@@ -1,32 +1,31 @@
 <!DOCTYPE html>
-<!--[if lt IE 7 ]> 			   <html class="no-js ie6"> <![endif]-->
-<!--[if IE 7 ]>    			   <html class="no-js ie7"> <![endif]-->
-<!--[if IE 8 ]>    			   <html class="no-js ie8"> <![endif]-->
-<!--[if IE 9 ]>    			   <html class="no-js ie9"> <![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js"> <!--<![endif]-->
-  <head>
-    <meta charset="utf-8">	
+<%= open_html_tag %>
+	<head>
+    	<meta charset="utf-8">	
 		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame 
 		     Remove this if you use the .htaccess -->
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	  
 	  	<title><%= "#{h(current_account.name)} Widget" %></title>
 
+		<%#= stylesheet_link_tag "widget", :media => "screen, projection" %>
 		<%= include_stylesheets :widget %>
-		<%= include_javascripts :fdwidget %>		
+		<%= include_javascripts :fdwidget %>
 		<!--[if IE]><%= include_javascripts :excanvas %><![endif]-->
-	  	<%= yield :head %>
-		<script type="text/javascript">
-			document.domain = document.domain;
-			var $J = jQuery.noConflict();
-		</script>
+	  <%= yield :head %>
+	  <script type="text/javascript">
+	  	document.domain = document.domain;
+	  	var $J = jQuery.noConflict();
+	  </script>
 	</head>
     <body>
-		<style> body{ background:transparent; }</style>
-		<div class="content ui-widget-container" id="ui-widget-container" name="ui-widget-container">
-			<%= yield %>
-		</div>
-		<div class="content ui-widget-container" id="ui-thanks-container" name="ui-widget-container" style="display:none">
-		</div>
+    	<style> body{ background:transparent; }</style>
+    	<div class="feedbackwidget-tooltip" id="widget_search_results"></div>
+		  <div class="content feedback-widget-container" id="ui-widget-container" name="ui-widget-container">
+		  	<%= yield%> 
+			<%= render :partial => "layouts/shared/footer" %>
+		  </div>
+		  <div class="content ui-widget-container" id="ui-thanks-container" name="ui-widget-container" style="display:none">
+		  </div>
     </body>
 </html>

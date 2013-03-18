@@ -1,3 +1,4 @@
+<%= assumed_identity_message %>
 <div class="header">
   <div class="wrapper">
   <div class="brand">
@@ -15,12 +16,12 @@
 
     <div class="header_links">
       <% if current_user then %>  
-		<%= content_tag(:span, is_assumed_user? ? t('header.assumed_text') : t('header.welcome') ) %>
+		<%= content_tag(:span, t('header.welcome')) %>
 		<%= link_to h(current_user.name), "#", :class => "nav-trigger", :menuid => "#LoggedOptions" %>
      <% else %>
 
         <%= link_to( t('header.login') , login_path) %>
-				<%= link_to( t('signup') , new_support_registration_path ) if feature?(:signup_link) %>
+		<%= link_to( t('signup') , current_portal.support_signup_path ) if feature?(:signup_link) %>
     <% end %>
     </div>     
 		<% if current_user then %>                        

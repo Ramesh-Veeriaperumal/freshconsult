@@ -68,8 +68,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
     AWS::S3::S3Object.url_for content.path, content.bucket_name , options
   end
  
- def image?
-   (!(content_content_type =~ /^image.*/).nil?) and (content_file_size < 5242880)
+  def image?
+    (!(content_content_type =~ /^image.*/).nil?) and (content_file_size < 5242880)
   end
 
   def attachment_sizes
@@ -95,6 +95,11 @@ class Helpdesk::Attachment < ActiveRecord::Base
     AWS::S3::S3Object.url_for(content.path(style.to_sym),content.bucket_name,
                                           :expires_in => expiry.to_i.seconds)
   end
+
+  def to_liquid
+    @helpdesk_attachment_drop ||= Helpdesk::AttachmentDrop.new self
+  end
+  
   
   private
   

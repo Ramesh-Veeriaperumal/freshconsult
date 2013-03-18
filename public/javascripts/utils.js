@@ -9,16 +9,26 @@ if (typeof console === "undefined" || typeof console.log === "undefined") {
     };
 }
 
-function log(entry) {
-  if (console) {
-    console.log(entry);
+function log() {
+  var args = Array.prototype.slice.call(arguments);
+  if (window.console && window.console.log && window.console.log.apply) {
+    console.log(args.join(" "));
   } else {
-    alert(entry);
+    // alert(entry);
   }
 }
 function autoSaveTinyMce(editor){
    tinyMCE.triggerSave();
    return true;
+}
+
+// Utility methods for FreshWidget  
+function catchException(fn, message) {
+  try {
+    return fn();
+  } catch(e) {
+    log(message || "Freshdesk Error:", e);
+  }
 }
 
 function freshdate(str) {
@@ -61,7 +71,7 @@ makePageNonSelectable = function(source){
 	source.onmousedown = function () { return false; };						// Other browsers
 };
 
-//Image error problem
+// Image error problem
 function imgerror(source){
     if (source.width <= 50) {
       source.src = PROFILE_BLANK_THUMB_PATH;
@@ -255,6 +265,16 @@ function construct_reply_url(to_email, account_full_domain){
    }
    return reply_email;
 }
+
+// Utility for setting a post param hidden variable for forms
+function setPostParam(form, name, value){
+  var paramDom = jQuery(form).find("[name="+name+"]")
+  if(!paramDom.get(0))
+    paramDom = jQuery("<input type='hidden' name='"+name+"' />").appendTo(form)
+  
+  paramDom.val(value)
+}
+
 
    // Quoted Addition show hide
    function quote_text(item){

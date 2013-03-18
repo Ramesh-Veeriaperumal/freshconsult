@@ -1,0 +1,4 @@
+<section id="password-reset-container" class="content-form rounded-6 main">
+	<h3 class="heading">{% translate change_my_password %}</h3>
+	{% snippet reset_password_form %}
+</section>

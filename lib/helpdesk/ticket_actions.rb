@@ -82,9 +82,9 @@ module Helpdesk::TicketActions
   def export_csv
     # params[:later] = false
 
-    # #Handle export in Resque and send a mail to the current user, if the duration selected is more than DATE_RANGE_CSV (in days)
+    #Handle export in Resque and send a mail to the current user, if the duration selected is more than DATE_RANGE_CSV (in days)
     # if(csv_date_range_in_days > TicketConstants::DATE_RANGE_CSV)
-    #   params[:later] = true
+      # params[:later] = true
       Resque.enqueue(Helpdesk::TicketsExport, params)
       flash[:notice] = t("export_data.mail.info")
       redirect_to helpdesk_tickets_path
@@ -122,7 +122,7 @@ module Helpdesk::TicketActions
                                 :source =>@source_ticket.source,
                                 :ticket_type =>@source_ticket.ticket_type,                             
                                 :cc_email => {:fwd_emails=>[],
-                                              :cc_emails => @note.cc_emails}                             
+                                              :cc_emails => @note.cc_emails || []}                             
                                 
                                }  
     unless @note.tweet.nil?

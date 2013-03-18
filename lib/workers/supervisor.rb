@@ -1,10 +1,24 @@
 class Workers::Supervisor
-  extend Resque::AroundPerform
+
   @queue = 'supervisor_worker'
+  
+  class PremiumSupervisor
+    @queue = 'premium_supervisor_worker'
 
+    def self.perform(account_id)
+     Workers::Supervisor.run(account_id)
+    end
+  end
 
-  def self.perform(args)
-    account = Account.current
+  def self.perform(account_id)
+    run(account_id)
+  end
+
+ 
+
+  def self.run(account_id)
+    account = Account.find(account_id)
+    account.make_current
     SeamlessDatabasePool.use_persistent_read_connection do
       start_time = Time.now.utc
     account.supervisor_rules.each do |rule|
@@ -40,5 +54,6 @@ class Workers::Supervisor
       puts "Time total time it took to execute the supervisor rules for, #{account.id}, #{account.full_domain}, #{total_time}"
     end
   end
+    Account.reset_current_account
   end
 end

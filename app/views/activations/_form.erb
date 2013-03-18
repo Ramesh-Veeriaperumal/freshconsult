@@ -1,21 +1,39 @@
-<ul class="ui-form">
-	<li>
-		<%= form.label :name, t('user.full_name') %>
-		<%= form.text_field :name, :class => "text" %>
-	</li>
-	<li>
-		<%= content_tag(:label, t('sign_in_info')) %>
-		<label><%= "<strong>#{@user.email}</strong>" %></label>
-	</li>
-	<li>
-		<%= form.label :password, t('set_password') %>
-		<%= form.password_field :password, :class => "text password"  %>
-	</li>
-	<li>
-		<%= form.label :password_confirmation , t('password_confirmation')%>
-		<%= form.password_field :password_confirmation, :class => "text password"  %>
-	</li>
-	<li>
-		<%= form.submit t("activate"), :class => "uiButton" %>
-	</li>
-</ul>
+<% form_for @user, :url => activate_path(@user.id), :html => { :rel => "validate", :class => "form-portal" } do |form| %>
+	<%= form.error_messages %>
+	<fieldset>
+	  	<div class="control-group">
+			<%= form.label :name, t('user.full_name'), :class => "control-label required" %>
+			<div class="controls">
+				<%= form.text_field :name, :class => "required special span6" %>
+			</div>
+		</div>
+		<div class="control-group">
+			<%= form.label :password, t('password'), :class => "control-label required" %>
+			<div class="controls">
+				<%= form.password_field :password, :class => "required special password span6"  %>
+			</div>
+		</div>
+		<div class="control-group">
+			<%= form.label :password_confirmation, t('profile.confirm_password'), :class => "control-label required" %>
+			<div class="controls">
+				<%= form.password_field :password_confirmation, :class => "required special password span6"  %>
+			</div>
+		</div>
+		<div class="form-actions">
+			<button type="submit" class="btn btn-primary"> <%= t('activate_and_login') %> </button>
+	  	</div>	
+	</fieldset>
+<% end %>
+
+<script type="text/javascript">
+	jQuery(document).ready(function(ev){
+		setTimeout(function(){
+			jQuery("#user_password_confirmation").rules("add", {
+				equalTo: "#user_password",
+				messages: {
+					equalTo: "<%= t('profile.confirm_password_message') %>"
+				}
+			})
+		}, 100)
+	})
+</script>

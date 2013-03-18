@@ -97,13 +97,16 @@
 					 	case "authenticity_token":
 					 	break;
 						case "submitThanks":
-							WidgetFormHash.set("queryString", WidgetFormHash.get("queryString") + "&" + $("#submitThanks").serialize());
+							WidgetFormHash.set("queryString", WidgetFormHash.get("queryString") + "&" + 
+								$("#submitThanks").serialize());
 						break;
 						case "formTitle":
-							WidgetFormHash.set("queryString", WidgetFormHash.get("queryString") + "&" + $("#FormTitle").serialize());
+							WidgetFormHash.set("queryString", WidgetFormHash.get("queryString") + "&" + 
+								$("#FormTitle").serialize());
 						break;
 						case "buttonBg":
-							WidgetFormHash.set("buttonColor", $.fn.mColorPicker.RGBtoHex($("#TabColor").css("color")));
+							WidgetFormHash.set("buttonColor", 
+								$.fn.mColorPicker.textColor($("#TabColor").css("border-right-color")));
 					 	default:
 							WidgetFormHash.set(item['name'], item['value']);
 						break;

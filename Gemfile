@@ -106,7 +106,3 @@ group :assets do
 	# Portal grid system is done using susy grids
 	gem "susy" 
 end
-
-
-
-

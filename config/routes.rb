@@ -1,4 +1,5 @@
  ActionController::Routing::Routes.draw do |map|
+
   map.connect '/images/helpdesk/attachments/:id/:style.:format', :controller => '/helpdesk/attachments', :action => 'show', :conditions => { :method => :get }
   
   map.connect "/javascripts/:action.:format", :controller => 'javascripts'
@@ -26,7 +27,7 @@
   
   map.resources :groups
   
-  map.resources :profiles , :member => { :change_password => :post}, :collection => {:reset_api_key => :post}
+  map.resources :profiles , :member => { :change_password => :post }, :collection => {:reset_api_key => :post}
   
   map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put, :convert_to_user => :get, :reset_password=> :put }, :collection => {:create_multiple_items => :put} do |agent|
       agent.resources :time_sheets, :controller=>'helpdesk/time_sheets'
@@ -45,12 +46,11 @@
   map.gauth '/openid/google', :controller => 'user_sessions', :action => 'openid_google'
   map.gauth '/opensocial/google', :controller => 'user_sessions', :action => 'opensocial_google'
   map.gauth_done '/authdone/google', :controller => 'user_sessions', :action => 'google_auth_completed'
-  map.login '/login', :controller => 'user_sessions', :action => 'new'
+  map.login '/login', :controller => 'user_sessions', :action => 'new'  
   map.sso_login '/login/sso', :controller => 'user_sessions', :action => 'sso_login'
-  map.login_normal '/login/normal', :controller => 'user_sessions', :action => 'new'
+  map.login_normal '/login/normal', :controller => 'support/login', :action => 'new'
   map.signup_complete '/signup_complete/:token', :controller => 'user_sessions', :action => 'signup_complete'
- 
-  
+
   map.openid_done '/google/complete', :controller => 'accounts', :action => 'openid_complete'
   
   map.zendesk_import '/zendesk/import', :controller => 'admin/zen_import', :action => 'index'
@@ -59,8 +59,8 @@
   
   #map.register '/register', :controller => 'users', :action => 'create'
   #map.signup '/signup', :controller => 'users', :action => 'new'
-  map.resources :users, :member => { :delete_avatar => :delete, :change_account_admin => :put,:block => :put, :assume_identity => :get},
-                        :collection => {:revert_identity => :get}
+  map.resources :users, :member => { :delete_avatar => :delete, :change_account_admin => :put, 
+          :block => :put, :assume_identity => :get, :profile_image => :get }, :collection => {:revert_identity => :get}
   map.resource :user_session
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
   map.activate '/activate/:id', :controller => 'activations', :action => 'create'
@@ -99,14 +99,21 @@
     admin.resources :getting_started, :collection => {:rebrand => :put}
     admin.resources :business_calender, :member => { :update => :put }
     admin.resources :security, :member => { :update => :put }
-    admin.resources :data_export, :collection => {:export => :any }
+    admin.resources :data_export, :collection => {:export => :any }    
     admin.resources :portal, :only => [ :index, :update ]
     admin.namespace :canned_responses do |ca_response|
       ca_response.resources :folders do |folder|
         folder.resources :responses, :collection => { :delete_multiple => :delete, :update_folder => :put }
       end
     end
-    admin.resources :products
+    admin.resources :products, :member => { :delete_logo => :delete, :delete_favicon => :delete }
+    admin.resources :portal, :only => [ :index, :update] do |portal|
+      portal.resource :template, 
+                      :collection => { :show =>:get, :update => :put, :soft_reset => :put, 
+                                        :restore_default => :get, :publish => :get, :clear_preview => :get } do |template|
+        template.resources :pages, :member => { :edit_by_page_type => :get, :soft_reset => :put }
+      end
+    end
     admin.resources :surveys, :collection => { :enable => :post, :disable => :post }
     admin.resources :gamification, :collection => { :toggle => :post, :quests => :get, :update_game => :put }
     admin.resources :quests, :member => { :toggle => :put }
@@ -187,7 +194,8 @@
   map.connect '/signup/d/:discount', :controller => 'accounts', :action => 'plans'
   map.thanks '/signup/thanks', :controller => 'accounts', :action => 'thanks'
   map.create '/signup/create/:discount', :controller => 'accounts', :action => 'create', :discount => nil
-  map.resource :account, :collection => {:rebrand => :put, :dashboard => :get, :thanks => :get,   :cancel => :any, :canceled => :get , :signup_google => :any }
+  map.resource :account, :collection => {:rebrand => :put, :dashboard => :get, :thanks => :get, 
+    :cancel => :any, :canceled => :get , :signup_google => :any, :delete_logo => :delete, :delete_favicon => :delete }
   map.resource :subscription, :collection => { :plans => :get, :billing => :any, :plan => :any, :calculate_amount => :any, :convert_subscription_to_free => :put }
 
   map.new_account '/signup/:plan/:discount', :controller => 'accounts', :action => 'new', :plan => nil, :discount => nil
@@ -328,33 +336,94 @@
     
   end
   
-   map.namespace :solution do |solution|     
-     solution.resources :categories, :collection => {:reorder => :put}  do |category|   
-     category.resources :folders, :collection => {:reorder => :put}  do |folder|
-       folder.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :delete_tag => :post }, :collection => {:reorder => :put} do |article|
-         article.resources :tag_uses
-       end
-       end
-     end
-     
-     solution.resources :articles, :only => :show
-         
-     end
+  map.namespace :solution do |solution|     
+    solution.resources :categories, :collection => {:reorder => :put}  do |category|   
+      category.resources :folders, :collection => {:reorder => :put}  do |folder|
+        folder.resources :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :delete_tag => :post }, :collection => {:reorder => :put} do |article|
+          article.resources :tag_uses
+        end
+      end
+    end     
+    solution.resources :articles, :only => :show         
+  end
 
+  # Removing the home as it is redundant route to home - by venom  
+  # map.resources :home, :only => :index 
+
+  # Theme for the support portal
+  map.connect "/theme/:id.:format", :controller => 'theme', :action => :index
+
+  # Support Portal routes  
   map.namespace :support do |support|
-     support.resources  :articles, :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
-       support.resources :tickets , :collection => { :check_email => :get } do |ticket|
+    # Portal home
+    support.home 'home', :controller => "home"
+
+    # Portal preview
+    support.preview 'preview', :controller => "preview"
+    
+    # Login for users in the portal
+    support.resource :login, :controller => "login", :only => [:new, :create]
+    support.connect "/login", :controller => 'login', :action => :new
+
+    # Signup for a new user in the portal
+    # registrations route is not renamed to signup
+    support.resource :signup, :only => [:new, :create]
+    support.connect "/signup", :controller => 'signups', :action => :new
+
+    # Signed in user profile edit and update routes
+    support.resource :profile, :only => [:edit, :update],
+      :member => { :delete_avatar => :delete }
+
+    # Search for the portal, can search Articles, Topics and Tickets
+    support.resource :search, :controller => 'search', :only => :show, 
+      :member => { :solutions => :get, :topics => :get, :tickets => :get }
+
+    # Forums for the portal, the items will be name spaced by discussions
+    support.resources :discussions, :only => [:index, :show]
+    support.namespace :discussions do |discussion|
+      discussion.filter_topics "/forums/:id/:filter_topics_by", :controller => :forums,
+        :action => :show
+      discussion.connect "/forums/:id/page/:page", :controller => :forums,
+        :action => :show
+      discussion.resources :forums, :only => :show
+      discussion.resources :topics, :except => :index, :member => { :like => :put, 
+          :unlike => :put, :toggle_monitor => :put, :users_voted => :get } do |topic|
+        discussion.connect "/topics/:id/page/:page", :controller => :topics, 
+          :action => :show
+        topic.resources :posts, :except => [:index, :new, :show], 
+          :member => { :toggle_answer => :put }
+      end
+    end
+
+    # Solutions for the portal
+    support.resources :solutions, :only => [:index, :show]
+    support.namespace :solutions do |solution|
+      solution.connect "/folders/:id/page/:page", :controller => :folders,
+        :action => :show
+      solution.resources :folders, :only => :show
+      solution.resources :articles, :only => :show, :member => { :thumbs_up => :put, 
+        :thumbs_down => :put , :create_ticket => :post }
+    end
+
+    # !PORTALCSS TODO The below is a access routes for accessing routes without the solutions namespace
+    # Check with shan if we really need this route or the one with the solution namespace
+    support.resources :articles, :controller => 'solutions/articles', 
+      :member => { :thumbs_up => :put, :thumbs_down => :put , :create_ticket => :post }
+
+    # Tickets for the portal
+    # All portal tickets including company_tickets are now served from this controller
+    support.resources :tickets, 
+      :collection => { :check_email => :get, :configure_export => :get, :filter => :get }, 
+      :member => { :close => :post, :add_people => :put } do |ticket|
+
       ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'
     end
-    support.ticket_add_cc "/support/ticket/:id/add_cc", :controller => 'tickets', :action => 'add_cc'
-    support.resources :company_tickets
-    support.resources :minimal_tickets
-    support.resources :registrations
-    
+
     support.portal_survey '/surveys/:ticket_id', :controller => 'surveys', :action => 'create_for_portal'
     support.customer_survey '/surveys/:survey_code/:rating/new', :controller => 'surveys', :action => 'new'
     support.survey_feedback '/surveys/:survey_code/:rating', :controller => 'surveys', :action => 'create', 
-        :conditions => { :method => :post }
+      :conditions => { :method => :post }
+
   end
   
   map.namespace :anonymous do |anonymous|

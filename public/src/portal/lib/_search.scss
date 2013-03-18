@@ -1,0 +1,14 @@
+.search-autocomplete{
+	position:absolute;
+	z-index:9999;
+	width:100%;
+}
+
+ul.ui-autocomplete{ 
+	margin: 0;
+	li.article-item, li.topic-item, li.ticket-item {
+		padding-left: 35px;
+		&:before{ left: 10px; }
+	}
+}
+.search-results-list{ margin: 0; }
