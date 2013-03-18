@@ -143,6 +143,10 @@ class PortalDrop < BaseDrop
   def url_options
     { :host => source.host }    
   end 
+
+  def paid_account
+    @paid_account ||= portal_account.subscription.paid_account?
+  end
   
   private
     def load_tabs

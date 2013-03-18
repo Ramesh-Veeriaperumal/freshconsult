@@ -1,11 +1,13 @@
 <header class="banner">
-	<div class="banner-title">
-		{{ portal | logo }}
-		<h1 class="ellipsis heading">{{ portal.name }}</h1>
+	<div class="banner-wrapper">
+		<div class="banner-title">
+			{{ portal | logo }}
+			<h1 class="ellipsis heading">{{ portal.name }}</h1>
+		</div>
+		<nav class="banner-nav">
+			{{ portal | welcome_navigation }}
+		</nav>
 	</div>
-	<nav class="banner-nav">
-		{{ portal | welcome_navigation }}
-	</nav>
 </header>
 <nav class="page-tabs" >
 	<a data-toggle-dom="#header-tabs" href="#" data-animated="true" class="mobile-icon-nav-menu show-in-mobile"></a>

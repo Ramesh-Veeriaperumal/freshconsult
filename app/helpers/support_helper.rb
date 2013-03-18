@@ -523,6 +523,13 @@ HTML
 			"/theme/#{current_portal.template.id}.css?v=#{current_portal.template.updated_at.to_i}"
 	end
 
+	def portal_copyright portal
+		%( 	<div class="copyright">
+				<a href="http://www.freshdesk.com" target="_blank"> #{ I18n.t('footer.helpdesk_software') } </a>
+				#{ I18n.t('footer.by_freshdesk') }
+			</div> ) unless portal.paid_account
+	end
+
 	private
 
 		def portal_preferences

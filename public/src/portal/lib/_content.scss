@@ -13,10 +13,10 @@
 .content-form{ background-color: $page-form-background; }
 
 .cs-s{
-	border-top:1px solid $orange;
+	border-top:1px solid $inputFocusRingColor;
 	margin:1.1em 0;
 	h3{
-		border-top:6px solid $orange;
+		border-top:6px solid $inputFocusRingColor;
 		@include inline-block;
 	}
 }

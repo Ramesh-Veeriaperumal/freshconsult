@@ -345,7 +345,7 @@ en:
     portal_settings:
       simple:
         header_color: "Header"
-        bg_color: "Page"
+        bg_color: "Body"
         footer_color: "Footer"
         help_center_color: "Help center"
         btn_primary_background: "Primary action button"
@@ -358,7 +358,7 @@ en:
         headingsColor: "Heading color"
         linkColor: "Link text"
         linkColorHover: "Link text hover"
-        inputFocusRingColor: "On focus border color"
+        inputFocusRingColor: "Heading divider & Input focus glow"
     quests:
       index:
         title: Quest

@@ -35,8 +35,8 @@
 
 @include at-breakpoint($break-tablet){
 	@include layout(4){
-		.login-form{ @include span-columns(3); }
-		.alt-login-button{ @include span-columns(1 omega); }
+		.login-form{ @include span-columns(2.6); }
+		.alt-login-button{ @include span-columns(1.2 omega); }
 	}
 	.login-form{ padding-right: 2em; }
 	.btn-login{ float: right; margin-top: -20px; } 
