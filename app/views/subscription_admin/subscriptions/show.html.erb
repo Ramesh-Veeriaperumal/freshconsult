@@ -16,7 +16,7 @@
 		  </tr>           
 		  <tr>
 		    <th>Contact information</th>
-		    <td><%= @subscription.account.account_admin.email %> <%= @subscription.account.account_admin.phone %> </td>
+		    <td><%= @subscription.admin_email %> <%= @subscription.admin_phone %> </td>
 		  </tr>
 		  <tr>
 		    <th>Last login</th>
@@ -116,6 +116,7 @@
 		</table>    
 	</div>	
  	<div class="span4">
+
 		<h3>Extend trial</h3>
 
 		<% form_tag({:action => 'extend_trial'}, :id => 'trial_form', :class => "well form-inline") do %>

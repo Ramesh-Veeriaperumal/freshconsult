@@ -2,6 +2,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   set_table_name "helpdesk_time_sheets"
   
   belongs_to :workable, :polymorphic => true
+  delegate :product_name, :group_name, :to => :workable
 
   belongs_to :user
   
@@ -39,12 +40,30 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
         :conditions =>{:users => {:email => contact_email}},
       } unless contact_email.blank?}
 
-    
-  BILLABLE_HASH = { "Billable" => true, "Non-Billable" => false}
-  GROUP_BY_ARR = [["Customer" , :customer_name] , ["Ticket",:workable] , ["Agent" , :agent_name] , ["Date" , :group_by_day_criteria]]
-  REPORT_LIST_VIEW = {:ticket => I18n.t('helpdesk.time_sheets.ticket') , :customer_name => I18n.t('helpdesk.time_sheets.customer') , 
-                      :agent_name =>  I18n.t('helpdesk.time_sheets.agent') , :note =>  I18n.t('helpdesk.time_sheets.note') ,
-                       :group_by_day_criteria =>I18n.t('helpdesk.time_sheets.executed_at') , :hours => I18n.t('helpdesk.time_sheets.hours')}
+  def self.billable_options
+    { I18n.t('helpdesk.time_sheets.billable') => true, 
+      I18n.t('helpdesk.time_sheets.non_billable') => false}
+  end
+
+  def self.group_by_options
+    [ [I18n.t('helpdesk.time_sheets.customer') , :customer_name], 
+      [I18n.t('helpdesk.time_sheets.ticket') , :workable], 
+      [I18n.t('helpdesk.time_sheets.agent') , :agent_name], 
+      [I18n.t('helpdesk.time_sheets.executed_at') , :group_by_day_criteria],
+      [I18n.t('helpdesk.time_sheets.product') , :product_name], 
+      [I18n.t('helpdesk.time_sheets.group') , :group_name] ]
+  end                                                                                                                                               
+
+  def self.report_list
+    { :ticket => I18n.t('helpdesk.time_sheets.ticket'),
+      :customer_name => I18n.t('helpdesk.time_sheets.customer'), 
+      :agent_name =>  I18n.t('helpdesk.time_sheets.agent'), 
+      :note =>  I18n.t('helpdesk.time_sheets.note'),
+      :group_by_day_criteria =>I18n.t('helpdesk.time_sheets.executed_at'), 
+      :hours => I18n.t('helpdesk.time_sheets.hours') ,
+      :product_name => I18n.t('helpdesk.time_sheets.product'), 
+      :group_name => I18n.t('helpdesk.time_sheets.group') }    
+  end                    
 
   def hours 
     seconds = time_spent
@@ -98,7 +117,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     if deep
       self[:ticket_id] = self.workable.display_id
       self[:agent_name] = self.agent_name
-      self[:time_spent] = sprintf( "%0.02f", self.time_spent/3600) # converting to hours as in UI
+      self[:timespent] = sprintf( "%0.02f", self.time_spent/3600) # converting to hours as in UI
       self[:agent_email] = user.email
       self[:customer_name] = self.customer_name
       self[:contact_email] = workable.requester.email

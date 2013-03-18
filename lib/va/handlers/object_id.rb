@@ -9,6 +9,10 @@ class Va::Handlers::ObjectId < Va::RuleHandler
       evaluate_on_value == proper_value
     end
 
+    def in(evaluate_on_value)
+      value.map(&:to_i).include?(evaluate_on_value)
+    end
+
     def filter_query_is
       construct_query (proper_value ? '=' : 'is')
     end

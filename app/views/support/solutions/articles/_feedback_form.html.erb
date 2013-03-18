@@ -1,0 +1,26 @@
+<% form_for :ticket, :url => create_ticket_support_solutions_article_path(@article.id), 
+            :html => {  :method => :post, 
+                        :rel => "validate",
+                        "data-remote" => true, 
+                        "data-update" => "vote-feedback-container",
+                        :class => "form-portal" } do |f| %>
+
+  <%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
+  <%= hidden_field_tag "helpdesk_ticket[subject]", "Feedback for #{@article.title}" %>
+  <div class="control-group">
+    <label id="requester-label" for="helpdesk_ticket_email" class="control-label required"><%= t('your_email') %></label>
+    <div class="controls">
+      <input type="text" id="helpdesk_ticket_email" class="required email span8" name="helpdesk_ticket[email]" />
+    </div>
+  </div>
+  <div class="control-group">
+    <label id="description-label" for="helpdesk_ticket_description" class="control-label"><%= t('comments') %></label>
+    <div class="controls">
+      <%= text_area_tag "helpdesk_ticket[description]", "", :rows => 5, :class => "span8" %>
+    </div>
+  </div>
+  <div class="form-actions">
+    <button data-hide-dom="#vote-feedback-container" class="btn"><%= t('cancel') %></button>
+    <%= submit_tag t('send_feedback'), :class => "btn btn-primary btn-toggle", :id => "submit-feedback" -%> 
+  </div>
+<% end %>

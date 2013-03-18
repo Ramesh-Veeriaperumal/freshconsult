@@ -18,7 +18,8 @@ class TopicObserver < ActiveRecord::Observer
 	end
 
 	def before_destroy(topic)
-		update_post_user_counts(topic)
+    topic_changes(topic)
+    update_post_user_counts(topic)
 	end
 
 	def after_commit(topic)

@@ -2,12 +2,12 @@
     <%= each_or_message("helpdesk/tickets/components/article", @articles, t(:'ticket.suggested_solutions.no_result')) %>
   </div>
   <div class="panel_area"> 
-    <%= link_to_function( "Find more solutions", "jQuery(this).hide(); jQuery('#more_solutions').show();", :class => "floatr slim-button") %>
+    <%= link_to_function( t('find_more_solutions'), "jQuery(this).hide();jQuery('#more_solutions').show();", :class => "floatr slim-button") %>
     <div id="more_solutions" style="display:none;">
       <form id="searchmoreform" action="#">
-        <label class="overlabel" id="search_solutions_label" for="solution_search">Search solutions</label>	
+        <label class="overlabel" id="search_solutions_label" for="solution_search"><%= t('search_solutions') %></label>	
  	      <input id="solution_search" name="solution[search]" size="30" type="text" /> 
- 	      <%= submit_tag( "Search", :class => 'button' ) %>
+ 	      <%= submit_tag( t('search_button'), :class => 'button' ) %>
  	    </form>
  	  </div>
   </div>  

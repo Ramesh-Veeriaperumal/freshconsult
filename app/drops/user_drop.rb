@@ -1,9 +1,19 @@
 class UserDrop < BaseDrop	
-	liquid_attributes << :name << :email << :phone << :mobile << :job_title << :user_role << 
-						 :time_zone << :twitter_id  
+
+	include ActionController::UrlWriter
+
+	liquid_attributes << :name  << :first_name << :last_name << :email << :phone << :mobile << 
+						:job_title << :user_role << :time_zone << :twitter_id  
+
+
+  include Integrations::AppsUtil
 
 	def initialize(source)
 		super source
+	end
+
+	def profile_url
+		source.avatar.nil? ? false : profile_image_user_path(@source)
 	end
 
 	def id
@@ -12,6 +22,10 @@ class UserDrop < BaseDrop
 
 	def company_name		
 		@company_name ||= @source.customer.name if @source.customer
+	end
+
+	def is_agent
+		source.agent?
 	end
 
 	def firstname

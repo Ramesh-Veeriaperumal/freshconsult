@@ -82,7 +82,6 @@
         }
 
         $tip
-          .remove()
           .css({ top: 0, left: 0, display: 'block' })
           .prependTo(document.body)
 
@@ -132,19 +131,19 @@
         , $tip = this.tip()
 
       $tip.removeClass('in')
+      $tip.css({'display':"none"});
+      // if($.browser.opera)
+      // {
+      //   $tip.remove();
+      // }
 
-      if($.browser.opera)
-      {
-        $tip.remove();
-      }
+      // function removeElement () {
+      //   $tip.remove();
+      // }
 
-      function removeElement () {
-        $tip.remove()
-      }
-
-      $.support.transition && this.$tip.hasClass('fade') ?
-        $tip.bind(transitionEnd, removeElement) :
-        removeElement()
+      // $.support.transition && this.$tip.hasClass('fade') ?
+      //   $tip.bind(transitionEnd, removeElement) :
+      //   removeElement()
     }
 
   , fixTitle: function() {

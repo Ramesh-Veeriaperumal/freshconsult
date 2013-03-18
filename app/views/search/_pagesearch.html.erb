@@ -2,37 +2,34 @@
 	placeholder ||= "Search"
 	url			||= "/search/content?search_key="
 %>
-<div class="live_search">
-	<label class="overlabel" for="PageSearch"><%= placeholder %></label>
-	<input class="search" type="text" id="PageSearch" /> 
-</div>
+<form class="page-search">
+	<div class="live_search">
+		<input class="search" type="text" id="PageSearch" placeholder="<%= placeholder %>" /> 
+	</div>
+</form>
 
 <div id="search_results" style="display:none;"></div>
-<% javascript_tag do %>
-	(function($){
-		jQuery(document).ready(function(){	
-			callbackToPageSearch = function(string){
-				jQuery.ajax({ url: "<%=url%>"+string, 
-								  success: function(data){
-								  			jQuery("#search_results").show();
-											jQuery("#search_results")
-												.html(data);
-											jQuery("#PageSearch").removeClass("loading");
-							}});
-			}
-			
-			jQuery("#PageSearch").bind("keyup", function(ev){
-				var searchString = this.value.replace(/^\s+|\s+$/g, "");
-					if(searchString != '' && searchString.length > 1){
-						jQuery(this).addClass("loading");
-						delay(function(){
-					      callbackToPageSearch(searchString);
-					    }, 200 ); 
-					}else{
-						jQuery("#search_results").hide()
-						jQuery(this).removeClass("loading");				
-					}
-			});
-		}); 
-	})(jQuery);
+<% content_for :script_jquery do %>
+	callbackToPageSearch = function(string){
+								$.ajax({ 
+									url: "<%=url%>"+string, 
+									success: function(data){
+									 			$("#search_results").show();
+												$("#search_results").html(data);
+												$("#PageSearch").removeClass("loading");
+									}});
+								};
+				
+	$("#PageSearch").bind("keyup", function(ev){
+		var searchString = this.value.replace(/^\s+|\s+$/g, "");
+		if(searchString != '' && searchString.length > 1){
+			$(this).addClass("loading");
+			delay(function(){
+		    	callbackToPageSearch(searchString);
+			}, 200 ); 
+		}else{
+			$("#search_results").hide()
+			$(this).removeClass("loading");				
+		}
+	});
 <% end %>

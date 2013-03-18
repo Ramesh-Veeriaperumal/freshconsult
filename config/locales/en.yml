@@ -2,6 +2,7 @@ en:
   meta:
    language_name: 'English'
   any: Any
+  or: or
   unspam: "Unspam"
   unblock: "Whitelist"
   enabled: "Enabled"
@@ -20,6 +21,9 @@ en:
   status: "Status"
   sales: "Sales"
   preview: "Preview"
+  send_feedback: "Send feedback"
+  your_email: "Your Email"
+  captcha_verify_message: "Captcha verification failed, try again!"
   your_email: "Your email"
   please_wait: Please wait...
   filter_options:
@@ -37,6 +41,11 @@ en:
   proceed_now: "\n\nProceed now?"
   forward: "Forward"
   apply: "Apply"
+  myself: "Myself"
+  meta:
+   language_name: 'English'
+  signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
+  attachment_help_info: File size < 15 MB
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
   attachment_help_info: "File size < 15 MB"
   feedbackwidget_offset_info: The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
@@ -45,6 +54,8 @@ en:
   assign: Assign
   signup: <b>Sign up</b>
   signup_title: "Sign up to %{current_portal}"
+  signup_up_with_us: "Sign up with us"
+  signup_help_information: "Once you sign up, you will have complete access to our solutions and FAQs, ask questions and learn from our user community. You can also raise support issues and track their status."
   trial_expired_on: Your trial has expired on
   upgrade_trial: Upgrade your trial!
   upgrade_plan: Upgrade
@@ -63,6 +74,7 @@ en:
   working: Working
   attachment: Attachment
   attachments: Attachments
+  attachment_delete: "You're about to permanently delete this attachment. Continue?"
   attach_file_local: Attach a file from your computer
   dropbox_attach_label: Attach from
   dropbox_attach_from: Attach from Dropbox
@@ -74,6 +86,19 @@ en:
   remove: Remove
   no_tags: No tags found.
   show_recent: Show Recent
+  immediately: Immediately
+  after_half: After 30 Minutes
+  after_one: After 1 Hour
+  after_two: After 2 Hours
+  after_four: After 4 Hours
+  after_eight: After 8 Hours
+  after_twelve: After 12 Hours
+  after_day: After 1 Day
+  after_twoday: After 2 Days
+  after_threeday: After 3 Days
+  after_oneweek: After 1 Week
+  after_twoweek: After 2 Weeks
+  after_onemonth: After 1 Month
   user: 
     company: Company
     photo: Photo
@@ -89,6 +114,11 @@ en:
     address: Address
     work: Work
     email: Email
+    choose_another_photo: "Choose another photo"
+    change_photo: "Change photo"
+    remove_photo: "Remove photo"
+    remove_profile_image: "Profile image successfully removed"
+    remove_profile_image_confirm: "Are you sure you want to delete this Profile Picture?"
   ticket_fields:
     fields:
       source: Source
@@ -102,6 +132,7 @@ en:
       product: Product
       ticket_type: Type
       created_at: Created
+    saving_ticket: "Saving ticket fields..."
     untitled: Untitled
     first_choice: First Choice
     second_choice: Second Choice
@@ -171,7 +202,7 @@ en:
   last: last
   agent_emailnotverified: Email has not been verified for this agent!
   agent_assigned_info: No open and pending tickets for this agent
-  basic_details: Email Response Management, Dispatch'r Rules, Default SLA Policy, Knowledge Base, Self-Service Portal, Domain Mapping, Community Support.
+  basic_details: "Email Response Management, Dispatch'r Rules, Default SLA Policy, Knowledge Base, Self-Service Portal, Domain Mapping, Community Support."
   choose_plan: Choose Plan
   select_plan: Select Plan
   create: Create
@@ -181,32 +212,62 @@ en:
     overview: Overview
     recent: Recent
     popular: Popular
+    planned: Planned
+    implemented: Implemented
+    nottaken: Not Taken
+    deferred: Deferred
+    inprogress: In Progress
   payment_info: Payment information
   billing_address: Billing Address
   support:
-      shared:
-        survey_form:
-          survey_title: Please take a minute to rate our support
-          feedback_title: Also your good words and specific critique can help us better our support in the future
-          rated_on: You gave us this rating on %{rated_on}
-          change_of_mind: Changed your mind?
-          rate_again: Rate us again
-          submit: Submit
-          cancel: Cancel
-      surveys:
-          thanks_for_feedback: "We have received your feedback. Thank you very much."
-          feedback_already_done: "You have already given feedback for this response."
-          new:
-              thanks_info: Thanks for taking time to rate our support experience.
-              feedback_info: Your feedback is very much appreciated.
-              feedback_optional: Feedback is optional
-              send: Send
-              thanks: Thank you very much for rating us!
-              sorry: But, really sorry for the inconvenience.
-              happy_info: It has been our pleasure to serve you, glad you were happy with our service
-              neutral_info: Wish you were a little more happy.
-              unhappy_info: We will ensure that we will take extra care the next time around.
-              additional_info: Additionally, you could also share your experience working with us.
+    tickets:    
+      ticket_survey:
+        title: "Customer survey"
+        rating_sub_title: "Your have rated us"
+        survey_title: Please take a minute to rate our support
+        feedback_title: Describe your support experience (optional)
+        rated_on: on %{rated_on}
+        change_of_mind: Changed your mind?
+        rate_again: Rate us again
+        submit: Submit
+        cancel: Cancel
+    login:      
+      form:      
+        email: Email
+        password: Password
+        remember: Remember me on this computer
+        login: Login
+        forgot: forgot your password?
+        sign_in_using: Sign In
+        sign_in_using_google: Sign in using your Google account
+        help: Help
+    shared:
+      survey_form:
+        survey_title: Please take a minute to rate our support
+        feedback_title: Also your good words and specific critique can help us better our support in the future
+        rated_on: You gave us this rating on %{rated_on}
+        change_of_mind: Changed your mind?
+        rate_again: Rate us again
+        submit: Submit
+        cancel: Cancel
+      info1: "Can you please tell us how we can improve this article?"
+      email: Your Email *
+      comments: Comments
+      send_feedback: Send Feedback
+    surveys:
+      thanks_for_feedback: "We have received your feedback. Thank you very much."
+      feedback_already_done: "You have already given feedback for this response."
+      new:
+        thanks_info: Thanks for taking time to rate our support experience.
+        feedback_info: Your feedback is very much appreciated.
+        feedback_optional: Feedback is optional
+        send: Send
+        thanks: Thank you very much for rating us!
+        sorry: But, really sorry for the inconvenience.
+        happy_info: It has been our pleasure to serve you, glad you were happy with our service
+        neutral_info: Wish you were a little more happy.
+        unhappy_info: We will ensure that we will take extra care the next time around.
+        additional_info: Additionally, you could also share your experience working with us.
   gamification:
     levels:
       beginner: Beginner
@@ -218,7 +279,7 @@ en:
     notifications:
       newlevel: "<b> Hurrah! </b><br/> Now you became <b>%{name}</b>."
       achieved_quest: "<b> Hurrah! </b><br/> You achieved the <b>%{name}</b>."
-    leaderboard:      
+    leaderboard:   
       mvp_trophie_label: "Most Valuable Player"
       mvp_trophie_info: "Agent with the most overall points this month"
       sharpshooter_trophie_label: "Sharpshooter"
@@ -258,8 +319,48 @@ en:
     js_ticket_txt: Resolve $$questvalue$$ tickets in a span of $$questtime$$ and matching these conditions.
     js_solution_txt: Create $$questvalue$$ knowledge base article in a span of $$questtime$$ and matching these conditions.
     js_forum_txt: $$questmode$$ $$questvalue$$ forum posts in a span of $$questtime$$ and matching these conditions.
-    js_quest_txt: On successful completion of the quest you can unlock $$badgename$$ badge and $$questpoints$$ bonus points. 
+    js_quest_txt: On successful completion of the quest you can unlock $$badgename$$ badge and $$questpoints$$ bonus points.
+  portal_pages:
+    groups:
+      general: "General pages"
+      solutions: "Solutions"
+      discussions: "Discussions"
+      tickets: "Tickets"
+    pages:
+      portal_home: "Portal home"     
+      user_signup: "New user signup"
+      user_login: "Login page"
+      forgot_password: "Forgot password"
+      profile_edit: "User profile"
+      search: "Search results"
+      solution_home: "Solutions home"
+      article_list: "Article list"
+      article_view: "Article view"
+      discussions_home: "Discussions home"
+      topic_list: "Topic list"
+      topic_view: "Topic view"
+      new_topic: "New topic"
+      submit_ticket: "New ticket"
+      ticket_list: "User tickets"
+      ticket_view: "Ticket details"
   admin:
+    portal_settings:
+      simple:
+        header_color: "Header"
+        bg_color: "Page"
+        footer_color: "Footer"
+        help_center_color: "Help center"
+        btn_primary_background: "Primary action button"
+        btn_background: "Secondary action button"
+        tab_color: "Background"
+        tab_hover_color: "Active tab"
+        baseFont: "Base font"
+        textColor: "Base color"
+        headingsFont: "Heading font"
+        headingsColor: "Heading color"
+        linkColor: "Link text"
+        linkColorHover: "Link text hover"
+        inputFocusRingColor: "On focus border color"
     quests:
       index:
         title: Quest
@@ -268,11 +369,30 @@ en:
         quest_title: Quests
         new_quest: New Quest
         quest_description: "Quests are Business-Specific goals that you create to challenge your agents to achieve!"
+        new_quest: New Quest
       quest_form:
+        edit: Edit quest
+        quest_type: Quest type
+        quest_objectives: Quest objectives
+        no_condition: No conditions present
+        reward: Reward
+        completion: On successful completion of a quest award a badge and bonus points
+        badge: Badge
+        bonus_points: Bonus points
+        final: "...and finally"
+        quest_name: Name your quest
+        brief: "Brief about the quest"
+        save: Save quest
+        pick_badge: Pick a badge
+        change: Change
         ticket: "Resolving <br /> <strong> Tickets </strong>"
         solution: "Publishing <br /> <strong> Solutions </strong>"
         forum: "Engage the <br /> <strong> Community </strong>"
     gamification:
+      new_quest: New Quest
+      fresh_arcade: What is Freshdesk Arcade?
+      quests: Quests
+      points: Points
       successfully_updated: Gamification settings has been successfully updated.
       error_updated: Error while updating gamification settings.
       help_text: 
@@ -299,7 +419,15 @@ en:
        </p>"
       index:
         title: Arcade Settings
+        info1: Now every support ticket that flows in is a chance for agents to score. What’s even cooler - you get to award bonus points to your support team based on what is most important to you. Like shooting out answers super fast, getting the solution right the first time, and winning awesome satisfaction ratings from customers. 
+        info2: Follow your support teams’ progress with the leaderboard right off the dashboard. And award special trophies to the top scorers for being the Speed Racer, Sharp Shooter, Customer Wow Champ, and best of all, your Most Valuable Player of the month.
+        video: Check out the video
+        learn_arcade: Learn more about the arcade
+        enable_arcade: Enable freshdesk arcade
       gamification_settings:
+        award_points: Award points
+        agent_resolves_ticket: "When agent <br /> resolves a ticket:"
+        bonus_points_for: "Bonus points for: "
         enable_label: Agents Gamification
         title_points_configuration: Points Configuration
         title_ticket_points: Ticket Points
@@ -350,52 +478,52 @@ en:
         enter_unhappy_text: Enter the unhappy text
     getting_started:
         send_mail_content:
-            title: "Your forwarding email:"
-            info: "You must forward a copy of your Support emails to the email address shown below:"
-            note: "<strong>Note:</strong> For FreshDesk to convert incoming emails to tickets you must configure an email forwarding rule in your mail server."
-            test_info1: If you think everything is good so far, try sending a test mail
+            test_info_1: Think everything looks okay until now? Try sending a test email.
             button_title: Send Test Mail
             button_again_title: ...or Send test mail again
             button_sending: Sending...
             send_test_mail_info1: Make sure you've set up your emails to forward to <b> %{to_email} </b>.
-            send_test_mail_info2: Learn How
             send_test_mail_info3: If you think everything is good so far, try sending a test mail. <br>%{send_test_mail_link}
             send_test_mail_link_title: Send test email
-            send_test_mail_response1: We've sent a test email to <b><span id=reply_email_1>%{reply_email}</span></b>. If everything goes well, you  can see  the <a href="/helpdesk/tickets" target="_blank">new ticket</a> in the tickets view.
+            send_test_mail_response_1: We just sent a test email to <b><span id=reply_email_1>%{reply_email}</span></b>. If all went well, you  should see  a new ticket in your help desk. <a href="/helpdesk/tickets" target="_blank">Check to see if it's there</a>.
             send_test_mail_confirm_yes: Yes, i got it.
             send_test_mail_confirm_no: No, i can't see any ticket.
-            send_test_mail_response_yes: Congratulations!!! You have successfully connected your support email with your help desk portal. Happy Supporting!!!
+            send_test_mail_yes_response: Good job! You have successfully setup your support email to work with Freshdesk. Happy Supporting!
             send_test_mail_response_no1: There seems to be a problem ->
             send_test_mail_response_no2: Learn how
-            send_test_mail_response_no3: <strong>Bummer! There seems to be a problem!</strong><br>If you did not receive the email in your inbox, please wait for a couple of minutes. If the problem persists, <a href="https://support.freshdesk.com/" target="_blank">let us know</a>.
+            send_test_mail_response_no_3: <strong>Bummer! There seems to be a problem!</strong><br>Check your forwarding rule to make sure everything is ok. If you don't get a test ticket in a couple of minutes, <a href="https://support.freshdesk.com/" target="_blank">get in touch with us</a>.
         index:
-            congrats: Congratulations! Your “fresh” helpdesk is ready.
-            title_msg: Just fill in a few details to get started.
+            congratulations: Congrats! Your Freshdesk is ready!
+            send_test_mail_info2: "Here is <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>how you can do it</a>."
+            title_message: Jump start your customer support in four steps...
             support_email_title: Support<br> e-mail
-            agents_title: Agents
+            agents_title_1: Adding<br> Agents
             rebrand_title: Logo <br>&amp; colors
-            social_title: Social
-            skip_link: Skip and go to your helpdesk
+            social_title_1: Going<br> Social
+            skip_text: No thanks, take me to my helpdesk.
             back_link: Back
             next_link: Next
-            next_alt_link: Go to helpdesk
+            next_alt_text: Jump right in!
             next_please_wait: Please wait...
-            support_email_sub_title: Tell us your support e-mail.
-            support_email_sub_msg: Your support e-mail is required for the helpdesk to function properly.
-            save: Change
-            agents_sub_title: Invite your helpdesk agents
-            agents_title_info: Invite your agents to use Freshdesk, separate each email address with a comma
-            rebrand_sub_title: Logo &amp; colors
-            rebrand_header: Your helpdesk name and logo
-            helpdesk_preview: Helpdesk preview
-            social_sub_title: Go Social
-            social_info: Take Your Help Desk to Facebook, Twitter, your communities and just about everywhere your Customers go
+            support_email_subtitle: Add your primary support email address
+            support_email_submsg: This will also be the default reply-to address when you respond to<br> queries from Freshdesk.
+            save_text: Save
+            agents_subtitle: Invite your team to join in on the fun
+            agent_title_info: Add the emails of your team members to invite them over to Freshdesk. Separate multiple emails with a comma.
+            rebrand_subtitle: Rebrand with your logo and colors!
+            rebranding_header: Enter a fancy name for your helpdesk
+            helpdesk_preview_text: "Preview"
+            social_subtitle: Go social with your customer support!
+            social_info_text: Add your Facebook and Twitter accounts to start monitoring all your social interactions, and bring in wall posts, tweets, DMs and messages into Freshdesk.
             social_add_account: Add Account
             config-support-email-address: "Configure your support email address"
             save-and-next: "Save and Go to next"
             send_verification_email: Send verification email
             send_invite: Send Invite
             title: Cool! Looks like your help desk is ready to roll...
+            title1: "Now let's get those emails into Freshdesk"
+            info: "You'll need to create a simple rule in your support mailbox to forward emails to this address."
+            info2:  Not happy with it? Enter a new email and hit "Save"
             sub_title: Here's a bunch of stuff to help you get started
             email_config_title: What's your support email?
             email_config_sub_title: Let Freshdesk handle your Support Emails!
@@ -410,6 +538,7 @@ en:
             social_facebook_add: Add a Page            
             rebrand_company_label: Company Name
             rebrand_company_field_placeholder: Enter your company name
+            footer_msg: "<strong>Note:<strong> You can change these settings anytime by going to the <a href='/admin/home' target='_blank' style='text-decoration:none; color:#1272DE'>Admin tab</a>" 
             rebrand_paint_title: Paint your helpdesk
             rebrand_color_header: Header
             rebrand_color_tabs: Tabs
@@ -447,6 +576,9 @@ en:
         title: Day Pass
         info: A Day Pass is used up for each day an occasional agent logs in to your helpdesk. You can purchase Day Passes in multiples of 5 at a time, and even setup Freshdesk to automatically renew your Day Passes when they gets used up. 
       index:
+        no_credit_card: No credit card on file.
+        payment_info: Enter payment information to add more day passes 
+        add_payment_info: Enter payment information
         title: "Day Pass"
         current_balance: "You have %{balance} left!"
         buy_pass: "Buy more passes"
@@ -546,11 +678,16 @@ en:
         product_desc: Product description
         forwarding_email_info: "Your forwarding email address:"
       product:
-        email_not_verified: Email not verified  
+        edit_twitter_account: "Edit Twitter Account @%{screen_name}"
+        edit_facebook_page: "Edit Facebook page %{page_name}"
+        customize_portal: "Customize portal"
+        enable_portal: "Enable Portal"
+        email_not_verified: Email not verified
         delete: Are you sure you want to delete this Product?
       index: 
+        enable_portal: Enable Products
         title: Products        
-        add_product: Add Product
+        add_product: New product
       primary_product_support_email: Primary Product Support Email
       add_another_email: Add Another Email
       primary_email_required: Atleast one primary email has to be present
@@ -832,6 +969,12 @@ en:
       insufficient_privilege: 
         admin: You don't have sufficient privilage to change this. Please login as Administrator..!!
       login_not_needed: You must be logged out to access this page
+      deactivation:
+        failure: The %{human_name} could not be deactivated
+        success: The %{human_name} has been deactivated.
+      activation:
+        failure: The %{human_name} could not be activated
+        success: The %{human_name} has been activated.
       destroy: 
         failure: The %{human_name} could not be deleted
         success: The %{human_name} has been deleted.
@@ -1043,7 +1186,7 @@ en:
         long: "{{user_path}} updated ticket source of {{notable_path}} to {{source_name}}"
   credit_card_info: Credit card information
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
-  your_email_address: Your email address
+  your_email_address: Your e-mail address
   username: Username
   reply: reply
   is_not: Is not
@@ -1201,6 +1344,12 @@ en:
     skip_notification_yes: "Yes"
     skip_notification_no: "No"
   header_logo: Header Logo
+  feedback:
+      title: "Was this answer helpful?"
+      up_vote_thank_you_message: "Glad we could be helpful. Thanks for the feedback."
+      upvote: "Yes"
+      downvote: "No"
+      down_vote_form_title: "Can you please tell us how we can improve this article?"
   solutions:
     status:
       draft: Draft
@@ -1235,16 +1384,19 @@ en:
       deferred: Deferred
       inprogress: In Progress
     name: Topic Name
-    new: New Topic
+    new: Post a new topic
+    edit: Edit topic
     open: Re-open this Discussion
     edit: Edit Topic
     close: Close this Discussion
     post: Post Topic
-    add_comment: Add Comment
+    add_comment: Post comment
+    update_comment: "Update comment"
     post_comment: Post
     msg1: Comments are closed for this topic
     sticky: Sticky
     locked: Locked
+    answered: Answered
   activerecord: 
     errors: 
       messages: 
@@ -1270,7 +1422,7 @@ en:
         inclusion: is not included in the list
       full_messages: 
         format: "%{attribute} %{message}"
-      template: 
+      template:
         body: "There were problems with the following fields:"
         one: 1 error prohibited this %{model} from being saved
         other: "%{count} errors prohibited this %{model} from being saved"
@@ -1282,6 +1434,7 @@ en:
   update: Update
   save_reply: Save Reply
   forum_shared:
+    follow_topic: Follow this topic
     topic_vote:
       unlike: Unlike
       ideas:
@@ -1319,6 +1472,9 @@ en:
     five_minutes: 5 Minutes
     ten_minutes: 10 Minutes
     fifteen_minutes: 15 Minutes
+    after_five_minutes: After 5 minutes
+    after_ten_minutes: After 10 Minutes
+    after_fifteen_minutes: After 15 Minutes
   between_range: Between Range
   back_to_admin: Back to Admin
   group: 
@@ -1331,6 +1487,8 @@ en:
     info3: Send an Escalation email to
     info4: if a ticket remains un-assigned for more than
     info5: Are you sure
+    info6: "Email Agent when a new ticket is assigned to this group "
+    info7: "if a ticket remains un-assigned for more than "
     tour: Help me create a new agent group
     helptext: You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, set email notifications, create business rules and generate reports at the group level. Note that the same agent can be a member of multiple groups as well. 
     select_agents: Select Agents
@@ -1348,10 +1506,13 @@ en:
   oneweek: 1 Week
   twoweek: 2 Weeks
   onemonth: 1 Month
-  threemonth: 3 Month
+  twomonth: 2 Months
+  threemonth: 3 Months
+  sixmonth: 6 Months
+  oneyear: 1 Year
   problem: Problem
   change_plan_info: You can change your plan at any time, your next bill date is %{date}.
-  created_on: Created on
+  created_on: "Created on "
   zip: Zip
   import_solution_article: Convert Article forum to solution
   close: Close
@@ -1359,12 +1520,14 @@ en:
     new: New Agent
     edit: Edit Agent
     showing: "Showing:"
+    agent_restored: The agent has been restored 
     status:
       active: Active
       deleted: Deleted
     active:
       no_agents: You have not added any agents to the list
     deleted:
+      agent_deleted: The agent has been deleted
       no_agents: You dont have any deleted agents
     title: Agents
     info1: This is a deleted Agent
@@ -1436,6 +1599,9 @@ en:
   send_email_to_agent: Send Email to Agent
   import_data: Date Imported
   contacts: 
+    confirm_delete: Are you sure you want to delete this user?
+    add_new_user: Add a new user
+    search_by: Search by Name or Email or Tags...
     new: New Contact
     edit_contact: Edit contact
     edit: Edit Contact
@@ -1496,11 +1662,13 @@ en:
       no_contacts: You don't have any unverified contacts.
       no_contacts_with_letter: No matching contacts starting with the letter '%{alphabet}'
   between: Between
+  profile_settings: Profile settings
   portal_key: Portal
   add_new_forum: add a new forum
   no_forum_category: No forums in this category
   sla_policy: 
     sla_targets: SLA Targets
+    sla_targets_details: Set Service Level Targets for each ticket priority
     new: New SLA Policy
     edit: Edit SLA Policy
     select_policy: Select policy
@@ -1509,8 +1677,11 @@ en:
     helpcard:
       title: SLA Policy
       tour: Help me create a new SLA policy
-      info1: "A service level agreement (SLA) policy lets you set standards of performance for your support team. You can set SLA policies for the time within which agents should respond to, and resolve tickets based on ticket priorities. You can choose whether you want each SLA rule to be calculated over calendar hours or your business hours, and also create automatic escalation rules to notify specific agents when an SLA rule is violated. "
-      info2: "Your SLA Policies will be used in Freshdesk to determine the “Due By” time for each ticket. You can have a default SLA policy for all customers, or have multiple SLA policies for different customer tiers, like those who have subscribed to your Premium Support package."
+      info1: '<p>A service level agreement (SLA) policy lets you set standards of performance for your support team. You can set SLA policies for the time within which agents should respond to, and resolve tickets based on ticket priorities. You can choose whether you want each SLA rule to be calculated over calendar hours or your business hours.</p> <p>Your SLA Policies will be used in Freshdesk to determine the “Due By” time for each ticket.</p>'
+      title1: 'Enforcing Escalation Rules'
+      info2: '<p>You can optionally set escalation hierarchies for each policy to notify specific agents when an SLA rule is violated.</p>'
+      title2: 'Using Multiple SLA Policies'
+      info3: '<p>You can have a default SLA policy for all customers, or have multiple SLA policies for different customer tiers, like those who have subscribed to your Premium Support package.</p><p>When you add additional SLA Policies (other than the default policy), you will have to specify the conditions for which this policy will be enforced.</p>'
     override: Override
     title1: SLA Policies
     response_time: Response time
@@ -1518,6 +1689,28 @@ en:
     info3: SLA Policy works in conjunction with Business Hours
     tickets_with: Tickets with
     escalate_to: Escalate to
+    applicable_to: Apply this to
+    applicable_details: Choose when this SLA policy must be enforced
+    applicable_error: You need to add at least 1 condition
+    response_escalation: Escalation rules when a ticket is not <b>responded to</b> on time
+    resolution_escalation: Escalation rules when a ticket is not <b>resolved</b> on time
+    respond_within: Respond within
+    resolve_within: Resolve within
+    op_hrs: Operational Hrs
+    escalation_email: Escalation email
+    add_new: Add new
+    add_level: Add level
+    escalate_after: Escalate
+    add_response_esc:  Add rule
+    add_resolution_esc: rule
+    company_placeholder: "Enter Company names"
+    group_id_placeholder: "Enter Group names"
+    product_id_placeholder: "Enter Product names"
+    source_placeholder: "Enter Source names"
+    agent_placeholder: Pick Agents to escalate to...
+    applicable_info: Select at least one trigger condition.
+    disabled_old_policy: Set a trigger condition to enable this SLA policy.
+    default_policy: Default SLA Policy cannot be turned off.
   left: Left
   subscription: 
     error: 
@@ -1530,6 +1723,8 @@ en:
     total: Total
     free: Free
     paid: Paid
+    info1: "You can change your subscription details anytime. Your card will be charged pro-rata from the date of the subscription change to the next billing date."
+    info2: "Downgrading from a higher plan to a lower plan will result in loss of configuration data for features that are only available in the higher plan."
   activate: Activate
   feedbackwidget_text: Text
   billed_amount_per_month: You will be billed $%{amount} %{period}
@@ -1543,8 +1738,69 @@ en:
   no_anonymous_tickets: "To submit a ticket, <a href={{signup}}><b>Sign up</b></a> as a new user or <a href={{login}}><b>Login</b></a>."
   no_signup: "To submit a ticket, please <a href={{login}}><b>Login</b></a>."
   portal: 
+    no_topics_in_this_view: "~ No topics in this view ~"
+    header: 
+      preview_message: "<b>Preview mode</b> - <a href='javascript:window.close()'>Click here</a> to go back."
+    login: Login
+    signup: Signup
+    or_signup: " or %{signup} for an account"
+    to_post_comment: " to post a comment"
+    to_submit_ticket: " to submit a new ticket"
+    to_post_topic: " to post a topic"
     search: 
-      placeholder: Search using a keyword or a full question
+      filters:
+        all: "All"
+        solutions: "Solutions"
+        topics: "Topics"
+        tickets: "Tickets"
+      placeholder: "Enter your search term here..."
+    popular_topics: "Popular topics"
+    showing_recently_popular_topics: "Showing recently popular topics"
+    community_forums: "Community forums"
+    knowledge_base: "Knowledge base"
+    showing_recent_updates: "Showing recent updates"
+    no_articles_info_1: "Sorry, we haven’t published any articles. "
+    no_articles_info_2: "Please check again later. "
+    no_forums_info_1: "No forum topic yet"
+    no_forums_info_2: "Why don't you start a %{start_topic_link}?"
+    article:
+      see_all_articles: "See all %{count} articles"
+    topic:      
+      comments_closed: "Comments to this discussion are now closed!"
+      start_new_topic: "Start a new topic"
+      see_all_topics: "See all %{count} topics"
+    topic_vote:
+      you: 
+        one: "You"
+        other: "You and"
+      more: 
+        one: "1 other"
+        other: "%{count} others"
+      people:
+        one: "1 person"
+        other: "%{count} people"
+      ideas:
+        one: "likes this idea"
+        other: "like this idea"
+      problem:
+        one: "has this problem"
+        other: "have this problem"
+      howto:
+        one: "has this question"
+        other: "have this question"
+      ideas_button: "Do you like this idea?"
+      problem_button: "Do you have this problem?"
+      howto_button: "Do you have this question as well?"
+      ideas_unlike_button: "unlike!"
+      problem_unlike_button: "I don't have this problem!"
+      howto_unlike_button: "I don't have this question!"
+      ideas_users_voted_title: People who like this idea
+      problem_users_voted_title: People who have this problem
+      howto_users_voted_title: People who have this question
+    tickets:
+      export: "Export tickets"
+      export_ticket_data: "Export ticket data to CSV"
+      export_to_csv: "Export to CSV"
   feedbackwidget_form_title: Widget form title
   cancel_and_back: Cancel and go back
   due_in: Due in %{time_words}
@@ -1561,6 +1817,21 @@ en:
         new_folder: New Folder
       folder_form:
         visible_to: Visible to
+    articles:
+      where: Where
+      search_articles: Search Articles
+      guides: Guides
+      expanded_view: Expanded View
+      list_view: List View
+      select_all: Select All
+      deselect_all: Deselect All
+      assign_to_guide: Assign To Guide
+      clear_search: Clear Search Results
+      add_to_guide: Add to Guide
+      add_article: Add an article
+      article_useful: Glad we could be helpful. Thanks for the feedback. 
+      article_not_useful: "Thanks for the feedback. We will improve this article."
+      error_message: "There is an error %{error_msg}"
     info9: Public (Will be published in self service)
     edit: Edit Solution
     add: Add Solution
@@ -1612,6 +1883,7 @@ en:
     current_password: Current password
     confirm_password: Confirm password
     new_password: New password
+    confirm_password_message: "Must be same as password"
     api_key:
       title: "Your API Key"
       reset: "Reset API Key"
@@ -1656,7 +1928,13 @@ en:
     new_ticket: New Ticket
     submit_a_ticket: Submit a ticket
     login: <b>Login</b>
+    guest: "Guest"
+    signout: "Sign out"
+    edit_profile: "Edit profile"
     assumed_text: "You are viewing as"
+    help_center: "How can we help you today?"
+    new_support_ticket: "New support ticket"
+    check_ticket_status: "Check ticket status"
     tabs:
       reports: Reports
       dashboard: Dashboard
@@ -1668,8 +1946,7 @@ en:
       tickets: Tickets
       home: Home
       company_tickets: Company Tickets
-      social: Social
-    signout: Sign out
+      social: Social    
     search: Search
   agent_adds_comment: Agent adds comment to Ticket
   portal_customizer_anon_tickets: Anybody can submit a ticket
@@ -1702,7 +1979,9 @@ en:
   step1: Step 1
   next_charge_date: "Next Renewal"
   last_renewed_on: "Last Renewed on"
-  update_and_login: Update and login
+  update_and_login: "Update & login"
+  activate_and_login: "Activate & login"
+  password: "Password"
   enter_payment: Enter Payment details...
   downgrade_confirm: "<span class=\"label label-important\">Important</span>&nbsp;&nbsp;You are currently downgrading from <b>{{from}}</b> plan to the <b>{{to}}</b> plan. Please note that all data and configurations associated with features available in {{from}} plan will be lost permanently.<br /><br /> To see the full list of plans and features, please visit <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plans and Pricing</a>. <br />Still not sure? <a href = \"mailto:support@freshdesk.com\" >Let us help you decide</a>"
   errors_in_payment: "Errors encountered with your payment:"
@@ -1724,8 +2003,8 @@ en:
     add_supp_emails: Additional support email(s)
     info12: Add Another Email address
     info2: You must forward your support emails to your unique email address
-    send_verification_email: Verify again
-    unverified: Email not verified
+    send_verification_email: Send verification
+    unverified: Email un-verified
     info13: Your support email address is
     info3: Freshdesk will fetch those emails and convert them as tickets
     inactive_info1: All your support emails are still unverified, you must verify at least one support email
@@ -1800,11 +2079,14 @@ en:
     tkt_err_save: Unable to convert the tweet to ticket or already converted
     usr_not_thr: User is not there.    
   facebook:
+    add_page: Add Facebook Page
     deleted: The facebook page %{facebook_page} has been removed.
     not_authorized: You were not authorized by Facebook
   logo: Logo
   ok: Ok
   back: Back
+  question: "Question"
+  feature request: "Feature Request"
   ticket:
     spam: "SPAM"
     deleted: "TRASH"
@@ -1834,8 +2116,8 @@ en:
     merge_ticket_list_status_requester_responded_at: "From: %{username}<br /> Customer responded: <span class='emphasize'>%{time_ago} ago</span>"
     merge_ticket_list_status_created_at: "From: %{username}<br /> Created: <span class='emphasize'>%{time_ago} ago</span>"
     id : Id
-    ticket_selected: " ticket selected"
-    tickets_selected: " tickets selected"
+    ticket_selected: " ticket selected (Conversations from the merged tickets will be added to the primary ticket)"
+    tickets_selected: " tickets selected (Conversations from the merged tickets will be added to the primary ticket)"
     subject_placeholder: "Look up tickets by their subject"
     id_placeholder: "Type in an ID to find tickets"
     requester_placeholder: "Find tickets by requester"
@@ -1848,6 +2130,7 @@ en:
     group: Group
     agent: Agent 
     none: None
+    myself: Myself
     spam_btn_title: Mark as spam
     assigned_to: Assigned To
     assigned_agent: Agent
@@ -1855,6 +2138,10 @@ en:
     ham_btn_title: This is not spam
     reported_from_source: Reported via %{source}
     add_time: Add time
+    support:
+      reply: "Reply"
+      reply_and_open: "Reply & re-open"
+    from: "From:"
     suggested_solutions: 
       insert_url: Insert URL
       link: Link
@@ -1925,7 +2212,8 @@ en:
     type: Type
     execute_scenario: Execute Scenario
     note_form: 
-      private_note: This is a private note,  don't show this to the requester.
+      private_note: "Add as Private Note, and don't notify the requester"
+      description_note: "The Subject and Description of the merged tickets will be added as notes in the primary ticket"
       form_title: Add a Note
       add_and_resolve: Add and Resolve
       notify_agents: Notify Agents
@@ -1976,8 +2264,8 @@ en:
   feedbackwidget_embed_code_intro: Please copy and paste the code below anywhere before the &lt;/body&gt; tag in the html template of your site or every page where you'd like to provide the Freshdesk widget.
   import_forum: Forums
   title: Title
-  new_ticket_created: New Ticket Created
-  recent_forum_posts: Recent Forum Posts
+  new_ticket_created: New ticket created
+  recent_forum_posts: Recent forum posts
   description: Description
   tkt_assigned_to_agent: Ticket assigned to Agent
   is: Is
@@ -2046,9 +2334,10 @@ en:
       info2: In addition to the built-in integrations, you can bring in data from any other third party application, legacy system or database into the tickets and contact pages with FreshPlugs. You can customize your FreshPlug widget by pushing relevant information from Freshdesk to your data source with an AJAX call, and format and display information with HTML, CSS and Javascript.
   account: 
     name: Account Name
-    cancel: Cancel and go back
+    cancel: Cancel   
+    customize_portal: "Helpdesk rebranding"
     page_colors: 
-      title: Page colors
+      title: Helpdesk colors
       background: Background
       header: Header
       tab_color: Tab Color
@@ -2056,12 +2345,13 @@ en:
     info1: You can use this field to setup custom domain mapping for Freshdesk
     info2: Before using this field please ensure that you have created a CNAME DNS record in your DNS Zone file to point support.mycompanyname.com to %{full_domain}. Your Webmaster or Server administrator should be able to help you set this up correctly
     info3: Reset to Default colors
+    info5: Reset colors
     info4: The next ticket ID counter will start with this number (Should be greater than the last ticket ID created). This affects tickets created henceforth.
-    save: Save changes
+    save: Save
     time_zone: Time Zone
-    helpdesk_name: Helpdesk Name
+    helpdesk_name: Helpdesk/Portal name
     rebrand: Rebrand your Helpdesk
-    helpdesk_url: Helpdesk URL
+    helpdesk_url: Helpdesk/Portal URL
     language: Language
   lead: Lead
   comments: Comments
@@ -2070,6 +2360,8 @@ en:
   portal_customizer_open_forums: Anybody can view forums
   portal_customizer_option_forums: Users can view Forums without logging in
   business_hours: 
+    to: to
+    valid_time: Please enter a valid time
     holiday_name: Holiday name
     title: Business Hours
     info1: Setting up your business hours in Freshdesk allows you to have more control over your SLAs. For eg. if your helpdesk works between 9am to 6pm Mon-Fri and a customer sends a high priority ticket at 4pm on Tuesday, with a SLA target resolution time of 4 hours, then the ticket Due By time is set as 11am on Wednesday.You can configure your SLAs to either respect or ignore business hours
@@ -2104,7 +2396,9 @@ en:
   tickets_were: tickets were
   undo: Undo
   total: "Total"
-  helpdesk: 
+  export_to_CSV: Export to CSV
+  back_to_reports: "&larr; Back to reports"
+  helpdesk:
     ticket_notifier:
         reply:
             happy: Awesome
@@ -2123,7 +2417,8 @@ en:
       executed_at: Date
       hours: Hours
       agent: Agent
-      note: Note
+      note: Note 
+      billable_entry: Mark as a billable entry
       billing_type: Billing Type
       group_by: Group By
       report:
@@ -2162,6 +2457,8 @@ en:
           billing_hours: Billable
           note: Note
           on: on
+        note: Notes
+
     tags:
       index:
         title: Tags
@@ -2216,6 +2513,7 @@ en:
         info: This will be the help desk name that is shown in the header and mail notifications.
     ticket_created_on_n_by: by %{requester} on %{date_time}
     tickets:
+      to: "To: "
       no_email_found: "User with email %{email} is not available in the system."
       overlay_reply_time: " replied, %{time_in_words} ago"
       overlay_fwd_time: " forwarded, %{time_in_words} ago"
@@ -2391,13 +2689,16 @@ en:
         target_merge_description2: Description in ticket %{ticket_id}
         confirm_and_merge: Confirm and merge  
       bulk_merge:
+        mark_primary: "Mark as primary"
+        primary_ticket: "This is your primary ticket"
+        remove: "Remove this ticket"
         target_merge_description:  "Ticket {{ticket.id}} {{ticket.subject}} is merged with this request"
         target_note_description1: 
           one: "Ticket with id"
           other: "Tickets with ids"
         target_note_description2: 
-          one: "is merged with this request."
-          other: "are merged with this request."
+          one: "is merged into this ticket."
+          other: "are merged into this ticket."
         target_note_description3:
           one: "Ticket with id %{source_tickets} is merged into ticket %{target_ticket_id} with this request"
           other: "Tickets with ids %{source_tickets} are merged into ticket %{target_ticket_id} with this request"
@@ -2406,10 +2707,14 @@ en:
   tickets_filter:
     title: "Filter Tickets"
     unsaved_view: "Untitled View"
+    raised_by: "Tickets created by"
+    everyone_in_company: "Everyone in %{company_name}"
     sort_fields:
       due_by: Due by time
       date_created: Date Created
       last_modified: Last Modified
+      created_at: Date Created
+      updated_at: Last Modified 
       priority: Priority
       status: Status
       asc: Ascending
@@ -2461,27 +2766,28 @@ en:
       subject: Export tickets - %{filter} - ( %{start_date} to %{end_date} )
       body: Please find the CSV file attached.
   date:
-    ago: Ago
-    from: From Now
-    now: Just Now
-    second: Second
-    seconds: Seconds
-    minute: Minute
-    minutes: Minutes
-    hour: Hour
-    hours: Hours
-    day: Day
-    days: Days
-    week: Week
-    weeks: Weeks
-    month: Month
-    months: Months
-    year: Year
-    years: Years
+    ago: ago
+    from: from now
+    now: just now
+    second: second
+    seconds: seconds
+    minute: minute
+    minutes: minutes
+    hour: hour
+    hours: hours
+    day: day
+    days: days
+    week: week
+    weeks: weeks
+    month: month
+    months: months
+    year: year
+    years: years
   go_back_admin: Go back to Admin
   social:
     facebook_pages:
       index:
+        remove_facebook_page: "Are you sure you want to remove this facebook page"
         title: "Facebook Pages"
         reauthorize: Reauthorize
         reauth_required : Reauthorization required
@@ -2505,9 +2811,21 @@ en:
         direct_messages_info: Freshdesk will convert all direct messages on this Facebook page as tickets. if you are enabling this first time you may need to <a href='{{reauth_url}}'>Reauthorize with Facebook</a>
     twitter_handles:
       index:
+        go_to_ticket: Go to Ticket
+        results_for: Results for
+        no_tweet_results: "No Tweet results for "
+        no_search_default: No Search Default search keywords are defined for any of your twitter handle.
+        search: Search
+        convert_to_ticket: Convert to Ticket
+        reply: Reply
+        show_more_results: Show more results
+        search_twitter: Search twitter
         title: "Twitter Accounts"
         reauthorize: Reauthorize
         reauth_required: Reauthorization required
+        from: "From: "
+        note_title: "Note: "
+        note:  The current reply will not be registered as a ticket or a conversation inside Freshdesk.
         remove_handle_msg: Are you sure you want to remove this twitter account?
       signin_info:
         title: Sign in using twitter
@@ -2585,6 +2903,18 @@ en:
       sign_in_using: "...or Sign in using"
       sign_in_error: "Incorrect email or password."
   integrations:
+    native_integrations: Native Integrations
+    freshplugs_title: FreshPlugs
+    new_freshplug: New FreshPlug
+    no_freshplugs: You do not have any FreshPlugs.
+    add_new_freshplug: Add new FreshPlug
+    freshplugs:
+      refresh: Refresh
+      custom_widget_preview: Custom Widget Preview
+      show_preview: Show Preview
+      hide_preview: Hide Preview
+      show_widget_in_ticket_view_page: Show the widget in ticket view page. 
+      show_the_widget_in_contact_view_page: Show the widget in contact view page. 
     capsule_crm:
       label: "Capsule CRM"
       helptext: "<h4>Link back from Capsule to Freshdesk</h4><p><br/>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
@@ -2724,6 +3054,10 @@ en:
         add_jira_comment: "Add it as a comment in JIRA."
         update_jira_status: "Update JIRA status as well."
     jira_settings:
+      sync_updates: Sync Updates
+      info1: "When a Freshdesk ticket is linked with JIRA issue, perform the below actions."
+      info2: "When ticket status is updated in Freshdesk "
+      info3: "When a comment is added in Freshdesk "
       none: "Do nothing."
       add_private_note_in_fd: "Add a private note in Freshdesk and notify agent."
       add_public_note_in_fd: "Add a public note in Freshdesk."
@@ -2773,6 +3107,13 @@ en:
         widget_title: "Widget Title"
         username: "Username"
         password: "Password"
+    google_calendar:
+      label: "Google Calendar"
+      desc: "You can manage events for each ticket with Google Calendar."
+      helptext: "Google calendar lets you keep track of events associated with tickets. Agents need to connect their Google account with Freshdesk to manage events with Google Calendar."
+      form:
+        google_calendar_settings_info: ""
+        google_calendar_settings: "Google Calendar Settings"
     batchbook:
       label: "Batchbook"
       helptext: "<h4>Batchbook Integration</h4><p><br>Link your Batchbook account with Freshdesk to display contact information on the Contacts and Tickets pages. Please specify your domain and API key in this page to configure the integration. <br><br>Freshdesk pulls in the Name, Title, Company Name, Contact Address, Phone Number &amp; Mobile Numbers from Batchbook and makes it available for your agents.<br><br>You can lookup contacts from Batchbook by searching with their email address. If multiple contacts exist with the same address, all of them will be displayed in the form of a list.</p><br/> "
@@ -2885,6 +3226,7 @@ en:
       description: "Display a contact or option to add the contact into capsule."
   reorder: "Reorder"
   reports:
+      no_data: No data to display!
       tab_heading: "Reports"
       select_customer: "Select Customer"
       select_options: "Reports by"
@@ -2940,9 +3282,13 @@ en:
           view_between: View report between
           from: From
           to: To
+          filter_report: Filter report by
       scoreboard_reports:
         champions_title: Champions
         sharpshooter_title: Sharp Shooters
+        speed_champion: Speed Champion
+        customer_champion: Customer Champion
+        valuable_player: Most valuable Player   
       survey_reports:
         index: 
             agent_list_loading: Fetching agent list
@@ -3035,6 +3381,7 @@ en:
   since: "Since"
   for: "for"
   since_time: "Since %{time_words}"
+  since_last_time: "since last %{time_words}"
   change_deleted_status_msg: "Please change the status as the current status is deleted"
   ticket_cc_email_more: "more"
   fwd_to: "Forward"
@@ -3087,6 +3434,11 @@ en:
   ticket_close_success: Your ticket has been successfully closed.
   ticket_close_failure: Closing the ticket failed.
   canned_folders:
+    insert_placeholder: Insert Placeholder 
+    important: "Important: "
+    delete_folder_warning: Deleting the folder will also delete all the canned responses contained in it.
+    delete_canned_response: Are you sure you want to delete the selected Canned Responses?
+    delete_folder: Are you sure you want to delete folder and all its contents? 
     new: "Folder name"
     move: "Move"
     title: "Canned Response Folders"
@@ -3118,20 +3470,93 @@ en:
     create_new: "Create New"
     no_response_admin: "No responses in this folder <a href={{link}} id='new_resp'>Create New</a>"
     select_folder: "Select Folder"
-  created_within:
-    any_time: Any Time
-    five_minutes: Within 5 minutes
-    fifteen_minutes: Within 15 minutes
-    thirty_minutes: Within 30 minutes
-    one_hour: Within 1 hour
-    four_hours: Within 4 hours
-    twelve_hours: Within 12 hours
-    twentyfour_hours: Within 24 hours
-    today: Today
-    yesterday: Yesterday
-    seven_days: This Week
-    thirty_days: This Month
-    two_months: Last 2 months
-    six_months: Last 6 months
-    any_time: Any time
+  portalcss:
+    reset_all_changes: Reset ALL changes
+    reset_all_confirm_message: This action will reset all your customizations to freshdesk default. Are you sure you want to continue?
+    publish_changes: Save and Publish
+    title: "Portal customization \"%{portal}\""
+    color_and_font_header: Color &amp; font
+    css_header: Stylesheet
+    layout_and_pages_header: Layout &amp; pages
+    editing: Editing
+    reset_to_last_published: Reset page to last published
+    preview: Preview portal
+    save_and_continue: Save
+    please_wait: Please wait...
+    layout_pages:
+      subheader_layout: Portal layout
+      subheader_pages: Portal pages
+      pages_help_message: Here you will be able to customize body area of individual pages.
+      header_layout_title: Header
+      footer_layout_title: Footer
+      pagelayout_title: Page layout
+      header_layout_help_message: Change the header area of your support portal
+      footer_layout_help_message: Change the footer area of your support portal
+      pagelayout_help_message: Customize the entire layout of your support portal
+    cosmetic:
+      subheader_background_color: Background color
+      subheader_tab_color: Tab colors
+      subheader_portal_fonts: Portal fonts
+      subheader_link_color: Link color
+      subheader_form_elements: Form elements
+      css_subheader: Custom stylesheet
+      css_help_message: Add or overwrite freshdesk default styles with your own custom css.  
+  any_time: Any Time
+  five_minutes: Within 5 minutes
+  fifteen_minutes: Within 15 minutes
+  thirty_minutes: Within 30 minutes
+  one_hour: Within 1 hour
+  four_hours: Within 4 hours
+  twelve_hours: Within 12 hours
+  twentyfour_hours: Within 24 hours
+  today: Today
+  yesterday: Yesterday
+  seven_days: This Week
+  thirty_days: This Month
+  two_months: Last 2 months
+  six_months: Last 6 months
+  any_time: Any time
   any: Any
+  Source: Source
+  Subject: Subject
+  Requester: Search a requester
+  Status: Status
+  Group: Group
+  Agent: Agent
+  Priority: Priority
+  Description: Description
+  Product: Product
+  Type: Type
+  showing: Showing
+  Email: "Email"
+  Portal: "Portal"
+  Phone: "Phone"
+  Forum: "Forum"
+  Twitter: Twitter
+  Facebook: Facebook
+  Chat: "Chat"
+  MobiHelp: MobiHelp
+  find_more_solutions: Find more solutions
+  of: of
+  search_button: Search
+  search_solutions: Search solutions
+  add_a_new_folder: add a new folder
+  likes: Likes
+  dislikes: Dislikes
+  for_this_article: For this article
+  export: Export
+  helpdesk_quests:
+    see_all: See all
+    available_quests: Available Quests
+    all: All
+    un_achieved: Un-Achieved
+    back_to_dashboard:  "< Back to dashboard"
+    quests: Quests
+  close_this_ticket: Close this ticket
+  ticket_deleted: This ticket has been deleted
+  reported_by: "Reported by "
+  password_confirmation: "Password Confirmation:"
+  search_results: Search results
+  plans_and_pricing: "Plans & Pricing"
+  number_of_attachments: " attachments"
+  activation_link: Successfully registered activation link has been sent to %{email}

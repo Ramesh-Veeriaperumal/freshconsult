@@ -1,6 +1,6 @@
 module Helpdesk::TimeSheetsHelper
   def clear_view_timers(page, timeentry, timeentry_cleared)
-    if !timeentry.nil? && !timeentry_cleared.nil? && (timeentry.ticket_id == timeentry_cleared.ticket_id)
+    if !timeentry.nil? && !timeentry_cleared.nil? && (timeentry.workable.eql?(timeentry_cleared.workable))
       page.replace "timeentry_#{timeentry_cleared.id}", :partial => "/helpdesk/time_sheets/time_entry", :object => timeentry_cleared
     end
   end

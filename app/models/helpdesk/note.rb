@@ -124,7 +124,7 @@ class Helpdesk::Note < ActiveRecord::Base
   validates_presence_of  :source, :notable_id
   validates_numericality_of :source
   validates_inclusion_of :source, :in => 0..SOURCES.size-1
-
+  
   def status?
     source == SOURCE_KEYS_BY_TOKEN["status"]
   end
@@ -185,11 +185,12 @@ class Helpdesk::Note < ActiveRecord::Base
   end
   
   def to_liquid
-    { 
-      "commenter" => user,
-      "body"      => liquidize_body,
-      "body_text" => body
-    }
+    # { 
+    #   "commenter" => user,
+    #   "body"      => liquidize_body,
+    #   "body_text" => body
+    # }
+    Helpdesk::NoteDrop.new self
   end
   
   def to_xml(options = {})
@@ -236,8 +237,8 @@ class Helpdesk::Note < ActiveRecord::Base
   def update_note_level_resp_time(ticket_state)
     if ticket_state.first_response_time.nil?
       resp_time = created_at - notable.created_at
-      resp_time_bhrs = Time.parse(notable.created_at.to_s).
-                          business_time_until(Time.parse(created_at.to_s))
+      resp_time_bhrs = Time.zone.parse(notable.created_at.to_s).
+                          business_time_until(Time.zone.parse(created_at.to_s))
     else
       customer_resp = notable.notes.visible.customer_responses.
         created_between(ticket_state.agent_responded_at,created_at).first(
@@ -245,8 +246,8 @@ class Helpdesk::Note < ActiveRecord::Base
         :order => "helpdesk_notes.created_at ASC")
       unless customer_resp.blank?
         resp_time = created_at - customer_resp.created_at
-        resp_time_bhrs = Time.parse(customer_resp.created_at.to_s).
-                            business_time_until(Time.parse(created_at.to_s))
+        resp_time_bhrs = Time.zone.parse(customer_resp.created_at.to_s).
+                            business_time_until(Time.zone.parse(created_at.to_s))
       end
     end
     schema_less_note.update_attributes(:response_time_in_seconds => resp_time,
@@ -347,6 +348,7 @@ class Helpdesk::Note < ActiveRecord::Base
         schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
       end
     end
+
     
   private
     def human_note_for_ticket?

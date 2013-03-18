@@ -63,11 +63,11 @@ class SubscriptionPaymentObserver < ActiveRecord::Observer
     end
 
     def add_to_crm(payment)
-      Resque.enqueue(CRM::AddToCRM::PaidCustomer, payment.id)
+      Resque.enqueue(CRM::AddToCRM::PaidCustomer, {:account_id => payment.account_id, :item_id => payment.id})
     end
 
     def notify_totango(payment)
-      Resque.enqueue(CRM::Totango::PaidCustomer, payment.id)
+      Resque.enqueue(CRM::Totango::PaidCustomer,{:account_id => payment.account_id, :payment_id => payment.id} )
     end
 
 end

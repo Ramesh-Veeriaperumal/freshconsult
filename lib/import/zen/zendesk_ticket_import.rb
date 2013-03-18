@@ -1,11 +1,9 @@
 class Import::Zen::ZendeskTicketImport 
-	extend Resque::Plugins::Retry
-  @queue = 'zendeskTicketImport'
+  extend Resque::AroundPerform
 
-  @retry_limit = 3
-  @retry_delay = 60*2
+  @queue = "zendeskTicketImport"
 
-  def self.perform(ticket_xml , domain)
-  	Import::Zen::TicketImport.new(ticket_xml ,domain)
+  def self.perform(args)
+  	Import::Zen::TicketImport.new(args[:ticket_xml])
   end
 end

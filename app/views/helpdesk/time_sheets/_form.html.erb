@@ -10,5 +10,9 @@
 	<div class="note">
 		<label><%= t('.note')%></label>
 		<%= form.text_area(:note, { :rows => 2, :class => "paragraph auto-height" })%>
+ 		<label class="checkbox floatl" for="time_entry_billable">
+	      <%= form.check_box :billable , :checked => true %>
+        	<%= t('helpdesk.time_sheets.billable_entry') %>
+      	</label>
   </div>		
 </fieldset>

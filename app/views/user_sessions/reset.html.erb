@@ -13,10 +13,10 @@
       </ul>
     </div>
   <% end %>
-  <label for="password">Password:</label>
+  <label for="password"><%= t('user_sessions.new.password') %>:</label>
   <%= f.password_field :password %>
-  <label for="password_confirmation">Password Confirmation:</label>
+  <label for="password_confirmation"><%= t('password_confirmation') %>:</label>
   <%= f.password_field :password_confirmation %>
   <br/>
-  <%= submit_tag 'Change password' %>
+  <%= submit_tag t('profile.change_password') %>
 <% end %>

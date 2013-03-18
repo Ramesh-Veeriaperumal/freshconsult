@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <%
-@debuging =  RAILS_ENV.eql?("development") && params.has_key?("debug")
+  @debuging =  RAILS_ENV.eql?("development") && params.has_key?("debug")
 %>
-  <%= render :partial => "layouts/shared/html" %>
+  <%= open_html_tag %>
 	<%= render :partial => "layouts/shared/head" %>
 	<body class="<% unless @content_for_sidebar %>single<% end %> <%= yield :layoutType %>">
 		<div id="wrap">
@@ -14,7 +14,7 @@
   		<%end%>
   		<div class='load-mask' style='display:none'><img src='/images/ajax-loader.gif'/></div>
   		<div class="content" id="body-container">
-  			<%= render :partial => "layouts/tour_my_app" %>
+  		<%= render :partial => "layouts/tour_my_app" %>
 			<%= render :file => "layouts/maincontent" %>
 		</div>
 		<%= render :partial => "layouts/shared/footer" %> 

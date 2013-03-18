@@ -1,0 +1,65 @@
+// LABELS
+// ------
+
+// Base
+.label {
+  padding: 2px 12px;  
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: $white;
+  vertical-align: middle;
+  white-space: nowrap;
+  margin-right: 5px;
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.5);
+  background-color: $grayLight;
+  @include border-radius(3px);
+  @include inline-block;
+  -webkit-font-smoothing: antialiased;
+}
+
+// Hover state
+.label:hover {
+  color: $white;
+  text-decoration: none;
+}
+
+// Small label sizes
+.label-small{
+  font-size: 10px;
+  margin-right: 15px;
+  padding: 1px 10px;
+}
+
+// Colors
+
+// Labels & Label Colors
+// Add more colors with 1st value as class name and 2nd value as color
+$labels: 
+  planned #5077b3, 
+  implemented #597300,   
+  nottaken #a23330, 
+  answered #6b9d56,
+  deferred #735000,
+  inprogress #cf8e00,
+  status #0c8519, 
+  sticky #6d6d6d,
+  warning $orange,
+  success $successText,
+  info $infoText,
+  inverse $grayDark;
+
+@each $label in $labels{
+  .label-#{nth($label, 1)}        { background-color: nth($label, 2); }
+  /*.label-#{nth($label, 1)}:hover  { background-color: darken(nth($label, 2), 10%); }*/
+}
+  
+.label-light           { background-color: #eee; color:#666; @include text-shadow(none); }
+.label-light:hover     { background-color: darken(#eee, 3%); color:#444; @include text-shadow(none); }
+
+@include at-breakpoint($break-tablet){
+  .label{ 
+    @include border-radius(16px); 
+  }
+}

@@ -1,13 +1,26 @@
+<%= include_stylesheets :pattern %>
+<%= include_javascripts :pattern %>
 <% content_for :sidebar do %>
   <%= render :partial => "/integrations/widgets/contacts_show_side_bar_widget", :locals => {:user => @user}%>
 <%- end %>
 
+
 <div class="contact-box clearfix">
+	<% if !@user.deleted? %>
 		<div class="action_buttons">
-			<%= link_to t('contacts.edit_contact'), edit_contact_path(@user) if !@user.blocked? and !@user.spam?%>
+			<%= link_to t('contacts.edit_contact'), edit_contact_path(@user) if !@user.blocked? %>
 			<%= link_to t('assume_identity_button'), assume_identity_user_path(@user) if is_allowed_to_assume?(@user) %>
-			<%= link_to ( t('contacts.info2'), { :action => :make_agent, :id => @user.id }, :method => :put , :class => "last" ) if (current_user.admin? && @user.has_email? and !@user.blocked? and !@user.spam?)%>
+			<%if current_user.admin? && @user.has_email? and !@user.blocked? %>
+				<a class="drop-toggle last" data-toggle="dropdown" href="#" role="button">
+					<b><%= t('contacts.info2') %></b>
+				</a>
+		    		<ul class="dropdown-menu pull-right" role="menu">
+		        			<li><%= link_to ( t('contacts.convert_fulltime'), { :action => :make_agent, :id => @user.id , :occasional => false},:method => :put)%></li>
+		        			<li><%= link_to ( t('contacts.convert_occasional'), { :action => :make_agent, :id => @user.id, :occasional => true }, :method => :put)%></li>       		
+		        	</ul>
+        	<%end%>
 		</div>
+	<% end %>
 		<%= user_avatar(@user, :medium, "profile_pic") %>
 		<h1 class="title"><%= @user.display_name %></h1>
 		<%= render :partial => "helpdesk/tickets/components/company_info", :locals => { :user => @user } %>
@@ -33,18 +46,18 @@
 		<% end %>
 </div>
 
-<div>
+<div class="row-fluid">
 	<h4 class="title"><%=t('contacts.info3',:nick_name => @user.display_name)%></h4>
 		<% form_for @user do |f| %>
 			<%= f.label :description, t("contacts.form_placeholder.description"), :class => "overlabel" %>
-			<%= f.text_area :description, :class=> "sp_paragraph" %>
-			<div class="alignright"> 
-				<%= f.submit t('save'), :class=>"uiButton small"  %> &nbsp;
+			<%= f.text_area :description, :class=> "sp_paragraph span12",:cols => 20,:rows => 10 %>
+			<div class="span12 pull-right"> 
+				<%= f.submit t('save'), :class=>"btn btn-primary pull-right"  %> &nbsp;
 			</div>
 		<% end %>	
 </div>
 <% unless @user.deleted %>
-	<div id="tickets-expanded" class="contact_tickets">
+	<div id="tickets-expanded" class="contact_tickets row-fluid">
 		<div class="detailed_view">
 			<h4 class="title"><%=t('contacts.info4',:nick_name => @user.display_name)%></h4>
 			<span class="seperator"></span>

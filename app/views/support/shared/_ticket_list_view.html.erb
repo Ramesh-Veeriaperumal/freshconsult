@@ -1,10 +1,4 @@
-<div class="tickets-container">
- <table class="tickets customer_tickets" id="tickets-expanded">	
-	<tbody>
-		<%= each_or_message("/support/shared/ticket", @tickets, t("helpdesk.tickets.views.no_tickets")) %>
-	</tbody>
- </table>
+<div id="ticket-list" class="c-list">
+	<%= each_or_message("/support/shared/ticket", @tickets, t("helpdesk.tickets.views.no_tickets")) %>
 </div>
- <div class="toolbar">
-    <%= will_paginate @tickets, :class => "toolbar_pagination_full" %>  
- </div>
+<%= will_paginate @tickets, :class => "pagination" %>

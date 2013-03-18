@@ -16,7 +16,8 @@ module Integrations::Constants
     :icontact => "iContact",
     :campaignmonitor => "CampaignMonitor",
     :nimble => "nimble",
-    :zohocrm => "zohocrm"
+    :zohocrm => "zohocrm",
+    :google_calendar => "google_calendar"
   }
 
   APP_CATEGORY_ID_TO_NAME = {

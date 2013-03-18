@@ -1451,7 +1451,7 @@ es:
     login: Conectar
     new_ticket: "Nuevo ticket"
     search: Buscar
-    signout: "Cancelar la inscripción"
+    signout: "Cerrar sesión"
     submit_a_ticket: "Enviar un ticket"
     tabs: 
       admin: Admin

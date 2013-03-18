@@ -162,7 +162,8 @@ class Integrations::ObjectMapper
       :update_jira_status => {:map => [{:ours_to_theirs=>{:handler=>:map_field, :value=>"{{helpdesk_ticket.status}}", :mapping_values=>{
                       "Default"=>"Reopen Issue",
                       "Resolved"=>"Resolve Issue",
-                      "Closed"=>"Close Issue"}
+                      "Closed"=>"Close Issue",
+                      "Pending" => "Start Progress"}
                     }}]}
     }
 

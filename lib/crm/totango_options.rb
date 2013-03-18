@@ -1,21 +1,21 @@
 module CRM::TotangoOptions
 	MODULES_AND_ACTIONS = {
-		:account_activation  => { :module => "Account", :action => "Activation Done" },
+		:account_activation  => { :module => "Basic", :action => "Email Verified" },
 
-		:helpdesk_rebranding => { :module => "Helpdesk Rebranding", :action=> "Rebranding Done"},
+		:helpdesk_rebranding => { :module => "Portal Customization", :action=> "Portal Rebranded"},
 
-		:agents  			 => { :module => "Agents", :action => "New Agent Added"},
+		:agents  			 => { :module => "Helpdesk Settings", :action => "Agents Added"},
 
-		:arcade 			 => { :module => "Arcade", :action => "Points Updated" },
+		:arcade 			 => { :module => "Advanced", :action => "Arcade Updated" },
 
-		:quests 			 => { :module => "Quests", :action => "New Quest Created" },
+		:quests 			 => { :module => "Advanced", :action => "Quest Created" },
 
-		:email_config 		 => { :module => "Email Settings", :action => "Support Email Edited"},
+		:email_config 		 => { :module => "Helpdesk Settings", :action => "Email Setup"},
 
-		:multiple_products   => { :module => "Multiple Products", :action => "New Product Added"},
+		:multiple_products   => { :module => "Advanced", :action => "Product Added"},
 
-		:twitter 			 => { :module => "Twitter", :action => "Twitter Account Added" },
+		:twitter 			 => { :module => "Social", :action => "Twitter Account Added" },
 		
-		:facebook 			 => { :module => "Facebook", :action => "Facebook Page Added" }
+		:facebook 			 => { :module => "Social", :action => "Facebook Account Added" }
 	}
 end

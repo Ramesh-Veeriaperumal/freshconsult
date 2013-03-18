@@ -42,6 +42,7 @@ Rails::Initializer.run do |config|
 
   # Add additional load paths for your own custom dirs
   # config.load_paths += %W( #{RAILS_ROOT}/extras )
+
   config.load_paths += %W( #{RAILS_ROOT}/app/drops )
   
   #observers for our models to execute callbacks - Refer the link - http://rubydoc.info/docs/rails/2.3.8/ActiveRecord/Observer for more 
@@ -94,7 +95,6 @@ Rails::Initializer.run do |config|
 end
 
 ActiveRecord::ConnectionAdapters::MysqlAdapter::NATIVE_DATABASE_TYPES[:primary_key] = "BIGINT UNSIGNED DEFAULT NULL auto_increment PRIMARY KEY"
-Authlogic::Session::Base.controller = Authlogic::ControllerAdapters::RailsAdapter.new(self)
 
 GC.enable_stats if defined?(GC) && GC.respond_to?(:enable_stats)
 

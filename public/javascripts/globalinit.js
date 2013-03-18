@@ -18,6 +18,8 @@ is_touch_device = function() {
     var hoverPopup =  false;
     var hidePopoverTimer;
     var hideWatcherTimer;
+    var insideCalendar = false;
+    var closeCalendar = false;
 
 
     if (is_touch_device()) {
@@ -28,10 +30,22 @@ is_touch_device = function() {
       hideWidgetPopup(ev);
     });
 
+    $("a.dialog2, a[data-ajax-dialog], button.dialog2").livequery(function(ev){
+      $(this).dialog2();
+    })
+
     hideWidgetPopup = function(ev) {
       if((widgetPopup != null) && !$(ev.target).parents().hasClass("popover")){
-        widgetPopup.popover('hide');
-        widgetPopup = null;
+        if(!insideCalendar)
+        {
+          widgetPopup.popover('hide');
+          widgetPopup = null;
+        }
+      }
+      if (closeCalendar)
+      {
+        insideCalendar = false;
+        closeCalendar = false;
       }
     }
 
@@ -129,7 +143,34 @@ is_touch_device = function() {
         });
     });
 
-      $("a[rel=contact-hover],[rel=hover-popover]").live('mouseenter',function(ev) {
+    $("input.datepicker_popover").livequery(function() {
+      $(this).datepicker({
+        dateFormat: 'yy-mm-dd',
+        beforeShow: function(){
+          insideCalendar=true;
+          closeCalendar=false;
+        },
+        onClose: function(){
+          closeCalendar=true;
+        }
+      });
+    });
+
+    $('input.datetimepicker_popover').livequery(function() {
+      $(this).datetimepicker({
+        timeFormat: "HH:mm:ss",
+        dateFormat: 'MM dd,yy',
+        beforeShow: function(){
+          insideCalendar=true;
+          closeCalendar=false;
+        },
+        onClose: function(){
+          closeCalendar=true;
+        }
+      });
+    });
+
+    $("a[rel=contact-hover],[rel=hover-popover]").live('mouseenter',function(ev) {
         ev.preventDefault();
         var element = $(this);
         // Introducing a slight delay so that the popover does not show up
@@ -258,10 +299,10 @@ is_touch_device = function() {
          onkeyup: false,
          focusCleanup: true,
          focusInvalid: false,
-         ignore:".nested_field:not(:visible)"
+         ignore:".nested_field:not(:visible), .portal_url:not(:visible)"
       };
       
-      $("ul.ui-form").livequery(function(ev){
+      $("ul.ui-form, .cnt").livequery(function(ev){
         $(this).not(".dont-validate").parents('form:first').validate(validateOptions);
       })
       $("div.ui-form").livequery(function(ev){
@@ -317,12 +358,20 @@ is_touch_device = function() {
 
       sidebarHeight = $('#Sidebar').height();
       if(sidebarHeight !== null && sidebarHeight > $('#Pagearea').height())
-         $('#Pagearea').css("minHeight", sidebarHeight);
+        $('#Pagearea').css("minHeight", sidebarHeight);
 
-
-        if(window.location.hash != '')
-          $(window.location.hash + "-tab").trigger('click');
-
+      // Tab auto select based on window hash url
+      if(window.location.hash != '') {
+        hash = window.location.hash.split('/');
+        jQuery.each(hash, function(index, value){
+          setTimeout(function(){
+            catchException(function(){ 
+              jQuery(value + "-tab").trigger('click') 
+            }, "Error in File globalinit.js");
+          }, ((index+1)*10) )
+        })
+      }
+          
         qtipPositions = {
           normal : {
             my: 'center right',

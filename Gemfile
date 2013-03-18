@@ -3,16 +3,7 @@ source "http://gems.github.com"
 
 gem "rake", "0.8.7"
 gem "rack", "~> 1.1.6"
-
-git 'git://github.com/freshdesk/rails.git', :branch => "rails_2_3_8"  do
-  # Note: load-order is essential for dependencies
-  gem 'activesupport', :branch => "rails_2_3_8" 
-  gem 'actionpack',     :branch => "rails_2_3_8" 
-  gem 'actionmailer',    :branch => "rails_2_3_8" 
-  gem 'activerecord',   :branch => "rails_2_3_8" 
-  gem 'activeresource',  :branch => "rails_2_3_8" 
-  gem 'rails', :branch => "rails_2_3_8" 
-end
+gem "rails","2.3.17"
 
 gem "json", "~> 1.5.5"
 gem "mysql"
@@ -30,6 +21,7 @@ gem "ruby-debug", "0.10.3"
 gem "omniauth-oauth2", "1.0"
 gem "omniauth-openid"
 gem "omniauth-google"
+gem "omniauth-google-oauth2"
 gem "omniauth-facebook"
 gem "omniauth-salesforce"
 gem "omniauth-mailchimp", "~> 1.0.3"
@@ -115,7 +107,3 @@ group :assets do
 	# Portal grid system is done using susy grids
 	gem "susy" 
 end
-
-
-
-

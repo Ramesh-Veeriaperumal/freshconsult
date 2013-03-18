@@ -1,0 +1,26 @@
+<div id="ticket-toolbar">
+  <div class="dropdown" id="ticket-filters">  
+  	<a href="#" class="list-lead dropdown-toggle" data-toggle="dropdown">
+  	<%= @page_title %> <i class="caret"></i>
+  	</a>
+    <%= filter_list %>
+  </div>
+  <div id="ticket-sub-toolbar">
+    <span id="ticket-sort" class="dropdown">
+      <%= ticket_sorting %>
+      <a class="dropdown-toggle help-text" data-toggle="dropdown" href="#">
+        <%= t('ticket.sort_by') %> <b> <%= I18n.t("tickets_filter.sort_fields.#{@current_wf_order}") %></b>
+        <i class="caret"></i>
+      </a>
+    </span>
+    <% if @filter_users.present? %>
+      <span class="dropdown" id="user-list-dropdown">  
+        <a class="dropdown-toggle help-text" data-toggle="dropdown" href="#">
+          <%= I18n.t("tickets_filter.raised_by") %> <b><%= raised_by %></b>
+          <i class="caret"></i>
+        </a>
+        <%= user_list %>      
+      </span>
+    <% end %>
+  </div>
+</div>
