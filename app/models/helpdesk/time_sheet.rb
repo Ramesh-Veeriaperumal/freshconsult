@@ -11,7 +11,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   after_create :create_new_activity
   after_update :update_timer_activity , :if => :timer_running_changed?
   before_save :update_observer_events
-  after_commit :filter_observer_events, :if => :current_user?
+  after_commit :filter_observer_events, :if => :user_present?
 
   has_many :integrated_resources, 
     :class_name => 'Integrations::IntegratedResource',
@@ -54,7 +54,6 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   end
 
   def running_time
-    p "running time"
     total_time = time_spent
     if timer_running
       from_time = start_time
@@ -83,7 +82,6 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   end
   
   def stop_timer
-    p "stop timer"
      self.timer_running=false
      self.time_spent = calculate_time_spent
      self.save
@@ -121,7 +119,6 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   private
   
    def calculate_time_spent
-    p "calculate time spent"
     to_time = Time.zone.now.to_time
     from_time = start_time.to_time 
     running_time =  ((to_time - from_time).abs).round 
@@ -129,7 +126,6 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
    end
 
   def update_timer_activity
-     p "update_activity"
       if timer_running
          ticket.create_activity(User.current, 'activities.tickets.timesheet.timer_started.long', 
           {'eval_args' => {'timesheet_path' => ['timesheet_path', 
@@ -145,7 +141,6 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   end
   
   def create_new_activity
-    p "create_activity"
       ticket.create_activity(User.current, 'activities.tickets.timesheet.new.long', 
           {'eval_args' => {'timesheet_path' => ['timesheet_path', 
                                 {'ticket_id' => ticket.display_id, 'timesheet_id' => id}]}},
@@ -159,16 +154,18 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   # VA - Observer Rule 
 
   def update_observer_events
-    from, to = time_spent_change    # Should find another way - Hari
-    if from == nil
-      unless to == 0
-        @observer_changes = {:time_sheet => :added} 
-      end
-    elsif from == 0
-      @observer_changes = {:time_sheet => :added}
-    else
-      @observer_changes = {:time_sheet => :updated}
-    end unless time_spent_change.nil?
+    unless time_spent_change.nil?      
+      from, to = time_spent_change
+      if from == nil
+        unless to == 0
+          @model_changes = {:time_sheet_action => :added} 
+        end
+      elsif from == 0
+        @model_changes = {:time_sheet_action => :added}
+      else
+        @model_changes = {:time_sheet_action => :updated}
+      end 
+    end
   end
   
 end

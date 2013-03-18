@@ -19,6 +19,10 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 
 	validates_uniqueness_of :string_tc01, :scope => :account_id,:allow_nil => true
 
+	def self.survey_result_column
+		:int_tc01
+	end
+
 	def self.trashed_column
 		:boolean_tc02
 	end

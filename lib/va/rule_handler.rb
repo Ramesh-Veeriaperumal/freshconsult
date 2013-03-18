@@ -20,7 +20,7 @@ class Va::RuleHandler
   def event_matches? check_value, check_var
     return true if rule_hash[check_var]=="--"
     @value_key = check_var
-    return is check_value
+    return(is check_value)
   end
 
   def matches(evaluate_on)

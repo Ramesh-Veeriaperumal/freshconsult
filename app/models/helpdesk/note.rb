@@ -41,7 +41,6 @@ class Helpdesk::Note < ActiveRecord::Base
   after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
 
   after_commit_on_create :update_ticket_states, :notify_ticket_monitor
-  after_commit_on_create :filter_observer_events, :if => :current_user?
 
   accepts_nested_attributes_for :tweet , :fb_post
   
@@ -215,6 +214,11 @@ class Helpdesk::Note < ActiveRecord::Base
     end
   end
 
+  def trigger_observer model_changes
+    @model_changes = model_changes.symbolize_keys
+    filter_observer_events if user_present?
+  end
+
   protected
 
     def update_content_ids
@@ -328,7 +332,6 @@ class Helpdesk::Note < ActiveRecord::Base
         super
       rescue NoMethodError => e
         logger.debug "method_missing :: args is #{args.inspect} and method:: #{method}"  
-        p logger.debug "method_missing :: args is #{args.inspect} and method:: #{method}"  
         if (load_schema_less_note && schema_less_note.respond_to?(method))
           args = args.first if args && args.is_a?(Array)
           (method.to_s.include? '=') ? schema_less_note.send(method, args) : schema_less_note.send(method)
@@ -368,7 +371,8 @@ class Helpdesk::Note < ActiveRecord::Base
     end 
 
     def update_ticket_states
-      Resque.enqueue(Helpdesk::UpdateTicketStates, { :id => id }) unless private? || zendesk_import?
+      Resque.enqueue(Helpdesk::UpdateTicketStates, 
+            { :id => id, :model_changes => @model_changes }) unless zendesk_import?
     end
 
     def update_avg_response_time(ticket_state)
@@ -392,10 +396,11 @@ class Helpdesk::Note < ActiveRecord::Base
     # VA - Observer Rule 
     def update_observer_events
       if note?
-        @observer_changes = {:note => NOTE_TYPE[private]}
+        @model_changes = {:note_type => NOTE_TYPE[private]}
       else
-        @observer_changes = {:reply => :sent}
+        @model_changes = {:reply_sent => :sent}
       end
     end
+
 
 end

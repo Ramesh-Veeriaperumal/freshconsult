@@ -81,21 +81,12 @@ class Helpdesk::TicketField < ActiveRecord::Base
                   :default_description  => { :type => :default, :dom_type => "html_paragraph", :visible_in_view_form => false, :form_field => "description_html" },
                   :default_product      => { :type => :default, :dom_type => "dropdown_blank",
                                              :form_field => "product_id" },
-                  :custom_text          => { :type => :custom, :dom_type => "text", 
-                                             :handler => "text"},
-                  :custom_paragraph     => { :type => :custom, :dom_type => "paragraph", 
-                                             :handler => "text"},
-                  :custom_checkbox      => { :type => :custom, :dom_type => "checkbox", 
-                                             :handler => "checkbox",
-                                             :event_handler => "value", :event_rule_handler => "checkbox"},
-                  :custom_number        => { :type => :custom, :dom_type => "number", 
-                                             :handler => "numeric"},
-                  :custom_dropdown      => { :type => :custom, :dom_type => "dropdown", 
-                                             :handler => "dropdown", 
-                                             :event_handler => "update", :event_rule_handler => "dropdown"},
-                  :nested_field         => { :type => :custom, :dom_type => "dropdown_blank",
-                                             :handler => "nested_field",
-                                             :event_handler => "update", :event_rule_handler => "dropdown"}
+                  :custom_text          => { :type => :custom, :dom_type => "text"},
+                  :custom_paragraph     => { :type => :custom, :dom_type => "paragraph"},
+                  :custom_checkbox      => { :type => :custom, :dom_type => "checkbox"},
+                  :custom_number        => { :type => :custom, :dom_type => "number"},
+                  :custom_dropdown      => { :type => :custom, :dom_type => "dropdown"},
+                  :nested_field         => { :type => :custom, :dom_type => "dropdown_blank"}
                 }
 
   def dom_type

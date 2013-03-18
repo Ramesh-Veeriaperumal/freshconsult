@@ -109,7 +109,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				}
 
 				jQuery.data(r_dom, "inner")
-					  .append(FactoryUI.dropdown(filterList, "name", "ruCls_"+name))
+					  .append(FactoryUI.dropdown(filterList, "name", "ruCls_"+name+ ' select2'))
 					  .append("<div />");
 
 				list_C = jQuery(parentDom).find(setting.rule_dom);
@@ -131,7 +131,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
                   if(rule.operator){	
                   	try{
                      	opType = hg_data.get(rule.name).operatortype;
-                     	inner.append(FactoryUI.dropdown(operator_types.get(opType), "operator").val(rule.operator));
+                     	inner.append(FactoryUI.dropdown(operator_types.get(opType), "operator", 'operator select2').val(rule.operator));
                     }catch(e){}
                   }	
                   if(rule.name == "set_nested_fields")
@@ -143,15 +143,15 @@ rules_filter = function(_name, filter_data, parentDom, options){
 	                  switch (hg_data.get(rule.name).type)
 	                  {
 	                	case 0:
-	              			inner.append(FactoryUI.label(hg_data.get(rule.name).postlabel, 'rule_label'));
+	              			inner.parent.append(FactoryUI.label(hg_data.get(rule.name).postlabel, 'rule_label'));
 	                  	break;
 	                 	case 1:
-	                  	inner.append(FactoryUI.label(hg_data.get(rule.name).postlabel, 'rule_label')).append(conditional_dom(hg_data.get(rule.name), data_id, name, rule, "value"));
+	                  	inner.append(FactoryUI.label(hg_data.get(rule.name).postlabel, 'rule_label')).append(conditional_dom(hg_data.get(rule.name), data_id, name, rule, "value", 'select2'));
 	                  	break;
 	                  case 2:
 	                  	hg_data.get(rule.name).postlabel = _updated;
-	                  	from_select = conditional_dom(hg_data.get(rule.name), data_id, name, rule, "from");
-	                  	to_select = conditional_dom(hg_data.get(rule.name), data_id, name, rule, "to");
+	                  	from_select = conditional_dom(hg_data.get(rule.name), data_id, name, rule, "from", 'select2');
+	                  	to_select = conditional_dom(hg_data.get(rule.name), data_id, name, rule, "to", 'select2');
 	                  	if ( from_select.val()!='--' )
 		                  	to_select.find('option[value="'+from_select.val()+'"]').prop('disabled',true);
 		                  if ( to_select.val()!='--' )
@@ -165,10 +165,17 @@ rules_filter = function(_name, filter_data, parentDom, options){
 		                  	hideEmptySelectBoxes.apply(to_select.find('select')[1]);
 		                  	hideEmptySelectBoxes.apply(to_select.find('select')[2]);
 		                  }
+		                  // console.log (jQuery(from_select).find('select'));
+		                  // jQuery(from_select).find('select').trigger('change');
+		                  // jQuery(to_select).find('select').trigger('change');
+		                  // hideEmptySelectBoxesFromTo(from_select);
+		                  // hideEmptySelectBoxesFromTo(to_select);
 		                  break;
 	                 	}
                 	}else{
-                  	inner.append(conditional_dom(hg_data.get(rule.name), data_id, name, rule, "value"));
+                		dom = conditional_dom(hg_data.get(rule.name), data_id, name, rule, "value", 'select2');
+	                 	hideEmptySelectBoxesFromTo(dom);
+                  	inner.append(dom);
                 	}
 
 					var filterList = [];
@@ -181,7 +188,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 					}
 
                   jQuery.data(r_dom, "inner")
-                     .append(FactoryUI.dropdown(filterList, "name", "ruCls_"+name).val(rule.name))
+                     .append(FactoryUI.dropdown(filterList, "name", "ruCls_"+name + ' select2').val(rule.name))
                      .append(inner);	
 
                   list_C = jQuery(parentDom).find(setting.rule_dom);
@@ -267,6 +274,27 @@ rules_filter = function(_name, filter_data, parentDom, options){
 		refresh_list: domUtil.refresh_list
 	};	 
 	
+	var hideEmptySelectBoxes = function(){
+		console.log("Hide")
+		if (this.options.length == 1 && this.options[0].value == "--" || this.options.length == 0)
+		{	
+			jQuery(this).prev().css('display','none');
+			jQuery(this).css('display','none');
+		}
+		else
+		{	
+			jQuery(this).prev().css('display','block');
+			jQuery(this).css('display','block');	
+		}
+		return this;
+	}
+
+	var hideEmptySelectBoxesFromTo = function(c_dom){
+		console.log("FromTo")
+		for (i=0;i<jQuery(c_dom).find('select').length;i++)
+  		hideEmptySelectBoxes.apply(jQuery(dom).find('select')[i]);
+	}
+
 	// Applying Events, filters and actions on Window ready initialization	
 	// Init Constructor
 	function init(){			 
@@ -300,7 +328,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 								var data_id = hg_item.name + itemManager.get();
 
 								if(hg_item.operatortype) {
-									rule_drop.append(FactoryUI.dropdown(operator_types.get(hg_item.operatortype), "operator"));
+									rule_drop.append(FactoryUI.dropdown(operator_types.get(hg_item.operatortype), "operator", 'operator select2'));
 								}
 
 								if( name == "event"){
@@ -311,13 +339,14 @@ rules_filter = function(_name, filter_data, parentDom, options){
               			rule_drop.append(FactoryUI.label(hg_item.postlabel, 'rule_label'));
                   	break;
                  	case 1:
-                  	rule_drop.append(FactoryUI.label(hg_item.postlabel, 'rule_label')).append(conditional_dom(hg_item, data_id, name, null, "value"));
+                  	rule_drop.append(FactoryUI.label(hg_item.postlabel, 'rule_label')).append(conditional_dom(hg_item, data_id, name, null, "value", 'select2'));
                   	break;
                   case 2:
                   	hg_item.postlabel = _updated;
-                  	from_select = conditional_dom(hg_item, data_id, name, null, "from");
-                  	to_select = conditional_dom(hg_item, data_id, name, null, "to");
+                  	from_select = conditional_dom(hg_item, data_id, name, null, "from", 'select2');
+                  	to_select = conditional_dom(hg_item, data_id, name, null, "to", 'select2');
                   	rule_drop.append(FactoryUI.label(hg_item.postlabel, 'rule_label')).append(FactoryUI.label(_from, 'rule_label')).append(from_select).append(FactoryUI.label(_to, 'rule_label')).append(to_select);
+                  	
                   	if (from_select.find('select').length)
 	                  {
 	                  	hideEmptySelectBoxes.apply(from_select.find('select')[1]);
@@ -325,14 +354,22 @@ rules_filter = function(_name, filter_data, parentDom, options){
 	                  	hideEmptySelectBoxes.apply(to_select.find('select')[1]);
 	                  	hideEmptySelectBoxes.apply(to_select.find('select')[2]);
 	                  }
+
+	                  // hideEmptySelectBoxesFromTo(from_select);
+	                  // hideEmptySelectBoxesFromTo(to_select);
                   	break;
                  	}
                 }else{
-                  rule_drop.append(conditional_dom(hg_item, data_id, name, null, "value"));
+                	dom = conditional_dom(hg_item, data_id, name, null, "value", 'select2')
+                	hideEmptySelectBoxesFromTo(dom);
+                  rule_drop.append(dom);
                 }
 								postProcessCondition(hg_item, data_id);
 							}
 						});
+
+			jQuery(parentDom).find('select').not('.ruCls_filter, .ruCls_action, .ruCls_event')
+				.live("change", hideEmptySelectBoxes);
 			
 			jQuery(parentDom).find('select, :text')
 				.live("change",function(){

@@ -4,12 +4,13 @@
   <% javascript_tag do %>
     // Condition Parsing 
     // This template contains the dom population information 
-    var conditional_dom = function(filter, id, compName, initFeed, val){
+    var conditional_dom = function(filter, id, compName, initFeed, val, classname){
       var value = val || "value";
       var type      = filter.domtype;
       var initFeed  = initFeed || {};
       var compName  = compName || "filter";
       className = "dummy";
+      _class_name = classname || ''
       // Conditional Dom created based on the options available 
       c_dom = "";
       switch (type) {
@@ -28,7 +29,7 @@
               value: arrayItem[1]
             });
           });
-          c_dom = FactoryUI.dropdown(choices, value);
+          c_dom = FactoryUI.dropdown(choices, value, _class_name);
           jQuery(c_dom).val(initFeed[value]);
         break;
         case 'paragraph':

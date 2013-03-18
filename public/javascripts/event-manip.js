@@ -9,30 +9,33 @@ var set_observer_keywords = function(from, to, updated, confirm_message){
 };
 
 var ensure_performed_by = function(){ 
-	var element = jQuery(this);
+	
+	var element = jQuery(this);	
+	var value = jQuery(this).val();
 	// Couldn't get the last added element in chozen.. Hence used _any_present
-	if(element.val() == null)
+	if(value == null)
 	{
-		element.val("--").trigger("liszt:updated");
+		console.log("nullvalue")
+		element.select2("val",["--"]);
 		_any_present = true;
-	}	
+	}
 	else if (_any_present)
 	{
-		element.val(element.val().splice(1,1)).trigger("liszt:updated");
+		element.select2("val", value[1]);
 		_any_present = false;
 	}
-	else if (element.val().first() == "--" && element.val().length > 1)
+	else if (value.first() == "--" && value.length > 1)
 	{
-		if (confirm(_confirm_message))
+		if (confirm(_confirm_message))	
 		{			
-			element.val("--").trigger("liszt:updated");
+			element.select2("val", ["--"])
 			_any_present = true;
 		}
 		else 
 		{
-			value = element.val();
 			value.splice(0,1);
-			element.val(value).trigger("liszt:updated");
+			console.log(value);
+			element.select2("val", value);
 			_any_present = false;
 		}	
 	}
@@ -45,71 +48,42 @@ var disableOtherSelectValue = function(){
 	jQuery(this).siblings('select[name="'+target+'"]').find('option').each( function(){
 		jQuery(this).prop('disabled', false);
 	});
-	// Disable the only option
+	// Disable the selected option
 	if (selection != '--')
 	{ jQuery(this).siblings('select[name="'+target+'"]').find('option[value="'+selection+'"]').prop('disabled',true); }
 	return this;
 }
 
-var hideEmptySelectBoxes = function(){
-	if (this.options.length == 1 && this.options[0].value == "--")
-	{	jQuery(this).prev().css('display','none');
-		jQuery(this).css('display','none');	}
-	else
-	{	jQuery(this).prev().css('display','block');
-		jQuery(this).css('display','block');	}
-	return this;
-}
-
 var performed_by_change = function(){ 
-	if ( jQuery( this ).val() == "agent")
+	if ( jQuery( this ).val() == 1)
 		{ 
-			jQuery("#va_rule_performed_by_chzn > ul").slideDown('slow');
-			jQuery("#va_rule_performed_by_chzn, #va_rule_performed_by_chzn > ul ").slideDown('fast');
+			jQuery(".va_rule_performer_members_container").slideDown();
 	 	}
  	else
 	  { 
-	  	jQuery("#va_rule_performed_by_chzn, #va_rule_performed_by_chzn > ul ").slideUp('fast'); 
-			jQuery("#va_rule_performed_by_chzn ").slideUp('slow'); 
-			// jQuery("#va_rule_performed_by_chzn > ul").fadeOut('slow'); 
+	  	jQuery(".va_rule_performer_members_container").slideUp(); 
+			// jQuery("#va_rule_performer_chzn > ul").fadeOut('slow'); 
 		}
 };
 
 var selectPerformedBy = function(){
-	if ( jQuery( 'input[name="va_rule[performed_by]"]:checked' ).val() == null )
-		jQuery( 'input[name="va_rule[performed_by]"][value = "agent"]' ).attr("checked","checked");
-	performed_by_change.call(jQuery( 'input[name="va_rule[performed_by]"]:checked' ));
-	ensure_performed_by.call(jQuery( '#va_rule_performed_by' ));
+	if ( jQuery( 'input[name="va_rule[performer][type]"]:checked' ).val() == null )
+		jQuery( 'input[name="va_rule[performer][type]"][value = 1]' ).attr("checked","checked");
+	performed_by_change.call(jQuery( 'input[name="va_rule[performer][type]"]:checked' ));
+	ensure_performed_by.call(jQuery('.doer select'));
 };
 
-	jQuery('#EventList').find('select[name="from"]:not("div .event_nested_field > select")')
+	jQuery('#EventList select[name="from"]:not("div .event_nested_field > select")')
 		.live("change", disableOtherSelectValue);
 
-	jQuery('#EventList').find('select[name="to"]:not("div .event_nested_field > select")')
+	jQuery('#EventList select[name="to"]:not("div .event_nested_field > select")')
 		.live("change", disableOtherSelectValue);
 
-	jQuery('#EventList').find('div .event_nested_field > select')
-		.live("change", hideEmptySelectBoxes);
-
-	jQuery('input[name = "va_rule[performed_by]"]').live ( "change", performed_by_change	);
-	jQuery("#va_rule_performed_by").live ( "change", ensure_performed_by );
+	jQuery('input[name = "va_rule[performer][type]"]').live ( "change", performed_by_change	);
+	jQuery('.doer select').live ( "change", ensure_performed_by );
 
 	jQuery("#VirtualAgent").submit(function(e){
-		var performed_by = jQuery('input[name=va_rule[performed_by]]:checked').val();
-		if ( performed_by != "agent")
-		{	
-				jQuery('#va_rule_performed_by').remove(); 
-		}
-		else if( performed_by == "agent")
-		{ 
-			if ( jQuery('#va_rule_performed_by').val().first() == "--" ) 
-			{	
-				jQuery('#va_rule_performed_by').remove(); 
-			}
-			else
-			{	
-				jQuery('input[name="va_rule[performed_by]"]').remove(); 
-			}
-		}				
-		return true;
+		var performed_by = jQuery('input[name="va_rule[performer][type]"]:checked').val();
+		if ( performed_by != '1' || jQuery('#va_rule_performer_members').val().first() == "--" )
+			jQuery('#va_rule_performer_members').remove();
 	});

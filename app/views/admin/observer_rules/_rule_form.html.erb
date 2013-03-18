@@ -13,28 +13,36 @@
 		<%= f.text_field :name, :class => "required text" %>
 	</li>
 	<li>
-		<%= f.label :description %>				
+		<%= f.label :description, "#{t('dispatch.description')}" %>
 		<label class="overlabel" for="va_rule_description">
 			<%= t("example") %>: <em>"<%=t('dispatch.info2')%>"</em>
 		</label>
 		<%= f.text_area :description, :class => "smallpara" %>
 	</li>
-	<li>
-		<%= f.label :performed_by, "#{t('admin.observer_rules.performed_by')}" %>
-		<div class="choicelist">
-			<label><%=t('dispatch.info3')%>?</label>
-			<%= f.radio_button  :performed_by, 'agent', :class => "radio" %> <%= f.label :agent, t('admin.observer_rules.agent'), :class => "radiolabel" %>
-			<%= f.radio_button  :performed_by, 'customer', :class => "radio" %> <%= f.label :requester, t('admin.observer_rules.requester'), :class => "radiolabel" %>
-			<%= f.radio_button  :performed_by, 'anyone', :class => "radio" %> <%= f.label :anyone, t('admin.observer_rules.anyone'), :class => "radiolabel" %>
+
+
+	<li>	
+		<h3 class="title"><%=t('admin.observer_rules.events')%></h3> 
+		<label><%=t('dispatch.event_note')%></label>
+
+		<div class="doer">
+			<% f.fields_for :performer do |s| %>	
+				<%= s.label :performed_by, "#{t('admin.observer_rules.performed_by')}" %>
+				<div class="choicelist">	
+					<%	Va::Performer::TYPE_CHECK.each do |number, type|	%>
+						<%= s.radio_button  :type, number, :class => "radio", :checked => (@va_rule.performer.type == number) %> 
+						<%= s.label :type, t("admin.observer_rules.#{type[0..-2]}"), :value => number, :class => "radiolabel" %>				
+					<%	end	%>
+				</div>
+				<div class="va_rule_performer_members_container">
+					<%= s.select :members, 
+												options_for_select((@agents.map {|id, name| [name, id.to_s]}), 	
+													(@va_rule.performer.nil? || @va_rule.performer.members.nil?) ? [] : @va_rule.performer.members.map(&:to_s) ), 
+												{}, { :multiple => true, :class => "select2", :id => 'members' } %>
+				</div>
+			<% end %>
 		</div>
 		
-		<%= f.select :performed_by, options_for_select((@agents.map {|k, v| [v, k.to_s]}), @va_rule.performed_by ), {}, { :multiple => true, :class => "customSelect" } %>
-	</li>
-	
-	<li>
-		<div class="choicelist">
-			<label><%=t('dispatch.info4')%>?</label>
-		</div>
 		<div class="conditionset" id="eventDOM">
 		<div id="EventList" class="rule_list"></div>
 		<fieldset class="addchoice">
@@ -42,9 +50,11 @@
 	  </fieldset>			
 		</div>
 	</li>
-	<li>			
+	<li>
+		<h3 class="title"><%=t('admin.observer_rules.conditions')%></h3>			
+		<label><%=t('dispatch.condition_note')%></label>
+
 		<div class="choicelist">
-			<label><%=t('dispatch.info3')%>?</label>
 			<%= f.radio_button  :match_type, 'any', :class => "radio" %> <%= f.label :match_type_any, t('dispatch.match_any'), :class => "radiolabel" %>
 			<%= f.radio_button  :match_type, 'all', :class => "radio" %> <%= f.label :match_type_all, t('dispatch.match_all'), :class => "radiolabel" %>
 		</div>			
@@ -56,7 +66,9 @@
 		</div>
 	</li>
 	<li>
-		<label><%=t('dispatch.act_to_perform')%>?</label>				
+		<h3 class="title"><%=t('admin.observer_rules.actions')%></h3>
+		<label><%=t('dispatch.action_note')%></label>
+
 		<div class="conditionset" id="actionDOM">
 			<div id="ActionList" class="rule_list"></div>
 			<fieldset class="addchoice">

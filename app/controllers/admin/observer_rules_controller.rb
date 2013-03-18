@@ -24,7 +24,6 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
     end
 
     def edit_data
-      @va_rule.performed_by = @va_rule.filter_data[:performed_by]
       @event_input = ActiveSupport::JSON.encode @va_rule.filter_data[:events]
       @filter_input = ActiveSupport::JSON.encode @va_rule.filter_data[:conditions]
       @action_input = ActiveSupport::JSON.encode @va_rule.action_data
@@ -75,8 +74,9 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
     end
 
     def set_filter_data
+      params[:va_rule][:performer][:members].map!(&:to_i) unless params[:va_rule][:performer][:members].nil?
       filter_data = {
-        :performed_by => params[:va_rule][:performed_by],
+        :performer => params[:va_rule][:performer],
         :events => params[:event_data].blank? ? [] : (ActiveSupport::JSON.decode params[:event_data]),
         :conditions => params[:filter_data].blank? ? [] : (ActiveSupport::JSON.decode params[:filter_data]),
       }

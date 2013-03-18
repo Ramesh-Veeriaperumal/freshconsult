@@ -5,7 +5,6 @@
 module Has #:nodoc:
   module FlexibleFields #:nodoc:
     
-  
     def self.included(base) # :nodoc:
       base.extend ClassMethods
     end
@@ -16,7 +15,7 @@ module Has #:nodoc:
           
           has_one :flexifield, :as => :flexifield_set, :dependent => :destroy
           
-          has_many :flexifield_def_entry, :class_name => 'FlexifieldDefEntry'
+          # has_many :flexifield_def_entries, :class_name => 'FlexifieldDefEntry'
          
           delegate :assign_ff_values, :retrieve_ff_values, :set_ff_value, :get_ff_value, :ff_def=, :ff_def, :to_ff_alias, :ff_aliases, :to_ff_field, :ff_fields, :to => :flexifield
           

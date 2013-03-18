@@ -17,7 +17,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Va::ObserverUtil
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification", 
-                            "header_info", "st_survey_rating", "trashed", "access_token", "ticket"]
+                            "header_info", "st_survey_rating", "trashed", "access_token"]
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
   OBSERVER_ATTR = []
 
@@ -46,18 +46,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_validation_on_create :set_token
 
-  before_update :update_observer_events
-
   
   before_save :update_ticket_changes
   
   after_commit_on_create :create_initial_activity,  :update_content_ids, :pass_thro_biz_rules,
     :support_score_on_create, :process_quests
-  
+    
+  after_commit_on_update :filter_observer_events, :if => :user_present?
   after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity, 
     :stop_timesheet_timers, :fire_update_event, :support_score_on_update, 
     :process_quests, :publish_to_update_channel
-  after_commit_on_update :filter_observer_events, :if => :current_user?
+  
 
   has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
 
@@ -580,12 +579,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def notify_on_update
     return if spam? || deleted?
-    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if (@ticket_changes.key?(:group_id) && group)
-    if (@ticket_changes.key?(:responder_id) && responder && responder != User.current)
+    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if (@model_changes.key?(:group_id) && group)
+    if (@model_changes.key?(:responder_id) && responder && responder != User.current)
       notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT)
     end
     
-    if @ticket_changes.key?(:status)
+    if @model_changes.key?(:status)
       if (status == RESOLVED)
         notify_by_email(EmailNotification::TICKET_RESOLVED) 
         notify_watchers("resolved")
@@ -622,12 +621,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def update_ticket_states 
     
-    ticket_states.assigned_at=Time.zone.now if (@ticket_changes.key?(:responder_id) && responder)    
-    if (@ticket_changes.key?(:responder_id) && @ticket_changes[:responder_id][0].nil? && responder)
+    ticket_states.assigned_at=Time.zone.now if (@model_changes.key?(:responder_id) && responder)    
+    if (@model_changes.key?(:responder_id) && @model_changes[:responder_id][0].nil? && responder)
       ticket_states.first_assigned_at = Time.zone.now
     end
     
-    if @ticket_changes.key?(:status)
+    if @model_changes.key?(:status)
       if (status == OPEN)
         ticket_states.opened_at=Time.zone.now
         ticket_states.reset_tkt_states
@@ -907,7 +906,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def update_activity
-    @ticket_changes.each_key do |attr|
+    @model_changes.each_key do |attr|
       send(ACTIVITY_HASH[attr.to_sym()]) if ACTIVITY_HASH.has_key?(attr.to_sym())
     end
   end
@@ -934,7 +933,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
    def stop_timesheet_timers
-    if @ticket_changes.key?(:status) && [RESOLVED, CLOSED].include?(status)
+    if @model_changes.key?(:status) && [RESOLVED, CLOSED].include?(status)
        running_timesheets =  time_sheets.find(:all , :conditions =>{:timer_running => true})
        running_timesheets.each{|t| t.stop_timer}
     end
@@ -1077,7 +1076,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                                    'activities.tickets.assigned_to_nobody.short')
       else
         create_activity(User.current, 
-          @ticket_changes[:responder_id][0].nil? ? 'activities.tickets.assigned.long' : 'activities.tickets.reassigned.long', 
+          @model_changes[:responder_id][0].nil? ? 'activities.tickets.assigned.long' : 'activities.tickets.reassigned.long', 
             {'eval_args' => {'responder_path' => ['responder_path', 
               {'id' => responder.id, 'name' => responder.name}]}}, 
             'activities.tickets.assigned.short')
@@ -1091,7 +1090,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def support_score_on_update
       return unless gamification_feature?(account)
 
-      if (reopened_now? or (@ticket_changes.key?(:deleted) && deleted?))
+      if (reopened_now? or (@model_changes.key?(:deleted) && deleted?))
         Resque.enqueue(Gamification::Scoreboard::ProcessTicketScore, { :id => id, 
                 :account_id => account_id,
                 :remove_score => true })
@@ -1109,9 +1108,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def update_ticket_changes
-      @ticket_changes = self.changes.clone
-      @ticket_changes.merge!(schema_less_ticket.changes.clone) unless schema_less_ticket.nil?
-      @ticket_changes.symbolize_keys!
+      @model_changes = self.changes.clone
+      @model_changes.merge!(schema_less_ticket.changes.clone) unless schema_less_ticket.nil?
+      @model_changes.merge!(flexifield.changes) unless flexifield.nil?
+      @model_changes.symbolize_keys!
     end
     
     #Temporary move of quest processing from observer - Shan
@@ -1138,13 +1138,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   	end
 
   	def resolved_now?
-      @ticket_changes.key?(:status) && ((resolved? && @ticket_changes[:status][0] != CLOSED) || 
-            (closed? && @ticket_changes[:status][0] != RESOLVED))
+      @model_changes.key?(:status) && ((resolved? && @model_changes[:status][0] != CLOSED) || 
+            (closed? && @model_changes[:status][0] != RESOLVED))
   	end
 
   	def reopened_now?
-      @ticket_changes.key?(:status) && (active? && 
-                      [RESOLVED, CLOSED].include?(@ticket_changes[:status][0]))
+      @model_changes.key?(:status) && (active? && 
+                      [RESOLVED, CLOSED].include?(@model_changes[:status][0]))
   	end
     #Quest processing ends here..
 
@@ -1212,7 +1212,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def fire_update_event
-      fire_event(:update, @ticket_changes) unless disable_observer
+      fire_event(:update, @model_changes) unless disable_observer
     end
 
     def set_token   
@@ -1255,12 +1255,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
         
         self.requester = requester
       end
-    end
-    
-    # VA - Observer Rules 
-    def update_observer_events
-      @observer_changes = @ticket_changes.clone
-      @observer_changes.merge!(flexifield.changes) unless flexifield.nil?
     end
 
     def can_add_requester?

@@ -11,7 +11,7 @@
 		<%= f.text_field :name, :class => "required text" %>
 	</li>
 	<li>
-		<%= f.label :description %>				
+		<%= f.label :description, "#{t('dispatch.description')}" %>
 		<label class="overlabel" for="va_rule_description">
 			<%= t("example") %>: <em>"<%=t('dispatch.info2')%>"</em>
 		</label>

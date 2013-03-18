@@ -58,11 +58,10 @@ class Flexifield < ActiveRecord::Base
   end
 
   def retrieve_ff_values
-    ff_values = {}
-    ff_aliases.each do |ff_alias|
-      ff_values[ff_alias] = get_ff_value ff_alias
-    end
-    return ff_values
+    ff_aliases.inject({}) do  |ff_values, ff_alias| 
+      ff_values[ff_alias] = (get_ff_value ff_alias)
+      ff_values
+    end || {}
   end
 
 end

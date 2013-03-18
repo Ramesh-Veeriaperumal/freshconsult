@@ -15,27 +15,43 @@ module VAConfig
   APP_BUSINESS_RULE = 11
   INSTALLED_APP_BUSINESS_RULE = 12
 
-  def self.handler(field, account, handler_type = :handler)
-    field_type = DEFAULT_FIELDS[field]
-    if field_type.nil?
-      if account.flexifield_def_entries.event_fields.map(&:flexifield_name).include? field.to_s
-        field = (account.flexifield_def_entries.find_by_flexifield_name field.to_s).flexifield_alias
-      end
-      field_type = check_for_custom_field field, account, handler_type
+  def self.handler(field, account)
+    fetch_handler field, account, :rule
+  end
+
+  def self.event_handler(field, account)
+    fetch_handler field, account, :event
+  end
+
+  private
+
+    def self.fetch_handler(field, account, type)
+      field_key = fetch_field_key field, account, type
+      handler_key = FIELDS[type][field_key]
+
+      RAILS_DEFAULT_LOGGER.debug "The field is : #{field}, type is :#{type}, field_key is : #{field_key}  handler_key is : #{handler_key}"
+      HANDLERS[type][handler_key.to_sym]
     end
 
-    RAILS_DEFAULT_LOGGER.debug " The field is : #{field} field_type is : #{field_type}"
-    HANDLERS[field_type[handler_type].to_sym]
-  end
+    def self.fetch_field_key field, account, type
+      (FIELDS[type].include? field) ? field : (custom_field_type field.to_s, account, type)
+    end
   
-  def self.check_for_custom_field(field, account, handler_type)
-    t_field = account.ticket_fields.find_by_name field.to_s
-    t_field ? Helpdesk::TicketField::FIELD_CLASS[t_field.field_type.to_sym][handler_type] : 
-      (handler_type == :event_handler ? 'update' : 'text')
-  end
+    def self.custom_field_type field, account, type
+      t_field = fetch_ticket_field field.to_s, account
+      t_field.present? ? t_field.field_type.to_sym : :default
+    end
+
+    def self.fetch_ticket_field field, account
+      (account.flexifield_def_entries.find_by_flexifield_name_or_flexifield_alias field).
+                                                                          first.ticket_field
+    end
 
 end
 
 YAML.load_file("#{RAILS_ROOT}/config/virtual_agent.yml").each do |k, v|
+  VAConfig.const_set(k.upcase, Helpdesk::prepare(v))
+end
+YAML.load_file("#{RAILS_ROOT}/config/va_handler.yml").each do |k, v|
   VAConfig.const_set(k.upcase, Helpdesk::prepare(v))
 end

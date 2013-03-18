@@ -1608,8 +1608,8 @@ span.sort_handle{
 	float:left;
 	left:0px;
 	top:1px;
-	width:25px;
-	height:25px;
+	width:10px;
+	height:10px;
 	cursor:move;
 	background:url(/images/sort_handle.gif) no-repeat;
 	@include corners(5px);
@@ -9036,10 +9036,38 @@ div.select2-search{
 	display: none;
 }
 .select2{
-	width: 190px;
+	width: 332px;
+	
+	li {
+		width: auto !important;	
+	}
 }
 
-#va_rule_performed_by_chzn
-{
-	top: 12px;
+.doer{
+	border:1px solid #cac6c6;
+	border-radius:5px;
+	padding:10px;
+
+	label:first-child{
+		padding:0;
+		float: left;
+		font-weight: bold;
+		width: 120px;
+	}
+
+	.va_rule_performer_members_container
+	{
+		margin-top: 10px;
+		margin-left: 120px;
+		select {
+			width: 50%;
+		}
+	}
+	
+	.choicelist{
+		margin-left: 120px;
+		input[type=radio]{
+			margin-left: 1%;
+		}
+	}
 }

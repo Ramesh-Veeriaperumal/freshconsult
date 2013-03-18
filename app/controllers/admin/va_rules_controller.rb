@@ -94,10 +94,10 @@ class Admin::VaRulesController < Admin::AutomationsController
           :operatortype => "text" },
         { :name => "company_name", :value => t('company_name'), :domtype => "text", 
           :operatortype => "text"}]
-
+      
       filter_hash.insert(11, { :name => "product_id", :value => t('admin.products.product_label_msg'),:domtype => 'dropdown', 
-        :choices => @products, :operatortype => "choicelist" }) if current_account.features?(:multi_product)
-                                                   
+        :choices => [['', I18n.t('ticket.none')]]+@products, :operatortype => "choicelist" }) if current_account.features?(:multi_product)
+
       filter_hash = filter_hash + additional_filters
       add_custom_filters filter_hash
       @filter_defs  = ActiveSupport::JSON.encode filter_hash
