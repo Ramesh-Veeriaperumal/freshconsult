@@ -5,11 +5,11 @@ module Support::TicketsHelper
   end
 
   def current_wf_order 
-    cookies[:wf_order] = (params[:wf_order] ? params[:wf_order] : ( (!cookies[:wf_order].blank?) ? cookies[:wf_order] : "created_at" )).to_sym
+    cookies[:wf_order] = (params[:wf_order] ? params[:wf_order] : ( (!cookies[:wf_order].blank?) ? cookies[:wf_order] : TicketsFilter::DEFAULT_PORTAL_SORT )).to_sym
   end
 
   def current_wf_order_type 
-    cookies[:wf_order_type] = (params[:wf_order_type] ? params[:wf_order_type] : ( (!cookies[:wf_order_type].blank?) ? cookies[:wf_order_type] : "desc" )).to_sym
+    cookies[:wf_order_type] = (params[:wf_order_type] ? params[:wf_order_type] : ( (!cookies[:wf_order_type].blank?) ? cookies[:wf_order_type] : TicketsFilter::DEFAULT_PORTAL_SORT_ORDER )).to_sym
   end
 
   def visible_fields

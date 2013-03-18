@@ -149,10 +149,12 @@ class Support::TicketsController < ApplicationController
   
     def build_tickets
       ticket_scope = (params[:start_date].blank? or params[:end_date].blank?) ? current_user.tickets : current_user.tickets.created_at_inside(params[:start_date], params[:end_date])
-    @tickets = TicketsFilter.filter(current_filter.to_sym, current_user, ticket_scope)
-    per_page = mobile? ? 30 : params[:wf_per_page] || 10
-     @tickets = @tickets.paginate(:page => params[:page], :per_page => per_page, :order=> "#{current_wf_order} #{current_wf_order_type}") 
-    @tickets ||= []
+      @tickets = TicketsFilter.filter(current_filter.to_sym, current_user, ticket_scope)
+      per_page = mobile? ? 30 : params[:wf_per_page] || 10
+        current_order = visible_fields.include?(current_wf_order) ? "#{current_wf_order} #{current_wf_order_type}" :
+         "#{TicketsFilter::DEFAULT_PORTAL_SORT} #{TicketsFilter::DEFAULT_PORTAL_SORT_ORDER}" 
+        @tickets = @tickets.paginate(:page => params[:page], :per_page => per_page, :order=> current_order) 
+      @tickets ||= []
    end
    
    def require_user_login

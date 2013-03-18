@@ -108,21 +108,6 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   def default_order
     'created_at'
   end
-  
-  def order_clause
-    @order_clause ||= begin
-      order_columns = order
-      #Performence reseason we are using id instead of created_at.
-      #order_columns = "id" if "created_at".eql?(order_columns) #Removing to check if the performace hit was because of 
-                                                                # this causing mysql to use id index instead of account_id index
-      order_parts = order_columns.split('.')
-      if order_parts.size > 1
-        "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
-      else
-        "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}"
-      end
-    end  
-  end
 
   def default_filter(filter_name, from_export = false)
      default_value = from_export ? "all_tickets" : "new_my_open"
@@ -310,6 +295,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     all_joins[0].concat(schema_less_join) if all_conditions[0].include?("helpdesk_schema_less_tickets.boolean_tc02")
     all_joins[0].concat(users_join) if all_conditions[0].include?("users.customer_id")
     all_joins[0].concat(tags_join) if all_conditions[0].include?("helpdesk_tags.name")
+    all_joins[0].concat(states_join) if order.eql? "requester_responded_at"
     all_joins
   end
 
@@ -331,6 +317,11 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
  def users_join
    " INNER JOIN users ON users.id = helpdesk_tickets.requester_id  and  users.account_id = helpdesk_tickets.account_id  "
  end
+
+ def states_join
+  " INNER JOIN helpdesk_ticket_states on helpdesk_ticket_states.ticket_id = helpdesk_tickets.id 
+    AND helpdesk_ticket_states.account_id = helpdesk_tickets.account_id "
+ end
   
   
   def joins
@@ -351,6 +342,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
       else
         "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}"
+      end
+
+      if order.eql? "requester_responded_at"
+        "if(helpdesk_ticket_states.#{order} IS NULL, helpdesk_tickets.created_at, helpdesk_ticket_states.#{order}) #{order_type}"
       end
     end  
   end
