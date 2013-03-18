@@ -1,0 +1,29 @@
+<% unless @searched_articles.nil? or @searched_articles.empty? %>
+	<div class="article-list">
+		<div class="list-lead">Articles</div>
+		<ul>
+		<% @searched_articles.each do |article| %>
+			<li>
+				<%= link_to(article.excerpts.title, support_solutions_article_path(article)) %>
+				<span class="label label-small label-light"><%= article.folder.name %></span> 
+				<p><%= article.excerpts.desc_un_html %></p>
+			</li>
+		<% end %>
+		</ul>
+	</div>
+<% end %>
+
+<% unless @searched_topics.nil? or @searched_topics.empty? %>
+	<div class="topic-list">
+		<div class="list-lead">Topics</div>
+		<ul>
+		<% @searched_topics.each do |topic| %>
+			<li>
+				<%= link_to(topic.excerpts.title, support_discussions_topic_path(topic)) %>
+				<span class="label label-small label-light"><%= topic.forum.name %></span>
+				<p><%= truncate(topic.posts.first.body, 300)  %></p>
+			</li>
+		<% end %>
+		</ul>
+	</div>
+<% end %>

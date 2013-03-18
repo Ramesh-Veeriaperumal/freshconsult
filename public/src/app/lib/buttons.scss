@@ -210,7 +210,7 @@ div.action_buttons{
 	background-repeat:repeat-x; 
 	padding:2px 7px 3px 3px; 
 	border:1px solid darken(#f2f2f2, 5%);
-	a{
+	> a{
 		text-decoration:none;
 		float:left;
 		margin:0px 0px;
@@ -221,17 +221,17 @@ div.action_buttons{
 		@include link-colors(#333333, #666666, #333333, #333333);
 		@include text-shadow(#ffffff, 0px, 1px, 1px);
 	}	
-	a.last{ 
+	> a.last{ 
 		border-right:0px;
 		padding-right:4px;
 	}
- 	a:last-child{ 
+ 	> a:last-child{ 
 		border-right:0px;
 		padding-right:4px;
 	}	
 	a.icon{
 		padding-left:20px;
-    width: 100%;
+    width: auto;
     height: 100%;
     display: block;
     position: static;
@@ -460,7 +460,7 @@ div.action_buttons:hover{
     @include clearfix;
     @include border-radius(18px);
     @include transition-property(left);
-    @include transition-duration(0.1s);    
+    /*@include transition-duration(0.1s);    */
   }  
   .toggle-handle{    
     left:50%;    
@@ -475,8 +475,8 @@ div.action_buttons:hover{
       @include background(linear-gradient(top, #d9d9d9, #ffffff));
       @include border-radius(12px);
       @include box-shadow(#f2f2f2 0 0 0 1px inset);
-      @include transition-property(margin);
-      @include transition-duration(0.2s);
+      /*@include transition-property(margin);
+      @include transition-duration(0.2s);*/
     }
   }   
   &:hover{
@@ -501,7 +501,7 @@ div.action_buttons:hover{
     line-height:0;
     font-weight: 200;
     font-size: 13px;
-    span{ display:block; margin-top:10px; font-weight:500; }
+    span{ display:block; margin-top:10px; font-weight:500; line-height: 0.1em; /* Opera fix */ }
   }  
   .on-label{    
     background-color: #40894c; // Old browsers
@@ -583,4 +583,8 @@ div.action_buttons:hover{
 .btn-group .btn:active,
 .btn-group .btn.active {
   z-index: 2;
+}
+
+.btn-bold{
+  font-weight: bold;
 }

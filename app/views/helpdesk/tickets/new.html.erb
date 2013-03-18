@@ -1,6 +1,6 @@
 <% content_for :sidebar do -%><%- end %>
 <%= content_tag (:h3, t("ticket.submit_ticket_title"), :class => "title") %>
-<% form_for @item, :html => {:multipart => true, :id => "NewTicket" } do |f| %>
+<% form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" } do |f| %>
   <ul class="ui-form">  
     <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => false } %>
     <li>

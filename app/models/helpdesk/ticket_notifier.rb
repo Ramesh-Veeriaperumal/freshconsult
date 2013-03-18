@@ -191,7 +191,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 protected
 
   def formatted_export_subject(params)
-    filter = TicketConstants::STATES_HASH[params[:ticket_state_filter].to_sym]
+    filter = "export_data.#{params[:ticket_state_filter]}"
+    filter = I18n.t(filter)
     I18n.t('export_data.mail.subject',
             :filter => filter,
             :start_date => params[:start_date].to_date, 

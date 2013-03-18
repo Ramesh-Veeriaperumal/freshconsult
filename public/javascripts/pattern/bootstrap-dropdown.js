@@ -102,6 +102,9 @@
   function clearMenus() {
     getParent($(toggle))
       .removeClass('open')
+    // Repaint not happening properly in Chrome/Mac
+    // This is a hack to fix it
+    getParent($(toggle)).toggle(0, function() { $(this).toggle(0); } );
   }
 
   function getParent($this) {

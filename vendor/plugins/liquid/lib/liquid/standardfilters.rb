@@ -30,7 +30,9 @@ module Liquid
     end
 
     def escape_once(input)
-      ActionView::Helpers::TagHelper.escape_once(input) rescue input
+      ActionView::Helpers::TagHelper.escape_once(input)
+    rescue NameError
+      input
     end
 
     alias_method :h, :escape
@@ -51,8 +53,17 @@ module Liquid
       wordlist.length > l ? wordlist[0..l].join(" ") + truncate_string : input
     end
 
+    # Split input string into an array of substrings separated by given pattern.
+    #
+    # Example:
+    #   <div class="summary">{{ post | split '//' | first }}</div>
+    #
+    def split(input, pattern)
+      input.split(pattern)
+    end
+
     def strip_html(input)
-      input.to_s.gsub(/<script.*?<\/script>/, '').gsub(/<.*?>/, '')
+      input.to_s.gsub(/<script.*?<\/script>/, '').gsub(/<!--.*?-->/, '').gsub(/<.*?>/, '')
     end
 
     # Remove all newlines from the string
@@ -158,6 +169,10 @@ module Liquid
         return input.to_s
       end
 
+      if ((input.is_a?(String) && !/^\d+$/.match(input.to_s).nil?) || input.is_a?(Integer)) && input.to_i > 0
+        input = Time.at(input.to_i)
+      end
+
       date = input.is_a?(String) ? Time.parse(input) : input
 
       if date.respond_to?(:strftime)
@@ -205,6 +220,10 @@ module Liquid
     # division
     def divided_by(input, operand)
       to_number(input) / to_number(operand)
+    end
+
+    def modulo(input, operand)
+      to_number(input) % to_number(operand)
     end
 
     private

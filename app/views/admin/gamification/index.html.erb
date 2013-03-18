@@ -10,10 +10,10 @@
 <div id="scoreboard_elements" <% unless feature?(:gamification_enable) %>style="display:none"<%end%> >
 	<ul data-tabs="tabs" class="tabs admin-tabs">
 		<li class="active first">
-			<a id="points-tab" href="#points">Points</a>
+			<a id="points-tab" href="#points"><%= t('admin.gamification.points') %></a>
 		</li>
 		<li>
-			<a id="quests-tab" href="#quests">Quests</a>
+			<a id="quests-tab" href="#quests"><%= t('admin.gamification.quests') %></a>
 		</li>
 	</ul>
 
@@ -30,23 +30,24 @@
 <div class="grey-background clearfix" id="gamification-intro" <% if feature?(:gamification_enable) %>style="display:none"<%end%>>	
 	<div class="aracde-content">
 		<%= image_tag '/images/helpimages/arcade-admin-page.png' %>
-		<h2>What is Freshdesk Arcade?</h2>
+		<h2><%= t('admin.gamification.fresh_arcade') %></h2>
 		<p>
-			Now every support ticket that flows in is a chance for agents to score. What’s even cooler - you get to award bonus points to your support team based on what is most important to you. Like shooting out answers super fast, getting the solution right the first time, and winning awesome satisfaction ratings from customers. 
+			<%= t('admin.gamification.index.info1') %>
 		</p>
 		<p>
-			Follow your support teams’ progress with the leaderboard right off the dashboard. And award special trophies to the top scorers for being the Speed Racer, Sharp Shooter, Customer Wow Champ, and best of all, your Most Valuable Player of the month.
+			<%= t('admin.gamification.index.info2') %>
 		</p>
 		<p>	
-			<a href="http://www.youtube.com/watch?v=bi6Md5K2nsY" target="_blank">Check out the video</a>
+			<a href="http://www.youtube.com/watch?v=bi6Md5K2nsY" target="_blank"><%= t('admin.gamification.index.video') %>
+			</a>
 			<br />
 			<a href="javascript: jQuery('#gamification_enable').trigger('click'); " class="uiButton special floatr">
-				Enable freshdesk arcade
+				<%= t('admin.gamification.index.enable_arcade') %>
 			</a>
 		</p>
 		<p>			
 			<a target="_blank" href="https://support.freshdesk.com/solution/categories/4/folders/59789/articles/27148-gamification">
-				Learn more about the arcade
+				<%= t('admin.gamification.index.learn_arcade') %>
 			</a>
 		</p>
 	</div>

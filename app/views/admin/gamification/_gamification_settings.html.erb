@@ -2,12 +2,12 @@
     <li>
     <% form_tag update_game_admin_gamification_path, :method => :put, :id => "scoreboard_ratings_form", :rel => "validate" do %>
     <div class="section-title">
-        <h3>Award points</h3>
+        <h3><%= t('admin.gamification.gamification_settings.award_points') %></h3>
     </div>
     <div class="row">
         <div class="span3">
             <strong>
-                When agent <br /> resolves a ticket:
+                <%= t('admin.gamification.gamification_settings.agent_resolves_ticket') %>
             </strong>
         </div>        
         <% @scoreboard_ratings.each_with_index do |scoreboard , index| %>
@@ -30,7 +30,7 @@
     <div class="row">
         <div class="span3">
             <strong>
-                Bonus points for:
+                <%= t('admin.gamification.gamification_settings.bonus_points_for') %>
             </strong>
         </div>
         <% @scoreboard_ratings.each_with_index do |scoreboard , index| %>
@@ -68,7 +68,7 @@
     <br /><br />
     <span class="seperator"></span>
     <div class="button-container">        
-        <a class="uiButton" href="/admin/home">Cancel</a>
+        <a class="uiButton" href="/admin/home"><%= t('cancel') %></a>
         <%= submit_tag t('account.save'), :class => 'uiButton special' %>
     </div>
     <% end %>

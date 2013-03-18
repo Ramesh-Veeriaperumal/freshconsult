@@ -1,13 +1,10 @@
 class Social::TwitterWorker
-	extend Resque::Plugins::Retry
+	extend Resque::AroundPerform
   @queue = 'TwitterWorker'
 
-  @retry_limit = 3
-  @retry_delay = 60*2
 
-  def self.perform(account_id)
-    account = Account.find(account_id)
-    account.make_current
+  def self.perform(args)
+    account = Account.current
     twitter_handles = account.twitter_handles.active   
     twitter_handles.each do |twt_handle|
       @twt_handle = twt_handle 
@@ -18,7 +15,6 @@ class Social::TwitterWorker
         fetch_twt_mentions twt_handle
       end
     end
-     Account.reset_current_account
   end
 
   def self.fetch_direct_msgs twt_handle
@@ -49,13 +45,15 @@ class Social::TwitterWorker
         @twt_handle.state = Social::TwitterHandle::TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required]
         @twt_handle.last_error = e.to_s
         @twt_handle.save
-        NewRelic::Agent.notice_error(e)
-        puts "Something wrong happened in twitter!"
-        puts e.to_s
+        NewRelic::Agent.notice_error(e,{:custom_params => {:account_id => @twt_handle.account_id,
+                  :id => @twt_handle.id}})
+        puts "Twitter Api Error -#{e.to_s} :: Account_id => #{@twt_handle.account_id}
+                                  :: id => #{@twt_handle.id} "
       rescue Exception => e
-        puts "Something wrong happened in twitter!"
-        NewRelic::Agent.notice_error(e)
-        puts e.to_s
+        puts "Something wrong happened in twitter! Error-#{e.to_s} :: Account_id => #{@twt_handle.account_id}
+                                  :: id => #{@twt_handle.id} "
+        NewRelic::Agent.notice_error(e,{:custom_params => {:account_id => @twt_handle.account_id,
+                  :id => @twt_handle.id}})
       end  
       return return_value   
   end

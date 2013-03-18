@@ -15,12 +15,7 @@ class Helpdesk::MergeTicketsController < ApplicationController
     "closed_at" => 1
   }
 
-  SEARCH_KEY_SEARCH_FIELD_MAPPING = {
-  	"display_id" => 'helpdesk_tickets.display_id',
-  	"requester" => 'users.name'
-  }
-
-	def bulk_merge
+  def bulk_merge
     @ticket_search = Array.new
     @source_tickets = merge_sort
 		render :partial => "helpdesk/merge/bulk_merge"
@@ -28,14 +23,14 @@ class Helpdesk::MergeTicketsController < ApplicationController
 
 	def merge_search
 		scope = current_account.tickets.permissible(current_user)
-		search_method = ( ( params[:key] == "subject" ) ? "with_subject" : "with_merge_criteria" )
-		items = merge_sort scope.send("#{search_method}", params[:search_string],
-											SEARCH_KEY_SEARCH_FIELD_MAPPING[params[:key]])
-		r = {:results => items.map{|i| {:display_id => i.display_id, :subject => i.subject, 
-				:searchKey => ( ( params[:key] == "requester" ) ? i[:requester_name] : i.send(params[:key]).to_s ), 
-		    :info => t("ticket.merge_ticket_list_status_"+i.ticket_states.current_state, 
-		    :username => "<span class='muted'>#{h(i[:requester_name])}</span>", 
-		    :time_ago => time_ago_in_words(i.ticket_states.send(i.ticket_states.current_state))) }}}
+		items = (params[:key] == "display_id") ? scope.send( params[:search_method], params[:search_string] ) :
+																						merge_sort(scope.send( params[:search_method], params[:search_string] ))
+		r = {:results => items.map{|i| {
+					:display_id => i.display_id, :subject => i.subject, :title => h(i.subject),
+					:searchKey => (params[:key] == 'requester') ? i[:requester_name] : i.send(params[:key]).to_s, 
+				 	:info => t("ticket.merge_ticket_list_status_"+i.ticket_states.current_state, 
+						:username => "<span class='muted'>#{( (params[:key] == 'requester') ? i[:requester_name] : i.requester )}</span>", 
+						:time_ago => time_ago_in_words(i.ticket_states.send(i.ticket_states.current_state))) }}}
 		respond_to do |format|
 		  format.json { render :json => r.to_json }
 		end

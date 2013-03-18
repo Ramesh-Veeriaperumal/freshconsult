@@ -58,7 +58,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   
   named_scope :custom_fields, :conditions => ["flexifield_def_entry_id is not null"]
   named_scope :custom_dropdown_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'custom_dropdown'"]
-  named_scope :customer_visible, :conditions => { :visible_in_portal => true }  
+  named_scope :customer_visible, :conditions => { :visible_in_portal => true }
   named_scope :customer_editable, :conditions => { :editable_in_portal => true }
   named_scope :type_field, :conditions => { :name => "ticket_type" }
   named_scope :status_field, :conditions => { :name => "status" }
@@ -76,7 +76,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
                   :default_group        => { :type => :default, :dom_type => "dropdown_blank", :form_field => "group_id"},
                   :default_agent        => { :type => :default, :dom_type => "dropdown_blank", :form_field => "responder_id"},
                   :default_source       => { :type => :default, :dom_type => "hidden"},
-                  :default_description  => { :type => :default, :dom_type => "html_paragraph", :visible_in_view_form => false, :form_field => "description_html" },
+                  :default_description  => { :type => :default, :dom_type => "html_paragraph", 
+                                              :form_field => "description_html", :visible_in_view_form => false },
                   :default_product      => { :type => :default, :dom_type => "dropdown_blank",
                                              :form_field => "product_id" },
                   :custom_text          => { :type => :custom, :dom_type => "text", 
@@ -115,9 +116,9 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "custom_dropdown" then
          picklist_values.collect { |c| [c.value, c.value] }
        when "default_priority" then
-         Helpdesk::Ticket::PRIORITY_OPTIONS
+         TicketConstants.priority_names
        when "default_source" then
-         Helpdesk::Ticket::SOURCE_OPTIONS
+         TicketConstants.source_names
        when "default_status" then
          Helpdesk::TicketStatus.statuses_from_cache(account)
        when "default_ticket_type" then
@@ -154,11 +155,14 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end
 
   def nested_levels
-    nested_ticket_fields.map{ |l| { :id => l.id, :label => l.label, :label_in_portal => l.label_in_portal, :name => l.name, :level => l.level } } if field_type == "nested_field"
+    nested_ticket_fields.map{ |l| { :id => l.id, :label => l.label, :label_in_portal => l.label_in_portal, 
+      :name => l.name, :level => l.level, :field_type => "nested_child" } } if field_type == "nested_field"
   end
 
   def levels
-    nested_ticket_fields.map{ |l| { :id => l.id, :label => l.label, :label_in_portal => l.label_in_portal , :description => l.description, :level => l.level, :position => 1, :type => "dropdown" } } if field_type == "nested_field"
+    nested_ticket_fields.map{ |l| { :id => l.id, :label => l.label, :label_in_portal => l.label_in_portal, 
+      :description => l.description, :level => l.level, :position => 1, :field_type => "nested_child", 
+      :type => "dropdown" } } if field_type == "nested_field"
   end
 
   def level_three_present
@@ -250,11 +254,25 @@ class Helpdesk::TicketField < ActiveRecord::Base
   protected
 
     def group_agents(ticket)
-      return account.agent_groups.find( :all,
-                      :joins =>:user,
-                      :conditions => { :group_id => ticket.group_id, :users => {:deleted => false}
-                                      }
-                    ).collect{ |c| [c.user.name, c.user.id]} if ticket && ticket.group_id
+      if ticket && ticket.group_id
+        agent_list = account.agent_groups.find(:all, 
+                                               :joins =>"inner join users on 
+                                                          agent_groups.account_id = 
+                                                                    users.account_id and 
+                                                          users.id = agent_groups.user_id",
+                                               :conditions => { :group_id => ticket.group_id, 
+                                                                :users => {:deleted => false}
+                                                              }
+                                              ).collect{ |c| [c.user.name, c.user.id]}
+
+        if !ticket.responder_id || agent_list.any? { |a| a[1] == ticket.responder_id }
+          return agent_list
+        end
+
+        responder = account.agents_from_cache.detect { |a| a.user.id == ticket.responder_id }
+        agent_list += [[ responder.user.name, ticket.responder_id ]] if responder
+        return agent_list
+      end
       
       account.agents_from_cache.collect { |c| [c.user.name, c.user.id] }
     end

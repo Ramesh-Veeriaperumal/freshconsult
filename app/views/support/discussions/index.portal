@@ -1,0 +1,46 @@
+<section class="main content rounded-6 min-height-on-desktop">
+	<h2 class="heading">{% translate portal.community_forums %}</h2>
+	<div class="start-topic">{{ portal | link_to_start_topic }}</div>
+	{% for category in portal.forum_categories %}
+		{% if category.forums != empty %}
+			<div class="cs-s">
+				<h3 class="heading">{{category.name}}</h3>
+				<div class="cs-g-c">
+				{% for forum in category.forums %}
+					{% if forum.topics_count %}
+						<section class="cs-g topic-list">
+							<div class="list-lead badge-{{ forum.type_name }}">
+								<a href="{{ forum.url }}">
+									{{ forum.name }} ({{ forum.topics_count }})
+								</a>
+							</div>
+							{{ forum | topic_list:5 }}
+						</section>
+					{% endif %}
+				{% endfor %}
+				</div>
+			</div>
+		{% endif %}
+	{% endfor %}
+</section>
+
+{% if portal.recent_popular_topics != empty %}
+	<section class="sidebar content rounded-6">
+		<section class="cs-g-c topic-list">
+			<div class="list-lead">{% translate portal.popular_topics %}</div>
+			<p class="intro">{% translate portal.showing_recently_popular_topics %}</p>
+			<ul>
+			{% for topic in portal.recent_popular_topics %}
+				<li class="cs-g-3">
+					<div class="ellipsis">
+						<a href="{{topic.url}}">{{topic.title}}</a>
+					</div>
+					<div class="help-text">
+						{{ topic | topic_info }}
+					</div>
+				</li>
+			{% endfor %}
+			</ul>
+		</section>
+	</section>
+{% endif %}

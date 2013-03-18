@@ -58,6 +58,12 @@ class Customer < ActiveRecord::Base
   CUST_TYPE_OPTIONS = CUST_TYPES.map { |i| [i[1], i[2]] }
   CUST_TYPE_BY_KEY = Hash[*CUST_TYPES.map { |i| [i[2], i[1]] }.flatten]
   CUST_TYPE_BY_TOKEN = Hash[*CUST_TYPES.map { |i| [i[0], i[2]] }.flatten]
+
+  named_scope :custom_search, lambda { |search_string| 
+    { :conditions => ["name like ?" ,"%#{search_string}%"],
+      :select => "name, id",
+      :limit => 1000  }
+  }
   
   def self.filter(letter, page)
   paginate :per_page => 10, :page => page,
@@ -70,6 +76,10 @@ class Customer < ActiveRecord::Base
     if self.sla_policy_id.nil?            
       self.sla_policy_id = account.sla_policies.find_by_is_default(true).id      
     end    
+  end
+
+  def to_s
+    self.name
   end
   
   def to_xml(options = {})

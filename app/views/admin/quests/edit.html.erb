@@ -1,8 +1,8 @@
 <h3 class="title">
-	<span class="right-title">Quest type: 
+	<span class="right-title"><%= t('admin.quests.quest_form.quest_type') %>: 
 		<strong><%= Quest::GAME_TYPE_NAME_BY_KEY[@quest.category] unless @quest.category.blank? %></strong>
 	</span>
-	Edit quest
+	<%= t('admin.quests.quest_form.edit') %>
 </h3> 
 <% form_for :quest, @quest, :url => admin_quest_path, :html => { :method => :put , :id => "formQuestNew" } do |f| %>
 	<%= render :partial => "/admin/quests/quest_form", :locals => { :f => f } %>

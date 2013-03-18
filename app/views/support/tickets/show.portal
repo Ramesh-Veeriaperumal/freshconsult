@@ -1,0 +1,201 @@
+<section class="main content rounded-6 min-height-on-desktop">
+	<div class="breadcrumb">
+		<a href="/">Home</a>
+		<a href="{{ portal.tickets_home_url }}">Tickets list</a>
+	</div>
+	
+	<section class="ticket-main">
+		{{ ticket | status_alert }}
+		
+		<h2 class="heading">#{{ ticket.id }} {{ ticket.subject }}</h2>
+
+		{% if portal.user %}
+			<section class="toolbar-actions" id="ticket-toolbar">
+				<span class="hide-tablet pull-right">
+					<a href="#ticket-sidebar" class="btn btn-icon btn-small btn-primary"
+						title="More ticket details">
+						<i class="icon-cog-drop-light"></i>
+					</a>
+				</span>
+				<div class="btn-group" id="ticket-toolbar">
+					{% unless ticket.closed? %}
+						<a href="#reply-to-ticket" class="btn btn-small" data-proxy-for="#add-note-form">Reply</a>
+						<a href="{{ ticket.close_ticket_url }}" data-method="post" class="btn btn-small">
+							Mark ticket as closed
+						</a>
+						<a href="#add-people" rel="freshdialog" title="Add people to conversation" 
+							data-width="400" class="btn btn-small" data-submit-label="Add people">Add people</a>
+					{% endunless %}
+				</div>			
+			</section>
+		{% endif %}
+
+		<section class="user-comment" id="ticket-description">			
+			<div class="user-info">
+				{{ ticket.requester | profile_image:'user-pointer-bottom', '40px', '40px' }}
+				<div class="user-details">
+					<h4 class="user-name">{{ ticket.requester.name }}</h4>
+					<div class="p-info">reported {{ ticket.created_on | time_ago }}</div>
+				</div>
+			</div>
+			<div class="p-content">
+				<div class="p-desc">{{ ticket.description_html }}</div>
+				{% if ticket.attachments.size > 0 %}
+				<hr />
+				<div class="cs-g-c attachments" id="ticket-{{ticket.id}}-attachments">
+					{% for attachment in ticket.attachments %}
+						<div class="cs-g-3 attachment">
+							<img src="{{ attachment.thumbnail }}" 
+								 class="file-thumbnail {% if attachment.is_image? %} file-image {% endif %}"
+								 width="50px" height="50px"  />
+							<a href="{{ attachment.url }}" class="ellipsis file-name" target="_blank">
+								{{ attachment.filename }}
+							</a>
+							<div class="help-text file-size">
+								{{ attachment.size }}
+								{% if ticket.requester and (ticket.requester.id == portal.user.id)  %}
+									<a href="{{ attachment.delete_url }}" data-method="delete" 
+										data-confirm="{% translate attachment_delete %}">
+										{% translate delete %}
+									</a>
+								{% endif %}
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+				{% endif %}
+				{% if ticket.dropboxes.size > 0 %}
+					<hr />
+					<div class="cs-g-c attachments" id="ticket-{{ticket.id}}-dropbox-attachments">
+						{% for dropbox in ticket.dropboxes %}
+							<div class="cs-g-3 attachment">
+								<img src="{{ dropbox.thumbnail }}" 
+									 class="file-thumbnail" width="50px" height="50px"  />
+								<a href="{{ dropbox.url }}" class="ellipsis file-name" target="_blank">
+									<i class="icon-dropbox-small"></i>
+									{{ dropbox.filename }}
+								</a>
+								{% if ticket.requester and (ticket.requester.id == portal.user.id)  %}
+									<div class="help-text file-size">
+										<a href="{{ dropbox.delete_url}}" data-method="delete" 
+											data-confirm="{% translate attachment_delete %}">
+											{% translate delete %}
+										</a>
+									</div>
+								{% endif %}
+							</div>
+						{% endfor %}
+					</div>
+				{% endif %}
+			</div>
+		</section>
+
+		<section id="ticket-comments">
+			{% for comment in ticket.public_comments %}
+				<section class="user-comment {% if comment.user.is_agent %} comment-by-agent {% endif %}" 
+						 id="ticket-note-{{comment.id}}">
+
+					<div class="user-info">
+						{{ comment.user | profile_image:'user-pointer-bottom', '40px', '40px' }}
+						<div class="user-details">
+							<h4 class="user-name">{{ comment.user.name }}</h4> 
+							<div class="p-info">said {{ comment.created_on | time_ago }}</div>
+						</div>
+					</div>
+
+					<div class="p-content">						
+						<div class="p-desc">
+							{{ comment.description }}
+						</div>
+						{% if comment.attachments.size > 0 %}
+						<hr />
+						<div class="cs-g-c attachments" id="comment-{{comment.id}}-attachments">
+							{% for attachment in comment.attachments %}
+								<div class="cs-g-3 attachment">
+									<img src="{{ attachment.thumbnail }}" 
+										 class="file-thumbnail {% if attachment.is_image? %} file-image {% endif %}"
+										 width="50px" height="50px"  />
+									<a href="{{ attachment.url }}" class="ellipsis file-name" target="_blank">
+										{{ attachment.filename }}
+									</a>
+									<div class="help-text file-size">
+										{{ attachment.size }}
+										{% if comment.user and (comment.user.id == portal.user.id)  %}
+											<a href="{{ attachment.delete_url }}" data-method="delete" 
+												data-confirm="{% translate attachment_delete %}">
+												{% translate delete %}
+											</a>
+										{% endif %}
+									</div>
+								</div>
+							{% endfor %}
+						</div>
+						{% endif %}
+						{% if comment.dropboxes.size > 0 %}
+						<hr />
+						<div class="cs-g-c attachments" id="comment-{{comment.id}}-dropbox-attachments">
+							{% for dropbox in comment.dropboxes %}
+								<div class="cs-g-3 attachment">
+									<img src="{{ dropbox.thumbnail }}" 
+										 class="file-thumbnail" width="50px" height="50px"  />
+									<a href="{{ dropbox.url }}" class="ellipsis file-name" target="_blank">
+										<i class="icon-dropbox-small"></i>
+										{{ dropbox.filename }}
+									</a>
+									{% if comment.user and (comment.user.id == portal.user.id)  %}
+										<div class="help-text file-size">
+											<a href="{{ dropbox.delete_url}}" data-method="delete" 
+												data-confirm="{% translate attachment_delete %}">
+												{% translate delete %}
+											</a>
+										</div>
+									{% endif %}
+								</div>
+							{% endfor %}
+						</div>
+						{% endif %}
+
+					</div>
+				</section>
+			{% endfor %}
+			{% if ticket.closed? %}
+				{{ ticket | status_alert }}
+			{% endif %}
+			<section id="reply-to-ticket" name="reply-to-ticket" class="user-comment {% if ticket.closed? %}hide{% endif %}">
+				<div class="user-info">
+					{{ portal.user | profile_image:'user-pointer-bottom', '40px', '40px' }}
+					<div class="user-details">
+						<h4 class="user-name">{{ portal.user.name }}</h4>
+					</div>
+				</div>
+				<div class="p-content">
+					<input type="text" class="special span12" 
+							placeholder="Click here to reply to this ticket" id="add-note-form-proxy" 
+							data-proxy-for="#add-note-form" />
+
+					<div id="add-note-form" class="hide">
+						{% snippet ticket_reply %}
+					</div>
+				</div>
+			</section>
+		</section>
+	</section>
+</section>
+
+<section class="sidebar content rounded-6" id="ticket-sidebar">
+	{% assign agent = ticket.agent %}
+	{% if agent_visible == true and agent %}
+		<div class="widget agent-details">
+			<h3 class="lead">Agent working on this ticket</h4>
+			{{ agent | profile_image:'user-pointer-bottom', '40px', '40px' }}
+			<div><b>{{ agent.name }}</b></div>
+			<div>{{ agent.job_title }}</div>
+		</div>
+	{% endif %}
+
+	{% snippet ticket_survey %}
+	
+	{% snippet ticket_details %}	
+</section>
+
+{% snippet ticket_add_people %}

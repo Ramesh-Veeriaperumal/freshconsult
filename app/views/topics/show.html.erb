@@ -39,7 +39,7 @@
 			  <h3 class="forum-title">
 			    <%= h @topic.title  %>
 			  </h3>
-				<% first_post = @posts.first %>
+				<% first_post = @topic.posts.first %>
 				<div class="description">
 					<% if permission?(:manage_forums) and feature?(:gamification) %>
 						<textarea id="agent-hovercard" style="display:none;">
