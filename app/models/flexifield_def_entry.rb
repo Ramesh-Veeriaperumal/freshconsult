@@ -7,9 +7,15 @@ class FlexifieldDefEntry < ActiveRecord::Base
   has_one :ticket_field, :class_name => 'Helpdesk::TicketField', :dependent => :destroy
   validates_presence_of :flexifield_name, :flexifield_alias, :flexifield_order
 
-  named_scope :drop_down_fields, :condition => {:flexifield_coltype => 'dropdown' }
-  named_scope :event_fields, :conditions=>["flexifield_coltype = 'dropdown' or flexifield_coltype = 'checkbox'"]
-  
+  named_scope :drop_down_fields, :conditions => {:flexifield_coltype => 'dropdown' }
+  named_scope :event_fields, :conditions=>["flexifield_coltype = 'dropdown' or flexifield_coltype = 'checkbox'"]  
+  named_scope :find_by_flexifield_name_or_flexifield_alias, lambda { |field|
+      {:conditions => ["flexifield_name = ? || flexifield_alias = ?", field, field], :limit => 1}
+      # ((find_by_flexifield_alias field) || (find_by_flexifield_name field)).scope(:find)
+    }
+  named_scope :find_by_flexifield_alias_or_flexifield_name, lambda { |field|
+    find_by_flexifield_name_or_flexifield_alias(field).scope(:find) }  
+
   before_save :ensure_alias_is_one_word
   before_create :set_account_id
   

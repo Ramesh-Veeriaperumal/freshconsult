@@ -6,7 +6,7 @@ class VARule < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => [:account_id, :rule_type]
   validate :has_events?, :has_conditions?, :has_actions?
   
-  attr_accessor :conditions, :actions, :events, :performed_by
+  attr_accessor :conditions, :actions, :events, :performer
   
   belongs_to :account
   
@@ -32,7 +32,7 @@ class VARule < ActiveRecord::Base
   def deserialize_all
     if rule_type == VAConfig::OBSERVER_RULE
       filter_data.symbolize_keys!
-      @performed_by = filter_data[:performed_by]
+      @performer = Va::Performer.new(filter_data[:performer].symbolize_keys)
       events_array = filter_data[:events]
       @filter_array = filter_data[:conditions]
       @events = []
@@ -52,7 +52,7 @@ class VARule < ActiveRecord::Base
       f.symbolize_keys!
       @conditions << (Va::Condition.new(f, account))
     end if @filter_array
-    
+
     @actions = action_data.map { |act| deserialize_action act } if action_data
   end
   
@@ -61,33 +61,26 @@ class VARule < ActiveRecord::Base
     Va::Action.new(act_hash)
   end
 
-  def check_events current_user, evaluate_on, current_events
-    return false unless check_performed_by current_user
+  def check_events doer, evaluate_on, current_events
+    p @performer.matches? doer
+    return false unless @performer.matches? doer
     is_a_match = event_matches? current_events, evaluate_on
-    pass_through evaluate_on if is_a_match
+    p is_a_match
+    pass_through evaluate_on, nil, doer if is_a_match
     return evaluate_on
   end
 
-  def check_performed_by current_user
-    case performed_by
-      when Array
-        return ( performed_by.include? current_user.id.to_s )# && current_user.agent?
-      when String
-        return ( performed_by == 'anyone' || (current_user.send "#{performed_by}?") )
-    end
-  end
-
   def event_matches? current_events, evaluate_on
-    events.each do |e|
-      return true if e.event_matches? current_events, evaluate_on
+    events.any? do  |e|
+      e.event_matches? current_events, evaluate_on
     end
-    return false
   end
   
-  def pass_through(evaluate_on, actions=nil)
+  def pass_through(evaluate_on, actions=nil, doer=nil)
     RAILS_DEFAULT_LOGGER.debug "INSIDE pass_through WITH evaluate_on : #{evaluate_on.inspect}, actions #{actions}"
     is_a_match = matches(evaluate_on, actions)
-    trigger_actions(evaluate_on) if is_a_match
+    p is_a_match
+    trigger_actions(evaluate_on, doer) if is_a_match
     return evaluate_on if is_a_match
     return nil
   end
@@ -107,9 +100,9 @@ class VARule < ActiveRecord::Base
     return to_ret
   end
   
-  def trigger_actions(evaluate_on)
+  def trigger_actions(evaluate_on, doer=nil)
     Va::Action.initialize_activities
-    actions.each { |a| a.trigger(evaluate_on) }
+    actions.each { |a| a.trigger(evaluate_on, doer) }
   end
   
   def filter_query

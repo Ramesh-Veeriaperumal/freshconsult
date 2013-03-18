@@ -88,6 +88,7 @@ class Admin::AutomationsController < Admin::AdminController
     def load_config
       @agents = current_account.users.technicians.collect { |au| [au.id, au.name] }
       @agents << ([0, '{{ticket.agent}}'])
+      @agents << ([-2, '{{event.performer}}'])
 
       @groups  = current_account.groups.find(:all, :order=>'name' ).collect { |g| [g.id, g.name]}
       @groups << ([0, '{{ticket.group}}'])

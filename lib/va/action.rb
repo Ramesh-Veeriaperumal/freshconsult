@@ -1,5 +1,5 @@
 class Va::Action
-  attr_accessor :action_key, :act_hash
+  attr_accessor :action_key, :act_hash, :doer
   
   def initialize(act_hash)
     @act_hash = act_hash
@@ -10,8 +10,9 @@ class Va::Action
     act_hash[:value]
   end
   
-  def trigger(act_on)
-    RAILS_DEFAULT_LOGGER.debug "INSIDE trigger of Va::Action with act_on : #{act_on.inspect}"
+  def trigger(act_on, doer=nil)
+    @doer = doer
+    RAILS_DEFAULT_LOGGER.debug "INSIDE trigger of Va::Action with act_on : #{act_on.inspect} action_key : #{action_key} value: #{value}"
     return send(action_key, act_on) if respond_to?(action_key)
     if act_on.respond_to?("#{action_key}=")
       act_on.send("#{action_key}=", value)
@@ -39,10 +40,6 @@ class Va::Action
       "Changed the status to <b>#{Helpdesk::TicketStatus.status_names_by_key(act_on.account)[value.to_i]}</b>"
     when 'ticket_type'
       "Changed the ticket type to <b>#{value}</b>"
-    when 'responder_id'
-      "Assigned to the agent <b>#{act_on.account.users.find(value.to_i)}</b>"
-    when 'group_id'
-      "Assigned to the group <b>#{act_on.account.groups.find(value.to_i).name}</b>"
     else
       "Set #{action_key.humanize()} as <b>#{value}</b>"
     end
@@ -82,7 +79,22 @@ class Va::Action
         add_activity("<b>Unable to set the group, consider updating this scenario if the group has been deleted recently.</b>")
       end
     end
-  
+
+    def responder_id(act_on)
+      r_id = value.to_i
+      begin
+        responder = (r_id == -2) ? (doer.agent? ? doer : nil) : act_on.account.users.find(value.to_i)
+      rescue ActiveRecord::RecordNotFound
+      end
+
+      if responder
+        act_on.responder_id = responder.id
+        add_activity("Set agent as <b>#{responder.name}</b>")
+      else
+        add_activity("<b>Unable to set the agent, consider updating this scenario if the agent has been deleted recently.</b>")
+      end
+    end
+
     def add_comment(act_on)
       note = act_on.notes.build()
       note.body = act_hash[:comment]
