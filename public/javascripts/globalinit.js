@@ -131,9 +131,11 @@ is_touch_device = function() {
 
       $("a[rel=contact-hover],[rel=hover-popover]").live('mouseenter',function(ev) {
         ev.preventDefault();
-        clearTimeout(hidePopoverTimer);
         var element = $(this);
+        // Introducing a slight delay so that the popover does not show up
+        // when just passing thru this element.
         var timeoutDelayShow = setTimeout(function(){
+          clearTimeout(hidePopoverTimer);
           hideActivePopovers(ev);
           widgetPopup = element.popover('show');
           hoverPopup = true;
@@ -156,10 +158,17 @@ is_touch_device = function() {
 
     // - Add Watchers
     $("#monitor").live('mouseenter',function(ev) {
-        clearTimeout(hidePopoverTimer);
-        hideActivePopovers(ev);
-        $("#new_watcher_page").show();
+        var element = $(this);
+        // Introducing a slight delay so that the popover does not show up
+        // when just passing thru this element.
+        var timeoutDelayShow = setTimeout(function(){
+          clearTimeout(hidePopoverTimer);
+          hideActivePopovers(ev);
+          $("#new_watcher_page").show();
+        }, 500);
+        element.data('timeoutDelayShow', timeoutDelayShow);
       }).live('mouseleave',function(ev) {
+          clearTimeout($(this).data('timeoutDelayShow'));
           hidePopoverTimer = setTimeout(function() { $("#new_watcher_page").hide(); },1000);
       });    
 

@@ -1,4 +1,5 @@
 @import "lib/settings";
+@import "lib/animations";
 /*Requester Info Tabs in Ticket Details page */
 @import "requester-info/*.png";
 @import "conv-actions/*.png";
@@ -2604,38 +2605,11 @@ $collision_delay: 1s;
 }
 
 
-@-webkit-keyframes rotateFrontCircle {
+@include keyframes(rotateFrontCircle) {
 	0%, 16%, 83%, 100% {@include rotateY(0deg);}
 	33%, 67% {@include rotateY(180deg);}
 }
-@-webkit-keyframes rotateBackCircle {
-	0%, 16%, 83%, 100% {@include rotateY(180deg);}
-	33%, 67% {@include rotateY(0deg);}
-}
-
-@-moz-keyframes rotateFrontCircle {
-	0%, 16%, 83%, 100% {@include rotateY(0deg);}
-	33%, 67% {@include rotateY(180deg);}
-}
-@-moz-keyframes rotateBackCircle {
-	0%, 16%, 83%, 100% {@include rotateY(180deg);}
-	33%, 67% {@include rotateY(0deg);}
-}
-
-@-o-keyframes rotateFrontCircle {
-	0%, 16%, 83%, 100% {@include rotateY(0deg);}
-	33%, 67% {@include rotateY(180deg);}
-}
-@-o-keyframes rotateBackCircle {
-	0%, 16%, 83%, 100% {@include rotateY(180deg);}
-	33%, 67% {@include rotateY(0deg);}
-}
-
-@keyframes rotateFrontCircle {
-	0%, 16%, 83%, 100% {@include rotateY(0deg);}
-	33%, 67% {@include rotateY(180deg);}
-}
-@keyframes rotateBackCircle {
+@include keyframes(rotateBackCircle) {
 	0%, 16%, 83%, 100% {@include rotateY(180deg);}
 	33%, 67% {@include rotateY(0deg);}
 }
