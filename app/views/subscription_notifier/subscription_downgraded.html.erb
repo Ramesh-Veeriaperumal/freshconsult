@@ -1,6 +1,6 @@
 <% period = { 1 => "Monthly", 3 => "Quarterly", 6 => "Half Yearly", 12 => "Annual" } %>
 <p>
-	Admin Email ID : <%= @subscription.account.account_admin.email %><br>
+	Contact Email : <%= @subscription.admin_email %><br>
 	Account ID : <%= @subscription.account_id %><br>
 	Domain : <%= @subscription.account.full_domain %><br>
 </p>

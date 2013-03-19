@@ -1,6 +1,7 @@
 module Gamification
 	module Scoreboard
-		class UpdateUserScore < Resque::FreshdeskBase
+		class UpdateUserScore 
+			extend Resque::AroundPerform
 			@queue = "gamificationQueue"
 
 			def self.perform(args)

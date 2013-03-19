@@ -6,7 +6,7 @@ class AccountsController < ApplicationController
   layout :choose_layout 
   
   skip_before_filter :set_locale, :except => [:cancel, :show, :edit]
-  skip_before_filter :set_time_zone, :except => [:cancel, :edit, :update, :delete_logo, :delete_fav, :show]
+  skip_before_filter :set_time_zone, :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show]
   skip_before_filter :check_account_state
   skip_before_filter :redirect_to_mobile_url
   
@@ -248,9 +248,9 @@ class AccountsController < ApplicationController
     params[:account][:main_portal_attributes][:updated_at] = Time.now
     @account.main_portal_attributes = params[:account][:main_portal_attributes]
     if @account.save
-      Resque::enqueue(CRM::Totango::SendUserAction, current_account.id, 
-                                                    current_user.email, 
-                                                    totango_activity(:helpdesk_rebranding))
+      Resque::enqueue(CRM::Totango::SendUserAction, {:account_id => current_account.id,
+                                                     :email => current_user.email,
+                                                     :activity => totango_activity(:helpdesk_rebranding)})
       flash[:notice] = t(:'flash.account.update.success')
       redirect_to redirect_url
     else
@@ -279,8 +279,8 @@ class AccountsController < ApplicationController
      DeletedCustomers.create(
        :full_domain => "#{current_account.name}(#{current_account.full_domain})",
        :account_id => current_account.id,
-       :admin_name => current_account.account_admin.name,
-       :admin_email => current_account.account_admin.email,
+       :admin_name => current_account.admin_first_name,
+       :admin_email => current_account.admin_email,
        :account_info => {:plan => sub.subscription_plan_id,
                          :discount => sub.subscription_discount_id,
                          :agents_count => current_account.agents.count,
@@ -309,7 +309,7 @@ class AccountsController < ApplicationController
     end
   end
   
-  def delete_fav
+  def delete_favicon
     current_account.main_portal.fav_icon.destroy
     current_account.main_portal.touch
     
@@ -438,6 +438,6 @@ class AccountsController < ApplicationController
     private
 
       def add_to_crm
-        Resque.enqueue(Marketo::AddLead, @account.id, ThirdCRM.fetch_cookie_info(request.cookies))
+        Resque.enqueue(Marketo::AddLead, { :account_id => @account.id, :cookie => ThirdCRM.fetch_cookie_info(request.cookies) })
       end   
 end

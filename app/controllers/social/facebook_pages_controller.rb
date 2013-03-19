@@ -44,9 +44,9 @@ class Social::FacebookPagesController < Admin::AdminController
             page = scoper.new(fb_page)
             if page.save
               Resque::enqueue(CRM::Totango::SendUserAction, 
-                                        current_account.id, 
-                                        current_user.email, 
-                                        totango_activity(:facebook))
+                                        {:account_id => current_account.id, 
+                                        :email => current_user.email, 
+                                        :activity => totango_activity(:facebook)})
               fetch_fb_wall_posts page
             end
           end

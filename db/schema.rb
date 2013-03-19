@@ -9,7 +9,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130307133109) do
+
+ActiveRecord::Schema.define(:version => 20130308075546) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -22,6 +23,14 @@ ActiveRecord::Schema.define(:version => 20130307133109) do
   end
 
   add_index "account_additional_settings", ["account_id"], :name => "index_account_id_on_account_additional_settings"
+
+  create_table "account_configurations", :force => true do |t|
+    t.integer  "account_id",     :limit => 8, :null => false
+    t.text     "contact_info"
+    t.text     "billing_emails"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -804,34 +813,6 @@ ActiveRecord::Schema.define(:version => 20130307133109) do
   add_index "helpdesk_schema_less_tickets", ["string_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_02", :length => {"account_id"=>nil, "string_tc02"=>"10"}
   add_index "helpdesk_schema_less_tickets", ["ticket_id", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_account_id_ticket_id", :unique => true
 
-  create_table "helpdesk_sla_details", :force => true do |t|
-    t.string   "name"
-    t.integer  "priority",        :limit => 8
-    t.integer  "response_time"
-    t.integer  "resolution_time"
-    t.integer  "escalateto",      :limit => 8
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "sla_policy_id",   :limit => 8
-    t.boolean  "override_bhrs",                :default => false
-    t.integer  "account_id",      :limit => 8
-    t.boolean  "escalation_enabled",              :default => true
-  end
-
-  create_table "helpdesk_sla_policies", :force => true do |t|
-    t.string   "name"
-    t.text     "description"
-    t.integer  "account_id",  :limit => 8
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean  "is_default",               :default => false
-    t.text     "escalations"
-    t.text     "conditions"
-    t.integer  "position"
-    t.boolean  "active",                   :default => true
-  end
-
-  add_index "helpdesk_sla_policies", ["account_id", "name"], :name => "index_helpdesk_sla_policies_on_account_id_and_name", :unique => true
 
   create_table "helpdesk_subscriptions", :force => true do |t|
     t.integer  "user_id",    :limit => 8
@@ -1157,6 +1138,37 @@ ActiveRecord::Schema.define(:version => 20130307133109) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "sla_details", :force => true do |t|
+    t.string   "name"
+    t.integer  "priority",           :limit => 8
+    t.integer  "response_time"
+    t.integer  "resolution_time"
+    t.integer  "escalateto",         :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "sla_policy_id",      :limit => 8
+    t.boolean  "override_bhrs",                   :default => false
+    t.integer  "account_id",         :limit => 8
+    t.boolean  "escalation_enabled",              :default => true
+  end
+
+  add_index "sla_details", ["account_id", "sla_policy_id"], :name => "index_account_id_and_sla_policy_id_on_sla_details"
+
+  create_table "sla_policies", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "account_id",  :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "is_default",               :default => false
+    t.text     "escalations"
+    t.text     "conditions"
+    t.integer  "position"
+    t.boolean  "active",                   :default => true
+  end
+
+  add_index "sla_policies", ["account_id", "name"], :name => "index_helpdesk_sla_policies_on_account_id_and_name", :unique => true
 
   create_table "social_facebook_pages", :force => true do |t|
     t.integer  "profile_id",           :limit => 8

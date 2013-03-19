@@ -15,13 +15,16 @@ body {
 // Links
 // -----
 
-a {
+a, .a-link {
   color: $linkColor;
   text-decoration: none;
 }
-a:hover {
+a:hover, .a-link:hover {
   color: $linkColorHover;
   text-decoration: underline;
+}
+.a-link{
+  cursor: pointer;
 }
 
 @import "mobile";

@@ -10,6 +10,6 @@
   		<br />
 		<% default_favicon_url = item.main_portal? ? delete_favicon_account_path : delete_favicon_admin_product_path(item) %>
   		<%= link_to("Use default", default_favicon_url,
-                :confirm => t('fav_delete_msg'), :method => 'delete') %>
+                :confirm => t('fav_delete_msg'), :method => :delete) %>
     <% end %>
 </div>

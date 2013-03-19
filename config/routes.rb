@@ -48,7 +48,7 @@
   map.gauth_done '/authdone/google', :controller => 'user_sessions', :action => 'google_auth_completed'
   map.login '/login', :controller => 'user_sessions', :action => 'new'  
   map.sso_login '/login/sso', :controller => 'user_sessions', :action => 'sso_login'
-  map.login_normal '/login/normal', :controller => 'user_sessions', :action => 'new'
+  map.login_normal '/login/normal', :controller => 'support/login', :action => 'new'
   map.signup_complete '/signup_complete/:token', :controller => 'user_sessions', :action => 'signup_complete'
 
   map.openid_done '/google/complete', :controller => 'accounts', :action => 'openid_complete'
@@ -70,6 +70,8 @@
   map.resources :email, :only => [:new, :create]
   map.resources :password_resets, :except => [:index, :show, :destroy]
   map.resources :sso, :collection => {:login => :get, :facebook => :get}
+  map.resource :account_configuration
+  
   map.namespace :integrations do |integration|
     integration.resources :installed_applications, :member =>{:install => :put, :uninstall => :get}
     integration.resources :applications, :member=>{:custom_widget_preview => :post}

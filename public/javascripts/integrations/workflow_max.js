@@ -156,7 +156,7 @@ WorkflowMaxWidget.prototype = {
 				job_id: $("workflow-max-timeentry-jobs").value,
 				task_id: $("workflow-max-timeentry-tasks").value,
 				notes: $("workflow-max-timeentry-notes").value,
-				hours: Math.ceil($("workflow-max-timeentry-hours").value*60),
+				hours: this.getFormattedMinutes($("workflow-max-timeentry-hours").value).toString(),
 				date: this.executed_date.toString("yyyyMMdd")
 			});
 			this.freshdeskWidget.request({
@@ -253,14 +253,24 @@ WorkflowMaxWidget.prototype = {
 
 	updateTimeEntryUsingIds:function(remote_integratable_id, hours, resultCallback) {
 		if (remote_integratable_id) {
-			var body = this.UPDATE_TIMEENTRY_ONLY_HOURS_REQ.evaluate({
+			/*var body = this.UPDATE_TIMEENTRY_ONLY_HOURS_REQ.evaluate({
 				time_entry_id: remote_integratable_id,
-				hours: (hours*60)+""
-			});
+			});*/
+			var body = this.UPDATE_TIMEENTRY_REQ.evaluate({
+					time_entry_id: remote_integratable_id,
+					staff_id: $("workflow-max-timeentry-staff").value,
+					job_id: $("workflow-max-timeentry-jobs").value,
+					task_id: $("workflow-max-timeentry-tasks").value,
+					notes: $("workflow-max-timeentry-notes").value,
+					hours: this.getFormattedMinutes(hours).toString(),
+					date: this.executed_date.toString("yyyyMMdd")
+				});
+
+
 			this.freshdeskWidget.request({
 				body: body,
 				content_type: "application/xml",
-				method: "post",
+				method: "put",
 				rest_url: "time.api/update"+this.auth_keys,
 				on_success: function(evt){
 					this.handleTimeEntrySuccess(evt);
@@ -280,7 +290,7 @@ WorkflowMaxWidget.prototype = {
 					job_id: $("workflow-max-timeentry-jobs").value,
 					task_id: $("workflow-max-timeentry-tasks").value,
 					notes: $("workflow-max-timeentry-notes").value,
-					hours: Math.ceil($("workflow-max-timeentry-hours").value*60),
+					hours: this.getFormattedMinutes($("workflow-max-timeentry-hours").value).toString(),
 					date: this.executed_date.toString("yyyyMMdd")
 					// start_time: this.format_time(this.executed_date, 0),
 					// end_time: this.format_time(this.executed_date, $("workflow-max-timeentry-hours").value*60)
@@ -386,6 +396,15 @@ WorkflowMaxWidget.prototype = {
 			time_entry_node = time_entry_node[0];
 			return XmlUtil.getNodeValueStr(time_entry_node, fetchEntity);
 		}
+	},
+
+	getFormattedMinutes: function(hours){
+		hours = (hours > 1) ? this.getFormattedHours(hours) : (hours * 100);
+		return Math.floor(hours);
+	},
+
+	getFormattedHours: function(hours){
+		return (Math.floor(hours) * 60) + (this.getFormattedMinutes(hours % 1))
 	},
 
 	format_date: function(date) {

@@ -5,7 +5,10 @@ class SupportController < ApplicationController
 
   caches_action :show, :index, :new,
   :if => proc { |controller|
-    controller.cache_enabled? && !controller.send(:current_user) && 
+    controller_name = controller.controller_name
+    controller.cache_enabled? && 
+    !controller_name.eql?('feedback_widgets') &&
+    (controller_name.eql?("theme") || !controller.send(:current_user)) && 
     controller.send('flash').keys.blank?
   }, 
   :cache_path => proc { |c| 

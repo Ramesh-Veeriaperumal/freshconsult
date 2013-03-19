@@ -9,11 +9,11 @@ module Support::TicketsHelper
   end
 
   def current_wf_order 
-    @current_wf_order ||= set_cookie :wf_order, "created_at"
+    @current_wf_order ||= set_cookie :wf_order, TicketsFilter::DEFAULT_PORTAL_SORT
   end
 
   def current_wf_order_type 
-    @current_wf_order_type ||= set_cookie :wf_order_type, "desc"
+    @current_wf_order_type ||= set_cookie :wf_order_type, TicketsFilter::DEFAULT_PORTAL_SORT_ORDER
   end
 
   def current_requested_by

@@ -38,7 +38,7 @@
                       <tr>
                         <td style="vertical-align:top; width:20px;"> To:&nbsp; </td>
                         <td>
-                          <strong><%=@subscription.account.account_admin.name%><br/></strong>
+                          <strong><%=@subscription.account.name%><br/></strong>
                           <%if @subscription.billing_address%>
                             <%=@subscription.billing_address.humanize.gsub("\n","<br>")%>
                           <%else%>

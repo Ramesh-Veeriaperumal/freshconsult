@@ -324,6 +324,11 @@ class Helpdesk::Note < ActiveRecord::Base
       end
     end
 
+    def liquidize_body
+      attachments.empty? ? body_html : 
+        "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
+    end
+
     
   private
     def human_note_for_ticket?
@@ -332,11 +337,6 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def zendesk_import?
       Thread.current["zenimport_#{account_id}"]
-    end
-    
-    def liquidize_body
-      attachments.empty? ? body_html : 
-        "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
     end
 
     # Replied by third pary to the forwarded email

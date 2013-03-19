@@ -26,7 +26,7 @@ class CRM::Salesforce < Resque::Job
 
   def add_paid_customer_to_crm(payment)
     #returned_value = sandbox(0){
-      crm_ids = search_crm_record(payment.account.id)
+      crm_ids = search_crm_record(payment.account_id)
       opportunity_id = add_opportunity(crm_ids, payment)
       add_opportunity_contact_role(opportunity_id, crm_ids[:contact])
       update_paid_account(crm_ids, payment)   
@@ -35,8 +35,9 @@ class CRM::Salesforce < Resque::Job
   end
 
   def add_free_customer_to_crm(subscription) 
-    crm_ids = search_crm_record(subscription.account.id)
-    update_account(crm_ids, subscription.account.full_domain, CUSTOMER_STATUS[:free])
+    account = Account.current
+    crm_ids = search_crm_record(account.id)
+    update_account(crm_ids, account.full_domain, CUSTOMER_STATUS[:free])
   end
 
   def update_deleted_account_to_crm(account_id)
@@ -44,10 +45,11 @@ class CRM::Salesforce < Resque::Job
     update_account(crm_ids, account_id, CUSTOMER_STATUS[:deleted])
   end
 
-  def update_admin_info(admin)
-    crm_ids = search_crm_record(admin.account.id)
+  def update_admin_info(config)
+    crm_ids = search_crm_record(config.account.id)
     binding.update('sObject {"xsi:type" => "Contact"}' => { :id => crm_ids[:contact],
-         :LastName => admin.name, :Email => admin.email })
+        :FirstName => config.account.admin_first_name, :LastName => config.account.admin_last_name, 
+        :Email => config.account.admin_email })
   end
 
   
@@ -152,8 +154,9 @@ class CRM::Salesforce < Resque::Job
 
     def contact_attributes(account, crm_account_id)
       { 
-        :LastName => account.account_admin.name, 
-        :Email => account.account_admin.email, 
+        :FirstName => account.admin_first_name,
+        :LastName => account.admin_last_name,
+        :Email => account.admin_email,
         :AccountId => crm_account_id
       }
     end
