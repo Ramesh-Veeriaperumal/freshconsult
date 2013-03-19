@@ -82,8 +82,8 @@ var selectPerformedBy = function(){
 	jQuery('input[name = "va_rule[performer][type]"]').live ( "change", performed_by_change	);
 	jQuery('.doer select').live ( "change", ensure_performed_by );
 
-	jQuery("#VirtualAgent").submit(function(e){
+	jQuery("#ObserverForm").submit(function(e){
 		var performed_by = jQuery('input[name="va_rule[performer][type]"]:checked').val();
-		if ( performed_by != '1' || jQuery('#va_rule_performer_members').val().first() == "--" )
-			jQuery('#va_rule_performer_members').remove();
+		if ( performed_by != '1' || jQuery('#members').val().first() == "--" )
+			jQuery('#members').remove();
 	});
