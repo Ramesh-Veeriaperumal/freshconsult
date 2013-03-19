@@ -2,11 +2,11 @@
 
 class Import::Attachment
   attr_accessor :id , :attach_url , :model, :account
-  def initialize(id ,attach_url , model, account_id)
+  def initialize(id ,attach_url , model)
     self.id = id
     self.attach_url = attach_url
     self.model = model
-    self.account = Account.find(account_id)
+    self.account = Account.current
   end
   
   def perform

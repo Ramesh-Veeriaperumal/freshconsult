@@ -437,7 +437,14 @@ Autocompleter.MultiValue = Class.create({
   
   addObservers: function(element) {
     Event.observe(element, "mouseover", this.onHover.bindAsEventListener(this));
-    Event.observe(element, "click", this.onClick.bindAsEventListener(this));
+    // Added as click event wasn't triggered in SLA Policy page in companies autocompleter
+    // Event.observe(element, "click", this.onClick.bindAsEventListener(this)); captures trackpad 
+    // touch event but fails to capture click event (ironic but true)
+    // Hence click is replaced by
+    // 1. mousedown is used to capture click 
+    // 2. touchend to capture touch 
+    Event.observe(element, "mousedown", this.onClick.bindAsEventListener(this));
+    Event.observe(element, "touchend", this.onClick.bindAsEventListener(this));
   },
 
   onHover: function(event) {

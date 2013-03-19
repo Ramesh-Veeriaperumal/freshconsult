@@ -1,0 +1,9 @@
+if params[:cmfullscreen] 
+	show_growl_flash page
+else
+	show_ajax_flash page
+end
+
+# @active_tab = params[:portal_tab].to_sym
+# page.replace_html "#{@active_tab}_btns", :partial => "/admin/shared/customization_buttons", 
+# 		:locals => { :type => :template, :active_tab => @active_tab } 

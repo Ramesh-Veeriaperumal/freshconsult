@@ -32,7 +32,7 @@ module Subscription::Events::ControllerMethods
 
     def account_info(account)
       [ account.name, account.full_domain, account.created_at.strftime('%Y-%m-%d'),
-        account.account_admin.name, account.account_admin.email ]
+        account.admin_first_name, account.admin_email ]
     end
 
     def deleted_account_info(account, account_id)

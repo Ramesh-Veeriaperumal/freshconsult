@@ -44,7 +44,8 @@ class Forum < ActiveRecord::Base
 
 
   named_scope :visible, lambda {|user| {
-                    :include => :customer_forums ,
+                    :joins => "LEFT JOIN `customer_forums` ON customer_forums.forum_id = forums.id
+                                and customer_forums.account_id = forums.account_id ",
                     :conditions => visiblity_condition(user) } }
 
 
@@ -75,7 +76,7 @@ class Forum < ActiveRecord::Base
 
   # this is used to see if a forum is "fresh"... we can't use topics because it puts
   # stickies first even if they are not the most recently modified
-  has_many :recent_topics, :class_name => 'Topic', :order => 'replied_at DESC'
+  has_many :recent_topics, :class_name => 'Topic', :order => 'sticky desc, replied_at DESC'
   has_one  :recent_topic,  :class_name => 'Topic', :order => 'replied_at DESC'
   has_many :posts,     :order => "#{Post.table_name}.created_at DESC", :dependent => :delete_all
   has_one  :recent_post, :order => "#{Post.table_name}.created_at DESC", :class_name => 'Post'
@@ -172,6 +173,10 @@ class Forum < ActiveRecord::Base
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
   end
+
+  def to_liquid
+    @forum_forum_drop ||= Forum::ForumDrop.new self
+  end    
 
   def to_s
     name

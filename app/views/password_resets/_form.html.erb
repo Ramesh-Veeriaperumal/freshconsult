@@ -1,0 +1,21 @@
+<% form_for @user, :url => password_reset_path, :method => :put, 
+		:html => { :rel => "validate"} do |f| %>
+  	<%= f.error_messages %>
+  	<fieldset>
+	  	<div class="control-group">
+	  		<label class="control-label"><%= t('password') %></label>
+	  		<div class="controls">
+	  			<input class="special span6" id="password" name="user[password]" type="password">
+	  		</div>
+	  	</div>
+	  	<div class="control-group">
+	  		<label class="control-label"><%= t('profile.confirm_password') %></label>
+	  		<div class="controls">
+	  			<input class="special span6" id="password_confirmation" name="user[password]" type="password">
+	  		</div>
+	  	</div>		  	
+		<div class="form-actions">
+			<button type="submit" class="btn btn-primary"> <%= t('update_and_login') %> </button>
+	  	</div>	
+	</fieldset>
+<% end %>

@@ -8,23 +8,24 @@ class Admin::ProductsController < Admin::AdminController
   def create
     portal_params = params[:product].delete(:portal_attributes)
     build_object
-    
+
     if @product.portal_enabled?
       @product.build_portal
       @product.portal.account_id = @product.account_id
       @product.portal.attributes = portal_params
     end
-    
+
     super
   end
   
   def update
     portal_params = params[:product].delete(:portal_attributes)
-        
+
     if @product.update_attributes(params[:product])
       post_process_on_update portal_params
       flash.now[:notice] = I18n.t(:'flash.general.update.success', :human_name => human_name)
-      redirect_to :action => 'index'
+
+      redirect_to params[:customize_portal] ? admin_portal_template_path(@product.portal) : redirect_url
     else
       update_error
       redirect_to :action => 'edit'
@@ -33,10 +34,10 @@ class Admin::ProductsController < Admin::AdminController
   end
   
   def delete_logo
-    delete_icon('logo')
+    delete_icon('logo')    
   end
   
-  def delete_fav
+  def delete_favicon
     delete_icon('fav_icon')
   end
   
@@ -84,6 +85,15 @@ class Admin::ProductsController < Admin::AdminController
       portal = current_account.portals.find(params[:id])
       portal.send(icon_type).destroy
       portal.touch
-      render :text => "success"
+      redirect_to :action => 'edit'
+      # render :text => "success"
+    end
+
+    def redirect_url
+      if params[:customize_portal].presence && @product.portal.present?
+        admin_portal_template_path(@product.portal.id) 
+      else 
+        params[:redirect_url].presence || admin_products_path
+      end
     end
 end

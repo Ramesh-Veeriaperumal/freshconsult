@@ -1,0 +1,110 @@
+<% form_for @profile, :url => support_profile_path, 
+	:html => { :class => "form-portal", :multipart => true, :rel => "validate"} do |f| %>
+	<%= f.error_messages %>
+	<% fields_for "users", @profile do |usr| %>
+    <div class="row-fluid">
+    	<fieldset class="span4 avatar-span">
+    		<div id="avatar-pic">
+				<% if(@profile.avatar) %>
+					<div class="user-pic-original">					  
+						<%= image_tag @profile.avatar.expiring_url(:medium, 300) %>						
+					</div>
+					<div class="dropdown">
+		              	<a class="dropdown-toggle btn" data-toggle="dropdown" href="#">
+		              		<%= t('user.change_photo') %> <b class="caret"></b>
+		              	</a>
+						<ul class="dropdown-menu">
+							<li>
+								<a href="#" data-toggle-dom="#avatar-pic, #avatar-edit">
+									<%= t('user.choose_another_photo') %>
+								</a>
+							</li>
+							<li>
+								<a href="<%= delete_avatar_support_profile_path %>"
+									data-method="delete"
+									data-confirm="<%= t('user.remove_profile_image_confirm') %>">
+									<%= t('user.remove_photo') %>
+								</a>
+							</li>
+						</ul>
+		            </div>
+				<% end %>
+			</div>	
+			<div id="avatar-edit" class="<%= (@profile.avatar) ? 'hide' : '' %>">
+				<% fields_for "user[avatar_attributes]", @profile.avatar do |avatar_form| %>
+					<div class="info-data"><%=t('user.info1')%></div>
+					<%= avatar_form.file_field :content, :size => "12" %>				
+				<% end %>
+			</div>			
+		</fieldset>
+ 		<fieldset class="span8 omega">
+			<div class="control-group">
+				<%= f.label(:name, t("user.full_name"), :class => "control-label required" ) %>
+				<div class="controls">
+					<%= f.text_field(:name, :class => "required")  %>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<%= f.label(:job_title, t("user.title"), :class => "control-label" ) %>
+				<div class="controls">
+					<%= f.text_field(:job_title) %>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<%= f.label(:email, t("user.email"), :class => "control-label" ) %>			
+				<div class="controls">
+					<%= f.text_field(:email, :disabled => @profile.email.present?) %>
+					<%= f.hidden_field(:user_role, :value => @profile.user_role) %>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<%= f.label(:phone, t("user.phone_no"), :class => "control-label" ) %>	
+				<div class="controls multiple-inputs">
+					<%= f.text_field(:phone, :placeholder => "work") %>
+					<%= f.text_field(:mobile, :placeholder => "mobile") %>
+				</div>
+			</div>			
+			
+			<div class="control-group">
+				<%= f.label(:twitter_id, t("user.twitter_id"), :class => "control-label" ) %>
+				<div class="controls">
+					<%= f.text_field(:twitter_id) %>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<%= f.label(:customer, t("user.company"), :class => "control-label") %>
+				<div class="controls">
+					<%= f.text_field(:customer, :value => @profile.customer.presence) %>
+				</div>
+			</div>
+			
+			<% if feature?(:multi_timezone) %>
+			<div class="control-group">
+				<%= f.label(:time_zone, t("account.time_zone"), :class => "control-label" ) %>			
+				<div class="controls">
+					<%= f.time_zone_select (:time_zone, ActiveSupport::TimeZone.all, :default => @profile.time_zone) %>
+				</div>
+			</div>
+			<% end %>
+
+			<% if feature?(:multi_language) %>
+			<div class="control-group">
+				<%= f.label(:language, t('account.language'), :class => "control-label" ) %>
+				<div class="controls">
+					<%= f.select(:language, I18n.available_locales_with_name, { :selected => @profile.language.to_sym() })%>
+				</div>
+			</div>
+			<% end %>
+
+		</fieldset>
+	</div>
+	<% end %>	
+	<div class="form-actions">
+   		<%= f.submit t('save_changes'), { :class => "btn btn-primary" } %>
+		<%= link_to t('cancel'), :back, :class => "btn" %>
+	</div>
+<%end%>

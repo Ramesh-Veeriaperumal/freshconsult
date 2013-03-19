@@ -111,7 +111,7 @@
 				image_class = params.image_class || '',
 				sticky = params.sticky || false,
 				item_class = params.class_name || $.gritter.options.class_name,
-				position = $.gritter.options.position,
+				position = params.position || $.gritter.options.position,
 				time_alive = params.time || '';
 
 			this._verifyWrapper();
@@ -407,10 +407,11 @@
 		* @private
 		*/  
 		_verifyWrapper: function(){
-		  
+		  	console.log(this.position)
 			if($('#gritter-notice-wrapper').length == 0){
 				$('body').append(this._tpl_wrap);
-				$('#gritter-notice-wrapper').animate({opacity:1,bottom:'30px'},{duration:500,easing:'easeOutBack'})
+
+				// $('#gritter-notice-wrapper').animate({opacity:1},{duration:500,easing:'easeOutBack'})
 			}
 		
 		}

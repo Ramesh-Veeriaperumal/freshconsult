@@ -257,8 +257,9 @@ jQuery(document).ready(function(){
 		jQuery("#slide1-"+activeSlide).trigger("click");
 	});
 
-	jQuery('.colorpicker input[type=text]').change(function(ev) {
-		jQuery("#"+jQuery(this).attr("id")+"View").css("background-color",jQuery(this).val());
+	jQuery('.mColorPicker').live('change', function(ev) {
+		jQuery("#"+jQuery(this).attr("id")+"View")
+			.css("background-color", jQuery(this).val());
 	});
 
 	jQuery("form#agent_invite").bind('keydown', function(e)

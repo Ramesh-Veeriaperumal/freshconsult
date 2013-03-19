@@ -4,9 +4,9 @@
 			limit = Number(limit);
 			$('#' + counter).html(jQuery.trim($(textarea).val()).length);
 			if (jQuery.trim($(textarea).val()).length > limit)
-				jQuery('#' + counter).addClass('error');
+				jQuery('#' + counter).addClass('error-text');
 			else
-				jQuery('#' + counter).removeClass('error');
+				jQuery('#' + counter).removeClass('error-text');
 		}
 		$('[rel=charcounter]').each(function(i,node) {
 			$(node).bind("paste, cut", function() {

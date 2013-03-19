@@ -3,7 +3,7 @@ source "http://gems.github.com"
 
 gem "rake", "0.8.7"
 gem "rack", "~> 1.1.6"
-gem "rails","2.3.17"
+gem "rails","2.3.18"
 
 gem "json", "~> 1.5.5"
 gem "mysql"
@@ -106,7 +106,3 @@ group :assets do
 	# Portal grid system is done using susy grids
 	gem "susy" 
 end
-
-
-
-

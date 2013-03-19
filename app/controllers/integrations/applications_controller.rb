@@ -3,8 +3,6 @@ class Integrations::ApplicationsController < Admin::AdminController
   include Integrations::AppsUtil
   include Integrations::SalesforceUtil
   before_filter :load_object, :only => [:show, :edit, :update, :destroy]
-  before_filter :store_location, :only => [:index]
-
 
   def index
     @applications = Integrations::Application.available_apps(current_account).order(:listing_order)

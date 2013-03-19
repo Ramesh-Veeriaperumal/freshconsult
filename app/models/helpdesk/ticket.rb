@@ -43,6 +43,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_update :assign_email_config, :load_ticket_status
 
+  before_update :update_message_id, :if => :deleted_changed?
+
   before_validation_on_create :set_token
   
   before_save :update_ticket_changes, :set_sla_policy, :update_dueby
@@ -224,7 +226,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     "helpdesk_tickets.created_at > ? and helpdesk_tickets.spam = true and requester_id = ?", user.deleted_at, user.id ] } }
 
   named_scope :with_display_id, lambda { |search_string| {  
-    :include => [ :ticket_states, :requester ],
+    :include => [ :requester ],
     :conditions => ["helpdesk_tickets.display_id like ? and helpdesk_tickets.deleted is false","#{search_string}%" ],
     :order => 'helpdesk_tickets.display_id',
     :limit => 1000
@@ -232,12 +234,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   }
 
   named_scope :with_requester, lambda { |search_string| {  
-    :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id 
-                        and users.account_id = helpdesk_tickets.account_id and users.deleted = false",
-    :include => :ticket_states,
+    :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id and users.account_id = helpdesk_tickets.account_id and users.deleted = false",
     :conditions => ["users.name like ? and helpdesk_tickets.deleted is false","%#{search_string}%" ],
-    :limit => 1000,
-    :select => "helpdesk_tickets.*, users.name as requester_name"
+    :select => "helpdesk_tickets.*, users.name as requester_name",
+    :order => "helpdesk_tickets.status, helpdesk_tickets.created_at DESC",
+    :limit => 1000
     } 
   }
   
@@ -289,10 +290,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   sphinx_scope(:with_subject) { |search_string| { 
-    :include => [:ticket_states, :requester],
+    :include => [:requester],
     :conditions => { :subject => "%#{search_string}%" }, 
     :with => { :deleted => false }, 
     :star => true,
+    :order => :status,
     :limit => 1000
     } 
   }
@@ -345,10 +347,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #:allow_nil => false, :allow_blank => false
 
   validate_on_create do |ticket|
-    ticket.spam = true if ticket.requester.deleted?
-    if ticket.requester.blocked?
+    req = ticket.requester
+    if req
+      ticket.spam = true if req.deleted?
+      if req.blocked?
         Rails.logger.debug "User blocked! No more tickets allowed for this user" 
         ticket.errors.add_to_base("User blocked! No more tickets allowed for this user")
+      end
     end
   end
 
@@ -802,9 +807,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #To use liquid template...
   #Might be darn expensive db queries, need to revisit - shan.
   def to_liquid
-
-    Helpdesk::TicketDrop.new self
-    
+    @helpdek_ticket_drop ||= Helpdesk::TicketDrop.new self    
   end
 
   def url_protocol
@@ -961,6 +964,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
   
+  def support_path
+    support_tickets_path(:host => portal_url)
+  end
    
    def group_name
       group.nil? ? "No Group" : group.name
@@ -1035,6 +1041,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def unsubscribed_agents
     user_ids = subscriptions.map(&:user_id)
     account.agents_from_cache.reject{ |a| user_ids.include? a.user_id }
+  end
+
+  def update_message_id
+    if self.header_info
+      self.header_info[:message_ids].each do |parent_message|
+        message_key = EMAIL_TICKET_ID % {:account_id => self.account_id, :message_id => parent_message}
+        deleted ? remove_key(message_key) : set_key(message_key, self.display_id, 86400*7)
+      end
+    end
   end
 
 

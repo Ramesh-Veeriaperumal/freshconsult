@@ -125,7 +125,8 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
 
       @companies = current_account.customers.find(:all, 
             :conditions => ["id in (?)", @sla_policy.conditions[:company_id]]).map {|company| 
-            [company.name, company.id]} unless @sla_policy.conditions[:company_id].blank?
+            [company.name, company.id]} unless (@sla_policy.is_default || 
+                                                @sla_policy.conditions[:company_id].blank?)
       
       return if @sla_policy.escalations.blank?
 
@@ -152,7 +153,7 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
       unless @agents_id.blank? 
         @agents_cache = {}
         @agents_id.uniq!
-        current_account.users.technicians.find(:all, :conditions => ["id in (?)", @agents_id], 
+        current_account.users.technicians.visible.find(:all, :conditions => ["id in (?)", @agents_id], 
                         :select => "id, name, email").each{|agent| 
                         @agents_cache[agent.id] = {:name => agent.name, :email => agent.email}}
       end

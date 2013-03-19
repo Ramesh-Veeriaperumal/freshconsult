@@ -8,7 +8,7 @@ body {
 
 /* line 5, ../../src/pattern/patternhack.scss */
 .lead {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   font-size: 21px;
   font-weight: 200;
   line-height: 30px; }
@@ -22,65 +22,55 @@ strong {
   font-weight: bold; }
 
 /* line 20, ../../src/pattern/patternhack.scss */
+.top-space-none {
+  margin-top: 0;
+  padding-top: 0; }
+
+/* line 25, ../../src/pattern/patternhack.scss */
 .muted {
   color: #999999; }
 
-/* line 23, ../../src/pattern/patternhack.scss */
+/* line 28, ../../src/pattern/patternhack.scss */
 .page-header {
   padding-bottom: 9px;
   margin: 20px 0 30px;
   border-bottom: 1px solid #eeeeee; }
 
-/* line 29, ../../src/pattern/patternhack.scss */
+/* line 34, ../../src/pattern/patternhack.scss */
 .topbar .dropdown-menu a, .dropdown-menu a {
   text-shadow: 0 0 0 white; }
 
-/* line 33, ../../src/pattern/patternhack.scss */
+/* line 38, ../../src/pattern/patternhack.scss */
 .cust_list_table .open .menu, .cust_list_table .dropdown.open .menu, .cust_list_table .open .dropdown-toggle, .cust_list_table .dropdown.open .dropdown-toggle {
   border: 0 solid transparent;
   background: none;
   color: inherit; }
 
-/* line 39, ../../src/pattern/patternhack.scss */
+/* line 44, ../../src/pattern/patternhack.scss */
 .table th, .table td {
   padding: 12px; }
 
-/* line 42, ../../src/pattern/patternhack.scss */
-.table-striped tbody tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
-  background-color: #fbfbfb; }
-
-/* line 45, ../../src/pattern/patternhack.scss */
-.pagination ul > li > a:hover, .pagination ul > .active > a, .pagination ul > .active > span {
-  background-color: #7f7f7f;
-  border-color: #7f7f7f;
-  color: #fff; }
-
-/* line 50, ../../src/pattern/patternhack.scss */
-.pagination ul > li > a:hover {
-  background-color: #c6c6c6;
-  border-color: #c6c6c6; }
-
-/* line 54, ../../src/pattern/patternhack.scss */
+/* line 47, ../../src/pattern/patternhack.scss */
 .tabs {
   margin-right: -20px;
   margin-left: -20px;
   padding-right: 20px;
   padding-left: 20px; }
 
-/* line 61, ../../src/pattern/patternhack.scss */
+/* line 54, ../../src/pattern/patternhack.scss */
 .pagination ul > li > a:hover .arrow-up {
   border-bottom-color: #fff; }
-/* line 64, ../../src/pattern/patternhack.scss */
+/* line 55, ../../src/pattern/patternhack.scss */
 .pagination ul > li > a:hover .arrow-right {
   border-left-color: #fff; }
-/* line 67, ../../src/pattern/patternhack.scss */
+/* line 56, ../../src/pattern/patternhack.scss */
 .pagination ul > li > a:hover .arrow-down {
   border-top-color: #fff; }
-/* line 70, ../../src/pattern/patternhack.scss */
+/* line 57, ../../src/pattern/patternhack.scss */
 .pagination ul > li > a:hover .arrow-left {
   border-right-color: #fff; }
 
-/* line 77, ../../src/pattern/patternhack.scss */
+/* line 62, ../../src/pattern/patternhack.scss */
 .arrow-right,
 .arrow-left,
 .arrow-up,
@@ -106,52 +96,106 @@ strong {
   vertical-align: middle;
   width: 0; }
 
-/* line 100, ../../src/pattern/patternhack.scss */
+/* line 85, ../../src/pattern/patternhack.scss */
 .arrow-up {
   border-bottom-width: 1em;
   border-bottom-style: solid;
   border-bottom-color: #666;
   bottom: 0.25em; }
 
-/* line 107, ../../src/pattern/patternhack.scss */
+/* line 92, ../../src/pattern/patternhack.scss */
 .arrow-right {
   border-left-width: 1em;
   border-left-style: solid;
   border-left-color: #666;
   left: 0.35em; }
 
-/* line 114, ../../src/pattern/patternhack.scss */
+/* line 99, ../../src/pattern/patternhack.scss */
 .arrow-down {
   border-top-width: 1em;
   border-top-style: solid;
   border-top-color: #666;
   top: 0.25em; }
 
-/* line 121, ../../src/pattern/patternhack.scss */
+/* line 106, ../../src/pattern/patternhack.scss */
 .arrow-left {
   border-right-width: 1em;
   border-right-style: solid;
   border-right-color: #666;
   right: 0.35em; }
 
-/* line 127, ../../src/pattern/patternhack.scss */
+/* line 112, ../../src/pattern/patternhack.scss */
 .text-info {
   width: 75%;
   word-wrap: break-word;
   overflow: hidden; }
 
-/* line 132, ../../src/pattern/patternhack.scss */
+/* line 117, ../../src/pattern/patternhack.scss */
 .cust-list-avatar, .text-info {
   display: inline-block;
   vertical-align: middle; }
 
-/* This is class is overriding app-common css. */
-/* line 141, ../../src/pattern/patternhack.scss */
+/* This class overriding app-common css. */
+/* overriding buttons styles from Bootstrap v1.4 */
+/* line 126, ../../src/pattern/patternhack.scss */
+.btn-group .btn {
+  float: none; }
+
+/* line 129, ../../src/pattern/patternhack.scss */
+.btn-group.open {
+  overflow: visible; }
+
+/* line 132, ../../src/pattern/patternhack.scss */
+.btn.dropdown-toggle {
+  overflow: visible; }
+  /* line 134, ../../src/pattern/patternhack.scss */
+  .btn.dropdown-toggle:after {
+    display: none; }
+  /* line 138, ../../src/pattern/patternhack.scss */
+  .btn.dropdown-toggle .caret {
+    margin: 6px 0 0; }
+
+/* line 142, ../../src/pattern/patternhack.scss */
+.open .dropdown-toggle {
+  color: inherit; }
+
+/* line 146, ../../src/pattern/patternhack.scss */
+.open > .dropdown-menu.right {
+  left: auto;
+  right: 0; }
+  /* line 151, ../../src/pattern/patternhack.scss */
+  .open > .dropdown-menu.right:before {
+    right: 25px;
+    left: auto; }
+  /* line 156, ../../src/pattern/patternhack.scss */
+  .open > .dropdown-menu.right:after {
+    right: 26px;
+    left: auto; }
+
+/*  End of Button overriding */
+/* line 164, ../../src/pattern/patternhack.scss */
 .pagination {
   border-bottom: 0; }
-  /* line 143, ../../src/pattern/patternhack.scss */
+  /* line 166, ../../src/pattern/patternhack.scss */
   .pagination a {
     font-weight: normal; }
-    /* line 145, ../../src/pattern/patternhack.scss */
+    /* line 168, ../../src/pattern/patternhack.scss */
     .pagination a:hover, .pagination a:focus {
       text-decoration: none; }
+
+/* This class overriding app-bootstrap css. */
+/* line 176, ../../src/pattern/patternhack.scss */
+.dropdown-toggle:after {
+  border-top: 0; }
+
+/* line 180, ../../src/pattern/patternhack.scss */
+select {
+  height: 20px;
+  line-height: 20px;
+  padding: 1px; }
+
+/* Fix for tickets show page data-tabs */
+/* line 187, ../../src/pattern/patternhack.scss */
+.ticket_tabs {
+  margin-left: 0px;
+  margin-right: 0px; }

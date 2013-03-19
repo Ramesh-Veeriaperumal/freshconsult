@@ -1,0 +1,85 @@
+// UTILITY CLASSES
+// ---------------
+
+// Quick floats
+.pull-right {
+  float: right;
+}
+.pull-left {
+  float: left;
+}
+
+// Toggling content
+.hide {
+  display: none;
+}
+.show {
+  display: block;
+}
+
+// Visibility
+.invisible {
+  visibility: hidden;
+}
+
+// Alignment options
+.align-right{
+  text-align:right;
+}
+
+.align-left{
+  text-align:left;
+}
+
+.inline-block{
+	@include inline-block;
+}
+
+.hide-in-mobile{ 
+  display: none;
+}
+
+.show-in-tablet{
+  display: none; 
+}
+
+/* Loading content */
+.loading-box, .loading, .ui-autocomplete-loading{
+  background-image:image-url('/images/load.gif');
+  background-repeat:no-repeat;
+}
+
+.loading-box{  
+  background-position:center center;
+  height:100px;
+}
+
+input[type="text"].loading, .ui-autocomplete-loading{
+  background-position:right 3px;
+}
+
+.special.ui-autocomplete-loading{
+  background-position:99% 5px; 
+}
+
+
+@include at-breakpoint($break-tablet){
+  // Rounded options only for tablet and desktop
+	.rounded-6{ @include border-radius($content-border-radius); }
+
+  // Some utility class that will be applicable from tablet to desktop
+  .pull-right-tablet{ float: right; }
+  .pull-left-tablet{ float: left; }
+  .hide-tablet{ display: none; }
+  .show-in-tablet{ display: block; }
+  .invisible-tablet { visibility: hidden; }
+  .align-right-tablet{ text-align:right; }
+  .align-left-tablet{ text-align:left; }
+  .hide-in-mobile{ display: block; }
+  .show-in-mobile{ display: none; }
+}
+
+// Ellipsis
+.ellipsis{
+	@include ellipsis;
+}

@@ -41,8 +41,8 @@ class Billing::Subscription
           subscription_data(subscription).merge({ :trial_end => TRIAL_END }))
   end
 
-  def update_admin(user)
-    ChargeBee::Customer.update(user.account_id, customer_data(user.account))
+  def update_admin(config)
+    ChargeBee::Customer.update(config.account_id, customer_data(config.account))
   end
 
   def buy_day_passes(day_pass_purchase)
@@ -71,8 +71,9 @@ class Billing::Subscription
     
     def customer_data(account)
       {
-        :first_name => account.account_admin.name,
-        :email => %(vijayaraj+#{account.id}@freshdesk.com),  #account.account_admin.email,  
+        :first_name => account.admin_first_name,
+        :last_name => account.admin_last_name,
+        :email =>  %(vijayaraj+#{account.id}@freshdesk.com), # account.admin_email,
         :company => account.name
       }
     end

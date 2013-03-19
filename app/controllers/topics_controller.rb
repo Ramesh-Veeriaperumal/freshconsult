@@ -1,5 +1,5 @@
 class TopicsController < ApplicationController
-
+  before_filter :portal_check
   rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
 
   before_filter :find_forum_and_topic, :except => :index 
@@ -56,8 +56,9 @@ class TopicsController < ApplicationController
         (session[:topics] ||= {})[@topic.id] = Time.now.utc if logged_in?
         # authors of topics don't get counted towards total hits
         @topic.hit! unless logged_in? and @topic.user == current_user
+        
         @posts = @topic.posts.paginate :page => params[:page]
-        @post   = Post.new
+        @post  = Post.new
       end
       format.xml do
         render :xml => @topic.to_xml(:include => :posts)
@@ -257,4 +258,11 @@ end
 #    def authorized?
 #      %w(new create).include?(action_name) || @topic.editable_by?(current_user)
 #    end
+  private
+    def portal_check
+      if current_user.nil? || current_user.customer?
+        @topic = params[:id] ? current_account.portal_topics.find(params[:id]) : nil
+        return redirect_to support_discussions_topic_path(@topic)
+      end
+    end
 end

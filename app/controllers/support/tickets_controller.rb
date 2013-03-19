@@ -1,5 +1,4 @@
-class Support::TicketsController < ApplicationController
-
+class Support::TicketsController < SupportController
   #validates_captcha_of 'Helpdesk::Ticket', :only => [:create]
   helper SupportTicketControllerMethods
   include SupportTicketControllerMethods 
@@ -11,17 +10,25 @@ class Support::TicketsController < ApplicationController
     c.check_portal_scope :anonymous_tickets
   end
   before_filter :check_user_permission, :only => [:show]
-  before_filter :require_user_login , :only =>[:index,:filter,:close_ticket, :update]
-  before_filter :load_item, :only =>[:update]
-  before_filter :set_mobile, :only => [:filter,:show,:update,:close_ticket]
-  before_filter :set_date_filter ,    :only => [:export_csv]
-  before_filter :set_selected_tab
+  before_filter :require_user_login, :only => [:show, :index, :filter, :close, :update, :add_people]
+  before_filter :load_item, :only =>[:show, :update, :close, :add_people]
 
-  uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
+  before_filter :set_date_filter, :only => [:export_csv]  
+
+  def show
+    return access_denied unless can_access_support_ticket?
+    @visible_ticket_fields = current_portal.ticket_fields(:customer_visible).reject{ |f| !f.visible_in_view_form? }
+
+    @agent_visible = @visible_ticket_fields.any? { |tf| tf[:field_type] == "default_agent" }
+    # @editable_ticket_fields = current_portal.ticket_fields(:customer_editable).reject{ |f| !f.visible_in_view_form? }
+
+    set_portal_page :ticket_view
+  end
   
-  def index
-    @page_title = t('helpdesk.tickets.views.all_tickets')
+  def index    
     build_tickets
+    @page_title = t("helpdesk.tickets.views.#{@current_filter}")    
+    set_portal_page :ticket_list
     respond_to do |format|
       format.html
       format.xml  { render :xml => @tickets.to_xml }
@@ -35,46 +42,24 @@ class Support::TicketsController < ApplicationController
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
           redirect_to @item 
         }
-        format.mobile { 
-          render :json => { :success => true, :item => @item }.to_json 
-        }
       end
     end
   end
 
-  def filter   
+  def filter    
     @page_title = TicketsFilter::CUSTOMER_SELECTOR_NAMES[current_filter.to_sym]
     build_tickets
+    set_portal_page :ticket_list
     respond_to do |format|
-      format.html {
-        if params[:partial].blank?
-          render :index
-        else
-          render :partial => "/support/shared/ticket_list"
-        end
-      }
-      format.mobile {
-        unless @response_errors.nil?
-          render :json => {:errors => @response_errors}.to_json
-        else
-          json = "["; sep=""
-          @tickets.each { |tic| 
-            #Removing the root node, so that it conforms to JSON REST API standards
-            # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
-            json << sep + tic.to_json({
-              :except => [ :description_html, :description ],
-              :methods => [ :status_name, :priority_name, :source_name, :requester_name,
-                            :responder_name, :need_attention, :pretty_updated_date ]
-            }, false)[19..-2]; sep=","
-          }
-          render :json => json + "]"
-        end
-      }
+      format.html { render :partial => "ticket_list" }
+      format.js
     end
   end
 
   def configure_export
-    render :partial => "helpdesk/tickets/configure_export", :locals => {:csv_headers => export_fields(true)}
+    @csv_headers = export_fields(true)
+    render :layout => false
+    # render :partial => "helpdesk/tickets/configure_export", :locals => {:csv_headers => export_fields(true)}
   end
   
   def export_csv
@@ -88,49 +73,22 @@ class Support::TicketsController < ApplicationController
     export_data items, csv_hash, true
   end
 
-  def close_ticket
-    @item = Helpdesk::Ticket.find_by_param(params[:id], current_account)
-     status_id = Helpdesk::Ticketfields::TicketStatus::CLOSED
-     logger.debug "close the ticket...with status id  #{status_id}"
-     res = Hash.new
-     mob_json = {}
-     if @item.update_attribute(:status , status_id)
-       # res["success"] = true
-       #        res["status"] = 'Closed'
-       #        res["value"]  = status_id
-       #        res["message"] = "Successfully updated"
-       #        render :json => ActiveSupport::JSON.encode(res)
-       flash[:notice] = I18n.t('ticket_close_success')
-       mob_json[:success] = true
-     else
-       # res["success"] = false
-       # res["message"] = "closing the ticket failed"
-       # render :json => ActiveSupport::JSON.encode(res)      
-       flash[:notice] = I18n.t('ticket_close_failure')
-       mob_json[:failure] = true
-     end
-     respond_to do |format|
-      format.html{
-        redirect_to :back
-      }
-      format.mobile {
-        mob_json[:item] = @item;
-        render :json => mob_json.to_json
-      }
-     end
+  def close
+    status_id = Helpdesk::Ticketfields::TicketStatus::CLOSED
+    if @item.update_attribute(:status , status_id)
+     flash[:notice] = I18n.t('ticket_close_success')
+    else
+     flash[:notice] = I18n.t('ticket_close_failure')
+    end
+    redirect_to :back
   end
 
-  def add_cc
-      @ticket = Helpdesk::Ticket.find_by_id(params[:id])      
-      cc_params = params[:ticket][:cc_email][:cc_emails].split(/,/)
-      cc_emails_array = @ticket.cc_email[:cc_emails]
-      cc_emails_array = Array.new if cc_emails_array.nil?
-      cc_emails_array = cc_emails_array | cc_params  
-      cc_emails_array = cc_emails_array.delete_if {|x|  !valid_email?(x)}
-      @ticket.cc_email[:cc_emails] = cc_emails_array  
-      @ticket.save
-      flash[:notice] = ['"', cc_params.join(","),'" has been successfully added to CC.'].join()
-      redirect_to support_ticket_path(@ticket)
+  def add_people
+    cc_params = params[:helpdesk_ticket][:cc_email][:cc_emails].split(/,/)
+    @ticket.cc_email[:cc_emails] = cc_params.delete_if {|x| !valid_email?(x)}
+    @ticket.save
+    flash[:notice] = "Email(s) successfully added to CC."
+    redirect_to support_ticket_path(@ticket)
   end  
 
   protected 
@@ -140,34 +98,60 @@ class Support::TicketsController < ApplicationController
     end
 
     def load_item
-      @item = Helpdesk::Ticket.find_by_param(params[:id], current_account) 
+      @ticket = @item = Helpdesk::Ticket.find_by_param(params[:id], current_account) 
       @item || raise(ActiveRecord::RecordNotFound)      
     end
+
     def redirect_url
       current_user ? support_ticket_url(@ticket) : root_path
     end
   
     def build_tickets
-      ticket_scope = (params[:start_date].blank? or params[:end_date].blank?) ? current_user.tickets : current_user.tickets.created_at_inside(params[:start_date], params[:end_date])
-    @tickets = TicketsFilter.filter(current_filter.to_sym, current_user, ticket_scope)
-    per_page = mobile? ? 30 : params[:wf_per_page] || 10
-     @tickets = @tickets.paginate(:page => params[:page], :per_page => per_page, :order=> "#{current_wf_order} #{current_wf_order_type}") 
-    @tickets ||= []
-   end
+      @company = current_user.customer.presence
+      @filter_users = current_user.customer.users if 
+            @company && current_user.client_manager? && @company.users.size > 1 
+
+      @requested_by = current_requested_by
+
+      date_added_ticket_scope = (params[:start_date].blank? or params[:end_date].blank?) ? 
+          ticket_scope.tickets : 
+          ticket_scope.tickets.created_at_inside(params[:start_date], params[:end_date])
+
+      @tickets = TicketsFilter.filter(current_filter, current_user, date_added_ticket_scope)
+      per_page = params[:wf_per_page] || 10
+      current_order = visible_fields.include?(current_wf_order) ? "#{current_wf_order} #{current_wf_order_type}" :
+        "#{TicketsFilter::DEFAULT_PORTAL_SORT} #{TicketsFilter::DEFAULT_PORTAL_SORT_ORDER}" 
+      @tickets = @tickets.paginate(:page => params[:page], :per_page => per_page, 
+          :order => current_order) 
+      @tickets ||= []
+    end
+
+    def many_employees_in_company?
+      current_user.client_manager? && has_company? && customer.user > 1
+    end
+
+
+    # Used for scoping of filters
+    def ticket_scope
+      if current_user.client_manager?
+        if @requested_by.to_i == 0
+          current_user.customer
+        else
+          @requested_item = current_account.users.find_by_id(@requested_by)
+        end
+      else
+        @requested_item = current_user
+      end
+    end
    
-   def require_user_login
-     return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless current_user
-   end
+    def require_user_login
+      return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless current_user
+    end
 
-   def check_user_permission
-     if current_user and current_user.agent?
-       return redirect_to helpdesk_ticket_url(:format => params[:format])
-     end
-   end
-
-  private
-    def set_selected_tab
-      @selected_tab = :checkstatus
+    def check_user_permission
+      if current_user and current_user.agent? and session[:preview_button].blank?
+        return redirect_to helpdesk_ticket_url(:format => params[:format])
+      end
     end
 
   

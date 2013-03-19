@@ -1,0 +1,86 @@
+<% form_tag({:action => :export_csv, :a => params[:a], :i => params[:i] }, { :method => :post }) do %>
+  	<input type="hidden" name="data_hash" value="" />
+	<div class="alert"><%=t('export_data.info')%></div>
+	<fieldset class="row-fluid">
+		<div class="span4">
+			<label class="lead-small"><%=t('export_data.filter_label_customer')%></label>
+			<%= select_tag "date_filter", options_for_select(TicketConstants::CREATED_BY_OPTIONS) %>
+		</div>
+		<div id="datepicker" class="hide">
+ 			<div class="span4">	
+ 				<label class="lead-small">From</label>
+				<input type="text" placeholder="<%=t('export_data.from')%>" id="start_date" date="" 
+					name="start_date" class="text auto" size="15" />
+			</div>
+			<div class="span4 omega">
+				<label class="lead-small">To</label>
+				<input type="text" placeholder="<%=t('export_data.to')%>" id="end_date" date="" 
+					class="text auto" name="end_date" size="15" />
+			</div>
+		</div>
+	</fieldset>
+	<fieldset>
+		<div class="control-group">
+			<label class="lead-small"><%= t("export_data.select_header") %></label>
+			<div class="alert alert-error hide" id="err_no_fields_selected"> <%= t('export_data.no_fields_selected') %> </div>
+			<div class="row-fluid" id="ticket_fields">
+	 			<% @csv_headers.each do |head| %>
+	 			  	<div class="span4 <%= head[:type] %> <%= cycle("", "", "omega") %>">
+		  				<label class="checkbox nested-parent"> 
+		    				<%= check_box_tag "export_fields[#{head[:label]}]", head[:value], head[:selected] %> 
+							<%= head[:label] %>														
+		  				</label>
+		  				<% head[:levels].each do |level| %>
+			  				<label class="checkbox nested-child"> 
+			    				<%= check_box_tag "export_fields[#{level[:label]}]", level[:name], false  %> 
+								<%= level[:label] %>
+			  				</label>
+			  			<% end %>
+	  			    </div>	
+	 			<% end %>
+			</div>
+		</div>
+	</fieldset>
+<%end%>
+
+<script type="text/javascript">
+	!function( $ ) {
+
+		$(function () {
+
+			"use strict"
+
+			$(".nested-parent").on("change", function(ev){
+				var _condition = $(this).children("input").prop("checked")
+	  			$(this).siblings(".nested-child").children("input").prop({ "checked": _condition })
+			})
+
+			var date_today = new Date()
+
+			$("#date_filter").on("change", function(ev){
+				$("#datepicker").toggle($(this).val() == 4)
+			})
+
+			var dates = $( "#start_date, #end_date" ).datepicker({
+				changeMonth: true, 
+				changeYear: true,
+				numberOfMonths: 1,
+				maxDate: "today",
+				onSelect: function( selectedDate ) {
+					var option = this.id == "start_date" ? "minDate" : "maxDate",
+						instance = $( this ).data( "datepicker" ),
+						date = $.datepicker.parseDate(
+							instance.settings.dateFormat ||
+							$.datepicker._defaults.dateFormat,
+							selectedDate, instance.settings );
+					dates.not( this ).datepicker( "option", option, date )
+					$(this).prop("date", date)
+				}
+			})
+
+			$("#start_date").val((date_today.getMonth()) + '/' + date_today.getDate() + '/' + date_today.getFullYear());
+			$("#end_date").val((date_today.getMonth()+1) + '/' + date_today.getDate() + '/' + date_today.getFullYear());
+		})
+
+	}(window.jQuery)
+</script>

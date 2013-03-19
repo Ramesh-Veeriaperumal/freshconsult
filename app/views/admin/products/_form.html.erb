@@ -30,7 +30,7 @@
 </script>
 
 <% content_for :sidebar do -%><%- end %>
-<%= render :partial => "shared/colorpicker" %>
+<%#= render :partial => "shared/colorpicker" %>
 <%= form.error_messages %>
 
 <div class="multi-product-add ui-form">
@@ -60,8 +60,10 @@
 
     <%= content_tag(:label, t('admin.products.form.product_desc'), :class => "tabbed caption") %>
     <div class="fields">
-      <%= form.text_area :description, :class => "text" %>
+      <%= form.text_area :description, :class => "text", :rows => "5" %>
     </div>
+
+    <span class="seperator"></span>    
 
     <div class="configure-portal">
       <label>
