@@ -1577,6 +1577,8 @@ en:
     showing: "Showing:"
     info1: Are you sure you want to delete this contact?
     info2: Convert to an Agent
+    convert_fulltime: Full-Time Agent
+    convert_occasional:Occasional Agent
     send_activation: Send activation email
     import_csv: Import Customers from CSV
     export_csv: Export to CSV
