@@ -2941,6 +2941,8 @@ en:
       info1: "When a Freshdesk ticket is linked with JIRA issue, perform the below actions."
       info2: "When ticket status is updated in Freshdesk "
       info3: "When a comment is added in Freshdesk "
+      info4: "When issue status is updated in JIRA"
+      info5: "When a comment is added in JIRA"
       none: "Do nothing."
       add_private_note_in_fd: "Add a private note in Freshdesk and notify agent."
       add_public_note_in_fd: "Add a public note in Freshdesk."
