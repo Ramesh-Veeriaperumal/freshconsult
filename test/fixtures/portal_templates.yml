@@ -1,0 +1,19 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  portal_id: 1
+  account_id: 1
+  header: MyText
+  footer: MyText
+  custom_css: MyText
+  contact_info: MyText
+  layout: 
+
+two:
+  portal_id: 1
+  account_id: 1
+  header: MyText
+  footer: MyText
+  custom_css: MyText
+  contact_info: MyText
+  layout: 

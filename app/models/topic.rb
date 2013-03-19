@@ -1,5 +1,7 @@
 class Topic < ActiveRecord::Base
   include Juixe::Acts::Voteable
+  include ActionController::UrlWriter
+
   acts_as_voteable 
   validates_presence_of :forum, :user, :title
 
@@ -7,6 +9,9 @@ class Topic < ActiveRecord::Base
   belongs_to :forum
   belongs_to :user
   belongs_to :last_post, :class_name => "Post", :foreign_key => 'last_post_id'
+
+  before_create :set_locked
+
   has_many :monitorships,:dependent => :destroy
   has_many :monitors, :through => :monitorships, :conditions => ["#{Monitorship.table_name}.active = ?", true], :source => :user
 
@@ -30,6 +35,22 @@ class Topic < ActiveRecord::Base
   named_scope :visible, lambda {|user| visiblity_options(user) }
 
   named_scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
+
+  # Popular topics in forums
+  # Filtered based on last replied and user_votes
+  # !FORUM ENHANCE Removing hits from orderby of popular as it will return all time
+  # It would be better if it can be tracked month wise
+  # Generally with days before DateTime.now - 30.days
+  named_scope :popular, lambda{ |days_before| 
+    { :conditions => ["replied_at >= ?", days_before], 
+      :order => 'hits DESC, user_votes DESC, replied_at DESC', 
+      :include => :last_post } 
+  }
+
+  # The below named scopes are used in fetching topics with a specific stamp used for portal topic list  
+  named_scope :by_stamp, lambda { |stamp_type| 
+    { :conditions => ["stamp_type = ?", stamp_type] }
+  }
 
   def self.visiblity_options(user)
     if user
@@ -98,6 +119,8 @@ class Topic < ActiveRecord::Base
   IDEAS_STAMPS_OPTIONS = IDEAS_STAMPS.map { |i| [i[1], i[2]] }
   IDEAS_STAMPS_BY_KEY = Hash[*IDEAS_STAMPS.map { |i| [i[2], i[1]] }.flatten]
   IDEAS_STAMPS_BY_TOKEN = Hash[*IDEAS_STAMPS.map { |i| [i[0], i[2]] }.flatten]
+  IDEAS_STAMPS_TOKEN_BY_KEY = Hash[*IDEAS_STAMPS.map { |i| [i[2], i[0]] }.flatten]
+  IDEAS_TOKENS = IDEAS_STAMPS.map { |i| i[0] }
   
   def monitorship_emails
     user_emails = Array.new
@@ -111,6 +134,10 @@ class Topic < ActiveRecord::Base
     IDEAS_STAMPS_BY_KEY[stamp_type]
   end  
 
+  def stamp_key
+    IDEAS_STAMPS_TOKEN_BY_KEY[stamp_type].to_s
+  end
+
 	def hit!
     self.class.increment_counter :hits, id
   end
@@ -120,6 +147,10 @@ class Topic < ActiveRecord::Base
   def views() hits end
 
   def paged?() posts_count > Post.per_page end
+
+  def set_locked
+    self.locked = false if self.locked.nil?
+  end
   
   def last_page
     [(posts_count.to_f / Post.per_page).ceil.to_i, 1].max
@@ -139,6 +170,10 @@ class Topic < ActiveRecord::Base
       # self.destroy
     end
   end
+
+  def answered?
+    posts.answered_posts.count > 0
+  end
   
   def users_who_voted
     users = User.find(:all,
@@ -149,11 +184,27 @@ class Topic < ActiveRecord::Base
     users
   end
   
+  def last_post_url
+    if self.last_post_id.present?
+      support_discussions_topic_path(self, :anchor => "post-#{self.last_post_id}")
+    end
+  end
+
   def to_xml(options = {})
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
+  end
+
+  # Added for portal customisation drop
+  def self.filter(_per_page = self.per_page, _page = 1)
+    paginate :per_page => _per_page, :page => _page
+  end
+
+  # Added for portal customisation
+  def to_liquid
+    @forum_topic_drop ||= Forum::TopicDrop.new self
   end
 
   def to_s

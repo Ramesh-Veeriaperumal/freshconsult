@@ -8,6 +8,7 @@ module FreshdeskCore::Model
     									{:dependant => :flexi_field_defs, :method => :destroy_all},
     									{:dependant => :data_export, :method => :destroy},
     									{:dependant => :account_additional_settings, :method => :destroy},
+                      {:dependant => :account_configuration, :method => :destroy},                      
     									{:dependant => :conversion_metric, :method => :destroy},
     									{:dependant => :attachments, :method => :destroy_all},
     									{:dependant => :all_users, :method => :destroy_all},

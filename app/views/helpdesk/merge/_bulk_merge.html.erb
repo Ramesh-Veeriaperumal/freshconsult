@@ -1,93 +1,10 @@
 <%= javascript_include_tag 'app/merge.js' %>
 <%= javascript_include_tag 'app/merge_tickets.js' %>
 <script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
-<% javascript_tag do -%>
-
-jQuery(document).ready(function(){
-  primary_ticket = jQuery('.merge-cont').first()
-  primary_ticket.attr('title','This is your primary ticket').addClass('cont-primary tooltip');
-  primary_ticket.find('.primary-marker').attr('title','');
-  enable_continue();
-  initialize_autocompleter();
-  check_requester();
-});
-
-function initialize_autocompleter(){
-  ContactsSearch = new Template(
-      '<li><div class="contactdiv" data-id="#{display_id}">'+
-      '<span id="resp-icon"></span>'+
-      '<div id="merge-ticket" class="merge_element" data-id="#{display_id}">'+
-      '<span class="item_info" title="#{subject}">##{display_id} #{subject}</span>'+
-      '<div class="info-data hideForList">'+
-      '<span>#{info}</span>'+
-      '</div></div></div></li>'
-  );
-  bind_autocompleter();
-}
-
-function bind_autocompleter(){
-  var idcachedBackend,requestercachedBackend,subjectcachedBackend;
-  var idcachedLookup,requestercachedLookup,subjectcachedLookup;
-
-  var autocompleter_hash = {  id :  { cache : idcachedLookup, backend : idcachedBackend, 
-                                      searchBox : 'select-id', searchResults : 'display_id_results',
-                                      minChars : 1 },
-                  requester :  {  cache : requestercachedLookup, backend : requestercachedBackend, 
-                                  searchBox : 'select-requester', searchResults : 'requester_results',
-                                  minChars : 2 },
-                  subject :  {  cache : subjectcachedLookup, backend : subjectcachedBackend, 
-                                searchBox : 'select-subject', searchResults : 'subject_results',
-                                minChars : 2 }
-              }
-
-  var aftershow = function(){
-    x = jQuery('.contactdiv');
-    x.each(function(){
-      y = jQuery(this);
-      jQuery('.merge-cont #merge-ticket').each( function(){
-        
-        if(jQuery(this).data('id') == y.data('id'))
-        {
-          y.children('#resp-icon').addClass('clicked');
-          y.addClass('clicked');
-        }
-      });
-    });
-  }
-
-  jQuery.each(autocompleter_hash, function(){
-    this.backend = new Autocompleter.Cache(lookup, {choices: 15});
-    this.cache = this.backend.lookup.bind(this.backend);
-    global[this.searchBox] = new Autocompleter.PanedSearch( this.searchBox, this.cache, ContactsSearch,
-    this.searchResults, $A(<%= @ticket_search.map{|item|[item, item]}.to_json %>), {frequency: 0.1, acceptNewValues: true,
-    afterPaneShow: aftershow, minChars: this.minChars, separatorRegEx:/;|,/});
-  })
-}
-
-function lookup(searchString, callback) { 
-  var type = jQuery('#search-type option:selected').val();
-  var list =  jQuery('#'+type+'_results').find('ul');
-  list.empty();
-  jQuery('#'+type+'_results').addClass("loading-center");
-  new Ajax.Request('<%= merge_search_helpdesk_merge_tickets_path %>',{ parameters: {
-                                                        search_string: searchString,
-                                                        key: jQuery('#search-type option:selected').val(),
-                                                        search_method: "with_"+jQuery('#search-type option:selected').val(),
-                                                        rand: (new Date()).getTime()},
-                                            onSuccess: function(response) {       
-                                              jQuery('.merge_results:visible').removeClass("loading-center");
-                                              callback(response.responseJSON.results);
-                                            } });
-                                          }
-
-function change_ticket_count(){
-  var count = ""+jQuery('.merge-cont').length
-  var txt = count+(( count == 1 ) ? '<%= t("ticket.ticket_selected") %>' : '<%= t("ticket.tickets_selected") %>' )
-  jQuery('.merge-sub-title').text(txt);
-}                                    
-<%- end %>
 <div id = "ticket-merge">
-  <span class="merge-sub-title">
+  <span class="merge-sub-title" 
+    data-default-text="<%= t('ticket.ticket_selected') %>"
+    data-pluralized-text="<%= t('ticket.tickets_selected') %>" >
     <%= pluralize(@source_tickets.length, t('ticket.ticket_selected'), t('ticket.tickets_selected')) %>
   </span>
   <div id="mergeboxconfirm"></div>
@@ -96,15 +13,16 @@ function change_ticket_count(){
       <div class="content-show merge_entity">
         <% @source_tickets.each do |ticket| %>
           <div class="merge-cont">
-            <div class="primary-marker tooltip" title='Mark this ticket as primary ticket'>
+            <div class="primary-marker tooltip" title='<%= t(".mark_primary")%>'>
               <span id="marker"></span>
             </div>
               <div id="contact-area">
-    		        <span id="resp-icon" title="Remove this ticket from the list"></span>
+    		        <span id="resp-icon" title="<%= t('.remove') %>"></span>
     		       		<div id="merge-ticket" class="merge_element" data-id=<%= h(ticket.display_id) %>>
-                    <%= link_to("##{ticket.display_id} #{ticket.subject}", ticket, :title => ticket.subject, :class =>"item_info", :target=>"_blank" ) %>
+                    <%= link_to("##{ticket.display_id} #{ticket.subject}", ticket, :title => h(ticket.subject), 
+                    :class =>"item_info", :target=>"_blank" ) %>
     			          <div class="info-data hideForList">
-    			          	<span>
+    			          	<span class="merge-ticket-info">
     			          		<%= t("ticket.merge_ticket_list_status_"+ticket.ticket_states.current_state, 
               					:username => "<span class='muted requester_name'>#{h(ticket.requester.display_name)}</span>",
                         :time_ago => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state))) %>
@@ -133,8 +51,10 @@ function change_ticket_count(){
       <div id="subject_results" class="merge_results hide"></div>
     </div>
 
-      <% form_remote_tag (:url =>{ :controller => "merge_tickets", :action=>"merge" },:html => {:id=>"bulk_merge_tickets"}) do -%>  <input type="hidden" name="target[ticket_id]" id="target_ticket" />
-        <div class="button-container">
+      <% form_remote_tag (:url =>{ :controller => "merge_tickets", :action=>"merge" },:html => {:id=>"bulk_merge_tickets"}) do -%>  
+      <div class="divide"></div>
+      <input type="hidden" name="target[ticket_id]" id="target_ticket" />
+        <div class="button-container" id="bulk-merge-button-container">
           <a class="btn" id="cancel_new_merge"><%= t('cancel') %></a>
           <%= submit_tag "Continue",:class => "btn btn-primary",:id => "bulk_merge",:onclick => "bulk_merge_submit()", :disabled => "disabled", "data-loading-text" => t('please_wait') %>
           <%- end %>

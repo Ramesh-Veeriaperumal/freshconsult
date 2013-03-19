@@ -37,15 +37,13 @@ class ThirdCRM
     #   FreshdeskErrorsMailer.deliver_error_in_crm!(account)
     # end
   end
-  
+
   def add_contact(account)
-    account_admin = account.account_admin
-    name = account_admin.name.split(" ", 2)
     lead_contact = {}
-    lead_contact[:LastName] = name[0]
-    lead_contact[:FirstName] = name[1] if name.size > 1
-    lead_contact[:Phone] = account_admin.phone
-    lead_contact[:Email ] = account_admin.email
+    lead_contact[:FirstName] = account.admin_first_name
+    lead_contact[:LastName] = account.admin_last_name    
+    lead_contact[:Phone] = account.admin_phone
+    lead_contact[:Email] = account.admin_email
     lead_contact[:Company ] = account.name
     lead_contact[:Country] = account.conversion_metric.country if account.conversion_metric
     lead_contact

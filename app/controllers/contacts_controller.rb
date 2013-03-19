@@ -21,6 +21,7 @@ class ContactsController < ApplicationController
    before_filter :load_item, :only => [:show, :edit, :update, :make_agent]
    skip_before_filter :build_item , :only => [:new, :create]
    before_filter :set_mobile , :only => :show
+   before_filter :fetch_contacts, :only => [:index]
   
    
    def check_demo_site
@@ -31,11 +32,7 @@ class ContactsController < ApplicationController
   end
   
   def index
-    begin
-      @contacts = scoper.filter(params[:letter], params[:page], params.fetch(:state, "verified"))
-    rescue Exception => e
-      @contacts = {:error => get_formatted_message(e)}
-    end
+    
     respond_to do |format|
       format.html do
         @tags = current_account.tags.with_taggable_type(User.to_s)
@@ -179,7 +176,7 @@ class ContactsController < ApplicationController
     @agent = current_account.agents.new
     @agent.user = @item 
     @item.deleted = false
-    @agent.occasional = false
+    @agent.occasional = params[:occasional]
     respond_to do |format|
       if @agent.save        
         format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
@@ -260,8 +257,8 @@ protected
  end
 
  def check_agent_limit
-   if current_account.reached_agent_limit? 
-    flash[:notice] = t('maximum_agents_msg')
+    if params[:occasional].nil? && current_account.reached_agent_limit? 
+    flash[:notice] = t('maximum_agents_msg') 
     redirect_to :back 
    end
   end
@@ -270,5 +267,16 @@ protected
 
     def get_formatted_message(exception)
       exception.message # TODO: Proper error reporting.
+    end
+
+    def fetch_contacts
+       connection_to_be_used =  params[:format].eql?("xml") ? "use_persistent_read_connection" : "use_master_connection"  
+       begin
+         @contacts =   SeamlessDatabasePool.send(connection_to_be_used.to_sym) do
+          scoper.filter(params[:letter], params[:page], params.fetch(:state, "verified"))
+        end
+      rescue Exception => e
+        @contacts = {:error => get_formatted_message(e)}
+      end
     end
 end

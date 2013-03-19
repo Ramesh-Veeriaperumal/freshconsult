@@ -101,7 +101,7 @@ Version: 3.2 Timestamp: Mon Sep 10 10:38:04 PDT 2012
 }
 
 .select2-drop {
-    @include select2-drop;
+  @include select2-drop;
 }
 
 .select2-drop.select2-drop-above {
@@ -166,7 +166,8 @@ Version: 3.2 Timestamp: Mon Sep 10 10:38:04 PDT 2012
   left: -10000px;
 }
 
-.select2-search input {
+.select2-search input,
+.select2-search input[type="text"] {
     background: #fff url('/images/select2.png') no-repeat 100% -22px;
     background: url('/images/select2.png') no-repeat 100% -22px, -webkit-gradient(linear, left bottom, left top, color-stop(0.85, white), color-stop(0.99, #eeeeee));
     background: url('/images/select2.png') no-repeat 100% -22px, -webkit-linear-gradient(center bottom, white 85%, #eeeeee 99%);
@@ -424,21 +425,14 @@ disabled look for already selected choices in the results dropdown
 
 .select2-search-choice-close {
   display: block;
-  position: absolute;
-  right: 3px;
-  top: 4px;
   width: 12px;
   height: 13px;
   font-size: 1px;
   background: url('/images/select2.png') right top no-repeat;
   outline: none;
+  float: left;
+  margin-left: 8px;
 }
-
-.select2-container-multi .select2-search-choice-close {
-  left: 5px;
-  top: 2px;
-}
-
 
 .select2-container-multi .select2-choices .select2-search-choice .select2-search-choice-close:hover {
   background-position: right -11px;

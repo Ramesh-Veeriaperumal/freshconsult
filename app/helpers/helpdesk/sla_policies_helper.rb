@@ -26,7 +26,7 @@ module Helpdesk::SlaPoliciesHelper
 	alias_method :product_id_list, :products
 	
 	def sources
-		Helpdesk::Ticket::SOURCE_OPTIONS
+		TicketConstants.source_names
 	end
 	alias_method :source_list, :sources
 

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<%= open_html_tag %>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<title><%= page_title %></title>
+		<meta name="description" content="<%= page_description %>">
+		<meta name="author" content="">
+		<meta name="keywords" content="<%= page_keywords %>">
+
+		<meta name="viewport" content="width=device-width">
+		<%= portal_fav_ico %>
+
+		<!-- Base stylesheet -->
+		<%= include_stylesheets :portal %>
+
+		<!-- Theme stylesheet -->
+		<%= stylesheet_link_tag theme_url  %>
+
+		<!-- Google font url if present -->
+		<%= portal_fonts %>
+
+		<!-- Including default portal based script framework at the top -->
+		<%= include_javascripts :portal_head %>
+
+		<!-- Access variables for the portal -->
+		<%= portal_access_varibles %>
+	</head>
+	<body>
+		<%= assumed_identity_message %>
+		
+		<%= @layout %>
+		
+		<%= render :partial => "layouts/integrations" %>
+		<%= render :partial => "layouts/shared/scripts" %> 
+
+		<!-- Including default portal based script at the bottom -->
+		<%= include_javascripts :portal_bottom, :redactor %>
+	</body>
+</html>

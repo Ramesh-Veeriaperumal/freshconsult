@@ -1,0 +1,31 @@
+<% if @preview %>
+    <div id="preview-message" class="preview-message">
+        <div class="page">
+        <a href="#" onclick="window.close();return false;" 
+            class="btn btn-large preview-exit pull-right">Exit Preview</a>
+        <div id="responsive-buttons">
+            <a href="#" class="active" data-width="none">
+                <span class="preview-desktop"></span>
+            </a>
+            <a href="#" data-width="768">
+                <span class="preview-ipad"></span>
+            </a>
+            <a href="#" data-width="1024">
+                <span class="preview-ipad-rotate"></span>
+            </a>
+            <a href="#" data-width="330">
+                <span class="preview-iphone"></span>
+            </a>
+            <a href="#" data-width="480">
+                <span class="preview-iphone-rotate"></span>
+            </a>
+        </div>
+        </div>
+    </div>
+<% end %>
+<script>
+    jQuery(window).unload(function(){
+        jQuery.get("/admin/portal/<%=current_portal.id%>/template/clear_preview")
+    });
+</script>
+<iframe id="iframe-preview" src="<%= @preview_url %>" class="" style="height: 100%; max-width: none;"></iframe>

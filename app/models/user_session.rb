@@ -1,7 +1,8 @@
 class UserSession < Authlogic::Session::Base
+	include RedisKeys
+
   params_key :k
   single_access_allowed_request_types :any
-  
   after_save :set_user_time_zone, :set_node_session
   before_destroy :delete_node_session
   after_validation :set_missing_node_session

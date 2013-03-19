@@ -10,10 +10,14 @@ class SAAS::SubscriptionActions
       drop_twitter_handles(account)
       drop_custom_domain(account)
       drop_multiple_emails(account)
+      drop_css_customization(account)
     when :blossom
       drop_custom_sla(account)
       update_timezone_to_users(account)
       drop_products(account)
+      drop_css_customization(account)
+    when :garden
+      drop_layout_customization(account)
     end
   end
   
@@ -69,6 +73,18 @@ class SAAS::SubscriptionActions
 
    def drop_multiple_emails(account)
     account.global_email_configs.find(:all, :conditions => {:primary_role => false}).each{|gec| gec.destroy}
+   end
+
+   def drop_layout_customization(account)
+    account.portal_pages.destroy_all
+    account.portal_templates.each do |template|
+      template.update_attributes( :header => nil, :footer => nil, :layout => nil)
+    end
+   end
+
+   def drop_css_customization(account)
+    account.portal_templates.update_all( :custom_css => nil, :updated_at => Time.now)
+    drop_layout_customization(account)
    end
  
 end

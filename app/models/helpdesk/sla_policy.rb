@@ -1,6 +1,6 @@
 class Helpdesk::SlaPolicy < ActiveRecord::Base
   
-  set_table_name "helpdesk_sla_policies"
+  set_table_name "sla_policies"
 
   serialize :escalations, Hash
   serialize :conditions, Hash
@@ -83,7 +83,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
   end
 
   def escalate_resolution_overdue(ticket)
-    unless escalation_enabled?(ticket)
+    unless escalation_enabled?(ticket) && escalations.key?(:resolution)
       ticket.update_attributes({:escalation_level => ESCALATION_LEVELS_MAX, :isescalated => true})
       return
     end
@@ -111,7 +111,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
   end
 
   def escalate_response_overdue(ticket)
-    unless escalation_enabled?(ticket)
+    unless escalation_enabled?(ticket) && escalations.key?(:response)
       ticket.update_attribute(:fr_escalated, true)
       return
     end

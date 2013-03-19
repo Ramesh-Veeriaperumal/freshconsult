@@ -1,0 +1,66 @@
+@import "sources/*.png";
+$sources-sprite-dimensions: true;
+$sources-layout:smart;
+$sources-sprite-dimensions:true;
+@include all-sources-sprites;
+
+.ticket-filters{
+	margin-top:3px;
+	left:-2px;
+}
+.c-ticket-row{ 
+	padding-left:30px; 
+	.status-source{ 
+		float:left;
+		margin-left:-45px;
+	}
+}
+.ticket-toolbar{ 
+	position: relative; z-index: 1; 
+	a{ font-weight: bold; }
+}
+
+.widget{ margin-bottom: 20px; }
+
+#ticket-sort{ margin-right: 20px; }
+#user-list-dropdown .dropdown-menu{ 
+	max-height: 300px;
+	overflow: auto;
+}
+.name_label{ font-weight: bold; margin-top: 4px; }
+.value_label{ margin-bottom: 10px; }
+
+#ticket-sidebar-details .control-label{
+	margin-top: 8px;
+	margin-bottom: 0;
+	line-height: 28px;
+	font-weight: bold;
+}
+
+.agent-details{
+	border-bottom: $content-border;
+	background-color: #fafafa;	
+	margin-top: -$content-padding-mobile;
+	margin-left: -$content-padding-mobile;
+	margin-right: -$content-padding-mobile;
+	padding: $content-padding-mobile;
+	.lead{ margin-bottom: 10px; }
+}
+
+
+/* Media styles for tablet and above */
+@include at-breakpoint($break-tablet){	
+	.c-ticket-row{ 
+		padding: 8px 5px 8px 45px; 
+		.label-status{ float:right; }
+	}
+	.ticket-brief{ padding-top: 7px; }
+	.label-status{ margin-top: 6px; }
+	.agent-details{
+		@include border-top-radius($content-border-radius);
+		padding: $content-padding;
+		margin-top: -$content-padding-top;
+		margin-left: -$content-padding-side;
+		margin-right: -$content-padding-side;
+	}
+}

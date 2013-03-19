@@ -61,7 +61,10 @@
       }
 
       previous = $ul.find('.active a').last()[0]
-      $href = $(href)
+      
+      // Testing for nested hash tabs
+      // eg: #tag1/#tag2/#tag3
+      $href = $(/([^\/]+$)/i.exec(href).last())
 
       activate($this.parent('li'), $ul)
       activate($href, $href.parent())

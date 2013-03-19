@@ -9,7 +9,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130307133109) do
+
+ActiveRecord::Schema.define(:version => 20130308075546) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -22,6 +23,14 @@ ActiveRecord::Schema.define(:version => 20130307133109) do
   end
 
   add_index "account_additional_settings", ["account_id"], :name => "index_account_id_on_account_additional_settings"
+
+  create_table "account_configurations", :force => true do |t|
+    t.integer  "account_id",     :limit => 8, :null => false
+    t.text     "contact_info"
+    t.text     "billing_emails"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -81,7 +90,7 @@ ActiveRecord::Schema.define(:version => 20130307133109) do
     t.integer  "folder_id",    :limit => 8
   end
 
-  add_index "admin_canned_responses", ["account_id", "folder_id", "title"], :name => "Index_ca_responses_on_account_id_folder_id_and_title", :length => {"folder_id"=>nil, "account_id"=>nil, "title"=>"20"}
+  add_index "admin_canned_responses", ["account_id", "folder_id", "title"], :name => "Index_ca_responses_on_account_id_folder_id_and_title", :length => {"title"=>"20", "account_id"=>nil, "folder_id"=>nil}
 
   create_table "admin_data_imports", :force => true do |t|
     t.string   "import_type"
@@ -558,7 +567,7 @@ ActiveRecord::Schema.define(:version => 20130307133109) do
     t.integer  "account_id",           :limit => 8
   end
 
-  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"account_id"=>nil, "attachable_id"=>nil, "attachable_type"=>"14"}
+  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"account_id"=>nil, "attachable_type"=>"14", "attachable_id"=>nil}
   add_index "helpdesk_attachments", ["id"], :name => "helpdesk_attachments_id"
 
   create_table "helpdesk_authorizations", :force => true do |t|
@@ -804,34 +813,6 @@ ActiveRecord::Schema.define(:version => 20130307133109) do
   add_index "helpdesk_schema_less_tickets", ["string_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_02", :length => {"account_id"=>nil, "string_tc02"=>"10"}
   add_index "helpdesk_schema_less_tickets", ["ticket_id", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_account_id_ticket_id", :unique => true
 
-  create_table "helpdesk_sla_details", :force => true do |t|
-    t.string   "name"
-    t.integer  "priority",        :limit => 8
-    t.integer  "response_time"
-    t.integer  "resolution_time"
-    t.integer  "escalateto",      :limit => 8
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "sla_policy_id",   :limit => 8
-    t.boolean  "override_bhrs",                :default => false
-    t.integer  "account_id",      :limit => 8
-    t.boolean  "escalation_enabled",              :default => true
-  end
-
-  create_table "helpdesk_sla_policies", :force => true do |t|
-    t.string   "name"
-    t.text     "description"
-    t.integer  "account_id",  :limit => 8
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean  "is_default",               :default => false
-    t.text     "escalations"
-    t.text     "conditions"
-    t.integer  "position"
-    t.boolean  "active",                   :default => true
-  end
-
-  add_index "helpdesk_sla_policies", ["account_id", "name"], :name => "index_helpdesk_sla_policies_on_account_id_and_name", :unique => true
 
   create_table "helpdesk_subscriptions", :force => true do |t|
     t.integer  "user_id",    :limit => 8
@@ -852,7 +833,7 @@ ActiveRecord::Schema.define(:version => 20130307133109) do
   end
 
   add_index "helpdesk_tag_uses", ["tag_id"], :name => "index_helpdesk_tag_uses_on_tag_id"
-  add_index "helpdesk_tag_uses", ["taggable_id", "taggable_type"], :name => "helpdesk_tag_uses_taggable", :length => {"taggable_id"=>nil, "taggable_type"=>"10"}
+  add_index "helpdesk_tag_uses", ["taggable_id", "taggable_type"], :name => "helpdesk_tag_uses_taggable", :length => {"taggable_type"=>"10", "taggable_id"=>nil}
 
   create_table "helpdesk_tags", :force => true do |t|
     t.string  "name"
@@ -1056,6 +1037,27 @@ ActiveRecord::Schema.define(:version => 20130307133109) do
     t.datetime "created_at"
   end
 
+  create_table "portal_pages", :force => true do |t|
+    t.integer  "template_id", :limit => 8,        :null => false
+    t.integer  "account_id",  :limit => 8,        :null => false
+    t.integer  "page_type",                       :null => false
+    t.text     "content",     :limit => 16777215
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "portal_templates", :force => true do |t|
+    t.integer  "account_id",  :limit => 8,        :null => false
+    t.integer  "portal_id",   :limit => 8,        :null => false
+    t.text     "preferences"
+    t.text     "header"
+    t.text     "footer"
+    t.text     "custom_css",  :limit => 16777215
+    t.text     "layout"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "portals", :force => true do |t|
     t.string   "name"
     t.integer  "product_id",           :limit => 8
@@ -1137,6 +1139,37 @@ ActiveRecord::Schema.define(:version => 20130307133109) do
     t.datetime "updated_at"
   end
 
+  create_table "sla_details", :force => true do |t|
+    t.string   "name"
+    t.integer  "priority",           :limit => 8
+    t.integer  "response_time"
+    t.integer  "resolution_time"
+    t.integer  "escalateto",         :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "sla_policy_id",      :limit => 8
+    t.boolean  "override_bhrs",                   :default => false
+    t.integer  "account_id",         :limit => 8
+    t.boolean  "escalation_enabled",              :default => true
+  end
+
+  add_index "sla_details", ["account_id", "sla_policy_id"], :name => "index_account_id_and_sla_policy_id_on_sla_details"
+
+  create_table "sla_policies", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "account_id",  :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "is_default",               :default => false
+    t.text     "escalations"
+    t.text     "conditions"
+    t.integer  "position"
+    t.boolean  "active",                   :default => true
+  end
+
+  add_index "sla_policies", ["account_id", "name"], :name => "index_helpdesk_sla_policies_on_account_id_and_name", :unique => true
+
   create_table "social_facebook_pages", :force => true do |t|
     t.integer  "profile_id",           :limit => 8
     t.string   "access_token"
@@ -1175,7 +1208,7 @@ ActiveRecord::Schema.define(:version => 20130307133109) do
     t.string   "thread_id"
   end
 
-  add_index "social_fb_posts", ["account_id", "postable_id", "postable_type"], :name => "index_social_fb_posts_account_id_postable_id_postable_type", :length => {"postable_id"=>nil, "account_id"=>nil, "postable_type"=>"15"}
+  add_index "social_fb_posts", ["account_id", "postable_id", "postable_type"], :name => "index_social_fb_posts_account_id_postable_id_postable_type", :length => {"account_id"=>nil, "postable_type"=>"15", "postable_id"=>nil}
 
   create_table "social_tweets", :force => true do |t|
     t.integer  "tweet_id",       :limit => 8
@@ -1188,7 +1221,7 @@ ActiveRecord::Schema.define(:version => 20130307133109) do
     t.integer  "twitter_handle_id", :limit => 8
   end
 
-  add_index "social_tweets", ["account_id", "tweetable_id", "tweetable_type"], :name => "index_social_tweets_account_id_tweetable_id_tweetable_type", :length => {"tweetable_type"=>"15", "account_id"=>nil, "tweetable_id"=>nil}
+  add_index "social_tweets", ["account_id", "tweetable_id", "tweetable_type"], :name => "index_social_tweets_account_id_tweetable_id_tweetable_type", :length => {"account_id"=>nil, "tweetable_id"=>nil, "tweetable_type"=>"15"}
 
   create_table "social_twitter_handles", :force => true do |t|
     t.integer  "twitter_user_id",           :limit => 8
@@ -1528,9 +1561,8 @@ ActiveRecord::Schema.define(:version => 20130307133109) do
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
-  add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"account_id"=>nil, "external_id"=>"20"}
+  add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"external_id"=>"20", "account_id"=>nil}
   add_index "users", ["account_id", "import_id"], :name => "index_users_on_account_id_and_import_id", :unique => true
-  add_index "users", ["customer_id", "account_id"], :name => "index_users_on_customer_id_and_account_id"
   add_index "users", ["id"], :name => "users_id"
   add_index "users", ["perishable_token", "account_id"], :name => "index_users_on_perishable_token_and_account_id"
   add_index "users", ["persistence_token", "account_id"], :name => "index_users_on_persistence_token_and_account_id"

@@ -138,18 +138,25 @@ class Solution::Article < ActiveRecord::Base
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) 
   end
 
+  # Added for portal customisation drop
+  def self.filter(_per_page = self.per_page, _page = 1)
+    paginate :per_page => _per_page, :page => _page
+  end
+  
+  def to_liquid
+    @solution_article_drop ||= Solution::ArticleDrop.new self
+  end
+  
   def article_title
     (seo_data[:meta_title].blank?) ? title : seo_data[:meta_title]
   end
 
   def article_description
-    (seo_data[:meta_description].blank?) ? "#{title}. #{folder.name}. #{folder.category.name}" : 
-                                            seo_data[:meta_description]
+    seo_data[:meta_description]
   end
 
   def article_keywords
     (seo_data[:meta_keywords].blank?) ? tags.join(", ") : seo_data[:meta_keywords]
   end
 
- 
 end

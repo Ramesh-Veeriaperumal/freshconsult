@@ -1,0 +1,121 @@
+
+/* Applying font size for mobile */
+@include at-breakpoint($media-mobile){
+  // Body reset
+  // ----------
+  body {  
+    font-size: $baseFontSizeForMobile;
+    line-height: $baseLineHeightForMobile;
+  }
+
+
+  // BODY TEXT
+  // ---------
+  p {
+    margin: 0 0 $baseLineHeightForMobile / 2;
+    small {
+      font-size: $baseFontSizeForMobile - 2;
+    }
+  }
+
+  .lead, .lead-small, .list-lead {
+    line-height: $baseLineHeightForMobile * 1.3;
+  }
+  .lead-small { font-size: 14px; }
+
+  /* List lead is used as title for titles inside the portal */
+  /*.list-lead { margin: $baseLineHeightForMobile / 3 0; }*/
+
+  h1 {
+    font-size: 26px;
+    line-height: $baseLineHeightForMobile * 2;
+    small {
+      font-size: 18px;
+    }
+  }
+  h2 {
+    font-size: 22px;
+    line-height: $baseLineHeightForMobile * 1.6;
+    small {
+      font-size: 16px;
+    }
+  }
+  h3 {
+    font-size: 18px;
+    line-height: $baseLineHeightForMobile * 1.4;
+    small {
+      font-size: 13px;
+    }
+  }
+  h4, h5, h6 {
+    line-height: $baseLineHeightForMobile;
+  }
+  h4 {
+    font-size: 13px;
+    small {
+      font-size: 11px;
+    }
+  }
+  h5 {
+    font-size: 11px;
+  }
+  h6 {
+    font-size: 10px; 
+  }
+
+  // Page header
+  .page-header {
+    padding-bottom: $baseLineHeightForMobile - 1;
+    margin: $baseLineHeightForMobile 0;
+  }
+
+
+  // LISTS
+  // -----
+
+  // Unordered and Ordered lists
+  ul, ol {
+    padding: 0;
+    margin: 0 0 $baseLineHeightForMobile / 2 15px;
+  }
+  li {
+    line-height: $baseLineHeightForMobile;
+  }
+  // Description Lists
+  dl {
+    margin-bottom: $baseLineHeightForMobile;
+  }
+  dt,
+  dd {
+    line-height: $baseLineHeightForMobile;
+  }
+  dt {
+    line-height: $baseLineHeightForMobile - 1; // fix jank Helvetica Neue font bug
+  }
+  dd {
+    margin-left: $baseLineHeightForMobile / 2;
+  }
+  // MISC
+  // ----
+
+  // Horizontal rules
+  hr {
+    margin: $baseLineHeightForMobile/1.3 0;
+  }
+  // Blockquotes
+  blockquote {
+    margin: 0 0 $baseLineHeightForMobile;
+    p {
+      @include font-shorthand(16px,300,$baseLineHeightForMobile * 1.25);
+    }
+    small {
+      line-height: $baseLineHeightForMobile;
+    }
+  }
+
+  // Addresses
+  address {
+    margin-bottom: $baseLineHeightForMobile;
+    line-height: $baseLineHeightForMobile;
+  }
+}

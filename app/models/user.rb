@@ -60,8 +60,6 @@ class User < ActiveRecord::Base
   before_create :set_time_zone , :set_company_name , :set_language
   before_save :set_contact_name, :check_email_value , :set_default_role
   after_update :drop_authorization , :if => :email_changed?
-  after_update :update_admin_in_crm , :if => :account_admin_updated?
-  after_update :update_admin_to_billing , :if => :account_admin_updated?
 
   after_commit_on_create :clear_agent_list_cache, :if => :agent?
   after_commit_on_update :clear_agent_list_cache, :if => :agent?
@@ -270,6 +268,14 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :customer, :google_contacts  # Added to save the customer while importing user from google contacts.
   
 
+  def first_name
+    name_part(:first)
+  end
+
+  def last_name
+    name_part(:last)
+  end
+
   #Savage_beast changes start here
   #implement in your user model 
   def display_name
@@ -357,7 +363,7 @@ class User < ActiveRecord::Base
   end
   
   def to_liquid
-    UserDrop.new self
+    @user_drop ||= UserDrop.new self
   end
   
   def has_manage_forums?
@@ -528,15 +534,22 @@ class User < ActiveRecord::Base
     return self.find_by_twitter_id(options[:twitter_id]) if options.key?(:twitter_id)
     return self.find_by_external_id(options[:external_id]) if options.key?(:external_id)
   end 
-  
-  private
 
-    def account_admin_updated?
-      user_role_changed? && account_admin?
+  private
+    def name_part(part)
+      parsed_name[part].blank? ? parsed_name[:clean] : parsed_name[part]
+    end
+
+    def parsed_name
+      @parsed_name ||= People::NameParser.new.parse(self.name)
     end
 
     def update_admin_in_crm
       Resque.enqueue(CRM::AddToCRM::UpdateAdmin, {:account_id => account_id, :item_id => id})
+    end
+    
+    def account_admin_updated?
+      user_role_changed? && account_admin?
     end
 
     def bakcup_user_changes
@@ -548,7 +561,4 @@ class User < ActiveRecord::Base
       @all_changes.has_key?(:user_role)
     end
     
-    def update_admin_to_billing
-      Resque.enqueue(Billing::AddToBilling::UpdateAdmin, self.id)
-    end
 end

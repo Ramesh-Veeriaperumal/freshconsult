@@ -55,7 +55,7 @@ module Liquid
     # Parse source code.
     # Returns self for easy chaining
     def parse(source)
-      @root = Document.new(tokenize(Liquid::Literal.from_shorthand(source)))
+      @root = Document.new(tokenize(source))
       self
     end
 
@@ -121,7 +121,8 @@ module Liquid
       begin
         # render the nodelist.
         # for performance reasons we get a array back here. join will make a string out of it
-        @root.render(context).join
+        result = @root.render(context)
+        result.respond_to?(:join) ? result.join : result
       ensure
         @errors = context.errors
       end

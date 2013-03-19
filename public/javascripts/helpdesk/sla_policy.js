@@ -169,6 +169,10 @@
 			if ($('.sla_policy_conditions_container .condition:visible').length != $('.sla_policy_conditions_container .condition').length)
 				$('.sla_policy_conditions_container .condition:visible:last').addClass('last-child');
 		}
+		var firstLastConditionBorderRadius = function() {
+			$('.sla_policy_conditions_container .condition.first-child').removeClass('first-child');
+			$('.sla_policy_conditions_container .condition:visible:first').addClass('first-child');
+		}
 
 		// Initialization on page load
 		generate_select($('#select_resolution_time_1'), true);
@@ -216,6 +220,7 @@
   	if($('div.condition:hidden').length) {
 			$('div.add_new_condition').slideDown('fast');
 			lastConditionBorder();
+			firstLastConditionBorderRadius();
   	}
   	
   	if(!$('div.condition:visible').length)
@@ -235,6 +240,7 @@
   		if(!$('.condition:hidden').length)
   			$('.add_new_condition').hide();
   		lastConditionBorder();
+  		firstLastConditionBorderRadius();
   		$(this).parent().hide();
   	});
   	$('.btn.dropdown-toggle').click(function(){
@@ -256,17 +262,23 @@
 			$('.add_new_condition').show();
 			$('.condition_list[data-cond=' + cond + ']').parent().show();
 			lastConditionBorder();
+			firstLastConditionBorderRadius();
 		});
 
 		// Reconstruct input field on form submit
 		$('form.sla_policy_form').validate({
 			onkeyup: false,
-      focusCleanup: true,
-      focusInvalid: false
+			focusCleanup: true,
+			focusInvalid: false,
+			submitHandler: function(form) {
+				validateAndReconstruct(form);
+			},
+			invalidHandler: function() {
+				$('.add_new_condition .dropdown-toggle').qtip('hide');
+			}
 		});
 
-		$('form.sla_policy_form').on('submit', function(ev) {
-
+		function validateAndReconstruct(form) {
 			var no_condition = true;
 			if(!is_default) {
 				$('[name*="helpdesk_sla_policy[conditions]"]').each(function() {
@@ -277,14 +289,13 @@
 			if(no_condition && !is_default) {
 				$('label[for=sla_policy_conditions]').addClass('error').show();
 				$('.add_new_condition .dropdown-toggle').qtip('hide');
-				return false;
 			}
 			else {
 				removeLevel();
 				reconstruct();	
+				form.submit();
 			}
-
-		})
+		}
 		removeLevel = function() {
 			$('tr.escalations:visible').each(function(){
 				if($.trim($(this).find('input.agents_id').val()) == "" && $(this).is(':visible')) {

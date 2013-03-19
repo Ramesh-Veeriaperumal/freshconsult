@@ -2,6 +2,7 @@ class ForumCategoriesController < ApplicationController
   include ModelControllerMethods
   include Helpdesk::ReorderUtility
   
+  before_filter :portal_check
   rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
 
   before_filter :except => [:index, :show] do |c| 
@@ -116,6 +117,13 @@ class ForumCategoriesController < ApplicationController
     def RecordNotFoundHandler
       flash[:notice] = I18n.t(:'flash.forum_category.page_not_found')
       redirect_to categories_path
+    end
+
+  private
+    def portal_check
+      if current_user.nil? || current_user.customer?
+        return redirect_to support_discussions_path
+      end
     end
     
 end

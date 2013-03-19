@@ -369,7 +369,7 @@ li.dashboard-quest-points {
 	font-weight: bold;
 	font-size: 14px;
 	padding:13px 10px;
-	line-height: 0;
+	line-height: .1em; /* Opera fix */
 	@include border-radius(2em);
 	@include box-shadow(rgba(0, 0, 0, 0.5) 0 1px 1px inset);
 	position: absolute;

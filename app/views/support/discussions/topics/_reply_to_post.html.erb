@@ -1,0 +1,34 @@
+<% if @topic.present? %>
+	<%= content_tag 'p', h(flash[:bad_reply]), :class => 'notice' if flash[:bad_reply] %>
+	<% form_for @topic.posts.new, :url => support_discussions_topic_posts_path(@topic), 
+		:html => { :multipart => true, :rel => "validate" } do |f| -%>		
+		<div class="row-fluid">
+			<p class="span12">
+				<%= f.rich_editor :body_html, "editor-type" => :forum, :class=>"required", :height => 150 %>
+			</p>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Attach files</label>	
+			<% attach_id = attach_id || "post" %>
+			<div class="controls">
+				<input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="post[attachments][][resource]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
+				<div class="attachments" id="<%=attach_id%>-container" style="display:none">
+				  <div id="<%=attach_id%>-attachments"></div>
+				</div>
+			</div>	
+						
+			<script id="file-list-template" type="text/x-jquery-tmpl">			
+			  <div class="item">
+			  	<span>
+			  		${name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="${inputId}">remove</a>
+				</span>
+			  </div>
+			</script>
+		</div>
+		<hr />
+		<div>
+			<%= submit_tag t('topic.add_comment'), :class => "btn btn-primary", :id => "post-submit-button"  %> 
+			<a href="#" data-hide-dom="#new-post-form" data-show-dom="#reply-form-proxy" class="btn"><%= t('cancel') %></a>
+		</div>
+	<% end -%>
+<% end %>
