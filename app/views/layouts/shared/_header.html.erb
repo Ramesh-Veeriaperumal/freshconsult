@@ -2,8 +2,8 @@
   <div class="wrapper">
   <div class="brand">
     <% link_to (portal_pref(current_portal, :logo_link).empty?) ? "/home" : portal_pref(current_portal, :logo_link), :class => "logo" do %>
-    	<% cache(["v2","portal","logo",current_portal]) do %>
-      	<%= image_tag (current_portal.logo.nil? ? "/images/logo.png?721013" : current_portal.logo.content.url(:logo)) %>
+    	<% cache(["v1","portal","logo",current_portal]) do %>
+      	<%= image_tag (current_portal.logo.nil? ? "/images/logo.png?722013" : current_portal.logo.content.url(:logo)) %>
       <% end %>
     <% end %>      
     <%= link_to(current_portal.name, "/home", :class => "logo_text") %>
