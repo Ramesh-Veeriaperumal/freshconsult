@@ -2,9 +2,9 @@
 @import "reset";
 
 // This import applies a global reset to any page that imports this stylesheet.
-body {	font:12px $blueprint-font-family; background-color: transparent; }
+body {	font:13px $blueprint-font-family; background-color: transparent; }
  
-code, pre {
+code {
   padding: 0 3px 2px;
   font-family: Menlo, Monaco, "Courier New", monospace;
   font-size: 12px;
@@ -19,7 +19,7 @@ code, pre {
 }
 
 a{ 
-  @include link-colors(#336699, #00438a);
+  @include link-colors(#0066cc, #1272de);
   text-decoration: none;
   font-weight: inherit;
 }
@@ -41,13 +41,17 @@ a:hover{ text-decoration:none;}
 /*.title a{ @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F); text-decoration:none; }*/
 h1.title{ font-size:2em; text-transform:capitalize; font-weight:normal; }
 h2.title{ font-size:1.6em; }
-h3.title, h3.sub_title, h3.title-band{ font-size:20px; }
-h4.title { font-size:1.30em; }
+
+h3.title, h3.sub_title, h3.title-band{ font-size:16px; line-height: 24px; }
+h4.title { font-size:1.30em; line-height: 22px; }
+
 h4.title.margin-set { margin-bottom:8px }
 
 h3.title-band{ margin:12px -20px; background-color:#f2f2f2; padding:8px 20px; }
-h3.sub_title{ font-size:1.1em; }
+h3.sub_title{ font-size:1.1em; }  
+h6{ font-size:13px; text-transform:uppercase; line-height:24px; font-weight:bold; }
 
+.sub-title{ font-size:18px; }
 .floatl{ @include float-left; }
 .floatr{ @include float-right; }
 .alignright{text-align:right;}
@@ -58,6 +62,10 @@ h3.sub_title{ font-size:1.1em; }
 	line-height:18px;
 	padding-bottom:6px;
 } 
+
+.light{
+  font-weight: 300;
+}
 
 .borderbottom{
 	border-bottom:1px dotted #EFEFEF;
@@ -124,7 +132,7 @@ label.error{
   position:relative;
 }
 .alert, .alert-heading {
-  color: #c09853;
+  color: #82683c;
 }
 .alert .close-text {
   position: absolute;
@@ -168,6 +176,16 @@ label.error{
   margin-top: 5px;
 }
 
+.alert-solid{
+  @include border-radius(0);
+}
+
+.alert-assume-agent{
+  font-size: 13px;
+  margin: 0;
+  text-align: center;
+}
+
 .underline{
 	text-decoration:underline;
 }
@@ -179,3 +197,5 @@ label.error{
 .negtiveMargin{
   margin:0 0px -16px;
 }
+
+

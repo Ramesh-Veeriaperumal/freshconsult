@@ -1,0 +1,64 @@
+<%= javascript_include_tag 'app/merge.js' %>
+<%= javascript_include_tag 'app/merge_tickets.js' %>
+<script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
+<div id = "ticket-merge">
+  <span class="merge-sub-title" 
+    data-default-text="<%= t('ticket.ticket_selected') %>"
+    data-pluralized-text="<%= t('ticket.tickets_selected') %>" >
+    <%= pluralize(@source_tickets.length, t('ticket.ticket_selected'), t('ticket.tickets_selected')) %>
+  </span>
+  <div id="mergeboxconfirm"></div>
+  <div id="mergebox" class="row-fluid">
+    <div id="merge-content" class="span6">
+      <div class="content-show merge_entity">
+        <% @source_tickets.each do |ticket| %>
+          <div class="merge-cont">
+            <div class="primary-marker tooltip" title='<%= t(".mark_primary")%>'>
+              <span id="marker"></span>
+            </div>
+              <div id="contact-area">
+    		        <span id="resp-icon" title="<%= t('.remove') %>"></span>
+    		       		<div id="merge-ticket" class="merge_element" data-id=<%= h(ticket.display_id) %>>
+                    <%= link_to("##{ticket.display_id} #{ticket.subject}", ticket, :title => h(ticket.subject), 
+                    :class =>"item_info", :target=>"_blank" ) %>
+    			          <div class="info-data hideForList">
+    			          	<span class="merge-ticket-info">
+    			          		<%= t("ticket.merge_ticket_list_status_"+ticket.ticket_states.current_state, 
+              					:username => "<span class='muted requester_name'>#{h(ticket.requester.display_name)}</span>",
+                        :time_ago => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state))) %>
+          						</span>
+    			          </div>
+    			        </div>
+    			    </div>
+    		  </div>
+        <% end %>
+      </div>
+    </div>
+    <div class="search-content">
+      <%= select_tag "search-type", "<option value='display_id'>Id</option><option value='subject'>Subject</option><option selected='selected' value='requester'>Requester</option>".html_safe %>
+      <% search_text = [
+        ['display_id', 'select-id', t("ticket.id_placeholder"), 'hide' ],
+        ['requester', 'select-requester', t("ticket.requester_placeholder")],
+        ['subject', 'select-subject', t("ticket.subject_placeholder"), 'hide']] %>
+      <% search_text.map{ |t|  %>
+        <div class="searchticket <%= t[0] %> <%= t[3] %>">
+          <input type="text" id='<%= t[1] %>'  name='<%= t[1] %>' class="search_merge"  
+                                                placeholder='<%=t[2]%>' /><span class="searchicon"></span>
+        </div>
+      <% } %>
+      <div id="display_id_results" class="merge_results hide"></div>
+      <div id="requester_results" class="merge_results hide"></div>
+      <div id="subject_results" class="merge_results hide"></div>
+    </div>
+
+      <% form_remote_tag (:url =>{ :controller => "merge_tickets", :action=>"merge" },:html => {:id=>"bulk_merge_tickets"}) do -%>  
+      <div class="divide"></div>
+      <input type="hidden" name="target[ticket_id]" id="target_ticket" />
+        <div class="button-container" id="bulk-merge-button-container">
+          <a class="btn" id="cancel_new_merge"><%= t('cancel') %></a>
+          <%= submit_tag "Continue",:class => "btn btn-primary",:id => "bulk_merge",:onclick => "bulk_merge_submit()", :disabled => "disabled", "data-loading-text" => t('please_wait') %>
+          <%- end %>
+        </div>
+      <div id="invaliduser" class="info-highlight" style="display:none;"></div>
+  </div>   
+</div>

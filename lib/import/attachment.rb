@@ -2,11 +2,11 @@
 
 class Import::Attachment
   attr_accessor :id , :attach_url , :model, :account
-  def initialize(id ,attach_url , model, account_id)
+  def initialize(id ,attach_url , model)
     self.id = id
     self.attach_url = attach_url
     self.model = model
-    self.account = Account.find(account_id)
+    self.account = Account.current
   end
   
   def perform
@@ -26,7 +26,7 @@ class Import::Attachment
         file = RemoteFile.new(attach_url)
         attachment = @item.attachments.build(:content => file , :description => "", :account_id => @item.account_id)
         attachment.save!
-      rescue
+      rescue => e
         puts "Attachmnet exceed the limit!"
         NewRelic::Agent.notice_error(e)
       ensure

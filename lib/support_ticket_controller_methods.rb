@@ -3,34 +3,29 @@ module SupportTicketControllerMethods
   include Helpdesk::TicketActions
   
   def show
-    @ticket = Helpdesk::Ticket.find_by_param(params[:id], current_account)    
+    @ticket = current_account.tickets.find_by_param(params[:id], current_account)    
     unless can_access_support_ticket?
       access_denied
     else
       respond_to do |format|
         format.html
-        format.mobile {
-          render :json => @ticket.to_mob_json(true)
-        }        
       end
     end
   end
 
-  def new
-    @ticket = Helpdesk::Ticket.new 
-    @ticket.email = current_user.email if current_user
+  def new    
+    set_portal_page :submit_ticket
   end
   
   def create
     puts "Create method in support controller methods"
     if create_the_ticket(feature?(:captcha))
       flash[:notice] = I18n.t(:'flash.portal.tickets.create.success')
-      redirect_to redirect_url unless mobile?
-      render :json => { :item => @ticket, :success => true }.to_json if mobile?
+      redirect_to redirect_url
     else
       logger.debug "Ticket Errors is #{@ticket.errors}"
-      render :action => :new unless mobile?
-      render :json => { :errors => @response_errors, :failure => true }.to_json if mobile?
+      set_portal_page :submit_ticket
+      render :action => :new
     end
   end
   
@@ -40,7 +35,7 @@ module SupportTicketControllerMethods
   end
   
   def show_survey_form
-      render :partial => "/support/shared/survey_form" if customer_survey_required?
+    render :partial => "/support/shared/survey_form" if customer_survey_required?
   end
 
   def customer_survey_required?
@@ -49,10 +44,10 @@ module SupportTicketControllerMethods
 
   def check_email
     items = check_email_scoper.find(
-            :all, 
-            :conditions => ["email = ?", "#{params[:v]}"])
+              :all, 
+              :conditions => ["email = ?", "#{params[:v]}"])
     respond_to do |format|
-      format.json { render :json => { :user_exists => items.blank? }  }
+      format.json { render :json => { :user_exists => items.present? }  }
     end
   end  
 

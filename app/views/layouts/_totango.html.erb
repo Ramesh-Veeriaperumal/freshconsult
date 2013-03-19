@@ -1,0 +1,30 @@
+<% if current_user %>
+  <script type="text/javascript">
+    var totango_options = {
+      service_id: "<%= TotangoServiceId %>",
+      username: "<%= current_user.email %>",
+      account: 
+      {
+      id: "<%= current_account.id %>",
+      name: "<%= current_account.full_domain %>"
+      }
+    };
+
+    window.totango = {
+        go: function(){return -1}, 
+        track: function(){}, 
+        identify: function(){}, 
+        setAccountAttributes: function(){}
+    };
+
+    (function() {
+        var e = document.createElement('script'); 
+        e.type = 'text/javascript'; 
+        e.async = true;
+        e.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 
+                                                          's3.amazonaws.com/totango-cdn/totango2.js';
+        var s = document.getElementsByTagName('script')[0]; 
+        s.parentNode.insertBefore(e, s);
+    })();
+  </script>
+<% end %>

@@ -1,3 +1,5 @@
 <% @page_title = t(".title") %>
+<%= check_fb_reauth_required  %>
+<%= check_twitter_reauth_required %>
 <% content_for :layoutType do -%>single<%- end %>
 <%= admin_pref_links %>

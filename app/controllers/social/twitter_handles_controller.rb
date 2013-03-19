@@ -67,13 +67,24 @@ class Social::TwitterHandlesController < ApplicationController
   def add_to_db
     returned_value = sandbox(0) {      
       twitter_handle = @wrapper.auth( session[:request_token], session[:request_secret], params[:oauth_verifier] )
-      if twitter_handle.save
+      handle = all_twitters.find_by_twitter_user_id(twitter_handle[:twitter_user_id])
+      unless handle.nil?
+        handle.attributes = { :access_token => twitter_handle.access_token, 
+                              :access_secret => twitter_handle.access_secret,
+                              :last_dm_id => nil, :last_mention_id => nil,
+                              :state => Social::TwitterHandle::TWITTER_STATE_KEYS_BY_TOKEN[:active], 
+                              :last_error => nil }
+        handle.save                                 
+        redirect_to edit_social_twitter_url(handle)
+      else
+        twitter_handle.save
+        Resque::enqueue(CRM::Totango::SendUserAction, 
+                                        {:account_id => current_account.id, 
+                                         :email =>  current_user.email, 
+                                        :activity => totango_activity(:twitter) })
         portal_name = twitter_handle.product ? twitter_handle.product.name : current_account.portal_name
         flash[:notice] = t('twitter.success_signin', :twitter_screen_name => twitter_handle.screen_name, :helpdesk => portal_name)        
         redirect_to edit_social_twitter_url(twitter_handle)
-      else
-        flash[:notice] = t('twitter.user_exists')
-        redirect_to social_twitters_url
       end
    }
    if returned_value == 0

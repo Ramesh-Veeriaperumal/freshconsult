@@ -26,6 +26,12 @@ GIT
     lhm (1.2.0)
 
 GIT
+  remote: git://github.com/freshdesk/rinku.git
+  revision: 67f54898fe7270f96900a3fa9a4dd50b6b351f25
+  specs:
+    rinku (1.7.2)
+
+GIT
   remote: git://github.com/freshdesk/ruby-yui-compressor.git
   revision: 8e1d110528c986cb5cd13487bded7a7449bdcd2e
   specs:
@@ -73,16 +79,16 @@ GEM
     Platform (0.4.0)
     RedCloth (4.2.3)
     SystemTimer (1.2.3)
-    actionmailer (2.3.8)
-      actionpack (= 2.3.8)
-    actionpack (2.3.8)
-      activesupport (= 2.3.8)
+    actionmailer (2.3.18)
+      actionpack (= 2.3.18)
+    actionpack (2.3.18)
+      activesupport (= 2.3.18)
       rack (~> 1.1.0)
-    activerecord (2.3.8)
-      activesupport (= 2.3.8)
-    activeresource (2.3.8)
-      activesupport (= 2.3.8)
-    activesupport (2.3.8)
+    activerecord (2.3.18)
+      activesupport (= 2.3.18)
+    activeresource (2.3.18)
+      activesupport (= 2.3.18)
+    activesupport (2.3.18)
     addressable (2.2.7)
     akami (1.2.0)
       gyoku (>= 0.4.0)
@@ -144,7 +150,7 @@ GEM
       rdoc
     jira4r (0.3.0)
       soap4r
-    json (1.5.3)
+    json (1.5.5)
     json_pure (1.7.5)
     koala (1.0.0)
       json (~> 1.0)
@@ -196,9 +202,10 @@ GEM
       multi_json
       omniauth (~> 1.0.0)
       omniauth-oauth
-    omniauth-mailchimp (1.0.3)
+    omniauth-google-oauth2 (0.1.13)
       omniauth (~> 1.0)
       omniauth-oauth2
+    omniauth-mailchimp (1.0.3)
     omniauth-oauth (1.0.1)
       oauth
       omniauth (~> 1.0)
@@ -212,16 +219,17 @@ GEM
       omniauth (~> 1.0)
       omniauth-oauth2 (~> 1.0)
     open4 (1.3.0)
+    people (0.2.1)
     rack (1.1.6)
     rack-openid (1.3.1)
       rack (>= 1.1.0)
       ruby-openid (>= 2.1.8)
-    rails (2.3.8)
-      actionmailer (= 2.3.8)
-      actionpack (= 2.3.8)
-      activerecord (= 2.3.8)
-      activeresource (= 2.3.8)
-      activesupport (= 2.3.8)
+    rails (2.3.18)
+      actionmailer (= 2.3.18)
+      actionpack (= 2.3.18)
+      activerecord (= 2.3.18)
+      activeresource (= 2.3.18)
+      activesupport (= 2.3.18)
       rake (>= 0.8.3)
     rake (0.8.7)
     rdoc (3.12)
@@ -350,6 +358,7 @@ DEPENDENCIES
   insensitive_hash (= 0.2.3)
   jammit (= 0.6.5)
   jira4r (= 0.3.0)
+  json (~> 1.5.5)
   koala (~> 1.0.0)
   lhm!
   lockfile (= 1.4.3)
@@ -365,13 +374,15 @@ DEPENDENCIES
   omniauth-constantcontact2 (~> 1.0.4)
   omniauth-facebook
   omniauth-google
+  omniauth-google-oauth2
   omniauth-mailchimp (~> 1.0.3)
   omniauth-oauth
   omniauth-oauth2 (= 1.0)
   omniauth-openid
   omniauth-salesforce
+  people (= 0.2.1)
   rack (~> 1.1.6)
-  rails (= 2.3.8)
+  rails (= 2.3.18)
   rake (= 0.8.7)
   redis (= 2.2.2)
   resque (= 1.22.0)
@@ -380,6 +391,7 @@ DEPENDENCIES
   resque-status (= 0.3.0)
   resque_mailer (= 1.0.1)
   rforce
+  rinku!
   ruby-debug (= 0.10.3)
   ruby-openid (= 2.1.8)
   ruby-openid-apps-discovery (= 1.2.0)

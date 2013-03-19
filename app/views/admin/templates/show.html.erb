@@ -1,0 +1,245 @@
+<%= include_stylesheets :codemirror %>
+<%= include_javascripts :codemirror %>
+<%= include_javascripts :portaltemplate %>
+<%= include_stylesheets :pattern %>
+<%= include_javascripts :pattern %>
+<% content_for :sidebar do %><% end %> 
+<%= render :partial => "shared/colorpicker" %>
+<h3 class="lead">
+  <%=t("portalcss.title", :portal => @portal.main_portal? ? current_account.name : @portal.product.name)%>
+</h3>
+<div>
+  <ul data-tabs="tabs" class="tabs" id="portal-tabs">
+    <li class="active">      
+      <a href="#preferences" data-toggle="tab" id="preferences-tab"><%=t("portalcss.color_and_font_header")%></a>
+    </li>
+    <%if feature?(:css_customization)%>
+    <li>
+      <a id="custom_css-tab" href="#custom_css" data-code-refresh="#portal_template_custom_css"><%=t("portalcss.css_header")%></a>
+    </li>
+    <%end%>
+    <%if feature?(:layout_customization)%>
+    <li>
+      <a id="layout-tab" href="#layout" data-toggle="tab" data-code-refresh="#portal_template_header, #portal_template_footer, #portal_template_layout"><%=t("portalcss.layout_and_pages_header")%></a>
+    </li>
+    <%end%>
+  </ul>        
+  
+    <div class="tab-content">
+      <div class="tab-pane active" id="preferences">
+        <%= render :partial => "/admin/shared/portal_simple", :object => @portal_template %>
+      </div>
+      <%if feature?(:css_customization)%>
+      	<div class="tab-pane" id="custom_css">		
+          <%= render :partial => "custom_css" %>
+      	</div>
+      <%end%>
+      <%if feature?(:layout_customization)%>
+        <div class="tab-pane" id="layout">
+          <ul data-tabs="tabs" class="pills">
+            <li class="active">
+              <a id="template-tab" href="#layout/#template" code-refresh-id="portal_template_layout">
+                <%=t("portalcss.layout_pages.subheader_layout")%>
+              </a>
+            </li>
+            <li>
+              <a id="pages-tab" href="#layout/#pages"><%=t("portalcss.layout_pages.subheader_pages")%></a> 
+            </li>
+          </ul>
+
+          <div class="tab-content">
+            <div class="tab-pane active" id="template">
+              <%= render :partial => "layout" %>
+            </div>
+            <div class="tab-pane" id="pages">
+              <div>
+                <h2 class="title light"><%=t("portalcss.layout_pages.subheader_pages")%></h2>
+                <p class="help-text">
+                  <%=t("portalcss.layout_pages.pages_help_message")%>
+                </p>
+              </div>
+              <br />
+              <div class="row-fluid">
+                <div class="span2">
+                  <%= render :partial => "portal_pages"%>
+                </div>
+                <div class="span10 omega">
+                  <div id="Customizepage"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <%end%>
+</div> 
+
+<% content_for :pagefixed do %>
+  <div id="reset-dialog" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3 id="reset-dialog-header" class="heading title">Reset portal changes</h3>
+    </div>
+    <div class="modal-body reset-modal">
+      <br />
+      <div>
+        <%= link_to t("portalcss.reset_to_last_published"), "", :method => :put, :id => "soft-reset-proxy", :class=>"btn" %>
+        <p class="info-data">
+          This will reset edits for "<b id='reset-tab-type'></b>" to last published version <br />
+          Portal was published <%= @portal_template.updated_at %>
+        </p>
+      </div>
+      <br />
+      <div>
+        <%= link_to t("portalcss.reset_all_changes"), restore_default_admin_portal_template_path, 
+          :confirm => t("portalcss.reset_all_confirm_message"), :class => "btn btn-danger" %>
+        <p class="text_red">
+          <b>Warning:</b> This will reset ALL portal customizations to default.
+        </p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :onload_script do %>
+  jQuery("[rel=portal_form]").live("change", function(ev){
+    jQuery(this).data('formChanged', true)
+  })
+
+  jQuery("#custom_css-tab, #layout-tab").bind("click", function(evnt){
+    var target = evnt.target;
+    setTimeout(function(){
+      jQuery(jQuery(target).data("codeRefresh")).codemirror("refresh")
+    }, 100)    
+  });
+
+  jQuery("form[rel=portal_form]").livequery(function(ev){
+      jQuery(this).validate({
+        submitHandler: function(form, btn) {
+          // Setting the submit button to a loading state
+          var $btn = jQuery(btn)
+              $form = form
+
+          if(btn.name != "preview_button"){
+
+            // Disabling all buttons in the form
+            jQuery(form).find(".form-buttons .btn").attr("disabled", true)
+            jQuery("#cm-fs-actions .btn").attr("disabled", true)
+
+            $btn.button("loading")
+
+            jQuery($btn.data("codeRefresh")).codemirror('save');
+
+            if(window['codemirror-fullscreen'] !== undefined)
+              setPostParam(form, "cmfullscreen", window['codemirror-fullscreen'])
+
+            jQuery(form).ajaxSubmit({
+              success: function(response, status){
+                // Resetting the submit buttons to its default state
+                jQuery($form).find(".form-buttons .btn").button("reset")
+                jQuery("#cm-fs-actions .btn").button("reset")
+
+                $btn.parent().find("#soft_reset_button").data("resetDisabled", false)
+                jQuery('#cm-fs-actions #soft_reset_button').attr("resetDisabled", false)
+              },
+              dataType: "script"
+            })
+          }else{
+            form.submit()
+          }
+          return false;
+        }
+      })
+    })
+
+    jQuery("#portal-tabs a").live("click", function(ev){
+      jQuery("[rel=helpcard]").hide()
+      jQuery("#" + this.id + "-helpcard").show()
+    })
+
+    jQuery("[rel=reset-btn]").live("click", function(ev){
+      var btn_disabled = (jQuery(this).data("resetDisabled") == 'true')
+      jQuery("#soft-reset-proxy")
+        .attr({ "href": jQuery(this).data("resetUrl"), 
+                "disabled": btn_disabled } )
+        .toggleClass("disabled", btn_disabled)
+
+      jQuery("#reset-tab-type").html(jQuery(this).data("resetTab"))
+    })
+
+  jQuery("#pages-tab").live("click", function(ev){
+    if(jQuery("#Customizepage").html() == "")
+      jQuery("#PortalPages a").first().trigger("click");
+  });
+
+  
+  jQuery("#PortalPages a.page-btn").live("click", function(ev){
+    jQuery("#PortalPages").find(".active").removeClass("active")
+    jQuery(this).parent().addClass("active")
+  })
+
+  if(window.Mousetrap){
+    Mousetrap.bind(['command+s', 'ctrl+s'],function(e){
+      jQuery('input[name="save_button"]:visible')[0].click();
+      return false;
+    });
+
+    Mousetrap.bind(['command+shift+p', 'ctrl+shift+p'],function(e){
+      jQuery('input[name="preview_button"]:visible')[0].click();
+      return false;
+    });
+  }
+<% end %>
+
+<% content_for :sidebar do %>
+  <div class="sidepanel">
+    <h3 class="title">Shortcut for editor</h3>
+    <p>
+      <b>Shift+cmd+s</b>  <br />
+      Save current changes<br />
+
+      <b>Shift+cmd+p</b> <br /> 
+      Preview current changes<br />
+      
+      <b>Shift+cmd+f</b> <br />
+      Show current working editor in fullscreen mode<br />
+      
+      <b>Esc</b> <br />
+      Exit fullscreen<br />
+    </p> 
+    
+    <div id="preferences-tab-helpcard" rel="helpcard">
+      <h3 class="title">Advanced rebranding & customization</h3>
+      <p>
+        Apart from the basic coloring changes you have made to your portal, you can also customize the look and feel of select aspects of the page to further match your brand. 
+
+        You can stylize, color and set the font of almost every element in your support portal, put up your logo and customize your favicon. Just select the color from the color wheel corresponding to an element, or directly type in the hexadecimal color code into the text box.
+
+        Remember to preview your changes before publishing them live. 
+      </p>
+    </div>
+
+    <div id="custom_css-tab-helpcard" class="hide" rel="helpcard">
+      <h3 class="title">Using Custom Stylesheets</h3>
+      <p>
+        You can use your own CSS to override existing styles in your customer portal. For example, you can provide your own style definitions for the header tabs, paragraphs and body of your portal. 
+
+        Enter your CSS in the text area to apply your custom styles to your support portal. If your CSS has any breaks or issues, the styled element may fallback to the corresponding default styles, so remember to preview your changes before publishing them to your portal.
+      </p>
+    </div>
+
+    <div id="layout-tab-helpcard" class="hide" rel="helpcard">
+      <h3 class="title">Page level customizations</h3>
+      <p>
+        You can customize the layout of each page in your Freshdesk portal. You will need to design your layout using the Freshdesk Portal Placeholders and the Liquid templating framework. 
+
+        The layout of the support portal is made up of (a) the Header, (b) the Footer and (c) the page layout. You can use your own HTML and add, remove or completely modify the content across each page in your portal, and add your own JavaScript interactions. Remember to preview your theme before publishing it for your customers.
+
+        Check out the <b>FreshThemes Guide</b> to learn more about developing your own support portal theme. 
+      </p>
+    </div>
+
+  </div>
+<% end %>

@@ -56,4 +56,8 @@ class Admin::SupervisorRulesController < Admin::VaRulesController
         {}
       end
     end
+
+    def business_hours_filter(filter_hash)
+      []
+    end
 end

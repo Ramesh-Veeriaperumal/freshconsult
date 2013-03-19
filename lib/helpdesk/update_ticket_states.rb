@@ -1,8 +1,11 @@
 module Helpdesk
-	class UpdateTicketStates < Resque::FreshdeskBase
-		extend Va::ObserverUtil
-		@queue = "update_ticket_states_queue"
 
+	class UpdateTicketStates
+		extend Va::ObserverUtil
+		extend Resque::AroundPerform
+
+		@queue = "update_ticket_states_queue"
+       
 		def self.perform(args)
 			args.symbolize_keys!
 			note = Helpdesk::Note.find args[:id]

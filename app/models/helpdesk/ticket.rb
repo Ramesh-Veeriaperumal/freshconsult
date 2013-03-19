@@ -16,15 +16,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include RedisKeys
   include Va::ObserverUtil
 
-  SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification", 
-                            "header_info", "st_survey_rating", "trashed", "access_token"]
+  SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
+                            "header_info", "st_survey_rating", "trashed", "access_token", 
+                            "escalation_level", "sla_policy_id", "sla_policy"]
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
   OBSERVER_ATTR = []
 
   set_table_name "helpdesk_tickets"
   
   serialize :cc_email
-  
+
   has_flexiblefields
   
   unhtml_it :description
@@ -34,7 +35,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   before_validation :populate_requester, :set_default_values
   
-  before_create :assign_flexifield, :assign_schema_less_attributes, :assign_email_config_and_product, :set_dueby, :save_ticket_states
+  before_create :assign_flexifield, :assign_schema_less_attributes, :assign_email_config_and_product, :save_ticket_states
 
   has_many_attachments
 
@@ -42,13 +43,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   after_create :refresh_display_id, :create_meta_note
 
-  before_update :assign_email_config, :load_ticket_status, :update_dueby
+  before_update :assign_email_config, :load_ticket_status
+
+  before_update :update_message_id, :if => :deleted_changed?
 
   before_validation_on_create :set_token
 
-  
-  before_save :update_ticket_changes
-  
+  before_save :update_ticket_changes, :set_sla_policy, :update_dueby
+
   after_commit_on_create :create_initial_activity,  :update_content_ids, :pass_thro_biz_rules,
     :support_score_on_create, :process_quests
     
@@ -135,7 +137,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState',:dependent => :destroy
   delegate :closed_at, :resolved_at, :to => :ticket_states, :allow_nil => true
-  
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
   delegate :active?, :open?, :is_closed, :closed?, :resolved?, :pending?, :onhold?, :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
   
@@ -146,7 +147,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_many :survey_results, :as => :surveyable, :dependent => :destroy
   has_many :support_scores, :as => :scorable, :dependent => :destroy
   
-  has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet', :dependent => :destroy, :order => "executed_at"
+
+  has_many :time_sheets, 
+    :class_name => 'Helpdesk::TimeSheet',
+    :as => 'workable',
+    :dependent => :destroy,
+    :order => "executed_at"
+  
 
   attr_protected :attachments #by Shan - need to check..
   
@@ -220,13 +227,29 @@ class Helpdesk::Ticket < ActiveRecord::Base
   named_scope :spam_created_in, lambda { |user| { :conditions => [ 
     "helpdesk_tickets.created_at > ? and helpdesk_tickets.spam = true and requester_id = ?", user.deleted_at, user.id ] } }
 
+  named_scope :with_display_id, lambda { |search_string| {  
+    :include => [ :requester ],
+    :conditions => ["helpdesk_tickets.display_id like ? and helpdesk_tickets.deleted is false","#{search_string}%" ],
+    :order => 'helpdesk_tickets.display_id',
+    :limit => 1000
+    } 
+  }
+
+  named_scope :with_requester, lambda { |search_string| {  
+    :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id and users.account_id = helpdesk_tickets.account_id and users.deleted = false",
+    :conditions => ["users.name like ? and helpdesk_tickets.deleted is false","%#{search_string}%" ],
+    :select => "helpdesk_tickets.*, users.name as requester_name",
+    :order => "helpdesk_tickets.status, helpdesk_tickets.created_at DESC",
+    :limit => 1000
+    } 
+  }
+  
   def self.agent_permission user
-    
     permissions = {:all_tickets => [] , 
                    :group_tickets => ["group_id in (?) OR responder_id=?", user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id] , 
                    :assigned_tickets =>["responder_id=?", user.id] }
                   
-     return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
+    return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
   end
   
   def agent_permission_condition user
@@ -267,6 +290,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :subject      => 10
      }
   end
+
+  sphinx_scope(:with_subject) { |search_string| { 
+    :include => [:requester],
+    :conditions => { :subject => "%#{search_string}%" }, 
+    :with => { :deleted => false }, 
+    :star => true,
+    :order => :status,
+    :limit => 1000
+    } 
+  }
   #Sphinx configuration ends here..
 
 
@@ -316,10 +349,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #:allow_nil => false, :allow_blank => false
 
   validate_on_create do |ticket|
-    ticket.spam = true if ticket.requester.deleted?
-    if ticket.requester.blocked?
+    req = ticket.requester
+    if req
+      ticket.spam = true if req.deleted?
+      if req.blocked?
         Rails.logger.debug "User blocked! No more tickets allowed for this user" 
         ticket.errors.add_to_base("User blocked! No more tickets allowed for this user")
+      end
     end
   end
 
@@ -329,6 +365,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.ticket_type ||= account.ticket_types_from_cache.first.value
     self.subject ||= ''
     self.group_id ||= email_config.group_id unless email_config.nil?
+    self.priority ||= PRIORITY_KEYS_BY_TOKEN[:low]
     #self.description = subject if description.blank?
   end
   
@@ -358,9 +395,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Helpdesk::TicketStatus.translate_status_name(ticket_status, "customer_display_name")
   end
 
-  def source_name
-    SOURCE_NAMES_BY_KEY(source)
-  end
 
    def is_twitter?
     (tweet) and (!account.twitter_handles.blank?) 
@@ -387,7 +421,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def priority_name
-    PRIORITY_NAMES_BY_KEY[priority]
+    TicketConstants.translate_priority_name(priority)
   end
   
   def priority_key
@@ -421,7 +455,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def source_name
-    SOURCE_NAMES_BY_KEY[source]
+    TicketConstants.translate_source_name(source)
   end
 
   def nickname
@@ -464,27 +498,57 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
-  #shihab-- date format may need to handle later. methode will set both due_by and first_resp
-  def update_dueby
-    set_dueby if priority_changed?
-    set_dueby(true) if status_changed?
-  end
-  
-  def set_dueby(start_sla_timer=nil)
-    set_account_time_zone   
-    self.priority = PRIORITY_KEYS_BY_TOKEN[:low] if priority.nil?
-    
-    sla_policy_id = requester.customer.sla_policy_id unless requester.customer.nil?
-    sla_policy_id = Helpdesk::SlaPolicy.find_by_account_id_and_is_default(account_id, true) if sla_policy_id.nil?     
-    sla_detail = Helpdesk::SlaDetail.find(:first, :conditions =>{:sla_policy_id =>sla_policy_id, :priority =>self.priority})
-    
-    set_dueby_on_priority_change(sla_detail) if start_sla_timer.nil?
-    set_dueby_on_status_change(sla_detail) unless start_sla_timer.nil? 
-    
-    set_user_time_zone if User.current
-    logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} "   
+  #SLA Related changes..
+
+  def set_sla_policy
+    return if !(changed_condition? || self.sla_policy.nil?)
+
+    new_match = nil
+    account.sla_policies.rule_based.active.each do |sp|
+      if sp.matches? self
+        new_match = sp
+        break
+      end
+    end
+
+    self.sla_policy = (new_match || account.sla_policies.default.first)
   end
 
+  def changed_condition?
+    group_id_changed? || source_changed? || has_product_changed?
+  end
+
+  def has_product_changed?
+    self.schema_less_ticket.changes.key?('product_id') 
+  end
+
+  #shihab-- date format may need to handle later. methode will set both due_by and first_resp
+  def update_dueby
+
+    if self.new_record?
+      set_account_time_zone   
+      sla_detail = self.sla_policy.sla_details.find(:first, :conditions => {:priority => priority})
+      set_dueby_on_priority_change(sla_detail)
+
+      set_user_time_zone if User.current
+      logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
+      
+    elsif priority_changed? || changed_condition? || status_changed?
+
+      set_account_time_zone   
+      sla_detail = self.sla_policy.sla_details.find(:first, :conditions => {:priority => priority})
+
+      set_dueby_on_priority_change(sla_detail) if (priority_changed? || changed_condition?)
+      set_dueby_on_status_change(sla_detail) if status_changed?
+      set_user_time_zone if User.current
+      logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
+      
+    end
+
+  end
+
+  #end of SLA
+  
   def set_account_time_zone  
     self.account.make_current
     Time.zone = self.account.time_zone    
@@ -627,7 +691,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     
     if @model_changes.key?(:status)
-      if (status == OPEN)
+      if reopened_now?
         ticket_states.opened_at=Time.zone.now
         ticket_states.reset_tkt_states
       end
@@ -718,6 +782,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def company_name
     requester.customer.name if (requester && requester.customer)
   end
+  
+  def company_id
+    requester.customer_id if requester
+  end
   #virtual agent things end here..
   
   def pass_thro_biz_rules
@@ -755,9 +823,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #To use liquid template...
   #Might be darn expensive db queries, need to revisit - shan.
   def to_liquid
-
-    Helpdesk::TicketDrop.new self
-    
+    @helpdek_ticket_drop ||= Helpdesk::TicketDrop.new self    
   end
 
   def url_protocol
@@ -911,6 +977,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
   
+  def support_path
+    support_tickets_path(:host => portal_url)
+  end
    
    def group_name
       group.nil? ? "No Group" : group.name
@@ -928,9 +997,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       requester.customer.nil? ? "No company" : requester.customer.name
     end
     
-    def priority_name
-      PRIORITY_NAMES_BY_KEY[priority]
-    end
     
    def stop_timesheet_timers
     if @model_changes.key?(:status) && [RESOLVED, CLOSED].include?(status)
@@ -988,6 +1054,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def unsubscribed_agents
     user_ids = subscriptions.map(&:user_id)
     account.agents_from_cache.reject{ |a| user_ids.include? a.user_id }
+  end
+
+  def update_message_id
+    if self.header_info
+      self.header_info[:message_ids].each do |parent_message|
+        message_key = EMAIL_TICKET_ID % {:account_id => self.account_id, :message_id => parent_message}
+        deleted ? remove_key(message_key) : set_key(message_key, self.display_id, 86400*7)
+      end
+    end
   end
 
 

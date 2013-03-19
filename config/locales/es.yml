@@ -39,6 +39,11 @@ es:
       intro: "Está próximo a cancelar su cuenta.  Esto <strong>eliminará definitivamente todos sus datos</strong>."
       warning_message: "Una vez que haga esto, no tendrá más aceso a sus datos, asegúrese de que es realmente lo quiere hacer."
       you_must_confirm: "Dbe confirmar su cancelación"
+    helpcard: 
+      info1: "Puede personalizar completamente todo el servicio de asistencia Freshdesk para clientes accediendo a su portal de autoservicio, así como sus agentes. Cambiando la apariencia de su servicio de asistencia con el logotipo y el lema de cargar su logo y favicon, dando a su mesa de ayuda un nombre, y la personalización de los colores de su portal"
+      info2: "Es posible que desee a sus clientes y agentes de soporte para acceder a su portal de soporte en su dominio propio. Puede apuntar su dirección URL de soporte a sucompañia.freshdesk.com a su dominio, como soporte.sucompañia.com."
+      title: "Renonbra el portal de ayuda"
+      tour: "Ayuda para Renombrar mi portal de ayuda"
     show: 
       account_settings: "Configuraciones de cuenta"
       export_data: "Exportar datos"
@@ -76,6 +81,31 @@ es:
         one: "1 error prohibió que este %{model} se guardara"
         other: "%{count} errores prohibieron que este %{model} se guardara"
   activities: 
+    forums: 
+      delete_forum: 
+        long: "Eliminar el Foro {{user_path}}{{notable_path}} y categoria{{category_name}}"
+        short: "Eliminar el foro {{user_path}}"
+      delete_forum_category: 
+        long: "Eliminar la categoria del foro{{user_path}}{{notable_path}}"
+        short: "Eliminar la categoria del foro{{user_path}}"
+      delete_post: 
+        long: "Se a eliminado la publicacion desde {{user_path}}{{notable_path}}"
+        short: "Eliminar la nueva publicacion{{user_path}}"
+      delete_topic: 
+        long: "Eliminar el topico{{user_path}}{{notable_path}}in{{forum_name}}"
+        short: "Eliminar el topico{{user_path}}"
+      new_forum: 
+        long: "Crear un nuevo Foro{{user_path}}{{notable_path}} categoria {{category_name}}"
+        short: "Crear un nuevo foro {{user_path}}"
+      new_forum_category: 
+        long: "Crear una nueva categoria en el foro{{user_path}}{{notable_path}}"
+        short: "Crear una nueva categoria en el Foro{{user_path}}"
+      new_post: 
+        long: "Postear en {{user_path}}{{notable_path}}"
+        short: "Crear un nuevo post{{user_path}}"
+      new_topic: 
+        long: "crear un nuevo topico{{user_path}}{{notable_path}}en {{forum_name}}"
+        short: "Crear un nuevo topico{{user_path}}"
     solutions: 
       new_solution: 
         long: "{{user_path}} creó una solución nueva {{notable_path}}"
@@ -85,14 +115,14 @@ es:
         long: "{{user_path}} asignó el ticket {{notable_path}} a {{responder_path}}"
         short: "Asignado a {{responder_path}} por {{user_path}}"
       assigned_to_nobody: 
-        long: "{{user_path}} asignó el ticket {{notable_path}} a 'Nadie'"
+        long: "{{user_path}} asignó el ticket {{notable_path}} a &quot;Nadie&quot;"
         short: "Asignado a 'Nadie' por {{user_path}}"
       conversation: 
         in_email: 
           long: "{{user_path}} envió un(a) {{email_response_path}} al ticket {{notable_path}}"
           short: "{{user_path}} envió un(a) {{email_response_path}}"
         note: 
-          long: "{{user_path}} agregó un(a) {{comment_path}} al ticket {{notable_path}}"
+          long: "{{user_path}} añadió un(a) {{comment_path}} al ticket {{notable_path}}"
           short: "{{user_path}} agregó un(a) {{comment_path}}"
         out_email: 
           long: "{{user_path}} envió un(a) {{reply_path}} al ticket {{notable_path}}"
@@ -101,7 +131,7 @@ es:
             short: "{{user_path}} ha {{fwd_path}} el ticket a {{to_emails}}"
           short: "{{user_path}} envió un(a) {{reply_path}}"
         twitter: 
-          long: "{{user_path}} agregó un {{twitter_path}} al ticket {{notable_path}}"
+          long: "{{user_path}} añadió un(a) {{twitter_path}} al ticket {{notable_path}}"
           short: "{{user_path}} agregó un {{twitter_path}}"
       deleted: 
         long: "{{user_path}} borró el ticket {{notable_path}}"
@@ -116,8 +146,8 @@ es:
         long: "{{user_path}} cambió el grupo de {{notable_path}} a 'ninguno'"
         short: "{{user_path}} cambió el grupo a 'ninguno'"
       new_ticket: 
-        long: "{{user_path}} abrió el ticket nuevo {{notable_path}}"
-        short: "{{user_path}} abrió el ticket"
+        long: "{{user_path}} envió un ticket nuevo {{notable_path}}"
+        short: "{{user_path}} envió el ticket"
       priority_change: 
         long: "{{user_path}} cambió la prioridad del ticket de {{notable_path}} a {{priority_name}}"
         short: "{{user_path}} cambió la prioridad a {{priority_name}}"
@@ -171,22 +201,49 @@ es:
     automations: 
       edit: 
         title: "Editar escenario"
+    ca_response: 
+      delete_confirm: "Estas seguro que deseas eliminar esta respuesta tipo?"
     canned_responses: 
       edit: 
         title: "Editar respuesta tipo"
+      folders: 
+        helpnote: 
+          info1: "las respuestas tipo, son respuestas predefinidas que pueden ser usadas para responder rapidamente los ticket"
+          info2: "Puede utilizar marcadores de posición en sus respuestas tipo para llenar de contenido dinámico como el nombre del solicitante, identificación del ticket y URL dentro de la respuesta."
+          title: "respuestas tipo"
+          tour: "ayuda para usar respuestas tipo"
       form: 
         all_agents: "Todos los agentes"
         available_for: "Disponible para "
         groups: "Los agentes del grupo"
         me_only: "Solo yo"
         response_name: "Título de la respuesta"
+      helpnote: 
+        info1: "las respuestas tipo, son prediseños de respuestas que pueden ser usadas para responer rapidamente los ticket"
+        info2: "Puede utilizar marcadores de posición en sus respuestas tipo para llenar de contenido dinámico como el nombre del solicitante, identificación del ticket y URL dentro de la respuesta."
+        title: "respuesta tipo"
+        tour: "ayuda para usar respuestas tipo"
       index: 
         new: "Agregar respuesta tipo"
         title: "Respuestas tipo"
       new: 
         delete_confirm: "Está seguro de eliminar esta respuesta tipo?"
         title: "Agregar respuesta tipo"
+      responses: 
+        edit: 
+          title: "editar respuestas tipo"
+        form: 
+          all_agents: "Todos los agentes"
+          available_for: "Disponible para"
+          groups: "Agentes en el grupo"
+          me_only: privado
+          response_name: "Titulo de la respuesta"
+        new: 
+          title: "agregar respuesta tipo"
     day_passes: 
+      helpnote: 
+        info: "Un pase diario se utiliza un día, Sirve para un agente ocasional en su servicio de asistencia. Usted puede comprar pases diarios en múltiplos de 5 a la vez, e incluso configurar Freshdesk para renovar automáticamente cuando se agota el pase."
+        title: "Pase diario"
       index: 
         add_confirm: "Se le realizará el cargo en la tarjeta de crédito "
         auto_recharge: "Recarga automática"
@@ -243,8 +300,10 @@ es:
         admin_title: "¿Todo en orden?"
         agent_email_exist: "El correo electrónico ya está tomado."
         agent_email_partial: "Parcialmente correcto."
+        agent_email_required: "Agrega el ID del Email para enviar invitaciones"
         agent_email_sending: "Enviando invitaciones..."
         agent_email_taken: "El siguiente correo electrónico ya está tomado:<br> %{emails}"
+        agent_invite_field_placeholder: "Introduzca el correo electrónico de los miembros de su equipo"
         agent_invite_multi_info: "Utilice una coma (,) para separar múltiples correos electrónicos."
         agent_limit_reached: "Ha superado su límite de agentes."
         agent_send_invite_label: "Enviar invitaciones a los agentes"
@@ -295,6 +354,7 @@ es:
         social_facebook: Facebook
         social_facebook_add: "Añadir una página"
         social_info: "Lleva tu Help Desk a Facebook, Twitter, tus comunidades y a cualquier sitio que vayan tus clientes."
+        social_sub_title: "Iniciar asistencia en redes sociales"
         social_title: Redes
         social_twitter: Twitter
         social_twitter_add: "Añadir una cuenta"
@@ -330,15 +390,18 @@ es:
     home: 
       index: 
         account: Cuenta
+        account-settings: Cuenta
         agent: Agentes
         billing: "Planes y facturación"
         business-hours: "Horario hábil"
         canned-response: "Respuesta tipo"
         customer: Cliente
         customer-portal: "Portal del cliente"
+        day_pass: "Pase Diario"
         dispatcher: Despachador
         else: ademas
         email-notifications: "Notificaciones por correo"
+        email_commands_setting: "Comandos de Email"
         everything: Todo
         feedback: "Botón de contacto"
         gamification-settings: Recreativo
@@ -360,6 +423,7 @@ es:
         survey-settings: "Customer Satisfaction Settings"
         ticket-fields: "Campos del ticket"
         title: Admin
+        twitter-setting: Twitter
     products: 
       add_another_email: "Agregar otro correo"
       assign_product: "Asignar Producto"
@@ -375,7 +439,12 @@ es:
         product_support_emails: "Emails de soporte de producto"
       helpnote: 
         content: "Multiples productos te ayudan a dar soporte a una marca o producto específico."
+        content1: "Usted puede dar soporte a varios productos con distintos portales de Productos de una sola cuenta de Freshdesk. Configurar y separar cuentas de correo de soporte para cada producto y automáticamente las esperas en un grupo específico."
+        content2: "Si opta por configurar un portal independiente de cada producto, se puede proporcionar un único conjunto de artículos de Base de conocimiento y foros para cada Producto "
         heading: "Multiples Productos"
+        heading1: "multiples productos"
+        heading2: "Configura un portal de productos separado"
+        tour: "ayuda para soporte de multiples productos"
       index: 
         add_product: "Agregar producto"
         title: Productos
@@ -444,9 +513,16 @@ es:
     supervisor_rules: 
       edit: 
         title: "Supervisor - Editar regla"
+      helpnote: 
+        help_info_1: "Las acciones prefijadas de Supervidor, funcionan sobre los ticket basados en el tiempo y los eventos que deben dirigir, Use las acciones Supervisor para comprobar los ticket recientes y configurar acciones como enviar recordatorios de los ticket pendientes o el escalado de los ticket a la persona indicada en la organizacion "
+        help_info_2: "Las reglas de Supervisor funcionan en cada hora, ademas actuan sobre ticket actualizados hasta hace 30 dias atras. las reglas de Supervisor actuan de modo secuencial, por esto el orden de las reglas es importante. Una regla puede causar ciertas acciones que activen las siguientes reglas"
+        help_info_3: "Las reglas de Supervisor funcionan en cada hora, ademas actuan sobre ticket actualizados hasta hace 30 dias atras."
+        help_info_4: "las reglas de Supervisor actuan de modo secuencial, por esto el orden de las reglas es importante. Una regla puede causar ciertas acciones que activen las siguientes reglas "
+        help_title: Supervisor
+        tour: "Ayuda a crear una nueva regla de supervisor"
       index: 
         help_info_1: "Use el supervisor para revisar periódicamente los tickets recientes y para realizar ciertas tareas periódicas como enviar recordatorios a los clientes, escalar tickets, reasignar tickets, etc."
-        help_info_2: "Por ejemplo - Si un ticket está esperando respuesta del cliente por más de 24 horas enviar un recordatorio por correo al cliente o cerrar automáticamente un ticket que se encuentra en estado \"Solucionado\" por más de 48 horas."
+        help_info_2: "Por ejemplo - Si un ticket está esperando respuesta del cliente durante más de 24 horas enviar un recordatorio por correo al cliente o cerrar automáticamente un ticket que se encuentra en estado &quot;Solucionado&quot; por más de 48 horas."
         help_info_3: "El supervisor se ejecutará a cada hora y procesará los tickets que se han actualizado en los últimos 30 días."
         help_info_4: "Las reglas de supervisor se procesan secuencialmente, por lo cual el orden de estas reglas es importante. Una regla puede ejecutar acciones que disparen reglas subsecuentes."
         help_title: Supervisor
@@ -496,22 +572,33 @@ es:
         thankyou_info: "El mensaje se mostrará después de que un usuario envíe el formulario del ticket"
         thankyou_label: "Enviar mensaje"
   agent: 
+    active: 
+      no_agents: "No has agregado agentes a la lista"
     add_signature: "Agregar Firma"
     admin: Administrador
     admin_info: "Puede realizar todas las tareas administrativas"
     contact_exists: "Una petición con el email'%{existing_email}' ya existe, %{use_email}"
     day_pass_expired: "Su pase de un día a vencido, inicie sesión para adquirir un nuevo pase de un día."
+    deleted: 
+      no_agents: "No tienes agentes eliminados"
     edit: "Editar agente"
     full_time: "Tiempo completo"
     global: "Agente (acceso global)"
     global_info: "Puede ver todos los tickets en la mesa de ayuda"
     group: "Agente (acceso grupal) "
     group_info: "Puede ver los tickets en sus grupos y los tickets asignados a él"
+    helpcard: 
+      info1: "Esta lista muestra todos los agentes agregados en su mesa de ayuda. Puede editar los permisos de un agente existente y derechos de acceso colocando el cursor sobre el agente y haga clic en \"Editar\". Usted puede agregar nuevos agentes haciendo clic en el boton \"Agente de Nuevo\"."
+      info2: "Cuando se agrega un nuevo agente, usted tendrá que proporcionar correo electrónico del agente, fijar sus niveles de permisos y acceso (a tiempo completo u ocasional). Los agentes recibirán un correo electrónico con un enlace de confirmación para activar su cuenta después de lo cual puede ser asignado o responder a los ticket."
+      info3: "Los administradores también pueden editar el perfil de un Agente e incluir título del agente, teléfono, foto de perfil, firma, etc"
+      side_title: "Agregar agentes y editar detalles"
+      tour: "Ayuda para agregar nuevos agentes"
     individual: "Agente (acceso restringido)"
     individual_info: "Sólo puede ver los tickets asignados a ellos"
     info1: "Este es un agente eliminado"
     info2: "El correo electrónico ya se ha tomado"
     info3: "¿Está seguro de que desea eliminar"
+    info4: "Convertir a contacto"
     insufficient_day_pass: "No es posible asignarles un pase de un día, póngase en contacto con su administrador."
     make_admin: "Hacer que este agente sea un administrador"
     new: "Nuevo agente"
@@ -521,21 +608,25 @@ es:
     password_reset_note: "Nota: Un mail con las instrucciones de regeneración será enviado a %{requester}"
     permissions: Permisos
     restore: restaurar
+    showing: Mostrando
     signature: Firma
+    status: 
+      active: activo
+      deleted: Eliminado
     supervisor: Supervisor
     supervisor_info: "Puede ver todos los tickets en la mesa de ayuda y acceder a los informes (sin privilegios de administrador)"
     title: Agentes
     update: Actualizar
     use_email: "Usar este correo"
     view_user: "Ver usuario"
-  agent_adds_comment: "El agente agrega un comentario al ticket"
+  agent_adds_comment: "El agente añade un comentario al ticket"
   agent_assigned_info: "No hay tickets abierto y pendientes para este agente"
   agent_assigned_title: "Tickets asignados recientemente (abierto y pendientes)"
-  agent_closes_tkt: "El Agente cierra el ticket"
+  agent_closes_tkt: "El agente cierra el ticket"
   agent_deleted_message: "Este es un agente no vigente"
   agent_emailnotverified: "El correo de este agente no se ha verificado!"
   agent_info_title: "Información del agente"
-  agent_solves_tkt: "El Agente solucionó el ticket"
+  agent_solves_tkt: "El agente solucionó el ticket"
   agent_working_on_this_ticket: "Agente que trabaja en este ticket"
   agents: Agentes
   align_to: "Alinear a"
@@ -573,8 +664,9 @@ es:
     info: "<b>Sabes que? Podríamos tener ya una respuesta a tu pregunta.</b><br/>Comprueba si alguna de estas coincide."
   automations: 
     available_placeholders: "Marcadores disponibles"
-    info1: "Todas  las mesas de ayuda tienen un conjunto de escenarios comunes y recurrentes - p.e.: Escalar al nivel 2, Assignar a QA, Reenviar a Ventas, etc. Estos escenarios usualmente involucran la ejecución de múltiples actualizaciones al ticket."
-    info2: "Pro ejemplo antes de asignar un ticket a QA ud podría querer tipificar el ticket como un bug, asignarlo al grupo de QA y enviarle un mensaje al gerente de QA sobre el nuevo bug."
+    helptext: "El escenario de Automatizaciones le permiten llevar a cabo un montón de cambios para los Ticket con un solo clic. Ellos le ayudan a gestionar rápidamente los escenarios recurrentes. Por ejemplo, podría crear un escenario de \"Marcar un Ticket como Basura\", \"Asignar al equipo de control de calidad\" y envíe un correo electrónico a la gerente de producto para que pueda procesar los errores han informado los clientes con un solo clic.\n"
+    info1: "Todas  las mesas de ayuda tienen un conjunto de escenarios comunes y recurrentes - p.e.: Escalar al nivel 2, Asignar a QA, Reenviar a Ventas, etc. Estos escenarios usualmente involucran la ejecución de múltiples actualizaciones al ticket."
+    info2: "Pro ejemplo antes de asignar un ticket a QA, es posible que dese querer tipificar el ticket como un error, asignarlo al grupo de QA y enviarle un mensaje al gerente de QA sobre el nuevo error."
     info3: "Scenario Automations allow you to automate these actions to a single click"
     info4: "Seleccione los marcadores a continuación para anexar al contenido del correo electrónico y se convertirán en los datos adecuados"
     info5: "Asignar a QA"
@@ -584,6 +676,7 @@ es:
     new: "Nueva situación"
     reorder: Reordenar
     title: "Automatización de escenarios"
+    tour: "Ayuda para automatizar un posible escenario"
   awaiting_your_reply: "Esperando su respuesta"
   back: Atrás
   back_plans_billing: "Regresar a Planes &amp; Facturación"
@@ -621,6 +714,37 @@ es:
   cancel: Cancelar
   cancel_and_back: "Cancelar y regresar"
   cancel_my_account: "Cancelar mi cuenta"
+  canned_folders: 
+    back_to_bulk: "Volver a la respuesta a granel"
+    create: "Crear Carpeta"
+    create_new: "Crear nuevo"
+    created: "La respuesta tipo fue creada con exito"
+    del: eliminar
+    delete: Eliminar
+    delete_confirmation: "eliminar la carpeta con todo su contenido?"
+    delete_multiple: "La respuesta tipo seleccionada fue eliminada"
+    deleted: "La carpeta de respuestas tipo ha sido eliminada con exito"
+    edit: Renombrar
+    folder: Carpeta
+    folder_created: "Carpeta para respuesta tipo fue creada"
+    folder_update: "Selecciona las respuestas para moverlas a la carpeta {{folder_name}}"
+    move: Mover
+    new: "Nombre de carpeta"
+    new_response: "Nueva respuesta tipo"
+    no_delete: "La carpeta por defecto no puede ser eliminada"
+    no_edit: "La carpeta por defecto no puede ser cambiada"
+    no_folders: "Sin respuestas tipo"
+    no_response: "Sin Respuestas"
+    no_response_admin: "No hay respuestas en esta carpeta, crear nueva <a href={{link}} id='new_resp'></a>"
+    pick: "Tomar una respuesta tipo"
+    recently: "Usado recientemente"
+    responses: "Respuesta Tipo"
+    search: "Buscar respuestas tipo"
+    select_folder: "Selecciona la carpeta"
+    title: "Carpeta de respuestas Tipo"
+    update: "Las respuestas tipo fueron actualizadas"
+    updated: "La carpeta de respuestas tipo fue actualizada con exito"
+    viewing: "Carpeta:"
   card_number: "Número de tarjeta"
   card_process: "Gracias por su pago. Su cuenta de Freshdesk esta activa ahora!"
   category: 
@@ -629,6 +753,7 @@ es:
   category_edit_not_allowed: "Esta categoría no puede modificarse"
   cc_emails_key: ", cc : %{cc_emails}"
   change: Cambiar
+  change_deleted_status_msg: "Porfavor cambie el estado, el estado actual sera eliminado "
   change_details_anytime: "Los detalles de subscripción o los planes pueden cambiar en cualquier momento."
   change_free_plan: "Cambia tu plan gratuito"
   change_my_password: "Cambiar mi contraseña"
@@ -653,6 +778,8 @@ es:
   company: 
     edit: "Editar empresa"
     info1: "¿Está seguro de que desea eliminar esta empresa?"
+    info10: "Nota: Eliminar la compañia no eliminara los contactos "
+    info11: "Estas seguro que desea eliminar"
     info2: "Nombres de dominio para esta empresa"
     info4: "Añadir una nota acerca de %{name}"
     info5: "Añada notas específicas con respecto a esta empresa, por ejemplo, estamos negociando un acuerdo de 100.000 con esta empresa"
@@ -665,15 +792,20 @@ es:
     notes: Notas
     quick_company: "Empresa rápida"
     title: Empresas
+    title1: Compañias?
+    title2: Compañia?
   company_name: "Nombre de la empresa"
   confirm: Confirmar
   connect_ticket: "Enlazar a ticket"
   contact_name: "Nombre del contacto"
   contacts: 
+    activation: "Enviar Activacion"
     active: 
       no_contacts: "No tienes ningún contacto añadido a la lista."
       no_contacts_with_letter: "No tienes ningún contacto activo con la letra '%{alphabet}'"
     add_new_requester: "Añade un nuevo Solicitante"
+    contact: Contacto
+    contacts: Contactos
     deleted: 
       no_contacts: "No tienes ningún contacto para restaurar."
       no_contacts_with_letter: "No tienes ningún contacto borrado con la letra '%{alphabet}'"
@@ -681,6 +813,7 @@ es:
     edit: "Editar contacto"
     edit_contact: "Editar contacto"
     emailnotverified: "Email has not been verified for this user!"
+    export_csv: "Exportar a CSV"
     form_placeholder: 
       description: "Añada notas específicas con respecto a este contacto, por ejemplo, fanático de los LA Lakers, etc."
     import_csv: "Importar usuarios desde CSV"
@@ -694,18 +827,35 @@ es:
     info5: "El usuario no ha creado ningún ticket hasta ahora"
     info6: "Agregar notas específicas sobre este contacto"
     new: "Nuevo contacto"
+    no_contacts: "Sin contactos"
     quick_contact: "Contacto rápido"
     restore: Restaurar
     role: 
       info: "Puede ver todos los tickets de esta empresa "
     save_changes: "Guardar cambios"
     send_activation: "Enviar correo de activación"
+    show_more: "Mostrar mas ticket de %{nick_name}"
     showing: Mostrar
     status: 
       active: Activo
+      all: Todo
       deleted: Borrado
+      unverified: "Sin verificar"
+      verified: Verificado
+    status_title: 
+      all: "Todos los contactos"
+      deleted: "Contactos eliminados"
+      unverified: "Contactos con email sin verificar"
+      verified: "Contactos Activos"
     tag_cloud: "Nube de etiquetas de contacto"
+    tags: Etiquetas
     title: Contactos
+    unverified: 
+      no_contacts: "No tienes contactos sin verificar"
+      no_contacts_with_letter: "no tienes contactos que comiencen %{alphabet}"
+    verified: 
+      no_contacts: "no existen contactos"
+      no_contacts_with_letter: "No tienes contactos que comiencen con la letra %{alphabet}"
     working: Trabajando
   contains: Contiene
   continue_using_free: "Continua usando Freshdesk como"
@@ -759,6 +909,10 @@ es:
     delete: "Está seguro de borrar esta regla?"
     dispatch_rules: "Despachador - Reglas"
     edit: "Despachador - Editar regla"
+    helpcard: 
+      info1: "El Despachador le permite llevar las reglas de  su negocio en su flujo de trabajo de soporte mediante la realización de un conjunto predefinido de acciones en la entrada de un nuevo ticket. Por ejemplo, podría utilizar el Despachador para categorizar, priorizar y asignar cada boleto de entrada al agente en tu equipo, con base en las condiciones especificadas.\n"
+      info2: "Recuerde que el orden de las reglas Despachador son importantes. al ingreso de un nuevo ticket, el Despachador ejecutará la primera regla que coincida y se detendrá. Puede cambiar el orden de la lista de reglas para tener las reglas más importantes en la parte superior ."
+      tour: "Ayuda a crear una nueva regla de despacho"
     inactive_rules: "Reglas inactivas"
     info1: "Tickets relacionados con suscripciones"
     info2: "Todos los tickets relacionados con suscripciones se asignarán a Susan"
@@ -775,6 +929,7 @@ es:
     skip_notifications: "Saltar notificaciones de email de Nuevo Ticket"
     title: Despachador
   does_not_contain: "No contiene"
+  done: Hecho
   draft: Borrador
   due_in: "Demorado %{time_words}"
   due_next_eight: "Próximas 8 horas"
@@ -793,6 +948,13 @@ es:
   email_command_preview_subject_value: "Ticket de soporte"
   email_command_preview_to_email: Para
   email_command_preview_to_email_value: support@acme.freshdesk.com
+  email_command_setting: 
+    helpcard: 
+      heading: "Configuracion de comandos de email"
+      info1: "Al responder a los correos electrónicos de notificación desde su buzón de correo, puede incluir \"Comandos de correo electrónico\" para instruir Freshdesk para llevar a cabo determinadas acciones en el ticket. El texto de comando electrónico será retirado por Freshdesk y no será visto por el solicitante, mientras que el resto del texto se convertirá en una parte de la conversación del ticket\n"
+      info2: "Órdenes de correo electrónico debe seguir la sintaxis correcta y debe ser colocado en el delimitador de texto pre-configurado. Por ejemplo, el comando - \"@ simonsays agente: John Roberts Estado: Resuelta @ simonsays\" asignará el ticket al agente John Roberts y marcar el ticket como resuelto."
+      info3: "El resto del contenido de su correo electrónico se añadirá como una conversación para Freshdesk y también se envía al solicitante por correo electrónico."
+      tour: "Ayuda para entender los comandos de email"
   email_command_settings_info: "Configure el delimitador utilizado para identificar y extraer los comandos de correo electrónico desde el correo"
   email_commands_update_failed: "No fue posible actualizar la configuración de comandos de correo electrónico."
   email_commands_update_success: "La configuración de comandos de correo electrónico se actualizó correctamente."
@@ -813,9 +975,17 @@ es:
     email: correo
     email_added_succ_msg: "El mail ha sido añadido"
     forwarding_email: "Email de reenvio"
+    freshdesk: Freshdesk
     global_support_emails: "Emails de soporte global"
     group: Grupo
     help_link_info: "Para mayor información lea nuestro artículo de configuraciones de correo."
+    helpcard: 
+      info19: "Puedes configurar su cuenta de Freshdesk para usar su email de soporte en su propio dominio, asi como suporte@sucompañia.com para enviar email a la direccion <a target=\"_blank\" href=\"{{solution_url}}\">demo.freshdesk.com</a>. Para crear un nuevo email de soporte, Click en \"Editar\" bajo las configuraciones globales de email "
+      info20: "Usando multiples casillas de email"
+      info21: "Puede añadir un número ilimitado buzones de correo entrantes y salientes (como info@yourcompany.com, ventas@yourcompany.com, etc) en su servicio de asistencia. Incluso puedes configurar Freshdesk para asignar automáticamente mensajes de correo electrónico de todos los buzones a un grupo específico"
+      info5: "La casilla de email asignada por defecto es <a target=\"_blank\" href=\"{{solution_url}}\">support@demo.freshdesk.com</a>. todos los email enviados a esta casilla se convertira automaticamente en un ticket y puedes trabajar sobre el"
+      tour1: "Ayuda para configurar mi email de soporte"
+      tour2: "Ayuda para configurar multiples casillas de email"
     inactive_info1: "Todos sus correos de soporte están sin verificar, debe verificar por lo menos un correo de soporte."
     inactive_info2: "Hasta tanto, se usará el correo por defecto \"%{default_email}\" como dirección de respuesta."
     info1: "Sus usuarios envían los correos electrónicos de asistencia a"
@@ -859,6 +1029,12 @@ es:
     do_not_delete_ticket_id_from_subject: "Para capturar las respuestas de los clientes como conversaciones de tickets, el marcador del ID del ticket no debería quitarse de la línea de asunto"
     edit_reply_template: "Editar plantilla"
     event: Evento
+    helpcard: 
+      info1: "Puede configurar Freshdesk para enviar automaticamente notificaciones via email a los solicitantes o a los agentes por eventos especificos, por ejemplo, puede notificar a los clientes cuando los agentes agregen o publiquen notas a sus ticket con un email predefinido"
+      info2: "Tenga en cuenta que usted puede optar por desactivar las notificaciones, y también crear reglas Despachador o Supervisor para complementar un evento."
+      info3: "Tambien puede Organizar las respuestas prediseñadas de email para agentes incluso puede agregar contenido dinamico con los marcadores de pocision"
+      tour1: "Ayuda para organizar las notificaciones por e-mail"
+      tour2: "ayuda para definir respuestas prediseñadas"
     insert_placeholder: "Insert Placeholder"
     modify_agent_template: "Modificar la plantilla de correo del agente"
     modify_requester_template: "Modificar la plantilla de correo del solicitante"
@@ -886,6 +1062,7 @@ es:
   expires: Expira
   export_data: 
     closed_at: "Hora de Cerrado"
+    contact_info: "Exporta los contactos activos a archivo CSV"
     created_at: "Hora de creación"
     custom_filter: "Configurar fecha"
     export_to_csv: "Exportar a CSV"
@@ -900,6 +1077,7 @@ es:
       subject: "Exportar tickets -%{filter}-(%{start_date} a %{end_date})"
     no_fields_selected: "Por favor marca al menos uno de los campos de abajo para empezar."
     resolved_at: "Tiempo de resolución"
+    select_header: "Selecciona los campos para exportar"
     seven_days: "Últimos 7 días"
     thirt_days: "Últimos 30 días"
     to: Para
@@ -910,6 +1088,7 @@ es:
     deleted: "La cuenta de Facebook %{facebook_page} se ha eliminado."
     not_authorized: "No está autorizado por Facebook"
   facebook_source: Facebook
+  facebook_user: "Usuario Facebook"
   failure: Error...
   fav_delete_msg: "Está seguro de borrar este ícono de página?"
   feedbackwidget_bgcolor: "Color de fondo"
@@ -923,7 +1102,7 @@ es:
   feedbackwidget_form_title: "Título de la forma del botón"
   feedbackwidget_formcustomize: "Personalización de la forma"
   feedbackwidget_help_para1: "Capture la opinión de sus clientes agregando un botón de soporte a su sitio en la web."
-  feedbackwidget_help_para2: "Tabulador personalizable que abre un formulario de ticket de soporte"
+  feedbackwidget_help_para2: "Tabulador personalizable que abre un formulario de ticket de asistencia. "
   feedbackwidget_help_title: "Botón de contacto"
   feedbackwidget_intro: "Personalice su botón de freshdesk y tenga una vista previa inmediata."
   feedbackwidget_offset_info: "El desplazamiento será la distancia desde el botón hasta el borde izquierdo o superior de la pantalla, basado en la alineación escogida."
@@ -931,6 +1110,17 @@ es:
   feedbackwidget_position: Posición
   feedbackwidget_text: Texto
   feedbackwidget_title: "Configuración del botón"
+  filter_options: 
+    customers: clientes
+    due_by: Vencido
+    group_id: grupos
+    priority: prioridad
+    requester: solicitante
+    responder_id: Agentes
+    source: Fuente
+    status: estado
+    tags: Tags
+    ticket_type: tipo
   first_name: Nombre
   first_response_sla: "Incumplimiento del ANS de Primera Respuesta"
   flash: 
@@ -942,6 +1132,7 @@ es:
         success: "Se creó el agente y se enviaron instrucciones de activación a %{email}!"
       delete: 
         not_allowed: "Usted no tiene permiso para borrarlo!"
+      to_contact: "El agente ha sido convertido en contacto"
     application: 
       already: "El complemento ya está instalado."
       install: 
@@ -963,6 +1154,7 @@ es:
       create: 
         success: "Se creó exitosamente el contacto."
       info_select: "Por favor selecciona al menos 1 usuario."
+      to_agent: "El contacto fue convertido en agente"
     contacts_import: 
       failure: "Por favor inténtelo de nuevo"
       no_file: "Por favor cargue un archivo"
@@ -999,6 +1191,10 @@ es:
     filter: 
       delete_success: "La vista se eliminó correctamente."
       save_success: "La vista se guardó correctamente."
+    forum: 
+      page_not_found: "No se encuentra el Foro. Puede estar mal escrita la direccion o fue eleminado"
+    forum_category: 
+      page_not_found: "No se encuentra la categoria en el foro. Puede estar mal escrita la direccion o fue eleminado"
     g_app: 
       authentication_failed: "Fallo de autenticación"
       authentication_success: "La autenticación se completó correctamente."
@@ -1051,6 +1247,9 @@ es:
     portal_settings: 
       update: 
         success: "Se actualizaron las configuraciones del portal del cliente."
+    post: 
+      deleted: "La publicacion {title} fue eliminada"
+      page_not_found: "La publicacion no fue encontrada. Puede estar mal escrita la direccion o fue eleminado"
     profile: 
       api_key: 
         reset_failure: "Error al restablecer Clave API."
@@ -1067,27 +1266,37 @@ es:
       update: 
         success: "Se actualizaron los detalles de su cuenta."
     tickets: 
+      delete_forever: 
+        success: "borrar%{tickets}"
       empty_spam: 
         success: "Se borraron todos los tickets de la carpeta de correo no deseado."
       empty_trash: 
         success: "Se borraron todos los tickets de la papelera."
       merge: 
         success: "El ticket se combinó exitosamente."
-        wrong_ticket_id: "Por favor digite un ID de ticket"
+        wrong_ticket_id: "Introduzca un ID de ticket válido"
       monitor: 
-        start: "Usted ahora está monitoreando este ticket."
-        stop: "Usted no monitoreará más este ticket."
+        start: "Ahora está monitoreando este ticket."
+        stop: "Ya no monitoreará más este ticket."
       notes: 
         create: 
-          failure: "Se presentó un problema al agregar la nota a su ticket. Por favor inténtelo de nuevo."
-          success: "Se agregó la nuta a su ticket."
+          failure: "Se presentó un problema al añadir la nota a su ticket. Inténtelo nuevamente."
+          invalid_email: "No estas autorizado para agregar una nota"
+          success: "Se añadió la nota a su ticket."
       reply: 
         success: "Se ha enviado la respuesta."
       timesheet: 
         timer_stopped: "los temporizadores de tickets se han detenido"
+      unwatch: 
+        failure: "Accion fallida, ticket sin seguimiento"
+        success: "Quitar de la lista de seguimiento%{tickets}"
+        unsubscribe_success: "El ticket fue removido de tu lista de seguimiento"
     to_dos: 
       complete: 
         success: "La tarea por hacer se marcó como completada."
+    topic: 
+      deleted: "El topico {title} fue borrado"
+      page_not_found: "No se encuentra el topico. puede estar mal escrito o fue eliminado"
     twitter: 
       updated: "Se actualizó la configuración de Twitter"
   folder: 
@@ -1129,8 +1338,11 @@ es:
   forum_shared: 
     post: 
       answer: Respuesta
+      delete_comment: "Eliminar comentario"
+      delete_comment_confirm: "Esta seguro de eliminar este comentario ?"
       delete_post: "Borrar publicación"
       delete_post_confirm: "Borrar esta publicación? Está seguro?"
+      edit_comment: "Editar comentario"
       mark_answer: "Marcar esto como respuesta"
       post_accepted_as_a_good_answer: "Se acepta esta publicación como buena respuesta a este tópico"
       posted_on: "%{user_name} el %{post_date}"
@@ -1183,12 +1395,20 @@ es:
     leaderboard: 
       love_trophie_info: "Agente con el máximo de puntos de satisfacción de los clientes este mes"
       love_trophie_info_group: "Grupo con el máximo de puntos de satisfaccción de los clientes este mes"
+      love_trophie_label: "Wow Cliente campeon"
+      love_trophie_label_group: "Wow Clientes campeones"
+      mvp_trophie_info: "Agente con mayor puntuacion general del mes"
+      mvp_trophie_info_group: "Grupo con el mayor puntaje general del mes "
       mvp_trophie_label: "Jugador más valioso"
       mvp_trophie_label_group: "Equipo más valioso"
       sharpshooter_trophie_info: "Agente con la más alta puntuación en resolución en la primera llamada este mes"
       sharpshooter_trophie_info_group: "Grupo con la más alta puntuación en resolución en la primera llamada este mes"
+      sharpshooter_trophie_label: "Tirador efectivo"
+      sharpshooter_trophie_label_group: "Tiradores efectivos"
       speed_trophie_info: "Agente con la más alta puntuación en velocidad de resolución este mes"
       speed_trophie_info_group: "Grupo con la más alta puntuación en velocidad de resolución este mes"
+      speed_trophie_label: Carrera
+      speed_trophie_label_group: Corredores
     levels: 
       beginner: Novato
       expert: Experto
@@ -1214,6 +1434,7 @@ es:
       two: "12 Horas"
       twoday: "2 Días"
     edit: "Editar grupo"
+    helptext: "Puede organizar sus agentes en grupos específicos como \"Ventas\" y \"Gestión de Producto\". La segmentación de ellos en divisiones te permite asignar Tickets, crear respuestas específicas o respuestas tipo, configurar las notificaciones de correo electrónico, crear reglas de negocio y generar informes a nivel de grupo. Tenga en cuenta que el mismo agente puede ser un miembro de varios grupos también."
     info1: "Los agentes en este grupo"
     info2: "No hay agentes en este grupo"
     info3: "Envíenos un correo electrónico de derivación a"
@@ -1223,6 +1444,7 @@ es:
     new: "Nuevo grupo"
     select_agents: "Seleccionar agentes"
     title: Grupos
+    tour: "Ayuda para crear un nuevo grupo de agentes"
   half: "30 Minutos"
   header: 
     assumed_text: "Está viendo como"
@@ -1249,6 +1471,7 @@ es:
     dashboard: 
       summary: 
         due_today: "Vencidos hoy"
+        on_hold: "En Espera"
         open: Abierto
         overdue: Atrasado
         pending: Pendiente
@@ -1262,8 +1485,10 @@ es:
       flagged_spam: "%{tickets} etiquetados como basura. %{undo}"
       flagged_unspam: "%{tickets} eliminados de la carpeta de basura."
       removed_from_spam: "%{tickets} eliminados de la carpeta de basura."
+      sending_failure: "Fallo el envio de las respuestas en los siguientes ticket"
       tickets_closed: "%{tickets} cerrados"
       tickets_update: "%{tickets} actualizado"
+      tickets_update_with_errors: "%{tickets} Actualizado, pero tiene cuestiones que requieren atencion"
     merge: 
       confirm_merge: 
         confirm_and_merge: "Confirmar y combinar"
@@ -1310,6 +1535,32 @@ es:
         neutral: "Solamente bien"
         unhappy: "No está mal"
     tickets: 
+      add_watcher: 
+        add_watcher_link: "Añadir observador"
+        all_agents_watching: "todos los agentes estan observando este ticket"
+        cancel: Cancelar
+        mail: 
+          activity: Actividad
+          added_as_watcher: "el Agente%{agent_name} fue agregado como observador al ticket"
+          agent_response: "Respuesta del agente"
+          customer: "El cliente"
+          customer_response: "Respuesta del Cliente"
+          hi: Hola
+          new_activity: "Existe una nueva actividad en su ticket observado"
+          requester: Solicitante
+          response: "el ticket que estas observando a sido respondido por %{responder}"
+          status_change: "el %{agent_name} ha cambiado el ticket que estas observando a %{status}"
+          stop_emails: "Dejar de observar este ticket"
+          ticket: Ticket
+          ticket_details: "Descripcion del ticket"
+        me: Yo
+        no_agents: "Este ticket no tiene agentes viendolo"
+        no_watcher_text: "Este ticket no tiene agentes observando"
+        pick_agents: "agregar agentes"
+        ticket_watchers: "observadores del ticket"
+        unwatch: "sin observador"
+        view_watchers_link: "ver Observadores"
+        watcher_text: "Los agentes agregados como observadores reciven email de alerta cuando el Ticket se actualiza"
       close_notice: 
         ticket_has_been_cloased: "El ticket se ha cerrado"
         view_ticket: "Ver ticket"
@@ -1336,6 +1587,7 @@ es:
         view_details: "Ver detalles"
       friendly_status: 
         customer_responded: "Cliente Respondido"
+        elapsed: "respuesta a tiempo"
         new: Nuevo
         overdue: Atrasado
         resolved: Resuelto
@@ -1361,17 +1613,20 @@ es:
       show: 
         conversation: "Conversación "
         linked_ticket: "Este ticket está vinculado al foro"
+        meta: Meta
         timesheet: "Hoja de tiempo"
       tabular_view: 
         assigned: Asignado
         posted: Publicado
         priority: Prioridad
+        sla: Vencida
         status: Estado
         time_ago: "hace %{time_in_words}"
         title: Título
       view_ticket: 
         conversation: "Conversación "
         linked_ticket: "Este ticket está vinculado al foro"
+        meta: Meta
         timesheet: "Hoja de tiempo"
       views: 
         all: "Todos los tickets"
@@ -1388,11 +1643,11 @@ es:
         my_overdue: "Mis tickets atrasados"
         my_resolved: "Mis tickets resueltos"
         new: "Tickets nuevos"
-        new_and_my_open: "Nuevos y Mis tickets abierto"
+        new_and_my_open: "Nuevos y Mis tickets abiertos"
         new_my_open: "Nuevos y mis tickets abierto"
         no_tickets: "No tiene ningún ticket en la vista actual"
         on_hold: "Tickets en espera"
-        open: "Ttickets abierto"
+        open: "Tickets abiertos"
         open_or_pending: "Abierto o pendiente"
         overdue: "Tickets atrasados"
         resolved: "Tickets resueltos"
@@ -1468,7 +1723,36 @@ es:
   import_zendesk_title: "Importar desde Zendesk"
   incident: Incidente
   index_tooltip_loading_msg: Cargando...
+  integration: 
+    helpcard: 
+      info1: "Integraciones en Freshdesk le permiten compartir datos con aplicaciones y servicios de terceros que se utilizan regularmente. Freshdesk ofrece varias integraciones nativas Out-of-the-box. Para empezar a utilizar una integración nativa, haga clic en el correspondiente botón \"Habilitar\"."
+      info2: "Además de las integraciones incorporadas, usted puede traer en los datos de cualquier otro sistema de tercera aplicación de otro legado, o base de datos en las entradas y páginas de contacto con FreshPlugs. Se puede personalizar el widget FreshPlug empujando información relevante de Freshdesk al origen de datos con una llamada AJAX, y el formato y la información de la pantalla con HTML, CSS y Javascript."
+      title1: Integraciones
+      title2: "FreshPlug Widgets"
   integrations: 
+    batchbook: 
+      desc: "Traiga información de contacto de su cuenta en Batchbook Freshdesk"
+      detect_error: "Imposible de detectar version de Batchbook, Porfavor verifique el dominio"
+      form: 
+        api_key: "API Key"
+        api_key_info: "Tu API de Batchbook puedes encontrarla siguiendo el enlace <i> tu cuenta </i> en Batchbook"
+        domain: "Dominio de Batchbook"
+        version: 
+          auto_detect: "Detectar automaticamente"
+          classic: Clasica
+          label: Version
+          new: Nueva
+        version_info: "En los campos puedes escoger la version entre <i>Batchbook Clasico </i> y <i>Batchbook nuevo</i>"
+        widget_title: "Titulo del Widget"
+      label: Batchbook
+    campaignmonitor: 
+      desc: "Busca y administra las suscripciones de tu cuenta de monitor de campañas,  y traer ideas sobre las estadísticas de uso de los clientes dentro de Freshdesk "
+      form: 
+        api_key: "Api Key"
+        api_key_info: "Obtenga desde su cuenta la API Key "
+        client_id: "ID de Cliente"
+        client_id_info: "Para obtener la Id del cliente, sigue las instrucciones descritas en http://www.campaignmonitor.com/api/getting-started/#clientid "
+      label: "Monitor de campaña"
     capsule: 
       desc: "Puede ver la Información de contacto desde Capsule CRM en Freshdesk. Puede acceder a esta información en la página Detalles de los tickets y la página de Detalles de contacto."
       form: 
@@ -1481,13 +1765,19 @@ es:
         widget_title: "Título del widget"
       label: "Capsule CRM"
     capsule_crm: 
+      helptext: "<h4>Enlace de regreso desde capsula a freshdesk</h4><p><br/>tu puedes crear un enlace en Capsula CRM para ver los ticket de los contactos en Freshdesk.</p><p>para hacer esto ve a tu <br /><b>Configuracion  -> Campo personalizado  -> para la organizacion y los clientes </b></p><p>luego clic sobre \"agregar nuevo\" y selecciona<b>\"Generar enlace\"</b></p><p>  copia exactamente la direccion que mostramos a continuacion y pegala en capsula CRM para definir el enlace<span class=\"info-code\">Http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
       label: "Capsule CRM"
+    constantcontact: 
+      desc: "Integre su cuenta Constant Contact para controlar sus suscripciones dentro Freshdesk y obtener información actualizada sobre los clientes y sus actividades."
+      helptext: "<h4>Ayuda para integracion de ConstantContac</h4>"
+      label: "Constant Contact"
     custom_application: 
       desc: "Puedes añadir un widget personalizado para mostrar cualquier detalle usando tu propio script."
       description: Descripción
       edit: "Editar Widget Personalizado"
       form: 
         create_n_enable: "Crear y Habilitar"
+        insert_placeholder: "insertar marcador de poscicion"
         widget_script: "código snippet del Widget"
         widget_title: "Nombre del Widget"
       helptext: "<h4>Ayuda Widget Personalizado</h4><p><br/>Puedes desarrollar tu propio widget usando html,css y javascript.</br></br>Para crear tu widget personalizado, introduce el nombre de tu nuevo widget y una peqeuña descripción del mismo.</br>Introduce tu código debajo de 'Script'. Puedes mirar en nuestras páginas de soluciones para aprender mas sobre el script.</br></br>Puedes pinchar en <b>'Vista Previa'</b> para ver como se ve tu widget en el ticket y en las paginas de contacto."
@@ -1515,6 +1805,7 @@ es:
         copy_settings: "Utilice el ID de seguimiento anterior para todos los portales"
         tracking_id: "ID de seguimiento para "
         tracking_id_example: "Ej: UA-123456-1"
+      helptext: "<h4>Ayuda para la integracion con Google Analytics</h4><p><br/> para integrar Google Analytics con Freshdesk, es recomendado que crees una cuenta dedicada dentro de la cuenta de tu empresa en Google Analytics.<br/><br/> para crear esta nueva cuenta, debes ingresar a tu cuenta de Google Analitics e ir al panel admin and seleccionar agregar cuenta. Click sobre<b> \"nueva Propiedad\"</b> para crear la nueva cuenta. en<b>Url del sitio</b>Ingresa la direccion del portal de soporte y click en <b> Crear cuenta </b>. Ahora Clic en la cuenta para ajustar la cuenta creada y que puedas ver la <b>ID de cuenta</b> una vez que tengas la ID de la cuenta copiala en Freshdesk</p> "
       inline_help: "Introduzca la ID de seguimiento para "
       label: "Google Analytics"
       portal: Portal
@@ -1589,9 +1880,26 @@ es:
         widget_title: "Título del widget"
       helptext: "<h4>Ayuda de integración de Harvest</h4><p><br/>Para integrar Harvest con Freshdesk, escriba su <b>nombre de dominio</b> y haga clic en Habilitar.<br/><br/>Haga clic en un ticket y vaya a la <b>pestaña Hoja de tiempo</b>.  Ahora puede escribir su <b>nombre de usuario</b> y <b>contraseña</b> de Harvest para iniciar sesión. Ahora puede añadir su entrada de seguimiento de tiempo en Harvest.<br/><br/>Nota: Puede hacer clic en <b>Recordarme</b>, de manera que no tenga que escribir sus credenciales de Harvest todas las veces."
       label: Harvest
+    highrise: 
+      desc: "Ver la información de contacto de Highrise CRM dentro Freshdesk al resolver ticket"
+      form: 
+        api_key: "API KEY"
+        api_key_info: "Su API Key de Highrise debe encontrarla en Highrise, por favor copie y pegue esta API aqui"
+        domain: "Dominio Highrise:"
+        widget_title: "Titulo de Widget"
+      label: Highrise
+    icontact: 
+      desc: "Exporta información de los clientes, gestiona las suscripciones existentes, y traer ideas sobre las estadísticas de uso de los clientes dentro de Freshdesk."
+      form: 
+        api_password: "Contraseña API"
+        api_url_info: "Para obtener la direccion URL de tu API ve a la seccion https://app.icontact.com/icp/core/externallogin and copy the API URL from &quot;Account Information&quot;"
+        app_id: "Aplicar la ID"
+        username: "Nombre de usuario de iContact"
+      label: IContact
     jira: 
       desc: "Convertir los tickets en problemas que puedan seguirse en JIRA."
       form: 
+        add_jira_comment: "Añadir estos como comentario en JIRA"
         add_note: "Añadir como una nota privada."
         do_nothing: "No hacer nada."
         domain: Dominio
@@ -1600,12 +1908,15 @@ es:
             Para cualquier comentario añadido en Freshdesk
             %{dropdown}
         fd_status_sync: "Para cualquier cambio en el estado de Freshdesk %{dropdown}"
+        jira_comment_sync: "Para cualquier comentario agregado en JIRA usa %{dropdown}"
         jira_note: Descripción
         jira_note_info: "Este texto se añadirá a la descripción del problema en JIRA."
+        jira_status_sync: "Para cualquier cambio en el estado de JIRA usa %{dropdown}"
         jira_status_sync_update_customer: "Enviar respuesta al cliente y actualizar el campo estado."
         jira_status_sync_update_field: "Actualizar el campo estado del Freshdesk."
         password: Contraseña
         send_reply: "Enviar como respuesta al cliente."
+        update_jira_status: "de este modo, actualizar Estado de Jira "
         username: Usuario
         widget_title: "Título del widget"
       helptext: "<h4>JIRA Integration Help</h4><p><br/>To integrate JIRA with Freshdesk, enter your JIRA administrator username and password. The integration supports both on-demand and on-premise variants, from JIRA 4.2 upto the latest version - JIRA 5.<br/><br/> To create an issue or link to an existing issue from Freshdesk, navigate to the Tickets page and click on <img src='/images/ticket-icon/jira.png'/><br/><br/> To view details of your linked Freshdesk tickets in JIRA, and conversely to view JIRA issue details in Freshdesk, the JIRA administrator is recommended to create a Free Text custom field with the name &quot;Freshdesk Tickets&quot; as described below. <br/><br/>Log on to your JIRA account, click on <b>Administration</b>, navigate to <b>Issues</b> -> <b>Fields</b> and click on <b>Add Custom Field</b>. In <b>Create Custom Field</b> screen, select <b> Free Text Field </b> and click on <b>Next</b>. Input <b>&quot;Freshdesk Tickets&quot;</b> in Field Name and click on Finish. In <b>Associate field to Screens</b> page, select all the check-boxes and click on 'Update'.<br/><br/>"
@@ -1616,23 +1927,33 @@ es:
       add_public_note_in_fd: "Agregar una nota pública en Freshdesk."
       none: "No hacer nada."
       send_reply_in_fd: "Notificar al cliente via email"
+      update_jira_status: "Actualizar esto de Jira"
       update_status_in_fd: "Actualizar el estado en Freshdesk."
     logmein: 
       desc: "Ofrecer soporte remoto instantáneo a tus clientes y empleados con LogMeIn Rescue"
       form: 
         company_id: "ID de Compañia"
         logmein_company_info: "Para ver tu ID de Compañia ve a Centro Administrador->Grupo Técnico->Configuracion Global->Ejemplo ASP.Net C# lado servidor "
+        logmein_sso_pwd_info: "Para Configurar tu contraseña SSO, ingresa a Admin Center -> Grupo tecnico -> Confguracion global -> Sing-on unico -> nueva contraseña SSO"
         password: "SSO Contraseña"
         widget_title: "Título del Widget"
       label: "LogMeIn Rescue"
       note: 
         chatlog: "Log del Chat"
         header: "Tus detalles de la sesion de LogMeIn Rescue"
+        platform: "Plataforma Clientes"
         session_id: "ID de Sesion"
         tech_email: "Email Técnico"
         tech_name: "Nombre del Técnico"
         tech_notes: "Notas del técnico"
         work_time: "Total Tiempo Trabajado (en segundos)"
+    mailchimp: 
+      desc: "Añadir a MailChimp Freshdesk y empezar a gestionar sus suscripciones, listas de exportación de los clientes y extraer la información necesaria sobre sus actividades desde su mesa de ayuda."
+      helptext: "<h4>ayuda para la integracion de MailChim</h4>"
+      label: Mailchimp
+    nimble: 
+      desc: "Puedes ver la informacion de contactos desde Nimble CRM en Freshdesk"
+      label: Nimble
     salesforce: 
       desc: "You can view contact information from Salesforce in Freshdesk."
       form: 
@@ -1658,6 +1979,9 @@ es:
         workflow_max_note: "Texto de las notas para anexar"
         workflow_max_note_info: "Este texto se añadirá al final de la nota, con el registro del tiempo invertido."
       label: "Workflow MAX"
+    zohocrm: 
+      desc: "Puedes ver la informacion de contactos desde Zoho CRM en Freshdesk"
+      label: "Zoho CRM"
   is: Es
   is_expiring_today: "Expira hoy"
   is_not: "No es"
@@ -1683,8 +2007,7 @@ es:
   maximum_agents_msg: "Ha llegado al número máximo de agentes que permite su suscripción. Debe eliminar un agente a existente o ponerse en contacto con el administrador de su cuenta para actualizar su cuenta. Si sólo necesita un agente ocasional, puede añadir uno a continuación"
   medium: Medio
   message: Mensaje
-  meta: 
-    language_name: Spanish
+  mobi_help: mobihelp
   mobile: 
     home: 
       login: Conectar
@@ -1710,15 +2033,17 @@ es:
   no_topics_text: "No hay temas en este foro"
   no_twitter_handle: "Configure al menos una cuenta de Twitter"
   non_covered_feature_error: "Su actual plan de Freshdesk no cubre esta función."
+  not_eligible_for_free_plan: "No elegible al seleccionar plan gratuito "
   not_selected: "No seleccionado"
   note: "Nota:"
   notified_to: "Notificar a"
+  ok: Ok
   on_hold: "En espera"
   one: "1 Hora"
   onemonth: "1 mes"
   oneweek: "1 semana"
   open: Abierto
-  open_tickets: "Tickets Abierto"
+  open_tickets: "Tickets Abiertos"
   or: o
   paid_with: "Pagado con"
   password: Contraseña
@@ -1740,7 +2065,7 @@ es:
   portal_customizer_anon_for_i: "Apague esta función si desea ocultar el tabulador de \"Foros\" en el portal público de clientes"
   portal_customizer_anon_for_t: "Active esta función si quiere que sus clientes puedan conectarse usando su usuario y contraseña de Twitter "
   portal_customizer_anon_tickets: "Cualquiera puede crear un ticket"
-  portal_customizer_anon_tickets_i: "Apague esta característica, si desea que sus usuarios deban conectarse antes de enviar un ticket."
+  portal_customizer_anon_tickets_i: "Apague esta característica si desea que sus usuarios deban conectarse antes de enviar un ticket."
   portal_customizer_auto_suggest_solutions: "Activa esta caracteristica si quieres sugerir soluciones existentes cuando un usuario cree un nuevo ticket."
   portal_customizer_facebook_signin: "Permitir a los usuarios entrar usando Facebook"
   portal_customizer_google_signin: "Permitir a los usuarios inscribirse mediante Google"
@@ -1752,8 +2077,8 @@ es:
   portal_customizer_option_forums: "Los usuarios pueden ver los Foros sin conectarse"
   portal_customizer_option_sol_i: "Apague esta característica si quiere que los usuarios se conecten para poder ver las soluciones"
   portal_customizer_option_solutions: "Los usuarios pueden ver las soluciones públicas sin conectarse"
-  portal_customizer_option_tickets: "Los usuarios pueden crear un ticket in conectarse"
-  portal_customizer_option_tickets_i: "Apague esta característica si quiere obligar a los usuarios a conectarse antes de enviar un ticket"
+  portal_customizer_option_tickets: "Los usuarios pueden crear un ticket sin iniciar sesión "
+  portal_customizer_option_tickets_i: "Apague esta característica si desea obligar a los usuarios a conectarse antes de enviar un ticket"
   portal_customizer_title: "Personalizar su portal público del cliente"
   portal_customizer_twitter_signin: "Permitir a los usuarios isncribirse mediante Twitter"
   portal_key: Portal
@@ -1787,13 +2112,20 @@ es:
     delete: "Estas seguro de que quieres borrar este reto?"
     fcr: "Esta resuelto en primera llamada"
     forum_category: Categoría
+    forum_mand: "Porfavor complete los numeros de foros"
     forums: Forums
     inactive_quests: "Búsquedas Inactivas"
+    js_forum_txt: "$$questmode$$ $$questvalue$$ Publicaciones en el foro en un lapso de $$questtime$$ y cumpliras con esta condicion"
+    js_quest_txt: "Luego de finalizar satisfactoriamente esta competencia puedes desbloquear el escudo $$badgename$$  y los puntos de bonus  $$questpoints$$"
+    js_solution_txt: "Crea $$questvalue$$ Articulos de base de conocimiento en un lapso tiempo $$questtime$$ y Cumpliras esta condicion "
+    js_ticket_txt: "Resuelve $$questvalue$$ tickets en un lapso de tiempo de $$questtime$$ y cumpliras esta condicion"
     name_mand: "Por favor da un nombre al reto."
     satisfaction: "Ratio de satisfacción de los clientes"
     solution_articles: Artículo
     solution_folder: Carpeta
     solution_likes: "Numero de \"Me gusta\""
+    solution_mand: "Porfavor completa el numero de soluciones"
+    ticket_mand: "Porfavor complete el numero de ticket resueltos "
   recent_activities: "Actividades recientes"
   recent_activity: "Actividad reciente"
   recent_forum_posts: "Entradas recientes en el foro"
@@ -1803,6 +2135,7 @@ es:
   replied_to: "Respondido a"
   replies: Respuestas
   reply: Responder
+  reply_comment: "Agregar comentarios"
   reply_topic: "Responder al tema"
   reports: 
     customer_activity_title: "Informe de actividad"
@@ -1825,13 +2158,14 @@ es:
     scoreboard_group_title: "Grupo Lider"
     scoreboard_reports: 
       champions_title: Campeones
+      sharpshooter_title: "Tiradores efectivos"
     scoreboard_title_nav: Lider
     select_customer: "Seleccionar cliente"
     select_options: "Informes de"
     select_time_period: "Seleccionar el periodo de tiempo"
     summary: 
       fcr: "Solución a la primera llamada"
-      open_tickets: "Tickets abierto"
+      open_tickets: "Tickets abiertos"
       pending_tickets: "Tickets pendientes"
       received_tickets: "Tickets recibidos"
       resolved_tickets: "Tickets solucionados"
@@ -1840,21 +2174,27 @@ es:
       total_tickets: "Tickets totales"
     summary_report: 
       avg_1st_response_time: "Tiempo medio de primera respuesta"
+      avg_response_time: "Tiempo medio de respuesta <br>"
       back_to_reports: "Volver a Reportes"
       fcr_count: "Resolución al primer contacto"
+      fcr_percent: FCR%
       helptext: "Las estadísticas calculadas en el informe son con respecto al número de tickets resueltos. <br /> Los tickets resueltos en SLA se resumen en &quot;Resolución a tiempo&quot;. <br /> La columna &quot;Resolución al primer contacto&quot; muestra los tickets que se han resuelto en la primera respuesta.<br /> El &quot;Tiempo medio de primera respuesta&quot; muestra el tiempo transcurrido entre el momento que el ticket se creó y el momento en el que el agente respondió por primera vez."
       on_time_resolution: "Resolución a tiempo"
+      on_time_resolution_percent: OTR%
       show_report: "Mostrar reporte"
       tickets_resolved: "Tickets solucionados"
     survey_reports: 
       back_to: "Volver a la vista de Lista"
       feedbacks: 
         in_response_to: "-- en respuesta a"
+      index: 
+        agent_list_loading: "Obteniendo la lista de agentes"
       list: 
         no_feedback: "Nadie ha dado ningún comentario durante este tiempo."
       list_content: 
         happy: Estupendo
         neutral: "solo bien"
+        rating_msg_multiple: "%{count}Dijo%{rating}"
         rating_msg_none: "nadie dijo %{rating}"
         rating_msg_single: "uno dijo %{rating}"
         rating_primary_msg_multiple: "%{count} los clientes dijeron %{rating}"
@@ -1868,7 +2208,7 @@ es:
         view_report_date: "Vista de informe durante"
     surveys_title_nav: "Informe de Satisfacción del Cliente"
     tab_heading: Reportes
-    tickets_by: "Tt]ickets por"
+    tickets_by: "Tickets por"
     timeline_chart_title: "Tickets recibidos en comparación con solucionados"
     timesheet_reports: 
       index: 
@@ -1890,6 +2230,7 @@ es:
   resolved_tickets: "Tickets resueltos"
   revert_identity_link_msg: "Revertir identidiad"
   right: Derecha
+  sales: Ventas
   save: Guardar
   save_and_close: "Guardar y cerrar"
   save_and_create: "Guardar y crear otro"
@@ -1916,6 +2257,7 @@ es:
   set_priority_as: "Establecer la prioridad como "
   set_status_as: "Cambiar estado a"
   set_type_as: "Tipificar como"
+  show_me_how: "Muestrame como"
   show_quoted_text: "Mostrar el texto citado"
   sign_in_info: "Ud vá a registrarse con"
   signup: Inscribirse
@@ -1928,7 +2270,12 @@ es:
     calendar_time: "Horas calendario"
     edit: "Editar política de SLA"
     escalate_to: "Escalar a"
-    info1: "	La política de SLA es un conjunto de tiempos de respuesta y resolución objetivo basados en la prioridad de los tickets. Es una buena práctica de la industria para establecer niveles de servicio basados en prioridad. Su política de SLA podría ser tan simple como decir &quot;Los tickets de alta prioridad deben resolverse en 2 horas&quot;, etc."
+    helpcard: 
+      info1: "La poliza de nivel servicio (SLA) es una regla que determina los estandares de calidad de la atencion de su equipo de soporte. Usted puede configurar las Polizas SLA para el tiempo que requiere que se responda un ticket o consulta y cuanto tiempo debe resolver el ticket, basados en la prioridad del ticket. Usted puede elegir si desea que cada regla SLA debe calcularse sobre las horas del calendario o el horario comercial, y también crear reglas automáticas de escalado para notificar agentes específicos cuando una regla de SLA es violada."
+      info2: "Las políticas de SLA se utilizará en Freshdesk para determinar el \"Vencimiento\" tiempo para cada Ticket. Usted puede tener una política de SLA por defecto para todos los clientes, o tener múltiples políticas de SLA para diferentes niveles de clientes, como los que se han suscrito al paquete soporte Premium."
+      title: "Poliza SLA"
+      tour: "Ayuda para crear una nueva poliza SLA"
+    info1: "  La política de SLA es un conjunto de tiempos de respuesta y resolución objetivo basados en la prioridad de los tickets. Es una buena práctica de la industria para establecer niveles de servicio basados en prioridad. Su política de SLA podría ser tan simple como decir &quot;Los tickets de alta prioridad deben resolverse en 2 horas&quot;, etc."
     info2: "Freshdesk utiliza la política de SLA para determinar la hora de “vencimiento” de tickets. Puede tener una política de SLA predeterminada para todos sus clientes, pero si tiene un cliente especial que necesita unos tiempos de respuesta y resolución más rápidos, siempre puede crear una política de SLA especial para ese cliente."
     info3: "La política de SLA funciona en conjunto con el horario laboral"
     new: "Nueva política de SLA"
@@ -1968,6 +2315,13 @@ es:
       edit: 
         twitter_settings_for_msg: "Configuración de Twitter para"
       form: 
+        capture_dm_info: "Freshdesk convertira automaticamente cualquier mensaje directo de esta cuenta de Twitter en un ticket "
+        capture_dm_msg: "capturar<strong>\"Direct menssages\"</strong> como ticket"
+        capture_mentions_info: "Freshdesk convertira automaticamente cualquier @mentions de esta cuenta de twitter en ticket "
+        capture_mentions_msg: "captura<strong>\"@mentions\"</strong>como ticket"
+        dm_time_info: "tiempo maximo para revisar mensajes directos desde el mismo usuario y considerarlos enlazados "
+        dm_time_msg: "DM Tiempo de enlace"
+        info_data: "Ayuda a controlar rapidamente la busquedas relativas a su producto/marca/servicio en twitter.<br /><strong>Nota:</strong> usted puede agregar multiples palabras en la busqueda separadas por coma "
         product: Producto
         search_keywords: "Buscar Palabras"
       index: 
@@ -1981,6 +2335,8 @@ es:
   solution: 
     add: "Añadir solución"
     add_new_solution: "Añadir una solución nueva"
+    char_count: Caracteres
+    description_counter_message: "Las mejores páginas de SEO, recomendamos un máximo de 150 caracteres para la descripción"
     edit: "Editar solución"
     folder: Carpeta
     folders: 
@@ -1998,9 +2354,15 @@ es:
     info7: "No hay soluciones en esta carpeta"
     info8: "Are you sure you want to delete this solution"
     info9: "Pública (se publicará en el autoservicio)"
+    meta_keywords_message: "Separa las palabras por coma"
     no_solutions_info: "No hay soluciones en esta carpeta"
+    solution_meta: "Motor de busqueda con Meta Tags"
+    solution_meta_description: "Descricion de Meta"
+    solution_meta_keywords: "Meta Keywords"
+    solution_meta_title: "Titulo del Tag"
     status: "Estado de la solución"
     title: Soluciones
+    title_counter_message: "Las mejores páginas de SEO, recomendamos un máximo de 72 caracteres para el titulo"
     type: "Tipo de solución"
     visibility: Visibilidad
   solution_category: 
@@ -2028,11 +2390,13 @@ es:
       logged_in_users: "Usuarios conectados"
       select_company: "Seleciona Compañias"
   special_beta_offer: "Oferta especial para cuentas Beta"
+  sprout_brief: "Solida mesa de ayuda por Email"
   sprout_details: "Gestión de respuestas por correo electrónico, Todas las automatizaciones, Política por predeterminada de SLA, Base de conocimientos, Portal de autoservicio, Asignación de dominios, Asistencia de la comunidad."
   start_typing_a_question: "Escriba su pregunta y las respuestas serán mostradas en tiempo real"
   starts_with: "Empezar con"
   state: Estado
   status: Estado
+  status_cust_disp_name_uniqueness_msg: "El nombre que ha seleccionado ya esta ocupado"
   status_deleted: "Estado borrado"
   status_name_validate_presence_msg: " El nombre del estado no puede estar en blanco"
   status_name_validate_uniqueness_msg: " El nombre del estado ya existe"
@@ -2079,7 +2443,7 @@ es:
   switch_heading: "Cambiar agente"
   swith_agent_msg: "Cambiar a otro agente"
   this_ticket_has_been_closed: "El ticket ha sido cerrado"
-  this_ticket_has_been_deleted: "El ticket ha sido borrado"
+  this_ticket_has_been_deleted: "El ticket se ha eliminado"
   this_ticket_has_been_resolved: "El ticket ha sido Resuelto"
   threeday: "3 Días"
   threemonth: "3 mes"
@@ -2088,6 +2452,7 @@ es:
     activity: Actividad
     add_note: "Agregar nota"
     add_time: "Añadir hora"
+    agent: Agente
     agent_notify: "añadió una nota y desea que usted lo compruebe"
     agent_responded_at: "Horas desde la respuesta del agente"
     assign_to_agent: "Assign To Agent"
@@ -2095,7 +2460,9 @@ es:
     assigned_at: "Horas desde asignado"
     assigned_none: "-"
     assigned_to: "Asignado a"
+    available_commands: "Comandos disponibles"
     canned_responses: 
+      ca_responses: "Respuestas Tipo"
       insert_ca_resp_tip: "Insertar esta respuesta tipo"
       insert_ca_response: "Respuesta tipo"
     close_btn: Cerrar
@@ -2106,16 +2473,18 @@ es:
     created_at: "Horas desde creado"
     created_on: "Creado a las %{time}"
     delete_btn: Eliminar
-    delete_btn_title: "Enviar este ticket a la papelera"
+    delete_btn_title: "Mover este ticket a la papelera"
+    delete_forever: "eliminar para siempre"
     due_by: "Horas desde demorado"
     due_by_time: "Vencido por tiempo"
     edit: "Edit Ticket"
     edit_btn: Editar
+    empty_trash: "Papelera vacio"
     execute_scenario: "Ejecutar situación"
     export: Exportar
     facebook_form: 
       send: Enviar
-      send_and_resolve: "Enviar y resolver	  	"
+      send_and_resolve: "Enviar y resolver      "
     first_assigned_at: "Horas desde la primera asignación"
     first_response_due: "Horas transcurridas desde la primera respuesta"
     group: Grupo
@@ -2126,6 +2495,7 @@ es:
         tooltip: "Ver el problema JIRA asociado"
     merge_btn: Combinar
     monitor_btn_title: "Monitorear este ticket"
+    none: ninguno
     note_content: "Contenido de la nota"
     note_form: 
       add_and_resolve: "Añadir y resolver"
@@ -2135,6 +2505,8 @@ es:
     opened_at: "Horas desde la reapertura"
     pending_since: "Horas desde pendiente"
     pick_up: Recoger
+    portal_created_on: "Creado por <span class='emphasize'>%{username}</span>sobre<span class='emphasize'>%{date}</span>"
+    portal_created_on_same_user: "Creado en <span class='emphasize'>%{date}</span>"
     priority: Prioridad
     properties: "Propiedades del ticket"
     recent_tickets: "Tickets recientes"
@@ -2153,8 +2525,8 @@ es:
     requester_responded_at: "Horas desde que el solicitante respondió"
     requestor_info: "Información del solicitante"
     resolved_at: "Horas desde solucionado"
-    restore_btn: "Recuperar este ticket"
-    restore_btn_title: "Recuperar este ticket desde la papelera"
+    restore_btn: "Restaurar este ticket"
+    restore_btn_title: "Restaurar este ticket desde la papelera"
     select_to_agent: "Seleccione un agente"
     singular: Ticket
     sort_by: "Ordenar por"
@@ -2179,7 +2551,17 @@ es:
       destroy_success: "Se eliminó la etiqueta de este ticket"
       no_match: "No hay concordancias. Presione enter para crear la etiqueta."
     thanks: "Gracias por enviarnos su opinión"
+    ticket_list_status_agent_responded_at: "De: %{username}, Agente que responde:<span class='emphasize'>hace%{time_ago}</span>"
+    ticket_list_status_closed_at: "de:%{username},Cerrado<span class='emphasize'>hace%{time_ago}</span>"
+    ticket_list_status_created_at: "de:%{username}, Creado:<span class='emphasize'>hace%{time_ago}</span>"
+    ticket_list_status_requester_responded_at: "De:%{username}, Respuesta de cliente<span class='emphasize'>hace%{time_ago}</span>"
+    ticket_list_status_resolved_at: "De:%{username}, resuelto:<span class='emphasize'>hace%{time_ago}</span>"
     ticket_url: "URL del ticket"
+    ticket_user_list_status_agent_responded_at: "Agente respondio hace <span class='emphasize'></span>%{time_ago}"
+    ticket_user_list_status_closed_at: "cerrado hace<span class='emphasize'></span>%{time_ago}"
+    ticket_user_list_status_created_at: "Creado hace <span class='emphasize'></span>%{time_ago}"
+    ticket_user_list_status_requester_responded_at: "Clientes respondio hace<span class='emphasize'></span>%{time_ago}"
+    ticket_user_list_status_resolved_at: "resuelto hace<span class='emphasize'></span>%{time_ago}"
     to_do: "Tickets para hacer"
     tweet_form: 
       tweet_and_resolve: "Tweet y resolver"
@@ -2188,12 +2570,21 @@ es:
     type: Tipo
     unassigned: "No asignados"
     unflag_spam: "Unflag Spam"
+    unwatch: "sin observador"
     verify_human: "Para verificar que usted es humano, porfavor digite las letras distorsionadas"
   ticket_cancel_multiple_button: Cancelar
   ticket_cc_email_more: mas
   ticket_close_failure: "El cierre del ticket falló."
   ticket_close_success: "Tu ticket ha sido cerrado con éxito."
   ticket_closed_at_time: "Cerrado a las"
+  ticket_due_by_time: Vencido
+  ticket_field: 
+    helpcard: 
+      info1: "El formulario de entrada es la manera más fácil para capturar todos los datos que necesitas conocer del cliente, incluso al enviar un ticket. Por ejemplo, el cliente que tiene ID en un entorno de comercio electrónico ayuda comprender el contexto adecuado para responder el ticket y acelerar las cosas un poco. Se puede personalizar el formulario de entradas en Freshdesk para incluir los campos de entradas correctas para su negocio, y deje que sus clientes y agentes, complete la información que necesita en el formato que desee."
+      info2: "Los Campos dependientes ofrecen una manera fácil de crear más profundas categorías de entradas e identificar los mayores problemas que obstruyen su sistema de ayuda. Con los campos dependientes puede organizar entradas jerárquicamente en categorías, subcategorías y elementos afectados."
+      title1: "Campos de Ticket"
+      title2: "Campos dependientes"
+      tour: "Ayuda para entender los campos del ticket"
   ticket_fields: 
     confirm_delete: "Estas seguro de que quieres borrar este campo?"
     fields: 
@@ -2227,6 +2618,8 @@ es:
       display_cc_field: "Mostrar campo CC"
       display_to_customer: "Mostrar mensaje al cliente"
       dropdown_choices: "Opciones desplegables"
+      dropdown_items_edit: "Editar vista - elemento desplegable"
+      dropdown_items_preview: "Vista previa - elemento desplegable"
       field_label_agents: "Etiqueta de campo para agentes"
       field_label_customer: "Etiqueta de campo para clientes"
       for_agents: "Para los Agentes"
@@ -2239,12 +2632,15 @@ es:
       level2: "Nivel 2"
       level3: "Nivel 3"
       nested_label: "Etiquetas de campos anidados"
+      nestedfield_helptext: "utilice el siguiente formulario de area de texto libre para agregar o editar elementos al menu desplegable, ordena los elementos presionado en tabulador una o dos veces. convertiremos estos elementos como base del menu desplegable, por favor tenga mucho cuidado. <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'> aprender mas</a>"
+      nestedfield_helptext_preview: "esta es la \"vista previa\" del elemento desplegable a mostrar, use de forma libre el area de texto para \"editar vistas\" y asi editar los elementos"
       sla_timer: "contador de SLA"
       status_choices: "Opciones de Estado"
     index: 
       add_custom_field: "Agregar campo personalizado"
-      customize_form: "Personalizar su formulario de \"Nuevo ticket\""
-      drag_drop_intro: "Para agregar un nuevo campo personalizado arrastre y suelte cualquier tipo de campo en la forma de \"Nuevo ticket\" de abajo"
+      checkbox: "Caja de verificación"
+      customize_form: "Personalizar su formulario de &quot;Nuevo ticket&quot;"
+      drag_drop_intro: "Para añadir un nuevo campo personalizado arrastre y suelte cualquier tipo de campo en la forma de &quot;Nuevo ticket&quot; de abajo"
       dropdown: "Menú desplegable"
       nestedfield: "Campo dependiente"
       number: Número
@@ -2258,7 +2654,7 @@ es:
   ticket_pending_since_time: "Pendiente desde"
   ticket_resolved_at_time: "Resuelto a las"
   ticket_update_multiple_button: Actualizar
-  ticket_was: "El ticketfué"
+  ticket_was: "El ticket se"
   tickets_filter: 
     sort_fields: 
       asc: Ascendente
@@ -2281,6 +2677,7 @@ es:
   to_do: Tareas
   to_email: "Al correo"
   topic: 
+    add_comment: "Agregar comentario"
     close: "Cerrar esta discusión"
     edit: "Editar tema"
     ideas_stamps: 
@@ -2293,6 +2690,7 @@ es:
     new: "Nuevo tema"
     open: "Volver a abierto la discusión"
     post: "Publicar tema"
+    post_comment: Publicar
     reply: "Responder a este tema"
     sticky: Adhesivo
   topics: 
@@ -2311,8 +2709,8 @@ es:
     not_authorized: "Ud no ha sido autorizado por Twitter"
     sent: "Trino enviado exitosamente"
     success_signin: "Se asoció exitosamente a @%{twitter_screen_name} con %{helpdesk}."
-    ticket_save: "El trino se convirtió exitosamente en ticket"
-    tkt_err_save: "No fué posible convertir el trino en ticket, o ya se había convertido"
+    ticket_save: "El tweet se convirtió correctamente en un ticket"
+    tkt_err_save: "No fue posible convertir el tweet en ticket o ya se había convertido"
     user_exists: "Esta cuenta de Twitter ya está asociada a otro producto"
     usr_not_thr: "El usuario no existe aquí"
   twitter_source: Twitter
@@ -2360,9 +2758,14 @@ es:
   username: Usuario
   users: 
     activations: 
+      bulk_send_invite_success: "El email de activacion fue enviado a"
+      bulk_send_invite_success2: "El email de activacion sera enviado a"
       code_expired: "Su código de activación ha expirado!"
       send_invite_success: "Se ha enviado el correo de activación!"
+      sent: enviado
       success: "Su cuenta ha sido activada."
+      user: usuario
+      users: usuarios
   users_blocked_message: "Los siguientes contactos (%{users}) se han bloqueado"
   validate_fwd_to_email_msg: "Por favor introduce una dirección de email válida"
   waiting_on_customer: "Esperando al Cliente"
@@ -2391,6 +2794,7 @@ es:
     content_not_available: "El contenido que usted busca no se encuentra en este portal."
     title: "No disponible!"
   yes_password_reset: Si
+  your_email: "tu email"
   your_email_address: "Su dirección de correo"
   your_trial_account: "Su cuenta de prueba"
   zendesk_backup: "Archivo de respaldo"

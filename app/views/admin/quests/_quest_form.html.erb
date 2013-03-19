@@ -2,7 +2,7 @@
 
 <%= f.error_messages :object_name => 'quest' %>
 <div style="<%= 'display:none' unless @quest.name.blank? %>">
-	<h3 class="s-title">Quest type</h3>
+	<h3 class="s-title"><%= t('admin.quests.quest_form.quest_type') %></h3>
 	<div class="form-section">		
 		<div class="row">
 			<% Quest::GAME_TYPES.each do |game_type| %>
@@ -16,13 +16,13 @@
 </div>
 <div id="enablequest">
 	<div class="gamecriteria">
-		<h3 class="s-title">Quest objectives</h3>
+		<h3 class="s-title"><%= t('admin.quests.quest_form.quest_objectives') %></h3>
 		<div class="ui-form gray-box-rounded">
 			<div id="questDOM"></div>
 			<div class="conditionset" id="filterDOM">
 				<div id="RuleList" class="rule_list"></div>
 				<fieldset class="empty_choice">
-		        	<p>No conditions present</p>
+		        	<p><%= t('admin.quests.quest_form.no_condition') %></p>
 		    	</fieldset>
 				<fieldset class="addchoice">
 		         	<p><%=t('dispatch.add_condition')%></p> 
@@ -33,12 +33,12 @@
 	</div>
 
 	<div class="gamereward">
-		<h3 class="s-title">Reward</h3>
-		<p class="help-text">On successful completion of a quest award a badge and bonus points</p>
+		<h3 class="s-title"><%= t('admin.quests.quest_form.reward') %></h3>
+		<p class="help-text"><%= t('admin.quests.quest_form.completion') %></p>
 		<div class="form-section">
 			<div class="row">
 				<div class="span3">
-					<strong>Badge</strong><br />			
+					<strong><%= t('admin.quests.quest_form.badge') %></strong><br />			
 					<%= f.hidden_field :badge_id, :class => "required text" %>					
 					<div class="select_badge <%= 'hide' unless @badge_class %>">
 						<div id="selected-badge">
@@ -47,11 +47,11 @@
 						<strong id="selected-badge-name"><%= @badge_class[:name] if @badge_class%></strong>
 					</div>
 					<a href="javascript:void(0)" id="showbadges">
-						<%= (!@badge_class) ? "Pick a badge" : "Change" %>
+						<%= (!@badge_class) ? t('admin.quests.quest_form.pick_badge') : t('admin.quests.quest_form.change') %>
 					</a>
 				</div>
 				<div class="span4">
-					<strong>Bonus points</strong><br />
+					<strong><%= t('admin.quests.quest_form.bonus_points') %></strong><br />
 					<%= f.text_field :points, :class => "required points" %>
 				</div>
 			</div>
@@ -74,10 +74,10 @@
 	</div>
 	<br />
 	<div class="gamename">
-		<h3 class="s-title">...and finally</h3>
+		<h3 class="s-title"><%= t('admin.quests.quest_form.final') %></h3>
 		<div class="form-section">
-			<%= f.text_field :name, :class => "required text", :placeholder => "Name your quest" %>
-			<%= f.text_area :description, :class => "mediumpara", :placeholder => "Brief about the quest" %>
+			<%= f.text_field :name, :class => "required text", :placeholder => t('admin.quests.quest_form.quest_name') %>
+			<%= f.text_area :description, :class => "mediumpara", :placeholder => t('admin.quests.quest_form.brief') %>
 		</div>
 	</div>	
 </div>
@@ -85,7 +85,7 @@
 	<input type="hidden" name="quest_data" id="quest_quest_data" value=""/>
 	<%= link_to t('cancel_and_back'), { :action => 'index' }, :class => "uiButton floatl" %>
 	<div class="hide" id="save-button">
-		<input type="submit" class="uiButton special" value="Save quest" />
+		<input type="submit" class="uiButton special" value="<%= t('admin.quests.quest_form.save') %>" />
 	</div>
 </div>
 

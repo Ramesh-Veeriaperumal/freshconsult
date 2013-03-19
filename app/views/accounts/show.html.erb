@@ -1,4 +1,23 @@
+<%= include_stylesheets :pattern %>
+<%= include_javascripts :pattern  %>
+
+<%
+	admin_choice = current_account.all_admins.inject ([]) { |choice, admin| 
+							choice << "{ id : '#{escape_javascript(admin.email)}',
+	            		   				value : '#{escape_javascript(admin.email)}',
+	               						text : '#{escape_javascript(admin.email)}' }"  }
+
+	unless (emails = current_account.invoice_emails).blank?  
+	  added_invoice_emails = emails.inject ([]) { |choice, email| 
+							choice << "{ id: '#{escape_javascript(email)}',
+														text: '#{escape_javascript(email)}',
+														value: '#{escape_javascript(email)}' }" }
+	end
+
+%>
+
 <% content_for :sidebar do -%>
+	
 	<div class="sidepanel">
 		<h3 class="title"><%= current_account.name %></h3> 
 		<p>			
@@ -8,39 +27,202 @@
 		</p>
 		<%= link_to(t("cancel_my_account"), cancel_account_url, :class => "button") %>
 	</div>
-<%- end %>
-<h3 class= "title"><%= @page_title = t('.account_settings') %></h3>
-<ul class="ui-form">
-	<li class="inline-field">
-		<label class="caption"><%= t('account.name') %></label>
-		<div class="fields">
-			<div class="big-text"><%= current_account.name %></div>
-		</div>
-	</li> 
-	<li class="inline-field">
- 	  <%= content_tag(:label, t(".export_data"), :class => "caption") %>
-     <div class="fields"> 
- 		  <div class="action_buttons">        
-         <%= link_to "#{t('.export_now')} &rsaquo;", export_admin_data_export_url, :class => "last" %>
-       </div>
-       <%= content_tag(:label, t('.export_data_text')) %>
-     </div>
- 	</li>
-  <li class="inline-field">
-  	<% form_tag(:action => 'change_account_admin' , :controller => :users, :method => :put) do %>
-  	<%= content_tag(:label,t('account_admin'), :class => "caption") %> 
-		<div class="fields"> 
-  		<div class="action_buttons">        
-            <%= link_to_function "#{t('change')}", "jQuery(this).parents('form:first').trigger('submit')" %>
-        </div>
-				<%= select_tag :account_admin, options_from_collection_for_select(current_account.all_admins, :id, :name_details,current_account.account_admin.id) %>
-    </div>
-	<%end-%>
-	
-  </li>	  
-</ul>
 
-<div class="button-container">
-	<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", :class => "uiButton floatl" %>
-	<%= link_to t("admin.home.index.billing"), subscription_url, :class => "uiButton special" %>
+	<div class="sidepanel">
+		<h3 class="title"><%= t(".export_data") %></h3> 
+		<p><%= t('.export_data_text') %></p>
+		<%= link_to "#{t('.export_now')} &rsaquo;", export_admin_data_export_url, :class => "button" %>
+	</div>
+
+<%- end %>
+
+
+<h3 class= "title"><%= @page_title = t('.account_settings') %><span class="big-text normal"> - <%= current_account.name %></span></h3>
+
+<div class="account-content"> 
+	<ul class="ui-form">
+	  
+	  <li class="inline-field">
+	  		<%= content_tag(:label, t('account_admin'), :class => "caption") %>
+				
+				<div class="fields">
+					
+					<% if current_account.all_admins.size > 1 %>
+						
+						<div id="admin-name">
+							<%= content_tag(:label, h(current_account.account_admin.name_details), :class => "bold pull-left") %> 
+							<%= link_to_function "#{t('change')}", :class => "change-admin-link", :id => "change-link" %>
+						</div>
+
+						<div id="admin-form" class="hide" >
+							<% form_tag({:action => 'change_account_admin', :controller => :users }, {  
+	  						:id => "account-admin-form"}) do %>
+							      
+								<%= select_tag :account_admin, options_from_collection_for_select(current_account.all_admins, :id, :name_details, :disabled => current_account.account_admin.id)  %>
+
+								<%= link_to_function "#{t('update')}", "jQuery(this).parents('form:first').trigger('submit')", :class => "btn btn-primary" %>
+
+								<%= link_to_function "#{t('cancel')}", :class => "change-admin-link btn" %>
+							
+							<% end %>
+						</div>
+    
+					<% else %>
+						
+						<%= content_tag(:label, h(current_account.account_admin.name_details), :class => "bold") %> 
+					<% end %>
+	    	</div>
+			
+	  </li>	
+	</ul>
 </div>
+
+<br />
+<div class="account-content">
+	 
+	<% form_for :account_configuration, @account_configuration, :url => { :controller => 
+		"account_configurations", :action => "update" },  :html => { :method => :put, 
+		:id => "account-details-form"} do |f| %>
+
+  	<ul class="ui-form account-configs">
+	  
+		  <li class="inline-field">
+		  	
+		  	<%= content_tag(:label, t('.primary_contact'), :class => "bold") %>
+		  	<div id="field-info">
+		  		<%= content_tag(:label, t('.primary_contact_info')) %>
+		  	</div>
+		  	
+		  	<br/>
+		  	
+		  	<ul class="fields"> 
+		  		<li class="inline-field">
+			  		<%= content_tag(:label, "#{t('.contact_first_name')} *", :class => "caption") %>
+			  		
+			  		<div class="contact-fields">
+							<%= text_field_tag "account_configuration[contact_info][first_name]", current_account.admin_first_name, :class => "required", :autocomplete => "off" %>
+						</div>
+					</li>
+
+					<li class="inline-field">
+			  		<%= content_tag(:label, "#{t('.contact_last_name')} *", :class => "caption") %>
+			  		
+			  		<div class="contact-fields">
+							<%= text_field_tag "account_configuration[contact_info][last_name]", current_account.admin_last_name, :class => "required", :autocomplete => "off" %>
+						</div>
+					</li>
+
+					<li class="inline-field">
+			  		<%= content_tag(:label, "#{t('.contact_email')} *", :class => "caption") %>
+
+			  		<div class="contact-fields">
+							<%= text_field_tag "account_configuration[contact_info][email]", current_account.admin_email, :class => "email required", :autocomplete => "off" %>
+						</div>
+					</li>
+
+		  		<li class="inline-field">
+			  		<%= content_tag(:label, t('.contact_phone'), :class => "caption") %>
+
+			  		<div class="contact-fields">
+							<%= text_field_tag "account_configuration[contact_info][phone]", current_account.admin_phone, :id => "contact-phone", :autocomplete => "off" %>
+						</div>
+					</li>					
+				</ul>
+	  	</li>
+
+		  <li class="inline-field">
+	    	<%= content_tag(:label, t('.invoice_email_info'), :class => "caption bold") %> 
+				
+			 	<ul class="fields"> 
+			 		<li class="inline-field">
+						<%= content_tag(:label, "#{t('.invoice_emails')} *", :class => "caption") %>
+
+						<div class="contact-fields">
+							<%= hidden_field_tag "invoice_email_field", added_invoice_emails, :class => "required" %>
+						</div>
+					</li>	
+		    </ul>
+
+		  </li>
+		  
+		  <li>
+		  	<%= f.submit "#{t('update')}", :id => "account_form_submit", :class => "btn btn-primary"  %>
+		  </li>
+	  </ul>
+
+		<div class="button-container">
+			<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", :class => "uiButton floatl" %>
+		</div>
+
+	<% end %>
+
+</div>
+
+<script>
+		
+	jQuery(document).ready(function() { 
+
+  	results = function(result, container, query) {
+  		return result.text;
+		}
+
+		search_choice_validation = function(term, data) {
+			    		if (jQuery(data).filter(function() { 
+				    		return this.text.localeCompare(term)===0; 
+				    	}).length===0) { 
+								if(/\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/.test(term)) { 
+									return {
+										id : term, 
+										text : term 
+									}; 
+								}  
+								else { return null; } 
+				     }}
+
+
+  	jQuery("#invoice_email_field").select2({
+  			data: [ <%= admin_choice.join(",")  %> ],
+  			multiple: true,
+  			// maximumSelectionSize: 1,
+
+  			initSelection : function (element, callback) {
+    			callback( [<%= added_invoice_emails.join(",") if added_invoice_emails %>] );
+  			},
+
+  			specialFormatting: true,
+  			formatResult: results,
+				formatNoMatches: function () { return "Invalid email"; },
+				// formatSelectionTooBig: function(){ return "You cannot add any more emails"; },
+
+  			createSearchChoice: search_choice_validation		
+		});
+	
+		jQuery("#invoice_email_field").select2("val",[]);
+
+	});
+
+	
+	jQuery(".change-admin-link").live('click', function(event){
+		jQuery("#admin-name, #admin-form").toggle();
+	});
+
+	
+	jQuery('form#account-details-form').validate({
+		submitHandler: function(form){ accountFormSubmit(form); }
+	});
+		
+	var accountFormSubmit = function(form){
+	  	target = jQuery('#invoice_email_field');
+			if(target.val()){
+		  	target.val().split(",").each(function(email){
+					target.append(jQuery('<input />').attr({ name: "account_configuration[billing_emails][invoice_emails][]", value: email, type: "hidden" }))
+		  	})
+	  	}
+	  	else{
+	  		target.append(jQuery('<input />').attr({ name: "account_configuration[billing_emails][invoice_emails]", value: null, type: "hidden" }))
+	  	}
+	  	
+	  	form.submit();
+	  }
+
+</script>

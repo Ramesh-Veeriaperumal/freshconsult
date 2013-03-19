@@ -35,6 +35,7 @@ class Subscription < ActiveRecord::Base
   before_validation :update_amount
   after_update :update_features,:send_invoice
   after_update :add_to_crm, :if => :free_customer?
+  after_update :notify_totango, :if => :free_customer?
   
   after_update :update_billing
   after_update :add_card_to_billing, :if => :card_number_changed?
@@ -47,6 +48,9 @@ class Subscription < ActiveRecord::Base
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
   
+  delegate :contact_info, :admin_first_name, :admin_last_name, :admin_email, :admin_phone, 
+            :invoice_emails, :to => "account.account_configuration"
+
   # renewal_period is the number of months to bill at a time
   # default is 1
   validates_numericality_of :renewal_period, :only_integer => true, :greater_than => 0
@@ -534,7 +538,11 @@ class Subscription < ActiveRecord::Base
     end
 
     def add_to_crm
-      Resque.enqueue(CRM::AddToCRM::FreeCustomer, id)
+      Resque.enqueue(CRM::AddToCRM::FreeCustomer, {:item_id => id})
+    end
+
+    def notify_totango
+      Resque.enqueue(CRM::Totango::FreeCustomer, {:account_id => account_id})
     end
 
     #Billing
@@ -561,11 +569,12 @@ class Subscription < ActiveRecord::Base
     end
 
     def add_subscription_event
-      Resque.enqueue(Subscription::Events::AddEvent, id, subscription_info(@old_subscription))
+      Resque.enqueue(Subscription::Events::AddEvent, {:account_id => account_id, :subscription_id => id, 
+                                                      :subscription_hash => subscription_info(@old_subscription)} )
     end
 
     def add_churn
-      Resque.enqueue(Subscription::Events::AddDeletedEvent, subscription_info(self)) if active?
+      Resque.enqueue(Subscription::Events::AddDeletedEvent, {:account_id => account_id, :subscription_hash =>  subscription_info(self)}) if active?
     end
 
  end

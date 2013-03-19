@@ -6,8 +6,8 @@ class Subscription::Events::AddDeletedEvent
 
 	class << self
 
-		def perform(deleted_subscription_hash)
-			subscription = deleted_subscription_hash.symbolize_keys!
+		def perform(args)
+			subscription = args[:subscription_hash].symbolize_keys!
 
 			event_attributes = subscription_info(subscription).merge(deleted_event_info(subscription))
 			SubscriptionEvent.create(event_attributes)

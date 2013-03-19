@@ -32,6 +32,8 @@
 
             <button class="button dialog2" data-url="/helpdesk/tickets/update_multiple_tickets" data-width="667" title="<%=t('bulk_actions')%>" disabled="disabled"><%=t('bulk_actions')%></button>
 
+            <button id="merge_multiple" class="button dialog2" data-width="715" data-parameters title="<%=t('ticket.merge_title')%>" disabled="disabled" data-destroy-on-close="true"><%=t('ticket.merge_btn')%></button>
+
           <% end %>
 
           <% if @current_view == "monitored_by" %>
@@ -54,5 +56,17 @@
       	</tr>
     </thead>
   </table>
+
+<% javascript_tag do -%>
+  jQuery("#merge_multiple").bind("click", function(ev){
+      var selected_tickets=[];
+      var parameters=[];
+      jQuery("#tickets-expanded .selector:checked").each(function(){
+        selected_tickets.push(jQuery(this).val());
+      });
+      jQuery(this).data("url","/helpdesk/merge_tickets/bulk_merge");
+      jQuery(this).data("parameters",{ source_tickets : selected_tickets });
+  });
+<%- end %>
 
 

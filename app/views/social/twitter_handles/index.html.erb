@@ -1,13 +1,14 @@
 <% content_for :sidebar do -%><%-end %>
 <% unless @twitter_handles.empty? %>
   <div class="floatr">
-    <%= link_to "Add Account", @auth_redirect_url, :class => "uiButton special medium" %> 
+    <%= link_to t('admin.getting_started.index.social_twitter_add'), @auth_redirect_url, :class => "uiButton special medium" %> 
   </div>
   <h3 class="title"><%=t('.title')%></h3>
   <ul class="admin_list">
     <% @twitter_handles.each do |twitter_handle| %>
       <li>
   		  <div class="item_actions">
+          <%= link_to (t(".reauthorize"), @auth_redirect_url , :class => "button") if twitter_handle.reauth_required? %>
   		    <%= link_to t("edit"),  edit_social_twitter_url(twitter_handle), :class => "button" %>
   		    <%= link_to(t('remove'), social_twitter_path(twitter_handle), :method => 'delete', :confirm => t('.remove_handle_msg'), :class => "button" ) %>    
   		  </div>
@@ -17,6 +18,7 @@
   		  </div>		
   		    <h2 class="title">
             <%= link_to "@#{twitter_handle.screen_name}", edit_social_twitter_url(twitter_handle) %> 
+            &nbsp;<%if twitter_handle.reauth_required? %><span class="label label-important align-fix"> <%=t(".reauth_required")%></span><%end%> 
           </h2>
           <div class="intro"> <%= twitter_handle.product.name if twitter_handle.product%> </div> 
       </li>

@@ -21,6 +21,10 @@ class Va::Handlers::Numeric < Va::RuleHandler
     def less_than(evaluate_on_value)
       evaluate_on_value < numeric_value
     end
+
+    def in(evaluate_on_value)
+      value.map(&:to_i).include?(evaluate_on_value)
+    end
     
     def filter_query_is
       construct_query '='

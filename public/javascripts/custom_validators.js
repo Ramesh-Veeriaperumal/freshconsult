@@ -31,7 +31,7 @@
      return /^([0-9]*):([0-5][0-9])(:[0-5][0-9])?$/.test(hours);
   }, 'Please enter a valid hours.');
   $.validator.addClassRules("hours", { hours: true });
-
+  
 
   //Domain Name Validator 
   $.validator.addMethod("domain_validator", function(value, element) {
@@ -58,7 +58,8 @@
   //URL Validator without protocol
   $.validator.addMethod("url_without_protocol", function(value, element) {
       var domain_name = (element && $(element).data('domain')) || 'freshdesk.com',
-      domian_restricted_regex= new RegExp("^(?!.*\\."+domain_name+"$)[/\\w\\.-]+$");
+      domian_restricted_regex = new RegExp("^(?!.*\\."+domain_name+"$)[/\\w\\.-]+$");
+      value = trim(value)
       return this.optional(element) || (/^((https?|ftp):\/\/)?(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(value) && domian_restricted_regex.test(value));
   }, "Please enter a valid URL");
   $.validator.addClassRules({
@@ -107,5 +108,19 @@ $.validator.addMethod("require_from_group", function(value, element, options) {
 }, jQuery.format("Please enter a Email or Phone Number"));
 
 $.validator.addClassRules("require_from_group" ,{require_from_group: [1, ".user_info"]});
+
+// Time validator
+$.validator.addMethod("time_12", function(value, element){
+  if( ! /^[0-9]{1,2}:[0-9]{1,2} [ap]m$/i.test(value) ) return false;  
+  var t = value.split(' ');
+  var hm = t[0].split(':'), meridian = t[1];
+  var h = hm[0], m = hm[1];
+  if(meridian!='am' && meridian!='pm') return false;
+  if(h<1 || h>12) return false;
+  if(m<0 || m>59) return false;
+  return true;
+}, 'Invalid time.');
+$.validator.addClassRules("time-12", { time_12: true });
+
 
 })(jQuery);

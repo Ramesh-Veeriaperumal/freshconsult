@@ -6,7 +6,7 @@ class AccountsController < ApplicationController
   layout :choose_layout 
   
   skip_before_filter :set_locale, :except => [:cancel, :show, :edit]
-  skip_before_filter :set_time_zone, :except => [:cancel, :edit, :update, :delete_logo, :delete_fav, :show]
+  skip_before_filter :set_time_zone, :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show]
   skip_before_filter :check_account_state
   skip_before_filter :redirect_to_mobile_url
   
@@ -242,13 +242,17 @@ class AccountsController < ApplicationController
   end
 
   def update
+    redirect_url = params[:redirect_url].presence || admin_home_index_path
     @account.time_zone = params[:account][:time_zone]
     @account.ticket_display_id = params[:account][:ticket_display_id]
     params[:account][:main_portal_attributes][:updated_at] = Time.now
     @account.main_portal_attributes = params[:account][:main_portal_attributes]
     if @account.save
+      Resque::enqueue(CRM::Totango::SendUserAction, {:account_id => current_account.id,
+                                                     :email => current_user.email,
+                                                     :activity => totango_activity(:helpdesk_rebranding)})
       flash[:notice] = t(:'flash.account.update.success')
-      redirect_to admin_home_index_path
+      redirect_to redirect_url
     else
       render :action => 'edit'
     end
@@ -275,8 +279,8 @@ class AccountsController < ApplicationController
      DeletedCustomers.create(
        :full_domain => "#{current_account.name}(#{current_account.full_domain})",
        :account_id => current_account.id,
-       :admin_name => current_account.account_admin.name,
-       :admin_email => current_account.account_admin.email,
+       :admin_name => current_account.admin_first_name,
+       :admin_email => current_account.admin_email,
        :account_info => {:plan => sub.subscription_plan_id,
                          :discount => sub.subscription_discount_id,
                          :agents_count => current_account.agents.count,
@@ -299,13 +303,20 @@ class AccountsController < ApplicationController
   def delete_logo
     current_account.main_portal.logo.destroy
     current_account.main_portal.touch
-    render :text => "success"
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.js { render :text => "success" }
+    end
   end
   
-  def delete_fav
+  def delete_favicon
     current_account.main_portal.fav_icon.destroy
     current_account.main_portal.touch
-    render :text => "success"
+    
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.js { render :text => "success" }
+    end    
   end
 
   protected
@@ -427,6 +438,6 @@ class AccountsController < ApplicationController
     private
 
       def add_to_crm
-        Resque.enqueue(Marketo::AddLead, @account.id, ThirdCRM.fetch_cookie_info(request.cookies))
+        Resque.enqueue(Marketo::AddLead, { :account_id => @account.id, :cookie => ThirdCRM.fetch_cookie_info(request.cookies) })
       end   
 end

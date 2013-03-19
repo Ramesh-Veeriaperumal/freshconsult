@@ -12,7 +12,7 @@ class Social::FacebookPagesController < Admin::AdminController
   before_filter :load_item,  :only => [:edit, :update, :destroy]  
   
   def index
-    @fb_pages = scoper.active 
+    @fb_pages = scoper 
   end
 
   def authdone
@@ -43,6 +43,10 @@ class Social::FacebookPagesController < Admin::AdminController
           else
             page = scoper.new(fb_page)
             if page.save
+              Resque::enqueue(CRM::Totango::SendUserAction, 
+                                        {:account_id => current_account.id, 
+                                        :email => current_user.email, 
+                                        :activity => totango_activity(:facebook)})
               fetch_fb_wall_posts page
             end
           end

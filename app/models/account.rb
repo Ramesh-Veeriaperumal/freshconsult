@@ -32,6 +32,7 @@ class Account < ActiveRecord::Base
 
   has_many :survey_results
   has_many :survey_remarks
+
   has_one  :subscription_plan, :through => :subscription
 
   has_one :conversion_metric
@@ -45,7 +46,12 @@ class Account < ActiveRecord::Base
   has_one :data_export
   
   has_one :account_additional_settings
+
+  has_one :account_configuration
   
+  delegate :contact_info, :admin_first_name, :admin_last_name, :admin_email, :admin_phone, 
+            :invoice_emails, :to => "account_configuration"
+
   has_one :logo,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
@@ -82,10 +88,12 @@ class Account < ActiveRecord::Base
   
   has_one :subscription
   has_many :subscription_payments
-  has_many :solution_categories , :class_name =>'Solution::Category',:include =>:folders,:order => "position"
-  has_many :solution_articles , :class_name =>'Solution::Article'
+  has_many :solution_categories, :class_name =>'Solution::Category',:include =>:folders,:order => "position"
+  has_many :portal_solution_categories, :class_name =>'Solution::Category', :order => "position"
+  has_many :solution_articles, :class_name =>'Solution::Article'
   
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
+  has_many :user_credentials, :class_name => 'Integrations::UserCredential', :dependent => :destroy
   has_many :customers
   has_many :contacts, :class_name => 'User' , :conditions =>{:user_role =>[User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]] , :deleted =>false}
   has_many :all_agents, :through =>:users, :order => "users.name"
@@ -125,13 +133,11 @@ class Account < ActiveRecord::Base
   has_many :forum_categories, :order => "position"
   
   has_one :business_calendar
-  
-  
-  has_many :folders , :class_name =>'Solution::Folder' , :through =>:solution_categories
-  
-  
-  has_many :portal_forums,:through => :forum_categories , :conditions =>{:forum_visibility => Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]} 
-  has_many :portal_topics, :through => :portal_forums# , :order => 'replied_at desc', :limit => 5
+
+  has_many :forums, :through => :forum_categories    
+  has_many :portal_forums, :through => :forum_categories, 
+    :conditions =>{:forum_visibility => Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]}, :order => "position"     
+  has_many :portal_topics, :through => :forums# , :order => 'replied_at desc', :limit => 5
   
   has_many :user_forums, :through => :forum_categories, :conditions =>['forum_visibility != ?', Forum::VISIBILITY_KEYS_BY_TOKEN[:agents]] 
   has_many :user_topics, :through => :user_forums#, :order => 'replied_at desc', :limit => 5
@@ -139,7 +145,10 @@ class Account < ActiveRecord::Base
   has_many :topics
   has_many :posts
 
- 
+  has_many :folders, :class_name =>'Solution::Folder', :through => :solution_categories  
+  has_many :public_folders, :through => :solution_categories
+  has_many :published_articles, :through => :public_folders
+   
   has_one :form_customizer , :class_name =>'Helpdesk::FormCustomizer'
   has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', 
     :include => [:picklist_values, :flexifield_def_entry], :order => "position"
@@ -222,9 +231,9 @@ class Account < ActiveRecord::Base
   after_create :send_welcome_email
   after_update :update_users_language
 
-  before_destroy :update_crm
+  before_destroy :update_crm, :notify_totango
 
-  after_commit_on_create :add_to_billing
+  after_commit_on_create :add_to_billing, :add_to_totango
   before_destroy :update_billing
 
   after_commit_on_update :clear_cache
@@ -257,7 +266,7 @@ class Account < ActiveRecord::Base
     
     :pro => {
       :features => [ :scenario_automations, :customer_slas, :business_hours, :forums, 
-        :surveys, :scoreboard, :facebook, :timesheets ],
+        :surveys, :scoreboard, :facebook, :timesheets, :css_customization ],
       :inherits => [ :basic ]
     },
     
@@ -271,17 +280,19 @@ class Account < ActiveRecord::Base
     },
     
     :blossom => {
-      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, :custom_domain, :multiple_emails ],
+      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
+        :custom_domain, :multiple_emails ],
       :inherits => [ :sprout ]
     },
     
     :garden => {
-      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :advanced_reporting ],
+      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
+        :advanced_reporting, :css_customization ],
       :inherits => [ :blossom ]
     },
 
     :estate => {
-      :features => [ :gamification, :agent_collision ],
+      :features => [ :gamification, :agent_collision, :layout_customization ],
       :inherits => [ :garden ]
     },
 
@@ -295,17 +306,22 @@ class Account < ActiveRecord::Base
     },
     
     :garden_classic => {
-      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :advanced_reporting ],
+      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
+        :advanced_reporting, :css_customization ],
       :inherits => [ :blossom_classic ]
     },
 
     :estate_classic => {
-      :features => [ :gamification, :agent_collision ],
+      :features => [ :gamification, :agent_collision, :layout_customization ],
       :inherits => [ :garden_classic ]
     }
 
   }
   
+
+  has_many :portal_templates,  :class_name=> 'Portal::Template'
+  has_many :portal_pages,  :class_name=> 'Portal::Page'
+
 # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
     
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
@@ -622,6 +638,8 @@ class Account < ActiveRecord::Base
       self.user.save
       User.current = self.user
       
+      self.build_account_configuration(admin_contact_info)
+      self.account_configuration.save
     end
     
     def create_portal
@@ -655,12 +673,28 @@ class Account < ActiveRecord::Base
       Resque.enqueue(Billing::AddToBilling::CreateSubscription, id)
     end 
 
+    def add_to_totango
+      Resque.enqueue(CRM::Totango::TrialCustomer, {:account_id => id})
+    end
+
     def update_billing
       Resque.enqueue(Billing::AddToBilling::DeleteSubscription, id)
     end
 
     def update_crm
       Resque.enqueue(CRM::AddToCRM::DeletedCustomer, id)
+    end
+
+    def notify_totango
+      Resque.enqueue(CRM::Totango::CanceledCustomer, id, full_domain)
+    end
+
+    def admin_contact_info
+      {
+        :contact_info => { :first_name => self.user.first_name, :last_name => self.user.last_name,
+                           :email => self.user.email, :phone => self.user.phone },
+        :billing_emails => { :invoice_emails => [ self.user.email ] }
+      }
     end
 
 end

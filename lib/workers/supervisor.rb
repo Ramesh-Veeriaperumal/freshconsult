@@ -1,14 +1,28 @@
 class Workers::Supervisor
-  extend Resque::Plugins::Retry
+  extend Resque::AroundPerform
+  
+
   @queue = 'supervisor_worker'
+  
+  class PremiumSupervisor
+    extend Resque::AroundPerform
+    @queue = 'premium_supervisor_worker'
 
-  @retry_limit = 3
-  @retry_delay = 60*2
+    def self.perform(args)
+     Workers::Supervisor.run
+    end
+  end
 
-  def self.perform(account_id)
-    account = Account.find(account_id)
-    account.make_current
+  def self.perform(args)
+    run
+  end
+
+ 
+
+  def self.run
+    account = Account.current
     SeamlessDatabasePool.use_persistent_read_connection do
+      start_time = Time.now.utc
     account.supervisor_rules.each do |rule|
       begin
         conditions = rule.filter_query
@@ -36,7 +50,11 @@ class Workers::Supervisor
         puts "something went wrong"
       end
     end
+    end_time = Time.now.utc
+    if((end_time - start_time) > 250)
+      total_time = Time.at(Time.now.utc - start_time).gmtime.strftime('%R:%S')
+      puts "Time total time it took to execute the supervisor rules for, #{account.id}, #{account.full_domain}, #{total_time}"
+    end
   end
-    Account.reset_current_account
   end
 end

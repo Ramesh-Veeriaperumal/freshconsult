@@ -15,6 +15,17 @@ class Integrations::IntegratedResource < ActiveRecord::Base
     end
   end
 
+  def self.updateResource(params)
+    irParams = params[:integrated_resource]
+    unless irParams.blank?
+      ir = irParams[:account].integrated_resources.find(irParams[:id])
+      ir.local_integratable_id  = irParams[:local_integratable_id] if irParams.has_key?(:local_integratable_id) and irParams[:local_integratable_id].present?
+      ir.remote_integratable_id  = irParams[:remote_integratable_id] if irParams.has_key?(:remote_integratable_id) and  irParams[:remote_integratable_id].present?
+      ir.save!
+      return ir
+    end
+  end
+
   def self.delete_resource_by_remote_integratable_id(params)
     irParams = params[:integrated_resource]
     remote_integratable_id = irParams['remote_integratable_id']

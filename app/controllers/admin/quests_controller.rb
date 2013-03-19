@@ -18,6 +18,9 @@ class Admin::QuestsController < Admin::AdminController
 
   def create    
     if @quest.save
+      Resque::enqueue(CRM::Totango::SendUserAction, { :account_id => current_account.id,
+                                                     :email => current_user.email, 
+                                                    :activity => totango_activity(:quests)})
       flash[:notice] = t(:'flash.general.create.success', :human_name => human_name)
       redirect_back_or_default '/admin/gamification#quests'
     else

@@ -46,9 +46,9 @@
           <div class="info"> 
             <%if @to_emails && @to_emails.length > 0 %>                        
                   <%if @to_emails.length < 3 %>
-                      <%= content_tag :span, "To: " + @to_emails.collect{ |to_e| to_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", "), :class => "" if (@ticket.source == (Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])) %>  
+                      <%= content_tag :span, t('helpdesk.tickets.to') + @to_emails.collect{ |to_e| to_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", "), :class => "" if (@ticket.source == (Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])) %>  
                   <% else %>
-                      <%= content_tag :span, "To: " + @to_emails[0,2].collect{ |to_e| to_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", ") + "<span class='toEmailMoreContainer hide'>,&nbsp;"+ @to_emails[2,@to_emails.length].collect{ |to_e| to_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", ") +" </span> <a href='javascript:showHideToEmailContainer();'  class='toEmailMoreLink'> #{@to_emails.length-2} "+t('ticket_cc_email_more')+"</a>", :class => "" if (@ticket.source == (Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])) %>  
+                      <%= content_tag :span, t('helpdesk.tickets.to') + @to_emails[0,2].collect{ |to_e| to_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", ") + "<span class='toEmailMoreContainer hide'>,&nbsp;"+ @to_emails[2,@to_emails.length].collect{ |to_e| to_e.gsub("<","&lt;").gsub(">","&gt;") }.join(", ") +" </span> <a href='javascript:showHideToEmailContainer();'  class='toEmailMoreLink'> #{@to_emails.length-2} "+t('ticket_cc_email_more')+"</a>", :class => "" if (@ticket.source == (Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])) %>  
                   <% end %>
             <% end %> 
             via <%= @ticket.source_name %>
@@ -90,7 +90,8 @@
             </div>
             <div class="action_buttons clearfix">
               <%= link_to( "Print", print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
-              <%= link_to t('ticket.merge_btn'), "/helpdesk/tickets/show_tickets_from_same_user/#{@ticket.display_id}", :id => "Merge", :title => "Merge ticket", "data-ajax-dialog" => true %>
+              <%= link_to t('ticket.merge_btn'), "/helpdesk/merge_tickets/bulk_merge?source_tickets=#{@ticket.display_id}", 
+              :id => "Merge", :title => t('ticket.merge_title'), "data-ajax-dialog" => true, "data-width" => "727" %>
               <%= link_to(t('ticket.close_btn'), "#", :title  => t('ticket.close_btn_title'), :class => "last" , :id=>"close_ticket_btn" , :"data-href" => close_helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]})) unless @ticket.closed? %> 
             </div>  
             <div class="action_icons floatr"> 
@@ -118,6 +119,13 @@
           <div class="request_mail">
             <%= @ticket.description_html %>
           </div>
+          <% if @ticket.requester && @ticket.is_twitter? && @ticket.tweet.is_mention? %>
+          <div class="ticket-details-twitter">
+            <span class="twitter-logo"></span><%= link_to(t('ticket.view_twitter'),
+                "http://twitter.com/#{@ticket.requester.twitter_id}/status/#{@ticket.tweet.tweet_id}", 
+                 :id => "ViewConvo", :target => "_blank") %>
+          </div>
+          <% end %>
         </div>      
         <% 
           attachments = @ticket.attachments
@@ -128,9 +136,10 @@
             <%= render :partial => '/helpdesk/shared/attachment', :collection => attachments, :locals => {:show_delete => true, :url => [@item] } %>
           </ul>
         <% end %>
-        <% unless @ticket.dropboxes.empty? %>
+        <% dropboxes = @ticket.dropboxes
+        unless dropboxes.length == 0 %>
         <ul class="attachment_list">
-        <%@ticket.dropboxes.each do |dropbox| %> 
+        <%dropboxes.each do |dropbox| %> 
           <%= render :partial => '/helpdesk/shared/dropbox', :locals => {:dropbox => dropbox, :show_delete => true, :url => [@item] } %>
         <%end%> 
         </ul>

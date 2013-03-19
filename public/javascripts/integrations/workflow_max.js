@@ -1,6 +1,6 @@
 var WorkflowMaxWidget = Class.create();
 WorkflowMaxWidget.prototype = {
-	WORKFLOW_MAX_FORM:new Template('<form id="workflow-max-timeentry-form"><div class="field first"><label>Staff</label><select name="staff-id" id="workflow-max-timeentry-staff" onchange="workflowMaxWidget.staffChanged(this.options[this.selectedIndex].value)" disabled class="full hide"></select> <div class="loading-fb" id="workflow-max-staff-spinner"></div></div><div class="field-35"><label>Client - Job</label><select class="full hide" name="job-id" id="workflow-max-timeentry-jobs" onchange="workflowMaxWidget.jobChanged(this.options[this.selectedIndex].value)" disabled></select> <div class="loading-fb" id="workflow-max-jobs-spinner"></div></div><div class="field last"><label>Task</label><select class="full hide" disabled name="task-id" id="workflow-max-timeentry-tasks"></select> <div class="loading-fb" id="workflow-max-tasks-spinner" ></div></div><div class="field"><label id="workflow-max-timeentry-notes-label">Notes</label><textarea disabled name="notes" id="workflow-max-timeentry-notes" wrap="virtual">'+workflowMaxBundle.workflowMaxNote.escapeHTML()+'</textarea></div><div class="field"><label id="workflow-max-timeentry-hours-label">Hours</label><input type="text" disabled name="hours" id="workflow-max-timeentry-hours"></div><input type="submit" disabled id="workflow-max-timeentry-submit" value="Submit" onclick="workflowMaxWidget.logTimeEntry($(\'workflow-max-timeentry-form\'));return false;"></form>'),
+	WORKFLOW_MAX_FORM:new Template('<form id="workflow-max-timeentry-form"><div class="field first"><label>Staff</label><select name="staff-id" id="workflow-max-timeentry-staff" onchange="workflowMaxWidget.staffChanged(this.options[this.selectedIndex].value)" disabled class="full hide"></select> <div class="loading-fb" id="workflow-max-staff-spinner"></div></div><div class="field-35"><label>Client - Job</label><select class="full hide" name="job-id" id="workflow-max-timeentry-jobs" onchange="workflowMaxWidget.jobChanged(this.options[this.selectedIndex].value)" disabled></select> <div class="loading-fb" id="workflow-max-jobs-spinner"></div></div><div class="field last"><label>Task</label><select class="full hide" disabled name="task-id" id="workflow-max-timeentry-tasks"></select> <div class="loading-fb" id="workflow-max-tasks-spinner" ></div></div><div class="field"><label id="workflow-max-timeentry-notes-label">Notes</label><textarea disabled name="notes" id="workflow-max-timeentry-notes" wrap="virtual">'+ jQuery('#workflowmax-note').html().escapeHTML() +'</textarea></div><div class="field"><label id="workflow-max-timeentry-hours-label">Hours</label><input type="text" disabled name="hours" id="workflow-max-timeentry-hours"></div><input type="submit" disabled id="workflow-max-timeentry-submit" value="Submit" onclick="workflowMaxWidget.logTimeEntry($(\'workflow-max-timeentry-form\'));return false;"></form>'),
 	CREATE_TIMEENTRY_REQ:new Template('<Timesheet><Job>#{job_id}</Job><Task>#{task_id}</Task><Staff>#{staff_id}</Staff><Date>#{date}</Date><Minutes>#{hours}</Minutes><Note><![CDATA[#{notes}]]></Note></Timesheet>'),
 	UPDATE_TIMEENTRY_REQ:new Template('<Timesheet><ID>#{time_entry_id}</ID><Job>#{job_id}</Job><Task>#{task_id}</Task><Staff>#{staff_id}</Staff><Date>#{date}</Date><Minutes>#{hours}</Minutes><Note><![CDATA[#{notes}]]></Note></Timesheet>'),
 	UPDATE_TIMEENTRY_ONLY_HOURS_REQ:new Template('<Timesheet><ID>#{time_entry_id}</ID><Minutes>#{hours}</Minutes></Timesheet>'),
@@ -8,6 +8,7 @@ WorkflowMaxWidget.prototype = {
 	initialize:function(workflowMaxBundle, loadInline){
 		widgetInst = this; // Assigning to some variable so that it will be accessible inside custom_widget.
 		this.jobData = ""; init_reqs = []; this.executed_date = new Date();
+		workflowMaxBundle.workflowMaxNote = jQuery('#workflowmax-note').html();
 		this.auth_keys = "?apiKey="+workflowMaxBundle.k+"&accountKey="+workflowMaxBundle.a
 		init_reqs = [null, {
 			accept_type: "application/xml",
@@ -155,7 +156,7 @@ WorkflowMaxWidget.prototype = {
 				job_id: $("workflow-max-timeentry-jobs").value,
 				task_id: $("workflow-max-timeentry-tasks").value,
 				notes: $("workflow-max-timeentry-notes").value,
-				hours: Math.ceil($("workflow-max-timeentry-hours").value*60),
+				hours: this.getFormattedMinutes($("workflow-max-timeentry-hours").value).toString(),
 				date: this.executed_date.toString("yyyyMMdd")
 			});
 			this.freshdeskWidget.request({
@@ -252,14 +253,24 @@ WorkflowMaxWidget.prototype = {
 
 	updateTimeEntryUsingIds:function(remote_integratable_id, hours, resultCallback) {
 		if (remote_integratable_id) {
-			var body = this.UPDATE_TIMEENTRY_ONLY_HOURS_REQ.evaluate({
+			/*var body = this.UPDATE_TIMEENTRY_ONLY_HOURS_REQ.evaluate({
 				time_entry_id: remote_integratable_id,
-				hours: (hours*60)+""
-			});
+			});*/
+			var body = this.UPDATE_TIMEENTRY_REQ.evaluate({
+					time_entry_id: remote_integratable_id,
+					staff_id: $("workflow-max-timeentry-staff").value,
+					job_id: $("workflow-max-timeentry-jobs").value,
+					task_id: $("workflow-max-timeentry-tasks").value,
+					notes: $("workflow-max-timeentry-notes").value,
+					hours: this.getFormattedMinutes(hours).toString(),
+					date: this.executed_date.toString("yyyyMMdd")
+				});
+
+
 			this.freshdeskWidget.request({
 				body: body,
 				content_type: "application/xml",
-				method: "post",
+				method: "put",
 				rest_url: "time.api/update"+this.auth_keys,
 				on_success: function(evt){
 					this.handleTimeEntrySuccess(evt);
@@ -279,7 +290,7 @@ WorkflowMaxWidget.prototype = {
 					job_id: $("workflow-max-timeentry-jobs").value,
 					task_id: $("workflow-max-timeentry-tasks").value,
 					notes: $("workflow-max-timeentry-notes").value,
-					hours: Math.ceil($("workflow-max-timeentry-hours").value*60),
+					hours: this.getFormattedMinutes($("workflow-max-timeentry-hours").value).toString(),
 					date: this.executed_date.toString("yyyyMMdd")
 					// start_time: this.format_time(this.executed_date, 0),
 					// end_time: this.format_time(this.executed_date, $("workflow-max-timeentry-hours").value*60)
@@ -385,6 +396,15 @@ WorkflowMaxWidget.prototype = {
 			time_entry_node = time_entry_node[0];
 			return XmlUtil.getNodeValueStr(time_entry_node, fetchEntity);
 		}
+	},
+
+	getFormattedMinutes: function(hours){
+		hours = (hours > 1) ? this.getFormattedHours(hours) : (hours * 100);
+		return Math.floor(hours);
+	},
+
+	getFormattedHours: function(hours){
+		return (Math.floor(hours) * 60) + (this.getFormattedMinutes(hours % 1))
 	},
 
 	format_date: function(date) {

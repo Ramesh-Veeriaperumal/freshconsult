@@ -70,7 +70,7 @@ module Helpdesk::TicketsHelper
     ul tabs.map{ |t| 
                   next if !t[4].nil? && !t[4]
                   link_to t[1] + (content_tag :span, t[2], :class => "pill #{ t[2] == 0 ? 'hide' : ''}", :id => "#{t[0]}Count"), "##{t[0]}", "data-remote-load" => t[3], :id => "#{t[0]}Tab"
-                }, { :class => "tabs", "data-tabs" => "tabs" }
+                }, { :class => "tabs ticket_tabs", "data-tabs" => "tabs" }
                 
   end
   
@@ -103,8 +103,11 @@ module Helpdesk::TicketsHelper
       cannot_delete = true
     end
 
-    top_view_html = drop_down_views(top_views_array, selected_item_name, "leftViewMenu", selected.blank? ).to_s +
-      (content_tag :div, (link_to t('delete'), {:controller => "wf/filter", :action => "delete_filter", :id => selected_item[:id]}, {:method => :delete, :confirm => t("wf.filter.view.delete"), :id => 'delete_filter'}), :id => "view_manage_links"  unless cannot_delete or selected_item[:default] )
+    top_view_html = drop_down_views(top_views_array, selected_item_name, "leftViewMenu", selected.blank? ).to_s + 
+      (!(cannot_delete or selected_item[:default]) ? (content_tag :div, (link_to t('delete'), {:controller => "wf/filter", :action => "delete_filter", 
+        :id => selected_item[:id]}, 
+        {:method => :delete, :confirm => t("wf.filter.view.delete"), :id => 'delete_filter'}), 
+        :id => "view_manage_links") : "")
   end
   
   def filter_select( prompt = t('helpdesk.tickets.views.select'))    
@@ -151,6 +154,7 @@ module Helpdesk::TicketsHelper
 
   def current_wf_order_type 
     return @cached_filter_data[:wf_order_type] if @cached_filter_data && !@cached_filter_data[:wf_order_type].blank?
+    # return @cached_filter_data[:wf_order_type].to_sym if @cached_filter_data && !@cached_filter_data[:wf_order_type].blank?
     cookies[:wf_order_type] = (params[:wf_order_type] ? params[:wf_order_type] : ( (!cookies[:wf_order_type].blank?) ? cookies[:wf_order_type] : DEFAULT_SORT_ORDER )).to_sym
   end
 

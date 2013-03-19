@@ -5,6 +5,7 @@ policy = Helpdesk::SlaPolicy.seed(:account_id, :name) do |s|
   s.name = 'Default SLA Policy'
   s.description = 'default policy'
   s.is_default = true
+  s.escalations = {}
 end
 
 Helpdesk::SlaDetail.seed_many(:sla_policy_id, :priority, [

@@ -91,7 +91,10 @@ module Import::Zen::Forum
           post.account_id = @current_account.id
           post.save
           topic_prop.attachments.each do |attachment|   
-              Resque.enqueue( Import::Zen::ZendeskAttachmentImport,post.id ,URI.encode(attachment.url), :post, @current_account.id)
+              Resque.enqueue( Import::Zen::ZendeskAttachmentImport,{:item_id => post.id, 
+                                                                    :attachment_url => URI.encode(attachment.url), 
+                                                                    :model => :post,
+                                                                    :account_id => @current_account.id})
           end 
        end
    else
@@ -114,7 +117,10 @@ module Import::Zen::Forum
       post.save
     
       post_prop.attachments.each do |attachment|   
-        Resque.enqueue( Import::Zen::ZendeskAttachmentImport,post.id ,URI.encode(attachment.url), :post, @current_account.id)
+        Resque.enqueue( Import::Zen::ZendeskAttachmentImport,{:item_id => post.id, 
+                                                              :attachment_url => URI.encode(attachment.url), 
+                                                              :model => :post,
+                                                              :account_id => @current_account.id})
       end 
     else
       post.update_attribute(:import_id , post_prop.import_id )
@@ -150,7 +156,10 @@ def save_solution_article topic_prop
     article.save
 
     topic_prop.attachments.each do |attachment|   
-        Resque.enqueue( Import::Zen::ZendeskAttachmentImport,article.id ,URI.encode(attachment.url), :article, @current_account.id)
+        Resque.enqueue( Import::Zen::ZendeskAttachmentImport,{:item_id => article.id, 
+                                                              :attachment_url => URI.encode(attachment.url), 
+                                                              :model => :article,
+                                                              :account_id => @current_account.id})
     end 
   else
     article.update_attribute(:import_id , topic_prop.import_id )

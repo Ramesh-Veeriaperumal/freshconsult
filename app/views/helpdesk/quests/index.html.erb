@@ -1,10 +1,10 @@
 <% content_for :sidebar do %><% end %>
 <div class="btn-group floatr">
-  <a href="/helpdesk/quests" class="btn active">All</a>
-  <a href="/helpdesk/quests/unachieved" class="btn">Un-achieved</a>
+  <a href="/helpdesk/quests" class="btn active"><%= t('helpdesk_quests.all') %></a>
+  <a href="/helpdesk/quests/unachieved" class="btn"><%= t('helpdesk_quests.un_achieved') %></a>
 </div>
-<a href="/">< Back to dashboard </a>
-<h3 class="title">Quests</h3>
+<a href="/"><%= t('helpdesk_quests.back_to_dashboard') %></a>
+<h3 class="title"><%= t('helpdesk_quests.quests') %></h3>
 <div class="report-nmleft thick-border-top q-report">
 	<div class="panel-list" id="Pages"> 
 		<%= render :partial => "quest", :collection => @quests %>
