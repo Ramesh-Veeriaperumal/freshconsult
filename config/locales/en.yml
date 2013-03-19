@@ -2572,6 +2572,7 @@ en:
         primary_ticket: "This is your primary ticket"
         remove: "Remove this ticket"
         target_merge_description:  "Ticket {{ticket.id}} {{ticket.subject}} is merged with this request"
+        target_merge_description1: "Merged from ticket <a href='/helpdesk/tickets/%{ticket_id}' target='_blank'>%{ticket_id}</a>"
         target_note_description1: 
           one: "Ticket with id"
           other: "Tickets with ids"
