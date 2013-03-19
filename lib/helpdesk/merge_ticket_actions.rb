@@ -13,7 +13,7 @@ module Helpdesk::MergeTicketActions
 			move_source_description_to_target(source_ticket)
 			add_note_to_source_ticket(source_ticket) 
 			close_source_ticket(source_ticket)
-		  update_header_info(source_ticket.header_info) if source_ticket.header_info
+			update_header_info(source_ticket.header_info) if source_ticket.header_info
 			update_merge_activity(source_ticket) 
 		end
 		add_header_to_target if !@header.blank?
@@ -32,7 +32,7 @@ module Helpdesk::MergeTicketActions
 		def move_source_description_to_target source_ticket
 			desc_pvt_note = params[:target][:is_private]
 			source_description_note = @target_ticket.notes.build(
-				:body_html => %{<b>#{source_ticket.subject}</b><br/><br/>#{source_ticket.description}},
+				:body_html => build_source_description_body_html(source_ticket),
 				:private => desc_pvt_note || false,
 				:source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
 				:account_id => current_account.id,
@@ -41,6 +41,12 @@ module Helpdesk::MergeTicketActions
 			add_source_attachments_to_source_description(source_ticket, source_description_note)
 			source_description_note.save
 		end
+
+    def build_source_description_body_html source_ticket
+      %{#{I18n.t('helpdesk.merge.bulk_merge.target_merge_description1', :ticket_id => source_ticket.display_id)}<br/><br/>
+      <b>#{I18n.t('Subject')}:</b> #{source_ticket.subject}<br/><br/>
+      <b>#{I18n.t('description')}:</b><br/>#{source_ticket.description_html}}
+    end
 
 		def add_source_attachments_to_source_description( source_ticket , source_description_note )
       ## handling attachemnt..need to check this
