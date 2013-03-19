@@ -41,7 +41,6 @@
     <ul class="ui-form dont-validate">
       <li class="inline-field field" >
           <%= f.label(:reply_email, "From:" ) %>
-          <%= select :reply_email, :id, options_for_select(@reply_email, @selected_reply_email),{}, {:class => 'select2 responder_field'} %>
 
           <div class="request_form_options">
             <a  href="#" rel="toggle_email_container" id="add_cc_btn_<%=cntid%>"
@@ -61,6 +60,8 @@
           </div>
           <input type="checkbox" class="hide" id="include_cc" name="include_cc"  <%=@to_cc_emails.blank? ? "" : "checked" %>  />              
           <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" <%=bcc_drop_box_email.blank? ? "" : "checked" %> />
+          
+          <%= select :reply_email, :id, options_for_select(@reply_email, @selected_reply_email),{}, {:class => 'select2 responder_field'} %>
       </li>
       <li class="inline-field field <%=@to_cc_emails.blank? ? "hide" : "" %> cc_fields" id="cc-form-container-<%=cntid%>">
         <label for="cc_emails_<%=cntid%>"><%= t(".cc") %>:</label>

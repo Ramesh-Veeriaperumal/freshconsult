@@ -68,25 +68,23 @@ clearSavedDraft = function(){
 	draftClearedFlag = true;
 }
 
-
-$(".ticket_show #draft-save").live('mouseover',function timePop(){
+$('body').on('mouseover.ticket_details', ".ticket_show #draft-save", function() {
 	if(savingDraft != 0){
 	  jQuery(".ticket_show #draft-save").attr('title',humaneDate(draftSavedTime,new Date()));
 	}
 });
- 
-$(".ticket_show #draft-save").live('mouseout',function(){
+
+$("body").on("mouseout.ticket_details", ".ticket_show #draft-save",function(){
   $(".ticket_show #draft-save").attr('title','');
 });
 
 // This has been moved as a on click event directly to the cancel button 
 // jQuery('input[type="button"][value="Cancel"]').bind('click', function(){cleardraft();});
 
-jQuery(".ticket_show #clear-draft").bind('click', function(){
+$("body").on("click.ticket_details", ".ticket_show #clear-draft", function(){
   if (confirm(TICKET_DETAILS_DATA['draft']['clear_text']))
   	clearSavedDraft();
 });
-
 
 
 // ----- END OF DRAFT JS ---- //
@@ -542,15 +540,15 @@ $(document).ready(function() {
 
 		$active.click();
 	});
-
-	$('.widget.load_on_click.inactive').live('click', function(ev){
+	
+	$("body").on('click.ticket_details', '.widget.load_on_click.inactive', function(ev){
 		var widget_code = $(this).find('textarea');
 		$(this).find('.content').append(widget_code.val());
 		widget_code.remove();
 		$(this).removeClass('inactive');
 	});
 
-	$('.widget.load_remote.inactive').live('click', function(ev){
+	$("body").on('click.ticket_details', '.widget.load_remote.inactive', function(ev){
 		$(this).children('.content').trigger('afterShow');
 		$(this).removeClass('inactive');
 	});
@@ -581,7 +579,7 @@ $(document).ready(function() {
 
 
 	// For Twitter Replybox
-	$('#twitter_handle').live('change', function (){
+	$("body").on("change.ticket_details", '#twitter_handle', function (){
 		twitter_handle= $('#twitter_handle').val();
 		req_twt_id = $('#requester_twitter_handle').val();
 		istwitter = $('#cnt-tweet').data('isTwitter');
@@ -612,8 +610,7 @@ $(document).ready(function() {
 	//End of Twitter Replybox JS
 
 	//For Clearing Bcc, Cc email list and hiding those containers
-
-	$('[rel=toggle_email_container]').live('click',function(ev) {
+	$('body').on('click.ticket_details', '[rel=toggle_email_container]',function(ev) {
 		ev.preventDefault();
 		var container = $('#' + $(this).data('container'));
 		var select = $('#' + $(this).data('container') + ' select');
@@ -636,7 +633,7 @@ $(document).ready(function() {
 	});
 
 	//Loading Ticket Activities
-	$('.ticket_show #activity_toggle input[type=checkbox]').live('change', function(ev) {
+	$('body').on('change.ticket_details', '.ticket_show #activity_toggle input[type=checkbox]', function(ev) {
 
 		ev.preventDefault();
 		var _toggle = $(this).parent();
@@ -666,20 +663,20 @@ $(document).ready(function() {
 		})
 	});
 
-	$('.ticket_details').on('click', '[rel=activity_container] .minimizable', function(){
+	$('.ticket_details').on('click.ticket_details', '[rel=activity_container] .minimizable', function(){
 		$(this).toggleClass('minimized');
 	});
 
-	$('.collision_refresh').live('click', function(ev) {
+	$('body').on('click.ticket_details', '.collision_refresh', function(ev) {
 		window.location = TICKET_DETAILS_DATA['ticket_path'];
 	});
 
-	$(".conversation_thread .request_panel form .submit_btn").live('click', function(ev) {
+	$('body').on('click.ticket_details', ".conversation_thread .request_panel form .submit_btn", function(ev) {
 		ev.preventDefault();
 		$(this).parents('form').trigger('submit');
 	});
 
-	$(".conversation_thread .request_panel form .cancel_btn").live('click', function(ev) {
+	$('body').on('click.ticket_details', ".conversation_thread .request_panel form .cancel_btn", function(ev) {
 		ev.preventDefault();
 		var btn = $(this);
 		$('#' + btn.data('cntId')).hide().trigger('visibility');
@@ -692,11 +689,11 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#time_integration .app-logo input:checkbox').live('change', function(ev) {
+	$('body').on('click.ticket_details', '#time_integration .app-logo input:checkbox', function(ev) {
 		$(this).parent().siblings('.integration_container').toggle($(this).prop('checked'));
 	});
 
-	$(".conversation_thread .request_panel form").live('submit', function(ev) {
+	$('body').on('submit.ticket_details', ".conversation_thread .request_panel form", function(ev) {
 
 		var _form = $(this);
 		if (_form.valid()) {
@@ -809,7 +806,7 @@ $(document).ready(function() {
 		}
 	});
 
-	$('[rel=TicketReplyPlaceholder]').live('click', function(ev) {
+	$('body').on('click.ticket_details', '[rel=TicketReplyPlaceholder]', function(ev) {
 		ev.preventDefault();
 		$(this).hide();
 		$('#ReplyButton').click();
@@ -821,7 +818,7 @@ $(document).ready(function() {
 	var outerHeight = $('.fixedStrap').outerHeight();
 	var the_window = $(window);
 
-	the_window.scroll(function () {
+	the_window.on('scroll.ticket_details', function () {
 		if (the_window.scrollTop() > REAL_TOP) {
 			if (!$('.fixedStrap').hasClass('at_the_top')) {
 
@@ -840,13 +837,13 @@ $(document).ready(function() {
 	// -----   END OF TICKET BAR FIXED TOP ------ //
 
 	//Toggling Note visiblity
-	$('#toggle-note-visibility').live('click', function(ev){
+	$('body').on('click.ticket_details', '#toggle-note-visibility', function(ev){
 		var checkbox = $(this).find('input[type=checkbox]');
 		checkbox.prop("checked", !checkbox.prop("checked"));
 		$(this).toggleClass('visible');
 	});
 
-	$('.ticket_show #close_ticket_btn').live('click', function(ev){
+	$('body').on('click.ticket_details', '.ticket_show #close_ticket_btn', function(ev){
 		ev.preventDefault();
 		var form = $("<form>")
 			.attr("method", "post")
@@ -856,7 +853,7 @@ $(document).ready(function() {
 		return false;
 	});
 
-	$('#custom_ticket_form').on('change',function(ev) {
+	$('#custom_ticket_form').on('change.ticket_details',function(ev) {
 		if (!dontAjaxUpdate) 
 		{
 			$('#helpdesk_ticket_submit').show();
@@ -875,11 +872,9 @@ $(document).ready(function() {
 		dontAjaxUpdate = false;
 	} );
 
-
-    jQuery('.ticket_details').on('click', '[rel=custom-reply-status]', function(ev){
+    $('.ticket_details').on('click.ticket_details', '[rel=custom-reply-status]', function(ev){
       ev.preventDefault();
       ev.stopPropagation();
-
       jQuery('#reply_ticket_status_' + jQuery(this).data('cntId')).val(jQuery(this).data('statusVal'));
       jQuery('body').click();
 
@@ -887,7 +882,7 @@ $(document).ready(function() {
       jQuery("#HelpdeskReply").trigger('submit');
     });
 
-	$('#custom_ticket_form').on('submit', function(ev) {
+	$('#custom_ticket_form').on('submit.ticket_details', function(ev) {
 		ev.preventDefault(); 
 		var tkt_form = $('#custom_ticket_form');
 		if (tkt_form.valid()) {
@@ -948,8 +943,6 @@ $(document).ready(function() {
 			
 	});
 
-	
-
 	/*
 		When the ticket subjects are long, we hide the extra content and show them only on mouseover. 
 		While doing this, the ticket subject occupies more height that normal we are hiding that
@@ -968,9 +961,8 @@ $(document).ready(function() {
 		}
 	})
 
-
 	//Binding the Reply/Forward/Add Note buttons
-	$('[rel=note-button]').live('click', function(ev) {
+	$('.ticket_show').on('click.ticket_details', '[rel=note-button]', function(ev) {
 		ev.preventDefault();
 		ev.stopPropagation();
 		swapEmailNote('cnt-' + $(this).data('note-type'), this);
@@ -981,11 +973,13 @@ $(document).ready(function() {
 
 	//Previous Next Buttons request
 	$.getScript("/helpdesk/tickets/prevnext/" + TICKET_DETAILS_DATA['displayId']);
+
+	// setInterval(function() { $('.btn-toolbar').toggle().toggle(); }, 500); //Hack for Bootstrap buttons repositioning in Chrome
 });
 
 
 // MOVE TO !PATTERN
-$('.selected_to_yellow [type=radio], .selected_to_yellow [type=checkbox]').live('change', function(ev) {
+$('body').on('change.pattern', '.selected_to_yellow [type=radio], .selected_to_yellow [type=checkbox]', function(ev) {
 	$(this).parents('.selected_to_yellow').find('.stripe-select').removeClass('stripe-select');
 	$(this).parents('td').first().toggleClass('stripe-select', $(this).prop('checked'));
 });

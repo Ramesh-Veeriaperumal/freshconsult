@@ -776,7 +776,6 @@ p strong{
 		@include corners(5px);
 		margin: 20px 0 10px;
 		background: #fdfdfd;
-		padding: 5px 10px;
     }
 
     .request_panel {
@@ -816,10 +815,10 @@ p strong{
 		}
 	}
 
-    .ui-form .inline-field {
+    .ui-form li.inline-field {
     	background: $message_window_bg_color;
     	border-bottom: solid 1px #F3F3F3;
-    	padding: 5px 10px;
+    	padding: 10px 15px;
     	@include border-radius(6px 6px 0 0);
     	float: none;
     	width: auto;
@@ -870,6 +869,23 @@ p strong{
 	    	}
     	}
 
+
+		.select2-container {
+			width: 350px;
+			position: relative;
+			top: -3px;
+			.select2-choices {
+				border: 1px $message_window_bg_color solid;
+				background: $message_window_bg_color;					
+			}
+			.select2-choice, .select2-search-choice {
+				float: none;
+				width: auto;
+				display: inline-block;
+			}
+
+		}
+
     	&.cc_fields {
     		overflow: hidden;
     		label {
@@ -890,7 +906,7 @@ p strong{
     			width: 100%;
 				float: right;
 				padding: 0 90px 0 50px;
-				margin-top: -25px;
+				margin-top: -30px;
 				display: inline-block;
 				zoom: 1;
 				vertical-align: top;
@@ -910,24 +926,6 @@ p strong{
 			.request_form_options {
 				margin-top: -20px;
 			}
-
-    		.select2-container {
-    			width: 100%;
-				float: right;
-				padding: 0 60px;
-				position: relative;
-				top: -25px;
-				.select2-choices {
-					border: 1px $message_window_bg_color solid;
-					background: $message_window_bg_color;					
-				}
-    			.select2-choice, .select2-search-choice {
-    				float: none;
-    				width: auto;
-    				display: inline-block;
-    			}
-
-    		}
 
     		input[type=text] {
 	    		display: inline-block;
@@ -950,7 +948,6 @@ p strong{
     	}
     	&.notify_agent{
     		overflow: hidden;
-    		border: none;
     		label {
 				display:inline-block;
 				zoom: 1;
@@ -2164,71 +2161,71 @@ p strong{
 
 }
 
-label.custom-select {
-    position: relative;
-    display: inline-block;
-}
+// label.custom-select {
+//     position: relative;
+//     display: inline-block;
+// }
 
-.custom-select select {
-    display: inline-block;
-    border: 2px solid #bbb;
-    padding: 4px 3px 3px 5px;
-    margin: 0;
-    font: inherit;
-    outline:none; /* remove focus ring from Webkit */
-    line-height: 1.2;
-    background: #f8f8f8;
-    -webkit-appearance:none; /* remove the strong OSX influence from Webkit */
-    -webkit-border-radius: 6px;
-    -moz-border-radius: 6px;
-    border-radius: 6px;
-}
+// .custom-select select {
+//     display: inline-block;
+//     border: 2px solid #bbb;
+//     padding: 4px 3px 3px 5px;
+//     margin: 0;
+//     font: inherit;
+//     outline:none; /* remove focus ring from Webkit */
+//     line-height: 1.2;
+//     background: #f8f8f8;
+//     -webkit-appearance:none; /* remove the strong OSX influence from Webkit */
+//     -webkit-border-radius: 6px;
+//     -moz-border-radius: 6px;
+//     border-radius: 6px;
+// }
 
-@media screen and (-webkit-min-device-pixel-ratio:0) { 
-    .custom-select select {
-        padding-right:30px;    
-    }
-}
+// @media screen and (-webkit-min-device-pixel-ratio:0) { 
+//     .custom-select select {
+//         padding-right:30px;    
+//     }
+// }
 
-.custom-select select:focus {
-    -webkit-box-shadow: 0 0 3px 1px #c00;
-    -moz-box-shadow: 0 0 3px 1px #c00;
-    box-shadow: 0 0 3px 1px #c00;
-}
+// .custom-select select:focus {
+//     -webkit-box-shadow: 0 0 3px 1px #c00;
+//     -moz-box-shadow: 0 0 3px 1px #c00;
+//     box-shadow: 0 0 3px 1px #c00;
+// }
 
-.custom-select:after {
-    content: "▼";
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    font-size: 60%;
-    line-height: 30px;
-    padding: 0 7px;
-    background: #bbb;
-    color: white;    
-    pointer-events:none;    
-    -webkit-border-radius: 0 6px 6px 0;
-    -moz-border-radius: 0 6px 6px 0;
-    border-radius: 0 6px 6px 0;
-}
+// .custom-select:after {
+//     content: "▼";
+//     position: absolute;
+//     top: 0;
+//     right: 0;
+//     bottom: 0;
+//     font-size: 60%;
+//     line-height: 30px;
+//     padding: 0 7px;
+//     background: #bbb;
+//     color: white;    
+//     pointer-events:none;    
+//     -webkit-border-radius: 0 6px 6px 0;
+//     -moz-border-radius: 0 6px 6px 0;
+//     border-radius: 0 6px 6px 0;
+// }
 
 .no-pointer-events .custom-select:after{
 	content: none;
 }
 
-.dropdown-large{
-	.chzn-select{
-		width: 310px;
-		color: #333;
-	}
-}
+// .dropdown-large{
+// 	.chzn-select{
+// 		width: 310px;
+// 		color: #333;
+// 	}
+// }
 
-.dropdown-small{
-	.chzn-select{
-		width: 152px;
-	}
-}
+// .dropdown-small{
+// 	.chzn-select{
+// 		width: 152px;
+// 	}
+// }
 
 .bread-crumb-wrap{
 	width: 100%;
