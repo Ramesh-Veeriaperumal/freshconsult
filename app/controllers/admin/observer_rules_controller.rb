@@ -32,7 +32,7 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
     def load_config
       super
 
-      @agents[0] = ['--', t('any_val.any') ]
+      @agents[0..0] = ['--', t('any_val.any') ], ['-1', '{{ticket.agent}}' ]
       @note_types = [ ['--', t('ticket.any_note')], [:public, t('ticket.public_note')],
                        [:private, t('ticket.private_note')] ]
       @ticket_actions = [ [:updated, t('ticket.updated')], [:deleted, t('ticket.deleted')],

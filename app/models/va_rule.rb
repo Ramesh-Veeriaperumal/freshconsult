@@ -62,8 +62,8 @@ class VARule < ActiveRecord::Base
   end
 
   def check_events doer, evaluate_on, current_events
-    p @performer.matches? doer
-    return false unless @performer.matches? doer
+    p @performer.matches? doer, evaluate_on
+    return false unless @performer.matches? doer, evaluate_on
     is_a_match = event_matches? current_events, evaluate_on
     p is_a_match
     pass_through evaluate_on, nil, doer if is_a_match

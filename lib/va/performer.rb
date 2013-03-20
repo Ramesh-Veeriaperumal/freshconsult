@@ -8,9 +8,9 @@ class Va::Performer
 		@type, @members = args[:type], args[:members]
 	end
 
-	def matches? doer
+	def matches? doer, ticket
 		return false unless check_type doer
-		members.nil? ? true : (check_members doer)
+		members.nil? ? true : (check_members doer, ticket)
 	end
 
   private
@@ -19,7 +19,8 @@ class Va::Performer
 	    doer.send TYPE_CHECK[type]
 	  end
 
-	  def check_members doer
+	  def check_members doer, ticket
+	  	return true if ((members.include? -1) && doer == ticket.responder)
 	    members.include? doer.id
 	  end
 
