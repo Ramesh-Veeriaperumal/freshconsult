@@ -236,7 +236,7 @@ class Helpdesk::TicketsController < ApplicationController
   def update
     old_item = @item.clone
     #old_timer_count = @item.time_sheets.timer_active.size -  we will enable this later
-    if @item.update_attributes(params[nscname].merge(params[nscname][:custom_field]))
+    if @item.update_attributes(params[nscname])
       #flash[:notice] = flash[:notice].chomp(".")+"& \n"+ t(:'flash.tickets.timesheet.timer_stopped') if ((old_timer_count - @item.time_sheets.timer_active.size) > 0)
       respond_to do |format|
         format.html { 
