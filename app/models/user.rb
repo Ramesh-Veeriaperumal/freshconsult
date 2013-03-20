@@ -544,14 +544,6 @@ class User < ActiveRecord::Base
       @parsed_name ||= People::NameParser.new.parse(self.name)
     end
 
-    def update_admin_in_crm
-      Resque.enqueue(CRM::AddToCRM::UpdateAdmin, {:account_id => account_id, :item_id => id})
-    end
-    
-    def account_admin_updated?
-      user_role_changed? && account_admin?
-    end
-
     def bakcup_user_changes
       @all_changes = self.changes.clone
       @all_changes.symbolize_keys!
