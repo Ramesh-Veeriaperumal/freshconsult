@@ -1011,6 +1011,10 @@ p strong{
     	}
     	.redactor_box {
     		border: none;
+
+    		p {
+    			width: auto;
+    		}
     	}
 
     	.redactor_toolbar {
