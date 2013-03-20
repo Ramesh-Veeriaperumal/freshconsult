@@ -11,7 +11,7 @@
 				:title => type == :new ? '!V2 - Leave this blank to start a timer. You can also enter time as 1.5 or 1:30 (they both mean 1 hour and 30 minutes).' : '',
 				} ) %>
 		<label class="billing_hours floatr">
-			<%= form.check_box(:billable) %>
+			<%= form.check_box(:billable, {:checked => (type == :new) ? true : form.object.billable}) %>
 			<%= t('.billing_hours')%>
 		</label>
 	</dd>

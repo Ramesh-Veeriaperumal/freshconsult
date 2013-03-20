@@ -812,6 +812,7 @@ p strong{
 	.post_in_forum {
 		float: left; 
 		width: 200px;
+		margin: 15px 5px;
 		label {
 			display: block;
 			margin-right: 25px;
@@ -1007,6 +1008,7 @@ p strong{
 	    		display: inline-block;
 	    		width: 100%;
 	    		float: none;
+	    		cursor: pointer;
     		}
     	}
     	.redactor_box {

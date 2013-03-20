@@ -963,8 +963,10 @@ $(document).ready(function() {
 
 	//Binding the Reply/Forward/Add Note buttons
 	$('.ticket_show').on('click.ticket_details', '[rel=note-button]', function(ev) {
-		ev.preventDefault();
-		ev.stopPropagation();
+		if (!$(this).parent().parent().hasClass('dropdown-menu')) {
+			ev.preventDefault();
+			ev.stopPropagation();
+		}
 		swapEmailNote('cnt-' + $(this).data('note-type'), this);
 	})
 	//ScrollTo the latest conversation
