@@ -1370,6 +1370,9 @@ pl:
     title: Grupy
   half: "30 minut"
   header: 
+    help_center: "Jak możemy Ci dziś pomóc?"
+    new_support_ticket: "Nowe zgłoszenie"
+    check_ticket_status: "Sprawdź status zgłoszenia"
     assumed_text: "Przeglądasz jako"
     login: login
     new_ticket: "Nowe zgłoszenie"
@@ -1956,8 +1959,72 @@ pl:
   plan_is_selected: "Twoje darmowe konto jest już aktywne w ramach planu %{plan} "
   plans_billing: "Abonamenty i płatności"
   portal: 
+    article: 
+      see_all_articles: "Zobacz wszystkie (%{count}) artykuły"
+    community_forums: Forum
+    login: Logowanie
+    login_details: "Wprowadź dane do logowania podane podczas rejestracji"
+    login_portal: "Zaloguj się do portalu wsparcia"
+    signup: zarejestruj się
+    header: 
+      preview_message: "<b>Tryb podglądu</b> – <a href='javascript:window.close()'>kliknij tutaj</a>, aby wrócić."
+    knowledge_base: "Baza wiedzy"
+    no_articles_info_1: "Nie opublikowaliśmy jeszcze żadnych artykułów."
+    no_articles_info_2: "Zajrzyj ponownie za jakiś czas."
+    no_forums_info_1: "Brak tematów na forum"
+    no_forums_info_2: "Może chcesz rozpocząć %{start_topic_link}?"
+    no_topics_in_this_view: "~ Brak tematów w tym widoku ~"
+    or_signup: " lub %{signup} i załóż konto"
+    popular_topics: "Popularne tematy"
     search: 
-      placeholder: "Szukaj, wpisując słowo kluczowe lub pełne pytanie"
+      filters:
+        all: "Całość"
+        solutions: "Rozwiązania"
+        topics: "Wątki"
+        tickets: "Zgłoszenia"
+      placeholder: "Wprowadź frazę, którą chcesz wyszukać..."
+    showing_recent_updates: "Pokazuje ostatnie aktualizacje"
+    showing_recently_popular_topics: "Pokazuje popularne ostatnio tematy"
+    tickets: 
+      export: "Eksportuj zgłoszenia"
+      export_ticket_data: "Eksportuj zgłoszenia do pliku CVS"
+      export_to_csv: "Eksport do CSV"
+    to_post_comment: " aby zamieścić komentarz"
+    to_post_topic: " aby rozpocząć nowy temat"
+    to_submit_ticket: " aby wysłać nowe zgłoszenie"
+    topic: 
+      comments_closed: "Dodawanie komentarzy do tej dyskusji zostało zablokowane!"
+      see_all_topics: "Zobacz wszystkie (%{count}) tematy"
+      start_new_topic: "Rozpocznij nowy temat"
+    topic_vote: 
+      howto: 
+        one: "ma to samo pytanie"
+        other: "ma to samo pytanie"
+      howto_button: "Masz to samo pytanie?"
+      howto_unlike_button: "Nie mam tego pytania!"
+      ideas_unlike_button: "Odrzucone!"
+      ideas_users_voted_title: "Ludzie, którzy lubią ten pomysł"
+      problem_users_voted_title: "Osoby, które mają ten problem"
+      howto_users_voted_title: "Osoby, które mają to samo pytanie"
+      ideas: 
+        one: "lubi ten pomysł"
+        other: "lubi ten pomysł"
+      ideas_button: "Podoba Ci się ten pomysł?"
+      more: 
+        one: "1 inna osoba"
+        other: "%{count} innych osób"
+      people: 
+        one: "1 osoba"
+        other: "%{count} osób"
+      problem: 
+        one: "ma ten sam problem"
+        other: "ma ten sam problem"
+      problem_button: "Masz ten sam problem?"
+      problem_unlike_button: "Nie mam tego problemu!"
+      you: 
+        one: Ty
+        other: "Ty i"
+  send_feedback: "Prześlij opinię"
   portal_captcha: "Ustaw obowiązkowe wprowadzenie kodu obrazkowego podczas wysyłania zgłoszenia bez logowania się"
   portal_captcha_anon: "Włącz tę funkcję, jeśli chcesz, aby podczas wysyłania zgłoszeń użytkownicy musieli przepisywać kod obrazkowy"
   portal_customizer_anon_for_f: "Włącz tę funkcję, jeśli chcesz, aby użytkownicy mogli się zalogować, używając swojej nazwy użytkownika i hasła Facebook."
@@ -2309,6 +2376,11 @@ pl:
       sixmonth: Półrocznie
   success: "Powiodło się"
   support: 
+    login:      
+      form:
+        forgot: "Nie pamiętasz hasła?"
+        remember: "Pamiętaj mnie na tym komputerze"
+        login: Logowanie
     shared: 
       survey_form: 
         cancel: Anuluj
@@ -2636,6 +2708,8 @@ pl:
   user_activation_email: "Email weryfikujący użytkownika"
   user_activation_message_sent: "Użytkownik został utworzony, a instrukcje na temat aktywacji wysłane na adres %{user_email}!"
   user_block: Tak
+  feedback: 
+    title: "Czy ta odpowiedź była pomocna?"
   user_sessions: 
     new: 
       email: E-mail

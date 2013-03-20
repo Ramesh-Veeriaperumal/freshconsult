@@ -1691,6 +1691,10 @@ en:
     header: 
       preview_message: "<b>Preview mode</b> - <a href='javascript:window.close()'>Click here</a> to go back."
     login: Login
+    login_portal: "Login to the support portal"
+    login_details: "Enter the login details you gave when you registered with us"
+    login_options: "...or login using"
+    reset_password: "Give us your email address and instructions to reset your password will be emailed to you."
     signup: Signup
     or_signup: " or %{signup} for an account"
     to_post_comment: " to post a comment"

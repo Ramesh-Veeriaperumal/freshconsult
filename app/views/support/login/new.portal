@@ -1,19 +1,19 @@
 <section id="login-container" class="content-form rounded-6 main">
 	<div class="login-form">
 		<div id="login-form">
-			<h2 class="heading">Login to the support portal</h2>
-			<p>Enter the login details you gave when you registered with us. </p>
+			<h2 class="heading">{% translate portal.login_portal %}</h2>
+			<p>{% translate portal.login_details %}</p>
 			{% snippet login_form %}
 		</div>
 		<div id="forgot-form" class="hide">
-			<h2 class="heading">Forgot password</h2>
-			<p>Give us your email address and instructions to reset your password will be emailed to you. </p>
+			<h2 class="heading">{% translate forgot_password %}</h2>
+			<p>{% translate portal.reset_password %} </p>
 			{% snippet forgot_password_form %}
 		</div>
 	</div>
 	{% if portal.has_alternate_login %}
 		<div class="alt-login-button">
-			<h2 class="heading">...or login using</h2>
+			<h2 class="heading">{% translate portal.login_options %}</h2>
 			{{ "Google" | login_via_google }}
 			{{ "Facebook" | login_via_facebook }}
 			{{ "Twitter" | login_via_twitter }}
