@@ -1,4 +1,4 @@
-handlers:
+va_handlers:
     rule:
         default: Va::Handlers::Text
         email: Va::Handlers::Email

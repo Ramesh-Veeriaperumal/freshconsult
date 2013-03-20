@@ -143,7 +143,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 	                  switch (hg_data.get(rule.name).type)
 	                  {
 	                	case 0:
-	              			inner.parent.append(FactoryUI.label(hg_data.get(rule.name).postlabel, 'rule_label'));
+	              			inner.append(FactoryUI.label(hg_data.get(rule.name).postlabel, 'rule_label'));
 	                  	break;
 	                 	case 1:
 	                  	inner.append(FactoryUI.label(hg_data.get(rule.name).postlabel, 'rule_label')).append(conditional_dom(hg_data.get(rule.name), data_id, name, rule, "value", 'select2'));
@@ -275,7 +275,6 @@ rules_filter = function(_name, filter_data, parentDom, options){
 	};	 
 	
 	var hideEmptySelectBoxes = function(){
-		console.log("Hide")
 		if (this.options.length == 1 && this.options[0].value == "--" || this.options.length == 0)
 		{	
 			jQuery(this).prev().css('display','none');
@@ -290,7 +289,6 @@ rules_filter = function(_name, filter_data, parentDom, options){
 	}
 
 	var hideEmptySelectBoxesFromTo = function(c_dom){
-		console.log("FromTo")
 		for (i=0;i<jQuery(c_dom).find('select').length;i++)
   		hideEmptySelectBoxes.apply(jQuery(dom).find('select')[i]);
 	}

@@ -38,7 +38,7 @@ module VAConfig
       handler_key = FIELDS[type][field_key]
 
       RAILS_DEFAULT_LOGGER.debug "The field is : #{field}, type is :#{type}, field_key is : #{field_key}  handler_key is : #{handler_key}"
-      HANDLERS[type][handler_key.to_sym]
+      VA_HANDLERS[type][handler_key.to_sym]
     end
 
     def self.fetch_field_key field, account, type

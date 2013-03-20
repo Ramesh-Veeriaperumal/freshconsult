@@ -15,7 +15,6 @@ var ensure_performed_by = function(){
 	// Couldn't get the last added element in chozen.. Hence used _any_present
 	if(value == null)
 	{
-		console.log("nullvalue")
 		element.select2("val",["--"]);
 		_any_present = true;
 	}
@@ -34,7 +33,6 @@ var ensure_performed_by = function(){
 		else 
 		{
 			value.splice(0,1);
-			console.log(value);
 			element.select2("val", value);
 			_any_present = false;
 		}	
