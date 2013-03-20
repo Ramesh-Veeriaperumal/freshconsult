@@ -974,7 +974,6 @@ $(document).ready(function() {
 	//Previous Next Buttons request
 	$.getScript("/helpdesk/tickets/prevnext/" + TICKET_DETAILS_DATA['displayId']);
 
-	// setInterval(function() { $('.btn-toolbar').toggle().toggle(); }, 500); //Hack for Bootstrap buttons repositioning in Chrome
 });
 
 

@@ -45,41 +45,27 @@
     <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>:note_ticket_status  )%>
 
     <div class="btn-toolbar">
-
-      <div id="toggle-note-visibility">
-        <div class="note-visible tooltip" title="Visible to the customer">
-          <i></i>
-        </div>
-        <div class="note-hidden tooltip" title="Hidden to the customer">
-          <i></i>
-        </div>
-        <%= f.check_box(:private, :checked => true, :class => 'tooltip', :title => "Hidden to the customer") %>
-      </div>
-
-      <div class="btn-group">
-        <button class="btn btn-primary submit_btn">
-          <%= local_assigns[:submit] || ActiveSupport::Inflector.titleize(id) %>
+      
+      <span class="btn-group">
+        <button class="btn cancel_btn" data-show-pseudo-reply='true' data-cnt-id='<%= cntid %>'>
+          <%= t('cancel') %>
         </button>
-      </div>
-      <div class="btn-group">
+      </span>
+
+      <span class="btn-group">
         <button class="btn submit_btn" rel="custom-reply-status" 
                 data-cnt-id='<%=cntid%>' data-status-val='4'>
           <%= t('ticket.note_form.add_and_resolve') %>
         </button>
-      </div>
-      <div class="btn-group">
-        <button class="btn cancel_btn" data-show-pseudo-reply='true' data-cnt-id='<%= cntid %>'>
-          <%= t('cancel') %>
+      </span>
+
+      <span class="btn-group">
+        <button class="btn btn-primary submit_btn">
+          <%= local_assigns[:submit] || ActiveSupport::Inflector.titleize(id) %>
         </button>
-      </div>
-    </div>
-<!--     <div class="f-right">
-      <%= submit_tag(t('cancel'), :class => "uiButton cancel_btn", 
-                                  "data-show-pseudo-reply" => 'true',
-                                  "data-cnt-id" => cntid ) %>   
-    	<%= submit_tag(t('ticket.note_form.add_and_resolve'), :onclick => "jQuery('#note_ticket_status').val('resolved');" , :class => "uiButton") %> 
-      <%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton special") %>
-      <div id="toggle-note-visibility">
+      </span>
+
+      <span id="toggle-note-visibility">
         <div class="note-visible tooltip" title="Visible to the customer">
           <i></i>
         </div>
@@ -87,8 +73,9 @@
           <i></i>
         </div>
         <%= f.check_box(:private, :checked => true, :class => 'tooltip', :title => "Hidden to the customer") %>
-      </div>
-    </div> -->
+      </span>
+      
+    </div>
   <% end %>
   <div class="clearfix overflowh" ></div>
 </div> 

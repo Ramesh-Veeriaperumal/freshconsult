@@ -120,25 +120,35 @@
       <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
       <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=> "reply_ticket_status_#{cntid}"  )%>
       <div class="clearfix zeroh" ></div>
-      <div class="" style="float: left; width: 200px;">
+      <div class="post_in_forum" style="float: left; width: 200px;">
 
+        <label>
+          <%= check_box_tag :quoted_text, "true", true %><%= t("ticket.include_quoted_text") %>
+        </label>
         <% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) %>    
-          <label class="post_in_forum">
+          <label>
               <%= check_box_tag :post_forums %><%= t("ticket.reply_form.post_to_linked_forum") %>
           </label>
         <% end %>
         <% if @ticket.account.survey.can_send?(@ticket, Survey::SPECIFIC_EMAIL_RESPONSE)%>
-          <label class="post_in_forum">
+          <label>
             <%= check_box_tag :send_survey %><%= t("ticket.reply_form.send_satisfaction_survey") %>
           </label>
         <% end %> 
-        <label class="post_in_forum">
-          <%= check_box_tag :quoted_text, "true", true %><%= t("ticket.include_quoted_text") %>
-        </label>
       </div>      
 
       <div class="btn-toolbar">
-        <div class="btn-group">
+
+        <span class="reply-draft" id="reply-draft">
+          <div class="close-img" id="clear-draft"><span></span></div>
+          <%= content_tag :div, "#{t("draft")} #{t("saving_draft")}", :class => "sav tooltip", "data-placement" => "below", :id => "draft-save", "title" => t("last_draft") %>
+        </span>
+
+        <span>
+          <%= link_to(t('cancel'), '#', :class => "btn cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true') %>
+        </span>
+
+        <span class="btn-group">
           <a class="btn btn-primary submit_btn">
             <%= t('ticket.reply_form.send') %>
             <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
@@ -157,16 +167,7 @@
             </li>
             <% end %>
           </ul>
-        </div>
-        <div class="btn-group">
-          <%= link_to(t('cancel'), '#', :class => "btn cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true') %>
-        </div>
-        <div class="btn-group">        
-          <div class="reply-draft" id="reply-draft">
-            <div class="close-img" id="clear-draft"><span></span></div>
-            <%= content_tag :div, "#{t("draft")} #{t("saving_draft")}", :class => "sav tooltip", "data-placement" => "below", :id => "draft-save", "title" => t("last_draft") %>
-          </div>
-        </div>
+        </span>
         
       </div>
 
