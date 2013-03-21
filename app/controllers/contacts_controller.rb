@@ -74,6 +74,11 @@ class ContactsController < ApplicationController
       respond_to do |format|
         format.html { redirect_to contacts_url }
         format.xml  { render :xml => @user, :status => :created, :location => contacts_url(@user) }
+        format.json {
+            render :json => @user.to_json({:except=>[:account_id] ,:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
+                    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
+                    :user_role,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
+        }
         format.widget { render :action => :show}
         format.js
       end
@@ -82,6 +87,7 @@ class ContactsController < ApplicationController
       respond_to do |format|
         format.html { render :action => :new}
         format.xml  { render :xml => @user.errors, :status => :unprocessable_entity} # bad request
+        format.json { render :json =>@user.errors, :status => :unprocessable_entity} #bad request
         format.widget { render :action => :show}
         format.js
       end
@@ -161,12 +167,14 @@ class ContactsController < ApplicationController
       respond_to do |format|
         format.html { redirect_to contacts_url }
         format.xml  { head 200}
+        format.json { head 200}
       end
     else
       check_email_exist
       respond_to do |format|
         format.html { render :action => 'edit' }
         format.xml  { render :xml => @item.errors, :status => :unprocessable_entity} #Bad request
+        format.json { render :json => @item.errors, :status => :unprocessable_entity}
       end
     end
   end
