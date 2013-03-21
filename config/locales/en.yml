@@ -1578,7 +1578,7 @@ en:
     info1: Are you sure you want to delete this contact?
     info2: Convert to an Agent
     convert_fulltime: Full-Time Agent
-    convert_occasional:Occasional Agent
+    convert_occasional: Occasional Agent
     send_activation: Send activation email
     import_csv: Import Customers from CSV
     export_csv: Export to CSV
@@ -2941,6 +2941,8 @@ en:
       info1: "When a Freshdesk ticket is linked with JIRA issue, perform the below actions."
       info2: "When ticket status is updated in Freshdesk "
       info3: "When a comment is added in Freshdesk "
+      info4: "When issue status is updated in JIRA"
+      info5: "When a comment is added in JIRA"
       none: "Do nothing."
       add_private_note_in_fd: "Add a private note in Freshdesk and notify agent."
       add_public_note_in_fd: "Add a public note in Freshdesk."
