@@ -3653,6 +3653,7 @@ div.addReminder{
 				font-size:12px;
 				line-height: 16px;
 				padding-right:10px;
+				margin-bottom: -2px;
 				.result {
 					color:$default_txt_color;
 					font-weight: normal;
@@ -3681,6 +3682,7 @@ div.addReminder{
 					white-space: nowrap;
 					text-overflow:ellipsis;
 					margin-bottom: 0;
+					color: #888;
 				}				
 			}
 		}

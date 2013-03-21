@@ -226,6 +226,7 @@ JiraWidget.prototype = {
 		projectId = (jiraBundle.projectId) ? jiraBundle.projectId : jQuery('#jira-projects').val();
 		typeId = (jiraBundle.typeId) ? jiraBundle.typeId : jQuery('#jira-issue-types').val();
 		ticketData = "#" + jiraBundle.ticketId + " (" + jiraWidget.getCurrentUrl() + ") - " + jiraBundle.ticketSubject;
+		jiraWidget.jiraCreateSummaryAndDescription();
 		init_reqs = [{
 			source_url: "/integrations/jira_issue/create",
 			content_type: "application/json",
@@ -240,6 +241,24 @@ JiraWidget.prototype = {
 		}];
 		jiraWidget.freshdeskWidget.options.init_requests = init_reqs
 		jiraWidget.freshdeskWidget.call_init_requests();
+	},
+	jiraCreateSummaryAndDescription: function(){
+		if(jQuery('input[name="fields[description]"]').size() == 0)
+		{
+			jQuery('<input>').attr({
+			type:'hidden',
+			id: 'fields[description]',
+			name: 'fields[description]',
+			value: jiraBundle.ticketDesc}).appendTo('#jira-add-form');
+		}
+		if(jQuery('input[name="fields[summary]"]').size() == 0)
+		{
+			jQuery('<input>').attr({
+			type:'hidden',
+			id: 'fields[summary]',
+			name: 'fields[summary]',
+			value: jiraBundle.ticketSubject}).appendTo('#jira-add-form');
+		}
 	},
 	jiraCreateIssueSuccess: function(evt) {
 		resJ = evt.responseJSON

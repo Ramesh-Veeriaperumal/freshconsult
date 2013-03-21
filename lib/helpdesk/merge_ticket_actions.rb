@@ -62,13 +62,13 @@ module Helpdesk::MergeTicketActions
 		end
 
 		def move_source_requesters_to_target
-			cc_email_array = @source_tickets.collect{ |source| [ source.cc_email[:cc_emails], 
-																	convert_to_cc_format(source) ] if check_source(source) }.flatten()
+			cc_email_array = @source_tickets.collect{ |source| [ get_cc_email_from_hash(source), 
+																	convert_to_cc_format(source) ] if check_source(source) }.flatten().compact
 			return unless cc_email_array.any?
 			if @target_ticket.cc_email.blank?
 				@target_ticket.cc_email = {:cc_emails => cc_email_array.uniq, :fwd_emails => []}
 			else	
-				cc_email_array += @target_ticket.cc_email[:cc_emails] 
+				cc_email_array += get_cc_email_from_hash(@target_ticket) 
 				@target_ticket.cc_email[:cc_emails] = validate_emails(cc_email_array , @target_ticket)
 			end
 			@target_ticket.save  
@@ -141,16 +141,20 @@ module Helpdesk::MergeTicketActions
 				:cc_emails => target_pvt_note ? [] : @target_ticket.cc_email_hash && @target_ticket.cc_email_hash[:cc_emails]
 			)
 			if !@target_note.private
-			Helpdesk::TicketNotifier.send_later(:deliver_reply, @target_ticket, @target_note, {:include_cc => true})
+  			Helpdesk::TicketNotifier.send_later(:deliver_reply, @target_ticket, @target_note, {:include_cc => true})
 			end
 		end
 
 		def convert_to_cc_format ticket
 		  %{#{ticket.requester} <#{ticket.requester.email}>}
-		end 
+		end
+
+    def get_cc_email_from_hash ticket
+      ticket.cc_email ? (ticket.cc_email[:cc_emails] ? ticket.cc_email[:cc_emails] : []) : []
+    end 
 
 		def check_source source_ticket
 		  source_ticket.requester_has_email? and ( !source_ticket.requester.eql?(@target_ticket.requester) or 
-		  																									source_ticket.cc_email[:cc_emails].any?)
+		  																									get_cc_email_from_hash(source_ticket).any?)
 		end
 end	
