@@ -1,7 +1,7 @@
 module Resque::AroundPerform
 
  def before_enqueue_add_account_and_user(*args)
-    args[0][:account_id] = Account.current.id if Account.current
+    args[0][:account_id] = Account.current.id if Account.current  
     args[0][:current_user_id] = User.current.id if User.current
   end
 
@@ -23,10 +23,10 @@ module Resque::AroundPerform
  def around_perform_with_shard(*args)
   args[0].symbolize_keys!
   account_id = (args[0][:account_id]) || (args[0][:current_account_id])
-  account = Account.find_by_id(account_id)
-  account.make_current if account
-  yield
-  Account.reset_current_account
+  ActiveRecord::Base.on_shard(shard_name.to_sym) do
+    account = Account.find_by_id(account_id)
+    account.make_current if account
+      yield
+  end
  end
-
 end

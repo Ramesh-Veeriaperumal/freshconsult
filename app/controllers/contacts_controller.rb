@@ -270,9 +270,9 @@ protected
     end
 
     def fetch_contacts
-       connection_to_be_used =  params[:format].eql?("xml") ? "use_persistent_read_connection" : "use_master_connection"  
+       connection_to_be_used =  params[:format].eql?("xml") ? "on_slave" : "on_master"  
        begin
-         @contacts =   SeamlessDatabasePool.send(connection_to_be_used.to_sym) do
+         @contacts =   ActiveRecord::Base.send(connection_to_be_used.to_sym) do
           scoper.filter(params[:letter], params[:page], params.fetch(:state, "verified"))
         end
       rescue Exception => e

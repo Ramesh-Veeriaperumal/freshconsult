@@ -1,7 +1,9 @@
 class SubscriptionAdmin::SpamWatchController < ApplicationController
+
   include AdminControllerMethods
-  include ReadsToSlave
-  skip_before_filter :check_account_state
+  around :read_on_slave, :only => [:block_user,:spam_user]
+
+  
 
   before_filter :load_user, :load_recent_tickets, :load_recent_notes, :only => :spam_details
 

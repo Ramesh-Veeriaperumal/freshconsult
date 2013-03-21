@@ -13,15 +13,17 @@ namespace :spam_watcher do
   task :ticket_load => :environment do
     puts "Check for abnormal activities started at  #{Time.now}"
     check_for_slave_db unless Rails.env.development?
-    check_for_spam('helpdesk_tickets', 'requester_id', TICKETS_ID_LIMIT, SPAM_TICKETS_THRESHOLD)
-    check_for_spam('helpdesk_notes', 'user_id', NOTES_ID_LIMIT, SPAM_CONVERSATIONS_THRESHOLD)
+    shards = ActiveRecord::Base.shard_names
+    shards.each do |shard_name|
+     ActiveRecord::Base.on_shard(shard_name.to_sym) do
+      check_for_spam('helpdesk_tickets', 'requester_id', TICKETS_ID_LIMIT, SPAM_TICKETS_THRESHOLD)
+      check_for_spam('helpdesk_notes', 'user_id', NOTES_ID_LIMIT, SPAM_CONVERSATIONS_THRESHOLD)
+     end
+    end
     puts "Check for abnormal activities end at  #{Time.now}"
   end
   
-  task :unblock => :environment do
-    puts "Check for unblock abnormal activities started at #{Time.now}"
-    check_for_users_and_unblock
-  end
+  
 
   task :clear_spam_tickets => :environment do
     account_ids = $redis.smembers("SPAM_CLEARABLE_ACCOUNTS")
@@ -32,34 +34,14 @@ namespace :spam_watcher do
   
 end
 
-def check_for_slave_db
- @db_to_connect = Rails.configuration.database_configuration.keys.include?(DB_SLAVE) ? DB_SLAVE :  Rails.env
-end
 
 def execute_sql_on_slave(query_str)
+ result = ActiveRecord::Base.on_slave do 
   ActiveRecord::Base.connection.select_all(query_str)
-end
-
-def check_for_users_and_unblock
-  current_time = Time.zone.now #Should it be Time.now?!?!
-  query_str = "select id  from users where blocked = 1 and blocked_at < '#{60.minutes.ago(current_time).to_s(:db)}'" 
-  users = ActiveRecord::Base.connection.select_values(query_str)
-  
-  unless users.blank?
-    ActiveRecord::Base.connection.execute("update users set blocked = 0,blocked_at = null where id IN (#{users*","}) ")
-  end
-  
-  # query_str = "select id  from users where deleted = 1 and deleted_at < '#{120.minutes.ago(current_time).to_s(:db)}'" 
-  # users = ActiveRecord::Base.connection.select_values(query_str)
-  
-  # unless users.blank?
-  #   ActiveRecord::Base.connection.execute("update users set deleted = 0,deleted_at = null where id IN (#{users*","}) ")
-  # end
-
+ end
 end
 
 def check_for_spam(table,column_name, id_limit, threshold)
-  SeamlessDatabasePool.use_persistent_read_connection do
     current_time = Time.zone.now #Should it be Time.now?!?!
     query_str = <<-eos
       select #{column_name},count(*) as total, account_id from #{table} where created_at 
@@ -104,64 +86,22 @@ def check_for_spam(table,column_name, id_limit, threshold)
     deliver_spam_alert(table, query_str, {:actual_requesters => user_ids, 
       :deleted_users => deleted_users, :blocked_users => blocked_users, :ignore_list => ignore_list}) unless user_ids.empty?
 
-    account_ids.keys.each do |account_id|
-      account = Account.find(account_id)    
-      puts "::::account->#{account}"
-      $redis.sadd("SPAM_CLEARABLE_ACCOUNTS",account.id)
-      puts "deleted_users 1::::::::->#{deleted_users}"
-      deleted_users = account_ids[account_id]
-      unless deleted_users.empty?
-        puts "deleted_users 2::::::::->#{deleted_users}"
-        deleted_users = account.all_users.find(deleted_users)
-        SubscriptionNotifier.send_later(:deliver_account_admin_spam_watcher, account.admin_email, deleted_users)
-      end
-    end
-  end
+    # account_ids.keys.each do |account_id|
+    #   account = Account.find(account_id)    
+    #   puts "::::account->#{account}"
+    #   $redis.sadd("SPAM_CLEARABLE_ACCOUNTS",account.id)
+    #   puts "deleted_users 1::::::::->#{deleted_users}"
+    #   deleted_users = account_ids[account_id]
+    #   unless deleted_users.empty?
+    #     puts "deleted_users 2::::::::->#{deleted_users}"
+    #     deleted_users = account.all_users.find(deleted_users)
+    #     SubscriptionNotifier.send_later(:deliver_account_admin_spam_watcher, account.admin_email, deleted_users)
+    #   end
+    #end
 end
 
 
-def check_for_tickets_spam(table,column_name, threshold)
-  current_time = Time.zone.now #Should it be Time.now?!?!
-  query_str = <<-eos
-    select #{column_name},count(*) as total from #{table} where created_at 
-    between '#{60.minutes.ago(current_time).to_s(:db)}' and '#{current_time.to_s(:db)}'  and id > 5961998
-    group by #{column_name} having total > #{threshold}
-  eos
-  requesters = execute_sql_on_slave(query_str)
-  puts query_str
-  deliver_spam_alert(table, query_str, {:actual_requesters => requesters}) unless requesters.empty?
-  
-  # unless requesters.empty?
-  #   current_time = Time.zone.now
-  #   users = User.find(:all,:conditions => ["id in (?) and user_role in (3,5) and blocked = 0 and whitelisted = 0",requesters])
-  #   deleted_users = []
-  #   blocked_users = []
-  #   users.each do |usr|
-  #     if usr.deleted?  
-  #       (usr.deleted_at and usr.deleted_at < 60.minutes.ago(current_time)) ? (blocked_users << usr.id) : (deleted_users  << usr.id)
-  #     elsif !usr.deleted? 
-  #       deleted_users << usr.id
-  #     end
-  #   end
-  #   ActiveRecord::Base.connection.execute("update users set blocked = 1,blocked_at = '#{current_time.to_s(:db)}' where id IN (#{blocked_users*","}) ") unless blocked_users.blank?
-  #   ActiveRecord::Base.connection.execute("update users set deleted = 1,deleted_at = '#{current_time.to_s(:db)}' where id IN (#{deleted_users*","}) ") unless deleted_users.blank?
-  #   deliver_spam_alert(table, query_str, {:actual_requesters => requesters,:deleted_users => deleted_users,:blocked_users => blocked_users}) unless requesters.empty?
-  # end
 
-  
-end
-
-def check_for_notes_spam(table,column_name, threshold)
-  current_time = Time.zone.now #Should it be Time.now?!?!
-  query_str = <<-eos
-    select #{column_name},count(*) as total from #{table} where created_at 
-    between '#{60.minutes.ago(current_time).to_s(:db)}' and '#{current_time.to_s(:db)}' and id > 5891917
-    group by #{column_name} having total > #{threshold}
-  eos
-  requesters = execute_sql_on_slave(query_str)
-  puts query_str
-  deliver_spam_alert(table, query_str, {:actual_requesters => requesters}) unless requesters.empty?
-end
 
 def deliver_spam_alert(table, query_str,additional_info)
   FreshdeskErrorsMailer.deliver_error_email(nil, nil, nil,

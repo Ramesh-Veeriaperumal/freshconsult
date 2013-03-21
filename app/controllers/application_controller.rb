@@ -4,6 +4,8 @@
 class ApplicationController < ActionController::Base
 
   layout Proc.new { |controller| controller.request.headers['X-PJAX'] ? 'maincontent' : 'application' }
+
+  around_filter :select_shard
   
   before_filter :reset_current_account, :redactor_form_builder, :redirect_to_mobile_url
   before_filter :check_account_state, :except => [:show,:index]
@@ -119,6 +121,11 @@ class ApplicationController < ActionController::Base
       format.xml  { render :xml => result.to_xml(:indent =>2,:root=>:errors)  and return }
       format.json { render :json => {:errors =>result}.to_json and return } 
     end
+  end
+
+  def select_shard(&block)
+    shard_name = ShardMapping.lookup(request.host)
+    ActiveRecord::Base.on_shard(shard_name.to_sym,&block)
   end
 
   protected

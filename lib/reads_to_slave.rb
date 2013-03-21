@@ -1,8 +1,12 @@
 module ReadsToSlave
  def self.included(base)
   base.class_eval do
-    include SeamlessDatabasePool::ControllerFilter
-    use_database_pool :all => :persistent
+    around_filter :run_on_slave
    end
   end
+  
+  def run_on_slave(&block)
+    ActiveRecord::Base.on_slave(&block)
+  end 
+
 end

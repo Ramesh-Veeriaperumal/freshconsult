@@ -14,8 +14,7 @@ module AdminControllerMethods
     base.send :prepend_before_filter,:login_from_basic_auth
     base.send :prepend_before_filter,:set_time_zone
     base.class_eval do
-      include SeamlessDatabasePool::ControllerFilter
-      use_database_pool :all => :persistent
+      include ReadsToSlave
     end
   end
   
@@ -65,6 +64,15 @@ module AdminControllerMethods
       Time.zone = 'Pacific Time (US & Canada)'
     end
     
+    def select_shard(&block)
+        ActiveRecord::Base.on_shard(ShardMapping.latest_shard,&block)
+    end
+
+    # def run_on_slave(&block)
+    #   puts "shard slave stuff"
+    #   ActiveRecord::Base.on_slave(&block)
+    # end
+
     # Since the default, catch-all routes at the bottom of routes.rb
     # allow the admin controllers to be accessed via any subdomain,
     # this before_filter prevents that kind of access, rendering

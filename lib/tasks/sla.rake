@@ -1,7 +1,6 @@
 namespace :sla do
   desc 'Check for SLA violation and trigger emails..'
   task :escalate => :environment do
-    puts "Check for SLA violation initialized at #{Time.zone.now}"
     queue_name = "sla_worker"
     if sla_should_run?(queue_name)
       puts "SLA violation check called at #{Time.zone.now}."
@@ -13,7 +12,6 @@ namespace :sla do
   end
 
   task :premium => :environment do
-    puts "Check for SLA violation in Premium Accounts initialized at #{Time.zone.now}"
     queue_name = "premium_sla_worker"
     if sla_should_run?(queue_name)
         puts "SLA violation check for Premium accounts called at #{Time.zone.now}."

@@ -24,8 +24,14 @@ module Delayed
 
     def perform
        Account.reset_current_account
-       load(account).send(:make_current) if account
-       load(object).send(method, *args.map{|a| load(a)})
+       if account
+        account =~ /^AR\:([A-Z][\w\:]+)\:(\d+)$/
+        shard_name = ShardMapping.lookup($2)
+       end
+       ActiveRecord::Base.on_shard(shard_name.to_sym) do
+        load(account).send(:make_current) if account
+        load(object).send(method, *args.map{|a| load(a)})
+      end
       rescue ActiveRecord::RecordNotFound
            # We cannot do anything about objects which were deleted in the meantime
       true

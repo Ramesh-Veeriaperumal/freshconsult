@@ -1,3 +1,5 @@
+require 'active_record_shards'
+
 module Delayed
 
   class DeserializationError < StandardError
@@ -6,9 +8,11 @@ module Delayed
   # A job object that is persisted to the database.
   # Contains the work object as a YAML field.
   class Job < ActiveRecord::Base
+    set_table_name :delayed_jobs
+    not_sharded
+
     MAX_ATTEMPTS = 25
     MAX_RUN_TIME = 4.hours
-    set_table_name :delayed_jobs
 
     # By default failed jobs are destroyed after too many attempts.
     # If you want to keep them around (perhaps to inspect the reason
