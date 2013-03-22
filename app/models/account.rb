@@ -704,7 +704,6 @@ class Account < ActiveRecord::Base
     end
 
     def change_shard_mapping
-      puts full_domain_changed?
       if full_domain_changed?
         domain_mapping = DomainMapping.find_by_account_id_and_domain(id,full_domain)
         domain_mapping.update_attribute(:domain,full_domain)

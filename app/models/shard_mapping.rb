@@ -37,7 +37,7 @@ class ShardMapping < ActiveRecord::Base
  end
 
  def self.latest_shard
- 	"shard_1" #probably fetch it from Redis or config 
+ 	"shard_2" #probably fetch it from Redis or config 
  end
 
  def clear_cache
