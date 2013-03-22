@@ -166,6 +166,16 @@ module SupportHelper
 		end
 	end
 
+	def link_to_folder_with_count folder, *args
+		label = " #{folder['name']} <span class='item-count'>#{folder['articles_count']}</span>"
+		content_tag :a, label, { :href => folder['url'], :title => folder['name'] }.merge(options)
+	end
+
+	def link_to_forum_with_count forum, *args
+		label = " #{forum['name']} <span class='item-count'>#{forum['topics_count']}</span>"
+		content_tag :a, label, { :href => forum['url'], :title => forum['name'] }.merge(options)
+	end
+
 	def link_to_start_topic portal, *args
 		options = link_args_to_options(args)
     	label = options.delete(:label) || I18n.t('portal.topic.start_new_topic')
@@ -504,8 +514,7 @@ HTML
 	def portal_access_varibles
 		output = []
 		output << %( <script type="text/javascript"> )
-		output << %(  	portal = #{portal_javascript_object}; )
-		output << %( 	// console.log(portal); )
+		output << %(  	var portal = #{portal_javascript_object}; )
 		output << %( </script> )
 		output.join("")
 	end
@@ -514,8 +523,8 @@ HTML
 		{ :language => @portal['language'],
 		  :name => @portal['name'],
 		  :contact_info => @portal['contact_info'],
-		  :page => @portal['page'],
-		}.to_json
+		  :current_page => @portal['page'],
+		  :current_tab => @portal['current_tab'] }.to_json
 	end
 
 	def theme_url

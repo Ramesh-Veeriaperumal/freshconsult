@@ -21,7 +21,7 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
     a:hover{ color: inherit; }
 }
 
-.banner-title .heading{ color: inherit; }
+.banner-title .heading{ color: inherit; line-height: 33px; }
 
 .banner-nav{
 	font-size: 0.929em;
@@ -38,6 +38,7 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 	line-height: 35px;
 	width: 100%;	
 	@include clearfix;
+	@include min-height(17px);
 	border: 1px solid rgba($tab_text_color, 0.2);
 	.nav-link{
 		background-color:$tab_color;
@@ -62,7 +63,7 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 	width: auto;
 }
 
-footer{
+.footer{
 	margin-top:10px;
 	background-color: $footer_color;
 	padding: $content-padding-mobile;

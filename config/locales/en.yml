@@ -1701,6 +1701,7 @@ en:
   no_signup: "To submit a ticket, please <a href={{login}}><b>Login</b></a>."
   portal: 
     no_topics_in_this_view: "~ No topics in this view ~"
+    solutions_home: "Solution home"
     header: 
       preview_message: "<b>Preview mode</b> - <a href='javascript:window.close()'>Click here</a> to go back."
     login: Login
@@ -1721,7 +1722,7 @@ en:
     community_forums: "Community forums"
     knowledge_base: "Knowledge base"
     showing_recent_updates: "Showing recent updates"
-    no_articles_info_1: "Sorry, we haven’t published any articles. "
+    no_articles_info_1: "Sorry, we haven’t published any articles in this section. "
     no_articles_info_2: "Please check again later. "
     no_forums_info_1: "No forum topic yet"
     no_forums_info_2: "Why don't you start a %{start_topic_link}?"

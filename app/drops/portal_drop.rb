@@ -98,6 +98,7 @@ class PortalDrop < BaseDrop
 
   def tabs
     @tabs ||= load_tabs
+    (@tabs.size > 1) ? @tabs : [] 
   end
 
   # Access to Discussions
@@ -114,7 +115,7 @@ class PortalDrop < BaseDrop
   end
 
   def recent_popular_topics
-    @recent_popular_topics ||= source.recent_popular_topics(portal_user,DateTime.now - 30.days)
+    @recent_popular_topics ||= source.recent_popular_topics(portal_user, DateTime.now - 30.days)
   end
 
   def topics_count
@@ -131,7 +132,7 @@ class PortalDrop < BaseDrop
   end
   
   def folders
-    @folders ||= (portal_account.folders.visible(portal_user).reject(&:blank?) || []).flatten
+    @folders ||= (solution_categories.map { |c| c.folders.visible(portal_user) }.reject(&:blank?) || []).flatten
   end
 
   # !MODEL-ENHANCEMENT Need to make published articles for a 
@@ -142,7 +143,7 @@ class PortalDrop < BaseDrop
 
   def url_options
     { :host => source.host }    
-  end 
+  end
 
   def paid_account
     @paid_account ||= portal_account.subscription.paid_account?
@@ -151,8 +152,8 @@ class PortalDrop < BaseDrop
   private
     def load_tabs
       tabs = [  [ support_home_path,        :home,		    true ],
-					      [ support_solutions_path,   :solutions,	  allowed_in_portal?(:open_solutions) ],
-				        [ support_discussions_path, :forums, 	    (feature?(:forums) && allowed_in_portal?(:open_forums)) ],
+					      [ support_solutions_path,   :solutions,	  has_solutions ],
+				        [ support_discussions_path, :forums, 	    has_forums ],
 				        [ support_tickets_path,     :tickets,     portal_user ]]
 
 			tabs.map { |s|

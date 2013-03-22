@@ -1,6 +1,8 @@
-<footer class="rounded-6">
-	{% for tab in portal.tabs %}
-		<a href="{{tab.url}}" class="{% if tab.tab_type == current_tab %}active{% endif %}">{{ tab.label }}</a>
-	{% endfor %}
-</footer>
+{% if portal.tabs.size > 0 %}
+	<footer class="footer rounded-6">
+		{% for tab in portal.tabs %}
+			<a href="{{tab.url}}" class="{% if tab.tab_type == current_tab %}active{% endif %}">{{ tab.label }}</a>
+		{% endfor %}
+	</footer>
+{% endif %}
 {{ portal | portal_copyright }}

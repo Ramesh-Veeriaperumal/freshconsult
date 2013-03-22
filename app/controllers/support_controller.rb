@@ -93,7 +93,7 @@ class SupportController < ApplicationController
         @current_tab ||= "home"
       elsif [ :discussions_home, :topic_list, :topic_view, :new_topic ].include?(token)
         @current_tab ||= "forums"
-      elsif [ :solution_home, :article_list, :article_view ].include?(token)
+      elsif [ :solution_home, :solution_category, :article_list, :article_view ].include?(token)
         @current_tab ||= "solutions"
       elsif [ :ticket_list, :ticket_view ].include?(token)
         @current_tab ||= "tickets"

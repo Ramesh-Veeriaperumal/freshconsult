@@ -1,7 +1,7 @@
-<section class="main content rounded-6 min-height-on-desktop">
+<section class="main content rounded-6 min-height-on-desktop" id="folder-show-{{folder.id}}">
 	<div class="breadcrumb">
-		<a href="{{ portal.solutions_home_url }}">Solution home</a>
-		<a href="{{ article.category.url }}">{{ folder.category.name }}</a>
+		<a href="{{ portal.solutions_home_url }}"> {% translate portal.solutions_home %} </a>
+		<a href="{{ folder.category.url }}">{{ folder.category.name }}</a>
 	</div>
 	<h2 class="heading">{{ folder.name }}</h2>
 	<p class="info-text">{{ folder.description }}</p>
@@ -13,10 +13,10 @@
 					<div class="ellipsis"> 
 						<a href="{{article.url}}" class="c-link">{{article.title}}</a>
 					</div>
-					<div class="info-text">
-						{{ article.body_plain || truncatewords:40 }}
+					<div class="description-text">
+						{{ article.body_plain || truncate:160 }}
 					</div>
-					<p class="help-text">{{ article.modified_on | short_day_with_time }}</p>
+					<div class="help-text">{{ article.modified_on | short_day_with_time }}</div>
 				</div>
 			{% endfor %}
 			{% if folder.articles == empty %}

@@ -30,7 +30,7 @@
 }
 
 .article-body{
-	font-size: 14px;
+	@include text-formatting;
 	big{ font-size: inherit; }
 }
 
@@ -78,10 +78,16 @@ li.article-item, li.topic-item, li.ticket-item {
 	}
 }
 
-.help-text, .p-info, .info-text, .list-noinfo{
+.help-text, .p-info, .info-text, .list-noinfo, .description-text{
 	color: $helpTextColor;	
 	font-weight: 200;
 	line-height: $baseLineHeight / 1.1;
+}
+
+.item-count{ 
+	color: lighten($helpTextColor, 10%);
+	&:before{ content: "("; }
+	&:after{ content: ")"; }
 }
 
 .help-text{	font-size: 12px;  }

@@ -3,8 +3,6 @@
  * Portal common page scripts
  */
 
-jQuery.noConflict()
- 
 !function( $ ) {
 
 	$(function () {
