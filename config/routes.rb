@@ -70,6 +70,8 @@
   map.resources :email, :only => [:new, :create]
   map.resources :password_resets, :except => [:index, :show, :destroy]
   map.resources :sso, :collection => {:login => :get, :facebook => :get}
+  map.resource :account_configuration
+  
   map.namespace :integrations do |integration|
     integration.resources :installed_applications, :member =>{:install => :put, :uninstall => :get}
     integration.resources :applications, :member=>{:custom_widget_preview => :post}

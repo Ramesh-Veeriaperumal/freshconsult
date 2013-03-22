@@ -79,9 +79,9 @@ class Social::TwitterHandlesController < ApplicationController
       else
         twitter_handle.save
         Resque::enqueue(CRM::Totango::SendUserAction, 
-                                        current_account.id, 
-                                        current_user.email, 
-                                        totango_activity(:twitter))
+                                        {:account_id => current_account.id, 
+                                         :email =>  current_user.email, 
+                                        :activity => totango_activity(:twitter) })
         portal_name = twitter_handle.product ? twitter_handle.product.name : current_account.portal_name
         flash[:notice] = t('twitter.success_signin', :twitter_screen_name => twitter_handle.screen_name, :helpdesk => portal_name)        
         redirect_to edit_social_twitter_url(twitter_handle)

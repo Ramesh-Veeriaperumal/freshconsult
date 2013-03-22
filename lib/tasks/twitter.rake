@@ -10,7 +10,7 @@ namespace :twitter do
     	puts "Twitter Queue is empty... queuing at #{Time.zone.now}"
     	Account.active_accounts.each do |account|  
     		next if account.twitter_handles.empty?   
-       		Resque.enqueue( Social::TwitterWorker , account.id)   
+       		Resque.enqueue( Social::TwitterWorker ,{:account_id => account.id } )
     	end
     else
     	puts "Twitter Queue is already running . skipping at #{Time.zone.now}"  

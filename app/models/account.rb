@@ -45,7 +45,12 @@ class Account < ActiveRecord::Base
   has_one :data_export
   
   has_one :account_additional_settings
+
+  has_one :account_configuration
   
+  delegate :contact_info, :admin_first_name, :admin_last_name, :admin_email, :admin_phone, 
+            :invoice_emails, :to => "account_configuration"
+
   has_one :logo,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
@@ -429,6 +434,10 @@ class Account < ActiveRecord::Base
   def full_url
     "http://#{host}"
   end
+
+  def url_protocol
+    self.ssl_enabled? ? 'https' : 'http'
+  end
   
   #Helpdesk hack starts here
   def reply_emails
@@ -627,6 +636,8 @@ class Account < ActiveRecord::Base
       self.user.save
       User.current = self.user
       
+      self.build_account_configuration(admin_contact_info)
+      self.account_configuration.save
     end
     
     def create_portal
@@ -661,7 +672,7 @@ class Account < ActiveRecord::Base
     end 
 
     def add_to_totango
-      Resque.enqueue(CRM::Totango::TrialCustomer, id)
+      Resque.enqueue(CRM::Totango::TrialCustomer, {:account_id => id})
     end
 
     def update_billing
@@ -674,6 +685,14 @@ class Account < ActiveRecord::Base
 
     def notify_totango
       Resque.enqueue(CRM::Totango::CanceledCustomer, id, full_domain)
+    end
+
+    def admin_contact_info
+      {
+        :contact_info => { :first_name => self.user.first_name, :last_name => self.user.last_name,
+                           :email => self.user.email, :phone => self.user.phone },
+        :billing_emails => { :invoice_emails => [ self.user.email ] }
+      }
     end
 
 end

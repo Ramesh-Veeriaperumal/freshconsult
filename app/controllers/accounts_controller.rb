@@ -248,9 +248,9 @@ class AccountsController < ApplicationController
     params[:account][:main_portal_attributes][:updated_at] = Time.now
     @account.main_portal_attributes = params[:account][:main_portal_attributes]
     if @account.save
-      Resque::enqueue(CRM::Totango::SendUserAction, current_account.id, 
-                                                    current_user.email, 
-                                                    totango_activity(:helpdesk_rebranding))
+      Resque::enqueue(CRM::Totango::SendUserAction, {:account_id => current_account.id,
+                                                     :email => current_user.email,
+                                                     :activity => totango_activity(:helpdesk_rebranding)})
       flash[:notice] = t(:'flash.account.update.success')
       redirect_to redirect_url
     else
@@ -279,8 +279,8 @@ class AccountsController < ApplicationController
      DeletedCustomers.create(
        :full_domain => "#{current_account.name}(#{current_account.full_domain})",
        :account_id => current_account.id,
-       :admin_name => current_account.account_admin.name,
-       :admin_email => current_account.account_admin.email,
+       :admin_name => current_account.admin_first_name,
+       :admin_email => current_account.admin_email,
        :account_info => {:plan => sub.subscription_plan_id,
                          :discount => sub.subscription_discount_id,
                          :agents_count => current_account.agents.count,
@@ -438,6 +438,6 @@ class AccountsController < ApplicationController
     private
 
       def add_to_crm
-        Resque.enqueue(Marketo::AddLead, @account.id, ThirdCRM.fetch_cookie_info(request.cookies))
+        Resque.enqueue(Marketo::AddLead, { :account_id => @account.id, :cookie => ThirdCRM.fetch_cookie_info(request.cookies) })
       end   
 end

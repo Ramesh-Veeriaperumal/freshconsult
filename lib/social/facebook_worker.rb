@@ -1,16 +1,14 @@
 class Social::FacebookWorker
-	extend Resque::Plugins::Retry
+	extend Resque::AroundPerform
+
   @queue = 'FacebookWorker'
 
-  @retry_limit = 3
-  @retry_delay = 60*2
 
   ERROR_MESSAGES = {:access_token_error => "access token", :permission_error => "manage_pages", 
                     :mailbox_error => "read_page_mailboxes" }
   
-  def self.perform(account_id)
-    account = Account.find(account_id)
-    account.make_current
+  def self.perform(args)
+    account = Account.current
     facebook_pages = account.facebook_pages.find(:all, :conditions => ["enable_page = 1"])    
     facebook_pages.each do |fan_page|   
         @fan_page =  fan_page
@@ -20,7 +18,6 @@ class Social::FacebookWorker
             fetch_fb_messages fan_page
         end         
      end
-     Account.reset_current_account
   end
 
   def self.fetch_fb_messages fan_page

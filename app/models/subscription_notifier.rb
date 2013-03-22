@@ -18,7 +18,7 @@ class SubscriptionNotifier < ActionMailer::Base
   end
   
   def welcome(account)
-    setup_email(account.account_admin, "Welcome to #{AppConfig['app_name']}!","vijay@freshdesk.com")
+    setup_email(account.admin_email, "Welcome to #{AppConfig['app_name']}!","vijay@freshdesk.com")
     @body = { :account => account, :host => account.host }
     @content_type = "text/html"
   end
@@ -31,28 +31,28 @@ class SubscriptionNotifier < ActionMailer::Base
   end
   
   def charge_receipt(subscription_payment)
-    setup_email(subscription_payment.subscription.account.account_admin, "Your #{AppConfig['app_name']} invoice")
+    setup_email(subscription_payment.subscription.invoice_emails, "Your #{AppConfig['app_name']} invoice")
     setup_bcc
     @body = { :subscription => subscription_payment.subscription, :amount => subscription_payment.amount, :subscription_payment => subscription_payment }
     @content_type = "text/html"
   end
   
   def day_pass_receipt(quantity, subscription_payment)
-    setup_email(subscription_payment.subscription.account.account_admin, "Your #{AppConfig['app_name']} invoice")
+    setup_email(subscription_payment.subscription.invoice_emails, "Your #{AppConfig['app_name']} invoice")
     setup_bcc
     @body = { :units => quantity, :subscription_payment => subscription_payment, :subscription => subscription_payment.subscription }
     @content_type = "text/html"
   end
   
   def misc_receipt(subscription_payment,description)
-    setup_email(subscription_payment.subscription.account.account_admin, "Your #{AppConfig['app_name']} invoice")
+    setup_email(subscription_payment.subscription.invoice_emails, "Your #{AppConfig['app_name']} invoice")
     setup_bcc
     @body = { :subscription => subscription_payment.subscription, :subscription_payment => subscription_payment, :description => description }
     @content_type = "text/html"
   end
   
   def charge_failure(subscription)
-    setup_email(subscription.account.account_admin, "Your #{AppConfig['app_name']} renewal failed")
+    setup_email(subscription.invoice_emails, "Your #{AppConfig['app_name']} renewal failed")
     @bcc = AppConfig['from_email']
     @body = { :subscription => subscription }    
     @content_type = "text/html"
@@ -64,12 +64,12 @@ class SubscriptionNotifier < ActionMailer::Base
     @content_type = "text/html"
   end
 
-  def account_admin_spam_watcher(user, deleted_users)
+  def account_admin_spam_watcher(account, deleted_users)
     from  AppConfig['from_email']
-    recipients user.email
+    recipients account.admin_email
     subject "Freshdesk :: Spam watcher"
     sent_on Time.now
-    body(:account_admin => user, 
+    body(:account => account, 
           :deleted_users => deleted_users)
     content_type  "text/html"
   end

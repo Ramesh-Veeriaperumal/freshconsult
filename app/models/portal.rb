@@ -42,7 +42,6 @@ class Portal < ActiveRecord::Base
 
   after_create :create_template
 
-
   APP_CACHE_VERSION = "FD6"
     
   def logo_attributes=(icon_attr)

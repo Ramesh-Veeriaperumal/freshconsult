@@ -1183,6 +1183,17 @@ en:
       export_now: Export now
       export_data_text: Generate an XML of all available Help desk data and send it via email
       account_settings: Account Settings
+      primary_contact : Primary contact details
+      primary_contact_info : (Used for all account-related communications from Freshdesk)
+      contact_first_name : First Name
+      contact_last_name : Last Name
+      contact_email : Email
+      contact_phone : Phone
+      invoice_email_info : Send Invoices to
+      invoice_emails : Emails
+  success_msg : Account settings updated successfully!
+  failure_msg : Failed to update Account Settings!
+  
   forum_key: Forum
   topics:
     show:
@@ -1567,6 +1578,8 @@ en:
     showing: "Showing:"
     info1: Are you sure you want to delete this contact?
     info2: Convert to an Agent
+    convert_fulltime: Full-Time Agent
+    convert_occasional: Occasional Agent
     send_activation: Send activation email
     import_csv: Import Customers from CSV
     export_csv: Export to CSV
@@ -2355,6 +2368,10 @@ en:
       note: Note 
       billable_entry: Mark as a billable entry
       billing_type: Billing Type
+      billable: Billable
+      non_billable: Non-Billable
+      product: Product
+      group: Group
       group_by: Group By
       report:
         no_timeentry: "No data available"
@@ -2562,6 +2579,7 @@ en:
         primary_ticket: "This is your primary ticket"
         remove: "Remove this ticket"
         target_merge_description:  "Ticket {{ticket.id}} {{ticket.subject}} is merged with this request"
+        target_merge_description1: "Merged from ticket <a href='/helpdesk/tickets/%{ticket_id}' target='_blank'>%{ticket_id}</a>"
         target_note_description1: 
           one: "Ticket with id"
           other: "Tickets with ids"
@@ -2586,6 +2604,7 @@ en:
       updated_at: Last Modified 
       priority: Priority
       status: Status
+      customer_response: Customer Response
       asc: Ascending
       desc: Descending
   click_to_change_sort_order: Click to change sort order

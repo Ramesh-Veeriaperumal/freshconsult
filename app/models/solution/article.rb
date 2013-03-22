@@ -152,8 +152,7 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def article_description
-    (seo_data[:meta_description].blank?) ? "#{title}. #{folder.name}. #{folder.category.name}" : 
-                                            seo_data[:meta_description]
+    seo_data[:meta_description]
   end
 
   def article_keywords

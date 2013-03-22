@@ -15,11 +15,13 @@ module Reports::TimesheetReport
   end
   
   def csv_hash
-    {"Agent"=>:agent_name, "Hours"=> :hours, "Date" =>:executed_at ,"Ticket"=>:ticket_display, "Note"=>:note  }
+    {"Agent"=>:agent_name, "Hours"=> :hours, "Date" =>:executed_at ,"Ticket"=>:ticket_display, 
+                                 "Product"=>:product_name , "Group"=>:group_name , "Note"=>:note }
   end
   
   def list_view_items
-   [:workable , :customer_name , :note , :group_by_day_criteria ,:agent_name, :hours]
+   [:workable , :customer_name , :note , :group_by_day_criteria , :agent_name, :product_name ,
+                                                                             :group_name , :hours]
   end
   
   private
