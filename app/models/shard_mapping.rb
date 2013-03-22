@@ -21,8 +21,8 @@ class ShardMapping < ActiveRecord::Base
    return if domain.blank?
    key = SHARD_BY_DOMAIN % { :domain => domain }
    MemcacheKeys.fetch(key) { 
-    shard = DomainMapping.find_by_domain(domain)
-    shard if shard
+    domain_maping = DomainMapping.find_by_domain(domain)
+    domain_maping.shard if domain_maping
   }
  end
     
