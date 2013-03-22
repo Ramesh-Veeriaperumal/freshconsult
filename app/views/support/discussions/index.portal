@@ -7,16 +7,12 @@
 				<h3 class="heading">{{category.name}}</h3>
 				<div class="cs-g-c">
 				{% for forum in category.forums %}
-					{% if forum.topics_count %}
-						<section class="cs-g topic-list">
-							<div class="list-lead badge-{{ forum.type_name }}">
-								<a href="{{ forum.url }}">
-									{{ forum.name }} ({{ forum.topics_count }})
-								</a>
-							</div>
-							{{ forum | topic_list:5 }}
-						</section>
-					{% endif %}
+					<section class="cs-g topic-list">
+						<div class="list-lead badge-{{ forum.type_name }}">
+							{{ forum | link_to_forum_with_count }}
+						</div>
+						{{ forum | topic_list:5 }}
+					</section>
 				{% endfor %}
 				</div>
 			</div>
