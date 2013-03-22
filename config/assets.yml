@@ -14,7 +14,6 @@ stylesheets:
     - public/stylesheets/app/lib/autocomplete.css
     - public/stylesheets/app/lib/jquery-ui.css
     - public/stylesheets/app/lib/qtip.css
-    - public/stylesheets/search-results.css
 
   app:
     - public/stylesheets/app/lib/chosen.css    
