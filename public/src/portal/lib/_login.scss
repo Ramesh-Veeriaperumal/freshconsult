@@ -4,19 +4,15 @@
 	margin:$baseLineHeight 0;
 } 
 
-.login-form input.special{
+.login-form input.special, .btn-signup, .btn-newticket, .btn-login{
 	width: 100%;
 }
 
-.btn-signup{
-	font-weight: bold;
-	margin: 16px 0;
-	width: 100%;
-}
+.btn-newticket{ font-weight: bold; }
+.btn-signup{ font-weight: bold; margin: 16px 0; }
 
 .btn-login{
-	float: none;
-	width: 100%;
+	float: none;	
 	text-transform: uppercase;
 	margin: 4px 0 10px;
 }
@@ -33,20 +29,18 @@
 .btn-facebook:before{ @extend .icon-sign-in-facebook; }
 .btn-twitter:before{ @extend .icon-sign-in-twitter; }
 
-@include at-breakpoint($break-tablet){
-	@include layout(4){
-		.login-form{ @include span-columns(3); }
-		.alt-login-button{ @include span-columns(1 omega); }
-	}
-	.login-form{ padding-right: 2em; }
+@include at-breakpoint($break-tablet){	
+	.login-form{ width:65%; float: left; max-width: 400px; }
+	.alt-login-button{ width:32%; padding-left: 3%; float: right; @include min-height(230px); }
 	.btn-login{ float: right; margin-top: -20px; } 
-	.btn-login, .btn-signup{ width: auto; }
-	.login-form{
-		border-right:1px solid #dadada;	
-		@include box-shadow(#fff 1px 0 0);
+	.btn-newticket{ float: right; }
+	.btn-login, .btn-signup, .btn-newticket{ width: auto; }
+	.alt-login-button{
+		border-left:1px solid #dadada;	
+		@include box-shadow(#fff -1px 0 0);
 	}	
 }
 @include at-breakpoint($break-desktop){
-	#login-container, #signup-container{ @include min-height(275px); }
-	#login-container{ margin-bottom: 200px; }
+	/*#login-container, #signup-container{ @include min-height(275px); }
+	#login-container{ margin-bottom: 200px; }*/
 }

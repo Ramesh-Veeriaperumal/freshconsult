@@ -1,4 +1,4 @@
-<section class="content rounded-6 min-height-on-desktop">
+<section class="content rounded-6 min-height-on-desktop" id="forum-{{ forum.id }}">
 	{% if forum.type_name != 'announcement' %}
 		<b class="pull-right">{{ portal | link_to_start_topic }}</b>
 	{% endif %}
@@ -10,7 +10,7 @@
 		<i class="icon-page-{{ forum.type_name }}"></i>
 	</i>
 	<div class="list-lead">
-		{{ forum.name }} ({{ forum.topics_count }})
+		{{ forum.name }} <span class="item-count">{{ forum.topics_count }}</span>
 	</div>
 	<p class="intro ellipsis" title="{{forum.description}}">
 		{{ forum.description }}
