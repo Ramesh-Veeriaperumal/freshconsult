@@ -1,5 +1,6 @@
 class Subscription::Events::AddDeletedEvent
-
+	extend Resque::AroundPerform
+	
 	include Subscription::Events::CalculateRevenue
 
 	@queue = "events_queue"

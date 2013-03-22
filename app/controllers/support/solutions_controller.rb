@@ -1,13 +1,14 @@
 class Support::SolutionsController < SupportController
 	before_filter :scoper
-	before_filter do |c|
-		c.send(:set_portal_page, :solution_home)
-	end
 	before_filter { |c| c.check_portal_scope :open_solutions }
-	
+
+	def index
+		set_portal_page :solution_home
+	end
+
 	def show
-		# @category = @categories.find_by_id(params[:id])
-		# return redirect_to support_solutions_path
+		@category = @categories.find_by_id(params[:id])
+		set_portal_page :solution_category
 	end
 
 	private

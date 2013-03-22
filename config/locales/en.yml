@@ -332,6 +332,7 @@ en:
       profile_edit: "User profile"
       search: "Search results"
       solution_home: "Solutions home"
+      solution_category: "Solutions category home"
       article_list: "Article list"
       article_view: "Article view"
       discussions_home: "Discussions home"
@@ -345,7 +346,7 @@ en:
     portal_settings:
       simple:
         header_color: "Header"
-        bg_color: "Page"
+        bg_color: "Body"
         footer_color: "Footer"
         help_center_color: "Help center"
         btn_primary_background: "Primary action button"
@@ -358,7 +359,7 @@ en:
         headingsColor: "Heading color"
         linkColor: "Link text"
         linkColorHover: "Link text hover"
-        inputFocusRingColor: "On focus border color"
+        inputFocusRingColor: "Heading divider & Input focus glow"
     quests:
       index:
         title: Quest
@@ -1700,6 +1701,7 @@ en:
   no_signup: "To submit a ticket, please <a href={{login}}><b>Login</b></a>."
   portal: 
     no_topics_in_this_view: "~ No topics in this view ~"
+    solutions_home: "Solution home"
     header: 
       preview_message: "<b>Preview mode</b> - <a href='javascript:window.close()'>Click here</a> to go back."
     login: Login
@@ -1720,7 +1722,7 @@ en:
     community_forums: "Community forums"
     knowledge_base: "Knowledge base"
     showing_recent_updates: "Showing recent updates"
-    no_articles_info_1: "Sorry, we haven’t published any articles. "
+    no_articles_info_1: "Sorry, we haven’t published any articles in this section. "
     no_articles_info_2: "Please check again later. "
     no_forums_info_1: "No forum topic yet"
     no_forums_info_2: "Why don't you start a %{start_topic_link}?"

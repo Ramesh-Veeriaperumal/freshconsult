@@ -25,6 +25,7 @@ class Portal::Page < ActiveRecord::Base
 
 		# Solution pages
 		[:solution_home,      	6,   "support/solutions/index.portal", "support_solutions_path"],
+		[:solution_category,    18,  "support/solutions/show.portal", "support_solutions_path"],
 		[:article_list,       	7,   "support/solutions/folders/show.portal", 
 			"support_solutions_folder_path", "public_folders"],
 		[:article_view,       	8,   "support/solutions/articles/show.portal", 
@@ -54,7 +55,7 @@ class Portal::Page < ActiveRecord::Base
 	# Manually organizing them as groups to avoid direct db save dependency
 	PAGE_GROUPS = [
 		{ :general 		=> [:portal_home, :user_signup, :user_login, :search] },
-		{ :solutions 	=> [:solution_home, :article_list, :article_view] }, 
+		{ :solutions 	=> [:solution_home, :article_list, :article_view, :solution_category] }, 
 		{ :discussions 	=> [:discussions_home, :topic_list, :topic_view, :new_topic] },
 		{ :tickets 		=> [:submit_ticket] }
 	]
