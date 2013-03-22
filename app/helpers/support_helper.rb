@@ -1,5 +1,4 @@
 module SupportHelper
-	include ActionView::Helpers::TagHelper
 	include Portal::PortalFilters
 	include RedisKeys
 
