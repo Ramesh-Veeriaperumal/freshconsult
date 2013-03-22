@@ -434,6 +434,10 @@ class Account < ActiveRecord::Base
   def full_url
     "http://#{host}"
   end
+
+  def url_protocol
+    self.ssl_enabled? ? 'https' : 'http'
+  end
   
   #Helpdesk hack starts here
   def reply_emails

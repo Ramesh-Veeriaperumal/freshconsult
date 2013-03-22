@@ -1,15 +1,15 @@
 <div>
-	Hi <%= @account_admin.name %>,<div><br></div>
+	Hi <%= @account.admin_first_name %>,<div><br></div>
 	<div>Bellow listed users are blocked by our spam watcher.If you feel they are genuine users, you can whitelist them by clicking the links.</div>
 	<div><br></div>
 	<% @deleted_users.each do |user| %>
 		<div> 
 			<b>
-				<%=link_to user.name_details, "#{@account_admin.url_protocol}://#{@account_admin.account.host}/contacts/#{user.id}" %>
+				<%=link_to user.name_details, "#{@account.url_protocol}://#{@account.host}/contacts/#{user.id}" %>
 			</b>
 			&nbsp;
 			<b>
-				<%=link_to "unblock", "#{@account_admin.url_protocol}://#{@account_admin.account.host}/contacts/unblock/#{user.id}" %>
+				<%=link_to "unblock", "#{@account.url_protocol}://#{@account.host}/contacts/unblock/#{user.id}" %>
 			</b>
 		</div>
 	<%end%>
