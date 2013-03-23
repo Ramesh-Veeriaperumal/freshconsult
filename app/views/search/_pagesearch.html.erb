@@ -2,7 +2,7 @@
 	placeholder ||= "Search"
 	url			||= "/search/content?search_key="
 %>
-<form class="page-search">
+<form class="page-search" >
 	<div class="live_search">
 		<input class="search" type="text" id="PageSearch" placeholder="<%= placeholder %>" /> 
 	</div>
@@ -32,4 +32,9 @@
 			jQuery(this).removeClass("loading");				
 		}
 	});
+
+	jQuery('.page-search').bind("submit", function(ev){
+		ev.preventDefault()
+		return false
+	})
 </script>
