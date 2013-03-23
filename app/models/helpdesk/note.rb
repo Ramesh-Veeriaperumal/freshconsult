@@ -236,6 +236,12 @@ class Helpdesk::Note < ActiveRecord::Base
       :response_time_by_bhrs => resp_time_bhrs) unless resp_time.blank?
   end
 
+
+  def liquidize_body
+    attachments.empty? ? body_html : 
+      "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
+  end
+
   protected
 
     def update_content_ids
@@ -323,12 +329,6 @@ class Helpdesk::Note < ActiveRecord::Base
         schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
       end
     end
-
-    def liquidize_body
-      attachments.empty? ? body_html : 
-        "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
-    end
-
     
   private
     def human_note_for_ticket?

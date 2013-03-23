@@ -10,7 +10,7 @@ class Helpdesk::TicketDrop < BaseDrop
 	end
 
 	def subject
-		h(@source.subject)
+		@source.subject
 	end
 
 	def id

@@ -8,7 +8,7 @@
       :html => { :method => :put, :rel => "portal_form", :target => "freshdesk_preview" } do |f| -%>
     <%= hidden_field_tag 'portal_tab', :preferences %>
     <h3 class="title"><%=t("portalcss.cosmetic.subheader_background_color")%></h3>
-    <% pref_bgs = [:header_color, :bg_color, :footer_color, :help_center_color] %>
+    <% pref_bgs = [:bg_color, :header_color, :footer_color, :help_center_color] %>
     <div class='srow-fluid'>
     <% pref_bgs.each_with_index do |p, i| %>
       <div class="sgrid3 config_item <%= ((i+1) % 4 == 0) ? "omega" : "" %>">
