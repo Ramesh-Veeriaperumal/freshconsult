@@ -15,8 +15,8 @@
 					<b><%= t('contacts.info2') %></b>
 				</a>
 		    		<ul class="dropdown-menu pull-right" role="menu">
-		        			<li><%= link_to ( t('contacts.convert_fulltime'), { :action => :make_agent, :id => @user.id , :occasional => false},:method => :put)%></li>
-		        			<li><%= link_to ( t('contacts.convert_occasional'), { :action => :make_agent, :id => @user.id, :occasional => true }, :method => :put)%></li>       		
+		        			<li><%= link_to ( t('contacts.convert_fulltime'), { :action => :make_agent, :id => @user.id},:method => :put)%></li>
+		        			<li><%= link_to ( t('contacts.convert_occasional'), { :action => :make_occasional_agent, :id => @user.id}, :method => :put)%></li>       		
 		        	</ul>
         	<%end%>
 		</div>
