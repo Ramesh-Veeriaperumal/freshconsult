@@ -1,10 +1,10 @@
 class ContactsController < ApplicationController
 
-    before_filter :except => [:make_agent] do |c| 
+    before_filter :except => [:make_agent,:make_occasional_agent] do |c| 
       c.requires_permission :manage_tickets
     end
 
-    before_filter :only => [:make_agent] do |c| 
+    before_filter :only => [:make_agent,:make_occasional_agent] do |c| 
       c.requires_permission :manage_users
     end
 
@@ -18,7 +18,7 @@ class ContactsController < ApplicationController
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
    before_filter :set_selected_tab
    before_filter :check_agent_limit, :only =>  :make_agent
-   before_filter :load_item, :only => [:show, :edit, :update, :make_agent]
+   before_filter :load_item, :only => [:show, :edit, :update, :make_agent,:make_occasional_agent]
    skip_before_filter :build_item , :only => [:new, :create]
    before_filter :set_mobile , :only => :show
    before_filter :fetch_contacts, :only => [:index]
@@ -179,14 +179,11 @@ class ContactsController < ApplicationController
     end
   end
   
-  def make_agent    
-    @item.update_attributes(:delete =>false   ,:user_role =>User::USER_ROLES_KEYS_BY_TOKEN[:poweruser])      
-    @agent = current_account.agents.new
-    @agent.user = @item 
-    @item.deleted = false
-    @agent.occasional = params[:occasional]
+  def make_occasional_agent
+    agent = build_agent
+    agent.occasional = true
     respond_to do |format|
-      if @agent.save        
+      if @item.save        
         format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
           redirect_to @item }
         format.xml  { render :xml => @item, :status => 200 }
@@ -196,7 +193,21 @@ class ContactsController < ApplicationController
       end   
     end 
   end
-  
+  def make_agent
+    agent = build_agent
+    agent.occasional = false
+    respond_to do |format|
+      if @item.save        
+        format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
+          redirect_to @item }
+        format.xml  { render :xml => @item, :status => 200 }
+      else
+        format.html { redirect_to :back }
+        format.xml  { render :xml => @agent.errors, :status => 500 }
+      end   
+    end 
+  end
+
   def autocomplete   
     items = current_account.customers.find(:all, 
                                             :conditions => ["name like ? ", "%#{params[:v]}%"], 
@@ -265,13 +276,19 @@ protected
  end
 
  def check_agent_limit
-    if params[:occasional].nil? && current_account.reached_agent_limit? 
+    if current_account.reached_agent_limit? 
     flash[:notice] = t('maximum_agents_msg') 
     redirect_to :back 
    end
   end
 
   private
+
+    def build_agent
+      @item.deleted = false
+      @item.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:poweruser]
+      @item.build_agent()
+    end
 
     def get_formatted_message(exception)
       exception.message # TODO: Proper error reporting.
