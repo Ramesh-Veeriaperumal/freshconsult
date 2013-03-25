@@ -66,15 +66,15 @@
       </span>
 
       <span id="toggle-note-visibility">
-        <div class="note-visible tooltip" title="Visible to the customer">
+        <div class="note-visible tooltip" title="<%= t("helpdesk.tickets.note.public_note_tip") %>">
           <i></i>
         </div>
-        <div class="note-hidden tooltip" title="Hidden to the customer">
+        <div class="note-hidden tooltip" title="<%= t("helpdesk.tickets.note.private_note_tip") %>">
           <i></i>
         </div>
-        <%= f.check_box(:private, :checked => true, :class => 'tooltip', :title => "Hidden to the customer") %>
+        <%= f.check_box(:private, :checked => true, :class => 'tooltip') %>
       </span>
-      
+
     </div>
   <% end %>
   <div class="clearfix overflowh" ></div>

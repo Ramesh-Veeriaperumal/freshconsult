@@ -7,6 +7,7 @@ en:
   unblock: "Whitelist"
   enabled: "Enabled"
   disabled: "Disabled"
+  more: "more"
   tip_on: "Click to Enable"
   tip_off: "Click to Disable"
   credit_card: "Card on file"
@@ -1156,9 +1157,11 @@ en:
         long: "{{user_path}} updated ticket status of {{notable_path}} to {{status_name}}"
       deleted:
         short: "{{user_path}} has deleted this ticket"
+        without_user: "has deleted the ticket"
         long: "{{user_path}} has deleted the ticket {{notable_path}}"
       restored:
         short: "{{user_path}} has restored this ticket"
+        without_user: "has restored the ticket"
         long: "{{user_path}} has restored the ticket {{notable_path}}"
       product_change:
         short: "{{user_path}} updated product to {{product_name}}"
@@ -2670,6 +2673,8 @@ en:
         split_ticket_confirm: Split this note and create it as a new ticket?
         private_note: Private note
         public_note: Public note
+        private_note_tip: Hidden to the customer
+        public_note_tip: Visible to the customer
         inbound_email: Incoming email
         outbound_email: Outbound email
         attachment_size: 

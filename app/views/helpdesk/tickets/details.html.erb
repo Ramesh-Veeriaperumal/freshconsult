@@ -25,7 +25,7 @@
 					<%= render :partial => "helpdesk/tickets/show/ticket_fields.html.erb" %>
 					<%= render :partial => "helpdesk/tickets/show/integrations.html.erb" %> 
 					<% if feature?(:timesheets) %>
-					<div class="widget time-tracked inactive load_remote" id="TimesheetTab" data-remote="/helpdesk/tickets/<%= @ticket.display_id %>/components/timesheetss">
+					<div class="widget time-tracked inactive load_remote" id="TimesheetTab">
 						<h3>
 							Time Tracked
 							<div class="tracked_time">
@@ -52,7 +52,7 @@
 						<a href="" class="avatar-wrap avatar-wrap-collapse"><p>
 							<span class='count_number not_on_loading' rel='count-total-remaining'></span>
 							<span class='count_number loading_only'>...</span>
-							<span rel='count_more' class="count_more not_on_loading">more</span>
+							<span rel='count_more' class="count_more not_on_loading"><%= t('more') %></span>
 						</p></a>
 						<a href="" class="commentbox commentbox-blue">
 							<div>Expand</div>

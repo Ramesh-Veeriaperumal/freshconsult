@@ -83,7 +83,7 @@
 								<ul>
 									<li class="ticket-btns">
 										<div class="btn-group">
-										<% if @item.from_email.present? %>
+										<% if (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present?) %>
 										  <a class="btn" rel="note-button" data-note-type="reply" id="ReplyButton">
 										    <span class="reply-inner"></span>
 										  	<%= t('ticket.reply_to')  %>
@@ -104,10 +104,10 @@
 											</li>
 										  </ul>
 										<% else %>
-										  	<a href="" id="FwdButton" rel="note-button" data-note-type="fwd" >
+										  	<a href="" id="FwdButton" class="btn" rel="note-button" data-note-type="fwd" >
 									    		<%= t('fwd_to') %>
 									    	</a>
-										  	<a href="#"  rel="note-button" data-note-type="note" >
+										  	<a href="#"  rel="note-button" class="btn" data-note-type="note" >
 												<%= t('ticket.add_note') %>
 											</a>
 								    	<% end %>
@@ -130,7 +130,7 @@
 										<div class="btn-group">
 
 										  <a class="btn dropdown-toggle" data-toggle="dropdown">
-										  	More
+										  	<%= t("more") %>
 										    <span class="caret"></span>
 										  </a>
 

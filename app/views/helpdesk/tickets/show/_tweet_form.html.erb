@@ -29,16 +29,38 @@
 
 		<span class="tweet-counter" id="SendTweetCounter">140</span>
 
-		<div class="f-right">
+		<div class="btn-toolbar">
 			<span id="tweet_type_selector">
 				<%= select_tag :tweet_type , 
 								options_for_select(Social::Tweet::TWEET_TYPES, @ticket.tweet ? @ticket.tweet.tweet_type.to_sym : :mention ) , 
 								{ :class => 'select2' } %>
 			</span>
-			<%= button_to_function(t('cancel'), "jQuery('#cnt-tweet').slideUp()", :class => "uiButton" ) %>
-			<%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#tweet_ticket_status').val('resolved');" , :class => "uiButton") %>
-			<%= submit_tag(t('ticket.reply_form.send'), :class => "uiButton special" ) %>
+			<span>
+	          <%= link_to(t('cancel'), '#', :class => "btn cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true') %>
+	        </span>
+
+	        <span class="btn-group">
+	          <a class="btn btn-primary submit_btn">
+	            <%= t('ticket.reply_form.send') %>
+	            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+	              <span class="caret"></span>
+	            </a>
+	          </a>
+	          <ul class="dropdown-menu">
+	            <%
+	            ticket_statuses = current_account.ticket_statuses.reject{|status| status.status_id == 2 }
+	            %>
+	            <% ticket_statuses.each do |status| %>
+	            <li>
+	              <a href="#" rel="custom-reply-status" data-status-name='<%= status.name %>' data-cnt-id='<%=cntid%>' data-status-val='<%= status.status_id %>' >
+	                &amp; Set as <%= status.name %>
+	              </a>
+	            </li>
+	            <% end %>
+	          </ul>
+	        </span>
 		</div>
+		<div class="clearfix" ></div>
 	<% end %>
 </div> 	
 

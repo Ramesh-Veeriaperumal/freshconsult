@@ -120,7 +120,7 @@
       <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
       <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=> "reply_ticket_status_#{cntid}"  )%>
       <div class="clearfix zeroh" ></div>
-      <div class="post_in_forum" style="float: left; width: 200px;">
+      <div class="post_in_forum">
 
         <label>
           <%= check_box_tag :quoted_text, "true", true %><%= t("ticket.include_quoted_text") %>

@@ -32,7 +32,7 @@ note = activity[:is_note] ? @prefetched_notes[activity[:stack].first.note_id] : 
 			TICKET_DETAILS_DATA['last_activity'] = <%= activity[:stack].last.id %>;
 		if (typeof(TICKET_DETAILS_DATA['first_activity']) == 'undefined' || TICKET_DETAILS_DATA['first_activity'] > <%= activity[:stack].last.id %>)
 			TICKET_DETAILS_DATA['first_activity'] = <%= activity[:stack].first.id %>;
-		<%= "TICKET_DETAILS_DATA['loaded_activities'] += #{activity[:stack].size}; " unless params[:since_id].present? %>
+		<%= "TICKET_DETAILS_DATA['loaded_activities'] = #{activity[:stack].size}; " unless params[:since_id].present? %>
 	</script>
 </li>
 <% end %>

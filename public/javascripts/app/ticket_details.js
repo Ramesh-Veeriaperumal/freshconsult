@@ -381,29 +381,27 @@ var updateShowMore = function() {
 
 var updatePagination = function() {
 
-	if (updateShowMore()) {
-		var showing_notes = $('#all_notes').length > 0;
+	var showing_notes = $('#all_notes').length > 0;
 
-		//Unbinding the previous handler:
-		$('#show_more').off('click');
-		$('#show_more').on('click',function(ev) {
-			ev.preventDefault();
-			$('#show_more').addClass('loading');
-			var href;
-			if (showing_notes)
-				href = TICKET_DETAILS_DATA['notes_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_note_id'];
-			else
-				href = TICKET_DETAILS_DATA['activities_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_activity'];
+	//Unbinding the previous handler:
+	$('#show_more').off('click.ticket_details');
+	$('#show_more').on('click.ticket_details',function(ev) {
+		ev.preventDefault();
+		$('#show_more').addClass('loading');
+		var href;
+		if (showing_notes)
+			href = TICKET_DETAILS_DATA['notes_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_note_id'];
+		else
+			href = TICKET_DETAILS_DATA['activities_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_activity'];
 
-			$.get(href, function(response) {
-				$('#show_more').removeClass('loading');
-				$('[rel=activity_container]').prepend(response);
-				$('#show_more').data('next-page',$('#show_more').data('next-page') + 1);
-				updateShowMore();
-			});
+		$.get(href, function(response) {
+			$('#show_more').removeClass('loading').addClass('hide');
+			$('[rel=activity_container]').prepend(response);
+			
+			TICKET_DETAILS_DATA['last_activity'] = TICKET_DETAILS_DATA['first_activity'] = null;
+			TICKET_DETAILS_DATA['last_note_id'] = TICKET_DETAILS_DATA['first_note_id'] = null;
 		});
-		
-	}   
+	});
 }
 
 // ----- END FOR REVERSE PAGINATION ------ //
@@ -651,7 +649,7 @@ $(document).ready(function() {
 			success: function(response) {
 				$('[rel=activity_container]').replaceWith(response);
 				$('#show_more').data('next-page',null);  //Resetting
-				updatePagination();
+				if (updateShowMore()) updatePagination();
 				_toggle.removeClass('loading_activities');
 			}, 
 			error: function(response) {
@@ -680,13 +678,13 @@ $(document).ready(function() {
 		ev.preventDefault();
 		var btn = $(this);
 		$('#' + btn.data('cntId')).hide().trigger('visibility');
-		$('#' + btn.data('cntId') + '-body').destroyEditor();
 		if (btn.data('showPseudoReply')) 
 			$('#TicketPseudoReply').show();
 		if (btn.data('clearDraft')) {
 			clearSavedDraft();
 			stopDraftSaving();
 		}
+		$('#' + btn.data('cntId') + '-body').destroyEditor();
 	});
 
 	$('body').on('click.ticket_details', '#time_integration .app-logo input:checkbox', function(ev) {
@@ -971,7 +969,7 @@ $(document).ready(function() {
 	})
 	//ScrollTo the latest conversation
 
-	updatePagination();
+	if (updateShowMore()) updatePagination();
 
 	//Previous Next Buttons request
 	$.getScript("/helpdesk/tickets/prevnext/" + TICKET_DETAILS_DATA['displayId']);

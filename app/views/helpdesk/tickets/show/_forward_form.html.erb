@@ -40,7 +40,7 @@
 <%= f.error_messages %>       
 <ul class="ui-form dont-validate">
   <li class="inline-field field" >
-      <%= f.label(:reply_email, "From:" ) %>
+      <%= f.label(:reply_email, t('ticket.from') ) %>
       <%= select :reply_email, :id, options_for_select(@reply_email, @selected_reply_email), {}, {:class => 'select2 responder_field'} %>
   </li>
 
@@ -123,7 +123,7 @@
       <%= t('cancel') %>
     </button>
   </span>
-  
+
   <span>
     <button class="btn btn-primary submit_btn">
       <%= local_assigns[:submit] || ActiveSupport::Inflector.titleize(id) %>
