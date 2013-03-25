@@ -1467,6 +1467,9 @@ it:
     tour: "Aiuto nella creazione di un nuovo gruppo di agenti"
   half: "30 Minuti"
   header: 
+    help_center: "Come possiamo aiutarti oggi?"
+    new_support_ticket: "Nuovo ticket d'assistenza"
+    check_ticket_status: "Controlla lo stato del ticket"
     assumed_text: "Stai visualizzando come"
     login: Accesso
     new_ticket: "Nuovo Ticket"
@@ -2089,8 +2092,72 @@ it:
   plan_is_selected: "L'account gratuito è ora attivo con il pacchetto %{plan}"
   plans_billing: "Piani & Fatturazione"
   portal: 
+    article: 
+      see_all_articles: "Visualizza tutti i %{count} articoli"
+    community_forums: "Forum della community"
+    login: Accesso
+    login_portal: "Accedi al portale d'assistenza"
+    login_details: "Inserisci i dati d'accesso utilizzati al momento della registrazione"
+    signup: Entra
+    header: 
+      preview_message: "<b>Modalità di anteprima</b> - <a href='javascript:window.close()'>Clicca qui</a> per tornare indietro."
+    knowledge_base: "Knowledge base"
+    no_articles_info_1: "Siamo spiacenti, non abbiamo pubblicato nessun articolo."
+    no_articles_info_2: "Ti preghiamo di controllare più avanti."
+    no_forums_info_1: "Nessun argomento del forum è ancora disponibile"
+    no_forums_info_2: "Perché non dai inizio ad un %{start_topic_link}?"
+    no_topics_in_this_view: "~ Nessun argomento in questa visualizzazione ~"
+    or_signup: " o %{signup} per un account"
+    popular_topics: "Argomenti diffusi"
     search: 
-      placeholder: "Esegui una ricerca inserendo una parola chiave o una domanda completa"
+      filters:
+        all: "Tutti"
+        solutions: "Soluzioni"
+        topics: "Discussioni"
+        tickets: "Tickets"
+      placeholder: "Inserici qui il termine della ricerca..."
+    showing_recent_updates: "Mostrando gli aggiornamenti recenti"
+    showing_recently_popular_topics: "Mostrando gli argomenti diffusi recenti "
+    tickets: 
+      export: "Esporta ticket"
+      export_ticket_data: "Esporta le informazioni del ticket su CSV"
+      export_to_csv: "Esporta in formato CSV"
+    to_post_comment: "per pubblicare un commento"
+    to_post_topic: "per pubblicare un argomento"
+    to_submit_ticket: "per richiedere un nuovo ticket"
+    topic: 
+      comments_closed: "Non è più possibile pubblicare commenti su questa discussione"
+      see_all_topics: "Visualizza tutti i %{count} argomenti"
+      start_new_topic: "Inizia un nuovo argomento"
+    topic_vote: 
+      howto: 
+        one: "ha questa domanda"
+        other: "hanno questa domanda"
+      howto_button: "Hai anche questa domanda?"
+      howto_unlike_button: "Non ho questa domanda!"
+      ideas: 
+        one: "gradisce questa idea"
+        other: "gradiscono questa idea"
+      ideas_button: "Ti piace questa idea?"
+      ideas_unlike_button: "Non mi piace!"
+      ideas_users_voted_title: "Persone a cui piace questa idea"
+      problem_users_voted_title: "Persone che hanno questo problema"
+      howto_users_voted_title: "Persone che hanno fatto questa domanda"
+      more: 
+        one: "1 altro"
+        other: "altri %{count} "
+      people: 
+        one: "1 persona"
+        other: "%{count} persone"
+      problem: 
+        one: "ha questo problema"
+        other: "hanno questo problema"
+      problem_button: "Hai questo problema?"
+      problem_unlike_button: "Non ho questo problema!"
+      you: 
+        one: Tu
+        other: "Tu e"
+  send_feedback: "Invia Feedback"
   portal_captcha: "Rendi obbligatori i captcha quando i ticket vengono inviati senza eseguire l'accesso"
   portal_captcha_anon: "Abilita questa funzione se desideri che gli utenti inviino ticket con captcha"
   portal_customizer_anon_for_f: "Abilitare questa funzione se si desidera che i clienti possano registrarsi utilizzando le credenziali Facebook"
@@ -2449,6 +2516,11 @@ it:
       sixmonth: Semestrale
   success: "Eseguito con successo"
   support: 
+    login:      
+      form:
+        forgot: "dimenticato la password?"
+        remember: "Memorizza account in questo computer"
+        login: Accesso
     shared: 
       survey_form: 
         cancel: Annulla
@@ -2784,6 +2856,8 @@ it:
   user_activation_email: "Mail attivazione utente"
   user_activation_message_sent: "L'utente è stato creato e le istruzioni di attivazione sono state inviate a %{user_email}."
   user_block: Sì
+  feedback: 
+    title: "Questa risposta ti è stata d'aiuto?"
   user_sessions: 
     new: 
       email: E-mail
