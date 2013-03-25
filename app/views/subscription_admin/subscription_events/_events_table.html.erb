@@ -11,7 +11,7 @@
       
       <% if events.size > 0 %>
         <li> <%= link_to 'Download CSV', export_to_csv_admin_subscription_events_path(
-                                              :data => events, :title => details[1]) %> </li>
+                                              :data => events, :title => details[1].gsub(",", " ")) %> </li>
       <% end %>
     </ul>
 

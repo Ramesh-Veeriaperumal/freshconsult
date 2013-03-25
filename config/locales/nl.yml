@@ -1200,6 +1200,9 @@ nl:
     title: Groepen
   half: "30 minuten"
   header: 
+    check_ticket_status: "Controleer ticketstatus"
+    help_center: "Hoe kunnen wij je vandaag helpen?"
+    new_support_ticket: "Nieuw ondersteuningsticket"
     assumed_text: "U bekijkt als"
     login: inloggen
     new_ticket: "Nieuw ticket"
@@ -1708,8 +1711,74 @@ nl:
   plan_info_update: "Uw plan is gewijzigd."
   plans_billing: "Overeenkomsten & facturatie"
   portal: 
+    article: 
+      see_all_articles: "Bekijk alle %{count} artikelen"
+    community_forums: Gemeenschapsforums
+    login_portal: "Log in bij de support portal"
+    login_details: "Voer de inloggegevens in die je hebt opgegeven tijdens het registeren"
+    header: 
+      preview_message: "<b>Voorbeeldmodus</b> - <a href='javascript:window.close()'>Klik hier</a> om terug te gaan."
+    login: Inloggen
+    signup: Aanmelden
+    knowledge_base: Kennisbank
+    no_articles_info_1: "Sorry, we hebben geen artikelen gepubliceerd."
+    no_articles_info_2: "Probeer later opnieuw."
+    no_forums_info_1: "Nog geen onderwerp voor het forum"
+    no_forums_info_2: "Waarom begin je niet een %{start_topic_link}?"
+    no_topics_in_this_view: "~ Geen onderwerpen bij deze weergave ~"
+    or_signup: "of %{signup} voor een account"
+    popular_topics: "Populaire onderwerpen"
     search: 
-      placeholder: "Zoeken met een sleutelwoord of volledige vraag"
+      filters:
+        all: "Alle"
+        solutions: "Oplossingen"
+        topics: "Onderwerpen"
+        tickets: "Tickets"
+      placeholder: "Voer hier je zoekterm in..."
+    showing_recent_updates: "Recente updates worden getoond"
+    showing_recently_popular_topics: "Onlangs populaire onderwerpen worden getoond"
+    tickets: 
+      export: "Tickets exporteren"
+      export_ticket_data: "Ticketgegevens exporteren naar CSV"
+      export_to_csv: "Export naar CSV"
+    to_post_comment: "om een opmerking te plaatsen"
+    to_post_topic: "om een onderwerp te plaatsen"
+    to_submit_ticket: "om een nieuwe ticket te versturen"
+    topic: 
+      comments_closed: "De mogelijkheid om opmerkingen toe te voegen aan deze discussie is nu gesloten!"
+      see_all_topics: "Bekijk alle %{count} onderwerpen"
+      start_new_topic: "Begin een nieuw onderwerp"
+    topic_vote: 
+      howto: 
+        one: "heeft deze vraag"
+        other: "hebben deze vraag"
+      howto_button: "Heb jij ook deze vraag?"
+      howto_unlike_button: "Ik heb deze vraag niet!"
+      ideas_unlike_button: "Niet leuk!"
+      ideas_users_voted_title: Mensen die dit idee leuk vinden
+      problem_users_voted_title: Mensen die dit probleem hebben
+      howto_users_voted_title: Mensen die deze vraag hebben
+      ideas: 
+        one: "vinden dit idee leuk"
+        other: "vindt dit idee leuk"
+      ideas_button: "Vind je dit idee leuk?"
+      more: 
+        one: "1 andere"
+        other: "%{count} anderen"
+      people: 
+        one: "1 persoon"
+        other: "%{count} personen"
+      problem: 
+        one: "heeft een probleem"
+        other: "hebben een probleem"
+      problem_button: "Heb je dit probleem?"
+      problem_unlike_button: "Ik heb dit probleem niet!"
+      you: 
+        one: Jij
+        other: "Jij en"
+  feedback: 
+    title: "Was dit antwoord behulpzaam?"
+  send_feedback: "Stuur feedback"
   portal_captcha: "Captcha verplichten bij het aanmaken van tickets zonder aanmelding."
   portal_captcha_anon: "Deze functie inschakelen als u wilt dat gebruikers tickets met captcha indienen"
   portal_customizer_anon_for_g: "Schakel deze functie in, als u wilt dat klanten kunnen aanmelden met hun gebruikersnaam en wachtwoord van Google."
@@ -2028,6 +2097,11 @@ nl:
       sixmonth: Halfjaarlijks
   success: Succes
   support: 
+    login:      
+      form:
+        forgot: "wachtwoord vergeten?"
+        remember: "Onthoud mij op deze computer"
+        login: Inloggen
     shared: 
       survey_form: 
         cancel: Annuleren

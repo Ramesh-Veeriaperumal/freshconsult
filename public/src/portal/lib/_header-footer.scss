@@ -189,7 +189,7 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 		h1{
 			line-height: $baseLineHeight * 2;
 		}
-		.banner-title{ @include span-columns(7); }
+		.banner-title{ @include span-columns(9); }
 		.banner-nav{ 
 			@include span-columns(3 omega);
 			margin-top: 5px;

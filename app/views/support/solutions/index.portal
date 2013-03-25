@@ -1,6 +1,6 @@
 <section class="main content rounded-6 min-height-on-desktop" id="solutions-home">
 	<h2 class="heading">{% translate portal.knowledge_base %}</h2>
-	{% if portal.articles_count > 0 %}				
+	{% if portal.articles_count > 0 %}
 		{% for category in portal.solution_categories %}
 			{% if category.folders_count > 0 %}
 			<div class="cs-s">

@@ -34,7 +34,7 @@ class Va::Action
   def property_message(act_on)
     case action_key
     when 'priority'
-      "Changed the priority to <b>#{TicketConstants::PRIORITY_NAMES_BY_KEY[value.to_i]}</b>"
+      "Changed the priority to <b>#{TicketConstants.priority_list[value.to_i]}</b>"
     when 'status'
       "Changed the status to <b>#{Helpdesk::TicketStatus.status_names_by_key(act_on.account)[value.to_i]}</b>"
     when 'ticket_type'
