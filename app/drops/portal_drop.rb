@@ -142,7 +142,7 @@ class PortalDrop < BaseDrop
   end
 
   def url_options
-    { :host => source.host }
+    { :host => source.host }    
   end
 
   def paid_account

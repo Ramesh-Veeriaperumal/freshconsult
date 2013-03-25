@@ -2,7 +2,7 @@
 	<h2 class="heading">{% translate portal.community_forums %}</h2>
 	<div class="start-topic">{{ portal | link_to_start_topic }}</div>
 	{% for category in portal.forum_categories %}
-		{% if category.forums != empty %}
+		{% if category.forums_count > 0 %}
 			<div class="cs-s">
 				<h3 class="heading">{{category.name}}</h3>
 				<div class="cs-g-c">

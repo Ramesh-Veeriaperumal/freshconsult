@@ -191,7 +191,8 @@ end
 
    private
     def portal_check
-      if current_user.nil? || current_user.customer?
+      format = params[:format]
+      if format.nil? && (current_user.nil? || current_user.customer?)
         @article = current_account.solution_articles.find(params[:id]) 
         return redirect_to support_solutions_article_path(@article)
       end

@@ -10,11 +10,14 @@ p {
     font-size: $baseFontSize - 2;
     color: $grayLight;
   }
+  big{
+    font-size: inherit;
+  }
 }
 
 .lead, .lead-small, .list-lead {
   line-height: $baseLineHeight * 1.3;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 200;
   color: inherit;
   b{ font-weight: 500; }
@@ -258,6 +261,3 @@ cite {
 }
 /* Match css in autocompelete */
 .match{ background-color:$acHighlightBg; }
-
-
-

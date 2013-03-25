@@ -332,6 +332,7 @@ en:
       profile_edit: "User profile"
       search: "Search results"
       solution_home: "Solutions home"
+      solution_category: "Solutions category home"
       article_list: "Article list"
       article_view: "Article view"
       discussions_home: "Discussions home"
@@ -345,7 +346,7 @@ en:
     portal_settings:
       simple:
         header_color: "Header"
-        bg_color: "Page"
+        bg_color: "Body"
         footer_color: "Footer"
         help_center_color: "Help center"
         btn_primary_background: "Primary action button"
@@ -358,7 +359,7 @@ en:
         headingsColor: "Heading color"
         linkColor: "Link text"
         linkColorHover: "Link text hover"
-        inputFocusRingColor: "On focus border color"
+        inputFocusRingColor: "Heading divider & Input focus glow"
     quests:
       index:
         title: Quest
@@ -1705,6 +1706,10 @@ en:
     header: 
       preview_message: "<b>Preview mode</b> - <a href='javascript:window.close()'>Click here</a> to go back."
     login: Login
+    login_portal: "Login to the support portal"
+    login_details: "Enter the login details you gave when you registered with us"
+    login_options: "...or login using"
+    reset_password: "Give us your email address and instructions to reset your password will be emailed to you."
     signup: Signup
     or_signup: " or %{signup} for an account"
     to_post_comment: " to post a comment"
@@ -2369,6 +2374,10 @@ en:
       note: Note 
       billable_entry: Mark as a billable entry
       billing_type: Billing Type
+      billable: Billable
+      non_billable: Non-Billable
+      product: Product
+      group: Group
       group_by: Group By
       report:
         no_timeentry: "No data available"

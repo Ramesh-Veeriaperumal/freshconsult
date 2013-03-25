@@ -5,7 +5,6 @@
 	</div>
 	<h2 class="heading">{{ folder.name }}</h2>
 	<p class="info-text">{{ folder.description }}</p>
-	<hr />
 	{% paginate folder.articles by 10 %}
 		<section class="article-list c-list">
 			{% for article in paginate.collection %}
