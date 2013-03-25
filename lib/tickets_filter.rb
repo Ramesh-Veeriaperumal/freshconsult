@@ -59,13 +59,16 @@ module TicketsFilter
 
   DEFAULT_SORT        = :due_by
   DEFAULT_SORT_ORDER  = :asc
+  DEFAULT_PORTAL_SORT = :created_at
+  DEFAULT_PORTAL_SORT_ORDER = :desc
 
   SORT_FIELDS = [
     [ :due_by     , "tickets_filter.sort_fields.due_by"        ],
     [ :created_at , "tickets_filter.sort_fields.date_created"  ],
     [ :updated_at , "tickets_filter.sort_fields.last_modified" ],
     [ :priority   , "tickets_filter.sort_fields.priority"      ],
-    [ :status     , "tickets_filter.sort_fields.status"        ]
+    [ :status     , "tickets_filter.sort_fields.status"        ],
+    [ :requester_responded_at, "tickets_filter.sort_fields.customer_response"]
   ]
 
   def self.sort_fields_options

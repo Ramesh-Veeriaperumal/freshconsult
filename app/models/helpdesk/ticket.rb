@@ -227,7 +227,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     "helpdesk_tickets.created_at > ? and helpdesk_tickets.spam = true and requester_id = ?", user.deleted_at, user.id ] } }
 
   named_scope :with_display_id, lambda { |search_string| {  
-    :include => [ :ticket_states, :requester ],
+    :include => [ :requester ],
     :conditions => ["helpdesk_tickets.display_id like ? and helpdesk_tickets.deleted is false","#{search_string}%" ],
     :order => 'helpdesk_tickets.display_id',
     :limit => 1000
@@ -235,12 +235,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   }
 
   named_scope :with_requester, lambda { |search_string| {  
-    :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id 
-                        and users.account_id = helpdesk_tickets.account_id and users.deleted = false",
-    :include => :ticket_states,
+    :joins => "INNER JOIN users ON users.id = helpdesk_tickets.requester_id and users.account_id = helpdesk_tickets.account_id and users.deleted = false",
     :conditions => ["users.name like ? and helpdesk_tickets.deleted is false","%#{search_string}%" ],
-    :limit => 1000,
-    :select => "helpdesk_tickets.*, users.name as requester_name"
+    :select => "helpdesk_tickets.*, users.name as requester_name",
+    :order => "helpdesk_tickets.status, helpdesk_tickets.created_at DESC",
+    :limit => 1000
     } 
   }
   
@@ -292,10 +291,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   sphinx_scope(:with_subject) { |search_string| { 
-    :include => [:ticket_states, :requester],
+    :include => [:requester],
     :conditions => { :subject => "%#{search_string}%" }, 
     :with => { :deleted => false }, 
     :star => true,
+    :order => :status,
     :limit => 1000
     } 
   }

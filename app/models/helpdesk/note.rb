@@ -32,8 +32,9 @@ class Helpdesk::Note < ActiveRecord::Base
   has_one :schema_less_note, :class_name => 'Helpdesk::SchemaLessNote',
           :foreign_key => 'note_id', :autosave => true, :dependent => :destroy
 
-  attr_accessor :nscname, :disable_observer
+  attr_accessor :nscname, :disable_observer, :send_survey
   attr_protected :attachments, :notable_id
+  has_one :external_note, :class_name => 'Helpdesk::ExternalNote',:dependent => :destroy
   
   before_create :validate_schema_less_note
   before_save :load_schema_less_note, :update_category
@@ -261,6 +262,11 @@ class Helpdesk::Note < ActiveRecord::Base
     "reply"
   end
 
+  def liquidize_body
+    attachments.empty? ? body_html : 
+      "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
+  end
+
   protected
 
     def update_content_ids
@@ -292,15 +298,51 @@ class Helpdesk::Note < ActiveRecord::Base
               EmailNotification::REPLIED_BY_REQUESTER), notable, self) if notable.responder && e_notification.agent_notification?
       else    
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)     
+        #notify the agents only for notes
+        if note? && !self.to_emails.blank?
+          Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, notable, self ,notable.friendly_reply_email,{:notify_emails =>self.to_emails}) unless self.to_emails.blank? 
+        end
+        #notify the customer if it is public note
+        if note? && !private && e_notification.requester_notification?
         Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT,      
-           notable, self) if source.eql?(SOURCE_KEYS_BY_TOKEN["note"]) && !private && e_notification.requester_notification?
+           notable, self)
+        #handle the email conversion either fwd email or reply
+        elsif email_conversation?
+          send_reply_email
+          create_fwd_note_activity(self.to_emails) if fwd_email?
+        end
       end
       # syntax to move code from delayed jobs to resque.
       #Resque::MyNotifier.deliver_reply( notable.id, self.id , {:include_cc => true})
       notable.updated_at = created_at
       notable.save
     end
-    
+
+    def send_reply_email  
+      add_cc_email     
+      if fwd_email?
+        Helpdesk::TicketNotifier.send_later(:deliver_forward, notable, self)
+      elsif self.to_emails.present? or self.cc_emails.present? or self.bcc_emails.present? and !self.private
+        Helpdesk::TicketNotifier.send_later(:deliver_reply, notable, self, {:include_cc => self.cc_emails.blank? , 
+                :send_survey => ((!self.send_survey.blank? && self.send_survey == 1) ? true : false)},
+                :quoted_text => self.quoted_text)
+      end
+    end
+
+    def add_cc_email
+      cc_email_hash_value = notable.cc_email_hash.nil? ? {:cc_emails => [], :fwd_emails => []} : notable.cc_email_hash
+      if fwd_email?
+        fwd_emails = self.to_emails | self.cc_emails | self.bcc_emails | cc_email_hash_value[:fwd_emails]
+        fwd_emails.delete_if {|email| (email == notable.requester.email)}
+        cc_email_hash_value[:fwd_emails]  = fwd_emails
+      else
+        cc_emails = self.cc_emails | cc_email_hash_value[:cc_emails]
+        cc_emails.delete_if {|email| (email == notable.requester.email)}
+        cc_email_hash_value[:cc_emails] = cc_emails
+      end
+      notable.update_attribute(:cc_email, cc_email_hash_value)     
+    end
+
     def add_activity
       return if (!human_note_for_ticket? or zendesk_import?)
           
@@ -348,7 +390,6 @@ class Helpdesk::Note < ActiveRecord::Base
         schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
       end
     end
-
     
   private
     def human_note_for_ticket?
@@ -357,11 +398,6 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def zendesk_import?
       Thread.current["zenimport_#{account_id}"]
-    end
-    
-    def liquidize_body
-      attachments.empty? ? body_html : 
-        "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
     end
 
     # Replied by third pary to the forwarded email

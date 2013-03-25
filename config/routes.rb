@@ -22,7 +22,7 @@
    end
   map.connect '/customers/filter/:state/*letter', :controller => 'customers', :action => 'index'
  
-  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :hover_card => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put}
+  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :hover_card => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put, :make_occasional_agent => :put}
   map.connect '/contacts/filter/:state/*letter', :controller => 'contacts', :action => 'index'
   
   map.resources :groups
@@ -413,7 +413,7 @@
     # Tickets for the portal
     # All portal tickets including company_tickets are now served from this controller
     support.resources :tickets, 
-      :collection => { :check_email => :get, :configure_export => :get, :filter => :get }, 
+      :collection => { :check_email => :get, :configure_export => :get, :filter => :get, :export_csv => :post }, 
       :member => { :close => :post, :add_people => :put } do |ticket|
 
       ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'

@@ -169,6 +169,10 @@
 			if ($('.sla_policy_conditions_container .condition:visible').length != $('.sla_policy_conditions_container .condition').length)
 				$('.sla_policy_conditions_container .condition:visible:last').addClass('last-child');
 		}
+		var firstLastConditionBorderRadius = function() {
+			$('.sla_policy_conditions_container .condition.first-child').removeClass('first-child');
+			$('.sla_policy_conditions_container .condition:visible:first').addClass('first-child');
+		}
 
 		// Initialization on page load
 		generate_select($('#select_resolution_time_1'), true);
@@ -216,6 +220,7 @@
   	if($('div.condition:hidden').length) {
 			$('div.add_new_condition').slideDown('fast');
 			lastConditionBorder();
+			firstLastConditionBorderRadius();
   	}
   	
   	if(!$('div.condition:visible').length)
@@ -235,6 +240,7 @@
   		if(!$('.condition:hidden').length)
   			$('.add_new_condition').hide();
   		lastConditionBorder();
+  		firstLastConditionBorderRadius();
   		$(this).parent().hide();
   	});
   	$('.btn.dropdown-toggle').click(function(){
@@ -256,6 +262,7 @@
 			$('.add_new_condition').show();
 			$('.condition_list[data-cond=' + cond + ']').parent().show();
 			lastConditionBorder();
+			firstLastConditionBorderRadius();
 		});
 
 		// Reconstruct input field on form submit

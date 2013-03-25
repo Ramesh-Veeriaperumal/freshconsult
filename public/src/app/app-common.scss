@@ -1968,19 +1968,6 @@ h3.t_padding{
 	}
 }
 
-.mceEditorView{
-	line-height: 20px;
-	vertical-align: baseline;
-	font-size:12px;
-	color:$default_txt_color;	
-	img{
-		margin:0px 10px 10px 10px;
-	}
-	p{
-		margin: 0px 0px 1.5em;
-	} 
-}
-
 
 div.information_tip{
 	padding:15px 20px;
@@ -3669,6 +3656,7 @@ div.addReminder{
 				font-size:12px;
 				line-height: 16px;
 				padding-right:10px;
+				margin-bottom: -2px;
 				.result {
 					color:$default_txt_color;
 					font-weight: normal;
@@ -3697,6 +3685,7 @@ div.addReminder{
 					white-space: nowrap;
 					text-overflow:ellipsis;
 					margin-bottom: 0;
+					color: #888;
 				}				
 			}
 		}
@@ -9981,8 +9970,13 @@ div.gcal-confirm-modal-content{ width: 100%; }
 		margin-right: 3px;
 		@include corners(4px);
 		margin-top: 10px;
+		background: #F6F6F6;
 		.grid:first-of-type {
 			margin-bottom: 20px;
+		}
+		.grid {
+			border: 1px solid #DFDFDF;
+			background: rgba(255, 255, 255, 0.3);
 		}
 	}
 	.grid {
@@ -10124,13 +10118,14 @@ div.gcal-confirm-modal-content{ width: 100%; }
 		}
 	}
 	.sla_policy_conditions_container {
-		border:1px solid #EFEFEF;
+		border:1px solid #CFCFCF;
 		margin-right: 3px;
 		margin-top: 15px;
 		@include corners(4px);
 		.condition {
 			background-color:#F6F6F6;
 			padding:5px 10px;
+			@include border-bottom-radius(4px);
 			.delete_conditions {
 				@include opacity(0.7);
 				margin-top:7px;
@@ -10151,8 +10146,12 @@ div.gcal-confirm-modal-content{ width: 100%; }
 				width: 55px;
 				margin-left: 20px;
 			}
+			&.first-child {
+				@include border-top-radius(4px);
+			}
 			&.last-child {
-				border-bottom: 1px solid #efefef;
+				border-bottom: 1px solid #CFCFCF;
+				@include border-bottom-radius(0);
 			}
 		}
 
@@ -10191,11 +10190,11 @@ div.gcal-confirm-modal-content{ width: 100%; }
 	li .fast_autocomplete {
 		li.choice {
 			@include select2_container_choice;
-			padding: 3px 5px 3px 5px;
+			padding: 3px 3px 3px 8px;
 			a {
-				float:left;
+				float:right;
 				@include hide-text();
-				padding: 2px 2px 2px 0px !important;
+				padding: 2px 3px 2px 7px !important;
 				background: image-url('/images/select2.png') right top no-repeat !important;
 				width: 12px;
 				height: 8px;
@@ -10303,4 +10302,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 	.reset-color{
 			margin-top: 5px;
 	}
+}
+.error-text {
+	color: #D00;
 }

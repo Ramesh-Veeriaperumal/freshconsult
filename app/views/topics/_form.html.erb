@@ -7,7 +7,7 @@
 		<label for="topic_body"><%= t('message') %></label>
 		<%= form.rich_editor(:body_html, 
 			:value => !@topic.new_record? ? @topic.posts.first.body_html : "", 
-			:tabindex => 20, :height => "250px") %>
+			:tabindex => 20, :height => "250px", 'editor-type' => :forum) %>
 	</li>
 	<% if admin? and not @topic.new_record? %>
 		<li id="topic_forum_id">

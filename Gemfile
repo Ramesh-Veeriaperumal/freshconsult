@@ -3,7 +3,7 @@ source "http://gems.github.com"
 
 gem "rake", "0.8.7"
 gem "rack", "~> 1.1.6"
-gem "rails","2.3.17"
+gem "rails","2.3.18"
 
 gem "json", "~> 1.5.5"
 gem "mysql"
@@ -50,8 +50,6 @@ gem "net-dns", "0.6.1"
 gem "classifier", "1.3.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/classifier-1.3.1"
 gem "stemmer", "1.0.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/stemmer-1.0.1"
 
-# This tinymce vendor plugin is update with the tinymce verion 3.4.7
-gem "tiny_mce", "0.1.9", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/tiny_mce-0.1.9"
 gem "jammit", "0.6.5"
 gem "yui-compressor", :git => "git://github.com/freshdesk/ruby-yui-compressor.git"
 gem "zendesk-features", :require => "features"
