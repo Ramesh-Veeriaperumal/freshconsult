@@ -32,7 +32,7 @@ class Helpdesk::Note < ActiveRecord::Base
   has_one :schema_less_note, :class_name => 'Helpdesk::SchemaLessNote',
           :foreign_key => 'note_id', :autosave => true, :dependent => :destroy
 
-  attr_accessor :nscname, :disable_observer, :send_survey
+  attr_accessor :nscname, :disable_observer, :send_survey, :quoted_text
   attr_protected :attachments, :notable_id
   has_one :external_note, :class_name => 'Helpdesk::ExternalNote',:dependent => :destroy
   
@@ -324,8 +324,8 @@ class Helpdesk::Note < ActiveRecord::Base
         Helpdesk::TicketNotifier.send_later(:deliver_forward, notable, self)
       elsif self.to_emails.present? or self.cc_emails.present? or self.bcc_emails.present? and !self.private
         Helpdesk::TicketNotifier.send_later(:deliver_reply, notable, self, {:include_cc => self.cc_emails.blank? , 
-                :send_survey => ((!self.send_survey.blank? && self.send_survey == 1) ? true : false)},
-                :quoted_text => self.quoted_text)
+                :send_survey => ((!self.send_survey.blank? && self.send_survey == 1) ? true : false),
+                :quoted_text => self.quoted_text})
       end
     end
 
