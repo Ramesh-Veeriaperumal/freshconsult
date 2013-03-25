@@ -2,7 +2,7 @@
 
 # The production environment is meant for finished, "live" apps.
 # Code is not reloaded between requests
-config.log_level = :debug
+config.log_level = :info
 
 config.cache_classes = true
 

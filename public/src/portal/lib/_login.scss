@@ -29,6 +29,7 @@
 .btn-facebook:before{ @extend .icon-sign-in-facebook; }
 .btn-twitter:before{ @extend .icon-sign-in-twitter; }
 
+
 @include at-breakpoint($break-tablet){	
 	.login-form{ width:65%; float: left; max-width: 400px; }
 	.alt-login-button{ width:32%; padding-left: 3%; float: right; @include min-height(230px); }
@@ -39,8 +40,4 @@
 		border-left:1px solid #dadada;	
 		@include box-shadow(#fff -1px 0 0);
 	}	
-}
-@include at-breakpoint($break-desktop){
-	/*#login-container, #signup-container{ @include min-height(275px); }
-	#login-container{ margin-bottom: 200px; }*/
 }

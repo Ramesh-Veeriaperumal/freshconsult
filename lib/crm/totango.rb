@@ -49,8 +49,10 @@ class CRM::Totango
 		end
 	end
 
-	class CanceledCustomer < TotangoUrl
+	class CanceledCustomer
+		extend CRM::SendEventToTotango
 		@queue = QUEUE
+		
 		def self.perform(account_id, full_domain)
 			send_event("#{account_id}&sdr_o.Status=Canceled&sdr_odn=#{full_domain}")
 		end

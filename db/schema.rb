@@ -9,8 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-
-ActiveRecord::Schema.define(:version => 20130308075546) do
+ActiveRecord::Schema.define(:version => 20130323064447) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -31,6 +30,8 @@ ActiveRecord::Schema.define(:version => 20130308075546) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "account_configurations", ["account_id"], :name => "index_for_account_configurations_on_account_id"
 
   create_table "accounts", :force => true do |t|
     t.string   "name"

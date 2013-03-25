@@ -13,10 +13,10 @@
 .content-form{ background-color: $page-form-background; }
 
 .cs-s{
-	border-top:1px solid $orange;
+	border-top:1px solid $inputFocusRingColor;
 	margin:1.1em 0;
 	h3{
-		border-top:6px solid $orange;
+		border-top:6px solid $inputFocusRingColor;
 		@include inline-block;
 	}
 }
@@ -192,6 +192,15 @@ li.article-item, li.topic-item, li.ticket-item {
 .c-link{ 
 	font-size: 1.16em; 
 	font-weight: 200;
+}
+
+/* Solutions table row */
+.c-article-row{
+	padding-left: 38px;
+	.icon-article-table-row{
+		margin-left: -38px;
+		float: left;
+	}	
 }
 
 /* Solution voting button */

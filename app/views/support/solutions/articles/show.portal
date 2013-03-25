@@ -20,12 +20,11 @@
 	</div>
 	{% endcomment %}
 
-	<article id="article-body">
+	<article class="article-body" id="article-body">
 		{{ article.body }}
 	</article>
 
-	<hr />
-	
+	<hr />	
 	{% if article.attachments.size > 0  %}
 	<div class="cs-g-c attachments" id="article-attachments">
 		{% for attachment in article.attachments %}

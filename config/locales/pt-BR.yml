@@ -1447,6 +1447,9 @@ pt-BR:
     tour: "Ajude-me a criar um novo grupo de agentes"
   half: "30 minutos"
   header: 
+    help_center: "Como posso lhe ajudar hoje?"
+    new_support_ticket: "Novo chamado de suporte"
+    check_ticket_status: "Verificar status do chamado"
     assumed_text: "Você está exibindo como"
     login: Logar
     new_ticket: "Novo ticket"
@@ -2035,8 +2038,72 @@ pt-BR:
   plan_is_selected: "Sua conta está agora ativa com o plano %{plan}"
   plans_billing: "Planos e Pagamentos"
   portal: 
+    article: 
+      see_all_articles: "Ver todos os %{count} artigos"
+    community_forums: "Fóruns da comunidade"
+    login: Entrar
+    login_portal: "Fazer login no portal de suporte"
+    login_details: "Digitar as informações de login que você registrou conosco"
+    signup: registrar
+    header: 
+      preview_message: "<b>Modo visualização</b> - <a href='javascript:window.close()'>Clique aqui</a> para voltar."
+    knowledge_base: "Base de conhecimento"
+    no_articles_info_1: "Desculpe, não publicamos nenhum artigo."
+    no_articles_info_2: "Por favor, verifique de novo mais tarde."
+    no_forums_info_1: "Nenhum tópico do fórum ainda"
+    no_forums_info_2: "Por que você não inicia um %{start_topic_link}?"
+    no_topics_in_this_view: "~ Nenhum tópico nesta visualização ~"
+    or_signup: " ou %{signup} para uma conta"
+    popular_topics: "Tópicos populares"
     search: 
-      placeholder: "Pesquise usando uma palavra-chave ou uma pergunta completa"
+      filters:
+        all: "Todos"
+        solutions: "Soluções"
+        topics: "Tópicos"
+        tickets: "Tickets"
+      placeholder: "Digitar seu termo de busca aqui..."
+    showing_recent_updates: "Mostrando atualizações recentes"
+    showing_recently_popular_topics: "Mostrando tópicos populares recentes"
+    tickets: 
+      export: "Exportar chamados"
+      export_ticket_data: "Exportar os dados do chamado para CSV"
+      export_to_csv: "Exportar para CSV"
+    to_post_comment: "para publicar um comentário"
+    to_post_topic: "para publicar um tópico"
+    to_submit_ticket: "para enviar um novo chamado"
+    topic: 
+      comments_closed: "Os comentários para esta discussão estão encerrados agora!"
+      see_all_topics: "Ver todos os %{count} tópicos"
+      start_new_topic: "Iniciar um novo tópico"
+    topic_vote: 
+      howto: 
+        one: "tem esta pergunta"
+        other: "tenho esta pergunta"
+      howto_button: "Você também tem esta pergunta?"
+      howto_unlike_button: "Eu não tenho esta pergunta!"
+      ideas_unlike_button: "Desgostar!"
+      ideas_users_voted_title: "Pessoas que gostam desta ideia"
+      problem_users_voted_title: "As pessoas que tem este problema"
+      howto_users_voted_title: "As pessoas que têm esta pergunta"
+      ideas: 
+        one: "curte esta ideia"
+        other: "curte esta ideia"
+      ideas_button: "Você gosta desta ideia?"
+      more: 
+        one: "1 outro"
+        other: "%{count} outros"
+      people: 
+        one: "1 pessoa"
+        other: "%{count} pessoas"
+      problem: 
+        one: "tem este problema"
+        other: "tenho este problema"
+      problem_button: "Você tem este problema?"
+      problem_unlike_button: "Eu não tenho este problema!"
+      you: 
+        one: "Você "
+        other: "Você e"
+  send_feedback: "Enviar Feedback"
   portal_captcha: "Torne o captcha obrigatório ao enviar um ticket sem fazer login"
   portal_captcha_anon: "Habilite esta opção se você prefere que os usuários enviem tickets com Captcha"
   portal_customizer_anon_for_f: "Habilite esta funcionalidade se você desejar que seus clientes possam realizar login usando suas contas do Facebook."
@@ -2384,6 +2451,11 @@ pt-BR:
       sixmonth: Semestralmente
   success: Sucesso!
   support: 
+    login:      
+      form:
+        forgot: "esqueceu sua senha?"
+        remember: "Lembrar de mim neste computador"
+        login: Entrar
     shared: 
       survey_form: 
         cancel: Cancelar
@@ -2713,6 +2785,8 @@ pt-BR:
   user_activation_email: "Email de ativação do usuário"
   user_activation_message_sent: "O usuário foi criado e as instruções de ativação foram enviadas para %{user_email}!"
   user_block: Sim
+  feedback: 
+    title: "Esta resposta ajudou?"
   user_sessions: 
     new: 
       email: E-mail

@@ -7,6 +7,7 @@ class SupportController < ApplicationController
   :if => proc { |controller|
     controller_name = controller.controller_name
     controller.cache_enabled? && 
+    !controller_name.eql?('search') &&
     !controller_name.eql?('feedback_widgets') &&
     (controller_name.eql?("theme") || !controller.send(:current_user)) && 
     controller.send('flash').keys.blank?
