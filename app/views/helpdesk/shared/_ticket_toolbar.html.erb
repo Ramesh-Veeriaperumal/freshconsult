@@ -65,7 +65,7 @@
         selected_tickets.push(jQuery(this).val());
       });
       jQuery(this).data("url","/helpdesk/merge_tickets/bulk_merge");
-      jQuery(this).data("parameters",{ source_tickets : selected_tickets });
+      jQuery(this).data("parameters",{ source_tickets : selected_tickets, redirect_back : true });
   });
 <%- end %>
 
