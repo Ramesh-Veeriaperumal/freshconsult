@@ -1233,6 +1233,9 @@ de:
     title: Gruppen
   half: "30 Minuten"
   header: 
+    help_center: "Wie können wir Ihnen heute helfen?"
+    new_support_ticket: "Neues Support-Ticket"
+    check_ticket_status: "Ticket-Status überprüfen"
     assumed_text: "Sie sehen an als"
     login: Anmelden
     new_ticket: "Neues Ticket"
@@ -1253,6 +1256,8 @@ de:
       tickets: Tickets
     welcome: Willkommen
   header_logo: Header-Logo
+  feedback: 
+    title: "Oliko tästä vastauksesta apua?"
   helpdesk: 
     dashboard: 
       index: 
@@ -1753,8 +1758,71 @@ de:
   plan_is_selected: "Ihr kostenloses Konto ist jetzt mit dem %{plan}-Tarif aktiviert"
   plans_billing: "Editionen & Zahlungsdaten"
   portal: 
+    article: 
+      see_all_articles: "Sehen Sie sich alle %{count} Artikel an"
+    community_forums: Community-Foren
+    login: Anmelden
+    login_details: "Geben Sie die Anmeldedaten ein, die Sie bei Ihrer Registrierung angegeben haben"
+    login_portal: "Melden Sie sich im Supportportal an"
+    signup: Registrieren
+    header: 
+      preview_message: "<b>Vorschaumodus</b> – <a href='javascript:window.close()'>Klicken Sie hier,</a> um zurück zu gehen."
+    knowledge_base: Wissensdatenbank
+    no_articles_info_1: "Leider haben wir noch keine Artikel veröffentlicht."
+    no_articles_info_2: "Bitte schauen Sie später wieder vorbei."
+    no_forums_info_1: "Noch keine Forum-Themen"
+    no_forums_info_2: "Warum starten Sie nicht ein/e %{start_topic_link}?"
+    no_topics_in_this_view: "~ Keine Themen in dieser Ansicht ~"
+    or_signup: " oder %{signup} für ein Konto"
+    popular_topics: "Beliebte Themen"
     search: 
-      placeholder: "Suchen Sie mittels Eingabe eines Schlüsselworts oder einer vollständigen Frage"
+      filters:
+        all: "Alle"
+        solutions: "Lösungen"
+        topics: "Themen"
+        tickets: "Tickets"
+      placeholder: "Geben Sie hier Ihren Suchbegriff ein..."
+    showing_recent_updates: "Es werden die letzte Aktualisierungen angezeigt"
+    showing_recently_popular_topics: "Es werden die neusten beliebten Themen angezeigt"
+    tickets: 
+      export: "Tickets exportieren"
+      export_ticket_data: "Ticket-Daten an CSV exportieren"
+      export_to_csv: "Nach CSV exportieren"
+    to_post_comment: "um einen Kommentar zu verfassen"
+    to_post_topic: "um ein Thema zu posten"
+    to_submit_ticket: "um ein neues Ticket abzuschicken"
+    topic: 
+      comments_closed: "Kommentare zu dieser Unterhaltung sind jetzt geschlossen!"
+      see_all_topics: "Sehen Sie sich alle %{count} Themen an"
+      start_new_topic: "Starten Sie ein neues Thema"
+    topic_vote: 
+      howto: 
+        one: "hat diese Frage"
+        other: "haben diese Fragen"
+      howto_button: "Haben Sie auch diese Frage?"
+      howto_unlike_button: "Ich habe diese Frage nicht!"
+      ideas_users_voted_title: "Personen, denen diese Idee gefällt"
+      problem_users_voted_title: "Personen, die von diesem Problem betroffen sind"
+      howto_users_voted_title: "Personen, die diese Frage haben"
+      ideas: 
+        one: "gefällt diese Idee"
+        other: "gefällt diese Idee"
+      ideas_button: "Gefällt Ihnen diese Idee?"
+      more: 
+        one: "1 weitere Person"
+        other: "%{count} weitere Personen"
+      people: 
+        one: "1 Person"
+        other: "%{count} Personen"
+      problem: 
+        one: "hat dieses Problem"
+        other: "haben dieses Problem"
+      problem_button: "Haben Sie dieses Problem?"
+      problem_unlike_button: "Ich habe dieses Problem nicht!"
+      you: 
+        one: "Ich "
+        other: "Ich und"
+  send_feedback: "Feedback senden"
   portal_captcha: "Captcha für das Senden eines Tickets ohne Anmeldung verpflichtend machen"
   portal_captcha_anon: "Aktivieren Sie diese Funktion, wenn Sie möchten, dass Benutzer ein Ticket mit Captcha senden können"
   portal_customizer_anon_for_f: "Aktivieren Sie dieses Feature, wenn Sie möchten, dass sich Kunden über ihren Facebook-Benutzernamen und ihr Facebook-Passwort anmelden können."
@@ -2093,6 +2161,11 @@ de:
       sixmonth: Halbjährlich
   success: Erfolgreich
   support: 
+    login:      
+      form:
+        forgot: "Passwort vergessen?"
+        remember: "Meine Anmeldedaten auf diesem Computer speichern"
+        login: Anmelden
     shared: 
       survey_form: 
         cancel: Abbrechen

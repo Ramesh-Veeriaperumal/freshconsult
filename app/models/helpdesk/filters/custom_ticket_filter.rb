@@ -338,14 +338,15 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       #order_columns = "id" if "created_at".eql?(order_columns) #Removing to check if the performace hit was because of 
                                                                 # this causing mysql to use id index instead of account_id index
       order_parts = order_columns.split('.')
-      if order_parts.size > 1
-        "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
-      else
-        "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}"
-      end
-
+      
       if order.eql? "requester_responded_at"
         "if(helpdesk_ticket_states.#{order} IS NULL, helpdesk_tickets.created_at, helpdesk_ticket_states.#{order}) #{order_type}"
+      else
+        if order_parts.size > 1
+          "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
+        else
+          "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}"
+        end
       end
     end  
   end

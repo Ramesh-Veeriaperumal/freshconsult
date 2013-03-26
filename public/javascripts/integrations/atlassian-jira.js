@@ -77,11 +77,11 @@ JiraWidget.prototype = {
 
 	initialize: function(jiraBundle) {
 		jiraWidget = this; // Assigning to some variable so that it can be accessible inside custom_widget.
-		this.projectData = {};
+		this.projectData = "";
 		var init_reqs = [];
 		if(jiraBundle.remote_integratable_id) {
 			init_reqs = [{
-				rest_url: "rest/api/latest/issue/" + jiraBundle.remote_integratable_id,
+				rest_url: "rest/api/2/issue/" + jiraBundle.remote_integratable_id,
 				content_type: "application/json",
 				on_failure: jiraWidget.processFailureCreate,
 				on_success: jiraWidget.displayIssue.bind(this)
@@ -91,7 +91,7 @@ JiraWidget.prototype = {
 				source_url: "/integrations/jira_issue/fetch_jira_projects_issues",
 				content_type: "application/json",
 				on_success: jiraWidget.loadProject.bind(this),
-				on_failure: jiraWidget.processFailure
+				on_failure: jiraWidget.processFailure.bind(this)
 			}];
 			jQuery('#jira_issue_loading').addClass('hide');
 
@@ -135,15 +135,7 @@ JiraWidget.prototype = {
 	},
 
 	loadProject: function(resData) {
-		this.projectData["res_projects"] = resData.responseJSON["res_projects"];
-		this.projectData["res_issues"] = resData.responseJSON["res_issues"]
-		if(this.projectData["res_projects"].length ==0 || this.projectData["res_issues"].length == 0){
-			alert("Projcts and Issues cannot be loaded");
-			UIUtil.hideLoading('jira', 'projects', '');
-			UIUtil.hideLoading('jira', 'issue-types', '');
-			jQuery("#fields").html("");
-			return 
-		}
+		this.projectData = resData;
 		this.handleLoadProject(resData);
 		this.loadIssueTypes(resData);
 	},
@@ -154,7 +146,7 @@ JiraWidget.prototype = {
 	},
 
 	handleLoadProject: function(resData) {
-		selectedProjectNode = UIUtil.constructDropDown(this.projectData["res_projects"], "json", "jira-projects", null, "id", ["name"], null, Cookie.retrieve("jira_project_id") || "");
+		selectedProjectNode = UIUtil.constructDropDown(this.projectData.responseJSON["res_projects"], "json", "jira-projects", null, "id", ["name"], null, Cookie.retrieve("jira_project_id") || "");
 		UIUtil.hideLoading('jira', 'projects', '');
 	},
 
@@ -177,7 +169,7 @@ JiraWidget.prototype = {
 		project_id = jQuery('#jira-projects').val();
 		type_id = jQuery('#jira-issue-types').val();
 		init_reqs = [{
-			rest_url : "rest/api/latest/issue/createmeta?expand=projects.issuetypes.fields&projectIds="+project_id+"&issuetypeIds="+type_id,
+			rest_url : "rest/api/2/issue/createmeta?expand=projects.issuetypes.fields&projectIds="+project_id+"&issuetypeIds="+type_id,
 			method: "get",
 			content_type: "application/json",
 			on_success:jiraWidget.constructFieldsDynamically.bind(this),
@@ -250,23 +242,22 @@ JiraWidget.prototype = {
 		jiraWidget.freshdeskWidget.options.init_requests = init_reqs
 		jiraWidget.freshdeskWidget.call_init_requests();
 	},
-	jiraCreateSummaryAndDescription: function()
-	{
+	jiraCreateSummaryAndDescription: function(){
 		if(jQuery('input[name="fields[description]"]').size() == 0)
 		{
 			jQuery('<input>').attr({
-				type:'hidden',
-			    id: 'fields[description]',
-			    name: 'fields[description]',
-			    value: jiraBundle.ticketDesc}).appendTo('#jira-add-form');
+			type:'hidden',
+			id: 'fields[description]',
+			name: 'fields[description]',
+			value: jiraBundle.ticketDesc}).appendTo('#jira-add-form');
 		}
 		if(jQuery('input[name="fields[summary]"]').size() == 0)
 		{
 			jQuery('<input>').attr({
-				type:'hidden',
-			    id: 'fields[summary]',
-			    name: 'fields[summary]',
-			    value: jiraBundle.ticketSubject}).appendTo('#jira-add-form');
+			type:'hidden',
+			id: 'fields[summary]',
+			name: 'fields[summary]',
+			value: jiraBundle.ticketSubject}).appendTo('#jira-add-form');
 		}
 	},
 	jiraCreateIssueSuccess: function(evt) {
@@ -284,10 +275,11 @@ JiraWidget.prototype = {
 		}
 
 		jQuery('#jira_issue_icon a.jira').removeClass('jira').addClass('jira_active');
+		if(resultCallback) resultCallback(evt);
+
 	},	
 	jiraCreateIssueFailure: function(evt) {
-		jiraWidget.processFailure(evt);
-		jiraWidget.displayCreateWidget();
+		if(resultCallback) resultCallback(evt);
 	},
 
 	jiraExceptionFilter: function(errMsg) {
@@ -356,7 +348,7 @@ JiraWidget.prototype = {
 
 	renderDisplayIssueWidget: function() {
 		init_reqs = [{
-			rest_url: "rest/api/latest/issue/" + jiraBundle.remote_integratable_id,
+			rest_url: "rest/api/2/issue/" + jiraBundle.remote_integratable_id,
 			content_type: "application/json",
 			on_failure: jiraWidget.processFailure,
 			on_success: jiraWidget.displayIssue.bind(this)
@@ -425,20 +417,15 @@ JiraWidget.prototype = {
 		jiraWidget.linkIssueId = remoteKey;
 		jiraWidget.linkedTicket = ""
 		this.freshdeskWidget.request({
-			rest_url: "rest/api/latest/issue/" + encodeURIComponent(remoteKey),
+			rest_url: "rest/api/2/issue/" + encodeURIComponent(remoteKey),
 			content_type: "application/json",
 			on_success: jiraWidget.updateIssue.bind(this),
-			on_failure: jiraWidget.linkProcessFailure.bind(this)
+			on_failure: jiraWidget.processFailure
 		});
 	},
-	linkProcessFailure: function(resData){
-		if(resData.status == 401) alert("Username or password is incorrect.");
-		else {
 
-			alert("Jira reports the following error : " + resData.responseJSON.errorMessages[0]);
-		}
-		jiraWidget.displayCreateWidget();
-	},
+
+
 	updateIssue: function(resData) {
 		self = this;
 		var isCustomFieldDef = false;
@@ -504,12 +491,12 @@ JiraWidget.prototype = {
 		} else {
 			jiraException = self.jiraExceptionFilter(resJ['error'])
 			if(jiraException == false) alert("Unknown server error. Please contact support@freshdesk.com.");
-			jiraWidget.renderDisplayIssueWidget();
 		}
+
+		if(resultCallback) resultCallback(evt);
 	},
 	updateIssueJiraFailure: function(evt) {
-		jiraWidget.processFailure(evt);
-		jiraWidget.renderDisplayIssueWidget();
+		if(resultCallback) resultCallback(evt);
 	},
 	unlinkJiraIssue: function() {
 		if(jiraBundle.integrated_resource_id) {
@@ -525,6 +512,7 @@ JiraWidget.prototype = {
 				}
 			}
 			init_reqs = [{
+				rest_url: "rest/api/2/issue/" + jiraWidget.unlinkId,
 				source_url: "/integrations/jira_issue/unlink",
 				method: "put",
 				remote_key: jiraWidget.unlinkId,
@@ -561,7 +549,7 @@ JiraWidget.prototype = {
 		this.showSpinner();
 		self = this;
 		init_reqs = [{
-			rest_url: "rest/api/latest/issue/" + jiraBundle.remote_integratable_id,
+			rest_url: "rest/api/2/issue/" + jiraBundle.remote_integratable_id,
 			content_type: "application/json",
 			method: "delete",
 			deleteSubtasks: true,

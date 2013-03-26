@@ -1164,6 +1164,8 @@ fi:
   from_email: "Lähettäjän osoite"
   fwd_success_msg: "Tiketin edelleenlähetys onnistui"
   fwd_to: Edelleenlähetä
+  feedback: 
+    title: "Oliko tästä vastauksesta apua?"
   gamification: 
     leaderboard: 
       love_trophie_info: "Tämän kuukauden parhaat asiakastyytyväisyyspisteet omaava edustaja"
@@ -1218,6 +1220,9 @@ fi:
     title: Ryhmät
   half: "30 minuuttia"
   header: 
+    help_center: "Kuinka voimme auttaa sinua tänään?"
+    new_support_ticket: "Uusi tukitiketti"
+    check_ticket_status: "Katso tiketin tila"
     assumed_text: "Tarkastelet tätä seuraavasti:"
     login: Kirjaudu
     new_ticket: "Uusi case"
@@ -1732,8 +1737,71 @@ fi:
   plan_is_selected: "Ilmainen tilisi on nyt aktiivinen %{plan} suunnitelman kanssa"
   plans_billing: "Sopimukset ja laskutus"
   portal: 
+    article: 
+      see_all_articles: "Näe kaikki %{count} artikkelia"
+    community_forums: Yhteisöfoorumit
+    login: Kirjaudu
+    login_portal: "Kirjaudu sisään tukisivustolle"
+    login_details: "Syötä rekisteröitymisen yhteydessä antamasi kirjautumistietosi"
+    signup: rekisteröidy
+    header: 
+      preview_message: "<b>Esikatselutila</b> - <a href='javascript:window.close()'>Klikkaa tästä</a> palataksesi takaisin."
+    knowledge_base: Tietotaso
+    no_articles_info_1: "Pahoittelemme, mutta emme ole julkaisseet yhtään artikkelia."
+    no_articles_info_2: "Ole hyvä ja palaa myöhemmin uudelleen."
+    no_forums_info_1: "Ei foorumiaihetta vielä"
+    no_forums_info_2: "Mikset aloittaisi %{start_topic_link}?"
+    no_topics_in_this_view: "~ Ei aiheita tässä näkymässä ~"
+    or_signup: "tai %{signup} itsellesi tili"
+    popular_topics: "Suosituimmat aiheet"
     search: 
-      placeholder: "Etsi käyttäen avainsanaa tai kokonaista kysymystä"
+      filters:
+        all: "Kaikki"
+        solutions: "Artikkelit"
+        topics: "Aiheet"
+        tickets: "Caset"
+      placeholder: "Syötä hakuehtosi tähän..."
+    showing_recent_updates: "Näytetään uusimmat päivitykset"
+    showing_recently_popular_topics: "Näytetään uusimmat suosituimmista aiheista"
+    tickets: 
+      export: "Vie tiketit"
+      export_ticket_data: "Vie tiketin tiedot CSV:hen"
+      export_to_csv: "Vie CSV:lle"
+    to_post_comment: "lähettääksesi kommentin"
+    to_post_topic: "lähettääksesi aiheen"
+    to_submit_ticket: "jättääksesi uuden tiketin"
+    topic: 
+      comments_closed: "Tämän keskustelun kommentointi on nyt suljettu!"
+      see_all_topics: "Näe kaikki %{count} aiheet"
+      start_new_topic: "Aloita uusi aihe"
+    topic_vote: 
+      howto: 
+        one: "on tämä kysymys"
+        other: "on tämä kysymys"
+      howto_button: "Onko sinullakin tämä kysymys?"
+      howto_unlike_button: "Tämä ei ole kysymykseni!"
+      ideas_users_voted_title: "Tästä ideasta tykkäävät käyttäjät"
+      problem_users_voted_title: "Käyttäjät, joilla on tämä ongelma"
+      howto_users_voted_title: "Käyttäjät, joilla on tämä kysymys"
+      ideas: 
+        one: "pitää tästä ideasta"
+        other: "pidä tästä ideasta"
+      ideas_button: "Pidätkö tästä ideasta?"
+      more: 
+        one: "1 muu"
+        other: "%{count} muuta"
+      people: 
+        one: "1 henkilö"
+        other: "%{count} henkilöä"
+      problem: 
+        one: "on tämä ongelma"
+        other: "on tämä ongelma"
+      problem_button: "Onko sinulla tämä ongelma?"
+      problem_unlike_button: "Ongelma ei ole tämä!"
+      you: 
+        one: Sinä
+        other: "Sinä ja "
+  send_feedback: "Lähetä palautetta"
   portal_captcha: "Määritä captcha-tunnistus pakolliseksi, kun caseja lähetetään kirjautumatta"
   portal_captcha_anon: "Jos haluat käyttäjien lähettävän tukicaseja captcha-tunnistuksella, ota tämä toiminto käyttöön"
   portal_customizer_anon_for_f: "Aktivoi tämä toiminto jos haluat, että asiakkaasi voivat kirjautua käyttäen Facebook-tilinsä käyttäjätunnusta sekä salasanaa."
@@ -2054,6 +2122,11 @@ fi:
       sixmonth: "Puolen vuoden välein"
   success: Onnistui
   support: 
+    login:      
+      form:
+        forgot: "unohditko salasanasi?"
+        remember: "Muista minut tässä tietokoneessa"
+        login: Kirjaudu
     shared: 
       survey_form: 
         cancel: Peruuta

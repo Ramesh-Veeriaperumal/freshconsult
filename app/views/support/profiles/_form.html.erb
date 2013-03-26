@@ -35,7 +35,17 @@
 					<div class="info-data"><%=t('user.info1')%></div>
 					<%= avatar_form.file_field :content, :size => "12" %>				
 				<% end %>
-			</div>			
+			</div>
+			<br />
+			<% if @profile.email.present? %>
+				<h4><%= t("user.email") %></h4>
+				<div><%= @profile.email %></div>
+			<% end %>
+			<br />
+			<% if @profile.customer.present? %>
+				<h4><%= t("user.company") %></h4>
+				<div><%= @profile.customer %></div>
+			<% end %>
 		</fieldset>
  		<fieldset class="span8 omega">
 			<div class="control-group">
@@ -52,13 +62,16 @@
 				</div>
 			</div>
 
-			<div class="control-group">
-				<%= f.label(:email, t("user.email"), :class => "control-label" ) %>			
-				<div class="controls">
-					<%= f.text_field(:email, :disabled => @profile.email.present?) %>
-					<%= f.hidden_field(:user_role, :value => @profile.user_role) %>
+			<% unless @profile.email.present? %>
+				<div class="control-group">
+					<%= f.label(:email, t("user.email"), :class => "control-label" ) %>			
+					<div class="controls">
+						<%= f.text_field(:email) %>					
+					</div>
 				</div>
-			</div>
+			<% end %>
+
+			<%= f.hidden_field(:user_role, :value => @profile.user_role) %>
 
 			<div class="control-group">
 				<%= f.label(:phone, t("user.phone_no"), :class => "control-label" ) %>	
@@ -72,13 +85,6 @@
 				<%= f.label(:twitter_id, t("user.twitter_id"), :class => "control-label" ) %>
 				<div class="controls">
 					<%= f.text_field(:twitter_id) %>
-				</div>
-			</div>
-
-			<div class="control-group">
-				<%= f.label(:customer, t("user.company"), :class => "control-label") %>
-				<div class="controls">
-					<%= f.text_field(:customer, :value => @profile.customer.presence) %>
 				</div>
 			</div>
 			

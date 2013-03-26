@@ -11,7 +11,6 @@ class Helpdesk::NotesController < ApplicationController
   before_filter :fetch_item_attachments, :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
   before_filter :set_mobile, :prepare_mobile_note, :only => [:create]
     
-  uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
 
   def index
     @notes = @parent.conversation(params[:page])

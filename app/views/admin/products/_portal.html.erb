@@ -40,7 +40,7 @@
     <label class="caption"><%= t(".top_level_forum") %></label>
     <div class="fields">
       <%= portal.collection_select :forum_category_id, @forums_categories, :id, :name, 
-          options = { :prompt =>  t(".select_forum_category")} %>
+          { :include_blank =>  t(".select_forum_category")} %>
       <%= content_tag(:div, t('.top_level_forum_info'), :class => "info-data") %>
     </div>
     
@@ -48,7 +48,7 @@
     <label class="caption"><%= t(".top_level_solution") %></label>
     <div class="fields">
       <%= portal.collection_select :solution_category_id, @solution_categories.reject(&:is_default?), 
-          :id, :name, options ={:prompt => t(".select_solution_category")} %>
+          :id, :name, {:include_blank => t(".select_solution_category")} %>
       <%= content_tag(:div, t('.top_level_solution_info'), :class => "info-data") %>
     </div>
   </div>

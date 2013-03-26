@@ -1,7 +1,7 @@
 SPAM_TICKETS_THRESHOLD = 50 #Allowed number of tickets in 30 minutes window..
 SPAM_CONVERSATIONS_THRESHOLD = 50
-TICKETS_ID_LIMIT = 7000000
-NOTES_ID_LIMIT = 6000000
+TICKETS_ID_LIMIT = 8500000
+NOTES_ID_LIMIT = 7200000
 # TICKETS_ID_LIMIT = 1
 # NOTES_ID_LIMIT = 1
 DB_SLAVE = "slave"
@@ -113,7 +113,7 @@ def check_for_spam(table,column_name, id_limit, threshold)
       unless deleted_users.empty?
         puts "deleted_users 2::::::::->#{deleted_users}"
         deleted_users = account.all_users.find(deleted_users)
-        SubscriptionNotifier.send_later(:deliver_account_admin_spam_watcher, account.admin_email, deleted_users)
+        SubscriptionNotifier.send_later(:deliver_account_admin_spam_watcher, account, deleted_users)
       end
     end
   end

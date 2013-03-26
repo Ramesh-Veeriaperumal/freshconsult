@@ -64,12 +64,12 @@ class SubscriptionNotifier < ActionMailer::Base
     @content_type = "text/html"
   end
 
-  def account_admin_spam_watcher(email, deleted_users)
+  def account_admin_spam_watcher(account, deleted_users)
     from  AppConfig['from_email']
-    recipients email
+    recipients account.admin_email
     subject "Freshdesk :: Spam watcher"
     sent_on Time.now
-    body(:account_admin => user, 
+    body(:account => account, 
           :deleted_users => deleted_users)
     content_type  "text/html"
   end

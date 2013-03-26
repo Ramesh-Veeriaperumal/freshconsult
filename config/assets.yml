@@ -14,7 +14,6 @@ stylesheets:
     - public/stylesheets/app/lib/autocomplete.css
     - public/stylesheets/app/lib/jquery-ui.css
     - public/stylesheets/app/lib/qtip.css
-    - public/stylesheets/search-results.css
 
   app:
     - public/stylesheets/app/lib/chosen.css    
@@ -199,7 +198,7 @@ javascripts:
     - public/javascripts/prototype.js
     - public/javascripts/portal/jquery-1.8.3.js    
     - public/javascripts/modernizr-2.5.3-respond-1.1.0.min.js
-    - public/javascripts/lib/detectmobilebrowsers.js
+    - public/javascripts/portal/portal-utils.js
 
   preview:
     - public/javascripts/portal/jquery-1.8.3.js

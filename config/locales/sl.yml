@@ -1,0 +1,2880 @@
+sl: 
+  meta: 
+    language_name: 'Slovenian'
+  account: 
+    active_since: "Aktiven od"
+    cancel: "Prekliči in pojdi nazaj"
+    helpdesk_name: "Naziv podpore"
+    helpdesk_url: "url podpore"
+    info1: "To polje uporabite za nastavitev mapiranje vaše domene za Freshdesk"
+    info2: "Pred uporabo tega polja se prepričajte da ste kreirali CNAME DNS zapis v vaši DNS Zone datoteki, ki usmerja support.mycompanyname.com v %{full_domain}. Administrator vaše domene oz strežnikov vam lahko pri tem pomaga."
+    info3: "Ponastavi barve"
+    info4: "Številka Id-ja zahtevka (mora biti višja kot številka zadnjega zahtevka.) Velja za vse nove zahtevke."
+    language: Jezik
+    name: "Ime uporabniškega računa"
+    page_colors: 
+      background: Ozadje
+      header: Glava
+      tab_color: "Barva zavihka"
+      title: "Barva strani"
+    rebrand: "Oblikujte svojo stran za Podporo"
+    save: "Shrani spremembe"
+    time_zone: "Časovni pas"
+  account_admin: "Aministrator up. računa"
+  account_admin_updated: "Administrator je bil spremenjen"
+  accounts: 
+    billing: 
+      begin_subscription: "Vklopi naročnino"
+      begin_subscription_info: "Za znesek naročnine bomo bremenili vašo kreditno kartico in takoj aktivirali naročnino"
+      billing: Obračunavanje
+      save_billing_information: "Shrani podatke za račun"
+      save_billing_information_info: "shranili bomo informacije o izbrani \"Naročnni in obračunavanju\". Po poteku preiskusnega obdobja bomo bremenili bomo vašo kartico in aktivirali naročniško razmerje."
+      update_billing_info: "Uredi podatke za račun"
+    cancel: 
+      cancel_account: "Prekliči Freshdesk račun"
+      change_your_plan: "Sprememba naročniškega paketa"
+      changeplan_instead_of_cancel: "Namesto ukinitve vašega računa bi morebiti želeli spremeniti zgolj vrsto naročnine."
+      confirm_and_cancel_my_account: "Potrjujem. da želim ukiniti moj račun in izbrisati vse podatke"
+      delete_my_account: "Izbriši moj račun"
+      goback: "Nazaj na nastavitve up. računa"
+      intro: "Ukinili boste vaš račun. To bo <strong>izrisalo vse vaše podatke. </strong>"
+      warning_message: "Ob zaključku vaši podatki ne bodo več dostopni. Je to resnično vaša odločitev?"
+      you_must_confirm: "Potrdite preklic"
+    helpcard: 
+      info1: "Freshdesk lahko tako za kupce kot tudi agente popolnoma prilagodite. Uskladite izgled z celostno podobo vašega podjetja, namestite logotip, favicon, ime portala in barve."
+      info2: "Verjetno želite, da bi vaši kupci in agenti dostopali do portala za podporo preko vaše lastne domene. Lahko usmerite url vaše podpore na yourcompany.freshdesk.com na vašo domeno kot npr. support.mycompany.com."
+      title: "Spreminjanje podobe portala podpore"
+      tour: "Pomoč pri spremembi podobe Podpore"
+    show: 
+      account_settings: "Nastavitve uporabniškega računa"
+      export_data: "Izvozi podatke"
+      export_data_text: "Izdelaj XML vseh podatkov Podpore in jih pošlji po e-pošti"
+      export_now: "Izvozi zdaj"
+  activate: Aktiviraj
+  activate_account: "Aktivirajte vaš račun"
+  activerecord: 
+    errors: 
+      full_messages: 
+        format: "%{attribute}%{message}"
+      messages: 
+        accepted: "mora biti potrjeno"
+        blank: "ne sme biti prazno"
+        confirmation: "ne sklada se s potrditvijo"
+        empty: "ne sme biti prazno"
+        equal_to: "mora biti enako %{count}"
+        even: "mora biti enako"
+        exclusion: "je rezervirano"
+        greater_than: "mora biti večje od %{count}"
+        greater_than_or_equal_to: "mora biti večje ali enako %{count}"
+        inclusion: "ni vključeno v seznam"
+        invalid: "je napačno"
+        less_than: "mora biti manj kot %{count}"
+        less_than_or_equal_to: "mora biti manj ali enako kot %{count}"
+        not_a_number: "ni število"
+        not_an_integer: "mora biti celo število"
+        odd: "mora biti liho"
+        record_invalid: "Validacija neuspešna %{errors}"
+        too_long: "je predolgo (maksimum je %{count} znakov)"
+        too_short: "je prekratko (minimalno je %{count} znakov)"
+        wrong_length: "je napačne dolžine (pravilno je %{count} znakov)"
+      template: 
+        body: "Prosimo preglejte vnose v sledečih poljih"
+        one: "Zaradi napake %{model} ni možno shraniti"
+        other: "%{count} napak onemogoča da bi se %{model} shranil"
+  activities: 
+    forums: 
+      delete_forum: 
+        long: "{{user_path}} je izbrisal forum {{notable_path}} pod {{category_name}}"
+        short: "{{user_path}} izbrisal forum"
+      delete_forum_category: 
+        long: "{{user_path}} izbrisal kategorijo foruma {{notable_path}}"
+        short: "{{user_path}} je izbrisal kategorijo foruma"
+      delete_post: 
+        long: "{{user_path}} izbrisal objavo od {{notable_path}}"
+        short: "{{user_path}} izbirsal novo objavo"
+      delete_topic: 
+        long: "{{user_path}} izbrisal temo {{notable_path}} v {{forum_name}}"
+        short: "{{user_path}} izbrisal temo"
+      new_forum: 
+        long: "{{user_path}} je kreiral nov forum {{category_name}} v {{notable_path}}"
+        short: "{{user_path}} je kreiral nov forum"
+      new_forum_category: 
+        long: "{{user_path}} je kreiral novo kategorijo foruma {{notable_path}}"
+        short: "{{user_path}} je kreiral novo kategorija foruma"
+      new_post: 
+        long: "{{user_path}} je objavil v {{notable_path}}"
+        short: "{{user_path}} je kreiral novo objavo"
+      new_topic: 
+        long: "{{user_path}} je kreiral novo temo {{notable_path}} v {{forum_name}}"
+        short: "{{user_path}} je kreiral novo temo"
+    solutions: 
+      new_solution: 
+        long: "{{user_path}}je vnesel novo rešitev {{notable_path}}"
+        short: "{{user_path}} je vnesel novo rešitev"
+    tickets: 
+      assigned: 
+        long: "{{user_path}} dodelil Zahtevek {{notable_path}} {{responder_path}}"
+        short: "Dodeljeno {{responder_path}} s strani {{user_path}}"
+      assigned_to_nobody: 
+        long: "{{user_path}} je dodelil zahtevek {{notable_path}} \"nikomur\""
+        short: "Dodeljeno \"Nikomur\" s strani {{user_path}}"
+      conversation: 
+        in_email: 
+          long: "{{user_path}} je poslal {{email_response_path}} k zahtevku {{notable_path}}"
+          short: "{{user_path}} je poslal {{email_response_path}}"
+        note: 
+          long: "{{user_path}} je dodal {{comment_path}} k zahtevku {{notable_path}}"
+          short: "{{user_path}} je dodal {{comment_path}}"
+        out_email: 
+          long: "{{user_path}} je poslal {{reply_path}} k zahtevku {{notable_path}}"
+          private: 
+            long: "Zahtevek {{notable_path}} je bil {{fwd_path}} k {{to_emails}} od {{user_path}}"
+            short: "{{user_path}} je {{fwd_path}} zahtevek {{to_emails}}"
+          short: "{{user_path}} je poslal {{reply_path}}"
+        twitter: 
+          long: "{{user_path}} je dodal {{twitter_path}} v zahtevek {{notable_path}}"
+          short: "{{user_path}} je dodal {{twitter_path}}"
+      deleted: 
+        long: "{{user_path}} je izbrisal zahtevek {{notable_path}}"
+        short: "{{user_path}} je izbrisal zahtevek"
+      execute_scenario: 
+        long: "{{user_path}} je izvedel scenarij {{scenario_name}} na {{notable_path}}"
+        short: "{{user_path}} je uporabil scenaij {{scenario_name}}"
+      group_change: 
+        long: "{{user_path}} je spremenil skupino od {{notable_path}} v {{group_name}}"
+        short: "{{user_path}} je spremenil skupino v {{group_name}}"
+      group_change_none: 
+        long: "{{user_path}} je spremenili skupino od {{notable_path}} v 'neuvrščeno'"
+        short: "{{user_path}} je spremenil skupino v 'neuvrščeno'"
+      new_ticket: 
+        long: "{{user_path}} je oddal nov zahtevek {{notable_path}}"
+        short: "{{user_path}} je oddal zahtevek"
+      priority_change: 
+        long: "{{user_path}} je spremenil prioriteto zahtevka {{notable_path}} na {{priority_name}}"
+        short: "{{user_path}} je spremenil prioriteto {{priority_name}}"
+      product_change: 
+        long: "{{user_path}} je spremenil produkt od {{notable_path}} v {{product_name}}"
+        short: "{{user_path}} je spremenil produkt v {{product_name}}"
+      product_change_none: 
+        long: "{{user_path}} je spremenil produkt od {{notable_path}} v 'neuvrščeno'"
+        short: "{{user_path}} je spremenil produkt v 'neuvrščeno'"
+      reassigned: 
+        long: "{{user_path}} je prenesel zahtevek {{notable_path}} na {{responder_path}}"
+      restored: 
+        long: "{{user_path}} je ponovno aktiviral zahtevek {{notable_path}}"
+        short: "{{user_path}} je ponovno aktiviral zahtevek"
+      source_change: 
+        long: "{{user_path}} je spremenil vir zahtevka od {{notable_path}} na {{source_name}}"
+        short: "{{user_path}} je spremenil vir v {{source_name}}"
+      status_change: 
+        long: "{{user_path}} je spremenil status zahtevka {{notable_path}} na {{status_name}}"
+        short: "{{user_path}} je spremenil status v {{status_name}}"
+      ticket_merge: 
+        long: "{{user_path}} je združil zahtevek {{notable_path}} z {{merge_ticket_path}}"
+        short: "{{user_path}} je združil zahtevek {{notable_path}} in {{merge_ticket_path}}"
+      ticket_split: 
+        long: "{{user_path}} je razdelil zahtevek {{notable_path}} iz {{split_ticket_path}}"
+        short: "{{user_path}} je razdelil zahtevek {{notable_path}} iz {{split_ticket_path}}"
+      ticket_type_change: 
+        long: "{{user_path}} je spremenil tip zahtevka {{notable_path}} v {{ticket_type}}"
+        short: "{{user_path}} je spremenil tip zahtevka v {{ticket_type}}"
+      timesheet: 
+        new: 
+          long: "{{user_path}} je dodal {{timesheet_path}} k zahtevku {{notable_path}}"
+          short: "{{user_path}} je dodal {{timesheet_path}}"
+        timer_started: 
+          long: "{{user_path}} je vklopil štoparico na {{timesheet_path}} zahtevku {{notable_path}}"
+          short: "{{user_path}} je vklopil štoparico na {{timesheet_path}}"
+        timer_stopped: 
+          long: "{{user_path}} je ustavil štoparico na {{timesheet_path}} za zahtevek {{notable_path}}"
+          short: "{{user_path}} je ustavil merjenje časa na {{timesheet_path}}"
+  add: Dodaj
+  add_a_topic: "Odpri temo"
+  add_cc: "Dodaj Cc"
+  add_holiday: "Dodaj praznik"
+  add_new_email: "Dodaj novo e-pošto"
+  add_new_forum: "Dodaj nov forum"
+  add_new_requester: "Dodaj novega zahtevnika"
+  add_note: "Dodaj zapisek"
+  add_tags: "Dodaj oznako"
+  add_to_do: "Dodaj nalogo"
+  admin: 
+    automations: 
+      edit: 
+        title: "Uredi scenarij"
+    ca_response: 
+      delete_confirm: "Ste prepričani, da želite izbrisati prednastavljen odgovor?"
+    canned_responses: 
+      edit: 
+        title: "Uredi predpripravljen odgovor"
+      folders: 
+        helpnote: 
+          info1: "Pripravljeni odgovori so prednastavljene predloge sporočil, ki jih lahko uporabite za hitrejši odziv na prejet zahtevek."
+          info2: "Lahko uporabite sidra za pripravljene odgovore, kjer se bodo prednapolnili podatki kot npr ime zahtevnika, id zahtevka in URL v odgovoru"
+          title: "Prednastavljeni odgovori"
+          tour: "Pomoč pri uporabi prednastavljenih odgovorov"
+      form: 
+        all_agents: "Vsi agenti"
+        available_for: Dosegljivo
+        groups: "Agenti v skupini"
+        me_only: "Samo meni"
+        response_name: "Naziv odgovora"
+      helpnote: 
+        info1: "Pripravljeni odgovori so prednastavljene predloge sporočil, ki jih lahko uporabite za hitrejše odgovarjanje na zahtevke."
+        info2: "Lahko uporabite sidra za pripravljene odgovore, kjer se bodo prednapolnili podatki kot npr ime zahtevnika, id zahtevka in URL v odgovoru"
+        title: "Pripravljeni odgovori"
+        tour: "Pomoč pri uporabi pripravljenih odgovorov"
+      index: 
+        new: "Dodaj pripravljen odgovor"
+        title: "Pripravljeni odgovori"
+      new: 
+        delete_confirm: "Resnično želite izbrisato ta predpripravljen odgovor?"
+        title: "Dodaj pripravljen odgovor"
+      responses: 
+        edit: 
+          title: "Uredi prednastavljen odgovor"
+        form: 
+          all_agents: "Vsi agenti"
+          available_for: Dostopno
+          groups: "Agenti v skupini"
+          me_only: Jaz
+          response_name: "Naslov odgovora"
+        new: 
+          title: "Dodaj prednastavljen odgovor"
+    day_passes: 
+      helpnote: 
+        info: "Dnevna licenca je v uporabi za vsak dan ko se začasen agent prijavi v Freshdesk. Dnevne licence lahko kupite v kompletih po 5 naenkrat,. Freshdesk pa lahko nastavite tako da jih avtomatično obnavlja ko jih porabite"
+        title: "Dnevna licenca"
+      index: 
+        add_confirm: "Vaša kreditna kartica bo bremenjena "
+        auto_recharge: "Samodejno aktiviranje"
+        buy_now: "Kupi zdaj"
+        buy_pass: "Kupi več licenc"
+        current_balance: "Imate še %{balance}"
+        day_pass_history: "Zgodovina nakupov"
+        day_pass_pack: "%{quantity} dnevnih licenc %{currency}%{amount}"
+        day_passes: "Dnevne licence"
+        daypass_quantity: "%{quantity} dnevnih licenc"
+        helptext: "Vaša dnevna licence se bo avtomatično ponovno aktivirala ko bo število prostih licenc padlo na 2. "
+        no_of_day_passes: "# dnevnih licenc"
+        order: "Naročilo #"
+        recharge_quantity: "Količina  za avt. ponovno aktivacijo"
+        title: "Dnevna licenca"
+    gamification: 
+      error_updated: "Napaka pri urejanju nastavitev tekmovanja"
+      gamification_settings: 
+        bonus_points: "Bonus točke"
+        enable_label: "Tekmovanje Agentov"
+        fast_resolution: "Hitro <span>< 1 hr)</span>"
+        firstcall_resolution: "Rešitev ob prvem klicu"
+        happy_customer: "Zadovoljen kupec"
+        info_levels: "Nastavite število točk, ki jih mora doseči agent za prehod v naslednji nivo"
+        late_resolution: "Zamuja <span> (pretečeno) </span>"
+        new_quest: "Nov izziv"
+        ontime_resolution: "Pravočasno <span> (znotraj SLA) </span>"
+        quest_title: Izzivi
+        title_levels: "Nivoji Agentov"
+        title_points_configuration: "Nastavitev točkovanja"
+        title_ticket_points: "Točke zahtevka"
+        title_trophies: Nagrade
+        unhappy_customer: "Nezadovoljen kupec"
+      help_text: 
+        creating_survey: "Izdelava vprašalnika zadovoljstva kupcev:"
+        creating_survey_help: "S pomočjo sledečih korakov boste lahko zbirali povratne informacije s pomočjo povezave v e-poštnih sporočilih vaših odgovorov:<br> 1.  Vklopite Ankete za merjenje zadovoljstva.<br> 2. Določite tekst povezave.<br> <br> <b>  Izberite katera e-pošta bo imela vključeno povezavo : </b> <br> Lahko izberete ali se povezava pošlje z vsako e-pošto ali zgolj ko je zahtevek razrešen <br><br> Več o anketah lahko preberete na strani z rešitvami </p>"
+        quest: Izzivi
+        quest_form_info1: "Izberite tip izziva za agente, Lahko je eden od treh <br /> a.) reševanje zahtevkov <br /> b.) objava rešitev in <br /> c.) prispevki na forumih."
+        quest_form_info2: "Ko je to narejeno izberite kriterij izziva (kaj mora agent narediti) in zatem dodajte kriterije, ki jih mora doseči agent za dosego značke"
+        quest_form_info3: "Izberite točke, ki jih bo agent dosegel in značko, ki mu bo pripadla. Poimenujte izziv in dodajte kratek opis."
+        quest_form_info4: "Kliknite na \"Shrani izziv\" in shranite vnešene nastavitve"
+        quest_info1: "Izziv predstavlja cilj učinkovitost za agente,ki jim bo ob doseganju pripadla značka za dosežene uspehe "
+        quest_info2: "Vsi izzivi so privzeto vključeni. Lahko izključite neželjene. Če želite dodati dodatne izzive, s specifičnimi cilji kliknite na \"Nov izziv\" in izdelajte čisto nov izziv s pogoji, ki vam ustrezajo."
+        trophies_info1: "Agent bo prejel 4 trofeje na podlagi različnih kriterijev."
+        why_game: "Točke in nivoji"
+        why_game_info1: "Točke so dodeljene agentu na podlagi tega kako hitro rešijo dodeljene zahtevke. Za rešitev v prvem odgovoru in zadovoljne kupce lahko prejme bonus točke. Agenti izgubijo točke za zamude pri reševanju in nezadovoljstvo kupcev."
+        why_game_info2: "Agent lahko doseže višji nivo z zbiranjem točk, količine točk za prehod pa določi administrator."
+      index: 
+        title: "Nastavitve Arkade"
+      successfully_updated: "Spremembe nastavitev tekmovanja so uspešno shranjene"
+    getting_started: 
+      index: 
+        admin_sub_title: "Ne pozabite pogledati tudi nastavitve ostalih funkcionalnosti, ki jih lahko nastavite v \"%{admin_tab}\" zavihku"
+        admin_title: "Vse ok?"
+        agent_email_exist: "E-poštni naslov/naslovi so že zasedeni."
+        agent_email_partial: "Delno uspešno"
+        agent_email_required: "ID e-pošte zahetvan za pošiljanje povabil."
+        agent_email_sending: "Pošiljanje vabil"
+        agent_email_taken: "Sledeči e-poštni naslovi so že zasedeni <br>%{emails}"
+        agent_invite_field_placeholder: "Vnesi e-poštne naslove ekipe"
+        agent_invite_multi_info: "Uporabite vejico ( , ) za dodajanje več e-poštnih naslovov."
+        agent_limit_reached: "Presegli ste dovoljeno število agentov."
+        agent_send_invite_label: "Pošlji vabilo agentom"
+        agent_sub_title: "Povabite člana ekipe v Freshdesk"
+        agent_title: "Se počutite osamljeno?"
+        agents_sub_title: "Povabite agente vaše podpore"
+        agents_title: Agenti
+        agents_title_info: "Povabite vaše agente podpore k uporabi Freshdeska, ločite e-poštne naslove z vejico"
+        back_link: Nazaj
+        config-support-email-address: "Nastavi e-poštni naslov podpore"
+        congrats: "Čestitamo! Vaš \"fresh\" podpora je pripravljena."
+        email_config_field_title: "E-pošta vaše podpore"
+        email_config_sub_title: "Naj Freshdesk upravlja z e-pošto vaše podpore!"
+        email_config_title: "E-pošta vaše podpore?"
+        email_invalid: "Vaš e-poštni naslov ni veljaven, prosimo preverite"
+        email_send_problem: "Napaka pri pošiljanju e-pošte"
+        email_sent_success: "E-pošta je bila uspešno poslana"
+        emails_invalid: "Eden ali več e-poštnih naslovov ni veljavnih"
+        helpdesk_preview: "Predogled Podpore"
+        implement_changes: "Nameščanje sprememb.."
+        next_alt_link: "Pojdi na podporo"
+        next_link: Naprej
+        next_please_wait: "Prosimo počakajte .."
+        problem_updating: "Napaka pri nameščanju, prosimo poiskusite ponovno"
+        product_link_label: "Vstopi v namizje podpore >>"
+        rebrand_bg_empty: "Vnos kode barve ozadja je obvezen"
+        rebrand_bg_invalid: "Koda barve ozadja ni veljavna"
+        rebrand_color_background: Ozadje
+        rebrand_color_header: Glava
+        rebrand_color_tabs: Zavihki
+        rebrand_company_field_placeholder: "Vnesite naziv vašega podjetja"
+        rebrand_company_label: "Naziv podjetja"
+        rebrand_header: "Ime vaše podpore in logotip"
+        rebrand_header_empty: "Vnos kode barve glave je obvezna"
+        rebrand_header_invalid: "Koda barve glave ni veljavna"
+        rebrand_paint_title: "Obarvajte vašo podporo"
+        rebrand_sub_title: "Logo  &amp; barve"
+        rebrand_submit_label: "Oblikuj podobo"
+        rebrand_tab_empty: "Vnos kode barve zavihka je obvezen"
+        rebrand_tab_invalid: "Koda barve zavihka ni veljavna"
+        rebrand_title: "Logo <br> &amp; barve"
+        save: Spremeni
+        save-and-next: "Shrani in pojdi naprej"
+        send_invite: "Pošlji vabilo"
+        send_verification_email: "Pošlji potrditveno e-pošto"
+        sending_test_mail_progress: "Pošiljamo testno e-pošto, prosimo počakajte.."
+        skip_link: "Preskoči in pojdi na mojo podporo"
+        social_add_account: "Dodaj račun"
+        social_facebook: Facebook
+        social_facebook_add: "Dodaj stran"
+        social_info: "Vzpostavite podporo na Facebooku, Twitterju, forumih oz povsod kjer so vaši kupci"
+        social_sub_title: "Socialna omrežja"
+        social_title: Socialna
+        social_twitter: Twitter
+        social_twitter_add: "Dodaj račun"
+        sub_title: "Tu je kup stvari, ki vam bodo pomagali začeti"
+        successfully_sent: "Uspešno poslano."
+        successfully_updated: "Uspešno dopolnjeno."
+        support_email_sub_msg: "E-pošni naslov podore je nujen, da bi vaša podpora delovala pravilno"
+        support_email_sub_title: "Vpišite e-pošto vaše podpore."
+        support_email_title: "Podpora <br> e-pošta"
+        title: "Odlično! Izgleda, da je vaša podpora pripravljena za delo.."
+        title_msg: "Izpolnite nekaj detajlov za začetek dela. (opcijsko)"
+        updating: "Osvežujem .."
+        validating: Preverjam..
+      send_mail_content: 
+        button_again_title: ".. ali pošljite e-pošto ponovno"
+        button_sending: "Pošiljam .."
+        button_title: "Pošlji testno e-pošto"
+        info: "Kopijo e-pošniih sporočil vaše podpore morate posredovati na sledeč naslov:"
+        note: "<strong> Opomba: </strong> Da bi FreshDesk lahko spremenil prihajajočo e-pošto v zahtevke morate nastaviti pravilo za posredovanje na vašem poštnem strežniku."
+        send_test_mail_confirm_no: "Ne, ne vidim nobenega zahtevka."
+        send_test_mail_confirm_yes: "Da, sem prejel."
+        send_test_mail_info1: "Prepričajte se, da ste nastavili e-pošto za posredovanje na <b>%{to_email}</b>"
+        send_test_mail_info2: "Poglej kako"
+        send_test_mail_info3: "Če mislite, da je dp tu vse ok, lahko pošljete testno e-poštp <br>%{send_test_mail_link}"
+        send_test_mail_link_title: "Pošlji testno e-pošto"
+        send_test_mail_response1: "Testna e-pošta je bila poslana na <b><span id=reply_email_1>%{reply_email} </span></b>. Če bo vse ok, boste videli <a href=\"/helpdesk/tickets\" target=\"_blank\"> nov zahtevek </a> v pregledu zahtevkov."
+        send_test_mail_response_no1: "Očitno je nastal problem ->"
+        send_test_mail_response_no2: "Poglej kako"
+        send_test_mail_response_no3: "<strong> Smola! Očitno se je pojavil problem! </strong> <br> Če še niste prejeli e-pošte počakajte nekaj minut. Če problem ni odpravljen <a href=\"https://support.freshdesk.com/\" target=\"_blank\"> sporočite </a> "
+        send_test_mail_response_yes: "Čestitke!! Uspešno ste povezali e-pošto podpore z portalom vaše podpore! Uspešno reševanje !!"
+        test_info1: "Če mislite, da je do tu vse ok, poiskusite poslati testno e-pošto"
+        title: "E-pošta za preusmeritev:"
+    home: 
+      index: 
+        account: "Up. račun"
+        account-settings: "Up. račun"
+        agent: Agenti
+        billing: "Naročnina in obračunavanje"
+        business-hours: Delavnik
+        canned-response: "Pripravljen odgovor"
+        customer: Kupec
+        customer-portal: "Portal za kupce"
+        day_pass: "Dnevna licenca"
+        dispatcher: Dispatch'r
+        else: ali
+        email-notifications: "e-poštna obvestila"
+        email-settings: "Nastavitev e-pošte"
+        email_commands_setting: "E-poštni ukazi"
+        everything: Vse
+        facebook-setting: Facebook
+        feedback: "Modul za pridobivanje mnenja"
+        gamification-settings: Arkada
+        group: Skupine
+        helpdesk: Podpora
+        import: "Uvozite podatke iz Zendesk"
+        integrations: Integracije
+        multi-product: "Več produktov"
+        portal: Portal
+        productivity: Produktivnost
+        rebranding: "Sprememba podobe Podpore"
+        remote-authentication: "Oddaljena avtentikacija"
+        scenario: "Scenarjiji avtomatizacija"
+        security: Varnost
+        settings: Nastavitve
+        sla: "SLA pogoji"
+        supervisor: Nadzornik
+        survey: "Nastavitve vprašalnikov"
+        survey-settings: "Zadovoljstvo kupca"
+        ticket-fields: "Polja zahtevka"
+        title: Admin
+        twitter-setting: Twitter
+    products: 
+      add_another_email: "Dodaj e-pošto"
+      assign_product: "Dodeli produkt"
+      edit: 
+        title: "Spremeni produkt"
+      form: 
+        configure_email: "Nastavi e-pošto"
+        configure_seperate_portal: "Nastavi dodaten portal za ta produkt"
+        enable_product_portal: "Vzpostavi portal produkta"
+        enter_support_email_id: "e-pošta podpore"
+        forwarding_email_info: "E-pošta za posredovanje:"
+        product_name: "Ime produkta"
+        product_support_emails: "E-poštni naslovi za podporo produkta"
+      helpnote: 
+        content: "Več produktov omogoča, da kupcem nudite podporo razdeljeno za posamezen produkt ali blagovno znamko."
+        content1: "Znotraj vašega Freshdesk računa lahko izvedete podporo za več ločenih produktov. Nastavite drugačen epoštni naslov za vsak produkt in avtomatično razvrstite v specifične skupine."
+        content2: "Če se odločite za ločen portal za vsak produkt boste lahko objavili na vsakem portalu ločen forum in baza znanja"
+        heading: "Več produktov"
+        heading1: "Več produktov"
+        heading2: "Nastavitev dodatnega portala za produkte"
+        tour: "Pomoč pri podpori več produktov"
+      index: 
+        add_product: "Dodaj produkt"
+        title: Produkti
+      new: 
+        title: "Nov produkt"
+      portal: 
+        cname_configure_info: "Pred uporabo tega polja se prepričajte da ste kreirali CNAME DNS zapis v vaši DNS Zone datotek ki usmerja v <strong> pomoč.<b id=\"domain_info_name\"> mycompanyname </b>.com </strong> %{full_domain}. Administrator vašega spletnega strežnika vam lahko pomaga pri nastavitvah."
+        portal_language: "Jezik portala"
+        portal_language_info: "To bo privzet jezik, ko kupci obiščejo vaš portal"
+        portal_name: "Ime portala"
+        portal_name_info: "Ime bo prikazano na portalu produkta poleg logotipa v glavi"
+        portal_rebranding: "Sprememba podobe portala"
+        portal_settings: "Nastavitve portala"
+        portal_url: "URL portala"
+        select_forum_category: "Izberi kategorijo foruma ..."
+        select_solution_category: "Izberi kategorijo rešitve.."
+        top_level_forum: "Najvišja kategorija foruma"
+        top_level_forum_info: "Lahko povežete kategorijo foruma z izbranim produktom. Vsi ostali forumi ne bodo vidni kupcem v zavihku forumov tega produkta."
+        top_level_solution: "Najvišja kategorija rešitve"
+        top_level_solution_info: "Lahko povežete kategorijo rešitev z izbranim produktom. Vse ostale rešitve ne bodo vidne kupcem v zavihku rešitev tega produkta."
+      primary_email_required: "Vnešen mora biti vsaj en primaren e-poštno naslov"
+      primary_product_support_email: "Primaren e-poštni naslov podpore produkta"
+      product: 
+        delete: "Resnično želite izbrisati ta produkte?"
+        email_not_verified: "e-pošta ni verificirana"
+      product_label_msg: Produkt
+    quests: 
+      index: 
+        new_quest: "Nov izziv"
+        quest_description: "Izzivi so poslovno usmerjeni cilji, ki jih izdelate z namenom spodbujanja agentov za dosego le teh"
+        quest_title: Izzivi
+        sideinfo1: "Info 1"
+        sideinfo2: "Info 2"
+        title: izziv
+      quest_form: 
+        forum: "Sodeluj z <br /><strong> skupnostjo </strong>"
+        solution: "Objava <br /><strong> rešitev </strong>"
+        ticket: "Reševanje <br /><strong> zahtevkov </strong>"
+    security: 
+      index: 
+        click_to_disable: "Klikni za onemogočanje SSL"
+        click_to_enable: "Klikni za omogočanje SSL"
+        customer_portal_ssl_warning: "Ker je v vašem računu za Podporo nastavljen poseben URL boste preusmerjeni"
+        disabled: Onemogočeno
+        enable_SSL: "Omogoči SSL"
+        enable_SSL_anon: "SSL omogoča kripcijo prenosa podatkov na freshdesk portalih"
+        enable_sso: "Omogoči enotno prijavo"
+        enable_sso_info: "Enotna prijava omogoča uporabo lastne aplikacije ali centralnega strežnika (kot npr MS Active Directory) za avtentikacijo agentov in kupcev in s tem dostopa do Freshdeska brez ponovne prijave. "
+        enabled: Omogočeno
+        multiple_product_ssl_warning: "SSL ne bo deloval kadar je nastavljenih več produktov"
+        remote_authentication: "Oddaljena avtentikacija"
+        remote_login_url: "Oddaljena prijava URL"
+        remote_login_url_info: "To je URL na katerega Freshdesk preusmeri uporabnike za avtentikacijio, ki želijo vstopiti v Freshdesk."
+        remote_logout_url: "Oddaljena odjava URL"
+        remote_logout_url_info: "To je URL na katerega Freshdesk preusmeri uporabnike ko se odjavilo iz Freshdeska."
+        security_title: Varnost
+        shared_secret: "Skriven ključ"
+        shared_secret_info: "Prosimo kopirajte ta žeton in ga varno shranite. Potrebovali ga boste za oddaljeno avtentikacijo. To je skriven ključ med vami in Freshdeskom."
+    shared: 
+      filter_jsinit: 
+        body: Vsebina
+        insert_placeholder: "Vstavite vnosno mesto"
+        not_selected: "Ni izbrano"
+        selected: Izbrano
+        to: Za
+    supervisor_rules: 
+      edit: 
+        title: "Nadzornik - urejanje pravila"
+      helpnote: 
+        help_info_1: "Nadzornik izvede aktivnosti na zahtevkih na podlagi časa in prožilcev akcij. Uporabite Nadzornika za periodično preverjanje zahtevkov kot je pošiljanje opomnikov kupcem za potreben odgovor ali eskalacijo zahtevka v zamudi pravi osebi."
+        help_info_2: "Nadzornik bo zagnan vsako uro in obdelal zahtevke, ki so bili posodobljeni v zadnjih 30 dneh. Pravila Nadzornika se procesirajo zaporedno zato je vrstni red pravil pomemben. Pravilo vsebuje akcijo, ki aktivira drugo pravilo."
+        help_info_3: "Nadzornik se bo zagnal vsako uro in procesiral zahtevke, ki so bili spremenjeni v zadnjih 30 dneh."
+        help_info_4: "Pravila Nadzornika se procesirajo zaporedno zato je njihovo zaporedje pomembno. Določeno pravilo lahko proži aktivnost drugega pravila."
+        help_title: Nadzornik
+        tour: "Pomoč pri nastavitvi pravil Nadzornika"
+      index: 
+        help_info_1: "Uporabi Nadzornika za periodično preverjanje zahtevkov in izvedbo določenih aktivnosti ob izbrani uri kot npr. pošiljanje obvestil kupcem ali dvig prioritete zahtevka, itd."
+        help_info_2: "Npr. če zahtevek čaka na odziv kupca več kot 24 ur mu pošlji opomnik ali pa Avtomatsko zapri zahtevek, ki je v statusu \"rešen\" več kot 48 ur."
+        help_info_3: "Nadzornik bo zagnan vsako uro in obdelal zahtevke, ki so bili posodobljeni v zadnjih 30 dneh."
+        help_info_4: "Pravila Nadzornika se procesirajo zaporedno zato je zaporedje pravil pomembno. Določeno pravilo lahko proži aktivnost drugega pravila."
+        help_title: Nadzornik
+        title: "Nadzornik - pravila"
+      new: 
+        title: "Nadzornik - novo pravilo"
+    surveys: 
+      error_updated: "Napaka pri shranjevanju nastavitev vprašalnikov"
+      helptext: "<p><b> Zakaj vključiti ankete zadovoljstva?</b> <br> Ankete vam omogočajo, da v vaše odgovore vstavite povezavo in tako zbirate povratne informacije od kupcev <br><br> <b> Izdelava ankete zadovoljstva: :</b><br> S pomočjo naslednjih korakov boste lahko zbirali menja vaših kupcev s pomočjo povezave v odgovorih:{ <br>} 1. Omogočite Ankete kupcev <br> 2. Vnesite tekst povezave. Privzet tekst je &ldquo; \"Prosimo vas ocenite vašo izkušnjo z našo podporo &rdquo; ;;<br> <br> <b>. Izberite kdaj se vstavi povezava do ankete </b><br> Izberete lahko, da se povezave do anket vključi v vsak odgovor ali pa zgolj v epoštnem sporočilu ko je zahtevek zaključen.<br><br> Več o anketah zadovoljstva lahko izveste na strani z rešitvami {</p> <br>"
+      index: 
+        title: "Nastavitev zadovoljstva kupcev"
+      satisfaction_settings: 
+        enable_label: "Vprašalniki zadovoljstva"
+        enter_happy_text: "Vnesite vesel tekst"
+        enter_neutral_text: "Vnesite nevtralen tekst"
+        enter_unhappy_text: "Vnesite nezadovoljen tekst"
+        link_text_info: "Ta tekst bo prikazan v poslani e-pošti na dnu pod vašim podpisom"
+        link_text_input: "Prosimo sporočite nam vaše mnenje o izkušnji z našo podporo"
+        link_text_label: "Povezava do vprašalnika o zadovoljstvu"
+        send_while_option1: "e-pošta je bila poslana kupcu"
+        send_while_option2: "e-poštna sporočila poslana zatem, ko je bil zahtevek \"Rešen\""
+        send_while_option3: "e-poštna sporočila poslama zatem ko je bil zahtevek \"Zaprt\""
+        send_while_option4: "Dovoli agentom da dodaja povezavo na vprašalnik specifičnim e-poštnim sporočilom"
+        send_while_title: "Izberi katera e-poštna sporočila vsebujejp povezavo na vprašalnik zadovoljstva"
+      successfully_updated: "Nastavitev zadovoljstva kupcev uspešno shranjena"
+    twitters: 
+      change: 
+        capture_dm: "Pretvori direktna sporočila v zahtevke"
+        capture_mention: "Pretvori omembe (javne) v zahtevke"
+        default_group: "Privzeta skupina"
+        edit_twitter: "Uredi Twitter"
+        screen_name: "Zaslonsko ime"
+      index: 
+        add_search: "Dodaj iskanje"
+        new: "Dodaj Twitter račun"
+        search_keys: "Iskalni ključi"
+        title: "Twitter računi"
+      search: 
+        add_key: "Dodaj iskanje"
+        edit_key: "Uredi iskanje"
+        name: "Naziv iskanja"
+        screen_name: "Twitter račun"
+        search_key: Iskanje
+    widget_config: 
+      index: 
+        thankyou_default: "Hvala za vaše odgovore"
+        thankyou_info: "Sporočilo bo prikazano ko bo uporabnik poslal podatke vnešene v zahtevek"
+        thankyou_label: "Pošlji sporočilo"
+  agent: 
+    active: 
+      no_agents: "Na seznam niste dodali nobenega agenta"
+    add_signature: "Dodaj podpis"
+    admin: Administrator
+    admin_info: "Lahko opravlja naloge Admin"
+    contact_exists: "Zahtevnik z e-pošto '%{existing_email}' že obstaja, %{use_email}"
+    day_pass_expired: "Vaša dnevna licenca je potekla, prosimo pridobite novo licenco"
+    deleted: 
+      no_agents: "Nimate izbrisanih agentov"
+    edit: "Uredi Agenta"
+    full_time: "Poln čas"
+    global: "Agent (Globalen dostop)"
+    global_info: "Lahko vidi vse zahtevke podpore"
+    group: "Agent (Skupinski dostop)"
+    group_info: "Lahko vidi zahtevke skupine/skupin in zahtevke dodeljene njemu"
+    helpcard: 
+      info1: "Seznam prikazuje vse agente dodane v vaši podpori. Pravice in dostop agenta lahko urejate tako, da greste z miško preko agenta in kliknete \"Uredi\". Nove agente dodate s klikom na  gumb \"Nov Agent\" "
+      info2: "Ko dodate agenta, morate vpisati njegovo epošto, določiti nivo dostopa in pravice (neomejen dostop ali začasen). Agent bo prejel epoštno sporočilo z povezavo za potrditev aktivacije računa, preko katerega bo odgovarjal na zahtevke."
+      info3: "Administratorji lahko ureja profil Agentov za vnos naziva agenta, telefon, sliko, podpis, itd.."
+      side_title: "Dodajanje agentov in urejanje podrobnosti"
+      tour: "Dodaj me kot novega agenta"
+    individual: "Agent (dostop omejen)"
+    individual_info: "Lahko vidi samo zahtevke dodeljene njim"
+    info1: "To je izbrisan agent"
+    info2: "E-pošta je že zasedena"
+    info3: "Ali ste prepričani, da želite izbrisati?"
+    info4: "Spremeni v kontakt"
+    insufficient_day_pass: "Prenos dnevne licence ni uspel, obvestite administratorja"
+    make_admin: "Določi Agenta kot admin-a"
+    new: "Nov Agent"
+    occasional: Občasno
+    occasional_description: "Ta agent bo dostopal do portala podpore"
+    password_reset_message: "Želite resetirati geslo od %{requester}?"
+    password_reset_note: "Opomba: E-poštno sporočilo z navodili bodo poslani %{requester}"
+    permissions: Privilegiji
+    restore: ponastavi
+    showing: "Prikazujem:"
+    signature: podpis
+    status: 
+      active: Aktivno
+      deleted: Izbrisano
+    supervisor: Nadzornik
+    supervisor_info: "Vidi vse zahtevke podpore in dostopa do poročil (nima admin pravic)"
+    title: Agenti
+    update: Uredi
+    use_email: "Uporabi to e-pošto"
+    view_user: "Pregled uporabnika"
+  agent_adds_comment: "Agent je dodal komentar k zahtevku"
+  agent_assigned_info: "Ni odprtih ali nerešenih zahtevkov za izbranega agenta"
+  agent_assigned_title: "Nazadnje dodeljeni zahtevki ( Odprti &amp; Nerešeni)"
+  agent_closes_tkt: "Agent je zaprl zahtevek"
+  agent_deleted_message: "Ta agent je izbrisan"
+  agent_emailnotverified: "E-pošta za tega agenta še ni verificirana"
+  agent_info_title: "Informacije o agentu"
+  agent_solves_tkt: "Agent je rešil zahtevek"
+  agent_working_on_this_ticket: "Agent, ki dela na tem zahtevku"
+  agents: Agenti
+  align_to: "Poravnaj z"
+  all_due: Pretečeno
+  already_overdue: "Pretečeno za %{time_words}"
+  always: Vedno
+  amount: Znesek
+  amount_for_annual: "$ %{amount} letno"
+  amount_per_month: "$ %{amount}%{period}"
+  answered: Odgovorjeno
+  application: 
+    click_to_disable: "Onemogoči integracijo"
+    click_to_enable: "Omogoči integracijo"
+    configure: Nastavi
+    configure_addon: "Nastavi integracijo"
+    configure_custom_addon: "Nastavi vsebino"
+    confirm_disable: "Ali ste prepričani da želite onemogočiti integracijo?"
+    desc: "Integrirajte z ostalimi App-si da bi vaša izkušnje s Freshdeskom še boljša"
+    disabled: Onemogočen
+    enable: Omogoči
+    enabled: Omogočen
+    new: "Izdelaj novo Aplikacijo"
+    title: Integracije
+  apply: Potrdi
+  asked_on: "Vprašan na"
+  assign: Dodeli
+  assigned_to: Dodeljeno
+  assume_identity_button: "Prevzemi identiteto"
+  assumed_identity_msg: "Prevzeli ste identiteto %{user_name}"
+  assuming_identity_not_allowed_msg: "Nimate dovoljenja za prevzemanje identitete"
+  assuming_identity_user_does_not_exist_msg: "Uporabnik, katerega identiteto poizkušate prevzeti ne obstaja"
+  at: ob
+  attach_files: "Dodaj priponke"
+  attachment: Priponka
+  attachment_help_info: "Priponke so lahko velike do 15 MB"
+  attachments: Priponke
+  auto_suggest_solutions: 
+    info: "<b> Verjetno že imamo odgovor na vaše vprašanje. </b> <br/> Preverite ali kateri od teh ustreza."
+  automations: 
+    available_placeholders: "Vnosna mesta"
+    helptext: "Scenarij avtomatizacije omogoča izvedbo več posodobitev zahtevka z enim klikom. Pomagajo pri ponavljajočih se scenarijih. npr, lahko izdelate scenarij \"Označi zahtevek kot Hrošč.\"Dodelu razvoju\" in pošlji epošto vodji produkta, da bi procesirali prijavljeno napako z enim klikom."
+    info1: "Vsaka podpora ima nekaj splošnih scenarijev - npr. eskalacija na nivo 2, dodeli v QA. Posreduj v prodajo,.itd- Ti scenariji navadno vključuje več dopolnitev zahtevka."
+    info2: "Npr. preden dodelite zahtevek v QA bi lahko tip zahtevka označili kot Napako, jo dodelili k QA skupini in poslali e-pošto vodji QA o novi napaki."
+    info3: "Scenariji Avtomatizirani omogočajo da avtomatizirate izvajanje akcij z enim klikom"
+    info4: |-
+        Spodaj izberite vnosna mesta za vstavljanje v vsebino epošte, da bi 
+        se pretvorila v pravilne podatke
+    info5: "Dodeli QA"
+    info6: "Označi Zahtevek kot napako in ga dodeli v QA"
+    info7: "Aktivnosti za izvedbo"
+    info8: "Dodaj novo aktivnost"
+    new: "Nov scenarij"
+    reorder: Prerazporedi
+    title: "Scenariji Avtomatizacije"
+    tour: "Pomoč pri avtomatizaciji skupnega scenarija"
+  awaiting_your_reply: "Čaka vaš odgovor"
+  back: Nazaj
+  back_plans_billing: "Nazaj na Naročnine &amp; Obračunavanje"
+  back_to_admin: "Nazaj na admin"
+  badges_achieved_label: "Dosežene značke"
+  basic_brief: "Za majhne ekipe"
+  basic_details: "Urejanje odzivov na epoštp, pravila Dispatch'rčja,, privzeti pogoji SLA, baza znanja, portal, mapiranje domene, osnovno poročanje, podpora skupnostim."
+  bcc_email_updated_failure_msg: "Neuspešno urejanje Bcc e-pošte"
+  bcc_email_updated_success_msg: "Uspešno urejanje Bcc e-pošte"
+  bcc_emails_key: ". bcc:%{bcc_emails}"
+  bcc_emails_key_pop: "<li class='left'> bcc: </li><li><li>%{bcc_emails}"
+  begin_subscription_confirm: "Vašo kreditno kartico bomo bremenili za znesek $ %{cost} in vaša naročnina bo takoj aktivirana. Želite nadaljevati? "
+  being_processed: Procesiranje
+  between: Med
+  between_range: "Razpon med"
+  billed_amount_annually: "Letno vas bomo bremenili zai $ %{amount}"
+  billed_amount_per_month: "Bemenili vas bomo $ %{amount}%{period}"
+  billed_monthly: "Bremenitev mesečno"
+  billing_info: "Informacije o naročnini"
+  billing_info_update: "Podatki za obračunavanje so bili spremenjeni"
+  block_users: "Želite blokirati tudi kontakt(e)?"
+  blossom_brief: "Podpora Socialna omrežja"
+  blossom_details: "Vse v &quot;Sprout&quot; Plan plus, Twitter Podpora, Facebook Podpora, Forumi, Skupnosti &amp; Email Podpora"
+  bottom: Dno
+  bulk_actions: "Paketne aktivnosti"
+  business_hours: 
+    helpdesk_hours: "Delovne ure podpore"
+    holiday_added: "Nedelovni dnevi so že dodani"
+    holiday_list: "Letni koledar nedelovnih dni"
+    holiday_name: "Praznik "
+    holidays: "Dela prosto"
+    info1: "Nastavitev delovnika omogoča boljšo kontrolo nad pogodbenimi obveznostmi podpore. Npr če delate med 9.00 in 18.00 pon-pet in kupec pošlje zahtevek z visoko prioriteto v torek ob 16tih z dogovorjenim časom za rešitev zahtevka v 4 urah se bo čas dogovorjenega roka razrešitve nastavil na 11.00 v sredo. Lahko nastavite da se delovnik upošteva ali ignorira,"
+    info2: "Dopusti delujejo enako kot Delovnik. Npr če delate med 9.00 in 18.00 pon-pet in kupec pošlje zahtevek z srednjo prioriteto v petek ob 20tih z dogovorjenim časom za rešitev zahtevka v 24 ur se bo čas dogovorjenega roka razrešitve nastavil na 9.00 v torek."
+    info3: "Posebne delovne ure"
+    info4: "Delovni dnevi vaše podpore"
+    info5: "Dopusti bodo ignorirani pri izračunu SLA za zahtevek"
+    title: Delovnik
+  cancel: Prekliči
+  cancel_and_back: "Prekliči in pojdi nazaj"
+  cancel_my_account: "Prekličite moj uporabniški račun"
+  canned_folders: 
+    back_to_bulk: "Nazaj na masoven odgovor"
+    create: "Izdelaj mapo"
+    create_new: "Izdelaj novo"
+    created: "Pripravljen odgovor uspešno kreiran."
+    del: Izbiriši
+    delete: Izbriši
+    delete_confirmation: "Izbris mape in vsebine?"
+    delete_multiple: "Izbran pripravljen odgovor uspešno izbrisan!!"
+    deleted: "Mapa uspešno izbrisana"
+    edit: Preimenuj
+    folder: Mapa
+    folder_created: "Mapa za pripravjene odgovore uspešno kreirana."
+    folder_update: "Izbrani odgovori so premaknjeni v mapo: {{folder_name}}"
+    move: Premakni
+    new: "Ime mape"
+    new_response: "Nov pripravljen odgovor"
+    no_delete: "Privzeta mapa ne more biti izbrisana!!"
+    no_edit: "Privzete mape ni možno spreminjati!!"
+    no_folders: "Ni pripravljenih odgovorov"
+    no_response: "Ni odziva"
+    no_response_admin: "V izbrani mapi ni pripravljenih odgovorov <a href={{link}} id='new_resp'> Izdelajte nove </a>"
+    pick: "Izberi pripravjen odgovor"
+    recently: "Nazadnje uporabljeno.."
+    responses: "Pripravljeni odgovori"
+    search: "Išči po pripravljenih odgovorih"
+    select_folder: "Izberi mapo"
+    title: "Mape pripravljenih odgovorov"
+    update: "Spremembe pripravljenega odgovora uspešno shranjene."
+    updated: "Spremembe mape pripravljenih odgovorov uspešno shranjena"
+    viewing: "Mapa:"
+  card_number: "Št. kreditne kartice"
+  card_process: "Hvala za vaše plačilo. Vaš Freshdesk račun je aktiviran."
+  category: 
+    edit: "Uredi kategorijo"
+    new: "Nova kategorija"
+  category_edit_not_allowed: "Te kategorije ni možno urejati"
+  cc_emails_key: ", cc: %{cc_emails}"
+  cc_emails_key_pop: "<li class='left'> cc: </li><li> %{cc_emails}</li>"
+  change: Spremeni
+  change_deleted_status_msg: "Prosimo spremenite status ker je bil trenuten status izbrisan"
+  change_details_anytime: "Podrobnosti naročnine ali izbrana naročnina lahko spremenite kadarkoli"
+  change_free_plan: "Spremeni brezplačno naročnino"
+  change_my_password: "Spremeni moje geslo"
+  change_my_plan: "Izberi to naročnino.."
+  change_plan: "Spremeni naročnino"
+  change_plan_info: "Naročnino lahko spremenite kadarkoli, datum naslednjega račune je %{date}"
+  change_to_free_info: "Izbira manjšega paketa bo rezultirala v izgubi funkcionalnosti in podatkov. Resnično želite preiti na manjši paket?"
+  chat: Klepet
+  choose_free_plan: "Izberi brezplačno %{plan}"
+  choose_plan: "Izberite naročnino"
+  clear_draft_text: "Izriši shranjeno predlogo?"
+  click_select_action: "Klikni za izbiro akcije"
+  click_to_change_sort_order: "Klikni za spremembo sortiranja"
+  click_to_select_filter: "Kliknite za izbor filtra"
+  close: Zapri
+  closed: Zaprto
+  comments: Komentarji
+  companies: 
+    active: 
+      no_companies: "V seznam niste dodali nobenega podjetja"
+      no_companies_with_letter: "Nimate nobenega podjetje s črko %{alphabet}"
+  company: 
+    edit: "Spremeni podjetje"
+    info1: "Ali ste prepričani da želite izbrisati to podjejte?"
+    info10: "Obvestilo: Izbris podjetja ne bo izbrisalo pripadajočih kontaktov"
+    info11: "Ali ste prepričani da želite izbrisati"
+    info2: "Domene za to podjetje"
+    info4: "Dodaj zapisek o %{name}"
+    info5: "Dodaj specifičen zapisek povezan s tem podjetjem, Npr. s tem podjetjem se dogovarjamo za novo pogodbo"
+    info6: "Uporabniki v %{name}"
+    info7: "Uporabniki tega podjetja niso kreirali nobenega zahtevka"
+    info8: "Več informacij o tem podjetju kot so naslovi, tel številke, spletna stran, itd."
+    info9: "Freshdesk bo avtomatično povezal kontakte s tem podjetjem če id e-pošte vsebuje te domene"
+    name: "Naziv podjetja"
+    new: "Novo podjetje"
+    notes: Zapiski
+    quick_company: "Hitro podjetje"
+    title: Podjetja
+    title1: podjetja?
+    title2: podjetje?
+  company_name: "Naziv podjetja"
+  confirm: Potrdi
+  connect_ticket: "Povezava do zahtevka"
+  contact_name: "Ime kontakta"
+  contacts: 
+    activation: "Pošlji aktivacijo"
+    active: 
+      no_contacts: "Na tem seznamu ni dodanega nobenega kontakta"
+      no_contacts_with_letter: "Nimate nobenega kontakta s črko '%{alphabet}'"
+    add_new_requester: "Dodaj novega zahtevnika"
+    contact: Kontakt
+    contacts: kontakti
+    contacts_in_companies: "%{contacts}"
+    deleted: 
+      no_contacts: "Ni kontaktov za obnovitev"
+      no_contacts_with_letter: "Niste izbrisali nobenega kontakta na črko '%{alphabet}'"
+    deleted_message: "Ta kontakt je izbrisan"
+    edit: "Uredi kontakt"
+    edit_contact: "Uredi kontakt"
+    emailnotverified: "E-pošta ni bila verificirana za ta kontakt!"
+    export_csv: "Izvozi v CSV"
+    form_placeholder: 
+      description: "Dodajte zapiske o posebnostih kontakta npr. - navijač L.a. Lakers"
+    import_csv: "Uvozi Kupce CSV"
+    import_google: "Uvozi iz Googla"
+    import_google_no: Ne
+    import_google_yes: Da
+    info1: "Ali ste prepričani da želite izbrisati ta kontakt?"
+    info2: "Spremeni tega uporabnika v Agenta"
+    info3: "Osnovne informacije o %{nick_name}"
+    info4: "Zadnji zahtevki od %{nick_name}"
+    info5: "Uporabnik še ni izdelal nobenega zahtevka"
+    info6: "Dodaj zapis posebnosti kontakta"
+    new: "Nov kontakt"
+    no_contacts: "Ni kontaktov"
+    quick_contact: "Hiter kontakt"
+    restore: Reaktiviraj
+    role: 
+      info: "Lahko vidi vse zahtevke tega podjetja"
+    save_changes: "Shrani spremembe"
+    send_activation: "Pošlji aktivacijsko e-pošto"
+    show_more: "Prikaži več zahtevkov od %{nick_name}"
+    showing: "Prikaz:"
+    status: 
+      active: Aktivno
+      all: Vsi
+      deleted: Izbrisano
+      unverified: Nepotrjeno
+      verified: Potrjeno
+    status_title: 
+      all: "Vsi kontakti"
+      deleted: "Izbrisani kontakti"
+      unverified: "Kontakti z nepotrjenimi e-poštnimi naslovi"
+      verified: "Aktivni kontakti"
+    tag_cloud: "Oblak Oznak kontaktov"
+    tags: Oznake
+    title: Kontakti
+    unverified: 
+      no_contacts: "Nimate nobenega neverificiranega kontakta"
+      no_contacts_with_letter: "Ni kontaktov s črko %{alphabet}"
+    verified: 
+      no_contacts: "Nimate nobenega kontakta"
+      no_contacts_with_letter: "Ni kontaktov s črko %{alphabet}"
+    working: "V delu"
+  contains: Vsebuje
+  continue_using_free: "Nadaljuj uporabo Freshdeska kot"
+  conv_contacts_info: "%{conv_type_msg} : %{to_emails}%{cc_emails_key}%{bcc_emails_key}"
+  conv_contacts_info_pop: "<ul><li class='left'>:</li><li></li></ul>%{conv_type_msg}%{to_emails}%{cc_emails_key}%{bcc_emails_key}"
+  conversation: Pogovor
+  country: Država
+  create: Ustvari
+  created_on: Ustvarjeno
+  credit_card: "Shranjena kartica"
+  credit_card_info: "Informacij o kreditni kartici"
+  current_plan: "Trenutna naročnina"
+  current_plan_details: "%{plan_name}Plan z %{agent_limit} agenti"
+  customers: Kupci
+  date: 
+    ago: Pred
+    day: Dan
+    days: Dni
+    from: "Od tega trenutka"
+    hour: Ura
+    hours: Ur
+    minute: Minuta
+    minutes: Minut
+    month: Mesec
+    months: Mesecev
+    now: Ravnokar
+    second: Sekunda
+    seconds: Sekund
+    week: Teden
+    weeks: Tednov
+    year: Leto
+    years: Let
+  date_title: Datum
+  day: "1 Dan"
+  days: Dni
+  deactivate: Deaktiviraj
+  default_category: "Privzeta kategorija"
+  default_category_description: "Vsa e-pošta poslana v %{full_domain} bo shranjena tukaj kot osnutki"
+  default_folder: Osnutki
+  default_folder_description: "Vsa e-pošta poslana v %{full_domain} bo shranjena tukaj kot osnutki"
+  default_reply_template: "Predloga odgovora Agenta"
+  delete: Izbriši
+  delete_confirm_scenario: "Ali ste prepričani da želite izbrisati ta scenarij?"
+  delete_reminder: "Izris te naloge?"
+  delete_the_ticket: "Izbriši zahtevek"
+  delete_topic_msg: "Dokočno izbriši temo"
+  description: Opis
+  disabled: Neaktivno
+  dispatch: 
+    act_to_perform: "Naloge za izvedbo"
+    add_condition: "Dodaj nov pogoj"
+    add_new_action: "Dodaj novo nalogo"
+    add_new_choice: "Dodaj novo možnost"
+    delete: "Resnično želite izbrisati to pravio?"
+    dispatch_rules: " Dispatch'r - Pravila"
+    edit: " Dispatch'r - Popravi pravilo "
+    helpcard: 
+      info1: "Dispatch’r vam omogoča, da vgradite pravila v proces podpore z izvajanjem vnaprej definiranih akcij na prejetih zahtevkih. Npr. Dispatch’r lahko avtomatično kategorizira. prioritizira in dodeli vsak prejet zahtevek pravemu agentu glede na vnešene pogoje. "
+      info2: "Ne pozabite, vrstni red pravil Dispatch’r-ja je pomemben. Za vsak prejet zahtevek bo Dispatch’r izpolnil prvo pripadajoče pravilo in se ustavil. Pravila lahko uredite tako da so najpomembnejša na vrhu."
+      tour: "Pomoč pri izdelavi novega pravila za Dispatch’r"
+    inactive_rules: "Neaktivna pravila"
+    info1: "Zahtevki povezani z naročnino"
+    info2: "Vsi zahtevki povezani z naročnino bodo dodeljeni Susan"
+    info3: "Kdaj naj se to pravilo upošteva"
+    info4: "Dispatch'r bo avtomatično poslal vnešen zahtevek na podlagi vnešenih pravil in akcij"
+    info5: "Ne pozabite, da je vrstni red pravil pomemben. Za vsak prejet zahtevek bo Dispatch'r izvedel prvo pravilo (glede na ujemanje) in se ustavil"
+    match_all: "Primerjaj vse"
+    match_any: "Primerjaj "
+    new: "Dispatch'r - Novo pravilo"
+    new_rule: "Novo pravilo"
+    reorder: Razvrsti
+    rule_name: "Ime pravila"
+    skip_notification_no: Ne
+    skip_notification_yes: Da
+    skip_notifications: "Prekoči obvestila pri novem Zahtevku"
+    title: Dispatch'r
+  does_not_contain: "Ne vsebuje"
+  done: Narejeno
+  draft: Osnutek
+  due_in: "Potrebno narediti v %{time_words}"
+  due_next_eight: "Nasjednjih 8 ur"
+  due_today: Danes
+  due_tomo: Jutri
+  edit: Uredi
+  edit_agent: "Uredi Agenta"
+  edit_email: "Uredi e-pošto"
+  edit_forum_category: "Uredi kategorijo foruma"
+  eight: "8 ur"
+  email: E-pošta
+  email_command_del_info_data: "Nasvet - določite unikatno kombinacijo treh ločil (posebni znaki priporočeni) ki ne bodo v nasprotju z običajnim odgovorom e-pošte. "
+  email_command_delimeter_label: "Ločilo za e-poštne ukaze"
+  email_command_delimeter_length_error_msg: "Prosimo vnesite vsaj 3 znake za ločilo"
+  email_command_preview_subject: Zadeva
+  email_command_preview_subject_value: "Zahtevek za podporo"
+  email_command_preview_to_email: Za
+  email_command_preview_to_email_value: "support@acme.freshdesk.com "
+  email_command_setting: 
+    helpcard: 
+      heading: "Nastavitve epoštnih ukazov"
+      info1: "Pri odgovorih na prejeta epoštna obvestila, lahko vključite \"epoštne ukaze\" da bi Freshdesk izvedel določene akcije na zahtevku. Ukazi bo Freshdesk odstranil in ne bodo vidni pošiljatelju zahtevka, medtem ko bo preostanek teksta viden v pogovoru."
+      info2: |-
+          Epoštni ukazi morajo slediti pravilni syntax -i in morajo biti umeščeni znotraj prednastavljenega razmejitvenega teksta. Npr ukaz " "@simonsays agent : John Roberts Status:Rešen @simonsays" 
+          bo zahtevek dodelil agentu John-u Robertsu in označil zahtevek kot Rešen.
+      info3: "Preostanek vašega epoštnega sporočila bo dodan kot pogovor v Freshdesk in poslan po epošti zahtevniku"
+      tour: "Pomoč pri ukazih epošte"
+  email_command_settings_heading: "Nastavitve e-poštnih ukazov"
+  email_command_settings_info: "Nastavite ločilo s katerim se bo prepoznalo e-poštne ukaze iz e-pošte"
+  email_commands_update_failed: "Sprememba nastavitev E-poštnih ukazov ni uspela"
+  email_commands_update_success: "Nastavitev ukazov e-pošte uspešno shranjeni"
+  email_configs: 
+    Personalized_email_replies: "Uporabi imena Agentov za Personalizirane e-poštne odgovore?"
+    Personalized_email_replies_info: "Če DA potem bodo odgovori agentov vsebovali ime agenta kot pošiljateljevo ime  (E-pošta bo še vedno pošta vaše podpore) Npr. %{current_user_name} &lt;%{current_account_domain}&gt;'. "
+    Personalized_email_replies_message: "Vaše nastavitve so bile uspešno shranjene"
+    Personalized_email_replies_no: Ne
+    Personalized_email_replies_yes: Da
+    add_bcc_text: "Dodaj Bcc:"
+    add_supp_emails: "Dodatna e-pošta podpore"
+    assign_to_product_info: "Če želite povezati e-pošto z novim produktom najprej <a href='{{products_path}}'> dodaj produkt </a>"
+    assign_to_product_msg: "Poveži to e-pošto podpore z produktom"
+    bcc_email: "Bcc naslov"
+    bcc_text: Bcc
+    change_this: "Spremeni to "
+    delete: "Ali ste prepričani da želite izbrisati to e-pošto?"
+    edit: Uredi
+    email: e-pošta
+    email_added_succ_msg: "E-pošta je bila dodana"
+    forwarding_email: "Posreduj na e-pošto"
+    freshdesk: Freshdesk
+    global_support_emails: "E-poštni naslovi globalne podpore"
+    group: Skupina
+    help_link_info: "Za več informacij preberite navodilo o Nastavitvah e-pošte"
+    helpcard: 
+      info19: "Freshdesk račun lahko nastavite tako, da uporabite epoštni naslov podpore z vašo domeno. npr, support@mycompany.com tako da preusmerite epoštna sporočila na <a target=\"_blank\" href=\"{{solution_url}}\">demo.freshdesk.com</a>. Za izdelavo novega epoštnega naslova podpore kliknite ne \"Uredi\" v globalnih nastavitvah epošte."
+      info20: "Uporaba več epošnih predalov"
+      info21: "V vašo podporo lahko dodate neomejeno število epoštnih naslovov - vhodnih in izhodnih (npr. info@yourcompany.com, prodaja@yourcompany.com, itd.). Nastavite lahko tudi, da Freshdesk avtomatično dodeli epošna sporočila vsakega predala specifični skupini."
+      info5: "Privzeta epošta vaše podpore je <a target=\"_blank\" href=\"{{solution_url}}\"> support@demo.freshdesk.com</a>. Vsako sporočilo poslano na ta naslov bo avtomatično spremenilo v zahtevek, ki ga agenti ustrezno obravnavajo."
+      tour1: "Pomoč pri nastavitvi e-pošte podpore"
+      tour2: "Pomoč pri nastavitvi več epoštnih predalov"
+    inactive_info1: "Vsi e-poštni naslovi podpore so še nepotrjeni, potrditi morate vsaj enega"
+    inactive_info2: "Do takrat bo za odgovore v uporabi privzeta e-pošta %{default_email}"
+    info1: "Vaši uporabniki pošiljajo e-pošto podpore k"
+    info10: "Novi zahtevki na tej e-pošti bodo avtomatično dodeljeni skupini"
+    info11: "Seznam vseh e-poštnih naslovov podpore "
+    info12: "Dodaj nov e-poštni naslov"
+    info13: "E-pošta vaše podpore je"
+    info14: "Vsa e-pošta na tem naslovu bo spremenjena v zahtevke"
+    info15: "Posreduj ta e-poštna sporočila na"
+    info16: "Zahtevek bo dodeljen"
+    info17: "Ta e-pošta bo avtomatično vključena v Bcc polju za vso komunikacijo povezano z zahtevki"
+    info18: "Avtomatično bcc vključen v odgovorih zahtevkov"
+    info2: "E-poštna sporočila podpore morate preusmeriti na vaše e-poštne naslove"
+    info3: "Freshdesk bo zajel ta e-poštna sporočila in jih prenesek v zahtevke"
+    info4: "<strong> OPOZORILO: </strong> Če imate več e-poštnih naslovov za podporo več produktov <a href='{{products_path}}'> jih lahko dodalte tu </a>."
+    info5: "Odgovori podpore iz Freshdeska bodo avtomatično uporabilii id vaše origonalne e-pošte podpore v polju Od  "
+    info7: "To je tudi vaš e-pošni naslov za odgovore npr. podpora@vasepodjetje.com"
+    info8: "Preusmeri e-pošto k"
+    info9: "Dodeli skupini"
+    make_primary: "Izberi kot primarno"
+    mark_as_primary_msg: "Resnično želite to e-pošto izbrati kot primarno za vašo podporo?"
+    name: Ime
+    name_info_msg: "Ime e-pošte ki bo uporabljena pri odgovorih na prejete zahtevke"
+    new_support_email: "Nova e-pošte podpore"
+    primary_supp_email: "Primarna e-pošta podpore"
+    primary_supp_email_tool_tip: "Primarna e-pošta podpore"
+    remove_msg: "Resnično želite odstraniti to e-pošto?"
+    reply_email: "E-pošta vaše podpore"
+    reply_emails: "E-pošni odgovori iz Freshdeska"
+    secondary_supp_email_tool_tip: "Izberi to e-pošto kot primarno"
+    send_verification_email: "Ponovno potrdi"
+    set_bcc_email_text: "Vnesi avtomatično bcc pošto"
+    spf_info: "Večino e-poštnih sporočil bo dostavljeno brez težav, da boste sigurni kreirajte <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\"> SPF zapis </a> v vaši DNS datoteki - če uporabljate e-pošto s svojo domeno. To zagotovi pravilno dostavo e-poštnih sporočil."
+    supp_email_add: "Naslov e-pošte podpore"
+    support_email: "e-pošta podpore"
+    support_email_exists: "e-pošte podpore že obstaja"
+    title: "nastavitve e-pošte"
+    unverified: "e-pošte ni verificirana"
+    unverified_info1: "poslali smo vam e-pošto z verifikacijsko povezavo.  Po verifikaciji te e-pošte bo e-pošta vaše podpore postala aktivna "
+  email_notifications: 
+    agent_notification: "Obvestilo agenta"
+    customize_email: "Uredi e-poštp"
+    default_reply_template_info: "Predloga bo vidna avtomatično pri odgovorih vseh agentov, kadarkoli bodo odgovarjali na zahtevek"
+    default_reply_template_title: "Predloga odgovora Agenta"
+    do_not_delete_ticket_id_from_subject: "Da bi zajeli odgovore kupca kot komunikacijo zahtevka mora le ta v zadevi vsebovati ID zahtevka"
+    edit_reply_template: "Uredi predlogo"
+    event: Dogodek
+    helpcard: 
+      info1: "Freshdesk lahko nastavite tako, da avtomatično pošilja obvestila agentom in zahtevnikom ko se zgodijo specifični dogodki.Npr. obvestite lahko kupca ko agent doda komentar k zahtevku s pomočjo oblikovanega epoštnega sporočila."
+      info2: "Obvestila lahko izklopite in izdelate pravilo v Dispatch’r-ju ali Nadzorniku kjer lahko dopolnete neko aktivnost"
+      info3: "Nastavite lahko tudi predloge epošte odgovorov agenta in dodate dinamično vsebino s pomočjo sider."
+      tour1: "Pomoč pri urejanju e-poštnih obvestil"
+      tour2: "Pomoč pri urejanju predlog odgovorov"
+    insert_placeholder: "Vstavite vnosna mesta"
+    modify_agent_template: "Uredi predlogo e-pošte Agenta"
+    modify_requester_template: "Uredi predlogo e-pošte prijavitelja"
+    requestor_notification: "Obvestilo prijavitelja"
+    subject: Zadeva
+    title: "E-poštna obvestila"
+  email_notifications_agent_selection_msg: "Izberi agenta za obvestilo"
+  enabled: Aktivno
+  ends_with: "Zaključi z"
+  enter_billing_for_free: "Prosimo vnesite podatke kreditne kartice preden izberete plačljivo naročnino"
+  enter_message: "Vnesite vaše sporočilo tu"
+  enter_payment: "Vnesite podatke o plačilu.."
+  enter_payment_details_to_add: "Vnesite podatke o plačili za dodajanje več agentov"
+  error_in_plan: "Napaka pri spremembi naročnine"
+  errors: 
+    actions_empty: "Aktivnosti ne morejo biti prazne"
+    conditions_empty: "Pogoji morajo biti izpolnjeni"
+  errors_in_payment: "Napaka pri plačilu"
+  errors_in_payment_info: "Napaka pri plačilih"
+  errors_in_plan_change: "Napaka pri urejanju"
+  errors_in_your_address: "Naoake pri vašem naslovu"
+  estate_brief: "Podpora nivo Podjetje"
+  estate_details: "Vse v &quot;Garden&quot; Plan plus, Tekmovanje."
+  example: primer
+  expires: Poteče
+  export_data: 
+    closed_at: Zaprto
+    contact_info: "Izvozi aktivne kontakte v .CSV"
+    created_at: "Izdelano ob"
+    custom_filter: "Določi datum"
+    export_to_csv: "Izvozi v CSV"
+    field_select_title: "Izberi polja za izvoz"
+    filter_label_agent: "Filtiraj zahtevke po:"
+    filter_label_customer: "Filtriraj zahtevke ustvarjene v"
+    from: Od
+    info: "Izvozi informacije zahtevkov trenutnega pogleda v cvs datoteko."
+    mail: 
+      body: "V priponki je CSV datoteka"
+      info: "Podatki vašega zahtevka bodo poslani na vaš e-poštno naslov v kratkem!"
+      subject: "%{filter} - (%{start_date} do %{end_date})"
+    no_fields_selected: "Prosimo izberite vsaj eno od spodnjih možnosti za nadaljevanje"
+    resolved_at: Razrešeno
+    select_header: "Izberite polja za izvoz"
+    seven_days: "Zadnjih 7 dni"
+    thirt_days: "Zadnjih 30 dni"
+    to: Za
+    twenty_four: "Od včeraj"
+  export_data_successfull: "Podatki vaše podpore bodo v kratkem poslani na vaš e-poštni naslov!"
+  f_request: "Zahteva za funkcionalnost"
+  facebook: 
+    deleted: "Facebook stran %{facebook_page} je odstranjena"
+    not_authorized: "Niste avtorizirani s strani Facebooka"
+  facebook_source: Facebook
+  facebook_user: "Facebook uporabnik"
+  failure: Napaka..
+  fav_delete_msg: "Ali ste prepričani da želite izbrisati to fav ikono?"
+  favicon: Favicom
+  feedbackwidget_bgcolor: "Barva ozadja"
+  feedbackwidget_btcustomize: "Urejanje gumbov"
+  feedbackwidget_custom_image: "URL slike"
+  feedbackwidget_custom_image_info: "Če uporabljate sliko bo barva in tekst ignoriran."
+  feedbackwidget_defaultbutton: Podpora
+  feedbackwidget_defaulttitle: "Pomoč &amp; Podpora"
+  feedbackwidget_embed_code: "Koda za vstavljanje modula"
+  feedbackwidget_embed_code_intro: "Prosimo kopirajte in prilepite spodnjo kodo kamorkoli pred &lt;/body&gt; tagom v html predlogi vaše strani oziroma na vsaki strani kjer želite imeti Freshdesk modul. "
+  feedbackwidget_form_title: "Naslov modula"
+  feedbackwidget_formcustomize: "Urejanje forme"
+  feedbackwidget_help_para1: "Pridobite povratne informacijo s strani kupcev tako da dodate zavihek podpora na spletno stran."
+  feedbackwidget_help_para2: "Nastavljiv zavihek se odpre v formi za oddajo zahtevka"
+  feedbackwidget_help_title: "Modul za oddajo mnenj"
+  feedbackwidget_intro: "Spodaj uredite vaš freshdesk modul in preglejte spremembe v realnem času"
+  feedbackwidget_offset_info: "Odmik bo razdalja gumba modula (pixli) od leve ali vrha ekrana odvidno od vrste nastavljene poravnave."
+  feedbackwidget_offset_label: "Odmik za "
+  feedbackwidget_position: Pozicija
+  feedbackwidget_text: Tekst
+  feedbackwidget_title: "Nastavitve modula"
+  filter_options: 
+    customers: Kupci
+    due_by: Zapade
+    group_id: Skupine
+    priority: Prioriteta
+    requester: Zahtevniki
+    responder_id: Agenti
+    source: Vir
+    status: Status
+    tags: Oznake
+    ticket_type: Tip
+  first_name: Ime
+  first_response_sla: "Prvi odziv kršitve SLA"
+  flash: 
+    account: 
+      update: 
+        success: "Podrobnosti vašega up.računa so bile dopolnjene"
+    agents: 
+      create: 
+        success: "Agent je ustvarjen in navodila za aktivacijo so bila poslala na %{email}!"
+      delete: 
+        not_allowed: "NImate dostopa za izbris!"
+      to_contact: "Agent uspešno spremenjen v Kontakt"
+    application: 
+      already: "Integracija je že nameščena"
+      install: 
+        error: "Napaka pri vzpostavitvi integracije"
+        success: "Integracija je uspešna"
+      not_installed: "Integracija še ni nameščena"
+      uninstall: 
+        error: "Napaka pri prekinitvi integracije"
+        success: "Prekinitev integracije uspešna"
+      update: 
+        error: "Napaka pri nastavitvi integracije"
+        success: "Spremembe integracije uspešno shranjene"
+    business_hours: 
+      update: 
+        failure: "Napaka pri spremembi delovnega časa"
+        success: "Spremembe delovnega časa uspešno shranjene"
+    contacts: 
+      cancel: prekliči
+      create: 
+        success: "Kontakt uspešno dodan"
+      info_select: "Prosimo izberite vsaj 1 uporabnika."
+      to_agent: "Kontakt uspešno spremenjen v Agenta"
+    contacts_import: 
+      failure: "Prosim ponoviite še enkrat"
+      no_file: "Prosimo naložite datoteko"
+      success: "%{created_count} je bilo na novo uvoženih in %{updated_count} je bilo osveženih"
+    custom_fields: 
+      update: 
+        failure: "Spremembe polj zahtevka neuspešno shranjene"
+        success: "Spremembe polj zahtevka uspešno shranjene"
+    customers: 
+      info_select: "Prosimo izberite vsaj 1 kupca"
+    data_import: 
+      zendesk: 
+        failure: "Neuspešen uvoz iz zendeska...poiskusite ponovno"
+        no_contact: "Kontakt z zendeskom ni uspel. Prosimo preverite vaše podatke in poiskusite znova !!"
+        running: "Trenutno že poteka uvoz zendesk podatkov, poiskusite pozneje!!"
+        success: "Uvoz vaših podatkov se je začel, ko bo končan vas boste prejeli e-pošto. Uvoz lahko traja nekaj minut odvisno od količine podatkov."
+    daypass: 
+      failed: "Napaka pri dodajanju dnevne licence"
+      success: "%{quantity} Dnevnih licenc je bilo uspešno dodano vašemu up. računu"
+    email_notifications: 
+      update: 
+        success: "Spremembe E-poštnih sporočila so shranjene"
+    email_settings: 
+      activation: 
+        already_activated: "%{reply_email} je bila že aktivirana!"
+        invalid_code: "Aktivacijska koda ni validna!"
+        success: "%{reply_email} je aktivirana!"
+      make_primary: 
+        success: "<b>%{reply_email}</b> je sedaj primarni e-poštni naslov vaše podpore!"
+      send_activation: 
+        success: "Verifikacijska e-pošta je bila poslana %{reply_email} !"
+    facebook: 
+      updated: "Sprememba nastavitev Facebooka uspešno shranjena"
+    filter: 
+      delete_success: "Pogled je uspešno izbrisan!"
+      save_success: "Pogled je uspešno shranjen"
+    forum: 
+      page_not_found: "Tega foruma ni možno najti. Lahko da je izbrisan ali pa je URL napačen."
+    forum_category: 
+      page_not_found: "Kategorije ni možno najti. Lahko da je izbrisana ali ste vpisali napačen URL."
+    g_app: 
+      authentication_failed: "Avtentikacija neuspešna"
+      authentication_success: "Avtentikacija uspešno zaključena"
+      no_subdomain: "Ni take subdomene, Prosimo poiskusite ponovno."
+      user_deleted: "Uporabnik izbrisan"
+    general: 
+      access_denied: "Nimate privilegijev dostopa za to stran"
+      create: 
+        failure: "%{human_name} ni možno shraniti"
+        success: "%{human_name} je dodan"
+      destroy: 
+        failure: "%{human_name} ni možno izbrisati"
+        success: "%{human_name} je izrisan"
+      insufficient_privilege: 
+        admin: "Nimate pravic za spremembo, Prosimo prijavite se kot administrator."
+      login_not_needed: "Morate se odjaviti za dostop do te strani"
+      need_login: "Za dostop do te strani se morate prijaviti"
+      restore: 
+        failure: "%{human_name} ni možno obnoviti"
+      update: 
+        success: "spremembe %{human_name} so shranjene"
+    gmail_gadgets: 
+      account_not_associated: "Vaš Gmail račun še ni povezan z nobenim Freshdesk računom. Uporabite navigacijsko povezavo za vzpostavitev povezave."
+      agent_missing: "V Freshdesku niste določen kot Agent. Spremenite uporabnika v agenta in poiskusite znova."
+      agent_not_active: "V Freshdesku je bil vaš e-poštni naslov izbrisan ali deaktiviran. Aktivirajte ga in poiskusite znova."
+      gmail_request_unverified: "Napače Gmail podpis. Prosimo poiskusite znova po prijavi."
+      kvp_missing: "Napačna avtentikacija. Ponovno odprite vašo pošto in poiskusite znova."
+      unknown_error: "Neznana napaka na strežniku. Prosimo kontaktirajte podporo"
+      user_missing: "V Freshdesku vaš e-poštni naslov ne obstaja. Dodajte agenta z vašo e-pošto in poiskusite znova."
+      viewer_id_not_sent_by_gmail: "Napačna Gmail zahteva. Prosimo prijavite se in poiskusite znova."
+    login: 
+      failed: "Prijava uspešna."
+      sso: 
+        expected_params: "Pričakovani parametri so ime, e-pošta in \"hash\" ki niso prisotni"
+      success: "Uspešna prijava!"
+      verify_credentials: "Prijava ni uspela. Preverite vaše podatke."
+    not_allowed_in_demo_site: "Demo stran nima tega dostopa!"
+    password_resets: 
+      email: 
+        reset: "E-pošta za resetiranje je bila poslana %{requester}."
+        success: "Navodila za reset gesla so bila poslana po e-pošti. Prosimo preverite. "
+        user_not_found: "Uporabnika s tem e-poštnim naslovom ne obstaja"
+      update: 
+        invalid_token: "Žal nismo uspeli locirati vašega računa. Če imate težave poiskusite kopirati URL iz e-pošte v brskalnik ali pa ponovno začnite proces za resetiranje gesla."
+        success: "Geslo uspešno spremenjeno"
+    portal: 
+      tickets: 
+        create: 
+          success: "Vaš zahtevek je kreiran in kopijo le tega smo vam poslali po e-pošti."
+    portal_settings: 
+      update: 
+        success: "Spremembe nastavitev portala so shranjene"
+    post: 
+      deleted: "Objava v {title} je izbrisana"
+      page_not_found: "Te objave ni možno najti. Lahko da je izbrisana ali pa je URL napačen."
+    profile: 
+      api_key: 
+        reset_failure: "Napaka pri resetiranju ključa API"
+        reset_success: "Ključ API-ja je bil uspešno resetiran"
+      change_password: 
+        failure: "Sprememba gesla ni bilo možno izvesti, prosimo preverite vaše trenutno geslo"
+        success: "Geslo uspešno spremenjeno, Prosimo ponovno se prijavite"
+      update: 
+        success: "Spremembe vašega profila so shranjene"
+    solutions: 
+      remove_tag: 
+        success: "Ta oznaka je bila odstranjena iz Rešitve"
+    sso: 
+      update: 
+        success: "Spremembe vašega up. računa so bile shranjene"
+    tickets: 
+      delete_forever: 
+        success: "%{tickets} izbrisanih"
+      empty_spam: 
+        success: "Vsi zahtevki v mapi Spam so izbrisani"
+      empty_trash: 
+        success: "Vsi zahtevki v košu so izbrisani"
+      merge: 
+        success: "Zahtevki so uspešno združeni"
+        wrong_ticket_id: "Prosimo vpišite validen id zahtevka"
+      monitor: 
+        start: "Sedaj nadzorujete ta zahtevek"
+        stop: "Ne nadzorujete več tega zahtevka"
+      notes: 
+        create: 
+          failure: "Pri dodajanju zapiska zahtevku je prišlo do napake. Prosimo poiskusite znova."
+          invalid_email: "Nimate pristojnosti za dodajanje zapiska"
+          success: "Zapisek je dodan k vašemu zahtevku"
+      reply: 
+        success: "Odgvor je poslan"
+      timesheet: 
+        timer_stopped: "Štoparica zahtevka je ustavljena"
+      unwatch: 
+        failure: "Odstranitev spremljanja zahtevka ni bila uspešna."
+        success: "%{tickets} odstranjeno iz seznama opazovanja"
+        unsubscribe_success: "Zahtevek je odstranjen iz vašega seznama opazovanih zahtevkov"
+    to_dos: 
+      complete: 
+        success: "To-do je označen kot opravljen."
+    topic: 
+      deleted: "Tema {title} je izbrisana"
+      page_not_found: "Te teme ni možno najti. Lahko da je izbrisana ali pa je URL napačen."
+    twitter: 
+      updated: "Nastavitev twitterja je shranjena"
+  folder: 
+    add_folder: "Dodaj mapo"
+    edit: "Uredi mapo"
+    info1: "Ali ste prepričani da želite izbrisati to mapo?"
+  folder_edit_not_allowed: "Te mapo ni možno urejati"
+  footer: 
+    by_freshdesk: "by Freshdesk"
+    helpdesk_software: "Program za podporo"
+  for: za
+  forgot_password: "Pozabljeno geslo"
+  forgot_password_intro: "Izpolnite spodnjo formo in navodila za reset gesla vam bodo poslana na e-pošto."
+  formatting_help: "Urejanje pomoči"
+  forum: 
+    confim_msg1: "Ali ste prepričani da želite izbrisati ta forum?"
+    edit: "Uredi forum"
+    new: "Nov forum"
+    start_topic: "Odprite temo"
+    title: Forumi
+    types: 
+      announce: Najave
+      howto: Vprašanja
+      ideas: Ideje
+      problem: Problemi
+    verb: 
+      announcement: Objavil
+      ideas: "Idejo objavil"
+      problems: "Problem sporočil"
+      questions: "Vprašanje je postavil"
+    visibility: 
+      agents: Agenti
+      all: Vsi
+      anyone: Kdorkoli
+      logged_users: "Prijavljeni uporabniki"
+      select_company: "Izberi podjetja"
+  forum_confirm_msg1: "Ali ste prepričani da želite izbrisati to kategorijo?"
+  forum_key: Forum
+  forum_shared: 
+    post: 
+      answer: Odgovor
+      delete_comment: "Izbriši komentar"
+      delete_comment_confirm: "Izbriši komentar? Ste prepričani?"
+      delete_post: "Izbriši objavo"
+      delete_post_confirm: "Izbrišem to objavo? Ste prepričani?"
+      edit_comment: "Uredi komentar"
+      edit_post: "Uredi objavo"
+      mark_answer: "Označi kot odgovor"
+      post_accepted_as_a_good_answer: "Ta objava je izbrana kot dober odgovor na to temo"
+      posted_on: "%{user_name} na %{post_date}"
+      unmark_answer: "Odznači kot odgovor"
+    topic_vote: 
+      howto: 
+        vote_button: "Imam sledeče vprašanje"
+        vote_info_1: "<a id='users-voted' href='#' title='See who has this'>%{vote} Oseba </a> ima sledeče vprašanje"
+        vote_info_2: "<a id='users-voted' href='#' title='See who have this'>%{vote} Oseb </a> ima to vprašanje"
+        vote_info_include_1: "Vi imate sledeče vprašanje"
+        vote_info_include_2: "Vi in <a id='users-voted' href='#' title='See who have this'> %{vote} oseb </a> ima to vprašanje"
+        voted_users_widget_title: "Osebe, ki imajo to vprašanje"
+      ideas: 
+        vote_button: "Všeč mi je ta ideja"
+        vote_info_1: "<a id='users-voted' href='#' title='See who likes this'> %{vote} Oseba </a> je všeč ta ideja"
+        vote_info_2: "<a id='users-voted' href='#' title='See who like this'> %{vote} Oseb </a>je všeč ta ideja"
+        vote_info_include_1: "Vi imate radi to idejo"
+        vote_info_include_2: "Vi in <a id='users-voted' href='#' title='See who like this'> %{vote} osebam </a> je všeč ta ideja"
+        voted_users_widget_title: "Osebe, ki jim je všeč ta ideja"
+      problem: 
+        vote_button: "Imam sledeč problem"
+        vote_info_1: "<a id='users-voted' href='#' title='See who has this'>%{vote} oseba </a> ima problem"
+        vote_info_2: "<a id='users-voted' href='#' title='See who have this'>%{vote} Oseb </a> ima ta problem"
+        vote_info_include_1: "Vi imate ta problem"
+        vote_info_include_2: "Vi in <a id='users-voted' href='#' title='See who have this'> %{vote} oseb </a> ima ta problem"
+        voted_users_widget_title: "Osebe, ki imajo ta problem"
+      unlike: "NI všeč"
+  forums: 
+    form: 
+      type: "Tip foruma"
+      visibility: "VIdnost foruma"
+      visible_to: Vidno
+    search: 
+      placeholder: "Išči %{name}"
+    search_all: 
+      placeholder: "Išči po vseh temah"
+  forums_order: 
+    overview: Pregled
+    popular: Popularno
+    recent: Zadnje
+  forward: Posreduj
+  forwarded_email: "Posredovana e-pošta"
+  forwarded_to: Posredovano
+  four: "4 ure"
+  free_account: "Brezplačen up. račun"
+  from_email: "Iz e-pošte"
+  fwd_success_msg: "Zahtevek je uspešno posredovan"
+  fwd_to: Posreduj
+  gamification: 
+    leaderboard: 
+      love_trophie_info: "Agent z največ točk zadovoljstva ta mesec"
+      love_trophie_info_group: "Skupina z največ točk zadovoljstva ta mesec"
+      love_trophie_label: "Prvak podpore"
+      love_trophie_label_group: "Prvaki podpore"
+      mvp_trophie_info: "Agent z največ točk skupno ta mesec"
+      mvp_trophie_info_group: "Skupina z največ točkami ta mesec"
+      mvp_trophie_label: "Najvrednejši igralec"
+      mvp_trophie_label_group: "Najvrednejša ekipa"
+      sharpshooter_trophie_info: "Agent, ki je razrešil največ zahtevkov v prvem odgovoru ta mesec"
+      sharpshooter_trophie_info_group: "Skupina, ki je razrešila največ zahtevkov v prvem odgovoru ta mesec"
+      sharpshooter_trophie_label: Ostrostrelec
+      sharpshooter_trophie_label_group: Ostrostrelec
+      speed_trophie_info: "Agent z največ točk za hitro razrešitev ta mesec"
+      speed_trophie_info_group: "Skupina z največ točkami za hitro razrešitev ta mesec"
+      speed_trophie_label: "Najhitrejši "
+      speed_trophie_label_group: Najhitrejši
+    levels: 
+      beginner: Začetnik
+      expert: Ekspert
+      guru: Guru
+      intermediate: Povprečen
+      master: Mojster
+      professional: Profesionalec
+    notifications: 
+      achieved_quest: "<b> Bravo!! </b><br/> dosegli ste <b>%{name}</b>"
+      newlevel: "<b> Bravo!! </b><br/> Postali ste <b>%{name}</b>"
+  garden_brief: "Podpora za več produtov"
+  garden_details: "Vse v &quot;Blossom&quot; Plan plus, Podpora več produktov, Napredna poročila, Skupnosti, Email &amp; Telefonska podpora"
+  go_back_admin: "Nazaj na Admin"
+  greater_than: "Večji kot"
+  group: 
+    assigntime: 
+      day: "1 Dan"
+      eight: "8 Ur"
+      four: "4 Ure"
+      half: "30 minut"
+      one: "1 Ura"
+      threeday: "3 Dni"
+      two: "12 ur"
+      twoday: "2 Dni"
+    edit: "Uredi Skupino"
+    helptext: "Agente lahko razvrstite v specifične skupine npr \"Prodaja\" in \"Upravljanje produkta\". Segmentirate jih lahko v oddelke, kar omogoči da jim hitro dodelite zahtevke, pripravite specifične prednastavljene odgovore, postavite druga poslovna pravila in generirate poročila na nivoju skupine. Določen agent je lahko član več skupin."
+    info1: "Agenti v Skupini"
+    info2: "V tej skupini ni nobenega Agenta"
+    info3: "Pošlji eskalacijsko e-pošto k"
+    info4: "Če je zahtevek nedodeljen več kot "
+    info5: "Ste prepričani"
+    name: "Ime skupine"
+    new: "Nova skupina"
+    select_agents: "Izberite Agente"
+    title: Skupine
+    tour: "Pomoč pri izdelavi nove skupine agentov"
+  half: "30 Minut"
+  header: 
+    assumed_text: "Gledate kot"
+    login: prijava
+    new_ticket: "Nov zahtevek"
+    search: Iskanje
+    signout: Odjava
+    submit_a_ticket: "Pošljanje zahtevka"
+    tabs: 
+      admin: Admin
+      checkstatus: "Preverite status vašega zahtevka"
+      company_tickets: "Zahtevki podjetja"
+      customers: Kupci
+      dashboard: "Osnovna navigacija"
+      forums: Forumi
+      home: Domov
+      reports: Poročila
+      social: Socialno
+      solutions: Rešitve
+      tickets: Zahtevki
+    welcome: Dobrodošli
+  header_logo: "Logo v glavi"
+  helpdesk: 
+    dashboard: 
+      index: 
+        todo_title: Naloge
+      summary: 
+        due_today: "Rok danes"
+        on_hold: "Na čakanju"
+        open: Odprto
+        overdue: Zamujeno
+        pending: Nerešeno
+        title: "Povzetek zahtevka"
+        unassigned: Nedodeljeno
+    flash: 
+      assigned_reassigned: "%{type} za %{username}"
+      assigned_to_you: "%{tickets} dodeljeni meni"
+      assignedto: "%{tickets} je dodeljen %{username}"
+      closing_the_ticket_failed: "Zapiranje zahtevka ni uspelo"
+      flagged_spam: "%{tickets} označen kot Spam. %{undo}"
+      flagged_unspam: "%{tickets} odstranjenih iz spam mape"
+      removed_from_spam: "%{tickets} odstranjenih iz spam mape"
+      sending_failure: "Napake pri pošiljanju odgovorov sledečih zahtevkov:"
+      tickets_closed: "%{tickets} zaprtih"
+      tickets_update: "%{tickets} obdelanih"
+      tickets_update_with_errors: "%{tickets} je bilo dopolnjenih, nekatere potrebujejo vašo pozornost."
+    merge: 
+      confirm_merge: 
+        confirm_and_merge: "Potrdi in združi"
+        source_merge_description: "Ta zahtevek je zaprt in združen z %{ticket_id}"
+        source_ticket_close_info: "Zahtevek bo zaprt s sledečim sporočilom"
+        target_merge_description1: "Zahtevek %{ticket_id}%{ticket_subject} je združen s to zahtevo"
+        target_merge_description2: "Opis v zahtevku %{ticket_id}"
+        target_ticket_updated_info: "Ta zahtevek bo dopolnjen s tem zapiskom in vsa komunikacija bo premaknjena"
+        will_be_merged_into: "Bo združen v "
+      merge: 
+        enter_ticket_id: "Vnesite id zahtevka"
+        merge: Združi
+        merge_into: "Združi z?"
+        other_tickets: "Ostale zahtevke je sporočil %{requester}  "
+    rebranding: 
+      name: 
+        info: "To bo ime vaše podpore in bo prikazano v glavi in e-poštnih obvestilih"
+    shared: 
+      facebook_form: 
+        title: "Odgovori %{user}"
+      forward_form: 
+        addbcc: "Dodaj Bcc"
+        addcc: "Dodaj Cc"
+        bcc: Bcc
+        cc: Cc
+        removebcc: "Odstrani Bcc"
+        removecc: "Odstrani Cc"
+      history: 
+        recent_item: "Zadnji izdelki"
+      reply_form: 
+        addbcc: "Dodaj Bcc"
+        addcc: "Dodaj Cc"
+        bcc: Bcc
+        cc: Cc
+        removebcc: "Odstrani Bcc"
+        removecc: "Odstrani Cc"
+        title: "Odgovori na %{email}"
+      tweet_form: 
+        title: "Odgovori %{user}"
+    tags: 
+      index: 
+        title: Oznake
+    ticket_created_on_n_by: "od %{requester} %{date_time}"
+    ticket_notifier: 
+      reply: 
+        happy: Odlično
+        neutral: Ok
+        unhappy: "Ni uredu"
+    tickets: 
+      add_watcher: 
+        add_button: Dodaj
+        add_watcher_link: "Dodaj opazovalca"
+        all_agents_watching: "Vsi agenti spremljajo ta zahtevek"
+        cancel: Prekliči
+        mail: 
+          activity: Aktivnost
+          added_as_watcher: "%{agent_name} vas je dodal kot opazovalca Zahtevka"
+          agent_response: "Odgovor agenta"
+          customer: Kupec
+          customer_response: "Odziv kupca"
+          hi: Hi
+          new_activity: "Nova aktivnost na opazovanem zahtevku"
+          requester: Zahtevnik
+          response: "%{responder} je odgovoril na zahtevek, ki ga opazujete"
+          status_change: "%{agent_name} ima %{status} na zahtevku, ki ga opazujete"
+          stop_emails: "Prenehaj spremljati ta zahtevek"
+          ticket: Zahtevek
+          ticket_details: "Opis zahtevka"
+        me: Jaz
+        no_agents: "Noben agent ne spremlja tega zahtevka"
+        no_watcher_text: "Noben agent ne spremlja tega zahtevka"
+        pick_agents: "Dodaj agente"
+        ticket_watchers: "Opazovalci zahtevka"
+        unwatch: "Ne spremljaj"
+        view_watchers_link: "Pokaži opazovalce"
+        watcher_text: "Agenti, ki so dodani kot opazovalci bodo prejeli obvestila ko se zahtevek spremeni oz ureja."
+      close_notice: 
+        ticket_has_been_cloased: "Zahtevek je bil zaprt"
+        view_ticket: "Poglej zahtevek"
+      components: 
+        due_date: 
+          due: Poteče
+          earlier_date_and_time: "Prosimo izberite datum & čas ki je novejši kot čas nastanka zahtevka"
+          next_week: "Naslednji teden"
+          set_date_time: "Določi datum/ čas"
+          specific_date: "Specifičen datum/čas"
+          this_week: "Ta teden"
+          today: Danes
+          tomorrow: Jutri
+          when_is_it_due: "Kdaj zapade?"
+        scenarios: 
+          execute_this_scenario: "Izveden scenarij"
+      customview: 
+        new: 
+          give_a_name: "Imenuj pogled"
+          visible_to: "Ta pogled je viden"
+      execute_scenario_notice: 
+        actions_performed: "Izvedene akcije"
+        execute_the_scenario: "Izvedel scenarij <b>%{rule_name}</b>"
+        view_details: "poglej podrobnosti"
+      friendly_status: 
+        customer_responded: "Kupec je odgovoril"
+        elapsed: "Odgovor do"
+        new: Novo
+        overdue: Pretečeno
+        resolved: Rešeno
+      no_email_found: "Uporabnik s tem %{email} ni na voljo v sistemu"
+      note: 
+        attachment_size: 
+          exceed: "Ops! Vaša priponka je večja kot 15 MB. Prosimo pripnite manjšo datoteko"
+        delete_note: "Zahtevek odstranimo iz komunikacije?"
+        edit_note: "Popravi zapisek"
+        inbound_email: "Prejeta e-pošta"
+        outbound_email: "Poslana e-pošta"
+        posted_on: "%{user_name} na %{note_date}"
+        private_note: "Zaseben zapisek"
+        public_note: "Javen zapisek"
+        split_this_as_new_ticket: "Razdeli v nov zahtevek"
+        split_ticket_confirm: "Razdeli ta zapisek in izdelaj zahtevek"
+      overlay_fwd_time: "posredovano pred %{time_in_words}"
+      overlay_note_time: "zapisek dodan pred %{time_in_words}"
+      overlay_reply_time: "odgovorjeno pred %{time_in_words}"
+      save_and_close_notice: 
+        ticket_saved_and_closed: "Zahtevek je bil izdelan in zaprt."
+        view_ticket: "Poglej zahtevek"
+      show: 
+        conversation: Komunikacija
+        linked_ticket: "Ta zahtevek je povezan s forumom"
+        meta: meta
+        timesheet: Časovnica
+      tabular_view: 
+        assigned: Dodeljeno
+        posted: Objavljeno
+        priority: Prioriteta
+        sla: "Rešiti do"
+        status: Status
+        time_ago: "pred %{time_in_words} "
+        title: Naslov
+      view_ticket: 
+        conversation: Komunikacija
+        linked_ticket: "Ta zahtevek je povezan s forumom"
+        meta: meta
+        timesheet: Časovnica
+      views: 
+        all: "Vsi zahtevki"
+        all_tickets: "Vsi zahtevki"
+        closed: "Zaključeni zahtevki"
+        deleted: Koš
+        due_today: "Zahtevki, ki zapadejo danes"
+        monitored_by: "Zahtevki, ki jih nadziram"
+        my_all: "Vsi moji zahtevki"
+        my_closed: "Zahtevki, ki sem jih zaprl"
+        my_due_today: "Moji zahtevki ki zapadejo danes"
+        my_on_hold: "Moji zahtevki na čakanju"
+        my_open: "Moji odprti zahtevki"
+        my_overdue: "Moji zahtevki v zamudi"
+        my_resolved: "Moji rešeni zahtevki"
+        new: "Novi zahtevki"
+        new_and_my_open: "Novi & Moji odprti zahtevki"
+        new_my_open: "Novi & Moji odprti zahtevki"
+        no_tickets: "V trenutnem pogledu nimate nobenega zahtevka"
+        on_hold: "Zahtevki v čakanju"
+        open: "Odprti zahtevki"
+        open_or_pending: "Odprti ali nerešeni"
+        overdue: "Zahtevki v zamudi"
+        resolved: "Rešeni zahtevki"
+        resolved_or_closed: "Rešeni ali zaprti"
+        select: "Izberi pogled .."
+        spam: Spam
+        tags: "Oznake Zahtevka"
+        this_view: "ta pogled"
+        tickets_by: "Zahtevki od"
+        tickets_twitter: "Zahtevki preko twitterja"
+    time_sheets: 
+      agent: Agent
+      billing_type: "Tip obračunavanja"
+      customer: Kupec
+      executed_at: Datum
+      form: 
+        agent: Agent
+        hours: Ure
+        note: Zapisek
+      group_by: "Združi po"
+      hours: Ure
+      index: 
+        no_timeentry: "Ni zapisa časa za ta zahtevek"
+      new: 
+        title: "Nov vnos časa"
+      note: Zapisek
+      report: 
+        no_timeentry: "Na voljo ni nobenega podatka"
+        total: Skupaj
+      ticket: Zahtevek
+      time_entry: 
+        toggle_timer_false: "Ustavi štoparico"
+        toggle_timer_true: "Vklopi štoparico"
+  helpdesk_title: Podpora
+  high: Visoka
+  home: 
+    mobile_index: 
+      email: e-pošta
+      forgot: "Pozabil sem geslo?"
+      help: Pomoč
+      login: Prijava
+      password: Geslo
+      remember: "Zapomni se me na tem računalniku"
+      sign_in_using: "Prijavi se z"
+      sign_in_using_google: "Prijavi se z Google računom"
+  how_to: Vprašanje
+  identity_reverted_error_msg: "Oprostite, nismo našli izvirnega uporabnika"
+  identity_reverted_msg: "Povrnili ste si vašo identiteto"
+  import: Uvozi
+  import_added_newly: "Dodano zadnje"
+  import_articles: "Članki z rešitvami"
+  import_data: "Datum uvoza"
+  import_example_title: "To je primer CSV datoteke"
+  import_forum: Forumi
+  import_groups: Skupine
+  import_ignore_first_row: "Preskoči prvo vrstico (imena stolpcev)"
+  import_note_info: "Polja v vašem CSV datoteki so lahko v kateremkoli zaporedju. Dodajte ustrezna imena stolpcev. Edino obvezno polje je e-pošta."
+  import_org_companies: "Organizacije &rarr; Podjetja "
+  import_solution_article: "Spremeni članek v rešitev"
+  import_solution_article_info: "Obvestilo: Kometarji na forumu ne bodo shranjeni"
+  import_step1_info: "Izberite CSV datoteko in kliknite uvozi"
+  import_step2_info: "Povežite polja v CSV datoteki s polji v bazi in uvozite"
+  import_ticket_group: "Zahtevki  &amp; Skupine"
+  import_tickets: Zahtevki
+  import_topics: Teme
+  import_updated: Spremenjeno
+  import_user_notification: "Pošlji uporabniku aktivacijsko e-pošto med uvozom"
+  import_user_org: "Uporabniki &amp; Podjetja"
+  import_user_org_text: "Vsi Uporabniki &amp; Podjetja vašega Zendesk računa bodo uvoženi v trenuten Freshdesk račun kot \"Kontakti & Podjejta!"
+  import_users_contacts: "Uporabniki &rarr; Kontakti"
+  import_warning_info: "E-poštno sporočilo z navodili za aktivacijo bo poslano vsakemu Kontaktu po uspešnem uvozu. Če e-poštni naslov že obstaja v bazi bomo podatke ustrezno dopolnili."
+  import_zendesk_summary: "Povzetek uvoza iz zendeska"
+  import_zendesk_summary_info: "Uvoz iz Zendeska uspešen"
+  import_zendesk_title: "Uvozi iz zendeska"
+  incident: Incident
+  index_tooltip_loading_msg: Nalagam...
+  integration: 
+    helpcard: 
+      info1: "Integracije v Freshdesku vam omogočajo, da z zunanjimi aplikacijami izmenjujete podatke. Freshdesk ponuja več že vnaprej pripravljenih integracij. Za uporabo pripravljenih integracij, kliknite na gumb \"omogoči\" ob željeni integraciji. "
+      info2: "Poleg pripravljenih integracij lahko v Freshdesk vnesete tudi podatke tretjih aplikacij preko FreshPlugs. Modul Freshplugs lahko nastavite tako da pošlje relevantne informacije vašemu viru z AJAX klicem, in formatirate in prikažete informacije z HTML, CSS in Javascript-om."
+      title1: Integracije
+      title2: "FreshPlug moduli"
+  integrations: 
+    batchbook: 
+      desc: "Prenesite informacije o kontaktih iz Bacthbook računa v Freshdesk."
+      detect_error: "Neuspešna detekcija verzije Batchbooka. Prosimo preverite domeno."
+      form: 
+        api_key: "API Ključ"
+        api_key_info: "Vaš Batchbook API Ključ lahko najdete preko povezave <i> vašega računa </i>  v Batchbooku."
+        domain: "Batchbook domena:"
+        domain_info: "Npr, če je Batchbook URL: <strong> http://mycompany.batchbook.com/</strong> , vnesite <strong> mojepodjetje </strong>. </span>"
+        version: 
+          auto_detect: "Izberi avtomatično"
+          classic: Classic
+          label: Verzija
+          new: Nov
+        version_info: "Polje verzij vam omogoča izbiro med <i>Batchbook Classic</i> in <i>Batchbook New</i>."
+        widget_title: "Naziv modula"
+      helptext: "<h4>Batchbook integracija</h4><p><br>Povežite vaš  Batchbook račun z Freshdeskom za prikaz kontaktov na strani Kontakti in Zahtevki. Prosimo vnesite vašo domeno in API Ključ na tej strani za nastavitve integracije. <br><br> Freshdesk pridobi Ime, naziv, Podjetje, naslov. tel. št  in Mobilo št iz Batchbook-a in te informacije pokaže agentom. <br><br> Kontakte iz Batchbooka lahko iščete preko epoštnih naslovov. Če ima več kontaktov isti epoštni naslov bodo v seznamu prikazani vsi kontakti.</p><br/>"
+      label: Batchbook
+    campaignmonitor: 
+      desc: "Poiščite in urejajte naročnine v Campaing Monitor računu in prenesite podatke o statistikah uporabe v Freshdesk"
+      form: 
+        api_key: "API Ključ"
+        api_key_info: "Pridobite API ključ iz nastavitev računa"
+        client_id: "ID Klienta"
+        client_id_info: "Za pridobitev ID uporabnika, sledite navodilom na http://www.campaignmonitor.com/api/getting-started/#clientid"
+      helptext: "<h4>Integracija Campaign Monitor - pomoč</h4><br/>Za integracijo z Campaign Monitor, morate vnesti API Ključ in ClientID iz Campaign Monitor. <br/></br/> API Ključ lahko pridobite v Campaign Monitor's Account Settings.<br/><br/> Navodila kako pridobiti \"ClientID\" so dostopna <a target='_blank' href='http://www.campaignmonitor.com/api/getting-started/#clientid'> http://www.campaignmonitor.com/api/getting-started/#clientid </a> . <br/><br/>Kliknite \"Osveži\" za začetek Campaign Monitor integracije."
+      label: "Campaign Monitor"
+    capsule: 
+      desc: "Podatke kontakta iz Capsule CRM si lahko ogledate v Freshdesku. Te informacije lahko pridobitev v detajlih zahtevka in na strani s detajli kontakta."
+      form: 
+        api_key: "Ključ Apija"
+        api_key_info: "Za pridobitev unikatnega API ključa, se prijavite v  Capsule CRM in navigirajte do <br /> <b>“User -> My Preferences”</b> . (Najdete v zgornjem desnem kotu strain).<br /> Kliknite na <b>“API Authentication Token”</b>, da bi dobili ključ <br /> ga kopirajte in prilepite v zgornje polje."
+        bcc_drop_box_mail: "e-pošno naslov Drop boxa"
+        bcc_drop_box_mail_info: "Capsule Drop box Email najdete v <b>“Settings -> Mail Drop Box”</b>.<br /> (Najdete v zgornjem desnem kotu strani).<br /> Kopirajte epoštne naslove in jih prilepite v polje zgoraj. <br /> Freshdesk bo avtomatično dodal te epoštne naslove v Bcc polje ko boste odgovarjali na prejete zahtevke."
+        domain: Domena
+        domain_info: "Vpišite samo domeno brez https. Npr. primer.capsulecrm.com"
+        widget_title: "Naslov modula"
+      label: "Capsule CRM"
+    capsule_crm: 
+      helptext: "<h4>Povratna povezava iz Capsule do Freshdesk</h4><p><br/>V Capsule CRM lahko izdelate povezavo preko katere lahko vidite zahtevke izbranega kontakta v Freshdesku.</p> <p>To naredite tako, da izberete <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Kliknite \"Add new...\" in izberite<b>\"Generated Link\"</b></p> <p>Kopirajte URl natančno tako kot je prikazano spodaj in ga prilepite v Capsule CRM kot povezavo <span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>	"
+      label: "Capsule CRM"
+    constantcontact: 
+      desc: "Povežite vaš Constant Contact račun za nadzor vaših naročin znotraj Freshdeska in pridobivanje svežih informacij o kupcih in njihovih aktivnostih"
+      helptext: "<h4> Pomoč - integracija ConstantContact </h4>"
+      label: "Kontakt Constant"
+    custom_application: 
+      desc: "Lahko dodate svoj modul za prikazovanje katerihkoli podatkov z uporabo vaših script."
+      description: Opis
+      edit: "Uredi modul"
+      form: 
+        create_n_enable: "Ustvari in aktiviraj"
+        insert_placeholder: "Vstavite vnosno mesto"
+        widget_script: "Snippet kode modula"
+        widget_title: "Ime modula"
+      helptext: "<h4> Pomoč za modul po meri </h4><p><br/> Izdelate lahko svoj modul s pomočjo html,css in javascript-a. </br></br> Za izdelavo modula vnesite njegovo ime in kratek opis </br> Vnesite kodo pod ‘Script’ </br></br> Lahko kliknete <b> ‘Prikaži predogled’</b> da bi si ogledali kako bo vaš modul izgledall v zahtevku in kontaktnih straneh."
+      label: "Modul po meri"
+      name: Ime
+      new: "Nov modul po meri"
+      script: Skripta
+      small_help_text: "Vi lahko izdelate svoj modul s pomočjo  html,css in javascript-a."
+    freshbooks: 
+      desc: "Porabo časa za reševanje zahtevkov lahjko beležite na projektih in nalogah v Freshdesku"
+      form: 
+        api_key: "Avtentikacijski žeton"
+        api_key_info: (-)
+        api_url: "API URL"
+        api_url_info: "Vnesite celoten API URL z https. Npr https://example.freshbooks.com/api/2.1/xml-in "
+        freshbooks_note: "Tekst zapiska"
+        freshbooks_note_info: "Ta tekst bo dodan na koncu sporočila, skupaj z zapisom porabljenega časa"
+        widget_title: "Ime modula"
+      helptext: "<h4>Pomoč - Freshbooks integracija</h4><p><br/> Za integracijo Freshbooks z Freshdeskom, morate pridobiti Freshbooks API & Authentication token. <br/><br/>Prijavite se v Freshbooks kliknite <b>Zavihek People</b> in potem naprej v <b>Staff and Contractors podzavihek</b>.Kliknite <b>Edit</b> v Adminu. API URL and Authentication Token najdete tu.<br/><br/> V Freshdesku, kliknite na zahtevek, naprej na zavihek Urnik . Tu lahko dodate vnos časa v Freshbooks."
+      label: Freshbooks
+    google_analytics: 
+      account_number: "Vnesi vaš Tracking ID"
+      desc: "Spremljajte statistike obiska portala vaše podpore s pomočjo Google Analytics"
+      domain: Domena
+      form: 
+        copy_settings: "Uporabi zgornji Trackinh ID za vse portale"
+        google_analytics_settings: "( )"
+        google_analytics_settings_info: (-)
+        tracking_id: "Tracking ID za"
+        tracking_id_example: "Npr: UA-123456-1"
+      helptext: "<h4>Pomoč - integracija Google Analytics </h4><p><br/>Priporočamo, da za integracijo Google Analytics in Freshdesk, izdelate za to namenjeno označbo znotraj računa v Google Analytics-u. <br/><br/>Za izdelavo le te se prijavite v Google Analytics račun, izberite zavihek Admin, izberite račun in kliknite na.  <b>'New Property'</b>. V '<b>Website URL'</b>, vnesite URL portala podpore v Freshdesku in kliknite <b>'Create Property'</b>. Nadaljujete tako, da kliknete na \"property\", ki ste jo ravnokar ustvarili in videli boste <b>'Property ID'</b> pod imenom property. Kopirajte to v Nastavitve Google Analytics v  Freshdesku.</p>"
+      inline_help: "Vnesi Tracking ID za"
+      label: "Google Analytics"
+      portal: Portal
+    google_contacts: 
+      MERGE_LATEST: "Združi kontakte Freshdeska in Googla (novejša posodobitev obvelja)"
+      MERGE_LOCAL: "Združi kontakte Freshdeska in Googla (Freshdesk prevlada)"
+      MERGE_LOCAL_small: "Združi (Freshdesk prevlada)"
+      MERGE_REMOTE: "Združi kontakte Freshdeska in Googla (Google prevlada)"
+      MERGE_REMOTE_small: "Združi (Google prevlada)"
+      OVERWRITE_LOCAL: "Izvozi kontakte Freshdeska in vse posodobitve v Google kontakte"
+      OVERWRITE_LOCAL_small: Izvozi
+      OVERWRITE_REMOTE: "Uvozi Google kontakte in posodobitve v Freshdesk kontakte"
+      OVERWRITE_REMOTE_small: Uvozi
+      account: "Up,račun"
+      account_not_configured: "Google račun ni ustrezno nastavljen, Prosimo poiskusite znova."
+      add_more: "Sinhroniziraj nov račun"
+      already_exist: "Ta e-pošta je že nastavljena. Ponovno dodajanje ni možno."
+      delete: Izbriši
+      delete_action: 
+        error: "Napaka pri brisanju Google računa."
+        success: "Uspešno izbrisan Google račun."
+      desc: "Periodično sinhroniziraj Google in Freshdesk kontakte."
+      edit: Uredi
+      edit_app: Posodobi
+      edit_form: 
+        edit_app_title: "Uredi nastavitve sinhronizacije Google kontaktov"
+        import_group: "Izberi skupine za uvoz (opcijsko)"
+        import_title: "Nastavitve uvoza Google kontaktov"
+        install_title: "Nastavitve sinhnronizacije Google kontaktov"
+        mail_box_detail: "Sinhroniziraj z"
+      edit_helptext: "<h4>Pomoč - sinhronizacija Google kontaktov</h4><p><br/> <b>Izberite Skupino za uvoz (opcijsko)</b> <br/> Skupaj z nastavitvijo Google sinhronizacije lahko uvozite tudi kontakte tu navadenih obstoječih skupin. Izberite skupine kontakte ki jih želite uvoziti v Freshdesk.<br/><br/> <b>Nastavitve Sinhronizacije</b> <br/> Te nastavitve kontrolirajo sinhronizacijo kontaktov med Googlom in Freshdeskom. Freshdesk kontakti z oznako<b>'Sinhronizirani'</b> bodo sinhronizirani z Googlom. . Ravno tako bodo kontakti uvoženi iz Googla označeni z <b>'Sinhronizirani'</b>.<br/><br/> Posebna skupina omenjena tu bo dodana za sinhronizacijo za uvoz kontaktov. Po prvem uvozu bodo kontakti dodani v to skupino sinhronizirani v in iz Freshdeska."
+      email: E-pošta
+      enable_integration: "Prični z avtomatsko sinhronizacijo po zaključku uvoza (enkrat dnevno)"
+      fetch_problem: "Problem pri pridobivanju Google kontaktov"
+      form: 
+        account_not_configured: "<br/> Nastavitve Google računa še niso vnešene. Kliknite %{action} za dodajanje novega Google računa <br/><br/>"
+        account_settings: (-)
+        account_settings_info: (-)
+        sync_type: "Tip sinhronizacije"
+        sync_type_info: "Kako želite sinhronizirati kontakte med Googlom in Freshdeskom"
+      group: "Naziv skupine sinhronizacije"
+      helptext: "<h4>Pomoč - Nastavitev sinhronizacije Google kontaktov</h4><p><br/> Kliknite <b>‘Sinhronizacija novena računa’</b> za dodajanje novega Google računa za sinhronizacijo. Ko boste pozvani, odobrite dostop Freshdesku uporabo Google kontaktov (Vnesite Google uporabniško ime & geslo če bo potrebno).<br/><br/> Če ne želite več sinronizacije lahko izbran račun izbrišete.<br/><br/><b>Note:</b> Priporočamo, da naredite varnostno kopijo kontaktov v Google računu pred začetkom sinhronizacije."
+      import: uvozi
+      import_complete: "Enkraten uvoz zaključen"
+      import_later_success: "Uvoz kontaktov se je uspešno začel. Status uvoza lahko preverite na v Nastavitvah,"
+      import_problem: "Problem pri uvozu Google kontaktov"
+      import_success: |-
+          Uspešno uvoženi Google kontakti
+          Status: %{added} dodanih, %{updated} posodobljenih in %{deleted} izbrisanih.
+      import_success_no_stats: "Uspešen uvoz Google kontaktov"
+      info1: "Uporaba enake oznake pri sihnronizaciji z več Google računi omogoča, da Freshdesk kontakte delite z vsem Google računi. Če ne želite sinhronizacije z Google računi pustite prazno."
+      install: "Uvozi & Aktiviraj"
+      internal_error: "Pojavila se je napaka. Prosimo kontaktirajte podporo"
+      label: "Sinhronizacja kontaktov Googla"
+      last_sync: "Zadnja sinhr."
+      last_sync_status: "Status zadnje sinhronizacije"
+      last_sync_time: "Čas zadnje sinhronizacije"
+      no_status: "N / A"
+      not_yet_synced: "Sinhronizacija se ni začela"
+      overwrite_existing_user: "Prepiši kontakte v Freshdesku"
+      sync_group_info: "Nova skupina kontaktov <strong>%{group_name}</strong> bo kreirana v vašem Gmail računu za sinhronizacijo kontaktov. "
+      sync_status: 
+        added: dodano
+        deleted: Izbrisano
+        freshdesk: "Status uvoženih kontaktov v Freshdesk"
+        google: "Status izvoženih kontaktov v Google"
+        modified: popravljeno
+      sync_type: "Kako sinhronizirati?"
+      syncing_in_progress: "Sinhronizacija v teku"
+      tag: "Nastavitve sinhr."
+      tag_label: "Oznaka sinhr."
+      update_action: 
+        also: tudi
+        error: "Napaka pri osveževanju Google računa"
+        success: "Google up.račun uspešno dodan"
+    harvest: 
+      desc: "Vnos porabljenega časa na zahtevkih lahko vneste Poročanje projektov in nalog."
+      form: 
+        domain: Domena
+        domain_info: "Vnesite zgolj domeno brez https. Npr. dev.harvestapp.com"
+        harvest_note: "Tekst zapiska"
+        harvest_note_info: "Ta tekst bo pripet na koncu zapiska z zabeleženim porabljenim časom"
+        widget_title: "Ime modula"
+      helptext: "<h4>Pomoč - integracija Harvest </h4><p><br/>Za integracijo Harvest-a z Freshdeskom, vnesite vašo <b>Ime domene</b> in kliknite Omogoči.<br/><br/> Kliknite na zahtevek, pojdite na  <b> Zavihek Urnik</b>. Tu vnesete vaš Harvest <b>Uporabniško ime</b> in  <b>Geslo</b>. Sedaj lahko dodajate porabo časo v Harvest.<br/><br/>Opomba: Lahko kliknete na <b>Zapomni se</b>, da vam ne bo potrebno ponavljati vnosa vstopnih podatkov Harvesta."
+      label: Poročanje
+    highrise: 
+      desc: "Poglej kontaktne informacije in Highrise CRM v Freshdesku medtem ko rešujete zahtevke."
+      form: 
+        api_key: "API Ključ"
+        api_key_info: "Vaš Highrise API ključ lahko najdete v Highrise. Prosimo kopirajte in prilepite ga tukaj."
+        domain: "Highrise Domena:"
+        domain_info: "Npr. če je vaš Highrise URL is <strong>http://mojepodjetje.highrisehq.com/</strong> , vnesite <strong> mojepodjetje </strong>. </span>"
+        widget_title: "Naziv modula"
+      helptext: "<h4>Highrise integracija</h4><p><br>Vnesite vašo domeno in vaš API Ključ za prikaz informacij kontaktov iz Highrise-a v Freshdesku. Modul se bo pokazal na strani Kontakti in Zahtevki ko končate. <br><br> Podatki v poljih Ime, Podjetje, Naslov, telefon, in gsm v Highrise CRM bodo prikazani<br><br> Iskanje po kontaktih Highrise s pomočjo epotšnega naslova. Če bo zadetkov več bodo prikazani kot seznam</p>"
+      label: Highrise
+    icontact: 
+      desc: "Izvozite podatke kupcev, urejajte obstoječe naročnine in preglejte statistike uporabe znotraj Freshdeska"
+      form: 
+        api_password: "API geslo"
+        api_url: "API URL"
+        api_url_info: "Za pridobitev vašega API URL, pojdite https://app.icontact.com/icp/core/externallogin in kopirajte API URL iz \"Account information\" "
+        app_id: "ID Aplikacije"
+        username: "iContact uporabniško ime"
+      helptext: "<h4>iContact Integracija - Pomoč</h4><br/> Za integracijo  iContact, pojdite <a target='_blank' href='https://app.icontact.com/icp/core/externallogin'>https://app.icontact.com/icp/core/externallogin</a> in odobrite dostop Freshdesku z vnosom spodnje Application ID <br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b><br/><br/> Določite geslo in kliknite \"Shrani\". To API geslo bo uporabljeno za vse API zahtevke iz Freshdeska. <br/><br/> Kopirajte API URL od \"Account Information\" in jo prilepite v API URL polje tukaj. Vnesite iContact uporabniško ime in novo API geslo in kliknite na Osveži."
+      label: iContact
+    jira: 
+      desc: "Spremenite zahtevek v nalogo, ki jo lahko spremljate v JIRA"
+      form: 
+        add_jira_comment: "Dodaj kot komentar v JIRA"
+        add_note: "Dodaj kot zaseben zapisek"
+        do_nothing: "Ne naredi ničesar"
+        domain: Domena
+        domain_info: "Vnesite celoten URL JIRA računa vključno z https/http. Npr. https://example.atlassian.net. <br /><span class='italics'> Opomba: Namestive Jire v omrežju morajo imeti dostop do interneta </span>"
+        fd_comment_sync: "Za vsak komentar dodan v Freshdesk %{dropdown}"
+        fd_status_sync: "Za vsako spremembo statusa v Freshdesku %{dropdown}"
+        jira_comment_sync: "Za komentarje dodane v JIRA nalogi %{dropdown}"
+        jira_note: "Tekst opisa"
+        jira_note_info: "Ta tekst bo dodan v opis naloge v JIRA"
+        jira_status_sync: "Za vsako spremembo statusa v JIRA nalogi %{dropdown} "
+        jira_status_sync_update_customer: "Pošlji odgovor kupcu in spremeni status"
+        jira_status_sync_update_field: "Posodobi Freshdesk status"
+        password: Geslo
+        send_reply: "Pošlji kot odgovor kupcu"
+        update_jira_status: "Osveži tudi JIRA status"
+        username: "Uporabniško ime"
+        widget_title: "Ime modula"
+      helptext: "<h4> Pomoč - integracija JIRA</h4><p><br/>Da bi povezali  JIRA z Freshdeskom, vnesite JIRA admin uporabniško ime  in geslo. Intergacija je omogočena tako za online ali namestitev JIRA na vaših strežnikih od JIRA 4.2 naprej<br/><br/> Za izdelavo zahtevka Ali povezave do obstoječega zahtevka v Freshdesku, pojdite do Zahtevkov in kliknite <img src='/images/ticket-icon/jira.png'/><br/><br/> Za ogled detajlov povezanega Freshdesk zahtevka v  JIRA, in obratno je priporočljivo da JIRA administrator izdela Free Text custom field z nazivom &quot;Freshdesk Tickets&quot; kot je opisano spodaj. <br/><br/> Prijavite se v JIRA račun in kliknite <b>Administration</b>, pojdite v <b>Issues</b> -> <b>Fields</b> in kliknite <b>Add Custom Field</b>. v <b>Create Custom Field</b> izberite <b> Free Text Field </b> in kliknite <b>Next</b>. vnesite <b>&quot;Freshdesk Tickets&quot;</b> v Field Name in kliknite na Finish. V <b>Associate field to Screens</b> strani, izberite vse opcije in kliknite na 'Update'.<br/><br/>"
+      label: "Atlassian JIRA"
+    jira_settings: 
+      add_comment_in_jira: "Dodaj komentar v JIRA"
+      add_private_note_in_fd: "Dodaj zaseben zapisek v Freshdesk in obvesti Agenta"
+      add_public_note_in_fd: "Dodaj javen zapisek v Freshdesk"
+      none: "Ne naredi ničesar"
+      send_reply_in_fd: "Obvesti kupca po e-pošti"
+      update_jira_status: "Osveži JIRA status"
+      update_status_in_fd: "Osveži status v Freshdesku"
+    logmein: 
+      desc: "Omogočite oddaljen dostop kupcem in zaposlenim z LogMeIn Rescue"
+      form: 
+        company_id: "ID podjetja"
+        logmein_company_info: "Da bi pridobili ID vašega podjetja pojdite v Admin Center -> Skupine tehnikov -> Globlne Nastavitve -> ASP.Net C# server side example "
+        logmein_sso_pwd_info: "Za nastavitev SSO gesla, pojdite v Admin Center -> Skupina tehniki -> Globalne nastavitve -> Enotna prijava -> novo SSO geslo"
+        password: "SSO Geslo"
+        widget_title: "Ime modula"
+      helptext: "<h4>Pomoč - integracija LogMeIn Rescue</h4><p><br/> Da bi izvedli integracijo LogMeIn Rescue z Freshdeskom, vnesite LogMeIn Rescue CompanyID in SSO geslo in kliknite Osveži. <br/> Ko je omogočeno boste našli modul LogMeIn Rescue v podstrani podrobnosti zahtevka. <br/><br/>Uporabite &quot;Launch Technician Console&quot; za lansiranje konzole direktno iz Freshdesk modula. <br/> Sedaj lahko izdelate pinkodo in delite navodila z zahtevnikom in nadaljujete podporov LogMeIn Rescue. <br/><br/> <b>Note:</b> E-pošta agenta mora biti enaka  LogMeIn Rescue's technician SSO ID. Za določitev vašega SSO ID pojdite v Admin Center -> Technician Name -> Organization -> SSOID"
+      label: "LogMeIn Rescue"
+      note: 
+        chatlog: "Dnevnik klepeta"
+        header: "Podrobnosti seje LogMeIn Rescue"
+        platform: "Platforma za končne uporabnike"
+        session_id: "ID Seje"
+        tech_email: "E-pošta tehnika"
+        tech_name: "Ime tehnika"
+        tech_notes: "Zapiski tehnika"
+        work_time: "Skupen oddelan čas (v sekundah)"
+    mailchimp: 
+      desc: "Povežite MailChimp in Freshdesk in začnite upravljati vaše naročnine, izvažati sezname kupcev in pridobivanje informacij o njihovi aktivnosti kar s pomočjo podpore"
+      helptext: "<h4> Pomoč pri integraciji MailChimp </h4>"
+      label: MailChimp
+    nimble: 
+      desc: "Informacije o kontaktih Nimble crm lahko najdete v Freshsdesku."
+      label: Nimble
+    salesforce: 
+      desc: "Informacije kontakta Salesforce CRM lahko pogledate v Freshdesku"
+      form: 
+        salesforce_settings: "Nastavitve Salesforce"
+        salesforce_settings_info: (-)
+      label: Salesforce
+    sugarcrm: 
+      desc: "Informacije kontakta SugarCRM lahko pogledate v Freshdesku"
+      form: 
+        domain: "URL up.računa SugarCRM "
+        domain_info: "Npr., če je vaš  SugarCRM URL <strong>http://mycompany.xyz/sugar/index.php?module=Administration&action=index</strong> , vnesite <strong> http://mycompany.xyz/sugar </strong><br /><br /> Opomba: Namestitev SugarCRM na strežniku znotraj vašega omrežja omogočite dostop do interneta. </span>"
+        password: Geslo
+        username: "Uporabniško ime"
+        widget_title: "Ime modula"
+      helptext: "<h4> Pomoč Integracija z Sugar CRM </h4> <p><br/> Do kontaktnih podatkov Sugar CRM lahko dostopate v zahtevkih in kontaktnih straneh <br /><br /> Sledeči podatki bodo dostopni - ime, naziv, podjetje, oddelek, naslov, telefon & gsm <br /><br />. Iskanje se bo izvedlo po epoštnem naslovu. Če je kontaktov z istim epoštnim naslovov več bodo vsi prikazani kot seznam."
+      label: SugarCRM
+    workflow_max: 
+      desc: "Čas porabljen na zahtevkih lahko zabeležite v Workflow Mas Naloge in dela"
+      form: 
+        account_key: "Ključ računa"
+        account_key_info: "Zahtevajte ključ vašega računa od Workflow Max podpore in ga prilepite tukaj"
+        api_key: "API ključ"
+        api_key_info: "Zahtevajte ključ vašega računa od Workflow Max podpore in ga prilepite tuka"
+        widget_title: "Ime modula"
+        workflow_max_note: "Tekst zapiska za pripenjanje"
+        workflow_max_note_info: "Ta tekst bo pripet na koncu zapiska z zabeleženim porabljenim časom"
+      helptext: "<h4>Pomoč - integracija Workflow Max</h4><p><br/> Za povezovanje Workflow Max z Freshdeskom, morate pridobiti Account Key in API Key v<a href='mailto:support@workflowmax.com'>WorkflowMax Support</a>. Vnesite ključ v polje za izvedbo integracije.<br/><br/> Ko je povezava vzpostavljena kliknite na enega od zahtevkov izberite zavihek Urnik. Izberete lahko osebje, delo in nalogo, da bi dodali vnose časa v Workflow Max. "
+      label: "Workflow Max"
+    zohocrm: 
+      desc: "Informacije o kontaktih Zoho crm lahko najdete v Freshsdesku."
+      form: 
+        api_key: "Auth žeton"
+        api_key_info: "<a href='http://www.zoho.com/crm/help/api/using-authentication-token.html#Generate_Auth_Token' target='_blank'> Izdelajte Auth žeton </a> v Zoho CRM s  \"Browser mode\" in prilepite generiran Auth žeton tukaj."
+      helptext: "<h4> Integracija Zoho CRM - Pomoč </h4><p><br/>Za integracijo Zoho CRM in Freshdeska, <a href='http://www.zoho.com/crm/help/api/using-authentication-token.html#Generate_Auth_Token' target='_blank'> Izdelajte Auth Žeton</a> v Zoho CRM v Browser Mode in prilepite generiran Auth Žeton tukaj. Če ste ga že generirali ga lahko dobite na strani <a href='https://accounts.zoho.com/u/h#setting/authtoken' target='_blank'>uporabniškega računa.</a> <br/><br/> Ko zaključite lahko vidite informacije kontakta v pregledu zahtevka ali kontakta. </p>"
+      label: "Zoho CRM"
+  is: Je
+  is_expiring_today: "poteče danes"
+  is_not: "ni "
+  last: zadnji
+  last_draft: "Vaš zadnji osnutek"
+  last_name: Priimek
+  latest_ticket: novost
+  latest_tickets: novosti
+  lead: Sled
+  left: Ostane
+  less_than: "Manj kot"
+  level_label: Nivo
+  linkback_info: "Lahko izberete možnost da logotip v glavi preusmeri kupca na vašo spletno stran"
+  linkback_overlabel: "URL preusmeritve"
+  loading: 
+    activities: "Nalagam več aktivnosti"
+    items: "Nalagam več artiklov"
+  logmein_source: "LogMeIn Rescue"
+  logo: Logotip
+  logo_delete_msg: "Ste prepričani, da želite izbrisati ta logotip?"
+  low: Nizka
+  mark_as_spam: "Označi kot Spam"
+  maximum_agents_admin_msg: "Dosegli ste maksimalno število agentov, ki jih dovoljuje izbrana naročnina. Izbrišite obstoječega agenta ali <a href='/subscription/plans'> nadgradite naročniški paket </a> za dodajanje novega agenta. Če želite dodati začasnega agenta, ga lahko dodate spodaj."
+  maximum_agents_msg: "Dosegli ste maksimalno število agentov, ki jih dovoljuje vaša naročnina. Izbrisati morate obstoječega agenta ali pa kontaktirati vašega administratorja za nadgradnjo računa. Če želite zgolj začasnega agenta ga lahko dodate spodaj."
+  medium: Srednja
+  message: Sporočilo
+  mobi_help: MobiPomoč
+  mobile: 
+    home: 
+      login: Prijava
+      remember: "Zapomni se"
+      sign_in_error: "Napačna e-pošta ali geslo"
+      sign_in_using: ".. ali pa se prijavite z"
+  name: Ime
+  never: Nikoli
+  new_ticket_created: "Ustvarjen nov zahtevek"
+  next: Naprej
+  next_charge_amount: "%{type} strošek:"
+  next_charge_date: "Naslednje plačilo bo bremenjeno dne:"
+  next_level_info: "+ %{points} da postanete %{name}"
+  no_badge_achieved_label: "Nobene osvojene značke"
+  no_change: "Ni sprememb"
+  no_date_to_display: "Ni podatkov za prikaz"
+  no_forum_category: "V tej kategoriji ni forumov"
+  no_level_achieved_label: "Noben nivo osvojen"
+  no_message: 
+    canned_responses: "Nobene predloge sporočila ni na voljo"
+    products: "Niste še kreirali nobenega produkta"
+  no_password_reset: Ne
+  no_tags: "Našli nismo nobene oznake"
+  no_topics_text: "Ni tem v tem forumu"
+  no_twitter_handle: "Prosimo nastavite vsaj en twitter račun"
+  non_covered_feature_error: "Vaš paket Freshdesk ne vsebuje te funkcionalnosti"
+  not_eligible_for_free_plan: "Ni možnosti izbire brezplačne naročnine"
+  not_selected: "Ni izbran"
+  note: "Zapisek:"
+  notified_to: Obveščeni
+  ok: Ok
+  on_hold: "Na čakanju"
+  one: "1 Ura"
+  onemonth: "1 Dan"
+  oneweek: "1 Teden"
+  open: Odprto
+  open_tickets: "Odprti zahtevki"
+  or: ali
+  paid_with: "Plačano z"
+  password: Geslo
+  password_reset_email: "e-pošta za reset gesla"
+  payment_info: "Informacija o plačilu"
+  pending: Nerešeno
+  phone: Telefon
+  plan_amount: "na agenta/ mesec"
+  plan_info_update: "Vaša naročnina je bila spremenjena."
+  plan_is_selected: "Vaš brezplačen račun je sedaj aktiven z %{plan} naročnino"
+  plans_billing: "Naročnine & obračuni"
+  portal: 
+    search: 
+      placeholder: "Išči s ključnimi besedami ali celotnim vprašanjem"
+  portal_captcha: "Naredi Capcha obvezno za pddajo zahtevka brez prijave"
+  portal_captcha_anon: "Omogoči če želte, uporabo Capcha pri oddaji zahtevka"
+  portal_customizer_anon_for_f: "Omogoči, če želite da se uporabniki prijavijo z Facebook računom"
+  portal_customizer_anon_for_g: "Omogoči, če želite da se uporabniki prijavijo z Google računom "
+  portal_customizer_anon_for_i: "Izključite to funkcionalnost, če želite izključiti zavihek 'Forumi' na javnem portalu"
+  portal_customizer_anon_for_t: "Vključite će želite da se kupci prijavijo z Twitter računom"
+  portal_customizer_anon_tickets: "Zahtevek lahko odda kdorkoli"
+  portal_customizer_anon_tickets_i: "Izključite to funkcionalnost. če želite da so uporabniki prijavljeni za pošiljanje zahtevka."
+  portal_customizer_auto_suggest_solutions: "Vklopite to funkcionalnost. če želite predloge rešitev ko uporabnik kreira nov zahtevek"
+  portal_customizer_facebook_signin: "Dovoli prijavo z Facebook računom "
+  portal_customizer_google_signin: "Ni doseženih značk"
+  portal_customizer_open_forums: "Ni doseženih nivojev"
+  portal_customizer_open_sol_i: "Izključite to funkcionalnost, če želite izključiti zavihek 'Rešitve' na javnem portalu"
+  portal_customizer_open_solutions: "Vsak lahko vidi javne objave, rešitve"
+  portal_customizer_option_auto_suggest_solutions: "Avtomatsko predlagaj rešitve ko uporabnik vpisuje nov zahtevek."
+  portal_customizer_option_for_i: "Onemogoči. če želite da se uporabniki prijavijo za ogled rešitev"
+  portal_customizer_option_forums: "Uporabniki lahko vidijo Forume brez prijave"
+  portal_customizer_option_sol_i: "Onemogoči. če želite da se uporabniki prijavijo za ogled rešitev"
+  portal_customizer_option_solutions: "Uporabniki lahko vidijo javno objavljene rešitve brez prijave"
+  portal_customizer_option_tickets: "Uporabniki lahko pošljejo zahtevek brez prijave"
+  portal_customizer_option_tickets_i: "Onemogoči če želite, da se morajo uporabniki prijaviti pred pošiljanjem zahtevka"
+  portal_customizer_title: "Prilagodi Javen portal za kupce"
+  portal_customizer_twitter_signin: "Dovoli da se uporabniki prijavijo s Twitterjem"
+  portal_key: Portal
+  portal_signup: "Dovolite kupcem da se prijavijo preko portala kupcev"
+  portal_signup_anon: "Omogočite. če želite da si uporabniki ustvarijo svoj račun. To jim bo omogočilo prijavo in sodelovanje na forumih, glasovanje za ideje, itd.. "
+  posted_by: Zapisal
+  premium_brief: Najboljše
+  premium_details: "Vse v &quot;Pro&quot; Plan plus, Podpora več produktov, Podpora več časovnih con, Skupnosti, Email &amp; Telefonska Podpora"
+  preview: Predogled
+  pro_brief: "Za večje ekipe"
+  pro_details: "Vse v &quot;Basic&quot; Plan plus, Scenariji za avtomatizacijo, SLA Pogodbe kupcev, Delovni čas, Forumi, Skupnost &amp; Email Podpora."
+  problem: Problem
+  proceed_now: |-
+      
+      
+      Nadaljujem sedaj?
+  profile: 
+    api_key: 
+      reset: "Resetiraj API ključ"
+      reset_warning: "Ko resetirate API ključ bodo vse aplikacije, ki uporabljajo star ključ prenehale delovati. Ste prepričani da želite nadaljevati?"
+      title: "Vaš API ključ"
+    change_password: "Spremeni geslo"
+    confirm_password: "Potdi geslo"
+    current_password: "Trenutno geslo"
+    edit: "Uredi profil"
+    new_password: "Novo geslo"
+  quests: 
+    badge_mand: "Izberite značko."
+    customer_votes: "Število glasov"
+    date: Datum
+    delete: "Ste prepričani, da želite izbrisati ta izziv?"
+    fcr: "Rešitve ob prvem klicu"
+    forum_category: Kategorija
+    forum_mand: "Prosimo izpolnite število forumov"
+    forums: Forumi
+    inactive_quests: "Neaktivna iskanja"
+    js_forum_txt: "$$questmode$$ $$questvalue$$ objav na forumu v času $$questtime$$ z upoštevanjem sledečih pogojev."
+    js_quest_txt: "Po uspešnem zaključku izziva lahko odklenete $$badgename$$ značko in $$questpoints$$ bonusnih točk."
+    js_solution_txt: "Izdelaj $$questvalue$$ članek za bazo znanja v času $$questtime$$ z upoštevanjem sledečih pogojev"
+    js_ticket_txt: "Reši $$questvalue$$  zahtevkov v času $$questtime$$ z upoštevanjem sledečih pogojev."
+    name_mand: "Vpišite ime izziva."
+    satisfaction: "Ocena zadovoljstva kupcev"
+    solution_articles: Članek
+    solution_folder: Mapa
+    solution_likes: "Število všečkov"
+    solution_mand: "Izpolnite število rešitev"
+    ticket_mand: "Izpolnite št. rešenih zahtevkov"
+    ? "true"
+    : (-)
+  recent_activities: "Pretekle aktivnosti"
+  recent_activity: "Pretekla aktivnost"
+  recent_forum_posts: "Zadnje objave na forumu"
+  referral: "Nagrada za posredovanje"
+  remove: Odstrani
+  reorder: Preuredi
+  replied_to: "Odgovoril "
+  replies: Odgovori
+  reply: Odgovori
+  reply_comment: "Dodaj komentar"
+  reply_topic: "Odgovori na temo"
+  reports: 
+    customer_activity_title: "Poročilo o aktivnostih"
+    customer_title: "Poročilo o aktivnostih kupcev"
+    customer_title_nav: "Poročilo o aktivnostih kupcev"
+    date_ranges: 
+      custom: "Datumski razpon"
+      last_30_days: "Zadnjih 30 Dni"
+      last_7_days: "Zadnjih 7 Dni"
+      last_90_days: "Zadnjih 90 Dni"
+      today: Danes
+      yesterday: Včeraj
+    generate_button: Izdelaj
+    helpdesk_activity_title: "Poročilo o aktivnostih podpore"
+    helpdesk_title: "Poročilo o aktivnostih podpore"
+    helpdesk_title_nav: "Poročilo o aktivnostih podpore"
+    pie_chart_title_prefix: "Zahtevki od"
+    satisfaction_title: "Poročilo o zadovoljstvu"
+    scoreboard_agent_title: "Lestvica agentov"
+    scoreboard_group_title: "Lestvica skupin"
+    scoreboard_reports: 
+      champions_title: Prvaki
+      sharpshooter_title: Ostrostrelci
+    scoreboard_title_nav: Lestvica
+    select_customer: "Izberi kupca"
+    select_options: "Poročila od"
+    select_time_period: "Izberi periodo"
+    summary: 
+      fcr: "Rešitev v prvem klicu"
+      open_tickets: "Odprtih zahtevkov"
+      pending_tickets: "Zahtevkov v reševanju"
+      received_tickets: "Sprejetih zahtevkov"
+      resolved_tickets: "Rešenih zahtevkov"
+      sla_compliance: "Skladnost s SLA"
+      title: "Povzetki zahtevkov"
+      total_tickets: "Skupaj zahtevkov"
+    summary_report: 
+      avg_1st_response_time: "Povpr. odzivni čas"
+      avg_response_time: "Povprečen odzivni <br> čas "
+      back_to_reports: "Nazaj na poročila"
+      fcr_count: "Rešitev ob prvem kontaktu"
+      fcr_percent: "ROK %"
+      helptext: "Statistike izračunane v poročilu so odvisne od št. rešenih zahtevkov. <br /> Zahtevki rešeni znotraj pogojev SLAs so združeni kot  &quot; Pravočasna razrešitev&quot;. <br /> Stolpec &quot;Rešitev ob prvem kontaktu&quot; prikazuje zahtevke, ki so bill rešeni v prvem odgovoru.<br /> &quot;Povprečni čas prvega odgovora&quot; prikazuje čas med tem ko je bil zahtevek odprt in prvim odgovorom agenta."
+      on_time_resolution: "Pravočasna razrešitev"
+      on_time_resolution_percent: "OTR %"
+      show_report: "Odpri poročilo"
+      tickets_resolved: "Rešenih zahtevkov"
+    survey_reports: 
+      back_to: "Nazaj na seznam"
+      feedbacks: 
+        in_response_to: "-- v odgovor"
+      index: 
+        agent_list_loading: "Pridobivam seznam agentov"
+      list: 
+        no_feedback: "Nihče ni odgovoril med tem časom."
+      list_content: 
+        happy: Odlično
+        neutral: "Zgolj Ok"
+        rating_msg_multiple: "%{count} je izbralo %{rating}"
+        rating_msg_none: "nihče ni izbral %{rating}"
+        rating_msg_single: "eden je izbral %{rating} "
+        rating_primary_msg_multiple: "%{count} kupcev je izbralo %{rating}"
+        rating_primary_msg_single: "En kupec je izbral %{rating}"
+        unhappy: "ni dobro"
+      sidebar: 
+        filter_by: "Pregled zadovoljstva"
+        from: Od
+        helptext: "<b>Uporabnost poročila zadovoljstva kupcev?</b><p>Poročilo vam ponudi vpogled v kvaliteto dela vaših agentov.<br> Poročilo vam omogoča razumeti nivo zadovoljstva vaših kupcev, ki je izražena s procenti vrednosti (zadovoljni, nevtralno & nezadovoljni) za vsakega agenta.<br><br><b>Kaj še lahko naredite?</b> <br> <p style='margin-left:15px;'>1.Filtrirajta rezultate po Agentu, Skupini ali Podjetju <br>2.Oglejte si poročilo za določeno časovno območje</p></p>"
+        to: Za
+        view_report_date: "Poglej poročila med"
+    surveys_title_nav: "Poročilo zadovoljstva kupcev"
+    tab_heading: Poročila
+    tickets_by: "Zahtevki od"
+    timeline_chart_title: "Zahtevki Prejeti vs Rešeni"
+    timesheet_reports: 
+      index: 
+        from: Od
+        select_agent: "Izberi Agenta"
+        select_billable: "Izberi obračunljivo/ ni obračunljivo"
+        select_customer: "Izberi kupca"
+        title: "Poročilo prisotnosti"
+        to: Za
+        view_between: "Izpiši poročilo med"
+  requester_reopens: "Zahtevnik je ponovno odprl zahtevek"
+  requester_replies: "Zahtevnik je odgovoril na zahtevek"
+  reset: Resetiraj
+  reset_my_password: "Restiraj moje geslo"
+  reset_password_title: "Resetiraj geslo"
+  resolution_time_sla: "SLA kršitev časa reševanja"
+  resolved: Rešeno
+  resolved_late: "Rešeno prepozno"
+  resolved_on_time: "Rešeno pravočasno"
+  resolved_tickets: "Rešeni zahtevki"
+  revert_identity_link_msg: "Povrni identiteto"
+  right: Desno
+  sales: Prodaja
+  save: Shrani
+  save_and_close: "Shrani in zapri"
+  save_and_create: "Shrani in kreiraj nov"
+  save_and_new: "Shrani in nov"
+  save_changes: "Shrani spremembe"
+  save_reply: "Shrani odgovor"
+  save_this_view: Shrani
+  save_this_view_tooltip: "Shrani pregled"
+  saved_draft: Shranjeno
+  saving_draft: Shranjujem...
+  scenario_label: "Označba Scenarija"
+  search: 
+    no_results_msg: "Ni zadetka"
+  security_code: "Varnostna koda"
+  select: "Izberi .."
+  select_a_plan: "Izberite naročnino"
+  select_a_plan_gain_access: "Spodaj izberite naročnino, da ponovno aktivirate dostop do vašega računa"
+  select_another_plan: "Izberite drugo naročnino"
+  select_free_plan: "Izberite željeno brezplačno naročnino"
+  selected: Izbrano
+  send_email_to_agent: "Pošlji e-poštno sporočilo Agentu"
+  send_email_to_group: "Pošlji e-poštno sporočilo Skupini"
+  send_email_to_requester: "Pošlji e-poštno sporočilo Zahtevniku"
+  set_password: "Določi svoje geslo"
+  set_priority_as: "Določi prioriteto kot"
+  set_status_as: "Določi status kot"
+  set_type_as: "Določi tip kot"
+  settings: Nastavitve
+  show_me_how: "Pokaži mi kako"
+  show_quoted_text: "Pokaži naveden tekst"
+  sign_in_info: "Prijavili se boste kot"
+  signup: "Prijavite se"
+  signup_complete_activate_info: "Dobrodošli! Poslali smo vam e-pošto, ki vsebuje povezavo, s pomočjo katere določite geslo in aktivirate vaš uporabniški račun."
+  signup_title: "Prijava na %{current_portal}"
+  since: Od
+  since_time: "Od %{time_words}"
+  sla_policy: 
+    business_time: Delovnik
+    calendar_time: "Koledarske ure"
+    edit: "Uredi SLA pogoje "
+    escalate_to: "Povišaj prioriteto"
+    helpcard: 
+      info1: "(SLA) pogoji omogočijo, da postavite performančne standarde ekipe v podpori. Nastavite lahko pravila kako hitro se morajo agenti odzvati in rešiti zahtevek glede na prioriteto prejetega zahtevka. Nastavite lahko ali se čas šteje zgolj znotraj delovnih ur ali pa koledarsko, hkrati pa nastavite pravila, ki zahtevek avtomatsko ekalirajo in obvestijo določenega agenta ko je pravilo kršeno."
+      info2: "Vaši SLA pogoji bodo uporabljeni za določitev datuma \"zapadlosti\" za vsak zahtevek. Uporabite lahko privzete SLA pogoje za vse kupce, ali pa več različnih pogojev za različne skupine kupcev, npr za tiste z Premium paketom"
+      title: "Sla pogoji"
+      tour: "Pomoč pri vnos SLA pogojev"
+    info1: "SLA pogoj je nabor časov za odgovor in razrešitev glede na prioriteto zahtevka. Priporočamo da pogoje nastavite glede na prioriteto. Pogoj SLA je lahko tudi zelo enostaven kot \"Zahtevki z  Visoko prioriteto morajo biti rešeni v 2 urah\" itd.."
+    info2: "Freshdesk uporablja SLA pogoje za določanje kdaj morajo biti razrešeni zahtevki. Privzeto pravilo lahko uporabljate za vse kupce, če pa imate kupca, ki želi hitrejši odziv, lahko vedno izdelate poseben SLA pogoj za tega kupca."
+    info3: "SLA pogoji delujejo skladno z delovnim časom"
+    new: "Nov SLA pogoj"
+    override: Prepiši
+    resolution_time: "Čas reševanja"
+    response_time: "Čas odziva"
+    select_policy: "Izberi pogoj"
+    sla_targets: "SLA cilji"
+    tickets_with: "Zahtevke z"
+    title: "SLA pogoj"
+    title1: "SLA pogojo"
+  social: 
+    facebook_pages: 
+      enable_facebook_page: 
+        associate: "Izberite Facebook strani, ki jih želite povezati s podporo"
+        no_page_info: "Oops. Izgleda na nimate Facebook strani. <a href=\"https://www.facebook.com/pages/create.php\" target='_blank'> Izdelajte jo za še boljšo podporo! ..</a> "
+      engage_info: 
+        add_facebook: "Dodaj Facebook stran"
+        associate_account: "Povežite Facebook stran z <b>%{account_name}</b> in odgovorite vašim kupcem znotraj Freshdeska ko komentirajo ali objavijo na vašem zidu."
+        engage_customers: "Sodelujte s kupci direktno na Facebooku"
+        title: "Dodaj vaše Facabook strani"
+      form: 
+        company_posts: "Uvozi <strong>\"Komentarje\"</strong> kot zahtevek"
+        company_posts_info: "Freshdesk bo vse objave na facebook strani prenesel v zahtevke"
+        direct_messages: "Uvozi <strong> \"Direktna sporočila\" </strong> kot zahtevek"
+        direct_messages_info: "Freshdesk bo vse direktna sporočila na Facebook strani spremenil v zahtevek. Če ste to možnost vključili boste morali <a href='{{reauth_url}}'> ponovno avtorizirati Facebook </a>"
+        message_thread_time: "Čas sporočila"
+        message_thread_time_info: "Maksimalen čas, ko se sporočila istega uporabnika smatra kot povezana."
+        product: Produkt
+        visitor_posts: "Uvozi <strong> \"Objave obiskovalcev\" </strong> kot zahtevek"
+        visitor_posts_info: "Freshdesk bo vsako objavo na tej Facebook strani avtomatično spremenil v zahtevek"
+      index: 
+        reauth_required: "Potrebna je ponovna avtorizacija"
+        reauthorize: "Ponovno avtoriziraj"
+        title: "Facebook strani"
+    twitter_handles: 
+      edit: 
+        twitter_settings_for_msg: "Twitter nastavitve za"
+      form: 
+        capture_dm_info: "Freshdesk bo vsako Direktno sporočilo na tem Twitter računu spremenil v zahtevek."
+        capture_dm_msg: "Zajemi <strong> \"Direktna sporočila\" </strong> kot zahtevek"
+        capture_mentions_info: "Freshdesk bo vsako @Omenjeno tega Twitter računa avtomatično  spremenil v zahtevek."
+        capture_mentions_msg: "Zajemi <strong> \"@Omenjeno\" </strong> kot zahtevek"
+        dm_time_info: "Maksimalen čas, ko se direktna sporočila istega uporabnika kot povezana."
+        dm_time_msg: "DM Čas povezave."
+        info_data: "Omogoča hiter nadzor iskanje po twitterju vezano na vaš produkt/blagovno znamko/ storitev. <br /> <strong>Navodilo: </strong> Več ključnih besed vnesete tako da jih ločite z vejico-"
+        product: Produkt
+        search_keywords: "Iskalne besede"
+      index: 
+        remove_handle_msg: "Ste prepričani da želite odstraniti twitter račun?"
+        title: "Twitter računi"
+      signin_info: 
+        add_twitter: "Dodaj Twitter račun"
+        associate_account: "Povežite twitter račun z <b>%{product_name}</b> in se odzovite vašim kupcem s tweetom ali sporočilom znotraj Freshdeska"
+        engage_customers: "Sodelujte z vašimi kupci direktno na Twitterju"
+        title: "Prijavi se s pomočjo Twitterja"
+  solution: 
+    add: "Dodaj rešitev"
+    add_new_solution: "Dodaj novo rešitev"
+    char_count: znakov
+    description_counter_message: "Najboljše SEO strani priporočajo maksimalno 150 znakov za opis."
+    edit: "Uredi rešitev"
+    folder: Mapa
+    folders: 
+      folder_form: 
+        visible_to: Vidna
+      new: 
+        new_folder: "Nova mapa"
+    info1: "Rešitve v Freshdesku so vaša Baza znanja"
+    info10: "Zasebno  (Vidno zgolj Agentom)"
+    info2: "Rešitve so lahkp <b> javne </b> ali <b> zasebne </b>. Javne rešitve so vidne na portalu in pri iskanju rešitev"
+    info3: "Rešitve označene kot zasebne so vidne zgolj agentom za prenos znanja med agenti"
+    info4: "Rešitve imajo 3 nivojsko hierarhijjo - <b> Kategorija --> Mapa --> Članek</b>"
+    info5: "Obstajata dve vrsti rešitev - <b> Nadomestna rešitev </b> ali <b> prava </b> rešitev"
+    info6: "Rešitev ima lahko status <b> Osnutek </b> ko jo urejate in dopolnjujete in se lahko spremeni v <b> Objavljeno </b> ko je zaključeno in pregledano."
+    info7: "Nobene rešitve v tej mapi"
+    info8: "Ste prepričani da želite izbrisati to rešitev?"
+    info9: "Javno (bo objavljeno v samoobjavah)"
+    meta_keywords_message: "ločite z vejico"
+    no_solutions_info: "Nobene rešitve v tej mapi"
+    solution_meta: "Meta oznake za iskalnike"
+    solution_meta_description: "Meta Opis"
+    solution_meta_keywords: "Ključne besede"
+    solution_meta_title: "Oznaka naslova"
+    status: "Status rešitve"
+    title: Rešitve
+    title_counter_message: "Najboljše SEO strani priporočajo maksimalno 72 znakov za naslov."
+    type: "Tip rešitve"
+    visibility: Vidnost
+  solution_category: 
+    edit: "Uredi kategorijo rešitve"
+    info1: "Ste prepričani da želite izbrisati to kategorijo?"
+    info2: "Nobene mape v tej kategoriji"
+    name: "Ime kategorije"
+    new: "Nova kategorija rešitev"
+    save_and_create: "Shrani in kreiraj novo"
+  solutions: 
+    search: 
+      placeholder: "Išči %{name}"
+    search_all: 
+      placeholder: "Išči vse rešitve"
+    status: 
+      draft: Osnutek
+      published: Objavljeno
+    types: 
+      permanent: Stalno
+      workaround: "Drugačna rešitev"
+    visibility: 
+      agents: Agenti
+      all: Vsi
+      anyone: Kdorkoli
+      logged_in_users: "Prijavljeni uporabniki"
+      select_company: "Izberi podjetja"
+  special_beta_offer: "Posebna ponudba za Beta uporabnike"
+  sprout_brief: "Robustna e-poštna podpora "
+  sprout_details: "Urejanje odzivov na epoštp, avtomatizacija, privzeti pogoji SLA, baza znanja, portal, mapiranje domene, osnovno poročanje, podpora skupnostim."
+  start_typing_a_question: "Začnite z tipkanjem vprašanja in poglejte odgovore v realnem času"
+  starts_with: "Začni z"
+  state: Država
+  status: Status
+  status_cust_disp_name_uniqueness_msg: "Prikaz statusa kupca je že zaseden"
+  status_deleted: "Status izbrisan"
+  status_name_validate_presence_msg: "Izpolnite polje statusa"
+  status_name_validate_uniqueness_msg: "Naziv status je že zaseden"
+  step1: "Korak 1"
+  step2: "Korak 2"
+  subject_or_description: "Zadeva ali opis"
+  submit: pošlji
+  subscription: 
+    error: 
+      lesser_agents: "Vaš freshdesk up. račun ima trenutno %{agent_count} agentov, zmanjšanje število agentov ni možno. Prosimo ponovno izvedite brisanje agentov."
+  subscription_plan: 
+    billing_cycle: 
+      annual: Letno
+      monthly: Mesečno
+      quarterly: Kvartalno
+      sixmonth: "Pol leta"
+  success: Uspešno
+  support: 
+    shared: 
+      survey_form: 
+        cancel: Prekliči
+        change_of_mind: "Ste si premislili?"
+        feedback_title: "Vaše pohvale ali kritike nam bodo v spodbudo za še večji trud v prihodnje"
+        rate_again: "Ocenite nas ponovno"
+        rated_on: "Tako ste nas ocenili %{rated_on}"
+        submit: Pošlji
+        survey_title: "Prpsimo ocenite našo podoro"
+    surveys: 
+      feedback_already_done: "Na ta poziv ste se že odzvali"
+      new: 
+        additional_info: "Poleg tega lahko delite vašo izkušnjo dela z nami."
+        feedback_info: "Najlepše se zahvaljujem za podane informacije "
+        feedback_optional: "Povratne informacije niso obvezne"
+        happy_info: "Z veseljem sodelujemo z vami, nas veseli da ste zadovoljni z našo storitvijo"
+        neutral_info: "V prihodnje bi vas želeli videti bolj zadovoljne"
+        send: Pošlji
+        sorry: "Resnično nam je žal za neprijetnosti"
+        thanks: "Hvala, da ste nas ocenili!"
+        thanks_info: "Hvala, da ste si vzeli čas za izdelavo ocene naše podpore"
+        unhappy_info: "Bodite prepričani, da se bomo naslednjič še bolj potrudili."
+      thanks_for_feedback: "Prejeli smo vaše informacija. Hvala za trud."
+  suspended_plan_admin_info: "Vaš račun je ukinjen. Prosimo kontaktirajte vašega administratorja %{email}"
+  suspended_plan_info: "Vaš račun je ukinjen. Prosimo izberite naročnino za nadaljevanje!"
+  switch_heading: "Zamenjaj Agenta"
+  swith_agent_msg: "Zamenjaj k drugemu Agentu"
+  tag: 
+    title: Oznaka
+  this_ticket_has_been_closed: "Zahtevek je zaprt"
+  this_ticket_has_been_deleted: "Zahtevek je izbrisan"
+  this_ticket_has_been_resolved: "Zahtevek je rešen"
+  threeday: "3 dni"
+  threemonth: "3 mesece"
+  ticket: 
+    activities: Aktivnosti
+    activity: Aktivnost
+    add_note: "Dodaj zapisek"
+    add_time: "Dodaj čas"
+    agent: Agent
+    agent_notify: "dodal zapisek in želi da ga preberete"
+    agent_responded_at: "Ur od zadnjega odgovora agenta"
+    assign_to_agent: "Dodeli agentu"
+    assigned_agent: Agent
+    assigned_at: "Ur od dodelitve"
+    assigned_none: "-"
+    assigned_to: Dodeljeno
+    available_commands: "Razpoložljivi ukazi"
+    canned_responses: 
+      ca_responses: "Pripravljena sporočila"
+      insert_ca_resp_tip: "Vstavi pripravljeno sporočilo"
+      insert_ca_response: "Pripravljeno sporočilo"
+    close_btn: Zapri
+    close_btn_title: "Zapri zahtevek"
+    closed_at: "Ur od zaprtja"
+    convert_ticket_title: "Spremeni v zahtevek"
+    create_ticket_title: "Vnesi zahtevek"
+    created_at: "Ur od vnosa"
+    created_on: "Vnešeno %{time}"
+    delete_btn: Izbriši
+    delete_btn_title: "Vrži zahtevek v koš"
+    delete_forever: "Izbriši za vedno"
+    due_by: "Ur zahtevek zamuja"
+    due_by_time: "Zamuda v času"
+    edit: "Uredi zahtevek"
+    edit_btn: Uredi
+    empty_trash: "Izprazni koš"
+    execute_scenario: "Izvedi scenarij"
+    export: Izvozi
+    facebook_form: 
+      send: Pošlji
+      send_and_resolve: "Pošlji in Reši"
+    first_assigned_at: "Ur odkar prvič dodeljeno"
+    first_response_due: "Ur od potrebnega prvega odziva"
+    flag_spam: "Označi Spam"
+    group: Skupina
+    ham_btn_title: "To ni Spam"
+    inbound_count: "Število interakcij zahtevnika"
+    integrations: 
+      jira: 
+        tooltip: "Poglej povezano JIRA nalogo"
+    merge_btn: Združi
+    monitor_btn_title: "Nadzoruj ta zahtevek"
+    none: Nobeden
+    note_content: "Vsebina zapiska"
+    note_form: 
+      add_and_resolve: "Dodaj in Reši"
+      form_title: "Dodaj Zapisek"
+      notify_agents: "Obvesti Agente"
+      private_note: "To je zaseben zapisek, ne prikaži ga zahtevniku"
+    opened_at: "Ur od ponovnega odprtja"
+    pending_since: "Ur v reševanju"
+    pick_up: Izberi
+    portal_created_on: "Ustvaril <span class='emphasize'>%{username} </span> dne <span class='emphasize'>%{date}</span>"
+    portal_created_on_same_user: "Ustvarjeno <span class='emphasize'>%{date}</span>"
+    priority: Prioriteta
+    properties: "Lastnosti zahtevka"
+    recent_tickets: "Zadnji zahtevki"
+    reply_form: 
+      form_title: "Oggovori "
+      post_to_linked_forum: "Objavi v povezanem forumu"
+      reply_email_id: "Pošlji odgovor s sledečim id  e-pošte"
+      send: Pošlji
+      send_and_resolve: "Pošlji in Reši"
+      send_satisfaction_survey: "Vključi vprašalnik zadovoljstva"
+    reply_to: Odgovori
+    reported_by: "of %{requester}"
+    reported_from_source: "Sporočeno preko %{source}"
+    reported_on: "Od %{username}, Nazadnje osveženo: %{date}"
+    requester: Zahtevnik
+    requester_responded_at: "Ur od odziva zahtevnika"
+    requestor_info: "Info zahtevnika"
+    resolved_at: "Ur od rešitve"
+    restore_btn: "Obnovi zahtevek"
+    restore_btn_title: "Obnovi zahtevek iz koša"
+    select_to_agent: "Izberi agenta"
+    singular: Zahtevek
+    sort_by: "Razvrščeno po"
+    source: Vir
+    spam_btn_title: "Označi kot Spam"
+    split_ticket: Razdeli
+    status: Status
+    stop_monitor_btn_title: "Prekini nadzor tega zahtevka"
+    subject: Zadeva
+    submit_ticket: Pošlji
+    submit_ticket_title: "Pošlji zahtevek"
+    suggest_solutions: "Predlagaj rešitev"
+    suggested_solutions: 
+      insert_content: "Vnesi vsebino"
+      insert_content_tip: "Vključi ta članek z rešitvijo v odgovor ali zapisek"
+      insert_url: "Vnesi URL"
+      insert_url_tip: "Vstavi URL rešitve k odgovoru ali sporočilu"
+      no_result: "Ni rešitve"
+      title: "Predlagane rešitve"
+    tags: 
+      add_tag: "Dodaj oznako"
+      create_success: "Oznaka je bila dodana"
+      destroy_success: "Oznaka je bila odstranjena iz zahtevka"
+      no_match: "Ni zadetkov, Pritisnite enter za izdelavo oznake."
+    thanks: "Hvala za poslane informacije"
+    ticket_list_status_agent_responded_at: "Od: %{username}, Agent je odgovoril: <span class='emphasize'> pred %{time_ago} </span>"
+    ticket_list_status_closed_at: "Od: %{username}, Zaključeno: <span class='emphasize'> pred %{time_ago}</span>"
+    ticket_list_status_created_at: "Od: %{username}, Izdelano: <span class='emphasize'> pred %{time_ago}</span>"
+    ticket_list_status_requester_responded_at: "Od: %{username}, Kupec odgovoril:  <span class='emphasize'> pred %{time_ago}</span>"
+    ticket_list_status_resolved_at: "Od: %{username}, Rešeno: <span class='emphasize'> pred %{time_ago}</span>"
+    ticket_url: "URL Zahtevka"
+    ticket_user_list_status_agent_responded_at: "Agent odgovoril: <span class='emphasize'> pred %{time_ago} </span>"
+    ticket_user_list_status_closed_at: "Zaprto: <span class='emphasize'> pred %{time_ago}</span>"
+    ticket_user_list_status_created_at: "Izdelano: <span class='emphasize'> pred %{time_ago}</span>"
+    ticket_user_list_status_requester_responded_at: "Odgovor kupca: <span class='emphasize'> pred %{time_ago}</span>"
+    ticket_user_list_status_resolved_at: "Rešeno: <span class='emphasize'> pred %{time_ago} </span>"
+    to_do: "To - Do zahtevki"
+    tweet_form: 
+      tweet_and_resolve: "Objavi Tweet in reši"
+      user_not_following: "Ta uporabnik ne spremlja vašega Tweeter računa"
+    tweets: "Tweeti "
+    type: Tip
+    unassigned: Nedodeljeno
+    unflag_spam: "Ni Spam"
+    unwatch: "Ne spremljaj"
+    verify_human: "Da potrdimo da niste robot, prepišite črke"
+  ticket_cancel_multiple_button: Prekliči
+  ticket_cc_email_more: več
+  ticket_close_failure: "Zapiranje zahtevka ni uspelo."
+  ticket_close_success: "Vaš zahtevek je bil uspešno zaključen."
+  ticket_closed_at_time: "Zaključeno ob"
+  ticket_due_by_time: Zapade
+  ticket_field: 
+    helpcard: 
+      info1: "Forma zahtevka je najlažji način za pridobitev vseh podatkov ki jih potrebujete od kupca, Formo zahtevka lahko prilagodite tako, da so vključeni vsi podatki pomembni za vaše poslovanje. "
+      info2: "Odvisna polja omogočajo enostaven način za poglobljeno kategorizacijo in identifikacijo največjih problemov, ki pestijo vašo podporo. Z odvisnimi polji lahko zahtevke organizirate hierarhično v kategorije, podkategorije."
+      title1: "Polja zahtevka"
+      title2: "Odvisna polja"
+      tour: "Pomoč pri poljih zahtevka"
+  ticket_fields: 
+    confirm_delete: "Ste prepričani da želite izbrisati to polje?"
+    fields: 
+      agent: Agent
+      description: Opis
+      group: Skupina
+      priority: Prioriteta
+      product: Produkt
+      requester: Zahtevnik
+      source: Vir
+      status: Status
+      subject: Zadeva
+      ticket_type: Tip
+    first_choice: "Prva izbira"
+    formfield_props: 
+      add_new_choice: "Dodaj novo izbiro"
+      agent_info1: "Polje ne sme biti prazno ko pošiljate zahtevek"
+      agent_info2: "Polje ne sme biti prazno ko zaključujete zahtevek"
+      agent_mandatory_closure: "Zahtevano pri zapiranju zahtevka"
+      agent_mandatory_submission: "Zahtevano pri pošiljanju forme"
+      behavior: Obnašanje
+      cc_any_email: "Lahko doda katerokoli e-pošto v CC"
+      cc_company_contacts: "Lahko doda v CC zgolj kontakte podjetja"
+      choices: Možnosti
+      customer_edit: "Kupec lahko ureja"
+      customer_info1: "Polje ne sme biti prazno pri pošiljanju zahtevka online"
+      customer_mandatory: "Zahtevano pri pošiljanju forme"
+      customer_visible: "Prikazano kupcu"
+      delete_field: "Izbriši polje"
+      description: Opis
+      display_cc_field: "Prikaži CC polje"
+      display_to_customer: "Prikaži sporočilo kupcu"
+      dropdown_choices: "Možnosti v meniju"
+      dropdown_items_edit: "Menijske možnosti - uredi pogled"
+      dropdown_items_preview: "Menijske možnosti - predogled"
+      field_label_agents: "Oznaka polja za agente"
+      field_label_customer: "Oznaka polja za kupce"
+      for_agents: "Za Agente"
+      for_customer: "Za Kupce"
+      form_title: "Lastnosti polja"
+      label: "Oznaka polja"
+      label_in_portal: "Oznaka in portal"
+      label_in_portal_info: "Oznaka, ki bo prikazana na portalu"
+      level1: "Nivo 1"
+      level2: "Nivo 2"
+      level3: "Nivo 3"
+      nested_label: "Oznake polj"
+      nestedfield_helptext: "Uporabite spodnjo tekstovno polje za dodajanje ali urejanje možnosti v vašem spustnem seznamu. Zamik možnosti izvedete tako, da 2x kliknete tipko Tab. Ker se menijska struktura izdela na podlagi zamikov bodite pozorni pri uporabi. <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'> Več o tem.</a>"
+      nestedfield_helptext_preview: "To je \"Predogled\" spustnega menija možnosti, uporabite prosto oblikovanje področja teksta  v \"Uredi pogled\" za urejanje možnosti"
+      sla_timer: "SLA merilnik"
+      status_choices: "Izbira statusov"
+    index: 
+      add_custom_field: "Dodaj polje po meri"
+      checkbox: Potrditev
+      customize_form: "Nastavi formo \"Nov zahtevek\""
+      drag_drop_intro: "Zagrabi in spusti katerikoli tip polja v formo \"Nov zahtevek\" da bi dodali novo polje "
+      dropdown: Meni
+      nestedfield: "Odvisno polje"
+      number: Številka
+      paragraph: "Tekst paragraf"
+      save: "Shrani polja Zahtevka"
+      single_line: "Tekst ena vrstica"
+      title: "Polja zahtevka"
+    no_choice_message: "Izbranai mora biti vsaj eno možnost"
+    second_choice: "Druga izbira"
+    untitled: Neimenovano
+  ticket_pending_since_time: "Rešuje od"
+  ticket_resolved_at_time: "Rešeno ob"
+  ticket_update_multiple_button: Osveži
+  ticket_was: "zahtevek je bil"
+  tickets_filter: 
+    sort_fields: 
+      asc: Naraščajoče
+      date_created: "Datum kreiranja"
+      desc: Padajoče
+      due_by: "Zaključiti do"
+      last_modified: "Zadnji urejal"
+      priority: Prioriteta
+      status: Status
+    title: "Filter zahtevkov"
+    unsaved_view: "Neimenovan pregled"
+  tickets_were: "zahtevki so "
+  tip_off: "Klikni za neaktivno"
+  tip_on: "Klikni Aktivno"
+  title: Naziv
+  tkt_assigned_to_agent: "Zahtevek dodeljen Agentu"
+  tkt_assigned_to_group: "Zahtevek dodeljen skupini"
+  tkt_unattended_in_grp: "Zahtevek neobdelan v skupini"
+  to: za
+  to_do: "Za izvedbo"
+  to_email: "Za e-pošta"
+  top: Vrh
+  topic: 
+    add_comment: "Dodaj komentar"
+    close: "Zapri to diskusijo"
+    edit: "Uredi temo"
+    ideas_stamps: 
+      implemented: Implementirano
+      nottaken: "Ni zasedeno"
+      planned: Planirano
+    locked: Zaklenjeno
+    msg1: "Komentarji so zaprti za to temo"
+    name: "Ime teme"
+    new: "Nova tema"
+    open: "Ponovno odpri diskusijo"
+    post: "Objavi temo"
+    post_comment: Objava
+    reply: "Odgovori na to temo"
+    sticky: Popularno
+  topics: 
+    last_reply: "Zadnji odgovor pred %{post_time} od %{user_link}"
+    posted_at: "Objavljeno pred %{post_time}"
+    show: 
+      mark_this_idea_as: "Označi idejo kot"
+  total: Skupaj
+  total_price: "Skupaj cena"
+  trial_expired_on: "Vaše poiskusno obdobje je poteklo"
+  twelve: "12 Ur"
+  twitter: 
+    associate_twitter: "Povežite vaš Twitter račun z podporo, tako boste lahko zajeli probleme kupec tudi preko Twitterja"
+    deleted: "Račun Twitterja @ %{twitter_screen_name} je odstranjen"
+    error_sending: "Napaka pri objavi Tweeta! Twitter morebiti ne deluje, Prosimo poiskusite še enkrat."
+    not_authorized: "Niste avtorizirani s strani Twitterja"
+    sent: "Tweet uspešno objavljen"
+    success_signin: "Uspešno povezano @%{twitter_screen_name} z %{helpdesk}"
+    ticket_save: "Uspešen prenos tweeta v zahtevek"
+    tkt_err_save: "Neuspešen prenos Tweeta v zahtevej ali pa je že prenešen"
+    user_exists: "Twitter račun že povezan z drugim produktom"
+    usr_not_thr: "Uporabnika ni"
+  twitter_source: Twitter
+  two: "2 uri"
+  twoday: "2 dni"
+  twoweek: "2 tedna"
+  unable_to_charge: "Bremenitev kreditne kartice za dodanega agenta ni uspela!"
+  unauthorized_msg: "Avtorizacija neuspešna"
+  undelete: Ponastavi
+  undo: Povrni
+  update: Osveži
+  update_and_login: "Osveži in prijavi"
+  update_multiple_tickets: "Osveži več zahtevkov "
+  updated_on: "%{user_name} osvežil dne %{note_date}"
+  upgrade_trial: "Nadgradi testno naročnino"
+  urgent: Urgentno
+  use_reply_option: "Uporabite Odgovori za pošiljanje e-pošte zahtevniku"
+  user: 
+    address: Naslov
+    back_info: "Dodatni podatki"
+    company: Podjetje
+    email: E-pošta
+    full_name: "Polno ime"
+    info1: "Slika osebe - profil, najboljše če je višina in širina slike enaka"
+    mobile: Mobilni
+    name: Ime
+    phone_no: "Telef. št."
+    photo: Slika
+    secondary: sekundaren
+    title: Naziv
+    twitter_id: "Twitter id"
+    work: Delo
+  user_activation_email: "Aktivacijska e-pošta uporabnika"
+  user_activation_message_sent: "Uporabnik je kreiran in navodila za aktivacijo so bila poslana %{user_email}"
+  user_block: Da
+  user_sessions: 
+    new: 
+      email: E-pošta
+      forgot: "Pozabll sem geslo?"
+      help: Pomoč
+      login: Prijava
+      password: Geslo
+      remember: "Zapomni na tem računalniku"
+      sign_in_using: Prijava
+      sign_in_using_google: "Prijavite se s vašim Google računom"
+  username: "Uporabniško ime"
+  users: 
+    activations: 
+      bulk_send_invite_success: "Aktiivacijska e-pošta poslana"
+      bulk_send_invite_success2: "Aktivacijske e-pošte poslane"
+      code_expired: "Vaša aktivacijska koda je potekla!"
+      send_invite_success: "Aktivacijska e-pošta poslana!"
+      sent: Poslano!
+      success: "Vaš račun je aktiviran."
+      user: uporabnik.
+      users: uporabniki.
+  users_blocked_message: "Sledeči kontakti (%{users}) so blokirani"
+  validate_fwd_to_email_msg: "Vnesite validno e-pošto"
+  waiting_on_customer: "Čaka na kupca"
+  waiting_on_third_party: "Čaka na zunanjega partnerja"
+  warning: OPOZORILO
+  wf: 
+    filter: 
+      index: 
+        back: "&larr; Nazaj na zahtevke"
+        no_custom_view: "Ni pogledov po meri!"
+        title: "Uredi poglede po meri"
+      view: 
+        delete: "Ste prepričani da želite izbrisati ta pogled?"
+    messages: 
+      no_tickets_for_user: "Ni odprtih zahtevkov za %{user_name}"
+      no_tickets_in_view: "Nimate nobenega zahtevka v %{view_name}"
+      no_tickets_subtext: "Pogled %{view_1} ali %{view_2}"
+      no_tickets_subtext_single: "Pogled %{view_1}"
+  what_is_cvv: "Kaj je cvv?"
+  widgets: 
+    contact_widget: 
+      description: "Prikaži kontakt ali opcijo dodajanja kontakta v capsulo"
+  will_expire_in: "Poteče v"
+  working: Dela
+  wrong_portal: 
+    content_not_available: "Vsebina ki jo iščete ni na voljo na tem portalu"
+    title: "Ni na voljo!"
+  yes_password_reset: Da
+  your_email: "Vaša e-pošta"
+  your_email_address: "Vaš e-poštno naslov"
+  your_trial_account: "Vaš preiskusni račun"
+  zendesk_backup: "Varnostna kopija"
+  zendesk_backup_info: "Izberi Zendesk varnostno kopijo"
+  zendesk_credentials: "Zendesk Mandat"
+  zendesk_url: "Zendesk URL"
+  zendesk_url_info: "npr:- http://acme.zendesk.com"
+  zip: Zip

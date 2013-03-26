@@ -104,7 +104,7 @@ module TicketsFilter
       to_ret = to_ret.scoped(:conditions => conditions[af])
     end unless ADDITIONAL_FILTERS[filter].nil?
 
-    to_ret.scoped(:include => [:ticket_status, :requester])
+    to_ret
   end
 
   def self.default_scope
