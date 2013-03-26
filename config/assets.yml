@@ -82,6 +82,7 @@ stylesheets:
     - public/stylesheets/app/lib/jquery-ui.css
     - public/stylesheets/app/lib/qtip.css
     - public/stylesheets/app/lib/ie.css
+    - public/stylesheets/app/tkt_details.css
     - public/stylesheets/app/gadget.css
 
   subscription:

@@ -1,4 +1,5 @@
 <div class="widget clearfix">
+	<% unless params[:format] == 'widget' %>
 	<div class="tkt-tabs-wrap">
 		<ul class="tkt-tabs">
 			<li><a href="#contact_info_default" class="requester-info-sprite requester-info-default"></a></li>
@@ -13,7 +14,9 @@
 			%> 
 		</ul>
 	</div>
-	<% 
+	<%
+	end
+
 	user = @ticket.requester 
 	contact = current_user.can_view_all_tickets? ? user : "javascript:void(0)"
 	%>
@@ -25,7 +28,7 @@
 
 		<div class="requester-details">
 			<p><%= link_to(h(user.name), contact, :class => "user_name") %></p>
-			<p><%= render :partial => "helpdesk/tickets/components/company_info", :locals => { :user => user } %></p>
+			<p><%= render :partial => "helpdesk/tickets/components/company_info.html.erb", :locals => { :user => user } %></p>
 			<%= content_tag(:p, "Email: #{render_item(h(user.email), "link")}" ) unless user.email.blank? %>
 			<%= content_tag(:p, "Twitter: #{render_item(h(user.twitter_id),'twitter')}" ) unless user.twitter_id.blank? %>
 			<%= content_tag(:p, "Facebook: #{render_item(h(user.fb_profile_id), "facebook")}" ) unless user.fb_profile_id.blank? %>
@@ -36,6 +39,8 @@
 		</div>
 	</div>
 	<%
+	unless params[:format] == 'widget' 
+
 	crm_apps.each do |crm_app| 
 		if is_application_installed?(Integrations::Constants::APP_NAMES[crm_app])  %>
 	<div id="contact_info_<%=crm_app%>" class='requester_tab'>
@@ -48,6 +53,8 @@
 	</div>
 	<% 
 		end 
+	end
+
 	end
 	%>
 </div>

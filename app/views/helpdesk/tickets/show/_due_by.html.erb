@@ -1,8 +1,11 @@
 <%=t( due_by > Time.now() ? 'ticket_future_due_by' : 'ticket_past_due_by',
 		 {:time => distance_of_time_in_words(Time.now(), due_by)}) %>
-<br />on <%= formated_date(due_by) %> <a id="edit-dueby-time" 
+<br />on <%= formated_date(due_by) %> 
+<% unless params[:format]=='widget' %>
+<a id="edit-dueby-time" 
 			data-placement="topRight" 
 			href="#" 
 			data-widget-container="due-date-dialog-container">
-	Change
+	<%= t('change') %>
 </a>
+<% end %>

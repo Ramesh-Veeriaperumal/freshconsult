@@ -4,6 +4,7 @@
 	<div id="firstchild">
 		<div class="controls">
 		<!--Pagination-->
+			<% unless params[:format]=='widget' %>
 			<div class="pagination-link" id="adjacents">
 				<ul>
 					<li><a href="#" class="pagi-btn disabled"><span class="arrow-next"></span></a></li>
@@ -15,6 +16,7 @@
 				<input rel="toggle" type="checkbox" data-checked-label="Yes" data-unchecked-label="No" />
 				<div class="loading-center"></div>
 			</div>
+			<% end %>
 			<!--Breadcrumb-->
 			<div class="bread-crumb-wrap clearfix">
 				<div class="bread-crumb">
@@ -43,27 +45,30 @@
 						<%= render :partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @ticket} unless @ticket.deleted or @ticket.spam %>
 
 						<div class="ticket-subject">
-							<h2 class="subject <%= 'show_full' if @ticket.deleted or @ticket.spam %> %>">
+							<h2 class="subject <%= 'show_full' if @ticket.deleted or @ticket.spam or params[:format]=='widget' %>">
 								<% unless @ticket.deleted or @ticket.spam %>
 									<div class="watchers_tooltip hide" id="new_watcher_page"
 										rel="remote-load" 
 										data-url= "<%=helpdesk_ticket_helpdesk_subscriptions_path(@ticket)%>" >
 										<span class="arrow-right"></span>
 									</div>
+									<% unless params[:format]=='widget' %>
 									<div class="monitor_div">
 										<span id="monitor">
-											<%= render :partial => "/helpdesk/subscriptions/monitor" %>
+											<%= render :partial => "/helpdesk/subscriptions/monitor.html.erb" %>
 										</span>
 										<div class="watchers_tooltip " id="new_watcher_page" style="display:none" rel="remote-load" 
 												data-url= "<%=helpdesk_ticket_helpdesk_subscriptions_path(@ticket)%>" data-load-unique="true" >
 											<span class="arrow-top"></span>
 										</div>
 									</div>
+									<% end %>
 								<% end %>
 								<% if @ticket.spam %>
 									<span class='label spam'>
 										<%= link_to("×", unspam_helpdesk_ticket_path(@ticket), :method => :put,
-															:class => "tooltip", "data-placement" => "below", :title => t('ticket.ham_btn_title'))%>
+															:class => "tooltip", "data-placement" => "below", 
+															:title => t('ticket.ham_btn_title')) unless params[:format]=='widget' %>
 										<%= t("ticket.spam") %>
 
 									</span>
@@ -71,7 +76,9 @@
 								<% if @ticket.deleted %>
 									<span class='label deleted'>
 										<%= link_to("×", restore_helpdesk_ticket_path(@ticket), :method => :put, 
-													:class => "tooltip", "data-placement" => "below", :title => t('ticket.restore_btn_title') ) %>
+													:class => "tooltip", "data-placement" => "below", 
+													:title => t('ticket.restore_btn_title') ) unless params[:format]=='widget' 
+													%>
 										<%= t("ticket.deleted") %>
 									</span>
 									
@@ -79,7 +86,7 @@
 
 								<%= h(@ticket.subject) %>
 							</h2>
-							<div class="ticket-actions clearfix <%= 'hide' if @ticket.deleted or @ticket.spam %>">
+							<div class="ticket-actions clearfix <%= 'hide' if @ticket.deleted or @ticket.spam or params[:format]=='widget' %>">
 								<ul>
 									<li class="ticket-btns">
 										<div class="btn-group">
@@ -151,7 +158,7 @@
 										  	</li>
 
 										  	<li id="spamicon">
-										  		<%= render :partial => "spam", :locals => { :ticket => @ticket, :page => params[:page] } %>
+										  		<%= render :partial => "spam.html.erb", :locals => { :ticket => @ticket, :page => params[:page] } %>
 										  	</li>
 
 										  	<li>

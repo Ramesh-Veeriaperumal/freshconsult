@@ -185,6 +185,7 @@ class Helpdesk::TicketsController < ApplicationController
       else
         if verify_permission
           @ticket_notes = @ticket.conversation
+          @ticket_notes_total = @ticket.conversation_count
           render :layout => "widgets/contacts"
         else
           @no_auth = true

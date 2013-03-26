@@ -2,7 +2,7 @@
 <% unless (ticket.onhold_and_closed? or ticket.ticket_status.deleted?)%>
 	<h4 class="title"><%= h(ticket.status_name) %></h4>
 	<p id="edit-dueby-time-parent">
-		<%= render :partial => "/helpdesk/tickets/show/due_by", :object => ticket.due_by %>
+		<%= render :partial => "/helpdesk/tickets/show/due_by.html.erb", :object => ticket.due_by %>
 	</p>
 <% else %>
 	<% if ticket.ticket_status.deleted? %>
