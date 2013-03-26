@@ -440,7 +440,7 @@ class AccountsController < ApplicationController
         end  
 
       def select_latest_shard(&block)
-        ActiveRecord::Base.on_shard(ShardMapping.latest_shard.to_sym,&block)
+        Sharding.select_latest_shard(&block)
       end   
 
     private

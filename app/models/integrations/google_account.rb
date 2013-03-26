@@ -45,12 +45,11 @@ class Integrations::GoogleAccount < ActiveRecord::Base
   def self.find_google_accounts_for_all_accounts
     goog_cnt_app = Integrations::Application.find(:first, :conditions => {:name => "google_contacts"})
     conditions = ["installed_applications.application_id = ?", goog_cnt_app]
-    results =  ActiveRecord::Base.on_all_shards do
+    results =  Sharding.run_on_all_shards do
         Integrations::GoogleAccount.find(:all, 
                   :joins => "INNER JOIN installed_applications ON installed_applications.account_id=google_accounts.account_id", 
                   :select => "google_accounts.*, installed_applications.configs", :conditions => conditions)
       end
-    results.flatten
   end
 
   def create_google_group(group_name)

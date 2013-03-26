@@ -23,7 +23,7 @@ module Resque::AroundPerform
  def around_perform_with_shard(*args)
   args[0].symbolize_keys!
   account_id = (args[0][:account_id]) || (args[0][:current_account_id])
-  ActiveRecord::Base.on_shard(shard_name.to_sym) do
+  Sharding.select_shard_of(account_id) do
     account = Account.find_by_id(account_id)
     account.make_current if account
       yield

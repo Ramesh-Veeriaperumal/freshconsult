@@ -646,24 +646,21 @@ class Account < ActiveRecord::Base
     end
 
     def self.active_accounts
-      results = ActiveRecord::Base.on_all_shards do
+      results = Sharding.run_on_all_shards do
         Account.find(:all,:joins => :subscription, :conditions => "subscriptions.next_renewal_at > now()")
       end
-      results.flatten
     end
 
     def self.premium_accounts
-      results = ActiveRecord::Base.on_all_shards do
+      results =  Sharding.run_on_all_shards do
         Account.find(:all,:joins => :subscription, :conditions => "subscriptions.next_renewal_at > now() and accounts.premium = 1")
       end
-      results.flatten
     end
 
     def self.non_premium_accounts
-      results = ActiveRecord::Base.on_all_shards do
+      results = Sharding.run_on_all_shards do
         Account.find(:all,:joins => :subscription, :conditions => "subscriptions.next_renewal_at > now() and accounts.premium = 0")
       end
-      results.flatten
     end
 
   private 

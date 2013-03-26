@@ -1,24 +1,20 @@
 SPAM_TICKETS_THRESHOLD = 50 #Allowed number of tickets in 30 minutes window..
 SPAM_CONVERSATIONS_THRESHOLD = 50
-TICKETS_ID_LIMIT = 7000000
-NOTES_ID_LIMIT = 6000000
-# TICKETS_ID_LIMIT = 1
-# NOTES_ID_LIMIT = 1
-DB_SLAVE = "slave"
 
-#We might need to make the time window also as configurable. Right now, 30 minutes looks like a good guess!
+LIMITS = {:shard_1 => {:tickets_limit => 8500000, :notes_limit => 7000000} } 
 
 namespace :spam_watcher do
   desc 'Check for abnormal activities and email us, if needed'
   task :ticket_load => :environment do
     puts "Check for abnormal activities started at  #{Time.now}"
-    check_for_slave_db unless Rails.env.development?
-    shards = ActiveRecord::Base.shard_names
+    shards = Sharding.all_shards
     shards.each do |shard_name|
-     ActiveRecord::Base.on_shard(shard_name.to_sym) do
-      check_for_spam('helpdesk_tickets', 'requester_id', TICKETS_ID_LIMIT, SPAM_TICKETS_THRESHOLD)
-      check_for_spam('helpdesk_notes', 'user_id', NOTES_ID_LIMIT, SPAM_CONVERSATIONS_THRESHOLD)
-     end
+     shard_sym = shard_name.to_sym
+     puts "shard_name is #{shard_name}"
+     Sharding.run_on_shard(shard_name.to_sym) {
+      check_for_spam('helpdesk_tickets', 'requester_id', LIMITS[shard_sym][:tickets_limit], SPAM_TICKETS_THRESHOLD)
+      check_for_spam('helpdesk_notes', 'user_id', LIMITS[shard_sym][:notes_limit], SPAM_CONVERSATIONS_THRESHOLD)
+     }
     end
     puts "Check for abnormal activities end at  #{Time.now}"
   end
@@ -36,7 +32,7 @@ end
 
 
 def execute_sql_on_slave(query_str)
- result = ActiveRecord::Base.on_slave do 
+ result = Sharding.run_on_slave do 
   ActiveRecord::Base.connection.select_all(query_str)
  end
 end
@@ -86,18 +82,18 @@ def check_for_spam(table,column_name, id_limit, threshold)
     deliver_spam_alert(table, query_str, {:actual_requesters => user_ids, 
       :deleted_users => deleted_users, :blocked_users => blocked_users, :ignore_list => ignore_list}) unless user_ids.empty?
 
-    # account_ids.keys.each do |account_id|
-    #   account = Account.find(account_id)    
-    #   puts "::::account->#{account}"
-    #   $redis.sadd("SPAM_CLEARABLE_ACCOUNTS",account.id)
-    #   puts "deleted_users 1::::::::->#{deleted_users}"
-    #   deleted_users = account_ids[account_id]
-    #   unless deleted_users.empty?
-    #     puts "deleted_users 2::::::::->#{deleted_users}"
-    #     deleted_users = account.all_users.find(deleted_users)
-    #     SubscriptionNotifier.send_later(:deliver_account_admin_spam_watcher, account.admin_email, deleted_users)
-    #   end
-    #end
+    account_ids.keys.each do |account_id|
+      account = Account.find(account_id)    
+      puts "::::account->#{account}"
+      $redis.sadd("SPAM_CLEARABLE_ACCOUNTS",account.id)
+      puts "deleted_users 1::::::::->#{deleted_users}"
+      deleted_users = account_ids[account_id]
+      unless deleted_users.empty?
+        puts "deleted_users 2::::::::->#{deleted_users}"
+        deleted_users = account.all_users.find(deleted_users)
+        SubscriptionNotifier.send_later(:deliver_account_admin_spam_watcher, account.admin_email, deleted_users)
+      end
+    end
 end
 
 

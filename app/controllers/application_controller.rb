@@ -15,6 +15,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
+  rescue_from DomainNotReady, :with => :render_404
   
   include AuthenticationSystem
   #include SavageBeast::AuthenticationSystem
@@ -124,8 +125,7 @@ class ApplicationController < ActionController::Base
   end
 
   def select_shard(&block)
-    shard_name = ShardMapping.lookup(request.host)
-    ActiveRecord::Base.on_shard(shard_name.to_sym,&block)
+    Sharding.select_shard_of(request.host) { yield }
   end
 
   protected

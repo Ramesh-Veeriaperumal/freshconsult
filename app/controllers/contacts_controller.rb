@@ -270,9 +270,9 @@ protected
     end
 
     def fetch_contacts
-       connection_to_be_used =  params[:format].eql?("xml") ? "on_slave" : "on_master"  
+       connection_to_be_used =  params[:format].eql?("xml") ? "run_on_slave" : "run_on_master"  
        begin
-         @contacts =   ActiveRecord::Base.send(connection_to_be_used.to_sym) do
+         @contacts =   Sharding.send(connection_to_be_used.to_sym) do
           scoper.filter(params[:letter], params[:page], params.fetch(:state, "verified"))
         end
       rescue Exception => e

@@ -65,13 +65,8 @@ module AdminControllerMethods
     end
     
     def select_shard(&block)
-        ActiveRecord::Base.on_shard(ShardMapping.latest_shard,&block)
+      Sharding.select_latest_shard(&block)
     end
-
-    # def run_on_slave(&block)
-    #   puts "shard slave stuff"
-    #   ActiveRecord::Base.on_slave(&block)
-    # end
 
     # Since the default, catch-all routes at the bottom of routes.rb
     # allow the admin controllers to be accessed via any subdomain,

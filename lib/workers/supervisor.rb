@@ -28,7 +28,7 @@ class Workers::Supervisor
         conditions = rule.filter_query
         next if conditions.empty?
       
-        tickets = ActiveRecord::Base.on_slave do
+        tickets = Sharding.run_on_slave do
          account.tickets.updated_in(1.month.ago).visible.find( :all, 
           :joins => %(inner join helpdesk_schema_less_tickets on helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id 
             and helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id 

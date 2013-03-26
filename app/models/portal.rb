@@ -35,7 +35,6 @@ class Portal < ActiveRecord::Base
               :foreign_key => 'solution_category_id'
   belongs_to :forum_category
 
-  after_create :create_template
 
 
   APP_CACHE_VERSION = "FD3"
@@ -128,10 +127,7 @@ class Portal < ActiveRecord::Base
       to_ret
     end
 
-    def create_template
-      self.build_template()
-      self.template.save()
-    end
+    
 
     def cache_version
       key = PORTAL_CACHE_VERSION % { :account_id => self.account_id }

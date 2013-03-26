@@ -12,9 +12,12 @@ class ShardMapping < ActiveRecord::Base
   after_destroy :clear_cache
 
 
- def self.lookup(shard_key)
-   shard = is_numeric?(shard_key) ? fetch_by_account_id(shard_key) : fetch_by_domain(shard_key)
-   shard.shard_name  if shard
+ def self.lookup_with_account_id(shard_key)
+   shard =  fetch_by_account_id(shard_key) 
+ end
+
+ def self.lookup_with_domain(shard_key)
+   shard = fetch_by_domain(shard_key)
  end
 
  def self.fetch_by_domain(domain)
@@ -32,12 +35,12 @@ class ShardMapping < ActiveRecord::Base
    MemcacheKeys.fetch(key) { self.find_by_account_id(account_id) }
  end
 
- def self.is_numeric?(str) #Need to move to shard
-    true if Float(str) rescue false
+ def self.latest_shard
+ 	"shard_1" #probably fetch it from Redis or config 
  end
 
- def self.latest_shard
- 	"shard_2" #probably fetch it from Redis or config 
+ def ok?
+  status == 200
  end
 
  def clear_cache

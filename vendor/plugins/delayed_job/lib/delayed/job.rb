@@ -76,7 +76,7 @@ module Delayed
         self.unlock
         save!
       else
-        logger.info "* [JOB] PERMANENTLY removing #{self.name} because of #{attempts} consequetive failures."
+        RAILS_DEFAULT_LOGGER.info "* [JOB] PERMANENTLY removing #{self.name} because of #{attempts} consequetive failures."
         destroy_failed_jobs ? destroy : update_attribute(:failed_at, Delayed::Job.db_time_now)
       end
     end
@@ -84,10 +84,10 @@ module Delayed
 
     # Try to run one job. Returns true/false (work done/work failed) or nil if job can't be locked.
     def run_with_lock(max_run_time, worker_name)
-      logger.info "* [JOB] aquiring lock on #{name}"
+      RAILS_DEFAULT_LOGGER.info "* [JOB] aquiring lock on #{name}"
       unless lock_exclusively!(max_run_time, worker_name)
         # We did not get the lock, some other worker process must have
-        logger.warn "* [JOB] failed to aquire exclusive lock for #{name}"
+        RAILS_DEFAULT_LOGGER.warn "* [JOB] failed to aquire exclusive lock for #{name}"
         return nil # no work done
       end
 
@@ -97,7 +97,7 @@ module Delayed
           destroy
         end
         # TODO: warn if runtime > max_run_time ?
-        logger.info "* [JOB] #{name} completed after %.4f" % runtime
+        RAILS_DEFAULT_LOGGER.info "* [JOB] #{name} completed after %.4f" % runtime
         return true  # did work
       rescue Exception => e
         reschedule e.message, e.backtrace
@@ -192,8 +192,8 @@ module Delayed
 
     # This is a good hook if you need to report job processing errors in additional or different ways
     def log_exception(error)
-      logger.error "* [JOB] #{name} failed with #{error.class.name}: #{error.message} - #{attempts} failed attempts"
-      logger.error(error)
+      RAILS_DEFAULT_LOGGER.error "* [JOB] #{name} failed with #{error.class.name}: #{error.message} - #{attempts} failed attempts"
+      RAILS_DEFAULT_LOGGER.error(error)
     end
 
     # Do num jobs and return stats on success/failure.

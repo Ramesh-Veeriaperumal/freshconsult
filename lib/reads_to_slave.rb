@@ -6,7 +6,7 @@ module ReadsToSlave
   end
   
   def run_on_slave(&block)
-    ActiveRecord::Base.on_slave(&block)
+    Sharding.run_on_slave(&block)
   end 
 
 end
