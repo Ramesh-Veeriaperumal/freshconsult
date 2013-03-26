@@ -101,10 +101,9 @@ minimizable ||= false
 	</textarea>
 	<% end %>
 	<script type="text/javascript">
-		if (typeof(TICKET_DETAILS_DATA['last_note_id']) == 'undefined' || TICKET_DETAILS_DATA['last_note_id'] < <%= note.id %>)
+		if (typeof(TICKET_DETAILS_DATA['last_note_id']) == 'undefined' ||	TICKET_DETAILS_DATA['last_note_id']  == null || TICKET_DETAILS_DATA['last_note_id'] < <%= note.id %>)
 			TICKET_DETAILS_DATA['last_note_id'] = <%= note.id %>;
-		if (typeof(TICKET_DETAILS_DATA['first_note_id']) == 'undefined' || TICKET_DETAILS_DATA['first_note_id'] > <%= note.id %>)
+		if (typeof(TICKET_DETAILS_DATA['first_note_id']) == 'undefined' || TICKET_DETAILS_DATA['first_note_id']  == null || TICKET_DETAILS_DATA['first_note_id'] > <%= note.id %>)
 			TICKET_DETAILS_DATA['first_note_id'] = <%= note.id %>;
-		<%= "TICKET_DETAILS_DATA['total_notes'] += 1; " if params[:since_id].present? %>
 	</script>
 </li>

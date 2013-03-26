@@ -9,6 +9,7 @@ class Helpdesk::NotesController < ApplicationController
   include ParserUtil
   include Helpdesk::Social::Facebook
   include Helpdesk::Social::Twitter
+  include Helpdesk::Activities
   
   before_filter :fetch_item_attachments, :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
   before_filter :set_mobile, :prepare_mobile_note, :only => [:create]
@@ -27,6 +28,7 @@ class Helpdesk::NotesController < ApplicationController
     if request.xhr?
       unless params[:v].blank? or params[:v] != '2'
         @ticket_notes = @notes.reverse
+        @ticket_notes_total = @parent.conversation_count
         render :partial => "helpdesk/tickets/show/conversations"
       else
         render(:partial => "helpdesk/tickets/note", :collection => @notes)
@@ -75,6 +77,11 @@ class Helpdesk::NotesController < ApplicationController
         create_article if email_reply?
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
+      end
+
+      if params[:showing] == 'activities'
+        activity_records = @parent.activities.activity_since(params[:since_id])
+        @activities = stacked_activities(activity_records.reverse)
       end
   
       post_persist

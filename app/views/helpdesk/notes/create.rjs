@@ -1,8 +1,6 @@
 #Getting the latest notes and appending
 
 if params[:showing] == 'activities'
-	activity_records = @parent.activities.activity_since(params[:since_id])
-	@activities = stacked_activities(activity_records.reverse)
     @total_activities =  @parent.activities_count
 
     page.insert_html :bottom, 'all_activities', render(:partial => "helpdesk/tickets/show/activity", :collection => @activities)
