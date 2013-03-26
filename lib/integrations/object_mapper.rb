@@ -159,6 +159,7 @@ class Integrations::ObjectMapper
   REPLY_CONFIG = clone(generic_config)
   REPLY_CONFIG[:map][2][:theirs_to_ours][:value] = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"] #source
   REPLY_CONFIG[:map][3][:theirs_to_ours][:value] = false #private
+  REPLY_CONFIG[:map].push({:ours=>"body_html",:theirs_to_ours=> {:value => "<div>JIRA comment {{notification_cause}} # {{comment.id}}:<br/> {{comment.body}} <br/></div>"}})
   
   MAPPER_CONFIGURATIONS = {
       :add_private_note_in_fd => PRIVATE_NOTE_CONFIG,
