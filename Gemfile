@@ -8,14 +8,12 @@ gem "rails","2.3.18"
 gem "json", "~> 1.5.5"
 gem "mysql"
 gem "i18n", "0.4.2"
-gem "html2textile", "~> 1.0.0.beta1"
 
 gem "RedCloth", "4.2.3"
 gem "authlogic", "2.1.6"
 gem "httparty", "0.10.0"
 gem "omniauth", "1.0"
 gem "omniauth-oauth"
-gem "rufus-scheduler", :require =>"rufus/scheduler"
 gem "tzinfo"
 gem "ruby-debug", "0.10.3"
 gem "omniauth-oauth2", "1.0"
@@ -34,7 +32,6 @@ gem "ruby-openid-apps-discovery", "1.2.0"
 
 gem "aws-s3", "0.6.2", :require => "aws/s3"
 gem "arel", "2.0.7"
-gem "searchlogic", "2.4.27"
 gem "map-fields", "1.0.0", :require => "map_fields"
 
 gem "rubyzip", "0.9.4" , :require => "zip/zip"
@@ -47,8 +44,6 @@ gem "delayed_job", "1.8.4"
 
 gem "net-dns", "0.6.1"
 
-gem "classifier", "1.3.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/classifier-1.3.1"
-gem "stemmer", "1.0.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/stemmer-1.0.1"
 
 gem "jammit", "0.6.5"
 gem "yui-compressor", :git => "git://github.com/freshdesk/ruby-yui-compressor.git"
@@ -70,16 +65,11 @@ gem "insensitive_hash", "0.2.3"
 gem "SystemTimer", "1.2.3" 
 gem "redis","2.2.2"
 gem "resque","1.22.0"
-gem 'resque-scheduler', :require => 'resque_scheduler'
-gem 'resque_mailer', "1.0.1"
-gem 'resque-status', "0.3.0"
-gem 'resque-retry', "0.2.2"
 
 gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
 gem 'rforce'
 
-gem "seamless_database_pool", :git => "git://github.com/freshdesk/seamless_database_pool.git"
-gem 'after_commit', :git => "git://github.com/freshdesk/after_commit.git"
+gem 'after_commit', "1.0.11"
 gem 'chargebee', "~> 1.1.1"
 
 gem 'memcache-client', '1.8.5'
@@ -88,6 +78,7 @@ gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
 gem "rinku", :git => "git://github.com/freshdesk/rinku.git"
 
 gem "people", '0.2.1' #https://github.com/mericson/people/tree/master/lib
+gem "active_record_shards","2.7.0", :require => 'active_record_shards'
 
 group :development,:test do
    #gem "rspec", "1.3.1"

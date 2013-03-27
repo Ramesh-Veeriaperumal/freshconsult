@@ -16,7 +16,8 @@ module Helpdesk::MergeTicketActions
 		end
     move_source_notes_to_target
 		add_header_to_target if !@header.blank?
-		move_source_requesters_to_target
+		# Moving requesters part removed from the feature for now!
+		# move_source_requesters_to_target 
 		add_note_to_target_ticket
 	end
 
@@ -127,16 +128,17 @@ module Helpdesk::MergeTicketActions
 			end
 		end
 
-		def convert_to_cc_format ticket
-		  %{#{ticket.requester} <#{ticket.requester.email}>}
-		end
+		# Moving requesters part removed from the feature for now!
+		# def convert_to_cc_format ticket
+		#   %{#{ticket.requester} <#{ticket.requester.email}>}
+		# end
 
-    def get_cc_email_from_hash ticket
-      ticket.cc_email ? (ticket.cc_email[:cc_emails] ? ticket.cc_email[:cc_emails] : []) : []
-    end 
+  #   def get_cc_email_from_hash ticket
+  #     ticket.cc_email ? (ticket.cc_email[:cc_emails] ? ticket.cc_email[:cc_emails] : []) : []
+  #   end 
 
-		def check_source source_ticket
-		  source_ticket.requester_has_email? and ( !source_ticket.requester.eql?(@target_ticket.requester) or 
-		  																									get_cc_email_from_hash(source_ticket).any?)
-		end
+		# def check_source source_ticket
+		#   source_ticket.requester_has_email? and ( !source_ticket.requester.eql?(@target_ticket.requester) or 
+		#   																									get_cc_email_from_hash(source_ticket).any?)
+		# end
 end	

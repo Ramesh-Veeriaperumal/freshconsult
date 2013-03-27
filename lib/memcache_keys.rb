@@ -43,6 +43,10 @@ module MemcacheKeys
   FB_REAUTH_CHECK = "v1/FB_REAUTH_CHECK:%{account_id}"
 
   TWITTER_REAUTH_CHECK = "v1/TWITTER_REAUTH_CHECK:%{account_id}"
+
+  SHARD_BY_DOMAIN = "v1/SHARD_BY_DOMAIN:%{domain}"
+
+  SHARD_BY_ACCOUNT_ID = "v1/SHARD_BY_ACCOUNT_ID:%{account_id}"
   
   class << self
 

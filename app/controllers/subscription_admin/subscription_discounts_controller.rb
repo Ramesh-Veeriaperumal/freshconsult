@@ -3,6 +3,8 @@ class SubscriptionAdmin::SubscriptionDiscountsController < ApplicationController
   include ModelControllerMethods
   include AdminControllerMethods        
   before_filter :set_selected_tab    
+
+  skip_filter :run_on_slave
   
   protected
   def set_selected_tab

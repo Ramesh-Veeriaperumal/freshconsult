@@ -5,7 +5,7 @@ class Helpdesk::TicketsExport
 
   def self.perform(export_params)
 
-    SeamlessDatabasePool.use_persistent_read_connection do
+    Sharding.run_on_slave do
       export_params.symbolize_keys!
       user = Account.current.users.find(export_params[:current_user_id])
       user.make_current
