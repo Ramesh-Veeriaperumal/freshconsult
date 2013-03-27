@@ -35,7 +35,9 @@
       </div>
     </div>
     <div class="search-content">
-      <%= select_tag "search-type", "<option value='display_id'>Id</option><option value='subject'>Subject</option><option selected='selected' value='requester'>Requester</option>".html_safe %>
+      <%= select_tag "search-type", "<option value='display_id'>"+t('ticket.id')+"</option>
+                                    <option value='subject'>"+t('ticket.subject')+"</option>
+          <option selected='selected' value='requester'>"+t('ticket.requester')+"</option>".html_safe %>
       <% search_text = [
         ['display_id', 'select-id', t("ticket.id_placeholder"), 'hide' ],
         ['requester', 'select-requester', t("ticket.requester_placeholder")],
@@ -49,6 +51,7 @@
       <div id="display_id_results" class="merge_results hide"></div>
       <div id="requester_results" class="merge_results hide"></div>
       <div id="subject_results" class="merge_results hide"></div>
+      <input type="hidden" value='<%= redirect_back %>' id="redirect"/>
     </div>
 
       <% form_remote_tag (:url =>{ :controller => "merge_tickets", :action=>"merge" },:html => {:id=>"bulk_merge_tickets"}) do -%>  
@@ -56,7 +59,7 @@
       <input type="hidden" name="target[ticket_id]" id="target_ticket" />
         <div class="button-container" id="bulk-merge-button-container">
           <a class="btn" id="cancel_new_merge"><%= t('cancel') %></a>
-          <%= submit_tag "Continue",:class => "btn btn-primary",:id => "bulk_merge",:onclick => "bulk_merge_submit()", :disabled => "disabled", "data-loading-text" => t('please_wait') %>
+          <%= submit_tag t('.continue'),:class => "btn btn-primary",:id => "bulk_merge",:onclick => "bulk_merge_submit()", :disabled => "disabled", "data-loading-text" => t('please_wait') %>
           <%- end %>
         </div>
       <div id="invaliduser" class="info-highlight" style="display:none;"></div>

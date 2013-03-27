@@ -2581,6 +2581,7 @@ en:
         target_merge_description2: Description in ticket %{ticket_id}
         confirm_and_merge: Confirm and merge  
       bulk_merge:
+        continue: "Continue"
         mark_primary: "Mark as primary"
         primary_ticket: "This is your primary ticket"
         remove: "Remove this ticket"
@@ -2593,8 +2594,8 @@ en:
           one: "is merged into this ticket."
           other: "are merged into this ticket."
         target_note_description3:
-          one: "Ticket with id %{source_tickets} is merged into ticket %{target_ticket_id} with this request"
-          other: "Tickets with ids %{source_tickets} are merged into ticket %{target_ticket_id} with this request"
+          one: "The ticket %{source_tickets} has been merged with the ticket %{target_ticket_id}. The conversation will be added in a few minutes. "
+          other: "The tickets %{source_tickets} have been merged into the ticket %{target_ticket_id}. The conversations will be added in a few minutes."
   import_ticket_group: Tickets &amp; Group
   or: or
   tickets_filter:
