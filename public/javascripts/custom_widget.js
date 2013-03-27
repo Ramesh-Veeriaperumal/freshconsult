@@ -1,5 +1,6 @@
 var Freshdesk = {}
-
+jsLoadPath = document.getElementsByTagName("script")
+timeStamp = jsLoadPath[jsLoadPath.length-1].src.split('?')[1]
 Freshdesk.Widget=Class.create();
 Freshdesk.Widget.prototype={
 	initialize:function(widgetOptions){
@@ -1162,7 +1163,7 @@ var CustomWidget =  {
 	include_js: function(jslocation) {
 		widget_script = document.createElement('script');
 		widget_script.type = 'text/javascript';
-		widget_script.src = jslocation;
+		widget_script.src = jslocation+"?"+timeStamp;
 		document.getElementsByTagName('head')[0].appendChild(widget_script);
 	}
 };

@@ -29,7 +29,7 @@
 	}	
 }
 
-.article-body{
+.article-body{	
 	@include text-formatting;
 	big{ font-size: inherit; }
 }

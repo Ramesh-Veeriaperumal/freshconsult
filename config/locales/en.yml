@@ -1641,8 +1641,8 @@ en:
       tour: Help me create a new SLA policy
       info_1: '<p>A service level agreement (SLA) policy lets you set standards of performance for your support team. You can set SLA policies for the time within which agents should respond to, and resolve tickets based on ticket priorities. You can choose whether you want each SLA rule to be calculated over calendar hours or your business hours.</p> <p>Your SLA Policies will be used in Freshdesk to determine the “Due By” time for each ticket.</p>'
       title_1: 'Using Multiple SLA Policies'
-      info_2: '<p>You can have multiple SLA policies, triggered by specific conditions like the customer who requested the ticket, the group it is assigned to, its source and/or product.</p><p>For example, you can have set a special SLA policy for tickets coming in through Twitter and assigned to the Sales team. Or have a special policy for customers having priority subscriptions with you. If you are supporting multiple brands or products, you can also have a different SLA workflow for each product.</p>
-<p><strong>The order of your SLA rules is important.</strong> The first SLA rule that matches all conditions for a ticket will be applied to it, so remember to order your important rules closer to the top</p>'
+      sla_info_2: '<p>You can have multiple SLA policies, triggered by specific conditions like the customer who requested the ticket, the group it is assigned to, its source and/or product.</p><p>For example, you can have set a special SLA policy for tickets coming in through Twitter and assigned to the Sales team. Or have a special policy for customers having priority subscriptions with you. If you are supporting multiple brands or products, you can also have a different SLA workflow for each product.</p>
+<p><strong>The order of your SLA policies is important.</strong> The first SLA Policy that matches all conditions for a ticket will be applied to it, so remember to order your important rules closer to the top</p>'
       title_2: 'Enforcing Escalation Rules'
       info_3: '<p>You can optionally set escalation hierarchies for each policy to notify specific agents when an SLA rule is violated.</p>'
     override: Override
@@ -1655,8 +1655,8 @@ en:
     applicable_to: Apply this to
     applicable_details: Choose when this SLA policy must be enforced
     applicable_error: You need to add at least 1 condition
-    escalation_response: Set Escalation Rules when a ticket is not <b>responded to</b> on time
-    escalation_resolution: Set Escalation Hierarchy when a ticket is not <b>resolved</b> on time
+    escalation_response_text: Set Escalation Rule when a ticket is not <b>responded to</b> on time
+    escalation_resolution_text: Set Escalation Hierarchy when a ticket is not <b>resolved</b> on time
     respond_within: Respond within
     resolve_within: Resolve within
     op_hrs: Operational Hrs
@@ -2581,6 +2581,7 @@ en:
         target_merge_description2: Description in ticket %{ticket_id}
         confirm_and_merge: Confirm and merge  
       bulk_merge:
+        continue: "Continue"
         mark_primary: "Mark as primary"
         primary_ticket: "This is your primary ticket"
         remove: "Remove this ticket"
@@ -2593,8 +2594,8 @@ en:
           one: "is merged into this ticket."
           other: "are merged into this ticket."
         target_note_description3:
-          one: "Ticket with id %{source_tickets} is merged into ticket %{target_ticket_id} with this request"
-          other: "Tickets with ids %{source_tickets} are merged into ticket %{target_ticket_id} with this request"
+          one: "The ticket %{source_tickets} has been merged with the ticket %{target_ticket_id}. The conversation will be added in a few minutes. "
+          other: "The tickets %{source_tickets} have been merged into the ticket %{target_ticket_id}. The conversations will be added in a few minutes."
   import_ticket_group: Tickets &amp; Group
   or: or
   tickets_filter:
@@ -2952,6 +2953,8 @@ en:
       info1: "When a Freshdesk ticket is linked with JIRA issue, perform the below actions."
       info2: "When ticket status is updated in Freshdesk "
       info3: "When a comment is added in Freshdesk "
+      info4: "When issue status is updated in JIRA"
+      info5: "When a comment is added in JIRA"
       none: "Do nothing."
       add_private_note_in_fd: "Add a private note in Freshdesk and notify agent."
       add_public_note_in_fd: "Add a public note in Freshdesk."
