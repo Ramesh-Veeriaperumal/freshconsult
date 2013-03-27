@@ -1,5 +1,4 @@
 require 'fastercsv'
-require 'html2textile'
 
 class Helpdesk::TicketsController < ApplicationController  
   

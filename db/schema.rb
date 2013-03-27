@@ -9,8 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-
-ActiveRecord::Schema.define(:version => 20130325210321) do
+ActiveRecord::Schema.define(:version => 20130326092144) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -591,12 +590,6 @@ ActiveRecord::Schema.define(:version => 20130325210321) do
   add_index "helpdesk_authorizations", ["role_token"], :name => "index_helpdesk_authorizations_on_role_token"
   add_index "helpdesk_authorizations", ["user_id"], :name => "index_helpdesk_authorizations_on_user_id"
 
-  create_table "helpdesk_classifiers", :force => true do |t|
-    t.string "name",       :null => false
-    t.string "categories", :null => false
-    t.binary "data"
-  end
-
   create_table "helpdesk_dropboxes", :id => false, :force => true do |t|
     t.integer  "id",             :limit => 8, :null => false
     t.text     "url"
@@ -620,18 +613,6 @@ ActiveRecord::Schema.define(:version => 20130325210321) do
  
   add_index "helpdesk_external_notes", ["account_id", "installed_application_id", "external_id"], :name => "index_helpdesk_external_id", :length => {"installed_application_id"=>nil, "external_id"=>"20", "account_id"=>nil}
   add_index "helpdesk_external_notes", ["id"], :name => "helpdesk_external_notes_id"
-
-  create_table "helpdesk_form_customizers", :force => true do |t|
-    t.string   "name"
-    t.text     "json_data"
-    t.integer  "account_id",     :limit => 8
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.text     "agent_view"
-    t.text     "requester_view"
-  end
-
-  add_index "helpdesk_form_customizers", ["account_id"], :name => "index_helpdesk_form_customizers_on_account_id", :unique => true
 
   create_table "helpdesk_issues", :force => true do |t|
     t.string   "title"

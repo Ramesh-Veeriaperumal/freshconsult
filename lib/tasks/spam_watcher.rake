@@ -25,7 +25,7 @@ namespace :spam_watcher do
     account_ids = $redis.smembers("SPAM_CLEARABLE_ACCOUNTS")
     return unless account_ids
     accounts = Account.active_accounts.find(:all,:conditions => ["accounts.id in (?)",account_ids])
-    accounts.each { |account| Resque.enqueue( Workers::ClearSpam, account.id) }
+    accounts.each { |account| Resque.enqueue Workers::ClearSpam }
   end
   
 end
