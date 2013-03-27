@@ -42,7 +42,7 @@
     </ul> 
     <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>
     <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
-    <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>:note_ticket_status  )%>
+    <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>"reply_ticket_status_#{cntid}"  )%>
 
     <div class="btn-toolbar">
       

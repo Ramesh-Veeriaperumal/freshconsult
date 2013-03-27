@@ -396,8 +396,8 @@ var updatePagination = function() {
 
 		$.get(href, function(response) {
 
-			TICKET_DETAILS_DATA['last_activity'] = TICKET_DETAILS_DATA['first_activity'] = null;
-			TICKET_DETAILS_DATA['last_note_id'] = TICKET_DETAILS_DATA['first_note_id'] = null;
+			TICKET_DETAILS_DATA['first_activity'] = null;
+			TICKET_DETAILS_DATA['first_note_id'] = null;
 			$('#show_more').removeClass('loading').addClass('hide');
 			$('[rel=activity_container]').prepend(response);
 			
@@ -643,10 +643,10 @@ $(document).ready(function() {
 		var url = showing_notes ? TICKET_DETAILS_DATA['activities_pagination_url'] : TICKET_DETAILS_DATA['notes_pagination_url'];
 		
 		if (showing_notes) {
-			TICKET_DETAILS_DATA['last_activity'] = TICKET_DETAILS_DATA['first_activity'] = null;
+			TICKET_DETAILS_DATA['first_activity'] = null;
 			TICKET_DETAILS_DATA['loaded_activities'] = 0;
 		} else {
-			TICKET_DETAILS_DATA['last_note_id'] = TICKET_DETAILS_DATA['first_note_id'] = null;
+			TICKET_DETAILS_DATA['first_note_id'] = null;
 			TICKET_DETAILS_DATA['total_notes'] = 0;
 		}
 

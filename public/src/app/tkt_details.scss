@@ -665,20 +665,6 @@ p strong{
     		@include border-radius(4px 0 0 4px);
     	}
     }
-
-    .btn-toolbar {
-    	float: right;
-    	clear: right;
-    	width: 450px;
-    	text-align: right;
-
-    	> span {
-    		text-align: left;
-    	}
-    	.btn-group {
-    		margin:0 0 0 10px;
-    	}
-    }
 }
 
 .open_in_new {
@@ -761,6 +747,20 @@ p strong{
 		}
 	}
 
+
+    .btn-toolbar {
+    	float: right;
+    	clear: right;
+    	width: 450px;
+    	text-align: right;
+
+    	> span {
+    		text-align: left;
+    	}
+    	.btn-group {
+    		margin:0 0 0 10px;
+    	}
+    }
 
 	.comment-lock{
 		background: sprite($tktdetailicon,lock) no-repeat;
@@ -956,6 +956,10 @@ p strong{
     		input[type=checkbox] {
     			float: none;
     		}
+    	}
+
+    	ul.multi_value_field li.search_field_item {
+    		width: 100%;
     	}
     	&.notify_agent{
     		overflow: hidden;
