@@ -87,15 +87,16 @@ class Integrations::JiraIssue
       http_parameter[:body] = req_data.to_json
       res_data = make_rest_call(http_parameter)
     else
-      add_comment(params[:remote_key],params[:ticket_data])
+      return add_comment(params[:remote_key],params[:ticket_data])
     end  
     if(res_data && res_data[:exception] && custom_field_id && res_data[:json_data]["errors"][custom_field_id])
       if retry_flag
         res_data = update(params, false) 
       else
-        add_comment(params[:remote_key],params[:ticket_data])
+        return add_comment(params[:remote_key],params[:ticket_data])
       end
     end
+    res_data
   end
 
   def add_comment(issueId, ticketData)
