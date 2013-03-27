@@ -529,7 +529,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       set_dueby_on_priority_change(sla_detail)
 
       set_user_time_zone if User.current
-      logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
+      RAILS_DEFAULT_LOGGER.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
       
     elsif priority_changed? || changed_condition? || status_changed?
 
@@ -539,7 +539,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       set_dueby_on_priority_change(sla_detail) if (priority_changed? || changed_condition?)
       set_dueby_on_status_change(sla_detail) if status_changed?
       set_user_time_zone if User.current
-      logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
+      RAILS_DEFAULT_LOGGER.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
       
     end
 
@@ -849,14 +849,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def schema_less_attributes(attribute, args)
-    logger.debug "schema_less_attributes - method_missing :: args is #{args} and attribute :: #{attribute}"
+    RAILS_DEFAULT_LOGGER.debug "schema_less_attributes - method_missing :: args is #{args} and attribute :: #{attribute}"
     build_schema_less_ticket unless schema_less_ticket
     args = args.first if args && args.is_a?(Array) 
     (attribute.to_s.include? '=') ? schema_less_ticket.send(attribute, args) : schema_less_ticket.send(attribute)
   end
 
   def custom_field_attribute attribute, args    
-    logger.debug "method_missing :: custom_field_attribute  args is #{args.inspect}  and attribute: #{attribute}"
+    RAILS_DEFAULT_LOGGER.debug "method_missing :: custom_field_attribute  args is #{args.inspect}  and attribute: #{attribute}"
     
     load_flexifield if custom_field.nil?
     attribute = attribute.to_s
@@ -873,7 +873,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     begin
       super
     rescue NoMethodError => e
-      logger.debug "method_missing :: args is #{args.inspect} and method:: #{method} "
+      RAILS_DEFAULT_LOGGER.debug "method_missing :: args is #{args.inspect} and method:: #{method} "
 
       return schema_less_attributes(method, args) if SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("=").chomp("?"))
       return ticket_states.send(method) if ticket_states.respond_to?(method)
