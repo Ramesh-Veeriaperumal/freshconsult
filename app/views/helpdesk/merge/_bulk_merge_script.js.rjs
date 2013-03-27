@@ -5,3 +5,4 @@ page.show :mergeboxconfirm
 page << "jQuery('#bulk_merge').button('reset')"
 page << "jQuery('#cancel').attr('disabled', false).removeClass('disabled')"
 page << "jQuery('.src').remove()"
+page << "jQuery('#redirect_back').val(jQuery('#redirect').val())"

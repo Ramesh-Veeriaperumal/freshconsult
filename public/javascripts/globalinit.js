@@ -266,7 +266,7 @@ var $J = jQuery.noConflict();
       });
 
       // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
-      validateOptions = {
+      var validateOptions = {
          onkeyup: false,
          focusCleanup: true,
          focusInvalid: false,
