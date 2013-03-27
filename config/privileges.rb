@@ -168,6 +168,7 @@ Authority::Authorization::PrivilegeList.build do
 		resource :"reports/customer_report"
 		resource :"reports/helpdesk_report"
 		resource :"reports/survey_report"
+    resource :"reports/gamification_reports"
 	end
 
   # ************** ADMIN **************************

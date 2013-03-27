@@ -16,12 +16,21 @@ module AgentsHelper
       (agent.user.privilege?(:manage_account) && !current_user.privilege?(:manage_account)))
   end
   
+  # Should be used only if NOT trial account
   def available_agents
     current_account.subscription.agent_limit - current_account.full_time_agents.count
   end
   
   def available_passes
     current_account.day_pass_config.available_passes
+  end
+  
+  def agents_available?
+    current_account.subscription.trial? || available_agents > 0
+  end
+  
+  def passes_available?
+    available_passes > 0
   end
 
   def fetch_upgrade_error_msg

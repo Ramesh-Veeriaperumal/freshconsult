@@ -5,6 +5,7 @@ module AdminControllerMethods
   
   def self.included(base)
     base.send :prepend_before_filter, :check_admin_subdomain
+    base.send :skip_before_filter, :check_privilege    
     base.send :skip_before_filter, :set_time_zone
     base.send :skip_before_filter, :set_locale
     base.send :skip_before_filter, :check_account_state

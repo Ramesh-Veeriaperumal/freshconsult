@@ -6,13 +6,13 @@
     	<div class="row-fluid">
     		<div class="span6"><h3 class="title"><%=t('agent.title')%></h4></div>
     		 <div class="span6 pull-right pagination-right">
-    		 	<% unless @current_account.subscription.agent_limit.blank? %>
-    		 	<span>
-            <%= t('agent.available_seats', :count => available_agents) %>
-            <% if privilege?(:manage_account) %>
-              ,<%= link_to t('agent.buy'), subscription_path, :class => "margin-right" %></a> 
-            <% end %>
-          </span>
+    		 	<% unless @current_account.subscription.trial? %>
+      		 	<span>
+              <%= agents_available? ? t('agent.available_seats', :count => available_agents ) : t('agent.no_seats') %>
+              <% if privilege?(:manage_account) %>
+                ,<%= link_to t('agent.buy'), subscription_path, :class => "margin-right" %></a> 
+              <% end %>
+            </span>
           <% else %>
             <%= t('agent.trial') %>
           <% end %>
@@ -26,4 +26,4 @@
     <div id="agents-list">
 	    <%= render :partial => "agents", :object => @agents %>
     </div>
-</div>​
+</div>

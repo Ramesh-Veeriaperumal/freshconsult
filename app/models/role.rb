@@ -7,15 +7,14 @@ class Role < ActiveRecord::Base
   
   include Authority::Rails::ModelHelpers
   before_destroy :destroy_user_privileges
-  after_save :update_user_privileges
+  after_update :update_user_privileges
 
   #Acutal recalculationg of privilege masks part should be
   #moved to background processing.
   
   belongs_to_account
-  has_many :user_roles, :dependent => :destroy
-  has_many :users, :through => :user_roles
-
+  has_and_belongs_to_many :users, :join_table => "user_roles"
+  
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
   
@@ -32,7 +31,7 @@ class Role < ActiveRecord::Base
 
   private
     def destroy_user_privileges
-      users.each do |user|
+      users.all.each do |user|
         roles = user.roles.reject { |r| r.id == self.id }
         privileges = union_privileges roles
         user.update_attribute(:privileges, privileges)
@@ -40,7 +39,7 @@ class Role < ActiveRecord::Base
     end
     
     def update_user_privileges
-      users.each do |user|
+      users.all.each do |user|
         privileges = (union_privileges user.roles).to_s
         user.update_attribute(:privileges, privileges)
       end 

@@ -112,9 +112,7 @@ class AgentsController < ApplicationController
         if @user.signup!(:user => { 
             :email => agent_email,
             :helpdesk_agent => true,
-            :user_roles_attributes => { 
-              :role_id => [current_account.roles.find_by_name("Agent").id]  
-            }
+            :role_ids => [current_account.roles.find_by_name("Agent").id]
         })
           @user.create_agent
           @new_users << @user
@@ -135,9 +133,8 @@ class AgentsController < ApplicationController
     @agent.occasional = params[:agent][:occasional]
     #check_agent_limit
     @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id] if gamification_feature?(current_account)
-      
+    @user = current_account.all_users.find(@agent.user_id)
     if @agent.update_attributes(params[nscname])            
-        @user = current_account.all_users.find(@agent.user_id)
         if @user.update_attributes(params[:user])
           flash[:notice] = t(:'flash.general.update.success', :human_name => 'Agent')
           redirect_to :action => 'index'
@@ -172,9 +169,7 @@ class AgentsController < ApplicationController
  def restore  
    @agent = current_account.all_agents.find(params[:id])
    if @agent.user.update_attributes(:deleted => false,
-     :user_roles_attributes => { 
-        :role_id => [current_account.roles.find_by_name("Agent").id] 
-      }
+       :role_ids => [current_account.roles.find_by_name("Agent").id]
     )   
     flash[:notice] = render_to_string(:partial => '/agents/flash/restore_notice')
    else

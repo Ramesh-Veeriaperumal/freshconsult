@@ -30,9 +30,13 @@ class User < ActiveRecord::Base
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :dependent => :destroy
    
   has_many :email_notification_agents,  :dependent => :destroy
-
-  has_many :user_roles, :dependent => :destroy
-  has_many :roles, :through => :user_roles
+  
+  has_and_belongs_to_many :roles,
+    :join_table => "user_roles",
+    :insert_sql => 
+      'INSERT INTO user_roles (account_id, user_id, role_id) VALUES (#{account_id}, #{id}, #{record.id})',
+    :after_add => :touch_role_change,
+    :after_remove => :touch_role_change
   
   validates_uniqueness_of :account_admin, :scope => :account_id, :if => Proc.new { |user| user.account_admin  == true }
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
@@ -59,6 +63,8 @@ class User < ActiveRecord::Base
   before_create :set_time_zone , :set_company_name , :set_language
   before_create :account_admin_privilege, :if => :account_admin?
   before_save :set_customer_privilege, :if => :customer?
+  before_create :populate_privileges, :if => :helpdesk_agent?
+  before_update :populate_privileges, :if => :roles_changed?
   # FIXME: before_save ?
   before_update :destroy_user_roles, :if => :deleted?
   before_save :set_contact_name, :check_email_value
@@ -90,33 +96,8 @@ class User < ActiveRecord::Base
   end
   
   validates_presence_of :email, :unless => :customer?
-  validates_presence_of :user_roles, :unless => [:customer?, :account_admin?]
-  validate :roles_assigned?
-
-  def user_roles_attributes=(user_attr)
-    return if user_attr.empty?
-    role_ids = user_attr[:role_id].delete_if { |id| id.blank? }
-    # !user_roles is added to prevent from raising this error on create
-    # when user_roles will be empty, This error should be raised only
-    # on update
-    if role_ids.blank? && !user_roles.blank?
-      @user_roles_error = "can't be blank"
-      return false
-    end
-    # delete records if update
-    user_roles.destroy_all unless user_roles.blank?
-    # build user_roles
-    role_ids.each { |id| user_roles.build({:role_id => id}) }
-    # set privileges based on chosen roles
-    privilege_masks = account.roles.find(:all, :select => "privileges",
-                 :conditions => ["id IN (?)", role_ids])
-    self.privileges = union_privileges(privilege_masks).to_s
-  end
+  validate :has_role?, :unless => [ :customer?, :account_admin? ]
   
-  def roles_assigned?
-    self.errors.add(:user_roles, @user_roles_error) if @user_roles_error
-  end
-    
   def client_manager=(checked)
     if customer? && checked == "true"
       self.privileges = Role.privileges_mask([:client_manager])
@@ -174,10 +155,9 @@ class User < ActiveRecord::Base
 
   attr_accessor :import
   # FIXME: is the user_roles, :client_manager, :helpdesk_agent correct?
-  attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, 
-                  :twitter_id, :description, :time_zone, :avatar_attributes,:customer_id,:import_id,
-                  :deleted , :fb_profile_id , :language, :address, :user_roles_attributes, :client_manager,
-                  :helpdesk_agent
+  attr_accessible :name, :email, :password, :password_confirmation, :second_email, :job_title, :phone, :mobile, 
+                  :twitter_id, :description, :time_zone, :avatar_attributes, :customer_id, :import_id,
+                  :deleted, :fb_profile_id, :language, :address, :client_manager, :helpdesk_agent, :role_ids
 
   #Sphinx configuration starts
   define_index do
@@ -215,7 +195,7 @@ class User < ActiveRecord::Base
     self.job_title = params[:user][:job_title]
     self.helpdesk_agent = params[:user][:helpdesk_agent] || false
     self.client_manager = params[:user][:client_manager]
-    self.user_roles_attributes = params[:user][:user_roles_attributes] || {}
+    self.role_ids = params[:user][:role_ids] || []
     self.time_zone = params[:user][:time_zone]
     self.import_id = params[:user][:import_id]
     self.fb_profile_id = params[:user][:fb_profile_id]
@@ -541,8 +521,7 @@ class User < ActiveRecord::Base
     end
 
     def account_admin_privilege
-      user_roles.build({:role_id => account.roles.find_by_name("Account Administrator").id})  
-      self.privileges = Role.privileges_mask(Helpdesk::Roles::ACCOUNT_ADMINISTRATOR).to_s  
+      self.role_ids = [account.roles.find_by_name("Account Administrator").id]
     end
     
     def set_customer_privilege
@@ -553,6 +532,25 @@ class User < ActiveRecord::Base
     
     def destroy_user_roles
       self.privileges = "0"
-      user_roles.destroy_all
+      self.roles.clear
     end
+    
+    def touch_role_change(role)
+      @role_change_flag = true
+    end
+  
+    def roles_changed?
+      !!@role_change_flag
+    end
+  
+    def populate_privileges
+      self.privileges = union_privileges(self.roles).to_s
+      @role_change_flag = false
+      true
+    end
+  
+    def has_role?
+      self.errors.add(:base, I18n.t("activerecord.errors.messages.user_role")) if self.roles.blank?
+    end
+    
 end

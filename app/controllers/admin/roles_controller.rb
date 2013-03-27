@@ -73,7 +73,7 @@ class Admin::RolesController < Admin::AdminController
     end
     
     def check_users
-      unless @role.user_roles.empty?
+      unless @role.user_ids.empty?
         flash[:notice] = t(:'flash.roles.delete.not_allowed')
         redirect_to :back
       end

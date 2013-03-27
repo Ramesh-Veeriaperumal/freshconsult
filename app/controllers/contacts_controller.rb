@@ -147,9 +147,7 @@ class ContactsController < ApplicationController
   def make_agent    
     @item.update_attributes(:delete =>false,
      :helpdesk_agent => true,
-     :user_roles_attributes => { 
-        :role_id => [current_account.roles.find_by_name("Agent").id] 
-      }
+     :role_ids => [current_account.roles.find_by_name("Agent").id] 
     )      
     @agent = current_account.agents.new
     @agent.user = @item 

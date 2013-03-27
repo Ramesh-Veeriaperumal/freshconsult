@@ -4,12 +4,16 @@ body{
 }
 .lead {
   margin-bottom: 20px;
-  font-size: 21px;
+  font-size: 22px;
   font-weight: 200;
   line-height: 30px;
   text-transform: capitalize;
 }
-
+.lead-sub{
+  line-height: 15px;
+  font-size: 20px;
+  color:#aaa;
+}
 small {
   font-size: 90%;
 }
@@ -117,10 +121,16 @@ strong {
 
 .admin-breadcrumb{
   margin: -14px -20px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   &.breadcum-footer{
     margin-bottom: -14px;
+    margin-top:20px;
   }
+}
+/* After including type.scss in pattern this class have to removed*/
+.no-results{
+ color: #ccc;
+ font-size:$baseFontSize;
 }
 
 /* This class overriding app-common css. */
@@ -139,4 +149,13 @@ strong {
 
 .dropdown-toggle:after{
   border-top:0;
+}
+
+/* Roles new */
+.nested-ul{
+  .nested-ul{
+    li{
+      margin-left:20px;
+    }
+  }
 }

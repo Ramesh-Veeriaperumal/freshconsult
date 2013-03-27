@@ -40,8 +40,8 @@ class AddHelpdeskAgentToUser < ActiveRecord::Migration
       if roles_mapping[role[0]]
         # if not poweruser
         unless role[2] == 2            
-          execute( %(INSERT INTO user_roles (user_id, role_id, account_id, created_at, updated_at)
-                     SELECT users.id, roles.id, users.account_id, now(), now()
+          execute( %(INSERT INTO user_roles (user_id, role_id, account_id)
+                     SELECT users.id, roles.id, users.account_id
                      FROM users, roles
                      WHERE users.user_role = #{role[2]} and
                       roles.name = '#{default_roles[roles_mapping[role[0]]][0]}' and
@@ -49,8 +49,8 @@ class AddHelpdeskAgentToUser < ActiveRecord::Migration
                  )
         else
           # for agents with global access
-          execute( %(INSERT INTO user_roles (user_id, role_id, account_id, created_at, updated_at)
-                     SELECT users.id, roles.id, users.account_id, now(), now()
+          execute( %(INSERT INTO user_roles (user_id, role_id, account_id)
+                     SELECT users.id, roles.id, users.account_id
                      FROM users, agents, roles
                      WHERE users.user_role = #{role[2]} AND
                       agents.user_id = users.id AND agents.account_id = users.account_id AND 
@@ -59,8 +59,8 @@ class AddHelpdeskAgentToUser < ActiveRecord::Migration
                       roles.account_id = users.account_id) 
                  )
            # for agents with restricted and group access    
-           execute( %(INSERT INTO user_roles (user_id, role_id, account_id, created_at, updated_at)
-                      SELECT users.id, roles.id, users.account_id, now(), now()
+           execute( %(INSERT INTO user_roles (user_id, role_id, account_id)
+                      SELECT users.id, roles.id, users.account_id
                       FROM users, agents, roles
                       WHERE users.user_role = #{role[2]} AND
                        agents.user_id = users.id AND agents.account_id = users.account_id AND 

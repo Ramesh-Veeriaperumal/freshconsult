@@ -8167,7 +8167,7 @@ height: auto;
 	.info_data, .info-data {
 		display: block;
 		margin-top: -5px;
-		padding-left: 25px;
+		padding-left: 16px;
 	}
 	.avatar-controls{
 		color:#999;
@@ -8189,8 +8189,8 @@ height: auto;
 	}
 }
 	.agent-role{
-		margin-top:20px;
-		margin-bottom:20px;
+		margin-top:30px;
+		margin-bottom:30px;
 		li{	margin-bottom:10px; }
 		input[type="radio"]{
 			float: left;
@@ -8199,6 +8199,7 @@ height: auto;
 		}
 	}
 .icon_remove{
+  cursor:pointer;
 	width: 15px;
 	height: 15px;
 	position: relative;
@@ -8388,3 +8389,4 @@ height: auto;
 .margin-bottom{ margin-bottom:10px; }
 .margin-right{ margin-right: 10px; }
 .margin-left{ margin-left: 10px; } 
+

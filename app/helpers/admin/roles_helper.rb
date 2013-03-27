@@ -129,7 +129,7 @@ module Admin::RolesHelper
     ROLE_SECTIONS.each do |section|
       
      form +=  content_tag( :div, {:class => "row-fluid margin-bottom", :id => section[:id] }) do
-        content_tag( :div, content_tag( :p, t('admin.roles.privilege.'+ section[:id]), :class => "lead"), :class => "span2") +
+        content_tag( :div, content_tag( :p, t('admin.roles.privilege.'+ section[:id]), :class => "lead-sub"), :class => "span2") +
         content_tag( :div, :class => "span10 role-section") do
           value = label(:agent, :signature_html, "<b>Agent can</b>") 
           if section[:children]
@@ -148,19 +148,19 @@ module Admin::RolesHelper
     content_tag(:ul, :class => "nested-ul") do
       children.map do |child|
         content_tag(:li) do
-          content_tag(:label, :class => "#{child[:dom_type]} #{style(child[:dom_type])}") do
-            element = ""
-            case child[:dom_type]
-            when "check_box", "radio_button"
-              element += build_element(child, parent, disabled)
-            when "hidden_field"
-              element += build_hidden(child, parent, disabled)
-            end
+          element =
+            content_tag(:label, :class => "#{child[:dom_type]} #{style(child[:dom_type])}") do
+              case child[:dom_type]
+              when "check_box", "radio_button"
+                build_element(child, parent, disabled)
+              when "hidden_field"
+                build_hidden(child, parent, disabled)
+              end
+            end # label
             if child[:children]
               element += process_children(child[:children], child[:id], true) 
             end
             element
-          end # label
         end # li
       end # map
     end #ul

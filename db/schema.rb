@@ -1477,16 +1477,14 @@ ActiveRecord::Schema.define(:version => 20130206040552) do
   add_index "topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"
   add_index "topics", ["forum_id"], :name => "index_topics_on_forum_id"
 
-  create_table "user_roles", :force => true do |t|
-    t.integer  "user_id",    :limit => 8
-    t.integer  "role_id",    :limit => 8
-    t.integer  "account_id", :limit => 8
-    t.datetime "created_at"
-    t.datetime "updated_at"
+  create_table "user_roles", :id => false, :force => true do |t|
+    t.integer "user_id",    :limit => 8
+    t.integer "role_id",    :limit => 8
+    t.integer "account_id", :limit => 8
   end
 
-  add_index "user_roles", ["account_id", "role_id", "user_id"], :name => "index_user_roles_on_account_id_and_role_id_and_user_id"
-  add_index "user_roles", ["account_id", "user_id"], :name => "index_user_roles_on_account_id_and_user_id"
+  add_index "user_roles", ["role_id"], :name => "index_user_roles_on_role_id"
+  add_index "user_roles", ["user_id"], :name => "index_user_roles_on_user_id"
 
   create_table "users", :id => false, :force => true do |t|
     t.integer  "id",                  :limit => 8,                    :null => false

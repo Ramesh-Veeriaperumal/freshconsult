@@ -15,7 +15,10 @@ p {
   font-weight: 200;
   line-height: $baseLineHeight * 1.5;
 }
-
+.no-results{
+ color: #ccc;
+ font-size:$baseFontSize;
+}
 
 // Emphasis & misc
 // -------------------------

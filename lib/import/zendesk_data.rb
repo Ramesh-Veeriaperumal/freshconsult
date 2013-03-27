@@ -243,9 +243,8 @@ def handle_user_import base_dir
           # Not a customer
           if usr_role != 'Customer'
             @params_hash[:user][:helpdesk_agent] = true
-            @params_hash[:user][:user_roles_attributes] = { :role_id =>
+            @params_hash[:user][:role_ids] =
               [@current_account.roles.find_by_name(usr_role).id]
-            } 
           end
           
           if @user.signup!(@params_hash) 

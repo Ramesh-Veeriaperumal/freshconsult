@@ -9,8 +9,8 @@
     "data-focus-invalid" => false,  "data-ignore" => "" } do |f| %>
 <%= f.error_messages %>
 <ul class="admin-breadcrumb">
-  <li class="non-arrow"><a href="/admin/home">Home</a><span class="divider"></span></li>
-  <li><a href="/agents/">Agent</a> <span class="divider"></span></li>
+  <li class="non-arrow"><a href="<%= admin_home_index_path %>"><%= t('header.tabs.home') %></a><span class="divider"></span></li>
+  <li><a href="<%= agents_path %>"><%= t('agent.title')%></a> <span class="divider"></span></li>
   <li class="active "><%=t('agent.edit')%></li>
   <li class="non-arrow pull-right">
     <%= f.submit t('save'), { :class => "btn  btn-primary" } %>

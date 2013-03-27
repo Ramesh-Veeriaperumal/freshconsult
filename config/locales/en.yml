@@ -646,6 +646,7 @@ en:
         screen_name: Screen Name
         default_group : Default Group 
     roles:
+      title: Agent Roles
       new: New Role
       edit: Edit Role
       default_role: Default Role
@@ -729,7 +730,7 @@ en:
         email-settings: Email Setup
         everything: Everything
         helpdesk: Helpdesk
-        roles: Roles
+        role: Roles
         else: else
         settings: Settings
         productivity: Productivity
@@ -1291,9 +1292,10 @@ en:
       occasional: "Occasional Agents"
       deleted: "Deleted agents"
     sort:
+      sorted_by: Sorted by
       name: "Name"
       last_login_at: "Last logged in"
-      created_at: "Agent created"
+      created_at: Created date
       asc: Ascending
       desc: Descending
   topic:
@@ -1337,6 +1339,7 @@ en:
         accepted: must be accepted
         not_a_number: is not a number
         inclusion: is not included in the list
+        user_role: A user must be associated with atleast one role
       full_messages: 
         format: "%{attribute} %{message}"
       template:
@@ -1423,6 +1426,7 @@ en:
     new: New Agent
     edit: Edit Agent
     showing: "Showing:"
+    type: Agent Type
     status:
       active: Active
       deleted: Deleted
@@ -1433,12 +1437,15 @@ en:
     trial: In trial version
     buy: Buy more
     available_seats: %{count} Agent seats available
+    no_seats: No agent seats available
     last_logged_in: Last logged in %{time} ago.
     never_logged_in: Never logged in
     day_pass_used: Used %{count} day pass till date
     day_pass_available: %{count} Day pass available
-    assign_role: Assign role
-    add_role: + Add role
+    no_day_pass: No day pass available
+    assign_role: Assign
+    add_role: Add role
+    role : Agent Role
     title: Agents
     info1: This is a deleted Agent
     info2: Email has already been taken
@@ -1459,18 +1466,19 @@ en:
     add_signature: Add signature
     update: Update
     permissions: Permissions
+    role_and_type: Roles and Type
     roles: Roles
     roles_description: Associate a role to an agent, an agent can play multiple role.
-    scope: Agent scope
+    ticket_scope: Ticket Scope
     admin: Administrator
     supervisor: Supervisor
-    global: Agent (Global Access)
-    group: Agent (Group Access) 
-    individual: Agent (Restricted Access)
+    global: Global Access
+    group: Group Access
+    individual: Restricted Access
     admin_info: Can perform all Admin tasks
     supervisor_info: Can view all Tickets in the Helpdesk and access Reports (no admin privileges)
     global_info: Can view all Tickets in the Helpdesk
-    group_info: Can view Tickets in their Groups(s) and Tickets assigned to them
+    group_info: Can view Tickets in their Group(s) and Tickets assigned to them
     individual_info: Can only view Tickets assigned to them
     occasional_description: This agent will be accessing the support portal
     full_time: Full time

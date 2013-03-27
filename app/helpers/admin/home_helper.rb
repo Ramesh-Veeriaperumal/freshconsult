@@ -18,8 +18,8 @@ HTML
   #     The name listed below in the Array next to the link is the key value for the Item
   # =>  This key value will be used as the 
   # =>       1. i18n key
-  # =>       2. Name of the image that should be placed under the admin-icon folder
-  # =>       3. Group title text are also used in admin.scss file as a class name
+  # =>       2. Name of the image that is placed under the admin-icon folder
+  # =>  Group title text are also used in admin.scss file as a class name
   
   def admin_pref_links
     admin_links = [
@@ -37,7 +37,7 @@ HTML
           ['/agents',                     'agent',                   privilege?(:manage_users) ],
           ['/groups',                     'group',                   privilege?(:admin_tasks) ],
           ['/admin/day_passes',           'day_pass',                privilege?(:manage_account) ],
-          ['/admin/roles',                'roles',                   privilege?(:admin_tasks) ],
+          ['/admin/roles',                'role',                    privilege?(:admin_tasks) ],
       ], "Helpdesk"],
       [ [t(".helpdesk"),t(".productivity")], [ 
           ['/admin/va_rules',             'dispatcher',              privilege?(:manage_dispatch_rules) ],

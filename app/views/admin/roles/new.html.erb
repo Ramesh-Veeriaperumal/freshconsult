@@ -7,7 +7,7 @@
 <% form_for @role, :url => admin_roles_path, :html => { :id => 'new_role', :method => :post} do |role_form| %>
 	<ul class="admin-breadcrumb">
 	  <li class="non-arrow"><%= link_to t('header.tabs.admin'), admin_home_index_path %><span class="divider"></span></li>
-	  <li><%= link_to t('admin.home.index.roles'), admin_roles_path %><span class="divider"></span></li>
+	  <li><%= link_to t('admin.home.index.role'), admin_roles_path %><span class="divider"></span></li>
 	  <li class="active "><%= t('admin.roles.new') %></li>
 	  <li class="non-arrow pull-right">
       <%= role_form.submit t('save'), :class => "btn btn-primary"%>
