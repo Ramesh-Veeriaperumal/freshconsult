@@ -1,24 +1,22 @@
 <section class="main content rounded-6 min-height-on-desktop" id="solutions-home">
 	<h2 class="heading">{% translate portal.knowledge_base %}</h2>
-	{% if portal.articles_count > 0 %}
-		{% for category in portal.solution_categories %}
-			{% if category.folders_count > 0 %}
-			<div class="cs-s">
-				<h3 class="heading">{{ category.name }}</h3>
-				<div class="cs-g-c">
-					{% for folder in category.folders %}
-						<section class="cs-g article-list">
-							<div class="list-lead">
-								{{ folder | link_to_folder_with_count }}
-							</div>
-							{{ folder | article_list:5 }}
-						</section>
-					{% endfor %}
-				</div>
+	{% for category in portal.solution_categories %}
+		{% if category.folders_count > 0 %}
+		<div class="cs-s">
+			<h3 class="heading">{{ category.name }}</h3>
+			<div class="cs-g-c">
+				{% for folder in category.folders %}
+					<section class="cs-g article-list">
+						<div class="list-lead">
+							{{ folder | link_to_folder_with_count }}
+						</div>
+						{{ folder | article_list:5 }}
+					</section>
+				{% else %}
+					{{ portal | filler_for_solutions }}
+				{% endfor %}
 			</div>
-			{% endif %}
-		{% endfor %}		
-	{% else %}
-		{{ portal | filler_for_solutions }}
-	{% endif %}
+		</div>	
+		{% endif %}
+	{% endfor %}
 </section>
