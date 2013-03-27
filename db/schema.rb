@@ -9,7 +9,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130323064447) do
+
+ActiveRecord::Schema.define(:version => 20130325210321) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -298,6 +299,15 @@ ActiveRecord::Schema.define(:version => 20130323064447) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "domain_mappings", :force => true do |t|
+    t.integer "account_id", :limit => 8, :null => false
+    t.integer "portal_id",  :limit => 8
+    t.string  "domain",                  :null => false
+  end
+
+  add_index "domain_mappings", ["account_id", "portal_id"], :name => "index_domain_mappings_on_account_id_and_portal_id", :unique => true
+  add_index "domain_mappings", ["domain"], :name => "index_domain_mappings_on_domain", :unique => true
 
   create_table "email_configs", :force => true do |t|
     t.integer  "account_id",      :limit => 8
@@ -825,7 +835,6 @@ ActiveRecord::Schema.define(:version => 20130323064447) do
   add_index "helpdesk_schema_less_tickets", ["string_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_02", :length => {"account_id"=>nil, "string_tc02"=>"10"}
   add_index "helpdesk_schema_less_tickets", ["ticket_id", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_account_id_ticket_id", :unique => true
 
-
   create_table "helpdesk_subscriptions", :force => true do |t|
     t.integer  "user_id",    :limit => 8
     t.integer  "ticket_id",  :limit => 8
@@ -1149,6 +1158,11 @@ ActiveRecord::Schema.define(:version => 20130323064447) do
     t.integer  "score"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "shard_mappings", :primary_key => "account_id", :force => true do |t|
+    t.string  "shard_name",                  :null => false
+    t.integer "status",     :default => 200, :null => false
   end
 
   create_table "sla_details", :force => true do |t|
