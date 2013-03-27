@@ -64,6 +64,7 @@
             @target_ticket.display_id) %>
           </textarea>
           <div class="private-note">
+          <input id="redirect_back" name="redirect_back" type="hidden"/>
           <input id="target_private" checked="checked" name="target[is_private]" value="true" type="checkbox"> 
           <%= t("ticket.note_form.private_note") %>
           </div>
@@ -97,7 +98,7 @@
   <div class="button-container">
     <%= button_to_function(t("back"), "jQuery('#mergeboxconfirm').hide(); jQuery('#mergebox').show();", :class => "btn", :id  => "back-user-merge") %> 
     <a class="btn" id="cancel-user-merge"><%= t('cancel') %></a>
-  	<%= submit_tag "Confirm and Merge", :class => "btn btn-primary", :id => "merge_completion", 
+  	<%= submit_tag t("helpdesk.merge.confirm_merge.confirm_and_merge"), :class => "btn btn-primary", :id => "merge_completion", 
     "data-loading-text" => t('please_wait')  %>
   </div>
 <% end %>

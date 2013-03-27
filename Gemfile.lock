@@ -56,11 +56,6 @@ PATH
     stemmer (1.0.1)
 
 PATH
-  remote: vendor/gems/tiny_mce-0.1.9
-  specs:
-    tiny_mce (0.1.9)
-
-PATH
   remote: vendor/gems/twitter-2.1.1
   specs:
     twitter (2.1.1)
@@ -406,7 +401,6 @@ DEPENDENCIES
   stemmer (= 1.0.1)!
   susy
   thinking-sphinx (= 1.4.3)
-  tiny_mce (= 0.1.9)!
   twitter (= 2.1.1)!
   tzinfo
   yui-compressor!

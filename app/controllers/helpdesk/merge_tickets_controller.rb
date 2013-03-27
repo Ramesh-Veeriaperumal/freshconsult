@@ -15,14 +15,14 @@ class Helpdesk::MergeTicketsController < ApplicationController
  #    "closed_at" => 1
  #  }
 
-  def bulk_merge
-    @ticket_search = Array.new
-    render :partial => "helpdesk/merge/bulk_merge"
-  end
+    def bulk_merge
+        @ticket_search = Array.new
+        render :partial => "helpdesk/merge/bulk_merge", :locals => { :redirect_back => params[:redirect_back]}
+    end
 
 	def merge_search
 		scope = current_account.tickets.permissible(current_user)
-  	items = scope.send( params[:search_method], params[:search_string] ) 
+  		items = scope.send( params[:search_method], params[:search_string] ) 
 		r = {:results => items.map{|i| {
 					:display_id => i.display_id, :subject => i.subject, :title => h(i.subject),
 					:searchKey => (params[:key] == 'requester') ? i[:requester_name] : i.send(params[:key]).to_s, 
@@ -44,7 +44,7 @@ class Helpdesk::MergeTicketsController < ApplicationController
 										:count => @source_tickets.length, 
 										:target_ticket_id => @target_ticket.display_id, 
 										:source_tickets => @source_tickets.map(&:display_id).to_sentence)
-		redirect_to :back
+    	redirect_to ( params[:redirect_back].eql?("true") ? :back : helpdesk_ticket_path(@target_ticket) )
 	end
 
 	protected
