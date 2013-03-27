@@ -4,6 +4,7 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
 
   before_filter :strip_slash, :only => [:install, :update]
   before_filter :load_object
+  before_filter :set_auth_key, :only => [:install,:update]
   before_filter :check_jira_authenticity, :only => [:install, :update]
 
   def install # also updates
@@ -109,21 +110,18 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
     @installed_application.set_configs params[:configs]
   end
 
+  def set_auth_key
+    if @installing_application.name == "jira"
+       @installed_application[:configs][:inputs][:auth_key] = Digest::MD5.hexdigest(params[:configs][:domain]+Time.now.to_s) 
+    end
+  end
+  
   def check_jira_authenticity
     if @installing_application.name == "jira"
       begin
-        body_content ={ :username => @installed_application.configs_username,
-                        :password => @installed_application.configsdecrypt_password}.to_json
-        jira_rest_api_auth = {
-          :rest_url => "rest/auth/1/session",
-          :domain => @installed_application.configs_domain,
-          :method => "post",
-          :body => body_content
-        }
-        response = Integrations::JiraIssue.new(@installing_application).authenticate(jira_rest_api_auth,request)
-        if(response[:status] != 200)
-          errorMessage = JSON.parse(response[:text])["errorMessages"]
-          flash[:error] = "jira reports the following error : #{errorMessage}"
+        response = Integrations::JiraIssue.new(@installed_application).authenticate
+        if(response[:exception])
+          flash[:error] = "jira reports the following error : #{response[:error].split(':')[1]}"
           redirect_to :controller=> 'applications', :action => 'index'
         end
       rescue Exception => msg

@@ -31,6 +31,8 @@ ActiveRecord::Schema.define(:version => 20130325210321) do
     t.datetime "updated_at"
   end
 
+  add_index "account_configurations", ["account_id"], :name => "index_for_account_configurations_on_account_id"
+
   create_table "accounts", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
@@ -606,6 +608,17 @@ ActiveRecord::Schema.define(:version => 20130325210321) do
 
   add_index "helpdesk_dropboxes", ["account_id", "droppable_id", "droppable_type"], :name => "index_helpdesk_dropboxes_on_droppable_id"
   add_index "helpdesk_dropboxes", ["id"], :name => "helpdesk_dropboxes_id"
+
+  create_table "helpdesk_external_notes", :id => false, :force => true do |t|
+    t.integer "id",                       :limit => 8, :null => false
+    t.integer "account_id",               :limit => 8
+    t.integer "note_id",                  :limit => 8
+    t.integer "installed_application_id", :limit => 8
+    t.string  "external_id"
+  end
+ 
+  add_index "helpdesk_external_notes", ["account_id", "installed_application_id", "external_id"], :name => "index_helpdesk_external_id", :length => {"installed_application_id"=>nil, "external_id"=>"20", "account_id"=>nil}
+  add_index "helpdesk_external_notes", ["id"], :name => "helpdesk_external_notes_id"
 
   create_table "helpdesk_form_customizers", :force => true do |t|
     t.string   "name"

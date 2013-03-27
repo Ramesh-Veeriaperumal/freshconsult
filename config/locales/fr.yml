@@ -1211,6 +1211,9 @@ fr:
     title: Groupes
   half: "30 minutes"
   header: 
+    help_center: "Comment pouvons-nous vous aider aujourd'hui ?"
+    new_support_ticket: "Nouveau ticket d'assistance"
+    check_ticket_status: "Vérifier le statut du ticket"
     assumed_text: "Vous consultez en tant que"
     login: connexion
     new_ticket: "Nouveau Ticket"
@@ -1720,9 +1723,73 @@ fr:
   plan_info_update: "Votre plan a été modifié."
   plan_is_selected: "Votre compte gratuit est désormais activé et bénéficie du programme %{plan}"
   plans_billing: "Plans et facturation"
+  send_feedback: "Envoyer un commentaire"
   portal: 
+    article: 
+      see_all_articles: "Voir les %{count} articles"
+    community_forums: "Forums de la communauté"
+    login: Connexion
+    login_portal: "Se connecter au portail d'assistance"
+    login_details: "Veuillez entrer les détails de connexion que vous avez fournis en vous enregistrant auprès de nous."
+    signup: s'inscrire
+    header: 
+      preview_message: "<b>Mode aperçu</b> - <a href='javascript:window.close()'>Cliquez ici</a> pour revenir en arrière."
+    knowledge_base: "Base de connaissances"
+    no_articles_info_1: "Désolés, nous n'avons publié aucun article."
+    no_articles_info_2: "Veuillez vérifier ultérieurement."
+    no_forums_info_1: "Aucun sujet de forum pour l'instant"
+    no_forums_info_2: "Pourquoi ne lancez-vous pas un %{start_topic_link} ?"
+    no_topics_in_this_view: "- Aucun sujet dans cette section -"
+    or_signup: "ou %{signup} inscrivez-vous"
+    popular_topics: "Sujets populaires"
     search: 
-      placeholder: "Rechercher à l'aide d'un mot clé ou d'une question complète"
+      filters:
+        all: "Tout"
+        solutions: "Solutions"
+        topics: "Rubriques"
+        tickets: "Tickets"
+      placeholder: "Entrez votre terme de recherche ici..."
+    showing_recent_updates: "Affichage des mises à jour récentes"
+    showing_recently_popular_topics: "Affichage des sujets populaires récents"
+    tickets: 
+      export: "Exporter les tickets"
+      export_ticket_data: "Exporter les données du ticket au format CSV"
+      export_to_csv: "Exporter au format CSV"
+    to_post_comment: "pour poster un commentaire"
+    to_post_topic: "pour poster un sujet"
+    to_submit_ticket: "pour soumettre un nouveau ticket"
+    topic: 
+      comments_closed: "Il n'est plus possible de transmettre des commentaires pour cette discussion !"
+      see_all_topics: "Voir les %{count} sujets"
+      start_new_topic: "Commencer un nouveau sujet"
+    topic_vote: 
+      howto: 
+        one: "pose cette question"
+        other: "posent cette question"
+      howto_button: "Êtes-vous également confronté à ce problème ?"
+      howto_unlike_button: "Je n'ai pas cette question !"
+      ideas_unlike_button: "J'aime pas!"
+      ideas_users_voted_title: "Les personnes qui aiment cette idée"
+      problem_users_voted_title: "Personnes qui ont ce problème"
+      howto_users_voted_title: "Personnes qui posent cette question"
+      ideas: 
+        one: "aime cette idée"
+        other: "aime cette idée"
+      ideas_button: "Aimez-vous cette idée ?"
+      more: 
+        one: "1 autre"
+        other: "%{count} autres"
+      people: 
+        one: "1 personne"
+        other: "%{count} personnes"
+      problem: 
+        one: "est confronté à ce problème"
+        other: "sont confrontés à ce problème"
+      problem_button: "Êtes-vous confronté à ce problème ?"
+      problem_unlike_button: "Je n'ai pas ce problème !"
+      you: 
+        one: Vous
+        other: "Vous et"
   portal_captcha: "Rendre le CAPTCHA obligatoire lors de la soumission d'un ticket sans se connecter"
   portal_captcha_anon: "Activez cette fonctionnalité si vous souhaitez que les utilisateurs soumettent les tickets avec CAPTCHA"
   portal_customizer_anon_for_f: "Activez cette fonction si vous voulez que vos clients puissent se connecter en utilisant leur identifiant et leur mot de passe Facebook."
@@ -2056,6 +2123,11 @@ fr:
       sixmonth: Semestriel
   success: Réussite
   support: 
+    login:      
+      form:
+        forgot: "mot de passe oublié ?"
+        remember: "Se souvenir de moi sur cet ordinateur"
+        login: Connexion
     shared: 
       survey_form: 
         cancel: Annuler
@@ -2356,6 +2428,8 @@ fr:
   user_activation_email: "E-mail d'activation de l’utilisateur"
   user_activation_message_sent: "L'utilisateur a été créé et les instructions d'activation envoyées à %{user_email} !"
   user_block: Oui
+  feedback: 
+    title: "Cette réponse était-elle utile ?"
   user_sessions: 
     new: 
       email: E-mail
