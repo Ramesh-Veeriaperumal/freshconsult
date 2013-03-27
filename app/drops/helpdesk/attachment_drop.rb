@@ -8,12 +8,12 @@ class Helpdesk::AttachmentDrop < BaseDrop
   end
   
   def url
-    source.expiring_url
+    helpdesk_attachment_path(source)
   end
 
   def thumbnail
     if source.image?
-      source.expiring_url(:thumb)
+      "/images/helpdesk/attachments/#{source.id}/thumb"
     else
       extname = source.content_file_name.split('.')[-1] 
       extname = (["pdf", "doc", "mov", "xls", "zip", "txt", "ppt"].include?(extname)) ? extname : "def"

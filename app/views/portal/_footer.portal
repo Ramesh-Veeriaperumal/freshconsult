@@ -1,9 +1,8 @@
-<footer class="rounded-6">
-	{% for tab in portal.tabs %}
-		<a href="{{tab.url}}" class="{% if tab.tab_type == current_tab %}active{% endif %}">{{ tab.label }}</a>
-	{% endfor %}
-</footer>
-<div class="copyright">
-	<a href="http://www.freshdesk.com" target="_blank">{% translate footer.helpdesk_software %}</a> 
-	{% translate footer.by_freshdesk %}
-</div>
+{% if portal.tabs.size > 0 %}
+	<footer class="footer rounded-6">
+		{% for tab in portal.tabs %}
+			<a href="{{tab.url}}" class="{% if tab.tab_type == current_tab %}active{% endif %}">{{ tab.label }}</a>
+		{% endfor %}
+	</footer>
+{% endif %}
+{{ portal | portal_copyright }}

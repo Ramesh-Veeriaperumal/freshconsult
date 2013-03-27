@@ -8,7 +8,7 @@ class Support::DiscussionsController < SupportController
 	end
 
 	def show
-		@category = current_portal.forum_categories.find_by_id(params[:id])
+		# @category = current_portal.forum_categories.find_by_id(params[:id])
 		set_portal_page :discussions_home
 	end	
 

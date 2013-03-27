@@ -397,3 +397,30 @@
     }
   }
 }
+
+
+// Formatting used for solutions
+@mixin text-formatting(){
+   font-size: 14px;
+   p, li, div{ font-size: 14px; }
+   code, pre, p, li, div{ 
+    word-break: normal;
+    word-wrap: break-word;
+   }              
+   pre {
+    white-space: pre-wrap;       /* css-3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+   }
+   img, iframe { border:0; max-width: 100%; }
+   table {cursor:default; border:1px solid #afafaf; border-bottom:0; border-right: 0; } 
+   table td, table th {cursor:text; font-size: inherit; font-size: 13px; border:1px solid #afafaf; padding: 4px; border-top:0; border-left: 0; vertical-align: top;}
+   em{ font-style:italic; }
+   ins {border-bottom:1px solid green; text-decoration: none; color:green}
+   cite {border-bottom:1px dashed blue}
+   acronym {border-bottom:1px dotted #CCC; cursor:help}
+   abbr {border-bottom:1px dashed #CCC; cursor:help}
+   ol, ul{ margin: 8px 0px 4px 0px; padding: 0px 0px 0px 40px; line-height: 17px;}
+   ul{ list-style:disc outside;  }
+   blockquote { font-size:13px; line-height:22px; margin:0.5em; color: #666; border-left: 1px dotted #999; padding:6px 6px 1px 1em; }
+   del{ text-decoration:none; }
+}

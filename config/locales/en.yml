@@ -332,6 +332,7 @@ en:
       profile_edit: "User profile"
       search: "Search results"
       solution_home: "Solutions home"
+      solution_category: "Solutions category home"
       article_list: "Article list"
       article_view: "Article view"
       discussions_home: "Discussions home"
@@ -345,7 +346,7 @@ en:
     portal_settings:
       simple:
         header_color: "Header"
-        bg_color: "Page"
+        bg_color: "Body"
         footer_color: "Footer"
         help_center_color: "Help center"
         btn_primary_background: "Primary action button"
@@ -358,7 +359,7 @@ en:
         headingsColor: "Heading color"
         linkColor: "Link text"
         linkColorHover: "Link text hover"
-        inputFocusRingColor: "On focus border color"
+        inputFocusRingColor: "Heading divider & Input focus glow"
     quests:
       index:
         title: Quest
@@ -1638,23 +1639,24 @@ en:
     helpcard:
       title: SLA Policy
       tour: Help me create a new SLA policy
-      info1: '<p>A service level agreement (SLA) policy lets you set standards of performance for your support team. You can set SLA policies for the time within which agents should respond to, and resolve tickets based on ticket priorities. You can choose whether you want each SLA rule to be calculated over calendar hours or your business hours.</p> <p>Your SLA Policies will be used in Freshdesk to determine the “Due By” time for each ticket.</p>'
-      title1: 'Enforcing Escalation Rules'
-      info2: '<p>You can optionally set escalation hierarchies for each policy to notify specific agents when an SLA rule is violated.</p>'
-      title2: 'Using Multiple SLA Policies'
-      info3: '<p>You can have a default SLA policy for all customers, or have multiple SLA policies for different customer tiers, like those who have subscribed to your Premium Support package.</p><p>When you add additional SLA Policies (other than the default policy), you will have to specify the conditions for which this policy will be enforced.</p>'
+      info_1: '<p>A service level agreement (SLA) policy lets you set standards of performance for your support team. You can set SLA policies for the time within which agents should respond to, and resolve tickets based on ticket priorities. You can choose whether you want each SLA rule to be calculated over calendar hours or your business hours.</p> <p>Your SLA Policies will be used in Freshdesk to determine the “Due By” time for each ticket.</p>'
+      title_1: 'Using Multiple SLA Policies'
+      sla_info_2: '<p>You can have multiple SLA policies, triggered by specific conditions like the customer who requested the ticket, the group it is assigned to, its source and/or product.</p><p>For example, you can have set a special SLA policy for tickets coming in through Twitter and assigned to the Sales team. Or have a special policy for customers having priority subscriptions with you. If you are supporting multiple brands or products, you can also have a different SLA workflow for each product.</p>
+<p><strong>The order of your SLA policies is important.</strong> The first SLA Policy that matches all conditions for a ticket will be applied to it, so remember to order your important rules closer to the top</p>'
+      title_2: 'Enforcing Escalation Rules'
+      info_3: '<p>You can optionally set escalation hierarchies for each policy to notify specific agents when an SLA rule is violated.</p>'
     override: Override
     title1: SLA Policies
     response_time: Response time
     business_time: Business Hours
     info3: SLA Policy works in conjunction with Business Hours
     tickets_with: Tickets with
-    escalate_to: Escalate to
+    escalate: What happens when this SLA is violated?
     applicable_to: Apply this to
     applicable_details: Choose when this SLA policy must be enforced
     applicable_error: You need to add at least 1 condition
-    response_escalation: Escalation rules when a ticket is not <b>responded to</b> on time
-    resolution_escalation: Escalation rules when a ticket is not <b>resolved</b> on time
+    escalation_response_text: Set Escalation Rule when a ticket is not <b>responded to</b> on time
+    escalation_resolution_text: Set Escalation Hierarchy when a ticket is not <b>resolved</b> on time
     respond_within: Respond within
     resolve_within: Resolve within
     op_hrs: Operational Hrs
@@ -1700,9 +1702,14 @@ en:
   no_signup: "To submit a ticket, please <a href={{login}}><b>Login</b></a>."
   portal: 
     no_topics_in_this_view: "~ No topics in this view ~"
+    solutions_home: "Solution home"
     header: 
       preview_message: "<b>Preview mode</b> - <a href='javascript:window.close()'>Click here</a> to go back."
     login: Login
+    login_portal: "Login to the support portal"
+    login_details: "Enter the login details you gave when you registered with us"
+    login_options: "...or login using"
+    reset_password: "Give us your email address and instructions to reset your password will be emailed to you."
     signup: Signup
     or_signup: " or %{signup} for an account"
     to_post_comment: " to post a comment"
@@ -1720,7 +1727,7 @@ en:
     community_forums: "Community forums"
     knowledge_base: "Knowledge base"
     showing_recent_updates: "Showing recent updates"
-    no_articles_info_1: "Sorry, we haven’t published any articles. "
+    no_articles_info_1: "Sorry, we haven’t published any articles in this section. "
     no_articles_info_2: "Please check again later. "
     no_forums_info_1: "No forum topic yet"
     no_forums_info_2: "Why don't you start a %{start_topic_link}?"
@@ -2367,6 +2374,10 @@ en:
       note: Note 
       billable_entry: Mark as a billable entry
       billing_type: Billing Type
+      billable: Billable
+      non_billable: Non-Billable
+      product: Product
+      group: Group
       group_by: Group By
       report:
         no_timeentry: "No data available"
@@ -2570,6 +2581,7 @@ en:
         target_merge_description2: Description in ticket %{ticket_id}
         confirm_and_merge: Confirm and merge  
       bulk_merge:
+        continue: "Continue"
         mark_primary: "Mark as primary"
         primary_ticket: "This is your primary ticket"
         remove: "Remove this ticket"
@@ -2582,8 +2594,8 @@ en:
           one: "is merged into this ticket."
           other: "are merged into this ticket."
         target_note_description3:
-          one: "Ticket with id %{source_tickets} is merged into ticket %{target_ticket_id} with this request"
-          other: "Tickets with ids %{source_tickets} are merged into ticket %{target_ticket_id} with this request"
+          one: "The ticket %{source_tickets} has been merged with the ticket %{target_ticket_id}. The conversation will be added in a few minutes. "
+          other: "The tickets %{source_tickets} have been merged into the ticket %{target_ticket_id}. The conversations will be added in a few minutes."
   import_ticket_group: Tickets &amp; Group
   or: or
   tickets_filter:
@@ -2941,6 +2953,8 @@ en:
       info1: "When a Freshdesk ticket is linked with JIRA issue, perform the below actions."
       info2: "When ticket status is updated in Freshdesk "
       info3: "When a comment is added in Freshdesk "
+      info4: "When issue status is updated in JIRA"
+      info5: "When a comment is added in JIRA"
       none: "Do nothing."
       add_private_note_in_fd: "Add a private note in Freshdesk and notify agent."
       add_public_note_in_fd: "Add a public note in Freshdesk."

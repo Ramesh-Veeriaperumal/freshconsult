@@ -50,7 +50,6 @@ class Helpdesk::TicketsController < ApplicationController
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
 
-  uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
  
   def user_ticket

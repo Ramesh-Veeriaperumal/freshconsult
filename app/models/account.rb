@@ -12,6 +12,7 @@ class Account < ActiveRecord::Base
   
   has_many :tickets, :class_name => 'Helpdesk::Ticket', :dependent => :delete_all
   has_many :notes, :class_name => 'Helpdesk::Note', :dependent => :delete_all
+  has_many :external_notes, :class_name => 'Helpdesk::ExternalNote', :dependent => :delete_all
   has_many :activities, :class_name => 'Helpdesk::Activity', :dependent => :delete_all
   has_many :flexifields, :dependent => :delete_all
   has_many :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :delete_all
@@ -433,6 +434,10 @@ class Account < ActiveRecord::Base
   
   def full_url
     "http://#{host}"
+  end
+
+  def url_protocol
+    self.ssl_enabled? ? 'https' : 'http'
   end
   
   #Helpdesk hack starts here

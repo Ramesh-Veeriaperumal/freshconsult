@@ -8,10 +8,6 @@ class Support::ProfilesController < SupportController
   end
 
   def update
-    company_name = params[:user][:customer]
-    
-    @profile.customer_id = company_name.blank? ? nil : current_account.customers.find_or_create_by_name(company_name).id
-
     if @profile.update_attributes(params[:user])
       flash[:notice] = t(:'flash.profile.update.success')
       redirect_to :back

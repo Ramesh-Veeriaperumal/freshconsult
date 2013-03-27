@@ -1453,6 +1453,9 @@ es:
     search: Buscar
     signout: "Cerrar sesión"
     submit_a_ticket: "Enviar un ticket"
+    help_center: "¿Cómo podemos ayudarte?"
+    new_support_ticket: "Nueva consulta de apoyo"
+    check_ticket_status: "Revisar el estado de la consulta"
     tabs: 
       admin: Admin
       checkstatus: "Verificar el estado de su ticket"
@@ -2056,8 +2059,71 @@ es:
   plan_is_selected: "Tu cuenta gratuita está ahora activa con el plan %{plan}"
   plans_billing: "Planes & facturación"
   portal: 
+    article: 
+      see_all_articles: "Ver los %{count} artículos"
+    community_forums: "Foros de la comunidad"
+    login: Conectar
+    login_portal: "Registrate en el portar de ayuda"
+    login_details: "Introducir los datos de registro que aportaste al registrarte con nosotros."
+    signup: Inscribirse
+    header: 
+      preview_message: "<b>Modo preliminar</b> - <a href='javascript:window.close()'>Pulsar aquí</a> para volver."
+    knowledge_base: "Base de conocimientos"
+    no_articles_info_1: "Lo sentimos, no hemos publicado ningún artículo."
+    no_articles_info_2: "Vuelve otra vez más tarde."
+    no_forums_info_1: "No hay temas en el foro todavía"
+    no_forums_info_2: "¿Por qué no empiezas un %{start_topic_link}?"
+    no_topics_in_this_view: "~ No hay temas en esta vista ~"
+    or_signup: "o %{signup} para una cuenta"
+    popular_topics: "Temas populares"
     search: 
-      placeholder: "Búsqueda usando una llave o una pregunta completa"
+      filters:
+        all: "Todo"
+        solutions: "Soluciones"
+        topics: "Tópicos"
+        tickets: "Tickets"
+      placeholder: "Introducir el termino de búsqueda aquí..."
+    showing_recent_updates: "Mostando actualizaciones recientes"
+    showing_recently_popular_topics: "Mostrando temas populares recientes"
+    tickets: 
+      export: "Exportar consultas"
+      export_ticket_data: "Exportar los datos de consulata a CSV"
+      export_to_csv: "Exportar a CSV"
+    to_post_comment: "para publicar un comentario"
+    to_post_topic: "para publicar un tema"
+    to_submit_ticket: "para enviar una nueva consulta"
+    topic: 
+      comments_closed: "¡Los comentarios de esta discusión están cerrados!"
+      see_all_topics: "Ver los %{count} temas"
+      start_new_topic: "Empezar un tema nuevo"
+    topic_vote: 
+      howto: 
+        one: "tiene esta pregunta"
+        other: "tienen esta pregunta"
+      howto_button: "¿También tienes esta pregunta?"
+      howto_unlike_button: "¡No tengo esta pregunta!"
+      ideas_unlike_button: "desemejante!"
+      ideas: 
+        one: "le gusta esta idea"
+        other: "les gusta esta idea"
+      ideas_button: "¿Te gusta esta idea?"
+      more: 
+        one: otro
+        other: "otros %{count}"
+      people: 
+        one: "1 persona"
+        other: "%{count} personas"
+      problem: 
+        one: "tiene este problema"
+        other: "tienen este problema"
+      problem_button: "¿Tienes este problema?"
+      problem_unlike_button: "¡No tengo este problema!"
+      ideas_users_voted_title: "Personas a las que les gusta esta idea"
+      problem_users_voted_title: "Personas que tienen este problema"
+      howto_users_voted_title: "Personas que tienen esta pregunta"
+      you: 
+        one: Tú
+        other: "Tú y"
   portal_captcha: "Hacer que captcha sea obligatorio al enviar un ticket sin iniciar sesión"
   portal_captcha_anon: "Deshabilite esta característica si desea que los usuarios envíen un tickets sin captcha"
   portal_customizer_anon_for_f: "Activa esta caracteristica si quieres que tus clientes sean capaces de entrar usando su nombre y clave de Facebook."
@@ -2415,6 +2481,10 @@ es:
       sixmonth: Semestral
   success: Correcto
   support: 
+    login:      
+      form:
+        forgot: "¿olvidaste la contraseña?"
+        remember: "Recordarme en este equipo"
     shared: 
       survey_form: 
         cancel: Cancelar
@@ -2447,6 +2517,8 @@ es:
   this_ticket_has_been_resolved: "El ticket ha sido Resuelto"
   threeday: "3 Días"
   threemonth: "3 mes"
+  feedback: 
+    title: "¿Ha sido útil esta respuesta?"
   ticket: 
     activities: Actividades
     activity: Actividad

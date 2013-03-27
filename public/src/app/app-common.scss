@@ -1954,19 +1954,6 @@ h3.t_padding{
 	}
 }
 
-.mceEditorView{
-	line-height: 20px;
-	vertical-align: baseline;
-	font-size:12px;
-	color:$default_txt_color;	
-	img{
-		margin:0px 10px 10px 10px;
-	}
-	p{
-		margin: 0px 0px 1.5em;
-	} 
-}
-
 
 div.information_tip{
 	padding:15px 20px;
@@ -3653,6 +3640,7 @@ div.addReminder{
 				font-size:12px;
 				line-height: 16px;
 				padding-right:10px;
+				margin-bottom: -2px;
 				.result {
 					color:$default_txt_color;
 					font-weight: normal;
@@ -3681,6 +3669,7 @@ div.addReminder{
 					white-space: nowrap;
 					text-overflow:ellipsis;
 					margin-bottom: 0;
+					color: #888;
 				}				
 			}
 		}

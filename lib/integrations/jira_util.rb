@@ -67,7 +67,7 @@ class Integrations::JiraUtil
             invoke_action = notify_value.match("comment_in_jira") ? "add_comment" : "update_status"
             jira_obj.send(invoke_action, issue_id, mapped_data)
             jira_key = INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account.id, :local_integratable_id=>notify_resource.local_integratable_id, :remote_integratable_id=>notify_resource.remote_integratable_id}
-            set_key(jira_key, "true", 60) # The key will expire within 60secs.
+            set_key(jira_key, "true", 240) # The key will expire within 4 mins.
           }
         end  
       rescue Exception => e

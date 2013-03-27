@@ -1,7 +1,7 @@
 class HttpRequestProxy
 
   def fetch(params, request)
-    if(request)
+    unless(request.blank?)
       method = request.env["REQUEST_METHOD"].downcase
       auth_header = request.headers['HTTP_AUTHORIZATION']
       user_agent = request.headers['HTTP_USER_AGENT']

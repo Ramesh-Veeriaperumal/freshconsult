@@ -537,19 +537,11 @@ class User < ActiveRecord::Base
 
   private
     def name_part(part)
-      parsed_name[part].blank? ? parsed_name[:clean] : parsed_name[part]
+      parsed_name[part].blank? ? name : parsed_name[part]
     end
 
     def parsed_name
       @parsed_name ||= People::NameParser.new.parse(self.name)
-    end
-
-    def update_admin_in_crm
-      Resque.enqueue(CRM::AddToCRM::UpdateAdmin, {:account_id => account_id, :item_id => id})
-    end
-    
-    def account_admin_updated?
-      user_role_changed? && account_admin?
     end
 
     def bakcup_user_changes
