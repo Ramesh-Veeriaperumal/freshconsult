@@ -1256,6 +1256,27 @@ p strong{
 		a {
 			font-weight:bold;
 		}
+
+		.ticket-details-twitter {
+			width: 200px;
+			float: right;
+			margin: 0 10px;
+			text-align: right;
+
+			.twitter-logo {
+				background: sprite($tktdetailicon,twitter) no-repeat;
+				display: inline-block;
+				width: 17px;
+				height: 16px;
+				margin-right: 5px;
+				position: relative;
+				top: 3px;
+			}
+
+			a {
+				font-weight: normal;
+			}
+		}
 	}
 
 	.details, #ticket_original_request {
