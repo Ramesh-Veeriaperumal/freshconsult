@@ -156,7 +156,7 @@ WorkflowMaxWidget.prototype = {
 				job_id: $("workflow-max-timeentry-jobs").value,
 				task_id: $("workflow-max-timeentry-tasks").value,
 				notes: $("workflow-max-timeentry-notes").value,
-				hours: this.getFormattedMinutes($("workflow-max-timeentry-hours").value).toString(),
+				hours: Math.ceil($("workflow-max-timeentry-hours").value*60),
 				date: this.executed_date.toString("yyyyMMdd")
 			});
 			this.freshdeskWidget.request({
@@ -262,7 +262,7 @@ WorkflowMaxWidget.prototype = {
 					job_id: $("workflow-max-timeentry-jobs").value,
 					task_id: $("workflow-max-timeentry-tasks").value,
 					notes: $("workflow-max-timeentry-notes").value,
-					hours: this.getFormattedMinutes(hours).toString(),
+					hours: Math.ceil((hours*60))+"",
 					date: this.executed_date.toString("yyyyMMdd")
 				});
 
@@ -290,7 +290,7 @@ WorkflowMaxWidget.prototype = {
 					job_id: $("workflow-max-timeentry-jobs").value,
 					task_id: $("workflow-max-timeentry-tasks").value,
 					notes: $("workflow-max-timeentry-notes").value,
-					hours: this.getFormattedMinutes($("workflow-max-timeentry-hours").value).toString(),
+					hours: Math.ceil($("workflow-max-timeentry-hours").value*60),
 					date: this.executed_date.toString("yyyyMMdd")
 					// start_time: this.format_time(this.executed_date, 0),
 					// end_time: this.format_time(this.executed_date, $("workflow-max-timeentry-hours").value*60)
@@ -396,15 +396,6 @@ WorkflowMaxWidget.prototype = {
 			time_entry_node = time_entry_node[0];
 			return XmlUtil.getNodeValueStr(time_entry_node, fetchEntity);
 		}
-	},
-
-	getFormattedMinutes: function(hours){
-		hours = (hours > 1) ? this.getFormattedHours(hours) : (hours * 100);
-		return Math.floor(hours);
-	},
-
-	getFormattedHours: function(hours){
-		return (Math.floor(hours) * 60) + (this.getFormattedMinutes(hours % 1))
 	},
 
 	format_date: function(date) {
