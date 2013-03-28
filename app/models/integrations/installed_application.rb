@@ -1,11 +1,13 @@
 class Integrations::InstalledApplication < ActiveRecord::Base
   include Integrations::AppsUtil
-
+  include Integrations::Jira::WebhookInstaller
+  
   serialize :configs, Hash
   belongs_to :application, :class_name => 'Integrations::Application'
   belongs_to :account
   has_many :integrated_resources, :class_name => 'Integrations::IntegratedResource', :dependent => :destroy
   has_many :user_credentials, :class_name => 'Integrations::UserCredential', :dependent => :destroy
+  has_many :external_notes,:class_name => 'Helpdesk::ExternalNote',:foreign_key => 'installed_application_id',:dependent => :destroy  
   attr_protected :application_id
 
   before_destroy :before_destroy_customize

@@ -26,7 +26,7 @@
 			var _o_data = $(this).data(),
 				_self = $(this),
 				_post_data = { 
-					"_method" : $(this).data("method")
+					"_method" : $(this).data("method") || "get"
 				}
 
 			if(_o_data.confirm && !confirm(_o_data.confirm)) return

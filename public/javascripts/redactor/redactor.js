@@ -165,14 +165,17 @@ var Redactor = function(element, options)
 		observeImages: true,
 		overlay: true, // modal overlay
 		
-		allowedTags: ["code", "span", "div", "a", "br", "p", "b", "i", "del", "strike", "u",
-					"img", "video", "audio", "iframe", "object", "embed", "param", "blockquote",
-					"mark", "cite", "small", "ul", "ol", "li", "hr", "dl", "dt", "dd", "sup", "sub",
-					"big", "pre", "code", "figure", "figcaption", "strong", "em", "table", "tr", "td",
-					"th", "tbody", "thead", "tfoot", "h1", "h2", "h3", "h4", "h5", "h6", "abbr", "acronym",
-					"address", "dfn", "kbd", "ins", "q", "s", "samp", "tt", "canvas", "details", "figure", 
-					"figcaption", "output", "section", "summary", "time", "mark", "audio", "video"],
-		
+		allowedTags: [ "code", "span", "div", "a", "p", "pre", "hr", "br",
+							"b", "strong", "i", "em", "del", "strike", "s", "u", "blockquote",  "q",
+							"img", "video", "audio", "iframe", "embed", "object", "param",
+							"mark", "cite", "small", "big",
+							"ul", "ol", "li",
+							"dl", "dt", "dd", "abbr", "acronym", "address", "dfn",
+							"sup", "sub", "kbd", "ins", "samp", "tt", "details",
+							"table", "tr", "td", "th", "tbody", "thead", "tfoot",
+							"h1", "h2", "h3", "h4", "h5", "h6",
+							"canvas", "figure", "figcaption",
+							"output", "section", "summary", "time" ],
 		buttonsCustom: {},
 		buttonsAdd: [],
 		buttons: ['formatting', 'fontname', 'fontsize', 
@@ -191,6 +194,7 @@ var Redactor = function(element, options)
 			em: 'italic',
 			del: 'deleted',
 			strike: 'deleted',
+			s: 'deleted',
 			ul: 'unorderedlist',
 			ol: 'orderedlist',
 			u: 'underline'

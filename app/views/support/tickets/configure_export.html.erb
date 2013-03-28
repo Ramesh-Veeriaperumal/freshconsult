@@ -1,5 +1,6 @@
-<% form_tag({:action => :export_csv, :a => params[:a], :i => params[:i] }, { :method => :post }) do %>
+<% form_tag(export_csv_support_tickets_path(:a => params[:a], :i => params[:i]), { :method => :post }) do %>
   	<input type="hidden" name="data_hash" value="" />
+  	<input type="hidden" name="_method" value="post" />
 	<div class="alert"><%=t('export_data.info')%></div>
 	<fieldset class="row-fluid">
 		<div class="span4">

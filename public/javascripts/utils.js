@@ -17,10 +17,6 @@ function log() {
     // alert(entry);
   }
 }
-function autoSaveTinyMce(editor){
-   tinyMCE.triggerSave();
-   return true;
-}
 
 // Utility methods for FreshWidget  
 function catchException(fn, message) {

@@ -54,6 +54,15 @@ body .redactor_air {
 }
 .redactor_editor {
 	@include text-formatting;
+	span, b, u, i, strong, em, strike, font, a, code, del, s, blockquote,
+	mark, cite, dl, dt, dd, pre, td, th, 
+	abbr, acronym, address, dfn, kbd, ins, q, samp, tt, details,
+	output, section, summary, time { 
+		font-size: 13px;
+		line-height: 18px;
+		font-style: normal;
+		margin:0;
+	}           
 }
 .redactor_editor li{
 	padding:0px;

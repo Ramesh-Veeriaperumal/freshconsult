@@ -11,7 +11,6 @@ class Helpdesk::NotesController < ApplicationController
   before_filter :fetch_item_attachments, :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
   before_filter :set_mobile, :prepare_mobile_note, :only => [:create]
     
-  uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
 
   def index
     @notes = @parent.conversation(params[:page])
@@ -33,6 +32,7 @@ class Helpdesk::NotesController < ApplicationController
   
   def create  
     build_attachments @item, :helpdesk_note
+    @item.send_survey = params[:send_survey]
     if @item.save
       if params[:post_forums]
         @topic = Topic.find_by_id_and_account_id(@parent.ticket_topic.topic_id,current_account.id)
@@ -89,8 +89,11 @@ class Helpdesk::NotesController < ApplicationController
       Thread.current[:notifications] = current_account.email_notifications
       if @parent.is_a? Helpdesk::Ticket
         if @item.email_conversation?
-          send_reply_email
-          @item.create_fwd_note_activity(params[:helpdesk_note][:to_emails]) if @item.fwd_email?
+           if @item.fwd_email?
+            flash[:notice] = t(:'fwd_success_msg')
+           elsif @item.to_emails.present? or @item.cc_emails.present? or @item.bcc_emails.present?
+            flash[:notice] = t(:'flash.tickets.reply.success')
+           end
         end
         if tweet?
           twt_type = params[:tweet_type] || :mention.to_s
@@ -106,10 +109,6 @@ class Helpdesk::NotesController < ApplicationController
         unless params[:ticket_status].blank?
           Thread.current[:notifications][EmailNotification::TICKET_RESOLVED][:requester_notification] = false
           @parent.status = Helpdesk::TicketStatus.status_keys_by_name(current_account)[I18n.t(params[:ticket_status])]
-        end
-        if @item.note? and !params[:helpdesk_note][:to_emails].blank?
-          notify_array = validate_emails(params[:helpdesk_note][:to_emails])
-          Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, @parent, @item ,@parent.friendly_reply_email,{:notify_emails =>notify_array}) unless notify_array.blank? 
         end
       end
 
@@ -128,32 +127,6 @@ class Helpdesk::NotesController < ApplicationController
     
     def tweet?
       (!@parent.tweet.nil?) and (!params[:tweet].blank?)  and (params[:tweet].eql?("true")) 
-    end
-    
-    def add_cc_email
-      cc_email_hash_value = @parent.cc_email_hash.nil? ? {:cc_emails => [], :fwd_emails => []} : @parent.cc_email_hash
-      if @item.fwd_email?
-        fwd_emails = @item.to_emails | @item.cc_emails | @item.bcc_emails | cc_email_hash_value[:fwd_emails]
-        fwd_emails.delete_if {|email| (email == @parent.requester.email)}
-        cc_email_hash_value[:fwd_emails]  = fwd_emails
-      else
-        cc_emails = @item.cc_emails | cc_email_hash_value[:cc_emails]
-        cc_emails.delete_if {|email| (email == @parent.requester.email)}
-        cc_email_hash_value[:cc_emails] = cc_emails
-      end
-      @parent.update_attribute(:cc_email, cc_email_hash_value)      
-    end
-
-    def send_reply_email      
-      add_cc_email     
-      if @item.fwd_email?
-        Helpdesk::TicketNotifier.send_later(:deliver_forward, @parent, @item)
-        flash[:notice] = t(:'fwd_success_msg')
-      elsif @item.to_emails.present? or @item.cc_emails.present? or @item.bcc_emails.present?
-        Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item, {:include_cc => params[:include_cc] , 
-                :send_survey => ((!params[:send_survey].blank? && params[:send_survey].to_i == 1) ? true : false)})
-        flash[:notice] = t(:'flash.tickets.reply.success')
-      end
     end
 
     def create_error

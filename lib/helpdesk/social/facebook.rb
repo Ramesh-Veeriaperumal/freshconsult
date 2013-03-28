@@ -66,7 +66,7 @@ module Helpdesk::Social::Facebook
         else
           @fb_page.attributes = {:enable_page => false} if e.to_s.include?(Social::FacebookWorker::ERROR_MESSAGES[:access_token_error]) ||
                                                           e.to_s.include?(Social::FacebookWorker::ERROR_MESSAGES[:permission_error])
-          @fb_page.attributes = { :reauth_required => true, :last_error => e.to_s }
+          @fb_page.attributes = { :reauth_required => true, :last_error => e.to_s } if Social::FacebookWorker::ERROR_MESSAGES.any? {|k,v| e.to_s.include?(v)} 
           @fb_page.save
           NewRelic::Agent.notice_error(e, {:custom_params => {:error_type => e.fb_error_type, :error_msg => e.to_s, 
                                             :account_id => @fb_page.account_id, :id => @fb_page.id }})
