@@ -97,7 +97,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def to_liquid
-    Helpdesk::AttachmentDrop.new self
+    @helpdesk_attachment_drop ||= Helpdesk::AttachmentDrop.new self
   end
   
   

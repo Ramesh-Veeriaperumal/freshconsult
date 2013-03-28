@@ -8,24 +8,24 @@ class Import::Zen::Start < Struct.new(:params)
     include Import::Zen::FileUtil
     include Import::Zen::Group
     include Import::Zen::Organization
+    include Helpdesk::ToggleEmailNotification
     
     OBJECT_FILE_MAP = {:organization => "organizations.xml" ,:user => "users.xml" , :group => "groups.xml" ,:ticket => "tickets.xml" ,
-                       :record => "ticket_fields.xml"  , :category => "categories.xml",:forum => "forums.xml"  , :entry=>"entries.xml" }
-    SUB_FUNCTION_MAP = {:customers =>[:organization, :user] , :tickets =>[:group , :record, :ticket] , :forums => [:category,:forum,:entry] }
+                       :record => "ticket_fields.xml"  , :category => "categories.xml",:forum => "forums.xml"  , :entry=>"entries.xml", :post=>"posts.xml" }
+    SUB_FUNCTION_MAP = {:customers =>[:organization, :user] , :tickets =>[:group , :record, :ticket] , :forums => [:category,:forum,:entry,:post] }
  
   
   def perform
     params.symbolize_keys!
     params[:zendesk].symbolize_keys! if params[:zendesk]
 
-    @current_account = Account.find_by_full_domain(params[:domain])   
-    @current_account.make_current    
+    @current_account = Account.current  
     return if @current_account.blank?
     begin
       @base_dir = extract_zendesk_zip
-      disable_notification 
+      disable_notification(@current_account)
       handle_migration(params[:zendesk][:files] , @base_dir)
-      enable_notification
+      enable_notification(@current_account)
       send_success_email(params[:email] , params[:domain])
       delete_import_files @base_dir
     rescue => e
@@ -53,7 +53,8 @@ def read_data(obj_node)
      begin
        if reader.node_type == Nokogiri::XML::Reader::TYPE_ELEMENT and reader.name == obj_node
           if obj_node.eql?("ticket")
-              Resque.enqueue( Import::Zen::ZendeskTicketImport , reader.outer_xml , params[:domain])
+              Resque.enqueue( Import::Zen::ZendeskTicketImport , { :ticket_xml => reader.outer_xml, 
+                                                                   :account_id => @current_account.id})
           else
             send("save_#{obj_node}" , reader.outer_xml)
           end
@@ -65,15 +66,6 @@ def read_data(obj_node)
 end
 
 private
- 
-  def disable_notification        
-     Thread.current["notifications_#{@current_account.id}"] = EmailNotification::DISABLE_NOTIFICATION   
-     Thread.current["notifications_#{@current_account.id}"][EmailNotification::USER_ACTIVATION][:requester_notification] = params[:zendesk][:files].include?("user_notify")   
-  end
-  
-  def enable_notification
-    Thread.current["notifications_#{@current_account.id}"] = nil
-  end
 
   def solution_import?
     params[:zendesk][:files].include?("solution")

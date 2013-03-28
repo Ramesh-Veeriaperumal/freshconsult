@@ -39,9 +39,13 @@
   display: none;
 }
 
+.show-in-tablet{
+  display: none; 
+}
+
 /* Loading content */
 .loading-box, .loading, .ui-autocomplete-loading{
-  background-image:url('/images/load.gif');
+  background-image:image-url('/images/load.gif');
   background-repeat:no-repeat;
 }
 
@@ -61,13 +65,13 @@ input[type="text"].loading, .ui-autocomplete-loading{
 
 @include at-breakpoint($break-tablet){
   // Rounded options only for tablet and desktop
-	.rounded-6{ @include border-radius(6px); }
+	.rounded-6{ @include border-radius($content-border-radius); }
 
   // Some utility class that will be applicable from tablet to desktop
   .pull-right-tablet{ float: right; }
   .pull-left-tablet{ float: left; }
   .hide-tablet{ display: none; }
-  .show-tablet{ display: block; }
+  .show-in-tablet{ display: block; }
   .invisible-tablet { visibility: hidden; }
   .align-right-tablet{ text-align:right; }
   .align-left-tablet{ text-align:left; }

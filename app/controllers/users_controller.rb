@@ -1,12 +1,11 @@
 class UsersController < ApplicationController 
-  
+
   include ModelControllerMethods #Need to remove this, all we need is only show.. by Shan. to do must!
   include HelpdeskControllerMethods
 
-  skip_before_filter :check_privilege, :only => :revert_identity
+  skip_before_filter :check_privilege, :only => [:revert_identity, :profile_image]
   before_filter :set_selected_tab
-  skip_before_filter :load_object , :only => [ :show, :edit]
-  
+  skip_before_filter :load_object , :only => [ :show, :edit ]
   before_filter :load_multiple_items, :only => :block
 
   ##redirect to contacts
@@ -53,6 +52,12 @@ class UsersController < ApplicationController
       redirect_to :controller =>'agents' ,:action => 'show', :id => agent_id    
     end
     
+  end
+
+  def profile_image
+    load_object
+    redirect_to (@user.avatar.nil? ? "/images/fillers/profile_blank_thumb.gif" : 
+      @user.avatar.expiring_url(:thumb, 300))
   end
   
   def delete_avatar

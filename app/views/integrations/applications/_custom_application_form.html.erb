@@ -4,8 +4,8 @@
   </div>
   <div id="sample_preview" class="hide">
     <div class="titlebar">
-      <a class="preview_link" href="#">Refresh</a>
-      Custom Widget Preview
+      <a class="preview_link" href="#"><%= t('integrations.freshplugs.refresh') %></a>
+      <%= t('integrations.freshplugs.custom_widget_preview') %>
     </div>
     <div id="preview" class=""></div>
   </div>
@@ -40,20 +40,20 @@
           <li class="field custom_app_preview">
             <a class='l_placeholder slim-button' href='javascript:void(0)'><%= t('integrations.custom_application.form.insert_placeholder') %> &raquo;</a>
             <div class="custom_app_preview_link">
-              <%=link_to "Show Preview", "#", :class => "toggle_preview", 
-                    "data-toggled-text" => "Hide Preview", "data-toggled-class" => "active", 
-                    "data-default-text" => "Show Preview", 'data-default-class' => "" %>
+              <%=link_to t('integrations.freshplugs.show_preview'), "#", :class => "toggle_preview", 
+                    "data-toggled-text" => t('integrations.freshplugs.hide_preview'), "data-toggled-class" => "active", 
+                    "data-default-text" => t('integrations.freshplugs.show_preview'), 'data-default-class' => "" %>
               <span class="hide"> <br />This integration will appear in the sidebar</span>
             </div>
             <label class="checkwrapper">
               <%= check_box_tag "application[view_pages][]", "helpdesk_tickets_show_page_side_bar", 
                       disp_in_pages.include?('helpdesk_tickets_show_page_side_bar')%>
-                  Show the widget in ticket view page. 
+                  <%= t('integrations.freshplugs.show_widget_in_ticket_view_page') %>
             </label>
             <label class="checkwrapper">
               <%= check_box_tag "application[view_pages][]", "contacts_show_page_side_bar", 
               disp_in_pages.include?('contacts_show_page_side_bar')%>
-              Show the widget in contact view page. 
+              <%= t('integrations.freshplugs.show_the_widget_in_contact_view_page') %>
             </label>
             
           </li>

@@ -22,6 +22,11 @@ strong {
   font-weight: bold;
 }
 
+.top-space-none{
+  margin-top:0;
+  padding-top:0;
+}
+
 .muted {
   color: #999999;
 }
@@ -135,6 +140,45 @@ strong {
 
 /* This class overriding app-common css. */
 
+/* overriding buttons styles from Bootstrap v1.4 */
+.btn-group .btn {
+  float: none;
+}
+.btn-group.open {
+  overflow: visible;
+}
+.btn.dropdown-toggle {
+  overflow: visible;
+  &:after { 
+  display: none;
+  }
+
+  .caret {
+  margin: 6px 0 0;
+  }
+}
+.open .dropdown-toggle {
+  color: inherit;
+}
+
+.open > .dropdown-menu.right{
+
+  left: auto;
+  right: 0;
+
+  &:before {
+  right: 25px;
+  left: auto;
+  }
+
+  &:after {
+  right: 26px;
+  left: auto;
+  }
+}
+
+
+/*  End of Button overriding */
 .pagination{
   border-bottom:0 ;
   a{
@@ -158,4 +202,15 @@ strong {
       margin-left:20px;
     }
   }
+}
+select{
+  height: 20px;
+  line-height: 20px;
+  padding:1px;
+}
+
+/* Fix for tickets show page data-tabs */
+.ticket_tabs{
+  margin-left: 0px;
+  margin-right: 0px;
 }

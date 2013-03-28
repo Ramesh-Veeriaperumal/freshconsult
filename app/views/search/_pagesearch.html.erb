@@ -2,34 +2,39 @@
 	placeholder ||= "Search"
 	url			||= "/search/content?search_key="
 %>
-<form class="page-search">
+<form class="page-search" >
 	<div class="live_search">
 		<input class="search" type="text" id="PageSearch" placeholder="<%= placeholder %>" /> 
 	</div>
 </form>
 
 <div id="search_results" style="display:none;"></div>
-<% content_for :script_jquery do %>
+<script type="text/javascript">
 	callbackToPageSearch = function(string){
-								$.ajax({ 
+								jQuery.ajax({ 
 									url: "<%=url%>"+string, 
 									success: function(data){
-									 			$("#search_results").show();
-												$("#search_results").html(data);
-												$("#PageSearch").removeClass("loading");
+									 			jQuery("#search_results").show();
+												jQuery("#search_results").html(data);
+												jQuery("#PageSearch").removeClass("loading");
 									}});
 								};
 				
-	$("#PageSearch").bind("keyup", function(ev){
+	jQuery("#PageSearch").bind("keyup", function(ev){
 		var searchString = this.value.replace(/^\s+|\s+$/g, "");
 		if(searchString != '' && searchString.length > 1){
-			$(this).addClass("loading");
+			jQuery(this).addClass("loading");
 			delay(function(){
 		    	callbackToPageSearch(searchString);
 			}, 200 ); 
 		}else{
-			$("#search_results").hide()
-			$(this).removeClass("loading");				
+			jQuery("#search_results").hide()
+			jQuery(this).removeClass("loading");				
 		}
 	});
-<% end %>
+
+	jQuery('.page-search').bind("submit", function(ev){
+		ev.preventDefault()
+		return false
+	})
+</script>

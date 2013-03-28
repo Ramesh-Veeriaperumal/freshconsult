@@ -9,6 +9,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
     @resolved_time_was = self.resolved_at_was
     self.resolved_at = nil
     self.closed_at = nil
+    self.resolution_time_by_bhrs = nil
   end
 
   def resolved_time_was
@@ -17,6 +18,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
   
   def set_resolved_at_state
     self.resolved_at=Time.zone.now
+    set_resolution_time_by_bhrs
   end
   
   def set_closed_at_state
@@ -68,6 +70,28 @@ class Helpdesk::TicketState <  ActiveRecord::Base
 
   def closed_at_dirty
     closed_at || closed_at_dirty_fix
+  end
+
+  def set_first_response_time(time)
+    self.first_response_time ||= time
+    self.first_resp_time_by_bhrs ||= Time.zone.parse(created_at.to_s).
+                        business_time_until(Time.zone.parse(first_response_time.to_s))
+  end
+
+  def set_resolution_time_by_bhrs
+    return unless resolved_at
+    time = created_at || Time.zone.now
+    self.resolution_time_by_bhrs = Time.zone.parse(time.to_s).
+                        business_time_until(Time.zone.parse(resolved_at.to_s))
+  end
+
+  def set_avg_response_time
+    tkt_values = tickets.notes.visible.agent_public_responses.first(
+        :select => 'count(*) as outbounds, round(avg(helpdesk_schema_less_notes.int_nc02), 3) as avg_resp_time, 
+                    round(avg(helpdesk_schema_less_notes.int_nc03), 3) as avg_resp_time_bhrs')
+    self.outbound_count = tkt_values.outbounds
+    self.avg_response_time = tkt_values.avg_resp_time
+    self.avg_response_time_by_bhrs = tkt_values.avg_resp_time_bhrs
   end
 
 private

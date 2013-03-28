@@ -1,4 +1,5 @@
 module Portal::TemplateActions
+  include RedisKeys
 	
 	# setting portal
 	def scoper
@@ -31,10 +32,32 @@ module Portal::TemplateActions
   def css_syntax?(custom_css)
     _options = Compass.configuration.to_sass_engine_options.merge(:syntax => :scss, 
         :always_update => true, :style => :compact)
-    syntax_rescue { Sass::Engine.new(custom_css, _options).render }
+    _options[:load_paths] << "#{RAILS_ROOT}/public/src/portal"
+
+    syntax_rescue { Sass::Engine.new("@import \"lib/settings\"; #{custom_css}", _options).render }
   end
 
   def clear_preview_session
-    session.delete(:preview_button)
+    remove_key(is_preview_key)
+    remove_key(preview_url_key)
+  end
+
+  def set_preview_and_redirect(preview_url)
+    set_key(is_preview_key, true)
+    set_key(preview_url_key, preview_url)
+    redirect_url = support_preview_url
+    redirect_url = support_preview_url(:host => @portal.portal_url) unless @portal.portal_url.blank?
+    Rails.logger.debug "::::#{redirect_url}"
+    redirect_to redirect_url and return
+  end
+
+  def is_preview_key
+    IS_PREVIEW % { :account_id => current_account.id, 
+      :user_id => User.current.id, :portal_id => scoper.id}
+  end
+
+  def preview_url_key
+    PREVIEW_URL % { :account_id => current_account.id, 
+      :user_id => User.current.id, :portal_id => scoper.id}
   end
 end

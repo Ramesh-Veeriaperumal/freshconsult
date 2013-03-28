@@ -19,8 +19,8 @@
 			<%= f.text_field :name, :class => "text required" %>
 		</div>
 		<div class="button-container">
-			<%= submit_tag 'Save', :class => "uiButton", :id => "save_edit" %>
-			<%= link_to "Cancel", '#', :class => "uiButton", :id => "edit-cancel" %>
+			<%= submit_tag t('save'), :class => "uiButton", :id => "save_edit" %>
+			<%= link_to t('cancel'), '#', :class => "uiButton", :id => "edit-cancel" %>
 		</div>
 		<% end %>
 	</div>
@@ -50,7 +50,7 @@
 <div class="response-list">
 	<div id="list-table" class="list-toolbar"><input type="checkbox" id="responses-select-all" class="adjust-margin" />
 	<%= f.submit t('canned_folders.del') , :class => "button", :disabled => "disabled",
-	:onclick => "return confirm('Are you sure you want to delete the selected Canned Responses?')" %>
+	:onclick => "return confirm(t('canned_folders.delete_canned_response'))" %>
 	<button id="move" class="button", disabled="disabled"><%= t('canned_folders.move') %></button>
 </div>
 <div id ="responses" class="table-grid load"><%= render :partial => 'show' %></div></div>
@@ -60,12 +60,12 @@
 
 <div id="folder-delete" class="hide">
 	<div class="dialog-special">
-		<p class="imp"> Important: </p> <p>Deleting the folder will also delete all the canned responses contained in it.<br /><br /> 
-		Are you sure you want to delete folder and all its contents? </p>
+		<p class="imp"> <%= t('canned_folders.important') %> </p> <p><%= t('canned_folders.delete_folder_warning') %><br /><br /> 
+		<%= t('canned_folders.delete_folder') %></p>
 	</div>
 		<div class="button-container">
-		<button id="delete-cancel" class="uiButton"> Cancel </button>
-		<button id="confirm-delete" class="uiButton"> Delete </button></div>
+		<button id="delete-cancel" class="uiButton"> <%= t('cancel') %> </button>
+		<button id="confirm-delete" class="uiButton"> <%= t('delete') %> </button></div>
 </div>
 </div></div>
 <% end %>

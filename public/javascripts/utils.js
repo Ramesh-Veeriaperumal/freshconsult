@@ -9,16 +9,26 @@ if (typeof console === "undefined" || typeof console.log === "undefined") {
     };
 }
 
-function log(entry) {
-  if (console) {
-    console.log(entry);
+function log() {
+  var args = Array.prototype.slice.call(arguments);
+  if (window.console && window.console.log && window.console.log.apply) {
+    console.log(args.join(" "));
   } else {
-    alert(entry);
+    // alert(entry);
   }
 }
 function autoSaveTinyMce(editor){
    tinyMCE.triggerSave();
    return true;
+}
+
+// Utility methods for FreshWidget  
+function catchException(fn, message) {
+  try {
+    return fn();
+  } catch(e) {
+    log(message || "Freshdesk Error:", e);
+  }
 }
 
 function freshdate(str) {
@@ -256,6 +266,16 @@ function construct_reply_url(to_email, account_full_domain){
    return reply_email;
 }
 
+// Utility for setting a post param hidden variable for forms
+function setPostParam(form, name, value){
+  var paramDom = jQuery(form).find("[name="+name+"]")
+  if(!paramDom.get(0))
+    paramDom = jQuery("<input type='hidden' name='"+name+"' />").appendTo(form)
+  
+  paramDom.val(value)
+}
+
+
    // Quoted Addition show hide
    function quote_text(item){
       if (!jQuery(item).attr("data-quoted")) {
@@ -282,21 +302,32 @@ active_dialog = null;
             var dialog = null;
 
             curItem.click(function(e){
-               e.preventDefault();
-               width = $(this).data("width") || '750px';
-             
-                href = jQuery(this).data('url') || this.href;
+              e.preventDefault();
             
-               if(dialog == null){
+              var $this = $(this),
+                  dialog = $this.data("dialog2"),
+                  width = $this.data("width") || '750px',
+                  href = $this.data('url') || this.href,
+                  params = $this.data('parameters');
+
+              if(dialog == null){
                   dialog = $("<div class='loading-center' />")
                               .html("<br />")
                               .dialog({  modal:true, width: width, height:'auto', position:'top',
-                                         title: this.title, resizable: false });
+                                         title: this.title, resizable: false,
+                                         close: function( event, ui ) {
 
-                   active_dialog = dialog.load(href,{}, function(responseText, textStatus, XMLHttpRequest) {
+                                          if($this.data("destroyOnClose"))
+                                              $this.dialog2("destroy")
+                                         } });
+
+                  active_dialog = dialog.load(href, params || {}, function(responseText, textStatus, XMLHttpRequest) {
                                                    dialog.removeClass("loading-center");
                                                    dialog.css({"height": "auto"});
                                                 });
+
+                  $this.data("dialog2", dialog)
+
                }else{
                   dialog.dialog("open");
                }
@@ -306,10 +337,14 @@ active_dialog = null;
         destroy : function( ) {
           return this.each(function(){
             var $this = $(this),
-                data = $this.data('dialog2');
+                dialog = $this.data('dialog2');
+
             $(window).unbind('.dialog2');
-            data.tooltip.remove();
             $this.removeData('dialog2');
+            $el = dialog.dialog("destroy")
+            $el.remove()
+
+            dialog = null;
           })
         },
         show : function( ) { },
@@ -686,5 +721,124 @@ function fetchResponses(url, element){
   }
 }
 
-function trim(s){return s.replace(/^\s+|\s+$/g, '');}
+function trim(s){
+  return s.replace(/^\s+|\s+$/g, '');
+}
 
+function typeString(o) {
+  if (typeof o != 'object')
+    return typeof o;
+
+  if (o === null)
+      return "null";
+  //object, array, function, date, regexp, string, number, boolean, error
+  var internalClass = Object.prototype.toString.call(o)
+                                               .match(/\[object\s(\w+)\]/)[1];
+  return internalClass.toLowerCase();
+}
+
+function trimArray(s){
+  if(typeString(s) == 'array'){
+    for(i=0; i<s.length; i++)
+      s[i] = trimArray(s[i]);
+    return s;
+  }
+  return s.replace(/^\s+|\s+$/g, '');
+}
+
+
+function escapeJSON(str) {
+  return str
+    .replace(/[\\]/g, '\\\\')
+    .replace(/[\"]/g, '\\\"')
+    .replace(/[\/]/g, '\\/')
+    .replace(/[\b]/g, '\\b')
+    .replace(/[\f]/g, '\\f')
+    .replace(/[\n]/g, '\\n')
+    .replace(/[\r]/g, '\\r')
+    .replace(/[\t]/g, '\\t');
+};
+
+jQuery.fn.serializeObject = function(){
+
+        var self = this,
+            json = {},
+            push_counters = {},
+            patterns = {
+                "validate": /^[a-zA-Z][a-zA-Z0-9_]*(?:\[(?:\d*|[a-zA-Z0-9_]+)\])*$/,
+                "key":      /[a-zA-Z0-9_]+|(?=\[\])/g,
+                "push":     /^$/,
+                "fixed":    /^\d+$/,
+                "named":    /^[a-zA-Z0-9_]+$/
+            };
+        this.build = function(base, key, value){
+            base[key] = value;
+            return base;
+        };
+        this.push_counter = function(key){
+            if(push_counters[key] === undefined){
+                push_counters[key] = 0;
+            }
+            return push_counters[key]++;
+        };
+        var serializedArray = jQuery(this).serializeArray();
+        jQuery.each(serializedArray, function(){
+
+            // skip invalid keys
+            if(!patterns.validate.test(this.name)){
+                return;
+            }
+
+            var k,
+                keys = this.name.match(patterns.key),
+                merge = this.value,
+                reverse_key = this.name;
+            if (jQuery(self).find('[name="'+this.name+'"]').hasClass("array"))
+            {
+              merge = merge.replace(/\s/g, '');
+              merge = merge.split(',');
+            }
+            else if(jQuery(self).find('[name="'+this.name+'"]').hasClass("datetimepicker_popover")){
+              merge = new Date(merge);
+              epoch_sec = merge.getTime() + (1100*60000);
+              merge = (new Date(epoch_sec)).toISOStringCustom().trim();
+            }
+            while((k = keys.pop()) !== undefined){
+
+                // adjust reverse_key
+                reverse_key = reverse_key.replace(new RegExp("\\[" + k + "\\]$"), '');
+
+                // push
+                if(k.match(patterns.push)){
+                    merge = self.build([], self.push_counter(reverse_key), merge);
+                }
+
+                // fixed
+                else if(k.match(patterns.fixed)){
+                    merge = self.build([], k, merge);
+                }
+
+                // named
+                else if(k.match(patterns.named)){
+                    merge = self.build({}, k, merge);
+                }
+            }
+
+            json = jQuery.extend(true, json, merge);
+        });
+
+        return json;
+    };
+
+String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
+Date.prototype.toISOStringCustom = function() {
+        function pad(n) { return n < 10 ? '0' + n : n }
+        return this.getFullYear() + '-'
+            + pad(this.getMonth() + 1) + '-'
+            + pad(this.getDate()) + 'T'
+            + pad(this.getHours()) + ':'
+            + pad(this.getMinutes()) + ':'
+            + pad(this.getSeconds()) +"."+pad(this.getMilliseconds()) +"+1100";
+    };

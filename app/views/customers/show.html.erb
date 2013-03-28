@@ -1,63 +1,41 @@
 <% content_for :layoutType do -%>bg_pulp<%-end %>
 <% content_for :sidebar do %> 
-	<div class="sidepanel">
-		<div class="element first">
-			<% if feature?(:customer_slas) %>
-				<div class="edit" id="sla_button">
-					<a href="javascript:void(0)" onclick="jQuery('#sla_details, #sla_form').toggle(); jQuery('#sla_button').hide()"><%=t('edit')%></a>
-				</div> 
-			<% end %>
-			<h4 class="title"><%=t('sla_policy.helpcard.title')%></h4>
-			<div id="sla_details">
-				<strong><%= @customer.sla_policy.name %></strong>
-				<div class="info_data"><%= @customer.sla_policy.description %></div>
-			</div>			
-			<div id="sla_form" style="display:none;">
-				<% form_for @customer do |f| %>
-					<div>
-						<%= f.label(:sla_policy_id, t('sla_policy.select_policy')) %>
-						<%= f.select(:sla_policy_id, current_account.sla_policies.map {|u| [u.name, u.id]}) %>
-					</div>
-					<%= f.submit t('change') %>
-					<a href="javascript:void(0)" onclick="jQuery('#sla_details, #sla_form').toggle(); jQuery('#sla_button').show()"><%=t('cancel')%></a>
-				<% end %>
+	
+	<% unless @customer.domains.blank? %>
+		<div class="sidepanel">
+			<div class="element first" style="display:none;">
+				<h4 class="title"><%=t('company.info2')%></h4>
+				<p>
+					<%= @customer.domains %>	
+				</p>	
 			</div>
-		</div>
-		<% unless @customer.domains.blank? %>
-		<div class="element" style="display:none;">
-			<h4 class="title"><%=t('company.info2')%></h4>
-			<p>
-				<%= @customer.domains %>	
-			</p>	
-		</div>
-		<% end %>
-	</div>
+		</div> 
+	<% end %>
   <% if privilege?(:manage_contacts) %> 
   	<div class="sidepanel">
   	<h4 class="title"><%=t('contacts.new')%> <span class="highlight">in <%=@customer.name%></span></h4> 
-  	
+	
   		<% form_tag :action=> :quick_customer,:controller => "contacts", :method =>:post do %>
-  		<%= hidden_field_tag 'customer_id', params[:id] %> 	
-  		<ul class="ui-form">
-  		<li> 
-  			<label for="user_name"><%=t('user.full_name')%></label> 
-  			<input class="text" id="user_name" name="user[name]" size="30" type="text" value="" /> 
-  		</li> 
-  		<li>
-  			<label for="email_primary"><%=t('user.email')%></label> 
-  			<input class="text" id="email_primary" name="user[email]" size="30" type="text" />
-  		</li>
-  		<li>
-  			<label for="user_phone"><%=t('user.phone_no')%></label> 
-  			<input class="text" id="phone_work" name="user[phone]" size="30" type="text" /> 
-  		</li>
-    </ul>
-  		<div class="button-container"><%= submit_tag t('create'), :class => "uiButton grey small" %></div>
+  		  <%= hidden_field_tag 'customer_id', params[:id] %> 	
+    		<ul class="ui-form">
+    		<li> 
+    			<label for="user_name"><%=t('user.full_name')%></label> 
+    			<input class="text" id="user_name" name="user[name]" size="30" type="text" value="" /> 
+    		</li> 
+    		<li>
+    			<label for="email_primary"><%=t('user.email')%></label> 
+    			<input class="text" id="email_primary" name="user[email]" size="30" type="text" />
+    		</li>
+    		<li>
+    			<label for="user_phone"><%=t('user.phone_no')%></label> 
+    			<input class="text" id="phone_work" name="user[phone]" size="30" type="text" /> 
+    		</li>
+    		</ul>
+    		<div class="button-container"><%= submit_tag t('create'), :class => "uiButton grey small" %></div>
   		<% end %>
   	</div>
-  <% end %>
-<% end %>
-<div class="company_box">
+ <% end %>
+ <div class="company_box">
   	<div class="action_buttons hide">
       <% if privilege?(:manage_contacts) %>
   		  <%= link_to t('edit'), edit_customer_path(@customer), :class => "last" %>

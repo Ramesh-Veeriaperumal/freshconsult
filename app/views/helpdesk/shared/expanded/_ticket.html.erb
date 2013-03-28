@@ -30,10 +30,13 @@
 
 		<% unless ticket.requester.nil? %>
 			<div class="info-data hideForList">
-				<%= t("ticket.ticket_list_status_"+ticket.ticket_states.current_state, 
-						:username => requester(ticket), 
+				<% user_page ||= false %>
+				<% sentence_type = user_page ? "ticket_user_list_status_" : "ticket_list_status_" %>
+				
+				<%= t("ticket." + sentence_type + ticket.ticket_states.current_state, 
+						:username => requester(ticket),
 						:time_ago => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state))) 
-						%>
+				%>
 				<div class="emphasize"><%= sla_status(ticket,@onhold_and_closed_statuses) %></div>
 			</div>
 		<% end %>

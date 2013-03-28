@@ -15,13 +15,13 @@ class Forum::CategoryDrop < BaseDrop
   def url
     support_discussions_path
   end
-  
-  def forums
-    @forums ||= @source.forums.visible(portal_user)
+
+  def forums_count
+    @forums_count ||= @source.forums.visible(portal_user).size
   end
 
-  def total_forums
-    @source.forums.visible(portal_user).size
+  def forums
+    @forums ||= @source.forums.visible(portal_user)
   end
   
 end

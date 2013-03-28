@@ -14,6 +14,8 @@ class Customer < ActiveRecord::Base
   has_many :all_users , :class_name =>'User' , :dependent => :nullify , :order => :name
   
   has_many :tickets , :through => :users , :class_name => 'Helpdesk::Ticket'
+
+  has_many :customer_folders, :class_name => 'Solution::CustomerFolder', :dependent => :destroy
   
   belongs_to :sla_policy, :class_name =>'Helpdesk::SlaPolicy'
 
@@ -56,6 +58,12 @@ class Customer < ActiveRecord::Base
   CUST_TYPE_OPTIONS = CUST_TYPES.map { |i| [i[1], i[2]] }
   CUST_TYPE_BY_KEY = Hash[*CUST_TYPES.map { |i| [i[2], i[1]] }.flatten]
   CUST_TYPE_BY_TOKEN = Hash[*CUST_TYPES.map { |i| [i[0], i[2]] }.flatten]
+
+  named_scope :custom_search, lambda { |search_string| 
+    { :conditions => ["name like ?" ,"%#{search_string}%"],
+      :select => "name, id",
+      :limit => 1000  }
+  }
   
   def self.filter(letter, page)
   paginate :per_page => 10, :page => page,
@@ -79,6 +87,12 @@ class Customer < ActiveRecord::Base
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id,:delta]) 
+  end
+
+  def to_json(options = {})
+    options[:except] = [:account_id,:import_id,:delta]
+    json_str = super options
+    json_str
   end
   
 end

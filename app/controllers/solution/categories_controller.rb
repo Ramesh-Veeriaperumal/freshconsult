@@ -109,6 +109,14 @@ class Solution::CategoriesController < ApplicationController
       solution_categories_path
     end
 
+  private
+    def portal_check
+      format = params[:format]
+      if format.nil? && (current_user.nil? || current_user.customer?)
+        return redirect_to support_solutions_path
+      end
+    end
+    
     def cname
       @cname ||= controller_name.singularize
     end

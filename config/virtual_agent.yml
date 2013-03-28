@@ -46,6 +46,11 @@ default_fields:
         
     group_id:
         handler: object_id
+    company_id:
+        handler: object_id
+
+    created_at:
+        handler: date_time
 
     created_at:
         <<: *date_time

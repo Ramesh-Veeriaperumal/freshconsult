@@ -82,8 +82,8 @@ $btnSuccessBackgroundHighlight:     #51a351 !default;
 $btnWarningBackground:              lighten($orange, 15%) !default;
 $btnWarningBackgroundHighlight:     $orange !default;
 
-$btnDangerBackground:               #ee5f5b !default;
-$btnDangerBackgroundHighlight:      #bd362f !default;
+$btnDangerBackground:               #bb0000 !default;
+$btnDangerBackgroundHighlight:      #770000 !default;
 
 $btnInverseBackground:              $linkColor !default;
 $btnInverseBackgroundHighlight:     adjust-hue($btnPrimaryBackground, 20%) !default;

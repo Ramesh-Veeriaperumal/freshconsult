@@ -1,19 +1,30 @@
-<% content_for :sidebar do -%>
+<%= include_stylesheets :pattern %>
+<%= include_javascripts :pattern %>
+<% content_for :sidebar do %>
   <%= render :partial => "/integrations/widgets/contacts_show_side_bar_widget", :locals => {:user => @user}%>
 <%- end %>
 
+
 <div class="contact-box clearfix">
-		<div class="action_buttons hide">
-      <% if privilege?(:manage_contacts) %>
-			  <%= link_to t('contacts.edit_contact'), edit_contact_path(@user) %>
-      <% end %>
-      <% if is_allowed_to_assume?(@user) %>
-			  <%= link_to t('assume_identity_button'), assume_identity_user_path(@user) %>
-      <% end %>
-      <% if (privilege?(:manage_users) && @user.has_email?) %>
-			  <%= link_to( t('contacts.info2'), { :action => :make_agent, :id => @user.id }, :method => :put , :class => "last" ) %>
-      <% end %>
+	<% if !@user.deleted? %>
+	<div class="action_buttons hide">
+    <% if privilege?(:manage_contacts) %>
+			<%= link_to t('contacts.edit_contact'), edit_contact_path(@user) if !@user.blocked? %>
+    <% end %>
+    <% if is_allowed_to_assume?(@user) %>
+			<%= link_to t('assume_identity_button'), assume_identity_user_path(@user) %>
+    <% end%>
+		<%if privilege?(:manage_users) && @user.has_email? and !@user.blocked? %>
+			<a class="drop-toggle last" data-toggle="dropdown" href="#" role="button">
+				<b><%= t('contacts.info2') %></b>
+			</a>
+	    		<ul class="dropdown-menu pull-right" role="menu">
+	        	<li><%= link_to ( t('contacts.convert_fulltime'), { :action => :make_agent, :id => @user.id},:method => :put)%></li>
+	          <li><%= link_to ( t('contacts.convert_occasional'), { :action => :make_occasional_agent, :id => @user.id}, :method => :put)%></li>       		
+	        	</ul>
+    <%end%>
 		</div>
+	<% end %>
 		<%= user_avatar(@user, :medium, "profile_pic") %>
 		<h1 class="title"><%= @user.display_name %></h1>
 		<%= render :partial => "helpdesk/tickets/components/company_info", :locals => { :user => @user } %>
@@ -30,38 +41,57 @@
 			<%= content_tag(:div, "#{content_tag(:span, t('facebook_source'))}  <a target='_blank' href=http://facebook.com/#{h(@user.fb_profile_id) }>http://facebook.com/people/#{h(@user.fb_profile_id)}</a>") unless @user.fb_profile_id.blank? %>
 			<%= content_tag(:div, "#{content_tag(:span, t('account.time_zone'))}  #{h(@user.time_zone)}") %>
 		</div>
-		<% if @user.deleted || (!@user.active? and @user.has_email?) %>
-		<div class="info-highlight hide">
-      <% if privilege?(:delete_contact) %>
-			  <%= content_tag(:div, "#{ t('contacts.deleted_message') } #{ link_to( t('contacts.restore'), { :action => :restore, :id => @user.id }, :method => :put ) }") if @user.deleted %>
-      <% end %>
-      <% if privilege?(:manage_users) %>
-			  <%= content_tag(:div, "#{ t('contacts.emailnotverified') }   #{ link_to( t('contacts.send_activation'), send_invite_activation_path(@user), :method => :put ) } " ) if !@user.active? and @user.has_email? %>
-      <% end %>
-		</div>
+
+		<% if @user.deleted || (!@user.active? and @user.has_email?) || @user.blocked? %>
+  		<div class="info-highlight hide">
+        <% if privilege?(:delete_contact) %>
+  			<%= content_tag(:div, "#{ t('contacts.deleted_message') } #{ link_to( t('contacts.restore'), { :action => :restore, :id => @user.id }, :method => :put ) }") if @user.deleted and !@user.spam?%>
+        <% end %>
+        <% if privilege?(:manage_users) %>
+  			<%= content_tag(:div, "#{ t('contacts.emailnotverified') }   #{ link_to( t('contacts.send_activation'), send_invite_activation_path(@user), :method => :put ) } " ) if !@user.active? and @user.has_email? and !@user.spam? and !@user.blocked?%>
+        <% end %>
+  			<%= content_tag(:div, "#{ t('contacts.blocked_message') } #{ link_to( t('unblock'), { :action => :unblock, :id => @user.id }, :method => :put ) }") if @user.blocked? || @user.spam? %>
+  		</div>
 		<% end %>
 </div>
 
-<div class="contact-box-additional">
+<div class="row-fluid">
 	<h4 class="title"><%=t('contacts.info3',:nick_name => @user.display_name)%></h4>
 		<% form_for @user do |f| %>
 			<%= f.label :description, t("contacts.form_placeholder.description"), :class => "overlabel" %>
-			<%= f.text_area :description, :class=> "sp_paragraph" %>
+			<%= f.text_area :description, :class=> "sp_paragraph span12",:cols => 20,:rows => 10 %>
       <% if privilege?(:manage_contacts) %>
-			  <div class="alignright"> 
-				  <%= f.submit t('save'), :class=>"uiButton small"  %> &nbsp;
-			  </div>
+  			<div class="span12 pull-right"> 
+  				<%= f.submit t('save'), :class=>"btn btn-primary pull-right"  %> &nbsp;
+  			</div>
       <% end %>
-		<% end %>
-
-		<span class="seperator"></span>
-		<h4 class="title"><%=t('contacts.info4',:nick_name => @user.display_name)%></h4>
-		<% if @user_tickets_open_pending.blank? %>
-			<%= "#{t('contacts.info5')}" %>
-		<% end %>
-		<%= render :partial => "tickets", :object => @user_tickets_open_pending %>
+		<% end %>	
 </div>
-<br><br>
+<% unless @user.deleted %>
+	<div id="tickets-expanded" class="contact_tickets row-fluid">
+		<div class="detailed_view">
+			<h4 class="title"><%=t('contacts.info4',:nick_name => @user.display_name)%></h4>
+			<span class="seperator"></span>
+			<% if @user_tickets.blank? %>
+				<%= "#{t('contacts.info5')}" %>
+			<% else %>
+				<% @onhold_and_closed_statuses = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(current_account) %>
+				<table class="tickets" id="tickets_view" width="100%">	
+			    	<tbody id="view_tickets">
+						<%= render :partial => "/helpdesk/shared/expanded/ticket", :collection => @user_tickets, 
+							:inline => true, :locals => { :user_page => true } %>
+				    </tbody>
+			  	</table>
+			  	<% if @user.tickets.visible.size > 5 %>
+				  	<div class="more_results">
+				  		<%= link_to t('contacts.show_more',:nick_name => @user.display_name), helpdesk_requester_filter_path(:requester_id => @user.id) , :id => "show_more" %>
+				  	</div>
+			  	<% end %>
+		  	<% end %>
+		</div>
+	</div>
+<% end %>
+
 <% javascript_tag do %>
   // need to convert this to util
   jQuery(document).ready(function(){
@@ -74,4 +104,3 @@
     }
 });
 <% end %>
-

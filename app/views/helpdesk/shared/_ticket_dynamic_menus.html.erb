@@ -10,7 +10,7 @@
 </div>
 <div id="ticket_priorities" class="hide">
 	<% 
-	priorities = TicketConstants::PRIORITY_NAMES_BY_KEY
+	priorities = TicketConstants.priority_list
 	priorities.each do |priority_value, priority_name|
 		%>
 		<a data-value="<%= priority_value %>" class="action_assign" data-assign-action="priority" tabindex = '99'><%=priority_name %></a>
@@ -21,11 +21,11 @@
 <div id="ticket_agents" class="hide">
 	<a class="action_assign"  href=""
 	   data-assign-action="agent"
-	   data-value="<%= current_user.id %>" data-text="<%= current_user.name %>"  tabindex = '99'>Myself</a>
+	   data-value="<%= current_user.id %>" data-text="<%= current_user.name %>"  tabindex = '99'><%= t('ticket.myself') %></a>
 
 	<a class="action_assign"  href="" tabindex = '99'
 	   data-assign-action="agent"
-	   data-value="-" data-text="-" >Nobody</a>
+	   data-value="-" data-text="-" ><%= t('ticket.none') %></a>
 
 	<span class="seperator"></span>
 	<% current_account.agents_from_cache.each do |agent| %>

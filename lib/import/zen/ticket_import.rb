@@ -3,9 +3,8 @@ class Import::Zen::TicketImport
   include Import::Zen::Ticket
   include Import::Zen::FlexiField
 
-  def initialize(ticket_xml , domain)
-  	@current_account = Account.find_by_full_domain(domain)
-  	@current_account.make_current    
+  def initialize(ticket_xml)
+  	@current_account = Account.current
     return if @current_account.blank?
     disable_notification
     save_ticket ticket_xml

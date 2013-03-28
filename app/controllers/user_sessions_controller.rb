@@ -20,7 +20,7 @@ include RedisKeys
   
   def new
     if current_account.sso_enabled? and (request.request_uri != "/login/normal") 
-      redirect_to current_account.sso_options[:login_url]
+      return redirect_to current_account.sso_options[:login_url]
     else
       @user_session = current_account.user_sessions.new
       # !PORTALCSS move this to another route called agent login
@@ -317,6 +317,7 @@ include RedisKeys
       @contact.name = options[:name] unless options[:name].blank? 
       @contact.email = email
       @contact.helpdesk_agent = false
+      @contact.language = current_portal.language
       return @contact
     end
     TOKEN_TYPE = "OpenSocialFirstTimeAccessToken"  

@@ -11,7 +11,7 @@ module SubscriptionSystem
   end
   
   def requires_feature(f)
-    render("/errors/non_covered_feature") unless feature?(f)
+    render :template => "/errors/non_covered_feature", :locals => {:feature => f} unless feature?(f)
   end
   
   def check_portal_scope(f)

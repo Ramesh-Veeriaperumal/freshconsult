@@ -8,7 +8,7 @@ config.cache_classes = false
 # Log error messages when you accidentally call methods on nil.
 config.whiny_nils = true
 
-config.load_paths += %W( #{RAILS_ROOT}/lib )
+# config.load_paths += %W( #{RAILS_ROOT}/lib )
 
 # Show full error reports and disable caching
 config.action_controller.consider_all_requests_local = true

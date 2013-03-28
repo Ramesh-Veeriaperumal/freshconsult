@@ -2,7 +2,7 @@ require 'xmlsimple'
 
 class Integrations::GoogleContactsImporter
   include Integrations::GoogleContactsUtil
-
+  include Helpdesk::ToggleEmailNotification
   def initialize (google_account=nil)
     @google_account = google_account
   end
@@ -46,7 +46,7 @@ class Integrations::GoogleContactsImporter
       @google_account.last_sync_status[:status] = :progress
       @google_account.save! unless @google_account.new_record?
       # Disbale notification before doing any other operations.
-      EmailNotification.disable_notification(@google_account.account)
+      disable_notification(@google_account.account)
       case sync_type
         when SyncType::OVERWRITE_LOCAL # Export
           db_contacts = find_updated_db_contacts
@@ -75,7 +75,7 @@ class Integrations::GoogleContactsImporter
       sync_stats = {:status=>:success, :db_stats => db_stats, :google_stats => google_stats}
     ensure
       # Enable notification before doing any other operations.
-      EmailNotification.enable_notification(@google_account.account) 
+      enable_notification(@google_account.account) 
       Rails.logger.info "last_sync_status #{sync_stats.inspect}"
       @google_account.last_sync_status = sync_stats
       @google_account.save! unless @google_account.new_record?

@@ -2,23 +2,23 @@
 	<% Portal::Page::PAGE_GROUPS.each do |group_hash| %>
 		<% group_hash.each do |key, group| %>
 		<h5><%= t("portal_pages.groups.#{key}") %></h5>
-		<ul id="PortalPageList" class="portal-pages-list">
-		<% group.each do |page| %>
-		<% page_id = Portal::Page::PAGE_TYPE_KEY_BY_TOKEN[page] %>
-			<li>
-				<i class="symbols-article-list"></i>
-				<%= link_to_remote t("portal_pages.pages.#{page}"),
-					:url => edit_admin_portal_template_page_path(
-								:id => page_id, 
-								:portal_id => @portal.id,
-								:page_type => page_id,
-								:page_group => key), 
-					:method => :get, 
-					:html => { :id => "page_id_#{page_id}" },
-					:update => "Customizepage" %>
-			</li>
-		<% end %>
+		<ul id="PortalPageList<%= key %>" class="portal-pages-list">
+			<% group.each do |page| %>
+				<% page_id = Portal::Page::PAGE_TYPE_KEY_BY_TOKEN[page] %>
+					<li>
+						<%= link_to_remote '<i class="symbols-article-list"></i>' + t("portal_pages.pages.#{page}"),
+							:url => edit_admin_portal_template_page_path(
+										:id => page_id, 
+										:portal_id => @portal.id,
+										:page_type => page_id,
+										:page_group => key), 
+							:before => "jQuery('#Customizepage').html('<div class=\"loading-box\"></div>')",
+							:method => :get, 
+							:html => { :id => "page_id_#{page_id}", :class => "page-btn" },
+							:update => "Customizepage" %>
+					</li>
+				<% end %>			
+			<% end %>
 		</ul>
-		<% end %>
 	<% end %>
 </div>

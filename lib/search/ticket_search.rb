@@ -69,11 +69,11 @@ module Search::TicketSearch
     end
 
     if criteria_key == :source
-      return TicketConstants::SOURCE_NAMES_BY_KEY.sort
+      return TicketConstants.source_list.sort
     end
 
     if criteria_key == :priority
-      return TicketConstants::PRIORITY_NAMES_BY_KEY.sort
+      return TicketConstants.priority_list.sort
     end
 
     if criteria_key == :responder_id
@@ -88,11 +88,12 @@ module Search::TicketSearch
       groups = []
       groups.push([0, "My Groups" ])
       groups.concat(Account.current.groups_from_cache.collect { |g| [g.id, g.name]})
+      groups.push([-1, "Unassigned" ])
       return groups
     end
 
     if criteria_key == :due_by
-       return TicketConstants::DUE_BY_TYPES_NAMES_BY_KEY
+       return TicketConstants.due_by_list
     end
 
     if criteria_key == "helpdesk_tags.name"
@@ -101,6 +102,20 @@ module Search::TicketSearch
 
     if criteria_key == "users.customer_id"
       return Account.current.customers_from_cache.collect { |au| [au.id, au.name] }
+    end
+
+    if criteria_key == :requester_id
+      if @requester_id_param
+        requester_id = @requester_id_param.to_a
+      elsif @current_options && @current_options.has_key?("requester_id")
+        requester_id = @current_options["requester_id"].split(',')
+      end
+      @selected_requesters = Account.current.users.find(requester_id) if requester_id
+      return @selected_requesters || [[1,""]]
+    end
+
+    if criteria_key == :created_at
+      return TicketConstants.created_within_list
     end
 
     return []

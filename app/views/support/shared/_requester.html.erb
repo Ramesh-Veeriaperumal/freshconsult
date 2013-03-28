@@ -1,5 +1,4 @@
 <% _cc_condition = current_user && field.portal_cc_field? && ( current_user.customer || field.all_cc_in_portal? ) %>
-<%= label %>
 <div class="controls">
 	<div class="clearfix">
 		<%= text_field object_name, :email, 

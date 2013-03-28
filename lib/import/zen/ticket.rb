@@ -85,7 +85,12 @@ def save_ticket ticket_xml
     ticket_state.store(:pending_since ,ticket_prop.status_upated_at.to_datetime() ) if ticket_prop.status.to_i == 2
     @ticket.ticket_states.update_attributes(ticket_state)   
     ticket_post_process ticket_prop , @ticket  
-  
+    # updating ticket level properties of ticket_states
+    t_state = @ticket.ticket_states
+    t_state.set_resolution_time_by_bhrs if ticket_prop.status.to_i >2
+    t_state.inbound_count = @ticket.notes.visible.customer_responses.count+1
+    t_state.set_avg_response_time
+    t_state.save
 end
 
 def ticket_post_process ticket_prop , ticket
@@ -102,7 +107,10 @@ def ticket_post_process ticket_prop , ticket
   #Attachment
   ticket_prop.attachments.each do |attachment|   
     #Delayed::Job.enqueue Import::Attachment.new(ticket.id , URI.encode(attachment.url), :ticket )
-    Resque.enqueue( Import::Zen::ZendeskAttachmentImport,ticket.id ,URI.encode(attachment.url), :ticket)
+    Resque.enqueue( Import::Zen::ZendeskAttachmentImport,{:item_id => ticket.id, 
+                                                              :attachment_url => URI.encode(attachment.url), 
+                                                              :model => :ticket,
+                                                              :account_id => @current_account.id})
   end 
   ticket_prop.comments.each do |comment| 
     user = @current_account.all_users.find_by_import_id(comment.user_id)
@@ -112,9 +120,22 @@ def ticket_post_process ticket_prop , ticket
                                                                         :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] , :created_at =>comment.created_at.to_datetime()})
     @note = ticket.notes.build(note_props)
     @note.save
+    #set ticket_states at note level
+    tkt_state = ticket.ticket_states
+    if user.customer?
+      tkt_state.requester_responded_at = @note.created_at
+    elsif !@note.private
+      @note.update_note_level_resp_time(tkt_state)
+      tkt_state.agent_responded_at = @note.created_at
+      tkt_state.set_first_response_time(@note.created_at)
+    end
+    
     comment.attachments.each do |attachment| 
       #Delayed::Job.enqueue Import::Attachment.new(@note.id ,URI.encode(attachment.url), :note)
-      Resque.enqueue( Import::Zen::ZendeskAttachmentImport ,@note.id , URI.encode(attachment.url), :note)
+      Resque.enqueue( Import::Zen::ZendeskAttachmentImport,{:item_id => @note.id, 
+                                                              :attachment_url => URI.encode(attachment.url), 
+                                                              :model => :note,
+                                                              :account_id => @current_account.id})
     end
   end
 end

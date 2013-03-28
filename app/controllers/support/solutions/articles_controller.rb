@@ -24,7 +24,7 @@ class Support::Solutions::ArticlesController < SupportController
     # Voting up the article
     @article.increment!(:thumbs_up)
 
-    render :text => "Glad we could be helpful. Thanks for the feedback."
+    render :text => I18n.t('solution.articles.article_useful')
   end
 
   def thumbs_down
@@ -41,7 +41,7 @@ class Support::Solutions::ArticlesController < SupportController
   def create_ticket
     # Message to the user based on success of ticket submission
     render :text => (create_the_ticket) ? 
-      "Thanks for the valuable feedback." : "There is an error #{@ticket.errors}"
+     I18n.t('solution.articles.article_not_useful') : I18n.t(:'solution.articles.error_message', :error_msg => @ticket.errors )
   end
 
   private

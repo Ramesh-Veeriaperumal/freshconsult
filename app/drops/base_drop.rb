@@ -64,14 +64,18 @@ class BaseDrop < Liquid::Drop
     # end
     
     def portal_user
-      @current_user ||= User.current
+      @portal_user ||= User.current
     end
 
     def portal_account
-      @current_account ||= Account.current
+      @portal_account ||= Account.current
     end 
 
     def allowed_in_portal? f
+      portal_user || feature?(f)
+    end
+
+    def feature? f
       portal_account.features? f
     end
     

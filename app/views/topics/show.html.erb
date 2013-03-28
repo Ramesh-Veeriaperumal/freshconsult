@@ -35,7 +35,7 @@
 			  <h3 class="forum-title">
 			    <%= h @topic.title  %>
 			  </h3>
-				<% first_post = @posts.first %>
+				<% first_post = @topic.posts.first %>
 				<div class="description">
 					<% if feature?(:gamification) %>
 						<textarea id="agent-hovercard" style="display:none;">
@@ -116,8 +116,8 @@
             <% unless (post == first_post) %>
               <%= render :partial => "forum_shared/post", :object => post %>							
             <% end %>
-            <%= will_paginate @posts %>
           <% end %> 
+          <%= will_paginate @posts %>
         </div>  
       <% end %>
       <div id="edit"></div>

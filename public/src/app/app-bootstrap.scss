@@ -705,10 +705,10 @@ footer {
   cursor: default;
   background-image: none;
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
-  filter: alpha(opacity=65);
-  -khtml-opacity: 0.65;
-  -moz-opacity: 0.65;
-  opacity: 0.65;
+  filter: alpha(opacity=20);
+  -khtml-opacity: 0.20;
+  -moz-opacity: 0.20;
+  opacity: 0.20;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
@@ -717,10 +717,10 @@ footer {
   cursor: default;
   background-image: none;
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
-  filter: alpha(opacity=65);
-  -khtml-opacity: 0.65;
-  -moz-opacity: 0.65;
-  opacity: 0.65;
+  filter: alpha(opacity=20);
+  -khtml-opacity: 0.20;
+  -moz-opacity: 0.20;
+  opacity: 0.20;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
@@ -786,7 +786,7 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
 }
 .alert-message a {
   font-weight: bold;
-  color: #404040;
+ // color: #404040;
 }
 .alert-message.danger p a,
 .alert-message.error p a,
@@ -980,7 +980,7 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
   visibility: visible;
   padding: 5px;
   font-size: 11px;
-  z-index: 1000;
+  z-index: 1003;
   filter: alpha(opacity=80);
   -khtml-opacity: 0.8;
   -moz-opacity: 0.8;
@@ -1777,6 +1777,3 @@ a.pill.help{
   margin-left: 0px;
 }
 
-.disabled{
-  color:#afafaf;
-}

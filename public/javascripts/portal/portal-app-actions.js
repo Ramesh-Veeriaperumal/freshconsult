@@ -1,12 +1,11 @@
 /*
  * @author venom
- * Portal specific ui-elements scripts
+ * Portal specific ui-elements initialization scripts
  */
  
 !function( $ ) {
 
-	// If no sidebar is present make the main content to stretch to full-width
-	if(!$(".sidebar").get(0)) $(".main").removeClass("main")
+	layoutResize(".main", ".sidebar")
 
 	$(function () {
 
@@ -83,13 +82,16 @@
 		// This is used in the place when the user can cc anybody
 		$("input#cc_emails").select2(_static_cc_emails_opts)
 
-
 		var _closed_list_cc_emails_opts = {
 			tokenSeparators: [",", " "],
 			formatNoMatches: function () { return ""; }
 		}
 		// This is used in the place when the user can cc only people from his company
 		$("select#cc_emails").select2(_closed_list_cc_emails_opts)
+
+		$("select.custom-select").livequery(function(){			
+			$(this).select2($.extend({ minimumResultsForSearch: 10, allowClear: true }, $(this).data()))
+		})
 
 		// Hacks for overriding Bootstrap defaults
 		// Changing the default loading button text
@@ -109,53 +111,84 @@
 		if(/forgot_password/.test(window.location.hash))
 			$("#forgot_password").trigger('click')
 
-		// Page search autocompelete        
-		$( "[rel=page-search]" ).autocomplete({
-        	minLength: 3,
-        	source: function( request, response ) {
-                var term = request.term.trim(),
-                	$element = this.element,
-                	cache = $element.data('search-cache') || {},
-                	url = $element.parents('form:first').attr('action') || "/support/search.json"
+		// Page search autocompelete
+		window['portal-search-boxes'] = $( "input[rel=page-search]" )
+		if(window['portal-search-boxes'].get().size() > 0){
+			window['portal-search-cache'] = {}
+			window['portal-search-boxes'].autocomplete({
+	        	minLength: 3,
+	        	source: function( request, response ) {
+	                var term = request.term.trim(),
+	                	$element = this.element,
+	                	cache = window['portal-search-cache'],
+	                	url = $element.parents('form:first').attr('action') || "/support/search.json"
 
-                if( term in cache || term == '' ) {
-                    response( cache[ term ] )
-                    return
-                }
+	                if( term in cache || term == '' ) {
+	                    response( cache[ term ] )
+	                    return
+	                }
 
-                request['max_matches'] = $element.data("maxMatches")
+	                request['max_matches'] = $element.data("maxMatches")
 
-                $.getJSON(url, request, function( data, status, xhr ) {
-					if(!$element.data('search-cache'))
-						$element.data('search-cache', {})
+	                $.getJSON(url, request, function( data, status, xhr ) {
+						window['portal-search-cache'][ term ] = data
+						response( data )
+	                });
+	            },
+	            focus: function( event, ui ) { event.preventDefault() }
+	        })
+	        .on( "autocompleteselect", function( event, ui ) { window.location = ui.item.url } )
+			
+			window['portal-search-render-ui'] = function( ul, item ) {
+	            return $( "<li>" )
+	                .data( "item.autocomplete", item )
+	                .append("<a href='"+item.url+"'>" + item.title + "</a> ")
+	                .append('<span class="label label-small label-light">'+ item.group +'</span>')
+	                // .append('<div>'+ item.desc +'</div>')
+	                .addClass(item.type.toLowerCase()+'-item')
+	                .appendTo( ul )
+	        }
 
-					$element.data('search-cache')[ term ] = data
-					response( data )
-                });
-            },
-            focus: function( event, ui ) { event.preventDefault() }
-        })
-        .on( "autocompleteselect", function( event, ui ) { window.location = ui.item.url } )
-		.data( "autocomplete" )._renderItem = function( ul, item ) {			
-            return $( "<li>" )
-                .data( "item.autocomplete", item )
-                .append("<a href='"+item.url+"'>" + item.title + "</a> ")
-                .append('<span class="label label-small label-light">'+ item.group +'</span>')
-                // .append('<div>'+ item.desc +'</div>')
-                .addClass(item.type.toLowerCase()+'-item')
-                .appendTo( ul )
-        }
+			$.each(window['portal-search-boxes'], function(i, searchItem){
+				$(searchItem).data( "autocomplete" )._renderItem = window['portal-search-render-ui']
+			})
+    	}
+
+        //mobile search box focus style
+		$(".help-center input[rel='page-search']").focus(function () {
+			$(".hc-search").addClass("onfocus-mobile")
+			$(".hc-search-button").addClass("onfocus-mobile-button")
+			if (Modernizr.mq('only screen and (max-width: 768px)')) {
+				$(".hc-nav").hide('fast')
+			}
+		}).blur(function(){
+	    	$(".hc-search").removeClass("onfocus-mobile")
+	    	$(".hc-search-button").removeClass("onfocus-mobile-button")
+	    	if (Modernizr.mq('only screen and (max-width: 768px)')) {
+				$(".hc-nav").show()
+			}
+		})
+
+
+		// Recapcha fix for multiple forms
+		// Fix for reCapcha !!! should be removed if it is removed
+		window['portal-recaptcha'] = $('.recaptcha-control')
+
+		if(window['portal-recaptcha'].size() > 1){			
+	    	$.each(window['portal-recaptcha'], function(i, item){
+	    		if(i > 0){
+		    		$(item).find("#recaptcha_widget_div")
+		    			.show()
+		    			.html(window['portal-recaptcha']
+		    				.first()
+		    				.find("#recaptcha_widget_div")
+		    				.clone(true, true))
+		    	}
+	    	})
+	    }
+
+	    
+
 	})
 
 }(window.jQuery);
-
-// Additional util methods for support helpdesk
-
-// Extending the string protoype to check if the entered string is a valid email or not
-String.prototype.isValidEmail = function(){
-	return (/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i).test(this)
-}
-
-String.prototype.trim = function(){
-	return this.replace(/^\s+|\s+$/g, '')
-}

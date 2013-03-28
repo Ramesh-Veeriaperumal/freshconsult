@@ -40,7 +40,7 @@
 											<% updated_contact_count = pluralize(customer.users.size, t('contacts.contact'), t('contacts.contacts')) %>
 									    	<span class="muted"><%= t('contacts.contacts_in_companies', :contacts => updated_contact_count) %></span>
 									    <% else %>
-									    	<span class="muted"><%= t('contacts.no_contacts') %></span>
+									    	<span class="muted">-</span>
 									    <% end %>
 									</p>
 								</td>

@@ -10,14 +10,6 @@ module PortalFilters
 	def bold content
 		content_tag :strong, content
 	end
-
-	def day_and_time date_time
-		date_time.to_s :long_day_with_time
-	end
-
-	def time_ago date_time 
-		"#{distance_of_time_in_words_to_now date_time} ago"
-	end
 	
 	# Ticket info for list view
 	def default_info(ticket)

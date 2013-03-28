@@ -6,10 +6,10 @@
 <p>
 	<%= form.code_editor :content, :height => "400px",
 			"data-fullscreen-title" => "<span class='light'>Editing</span> #{t("portal_pages.pages.#{@portal_page.token}")}",
-            "data-fullscreen-actions" => "page_btns" %>
+            "data-fullscreen-actions" => "#page_btns .portal-form-actions" %>
 </p>
-<br />
-<div class="well" id="page_btns">
+<hr />
+<div id="page_btns">
     <%= render :partial => "/admin/shared/customization_buttons", 
       :locals => { :page_id => params[:id], :page_type => @portal_page.page_type, :type => :page } %>
 </div>

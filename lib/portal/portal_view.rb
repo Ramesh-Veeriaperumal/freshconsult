@@ -70,9 +70,16 @@ class PortalView
       # assigns['content_for_layout'] = Liquid::Template.parse(assigns['content_for_layout']).render(assigns, :filters => filters, :registers => {:action_view => @view, :controller => @view.controller})
       assigns['content_for_layout'] = content_for_layout
     end
+    return source if @view.instance_variable_get('@skip_liquid_compile')
 
     liquid = Liquid::Template.parse(source)
-    liquid.render(assigns, :filters => filters, :registers => {:action_view => @view, :controller => @view.controller})
+    content = liquid.render(assigns, :filters => filters, :registers => {:action_view => @view, :controller => @view.controller})
+    liquid.errors.each do |err|
+      Rails.logger.error err
+      Rails.logger.error err.backtrace.join("\n")
+      NewRelic::Agent.notice_error(err)
+    end
+    content
   end
 
   def compilable?

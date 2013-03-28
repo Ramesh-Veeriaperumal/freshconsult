@@ -44,14 +44,19 @@ class Forum < ActiveRecord::Base
 
 
   named_scope :visible, lambda {|user| {
-                    :include => :customer_forums ,
+                    # :joins => "LEFT JOIN `customer_forums` ON customer_forums.forum_id = forums.id
+                    #             and customer_forums.account_id = forums.account_id ",
                     :conditions => visiblity_condition(user) } }
 
 
   def self.visiblity_condition(user)
     condition =  {:forum_visibility =>self.visibility_array(user) }
-    condition =  Forum.merge_conditions(condition) + " OR ( forum_visibility = #{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]} AND 
-                customer_forums.customer_id = #{user.customer_id} )" if (user && user.has_company?)
+    condition =  Forum.merge_conditions(condition) + " OR 
+                  ( forum_visibility = #{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]} 
+                    AND forums.id IN (SELECT customer_forums.forum_id from customer_forums
+                                      where customer_forums.customer_id = #{user.customer_id} and 
+                                      customer_forums.account_id = #{user.account_id}))"  if (user && user.has_company?)
+                # customer_forums.customer_id = #{user.customer_id} )"  if (user && user.has_company?)
     return condition
   end
 
@@ -174,7 +179,7 @@ class Forum < ActiveRecord::Base
   end
 
   def to_liquid
-    Forum::ForumDrop.new self
+    @forum_forum_drop ||= Forum::ForumDrop.new self
   end    
 
   def to_s

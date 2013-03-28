@@ -1,4 +1,4 @@
-class ActivationsController < ApplicationController
+class ActivationsController < SupportController
   #before_filter :require_no_user, :only => [:new, :create] #Guess we don't really need this - Shan
 
   skip_before_filter :check_privilege, :only => [:new, :create]
@@ -19,6 +19,7 @@ class ActivationsController < ApplicationController
 
   def new
     @user = current_account.users.find_using_perishable_token(params[:activation_code], 1.weeks) 
+    set_portal_page :activation_form
     if @user.nil?
       flash[:notice] = t('users.activations.code_expired')
       return redirect_to new_password_reset_path
@@ -33,6 +34,10 @@ class ActivationsController < ApplicationController
  
     if @user.activate!(params)
       flash[:notice] = t('users.activations.success')
+      Resque::enqueue(CRM::Totango::SendUserAction, 
+                                        { :account_id => current_account.id, 
+                                        :email => @user.email, 
+                                        :activity => totango_activity(:account_activation) }) if @user.account_admin?
       @current_user = @user
       redirect_to(root_url) if grant_day_pass
     else

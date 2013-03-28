@@ -15,13 +15,13 @@ class Solution::CategoryDrop < BaseDrop
   def url
     support_solution_path(@source)
   end
-  
+
+  def folders_count
+    @folders_count ||= @source.folders.visible(portal_user).size
+  end
+
   def folders
     @folders ||= @source.folders.visible(portal_user)
   end
-
-  def total_folders
-    @total_folders ||= @source.folders.visible(portal_user).size
-  end
-  
+ 
 end

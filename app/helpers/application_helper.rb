@@ -10,9 +10,25 @@ module ApplicationHelper
   require "twitter"
   
   ASSETIMAGE = { :help => "/images/helpimages" }
+
+  def open_html_tag
+    html_conditions = [ ["lt IE 7", "ie6"],
+                        ["IE 7", "ie7"],
+                        ["IE 8", "ie8"],
+                        ["IE 9", "ie9"],
+                        ["(gt IE 9)|!(IE)", "", true]]
+
+    html_conditions.map { |h| %( 
+        <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{ 
+          current_portal.language }">#{h[2] ? '<!--' : ''}<![endif]--> ) }
+  end
   
   def format_float_value(val)
-    sprintf( "%0.02f", val) unless val.nil? 
+    if !(val.is_a? Fixnum)
+      sprintf( "%0.01f", val)
+    else
+      return val.to_s
+    end
   end
 
   def timediff_in_words(interval)
@@ -29,13 +45,13 @@ module ApplicationHelper
     if (interval.to_i <= 0) 
       "-"
     elsif days > 0
-      "#{days} days and #{hours % 24} hours"
+      "#{days} days  #{hours % 24} hrs"
     elsif hours > 0
-      "#{hours} hours and #{mins % 60} minutes"
+      "#{hours} hrs  #{mins % 60} mins"
     elsif mins > 0
-      "#{mins} minutes and #{secs % 60} seconds"
+      "#{mins} mins  #{secs % 60} secs"
     elsif secs >= 0
-      "#{secs} seconds"
+      "#{secs} secs"
     end
 
   end
@@ -81,7 +97,11 @@ module ApplicationHelper
   end
 
   def tab(title, url, cls = false, tab_name="")
-    content_tag('li', content_tag('span') + link_to(strip_tags(title), url,  :"data-pjax" => "#body-container"), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
+    options = {:"data-pjax" => "#body-container"}
+    if tab_name.eql?(:tickets)
+      options.merge!({:"data-parallel-url" => "/helpdesk/tickets/filter_options", :"data-parallel-placeholder" => "#ticket-leftFilter"})
+    end
+    content_tag('li', content_tag('span') + link_to(strip_tags(title), url, options ), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
   end
   
   def show_ajax_flash(page)
@@ -90,6 +110,18 @@ module ApplicationHelper
     page << "closeableFlash('#noticeajax')"
     flash.discard
   end
+
+  def show_growl_flash(page)
+    [:notice, :warning, :error].each do |type|
+      if flash[type].present?      
+        page << "jQuery.gritter.add({ text: '#{flash[type]}' 
+              , fade: true, speed: 'fast', position: 'top-right', class_name: 'flash-#{type}' });"
+      end
+    end
+    flash.discard
+  end
+
+  
 
   def each_or_message(partial, collection, message, locals = {})
     render(:partial => partial, :collection => collection, :locals => locals) || content_tag(:div, message, :class => "list-noinfo")
@@ -333,6 +365,7 @@ module ApplicationHelper
       ['{{ticket.subject}}',          'Subject',          'Ticket subject.'],
       ['{{ticket.description}}',      'Description',        'Ticket description.'],
       ['{{ticket.url}}',          'Ticket URL' ,            'Full URL path to ticket.'],
+      ['{{ticket.public_url}}',          'Public Ticket URL' ,            'URL for accessing the tickets without login'],
       ['{{ticket.portal_url}}', 'Product specific ticket URL',  'Full URL path to ticket in product portal. Will be useful in multiple product/brand environments.'],
       ['{{ticket.status}}',         'Status' ,          'Ticket status.'],
       ['{{ticket.priority}}',         'Priority',         'Ticket priority.'],
@@ -341,14 +374,18 @@ module ApplicationHelper
       ['{{ticket.tags}}',           'Tags',           'Ticket tags.'],
       ['{{ticket.due_by_time}}',      'Due by time',        'Ticket due by time.'],
       ['{{ticket.requester.name}}',     'Requester name',       'Name of the requester who raised the ticket.'],
+      ['{{ticket.requester.firstname}}' , 'Requester first name', 'First name of the requester who raised the ticket'],
+      ['{{ticket.requester.lastname}}' , 'Requester last name', 'Last name of the requester who raised the ticket'],
       ['{{ticket.requester.email}}',    'Requester email',      "Requester's email."],
       ['{{ticket.requester.company_name}}', 'Requester company name',   "Requester's company name."], #??? should it be requester.company.name?!
+      ['{{ticket.requester.phone}}', 'Requester phone number',   "Requester's phone number."],
       ['{{ticket.group.name}}',       'Group name',       'Ticket group.'],
       ['{{ticket.agent.name}}',       'Agent name',       'Name of the agent who is currently working on the ticket.'],
       ['{{ticket.agent.email}}',      'Agent email',        "Agent's email."],
       ['{{ticket.latest_public_comment}}',  'Last public comment',  'Latest public comment for this ticket.'],
       ['{{helpdesk_name}}', 'Helpdesk name', 'Your main helpdesk portal name.'],
-      ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.']      
+      ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.'],
+      ['{{ticket.product_description}}', 'Product description', 'Product specific description in multiple product/brand environments.']
     ]
     place_holders << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey', 'Includes satisfaction survey.'] if current_account.features?(:surveys, :survey_links)
     current_account.ticket_fields.custom_fields.each { |custom_field|
@@ -366,8 +403,8 @@ module ApplicationHelper
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)
     end 
-    avatar_content = MemcacheKeys.fetch(["v2","avatar",profile_size,user],options.fetch(:expiry,300)) do
-      content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,options.fetch(:expiry,300)) : is_user_social(user, profile_size), img_tag_options ), :class => profile_class, :size_type => profile_size )
+    avatar_content = MemcacheKeys.fetch(["v3","avatar",profile_size,user],30.days.to_i) do
+      content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size), img_tag_options ), :class => profile_class, :size_type => profile_size )
     end
     avatar_content
   end
@@ -440,12 +477,22 @@ module ApplicationHelper
   end
 
   def get_app_details(app_name)
-    installed_app = @installed_apps_hash[app_name.to_sym]
+    installed_app = installed_apps[app_name.to_sym]
     return installed_app
   end
 
+  #This one checks for installed apps in account
+  def dropbox_app_key
+    app = installed_apps[:dropbox]
+    app.configs[:inputs]['app_key']  unless (app.blank?)
+  end
+
+  def installed_apps 
+    @installed_apps ||= current_account.installed_apps_hash
+  end
+  
   def get_app_widget_script(app_name, widget_name, liquid_objs) 
-    installed_app = @installed_apps_hash[app_name.to_sym]
+    installed_app = installed_apps[app_name.to_sym]
     if installed_app.blank? or installed_app.application.blank?
       return ""
     else
@@ -458,7 +505,7 @@ module ApplicationHelper
     replace_objs = liquid_objs || {}
     replace_objs = replace_objs.merge({"current_user"=>current_user})
     # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
-    replace_objs = replace_objs.merge({installed_app.application.name.to_s => installed_app, "application" => installed_app.application}) unless installed_app.blank?# Application name based liquid obj values.
+    replace_objs = replace_objs.merge({installed_app.application.name.to_s => installed_app, 'installed_app' => (InstalledAppDrop.new installed_app), "application" => installed_app.application, 'portal_id' => current_portal.id}) unless installed_app.blank?# Application name based liquid obj values.
     Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter])  # replace the liquid objs with real values.
   end
 
@@ -509,7 +556,8 @@ module ApplicationHelper
   def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
-    field_label    += '<span class="required_start">*</span>' if required
+    element_class  += " required_closure" if (field.required_for_closure && !field.required)
+    field_label    += '<span class="required_star">*</span>' if required
     field_label    += "#{add_requester_field}" if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
     field_name      = (field_name.blank?) ? field.field_name : field_name
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
@@ -524,7 +572,7 @@ module ApplicationHelper
       when "email" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
         element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit && controller_name.singularize != "feedback_widget") #dirty fix
-        element += add_name_field unless is_edit
+        element += add_name_field if !is_edit and !current_user
       when "text", "number" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
       when "paragraph" then
@@ -536,7 +584,10 @@ module ApplicationHelper
           element = label + select(object_name, field_name, field.choices, {:selected => field_value},{:class => element_class})
         end
       when "dropdown_blank" then
-        element = label + select(object_name, field_name, field.choices, {:include_blank => "...", :selected => field_value}, {:class => element_class})
+        element = label + select(object_name, field_name, 
+                                              field.choices(@ticket), 
+                                              {:include_blank => "...", :selected => field_value}, 
+                                              {:class => element_class})
       when "nested_field" then
         element = label + nested_field_tag(object_name, field_name, field, {:include_blank => "...", :selected => field_value}, {:class => element_class}, field_value, in_portal)
       when "hidden" then
@@ -565,7 +616,7 @@ module ApplicationHelper
   end
   
   def add_name_field
-    content_tag(:li, content_tag(:div, render(:partial => "/shared/name_field")),
+    content_tag(:li, (content_tag(:div, render(:partial => "/shared/name_field"))).to_s,
                 :id => "name_field", :class => "hide") unless current_user
   end
 
@@ -646,6 +697,24 @@ module ApplicationHelper
     nodejs_port = Rails.env.development? ? 5000 : (current_account.ssl_enabled ? 2050 : 1050)      
     "#{nodejs_protocol}://#{request.host}:#{nodejs_port}/#{namespace}"
   end  
+
+  def assumed_identity_message
+    _output = []
+    if current_user && is_assumed_user?
+      _output << %( <div class="alert alert-assume-agent alert-solid"> )
+      _output << %( #{t('header.assumed_text')} <b> #{current_user.name}</b> - )
+      _output << link_to(t('revert_identity_link_msg'), revert_identity_users_path, :class => "link")
+      _output << %( </div> )
+    end
+    _output.join("")
+  end
+
+  def get_logo
+    unless @account.main_portal.logo.blank?
+      return @account.main_portal.logo.content.url(:logo)
+    end
+    return "/images/logo.png?721013"
+  end
    
   private
     def solutions_tab
@@ -687,4 +756,26 @@ module ApplicationHelper
               "data-tour-id" => tour_id)
   end
   
+  def check_fb_reauth_required
+    fb_page = current_account.fb_reauth_check_from_cache
+    if fb_page
+      return content_tag('div', "<a href='javascript:void(0)'></a>  Your Facebook channel is inaccessible. 
+        It looks like username, password, or permission has been changed recently.Kindly 
+        <a href='/social/facebook' target='_blank'> fix </a> it.  ", :id => type, :class => 
+        "alert-message block-message warning full-width")
+    end
+    return
+  end
+ 
+  def check_twitter_reauth_required
+    twt_handle= current_account.twitter_reauth_check_from_cache
+    if twt_handle
+      return content_tag('div', "<a href='javascript:void(0)'></a>  Your Twitter channel is inaccessible. 
+        It looks like username or password has been changed recently. Kindly 
+        <a href='/social/twitters' target='_blank'> fix </a> it.  ", :id => type, :class => 
+        "alert-message block-message warning full-width")
+    end
+    return
+  end
+
 end

@@ -16,6 +16,10 @@ class CustomersController < ApplicationController
         @customers =current_account.customers.all
         render :xml => @customers.to_xml
       end
+      format.json do
+        @customers =current_account.customers.all
+        render :json => @customers.to_json
+      end
       
       format.atom do
         @customers = @customers.newest(20)

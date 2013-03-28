@@ -3,8 +3,9 @@
   sub_category_id = "#{field_id}_sub_category"
   sub_category_item_id = "#{field_id}_item_sub_category"
 %>
-<% options = options.unshift(["...","-1"]) %>
-<%= select_tag name, options_for_select(options.map {|k, v| [k, v.to_s]}, selected_val), :id => category_id, :class => "dropdown nested_field" %>
+<% options = options.unshift([t('any'),"-1"]) %>
+<%= select_tag name, options_for_select(options.map {|k, v| [k, v.to_s]}, selected_val), 
+                    :id => category_id, :class => "dropdown nested_field select2", "data-minimum-results-for-search" => 10 %>
 <%
   sub_category  = nested_fields[0] if nested_fields.size > 0
   item  = nested_fields[1] if nested_fields.size > 1
@@ -31,7 +32,8 @@
                 :operator    => sub_category[:operator],
                 :container   => 'nested_field' } do %>
     <h4 class="title"><%= sub_category[:name] %></h4>
-    <%= select_tag sub_category[:name], "", :id => sub_category_id, :class => "dropdown nested_field" %>
+    <%= select_tag sub_category[:name], "", :id => sub_category_id, 
+                  :class => "dropdown nested_field select2", "data-minimum-results-for-search" => 10 %>
   <%end%>
         
   <% unless item.nil? %>
@@ -42,7 +44,8 @@
                     :operator    => item[:operator],
                     :container   => 'nested_field' } do %>
         <h4 class="title"><%= item[:name] %></h4>
-        <%= select_tag item[:name], "", :id => sub_category_item_id, :class => "dropdown nested_field"%>
+        <%= select_tag item[:name], "", :id => sub_category_item_id, 
+                    :class => "dropdown nested_field select2", "data-minimum-results-for-search" => 10 %>
       <% end %>
   <% end %>
   <% javascript_tag do %>
@@ -53,11 +56,17 @@
             subcategory_val: '<%= current_options[sub_category[:condition].to_s].to_s %>',
             category_val: '<%= selected_val %>'            
           },
-          default_option: "<option value='-1'>...</option>",
+          include_blank: "Any",
           data_tree: <%= options.to_json %>,
           subcategory_id: '<%= sub_category_id %>',
           item_id: '<%= sub_category_item_id %>',
           change_callback: refresh_tickets
+        });
+        jQuery('#s2id_<%= category_id %>').live('click', function(){
+          jQuery('#s2id_<%= sub_category_id %>').select2("enable");
+        });
+        jQuery('#s2id_<%= sub_category_id %>').live('click', function(){
+          jQuery('#s2id_<%= sub_category_item_id %>').select2("enable");
         });
     <% end %>
 <%end%>

@@ -1,5 +1,6 @@
 module ContactsHelper
 
+	include Helpdesk::TicketsHelperMethods
 	def contact_tabs(type)
 		tabs = [['contacts', t('contacts.title')],
 				['customers', t('company.title')]]

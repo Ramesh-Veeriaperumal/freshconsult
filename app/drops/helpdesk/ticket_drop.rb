@@ -10,7 +10,7 @@ class Helpdesk::TicketDrop < BaseDrop
 	end
 
 	def subject
-		h(@source.subject)
+		@source.subject
 	end
 
 	def id
@@ -33,12 +33,24 @@ class Helpdesk::TicketDrop < BaseDrop
 		@source.description
 	end
 
+	def description_html
+		@source.description_html
+	end
+
+	def attachments
+	    @source.attachments
+	end
+
+	def dropboxes
+	    @source.dropboxes if @source.dropboxes.present?
+	end
+
 	def requester
-		@source.requester
+		@source.requester.presence
 	end
 
 	def agent
-		@source.responder
+		@source.responder.presence
 	end
 
 	def status
@@ -50,11 +62,11 @@ class Helpdesk::TicketDrop < BaseDrop
 	end
 
 	def priority
-		PRIORITY_NAMES_BY_KEY[@source.priority]
+		TicketConstants.priority_list[@source.priority]
 	end
 
 	def source
-		SOURCE_NAMES_BY_KEY[@source.source]
+		TicketConstants.source_list[@source.source]
 	end
 
 	def source_name
@@ -81,12 +93,22 @@ class Helpdesk::TicketDrop < BaseDrop
 		helpdesk_ticket_url(@source, :host => @source.account.host, :protocol=> @source.url_protocol)
 	end
 
+	def public_url
+		@source.populate_access_token if @source.access_token.blank?
+
+		public_ticket_url(@source.access_token,:host => @source.portal_host, :protocol=> @source.url_protocol)
+	end
+
 	def portal_url
 		support_ticket_url(@source, :host => @source.portal_host, :protocol=> @source.url_protocol)
 	end
 
 	def portal_name
 		@source.portal_name
+	end
+
+	def product_description
+		@source.product ? @source.product.description : ""
 	end
 
 	def latest_public_comment
@@ -114,6 +136,10 @@ class Helpdesk::TicketDrop < BaseDrop
 
 	def modified_on
 		@source.updated_at
+	end
+
+	def status_changed_on
+		@source.ticket_states.status_updated_at
 	end
 
 	def freshness

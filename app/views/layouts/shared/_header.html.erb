@@ -1,9 +1,10 @@
+<%= assumed_identity_message %>
 <div class="header">
   <div class="wrapper">
   <div class="brand">
     <% link_to (portal_pref(current_portal, :logo_link).empty?) ? "/home" : portal_pref(current_portal, :logo_link), :class => "logo" do %>
-    	<% cache(["v1","portal","logo",current_portal]) do %>
-      	<%= image_tag (current_portal.logo.nil? ? "/images/logo.png" : current_portal.logo.content.url(:logo)) %>
+    	<% cache(["v2","portal","logo",current_portal]) do %>
+      	<%= image_tag (current_portal.logo.nil? ? "/images/logo.png?721013" : current_portal.logo.content.url(:logo)) %>
       <% end %>
     <% end %>      
     <%= link_to(current_portal.name, "/home", :class => "logo_text") %>
@@ -15,12 +16,12 @@
 
     <div class="header_links">
       <% if current_user then %>  
-		<%= content_tag(:span, is_assumed_user? ? t('header.assumed_text') : t('header.welcome') ) %>
+		<%= content_tag(:span, t('header.welcome')) %>
 		<%= link_to h(current_user.name), "#", :class => "nav-trigger", :menuid => "#LoggedOptions" %>
      <% else %>
 
         <%= link_to( t('header.login') , login_path) %>
-		<%= link_to( t('signup') , current_portal.signup_path ) if feature?(:signup_link) %>
+		<%= link_to( t('signup') , current_portal.support_signup_path ) if feature?(:signup_link) %>
     <% end %>
     </div>     
 		<% if current_user then %>                        
@@ -30,7 +31,7 @@
 				<span><%= truncate(h(current_user.name), :length => 30) %></span>
 			</div>
 			<span class="seperator"></span>
-			<%= link_to "Profile settings", edit_profile_path(current_user), :class => "link" %>
+			<%= link_to t('profile_settings'), edit_profile_path(current_user), :class => "link" %>
 			<% if is_assumed_user? %>    
 				<span class="seperator"></span>
 				<%= link_to t('revert_identity_link_msg'), revert_identity_users_path, :class => "link" %>

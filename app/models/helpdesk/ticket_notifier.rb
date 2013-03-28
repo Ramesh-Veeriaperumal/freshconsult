@@ -26,6 +26,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
              :subject => r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)}
       if(notification_type == EmailNotification::NEW_TICKET and ticket.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone])
         params[:attachments] = ticket.attachments
+        params[:dropboxes] = ticket.dropboxes
       end
       deliver_email_notification(params) if ticket.requester_has_email?
     end
@@ -56,7 +57,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "multipart/mixed"
     
     part "text/html" do |html|
-      html.body   render_message("email_notification",:ticket => params[:ticket], :body => params[:email_body],
+      html.body   render_message("email_notification",:ticket => params[:ticket], :body => params[:email_body], :dropboxes=>params[:dropboxes],
                   :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
                   params[:notification_type]))
     end
@@ -96,7 +97,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "multipart/mixed"
   
     part "text/html" do |html|
-      html.body   render_message("reply",:ticket => ticket, :body => note.body_html,
+      html.body   render_message("reply",:ticket => ticket, :body => note.body_html,:dropboxes=>note.dropboxes,
                   :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]))
     end
 
@@ -118,7 +119,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "multipart/mixed"
 
     part "text/html" do |html|
-      html.body   render_message("forward",:ticket => ticket, :body => note.body_html)
+      html.body   render_message("forward",:ticket => ticket, :body => note.body_html,:dropboxes=>note.dropboxes)
     end
 
     note.attachments.each do |a|
@@ -137,7 +138,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "multipart/mixed"
     
     part "text/html" do |html|
-      html.body   render_message("send_cc_email", :ticket => ticket, :body => ticket.body_html)
+      html.body   render_message("send_cc_email", :ticket => ticket, :body => ticket.body_html,:dropboxes=>ticket.dropboxes)
     end
     
     ticket.attachments.each do |a|
@@ -188,7 +189,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 protected
 
   def formatted_export_subject(params)
-    filter = TicketConstants::STATES_HASH[params[:ticket_state_filter].to_sym]
+    filter = "export_data.#{params[:ticket_state_filter]}"
+    filter = I18n.t(filter)
     I18n.t('export_data.mail.subject',
             :filter => filter,
             :start_date => params[:start_date].to_date, 

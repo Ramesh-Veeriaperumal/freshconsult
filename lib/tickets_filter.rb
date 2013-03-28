@@ -59,22 +59,33 @@ module TicketsFilter
 
   DEFAULT_SORT        = :due_by
   DEFAULT_SORT_ORDER  = :asc
+  DEFAULT_PORTAL_SORT = :created_at
+  DEFAULT_PORTAL_SORT_ORDER = :desc
 
   SORT_FIELDS = [
-    [ :due_by     , I18n.t("tickets_filter.sort_fields.due_by")        ],
-    [ :created_at , I18n.t("tickets_filter.sort_fields.date_created")  ],
-    [ :updated_at , I18n.t("tickets_filter.sort_fields.last_modified") ],
-    [ :priority   , I18n.t("tickets_filter.sort_fields.priority")      ],
-    [ :status     , I18n.t("tickets_filter.sort_fields.status")        ]
+    [ :due_by     , "tickets_filter.sort_fields.due_by"        ],
+    [ :created_at , "tickets_filter.sort_fields.date_created"  ],
+    [ :updated_at , "tickets_filter.sort_fields.last_modified" ],
+    [ :priority   , "tickets_filter.sort_fields.priority"      ],
+    [ :status     , "tickets_filter.sort_fields.status"        ],
+    [ :requester_responded_at, "tickets_filter.sort_fields.customer_response"]
   ]
+
+  def self.sort_fields_options
+    SORT_FIELDS.map { |i| [I18n.t(i[1]), i[0]] }
+  end
 
   SORT_FIELD_OPTIONS = SORT_FIELDS.map { |i| [i[1], i[0]] }
   SORT_SQL_BY_KEY    = Hash[*SORT_FIELDS.map { |i| [i[0], i[0]] }.flatten]
 
   SORT_ORDER_FIELDS = [
-    [ :asc     , I18n.t("tickets_filter.sort_fields.asc")   ],
-    [ :desc    , I18n.t("tickets_filter.sort_fields.desc")  ]
+    [ :asc     , "tickets_filter.sort_fields.asc"   ],
+    [ :desc    , "tickets_filter.sort_fields.desc"  ]
   ]
+
+  def self.sort_order_fields_options
+    SORT_ORDER_FIELDS.map { |i| [I18n.t(i[1]), i[0]] }
+  end
   SORT_ORDER_FIELDS_OPTIONS = SORT_ORDER_FIELDS.map { |i| [i[1], i[0]] }
   SORT_ORDER_FIELDS_BY_KEY  = Hash[*SORT_ORDER_FIELDS.map { |i| [i[0], i[0]] }.flatten]
 

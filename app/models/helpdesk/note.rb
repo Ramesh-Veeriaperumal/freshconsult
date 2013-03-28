@@ -14,6 +14,8 @@ class Helpdesk::Note < ActiveRecord::Base
   include Mobile::Actions::Note
 
   has_many_attachments
+
+  has_many_dropboxes
     
   has_one :tweet,
     :as => :tweetable,
@@ -36,7 +38,7 @@ class Helpdesk::Note < ActiveRecord::Base
   before_create :validate_schema_less_note
   before_save :load_schema_less_note, :update_category
   after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
-  after_commit_on_create :update_ticket_states   
+  after_commit_on_create :update_ticket_states, :notify_ticket_monitor
 
   accepts_nested_attributes_for :tweet , :fb_post
   
@@ -205,12 +207,39 @@ class Helpdesk::Note < ActiveRecord::Base
         ticket_state.requester_responded_at = created_at unless replied_by_third_party?
         ticket_state.inbound_count = notable.notes.visible.customer_responses.count+1
       elsif !private
-        update_avg_response_time(ticket_state)
+        update_note_level_resp_time(ticket_state)
+        ticket_state.set_avg_response_time
         ticket_state.agent_responded_at = created_at
-        ticket_state.first_response_time ||= created_at
-      end  
+        ticket_state.set_first_response_time(created_at)
+      end 
       ticket_state.save
     end
+  end
+
+  def update_note_level_resp_time(ticket_state)
+    if ticket_state.first_response_time.nil?
+      resp_time = created_at - notable.created_at
+      resp_time_bhrs = Time.zone.parse(notable.created_at.to_s).
+                          business_time_until(Time.zone.parse(created_at.to_s))
+    else
+      customer_resp = notable.notes.visible.customer_responses.
+        created_between(ticket_state.agent_responded_at,created_at).first(
+        :select => "helpdesk_notes.id,helpdesk_notes.created_at", 
+        :order => "helpdesk_notes.created_at ASC")
+      unless customer_resp.blank?
+        resp_time = created_at - customer_resp.created_at
+        resp_time_bhrs = Time.zone.parse(customer_resp.created_at.to_s).
+                            business_time_until(Time.zone.parse(created_at.to_s))
+      end
+    end
+    schema_less_note.update_attributes(:response_time_in_seconds => resp_time,
+      :response_time_by_bhrs => resp_time_bhrs) unless resp_time.blank?
+  end
+
+
+  def liquidize_body
+    attachments.empty? ? body_html : 
+      "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
   end
 
   protected
@@ -300,7 +329,6 @@ class Helpdesk::Note < ActiveRecord::Base
         schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
       end
     end
-
     
   private
     def human_note_for_ticket?
@@ -309,11 +337,6 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def zendesk_import?
       Thread.current["zenimport_#{account_id}"]
-    end
-    
-    def liquidize_body
-      attachments.empty? ? body_html : 
-        "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
     end
 
     # Replied by third pary to the forwarded email
@@ -343,6 +366,15 @@ class Helpdesk::Note < ActiveRecord::Base
       fire_event(:create) unless disable_observer
     end
 
+    def notify_ticket_monitor
+      notable.subscriptions.each do |subscription|
+        if subscription.user.id != user_id
+          Helpdesk::WatcherNotifier.send_later(:deliver_notify_on_reply, 
+                                                notable, subscription, self)
+        end
+      end
+    end
+
     def update_category
       schema_less_note.category = CATEGORIES[:meta_response]
       return unless human_note_for_ticket?
@@ -357,25 +389,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end 
 
     def update_ticket_states
-      Resque.enqueue(Helpdesk::UpdateTicketStates, { :id => id }) unless private?
-    end
-
-    def update_avg_response_time(ticket_state)
-      if ticket_state.first_response_time.nil?
-        resp_time = created_at - notable.created_at
-      else
-        customer_resp = notable.notes.visible.customer_responses.
-          created_between(ticket_state.agent_responded_at,created_at).first(
-          :select => "helpdesk_notes.id,helpdesk_notes.created_at", 
-          :order => "helpdesk_notes.created_at ASC")
-        resp_time = created_at - customer_resp.created_at unless customer_resp.blank?
-      end
-      schema_less_note.update_attribute(:response_time_in_seconds, resp_time) unless resp_time.blank?
-
-      notable_values = notable.notes.visible.agent_public_responses.first(
-        :select => 'count(*) as outbounds, avg(helpdesk_schema_less_notes.int_nc02) as avg_resp_time')
-      ticket_state.outbound_count = notable_values.outbounds
-      ticket_state.avg_response_time = notable_values.avg_resp_time
+      Resque.enqueue(Helpdesk::UpdateTicketStates, { :id => id }) unless private? || zendesk_import?
     end
 
 end

@@ -1,6 +1,7 @@
 module Gamification
 	module Scoreboard
-		class UpdateUserScore < Resque::FreshdeskBase
+		class UpdateUserScore 
+			extend Resque::AroundPerform
 			@queue = "gamificationQueue"
 
 			def self.perform(args)
@@ -13,7 +14,7 @@ module Gamification
 					user.agent.update_attribute(:points, total_score)
 				end
 
-				user.agent.clear_leaderboard_cache!
+				user.agent.clear_leaderboard_cache!(Account.current,user)
 			end
 		end
 	end

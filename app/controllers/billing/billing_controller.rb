@@ -1,14 +1,12 @@
 class Billing::BillingController < ApplicationController
-
+  
   skip_before_filter :check_privilege
+  before_filter :login_from_basic_auth, :ssl_check
+
   skip_before_filter :set_time_zone, :set_locale, :check_account_state, :ensure_proper_protocol,
                       :check_day_pass_usage, :redirect_to_mobile_url
-                      
-  #before_filter :login_from_basic_auth
-  before_filter :ssl_check
-  before_filter :ensure_right_parameters, :retrieve_account, :unless => :ping_event?
 
-  PING_EVENT = "ping"
+  before_filter :ensure_right_parameters, :retrieve_account, :if => :event_monitored?
 
   EVENTS = [ "subscription_renewed", "payment_succeeded" ]
 
@@ -19,7 +17,7 @@ class Billing::BillingController < ApplicationController
 
 
   def trigger
-    send(params[:event_type], params[:content]) if EVENTS.include?(params[:event_type])
+    send(params[:event_type], params[:content]) if event_monitored?
 
     respond_to do |format|
       format.xml { head 200 }
@@ -41,8 +39,8 @@ class Billing::BillingController < ApplicationController
       render :json => ArgumentError, :status => 500 if (Rails.env.production? and !request.ssl?)
     end
 
-    def ping_event?
-      params[:event_type].eql?(PING_EVENT)
+    def event_monitored?
+      EVENTS.include?(params[:event_type])
     end
 
     def ensure_right_parameters
@@ -59,9 +57,6 @@ class Billing::BillingController < ApplicationController
 
     def subscription_renewed(content)
       #@account.subscription.update_attributes(:next_renewal_at => next_billing(content[:subscription]))
-      SubscriptionEvent.create(:account_id => content[:subscription][:id],
-                                :code => EVENTS[0],
-                                :info => content)
     end
 
     def next_billing(subscription)
@@ -71,9 +66,6 @@ class Billing::BillingController < ApplicationController
 
     def payment_succeeded(content)
       #@account.subscription.subscription_payments.create(payment_info(content))
-      SubscriptionEvent.create(:account_id => content[:subscription][:id], 
-                                :code => EVENTS[1],
-                                :info => content)
     end
 
     def payment_info(content)

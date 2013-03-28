@@ -12,6 +12,8 @@ class Group < ActiveRecord::Base
    has_many :agent_groups , :class_name => "AgentGroup", :foreign_key => "group_id", :dependent => :destroy
    
    has_many :agents, :through => :agent_groups, :source => :user , :conditions => ["users.deleted=?", false]
+
+   has_many :tickets, :class_name => 'Helpdesk::Ticket', :dependent => :nullify
    
    belongs_to :escalate , :class_name => "User", :foreign_key => "escalate_to"
    

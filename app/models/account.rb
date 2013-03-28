@@ -46,7 +46,12 @@ class Account < ActiveRecord::Base
   has_one :data_export
   
   has_one :account_additional_settings
+
+  has_one :account_configuration
   
+  delegate :contact_info, :admin_first_name, :admin_last_name, :admin_email, :admin_phone, 
+            :invoice_emails, :to => "account_configuration"
+
   has_one :logo,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
@@ -71,6 +76,8 @@ class Account < ActiveRecord::Base
   authenticates_many :user_sessions
   
   has_many :attachments, :class_name => 'Helpdesk::Attachment'
+
+  has_many :dropboxes,  :class_name=> 'Helpdesk::Dropbox'
   
   has_many :users, :conditions =>{:deleted =>false}, :order => :name
   has_many :all_users , :class_name => 'User'
@@ -81,9 +88,11 @@ class Account < ActiveRecord::Base
   has_one :subscription
   has_many :subscription_payments
   has_many :solution_categories, :class_name =>'Solution::Category',:include =>:folders,:order => "position"
+  has_many :portal_solution_categories, :class_name =>'Solution::Category', :order => "position"
   has_many :solution_articles, :class_name =>'Solution::Article'
   
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
+  has_many :user_credentials, :class_name => 'Integrations::UserCredential', :dependent => :destroy
   has_many :customers
   has_many :contacts, :class_name => 'User' , :conditions => { :helpdesk_agent => false , :deleted =>false }
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}, :order => "users.name"
@@ -113,6 +122,7 @@ class Account < ActiveRecord::Base
   
   has_many :email_notifications
   has_many :groups
+  has_many :agent_groups
   has_many :forum_categories, :order => "position"
   
   has_one :business_calendar
@@ -179,13 +189,15 @@ class Account < ActiveRecord::Base
 
   delegate :bcc_email, :ticket_id_delimiter, :email_cmds_delimeter, :pass_through_enabled, :to => :account_additional_settings
 
+  has_many :subscription_events 
+  
   #Scope restriction ends
   
   validates_format_of :domain, :with => /(?=.*?[A-Za-z])[a-zA-Z0-9]*\Z/
   validates_exclusion_of :domain, :in => RESERVED_DOMAINS, :message => "The domain <strong>{{value}}</strong> is not available."
   validates_length_of :helpdesk_url, :maximum=>255, :allow_blank => true
   validate :valid_domain?
-  validate :valid_helpdesk_url?
+  validate :valid_helpdesk_url? 
   validate :valid_sso_options?
   validate_on_create :valid_user?
   validate_on_create :valid_plan?
@@ -212,9 +224,9 @@ class Account < ActiveRecord::Base
   after_create :send_welcome_email
   after_update :update_users_language
 
-  before_destroy :update_crm
+  before_destroy :update_crm, :notify_totango
 
-  after_commit_on_create :add_to_billing
+  after_commit_on_create :add_to_billing, :add_to_totango
   before_destroy :update_billing
 
   after_commit_on_update :clear_cache
@@ -225,6 +237,10 @@ class Account < ActiveRecord::Base
   named_scope :active_accounts,
               :conditions => [" subscriptions.next_renewal_at > now() "], 
               :joins => [:subscription]
+
+  named_scope :premium_accounts, {:conditions => {:premium => true}}
+              
+  named_scope :non_premium_accounts, {:conditions => {:premium => false}}
              
   
   Limits = {
@@ -239,11 +255,11 @@ class Account < ActiveRecord::Base
   end
   
   PLANS_AND_FEATURES = {
-    :basic => { :features => [ :twitter ] },
+    :basic => { :features => [ :twitter, :custom_domain, :multiple_emails ] },
     
     :pro => {
       :features => [ :scenario_automations, :customer_slas, :business_hours, :forums, 
-        :surveys, :scoreboard, :facebook, :timesheets ],
+        :surveys, :scoreboard, :facebook, :timesheets, :css_customization ],
       :inherits => [ :basic ]
     },
     
@@ -257,20 +273,48 @@ class Account < ActiveRecord::Base
     },
     
     :blossom => {
-      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets ],
+      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
+        :custom_domain, :multiple_emails ],
       :inherits => [ :sprout ]
     },
     
     :garden => {
-      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :advanced_reporting, :css_customization ],
+      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
+        :advanced_reporting, :css_customization ],
       :inherits => [ :blossom ]
     },
+
     :estate => {
       :features => [ :gamification, :agent_collision, :layout_customization ],
       :inherits => [ :garden ]
+    },
+
+    :sprout_classic => {
+      :features => [ :scenario_automations, :business_hours, :custom_domain, :multiple_emails ]
+    },
+    
+    :blossom_classic => {
+      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets],
+      :inherits => [ :sprout_classic ]
+    },
+    
+    :garden_classic => {
+      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
+        :advanced_reporting, :css_customization ],
+      :inherits => [ :blossom_classic ]
+    },
+
+    :estate_classic => {
+      :features => [ :gamification, :agent_collision, :layout_customization ],
+      :inherits => [ :garden_classic ]
     }
+
   }
   
+
+  has_many :portal_templates,  :class_name=> 'Portal::Template'
+  has_many :portal_pages,  :class_name=> 'Portal::Page'
+
 # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
     
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
@@ -394,6 +438,10 @@ class Account < ActiveRecord::Base
   
   def full_url
     "http://#{host}"
+  end
+
+  def url_protocol
+    self.ssl_enabled? ? 'https' : 'http'
   end
   
   #Helpdesk hack starts here
@@ -593,6 +641,9 @@ class Account < ActiveRecord::Base
       account.user.agent.account = account
       account.user.save
       User.current = account.user
+      
+      account.build_account_configuration(admin_contact_info)
+      account.account_configuration.save
     end
 
     def create_portal
@@ -626,12 +677,28 @@ class Account < ActiveRecord::Base
       Resque.enqueue(Billing::AddToBilling::CreateSubscription, id)
     end 
 
+    def add_to_totango
+      Resque.enqueue(CRM::Totango::TrialCustomer, {:account_id => id})
+    end
+
     def update_billing
       Resque.enqueue(Billing::AddToBilling::DeleteSubscription, id)
     end
 
     def update_crm
       Resque.enqueue(CRM::AddToCRM::DeletedCustomer, id)
+    end
+
+    def notify_totango
+      Resque.enqueue(CRM::Totango::CanceledCustomer, id, full_domain)
+    end
+
+    def admin_contact_info
+      {
+        :contact_info => { :first_name => self.user.first_name, :last_name => self.user.last_name,
+                           :email => self.user.email, :phone => self.user.phone },
+        :billing_emails => { :invoice_emails => [ self.user.email ] }
+      }
     end
 
 end

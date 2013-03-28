@@ -3,6 +3,7 @@ module Helpdesk::TicketActions
   include Helpdesk::Ticketfields::TicketStatus
   include ParserUtil
   include ExportCsvUtil
+  include Helpdesk::ToggleEmailNotification
   
   def create_the_ticket(need_captcha = nil)
     cc_emails = fetch_valid_emails(params[:cc_emails])
@@ -33,8 +34,7 @@ module Helpdesk::TicketActions
     file = Tempfile.new([params[:screenshot][:name]]) 
     file.binmode
     file.write decoded_file
-    attachment = @ticket.attachments.build
-    attachment.content = file
+    attachment = @ticket.attachments.build(:content => file, :account_id => @ticket.account_id)
     file.close
   end
 
@@ -52,6 +52,10 @@ module Helpdesk::TicketActions
   #we are getting the mass-assignment warning right now..
   def build_ticket_attachments
     handle_screenshot_attachments unless params[:screenshot].blank?
+      (params[:dropbox_url] || []).each do |urls|
+        decoded_url =  URI.unescape(urls)
+         @ticket.dropboxes.build(:url => decoded_url)
+      end
     (params[:helpdesk_ticket][:attachments] || []).each do |a|
       @ticket.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @ticket.account_id)
     end
@@ -59,7 +63,6 @@ module Helpdesk::TicketActions
   
   def split_the_ticket        
     create_ticket_from_note
-    @note.destroy #delete the notes
     update_split_activity
     redirect_to @item
   end
@@ -77,20 +80,20 @@ module Helpdesk::TicketActions
   end
   
   def export_csv
-    params[:later] = false
+    # params[:later] = false
 
     #Handle export in Resque and send a mail to the current user, if the duration selected is more than DATE_RANGE_CSV (in days)
-    if(csv_date_range_in_days > TicketConstants::DATE_RANGE_CSV)
-      params[:later] = true
+    # if(csv_date_range_in_days > TicketConstants::DATE_RANGE_CSV)
+      # params[:later] = true
       Resque.enqueue(Helpdesk::TicketsExport, params)
       flash[:notice] = t("export_data.mail.info")
       redirect_to helpdesk_tickets_path
-    else
-      csv_tickets_string = Helpdesk::TicketsExport.perform(params)
-      send_data csv_tickets_string, 
-              :type => 'text/csv; charset=utf-8; header=present', 
-              :disposition => "attachment; filename=tickets.csv"
-    end
+    # else
+    #   csv_tickets_string = Helpdesk::TicketsExport.perform(params)
+    #   send_data csv_tickets_string, 
+    #           :type => 'text/csv; charset=utf-8; header=present', 
+    #           :disposition => "attachment; filename=tickets.csv"
+    # end
   end
 
   def component
@@ -118,18 +121,22 @@ module Helpdesk::TicketActions
                                 :status =>@source_ticket.status,
                                 :source =>@source_ticket.source,
                                 :ticket_type =>@source_ticket.ticket_type,                             
+                                :cc_email => {:fwd_emails=>[],
+                                              :cc_emails => @note.cc_emails || []}                             
                                 
                                }  
     unless @note.tweet.nil?
       tweet_hash = {:twitter_id => @note.user.twitter_id,
-                    :tweet_attributes => {:tweet_id => @note.tweet.tweet_id, 
-                                          :account_id => current_account.id}}
+                    :tweet_attributes => {:tweet_id => @note.tweet.tweet_id,
+                                          :twitter_handle_id => @note.tweet.twitter_handle_id }}
       params[:helpdesk_ticket] = params[:helpdesk_ticket].merge(tweet_hash)
       @note.tweet.destroy
     end
     build_item
     move_attachments   
+    move_dropboxes
     if @item.save
+      @note.destroy
       flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
     else
       puts @item.errors.to_json
@@ -148,106 +155,10 @@ module Helpdesk::TicketActions
         :account_id => @item.account_id)
     end
   end
-  
-  def show_tickets_from_same_user
-    @source_ticket = current_account.tickets.find_by_display_id(params[:id])    
-    @items = @source_ticket.requester.tickets.find(:all,:conditions => [" id != ? and deleted = ?", @source_ticket.id, false], :order => :status)
-    @items = @items.paginate(:page => params[:page], :per_page => 5) #or tickets from customer
-    if params[:page]
-      render :partial => "helpdesk/merge/same_user_tickets"
-    else
-      render :partial => "helpdesk/merge/merge"
-    end      
-  end
-  
-  def confirm_merge    
-    @source_ticket = current_account.tickets.find_by_display_id(params[:id])
-    @target_ticket = current_account.tickets.find_by_display_id(params[:target_id])    
-    render :partial => "helpdesk/merge/merge_script"
-  end
-  
-  def complete_merge    
-    @source_ticket = current_account.tickets.find_by_display_id(params[:source][:ticket_id])
-    @target_ticket = current_account.tickets.find_by_display_id(params[:target][:ticket_id])   
-    handle_merge
-    flash.now[:notice] = t(:'flash.tickets.merge.success')
-    redirect_to @target_ticket
-  end
-  
-  def handle_merge      
-    add_note_to_target_ticket
-    move_source_notes_to_target   
-    move_source_time_sheets_to_traget
-    add_note_to_source_ticket
-    close_source_ticket 
-    update_merge_activity  
-  end
-  
-  def update_merge_activity    
-    @source_ticket.create_activity(current_user, 'activities.tickets.ticket_merge.long',
-            {'eval_args' => {'merge_ticket_path' => ['merge_ticket_path', 
-            {'ticket_id' => @target_ticket.display_id, 'subject' => @target_ticket.subject}]}}, 'activities.tickets.ticket_merge.short') 
-  end
-  
-  def move_source_notes_to_target
-    @source_ticket.notes.each do |note|
-      note.update_attribute(:notable_id, @target_ticket.id)
-    end
-  end
 
-  def move_source_time_sheets_to_traget
-    @source_ticket.time_sheets.each do |time_sheet|
-      time_sheet.update_attribute(:ticket_id, @target_ticket.id)
-    end
-  end
-  
-  def close_source_ticket
-    EmailNotification.disable_notification(current_account)
-    @source_ticket.update_attribute(:status , CLOSED)
-    EmailNotification.enable_notification(current_account)
-  end
-  
-  def add_note_to_source_ticket
-    pvt_note = params[:source][:is_private]
-      @soucre_note = @source_ticket.notes.create(
-        :body => params[:source][:note],
-        :private => pvt_note || false,
-        :source => pvt_note ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
-        :account_id => current_account.id,
-        :user_id => current_user && current_user.id,
-        :from_email => @source_ticket.reply_email,
-        :to_emails => pvt_note ? [] : @source_ticket.requester.email.to_a,
-        :cc_emails => pvt_note ? [] : @source_ticket.cc_email_hash && @source_ticket.cc_email_hash[:cc_emails]
-      )
-      if !@soucre_note.private
-        Helpdesk::TicketNotifier.send_later(:deliver_reply, @source_ticket, @soucre_note ,{:include_cc => true})
-      end
-  end
-  
-  def add_note_to_target_ticket
-    target_pvt_note = params[:target][:is_private]
-    @target_note = @target_ticket.notes.build(
-        :body_html => params[:target][:note],
-        :private => target_pvt_note || false,
-        :source => target_pvt_note ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
-        :account_id => current_account.id,
-        :user_id => current_user && current_user.id,
-        :from_email => @target_ticket.reply_email,
-        :to_emails => target_pvt_note ? [] : @target_ticket.requester.email.to_a,
-        :cc_emails => target_pvt_note ? [] : @target_ticket.cc_email_hash && @target_ticket.cc_email_hash[:cc_emails]
-      )
-      ## handling attachemnt..need to check this
-     @source_ticket.attachments.each do |attachment|      
-      url = attachment.authenticated_s3_get_url
-      io = open(url) #Duplicate code from helpdesk_controller_methods. Refactor it!
-      if io
-        def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
-      end
-      @target_note.attachments.build(:content => io, :description => "", :account_id => @target_note.account_id)
-    end
-    @target_note.save
-    if !@target_note.private
-      Helpdesk::TicketNotifier.send_later(:deliver_reply, @target_ticket, @target_note , {:include_cc => true})
+  def move_dropboxes #added to support dropbox while spliting tickets
+    @note.dropboxes.each do |dropbox|
+      @item.dropboxes.build(:url => dropbox.url)
     end
   end
   
@@ -295,4 +206,16 @@ module Helpdesk::TicketActions
     @ticket_count = total_entries.to_i
   end
 
+  def clear_filter
+    if params[:requester_id]
+      params[:data_hash] = ActiveSupport::JSON.encode [{"operator"=>"is_in", 
+                            "condition"=>"requester_id", "value"=> params[:requester_id] }]
+
+      @ticket_filter.query_hash = [{"operator"=>"is_in", "condition"=>"requester_id", 
+                                    "value"=> params[:requester_id] }]
+                                    
+      cache_filter_params
+      @requester_id_param = params[:requester_id]
+    end
+  end
 end

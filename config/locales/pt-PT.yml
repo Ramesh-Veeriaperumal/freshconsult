@@ -751,6 +751,9 @@ pt-PT:
     title: Grupos
   half: "30 Minutos"
   header: 
+    help_center: "Como podemos ajudá-lo hoje?"
+    new_support_ticket: "Nova senha de suporte"
+    check_ticket_status: "Verificar o estado da senha"
     login: entrar
     new_ticket: "Novo Ticket"
     search: Pesquisa
@@ -937,8 +940,67 @@ pt-PT:
   plan_info_update: "O seu plano foi alterado."
   plans_billing: "Planos & Cobrança"
   portal: 
+    article: 
+      see_all_articles: "Ver todos os %{count} artigos"
+    community_forums: "Fóruns da comunidade"
+    login_portal: "Iniciar sessão no portal de suporte"
+    login_details: "Introduza os detalhes de início de sessão que introduziu quando se registou connosco"
+    signup: registar
+    header: 
+      preview_message: "<b>Modo de pré visualização</b> - <a href='javascript:window.close()'>Clique aqui</a> para voltar para trás."
+    knowledge_base: "Base de dados"
+    no_articles_info_1: "Pedimos desculpa, não publicámos quaisquer artigos."
+    no_articles_info_2: "Por favor volte a tentar mais tarde."
+    no_forums_info_1: "Ainda não há tópico de fórum"
+    no_forums_info_2: "Porque não começa um %{start_topic_link}?"
+    no_topics_in_this_view: "~ Sem tópicos nesta vista ~"
+    or_signup: "ou %{signup} para ter uma conta"
+    popular_topics: "Tópicos populares"
     search: 
-      placeholder: "Pesquise usando uma palavra-chave ou coloque uma pergunta completa"
+      filters:
+        solutions: "Soluções"
+        topics: "Tópicos"
+        tickets: "Tickets"
+      placeholder: "Introduza aqui o seu termo para a pesquisa"
+    showing_recent_updates: "A mostrar as atualizações mais recentes"
+    showing_recently_popular_topics: "A mostrar os tópicos populares mais recentes"
+    tickets: 
+      export: "Exportar senhas"
+      export_ticket_data: "Exportas os dados das senhas para CSV"
+      export_to_csv: "Export to CSV"
+    to_post_comment: "para publicar um comentário"
+    to_post_topic: "para publicar um tópico"
+    to_submit_ticket: "para submeter uma senha nova"
+    topic: 
+      comments_closed: "Os comentários a esta discussão estão agora encerrados!"
+      see_all_topics: "Ver todos os %{count} tópicos"
+      start_new_topic: "Começar um novo tópico"
+    topic_vote: 
+      howto: 
+        one: "tem esta pergunta"
+        other: "têm esta pergunta"
+      howto_button: "Também tem esta questão?"
+      howto_unlike_button: "Não tenho esta questão!"
+      ideas_unlike_button: "Não gosto!"
+      ideas: 
+        one: "gosta desta ideia"
+        other: "gostam desta ideia"
+      ideas_button: "Gosta desta ideia?"
+      more: 
+        one: "1 Outro"
+        other: "%{count} Outros"
+      people: 
+        one: "1 Pessoa"
+        other: "%{count} Pessoas"
+      problem: 
+        one: "tem este problema"
+        other: "têm este problema"
+      problem_button: "Tem este problema?"
+      problem_unlike_button: "Não tenho este problema!"
+      you: 
+        one: Você
+        other: "Você e "
+  send_feedback: "Enviar feedback"
   portal_customizer_anon_for_g: "Active esta funcionalidade se pretende que os utilizadores possam entrar utilizando as suas credenciais Google"
   portal_customizer_anon_for_i: "Desligue esta funcionalidade se pretende que o módulo 'Fóruns' não esta disponível no Portal do Cliente"
   portal_customizer_anon_for_t: "Active esta funcionalidade se deseja que os utilizadores possam entrar na sua conta utilizado as suas credenciais do Twitter."
@@ -1277,6 +1339,8 @@ pt-PT:
     twitter_id: "ID do Twitter"
     work: Emprego
   user_activation_email: "Email de Activação do Utilizador"
+  feedback: 
+    title: "Esta resposta foi útil?"
   user_sessions: 
     new: 
       forgot: "Esqueci-me da password?"

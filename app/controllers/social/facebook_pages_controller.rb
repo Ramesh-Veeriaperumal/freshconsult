@@ -3,12 +3,13 @@ class Social::FacebookPagesController < Admin::AdminController
   skip_before_filter :check_privilege, :only => :event_listener
   before_filter { |c| c.requires_feature :facebook }
   
+  before_filter :set_session_state , :only =>[:index , :edit]
   before_filter :fb_client , :only => [:authdone, :index,:edit]
   before_filter :build_item, :only => [:authdone]
   before_filter :load_item,  :only => [:edit, :update, :destroy]  
   
   def index
-    @fb_pages = scoper.active  
+    @fb_pages = scoper 
   end
 
   def authdone
@@ -39,6 +40,10 @@ class Social::FacebookPagesController < Admin::AdminController
           else
             page = scoper.new(fb_page)
             if page.save
+              Resque::enqueue(CRM::Totango::SendUserAction, 
+                                        {:account_id => current_account.id, 
+                                        :email => current_user.email, 
+                                        :activity => totango_activity(:facebook)})
               fetch_fb_wall_posts page
             end
           end
@@ -97,6 +102,10 @@ class Social::FacebookPagesController < Admin::AdminController
   
   def fb_call_back_url
    url_for(:host => current_account.full_domain, :action => 'authdone')
+  end
+
+  def set_session_state
+    session[:state] = Digest::MD5.hexdigest(Helpdesk::SECRET_3+ Time.now.to_f.to_s)
   end
   
   

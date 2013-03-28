@@ -1,7 +1,6 @@
 class SAAS::SubscriptionActions
   def change_plan(account, old_subscription)
     update_features(account, old_subscription)
-    
     case account.plan_name
     when :sprout
       drop_custom_sla(account)
@@ -9,10 +8,16 @@ class SAAS::SubscriptionActions
       drop_products(account)
       drop_facebook_pages(account)
       drop_twitter_handles(account)
+      drop_custom_domain(account)
+      drop_multiple_emails(account)
+      drop_css_customization(account)
     when :blossom
       drop_custom_sla(account)
       update_timezone_to_users(account)
       drop_products(account)
+      drop_css_customization(account)
+    when :garden
+      drop_layout_customization(account)
     end
   end
   
@@ -59,6 +64,27 @@ class SAAS::SubscriptionActions
    
    def drop_twitter_handles(account)
      account.twitter_handles.destroy_all
+   end
+
+   def drop_custom_domain(account)
+     account.main_portal.portal_url = nil
+     account.save!
+   end
+
+   def drop_multiple_emails(account)
+    account.global_email_configs.find(:all, :conditions => {:primary_role => false}).each{|gec| gec.destroy}
+   end
+
+   def drop_layout_customization(account)
+    account.portal_pages.destroy_all
+    account.portal_templates.each do |template|
+      template.update_attributes( :header => nil, :footer => nil, :layout => nil)
+    end
+   end
+
+   def drop_css_customization(account)
+    account.portal_templates.update_all( :custom_css => nil, :updated_at => Time.now)
+    drop_layout_customization(account)
    end
  
 end

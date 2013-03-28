@@ -3,8 +3,6 @@
  * Portal common page scripts
  */
 
-jQuery.noConflict()
- 
 !function( $ ) {
 
 	$(function () {
@@ -14,22 +12,24 @@ jQuery.noConflict()
 		// Attaching dom ready events
 
 		// Preventing default click & event handlers for disabled or active links
-		$(".disabled a, .active a, a.active, a.disabled")
+		$(".pagination, .dropdown-menu") 
+			.find(".disabled a, .active a")
 			.on("click", function(ev){
 				ev.preventDefault()
 				ev.stopImmediatePropagation()
 			})
 		
-
 		// Remote ajax for links
-		$("a[data-remote]").live("click", function(ev){
+		$(".a-link[data-remote], a[data-remote]").live("click", function(ev){
 			ev.preventDefault()
 
 			var _o_data = $(this).data(),
 				_self = $(this),
 				_post_data = { 
-					"_method" : $(this).data("method")
+					"_method" : $(this).data("method") || "get"
 				}
+
+			if(_o_data.confirm && !confirm(_o_data.confirm)) return
 
 			if(!_o_data.loadonce){
 				// Setting the submit button to a loading state
@@ -40,12 +40,13 @@ jQuery.noConflict()
 
 				$.ajax({
 					type: _o_data.type || 'POST',
-					url: this.href,
+					url: this.href || _o_data.href,
 					data: _post_data,
 					dataType: _o_data.responseType || "html",
-					success: function(data){					
+					success: function(data){		
 						$(_o_data.showDom||"").show()
 						$(_o_data.hideDom||"").hide()
+						$(_o_data.toggleDom||"").toggle()
 						$(_o_data.update||"").html(_o_data.updateWithMessage || data)	
 
 						// Executing any unique dom related callback
@@ -75,7 +76,8 @@ jQuery.noConflict()
 			var _form = $("<form class='hide' method='post' />")
 							.attr("action", this.href)
 							.append("<input type='hidden' name='_method' value='"+$(this).data("method")+"' />")
-							.get(0).submit()			
+							.appendTo("body")
+							.get(0).submit()
 		})
 
 		// Data api for onclick showing dom elements
@@ -154,6 +156,10 @@ jQuery.noConflict()
 					// Removed bootstraps error class from the container of the error element
 					$(element).parent().parent().removeClass(errorClass+"-group")
 				},
+				onkeyup: false,
+         		focusCleanup: true,
+         		focusInvalid: false,
+         		ignore:".nested_field:not(:visible), .portal_url:not(:visible)",
 				errorElement: "div", // Adding div as the error container to highlight it in red
 				submitHandler: function(form, btn) {
 					// Setting the submit button to a loading state
@@ -174,6 +180,22 @@ jQuery.noConflict()
 				  	else form.submit()
 				}
 			})
+		})
+		
+		$("img[rel=lazyloadimage]").jail({
+			// placeholder : '/images/load.gif',
+		})
+
+	
+		// Live query utility
+		$("[data-livequery]").livequery(function(ev){
+			switch($(this).data("livequery")){
+				// Adds custom-select class that will in-turn call another live query 
+				// that will init select2 plugin for all the select boxes in the form
+				case "selectboxes":
+					$(this).find("select").addClass("custom-select")
+				break
+			}
 		})
 
 	})

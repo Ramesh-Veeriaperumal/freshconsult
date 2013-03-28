@@ -16,11 +16,23 @@ class Helpdesk::NoteDrop < BaseDrop
 		@source.user
 	end
 
+	def commenter
+		@source.user
+	end
+
 	def description
 	 	@source.body_html
 	end
 
 	def description_text
+		@source.body
+	end
+
+	def body
+		@source.liquidize_body
+	end
+
+	def body_text
 		@source.body
 	end
 
@@ -34,6 +46,10 @@ class Helpdesk::NoteDrop < BaseDrop
 
 	def attachments
 	    @source.attachments
+	end
+
+	def dropboxes
+		@source.dropboxes if @source.dropboxes.present?
 	end
 
 end

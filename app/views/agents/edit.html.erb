@@ -1,33 +1,33 @@
 <% content_for :sidebar do %>
   <%= render :partial => "helpnote_without_tour" %>
 <% end %>
+
 <%= include_stylesheets :pattern %>
 <%= include_javascripts :pattern  %>
 <%= include_stylesheets :redactor  %>
 <%= include_javascripts :redactor  %>
 <% form_for @agent, :html => { :id => "agent_form", :rel => "validate", :multipart => true, 
     "data-focus-invalid" => false,  "data-ignore" => "" } do |f| %>
-<%= f.error_messages %>
-<ul class="admin-breadcrumb">
-  <li class="non-arrow"><a href="<%= admin_home_index_path %>"><%= t('header.tabs.home') %></a><span class="divider"></span></li>
-  <li><a href="<%= agents_path %>"><%= t('agent.title')%></a> <span class="divider"></span></li>
-  <li class="active "><%=t('agent.edit')%></li>
-  <li class="non-arrow pull-right">
-    <%= f.submit t('save'), { :class => "btn  btn-primary" } %>
-  </li>
-  <li class="non-arrow pull-right">
-  		<%= link_to t('cancel'), {:action => 'index'}, :class => "btn" %>
-  </li>
-</ul>
-<%= render :partial => "agent_form", :locals => { :type => "edit" } %>
-<ul class="admin-breadcrumb breadcum-footer clearfix">
+  <%= f.error_messages %>
+  <ul class="admin-breadcrumb">
+    <li class="non-arrow"><a href="<%= admin_home_index_path %>"><%= t('header.tabs.home') %></a><span class="divider"></span></li>
+    <li><a href="<%= agents_path %>"><%= t('agent.title')%></a> <span class="divider"></span></li>
+    <li class="active "><%=t('agent.edit')%></li>
     <li class="non-arrow pull-right">
       <%= f.submit t('save'), { :class => "btn  btn-primary" } %>
     </li>
-  	<li class="non-arrow pull-right">
-  		<%= link_to t('cancel'), {:action => 'index'}, :class => "btn" %>
-  	</li>
-</ul>  
+    <li class="non-arrow pull-right">
+    		<%= link_to t('cancel'), {:action => 'index'}, :class => "btn" %>
+    </li>
+  </ul>
+  <%= render :partial => "agent_form", :locals => { :type => "edit" } %>
+  <ul class="admin-breadcrumb breadcum-footer clearfix">
+      <li class="non-arrow pull-right">
+        <%= f.submit t('save'), { :class => "btn  btn-primary" } %>
+      </li>
+    	<li class="non-arrow pull-right">
+    		<%= link_to t('cancel'), {:action => 'index'}, :class => "btn" %>
+    	</li>
+  </ul>  
 <%end%>
-
  

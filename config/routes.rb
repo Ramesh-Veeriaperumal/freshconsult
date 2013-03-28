@@ -10,6 +10,7 @@
   map.resources :authorizations
   map.google_sync '/google_sync', :controller=> 'authorizations', :action => 'sync'
   map.callback '/auth/:provider/callback', :controller => 'authorizations', :action => 'create'
+  map.calender '/oauth2callback', :controller => 'authorizations', :action => 'create', :provider => 'google_oauth2'
   map.failure '/auth/failure', :controller => 'authorizations', :action => 'failure'
   
   map.resources :uploaded_images, :controller => 'uploaded_images'
@@ -21,7 +22,7 @@
    end
   map.connect '/customers/filter/:state/*letter', :controller => 'customers', :action => 'index'
  
-  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :hover_card => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put}
+  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :hover_card => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put, :make_occasional_agent => :put}
   map.connect '/contacts/filter/:state/*letter', :controller => 'contacts', :action => 'index'
   
   map.resources :groups
@@ -47,7 +48,7 @@
   map.gauth_done '/authdone/google', :controller => 'user_sessions', :action => 'google_auth_completed'
   map.login '/login', :controller => 'user_sessions', :action => 'new'  
   map.sso_login '/login/sso', :controller => 'user_sessions', :action => 'sso_login'
-  map.login_normal '/login/normal', :controller => 'user_sessions', :action => 'new'
+  map.login_normal '/login/normal', :controller => 'support/login', :action => 'new'
   map.signup_complete '/signup_complete/:token', :controller => 'user_sessions', :action => 'signup_complete'
 
   map.openid_done '/google/complete', :controller => 'accounts', :action => 'openid_complete'
@@ -58,8 +59,8 @@
   
   #map.register '/register', :controller => 'users', :action => 'create'
   #map.signup '/signup', :controller => 'users', :action => 'new'
-  map.resources :users, :member => { :delete_avatar => :delete, :change_account_admin => :put,:block => :put, :assume_identity => :get},
-                        :collection => {:revert_identity => :get}
+  map.resources :users, :member => { :delete_avatar => :delete, :change_account_admin => :put, 
+          :block => :put, :assume_identity => :get, :profile_image => :get }, :collection => {:revert_identity => :get}
   map.resource :user_session
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
   map.activate '/activate/:id', :controller => 'activations', :action => 'create'
@@ -69,6 +70,8 @@
   map.resources :email, :only => [:new, :create]
   map.resources :password_resets, :except => [:index, :show, :destroy]
   map.resources :sso, :collection => {:login => :get, :facebook => :get}
+  map.resource :account_configuration
+  
   map.namespace :integrations do |integration|
     integration.resources :installed_applications, :member =>{:install => :put, :uninstall => :get}
     integration.resources :applications, :member=>{:custom_widget_preview => :post}
@@ -78,7 +81,7 @@
     integration.resources :jira_issue, :collection => {:get_issue_types => :get, :unlink => :put, :notify => :post, :register => :get}
     integration.resources :salesforce, :collection => {:fields_metadata => :get}
     integration.resources :logmein, :collection => {:rescue_session => :get, :update_pincode => :put, :refresh_session => :get, :tech_console => :get, :authcode => :get}
-    integration.oauth_action '/refresh_access_token/:provider', :controller => 'oauth_util', :action => 'get_access_token'
+    integration.oauth_action '/refresh_access_token/:app_name', :controller => 'oauth_util', :action => 'get_access_token'
     integration.custom_install 'oauth_install/:provider', :controller => 'applications', :action => 'oauth_install'
   end
 
@@ -96,18 +99,18 @@
     admin.resources :getting_started, :collection => {:rebrand => :put}
     admin.resources :business_calender, :member => { :update => :put }
     admin.resources :security, :member => { :update => :put }
-    admin.resources :data_export, :collection => {:export => :any }
+    admin.resources :data_export, :collection => {:export => :any }    
     admin.resources :portal, :only => [ :index, :update ]
     admin.namespace :canned_responses do |ca_response|
       ca_response.resources :folders do |folder|
         folder.resources :responses, :collection => { :delete_multiple => :delete, :update_folder => :put }
       end
     end
-    admin.resources :products
+    admin.resources :products, :member => { :delete_logo => :delete, :delete_favicon => :delete }
     admin.resources :portal, :only => [ :index, :update] do |portal|
       portal.resource :template, 
                       :collection => { :show =>:get, :update => :put, :soft_reset => :put, 
-                                        :restore_default => :get, :publish => :get } do |template|
+                                        :restore_default => :get, :publish => :get, :clear_preview => :get } do |template|
         template.resources :pages, :member => { :edit_by_page_type => :get, :soft_reset => :put }
       end
     end
@@ -161,9 +164,14 @@
       admin.namespace :resque do |resque|
         resque.home '', :controller => 'home', :action => 'index'
         resque.failed_show '/failed/:queue_name/show', :controller => 'failed', :action => 'show'
-        resque.resources :failed, :member => { :destroy => :delete , :requeue => :put }, :collection => { :destroy_all => :delete }
+        resque.resources :failed, :member => { :destroy => :delete , :requeue => :put }, :collection => { :destroy_all => :delete, :requeue_all => :put }
       end
-      admin.resources :analytics 
+      # admin.resources :analytics 
+      admin.resources :spam_watch, :only => :index
+      admin.spam_details '/spam_watch/:user_id/:type', :controller => :spam_watch, :action => :spam_details
+      admin.spam_user '/spam_user/:user_id', :controller => :spam_watch, :action => :spam_user
+      admin.block_user '/block_user/:user_id', :controller => :spam_watch, :action => :block_user
+      admin.resources :subscription_events, :as => 'events', :collection => { :export_to_csv => :get }
     end
   end
   
@@ -187,8 +195,9 @@
   map.connect '/signup/d/:discount', :controller => 'accounts', :action => 'plans'
   map.thanks '/signup/thanks', :controller => 'accounts', :action => 'thanks'
   map.create '/signup/create/:discount', :controller => 'accounts', :action => 'create', :discount => nil
-  map.resource :account, :collection => {:rebrand => :put, :dashboard => :get, :thanks => :get,   :cancel => :any, :canceled => :get , :signup_google => :any }
-  map.resource :subscription, :collection => { :plans => :get, :billing => :any, :plan => :any, :calculate_amount => :any, :free => :get, :convert_subscription_to_free => :put }
+  map.resource :account, :collection => {:rebrand => :put, :dashboard => :get, :thanks => :get, 
+    :cancel => :any, :canceled => :get , :signup_google => :any, :delete_logo => :delete, :delete_favicon => :delete }
+  map.resource :subscription, :collection => { :plans => :get, :billing => :any, :plan => :any, :calculate_amount => :any, :convert_subscription_to_free => :put }
 
   map.new_account '/signup/:plan/:discount', :controller => 'accounts', :action => 'new', :plan => nil, :discount => nil
   
@@ -255,7 +264,7 @@
     helpdesk.resources :tickets, :collection => { :user_tickets => :get, :empty_trash => :delete, :empty_spam => :delete, 
                                     :delete_forever => :delete, :user_ticket => :get, :search_tweets => :any, :custom_search => :get, 
                                     :export_csv => :post, :latest_ticket_count => :post, :add_requester => :post,
-                                    :filter_options => :get, :full_paginate => :get },  
+                                    :filter_options => :get, :full_paginate => :get},  
                                  :member => { :reply_to_conv => :get, :forward_conv => :get, :view_ticket => :get, 
                                     :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :post, 
                                     :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put, 
@@ -268,7 +277,11 @@
                                        :twitter => :post, :facebook => :post}
 
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
-      ticket.resources :subscriptions, :name_prefix => 'helpdesk_ticket_helpdesk_'
+      ticket.resources :subscriptions, :collection => { :create_watchers => :post, 
+                                                        :unsubscribe => :get,
+                                                        :unwatch => :delete,
+                                                        :unwatch_multiple => :delete },
+                                       :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :tag_uses, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :reminders, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :time_sheets, :name_prefix => 'helpdesk_ticket_helpdesk_' 
@@ -283,7 +296,8 @@
       :collection => { :active => :get, :unachieved => :get }
 
     helpdesk.resources :notes
-    helpdesk.resources :bulk_ticket_actions , :collection => {:update_multiple => :put}
+    helpdesk.resources :bulk_ticket_actions , :collection => {:update_multiple => :put }
+    helpdesk.resources :merge_tickets, :collection => { :complete_merge => :post, :merge_search => :get, :merge => :put }
     helpdesk.resources :ca_folders
     helpdesk.resources :canned_responses, :collection => {:search => :get, :recent => :get}
     helpdesk.resources :reminders, :member => { :complete => :put, :restore => :put }
@@ -293,6 +307,7 @@
     helpdesk.filter_tickets        '/tickets/filter/tags', :controller => 'tags', :action => 'index'
     helpdesk.filter_view_default   '/tickets/filter/:filter_name', :controller => 'tickets', :action => 'index'
     helpdesk.filter_view_custom    '/tickets/view/:filter_key', :controller => 'tickets', :action => 'index'
+    helpdesk.requester_filter      '/tickets/filter/requester/:requester_id', :controller => 'tickets', :action => 'index'
 
     #helpdesk.filter_issues '/issues/filter/*filters', :controller => 'issues', :action => 'index'
 
@@ -304,8 +319,11 @@
     helpdesk.resources :articles, :collection => { :autocomplete => :get }
 
     helpdesk.resources :attachments
+
+    helpdesk.resources :dropboxes
     
-    helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get, :requester_autocomplete => :get }
+    helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get, 
+                  :requester_autocomplete => :get, :company_autocomplete => :get }
     
     helpdesk.resources :mailer, :collection => { :fetch => :get }
     
@@ -313,7 +331,8 @@
     
     helpdesk.resources :support_plans
     
-    helpdesk.resources :sla_policies 
+    helpdesk.resources :sla_policies, :collection => {:reorder => :put}, :member => {:activate => :put},
+                      :except => :show
 
     helpdesk.resources :notifications, :only => :index
 
@@ -336,12 +355,15 @@
   # map.resources :home, :only => :index 
 
   # Theme for the support portal
-  map.connect "/theme.:format", :controller => 'theme'
+  map.connect "/theme/:id.:format", :controller => 'theme', :action => :index
 
   # Support Portal routes  
   map.namespace :support do |support|
     # Portal home
     support.home 'home', :controller => "home"
+
+    # Portal preview
+    support.preview 'preview', :controller => "preview"
     
     # Login for users in the portal
     support.resource :login, :controller => "login", :only => [:new, :create]
@@ -353,7 +375,8 @@
     support.connect "/signup", :controller => 'signups', :action => :new
 
     # Signed in user profile edit and update routes
-    support.resource :profile, :only => [:edit, :update]
+    support.resource :profile, :only => [:edit, :update],
+      :member => { :delete_avatar => :delete }
 
     # Search for the portal, can search Articles, Topics and Tickets
     support.resource :search, :controller => 'search', :only => :show, 
@@ -362,9 +385,15 @@
     # Forums for the portal, the items will be name spaced by discussions
     support.resources :discussions, :only => [:index, :show]
     support.namespace :discussions do |discussion|
+      discussion.filter_topics "/forums/:id/:filter_topics_by", :controller => :forums,
+        :action => :show
+      discussion.connect "/forums/:id/page/:page", :controller => :forums,
+        :action => :show
       discussion.resources :forums, :only => :show
       discussion.resources :topics, :except => :index, :member => { :like => :put, 
           :unlike => :put, :toggle_monitor => :put, :users_voted => :get } do |topic|
+        discussion.connect "/topics/:id/page/:page", :controller => :topics, 
+          :action => :show
         topic.resources :posts, :except => [:index, :new, :show], 
           :member => { :toggle_answer => :put }
       end
@@ -373,6 +402,8 @@
     # Solutions for the portal
     support.resources :solutions, :only => [:index, :show]
     support.namespace :solutions do |solution|
+      solution.connect "/folders/:id/page/:page", :controller => :folders,
+        :action => :show
       solution.resources :folders, :only => :show
       solution.resources :articles, :only => :show, :member => { :thumbs_up => :put, 
         :thumbs_down => :put , :create_ticket => :post }
@@ -386,7 +417,7 @@
     # Tickets for the portal
     # All portal tickets including company_tickets are now served from this controller
     support.resources :tickets, 
-      :collection => { :check_email => :get, :configure_export => :get, :filter => :get }, 
+      :collection => { :check_email => :get, :configure_export => :get, :filter => :get, :export_csv => :post }, 
       :member => { :close => :post, :add_people => :put } do |ticket|
 
       ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'
@@ -401,6 +432,12 @@
   
   map.namespace :anonymous do |anonymous|
     anonymous.resources :requests
+  end
+
+  map.namespace :public do |p|
+     p.resources :tickets do |ticket|
+        ticket.resources :notes
+    end
   end
 
   map.namespace :mobile do |mobile|

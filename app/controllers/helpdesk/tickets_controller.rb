@@ -11,11 +11,15 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::Ticketfields::TicketStatus
   include RedisKeys
   include Helpdesk::AdjacentTickets
+  include Helpdesk::ToggleEmailNotification
+  include SeamlessDatabasePool::ControllerFilter
 
+  use_database_pool [:user_ticket, :export_csv] => :persistent
 
-  before_filter :set_mobile, :only => [:index, :show,:update, :update_ticket_properties, :create, :execute_scenario, :assign, :spam ]
-  before_filter :check_user, :load_installed_apps, :only => [:show, :forward_conv]
+  before_filter :set_mobile, :only => [:index, :show,:update, :create, :execute_scenario, :assign, :spam, :update_ticket_properties ]
+  before_filter :check_user, :only => [:show, :forward_conv]
   before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index, :filter_options]
+  before_filter :clear_filter, :only => :index
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :cache_filter_params, :only => [:custom_search]
   before_filter :disable_notification, :if => :notification_not_required?
@@ -84,8 +88,11 @@ class Helpdesk::TicketsController < ApplicationController
       format.html  do
         @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
         @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
-        @show_options = show_options
-        @current_view = @ticket_filter.id || @ticket_filter.name
+        unless request.headers['X-PJAX']
+          # Bad code need to rethink. Pratheep
+          @show_options = show_options
+        end
+        @current_view = @ticket_filter.id || @ticket_filter.name unless params[:requester_id]
         @is_default_filter = (!is_num?(@template.current_filter))
         # if request.headers['X-PJAX']
         #   render :layout => "maincontent"
@@ -426,7 +433,7 @@ class Helpdesk::TicketsController < ApplicationController
       st.ticket_id= t.id and st.account_id=#{current_account.id} 
       set st.#{Helpdesk::SchemaLessTicket.trashed_column} = 1 where 
       t.id in (#{@items.map(&:id).join(',')}) and t.account_id=#{current_account.id}")    
-    Resque.enqueue(Workers::ClearTrash, current_account.id)
+    Resque.enqueue(Workers::ClearTrash,{:account_id => current_account.id} )
     flash[:notice] = render_to_string(
         :inline => t("flash.tickets.delete_forever.success", :tickets => get_updated_ticket_count ))
     redirect_to :back
@@ -437,7 +444,7 @@ class Helpdesk::TicketsController < ApplicationController
      st inner join helpdesk_tickets t on st.ticket_id= t.id and st.account_id=#{current_account.id}
        set st.#{Helpdesk::SchemaLessTicket.trashed_column} = 1 
        where t.deleted=1 and t.account_id=#{current_account.id}")
-    Resque.enqueue(Workers::ClearTrash, current_account.id)
+    Resque.enqueue(Workers::ClearTrash, {:account_id => current_account.id} )
     flash[:notice] = t(:'flash.tickets.empty_trash.success')
     redirect_to :back
   end
@@ -656,7 +663,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def load_reply_to_all_emails
-    @ticket_notes = @ticket.conversation(nil,5,[:survey_remark, :user, :attachments, :schema_less_note])
+    @ticket_notes = @ticket.conversation(nil,5,[:survey_remark, :user, :attachments, :schema_less_note, :dropboxes])
     reply_to_all_emails
   end
 
@@ -734,7 +741,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def custom_filter?
-      params[:filter_key].blank? and params[:filter_name].blank?
+      params[:filter_key].blank? and params[:filter_name].blank? and params[:requester_id].blank?
     end
 
     def load_ticket_filter
@@ -762,7 +769,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     def check_user
       if !current_user.nil? and current_user.customer?
-        return redirect_to support_ticket_url(@ticket,:format => params[:format])
+        return redirect_to support_ticket_url(@ticket)
       end
     end
 
@@ -809,7 +816,4 @@ class Helpdesk::TicketsController < ApplicationController
     @selected_tab = :tickets
   end
 
-  def load_installed_apps
-    @installed_apps_hash = current_account.installed_apps_hash
-  end
 end

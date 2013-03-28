@@ -45,7 +45,7 @@ class Solution::Category < ActiveRecord::Base
   end
   
   def to_liquid
-    Solution::CategoryDrop.new self
+    @solution_category_drop ||= (Solution::CategoryDrop.new self)
   end
    
 end

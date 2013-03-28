@@ -21,7 +21,7 @@
 
       <%= content_tag( :h4, t(".title", :email => @ticket.requester.email || @ticket.requester.name ), :class => "title", :id => "reply_email_id" ) %>
         <li class="inline-field field" >
-            <%= f.label(:reply_email, "From:", :class => "caption" ) %>
+            <%= f.label(:reply_email, t('ticket.from'), :class => "caption" ) %>
             <div class="fields">
               <%= select :reply_email, :id, options_for_select(@reply_email, @selected_reply_email) %>
               <input type="checkbox" class="hide" id="include_cc" name="include_cc"  />              

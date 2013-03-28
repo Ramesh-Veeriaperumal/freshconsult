@@ -2,26 +2,16 @@ class Forum::TopicDrop < BaseDrop
   
   include ActionController::UrlWriter
   
-  liquid_attributes << :title 
+  liquid_attributes << :title << :posts_count
+
+  def context=(current_context)    
+    current_context['paginate_url'] = support_discussions_topic_path(source)
+
+    super
+  end
   
   def initialize(source)
     super source
-  end
-
-  def render_topic
-    default_context.inspect
-  end
-
-  def stamp_name
-  	source.stamp_name
-  end
-
-  def stamp_type
-  	source.stamp_type
-  end
-
-  def stamp_key
-    source.stamp_key
   end
 
   def user
@@ -36,6 +26,11 @@ class Forum::TopicDrop < BaseDrop
     source.created_at
   end
 
+  # Stamp key for the topic (planned, inprogress, deferred, implemented, nottaken)
+  def stamp
+    source.stamp_key
+  end
+
   def has_comments
   	(source.posts_count > 1) ? true : false
   end
@@ -43,32 +38,40 @@ class Forum::TopicDrop < BaseDrop
   def first_post
     source.posts.first
   end
-
+  
   def last_post
   	source.last_post
   end
 
+  # Useful for showing the latest comment in the topic
   def last_post_url
-    source.last_post_url
+    "#{support_discussions_topic_path(source)}/page/last#post-#{source.last_post_id}"
   end
-
+    
   def posts
-    source.posts
-  end
-  
-  def url
-  	support_discussions_topic_path(source)
+    unless @per_page.blank?
+      # If the page id is last then calculate the number of pages in the topic
+      @page = [(source.posts_count.to_f / @per_page).ceil.to_i, 1].max if @page == "last"
+      source.posts.filter(@per_page, @page)
+    else
+      # If the collection is not paginated then fetch all posts
+      source.posts.all
+    end
   end
 
   def id
     source.id
   end
 
+  def url
+  	support_discussions_topic_path(source)
+  end
+
   def forum
     source.forum
   end
 
-  def voted_by_current_user?
+  def voted_by_current_user
     source.voted_by_user? portal_user
   end
 

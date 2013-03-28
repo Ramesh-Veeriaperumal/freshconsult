@@ -351,8 +351,8 @@ function locationReplace(url) {
 // stuff yet.
 function onPjaxPopstate(event) {
   var state = event.state
-
-  if (state && state.container) {
+  //Temp . removed pjax on browser back button
+  if (state && state.container && false) {
     var container = $(state.container)
     if (container.length) {
       var contents = cacheMapping[state.id]

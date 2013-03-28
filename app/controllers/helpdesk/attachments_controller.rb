@@ -6,7 +6,8 @@ class Helpdesk::AttachmentsController < ApplicationController
   before_filter :check_destroy_permission, :only => [:destroy]
 
   def show
-    redir_url = AWS::S3::S3Object.url_for(@attachment.content.path,@attachment.content.bucket_name,
+    style = params[:style] || "original"
+    redir_url = AWS::S3::S3Object.url_for(@attachment.content.path(style.to_sym),@attachment.content.bucket_name,
                                           :expires_in => 300.seconds)
     respond_to do |format|
       format.html do
@@ -70,7 +71,8 @@ class Helpdesk::AttachmentsController < ApplicationController
         # Or if the note belogs to a ticket, and the user is the originator of the ticket
         ticket = @attachment.attachable.respond_to?(:notable) ? @attachment.attachable.notable : @attachment.attachable
         return (current_user && (ticket.requester_id == current_user.id || ticket.included_in_cc?(current_user.email) || 
-          (current_user.client_manager?  && ticket.requester.customer == current_user.customer)))
+          (current_user.client_manager?  && ticket.requester.customer == current_user.customer))) || 
+          (params[:access_token] && ticket.access_token == params[:access_token])
   
       # Is the attachment on a solution  If so, it's always downloadable.
 

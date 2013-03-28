@@ -19,7 +19,8 @@ class PasswordResetsController < SupportController
       if mobile?
         redirect_to root_url
       else
-        render :action => :new
+        # render :action => :new
+        redirect_to support_login_path(:anchor => "forgot_password")
       end
     end
   end

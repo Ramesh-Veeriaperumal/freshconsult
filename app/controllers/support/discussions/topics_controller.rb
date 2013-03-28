@@ -24,7 +24,7 @@ class Support::Discussions::TopicsController < SupportController
       format.html { redirect_to forum_path(params[:forum_id]) }
       format.xml do
         @topics = Topic.paginate_by_forum_id(params[:forum_id], :order => 'sticky desc, replied_at desc', :page => params[:page])
-        render :xml => @topics.to_xml
+        return render :xml => @topics.to_xml
       end
     end
   end
@@ -43,14 +43,14 @@ class Support::Discussions::TopicsController < SupportController
         @post = Post.new
       end
       format.xml do
-        render :xml => @topic.to_xml(:include => :posts)
+        return render :xml => @topic.to_xml(:include => :posts)
       end
       format.json do
-        render :json => @topic.to_json(:include => :posts)
+        return render :json => @topic.to_json(:include => :posts)
       end
       format.rss do
         @posts = @topic.posts.find(:all, :order => 'created_at desc', :limit => 25)
-        render :action => 'show', :layout => false
+        return render(:action => 'show', :layout => false)
       end
     end
     set_portal_page :topic_view

@@ -12,15 +12,30 @@ var $J = jQuery.noConflict();
     var widgetPopup = null;
     var hoverPopup =  false;
     var hidePopoverTimer;
+    var hideWatcherTimer;
+    var insideCalendar = false;
+    var closeCalendar = false;
 
     $("body").click(function(ev){
       hideWidgetPopup(ev);
     });
 
+    $("a.dialog2, a[data-ajax-dialog], button.dialog2").livequery(function(ev){
+      $(this).dialog2();
+    })
+
     hideWidgetPopup = function(ev) {
       if((widgetPopup != null) && !$(ev.target).parents().hasClass("popover")){
-        widgetPopup.popover('hide');
-        widgetPopup = null;
+        if(!insideCalendar)
+        {
+          widgetPopup.popover('hide');
+          widgetPopup = null;
+        }
+      }
+      if (closeCalendar)
+      {
+        insideCalendar = false;
+        closeCalendar = false;
       }
     }
 
@@ -30,6 +45,17 @@ var $J = jQuery.noConflict();
           hidePopoverTimer = setTimeout(function() {widgetPopup.popover('hide'); hoverPopup = false;},1000);
         }
       }
+    };
+
+    hideActivePopovers = function (ev) {
+      $("#new_watcher_page").hide();
+      $('[rel=widget-popover],[rel=contact-hover],[rel=hover-popover]').each(function(){
+        if (ev.target != $(this).get(0))
+          $(this).popover('hide');
+
+        //Not hiding the popup if the current event is actually trying to trigger the same popup
+        //That would result in Hiding the popover and immediately showing it again.
+      });
     };
 
     $('div.popover').live('mouseleave',hidePopover).live('mouseenter',function (ev) {
@@ -95,26 +121,49 @@ var $J = jQuery.noConflict();
       if(!document.getElementById('remote_loaded_dom_elements'))
         $("<div id='remote_loaded_dom_elements' class='hide' />").appendTo("body");
 
-        $(this)
+      var $this = jQuery(this)
+
+      $(this)
         .load($(this).data("url"), function(){
           $(this).attr("rel", "");
           $(this).removeClass("loading-box");
-          $(this).clone().prependTo('#remote_loaded_dom_elements');          
+          
+          if(!$this.data("loadUnique"))            
+            $(this).clone().prependTo('#remote_loaded_dom_elements');
         });
     });
 
-      $("a[rel=contact-hover]").live('mouseenter',function(ev) {
-        ev.preventDefault();
-        hideWidgetPopup(ev);
-        widgetPopup = $(this).popover('show');
-        hoverPopup = true;
-      }).live('mouseleave',function(ev) {
-          hidePopoverTimer = setTimeout(function() {widgetPopup.popover('hide'); hoverPopup = false;},1000);
+    $("input.datepicker_popover").livequery(function() {
+      $(this).datepicker({
+        dateFormat: 'yy-mm-dd',
+        beforeShow: function(){
+          insideCalendar=true;
+          closeCalendar=false;
+        },
+        onClose: function(){
+          closeCalendar=true;
+        }
       });
+    });
 
-      $("[rel=hover-popover]").live('mouseenter',function(ev) {
+    $('input.datetimepicker_popover').livequery(function() {
+      $(this).datetimepicker({
+        timeFormat: "HH:mm:ss",
+        dateFormat: 'MM dd,yy',
+        beforeShow: function(){
+          insideCalendar=true;
+          closeCalendar=false;
+        },
+        onClose: function(){
+          closeCalendar=true;
+        }
+      });
+    });
+
+    $("a[rel=contact-hover],[rel=hover-popover]").live('mouseenter',function(ev) {
         ev.preventDefault();
-        hideWidgetPopup(ev);
+        clearTimeout(hidePopoverTimer);
+        hideActivePopovers(ev);
         widgetPopup = $(this).popover('show');
         hoverPopup = true;
       }).live('mouseleave',function(ev) {
@@ -126,11 +175,25 @@ var $J = jQuery.noConflict();
         e.stopPropagation(); 
         clearTimeout(hidePopoverTimer);
         hoverPopup = false;
-        $('[rel=widget-popover],[rel=contact-hover],[rel=hover-popover]').each(function(){
-          $(this).popover('hide');
-        });
+        hideActivePopovers(e);
         widgetPopup = $(this).popover('show');
       });
+
+    // - Add Watchers
+    $("#monitor").live('mouseenter',function(ev) {
+        clearTimeout(hidePopoverTimer);
+        hideActivePopovers(ev);
+        $("#new_watcher_page").show();
+      }).live('mouseleave',function(ev) {
+          hidePopoverTimer = setTimeout(function() { $("#new_watcher_page").hide(); },1000);
+      });    
+
+    $("#new_watcher_page").live('mouseenter',function(ev) {
+      clearTimeout(hideWatcherTimer);
+      clearTimeout(hidePopoverTimer);
+    }).live('mouseleave',function(ev) {
+        hideWatcherTimer = setTimeout(function() { $("#new_watcher_page").hide(); },1000);
+    });
 
       // - Labels with overlabel will act a Placeholder for form elements
       $("label.overlabel").livequery(function(){ $(this).overlabel(); });
@@ -139,12 +202,14 @@ var $J = jQuery.noConflict();
  
       // - Custom select boxs will use a plugin called chosen to render with custom CSS and interactions
       $("select.customSelect").livequery(function(){ $(this).chosen(); });
+      $("select.select2").livequery(function(){ $(this).select2($(this).data()); });
 
       // - Quote Text in the document as they are being loaded
       $("div.request_mail").livequery(function(){ quote_text(this); }); 
 
       $("input.datepicker").livequery(function(){ $(this).datepicker($(this).data()) });
 
+      $('.contact_tickets .detailed_view .quick-action').removeClass('dynamic-menu quick-action').attr('title','');
       $('.quick-action.ajax-menu').livequery(function() { $(this).showAsDynamicMenu();});
       $('.quick-action.dynamic-menu').livequery(function() { $(this).showAsDynamicMenu();});
 
@@ -152,11 +217,6 @@ var $J = jQuery.noConflict();
       $(".tourmyapp-toolbar .tourmyapp-next_button").livequery(function(){ 
         if($(this).text() == "Next »")
            $(this).addClass('next_button_arrow').text('Next');
-      });
-
-      // - Tour My App 'slash' replaced by 'of'
-      $('.tourmyapp-step-index').livequery(function() { 
-        $(this).text($(this).text().replace('/',' of '));
       });
 
       // !PULP to be moved into the pulp framework as a sperate util or plugin function
@@ -206,14 +266,14 @@ var $J = jQuery.noConflict();
       });
 
       // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
-      validateOptions = {
+      var validateOptions = {
          onkeyup: false,
          focusCleanup: true,
          focusInvalid: false,
-         ignore:":not(:visible)"
+         ignore:".nested_field:not(:visible), .portal_url:not(:visible)"
       };
       
-      $("ul.ui-form").livequery(function(ev){
+      $("ul.ui-form, .cnt").livequery(function(ev){
         $(this).not(".dont-validate").parents('form:first').validate(validateOptions);
       })
       $("div.ui-form").livequery(function(ev){
@@ -221,7 +281,7 @@ var $J = jQuery.noConflict();
       })
       // $("form.uniForm").validate(validateOptions);
       $("form.ui-form").livequery(function(ev){
-        $(this).validate(validateOptions);
+        $(this).not(".dont-validate").validate(validateOptions);
       })
       // $("form[rel=validate]").validate(validateOptions);
 
@@ -269,17 +329,19 @@ var $J = jQuery.noConflict();
 
       sidebarHeight = $('#Sidebar').height();
       if(sidebarHeight !== null && sidebarHeight > $('#Pagearea').height())
-         $('#Pagearea').css("minHeight", sidebarHeight);
+        $('#Pagearea').css("minHeight", sidebarHeight);
 
-
-        if(window.location.hash != '') {
-          hash = window.location.hash.split('#');
-          window.location.hash.substr(1).split('#').each(function(value,index){
-            setTimeout(function(){
-              jQuery('#'+value + "-tab").trigger('click');
-            },(index+1)*10)
-          })
-        }
+      // Tab auto select based on window hash url
+      if(window.location.hash != '') {
+        hash = window.location.hash.split('/');
+        jQuery.each(hash, function(index, value){
+          setTimeout(function(){
+            catchException(function(){ 
+              jQuery(value + "-tab").trigger('click') 
+            }, "Error in File globalinit.js");
+          }, ((index+1)*10) )
+        })
+      }
           
         qtipPositions = {
           normal : {
@@ -394,12 +456,18 @@ var $J = jQuery.noConflict();
       }
 
       $(document).pjax('a[data-pjax]',{
-          timeout: -1
+          timeout: -1,
+          push : false,
+          maxCacheLength: 0,
+          replace: true
         }).bind('pjax:beforeSend',function(evnt,xhr,settings){
+          jQuery(document).data("requestDone",false);
+          jQuery(document).data("parallelData",undefined);
           start_time = new Date();
           jQuery('#cf_cache').remove();
           jQuery('#response_dialog').remove();
-          jQuery('#agent_collision_container').remove();
+          jQuery('.ui-dialog').remove();
+          jQuery('#bulkcontent').remove();
           var bHeight = $('#body-container').height(),
               clkdLI = $(evnt.relatedTarget).parent();
           $('ul.header-tabs li.active').removeClass('active');
@@ -407,22 +475,28 @@ var $J = jQuery.noConflict();
           jQuery('.top-loading-wrapper').switchClass('fadeOutRight','fadeInLeft',100,'easeInBounce',function(){
             jQuery('.top-loading-wrapper').removeClass('hide');
           });
-          // $('#body-container .wrapper').css('visibility','hidden');
           $(document).trigger('ticket_list');
           $(document).trigger('ticket_show');
+          initParallelRequest($(evnt.relatedTarget))
+
+          // hideActivePopovers();
 
           return true;
-      }).bind('pjax:end',function(){
-        //$('.load-mask').hide();
+      }).bind('pjax:end',function(evnt,xhr,settings){
+
+        jQuery('.popover').remove();
         jQuery('.top-loading-wrapper').switchClass('fadeInLeft','fadeOutRight');
         jQuery('.top-loading-wrapper').addClass('hide','slow');
-        // $('#body-container .wrapper').css('visibility','visible');
         end_time = new Date();
         setTimeout(function() {
           $('#benchmarkresult').html('Finally This page took ::: <b>'+(end_time-start_time)/1000+' s</b> to load.') 
         },10);
-        //clearing the pageless of previous page.
         jQuery(window).unbind('.pageless');
+        var options = jQuery(document).data();
+        jQuery(document).data("requestDone",true);
+        if(options.parallelData && $(evnt.relatedTarget).data()){
+          $($(evnt.relatedTarget).data().parallelPlaceholder).html(options.parallelData) 
+        }
         return true;
       })
    });
@@ -438,4 +512,22 @@ function closeableFlash(flash){
       if(flash.css("display") != 'none')
          flash.hide('blind', {}, 500);
     }, 20000);
+}
+
+function initParallelRequest(target){
+  if(!target.data('parallelUrl')){
+    return;
+  }
+  var options = target.data();
+  jQuery.get(options.parallelUrl,
+    function(data){
+      if(jQuery(document).data("requestDone")){
+        console.log("parent request done")
+        jQuery(options.parallelPlaceholder).html(data)
+      }
+      else{
+        console.log("parallel request done")
+        jQuery(document).data("parallelData",data);
+      }
+  })
 }

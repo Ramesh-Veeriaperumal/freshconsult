@@ -6,7 +6,7 @@ HOST:
     development:    "localhost:3000"
     test:           "localhost:3000"
     production:     "freshdesk.com"
-    staging:        "freshbugs.com"
+    staging:        "freshpo.com"
     
 ASSET_URL: "http://assets.freshdesk.com/widget" 
 
@@ -106,7 +106,7 @@ EMAIL:
           <<: *defaults
         staging:
           <<: *defaults
-          domain: freshbugs.com        
+          domain: freshpo.com        
           
             
 
@@ -117,13 +117,15 @@ SPAM_TRAINING_MODE: true
 
 # These are salt values used to generate access keys, so that anonymous
 # users can access their tickets. Change them to some unique noise.
+#SECRET_3 WILL BE USED FOR FACEBOOK
 SECRET_1: 19-30ihfojgsnfgo2h40t8hgkhndhfgkerhKJHKHIDYHfinro;quhwro
 SECRET_2: f;07934t8y6[okfdkjhqw3eUHEUY970DKUHoyudououoH780))&7*(3o
+SECRET_3: abcdefgihfojgsnfgo2h40t8hgkhndhfgkerhKJHKHIDYHfinro98712
 SHARED_SECRET: 7e8c587a5f7aff66519ae35eabb6b76f1632d0f058a84607702
 
 # The names route that the user will be redirect to if they don't
 # have permission to access an area
-ACCESS_DENIED_ROUTE: login_url   
+ACCESS_DENIED_ROUTE: support_login_url   
 
 # These are permissions for the different user roles
 ROLES:

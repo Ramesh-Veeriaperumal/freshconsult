@@ -1,0 +1,1 @@
+<%= link_to "#{Account.current.name} Support powered by Freshdesk", "http://freshdesk.com?utm_source=email&utm_medium=referral&utm_campaign=freemium" if Account.current.subscription.sprout? %>

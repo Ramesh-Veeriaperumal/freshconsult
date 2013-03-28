@@ -111,20 +111,20 @@ class Helpdesk::TicketField < ActiveRecord::Base
     (FIELD_CLASS[field_type.to_sym][:type] === :default)
   end
 
-  def choices
+  def choices(ticket = nil)
      case field_type
        when "custom_dropdown" then
          picklist_values.collect { |c| [c.value, c.value] }
        when "default_priority" then
-         Helpdesk::Ticket::PRIORITY_OPTIONS
+         TicketConstants.priority_names
        when "default_source" then
-         Helpdesk::Ticket::SOURCE_OPTIONS
+         TicketConstants.source_names
        when "default_status" then
          Helpdesk::TicketStatus.statuses_from_cache(account)
        when "default_ticket_type" then
          account.ticket_types_from_cache.collect { |c| [c.value, c.value] }
        when "default_agent" then
-         account.agents_from_cache.collect { |c| [c.user.name, c.user.id] }
+        return group_agents(ticket)
        when "default_group" then
          account.groups_from_cache.collect { |c| [c.name, c.id] }
        when "default_product" then
@@ -155,11 +155,14 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end
 
   def nested_levels
-    nested_ticket_fields.map{ |l| { :id => l.id, :label => l.label, :label_in_portal => l.label_in_portal, :name => l.name, :level => l.level } } if field_type == "nested_field"
+    nested_ticket_fields.map{ |l| { :id => l.id, :label => l.label, :label_in_portal => l.label_in_portal, 
+      :name => l.name, :level => l.level, :field_type => "nested_child" } } if field_type == "nested_field"
   end
 
   def levels
-    nested_ticket_fields.map{ |l| { :id => l.id, :label => l.label, :label_in_portal => l.label_in_portal , :description => l.description, :level => l.level, :position => 1, :type => "dropdown" } } if field_type == "nested_field"
+    nested_ticket_fields.map{ |l| { :id => l.id, :label => l.label, :label_in_portal => l.label_in_portal, 
+      :description => l.description, :level => l.level, :position => 1, :field_type => "nested_child", 
+      :type => "dropdown" } } if field_type == "nested_field"
   end
 
   def level_three_present
@@ -249,6 +252,31 @@ class Helpdesk::TicketField < ActiveRecord::Base
   end
   
   protected
+
+    def group_agents(ticket)
+      if ticket && ticket.group_id
+        agent_list = account.agent_groups.find(:all, 
+                                               :joins =>"inner join users on 
+                                                          agent_groups.account_id = 
+                                                                    users.account_id and 
+                                                          users.id = agent_groups.user_id",
+                                               :conditions => { :group_id => ticket.group_id, 
+                                                                :users => {:deleted => false}
+                                                              }
+                                              ).collect{ |c| [c.user.name, c.user.id]}
+
+        if !ticket.responder_id || agent_list.any? { |a| a[1] == ticket.responder_id }
+          return agent_list
+        end
+
+        responder = account.agents_from_cache.detect { |a| a.user.id == ticket.responder_id }
+        agent_list += [[ responder.user.name, ticket.responder_id ]] if responder
+        return agent_list
+      end
+      
+      account.agents_from_cache.collect { |c| [c.user.name, c.user.id] }
+    end
+
     def populate_choices
       return unless @choices
       if(["nested_field","custom_dropdown","default_ticket_type"].include?(self.field_type))

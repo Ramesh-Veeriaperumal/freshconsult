@@ -137,10 +137,27 @@ class Solution::ArticlesController < ApplicationController
       @nscname ||= controller_path.gsub('/', '_').singularize
     end
     
+<<<<<<< HEAD
     def set_item_user
       @article.user ||= current_user if (@article.respond_to?('user=') && !@article.user_id)
       @article.account ||= current_account
     end
+=======
+    @article.tags.clear    
+    tags = params[:tags][:name]
+    ar_tags =  tags.scan(/\w+/).uniq
+    new_tag = nil
+    ar_tags.each do |tag|    
+      
+      new_tag = Helpdesk::Tag.find_by_name_and_account_id(tag, current_account) || Helpdesk::Tag.new(:name => tag ,:account_id => current_account.id)
+
+       begin
+        @article.tags << new_tag
+        rescue ActiveRecord::RecordInvalid => e
+      end
+      
+    end   
+>>>>>>> refs/heads/master
     
     def set_selected_tab
       @selected_tab = :solutions
@@ -150,6 +167,7 @@ class Solution::ArticlesController < ApplicationController
       @page_title = t("header.tabs.solutions")    
     end
 
+<<<<<<< HEAD
     def set_solution_tags      
       @article.tags.clear    
       tags = params[:tags][:name]
@@ -165,5 +183,14 @@ class Solution::ArticlesController < ApplicationController
         end
 
       end   
+=======
+   private
+    def portal_check
+      format = params[:format]
+      if format.nil? && (current_user.nil? || current_user.customer?)
+        @article = current_account.solution_articles.find(params[:id]) 
+        return redirect_to support_solutions_article_path(@article)
+      end
+>>>>>>> refs/heads/master
     end
 end

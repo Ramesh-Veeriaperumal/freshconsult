@@ -10,7 +10,7 @@ class AccountsController < ApplicationController
                       :associate_local_to_google, :create, :rebrand, :dashboard]
 
   skip_before_filter :set_locale, :except => [:cancel, :show, :edit]
-  skip_before_filter :set_time_zone, :except => [:cancel, :edit, :update, :delete_logo, :delete_fav]
+  skip_before_filter :set_time_zone, :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show]
   skip_before_filter :check_account_state
   skip_before_filter :redirect_to_mobile_url
   
@@ -19,6 +19,8 @@ class AccountsController < ApplicationController
   before_filter :load_billing, :only => [ :show, :new, :create, :payment_info ]
   before_filter :build_plan, :only => [:new, :create]
   before_filter :admin_selected_tab, :only => [:show, :edit, :cancel ]
+  before_filter :validate_custom_domain_feature, :only => [:update]
+  
   filter_parameter_logging :creditcard,:password
   
   def show
@@ -162,16 +164,19 @@ class AccountsController < ApplicationController
       render :action => 'new'#, :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
     end
   end
-  
+
   def update
+    redirect_url = params[:redirect_url].presence || admin_home_index_path
     @account.time_zone = params[:account][:time_zone]
     @account.ticket_display_id = params[:account][:ticket_display_id]
     params[:account][:main_portal_attributes][:updated_at] = Time.now
     @account.main_portal_attributes = params[:account][:main_portal_attributes]
-    
     if @account.save
+      Resque::enqueue(CRM::Totango::SendUserAction, {:account_id => current_account.id,
+                                                     :email => current_user.email,
+                                                     :activity => totango_activity(:helpdesk_rebranding)})
       flash[:notice] = t(:'flash.account.update.success')
-      redirect_to admin_home_index_path
+      redirect_to redirect_url
     else
       render :action => 'edit'
     end
@@ -192,6 +197,29 @@ class AccountsController < ApplicationController
     end
   end
   
+  def create_deleted_customers_info
+    sub = current_account.subscription
+    if sub.active?
+     DeletedCustomers.create(
+       :full_domain => "#{current_account.name}(#{current_account.full_domain})",
+       :account_id => current_account.id,
+       :admin_name => current_account.admin_first_name,
+       :admin_email => current_account.admin_email,
+       :account_info => {:plan => sub.subscription_plan_id,
+                         :discount => sub.subscription_discount_id,
+                         :agents_count => current_account.agents.count,
+                         :tickets_count => current_account.tickets.count,
+                         :user_count => current_account.contacts.count,
+                         :account_created_on => current_account.created_at}
+     )
+    end
+  end
+  
+  def thanks
+    redirect_to :action => "plans" and return unless flash[:domain]
+    # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
+  end
+  
   def dashboard
     render :text => 'Dashboard action, engage!', :layout => true
   end
@@ -199,13 +227,20 @@ class AccountsController < ApplicationController
   def delete_logo
     current_account.main_portal.logo.destroy
     current_account.main_portal.touch
-    render :text => "success"
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.js { render :text => "success" }
+    end
   end
   
-  def delete_fav
+  def delete_favicon
     current_account.main_portal.fav_icon.destroy
     current_account.main_portal.touch
-    render :text => "success"
+    
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.js { render :text => "success" }
+    end    
   end
 
   protected
@@ -273,8 +308,13 @@ class AccountsController < ApplicationController
     
     def admin_selected_tab
       @selected_tab = :admin
-    end    
-    
+    end   
+
+    def validate_custom_domain_feature
+      unless @account.features?(:custom_domain)
+        params[:account][:main_portal_attributes][:portal_url] = nil
+      end
+    end
     
     def build_metrics
 
@@ -400,4 +440,7 @@ class AccountsController < ApplicationController
       end
     end
 
+    def add_to_crm
+      Resque.enqueue(Marketo::AddLead, { :account_id => @account.id, :cookie => ThirdCRM.fetch_cookie_info(request.cookies) })
+    end   
 end

@@ -4,11 +4,14 @@ class Portal < ActiveRecord::Base
   serialize :preferences, Hash
   
   validates_uniqueness_of :portal_url, :allow_blank => true, :allow_nil => true
+  validates_format_of :portal_url, :with => %r"^(?!.*\.#{Helpdesk::HOST[Rails.env.to_sym]}$)[/\w\.-]+$", 
+  :allow_nil => true, :allow_blank => true
 
   delegate :friendly_email, :to => :product, :allow_nil => true
   
   include Mobile::Actions::Portal
   include Cache::Memcache::Portal
+  include RedisKeys
 
   after_commit_on_update :clear_portal_cache
   after_commit_on_destroy :clear_portal_cache
@@ -38,6 +41,8 @@ class Portal < ActiveRecord::Base
   belongs_to :forum_category
 
   after_create :create_template
+
+  APP_CACHE_VERSION = "FD11"
     
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
@@ -52,7 +57,7 @@ class Portal < ActiveRecord::Base
   end
     
   def solution_categories
-    main_portal ? account.solution_categories : (solution_category ? [solution_category] : [])
+    main_portal ? account.portal_solution_categories : (solution_category ? [solution_category] : [])
   end
   
   def forum_categories
@@ -62,6 +67,11 @@ class Portal < ActiveRecord::Base
   def portal_forums
     main_portal ? account.forums : 
       forum_category ? forum_category.forums : []
+  end
+
+  def recent_popular_topics( user, days_before = (DateTime.now - 30.days) )
+    main_portal ? account.portal_topics.visible(user).popular(days_before).limit(10) :
+        forum_category ? forum_category.portal_topics.visible(user).popular(days_before).limit(10) : []
   end
 
   #Yeah.. It is ugly.
@@ -78,33 +88,10 @@ class Portal < ActiveRecord::Base
   end
   
   def to_liquid
-    PortalDrop.new self
+    @portal_drop ||= (PortalDrop.new self)
+    # PortalDrop.new self
   end
   
-  def portal_login_path
-    support_login_path(:host => portal_url)
-  end
-  
-  def portal_logout_path
-    logout_path(:host => portal_url)
-  end
-  
-  def signup_path
-    support_signup_path(:host => portal_url)
-  end
-  
-  def new_ticket_path
-    new_support_ticket_path(:host => portal_url)
-  end
-
-  def new_topic_path
-    new_support_discussions_topic_path(:host => portal_url)
-  end
-
-  def profile_path
-    edit_support_profile_path(:host => portal_url)
-  end
-
   def host
     portal_url.blank? ? account.full_domain : portal_url
   end
@@ -121,8 +108,8 @@ class Portal < ActiveRecord::Base
     fav_icon.content.url unless fav_icon.nil?
   end
   
-  def portal_page
-    self.template
+  def cache_prefix
+    "#{APP_CACHE_VERSION}/v#{cache_version}/#{language}/#{self.id}"
   end
 
   private
@@ -155,5 +142,9 @@ class Portal < ActiveRecord::Base
       @all_changes = self.changes.clone
       @all_changes.symbolize_keys!
     end
-  
+
+    def cache_version
+      key = PORTAL_CACHE_VERSION % { :account_id => self.account_id }
+      get_key(key) || "0"
+    end
 end

@@ -41,11 +41,16 @@ class Post < ActiveRecord::Base
   end
 
   def to_liquid
-    Forum::PostDrop.new self
+    forum_post_drop ||= Forum::PostDrop.new self
   end
 
   def to_s
     topic.title
+  end
+
+  # Added for portal customisation drop
+  def self.filter(_per_page = self.per_page, _page = 1)
+    paginate :per_page => _per_page, :page => _page
   end
   
 end

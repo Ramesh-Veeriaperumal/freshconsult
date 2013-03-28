@@ -13,10 +13,10 @@
 .content-form{ background-color: $page-form-background; }
 
 .cs-s{
-	border-top:1px solid $orange;
+	border-top:1px solid $inputFocusRingColor;
 	margin:1.1em 0;
 	h3{
-		border-top:6px solid $orange;
+		border-top:6px solid $inputFocusRingColor;
 		@include inline-block;
 	}
 }
@@ -27,6 +27,11 @@
 		margin-left: 0; 
 		margin-top: 10px;
 	}	
+}
+
+.article-body{
+	@include text-formatting;
+	big{ font-size: inherit; }
 }
 
 .article-list li, .topic-list li, .ticket-list li, 
@@ -55,14 +60,11 @@ li.article-item, li.topic-item, li.ticket-item {
 .start-topic{
 	float:right;
 	font-weight: bold;
+	margin-top: -35px;
 }
 
 .tabbed{
 	margin-left: 15px;
-}
-
-#home-community-sidebar .start-topic{
-	margin-top: -30px;
 }
 
 .see-more{
@@ -76,44 +78,25 @@ li.article-item, li.topic-item, li.ticket-item {
 	}
 }
 
-.help-text, .p-info, .info-text, .list-noinfo{
+.help-text, .p-info, .info-text, .list-noinfo, .description-text{
 	color: $helpTextColor;	
 	font-weight: 200;
 	line-height: $baseLineHeight / 1.1;
+}
+
+.item-count{ 
+	color: lighten($helpTextColor, 10%);
+	&:before{ content: "("; }
+	&:after{ content: ")"; }
 }
 
 .help-text{	font-size: 12px;  }
 .p-info strong{ color: $grayDark; }
 .list-noinfo{ text-align: center; }
 
+.topic-stamp{ margin-top: 10px; }
+
 /* Forum and ticket details style */
-/*.post-title{ float: left; }*/
-
-/*.topic-likes{ 
-	background-color:#fff8c7; 
-	border:1px solid #ecd095;
-	border-width: 1px 1px 1px 1px;
-	@include border-left-radius(3px);
-	padding: 6px 14px 6px 6px;
-	font-size: 12px;
-	margin-right: 15px;
-	position: relative;
-	line-height: 12px;
-	height: 26px;
-	@include box-shadow(0 0 7px #ecd095);
-	@include inline-block;
-	font-weight: bold;
-	.arrow{
-		position: absolute;
-		@extend .icon-like-arrow-right;
-		top:-5px;
-		right:-19px;
-		display: none;
-	}
-	a{ color: #a1913f; }
-	a:hover{ color: darken(#a1913f, 10%); }
-}*/
-
 #vote-toolbar{
 	#topic-vote-down-button{ display: none; }
 	&:hover #topic-vote-down-button{ display: inline; }
@@ -211,6 +194,15 @@ li.article-item, li.topic-item, li.ticket-item {
 	font-weight: 200;
 }
 
+/* Solutions table row */
+.c-article-row{
+	padding-left: 38px;
+	.icon-article-table-row{
+		margin-left: -38px;
+		float: left;
+	}	
+}
+
 /* Solution voting button */
 .vote-up, .vote-down{
 	font-weight: bold;
@@ -229,7 +221,7 @@ li.article-item, li.topic-item, li.ticket-item {
 .attachment{
 	@include clearfix;
 	margin-bottom: 15px;
-	a{ display: block; }
+	.file-name{ display: block; }
 	.file-thumbnail{ 
 		float: left;
 		margin-right: 10px;
@@ -319,11 +311,15 @@ hr.content-divider{
 	border-bottom-color:#f6f6f6;
 }
 
+/* Post edit and delete dropdown styles */
 .post-actions{
 	margin-top: 15px;
 	@include opacity(0.4);
 }
 .user-comment:hover .post-actions{ @include opacity(1); }
+
+/* Topic label styles in forum list view */
+.topic-list .topic-labels .label{ @extend .label-small; }
 
 /* Media styles for tablet and above */
 @include at-breakpoint($break-tablet){
@@ -347,18 +343,72 @@ hr.content-divider{
 		margin-right: -$content-padding-side; 
 	}
 
-	.topic-actions, .ticket-actions{
+	.toolbar-actions{
 		float: right;
 		margin-bottom: -50px;
 		margin-top: 15px;
 	}
+
+	.topic-list .topic-labels{
+		float: right;
+	}
+}
+
+.avatar-span{
+	margin-bottom: 15px;
+}
+
+
+.attachments-list-form{
+	margin: 8px 0;
+	padding: 5px 10px;
+	background: #f3f3f3;
+	border: 1px solid #efefef;
+}
+.attach-wrapper{ margin-top: 5px; }
+
+.dropbox_div{
+	border-left: 1px solid #AAAAAA; float: left; margin: 10px; padding-left: 20px; margin-top:1px;
+	.db-chooser .dropbox_button{ cursor: pointer; }
+}
+.attach_file{
+	float:left; padding-right:20px
+}
+
+.db-chooser{
+	label{ margin-right: 50%; }
+	.dropbox_button{
+		background: image-url("/images/portal/dropbox-attach.png") no-repeat left -11px #f3f2f2;
+	    height: 26px;
+	    padding-left:90px;
+	    border:1px solid #d6d6d6;
+	    border-radius:4px;
+		cursor:pointer;
+		text-shadow: 1px 1px 0px #fff;
+	    &:hover{ background-color:darken(#f2f2f2, 5%); }
+	}
 }
 
 @include at-breakpoint($break-desktop){
-	#home-page-discussions .topic-list:nth-child(n+3) ul{ display: none; }
+	.sidebar .community-sidebar{
+		.cs-s{ border-top:0; margin: 0; }
+		h3.heading{ display: none; }
+		.topic-list:nth-child(n+3) ul{ display: none; }
+		.start-topic{ margin-top: 0; float: none; }
+	} 
+	
 }
 
 @include at-breakpoint($media-mobile){
-	.topic-actions{ margin-top: 15px; margin-bottom: 15px; }
-	.topic-actions .btn{ min-width: 30%; }
+	.toolbar-actions{ margin-top: 15px; margin-bottom: 15px; }
+	#topic-toolbar .btn{ min-width: 30%; }
+
+	.cs-s{
+		border-top:1px solid $orange;
+		margin:0.5em 0;
+		h3{
+			border-top:4px solid $orange;
+			@include inline-block;
+		}
+	}
 }

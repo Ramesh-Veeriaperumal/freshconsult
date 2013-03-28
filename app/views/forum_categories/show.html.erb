@@ -10,11 +10,12 @@
 	<div class="forum-group">
 		<div class="search-grey-box">
 			<% if privilege?(:manage_forums) -%>
-				<div class="action_buttons no_margin">
-					<%= link_to(t('reorder'),'#', :id => "forums_reorder_button", :class => "first") unless (@forum_category.send("#{@content_scope}forums").size <= 1) %>
-			  	<%= link_to  t('forum.new'), new_category_forum_path(@forum_category), :class => "add_new icon" %>
-					<%= link_to t('category.edit') ,edit_category_path(@forum_category), :class => "last" %>  
-				</div> 
+				<div class="btn-group pull-right">
+					<%= link_to(t('reorder'),'#', :id => "forums_reorder_button", :class => "btn") unless
+							(@forum_category.send("#{@content_scope}forums").size <= 1) %>
+					<%= link_to t('forum.new'), new_category_forum_path(@forum_category), :class => "btn" %>
+					<%= link_to t('category.edit') ,edit_category_path(@forum_category), :class => "btn" %>
+				</div>
 			<% end -%> 
 			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('forums.search.placeholder', :name => h(@forum_category.name)), :url => "/search/topics?category_id=#{@forum_category.id}&search_key=" } %>
 		</div>

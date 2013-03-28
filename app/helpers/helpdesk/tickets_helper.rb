@@ -6,10 +6,17 @@ module Helpdesk::TicketsHelper
   include Helpdesk::NoteActions
   include RedisKeys
   include Integrations::AppsUtil
+  include Helpdesk::TicketsHelperMethods
 
   def view_menu_links( view, cls = "", selected = false )
     unless(view[:id] == -1)
-      link_to( (content_tag(:span, "", :class => "icon ticksymbol") if selected).to_s + strip_tags(view[:name]), (view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])) , :class => ( selected ? "active #{cls}": "#{cls}"), :rel => (view[:default] ? "default_filter" : "" ), :"data-pjax" => "#body-container")
+      parallel_url = "/helpdesk/tickets/filter_options"
+      query_str = view[:default] ? "?filter_name=#{view[:id]}" : "?filter_key=#{view[:id]}"
+      link_to( (content_tag(:span, "", :class => "icon ticksymbol") if selected).to_s + strip_tags(view[:name]), 
+        (view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])) , 
+        :class => ( selected ? "active #{cls}": "#{cls}"), :rel => (view[:default] ? "default_filter" : "" ), 
+        :"data-pjax" => "#body-container", :"data-parallel-url" => "#{parallel_url}#{query_str}", 
+        :"data-parallel-placeholder" => "#ticket-leftFilter")
     else
       content_tag(:span, "", :class => "seperator")
     end  
@@ -66,7 +73,7 @@ module Helpdesk::TicketsHelper
     ul tabs.map{ |t| 
                   next if !t[4].nil? && !t[4]
                   link_to t[1] + (content_tag :span, t[2], :class => "pill #{ t[2] == 0 ? 'hide' : ''}", :id => "#{t[0]}Count"), "##{t[0]}", "data-remote-load" => t[3], :id => "#{t[0]}Tab"
-                }, { :class => "tabs", "data-tabs" => "tabs" }
+                }, { :class => "tabs ticket_tabs", "data-tabs" => "tabs" }
                 
   end
 
@@ -107,8 +114,11 @@ module Helpdesk::TicketsHelper
       cannot_delete = true
     end
 
-    top_view_html = drop_down_views(top_views_array, selected_item_name, "leftViewMenu", selected.blank? ).to_s +
-      (content_tag :div, (link_to t('delete'), {:controller => "wf/filter", :action => "delete_filter", :id => selected_item[:id]}, {:method => :delete, :confirm => t("wf.filter.view.delete"), :id => 'delete_filter'}), :id => "view_manage_links"  unless cannot_delete or selected_item[:default] )
+    top_view_html = drop_down_views(top_views_array, selected_item_name, "leftViewMenu", selected.blank? ).to_s + 
+      (!(cannot_delete or selected_item[:default]) ? (content_tag :div, (link_to t('delete'), {:controller => "wf/filter", :action => "delete_filter", 
+        :id => selected_item[:id]}, 
+        {:method => :delete, :confirm => t("wf.filter.view.delete"), :id => 'delete_filter'}), 
+        :id => "view_manage_links") : "")
   end
   
   def filter_select( prompt = t('helpdesk.tickets.views.select'))    
@@ -154,7 +164,8 @@ module Helpdesk::TicketsHelper
   end
 
   def current_wf_order_type 
-    return @cached_filter_data[:wf_order_type] if @cached_filter_data && !@cached_filter_data[:wf_order_type].blank?
+    return @cached_filter_data[:wf_order_type].to_sym if @cached_filter_data && !@cached_filter_data[:wf_order_type].blank?
+    # return @cached_filter_data[:wf_order_type].to_sym if @cached_filter_data && !@cached_filter_data[:wf_order_type].blank?
     cookies[:wf_order_type] = (params[:wf_order_type] ? params[:wf_order_type] : ( (!cookies[:wf_order_type].blank?) ? cookies[:wf_order_type] : DEFAULT_SORT_ORDER )).to_sym
   end
 
@@ -222,36 +233,6 @@ module Helpdesk::TicketsHelper
     o.join
   end
   
-  def subject_style(ticket,onhold_and_closed_statuses)
-    type = "customer_responded" if ticket.ticket_states.customer_responded? && ticket.active?
-    type = "new" if ticket.ticket_states.is_new? && !onhold_and_closed_statuses.include?(ticket.ticket_status.status_id)
-    type = "elapsed" if ticket.ticket_states.agent_responded_at.blank? && ticket.frDueBy < Time.now && ticket.due_by >= Time.now && ticket.active?
-    type = "overdue" if !onhold_and_closed_statuses.include?(ticket.ticket_status.status_id) && ticket.due_by < Time.now && ticket.active? 
-    type
-  end
-
-  def sla_status(ticket,onhold_and_closed_statuses)
-    if( ticket.active? )
-      unless (onhold_and_closed_statuses.include?(ticket.ticket_status.status_id) or ticket.ticket_status.deleted?)
-        if(Time.now > ticket.due_by )
-          t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
-        else
-          t('due_in',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
-        end
-      else
-        " #{h(status_changed_time_value_hash(ticket)[:title])} #{t('for')} 
-            #{distance_of_time_in_words(Time.now, ticket.ticket_states.send(status_changed_time_value_hash(ticket)[:method]))} "
-      end
-
-    else
-      if( ticket.ticket_states.resolved_at_dirty < ticket.due_by )
-        t('resolved_on_time')
-      else
-        t('resolved_late')
-      end
-    end
-  end
-  
   def bind_last_conv (item, signature, forward = false)
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
     last_conv = (item.is_a? Helpdesk::Note) ? item : 
@@ -300,20 +281,6 @@ module Helpdesk::TicketsHelper
     return ( get_key(key) || bind_last_conv(item, signature) )
   end
 
-  def status_changed_time_value_hash (ticket)
-    status_name = ticket.status_name
-    status = ticket.status
-    case status
-      when RESOLVED
-        return {:title => "#{status_name}", :method => "resolved_at_dirty"}
-      when PENDING
-        return {:title =>  "#{status_name}", :method => "pending_since"}
-      when CLOSED
-        return {:title => "#{status_name}", :method => "closed_at_dirty"}
-      else
-        return {:title => "#{status_name}", :method => "status_updated_at"}
-    end
-  end
   
   def default_twitter_body_val (ticket)
     if (ticket.tweet && ticket.tweet.tweet_type == 'mention')

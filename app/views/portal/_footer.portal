@@ -1,8 +1,8 @@
-<footer class="rounded-6">
-	<a href="/">Help Center</a>
-	<a href="{{portal.solutions_home_path}}">Solutions</a>
-	<a href="{{portal.forums_home_path}}">Forums</a>
-</footer>
-<div class="copyright">
-	<a href="http://www.freshdesk.com" target="_blank">Help Desk software</a> by FreshDesk
-</div>
+{% if portal.tabs.size > 0 %}
+	<footer class="footer rounded-6">
+		{% for tab in portal.tabs %}
+			<a href="{{tab.url}}" class="{% if tab.tab_type == current_tab %}active{% endif %}">{{ tab.label }}</a>
+		{% endfor %}
+	</footer>
+{% endif %}
+{{ portal | portal_copyright }}

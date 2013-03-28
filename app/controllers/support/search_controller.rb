@@ -113,7 +113,7 @@ class Support::SearchController < SupportController
         
     end
 
-    def filter_key(query)
+    def filter_key(query = "")
       email_regex  = Regexp.new('(\b[-a-zA-Z0-9.\'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)', nil, 'u')
       default_regex = Regexp.new('\w+', nil, 'u')
       enu = query.gsub(/("#{email_regex}(.*?#{email_regex})?"|(?![!-])#{email_regex})/u)
@@ -211,9 +211,9 @@ class Support::SearchController < SupportController
     end
 
     def ticket_result ticket
-      { 'title' => ticket.excerpts.subject, 
+      { 'title' => ticket.subject, 
         'group' => "Ticket", 
-        'desc' => ticket.excerpts.description,
+        'desc' => truncate(ticket.description, 120),
         'type' => "TICKET", 
         'url' => support_ticket_path(ticket) }
     end

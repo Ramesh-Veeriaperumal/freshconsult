@@ -4,17 +4,17 @@ module TicketConstants
   
   OUT_OF_OFF_SUBJECTS = [ "away from the office", "out of office", "away from office","mail delivery failed","returning your reply to helpdesk message", "vacation" ]
    
-  DATE_RANGE_CSV = 31
+  # DATE_RANGE_CSV = 31
 
   SOURCES = [
-    [ :email,      I18n.t('email'),            1 ],
-    [ :portal,     I18n.t('portal_key'),       2 ],
-    [ :phone,      I18n.t('phone'),            3 ],
-    [ :forum,      I18n.t('forum_key'),        4 ],
-    [ :twitter,    I18n.t('twitter_source'),   5 ],
-    [ :facebook,   I18n.t('facebook_source'),  6 ],
-    [ :chat,       I18n.t('chat'),             7 ],
-    [ :mobi_help,  I18n.t('mobi_help'),        8 ]
+    [ :email,      'email',            1 ],
+    [ :portal,     'portal_key',       2 ],
+    [ :phone,      'phone',            3 ],
+    [ :forum,      'forum_key',        4 ],
+    [ :twitter,    'twitter_source',   5 ],
+    [ :facebook,   'facebook_source',  6 ],
+    [ :chat,       'chat',             7 ],
+    [ :mobi_help,  'mobi_help',        8 ]
   ]
 
   SOURCE_OPTIONS = SOURCES.map { |i| [i[1], i[2]] }
@@ -23,10 +23,10 @@ module TicketConstants
   SOURCE_KEYS_BY_NAME = Hash[*SOURCES.map { |i| [i[1], i[2]] }.flatten]
 
   PRIORITIES = [
-    [ :low,       I18n.t('low'),         1 ], 
-    [ :medium,    I18n.t('medium'),      2 ], 
-    [ :high,      I18n.t('high'),        3 ], 
-    [ :urgent,    I18n.t('urgent'),      4 ]   
+    [ :low,       'low',         1 ], 
+    [ :medium,    'medium',      2 ], 
+    [ :high,      'high',        3 ], 
+    [ :urgent,    'urgent',      4 ]   
   ]
 
   PRIORITY_OPTIONS = PRIORITIES.map { |i| [i[1], i[2]] }
@@ -48,7 +48,8 @@ module TicketConstants
   TYPE_KEYS_BY_TOKEN = Hash[*TYPE.map { |i| [i[0], i[2]] }.flatten]
   TYPE_NAMES_BY_SYMBOL = Hash[*TYPE.map { |i| [i[0], i[1]] }.flatten]
   
-  DEFAULT_COLUMNS_ORDER = [:responder_id,:group_id,:due_by,:status,:priority,:ticket_type,:source,"helpdesk_tags.name","users.customer_id"]
+  DEFAULT_COLUMNS_ORDER = [:responder_id,:group_id,:created_at,:due_by,:status,:priority,:ticket_type,:source,
+                            "helpdesk_tags.name","users.customer_id",:requester_id]
   
   DEFAULT_COLUMNS =  [
     [ :status,              'status',   :dropdown],
@@ -60,7 +61,8 @@ module TicketConstants
     [ :due_by,              'due_by',  :due_by],
     [ "helpdesk_tags.name", "tags",     :dropdown],
     [ "users.customer_id",  "customers", :dropdown],
-    #[ :created_at,          "Created At", :created_at]
+    [ :created_at,          "created_at", :created_at],
+    [ :requester_id,        'requester', :requester]
   ]
   
   DEFAULT_COLUMNS_OPTIONS = Hash[*DEFAULT_COLUMNS.map { |i| [i[0], i[1]] }.flatten]
@@ -68,10 +70,10 @@ module TicketConstants
   DEFAULT_COLUMNS_KEYS_BY_TOKEN = Hash[*DEFAULT_COLUMNS.map { |i| [i[0], i[2]] }.flatten]
   
   DUE_BY_TYPES = [
-    [ :all_due,    I18n.t('all_due'),               1 ], 
-    [ :due_today,  I18n.t('due_today'),             2 ], 
-    [ :due_tomo,   I18n.t('due_tomo'),              3 ], 
-    [ :due_next_eight, I18n.t('due_next_eight'),    4 ]
+    [ :all_due,         'all_due',               1 ], 
+    [ :due_today,       'due_today',             2 ], 
+    [ :due_tomo,        'due_tomo',              3 ], 
+    [ :due_next_eight,  'due_next_eight',        4 ]
   ]
 
   DUE_BY_TYPES_OPTIONS = DUE_BY_TYPES.map { |i| [i[1], i[2]] }
@@ -91,6 +93,26 @@ module TicketConstants
   CREATED_BY_KEYS_BY_TOKEN = Hash[*CREATED_BY_VALUES.map { |i| [i[0], i[2]] }.flatten]
   CREATED_BY_NAMES_BY_SYMBOL = Hash[*CREATED_BY_VALUES.map { |i| [i[0], i[1]] }.flatten]
   
+
+  CREATED_WITHIN_VALUES = [
+    [ :any_time,         'any_time',        "any_time"],
+    [ :five_minutes,     'five_minutes',            5 ],
+    [ :ten_minutes,      'fifteen_minutes',        15 ],
+    [ :thirty_minutes,   'thirty_minutes',         30 ],
+    [ :one_hour,         'one_hour',               60 ],
+    [ :four_hour,        'four_hours',            240 ],
+    [ :twelve_hour,      'twelve_hours',          720 ],
+    [ :twentyfour_hour,  'twentyfour_hours',     1440 ],
+    [ :today,            'today',             "today" ],
+    [ :yesterday,        'yesterday',     "yesterday" ],
+    [ :this_week,        'seven_days',         "week" ],
+    [ :this_month,       'thirty_days',       "month" ],
+    [ :two_months,       'two_months',   "two_months" ], 
+    [ :six_months,       'six_months',   "six_months" ]
+  ]
+
+  CREATED_AT_OPTIONS = CREATED_WITHIN_VALUES.map { |i| [i[2], i[1]] }
+
   STATES_HASH = {
     :closed_at => I18n.t("export_data.closed_at"),
     :resolved_at => I18n.t("export_data.resolved_at"),
@@ -107,5 +129,36 @@ module TicketConstants
     :product_id       => "create_product_activity",
     :ticket_type      => "create_ticket_type_activity"
   }
+
+  def self.translate_priority_name(priority)
+    I18n.t(PRIORITY_NAMES_BY_KEY[priority])
+  end
+
+  def self.priority_list
+    Hash[*PRIORITIES.map { |i| [i[2], I18n.t(i[1])] }.flatten]
+  end
+
+  def self.priority_names
+    PRIORITIES.map { |i| [I18n.t(i[1]), i[2]] }
+  end
   
+  def self.translate_source_name(source)
+    I18n.t(SOURCE_NAMES_BY_KEY[source])
+  end
+
+  def self.source_list
+    Hash[*SOURCES.map { |i| [i[2], I18n.t(i[1])] }.flatten]
+  end
+
+  def self.source_names
+    SOURCES.map { |i| [I18n.t(i[1]), i[2]] }
+  end
+
+  def self.due_by_list
+    Hash[*DUE_BY_TYPES.map { |i| [i[2], I18n.t(i[1])] }.flatten]
+  end
+  
+  def self.created_within_list
+    CREATED_WITHIN_VALUES.map { |i| [i[2], I18n.t(i[1])] }
+  end
 end

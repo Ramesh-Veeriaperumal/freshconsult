@@ -109,29 +109,17 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   def default_order
     'created_at'
   end
-  
-  def order_clause
-    @order_clause ||= begin
-      order_columns = order
-      #Performence reseason we are using id instead of created_at.
-      order_columns = "id" if "created_at".eql?(order_columns)
-      order_parts = order_columns.split('.')
-      if order_parts.size > 1
-        "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
-      else
-        "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}"
-      end
-    end  
-  end
 
-  def default_filter(filter_name)
-     self.name = filter_name.blank? ? "new_my_open" : filter_name
+  def default_filter(filter_name, from_export = false)
+     default_value = from_export ? "all_tickets" : "new_my_open"
+     self.name = filter_name.blank? ? default_value : filter_name
+
      if "on_hold".eql?filter_name
        on_hold_filter
      elsif "unresolved".eql?filter_name
        unresolved_filter
      else
-       DEFAULT_FILTERS.fetch(filter_name, DEFAULT_FILTERS["new_my_open"])
+       DEFAULT_FILTERS.fetch(filter_name, DEFAULT_FILTERS[default_value])
      end
   end
   
@@ -183,7 +171,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       action_hash.push({ "condition" => "deleted", "operator" => "is", "value" => false})
     end
 
-    action_hash = default_filter(params[:filter_name])  if params[:data_hash].blank?
+    action_hash = default_filter(params[:filter_name], !!params[:export_fields])  if params[:data_hash].blank?
     self.query_hash = action_hash
 
     action_hash.each do |filter|
@@ -302,11 +290,13 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
   
   def get_joins(all_conditions)
-    all_joins = joins
+    all_joins = [""]
+    all_joins = joins if all_conditions[0].include?("flexifields")
     all_joins[0].concat(monitor_ships_join) if all_conditions[0].include?("helpdesk_subscriptions.user_id")
     all_joins[0].concat(schema_less_join) if all_conditions[0].include?("helpdesk_schema_less_tickets.boolean_tc02")
     all_joins[0].concat(users_join) if all_conditions[0].include?("users.customer_id")
     all_joins[0].concat(tags_join) if all_conditions[0].include?("helpdesk_tags.name")
+    all_joins[0].concat(states_join) if order.eql? "requester_responded_at"
     all_joins
   end
 
@@ -328,6 +318,11 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
  def users_join
    " INNER JOIN users ON users.id = helpdesk_tickets.requester_id  and  users.account_id = helpdesk_tickets.account_id  "
  end
+
+ def states_join
+  " INNER JOIN helpdesk_ticket_states on helpdesk_ticket_states.ticket_id = helpdesk_tickets.id 
+    AND helpdesk_ticket_states.account_id = helpdesk_tickets.account_id "
+ end
   
   
   def joins
@@ -341,12 +336,18 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   def order_clause
     @order_clause ||= begin
       order_columns = order
-      order_columns = "id" if "created_at".eql?(order_columns)
+      #order_columns = "id" if "created_at".eql?(order_columns) #Removing to check if the performace hit was because of 
+                                                                # this causing mysql to use id index instead of account_id index
       order_parts = order_columns.split('.')
-      if order_parts.size > 1
-        "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
+      
+      if order.eql? "requester_responded_at"
+        "if(helpdesk_ticket_states.#{order} IS NULL, helpdesk_tickets.created_at, helpdesk_ticket_states.#{order}) #{order_type}"
       else
-        "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}"
+        if order_parts.size > 1
+          "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
+        else
+          "#{model_class_name.constantize.table_name}.#{order_parts.first} #{order_type}"
+        end
       end
     end  
   end

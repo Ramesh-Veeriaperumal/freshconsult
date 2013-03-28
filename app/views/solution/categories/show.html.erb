@@ -21,8 +21,8 @@
   		<%= render :partial => "/solution/shared/solution_list", :locals => { :category => @item, :folder => @item.folders.visible(current_user).first } %>
 		<% else %>
 			<span class="info_data"><%= t("solution_category.info2") %></span> 
-      <% if privilege?(:publish_solution) %> - 
-        <%= link_to 'add a new folder'[:create_new_folder], new_solution_category_folder_path(@item) %>
+      <% if privilege?(:publish_solution) %> -  
+        <%= link_to t('add_a_new_folder')[:create_new_folder], new_solution_category_folder_path(@item) %> 
       <%end%>
 		<% end %>	
 	</div> 

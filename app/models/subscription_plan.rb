@@ -17,6 +17,10 @@ class SubscriptionPlan < ActiveRecord::Base
     :pro => "Pro", 
     :premium => "Premium", 
     :free => "Free",
+    :sprout_classic => "Sprout Classic",
+    :blossom_classic => "Blossom Classic",
+    :garden_classic => "Garden Classic",
+    :estate_classic => "Estate Classic",
     :sprout => "Sprout",
     :blossom => "Blossom",
     :garden => "Garden",
@@ -46,7 +50,14 @@ class SubscriptionPlan < ActiveRecord::Base
       BILLING_CYCLE_KEYS_BY_TOKEN[:annual] => 0.85, BILLING_CYCLE_KEYS_BY_TOKEN[:six_month] => 0.95 },
     SUBSCRIPTION_PLANS[:blossom] => { 
       BILLING_CYCLE_KEYS_BY_TOKEN[:annual] => 0.85, BILLING_CYCLE_KEYS_BY_TOKEN[:six_month] => 0.95 },
-    SUBSCRIPTION_PLANS[:sprout] => { }
+    SUBSCRIPTION_PLANS[:estate_classic] => { 
+      BILLING_CYCLE_KEYS_BY_TOKEN[:annual] => 0.82, BILLING_CYCLE_KEYS_BY_TOKEN[:six_month] => 0.90 },
+    SUBSCRIPTION_PLANS[:garden_classic] => { 
+      BILLING_CYCLE_KEYS_BY_TOKEN[:annual] => 0.85, BILLING_CYCLE_KEYS_BY_TOKEN[:six_month] => 0.95 },
+    SUBSCRIPTION_PLANS[:blossom_classic] => { 
+      BILLING_CYCLE_KEYS_BY_TOKEN[:annual] => 0.85, BILLING_CYCLE_KEYS_BY_TOKEN[:six_month] => 0.95 },
+    SUBSCRIPTION_PLANS[:sprout] => { },
+    SUBSCRIPTION_PLANS[:sprout_classic] => { }
   }
 
   def fetch_discount(billing_cycle)

@@ -1,6 +1,9 @@
+<div id="all-views-tmpl" class="hide">
+    <%= render :partial => "filters", :locals =>{ :selected => @current_view, :custom_filters => @filters_options } %>
 
+    <%= link_to(t("save_this_view"), "/helpdesk/tickets/custom_view_save", :title => t("save_this_view_tooltip"), :class => "hide dialog2", :dialogWidth => "540px", :id => "save_filter") %>
+</div>
   <script type="text/javascript">
-
   function getFilterData(){
     query_hash = $A(); 
     jQuery("div.ff_item").map(function () {
@@ -14,7 +17,15 @@
        
       if(container == "nested_field") {         
         value = jQuery(this).children('select').val();
-      } else {
+      }
+      else if(container == "requester"){
+        value = jQuery('#requester_filter').val().toString() || '';
+      }
+      else if(container == "single_select"){
+        if(jQuery('#created_at option:selected').val() != "any_time")
+          value =  jQuery('#created_at option:selected').val();
+      }
+      else {
         value = jQuery(this).find(_selector).map(function(){ return this.value; }).get();
       }
                         
@@ -42,7 +53,6 @@
     jQuery("#FilterOptions input[name=data_hash]").val(query_hash.toJSON()).trigger("change"); 
   }
   </script>
-  <%= will_filter_scripts_tag %>
   <% special_case_views = ['deleted','spam','monitored_by'] %>
     <h3 class="title"><%= t("tickets_filter.title") %></h3>
     <form id="FilterOptions" action="#">
@@ -57,8 +67,10 @@
         <%
           if ((!c_hash[:field_type].nil?) && (c_hash[:field_type] == "nested_field"))
             container = "nested_field"
-          elsif     
-            container = (c_hash[:options].size < 5)? "dropdown" : "multi_select" 
+          elsif c_hash[:name] == 'created_at'
+            container = "single_select"
+          elsif  
+            container = (c_hash[:name] == 'requester') ? 'requester': (c_hash[:options].size < 5)? "dropdown" : "multi_select" 
           end
         %> 
     	  <% 
@@ -122,7 +134,9 @@
       jQuery('#empty_trash').hide();
     }	
 
-  });
+    jQuery('#all-views').html($J('#all-views-tmpl').html());
+    jQuery('#all-views-tmpl').html('');
+    });
   
   jQuery("#FilterOptions").change(function(){
     jQuery("#ticket-list").html("<div class='loading-box'></div>");
@@ -151,4 +165,5 @@
       }
     }); 
   });
+
 </script>

@@ -148,4 +148,12 @@ class Solution::FoldersController < ApplicationController
     :articles
   end
 
+  private
+    def portal_check
+      format = params[:format]
+      if format.nil? && (current_user.nil? || current_user.customer?)
+        return redirect_to support_solutions_folder_path(@folder)
+      end
+    end
+
 end

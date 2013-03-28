@@ -1,5 +1,5 @@
 <% if @editable_ticket_fields.present? %>
-<section class="widget hide" id="ticket-sidebar-edit">
+<section class="widget" id="ticket-sidebar-edit">
 	<h3 class="light">Modify ticket details</h4>
 	<% form_for @ticket, :url => { :action => "update", :controller => "support/tickets" }, 
 				:html => { :id => 'portal_ticket_form' } do |f| %>
@@ -19,12 +19,9 @@
 	      	   <%= construct_ticket_element :helpdesk_ticket, field, field.label_in_portal, dom_type, field.required, field_value %>
 	      	<% end %>
 	    <% end %>
-	    <hr />
-		<a href="#" class="btn btn-small" data-toggle-dom="#ticket-sidebar-edit, #ticket-sidebar-details" data-animated>
-			<%= t('cancel') %>
-		</a>
-		<%= f.submit t('update'), :class => "btn btn-small btn-primary pull-right" %>
-					
+	    <div>
+			<%= f.submit t('update'), :class => "btn btn-small btn-primary pull-right" %>
+		</div>
 		<% javascript_tag do %> 
 			<% if @ticket.ticket_status.deleted? %>
 				jQuery("#helpdesk_ticket_status")

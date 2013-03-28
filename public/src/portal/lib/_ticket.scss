@@ -19,11 +19,9 @@ $sources-sprite-dimensions:true;
 	position: relative; z-index: 1; 
 	a{ font-weight: bold; }
 }
-.ticket-link{ font-size:1.06em; }
-.widget{
-	border-top: 1px solid #afafaf;
-	margin-top: 13px;
-}
+
+.widget{ margin-bottom: 20px; }
+
 #ticket-sort{ margin-right: 20px; }
 #user-list-dropdown .dropdown-menu{ 
 	max-height: 300px;
@@ -31,6 +29,24 @@ $sources-sprite-dimensions:true;
 }
 .name_label{ font-weight: bold; margin-top: 4px; }
 .value_label{ margin-bottom: 10px; }
+
+#ticket-sidebar-details .control-label{
+	margin-top: 8px;
+	margin-bottom: 0;
+	line-height: 28px;
+	font-weight: bold;
+}
+
+.agent-details{
+	border-bottom: $content-border;
+	background-color: #fafafa;	
+	margin-top: -$content-padding-mobile;
+	margin-left: -$content-padding-mobile;
+	margin-right: -$content-padding-mobile;
+	padding: $content-padding-mobile;
+	.lead{ margin-bottom: 10px; }
+}
+
 
 /* Media styles for tablet and above */
 @include at-breakpoint($break-tablet){	
@@ -40,9 +56,11 @@ $sources-sprite-dimensions:true;
 	}
 	.ticket-brief{ padding-top: 7px; }
 	.label-status{ margin-top: 6px; }
-
-	@include layout(7) {
-		.ticket-main{ @include span-columns(5); }
-		.ticket-sidebar{ @include span-columns(2 omega); }
+	.agent-details{
+		@include border-top-radius($content-border-radius);
+		padding: $content-padding;
+		margin-top: -$content-padding-top;
+		margin-left: -$content-padding-side;
+		margin-right: -$content-padding-side;
 	}
 }

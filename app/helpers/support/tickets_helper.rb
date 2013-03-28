@@ -2,6 +2,7 @@ module Support::TicketsHelper
 
   TOOLBAR_LINK_OPTIONS = {  "data-remote" => true, 
                             "data-response-type" => "script",
+                            "data-method" => :get,
                             "data-loading-box" => "#ticket-list" }  
 
   def current_filter
@@ -9,11 +10,11 @@ module Support::TicketsHelper
   end
 
   def current_wf_order 
-    @current_wf_order ||= set_cookie :wf_order, "created_at"
+    @current_wf_order ||= set_cookie :wf_order, TicketsFilter::DEFAULT_PORTAL_SORT
   end
 
   def current_wf_order_type 
-    @current_wf_order_type ||= set_cookie :wf_order_type, "desc"
+    @current_wf_order_type ||= set_cookie :wf_order_type, TicketsFilter::DEFAULT_PORTAL_SORT_ORDER
   end
 
   def current_requested_by
@@ -70,14 +71,14 @@ module Support::TicketsHelper
     # Filtering out the visible sorting fields for portal and 
     # preping them for bootstrap dropdown as and array
     vfs = visible_fields
-    sort_fields = TicketsFilter::SORT_FIELD_OPTIONS.map { |field|
+    sort_fields = TicketsFilter.sort_fields_options.map { |field|
                       [ field[0], 
                         filter_support_tickets_path(:wf_order => field[1]),
                         (field[1] == @current_wf_order) ] if vfs.include?(field[1].to_s)
                   }.push([:divider]) # Adding a divider that will show up under the sort list
 
     # Preping the ascending & decending orders for bootstrap dropdown as and array
-    sort_order = TicketsFilter::SORT_ORDER_FIELDS_OPTIONS.map{ |so| 
+    sort_order = TicketsFilter.sort_order_fields_options.map{ |so| 
                       [ so[0], 
                         filter_support_tickets_path(:wf_order_type => so[1]), 
                         (so[1] == @current_wf_order_type)] 
@@ -85,25 +86,6 @@ module Support::TicketsHelper
 
     # Constructing the dropdown
     dropdown_menu sort_fields.concat(sort_order), TOOLBAR_LINK_OPTIONS
-  end
-
-  def ticket_field_display_value(field, ticket)
-    _field_type = field.field_type
-    _field_value = (field.is_default_field?) ? ticket.send(field.field_name) : ticket.get_ff_value(field.name)
-    _dom_type = (_field_type == "default_source") ? "dropdown" : field.dom_type
-    case _dom_type
-      when "dropdown", "dropdown_blank"
-        if(_field_type == "default_agent")
-          ticket.responder.name if ticket.responder
-        elsif(_field_type == "nested_field")
-          ticket.get_ff_value(field.name)
-        else
-          field.dropdown_selected(((_field_type == "default_status") ? 
-              field.all_status_choices : field.choices), _field_value)
-        end
-    else
-      _field_value
-    end
   end
 
 end

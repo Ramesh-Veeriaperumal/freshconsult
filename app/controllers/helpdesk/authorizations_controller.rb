@@ -24,7 +24,7 @@ class Helpdesk::AuthorizationsController < ApplicationController
       :conditions => ["email is not null and name like ? or email like ?", "%#{params[:v]}%", "%#{params[:v]}%"], 
       :limit => 1000)
 
-    r = {:results => items.map {|i| {:id => i.email , :value => i.name }}}
+    r = {:results => items.map {|i| {:id => i.email, :value => i.name, :user_id => i.id }}}
     r[:results].push({:id => current_account.kbase_email, :value => ""}) if params[:v] =~ /(kb[ase]?.*)/
     
     respond_to do |format|
@@ -39,13 +39,23 @@ class Helpdesk::AuthorizationsController < ApplicationController
       :conditions => ["name like ? or email like ? or phone like ?", "%#{params[:v]}%", "%#{params[:v]}%","%#{params[:v]}%"], 
       :limit => 1000)
 
-    r = {:results => items.map {|i| {:details => i.name_details, :user_id => i.id}}}
+    r = {:results => items.map {|i| {:details => i.name_details, :user_id => i.id, :value => i.name}}}
     r[:results].push({:id => current_account.kbase_email, :value => ""}) if params[:v] =~ /(kb[ase]?.*)/
     
     respond_to do |format|
       format.json { render :json => r.to_json }
     end
   end
+
+  def company_autocomplete
+    respond_to do |format|
+      format.json { 
+        render :json => current_account.customers.custom_search(params[:name]).map{
+                                              |customer| [customer.name, customer.id]}
+      }
+    end
+  end
+
 protected
 
   def item_url

@@ -77,6 +77,6 @@ class Helpdesk::Tag < ActiveRecord::Base
   end
   
   def to_liquid
-    Helpdesk::TagDrop.new self
+    @helpdesk_tag_drop ||= (Helpdesk::TagDrop.new self)
   end
 end

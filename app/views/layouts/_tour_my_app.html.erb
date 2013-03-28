@@ -1,13 +1,17 @@
-<link rel="stylesheet" href="https://tour.tourmyapp.com/static/tourmyapp/v1/tourmyapp.css" type="text/css">
-	<script type="text/javascript" src="https://tour.tourmyapp.com/static/tourmyapp/v1/tourmyapp.js"></script>
- 
-	<script type="text/javascript">
-	var tour;
-	jQuery(document).ready(function() {
-	    tour = new TourMyApp("freshdesk");
-	    if (window.location.href.indexOf("freshbugs.com") != -1) {
-    		tour.setOptions({"test_mode": true});
-  		}
-	    tour.start();
-	});
-	</script>
+<link rel="stylesheet" href="https://d345spfe4d65od.cloudfront.net/static/tourmyapp/v1/tourmyapp.css" type="text/css">
+<!-- <script type="text/javascript" src="https://tour.tourmyapp.com/static/tourmyapp/v1/tourmyapp.js"></script> -->
+
+<script type="text/javascript">
+	AsyncJSLoader('https://d345spfe4d65od.cloudfront.net/static/tourmyapp/v1/tourmyapp.js', function(){
+		jQuery(document).ready(function() {
+		    tour = new TourMyApp("freshdesk");
+		    if (window.location.href.indexOf("freshpo.com") != -1) {
+	    		tour.setOptions({"test_mode": true});
+	  		}
+	  		tour.setUserReference("<%= current_account.full_domain%>");
+	  		var string_table = tour._getOption("translations");
+	  		string_table["default"]["Step"] = "Step {1} of {2}";
+		    tour.start();
+		});
+	})
+</script>

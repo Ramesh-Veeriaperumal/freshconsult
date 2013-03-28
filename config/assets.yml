@@ -17,6 +17,7 @@ stylesheets:
 
   app:
     - public/stylesheets/app/lib/chosen.css    
+    - public/stylesheets/app/lib/select2.css    
     - public/stylesheets/app/satisfaction.css
     - public/stylesheets/app/gamification.css
     - public/stylesheets/app/lib/hacks.css
@@ -25,11 +26,11 @@ stylesheets:
   codemirror:
     - public/stylesheets/codemirror.css
 
-  portal:                
-    # - public/stylesheets/portal/portal.css
+  portal:
     - public/stylesheets/redactor.css
-    - public/stylesheets/app/lib/qtip.css
-    # - public/stylesheets/portal/responsive.css 
+
+  preview:
+    - public/stylesheets/portal/preview.css
 
   # !PATTERN TODO These css files will be migrated in to the pattern library at a later point
   non_pattern_1:
@@ -58,7 +59,7 @@ stylesheets:
     - public/stylesheets/app/lib/defaults.css
     - public/stylesheets/app/lib/form.css
     - public/stylesheets/app/lib/buttons.css
-    - public/stylesheets/app/lib/ie.css 
+    - public/stylesheets/app/lib/ie.css
 
   freshwidget:
     - public/stylesheets/freshwidget.css
@@ -82,6 +83,7 @@ stylesheets:
     - public/stylesheets/subscription/bootstrap.css
     - public/stylesheets/subscription/bootstrap-responsive.css
     - public/stylesheets/subscription/subscription.css
+    - public/stylesheets/app/lib/buttons.css
 
   reports:
     - public/stylesheets/app/reports.css
@@ -116,17 +118,22 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.overlabel.js
     - public/javascripts/frameworks/plugins/jquery.pageless.js
     - public/javascripts/frameworks/plugins/jquery.qtip.js
-    - public/javascripts/frameworks/plugins/jquery.tinymce.js
     - public/javascripts/frameworks/plugins/jquery.tweetfeed.js
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
     - public/javascripts/frameworks/plugins/jquery.itoggle.js
     - public/javascripts/frameworks/plugins/jquery.ui.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
+    - public/javascripts/frameworks/plugins/select2.js
     - public/javascripts/hackz.js
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/helpdesk/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/frameworks/socket.io.js
+    - public/javascripts/sisyphus.js
+    - public/javascripts/ticket_list.js
+    - public/javascripts/AsyncJSLoader.js
+    - public/javascripts/lib/detectmobilebrowsers.js
+    - public/javascripts/frameworks/plugins/jquery-ui-timepicker-addon.js
 
   # Code editor for portal cms
   codemirror:
@@ -138,7 +145,7 @@ javascripts:
 
   workspace: 
     - public/javascripts/bootstrap/twipsy.js
-    - public/javascripts/bootstrap/modal.js
+    # - public/javascripts/bootstrap/modal.js
     - public/javascripts/bootstrap/tabs.js
     - public/javascripts/bootstrap/popover.js
     - public/javascripts/dyn_menu.js
@@ -151,6 +158,8 @@ javascripts:
     - public/javascripts/globalinit.js
     - public/javascripts/application.js
     - public/javascripts/navsearch.js
+    - public/javascripts/report/date.js
+
   pattern:
     - public/javascripts/pattern/bootstrap-affix.js
     # - public/javascripts/pattern/bootstrap-alert.js
@@ -158,7 +167,7 @@ javascripts:
     # - public/javascripts/pattern/bootstrap-carousel.js
     # - public/javascripts/pattern/bootstrap-collapse.js
     - public/javascripts/pattern/bootstrap-dropdown.js
-    # - public/javascripts/pattern/bootstrap-modal.js
+    - public/javascripts/pattern/bootstrap-modal.js
     # - public/javascripts/pattern/bootstrap-scrollspy.js
     - public/javascripts/pattern/bootstrap-transition.js
     - public/javascripts/pattern/bootstrap-tab.js
@@ -180,6 +189,7 @@ javascripts:
     - public/javascripts/helpdesk/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/feedback_widget_form.js
+    - public/javascripts/utils.js
 
   custom_widget:
     - public/javascripts/custom_widget.js
@@ -188,6 +198,12 @@ javascripts:
     - public/javascripts/prototype.js
     - public/javascripts/portal/jquery-1.8.3.js    
     - public/javascripts/modernizr-2.5.3-respond-1.1.0.min.js
+    - public/javascripts/portal/portal-utils.js
+
+  preview:
+    - public/javascripts/portal/jquery-1.8.3.js
+    - public/javascripts/modernizr-2.5.3-respond-1.1.0.min.js
+    - public/javascripts/portal/preview.js
 
   portal_bottom:
     - public/javascripts/frameworks/plugins/jquery.livequery.js
@@ -196,22 +212,25 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
     - public/javascripts/hackz.js
     - public/javascripts/helpdesk/multifile.js
-    - public/javascripts/lib/nestedtree.js
+    - public/javascripts/lib/nestedtree.js    
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/portal/jquery-ui-1.9.2.custom.js
     - public/javascripts/portal/bootstrap.js
     - public/javascripts/portal/bootstrap.dialog.js
-    - public/javascripts/portal/select2.js
+    - public/javascripts/frameworks/plugins/select2.js
+    - public/javascripts/portal/jail.js
+    - public/javascripts/portal/moment.js
+    - public/javascripts/portal/livestamp.js
     - public/javascripts/portal/portal.js
     - public/javascripts/portal/portal-app-actions.js
-
-  getting_started:
-    - public/javascripts/getting_started.js
+    - public/javascripts/portal/portal-compatibility.js
 
   subscription:                    
     - public/javascripts/prototype.js
     - public/javascripts/jquery-1.7.1.min.js
     - public/javascripts/bootstrap.js
+    - public/javascripts/frameworks/plugins/jquery.livequery.js
+    - public/javascripts/frameworks/plugins/jquery.itoggle.js
   conditional:
     - public/javascripts/autosuggest.js    
     - public/javascripts/frameworks/plugins/jquery.nestedselect.js
@@ -248,7 +267,6 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.overlabel.js
     - public/javascripts/frameworks/plugins/jquery.pageless.js
     - public/javascripts/frameworks/plugins/jquery.qtip.js
-    - public/javascripts/frameworks/plugins/jquery.tinymce.js
     - public/javascripts/frameworks/plugins/jquery.tweetfeed.js
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
     - public/javascripts/frameworks/plugins/jquery.itoggle.js
@@ -274,20 +292,19 @@ javascripts:
     - public/javascripts/application.js
 
   gs_defaults: 
-    - public/javascripts/prototype.js
-    # - public/javascripts/frameworks/plugins/jquery.livequery.js
+    - public/javascripts/prototype.js    
     - public/javascripts/effects.js
-    - public/javascripts/controls.js
-    # - public/javascripts/utils.js
+    - public/javascripts/controls.js    
   gs_frameworks:
-    - public/javascripts/fast_autocompleter.js
-    - public/javascripts/hackz.js
     - public/javascripts/jquery-1.7.1.min.js
+    - public/javascripts/utils.js
+    - public/javascripts/fast_autocompleter.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.form.js
     - public/javascripts/frameworks/plugins/jquery.chosen.js
     - public/javascripts/frameworks/plugins/jquery.validate.js      
     - public/javascripts/utils.js
+    - public/javascripts/hackz.js
   getting_started:        
     # - public/javascripts/mColorPicker.min.js
     - public/javascripts/getting_started.js

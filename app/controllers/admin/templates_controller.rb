@@ -3,6 +3,7 @@ class Admin::TemplatesController < Admin::AdminController
 
   before_filter :build_objects,  :only => [:show, :update, :soft_reset, :restore_default, :publish]
   before_filter :clear_preview_session, :default_liquids, :set_forum_builder, :only => :show
+  before_filter :clear_preview_session, :only => :clear_preview
 
   
   before_filter(:only => :update) do |c| #validating the syntax before persisting.
@@ -11,6 +12,10 @@ class Admin::TemplatesController < Admin::AdminController
     Portal::Template::TEMPLATE_MAPPING_FILE_BY_TOKEN.each do |key,file|
       c.send(:liquid_syntax?, c.request.params[:portal_template][key.to_sym])
     end
+  end
+
+  def show
+    @portal = @portal_template.portal    
   end
 
   def publish
@@ -27,17 +32,28 @@ class Admin::TemplatesController < Admin::AdminController
 
   def update
     @portal_template.attributes = params[:portal_template]
-    @portal_template.draft!    
-    flash[:notice] = "Portal template saved successfully." unless params[:preview_button]
+    @portal_template.draft!
+
+    if params[:publish_button]
+      @portal_template.publish!
+      flash[:notice] = "Portal changes published successfully."
+    else
+      flash[:notice] = "Portal template saved successfully." unless params[:preview_button]
+    end
+
     respond_to do |format|
       format.html { 
         if params[:preview_button]
-          session[:preview_button] = true
-          redirect_to support_home_url
+          preview_url = support_home_path
+          set_preview_and_redirect(preview_url) 
         end
       }
     end
   end  
+
+  def clear_preview
+    render :text => "success"
+  end
 
   def soft_reset
     properties = params[:portal_template]
@@ -48,7 +64,7 @@ class Admin::TemplatesController < Admin::AdminController
  
   private
     def build_objects
-      @portal_template = scoper.template.get_draft || scoper.template
+      @portal_template = scoper.fetch_template.get_draft || scoper.fetch_template
     end
 
     def default_liquids

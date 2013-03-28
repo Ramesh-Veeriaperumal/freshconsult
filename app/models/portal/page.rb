@@ -1,10 +1,14 @@
 class Portal::Page < ActiveRecord::Base
 	set_table_name "portal_pages"
 	
+	include MemcacheKeys
+
 	belongs_to_account
 	belongs_to :template	
 	
 	validates_uniqueness_of :page_type, :scope => [:template_id]	
+
+	after_commit :clear_cache
   
 	#!PORTALCSS Need to move these constances to lib
 
@@ -21,6 +25,7 @@ class Portal::Page < ActiveRecord::Base
 
 		# Solution pages
 		[:solution_home,      	6,   "support/solutions/index.portal", "support_solutions_path"],
+		[:solution_category,    18,  "support/solutions/show.portal", "support_solutions_path"],
 		[:article_list,       	7,   "support/solutions/folders/show.portal", 
 			"support_solutions_folder_path", "public_folders"],
 		[:article_view,       	8,   "support/solutions/articles/show.portal", 
@@ -42,20 +47,22 @@ class Portal::Page < ActiveRecord::Base
 			"support_ticket_path", "tickets"],
 
 		# Password reset with perishable token
-		[:password_reset,       16,  "password_resets/edit.portal"]
+		[:password_reset,       16,  "password_resets/edit.portal"],
+		[:activation_form,      17,  "activations/new.portal"]
+		
 	]
 
 	# Manually organizing them as groups to avoid direct db save dependency
 	PAGE_GROUPS = [
 		{ :general 		=> [:portal_home, :user_signup, :user_login, :search] },
-		{ :solutions 	=> [:solution_home, :article_list, :article_view] }, 
+		{ :solutions 	=> [:solution_home, :article_list, :article_view, :solution_category] }, 
 		{ :discussions 	=> [:discussions_home, :topic_list, :topic_view, :new_topic] },
 		{ :tickets 		=> [:submit_ticket] }
 	]
 
 	# Restricted pages from editing
 	# Hiding customization for profile_edit, ticket_list, ticket_view and password_reset
-	RESTRICTED_PAGES = [:profile_edit, :ticket_list, :ticket_view, :password_reset]
+	RESTRICTED_PAGES = [:profile_edit, :ticket_list, :ticket_view, :password_reset, :activation_form]
 	
 	# Helper constants for access of PAGE_TYPES
 	PAGE_TYPE_OPTIONS      	= PAGE_TYPES.collect { |i| [i[0], i[1]] }	
@@ -81,7 +88,14 @@ class Portal::Page < ActiveRecord::Base
   	end 
 
 	def to_liquid
-	    PageDrop.new self
+	  @page_drop ||= PageDrop.new self
 	end
+
+	private
+	  def clear_cache
+	    key = PORTAL_TEMPLATE_PAGE % { :account_id => self.account_id, 
+	    	:template_id => self.template_id, :page_type => self.page_type }
+	    MemcacheKeys.delete_from_cache key
+	  end
 
 end

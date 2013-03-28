@@ -40,7 +40,7 @@
                                                                 callback(choices);
                                                               } });
                                                             }
-                  var agent_cachedBackend = new Autocompleter.Cache(agent_lookup, {choices: 10});
+                  var agent_cachedBackend = new Autocompleter.Cache(agent_lookup, {searchKey: 0, choices: 10});
                   var agent_cachedLookup = agent_cachedBackend.lookup.bind(agent_cachedBackend);
 				
 	               new Autocompleter.MultiValue("notify_emails", agent_cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});

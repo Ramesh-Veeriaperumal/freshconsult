@@ -1,3 +1,5 @@
+require RAILS_ROOT+'/app/models/solution/folder.rb'
+
 class Solution::Article < ActiveRecord::Base
   set_table_name "solution_articles"
   serialize :seo_data, Hash
@@ -142,7 +144,7 @@ class Solution::Article < ActiveRecord::Base
   end
   
   def to_liquid
-    Solution::ArticleDrop.new self
+    @solution_article_drop ||= Solution::ArticleDrop.new self
   end
   
   def article_title
@@ -150,8 +152,7 @@ class Solution::Article < ActiveRecord::Base
   end
 
   def article_description
-    (seo_data[:meta_description].blank?) ? "#{title}. #{folder.name}. #{folder.category.name}" : 
-                                            seo_data[:meta_description]
+    seo_data[:meta_description]
   end
 
   def article_keywords

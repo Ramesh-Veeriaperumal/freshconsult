@@ -18,16 +18,25 @@
 
 		if(this.options['editFullscreen']){
 			this.options['extraKeys'] = {
-		        "F11": function(cm) {
+		        "Shift-Cmd-F": function(cm) {
+		        	jQuery(cm.getTextArea()).codemirror("showFullscreen")
+		        }
+			,   "Shift-Ctrl-F": function(cm) {
 		        	jQuery(cm.getTextArea()).codemirror("showFullscreen")
 		        }
 		    ,   "Esc": function(cm) {
 		        	jQuery(cm.getTextArea()).codemirror("hideFullscreen")
 		        }
-		    ,   "Shift-Cmd-S" : function(cm) {
+		    ,   "Cmd-S" : function(cm) {
+		    		jQuery('input[name="save_button"]:visible')[0].click();
+		    	}
+		    ,   "Ctrl-S" : function(cm) {
 		    		jQuery('input[name="save_button"]:visible')[0].click();
 		    	}
 		    ,   "Shift-Cmd-P" : function(cm) {
+		    		jQuery('input[name="preview_button"]:visible')[0].click();
+		    	}
+		    ,   "Shift-Ctrl-P" : function(cm) {
 		    		jQuery('input[name="preview_button"]:visible')[0].click();
 		    	}
 		    }
@@ -61,7 +70,7 @@
 	,	buildFullscreen: function(cm){
 			var wrap = cm.getWrapperElement(), 
 				scroll = cm.getScrollerElement(),
-				wrap_action_group = $("#"+this.$element.data("fullscreenActions")).find("input, a")
+				wrap_action_group = $(this.$element.data("fullscreenActions")).find("input, a")
 
 			if(!document.getElementById("cm-fs-editor")){
 				$("<div id='cm-fs-wrapper' class='hide' />")
@@ -104,6 +113,8 @@
 
 				document.documentElement.style.overflow = "hidden"
 			}
+
+			window['codemirror-fullscreen'] = true
 			cm.refresh()
 			cm.focus()
 		}
@@ -122,6 +133,7 @@
 				$(document).data("fs-codemirror", false)
 			}
 
+			window['codemirror-fullscreen'] = false
 			cm.refresh()
 			cm.focus()
 		}

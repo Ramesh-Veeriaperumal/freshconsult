@@ -1,12 +1,18 @@
 .survey-buttons a{
     display: block;
     color: #333;
-    padding: 5px 15px 5px 5px;
+    padding: 3px 15px 3px 5px;
     background-color: #f4f4f4;
     border: 1px #e8e8e8 solid;
     margin-bottom: 5px;
     text-decoration: none;
+    font-weight:300;
+    font-size: 16px;
     @include border-radius(2em);
+    i{ 
+        margin-top: -1px;
+        margin-right: 3px; 
+    }
     &:hover{ background-color: #f9f9f9; }    
     &.active{
         background-color: #a5a5a5;

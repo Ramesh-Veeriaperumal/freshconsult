@@ -1,5 +1,3 @@
-<%= include_stylesheets :redactor %>
-<%= include_javascripts :redactor %>
 <ul class="ui-form">
 	<li>
 		<label for="topic_title"><%= t('topic.name') %>*</label>
@@ -9,7 +7,7 @@
 		<label for="topic_body"><%= t('message') %></label>
 		<%= form.rich_editor(:body_html, 
 			:value => !@topic.new_record? ? @topic.posts.first.body_html : "", 
-			:tabindex => 20, :height => "250px") %>
+			:tabindex => 20, :height => "250px", 'editor-type' => :forum) %>
 	</li>
 	<% if privilege?(:view_admin) and not @topic.new_record? %>
 		<li id="topic_forum_id">

@@ -3,6 +3,8 @@ class Portal::Template < ActiveRecord::Base
 	set_table_name "portal_templates"
 
   include RedisKeys
+  include Cache::Memcache::Portal::Template
+
   belongs_to_account
   belongs_to :portal
   
@@ -11,6 +13,7 @@ class Portal::Template < ActiveRecord::Base
   serialize :preferences, Hash
 
   before_create :set_defaults
+  after_commit :clear_memcache_cache
 
   TEMPLATE_MAPPING = [ 
     [:header,  "portal/header.portal"],    
@@ -31,9 +34,9 @@ class Portal::Template < ActiveRecord::Base
       :tab_hover_color => "#4c4b4b",
       :btn_background => "#ffffff", 
       :btn_primary_background => "#6c6a6a",
-      :baseFontFamily => "Helvetica Neue", 
+      :baseFont => "Helvetica Neue", 
       :textColor => "#333333",
-      :headingsFontFamily => "Open Sans Condensed", 
+      :headingsFont => "Open Sans Condensed", 
       :headingsColor => "#333333",
       :linkColor => "#049cdb", 
       :linkColorHover => "#036690",
@@ -49,7 +52,7 @@ class Portal::Template < ActiveRecord::Base
   end
   
   def reset_to_default
-    self.pages.each(&:delete)
+    self.pages.each(&:destroy)
     self.preferences = default_preferences
     self.header = nil
     self.footer = nil

@@ -1,9 +1,11 @@
 class HttpRequestProxy
 
   def fetch(params, request)
-    method = request.env["REQUEST_METHOD"].downcase
-    auth_header = request.headers['HTTP_AUTHORIZATION']
-    user_agent = request.headers['HTTP_USER_AGENT']
+    if(request)
+      method = request.env["REQUEST_METHOD"].downcase
+      auth_header = request.headers['HTTP_AUTHORIZATION']
+      user_agent = request.headers['HTTP_USER_AGENT']
+    end
     requestParams = {:method => method, :auth_header => auth_header, :user_agent => user_agent}
     fetch_using_req_params(params, requestParams)
   end
@@ -16,7 +18,7 @@ class HttpRequestProxy
     begin
       method = requestParams[:method]
       auth_header = requestParams[:auth_header]
-      user_agent = requestParams[:user_agent] + " Freshdesk"
+      user_agent = requestParams[:user_agent]? requestParams[:user_agent] + " Freshdesk" :  "Freshdesk"
       domain = params[:domain]
       method = params[:method] || method
       ssl_enabled = params[:ssl_enabled]
@@ -54,7 +56,10 @@ class HttpRequestProxy
         proxy_request = HTTParty::Request.new(net_http_method, URI.encode(remote_url), options)
         Rails.logger.debug "Sending request: #{proxy_request.inspect}"
         proxy_response = proxy_request.perform
-        Rails.logger.debug "Received response: #{proxy_response.inspect}"
+        Rails.logger.debug "Response Body: #{proxy_response.body}"
+        Rails.logger.debug "Response Code: #{proxy_response.code}"
+        Rails.logger.debug "Response Headers: #{proxy_response.headers.inspect}"
+  
   
         # TODO Need to audit all the request and response calls to 3rd party api.
         response_body = proxy_response.body
@@ -90,6 +95,7 @@ class HttpRequestProxy
             "get" => Net::HTTP::Get,
             "post" => Net::HTTP::Post,
             "put" => Net::HTTP::Put,
-            "delete" => Net::HTTP::Delete
+            "delete" => Net::HTTP::Delete,
+            "patch" => Net::HTTP::Patch
         }
 end

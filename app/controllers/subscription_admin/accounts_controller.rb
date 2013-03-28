@@ -35,9 +35,8 @@ class SubscriptionAdmin::AccountsController < ApplicationController
  
       # data rows 
       @accounts.each do |acc|
-        user = acc.account_admin
         sub = acc.subscription
-        csv << [acc.name, acc.full_domain, user.name,user.email,user.phone,acc.time_zone,acc.created_at.strftime('%Y-%m-%d'),sub.next_renewal_at.strftime('%Y-%m-%d')] 
+        csv << [acc.name, acc.full_domain, acc.admin_first_name, acc.admin_email, acc.admin_phone, acc.time_zone,acc.created_at.strftime('%Y-%m-%d'),sub.next_renewal_at.strftime('%Y-%m-%d')] 
       end 
     end
     # send it to the browsah

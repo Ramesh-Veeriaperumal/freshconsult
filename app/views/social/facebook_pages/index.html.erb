@@ -1,14 +1,14 @@
 <% content_for :sidebar do -%><%-end %>
 <% unless @fb_pages.empty? %>
   <div class="floatr">
-    <%= link_to "Add Facebook Page", @fb_client.authorize_url, :class => "uiButton special medium" %> 
+    <%= link_to t('facebook.add_page'),  @fb_client.authorize_url(session[:state]) , :class => "uiButton special medium" %> 
   </div>
 	<h3 class="title"><%= t('.title') %></h3>
   <ul class="admin_list">
     <% @fb_pages.each do |page| %>
       <li>
   		  <div class="item_actions">
-  		  	<%= link_to (t(".reauthorize"),  @fb_client.authorize_url, :class => "button") if page.reauth_required %>
+  		  	<%= link_to (t(".reauthorize"),  @fb_client.authorize_url(session[:state]), :class => "button") if page.reauth_required %>
   		    <%= link_to t("edit"),  edit_social_facebook_url(page), :class => "button" %>
   		    <%= link_to(t('remove'), social_facebook_path(page), :method => 'delete', :confirm => "Are you sure you want to remove this facebook page?", :class => "button" ) %>    
   		  </div>

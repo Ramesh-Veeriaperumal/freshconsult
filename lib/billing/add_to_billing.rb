@@ -40,7 +40,7 @@ class Billing::AddToBilling
     @queue = QUEUE
 
     def self.scoper
-      User
+      AccountConfiguration
     end
 
     def self.perform_job(billing, item)

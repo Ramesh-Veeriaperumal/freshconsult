@@ -87,7 +87,7 @@
         <li class="inline-field field">
             <div class="attachment-options fields" id="attachment-options-forward-<%=cntid%>">
               <% attachments = conv_item.attachments %>
-              <% if(attachments.size > 0) %>
+              <% if(attachments.length > 0) %>
                 Attachments
                 <div class="attachments">
                   <% attachments.each do |attachment| %>
@@ -100,6 +100,20 @@
                     <% end %>
                 </div>
               <% end %>
+              <% dropbox = conv_item.dropboxes %>
+              <% if(dropbox.length > 0) %>
+                <div class="attachments">
+                  <% dropbox.each do |dbox| %>
+                    <div class="item">
+                      <span> <%= dbox.url %> 
+                      - <a href="javascript:void(0)" onclick="jQuery(this).parent().parent().remove(); return false;">remove</a>
+                        <input type="hidden" name="[dropbox_url][]" value="<%=dbox.url%>" />
+                      </span>
+                    </div>
+                    <% end %>
+                </div>
+              <% end %>
+
                 <% unless local_assigns[:no_attachments] %>
                 <%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => "attachments_#{cntid}", :nsc_param => "helpdesk_note" } %>
                 <% end %>

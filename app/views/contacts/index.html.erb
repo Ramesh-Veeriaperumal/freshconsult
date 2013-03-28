@@ -66,7 +66,7 @@
 										<%= t('contacts.deleted.no_contacts') if params[:letter].blank? %>
 									<% else %>
 										<%= t('contacts.unverified.no_contacts_with_letter', :alphabet => params[:letter]) if !params[:letter].blank? %>
-										<%= t('contacts.unverified.no_contacts') if params[:letter].blank? %>
+										<%= t('contacts.verified.no_contacts') if params[:letter].blank? %>
 									<% end %>
 								</div>
 							</div>

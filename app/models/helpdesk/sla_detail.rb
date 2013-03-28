@@ -1,9 +1,8 @@
 class Helpdesk::SlaDetail < ActiveRecord::Base
-  set_table_name "helpdesk_sla_details" 
+  set_table_name "sla_details" 
   
   belongs_to_account
   belongs_to :sla_policy, :class_name => "Helpdesk::SlaPolicy"
-  has_one :account , :through => :sla_policy 
   before_create :set_account_id
   RESPONSETIME = [
     [ :half,    I18n.t('half'),  1800 ], 
@@ -33,12 +32,22 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
     [ :threeday, I18n.t('threeday'),     259200 ],
     [ :oneweek, I18n.t('oneweek'),     604800 ],
     [ :twoweek, I18n.t('twoweek'),     1209600 ],
-    [ :onemonth, I18n.t('onemonth'),   2592000 ]
+    [ :onemonth, I18n.t('onemonth'),   2592000 ],
+    [ :twomonth, I18n.t('twomonth'),   5184000 ],
+    [ :threemonth, I18n.t('threemonth'),   7776000 ],
+    [ :sixmonth, I18n.t('sixmonth'),   15811200 ],
+    [ :oneyear, I18n.t('oneyear'),   31536000 ]
   ]
 
   RESOLUTIONTIME_OPTIONS = RESOLUTIONTIME.map { |i| [i[1], i[2]] }
   RESOLUTIONTIME_NAMES_BY_KEY = Hash[*RESOLUTIONTIME.map { |i| [i[2], i[1]] }.flatten]
   RESOLUTIONTIME_KEYS_BY_TOKEN = Hash[*RESOLUTIONTIME.map { |i| [i[0], i[2]] }.flatten]
+
+  PREMIUM_TIME_OPTIONS = [ 
+    [I18n.t('premium_sla_times.five_minutes'),300], 
+    [I18n.t('premium_sla_times.ten_minutes'),600], 
+    [I18n.t('premium_sla_times.fifteen_minutes'), 900] 
+  ]
 
   PRIORITIES = [
     [ 'low',       "Low",         1 ], 
@@ -59,6 +68,8 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
   SLA_TIME_OPTIONS = SLA_TIME.map { |i| [i[1], i[2]] }
   SLA_TIME_BY_KEY = Hash[*SLA_TIME.map { |i| [i[2], i[0]] }.flatten]
   SLA_TIME_BY_TOKEN = Hash[*SLA_TIME.map { |i| [i[0], i[2]] }.flatten]
+
+  default_scope :order => "priority DESC"
 
   def calculate_due_by_time_on_priority_change(created_time)
     override_bhrs ? (created_time + resolution_time.seconds) : business_time(resolution_time, created_time)
@@ -95,7 +106,7 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
     end
 
     def on_status_change_bhrs(ticket, due_by_type)
-      bhrs_during_elapsed_time =  Time.parse(ticket.ticket_states.sla_timer_stopped_at.to_s).business_time_until(
+      bhrs_during_elapsed_time =  Time.zone.parse(ticket.ticket_states.sla_timer_stopped_at.to_s).business_time_until(
         Time.zone.now)
       if due_by_type > ticket.ticket_states.sla_timer_stopped_at
         bhrs_during_elapsed_time.div(60).business_minute.after(due_by_type) 

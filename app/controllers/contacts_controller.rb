@@ -1,14 +1,17 @@
 class ContactsController < ApplicationController
-    
+
    include APIHelperMethods
    include HelpdeskControllerMethods
    include ExportCsvUtil
+   include RedisKeys
+
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
    before_filter :set_selected_tab
    before_filter :check_agent_limit, :only =>  :make_agent
-   before_filter :load_item, :only => [:show, :edit, :update, :make_agent]
+   before_filter :load_item, :only => [:show, :edit, :update, :make_agent,:make_occasional_agent]
    skip_before_filter :build_item , :only => [:new, :create]
    before_filter :set_mobile , :only => :show
+   before_filter :fetch_contacts, :only => [:index]
   
    
    def check_demo_site
@@ -19,11 +22,7 @@ class ContactsController < ApplicationController
   end
   
   def index
-    begin
-      @contacts = scoper.filter(params[:letter], params[:page], params.fetch(:state, "verified"))
-    rescue Exception => e
-      @contacts = {:error => get_formatted_message(e)}
-    end
+    
     respond_to do |format|
       format.html do
         @tags = current_account.tags.with_taggable_type(User.to_s)
@@ -35,7 +34,7 @@ class ContactsController < ApplicationController
       format.json  do
         render :json => @contacts.to_json({:except=>[:account_id] ,:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
                     :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
-                    :helpdesk_agent,:fb_profile_id,:external_id,:language,:address] })#avoiding the secured attributes like tokens
+                    :helpdesk_agent,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
       end
       format.atom do
         @contacts = @contacts.newest(20)
@@ -65,6 +64,11 @@ class ContactsController < ApplicationController
       respond_to do |format|
         format.html { redirect_to contacts_url }
         format.xml  { render :xml => @user, :status => :created, :location => contacts_url(@user) }
+        format.json {
+            render :json => @user.to_json({:except=>[:account_id] ,:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
+                    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
+                    :user_role,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
+        }
         format.widget { render :action => :show}
         format.js
       end
@@ -73,10 +77,24 @@ class ContactsController < ApplicationController
       respond_to do |format|
         format.html { render :action => :new}
         format.xml  { render :xml => @user.errors, :status => :unprocessable_entity} # bad request
+        format.json { render :json =>@user.errors, :status => :unprocessable_entity} #bad request
         format.widget { render :action => :show}
         format.js
       end
     end
+  end
+
+  def unblock
+    ids = params[:ids] || Array(params[:id])
+    if ids
+      User.update_all({ :blocked => false, :whitelisted => true,:deleted => false, :blocked_at => nil }, 
+        [" id in (?) and (blocked_at IS NULL OR blocked_at <= ?) and (deleted_at IS NULL OR deleted_at <= ?) and account_id = ? ",
+         ids, (Time.now+5.days).to_s(:db), (Time.now+5.days).to_s(:db), current_account.id])
+      enqueue_worker(Workers::RestoreSpamTickets, current_account.id, ids)
+      flash[:notice] = t(:'flash.contacts.whitelisted')
+    end
+    redirect_to contacts_path and return if params[:ids]
+    redirect_to contact_path and return if params[:id]
   end
 
   def hover_card
@@ -107,11 +125,16 @@ class ContactsController < ApplicationController
     @user = nil # reset the user object.
     @user = current_account.all_users.find_by_email(email) unless email.blank?
     @user = current_account.all_users.find(params[:id]) if @user.blank?
-    @user_tickets_open_pending = current_account.tickets.requester_active(@user).visible.newest(5)
+    @user_tickets = current_account.tickets.requester_active(@user).visible.newest(5).find(:all, 
+      :include => [ :ticket_states,:ticket_status,:responder,:requester ])
+    
     respond_to do |format|
       format.html { }
       format.xml  { render :xml => @user.to_xml} # bad request
-      format.json { render :json => @user.to_json}
+      format.json { render :json => @user.to_json({:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
+                    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
+                    :user_role,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
+                  }
       format.mobile { render :json => @user.to_mob_json }
     end
   end
@@ -134,27 +157,23 @@ class ContactsController < ApplicationController
       respond_to do |format|
         format.html { redirect_to contacts_url }
         format.xml  { head 200}
+        format.json { head 200}
       end
     else
       check_email_exist
       respond_to do |format|
         format.html { render :action => 'edit' }
         format.xml  { render :xml => @item.errors, :status => :unprocessable_entity} #Bad request
+        format.json { render :json => @item.errors, :status => :unprocessable_entity}
       end
     end
   end
   
-  def make_agent    
-    @item.update_attributes(:delete =>false,
-     :helpdesk_agent => true,
-     :role_ids => [current_account.roles.find_by_name("Agent").id] 
-    )      
-    @agent = current_account.agents.new
-    @agent.user = @item 
-    @item.deleted = false
-    @agent.occasional = false
+  def make_occasional_agent
+    agent = build_agent
+    agent.occasional = true
     respond_to do |format|
-      if @agent.save        
+      if @item.save        
         format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
           redirect_to @item }
         format.xml  { render :xml => @item, :status => 200 }
@@ -165,6 +184,21 @@ class ContactsController < ApplicationController
     end 
   end
   
+  def make_agent
+    agent = build_agent
+    agent.occasional = false
+    respond_to do |format|
+      if @item.save        
+        format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
+          redirect_to @item }
+        format.xml  { render :xml => @item, :status => 200 }
+      else
+        format.html { redirect_to :back }
+        format.xml  { render :xml => @agent.errors, :status => 500 }
+      end   
+    end 
+  end
+
   def autocomplete   
     items = current_account.customers.find(:all, 
                                             :conditions => ["name like ? ", "%#{params[:v]}%"], 
@@ -225,15 +259,34 @@ protected
  end
 
  def check_agent_limit
-   if current_account.reached_agent_limit? 
-    flash[:notice] = t('maximum_agents_msg')
+    if current_account.reached_agent_limit? 
+    flash[:notice] = t('maximum_agents_msg') 
     redirect_to :back 
    end
   end
 
   private
 
+    def build_agent
+      @item.deleted = false
+      @item.helpdesk_agent = true
+      # FIXME: will this line update roles for the user ? need to test ...
+      @item.role_ids = [current_account.roles.find_by_name("Agent").id] 
+      @item.build_agent()      
+    end
+
     def get_formatted_message(exception)
       exception.message # TODO: Proper error reporting.
+    end
+
+    def fetch_contacts
+       connection_to_be_used =  params[:format].eql?("xml") ? "use_persistent_read_connection" : "use_master_connection"  
+       begin
+         @contacts =   SeamlessDatabasePool.send(connection_to_be_used.to_sym) do
+          scoper.filter(params[:letter], params[:page], params.fetch(:state, "verified"))
+        end
+      rescue Exception => e
+        @contacts = {:error => get_formatted_message(e)}
+      end
     end
 end

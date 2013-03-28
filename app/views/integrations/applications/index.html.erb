@@ -11,15 +11,15 @@
 	<div class="request-well">
 		<ul class="tabs">
 			<li class="active first">
-				<a data-show="app-native" data-hide="app-custom" href="#">Native Integrations</a>
+				<a data-show="app-native" data-hide="app-custom" href="#"><%= t('integrations.native_integrations') %></a>
 			</li>
 			<li>
-				<a data-hide="app-native" data-show="app-custom" href="#">FreshPlugs</a>
+				<a data-hide="app-native" data-show="app-custom" href="#"><%= t('integrations.freshplugs_title') %></a>
 			</li>
 		</ul>
 	</div>
 	<div class="app-custom clearfix">
-		<%= link_to "New FreshPlug", new_integrations_application_path, 
+		<%= link_to t('integrations.new_freshplug'), new_integrations_application_path, 
 					:class => "uiButton new_custom_app floatr" %>
 	</div>
 	<!-- <input class="search floatr" placeholder="Search Integrations"/> -->
@@ -45,13 +45,13 @@
 					  			<!-- Custom logic to call the installed_applications "Enable" directly from applications list when direct_install is provided and oauth_url is empty -->
 
 					  		<% else 
-					  			 auth_url = AppConfig['integrations_url'][Rails.env] + Liquid::Template.parse(application[:options][:oauth_url]).render("account_id" => current_portal.id)%>
+					  			 auth_url = AppConfig['integrations_url'][Rails.env] + Liquid::Template.parse(application[:options][:oauth_url]).render("account_id" => current_portal.id, "portal_id" => current_portal.id)%>
 						  		 <%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", auth_url , :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>		
 					  		<% end %>
 					  	<% end %>
 		  	    		
 					  <%else
-						if application[:options][:direct_install].blank? %>
+						if application[:options][:direct_install].blank? &&  application[:options][:no_settings].blank?%>
 			  	    		<%= link_to image_tag("symbols/setting.png"), edit_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "button custom-tip-bottom", :title => t("application.configure_addon") %>		
 			  	    	<% end %>
 			  	    	<%= link_to t('application.enabled') + "<span></span>", uninstall_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "uiButton special iphone-active custom-tip-bottom", :confirm => t("application.confirm_disable"), :title => t("application.click_to_disable") %>	
@@ -87,9 +87,9 @@
 	</ul>
 	<%if no_custom_app%>
 		<div class="app-custom list-noinfo">
-			You do not have any FreshPlugs.
+			<%= t('integrations.no_freshplugs') %>
 			<br />
-			<%= link_to "Add new FreshPlug", new_integrations_application_path %>
+			<%= link_to t('integrations.add_new_freshplug'), new_integrations_application_path %>
 		</div>
 	<%end%>
 </div>

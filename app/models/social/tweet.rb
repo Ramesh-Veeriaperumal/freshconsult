@@ -4,10 +4,11 @@ class Social::Tweet < ActiveRecord::Base
   
   belongs_to :tweetable, :polymorphic => true
   belongs_to_account
+  belongs_to :twitter_handle, :class_name => 'Social::TwitterHandle', :foreign_key => 'twitter_handle_id'
   
   attr_protected :tweetable_id
   
-  validates_presence_of   :tweet_id, :account_id
+  validates_presence_of   :tweet_id, :account_id, :twitter_handle_id
   validates_uniqueness_of :tweet_id, :scope => :account_id, :message => "Tweet already converted as a ticket"
   
   LENGTH = 140
@@ -22,6 +23,13 @@ class Social::Tweet < ActiveRecord::Base
     tweetable_type.eql?('Helpdesk::Note')
   end
   
+   def is_mention?
+    tweet_type.eql?('mention')
+  end
+
+  def is_dm?
+    tweet_type.eql?('dm')
+  end
   
   def get_ticket
     

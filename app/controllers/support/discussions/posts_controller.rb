@@ -14,7 +14,7 @@ class Support::Discussions::PostsController < SupportController
 					redirect_to support_discussions_topic_path(:id => params[:topic_id], :page => params[:page] || '1')
 				end
 				format.xml do
-					render :text => 'This topic is locked.'[:locked_topic], :status => 400
+					return render :text => 'This topic is locked.'[:locked_topic], :status => 400
 				end
 			end
 			return
@@ -28,9 +28,11 @@ class Support::Discussions::PostsController < SupportController
 		create_attachments
 		respond_to do |format|
 		  format.html do
-		    redirect_to support_discussions_topic_path(:id => params[:topic_id], :anchor => @post.dom_id, :page => params[:page] || '1')
+		    redirect_to "#{support_discussions_topic_path(:id => params[:topic_id])}/page/last#post-#{@post.id}"
 		  end
-		  format.xml { render :xml => @post }
+		  format.xml { 
+		  	return render :xml => @post 
+		  }
 		end
 		rescue ActiveRecord::RecordInvalid
 		flash[:bad_reply] = 'Please post a valid message...'[:post_something_message]
@@ -38,7 +40,9 @@ class Support::Discussions::PostsController < SupportController
 		  format.html do
 		  	redirect_to support_discussions_topic_path(:id => params[:topic_id], :page => params[:page] || '1')
 		  end
-		  format.xml { render :xml => @post.errors.to_xml, :status => 400 }
+		  format.xml { 
+		  	return render :xml => @post.errors.to_xml, :status => 400 
+		  }
 		end
 	end
 

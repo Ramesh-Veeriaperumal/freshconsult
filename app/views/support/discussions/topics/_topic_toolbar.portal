@@ -2,25 +2,25 @@
 
 {% case topic.votes %}
 	{% when 1 %}
-		{% if topic.voted_by_current_user? %}
+		{% if topic.voted_by_current_user %}
 			{% assign votePrefixText = 'You' %}
 		{% else %}
 			{% capture votePrefixText %} {{ topic.votes }} person {% endcapture %}
 		{% endif %}
 	{% when 2 %}
-		{% if topic.voted_by_current_user? %}
+		{% if topic.voted_by_current_user %}
 			{% assign votePrefixText = 'You and 1 more' %}
 		{% else %}
 			{% assign votePrefixText = '2 people' }} %}						
 		{% endif %}
 	{% when 3 %}
-		{% if topic.voted_by_current_user? %}
+		{% if topic.voted_by_current_user %}
 			{% capture votePrefixText %} You and {{topic.votes}} more {% endcapture %}
 		{% endif %}				
 {% endcase %}
 
 
-{% case topic.forum.type %}
+{% case topic.forum.type_name %}
 	{% when 1 %}
 		{% assign topicVoteSingular = 'has this question' %}
 		{% assign topicVotePlural = 'have this question' %}
@@ -32,7 +32,7 @@
 		{% assign topicVotePlural = 'like this idea' %}
 {% endcase %}
 
-{% if topic.votes == 1 and topic.voted_by_current_user? == false %}
+{% if topic.votes == 1 and topic.voted_by_current_user == false %}
 	{% capture votetext %} {{ votePrefixText }} {{ topicVoteSingular }} {% endcapture %}
 {% else %}
 	{% capture votetext %} {{ votePrefixText }} {{ topicVotePlural }} {% endcapture %}
@@ -46,7 +46,7 @@
 	</span>
 {% endif %}
 
-{% if topic.voted_by_current_user? == false %}
+{% if topic.voted_by_current_user == false %}
 	<a href="{{ topic.like_url }}" data-remote data-method="put" data-update="vote-toolbar" class="btn btn-primary">
 		I have this question
 	</a>

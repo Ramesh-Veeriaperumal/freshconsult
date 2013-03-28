@@ -20,7 +20,7 @@
 
 /* line 17, ../src/freshwidget.scss */
 .freshwidget-container {
-  position: absolute; }
+  position: relative; }
 
 /* line 21, ../src/freshwidget.scss */
 .left a {
@@ -99,7 +99,7 @@
 
 /* line 69, ../src/freshwidget.scss */
 .freshwidget-button {
-  position: absolute;
+  position: fixed;
   display: block !important;
   width: 0px;
   height: 0px;

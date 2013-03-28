@@ -95,6 +95,28 @@
                             }
              });
            });
+          jQuery('#helpdesk_ticket_status')
+           .bind("change", function(e){
+           		var required_closure_elements = jQuery(".required_closure");
+           		if(jQuery('#helpdesk_ticket_status option:selected').val() === "5"){ 
+           			jQuery.each(required_closure_elements,function(){ 
+           				jQuery(this).addClass('required');
+           				jQuery("label[for='"+jQuery(this).attr('id')+"']").append("*");
+           			});
+           		}
+           		else{	
+           			jQuery.each(required_closure_elements,function(){
+           				if(required_closure_elements.hasClass('required')){
+           				 	jQuery(this).removeClass('required');
+           					var label = jQuery("label[for='"+jQuery(this).attr('id')+"']").html();
+           					label = label.substring(0, label.length - 1);
+           					jQuery("label[for='"+jQuery(this).attr('id')+"']").empty();
+           					jQuery("label[for='"+jQuery(this).attr('id')+"']").append(label);
+           				}
+           			});
+       			}
+       		});
+       		
          <% if @ticket.ticket_status.deleted? %>
          	jQuery("#helpdesk_ticket_status")
          		.append('<option disabled="disabled" value = "<%= @ticket.status %>"> <%= @ticket.status_name %> </option>')

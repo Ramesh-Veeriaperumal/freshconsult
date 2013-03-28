@@ -1,30 +1,41 @@
 <section class="widget" id="ticket-sidebar-details">
-	<% if @editable_ticket_fields.present? %>
-		<div class="pull-right">
-			<a href="#" data-toggle-dom="#ticket-sidebar-edit, #ticket-sidebar-details" data-animated>Edit</a>
-		</div>
-	<% end %>
-	<h3 class="light">Ticket details</h4>
-	<% status_index = @visible_ticket_fields.index{ |f| f.field_type == 'default_status' } %>
-	<% @visible_ticket_fields.unshift(@visible_ticket_fields.delete_at(status_index)) if status_index.present? %>
-	<% @visible_ticket_fields.each do |field| %>
-		<div class="<%= field.field_type == 'default_status' ? "alert" : "" %>">
-			<% field_value = ticket_field_display_value(field, @ticket) %>
-			<% if field_value.present? %>
-	 			<h4><%= field.label_in_portal %></h4>
-				<div class="lead-small"><%= field_value %></div>
-				<% if field.field_type == "nested_field" %>				
-					<div class="tabbed">
-						<% field.nested_levels.each do |ff|%>
-							<% _nest_field_value = @ticket.get_ff_value(ff[:name]) %>
-							<% if _nest_field_value.present? %>
-								<h4><%= ff[:label_in_portal] %></h4>
-								<div class="lead-small"><%= _nest_field_value %></div>
+	<h3 class="lead">Ticket details</h4>
+	<% edit_field_present = false %>
+	<% form_for @ticket, :url => { :action => "update", :controller => "support/tickets" }, 
+				:html => { :id => 'portal_ticket_form', :rel => "validate" } do |f| %>	
+		<% @visible_ticket_fields.each do |field| %>			
+			<div id="ticket-field-<%= field.name %>">				
+				<% if field.visible_in_view_form? %>					
+					<% if field.editable_in_portal %>
+						<% edit_field_present = true %>
+						<%= ticket_label :helpdesk_ticket, field %>
+						<%= ticket_form_element :helpdesk_ticket, field, ticket_field_form_value(field, @ticket) %>
+					<% elsif field.visible_in_portal %>
+						<% field_value = ticket_field_display_value(field, @ticket) %>						
+						<% if field_value.present? %>
+							<%= ticket_label :helpdesk_ticket, field %>
+							<div class="lead-small"><%= field_value %></div>
+							<% if field.field_type == "nested_field" %>
+								<div class="tabbed">
+									<% field.nested_ticket_fields.each do |ff|%>
+										<% _nest_field_value = ticket_field_display_value(ff, @ticket) %>
+										<% if _nest_field_value.present? %>
+											<%= ticket_label :helpdesk_ticket, ff %>
+											<div class="lead-small"><%= _nest_field_value %></div>
+										<% end %>
+									<% end %>
+								</div>
 							<% end %>
 						<% end %>
-					</div>				
-				<% end %>
-			<% end %>
-		</div>
+					<% end %>
+	      		<% end %>
+	      	</div>
+		<% end %>
+
+		<% if edit_field_present %>
+			<div class="form-actions">
+				<%= f.submit t('update'), :class => "btn btn-small btn-primary" %>
+			</div>
+		<% end %>
 	<% end %>
 </section>

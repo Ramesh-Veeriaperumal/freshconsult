@@ -60,6 +60,7 @@ class User < ActiveRecord::Base
 
   has_many :support_scores, :dependent => :delete_all
 
+  has_many :user_credentials, :class_name => 'Integrations::UserCredential', :dependent => :destroy
   before_create :set_time_zone , :set_company_name , :set_language
   before_create :account_admin_privilege, :if => :account_admin?
   before_save :set_customer_privilege, :if => :customer?
@@ -69,8 +70,6 @@ class User < ActiveRecord::Base
   before_update :destroy_user_roles, :if => :deleted?
   before_save :set_contact_name, :check_email_value
   after_update :drop_authorization , :if => :email_changed?
-  after_update :update_admin_in_crm , :if => :account_admin_changed?
-  after_update :update_admin_to_billing , :if => :account_admin_changed?
 
   after_commit_on_create :clear_agent_list_cache, :if => :agent?
   after_commit_on_update :clear_agent_list_cache, :if => :agent?
@@ -281,6 +280,14 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :customer, :google_contacts  # Added to save the customer while importing user from google contacts.
   
 
+  def first_name
+    name_part(:first)
+  end
+
+  def last_name
+    name_part(:last)
+  end
+
   #Savage_beast changes start here
   #implement in your user model 
   def display_name
@@ -352,7 +359,7 @@ class User < ActiveRecord::Base
   end
   
   def to_liquid
-    UserDrop.new self
+    @user_drop ||= UserDrop.new self
   end
     
   def has_company?
@@ -378,12 +385,21 @@ class User < ActiveRecord::Base
              :order => 'name'
   end
 
+  def spam?
+    deleted && !deleted_at.nil?
+  end
+
   def self.filter_condition(state, letter)
     case state
       when "verified", "unverified"
-        [ ' name like ? and deleted = ? and active = ? and email is not ? ', "#{letter}%", false , state.eql?("verified"), nil ]
+        [ ' name like ? and deleted = ? and active = ? and email is not ? and deleted_at IS NULL and blocked = false ', 
+          "#{letter}%", false , state.eql?("verified"), nil ]
       when "deleted", "all"
-        [ ' name like ? and deleted = ? ', "#{letter}%", state.eql?("deleted") ]
+        [ ' name like ? and deleted = ? and deleted_at IS NULL and blocked = false', 
+          "#{letter}%", state.eql?("deleted")]
+      when "blocked"
+        [ ' name like ? and ((blocked = ? and blocked_at <= ?) or (deleted = ? and  deleted_at <= ?)) and whitelisted = false ', 
+          "#{letter}%", true, (Time.now+5.days).to_s(:db), true, (Time.now+5.days).to_s(:db)  ]
     end                                      
   end
   
@@ -454,8 +470,8 @@ class User < ActiveRecord::Base
   
   def make_customer
     return if customer?
-    
     update_attributes({:helpdesk_agent => false, :deleted => false})
+    subscriptions.destroy_all
     agent.destroy
   end
 
@@ -500,11 +516,14 @@ class User < ActiveRecord::Base
     return self.find_by_twitter_id(options[:twitter_id]) if options.key?(:twitter_id)
     return self.find_by_external_id(options[:external_id]) if options.key?(:external_id)
   end 
-  
+
   private
-    
-    def update_admin_in_crm
-      Resque.enqueue(CRM::AddToCRM::UpdateAdmin, self.id)
+    def name_part(part)
+      parsed_name[part].blank? ? name : parsed_name[part]
+    end
+
+    def parsed_name
+      @parsed_name ||= People::NameParser.new.parse(self.name)
     end
 
     def bakcup_user_changes
@@ -514,10 +533,6 @@ class User < ActiveRecord::Base
 
     def helpdesk_agent_updated?
       @all_changes.has_key?(:helpdesk_agent)
-    end
-
-    def update_admin_to_billing
-      Resque.enqueue(Billing::AddToBilling::UpdateAdmin, self.id)
     end
 
     def account_admin_privilege
@@ -552,5 +567,4 @@ class User < ActiveRecord::Base
     def has_role?
       self.errors.add(:base, I18n.t("activerecord.errors.messages.user_role")) if self.roles.blank?
     end
-    
 end

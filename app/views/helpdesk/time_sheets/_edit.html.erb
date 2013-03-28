@@ -1,18 +1,15 @@
 <div class="request_panel timeentry_edit">
-<% form_remote_for :time_entry, edit, :url => helpdesk_time_sheet_path, :html => { :method => :put, :class => "ui-form" } do |f| %>
+<% form_remote_for :time_entry, edit, :url => helpdesk_time_sheet_path, 
+	:html => { :method => :put, :class => "ui-form dont-validate" } do |f| %>
   <%= render :partial => "/helpdesk/time_sheets/form", :object => f %>
   <fieldset>
     <div class="agent"></div>
 	  <div class="timespent"></div>
 	  <div class="note">
 	    <label class="floatr">
-	      <%= button_to_function "Change Date", "jQuery(this).hide().next().show().datepicker();" %>
+	    <%= t('helpdesk.time_sheets.executed_at')%>
  	      <%= f.text_field :executed_at, :value => edit.executed_at.strftime("%m/%d/%Y"), :size => 10, :class => "auto hide datepicker" %>    	    
  	    </label> 
- 	    <label class="checkbox floatl" for="time_entry_billable">
-	      <%= f.check_box :billable %>
-        Mark as a billable entry 
-      </label>
  	  </div>
 	</fieldset>
  	<div class="button-container absolute-button-container">

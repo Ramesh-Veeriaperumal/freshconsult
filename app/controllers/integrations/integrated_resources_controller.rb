@@ -1,4 +1,4 @@
-class Integrations::IntegratedResourcesController < Admin::AdminController
+class Integrations::IntegratedResourcesController < ApplicationController
 
   before_filter :add_account_id
 
@@ -17,6 +17,21 @@ class Integrations::IntegratedResourcesController < Admin::AdminController
       end
     rescue Exception => msg
       puts "Something went wrong while creating an integrated resource ( #{msg})"
+      render :json => {:status=>:error}
+    end
+  end
+
+  def update
+    Rails.logger.debug "Editing integrated resource "+params.inspect
+    begin
+      newIntegratedResource = Integrations::IntegratedResource.updateResource(params)
+      if newIntegratedResource.blank?
+        render :json => {:status=>:error}
+      else
+        render :json => newIntegratedResource
+      end
+    rescue Exception => msg
+      puts "Something went wrong while updating an integrated resource ( #{msg})"
       render :json => {:status=>:error}
     end
   end
