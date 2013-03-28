@@ -27,7 +27,7 @@ ZohoCrmWidget.prototype= {
       var cType = resJson.response.uri.indexOf("Contacts") == -1 ? "Lead" : "Contact"
       for(var i=0;i<resources.length;i++){
         var contact_data = {name: '', designation: null, company: '', company_url: null, phone: 'N/A', mobile: 'N/A', 
-                              department: null, address: 'N/A', type: cType, url: ''};
+                              department: null, address: null, type: cType, url: ''};
         var row = resources[i].FL;
         for(var j=0;j<row.length;j++){
           key = row[j].val;
@@ -42,9 +42,10 @@ ZohoCrmWidget.prototype= {
           if(key == 'Mobile') contact_data['mobile'] = value;
           if(key == 'Department') contact_data['department'] = value;
           if(key == 'Mailing Zip') contact_data['address'] = (contact_data['address'] ? contact_data['address']+"-" : '') + value;
-          if(['Mailing Street', 'Mailing City', 'Mailing State', 'Mailing Country'].indexOf(key) != -1 ) 
+          if(['Mailing Street', 'Street', 'Mailing City', 'City', 'Mailing State', 'State', 'Mailing Country', 'Country'].indexOf(key) != -1 ) 
             contact_data['address'] = (contact_data['address'] ? contact_data['address']+", " : '') + value;
         }
+        contact_data['address'] = contact_data['address'] || "N/A"
         contacts.push(contact_data);
       }
     }

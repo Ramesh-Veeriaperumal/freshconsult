@@ -8,17 +8,24 @@
 				"data-cnt-id" => @item.id
 
 			} do |f| %>
-	<ul class="ui-form dont-validate">
+	<ul <%= 'class="ui-form dont-validate"' if @new_show_page %>>
 		<li class="inline-field field continous">
 			<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>
 			<%= f.text_area :body_html, :class => "required", :value => @item.body_html, :id =>"#{@item.id}-body" %>
 		</li>
+		<li class="button-container  <%= 'hide' if @new_show_page %>">
+			<%= submit_tag(t("update"), :class => "uiButton special") %>
+			<%= button_to_function(t('cancel'), "jQuery('#edit-#{@item.id}').slideUp();jQuery('#note_details_#{@item.id}').show()", :class => "uiButton" ) %>
+		</li>
 	</ul>
-	<div class="f-right">
-		<%= button_to_function(t('cancel'), "jQuery('#edit-#{@item.id}').slideUp();jQuery('#note_details_#{@item.id}').show()", :class => "uiButton" ) %>
-    	<%= submit_tag(t("update"), :class => "uiButton special") %>
+	<% if @new_show_page %>
+	<!-- !V2 -->
+	<div class="btn-toolbar">
+		<%= button_to_function(t('cancel'), "jQuery('#edit-#{@item.id}').slideUp();jQuery('#note_details_#{@item.id}').show()", :class => "btn" ) %>
+    	<%= submit_tag(t("update"), :class => "btn btn-primary") %>
     </div>
     <div class="clearfix"></div>
+    <% end %>
 <% end %>
 <% javascript_tag do %>
 	invokeRedactor('<%= "#{@item.id}-body" %>');
