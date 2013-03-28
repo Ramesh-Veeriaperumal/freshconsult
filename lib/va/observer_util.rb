@@ -25,18 +25,23 @@ module Va::ObserverUtil
 									}
 
 		def user_present?
+			p "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ In Observer Util"
 			p (User.current && @model_changes)
-			User.current && @model_changes
+			p @model_changes
+			User.current && @model_changes && !zendesk_import?
 	  end
+
+	  def zendesk_import?
+      Thread.current["zenimport_#{account_id}"]
+    end
 
 	  def filter_observer_events
 	  	@evaluate_on = self.class == Helpdesk::Ticket ? self : self.send(EVALUATE_ON[self.class.name])
-	  	p "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
 	  	p Helpdesk::Ticket.find @evaluate_on.id
 	  	p @model_changes
 	    @model_changes = @model_changes.inject({}) do |filtered, (change_key, change_value)| 
 	    																			filter_event filtered, change_key, change_value  end
-			send_events unless @model_changes.blank?
+			send_events unless @model_changes.blank? 
 	  end
 
 	  def filter_event filtered, change_key, change_value
@@ -47,10 +52,10 @@ module Va::ObserverUtil
 	  end
 
 	  def send_events
-	  	p "Enqueuing"
 	  	p @model_changes
+	  	p "Enqueuing"
 	  	@model_changes.merge! ticket_event @model_changes
-	    Resque.enqueue Workers::Observer, @evaluate_on.id, User.current.id, @model_changes
+	    Resque.enqueue Workers::Observer, { :ticket_id => @evaluate_on.id, :current_events => @model_changes }
 	    #Workers::Observer.perform @evaluate_on.id, User.current.id, @model_changes
 	    # Delayed::Job.enqueue Workers::Observer.new(@evaluate_on.id, User.current.id, @model_changes)
 	  end

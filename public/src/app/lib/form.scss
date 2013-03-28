@@ -274,6 +274,7 @@ a.addchoice:hover{
 	}
 	input.radio{
 		float:left;
+		margin-left: 1px;
 	}
 }
 
@@ -346,7 +347,7 @@ a.addchoice:hover{
 		font-weight:normal;
 		margin:0;
 		line-height:18px;
-		color:#565656;
+		/*color:#565656;*/
 		font-size:13px;
 		font-weight:400;
 	}
@@ -487,7 +488,14 @@ a.addchoice:hover{
 			}	
 
 			&.addchoice{ 
-				padding-left:28px;	
+				img{	
+					left:13px;
+					opacity: 0.85;
+				}
+				p{
+					padding-left: 31px;
+				}
+				padding: 8px 0 8px 4px;
 				border-bottom: 1px solid #DDD;
 				border-radius: 0px;
 				@include border-radius(0 0 5px 5px);
@@ -512,27 +520,27 @@ a.addchoice:hover{
 			
 			.event_nested_field{
 				/* border-left: 1px dotted #aaa; */
-				margin-left: 5px;
-				margin-right: 20px;
-				div {
+				/*margin-left: 5px;*/
+				/*margin-right: 20px;*/
+				/*div {
 					border-left: 1px dotted;
 					border-bottom: 1px dotted;
 					width: 14px;
 					margin-top: -1px;
 					height: 11px;
-				}
-				select {
+				}*/
+				/*select {
 					float: none;
 					display: block;
 					margin: 5px 0 5px 20px;
-				
-					&:first-child{
+				*/
+					/*&:first-child{
 						position:relative;
 						left:-2px;
 						margin-left:0;
 						margin-top:0;	
-					}
-				}
+					}*/
+				/*}*/
 			}
 
 			label.error, label.warning{
@@ -556,9 +564,7 @@ a.addchoice:hover{
 				opacity:0.5;
 			}
 			div.controls{
-				margin-left: 25px;
-				float: none;
-				display: inline-block;
+					width:95%;
 					select, .select2-container {
 						width: 185px;
 

@@ -86,41 +86,40 @@ class Admin::AutomationsController < Admin::AdminController
     end
     
     def load_config
-      @agents = current_account.users.technicians.collect { |au| [au.id, au.name] }
-      @agents << ([0, '{{ticket.agent}}'])
-      @agents << ([-2, '{{event.performer}}'])
+      @agents = [[0, t('admin.observer_rules.assigned_agent')], [-2, t('admin.observer_rules.event_performer')]]
+      @agents.concat current_account.users.technicians.collect { |au| [au.id, au.name] }
 
-      @groups  = current_account.groups.find(:all, :order=>'name' ).collect { |g| [g.id, g.name]}
-      @groups << ([0, '{{ticket.group}}'])
+      @groups = [[0, t('admin.observer_rules.assigned_group')]]
+      @groups.concat current_account.groups.find(:all, :order=>'name' ).collect { |g| [g.id, g.name]}
 
       @products = current_account.products.collect {|p| [p.id, p.name]}
       
       action_hash     = [
-        { :name => -1, :value => "--- #{t('click_select_action')} ---" },
+        { :name => -1, :value => t('click_to_select_action') },
         { :name => "priority", :value => t('set_priority_as'), :domtype => "dropdown", 
           :choices => Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort },
         { :name => "ticket_type", :value => t('set_type_as'), :domtype => "dropdown", 
           :choices => current_account.ticket_type_values.collect { |c| [ c.value, c.value ] } },
         { :name => "status", :value => t('set_status_as'), :domtype => "dropdown", 
           :choices => Helpdesk::TicketStatus.status_names(current_account)},
-        { :name => -1, :value => "------------------------------" },
+        { :name => -1, :value => "-----------------------" },
         { :name => "add_tag", :value => t('add_tags'), :domtype => 'text' },
-        { :name => -1, :value => "------------------------------" },
+        { :name => -1, :value => "-----------------------" },
         { :name => "responder_id", :value => t('ticket.assign_to_agent'), 
           :domtype => 'dropdown', :choices => @agents },
         { :name => "group_id", :value => t('email_configs.info9'), :domtype => 'dropdown', 
           :choices => @groups },
-        { :name => -1, :value => "------------------------------" },
+        { :name => -1, :value => "-----------------------" },
         { :name => "send_email_to_group", :value => t('send_email_to_group'), 
           :domtype => 'email_select', :choices => @groups },
         { :name => "send_email_to_agent", :value => t('send_email_to_agent'), 
           :domtype => 'email_select', :choices => @agents },
         { :name => "send_email_to_requester", :value => t('send_email_to_requester'), 
           :domtype => 'email' },
-        { :name => -1, :value => "------------------------------" },
+        { :name => -1, :value => "-----------------------" },
         { :name => "delete_ticket", :value => t('delete_the_ticket')},
         { :name => "mark_as_spam", :value => t('mark_as_spam')},
-        { :name => -1, :value => "------------------------------" } ]
+        { :name => -1, :value => "-----------------------" } ]
                         
       additional_actions.each { |index, value| action_hash.insert(index, value) }
       add_custom_actions action_hash

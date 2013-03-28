@@ -811,14 +811,23 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return evaluate_on
   end
 
+# To keep flexifield & @custom_field in sync
+
   def custom_field
     @custom_field ||= retrieve_ff_values
   end
-  
+
+  def custom_field= custom_field_hash
+    @custom_field = custom_field_hash
+    assign_ff_values custom_field_hash unless new_record?
+  end
+
   def set_ff_value field, arg
     custom_field[field] = arg
     flexifield.set_ff_value field, arg
   end
+
+# flexifield - custom_field syncing code ends here
 
   #To use liquid template...
   #Might be darn expensive db queries, need to revisit - shan.

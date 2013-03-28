@@ -2,7 +2,8 @@
   <%= render :partial => "helpnote_without_tour"%>
 <% end %>
 
-<h3 class="title"><%=t('.title')%></h3> 
+<%= include_stylesheets :pattern %>
+<h3 class="lead"><%=t('.title')%></h3> 
 <% form_for :va_rule, @va_rule, :url => admin_observer_rule_path, :html => { :method => :put , :id => "ObserverForm" } do |f| %>
 	<%= render :partial => "rule_form", :locals => { :f => f } %>
 <% end %>

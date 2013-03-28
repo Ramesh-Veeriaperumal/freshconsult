@@ -102,7 +102,7 @@ class Helpdesk::NotesController < ApplicationController
         elsif facebook?  
           send_facebook_reply  
         end
-        @parent.responder ||= @item.user unless @item.user.customer? 
+        # @parent.responder ||= @item.user unless @item.user.customer?    #Added as a default observer rule
         unless params[:ticket_status].blank?
           Thread.current[:notifications][EmailNotification::TICKET_RESOLVED][:requester_notification] = false
           @parent.status = Helpdesk::TicketStatus.status_keys_by_name(current_account)[I18n.t(params[:ticket_status])]

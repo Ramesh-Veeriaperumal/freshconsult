@@ -261,15 +261,10 @@ class Helpdesk::Note < ActiveRecord::Base
       return unless human_note_for_ticket?
       
       if user.customer?
-        # Will re-open the ticket if it is not in open status and not feedback
-        # Will re-open when the system gets a reply from third party and the ticket is not in resolved/closed statuses.
-        unless notable.open? || feedback? || (replied_by_third_party? and !notable.active?)
-          notable.status = Helpdesk::Ticketfields::TicketStatus::OPEN unless notable.import_id
-          notification_type = EmailNotification::TICKET_REOPENED
-        end
-        e_notification = account.email_notifications.find_by_notification_type(notification_type ||= EmailNotification::REPLIED_BY_REQUESTER)
-        Helpdesk::TicketNotifier.send_later(:notify_by_email, (notification_type ||= 
-              EmailNotification::REPLIED_BY_REQUESTER), notable, self) if notable.responder && e_notification.agent_notification?
+        # Ticket re-opening, moved as an observer's default rule
+        e_notification = account.email_notifications.find_by_notification_type(EmailNotification::REPLIED_BY_REQUESTER)
+        Helpdesk::TicketNotifier.send_later(:notify_by_email, (EmailNotification::REPLIED_BY_REQUESTER),
+                                              notable, self) if notable.responder && e_notification.agent_notification?
       else    
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)     
         Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT,      
@@ -338,10 +333,6 @@ class Helpdesk::Note < ActiveRecord::Base
   private
     def human_note_for_ticket?
       (self.notable.is_a? Helpdesk::Ticket) && user && (source != SOURCE_KEYS_BY_TOKEN['meta'])
-    end
-
-    def zendesk_import?
-      Thread.current["zenimport_#{account_id}"]
     end
 
     # Replied by third pary to the forwarded email
@@ -418,7 +409,7 @@ class Helpdesk::Note < ActiveRecord::Base
     
     # VA - Observer Rule 
     def update_observer_events
-      if note?
+      if !feedback? && note?
         @model_changes = {:note_type => NOTE_TYPE[private]}
       else
         @model_changes = {:reply_sent => :sent}

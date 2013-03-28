@@ -4,12 +4,12 @@
   <% javascript_tag do %>
     // Condition Parsing 
     // This template contains the dom population information 
-    var conditional_dom = function(filter, id, compName, initFeed, val, classname){
+    var conditional_dom = function(filter, id, compName, initFeed, val, classname, _dataAttr){
       var value = val || "value";
       var type      = filter.domtype;
       var initFeed  = initFeed || {};
       var compName  = compName || "filter";
-      className = "dummy";
+      _data_attr = _dataAttr || {};
       _class_name = classname || ''
       // Conditional Dom created based on the options available 
       c_dom = "";
@@ -17,7 +17,7 @@
         case 'text':
         case 'number':
         case 'autocompelete':
-          c_dom = FactoryUI.text("", value, initFeed[value], type);
+          c_dom = FactoryUI.text("", value, initFeed[value], type+' row-fluid ');
           jQuery(c_dom).prop("id", id);     
           break;
         case 'dropdown':
@@ -29,7 +29,7 @@
               value: arrayItem[1]
             });
           });
-          c_dom = FactoryUI.dropdown(choices, value, _class_name);
+          c_dom = FactoryUI.dropdown(choices, value, _class_name, _data_attr);
           jQuery(c_dom).val(initFeed[value]);
         break;
         case 'paragraph':
@@ -81,7 +81,7 @@
               name: 0,
               value: compName == 'action' ? "<%= t(".not_selected") %>" : "<%= t(".unchecked") %>"
             }];
-            c_dom = FactoryUI.dropdown(choices, value);
+            c_dom = FactoryUI.dropdown(choices, value, _class_name);
             jQuery(c_dom).val(initFeed[value]);
           } 
         break;
@@ -104,12 +104,12 @@
                     type: compName, 
                     initData: initFeed };
           if (compName == 'event')
-            { className = 'event_nested_field'; }
+            { _class_name = 'event_nested_field'; }
           else
-            { className = 'nested_field'; }
+            { _class_name = 'nested_field'; }
 
           if(!filter.tree) filter.tree = new NestedField(filter.choices);
-          c_dom = jQuery("<div />").addClass(className).nestedselect(filter.tree, _opts, value);
+          c_dom = jQuery("<div />").addClass(_class_name).nestedselect(filter.tree, _opts, value);
 
         break;
         

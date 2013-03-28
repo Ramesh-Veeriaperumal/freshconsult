@@ -4,7 +4,7 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
     
     NESTED_FIELDS = ['nested_rules', 'from_nested_rules', 'to_nested_rules']
     OBSERVER_FILTERS = [
-      { :name => -1, :value => "------------------------------" },
+      { :name => -1, :value => "-----------------------" },
       { :name => "inbound_count", :value => I18n.t('ticket.inbound_count'), :domtype => "number",
       :operatortype => "hours" },
       { :name => "outbound_count", :value => I18n.t('ticket.outbound_count'), :domtype => "number",
@@ -32,15 +32,15 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
     def load_config
       super
 
-      @agents[0..0] = ['--', t('any_val.any') ], ['-1', '{{ticket.agent}}' ]
+      @agents[0..0] = ['--', t('any_val.any') ], ['-1', t('admin.observer_rules.assigned_agent') ]
       @note_types = [ ['--', t('ticket.any_note')], [:public, t('ticket.public_note')],
                        [:private, t('ticket.private_note')] ]
       @ticket_actions = [ [:updated, t('ticket.updated')], [:deleted, t('ticket.deleted')],
                            [:marked_as_spam, t('ticket.marked_spam')] ]
       @time_sheet_actions = [ [:added, t('ticket.new_time_entry')], [:updated, t('ticket.updated_time_entry')] ]
 
-      event_hash   = [
-        { :name => -1, :value => "--- #{t('click_to_select_event')} ---" },
+      event_hash = [
+        { :name => -1, :value => t('click_to_select_event') },
         { :name => 'priority', :value => t('ticket.priority'), :domtype => 'dropdown', 
           :choices => [ ['--', t('any_val.any_priority')] ]+Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort, :type => 2, 
           :postlabel => t('event.updated') },
@@ -55,7 +55,7 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
         { :name => 'responder_id', :value => t('ticket.assigned_agent'),
           :type => 0, :postlabel => t('event.updated')},
         { :name => 'note_type', :value => t('ticket.note'), :domtype => 'dropdown',
-          :choices => @note_types, :type => 1, :postlabel => t('event.added') },
+          :choices => @note_types, :type => 1, :postlabel => t('event.added'), :valuelabel => t('event.type') },
         { :name => 'reply_sent', :value => t('ticket.reply'), :domtype => 'label', :type => 0,
           :postlabel => t('event.sent') },
         { :name => 'due_by', :value => t('ticket.due_date'), :domtype => 'label', :type => 0,
@@ -64,10 +64,10 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
           :choices => @ticket_actions, :type => 1 },
         { :name => 'int_tc01', :value => t('ticket.feedback'), :domtype => 'dropdown',
           :choices =>[ ['--', t('any_val.any_feedback')] ]+Survey.survey_names(current_account), :type => 1,
-          :postlabel => t('event.received') },
+          :postlabel => t('event.received'), :valuelabel => t('event.rating') },
         { :name => 'time_sheet_action', :value => t('ticket.time_entry'), :domtype => 'dropdown',
           :choices => @time_sheet_actions, :type => 1 },
-        ]
+      ]
 
       add_custom_events event_hash
       @event_defs = ActiveSupport::JSON.encode event_hash
@@ -91,7 +91,7 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
       cf = current_account.ticket_fields.event_fields
       unless cf.blank? 
         event_hash.push({ :name => -1,
-                          :value => "------------------------------" 
+                          :value => "-----------------------" 
                           })
         cf.each do |field|
           event_hash.push({

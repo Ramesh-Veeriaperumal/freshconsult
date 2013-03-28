@@ -64,12 +64,12 @@ class Admin::VaRulesController < Admin::AutomationsController
               end
 
       filter_hash   = [
-        { :name => -1, :value => "--- #{t('click_to_select_filter')} ---" },
+        { :name => -1, :value => t('click_to_select_filter') },
         { :name => "from_email", :value => t('from_email'), :domtype => "autocompelete", 
           :data_url => autocomplete_helpdesk_authorizations_path, :operatortype => "email" },
         { :name => "to_email", :value => t('to_email'), :domtype => "text",
           :operatortype => "email" },
-        { :name => -1, :value => "------------------------------" },
+        { :name => -1, :value => "-----------------------" },
         { :name => "subject", :value => t('ticket.subject'), :domtype => "text",
           :operatortype => "text" },
         { :name => "description", :value => t('description'), :domtype => "text",
@@ -89,7 +89,7 @@ class Admin::VaRulesController < Admin::AutomationsController
           :operatortype => "object_id", :choices => @agents },
         { :name => "group_id", :value => I18n.t('ticket.group'), :domtype => "dropdown",
           :operatortype => "object_id", :choices => @groups },
-        { :name => -1, :value => "------------------------------" },
+        { :name => -1, :value => "-----------------------" },
         { :name => "contact_name", :value => t('contact_name'), :domtype => "text", 
           :operatortype => "text" },
         { :name => "company_name", :value => t('company_name'), :domtype => "text", 
@@ -125,7 +125,7 @@ class Admin::VaRulesController < Admin::AutomationsController
       cf = current_account.ticket_fields.custom_fields
       unless cf.blank? 
         filter_hash.push({ :name => -1,
-                          :value => "------------------------------" 
+                          :value => "---------------------" 
                           })
         cf.each do |field|
           filter_hash.push({

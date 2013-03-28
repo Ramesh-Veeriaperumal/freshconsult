@@ -321,7 +321,7 @@ en:
   any_val:
     any: Any
     any_value: Any Value
-    any_feedback: Any Feedback
+    any_feedback: Any
     any_priority: Any Priority
     any_status: Any Status
     any_ticket_type: Any Type
@@ -629,9 +629,9 @@ en:
         help_info_3: Observer help_info_3
         help_info_4: Observer rule orders are not important.
       new:
-        title: Observer
+        title: Observer - New Rule
       edit:
-        title: Observer
+        title: Observer - Edit Rule
       add_new_event: Add another event
       events: Events
       conditions: Conditions
@@ -639,26 +639,29 @@ en:
       performed_by: Performed by
       agent: Agent
       customer: Requester
-      present: Any (Agent or Requester)
+      present: Anyone
+      assigned_agent: Assigned Agent
+      assigned_group: Assigned Group
+      event_performer: Event Performer
       filter_jsinit:
         insert_placeholder: Insert Placeholder
         body: Body
         to: To
         selected: Selected
         not_selected: Not selected
-        checked: Checked
-        unchecked: Unchecked
+        checked: is checked
+        unchecked: is unchecked
         deselected: Deselected
     shared:
       filter_jsinit:
         insert_placeholder: Insert Placeholder
         body: Body
         to: To
-        selected: Selected
+        selected: is selected
         not_selected: Not selected
-        checked: Checked
-        unchecked: Unchecked
-        deselected: Deselected
+        checked: is checked
+        unchecked: is unchecked
+        deselected: is deselected
     automations:
       edit:
         title: Edit Scenario
@@ -1063,8 +1066,8 @@ en:
   open: Open
   zendesk_url: Zendesk URL
   special_beta_offer: Special offer for Beta accounts
-  click_to_select_filter: Click to Select Filter
-  click_to_select_event: Click to Select Event
+  click_to_select_filter: Select Condition
+  click_to_select_event: Select Event
   select_another_plan: Select another plan
   threeday: 3 Days
   resolved: Resolved
@@ -1916,7 +1919,7 @@ en:
   wrong_portal: 
     content_not_available: The content you are looking for is, not available in this portal.
     title: Not available!
-  click_select_action: Click to Select Action
+  click_to_select_action: Select Action
   import_articles: Solution Articles
   back: Back
   save_changes: Save Changes
@@ -2105,6 +2108,8 @@ en:
     from: From
     to: To
     by: By
+    type: Type
+    rating: Rating
   ticket:
     reported_on: "from %{username}, Last updated: on %{date}"
     ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago</span>"
@@ -2135,21 +2140,21 @@ en:
     portal_created_on: "Created by <span class='emphasize'>%{username}</span> on <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Created on <span class='emphasize'>%{date}</span>"
     due_date: Due date
-    updated: Updated
-    deleted: Deleted
-    marked_spam: Marked as Spam
+    updated: is updated
+    deleted: is deleted
+    marked_spam: is marked as spam
     time_entry: Time Entry
-    new_time_entry: Added
-    updated_time_entry: Updated
+    new_time_entry: is added
+    updated_time_entry: is updated
     feedback: Customer feedback
     ticket: Ticket
     group: Group
     agent: Agent
     reply: Reply
     note: Note 
-    any_note: Any Note
-    private_note: Private Note
-    public_note: Public Note
+    any_note: Any
+    private_note: Private
+    public_note: Public
     none: None
     myself: Myself
     spam_btn_title: Mark as spam
@@ -2202,8 +2207,8 @@ en:
     agent_responded_at: Hours since agent responded
     first_response_due: Hours since first response due
     due_by: Hours since ticket overdue
-    inbound_count: Number of requester interactions
-    outbound_count: Number of agent interactions
+    inbound_count: Requester interactions
+    outbound_count: Agent interactions
     recent_tickets: Recent tickets
     unflag_spam: Not Spam
     pick_up: Pick Up
@@ -2333,7 +2338,7 @@ en:
   this_ticket_has_been_deleted: This ticket has been deleted
   state: State
   deactivate: Deactivate
-  add_tags: Add Tag(s)
+  add_tags: Add Tag
   change_to_free_info: Downgrading your plan will result in loss of functionality and data. Are you sure you want to downgrade?
   import_step1_info: Select a CSV file and click import
   tkt_assigned_to_group: Ticket assigned to Group

@@ -2,7 +2,8 @@
 	<%= render :partial => "helpnote_without_tour" %>
 <% end %>
 
-<h3 class="title"><%=t('dispatch.new')%></h3> 
+<%= include_stylesheets :pattern %>
+<h3 class="lead"><%=t('dispatch.new')%></h3> 
 <% form_for :va_rule, @va_rule, :url => admin_va_rules_path, :html => { :method => :post , :id => "VirtualAgent" } do |f| %>
 	<%= render :partial => "/admin/shared/rule_form", :locals => { :f => f } %>
 <% end %>

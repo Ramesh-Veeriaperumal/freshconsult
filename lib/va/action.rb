@@ -1,4 +1,8 @@
 class Va::Action
+  
+  EVENT_PERFORMER = -2
+  ASSIGNED_AGENT = ASSIGNED_GROUP = 0
+
   attr_accessor :action_key, :act_hash, :doer
   
   def initialize(act_hash)
@@ -83,7 +87,7 @@ class Va::Action
     def responder_id(act_on)
       r_id = value.to_i
       begin
-        responder = (r_id == -2) ? (doer.agent? ? doer : nil) : act_on.account.users.find(value.to_i)
+        responder = (r_id == EVENT_PERFORMER) ? (doer.agent? ? doer : nil) : act_on.account.users.find(value.to_i)
       rescue ActiveRecord::RecordNotFound
       end
 
@@ -184,14 +188,24 @@ class Va::Action
     def get_group(act_on) # this (g == 0) is kind of hack, same goes for agents also.
       begin
         g_id = act_hash[:email_to].to_i
-        (g_id == 0) ? (act_on.group_id ? act_on.group : nil) : act_on.account.groups.find(g_id)
+        (g_id == ASSIGNED_GROUP) ? act_on.group : act_on.account.groups.find(g_id)
       rescue ActiveRecord::RecordNotFound
       end
     end
 
     def get_agent(act_on)
-      a_id = act_hash[:email_to].to_i
-      (a_id == 0) ? (act_on.responder_id ? act_on.responder : nil) : act_on.account.users.find(a_id)
+      begin
+        a_id = act_hash[:email_to].to_i
+        case a_id
+        when ASSIGNED_AGENT
+          act_on.responder
+        when EVENT_PERFORMER
+          doer.agent? ? doer : nil
+        else 
+          act_on.account.users.find(a_id)
+        end
+      rescue ActiveRecord::RecordNotFound
+      end
     end
 
     def send_internal_email(act_on, receipients)

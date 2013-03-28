@@ -17,10 +17,10 @@
          var opts = $.extend( {}, $.fn.nestedselect.defaults, options ),
              _fields = opts.nested_fields,
              _init = opts.initData,
-             category = $("<select name='"+value+"' />"),
+             category = $("<select name='"+value+"' class='select2' />"),
              category_name = $("<input type='hidden' value='"+opts.category_name+"' name='name' />"),
-             subcategory = $("<select />"),
-             items = $("<select />"),
+             subcategory = $("<select class='select2'/>"),
+             items = $("<select class='select2'/>"),
 
              rule_type = $("<input type='hidden' name='rule_type' value='nested_rule' />"),
              nested_rules = $("<input type='hidden' name='"+nested_rules_name+"' value='' />");

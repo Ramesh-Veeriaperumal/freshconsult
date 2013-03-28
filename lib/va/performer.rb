@@ -2,7 +2,11 @@ class Va::Performer
 
 	attr_accessor :type, :members
 
-	TYPE_CHECK = { '3' => 'present?', '2' => 'customer?', '1' => 'agent?' }
+	AGENT = '1'
+	CUSTOMER = '2'
+	ANYONE = '3'
+	ASSIGNED_AGENT = -1
+	TYPE_CHECK = { ANYONE => 'present?', CUSTOMER => 'customer?', AGENT => 'agent?' }
 
 	def initialize args
 		@type, @members = args[:type], args[:members]
@@ -20,7 +24,7 @@ class Va::Performer
 	  end
 
 	  def check_members doer, ticket
-	  	return true if ((members.include? -1) && doer == ticket.responder)
+	  	return true if ((members.include? ASSIGNED_AGENT) && doer == ticket.responder)
 	    members.include? doer.id
 	  end
 
