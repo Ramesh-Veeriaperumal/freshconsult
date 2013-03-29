@@ -79,6 +79,7 @@ gem "rinku", :git => "git://github.com/freshdesk/rinku.git"
 
 gem "people", '0.2.1' #https://github.com/mericson/people/tree/master/lib
 gem "active_record_shards","2.7.0", :require => 'active_record_shards'
+gem "xss_terminate", "~> 0.2"
 
 group :development,:test do
    #gem "rspec", "1.3.1"

@@ -7,8 +7,8 @@
 	{% endif %}
 	<div class="breadcrumb">
 		<a href="{{ portal.discussions_home_url }}">{% translate portal_pages.groups.discussions %}</a>
-		<a href="{{ forum_category.url }}">{{ forum_category.name }}</a>
-		<a href="{{ forum.url }}">{{ forum.name }}</a>
+		<a href="{{ forum_category.url }}">{{ forum_category.name | h }}</a>
+		<a href="{{ forum.url }}">{{ forum.name | h}}</a>
 	</div>
 	
 	<section class="topic-header clearfix">
@@ -17,7 +17,7 @@
 			<i class="icon-page-{{ forum.type_name }}"></i>
 		</b>
 		<h2 class="post-title heading">
-			{{ topic.title }}
+			{{ topic.title | h}}
 		</h2>
 		{% if portal.user %}
 			<div class="toolbar-actions btn-group" id="topic-toolbar">
