@@ -18,7 +18,6 @@ class TopicsController < ApplicationController
   
   before_filter :set_selected_tab
   
-  uses_tiny_mce :options => Helpdesk::FRESH_EDITOR
 
   # @WBH@ TODO: This uses the caches_formatted_page method.  In the main Beast project, this is implemented via a Config/Initializer file.  Not
   # sure what analogous place to put it in this plugin.  It don't work in the init.rb  

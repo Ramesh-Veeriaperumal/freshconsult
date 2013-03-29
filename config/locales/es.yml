@@ -1453,6 +1453,9 @@ es:
     search: Buscar
     signout: "Cerrar sesión"
     submit_a_ticket: "Enviar un ticket"
+    help_center: "¿Cómo podemos ayudarte?"
+    new_support_ticket: "Nueva consulta de apoyo"
+    check_ticket_status: "Revisar el estado de la consulta"
     tabs: 
       admin: Admin
       checkstatus: "Verificar el estado de su ticket"
