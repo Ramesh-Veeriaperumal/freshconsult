@@ -48,7 +48,7 @@
   map.gauth_done '/authdone/google', :controller => 'user_sessions', :action => 'google_auth_completed'
   map.login '/login', :controller => 'user_sessions', :action => 'new'  
   map.sso_login '/login/sso', :controller => 'user_sessions', :action => 'sso_login'
-  map.login_normal '/login/normal', :controller => 'support/login', :action => 'new'
+  map.login_normal '/login/normal', :controller => 'user_sessions', :action => 'new'
   map.signup_complete '/signup_complete/:token', :controller => 'user_sessions', :action => 'signup_complete'
 
   map.openid_done '/google/complete', :controller => 'accounts', :action => 'openid_complete'
@@ -321,7 +321,6 @@
     helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get, 
                   :requester_autocomplete => :get, :company_autocomplete => :get }
     
-    helpdesk.resources :mailer, :collection => { :fetch => :get }
     
     helpdesk.resources :sla_details
     

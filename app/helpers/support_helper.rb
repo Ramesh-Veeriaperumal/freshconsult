@@ -166,19 +166,19 @@ module SupportHelper
 	end
 
 	def link_to_folder_with_count folder, *args
-		label = " #{folder['name']} <span class='item-count'>#{folder['articles_count']}</span>"
-		content_tag :a, label, { :href => folder['url'], :title => folder['name'] }.merge(options)
+		label = " #{h(folder['name'])} <span class='item-count'>#{folder['articles_count']}</span>"
+		content_tag :a, label, { :href => folder['url'], :title => h(folder['name']) }.merge(options)
 	end
 
 	def link_to_forum_with_count forum, *args
-		label = " #{forum['name']} <span class='item-count'>#{forum['topics_count']}</span>"
-		content_tag :a, label, { :href => forum['url'], :title => forum['name'] }.merge(options)
+		label = " #{h(forum['name'])} <span class='item-count'>#{forum['topics_count']}</span>"
+		content_tag :a, label, { :href => forum['url'], :title => h(forum['name']) }.merge(options)
 	end
 
 	def link_to_start_topic portal, *args
 		options = link_args_to_options(args)
     	label = options.delete(:label) || I18n.t('portal.topic.start_new_topic')
-    	content_tag :a, label, { :href => portal['new_topic_url'], :title => label }.merge(options)
+    	content_tag :a, label, { :href => portal['new_topic_url'], :title => h(label) }.merge(options)
 	end
 
 	def article_list folder, limit = 5, reject_article = nil
@@ -200,7 +200,7 @@ module SupportHelper
 		output = <<HTML
 			<li>
 				<div class="ellipsis">
-					<a href="#{article['url']}">#{article['title']}</a>
+					<a href="#{article['url']}">#{h(article['title'])}</a>
 				</div>
 			</li>
 HTML
@@ -226,7 +226,7 @@ HTML
 		output = <<HTML
 			<li>
 				<div class="ellipsis">
-					<a href="#{topic['url']}">#{topic['title']}</a>
+					<a href="#{topic['url']}">#{h(topic['title'])}</a>
 				</div>
 				<div class="help-text">
 					#{ topic_info topic }
@@ -254,7 +254,7 @@ HTML
 	def last_post_brief topic, link_label = "Last reply"
 		if topic.last_post.present?
 			post = topic.last_post.to_liquid
-			%(<a href="#{topic.last_post_url}"> #{link_label} </a> by
+			%(<a href="#{topic.last_post_url}"> #{h(link_label)} </a> by
 				#{post.user.name} #{time_ago post.created_on})
 		end
 	end

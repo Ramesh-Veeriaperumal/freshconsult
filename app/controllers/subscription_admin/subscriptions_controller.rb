@@ -6,6 +6,8 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   
   include ModelControllerMethods
   include AdminControllerMethods 
+
+  skip_filter :run_on_slave, :only => [:update]
   
   before_filter :set_selected_tab, :only => [ :customers ]
   
@@ -130,6 +132,8 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   end
   
   protected
+
+
   
    def search(search)
     if search
@@ -153,5 +157,5 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   def set_selected_tab
      @selected_tab = :customers
   end
-  
+
 end

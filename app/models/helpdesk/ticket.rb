@@ -62,6 +62,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   belongs_to :email_config
   belongs_to :group
+  xss_terminate :except => [:subject], :html5lib_sanitize => [:description_html,:description]
  
   belongs_to :responder,
     :class_name => 'User',
@@ -529,7 +530,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       set_dueby_on_priority_change(sla_detail)
 
       set_user_time_zone if User.current
-      logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
+      RAILS_DEFAULT_LOGGER.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
       
     elsif priority_changed? || changed_condition? || status_changed?
 
@@ -539,7 +540,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       set_dueby_on_priority_change(sla_detail) if (priority_changed? || changed_condition?)
       set_dueby_on_status_change(sla_detail) if status_changed?
       set_user_time_zone if User.current
-      logger.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
+      RAILS_DEFAULT_LOGGER.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
       
     end
 
@@ -841,23 +842,22 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Liquid ends here
   
   def respond_to?(attribute)
-    return false if [:to_ary].include?(attribute.to_sym)    
+    return false if [:to_ary,:after_initialize_without_slave].include?(attribute.to_sym)    
     # Array.flatten calls respond_to?(:to_ary) for each object.
     #  Rails calls array's flatten method on query result's array object. This was added to fix that.
-
     super(attribute) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?")) || 
       ticket_states.respond_to?(attribute) || custom_field_aliases.include?(attribute.to_s.chomp("=").chomp("?"))
   end
 
   def schema_less_attributes(attribute, args)
-    logger.debug "schema_less_attributes - method_missing :: args is #{args} and attribute :: #{attribute}"
+    RAILS_DEFAULT_LOGGER.debug "schema_less_attributes - method_missing :: args is #{args} and attribute :: #{attribute}"
     build_schema_less_ticket unless schema_less_ticket
     args = args.first if args && args.is_a?(Array) 
     (attribute.to_s.include? '=') ? schema_less_ticket.send(attribute, args) : schema_less_ticket.send(attribute)
   end
 
   def custom_field_attribute attribute, args    
-    logger.debug "method_missing :: custom_field_attribute  args is #{args.inspect}  and attribute: #{attribute}"
+    RAILS_DEFAULT_LOGGER.debug "method_missing :: custom_field_attribute  args is #{args.inspect}  and attribute: #{attribute}"
     
     load_flexifield if custom_field.nil?
     attribute = attribute.to_s
@@ -874,7 +874,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     begin
       super
     rescue NoMethodError => e
-      logger.debug "method_missing :: args is #{args.inspect} and method:: #{method} "
+      RAILS_DEFAULT_LOGGER.debug "method_missing :: args is #{args.inspect} and method:: #{method} "
 
       return schema_less_attributes(method, args) if SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("=").chomp("?"))
       return ticket_states.send(method) if ticket_states.respond_to?(method)
