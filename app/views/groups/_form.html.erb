@@ -83,6 +83,18 @@
 		    <%= f.label :description, t('description') %>
 		    <%= f.text_area :description, :class => "smallpara" %>
 		  </li>
+		  	<% if feature?(:round_robin) %>
+			  <li>
+			  	<%= f.label :ticket_assign_type, t('group.ticket_assignment') %>
+			  	<%= f.select :ticket_assign_type, options_for_select(Group.ticket_assign_options, @group.ticket_assign_type.to_s) %>
+
+			  </li>
+			  <li>
+			  	<%= f.label :max_open_tickets, t('group.max_tickets') %>
+			  	
+			  	<%= f.select :max_open_tickets, options_for_select(Group::MAX_OPEN_TICKETS, @group.max_open_tickets) %>
+			  </li>
+			<% end %>
 		  <li>		  	
 		  	<label><%=t('group.info1')%></label>
 			<% 

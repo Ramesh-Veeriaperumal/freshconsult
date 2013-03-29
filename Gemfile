@@ -84,12 +84,12 @@ gem "rack-throttle", "~> 0.3.0"
 
 
 group :development,:test do
-   #gem "rspec", "1.3.1"
-   #gem "thoughtbot-shoulda","2.10.2"
-   #gem "rspec-rails", "1.3.3"
+   gem "rspec", "1.3.1"
+   gem "rspec-rails", "1.3.3"
    gem "forgery","0.5.0"
    gem "factory_girl", "1.2.3" 
    gem "mongrel" 
+   gem "spork", "~> 0.8.0"
 end
 
 group :assets do

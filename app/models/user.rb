@@ -94,13 +94,15 @@ class User < ActiveRecord::Base
   end
   
   validates_presence_of :email, :unless => :customer?
-  
+
+  delegate :overloaded?, :available?, :to => :agent, :if => :agent?
+
   def check_email_value
     if email.blank?
       self.email = nil
     end
   end
-  
+
   def chk_email_validation?
     (is_not_deleted?) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?) and
                           (external_id.blank? || !email.blank?) and (phone.blank? || !email.blank?) and

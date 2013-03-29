@@ -140,6 +140,7 @@ ActiveRecord::Schema.define(:version => 20130326092144) do
     t.integer  "points",              :limit => 8
     t.integer  "scoreboard_level_id", :limit => 8
     t.integer  "account_id",          :limit => 8
+    t.boolean  "available",                        :default => true
   end
 
   add_index "agents", ["account_id", "user_id"], :name => "index_agents_on_account_id_and_user_id"
@@ -534,6 +535,8 @@ ActiveRecord::Schema.define(:version => 20130326092144) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "import_id",       :limit => 8
+    t.integer  "ticket_assign_type",              :default => 0
+    t.integer  "max_open_tickets",                :default => 5
   end
 
   add_index "groups", ["account_id", "name"], :name => "index_groups_on_account_id", :unique => true

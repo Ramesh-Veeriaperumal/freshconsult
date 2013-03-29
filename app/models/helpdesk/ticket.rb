@@ -205,6 +205,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
  
   named_scope :visible, :conditions => ["spam=? AND helpdesk_tickets.deleted=? AND status > 0", false, false] 
   named_scope :unresolved, :conditions => ["status not in (#{RESOLVED}, #{CLOSED})"]
+  named_scope :unresolved_for_agent, lambda { |agent|  { :conditions => ["status not in (#{RESOLVED}, #{CLOSED}) AND responder_id=?", agent.user_id ] } }
   named_scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
   named_scope :requester_active, lambda { |user| { :conditions => 
     [ "requester_id=? ",
@@ -755,6 +756,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
    begin
     evaluate_on = check_rules     
     update_custom_field evaluate_on unless evaluate_on.nil?
+    assign_tickets_to_agents
     autoreply
    rescue Exception => e #better to write some rescue code 
     NewRelic::Agent.notice_error(e)
@@ -1053,6 +1055,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
+  def assign_tickets_to_agents
+      #Ticket already has an agent assigned to it or doesn't have a group
+      return if group.nil? || self.responder_id
+      schedule_round_robin_for_agents if group.round_robin_eligible?
+  end 
+
 
   private
 
@@ -1160,7 +1168,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
       elsif resolved_now?
         add_support_score
       end
-    end    
+    end
+
+  
+    def schedule_round_robin_for_agents
+      next_agent = group.next_available_agent
+
+      return if next_agent.nil? #There is no agent available to assign ticket.
+      self.responder_id = next_agent.user_id
+      self.save
+    end
 
     def add_support_score
       Resque.enqueue(Gamification::Scoreboard::ProcessTicketScore, { :id => id, 

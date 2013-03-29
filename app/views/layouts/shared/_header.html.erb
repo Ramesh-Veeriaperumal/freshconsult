@@ -31,7 +31,13 @@
 				<span><%= truncate(h(current_user.name), :length => 30) %></span>
 			</div>
 			<span class="seperator"></span>
-			<%= link_to t('profile_settings'), edit_profile_path(current_user), :class => "link" %>
+			<div class="info link" >
+				<% if feature?(:round_robin) %>
+					<label class="item-in-menu"><input type="checkbox" 
+					<%= current_user.available? ? "checked" : "" %> 
+					class="item-in-menu" id="available" name="available" value="1" onclick="processAgent('<%= current_user.id %>')" /> <%= t('agent.available') %></label>
+				<% end %>
+			</div>
 			<% if is_assumed_user? %>    
 				<span class="seperator"></span>
 				<%= link_to t('revert_identity_link_msg'), revert_identity_users_path, :class => "link" %>

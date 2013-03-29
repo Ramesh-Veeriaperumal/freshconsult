@@ -10,8 +10,7 @@ class Agent < ActiveRecord::Base
   
   validates_presence_of :user_id
   
-  attr_accessible :signature_html, :user_id , :ticket_permission, :occasional
-  
+  attr_accessible :signature_html, :user_id , :ticket_permission, :occasional, :available
   
   has_many :agent_groups, :class_name => 'AgentGroup', :through => :user , 
           :foreign_key =>'user_id', :primary_key => "user_id", :source => :agent, 
@@ -82,6 +81,12 @@ end
 def signature_htm
   puts "#{self.signature_html}"
   self.signature_html
+end
+
+#This method says if an agent is occupied with max number of 
+#tickets that he is allowed to have(OPEN). #Group level.
+def overloaded?(group)
+  return group.tickets.unresolved_for_agent(self).size >= group.max_open_tickets
 end
 
 def self.filter(page, state = "active", per_page = 20)
