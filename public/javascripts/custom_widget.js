@@ -214,7 +214,7 @@ Freshdesk.Widget.prototype={
 		
 		cw = this;
 		// Retry with new access_token; if we have one
-		if(typeof reqHeader != 'undefined'){
+		if(typeof reqHeader != 'undefined' && reqHeader.Authorization){			
 			reqHeader = reqHeader.Authorization.split(' ');
 			if(reqHeader[1] != this.options.oauth_token && !this.awaiting_access_token)
 			{
