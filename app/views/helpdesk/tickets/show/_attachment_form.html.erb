@@ -1,13 +1,44 @@
 <% 
 	attach_id ||= "ticket" 
 	nsc_param = nsc_param || "helpdesk_ticket"
+  original_attachments ||= {:regular => [], :dropbox => []}
 %>
 <div class="attachments-wrap">
   <div id="<%=attach_id%>-container" class="attachments-container">
-    <label><i>0</i> Attachment(s): </label>
+    <% total_attachments = original_attachments[:regular].size + original_attachments[:dropbox].size if original_attachments.present? %>
+    <label><i><%= total_attachments || 0 %></i> Attachment(s): </label>
     <div class="attachment_contents">
 
-      <div class="attachment_list" id="<%=attach_id%>-attachments"></div>
+      <div class="attachment_list" id="<%=attach_id%>-attachments">
+        <% if original_attachments.present? %>
+
+          <% original_attachments[:regular].each do |attachment| %>
+            <div class="item" rel="original_attachment">
+              <a class="attachment-close"  href="javascript:void(0)"
+                fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" 
+                onclick="jQuery(this).parent().hide(); jQuery(this).next().prop('disabled', true); Helpdesk.Multifile.updateCount(this); return false;"></a>
+              <input type="hidden" name="helpdesk_note[attachments][][resource]" value="<%=attachment.id%>" rel="original_attachment"/>
+              <div class="attachment-type file-types-def">
+                <a href="javascript:void(0)"><%= attachment.content_file_name %></a>
+              </div>
+            </div>
+          <% end %>
+
+          <% original_attachments[:dropbox].each do |dbox| %>
+            <div class="item" rel="original_attachment">
+              <a class="attachment-close"  href="javascript:void(0)"
+                fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" 
+                onclick="jQuery(this).parent().hide(); jQuery(this).next().prop('disabled', true); Helpdesk.Multifile.updateCount(this); return false;"></a>
+              <input type="hidden" name="[dropbox_url][]" value="<%=dbox.url%>" rel="original_attachment" />
+              <div class="attachment-type file-types-def">
+                <a href="javascript:void(0)"><%= dbox.url.split('/')[-1] %> </a>
+              </div>
+            </div>
+          <% end %>
+
+        <% end %>
+
+      </div>
 
       <div class="hidden_upload custom_tip_bottom" title='<%=t('attachment_help_info')%>' class='custom-tip-top'>
         <div class="add_attachment"><span>+</span> Attach File </div>

@@ -272,14 +272,8 @@ p strong{
 						background-color: $COL_PRI_URGENT;
 					}
 
-					&.status_4, &.status_5 {
+					&.status_4, &.status_5, &.spam, &.deleted {
 						background-color: $COL_RESOLVED_CLOSED !important;
-					}
-					&.spam {
-						background-color: $COL_SPAM !important;
-					}
-					&.deleted {
-						background-color: $COL_DELETED !important;
 					}
 					@include box-shadow(0 2px 6px rgba(0,0,0,0.4) inset);
 					background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAGElEQVQIW2NkQIA0Rig7DUjPAnHADJAgACFnAmoWZrn+AAAAAElFTkSuQmCC);
@@ -444,10 +438,18 @@ p strong{
 
 	.ticket-btns{
 		float: left;
-		margin-right: 10px;
+		margin-right: 6px;
 
 		#spamicon img {
 			display: none; 
+		}
+
+		& > .btn {
+			margin-right: 0;
+		}
+
+		.btn {
+			padding: 4px 12px;
 		}
 
 	}
@@ -491,12 +493,21 @@ p strong{
 		margin: 5px;
 	}
 
-	.reply-inner{
-		background: sprite($tktdetailicon,reply-icon) no-repeat;
+	.reply-inner, .forward-inner, .note-inner{
 		display: inline-block;
 		width: 18px;
-		height: 13px;
-		margin: -5px 4px -1px 0;
+		height: 15px;
+		margin: -5px 4px -2px 0
+	}
+
+	.reply-inner{
+		background: sprite($tktdetailicon,reply-icon) no-repeat;
+	}
+	.forward-inner{
+		background: sprite($tktdetailicon,forward-icon) no-repeat;
+	}
+	.note-inner{
+		background: sprite($tktdetailicon,note-icon) no-repeat;
 	}
 }
 
@@ -1650,6 +1661,11 @@ p strong{
 		}
 	}
 
+	.crm_contact_widget .contact-type {
+		right: 0;
+		top: auto;
+	}
+
 	.time-tracked{
 
 		.list-noinfo {
@@ -1908,16 +1924,47 @@ p strong{
 		@include min-height(40px);
 		clear: both;
 		margin-bottom: 20px;
+		position: relative;
 
 		&.dialog-widget {
 			cursor: pointer;
+			margin-bottom: 0;
 		}
 
-		h3{
+		& > h3 {
+			padding-left: 20px;
+			display: inline-block;
 			font-size: 18px;
 			font-weight: 300;
 			padding-top: 2px;
 			padding-bottom: 5px;
+			cursor: pointer;
+			z-index: 2;
+			position: relative;
+
+			.subtitle {
+				float: right;
+				font-size: 0.7em;
+				color: #0066cc;
+				font-weight: 500;
+				display: inline-block;
+			}
+
+			&:before {
+				@include triangle(down, #000, 6px);
+				content: "";
+				margin: 6px 0 0 -19px;
+				padding: 0;
+				position: absolute;
+			}
+
+		}
+
+		&> h3.lazyload {
+			display: block;
+			&:before {
+				display: none;
+			}
 		}
 
 		.user_name {
@@ -1930,7 +1977,6 @@ p strong{
 			cursor: pointer;
 			h3 {
 				padding-left: 15px;
-
 				&:before {
 					@include triangle(right, #000, 6px);
 					content: "";
@@ -1938,6 +1984,10 @@ p strong{
 					padding: 0;
 					position: absolute;
 				}
+			}
+
+			.content {
+				display: none;
 			}
 		}
 
@@ -1954,6 +2004,9 @@ p strong{
 				display: block;
 				clear: both;
 				width: 100%;
+
+				top: 1px;
+				position: absolute;
 
 				li{
 					float: right;

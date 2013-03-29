@@ -90,34 +90,20 @@
 								<ul>
 									<li class="ticket-btns">
 										<div class="btn-group">
-										<% if (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present?) %>
-										  <a class="btn" rel="note-button" data-note-type="reply" id="ReplyButton">
-										    <span class="reply-inner"></span>
-										  	<%= t('ticket.reply_to')  %>
-										  	<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-										    <span class="caret"></span>
-											</a>
-										  </a>
-										  <ul class="dropdown-menu">
-										    <li>
-										    	<a href="javascript:void(0);" id="FwdButton" rel="note-button" data-note-type="fwd" >
-										    		<%= t('fwd_to') %>
-										    	</a>
-										    </li>
-											<li>
-												<a href="javascript:void(0);"  rel="note-button" data-note-type="note" >
-													<%= t('ticket.add_note') %>
-												</a>
-											</li>
-										  </ul>
-										<% else %>
-										  	<a href="" id="FwdButton" class="btn" rel="note-button" data-note-type="fwd" >
+											<% if (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present?) %>
+										  	<a class="btn" rel="note-button" data-note-type="reply" id="ReplyButton">
+										  		<span class="reply-inner"></span>
+									    		<%= t('ticket.reply_to')  %>
+									    	</a>
+											<% end %>
+										  	<a href="#" id="FwdButton" class="btn" rel="note-button" data-note-type="fwd" >
+										  		<span class="forward-inner"></span>
 									    		<%= t('fwd_to') %>
 									    	</a>
 										  	<a href="#"  rel="note-button" class="btn" data-note-type="note" >
+										  		<span class="note-inner"></span>
 												<%= t('ticket.add_note') %>
 											</a>
-								    	<% end %>
 										</div>
 									</li>
 									<li class="ticket-btns">

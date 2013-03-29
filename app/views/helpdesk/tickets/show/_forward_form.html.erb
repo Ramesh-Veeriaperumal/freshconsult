@@ -46,7 +46,7 @@
 
   <li class="inline-field field cc_fields">
       <%= f.label(:forward_email, "To:", :class => "caption" ) %>
-      <div class="email_container">
+      <div class="email_container forward_email">
         <input type="text" id="to_emails_<%=cntid%>" name="helpdesk_note[to_emails]" />
         <script type="text/javascript">
           new Autocompleter.MultiValue("to_emails_<%=cntid%>", cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
@@ -105,7 +105,8 @@
   </li>
   <li class="inline-field field attachment-options continous" id="attachment-options-reply">
       <% unless local_assigns[:no_attachments] %>
-      <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
+      <% attachments = {:regular => conv_item.attachments, :dropbox => conv_item.dropboxes } %>
+      <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note", :original_attachments => attachments} %>
       <% end %>    
   </li> 
     <!-- forward will be always private -->

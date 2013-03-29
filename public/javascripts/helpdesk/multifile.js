@@ -16,9 +16,11 @@ Helpdesk.Multifile = {
     },
 
     duplicateInput: function(input){
-        i2 = jQuery(input).clone();
+        jQuery(input).removeClass('original_input');
+        var i2 = jQuery(input).clone();
         i2.attr('id', i2.attr('id') + "_c");
         i2.val("");
+        i2.addClass('original_input');
         jQuery(input).before(i2);
 
         jQuery(input).attr('name',jQuery(input).attr('nameWhenFilled'));
@@ -34,6 +36,7 @@ Helpdesk.Multifile = {
 	
     addEventHandler: function(input){
 
+        jQuery(input).addClass('original_input');
         jQuery(input).bind('change', function() {
                 Helpdesk.Multifile.onFileSelected(input);
         });
@@ -52,7 +55,7 @@ Helpdesk.Multifile = {
                 name: jQuery(oldInput).val().replace(/^.*[\\\/]/, ''),
                 inputId: jQuery(oldInput).attr('id')
             }));
-        jQuery("#"+container + ' label i').text(target.children().length);
+        jQuery("#"+container + ' label i').text(target.children(':visible').length);
     },
     remove: function(link){
 		try{
@@ -63,17 +66,28 @@ Helpdesk.Multifile = {
 			jQuery('#'+jQuery(link).attr('inputId')).remove();
             jQuery(link).parents("div:first").remove();
 
-            jQuery("#"+container + ' label i').text(target.children().length);
+            jQuery("#"+container + ' label i').text(target.children(':visible').length);
 		}catch(e){
 			alert(e);
 		}
     },
-    resetAll: function() {
-        jQuery("input[fileList]").each( function () {
-            jQuery(this).val("");
-            var target = jQuery("#"+jQuery(this).attr('fileList'));
-            target.html("");
-        });
+    updateCount: function(item) {
+        var target = jQuery("#"+jQuery(item).attr('fileList'));
+        var container = jQuery(item).attr('fileContainer');
+        jQuery("#"+container + ' label i').text(target.children(':visible').length);
+    },
+    resetAll: function(form) {
+
+        var inputs = jQuery(form).find("input[fileList]");
+        if (inputs.length >= 1) {
+            console.log(jQuery("#"+inputs.first().attr('fileList')).children());
+            jQuery("#"+inputs.first().attr('fileList')).children().not('[rel=original_attachment]').remove();
+            jQuery("#"+inputs.first().attr('fileList')).children().show();
+            inputs.prop('disabled', false);
+            jQuery("#"+inputs.first().attr('fileContainer')+ ' label i').text(jQuery("#"+inputs.first().attr('fileList')).children().length);
+            inputs.not(".original_input").remove();
+        }
+
     }
 };
 
@@ -83,8 +97,13 @@ jQuery("document").ready(function(){
     // },500);
     
     jQuery("input[fileList]").livequery(function(){ 
-        Helpdesk.Multifile.load();
-        Helpdesk.Multifile.addEventHandler(this); 
+        $input_file = jQuery(this)
+        Helpdesk.Multifile.load()
+        Helpdesk.Multifile.addEventHandler(this)
+        jQuery(this.form).off("reset.Multifile")
+        jQuery(this.form).on("reset.Multifile", function(){
+            Helpdesk.Multifile.resetAll(this)
+        })
     });
 });
 

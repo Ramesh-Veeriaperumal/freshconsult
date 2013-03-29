@@ -1,7 +1,7 @@
 <div class="widget" id='TicketProperties'>
 	<h3 class="title"><%=t('ticket.properties')%></h3>
 	<% form_disable = params[:format] == 'widget' ? {:onsubmit=> 'return false'} : {} %>
-	<% form_for @ticket, :html => { :id => 'custom_ticket_form', :class => 'ui-form'}.merge(form_disable) do |f| %>
+	<% form_for @ticket, :html => { :id => 'custom_ticket_form', :class => 'ui-form content'}.merge(form_disable) do |f| %>
 	<ul class="cnt">
 
 		<% unless params[:format] == 'widget' %>

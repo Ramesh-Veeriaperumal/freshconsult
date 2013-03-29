@@ -513,7 +513,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def time_tracked
     time_spent = 0
     time_sheets.each do |entry|
-      time_spent += entry.time_spent
+      time_spent += entry.running_time
     end
     time_spent
   end

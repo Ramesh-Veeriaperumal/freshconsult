@@ -1,4 +1,6 @@
 <div class="widget clearfix">
+	<h3><%=t('ticket.requestor_info')%></h3>
+	<div class="content">
 	<% unless params[:format] == 'widget' %>
 	<div class="tkt-tabs-wrap">
 		<ul class="tkt-tabs">
@@ -21,7 +23,6 @@
 	contact = current_user.can_view_all_tickets? ? user : "javascript:void(0)"
 	%>
 	<div id="contact_info_default" class='requester_tab'>
-		<h3><%=t('ticket.requestor_info')%></h3>
 		<div class="requester-avatar-wrap">
 			<%= user_avatar(user, :medium)  %>
 		</div>
@@ -57,4 +58,5 @@
 
 	end
 	%>
+	</div>
 </div>

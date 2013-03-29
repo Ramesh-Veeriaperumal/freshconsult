@@ -544,12 +544,16 @@ $(document).ready(function() {
 		var widget_code = $(this).find('textarea');
 		$(this).find('.content').append(widget_code.val());
 		widget_code.remove();
-		$(this).removeClass('inactive');
+		$(this).removeClass('inactive load_on_click');
 	});
 
 	$("body").on('click.ticket_details', '.widget.load_remote.inactive', function(ev){
 		$(this).children('.content').trigger('afterShow');
-		$(this).removeClass('inactive');
+		$(this).removeClass('inactive load_remote');
+	});
+	
+	$("body").on('click.ticket_details', '.widget:not(.load_remote, .load_on_click, .dialog-widget) > h3', function(ev){
+		$(this).parent().toggleClass('inactive');
 	});
 
 	$("select").data('placeholder','');
@@ -560,11 +564,11 @@ $(document).ready(function() {
 				formatResult: formatPriority,
 				escapeMarkup: escapePriority,
 				specialFormatting: true,
-				minimumResultsForSearch: 5
+				minimumResultsForSearch: 10
 			});
 		} else {
 			$(this).select2({
-				minimumResultsForSearch: 5
+				minimumResultsForSearch: 10
 			}); 
 		}
 	});
@@ -684,15 +688,39 @@ $(document).ready(function() {
 
 	$('body').on('click.ticket_details', ".conversation_thread .request_panel form .cancel_btn", function(ev) {
 		ev.preventDefault();
+		if (ev.clientX == 0 && ev.clientY == 0) {
+			return;
+			/* Hack for Forward form.
+			Scenario: When the user presses enter key while on the To field,
+			the cancel btn is triggered.
+			Difference b/w real trigger and this is clientX/Y values */
+		}
 		var btn = $(this);
 		$('#' + btn.data('cntId')).hide().trigger('visibility');
 		if (btn.data('showPseudoReply')) 
 			$('#TicketPseudoReply').show();
+
+		var _form = $('#' + btn.data('cntId') + " form");
+
+		if (_form.data('cntId') && _form.data('destroyEditor')){
+			$('#' + _form.data('cntId') + '-body').destroyEditor(); //Redactor
+			_form.resetForm();
+			_form.trigger('reset');
+
+			//Removing the Dropbox attachments
+			_form.find('.dropbox_div input[filelist]:not(.original_input)').remove();
+		}
+
+		if (_form.attr('rel') == 'forward_form')  {
+			//Remove To Address
+			_form.find('.forward_email li.choice').remove();
+		}
+
+
 		if (btn.data('clearDraft')) {
 			clearSavedDraft();
 			stopDraftSaving();
 		}
-		$('#' + btn.data('cntId') + '-body').destroyEditor();
 	});
 
 	$('body').on('click.ticket_details', '#time_integration .app-logo input:checkbox', function(ev) {
@@ -713,9 +741,7 @@ $(document).ready(function() {
 				}
 			}
 
-
 			_form.find('input[type=submit]').prop('disabled', true);
-
 
 			//Blocking the Form:
 			if (_form.data('panel'))
@@ -778,7 +804,17 @@ $(document).ready(function() {
 					if (_form.data('cntId') && _form.data('destroyEditor')){
 						$('#' + _form.data('cntId') + '-body').destroyEditor(); //Redactor
 						_form.resetForm();
+						_form.trigger('reset');
 					}
+
+					if (_form.attr('rel') == 'forward_form')  {
+						//Remove To Address
+						_form.find('.forward_email li.choice').remove();
+					}
+
+					//Enabling original attachments
+					_form.find('.item[rel=original_attachment]').show();
+					_form.find('input[rel=original_attachment]').prop('disabled', false);
 
 					try {
 						if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
@@ -820,7 +856,7 @@ $(document).ready(function() {
 
 	// -----   START OF TICKET BAR FIXED TOP ------ //
 	//For having the ticket subject and the action bar floating at the top when Scrolling down	
-	var REAL_TOP = $("#wrap .header").first().height() + 10;
+	var REAL_TOP = $("#wrap .header").first().height() + 110;
 	var outerHeight = $('.fixedStrap').outerHeight();
 	var the_window = $(window);
 
@@ -830,7 +866,7 @@ $(document).ready(function() {
 
 				$('.fixedStrap, .fixedbg').addClass('at_the_top');
 				$('#forFixed').show();
-				$('.fixedStrap, .fixedbg').css({top: -outerHeight}).animate({ top: 0}, 500);
+				$('.fixedStrap, .fixedbg').css({top: -outerHeight}).animate({ top: 0}, 300, 'easeOutExpo');
 				$('#firstchild').addClass('firstchild');
 			}
 

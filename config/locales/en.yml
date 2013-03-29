@@ -2279,7 +2279,9 @@ en:
     ticket_url: Ticket URL
     integrations:      
       jira: 
-        tooltip: "View the associated JIRA Issue"      
+        tooltip: "View the associated JIRA Issue"
+        add_new: "Link an issue"
+        existing: "View issue"      
   recent_activity: Recent Activity
   recent_activities: Recent Activites
   forgot_password: Forgot Password
