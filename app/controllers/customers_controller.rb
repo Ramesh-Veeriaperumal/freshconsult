@@ -114,7 +114,7 @@ class CustomersController < ApplicationController
     end
 
     def get_domain(domains)
-      domains.split(",").map{ |s| s.gsub(/^(\s)?(http:\/\/)?(www\.)?/,'').gsub(/\/.*$/,'') } unless domains.blank?
+      domains.split(",").map{ |s| s.gsub(/^(\s)?(http:\/\/)?(www\.)?/,'').gsub(/\/.*$/,'') } 
     end
 
     def after_destroy_url
