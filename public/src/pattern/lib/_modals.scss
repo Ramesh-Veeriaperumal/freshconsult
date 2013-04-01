@@ -100,7 +100,7 @@
 @include at-breakpoint($break-tablet){
   // Modals
   .modal {
-    position: fixed;
+    position: absolute;
     top: 50%;
     left: 50%;
     width: 710px;

@@ -1,3 +1,4 @@
+show_ajax_flash(page)
 #Getting the latest notes and appending
 
 if params[:showing] == 'activities'
