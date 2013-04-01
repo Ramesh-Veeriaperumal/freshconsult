@@ -792,7 +792,7 @@ p strong{
     .ui-form {
     	border: solid 1px #CCC;
 		@include corners(5px);
-		margin: 20px 0 10px;
+		margin: 20px 0 0;
 		background: #fdfdfd;
     }
 
@@ -841,7 +841,7 @@ p strong{
     .ui-form li.inline-field {
     	background: $message_window_bg_color;
     	border-bottom: solid 1px #F3F3F3;
-    	padding: 10px 15px;
+    	padding: 7px 15px;
     	@include border-radius(6px 6px 0 0);
     	float: none;
     	width: auto;
@@ -1054,6 +1054,8 @@ p strong{
 
     		padding: 0 10px;
     		margin-bottom: -10px;
+
+    		overflow: hidden;
 
     		label {
     			float: left;
@@ -1965,6 +1967,10 @@ p strong{
 			&:before {
 				display: none;
 			}
+		}
+
+		&.time-tracked > h3 {
+			display: block;
 		}
 
 		.user_name {
