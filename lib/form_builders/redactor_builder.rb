@@ -12,7 +12,6 @@ module FormBuilders
         :convertDivs => false,
         :imageUpload => "/uploaded_images",
         :allowedTags => ["a", "div", "b", "i", "iframe"],
-        :imageGetJson => "/uploaded_images",
         :buttons => ['bold','italic','underline', 'deleted','|','unorderedlist', 'orderedlist',  
                       '|','fontcolor', 'backcolor', '|' ,'link','image', 'video']
       }
