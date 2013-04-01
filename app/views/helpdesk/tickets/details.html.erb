@@ -103,7 +103,7 @@ jQuery(document).ready(function(){
 	FreshWidget.init("", {"queryString": "", "buttonText": "Support", "buttonColor": "#ffffff", "buttonBg": "#006063", "alignment": "4", "offset": "235px", "url": "http://support.freshdesk.com", "assetUrl": "http://assets.freshdesk.com/widget"} );
 
 	var removeWidgetButton = setInterval(function() {
-		if (window.FreshWidget) {
+		if (window.FreshWidget && jQuery('.ticket_details #freshwidget-button').length) {
 			//Which means FreshWidget is loaded.
 			//Now remove the widget button.
 			jQuery('.ticket_details #freshwidget-button').remove();
