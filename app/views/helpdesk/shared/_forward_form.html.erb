@@ -17,7 +17,7 @@
                                                 callback(choices);
                                               } });
                                             }
-  var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10});
+  var cachedBackend = new Autocompleter.Cache(lookup, {searchKey: 0, choices: 10});
   var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
 
 <% end %>

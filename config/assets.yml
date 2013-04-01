@@ -68,6 +68,8 @@ stylesheets:
 
   tkt_details:
     - public/stylesheets/app/tkt_details.css
+  tkt_details_print:
+    - public/stylesheets/app/tkt_details_print.css
     
   gadget:
     - public/stylesheets/app/lib/defaults.css
@@ -175,6 +177,7 @@ javascripts:
     # - public/javascripts/pattern/bootstrap-collapse.js
     - public/javascripts/pattern/bootstrap-dropdown.js
     - public/javascripts/pattern/bootstrap-modal.js
+    - public/javascripts/pattern/bootstrap-dialog.js
     # - public/javascripts/pattern/bootstrap-scrollspy.js
     - public/javascripts/pattern/bootstrap-transition.js
     - public/javascripts/pattern/bootstrap-tab.js
@@ -182,6 +185,8 @@ javascripts:
     # - public/javascripts/pattern/bootstrap-popover.js
   timesheet:
     - public/javascripts/timesheet.js
+  ticket_details:
+    - public/javascripts/app/ticket_details.js
   freshwidget:
     - public/javascripts/freshwidget.js
   html2canvas:

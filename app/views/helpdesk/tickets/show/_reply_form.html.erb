@@ -14,7 +14,7 @@
                                                 callback(choices);
                                               } });
                                             }
-  var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10});
+  var cachedBackend = new Autocompleter.Cache(lookup, {searchKey: 0, choices: 10});
   var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
 
 <% end %>
@@ -24,7 +24,7 @@
   %>
 <div class="request_panel <%=hide_class%>" id="<%=cntid%>" rel="emitter" data-node-name="agent_replying">
   
-  <div class="form_title"><strong><%= t('.title') %>: </strong><%= @ticket.requester.email %> </div>
+  <div class="form_title"><span><%= t('.title') %>: </span><%= @ticket.requester.email %> </div>
   <div class="list_agents_replying" class="hide"></div>
   <% form_for note, :html => { 
                         :multipart => true, 

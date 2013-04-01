@@ -8,16 +8,16 @@
                                               onSuccess: function(response) {
                                                 var choices = $A();
                                                 response.responseJSON.results.each(function(item){
-                  if(item.value == "") {
-                    choices.push([item.id, item.id]);
-                  } else {
-                  choices.push([item.value +" <"+item.id+">", item.value +" <"+item.id+">" ]);
-                  } 
+                                                  if(item.value == "") {
+                                                    choices.push([item.id, item.id]);
+                                                  } else {
+                                                  choices.push([item.value +" <"+item.id+">", item.value +" <"+item.id+">" ]);
+                                                  } 
                                                 });                                                
                                                 callback(choices);
                                               } });
                                             }
-  var cachedBackend = new Autocompleter.Cache(lookup, {choices: 10});
+  var cachedBackend = new Autocompleter.Cache(lookup, {searchKey: 0, choices: 10});
   var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
 
 </script>
@@ -33,7 +33,7 @@
               "data-cnt-id" => cntid
             } do |f| %>
 
-<%= content_tag( :h4, t("fwd_to"), :class => "title", :id => "fwd_title" ) %>
+<%= content_tag( :div, t("fwd_to"), :class => "form_title", :id => "fwd_title" ) %>
 <% if conv_id.nil? %>
 <div class="list_agents_replying" class="hide"></div>
 <% end %>
