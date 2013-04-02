@@ -3,22 +3,17 @@
 #In future, we can just try using delayed_jobs for non-attachment mails or something like that..
 
 class EmailController < ApplicationController
- 
-  skip_filter :select_shard
   skip_before_filter :verify_authenticity_token
-  skip_before_filter :reset_current_account, :redirect_to_mobile_url
-  skip_before_filter :check_account_state, :except => [:show,:index]
-  skip_before_filter :set_default_locale
-  skip_before_filter :set_time_zone, :check_day_pass_usage 
-  skip_before_filter :set_locale
+  skip_before_filter :set_time_zone
   
   def new
-    render :layout => false
+    render :layout => 'application'
   end
 
   def create
     # Delayed::Job.enqueue Helpdesk::ProcessEmail.new(params)
     Helpdesk::ProcessEmail.new(params).perform
+    
     render :layout => 'email'
   end
 

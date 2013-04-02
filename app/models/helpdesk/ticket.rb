@@ -62,6 +62,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   belongs_to :email_config
   belongs_to :group
+  xss_terminate :except => [:subject], :html5lib_sanitize => [:description_html,:description]
  
   belongs_to :responder,
     :class_name => 'User',
@@ -841,9 +842,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Liquid ends here
   
   def respond_to?(attribute)
-    return false if [:to_ary,:after_initialize_without_slave].include?(attribute.to_sym)    
+    return false if [:to_ary].include?(attribute.to_sym)    
     # Array.flatten calls respond_to?(:to_ary) for each object.
     #  Rails calls array's flatten method on query result's array object. This was added to fix that.
+
     super(attribute) || SCHEMA_LESS_ATTRIBUTES.include?(attribute.to_s.chomp("=").chomp("?")) || 
       ticket_states.respond_to?(attribute) || custom_field_aliases.include?(attribute.to_s.chomp("=").chomp("?"))
   end

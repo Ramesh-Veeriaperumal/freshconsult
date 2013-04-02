@@ -9,7 +9,7 @@ class Integrations::GoogleContactsImporter
 
   def self.sync_google_contacts_for_all_accounts 
     # The below query fetches GoogleAccount along with InstalledApplication's configs field through inner join.  So only if the google_contacts integration is enabled this will fetch the detail.
-    google_accounts = Integrations::GoogleAccount.find_google_accounts_for_all_accounts
+    google_accounts = Integrations::GoogleAccount.find_all_installed_google_accounts
     google_accounts.each { |google_account|
 #        sync_type = YAML::load(google_account.configs)[:inputs]["sync_type"]
       Account.reset_current_account

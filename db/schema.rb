@@ -299,15 +299,6 @@ ActiveRecord::Schema.define(:version => 20130326092144) do
     t.datetime "updated_at"
   end
 
-  create_table "domain_mappings", :force => true do |t|
-    t.integer "account_id", :limit => 8, :null => false
-    t.integer "portal_id",  :limit => 8
-    t.string  "domain",                  :null => false
-  end
-
-  add_index "domain_mappings", ["account_id", "portal_id"], :name => "index_domain_mappings_on_account_id_and_portal_id", :unique => true
-  add_index "domain_mappings", ["domain"], :name => "index_domain_mappings_on_domain", :unique => true
-
   create_table "email_configs", :force => true do |t|
     t.integer  "account_id",      :limit => 8
     t.string   "to_email"
@@ -1139,11 +1130,6 @@ ActiveRecord::Schema.define(:version => 20130326092144) do
     t.integer  "score"
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  create_table "shard_mappings", :primary_key => "account_id", :force => true do |t|
-    t.string  "shard_name",                  :null => false
-    t.integer "status",     :default => 200, :null => false
   end
 
   create_table "sla_details", :force => true do |t|

@@ -10,7 +10,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   def perform
     from_email = parse_from_email
     to_email = parse_to_email
-    Sharding.select_shard_of(to_email[:domain]) do
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil? and account.active?
       # clip_large_html
@@ -39,8 +38,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         NewRelic::Agent.notice_error(e)
       end
       Account.reset_current_account
-    end
-    end
+    end 
   end
   
   def create_article(account, from_email, to_email)
