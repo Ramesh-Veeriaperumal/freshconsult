@@ -281,7 +281,7 @@ var $J = jQuery.noConflict();
       })
       // $("form.uniForm").validate(validateOptions);
       $("form.ui-form").livequery(function(ev){
-        $(this).validate(validateOptions);
+        $(this).not(".dont-validate").validate(validateOptions);
       })
       // $("form[rel=validate]").validate(validateOptions);
 
