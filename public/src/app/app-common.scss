@@ -6508,22 +6508,20 @@ a.close{
 		}
 	
 		background: url(/images/integrations/sugar_icon.png) 0 2px no-repeat;
+		background-position: 223px 7px;
 	}
 
 	/* div. added for higher specificity */
 	div.salesforce_widget_bg {
 		background: url(/images/integrations/salesforce_icon.png) 0 2px no-repeat;
-		background-position: 223px 7px;
  	}
 
  	div.batchbook_widget_bg {
 		background: url(/images/integrations/batchbook_icon.png) 0 2px no-repeat;
-		background-position: 223px 7px;
   	}
 
  	div.highrise_widget_bg {
 		background: url(/images/integrations/highrise_icon.png) 0 2px no-repeat;
-		background-position: 223px 7px;
   	}
 
  	div.zohocrm_widget_bg {
@@ -6533,7 +6531,6 @@ a.close{
 
  	div.nimble_widget_bg {
 		background: url(/images/integrations/nimble_icon.png) 0 2px no-repeat;
-		background-position: 223px 7px;
   	}
 	
 
