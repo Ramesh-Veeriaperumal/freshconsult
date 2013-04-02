@@ -6,7 +6,7 @@
 <div class="attachments-wrap">
   <div id="<%=attach_id%>-container" class="attachments-container">
     <% total_attachments = original_attachments[:regular].size + original_attachments[:dropbox].size if original_attachments.present? %>
-    <label><i><%= total_attachments || 0 %></i> Attachment(s): </label>
+    <label><i><%= total_attachments || 0 %></i> <%= t('attachments')%>: </label>
     <div class="attachment_contents">
 
       <div class="attachment_list" id="<%=attach_id%>-attachments">
@@ -41,7 +41,7 @@
       </div>
 
       <div class="hidden_upload custom_tip_bottom" title='<%=t('attachment_help_info')%>' class='custom-tip-top'>
-        <div class="add_attachment"><span>+</span> Attach File </div>
+        <div class="add_attachment"><span>+</span> <%= t('attach_file') %> </div>
         <input type="file" id="<%=attach_id%>_file" name="emptyfile"
                 nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
                 fileContainer="<%=attach_id%>-container" 

@@ -77,6 +77,7 @@ en:
   attachments: Attachments
   attachment_delete: "You're about to permanently delete this attachment. Continue?"
   attach_file_local: Attach a file from your computer
+  attach_file: Attach file
   dropbox_attach_label: Attach from
   dropbox_attach_from: Attach from Dropbox
   dropbox_choose_file: Choose file
@@ -1147,7 +1148,7 @@ en:
       ticket_merge: 
         short: "{{user_path}} has merged the ticket {{notable_path}} to {{merge_ticket_path}} "
         long: "{{user_path}} has merged the ticket  {{notable_path}} to {{merge_ticket_path}}"
-        long: "{{user_path}} has merged the ticket  {{notable_path}} to {{merge_ticket_path}}"
+        without_user: "merged the ticket  {{notable_path}} to {{merge_ticket_path}}"
       ticket_split: 
         short: "{{user_path}} has split the ticket {{notable_path}} from {{split_ticket_path}}"
         long: "{{user_path}} has split the ticket {{notable_path}} from {{split_ticket_path}}"
