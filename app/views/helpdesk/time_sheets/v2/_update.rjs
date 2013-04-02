@@ -4,4 +4,4 @@ page.replace "timeentry_#{@time_entry.id}", :partial => "/helpdesk/time_sheets/v
 page << 'totalTime("#timesheetlist .time", "#timeentry_timer_total");'
 page << "jQuery('#timesheetlist .time-tracked-details:not(.time_running) .toggle_timer').hide();"
 page << "jQuery('#timesheetlist .time-tracked-details:last .toggle_timer').show();"
-page << pushToIntegratedAppsWithoutLoading(@time_entry)
+pushToTimesheetIntegratedApps page, @time_entry

@@ -6509,28 +6509,29 @@ a.close{
 	
 		background: url(/images/integrations/sugar_icon.png) 0 2px no-repeat;
 		background-position: 223px 7px;
+		background-repeat: no-repeat;
 	}
 
 	/* div. added for higher specificity */
 	div.salesforce_widget_bg {
-		background: url(/images/integrations/salesforce_icon.png) 0 2px no-repeat;
+		background-image: url(/images/integrations/salesforce_icon.png);
  	}
 
  	div.batchbook_widget_bg {
-		background: url(/images/integrations/batchbook_icon.png) 0 2px no-repeat;
+		background-image: url(/images/integrations/batchbook_icon.png);
   	}
 
  	div.highrise_widget_bg {
-		background: url(/images/integrations/highrise_icon.png) 0 2px no-repeat;
+		background-image: url(/images/integrations/highrise_icon.png);
   	}
 
  	div.zohocrm_widget_bg {
-		background: url(/images/integrations/zohocrm_icon.png) 0 2px no-repeat;
+		background-image: url(/images/integrations/zohocrm_icon.png);
 		background-position: 210px -6px;
   	}
 
  	div.nimble_widget_bg {
-		background: url(/images/integrations/nimble_icon.png) 0 2px no-repeat;
+		background-image: url(/images/integrations/nimble_icon.png);
   	}
 	
 
