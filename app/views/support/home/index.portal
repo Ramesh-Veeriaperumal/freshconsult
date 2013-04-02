@@ -28,7 +28,7 @@
 	<h2 class="heading">{% translate portal.community_forums %}</h2>
 	{% if portal.topics_count > 0 %}
 		<p class="intro">{% translate portal.showing_recent_updates %}</p>
-		<div class="start-topic">{{ portal | link_to_start_topic }}</div>
+		<div>{{ portal | link_to_start_topic }}</div>
 		{% for category in portal.forum_categories %}
 			{% if category.forums_count > 0 %}
 				<div class="cs-s">

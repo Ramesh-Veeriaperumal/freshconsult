@@ -26,7 +26,7 @@
 					{{ topic.user | profile_image }}
 					{{ topic | topic_labels }}
 					<div class="ellipsis">						
-						<a class="c-link" title="{{topic.title}}" href="{{topic.url}}">{{topic.title}}</a>
+						<a class="c-link" title="{{topic.title | h}}" href="{{topic.url}}">{{topic.title | h}}</a>
 					</div>				
 					<div class="help-text"> 
 						{{ topic | topic_info_with_votes }}

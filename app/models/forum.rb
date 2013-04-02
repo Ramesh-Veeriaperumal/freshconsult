@@ -88,7 +88,8 @@ class Forum < ActiveRecord::Base
   
   format_attribute :description
   attr_protected :forum_category_id , :account_id
-
+  xss_terminate  :html5lib_sanitize => [:description_html,:description]
+ 
   # after_save :set_topic_delta_flag
   before_update :clear_customer_forums
   
