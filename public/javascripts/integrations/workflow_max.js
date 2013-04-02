@@ -399,7 +399,7 @@ WorkflowMaxWidget.prototype = {
 	},
 
 	getFormattedMinutes: function(hours){
-		hours = (hours > 1) ? this.getFormattedHours(hours) : (hours * 100);
+		hours = (hours > 1) ? this.getFormattedHours(hours) : (hours * 60);
 		return Math.floor(hours);
 	},
 

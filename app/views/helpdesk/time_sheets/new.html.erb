@@ -10,7 +10,9 @@
     <%= hidden_field(:time_entry, :workable_id , { :value => @ticket.id }  )%>
     <%= render :partial => "/helpdesk/time_sheets/v2/form", :object => f, :locals => { :type => :new } %>
   <% end %>
-  <div id="timeentry_apps_add" class="ui-form">
-    <%= render :partial => "/helpdesk/time_sheets/v2/integration" %>
-  </div>
 <% end %>
+
+<script type="text/javascript">
+  jQuery('#timeentry_apps_add').detach().appendTo('#timeentry_add');
+  jQuery('#timeentry_apps_add').show();
+</script>

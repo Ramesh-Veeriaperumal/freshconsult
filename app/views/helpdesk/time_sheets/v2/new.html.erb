@@ -8,7 +8,4 @@
     <%= hidden_field(:time_entry, :ticket_id , { :value => @ticket.id }  )%>
     <%= render :partial => "/helpdesk/time_sheets/v2/form", :object => f, :locals => { :type => :new } %>
   <% end %>
-  <div id="timeentry_apps_add" class="ui-form">   
-    <%= render :partial => "integration" %>
-  </div>
 <% end %>

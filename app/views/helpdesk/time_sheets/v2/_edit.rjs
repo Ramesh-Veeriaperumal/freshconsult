@@ -2,4 +2,4 @@ page << "timesheet.editCompelete('add', true)"
 page.replace_html "timeentry_edit_#{@time_entry.id}", :partial => "helpdesk/time_sheets/v2/edit", :object => @time_entry
 page << "timesheet.editCompelete(#{@time_entry.id});"
 page << 'totalTime("#timesheetlist .time", "#timeentry_timer_total");'
-page << modifyTimesheetApps(@time_entry)
+page << pushToIntegratedAppsWithoutLoading(@time_entry)
