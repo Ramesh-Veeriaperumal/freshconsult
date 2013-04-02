@@ -89,6 +89,7 @@ GEM
       builder
     builder (3.0.0)
     cgi_multipart_eof_fix (2.5.0)
+    chardet (0.9.0)
     chargebee (1.1.1)
       json_pure (~> 1.5)
       rest-client (~> 1.4)
@@ -115,6 +116,11 @@ GEM
     gyoku (0.4.6)
       builder (>= 2.1.2)
     hashie (1.2.0)
+    hoe (3.5.2)
+      rake (>= 0.8, < 11.0)
+    html5 (0.10.0)
+      chardet (>= 0.9.0)
+      hoe (>= 1.2.0)
     http_accept_language (1.0.1)
     httparty (0.10.0)
       multi_json (~> 1.0)
@@ -267,6 +273,8 @@ GEM
     wasabi (2.3.0)
       nokogiri (>= 1.4.0)
     xml-simple (1.0.15)
+    xss_terminate (0.2)
+      html5 (>= 0.10.0)
     zendesk-features (1.0.2)
 
 PLATFORMS
@@ -336,5 +344,6 @@ DEPENDENCIES
   thinking-sphinx (= 1.4.3)
   twitter (= 2.1.1)!
   tzinfo
+  xss_terminate (~> 0.2)
   yui-compressor!
   zendesk-features
