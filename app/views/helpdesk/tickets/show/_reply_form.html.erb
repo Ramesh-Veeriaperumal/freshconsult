@@ -68,7 +68,7 @@
         <a href="#" class="clear_emails" rel='toggle_email_container' 
             data-container="cc-form-container-<%=cntid%>" 
             data-toggle-button="add_cc_btn_<%=cntid%>" 
-            data-clear="true">Clear</a>
+            data-clear="true"><%= t('clear') %></a>
             <div class="email_container">
               <input type="text" id="cc_emails_<%=cntid%>" name="helpdesk_note[cc_emails]" />
               <% javascript_tag do %>
@@ -81,7 +81,7 @@
         <a href="#" class="clear_emails" rel='toggle_email_container' 
             data-container="bcc-form-container-<%=cntid%>" 
             data-toggle-button="add_bcc_btn-<%=cntid%>" 
-            data-clear="true">Clear</a>
+            data-clear="true"><%= t('clear') %></a>
             <div class="email_container">
               <input type="text" id="bcc_emails_<%=cntid%>" name="helpdesk_note[bcc_emails]" />
               <% javascript_tag do %>

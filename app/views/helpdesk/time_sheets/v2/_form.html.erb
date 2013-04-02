@@ -8,7 +8,7 @@
 	<dd class="hours">
 		<%= form.text_field(:hhmm, { 
 				:size => 6, :class => "auto number #{(type == :new) ? 'custom-tip' : ''}", :autocomplete => "off", :placeholder => "01:30",
-				:title => type == :new ? '!V2 - Leave this blank to start a timer. You can also enter time as 1.5 or 1:30 (they both mean 1 hour and 30 minutes).' : '',
+				:title => t('helpdesk.time_sheets.new.hours_format_tip'),
 				} ) %>
 		<label class="billing_hours floatr">
 			<%= form.check_box(:billable, {:checked => (type == :new) ? true : form.object.billable}) %>

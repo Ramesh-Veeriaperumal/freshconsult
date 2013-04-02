@@ -2443,6 +2443,7 @@ en:
         toggle_timer_false: "Stop timer"
       new:
         title: "New time entry"
+        hours_format_tip: "Leave this blank to start a timer. You can also enter time as 1.5 or 1:30 (they both mean 1 hour and 30 minutes)."
       ticket: Ticket
       customer: Customer
       executed_at: Date
@@ -3466,6 +3467,7 @@ en:
   cc_emails_key_pop: " <li class='left'>cc : </li><li>%{cc_emails}</li>"
   bcc_emails_key_pop: " <li class='left'>bcc :</li> <li>%{bcc_emails}<li>"
   conv_contacts_info_pop: "<ul><li class='left'>%{conv_type_msg} : </li><li>%{to_emails}</li> %{cc_emails_key} %{bcc_emails_key}</ul>"
+  clear: "Clear"
   saved_draft: "Saved"
   saving_draft: "Saving..."
   saving: "Saving..."

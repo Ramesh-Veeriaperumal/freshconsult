@@ -35,7 +35,7 @@
         <span>on <%= formated_date(time_entry.executed_at,"%a, %b %e, %Y") %></span>
       </div>
       <div class="is_billable">
-        <%= time_entry.billable ? "Billable" : "Non-Billable" %>
+        <%= time_entry.billable ? t('helpdesk.time_sheets.billable') : t('helpdesk.time_sheets.non_billable') %>
       </div>
     </div>
     <div class="note">

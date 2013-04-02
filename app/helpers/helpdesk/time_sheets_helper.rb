@@ -26,16 +26,31 @@ module Helpdesk::TimeSheetsHelper
     end
   end
   
-  def pushToTimesheetIntegratedApps(page, timeentry, type = :create)
+  def pushToTimesheetIntegratedApps(page, timeentry)
     integrated_apps.each do |app|
       unless get_app_details(app[0]).blank? 
         page << "try{"
-        page << "if (jQuery('##{app[0]}-timeentry-enabled').is(':checked')) {" unless @new_show_page && type == :create
+        page << "if (jQuery('##{app[0]}-timeentry-enabled').is(':checked')) {"
         page << "#{app[2]}.updateNotesAndTimeSpent(#{timeentry.note.to_json}, #{timeentry.time_spent == 0? "0.01" : timeentry.hours}, #{timeentry.billable}, #{timeentry.executed_at.to_json});"
         page << "#{app[2]}.logTimeEntry();"
         page << "#{app[2]}.set_timesheet_entry_id(#{timeentry.id});" # This is not needed for update.  But no harm in calling.
-        page << "}" unless @new_show_page && type == :create
+        page << "}"
         page << "}catch(e){ log(e)}"
+      end
+    end
+  end
+
+
+  def updateToTimesheetIntegratedApps(page, timeentry, type = :create)
+    integrated_apps.each do |app|
+      app_detail = get_app_details(app[0])
+      unless app_detail.blank? or timeentry.blank?
+        integrated_app = timeentry.integrated_resources.find_by_installed_application_id(app_detail)
+        unless integrated_app.blank?
+          page << "#{app[2]}.updateNotesAndTimeSpent(#{timeentry.note.to_json}, #{timeentry.time_spent == 0? "0.01" : timeentry.hours}, #{timeentry.billable}, #{timeentry.executed_at.to_json});"
+          page << "#{app[2]}.logTimeEntry();"
+          page << "#{app[2]}.set_timesheet_entry_id(#{timeentry.id});" # This is not needed for update.  But no harm in calling.
+        end
       end
     end
   end
