@@ -45,11 +45,12 @@
 	crm_apps.each do |crm_app| 
 		if is_application_installed?(Integrations::Constants::APP_NAMES[crm_app])  %>
 	<div id="contact_info_<%=crm_app%>" class='requester_tab'>
+
 		<%
 		@liquid_objects = {"requester" => @ticket.requester}
 		widget_code = get_app_widget_script(Integrations::Constants::APP_NAMES[crm_app], "#{crm_app}_widget", @liquid_objects) 
 		%>
-		<textarea class="hide"><%= Liquid::Template.parse(widget_code).render("ticket" => @ticket) %></textarea>
+		<textarea class="hide"><div id="<%=crm_app%>"><%= Liquid::Template.parse(widget_code).render("ticket" => @ticket) %></div></textarea>
 		
 	</div>
 	<% 
