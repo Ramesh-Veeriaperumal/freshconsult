@@ -21,7 +21,7 @@ class Workers::Sla
 
  def self.run
     account = Account.current
-    db_name = account.premium? ? "run_on_master" : "run_on_slave"
+    db_name = account.premium? ? "use_master_connection" : "use_persistent_read_connection"
     sla_default = account.sla_policies.default.first
     sla_rule_based = account.sla_policies.rule_based.active.inject({}) { |sp_hash, sp| 
                                                                       sp_hash[sp.id] = sp; sp_hash}
@@ -74,7 +74,7 @@ class Workers::Sla
   end
 
   def self.execute_on_db(db_name)
-    Sharding.send(db_name.to_sym) do
+    SeamlessDatabasePool.send(db_name.to_sym) do
       yield
     end
   end

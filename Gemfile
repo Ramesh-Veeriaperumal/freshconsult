@@ -69,7 +69,8 @@ gem "resque","1.22.0"
 gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
 gem 'rforce'
 
-gem 'after_commit', "1.0.11"
+gem "seamless_database_pool", :git => "git://github.com/freshdesk/seamless_database_pool.git"
+gem 'after_commit', :git => "git://github.com/freshdesk/after_commit.git"
 gem 'chargebee', "~> 1.1.1"
 
 gem 'memcache-client', '1.8.5'
@@ -78,8 +79,8 @@ gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
 gem "rinku", :git => "git://github.com/freshdesk/rinku.git"
 
 gem "people", '0.2.1' #https://github.com/mericson/people/tree/master/lib
-gem "active_record_shards","2.7.0", :require => 'active_record_shards'
 gem "xss_terminate", "~> 0.2"
+
 
 group :development,:test do
    #gem "rspec", "1.3.1"

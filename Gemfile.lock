@@ -7,6 +7,13 @@ GIT
       savon_model
 
 GIT
+  remote: git://github.com/freshdesk/after_commit.git
+  revision: af3e83dc6f071ae261478dbb7134d2ff534bc0a9
+  specs:
+    after_commit (1.0.11)
+      activerecord (>= 1.15.6, < 3.0.0)
+
+GIT
   remote: git://github.com/freshdesk/deadlock_retry.git
   revision: 801e84f45aed2ccde10aa085af0aa94f1bf46975
   specs:
@@ -30,6 +37,13 @@ GIT
   specs:
     yui-compressor (0.9.6)
       POpen4 (>= 0.1.4)
+
+GIT
+  remote: git://github.com/freshdesk/seamless_database_pool.git
+  revision: bfdd97f80edfc84b7cff2196ac5b1193174a07c5
+  specs:
+    seamless_database_pool (1.0.12)
+      activerecord (>= 2.2.2)
 
 PATH
   remote: vendor/gems/twitter-2.1.1
@@ -55,16 +69,12 @@ GEM
     actionpack (2.3.18)
       activesupport (= 2.3.18)
       rack (~> 1.1.0)
-    active_record_shards (2.7.0)
-      activerecord (>= 2.3.5, < 3.3)
     activerecord (2.3.18)
       activesupport (= 2.3.18)
     activeresource (2.3.18)
       activesupport (= 2.3.18)
     activesupport (2.3.18)
     addressable (2.2.7)
-    after_commit (1.0.11)
-      activerecord (>= 1.15.6, < 3.0.0)
     akami (1.2.0)
       gyoku (>= 0.4.0)
       nokogiri (>= 1.4.0)
@@ -266,8 +276,7 @@ PLATFORMS
 DEPENDENCIES
   RedCloth (= 4.2.3)
   SystemTimer (= 1.2.3)
-  active_record_shards (= 2.7.0)
-  after_commit (= 1.0.11)
+  after_commit!
   arel (= 2.0.7)
   authlogic (= 2.1.6)
   aws-s3 (= 0.6.2)
@@ -321,6 +330,7 @@ DEPENDENCIES
   sanitize (= 2.0.3)
   sass (= 3.2.1)
   sax-machine (~> 0.1.0)
+  seamless_database_pool!
   spreadsheet (= 0.6.8)
   susy
   thinking-sphinx (= 1.4.3)
