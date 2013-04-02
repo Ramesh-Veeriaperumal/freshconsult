@@ -108,11 +108,13 @@ en:
     info1: A Profile image of the person, its best if the picture has the same length and height
     back_info: Background information
     mobile: Mobile
-    twitter_id: Twitter Id
+    twitter_id: Twitter
+    facebook: Facebook
     full_name: Full Name
     name: Name
     secondary: secondary
     phone_no: Phone No
+    mobile: Mobile
     address: Address
     work: Work
     email: Email
@@ -2123,6 +2125,7 @@ en:
       revert_view: "Switch to Classic View"
       submit_feedback: "Submit Feedback"
     include_quoted_text: "Include quoted text"
+    more_details: "More details..."
     reported_on: "from %{username}, Last updated: on %{date}"
     ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_resolved_at: "From: %{username}, Resolved: <span class='emphasize'>%{time_ago} ago</span>"
@@ -2269,6 +2272,8 @@ en:
     edit_btn: Edit
     requester: Requester
     properties: Ticket Properties
+    updating: "Updating"
+    update_done: "Done"
     submit_ticket: Submit 
     stop_monitor_btn_title: Stop monitoring this ticket
     merge_btn: Merge

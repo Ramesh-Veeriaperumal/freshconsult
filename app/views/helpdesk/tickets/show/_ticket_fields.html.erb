@@ -7,8 +7,8 @@
 		<% unless params[:format] == 'widget' %>
 		<li class="button-container top">
 			<%= f.submit t('update'), :class => "btn btn-primary", :id => "helpdesk_ticket_submit_dup",
-			"data-loading-text" => "Updating...", 
-			"data-saved-text" => "✔ Done", 
+			"data-loading-text" => "#{t('ticket.updating')}...", 
+			"data-saved-text" => "✔ #{t('ticket.update_done')}", 
 			"data-default-text" => t('update') %>
 		</li>
 		<% end %>
@@ -70,8 +70,8 @@
 		<% unless params[:format] == 'widget' %>
 		<li class="button-container">
 			<%= f.submit t('update'), :class => "btn btn-primary", :id => "helpdesk_ticket_submit",
-			"data-loading-text" => "Updating...", 
-			"data-saved-text" => "✔ Done", 
+			"data-loading-text" => "#{t('ticket.updating')}...", 
+			"data-saved-text" => "✔ #{t('ticket.update_done')}", 
 			"data-default-text" => t('update') %>
 		</li>		
 		<% end %>

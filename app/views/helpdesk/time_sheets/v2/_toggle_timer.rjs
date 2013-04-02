@@ -1,6 +1,6 @@
 page << "timesheet.editCompelete('add', true)"
 page.replace "timeentry_#{@time_entry.id}", :partial => "/helpdesk/time_sheets/v2/time_entry", :object => @time_entry
-clear_view_timers_v2(page, @timeentry, @time_cleared)
-page << "#{pushToIntegratedAppsWithoutLoading(@time_entry)}"
+clear_view_timers_v2(page, @time_entry, @time_cleared)
+page << pushToIntegratedAppsWithoutLoading(@time_entry)
 page << "jQuery('#timesheetlist .time-tracked-details:not(.time_running) .toggle_timer').hide();"
 page << "jQuery('#timesheetlist .time-tracked-details:last .toggle_timer').show();"

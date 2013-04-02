@@ -85,7 +85,6 @@ jQuery('#solution_search').live('keyup', function(ev) {
 
 jQuery("#searchmoreform").submit(function(ev){
 	ev.preventDefault();
-	console.log('')
 	var query = $('solution_search').value;
 	jQuery('#default_solution_suggestions').hide();
 	jQuery("#more_search_results").show().addClass("loading-center");
