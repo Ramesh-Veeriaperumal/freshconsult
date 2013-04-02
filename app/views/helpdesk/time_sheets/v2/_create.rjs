@@ -10,8 +10,9 @@ page << "jQuery('#add_new_timer .submit, #add_new_time_entry .submit').each(func
 			jQuery(this).text(jQuery(this).data('resetText'));
 		});"
 page << "jQuery('#timesheetlist .list-noinfo').remove();"
+clear_view_timers_v2 page, @time_entry, @time_cleared
 page << "jQuery('#new_timeentry [data-submit=modal]').button('start');"
 page << 'totalTime("#timesheetlist .time", "#timeentry_timer_total");'
 page << "jQuery('#timesheetlist .time-tracked-details:not(.time_running) .toggle_timer').hide();"
 page << "jQuery('#timesheetlist .time-tracked-details:last .toggle_timer').show();"
-clear_view_timers_v2 page, @time_entry, @time_cleared
+

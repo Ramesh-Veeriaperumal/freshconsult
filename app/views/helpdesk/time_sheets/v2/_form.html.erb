@@ -16,11 +16,11 @@
 		</label>
 	</dd>
 
-	<dt><%= form.label :executed_at, 'On'%>: </dt>
-	<dd>
+	<dt><%= form.label :executed_at, 'On'%>: </dt> 
+	<dd> <% datepicker_id = type == :new ? "executed_at_new" : "executed_at_#{dom_id(edit)}" %>
 		<%= form.text_field :executed_at, 
 						:value => (type == :new ? Time.zone.now.strftime("%m/%d/%Y") : edit.executed_at.strftime("%m/%d/%Y")), 
-						:size => 10, :class => "auto executed_at datepicker" %>
+						:size => 10, :class => "auto executed_at datepicker", :id => datepicker_id %>
 	</dd>
 
 	<dt><%= form.label :note, t('.note')%>: </dt>
