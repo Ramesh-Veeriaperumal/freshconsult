@@ -17,6 +17,7 @@ class Portal < ActiveRecord::Base
   after_commit_on_destroy :clear_portal_cache
   before_update :backup_changes
   before_destroy :backup_changes
+  after_create :create_template
 
   has_one :logo,
     :as => :attachable,
@@ -142,5 +143,10 @@ class Portal < ActiveRecord::Base
     def cache_version
       key = PORTAL_CACHE_VERSION % { :account_id => self.account_id }
       get_key(key) || "0"
+    end
+
+    def create_template
+      self.build_template()
+      self.template.save()
     end
 end
