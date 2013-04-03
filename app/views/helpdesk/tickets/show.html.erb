@@ -1,7 +1,7 @@
 <% content_for :sidebar do -%>
 	<div id="switch_details_view" class="sidepanel">
 		<%= link_to t('ticket.switch_view.new_view'), helpdesk_ticket_path(@ticket), :class => "switch" %>
-		<%= link_to t('ticket.switch_view.whats_new'), "#" %>
+		<%= link_to t('ticket.switch_view.whats_new'), "https://support.freshdesk.com/support/solutions/articles/70760-new-enhanced-ticket-view-page", :target => "_blank" %>
 	</div>
 
   <%= render :partial => "/helpdesk/integrations/crm_widget", :locals => {:user => @ticket.requester} %>

@@ -2118,6 +2118,7 @@ en:
     deleted: "TRASH"
     next: "Next Ticket"
     previous: "Previous Ticket"
+    expand: "Expand"
     insert: "Insert"
     switch_view: 
       new_view: "Try the <strong>New Ticket View</strong>"
@@ -2445,6 +2446,7 @@ en:
         title: "New time entry"
         hours_format_tip: "Leave this blank to start a timer. You can also enter time as 1.5 or 1:30 (they both mean 1 hour and 30 minutes)."
       ticket: Ticket
+      sidebar_title: "Time tracked"
       customer: Customer
       executed_at: Date
       hours: Hours

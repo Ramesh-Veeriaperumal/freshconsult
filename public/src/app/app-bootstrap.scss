@@ -1254,6 +1254,7 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
 
 #capsule-note-text{
 	height:40px;
+  box-sizing: border-box;
 }
 
 .sidebar .searchicon{

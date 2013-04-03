@@ -16,8 +16,12 @@
 
 			<div class="tkt-sidebar" id="ticket_details_sidebar">
 				<div id="revert_details_view">
-					<%= link_to t('ticket.switch_view.revert_view'), helpdesk_ticket_path(@ticket), :class => "switch" %>
-					<%= link_to_function t('ticket.switch_view.submit_feedback'), "window.FreshWidget.show();" %>
+					<strong><%= link_to t('ticket.switch_view.whats_new'), 
+									"https://support.freshdesk.com/support/solutions/articles/70760-new-enhanced-ticket-view-page", 
+									:target => "_blank", :class => 'switch' %>
+					</strong>
+					<%= link_to_function t('ticket.switch_view.submit_feedback'), "window.FreshWidget.show();" %>	
+					<div><%= link_to t('ticket.switch_view.revert_view'), helpdesk_ticket_path(@ticket) %></div>
 				</div>
 				<%= render :partial => "helpdesk/tickets/show/requester.html.erb" %> 
 				<% unless @ticket.deleted or @ticket.spam %> 
@@ -26,7 +30,7 @@
 					<% if feature?(:timesheets) %>
 					<div class="widget time-tracked inactive load_remote" id="TimesheetTab">
 						<h3>
-							Time Tracked
+							<%= t('helpdesk.time_sheets.sidebar_title') %>
 							<div class="tracked_time">
 								<span class="time" id="timeentry_timer_total"><%= get_time_in_hours(@ticket.time_tracked) %></span>
 								<span class="time_unit">Hrs </span>
@@ -54,7 +58,7 @@
 							<span rel='count_more' class="count_more not_on_loading"><%= t('more') %></span>
 						</p></a>
 						<a href="" class="commentbox commentbox-blue">
-							<div>Expand</div>
+							<div><%= t('ticket.expand') %></div>
 						</a>
 					</li>
 				</ol>
@@ -110,3 +114,33 @@ jQuery(document).ready(function(){
 		}
 	}, 1000);
 </script>
+
+<div class="hide" id="whats_new">
+	<textarea style="display:none" rel="lazyload">
+	  <div class="content"><div class="negtive-margin">
+	    <ul>
+			<li>
+				Ticket conversations appear in chronological order from top to bottom. The thread gets collapsed when the size exceeds 3 messages. Up to 3 latest replies are displayed in this case. 
+			</li>
+			<li>
+				Ticket activities i.e. status change, property update, time entry etc. can be viewed as a part of the thread by using the show activities toggle on top of the page.
+			</li>
+			<li>
+				The Send and Resolve button has been removed. Instead, clicking on the arrow next to the Send button will show all possible statuses, such as : Send and Set as Pending, Send and Set as Resolved etc. including those for custom ticket statuses. 
+			</li>
+			<li>
+				Canned Responses and Suggested Solutions can be found under the Insert menu after an user clicks the reply button. 
+			</li>
+			<li>
+				The Execute Scenario feature is found under the More menu, along with Edit, Print, and Delete options.  
+			</li>
+			<li>
+				Time entries can be added from the sidebar, from below the Ticket Properties section. 
+			</li>
+			<li>
+				Notes are private by default. They can be made public by clicking on the lock icon at the bottom right corner of the dialog box. 
+			</li>
+		</ul>
+	  </div></div>
+	</textarea>
+</div>
