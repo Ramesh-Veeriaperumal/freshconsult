@@ -345,10 +345,7 @@ DEPENDENCIES
   thinking-sphinx (= 1.4.3)
   twitter (= 2.1.1)!
   tzinfo
-<<<<<<< HEAD
   useragent (~> 0.4.16)
-=======
   xss_terminate (~> 0.2)
->>>>>>> origin/staging_clone
   yui-compressor!
   zendesk-features
