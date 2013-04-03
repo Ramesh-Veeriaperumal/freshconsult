@@ -645,6 +645,11 @@ p strong{
     	background: #000;
     }
 
+    .custom_statuses {
+    	max-height: 110px;
+		overflow-y: auto;
+	}
+
     #reply-draft {
     	float: none;
     	padding:5px 0;
@@ -2119,15 +2124,15 @@ p strong{
 
 #time_integration fieldset.integration .integration_container {
 	padding: 30px 0 10px;
-	.field {
+	.field, .field-35 {
 		label {
 			display: inline-block;
-			width: 70px;
+			width: 90px;
 		}
 
 		select {
 			display: inline-block;
-			width: 290px;
+			width: 280px;
 			&.hide {
 				display: none;
 			}
@@ -2726,7 +2731,7 @@ $collision_delay: 1s;
 .dropdown.open .dropdown-toggle {
 	color: #333;
 }
-.redactor_insert_btns {
+.btn-group.redactor_insert_btns {
 	position: absolute;
 	z-index:5;
 	right: 15px;

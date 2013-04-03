@@ -155,7 +155,7 @@
               <span class="caret"></span>
             </a>
           </a>
-          <ul class="dropdown-menu">
+          <ul class="dropdown-menu custom_statuses">
             <%
             ticket_statuses = current_account.ticket_statuses.reject{|status| status.status_id == 2 }
             %>
