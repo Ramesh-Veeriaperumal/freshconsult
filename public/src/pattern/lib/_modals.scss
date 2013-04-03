@@ -4,6 +4,7 @@
 
 // Recalculate z-index where appropriate
 .modal-open {
+  overflow:hidden;
   .dropdown-menu {  z-index: $zindexDropdown + $zindexModal; }
   .dropdown.open { *z-index: $zindexDropdown + $zindexModal; }
   .popover       {  z-index: $zindexPopover  + $zindexModal; }
@@ -65,7 +66,7 @@
 // Body (where all modal content resides)
 .modal-body {
   overflow-y: auto;
-  max-height: 500px;
+  max-height: 400px;
   padding: 25px 15px 15px;
 
   form {
@@ -100,7 +101,7 @@
 @include at-breakpoint($break-tablet){
   // Modals
   .modal {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     width: 710px;

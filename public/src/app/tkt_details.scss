@@ -2794,3 +2794,12 @@ $collision_delay: 1s;
 		padding: 5px 5px 15px;
 	}
 }
+
+.static_content {
+	@include text-formatting();
+
+	.buttons {
+		text-align: center;
+		margin-top: 30px;
+	}
+}

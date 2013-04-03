@@ -16,9 +16,13 @@
 
 			<div class="tkt-sidebar" id="ticket_details_sidebar">
 				<div id="revert_details_view">
-					<strong><%= link_to t('ticket.switch_view.whats_new'), 
-									"https://support.freshdesk.com/support/solutions/articles/70760-new-enhanced-ticket-view-page", 
-									:target => "_blank", :class => 'switch' %>
+					<strong>
+							<%= link_to t('ticket.switch_view.whats_new'), 
+									"#tkt_view_whatsnew", 
+									:title => "What's different? ", "data-width" => '600', "data-height" => 600, 
+									"data-template-footer" => '',
+									:target => "_blank", :class => 'switch', :rel => 'freshdialog' %>
+
 					</strong>
 					<%= link_to_function t('ticket.switch_view.submit_feedback'), "window.FreshWidget.show();" %>	
 					<div><%= link_to t('ticket.switch_view.revert_view'), helpdesk_ticket_path(@ticket) %></div>
@@ -114,33 +118,8 @@ jQuery(document).ready(function(){
 		}
 	}, 1000);
 </script>
-
-<div class="hide" id="whats_new">
-	<textarea style="display:none" rel="lazyload">
-	  <div class="content"><div class="negtive-margin">
-	    <ul>
-			<li>
-				Ticket conversations appear in chronological order from top to bottom. The thread gets collapsed when the size exceeds 3 messages. Up to 3 latest replies are displayed in this case. 
-			</li>
-			<li>
-				Ticket activities i.e. status change, property update, time entry etc. can be viewed as a part of the thread by using the show activities toggle on top of the page.
-			</li>
-			<li>
-				The Send and Resolve button has been removed. Instead, clicking on the arrow next to the Send button will show all possible statuses, such as : Send and Set as Pending, Send and Set as Resolved etc. including those for custom ticket statuses. 
-			</li>
-			<li>
-				Canned Responses and Suggested Solutions can be found under the Insert menu after an user clicks the reply button. 
-			</li>
-			<li>
-				The Execute Scenario feature is found under the More menu, along with Edit, Print, and Delete options.  
-			</li>
-			<li>
-				Time entries can be added from the sidebar, from below the Ticket Properties section. 
-			</li>
-			<li>
-				Notes are private by default. They can be made public by clicking on the lock icon at the bottom right corner of the dialog box. 
-			</li>
-		</ul>
-	  </div></div>
-	</textarea>
+<div class="hide">
+<div id="tkt_view_whatsnew">
+	<%= render :partial=> 'helpdesk/tickets/show/whats_new.html.erb' %>
+</div>
 </div>

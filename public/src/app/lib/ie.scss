@@ -1,5 +1,8 @@
 @import "settings";
 
+// Height adjustment for ticket customization drag and drop
+html.ie6, html.ie7, html.ie8{  height:100%; overflow-y:scroll; }
+
 .ie6, .ie7{
 	.wrapper{ 
 		//expressions are too dangoreus ... pratheepv

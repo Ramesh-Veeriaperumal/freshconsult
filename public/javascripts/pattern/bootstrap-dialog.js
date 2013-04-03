@@ -18,7 +18,7 @@
 		this.$dialogid = this.options.targetId.substring(1)
 
 		// Getting static content id and dom if it is present in the document
-		this.$content = $((/#/.test(element.href) ? element.href : this.options.targetId))
+		this.$content = $(this.options.targetId)
 		// Building the base wrapper for the modal dialog
 		this.$dynamicTarget = $('<div class="modal fade" role="dialog" aria-hidden="true"></div>')
 									.attr('id', this.$dialogid)
