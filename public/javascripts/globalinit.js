@@ -229,9 +229,6 @@ is_touch_device = function() {
       $("select.customSelect").livequery(function(){ $(this).chosen(); });
       $("select.select2").livequery(function(){ $(this).select2($(this).data()); });
 
-      // - Custom select boxs will use a plugin called chosen to render with custom CSS and interactions
-      $("select.select2").livequery(function(){ $(this).select2(); });
-
       // - Quote Text in the document as they are being loaded
       $("div.request_mail").livequery(function(){ quote_text(this); }); 
 
