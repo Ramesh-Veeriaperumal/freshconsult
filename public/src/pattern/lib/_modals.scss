@@ -20,7 +20,8 @@
   left: 0;
   z-index: $zindexModalBackdrop;
   background-color: #efefef;
-  background-image: url("/images/dialog/overlay.gif");
+  background-color: rgba(0,0,0,0.2);
+  background-image: url("/images/dialog/popOverlay.png");
   background-repeat: repeat;
   // Fade for backdrop
   &.fade { opacity: 0; }
@@ -55,7 +56,7 @@
   &.fade.in { top: 10px; }
 }
 .modal-header {
-  padding: 9px 40px 0 15px;
+  padding: 20px 40px 0 15px;
   border-bottom: 1px solid #eee;
   .close {
     position: absolute;
@@ -67,7 +68,7 @@
 .modal-body {
   overflow-y: auto;
   max-height: 400px;
-  padding: 25px 15px 15px;
+  padding: 20px;
 
   form {
     margin:0;
@@ -80,7 +81,7 @@
 
 // Footer (for actions)
 .modal-footer {
-  padding: 14px 15px 15px;
+  padding: 20px;
   margin-bottom: 0;
   text-align: right; // right align buttons
   @include border-radius(0 0 6px 6px);
@@ -108,11 +109,12 @@
     margin: -250px 0 0 -355px;
     &.fade.in { top: 50%; }
   }
-  .modal-header{ padding: 9px 15px 0 15px; }
+  .modal-header{ padding: 20px 20px 0; }
   .modal-header .close {
-    height: 28px;
+    height: 32px;
     width: 28px;
-    border: none;
+    border: solid 2px rgba(255,255,255,0.8);
+    border-right: none;
     padding: 8px;
     text-align:center;    
     left:-29px;

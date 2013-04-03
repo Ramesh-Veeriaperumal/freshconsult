@@ -669,6 +669,11 @@ getCookie = function(name)
     }
   }
 }
+
+deleteCookie = function(name, path) 
+{
+  setCookie(name,'',-1,path);
+}
 supports_html5_storage = function() {
   try {
     return 'localStorage' in window && window['localStorage'] !== null;

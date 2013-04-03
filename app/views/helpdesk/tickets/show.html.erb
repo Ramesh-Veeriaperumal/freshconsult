@@ -229,8 +229,10 @@
 	<% end %>
 	jQuery.getScript("/helpdesk/tickets/prevnext/<%=@item.display_id%>");
 	setTimeout(function(){jQuery('#TicketProperties').trigger('afterShow')},50);
-
+	deleteCookie('new_details_view', '/');
 	jQuery('#switch_details_view .switch').click(function(ev) {
-		setCookie('new_details_view', 'true', 90);
+		ev.preventDefault();
+		setCookie('new_details_view', 'true', 90,'/');
+		window.location = '<%= helpdesk_ticket_path(@ticket) %>';
 	});
 <%- end %>

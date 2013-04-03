@@ -19,13 +19,13 @@
 					<strong>
 							<%= link_to t('ticket.switch_view.whats_new'), 
 									"#tkt_view_whatsnew", 
-									:title => "What's different? ", "data-width" => '600', "data-height" => 600, 
+									:title => "#{t('ticket.switch_view.whats_new')}?", "data-width" => '600', "data-height" => 600, 
 									"data-template-footer" => '',
 									:target => "_blank", :class => 'switch', :rel => 'freshdialog' %>
 
 					</strong>
 					<%= link_to_function t('ticket.switch_view.submit_feedback'), "window.FreshWidget.show();" %>	
-					<div><%= link_to t('ticket.switch_view.revert_view'), helpdesk_ticket_path(@ticket) %></div>
+					<div><%= link_to t('ticket.switch_view.revert_view'), helpdesk_ticket_path(@ticket), :id => 'switch' %></div>
 				</div>
 				<%= render :partial => "helpdesk/tickets/show/requester.html.erb" %> 
 				<% unless @ticket.deleted or @ticket.spam %> 
@@ -90,9 +90,12 @@ jQuery(document).ready(function(){
 	jQuery(window).trigger('scroll');
 <% end %>
 
-	jQuery('#revert_details_view .switch').click(function(ev) {
-		setCookie('new_details_view', 'false', 90);
+	jQuery('#revert_details_view #switch').on('click.ticket_details',function(ev) {
+		ev.preventDefault();;
+		setCookie('new_details_view', 'false', 90, '/');
+		window.location = '<%= helpdesk_ticket_path(@ticket) %>';
 	});
+	deleteCookie('new_details_view', '/');
 	
 	jQuery(".list_agents_replying").addClass("hide");
 </script>

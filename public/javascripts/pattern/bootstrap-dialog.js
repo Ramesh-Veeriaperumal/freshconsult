@@ -107,7 +107,7 @@
 		classes: 	'',
 		keyboard: 	true, 
 		templateHeader: '<div class="modal-header">' +
-							'<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+							'<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>' +
 							'<h3 class="ellipsis modal-title"></h3>' +
 						'</div>',
 		templateBody:	'<div class="modal-body"><div class="loading-box"></div></div>',

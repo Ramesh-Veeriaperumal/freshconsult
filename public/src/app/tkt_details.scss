@@ -2798,8 +2798,35 @@ $collision_delay: 1s;
 .static_content {
 	@include text-formatting();
 
-	.buttons {
-		text-align: center;
-		margin-top: 30px;
+	ul {
+		padding: 0px 20px;
 	}
+	li {
+		margin: 10px 0 0;
+	}
+	.buttons {
+		margin: 20px 5px;
+		font-size: 1.1em;
+		font-weight: bold;
+	}
+}
+
+// !PATTERN ? Whether to move this to pattern or not?
+.ticket_details .modal .searchmoreform {
+	position: absolute;
+	right: 20px;
+	display: block;
+	width: 300px;
+	top: 20px;
+
+	input {
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	.searchicon {
+		top: 7px;
+		right: 7px;
+	}
+
 }
