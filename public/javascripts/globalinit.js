@@ -295,7 +295,7 @@ is_touch_device = function() {
       });
 
       // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
-      validateOptions = {
+      var validateOptions = {
          onkeyup: false,
          focusCleanup: true,
          focusInvalid: false,
@@ -310,7 +310,7 @@ is_touch_device = function() {
       })
       // $("form.uniForm").validate(validateOptions);
       $("form.ui-form").livequery(function(ev){
-        $(this).validate(validateOptions);
+        $(this).not(".dont-validate").validate(validateOptions);
       })
       // $("form[rel=validate]").validate(validateOptions);
 

@@ -220,6 +220,7 @@ var Redactor = function(element, options)
 		mozillaEmptyHtml: '<p>&nbsp;</p>',
 		buffer: false,
 		visual: true,
+		span_cleanup_properties: ['color', 'font-family', 'font-size', 'font-weight'],
 					
 		// modal windows container
 		modal_file: String() + 
@@ -743,6 +744,22 @@ Redactor.prototype = {
 			this.opts.callback(this);
 		}
 		
+		var _redactor = this;
+		if(this.inputEventAvailable()) {
+			this.$editor.on('input', function() { 
+				_redactor.syncCode();
+			});
+		}
+		this.$editor.on('drop', function() {
+			// Opera & IE hack for listening to drag and drop
+			// Timeout essential for syncCode() to happen after drop
+			if(!_redactor.inputEventAvailable()) {
+				setTimeout(function() { _redactor.syncCode(); }, 1);
+			}
+		});
+		this.$editor.on('blur', function() { 
+			_redactor.syncCode();
+		});
 	},
 	//this.shortcuts() function is used to execute some action upon some shortcut ket hit
 	//formatblock cmd needs additional params for execution and so 'params' argument has been added
@@ -783,8 +800,10 @@ Redactor.prototype = {
 			{
 				return this.formatNewLine(e);
 			}
-			
-			this.syncCode();
+			if(!this.inputEventAvailable()) {
+				this.syncCode();
+			}
+				
 
 		}, this));		
 	},
@@ -3548,18 +3567,13 @@ Redactor.prototype = {
 		});
 		// Remove unnecessary css applied to a span by comparing a span's style to that of its parent
 		$.each(this.$editor.find('span'), function() {
-			if($(this).css('color') == $(this).parent().css('color')) {
-				$(this).css('color','');
-			}
-			if($(this).css('font-size') == $(this).parent().css('font-size')) {
-				$(this).css('font-size','');
-			}
-			if($(this).css('font-family') == $(this).parent().css('font-family')) {
-				$(this).css('font-family','');
-			}
-			if($(this).css('font-weight') == $(this).parent().css('font-weight')) {
-				$(this).css('font-weight','');
-			}
+			var _span = this;
+			$.each(_redactor.opts.span_cleanup_properties, function(i, css_property) {
+				if($(_span).css(css_property) == $(_span).parent().css(css_property)) {
+					$(_span).css(css_property,'');
+				}
+			});
+
 			if($(this).css('background-color') == $(this).parent().css('background-color') || 
 				($(this).css('background-color') == _redactor.$editor.css('background-color') &&
 					$(this).parent().css('background-color') == "transparent")) {
@@ -3567,6 +3581,9 @@ Redactor.prototype = {
 			}
 		});
 		this.syncCode();
+	},
+	inputEventAvailable: function() {
+		return ($.browser.webkit || $.browser.mozilla);
 	}
 	
 };

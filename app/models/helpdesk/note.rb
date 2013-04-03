@@ -44,7 +44,7 @@ class Helpdesk::Note < ActiveRecord::Base
   accepts_nested_attributes_for :tweet , :fb_post
   
   unhtml_it :body
-  
+  xss_terminate :html5lib_sanitize => [:body_html,:body]
   named_scope :newest_first, :order => "created_at DESC"
   named_scope :visible, :conditions => { :deleted => false } 
   named_scope :public, :conditions => { :private => false } 
@@ -410,7 +410,7 @@ class Helpdesk::Note < ActiveRecord::Base
       begin
         super
       rescue NoMethodError => e
-        logger.debug "method_missing :: args is #{args.inspect} and method:: #{method}"  
+        Rails.logger.debug "method_missing :: args is #{args.inspect} and method:: #{method}"  
         if (load_schema_less_note && schema_less_note.respond_to?(method))
           args = args.first if args && args.is_a?(Array)
           (method.to_s.include? '=') ? schema_less_note.send(method, args) : schema_less_note.send(method)

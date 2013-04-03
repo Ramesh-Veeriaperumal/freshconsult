@@ -144,7 +144,6 @@ class Account < ActiveRecord::Base
   has_many :public_folders, :through => :solution_categories
   has_many :published_articles, :through => :public_folders
    
-  has_one :form_customizer , :class_name =>'Helpdesk::FormCustomizer'
   has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', 
     :include => [:picklist_values, :flexifield_def_entry], :order => "position"
 
@@ -666,6 +665,7 @@ class Account < ActiveRecord::Base
       @all_changes.symbolize_keys!
     end
 
+
   private 
 
     def add_to_billing
@@ -695,5 +695,6 @@ class Account < ActiveRecord::Base
         :billing_emails => { :invoice_emails => [ self.user.email ] }
       }
     end
+
 
 end

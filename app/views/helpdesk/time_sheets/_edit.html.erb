@@ -1,6 +1,7 @@
 <% unless @new_show_page %>
 <div class="request_panel timeentry_edit">
-<% form_remote_for :time_entry, edit, :url => helpdesk_time_sheet_path, :html => { :method => :put, :class => "ui-form" } do |f| %>
+<% form_remote_for :time_entry, edit, :url => helpdesk_time_sheet_path, 
+	:html => { :method => :put, :class => "ui-form dont-validate" } do |f| %>
   <%= render :partial => "/helpdesk/time_sheets/form", :object => f %>
   <fieldset>
     <div class="agent"></div>

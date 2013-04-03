@@ -183,7 +183,7 @@
   	jQuery("#invoice_email_field").select2({
   			data: [ <%= admin_choice.join(",")  %> ],
   			multiple: true,
-  			// maximumSelectionSize: 1,
+  			maximumSelectionSize: 1,
 
   			initSelection : function (element, callback) {
     			callback( [<%= added_invoice_emails.join(",") if added_invoice_emails %>] );
@@ -192,7 +192,7 @@
   			specialFormatting: true,
   			formatResult: results,
 				formatNoMatches: function () { return "Invalid email"; },
-				// formatSelectionTooBig: function(){ return "You cannot add any more emails"; },
+				formatSelectionTooBig: function(){ return "You cannot add any more emails"; },
 
   			createSearchChoice: search_choice_validation		
 		});

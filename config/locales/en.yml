@@ -39,6 +39,8 @@ en:
     tags: "Tags"
     requester: "Requesters"
     created_at: "Created"
+    mygroups: My Groups
+    unassigned: Unassigned
   proceed_now: "\n\nProceed now?"
   forward: "Forward"
   apply: "Apply"
@@ -1758,11 +1760,17 @@ en:
   import_solution_article_info: "Note: We will not save the forum comments"
   no_anonymous_tickets: "To submit a ticket, <a href={{signup}}><b>Sign up</b></a> as a new user or <a href={{login}}><b>Login</b></a>."
   no_signup: "To submit a ticket, please <a href={{login}}><b>Login</b></a>."
+  register: Register
+  by: by
   portal: 
     no_topics_in_this_view: "~ No topics in this view ~"
+    reported: reported
+    said: said
     solutions_home: "Solution home"
     header: 
       preview_message: "<b>Preview mode</b> - <a href='javascript:window.close()'>Click here</a> to go back."
+    new_support_ticket: New support ticket
+    submit_new_ticket: "...or Submit a new ticket"
     login: Login
     login_portal: "Login to the support portal"
     login_details: "Enter the login details you gave when you registered with us"
@@ -1780,6 +1788,7 @@ en:
         topics: "Topics"
         tickets: "Tickets"
       placeholder: "Enter your search term here..."
+      results_for: Search results for
     popular_topics: "Popular topics"
     showing_recently_popular_topics: "Showing recently popular topics"
     community_forums: "Community forums"
@@ -1791,10 +1800,22 @@ en:
     no_forums_info_2: "Why don't you start a %{start_topic_link}?"
     article:
       see_all_articles: "See all %{count} articles"
-    topic:      
+    folder:
+      filler_text: "Watch this space for articles regarding %{folder_name}"
+    topic:   
+      follow: Follow
+      following: Following
+      topic_title: Topic title   
+      post_topic: Post topic in
+      monitor_topic: Monitor this topic
+      default_select_option: Select a forum type
       comments_closed: "Comments to this discussion are now closed!"
       start_new_topic: "Start a new topic"
       see_all_topics: "See all %{count} topics"
+      comment_placeholder: Click here to add a comment
+      started: started a topic
+      more_topic: More topics in
+      last_reply: Last Reply
     topic_vote:
       you: 
         one: "You"
@@ -1827,6 +1848,14 @@ en:
       export: "Export tickets"
       export_ticket_data: "Export ticket data to CSV"
       export_to_csv: "Export to CSV"
+      ticket_list: Tickets list
+      mark_closed: Mark ticket as closed
+      add_people: Add people
+      reply_placeholder: "Click here to reply to this ticket"
+      details: Ticket details
+      add_or_remove_emails: "Add or remove emails that need to be copied when a notification for this ticket is sent."
+      add_people_title: Add people to conversation
+      reopen_reply: Reopen and reply
   feedbackwidget_form_title: Widget form title
   cancel_and_back: Cancel and go back
   due_in: Due in %{time_words}
@@ -1905,6 +1934,7 @@ en:
   twoday: 2 Days
   profile: 
     change_password: Change Password
+    manage: Manage your profile
     edit: Edit Profile
     current_password: Current password
     confirm_password: Confirm password
@@ -2729,6 +2759,7 @@ en:
         target_merge_description2: Description in ticket %{ticket_id}
         confirm_and_merge: Confirm and merge  
       bulk_merge:
+        continue: "Continue"
         mark_primary: "Mark as primary"
         primary_ticket: "This is your primary ticket"
         remove: "Remove this ticket"
@@ -2741,8 +2772,8 @@ en:
           one: "is merged into this ticket."
           other: "are merged into this ticket."
         target_note_description3:
-          one: "Ticket with id %{source_tickets} is merged into ticket %{target_ticket_id} with this request"
-          other: "Tickets with ids %{source_tickets} are merged into ticket %{target_ticket_id} with this request"
+          one: "The ticket %{source_tickets} has been merged with the ticket %{target_ticket_id}. The conversation will be added in a few minutes. "
+          other: "The tickets %{source_tickets} have been merged into the ticket %{target_ticket_id}. The conversations will be added in a few minutes."
   import_ticket_group: Tickets &amp; Group
   or: or
   tickets_filter:
@@ -2890,6 +2921,7 @@ en:
   due_today: Today
   due_tomo: Tomorrow
   due_next_eight: Next 8 hours
+  print: Print
   block_users: Do you want to block the contact(s) as well?
   user_block: "Yes"
   users_blocked_message: "Following contact(s) (%{users}) have been blocked"
@@ -3605,3 +3637,4 @@ en:
   plans_and_pricing: "Plans & Pricing"
   number_of_attachments: " attachments"
   activation_link: Successfully registered activation link has been sent to %{email}
+  not_given: "Not given."

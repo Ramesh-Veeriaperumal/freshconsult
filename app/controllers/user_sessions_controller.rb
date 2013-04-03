@@ -19,15 +19,16 @@ include RedisKeys
   skip_before_filter :check_day_pass_usage
   
   def new
-    if current_account.sso_enabled? and (request.request_uri != "/login/normal") 
+    # Login normal supersets all login access (can be used by agents)
+    if request.request_uri == "/login/normal"
+      @user_session = current_account.user_sessions.new
+    elsif current_account.sso_enabled?
+      # Redirect to customer login is sso is enabled
       return redirect_to current_account.sso_options[:login_url]
     else
-      @user_session = current_account.user_sessions.new
-      # !PORTALCSS move this to another route called agent login
-      # render :partial => "shared/login" if mobile?
+      # Redirect to portal login by default 
+      return redirect_to support_login_path
     end
-    
-    redirect_to support_login_path
   end
  
   def sso_login

@@ -78,17 +78,17 @@ module Search::TicketSearch
 
     if criteria_key == :responder_id
       agents = []
-      agents.push([0, "Me" ])
+      agents.push([0, I18n.t("helpdesk.tickets.add_watcher.me") ])
       agents.concat(Account.current.agents_from_cache.collect { |au| [au.user.id, au.user.name] })
-      agents.push([-1, "Unassigned" ])
+      agents.push([-1, I18n.t("filter_options.unassigned") ])
       return agents
     end
 
     if criteria_key == :group_id
       groups = []
-      groups.push([0, "My Groups" ])
+      groups.push([0, I18n.t('filter_options.mygroups') ])
       groups.concat(Account.current.groups_from_cache.collect { |g| [g.id, g.name]})
-      groups.push([-1, "Unassigned" ])
+      groups.push([-1, I18n.t("filter_options.unassigned") ])
       return groups
     end
 

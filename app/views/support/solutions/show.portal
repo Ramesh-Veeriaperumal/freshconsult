@@ -1,6 +1,6 @@
 <section class="main content rounded-6 min-height-on-desktop" id="solutions-category-{{ category.id }}">
 	<div class="breadcrumb">
-		<a href="{{ portal.solutions_home_url }}">Solution home</a>
+		<a href="{{ portal.solutions_home_url }}">{% translate portal.solutions_home %}</a>
 	</div>
 	<h2 class="heading">{{ category.name }}</h2>
 	<div class="cs-g-c">
@@ -19,9 +19,7 @@
 					{% endfor %}
 				</ul>
 				{% if folder.articles.size > 5 %}
-					<a href="{{ folder.url }}" class="see-more">
-						See all {{ folder.articles | size }} articles 
-					</a>	
+					{{ folder | link_to_see_all_articles }}
 				{% endif %}
 			</section>
 		{% endfor %}

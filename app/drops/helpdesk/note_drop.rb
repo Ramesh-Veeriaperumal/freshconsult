@@ -33,7 +33,9 @@ class Helpdesk::NoteDrop < BaseDrop
 	end
 
 	def body_text
-		@source.body
+		last_reply = Nokogiri::HTML(CGI.unescapeHTML(@source.body_html))
+		last_reply.xpath('//div[@class="freshdesk_quote"]').remove
+		last_reply.content.strip()
 	end
 
 	def created_on
