@@ -9,7 +9,7 @@
 	<fieldset>
 		<div class="control-group">
 			<label class="control-label required" for="topic_title">
-				Topic title
+				<%= t('portal.topic.topic_title') %>
 			</label>
 			<div class="controls">
 				<%= form.text_field :title, :class => "required text span12", :tabindex => 10 %>
@@ -26,11 +26,11 @@
 		</div>	
 		<div class="control-group">
 			<label class="control-label required">
-				Post topic in
+				<%= t('portal.topic.post_topic') %>
 			</label>
 			<div class="controls">
 				<%= form.select :forum_id, grouped_options_for_select(forum_options), 
-					{ :include_blank => "Select a forum type" },
+					{ :include_blank => t("portal.topic.default_select_option") },
 					{ :class => "required custom-select", 
 					  :disabled => !@topic.new_record? } %>
 				<% javascript_tag do %>
@@ -43,13 +43,13 @@
 				<% if ["new"].include? params[:action] %>
 					<label class="checkbox" id="monitor-topic-lable">
 						<%= check_box_tag 'monitor', '', true, :class => "checkbox" %> 
-						Monitor this topic
+						<%= t('portal.topic.monitor_topic') %>
 					</label>
 				<%end%>
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">Attach files</label>	
+			<label class="control-label"><%= t('attach_files') %></label>	
 			<% attach_id = attach_id || "post" %>
 			<div class="controls">
 				<input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="post[attachments][][resource]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
@@ -61,7 +61,7 @@
 			<script id="file-list-template" type="text/x-jquery-tmpl">			
 			  <div class="item">
 			  	<span>
-			  		${name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="${inputId}">remove</a>
+			  		${name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="${inputId}"><%= t('remove') %></a>
 				</span>
 			  </div>
 			</script>
@@ -69,7 +69,7 @@
 		
 		<% unless @topic.new_record? %>
 		<div class="attachment-list-container">
-		    <%= content_tag('h5', 'Attachments') unless @topic.posts.first.attachments.empty? %>
+		    <%= content_tag('h5', t('attachments')) unless @topic.posts.first.attachments.empty? %>
 		    <table class="attachment-list">
 		      <%= render(
 		        :partial => '/helpdesk/shared/attachment', 
@@ -80,7 +80,7 @@
 		<%end%>
 	</fieldset>
 	<div class="form-actions">
-		<input type="submit" class="btn btn-primary" value="Save" />
+		<input type="submit" class="btn btn-primary" value=<%= t('save') %> />
 		<a href="javascript:history.back()" class="btn"><%= t('cancel') %></a>
 		<% unless @topic.new_record? %>
 			<%= link_to t('delete'), support_discussions_topic_path(@topic), :confirm => "#{t('delete_topic_msg')}?", 

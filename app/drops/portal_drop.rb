@@ -138,7 +138,7 @@ class PortalDrop < BaseDrop
   # !MODEL-ENHANCEMENT Need to make published articles for a 
   # folder to be tracked inside the folder itself... similar to fourms
   def articles_count
-    @articles_count ||= portal_account.published_articles.count
+    @articles_count ||= folders.map{ |f| f.published_articles.count }.sum
   end
 
   def url_options

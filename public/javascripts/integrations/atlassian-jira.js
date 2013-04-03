@@ -249,7 +249,7 @@ JiraWidget.prototype = {
 			type:'hidden',
 			id: 'fields[description]',
 			name: 'fields[description]',
-			value: jiraBundle.ticketDesc}).appendTo('#jira-add-form');
+			value: jQuery("#jira-note").text()}).appendTo('#jira-add-form');
 		}
 		if(jQuery('input[name="fields[summary]"]').size() == 0)
 		{

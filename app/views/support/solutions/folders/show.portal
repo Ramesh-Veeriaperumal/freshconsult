@@ -5,26 +5,25 @@
 	</div>
 	<h2 class="heading">{{ folder.name | h}}</h2>
 	<p class="info-text">{{ folder.description | h }}</p>
-	{% paginate folder.articles by 10 %}
-		<section class="article-list c-list">
-			{% for article in paginate.collection %}
-				<div class="c-row c-article-row">
-					<i class="icon-article-table-row"></i>					
-					<div class="ellipsis"> 
-						<a href="{{article.url}}" class="c-link">{{article.title | h}}</a>
+	{% if folder.articles_count > 0 %}
+		{% paginate folder.articles by 10 %}		
+			<section class="article-list c-list">
+				{% for article in paginate.collection %}
+					<div class="c-row c-article-row">
+						<i class="icon-article-table-row"></i>
+						<div class="ellipsis"> 
+							<a href="{{article.url}}" class="c-link">{{article.title | h}}</a>
+						</div>
+						<div class="description-text">
+							{{ article.body_plain || truncate:160 }}
+						</div>
+						<div class="help-text">{{ article.modified_on | short_day_with_time }}</div>
 					</div>
-					<div class="description-text">
-						{{ article.body_plain || truncate:160 }}
-					</div>
-					<div class="help-text">{{ article.modified_on | short_day_with_time }}</div>
-				</div>
-			{% endfor %}
-			{% if folder.articles == empty %}
-				<p class="lead">
-					~ Watch this space for articles regarding {{ folder.name | h}} ~
-				</p>
-			{% endif %}
-		</section>
-		{{ paginate | default_pagination }}
-	{% endpaginate %}
+				{% endfor %}
+			</section>
+			{{ paginate | default_pagination }}
+		{% endpaginate %}
+	{% else %}
+		{{ folder| h | filler_for_folders }}
+	{% endif %}
 </section>

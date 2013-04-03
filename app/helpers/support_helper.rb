@@ -104,6 +104,10 @@ module SupportHelper
 		   <div class="no-results">#{ I18n.t('portal.no_articles_info_2') }</div> )
 	end
 
+	def filler_for_folders folder
+		%( <div class="no-results">#{ I18n.t('portal.folder.filler_text', :folder_name => folder['name']) }</div> )
+	end
+
 	# Logo for the portal
 	def logo portal
 		_output = []
@@ -149,7 +153,7 @@ module SupportHelper
 	# Follow/unfollow button 
 	# To modify label the liquid can be modified as so
 	# {{ topic | follow_topic_button : "Click to follow", "Click to unfollow" }}
-	def follow_topic_button topic, follow_label = "Follow", unfollow_label = "Following"
+	def follow_topic_button topic, follow_label = t('portal.topic.follow'), unfollow_label = t('portal.topic.following')
 		if User.current
 			_monitoring = !Monitorship.count(:id, 
 							:conditions => ['user_id = ? and topic_id = ? and active = ?', 
@@ -251,16 +255,16 @@ HTML
 		output.join(", ")
 	end
 
-	def last_post_brief topic, link_label = "Last reply"
+	def last_post_brief topic, link_label = t('portal.topic.last_reply')
 		if topic.last_post.present?
 			post = topic.last_post.to_liquid
-			%(<a href="#{topic.last_post_url}"> #{h(link_label)} </a> by
+			%(<a href="#{topic.last_post_url}"> #{h(link_label)} </a> #{t('by')}
 				#{post.user.name} #{time_ago post.created_on})
 		end
 	end
 		
 	def topic_brief topic
-		%(Posted by #{bold topic.user.name}, #{time_ago topic.created_on})
+		%(#{t('posted_by')} #{bold topic.user.name}, #{time_ago topic.created_on})
 	end
 
 	def topic_votes topic
@@ -304,6 +308,16 @@ HTML
 		end
 	end	
 
+	def link_to_see_all_topics forum
+		label = I18n.t('portal.topic.see_all_topics', :count => forum['topics_count'])
+		link_to label, forum['url'], :title => label, :class => "see-more"
+	end
+
+	def link_to_see_all_articles folder
+		label = I18n.t('portal.article.see_all_articles', :count => folder['articles_count'])
+		link_to label, folder['url'], :title => label, :class => "see-more"
+	end
+
 	def post_actions post
 		if User.current == post.user
 			output = <<HTML
@@ -344,7 +358,7 @@ HTML
 		_text << %( <b> #{ ticket['status'] } </b> )
 		_text << I18n.t('since_last_time', :time_words => timediff_in_words(Time.now() - ticket['status_changed_on']))
 		_text << %( <a href='#reply-to-ticket' data-proxy-for='#add-note-form' 
-			data-show-dom='#reply-to-ticket'>Reopen and reply</a> ) if ticket['closed?']
+			data-show-dom='#reply-to-ticket'>#{ t('portal.tickets.reopen_reply') }</a> ) if ticket['closed?']
 		content_tag :div, _text.join(" "), :class => "alert alert-ticket-status"
 	end
 
