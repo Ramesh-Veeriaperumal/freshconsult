@@ -1,0 +1,4 @@
+<%= render "helpdesk/time_sheets/v2/edit", :object => @time_entry %>
+<% javascript_tag do -%>
+	<%= modifyTimesheetApps(@time_entry) %>
+<% end %>

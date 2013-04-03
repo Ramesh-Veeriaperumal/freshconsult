@@ -5,7 +5,7 @@ class Integrations::ApplicationsController < Admin::AdminController
   before_filter :load_object, :only => [:show, :edit, :update, :destroy]
 
   def index
-    @applications = Integrations::Application.available_apps(current_account).order(:listing_order)
+    @applications = Integrations::Application.available_apps(current_account)
     @installed_applications = get_installed_apps
   end
 

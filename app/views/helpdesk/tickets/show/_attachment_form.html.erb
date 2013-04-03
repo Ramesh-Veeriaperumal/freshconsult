@@ -1,0 +1,93 @@
+<% 
+	attach_id ||= "ticket" 
+	nsc_param = nsc_param || "helpdesk_ticket"
+  original_attachments ||= {:regular => [], :dropbox => []}
+%>
+<div class="attachments-wrap">
+  <div id="<%=attach_id%>-container" class="attachments-container">
+    <% total_attachments = original_attachments[:regular].size + original_attachments[:dropbox].size if original_attachments.present? %>
+    <label><i><%= total_attachments || 0 %></i> <%= t('attachments')%>: </label>
+    <div class="attachment_contents">
+
+      <div class="attachment_list" id="<%=attach_id%>-attachments">
+        <% if original_attachments.present? %>
+
+          <% original_attachments[:regular].each do |attachment| %>
+            <div class="item" rel="original_attachment">
+              <a class="attachment-close"  href="javascript:void(0)"
+                fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" 
+                onclick="jQuery(this).parent().hide(); jQuery(this).next().prop('disabled', true); Helpdesk.Multifile.updateCount(this); return false;"></a>
+              <input type="hidden" name="helpdesk_note[attachments][][resource]" value="<%=attachment.id%>" rel="original_attachment"/>
+              <div class="attachment-type file-types-def">
+                <a href="javascript:void(0)"><%= attachment.content_file_name %></a>
+              </div>
+            </div>
+          <% end %>
+
+          <% original_attachments[:dropbox].each do |dbox| %>
+            <div class="item" rel="original_attachment">
+              <a class="attachment-close"  href="javascript:void(0)"
+                fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" 
+                onclick="jQuery(this).parent().hide(); jQuery(this).next().prop('disabled', true); Helpdesk.Multifile.updateCount(this); return false;"></a>
+              <input type="hidden" name="[dropbox_url][]" value="<%=dbox.url%>" rel="original_attachment" />
+              <div class="attachment-type file-types-def">
+                <a href="javascript:void(0)"><%= dbox.url.split('/')[-1] %> </a>
+              </div>
+            </div>
+          <% end %>
+
+        <% end %>
+
+      </div>
+
+      <div class="hidden_upload custom_tip_bottom" title='<%=t('attachment_help_info')%>' class='custom-tip-top'>
+        <div class="add_attachment"><span>+</span> <%= t('attach_file') %> </div>
+        <input type="file" id="<%=attach_id%>_file" name="emptyfile"
+                nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
+                fileContainer="<%=attach_id%>-container" 
+                fileList="<%=attach_id%>-attachments" 
+                sendFocusTo="<%=attach_id%>-body"/>
+      </div>
+      <% unless dropbox_app_key.blank?  %>
+      <div class="dropbox_div">       
+        <div class="db-chooser" id="dropboxjs" data-app-key="<%=dropbox_app_key%>">
+          <label id="db-chooser" data-holder="<%=attach_id%>_url" onclick='initDropbox(this);' ><%= t('dropbox_attach_from') %></label>
+          <input type="hidden"  id="<%=attach_id%>_url" name="dropboxURL" nameWhenFilled="[dropbox_url][]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body">
+            <!-- <input type="button" class="dropbox_button" name="selected-file"value="<%=t('dropbox_choose_file')%>"> -->
+          <script type="text/javascript">
+                    function initDropbox(inp){
+                      Dropbox.choose({success:function(files){
+
+                          //console.log(jQuery(inp).data('holder')+':::: ');
+                          var inputElement = jQuery(inp).data('holder');
+
+                          jQuery('#'+inputElement).val(unescape(files[0].link))
+
+                          Helpdesk.Multifile.addFileToList(jQuery('#'+inputElement));
+                          newInput = Helpdesk.Multifile.duplicateInput(jQuery('#'+inputElement));
+                          jQuery(inp).data('holder',newInput.attr('id'));
+                      }})
+                    }
+          </script>
+        </div>
+      </div>
+      <%end%>
+    </div>
+  </div>
+</div>
+
+<%# 
+  The following is a template used by multifile.js to create rows in
+  the attachments table.
+ %>
+<script id="file-list-template" type="text/x-jquery-tmpl">
+<div class="item">
+  <a class="attachment-close"  href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;" inputId="${inputId}"></a>
+  <div class="attachment-type file-types-def">
+    <a href="javascript:void(0)">${name}</a>
+  </div>
+</div>
+</script>
+<% unless dropbox_app_key.blank? %>
+  <script type="text/javascript" src="https://www.dropbox.com/static/api/1/dropbox.js"></script>
+<% end %>

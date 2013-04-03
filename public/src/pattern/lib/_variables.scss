@@ -88,7 +88,11 @@ $btnDangerBackgroundHighlight:      #770000 !default;
 $btnInverseBackground:              $linkColor !default;
 $btnInverseBackgroundHighlight:     adjust-hue($btnPrimaryBackground, 20%) !default;
 
+$btnDisabledColor:              	$black !default;
+$btnDisabledBackground:     		#e8e8e8 !default;
 
+$btnDoneColor:						$black !default;
+$btnDoneBackground:					#FFF398 !default;
 // Forms
 // -------------------------
 $inputBackground:               $white !default;
@@ -110,7 +114,6 @@ $dropdownLinkColorActive:       $dropdownLinkColor !default;
 
 $dropdownLinkBackgroundActive:  $grayLight !default;
 $dropdownLinkBackgroundHover:   $dropdownLinkBackgroundActive !default;
-
 
 
 // COMPONENT VARIABLES

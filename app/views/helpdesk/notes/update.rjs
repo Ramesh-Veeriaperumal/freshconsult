@@ -1,0 +1,4 @@
+page << "jQuery('#note_details_#{@item.id}').html(\"#{escape_javascript(@item.body_html)}\")"
+page << "jQuery('#note_details_#{@item.id}').show()"
+
+show_ajax_flash(page)

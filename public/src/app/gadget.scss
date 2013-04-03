@@ -76,6 +76,16 @@ body#gcgadget {
 	#fullbody .alert-message {
 		margin: 0 10px;
 	}
+
+
+	// New Ticket Details View
+	.tkt-wrapper {
+		padding: 0 20px;
+	}
+
+	.commentbox .actions {
+		display: none;
+	}
 }
 
 body.minimized {
