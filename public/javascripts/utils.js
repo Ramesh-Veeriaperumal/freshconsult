@@ -838,3 +838,17 @@ Date.prototype.toISOStringCustom = function() {
             + pad(this.getMinutes()) + ':'
             + pad(this.getSeconds()) +"."+pad(this.getMilliseconds()) +"+1100";
     };
+
+function escapeHtml(str) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+};
+
+function unescapeHtml(escapedStr) {
+        var div = document.createElement('div');
+        div.innerHTML = escapedStr;
+        var child = div.childNodes[0];
+        return child ? child.nodeValue : '';
+};
+

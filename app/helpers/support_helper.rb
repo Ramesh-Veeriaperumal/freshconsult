@@ -128,7 +128,7 @@ module SupportHelper
 		output << %(<ul class="nav nav-pills nav-filter">)		
 			search.filters.each do |f|
 				output << %(<li class="#{search.current_filter == f[:name] ? "active" : ""}">)
-				output << link_to(t("portal.search.filters.#{f[:name]}"), f[:url])
+				output << link_to(t("portal.search.filters.#{f[:name]}"), h(f[:url]))
 				output << %(</li>)
 			end
 		output << %(</ul>)
@@ -375,11 +375,11 @@ HTML
 	        element = content_tag(:div, text_area(object_name, field_name, :class => element_class + " span12", :value => field_value, :rows => 6), :class => "controls")
 	      when "dropdown" then	        
           	element = content_tag(:div, 
-          		select(object_name, field_name, field.field_type == "default_status" ? field.visible_status_choices : field.choices, 
+          		select(object_name, field_name, field.field_type == "default_status" ? field.visible_status_choices : field.html_unescaped_choices, 
           			{:selected => field_value}, {:class => element_class}), :class => "controls")
 	      when "dropdown_blank" then
 	        element = content_tag(:div, 
-	        	select(object_name, field_name, field.choices, { :include_blank => "...", :selected => field_value }, {:class => element_class}), :class => "controls")
+	        	select(object_name, field_name, field.html_unescaped_choices, { :include_blank => "...", :selected => field_value }, {:class => element_class}), :class => "controls")
 	      when "nested_field" then
 	        element = content_tag(:div, nested_field_tag(object_name, field_name, field, 
 	        	{:include_blank => "...", :selected => field_value}, 
@@ -420,7 +420,7 @@ HTML
 	# The field_value(init value) for the nested field should be in the the following format
 	# { :category_val => "", :subcategory_val => "", :item_val => "" }
 	def nested_field_tag(_name, _fieldname, _field, _opt = {}, _htmlopts = {}, _field_values = {}, in_portal = false)        
-		_category = select(_name, _fieldname, _field.choices, _opt, _htmlopts)
+		_category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
 		_javascript_opts = {
 		  :data_tree => _field.nested_choices,
 		  :initValues => _field_values,
@@ -487,7 +487,7 @@ HTML
 					ticket.get_ff_value(field.name)
 			    else
 					field.dropdown_selected(((_field_type == "default_status") ? 
-						field.all_status_choices : field.choices), _field_value)
+						field.all_status_choices : field.html_unescaped_choices), _field_value)
 			    end
 			else
 			  	_field_value

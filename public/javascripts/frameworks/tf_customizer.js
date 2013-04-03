@@ -105,14 +105,14 @@
             ev.preventDefault();
             nestedTree.readData($('#nestedTextarea').val());
             $("#nestedTextarea").trigger("blur");
-            $("#nest-category").html(nestedTree.getCategory()).trigger("change");
+            $("#nest-category").html(nestedTree.getCategoryEscaped()).trigger("change");
             setTimeout(hideNestedTextarea, 200);
       });
       $("#nest-category").change(function(ev){    
-          $("#nest-subcategory").html(nestedTree.getSubcategory($(this).children('option:selected').text())).trigger("change");
+          $("#nest-subcategory").html(nestedTree.getSubcategoryEscaped($(this).children('option:selected').text())).trigger("change");
       });
       $("#nest-subcategory").change(function(ev){
-          $("#nest-item").html(nestedTree.getItems($("#nest-category option:selected").text(), $(this).children("option:selected").text()));
+          $("#nest-item").html(nestedTree.getItemsEscaped($("#nest-category option:selected").text(), $(this).children("option:selected").text()));
       });               
       $("#nested-edit-button").click(function(ev){ 
           ev.preventDefault();          
@@ -198,7 +198,7 @@
               }else{
                 if(dataItem.field_type == "default_status"){
                   dataItem.choices.each(function(item){
-                    field.append("<option value=" + item.status_id + ">" + item.name + "</option>");
+                    field.append("<option value=" + item.status_id + ">" + escapeHtml(item.name) + "</option>");
                   });
                 }else{
                   $(dataItem.choices).each(function(ci, choice){
@@ -352,7 +352,7 @@
          dom	= dom  || dialogDOMMap.choices;
          data	= data || [ '', 0 ];
          var inputData = $("<input type='text' />")
-                              .val(data[0])
+                              .val(unescapeHtml(data[0]))
                               .attr("data_id", data[1])
                               .change(function(){$("#ChoiceListValidation").next("label").hide();});
          var dropSpan  = $("<span class='dropchoice' />").append(inputData);
@@ -403,7 +403,7 @@
             var temp        = [ '', 0 ],
                 input_box   = $(this).find("span.dropchoice input");
                 
-                temp[0]     = input_box.val();
+                temp[0]     = escapeHtml(input_box.val());
                 temp[1]     = input_box.attr("data_id");
                 
             if($.trim(temp[0]) !== '') choices.push(temp);
@@ -483,8 +483,8 @@
             sourceData = $(sourceField).data("raw");
 
             dialogDOMMap.field_type.val(sourceData.type);
-            dialogDOMMap.label.val(sourceData.label);
-            dialogDOMMap.label_in_portal.val(sourceData.label_in_portal);
+            dialogDOMMap.label.val(unescapeHtml(sourceData.label));
+            dialogDOMMap.label_in_portal.val(unescapeHtml(sourceData.label_in_portal));
             dialogDOMMap.description.val(sourceData.description);
 
             $("div#CustomFieldsDialog label.overlabel").overlabel();
@@ -513,8 +513,8 @@
               $("#nestedTextarea").val(nestedTree.toString());   
               $("#nest-category").html(nestedTree.getCategory()).trigger("change");
               sourceData.levels.each(function(item){
-                $("#agentlevel"+item.level+"label").val(item.label);
-                $("#customerslevel"+item.level+"label").val(item.label_in_portal);
+                item.label ? $("#agentlevel"+item.level+"label").val(unescapeHtml(item.label)):$("#agentlevel"+item.level+"label").val(item.label);
+                item.label_in_portal ? $("#customerslevel"+item.level+"label").val(unescapeHtml(item.label_in_portal)):$("#customerslevel"+item.level+"label").val(item.label_in_portal);
               });
             }else if(sourceData.field_type == "default_status"){
               $("#StatusFieldChoices").show();
@@ -596,8 +596,8 @@
             var sourceData = $H($(SourceField).data("raw")),
                 _field_type = sourceData.get("field_type");
          // sourceData.set("name"                  , dialogDOMMap.label.val());
-            sourceData.set("label"                 , dialogDOMMap.label.val());
-            sourceData.set("label_in_portal"       , dialogDOMMap.label_in_portal.val());
+            sourceData.set("label"                 , escapeHtml(dialogDOMMap.label.val()));
+            sourceData.set("label_in_portal"       , escapeHtml(dialogDOMMap.label_in_portal.val()));
             sourceData.set("description"           , dialogDOMMap.description.val());
 
             sourceData.set("required"              , dialogDOMMap.required.prop("checked"));
@@ -625,8 +625,8 @@
    
             if(_field_type == 'nested_field'){
               setNestedFields(sourceData);              
-              sourceData.set("label", $("#agentlevel1label").val());
-              sourceData.set("label_in_portal", $("#customerslabel").val());
+              sourceData.set("label", escapeHtml($("#agentlevel1label").val()));
+              sourceData.set("label_in_portal", escapeHtml($("#customerslabel").val()));
               sourceData.set("choices", nestedTree.toArray());  
             }else if(_field_type == "default_status"){
               sourceData.set("choices", getAllStatusChoices());
@@ -655,8 +655,8 @@
 
           sourceData.set("levels", levels.map(function(item){
             return { 
-                label           : $("#agentlevel"+item.level+"label").val(),
-                label_in_portal : $("#customerslevel"+item.level+"label").val(), 
+                label           : escapeHtml($("#agentlevel"+item.level+"label").val()),
+                label_in_portal : escapeHtml($("#customerslevel"+item.level+"label").val()), 
                 description     : '',
                 level           : item.level,
                 id              : (item.id || null),
