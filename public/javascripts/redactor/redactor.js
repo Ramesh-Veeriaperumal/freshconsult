@@ -79,7 +79,7 @@ var RLANG = {
 	choose: 'Select Existing',
 	choose_text: 'Showing recent 20 images',
 	or_choose: 'Or choose',
-	drop_file_here: 'Drop and Drop Image file here to upload',
+	drop_file_here: 'Drag and Drop Image file here to upload',
 	align_left:	'Align Left (' + ctrlkeyname + shiftkeyname + 'L)',	
 	align_center: 'Align Center (' + ctrlkeyname + shiftkeyname + 'E)',
 	align_right: 'Align Right (' + ctrlkeyname + shiftkeyname + 'R)',
