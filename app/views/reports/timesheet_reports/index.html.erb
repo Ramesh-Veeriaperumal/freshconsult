@@ -35,6 +35,13 @@
 						{ :multiple => true,
 						  :class => "customSelect auto", 
 									 "data-placeholder".to_sym() => t('.select_agent') } %>
+        <label><%=t('helpdesk.time_sheets.group')%></label>	
+		<%= select_tag :group_id, 
+						options_for_select(current_account.groups.collect{ |c| [c.name, c.id] },
+											 @group_id), 
+						{ :multiple => true,
+						  :class => "customSelect auto", 
+									 "data-placeholder".to_sym() => t('.select_group') } %>
         
 		<label><%=t('helpdesk.time_sheets.billing_type')%></label>
 		<%= select_tag :billable, options_for_select(Helpdesk::TimeSheet.billable_options , 
