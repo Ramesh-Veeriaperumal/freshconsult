@@ -41,13 +41,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   after_create :refresh_display_id, :create_meta_note
 
-  before_update :assign_email_config, :load_ticket_status
+  before_update :assign_email_config
 
   before_update :update_message_id, :if => :deleted_changed?
 
   before_validation_on_create :set_token
   
-  before_save :update_ticket_changes, :set_sla_policy, :update_dueby
+  before_save :update_ticket_changes, :set_sla_policy, :load_ticket_status, :update_dueby
 
   after_save :save_custom_field
 
@@ -530,7 +530,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def load_ticket_status
-    if status_changed?
+    if !self.new_record? && status_changed?
       self.ticket_status = account.ticket_status_values.find_by_status_id(status)
     end
   end
