@@ -25,7 +25,7 @@ module Integrations::Jira::WebhookInstaller
   end
 
   def jira_app?
-     self.application.name == APP_NAMES[:jira]
+     self.application.name == APP_NAMES[:jira] if self.application.name
   end
 
 end

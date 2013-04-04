@@ -26,6 +26,9 @@ $ticket-view-layout:smart;
 @import "product/*.png";
 @include all-product-sprites;
 
+@import "file-types/*.png";
+@import "collision/*.png";
+
 /* !IMPORTANT ALL GAMIFICATION RELATED STYLES WILL BE UNDER "app/gamification.scss" 
 * These sprites are moved there so that they can be imported only if the feature is enabled */
 

@@ -1,0 +1,59 @@
+folder_1:
+ account_id: 1
+ name: Default solution folder
+ description: Default solution folder
+ category_id: 1
+ position: 1
+ is_default: 1
+ id: 1
+ visibility: 1
+
+folder_2:
+ account_id: 1
+ name: Default solution folder 2
+ description: Default solution folder 2
+ category_id: 1
+ position: 1
+ is_default: 0
+ id: 2
+ visibility: 1
+
+folder_anyone:
+ account_id: 1
+ name: Default solution folder anyone
+ description: Default solution folder anyone
+ category_id: 1
+ position: 1
+ is_default: 0
+ id: 3
+ visibility: 1
+
+folder_logged_users:
+ account_id: 1
+ name: Default solution folder logged_users 
+ description: Default solution folder logged_users
+ category_id: 1
+ position: 1
+ is_default: 0
+ id: 4
+ visibility: 2
+
+folder_agents:
+ account_id: 1
+ name: Default solution folder agents
+ description: Default solution folder agents
+ category_id: 1
+ position: 1
+ is_default: 1
+ id: 5
+ visibility: 3
+
+folder_company_users:
+ account_id: 1
+ name: Default solution folder company_users
+ description: Default solution folder company_users
+ category_id: 1
+ position: 1
+ is_default: 0
+ id: 6
+ visibility: 4

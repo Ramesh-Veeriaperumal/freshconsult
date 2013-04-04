@@ -1,0 +1,30 @@
+<div class="widget" id='TicketProperties'>
+	<h3 class="title"><%=t('ticket.properties')%></h3>
+	<% form_disable = params[:format] == 'widget' ? {:onsubmit=> 'return false'} : {} %>
+	<% form_for @ticket, :html => { :id => 'custom_ticket_form', :class => 'ui-form content'}.merge(form_disable) do |f| %>
+	<ul class="cnt">
+
+		<% unless params[:format] == 'widget' %>
+		<li class="button-container top">
+			<%= f.submit t('update'), :class => "btn btn-primary", :id => "helpdesk_ticket_submit_dup",
+			"data-loading-text" => "#{t('ticket.updating')}...", 
+			"data-saved-text" => "✔ #{t('ticket.update_done')}", 
+			"data-default-text" => t('update') %>
+		</li>
+		<% end %>
+		<!--form values starts here-->
+		<%= render :partial => '/helpdesk/tickets/show/ticket_field_elements.html.erb' %>
+		<%= render :partial => '/helpdesk/tickets/show/tags.html.erb' %>
+		<!--form values ends here-->
+		<!-- Custom fields ends here-->
+		<% unless params[:format] == 'widget' %>
+		<li class="button-container">
+			<%= f.submit t('update'), :class => "btn btn-primary", :id => "helpdesk_ticket_submit",
+			"data-loading-text" => "#{t('ticket.updating')}...", 
+			"data-saved-text" => "✔ #{t('ticket.update_done')}", 
+			"data-default-text" => t('update') %>
+		</li>		
+		<% end %>
+	</ul>
+	<% end %> 
+</div> 

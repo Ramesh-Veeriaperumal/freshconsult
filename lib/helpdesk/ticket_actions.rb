@@ -98,7 +98,11 @@ module Helpdesk::TicketActions
 
   def component
     @ticket = current_account.tickets.find_by_id(params[:id])   
-    render :partial => "helpdesk/tickets/components/#{params[:component]}", :locals => { :ticket => @ticket , :search_query =>params[:q] } 
+    unless @new_show_page
+      render :partial => "helpdesk/tickets/components/#{params[:component]}", :locals => { :ticket => @ticket , :search_query =>params[:q] } 
+    else
+      render :partial => "helpdesk/tickets/show/#{params[:component]}", :locals => { :ticket => @ticket , :search_query =>params[:q] } 
+    end
   end
   
   def update_split_activity    
@@ -182,7 +186,7 @@ module Helpdesk::TicketActions
   end
 
   def forward_conv
-    render :partial => "/helpdesk/shared/forward_form", 
+    render :partial => (@new_show_page ? "/helpdesk/tickets/show/forward_form" : "/helpdesk/shared/forward_form"), 
            :locals => { :id => "send-fwd-email", :cntid => "cnt-fwd-#{@conv_id}", :conv_id => @conv_id,
            :note => [@ticket, Helpdesk::Note.new(:private => true)] }
   end

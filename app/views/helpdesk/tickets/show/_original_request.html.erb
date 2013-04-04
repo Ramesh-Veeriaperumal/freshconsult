@@ -1,0 +1,44 @@
+<%= link_to user_avatar(@ticket.requester), @ticket.requester, :class => 'avatar-wrap' %>
+<div class="commentbox">
+	<div class="author-mail-detail">
+		<div>
+			<%= show_contact_hovercard(@ticket.requester) %> on <%= formated_date(@ticket.created_at) %> via <%= @ticket.source_name %>
+			<% 
+				metainfo = @ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["meta"]) 
+				humanized_meta = UserAgent.parse(metainfo.body.strip[12..-2]) if metainfo.present?
+			%> 
+
+			<%= content_tag :span, t("helpdesk.tickets.show.meta"), 
+							:title => "#{humanized_meta.browser} #{humanized_meta.version} / #{humanized_meta.os}", 
+							:class => "meta_icon tooltip" unless(metainfo.blank?) %>
+			<% if @ticket.requester && @ticket.is_twitter? && @ticket.tweet.is_mention? %>
+			<div class="ticket-details-twitter">
+				<span class="twitter-logo"></span><%= link_to(t('ticket.view_twitter'),
+				    "http://twitter.com/#{@ticket.requester.twitter_id}/status/#{@ticket.tweet.tweet_id}", 
+				     :id => "ViewConvo", :target => "_blank") %>
+			</div>
+			<% end %>
+		</div>
+		<div class="info"> 
+			<p>
+				<%= multiple_emails_container(@to_emails)  if (@ticket.source == (Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])) %>
+			</p> 
+			<%= content_tag :p, multiple_emails_container(@ticket.cc_email_hash[:cc_emails]) unless @ticket.cc_email_hash.blank? %>
+
+      	</div> 
+	</div>
+	<div id="ticket_original_request" class="request_mail">
+    	<%= @ticket.description_html %>
+	</div>
+
+
+	<% unless @ticket.attachments.empty? %>
+		<span class="seperator"></span>
+		<div class="attachments-wrap clearfix">
+			<h5><strong><%= pluralize(@ticket.attachments.size, t('attachment'), t('attachments'))%></strong></h5>
+			<ul class="attachment_list">
+			    <%= render :partial => '/helpdesk/tickets/show/attachment.html', :collection => @ticket.attachments, :locals => {:show_delete => true, :url => [@ticket] } %>
+			</ul>
+		</div>
+	<% end %>
+</div>

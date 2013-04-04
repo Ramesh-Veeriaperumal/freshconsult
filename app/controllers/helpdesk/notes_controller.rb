@@ -2,20 +2,37 @@ class Helpdesk::NotesController < ApplicationController
   
   before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :load_parent_ticket_or_issue
+
+  helper 'helpdesk/tickets'
   
   include HelpdeskControllerMethods
   include ParserUtil
   include Helpdesk::Social::Facebook
   include Helpdesk::Social::Twitter
+  include Helpdesk::Activities
   
   before_filter :fetch_item_attachments, :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
   before_filter :set_mobile, :prepare_mobile_note, :only => [:create]
     
 
   def index
-    @notes = @parent.conversation(params[:page])
+
+    if params[:since_id].present?
+      @notes = @parent.conversation_since(params[:since_id])
+    elsif params[:before_id].present?
+      @notes = @parent.conversation_before(params[:before_id])
+    else
+      @notes = @parent.conversation(params[:page])
+    end
+    
     if request.xhr?
-      render(:partial => "helpdesk/tickets/note", :collection => @notes)
+      unless params[:v].blank? or params[:v] != '2'
+        @ticket_notes = @notes.reverse
+        @ticket_notes_total = @parent.conversation_count
+        render :partial => "helpdesk/tickets/show/conversations"
+      else
+        render(:partial => "helpdesk/tickets/note", :collection => @notes)
+      end
     else 
       options = {}
       options.merge!({:human=>true}) if(!params[:human].blank? && params[:human].to_s.eql?("true"))  #to avoid unneccesary queries to users
@@ -29,10 +46,22 @@ class Helpdesk::NotesController < ApplicationController
       end
     end    
   end
+
+  def since
+    @notes = @parent.notes.newest_first.since(params[:last_note])
+    render(:partial => "helpdesk/tickets/show/note", :collection => @notes.reverse) 
+  end
+
+  def since
+    @notes = @parent.notes.newest_first.since(params[:last_note])
+    render(:partial => "helpdesk/tickets/show/note", :collection => @notes.reverse) 
+  end
+
   
-  def create  
+  def create
     build_attachments @item, :helpdesk_note
     @item.send_survey = params[:send_survey]
+    @item.quoted_text = params[:quoted_text].present? && params[:quoted_text] == 'true'
     if @item.save
       if params[:post_forums]
         @topic = Topic.find_by_id_and_account_id(@parent.ticket_topic.topic_id,current_account.id)
@@ -49,8 +78,14 @@ class Helpdesk::NotesController < ApplicationController
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end
+
+      if params[:showing] == 'activities'
+        activity_records = @parent.activities.activity_since(params[:since_id])
+        @activities = stacked_activities(activity_records.reverse)
+      end
   
       post_persist
+  
     else
       create_error
     end
@@ -108,7 +143,7 @@ class Helpdesk::NotesController < ApplicationController
         @parent.responder ||= @item.user unless @item.user.customer? 
         unless params[:ticket_status].blank?
           Thread.current[:notifications][EmailNotification::TICKET_RESOLVED][:requester_notification] = false
-          @parent.status = Helpdesk::TicketStatus.status_keys_by_name(current_account)[I18n.t(params[:ticket_status])]
+          @parent.status = params[:ticket_status]
         end
       end
 

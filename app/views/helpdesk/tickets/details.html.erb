@@ -1,0 +1,128 @@
+<%= include_stylesheets :redactor  %>
+<!-- INCLUDING PATTERN CSS -->
+<%= include_stylesheets :pattern, :media => "screen, print, projection"  %>
+<%# javascript_include_tag  'bootstrap' %>
+<%= include_javascripts :redactor  %>
+<%= include_javascripts :pattern  %>
+<%= include_stylesheets :tkt_details, :media => "screen, print, projection"  %>
+<%= include_stylesheets :tkt_details_print, :media => "print"  %>
+<%= render :partial => "helpdesk/tickets/show/scriptvars.html.erb" %>
+<div class="tkt-wrapper ticket_show" data-showing='notes'>
+	<div class="tkt-wrapper-inner clearfix">
+
+		<%= render :partial => "helpdesk/tickets/show/info.html.erb" %>
+		<div id="forFixed" class="conversation_thread"></div>
+		<div id="tkt-inner" class="scollable_content">
+
+			<div class="tkt-sidebar" id="ticket_details_sidebar">
+				<div id="revert_details_view">
+					<strong>
+							<%= link_to t('ticket.switch_view.whats_new'), 
+									"#tkt_view_whatsnew", 
+									:title => "#{t('ticket.switch_view.whats_new')}?", "data-width" => '600', "data-height" => 600, 
+									"data-template-footer" => '',
+									:target => "_blank", :class => 'switch', :rel => 'freshdialog' %>
+
+					</strong>
+					<%= link_to_function t('ticket.switch_view.submit_feedback'), "window.FreshWidget.show();" %>	
+					<div><%= link_to t('ticket.switch_view.revert_view'), helpdesk_ticket_path(@ticket), :id => 'switch' %></div>
+				</div>
+				<%= render :partial => "helpdesk/tickets/show/requester.html.erb" %> 
+				<% unless @ticket.deleted or @ticket.spam %> 
+					<%= render :partial => "helpdesk/tickets/show/ticket_fields.html.erb" %>
+					<%= render :partial => "helpdesk/tickets/show/integrations.html.erb" %> 
+					<% if feature?(:timesheets) %>
+					<div class="widget time-tracked inactive load_remote" id="TimesheetTab">
+						<h3>
+							<%= t('helpdesk.time_sheets.sidebar_title') %>
+							<div class="tracked_time">
+								<span class="time" id="timeentry_timer_total"><%= get_time_in_hours(@ticket.time_tracked) %></span>
+								<span class="time_unit">Hrs </span>
+							</div>
+						</h3>
+						<div class="content" rel="remote" data-remote-url="<%= helpdesk_ticket_helpdesk_time_sheets_path(@ticket) %>"></div>
+
+						<%# render :partial => "helpdesk/time_sheets/v2/index" %>
+					</div>
+					<% end %>
+				<% end %>
+			</div>
+			<!--content Left-->
+			<div class="leftcontent">
+				<ol class="conversation_thread" id="original_request">
+					<li class="conversation">
+						<%= render :partial => "helpdesk/tickets/show/original_request.html.erb" %> 
+					</li>
+				</ol>
+				<ol class="conversation_thread hide" id="show_more">
+					<li class="conversation">
+						<a href="" class="avatar-wrap avatar-wrap-collapse"><p>
+							<span class='count_number not_on_loading' rel='count-total-remaining'></span>
+							<span class='count_number loading_only'>...</span>
+							<span rel='count_more' class="count_more not_on_loading"><%= t('more') %></span>
+						</p></a>
+						<a href="" class="commentbox commentbox-blue">
+							<div><%= t('ticket.expand') %></div>
+						</a>
+					</li>
+				</ol>
+				<%= render :partial => "helpdesk/tickets/show/conversations.html.erb" %> 
+				<%= render :partial => "helpdesk/tickets/show/new_conversation.html.erb" %> 
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+<% if @ticket.is_twitter? %>
+jQuery(document).ready(function(){
+	jQuery('#twitter_handle').change();
+});
+<% end %>
+</script>
+<%= render :partial => "helpdesk/tickets/show/due_date.html.erb" %>
+<%= render :partial => "helpdesk/tickets/show/collision", :locals => { :ticket => @ticket } if feature?(:agent_collision) %>
+<%= include_javascripts :ticket_details  %>
+<script type="text/javascript">
+<% unless @draft.nil? %>
+	swapEmailNote('cnt-reply', null);
+	TICKET_DETAILS_DATA['draft']['hasChanged'] = false;
+	jQuery(window).trigger('scroll');
+<% end %>
+
+	jQuery('#revert_details_view #switch').on('click.ticket_details',function(ev) {
+		ev.preventDefault();;
+		setCookie('new_details_view', 'false', 90, '/');
+		window.location = '<%= helpdesk_ticket_path(@ticket) %>';
+	});
+	deleteCookie('new_details_view', '/');
+	
+	jQuery(".list_agents_replying").addClass("hide");
+</script>
+<% content_for :layoutType do -%>ticket_details<%- end %>
+
+<script type="text/javascript" src="http://assets.freshdesk.com/widget/freshwidget.js"></script>
+<style type="text/css" media="screen, projection">
+	@import url(http://assets.freshdesk.com/widget/freshwidget.css);
+
+	.ticket_details #freshwidget-button {
+		display: none !important;
+	}
+</style> 
+<script type="text/javascript">
+	FreshWidget.init("", {"queryString": "", "buttonText": "Support", "buttonColor": "#ffffff", "buttonBg": "#006063", "alignment": "4", "offset": "235px", "url": "http://support.freshdesk.com", "assetUrl": "http://assets.freshdesk.com/widget"} );
+
+	var removeWidgetButton = setInterval(function() {
+		if (window.FreshWidget && jQuery('.ticket_details #freshwidget-button').length) {
+			//Which means FreshWidget is loaded.
+			//Now remove the widget button.
+			jQuery('.ticket_details #freshwidget-button').remove();
+			clearInterval(removeWidgetButton);
+		}
+	}, 1000);
+</script>
+<div class="hide">
+<div id="tkt_view_whatsnew">
+	<%= render :partial=> 'helpdesk/tickets/show/whats_new.html.erb' %>
+</div>
+</div>

@@ -1,0 +1,56 @@
+@import "settings";
+
+$default_modal_margin: 250px;
+$modal_top: 50px;
+$modal_body_max_height: 500px;
+$modal_heading_size: 22px;
+$modal_heading_color: #000;
+
+.modal.in.fade {
+	.modal-header {
+		border-bottom: none;
+		@include corners(7px);
+
+		h3 {
+			font-size: $modal_heading_size;
+			color: $modal_heading_color;
+			font-weight: 300;
+			text-shadow: #FFF 1px 1px 0;
+		}
+
+	}
+}
+
+.modal-backdrop {
+	background: url(/images/dialog/overlay.gif);
+}
+.ui-dialog.dialog3 {
+	
+	.ui-dialog-title {
+		color: #000;
+	}
+
+	.ui-dialog-titlebar-close {
+		background:#7b7b7b;
+		left:-43px;
+		top: 15px;
+		right:auto;
+		height: 8px;
+		width: 8px;
+		padding: 9px;
+		@include border-radius(5px 0 0 5px);
+		@include box-shadow(1px 1px 0 rgba(0, 0, 0, 0.4) inset);
+		.ui-icon {
+			background:none;
+		}
+
+		
+		&:focus, &:hover {
+			background:#4b4b4b;
+		}
+	}
+}
+
+.ui-widget-overlay {
+	background: url(/images/dialog/overlay.gif);
+}

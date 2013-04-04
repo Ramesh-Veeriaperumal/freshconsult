@@ -32,7 +32,7 @@ class Helpdesk::Note < ActiveRecord::Base
   has_one :schema_less_note, :class_name => 'Helpdesk::SchemaLessNote',
           :foreign_key => 'note_id', :autosave => true, :dependent => :destroy
 
-  attr_accessor :nscname, :disable_observer, :send_survey
+  attr_accessor :nscname, :disable_observer, :send_survey, :quoted_text
   attr_protected :attachments, :notable_id
   has_one :external_note, :class_name => 'Helpdesk::ExternalNote',:dependent => :destroy
   
@@ -58,6 +58,24 @@ class Helpdesk::Note < ActiveRecord::Base
   named_scope :freshest, lambda { |account|
     { :conditions => ["deleted = ? and account_id = ? ", false, account], 
       :order => "helpdesk_notes.created_at DESC"
+    }
+  }
+  named_scope :since, lambda { |last_note_id|
+    { :conditions => ["helpdesk_notes.id > ? ", last_note_id], 
+      :order => "helpdesk_notes.created_at DESC"
+    }
+  }
+  
+  named_scope :before, lambda { |first_note_id|
+    { :conditions => ["helpdesk_notes.id < ? ", first_note_id], 
+      :order => "helpdesk_notes.created_at DESC"
+    }
+  }
+  
+  named_scope :for_quoted_text, lambda { |first_note_id|
+    { :conditions => ["source != ? AND helpdesk_notes.id < ? ",SOURCE_KEYS_BY_TOKEN["forward_email"], first_note_id], 
+      :order => "helpdesk_notes.created_at DESC",
+      :limit => 4
     }
   }
   
@@ -237,6 +255,12 @@ class Helpdesk::Note < ActiveRecord::Base
       :response_time_by_bhrs => resp_time_bhrs) unless resp_time.blank?
   end
 
+  def kind
+    return "private_note" if private_note?
+    return "public_note" if public_note?
+    return "forward" if fwd_email?
+    "reply"
+  end
 
   def liquidize_body
     attachments.empty? ? body_html : 
@@ -300,7 +324,8 @@ class Helpdesk::Note < ActiveRecord::Base
         Helpdesk::TicketNotifier.send_later(:deliver_forward, notable, self)
       elsif self.to_emails.present? or self.cc_emails.present? or self.bcc_emails.present? and !self.private
         Helpdesk::TicketNotifier.send_later(:deliver_reply, notable, self, {:include_cc => self.cc_emails.blank? , 
-                :send_survey => ((!self.send_survey.blank? && self.send_survey == 1) ? true : false)})
+                :send_survey => ((!self.send_survey.blank? && self.send_survey == 1) ? true : false),
+                :quoted_text => self.quoted_text})
       end
     end
 

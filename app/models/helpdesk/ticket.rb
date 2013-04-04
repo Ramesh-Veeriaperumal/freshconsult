@@ -58,6 +58,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :stop_timesheet_timers, :fire_update_event, :support_score_on_update, 
     :process_quests, :publish_to_update_channel
 
+
   has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
 
   belongs_to :email_config
@@ -477,8 +478,45 @@ class Helpdesk::Ticket < ActiveRecord::Base
     notes.visible.exclude_source('meta').newest_first.paginate(:include => includes ,:page => page, :per_page => no_of_records)
   end
 
+  def conversation_since(since_id)
+    return notes.visible.exclude_source('meta').newest_first.since(since_id)
+  end
+
+  def conversation_before(before_id)
+    return notes.visible.exclude_source('meta').newest_first.before(before_id)
+  end
+
   def conversation_count(page = nil, no_of_records = 5)
     notes.visible.exclude_source('meta').size
+  end
+
+  def all_activities(page = 1, no_of_records = 50)
+    first_page_count = 3
+    if page.blank? or page.to_i == 1
+      return activities.newest_first.paginate(:page => 1, :per_page => first_page_count)
+    else
+      return activities.newest_first.paginate(:page => page.to_i - 1, :per_page => no_of_records, :extra_offset => first_page_count)
+    end
+  end
+
+  def activities_since(since_id)
+    activities.newest_first.activity_since(since_id)
+  end
+
+  def activities_before(before_id)
+    activities.newest_first.activity_before(since_id).reverse
+  end
+
+  def activities_count
+    activities.size - 1 #Omitting the Ticket Creation activity
+  end
+
+  def time_tracked
+    time_spent = 0
+    time_sheets.each do |entry|
+      time_spent += entry.running_time
+    end
+    time_spent
   end
 
   def train(category)

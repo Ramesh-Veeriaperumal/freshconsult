@@ -1552,34 +1552,6 @@ table.summary-report{
 			padding:10px 0;
 			position:relative;
 		}
-		fieldset.integration{
-			margin-bottom: 10px;
-			@include pie-clearfix;
-			position:relative;
-			padding:0;
-			.integration_container {
-				padding:20px 0 10px 80px;
-			}				
-			border-top:1px solid #e3e3e3;
-			.app-logo{
-				position:absolute;
-				width:64px;
-				top:0;
-				left:0;
-				padding-right:25px;
-				height:20px;
-				background-color:#efefef;
-				@include border-bottom-radius(3px);
-				border:1px solid #e3e3e3;
-
-				cursor: pointer;
-				input[type=checkbox] {
-					position: absolute;
-					right:5px;
-					top:2px;
-				}
-			}
-		}
       li.inline-field, fieldset{
          label.caption{
             width:80px;
@@ -1613,6 +1585,39 @@ table.summary-report{
       }
    }
 }
+
+#time_integration {
+
+	fieldset.integration{
+		margin-bottom: 10px;
+		@include pie-clearfix;
+		position:relative;
+		padding:0;
+		.integration_container {
+			padding:20px 0 10px 80px;
+		}				
+		border-top:1px solid #e3e3e3;
+		.app-logo{
+			position:absolute;
+			width:64px;
+			top:0;
+			left:0;
+			padding-right:25px;
+			height:20px;
+			background-color:#efefef;
+			@include border-bottom-radius(3px);
+			border:1px solid #e3e3e3;
+
+			cursor: pointer;
+			input[type=checkbox] {
+				position: absolute;
+				right:5px;
+				top:2px;
+			}
+		}
+	}
+}
+
 
 .note-forward-form{ border-bottom: 0; }
 .note-forward-form .reply_box{
@@ -2188,7 +2193,7 @@ ul.ui-form .inputs-list{
 
 #reply-draft
 {
-padding-top: 10px;
+padding:5px 10px 0;
 float: right;
 }
 
