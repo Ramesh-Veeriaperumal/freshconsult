@@ -1101,7 +1101,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def es_notes
     body = []
-    notes.visible.exclude_source('meta').each do |note|
+    # notes.visible.exclude_source('meta').each do |note|
+    #   note_attachments =[]
+    #   note.attachments.each do |attachment|
+    #     note_attachments.push(attachment.content_file_name)
+    #   end
+    #   body.push( :body => note.body, :private => note.private, :attachments => note_attachments )
+    # end
+    # body
+    public_notes.each do |note|
       note_attachments =[]
       note.attachments.each do |attachment|
         note_attachments.push(attachment.content_file_name)
