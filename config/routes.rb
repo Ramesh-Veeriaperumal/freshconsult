@@ -34,7 +34,6 @@
   end
 
   map.connect '/agents/filter/:state' ,:controller => 'agents' ,:action => 'index'
-  map.connect '/agents/toggle_availability/:id', :controller => 'agents', :action => 'toggle_availability'
   map.resources :sla_details
   
 #  map.mobile '/mob', :controller => 'home', :action => 'mobile_index'
