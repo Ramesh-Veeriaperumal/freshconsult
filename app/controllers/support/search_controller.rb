@@ -143,8 +143,8 @@ class Support::SearchController < SupportController
                               { :term => { :deleted => false } }
                 f.filter :or, { :not => { :exists => { :field => :spam } } },
                               { :term => { :spam => false } }
-                f.filter :or, { :not => { :exists => { :field => 'es_notes.private' } } },
-                              { :term => { 'es_notes.private' => false } }
+                # f.filter :or, { :not => { :exists => { :field => 'es_notes.private' } } },
+                #               { :term => { 'es_notes.private' => false } }
                 if current_user.has_company?
                   f.filter :or, { :not => { :exists => { :field => 'forum.customer_forums.customer_id' } } },
                                 { :term => { 'forum.customer_forums.customer_id' => current_user.customer_id } }
