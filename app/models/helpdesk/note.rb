@@ -324,7 +324,7 @@ class Helpdesk::Note < ActiveRecord::Base
         Helpdesk::TicketNotifier.send_later(:deliver_forward, notable, self)
       elsif self.to_emails.present? or self.cc_emails.present? or self.bcc_emails.present? and !self.private
         Helpdesk::TicketNotifier.send_later(:deliver_reply, notable, self, {:include_cc => self.cc_emails.blank? , 
-                :send_survey => ((!self.send_survey.blank? && self.send_survey == 1) ? true : false),
+                :send_survey => ((!self.send_survey.blank? && self.send_survey.to_i == 1) ? true : false),
                 :quoted_text => self.quoted_text})
       end
     end
