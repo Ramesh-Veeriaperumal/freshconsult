@@ -110,6 +110,14 @@ var deferredTicketUpdate = function(timeout) {
 
 }
 
+silenceTktFieldsUpdate = function() {
+	dontAjaxUpdate = false;
+}
+
+unsilenceTktFieldsUpdate = function() {
+	dontAjaxUpdate = true;
+}
+
 showHideDueByDialog = function(showHide){
 	if(showHide){
 		var duedate_container = $("#duedate-dialog-container").detach();
@@ -520,7 +528,7 @@ $(document).ready(function() {
 		});
 
 		// Bind the click event handler
-		$(this).on('click', 'a', function(e){
+		$(this).on('click.ticket_details', 'a', function(e){
 
 			// Prevent the anchor's default click action
 			e.preventDefault();
@@ -1031,7 +1039,7 @@ $('body').on('change.pattern', '.selected_to_yellow [type=radio], .selected_to_y
 });
 
 // Capturing the Unload and making sure everything is fine, before we let the 
-window.onbeforeunload = function(e) {
+$(window).on('unload.ticket_details',function(e) {
 	var messages = [];
 	if ($('#custom_ticket_form .error:input').length > 0 ) {
 		messages.push('There are errors in the form.');
@@ -1058,5 +1066,5 @@ window.onbeforeunload = function(e) {
 
 		return msg;
 	}
-};
+});
 })(jQuery);
