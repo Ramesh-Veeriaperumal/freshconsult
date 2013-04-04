@@ -655,7 +655,7 @@ p strong{
     	padding:5px 0;
     	font-size: 12px;
     	position: relative;
-		top: 13px;
+		top: 3px;
 		margin-right: 30px;
 		display: inline-block;
 
@@ -776,6 +776,11 @@ p strong{
     	}
     	.btn-group {
     		margin:0 0 0 10px;
+    	}
+
+    	&.draft_saved > span {
+			top: -10px;
+			position: relative;
     	}
     }
 

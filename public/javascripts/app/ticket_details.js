@@ -15,6 +15,8 @@ var draftSavedTime,dontSaveDraft, replyEditor, draftInterval;
 save_draft = function(content) {
 	if ($.trim(content) != '') {
 		$(".ticket_show #reply-draft").show().addClass('saving');
+		$(".ticket_show #reply-draft").parent().addClass('draft_saved');
+
 		$(".ticket_show #draft-save").text(TICKET_DETAILS_DATA['draft']['saving_text']);
 		$(".ticket_show #clear-draft").hide();
 
@@ -65,6 +67,7 @@ clearSavedDraft = function(){
 	$('#cnt-reply-body').setCode(TICKET_DETAILS_DATA['draft']['default_reply']);
 	TICKET_DETAILS_DATA['draft']['hasChanged'] = false;
 	$(".ticket_show #reply-draft").hide();
+	$(".ticket_show #reply-draft").parent().removeClass('draft_saved');
 	draftClearedFlag = true;
 }
 
@@ -105,6 +108,14 @@ var deferredTicketUpdate = function(timeout) {
 	//     },3000);
 	// }
 
+}
+
+silenceTktFieldsUpdate = function() {
+	dontAjaxUpdate = false;
+}
+
+unsilenceTktFieldsUpdate = function() {
+	dontAjaxUpdate = true;
 }
 
 showHideDueByDialog = function(showHide){
@@ -249,8 +260,10 @@ swapEmailNote = function(formid, link){
 				$("#draft-save").text(TICKET_DETAILS_DATA['draft']['saved_text']);
 				$("#clear-draft").show();
 				$("#reply-draft").show();
+				$(".ticket_show #reply-draft").parent().addClass('draft_saved');
 			}else{
 				$("#reply-draft").hide();
+				$(".ticket_show #reply-draft").parent().removeClass('draft_saved');
 			}
 		}
 		draftFirstFlag = 1;
@@ -515,7 +528,7 @@ $(document).ready(function() {
 		});
 
 		// Bind the click event handler
-		$(this).on('click', 'a', function(e){
+		$(this).on('click.ticket_details', 'a', function(e){
 
 			// Prevent the anchor's default click action
 			e.preventDefault();
@@ -673,7 +686,9 @@ $(document).ready(function() {
 		})
 	});
 
-	$('.ticket_details').on('click.ticket_details', '[rel=activity_container] .minimizable', function(){
+	$('.ticket_details').on('click.ticket_details', '[rel=activity_container] .minimizable', function(ev){
+		if ($(ev.toElement).is('.quoted_button')) return;
+
 		$(this).toggleClass('minimized');
 	});
 
@@ -702,6 +717,11 @@ $(document).ready(function() {
 
 		var _form = $('#' + btn.data('cntId') + " form");
 
+		if (btn.data('clearDraft')) {
+			clearSavedDraft();
+			stopDraftSaving();
+		}
+
 		if (_form.data('cntId') && _form.data('destroyEditor')){
 			$('#' + _form.data('cntId') + '-body').destroyEditor(); //Redactor
 			_form.resetForm();
@@ -716,11 +736,6 @@ $(document).ready(function() {
 			_form.find('.forward_email li.choice').remove();
 		}
 
-
-		if (btn.data('clearDraft')) {
-			clearSavedDraft();
-			stopDraftSaving();
-		}
 	});
 
 	$('body').on('click.ticket_details', '#time_integration .app-logo input:checkbox', function(ev) {
@@ -975,10 +990,6 @@ $(document).ready(function() {
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					submit.text(submit.data('default-text')).prop('disabled',false);
-					// console.log('Errors');
-					// console.log(jqXHR);
-					// console.log(textStatus);
-					// console.log(errorThrown);
 				}
 			});
 		}
@@ -1028,7 +1039,7 @@ $('body').on('change.pattern', '.selected_to_yellow [type=radio], .selected_to_y
 });
 
 // Capturing the Unload and making sure everything is fine, before we let the 
-window.onbeforeunload = function(e) {
+$(window).on('unload.ticket_details',function(e) {
 	var messages = [];
 	if ($('#custom_ticket_form .error:input').length > 0 ) {
 		messages.push('There are errors in the form.');
@@ -1047,7 +1058,7 @@ window.onbeforeunload = function(e) {
 		messages.forEach(function(str) {
 			msg += str + "\n";
 		});
-		console.log(msg);
+
 		e = e || window.event;
 		if (e) {
 			e.returnValue = msg;
@@ -1055,5 +1066,5 @@ window.onbeforeunload = function(e) {
 
 		return msg;
 	}
-};
+});
 })(jQuery);

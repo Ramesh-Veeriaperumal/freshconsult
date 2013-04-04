@@ -507,6 +507,19 @@ is_touch_device = function() {
 
           // hideActivePopovers();
 
+          //Removing Event handlers created by New Ticket Details page:
+          if (jQuery('body').is('.ticket_details')) {
+            jQuery('body *').off('click.ticket_details');
+            jQuery('body *').off('change.ticket_details');
+            jQuery('body *').off('mouseover.ticket_details');
+            jQuery('body *').off('mouseout.ticket_details');
+            jQuery('body *').off('mouseenter.ticket_details');
+            jQuery('body *').off('mouseleave.ticket_details');
+            jQuery('body *').off('change.ticket_details');
+            jQuery(window).off('unload.ticket_details');
+            jQuery(window).off('scroll.ticket_details');
+          }
+
           return true;
       }).bind('pjax:end',function(evnt,xhr,settings){
 

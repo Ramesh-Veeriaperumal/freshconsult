@@ -80,7 +80,6 @@ Helpdesk.Multifile = {
 
         var inputs = jQuery(form).find("input[fileList]");
         if (inputs.length >= 1) {
-            console.log(jQuery("#"+inputs.first().attr('fileList')).children());
             jQuery("#"+inputs.first().attr('fileList')).children().not('[rel=original_attachment]').remove();
             jQuery("#"+inputs.first().attr('fileList')).children().show();
             inputs.prop('disabled', false);

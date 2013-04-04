@@ -45,6 +45,16 @@ GIT
     seamless_database_pool (1.0.12)
       activerecord (>= 2.2.2)
 
+GIT
+  remote: git://github.com/freshdesk/tire.git
+  revision: d90b77032502f6548938c6c051fdb7f1ccc8d97d
+  specs:
+    tire (0.4.3)
+      hashr (~> 0.0.19)
+      multi_json (~> 1.0)
+      rake
+      rest-client (~> 1.6)
+
 PATH
   remote: vendor/gems/twitter-2.1.1
   specs:
@@ -116,6 +126,7 @@ GEM
     gyoku (0.4.6)
       builder (>= 2.1.2)
     hashie (1.2.0)
+    hashr (0.0.22)
     hoe (3.5.2)
       rake (>= 0.8, < 11.0)
     html5 (0.10.0)
@@ -343,6 +354,7 @@ DEPENDENCIES
   spreadsheet (= 0.6.8)
   susy
   thinking-sphinx (= 1.4.3)
+  tire!
   twitter (= 2.1.1)!
   tzinfo
   useragent (~> 0.4.16)

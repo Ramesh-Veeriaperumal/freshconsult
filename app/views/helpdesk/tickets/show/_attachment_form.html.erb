@@ -58,7 +58,6 @@
                     function initDropbox(inp){
                       Dropbox.choose({success:function(files){
 
-                          //console.log(jQuery(inp).data('holder')+':::: ');
                           var inputElement = jQuery(inp).data('holder');
 
                           jQuery('#'+inputElement).val(unescape(files[0].link))
