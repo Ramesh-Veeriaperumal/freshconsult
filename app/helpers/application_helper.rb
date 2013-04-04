@@ -695,6 +695,10 @@ module ApplicationHelper
     "#{nodejs_protocol}://#{request.host}:#{nodejs_port}/#{namespace}"
   end  
 
+  def es_enabled?
+    current_account.es_enabled?
+  end
+  
   def truncate_filename filename
     extension = filename.include?('.') ? filename.split('.').last : nil
     simple_name = extension ? filename[0..-(extension.length + 2)] : filename

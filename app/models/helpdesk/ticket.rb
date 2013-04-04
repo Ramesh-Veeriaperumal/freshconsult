@@ -13,12 +13,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include BusinessRulesObserver
   include Mobile::Actions::Ticket
   include Gamification::GamificationUtil
+  include Search::ElasticSearchIndex
   include RedisKeys
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "trashed", "access_token", 
                             "escalation_level", "sla_policy_id", "sla_policy"]
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+
+  ES_FLEXIFIELD_COLUMNS = Flexifield.column_names.select {|v| v =~ /^ff(s|_text)/}
 
   set_table_name "helpdesk_tickets"
   
@@ -44,6 +47,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_update :assign_email_config
 
   before_update :update_message_id, :if => :deleted_changed?
+
+  after_commit :update_es_index
 
   before_validation_on_create :set_token
   
@@ -1077,9 +1082,51 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return false
   end
 
+  def to_indexed_json
+    to_json({
+            :root => "helpdesk/ticket",
+            :methods => [:es_notes, :company_id, :es_from, :to_emails, :es_cc_emails, :es_fwd_emails],
+            :only => [ :display_id, :subject, :description, :account_id, :responder_id, :group_id, :requester_id, :status, :spam, :deleted ], 
+            :include => { :flexifield => { :only => ES_FLEXIFIELD_COLUMNS },
+                          :attachments => { :only => [:content_file_name] }
+                        }
+            },
+            false)
+  end
+
   def unsubscribed_agents
     user_ids = subscriptions.map(&:user_id)
     account.agents_from_cache.reject{ |a| user_ids.include? a.user_id }
+  end
+
+  def es_notes
+    body = []
+    notes.visible.exclude_source('meta').each do |note|
+      note_attachments =[]
+      note.attachments.each do |attachment|
+        note_attachments.push(attachment.content_file_name)
+      end
+      body.push( :body => note.body, :private => note.private, :attachments => note_attachments )
+    end
+    body
+  end
+
+  def es_from
+    if source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:twitter]
+      requester.twitter_id
+    elsif source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook]
+      requester.fb_profile_id
+    else
+      from_email
+    end
+  end
+
+  def es_cc_emails
+    cc_email_hash[:cc_emails] if cc_email_hash
+  end
+
+  def es_fwd_emails
+    cc_email_hash[:fwd_emails] if cc_email_hash
   end
 
   def update_message_id

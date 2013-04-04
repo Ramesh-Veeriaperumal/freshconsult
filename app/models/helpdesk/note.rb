@@ -40,6 +40,7 @@ class Helpdesk::Note < ActiveRecord::Base
   before_save :load_schema_less_note, :update_category
   after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
   after_commit_on_create :update_ticket_states, :notify_ticket_monitor
+  after_update :update_search_index
 
   accepts_nested_attributes_for :tweet , :fb_post
   
@@ -389,6 +390,10 @@ class Helpdesk::Note < ActiveRecord::Base
       elsif note?
         schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
       end
+    end
+
+    def update_search_index
+      notable.update_es_index
     end
     
   private
