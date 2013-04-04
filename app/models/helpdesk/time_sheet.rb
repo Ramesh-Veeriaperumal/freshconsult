@@ -66,7 +66,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   end                    
 
   def hours 
-    seconds = time_spent
+    seconds = time_spent.to_f
     sprintf( "%0.02f", seconds/3600)
   end
 
