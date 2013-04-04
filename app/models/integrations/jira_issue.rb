@@ -178,9 +178,8 @@ class Integrations::JiraIssue
           return customField["id"]
         end
       end
-    else
-      return false
     end
+    return false
   end
 
   def customFieldChecker
@@ -197,7 +196,7 @@ class Integrations::JiraIssue
     rescue Exception => e
       Rails.logger.error "Problem in fetching the custom field. \t#{e.message}"
     end
-    unless custom_field_id.blank?
+    if custom_field_id
       @installed_app[:configs][:inputs]['customFieldId'] = custom_field_id
       @installed_app.disable_observer = true
       @installed_app.save!
