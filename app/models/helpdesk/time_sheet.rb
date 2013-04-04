@@ -5,6 +5,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   delegate :product_name, :group_name, :to => :workable
 
   belongs_to :user
+  belongs_to_account
   
   before_validation :set_default_values 
 
@@ -19,26 +20,36 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   named_scope :timer_active , :conditions =>["timer_running=?" , true]
 
   named_scope :created_at_inside, lambda { |start, stop|
-          { :conditions => [" helpdesk_time_sheets.executed_at >= ? and helpdesk_time_sheets.executed_at <= ?", start, stop] }
-        }
+    { :conditions => 
+      [" helpdesk_time_sheets.executed_at >= ? and helpdesk_time_sheets.executed_at <= ?", 
+        start, stop] 
+    }
+  }
   named_scope :hour_billable , lambda {|hr_billable| {:conditions =>{:billable => hr_billable} } }
         
   named_scope :by_agent , lambda { |created_by|
-                                    { :conditions => {:user_id => created_by } } unless created_by.blank?
-                                  }
+    { :conditions => {:user_id => created_by } } unless created_by.blank?
+  }
   
+  named_scope :by_group , lambda  { |group|
+      { :conditions => { :helpdesk_tickets => { :group_id => group } } } unless group.blank?
+  }
+
   named_scope :for_customers, lambda{ |customers|
-      {
-        :select     => "DISTINCT `helpdesk_time_sheets`.*" ,
-        :joins => ["INNER JOIN `helpdesk_tickets` ON `helpdesk_time_sheets`.workable_id = `helpdesk_tickets`.id AND `helpdesk_time_sheets`.workable_type = 'Helpdesk::Ticket'" , "INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id"],
-        :conditions => {:users => {:customer_id => customers}}
-      } unless customers.blank?}
+    {
+      :select     => "DISTINCT `helpdesk_time_sheets`.*" ,
+      :joins => ["INNER JOIN `helpdesk_tickets` ON `helpdesk_time_sheets`.workable_id = `helpdesk_tickets`.id AND `helpdesk_time_sheets`.workable_type = 'Helpdesk::Ticket'" , 
+                "INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id"],
+      :conditions => {:users => {:customer_id => customers}}
+    } unless customers.blank?
+  }
       
   named_scope :for_contacts, lambda{|contact_email|
       {
         :include =>{:workable =>:requester},
         :conditions =>{:users => {:email => contact_email}},
-      } unless contact_email.blank?}
+      } unless contact_email.blank?
+  }
 
   def self.billable_options
     { I18n.t('helpdesk.time_sheets.billable') => true, 
@@ -123,7 +134,8 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     options[:indent] ||= 2
     xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
     xml.instruct! unless options[:skip_instruct]
-    super(:builder => xml, :skip_instruct => true,:dasherize=>false,:except => [:account_id,:workable_id,:time_spent],:root=>:time_entry) do |xml|
+    super(:builder => xml, :skip_instruct => true, :dasherize=>false, :except => 
+      [:account_id,:workable_id,:time_spent],:root=>:time_entry) do |xml|
       xml.tag!(:ticket_id,workable.display_id)
       xml.tag!(:agent_name,agent_name)
       xml.tag!(:time_spent,sprintf( "%0.02f", self.time_spent/3600)) # converting to hours as in UI
@@ -145,16 +157,26 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   def update_timer_activity
      
       if timer_running
-         workable.create_activity(User.current, "activities.#{workable_name}.timesheet.timer_started.long", 
-          {'eval_args' => {'timesheet_path' => ['timesheet_path', 
-                                {'ticket_id' => workable.display_id, 'timesheet_id' => id}]}},
-                                "activities.#{workable_name}.timesheet.timer_started.short")
+         workable.create_activity(User.current, 
+          "activities.#{workable_name}.timesheet.timer_started.long", 
+          { 'eval_args' => { 'timesheet_path' => [ 
+                                'timesheet_path', 
+                                { 'ticket_id' => workable.display_id, 'timesheet_id' => id }
+                              ]
+                          }
+          },
+          "activities.#{workable_name}.timesheet.timer_started.short")
         
       else
-        workable.create_activity(User.current, "activities.#{workable_name}.timesheet.timer_stopped.long", 
-          {'eval_args' => {'timesheet_path' => ['timesheet_path', 
-                                {'ticket_id' => workable.display_id, 'timesheet_id' => id}]}},
-                                "activities.#{workable_name}.timesheet.timer_stopped.short")
+        workable.create_activity(User.current, 
+          "activities.#{workable_name}.timesheet.timer_stopped.long", 
+          {'eval_args' => {'timesheet_path' => [
+                                'timesheet_path', 
+                                {'ticket_id' => workable.display_id, 'timesheet_id' => id }
+                              ]
+                          }
+          },
+          "activities.#{workable_name}.timesheet.timer_stopped.short")
       end 
   end
   
@@ -163,15 +185,14 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
           {'eval_args' => {'timesheet_path' => ['timesheet_path', 
                                 {'ticket_id' => workable.display_id, 'timesheet_id' => id}]}},
                                 "activities.#{workable_name}.timesheet.new.short")
-                                
-   
- end
+  end
 
   def set_default_values
     self.executed_at ||= self.created_at
   end
- def workable_name
-   workable_type.split("::").second.downcase.pluralize
- end
+ 
+  def workable_name
+    workable_type.split("::").second.downcase.pluralize
+  end
   
 end
