@@ -61,6 +61,13 @@ class Helpdesk::NotesController < ApplicationController
   def create
     build_attachments @item, :helpdesk_note
     @item.send_survey = params[:send_survey]
+    
+    if params[:ticket_status]
+      @item.notable.status = params[:ticket_status]
+      Thread.current[:notifications] = current_account.email_notifications
+      Thread.current[:notifications][EmailNotification::TICKET_RESOLVED][:requester_notification] = false
+    end
+
     @item.quoted_text = params[:quoted_text].present? && params[:quoted_text] == 'true'
     if @item.save
       if params[:post_forums]
@@ -89,6 +96,8 @@ class Helpdesk::NotesController < ApplicationController
     else
       create_error
     end
+  ensure
+    Thread.current[:notifications] = nil
   end
   
   def edit
@@ -121,7 +130,6 @@ class Helpdesk::NotesController < ApplicationController
     end
 
     def process_item
-      Thread.current[:notifications] = current_account.email_notifications
       if @parent.is_a? Helpdesk::Ticket
         if @item.email_conversation?
            if @item.fwd_email?
@@ -140,23 +148,7 @@ class Helpdesk::NotesController < ApplicationController
         elsif facebook?  
           send_facebook_reply  
         end
-        @parent.responder ||= @item.user unless @item.user.customer? 
-        unless params[:ticket_status].blank?
-          Thread.current[:notifications][EmailNotification::TICKET_RESOLVED][:requester_notification] = false
-          @parent.status = params[:ticket_status]
-        end
       end
-
-      if @parent.is_a? Helpdesk::Issue
-        unless @item.private
-          @parent.tickets.each do |t|
-            t.notes << (c = @item.clone)
-            Helpdesk::TicketNotifier.deliver_reply(t, c)
-          end
-        end
-        @parent.owner ||= current_user  if @parent.respond_to?(:owner)
-      end
-      @parent.save
       Thread.current[:notifications] = nil
     end
     

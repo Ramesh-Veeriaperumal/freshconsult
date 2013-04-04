@@ -311,6 +311,7 @@ class Helpdesk::Note < ActiveRecord::Base
           send_reply_email
           create_fwd_note_activity(self.to_emails) if fwd_email?
         end
+        notable.responder ||= self.user
       end
       # syntax to move code from delayed jobs to resque.
       #Resque::MyNotifier.deliver_reply( notable.id, self.id , {:include_cc => true})
@@ -340,7 +341,7 @@ class Helpdesk::Note < ActiveRecord::Base
         cc_emails.delete_if {|email| (email == notable.requester.email)}
         cc_email_hash_value[:cc_emails] = cc_emails
       end
-      notable.update_attribute(:cc_email, cc_email_hash_value)     
+      notable.cc_email = cc_email_hash_value    
     end
 
     def add_activity
