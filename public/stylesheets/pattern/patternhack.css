@@ -136,66 +136,70 @@ strong {
   vertical-align: middle; }
 
 /* This class overriding app-common css. */
+/* line 124, ../../src/pattern/patternhack.scss */
+.group-management label {
+  margin-bottom: 0; }
+
 /* overriding buttons styles from Bootstrap v1.4 */
-/* line 126, ../../src/pattern/patternhack.scss */
+/* line 130, ../../src/pattern/patternhack.scss */
 .btn-group .btn {
   float: none; }
 
-/* line 129, ../../src/pattern/patternhack.scss */
+/* line 133, ../../src/pattern/patternhack.scss */
 .btn-group.open {
   overflow: visible; }
 
-/* line 132, ../../src/pattern/patternhack.scss */
+/* line 136, ../../src/pattern/patternhack.scss */
 .btn.dropdown-toggle {
   overflow: visible; }
-  /* line 134, ../../src/pattern/patternhack.scss */
+  /* line 138, ../../src/pattern/patternhack.scss */
   .btn.dropdown-toggle:after {
     display: none; }
-  /* line 138, ../../src/pattern/patternhack.scss */
+  /* line 142, ../../src/pattern/patternhack.scss */
   .btn.dropdown-toggle .caret {
     margin: 6px 0 0; }
 
-/* line 142, ../../src/pattern/patternhack.scss */
+/* line 146, ../../src/pattern/patternhack.scss */
 .open .dropdown-toggle {
   color: inherit; }
 
-/* line 146, ../../src/pattern/patternhack.scss */
+/* line 150, ../../src/pattern/patternhack.scss */
 .open > .dropdown-menu.right {
   left: auto;
   right: 0; }
-  /* line 151, ../../src/pattern/patternhack.scss */
+  /* line 155, ../../src/pattern/patternhack.scss */
   .open > .dropdown-menu.right:before {
     right: 25px;
     left: auto; }
-  /* line 156, ../../src/pattern/patternhack.scss */
+  /* line 160, ../../src/pattern/patternhack.scss */
   .open > .dropdown-menu.right:after {
     right: 26px;
     left: auto; }
 
 /*  End of Button overriding */
-/* line 164, ../../src/pattern/patternhack.scss */
+/* line 168, ../../src/pattern/patternhack.scss */
 .pagination {
   border-bottom: 0; }
-  /* line 166, ../../src/pattern/patternhack.scss */
+  /* line 170, ../../src/pattern/patternhack.scss */
   .pagination a {
     font-weight: normal; }
-    /* line 168, ../../src/pattern/patternhack.scss */
+    /* line 172, ../../src/pattern/patternhack.scss */
     .pagination a:hover, .pagination a:focus {
       text-decoration: none; }
 
 /* This class overriding app-bootstrap css. */
-/* line 176, ../../src/pattern/patternhack.scss */
+/* line 180, ../../src/pattern/patternhack.scss */
 .dropdown-toggle:after {
   border-top: 0; }
 
-/* line 180, ../../src/pattern/patternhack.scss */
+/* line 185, ../../src/pattern/patternhack.scss */
 select {
   height: 20px;
   line-height: 20px;
   padding: 1px; }
 
 /* Fix for tickets show page data-tabs */
-/* line 187, ../../src/pattern/patternhack.scss */
+/* line 192, ../../src/pattern/patternhack.scss */
 .ticket_tabs {
   margin-left: 0px;
   margin-right: 0px; }

@@ -1224,13 +1224,17 @@ table {
     text-align: left;
     vertical-align: top;
     border-top: 1px solid #eeeeee; }
-  /* line 31, ../../src/pattern/lib/_tables.scss */
+    /* line 30, ../../src/pattern/lib/_tables.scss */
+    .table th.text-right,
+    .table td.text-right {
+      text-align: right; }
+  /* line 34, ../../src/pattern/lib/_tables.scss */
   .table th {
     font-weight: bold; }
-  /* line 35, ../../src/pattern/lib/_tables.scss */
+  /* line 38, ../../src/pattern/lib/_tables.scss */
   .table thead th {
     vertical-align: bottom; }
-  /* line 44, ../../src/pattern/lib/_tables.scss */
+  /* line 47, ../../src/pattern/lib/_tables.scss */
   .table caption + thead tr:first-child th,
   .table caption + thead tr:first-child td,
   .table colgroup + thead tr:first-child th,
@@ -1238,16 +1242,16 @@ table {
   .table thead:first-child tr:first-child th,
   .table thead:first-child tr:first-child td {
     border-top: 0; }
-  /* line 48, ../../src/pattern/lib/_tables.scss */
+  /* line 51, ../../src/pattern/lib/_tables.scss */
   .table tbody + tbody {
     border-top: 2px solid #eeeeee; }
 
-/* line 60, ../../src/pattern/lib/_tables.scss */
+/* line 63, ../../src/pattern/lib/_tables.scss */
 .table-condensed th,
 .table-condensed td {
   padding: 4px 5px; }
 
-/* line 69, ../../src/pattern/lib/_tables.scss */
+/* line 72, ../../src/pattern/lib/_tables.scss */
 .table-bordered {
   border: 1px solid #eeeeee;
   border-collapse: separate;
@@ -1256,11 +1260,11 @@ table {
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px; }
-  /* line 76, ../../src/pattern/lib/_tables.scss */
+  /* line 79, ../../src/pattern/lib/_tables.scss */
   .table-bordered th,
   .table-bordered td {
     border-left: 1px solid #eeeeee; }
-  /* line 88, ../../src/pattern/lib/_tables.scss */
+  /* line 91, ../../src/pattern/lib/_tables.scss */
   .table-bordered caption + thead tr:first-child th,
   .table-bordered caption + tbody tr:first-child th,
   .table-bordered caption + tbody tr:first-child td,
@@ -1271,19 +1275,19 @@ table {
   .table-bordered tbody:first-child tr:first-child th,
   .table-bordered tbody:first-child tr:first-child td {
     border-top: 0; }
-  /* line 93, ../../src/pattern/lib/_tables.scss */
+  /* line 96, ../../src/pattern/lib/_tables.scss */
   .table-bordered thead:first-child tr:first-child th:first-child,
   .table-bordered tbody:first-child tr:first-child td:first-child {
     -webkit-border-top-left-radius: 4px;
     border-top-left-radius: 4px;
     -moz-border-radius-topleft: 4px; }
-  /* line 99, ../../src/pattern/lib/_tables.scss */
+  /* line 102, ../../src/pattern/lib/_tables.scss */
   .table-bordered thead:first-child tr:first-child th:last-child,
   .table-bordered tbody:first-child tr:first-child td:last-child {
     -webkit-border-top-right-radius: 4px;
     border-top-right-radius: 4px;
     -moz-border-radius-topright: 4px; }
-  /* line 107, ../../src/pattern/lib/_tables.scss */
+  /* line 110, ../../src/pattern/lib/_tables.scss */
   .table-bordered thead:last-child tr:last-child th:first-child,
   .table-bordered tbody:last-child tr:last-child td:first-child,
   .table-bordered tfoot:last-child tr:last-child td:first-child {
@@ -1293,14 +1297,14 @@ table {
     -webkit-border-bottom-left-radius: 4px;
     border-bottom-left-radius: 4px;
     -moz-border-radius-bottomleft: 4px; }
-  /* line 115, ../../src/pattern/lib/_tables.scss */
+  /* line 118, ../../src/pattern/lib/_tables.scss */
   .table-bordered thead:last-child tr:last-child th:last-child,
   .table-bordered tbody:last-child tr:last-child td:last-child,
   .table-bordered tfoot:last-child tr:last-child td:last-child {
     -webkit-border-bottom-right-radius: 4px;
     border-bottom-right-radius: 4px;
     -moz-border-radius-bottomright: 4px; }
-  /* line 125, ../../src/pattern/lib/_tables.scss */
+  /* line 128, ../../src/pattern/lib/_tables.scss */
   .table-bordered caption + thead tr:first-child th:first-child,
   .table-bordered caption + tbody tr:first-child td:first-child,
   .table-bordered colgroup + thead tr:first-child th:first-child,
@@ -1308,7 +1312,7 @@ table {
     -webkit-border-top-left-radius: 4px;
     border-top-left-radius: 4px;
     -moz-border-radius-topleft: 4px; }
-  /* line 133, ../../src/pattern/lib/_tables.scss */
+  /* line 136, ../../src/pattern/lib/_tables.scss */
   .table-bordered caption + thead tr:first-child th:last-child,
   .table-bordered caption + tbody tr:first-child td:last-child,
   .table-bordered colgroup + thead tr:first-child th:last-child,
@@ -1317,167 +1321,167 @@ table {
     border-top-right-radius: 4px;
     -moz-border-radius-topleft: 4px; }
 
-/* line 149, ../../src/pattern/lib/_tables.scss */
+/* line 152, ../../src/pattern/lib/_tables.scss */
 .table-striped tbody tr:nth-child(odd) td,
 .table-striped tbody tr:nth-child(odd) th {
   background-color: #fbfbfb; }
 
-/* line 162, ../../src/pattern/lib/_tables.scss */
+/* line 165, ../../src/pattern/lib/_tables.scss */
 .table-hover tbody tr:hover td,
 .table-hover tbody tr:hover th {
   background-color: whitesmoke; }
 
-/* line 174, ../../src/pattern/lib/_tables.scss */
+/* line 177, ../../src/pattern/lib/_tables.scss */
 table [class*=span],
 .row-fluid table [class*=span] {
   display: table-cell;
   float: none;
   margin-left: 0; }
 
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span1 {
   float: none;
   width: 44px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span2 {
   float: none;
   width: 124px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span3 {
   float: none;
   width: 204px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span4 {
   float: none;
   width: 284px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span5 {
   float: none;
   width: 364px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span6 {
   float: none;
   width: 444px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span7 {
   float: none;
   width: 524px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span8 {
   float: none;
   width: 604px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span9 {
   float: none;
   width: 684px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span10 {
   float: none;
   width: 764px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span11 {
   float: none;
   width: 844px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span12 {
   float: none;
   width: 924px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span13 {
   float: none;
   width: 1004px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span14 {
   float: none;
   width: 1084px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span15 {
   float: none;
   width: 1164px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span16 {
   float: none;
   width: 1244px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span17 {
   float: none;
   width: 1324px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span18 {
   float: none;
   width: 1404px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span19 {
   float: none;
   width: 1484px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span20 {
   float: none;
   width: 1564px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span21 {
   float: none;
   width: 1644px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span22 {
   float: none;
   width: 1724px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span23 {
   float: none;
   width: 1804px;
   margin-left: 0; }
-/* line 183, ../../src/pattern/lib/_tables.scss */
+/* line 186, ../../src/pattern/lib/_tables.scss */
 .table .span24 {
   float: none;
   width: 1884px;
   margin-left: 0; }
 
-/* line 194, ../../src/pattern/lib/_tables.scss */
+/* line 197, ../../src/pattern/lib/_tables.scss */
 .table tbody tr.success td {
   background-color: #dff0d8; }
-/* line 197, ../../src/pattern/lib/_tables.scss */
+/* line 200, ../../src/pattern/lib/_tables.scss */
 .table tbody tr.error td {
   background-color: #f2dede; }
-/* line 200, ../../src/pattern/lib/_tables.scss */
+/* line 203, ../../src/pattern/lib/_tables.scss */
 .table tbody tr.warning td {
   background-color: #fcf8e3; }
-/* line 203, ../../src/pattern/lib/_tables.scss */
+/* line 206, ../../src/pattern/lib/_tables.scss */
 .table tbody tr.info td {
   background-color: #d9edf7; }
 
-/* line 211, ../../src/pattern/lib/_tables.scss */
+/* line 214, ../../src/pattern/lib/_tables.scss */
 .table-hover tbody tr.success:hover td {
   background-color: #d0e9c6; }
-/* line 214, ../../src/pattern/lib/_tables.scss */
+/* line 217, ../../src/pattern/lib/_tables.scss */
 .table-hover tbody tr.error:hover td {
   background-color: #ebcccc; }
-/* line 217, ../../src/pattern/lib/_tables.scss */
+/* line 220, ../../src/pattern/lib/_tables.scss */
 .table-hover tbody tr.warning:hover td {
   background-color: #faf2cc; }
-/* line 220, ../../src/pattern/lib/_tables.scss */
+/* line 223, ../../src/pattern/lib/_tables.scss */
 .table-hover tbody tr.info:hover td {
   background-color: #c4e3f3; }
 
@@ -2482,27 +2486,27 @@ input[type="button"].btn-block {
 .btn-danger {
   color: white;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #a10000;
-  background-image: -moz-linear-gradient(top, #bb0000, #770000);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#bb0000), to(#770000));
-  background-image: -webkit-linear-gradient(top, #bb0000, #770000);
-  background-image: -o-linear-gradient(top, #bb0000, #770000);
-  background-image: linear-gradient(to bottom, #bb0000, #770000);
+  background-color: #db4f4a;
+  background-image: -moz-linear-gradient(top, #ee5f5b, #bd362f);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ee5f5b), to(#bd362f));
+  background-image: -webkit-linear-gradient(top, #ee5f5b, #bd362f);
+  background-image: -o-linear-gradient(top, #ee5f5b, #bd362f);
+  background-image: linear-gradient(to bottom, #ee5f5b, #bd362f);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFBB0000', endColorstr='#FF770000', GradientType=0);
-  border-color: #770000 #770000 #2a0000;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFEE5F5B', endColorstr='#FFBD362F', GradientType=0);
+  border-color: #bd362f #bd362f #802420;
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #770000;
+  *background-color: #bd362f;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
   filter: progid:DXImageTransform.Microsoft.gradient(enabled=false); }
   /* line 495, ../../src/pattern/lib/_mixins.scss */
   .btn-danger:hover, .btn-danger:active, .btn-danger.active, .btn-danger.disabled, .btn-danger[disabled] {
     color: white;
-    background-color: #770000;
-    *background-color: #5e0000; }
+    background-color: #bd362f;
+    *background-color: #a9302a; }
   /* line 503, ../../src/pattern/lib/_mixins.scss */
   .btn-danger:active, .btn-danger.active {
-    background-color: #440000 \9; }
+    background-color: #942a25 \9; }
 
 /* line 169, ../../src/pattern/lib/_buttons.scss */
 .btn-success {
@@ -2805,7 +2809,7 @@ input[type="submit"].btn {
   background-color: #f89406; }
 /* line 163, ../../src/pattern/lib/_button-groups.scss */
 .btn-group.open .btn-danger.dropdown-toggle {
-  background-color: #770000; }
+  background-color: #bd362f; }
 /* line 166, ../../src/pattern/lib/_button-groups.scss */
 .btn-group.open .btn-success.dropdown-toggle {
   background-color: #51a351; }
@@ -4271,66 +4275,135 @@ strong {
   vertical-align: middle; }
 
 /* This class overriding app-common css. */
+/* line 124, ../../src/pattern/patternhack.scss */
+.group-management label {
+  margin-bottom: 0; }
+
 /* overriding buttons styles from Bootstrap v1.4 */
-/* line 126, ../../src/pattern/patternhack.scss */
+/* line 130, ../../src/pattern/patternhack.scss */
 .btn-group .btn {
   float: none; }
 
-/* line 129, ../../src/pattern/patternhack.scss */
+/* line 133, ../../src/pattern/patternhack.scss */
 .btn-group.open {
   overflow: visible; }
 
-/* line 132, ../../src/pattern/patternhack.scss */
+/* line 136, ../../src/pattern/patternhack.scss */
 .btn.dropdown-toggle {
   overflow: visible; }
-  /* line 134, ../../src/pattern/patternhack.scss */
+  /* line 138, ../../src/pattern/patternhack.scss */
   .btn.dropdown-toggle:after {
     display: none; }
-  /* line 138, ../../src/pattern/patternhack.scss */
+  /* line 142, ../../src/pattern/patternhack.scss */
   .btn.dropdown-toggle .caret {
     margin: 6px 0 0; }
 
-/* line 142, ../../src/pattern/patternhack.scss */
+/* line 146, ../../src/pattern/patternhack.scss */
 .open .dropdown-toggle {
   color: inherit; }
 
-/* line 146, ../../src/pattern/patternhack.scss */
+/* line 150, ../../src/pattern/patternhack.scss */
 .open > .dropdown-menu.right {
   left: auto;
   right: 0; }
-  /* line 151, ../../src/pattern/patternhack.scss */
+  /* line 155, ../../src/pattern/patternhack.scss */
   .open > .dropdown-menu.right:before {
     right: 25px;
     left: auto; }
-  /* line 156, ../../src/pattern/patternhack.scss */
+  /* line 160, ../../src/pattern/patternhack.scss */
   .open > .dropdown-menu.right:after {
     right: 26px;
     left: auto; }
 
 /*  End of Button overriding */
-/* line 164, ../../src/pattern/patternhack.scss */
+/* line 168, ../../src/pattern/patternhack.scss */
 .pagination {
   border-bottom: 0; }
-  /* line 166, ../../src/pattern/patternhack.scss */
+  /* line 170, ../../src/pattern/patternhack.scss */
   .pagination a {
     font-weight: normal; }
-    /* line 168, ../../src/pattern/patternhack.scss */
+    /* line 172, ../../src/pattern/patternhack.scss */
     .pagination a:hover, .pagination a:focus {
       text-decoration: none; }
 
 /* This class overriding app-bootstrap css. */
-/* line 176, ../../src/pattern/patternhack.scss */
+/* line 180, ../../src/pattern/patternhack.scss */
 .dropdown-toggle:after {
   border-top: 0; }
 
-/* line 180, ../../src/pattern/patternhack.scss */
+/* line 185, ../../src/pattern/patternhack.scss */
 select {
   height: 20px;
   line-height: 20px;
   padding: 1px; }
 
 /* Fix for tickets show page data-tabs */
-/* line 187, ../../src/pattern/patternhack.scss */
+/* line 192, ../../src/pattern/patternhack.scss */
 .ticket_tabs {
   margin-left: 0px;
   margin-right: 0px; }
+
+/* line 1, ../../src/pattern/lib/_list-page-theme.scss */
+.list-page {
+  margin: 0 auto; }
+  /* line 3, ../../src/pattern/lib/_list-page-theme.scss */
+  .list-page .list-page-header {
+    margin-bottom: 20px; }
+  /* line 6, ../../src/pattern/lib/_list-page-theme.scss */
+  .list-page .list-page-subheader {
+    margin-top: 8px;
+    margin-bottom: 8px; }
+  /* line 10, ../../src/pattern/lib/_list-page-theme.scss */
+  .list-page .list-page-body {
+    border: 1px solid #eee;
+    /* depands upon bootstrap table variable $tableBorder  */
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    background: #f6f6f6;
+    padding: 8px 0 8px 0;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-box-shadow: 0px 0px 10px rgba(200, 200, 200, 0.2);
+    -moz-box-shadow: 0px 0px 10px rgba(200, 200, 200, 0.2);
+    box-shadow: 0px 0px 10px rgba(200, 200, 200, 0.2); }
+    /* line 18, ../../src/pattern/lib/_list-page-theme.scss */
+    .list-page .list-page-body .list-page-table-header {
+      padding: 4px 12px 12px; }
+    /* line 21, ../../src/pattern/lib/_list-page-theme.scss */
+    .list-page .list-page-body .list-page-table-footer {
+      padding: 12px 12px 4px; }
+    /* line 24, ../../src/pattern/lib/_list-page-theme.scss */
+    .list-page .list-page-body table {
+      background: #fff;
+      margin: 0;
+      border-bottom: 1px solid #eeeeee; }
+      /* line 30, ../../src/pattern/lib/_list-page-theme.scss */
+      .list-page .list-page-body table tr:hover td {
+        background-color: #FEFDEE; }
+      /* line 36, ../../src/pattern/lib/_list-page-theme.scss */
+      .list-page .list-page-body table tr td, .list-page .list-page-body table tr th {
+        vertical-align: middle;
+        word-wrap: break-word;
+        padding: 12px; }
+    /* line 42, ../../src/pattern/lib/_list-page-theme.scss */
+    .list-page .list-page-body .item_actions, .list-page .list-page-body .item-actions {
+      padding-right: 5px; }
+    /* line 45, ../../src/pattern/lib/_list-page-theme.scss */
+    .list-page .list-page-body .pagination {
+      background: #f6f6f6;
+      border-top: 1px solid #eeeeee;
+      margin: 0px;
+      padding: 10px;
+      padding-bottom: 0;
+      line-height: 0; }
+    /* line 53, ../../src/pattern/lib/_list-page-theme.scss */
+    .list-page .list-page-body .btn-mini {
+      background-image: none;
+      background-color: #fdfdfd; }
+      /* line 56, ../../src/pattern/lib/_list-page-theme.scss */
+      .list-page .list-page-body .btn-mini:hover {
+        background-color: #f1f1f1; }

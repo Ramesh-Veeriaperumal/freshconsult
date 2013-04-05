@@ -1,65 +1,67 @@
 <%= assumed_identity_message %>
 <div class="header">
   <div class="wrapper">
-  <div class="brand">
-    <% link_to (portal_pref(current_portal, :logo_link).empty?) ? "/home" : portal_pref(current_portal, :logo_link), :class => "logo" do %>
-    	<% cache(["v2","portal","logo",current_portal]) do %>
-      	<%= image_tag (current_portal.logo.nil? ? "/images/logo.png?721013" : current_portal.logo.content.url(:logo)) %>
-      <% end %>
-    <% end %>      
-    <%= link_to(current_portal.name, "/home", :class => "logo_text") %>
-    <%= link_to_function("Switch to mobile version", 
-    										 "jQuery.cookie('classic_view','false',{path:'/'});location.href='/';", 
-    										 :class => 'mobile_switchBtn') if mobile_agent? && allowed_domain? %>
-  </div>		
-
-
-    <div class="header_links">
-      <% if current_user then %>  
-		<%= content_tag(:span, t('header.welcome')) %>
-		<%= link_to h(current_user.name), "#", :class => "nav-trigger", :menuid => "#LoggedOptions" %>
-     <% else %>
-
-        <%= link_to( t('header.login') , login_path) %>
-		<%= link_to( t('signup') , current_portal.support_signup_path ) if feature?(:signup_link) %>
-    <% end %>
-    </div>     
-		<% if current_user then %>                        
-		<div class="profile_info" id="LoggedOptions">                          
-			<div class="info user clearfix">
-				<%= user_avatar(current_user, :thumb, "preview_pic", {:width => "30px", :height => "30px" }) %>
-				<span><%= truncate(h(current_user.name), :length => 30) %></span>
-			</div>
+	<div class="brand">
+	<% link_to (portal_pref(current_portal, :logo_link).empty?) ? "/home" : portal_pref(current_portal, :logo_link), :class => "logo" do %>
+		<% cache(["v2","portal","logo",current_portal]) do %>
+	  	<%= image_tag (current_portal.logo.nil? ? "/images/logo.png?721013" : current_portal.logo.content.url(:logo)) %>
+	  <% end %>
+	<% end %>      
+	<%= link_to(current_portal.name, "/home", :class => "logo_text") %>
+	<%= link_to_function("Switch to mobile version", 
+											 "jQuery.cookie('classic_view','false',{path:'/'});location.href='/';", 
+											 :class => 'mobile_switchBtn') if mobile_agent? && allowed_domain? %>
+	</div>	
+	 <% if current_user then %>  
+  	<div class="header-link-wrapper">
+  		<a href="#">
+  			<img alt="" height="35px" src="/images/spacer.gif" class="header-icons-autoAssign-on">
+  		</a>
+		<a href="#" class="nav-trigger" menuid="#LoggedOptions">
+			<%= user_avatar(current_user, :thumb, "preview_pic", {:width => "30px", :height => "30px" }) %>
+		</a>
+	</div>
+	<% else %>
+	 	<div class="header_links">
+	        <%= link_to( t('header.login') , login_path) %>
+			<%= link_to( t('signup') , current_portal.support_signup_path ) if feature?(:signup_link) %>
+		</div>
+    <% end %>    
+	<% if current_user then %>                        
+	<div class="profile_info" id="LoggedOptions">                          
+		<div class="info user clearfix">
+			<span><%= truncate(h(current_user.name), :length => 30) %></span>
+		</div>
+		<div class="info link" >
+			<% if feature?(:round_robin) %>
+				<label class="item-in-menu"><input type="checkbox" 
+				<%= current_user.available? ? "checked" : "" %> 
+				class="item-in-menu" id="available" name="available" value="1" onclick="processAgent('<%= current_user.id %>')" /> <%= t('agent.available') %></label>
+			<% end %>
+		</div>
+		<%= link_to "<i class='header-arrow-right'></i> #{t('profile_settings')}", edit_profile_path(current_user), :class => "link" %>
+		<% if is_assumed_user? %>    
 			<span class="seperator"></span>
-			<div class="info link" >
-				<% if feature?(:round_robin) %>
-					<label class="item-in-menu"><input type="checkbox" 
-					<%= current_user.available? ? "checked" : "" %> 
-					class="item-in-menu" id="available" name="available" value="1" onclick="processAgent('<%= current_user.id %>')" /> <%= t('agent.available') %></label>
-				<% end %>
-			</div>
-			<% if is_assumed_user? %>    
+			<%= link_to t('revert_identity_link_msg'), revert_identity_users_path, :class => "link" %>			
+  		<% elsif !is_assumed_user? && (current_user.admin? || current_user.account_admin? || current_user.supervisor?) %>
+  			<% @allowed_to_assume = current_account.users.technicians.visible.allowed_to_assume(current_user) %>
+  			<% unless @allowed_to_assume.blank? %>
 				<span class="seperator"></span>
-				<%= link_to t('revert_identity_link_msg'), revert_identity_users_path, :class => "link" %>
-      		<% elsif !is_assumed_user? && (current_user.admin? || current_user.account_admin? || current_user.supervisor?) %>
-      			<% @allowed_to_assume = current_account.users.technicians.visible.allowed_to_assume(current_user) %>
-      			<% unless @allowed_to_assume.blank? %>
-					<span class="seperator"></span>
-					<div class="info">
-						<h5><%=t('switch_heading')%></h5>      					
-						<%= select_tag 'assumed_select_id', options_from_collection_for_select(@allowed_to_assume, :id, :name), { :class => "customSelect", "data-placeholder"=> t('swith_agent_msg'), "onchange" => "assume_identity_url()", :style => "width:250px" } %>
-						<% javascript_tag do%>
-						  function assume_identity_url() {
-						    window.location = '/users/'+$('assumed_select_id').value+'/assume_identity';
-						  }
-						<%end%>
-					</div>
-				<% end %>
-			<% end %>                      
-			<span class="seperator"></span>			
-			<%= link_to t('header.signout'), logout_path, :class => "link" %>
-		</div>                                                             
-		<% end %>
+				<div class="info">   	
+					<i class='header-arrow-right'></i>				
+					<%= select_tag 'assumed_select_id', options_from_collection_for_select(@allowed_to_assume, :id, :name), { :class => "customSelect", "data-placeholder"=> t('swith_agent_msg'), "onchange" => "assume_identity_url()", :style => "width:210px" } %>
+					<% javascript_tag do%>
+					  function assume_identity_url() {
+					    window.location = '/users/'+$('assumed_select_id').value+'/assume_identity';
+					  }
+					<%end%>
+				</div>
+			<% end %>
+		<% end %>                      
+		<span class="seperator"></span>			
+		<%= link_to "<i class='header-arrow-right'></i> #{t('header.signout')}", logout_path, :class => "link" %>
+	</div>                                                             
+	<% end %>
   </div>
 	<div class="top_nav_bg"> 
 		<div class="wrapper">

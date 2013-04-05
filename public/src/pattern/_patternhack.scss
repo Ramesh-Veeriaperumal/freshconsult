@@ -119,8 +119,12 @@ strong {
   vertical-align: middle;
 }
 
-
 /* This class overriding app-common css. */
+.group-management{
+  label{
+    margin-bottom:0;
+  }
+}
 
 /* overriding buttons styles from Bootstrap v1.4 */
 .btn-group .btn {
@@ -176,6 +180,7 @@ strong {
 .dropdown-toggle:after{
   border-top:0;
 }
+
 
 select{
   height: 20px;
