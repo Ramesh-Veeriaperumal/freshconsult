@@ -247,7 +247,7 @@ class Helpdesk::TicketsController < ApplicationController
     #old_timer_count = @item.time_sheets.timer_active.size -  we will enable this later
     if @item.update_attributes(params[nscname])
 
-      update_tags unless params[:helpdesk].blank? or  params[:helpdesk][:tags].blank?
+      update_tags unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
       respond_to do |format|
         format.html { 
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
@@ -821,7 +821,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def update_tags
     new_tag_list= params[:helpdesk][:tags].split(",").map { |tag| tag.strip}
-    old_tag_list = @item.tags.map{|tag| tag.name}
+    old_tag_list = @item.tags.map{|tag| tag.name.strip }
 
     add_ticket_tags( new_tag_list.select {|tag| !old_tag_list.include?(tag) })
     #Choosing the ones that are not in the old list.

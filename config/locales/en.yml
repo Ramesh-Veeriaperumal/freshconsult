@@ -2475,7 +2475,7 @@ en:
         toggle_timer_false: "Stop timer"
       new:
         title: "New time entry"
-        hours_format_tip: "Leave this blank to start a timer. You can also enter time as 1.5 or 1:30 (they both mean 1 hour and 30 minutes)."
+        hours_format_tip: "Enter time in HH:MM or decimals (like 1:30 or 1.5 for an hour and 30 minutes). Leave this blank to start the auto-timer."
       ticket: Ticket
       sidebar_title: "Time tracked"
       customer: Customer

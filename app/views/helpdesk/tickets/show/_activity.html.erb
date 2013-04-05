@@ -19,7 +19,7 @@ note = activity[:is_note] ? @prefetched_notes[activity[:stack].first.note_id] : 
 														t(act.short_descr.chomp('.short') + '.without_user')
 														).render(eval_activity_data(act.activity_data).merge(
 															'user_path' => link_to(act[:user] ,act[:user]),
-															'notable_path' => link_to(h(act.notable), act.notable) )
+															'notable_path' => link_to(h(@item), @item) )
 														) 
 											}
 			%>

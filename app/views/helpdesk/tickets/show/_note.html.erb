@@ -2,7 +2,8 @@
 note_view_id = dom_id(note)
 notedetails  = "note_details_#{note.id.to_s()}"
 forward_note_id = "cnt-fwd-#{note.id.to_s()}" 
-edit_id = "edit-#{note.id.to_s()}" 
+edit_id = "edit-#{note.id.to_s()}"
+notable_object = @ticket || @parent
 minimizable ||= false
 %>
 
@@ -13,7 +14,7 @@ minimizable ||= false
 		<div class="helpdesk_note">
 			<div class="actions">
 				<% if permission?(:manage_tickets) %>
-					<%= link_to_remote(t('delete'), :url => helpdesk_ticket_helpdesk_note_path(note.notable, note), 
+					<%= link_to_remote(t('delete'), :url => helpdesk_ticket_helpdesk_note_path(notable_object, note), 
 								:method => :delete, :confirm => t("helpdesk.tickets.note.delete_note"), 
 								:html => {:class => "red_links conv-action-icon conv-actions-delete tooltip", :title => t('delete')}) if note.user && note.user.agent?    %>   
 
@@ -49,10 +50,10 @@ minimizable ||= false
 
 
 			<%= content_tag :div, "", :id => "#{edit_id}", :class => "request_panel email-edit-form hide", :rel => "remote", 
-									"data-remote-url" => edit_helpdesk_ticket_helpdesk_note_path(note.notable, note) %>
+									"data-remote-url" => edit_helpdesk_ticket_helpdesk_note_path(notable_object, note) %>
 		    <%= content_tag :div, "", :id => forward_note_id, :class => "request_panel note-forward-form hide", :rel => "remote", 
 							"data-remote-url" => forward_conv_helpdesk_ticket_path({ 
-														:id => note.notable.display_id, 
+														:id => notable_object.display_id, 
 														:note_id => note.id }) %>
 			<div class="details" id='<%= notedetails %>'>
 				<div class="request_mail">
