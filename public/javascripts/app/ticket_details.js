@@ -687,7 +687,7 @@ $(document).ready(function() {
 	});
 
 	$('.ticket_details').on('click.ticket_details', '[rel=activity_container] .minimizable', function(ev){
-		if ($(ev.toElement).is('.quoted_button')) return;
+		if ($(ev.toElement).is('a')) return;
 
 		$(this).toggleClass('minimized');
 	});
@@ -1028,6 +1028,10 @@ $(document).ready(function() {
 
 	//Previous Next Buttons request
 	$.getScript("/helpdesk/tickets/prevnext/" + TICKET_DETAILS_DATA['displayId']);
+
+	//Hack for those who visit upon hitting the back button
+	$('#activity_toggle .toggle-button').removeClass('active');
+	jQuery('#activity_toggle [rel=toggle]').prop('checked', false);
 
 });
 
