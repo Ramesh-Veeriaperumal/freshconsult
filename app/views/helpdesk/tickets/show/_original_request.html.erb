@@ -20,11 +20,8 @@
 			<% end %>
 		</div>
 		<div class="info"> 
-			<p>
-				<%= multiple_emails_container(@to_emails)  if (@ticket.source == (Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email])) %>
-			</p> 
-			<%= content_tag :p, multiple_emails_container(@ticket.cc_email_hash[:cc_emails]) unless @ticket.cc_email_hash.blank? %>
-
+			<%= content_tag :div, multiple_emails_container(@to_emails) unless @ticket.cc_email_hash.blank? or @to_emails.blank? %>
+			<%= content_tag :div, multiple_emails_container(@ticket.cc_email_hash[:cc_emails]) unless @ticket.cc_email_hash.blank? %>
       	</div> 
 	</div>
 	<div id="ticket_original_request" class="request_mail">

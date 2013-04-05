@@ -9,11 +9,12 @@ class Helpdesk::NotesController < ApplicationController
   include ParserUtil
   include Helpdesk::Social::Facebook
   include Helpdesk::Social::Twitter
+  include RedisKeys
   include Helpdesk::Activities
   
   before_filter :fetch_item_attachments, :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
   before_filter :set_mobile, :prepare_mobile_note, :only => [:create]
-    
+  before_filter :set_show_version
 
   def index
 
@@ -105,6 +106,15 @@ class Helpdesk::NotesController < ApplicationController
   end
 
   protected
+
+    def set_show_version
+      @new_show_page = (get_key(show_version_key) == "1")
+    end
+    
+    def show_version_key
+      HELPDESK_TKTSHOW_VERSION % { :account_id => current_account.id, :user_id => current_user.id }
+    end
+
     def scoper
       @parent.notes
     end
