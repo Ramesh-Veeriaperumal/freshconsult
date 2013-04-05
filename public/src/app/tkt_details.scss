@@ -135,7 +135,7 @@ p strong{
 			width: 100%;
 		}	
 		.control-left{
-			padding-bottom: 20px;
+			padding-bottom: 10px;
 			position: relative;
 
 			h2{
@@ -1190,7 +1190,7 @@ p strong{
 	margin-top: 10px;
 	display: block;
 	margin-left: 29px;
-	padding: 20px;
+	padding: 10px;
 	line-height: 150%;
 	background: #fffdf8;
 	border: 1px solid #bbb;
@@ -1241,7 +1241,7 @@ p strong{
 		@include opacity(0);
 		@include transition(opacity .5s linear); 
 
-		margin: -20px -20px 0 0;
+		margin: -9px -10px 0 0;
 	}
 
 
@@ -1485,7 +1485,7 @@ p strong{
 .commentbox-info{
 	position: relative;
 	margin-left: 40px;
-	padding: 15px 15px 6px;
+	padding: 10px 10px 0;
 	background: #f7f7f7;
 	border: 1px solid #cccccc;
 	height:75px;
@@ -2564,7 +2564,7 @@ p strong{
 	display: none;
 	z-index:0;
 	width: 100%;
-	height: 164px;
+	height: 143px;
 	overflow: hidden;
 	position: fixed;
 	background: #fff;
