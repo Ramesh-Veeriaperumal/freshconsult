@@ -47,7 +47,7 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/tire.git
-  revision: d90b77032502f6548938c6c051fdb7f1ccc8d97d
+  revision: 8c323dc3ea6245c71cdbc9cbf9c560f571050496
   specs:
     tire (0.4.3)
       hashr (~> 0.0.19)
