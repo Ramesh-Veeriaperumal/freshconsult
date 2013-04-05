@@ -62,7 +62,7 @@ class Helpdesk::NotesController < ApplicationController
     build_attachments @item, :helpdesk_note
     @item.send_survey = params[:send_survey]
     
-    if params[:ticket_status]
+    unless params[:ticket_status].blank?
       @item.notable.status = params[:ticket_status]
       Thread.current[:notifications] = current_account.email_notifications
       Thread.current[:notifications][EmailNotification::TICKET_RESOLVED][:requester_notification] = false
