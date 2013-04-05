@@ -296,15 +296,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
      }
   end
 
-  sphinx_scope(:with_subject) { |search_string| { 
-    :include => [:requester],
-    :conditions => { :subject => "%#{search_string}%" }, 
-    :with => { :deleted => false }, 
-    :star => true,
-    :order => :status,
-    :limit => 1000
-    } 
-  }
+  # sphinx_scope(:with_subject) { |search_string| { 
+  #   :include => [:requester],
+  #   :conditions => { :subject => "%#{search_string}%" }, 
+  #   :with => { :deleted => false }, 
+  #   :star => true,
+  #   :order => :status,
+  #   :limit => 1000
+  #   } 
+  # }
   #Sphinx configuration ends here..
 
 
