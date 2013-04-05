@@ -75,6 +75,7 @@ gem 'chargebee', "~> 1.1.1"
 
 gem 'memcache-client', '1.8.5'
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
+gem 'tire', :git => "git://github.com/freshdesk/tire.git"
 gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
 gem "rinku", :git => "git://github.com/freshdesk/rinku.git"
 

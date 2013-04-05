@@ -121,6 +121,10 @@
     admin.resources :email_commands_setting, :member => { :update => :put }
     admin.resources :account_additional_settings, :member => { :update => :put, :assign_bcc_email => :get}
   end
+
+  map.namespace :search do |search|
+    search.resources :home, :only => :index, :collection => { :suggest => :get, :solutions => :get, :topics => :get }
+  end
   
   map.resources :reports
   map.resources :timesheet_reports , :controller => 'reports/timesheet_reports' , :collection => {:report_filter => :post , :export_csv => :post} 
@@ -204,7 +208,6 @@
   map.reset_password '/account/reset/:token', :controller => 'user_sessions', :action => 'reset'
   
   map.resources :search, :only => :index, :member => { :suggest => :get }
-  
   
   #SAAS copy ends here
 

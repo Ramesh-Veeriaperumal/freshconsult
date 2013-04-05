@@ -40,6 +40,7 @@ class Helpdesk::Note < ActiveRecord::Base
   before_save :load_schema_less_note, :update_category
   after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
   after_commit_on_create :update_ticket_states, :notify_ticket_monitor
+  after_update :update_search_index
 
   accepts_nested_attributes_for :tweet , :fb_post
   
@@ -311,6 +312,7 @@ class Helpdesk::Note < ActiveRecord::Base
           send_reply_email
           create_fwd_note_activity(self.to_emails) if fwd_email?
         end
+        notable.responder ||= self.user
       end
       # syntax to move code from delayed jobs to resque.
       #Resque::MyNotifier.deliver_reply( notable.id, self.id , {:include_cc => true})
@@ -340,7 +342,7 @@ class Helpdesk::Note < ActiveRecord::Base
         cc_emails.delete_if {|email| (email == notable.requester.email)}
         cc_email_hash_value[:cc_emails] = cc_emails
       end
-      notable.update_attribute(:cc_email, cc_email_hash_value)     
+      notable.cc_email = cc_email_hash_value    
     end
 
     def add_activity
@@ -389,6 +391,10 @@ class Helpdesk::Note < ActiveRecord::Base
       elsif note?
         schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
       end
+    end
+
+    def update_search_index
+      notable.update_es_index
     end
     
   private

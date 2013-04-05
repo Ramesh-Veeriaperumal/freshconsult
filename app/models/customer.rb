@@ -1,6 +1,7 @@
 class Customer < ActiveRecord::Base
   
   include Cache::Memcache::Customer
+  include Search::ElasticSearchIndex
   serialize :domains
     
   validates_presence_of :name,:account
@@ -48,6 +49,7 @@ class Customer < ActiveRecord::Base
   
   before_create :check_sla_policy
   before_update :check_sla_policy
+  after_commit :update_es_index
   
   has_many :tickets , :through =>:users , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id"
   
@@ -93,6 +95,10 @@ class Customer < ActiveRecord::Base
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id,:delta]) 
   end
 
+  def to_indexed_json
+    to_json( :only => [ :name, :note, :description, :account_id ] )
+  end
+  
   def to_json(options = {})
     options[:except] = [:account_id,:import_id,:delta]
     json_str = super options
