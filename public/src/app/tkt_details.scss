@@ -1185,7 +1185,7 @@ p strong{
 	margin-top: 10px;
 	display: block;
 	margin-left: 29px;
-	padding: 10px;
+	padding: 20px;
 	line-height: 150%;
 	background: #fffdf8;
 	border: 1px solid #bbb;
@@ -1475,7 +1475,7 @@ p strong{
 .commentbox-info{
 	position: relative;
 	margin-left: 40px;
-	padding: 10px 10px 0;
+	padding: 15px 15px 6px;
 	background: #f7f7f7;
 	border: 1px solid #cccccc;
 	height:75px;
@@ -2542,15 +2542,13 @@ p strong{
 	top: 20px;
 }
 
-
-
 /***** FIXED HEADER CSS ******/
 
 .fixedbg {
 	display: none;
 	z-index:0;
 	width: 100%;
-	height: 143px;
+	height: 154px;
 	overflow: hidden;
 	position: fixed;
 	background: #fff;
