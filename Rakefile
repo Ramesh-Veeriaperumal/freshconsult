@@ -10,4 +10,3 @@ require 'rake/rdoctask'
 require 'tasks/rails'
 require 'thinking_sphinx/tasks'
 require "resque/tasks"
-require 'resque_scheduler/tasks'

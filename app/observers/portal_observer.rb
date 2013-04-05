@@ -6,6 +6,7 @@ class PortalObserver < ActiveRecord::Observer
 	include RedisKeys
 
 	def increment_version(*args)
+		return unless Account.current
 		return if get_key(PORTAL_CACHE_ENABLED) === "false"
 		Rails.logger.debug "::::::::::Sweeping from portal"
 		key = PORTAL_CACHE_VERSION % { :account_id => Account.current.id }

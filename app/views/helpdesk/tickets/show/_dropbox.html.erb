@@ -1,0 +1,17 @@
+<li id="<%= dom_id(dropbox) %>">
+	<%= link_to_remote("", 
+						:url => helpdesk_dropbox_path(dropbox), :method => 'delete', 
+						:html => { :class =>"attachment-close" },
+						:confirm => "You're about to permanently delete this attachment. Continue?")  if local_assigns[:show_delete] %>
+
+	<div class="attachment-type file-types-dropbox">
+
+		<% 
+		 	filename = dropbox.url.split('/')[-1]
+		%>
+		<%= link_to truncate_filename(h(filename)), dropbox.url, :popup => true, :title => h(filename) %>
+		<span>(<%=h("dropbox link")%>)</span>
+	</div>
+</li>			
+			
+

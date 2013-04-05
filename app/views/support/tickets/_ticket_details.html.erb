@@ -1,5 +1,5 @@
 <section class="widget" id="ticket-sidebar-details">
-	<h3 class="lead">Ticket details</h4>
+	<h3 class="lead"><%= t('portal.tickets.details') %></h4>
 	<% edit_field_present = false %>
 	<% form_for @ticket, :url => { :action => "update", :controller => "support/tickets" }, 
 				:html => { :id => 'portal_ticket_form', :rel => "validate" } do |f| %>	

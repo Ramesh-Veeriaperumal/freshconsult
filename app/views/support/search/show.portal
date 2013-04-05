@@ -1,5 +1,5 @@
 <section class="content rounded-6 min-height-desktop">
-	<h2 class="heading">Search results for "{{ search.term }}"</h2>	
+	<h2 class="heading">{% translate portal.search.results_for %} "{{ search.term | escape_once }}"</h2>	
 	{{ search | default_filters }}
 	<hr />
 	{% if search.result_count != 0 %}
@@ -17,6 +17,6 @@
 		</ul>
 		{{ search.pagination }}
 	{% else %}
-		<div class="lead">No results found</div>
+		<div class="lead">{% translate search.no_results_msg %}</div>
 	{% endif %}
 </section>

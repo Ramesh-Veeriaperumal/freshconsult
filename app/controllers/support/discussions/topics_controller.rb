@@ -82,7 +82,6 @@ class Support::Discussions::TopicsController < SupportController
       @post.topic = @topic
       @post.user  = current_user
       @post.account_id = current_account.id
-      build_attachments
       # only save topic if post is valid so in the view topic will be a new record if there was an error
       @topic.body_html = @post.body_html # incase save fails and we go back to the form
       topic_saved = @topic.save if @post.valid?
@@ -90,7 +89,8 @@ class Support::Discussions::TopicsController < SupportController
     end
     
     if topic_saved && post_saved
-      @topic.monitorships.create(:user_id => current_user.id, :active => true) if params[:monitor]   
+      @topic.monitorships.create(:user_id => current_user.id, :active => true) if params[:monitor] 
+      create_attachments  
       respond_to do |format| 
         format.html { redirect_to support_discussions_topic_path(:id => @topic) }
         format.xml  { render :xml => @topic }
@@ -114,11 +114,11 @@ class Support::Discussions::TopicsController < SupportController
       @post = @topic.posts.first
       @post.attributes = post_param
       @topic.body_html = @post.body_html 
-      build_attachments
       topic_saved = @topic.save
       post_saved = @post.save
     end
     if topic_saved && post_saved
+      create_attachments
       respond_to do |format|
         format.html { redirect_to support_discussions_topic_path(@topic) }
         format.xml  { head 200 }
@@ -176,11 +176,11 @@ class Support::Discussions::TopicsController < SupportController
     render :partial => "users_voted", :object => @topic
   end
 
-  def build_attachments
-    return unless @post.respond_to?(:attachments) 
+  def create_attachments
+    return unless @topic.posts.first.respond_to?(:attachments) 
       unless params[:post].nil?
       (params[:post][:attachments] || []).each do |a|
-        @post.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
+        @topic.posts.first.attachments.create(:content => a[:resource], :description => a[:description], :account_id => @topic.posts.first.account_id)
       end
     end
   end

@@ -1,0 +1,23 @@
+<div class="open-box" id="due-by-element-parent">
+<% unless (ticket.onhold_and_closed? or ticket.ticket_status.deleted?)%>
+	<h4 class="title"><%= h(ticket.status_name) %></h4>
+	<p id="edit-dueby-time-parent">
+		<%= render :partial => "/helpdesk/tickets/show/due_by.html.erb", :object => ticket.due_by %>
+	</p>
+<% else %>
+	<% if ticket.ticket_status.deleted? %>
+		<h4 class="title deleted tooltip" data-placement="left" title="<%=t('status_deleted')%>">
+			<%= h(status_changed_time_value_hash(ticket)[:title]) %>
+		</h4>
+	<% else %>
+		<h4 class="title">
+			<%= h(status_changed_time_value_hash(ticket)[:title]) %>
+		</h4>
+	<% end %>
+	<p>
+		<% changed_time = ticket.ticket_states.send(status_changed_time_value_hash(ticket)[:method]) %>
+		<%= t('since') %> <%= distance_of_time_in_words(Time.now(), changed_time) %>
+		<br />from <%= formated_date(changed_time) %>
+	</p>
+<% end %>
+</div>

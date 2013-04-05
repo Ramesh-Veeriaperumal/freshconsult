@@ -44,7 +44,7 @@ ActiveRecord::Base.class_eval do
       elsif body_html.blank? && !body.blank?
         self.body_html = body_html_with_formatting
       elsif body.blank? && body_html.blank?
-        self.body = self.body_html = "Not given."
+        self.body = self.body_html = I18n.t('not_given')
       end
       text = Nokogiri::HTML(self.body_html)
       unless text.at_css("body").blank?

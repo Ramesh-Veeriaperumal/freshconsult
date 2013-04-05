@@ -44,6 +44,8 @@ stylesheets:
     - public/stylesheets/app/app-bootstrap.css
     - public/stylesheets/app/lib/form.css
     - public/stylesheets/app/lib/buttons.css
+    - public/stylesheets/app/lib/select2.css
+    - public/stylesheets/app/lib/dialog.css
 
   pattern:
     - public/stylesheets/pattern/pattern.css
@@ -64,6 +66,11 @@ stylesheets:
   freshwidget:
     - public/stylesheets/freshwidget.css
 
+  tkt_details:
+    - public/stylesheets/app/tkt_details.css
+  tkt_details_print:
+    - public/stylesheets/app/tkt_details_print.css
+    
   gadget:
     - public/stylesheets/app/lib/defaults.css
     - public/stylesheets/app/lib/layout.css    
@@ -77,6 +84,7 @@ stylesheets:
     - public/stylesheets/app/lib/jquery-ui.css
     - public/stylesheets/app/lib/qtip.css
     - public/stylesheets/app/lib/ie.css
+    - public/stylesheets/app/tkt_details.css
     - public/stylesheets/app/gadget.css
 
   subscription:
@@ -125,6 +133,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.ui.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/frameworks/plugins/select2.js
+    - public/javascripts/frameworks/plugins/jquery.blockUI.js
     - public/javascripts/hackz.js
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/helpdesk/multifile.js
@@ -168,6 +177,7 @@ javascripts:
     # - public/javascripts/pattern/bootstrap-collapse.js
     - public/javascripts/pattern/bootstrap-dropdown.js
     - public/javascripts/pattern/bootstrap-modal.js
+    - public/javascripts/pattern/bootstrap-dialog.js
     # - public/javascripts/pattern/bootstrap-scrollspy.js
     - public/javascripts/pattern/bootstrap-transition.js
     - public/javascripts/pattern/bootstrap-tab.js
@@ -175,6 +185,8 @@ javascripts:
     # - public/javascripts/pattern/bootstrap-popover.js
   timesheet:
     - public/javascripts/timesheet.js
+  ticket_details:
+    - public/javascripts/app/ticket_details.js
   freshwidget:
     - public/javascripts/freshwidget.js
   html2canvas:

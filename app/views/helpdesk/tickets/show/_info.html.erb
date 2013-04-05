@@ -1,0 +1,167 @@
+<!--Fixed Starp-->
+<div class="fixedbg"></div>
+<div class="fixedStrap">
+	<div id="firstchild">
+		<div class="controls">
+		<!--Pagination-->
+			<% unless params[:format]=='widget' %>
+			<div class="pagination-link" id="adjacents">
+				<ul>
+					<li><a href="#" class="pagi-btn disabled"><span class="arrow-next"></span></a></li>
+					<li><a href="#" class="pagi-btn disabled"><span class="arrow-previous"></span></a></li>
+				</ul>
+			</div>
+			<div id="activity_toggle" class="activity_toggle tooltip-bottom clearfix" title="Toggle Activities">
+				<div class="text"><%= t('ticket.activity_toggle') %></div>
+				<input rel="toggle" type="checkbox" data-checked-label="Yes" data-unchecked-label="No" />
+				<div class="loading-center"></div>
+			</div>
+			<% end %>
+			<!--Breadcrumb-->
+			<div class="bread-crumb-wrap clearfix">
+				<div class="bread-crumb">
+					<ul>
+						<li><%= link_to t('header.tabs.tickets'), helpdesk_tickets_path %></li>
+						<li>&raquo;</li>
+						<li><%= "#{t('ticket.singular')} ##{h(@ticket.display_id)}"%></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="controls clearfix">
+			<div class="control-left-outer">
+				<div class="control-left">
+					<div class="source-badge-wrap">
+						<div href="#" 
+							 class='source 
+							 		<%= "priority_color_#{@ticket.priority} 
+							 		status_#{@ticket.status} " + 
+							 		("spam" if @ticket.spam).to_s + 
+							 		("deleted" if @ticket.deleted).to_s %>' >
+							<span class="source_<%= @ticket.source %>"></span>
+						</div>
+					</div>
+					<div class="commentbox-info" id="ticket_status_box">
+						<%= render :partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @ticket} unless @ticket.deleted or @ticket.spam %>
+
+						<div class="ticket-subject">
+							<h2 class="subject <%= 'show_full' if @ticket.deleted or @ticket.spam or params[:format]=='widget' %>">
+								<% unless @ticket.deleted or @ticket.spam %>
+									<div class="watchers_tooltip hide" id="new_watcher_page"
+										rel="remote-load" 
+										data-url= "<%=helpdesk_ticket_helpdesk_subscriptions_path(@ticket)%>" >
+										<span class="arrow-right"></span>
+									</div>
+									<% unless params[:format]=='widget' %>
+									<div class="monitor_div">
+										<span id="monitor">
+											<%= render :partial => "/helpdesk/subscriptions/monitor.html.erb" %>
+										</span>
+										<div class="watchers_tooltip " id="new_watcher_page" style="display:none" rel="remote-load" 
+												data-url= "<%=helpdesk_ticket_helpdesk_subscriptions_path(@ticket)%>" data-load-unique="true" >
+											<span class="arrow-top"></span>
+										</div>
+									</div>
+									<% end %>
+								<% end %>
+								<% if @ticket.spam %>
+									<span class='label spam'>
+										<%= link_to("×", unspam_helpdesk_ticket_path(@ticket), :method => :put,
+															:class => "tooltip", "data-placement" => "below", 
+															:title => t('ticket.ham_btn_title')) unless params[:format]=='widget' %>
+										<%= t("ticket.spam") %>
+
+									</span>
+								<% end %>
+								<% if @ticket.deleted %>
+									<span class='label deleted'>
+										<%= link_to("×", restore_helpdesk_ticket_path(@ticket), :method => :put, 
+													:class => "tooltip", "data-placement" => "below", 
+													:title => t('ticket.restore_btn_title') ) unless params[:format]=='widget' 
+													%>
+										<%= t("ticket.deleted") %>
+									</span>
+									
+								<% end %>													
+
+								<%= h(@ticket.subject) %>
+							</h2>
+							<div class="ticket-actions clearfix <%= 'hide' if @ticket.deleted or @ticket.spam or params[:format]=='widget' %>">
+								<ul>
+									<li class="ticket-btns">
+										<div class="btn-group">
+											<% if (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present?) %>
+										  	<a class="btn" rel="note-button" data-note-type="reply" id="ReplyButton">
+										  		<span class="reply-inner"></span>
+									    		<%= t('ticket.reply_to')  %>
+									    	</a>
+											<% end %>
+										  	<a href="#" id="FwdButton" class="btn" rel="note-button" data-note-type="fwd" >
+										  		<span class="forward-inner"></span>
+									    		<%= t('fwd_to') %>
+									    	</a>
+										  	<a href="#"  rel="note-button" class="btn" data-note-type="note" >
+										  		<span class="note-inner"></span>
+												<%= t('ticket.add_note') %>
+											</a>
+										</div>
+									</li>
+									<li class="ticket-btns">
+										<%= link_to(t('ticket.close_btn'), "#", 
+												:title  => t('ticket.close_btn_title'), 
+												:class => "btn" , :id=>"close_ticket_btn" , 
+												:"data-href" => close_helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]})) unless @ticket.closed? %> 
+
+									</li>
+									<li class="ticket-btns">
+										<%= link_to t('ticket.merge_btn'), "/helpdesk/merge_tickets/bulk_merge?source_tickets=#{@ticket.display_id}", 
+												:id => "Merge", :title => t('ticket.merge_title'), :class => 'btn',
+												"data-ajax-dialog" => true, "data-width" => "727"
+										%>
+									</li>
+									<li class="ticket-btns">
+										<div class="btn-group">
+
+										  <a class="btn dropdown-toggle" data-toggle="dropdown">
+										  	<%= t("more") %>
+										    <span class="caret"></span>
+										  </a>
+
+										  <ul class="dropdown-menu" id="reply_options" role="menu" aria-labelledby="dLabel">
+										  	
+										  	<li>
+										  		<%= link_to( t('ticket.execute_scenario'), "/helpdesk/tickets/component/#{@ticket.id}?component=scenarios", 
+										  				:rel => 'freshdialog', "data-target" => "#execute_scenario", 
+										  				"data-submit-label" => t('ticket.execute_scenario'),
+										  				:title => t('ticket.execute_scenario') ) %>
+										  	</li>
+										  	<li>
+										  		<%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %>
+										  	</li>
+										  	
+										  	<li>
+										  		<%= link_to( "Print", print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
+										  	</li>
+
+										  	<li id="spamicon">
+										  		<%= render :partial => "spam.html.erb", :locals => { :ticket => @ticket, :page => params[:page] } %>
+										  	</li>
+
+										  	<li>
+										  		<%= link_to(t('ticket.delete_btn'), 
+										  					helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]}), 
+										  					:method => :delete, :title => t('ticket.delete_btn_title')) %>
+							  				</li>
+										  </ul>
+										</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

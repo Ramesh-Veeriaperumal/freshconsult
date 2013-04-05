@@ -191,10 +191,10 @@ def users_voted
 end
 
  def build_attachments
-   return unless @post.respond_to?(:attachments) 
+   return unless @topic.posts.first.respond_to?(:attachments) 
     unless params[:post].nil?
     (params[:post][:attachments] || []).each do |a|
-      @post.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
+      @topic.posts.first.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @topic.posts.first.account_id)
     end
    end
   end

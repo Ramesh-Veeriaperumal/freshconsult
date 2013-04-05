@@ -88,9 +88,11 @@ class Forum < ActiveRecord::Base
   
   format_attribute :description
   attr_protected :forum_category_id , :account_id
-
+  xss_terminate  :html5lib_sanitize => [:description_html,:description]
+ 
   # after_save :set_topic_delta_flag
-  before_update :clear_customer_forums
+  before_update :clear_customer_forums, :backup_forum_changes
+  after_commit_on_update :update_search_index, :if => :forum_visibility_updated?
   
   def after_create 
     create_activity('new_forum')
@@ -206,5 +208,20 @@ class Forum < ActiveRecord::Base
                         }
     )
   end
+
+  def update_search_index
+    Resque.enqueue(Search::IndexUpdate::ForumTopics, { :forum_id => id })
+  end
+
+  private
+
+    def backup_forum_changes
+      @all_changes = self.changes.clone
+      @all_changes.symbolize_keys!
+    end
+
+    def forum_visibility_updated?
+      @all_changes.has_key?(:forum_visibility)
+    end
    
 end

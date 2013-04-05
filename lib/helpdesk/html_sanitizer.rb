@@ -11,6 +11,12 @@ module Helpdesk::HTMLSanitizer
   end
   
   def self.plain(html)
-    Sanitize.clean(html) if html
+   plain_text(Sanitize.clean(html)) if html
   end
+
+  private
+  
+    def self.plain_text(html)
+      CGI::unescapeHTML(html)
+    end
 end

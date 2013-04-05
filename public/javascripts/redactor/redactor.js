@@ -18,9 +18,10 @@ if (typeof RELANG === 'undefined')
 	var RELANG = {};
 }
 //⌘⇧7
-var ctrlkeyname = (navigator.appVersion.indexOf("Mac") != -1) ? "⌘" : "Ctrl-"
-var shiftkeyname = (navigator.appVersion.indexOf("Mac") != -1) ? "⇧" : "Shift-"
-var altkeyname = (navigator.appVersion.indexOf("Mac") != -1) ? "-Alt-" : "Alt-"
+var isMacintosh = navigator.appVersion.indexOf("Macintosh") > -1
+var ctrlkeyname = isMacintosh ? "⌘" : "Ctrl-"
+var shiftkeyname = isMacintosh ? "⇧" : "Shift-"
+var altkeyname = isMacintosh ? "-Alt-" : "Alt-"
 var RLANG = {
 	html: 'HTML',
 	video: 'Insert Video...',
@@ -79,7 +80,7 @@ var RLANG = {
 	choose: 'Select Existing',
 	choose_text: 'Showing recent 20 images',
 	or_choose: 'Or choose',
-	drop_file_here: 'Drop and Drop Image file here to upload',
+	drop_file_here: 'Drag and Drop Image file here to upload',
 	align_left:	'Align Left (' + ctrlkeyname + shiftkeyname + 'L)',	
 	align_center: 'Align Center (' + ctrlkeyname + shiftkeyname + 'E)',
 	align_right: 'Align Right (' + ctrlkeyname + shiftkeyname + 'R)',
@@ -220,6 +221,7 @@ var Redactor = function(element, options)
 		mozillaEmptyHtml: '<p>&nbsp;</p>',
 		buffer: false,
 		visual: true,
+		span_cleanup_properties: ['color', 'font-family', 'font-size', 'font-weight'],
 					
 		// modal windows container
 		modal_file: String() + 
@@ -743,6 +745,22 @@ Redactor.prototype = {
 			this.opts.callback(this);
 		}
 		
+		var _redactor = this;
+		if(this.inputEventAvailable()) {
+			this.$editor.on('input', function() { 
+				_redactor.syncCode();
+			});
+		}
+		this.$editor.on('drop', function() {
+			// Opera & IE hack for listening to drag and drop
+			// Timeout essential for syncCode() to happen after drop
+			if(!_redactor.inputEventAvailable()) {
+				setTimeout(function() { _redactor.syncCode(); }, 1);
+			}
+		});
+		this.$editor.on('blur', function() { 
+			_redactor.syncCode();
+		});
 	},
 	//this.shortcuts() function is used to execute some action upon some shortcut ket hit
 	//formatblock cmd needs additional params for execution and so 'params' argument has been added
@@ -783,8 +801,10 @@ Redactor.prototype = {
 			{
 				return this.formatNewLine(e);
 			}
-			
-			this.syncCode();
+			if(!this.inputEventAvailable()) {
+				this.syncCode();
+			}
+				
 
 		}, this));		
 	},
@@ -905,7 +925,7 @@ Redactor.prototype = {
 				else if(key === 37)	
 				{
 					//Ctrl + left arrow
-					if(navigator.userAgent.indexOf('Firefox') > -1)
+					if(isMacintosh && $.browser.mozilla)
 					{
 						e.preventDefault();
 						this.getSelection().modify("move", "backward", "lineboundary");
@@ -3548,18 +3568,13 @@ Redactor.prototype = {
 		});
 		// Remove unnecessary css applied to a span by comparing a span's style to that of its parent
 		$.each(this.$editor.find('span'), function() {
-			if($(this).css('color') == $(this).parent().css('color')) {
-				$(this).css('color','');
-			}
-			if($(this).css('font-size') == $(this).parent().css('font-size')) {
-				$(this).css('font-size','');
-			}
-			if($(this).css('font-family') == $(this).parent().css('font-family')) {
-				$(this).css('font-family','');
-			}
-			if($(this).css('font-weight') == $(this).parent().css('font-weight')) {
-				$(this).css('font-weight','');
-			}
+			var _span = this;
+			$.each(_redactor.opts.span_cleanup_properties, function(i, css_property) {
+				if($(_span).css(css_property) == $(_span).parent().css(css_property)) {
+					$(_span).css(css_property,'');
+				}
+			});
+
 			if($(this).css('background-color') == $(this).parent().css('background-color') || 
 				($(this).css('background-color') == _redactor.$editor.css('background-color') &&
 					$(this).parent().css('background-color') == "transparent")) {
@@ -3567,6 +3582,9 @@ Redactor.prototype = {
 			}
 		});
 		this.syncCode();
+	},
+	inputEventAvailable: function() {
+		return ($.browser.webkit || $.browser.mozilla);
 	}
 	
 };

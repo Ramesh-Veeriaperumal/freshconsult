@@ -994,6 +994,12 @@
             }
 
             this.dropdown.show();
+            // Issue with a repaint problem in webkit browsers
+            // Fixed based on this issue log
+            // https://github.com/ivaynberg/select2/issues/641
+            // this.dropdown.show();
+            this.dropdown.css("display", "none");
+            this.dropdown.fadeIn(0);
 
             this.positionDropdown();
             this.dropdown.addClass("select2-drop-active");

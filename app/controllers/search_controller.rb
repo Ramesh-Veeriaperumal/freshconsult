@@ -120,13 +120,17 @@ class SearchController < ApplicationController
     def search
       begin
         if permission? :manage_tickets
-          @items = ThinkingSphinx.search filter_key(params[:search_key]), 
-                                                              :with => search_with, 
-                                                              :classes => searchable_classes,
-                                                              :sphinx_select => sphinx_select,
-                                                              :star => false,
-                                                              :match_mode => :any,                                          
-                                                              :page => params[:page], :per_page => 10                                          
+          unless current_account.es_enabled?
+            @items = ThinkingSphinx.search filter_key(params[:search_key]), 
+                                                                :with => search_with, 
+                                                                :classes => searchable_classes,
+                                                                :sphinx_select => sphinx_select,
+                                                                :star => false,
+                                                                :match_mode => :any,                                          
+                                                                :page => params[:page], :per_page => 10
+          else
+            return redirect_to search_home_index_url(:search_key => params[:search_key])
+          end
         elsif current_user && (permission? :portal_request)
           search_portal_for_logged_in_user
         end
