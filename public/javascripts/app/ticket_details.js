@@ -687,7 +687,7 @@ $(document).ready(function() {
 	});
 
 	$('.ticket_details').on('click.ticket_details', '[rel=activity_container] .minimizable', function(ev){
-		if ($(ev.toElement).is('a')) return;
+		if ($(ev.target).is('a')) return;
 
 		$(this).toggleClass('minimized');
 	});
