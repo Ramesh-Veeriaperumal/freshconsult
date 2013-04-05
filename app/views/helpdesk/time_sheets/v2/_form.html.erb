@@ -7,13 +7,13 @@
 	<dt><%= form.label :hhmm, t('.hours')%>: </dt>
 	<dd class="hours">
 		<%= form.text_field(:hhmm, { 
-				:size => 6, :class => "auto number #{(type == :new) ? 'custom-tip' : ''}", :autocomplete => "off", :placeholder => "01:30",
-				:title => t('helpdesk.time_sheets.new.hours_format_tip'),
+				:size => 6, :class => "auto number", :autocomplete => "off", :placeholder => "HH:MM"
 				} ) %>
 		<label class="billing_hours floatr">
 			<%= form.check_box(:billable, {:checked => (type == :new) ? true : form.object.billable}) %>
 			<%= t('.billing_hours')%>
 		</label>
+		<div class="tip"><%= t('helpdesk.time_sheets.new.hours_format_tip') %> </div>
 	</dd>
 
 	<dt><%= form.label :executed_at, 'On'%>: </dt> 

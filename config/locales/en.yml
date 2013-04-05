@@ -2155,7 +2155,7 @@ en:
       whats_new: "What's new"
       revert_view: "Switch to Classic View"
       submit_feedback: "Submit Feedback"
-    include_quoted_text: "Include quoted text"
+    include_quoted_text: "Include previous replies"
     more_details: "More details..."
     reported_on: "from %{username}, Last updated: on %{date}"
     ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago</span>"
@@ -2254,6 +2254,7 @@ en:
       form_title: Reply to the conversation
       reply_email_id: Send the reply from the following email id
       send_and_resolve: Send and Resolve
+      send_and_set_as: "Send and set as <strong>%{status}</strong>"
       send: Send
       send_satisfaction_survey: Include satisfaction survey
     facebook_form:
@@ -2474,7 +2475,7 @@ en:
         toggle_timer_false: "Stop timer"
       new:
         title: "New time entry"
-        hours_format_tip: "Leave this blank to start a timer. You can also enter time as 1.5 or 1:30 (they both mean 1 hour and 30 minutes)."
+        hours_format_tip: "Enter time in HH:MM or decimals (like 1:30 or 1.5 for an hour and 30 minutes). Leave this blank to start the auto-timer."
       ticket: Ticket
       sidebar_title: "Time tracked"
       customer: Customer

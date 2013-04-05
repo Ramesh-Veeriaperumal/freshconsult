@@ -776,7 +776,7 @@ $(document).ready(function() {
 				});
 			}
 
-			if ($('html').hasClass('ie6') || $('html').hasClass('ie7') || $('html').hasClass('ie8') || $('html').hasClass('ie9')) {
+			if ($('html').hasClass('ie6') || $('html').hasClass('ie7') || $('html').hasClass('ie8') || $('html').hasClass('ie9')|| $('html').hasClass('ie10')) {
 				stopDraftSaving();
 				$.ajax({
 					url: TICKET_DETAILS_DATA['draft']['clear_path'],
@@ -843,8 +843,12 @@ $(document).ready(function() {
 					_form.find('[rel=ajax_params]').remove();
 						
 					_form.find('input[type=submit]').prop('disabled', false);
-					if (_form.data('showPseudoReply'))
+					if (_form.data('showPseudoReply')) {
 						$('#TicketPseudoReply').show();
+						refreshStatusBox();	//Only Reply/Add Note/Fwd forms need this, and they might have status changes.
+					}
+						
+
 
 
 				},

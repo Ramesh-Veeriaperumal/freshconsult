@@ -648,6 +648,7 @@ p strong{
     .custom_statuses {
     	max-height: 110px;
 		overflow-y: auto;
+		max-width: 460px;
 	}
 
     #reply-draft {
@@ -855,6 +856,10 @@ p strong{
 				margin: 0 5px 0 0;
 			}
 		}
+	}
+
+	.edit_helpdesk_note {
+		margin-top: 20px;
 	}
 
     .ui-form li.inline-field {
@@ -1185,7 +1190,7 @@ p strong{
 	margin-top: 10px;
 	display: block;
 	margin-left: 29px;
-	padding: 20px;
+	padding: 10px;
 	line-height: 150%;
 	background: #fffdf8;
 	border: 1px solid #bbb;
@@ -1236,7 +1241,7 @@ p strong{
 		@include opacity(0);
 		@include transition(opacity .5s linear); 
 
-		margin: -10px -15px 0 0;
+		margin: -9px -10px 0 0;
 	}
 
 
@@ -1251,6 +1256,7 @@ p strong{
 
 		&:first-child {
 			border-right: none;
+			@include border-radius(0 4px 0 0);
 		}
 
 		&:hover {
@@ -1276,7 +1282,7 @@ p strong{
 		width: 95%;
 		font-size: 13px;
 		font-weight: normal;
-		color: #656565;
+		color: #333;
 		line-height: 17px;
 	}
 
@@ -1479,7 +1485,7 @@ p strong{
 .commentbox-info{
 	position: relative;
 	margin-left: 40px;
-	padding: 15px 15px 6px;
+	padding: 10px 10px 0;
 	background: #f7f7f7;
 	border: 1px solid #cccccc;
 	height:75px;
@@ -1825,7 +1831,7 @@ p strong{
 			width: 100%;
 
 			&.top {
-				margin-top: -33px;
+				margin-top: -43px;
 			}
 		}
 		.ui-form {
@@ -1946,7 +1952,7 @@ p strong{
 	.widget{
 		border-top: 2px #AAA solid;
 		width: 100%;
-		@include min-height(40px);
+		@include min-height(60px);
 		clear: both;
 		margin-bottom: 20px;
 		position: relative;
@@ -1962,7 +1968,7 @@ p strong{
 			font-size: 18px;
 			font-weight: 300;
 			padding-top: 2px;
-			padding-bottom: 5px;
+			padding-bottom: 15px;
 			cursor: pointer;
 			z-index: 2;
 			position: relative;
@@ -2199,6 +2205,12 @@ p strong{
 	}
 	.select2-container {
 		width: 100%;
+    }
+
+    .tip {
+    	margin-top: -5px;
+		color: #888;
+		font-size: 0.9em;
     }
 }
 
@@ -2552,7 +2564,7 @@ p strong{
 	display: none;
 	z-index:0;
 	width: 100%;
-	height: 154px;
+	height: 143px;
 	overflow: hidden;
 	position: fixed;
 	background: #fff;

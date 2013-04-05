@@ -161,7 +161,7 @@
             <% ticket_statuses.each do |status| %>
             <li>
               <a href="#" rel="custom-reply-status" data-status-name='<%= status.name %>' data-cnt-id='<%=cntid%>' data-status-val='<%= status.status_id %>' >
-                &amp; Set as <%= status.name %>
+                <%= t('ticket.reply_form.send_and_set_as', {:status => status.name}) %>
               </a>
             </li>
             <% end %>

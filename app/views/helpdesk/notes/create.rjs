@@ -9,6 +9,3 @@ else
 	@notes = @parent.conversation_since(params[:since_id])
 	page.insert_html :bottom, 'all_notes', render(:partial => "helpdesk/tickets/show/note", :collection => @notes)
 end
-
-# Updating the Status box
-page.replace "due-by-element-parent", render(:partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @parent})
