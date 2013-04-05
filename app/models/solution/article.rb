@@ -123,7 +123,8 @@ class Solution::Article < ActiveRecord::Base
           NewRelic::Agent.notice_error(e)
         end
     else
-      search(search_by, :with => { :account_id => ticket.account.id }, :match_mode => :any, :per_page => 10)
+      ThinkingSphinx.search(search_by, :with => { :account_id => ticket.account.id },
+       :classes => [ Solution::Article ], :match_mode => :any, :per_page => 10 )
     end
   end
   
