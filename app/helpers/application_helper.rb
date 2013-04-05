@@ -17,7 +17,8 @@ module ApplicationHelper
                         ["IE 7", "ie7"],
                         ["IE 8", "ie8"],
                         ["IE 9", "ie9"],
-                        ["(gt IE 9)|!(IE)", "", true]]
+                        ["IE 10", "ie10"],
+                        ["(gt IE 10)|!(IE)", "", true]]
 
     html_conditions.map { |h| %( 
         <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{ 

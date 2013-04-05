@@ -768,7 +768,7 @@ p strong{
     .btn-toolbar {
     	float: right;
     	clear: right;
-    	width: 450px;
+    	width: 400px;
     	text-align: right;
 
     	> span {
@@ -1412,6 +1412,10 @@ p strong{
 
 .commentbox-requester{
 	border: 1px #eee solid;
+
+	&:before {
+		border-right-color: #eee;
+	}
 }
 
 .commentbox-yellow {
@@ -2832,4 +2836,18 @@ $collision_delay: 1s;
 		right: 7px;
 	}
 
+}
+
+//Cust. Satisfaction survey:
+.ticket_details .happy-smily-small, .ticket_details .unhappy-smily-small, .ticket_details .neutral-smily-small {
+	top: 45px;
+	left: -52px;
+	position: absolute;
+	z-index: 999;
+	margin-top: 0 !important;
+}
+
+.ticket_details .customer-opinion {
+	border: none;
+	margin: 0;
 }
