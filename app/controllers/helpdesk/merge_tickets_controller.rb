@@ -27,7 +27,7 @@ class Helpdesk::MergeTicketsController < ApplicationController
         		search.query do |query|
           			query.filtered do |f|
             			if SearchUtil.es_exact_match?(params[:search_string])
-              				f.query { |q| q.text :subject, params[:search_string], :type => :phrase }
+              				f.query { |q| q.text :subject, SearchUtil.es_filter_exact(params[:search_string]), :type => :phrase }
             			else
               				f.query { |q| q.string SearchUtil.es_filter_key(params[:search_string]), :fields => ['subject'], :analyzer => "include_stop" }
             			end

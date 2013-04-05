@@ -31,7 +31,7 @@ class Search::HomeController < ApplicationController
             search.query do |query|
               query.filtered do |f|
                 if SearchUtil.es_exact_match?(params[:search_key])
-                  f.query { |q| q.text :_all, params[:search_key], :type => :phrase }
+                  f.query { |q| q.text :_all, SearchUtil.es_filter_exact(params[:search_key]), :type => :phrase }
                 else
                   f.query { |q| q.string SearchUtil.es_filter_key(params[:search_key]), :analyzer => "include_stop" }
                 end

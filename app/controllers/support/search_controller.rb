@@ -125,7 +125,7 @@ class Support::SearchController < SupportController
           search.query do |query|
             query.filtered do |f|
               if SearchUtil.es_exact_match?(params[:term])
-                f.query { |q| q.text :_all, params[:term], :type => :phrase }
+                f.query { |q| q.text :_all, SearchUtil.es_filter_exact(params[:term]), :type => :phrase }
               else
                 f.query { |q| q.string SearchUtil.es_filter_key(params[:term]), :analyzer => "include_stop" }
               end
