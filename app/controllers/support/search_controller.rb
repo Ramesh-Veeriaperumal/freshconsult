@@ -89,8 +89,9 @@ class Support::SearchController < SupportController
                 s_options[:category_id] = current_portal.forum_category_id
               end
 
-              class_search = f_class.search(filter_key(params[:term]), 
+              class_search = ThinkingSphinx.search(filter_key(params[:term]), 
                                       :with => s_options, 
+                                      :classes => [ f_class ],
                                       :without => without_options,                                
                                       :match_mode => :any,
                                       :max_matches => params[:max_matches],
