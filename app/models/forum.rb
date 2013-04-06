@@ -210,7 +210,7 @@ class Forum < ActiveRecord::Base
   end
 
   def update_search_index
-    Resque.enqueue(Search::IndexUpdate::ForumTopics, { :forum_id => id })
+    Resque.enqueue(Search::IndexUpdate::ForumTopics, { :current_account_id => account_id, :forum_id => id })
   end
 
   private

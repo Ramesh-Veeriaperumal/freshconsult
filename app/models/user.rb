@@ -501,7 +501,7 @@ class User < ActiveRecord::Base
   end
 
   def update_search_index
-    Resque.enqueue(Search::IndexUpdate::UserTickets, { :user_id => id })
+    Resque.enqueue(Search::IndexUpdate::UserTickets, { :current_account_id => account_id, :user_id => id })
   end
 
   protected
