@@ -156,7 +156,7 @@
           </a>
           <ul class="dropdown-menu custom_statuses">
             <%
-            ticket_statuses = current_account.ticket_statuses.reject{|status| status.status_id == 2 }
+            ticket_statuses = current_account.ticket_status_values.reject{|status| status.status_id == 2 }
             %>
             <% ticket_statuses.each do |status| %>
             <li>
