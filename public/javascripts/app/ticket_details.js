@@ -815,7 +815,6 @@ $(document).ready(function() {
 						$('#note_details_' + _form.data('cntId')).show();
 					}
 
-
 					if (_form.data('cntId') && _form.data('destroyEditor')){
 						$('#' + _form.data('cntId') + '-body').destroyEditor(); //Redactor
 						_form.resetForm();
@@ -825,6 +824,10 @@ $(document).ready(function() {
 					if (_form.attr('rel') == 'forward_form')  {
 						//Remove To Address
 						_form.find('.forward_email li.choice').remove();
+					}
+
+					if (_form.attr('rel') == 'note_form')  {
+						$('#toggle-note-visibility').removeClass('visible');
 					}
 
 					//Enabling original attachments
