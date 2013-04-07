@@ -4,4 +4,4 @@
 <%=render :partial => "satisfaction_survey", :locals => {:ticket => @ticket, :survey_handle => @survey_handle}%>
 <br/>
 <%= render :partial => 'shared/free_plan_message' %>
-<%=render :partial => "quoted_text", :locals => { :ticket => @ticket, :note => @note } if @include_quoted_text %>
+<%#render :partial => "quoted_text", :locals => { :ticket => @ticket, :note => @note } if @include_quoted_text %>
