@@ -1,3 +1,6 @@
+ <%= include_stylesheets :pattern %>
+<%= include_javascripts :pattern %>
+
  <script type="text/javascript"> 	
  	var agent_select = null; 
  	function toggleText(){
@@ -71,54 +74,107 @@
 		}); 
 	});
  </script>
- <h3 class="title"><%=title%></h3> 
+ <h3 class="lead"><%=title%></h3> <br/>
 	<% form_for(@group, :html => {:id => "group_form"}) do |f|  %>
 	  <%= f.error_messages %>
+	   <div class="row-fluid group-management">
+		 	<ul class="unstyled">
+		 		<li class="row-fluid">
+		 			<%= f.label :name, "<b> #{t('group.name')} </b>" , :class => "control-label span2" %>
+					  <div class="span9">
+						 <%= f.text_field :name , :class => "text required", :placeholder => t('group.name')  %>
+					  </div>
+		 		</li>
+		 		<li class="row-fluid">
+		 			 <%= f.label :description, "<b> #{t('description')} </b>", :class => "control-label span2" %>
+					  <div class="span9">
+						 <%= f.text_area :description , :class => "text required smallpara", :placeholder => t('group.name')  %>
+					  </div>
+		 		</li>
+		 		<% if feature?(:round_robin) %>
+		 		<li class="row-fluid">
+		 			 <%= f.label :ticket_assign_type, "<b> #{t('group.ticket_assignment')} </b>", :class => "control-label span2" %>
+					  <div class="span9">
+						 <%= f.select :ticket_assign_type, options_for_select(Group.ticket_assign_options, @group.ticket_assign_type.to_s) %>
+					  </div>
+		 		</li>
+		 		<li class="row-fluid">
+		 			 <%= f.label :max_open_tickets, "<b> #{t('group.max_tickets')} </b>", :class => "control-label span2" %>
+					  <div class="span9">
+						<%= f.select :max_open_tickets, options_for_select(Group::MAX_OPEN_TICKETS, @group.max_open_tickets) %>
+					  </div>
+		 		</li>
+		 		<% end %>
+		 		<li class="row-fluid">
+		 			 <label class="control-label span2"><b><%=t('group.info1')%></b></label>
+		 			 <% 
+						account_id =  @group.account_id
+						if account_id.nil?
+							account_id = current_account.id
+						end
+						 @exclude_list = @group.excluded_agents(current_account) %>
+					<%  
+						if(@exclude_list.nil? ||@exclude_list.size == 0)
+							showagent = "display:none"
+						end 
+					%>
+					<div class="span10">
+						<span id="All_Agents" style="<%= showagent %>">
+							<b><%=t('group.select_agents')%> </b>							  			
+							<select id="group_escalate_to" class="select2">
+								<% @exclude_list.each do |user| %>
+									<% 
+										avatar_url = '/images/fillers/profile_blank_thumb.gif'
+										unless user.avatar.nil?
+											avatar_url = user.avatar.expiring_url(:thumb)
+										end 
+									%>
+									<option agent_thumb="<%=avatar_url%>" agent_name="<%=user.name%>" agent_id="<%=user.id%>">
+										<%= user.name %>
+									</option>
+								<% end %>
+							</select>			
+							<%= link_to_function t('add'), 'AddUser()', :class => "button" %>
+						</span>
+						<%= f.hidden_field :agent_list, { :id =>"agent_list", :value => ""} %>		
+					</div>
+		 		</li>
+		 		<li class="row-fluid">
+					<label class="control-label span2"><b>Ticket Assignment</b></label>
+					<div class="span10">
+						<ul class="unstyled">
+							<li class="margin-bottom">
+								<label class="radio">
+								  <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+								  Manual
+								</label>
+								<%= content_tag( :span, 'Agents should <i>manually</i> pick up from this code', :class => "muted info_data" ) %> 	
+							</li>
+							<li class="margin-bottom">
+								<label class="radio">
+								  <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+								  Manual
+								</label>
+								<%= content_tag( :span, 'Agents should <i>manually</i> pick up from this code', :class => "muted info_data" ) %> 	
+							</li>
+					</div>
+            	</li>
+            	<li class="row-fluid">
+            		<div class="offset2 span9">
+            			<%=t('group.info4')%> :
+						<%= f.select :assign_time , Group::ASSIGNTIME_OPTIONS, :class =>'select2' %>
+						<div class="offset1">
+							<span> &nbsp; &nbsp;<%#=t('group.info3')%> ....then send escalation email to :</span>
+							<%= f.collection_select :escalate_to, Agent.technician_list(account_id), :id, :name, {:include_blank => '...'}, :class =>'span4' %>
+						</div>
+            		</div>
+            	</li>
+		 	</ul>
+		 </div>
+
+		 
 	  <ul class="ui-form">
-		  <li>
-		    <%= f.label :name, t('group.name') %>
-		    <%= f.text_field :name ,:class => "text required" %>
-		  </li>
-		  <li>
-		    <%= f.label :description, t('description') %>
-		    <%= f.text_area :description, :class => "smallpara" %>
-		  </li>
 		  <li>		  	
-		  	<label><%=t('group.info1')%></label>
-			<% 
-				
-					account_id =  @group.account_id
-					if account_id.nil?
-						account_id = current_account.id
-					end
-					 @exclude_list = @group.excluded_agents(current_account) %>
-			<%  
-				if(@exclude_list.nil? ||@exclude_list.size == 0)
-					showagent = "display:none"
-				end 
-			%>
-			<span id="All_Agents" style="<%= showagent %>">
-					<b><%=t('group.select_agents')%> </b>							  			
-					<select id="group_escalate_to">
-						<% @exclude_list.each do |user| %>
-							<% 
-								avatar_url = '/images/fillers/profile_blank_thumb.gif'
-								unless user.avatar.nil?
-									avatar_url = user.avatar.expiring_url(:thumb)
-								end 
-							%>
-							<option agent_thumb="<%=avatar_url%>" agent_name="<%=user.name%>" agent_id="<%=user.id%>">
-								<%= user.name %>
-							</option>
-						<% end %>
-					</select>			
-					<%= link_to_function t('add'), 'AddUser()', :class => "button" %>
-			</span>
-			
-				<%= f.hidden_field :agent_list, { :id =>"agent_list", :value => ""} %>			
-						
-			
-			
 			<ul class="item_list active" id="Active_list">	
 					<%  
 						@group.agents.each do |user| 
@@ -139,18 +195,10 @@
 			</ul>		
 			<br />	
 		  </li>
-		 
-
-		  <li>		
-			<%=t('group.info3')%> 
-			<%= f.collection_select :escalate_to, Agent.technician_list(account_id), :id, :name, {:include_blank => '...'} %>
-			<%=t('group.info4')%>
-			<%= f.select :assign_time , Group::ASSIGNTIME_OPTIONS %>			
-	   	  </li>
 	  </ul>
 	  <br />
 	  <div class="button-container">	    
-		<%= f.submit t('save'), :class => "uiButton" %>
-		<%= link_to t('cancel'), groups_path, :class => "uiButton" %>	
+		<%= f.submit t('save'), :class => "btn btn-primary" %>
+		<%= link_to t('cancel'), groups_path, :class => "btn" %>	
 	  </div>
 <% end %>

@@ -46,7 +46,7 @@ class Portal::Template < ActiveRecord::Base
 
   # Merge with default params for specific portal
   def get_portal_pref
-    pref = self.portal.preferences || Account.main_portal.preferences
+    pref = self.portal.preferences || account.main_portal.preferences
     # Selecting only bg_color, tab_color, header_color from the portals preferences
     Hash[*[:bg_color, :tab_color, :header_color].map{ |a| [ a, pref[a] ] }.flatten]
   end

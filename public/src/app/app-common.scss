@@ -5535,23 +5535,24 @@ a.close{
 .profile_info{     
 	visibility:hidden;
 	right:0;     
-	margin-top:30px;     
+	margin-top:35px;     
 	position:absolute;
-  font-size:13px;
-  background:#ffffff;
-	padding:0 0 10px 0;     
-  z-index:999999;
+  	font-size:13px;
+  	background:#ffffff;
+	padding:0 0 5px 0;     
+  	z-index:999999;
 	width:300px;
-  @include opacity(0.95);
-  @include corners(5px);
-  @include box-shadow( rgba(0, 0, 0, 0.8) 0px 3px 8px );
+	border-bottom: 7px solid #eee;
+	@include opacity(0.95);
+	@include corners(5px);
+	@include box-shadow( rgba(0, 0, 0, 0.8) 0px 3px 8px );
 	&:before{           
 		content:"";
 		position:absolute;
 		border:6px solid transparent;
 		border-bottom-color:#fff;
 		width:1px;        
-		top:-12px; right:40px;
+		top:-12px; right:24px;
 	}
 	.seperator{
 		border-color:#e0e0e0;
@@ -5559,8 +5560,19 @@ a.close{
 	.link, h5, .user{          
 		font-size:14px;
 	} 
+	.header-arrow-right {
+			display:inline-block;
+			width: 0; 
+			height: 0; 
+			border-top: 5px solid transparent;
+			border-bottom: 5px solid transparent;
+			border-left: 5px solid #909090;
+			margin-right:10px;
+			margin-left:-5px;
+	}
 	.user{
-		margin:10px 0 5px 0;     
+		margin:0; 
+		background:#eee;    
 		span{
 			position:relative;
 		 	top:7px; 
@@ -5584,7 +5596,7 @@ a.close{
 		padding:4px 24px;
 	}            
 	.user{
-		padding:2px 18px;
+		padding:2px 18px 18px;
 	}
 	.preview_pic img{     
 		width:30px;height:30px;  
@@ -10266,4 +10278,12 @@ div.gcal-confirm-modal-content{ width: 100%; }
 }
 .error-text {
 	color: #D00;
+}
+
+.group-management{
+  .info_data{
+    display: block;
+    margin-top: -10px;
+    padding-left: 16px;
+  }
 }

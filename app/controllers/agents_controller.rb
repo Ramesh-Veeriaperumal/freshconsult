@@ -10,7 +10,7 @@ class AgentsController < ApplicationController
 
   skip_before_filter :check_account_state, :only => :destroy
   
-  before_filter :load_object, :only => [:update, :destroy, :restore, :edit, :reset_password ,:convert_to_contact ]
+  before_filter :load_object, :only => [:update, :destroy, :restore, :edit, :toggle_availability, :reset_password ,:convert_to_contact ]
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
   before_filter :check_user_permission, :only => [:destroy,:convert_to_contact]
   before_filter :check_agent_limit, :only =>  :restore
@@ -77,6 +77,12 @@ class AgentsController < ApplicationController
       format.html # edit.html.erb
       format.xml  { render :xml => @agent }
     end    
+  end
+
+  def toggle_availability
+    @agent.available = params[:value]
+    @agent.save
+    render :nothing => true
   end
   
   def delete_avatar

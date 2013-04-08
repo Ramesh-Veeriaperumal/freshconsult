@@ -4,7 +4,7 @@
 # test suite.  You never need to work with it otherwise.  Remember that
 # your test database is "scratch space" for the test suite and is wiped
 # and recreated between test runs.  Don't rely on the data there!
-config.cache_classes = true
+config.cache_classes = false
 
 # Log error messages when you accidentally call methods on nil.
 config.whiny_nils = true
@@ -23,7 +23,7 @@ config.action_mailer.delivery_method = :test
 
 # config.gem "thoughtbot-shoulda", :lib => 'shoulda', :source => "http://gems.github.com"
 
-# config.gem 'rspec-rails', :version => '>= 1.3.2', :lib => false unless File.directory?(File.join(Rails.root, 'vendor/plugins/rspec-rails'))
+ config.gem 'rspec-rails', :version => '>= 1.3.2', :lib => false unless File.directory?(File.join(Rails.root, 'vendor/plugins/rspec-rails'))
 
 # config.gem 'factory_girl', :version => '1.2.3'
 
