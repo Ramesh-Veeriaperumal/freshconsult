@@ -1704,7 +1704,14 @@ en:
   no_signup: "To submit a ticket, please <a href={{login}}><b>Login</b></a>."
   register: Register
   by: by
-  portal: 
+  portal:
+    cookie:
+      cookie_policy: "Cookie policy"
+      why_we_love_cookies: "Why we love Cookies"
+      cookie_dialog_info1: "We use cookies to try and give you a better experience in Freshdesk. "
+      cookie_dialog_info2: "You can learn more about what kind of cookies we use, why, and how from our %{privacy_link}. If you hate cookies, or are just on a diet, you can disable them altogether too. Just note that the Freshdesk service is pretty big on some cookies (we love the choco-chip ones), and some portions of Freshdesk may not work properly if you disable cookies. "
+      cookie_dialog_info3: "We’ll also assume you agree to the way we use cookies and are ok with it as described in our %{privacy_link}, unless you choose to disable them altogether through your browser. "
+      privacy_policy: "Privacy Policy"
     no_topics_in_this_view: "~ No topics in this view ~"
     reported: reported
     said: said

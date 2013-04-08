@@ -552,6 +552,22 @@ HTML
 			</div> ) unless portal.paid_account
 	end
 
+	def link_to_cookie_law portal
+		%(	<a href="#portal-cookie-info" rel="freshdialog" class="cookie-link" 
+				data-width="450px" title="#{ I18n.t('portal.cookie.why_we_love_cookies') }" data-template-footer="">
+				#{ I18n.t('portal.cookie.cookie_policy') }
+			</a>)
+	end
+
+	def cookie_law
+		privacy_link = %(<a href="http://freshdesk.com/privacy/" target="_blank">#{ I18n.t('portal.cookie.privacy_policy') }</a>)
+		%(  <div id="portal-cookie-info" class="hide">
+				<p>#{ I18n.t('portal.cookie.cookie_dialog_info1') }</p>
+				<p>#{ I18n.t('portal.cookie.cookie_dialog_info2', :privacy_link => privacy_link) }</p>
+				<p>#{ I18n.t('portal.cookie.cookie_dialog_info3', :privacy_link => privacy_link) }</p>
+			</div>)
+	end
+
 	private
 
 		def portal_preferences

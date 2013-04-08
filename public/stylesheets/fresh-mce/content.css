@@ -209,56 +209,55 @@ body, td, pre {
 p, li, div {
   font-size: 13px;
   line-height: 18px;
-  font-style: normal;
   margin: 0; }
 
-/* line 93, ../../src/app/lib/_mixins.scss */
+/* line 92, ../../src/app/lib/_mixins.scss */
 code, pre, p, li, div {
   word-break: normal;
   word-wrap: break-word; }
 
-/* line 97, ../../src/app/lib/_mixins.scss */
+/* line 96, ../../src/app/lib/_mixins.scss */
 pre {
   white-space: pre-wrap;
   /* css-3 */
   white-space: -moz-pre-wrap;
   /* Mozilla, since 1999 */ }
 
-/* line 101, ../../src/app/lib/_mixins.scss */
+/* line 100, ../../src/app/lib/_mixins.scss */
 h1 {
   font-size: 2em; }
 
-/* line 102, ../../src/app/lib/_mixins.scss */
+/* line 101, ../../src/app/lib/_mixins.scss */
 h2 {
   font-size: 1.5em; }
 
-/* line 103, ../../src/app/lib/_mixins.scss */
+/* line 102, ../../src/app/lib/_mixins.scss */
 h3 {
   font-size: 1.17em; }
 
-/* line 104, ../../src/app/lib/_mixins.scss */
+/* line 103, ../../src/app/lib/_mixins.scss */
 h4 {
   font-size: 1em; }
 
-/* line 105, ../../src/app/lib/_mixins.scss */
+/* line 104, ../../src/app/lib/_mixins.scss */
 h5 {
   font-size: .83em; }
 
-/* line 106, ../../src/app/lib/_mixins.scss */
+/* line 105, ../../src/app/lib/_mixins.scss */
 h6 {
   font-size: .75em; }
 
-/* line 107, ../../src/app/lib/_mixins.scss */
+/* line 106, ../../src/app/lib/_mixins.scss */
 img, iframe {
   border: 0;
   max-width: 100%; }
 
-/* line 108, ../../src/app/lib/_mixins.scss */
+/* line 107, ../../src/app/lib/_mixins.scss */
 table {
   cursor: default;
   border: 1px solid #afafaf; }
 
-/* line 109, ../../src/app/lib/_mixins.scss */
+/* line 108, ../../src/app/lib/_mixins.scss */
 table td, table th {
   cursor: text;
   font-size: inherit;
@@ -266,41 +265,41 @@ table td, table th {
   border: 1px solid #afafaf;
   padding: 4px; }
 
-/* line 110, ../../src/app/lib/_mixins.scss */
+/* line 109, ../../src/app/lib/_mixins.scss */
 em {
   font-style: italic; }
 
-/* line 111, ../../src/app/lib/_mixins.scss */
+/* line 110, ../../src/app/lib/_mixins.scss */
 ins {
   border-bottom: 1px solid green;
   text-decoration: none;
   color: green; }
 
-/* line 112, ../../src/app/lib/_mixins.scss */
+/* line 111, ../../src/app/lib/_mixins.scss */
 cite {
   border-bottom: 1px dashed blue; }
 
-/* line 113, ../../src/app/lib/_mixins.scss */
+/* line 112, ../../src/app/lib/_mixins.scss */
 acronym {
   border-bottom: 1px dotted #CCC;
   cursor: help; }
 
-/* line 114, ../../src/app/lib/_mixins.scss */
+/* line 113, ../../src/app/lib/_mixins.scss */
 abbr {
   border-bottom: 1px dashed #CCC;
   cursor: help; }
 
-/* line 115, ../../src/app/lib/_mixins.scss */
+/* line 114, ../../src/app/lib/_mixins.scss */
 ol, ul {
   margin: 8px 0px 4px 0px;
   padding: 0px 0px 0px 40px;
   line-height: 17px; }
 
-/* line 116, ../../src/app/lib/_mixins.scss */
+/* line 115, ../../src/app/lib/_mixins.scss */
 ul {
   list-style: disc outside; }
 
-/* line 117, ../../src/app/lib/_mixins.scss */
+/* line 116, ../../src/app/lib/_mixins.scss */
 blockquote {
   font-size: 13px;
   line-height: 22px;
@@ -309,6 +308,6 @@ blockquote {
   border-left: 1px dotted #999;
   padding: 6px 6px 1px 1em; }
 
-/* line 118, ../../src/app/lib/_mixins.scss */
+/* line 117, ../../src/app/lib/_mixins.scss */
 del {
   text-decoration: none; }
