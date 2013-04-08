@@ -52,10 +52,9 @@ $sources-sprite-dimensions:true;
 @include at-breakpoint($break-tablet){	
 	.c-ticket-row{ 
 		padding: 8px 5px 8px 45px; 
-		.label-status{ float:right; }
+		.label{ float:right; margin-top:6px; }
 	}
-	.ticket-brief{ padding-top: 7px; }
-	.label-status{ margin-top: 6px; }
+	.ticket-brief{ padding-top: 7px; }	
 	.agent-details{
 		@include border-top-radius($content-border-radius);
 		padding: $content-padding;
