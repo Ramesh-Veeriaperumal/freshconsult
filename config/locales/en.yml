@@ -2,7 +2,9 @@ en:
   meta:
    language_name: 'English'
   any: Any
-  or: or
+  or: or  
+  plain_yes: "Yes"
+  plain_no: "No"
   unspam: "Unspam"
   unblock: "Whitelist"
   enabled: "Enabled"
