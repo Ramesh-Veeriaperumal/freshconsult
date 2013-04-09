@@ -1602,6 +1602,7 @@ en:
   portal_signup_anon: Enable this feature if you want users to be able to sign up and create their own user accounts. This will enable users to login and participate in forum discussions, vote on ideas etc.
   portal_captcha_anon: Enable this feature if you want users to submit tickets with captcha
   card_process: Thank you for your payment. Your Freshdesk account is now live!
+  card_error: There was an error adding your card. Please try again.
   chat: Chat
   card_number: Card Number
   forgot_password_intro: Fill out the form below and instructions to reset your password will be emailed to you
