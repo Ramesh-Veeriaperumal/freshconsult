@@ -224,7 +224,6 @@ module ApplicationHelper
     tabs = [
       [customers_admin_subscriptions_path, :customers, "Customers" ],
       [admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
-      [admin_subscription_discounts_path, :discounts, "Discounts" ],
       [admin_subscription_payments_path, :payments, "Payments" ],
       [admin_subscription_announcements_path, :announcements, "Announcements" ]
     ]

@@ -108,16 +108,16 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
    #subscriptions = Subscription.find(:all,:include => :account, :order => 'accounts.created_at desc',:conditions => {:state => 'active'} )
     csv_string = FasterCSV.generate do |csv| 
       # header row 
-      csv << ["name","full_domain","contact name","email","created_at","next_renewal_at","amount","agent_limit","plan","renewal_period","discount","Free agents"] 
+      csv << ["name","full_domain","contact name","email","created_at","next_renewal_at","amount","agent_limit","plan","renewal_period","Free agents"] 
  
       # data rows 
     Subscription.find_in_batches(:include => :account,:batch_size => 300,
                                            :conditions => [ "state != 'trial'"] ) do |subscriptions|
       subscriptions.each do |sub|
         account = sub.account
-        discount_name = "#{sub.discount.name} ($#{sub.discount.amount} per agent)" if sub.discount
-        csv << [account.name, account.full_domain, account.admin_first_name, account.admin_email, account.created_at.strftime('%Y-%m-%d'),sub.next_renewal_at.strftime('%Y-%m-%d'),sub.amount,sub.agent_limit,
-                sub.subscription_plan.name,sub.renewal_period,discount_name ||= 'NULL',
+        user = account.account_admin
+        csv << [account.name, account.full_domain, user.name,user.email,account.created_at.strftime('%Y-%m-%d'),sub.next_renewal_at.strftime('%Y-%m-%d'),sub.amount,sub.agent_limit,
+                sub.subscription_plan.name,sub.renewal_period,
                 sub.free_agents] 
       end 
     end 

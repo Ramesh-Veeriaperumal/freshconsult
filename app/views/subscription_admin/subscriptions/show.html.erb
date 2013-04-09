@@ -43,10 +43,6 @@
 		    <td><%= @subscription.subscription_plan %></td>
 		  </tr>
 		  <tr>
-		    <th>Discount</th>
-		    <td><%= @subscription.discount ? "#{@subscription.discount.name} (#{@subscription.discount.code}) - #{discount_label(@subscription.discount)}" : 'None' %></td>
-		  </tr>
-		  <tr>
 		    <th>Remaining Day Passes</th>
 		    <td><%= @subscription.account.day_pass_config.available_passes %></td>
 		  </tr>
