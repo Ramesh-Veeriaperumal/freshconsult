@@ -1,0 +1,45 @@
+<div class="time-tracked-details <%= 'time_running' if time_entry.timer_running %>" id="timeentry_<%= time_entry.id %>">
+  <div class="actions">
+    <%= link_to_remote( t(".toggle_timer_#{!time_entry.timer_running}"), 
+                    { :url => toggle_timer_helpdesk_time_sheet_path(time_entry),
+                          :method => :put },
+                    :class => 'toggle_timer') %>
+    <%= link_to ( t('edit'), 
+                  edit_helpdesk_ticket_helpdesk_time_sheet_path(@ticket, time_entry), 
+                  "rel" => 'freshdialog', "data-target" => "#edit_timeentry_#{time_entry.id}",
+                  "data-width" => 400,
+                  "data-submit-label" => t('update'),
+                  :title => 'Edit Timesheet' ) unless time_entry.timer_running %>
+    <%= link_to_remote( "delete",
+                    { :url => helpdesk_time_sheet_url(time_entry),
+                      :method => :delete ,
+                      :confirm => "Delete this time entry?" }) %>
+  </div>
+  <div class="requester-avatar-wrap"><%= user_avatar(time_entry.user) if time_entry.user %></div>
+  <div class="details">
+    <h4>
+      <%= link_to_user(time_entry.user, :class => "user_name") %>
+      <span class="tracked_time">
+        <%= content_tag :span, get_time_in_hours(time_entry.running_time), 
+                            :class => "time",
+                            "data-running-time" => time_entry.running_time,
+                            "data-timer-running" => time_entry.timer_running,
+                            :id => "timeentry_timer_#{time_entry.id}" %>
+        <span class="time_unit">Hrs </span>
+
+      </span>
+    </h4>
+    <div class="info">
+      <div class="time_stamp">
+        <%# content_tag(:div, "Timer started @ #{formated_date(time_entry.start_time, "%I:%M %p")} ", :class => "started_time") if time_entry.timer_running %>
+        <span>on <%= formated_date(time_entry.executed_at,"%a, %b %e, %Y") %></span>
+      </div>
+      <div class="is_billable">
+        <%= time_entry.billable ? t('helpdesk.time_sheets.billable') : t('helpdesk.time_sheets.non_billable') %>
+      </div>
+    </div>
+    <div class="note">
+      <%= RedCloth.new(time_entry.note || "").to_html %>
+    </div> 
+  </div>
+</div>

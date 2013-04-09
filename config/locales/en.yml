@@ -9,6 +9,7 @@ en:
   unblock: "Whitelist"
   enabled: "Enabled"
   disabled: "Disabled"
+  more: "more"
   tip_on: "Click to Enable"
   tip_off: "Click to Disable"
   credit_card: "Card on file"
@@ -80,7 +81,9 @@ en:
   attachments: Attachments
   attachment_delete: "You're about to permanently delete this attachment. Continue?"
   attach_file_local: Attach a file from your computer
+  attach_file: Attach file
   dropbox_attach_label: Attach from
+  dropbox_attach_from: Attach from Dropbox
   dropbox_choose_file: Choose file
   show_quoted_text: Show Quoted text
   cancel_my_account: Cancel my account
@@ -88,6 +91,7 @@ en:
   resolved_late: Resolved late
   remove: Remove
   no_tags: No tags found.
+  show_recent: Show Recent
   immediately: Immediately
   after_half: After 30 Minutes
   after_one: After 1 Hour
@@ -108,11 +112,13 @@ en:
     info1: A Profile image of the person, its best if the picture has the same length and height
     back_info: Background information
     mobile: Mobile
-    twitter_id: Twitter Id
+    twitter_id: Twitter
+    facebook: Facebook
     full_name: Full Name
     name: Name
     secondary: secondary
     phone_no: Phone No
+    mobile: Mobile
     address: Address
     work: Work
     email: Email
@@ -1033,6 +1039,37 @@ en:
   from_email: From Email
   feedbackwidget_custom_image: Custom image URL
   activities: 
+    action_verb: 'updated'
+    tag:
+      solutions: "New Solution"
+      assigned_to_nobody: "Agent Unassigned"
+      reassigned: "Agent Reassigned"
+      assigned: "Agent Assigned"
+      priority_change: "{{value}}"
+      new_ticket: "New Ticket"
+      conversation:
+        out_email: 
+          default: "Agent Replied"
+          private: "Ticket Forwarded"
+        in_email: "Customer Responded"
+        note: "New Note"
+        twitter: "Tweet"
+      timesheet:
+        new: "Time logged"
+        timer_started: "Timer Started"
+        timer_stopped: "Timer Stopped"
+      execute_scenario: "Scenario Executed"
+      ticket_merge: "Ticket Merged"
+      ticket_split: "Ticket Splitted"
+      status_change: "{{value}}"
+      deleted: "Ticket Deleted"
+      restored: "Ticket Restored"
+      product_change: "Product Updated"
+      product_change_none: "Product Updated"
+      ticket_type_change: "Ticket Type"
+      group_change: "Agent Group Changed"
+      group_change_none: "Agent Group Changed"
+      source_change: "Ticket Source"
     solutions: 
       new_solution: 
         short: "{{user_path}} created a new solution"
@@ -1066,11 +1103,14 @@ en:
       assigned_to_nobody: 
         short: Assigned to 'Nobody' by {{user_path}}
         long: "{{user_path}} assigned the ticket {{notable_path}} to 'Nobody'"
+        without_user: assigned to <strong>'Nobody'</strong>
       reassigned: 
         long: "{{user_path}} reassigned the ticket {{notable_path}} to {{responder_path}}"
+        without_user: "reassigned the ticket <strong>{{responder_path}}</strong>"
       priority_change: 
-        short: "{{user_path}} changed the priority to {{priority_name}}"
-        long: "{{user_path}} changed the ticket priority of {{notable_path}} to {{priority_name}}"
+        short: "{{user_path}} changed priority to {{priority_name}}"
+        long: "{{user_path}} changed ticket priority of {{notable_path}} to {{priority_name}}"
+        without_user: "updated ticket priority to <strong>{{priority_name}}</strong>"
       new_ticket: 
         short: "{{user_path}} submitted the ticket"
         long: "{{user_path}} submitted a new ticket {{notable_path}}"
@@ -1094,51 +1134,67 @@ en:
         new:
           short: "{{user_path}} added a {{timesheet_path}}"
           long: "{{user_path}} added a {{timesheet_path}} to the ticket {{notable_path}}"
+          without_user: "added a {{timesheet_path}}"
         timer_started:
           short: "{{user_path}} started timer on  {{timesheet_path}}"
+          without_user: "started timer on  {{timesheet_path}}"
           long: "{{user_path}} started timer on {{timesheet_path}} to the ticket {{notable_path}}"
         timer_stopped:
           short: "{{user_path}} stopped timer on  {{timesheet_path}}"
+          without_user: "stopped timer on  {{timesheet_path}}"
           long: "{{user_path}} stopped timer on {{timesheet_path}} to the ticket {{notable_path}}"
       assigned: 
         short: Assigned to {{responder_path}} by {{user_path}}
+        without_user: assigned to <strong>{{responder_path}}</strong>
         long: "{{user_path}} assigned the ticket {{notable_path}} to {{responder_path}}"
       execute_scenario: 
         short: "{{user_path}} executed the scenario '{{scenario_name}}"
+        without_user: "executed the scenario <strong>{{scenario_name}}</strong>"
         long: "{{user_path}} executed the scenario '{{scenario_name}}' on {{notable_path}}"
       ticket_merge: 
         short: "{{user_path}} has merged the ticket {{notable_path}} to {{merge_ticket_path}} "
         long: "{{user_path}} has merged the ticket  {{notable_path}} to {{merge_ticket_path}}"
+        without_user: "merged the ticket  {{notable_path}} to {{merge_ticket_path}}"
       ticket_split: 
         short: "{{user_path}} has split the ticket {{notable_path}} from {{split_ticket_path}}"
         long: "{{user_path}} has split the ticket {{notable_path}} from {{split_ticket_path}}"
+        without_user: "Splitted the ticket from {{split_ticket_path}}"
       status_change: 
-        short: "{{user_path}} changed the status to {{status_name}}"
-        long: "{{user_path}} changed the ticket status of {{notable_path}} to {{status_name}}"
+        short: "{{user_path}} updated status to {{status_name}}"
+        without_user: "updated status to <strong>{{status_name}}</strong>"
+        long: "{{user_path}} updated ticket status of {{notable_path}} to {{status_name}}"
       deleted:
         short: "{{user_path}} has deleted this ticket"
+        without_user: "has deleted the ticket"
         long: "{{user_path}} has deleted the ticket {{notable_path}}"
       restored:
         short: "{{user_path}} has restored this ticket"
+        without_user: "has restored the ticket"
         long: "{{user_path}} has restored the ticket {{notable_path}}"
       product_change:
-        short: "{{user_path}} changed the product to {{product_name}}"
-        long: "{{user_path}} changed the product of {{notable_path}} to {{product_name}}"
+        short: "{{user_path}} updated product to {{product_name}}"
+        without_user: "updated product to <strong>{{product_name}}</strong>"
+        long: "{{user_path}} updated product of {{notable_path}} to {{product_name}}"
       product_change_none: 
-        short: "{{user_path}} changed the product to 'none'"
-        long: "{{user_path}} changed the product of {{notable_path}} to 'none'"
+        short: "{{user_path}} updated product to 'none'"
+        without_user: "updated product to <strong>'none'"
+        long: "{{user_path}} updated product of {{notable_path}} to 'none'"
       ticket_type_change:
-        short: "{{user_path}} changed the ticket type to {{ticket_type}}"
-        long: "{{user_path}} changed the ticket type of {{notable_path}} to {{ticket_type}}"
+        short: "{{user_path}} updated ticket type to {{ticket_type}}"
+        without_user: "updated ticket type to <strong>{{ticket_type}}</strong>"
+        long: "{{user_path}} updated ticket type of {{notable_path}} to {{ticket_type}}"
       group_change:
-        short: "{{user_path}} changed the group to {{group_name}}"
-        long: "{{user_path}} changed the group of {{notable_path}} to {{group_name}}"
+        short: "{{user_path}} updated group to {{group_name}}"
+        without_user: "updated group to <strong>{{group_name}}</strong>"
+        long: "{{user_path}} updated group of {{notable_path}} to {{group_name}}"
       group_change_none: 
-        short: "{{user_path}} changed the group to 'none'"
-        long: "{{user_path}} changed the group of {{notable_path}} to 'none'"
+        short: "{{user_path}} updated group to 'none'"
+        without_user: "updated group to <strong>'none'</strong>"
+        long: "{{user_path}} updated group of {{notable_path}} to 'none'"
       source_change:
-        short: "{{user_path}} changed the source to {{source_name}}"
-        long: "{{user_path}} changed the ticket source of {{notable_path}} to {{source_name}}"
+        short: "{{user_path}} updated source to {{source_name}}"
+        without_user: "updated source to <strong>{{source_name}}</strong>"
+        long: "{{user_path}} updated ticket source of {{notable_path}} to {{source_name}}"
   credit_card_info: Credit card information
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
   your_email_address: Your e-mail address
@@ -1554,6 +1610,8 @@ en:
   done: Done
   reset: Reset
   ticket_due_by_time: Due by
+  ticket_past_due_by: Due %{time} ago
+  ticket_future_due_by: Due in %{time}
   ticket_pending_since_time: Pending Since
   ticket_resolved_at_time: Resolved at
   ticket_closed_at_time: Closed at
@@ -2095,6 +2153,19 @@ en:
   question: "Question"
   feature request: "Feature Request"
   ticket:
+    spam: "SPAM"
+    deleted: "TRASH"
+    next: "Next Ticket"
+    previous: "Previous Ticket"
+    expand: "Expand"
+    insert: "Insert"
+    switch_view: 
+      new_view: "Try the <strong>New Ticket View</strong>"
+      whats_new: "What's new"
+      revert_view: "Switch to Classic View"
+      submit_feedback: "Submit Feedback"
+    include_quoted_text: "Include previous replies"
+    more_details: "More details..."
     reported_on: "from %{username}, Last updated: on %{date}"
     ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_resolved_at: "From: %{username}, Resolved: <span class='emphasize'>%{time_ago} ago</span>"
@@ -2140,11 +2211,13 @@ en:
     from: "From:"
     suggested_solutions: 
       insert_url: Insert URL
+      link: Link
       title: Suggested Solutions
       insert_content_tip: Insert this solution article to your Reply or Note
       no_result: No Solutions found
       insert_url_tip: Insert this solution URL to your Reply or Note
       insert_content: Insert Content
+      content: Content
     unassigned: Unassigned
     assigned_none: "-"
     suggest_solutions: Suggest Solutions
@@ -2190,6 +2263,7 @@ en:
       form_title: Reply to the conversation
       reply_email_id: Send the reply from the following email id
       send_and_resolve: Send and Resolve
+      send_and_set_as: "Send and set as <strong>%{status}</strong>"
       send: Send
       send_satisfaction_survey: Include satisfaction survey
     facebook_form:
@@ -2215,6 +2289,7 @@ en:
       tweet_and_resolve: Tweet and Resolve
       user_not_following: This user is not following your twitter account
     activities: Activities
+    activity_toggle: Show Activities
     requestor_info: Requestor Info
     view_twitter: View on Twitter 
     reply_to: Reply
@@ -2238,6 +2313,8 @@ en:
     edit_btn: Edit
     requester: Requester
     properties: Ticket Properties
+    updating: "Updating"
+    update_done: "Done"
     submit_ticket: Submit 
     stop_monitor_btn_title: Stop monitoring this ticket
     merge_btn: Merge
@@ -2249,7 +2326,9 @@ en:
     ticket_url: Ticket URL
     integrations:      
       jira: 
-        tooltip: "View the associated JIRA Issue"      
+        tooltip: "View the associated JIRA Issue"
+        add_new: "Link an issue"
+        existing: "View issue"      
   recent_activity: Recent Activity
   recent_activities: Recent Activites
   forgot_password: Forgot Password
@@ -2405,7 +2484,9 @@ en:
         toggle_timer_false: "Stop timer"
       new:
         title: "New time entry"
+        hours_format_tip: "Enter time in HH:MM or decimals (like 1:30 or 1.5 for an hour and 30 minutes). Leave this blank to start the auto-timer."
       ticket: Ticket
+      sidebar_title: "Time tracked"
       customer: Customer
       executed_at: Date
       hours: Hours
@@ -2424,6 +2505,36 @@ en:
       form:
         agent: Agent
         hours: Hours
+        note: Note
+      v2:
+        index:
+          no_timeentry: "No time entry logged for this ticket"
+          start_timer: "Start Timer"
+          add_entry: "Add Time Entry"
+        time_entry:
+          toggle_timer_true: "Start timer"
+          toggle_timer_false: "Stop timer"
+        new:
+          title: "New time entry"
+        ticket: Ticket
+        customer: Customer
+        executed_at: Date
+        hours: Hours
+        agent: Agent
+        note: Note
+        billing_type: Billing Type
+        group_by: Group By
+        report:
+          no_timeentry: "No data available"
+          total: Total
+        form:
+          start_timer: "Start Timer"
+          add_entry: "Add Time Entry"
+          agent: Agent
+          hours: Hours
+          billing_hours: Billable
+          note: Note
+          on: on
         note: Notes
 
     tags:
@@ -2545,6 +2656,37 @@ en:
         linked_ticket: This ticket is linked to the forum
         conversation: Conversation 
         timesheet: Time Sheet
+        reply_form:
+          title: Reply to
+          cc: Cc
+          addcc: Add Cc
+          removecc: Remove Cc
+          bcc: Bcc
+          addbcc: Add Bcc
+          removebcc: Remove Bcc
+        forward_form:
+          cc: Cc
+          addcc: Add Cc
+          removecc: Remove Cc
+          bcc: Bcc
+          addbcc: Add Bcc
+          removebcc: Remove Bcc
+        tweet_form:
+          title: "Reply to %{user}"
+        facebook_form:
+          title: "Reply to %{user}"
+        history:
+          recent_item: Recent Items
+        due_date:
+          when_is_it_due: When's it Due?
+          today: Today
+          tomorrow: Tomorrow
+          this_week: This week
+          next_week: Next week
+          specific_date: "Specific date/time..."
+          set_date_time: "Set Date/time"
+          due: Due
+          earlier_date_and_time: Please give a date & time that is newer than the ticket's created date & time
       view_ticket:
         meta: meta
         linked_ticket: This ticket is linked to the forum
@@ -2595,12 +2737,19 @@ en:
         no_tickets: You don't have any tickets in current view
       note:
         posted_on: "%{user_name} on %{note_date}"
+        created_on:
+          private_note: "%{user_name} added a private note on %{note_date}"
+          public_note: "%{user_name} added a public note on %{note_date}"
+          reply: "%{user_name} replied on %{note_date}"
+          forward: "%{user_name} forwarded on %{note_date}"
         edit_note: Edit Note
         split_this_as_new_ticket: Split this as a new Ticket
         delete_note: "Remove this from the ticket converstion?"
         split_ticket_confirm: Split this note and create it as a new ticket?
         private_note: Private note
         public_note: Public note
+        private_note_tip: Hidden to the customer
+        public_note_tip: Visible to the customer
         inbound_email: Incoming email
         outbound_email: Outbound email
         attachment_size: 
@@ -3363,9 +3512,11 @@ en:
   cc_emails_key_pop: " <li class='left'>cc : </li><li>%{cc_emails}</li>"
   bcc_emails_key_pop: " <li class='left'>bcc :</li> <li>%{bcc_emails}<li>"
   conv_contacts_info_pop: "<ul><li class='left'>%{conv_type_msg} : </li><li>%{to_emails}</li> %{cc_emails_key} %{bcc_emails_key}</ul>"
+  clear: "Clear"
   saved_draft: "Saved"
   saving_draft: "Saving..."
-  draft: "Draft:"
+  saving: "Saving..."
+  draft: "Draft"
   last_draft: "Your last draft"
   clear_draft_text: "Are you sure you want to clear saved draft?"
   ticket_close_success: Your ticket has been successfully closed.

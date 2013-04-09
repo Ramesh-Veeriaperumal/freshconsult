@@ -13,12 +13,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include BusinessRulesObserver
   include Mobile::Actions::Ticket
   include Gamification::GamificationUtil
+  include Search::ElasticSearchIndex
   include RedisKeys
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "trashed", "access_token", 
                             "escalation_level", "sla_policy_id", "sla_policy"]
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+
+  ES_FLEXIFIELD_COLUMNS = Flexifield.column_names.select {|v| v =~ /^ff(s|_text)/}
 
   set_table_name "helpdesk_tickets"
   
@@ -45,6 +48,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_update :update_message_id, :if => :deleted_changed?
 
+  after_commit :update_es_index
+
   before_validation_on_create :set_token
   
   before_save :update_ticket_changes, :set_sla_policy, :load_ticket_status, :update_dueby
@@ -58,11 +63,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :stop_timesheet_timers, :fire_update_event, :support_score_on_update, 
     :process_quests, :publish_to_update_channel
 
+
   has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
 
   belongs_to :email_config
   belongs_to :group
-  xss_terminate :except => [:subject], :html5lib_sanitize => [:description_html,:description]
+  # xss_terminate :except => [:subject,:cc_email], :html5lib_sanitize => [:description_html,:description]
  
   belongs_to :responder,
     :class_name => 'User',
@@ -290,15 +296,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
      }
   end
 
-  sphinx_scope(:with_subject) { |search_string| { 
-    :include => [:requester],
-    :conditions => { :subject => "%#{search_string}%" }, 
-    :with => { :deleted => false }, 
-    :star => true,
-    :order => :status,
-    :limit => 1000
-    } 
-  }
+  # sphinx_scope(:with_subject) { |search_string| { 
+  #   :include => [:requester],
+  #   :conditions => { :subject => "%#{search_string}%" }, 
+  #   :with => { :deleted => false }, 
+  #   :star => true,
+  #   :order => :status,
+  #   :limit => 1000
+  #   } 
+  # }
   #Sphinx configuration ends here..
 
 
@@ -477,8 +483,45 @@ class Helpdesk::Ticket < ActiveRecord::Base
     notes.visible.exclude_source('meta').newest_first.paginate(:include => includes ,:page => page, :per_page => no_of_records)
   end
 
+  def conversation_since(since_id)
+    return notes.visible.exclude_source('meta').newest_first.since(since_id)
+  end
+
+  def conversation_before(before_id)
+    return notes.visible.exclude_source('meta').newest_first.before(before_id)
+  end
+
   def conversation_count(page = nil, no_of_records = 5)
     notes.visible.exclude_source('meta').size
+  end
+
+  def all_activities(page = 1, no_of_records = 50)
+    first_page_count = 3
+    if page.blank? or page.to_i == 1
+      return activities.newest_first.paginate(:page => 1, :per_page => first_page_count)
+    else
+      return activities.newest_first.paginate(:page => page.to_i - 1, :per_page => no_of_records, :extra_offset => first_page_count)
+    end
+  end
+
+  def activities_since(since_id)
+    activities.newest_first.activity_since(since_id)
+  end
+
+  def activities_before(before_id)
+    activities.newest_first.activity_before(since_id).reverse
+  end
+
+  def activities_count
+    activities.size - 1 #Omitting the Ticket Creation activity
+  end
+
+  def time_tracked
+    time_spent = 0
+    time_sheets.each do |entry|
+      time_spent += entry.running_time
+    end
+    time_spent
   end
 
   def train(category)
@@ -1042,9 +1085,59 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return false
   end
 
+  def to_indexed_json
+    to_json({
+            :root => "helpdesk/ticket",
+            :methods => [:es_notes, :company_id, :es_from, :to_emails, :es_cc_emails, :es_fwd_emails],
+            :only => [ :display_id, :subject, :description, :account_id, :responder_id, :group_id, :requester_id, :status, :spam, :deleted ], 
+            :include => { :flexifield => { :only => ES_FLEXIFIELD_COLUMNS },
+                          :attachments => { :only => [:content_file_name] }
+                        }
+            },
+            false)
+  end
+
   def unsubscribed_agents
     user_ids = subscriptions.map(&:user_id)
     account.agents_from_cache.reject{ |a| user_ids.include? a.user_id }
+  end
+
+  def es_notes
+    body = []
+    # notes.visible.exclude_source('meta').each do |note|
+    #   note_attachments =[]
+    #   note.attachments.each do |attachment|
+    #     note_attachments.push(attachment.content_file_name)
+    #   end
+    #   body.push( :body => note.body, :private => note.private, :attachments => note_attachments )
+    # end
+    # body
+    public_notes.each do |note|
+      note_attachments =[]
+      note.attachments.each do |attachment|
+        note_attachments.push(attachment.content_file_name)
+      end
+      body.push( :body => note.body, :private => note.private, :attachments => note_attachments )
+    end
+    body
+  end
+
+  def es_from
+    if source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:twitter]
+      requester.twitter_id
+    elsif source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook]
+      requester.fb_profile_id
+    else
+      from_email
+    end
+  end
+
+  def es_cc_emails
+    cc_email_hash[:cc_emails] if cc_email_hash
+  end
+
+  def es_fwd_emails
+    cc_email_hash[:fwd_emails] if cc_email_hash
   end
 
   def update_message_id

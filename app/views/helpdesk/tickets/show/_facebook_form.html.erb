@@ -1,0 +1,57 @@
+<div class="request_panel" id="<%=cntid%>" style="display:none;" data-type="textarea" rel="emitter" data-node-name="agent_replying">
+  <div class="form_title">
+    <%= t(".title", :user => @ticket.requester.name ) %>
+  </div>
+  <div class="list_agents_replying" class="hide"></div>
+  <input type="hidden" value="<%= @ticket.requester.twitter_id %>" id="requester_twitter_handle" />
+  <% form_for note, :html => {:multipart => true,  :id => "HelpdeskFbComment" } do |f| %>
+    <%= f.error_messages %>
+    <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
+    <%= hidden_field_tag :fb_post, "true", :id => "fb_comment" %>
+    <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"]%>          
+    <%= f.hidden_field :private , :value => "false" %>
+    <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>:fb_ticket_status  )%>
+
+    <ul class="ui-form dont-validate">
+      <li class="inline-field field">
+        <%= f.label(:reply_email, "From:" ) %>
+        &nbsp;<%= @ticket.fb_post.facebook_page.page_name if @ticket.fb_post && @ticket.fb_post.facebook_page %>
+      </li>       
+      <li class="inline-field field clearField continous message">
+        <%= f.text_area :body, { :class => 'required facebook auto-height', :id => "#{id}-#{cntid}-body", :rows => "6" } %>
+      </li>
+    </ul>
+
+    <div class="btn-toolbar">
+      <span>
+        <%= link_to(t('cancel'), '#', :class => "btn cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true') %>
+      </span>
+
+      <span class="btn-group">
+        <a class="btn btn-primary submit_btn">
+          <%= t('ticket.reply_form.send') %>
+          <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+            <span class="caret"></span>
+          </a>
+        </a>
+        <ul class="dropdown-menu">
+          <%
+          ticket_statuses = current_account.ticket_status_values.reject{|status| status.status_id == 2 }
+          %>
+          <% ticket_statuses.each do |status| %>
+          <li>
+            <a href="#" rel="custom-reply-status" data-status-name='<%= status.name %>' data-cnt-id='<%=cntid%>' data-status-val='<%= status.status_id %>' >
+              &amp; Set as <%= status.name %>
+            </a>
+          </li>
+          <% end %>
+        </ul>
+      </span>
+    </div>
+    <div class="clearfix" ></div>
+  <% end %>
+</div>  
+
+<% content_for :onload_script do %>
+  jQuery("#HelpdeskFbComment").validate();  
+<% end %>

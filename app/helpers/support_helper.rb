@@ -105,7 +105,7 @@ module SupportHelper
 	end
 
 	def filler_for_folders folder
-		%( <div class="no-results">#{ I18n.t('portal.folder.filler_text', :folder_name => folder['name']) }</div> )
+		%( <div class="no-results">#{ I18n.t('portal.folder.filler_text', :folder_name => h(folder['name'])) }</div> )
 	end
 
 	# Logo for the portal

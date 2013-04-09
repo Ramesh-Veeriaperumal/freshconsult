@@ -256,6 +256,10 @@ div.contact_hover{
 		height:11px;
 		background:sprite($symbol, reply-tweet) no-repeat #ffffff;
 	}
+
+	.infoblock {
+		display: inline-block;
+	}
 }
 
 .popover.topRight, {
@@ -1107,6 +1111,9 @@ h4.title{
 	}
 }
 
+@include all-file-types-sprites;
+@include all-admin-icon-sprites;
+
 .mark_action{ 
 	a, .stamp{
 		padding:2px 6px; 
@@ -1195,6 +1202,8 @@ div.panel_area{
 		background-color:none;
 		width:24px;
 		height:24px;
+
+		display: inline-block;
 	}
 	.monitor img{ 
 		background: sprite($ticketicon, monitor) no-repeat;
@@ -1202,18 +1211,23 @@ div.panel_area{
 	.monitor_active img{ 
 		background: sprite($ticketicon, monitor_active) no-repeat;
 	}
-	.spam img{
+	.spam, .spam_active {
+		span {
+			display: none; //For compatibility with new tkt details !V2
+		}
+	}
+	.spam img{ 
 		background: sprite($ticketicon, flag-spam) no-repeat;
 	}
 	.spam_active img{ 
 		background: sprite($ticketicon, flag-spam_active) no-repeat;
 	}
-	.jira img{ 
-		background: sprite($ticketicon, jira) no-repeat;
-	}
-	.jira_active img{ 
-		background: sprite($ticketicon, jira_active) no-repeat;
-	}
+}
+.jira img{ 
+	background: sprite($ticketicon, jira) no-repeat;
+}
+.jira_active img{ 
+	background: sprite($ticketicon, jira_active) no-repeat;
 } 
 
 .request_panel_list{
@@ -2358,7 +2372,7 @@ h4.border_title{
 }
 
 div.survey_check{
-	top:0px;
+	padding:0px 10px;
 	text-align:right;	
 }
 
@@ -2923,7 +2937,12 @@ a.page_title{
 		}	
 		
 	}
-
+.private-icon{
+	background:sprite($symbol, private-lock-grey) no-repeat;
+	width:16px;
+	height:16px;
+	display:inline-block;
+}
 .request-list{
 	background-color:#f4f4f4;
 	margin:4px 1px;
@@ -2958,9 +2977,6 @@ a.page_title{
 		}
 		.private-icon{
 			display:none;
-			background:sprite($symbol, private-lock-grey) no-repeat;
-			width:16px;
-			height:16px;
 			position:relative;
 			left:5px;
 			float:right;			
@@ -5318,6 +5334,12 @@ a.close{
 	}
 }
 
+.required_start {
+	font-size: 24px;
+	line-height: 2px;
+	color: #d00;
+	display: inline-block;
+}
 
 .fd-menu, .fd-ajaxmenu, #tickets-expanded .fd-menu, #tickets-expanded .fd-ajaxmenu{
    position:absolute;
@@ -6021,6 +6043,7 @@ a.close{
 
 		.uiButton[type=submit] {
 			margin:15px 0 10px;
+			display: block;
 		}
 	}
 
@@ -6485,32 +6508,30 @@ a.close{
 		}
 	
 		background: url(/images/integrations/sugar_icon.png) 0 2px no-repeat;
+		background-position: 223px 7px;
+		background-repeat: no-repeat;
 	}
 
 	/* div. added for higher specificity */
 	div.salesforce_widget_bg {
-		background: url(/images/integrations/salesforce_icon.png) 0 2px no-repeat;
-		background-position: 223px 7px;
+		background-image: url(/images/integrations/salesforce_icon.png);
  	}
 
  	div.batchbook_widget_bg {
-		background: url(/images/integrations/batchbook_icon.png) 0 2px no-repeat;
-		background-position: 223px 7px;
+		background-image: url(/images/integrations/batchbook_icon.png);
   	}
 
  	div.highrise_widget_bg {
-		background: url(/images/integrations/highrise_icon.png) 0 2px no-repeat;
-		background-position: 223px 7px;
+		background-image: url(/images/integrations/highrise_icon.png);
   	}
 
  	div.zohocrm_widget_bg {
-		background: url(/images/integrations/zohocrm_icon.png) 0 2px no-repeat;
+		background-image: url(/images/integrations/zohocrm_icon.png);
 		background-position: 210px -6px;
   	}
 
  	div.nimble_widget_bg {
-		background: url(/images/integrations/nimble_icon.png) 0 2px no-repeat;
-		background-position: 223px 7px;
+		background-image: url(/images/integrations/nimble_icon.png);
   	}
 	
 
@@ -7644,6 +7665,10 @@ a[rel="load-rjs"] {
 
 div.monitor_div{
 	display: inline-block;
+	zoom: 1;
+	*display: block;
+	*float: left;
+	*width: 43px;
 }
 
 div.watchers_tooltip{
@@ -8975,6 +9000,18 @@ height: auto;
 .select2-highlighted .select2_list_detail{
 	color:#fff;
 }
+
+#switch_details_view {
+	background: #fffad3;
+
+	a.switch {
+		width:150px;
+		border-right: solid 1px #CCC;
+		display: inline-block;
+		margin-right: 10px;
+	}
+}
+
 /*!pattern Need to delete after pattern intagrated to product */
 .watchers_tooltip{
 	.btn-primary {
@@ -10266,4 +10303,9 @@ div.gcal-confirm-modal-content{ width: 100%; }
 }
 .error-text {
 	color: #D00;
+}
+
+
+#footer {
+	margin: 10px auto 40px;
 }

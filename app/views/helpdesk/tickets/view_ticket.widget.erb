@@ -8,6 +8,43 @@
       <p><strong><%= t('this_ticket_has_been_deleted') %></strong></p>
     </div>
   <% end %>
+  <% if @new_show_page %>
+  <div class="tkt-wrapper ticket_show" data-showing='notes'>
+    <div class="tkt-wrapper-inner clearfix">
+
+      <%= render :partial => "helpdesk/tickets/show/info.html.erb" %>
+      <div id="forFixed" class="conversation_thread"></div>
+      <div id="tkt-inner" class="scollable_content">
+        <div class="tkt-sidebar" id="ticket_details_sidebar">
+          <%= render :partial => "helpdesk/tickets/show/requester.html.erb" %> 
+          <% unless @ticket.deleted or @ticket.spam %> 
+            <%= render :partial => "helpdesk/tickets/show/ticket_fields.html.erb" %>
+          <% end %>
+        </div>
+        <!--content Left-->
+        <div class="leftcontent">
+          <ol class="conversation_thread" id="original_request">
+            <li class="conversation">
+              <%= render :partial => "helpdesk/tickets/show/original_request.html.erb" %> 
+            </li>
+          </ol>
+          <% remaining_count = @ticket_notes_total - 5 %>
+          <ol class="conversation_thread <%= remaining_count ? '' : 'hide' %>" id="show_more">
+            <li class="conversation">
+              <div class="avatar-wrap avatar-wrap-collapse"><p>
+                <span class='count_number not_on_loading' rel='count-total-remaining'><%= remaining_count %></span>
+                <span rel='count_more' class="count_more not_on_loading"><%= t('more') %></span>
+              </p></div>
+            </li>
+          </ol>
+          <%= render :partial => "helpdesk/tickets/show/conversations.html.erb" %>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  <% else %>
  <div class="request_details">
     <div class="requestCnt request-cnt-first">
       <div class="request-title">
@@ -59,3 +96,4 @@
   </div>
 </div>
   <% end %>
+<% end %>

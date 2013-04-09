@@ -1,7 +1,9 @@
-page << "timesheet.editCompelete('add', true)"
+unless @new_show_page
+	page << "timesheet.editCompelete('add', true)"
+	page.replace "timeentry_#{@time_entry.id}", :partial => "/helpdesk/time_sheets/time_entry", :object => @time_entry
+	clear_view_timers(page, @timeentry, @time_cleared)
+	page << "#{pushToIntegratedAppsWithoutLoading(@time_entry)}"
 
-page.replace "timeentry_#{@time_entry.id}", :partial => "/helpdesk/time_sheets/time_entry", :object => @time_entry
- 
-clear_view_timers(page, @timeentry, @time_cleared)
-
-page << "#{pushToIntegratedAppsWithoutLoading(@time_entry)}"
+else
+	page << render(:partial => "/helpdesk/time_sheets/v2/toggle_timer")
+end

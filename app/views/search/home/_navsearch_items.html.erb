@@ -1,0 +1,70 @@
+<!-- To do - Remove duplicates and use some partials by Shan -->
+    <% unless @total_results == 0 %>
+      <li>
+        <div class="title">
+          <%= "Displaying #{pluralize(@total_results, "result")}" %>
+        </div>
+      </li>
+    <% end %>
+    
+    <% unless @searched_tickets.blank? %>
+      <li class="ticket_icon">
+        <h4>Tickets</h4>
+        <% @searched_tickets.each do |ticket| %>
+          <span class="icon"></span>
+          <%= link_to("#{ticket.subject} (##{ticket.display_id})", ticket) %>
+        <% end %>
+      </li>
+    <% end %>
+    
+    <% unless @searched_users.blank? %>
+      <li class="contact_icon"> 
+        <h4>People</h4>
+        <% @searched_users.each do |user| %> 
+          <span class="icon"></span>
+          <%= link_to "#{user.name} - #{user.email}", user %>
+        <% end %>
+      </li>
+    <% end %>
+    
+    <% unless @searched_companies.blank? %>
+      <li class="company_icon">
+        <h4>Companies</h4>
+        <% @searched_companies.each do |company| %>
+          <span class="icon"></span>
+          <%= link_to(company.name, company) %>
+        <% end %>
+      </li>
+    <% end %>
+    
+    <% unless @searched_articles.blank? %>
+      <li class="solution_icon">
+        <h4>Solutions</h4>
+        <% @searched_articles.each do |article| %>
+          <span class="icon"></span>
+          <%= link_to(article.title, article) %>
+        <% end %>
+      </li>
+    <% end %>
+    
+    <% unless @searched_topics.blank? %>
+      <li class="forum_icon">
+        <h4>Forums</h4>
+        <% @searched_topics.each do |topic| %>
+          <span class="icon"></span>
+          <%= link_to(topic.title, category_forum_topic_path(topic.forum.forum_category, topic.forum, topic)) %>
+        <% end %>
+      </li>
+    <% end %>
+    
+    <% if @total_results == 10 %>
+      <li>
+        <%= link_to("See more results for \"#{@search_key}\"  &raquo;", "/search?search_key=#{@search_key}") %>
+      </li>
+    <% end %>
+    
+    <% if @total_results == 0 %>
+      <li>
+        <div> <%= t('search.no_results_msg') %> </div>
+      </li>
+    <% end %>

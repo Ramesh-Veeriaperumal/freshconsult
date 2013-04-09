@@ -2,7 +2,7 @@
 	<div class="breadcrumb">
 		<a href="{{ portal.solutions_home_url }}">{% translate portal.solutions_home %}</a>
 	</div>
-	<h2 class="heading">{{ category.name | h }}</h2>
+	<h2 class="heading">{{ category.name | h}}</h2>
 	<div class="cs-g-c">
 		{% for folder in category.folders %}
 			<section class="cs-g article-list">

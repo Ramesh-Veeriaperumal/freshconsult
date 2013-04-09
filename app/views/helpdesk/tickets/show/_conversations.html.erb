@@ -1,0 +1,10 @@
+<%= '<ol class="conversation_thread" id="all_notes" rel="activity_container">' unless params[:since_id].present? or params[:before_id].present? %>
+	<% unless @ticket_notes.blank? %>
+		<%= render :partial => "helpdesk/tickets/show/note.html.erb", :collection => @ticket_notes %>
+	<% end %>
+<%= '</ol>' unless params[:since_id].present? or params[:before_id].present? %>
+<% unless params[:since_id].present? or params[:before_id].present? %>
+<script type="text/javascript">
+	TICKET_DETAILS_DATA['total_notes'] = "<%= @ticket_notes_total %>";
+</script>
+<% end %>

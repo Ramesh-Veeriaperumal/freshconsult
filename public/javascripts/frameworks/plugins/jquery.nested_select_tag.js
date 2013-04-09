@@ -29,6 +29,16 @@
             _subcategory.trigger("change");
             _condition = (!_items_present || (!_category.val() || _category.val() == -1));
 
+            //Hacks for Select2 to behave nicely with nested fields
+            if (typeof($.fn.select2) != 'undefined') {
+              if (_condition) {
+                _subcategory.select2('disable');
+              } else {
+                _subcategory.select2('enable');
+                _subcategory.select2('container').width(null);  //To make sure the width is set in the CSS.
+              }  
+            }
+
             _subcategory.prop("disabled", _disable_children && _condition).parent().toggle(!_condition);
          });
 
@@ -52,6 +62,15 @@
               });                 
               _item.trigger("change");
               _condition = (!_items_present || (!_subcategory.val() || _subcategory.val() == -1));
+              
+              if (typeof($.fn.select2) != 'undefined') {
+                if (_condition) {
+                  _item.select2('disable');
+                } else {
+                  _item.select2('enable');
+                  _item.select2('container').width(null); //To make sure the width is set in the CSS.
+                }
+              }
               _item.prop("disabled", _disable_children && _condition).parent().toggle(!_condition);
             }
          });
