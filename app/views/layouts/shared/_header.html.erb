@@ -13,7 +13,7 @@
 											 :class => 'mobile_switchBtn') if mobile_agent? && allowed_domain? %>
 	</div>	
 	 <% if current_user then %>  
-  	<div class="header-link-wrapper">
+  	<div class="header-link-wrapper" title="<%= t("header.user_available") %>">
   		<a href="#">
   			<img alt="" height="35px" src="/images/spacer.gif" class="header-icons-autoAssign-on" id="available_icon" onclick="toggle_availability()">
   		</a>
