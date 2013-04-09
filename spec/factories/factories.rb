@@ -1,7 +1,6 @@
 Factory.define :group do |g|
   g.name "group1"
   g.description "test group one"
-  #g.max_open_tickets 4
 end
 
 Factory.define :ticket, :class => Helpdesk::Ticket do |t|

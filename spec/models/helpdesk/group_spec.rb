@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Group do
 	before(:all) do 
     	@account = create_test_account
-    	@group = create_group(@account,{:ticket_assign_type => 1, :max_open_tickets => 2, :name =>  "dummy group"})
+    	@group = create_group(@account,{:ticket_assign_type => 1, :name =>  "dummy group"})
 
  	end
 
@@ -12,14 +12,9 @@ describe Group do
  	end
 
  	it "should have default as ticket assign type for groups unless specified" do
- 		@group1 = create_group(@account,{:max_open_tickets => 2, :name =>  "dummy group1"})
+ 		@group1 = create_group(@account,{:name =>  "dummy group1"})
  		@group1.ticket_assign_type.should == Group::TICKET_ASSIGN_TYPE[:default]
 
- 	end
-
- 	it "should have 5 as default maximum open tickets for round robin" do
- 		@group2 = create_group(@account,{:name =>  "dummy group2"})
- 		@group2.max_open_tickets.should == 5
  	end
 
  	it "should not return next available agent for non-round robin groups" do 

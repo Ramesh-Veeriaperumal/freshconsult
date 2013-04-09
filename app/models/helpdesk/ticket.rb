@@ -205,7 +205,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
  
   named_scope :visible, :conditions => ["spam=? AND helpdesk_tickets.deleted=? AND status > 0", false, false] 
   named_scope :unresolved, :conditions => ["status not in (#{RESOLVED}, #{CLOSED})"]
-  named_scope :unresolved_for_agent, lambda { |agent|  { :conditions => ["status not in (#{RESOLVED}, #{CLOSED}) AND responder_id=?", agent.user_id ] } }
   named_scope :assigned_to, lambda { |agent| { :conditions => ["responder_id=?", agent.id] } }
   named_scope :requester_active, lambda { |user| { :conditions => 
     [ "requester_id=? ",

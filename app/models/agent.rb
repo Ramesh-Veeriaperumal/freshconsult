@@ -83,12 +83,6 @@ def signature_htm
   self.signature_html
 end
 
-#This method says if an agent is occupied with max number of 
-#tickets that he is allowed to have(OPEN). #Group level.
-def overloaded?(group)
-  return group.tickets.unresolved_for_agent(self).size >= group.max_open_tickets
-end
-
 def self.filter(page, state = "active", per_page = 20)
   paginate :per_page => per_page, :page => page,
            :include => [ {:user => :avatar} ], 

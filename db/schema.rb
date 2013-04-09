@@ -536,7 +536,6 @@ ActiveRecord::Schema.define(:version => 20130326092144) do
     t.datetime "updated_at"
     t.integer  "import_id",       :limit => 8
     t.integer  "ticket_assign_type",              :default => 0
-    t.integer  "max_open_tickets",                :default => 5
   end
 
   add_index "groups", ["account_id", "name"], :name => "index_groups_on_account_id", :unique => true

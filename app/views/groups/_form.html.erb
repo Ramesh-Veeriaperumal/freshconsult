@@ -1,84 +1,11 @@
  <%= include_stylesheets :pattern %>
 <%= include_javascripts :pattern %>
 
- <script type="text/javascript"> 	
- 	var agent_select = null; 
- 	function toggleText(){
-		if (jQuery("ul#Active_list li").size()) {			
-			jQuery("ul#Active_list div.info").hide();
-		}else{			
-			jQuery("ul#Active_list div.info").show();			
-		}						
-	}	
-	
-	function removeUser(element){
-		agentName 	= element.getAttribute("agent_name");
-		agentID	  	= element.getAttribute("agent_id");
-		agentThumb  = element.getAttribute("agent_thumb");
-			
-		jQuery(agent_select)
-			.append("<option agent_name='"+agentName+"' agent_id='"+agentID+"' agent_thumb='"+agentThumb+"' value='"+agentID+"'>"+agentName+"</option>");
-		jQuery("#All_Agents").show();		
-	}
-	function AddUser(){		
-			option	  	= jQuery(agent_select.options[agent_select.selectedIndex]);	
-			agentName 	= option.get(0).getAttribute("agent_name");
-			agentID	  	= option.get(0).getAttribute("agent_id");
-			agentThumb  = option.get(0).getAttribute("agent_thumb");			
-			
-			option.remove();
-			
-			if(!agent_select.options.length)
-				jQuery("#All_Agents").hide();
-			
-			
-			var userBox = jQuery('<li />')							
-							.append("<div class=\"preview_pic\"><img src=\""+agentThumb+"\" /></div><a href=\"javascript:void(0)\" class=\"slim-button control\">remove</a><b title='"+agentName+"'>"+agentName.truncate(30)+"</b>");
-			
-			jQuery("ul#Active_list")
-					.append(userBox);
-			
-			jQuery(userBox).get(0).setAttribute("agent_name", agentName);
-			jQuery(userBox).get(0).setAttribute("agent_id", agentID);
-			jQuery(userBox).get(0).setAttribute("agent_thumb", agentThumb);
-					
-			toggleText();
-	}
-	jQuery(document).ready(function(){
-		agent_select = jQuery('select#group_escalate_to').get(0);
-		
-		jQuery("ul#Active_list li a.control")
-			.live("click", function(ev){
-				removeUser(this.parentNode);
-				jQuery(this.parentNode)
-					.remove();	
-				toggleText();				
-			});			
-		
-		jQuery("#group_form").submit(function(ev){
-			activeAgents = new Array();
-			jQuery("ul#Active_list li").each(function(index, item){
-				activeAgents.push(item.getAttribute("agent_id"));
-			});
-			jQuery("#agent_list").val(activeAgents); 
-		});
-		
-		toggleText();
-		
-		jQuery("#Active_list li").live('mouseover mouseout', function(event) {
-		  if (event.type == 'mouseover') { 
-		  	jQuery(this).find(".button").show();
-		  } else {
-		  	jQuery(this).find(".button").hide(); 
-		  }
-		}); 
-	});
- </script>
  <h3 class="lead"><%=title%></h3> <br/>
 	<% form_for(@group, :html => {:id => "group_form"}) do |f|  %>
 	  <%= f.error_messages %>
 	   <div class="row-fluid group-management">
-		 	<ul class="unstyled">
+		 	<ul class="unstylGroup::d">
 		 		<li class="row-fluid">
 		 			<%= f.label :name, "<b> #{t('group.name')} </b>" , :class => "control-label span2" %>
 					  <div class="span9">
@@ -91,22 +18,13 @@
 						 <%= f.text_area :description , :class => "text required smallpara", :placeholder => t('group.name')  %>
 					  </div>
 		 		</li>
-		 		<% if feature?(:round_robin) %>
+			 		<li class="row-fluid">
+			 			<label class="control-label span2"><b><%=t('group.info1')%></b></label>
+			 			<input type="hidden" id="agent_list" name="group[agent_list]" class="span9"
+			 			data-placeholder = "<%= t("helpdesk.tickets.add_watcher.add_agent") %>"/>
+					</li>
 		 		<li class="row-fluid">
-		 			 <%= f.label :ticket_assign_type, "<b> #{t('group.ticket_assignment')} </b>", :class => "control-label span2" %>
-					  <div class="span9">
-						 <%= f.select :ticket_assign_type, options_for_select(Group.ticket_assign_options, @group.ticket_assign_type.to_s) %>
-					  </div>
-		 		</li>
-		 		<li class="row-fluid">
-		 			 <%= f.label :max_open_tickets, "<b> #{t('group.max_tickets')} </b>", :class => "control-label span2" %>
-					  <div class="span9">
-						<%= f.select :max_open_tickets, options_for_select(Group::MAX_OPEN_TICKETS, @group.max_open_tickets) %>
-					  </div>
-		 		</li>
-		 		<% end %>
-		 		<li class="row-fluid">
-		 			 <label class="control-label span2"><b><%=t('group.info1')%></b></label>
+		 			 
 		 			 <% 
 						account_id =  @group.account_id
 						if account_id.nil?
@@ -118,47 +36,32 @@
 							showagent = "display:none"
 						end 
 					%>
-					<div class="span10">
-						<span id="All_Agents" style="<%= showagent %>">
-							<b><%=t('group.select_agents')%> </b>							  			
-							<select id="group_escalate_to" class="select2">
-								<% @exclude_list.each do |user| %>
-									<% 
-										avatar_url = '/images/fillers/profile_blank_thumb.gif'
-										unless user.avatar.nil?
-											avatar_url = user.avatar.expiring_url(:thumb)
-										end 
-									%>
-									<option agent_thumb="<%=avatar_url%>" agent_name="<%=user.name%>" agent_id="<%=user.id%>">
-										<%= user.name %>
-									</option>
-								<% end %>
-							</select>			
-							<%= link_to_function t('add'), 'AddUser()', :class => "button" %>
-						</span>
-						<%= f.hidden_field :agent_list, { :id =>"agent_list", :value => ""} %>		
-					</div>
+					
 		 		</li>
-		 		<li class="row-fluid">
-					<label class="control-label span2"><b>Ticket Assignment</b></label>
-					<div class="span10">
-						<ul class="unstyled">
-							<li class="margin-bottom">
-								<label class="radio">
-								  <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
-								  Manual
-								</label>
-								<%= content_tag( :span, 'Agents should <i>manually</i> pick up from this code', :class => "muted info_data" ) %> 	
-							</li>
-							<li class="margin-bottom">
-								<label class="radio">
-								  <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
-								  Manual
-								</label>
-								<%= content_tag( :span, 'Agents should <i>manually</i> pick up from this code', :class => "muted info_data" ) %> 	
-							</li>
-					</div>
-            	</li>
+		 		<% if feature?(:round_robin) %>
+			 		<li class="row-fluid">
+						<label class="control-label span2"><b><%=t('group.ticket_assignment') %></b></label>
+						<div class="span10">
+							<ul class="unstyled">
+								<li class="margin-bottom">
+									<label class="radio">
+									  <input type="radio" name="group[ticket_assign_type]" id="ticket_assign_type" value="0" <%= @group.ticket_assign_type == Group::TICKET_ASSIGN_TYPE[:default] ? "checked" : "" %> >
+									  <%= t('group.manual') %>
+									</label>
+									<%= content_tag( :span, t('group.manual_desc'), :class => "muted info_data" ) %> 	
+								</li>
+								
+									<li class="margin-bottom">
+										<label class="radio">
+										  <input type="radio" name="group[ticket_assign_type]" id="ticket_assign_type" value="1" <%= @group.ticket_assign_type == Group::TICKET_ASSIGN_TYPE[:round_robin] ? "checked" : "" %>>
+										  <%= t('group.automatic') %>
+										</label>
+										<%= content_tag( :span, t('group.automatic_desc'), :class => "muted info_data" ) %> 	
+									</li>
+								
+						</div>
+	            	</li>
+            	<% end %>
             	<li class="row-fluid">
             		<div class="offset2 span9">
             			<%=t('group.info4')%> :
@@ -171,34 +74,52 @@
             	</li>
 		 	</ul>
 		 </div>
-
-		 
-	  <ul class="ui-form">
-		  <li>		  	
-			<ul class="item_list active" id="Active_list">	
-					<%  
-						@group.agents.each do |user| 
-						avatar_agent = '/images/fillers/profile_blank_thumb.gif'
-						unless user.avatar.nil?
-							avatar_agent = user.avatar.expiring_url(:thumb)
-						end					  
-					%> 
-					<li agent_thumb="<%=avatar_agent%>" agent_id="<%=user.id %>" agent_name="<%= user.name %>">
-						<%= user_avatar(user, :thumb) %>
-						<a href="javascript:void(0)" class="slim-button control"><%= t("remove") %></a>				
-						<%= content_tag :b, truncate(user.name, 30), :title => user.name %>
-					</li>
-					<% end %>
-				
-					<div class="info padding6"><%=t('group.info2')%></div>
-							
-			</ul>		
-			<br />	
-		  </li>
-	  </ul>
 	  <br />
 	  <div class="button-container">	    
 		<%= f.submit t('save'), :class => "btn btn-primary" %>
 		<%= link_to t('cancel'), groups_path, :class => "btn" %>	
 	  </div>
 <% end %>
+
+<script type="text/javascript">
+
+jQuery(document).ready(function() {
+	jQuery("#group_form").submit(function(ev){
+			if(jQuery("#agent_id").val() != null)
+			jQuery("#agent_list").val(jQuery("#agent_id").val().join()); 
+		});
+<%
+all_agents = []
+all_agents_list = @group.all_agents_list(current_account)
+if all_agents_list
+  all_agents_list.each do |req|
+    all_agents << "{id: '#{req.user_id}',
+                  value: '#{escape_javascript(req.user.name)}',
+                  text: '#{escape_javascript(req.user.name)}'}"
+  end
+end
+
+selected_agents = []
+agents = @group.agents
+if agents
+	 agents.each do |req|
+    selected_agents << "{id: '#{req.id}',
+                  value: '#{escape_javascript(req.name)}',
+                  text: '#{escape_javascript(req.name)}'}"
+  end
+end 
+%>
+
+jQuery('#agent_list').select2({
+	multiple: true,
+	data: [<%=all_agents.join(",")%>],
+	initSelection : function (element, callback) {
+      callback( [<%=selected_agents.join(",")%>] );
+    }
+	
+});
+jQuery("#agent_list").select2("val",[]);
+
+});
+
+</script>

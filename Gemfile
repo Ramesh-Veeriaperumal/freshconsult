@@ -90,6 +90,7 @@ group :development,:test do
    gem "factory_girl", "1.2.3" 
    gem "mongrel" 
    gem "spork", "~> 0.8.0"
+   gem "mocha", "~> 0.13.3"
 end
 
 group :assets do

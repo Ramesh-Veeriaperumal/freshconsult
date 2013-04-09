@@ -19,7 +19,7 @@ class Group < ActiveRecord::Base
    belongs_to :escalate , :class_name => "User", :foreign_key => "escalate_to"
    
    attr_accessible :name,:description,:email_on_assign,:escalate_to,:assign_time ,:import_id, 
-                   :ticket_assign_type,:max_open_tickets
+                   :ticket_assign_type
    
    accepts_nested_attributes_for :agent_groups
    liquid_methods :name
@@ -45,7 +45,6 @@ class Group < ActiveRecord::Base
                             ['group_ticket_options.round_robin',     '1']
                           ]
 
-  MAX_OPEN_TICKETS = [1,2,4,8,10]
   ASSIGNTIME_OPTIONS = ASSIGNTIME.map { |i| [i[1], i[2]] }
   ASSIGNTIME_NAMES_BY_KEY = Hash[*ASSIGNTIME.map { |i| [i[2], i[1]] }.flatten]
   ASSIGNTIME_KEYS_BY_TOKEN = Hash[*ASSIGNTIME.map { |i| [i[0], i[2]] }.flatten]
@@ -58,6 +57,10 @@ class Group < ActiveRecord::Base
 
   def self.ticket_assign_options
     TICKET_ASSIGN_OPTIONS.map {|t| [I18n.t(t[0]),t[1]]}
+  end
+
+  def all_agents_list(account)
+    account.agents_from_cache
   end
 
   def agent_emails
@@ -107,7 +110,7 @@ class Group < ActiveRecord::Base
     agent_ids.each do |agent_id|
       agent = Agent.find_by_user_id(agent_id)
       next if agent.nil?
-      if agent.available? && !agent.overloaded?(self)
+      if agent.available?
           #rotating the array. Put the latest assigned agent at last.
           agent_ids = agent_ids.push(agent_ids.shift(count)).flatten
           store_in_redis(agent_ids)

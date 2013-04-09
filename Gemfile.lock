@@ -144,7 +144,10 @@ GEM
     map-fields (1.0.0)
       fastercsv (>= 1.2.3)
     memcache-client (1.8.5)
+    metaclass (0.0.1)
     mime-types (1.16)
+    mocha (0.13.3)
+      metaclass (~> 0.0.1)
     mongrel (1.1.5)
       cgi_multipart_eof_fix (>= 2.4)
       daemons (>= 1.0.3)
@@ -315,6 +318,7 @@ DEPENDENCIES
   map-fields (= 1.0.0)
   marketo!
   memcache-client (= 1.8.5)
+  mocha (~> 0.13.3)
   mongrel
   mysql
   net-dns (= 0.6.1)

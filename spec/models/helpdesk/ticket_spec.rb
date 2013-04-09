@@ -26,7 +26,6 @@ describe Helpdesk::Ticket do
   def setup_data
     @group = Group.find(:last)
     @group.ticket_assign_type = 1
-    @group.max_open_tickets = 10
     @group.save!
 
     @agent = Agent.find(:last)
@@ -60,13 +59,6 @@ describe Helpdesk::Ticket do
     @ticket.responder_id.should_not == @another_ticket.responder_id
   end
 
-  it "should not be assigned an agent if all agents are overloaded" do
-    #making all agents overloadeded forcefully.
-    Agent.any_instance.stubs(:overloaded?).with(@group).returns(true)
-    @agent.overloaded?(@group).should be_true
-    @ticket.assign_tickets_to_agents
-    @ticket.responder_id.should be_nil
-  end
 
   it "should not be assigned to agent if no agents are available" do
     Agent.any_instance.stubs(:available?).returns(false)

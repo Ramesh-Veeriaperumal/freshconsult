@@ -28,7 +28,7 @@ function catchException(fn, message) {
 }
 
 function processAgent(user_id) {
-  var value = jQuery("#available").is(':checked')
+  var value = ( jQuery("#available_icon").attr("class") == "header-icons-autoAssign-on" )
  
   new Ajax.Request('/agents/toggle_availability', 
                    { parameters: {value: value, id: user_id},
