@@ -48,6 +48,7 @@ class Account < ActiveRecord::Base
   has_one :account_additional_settings
 
   has_one :account_configuration
+  validates_associated :account_configuration, :on => :create
   
   delegate :contact_info, :admin_first_name, :admin_last_name, :admin_email, :admin_phone, 
             :invoice_emails, :to => "account_configuration"
@@ -82,7 +83,6 @@ class Account < ActiveRecord::Base
   has_many :users, :conditions =>{:deleted =>false}, :order => :name
   has_many :all_users , :class_name => 'User'
   
-  has_one :account_admin, :class_name => "User", :conditions => { :account_admin => true } #has_one ?!?!?!?!
   has_many :technicians, :class_name => "User", :conditions => { :helpdesk_agent => true, :deleted => false }, :order => "name desc"
   
   has_one :subscription
@@ -199,7 +199,6 @@ class Account < ActiveRecord::Base
   validate :valid_domain?
   validate :valid_helpdesk_url? 
   validate :valid_sso_options?
-  validate_on_create :valid_user?
   validate_on_create :valid_plan?
   validate_on_create :valid_payment_info?
   validate_on_create :valid_subscription?
@@ -215,11 +214,8 @@ class Account < ActiveRecord::Base
 
   before_create :set_default_values
   
-  
   before_update :check_default_values, :update_users_time_zone
     
-  after_create :create_portal
-  after_create :populate_seed_data
   after_create :populate_features
   after_create :send_welcome_email
   after_update :update_users_language
@@ -580,17 +576,6 @@ class Account < ActiveRecord::Base
       end
     end
     
-    # An account must have an associated user to be the administrator
-    def valid_user?
-      if !@user
-        errors.add_to_base("Missing user information")
-      elsif !@user.valid?
-        @user.errors.full_messages.each do |err|
-          errors.add_to_base(err)
-        end
-      end
-    end
-    
     def valid_payment_info?
       if needs_payment_info?
         unless @creditcard && @creditcard.valid?
@@ -632,32 +617,7 @@ class Account < ActiveRecord::Base
       HashWithIndifferentAccess.new({:login_url => "",:logout_url => ""})
     end
     
-    def self.create_admin(account)
-      account.user.active = true  
-      account.user.account = account #?!?!?!
-      account.user.helpdesk_agent =  true
-      account.user.account_admin = true
-      account.user.build_agent()
-      account.user.agent.account = account
-      account.user.save
-      User.current = account.user
-      
-      account.build_account_configuration(admin_contact_info)
-      account.account_configuration.save
-    end
-
-    def create_portal
-      self.primary_email_config.account = self
-      self.primary_email_config.save
-      self.main_portal.account = self
-      self.main_portal.save
-    end
-
-    def populate_seed_data
-      PopulateAccountSeed.populate_for(self)
-    end
-
-   def send_welcome_email
+    def send_welcome_email
       SubscriptionNotifier.send_later(:deliver_welcome, self) unless google_domain.blank?
     end
     
@@ -691,14 +651,6 @@ class Account < ActiveRecord::Base
 
     def notify_totango
       Resque.enqueue(CRM::Totango::CanceledCustomer, id, full_domain)
-    end
-
-    def admin_contact_info
-      {
-        :contact_info => { :first_name => self.user.first_name, :last_name => self.user.last_name,
-                           :email => self.user.email, :phone => self.user.phone },
-        :billing_emails => { :invoice_emails => [ self.user.email ] }
-      }
     end
 
 end

@@ -31,8 +31,8 @@
 	</td>
 	<td>
 		<div class="user_actions" align="right">
-			<%= link_to(t('unblock'), {:controller => "contacts", :action => "unblock", :id => contact} , :method => 'put', :class => "btn btn-mini") if contact.spam? || contact.blocked?%>
       <% if privilege?(:delete_contact) %>
+			   <%= link_to(t('unblock'), {:controller => "contacts", :action => "unblock", :id => contact} , :method => 'put', :class => "btn btn-mini") if contact.spam? || contact.blocked?%>
 			   <%= link_to(t('contacts.restore'), {:controller => "contacts", :action => "restore", :id => contact, :redirect_back => true} , :method => 'put', :class => "btn btn-mini") if contact.deleted? and !contact.spam? and !contact.blocked? %>
       <% end %>
       <% if privilege?(:manage_users) %>

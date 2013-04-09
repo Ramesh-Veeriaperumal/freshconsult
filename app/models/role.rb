@@ -1,10 +1,5 @@
 class Role < ActiveRecord::Base
   
-  # FIXME: Prompt if users are associated with role during delete ?
-  # FIXME: valid if we stick to account_admin flag
-    # FIXME: a role with which account_admin is associated is deleted
-    # FIXME: user is changed to a role without manage_account
-  
   include Authority::Rails::ModelHelpers
   before_destroy :destroy_user_privileges
   after_update :update_user_privileges
@@ -13,7 +8,7 @@ class Role < ActiveRecord::Base
   #moved to background processing.
   
   belongs_to_account
-  has_and_belongs_to_many :users, :join_table => "user_roles"
+  has_and_belongs_to_many :users, :join_table => "user_roles", :autosave => true
   
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id

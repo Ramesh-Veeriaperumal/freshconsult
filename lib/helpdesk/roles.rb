@@ -1,5 +1,14 @@
 module Helpdesk
   module Roles
+    
+    def default_roles_list
+    [  
+      ["Account Administrator", ACCOUNT_ADMINISTRATOR, "Account Administrator"],
+      ["Administrator",         ADMINISTRATOR,         "Administrator"],
+      ["Supervisor",            SUPERVISOR,            "Supervisor"],
+      ["Agent",                 AGENT,                 "Agent"]
+    ]
+    end
         
     ACCOUNT_ADMINISTRATOR = [
       :manage_tickets,

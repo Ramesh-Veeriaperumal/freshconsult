@@ -5,7 +5,6 @@ class Support::TicketsController < SupportController
   include Support::TicketsHelper
   include ExportCsvUtil
   
-  skip_before_filter :check_privilege
   before_filter :only => [:new, :create] do |c| 
     c.check_portal_scope :anonymous_tickets
   end

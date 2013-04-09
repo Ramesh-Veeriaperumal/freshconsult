@@ -34,13 +34,10 @@
   end
 
   map.connect '/agents/filter/:state/*letter', :controller => 'agents', :action => 'index'
-  map.resources :sla_details
   
 #  map.mobile '/mob', :controller => 'home', :action => 'mobile_index'
 #  map.mobile '/mob_site', :controller => 'user_sessions', :action => 'mob_site'
   #map.resources :support_plans
-
-  map.resources :sl_as
 
   map.logout '/logout', :controller => 'user_sessions', :action => 'destroy'
   map.gauth '/openid/google', :controller => 'user_sessions', :action => 'openid_google'
@@ -59,7 +56,7 @@
   
   #map.register '/register', :controller => 'users', :action => 'create'
   #map.signup '/signup', :controller => 'users', :action => 'new'
-  map.resources :users, :member => { :delete_avatar => :delete, :change_account_admin => :put, 
+  map.resources :users, :member => { :delete_avatar => :delete, 
           :block => :put, :assume_identity => :get, :profile_image => :get }, :collection => {:revert_identity => :get}
   map.resource :user_session
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
@@ -326,11 +323,7 @@
                   :requester_autocomplete => :get, :company_autocomplete => :get }
     
     helpdesk.resources :mailer, :collection => { :fetch => :get }
-    
-    helpdesk.resources :sla_details
-    
-    helpdesk.resources :support_plans
-    
+            
     helpdesk.resources :sla_policies, :collection => {:reorder => :put}, :member => {:activate => :put},
                       :except => :show
 

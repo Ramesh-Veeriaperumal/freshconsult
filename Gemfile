@@ -90,6 +90,7 @@ gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
 gem "rinku", :git => "git://github.com/freshdesk/rinku.git"
 
 gem "people", '0.2.1' #https://github.com/mericson/people/tree/master/lib
+gem "active_presenter", "1.4.0"
 
 group :development,:test do
    gem "ZenTest", "4.4.1"

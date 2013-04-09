@@ -15,7 +15,7 @@ Authority::Authorization::PrivilegeList.build do
                       :spam, :unspam, :execute_scenario, :pick_tickets,
                       :get_ca_response_content, :merge_with_this_request, :print, :latest_note,
                       :clear_draft, :save_draft, :prevnext, :component, :custom_search, :configure_export,
-                      :quick_assign, :canned_reponse, :full_paginate, :edit, :update, :custom_view_save]
+                      :quick_assign, :canned_reponse, :full_paginate, :edit, :update, :custom_view_save, :filter_options]           
     resource :"helpdesk/subscription"
  		resource :"helpdesk/tag_use"
     resource :"helpdesk/tag"
@@ -44,7 +44,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   merge_or_split_ticket do
-    resource :"helpdesk/ticket", :only => [:show_tickets_from_same_user, :confirm_merge, :complete_merge]
+    resource :"helpdesk/merge_ticket"
     resource :"helpdesk/ticket", :only => [:split_the_ticket]
   end
 
@@ -154,7 +154,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   delete_contact do
-    resource :contact, :only => [:destroy, :restore]
+    resource :contact, :only => [:destroy, :restore, :unblock]
     resource :customer, :only => [:destroy]
     # is this the correct place to put this ?
     resource :user, :only => [:destroy]
@@ -168,7 +168,7 @@ Authority::Authorization::PrivilegeList.build do
 		resource :"reports/customer_report"
 		resource :"reports/helpdesk_report"
 		resource :"reports/survey_report"
-    resource :"reports/gamification_reports"
+    resource :"reports/gamification_report"
 	end
 
   # ************** ADMIN **************************
@@ -182,7 +182,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_users do
     resource :agent, :only => [:new, :create, :edit, :update, :index, :destroy, :delete_avatar,
                       :restore, :convert_to_user, :reset_password, :create_multiple_items, :convert_to_contact]
-    resource :contact, :only => [:make_agent]
+    resource :contact, :only => [:make_agent, :make_occasional_agent]
     resource :activation, :only => [:send_invite]
     resource :user, :only => [:assume_identity]
   end
@@ -234,13 +234,15 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/quest"
     resource :"helpdesk/sla_policy"
     resource :account, :only => [:update, :edit, :delete_logo, :delete_fav]
+    resource :"admin/template"
+    resource :"admin/page"
+    resource :"support/preview"
   end
 
   manage_account do
     resource :account, :only => [:show, :cancel]
+    resource :account_configuration
     resource :"admin/data_export"
-    resource :"admin/template"
-    resource :user, :only => [:change_account_admin]
     resource :subscription # plans and billing
     resource :"admin/zen_import"
     # new item day passes && getting started

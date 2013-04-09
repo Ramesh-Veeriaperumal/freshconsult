@@ -66,26 +66,6 @@ class UsersController < ApplicationController
     render :text => "success"
   end
   
-  def change_account_admin 
-    pre_owner_saved, new_owner_saved = false, false    
-    User.transaction do
-      if current_account.account_admin.id != params[:account_admin].to_i
-        @pre_owner = current_account.account_admin
-        @pre_owner.account_admin =  false
-        @new_owner = current_account.technicians.find(params[:account_admin])
-        @new_owner.account_admin = true
-        pre_owner_saved = @pre_owner.save
-        new_owner_saved = @new_owner.save
-      end
-    end
-    if pre_owner_saved and new_owner_saved
-      flash[:notice] = t('account_admin_updated')
-      redirect_to admin_home_index_url
-    else
-      redirect_to account_url
-    end
-  end
-
   def assume_identity
     user = current_account.users.find params[:id]
 

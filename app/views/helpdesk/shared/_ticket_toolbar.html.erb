@@ -31,9 +31,9 @@
             <button class="button dialog2" data-url="/helpdesk/tickets/assign_to_agent" data-width="360" title="<%=t('ticket.assign_to_agent')%>" disabled="disabled"><%=t('ticket.assign_to_agent')%></button>
 
             <button class="button dialog2" data-url="/helpdesk/tickets/update_multiple_tickets" data-width="667" title="<%=t('bulk_actions')%>" disabled="disabled"><%=t('bulk_actions')%></button>
-
+          <% end %>
+          <% if privilege?(:merge_or_split_ticket)%>    
             <button id="merge_multiple" class="button dialog2" data-width="715" data-parameters title="<%=t('ticket.merge_title')%>" disabled="disabled" data-destroy-on-close="true"><%=t('ticket.merge_btn')%></button>
-
           <% end %>
 
           <% if @current_view == "monitored_by" %>

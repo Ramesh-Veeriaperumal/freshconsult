@@ -3,6 +3,7 @@ class Public::NotesController < ApplicationController
   include ParserUtil
   include SupportNoteControllerMethods
   
+  skip_before_filter :check_privilege
   before_filter :set_mobile , :only => [:create]
 
   def create

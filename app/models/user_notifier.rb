@@ -22,14 +22,15 @@ class UserNotifier < ActionMailer::Base
     end
   end
   
-  def account_admin_activation(account_admin)
+  def admin_activation(admin)
     from  AppConfig['from_email'] 
-    recipients account_admin.email
+    recipients admin.email
     subject "#{AppConfig['app_name']} Account Activation"
     sent_on Time.now
-    body(:account_admin => account_admin, 
-          :activation_url => register_url(:activation_code => account_admin.perishable_token, :host => account_admin.account.host , :protocol => account_admin.url_protocol ))
+    body(:admin => admin, 
+          :activation_url => register_url(:activation_code => admin.perishable_token, :host => admin.account.host , :protocol => admin.url_protocol ))
     content_type  "text/html"
   end
+  alias :account_admin_activation :admin_activation 
   
 end

@@ -74,7 +74,7 @@
 									<div class="label-locked-feature">
 										<%= content_tag(:label, @account.full_domain, :class => "control-label") %>
 										<div class="help-block">
-											<% options =  ( current_user.account_admin? ) ? 
+											<% options =  ( current_user.privilege?(:manage_account) ) ? 
 												{:tag => :a, :href => subscription_url } : {:tag => :span} %>
 					    					<%= content_tag(options[:tag], t('subscription.upgrade.cname'), :href => options[:href] ) %>
 										</div>

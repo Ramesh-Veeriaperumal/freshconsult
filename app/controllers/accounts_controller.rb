@@ -20,6 +20,7 @@ class AccountsController < ApplicationController
   before_filter :build_plan, :only => [:new, :create]
   before_filter :admin_selected_tab, :only => [:show, :edit, :cancel ]
   before_filter :validate_custom_domain_feature, :only => [:update]
+  before_filter :build_signup_param, :only => [:new_signup_free, :create_account_google]
   
   filter_parameter_logging :creditcard,:password
   
@@ -35,15 +36,15 @@ class AccountsController < ApplicationController
   end
    
   def new_signup_free
-   create_account 
-   if @account.save
+   @signup = Signup.new(params[:signup])
+   
+   if @signup.save
       add_to_crm
       render :json => { :success => true, 
-      :url => signup_complete_url(:token => @account.account_admin.perishable_token,:host => @account.full_domain) }, 
+      :url => signup_complete_url(:token => @signup.account.agents.first.user.perishable_token, :host => @signup.account.full_domain) }, 
       :callback => params[:callback]
-   
     else
-      render :json => { :success => false, :errors => @account.errors.to_json }, :callback => params[:callback] 
+      render :json => { :success => false, :errors => @signup.errors.to_json }, :callback => params[:callback] 
     end    
   end
   
@@ -62,11 +63,12 @@ class AccountsController < ApplicationController
     end     
   end
   
-  def create_account_google   
-    create_account
-    if @account.save       
+  def create_account_google
+    @signup = Signup.new(params[:signup])
+   
+    if @signup.save
        rediret_url = params[:call_back]+"&EXTERNAL_CONFIG=true" unless params[:call_back].blank?
-       rediret_url = "https://www.google.com/a/cpanel/"+@account.google_domain if rediret_url.blank?
+       rediret_url = "https://www.google.com/a/cpanel/"+@signup.account.google_domain if rediret_url.blank?
        redirect_to rediret_url
       #redirect to google.... else to the signup page
     else
@@ -317,68 +319,46 @@ class AccountsController < ApplicationController
     end
     
     def build_metrics
+      return if params[:session_json].blank?
+      
+      begin  
+        metrics =  JSON.parse(params[:session_json])
+        metrics_obj = {}
 
-          return if params[:session_json].blank?
-            
-          begin  
-                  metrics =  JSON.parse(params[:session_json])
-                  metrics_obj = {}
-            
-                  metrics_obj[:referrer] = metrics["current_session"]["referrer"]
-                  metrics_obj[:landing_url] = metrics["current_session"]["url"]
-                  metrics_obj[:first_referrer] = params[:first_referrer]
-                  metrics_obj[:first_landing_url] = params[:first_landing_url]
-                  metrics_obj[:country] = metrics["location"]["countryName"] unless metrics["location"].blank?
-                  metrics_obj[:language] = metrics["locale"]["lang"]
-                  metrics_obj[:search_engine] = metrics["current_session"]["search"]["engine"]
-                  metrics_obj[:keywords] = metrics["current_session"]["search"]["query"]
-                  metrics_obj[:visits] = params[:pre_visits]
-            
-                  if metrics["device"]["is_mobile"]
-                    metrics_obj[:device] = "M"
-                  elsif  metrics["device"]["is_phone"]
-                    metrics_obj[:device] = "P"
-                  elsif  metrics["device"]["is_tablet"]
-                    metrics_obj[:device] = "T"
-                  else
-                    metrics_obj[:device] = "C"  
-                  end
-            
-                  metrics_obj[:browser] = metrics["browser"]["browser"]                 
-                  metrics_obj[:os] = metrics["browser"]["os"]
-                  metrics_obj[:offset] = metrics["time"]["tz_offset"]
-                  metrics_obj[:is_dst] = metrics["time"]["observes_dst"]
-                  metrics_obj[:session_json] = metrics
-                
-                  @account.conversion_metric_attributes = metrics_obj
+        metrics_obj[:referrer] = metrics["current_session"]["referrer"]
+        metrics_obj[:landing_url] = metrics["current_session"]["url"]
+        metrics_obj[:first_referrer] = params[:first_referrer]
+        metrics_obj[:first_landing_url] = params[:first_landing_url]
+        metrics_obj[:country] = metrics["location"]["countryName"] unless metrics["location"].blank?
+        metrics_obj[:language] = metrics["locale"]["lang"]
+        metrics_obj[:search_engine] = metrics["current_session"]["search"]["engine"]
+        metrics_obj[:keywords] = metrics["current_session"]["search"]["query"]
+        metrics_obj[:visits] = params[:pre_visits]
 
-           rescue => e
-                NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error occoured while building conversion metrics"}})
-                Rails.logger.error("Error while building conversion metrics with session params: \n #{params[:session_json]} \n#{e.message}\n#{e.backtrace.join("\n")}")
-           end
+        if metrics["device"]["is_mobile"]
+          metrics_obj[:device] = "M"
+        elsif  metrics["device"]["is_phone"]
+          metrics_obj[:device] = "P"
+        elsif  metrics["device"]["is_tablet"]
+          metrics_obj[:device] = "T"
+        else
+          metrics_obj[:device] = "C"  
+        end
 
-        end      
+        metrics_obj[:browser] = metrics["browser"]["browser"]                 
+        metrics_obj[:os] = metrics["browser"]["os"]
+        metrics_obj[:offset] = metrics["time"]["tz_offset"]
+        metrics_obj[:is_dst] = metrics["time"]["observes_dst"]
+        metrics_obj[:session_json] = metrics
+        metrics_obj
+      rescue => e
+        NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error occoured while building conversion metrics"}})
+        Rails.logger.error("Error while building conversion metrics with session params: \n #{params[:session_json]} \n#{e.message}\n#{e.backtrace.join("\n")}")
+        nil
+      end
+    end      
 
   private
-
-    def add_to_crm
-      Resque.enqueue(Marketo::AddLead, @account.id, ThirdCRM.fetch_cookie_info(request.cookies))
-    end   
-
-    def create_account
-      params[:plan] = SubscriptionPlan::SUBSCRIPTION_PLANS[:estate]
-      build_object
-      build_primary_email_and_portal
-      build_user
-      build_plan
-      build_metrics
-      
-      begin
-        @account.time_zone = (ActiveSupport::TimeZone[params[:utc_offset].to_f]).name 
-      rescue
-        @account.time_zone = (ActiveSupport::TimeZone["Eastern Time (US & Canada)"]).name 
-      end
-    end
 
     def deliver_signup_page resp,data
       @open_id_url = resp.identity_url
@@ -428,8 +408,8 @@ class AccountsController < ApplicationController
         DeletedCustomers.create(
           :full_domain => "#{current_account.name}(#{current_account.full_domain})",
           :account_id => current_account.id,
-          :admin_name => current_account.account_admin.name,
-          :admin_email => current_account.account_admin.email,
+          :admin_name => current_account.admin_first_name,
+          :admin_email => current_account.admin_email,
           :account_info => {:plan => sub.subscription_plan_id,
                             :discount => sub.subscription_discount_id,
                             :agents_count => current_account.agents.count,
@@ -439,8 +419,28 @@ class AccountsController < ApplicationController
         )
       end
     end
-
+    
+    def build_signup_param
+      params[:signup] = {}
+      
+      [:user, :account].each do |param|
+        params[param].each do |key, value|
+          params[:signup]["#{param}_#{key}"] = value
+        end
+      end
+      
+      params[:signup][:locale] = request.compatible_language_from(I18n.available_locales)
+      params[:signup][:time_zone] = params[:utc_offset]
+      params[:signup][:metrics] = build_metrics
+    end
+    
     def add_to_crm
-      Resque.enqueue(Marketo::AddLead, { :account_id => @account.id, :cookie => ThirdCRM.fetch_cookie_info(request.cookies) })
+      Resque.enqueue(
+        Marketo::AddLead,
+        { 
+          :account_id => @signup.account.id,
+          :cookie => ThirdCRM.fetch_cookie_info(request.cookies)
+        }
+      )
     end   
 end

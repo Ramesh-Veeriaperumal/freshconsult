@@ -165,7 +165,7 @@ include RedisKeys
     
     @user_session = current_account.user_sessions.new(@current_user)
     if @user_session.save
-      @current_user.deliver_account_admin_activation
+      @current_user.deliver_admin_activation
       #SubscriptionNotifier.send_later(:deliver_welcome, current_account)
       flash[:notice] = t('signup_complete_activate_info')
       redirect_to admin_getting_started_index_path  
@@ -258,7 +258,7 @@ include RedisKeys
 
           if gmail_gadget_temp_token.blank?
             flash[:notice] = t(:'flash.g_app.authentication_success')        
-            if (@current_user.account_admin? && @current_user.first_login?)
+            if (@current_user.first_login? && @current_user.privilege?(:manage_account))
                redirect_to admin_getting_started_index_path
             else
               redirect_back_or_default('/')            

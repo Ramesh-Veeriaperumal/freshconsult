@@ -36,9 +36,9 @@ class User < ActiveRecord::Base
     :insert_sql => 
       'INSERT INTO user_roles (account_id, user_id, role_id) VALUES (#{account_id}, #{id}, #{record.id})',
     :after_add => :touch_role_change,
-    :after_remove => :touch_role_change
+    :after_remove => :touch_role_change,
+    :autosave => true
   
-  validates_uniqueness_of :account_admin, :scope => :account_id, :if => Proc.new { |user| user.account_admin  == true }
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   
@@ -62,11 +62,9 @@ class User < ActiveRecord::Base
 
   has_many :user_credentials, :class_name => 'Integrations::UserCredential', :dependent => :destroy
   before_create :set_time_zone , :set_company_name , :set_language
-  before_create :account_admin_privilege, :if => :account_admin?
   before_save :set_customer_privilege, :if => :customer?
   before_create :populate_privileges, :if => :helpdesk_agent?
   before_update :populate_privileges, :if => :roles_changed?
-  # FIXME: before_save ?
   before_update :destroy_user_roles, :if => :deleted?
   before_save :set_contact_name, :check_email_value
   after_update :drop_authorization , :if => :email_changed?
@@ -77,11 +75,10 @@ class User < ActiveRecord::Base
   after_commit_on_update :clear_agent_list_cache, :if => :helpdesk_agent_updated?
   before_update :bakcup_user_changes
   
-  named_scope :account_admin, :conditions => [:account_admin => true ]
   named_scope :contacts, :conditions => { :helpdesk_agent => false }
   named_scope :technicians, :conditions => { :helpdesk_agent => true }
   named_scope :visible, :conditions => { :deleted => false }
-
+  named_scope :active, lambda { |condition| { :conditions => { :active => condition }} }
   named_scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
   
   acts_as_authentic do |c|    
@@ -95,14 +92,14 @@ class User < ActiveRecord::Base
   end
   
   validates_presence_of :email, :unless => :customer?
-  validate :has_role?, :unless => [ :customer?, :account_admin? ]
+  validate :has_role?, :unless => :customer?
   
   def client_manager=(checked)
     if customer? && checked == "true"
       self.privileges = Role.privileges_mask([:client_manager])
     end
   end
-
+  
   def check_email_value
     if email.blank?
       self.email = nil
@@ -306,16 +303,11 @@ class User < ActiveRecord::Base
   end
   alias :is_customer :customer?
   
-  def account_admin?
-    agent? && account_admin
-  end
-  
   def can_assume?(user)
     # => Not himself
-    # => User is not an account admin
     # => User is not deleted
     # => And the user does not have any admin privileges (He is an agent)
-    !((user == self) or user.account_admin? or user.deleted? or user.privilege?(:view_admin))
+    !((user == self) or user.deleted? or user.privilege?(:view_admin))
   end
   
   def first_login?
@@ -474,6 +466,17 @@ class User < ActiveRecord::Base
     subscriptions.destroy_all
     agent.destroy
   end
+  
+  def make_agent(args = {})
+    ActiveRecord::Base.transaction do
+      self.deleted = false
+      self.helpdesk_agent = true
+      self.role_ids = [account.roles.find_by_name("Agent").id] 
+      agent = build_agent()
+      agent.occasional = !!args[:occasional]
+      save
+    end
+  end
 
   protected
 
@@ -534,10 +537,6 @@ class User < ActiveRecord::Base
     def helpdesk_agent_updated?
       @all_changes.has_key?(:helpdesk_agent)
     end
-
-    def account_admin_privilege
-      self.role_ids = [account.roles.find_by_name("Account Administrator").id]
-    end
     
     def set_customer_privilege
       if(!(abilities.length == 1) && !privilege?(:client_manager))
@@ -565,6 +564,7 @@ class User < ActiveRecord::Base
     end
   
     def has_role?
-      self.errors.add(:base, I18n.t("activerecord.errors.messages.user_role")) if self.roles.blank?
+      self.errors.add(:base, I18n.t("activerecord.errors.messages.user_role")) if
+        (@role_change_flag && self.roles.blank?)
     end
 end

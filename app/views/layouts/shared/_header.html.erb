@@ -35,9 +35,9 @@
 			<% if is_assumed_user? %>    
 				<span class="seperator"></span>
 				<%= link_to t('revert_identity_link_msg'), revert_identity_users_path, :class => "link" %>
-      		<% elsif !is_assumed_user? && (privilege?(:manage_users) || current_user.account_admin?) %>
-      			<% @allowed_to_assume = current_user.agent.assumable_agents %>
-      			<% unless @allowed_to_assume.blank? %>
+      <% elsif privilege?(:manage_users) %>
+      	<% @allowed_to_assume = current_user.agent.assumable_agents %>
+      	<% unless @allowed_to_assume.blank? %>
 					<span class="seperator"></span>
 					<div class="info">
 						<h5><%=t('switch_heading')%></h5>      					
@@ -46,10 +46,10 @@
 						  function assume_identity_url() {
 						    window.location = '/users/'+$('assumed_select_id').value+'/assume_identity';
 						  }
-						<%end%>
+				<%end%>
 					</div>
-				<% end %>
-			<% end %>                      
+			<% end %>
+		<% end %>                      
 			<span class="seperator"></span>			
 			<%= link_to t('header.signout'), logout_path, :class => "link" %>
 		</div>                                                             

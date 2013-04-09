@@ -27,15 +27,15 @@ module HelpdeskSystem
     @items.each do |dropbox|
       if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? dropbox.droppable_type
         ticket = dropbox.droppable.respond_to?(:notable) ? dropbox.droppable.notable : dropbox.droppable
-        can_destroy = true if permission?(:manage_tickets) or (current_user && ticket.requester_id == current_user.id)
+        can_destroy = true if privilege?(:manage_tickets) or (current_user && ticket.requester_id == current_user.id)
       elsif ['Solution::Article'].include?  dropbox.droppable_type
-        can_destroy = true if permission?(:manage_knowledgebase) or (current_user && dropbox.droppable.user_id == current_user.id)
+        can_destroy = true if privilege?(:publish_solution) or (current_user && dropbox.droppable.user_id == current_user.id)
       elsif ['Account'].include?  dropbox.droppable_type
-        can_destroy = true if permission?(:manage_users)
+        can_destroy = true if privilege?(:manage_account)
       elsif ['Post'].include?  dropbox.droppable_type
-        can_destroy = true if permission?(:manage_forums) or (current_user && dropbox.droppable.user_id == current_user.id)
+        can_destroy = true if privilege?(:edit_topic) or (current_user && dropbox.droppable.user_id == current_user.id)
       elsif ['User'].include?  dropbox.droppabe_type
-        can_destroy = true if permission?(:manage_users) or (current_user && dropbox.droppable.id == current_user.id)
+        can_destroy = true if privilege?(:manage_users) or (current_user && dropbox.droppable.id == current_user.id)
       end
     end
     

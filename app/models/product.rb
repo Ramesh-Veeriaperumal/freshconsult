@@ -61,7 +61,7 @@ class Product < ActiveRecord::Base
     def notify_totango
       Resque::enqueue(CRM::Totango::SendUserAction, 
                                         {:account_id => account.id, 
-                                         :email => account.account_admin.email, 
+                                         :email => account.admin_email, 
                                          :activity =>   totango_activity(:multiple_products)})
     end
 end

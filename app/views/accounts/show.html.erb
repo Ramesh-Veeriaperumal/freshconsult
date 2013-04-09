@@ -2,13 +2,13 @@
 <%= include_javascripts :pattern  %>
 
 <%
-	admin_choice = current_account.all_admins.inject ([]) { |choice, admin| 
+	admin_choice = current_account.account_managers.inject([]) { |choice, admin| 
 							choice << "{ id : '#{escape_javascript(admin.email)}',
 	            		   				value : '#{escape_javascript(admin.email)}',
 	               						text : '#{escape_javascript(admin.email)}' }"  }
 
 	unless (emails = current_account.invoice_emails).blank?  
-	  added_invoice_emails = emails.inject ([]) { |choice, email| 
+	  added_invoice_emails = emails.inject([]) { |choice, email| 
 							choice << "{ id: '#{escape_javascript(email)}',
 														text: '#{escape_javascript(email)}',
 														value: '#{escape_javascript(email)}' }" }
@@ -39,45 +39,6 @@
 
 <h3 class= "title"><%= @page_title = t('.account_settings') %><span class="big-text normal"> - <%= current_account.name %></span></h3>
 
-<div class="account-content"> 
-	<ul class="ui-form">
-	  
-	  <li class="inline-field">
-	  		<%= content_tag(:label, t('account_admin'), :class => "caption") %>
-				
-				<div class="fields">
-					
-					<% if current_account.all_admins.size > 1 %>
-						
-						<div id="admin-name">
-							<%= content_tag(:label, h(current_account.account_admin.name_details), :class => "bold pull-left") %> 
-							<%= link_to_function "#{t('change')}", :class => "change-admin-link", :id => "change-link" %>
-						</div>
-
-						<div id="admin-form" class="hide" >
-							<% form_tag({:action => 'change_account_admin', :controller => :users }, {  
-	  						:id => "account-admin-form"}) do %>
-							      
-								<%= select_tag :account_admin, options_from_collection_for_select(current_account.all_admins, :id, :name_details, :disabled => current_account.account_admin.id)  %>
-
-								<%= link_to_function "#{t('update')}", "jQuery(this).parents('form:first').trigger('submit')", :class => "btn btn-primary" %>
-
-								<%= link_to_function "#{t('cancel')}", :class => "change-admin-link btn" %>
-							
-							<% end %>
-						</div>
-    
-					<% else %>
-						
-						<%= content_tag(:label, h(current_account.account_admin.name_details), :class => "bold") %> 
-					<% end %>
-	    	</div>
-			
-	  </li>	
-	</ul>
-</div>
-
-<br />
 <div class="account-content">
 	 
 	<% form_for :account_configuration, @account_configuration, :url => { :controller => 

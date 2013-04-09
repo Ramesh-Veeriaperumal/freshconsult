@@ -28,11 +28,7 @@ class SAAS::SubscriptionActions
   end
   
   private
-    
-    def drop_except_account_admin(account)
-      account.users.update_all({:deleted => true}, { :helpdesk_agent => true, :account_admin => false })
-    end
-    
+        
     def update_features(account, old_subscription)
       account.remove_features_of old_subscription.subscription_plan.canon_name
       account.reload

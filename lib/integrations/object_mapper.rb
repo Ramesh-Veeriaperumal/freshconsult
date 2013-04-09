@@ -102,7 +102,7 @@ class Integrations::ObjectMapper
         },
         :map=>[
           {:ours=>"body", :theirs_to_ours=>{:value=>"JIRA comment {{notification_cause}} # {{comment.id}}:\n {{comment.body}}\n"}}, 
-          {:ours=>"user", :theirs_to_ours=>{:handler=>:db_fetch, :use_if_empty=>"account_admin", :entity=>User, :using=>{:conditions=>["email=?", "{{comment.author}}"]}}},
+          {:ours=>"user", :theirs_to_ours=>{:handler=>:db_fetch, :use_if_empty=>"admin", :entity=>User, :using=>{:conditions=>["email=?", "{{comment.author}}"]}}},
           {:ours=>"source", :theirs_to_ours=>{:handler=>:static_value, :value=>0}},
           {:ours=>"private", :theirs_to_ours=>{:handler=>:static_value, :value=>true}},
           {:ours=>"notable", :theirs_to_ours=>{:handler=>:db_fetch, :entity=>Helpdesk::Ticket, 

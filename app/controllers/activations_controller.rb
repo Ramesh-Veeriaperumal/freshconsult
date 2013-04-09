@@ -24,20 +24,21 @@ class ActivationsController < SupportController
       flash[:notice] = t('users.activations.code_expired')
       return redirect_to new_password_reset_path
     end
-    raise Exception if @user.active? and !@user.account_admin?
   end
 
   def create
     @user = current_account.users.find(params[:id])
  
-    raise Exception if @user.active? and !@user.account_admin?
- 
     if @user.activate!(params)
       flash[:notice] = t('users.activations.success')
-      Resque::enqueue(CRM::Totango::SendUserAction, 
-                                        { :account_id => current_account.id, 
-                                        :email => @user.email, 
-                                        :activity => totango_activity(:account_activation) }) if @user.account_admin?
+      Resque::enqueue(
+        CRM::Totango::SendUserAction, 
+        { 
+          :account_id => current_account.id, 
+          :email => @user.email, 
+          :activity => totango_activity(:account_activation) 
+        }
+      ) if @user.privilege?(:manage_account)
       @current_user = @user
       redirect_to(root_url) if grant_day_pass
     else

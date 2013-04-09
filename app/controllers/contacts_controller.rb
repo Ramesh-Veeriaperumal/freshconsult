@@ -170,33 +170,29 @@ class ContactsController < ApplicationController
   end
   
   def make_occasional_agent
-    agent = build_agent
-    agent.occasional = true
     respond_to do |format|
-      if @item.save        
+      if @item.make_agent(:occasional => true)
         format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
           redirect_to @item }
         format.xml  { render :xml => @item, :status => 200 }
       else
         format.html { redirect_to :back }
-        format.xml  { render :xml => @agent.errors, :status => 500 }
+        format.xml  { render :xml => @item.errors, :status => 500 }
       end   
-    end 
+    end
   end
   
   def make_agent
-    agent = build_agent
-    agent.occasional = false
     respond_to do |format|
-      if @item.save        
+      if @item.make_agent        
         format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
           redirect_to @item }
         format.xml  { render :xml => @item, :status => 200 }
       else
         format.html { redirect_to :back }
-        format.xml  { render :xml => @agent.errors, :status => 500 }
+        format.xml  { render :xml => @item.errors, :status => 500 }
       end   
-    end 
+    end
   end
 
   def autocomplete   
@@ -266,14 +262,6 @@ protected
   end
 
   private
-
-    def build_agent
-      @item.deleted = false
-      @item.helpdesk_agent = true
-      # FIXME: will this line update roles for the user ? need to test ...
-      @item.role_ids = [current_account.roles.find_by_name("Agent").id] 
-      @item.build_agent()      
-    end
 
     def get_formatted_message(exception)
       exception.message # TODO: Proper error reporting.

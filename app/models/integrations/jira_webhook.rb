@@ -34,7 +34,7 @@ class Integrations::JiraWebhook
     end
     Rails.logger.debug "update_local #{notification_cause}, #{updated_entity_type}, #{notify_values}, installed_application #{installed_application}"
     obj_mapper = Integrations::ObjectMapper.new
-    params["account_admin"] = installed_application.account.users.account_admin.first
+    params["admin"] = installed_application.account.account_managers.first
     notify_values.each { |notify_value| obj_mapper.map_it(installed_application.account_id, notify_value, self.params) }
   end
 end

@@ -19,8 +19,10 @@
 		    <td><%= @subscription.admin_email %> <%= @subscription.admin_phone %> </td>
 		  </tr>
 		  <tr>
-		    <th>Last login</th>
-		    <td><%= @subscription.account.account_admin.last_login_at %> Login count - <%=@subscription.account.account_admin.login_count%> Valid - <%=@subscription.account.account_admin.valid?%></td>
+		    <th>Non-Active Agents</th>
+        <%= @subscription.account.technicians.active(false).each do |agent| %>
+		      <td> <%= agent.email %> </td>
+        <%= end %>
 		  </tr>
 		  <tr>
 		    <th>Monthly Revenue</th>

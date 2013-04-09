@@ -2,13 +2,13 @@
 <div class="row-fluid new-role">
 	<div>
 		<ul class="clearfix unstyled">
- 			<li>
+ 			<li class="row-fluid">
  				<%= role_form.label :name, t('name'), :class =>'control-label span2' %> 
 				<div class="span10">
 					<%= role_form.text_field :name , :class => "text span10", :placeholder => "Agent Name"%>
 				</div>
 			</li>	
-			<li>
+			<li class="row-fluid">
 				<%= role_form.label :description, t('description'), :class =>'control-label span2' %> 
 				<div class="span10">
 					<%= role_form.text_area :description , :class => "text span10", :cols => "40", :rows => "5", 						:placeholder => "Description"%>		
