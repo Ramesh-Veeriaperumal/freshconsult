@@ -21,12 +21,11 @@ class Subscription < ActiveRecord::Base
   
   has_one :billing_address,:class_name => 'Address',:as => :addressable,:dependent => :destroy
     
-  
+
   before_create :set_renewal_at
-  before_validation :update_amount
+  before_save :update_amount
   
   before_update :cache_old_model
-  # before_update :set_discount_expiry, :if => :subscription_discount_id_changed?
   after_update :update_features 
 
   after_update :add_to_crm, :if => :free_customer?
@@ -74,9 +73,6 @@ class Subscription < ActiveRecord::Base
     sum('amount/renewal_period', :conditions => [ " state = 'active' and amount > 0.00 and next_renewal_at > '#{(Time.zone.now.ago 5.days).to_s(:db)}'"]).to_f
   end
 
-  # def set_discount_expiry
-  #   self.discount_expires_at = discount.calculate_discount_expiry if discount
-  # end
   
   # This hash is used for validating the subscription when a plan
   # is changed.  It includes both the validation rules and the error
@@ -189,7 +185,7 @@ class Subscription < ActiveRecord::Base
         self.amount = subscription_plan.amount
       else
         response = Billing::Subscription.new.calculate_estimate(self)
-        self.amount = (response.estimate.amount/100).to_i
+        self.amount = (response.estimate.amount/100.0).round.to_f
       end
     end
     

@@ -17,13 +17,11 @@ class Billing::BillingController < ApplicationController
   INVOICE_TYPES = { :recurring => "0", :non_recurring => "1" }
 
   META_INFO = { :plan => :subscription_plan_id, :renewal_period => :renewal_period, 
-                :agents => :agent_limit, :free_agents => :free_agents, 
-                :discount => :subscription_discount_id}
+                :agents => :agent_limit, :free_agents => :free_agents }
 
   ADDRESS_INFO = { :first_name => :first_name, :last_name => :last_name, :address1 => :billing_addr1,
                     :address2 => :billing_addr2, :city => :billing_city, :state => :billing_state,
                     :country => :billing_country, :zip => :billing_zip  }
-
 
   IN_TRIAL = "in_trial"
   CANCELLED = "cancelled"
@@ -33,7 +31,6 @@ class Billing::BillingController < ApplicationController
   FREE = "free"
   ACTIVE = "active"  
   SUSPENDED = "suspended"              
-
 
   
   def trigger
@@ -195,7 +192,7 @@ class Billing::BillingController < ApplicationController
 
       return billing_address.update_attributes(address(card)) if billing_address
 
-      billing_address = build_billing_address(address(card))
+      billing_address = subscription.build_billing_address(address(card))
       billing_address.account = account
       billing_address.save
     end

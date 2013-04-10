@@ -51,7 +51,7 @@ class Billing::Subscription
   def calculate_estimate(subscription)
     data = subscription_data(subscription).merge(:id => subscription.account_id) 
 
-    ChargeBee::Estimate.update_subscription(:subscription => data)
+    ChargeBee::Estimate.update_subscription(:subscription => data, :end_of_term => true)
   end
 
   def update_subscription(subscription, prorate)
@@ -80,7 +80,7 @@ class Billing::Subscription
     ChargeBee::Invoice.charge_addon( add_on_data(account, quantity) )                                           
   end
 
-  def delete_subscription(account)
+  def cancel_subscription(account)
     begin
       ChargeBee::Subscription.cancel(account.id)
     rescue Exception => e
