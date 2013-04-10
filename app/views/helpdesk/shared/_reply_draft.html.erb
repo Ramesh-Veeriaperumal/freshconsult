@@ -13,15 +13,21 @@ function autosave(){
     var setval = replyEditor.getCode();
     if(jQuery.trim(setval)!="")
     {
-      jQuery("#reply-draft").show();
-      jQuery("#draft-save").text("<%= t('saving_draft') %>");
+      jQuery("#reply-draft").show().addClass('saving');
+      jQuery("#draft-save").text("<%= "#{t('draft')} #{t('saving_draft')}" %>");
       jQuery("#clear-draft").hide();
-      <%= remote_function :url => save_draft_helpdesk_ticket_path, :method => :post, :with => "'draft_data=' + encodeURIComponent(setval)" %>
-      savetime = new Date()
-      setTimeout(function(){
-        jQuery("#draft-save").text("<%= t('saved_draft') %>");
-        jQuery("#clear-draft").show();
-      },1000);
+      jQuery.ajax({
+        url: '<%=save_draft_helpdesk_ticket_path%>',
+        type: 'POST',
+        data: {draft_data: setval},
+        success: function(response) {
+          jQuery("#draft-save").text("<%= "#{t('draft')} #{t('saved_draft')}" %>");
+          jQuery("#clear-draft").show();
+          jQuery("#reply-draft").removeClass('saving');
+          savetime = new Date();
+        }
+      })
+      <%# remote_function :url => save_draft_helpdesk_ticket_path, :method => :post, :with => "'draft_data=' + encodeURIComponent(setval)" %>
       isDirty = false;
     }
   }
@@ -43,7 +49,7 @@ jQuery("#ReplyButton").bind('click', function(){
     isDirty = false;
     setInterval( function(){autosave();}, 30000);
     if(!draftClearedFlag){
-      jQuery("#draft-save").text("<%= t('saved_draft') %>");
+      jQuery("#draft-save").text("<%= "#{t('draft')} #{t('saved_draft')}" %>");
       jQuery("#clear-draft").show();
       jQuery("#reply-draft").show();
     }else{

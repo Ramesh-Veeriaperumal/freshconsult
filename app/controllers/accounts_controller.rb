@@ -4,16 +4,12 @@ class AccountsController < ApplicationController
   include FreshdeskCore::Model
   
   layout :choose_layout 
-
+  
   skip_before_filter :set_locale, :except => [:cancel, :show, :edit]
   skip_before_filter :set_time_zone, :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show]
   skip_before_filter :check_account_state
   skip_before_filter :redirect_to_mobile_url
-  skip_before_filter :check_day_pass_usage, :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show]
-  skip_filter :select_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
   
-  around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
-   
   before_filter :build_user, :only => [ :new, :create ]
   before_filter :build_metrics, :only => [ :create ]
   before_filter :load_billing, :only => [ :show, :new, :create, :payment_info ]
@@ -437,15 +433,9 @@ class AccountsController < ApplicationController
                 Rails.logger.error("Error while building conversion metrics with session params: \n #{params[:session_json]} \n#{e.message}\n#{e.backtrace.join("\n")}")
            end
 
-        end  
-
-      def select_latest_shard(&block)
-        Sharding.select_latest_shard(&block)
-      end   
+        end      
 
     private
-
-      
 
       def add_to_crm
         Resque.enqueue(Marketo::AddLead, { :account_id => @account.id, :cookie => ThirdCRM.fetch_cookie_info(request.cookies) })

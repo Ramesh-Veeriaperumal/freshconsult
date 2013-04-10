@@ -1,0 +1,55 @@
+<% if is_application_installed?("jira")  %>
+<% installedApp = get_app_details("jira") %>
+<% jira_integrated_resource = Integrations::IntegratedResource.find_by_installed_application_id_and_local_integratable_id(installedApp, @ticket.id) %>
+
+<div class="widget dialog-widget" id="jira_issue">
+	<span id="jira_issue_icon"> 
+		<%= link_to image_tag("/images/spacer.gif", :width => "24px", :height => "24px"), "#", :class=> (jira_integrated_resource.nil?) ? 'jira' : 'jira_active' %>
+	</span>  
+	<h3 class="title lazyload" rel="freshdialog" title="<%= h(installedApp.configs_title)%>"
+		data-width="390" data-target="#jira_widget_dialog" 
+		data-lazyload="true" data-template-footer="">
+		
+		<div class="subtitle">
+			<%=t( "ticket.integrations.jira.#{jira_integrated_resource.nil? ? 'add_new' : 'existing' }")%>
+		</div>
+		<%= h(installedApp.configs_title)%>
+
+	</h3>
+</div>
+<div class="hide" id="jira_widget_dialog">
+	<textarea style="display:none" rel="lazyload">
+	  <div class="content"><div class="negtive-margin">
+	    <%
+	    @liquid_objects = {"requester" => @ticket.requester, "ticket" => @ticket, "agent" => @agent, "integrated_resource" => jira_integrated_resource} %>
+	    <% widget_code = get_app_widget_script("jira", "jira_widget", @liquid_objects) 
+	    widget_code = widget_code.gsub("}}", " | encode_html}}")
+	    %>
+	    <%= Liquid::Template.parse(widget_code).render({"ticket" => @ticket}, :filters => [Integrations::FDTextFilter]) %>
+	    <div class="loading-box" id="jira_issue_loading"></div>
+	  </div></div>
+	</textarea>
+</div>
+<% end %>
+
+<% installed_apps.each do |key,installed_app|
+  app = installed_app.application
+  unless app.blank?
+    app.widgets.each do |widget|
+      dip = widget.display_in_pages_option
+      if !dip.blank? && dip.include?('helpdesk_tickets_show_page_side_bar')
+        @ticket.load_flexifield
+        liquid_objects = {"ticket" => @ticket, "requester" => @ticket.requester }
+        widget_code = widget_script(installed_app, widget, liquid_objects) %>
+        <div id="<%=app.name%>" class="widget ">
+        	<!-- <h3 class="title"><%= h(installed_app.configs_title || t(app.display_name) )%></h3> -->
+			<div class="content">
+			<!-- <textarea style="display:none"> -->
+				<%=widget_code%>
+			<!-- </textarea> -->
+			</div>
+        </div>
+  <%  end
+    end
+  end
+end %>

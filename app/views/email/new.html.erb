@@ -15,7 +15,14 @@
   <input id="type" name="charsets" value= '{"to":"UTF-8","html":"UTF-8","subject":"UTF-8","from":"UTF-8","text":"UTF-8"}' size="30" type="hidden" />
   
   
-  <input type="text" id="attachments-count" name="attachments" />
+  <div id="form-uploads">
+    <label>Attach a file</label>
+    <input type="file" id="email_attachment_file" name="emptyfile" nameWhenFilled="attachment" fileContainer="attachment-container" fileList="attachments-list" sendFocusTo="email_attachment-body" />
+    <div class="info-data">
+      <%=t('attachment_help_info')%>
+    </div>    
+  </div>
+  <input type="hidden" id="attachments-count" name="attachments" />
 <script id="file-list-template" type="text/x-jquery-tmpl">      
   <div class="item">
     <span>

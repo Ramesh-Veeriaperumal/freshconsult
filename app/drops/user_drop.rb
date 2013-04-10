@@ -3,7 +3,7 @@ class UserDrop < BaseDrop
 	include ActionController::UrlWriter
 
 	liquid_attributes << :name  << :first_name << :last_name << :email << :phone << :mobile << 
-						:job_title << :user_role << :time_zone << :twitter_id  
+						:job_title << :user_role << :time_zone << :twitter_id << :external_id
 
 
   include Integrations::AppsUtil

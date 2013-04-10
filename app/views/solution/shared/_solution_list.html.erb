@@ -4,9 +4,9 @@
 	<%= link_to t('edit'), edit_solution_category_folder_path(category, folder), :class => "button" unless category.is_default?%>
 </div>
 
-<h3 class="title"><%= folder.name %></h3> 
+<h3 class="title"><%= h(folder.name) %></h3> 
 <p class="intro">
-	<%= folder.description %>	
+	<%= h(folder.description) %>	
 </p> 
 <div class="intro">
 	<%=t('solution.folders.folder_form.visible_to')%>:

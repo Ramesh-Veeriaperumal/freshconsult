@@ -295,9 +295,9 @@ protected
     end
 
     def fetch_contacts
-       connection_to_be_used =  params[:format].eql?("xml") ? "run_on_slave" : "run_on_master"  
+       connection_to_be_used =  params[:format].eql?("xml") ? "use_persistent_read_connection" : "use_master_connection"  
        begin
-         @contacts =   Sharding.send(connection_to_be_used.to_sym) do
+         @contacts =   SeamlessDatabasePool.send(connection_to_be_used.to_sym) do
           scoper.filter(params[:letter], params[:page], params.fetch(:state, "verified"))
         end
       rescue Exception => e

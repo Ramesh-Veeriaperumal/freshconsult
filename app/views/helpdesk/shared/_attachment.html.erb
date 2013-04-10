@@ -1,28 +1,30 @@
-<li>  
-  <div class="preview_img">
-  	<% if attachment.image? %>
-  		<%= image_tag(attachment.expiring_url(:thumb), :class => "image")  %>
-	<% else %>
-		<% 
-			extname = attachment.content_file_name.split('.')[-1] 
-			extname = (["pdf", "doc", "chm", "mov", "avi", "swf", "wmv", "xls", "zip", "txt", "log", "exe"].include?(extname)) ? extname : "def" 
-		%>
-			
-		<%= image_tag("/images/filetype/file_extension_#{extname}.png") %>
-	<% end %>
-  </div>	
-  <div class="name">
-    <%= link_to truncate(h(attachment.content_file_name), { :length => 23 }), attachment, :popup => true if current_user %>
-    <%= link_to truncate(h(attachment.content_file_name), { :length => 23 }), 
-    	helpdesk_attachment_path(attachment, :access_token => params[:id]), :popup => true unless current_user %>
-  </div>
+<% unless attachment.new_record? %>
+	<li>  
+		<div class="preview_img">
+			<% if attachment.image? %>
+				<%= image_tag(attachment.expiring_url(:thumb), :class => "image")  %>
+		<% else %>
+			<% 
+				extname = attachment.content_file_name.split('.')[-1] 
+				extname = (["pdf", "doc", "chm", "mov", "avi", "swf", "wmv", "xls", "zip", "txt", "log", "exe"].include?(extname)) ? extname : "def" 
+			%>
+				
+			<%= image_tag("/images/filetype/file_extension_#{extname}.png") %>
+		<% end %>
+		</div>	
+		<div class="name">
+			<%= link_to truncate(h(attachment.content_file_name), { :length => 23 }), attachment, :popup => true if current_user %>
+			<%= link_to truncate(h(attachment.content_file_name), { :length => 23 }), 
+				helpdesk_attachment_path(attachment, :access_token => params[:id]), :popup => true unless current_user %>
+		</div>
 
-  <div class="size">
-    (<%= number_to_human_size attachment.content_file_size %>)
-	  <% if local_assigns[:show_delete] %>
-	    <span class="delete">
-	      <%= link_to image_tag("icons/btn_close_icon.png"), helpdesk_attachment_path(attachment), :method => 'delete', :confirm => "You're about to permanently delete this attachment. Continue?", :class => "delete" %>
-	    </span>
-	  <% end %>
-  </div>  
-</li>
+		<div class="size">
+			(<%= number_to_human_size attachment.content_file_size %>)
+			<% if local_assigns[:show_delete] %>
+				<span class="delete">
+					<%= link_to image_tag("icons/btn_close_icon.png"), helpdesk_attachment_path(attachment), :method => 'delete', :confirm => "You're about to permanently delete this attachment. Continue?", :class => "delete" %>
+				</span>
+			<% end %>
+		</div>  
+	</li>
+<% end %>

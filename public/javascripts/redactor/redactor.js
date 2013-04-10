@@ -18,9 +18,10 @@ if (typeof RELANG === 'undefined')
 	var RELANG = {};
 }
 //⌘⇧7
-var ctrlkeyname = (navigator.appVersion.indexOf("Mac") != -1) ? "⌘" : "Ctrl-"
-var shiftkeyname = (navigator.appVersion.indexOf("Mac") != -1) ? "⇧" : "Shift-"
-var altkeyname = (navigator.appVersion.indexOf("Mac") != -1) ? "-Alt-" : "Alt-"
+var isMacintosh = navigator.appVersion.indexOf("Macintosh") > -1
+var ctrlkeyname = isMacintosh ? "⌘" : "Ctrl-"
+var shiftkeyname = isMacintosh ? "⇧" : "Shift-"
+var altkeyname = isMacintosh ? "-Alt-" : "Alt-"
 var RLANG = {
 	html: 'HTML',
 	video: 'Insert Video...',
@@ -79,7 +80,7 @@ var RLANG = {
 	choose: 'Select Existing',
 	choose_text: 'Showing recent 20 images',
 	or_choose: 'Or choose',
-	drop_file_here: 'Drop and Drop Image file here to upload',
+	drop_file_here: 'Drag and Drop Image file here to upload',
 	align_left:	'Align Left (' + ctrlkeyname + shiftkeyname + 'L)',	
 	align_center: 'Align Center (' + ctrlkeyname + shiftkeyname + 'E)',
 	align_right: 'Align Right (' + ctrlkeyname + shiftkeyname + 'R)',
@@ -924,7 +925,7 @@ Redactor.prototype = {
 				else if(key === 37)	
 				{
 					//Ctrl + left arrow
-					if(navigator.userAgent.indexOf('Firefox') > -1)
+					if(isMacintosh && $.browser.mozilla)
 					{
 						e.preventDefault();
 						this.getSelection().modify("move", "backward", "lineboundary");

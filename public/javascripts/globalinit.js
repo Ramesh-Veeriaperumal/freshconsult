@@ -2,7 +2,12 @@
  * @author venom
  */
 var $J = jQuery.noConflict();
- 
+
+is_touch_device = function() {
+  return !!('ontouchstart' in window) // works on most browsers 
+      || !!('onmsgesturechange' in window); // works on ie10
+};
+
 (function($){
    // Global Jquery Plugin initialisation
    // $.fn.qtip.baseIndex = 10000;   
@@ -15,6 +20,11 @@ var $J = jQuery.noConflict();
     var hideWatcherTimer;
     var insideCalendar = false;
     var closeCalendar = false;
+
+
+    if (is_touch_device()) {
+      $('html').addClass('touch');
+    }
 
     $("body").click(function(ev){
       hideWidgetPopup(ev);
@@ -162,11 +172,19 @@ var $J = jQuery.noConflict();
 
     $("a[rel=contact-hover],[rel=hover-popover]").live('mouseenter',function(ev) {
         ev.preventDefault();
-        clearTimeout(hidePopoverTimer);
-        hideActivePopovers(ev);
-        widgetPopup = $(this).popover('show');
-        hoverPopup = true;
+        var element = $(this);
+        // Introducing a slight delay so that the popover does not show up
+        // when just passing thru this element.
+        var timeoutDelayShow = setTimeout(function(){
+          clearTimeout(hidePopoverTimer);
+          hideActivePopovers(ev);
+          widgetPopup = element.popover('show');
+          hoverPopup = true;
+        }, 500);
+        element.data('timeoutDelayShow', timeoutDelayShow);
+
       }).live('mouseleave',function(ev) {
+          clearTimeout($(this).data('timeoutDelayShow'));
           hidePopoverTimer = setTimeout(function() { widgetPopup.popover('hide'); hoverPopup = false;},1000);
       });
 
@@ -181,10 +199,17 @@ var $J = jQuery.noConflict();
 
     // - Add Watchers
     $("#monitor").live('mouseenter',function(ev) {
-        clearTimeout(hidePopoverTimer);
-        hideActivePopovers(ev);
-        $("#new_watcher_page").show();
+        var element = $(this);
+        // Introducing a slight delay so that the popover does not show up
+        // when just passing thru this element.
+        var timeoutDelayShow = setTimeout(function(){
+          clearTimeout(hidePopoverTimer);
+          hideActivePopovers(ev);
+          $("#new_watcher_page").show();
+        }, 500);
+        element.data('timeoutDelayShow', timeoutDelayShow);
       }).live('mouseleave',function(ev) {
+          clearTimeout($(this).data('timeoutDelayShow'));
           hidePopoverTimer = setTimeout(function() { $("#new_watcher_page").hide(); },1000);
       });    
 
@@ -223,11 +248,12 @@ var $J = jQuery.noConflict();
       $("[rel=remote]").livequery(function(){
         $(this).bind("afterShow", function(ev){
           var _self = $(this);
-          if(_self.data('remoteUrl'))
+          if(_self.data('remoteUrl')) {
             _self.append("<div class='loading-box'></div>");
             _self.load(_self.data('remoteUrl'), function(){
                 _self.data('remoteUrl', false);
             });
+          }
         });
       });
       
@@ -281,7 +307,7 @@ var $J = jQuery.noConflict();
       })
       // $("form.uniForm").validate(validateOptions);
       $("form.ui-form").livequery(function(ev){
-        $(this).validate(validateOptions);
+        $(this).not(".dont-validate").validate(validateOptions);
       })
       // $("form[rel=validate]").validate(validateOptions);
 
@@ -480,6 +506,19 @@ var $J = jQuery.noConflict();
           initParallelRequest($(evnt.relatedTarget))
 
           // hideActivePopovers();
+
+          //Removing Event handlers created by New Ticket Details page:
+          if (jQuery('body').is('.ticket_details')) {
+            jQuery('body *').off('click.ticket_details');
+            jQuery('body *').off('change.ticket_details');
+            jQuery('body *').off('mouseover.ticket_details');
+            jQuery('body *').off('mouseout.ticket_details');
+            jQuery('body *').off('mouseenter.ticket_details');
+            jQuery('body *').off('mouseleave.ticket_details');
+            jQuery('body *').off('change.ticket_details');
+            jQuery(window).off('unload.ticket_details');
+            jQuery(window).off('scroll.ticket_details');
+          }
 
           return true;
       }).bind('pjax:end',function(evnt,xhr,settings){

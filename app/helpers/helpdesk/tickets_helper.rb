@@ -222,7 +222,7 @@ module Helpdesk::TicketsHelper
     o.join
   end
   
-  def bind_last_conv (item, signature, forward = false)
+  def bind_last_conv (item, signature, forward = false, quoted=true)
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
     last_conv = (item.is_a? Helpdesk::Note) ? item : 
                 ((!forward && (last_visible_note = ticket.notes.visible.public.last)) ? last_visible_note : item)
@@ -255,19 +255,22 @@ module Helpdesk::TicketsHelper
         default_reply = (signature.blank?)? "<p/><div>#{reply_email_template}</div>" : "<p/><div>#{reply_email_template}<br/>#{signature}</div>" #Adding <p> tag for the IE9 text not shown issue
       end 
     end
+
+    return default_reply unless quoted or forward
+    
     content = default_reply+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
               "<span class='separator' /> , "+ last_reply_by +" wrote:"+
               last_reply_content+"</blockquote></div>"
     return content
   end
 
-  def bind_last_reply (item, signature, forward = false)
+  def bind_last_reply (item, signature, forward = false, quoted = false)
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
     # last_conv = (item.is_a? Helpdesk::Note) ? item : 
                 # ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
     key = 'HELPDESK_REPLY_DRAFTS:'+current_account.id.to_s+':'+current_user.id.to_s+':'+ticket.id.to_s
 
-    return ( get_key(key) || bind_last_conv(item, signature) )
+    return ( get_key(key) || bind_last_conv(item, signature, false, quoted) )
   end
 
   
@@ -293,6 +296,31 @@ module Helpdesk::TicketsHelper
     show_params
   end
 
+  def multiple_emails_container(emails)
+    html = ""
+    unless emails.blank?
+      if emails.length < 3
+        html << content_tag(:span, 
+                            "To: " + emails.collect{ |to_e| 
+                              to_e.gsub("<","&lt;").gsub(">","&gt;") 
+                            }.join(", "), 
+                            :class => "") 
+      else
+        html << content_tag(:span, 
+                            "To: " + emails[0,2].collect{ |to_e| 
+                              to_e.gsub("<","&lt;").gsub(">","&gt;") 
+                            }.join(", ") + 
+                            "<span class='toEmailMoreContainer hide'>,&nbsp;" + 
+                            emails[2,emails.length].collect{ |to_e| 
+                              to_e.gsub("<","&lt;").gsub(">","&gt;") 
+                            }.join(", ") + 
+                            " </span> <a href='javascript:showHideToEmailContainer();'  class='toEmailMoreLink'> #{emails.length-2} " + 
+                            t('ticket_cc_email_more')+"</a>", :class => "")
+      end
+    end
+    html
+  end
+  
   def visible_page_numbers(options,current_page,total_pages)
     inner_window, outer_window = options[:inner_window].to_i, options[:outer_window].to_i
     window_from = current_page - inner_window
