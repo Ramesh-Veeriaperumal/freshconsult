@@ -9,8 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-
-ActiveRecord::Schema.define(:version => 20130308075546) do
+ActiveRecord::Schema.define(:version => 20130405084952) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -31,6 +30,8 @@ ActiveRecord::Schema.define(:version => 20130308075546) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "account_configurations", ["account_id"], :name => "index_for_account_configurations_on_account_id"
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -350,6 +351,16 @@ ActiveRecord::Schema.define(:version => 20130308075546) do
 
   add_index "features", ["account_id"], :name => "index_features_on_account_id"
 
+  create_table "es_enabled_accounts", :force => true do |t|
+    t.integer  "account_id", :limit => 8
+    t.string   "index_name"
+    t.boolean  "imported",                :default => true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "es_enabled_accounts", ["account_id"], :name => "index_es_enabled_accounts_on_account_id"
+
   create_table "flexifield_def_entries", :force => true do |t|
     t.integer  "flexifield_def_id",  :limit => 8, :null => false
     t.string   "flexifield_name",                 :null => false
@@ -580,12 +591,6 @@ ActiveRecord::Schema.define(:version => 20130308075546) do
   add_index "helpdesk_authorizations", ["role_token"], :name => "index_helpdesk_authorizations_on_role_token"
   add_index "helpdesk_authorizations", ["user_id"], :name => "index_helpdesk_authorizations_on_user_id"
 
-  create_table "helpdesk_classifiers", :force => true do |t|
-    t.string "name",       :null => false
-    t.string "categories", :null => false
-    t.binary "data"
-  end
-
   create_table "helpdesk_dropboxes", :id => false, :force => true do |t|
     t.integer  "id",             :limit => 8, :null => false
     t.text     "url"
@@ -609,18 +614,6 @@ ActiveRecord::Schema.define(:version => 20130308075546) do
  
   add_index "helpdesk_external_notes", ["account_id", "installed_application_id", "external_id"], :name => "index_helpdesk_external_id", :length => {"installed_application_id"=>nil, "external_id"=>"20", "account_id"=>nil}
   add_index "helpdesk_external_notes", ["id"], :name => "helpdesk_external_notes_id"
-
-  create_table "helpdesk_form_customizers", :force => true do |t|
-    t.string   "name"
-    t.text     "json_data"
-    t.integer  "account_id",     :limit => 8
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.text     "agent_view"
-    t.text     "requester_view"
-  end
-
-  add_index "helpdesk_form_customizers", ["account_id"], :name => "index_helpdesk_form_customizers_on_account_id", :unique => true
 
   create_table "helpdesk_issues", :force => true do |t|
     t.string   "title"
@@ -823,7 +816,6 @@ ActiveRecord::Schema.define(:version => 20130308075546) do
   add_index "helpdesk_schema_less_tickets", ["string_tc01", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_01", :length => {"account_id"=>nil, "string_tc01"=>"10"}
   add_index "helpdesk_schema_less_tickets", ["string_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_02", :length => {"account_id"=>nil, "string_tc02"=>"10"}
   add_index "helpdesk_schema_less_tickets", ["ticket_id", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_account_id_ticket_id", :unique => true
-
 
   create_table "helpdesk_subscriptions", :force => true do |t|
     t.integer  "user_id",    :limit => 8

@@ -32,7 +32,7 @@ class Helpdesk::Note < ActiveRecord::Base
   has_one :schema_less_note, :class_name => 'Helpdesk::SchemaLessNote',
           :foreign_key => 'note_id', :autosave => true, :dependent => :destroy
 
-  attr_accessor :nscname, :disable_observer, :send_survey
+  attr_accessor :nscname, :disable_observer, :send_survey, :quoted_text
   attr_protected :attachments, :notable_id
   has_one :external_note, :class_name => 'Helpdesk::ExternalNote',:dependent => :destroy
   
@@ -40,11 +40,12 @@ class Helpdesk::Note < ActiveRecord::Base
   before_save :load_schema_less_note, :update_category
   after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
   after_commit_on_create :update_ticket_states, :notify_ticket_monitor
+  after_update :update_search_index
 
   accepts_nested_attributes_for :tweet , :fb_post
   
   unhtml_it :body
-  
+  # xss_terminate :html5lib_sanitize => [:body_html,:body]
   named_scope :newest_first, :order => "created_at DESC"
   named_scope :visible, :conditions => { :deleted => false } 
   named_scope :public, :conditions => { :private => false } 
@@ -58,6 +59,24 @@ class Helpdesk::Note < ActiveRecord::Base
   named_scope :freshest, lambda { |account|
     { :conditions => ["deleted = ? and account_id = ? ", false, account], 
       :order => "helpdesk_notes.created_at DESC"
+    }
+  }
+  named_scope :since, lambda { |last_note_id|
+    { :conditions => ["helpdesk_notes.id > ? ", last_note_id], 
+      :order => "helpdesk_notes.created_at DESC"
+    }
+  }
+  
+  named_scope :before, lambda { |first_note_id|
+    { :conditions => ["helpdesk_notes.id < ? ", first_note_id], 
+      :order => "helpdesk_notes.created_at DESC"
+    }
+  }
+  
+  named_scope :for_quoted_text, lambda { |first_note_id|
+    { :conditions => ["source != ? AND helpdesk_notes.id < ? ",SOURCE_KEYS_BY_TOKEN["forward_email"], first_note_id], 
+      :order => "helpdesk_notes.created_at DESC",
+      :limit => 4
     }
   }
   
@@ -237,6 +256,18 @@ class Helpdesk::Note < ActiveRecord::Base
       :response_time_by_bhrs => resp_time_bhrs) unless resp_time.blank?
   end
 
+  def kind
+    return "private_note" if private_note?
+    return "public_note" if public_note?
+    return "forward" if fwd_email?
+    "reply"
+  end
+
+  def liquidize_body
+    attachments.empty? ? body_html : 
+      "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
+  end
+
   protected
 
     def update_content_ids
@@ -281,6 +312,7 @@ class Helpdesk::Note < ActiveRecord::Base
           send_reply_email
           create_fwd_note_activity(self.to_emails) if fwd_email?
         end
+        notable.responder ||= self.user
       end
       # syntax to move code from delayed jobs to resque.
       #Resque::MyNotifier.deliver_reply( notable.id, self.id , {:include_cc => true})
@@ -293,8 +325,9 @@ class Helpdesk::Note < ActiveRecord::Base
       if fwd_email?
         Helpdesk::TicketNotifier.send_later(:deliver_forward, notable, self)
       elsif self.to_emails.present? or self.cc_emails.present? or self.bcc_emails.present? and !self.private
-        Helpdesk::TicketNotifier.send_later(:deliver_reply, notable, self, {:include_cc => self.cc_emails.blank? , 
-                :send_survey => ((!self.send_survey.blank? && self.send_survey == 1) ? true : false)})
+        Helpdesk::TicketNotifier.send_later(:deliver_reply, notable, self, {:include_cc => self.cc_emails.present? , 
+                :send_survey => ((!self.send_survey.blank? && self.send_survey.to_i == 1) ? true : false),
+                :quoted_text => self.quoted_text})
       end
     end
 
@@ -309,7 +342,7 @@ class Helpdesk::Note < ActiveRecord::Base
         cc_emails.delete_if {|email| (email == notable.requester.email)}
         cc_email_hash_value[:cc_emails] = cc_emails
       end
-      notable.update_attribute(:cc_email, cc_email_hash_value)     
+      notable.cc_email = cc_email_hash_value    
     end
 
     def add_activity
@@ -360,11 +393,9 @@ class Helpdesk::Note < ActiveRecord::Base
       end
     end
 
-    def liquidize_body
-      attachments.empty? ? body_html : 
-        "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
+    def update_search_index
+      notable.update_es_index
     end
-
     
   private
     def human_note_for_ticket?
@@ -385,7 +416,7 @@ class Helpdesk::Note < ActiveRecord::Base
       begin
         super
       rescue NoMethodError => e
-        logger.debug "method_missing :: args is #{args.inspect} and method:: #{method}"  
+        Rails.logger.debug "method_missing :: args is #{args.inspect} and method:: #{method}"  
         if (load_schema_less_note && schema_less_note.respond_to?(method))
           args = args.first if args && args.is_a?(Array)
           (method.to_s.include? '=') ? schema_less_note.send(method, args) : schema_less_note.send(method)

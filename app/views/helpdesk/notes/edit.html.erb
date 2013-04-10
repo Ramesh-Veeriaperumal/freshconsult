@@ -21,7 +21,7 @@
 <% content_for :main_panel_content  do %>
   <%= render(:partial => '/helpdesk/shared/note_form', :locals => {
     :id => 'add-note', 
-	:cntid => 'cnt-top',
+	  :cntid => 'cnt-top',
     :extra_class => 'note-edit',
     :note => [@parent, @item], 
     :submit => "Save Changes",

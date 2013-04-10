@@ -1,0 +1,25 @@
+<li id="<%= dom_id(attachment) %>">
+	<%= link_to_remote("", 
+						:url => helpdesk_attachment_path(attachment), :method => 'delete', 
+						:html => { :class =>"attachment-close" },
+						:confirm => "You're about to permanently delete this attachment. Continue?")  if local_assigns[:show_delete] %>
+	<% 
+	extname = attachment.content_file_name.split('.')[-1] 
+	# Converting 4 letter into 3 letter extensions
+	letter4 = {"jpeg" => "jpg"}
+	extname = letter4[extname] if letter4[extname].present?
+
+	extname = (["asf", "ai", "apk", "bmp", "avi", "cdr", "chm", "csv",
+				"dmg", "dwg", "eps", "exe", "fla", "flv", "gz","htm", 
+				"iso", "jar", "jpg", "js", "key", "m4a", "mdb", "mid", 
+				"mov", "mp3", "mp4", "mpg", "msi", "otf", "pdf", "php", 
+				"png", "ppt", "pptx", "html", "ps", "psd", "pub", "rar", 
+				"rb", "rtf", "sql", "svg", "swf", "tex", "tga", "tif", "ttf", "txt",
+				"vcf", "wav", "wma", "wmv", "xls", "xml", "doc",
+				"zip", "log" ].include?(extname)) ? extname : "def" 
+	%>
+	<div class="attachment-type file-types-<%= extname %>">
+		<%= link_to truncate_filename(h(attachment.content_file_name)), attachment, :popup => true, :title => h(attachment.content_file_name) %>
+		<span>(<%= number_to_human_size attachment.content_file_size %>)</span>
+	</div>
+</li>

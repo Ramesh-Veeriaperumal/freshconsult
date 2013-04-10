@@ -7,6 +7,7 @@ class SupportController < ApplicationController
   :if => proc { |controller|
     controller_name = controller.controller_name
     controller.cache_enabled? && 
+    !controller_name.eql?('search') &&
     !controller_name.eql?('feedback_widgets') &&
     (controller_name.eql?("theme") || !controller.send(:current_user)) && 
     controller.send('flash').keys.blank?
@@ -22,6 +23,10 @@ class SupportController < ApplicationController
   protected
     def set_portal_page page_token
       @skip_liquid_compile = false
+
+      # Name of the page to be used to render the static or dynamic page
+      @current_page_token = page_token.to_s
+
       # Setting up page layout variable
       process_page_liquid page_token
 
@@ -92,7 +97,7 @@ class SupportController < ApplicationController
         @current_tab ||= "home"
       elsif [ :discussions_home, :topic_list, :topic_view, :new_topic ].include?(token)
         @current_tab ||= "forums"
-      elsif [ :solution_home, :article_list, :article_view ].include?(token)
+      elsif [ :solution_home, :solution_category, :article_list, :article_view ].include?(token)
         @current_tab ||= "solutions"
       elsif [ :ticket_list, :ticket_view ].include?(token)
         @current_tab ||= "tickets"

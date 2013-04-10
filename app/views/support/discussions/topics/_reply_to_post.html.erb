@@ -4,11 +4,11 @@
 		:html => { :multipart => true, :rel => "validate" } do |f| -%>		
 		<div class="row-fluid">
 			<p class="span12">
-				<%= f.rich_editor :body_html, "editor-type" => :forum, :class=>"required", :height => 150 %>
+				<%= f.rich_editor :body_html, "editor-type" => :forum, :class=>"required", :height => "150px" %>
 			</p>
 		</div>
 		<div class="control-group">
-			<label class="control-label">Attach files</label>	
+			<label class="control-label"><%= t('attach_files') %></label>	
 			<% attach_id = attach_id || "post" %>
 			<div class="controls">
 				<input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="post[attachments][][resource]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
@@ -20,7 +20,7 @@
 			<script id="file-list-template" type="text/x-jquery-tmpl">			
 			  <div class="item">
 			  	<span>
-			  		${name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="${inputId}">remove</a>
+			  		${name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="${inputId}"><%= t('remove') %></a>
 				</span>
 			  </div>
 			</script>

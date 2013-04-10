@@ -44,15 +44,19 @@ class Forum < ActiveRecord::Base
 
 
   named_scope :visible, lambda {|user| {
-                    :joins => "LEFT JOIN `customer_forums` ON customer_forums.forum_id = forums.id
-                                and customer_forums.account_id = forums.account_id ",
+                    # :joins => "LEFT JOIN `customer_forums` ON customer_forums.forum_id = forums.id
+                    #             and customer_forums.account_id = forums.account_id ",
                     :conditions => visiblity_condition(user) } }
 
 
   def self.visiblity_condition(user)
     condition =  {:forum_visibility =>self.visibility_array(user) }
-    condition =  Forum.merge_conditions(condition) + " OR ( forum_visibility = #{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]} AND 
-                customer_forums.customer_id = #{user.customer_id} )" if (user && user.has_company?)
+    condition =  Forum.merge_conditions(condition) + " OR 
+                  ( forum_visibility = #{Forum::VISIBILITY_KEYS_BY_TOKEN[:company_users]} 
+                    AND forums.id IN (SELECT customer_forums.forum_id from customer_forums
+                                      where customer_forums.customer_id = #{user.customer_id} and 
+                                      customer_forums.account_id = #{user.account_id}))"  if (user && user.has_company?)
+                # customer_forums.customer_id = #{user.customer_id} )"  if (user && user.has_company?)
     return condition
   end
 
@@ -84,9 +88,11 @@ class Forum < ActiveRecord::Base
   
   format_attribute :description
   attr_protected :forum_category_id , :account_id
-
+  # xss_terminate  :html5lib_sanitize => [:description_html,:description]
+ 
   # after_save :set_topic_delta_flag
-  before_update :clear_customer_forums
+  before_update :clear_customer_forums, :backup_forum_changes
+  after_commit_on_update :update_search_index, :if => :forum_visibility_updated?
   
   def after_create 
     create_activity('new_forum')
@@ -202,5 +208,20 @@ class Forum < ActiveRecord::Base
                         }
     )
   end
+
+  def update_search_index
+    Resque.enqueue(Search::IndexUpdate::ForumTopics, { :current_account_id => account_id, :forum_id => id })
+  end
+
+  private
+
+    def backup_forum_changes
+      @all_changes = self.changes.clone
+      @all_changes.symbolize_keys!
+    end
+
+    def forum_visibility_updated?
+      @all_changes.has_key?(:forum_visibility)
+    end
    
 end

@@ -104,11 +104,25 @@ var NestedField = Class.create({
       _categories = [];
       this.tree.each(function(o){  _categories.push("<option value="+o.value.id+">"+o.key+"</option>") });         
       return _categories.join();
+  },
+  getCategoryEscaped: function(){
+      _categories = [];
+      this.tree.each(function(o){ _categories.push("<option value="+escapeHtml(o.value.id)+">"+escapeHtml(o.key)+"</option>") });         
+      return _categories.join();
   }, 
   getSubcategory: function(category_key){
       _subcategories = [];
-      if(this.tree.get(category_key).children)
+      if(this.tree.get(category_key) && this.tree.get(category_key).children)
         this.tree.get(category_key).children.each(function(o){ _subcategories.push("<option value="+o.value.id+">"+o.key+"</option>") });          
+      if(!_subcategories.first()) _subcategories = ["<option value='0'>"+this._blank+"</option>"];
+
+      //console.log("subcategory: "+_subcategories);
+      return _subcategories.join();   
+  },
+  getSubcategoryEscaped: function(category_key){
+      _subcategories = [];
+      if(this.tree.get(category_key) && this.tree.get(category_key).children)
+        this.tree.get(category_key).children.each(function(o){ _subcategories.push("<option value="+escapeHtml(o.value.id)+">"+escapeHtml(o.key)+"</option>") });          
       if(!_subcategories.first()) _subcategories = ["<option value='0'>"+this._blank+"</option>"];
 
       //console.log("subcategory: "+_subcategories);
@@ -121,6 +135,17 @@ var NestedField = Class.create({
       if(this.tree.get(category_key))
         if(this.tree.get(category_key).get(subcategory_key).children)
             this.tree.get(category_key).get(subcategory_key).children.each(function(o){ _items.push("<option value="+o.value.id+">"+o.key+"</option>") });
+
+      console.log("ITEMS: "+_items);
+      return (_items.first()) ? _items.join() : false;
+  },
+  getItemsEscaped: function(category_key, subcategory_key){    
+      _items = [];
+      console.log("category_key: "+category_key);
+      console.log("subcategory_key: "+subcategory_key);
+      if(this.tree.get(category_key))
+        if(this.tree.get(category_key).get(subcategory_key).children)
+            this.tree.get(category_key).get(subcategory_key).children.each(function(o){ _items.push("<option value="+escapeHtml(o.value.id)+">"+escapeHtml(o.key)+"</option>") });
 
       console.log("ITEMS: "+_items);
       return (_items.first()) ? _items.join() : false;
@@ -145,11 +170,11 @@ var NestedField = Class.create({
   toString: function(){
       _self = this, _treeString = "";
       _self.tree.each(function(_category){
-         _treeString += _category.key + "\n";
+         _treeString += unescapeHtml(_category.key) + "\n";
          _category.value.children.each(function(_subcategory){
-            _treeString += "\t" + _subcategory.key + "\n";  
+            _treeString += "\t" + unescapeHtml(_subcategory.key) + "\n";  
             _subcategory.value.children.each(function(_item){
-                _treeString += "\t\t" + _item.key + "\n";      
+                _treeString += "\t\t" + unescapeHtml(_item.key) + "\n";      
             });
          });
       });                              
@@ -162,11 +187,11 @@ var NestedField = Class.create({
             _category.value.children.each(function(_subcategory){  
                 var _item_array = [];
                 _subcategory.value.children.each(function(_item){
-                   _item_array.push([_item.key, _item.value.id]);  
+                   _item_array.push([escapeHtml(_item.key), escapeHtml(_item.value.id)]);  
                });                                              
-               _subcategory_array.push((_item_array.size()) ? [_subcategory.key, _subcategory.value.id, _item_array] : [_subcategory.key, _subcategory.value.id]);               
+               _subcategory_array.push((_item_array.size()) ? [escapeHtml(_subcategory.key), escapeHtml(_subcategory.value.id), _item_array] : [escapeHtml(_subcategory.key), (_subcategory.value.id)]);               
             });               
-           _category_array.push((_subcategory_array.size()) ? [_category.key, _category.value.id, _subcategory_array] : [_category.key, _category.value.id]);
+           _category_array.push((_subcategory_array.size()) ? [escapeHtml(_category.key), escapeHtml(_category.value.id), _subcategory_array] : [escapeHtml(_category.key), escapeHtml(_category.value.id)]);
         });          
         return _category_array;      
   }

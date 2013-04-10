@@ -40,7 +40,7 @@
     <label class="caption"><%= t(".top_level_forum") %></label>
     <div class="fields">
       <%= portal.collection_select :forum_category_id, @forums_categories, :id, :name, 
-          options = { :prompt =>  t(".select_forum_category")} %>
+          { :include_blank =>  t(".select_forum_category")} %>
       <%= content_tag(:div, t('.top_level_forum_info'), :class => "info-data") %>
     </div>
     
@@ -48,7 +48,7 @@
     <label class="caption"><%= t(".top_level_solution") %></label>
     <div class="fields">
       <%= portal.collection_select :solution_category_id, @solution_categories.reject(&:is_default?), 
-          :id, :name, options ={:prompt => t(".select_solution_category")} %>
+          :id, :name, {:include_blank => t(".select_solution_category")} %>
       <%= content_tag(:div, t('.top_level_solution_info'), :class => "info-data") %>
     </div>
   </div>
@@ -77,7 +77,7 @@
       <label class="caption">Helpdesk Phone</label>
       <div class="fields">
         <label class="overlabel" for="contact_info_text">Contact us @ 888 888 888</label>
-        <input name="account[main_portal_attributes][preferences][contact_info]" id="contact_info_text" 
+        <input name="product[portal_attributes][preferences][contact_info]" id="contact_info_text" 
           value="<%=portal_pref(@product.portal, :contact_info) %>" class="text auto" size="50" />
       </div>
     </div>
@@ -134,10 +134,4 @@
       <% end %>
     }
   })
-
-  jQuery('.fileAdminUpload').live("change", function(){
-    setPostParam(this.form, "redirect_url", window.location)
-    jQuery(this.form).submit()
-  })
-
 <% end %>

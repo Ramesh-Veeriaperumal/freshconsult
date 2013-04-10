@@ -54,6 +54,10 @@ class Social::TwitterHandle < ActiveRecord::Base
     end
   end
 
+  def formatted_handle
+    "@#{screen_name}"
+  end
+
   def reauth_required?
     state == TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required]
   end
@@ -61,4 +65,5 @@ class Social::TwitterHandle < ActiveRecord::Base
   def set_default_state
     self.state ||= TWITTER_STATE_KEYS_BY_TOKEN[:active]
   end
+
 end

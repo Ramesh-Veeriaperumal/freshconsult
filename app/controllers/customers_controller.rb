@@ -70,7 +70,7 @@ class CustomersController < ApplicationController
   def create
     respond_to do |format|
       if build_and_save
-        User.update_all("customer_id = #{@customer.id}", 
+         User.update_all("customer_id = #{@customer.id}", 
             ['SUBSTRING_INDEX(email, "@", -1) IN (?) and customer_id is null and user_role = ? and account_id = ?', 
             get_domain(@customer.domains), User::USER_ROLES_KEYS_BY_TOKEN[:customer], current_account.id]) unless @customer.domains.blank?
         format.html { redirect_to(@customer, :notice => 'Company was successfully created.') }

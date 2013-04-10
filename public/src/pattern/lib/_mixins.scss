@@ -497,6 +497,17 @@
     background-color: $endColor;
     *background-color: darken($endColor, 5%);
   }
+  &.disabled, &[disabled] {
+    color: $btnDisabledColor;
+    background-color: $btnDisabledBackground;
+    *background-color: darken($btnDisabledBackground, 5%);
+    @include text-shadow(1px 1px 0 invert($btnDisabledColor));
+  }
+
+  &.done {
+    color: $btnDoneColor;
+    background: $btnDoneBackground;
+  }
 
   // IE 7 + 8 can't handle box-shadow to show active, so we darken a bit ourselves
   &:active,

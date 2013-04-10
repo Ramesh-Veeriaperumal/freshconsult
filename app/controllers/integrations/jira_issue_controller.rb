@@ -94,6 +94,7 @@ class Integrations::JiraIssueController < ApplicationController
             account_id = @installed_app.account_id
             recently_updated_by_fd = get_key(INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account_id, :local_integratable_id=>local_integratable_id, :remote_integratable_id=>remote_integratable_id})
             if recently_updated_by_fd # If JIRA has been update recently with same params then ignore that event.
+              remove_key(INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account_id, :local_integratable_id=>local_integratable_id, :remote_integratable_id=>remote_integratable_id})
               @installed_app = nil
               Rails.logger.info("Recently freshdesk updated JIRA with same params. So ignoring the event.")
             end

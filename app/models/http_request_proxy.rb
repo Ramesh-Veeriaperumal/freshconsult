@@ -51,6 +51,7 @@ class HttpRequestProxy
       options[:body] = post_request_body unless post_request_body.blank?  # if the form-data is sent from the integrated widget then set the data in the body of the 3rd party api.
       options[:headers] = {"Authorization" => auth_header, "Accept" => accept_type, "Content-Type" => content_type, "User-Agent" => user_agent}.delete_if{ |k,v| v.blank? }  # TODO: remove delete_if use and find any better way to do it in single line
       options[:headers] = options[:headers].merge(params[:custom_auth_header]) unless params[:custom_auth_header].blank?
+      options[:timeout] = 30 #Returns status code 504 on timeout expiry 
       begin
         net_http_method = HTTP_METHOD_TO_CLASS_MAPPING[method.to_s]
         proxy_request = HTTParty::Request.new(net_http_method, URI.encode(remote_url), options)
@@ -65,6 +66,11 @@ class HttpRequestProxy
         response_body = proxy_response.body
         response_code = proxy_response.code
         response_type = proxy_response.headers['content-type']
+
+      rescue Timeout::Error
+        Rails.logger.error("Timeout trying to complete the request. \n#{params.inspect}")
+        response_body = '{"result":"timeout"}'
+        response_code = 504  # Timeout
       rescue => e
         Rails.logger.error("Error during #{method.to_s}ing #{remote_url.to_s}. \n#{e.message}\n#{e.backtrace.join("\n")}")  # TODO make sure any password/apikey sent in the url is not printed here.
         response_body = '{"result":"error"}'

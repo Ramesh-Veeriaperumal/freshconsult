@@ -17,10 +17,6 @@ function log() {
     // alert(entry);
   }
 }
-function autoSaveTinyMce(editor){
-   tinyMCE.triggerSave();
-   return true;
-}
 
 // Utility methods for FreshWidget  
 function catchException(fn, message) {
@@ -58,11 +54,21 @@ function plural( count, text1, text2 ){
 
 function totalTime(listClass, updateId){
  total_hours = $$(listClass)
-                .collect(function(t){ return t.innerHTML; })
+                .collect(function(t){ return jQuery(t).data('runningTime'); })
                 .inject(0, function(acc, n) { return parseFloat(acc) + parseFloat(n); });
  
- jQuery(updateId).html(sprintf( "%0.02f", total_hours));    
+ jQuery(updateId).html(time_in_hhmm(total_hours));    
 }
+
+function time_in_hhmm(seconds) {
+  var hh = parseInt(seconds/3600), mm = parseInt((seconds % 3600) / 60), ss = seconds % 60;
+  return pad2(hh) + ":" + pad2(mm); 
+}
+
+function pad2(number) {
+  return (number < 10 ? '0' : '') + number;
+}
+
 
 // Primarly for the form customizer page. Used for making the text unselectable
 makePageNonSelectable = function(source){
@@ -300,7 +306,6 @@ active_dialog = null;
           return this.each(function(i, item){
             curItem = $(item);
             var dialog = null;
-
             curItem.click(function(e){
               e.preventDefault();
             
@@ -664,6 +669,11 @@ getCookie = function(name)
     }
   }
 }
+
+deleteCookie = function(name, path) 
+{
+  setCookie(name,'',-1,path);
+}
 supports_html5_storage = function() {
   try {
     return 'localStorage' in window && window['localStorage'] !== null;
@@ -842,3 +852,17 @@ Date.prototype.toISOStringCustom = function() {
             + pad(this.getMinutes()) + ':'
             + pad(this.getSeconds()) +"."+pad(this.getMilliseconds()) +"+1100";
     };
+
+function escapeHtml(str) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+};
+
+function unescapeHtml(escapedStr) {
+        var div = document.createElement('div');
+        div.innerHTML = escapedStr;
+        var child = div.childNodes[0];
+        return child ? child.nodeValue : '';
+};
+

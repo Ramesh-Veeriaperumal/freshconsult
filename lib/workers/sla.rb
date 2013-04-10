@@ -61,7 +61,11 @@ class Workers::Sla
     ##Tickets left unassigned in group
     
     tickets_unpicked =  execute_on_db(db_name) {
-                          account.tickets.visible.find(:all, :joins => [:ticket_states,:group] ,
+                          account.tickets.visible.find(:all, 
+                            :joins => "inner join helpdesk_ticket_states 
+                            on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
+                            and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id 
+                            inner join groups on groups.id = helpdesk_tickets.group_id" ,
                           :readonly => false , 
                            :conditions =>['DATE_ADD(helpdesk_tickets.created_at, INTERVAL groups.assign_time SECOND)  <=? AND 
                             group_escalated=? AND status=? AND helpdesk_ticket_states.first_assigned_at IS ?', 
@@ -88,7 +92,7 @@ class Workers::Sla
                                 'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
     email_body = Liquid::Template.parse(e_notification.formatted_agent_template).render(
                                 'agent' => agent, 'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
-    SlaNotifier.deliver_escalation(ticket, agent, :email_body => email_body, :subject => email_subject)
+    SlaNotifier.deliver_escalation(ticket, [agent], :email_body => email_body, :subject => email_subject)
     User.reset_current
   end
 end

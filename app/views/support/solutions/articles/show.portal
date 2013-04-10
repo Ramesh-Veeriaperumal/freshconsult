@@ -1,31 +1,30 @@
-<section class="main content rounded-6 min-height-on-desktop">
+<section class="main content rounded-6 min-height-on-desktop" id="article-show-{{ article.id }}">
 	<div class="breadcrumb">
-		<a href="{{ portal.solutions_home_url }}">Solution home</a>
-		<a href="{{ article.category.url }}">{{ article.category.name }}</a>
-		<a href="{{ article.folder.url }}">{{ article.folder.name }}</a>
+		<a href="{{ portal.solutions_home_url }}"> {% translate portal.solutions_home %} </a>
+		<a href="{{ article.category.url }}">{{ article.category.name | h}}</a>
+		<a href="{{ article.folder.url }}">{{ article.folder.name | h}}</a>
 	</div>
 	<b class="page-stamp page-stamp-article">
 		<b class="icon-page-article"></b>
 	</b>
 
-	<h2 class="heading">{{ article.title }}</h2>
+	<h2 class="heading">{{ article.title | h}}</h2>
 	<p>Modified on: {{ article.modified_on | short_day_with_time }}</p>
 
 	<hr />
 	{% comment %}
 	<div>
 		{% for tag in article.tags %}
-			<span class="label label-info">{{tag.name}}</span>
+			<span class="label label-info">{{tag.name | h}}</span>
 		{% endfor %}
 	</div>
 	{% endcomment %}
 
-	<article id="article-body">
+	<article class="article-body" id="article-body">
 		{{ article.body }}
 	</article>
 
-	<hr />
-	
+	<hr />	
 	{% if article.attachments.size > 0  %}
 	<div class="cs-g-c attachments" id="article-attachments">
 		{% for attachment in article.attachments %}
@@ -67,7 +66,7 @@
 		<section class="article-list">
 			<h3 class="list-lead">
 				More articles in
-				<span class="folder-name">{{ article.folder.name }}</span>
+				<span class="folder-name">{{ article.folder.name | h}}</span>
 			</h3>
 			{{ article.folder | article_list: 10, article }}
 		</section>

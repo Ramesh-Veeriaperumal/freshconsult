@@ -1,4 +1,4 @@
-module PortalFilters
+module Portal::PortalFilters
 	include ActionView::Helpers::TagHelper
 	include ActionView::Helpers::DateHelper
 	include ActionView::Helpers::UrlHelper

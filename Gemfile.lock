@@ -45,20 +45,15 @@ GIT
     seamless_database_pool (1.0.12)
       activerecord (>= 2.2.2)
 
-PATH
-  remote: vendor/gems/classifier-1.3.1
+GIT
+  remote: git://github.com/freshdesk/tire.git
+  revision: 8c323dc3ea6245c71cdbc9cbf9c560f571050496
   specs:
-    classifier (1.3.1)
-
-PATH
-  remote: vendor/gems/stemmer-1.0.1
-  specs:
-    stemmer (1.0.1)
-
-PATH
-  remote: vendor/gems/tiny_mce-0.1.9
-  specs:
-    tiny_mce (0.1.9)
+    tire (0.4.3)
+      hashr (~> 0.0.19)
+      multi_json (~> 1.0)
+      rake
+      rest-client (~> 1.6)
 
 PATH
   remote: vendor/gems/twitter-2.1.1
@@ -104,6 +99,7 @@ GEM
       builder
     builder (3.0.0)
     cgi_multipart_eof_fix (2.5.0)
+    chardet (0.9.0)
     chargebee (1.1.1)
       json_pure (~> 1.5)
       rest-client (~> 1.4)
@@ -127,11 +123,15 @@ GEM
     forgery (0.5.0)
     fssm (0.2.9)
     gem_plugin (0.2.3)
-    git (1.2.5)
     gyoku (0.4.6)
       builder (>= 2.1.2)
     hashie (1.2.0)
-    html2textile (1.0.0.beta1)
+    hashr (0.0.22)
+    hoe (3.5.2)
+      rake (>= 0.8, < 11.0)
+    html5 (0.10.0)
+      chardet (>= 0.9.0)
+      hoe (>= 1.2.0)
     http_accept_language (1.0.1)
     httparty (0.10.0)
       multi_json (~> 1.0)
@@ -143,11 +143,6 @@ GEM
     insensitive_hash (0.2.3)
     jammit (0.6.5)
       yui-compressor (>= 0.9.3)
-    jeweler (1.8.3)
-      bundler (~> 1.0)
-      git (>= 1.2.5)
-      rake
-      rdoc
     jira4r (0.3.0)
       soap4r
     json (1.5.5)
@@ -157,15 +152,10 @@ GEM
       multipart-post (~> 1.0)
     linecache (0.43)
     lockfile (1.4.3)
-    macaddr (1.6.1)
-      systemu (~> 2.5.0)
     map-fields (1.0.0)
       fastercsv (>= 1.2.3)
     memcache-client (1.8.5)
-    metaclass (0.0.1)
     mime-types (1.16)
-    mocha (0.11.4)
-      metaclass (~> 0.0.1)
     mongrel (1.1.5)
       cgi_multipart_eof_fix (>= 2.4)
       daemons (>= 1.0.3)
@@ -224,6 +214,8 @@ GEM
     rack-openid (1.3.1)
       rack (>= 1.1.0)
       ruby-openid (>= 2.1.8)
+    rack-throttle (0.3.0)
+      rack (>= 1.0.0)
     rails (2.3.18)
       actionmailer (= 2.3.18)
       actionpack (= 2.3.18)
@@ -232,38 +224,14 @@ GEM
       activesupport (= 2.3.18)
       rake (>= 0.8.3)
     rake (0.8.7)
-    rdoc (3.12)
-      json (~> 1.4)
     redis (2.2.2)
     redis-namespace (1.1.0)
       redis (< 3.0.0)
-    redisk (0.2.2)
-      redis (>= 0.1.1)
-      redis-namespace (>= 0.1.0)
     resque (1.22.0)
       multi_json (~> 1.0)
       redis-namespace (~> 1.0)
       sinatra (>= 0.9.2)
       vegas (~> 0.1.2)
-    resque-retry (0.2.2)
-      rake
-      resque (>= 1.8.0)
-      resque-scheduler (>= 1.8.0)
-    resque-scheduler (2.0.0)
-      redis (>= 2.0.1)
-      resque (>= 1.20.0)
-      rufus-scheduler
-    resque-status (0.3.0)
-      jeweler
-      mocha (>= 0.9.8)
-      redisk (>= 0.2.1)
-      redisk (>= 0.2.1)
-      resque (>= 1.3.1)
-      resque (>= 1.3.1)
-      shoulda (>= 2.10.2)
-      uuid (>= 2.0.2)
-      uuid (>= 2.0.2)
-    resque_mailer (1.0.1)
     rest-client (1.6.7)
       mime-types (>= 1.16)
     rforce (0.8.1)
@@ -280,8 +248,6 @@ GEM
     ruby-openid-apps-discovery (1.2.0)
       ruby-openid (>= 2.1.7)
     rubyzip (0.9.4)
-    rufus-scheduler (2.0.9)
-      tzinfo (>= 0.3.23)
     sanitize (2.0.3)
       nokogiri (>= 1.4.4, < 1.6)
     sass (3.2.1)
@@ -298,13 +264,6 @@ GEM
       savon (>= 0.8.2, < 0.9.8)
     sax-machine (0.1.0)
       nokogiri (> 0.0.0)
-    searchlogic (2.4.27)
-      activerecord (>= 2.0.0)
-    shoulda (3.0.1)
-      shoulda-context (~> 1.0.0)
-      shoulda-matchers (~> 1.0.0)
-    shoulda-context (1.0.0)
-    shoulda-matchers (1.0.0)
     simple_oauth (0.2.0)
     sinatra (1.2.8)
       rack (~> 1.1)
@@ -316,20 +275,20 @@ GEM
     susy (1.0.5)
       compass (>= 0.12.2)
       sass (>= 3.2.0)
-    systemu (2.5.1)
     thinking-sphinx (1.4.3)
       activerecord (>= 1.15.6, < 3.0.0)
       after_commit (>= 1.0.7)
       riddle (>= 1.2.2)
     tilt (1.3.3)
     tzinfo (0.3.26)
-    uuid (2.3.5)
-      macaddr (~> 1.0)
+    useragent (0.4.16)
     vegas (0.1.11)
       rack (>= 1.0.0)
     wasabi (2.3.0)
       nokogiri (>= 1.4.0)
     xml-simple (1.0.15)
+    xss_terminate (0.2)
+      html5 (>= 0.10.0)
     zendesk-features (1.0.2)
 
 PLATFORMS
@@ -345,13 +304,11 @@ DEPENDENCIES
   aws-s3 (= 0.6.2)
   braintree (= 2.10.0)
   chargebee (~> 1.1.1)
-  classifier (= 1.3.1)!
   compass-rails
   deadlock_retry!
   delayed_job (= 1.8.4)
   factory_girl (= 1.2.3)
   forgery (= 0.5.0)
-  html2textile (~> 1.0.0.beta1)
   http_accept_language (= 1.0.1)
   httparty (= 0.10.0)
   i18n (= 0.4.2)
@@ -382,32 +339,28 @@ DEPENDENCIES
   omniauth-salesforce
   people (= 0.2.1)
   rack (~> 1.1.6)
+  rack-throttle (~> 0.3.0)
   rails (= 2.3.18)
   rake (= 0.8.7)
   redis (= 2.2.2)
   resque (= 1.22.0)
-  resque-retry (= 0.2.2)
-  resque-scheduler
-  resque-status (= 0.3.0)
-  resque_mailer (= 1.0.1)
   rforce
   rinku!
   ruby-debug (= 0.10.3)
   ruby-openid (= 2.1.8)
   ruby-openid-apps-discovery (= 1.2.0)
   rubyzip (= 0.9.4)
-  rufus-scheduler
   sanitize (= 2.0.3)
   sass (= 3.2.1)
   sax-machine (~> 0.1.0)
   seamless_database_pool!
-  searchlogic (= 2.4.27)
   spreadsheet (= 0.6.8)
-  stemmer (= 1.0.1)!
   susy
   thinking-sphinx (= 1.4.3)
-  tiny_mce (= 0.1.9)!
+  tire!
   twitter (= 2.1.1)!
   tzinfo
+  useragent (~> 0.4.16)
+  xss_terminate (~> 0.2)
   yui-compressor!
   zendesk-features

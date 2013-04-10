@@ -1,0 +1,2 @@
+module Search::HomeHelper
+end

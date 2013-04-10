@@ -11,8 +11,7 @@ module FormBuilders
         :tabindex => 2,
         :convertDivs => false,
         :imageUpload => "/uploaded_images",
-        :allowedTags => ["a", "div", "b", "i"],
-        :imageGetJson => "/uploaded_images",
+        :allowedTags => ["a", "div", "b", "i", "iframe"],
         :buttons => ['bold','italic','underline', 'deleted','|','unorderedlist', 'orderedlist',  
                       '|','fontcolor', 'backcolor', '|' ,'link','image', 'video']
       }
@@ -57,7 +56,7 @@ module FormBuilders
         _javascript_options = redactor_opts.merge(options).to_json
 
         # Height set as :height in the redator helper object will be used as the base height for the js editor
-        options[:style] = "height:#{options[:height]}px;" if options[:height]
+        options[:style] = "height:#{options[:height]};" if options[:height]
         options[:rel] = "redactor"
         options[:class] = "redactor-textarea #{options[:class]}" 
 
