@@ -1,20 +1,45 @@
 namespace :facebook do
   desc 'Check for New facebook feeds..'
-  task :fetch => :environment do    
-    puts "Facebook task initialized at #{Time.zone.now}"
+
+  task :fetch => :environment do 
     queue_name = "FacebookWorker"
-    queue_length = Resque.redis.llen "queue:#{queue_name}"
-    puts "current Facebook que length is #{queue_length}"
-    unless   queue_length > 0
-    	puts "Facebook Queue is empty... queuing at #{Time.zone.now}"
-    	Account.active_accounts.each do |account| 
-    	    next if account.facebook_pages.empty?    
-        	Resque.enqueue( Social::FacebookWorker ,{:account_id => account.id} )              
-     	end 
+    if queue_empty?(queue_name)
+      puts "Facebook Worker initialized at #{Time.zone.now}"
+      Account.active_accounts.each do |account|
+          next if account.facebook_pages.empty?
+          Resque.enqueue( Social::FacebookWorker ,{:account_id => account.id} )           
+      end
     else
-      puts "Facebook Queue is already running . skipping at #{Time.zone.now}"  
+      puts "Facebook Worker is already running . skipping at #{Time.zone.now}" 
     end
-    puts "Facebook task finished at #{Time.zone.now}"
   end
 
+  task :comments => :environment do
+    queue_name = "FacebookCommentsWorker"
+    if queue_empty?(queue_name)
+      puts "Facebook Comments Worker initialized at #{Time.zone.now}"
+      SeamlessDatabasePool.use_persistent_read_connection do
+        Social::FacebookPage.active.find_in_batches( 
+          :joins => %(
+            LEFT JOIN  accounts on accounts.id = social_facebook_pages.account_id 
+            INNER JOIN `subscriptions` ON subscriptions.account_id = accounts.id),
+          :conditions => "subscriptions.next_renewal_at > now() "
+        ) do |page_block|
+          page_block.each do |page|
+              Resque.enqueue(Social::FacebookCommentsWorker ,
+                {:account_id => page.account_id, :fb_page_id => page.id} ) 
+          end          
+        end
+      end
+    else
+      puts "Facebook Comments Worker is already running . skipping at #{Time.zone.now}" 
+    end
+  end
+
+
+  def queue_empty?(queue_name)
+    queue_length = Resque.redis.llen "queue:#{queue_name}"
+    puts "current #{queue_name} length is #{queue_length}"
+    queue_length < 1
+  end
 end
