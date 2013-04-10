@@ -15,7 +15,7 @@ namespace :facebook do
   end
 
   task :comments => :environment do
-    queue_name = "FacebookCommentsWorker"
+    queue_name = "facebook_comments_worker"
     if queue_empty?(queue_name)
       puts "Facebook Comments Worker initialized at #{Time.zone.now}"
       SeamlessDatabasePool.use_persistent_read_connection do

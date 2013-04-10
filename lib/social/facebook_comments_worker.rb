@@ -1,6 +1,6 @@
 class Social::FacebookCommentsWorker
 	extend Resque::AroundPerform
-	@queue = "FacebookCommentsWorker"
+	@queue = "facebook_comments_worker"
 
 
 	  def self.perform(args)
