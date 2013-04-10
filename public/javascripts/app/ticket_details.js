@@ -776,7 +776,7 @@ $(document).ready(function() {
 				});
 			}
 
-			if ($('html').hasClass('ie6') || $('html').hasClass('ie7') || $('html').hasClass('ie8') || $('html').hasClass('ie9')|| $('html').hasClass('ie10')) {
+			if($.browser.msie) {
 				stopDraftSaving();
 				$.ajax({
 					url: TICKET_DETAILS_DATA['draft']['clear_path'],
