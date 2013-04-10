@@ -16,7 +16,7 @@
   	<div class="header-link-wrapper" title="<%= t("header.user_available") %>">
   		<% if feature?(:round_robin) %>
 	  		<a href="#">
-	  			<img alt="" height="35px" src="/images/spacer.gif" class="header-icons-autoAssign-on" id="available_icon" onclick="toggle_availability()">
+	  			<img alt="" height="35px" src="/images/spacer.gif" class="header-icons-autoAssign-<%= current_user.available? ? "on" : "off" %>" id="available_icon" onclick="toggle_availability()">
 	  		</a>
 	  	<% end %>
 		<a href="#" class="nav-trigger" menuid="#LoggedOptions">

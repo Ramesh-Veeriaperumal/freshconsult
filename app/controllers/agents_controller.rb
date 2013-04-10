@@ -5,12 +5,12 @@ class AgentsController < ApplicationController
   
   include Gamification::GamificationUtil
 
-  before_filter :authorized_to_manage_agents, :except => :show
-  before_filter :authorized_to_view_agents, :only => :show
+  before_filter :authorized_to_manage_agents, :except => [:show, :toggle_availability]
+  before_filter :authorized_to_view_agents, :only => [:show, :toggle_availability]
 
   skip_before_filter :check_account_state, :only => :destroy
   
-  before_filter :load_object, :only => [:update, :destroy, :restore, :edit, :toggle_availability, :reset_password ,:convert_to_contact ]
+  before_filter :load_object, :only => [:update, :destroy, :restore, :edit, :reset_password ,:convert_to_contact ]
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
   before_filter :check_user_permission, :only => [:destroy,:convert_to_contact]
   before_filter :check_agent_limit, :only =>  :restore
@@ -80,6 +80,7 @@ class AgentsController < ApplicationController
   end
 
   def toggle_availability
+    @agent = current_account.agents.find_by_user_id(params[:id])
     @agent.available = params[:value]
     @agent.save
     render :nothing => true
