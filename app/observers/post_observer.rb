@@ -27,6 +27,10 @@ class PostObserver < ActiveRecord::Observer
 		end
 	end
 
+	def after_commit(post)
+		post.topic.update_es_index
+	end
+
 	def after_destroy(post)
 		update_cached_fields(post)
 		create_activity(post, 'delete_post')
@@ -45,8 +49,8 @@ class PostObserver < ActiveRecord::Observer
 
 	private
 
-		def set_body_content(post)     
-      post.body = (post.body_html.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") unless post.body_html.empty?
+	def set_body_content(post)     
+	  post.body = Helpdesk::HTMLSanitizer.plain(post.body_html) unless post.body_html.empty?
     end
 
     def update_cached_fields(post)

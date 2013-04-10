@@ -87,15 +87,16 @@ class Integrations::JiraIssue
       http_parameter[:body] = req_data.to_json
       res_data = make_rest_call(http_parameter)
     else
-      add_comment(params[:remote_key],params[:ticket_data])
+      return add_comment(params[:remote_key],params[:ticket_data])
     end  
     if(res_data && res_data[:exception] && custom_field_id && res_data[:json_data]["errors"][custom_field_id])
       if retry_flag
         res_data = update(params, false) 
       else
-        add_comment(params[:remote_key],params[:ticket_data])
+        return add_comment(params[:remote_key],params[:ticket_data])
       end
     end
+    res_data
   end
 
   def add_comment(issueId, ticketData)
@@ -177,9 +178,8 @@ class Integrations::JiraIssue
           return customField["id"]
         end
       end
-    else
-      return false
     end
+    return false
   end
 
   def customFieldChecker
@@ -196,7 +196,7 @@ class Integrations::JiraIssue
     rescue Exception => e
       Rails.logger.error "Problem in fetching the custom field. \t#{e.message}"
     end
-    unless custom_field_id.blank?
+    if custom_field_id
       @installed_app[:configs][:inputs]['customFieldId'] = custom_field_id
       @installed_app.disable_observer = true
       @installed_app.save!

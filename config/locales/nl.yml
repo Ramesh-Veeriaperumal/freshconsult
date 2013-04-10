@@ -1,15 +1,35 @@
 nl:
   meta:
    language_name: 'Dutch' 
+  Agent: Agent
+  Chat: Chat
+  Description: Beschrijving
+  Email: E-mail
+  Facebook: Facebook
+  Forum: Forum
+  Group: Groep
+  MobiHelp: MobiHelp
+  Phone: Telefoon
+  Portal: Portaal
+  Priority: Prioriteit
+  Product: Product
+  Requester: "Zoek een aanvrager"
+  Source: Bron
+  Status: Status
+  Subject: Onderwerp
+  Twitter: Twitter
+  Type: Type
   account: 
     active_since: "Actief sinds"
     cancel: "Annuleer en ga terug"
+    customize_portal: "Huisstijl van helpdesk wijzigen"
     helpdesk_name: "Helpdesk Naam"
     helpdesk_url: Helpdesk-URL
     info1: "Gebruik dit veld om een eigen domeinkoppeling te maken met Freshdesk"
     info2: "Zorg ervoor dat je een CNAME verwijzing in je DNS hebt gemaakt die support.mycompanyname.com naar %{full_domain} wijst voordat je dit veld gebruikt. Je webmaster of systeembeheerder kan je hiermee helpen"
     info3: "Opnieuw instellen op standaardkleuren"
     info4: "Het volgende ticket-ID zal met dit nummer beginnen (moet groter zijn dan de laatst gebruikte ticket ID). Geldt alleen voor toekomstige tickets."
+    info5: "Kleuren resetten"
     language: Taal
     name: Accountnaam
     page_colors: 
@@ -40,13 +60,28 @@ nl:
       intro: "U staat op het punt uw account te annuleren.  Hiermee worden <strong>al uw gegevens verwijderd</strong>."
       warning_message: "Als u doorgaat heeft u hierna geen toegang meer tot uw gegevens."
       you_must_confirm: "U moet uw annulering bevestigen"
+    helpcard: 
+      info1: "U kunt uw Freshdesk-helpdesk volledig aanpassen voor klanten die inloggen op uw self-service portaal maar ook voor uw medewerkers. Geef uw helpdesk een nieuw uiterlijk met uw logo en huisstijl door uw logo en favicon te uploaden, uw helpdesk een naam te geven, en uw portaalkleuren aan te passen."
+      info2: "U wilt waarschijnlijk dat uw klanten en supportmedewerkers toegang kunnen krijgen tot uw supportportaal via uw eigen domein. U kunt uw support-URL op uwbedrijf.freshdesk.com laten verwijzen naar uw eigen domein, zoals support.mijnbedrijf.com."
+      title: "Uw helpdesk-stijl aanpassen"
+      tour: "Help mij mijn helpdesk een huisstijl te geven"
     show: 
       account_settings: "Account instellingen"
+      contact_email: E-mail
+      contact_first_name: Voornaam
+      contact_last_name: Achternaam
+      contact_phone: Telefoon
       export_data: "Export gegevens"
       export_data_text: "Maak een XML van alle beschikbare helpdeskgegevens en verstuur het via e-mail"
       export_now: "Nu exporteren"
+      invoice_email_info: "Stuur facturen naar"
+      invoice_emails: E-mails
+      primary_contact: "Standaard contactgegevens"
+      primary_contact_info: "(Wordt gebruikt voor alle communicatie betreffende uw account van Freshdesk)"
   activate: activeer
   activate_account: "Uw account activeren"
+  activate_and_login: "Activeren & aanmelden"
+  activation_link: "De succesvol geregistreerde activatielink is verstuurd naar %{email}"
   activerecord: 
     errors: 
       full_messages: 
@@ -77,6 +112,31 @@ nl:
         one: "Door 1 fout kon dit %{model} niet worden opgeslagen"
         other: "%{count} fouten zorgden ervoor dat dit %{model} niet kon worden opgeslagen"
   activities: 
+    forums: 
+      delete_forum: 
+        long: "{{user_path}} heeft het forum '{{notable_path}}' onder {{category_name}}' verwijderd"
+        short: "{{user_path}} heeft een forum verwijderd"
+      delete_forum_category: 
+        long: "{{user_path}} heeft de forumcategorie '{{notable_path}}' verwijderd"
+        short: "{{user_path}} heeft een forumcategorie verwijderd"
+      delete_post: 
+        long: "{{user_path}} heeft een artikel uit '{{notable_path}}' verwijderd"
+        short: "{{user_path}} heeft een nieuw artikel verwijderd"
+      delete_topic: 
+        long: "{{user_path}} heeft het onderwerp '{{notable_path}}' in '{{forum_name}}' verwijderd"
+        short: "{{user_path}} heeft een onderwerp verwijderd."
+      new_forum: 
+        long: "{{user_path}} heeft een nieuw forum '{{notable_path}}' gemaakt onder '{{category_name}}'"
+        short: "{{user_path}} heeft een nieuw forum gemaakt"
+      new_forum_category: 
+        long: "{{user_path}} heeft een nieuwe forumcategorie gemaakt '{{notable_path}}'"
+        short: "{{user_path}} heeft een nieuwe forumcategorie gemaakt"
+      new_post: 
+        long: "{{user_path}} geplaatst in {{notable_path}}"
+        short: "{{user_path}} heeft een nieuw artikel gemaakt"
+      new_topic: 
+        long: "{{user_path}} heeft een nieuw onderwerp  '{{notable_path}}' in '{{forum_name}}' aangemaakt"
+        short: "{{user_path}} heeft een onderwerp aangemaakt"
     solutions: 
       new_solution: 
         long: "{{user_path}} heeft een nieuwe oplossing gemaakt {{notable_path}}"
@@ -141,7 +201,7 @@ nl:
         short: "{{user_path}} heeft de status gewijzigd in {{status_name}}"
       ticket_merge: 
         long: "{{user_path}} heeft het ticket {{notable_path}} samengevoegd met {{merge_ticket_path}}"
-        short: "{{user_path}} heeft het ticket {{notable_path}} samengevoegd met {{merge_ticket_path}}"
+        short: "{{user_path}} heeft het ticket {{notable_path}} samengevoegd met {{merge_ticket_path}} "
       ticket_split: 
         long: "{{user_path}} heeft het ticket {{notable_path}} gesplitst uit {{split_ticket_path}}"
         short: "{{user_path}} heeft het ticket {{notable_path}} gesplitst uit {{split_ticket_path}}"
@@ -159,9 +219,11 @@ nl:
           long: "{{user_path}} stopte timer op {{timesheet_path}} op het ticket {{notable_path}}"
           short: "{{user_path}} stopte timer op  {{timesheet_path}}"
   add: Toevoegen
+  add_a_new_folder: "voeg een nieuwe map toe"
   add_a_topic: "Begin onderwerp"
   add_cc: "Cc toevoegen"
   add_holiday: "Feestdag toevoegen"
+  add_more_free: "Voegt u meer dan %{free_agents} medewerkers toe?"
   add_new_email: "Nieuwe e-mail toevoegen"
   add_new_forum: "nieuw forum toevoegen"
   add_new_requester: "Nieuwe aanvrager toevoegen"
@@ -172,24 +234,52 @@ nl:
     automations: 
       edit: 
         title: "Scenario bewerken"
+    ca_response: 
+      delete_confirm: "Weet u zeker dat u dit standaardantwoord wilt verwijderen?"
     canned_responses: 
       edit: 
         title: "Standaardantwoord bewerken"
+      folders: 
+        helpnote: 
+          info1: "Standaardantwoorden zijn vooraf gedefinieerde antwoordtemplates die gebruikt kunnen worden om snel antwoord te geven op tickets."
+          info2: "U kunt placeholders gebruiken in uw standaardantwoorden om dynamische content op te nemen in uw antwoord, zoals de naam van de aanvrager, het ticket-ID en de URL."
+          title: "Standaard antwoorden"
+          tour: "Help mij bij het gebruik van standaardantwoorden"
       form: 
         all_agents: "Alle medewerkers"
         available_for: "Beschikbaar voor"
         groups: "Medewerkers in groep"
         me_only: "Alleen ik"
         response_name: "Titel antwoord"
+      helpnote: 
+        info1: "Standaardantwoorden zijn vooraf gedefinieerde antwoordtemplates die gebruikt kunnen worden om snel antwoord te geven op tickets."
+        info2: "U kunt placeholders gebruiken in uw standaardantwoorden om dynamische content op te nemen in uw antwoord, zoals de naam van de aanvrager, het ticket-ID en de URL."
+        title: "Standaard antwoorden"
+        tour: "Help mij bij het gebruik van standaardantwoorden"
       index: 
         new: "Standaardantwoord toevoegen"
         title: Standaardantwoorden
       new: 
         delete_confirm: "Weet u zeker dat u dit standaardantwoord wilt verwijderen?      "
         title: "Standaardantwoord toevoegen"
+      responses: 
+        edit: 
+          title: "Standaardantwoord bewerken"
+        form: 
+          all_agents: "Alle agenten"
+          available_for: "Beschikbaar voor"
+          groups: "Agenten in groep"
+          me_only: Mijzelf
+          response_name: Onderwerptitel
+        new: 
+          title: "Standaardantwoord toevoegen"
     day_passes: 
+      helpnote: 
+        info: "Een dagpas wordt elke keer gebruikt wanneer een tijdelijke medewerker inlogt op uw helpdesk. U kunt dagpassen per 5 kopen, en Freshdesk ook instellen om uw dagpassen automatisch te vernieuwen wanneer ze opgebruikt zijn."
+        title: Dagpas
       index: 
         add_confirm: "Uw creditcard wordt belast "
+        add_payment_info: "Voer betalingsinformatie in"
         auto_recharge: "Automatisch herladen"
         buy_now: "Nu kopen"
         buy_pass: "Meer passen kopen"
@@ -199,16 +289,23 @@ nl:
         day_passes: Dagpassen
         daypass_quantity: "%{quantity} Dagpassen"
         helptext: "Uw dagpassen worden automatisch opnieuw opgeladen als het aantal beschikbare dagpassen 2 bereikt."
+        no_credit_card: "Geen creditcard opgeslagen."
         no_of_day_passes: "Aant. dagpassen"
         order: Ordernr.
+        payment_info: "Voer betalingsinformatie om meer dagpassen toe te voegen"
         recharge_quantity: "Hoveelheid voor herladen:"
         title: Dagpas
     gamification: 
       error_updated: "Foutmelding tijdens het updaten van de gamification instellingen"
+      fresh_arcade: "Wat is Freshdesk Arcade?"
       gamification_settings: 
+        agent_resolves_ticket: "Wanneer medewerker<br />een ticket oplost:"
+        award_points: "Ken punten toe"
         bonus_points: Bonuspunten
+        bonus_points_for: "Bonuspunten voor:"
         enable_label: "Support medewerker Gamification"
         fast_resolution: "Snel <span>< 1 hr)</span>"
+        firstcall_resolution: "First Call Resolution"
         happy_customer: "Tevreden klant"
         info_levels: "Geef het aantal punten aan dat een medewerker nodig heeft om een niveau hoger te raken"
         late_resolution: "Te laat <span>(Verlopen)</span>"
@@ -222,11 +319,29 @@ nl:
         unhappy_customer: "Ontevreden klant"
       help_text: 
         creating_survey: "Klanttevredenheidsenquête maken:"
+        creating_survey_help: " De volgende stappen maken het mogelijk feedback van uw klanten te verzamelen d.m.v. een link in uw e-mailberichten:<br>1. Vink de checkbox aan<br>2. Stel de berichttekst in. De standaardtekst is “Deel uw mening over onze supportervaring.”<br><br><b>Kies welk e-mailbericht de klanttevredenheidslink meestuurt:</b><br>U kunt kiezen of deze link in elk e-mailbericht wordt toegevoegd of alleen in het laatste bericht als het ticket is opgelost. <br><br>Raadpleeg onze Oplossingen om meer te lezen over klanttevredenheidsenquêtes.</p>"
         quest: Quests
+        quest_form_info1: "Kies de soort quest om in te stellen voor medewerkers. Het kan één van drie zijn<br />a) afhandelen van tickets,<br />b) oplossingen plaatsen en<br />c) bijdragen leveren op forums."
+        quest_form_info2: "Zodra dat is gedaan, kies de criteria van de quest (wat de medewerker moet doen) en voeg de voorwaarden toe, waarvoor hij een badge zal winnen indien hij deze vervult,"
+        quest_form_info3: "Kies de punten die de medewerker wint en de badge die hij toegekend zal krijgen. Geef als laatste uw quest een naam en een korte samenvatting."
         quest_form_info4: "Klik op 'Quest opslaan' om uw instellingen op te slaan"
+        quest_info1: "Quests vertegenwoordigen prestatiedoelen die u instelt voor medewerkers, waar ze bij afronding badges en eer voor krijgen."
+        quest_info2: "Alle quests staan standaard AAN. U kunt ervoor kiezen om ongewenste quests UIT te zetten. Indien u meer quests wilt toevoegen of quests wilt aanmaken die specifiek passen bij uw doelen, klik dan op 'Nieuwe quest', en u kunt nieuwe quests aanmaken met de gewenste voorwaarden."
+        trophies_info1: "De medewerker zal 4 trofeeën ontvangen, gebaseerd op verschillende criteria."
         why_game: "Punten en niveau's"
+        why_game_info1: "Punten worden toegekend aan medewerkers gebaseerd op hoe snel zij tickets oplossen die aan hen worden toegewezen. Er zijn ook punten beschikbaar voor first call resolution en tevreden klanten. Medewerkers kunnen ook punten verliezen voor een late afhandeling van tickets of voor ontevreden klanten."
+        why_game_info2: "Een medewerker kan hogere niveau's bereiken bij het verkrijgen van meer en meer punten, het te behalen aantal punten wordt bepaald door de Admin."
       index: 
+        enable_arcade: "Zet freshdesk arcade aan"
+        info1: "Elke supportticket die binnenkomt is een kans voor een medewerker om te scoren. Wat nog leuker is - u kunt bonuspunten toekennen aan uw supportteam aan de hand van wat het belangrijkste voor u is. Zoals supersnel antwoorden versturen, de eerste keer de juiste oplossing krijgen, en geweldige tevredenheidsscores krijgen van uw klanten."
+        info2: "Volg de voortgang van uw supportteams met het scorebord in het overzicht. En ken speciale trofeeën toe aan de topscorers omdat ze de Speed Racer, Scherpschieter, Klant WOW kampioen, en de allerbeste, uw Meest Gewaardeerde Speler van de maand zijn."
+        learn_arcade: "Kom meer te weten over de arcade"
         title: "Arcade instellingen"
+        video: "Bekijk de video"
+      new_quest: "Nieuwe quest"
+      points: Punten
+      quests: Quests
+      successfully_updated: "Gamification-instellingen zijn succesvol bijgewerkt."
     getting_started: 
       index: 
         admin_sub_title: "Vergeet niet om alle extra functies te bekijken die u kunt aanpassen in het tabblad &quot;%{admin_tab}&quot;"
@@ -242,12 +357,16 @@ nl:
         agent_send_invite_label: "Stuur uitnodigingen naar agenten"
         agent_sub_title: "Nodig uw team uit voor Freshdesk"
         agent_title: "Voelt u zich eenzaam?"
+        agent_title_info: "Voeg de emails van uw teamleden toe om ze uit te nodigen om Freshdesk te gebruiken. Scheidt meerdere e-mailadressen met een komma."
         agents_sub_title: "Nodig uw helpdesk medewerkers uit"
+        agents_subtitle: "Nodig uw team uit om mee te doen"
         agents_title: Medewerkers
+        agents_title_1: Agenten<br>toevoegen
         agents_title_info: "Nodig uw medewerkers uit om Freshdesk te gebruiken. Scheid ieder e-mail adres met een komma"
         back_link: Terug
         config-support-email-address: "Configureer uw e-mailadres voor ondersteuning"
         congrats: "Gefeliciteerd! Uw \"frisse\" helpdesk is klaar."
+        congratulations: "Gefeliciteerd! Uw Freshdesk is klaar!"
         email_config_field_title: "Uw E-mailadres voor ondersteuning"
         email_config_sub_title: "Laat Freshdesk uw e-mail voor ondersteuning verwerken!"
         email_config_title: "Wat is uw e-mail voor ondersteuning?"
@@ -255,9 +374,14 @@ nl:
         email_send_problem: "Fout tijdens het sturen van de e-mail."
         email_sent_success: "E-mail is met succes verzonden."
         emails_invalid: "Eén of meer e-mailadressen zijn ongeldig."
+        footer_msg: "<strong>Let op:<strong>U kunt deze instellingen te allen tijde veranderen via het <a href='/admin/home' target='_blank' style='text-decoration:none; color:#1272DE'>Admin tabblad</a>"
         helpdesk_preview: "Helpdesk preview"
+        helpdesk_preview_text: Voorvertoning
         implement_changes: "Implementeren van de wijzigingen..."
+        info: "U dient een eenvoudige regel aan te maken binnen uw supportmailbox om e-mails door te sturen naar dit adres."
+        info2: "Niet tevreden? Voer een nieuwe e-mail in en klik op \"Opslaan\""
         next_alt_link: "Ga naar de helpdesk"
+        next_alt_text: "Meteen beginnen!"
         next_link: Volgende
         next_please_wait: "Even wachten..."
         problem_updating: "Fout tijdens het bijwerken, Probeer het a.u.b. opnieuw."
@@ -275,20 +399,29 @@ nl:
         rebrand_paint_title: "Kleur je helpdesk"
         rebrand_sub_title: "Logo &amp; kleuren"
         rebrand_submit_label: Stijl
+        rebrand_subtitle: "Voeg uw eigen logo en kleuren toe!"
         rebrand_tab_empty: "Tab kleur code is benodigd."
         rebrand_tab_invalid: "Kleurcode van tabblad is ongeldig."
         rebrand_title: "Logo <br>&amp; kleuren"
+        rebranding_header: "Kies een goede naam voor uw helpdesk"
         save: Veranderen
         save-and-next: "Opslaan en volgende"
+        save_text: Opslaan
         send_invite: "Verstuur uitnodiging"
+        send_test_mail_info2: "Dit is <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>hoe u het kunt doen</a>."
         send_verification_email: "Verstuur validatie e-mail"
         sending_test_mail_progress: "Bezig met het versturen van een test e-mail, Een moment geduld..."
         skip_link: "Sla over en ga naar uw helpdesk"
+        skip_text: "Nee bedankt, sla dit over."
         social_add_account: "Account toevoegen"
         social_facebook: Facebook
         social_facebook_add: "Pagina toevoegen"
+        social_info: "Breng uw helpdesk naar Facebook, Twitter, uw gemeenschappen en zo ongeveer overal waar uw klanten zijn"
+        social_info_text: "Voeg uw Facebook- en Twitter-account toe om te beginnen met het bijhouden van uw sociale interacties, en breng het plaatsen van berichten op het prikbord, tweets, DM's en berichten naar Freshdesk."
         social_sub_title: "Ga Sociaal"
+        social_subtitle: "Ga voor sociaal met uw klantenondersteuning!"
         social_title: Sociaal
+        social_title_1: "Ga voor<br>sociaal"
         social_twitter: Twitter
         social_twitter_add: "Account toevoegen"
         sub_title: "Hier zijn wat middelen om je makkelijk van start te laten gaan."
@@ -296,8 +429,12 @@ nl:
         successfully_updated: "Succesvol bijgewerkt."
         support_email_sub_msg: "Uw support e-mail adres is vereist. Zonder dit e-mail adres kan de helpdesk niet goed functioneren."
         support_email_sub_title: "Vertel ons uw support e-mail adres"
+        support_email_submsg: "Dit zal ook het standaard antwoordadres zijn wanneer u antwoord op<br>vragen van Freshdesk."
+        support_email_subtitle: "Voeg uw standaard support e-mail adres toe"
         support_email_title: "Support<br> e-mail"
         title: "Cool! Het lijkt erop dat je helpdesk er helemaal klaar voor is..."
+        title1: "Laten we nu die e-mails binnen Freshdesk krijgen"
+        title_message: "Begin uw klantenondersteuning in vier stappen..."
         title_msg: "Vul enkele details in om te beginnen (optioneel)"
         updating: "Bezig met bijwerken..."
         validating: Valideren...
@@ -311,12 +448,18 @@ nl:
         send_test_mail_confirm_yes: "Ja, ik begrijp het."
         send_test_mail_info1: "Zorg ervoor dat u heeft ingesteld dat uw e-mails worden doorgestuurd naar <b> %{to_email} </b>."
         send_test_mail_info2: "Leer hoe"
+        send_test_mail_info3: "Als u denkt dat alles tot nu toe goed is, probeer een testbericht te sturen.<br>%{send_test_mail_link}"
         send_test_mail_link_title: "Verstuur een test e-mail"
         send_test_mail_response1: "We hebben een test e-mail gestuurd naar <b><span id=reply_email_1>%%{reply_email}</span></b>. Als alles goed gaat, wordt het <a href=\"/helpdesk/tickets\" target=\"_blank\">nieuwe ticket</a> in de weergave Tickets weergegeven."
+        send_test_mail_response_1: "Wij hebben zojuist een testbericht verstuurd aan<b><span id=reply_email_1>%{reply_email}</span></b>. Indien alles is goed gegaan, dient u een nieuwe ticket te zien in uw helpdesk. <a href=\"/helpdesk/tickets\" target=\"_blank\">Controleer of het bericht daar is</a>."
         send_test_mail_response_no1: "Er lijkt een probleem te zijn ->"
         send_test_mail_response_no2: "Meer info"
+        send_test_mail_response_no3: "<strong>Helaas! Er lijkt een probleem te zijn!</strong><br>Indien u de e-mail niet heeft ontvangen in uw inbox, wacht dan een paar minuten. Als het probleem aanhoudt, <a href=\"https://support.freshdesk.com/\" target=\"_blank\">laat ons dit dan weten</a>."
+        send_test_mail_response_no_3: "<strong>Helaas! Er lijkt een probleem te zijn!</strong><br>Controleer uw doorstuurregel om te kijken of alles klopt. Indien u over een paar minuten nog geen testtickets heeft ontvangen, <a href=\"https://support.freshdesk.com/\" target=\"_blank\">neem dan contact met ons op</a>. "
         send_test_mail_response_yes: "Gefeliciteerd!!! U heeft uw e-mail voor ondersteuning met succes verbonden met uw helpdesk portaal. Veel plezier met ondersteunen!!!"
+        send_test_mail_yes_response: "Geweldig! U heeft succesvol uw support e-mail ingesteld om samen te werken met Freshdesk. Happy Supporting!"
         test_info1: "Als u denkt dat alles in orde is tot nu toe, probeer dan een test e-mail te verzenden"
+        test_info_1: "Denkt u dat alles er tot nu toe goed uitziet? Probeer een testbericht te sturen."
         title: "Uw doorstuur e-mail:"
     home: 
       index: 
@@ -337,6 +480,7 @@ nl:
         everything: Alles
         facebook-setting: Facebook
         feedback: Feedback-widget
+        gamification-settings: Arcade
         group: Groepen
         helpdesk: Helpdesk
         import: "Gegevens importeren uit Zendesk"
@@ -356,6 +500,23 @@ nl:
         ticket-fields: Ticketvelden
         title: Beheerder
         twitter-setting: Twitter
+    portal_settings: 
+      simple: 
+        baseFont: "Standaard lettertype"
+        bg_color: Pagina
+        btn_background: "Alternatieve actieknop"
+        btn_primary_background: "Standaard actieknop"
+        footer_color: Voettekst
+        header_color: Koptekst
+        headingsColor: "Kleur koptekst"
+        headingsFont: "Lettertype koptekst"
+        help_center_color: Helpcentrum
+        inputFocusRingColor: "Koptekst verdeler & Input focusglans"
+        linkColor: Linktekst
+        linkColorHover: "Linktekst muis over"
+        tab_color: Achtergrond
+        tab_hover_color: "Actieve tab"
+        textColor: Standaardkleur
     products: 
       add_another_email: "Nog een e-mail toevoegen"
       assign_product: "Product toewijzen"
@@ -367,11 +528,20 @@ nl:
         enable_product_portal: "Productenportaal inschakelen"
         enter_support_email_id: "Uw ondersteuningsmail"
         forwarding_email_info: "Uw doorstuur e-mail adres:"
+        product_desc: Productomschrijving
         product_name: Productnaam
+        product_support_emails: "Product supportberichten"
       helpnote: 
+        content: "Meerdere producten helpen u bij het leveren van product- of merkspecifieke ondersteuning."
+        content1: "U kunt meerdere producten ondersteunen met afzonderlijk gemerkte portals van een enkele Freshdesk-account. Stel verschillende supportberichten in voor elk product en zet ze automatisch in de rij bij een specifieke groep."
+        content2: "Indien u ervoor kiest om een portaal met een eigen huisstijl in te stellen voor elk product, dan kunt u een unieke set van kennisbankartikelen en forums instellen voor elk merk."
         heading: "Meerdere producten"
+        heading1: "Meerdere producten"
+        heading2: "Stel een afzonderlijke portaal in voor producten"
+        tour: "Help me meerdere producten te ondersteunen"
       index: 
         add_product: "Product toevoegen"
+        enable_portal: "Producten aanzetten"
         title: Producten
       new: 
         title: "Nieuw product"
@@ -393,8 +563,12 @@ nl:
       primary_email_required: "Minstens één primaire e-mail moet aanwezig zijn"
       primary_product_support_email: "Primair Product Support E-mail"
       product: 
+        customize_portal: "Portaal aanpassen"
         delete: "Weet u zeker dat u dit product wilt verwijderen?"
+        edit_facebook_page: "Bewerk Facebook-pagina %{page_name}"
+        edit_twitter_account: "Bewerk Twitter-account @%{screen_name}"
         email_not_verified: "E-mailadres is niet geverifieerd."
+        enable_portal: "Portaal aanzetten"
       product_label_msg: Product
     quests: 
       index: 
@@ -405,6 +579,21 @@ nl:
         sideinfo2: "Info 2"
         title: Quest
       quest_form: 
+        badge: Badge
+        bonus_points: Bonuspunten
+        brief: "Samenvatting over de quest"
+        change: Verander
+        completion: "Bij succesvolle afronding van een quest, ken een badge en bonuspunten toe"
+        edit: "Quest bewerken"
+        final: "...en als laatste"
+        forum: "Betrek de <br /><strong>Community</strong>"
+        no_condition: "Geen voorwaarden aanwezig"
+        pick_badge: "Kies een badge"
+        quest_name: "Geef uw quest een naam"
+        quest_objectives: Questdoelen
+        quest_type: Questsoort
+        reward: Beloning
+        save: "Quest opslaan"
         solution: "Publiceren <br /><strong>Oplossingen</strong>"
         ticket: "Oplossen van<br /><strong>Tickets</strong>"
     security: 
@@ -437,6 +626,13 @@ nl:
     supervisor_rules: 
       edit: 
         title: "Supervisor - Regel bewerken"
+      helpnote: 
+        help_info_1: "Gebruik de supervisor voor het periodiek controleren van recente tickets en het uitvoeren van bepaalde acties, zoals het versturen van herinneringen aan klanten of het toewijzen van tickets aan de juiste persoon in uw team."
+        help_info_2: "De Supervisor draait elk uur en verwerkt tickets die bijgewerkt zijn tijdens de afgelopen 30 dagen. De regels van de Supervisor worden opeenvolgend verwerkt, de volgorde van de regels is dus belangrijk. Een regel kan resulteren in bepaalde acties die leiden tot latere regels."
+        help_info_3: "De Supervisor draait elk uur en verwerkt tickets die bijgewerkt zijn tijdens de afgelopen 30 dagen."
+        help_info_4: "De regels van de Supervisor worden opeenvolgend verwerkt, de volgorde van de regels is dus belangrijk. Een regel kan resulteren in bepaalde acties die leiden tot latere regels."
+        help_title: Supervisor
+        tour: "Help mij bij het aanmaken van een nieuwe supervisor-regel"
       index: 
         help_info_1: "Gebruik de supervisor voor het periodiek controleren van recente tickets en het uitvoeren van bepaalde op tijd gebaseerde acties zoals het versturen van herinneringen, het escaleren van tickets, het opnieuw toewijzen van tickets, etc."
         help_info_2: "Bijvoorbeeld - Stuur een herinneringsmail naar de klant wanneer een ticket meer dan 24 uur wacht op antwoord van de klant of sluit een ticket automatisch wanneer het meer dan 48 uur de status \"Opgelost\" heeft."
@@ -447,6 +643,7 @@ nl:
       new: 
         title: "Supervisor - Nieuwe regel"
     surveys: 
+      error_updated: "Fout tijdens het bijwerken van de enquête-instellingen."
       helptext: "<p><b>Waarom klanttevredenheidsenquêtes activeren?</b><br> Deze optie voegt een link toe aan uw e-mailberichten, waarmee rechtstreeks feedback wordt verzameld.</p> <br><br><b>Uw klanttevredenheidsenquête instellen:<br></b> De volgende stappen maken het mogelijk feedback van uw klanten te verzamelen d.m.v. een link in uw e-mailberichten:<br> 1. Vink de checkbox aan<br> 2. Stel de berichttekst in<br> 3. De standaardtekst is &ldquo;Please let us know your opinion on our support experience.&rdquo;<br><br><b>Kies welk e-mailbericht de klanttevredenheidslink meestuurt:</b><br> U kunt kiezen of deze link in elk e-mailbericht wordt toegevoegd of alleen in het laatste bericht als het ticket is opgelost. <br> Raadpleeg onze Oplossingen om meer te lezen over klanttevredenheidsenquêtes.{</p>}"
       index: 
         title: Enquête-instellingen
@@ -461,6 +658,7 @@ nl:
         send_while_option1: "Alle e-mail verstuurd naar de klant"
         send_while_option2: "E-mails die verstuurd worden nadat een ticket \"Opgelost\" is"
         send_while_option3: "E-mails die verstuurd worden nadat een ticket  \"Gesloten\" is"
+        send_while_option4: "Medewerkers toestaan enquête-links toe te voegen aan bepaalde e-mailberichten."
         send_while_title: "Kies aan welk e-mailbericht de tevredenheidsonderzoek link wordt toegevoegd"
       successfully_updated: "Enquête-instellingen zijn met succes bijgewerkt."
     twitters: 
@@ -486,24 +684,49 @@ nl:
         thankyou_default: "Bedankt voor uw feedback"
         thankyou_info: "Bericht dat wordt weergegeven als een gebruiker een ticketformulier verstuurd."
         thankyou_label: "Bericht versturen"
+  after_day: "Na 1 dag"
+  after_eight: "Na 8 uur"
+  after_four: "Na 4 uur"
+  after_half: "Na 30 minuten"
+  after_one: "Na 1 uur"
+  after_onemonth: "Na 1 maannd"
+  after_oneweek: "Na 1 week"
+  after_threeday: "Na 3 dagen"
+  after_twelve: "Na 12 uur"
+  after_two: "Na 2 uur"
+  after_twoday: "Na 2 dagen"
+  after_twoweek: "Na 2 weken"
   agent: 
+    active: 
+      no_agents: "U heeft nog geen medewerkers toegevoegd aan de lijst"
     add_signature: "Handtekening toevoegen"
     admin: Beheerder
     admin_info: "Kan alle beheerderstaken uitvoeren"
+    agent_restored: "De medewerker is hersteld"
     contact_exists: "Een aanvrager met '%{existing_email}' bestaat reeds, %{use_email}"
     day_pass_expired: "Uw dagpas is verlopen, meld u zich a.u.b. aan om een nieuwe dagpas te verkrijgen."
+    deleted: 
+      agent_deleted: "De medewerker is verwijderd"
+      no_agents: "Er zijn geen verwijderde medewerkers gevonden"
     edit: "Wijzig medewerker"
     full_time: Voltijds
     global: "Agent (Globale toegang)"
     global_info: "Mag alle tickets in de Helpdesk zien"
     group: "Agent (Groepstoegang) "
     group_info: "Zien alle Tickets in de Groep(en) en Tickets die aan hen zijn toegewezen"
+    helpcard: 
+      info1: "De lijst toont alle medewerkers die zijn toegevoegd binnen uw helpdesk. U kunt de machtigingen en toegangsrechten van een bestaande medewerker bewerken door met de muis op de medewerker te gaan staan en op \"Bewerken\" te klikken. U kunt nieuwe medewerkers toevoegen door op de \"Nieuwe medewerker\"-knop te klikken."
+      info2: "Wanneer u een nieuwe medewerker toevoegt, dient u het e-mailadres van de medewerker in te voeren en hun machtigingen en toegang op te geven (fulltime of tijdelijk). Medewerkers zullen een e-mail ontvangen met een bevestigingslink om hun account te activeren. Hierna kunnen zij tickets toegewezen krijgen of antwoorden op tickets."
+      info3: "Beheerders kunnen ook het profiel van een medewerker bewerken om de aanhef, het telefoonnummer, de profielfoto, de handtekening, etc. van de medewerker toe te voegen."
+      side_title: "Medewerkers toevoegen en gegevens bewerken"
+      tour: "Help mij bij het toevoegen van nieuwe medewerkers"
     individual: "Agent (beperkte toegang)"
     individual_info: "Kan alleen tickets weergeven die aan hen zijn toegewezen"
     info1: "Dit is een verwijderde medewerker"
     info2: "E-mailadres is al bezet"
     info3: "Weet je zeker dat je deze medewerker wilt verwijderen"
-    insufficient_day_pass: "Kan geen dagpas aan u toewijzen, neem a.u.b. contact op met uw beheerder."
+    info4: "Omzetten naar contactpersoon"
+    insufficient_day_pass: "Het is helaas niet mogelijk om een dagpas toe te kennen, neem contact op met uw beheerder."
     make_admin: "Maak deze medewerker beheerder"
     new: "Nieuwe medewerker"
     occasional: "Af en toe"
@@ -512,7 +735,11 @@ nl:
     password_reset_note: "Opmerking: Een e-mail met daarin de instructies om het wachtwoord opnieuw in te stellen zal  verstuurd worden naar %{requester}"
     permissions: Machtigingen
     restore: herstellen
+    showing: "Toont:"
     signature: Handtekening
+    status: 
+      active: Actief
+      deleted: Verwijderd
     supervisor: Supervisor
     supervisor_info: "Kan alle tickets weergeven in de Helpdesk en heeft toegang tot Rapporten (geen beheerdersrechten)"
     title: Medewerkers
@@ -537,6 +764,8 @@ nl:
   amount_for_annual: "$%{amount} jaarlijks"
   amount_per_month: "€%{amount}%{period}"
   answered: Beantwoord
+  any: Elke
+  any_time: "Te allen tijde"
   application: 
     click_to_disable: "Klik om add-on uit te schakelen"
     click_to_enable: "Klik om add-on in te schakelen    "
@@ -557,15 +786,19 @@ nl:
   assume_identity_button: "Identiteit aannemen"
   assumed_identity_msg: "U heeft uw identiteit aangenomen als %{user_name}."
   assuming_identity_not_allowed_msg: "U heeft geen bevoegdheid voor aannemen van deze gebruiker."
+  assuming_identity_user_does_not_exist_msg: "Gebruiker die u probeert aan te nemen bestaat niet."
   at: op
+  attach_file_local: "Voeg een lokale bijlage toe"
   attach_files: "Voeg bestanden toe"
   attachment: Bijlage
+  attachment_delete: "Hiermee verwijder je de bijlage permanent. Doorgaan?"
   attachment_help_info: "Maximale grootte van bijlage(s) is 15 MB"
   attachments: Bijlagen
   auto_suggest_solutions: 
     info: "<b>We hebben wellicht al een antwoord op uw vraag. </b><br/>. Bekijk de onderstaande antwoorden."
   automations: 
     available_placeholders: Variabelen
+    helptext: "Scenario's zorgen ervoor dat u een groot aantal ticket-updates uit kunt voeren met één klik. Ze helpen u bij het snel afhandelen van terugkerende scenario's. U kunt bijvoorbeeld een scenario creëren om \"een ticket als een bug te markeren\", \"het aan een QA-team toe te wijzen\" en een e-mail sturen naar de productmanager zodat u bugs bij klanten kunt verwerken met één klik."
     info1: "Elke helpdesk heeft een aantal scenario's die vaker voorkomen - Bijv. escaleer naar niveau 2, wijs toe aan QA, stuur door naar Sales, etc. Deze scenario's bevatten meestal meerdere updates voor het ticket"
     info2: "Bijvoorbeeld voordat je een ticket toekent aan QA wil je het type op 'bug' zetten, toekennen aan de QA-groep en de QA manager mailen over de nieuwe bug."
     info3: "Scenario's zorgen ervoor dat al deze acties worden uitgevoerd met één klik"
@@ -577,16 +810,19 @@ nl:
     new: "Nieuw Scenario"
     reorder: Volgorde
     title: Scenario's
+    tour: "Help mij een veel voorkomend scenario te automatiseren"
   awaiting_your_reply: "In afwachting van uw antwoord"
   back: Terug
   back_plans_billing: "Terug naar Plannen en facturering"
   back_to_admin: "Terug naar Beheerder"
+  back_to_reports: "$larr; Terug naar rapporten"
   badges_achieved_label: "Badges behaald"
   basic_brief: "Voor kleine teams"
   basic_details: "E-mail antwoord Beheer, Dispatch'r regels, Standaard SLA-beleid, Kennisbank, Self Service Portaal, Domeintoewijzing, Community Ondersteuning."
   bcc_email_updated_failure_msg: "Bcc e-mail bijwerken mislukt"
   bcc_email_updated_success_msg: "Bcc e-mail bijwerken geslaagd"
   bcc_emails_key: ", bcc: %{bcc_emails}"
+  bcc_emails_key_pop: "<li class='left'>bcc :</li><li>%{bcc_emails}<li>"
   begin_subscription_confirm: |-
       Uw creditcard wordt gefactureerd voor een bedrag van $%{cost}en uw inschrijving is meteen actief. 
       Doorgaan?
@@ -596,10 +832,12 @@ nl:
   billed_amount_annually: "U wordt gefactureerd voor $%{amount} per jaar"
   billed_amount_per_month: "U wordt gefactureerd voor $%{amount} %{period} per maand"
   billed_monthly: "Facturering per maand"
+  billing_address: Factuuradres
+  billing_info: "Informatie abonnement"
   billing_info_update: "Uw factureringsgegevens zijn bijgewerkt."
   block_users: "Wilt u de contactpersoon(personen) ook blokkeren?"
   blossom_brief: "Sociale klantenondersteuning"
-  blossom_details: "Alles in 'Sprout' Plan Plus, Twitter ondersteuning, Facebook ondersteuning, Forums, Community en e-mailondersteuning."
+  blossom_details: "Alles in \"Sprout\" plan plus, Twitter-ondersteuning, Facebook-ondersteuning, e-mailondersteuning, forums, community, domeintoewijzing & meerdere e-mailadressen."
   bottom: Onderkant
   bulk_actions: "Bulk Acties"
   business_hours: 
@@ -614,9 +852,48 @@ nl:
     info4: "Openingsdagen van uw helpdesk"
     info5: "Vakanties worden genegeerd bij het berekenen van de SLA van een ticket"
     title: Werktijden
+    to: naar
+    valid_time: "Voer een geldige tijd in"
   cancel: Annuleren
   cancel_and_back: "Annuleer en ga terug"
   cancel_my_account: "Mijn acount annuleren"
+  canned_folders: 
+    back_to_bulk: "Terug naar Bulk antwoord"
+    create: "Folder maken"
+    create_new: "Nieuwe aanmaken"
+    created: "Standaardantwoord is succesvol aangemaakt."
+    del: Verwijderen
+    delete: "Verwijder "
+    delete_canned_response: "Weet u zeker dat u de geselecteerde standaardantwoorden wilt verwijderen?"
+    delete_confirmation: "Map met alle inhoud verwijderen?"
+    delete_folder: "Weet u zeker dat u de folder en de inhoud hiervan wilt verwijderen?"
+    delete_folder_warning: "Door de folder te verwijderen, verwijdert u ook alle standaardantwoorden die deze bevat."
+    delete_multiple: "De geselecteerde standaardantwoorden zijn verwijderd!!"
+    deleted: "Map voor Standaardantwoorden is succesvol verwijderd."
+    edit: "Hernoem "
+    folder: Map
+    folder_created: "Map voor Standaardantwoorden is succesvol aangemaakt."
+    folder_update: "De geselecteerde antwoorden zijn verplaatst naar de map:{{folder_name}}"
+    important: "Belangrijk:"
+    insert_placeholder: "Variabele invoegen"
+    move: Verplaatsen
+    new: "Naam folder"
+    new_response: "Nieuw standaardantwoord"
+    no_delete: "Standaard map kan niet worden gewijzigd!!"
+    no_edit: "Default map kan niet worden gewijzigd!!"
+    no_folders: "Geen standaard antwoorden"
+    no_response: "Geen antwoorden"
+    no_response_admin: "Geen antwoorden in deze folder aanwezig <a href={{link}} id='new_resp'>Maak nieuwe aan</a>"
+    pick: "Kies een standaard antwoord"
+    recently: "Recent gebruikt"
+    responses: Standaardantwoorden
+    search: "Zoek standaard antwoord"
+    select_folder: "Selecteer folder"
+    title: "Folders standaardantwoorden"
+    update: "Standaard antwoord is succesvol bijgewerkt."
+    updated: "Map voor Standaardantwoorden is succesvol bijgewerkt!!"
+    viewing: "Map: "
+  captcha_verify_message: "Captcha verificatie mislukt, probeer het nogmaals!"
   card_number: Kaartnummer
   card_process: "Bedankt voor uw betaling. Uw Freshdesk-account is nu actief!"
   category: 
@@ -624,8 +901,10 @@ nl:
     new: "Nieuwe categorie"
   category_edit_not_allowed: "Deze categorie kan niet worden gewijzigd"
   cc_emails_key: ", Cc: %{cc_emails}"
+  cc_emails_key_pop: "<li class='left'>cc : </li><li>%{cc_emails}</li>"
   change: Wijzig
   change_deleted_status_msg: "Verander de status want de huidige status is verwijderd"
+  change_details_anytime: "Abonnementgegevens of plannen kunnen te allen tijde veranderd worden."
   change_free_plan: "Uw gratis plan wijzigen"
   change_my_password: "Mijn wachtwoord wijzigen"
   change_my_plan: "Kies dit plan..."
@@ -633,13 +912,16 @@ nl:
   change_plan_info: "U kunt uw plan te allen tijde veranderen, uw volgende facturatiedatum is %{date}."
   change_to_free_info: "Met het degraderen van uw plan verliest u functionalitiet en gegevens. Weet u zeker dat u wilt downgraden?"
   chat: Chatten
+  choose_different_plan: "Kies een ander abonnement"
   choose_free_plan: "Kies uw gratis %{plan}"
-  choose_plan: "Kies een Plan"
+  choose_plan: "Plan kiezen"
+  choose_plan_trial: "Let op: uw account zal uitgeschakeld worden na afloop van de proefperiode. <br />Om Freshdesk te blijven gebruik, kies een van de onderstaande plannen."
   clear_draft_text: "Opgeslagen concept verwijderen?"
   click_select_action: "Klik om actie te selecteren"
   click_to_change_sort_order: "Klik om de volgorde te wijzigen"
   click_to_select_filter: "Klik om filter te selecteren"
   close: Sluiten
+  close_this_ticket: "Sluit dit ticket"
   closed: Gesloten
   comments: Opmerkingen
   companies: 
@@ -649,6 +931,8 @@ nl:
   company: 
     edit: "Wijzig Bedrijf"
     info1: "Weet je zeker dat dat je dit bedrijf wilt verwijderen"
+    info10: "Let op: het verwijderen van een bedrijf zal zijn contactpersonen niet verwijderen"
+    info11: "Weet u zeker dat u wilt verwijderen"
     info2: "Domeinnamen voor dit bedrijf"
     info4: "Voeg aantekeningen toe over %{name}"
     info5: "Voeg aantekeningen toe over dit bedrijf"
@@ -661,15 +945,26 @@ nl:
     notes: Aantekeningen
     quick_company: "Snel zoeken"
     title: Bedrijven
+    title1: bedrijven?
+    title2: bedrijf?
   company_name: Bedrijfsnaam
   confirm: Bevestigen
   connect_ticket: "Link naar ticket"
   contact_name: "Naam contactpersoon"
   contacts: 
+    activation: "Activatie versturen"
     active: 
       no_contacts: "U heeft geen contacten aan de lijst toegevoegd."
       no_contacts_with_letter: "U heeft geen actieve contacten met de letter '%{alphabet}'"
     add_new_requester: "Voeg nieuwe aanvrager toe"
+    add_new_user: "Voeg een nieuwe gebruiker toe"
+    blocked_message: "Deze contactpersoon is geblokkeerd."
+    confirm_delete: "Weet u zeker dat u deze gebruiker wilt verwijderen?"
+    contact: contactpersoon
+    contacts: contactpersonen
+    contacts_in_companies: "%{contacts}"
+    convert_fulltime: "Fulltime medewerker"
+    convert_occasional: "Tijdelijke medewerker"
     deleted: 
       no_contacts: "U heeft geen contacten die hersteld kunnen worden."
       no_contacts_with_letter: "U heeft geen verwijderde contacten met de letter '%{alphabet}'"
@@ -677,6 +972,7 @@ nl:
     edit: "Wijzig gebruiker"
     edit_contact: "Wijzig gebruiker"
     emailnotverified: "E-mailadres is nog niet geverifieerd voor deze gebruiker!"
+    export_csv: "Exporteren naar CSV"
     form_placeholder: 
       description: "Voeg specifieke aantekeningen over deze contactpersoon toe. Bijvoorbeeld, fan van bepaalde sportclub, enz."
     import_csv: "Importeer gebruikers met CSV"
@@ -690,50 +986,72 @@ nl:
     info5: "Gebruiker heeft tot nu toe geen tickets aangemaakt"
     info6: "Specifieke aantekeningen betreffende deze contactpersoon toevoegen"
     new: "Nieuwe gebruiker"
+    no_contacts: "Geen contactpersonen"
     quick_contact: "Snel contact toevoegen"
     restore: Herstel
     role: 
       info: "Kan alle tickets van dit bedrijf zien "
     save_changes: "Sla wijzigingen op"
+    search_by: "Zoek op naam, e-mail of label..."
     send_activation: "E-mail voor activering versturen"
     show_more: "Toon meer tickets van %{nick_name} »"
     showing: "Toont:"
+    spam_message: "Deze contactpersoon is een spammer."
     status: 
       active: Actief
+      all: Alle
+      blocked: Geblokkeerd
       deleted: Verwijderd
+      spam: Spam
+      unverified: Niet-geverifieerd
+      verified: Geverifieerd
+    status_title: 
+      all: "Alle contactpersonen"
+      deleted: "Verwijderde contactpersonen"
+      unverified: "Contactpersonen met niet-geverifieerde e-mailadressen"
+      verified: "Actieve contactpersonen"
     tag_cloud: "Tag Cloud contactpersoon"
     tags: Labels
     title: Gebruikers
+    unverified: 
+      no_contacts: "U heeft geen contactpersonen die niet-geverifieerd zijn."
+      no_contacts_with_letter: "Er zijn geen contactpersonen gevonden die beginnen met de letter '%{alphabet}'"
+    verified: 
+      no_contacts: "U heeft geen contactpersonen."
+      no_contacts_with_letter: "Er zijn geen contactpersonen gevonden die beginnen met de letter '%{alphabet}'"
     working: Moment
   contains: Bevat
   continue_using_free: "Ga door met Freshdesk gebruiken als een"
+  conv_contacts_info: "%{conv_type_msg} : %{to_emails}%{cc_emails_key}%{bcc_emails_key}"
+  conv_contacts_info_pop: "<ul><li class='left'>%{conv_type_msg} : </li><li>%{to_emails}</li>%{cc_emails_key}%{bcc_emails_key}</ul>"
   conversation: Conversatie
   country: Land
   create: Aanmaken
-  created_on: "Aangemaakt op"
+  created_on: "Gemaakt op "
   credit_card: "Kaart in bestand"
   credit_card_info: Creditcardgegevens
+  current_free_plan: "Huidig gratis plan"
   current_plan: "Huidige plan"
-  current_plan_details: "%{plan_name} Plan met %{agent_limit} medewerkers"
+  current_plan_details: "%{plan_name}"
   customers: Klanten
   date: 
     ago: geleden
-    day: Dag
+    day: dag
     days: Dagen
     from: "Vanaf nu"
     hour: Uur
     hours: Uren
-    minute: Minuut
-    minutes: Minuten
-    month: Maand
-    months: Maanden
+    minute: minuut
+    minutes: minuten
+    month: maand
+    months: maanden
     now: Nu
-    second: Seconde
-    seconds: Seconden
-    week: Week
-    weeks: Weken
-    year: Jaar
-    years: Jaar
+    second: seconde
+    seconds: seconden
+    week: week
+    weeks: weken
+    year: jaar
+    years: jaren
   date_title: Datum
   day: "1 dag"
   days: dagen
@@ -750,6 +1068,7 @@ nl:
   delete_topic_msg: "Verwijder dit onderwerp definitief"
   description: Omschrijving
   disabled: Uitgeschakeld
+  dislikes: Dislikes
   dispatch: 
     act_to_perform: "Uit te voeren acties"
     add_condition: "Voeg nieuwe voorwaarde toe"
@@ -758,6 +1077,10 @@ nl:
     delete: "Weet u zeker dat u deze regel wilt verwijderen?"
     dispatch_rules: "Verdeler - Regels"
     edit: "Verdeler - Wijzig regel"
+    helpcard: 
+      info1: "Met de Verdeler kunt u uw bedrijfsregels inbrengen bij uw support workflow door een vooraf gedefinieerde set van acties uit te voeren op recent aangemaakt tickets. U kunt de Verdeler bijvoorbeeld gebruiken om automatisch elk binnenkomende tickets te categoriseren, ordenen en toewijzen aan de juiste medewerker in uw team, gebaseerd op de voorwaarden die door u zijn aangegeven."
+      info2: "Onthoud dat de volgorde van de Verdeler-regels belangrijk is. Voor elke ticket dat binnenkomt zal de Verdeler de eerste regel uitvoeren die voldoet aan de voorwaarden en dan stoppen. U kunt de lijst met regels opnieuw ordenen zodat de meeste belangrijke regel bovenaan komt te staan."
+      tour: "Help mij bij het aanmaken van een nieuwe Verdeler-regel"
     inactive_rules: "Inactieve regels"
     info1: "Abonnement gerelateerde tickets"
     info2: "Alle abonnement gerelateerde tickets worden aan Susan toegekend"
@@ -776,11 +1099,21 @@ nl:
     title: Verdeler
   does_not_contain: "Bevat geen"
   done: Klaar
+  downgrade: Downgrade
+  downgrade_confirm: |-
+      <span class="label label-important">Belangrijk</span>
+      
+      U bent momenteel bezig met het downgraden van het <b>{{from}}</b>-plan naar het <b>{{to}}</b>-plan. Onthoud dat alle gegevens en instellingen van de functies die beschikbaar zijn in het {{from}}-plan onherstelbaar verloren zullen gaan.<br /><br />Voor een volledige lijst van plannen en functies, bezoek <a target="_blank" href="http://freshdesk.com/pricing">Plannen en prijzen</a>.<br />Weet u het nog steeds niet zeker? <a href = "mailto:support@freshdesk.com" >Laat ons helpen met het maken van uw keuze</a>
+  downgrade_dialog_title: "Weet u zeker dat u wilt downgraden?"
+  downgrade_plan: "Let op: als u een plan downgradet, kunt u een aantal van de bestaande functies verliezen"
   draft: "Concept:"
+  dropbox_attach_label: "toevoegen via"
+  dropbox_choose_file: "Kies bestand"
   due_in: "Vervalt in %{time_words}"
   due_next_eight: "Volgende 8 uren"
   due_today: Vandaag
   due_tomo: Morgen
+  during: tijdens
   edit: Wijzigen
   edit_agent: "Medewerker bewerken"
   edit_email: "E-mail bewerken"
@@ -794,17 +1127,28 @@ nl:
   email_command_preview_subject_value: "Ticket voor ondersteuning"
   email_command_preview_to_email: Aan
   email_command_preview_to_email_value: support@acme.freshdesk.com
+  email_command_setting: 
+    helpcard: 
+      heading: "E-mailcommando instellingen"
+      info1: "Wanneer u antwoord op e-mailberichten van uw mailbox, dan kunt u 'E-mailcommando's' bijvoegen om Freshdesk opdracht te geven om bepaalde acties uit te voeren op het ticket. De e-mailcommando tekst zal eruit gehaald worden door Freshdesk en zal niet gezien worden door de aanvrager, terwijl de rest van de tekst een onderdeel zal worden van het gesprek."
+      info2: "E-mailcommando's dienen de juiste syntax te volgen en moeten binnen de vooraf geconfigureerde delimiter tekst geplaatst worden. Bijvoorbeeld, het commando - \"@simonsays agent : John Roberts Resolved @simonsays\" zal het ticket toewijzen aan de medewerker John Robert en het ticket marken als afgehandeld."
+      info3: "De rest van de inhoud van de e-mail zal toegevoegd worden als een gesprek aan Freshdesk en ook verstuurd worden aan de aanvrager via e-mail."
+      ticket_type_example: Vraag
+      tour: "Help mij e-mailcommando's te begrijpen"
   email_command_settings_heading: "E-mailcommando instellingen"
   email_command_settings_info: "Configureer het onderscheidingsteken dat wordt gebruikt om e-mailcommando's van de e-mail te identificeren en te extraheren"
   email_commands_update_failed: "Actualiseren van Commando-instellingen van e-mail mislukt."
   email_commands_update_success: "E-mailcommando instellingen zijn gewijzigd."
   email_configs: 
     Personalized_email_replies: "Gebruik de naam van medewerker in persoonlijke e-mail?"
+    Personalized_email_replies_info: "Indien JA, dan zullen de antwoorden van de medewerker de naam van de medewerker tonen als verzender (e-mailadres zal nog steeds uw support e-mailadres zijn). Bijvoorbeeld: '%{current_user_name}&lt;%{current_account_domain}&gt;'"
     Personalized_email_replies_message: "Uw instelling is succesvol opgeslagen"
     Personalized_email_replies_no: Nee
     Personalized_email_replies_yes: Ja
     add_bcc_text: "Bcc toevoegen"
     add_supp_emails: "Extra support e-mail(s)"
+    assign_to_product_info: "Als u het e-mailadres wil linken aan een nieuw product, <a href='{{products_path}}'>voeg dan eerst een product toe</a>"
+    assign_to_product_msg: "Link deze support e-mail aan een product"
     bcc_email: "BCC-adres (optioneel)"
     bcc_text: Bcc
     change_this: "Verander dit"
@@ -812,8 +1156,18 @@ nl:
     edit: Wijzigen
     email: e-mail
     email_added_succ_msg: "De e-mail is toegevoegd"
+    forwarding_email: "Doorstuur e-mail"
+    freshdesk: Freshdesk
+    global_support_emails: "Algemene support e-mail"
     group: Groep
     help_link_info: "U vindt hierover meer informatie in het artikel e-mailinstellingen..."
+    helpcard: 
+      info19: "U kunt uw Freshdesk-account instellen om gebruik te maken van een support e-mail met uw eigen domein, zoals support@mijnbedrijf.com, door e-mailberichten door te sturen van dit adres naar <a target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>. Om een nieuwe inbox te creëren voor uw support e-mail, klik op \"Bewerken\" bij de algemene e-mailinstellingen."
+      info20: "Gebruiken van meerdere mailboxen"
+      info21: "U kunt een onbeperkt aantal binnenkomende en uitgaande mailboxen aanmaken (zoals info@uwbedrijf.com, sales@uwbedrijf.com, etc.) binnen uw helpdesk. U kunt Freshdesk zelf instellen om automatisch e-mailberichten van elke mailbox toe te wijzen aan een specifieke groep."
+      info5: "Uw standaard support e-mailadres is <a target=\"_blank\" href=\"https://{{solution_url}}\">{{solution_url}}</a>. Alle e-mailberichten die hier naartoe worden gestuurd worden automatisch omgezet naar een ticket waaraan u kunt gaan werken."
+      tour1: "Help mij bij het instellen van mijn support e-mails"
+      tour2: "Help mij bij het instellen van meerdere mailboxen"
     inactive_info1: "Uw ondersteuningsmails zijn nog niet geverifieerd. U moet minstens één e-mail verifiëren."
     inactive_info2: "Tot dan wordt de standaard e-mail '%{default_email}' gebruikt als de antwoord e-mail."
     info1: "Je gebruikers sturen e-mails voor ondersteuning naar"
@@ -823,7 +1177,7 @@ nl:
     info13: "Het support e-mailadres is"
     info14: "Van elke e-mail naar dit adres wordt een ticket gemaakt"
     info15: "Je moet deze e-mails doorsturen naar"
-    info16: "Tickets worden toegekend aan"
+    info16: "Tickets worden toewezen aan"
     info17: "Dit e-mailadres wordt automatisch omvat in het veld BCC voor alle communicatie over tickets"
     info18: "Automatisch BCC-adres omvat in antwoorden over tickets "
     info2: "Je moet support e-mail doorsturen naar je unieke e-mail adres"
@@ -834,24 +1188,39 @@ nl:
     info8: "Stuur e-mail door naar"
     info9: "Toekennen aan groep"
     make_primary: "Maak standaard"
+    mark_as_primary_msg: "Weet u zeker dat u dit als de standaard support e-mail wilt gebruiken?"
     name: Naam
     name_info_msg: "Naam van de e-mail dat zal worden gebruikt in het ticket antwoord"
+    new_support_email: "Nieuwe support e-mail"
     primary_supp_email: "Standaard support e-mail"
+    primary_supp_email_tool_tip: "Standaard support e-mail"
     remove_msg: "Weet u zeker dat u deze e-mail wilt verwijderen?"
     reply_email: "Uw ondersteuningse-mail"
     reply_emails: "Antwoorden van Freshdesk"
-    send_verification_email: "Opnieuw verifiëren"
+    secondary_supp_email_tool_tip: "Maak deze e-mail standaard"
+    send_verification_email: "Verstuur verificatie"
+    set_bcc_email_text: "Automatische Bcc e-mail instellen"
+    spf_info: "Antwoordberichten van Freshdesk zullen automatisch uw respectievelijke support e-mail ID's instellen als afzender. Het aanmaken van een <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">SPF record</a> binnen uw DNS-zonebestand zal zorgen dat uw e-mails correct worden afgeleverd."
     supp_email_add: "Support e-mailadres"
+    support_email: "Support e-mail"
+    support_email_exists: "Doorstuur e-mail bestaat al"
     title: "E-mail instellingen"
-    unverified: Niet-geverifieerd
+    unverified: "E-mail niet-geverifieerd"
     unverified_info1: "Een e-mail met de koppeling voor verificatie is naar dit e-mailadres gestuurd. Alleen na verificatie wordt deze ondersteuningsmail actief."
   email_notifications: 
     agent_notification: Medewerker
     customize_email: "Wijzig e-mail"
+    default_reply_template_info: "Template zal automatisch getoond worden voor ALLE antwoorden van een medewerker wanneer ze tickets beantwoorden"
     default_reply_template_title: "Medewerker antwoord template"
     do_not_delete_ticket_id_from_subject: "Om antwoorden van klantne te ondervangen als ticketgesprekken, mag de tijdelijke aanduiding van de ticket-ID niet uit de regel met onderwerp worden verwijderd"
     edit_reply_template: "Bewerk template"
     event: Actie
+    helpcard: 
+      info1: "U kunt Freshdesk instellen om automatisch een e-mailbericht te versturen aan medewerkers en de aanvrager wanneer bepaalde events voorkomen. U kunt klanten bijvoorbeeld een bericht sturen wanneer medewerkers een opmerking of publiek aantekening toevoegen aan hun ticket met een aangepaste e-mail."
+      info2: "U kunt ervoor kiezen om berichtgevingen uit te zetten en ook Verdeler- of Supervisor-regels aanmaken om een event aan te vullen."
+      info3: "U kunt de e-mailtemplate aanpassen voor antwoorden van een medewerker en zelf dynamische content toevoegen in antwoorden door gebruik te maken van variabelen."
+      tour1: "Help mij bij het beheren van e-mailberichten"
+      tour2: "Help mij bij het aanpassen van de antwoordtemplate"
     insert_placeholder: "Voeg variabele toe"
     modify_agent_template: "E-mailsjabloon van mederwerker wijzigen"
     modify_requester_template: "E-mailsjabloon van aanvrager wijzigen"
@@ -864,7 +1233,8 @@ nl:
   enter_billing_for_free: "Voer voordat het betaalde plan kiest de creditcardgegevens in"
   enter_message: "Voer uw hier bericht in"
   enter_payment: "Voer de betalingsgegevens in..."
-  enter_payment_details_to_add: "Voer de betaalgegevens in om meer medewerkers toe te voegen"
+  enter_payment_details_to_add: "Voer betaalgegevens in om meer medewerkers toe te voegen of uw huidige plan te upgraden"
+  error_in_plan: "Fout bij het veranderen van het plan"
   errors: 
     actions_empty: "Actie's kunnen niet leeg zijn"
     conditions_empty: "Voorwaarden kunnen niet leeg zijn"
@@ -872,10 +1242,14 @@ nl:
   errors_in_payment_info: "Er zijn fouten gevonden in uw betalingsgegevens:"
   errors_in_plan_change: "Er zijn fouten gevonden in uw wijziging:"
   errors_in_your_address: "Er zijn fouten gevonden in uw adres:"
+  estate_brief: "Enterprise-level ondersteuning"
+  estate_details: "Alles in \"Garden\" plan plus, Gamification en Agent Collision."
   example: voorbeeld
   expires: Verloopt
+  export: Exporteer
   export_data: 
     closed_at: "Gesloten op"
+    contact_info: "Exporteer actieve contactpersonen naar een CSV-bestand"
     created_at: "Gemaakt op"
     custom_filter: "Datum instellen"
     export_to_csv: "Export naar CSV"
@@ -885,23 +1259,37 @@ nl:
     from: Van
     info: "Exporteer ticket informatie zoals zichtbaar is in het huidig overzicht naar een CSV bestand."
     mail: 
+      body: "Bijgevoegd vindt u het CSV-bestand"
       info: "Uw ticket gegevens zullen verzonden worden naar uw e-mailadres!"
       subject: "Exporteer tickets - %{filter} - ( %{start_date} tot %{end_date} )"
     no_fields_selected: "Vink minstens 1 van onderstaande velden aan om door te gaan"
     resolved_at: "Opgelost op"
+    select_header: "Selecteer velden om te exporteren"
     seven_days: "Afgelopen 7 dagen"
     thirt_days: "Afgelopen 30 dagen"
     to: Aan
     twenty_four: "Van gisteren"
   export_data_successfull: "Uw helpdeskgegevens worden binnenkort naar uw e-mail verstuurd!"
+  export_to_CSV: "Exporteer naar CSV"
   f_request: "Aanvraag voor functie"
   facebook: 
+    add_page: "Voeg Facebook-pagina toe"
     deleted: "Het Facebook-pagina %{facebook_page} is verwijderd."
     not_authorized: "U heeft geen toestemming van Facebook"
   facebook_source: Facebook
+  facebook_user: "Facebook gebruikers"
   failure: Fout...
+  failure_msg: "Account-instellingen konden niet worden bijgewerkt!"
   fav_delete_msg: "Weet u zeker dat u dit fav-pictogram wilt verwijderen?"
   favicon: Fav-pictogram
+  ? "feature request"
+  : Functieverzoek
+  feedback: 
+    down_vote_form_title: "Hoe kunnen we dit artikel verbeteren?"
+    downvote: Nee
+    title: "Was dit antwoord nuttig?"
+    up_vote_thank_you_message: "Fijn dat we konden helpen! Bedankt voor uw feedback."
+    upvote: Ja
   feedbackwidget_bgcolor: Achtergrondkleur
   feedbackwidget_btcustomize: "Knop aanpassing"
   feedbackwidget_custom_image: "Aangepaste afbeeldings-URL"
@@ -916,13 +1304,28 @@ nl:
   feedbackwidget_help_para2: "Het aanpasbare tabblad wordt in een ondersteuningsticketformulier geopend. "
   feedbackwidget_help_title: Feedback-widget
   feedbackwidget_intro: "Pas uw freshdesk-widget aan en bekijk een realtime voorbeeld."
-  feedbackwidget_offset_info: "De marge wordt de afstand van de widget-knop (pixels) vanaf de linker- of bovenkant van het scherm, gebaseerd op de door uw gekozen uitlijning."
+  feedbackwidget_offset_info: "De marge is de afstand van de widget-knop (pixels) van de linker-of bovenkant van het scherm op basis van de uitlijning die u kiest"
   feedbackwidget_offset_label: "Met een compensatie van"
   feedbackwidget_position: Positie
   feedbackwidget_text: Tekst
   feedbackwidget_title: "Widget instellingen"
+  fifteen_minutes: "Binnen 15 minuten"
+  filter_options: 
+    created_at: Gemaakt
+    customers: Klanten
+    due_by: "Klaar op"
+    group_id: Groepen
+    priority: Prioriteit
+    requester: Aanvragers
+    responder_id: Medewerkers
+    source: Bron
+    status: Status
+    tags: Labels
+    ticket_type: Type
+  find_more_solutions: "Zoek meer oplossingen"
   first_name: Voornaam
   first_response_sla: "Eerste antwoord SLA-overtreding"
+  five_minutes: "Binnen 5 minuten"
   flash: 
     account: 
       update: 
@@ -932,6 +1335,7 @@ nl:
         success: "De medewerker is aangemaakt en de e-mail met instructies voor activering is verstuurd naar %{email}!"
       delete: 
         not_allowed: "U heeft geen toestemming om dit te verwijderen."
+      to_contact: "De medewerker is succesvol omgezet in een contactpersoon"
     application: 
       already: "Add-on is al geïnstalleerd."
       install: 
@@ -941,15 +1345,21 @@ nl:
       uninstall: 
         error: "Fout bij uitschakelen van de add-on."
         success: "De add-on is met succes uitgeschakeld!"
+      update: 
+        error: "Fout bij het instellen van de add-on."
+        success: "De add-on is succesvol bijgewerkt!"
     business_hours: 
       update: 
         failure: "Het bijwerken van de werktijden is mislukt"
-        success: "De werktijden zijn bijgewerkt"
+        success: "De werktijden zijn met succes bijgewerkt"
     contacts: 
       cancel: Annuleren
       create: 
         success: "De contactpersoon is aangemaakt."
       info_select: "Selecteer minstens 1 gebruiker"
+      to_agent: "De contactpersoon is succesvol omgezet in een medewerker"
+      unspamed: "De contactperso(o)n(en) zijn succesvol gemarkeerd als unspam."
+      whitelisted: "De contactperso(o)n(en) zijn succesvol op de whitelist geplaatst."
     contacts_import: 
       failure: "Probeer het opnieuw."
       no_file: "Upload een bestand"
@@ -986,6 +1396,10 @@ nl:
     filter: 
       delete_success: "De weergave is met succes verwijderd!"
       save_success: "De weergave is met succes opgeslagen!"
+    forum: 
+      page_not_found: "Dit forum kan niet worden gevonden. Het kan verwijderd zijn of de URL kan verkeerd zijn ingevoerd."
+    forum_category: 
+      page_not_found: "Deze forumcategorie kan niet worden gevonden. Het kan verwijderd zijn of de URL kan verkeerd zijn ingevoerd."
     g_app: 
       authentication_failed: "De verificatie is mislukt"
       authentication_success: "Verificatie is met succes voltooid"
@@ -993,9 +1407,15 @@ nl:
       user_deleted: "De gebruiker is verwijderd!"
     general: 
       access_denied: "U heeft geen toegang tot deze pagina!"
+      activation: 
+        failure: "%{human_name} kan niet geactiveerd worden"
+        success: "%{human_name} is geactiveerd."
       create: 
         failure: "Kan %{human_name} niet opslaan."
         success: "De %{human_name} is aangemaakt."
+      deactivation: 
+        failure: "Het %{human_name} kan niet gedeactiveerd worden"
+        success: "%{human_name} is gedeactiveerd."
       destroy: 
         failure: "De %{human_name} kon niet worden verwijderd"
         success: "De %{human_name} is verwijderd."
@@ -1038,22 +1458,28 @@ nl:
     portal_settings: 
       update: 
         success: "De klantenportaalinstellingen zijn bijgewerkt."
+    post: 
+      deleted: "Bericht van '{title}' is verwijderd."
+      page_not_found: "Dit bericht kan niet worden gevonden. Het kan verwijderd zijn of de URL kan verkeerd zijn ingevoerd."
     profile: 
       api_key: 
         reset_failure: "Fout tijdens het resetten van de API Sleutel"
         reset_success: "API Sleutel is met succes opnieuw ingesteld."
       change_password: 
-        failure: "Het was niet mogelijk uw wachtwoord bij te werken. Controleert u uw huidige wachtwoord"
-        success: "Wachtwoord bijgewerkt. Log opnieuw aan."
+        failure: "Het was niet mogelijk uw wachtwoord bij te werken. Controleer a.u.b. uw huidige wachtwoord"
+        success: "Het wachtwoord is bijgewerkt. Log opnieuw in."
       update: 
         success: "Uw profiel is bijgewerkt"
     solutions: 
       remove_tag: 
-        success: "Het label is bij deze oplossing verwijderd"
+        success: "De tag is van deze oplossing verwijderd"
     sso: 
       update: 
         success: "Uw accountgegevens zijn bijgewerkt."
     tickets: 
+      bulk_merge_success: "Tickets met Id's %{merged_tickets} zijn samengevoegd in <a href=\"/helpdesk/tickets/%{target_ticket}\">%{target_ticket_subject} #%{target_ticket}</a> "
+      delete_forever: 
+        success: "%{tickets} verwijderd."
       empty_spam: 
         success: "Alle tickets in de spammap zijn verwijderd."
       empty_trash: 
@@ -1067,14 +1493,22 @@ nl:
       notes: 
         create: 
           failure: "Er was een probleem bij het toevoegen van de aantekening bij uw ticket. Probeer het a.u.b. opnieuw."
+          invalid_email: "U bent niet bevoegd om een aantekening toe te voegen"
           success: "De aantekening is aan uw ticket toegevoegd."
       reply: 
-        success: "Het antwoord is verstuurd."
+        success: "De reactie is verstuurd."
       timesheet: 
         timer_stopped: "tickettimers zijn gestopt"
+      unwatch: 
+        failure: "Unwatch-actie voor ticket mislukt."
+        success: "%{tickets} verwijderd van de watch-list."
+        unsubscribe_success: "Het ticket is verwijderd van uw watch-list."
     to_dos: 
       complete: 
         success: "De Te doen is gemarkeerd als voltooid."
+    topic: 
+      deleted: "Onderwerp '{title}' was verwijderd."
+      page_not_found: "Dit onderwerp kon niet gevonden worden. Wellicht is het verwijderd of is de URL verkeerd ingetypt."
     twitter: 
       updated: "De Twitter-instelling is bijgewerkt"
   folder: 
@@ -1086,13 +1520,14 @@ nl:
     by_freshdesk: "door Freshdesk"
     helpdesk_software: "Helpdesk Software"
   for: voor
+  for_this_article: "Voor dit artikel"
   forgot_password: "Wachtwoord vergeten"
   forgot_password_intro: "Als u het onderstaande formulier invult, sturen wij instructies voor het herstellen van uw wachtwoord per e-mail naar u toe."
   formatting_help: "Hulp bij de opmaak"
   forum: 
     confim_msg1: "Weet je zeker dat je dit forum wilt verwijderen"
     edit: "Wijzig forum"
-    new: "Nieuw Forum"
+    new: "Nieuw forum"
     start_topic: "Begin nieuw onderwerp"
     title: Forums
     types: 
@@ -1103,7 +1538,7 @@ nl:
     verb: 
       announcement: "Aangekondigd door"
       ideas: "Idee gedeeld door"
-      problems: "Ingediend door"
+      problems: "Probleem ingediend door"
       questions: "Vraag gesteld door"
     visibility: 
       agents: Medewerkers
@@ -1114,14 +1549,18 @@ nl:
   forum_confirm_msg1: "Weet je zeker dat je deze categorie wilt verwijderen"
   forum_key: Forum
   forum_shared: 
+    follow_topic: "Volg dit onderwerp"
     post: 
       answer: Antwoord
+      delete_comment: "Verwijder reactie"
+      delete_comment_confirm: "Deze reactie verwijderen? Weet u het zeker?"
       delete_post: "Bericht verwijderen"
       delete_post_confirm: "Dit bericht verwijderen?  Weet u het zeker?"
+      edit_comment: "Reactie aanpassen"
       edit_post: "Bericht bewerken"
       mark_answer: "Als antwoord markeren"
       post_accepted_as_a_good_answer: "Dit bericht is geaccepteerd als goed antwoord voor dit onderwerp"
-      posted_on: "%{user_name} over %{post_date}"
+      posted_on: "%{user_name} op %{post_date}"
       unmark_answer: "Dit is niet het antwoord"
     topic_vote: 
       howto: 
@@ -1156,26 +1595,56 @@ nl:
     search_all: 
       placeholder: "Zoeken in alle onderwerpen"
   forums_order: 
+    deferred: Uitgesteld
+    implemented: Geïmplementeerd
+    inprogress: Bezig
+    nottaken: "Niet bezet"
     overview: Overzicht
+    planned: Gepland
     popular: Populair
     recent: Recent
   forward: Doorsturen
   forwarded_email: "Doorgestuurde email"
   forwarded_to: "Doorgestuurd naar"
   four: "4 uur"
+  four_hours: "Binnen 4 uur"
   free_account: "Gratis account"
+  free_plan_agents: "voor %{free_agents} medewerkers"
+  free_plan_details: "%{plan_name} plan met %{agent_limit} medewerkers"
   from_email: "Van e-mail"
   fwd_success_msg: "De ticket is succesvol doorgestuurd"
   fwd_to: Doorsturen
   gamification: 
     leaderboard: 
       love_trophie_info: "Medewerker met hoogste Klant Tevredenheids punten deze maand"
+      love_trophie_info_group: "Groep met hoogste klanttevredenheidspunten deze maand"
+      love_trophie_label: "klanten WOW kampioen"
+      love_trophie_label_group: "Klanten WOW kampioenen"
+      mvp_trophie_info: "Medewerker met de meeste punten deze maand"
+      mvp_trophie_info_group: "Groep met de meeste punten deze maand"
+      mvp_trophie_label: "Meest gewardeerde medewerker"
+      mvp_trophie_label_group: "Meest gewardeerde team"
+      sharpshooter_trophie_info: "Medewerker met de hoogste First Call Resolution punten deze maand"
+      sharpshooter_trophie_info_group: "Groep met de hoogste First Call Resolution punten deze maand"
       sharpshooter_trophie_label: Scherpschieter
+      sharpshooter_trophie_label_group: Scherpschieters
+      speed_trophie_info: "Agent met de maximale punten voor een snelle oplossing deze maand"
+      speed_trophie_info_group: "Groep met de maximale punten voor een snelle oplossing deze maand"
+      speed_trophie_label: "Speed Racer"
+      speed_trophie_label_group: "Speed Racers"
     levels: 
       beginner: Beginner
       expert: Expert
+      guru: Guru
+      intermediate: Gemiddeld
+      master: Meester
+      professional: Professioneel
+    notifications: 
+      achieved_quest: "<b>Gefeliciteerd!</b><br/>Je hebt de <b>%{name}</b> gehaald."
+      newlevel: "<b> Gefeliciteerd! </b><br/> U bent nu een <b>%{name}</b>."
   garden_brief: "Ondersteuning voor meerdere producten"
   garden_details: "Alles in 'Blossom' Plan Plus, Meervoudige product ondersteuning, Geavanceerde rapportage, Community, E-mail en telefonische ondersteuning"
+  go_back: "Ga terug"
   go_back_admin: "Ga terug naar Beheerder"
   greater_than: "Groter dan"
   group: 
@@ -1189,22 +1658,28 @@ nl:
       two: "12 uur"
       twoday: "2 dagen"
     edit: "Wijzig groep"
+    helptext: "U kunt uw medewerkers verdelen onder specifieke groepen zoals \"Sales\" en \"Product Management\". Door ze verdelen onder groepen kunt u gemakkelijk tickets toewijzen, specifieke standaardantwoorden aanmaken, e-mailberichten instellen, bedrijfsregels aanmaken en rapporten genereren op groepsniveau. Een medewerker kan lid zijn van verschillende groepen."
     info1: "Medewerkers in deze groep"
     info2: "Geen medewerkers in deze groep"
     info3: "Stuur een escalatie-mail naar"
     info4: "als een ticket niet toegekend wordt binnen"
     info5: "Weet u het zeker"
+    info6: "Email agent als een nieuw ticket is toegewezen aan deze groep "
+    info7: "Als ticket niet toegewezen wordt voor langer dan "
     name: Groepsnaam
     new: "Nieuwe groep"
     select_agents: "Selecteer medewerkers"
     title: Groepen
+    tour: "Help mij bij het aanmaken van een nieuwe medewerkersgroep"
   half: "30 minuten"
   header: 
-    check_ticket_status: "Controleer ticketstatus"
-    help_center: "Hoe kunnen wij je vandaag helpen?"
-    new_support_ticket: "Nieuw ondersteuningsticket"
     assumed_text: "U bekijkt als"
-    login: inloggen
+    check_ticket_status: "Controleer ticket status"
+    edit_profile: "Wijzig profiel"
+    guest: Gast
+    help_center: "Hoe kunnen we u vandaag helpen?"
+    login: <b>Inloggen</b>
+    new_support_ticket: "Nieuw support ticket"
     new_ticket: "Nieuw ticket"
     search: Zoeken
     signout: Afmelden
@@ -1229,6 +1704,7 @@ nl:
         todo_title: "Te doen"
       summary: 
         due_today: "Streefdatum vandaag"
+        on_hold: Wachtend
         open: Open
         overdue: Achterstallig
         pending: "In afwachting van"
@@ -1242,9 +1718,26 @@ nl:
       flagged_spam: "%{tickets} gemarkeerd als spam. %{undo}"
       flagged_unspam: "%{tickets} verwijderd uit de spam folder."
       removed_from_spam: "%{tickets} verwijderd uit de spam folder."
+      sending_failure: "Sturen van een antwoord naar de volgende tickets mislukt:"
       tickets_closed: "%{tickets} gesloten"
       tickets_update: "%{tickets} geactualiseerd"
+      tickets_update_with_errors: "%{tickets} bijgewerkt, maar er is een probleem dat uw aandacht nodig heeft."
     merge: 
+      bulk_merge: 
+        mark_primary: "Markeer als primair"
+        primary_ticket: "Dit is uw primaire ticket"
+        remove: "Verwijder dit ticket"
+        target_merge_description: "Ticket {{ticket.id}} {{ticket.subject}} is samengevoegd met verzoek"
+        target_merge_description1: "Samengevoegd vanuit ticket <a href='/helpdesk/tickets/%{ticket_id}' target='_blank'>%{ticket_id}</a>"
+        target_note_description1: 
+          one: "Ticket met Id"
+          other: "Tickets met Id's"
+        target_note_description2: 
+          one: "is samengevoegd in dit ticket."
+          other: "zijn samengevoegd in dit ticket."
+        target_note_description3: 
+          one: "Ticket met Id %{source_tickets} is samengevoegd in ticket %{target_ticket_id}"
+          other: "Tickets met Id's %{source_tickets} zijn samengevoegd in ticket %{target_ticket_id}"
       confirm_merge: 
         confirm_and_merge: "Bevestig en voeg samen    "
         source_merge_description: "Deze ticket is gesloten en samengevoegd met ticket %{ticket_id}."
@@ -1263,7 +1756,7 @@ nl:
         info: "Dit is de naam van de helpdesk welke zal worden getoond in de kopregel en de mail berichten."
     shared: 
       facebook_form: 
-        title: "Antwoord sturen naar %{user}"
+        title: "Reactie sturen naar %{user}"
       forward_form: 
         addbcc: "Bcc toevoegen"
         addcc: "Cc toevoegen"
@@ -1276,13 +1769,13 @@ nl:
       reply_form: 
         addbcc: "Bcc toevoegen"
         addcc: "Voeg Cc toe"
-        bcc: Bcc
-        cc: Cc
+        bcc: BCC
+        cc: CC
         removebcc: "Bcc verwijderen"
-        removecc: "Cc verwijderen"
-        title: "Antwoord sturen naar %{email}"
+        removecc: "Verwijder Cc"
+        title: "Reactie sturen naar %{email}"
       tweet_form: 
-        title: "Antwoord sturen naar %{user}"
+        title: "Reactie sturen naar %{user}"
     tags: 
       index: 
         title: Labels
@@ -1290,9 +1783,36 @@ nl:
     ticket_notifier: 
       reply: 
         happy: Geweldig
-        neutral: "Naar verwachting"
+        neutral: Redelijk
         unhappy: "Niet goed"
     tickets: 
+      add_watcher: 
+        add_button: "Voeg toe"
+        add_watcher_link: "Voeg controleur toe"
+        all_agents_watching: "Alle medewerkers controleren dit ticket"
+        cancel: Annuleer
+        mail: 
+          activity: Activiteit
+          added_as_watcher: "%{agent_name} heeft u toegevoegd als controleur van een ticket"
+          agent_response: "Antwoord van medewerker"
+          customer: "De klant"
+          customer_response: "Antwoord van klant"
+          hi: Hoi
+          new_activity: "Nieuwe activiteiten voor uw gecontroleerde ticket"
+          requester: Aanvrager
+          response: "%{responder} heeft antwoord gegeven op een tickets die u controleert"
+          status_change: "%{agent_name} heeft %{status} een ticket die u controleert"
+          stop_emails: "Stop met het controleren van dit ticket"
+          ticket: Ticket
+          ticket_details: "Ticket omschrijving"
+        me: Ik
+        no_agents: "Dit ticket wordt momenteel niet door een medewerker gecontroleerd"
+        no_watcher_text: "Dit ticket wordt momenteel niet door een medewerker gecontroleerd"
+        pick_agents: "Medewerkers toevoegen"
+        ticket_watchers: "Ticket controleurs"
+        unwatch: "Niet meer controleren"
+        view_watchers_link: "Bekijk controleurs"
+        watcher_text: "Medewerkers die zijn toegevoegd als controleur, ontvangen een e-mailbericht wanneer een ticket bijgewerkt wordt"
       close_notice: 
         ticket_has_been_cloased: "Dit ticket is gesloten."
         view_ticket: "Ticket weergeven"
@@ -1327,7 +1847,7 @@ nl:
       note: 
         attachment_size: 
           exceed: "Oeps! Uw bijlage is groter dan 15 MB. Voeg a.u.b. een kleiner bestand bij."
-        delete_note: "Verwijder van de ticket conversatie"
+        delete_note: "Verwijder dit uit conversatie"
         edit_note: "Bewerk notitie"
         inbound_email: "Inkomende email"
         outbound_email: "Uitgaand bericht"
@@ -1355,6 +1875,7 @@ nl:
         status: Status
         time_ago: "%{time_in_words} geleden"
         title: Titel
+      to: "Aan:"
       view_ticket: 
         conversation: "Conversatie "
         linked_ticket: "Dit ticket is gekoppeld aan het forum"
@@ -1392,6 +1913,8 @@ nl:
         tickets_twitter: "Tickets via Twitter"
     time_sheets: 
       agent: Medewerker
+      billable: Factureerbaar
+      billable_entry: "Markeren als factureerbare invoer"
       billing_type: Facturatietype
       customer: Klant
       executed_at: Datum
@@ -1399,13 +1922,16 @@ nl:
         agent: Medewerker
         hours: Uren
         note: Opmerking
+      group: Groep
       group_by: "Groeperen op"
       hours: Uren
       index: 
         no_timeentry: "Geen tijdsinvoer voor dit ticket geregistreed"
       new: 
         title: "Nieuwe tijdsinvoer"
+      non_billable: Niet-factureerbaar
       note: Opmerking
+      product: Product
       report: 
         no_timeentry: "Geen data beschikbaar"
         total: Totaal
@@ -1413,6 +1939,13 @@ nl:
       time_entry: 
         toggle_timer_false: "Timer stoppen"
         toggle_timer_true: "Timer starten"
+  helpdesk_quests: 
+    all: Alle
+    available_quests: "Beschikbare quests"
+    back_to_dashboard: "< Terug naar dashboard"
+    quests: Quests
+    see_all: "Alles zien"
+    un_achieved: Niet-behaald
   helpdesk_title: Helpdesk
   high: Hoog
   home: 
@@ -1428,6 +1961,7 @@ nl:
   how_to: Vraag
   identity_reverted_error_msg: "Sorry, we konden uw originele gebruiker niet vinden."
   identity_reverted_msg: "U heeft uw identiteit teruggezet naar uzelf."
+  immediately: onmidddelijk
   import: Importeren
   import_added_newly: "Nieuw toegevoegd"
   import_articles: Oplossingsberichten
@@ -1436,7 +1970,7 @@ nl:
   import_forum: Forums
   import_groups: Groepen
   import_ignore_first_row: "De eerste rij (kopteksten) negeren"
-  import_note_info: "De velden in uw csv-bestand kunnen op willekeurige manier gerandschikt worden. Zorg er alleen voor dat de eerste rij de koptekst bevat (bijv. naam, e-mail, etc.). Alleen het e-mailveld is verplicht."
+  import_note_info: "De velden in uw csv-bestand kunnen op willekeurige manier gerangschikt worden. Zorg er alleen voor dat de eerste rij de koptekst bevat (bijv. naam, e-mail, etc.)."
   import_org_companies: "Organizaties &rarr; Bedrijven"
   import_solution_article: "Converteer forumbericht naar oplossing"
   import_solution_article_info: "Opmerking: Wij slaan de forumopmerkingen niet op"
@@ -1450,13 +1984,46 @@ nl:
   import_user_org: "Gebruikers & Organisaties"
   import_user_org_text: "Alle Gebruikers & Organisaties in uw Zendesk-account worden geïmporteerd in uw huidige Freshdesk-account als \"Contactpersonen & Bedrijven\""
   import_users_contacts: "Gebruikers &rarr; Contactpersonen"
-  import_warning_info: "Na het importeren wordt een e-mail met instructies voor het activeren van de gebruiker naar elke contactpersoon verstuurd. Als de e-mail al in de database bestaat, worden de kenmerken hiervan, zoals Naam, Bedrijfsnaam, enz., bijgewerkt."
+  import_warning_info: "Indien we tijdens het importeren al een bestaande e-mail van een contactpersoon tegenkomen, dan zullen de andere gegevens van de contactpersoon bijgewerkt worden."
   import_zendesk_summary: "Importeren uit Zendesk-overzicht"
   import_zendesk_summary_info: "De Zendesk-gegevens zijn geïmporteerd."
   import_zendesk_title: "Importeren uit Zendesk"
   incident: Incident
   index_tooltip_loading_msg: Laden...
+  integration: 
+    helpcard: 
+      info1: "Integraties binnen Freshdesk zorgen dat u gegevens kunt delen met applicaties en diensten van derden die u regelmatig gebruikt. Freshdesk biedt verschillende ingebouwde integraties out-of-the-box. Om een ingebouwde integratie te gebruiken, klik op de corresponderende \"Aanzetten\"-knop."
+      info2: "Naast de ingebouwde integraties, kunt u met FreshPlugs gegevens van een applicatie van derden, een legacy systeem of database invoeren bij tickets en contactpagina's. U kunt uw FreshPlug widget aanpassen door relevante informatie van Freshdesk over te zetten naar uw databron met een AJAX-call, en informatie aanpassen en tonen met HTML, CSS en Javascript. "
+      title1: Integraties
+      title2: "FreshPlug widgets"
   integrations: 
+    add_new_freshplug: "Nieuwe FreshPlug toevoegen"
+    batchbook: 
+      desc: "Contactgegevens ophalen van uw Batchbook-account binnen Freshdesk"
+      detect_error: "Kan versie van Batchbook niet bepalen. Controleer het domein."
+      form: 
+        api_key: API-sleutel
+        api_key_info: "Uw API-sleutel van Batchbook is te vinden door op <i>Uw account</i> te klikken binnen Batchbook."
+        domain: "Batchbook-domeinnaam:"
+        domain_info: "Als uw Batchbook-URL bijvoorbeeld <strong>http://mijnbedrijf.batchbook.com/</strong> is, voer dan <strong>mijnbedrijf</strong> in.</span>"
+        version: 
+          auto_detect: "Automatisch detecteren"
+          classic: Classic
+          label: Versie
+          new: Nieuw
+        version_info: "Het versie-veld geeft u de keuze tussen <i>Batchbook Classic</i> en <i>Batchbook Nieuw</i>."
+        widget_title: Widget-naam
+      helptext: "<h4>Integratie van Batchbook</h4><p><br>Link uw Batchbook-account met Freshdesk om de contactgegevens te tonen op de ticket- en contactpagina's. Specificeer uw domein en API-sleutel op deze pagina om de integratie in te stellen. <br><br>Freshdesk haalt de naam, titel, bedrijfsnaam, contactadres en telefoonnummers op van Batchbook en maakt deze beschikbaar voor uw medewerkers.<br><br>U kunt contactpersonen opzoeken van Batchbook door te zoeken met hun e-mailadres. Als er meerdere contactpersonen zijn met hetzelfde e-mailadres, dan zullen ze allemaal als een lijst getoond worden.</p><br/>"
+      label: Batchbook
+    campaignmonitor: 
+      desc: "Bekijk en beheer uw abonnementen van uw Campaign Monitor-account, en breng overzichten van gebruiksstatistieken van klanten naar Freshdesk."
+      form: 
+        api_key: API-sleutel
+        api_key_info: "U API-sleutel vindt u bij accountinstellingen"
+        client_id: "Client ID"
+        client_id_info: "De instructies om uw ClientID te krijgen, zijn beschikbaar via http://www.campaignmonitor.com/api/getting-started/#clientid"
+      helptext: "<h4>Hulp bij integratie van Campaign Monitor</h4><br/>Om Campaign Monitor te integreren heeft u uw API-sleutel en ClientID nodig van Campaign Monitor.<br/></br/>De API-sleutel is te vinden bij de accountinstellingen van Campaign Monitor.<br/><br/>De instructies om uw ClientID te krijgen, zijn beschikbaar via <a target='_blank' href='http://www.campaignmonitor.com/api/getting-started/#clientid'>http://www.campaignmonitor.com/api/getting-started/#clientid</a>.<br/><br/>Klik nu op \"Update\" om te beginnen met het integreren van uw Campaign Monitor."
+      label: "Campaign Monitor"
     capsule: 
       desc: "U kunt in Freshdesk de contactpersoongegevens van Capsule CRM weergeven. U kunt deze informatie vinden op de pagina Ticket Details en de pagina Contact Details."
       form: 
@@ -1467,13 +2034,36 @@ nl:
         domain: Domein
         domain_info: "Voer gewoon het domein in zonder https. Bijv.: voorbeeld.capsulecrm.com"
         widget_title: "Widget titel"
+      label: "Capsule CRM"
+    capsule_crm: 
+      helptext: "<h4>Terugkoppelen van Capsule naar Freshdesk</h4><p><br/>U kunt een link aanmaken binnen Capsule CRM om de tickets van de contactpersonen te bekijken binnen Freshdesk.</p><p>Om dit te doen, ga naar uw<br /><b>Instellingen -> Aangepaste velden -> Voor mensen & organisatie</b></p><p>Klik daarna op \"Nieuwe toevoegen...\" en selecteer <b>\"Link genereren\"</b></p><p>Kopieer de URL precies zoals deze getoond wordt en plak deze in Capsule CRM als de linkdefinitie <span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
+      label: "Capsule CRM"
+    constantcontact: 
+      desc: "Integreer uw Constant Contact-account om uw abonnementen te beheren binnen Freshdesk en krijg bijgewerkte informatie over klanten en hun activiteiten."
+      helptext: "<h4>Hulp bij integratie van Constant Contact</h4>"
+      label: "Constant Contact"
     custom_application: 
+      desc: "U kunt een aangepaste widget toevoegen om alle soorten gegevens weer te geven door middel van uw eigen script."
       description: Omschrijving
+      edit: "Aangepaste widget bewerken"
       form: 
         create_n_enable: "Aanmaken en inschakelen"
         insert_placeholder: "Variabele invoegen"
+        widget_script: "Widget code snippet"
+        widget_title: Widget-naam
+      helptext: "<h4>FreshPlugs</h4><p><br/>U kunt uw eigen FreshPlugg ontwikkelen met behulp van HTML, CSS en JavaScript, en gegevens van een app of database van derden invoeren binnen uw tickets en contactpersonen.<br/><br/>Om een FreshPlug aan te maken, dient u het eerst een naam en omschrijving te geven. Voer dan uw code in bij het 'Script'-veld. U kunt elk ticket- of aanvragerveld, inclusief aangepaste velden die u heeft gemaakt, als JSONP-objecten laten doorgaan.<br/><br/>U kunt op <b>'Toon preview'</b> klikken om te zien hoe uw widget eruit zal zien zowel binnen de ticket- en contactpagina's.<br/><br/>Bekijk onze <a href='http://support.freshdesk.com/solution/categories/4/folders/15/articles/32031-using-freshplugs-to-integrate-third-party-apps'>oplossingen pagina</a> om meer te lezen over FreshPlugs."
+      label: "Aangepaste widget"
       name: Naam
+      new: "Nieuwe FreshPlug"
       script: script
+      small_help_text: "U kunt uw eigen FreshPlug ontwikkelen met behulp van HTML, CSS en JavaScript."
+    dropbox: 
+      desc: "Deel uw gegevens/bestanden van DropBox en voeg deze toe"
+      form: 
+        app_key: "Geregistreerde Application key voor uw domein"
+        app_key_info: "Maak een App aan in de dropbox en geef de app-sleutel hier op."
+      helptext: "<h4>Hulp bij integratie van Dropbox</h4><br/><p>De integratie van Dropbox maakt het voor medewerkers en contactpersonen mogelijk om naar bestanden in hun Dropbox-folder te zoeken en deze te delen wanneer ze antwoorden op een ticket of deze insturen binnen Freshdesk. Een directe link naar het bestand wordt gedeeld binnen het ticket, en het is dus niet langer meer nodig om limieten te leggen op het formaat van bijlagen en e-mailberichten.</p><p>Voordat u de integratie instelt, ga naar <strong><a href='https://www.dropbox.com/developers/apps' target='_blank' alt='developers'>Dropbox Developers pagina</a></strong>.</p><p>1. Vanaf de My Apps-sectie, klik op 'Create an App'.</p><p>2. Selecteer het app-soort als 'Chooser'.</p><p>3. Voer een naam en omschrijving in.</p><p>4. Voer uw support-URL in onder Domains <i>(bijv. uwbedrijf.dreshdesk.com)</i></p><p>5. Klik op de 'Create'-knop.</p><p>Kopieer en plak als laatste de Application Key van de nieuwe app op deze pagina, en sla de veranderingen op. Uw Dropbox Chooser zou nu klaar moeten zijn. U kunt deze uitproberen op het 'Nieuw ticket'-formulier.</p>"
+      label: DropBox
     freshbooks: 
       desc: "U kunt tijd die is besteed aan tickets registreren in uw Freshbooks-projecten en taken."
       form: 
@@ -1486,6 +2076,14 @@ nl:
         widget_title: "Widget titel"
       helptext: "<h4>Integratiehulp van Freshbooks</h4><p><br/>Om Freshbooks te integreren met Freshdesk, moet u eerst het token voor the Freshbooks API en authentication verkrijgen. <br/><br/>Aanmelden bij uw Freshbooks-account, klik op uw <b>tabblad People</b> en ga dan naar het <b>sub-tabblad Staff and Contractors</b>. Klik op <b>Bewerken</b> in uw Admin.  U kunt uw token voor API URL en authenticatie vinden.<br/><br/>In Freshdesk, klik op uw ticket en ga naar het tabblad Time Sheet.  U kunt uw invoer voor bijhouden tijd dan aan Freshbooks toevoegen."
       label: Freshbooks
+    freshplugs: 
+      custom_widget_preview: "Aangepaste Widget-preview"
+      hide_preview: "Verberg preview"
+      refresh: Verversen
+      show_preview: "Toon preview"
+      show_the_widget_in_contact_view_page: "Toon de widget op de contactpersoonpagina"
+      show_widget_in_ticket_view_page: "Toon de widget op de ticketpagina"
+    freshplugs_title: FreshPlugs
     google_analytics: 
       account_number: "Vul je tracking id in"
       desc: "Volg bezoekers statistieken van je ondersteuningsportaal via Google Analytics"
@@ -1494,9 +2092,16 @@ nl:
         copy_settings: "Gebruik het bovenstaande tracking id voor alle portalen."
         tracking_id: "Tracking id voor"
         tracking_id_example: "Bijv: UA-123456-1"
+      helptext: "<h4>Hulp bij het integreren van Google Analytics</h4><p><br/>Om Google Analytics te integreren met Freshdesk wordt het aangeraden om een 'dedicated property' aan te maken binnen uw Google Analytics-account.<br/><br/>Om een property aan te maken, logt u in bij uw Google Analytics-account en gaat u naar de Admin tab en selecteert u het gewenste account. Klik op <b>'New Property'</b> om een nieuwe aan te maken. Voer bij <b>'Website URL'</b> de URL van uw supportportaal in en klik op <b>'Create Property'</b>. Klik nu op de property die u zojuist heeft aangemaakt, en u krijgt de <b>'Property ID'</b> te zien onder de naam van de property. Kopieer deze naar de Google Analytics-instellingen van Freshdesk.</p>"
       inline_help: "Vul het tracking id in voor"
       label: "Google Analytics"
       portal: Portaal
+    google_calendar: 
+      desc: "U kunt de events voor elk ticket beheren met Google Calendar."
+      form: 
+        google_calendar_settings: "Instellingen Google Calendar"
+      helptext: "Met Google Calendar kunt u de event bijhouden van tickets. Medewerkers dienen hun Google-account te verbinden met Freshdesk om de event te beheren met Google Calendar."
+      label: "Google Calendar"
     google_contacts: 
       MERGE_LATEST: "Voeg de Freshdesk en Google contactpersonen samen (laatste update heeft voorrang)"
       MERGE_LOCAL: "Voeg de Freshdesk en Google contactpersonen samen (Freshdesk voorrang)"
@@ -1524,7 +2129,7 @@ nl:
         import_title: "Import-instelling Google contactpersonen"
         install_title: "Sync-instelling Google contactpersonen"
         mail_box_detail: "Detail postvak"
-      edit_helptext: "<h4>Google contacten sync hulp</h4><p><br/> <b>Selecteer te importeren groepen (optioneel)</b> <br/>Tegelijk met het opzetten van Google synchronisatie kunt u hier optioneel contacten van bestaande groepen importeren. Slelecteer svp de groepen waarvan u contacten wilt importeren in Freshdesk.<br/><br/> <b>Sync Instelling</b><br/> Deze instelling bepaalt de sunchronisatie van contacten tussen Google en Freshdesk. Freshdesk contacten getagd met de specifieke <b>'Sync tag'</b> zullen gesynchroniseerd worden met google. Contacten geimporteerd via Google zullen getagd worden met die <b>'Sync tag'</b>.<br/><br/> Een speciale groep, hier genoemd, zal aangemaakt worden om te sunchroniseren met Google. Na de eerste import zullen alle contactpersonen bidirectioneel gesynct worden tussen Freshdesk en Google."
+      edit_helptext: "<h4>Hulp bij het synchroniseren van uw Google-contactpersonen</h4><p><br/><b>Selecteer groepen om te importeren (optioneel)</b><br/>U kunt eventueel tegelijkertijd met het instellen van Google-synchronisatie ook contactpersonen importeren vanuit bestaande groepen die hier worden vermeld. Selecteer de groepen waar vanuit u contactpersonen wilt importeren naar Freshdesk.<br/><br/><b>Synchronisatie-instelling</b><br/>Deze instelling controleert het synchroniseren van contactpersonen tussen Google en Freshdesk. Contactpersonen van Freshdesk met de <b>'Sync tag'</b> zullen gesynchroniseerd worden met Google. Contactpersonen die geïmporteerd worden vanuit Google zulle getagged worden met die <b>'Sync tag'</b>.<br/><br/>Een speciale groep die hier wordt vermeld zal aangemaakt worden om contactpersonen te synchroniseren met Google. Na de eerste import zullen alle contactpersonen die zijn toegevoegd aan deze groep teruggesynchroniseerd worden met Freshdesk en vice versa."
       email: E-mail
       enable_integration: "Na importeren automatisch synchroniseren beginnen (eenmaal per uur)"
       fetch_problem: "Probleem bij ophalen van Google contactpersonen."
@@ -1575,31 +2180,66 @@ nl:
         widget_title: "Widget titel"
       helptext: "<h4>Integratiehulp van Harvest</h4><p><br/>Om Harvest met Freshdesk te integregen, type uw <b>Domeinnaam</b> in en klik op Inschakelen.<br/><br/>Klik op een ticket, ga dan naar het <b>tabblad Time Sheet</b>.  Dan kunt u uw Harvest <b>gebruikersnaam</b> en <b>wachtwoord</b> intypen voor aanmelden. Nu kunt u uw invoer voor bijhouden tijd aan Harvest toevoegen.<br/><br/>Opmerking: U kunt klikken op <b>Mij onthouden</b>, zodat u uw Harvest-referenties niet elke keer hoeft in te typen."
       label: Oogsten
+    highrise: 
+      desc: "Bekijk de contactgegevens van Highrise CRM binnen Facebook bij het afhandelen van tickets."
+      form: 
+        api_key: API-sleutel
+        api_key_info: "Uw API-sleutel van Highrise kunt u vinden bij Highrise. Kopieer en plak deze sleutel hier."
+        domain: "Highrise domeinnaam:"
+        domain_info: "Als uw Highrise-URL bijvoorbeeld <strong>http://mijnbedrijf.highrisehq.com/</strong> is, voer dan <strong>mijnbedrijf</strong> in.</span>"
+        widget_title: Widget-naam
+      helptext: "<h4>Integratie van Highrise</h4><p><br>Voer uw domeinnaam en API-sleutel in om de contactgegevens van Highrise te tonen binnen Freshdesk. De widget zal te zien zijn op de tickets- en contactpagina's zodra u klaar bent.<br><br>De velden naam, titel, bedrijfsnaam, contactadres en telefoonnummers van Highrise CRM zullen verzameld worden en getoond worden.<br><br>Zoek door de contactpersonen op Highrise met hun e-mailadressen. Als er meerdere contactpersonen zijn met hetzelfde e-mailadres, dan zullen ze allemaal als een lijst getoond worden.</p>"
+      label: Highrise
+    icontact: 
+      desc: "Exporteer klanteninformatie, beheer bestaand abonnementen, en breng overzichten van gebruiksstatistieken van klanten naar Freshdesk."
+      form: 
+        api_password: API-wachtwoord
+        api_url: API-URL
+        api_url_info: "Om uw API-URL te krijgen, ga naar https://app.icontact.com/icp/core/externallogin en kopieer de API-URL van de 'Account Information'-sectie."
+        app_id: "Application ID"
+        username: "Gebruikersnaam iContact"
+      helptext: "<h4>Hulp bij integratie van iContact</h4><br/>Om te integreren met iContact, ga naar <a target='_blank' href='https://app.icontact.com/icp/core/externallogin'>https://app.icontact.com/icp/core/externallogin</a> en geef toestemming voor de app van Freshdesk door de volgende Applicatie ID in te voeren <br/><br/><b>qB7RYQgliAPwl5dwezYF0kAN4Islhj4e</b><br/><br/>Stel een wachtwoord naar keuze in en klik op \"Opslaan\". Dit API-wachtwoord zal gebruikt worden voor alle API-verzoeken van Freshdesk.<br/><br/>Kopieer de API-URL van de 'Account Information'-sectie en plak deze in het API-URL-veld hier. Voer uw iContact gebruikersnaam en het nieuwe API-wachtwoord in en klik op Update."
+      label: iContact
     jira: 
       desc: "Vorm tickets om naar issues die getracked kunnen worden in JIRA."
       form: 
+        add_jira_comment: "Voeg het toe als een opmerking in JIRA."
         add_note: "Voeg toe als privé notitie."
         do_nothing: "Doe niets"
         domain: Domein
         domain_info: "Voer uw complete JIRA account URL in met https/http. Bijv. https://example.atlassian.net. <br /><span class='italics'> NB: De on-premise variang van JIRA moet beschikbaar zijn via het internet.</span>"
+        fd_comment_sync: "Voor een eventuele opmerking die is toegevoegd in Freshdesk %{dropdown}"
+        fd_status_sync: "Voor een eventuele verandering in Freshdesk-status %{dropdown}"
+        jira_comment_sync: "Voor een eventuele opmerking die is toegevoegd bij een JIRA-issue %{dropdown}"
         jira_note: "Omschrijving tekst"
         jira_note_info: "Deze tekst zal toegevoegd worden aan de issue beschrijving in JIRA."
+        jira_status_sync: "Voor eventuele veranderingen in de status van een JIRA-issue %{dropdown}"
         jira_status_sync_update_customer: "Stuur antwoord naar klant en werk veld Status bij."
         jira_status_sync_update_field: "Werk Freshdesk statusveld bij."
         password: Wachtwoord
         send_reply: "Verstuur als antwoord naar de klant"
+        update_jira_status: "JIRA-status ook bijwerken."
         username: Gebruikersnaam
         widget_title: "Widget titel"
-      helptext: "<h4>JIRA Integration Help</h4><p><br/>To integrate JIRA with Freshdesk, enter your JIRA administrator username and password. The integration supports both on-demand and on-premise variants, from JIRA 4.2 upto the latest version - JIRA 5.<br/><br/> To create an issue or link to an existing issue from Freshdesk, navigate to the Tickets page and click on <img src='/images/ticket-icon/jira.png'/><br/><br/> To view details of your linked Freshdesk tickets in JIRA, and conversely to view JIRA issue details in Freshdesk, the JIRA administrator is recommended to create a Free Text custom field with the name &quot;Freshdesk Tickets&quot; as described below. <br/><br/>Log on to your JIRA account, click on <b>Administration</b>, navigate to <b>Issues</b> -> <b>Fields</b> and click on <b>Add Custom Field</b>. In <b>Create Custom Field</b> screen, select <b> Free Text Field </b> and click on <b>Next</b>. Input <b>&quot;Freshdesk Tickets&quot;</b> in Field Name and click on Finish. In <b>Associate field to Screens</b> page, select all the check-boxes and click on 'Update'.<br/><br/>"
+      helptext: "<h4>Hulp bij JIRA-integratie</h4><p><br/>Voer om JIRA te integreren met Freshdesk uw JIRA-beheerder gebruikersnaam en wachtwoord in. De integratie ondersteunt zowel on-demand en on-premise varianten, van JIRA 4.2 tot de laatste versie - JIRA 5.<br/><br/>Om een issue aan te maken, of te linken naar een bestaande issue van Freshdesk, ga naar de ticketspagina en klik op <img src='/images/ticket-icon/jira.png'/><br/><br/>Om de gegevens van uw verbonden Freshdesk-tickets binnen JIRA te bekijken, en omgekeerd om de JIRA-issue gegevens binnen Freshdesk te bekijken, is het aan te raden voor de JIRA-beheerder om een aangepast 'Free text'-veld aan te maken met de naam \"Freshdesk\" zoals hieronder staat weergegeven.<br/><br/>Log in bij uw JIRA-account, klik op <b>Administratie</b>, ga naar <b>Issues</b> -> <b>Velden</b> en klik op <b>Voeg aangepast veld toe</b>. Op het <b>Maak aangepast veld</b>-scherm, selecteer <b>Free Text Field</b> en klik op <b>Volgende</b>. Vul <b>\"Freshdesk-tickets\"</b> in bij veldnaam en klik op afronden. Op de <b>Associate fiels to Screens</b>-pagina, selecteer alle vakjes en klik op 'Bijwerken'.<br/><br/>"
+      label: "Atlassian JIRA"
     jira_settings: 
+      add_comment_in_jira: "Voeg een opmerking toe in JIRA"
       add_private_note_in_fd: "Voeg een privé aantekening toe en bericht de medewerker"
       add_public_note_in_fd: "Voeg een openbare notitie toe in FreshDesk."
+      info1: "Wanneer een Freshdesk-ticket wordt verbonden met een JIRA-issue, voer de onderstaande acties uit."
+      info2: "Wanneer de ticket-status is bijgewerkt in Freshdesk."
+      info3: "Wanneer een opmerking is toegevoegd in Freshdesk"
       none: "Doe niets"
       send_reply_in_fd: "Attendeer de klant via e-mail"
+      sync_updates: "Updates synchroniseren"
+      update_jira_status: "JIRA-status bijwerken"
       update_status_in_fd: "Bijwerken status is FreshDesk."
     logmein: 
+      desc: "Lever directe ondersteuning op afstand aan uw klanten en werknemers met LogMeIn Rescue"
       form: 
         company_id: "Bedrijf ID"
+        logmein_company_info: "Voor uw Bedrijfs-ID gaat u naar Admin Center -> Technician Group -> Global Settings -> ASP.Net C# server side example"
         logmein_sso_pwd_info: "Om je SSO wachtwoord in te stellen, ga naar Admin Center ->  Technician Group -> Global Settings -> Single Sign-On -> new SSO password"
         password: "SSO wachtwoord"
         widget_title: "Widget titel"
@@ -1614,6 +2254,16 @@ nl:
         tech_name: "Techneut naam"
         tech_notes: "Medewerker notities"
         work_time: "Totale werktijd (in seconden)"
+    mailchimp: 
+      desc: "Voeg MailChimp toe aan Freshdesk en begin met het beheren van uw abonnementen, exporteer klantenlijsten en haal de benodigde informatie over hun activiteiten op van uw helpdesk."
+      helptext: "<h4>Hulp bij integratie van MailChimp</h4>"
+      label: MailChimp
+    native_integrations: "Ingebouwde integraties"
+    new_freshplug: "Nieuwe FreshPlug"
+    nimble: 
+      desc: "U kunt de contactgegevens van Nimble crm in Freshdesk bekijken."
+      label: Nimble
+    no_freshplugs: "U heeft nog geen FreshPlugs."
     salesforce: 
       desc: "You can view contact information from Salesforce in Freshdesk."
       form: 
@@ -1627,6 +2277,7 @@ nl:
         password: Wachtwoord
         username: Gebruikersnaam
         widget_title: Widget-titel
+      helptext: "<h4>Hulp bij integratie van Sugar CRM</h4><p><br/>Het is mogelijk om toegang te krijgen tot de contactgegevens van Sugar CRM op de ticket- en contactpagina's van Freshdesk.<br /><br />De volgende gegevens zullen toegankelijk zijn - naam, titel, bedrijf, afdeling, contactadres, telefoonnummers.<br /><br />Onthoud dat de zoekfunctie is gebaseerd op het e-mailadres. Als er meerdere contactpersonen zijn met hetzelfde e-mailadres, dan zullen ze allemaal als een lijst getoond worden."
       label: SugarCRM
     workflow_max: 
       desc: "U kunt tijd die is besteed aan tickets registreren in uw Workflow MAX-projecten en taken."
@@ -1640,17 +2291,27 @@ nl:
         workflow_max_note_info: "Deze tekst wordt toegevoegd aan het einde van de opmerking, met de registratie van bestede tijd."
       helptext: "<h4>Workflow Max Intergratie Help</h4><p><br/>Om Workflow Max tijd registratie te integreren in Freshdesk zul je de Account Key en Api sleutel van <a href='mailto:support@workflowmax.com'>Workflow Max </a>moeten verkrijgen. Voer de sleutels in de daarvoor bestemde velden in om de integratie te voldoen. <br/><br/>Eenmaal geintegreerd, klik op een willekeurig ticket en ga naar de Time Sheet tab. Hier kan je dan de werknemers, opdracht en taak selecteren om tijd registraties toe te voegen in Workflow Max."
       label: "Workflow Max"
+    zohocrm: 
+      desc: "U kunt de contactgegevens van Zoho crm in Freshdesk bekijken."
+      form: 
+        api_key: "Auth Token"
+        api_key_info: "<a href='http://www.zoho.com/crm/help/api/using-authentication-token.html#Generate_Auth_Token' target='_blank'>De Auth Token aanmaken</a> binnen Zoho CRM via Browser Mode en plak de aangemaakte Auth Token hier."
+      helptext: "<h4>Hulp bij integratie van Zoho CRM</h4><p><br/>Om Zoho CRM te integreren met Freshdesk, <a href='http://www.zoho.com/crm/help/api/using-authentication-token.html#Generate_Auth_Token' target='_blank'>Maak de Auth Token aan</a> in Zoho CRM via Browse Mode en plak de aangemaakte Auth Token hier. Indien u de Auth Token al heeft aangemaakt, kunt u deze vinden op <a href='https://accounts.zoho.com/u/h#setting/authtoken' target='_blank'>uw accountpagina.</a><br/><br/>Zodra dit is gedaan, kunt u de contactgegevens binnen elke ticket- of contactpagina bekijken.</p>"
+      label: "Zoho CRM"
   is: Is
   is_expiring_today: "verloopt vandaag"
   is_not: "Is niet"
   last: laatste
   last_draft: "Uw laatste concept"
   last_name: Achternaam
+  last_renewed_on: "Vernieuwd op"
   latest_ticket: "nieuwe update"
   latest_tickets: "nieuwe updates"
+  lead: Leid
   left: Links
   less_than: "Minder dan"
   level_label: Niveau
+  likes: Likes
   linkback_info: "U kunt kiezen voor terugkoppeling naar uw eigen website wanneer een klant op het koplogo klikt"
   linkback_overlabel: Linkback-URL
   loading: 
@@ -1665,19 +2326,22 @@ nl:
   maximum_agents_msg: "U heeft het maximale aantal voltijdsmedewerkers bereikt dat door uw abonnement wordt toegestaan. U moet een bestaande voltijdsmedewerker verwijderen, of contact opnemen met uw beheerder om uw account te upgraden. Als u slecht af en toe een medewerker nodig heeft, kunt u hieronder één toevoegen"
   medium: Gemiddeld
   message: Bericht
+  mobi_help: MobiHulp
   mobile: 
     home: 
       login: Inloggen
       remember: "Onthoudt mijn gegevens"
       sign_in_error: "Foutief e-mailadres of wachtwoord."
       sign_in_using: "...of inloggen met"
+  myself: Ik
   name: Naam
   never: Nooit
   new_ticket_created: "Nieuw ticket is gecreëerd"
   next: Volgende
   next_charge_amount: "%{type} kost:"
-  next_charge_date: "Uw volgende betaling wordt verrekend op:"
+  next_charge_date: "Volgende verlenging"
   next_level_info: "+%{points} om %{name} te worden"
+  no_anonymous_tickets: "Om een ticket te kunnen versturen dien u zich <a href={{signup}}><b>aan te melden</b></a> als een nieuwe gebruiker of <a href={{login}}><b>in te loggen</b></a>."
   no_badge_achieved_label: "Nog geen Badges behaald."
   no_change: "Geen wijziging"
   no_date_to_display: "Geen gegevens om weer te geven"
@@ -1687,63 +2351,78 @@ nl:
     canned_responses: "Geen standaardantwoorden beschikbaar."
     products: "U heeft nog geen producten aangemaakt."
   no_password_reset: Nee
+  no_signup: "Om een ticket te kunnen versturen dien u <a href={{login}}><b>in te loggen</b></a>."
   no_tags: "Geen tags gevonden."
   no_topics_text: "Geen onderwerpen in dit forum"
   no_twitter_handle: "Configureer a.u.b. minstens één twitter-account"
-  non_covered_feature_error: "Deze functie wordt door uw huidige Freshdesk plan niet ondersteund."
+  non_covered_feature_error: "Deze functie is momenteel vergrendeld"
+  not_eligible_for_free_plan: "Niet in aanmerking om het gratis plan te selecteren"
+  not_eligible_for_sprout_plan: "Niet in aanmerking om het Sprout-plan te selecteren"
   not_selected: "Niet geselecteerd"
   note: "Opmerking:"
+  notified_to: "Meegedeeld aan"
+  number_of_attachments: " bijlagen"
+  of: van
   ok: OK
   on_hold: Wachtend
   one: "1 uur"
+  one_hour: "Binnen 1 uur"
   onemonth: "1 maand"
   oneweek: "1 week"
+  oneyear: "1 jaar"
   open: Open
   open_tickets: "Open tickets"
   or: of
   paid_with: "Betaald met"
   password: Wachtwoord
+  password_confirmation: "Wachtwoordbevestiging:"
   password_reset_email: "Wachtwoord reset E-mail"
   payment_info: Betalingsgegevens
   pending: "in afwachting"
   phone: Telefoon
   plan_amount: "per medewerker/maand"
   plan_info_update: "Uw plan is gewijzigd."
+  plan_is_selected: "Uw account is nu actief met het %{plan}-plan"
+  plans_and_pricing: "Plannen & prijzen"
   plans_billing: "Overeenkomsten & facturatie"
+  please_wait: "Even geduld a.u.b."
   portal: 
     article: 
       see_all_articles: "Bekijk alle %{count} artikelen"
     community_forums: Gemeenschapsforums
-    login_portal: "Log in bij de support portal"
-    login_details: "Voer de inloggegevens in die je hebt opgegeven tijdens het registeren"
     header: 
       preview_message: "<b>Voorbeeldmodus</b> - <a href='javascript:window.close()'>Klik hier</a> om terug te gaan."
-    login: Inloggen
-    signup: Aanmelden
     knowledge_base: Kennisbank
-    no_articles_info_1: "Sorry, we hebben geen artikelen gepubliceerd."
-    no_articles_info_2: "Probeer later opnieuw."
+    login: Inloggen
+    login_details: "Voer de inloggegevens in die u opgegeven heeft tijdens uw registratie"
+    login_options: "...of log-in met"
+    login_portal: "Inloggen bij de ondersteuningsportaal"
+    no_articles_info_1: "Sorry, wij hebben nog geen artikelen gepubliceerd in deze sectie."
+    no_articles_info_2: "Controleer het later nog eens. "
     no_forums_info_1: "Nog geen onderwerp voor het forum"
     no_forums_info_2: "Waarom begin je niet een %{start_topic_link}?"
     no_topics_in_this_view: "~ Geen onderwerpen bij deze weergave ~"
-    or_signup: "of %{signup} voor een account"
-    popular_topics: "Populaire onderwerpen"
+    or_signup: " of %{signup} voor een account"
+    popular_topics: "Meest bekeken onderwerpen"
+    reset_password: "Geef ons uw e-mailadres en de instructies om uw wachtwoord te resetten zullen naar u verstuurd worden."
     search: 
-      filters:
-        all: "Alle"
-        solutions: "Oplossingen"
-        topics: "Onderwerpen"
-        tickets: "Tickets"
-      placeholder: "Voer hier je zoekterm in..."
-    showing_recent_updates: "Recente updates worden getoond"
-    showing_recently_popular_topics: "Onlangs populaire onderwerpen worden getoond"
+      filters: 
+        all: Alle
+        solutions: Oplossingen
+        tickets: Tickets
+        topics: Onderwerpen
+      placeholder: "Voer hier uw zoekterm in..."
+    showing_recent_updates: "Recente wijzigingen"
+    showing_recently_popular_topics: "Meest bekeken onderwerpen van de laatste tijd"
+    signup: "Meld aan"
+    solutions_home: "Oplossingen startpagina"
     tickets: 
       export: "Tickets exporteren"
       export_ticket_data: "Ticketgegevens exporteren naar CSV"
-      export_to_csv: "Export naar CSV"
-    to_post_comment: "om een opmerking te plaatsen"
-    to_post_topic: "om een onderwerp te plaatsen"
-    to_submit_ticket: "om een nieuwe ticket te versturen"
+      export_to_csv: "Exporteer naar CSV"
+    to_post_comment: " om een opmerking te plaatsen"
+    to_post_topic: " om een onderwerp te plaatsen"
+    to_submit_ticket: " om een nieuwe ticket te versturen"
     topic: 
       comments_closed: "De mogelijkheid om opmerkingen toe te voegen aan deze discussie is nu gesloten!"
       see_all_topics: "Bekijk alle %{count} onderwerpen"
@@ -1754,14 +2433,13 @@ nl:
         other: "hebben deze vraag"
       howto_button: "Heb jij ook deze vraag?"
       howto_unlike_button: "Ik heb deze vraag niet!"
-      ideas_unlike_button: "Niet leuk!"
-      ideas_users_voted_title: Mensen die dit idee leuk vinden
-      problem_users_voted_title: Mensen die dit probleem hebben
-      howto_users_voted_title: Mensen die deze vraag hebben
+      howto_users_voted_title: "Personen met deze vraag"
       ideas: 
         one: "vinden dit idee leuk"
         other: "vindt dit idee leuk"
       ideas_button: "Vind je dit idee leuk?"
+      ideas_unlike_button: "niet leuk!"
+      ideas_users_voted_title: "Mensen die dit idee leuk vinden"
       more: 
         one: "1 andere"
         other: "%{count} anderen"
@@ -1773,14 +2451,13 @@ nl:
         other: "hebben een probleem"
       problem_button: "Heb je dit probleem?"
       problem_unlike_button: "Ik heb dit probleem niet!"
+      problem_users_voted_title: "Personen met dit probleem"
       you: 
         one: Jij
         other: "Jij en"
-  feedback: 
-    title: "Was dit antwoord behulpzaam?"
-  send_feedback: "Stuur feedback"
   portal_captcha: "Captcha verplichten bij het aanmaken van tickets zonder aanmelding."
   portal_captcha_anon: "Deze functie inschakelen als u wilt dat gebruikers tickets met captcha indienen"
+  portal_customizer_anon_for_f: "Zet deze functie aan als u wilt dat klanten in kunnen loggen met hun inloggegevens van Facebook."
   portal_customizer_anon_for_g: "Schakel deze functie in, als u wilt dat klanten kunnen aanmelden met hun gebruikersnaam en wachtwoord van Google."
   portal_customizer_anon_for_i: "Schakel deze funtie uit als u het tabblad 'Forums' in het openbare klantenportaal wilt verbergen."
   portal_customizer_anon_for_t: "Schakel deze functie in, als u wilt dat gebruikers zich kunnen aanmelden met hun gebruikersnaam en wachtwoord van Twitter. "
@@ -1802,12 +2479,75 @@ nl:
   portal_customizer_title: "Uw openbare klantenportaal aanpassen"
   portal_customizer_twitter_signin: "Gebruikers toestaan om aan te melden via Twitter"
   portal_key: Portaal
+  portal_pages: 
+    groups: 
+      discussions: Discussies
+      general: "Algemene pagina's"
+      solutions: Oplossingen
+      tickets: Tickets
+    pages: 
+      article_list: Artikellijst
+      article_view: "Artikel bekijken"
+      discussions_home: "Discussies startpagina"
+      forgot_password: "Wachtwoord vergeten"
+      new_topic: "Nieuw onderwerp"
+      portal_home: "Portaal startpagina"
+      profile_edit: Gebruikersprofiel
+      search: Zoekresultaten
+      solution_category: "Oplossingencategorie startpagina"
+      solution_home: Oplossingen
+      submit_ticket: "Nieuw ticket"
+      ticket_list: "Tickets van gebruiker"
+      ticket_view: "Ticket details"
+      topic_list: Onderwerpenlijst
+      topic_view: "Onderwerp bekijken"
+      user_login: Inlogpagina
+      user_signup: "Nieuwe gebruiker"
   portal_signup: "Sta klanten toe zich te registreren vanaf het klantenportaal"
   portal_signup_anon: "Schakel deze functie in, als u wilt dat gebruikers kunnen registreren en hun eigen gebruikersaccounts kunnen aanmaken. Hiermee kunnen gebruikers aanmelden, meedoen aan forumdiscussies, stemmen op ideeën, etc."
+  portalcss: 
+    color_and_font_header: "Kleur & lettertype"
+    cosmetic: 
+      css_help_message: "Voeg standaard stijlen van fresdesk toe over overschrijf deze met uw eigen css."
+      css_subheader: "Aangepaste stylesheet"
+      subheader_background_color: Achtergrondkleur
+      subheader_form_elements: "Formulier elementen"
+      subheader_link_color: "Link kleur"
+      subheader_portal_fonts: Lettertypen
+      subheader_tab_color: Tabkleuren
+    css_header: Stylesheet
+    editing: "Aan het bewerken"
+    layout_and_pages_header: "Layout & pagina's"
+    layout_pages: 
+      footer_layout_help_message: "Verander de voettekst van uw ondersteuningsportaal"
+      footer_layout_title: Voettekst
+      header_layout_help_message: "Verander de koptekst van uw ondersteuningsportaal"
+      header_layout_title: Koptekst
+      pagelayout_help_message: "Verander de layoit van uw ondersteuningsportaal"
+      pagelayout_title: "Pagina layout"
+      pages_help_message: "Hier kunt u de body van individuele pagina's aanpassen."
+      subheader_layout: "Portaal layout"
+      subheader_pages: "Portaal pagina's"
+    please_wait: "Een moment geduld a.u.b..."
+    preview: Voorbeeld
+    publish_changes: "Opslaan en publiceren"
+    reset_all_changes: "Reset ALLE veranderingen"
+    reset_all_confirm_message: "Deze actie zal al uw aanpassingen aan Freshdesk default resetten. Weet u zeker dat u verder wilt gaan?"
+    reset_to_last_published: "Reset pagina naar laatst gepubliceerde"
+    save_and_continue: Opslaan
+    title: "Aanpassingen portaal \"%{portal}\""
   posted_by: "Geplaatst door"
   premium_brief: Topkwaliteit
   premium_details: "Alles in 'Pro' Plan plus, Meervoudige product ondersteuning, Multi-tijdzone ondersteuning, Community, E-mail en telefonische ondersteuning"
+  premium_sla_times: 
+    after_fifteen_minutes: "Na 15 minuten"
+    after_five_minutes: "Na  5 minuten"
+    after_ten_minutes: "Na 10 minuten"
+    fifteen_minutes: "15 minuten"
+    five_minutes: "5 minuten"
+    ten_minutes: "10 minuten"
   preview: Voorbeeld
+  previous: Vorige
   pro_brief: "Voor grotere teams"
   pro_details: "Alles in 'Basis' Plan plus, Scenario Automations, Klantspecifieke SLA's, Werktijden, Forums, Community en e-mailondersteuning."
   problem: Probleem
@@ -1822,20 +2562,35 @@ nl:
       title: "Je API Sleutel"
     change_password: "Wijzig wachtwoord"
     confirm_password: "Bevestig wachtwoord"
+    confirm_password_message: "Wachtwoord komt niet overeen"
     current_password: "Huidig wachtwoord"
     edit: "Wijzig profiel"
     new_password: "Nieuw wachtwoord"
+  profile_settings: Profielinstellingen
+  question: Vraag
   quests: 
+    badge_mand: "Selecteer een badge."
     customer_votes: "Aantal stemmen"
     date: Datum
     delete: "Weet u zeker dat u deze quest wilt verwijderen?"
+    fcr: "Is first call resolution"
     forum_category: Categorie
+    forum_mand: "Vul het aantal forums in."
     forums: Forums
     inactive_quests: "Inactieve quests"
+    js_forum_txt: "$questmode$ $questvalue$ forumberichten in $questtime$ tijd en overeenkomend met deze voorwaarden."
+    js_quest_txt: "Bij een succesvolle afronding van de quest kunt u badge $badgename$ en $questpoints$ bonuspunten vrijspelen."
+    js_solution_txt: "Maak $questvalue$ kennisbank artikel in $questtime$ tijd en overeenkomend met deze voorwaarden."
+    js_ticket_txt: "Los $questvalue$ tickets op in $questtime$ tijd en overeenkomend met deze voorwaarden."
+    name_mand: "Vul naam van de quest in."
     satisfaction: "Klant Tevredenheids beoordeling"
     solution_articles: Artikel
     solution_folder: Map
     solution_likes: "Aantal likes"
+    solution_mand: "Vul het aantal oplossingen in."
+    ticket_mand: "Vul het aantal opgeloste tickets in."
+    ? "true"
+    : "1"
   recent_activities: "Recente activiteiten"
   recent_activity: "Recente activiteit"
   recent_forum_posts: "Recente forumberichten"
@@ -1844,8 +2599,10 @@ nl:
   reorder: Herschikken
   replied_to: "Beantwoord aan"
   replies: reacties
-  reply: Reactie
+  reply: reactie
+  reply_comment: Reageer
   reply_topic: "Reageer op onderwerp"
+  reported_by: "Gerapporteerd door"
   reports: 
     customer_activity_title: Activiteitsrapport
     customer_title: Klantactiviteitsrapport
@@ -1861,8 +2618,18 @@ nl:
     helpdesk_activity_title: "Helpdesk activiteitsrapport"
     helpdesk_title: "Helpdesk activiteitsrapport"
     helpdesk_title_nav: "Helpdesk activiteitsrapport"
+    no_data: "Geen gegevens om te tonen!"
     pie_chart_title_prefix: "Tickets op "
     satisfaction_title: Tevredenheidsrapport
+    scoreboard_agent_title: "Scorebord medewerkers"
+    scoreboard_group_title: "Scorebord groepen"
+    scoreboard_reports: 
+      champions_title: Kampioenen
+      customer_champion: Klantenkampioen
+      sharpshooter_title: Scherpschieters
+      speed_champion: Snelheidskampioen
+      valuable_player: "Meeste gewaardeerde speler"
+    scoreboard_title_nav: Scorebord
     select_customer: "Klant selecteren"
     select_options: "Rapporten op"
     select_time_period: "Periode selecteren"
@@ -1877,10 +2644,13 @@ nl:
       total_tickets: "Totale tickets"
     summary_report: 
       avg_1st_response_time: "Gem. eerste reactie tijd"
+      avg_response_time: "Gemiddelde antwoordtijd<br>"
       back_to_reports: "Terug naar de rapportages"
       fcr_count: "Eerste oplossingscontact"
+      fcr_percent: "FCR %"
       helptext: "Statistieken berekend in dit rapport hebben betrekking op het aantal opgeloste tickets. <br /> Tickets opgelost binnen SLA's worden samengevat als &quot;Tijdige oplossing&quot;. <br /> De kolom &quot;Oplossing eerste contact&quot; geeft tickets weer die bij de eerste reactie zijn opgelost.<br /> &quot;Gemiddelde eerste reactietijd&quot; geeft de verstreken tijd weer tussen wanneer het ticket werd gecreëerd en wanneer de agent er voor het eerste op antwoordde."
       on_time_resolution: "Tijdige oplossing"
+      on_time_resolution_percent: "OTR %"
       show_report: "Rapport weergeven"
       tickets_resolved: "Opgeloste Tickets"
     survey_reports: 
@@ -1912,6 +2682,7 @@ nl:
     timeline_chart_title: "Tickets ontvangen Vs. opgelost"
     timesheet_reports: 
       index: 
+        filter_report: "Filter rapport op"
         from: Van
         select_agent: "Selecteer medewerker"
         select_billable: "Selecteer facturabel/niet-facturabel"
@@ -1931,6 +2702,7 @@ nl:
   resolved_tickets: "Opgeloste tickets"
   revert_identity_link_msg: "Terug naar eigen account"
   right: Rechts
+  sales: Verkopen
   save: Opslaan
   save_and_close: "Opslaan en afsluiten"
   save_and_create: "Opslaan en Nieuwe creëren"
@@ -1944,41 +2716,94 @@ nl:
   scenario_label: Scenariolabel
   search: 
     no_results_msg: "Geen resultaten gevonden"
-  security_code: Veiligheidscode
+  search_button: Zoeken
+  search_results: Zoekresultaten
+  search_solutions: "Zoek oplossingen"
+  security_code: Beveiligingscode
   select: "Kies ..."
   select_a_plan: "Plan selecteren"
   select_a_plan_gain_access: "Selecteer hieronder een plan om weer toegang te krijgen tot uw account."
   select_another_plan: "Een ander plan selecteren"
+  select_free_plan: "Selecteer uw gratis plan"
+  select_plan: "Kies plan"
   selected: Geselecteerd
   send_email_to_agent: "E-mail naar mederwerker versturen"
   send_email_to_group: "E-mail naar groep versturen"
   send_email_to_requester: "E-mail naar aanvrager versturen"
+  send_feedback: "Stuur feedback"
   set_password: "Uw wachtwoord instellen"
   set_priority_as: "Prioriteit instellen als"
   set_status_as: "Status instellen als"
   set_type_as: "Type instellen als"
   settings: "instellingen        "
-  show_quoted_text: "Aangehaalde tekst tonen"
+  seven_days: "Deze week"
+  show_me_how: "Laat me zien"
+  show_quoted_text: "Geciteerde tekst weergeven"
+  showing: Toont
   sign_in_info: "U wordt aangemeld met"
-  signup: aanmelden
-  signup_complete_activate_info: "Welkom! We hebben u een e-mail gestuurd met een koppeling, waarin u uw wachtwoord kunt instellen en uw account activeren."
-  signup_title: "Aanmelden bij %{current_portal}"
+  signup: registreren
+  signup_complete_activate_info: "Welkom! We hebben u een e-mail gestuurd met daarin een koppeling, waarmee u uw wachtwoord kunt instellen en uw account kunt activeren."
+  signup_help_information: "Indien je inschrijft heb je volledige toegang tot onze oplossingen en FAQs, je kan vragen stellen en van onze gebruikers community leren. Je kan ook support aanvragen en de status ervan opvolgen."
+  signup_title: "Registreer voor %{current_portal}"
+  signup_up_with_us: "Wordt ook lid"
   since: Sinds
+  since_last_time: "sinds %{time_words}"
   since_time: "Sinds %{time_words}"
+  six_months: "Afgelopen 6 maanden"
+  sixmonth: "6 maanden"
   sla_policy: 
-    business_time: Werktijden
+    add_level: "Voeg level toe"
+    add_new: "Voeg nieuwe toe"
+    add_resolution_esc: regel
+    add_response_esc: "Voeg regel toe"
+    agent_placeholder: "Kies medewerkers om naar te escaleren..."
+    applicable_details: "Kies wanneer dit SLA-beleid gehandhaafd moet worden"
+    applicable_error: "U dient minstens 1 voorwaarde toe te voegen"
+    applicable_info: "Selecteer minstens één activatievoorwaarde."
+    applicable_to: "Pas dit toe op"
+    business_time: Kantooruren
     calendar_time: Kalenderuren
+    company_placeholder: "Voer bedrijfsnamen in"
+    default_policy: "Het standaard SLA-beleid kan niet uitgezet worden."
+    disabled_old_policy: "Stel een activatievoorwaarde in om dit SLA-beleid actief te maken."
     edit: "Wijzig SLA Beleid"
+    escalate: "Wat gebeurt er wanneer deze SLA overtreden wordt?"
+    escalate_after: Escaleren
     escalate_to: "Escaleren naar"
+    escalation_email: Escalatiebericht
+    escalation_resolution: "Stel escalatiehiërarchie in voor wanneer een ticket niet op tijd <b>afgehandeld is</b>"
+    escalation_response: "Stel escalatieregels in voor wanneer een ticket niet op tijd <b>beantwoord wordt</b>"
+    group_id_placeholder: "Voer groepsnamen in"
+    helpcard: 
+      info1: "<p>Met een Service Level Agreement (SLA) kunt u prestatienormen instellen voor uw supportteam. U kunt een SLA-beleid instellen voor de tijdsduur waarin medewerkers een antwoord dienen te geven, en tickets af dienen te handelen op basis van ticketprioriteit. U kunt kiezen of u elke SLA-regel wilt berekenen per 24 uur of uw kantooruren.</p><p>Uw SLA-beleid zal binnen Freshdesk gebruikt worden om te bepalen wat de \"deadline\" is voor elk ticket.</p>"
+      info2: "<p>U kunt ervoor kiezen om escalatiehiërarchieën in te stellen voor elk beleid, om bepaalde medewerkers te waarschuwen wanneer er een SLA-regel wordt overtreden.</p>"
+      info3: "<p>U kunt een standaard SLA-beleid hebben voor alle klanten, of meerdere SLA-beleidsmaatregelen hebben voor verschillende klantenniveau's, zoals die klanten die een 'Premium Support'-pakket hebben.</p><p>Wanneer u extra SLA-beleidsmaatregelen toevoegt (anders dan het standaard beleid), dan dient u de voorwaarden aan te geven waarvoor dit beleid gehandhaafd dient te worden.</p> "
+      info_1: "<p>Met een Service Level Agreement (SLA) kunt u prestatienormen instellen voor uw supportteam. U kunt een SLA-beleid instellen voor de tijdsduur waarin medewerkers een antwoord dienen te geven, en tickets af dienen te handelen op basis van ticketprioriteit. U kunt kiezen of u elke SLA-regel wilt berekenen per 24 uur of uw kantooruren.</p><p>Uw SLA-beleid zal binnen Freshdesk gebruikt worden om te bepalen wat de \"deadline\" is voor elk ticket.</p>"
+      info_2: "<p>U kunt meedere SLA-beleidsmaatregelen hebben die geactiveerd worden door specifieke voorwaarden, zoals de klant die het ticket heeft aangevraagd, de groep waaraan het is toegewezen, de bron en/of het product.</p><p>U kunt bijvoorbeeld een speciaal SLA-beleid hebben ingesteld voor tickets die binnenkomen via Twitter en toegewezen zijn aan het verkoopteam. Of een speciaal beleid hebben voor klanten die voorrangsabonnementen hebben. Wanneer u meerdere merken of producten ondersteunt, dan kunt u een verschillende SLA-workflow hebben voor elk product.</p><p><strong>De volgorde van de SLA-regels is belangrijk.</strong>De eerste SLA-regel die aan alle voorwaarden voor een ticket voldoet, zal hierop worden toegepast. Denk er dus aan om belangrijkere regels bovenaan te plaatsen</p>"
+      info_3: "<p>U kunt eventueel escalatiehiërarchieën instellen voor elk beleid om bepaalde medewerkers te waarschuwen wanneer een SLA-regel wordt overtreden.</p>"
+      title: SLA-beleid
+      title1: "Handhaven van escalatieregels"
+      title2: "Gebruik van meerdere SLA-beleidsmaatregelen"
+      title_1: "Gebruik van meerdere SLA-beleidsmaatregelen"
+      title_2: "Handhaven van escalatieregels"
+      tour: "Help mij bij het aanmaken van een nieuw SLA-beleid"
     info1: "  SLA beleid zijn regels over responstijd en afhandeltijd gebasseerd op de prioriteit van een ticket. Het is gebruikelijk om Service Levels in te delen naar ticket prioriteit. Het SLA beleid zou zo simpel kunnen zijn als: \"Tickets met een hoge prioriteit worden binnen 2 uur opgelost\", etc"
     info2: "Freshdesk gebruikt het SLA beleid om de “Oplostermijn“ van tickets te bepalen. Een standaard SLA beleid voor alle klanten is mogelijk, maar het is ook mogelijk om voor een specifieke klant, die bijvoorbeeld snellere reactie- en afhandeltijden vereist, een apart SLA beleid te maken."
     info3: "SLA beleid maakt gebruik van Werktijden"
     new: "Nieuw SLA Beleid"
+    op_hrs: Bedrijfsuren
     override: Aanpassen
+    product_id_placeholder: "Voer productsnamen in"
+    resolution_escalation: "Escalatieregels wanneer een ticket niet op tijd <b>afgehandeld is</b>"
     resolution_time: Oplostermijn
+    resolve_within: "Afgehandeld binnen"
+    respond_within: "Beantwoord binnen"
+    response_escalation: "Escalatieregels wanneer een ticket niet op tijd <b>beantwoord wordt</b>"
     response_time: Responstijd
     select_policy: "Selecteer Beleid"
     sla_targets: "SLA Doelen"
+    sla_targets_details: "Stel Service Level Targets in voor elke ticketprioriteit"
+    source_placeholder: "Voer bronnamen in"
     tickets_with: "Tickets met"
     title: "SLA beleid"
     title1: "SLA beleid"
@@ -2005,18 +2830,37 @@ nl:
       index: 
         reauth_required: "Opnieuw autoriseren vereist"
         reauthorize: "Opnieuw autoriseren"
+        remove_facebook_page: "Weet u zeker dat u deze Facebook-pagina wilt verwijderen"
         title: Facebook-pagina's
     twitter_handles: 
       edit: 
         twitter_settings_for_msg: "Twitter instellingen voor"
       form: 
         capture_dm_info: "Freshdesk zal automatisch Prive berichten van dit Twitter account omzetten in tickets"
+        capture_dm_msg: "Leg <strong>\"directe berichten\"</strong> vast als ticket"
         capture_mentions_info: "Freshdesk zal automatisch @mentions van dit Twitter account omzetten in tickets"
         capture_mentions_msg: "Vang <strong>\"@Mentions\"</strong> op als tickets"
+        dm_time_info: "Maximale tijd om berichten van dezelfde gebruiker als een thread te beschouwen."
+        dm_time_msg: "DM threadtijd"
+        info_data: "Helpt u bij het snel bijhouden van zoekresultaten op Twitter die gerelateerd zijn aan uw product/merk/dienst.<br /><strong>Let op:</strong> U kunt meerdere zoektermen toevoegen door deze te scheiden met komma's."
         product: Product
         search_keywords: "Zoek trefwoorden"
       index: 
+        convert_to_ticket: "Omzetten naar ticket"
+        from: "Van:"
+        go_to_ticket: "Ga naar ticket"
+        no_search_default: "Er zijn geen standaard zoektermen gedefinieer voor een van uw Twitter handle."
+        no_tweet_results: "Geen Tweets gevonden voor"
+        note: "Deze reactie wordt niet geregistreerd als ticket of conversatie in Freshdesk."
+        note_title: "Aantekening:"
+        reauth_required: "Nieuwe autorisatie vereist"
+        reauthorize: "Opnieuw autoriseren"
         remove_handle_msg: "Weet je zeker dat je dit Twitter account wilt verwijderen?"
+        reply: Reactie
+        results_for: "Resultaten voor"
+        search: Zoeken
+        search_twitter: "Zoek op Twitter"
+        show_more_results: "Toon meer resultaten"
         title: Twitter-accounts
       signin_info: 
         add_twitter: "Twitter account toevoegen"
@@ -2026,6 +2870,23 @@ nl:
   solution: 
     add: "Voeg oplossing toe"
     add_new_solution: "Voeg een nieuwe oplossing toe"
+    articles: 
+      add_article: "Voeg een artikel toe"
+      add_to_guide: "Toevoegen aan gids"
+      article_not_useful: "Bedankt voor de feedback. Wij zullen dit artikel verbeteren."
+      article_useful: "Leuk dat we u hebben kunnen helpen. Bedankt voor de feedback."
+      assign_to_guide: "Toekennen aan gids"
+      clear_search: "Zoekresultaten leegmaken"
+      deselect_all: "Alles deselecteren"
+      error_message: "Er is een fout %{error_msg}"
+      expanded_view: "Uitgebreid overzicht"
+      guides: Gidsen
+      list_view: Lijst
+      search_articles: "Zoek artikelen"
+      select_all: "Alles selecteren"
+      where: Waar
+    char_count: tekens
+    description_counter_message: "Beste SEO-pagina's, aanbevolen aantal tekens voor de omschrijving is 150."
     edit: "Wijzig oplossing"
     folder: Map
     folders: 
@@ -2043,9 +2904,15 @@ nl:
     info7: "Geen oplossingen in deze map"
     info8: "Weet u zeker dat u deze oplossing wilt verwijderen?"
     info9: "Openbaar (zal gepubliceerd worden bij self-service)"
+    meta_keywords_message: "Scheid trefwoorden met komma"
     no_solutions_info: "Geen oplossingen in deze map"
+    solution_meta: "Meta tags voor zoekmachines"
+    solution_meta_description: "Meta omschrijving"
+    solution_meta_keywords: "Meta trefwoorden"
+    solution_meta_title: "Titel tag"
     status: "Status van oplossing"
     title: Oplossingen
+    title_counter_message: "Beste SEO-pagina's, aanbevolen aantal tekens voor de titel is 72."
     type: "Type oplossing"
     visibility: Zichtbaarheid
   solution_category: 
@@ -2074,11 +2941,12 @@ nl:
       select_company: "Selecteer Bedrijven"
   special_beta_offer: "Speciale aanbieding voor Beta-accounts"
   sprout_brief: "Robuuste e-mail helpdesk"
-  sprout_details: "E-mail antwoordbeheer, Alle automatiseringen, Standaard SLA-beleid, Kennisbank, Self service-portaal, Domeintoewijzing, Basisrapportering, Community-ondersteuning."
+  sprout_details: "E-mail antwoordbeheer, alle automatische diensten, standaard SLA-beleid, kennisbank, self-service portaal, standaard rapporten, community ondersteuning."
   start_typing_a_question: "Stel je vraag en bekijk direct mogelijke antwoorden"
   starts_with: "Begint met"
   state: Provincie
   status: Status
+  status_cust_disp_name_uniqueness_msg: "Status klanten displaynaam is al in gebruik"
   status_deleted: "Status verwijderd"
   status_name_validate_presence_msg: "Status naam moet ingevuld worden"
   status_name_validate_uniqueness_msg: " Status naam bestaat al"
@@ -2087,8 +2955,18 @@ nl:
   subject_or_description: "Onderwerp of beschrijving"
   submit: indienen
   subscription: 
+    agents: Medewerkers
+    billing: Facturatie
     error: 
       lesser_agents: "Uw freshdesk-account heeft momenteel %{agent_count} mederwerkers. U kunt niet voor meerdere mederwerkers inschrijven. Verwijder enkele medewerkers en probeer het opnieuw."
+    free: Gratis
+    info1: "U kunt uw abonnementsgegevens te allen tijde veranderen. Uw kaart wordt evenredig gefactureerd vanaf de datum van de verandering van het abonnement tot de volgende facturatiedatum."
+    info2: "Met het degraderen van een hoger plan naar een lager plan verliest u de instellingen voor functionaliteiten die alleen beschikbaar zijn voor het hogere plan."
+    paid: Betaald
+    total: Totaal
+    upgrade: 
+      cname: "Wilt u hier uw eigen domein gebruiken? Upgrade dan uw account."
+      message: "Upgrade uw account om deze functie te kunnen gebruiken."
   subscription_plan: 
     billing_cycle: 
       annual: Jaarlijks
@@ -2096,13 +2974,23 @@ nl:
       quarterly: Driemaandelijks
       sixmonth: Halfjaarlijks
   success: Succes
+  success_msg: "Account-instellingen succesvol bijgewerkt!"
   support: 
-    login:      
-      form:
-        forgot: "wachtwoord vergeten?"
-        remember: "Onthoud mij op deze computer"
+    login: 
+      form: 
+        email: E-mail
+        forgot: "Wachtwoord vergeten?"
+        help: Help
         login: Inloggen
+        password: Wachtword
+        remember: "Onthoud mij op deze computer"
+        sign_in_using: Inloggen
+        sign_in_using_google: "Log in met uw Google account"
     shared: 
+      comments: Reacties
+      email: "Uw e-mail adres *"
+      info1: "Vertel ons wat verbetert kan worden aan deze oplossing"
+      send_feedback: "Stuur feedback"
       survey_form: 
         cancel: Annuleren
         change_of_mind: "Van gedachten veranderd?"
@@ -2125,22 +3013,36 @@ nl:
         thanks_info: "Hartelijk dank voor het beoordelen van onze ondersteuning."
         unhappy_info: "We zullen ervoor zorgen de volgende keer het beter te doen."
       thanks_for_feedback: "We hebben uw feedback ontvangen. Hartelijk dank."
+    tickets: 
+      ticket_survey: 
+        cancel: Annuleren
+        change_of_mind: "Van gedachte verandert?"
+        feedback_title: "Beschrijf je ervaring met support (optioneel)"
+        rate_again: "Beoordeel ons opnieuw"
+        rated_on: "aan %{rated_on}"
+        rating_sub_title: "U heeft ons beoordeeld"
+        submit: Verzenden
+        survey_title: "Beoordeel onze service"
+        title: Klanttevredenheidsonderzoek
   suspended_plan_admin_info: "Uw account is geblokkeerd. Neem alstublieft contact op met de beheerder %{email}!"
   suspended_plan_info: "Uw account is geblokkeerd. Selecteer a.u.b. een plan om verder te gaan!"
   switch_heading: "Wissel medewerker"
   swith_agent_msg: "Schakelen naar andere medewerker"
   tag: 
     title: Labels
+  thirty_days: "Deze maand"
+  thirty_minutes: "Binnen 30 minuten"
   this_ticket_has_been_closed: "Dit ticket is gesloten"
   this_ticket_has_been_deleted: "Dit ticket is verwijderd."
   this_ticket_has_been_resolved: "Dit ticket is opgelost"
   threeday: "3 dagen"
-  threemonth: "3 maand"
+  threemonth: "3 maanden"
   ticket: 
     activities: Activiteiten
     activity: Activiteit
     add_note: "+ Notitie"
     add_time: "Tijd toevoegen"
+    agent: Medewerker
     agent_notify: "heeft een aantekening toegevoegd en vraagt u om het te bekijken"
     agent_responded_at: "Uren sinds reactie van medewerker"
     assign_to_agent: "Toekennen aan medewerker"
@@ -2148,6 +3050,7 @@ nl:
     assigned_at: "Uren sinds toewijzing"
     assigned_none: "-"
     assigned_to: "Toegewezen aan"
+    available_commands: "Beschikbare opdrachten"
     canned_responses: 
       ca_responses: Standaardantwoorden
       insert_ca_resp_tip: "Dit standaardantwoord invoegen"
@@ -2158,13 +3061,22 @@ nl:
     convert_ticket_title: "In een ticket omzetten"
     create_ticket_title: "Een ticket creëren"
     created_at: "Uren sinds gecreëerd"
+    created_during: 
+      business_hours: Kantooruren
+      holidays: Vakanties
+      non_business_hours: "Buiten kantooruren"
+      title: Gemaakt
     created_on: "Gemaakt op %{time}"
+    default_note_text: "Standaard notitie zal worden toegevoegd"
     delete_btn: Verwijderen
     delete_btn_title: "Dit ticket naar de prullenbak verplaatsen"
+    delete_forever: "Permanent verwijderen"
     due_by: "Uren sinds ticket is verlopen"
     due_by_time: Oplostermijn
     edit: "Wijzig Ticket"
     edit_btn: Wijzigen
+    edit_note: "<b>Aantekening bewerken</b>"
+    empty_trash: "Prullenbak leegmaken"
     execute_scenario: "Voer scenario uit"
     export: Export
     facebook_form: 
@@ -2173,20 +3085,33 @@ nl:
     first_assigned_at: "Uren sinds eerste toewijzing"
     first_response_due: "Uren sinds verwachte reactietijd"
     flag_spam: Spam
+    from: "Van:"
     group: Groep
     ham_btn_title: "Dit is geen spam"
+    id: Id
+    id_placeholder: "Voer een ID in om tickets te vinden"
     inbound_count: "Aantal reacties van aanvrager"
     integrations: 
       jira: 
         tooltip: "Bekijk het gerelateerde JIRA issue"
     merge_btn: Samenvoegen
+    merge_ticket_list_status_agent_responded_at: "Van: %{username}<br /> Medewerker antwoordde: <span class='emphasize'>%{time_ago} geleden</span>"
+    merge_ticket_list_status_closed_at: "Van: %{username}<br /> Gesloten: <span class='emphasize'>%{time_ago} geleden</span>"
+    merge_ticket_list_status_created_at: "Van: %{username}<br /> Aangemaakt: <span class='emphasize'>%{time_ago} geleden</span>"
+    merge_ticket_list_status_requester_responded_at: "Van: %{username}<br /> Klant antwoordde: <span class='emphasize'>%{time_ago} geleden</span>"
+    merge_ticket_list_status_resolved_at: "Van: %{username}<br /> Afgehandeld: <span class='emphasize'>%{time_ago} geleden</span>"
+    merge_title: "Tickets samenvoegen"
     monitor_btn_title: "Dit ticket monitoren"
+    myself: Mijzelf
+    none: Geen
     note_content: "Inhoud van aantekening"
     note_form: 
       add_and_resolve: "Toevoegen en oplossen"
+      description_note: "Het onderwerp en de omschrijving van de samengevoegde tickets zullen worden toegevoegd als aantekening bij het hoofdticket"
       form_title: "Notitie toevoegen"
       notify_agents: "Medewerkers berichten"
-      private_note: "Dit is een privéaantekening. Het wordt niet aan de aanvrager getoond."
+      private_note: "Voeg toe als privé-aantekening, en breng de aanvrager hier niet van op de hoogte"
+    note_saved: "Aantekening opgeslagen"
     opened_at: "Uren sinds opnieuw geopend"
     pending_since: "Uren sinds status in afwachting van"
     pick_up: Oppakken
@@ -2207,6 +3132,7 @@ nl:
     reported_from_source: "Gerapporteerd via %{source}"
     reported_on: "van %{username} voor het laatst bijgewerkt op %{date}"
     requester: Aanvrager
+    requester_placeholder: "Vind tickets op aanvrager"
     requester_responded_at: "Uren sinds reactie van aanvrager"
     requestor_info: "Aanvrager informatie"
     resolved_at: "Uren sinds status opgelost"
@@ -2221,6 +3147,7 @@ nl:
     status: Status
     stop_monitor_btn_title: "Het monitoren van dit ticket stoppen"
     subject: Onderwerp
+    subject_placeholder: "Zoek tickets op onderwerp"
     submit_ticket: "Aanmaken "
     submit_ticket_title: "Een ticket indienen"
     suggest_solutions: "Mogelijke oplossingen"
@@ -2231,6 +3158,9 @@ nl:
       insert_url_tip: "Deze oplossings-URL invoegen in uw reactie of aantekening"
       no_result: "Geen oplossingen gevonden"
       title: "Mogelijke oplossingen"
+    support: 
+      reply: Beantwoorden
+      reply_and_open: "Beantwoorden & heropenen"
     tags: 
       add_tag: "Een label toevoegen:"
       create_success: "Het labels is toegevoegd"
@@ -2242,7 +3172,14 @@ nl:
     ticket_list_status_created_at: "Van: %{username}, Aangemaakt: <span class='emphasize'>%{time_ago} geleden </span>"
     ticket_list_status_requester_responded_at: "Van: %{username}, Klant antwoordde: <span class='emphasize'>%{time_ago} geleden</span>"
     ticket_list_status_resolved_at: "Van: %{username}, Opgelost: <span class='emphasize'>%{time_ago} geleden </span>"
+    ticket_selected: "ticket geselecteerd (gesprekken van de samengevoegde tickets zullen worden toegevoegd aan het hoofdticket)"
     ticket_url: Ticket-URL
+    ticket_user_list_status_agent_responded_at: "Medewerker antwoordde: <span class='emphasize'>%{time_ago} geleden</span>"
+    ticket_user_list_status_closed_at: "Gesloten: <span class='emphasize'>%{time_ago} geleden</span>"
+    ticket_user_list_status_created_at: "Aangemaakt: <span class='emphasize'>%{time_ago} geleden</span>"
+    ticket_user_list_status_requester_responded_at: "Klant antwoordde: <span class='emphasize'>%{time_ago} geleden</span>"
+    ticket_user_list_status_resolved_at: "Afgehandeld: <span class='emphasize'>%{time_ago} geleden</span>"
+    tickets_selected: "tickets geselecteerd (gesprekken van de samengevoegde tickets zullen worden toegevoegd aan het hoofdticket)"
     to_do: "Te doen tickets"
     tweet_form: 
       tweet_and_resolve: "Tweet en oplossen"
@@ -2251,22 +3188,33 @@ nl:
     type: Type
     unassigned: "Niet toegewezen"
     unflag_spam: "Geen Spam"
+    unwatch: Unwatch
     verify_human: "Typ de gegeven vervormde letters om te verzekeren dat u geen machine bent"
+    view_twitter: "Bekijk op Twitter"
   ticket_cancel_multiple_button: Annuleren
   ticket_cc_email_more: meer
   ticket_close_failure: "Het afsluiten van het ticket is mislukt."
   ticket_close_success: "Uw ticket is succesvol gesloten."
   ticket_closed_at_time: "Gesloten op"
-  ticket_due_by_time: Oplostermijn
+  ticket_deleted: "Dit ticket is verwijderd"
+  ticket_due_by_time: Einddatum
+  ticket_field: 
+    helpcard: 
+      info1: "Het ticketformulier is de gemakkelijkste manier om alle gegevens vast te leggen die u nodig heeft van de klant, zelfs wanneer zij een ticket versturen. Bijvoorbeeld, het hebben van de bestellings-ID van de klant binnen een e-commerce setting helpt bij het ophalen van de juiste context voor het ticket en versnelt de afhandeling een beetje. U kunt uw ticketformulier aanpassen in Freshdesk om de juiste ticketvelden te bevatten voor uw bedrijf, en om uw klanten en medewerkers de informatie in te laten vullen in het formaat dat u wilt."
+      info2: "Afhankelijke velden bieden u een gemakkelijke manier om diepere ticketcategorieën aan te meken en de grootste issues te herkennen die uw support vertragen. Met afhankelijke velden kunt u tickets hiërarchisch organiseren in categorieën, subcategorieën en beïnvloedde item."
+      title1: Ticketvelden
+      title2: "Afhankelijke velden"
+      tour: "Help mij ticketvelden te begrijpen"
   ticket_fields: 
     confirm_delete: "Weet u zeker dat u dit veld wilt verwijderen?"
     fields: 
       agent: Medewerker
+      created_at: Aangemaakt
       description: Omschrijving
       group: Groep
       priority: Prioriteit
-      product: Produkt
-      requester: Aanvrager
+      product: Product
+      requester: "Zoek een aanvrager"
       source: Bron
       status: Status
       subject: Onderwerp
@@ -2282,7 +3230,7 @@ nl:
       cc_any_email: "Bewaar elk Cc e-mailadres"
       cc_company_contacts: "Cc geldt alleen voor medewerkers"
       choices: Keuzes
-      customer_edit: "Kan het veld bewerken"
+      customer_edit: "Klant mag bewerken"
       customer_info1: "Veld kan niet leeg zijn bij het online aanmaken van het ticket"
       customer_mandatory: "Verplicht voor het aanmaken van tickets"
       customer_visible: "Zichtbaar voor klanten"
@@ -2306,13 +3254,14 @@ nl:
       level3: "Niveau 3"
       nested_label: "Geneste veldlabels"
       nestedfield_helptext: "Gebruik het onderstaand vrije tekstveld om onderdelen toe te voegen of aan te passen voor de keuzelijst. Gebruik de tabtoets om maximaal twee subniveaus aan te brengen. <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>Leer meer</a> "
+      nestedfield_helptext_preview: "Dit is het \"Voorbeeld\" van voorbeeld keuzelijst-item, gebruik het vrije tekstveld in \"Bewerk weergave\" om items te bewerken"
       sla_timer: "SLA tijdklok"
       status_choices: "Status keuzes"
     index: 
       add_custom_field: "Een aangepast veld toevoegen"
       checkbox: Selectievakje
       customize_form: "Uw  'Nieuw ticket'-formulier aanpassen."
-      drag_drop_intro: "Met het slepen en neerzetten van een willekeurig veldtype in het 'Nieuw ticket'-formulier voegt u een nieuw aangepast veld toe."
+      drag_drop_intro: "Sleep en zet een veld neer in het \"Nieuw ticket\"-formulier om een aangepast veld toe te voegen."
       dropdown: Keuzelijst
       nestedfield: "Keuzelijst met niveaus"
       number: Aantal
@@ -2321,26 +3270,32 @@ nl:
       single_line: "Tekst van één regel"
       title: Ticketvelden
     no_choice_message: "Er moet ten minste een geldige keuze gemaakt worden"
+    saving_ticket: "Ticket velden aan het bewaren...."
     second_choice: "Tweede keuze"
     untitled: Naamloos
-  ticket_pending_since_time: "Wachtend sinds"
+  ticket_pending_since_time: "In wachtrij sinds"
   ticket_resolved_at_time: "Opgelost op"
   ticket_update_multiple_button: Actualiseren
   ticket_was: "ticket was"
   tickets_filter: 
+    everyone_in_company: "Iedereen in %{company_name}"
+    raised_by: "Tickets aangemaakt door"
     sort_fields: 
       asc: Oplopend
+      created_at: "Datum aangemaakt"
+      customer_response: "Antwoord van klant"
       date_created: Aanmaakdatum
       desc: Aflopend
-      due_by: Oplostermijn
+      due_by: Eindtijd
       last_modified: "Laatst gewijzigd"
       priority: Prioriteit
       status: Status
+      updated_at: "Laatst gewijzigd"
     title: "Filter tickets"
     unsaved_view: "Naamloze weergave"
   tickets_were: "tickets waren"
-  tip_off: "Klikken om uit te schakelen"
-  tip_on: "Klikken om in te schakelen"
+  tip_off: "Klik om uit te schakelen"
+  tip_on: "Klik om in te schakelen"
   title: Titel
   tkt_assigned_to_agent: "Ticket aan medewerker toegewezen"
   tkt_assigned_to_group: "Ticket aan groep toegewezen"
@@ -2348,31 +3303,40 @@ nl:
   to: naar
   to_do: To-do
   to_email: "E-mailen aan"
+  today: Vandaag
   top: Top
   topic: 
+    add_comment: Reageer
+    answered: Beantwoord
     close: "Sluit deze discussie"
     edit: "Wijzig onderwerp"
     ideas_stamps: 
+      deferred: Uitgesteld
       implemented: Geïmplementeerd
+      inprogress: Bezig
       nottaken: "Niet aangenomen"
       planned: Gepland
     locked: Gesloten
     msg1: "Onderwerp afgesloten"
     name: Onderwerp
-    new: "Nieuw onderwerp"
+    new: "Plaats een nieuw onderwerp"
     open: "Heropen deze discussie"
     post: "Plaats onderwerp"
+    post_comment: Plaatsen
     reply: "Reageer op dit onderwerp"
     sticky: Sticky
+    update_comment: "Reactie bijwerken"
   topics: 
     last_reply: "Laatste reactie %{post_time} geleden, door %{user_link}"
     posted_at: "%{post_time} geleden geplaatst."
     show: 
       mark_this_idea_as: "Dit idee markeren"
   total: Totaal
-  total_price: "Totale prijs"
+  total_price: Totaal
   trial_expired_on: "Uw proefversie is verlopen op"
   twelve: "12 uur"
+  twelve_hours: "Binnen 12 uur"
+  twentyfour_hours: "Binnen 24 uur"
   twitter: 
     associate_twitter: "U kunt een twitter-account aan uw helpdesk koppelen, zodat u uw klanten via twitter kunt ondersteunen."
     deleted: "Het twitter-account @%{twitter_screen_name} is verwijderd."
@@ -2386,32 +3350,43 @@ nl:
     usr_not_thr: "Gebruiker is niet beschikbaar."
   twitter_source: Twitter
   two: "2 uur"
+  two_months: "Afgelopen 2 maanden"
   twoday: "2 dagen"
+  twomonth: "2 maanden"
   twoweek: "2 weken"
   unable_to_charge: "Kan de kaart voor de toegevoegde agent niet opladen!"
   unauthorized_msg: "Autorisatie is mislukt"
+  unavailable_feature: "De %{feature}-functie wordt door uw huidige plan niet ondersteund. Upgrade uw account om hier gebruik van te kunnen maken."
+  unblock: Whitelist
   undelete: Herstel
   undo: Herstel
+  unspam: Unspam
   update: Opslaan
-  update_and_login: "Bijwerken en aanmelden"
+  update_and_login: "Bijwerken & aanmelden"
   update_multiple_tickets: "Meerdere tickets actualiseren"
   updated_on: "%{user_name} geactualiseerd op %{note_date}"
+  upgrade_plan: Upgrade
   upgrade_trial: "Uw proefperiode opwaarderen!"
   urgent: Urgent
   use_reply_option: "Gebruik aub de beantwoorden optie voor het verzenden van een email naar de aanvrager"
   user: 
     address: Adres
     back_info: Achtergrondinformatie
+    change_photo: "Pas foto aan"
+    choose_another_photo: "Kies een andere foto"
     company: Bedrijf
     email: E-mail
     full_name: "Volledige naam"
-    info1: "Pasfoto van de persoon. Het beste is een foto met dezelfde lengte en breedte"
+    info1: "Een pasfoto van de persoon is het beste wanneer de foto dezelfde lengte en hoogte heeft."
     mobile: Mobiel
     name: Naam
     phone_no: Telefoonnr.
     photo: Foto
+    remove_photo: "Verwijder foto"
+    remove_profile_image: "Profielfoto succesvol verwijderd"
+    remove_profile_image_confirm: "Weet u het zeker dat u deze profielfoto wilt verwijderen?"
     secondary: alternatief
-    title: Functie
+    title: Titel
     twitter_id: Twitter-ID
     work: Werk
   user_activation_email: "Gebruiker activeringsmail"
@@ -2430,9 +3405,14 @@ nl:
   username: Gebruikersnaam
   users: 
     activations: 
+      bulk_send_invite_success: "Activatiemail is verstuurd naar"
+      bulk_send_invite_success2: "Activatiemails zijn verstuurd naar"
       code_expired: "Uw activeringscode is verlopen."
       send_invite_success: "De activeringsmail is verstuurd."
+      sent: Verzonden!
       success: "Uw account is geactiveerd."
+      user: gebruiker.
+      users: gebruikers.
   users_blocked_message: "De volgende contactpersonen (%{users}) zijn geblokkeerd"
   validate_fwd_to_email_msg: "Geef aub een geldig e-mailadres in"
   waiting_on_customer: "Wacht op klant"
@@ -2461,6 +3441,8 @@ nl:
     content_not_available: "De inhoud waar u naar zoekt is in dit portaal niet beschikbaar."
     title: "Niet beschikbaar!"
   yes_password_reset: Ja
+  yesterday: Gisteren
+  your_email: "Uw e-mailadres"
   your_email_address: "Uw e-mailadres"
   your_trial_account: "Uw proefaccount"
   zendesk_backup: Back-upbestand

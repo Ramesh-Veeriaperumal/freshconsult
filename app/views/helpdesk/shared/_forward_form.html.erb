@@ -1,6 +1,26 @@
 <% hide_class = conv_id.nil? ? "hide" : ""
   note_details_id = conv_id.nil? ? "" : "note_details_#{@note.id}"  
 %>
+<% javascript_tag do %> 
+  function lookup(searchString, callback) { 
+    new Ajax.Request('<%= autocomplete_helpdesk_authorizations_path %>?v='+searchString, 
+                                              { parameters: {name: searchString, rand: (new Date()).getTime()},
+                                              onSuccess: function(response) {
+                                                var choices = $A();
+                                                response.responseJSON.results.each(function(item){
+                  if(item.value == "") {
+                    choices.push([item.id, item.id]);
+                  } else {
+                  choices.push([item.value +" <"+item.id+">", item.value +" <"+item.id+">" ]);
+                  } 
+                                                });                                                
+                                                callback(choices);
+                                              } });
+                                            }
+  var cachedBackend = new Autocompleter.Cache(lookup, {searchKey: 0, choices: 10});
+  var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+
+<% end %>
   <div class="reply_box">
     <% form_for note, :html => {:multipart => true, :id => "HelpdeskFwd_#{cntid}" } do |f| %>
     <%= f.error_messages %>       

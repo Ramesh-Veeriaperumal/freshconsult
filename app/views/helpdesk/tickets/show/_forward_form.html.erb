@@ -1,0 +1,161 @@
+<% hide_class = conv_id.nil? ? "hide" : ""
+  note_details_id = conv_id.nil? ? "" : "note_details_#{@note.id}"  
+%>
+<script type="text/javascript">
+  function lookup(searchString, callback) { 
+    new Ajax.Request('<%= autocomplete_helpdesk_authorizations_path %>?v='+searchString, 
+                                              { parameters: {name: searchString, rand: (new Date()).getTime()},
+                                              onSuccess: function(response) {
+                                                var choices = $A();
+                                                response.responseJSON.results.each(function(item){
+                                                  if(item.value == "") {
+                                                    choices.push([item.id, item.id]);
+                                                  } else {
+                                                  choices.push([item.value +" <"+item.id+">", item.value +" <"+item.id+">" ]);
+                                                  } 
+                                                });                                                
+                                                callback(choices);
+                                              } });
+                                            }
+  var cachedBackend = new Autocompleter.Cache(lookup, {searchKey: 0, choices: 10});
+  var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
+
+</script>
+<% form_for note, 
+            :html => {
+              :multipart => true, 
+              :id => "HelpdeskFwd_#{cntid}", 
+              :rel => 'forward_form', 
+              "data-panel" => conv_id.nil? ? "cnt-fwd" : "cnt-fwd-#{@note.id}",
+              "data-show-pseudo-reply" => conv_id.nil?.to_s,
+              "data-fetch-latest" => 'true',
+              "data-destroy-editor" => conv_id.nil?.to_s,
+              "data-cnt-id" => cntid
+            } do |f| %>
+
+<%= content_tag( :div, t("fwd_to"), :class => "form_title", :id => "fwd_title" ) %>
+<% if conv_id.nil? %>
+<div class="list_agents_replying" class="hide"></div>
+<% end %>
+<%= f.error_messages %>       
+<ul class="ui-form dont-validate">
+  <li class="inline-field field" >
+      <%= f.label(:reply_email, t('ticket.from') ) %>
+      <%= select :reply_email, :id, options_for_select(@reply_email, @selected_reply_email), {}, {:class => 'select2 responder_field'} %>
+  </li>
+
+  <li class="inline-field field cc_fields">
+      <%= f.label(:forward_email, "To:", :class => "caption" ) %>
+      <div class="email_container forward_email">
+        <input type="text" id="to_emails_<%=cntid%>" name="helpdesk_note[to_emails]" />
+        <script type="text/javascript">
+          new Autocompleter.MultiValue("to_emails_<%=cntid%>", cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
+        </script>
+      </div>
+
+      <div class="request_form_options">
+        <a  href="#" rel="toggle_email_container" id="fwd_add_cc_btn_<%=cntid%>"
+            data-container="fwd_cc-form-container-<%=cntid%>" 
+            data-toggle-button="fwd_add_cc_btn_<%=cntid%>"
+            data-toggle-checkbox="fwd_include_cc_<%=cntid%>">
+          <%= t(".cc") %>
+        </a>
+        <a  href="#" rel="toggle_email_container" id="fwd_add_bcc_btn-<%=cntid%>" 
+            class="<%=bcc_drop_box_email.blank? ? '' : 'hide' %> "
+            data-container="fwd_bcc-form-container-<%=cntid%>"
+            data-toggle-button="fwd_add_bcc_btn-<%=cntid%>" 
+            data-toggle-checkbox="fwd_include_bcc_<%=cntid%>" >
+          <%= t(".bcc") %>
+        </a>
+      </div>
+
+      <input type="checkbox" class="hide" id="fwd_include_cc_<%=cntid%>" name="include_cc" />              
+      <input type="checkbox" class="hide" id="fwd_include_bcc_<%=cntid%>" name="include_bcc" <%=bcc_drop_box_email.blank? ? "" : "checked" %> />
+
+  </li>
+  <li class="inline-field field hide cc_fields" id="fwd_cc-form-container-<%=cntid%>">
+    <label for="cc_emails_<%=cntid%>"><%= t(".cc") %>:</label>
+    <a href="#" class="clear_emails" rel='toggle_email_container' 
+        data-container="fwd_cc-form-container-<%=cntid%>" 
+        data-toggle-button="fwd_add_cc_btn_<%=cntid%>" 
+        data-clear="true"><%= t('clear') %></a>
+        <div class="email_container">
+          <input type="text" id="fwd_cc_emails_<%=cntid%>" name="helpdesk_note[cc_emails]" />
+          <script type="text/javascript">
+             new Autocompleter.MultiValue("fwd_cc_emails_<%=cntid%>", cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
+          </script>
+        </div>
+  </li>
+  <li class="inline-field field <%=bcc_drop_box_email.blank? ? "hide" : '' %>  cc_fields" id="fwd_bcc-form-container-<%=cntid%>">
+    <label for="cc_emails_<%=cntid%>"><%= t(".bcc") %>:</label>
+    <a href="#" class="clear_emails" rel='toggle_email_container' 
+        data-container="fwd_bcc-form-container-<%=cntid%>" 
+        data-toggle-button="fwd_add_bcc_btn-<%=cntid%>" 
+        data-clear="true"><%= t('clear') %></a>
+        <div class="email_container">
+          <input type="text" id="fwd_bcc_emails_<%=cntid%>" name="helpdesk_note[bcc_emails]" />
+          <script type="text/javascript">
+            new Autocompleter.MultiValue("fwd_bcc_emails_<%=cntid%>", cachedLookup, $A(<%= bcc_drop_box_email.to_json unless bcc_drop_box_email.blank? %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
+          </script>
+        </div>
+  </li>
+  <li class="inline-field field clearField">
+    <% conv_item = conv_id.nil? ? @ticket : @note %>
+    <%= f.text_area :body_html, :class => "body_html required", :id => "#{cntid}-body", :value => bind_last_conv(conv_item, @signature, true) %>
+  </li>
+  <li class="inline-field field attachment-options continous" id="attachment-options-reply">
+      <% unless local_assigns[:no_attachments] %>
+      <% attachments = {:regular => conv_item.attachments, :dropbox => conv_item.dropboxes } %>
+      <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note", :original_attachments => attachments} %>
+      <% end %>    
+  </li> 
+    <!-- forward will be always private -->
+    <%= f.hidden_field :private , :value => true %>
+    <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["forward_email"] %>
+    <%= f.hidden_field :from_email , :id => "fwd_from_email_#{cntid}", :value => @selected_reply_email %>
+    <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
+    
+</ul>
+
+<div class="btn-toolbar">
+
+  <span>
+    <button class="btn cancel_btn" data-show-pseudo-reply="<%=conv_id.nil?.to_s %>" data-cnt-id="<%=cntid%>">
+      <%= t('cancel') %>
+    </button>
+  </span>
+
+  <span>
+    <button class="btn btn-primary submit_btn">
+      <%= t('forward') %>
+    </button>
+  </span>
+
+</div>
+<div class="clearfix overflowh"></div>
+<% if conv_id.present? %>
+<script type="text/javascript">
+  invokeRedactor('<%= "#{cntid}-body" %>');
+</script>
+<% end %>
+
+<script type="text/javascript">
+    jQuery("#HelpdeskFwd_<%=cntid%>").bind("submit", function(ev){ 
+          if(!jQuery('#fwd_include_cc_<%=cntid%>').is(':checked'))
+            jQuery('[name="helpdesk_note[cc_emails][]"]').val('');
+          if(!jQuery('#fwd_include_bcc_<%=cntid%>').is(':checked'))
+            jQuery('[name="helpdesk_note[bcc_emails][]"]').val('');  
+          }).validate()
+</script>
+
+<% end %>
+<% content_for :pagefixed do %>
+  <script type="text/javascript">
+    jQuery('#HelpdeskFwd_<%=cntid%> select#reply_email_id').live('change',function(e){
+    var selectObj = jQuery(e.target),
+        form = e.target.form,
+        fromEmail = selectObj.val();
+        form['helpdesk_note[from_email]'].value = fromEmail;
+  })
+  </script>
+<% end %>

@@ -1,0 +1,94 @@
+<div class="request_panel" id="<%=cntid%>" style="display:none;" rel="emitter" data-node-name="agent_replying">
+  <% form_for note, :html => {
+                      :multipart => true,  
+                      :id => "HelpdeskNotes",
+                      :rel => 'note_form', 
+                      "data-panel" => cntid,
+                      "data-show-pseudo-reply" => 'true',
+                      "data-destroy-editor" => 'true',
+                      "data-fetch-latest" => 'true',
+                      "data-cnt-id" => cntid
+
+                    } do |f| %>
+    <div class="list_agents_replying" class="hide"></div>
+    <%= content_tag( :div, t("ticket.note_form.form_title"), :class => "form_title" ) %>
+
+    <%= f.error_messages %>
+    <ul class="ui-form dont-validate">
+
+      <li class="inline-field field notify_agent">
+        <label class="notify" for="helpdesk_note_to_emails">
+          <%= t("ticket.note_form.notify_agents") %>:
+        </label>
+        <div class="email_container">
+          <%= select_tag "helpdesk_note[to_emails]", 
+                          options_for_select(current_account.agents.map { |agent| "#{agent.user.name} <#{agent.user.email}>" }, 
+                              [( @ticket.responder_id and @ticket.responder_id != current_user.id ? 
+                                      "#{@ticket.responder.name} <#{@ticket.responder.email}>" : nil ) ]), 
+                          :multiple => true, :class => 'select2', "data-placeholder" => 'Select agents to notify' %>
+        </div>
+      </li>
+
+      <li class="inline-field field">
+        <%= f.text_area :body_html, :class => "body_html required", :id => "#{cntid}-body", 
+                        :value => "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span>" %>
+      </li>
+
+      <li class="inline-field field attachment-options continous" id="attachment-options-note">
+          <% unless local_assigns[:no_attachments] %>
+          <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
+          <% end %>
+      </li>
+    </ul> 
+    <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>
+    <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
+    <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>"reply_ticket_status_#{cntid}"  )%>
+
+    <div class="btn-toolbar">
+      
+      <span class="btn-group">
+        <button class="btn cancel_btn" data-show-pseudo-reply='true' data-cnt-id='<%= cntid %>'>
+          <%= t('cancel') %>
+        </button>
+      </span>
+
+      <span class="btn-group">
+        <button class="btn" rel="custom-reply-status" 
+                data-cnt-id='<%=cntid%>' data-status-val='4'>
+          <%= t('ticket.note_form.add_and_resolve') %>
+        </button>
+      </span>
+
+      <span class="btn-group">
+        <button class="btn btn-primary submit_btn">
+          <%= local_assigns[:submit] || ActiveSupport::Inflector.titleize(id) %>
+        </button>
+      </span>
+
+      <span id="toggle-note-visibility">
+        <div class="note-visible tooltip" title="<%= t("helpdesk.tickets.note.public_note_tip") %>">
+          <i></i>
+        </div>
+        <div class="note-hidden tooltip" title="<%= t("helpdesk.tickets.note.private_note_tip") %>">
+          <i></i>
+        </div>
+        <%= f.check_box(:private, :checked => true, :class => 'tooltip') %>
+      </span>
+
+    </div>
+  <% end %>
+  <div class="clearfix overflowh" ></div>
+</div> 
+<% content_for :pagefixed do %>
+  <%= javascript_include_tag "helpdesk/page_switcher" %>
+  <% javascript_tag do %>
+    document.observe("dom:loaded", function(){
+      new Helpdesk.PageSwitcher({
+        toggleMode: true,
+        pages: ['attachment-options-note']
+      });
+			jQuery("#HelpdeskNotes").validate();	  
+			jQuery("#cnt-note-body").val("");
+    });
+  <% end %>
+<% end %>

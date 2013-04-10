@@ -1,5 +1,6 @@
 module Integrations::Constants
   APP_NAMES = {
+    :capsule_crm => "capsule_crm", 
     :freshbooks => "freshbooks", 
     :harvest => "harvest", 
     :google_contacts => "google_contacts", 

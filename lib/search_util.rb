@@ -29,6 +29,21 @@ module SearchUtil
   	end
   end
 
+  def self.es_filter_key(query)
+    query.strip!
+    query.gsub!(/([\(\)\[\]\{\}\?\\\"!\^\+\-\*:~])/,'\\\\\1')
+    query = "*#{query}*"
+  end
+
+  def self.es_exact_match?(query)
+    query.blank? || ( query.start_with?('<') && query.end_with?('>') )
+  end
+
+  def self.es_filter_exact(query)
+    query = "<#{query.gsub(/^<|>$/,'').strip}>" unless query.blank?
+    query
+  end
+
   private
 
   	def contact_solution_visibility

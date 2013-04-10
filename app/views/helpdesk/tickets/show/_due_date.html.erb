@@ -1,0 +1,45 @@
+<div id="duedate-dialog-container" style="display:none; position:absolute; left:0px; top:0px; width: 100%; height: 100%; ">
+	<div class="transparent-overlay" id="due-date-overlay"></div>	
+	<div class="due-date-dialog" id="due-date-dialog" style="display:none;"> 
+		<span class="right_pointer"></span>
+		<% form_for @ticket, :url => { :action => "change_due_by" }, :html => { :id => "DueDateForm", :method => "put" } do |f| %>
+			<%= content_tag :label, t(".when_is_it_due") %>
+			<select name="due_date_options" id="due-date-options">
+				<option value="today"><%= t(".today") %></option>
+				<option value="tomorrow"><%= t(".tomorrow") %></option>		
+				<option value="thisweek"><%= t(".this_week") %></option>
+				<option value="nextweek"><%= t(".next_week") %></option>			
+				<option value="specific"><%= t(".specific_date") %></option>
+		  </select> 
+		  <span id="due-date-button">
+				<%= t("or") %> <a href="javascript:void(0)" id="set-date-time"><%= t(".set_date_time") %></a> 
+			</span>
+		  <div class="due-date-calender" id="due-date-calender" style="display:none;">
+			<div id="due-date-picker"></div>
+			<div class="due-date-info">
+				<p>
+					<%= t(".due") %>
+					<span id="due-date-value">
+						<%= @ticket.due_by.strftime("%a %B %e %Y") %>
+					</span>
+				</p>
+				<p>
+					at	
+					<%= select_tag "due_by_hour",   options_for_select(%w{ 1 2 3 4 5 6 7 8 9 10 11 12 }, @ticket.due_by.strftime("%l").strip) %> :
+					<%= select_tag "due_by_minute", options_for_select(%w{ 00 15 30 45 }, @ticket.due_by.strftime("%M").strip) %>
+					<%= select_tag "due_by_am_pm",  options_for_select(%w{ AM PM }, @ticket.due_by.strftime("%p").strip) %>
+				</p>
+			</div>
+		  </div>
+		  <%= hidden_field_tag "due_by_date_time" %>
+		  <div class="calender-buttons" id="calender-buttons">
+			<%= link_to_function( "Cancel", "showHideDueByDialog(false)", :class => "uiButton small" ) %>
+			<%= f.submit "Save", :class => "uiButton small" %>
+			<span class="loading-item"></span>
+		  </div>
+		  <div id="calender-info" class="info-highlight" style="display:none;">
+				<%= t(".earlier_date_and_time") %>
+		  </div>
+		<% end %>
+   </div>
+</div>

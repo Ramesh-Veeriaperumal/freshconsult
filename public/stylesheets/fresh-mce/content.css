@@ -58,7 +58,7 @@ table {
 /* line 56, ../../src/app/lib/_reset.scss */
 q, blockquote {
   quotes: none; }
-  /* line 103, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+  /* line 103, ../../../../.rvm/gems/ree-1.8.7-2012.02@freshdesk/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
   q:before, q:after, blockquote:before, blockquote:after {
     content: "";
     content: none; }
@@ -151,7 +151,7 @@ strong, b {
 em, i {
   font-style: italic; }
 
-/* line 116, ../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../.rvm/gems/ree-1.8.7-2012.02@freshdesk/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
   display: block; }
 

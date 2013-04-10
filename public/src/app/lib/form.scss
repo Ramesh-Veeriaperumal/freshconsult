@@ -1552,34 +1552,6 @@ table.summary-report{
 			padding:10px 0;
 			position:relative;
 		}
-		fieldset.integration{
-			margin-bottom: 10px;
-			@include pie-clearfix;
-			position:relative;
-			padding:0;
-			.integration_container {
-				padding:20px 0 10px 80px;
-			}				
-			border-top:1px solid #e3e3e3;
-			.app-logo{
-				position:absolute;
-				width:64px;
-				top:0;
-				left:0;
-				padding-right:25px;
-				height:20px;
-				background-color:#efefef;
-				@include border-bottom-radius(3px);
-				border:1px solid #e3e3e3;
-
-				cursor: pointer;
-				input[type=checkbox] {
-					position: absolute;
-					right:5px;
-					top:2px;
-				}
-			}
-		}
       li.inline-field, fieldset{
          label.caption{
             width:80px;
@@ -1613,6 +1585,39 @@ table.summary-report{
       }
    }
 }
+
+#time_integration {
+
+	fieldset.integration{
+		margin-bottom: 10px;
+		@include pie-clearfix;
+		position:relative;
+		padding:0;
+		.integration_container {
+			padding:20px 0 10px 80px;
+		}				
+		border-top:1px solid #e3e3e3;
+		.app-logo{
+			position:absolute;
+			width:64px;
+			top:0;
+			left:0;
+			padding-right:25px;
+			height:20px;
+			background-color:#efefef;
+			@include border-bottom-radius(3px);
+			border:1px solid #e3e3e3;
+
+			cursor: pointer;
+			input[type=checkbox] {
+				position: absolute;
+				right:5px;
+				top:2px;
+			}
+		}
+	}
+}
+
 
 .note-forward-form{ border-bottom: 0; }
 .note-forward-form .reply_box{
@@ -2188,7 +2193,7 @@ ul.ui-form .inputs-list{
 
 #reply-draft
 {
-padding-top: 10px;
+padding:5px 10px 0;
 float: right;
 }
 
@@ -2264,21 +2269,6 @@ li.agents-field
 #Pages.set-top
 {
 	margin-top: -6px;
-}
-#exportFilter{
-	.ui-form{
-		h4{
-			&.caption{
-				padding: 7px 10px 7px 0px; 
-			}
-		}
-		div.fields{
-			margin-left: 250px;
-			div.fields{
-				margin-left: 160px;
-			}
-		}
-	}
 }
 
 .admin-tabs{
@@ -2565,7 +2555,7 @@ input[type="text"].number{
 			#change-link{
 				padding: 8px;
 				position: relative;
-				top: 8px;
+				top: 3px;
 			}
 
 			#account-admin-form, #account-details-form{
@@ -2583,7 +2573,7 @@ input[type="text"].number{
 
 			label.error{
 				border-radius: 4px;
-				margin: 2px 255px 0px 2px;
+				margin: 2px 250px 0px 1px;
 			}
 		}
 	}

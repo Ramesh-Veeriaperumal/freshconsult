@@ -48,15 +48,18 @@ JIRA_REST_API = {
     },
     :register_webhooks => {
       :method => "post",
-      :rest_url => "rest/webhooks/1.0/webhook"
+      :rest_url => "rest/webhooks/1.0/webhook",
+      :content_type => "application/json"
     },
     :available_webhooks => {
       :method =>"get",
-      :rest_url =>"rest/webhooks/1.0/webhook"
+      :rest_url =>"rest/webhooks/1.0/webhook",
+      :content_type => "application/json"
     },
     :delete_webhooks => {
       :method => "delete",
-      :rest_url => "rest/webhooks/1.0/webhook/issueId"
+      :rest_url => "rest/webhooks/1.0/webhook/issueId",
+      :content_type => "application/json"
     }
   } 
 
@@ -78,6 +81,7 @@ JIRA_REST_API = {
   end
 
   def handle_jira_response(res_data)
+    begin
       jira_data = {
         :exception => true,
         :error => "Exception: Cannot process your request",
@@ -97,7 +101,13 @@ JIRA_REST_API = {
             Rails.logger.error "#{errorText.inspect} #{res_data.inspect}"
         end
       end
-      jira_data    
+      return jira_data
+    rescue Exception => e
+      jira_data[:exception] = true
+      jira_data[:error] = "Exception: Cannot process your request"
+      Rails.logger.error "Exception: Cannot process your request. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
+      return jira_data
+    end    
   end
   
 end
