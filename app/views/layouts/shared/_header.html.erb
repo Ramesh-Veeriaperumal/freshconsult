@@ -14,9 +14,11 @@
 	</div>	
 	 <% if current_user then %>  
   	<div class="header-link-wrapper" title="<%= t("header.user_available") %>">
-  		<a href="#">
-  			<img alt="" height="35px" src="/images/spacer.gif" class="header-icons-autoAssign-on" id="available_icon" onclick="toggle_availability()">
-  		</a>
+  		<% if feature?(:round_robin) %>
+	  		<a href="#">
+	  			<img alt="" height="35px" src="/images/spacer.gif" class="header-icons-autoAssign-on" id="available_icon" onclick="toggle_availability()">
+	  		</a>
+	  	<% end %>
 		<a href="#" class="nav-trigger" menuid="#LoggedOptions">
 			<%= user_avatar(current_user, :thumb, "preview_pic", {:width => "30px", :height => "30px" }) %>
 		</a>
