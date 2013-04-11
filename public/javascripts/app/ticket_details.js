@@ -515,6 +515,10 @@ $(document).ready(function() {
 
 // End of Due-by time JS
 
+	if (jQuery('.requester-info-sprite').length < 2) {
+		jQuery('.requester-info-sprite').parents('.tkt-tabs').remove();
+	}
+	
 	$('ul.tkt-tabs').each(function(){
 		// For each set of tabs, we want to keep track of
 		// which tab is active and it's associated content
@@ -778,7 +782,7 @@ $(document).ready(function() {
 				});
 			}
 
-			if ($('html').hasClass('ie6') || $('html').hasClass('ie7') || $('html').hasClass('ie8') || $('html').hasClass('ie9')|| $('html').hasClass('ie10')) {
+			if($.browser.msie) {
 				stopDraftSaving();
 				$.ajax({
 					url: TICKET_DETAILS_DATA['draft']['clear_path'],
@@ -811,12 +815,15 @@ $(document).ready(function() {
 						$('#' + _form.data('panel')).trigger('visibility');
 					}
 
+					if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
+						stopDraftSaving();
+					}	
+
 					if (_form.attr('rel') == 'edit_note_form')  {
 						
 						$('#note_details_' + _form.data('cntId')).html($(response).find("body-html").text());
 						$('#note_details_' + _form.data('cntId')).show();
 					}
-
 
 					if (_form.data('cntId') && _form.data('destroyEditor')){
 						$('#' + _form.data('cntId') + '-body').destroyEditor(); //Redactor
@@ -827,6 +834,10 @@ $(document).ready(function() {
 					if (_form.attr('rel') == 'forward_form')  {
 						//Remove To Address
 						_form.find('.forward_email li.choice').remove();
+					}
+
+					if (_form.attr('rel') == 'note_form')  {
+						$('#toggle-note-visibility').removeClass('visible');
 					}
 
 					//Enabling original attachments
@@ -860,6 +871,11 @@ $(document).ready(function() {
 
 					if (_form.data('panel')) {
 						$('#' + _form.data('panel')).unblock();
+					}
+
+
+					if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
+						triggerDraftSaving();
 					}
 
 				}
@@ -956,7 +972,7 @@ $(document).ready(function() {
       jQuery('body').click();
 
       changeStatusTo(jQuery(this).data('statusVal'));
-      jQuery("#HelpdeskReply").trigger('submit');
+      $(this).parents('form').trigger('submit');
     });
 
 	$('#custom_ticket_form').on('submit.ticket_details', function(ev) {

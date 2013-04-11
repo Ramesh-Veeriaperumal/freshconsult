@@ -83,8 +83,8 @@ body#gcgadget {
 		padding: 0 20px;
 	}
 
-	.commentbox .actions {
-		display: none;
+	.commentbox .actions, .ticket_details #show_more{
+		display: none !important;
 	}
 }
 

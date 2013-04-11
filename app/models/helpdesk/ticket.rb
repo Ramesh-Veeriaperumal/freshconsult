@@ -21,7 +21,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             "escalation_level", "sla_policy_id", "sla_policy"]
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
-  ES_FLEXIFIELD_COLUMNS = Flexifield.column_names.select {|v| v =~ /^ff(s|_text)/}
 
   set_table_name "helpdesk_tickets"
   
@@ -68,7 +67,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   belongs_to :email_config
   belongs_to :group
-  xss_terminate :except => [:subject,:cc_email], :html5lib_sanitize => [:description_html,:description]
+  # xss_terminate :except => [:subject,:cc_email], :html5lib_sanitize => [:description_html,:description]
  
   belongs_to :responder,
     :class_name => 'User',
@@ -963,6 +962,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
       return super(:builder =>xml,:skip_instruct => true,:only =>[:display_id,:subject,:deleted],
           :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name])
     end
+
+    return super(:builder =>xml, :skip_instruct => true) if options[:ticket_only]
+
     super(:builder => xml, :skip_instruct => true,:include => [:notes,:attachments],:except => [:account_id,:import_id], 
       :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name]) do |xml|
       xml.custom_field do
@@ -1082,12 +1084,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return false
   end
 
+  def es_flexifield_columns
+    @@es_flexi_txt_cols ||= Flexifield.column_names.select {|v| v =~ /^ff(s|_text)/}
+  end
+
   def to_indexed_json
     to_json({
             :root => "helpdesk/ticket",
             :methods => [:es_notes, :company_id, :es_from, :to_emails, :es_cc_emails, :es_fwd_emails],
             :only => [ :display_id, :subject, :description, :account_id, :responder_id, :group_id, :requester_id, :status, :spam, :deleted ], 
-            :include => { :flexifield => { :only => ES_FLEXIFIELD_COLUMNS },
+            :include => { :flexifield => { :only => es_flexifield_columns },
                           :attachments => { :only => [:content_file_name] }
                         }
             },

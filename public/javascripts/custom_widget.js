@@ -165,7 +165,11 @@ Freshdesk.Widget.prototype={
 		}
 		else if (evt.status == 502) {
 			this.alert_failure(this.app_name+" is not responding.  Please verify the given domain or try again later.");
-		} else if (evt.status == 500) {
+		}
+		else if (evt.status == 504) {
+			this.alert_failure("Request timed out. Please try again later.");
+		}
+		else if (evt.status == 500) {
 			// Right now 500 is used for freshdesk internal server error. The below one is special handling for Harvest.  If more apps follows this convention then move it to widget code.
 			if (this.app_name == "Harvest") {
 				var error = XmlUtil.extractEntities(evt.responseXML,"error");

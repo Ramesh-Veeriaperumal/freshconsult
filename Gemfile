@@ -82,6 +82,7 @@ gem "rinku", :git => "git://github.com/freshdesk/rinku.git"
 gem "people", '0.2.1' #https://github.com/mericson/people/tree/master/lib
 gem "useragent", "~> 0.4.16"
 gem "xss_terminate", "~> 0.2"
+gem "rack-throttle", "~> 0.3.0"
 
 group :development,:test do
    #gem "rspec", "1.3.1"

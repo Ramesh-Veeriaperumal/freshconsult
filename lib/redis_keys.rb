@@ -16,6 +16,7 @@ module RedisKeys
 
 	PORTAL_CACHE_ENABLED = "PORTAL_CACHE_ENABLED"
 	PORTAL_CACHE_VERSION = "PORTAL_CACHE_VERSION:%{account_id}"
+	API_THROTTLER  = "API_THROTTLER:%{host}"
 	
 	def newrelic_begin_rescue
     begin

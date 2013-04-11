@@ -23,7 +23,7 @@
         <div class="email_container">
           <%= select_tag "helpdesk_note[to_emails]", 
                           options_for_select(current_account.agents.map { |agent| "#{agent.user.name} <#{agent.user.email}>" }, 
-                              [( @ticket.responder_id and @ticket.responder_id != current_user.id ? 
+                              [( (@ticket.responder_id and @ticket.responder_id != current_user.id and @ticket.responder.present?) ? 
                                       "#{@ticket.responder.name} <#{@ticket.responder.email}>" : nil ) ]), 
                           :multiple => true, :class => 'select2', "data-placeholder" => 'Select agents to notify' %>
         </div>
@@ -54,7 +54,7 @@
       </span>
 
       <span class="btn-group">
-        <button class="btn submit_btn" rel="custom-reply-status" 
+        <button class="btn" rel="custom-reply-status" 
                 data-cnt-id='<%=cntid%>' data-status-val='4'>
           <%= t('ticket.note_form.add_and_resolve') %>
         </button>

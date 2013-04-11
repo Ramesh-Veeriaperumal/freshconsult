@@ -45,7 +45,7 @@ class Helpdesk::Note < ActiveRecord::Base
   accepts_nested_attributes_for :tweet , :fb_post
   
   unhtml_it :body
-  xss_terminate :html5lib_sanitize => [:body_html,:body]
+  # xss_terminate :html5lib_sanitize => [:body_html,:body]
   named_scope :newest_first, :order => "created_at DESC"
   named_scope :visible, :conditions => { :deleted => false } 
   named_scope :public, :conditions => { :private => false } 
@@ -325,7 +325,7 @@ class Helpdesk::Note < ActiveRecord::Base
       if fwd_email?
         Helpdesk::TicketNotifier.send_later(:deliver_forward, notable, self)
       elsif self.to_emails.present? or self.cc_emails.present? or self.bcc_emails.present? and !self.private
-        Helpdesk::TicketNotifier.send_later(:deliver_reply, notable, self, {:include_cc => self.cc_emails.blank? , 
+        Helpdesk::TicketNotifier.send_later(:deliver_reply, notable, self, {:include_cc => self.cc_emails.present? , 
                 :send_survey => ((!self.send_survey.blank? && self.send_survey.to_i == 1) ? true : false),
                 :quoted_text => self.quoted_text})
       end

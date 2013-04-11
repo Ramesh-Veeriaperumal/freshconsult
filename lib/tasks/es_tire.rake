@@ -60,10 +60,12 @@ namespace :freshdesk_tire do
     account = Account.find_by_id(ENV['ACCOUNT_ID'])
     account.make_current
     account.es_enabled_account.switch_to_sphinx
-    klasses = ENV['CLASS'].split(';')
-    klasses.each do |klass|
-      ENV['CLASS'] = klass
-      Rake::Task["tire:import"].execute("CLASS='#{ENV['CLASS']}' INDEX=#{ENV['INDEX']}")
+    SeamlessDatabasePool.use_persistent_read_connection do
+      klasses = ENV['CLASS'].split(';')
+      klasses.each do |klass|
+        ENV['CLASS'] = klass
+        Rake::Task["tire:import"].execute("CLASS='#{ENV['CLASS']}' INDEX=#{ENV['INDEX']}")
+      end
     end
     account.es_enabled_account.switch_to_es
     Account.reset_current_account
