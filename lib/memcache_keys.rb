@@ -33,6 +33,8 @@ module MemcacheKeys
 
   ACCOUNT_NESTED_FIELDS = "v1/ACCOUNT_NESTED_FIELDS:%{account_id}"
 
+  ACCOUNT_EVENT_FIELDS = "v1/ACCOUNT_EVENT_FIELDS:%{account_id}"
+
   # Portal customization related keys
   PORTAL_TEMPLATE = "v1/PORTAL_TEMPLATE:%{account_id}:%{portal_id}"
 

@@ -1,11 +1,12 @@
 class Admin::AutomationsController < Admin::AdminController
   include ModelControllerMethods
+  include Helpdesk::ReorderUtility
    
   before_filter :load_config, :only => [:new, :edit]
   before_filter :check_automation_feature
   
   def index
-    @va_rules = scoper.find(:all)
+    @va_rules = all_scoper
   end
   
   def new
@@ -42,29 +43,27 @@ class Admin::AutomationsController < Admin::AdminController
       render :action => 'edit'
     end
   end
-   
-  def reorder
-    new_pos = ActiveSupport::JSON.decode params[:reorderlist]
-    
-    va_rules = scoper.find(:all)
-    va_rules.each do |va_rule|
-      new_p = new_pos[va_rule.id.to_s]
-      if va_rule.position != new_p
-        va_rule.position = new_p
-        va_rule.save
-      end
-    end
-    redirect_back_or_default redirect_url
-  end
   
   protected 
   
     def scoper
       current_account.scn_automations
     end
+
+    def all_scoper
+      current_account.all_scn_automations
+    end
     
     def cname
       @cname ||= "va_rule"
+    end
+
+    def reorder_scoper
+      scoper
+    end
+
+    def reorder_redirect_url
+      redirect_url
     end
     
     def build_object #Some bug with build during new, so moved here from ModelControllerMethods
@@ -97,7 +96,7 @@ class Admin::AutomationsController < Admin::AdminController
       action_hash     = [
         { :name => -1, :value => t('click_to_select_action') },
         { :name => "priority", :value => t('set_priority_as'), :domtype => "dropdown", 
-          :choices => Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort },
+          :choices => TicketConstants.priority_list.sort },
         { :name => "ticket_type", :value => t('set_type_as'), :domtype => "dropdown", 
           :choices => current_account.ticket_type_values.collect { |c| [ c.value, c.value ] } },
         { :name => "status", :value => t('set_status_as'), :domtype => "dropdown", 
@@ -106,7 +105,7 @@ class Admin::AutomationsController < Admin::AdminController
         { :name => "add_tag", :value => t('add_tags'), :domtype => 'text' },
         { :name => -1, :value => "-----------------------" },
         { :name => "responder_id", :value => t('ticket.assign_to_agent'), 
-          :domtype => 'dropdown', :choices => @agents },
+          :domtype => 'dropdown', :choices => @agents[1..-1] },
         { :name => "group_id", :value => t('email_configs.info9'), :domtype => 'dropdown', 
           :choices => @groups },
         { :name => -1, :value => "-----------------------" },
@@ -141,7 +140,7 @@ class Admin::AutomationsController < Admin::AdminController
            :field_type => field.field_type, 
            :value => "Set #{field.label} as", 
            :domtype => (field.field_type == "nested_field") ? "nested_field" : field.flexifield_def_entry.flexifield_coltype,
-           :choices => (field.field_type == "nested_field") ? field.nested_choices : field.picklist_values.collect { |c| [c.value, c.value ] },
+           :choices => (field.field_type == "nested_field") ? (field.nested_choices) : field.picklist_values.collect { |c| [c.value, c.value ] },
            :action => "set_custom_field", 
            :handler => field.flexifield_def_entry.flexifield_coltype,
            :nested_fields => nested_fields(field)

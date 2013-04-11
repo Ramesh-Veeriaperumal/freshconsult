@@ -1,15 +1,15 @@
 class Admin::ObserverRulesController < Admin::SupervisorRulesController
 
+  NESTED_FIELDS = ['nested_rules', 'from_nested_rules', 'to_nested_rules']
+  OBSERVER_FILTERS = [
+    { :name => -1, :value => "-----------------------" },
+    { :name => "inbound_count", :value => I18n.t('ticket.inbound_count'), :domtype => "number",
+    :operatortype => "hours" },
+    { :name => "outbound_count", :value => I18n.t('ticket.outbound_count'), :domtype => "number",
+    :operatortype => "hours" }
+  ]
+
 	protected
-    
-    NESTED_FIELDS = ['nested_rules', 'from_nested_rules', 'to_nested_rules']
-    OBSERVER_FILTERS = [
-      { :name => -1, :value => "-----------------------" },
-      { :name => "inbound_count", :value => I18n.t('ticket.inbound_count'), :domtype => "number",
-      :operatortype => "hours" },
-      { :name => "outbound_count", :value => I18n.t('ticket.outbound_count'), :domtype => "number",
-      :operatortype => "hours" }
-    ]
 
     def scoper
       current_account.observer_rules
@@ -41,36 +41,57 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
 
       event_hash = [
         { :name => -1, :value => t('click_to_select_event') },
-        { :name => 'priority', :value => t('ticket.priority'), :domtype => 'dropdown', 
-          :choices => [ ['--', t('any_val.any_priority')] ]+Helpdesk::Ticket::PRIORITY_NAMES_BY_KEY.sort, :type => 2, 
-          :postlabel => t('event.updated') },
-        { :name => 'ticket_type', :value => t('ticket.type'), :domtype => 'dropdown', 
+        { :name => 'priority', :value => t('observer_events.priority'), :domtype => 'dropdown', 
+          :choices => [ ['--', t('any_val.any_priority')] ]+TicketConstants.priority_list.sort, :type => 2 },
+        { :name => 'ticket_type', :value => t('observer_events.type'), :domtype => 'dropdown', 
           :choices => [ ['--', t('any_val.any_ticket_type')] ]+current_account.ticket_type_values.collect { |c| [ c.value, c.value ] },
-          :type => 2, :postlabel => t('event.updated') },
-        { :name => 'status', :value => t('ticket.status'), :domtype => 'dropdown', 
-          :choices => [ ['--', t('any_val.any_status')] ]+Helpdesk::TicketStatus.status_names(current_account), :type => 2,
-          :postlabel => t('event.updated') },
-        { :name => 'group_id', :value => t('ticket.group'), :domtype => 'dropdown',
-          :choices => [ ['--', t('any_val.any_group')] ]+@groups, :type => 2, :postlabel => t('event.updated') },
-        { :name => 'responder_id', :value => t('ticket.assigned_agent'),
-          :type => 0, :postlabel => t('event.updated')},
-        { :name => 'note_type', :value => t('ticket.note'), :domtype => 'dropdown',
-          :choices => @note_types, :type => 1, :postlabel => t('event.added'), :valuelabel => t('event.type') },
-        { :name => 'reply_sent', :value => t('ticket.reply'), :domtype => 'label', :type => 0,
-          :postlabel => t('event.sent') },
-        { :name => 'due_by', :value => t('ticket.due_date'), :domtype => 'label', :type => 0,
-          :postlabel => t('event.updated')},
-        { :name => 'ticket_update', :value => t('ticket.ticket'), :domtype => 'dropdown',
+          :type => 2 },
+        { :name => 'status', :value => t('observer_events.status'), :domtype => 'dropdown', 
+          :choices => [ ['--', t('any_val.any_status')] ]+Helpdesk::TicketStatus.status_names(current_account), :type => 2 },
+        { :name => 'group_id', :value => t('observer_events.group'), :domtype => 'dropdown',
+          :choices => [ ['--', t('any_val.any_group')] ]+@groups, :type => 2 },
+        { :name => 'responder_id', :value => t('observer_events.agent'),
+          :type => 0 },
+        { :name => 'note_type', :value => t('observer_events.note'), :domtype => 'dropdown',
+          :choices => @note_types, :type => 1, :valuelabel => t('event.type') },
+        { :name => 'reply_sent', :value => t('observer_events.reply'), :domtype => 'label', :type => 0 },
+        { :name => 'due_by', :value => t('observer_events.due_date'), :domtype => 'label', :type => 0 },
+        { :name => 'ticket_update', :value => t('observer_events.ticket'), :domtype => 'dropdown',
           :choices => @ticket_actions, :type => 1 },
-        { :name => 'int_tc01', :value => t('ticket.feedback'), :domtype => 'dropdown',
+        { :name => 'int_tc01', :value => t('observer_events.customer_feedback'), :domtype => 'dropdown',
           :choices =>[ ['--', t('any_val.any_feedback')] ]+Survey.survey_names(current_account), :type => 1,
-          :postlabel => t('event.received'), :valuelabel => t('event.rating') },
-        { :name => 'time_sheet_action', :value => t('ticket.time_entry'), :domtype => 'dropdown',
+          :valuelabel => t('event.rating') },
+        { :name => 'time_sheet_action', :value => t('observer_events.time_entry'), :domtype => 'dropdown',
           :choices => @time_sheet_actions, :type => 1 },
       ]
 
       add_custom_events event_hash
       @event_defs = ActiveSupport::JSON.encode event_hash
+    end
+
+    def add_custom_events event_hash
+      any_value = [['--', t('any_val.any_value')]]
+      cf = current_account.ticket_fields.event_fields
+      unless cf.blank? 
+        event_hash.push({ :name => -1,
+                          :value => "-----------------------" 
+                          })
+        cf.each do |field|
+          event_hash.push({
+            :name => field.flexifield_def_entry.flexifield_name,
+            :value => "#{field.label} #{(field.field_type == "custom_checkbox") ? t('event.is') : t('event.updated')}",
+            :field_type => field.field_type,
+            :domtype => (field.field_type == "nested_field") ? 
+                          "nested_field" :
+                            field.flexifield_def_entry.flexifield_coltype,
+            :choices => (field.field_type == "nested_field") ? 
+                          (field.nested_choices any_value) : 
+                            any_value+field.picklist_values.collect { |c| [c.value, c.value ] },
+            :type => (field.field_type == "custom_checkbox") ? 1 : 2,
+            :nested_fields => nested_fields(field)
+          })
+        end
+      end
     end
 
     def set_filter_data
@@ -86,32 +107,6 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
                 filter_data.blank? ? [] : filter_data
     end
     
-    def add_custom_events event_hash
-      any_value = [['--', t('any_val.any_value')]]
-      cf = current_account.ticket_fields.event_fields
-      unless cf.blank? 
-        event_hash.push({ :name => -1,
-                          :value => "-----------------------" 
-                          })
-        cf.each do |field|
-          event_hash.push({
-            :name => field.flexifield_def_entry.flexifield_name,
-            :value => field.label,
-            :field_type => field.field_type,
-            :domtype => (field.field_type == "nested_field") ? 
-                          "nested_field" :
-                            field.flexifield_def_entry.flexifield_coltype,
-            :choices => (field.field_type == "nested_field") ? 
-                          (field.nested_choices any_value) : 
-                            any_value+field.picklist_values.collect { |c| [c.value, c.value ] },
-            :type => (field.field_type == "custom_checkbox") ? 1 : 2,
-            :nested_fields => nested_fields(field)
-          })
-        end
-      end
-    end
-
-
     def nested_fields ticket_field
       nestedfields = { :subcategory => "", :items => "" }
       if ticket_field.field_type == "nested_field"
@@ -147,8 +142,5 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
     def additional_filters
       OBSERVER_FILTERS
     end
-
-    def additional_actions
-    	super
-    end
+    
 end

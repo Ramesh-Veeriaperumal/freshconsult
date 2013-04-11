@@ -234,7 +234,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.itoggle.js
 
   observer_event:
-    - public/javascripts/event-manip.js 
+    - public/javascripts/observer_events.js 
   conditional:
     - public/javascripts/autosuggest.js    
     - public/javascripts/frameworks/plugins/jquery.nestedselect.js

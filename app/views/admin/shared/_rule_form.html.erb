@@ -4,8 +4,8 @@
 <%= f.error_messages :object_name => 'rule' %>
 <input type="hidden" name="id"   value="" />
 <input type="hidden" name="type" value="virtual_agents" />
-<ul class="ui-form row-fluid">
-	<li class="span12">
+<ul class="ui-form observer no-background">
+	<li>
 	<div class="row-fluid">
 		<%= f.label :name, t('dispatch.rule_name'), :class => "span2" %>
 		<div class="span8">
@@ -23,9 +23,13 @@
 		</div>
 	</div>
 	</li>
-	<li class="span12">		
+	<li>
+		<h3 class="lead">
+			<%=t('dispatch.conditions')%>
+			<label class="muted"><%=t('dispatch.info3')%></label>
+		</h3>
+
 		<div class="choicelist">
-			<label><%=t('dispatch.info3')%>?</label>
 			<%= f.radio_button  :match_type, 'any', :class => "radio" %> <%= f.label :match_type_any, t('dispatch.match_any'), :class => "radiolabel" %>
 			<%= f.radio_button  :match_type, 'all', :class => "radio" %> <%= f.label :match_type_all, t('dispatch.match_all'), :class => "radiolabel" %>
 		</div>			
@@ -36,8 +40,13 @@
 	    </fieldset>			
 		</div>
 	</li>
-	<li class="span12">
-		<label><%=t('dispatch.act_to_perform')%>?</label>				
+
+	<li>
+		<h3 class="lead">
+			<%=t('dispatch.actions')%>
+			<label class="muted"><%=t('dispatch.act_to_perform')%></label>
+		</h3>
+
 		<div class="conditionset" id="actionDOM">
 			<div id="ActionList" class="rule_list"></div>
 			<fieldset class="addchoice">
@@ -46,7 +55,7 @@
 		</div>
 	</li>
 </ul>		
-<br />
+
 <div class="button-container">
 	<input type="hidden" name="save_json" id="savejson" value="" />
 	<input type="submit" class="uiButton" id="dispatchr_submit" value="<%=t('save')%>" />

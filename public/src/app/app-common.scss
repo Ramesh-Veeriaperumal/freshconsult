@@ -1659,9 +1659,9 @@ span.sort_handle{
 .sort-list{
 	margin:0px -16px;	
 	span.sort_handle{
-		margin:0px 5px 0px 0px;
-		position:relative;
-		top:-3px;
+		margin: 0px 31px 0px 0px;
+		position: relative;
+		top: 2px;
 	}
 	li{
 		cursor:move;
@@ -8684,7 +8684,7 @@ height: auto;
 		}
 	}
 }
-.sla-index{
+.va_rule-index, .sla-index{
 	table{
 	    tr td
 	    {
@@ -9178,35 +9178,6 @@ div.db-chooser{
 	
 	li {
 		width: auto !important;	
-	}
-}
-
-.doer{
-	border:1px solid #cac6c6;
-	border-radius:5px;
-	padding:10px;
-
-	label:first-child{
-		padding:0;
-		float: left;
-		font-weight: bold;
-		width: 120px;
-	}
-
-	.va_rule_performer_members_container
-	{
-		margin-top: 10px;
-		margin-left: 120px;
-		select {
-			width: 50%;
-		}
-	}
-	
-	.choicelist{
-		margin-left: 120px;
-		input[type=radio]{
-			margin-left: 1%;
-		}
 	}
 }
 
@@ -9887,7 +9858,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 
 
 /* SLA policy reorder */
-#sla_policies_sort {
+#va_rules_sort, #sla_policies_sort {
 	@include box-shadow(#EEE 0 0 20px);
 	@include corners(4px);
 	margin: 20px 5px 0px 2px;
@@ -9900,7 +9871,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 		background: #FAFAFA;
 		border-bottom:1px solid #efefef; 
 		color:#656565;
-		padding: 10px 10px 4px 10px;
+		padding: 11px 0px;
 		margin: 1px 16px 2px;
 		font-size: 1em;
 		&.disabled {
@@ -10315,70 +10286,126 @@ div.gcal-confirm-modal-content{ width: 100%; }
 .error-text {
 	color: #D00;
 }
+.align_options .select2-results ul.select2-result-sub > li .select2-result-label{
+		padding-left: 7px;
+}
 
-.ui-form.observer{
-	> li{
+/* Observer */
+.ui-form.observer{	
+	.doer{
+		background-color: #f7f7f7;
+		border:1px solid #cac6c6;
+		border-radius:5px;
+		padding:10px;
+		margin-top:5px;
+
+		label:first-child{
+			padding:0;
+			float: left;
+			font-weight: bold;
+			width: 220px;
+		}
+
+		> *{ margin-left: 5px; }
+
+		.choicelist input[type=radio]{ margin-left: 1%;	}
+		.va_rule_performer_members_container{margin-top: 10px;}
+	}
+
+	.select2-container a{
+		margin-left: 0px;
+		margin-right: 0px;
+	}
+
+	
+	#filterDOM, #actionDOM{
+		.select2-container{width:150px;}
+		.dependent .select2-container{ margin-left: 3px; }
+		.dependent{ width: 550px; }
+	}
+
+	>li{
+		width:100%;
 		margin-bottom:0px;
 		padding-left:0;
-		h3{
-			label{
-				margin-bottom: 10px;
-			}
-		}
-
+		h3 label{	margin-bottom: 10px;	}
 	}
-	.addchoice{
-			font-weight: normal;
-		}
+
+	.addchoice{font-weight: normal;}
+
+	.conditionset{margin:0px;}
+
 	.conditionset fieldset {
-		
+
 		padding-left: 0px;
 
-		div.controls {
+		&.addchoice img{left:9px;}
+
+		.controls {
 			margin-left: 25px;
       float: none;
       display: inline-block;
       width: 93%;
-      select, .select2-container{
-      	width:150px;
+
+      .select2-container{width:303px;}
+
+      .dependent{
+				.select2-container{
+					margin-left: 3px;
+		    	width:150px;
+		    }
+			}
+
+      .nested_field{
+      	min-width: 400px;
+      	.select2-container{margin-right:0px;}
       }
-      
+
 			.event_nested_field{
-				width: 150px;
-				select, .select2-container{
+
+				width: 153px;
+
+				>div{
 					&:first-child{
 						padding-left:0;
 						border:0;
-						margin:0;
 						width:150px;
 					}
 					padding-left:5px;
 					margin-left:10px;
 					border-left:1px dotted #ccc;
-	      	width:140px;
+	      	.select2-container{width:134px;}
 	      }
 			}
+
+			.fromto_text{
+			 	margin-left: 8px;
+			 	padding-top: 4px;
+			 	width: 35px;
+			}
 		}
-	}
-	.event_text{
-		margin-left: 13px;
-		width:122px;
-		text-overflow: ellipses;
-		white-space: nowrap;
-		margin-right:5px;
-	}
+	}	
 }
-.observer li{
-	padding: 0;
-}
-.observer.row-fluid>li:nth-child(n+1){
-	margin-left: 0px;
-	padding-right: 0px;
- }
- .fromto_text{
- 	width: 35px;
- }
-.select2-drop.select2-drop-active{
-	left: 140px;
-	width: 142px;
+
+
+/* Gamification */
+.gamecriteria{
+	
+	#questDOM .select2-container{width: 140px;}
+	#quest_data_value{margin-right: 0px;}
+
+	.conditionset {
+		.rule_list .controls{
+			position: relative;
+			left : 27px;
+		}
+
+		fieldset {
+			div.select2 {
+				margin-right: 7px;
+				a{margin: 0px;}
+			}
+		}
+		.addchoice p{font-weight: normal;}
+	}
 }

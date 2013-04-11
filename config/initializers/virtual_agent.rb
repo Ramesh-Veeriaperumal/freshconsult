@@ -33,26 +33,26 @@ module VAConfig
 
   private
 
-    def self.fetch_handler(field, account, type)
-      field_key = fetch_field_key field, account, type
-      handler_key = FIELDS[type][field_key]
+    def self.fetch_handler(field, account, handler_type)
+      field_key = fetch_field_key field, account, handler_type
+      handler_key = FIELDS[handler_type][field_key]
 
-      RAILS_DEFAULT_LOGGER.debug "The field is : #{field}, type is :#{type}, field_key is : #{field_key}  handler_key is : #{handler_key}"
-      VA_HANDLERS[type][handler_key.to_sym]
+      RAILS_DEFAULT_LOGGER.debug "The field is : #{field}, handler_type is :#{handler_type}, field_key is : #{field_key}  handler_key is : #{handler_key}"
+      VA_HANDLERS[handler_type][handler_key.to_sym]
     end
 
-    def self.fetch_field_key field, account, type
-      (FIELDS[type].include? field) ? field : (custom_field_type field.to_s, account, type)
+    def self.fetch_field_key field, account, handler_type
+      (FIELDS[handler_type].include? field) ? field : (custom_field_handler_type field.to_s, account)
     end
   
-    def self.custom_field_type field, account, type
+    def self.custom_field_handler_type field, account
       t_field = fetch_ticket_field field.to_s, account
       t_field.present? ? t_field.field_type.to_sym : :default
     end
 
     def self.fetch_ticket_field field, account
-      (account.flexifield_def_entries.find_by_flexifield_name_or_flexifield_alias field).
-                                                                          first.ticket_field
+      account.event_flexifields_with_ticket_fields_from_cache.detect { |ff| 
+        ff.flexifield_name == field || ff.flexifield_alias == field }.ticket_field
     end
 
 end
@@ -62,6 +62,6 @@ end
 YAML.load_file("#{RAILS_ROOT}/config/virtual_agent.yml").each do |k, v|
   VAConfig.const_set(k.upcase, Helpdesk::prepare(v))
 end
-YAML.load_file("#{RAILS_ROOT}/config/va_handler.yml").each do |k, v|
+YAML.load_file("#{RAILS_ROOT}/config/va_handlers.yml").each do |k, v|
   VAConfig.const_set(k.upcase, Helpdesk::prepare(v))
 end

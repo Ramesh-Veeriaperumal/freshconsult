@@ -268,7 +268,7 @@ a.addchoice:hover{
 	label.radiolabel{
 		font-size:1em;
 		float:left; 
-		padding:0 5px 0 0;	
+		padding:0 5px 5px 0;	
 		margin-right:10px;
 		margin-left: 5px;	
 	}
@@ -281,8 +281,8 @@ a.addchoice:hover{
 .ui-form{
 	padding:6px 0 12px 0;
 	position:relative;
-	/*border:1px solid #E4E4E4; */
-	/*background-color:#F8F8F8; */
+	border:1px solid #E4E4E4;
+	background-color:#F8F8F8;
 	div.field-box{
 		padding:6px 2% 10px 2%;
 		@include pie-clearfix; 		
@@ -351,10 +351,6 @@ a.addchoice:hover{
 		font-size:13px;
 		font-weight:400;
 	}
-	label.rule_label {
-		padding: 5px 0;
-	}
-
 
 	label.label-title{	
 		margin-bottom: 5px;
@@ -468,6 +464,7 @@ a.addchoice:hover{
 		font-size:13px;
 		font-weight:bold;
 		cursor:pointer;		
+		background: #ffffff;
 	} 
 	fieldset.addchoice:hover{
 		background:#efefef;
@@ -512,35 +509,6 @@ a.addchoice:hover{
 
 			.select2-container .select2-choice div b{
 				margin: 0;
-			}
-
-			/*.nested_field{
-				clear: left;
-			}*/
-			
-			.event_nested_field{
-				/* border-left: 1px dotted #aaa; */
-				/*margin-left: 5px;*/
-				/*margin-right: 20px;*/
-				/*div {
-					border-left: 1px dotted;
-					border-bottom: 1px dotted;
-					width: 14px;
-					margin-top: -1px;
-					height: 11px;
-				}*/
-				/*select {
-					float: none;
-					display: block;
-					margin: 5px 0 5px 20px;
-				*/
-					/*&:first-child{
-						position:relative;
-						left:-2px;
-						margin-left:0;
-						margin-top:0;	
-					}*/
-				/*}*/
 			}
 
 			label.error, label.warning{
@@ -593,47 +561,27 @@ a.addchoice:hover{
 			
 			div.s_comment{				
 				width:520px;
-				.paragraph{
-					width:98%;
-				}
+				.paragraph{ width:98%; }
 			}
-			div.s_email{
-				float:none;
-				display:block;
-				clear:both;
-				padding:4px;
-				@include clearfix;
-				div{
-					width:100%;
-					padding:4px 0;
-					font-size:12px;
-					em{
-						font-style:normal;
+			.s_email{
+					min-width: 640px;
+					margin: 10px 0;
+					margin-left: -150px;
+					margin-top: 50px;
+					.required_star{
+						top: 10px;
+						right: 63px;
 					}
-					b{
-						width:180px;
+					label.error{ width:100%; }
+					.select2-container{top:-6px;}
+					textarea{margin-left: 3px;}
+					.l_placeholder{
+						float: right;
+						margin-right: -17px;
+						margin-top: -24px;
 					}
-					input.text, textarea.paragraph{
-						width:590px;
-					}
-					label.error{
-						margin-left:190px;
-						width:575px;
-						@include border-radius(3px);
-					}
-					
-					.error{
-						border-color:#ff9999;
-					}
-					a.l_placeholder{
-						clear:left;
-						margin-left:190px;
-						margin-top:4px;
-						font-size:11px; 
-						text-decoration:none;
-					}
-				}
 			}
+			.email_body{ width:100%; height: 130px; margin: 0; }
 			
 			span{
 				margin:0; padding:0;
@@ -648,11 +596,14 @@ a.addchoice:hover{
 				font-size:13px;
 			}
 		}
-		div{
-			margin:0;padding:0;
-		}
-		
+		div{ margin:0; padding:0; }
+		.nested_field .select2-container{ margin-right:3px; }
 	}
+}
+
+.ui-form.no-background{
+	border:0;
+	background: none;
 }
 
 li.nested_field{

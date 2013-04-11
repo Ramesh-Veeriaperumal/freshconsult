@@ -4,23 +4,14 @@ class Admin::VaRulesController < Admin::AutomationsController
   skip_before_filter :check_automation_feature
   before_filter :set_filter_data, :only => [ :create, :update ]
   
-  def index
-    @inactive_rules = all_scoper.disabled
-    super
-  end
-    
-  def deactivate
-    va_rule = scoper.find(params[:id])
-    va_rule.active = false
-    va_rule.save
-    redirect_back_or_default redirect_url
-  end
-  
-  def activate
-    va_rule = all_scoper.disabled.find(params[:id])
-    va_rule.active = true
-    va_rule.save
-    redirect_back_or_default redirect_url
+  def activate_deactivate
+    @va_rule = all_scoper.find(params[:id])
+    @va_rule.update_attributes({:active => params[:va_rule][:active]})  
+    type = params[:va_rule][:active] == "true" ? 'activation' : 'deactivation'
+      
+    flash[:highlight] = dom_id(@va_rule)
+    flash[:notice] = t("flash.general.#{type}.success", :human_name => human_name)
+    redirect_to :action => 'index'
   end
  
   protected

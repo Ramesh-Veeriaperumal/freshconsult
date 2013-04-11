@@ -2,7 +2,7 @@
 <%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "automation"} %>
 
 <%= f.error_messages :object_name => 'scenario' %>
-<ul class="ui-form">
+<ul class="ui-form observer no-background">
 	<li class="row-fluid">
 		<div class="row-fluid">
 			<%= f.label :name, t('scenario_label'), :class => "span2" %>
@@ -24,7 +24,11 @@
 
 	
 	<li>
-		<label><%=t('automations.info7')%>?</label>
+		<h3 class="lead">
+			<%=t('automations.actions')%>
+			<label class="muted"><%=t('automations.info7')%></label>
+		</h3>
+
 		<div class="conditionset" id="actionDOM">
 			<div id="ActionList" class="rule_list"></div>
 			<fieldset class="addchoice">
@@ -33,7 +37,7 @@
 		</div>
 	</li>
 </ul>
-<br />
+
 <div class="button-container">
 	<input type="submit" class="uiButton" value="<%=t('save')%>" />
 	<%= link_to t('cancel'), {:action => 'index'}, :class => "uiButton" %>

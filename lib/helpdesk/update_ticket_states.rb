@@ -1,7 +1,6 @@
 module Helpdesk
 
 	class UpdateTicketStates
-		extend Va::ObserverUtil
 		extend Resque::AroundPerform
 
 		@queue = "update_ticket_states_queue"

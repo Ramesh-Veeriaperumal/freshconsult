@@ -188,3 +188,22 @@ select{
   margin-left: 0px;
   margin-right: 0px;
 }
+
+/*Have to remove after type.scss added*/
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.vertical-alignment{
+  display: inline-block;  
+  vertical-align: middle;
+}

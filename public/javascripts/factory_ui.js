@@ -37,7 +37,7 @@ window.FactoryUI = {
 			select		= jQuery("<select />")
 							.prop({ "name": name })
 							.addClass(className);
-
+		
 		if (_dataAttr)
 			select.data( _dataAttr);
 
@@ -49,23 +49,30 @@ window.FactoryUI = {
 		});
 		return jQuery(select);
 	},
-	optgroup: function(choices, _name, _className){
+	optgroup: function(choices, _name, _className, _dataAttr){
 		if(!choices) return;
 		var className   = _className	|| "dropdown",
 			name		= _name			|| "",
 			select		= jQuery("<select />")
 							.prop({ "name": name })
 							.addClass(className);
-		
+
 		choices.each(function(item){
-			var _optgroup = jQuery("<optgroup label='"+item[0]+"' />");
-			item[1].each(function(option){
+			if(item.length > 0 && (item[1] instanceof Array)){
+				var _optgroup = jQuery("<optgroup label='"+item[0]+"' />");
+				item[1].each(function(option){
+					jQuery( "<option />" )
+						.text( option[1] )
+						.appendTo(_optgroup)
+						.get(0).value = option[0];
+				});
+				_optgroup.appendTo(select)
+			}else{
 				jQuery( "<option />" )
-				.text( option[1] )				
-				.appendTo(_optgroup)
-				.get(0).value = option[0];
-			});
-			_optgroup.appendTo(select)			  
+						.text( item[1] )
+						.appendTo( select )
+						.get(0).value = item[0];
+			}
 		});
 		return jQuery(select);
 	},

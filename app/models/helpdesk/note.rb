@@ -2,7 +2,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   include ParserUtil
   include BusinessRulesObserver
-  include Va::ObserverUtil
+  include Va::Observer::Util
 
   set_table_name "helpdesk_notes"
 

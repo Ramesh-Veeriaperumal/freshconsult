@@ -199,3 +199,21 @@ select {
 .ticket_tabs {
   margin-left: 0px;
   margin-right: 0px; }
+
+/*Have to remove after type.scss added*/
+/* line 194, ../../src/pattern/patternhack.scss */
+.text-left {
+  text-align: left; }
+
+/* line 198, ../../src/pattern/patternhack.scss */
+.text-right {
+  text-align: right; }
+
+/* line 202, ../../src/pattern/patternhack.scss */
+.text-center {
+  text-align: center; }
+
+/* line 206, ../../src/pattern/patternhack.scss */
+.vertical-alignment {
+  display: inline-block;
+  vertical-align: middle; }

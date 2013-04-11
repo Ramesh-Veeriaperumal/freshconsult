@@ -124,8 +124,8 @@ class Account < ActiveRecord::Base
     :rule_type => VAConfig::OBSERVER_RULE }, :order => "position"
   
   has_many :scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
-  
-  
+  has_many :all_scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
+
   
   has_many :email_notifications
   has_many :groups

@@ -12,7 +12,8 @@ class VARule < ActiveRecord::Base
   
   has_one :app_business_rule, :class_name=>'Integrations::AppBusinessRule'
 
-  named_scope :disabled, :conditions => { :active => false }
+  named_scope :active, :conditions => { :active => true }
+  named_scope :inactive, :conditions => { :active => false }
 
   named_scope :observer_biz_rules, :conditions => { 
     "va_rules.rule_type" => [VAConfig::INSTALLED_APP_BUSINESS_RULE], 
@@ -35,24 +36,16 @@ class VARule < ActiveRecord::Base
       @performer = Va::Performer.new(filter_data[:performer].symbolize_keys)
       events_array = filter_data[:events]
       @filter_array = filter_data[:conditions]
-      @events = []
-      events_array.each do |e|
-        e.symbolize_keys!
-        @events << (Va::Event.new(e, account))
-      end if events_array
+      @events = events_array.blank? ? [] : 
+                               events_array.collect { |e| Va::Event.new(e.symbolize_keys, account) } 
     end
-    
     deserialize_them
   end
   
   def deserialize_them
-    @conditions = []
     @filter_array ||= filter_data
-    @filter_array.each do |f|
-      f.symbolize_keys!
-      @conditions << (Va::Condition.new(f, account))
-    end if @filter_array
-
+    @conditions = @filter_array.blank? ? [] : 
+                          @filter_array.collect { |f| Va::Condition.new(f.symbolize_keys, account) }
     @actions = action_data.map { |act| deserialize_action act } if action_data
   end
   
@@ -62,12 +55,9 @@ class VARule < ActiveRecord::Base
   end
 
   def check_events doer, evaluate_on, current_events
-    p @performer.matches? doer, evaluate_on
-    return false unless @performer.matches? doer, evaluate_on
+    return unless performer.matches? doer, evaluate_on
     is_a_match = event_matches? current_events, evaluate_on
-    p is_a_match
     pass_through evaluate_on, nil, doer if is_a_match
-    return evaluate_on
   end
 
   def event_matches? current_events, evaluate_on
@@ -79,7 +69,6 @@ class VARule < ActiveRecord::Base
   def pass_through(evaluate_on, actions=nil, doer=nil)
     RAILS_DEFAULT_LOGGER.debug "INSIDE pass_through WITH evaluate_on : #{evaluate_on.inspect}, actions #{actions}"
     is_a_match = matches(evaluate_on, actions)
-    p is_a_match
     trigger_actions(evaluate_on, doer) if is_a_match
     return evaluate_on if is_a_match
     return nil

@@ -3,6 +3,7 @@ en:
    language_name: 'English'
   any: Any
   or: or
+  reorder_rules: Reorder Active Rules
   unspam: "Unspam"
   unblock: "Whitelist"
   enabled: "Enabled"
@@ -320,6 +321,7 @@ en:
     js_quest_txt: On successful completion of the quest you can unlock $$badgename$$ badge and $$questpoints$$ bonus points.
   any_val:
     any: Any
+    none: None
     any_value: Any Value
     any_feedback: Any
     any_priority: Any Priority
@@ -624,7 +626,7 @@ en:
       helpnote:
         tour: Help me create a new observer rule
         help_title: Observer
-        help_info_1: The Observer performs actions on tickets that you specify based on time and event driven triggers. Use the Supervisor to perform actions like sending reminders to customers for pending tickets, or escalating overdue tickets to the right person in your team.
+        help_info_1: The Observer performs actions on tickets that you specify based on time and event driven triggers.
         help_info_2: The Observer will run on every event trigger.
         help_info_3: Observer help_info_3
         help_info_4: Observer rule orders are not important.
@@ -632,17 +634,17 @@ en:
         title: Observer - New Rule
       edit:
         title: Observer - Edit Rule
-      add_new_event: Add another event
-      events: Events
-      conditions: Conditions
-      actions: Actions
-      performed_by: Performed by
+      add_new_event: Add new event
+      events: When <b>Any</b> of these events occur
+      conditions: on tickets with these properties
+      actions: perform these actions
+      performed_by: and the events are performed by
       agent: Agent
       customer: Requester
       present: Anyone
       assigned_agent: Assigned Agent
       assigned_group: Assigned Group
-      event_performer: Event Performer
+      event_performer: Event Performing Agent
       filter_jsinit:
         insert_placeholder: Insert Placeholder
         body: Body
@@ -657,10 +659,10 @@ en:
         insert_placeholder: Insert Placeholder
         body: Body
         to: To
-        selected: is selected
+        selected: Selected
         not_selected: Not selected
-        checked: is checked
-        unchecked: is unchecked
+        checked: checked
+        unchecked: unchecked
         deselected: is deselected
     automations:
       edit:
@@ -1283,6 +1285,7 @@ en:
   posted_by: Posted by
   already_overdue: Overdue by %{time_words}
   automations: 
+    actions: Actions
     new: New Scenario
     title: Scenario Automations
     tour: Help me automate a common scenario
@@ -1294,7 +1297,7 @@ en:
     info5: Assign QA
     reorder: Reorder
     info6: Mark the Ticket as a Bug and assign to QA
-    info7: Actions to Perform
+    info7: Perform these actions
     info8: Add another action
   category: 
     new: New Category
@@ -1326,9 +1329,11 @@ en:
   edit_email: Edit email
   fav_delete_msg: Are you sure you want to delete this fav icon?
   dispatch: 
+    conditions: Conditions
+    actions: Actions
     new: Dispatch'r - New Rule
     add_new_choice: Add New choice
-    act_to_perform: Actions to Perform
+    act_to_perform: Perform these actions
     edit: Dispatch'r - Edit Rule
     title: Dispatch'r
     inactive_rules: Inactive Rules
@@ -1337,10 +1342,10 @@ en:
     description: Description
     info2: All Subscription related tickets will be assigned to Susan
     new_rule: New Rule
-    event_note: When <b>Any</b> of these events are executed on a ticket
+    event_note: When <b>Any</b> of these events occur
     condition_note: With the following conditions
     action_note: Perform these actions
-    info3: Conditions to be satisfied
+    info3: When a ticket satisfies these condtions
     helpcard:
       tour: Help me create a new Dispatch’r rule
       info1: The Dispatch’r lets you bring your business rules into your support workflow by performing a predefined set of actions on newly created tickets. For example, you could use the Dispatch’r to automatically categorize, prioritize and assign every incoming ticket to the right agent in your team, based on the conditions you specify.
@@ -1350,7 +1355,7 @@ en:
     dispatch_rules: Dispatch'r - Rules
     match_all: Match <b>ALL</b> of the below
     match_any: Match <b>ANY</b> of the below
-    add_condition: Add another condition
+    add_condition: Add new condition
     delete: "Are you sure you want to delete this rule?"
     skip_notifications: "Skip New Ticket Email Notifications"
     skip_notification_yes: "Yes"
@@ -2102,7 +2107,8 @@ en:
   event:
     confirm_message: If you choose 'Any', the selected agents in the list will be discarded. Click OK to proceed.
     received: is received.
-    updated: is updated.
+    updated: is updated
+    is: is 
     added: is added.
     sent: is sent.
     from: From
@@ -2110,6 +2116,18 @@ en:
     by: By
     type: Type
     rating: Rating
+  observer_events:
+    priority: Priority is changed
+    type: Type is changed
+    status: Status is changed
+    group: Group is updated
+    agent: Agent is updated
+    note: Note is added
+    reply: Reply is sent
+    due_date: Due date is changed
+    ticket: Ticket is
+    customer_feedback: Custome Feedback is received
+    time_entry: Time Entry is 
   ticket:
     reported_on: "from %{username}, Last updated: on %{date}"
     ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago</span>"
@@ -2140,12 +2158,12 @@ en:
     portal_created_on: "Created by <span class='emphasize'>%{username}</span> on <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Created on <span class='emphasize'>%{date}</span>"
     due_date: Due date
-    updated: is updated
-    deleted: is deleted
-    marked_spam: is marked as spam
+    updated: updated
+    deleted: deleted
+    marked_spam: marked as spam
     time_entry: Time Entry
-    new_time_entry: is added
-    updated_time_entry: is updated
+    new_time_entry: added
+    updated_time_entry: updated
     feedback: Customer feedback
     ticket: Ticket
     group: Group

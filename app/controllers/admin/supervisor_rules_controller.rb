@@ -1,7 +1,7 @@
 class Admin::SupervisorRulesController < Admin::VaRulesController
   
   STATE_FILTERS = [
-    { :name => -1, :value => "------------------------------" },
+    { :name => -1, :value => "-----------------------" },
     { :name => "created_at", :value => I18n.t('ticket.created_at'), :domtype => "number",
       :operatortype => "hours" },
     { :name => "pending_since", :value => I18n.t('ticket.pending_since'), :domtype => "number",
