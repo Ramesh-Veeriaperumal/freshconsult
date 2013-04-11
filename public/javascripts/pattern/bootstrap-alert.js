@@ -22,6 +22,7 @@
 
   "use strict"; // jshint ;_;
 
+  if($.fn.alert) return
 
  /* ALERT CLASS DEFINITION
   * ====================== */
