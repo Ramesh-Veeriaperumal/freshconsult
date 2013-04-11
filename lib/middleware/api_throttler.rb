@@ -3,8 +3,7 @@ require 'rack/throttle'
 class Middleware::ApiThrottler < Rack::Throttle::Hourly
 
   include RedisKeys
-  SKIPPED_URLS = ["admin.freshdesk.com", "billing.freshdesk.com", "partner.freshdesk.com", 
-                  "signup.freshdesk.com"]
+  SKIPPED_SUBDOMAINS = ["admin", "billing", "partner","signup", "email"] 
   THROTTLED_TYPES = ["application/json", "application/x-javascript", "text/javascript",
                       "text/x-javascript", "text/x-json", "application/xml", "text/xml"]
   ONE_HOUR = 3600
@@ -18,7 +17,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     begin
       return true if by_pass_throttle?
       @count = get_key(API_THROTTLER % {:host => @host}).to_i
-      return max_per_hour >= @count
+      return max_per_hour > @count
     rescue Exception => e
       true
     end
@@ -27,15 +26,17 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   def call(env)
     @host = env["HTTP_HOST"]
     @content_type = env['CONTENT-TYPE'] || env['CONTENT_TYPE']
+    @api_path = env["REQUEST_URI"]
+    @sub_domain = @host.split(".")[0]
 
     if allowed?
       @status, @headers, @response = @app.call(env)
       unless by_pass_throttle?
-        if @count > 0
-          increment(API_THROTTLER % {:host => @host})
-        else
-          set_key(API_THROTTLER % {:host => @host}, 1, ONE_HOUR)
-        end
+        key = API_THROTTLER % {:host => @host}
+        increment(key)
+        value = get_key(key).to_i
+        ttl = get_expiry(key).to_i
+        set_expiry(key, ONE_HOUR) if value == 1 || ttl == -1
       end
     else
       @status, @headers, @response = [302, {"Location" => "/403.html"}, 
@@ -46,7 +47,12 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   end
 
   def by_pass_throttle?
-    SKIPPED_URLS.include?(@host) || !THROTTLED_TYPES.include?(@content_type)
+    return true if  SKIPPED_SUBDOMAINS.include?(@sub_domain)
+    if @content_type.nil?
+      return ( !@api_path.include?(".xml") && !@api_path.include?(".json") )
+    else
+      return !THROTTLED_TYPES.include?(@content_type)
+    end
   end
 
 end

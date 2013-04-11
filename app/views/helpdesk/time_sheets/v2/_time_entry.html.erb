@@ -7,7 +7,7 @@
     <%= link_to ( t('edit'), 
                   edit_helpdesk_ticket_helpdesk_time_sheet_path(@ticket, time_entry), 
                   "rel" => 'freshdialog', "data-target" => "#edit_timeentry_#{time_entry.id}",
-                  "data-width" => 400,
+                  "data-width" => 450,
                   "data-submit-label" => t('update'),
                   :title => 'Edit Timesheet' ) unless time_entry.timer_running %>
     <%= link_to_remote( "delete",
