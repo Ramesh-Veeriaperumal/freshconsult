@@ -18,7 +18,7 @@
   left: 0;
   z-index: $zindexModalBackdrop;
   background-color: #efefef;
-  background-image: image-url("/images/dialog/overlay.gif");
+  background-image: inline-image("portal/dialog/overlay.gif");
   background-repeat: repeat;
   // Fade for backdrop
   &.fade { opacity: 0; }
@@ -39,12 +39,11 @@
   margin: 0;  
   z-index: $zindexModal;
   background-color: $white;
-  @include background-image(linear-gradient(lighten($grayLighter, 5%), $white 30px) );
-  border: 2px solid #646464;
-  border: 2px solid rgba(#4f4f4f, 0.8);
-  *border: 2px solid #646464; /* IE6-7 */
+  border-top: solid 1px #808080;
+  background-image: inline-image('portal/dialog/headpattern.png','image/png');
+  background-repeat: repeat-x;
   @include border-radius(6px);
-  @include box-shadow(0 3px 7px rgba(0,0,0,0.3), $white 0 0 1px inset);
+  @include box-shadow(0 10px 40px rgba(0,0,0,0.5), $white 0 0 1px inset);
   @include background-clip(padding-box);
 
   &.fade {
@@ -54,14 +53,15 @@
   &.fade.in { top: 10px; }
 }
 .modal-header {
-  padding: 9px 40px 0 15px;
-  border-bottom: 1px solid #eee;
+  padding: 9px 40px 0 15px;  
   .close {
     position: absolute;
     right: 20px;
     top: 15px;
   }
 }
+
+.modal-title{ font-weight: 300; }
 
 // Body (where all modal content resides)
 .modal-body {
@@ -119,7 +119,7 @@
     width: 28px;
     border: none;
     padding: 8px;
-    text-align:center;    
+    text-align:center;
     left:-28px;
     top:15px;
     @include background-image(linear-gradient(#4f4f4f, #646464));
@@ -136,14 +136,14 @@
       text-indent: 100%;
       white-space: nowrap;
       overflow: hidden;
-      background: image-url("/images/dialog/icon-close.gif") no-repeat;
+      background-image: inline-image("portal/dialog/icon-close.gif");
+      background-repeat: no-repeat;
       display:inline-block;
       width:11px;
       height:11px;
     }
   }
 }
-
 
 @include at-breakpoint($break-desktop){
   .modal { 

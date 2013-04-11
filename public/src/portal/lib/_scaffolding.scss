@@ -8,9 +8,10 @@ body {
   line-height: $baseLineHeight;
   color: $textColor;
   background-color: $bg_color;
-  background-image: image-url('/images/portal/bgnoise_lg.png');
+  @if $page-pattern {
+    background-image: inline-image('portal/bgnoise_lg.png');
+  }
 }
-
 
 // Links
 // -----

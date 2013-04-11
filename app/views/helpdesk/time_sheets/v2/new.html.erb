@@ -1,0 +1,11 @@
+<% content_tag :div, :id => "timeentry_add" do %>
+  <hr />
+  <!-- Proper form for Start Timer - The required fields will be visible. -->
+  <% form_remote_for :time_entry, 
+                   :url => helpdesk_ticket_helpdesk_time_sheets_path(@ticket), 
+                   :before => 'if (jQuery("#timeentry_apps_add .app-logo input[type=checkbox]").filter(":checked").parentsUntil("#time_integration").filter(".still_loading").length) { jQuery("#timeentry_add").parent().siblings(".modal-footer").children(".btn").reset(); return false; }',
+                   :html => { :id => "add_new_time_entry", :class => "ui-form" } do |f| %>
+    <%= hidden_field(:time_entry, :ticket_id , { :value => @ticket.id }  )%>
+    <%= render :partial => "/helpdesk/time_sheets/v2/form", :object => f, :locals => { :type => :new } %>
+  <% end %>
+<% end %>

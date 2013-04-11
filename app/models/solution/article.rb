@@ -1,6 +1,7 @@
-require RAILS_ROOT+'/app/models/solution/folder.rb'
+require File.join(File.dirname(__FILE__), 'folder')
 
 class Solution::Article < ActiveRecord::Base
+  include Search::ElasticSearchIndex
   set_table_name "solution_articles"
   serialize :seo_data, Hash
 
@@ -27,6 +28,7 @@ class Solution::Article < ActiveRecord::Base
   has_many :support_scores, :as => :scorable, :dependent => :destroy
   
   include Mobile::Actions::Article
+  include Solution::Constants
 
   define_index do
     indexes :title, :sortable => true
@@ -56,37 +58,6 @@ class Solution::Article < ActiveRecord::Base
   validates_presence_of :title, :description, :user_id , :account_id
   validates_length_of :title, :in => 3..240
   validates_numericality_of :user_id
-    
-  STATUSES = [
-                  [ :draft,       I18n.t("solutions.status.draft"),        1 ], 
-                  [ :published,   I18n.t("solutions.status.published"),    2 ]
-              ]
-
-  STATUS_OPTIONS = STATUSES.map { |i| [i[1], i[2]] }
-  STATUS_NAMES_BY_KEY = Hash[*STATUSES.map { |i| [i[2], i[1]] }.flatten]
-  STATUS_KEYS_BY_TOKEN = Hash[*STATUSES.map { |i| [i[0], i[2]] }.flatten]
-  
-  TYPES = [
-            [ :permanent,    I18n.t("solutions.types.permanent"),   1 ],
-            [ :workaround,   I18n.t("solutions.types.workaround"),  2 ]
-          ]
-
-  TYPE_OPTIONS = TYPES.map { |i| [i[1], i[2]] }
-  TYPE_NAMES_BY_KEY = Hash[*TYPES.map { |i| [i[2], i[1]] }.flatten]
-  TYPE_KEYS_BY_TOKEN = Hash[*TYPES.map { |i| [i[0], i[2]] }.flatten]
-  
-  
-  SORT_FIELDS = [ 
-    [ :created_desc,  'Date Created (Newest First)',    "created_at DESC" ],    
-    [ :created_asc,   'Date Created (Oldest First)',    "created_at ASC"  ],    
-    [ :updated_desc,  'Last Modified (Newest First)',   "updated_at DESC" ],   
-    [ :updated_asc,   'Last Modified (Oldest First)',   "updated_at ASC"  ],    
-    [ :title_asc,     'Title (a..z)',                   "title ASC"       ],   
-    [ :title_desc,    'Title (z..a)',                   "title DESC"      ],    
- ]
-
- SORT_FIELD_OPTIONS = SORT_FIELDS.map { |i| [i[1], i[0]] }    
- SORT_SQL_BY_KEY = Hash[*SORT_FIELDS.map { |i| [i[0], i[2]] }.flatten]
  
   named_scope :visible, :conditions => ['status = ?',STATUS_KEYS_BY_TOKEN[:published]] 
  
@@ -128,7 +99,33 @@ class Solution::Article < ActiveRecord::Base
   
   def self.suggest(ticket, search_by)
     return [] if search_by.blank? || (search_by = search_by.gsub(/[\^\$]/, '')).blank?
-    search(search_by, :with => { :account_id => ticket.account.id }, :match_mode => :any, :per_page => 10)
+      if ticket.account.es_enabled?
+        begin
+          options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }
+          item = Tire.search [ticket.account.search_index_name], options do |search|
+            search.query do |query|
+              query.filtered do |f|
+                f.query { |q| q.string SearchUtil.es_filter_key(search_by), :fields => ['title', 'desc_un_html'], :analyzer => "include_stop" }
+                f.filter :terms, :_type => ['solution/article']
+              end
+            end
+            search.from options[:size].to_i * (options[:page].to_i-1)
+            search.highlight :desc_un_html, :title, :options => { :tag => '<strong>', :fragment_size => 50, :number_of_fragments => 4 }
+          end
+
+          item.results.each_with_hit do |result,hit|
+            hit['highlight'].keys.each do |i|
+              result[i] = hit['highlight'][i].to_s
+            end
+          end
+          item.results
+        rescue Exception => e
+          NewRelic::Agent.notice_error(e)
+        end
+    else
+      ThinkingSphinx.search(search_by, :with => { :account_id => ticket.account.id },
+       :classes => [ Solution::Article ], :match_mode => :any, :per_page => 10 )
+    end
   end
   
   def to_xml(options = {})
@@ -136,6 +133,19 @@ class Solution::Article < ActiveRecord::Base
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id]) 
+  end
+
+  def to_indexed_json
+    to_json(
+            :root => "solution/article",
+            :only => [ :title, :desc_un_html, :user_id, :status, :account_id ],
+            :include => { :tags => { :only => [:name] },
+                          :folder => { :only => [:category_id, :visibility], 
+                                       :include => { :customer_folders => { :only => [:customer_id] } }
+                                     },
+                          :attachments => { :only => [:content_file_name] }
+                        }
+           )
   end
 
   # Added for portal customisation drop

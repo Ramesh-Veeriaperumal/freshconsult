@@ -3,33 +3,78 @@ require 'jira4r'
 require 'json'
 
 class Integrations::JiraIssue
-  include Integrations::AppsUtil
+  include Integrations::Jira::Api
+
   def initialize(installed_app)
     @http_request_proxy = HttpRequestProxy.new
     @installed_app = installed_app unless installed_app.blank?
   end
 
-  def create(params, request)
-    method = "post"
-    rest_url = "rest/api/2/issue"
-    body = params[:body]
-    fieldData = construct_params_for_http(method,rest_url,body)
-    res_data = make_rest_call(fieldData, request)
-    res_json = JSON.parse(res_data[:text])
-    if res_json["key"]
-      params[:remote_key] = res_json["key"]
-      update(params,request)
+  def fetch_jira_projects_issues
+    project_issue_hash = {
+      :res_projects => [],
+      :res_issues => []
+    }
+    http_parameter = construct_params_for_http(:projects)
+    res_data = make_rest_call(http_parameter)
+    project_issue_hash[:res_projects] = res_data[:json_data] unless (res_data[:exception])
+    http_parameter = construct_params_for_http(:issuetypes)
+    res_data = make_rest_call(http_parameter)
+    project_issue_hash[:res_issues] = res_data[:json_data] unless (res_data[:exception])
+    return project_issue_hash
+  end
+
+  def create(params)
+    http_parameter = construct_params_for_http(:create)
+    http_parameter[:body] = params[:body]
+    res_data = make_rest_call(http_parameter)
+    if(!res_data[:exception] && res_data[:json_data]  && res_data[:json_data]["key"])
+      params['integrated_resource']={}
+      params['integrated_resource']['remote_integratable_id'] = res_data[:json_data]["key"]
+      params['integrated_resource']['account'] = @installed_app.account
+      params['integrated_resource']['local_integratable_id'] = params[:local_integratable_id]
+      params['integrated_resource']['local_integratable_type'] = params[:local_integratable_type]
+      params[:remote_key] = params['integrated_resource']['remote_integratable_id']
+      newIntegratedResource = Integrations::IntegratedResource.createResource(params)
+      send_later(:update,params,{}) 
+      return newIntegratedResource
     else
-      res_json
+      return res_data
     end
   end
 
-  def delete(params,request)
-    res_data = make_rest_call(params, request)
+  def link_issue(params)
+    res_data = update(params)
+    unless(res_data[:exception])
+      custom_field_id = @installed_app.configs[:inputs]['customFieldId']
+      params['integrated_resource']={}
+      params['integrated_resource']['remote_integratable_id'] = params[:remote_key]
+      params['integrated_resource']['account'] = @installed_app.account
+      params['integrated_resource']['local_integratable_id'] = params[:local_integratable_id]
+      params['integrated_resource']['local_integratable_type'] = params[:local_integratable_type]
+      newIntegratedResource = Integrations::IntegratedResource.createResource(params)
+      newIntegratedResource["custom_field"]=custom_field_id unless custom_field_id.blank?
+      return newIntegratedResource
+    else
+      res_data
+    end
   end
 
-  def update(params, request)
-    custom_field_id = customFieldChecker(request)
+  def unlink_issue(params)
+    params['integrated_resource']={}
+    params['integrated_resource']['id']=params[:id]
+    params['integrated_resource']['account'] = @installed_app.account
+    if @installed_app.configs_customFieldId
+      res_data = update(params)
+    end
+    Integrations::IntegratedResource.deleteResource(params)
+    return {:status=> :success}
+  end
+
+  #need to work on this
+  def update(params, retry_flag = true)
+    custom_field_id = customFieldChecker
+    res_data = nil
     if(custom_field_id)
       req_data ={
         :update => {
@@ -38,64 +83,62 @@ class Integrations::JiraIssue
           }]
         }
       }
-      params[:rest_url] = "rest/api/2/issue/" + params[:remote_key]
-      params[:method] = "put"
+      http_parameter = construct_params_for_http(:update,params[:remote_key])
+      http_parameter[:body] = req_data.to_json
+      res_data = make_rest_call(http_parameter)
     else
-      req_data = {
-        :body => params[:ticket_data]
-      }
-      params[:rest_url] = "rest/api/2/issue/" + params[:remote_key] + "/comment"
-      params[:method] = "post"
-    end
-    params[:body] = req_data.to_json
-    res_data = make_rest_call(params, request)
-    if(res_data[:status] == 400 && custom_field_id && JSON.parse(res_data[:text])["errors"][custom_field_id])
+      return add_comment(params[:remote_key],params[:ticket_data])
+    end  
+    if(res_data && res_data[:exception] && custom_field_id)
       delete_custom_field
-      #update(params,request)
-    end
-    res_data
-  end
-
-  def delete_custom_field
-    @installed_app[:configs][:inputs]['customFieldId'] = nil
-    @installed_app.save!
-  end
-
-  def authenticate(params,request=nil)
-    make_rest_call(params,request);
-  end
-
-  def get_all_mandatory_fields_for_project_and_issuetype(params,request)
-    res_data = make_rest_call(params,request)
-    res_json = JSON.parse(res_data)
-    mandatory_fields = {}
-    res_json["projects"].first["issuetypes"].first["fields"].each do |field_key,field_value|
-      if ((field_value["required"] && (field_key != "issuetype" && field_key != "project"))||(field_value["name"] == "Freshdesk Tickets"))
-        mandatory_fields["field_key"] = field_value
+      if retry_flag
+        res_data = update(params, false) 
       else
-        next
+        return add_comment(params[:remote_key],params[:ticket_data])
       end
     end
-    mandatory_fields
-  end
-
-  def fetch_jira_projects(request)
-    params_project = construct_params_for_http("get","rest/api/2/project")
-    res_project_json = JSON.parse(make_rest_call(params_project,request)[:text])
-  end
-
-  def fetch_jira_issues(request)
-    params_issue = construct_params_for_http("get","rest/api/2/issuetype")
-    res_issue_json = JSON.parse(make_rest_call(params_issue,request)[:text])
+    res_data
   end
 
   def add_comment(issueId, ticketData)
     req_data = {
         :body => ticketData
       }
-      comment_data = construct_params_for_http("post","rest/api/2/issue/" + issueId + "/comment")
+      comment_data = construct_params_for_http(:comment,issueId)
       comment_data[:body] = req_data.to_json
-    make_rest_call(comment_data, nil)
+      make_rest_call(comment_data, nil)
+  end
+
+  def delete(params)
+    params['integrated_resource']={}
+    params['integrated_resource']['remote_integratable_id'] = params[:remote_integratable_id]
+    params['integrated_resource']['account'] = @installed_app.account
+    http_parameter = construct_params_for_http(:delete_issue,params[:remote_integratable_id])
+    res_data = make_rest_call(http_parameter)
+    unless(res_data[:exception])
+        status = Integrations::IntegratedResource.delete_resource_by_remote_integratable_id(params)
+        return {:status=>status}
+      else
+        return res_data
+    end
+  end
+
+  def delete_custom_field
+    @installed_app[:configs][:inputs]['customFieldId'] = nil
+    @installed_app.disable_observer = true
+    @installed_app.save!
+  end
+
+  def authenticate
+    body_content ={ :username => @installed_app.configs_username,
+                    :password => @installed_app.configsdecrypt_password}.to_json
+    jira_rest_api_auth = {
+          :rest_url => "rest/auth/1/session",
+          :domain => @installed_app.configs_domain,
+          :method => "post",
+          :body => body_content
+    }
+    make_rest_call(jira_rest_api_auth);
   end
 
   def update_status(issue_id, new_status)
@@ -103,13 +146,15 @@ class Integrations::JiraIssue
       Rails.logger.debug "AvailableActions for #{issue_id}: #{ava_actions.inspect}"
       ava_actions["transitions"].each { |action|
         return progress_work_flow_action(issue_id, action["id"]) if (action["name"] == new_status)
-      }
+      } if ava_actions
+      
       Rails.logger.error "JIRA Issue not updated for #{issue_id}.  #{new_status} is not a valid status."
   end
 
   def get_available_status(issue_id)
-    ava_actions_data = construct_params_for_http("get","rest/api/2/issue/"+issue_id+"/transitions?transitionId")
-    JSON.parse(make_rest_call(ava_actions_data, nil)[:text])
+    ava_actions_data = construct_params_for_http(:get_transitions,issue_id)
+    res_data = make_rest_call(ava_actions_data, nil)
+    res_data[:exception] ? false : res_data[:json_data]
   end
 
   def progress_work_flow_action(issue_id, action)
@@ -118,66 +163,43 @@ class Integrations::JiraIssue
         "id" => action
       }
     }
-    progress_work_flow_data = construct_params_for_http("post",("rest/api/2/issue/"+issue_id+"/transitions?expand=transitions.fields"))
+    progress_work_flow_data = construct_params_for_http(:put_transitions,issue_id)
     progress_work_flow_data[:body] = req_data.to_json
     make_rest_call(progress_work_flow_data, nil)
   end
 
-  def register_webhooks(current_portal)
-    req_data = {
-          "name" => "Freshdesk webhook",
-          "url"  =>  "https://"+current_portal.host+"/notify",
-          "events" =>  [
-              "jira:issue_created",
-              "jira:issue_updated",
-              "jira:issue_deleted",
-              "jira:worklog_updated"
-          ],
-          "excludeIssueDetails" => true
-        }
-    webhook_data = construct_params_for_http("post","rest/webhooks/1.0/webhook")
-    webhook_data[:body] = req_data.to_json
-    make_rest_call(webhook_data, nil)
-  end
-
-  def delete_webhooks
-  end
-  
   private
 
-  def getCustomFieldId(request)
-    fieldData = construct_params_for_http("get","rest/api/2/field")
-    customData=make_rest_call(fieldData,request)
-    if (customData[:status]==200)
-      customData = JSON.parse(customData[:text])
-    else
-      return
-    end
-    Rails.logger.debug "Received response for getting custom fields : #{customData.inspect}"
-    customData.each do |customField|
-      if(customField["name"] == "Freshdesk Tickets")
-        return customField["id"]
+  def getCustomFieldId
+    fieldData = construct_params_for_http(:custom_field_details)
+    customData=make_rest_call(fieldData)
+    unless (customData[:exception])
+      customData[:json_data].each do |customField|
+        if(customField["name"] == "Freshdesk Tickets")
+          return customField["id"]
+        end
       end
     end
-    return
+    return false
   end
 
-  def customFieldChecker(request)
+  def customFieldChecker
     if @installed_app.configs_customFieldId
       return @installed_app.configs_customFieldId
     else
-      return populate_custom_field(request)
+      return populate_custom_field
     end
   end
 
-  def populate_custom_field(request)
+  def populate_custom_field
     begin
-      custom_field_id = getCustomFieldId(request)
+      custom_field_id = getCustomFieldId
     rescue Exception => e
       Rails.logger.error "Problem in fetching the custom field. \t#{e.message}"
     end
-    unless custom_field_id.blank?
+    if custom_field_id
       @installed_app[:configs][:inputs]['customFieldId'] = custom_field_id
+      @installed_app.disable_observer = true
       @installed_app.save!
       return custom_field_id
     end

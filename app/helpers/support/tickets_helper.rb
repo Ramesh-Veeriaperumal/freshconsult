@@ -2,6 +2,7 @@ module Support::TicketsHelper
 
   TOOLBAR_LINK_OPTIONS = {  "data-remote" => true, 
                             "data-response-type" => "script",
+                            "data-method" => :get,
                             "data-loading-box" => "#ticket-list" }  
 
   def current_filter

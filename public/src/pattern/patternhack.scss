@@ -42,7 +42,7 @@ strong {
   }
 }
 .table th, .table td {
-      padding: 12px;
+      padding: 15px;
 }
 .tabs{
   margin-right: -20px;
@@ -119,7 +119,103 @@ strong {
   vertical-align: middle;
 }
 
+/*  overriding buttons styles from Bootstrap v1.4 */
 
+.btn-group .btn {
+  float: none;
+}
+
+.btn-group.open {
+  overflow: visible;
+}
+.btn.dropdown-toggle {
+  overflow: visible;
+  &:after { 
+    display: none;
+  }
+
+  .caret {
+    margin: 6px 0 0;
+  }
+}
+.open .dropdown-toggle {
+  color: inherit;
+}
+
+// Adding upward arrow buttons to Dropdown menus
+
+.open > .dropdown-menu:before {
+  @include triangle(up, rgba(0, 0, 0, 0.35), 6px);
+  position:absolute;
+  z-index:2;
+  content:"";
+  top: -6px;
+  left: 25px;
+}
+
+.open > .dropdown-menu:after {
+  @include triangle(up, #FFF, 5px);
+  position:absolute;
+  z-index:3;
+  content:"";
+  top: -5px;
+  left: 26px;
+}
+
+.open > .dropdown-menu.right{
+
+  left: auto;
+  right: 0;
+
+  &:before {
+    right: 25px;
+    left: auto;
+  }
+
+  &:after {
+    right: 26px;
+    left: auto;
+  }
+}
+
+
+/*  End of Button overriding */
+
+
+// Stripe Select
+
+table.selected_to_yellow tbody tr td {
+  &.stripe-select {
+    background-color: #fffad8;
+  }
+
+  label { cursor: pointer;}
+}
+
+
+// End of Stripe Select
+
+.dialog-well {
+  height: 350px;
+  overflow: scroll;
+  border: 1px solid #f1f1f1;
+  border-top: 3px solid #f1f1f1;
+  border-bottom: 8px solid #f1f1f1;
+  @include corners(5px);
+
+  table td {
+    padding: 15px;
+  }
+  .actions-menu {
+    float: right;
+  }
+
+  &.links {
+    td:hover {
+      background:#fffad8;
+    }
+  }
+}
 /* This class overriding app-common css. */
 
 /* overriding buttons styles from Bootstrap v1.4 */
@@ -187,23 +283,4 @@ select{
 .ticket_tabs{
   margin-left: 0px;
   margin-right: 0px;
-}
-
-/*Have to remove after type.scss added*/
-
-.text-left {
-  text-align: left;
-}
-
-.text-right {
-  text-align: right;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.vertical-alignment{
-  display: inline-block;  
-  vertical-align: middle;
 }

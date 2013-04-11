@@ -5,7 +5,9 @@
 				<div class="c-row c-ticket-row">
 					<span class="status-source sources-detailed-<%= ticket.source_name.to_s.downcase %>" 
 							 title="<%= t("ticket.reported_from_source", :source => ticket.source_name.to_s.downcase) %>"> </span>
-					<span class="label-status label label-small"><%= ticket.status_name %></span>			 
+					<span class="<%= ticket.active? ? "label-status-pending" : "label-status-closed" %> label label-small">
+						<%= ticket.status_name %>
+					</span>
 					<div class="ticket-brief">
 					    <div class="ellipsis">
 					      	<%= link_to(h(ticket.subject) + " ##{ticket.display_id}", support_ticket_path(ticket), :title => truncate(ticket.description, { :length => 350 }), :class => "c-link") %> 

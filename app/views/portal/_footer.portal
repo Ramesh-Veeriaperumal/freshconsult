@@ -1,9 +1,13 @@
-<footer class="rounded-6">
-	{% for tab in portal.tabs %}
-		<a href="{{tab.url}}" class="{% if tab.tab_type == current_tab %}active{% endif %}">{{ tab.label }}</a>
-	{% endfor %}
+{% unless portal.current_page == "user_login" %}
+<footer class="footer rounded-6">
+	{{ portal | link_to_cookie_law }}
+	{% if portal.tabs.size > 0 %}
+		<nav class="footer-links">
+			{% for tab in portal.tabs %}
+				<a href="{{tab.url}}" class="{% if tab.tab_type == current_tab %}active{% endif %}">{{ tab.label }}</a>
+			{% endfor %}
+		</nav>
+	{% endif %}
 </footer>
-<div class="copyright">
-	<a href="http://www.freshdesk.com" target="_blank">{% translate footer.helpdesk_software %}</a> 
-	{% translate footer.by_freshdesk %}
-</div>
+{% endunless %}
+{{ portal | portal_copyright }}

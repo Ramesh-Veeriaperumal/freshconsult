@@ -1,10 +1,10 @@
 class ContactsController < ApplicationController
 
-    before_filter :except => [:make_agent] do |c| 
+    before_filter :except => [:make_agent,:make_occasional_agent] do |c| 
       c.requires_permission :manage_tickets
     end
 
-    before_filter :only => [:make_agent] do |c| 
+    before_filter :only => [:make_agent,:make_occasional_agent] do |c| 
       c.requires_permission :manage_users
     end
 
@@ -18,7 +18,7 @@ class ContactsController < ApplicationController
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
    before_filter :set_selected_tab
    before_filter :check_agent_limit, :only =>  :make_agent
-   before_filter :load_item, :only => [:show, :edit, :update, :make_agent]
+   before_filter :load_item, :only => [:show, :edit, :update, :make_agent,:make_occasional_agent]
    skip_before_filter :build_item , :only => [:new, :create]
    before_filter :set_mobile , :only => :show
    before_filter :fetch_contacts, :only => [:index]
@@ -74,6 +74,11 @@ class ContactsController < ApplicationController
       respond_to do |format|
         format.html { redirect_to contacts_url }
         format.xml  { render :xml => @user, :status => :created, :location => contacts_url(@user) }
+        format.json {
+            render :json => @user.to_json({:except=>[:account_id] ,:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
+                    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
+                    :user_role,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
+        }
         format.widget { render :action => :show}
         format.js
       end
@@ -82,6 +87,7 @@ class ContactsController < ApplicationController
       respond_to do |format|
         format.html { render :action => :new}
         format.xml  { render :xml => @user.errors, :status => :unprocessable_entity} # bad request
+        format.json { render :json =>@user.errors, :status => :unprocessable_entity} #bad request
         format.widget { render :action => :show}
         format.js
       end
@@ -94,7 +100,7 @@ class ContactsController < ApplicationController
       User.update_all({ :blocked => false, :whitelisted => true,:deleted => false, :blocked_at => nil }, 
         [" id in (?) and (blocked_at IS NULL OR blocked_at <= ?) and (deleted_at IS NULL OR deleted_at <= ?) and account_id = ? ",
          ids, (Time.now+5.days).to_s(:db), (Time.now+5.days).to_s(:db), current_account.id])
-      enqueue_worker(Workers::RestoreSpamTickets, current_account.id, ids)
+      enqueue_worker(Workers::RestoreSpamTickets, :user_ids => ids)
       flash[:notice] = t(:'flash.contacts.whitelisted')
     end
     redirect_to contacts_path and return if params[:ids]
@@ -161,24 +167,23 @@ class ContactsController < ApplicationController
       respond_to do |format|
         format.html { redirect_to contacts_url }
         format.xml  { head 200}
+        format.json { head 200}
       end
     else
       check_email_exist
       respond_to do |format|
         format.html { render :action => 'edit' }
         format.xml  { render :xml => @item.errors, :status => :unprocessable_entity} #Bad request
+        format.json { render :json => @item.errors, :status => :unprocessable_entity}
       end
     end
   end
   
-  def make_agent    
-    @item.update_attributes(:delete =>false   ,:user_role =>User::USER_ROLES_KEYS_BY_TOKEN[:poweruser])      
-    @agent = current_account.agents.new
-    @agent.user = @item 
-    @item.deleted = false
-    @agent.occasional = params[:occasional]
+  def make_occasional_agent
+    agent = build_agent
+    agent.occasional = true
     respond_to do |format|
-      if @agent.save        
+      if @item.save        
         format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
           redirect_to @item }
         format.xml  { render :xml => @item, :status => 200 }
@@ -188,7 +193,21 @@ class ContactsController < ApplicationController
       end   
     end 
   end
-  
+  def make_agent
+    agent = build_agent
+    agent.occasional = false
+    respond_to do |format|
+      if @item.save        
+        format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
+          redirect_to @item }
+        format.xml  { render :xml => @item, :status => 200 }
+      else
+        format.html { redirect_to :back }
+        format.xml  { render :xml => @agent.errors, :status => 500 }
+      end   
+    end 
+  end
+
   def autocomplete   
     items = current_account.customers.find(:all, 
                                             :conditions => ["name like ? ", "%#{params[:v]}%"], 
@@ -257,13 +276,19 @@ protected
  end
 
  def check_agent_limit
-    if params[:occasional].nil? && current_account.reached_agent_limit? 
+    if current_account.reached_agent_limit? 
     flash[:notice] = t('maximum_agents_msg') 
     redirect_to :back 
    end
   end
 
   private
+
+    def build_agent
+      @item.deleted = false
+      @item.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:poweruser]
+      @item.build_agent()
+    end
 
     def get_formatted_message(exception)
       exception.message # TODO: Proper error reporting.

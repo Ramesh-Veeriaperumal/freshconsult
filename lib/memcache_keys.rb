@@ -1,5 +1,5 @@
 module MemcacheKeys
-  
+
   LEADERBOARD_MINILIST = "HELPDESK_LEADERBOARD_MINILIST:%{agent_type}:%{account_id}"
 
   AVAILABLE_QUEST_LIST = "AVAILABLE_QUEST_LIST:%{user_id}:%{account_id}"
@@ -35,6 +35,8 @@ module MemcacheKeys
 
   ACCOUNT_EVENT_FIELDS = "v1/ACCOUNT_EVENT_FIELDS:%{account_id}"
 
+  ES_ENABLED_ACCOUNTS = "ES_ENABLED_ACCOUNTS"
+ 
   # Portal customization related keys
   PORTAL_TEMPLATE = "v1/PORTAL_TEMPLATE:%{account_id}:%{portal_id}"
 

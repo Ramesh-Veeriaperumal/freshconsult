@@ -10,6 +10,7 @@ class PortalDrop < BaseDrop
 
   def context=(current_context)
     @current_tab = current_context['current_tab']
+    @current_page = current_context['current_page_token']
     @context = current_context
     
     super
@@ -96,8 +97,13 @@ class PortalDrop < BaseDrop
     @current_tab ||= @current_tab
   end
 
+  def current_page
+    @current_page ||= @current_page
+  end
+
   def tabs
     @tabs ||= load_tabs
+    (@tabs.size > 1) ? @tabs : [] 
   end
 
   # Access to Discussions
@@ -114,7 +120,7 @@ class PortalDrop < BaseDrop
   end
 
   def recent_popular_topics
-    @recent_popular_topics ||= source.recent_popular_topics(portal_user,DateTime.now - 30.days)
+    @recent_popular_topics ||= source.recent_popular_topics(portal_user, DateTime.now - 30.days)
   end
 
   def topics_count
@@ -131,24 +137,28 @@ class PortalDrop < BaseDrop
   end
   
   def folders
-    @folders ||= (portal_account.folders.visible(portal_user).reject(&:blank?) || []).flatten
+    @folders ||= (solution_categories.map { |c| c.folders.visible(portal_user) }.reject(&:blank?) || []).flatten
   end
 
   # !MODEL-ENHANCEMENT Need to make published articles for a 
   # folder to be tracked inside the folder itself... similar to fourms
   def articles_count
-    @articles_count ||= portal_account.published_articles.count
+    @articles_count ||= folders.map{ |f| f.published_articles.count }.sum
   end
 
   def url_options
     { :host => source.host }    
-  end 
+  end
+
+  def paid_account
+    @paid_account ||= portal_account.subscription.paid_account?
+  end
   
   private
     def load_tabs
       tabs = [  [ support_home_path,        :home,		    true ],
-					      [ support_solutions_path,   :solutions,	  allowed_in_portal?(:open_solutions) ],
-				        [ support_discussions_path, :forums, 	    (feature?(:forums) && allowed_in_portal?(:open_forums)) ],
+					      [ support_solutions_path,   :solutions,	  has_solutions ],
+				        [ support_discussions_path, :forums, 	    has_forums ],
 				        [ support_tickets_path,     :tickets,     portal_user ]]
 
 			tabs.map { |s|

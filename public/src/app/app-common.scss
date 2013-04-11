@@ -256,6 +256,10 @@ div.contact_hover{
 		height:11px;
 		background:sprite($symbol, reply-tweet) no-repeat #ffffff;
 	}
+
+	.infoblock {
+		display: inline-block;
+	}
 }
 
 .popover.topRight, {
@@ -1107,6 +1111,9 @@ h4.title{
 	}
 }
 
+@include all-file-types-sprites;
+@include all-admin-icon-sprites;
+
 .mark_action{ 
 	a, .stamp{
 		padding:2px 6px; 
@@ -1195,6 +1202,8 @@ div.panel_area{
 		background-color:none;
 		width:24px;
 		height:24px;
+
+		display: inline-block;
 	}
 	.monitor img{ 
 		background: sprite($ticketicon, monitor) no-repeat;
@@ -1202,18 +1211,23 @@ div.panel_area{
 	.monitor_active img{ 
 		background: sprite($ticketicon, monitor_active) no-repeat;
 	}
-	.spam img{
+	.spam, .spam_active {
+		span {
+			display: none; //For compatibility with new tkt details !V2
+		}
+	}
+	.spam img{ 
 		background: sprite($ticketicon, flag-spam) no-repeat;
 	}
 	.spam_active img{ 
 		background: sprite($ticketicon, flag-spam_active) no-repeat;
 	}
-	.jira img{ 
-		background: sprite($ticketicon, jira) no-repeat;
-	}
-	.jira_active img{ 
-		background: sprite($ticketicon, jira_active) no-repeat;
-	}
+}
+.jira img{ 
+	background: sprite($ticketicon, jira) no-repeat;
+}
+.jira_active img{ 
+	background: sprite($ticketicon, jira_active) no-repeat;
 } 
 
 .request_panel_list{
@@ -1954,19 +1968,6 @@ h3.t_padding{
 	}
 }
 
-.mceEditorView{
-	line-height: 20px;
-	vertical-align: baseline;
-	font-size:12px;
-	color:$default_txt_color;	
-	img{
-		margin:0px 10px 10px 10px;
-	}
-	p{
-		margin: 0px 0px 1.5em;
-	} 
-}
-
 
 div.information_tip{
 	padding:15px 20px;
@@ -2371,7 +2372,7 @@ h4.border_title{
 }
 
 div.survey_check{
-	top:0px;
+	padding:0px 10px;
 	text-align:right;	
 }
 
@@ -2936,7 +2937,12 @@ a.page_title{
 		}	
 		
 	}
-
+.private-icon{
+	background:sprite($symbol, private-lock-grey) no-repeat;
+	width:16px;
+	height:16px;
+	display:inline-block;
+}
 .request-list{
 	background-color:#f4f4f4;
 	margin:4px 1px;
@@ -2971,9 +2977,6 @@ a.page_title{
 		}
 		.private-icon{
 			display:none;
-			background:sprite($symbol, private-lock-grey) no-repeat;
-			width:16px;
-			height:16px;
 			position:relative;
 			left:5px;
 			float:right;			
@@ -3653,6 +3656,7 @@ div.addReminder{
 				font-size:12px;
 				line-height: 16px;
 				padding-right:10px;
+				margin-bottom: -2px;
 				.result {
 					color:$default_txt_color;
 					font-weight: normal;
@@ -3681,6 +3685,7 @@ div.addReminder{
 					white-space: nowrap;
 					text-overflow:ellipsis;
 					margin-bottom: 0;
+					color: #888;
 				}				
 			}
 		}
@@ -5329,6 +5334,12 @@ a.close{
 	}
 }
 
+.required_start {
+	font-size: 24px;
+	line-height: 2px;
+	color: #d00;
+	display: inline-block;
+}
 
 .fd-menu, .fd-ajaxmenu, #tickets-expanded .fd-menu, #tickets-expanded .fd-ajaxmenu{
    position:absolute;
@@ -6032,6 +6043,7 @@ a.close{
 
 		.uiButton[type=submit] {
 			margin:15px 0 10px;
+			display: block;
 		}
 	}
 
@@ -6496,32 +6508,30 @@ a.close{
 		}
 	
 		background: url(/images/integrations/sugar_icon.png) 0 2px no-repeat;
+		background-position: 223px 7px;
+		background-repeat: no-repeat;
 	}
 
 	/* div. added for higher specificity */
 	div.salesforce_widget_bg {
-		background: url(/images/integrations/salesforce_icon.png) 0 2px no-repeat;
-		background-position: 223px 7px;
+		background-image: url(/images/integrations/salesforce_icon.png);
  	}
 
  	div.batchbook_widget_bg {
-		background: url(/images/integrations/batchbook_icon.png) 0 2px no-repeat;
-		background-position: 223px 7px;
+		background-image: url(/images/integrations/batchbook_icon.png);
   	}
 
  	div.highrise_widget_bg {
-		background: url(/images/integrations/highrise_icon.png) 0 2px no-repeat;
-		background-position: 223px 7px;
+		background-image: url(/images/integrations/highrise_icon.png);
   	}
 
  	div.zohocrm_widget_bg {
-		background: url(/images/integrations/zohocrm_icon.png) 0 2px no-repeat;
+		background-image: url(/images/integrations/zohocrm_icon.png);
 		background-position: 210px -6px;
   	}
 
  	div.nimble_widget_bg {
-		background: url(/images/integrations/nimble_icon.png) 0 2px no-repeat;
-		background-position: 223px 7px;
+		background-image: url(/images/integrations/nimble_icon.png);
   	}
 	
 
@@ -7655,6 +7665,10 @@ a[rel="load-rjs"] {
 
 div.monitor_div{
 	display: inline-block;
+	zoom: 1;
+	*display: block;
+	*float: left;
+	*width: 43px;
 }
 
 div.watchers_tooltip{
@@ -8174,6 +8188,7 @@ p.imp{
     .close-dialog{
     	margin-top: 10px;
     }
+    display: none;
 }
 
 #recently_used_list{
@@ -8213,10 +8228,7 @@ p.imp{
     float: right;
 }
 
-.pick-response-outer.back1.no_recently_used{
-	width: 640px;
-	@include border-left-radius(5px);
-}
+
 
 .pick-response-header{
     width: 442px;
@@ -8224,9 +8236,7 @@ p.imp{
     clear: both;
     display: inline-block;
 }
-.pick-response-header.no_recently_used{
-    	width: 622px;
-}
+
 
 .pick-response-header h3{
     float: left;
@@ -8239,6 +8249,7 @@ p.imp{
 
 .canned-icons{
     margin-bottom: 5px;
+    position: relative;
     
     input[type="text"]{
     width: 187px;
@@ -8247,15 +8258,11 @@ p.imp{
 	padding-right: 18px}
 }
 
-.canned-icons.no_recently_used{
-    	float: right;
-}
-
 #clear-search{
 		background: url(/images/close-search.png) no-repeat;
 		position: absolute;
-		top: 25px;
-		right: 21px;
+		top: 9px;
+		right: 14px;
 		display: none;
 		float: left;
 		width: 12px;
@@ -8264,23 +8271,10 @@ p.imp{
 }
 
 #bulk_canned_response_holder #clear-search {
-	top: 50px;
-	right: 36px;
+	top: 9px;
+	right: 14px;
 }
 
-#bulk_canned_response_holder{
-	.no_recently_used{
-		#clear-search{
-			right:36px !important;
-		}
-	}
-}
-
-.no_recently_used{
-	#clear-search{
-		right:21px !important;
-	}
-}
 .canned-icons a{
     float: right;
     margin-right: 10px;
@@ -8371,17 +8365,9 @@ p.imp{
     float: left;
 }
 
-.small-list-right.no_recently_used{
-    width: 394px;
-}
-
 .pick-response ul.small-list-right li span{
     float: left;
     top: 0px;
-}
-
-.pick-response.no_recently_used{
-	width: 612px;
 }
 
 .pick-response ul.small-list-right li a{
@@ -8468,15 +8454,6 @@ p.imp{
 	width:214px;
 	height: 266px;
 	float:right;
-	.no_recently_used{
-		width: 395px;
-		float: left;
-	}
-}
-
-.list2.no_recently_used{
-	width: 395px;
-	float: left;
 }
 
 .folderSelected{
@@ -8489,6 +8466,7 @@ p.imp{
 	overflow: hidden;
 	float: left;
 	width: 650px;
+	min-height: 100px;
 	margin-top: 10px;
 }
 
@@ -8541,11 +8519,6 @@ height: auto;
 	}
 }
 
-#searchbox .no_recently_used{
-	top: 31px;
-	right: 22px;
-}
-
 .folder-pane{
 	.caption{
 		display: inline-block;
@@ -8572,6 +8545,61 @@ height: auto;
 .response-loading{
 	#resp-icon{
 		background: url(/images/AddingCannedresponse.gif) no-repeat !important;
+	}
+}
+
+#response_dialog.no_recently_used{
+
+	.pick-response-outer.back1{
+		width: 640px;
+		@include border-left-radius(5px);
+		.pick-response-header{
+			.canned-icons{
+    		float: right;
+    		#clear-search{
+					right:6px !important;
+				}
+				#searchbox{
+					top: 31px;
+					right: 22px;	
+				}
+			}
+		}
+
+		#search-list.pick-response{
+			width: 619px;
+			.small-list-right{
+				width: 99%;
+			}
+		}
+
+		#fold-list{
+			width: 622px;
+			.list2{
+				width: 395px;
+				float: left;
+				.small-list-right{
+						width: 394px;
+				}
+			}
+		}
+
+	}
+
+	.pick-response-header{
+    	width: 622px;
+	}
+
+	.small-list-right{
+    width: 394px;
+	}
+}
+
+#bulk_canned_response_holder{
+	.no_recently_used{
+		#clear-search{
+			right:36px !important;
+		}
 	}
 }
 
@@ -8986,6 +9014,18 @@ height: auto;
 .select2-highlighted .select2_list_detail{
 	color:#fff;
 }
+
+#switch_details_view {
+	background: #fffad3;
+
+	a.switch {
+		width:150px;
+		border-right: solid 1px #CCC;
+		display: inline-block;
+		margin-right: 10px;
+	}
+}
+
 /*!pattern Need to delete after pattern intagrated to product */
 .watchers_tooltip{
 	.btn-primary {
@@ -10286,6 +10326,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 .error-text {
 	color: #D00;
 }
+
 .align_options .select2-results ul.select2-result-sub > li .select2-result-label{
 		padding-left: 7px;
 }
@@ -10408,4 +10449,9 @@ div.gcal-confirm-modal-content{ width: 100%; }
 		}
 		.addchoice p{font-weight: normal;}
 	}
+}
+
+#footer {
+	margin: 10px auto 40px;
+	clear: both;
 }

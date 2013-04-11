@@ -1,0 +1,38 @@
+<%
+note = activity[:is_note] ? @prefetched_notes[activity[:stack].first.note_id] : nil
+%>
+<% if note.present? %>
+	<%= render :partial => '/helpdesk/tickets/show/note', :object => note, :locals => { :minimizable => true} %>
+<% else %>
+<li class="conversation activity <%= 'hide' if activity[:important][:type] == 'new_ticket' %>">
+	<%= link_to user_avatar(activity[:user]), activity[:user], :class => 'avatar-wrap'  if activity[:user] %>
+	<div class="commentbox <%= (activity[:user].blank? or activity[:user].agent?) ? 'commentbox-gray' : 'commentbox-requester' %>">
+		<div class="tag">
+			<%= t('activities.tag.' + activity[:important][:type], {:value => activity[:important][:value]} ) %>
+		</div>
+		<div class="author-mail-detail">
+			<%= t("helpdesk.tickets.note.posted_on", :user_name => link_to_user(activity[:user], :class => "user_name" ), :note_date => formated_date(activity[:time]) ) %>
+		</div>
+		<div class="details">
+			<% 	stack = activity[:stack].map{ |act| 
+												Liquid::Template.parse(
+														t(act.short_descr.chomp('.short') + '.without_user')
+														).render(eval_activity_data(act.activity_data).merge(
+															'user_path' => link_to(act[:user] ,act[:user]),
+															'notable_path' => link_to(h(@item), @item) )
+														) 
+											}
+			%>
+			<%=  stack.size > 1 ? t('activities.action_verb').capitalize + ' ' + stack.map{|act| act.gsub(t('activities.action_verb'), '')}.to_sentence : stack.first %>
+		</div>
+	</div>
+</li>
+<% end %>
+
+<script type="text/javascript">
+	if (typeof(TICKET_DETAILS_DATA['last_activity']) == 'undefined' || TICKET_DETAILS_DATA['last_activity'] == null || TICKET_DETAILS_DATA['last_activity'] < <%= activity[:stack].first.id %>)
+		TICKET_DETAILS_DATA['last_activity'] = <%= activity[:stack].last.id %>;
+	if (typeof(TICKET_DETAILS_DATA['first_activity']) == 'undefined' || TICKET_DETAILS_DATA['first_activity'] == null || TICKET_DETAILS_DATA['first_activity'] > <%= activity[:stack].last.id %>)
+		TICKET_DETAILS_DATA['first_activity'] = <%= activity[:stack].first.id %>;
+	<%= "TICKET_DETAILS_DATA['loaded_activities'] += #{activity[:stack].size}; " %>
+</script>

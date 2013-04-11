@@ -159,7 +159,8 @@ end
 
   private
     def portal_check
-      if current_user.nil? || current_user.customer?
+      format = params[:format]
+      if format.nil? && (current_user.nil? || current_user.customer?)
         return redirect_to support_solutions_path
       end
     end

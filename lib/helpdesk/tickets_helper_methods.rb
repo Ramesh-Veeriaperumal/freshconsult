@@ -1,6 +1,6 @@
 module Helpdesk::TicketsHelperMethods
 
-  include Helpdesk::Ticketfields::TicketStatus
+  include Helpdesk::Ticketfields::TicketStatus  
   
   def subject_style(ticket,onhold_and_closed_statuses)
     type = "customer_responded" if ticket.ticket_states.customer_responded? && ticket.active?

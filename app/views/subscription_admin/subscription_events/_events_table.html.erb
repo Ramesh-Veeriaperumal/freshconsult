@@ -11,7 +11,7 @@
       
       <% if events.size > 0 %>
         <li> <%= link_to 'Download CSV', export_to_csv_admin_subscription_events_path(
-                                              :data => events, :title => details[1]) %> </li>
+                                              :data => events, :title => details[1].gsub(",", " ")) %> </li>
       <% end %>
     </ul>
 
@@ -48,7 +48,7 @@
                   <td><%= record.cmrr.abs %></td>
                 <% end %>
 
-                <td><%= record.created_at.strftime("%b %d, %Y") %></td>
+                <td><%= record.code.eql?(200) ? record.updated_at.strftime("%b %d, %Y") : record.created_at.strftime("%b %d, %Y")%> </td>
                 <td><%= record.account.created_at.strftime("%b %d, %Y") %></td>
               </tr>    
 

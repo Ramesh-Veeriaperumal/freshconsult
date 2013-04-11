@@ -89,7 +89,7 @@
               </ul>
             </div>
             <div class="action_buttons clearfix">
-              <%= link_to( "Print", print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
+              <%= link_to( t('print'), print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
               <%= link_to t('ticket.merge_btn'), "/helpdesk/merge_tickets/bulk_merge?source_tickets=#{@ticket.display_id}", 
               :id => "Merge", :title => t('ticket.merge_title'), "data-ajax-dialog" => true, "data-width" => "727" %>
               <%= link_to(t('ticket.close_btn'), "#", :title  => t('ticket.close_btn_title'), :class => "last" , :id=>"close_ticket_btn" , :"data-href" => close_helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]})) unless @ticket.closed? %> 

@@ -1,2 +1,3 @@
 page.replace_html :spamicon, :partial => "spam", :locals => { :ticket => @items.first }
+page << "jQuery('h2 .label.spam').remove()"
 show_ajax_flash page

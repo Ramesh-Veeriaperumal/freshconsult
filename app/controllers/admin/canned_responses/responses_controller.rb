@@ -1,6 +1,5 @@
 class Admin::CannedResponses::ResponsesController < Admin::AdminController
   include HelpdeskControllerMethods
-  uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
 
   before_filter :load_multiple_items, :only => [:delete_multiple, :update_folder]
   before_filter :load_all_folders, :only => [:new, :edit, :create]
@@ -76,7 +75,7 @@ class Admin::CannedResponses::ResponsesController < Admin::AdminController
 		@items.each do |item|
 			item.update_attribute(:folder_id, params[:move_folder_id])
 		end
-		redirect_to (:back, 
+		redirect_to(:back, 
 			:notice => t('canned_folders.folder_update',{:folder_name => @resp_folder.name}))
 	end
 

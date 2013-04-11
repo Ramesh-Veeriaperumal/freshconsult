@@ -993,7 +993,7 @@
                 this.dropdown.detach().appendTo(this.body());
             }
 
-
+            this.dropdown.show();
             // Issue with a repaint problem in webkit browsers
             // Fixed based on this issue log
             // https://github.com/ivaynberg/select2/issues/641

@@ -22,6 +22,7 @@
 
   "use strict"; // jshint ;_;
 
+  if($.fn.affix) return
 
  /* AFFIX CLASS DEFINITION
   * ====================== */

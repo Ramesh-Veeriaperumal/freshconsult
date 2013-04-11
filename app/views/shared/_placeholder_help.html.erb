@@ -10,12 +10,7 @@
       if(active_email_body.get(0)){
         var placeHolderText = jQuery(this).data("placeholder");  
 				//console.log(active_email_body);  
-        if(active_email_body.hasClass("mceEditor")){
-					tinyMCE.get(active_email_body.prop("id")).selection.setContent(placeHolderText, { no_events: true });
-          //tinyMCE.execInstanceCommand(active_email_body.prop("id"), "mceInsertContent", false, placeHolderText);  	      
-        }else{
-          insertTextAtCursor(active_email_body.get(0), placeHolderText);
-        }
+        insertTextAtCursor(active_email_body.get(0), placeHolderText);
 		  }
 		});
 		jQuery('#placeholder_close').click(function(){

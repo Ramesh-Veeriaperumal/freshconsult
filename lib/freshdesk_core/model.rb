@@ -22,7 +22,6 @@ module FreshdeskCore::Model
     									{:dependant => :groups, :method => :destroy_all},
     									{:dependant => :forum_categories, :method => :destroy_all},
     									{:dependant => :business_calendar, :method => :destroy},
-    									{:dependant => :form_customizer, :method => :destroy},
     									{:dependant => :ticket_fields, :method => :destroy_all},
     									{:dependant => :canned_responses, :method => :destroy_all},
     									{:dependant => :user_accesses, :method => :destroy_all},

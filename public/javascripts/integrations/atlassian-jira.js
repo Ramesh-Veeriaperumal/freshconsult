@@ -81,7 +81,7 @@ JiraWidget.prototype = {
 		var init_reqs = [];
 		if(jiraBundle.remote_integratable_id) {
 			init_reqs = [{
-				rest_url: "rest/api/2/issue/" + jiraBundle.remote_integratable_id,
+				rest_url: "rest/api/latest/issue/" + jiraBundle.remote_integratable_id,
 				content_type: "application/json",
 				on_failure: jiraWidget.processFailureCreate,
 				on_success: jiraWidget.displayIssue.bind(this)
@@ -169,7 +169,7 @@ JiraWidget.prototype = {
 		project_id = jQuery('#jira-projects').val();
 		type_id = jQuery('#jira-issue-types').val();
 		init_reqs = [{
-			rest_url : "rest/api/2/issue/createmeta?expand=projects.issuetypes.fields&projectIds="+project_id+"&issuetypeIds="+type_id,
+			rest_url : "rest/api/latest/issue/createmeta?expand=projects.issuetypes.fields&projectIds="+project_id+"&issuetypeIds="+type_id,
 			method: "get",
 			content_type: "application/json",
 			on_success:jiraWidget.constructFieldsDynamically.bind(this),
@@ -226,6 +226,7 @@ JiraWidget.prototype = {
 		projectId = (jiraBundle.projectId) ? jiraBundle.projectId : jQuery('#jira-projects').val();
 		typeId = (jiraBundle.typeId) ? jiraBundle.typeId : jQuery('#jira-issue-types').val();
 		ticketData = "#" + jiraBundle.ticketId + " (" + jiraWidget.getCurrentUrl() + ") - " + jiraBundle.ticketSubject;
+		jiraWidget.jiraCreateSummaryAndDescription();
 		init_reqs = [{
 			source_url: "/integrations/jira_issue/create",
 			content_type: "application/json",
@@ -240,6 +241,24 @@ JiraWidget.prototype = {
 		}];
 		jiraWidget.freshdeskWidget.options.init_requests = init_reqs
 		jiraWidget.freshdeskWidget.call_init_requests();
+	},
+	jiraCreateSummaryAndDescription: function(){
+		if(jQuery('input[name="fields[description]"]').size() == 0)
+		{
+			jQuery('<input>').attr({
+			type:'hidden',
+			id: 'fields[description]',
+			name: 'fields[description]',
+			value: jQuery("#jira-note").text()}).appendTo('#jira-add-form');
+		}
+		if(jQuery('input[name="fields[summary]"]').size() == 0)
+		{
+			jQuery('<input>').attr({
+			type:'hidden',
+			id: 'fields[summary]',
+			name: 'fields[summary]',
+			value: jiraBundle.ticketSubject}).appendTo('#jira-add-form');
+		}
 	},
 	jiraCreateIssueSuccess: function(evt) {
 		resJ = evt.responseJSON
@@ -329,7 +348,7 @@ JiraWidget.prototype = {
 
 	renderDisplayIssueWidget: function() {
 		init_reqs = [{
-			rest_url: "rest/api/2/issue/" + jiraBundle.remote_integratable_id,
+			rest_url: "rest/api/latest/issue/" + jiraBundle.remote_integratable_id,
 			content_type: "application/json",
 			on_failure: jiraWidget.processFailure,
 			on_success: jiraWidget.displayIssue.bind(this)
@@ -398,15 +417,19 @@ JiraWidget.prototype = {
 		jiraWidget.linkIssueId = remoteKey;
 		jiraWidget.linkedTicket = ""
 		this.freshdeskWidget.request({
-			rest_url: "rest/api/2/issue/" + encodeURIComponent(remoteKey),
+			rest_url: "rest/api/latest/issue/" + encodeURIComponent(remoteKey),
 			content_type: "application/json",
 			on_success: jiraWidget.updateIssue.bind(this),
-			on_failure: jiraWidget.processFailure
+			on_failure: jiraWidget.processFailureLinking
 		});
 	},
-
-
-
+	processFailureLinking: function(evt) {
+		if(evt.status == 401) alert("Username or password is incorrect.");
+		else {
+			alert("Jira reports the following error : " + evt.responseJSON.errorMessages[0]);
+		}
+		jiraWidget.displayCreateWidget();
+	},
 	updateIssue: function(resData) {
 		self = this;
 		var isCustomFieldDef = false;
@@ -493,7 +516,7 @@ JiraWidget.prototype = {
 				}
 			}
 			init_reqs = [{
-				rest_url: "rest/api/2/issue/" + jiraWidget.unlinkId,
+				rest_url: "rest/api/latest/issue/" + jiraWidget.unlinkId,
 				source_url: "/integrations/jira_issue/unlink",
 				method: "put",
 				remote_key: jiraWidget.unlinkId,
@@ -530,7 +553,7 @@ JiraWidget.prototype = {
 		this.showSpinner();
 		self = this;
 		init_reqs = [{
-			rest_url: "rest/api/2/issue/" + jiraBundle.remote_integratable_id,
+			rest_url: "rest/api/latest/issue/" + jiraBundle.remote_integratable_id,
 			content_type: "application/json",
 			method: "delete",
 			deleteSubtasks: true,

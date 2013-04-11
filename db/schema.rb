@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130325061611) do
+ActiveRecord::Schema.define(:version => 20130405084952) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -30,6 +30,8 @@ ActiveRecord::Schema.define(:version => 20130325061611) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "account_configurations", ["account_id"], :name => "index_for_account_configurations_on_account_id"
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -349,6 +351,16 @@ ActiveRecord::Schema.define(:version => 20130325061611) do
 
   add_index "features", ["account_id"], :name => "index_features_on_account_id"
 
+  create_table "es_enabled_accounts", :force => true do |t|
+    t.integer  "account_id", :limit => 8
+    t.string   "index_name"
+    t.boolean  "imported",                :default => true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "es_enabled_accounts", ["account_id"], :name => "index_es_enabled_accounts_on_account_id"
+
   create_table "flexifield_def_entries", :force => true do |t|
     t.integer  "flexifield_def_id",  :limit => 8, :null => false
     t.string   "flexifield_name",                 :null => false
@@ -579,12 +591,6 @@ ActiveRecord::Schema.define(:version => 20130325061611) do
   add_index "helpdesk_authorizations", ["role_token"], :name => "index_helpdesk_authorizations_on_role_token"
   add_index "helpdesk_authorizations", ["user_id"], :name => "index_helpdesk_authorizations_on_user_id"
 
-  create_table "helpdesk_classifiers", :force => true do |t|
-    t.string "name",       :null => false
-    t.string "categories", :null => false
-    t.binary "data"
-  end
-
   create_table "helpdesk_dropboxes", :id => false, :force => true do |t|
     t.integer  "id",             :limit => 8, :null => false
     t.text     "url"
@@ -598,17 +604,16 @@ ActiveRecord::Schema.define(:version => 20130325061611) do
   add_index "helpdesk_dropboxes", ["account_id", "droppable_id", "droppable_type"], :name => "index_helpdesk_dropboxes_on_droppable_id"
   add_index "helpdesk_dropboxes", ["id"], :name => "helpdesk_dropboxes_id"
 
-  create_table "helpdesk_form_customizers", :force => true do |t|
-    t.string   "name"
-    t.text     "json_data"
-    t.integer  "account_id",     :limit => 8
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.text     "agent_view"
-    t.text     "requester_view"
+  create_table "helpdesk_external_notes", :id => false, :force => true do |t|
+    t.integer "id",                       :limit => 8, :null => false
+    t.integer "account_id",               :limit => 8
+    t.integer "note_id",                  :limit => 8
+    t.integer "installed_application_id", :limit => 8
+    t.string  "external_id"
   end
-
-  add_index "helpdesk_form_customizers", ["account_id"], :name => "index_helpdesk_form_customizers_on_account_id", :unique => true
+ 
+  add_index "helpdesk_external_notes", ["account_id", "installed_application_id", "external_id"], :name => "index_helpdesk_external_id", :length => {"installed_application_id"=>nil, "external_id"=>"20", "account_id"=>nil}
+  add_index "helpdesk_external_notes", ["id"], :name => "helpdesk_external_notes_id"
 
   create_table "helpdesk_issues", :force => true do |t|
     t.string   "title"

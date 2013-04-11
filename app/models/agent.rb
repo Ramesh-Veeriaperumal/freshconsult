@@ -80,7 +80,6 @@ end
   end
 
 def signature_htm
-  puts "#{self.signature_html}"
   self.signature_html
 end
 

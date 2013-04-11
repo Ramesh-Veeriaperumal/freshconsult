@@ -3,9 +3,6 @@
 /* !PATTERN box-sizing to be included later and tweeked in all pages */
 /*@include border-box-sizing;*/
 
-// This import applies a global reset to any page that imports this stylesheet.
-html {  height:100%; overflow-y:scroll; }
-
 @include at-breakpoint($break-tablet){
 	// Generic Grid classes
 	.srow-fluid{ @include pie-clearfix; }

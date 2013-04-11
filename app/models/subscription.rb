@@ -42,7 +42,7 @@ class Subscription < ActiveRecord::Base
   after_update :activate_paid_customer_in_billing, :if => :card_number_changed?
   after_update :activate_free_customer_in_billing, :if => :free_plan_selected?
 
-  after_update :add_subscription_event
+  after_commit_on_update :add_subscription_event
   before_destroy :add_churn
 
   attr_accessor :creditcard, :address, :billing_cycle

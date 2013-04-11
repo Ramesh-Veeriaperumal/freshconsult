@@ -22,7 +22,7 @@
    end
   map.connect '/customers/filter/:state/*letter', :controller => 'customers', :action => 'index'
  
-  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :hover_card => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put}
+  map.resources :contacts, :collection => { :contact_email => :get, :autocomplete => :get } , :member => { :hover_card => :get, :restore => :put, :quick_customer => :post, :make_agent =>:put, :make_occasional_agent => :put}
   map.connect '/contacts/filter/:state/*letter', :controller => 'contacts', :action => 'index'
   
   map.resources :groups
@@ -48,7 +48,7 @@
   map.gauth_done '/authdone/google', :controller => 'user_sessions', :action => 'google_auth_completed'
   map.login '/login', :controller => 'user_sessions', :action => 'new'  
   map.sso_login '/login/sso', :controller => 'user_sessions', :action => 'sso_login'
-  map.login_normal '/login/normal', :controller => 'support/login', :action => 'new'
+  map.login_normal '/login/normal', :controller => 'user_sessions', :action => 'new'
   map.signup_complete '/signup_complete/:token', :controller => 'user_sessions', :action => 'signup_complete'
 
   map.openid_done '/google/complete', :controller => 'accounts', :action => 'openid_complete'
@@ -122,6 +122,10 @@
     admin.resources :zen_import, :collection => {:import_data => :any }
     admin.resources :email_commands_setting, :member => { :update => :put }
     admin.resources :account_additional_settings, :member => { :update => :put, :assign_bcc_email => :get}
+  end
+
+  map.namespace :search do |search|
+    search.resources :home, :only => :index, :collection => { :suggest => :get, :solutions => :get, :topics => :get }
   end
   
   map.resources :reports
@@ -207,7 +211,6 @@
   
   map.resources :search, :only => :index, :member => { :suggest => :get }
   
-  
   #SAAS copy ends here
 
 
@@ -269,11 +272,11 @@
                                  :member => { :reply_to_conv => :get, :forward_conv => :get, :view_ticket => :get, 
                                     :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :post, 
                                     :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put, 
-                                    :change_due_by => :put, :split_the_ticket =>:post, 
-                                    :merge_with_this_request => :post, :print => :any, :latest_note => :get, 
+                                    :change_due_by => :put, :split_the_ticket =>:post, :status => :get, 
+                                    :merge_with_this_request => :post, :print => :any, :latest_note => :get,  :activities => :get, 
                                     :clear_draft => :delete, :save_draft => :post } do |ticket|
 
-
+      ticket.resources :notes, :member => { :restore => :put }, :collection => {:since => :get}, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :subscriptions, :collection => { :create_watchers => :post, 
                                                         :unsubscribe => :get,
@@ -323,7 +326,6 @@
     helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get, 
                   :requester_autocomplete => :get, :company_autocomplete => :get }
     
-    helpdesk.resources :mailer, :collection => { :fetch => :get }
     
     helpdesk.resources :sla_details
     
@@ -415,7 +417,7 @@
     # Tickets for the portal
     # All portal tickets including company_tickets are now served from this controller
     support.resources :tickets, 
-      :collection => { :check_email => :get, :configure_export => :get, :filter => :get }, 
+      :collection => { :check_email => :get, :configure_export => :get, :filter => :get, :export_csv => :post }, 
       :member => { :close => :post, :add_people => :put } do |ticket|
 
       ticket.resources :notes, :name_prefix => 'support_ticket_helpdesk_'
