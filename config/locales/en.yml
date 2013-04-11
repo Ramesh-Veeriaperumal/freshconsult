@@ -1893,6 +1893,7 @@ en:
     info10: Private (Visible to Agents only)
     add_new_solution: Add a new solution
     title: Solutions
+    title_singular: Solution
     info1: Solutions in Freshdesk is  your Knowledge base
     info2: Solutions can be <b>public</b> or <b>private</b>. Public Solutions are visible in the Self Service Portal and also appear in Search results
     info3: Private solutions are agent-only solutions used for internal knowledge sharing

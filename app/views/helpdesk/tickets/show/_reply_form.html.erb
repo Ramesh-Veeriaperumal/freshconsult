@@ -90,16 +90,7 @@
             </div>
       </li>
       <li class="inline-field field clearField message">
-        <div class="btn-group redactor_insert_btns">
-          <button class="btn dropdown-toggle" data-toggle="dropdown">
-            <%= t('ticket.insert') %> <span class="caret"></span>
-          </button>
-          <div class="dropdown-menu right" id="reply_options" role="menu" aria-labelledby="dLabel">
-              <%= link_to( t(:'ticket.canned_responses.ca_responses'), "/helpdesk/canned_responses/index/#{@ticket.display_id}", "data-ajax-dialog" => true, "data-width" => "650", :id => "canned_response_show", :title => "Canned Responses") %>
-              <%= link_to( t(:'ticket.suggested_solutions.title'), "/helpdesk/tickets/component/#{@ticket.id}?component=related_solutions", 
-                            :title => t(:'ticket.suggested_solutions.title'), :rel => 'freshdialog', "data-target" => "#related_solutions", "data-template-footer" => '') %>
-          </div>
-        </div>
+        <%= render :partial => 'helpdesk/tickets/show/editor_insert_buttons' %>
         <% conv_item = conv_id.nil? ? @ticket : @note %>
         <%= f.text_area :body_html, :class => "required", :id => "#{cntid}-body", :value => bind_last_reply(conv_item, @signature, false, false) %>
       </li>

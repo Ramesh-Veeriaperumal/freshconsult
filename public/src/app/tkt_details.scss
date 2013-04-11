@@ -632,6 +632,18 @@ p strong{
 	}
 }
 
+.ticket_details #response_dialog {
+	.pick-response-outer.back1{
+		width: 462px;
+	}
+}
+
+.ticket_details #response_dialog.no_recently_used{
+	.pick-response-outer.back1{
+		width: 640px;
+	}
+}
+
 .conversation_thread.redactor{
 	border:none;
 	margin-bottom: 30px;
