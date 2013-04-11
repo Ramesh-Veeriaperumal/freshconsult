@@ -963,6 +963,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
       return super(:builder =>xml,:skip_instruct => true,:only =>[:display_id,:subject,:deleted],
           :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name])
     end
+
+    return super(:builder =>xml, :skip_instruct => true) if options[:shallow]
+
     super(:builder => xml, :skip_instruct => true,:include => [:notes,:attachments],:except => [:account_id,:import_id], 
       :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name]) do |xml|
       xml.custom_field do
