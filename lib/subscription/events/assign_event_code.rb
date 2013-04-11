@@ -62,7 +62,7 @@ module Subscription::Events::AssignEventCode
 		end
 
 		def affiliate?(subscription)
-			!(subscription.affiliate.blank?)
+			subscription.active? and !(subscription.affiliate.blank?)
 		end
 
 		def trial_to_paid?(subscription, old_subscription)
