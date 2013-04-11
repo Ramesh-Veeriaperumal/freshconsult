@@ -23,13 +23,14 @@
         <div class="email_container">
           <%= select_tag "helpdesk_note[to_emails]", 
                           options_for_select(current_account.agents.map { |agent| "#{agent.user.name} <#{agent.user.email}>" }, 
-                              [( (@ticket.responder_id and @ticket.responder_id != current_user.id and ticket.responder.present?) ? 
+                              [( (@ticket.responder_id and @ticket.responder_id != current_user.id and @ticket.responder.present?) ? 
                                       "#{@ticket.responder.name} <#{@ticket.responder.email}>" : nil ) ]), 
                           :multiple => true, :class => 'select2', "data-placeholder" => 'Select agents to notify' %>
         </div>
       </li>
 
       <li class="inline-field field">
+        <%= render :partial => 'helpdesk/tickets/show/editor_insert_buttons' %>
         <%= f.text_area :body_html, :class => "body_html required", :id => "#{cntid}-body", 
                         :value => "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span>" %>
       </li>

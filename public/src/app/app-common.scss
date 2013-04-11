@@ -8188,6 +8188,7 @@ p.imp{
     .close-dialog{
     	margin-top: 10px;
     }
+    display: none;
 }
 
 #recently_used_list{
@@ -8227,10 +8228,7 @@ p.imp{
     float: right;
 }
 
-.pick-response-outer.back1.no_recently_used{
-	width: 640px;
-	@include border-left-radius(5px);
-}
+
 
 .pick-response-header{
     width: 442px;
@@ -8238,9 +8236,7 @@ p.imp{
     clear: both;
     display: inline-block;
 }
-.pick-response-header.no_recently_used{
-    	width: 622px;
-}
+
 
 .pick-response-header h3{
     float: left;
@@ -8253,6 +8249,7 @@ p.imp{
 
 .canned-icons{
     margin-bottom: 5px;
+    position: relative;
     
     input[type="text"]{
     width: 187px;
@@ -8261,15 +8258,11 @@ p.imp{
 	padding-right: 18px}
 }
 
-.canned-icons.no_recently_used{
-    	float: right;
-}
-
 #clear-search{
 		background: url(/images/close-search.png) no-repeat;
 		position: absolute;
-		top: 25px;
-		right: 21px;
+		top: 9px;
+		right: 14px;
 		display: none;
 		float: left;
 		width: 12px;
@@ -8278,23 +8271,10 @@ p.imp{
 }
 
 #bulk_canned_response_holder #clear-search {
-	top: 50px;
-	right: 36px;
+	top: 9px;
+	right: 14px;
 }
 
-#bulk_canned_response_holder{
-	.no_recently_used{
-		#clear-search{
-			right:36px !important;
-		}
-	}
-}
-
-.no_recently_used{
-	#clear-search{
-		right:21px !important;
-	}
-}
 .canned-icons a{
     float: right;
     margin-right: 10px;
@@ -8385,17 +8365,9 @@ p.imp{
     float: left;
 }
 
-.small-list-right.no_recently_used{
-    width: 394px;
-}
-
 .pick-response ul.small-list-right li span{
     float: left;
     top: 0px;
-}
-
-.pick-response.no_recently_used{
-	width: 612px;
 }
 
 .pick-response ul.small-list-right li a{
@@ -8482,15 +8454,6 @@ p.imp{
 	width:214px;
 	height: 266px;
 	float:right;
-	.no_recently_used{
-		width: 395px;
-		float: left;
-	}
-}
-
-.list2.no_recently_used{
-	width: 395px;
-	float: left;
 }
 
 .folderSelected{
@@ -8503,6 +8466,7 @@ p.imp{
 	overflow: hidden;
 	float: left;
 	width: 650px;
+	min-height: 100px;
 	margin-top: 10px;
 }
 
@@ -8555,11 +8519,6 @@ height: auto;
 	}
 }
 
-#searchbox .no_recently_used{
-	top: 31px;
-	right: 22px;
-}
-
 .folder-pane{
 	.caption{
 		display: inline-block;
@@ -8586,6 +8545,61 @@ height: auto;
 .response-loading{
 	#resp-icon{
 		background: url(/images/AddingCannedresponse.gif) no-repeat !important;
+	}
+}
+
+#response_dialog.no_recently_used{
+
+	.pick-response-outer.back1{
+		width: 640px;
+		@include border-left-radius(5px);
+		.pick-response-header{
+			.canned-icons{
+    		float: right;
+    		#clear-search{
+					right:6px !important;
+				}
+				#searchbox{
+					top: 31px;
+					right: 22px;	
+				}
+			}
+		}
+
+		#search-list.pick-response{
+			width: 619px;
+			.small-list-right{
+				width: 99%;
+			}
+		}
+
+		#fold-list{
+			width: 622px;
+			.list2{
+				width: 395px;
+				float: left;
+				.small-list-right{
+						width: 394px;
+				}
+			}
+		}
+
+	}
+
+	.pick-response-header{
+    	width: 622px;
+	}
+
+	.small-list-right{
+    width: 394px;
+	}
+}
+
+#bulk_canned_response_holder{
+	.no_recently_used{
+		#clear-search{
+			right:36px !important;
+		}
 	}
 }
 
