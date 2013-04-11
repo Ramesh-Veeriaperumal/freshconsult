@@ -513,6 +513,10 @@ $(document).ready(function() {
 
 // End of Due-by time JS
 
+	if (jQuery('.requester-info-sprite').length < 2) {
+		jQuery('.requester-info-sprite').parents('.tkt-tabs').remove();
+	}
+	
 	$('ul.tkt-tabs').each(function(){
 		// For each set of tabs, we want to keep track of
 		// which tab is active and it's associated content

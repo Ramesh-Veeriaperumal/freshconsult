@@ -4,7 +4,8 @@
 						:html => { :class =>"attachment-close" },
 						:confirm => "You're about to permanently delete this attachment. Continue?")  if local_assigns[:show_delete] %>
 	<% 
-	extname = attachment.content_file_name.split('.')[-1] 
+	extname = attachment.content_file_name.split('.')[-1] || ""
+	extname = extname.downcase
 	# Converting 4 letter into 3 letter extensions
 	letter4 = {"jpeg" => "jpg"}
 	extname = letter4[extname] if letter4[extname].present?

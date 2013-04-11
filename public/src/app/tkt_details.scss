@@ -1193,7 +1193,7 @@ p strong{
 	margin-left: 29px;
 	padding: 10px;
 	line-height: 150%;
-	background: #fffdf8;
+	background: #fefef0;
 	border: 1px solid #bbb;
 	@include min-height(30px);
 	@include border-radius(4px);
@@ -1328,6 +1328,9 @@ p strong{
 		font-size: 12px;
 		padding: 3px 15px 5px;
 		font-weight: bold;
+		text-overflow: ellipsis;
+		height: 18px;
+		white-space: nowrap;
 	}
 
 	&.private-note .helpdesk_note {
