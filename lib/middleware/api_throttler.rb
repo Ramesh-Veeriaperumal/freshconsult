@@ -32,11 +32,11 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     if allowed?
       @status, @headers, @response = @app.call(env)
       unless by_pass_throttle?
-        if @count > 0
-          increment(API_THROTTLER % {:host => @host})
-        else
-          set_key(API_THROTTLER % {:host => @host}, 1, ONE_HOUR)
-        end
+        key = API_THROTTLER % {:host => @host}
+        increment(key)
+        value = get_key(key).to_i
+        ttl = get_expiry(key).to_i
+        set_expiry(key, ONE_HOUR) if value == 1 || ttl == -1
       end
     else
       @status, @headers, @response = [302, {"Location" => "/403.html"}, 
