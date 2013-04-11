@@ -14,7 +14,7 @@ module Authority
     def build(&block)
       instance_exec(&block)
       # TODO: Move this elsewhere !
-      Authority::Authorization::Keeper.map(self.privileges_by_name) #unless Rails.env.production?
+      Authority::Authorization::Keeper.map(self.privileges_by_name) unless Rails.env.production?
     end
 
     def add_privilege(privilege_name, &block)
