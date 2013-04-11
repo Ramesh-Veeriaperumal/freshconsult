@@ -720,8 +720,6 @@ function fetchResponses(url, element){
       var temp_resp = jQuery('.list2').detach();
       jQuery('#cf_cache').append(temp_resp);
       jQuery('#fold-list').append('<div id="responses" class="list2"></div>');
-      if(!localStorage["local_ca_response"])
-        jQuery('#responses').addClass('no_recently_used');
       jQuery('#responses').addClass('loading-center');
       jQuery.getScript(url, function(){
       jQuery('#responses').attr('id', use_id);
