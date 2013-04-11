@@ -12,7 +12,8 @@ class AgentsController < ApplicationController
   before_filter :load_roles, :only => [:new, :create, :edit, :update]
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
   before_filter :restrict_current_user, :only => [ :edit, :update, :destroy,
-    :restore, :convert_to_contact ]
+    :convert_to_contact, :reset_password ]
+  before_filter :check_current_user, :only => [ :destroy, :convert_to_contact, :reset_password ]
   before_filter :check_agent_limit, :only =>  :restore
   before_filter :set_selected_tab
   
@@ -182,7 +183,7 @@ class AgentsController < ApplicationController
  end
 
   def reset_password
-    if can_reset_password?(@agent)
+    if agent.user.active?
       @agent.user.reset_agent_password(current_portal)
       flash[:notice] = t(:'flash.password_resets.email.reset', :requester => h(@agent.user.email))      
       redirect_to :back
@@ -227,7 +228,15 @@ class AgentsController < ApplicationController
   def restrict_current_user
     unless can_edit?(@agent)
       flash[:notice] = t(:'flash.agents.edit.not_allowed')
-      redirect_to :back  
+      redirect_to :back
     end    
   end
+    
+  def check_current_user
+    if(current_user == @agent.user)
+      flash[:notice] = t(:'flash.agents.edit.not_allowed')
+      redirect_to :back  
+    end
+  end
+  
 end

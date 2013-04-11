@@ -9,16 +9,16 @@ module AgentsHelper
     content_tag(:div, fetch_upgrade_error_msg,:class => "errorExplanation") if current_account.reached_agent_limit?
   end
     
-  # 1. User cannot edit himself
+  # 1. Agent should not be deleted
   # 2. To edit and agent with manage_account, the current_user must also have manage_account
   def can_edit?(agent)
-    !(agent.user == current_user || 
+    !(agent.user.deleted? || 
       (agent.user.privilege?(:manage_account) && !current_user.privilege?(:manage_account)))
   end
   
   # Should be used only if NOT trial account
   def available_agents
-    current_account.subscription.agent_limit - current_account.full_time_agents.count
+    current_account.subscription.agent_limit - current_account.full_time_agents.size
   end
   
   def available_passes
@@ -58,19 +58,30 @@ module AgentsHelper
      false
    end
  end
-
-  def can_reset_password?(agent)
-   agent.user.active? and can_edit?(agent)
-  end
   
   def agent_list_tabs
     state = params.fetch(:state, "active")
-    [:active, :occasional, :deleted].map{ |tab|  
-      content_tag :li, link_to(t("agent_list.tab.#{tab}"), "/agents/filter/#{tab}"), 
-        :class => "#{(state == tab.to_s) ? 'active' : '' }"
-    }
+    
+    [:active, :occasional, :deleted].map do |tab|  
+      content_tag(:li, :class => "#{(state == tab.to_s) ? 'active' : '' }") do
+        link_to(t("agent_list.tab.#{tab}") + agent_count(tab),
+          "/agents/filter/#{tab}") 
+      end
+    end
+    
   end
-
+  
+  def agent_count(state)
+    unless(:deleted.eql?(state))
+      scoper = :occasional.eql?(state) ? "occasional_agents" : "full_time_agents"
+      "<span class='agent-list-count'>" +
+        current_account.all_agents.send(scoper).size.to_s +
+      "</span>"
+    else
+      ""
+    end
+  end
+  
   def agent_list_sort
     sort_list = [:name, :last_login_at, :created_at].map{ |sort| 
       [t("agent_list.sort.#{sort}"), "?order=#{sort}", (@current_agent_order == sort)]
@@ -93,6 +104,12 @@ module AgentsHelper
   # Will set a cookie until the browser cache is cleared
   def set_cookie type, default_value
     cookies[type] = (params[type] ? params[type] : ( (!cookies[type].blank?) ? cookies[type] : default_value )).to_sym
+  end
+  
+  def last_login_tooltip(agent)
+    if agent.user.last_login_at
+      "class='tooltip' title='#{formated_date(agent.user.last_login_at)}'"
+    end
   end
 
 end

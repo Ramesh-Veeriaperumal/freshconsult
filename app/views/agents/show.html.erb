@@ -55,20 +55,18 @@ function setUserRole(){
 <%- end %> 
 <div class="contact-box clearfix">
 	  <% if privilege?(:manage_users) %>
-		<div id="reset_password_template" >
-			<%= render :partial=> "reset_password" %>
-		</div>
-		<div class="action_buttons hide">
-
-			<%= link_to t('assume_identity_button'), assume_identity_user_path(@agent.user) if is_allowed_to_assume?(@agent.user) %>
-			
-			<% if can_reset_password?(@agent) %>
-				<%= link_to_function t('reset_password_title'), "confirm_password()"%>
-			<%end%>
+		<div class="action_buttons hide">	
+      <%= link_to t('assume_identity_button'), assume_identity_user_path(@agent.user) if is_allowed_to_assume?(@agent.user) %>
       <% if can_edit?(@agent) %>
-			  <%= link_to t('agent.info4'), { :action => :convert_to_contact, :id => @agent.id } ,:method => 'put' %> 
-			  <%= link_to t('edit_agent'), edit_agent_path(@agent), :class => "last"  %>
-      <% end %>
+      		<div id="reset_password_template" >
+      			<%= render :partial=> "reset_password" %>
+      		</div>
+          <%= link_to t('edit_agent'), edit_agent_path(@agent), :class => "last" %>
+          <% if(@agent.user != current_user)%>
+            <%= link_to t('agent.info4'), { :action => :convert_to_contact, :id => @agent.id } ,:method => 'put' %>
+            <%= link_to_function t('reset_password_title'), "confirm_password()" if @agent.user.active? %>
+          <% end %>
+			  <%end%>
 		</div>
 	  <% end %>
 
@@ -87,7 +85,7 @@ function setUserRole(){
 		<% if ((@user.deleted || !@user.active?) && privilege?(:manage_users)) %>
 		<div class="info-highlight">
 			<%= content_tag(:div, "#{ t('agent_deleted_message') } #{ link_to( t('contacts.restore'), { :action => :restore, :id => @agent.id }, :method => :put ) }") if @user.deleted %>
-			<%= content_tag(:div, "#{ t('agent_emailnotverified') } #{ link_to( 'Send activation email', send_invite_activation_path(@user), :method => :put ) } " ) unless @user.active? %>
+			<%= content_tag(:div, "#{ t('agent_emailnotverified') } #{ link_to( 'Send activation email', send_invite_activation_path(@user), :method => :put ) } " ) if !@user.deleted && !@user.active? %>
 		</div>
 		<% end %>
 </div> 

@@ -18,8 +18,8 @@
 	</div>
 	<div id="AvatarInput" style="display:none;">
 		<% fields_for "user[avatar_attributes]", user.avatar do |avatar_form| %>	
-			<div class="info-data"><%=t('user.info1')%></div>				
-			<%= avatar_form.file_field :content %>				
+			<div class="info-data"><%=t('user.info1')%></div>
+			  <%= avatar_form.file_field :content, :size => 10 %>				
 		<% end %>
 	</div>
 	<div id="AvatarControls" class="avatar-controls">
@@ -35,6 +35,6 @@
 <% else %>		
 	<% fields_for "user[avatar_attributes]", user.avatar do |avatar_form| %>
 		<div class="info-data"><%=t('user.info1')%></div>
-		<%= avatar_form.file_field :content %>				
+		  <%= avatar_form.file_field :content, :size => 10 %>				
 	<% end %>
 <% end %>

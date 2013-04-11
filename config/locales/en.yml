@@ -1410,9 +1410,9 @@ en:
   show_me_how: Show me how
   agent_list:
     tab:
-      active: "Full time Agents"
-      occasional: "Occasional Agents"
-      deleted: "Deleted agents"
+      active: "Full-Time"
+      occasional: "Occasional"
+      deleted: "Deleted"
     sort:
       sorted_by: Sorted by
       name: "Name"
@@ -1562,6 +1562,8 @@ en:
   import_solution_article: Convert Article forum to solution
   close: Close
   agent: 
+    full_time_agent: Full-Time Agent
+    occasional_agent: Occasional Agent
     new: New Agent
     edit: Edit Agent
     showing: "Showing:"
@@ -1578,14 +1580,15 @@ en:
     trial: In trial version
     buy: Buy more
     available_seats: %{count} Agent seats available
+    available_seats_without_count: Agent seats available
     no_seats: No agent seats available
     last_logged_in: Last logged in %{time} ago.
     never_logged_in: Never logged in
     day_pass_used: Used %{count} day pass till date
     day_pass_available: %{count} Day pass available
     no_day_pass: No day pass available
-    assign_role: Assign
-    add_role: Add role
+    assign_role: Assign Role
+    assign: Assign
     role : Agent Role
     title: Agents
     info1: This is a deleted Agent
@@ -1607,7 +1610,7 @@ en:
     add_signature: Add signature
     update: Update
     permissions: Permissions
-    role_and_type: Roles and Type
+    role_and_scope: Roles and Scope
     roles: Roles
     roles_description: Associate a role to an agent, an agent can play multiple role.
     ticket_scope: Ticket Scope

@@ -4,24 +4,15 @@
    <!-- FIXME: need to change content -->
   <%= render :partial => "agents/helpnote_without_tour" %>
 <% end %>
-<% form_for @role, :url => admin_role_path(@role), :html => { :id => 'new_role' , :method => :put } do |role_form| %>
-	<ul class="admin-breadcrumb">
-	  <li class="non-arrow"><%= link_to t('header.tabs.admin'), admin_home_index_path %><span class="divider"></span></li>
-	  <li><%= link_to t('admin.home.index.role'), admin_roles_path %><span class="divider"></span></li>
-    <% unless @role.default_role? %>
-	    <li class="active "><%= t('admin.roles.edit') %></li>
-    <% else %>
-      <li class="active "><%= t('admin.roles.default_role') %></li>
-    <% end %>
-	  <li class="non-arrow pull-right">
-      <% unless @role.default_role? %>
-        <%= role_form.submit t('save'), :class => "btn btn-primary" %>
-      <% end %>
-	  </li>
-	  <li class="non-arrow pull-right">
-      <%= link_to t('cancel'), admin_roles_path, :class => "btn"%>
-	  </li>
-	</ul>
+<% form_for @role, :url => admin_role_path(@role), :html => { :id => 'new_role' , :method => :put, :rel => "validate" } do |role_form| %>
+  <h3 class="lead">
+        <%= @role.default_role? ? t('admin.roles.default_role') : t('admin.roles.edit') %>
+      <div class="pull-right">
+        <%= link_to t('cancel'), admin_roles_path, :class => "btn"%>
+        <%= role_form.submit t('save'), :class => "btn btn-primary" unless @role.default_role? %>
+      </div>
+  </h3>
+  
   <%= render :partial => 'form', :locals => { :role_form => role_form} %>
 <% end %>
 

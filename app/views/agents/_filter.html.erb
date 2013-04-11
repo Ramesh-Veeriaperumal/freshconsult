@@ -2,7 +2,7 @@
   <%= agent_list_tabs %>
 </ul>
 <div class="row-fluid">
-  <% if @agents && @agents.count > 1%>
+  <% if @agents && @agents.size > 1%>
     <div class="span4">
       <div class="dropdown">
          <%= t('agent_list.sort.sorted_by')%>: <a role="button" class="dropdown-toggle drop-right" id="sorting_dropdown" data-toggle="dropdown" href="#">

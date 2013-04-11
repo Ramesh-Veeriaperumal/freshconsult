@@ -168,6 +168,7 @@ javascripts:
     # - public/javascripts/pattern/bootstrap-collapse.js
     - public/javascripts/pattern/bootstrap-dropdown.js
     - public/javascripts/pattern/bootstrap-modal.js
+    - public/javascripts/pattern/bootstrap-dialog.js
     # - public/javascripts/pattern/bootstrap-scrollspy.js
     - public/javascripts/pattern/bootstrap-transition.js
     - public/javascripts/pattern/bootstrap-tab.js

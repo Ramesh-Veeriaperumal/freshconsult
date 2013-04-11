@@ -46,6 +46,8 @@ class Agent < ActiveRecord::Base
   ]
  
   named_scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
+  named_scope :full_time_agents, :conditions => { :occasional => false, 'users.deleted' => false}
+  named_scope :occasional_agents, :conditions => { :occasional => true, 'users.deleted' => false}
   
   PERMISSION_TOKENS_BY_KEY = Hash[*TICKET_PERMISSION.map { |i| [i[1], i[0]] }.flatten]
   PERMISSION_KEYS_BY_TOKEN = Hash[*TICKET_PERMISSION.map { |i| [i[0], i[1]] }.flatten]
@@ -97,7 +99,11 @@ def self.filter(state = "active", order = "name", order_type = "ASC", page = 1, 
 end
 
 def self.filter_condition(state)
-  return ["users.deleted = ? and agents.occasional =?", "deleted".eql?(state), "occasional".eql?(state)]
+  unless "deleted".eql?(state)
+    return ["users.deleted = ? and agents.occasional = ?", false, "occasional".eql?(state)]
+  else
+    return ["users.deleted = ?", true]
+  end
 end
 
 def assumable_agents

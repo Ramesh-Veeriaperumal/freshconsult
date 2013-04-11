@@ -43,7 +43,7 @@
 						  <div class="span1">
 						    <%= radio_button 'agent', 'occasional', 'false', :checked => !agents_exceeded?(@agent), :disabled => full_time_disabled?(@agent) %> 
 						  </div>
-						  <div class="span11">
+						  <div class="span11 <%= 'muted' if @agent.new_record? && !agents_available? %>">
 							  <strong><%= t('agent.full_time') %></strong>
                 <% if !@current_account.subscription.trial? && (@agent.new_record? || @agent.occasional?) %>
                   <br /> <%= agents_available? ? t('agent.available_seats', :count => available_agents ) : t('agent.no_seats') %>
@@ -64,81 +64,84 @@
         <%= hidden_field(:user, :helpdesk_agent, :id=> "helpdesk_agent", :value => true ) %>
         <li class="seperator"></li>
      			<li class="row-fluid">
-     				<p class="lead">
+     				<h5 class="lead">
      					 <%= t('agent_info_title') %>
-					  </p>
+					  </h5>
      			 </li>
      			<li class="row-fluid">
 					  <%= label(:user, :name, t('user.full_name'), :class => "control-label span2" ) %>
 					  <div class="span10">
-						  <%= text_field(:user, :name, :class => "text required span10", :value => @agent.user.name, 
-                  :placeholder => t('user.name'))  %>
+						  <%= text_field(:user, :name, :class => "text required span10", 
+                    :value => @agent.user.name, :placeholder => t('user.name'))  %>
 					  </div>
 				  </li>	
   				<li class="row-fluid">
   					<%= label(:user, :email, t('user.email'), :class => "control-label span2" ) %>
   					<div class="span10">
-  						<%= text_field(:user, :email, :class => "text required email span8", :id => "email_primary" , :value => @agent.user.email, :placeholder => t('user.email')) %>
+  						<%= text_field(:user, :email, :class => "text required email span8", 
+                    :value => @agent.user.email, :placeholder => t('user.email')) %>
   					</div>
   				</li>	
   				<li class="row-fluid">
   					<%= label(:user, :job_title, t('user.title'), :class => "control-label span2" ) %>
   					<div class="span10">
-  						<%= text_field(:user, :job_title, :class => "text span8", :value => @agent.user.job_title, :placeholder => t('user.title')) %>
+  						<%= text_field(:user, :job_title, :class => "text span8", 
+                  :value => @agent.user.job_title, :placeholder => t('user.title')) %>
   					</div>
   				</li>
   				<li class="row-fluid">
   					<%= label(:user, :phone, "#{t('user.phone_no')}.", :class => "control-label span2" ) %>
   				  <div class="span10">
-  					 <%= text_field(:user, :phone, :class => "text span7", :id => "phone_work", :value => @agent.user.phone,
-                 :placeholder => t('user.work') ) %> 
+  					 <%= text_field(:user, :phone, :class => "text span7", 
+                 :value => @agent.user.phone, :placeholder => t('user.work') ) %> 
             </div>
   				</li>
   				<li class="row-fluid">
   					<div class="span10 offset2">
-  						<%= text_field(:user, :mobile, :class => "text span7", :id => "phone_mobile" ,:value => @agent.user.mobile,
-                  :placeholder => t('user.mobile')) %>
+  						<%= text_field(:user, :mobile, :class => "text span7", 
+                    :value => @agent.user.mobile, :placeholder => t('user.mobile')) %>
   					</div>
   				</li>
     			<% if gamification_feature?(current_account) %>
     				<li class="row-fluid">
-    					<%= label(:agent , :scoreboard_level_id, t('level_label'), :class => "span2")%>
-    					<div class="span10">
+    					<%= label(:agent , :scoreboard_level_id, t('level_label'), :class => "control-label span2")%>
+    					<div class="span10 margin-bottom">
     						<%= select(:agent, :scoreboard_level_id, 
-    							options_from_collection_for_select(@scoreboard_levels, "id", "name", @agent.level ? @agent.level.id : "-1") ,{:class => "select2"}) %>
+    							options_from_collection_for_select(@scoreboard_levels, "id", "name", @agent.level ? @agent.level.id : "-1") ,{},{:class => "select2"}) %>
     					</div>
     				</li>
     			<% end %>
     			<% if feature?(:multi_timezone) %>
     				<li class="row-fluid">
-    					<%= label(:user , :time_zone, t('account.time_zone'), :class => "span2") %>			
-    					<div class="span10">
-    						<%= time_zone_select (:user, :time_zone, ActiveSupport::TimeZone.all, :default => @agent.user.time_zone) %>
+    					<%= label(:user , :time_zone, t('account.time_zone'), :class => "control-label span2") %>			
+    					<div class="span10  margin-bottom">
+                <%= time_zone_select(:user, :time_zone, ActiveSupport::TimeZone.all, {:default => @agent.user.time_zone}, {:class => "select2"}) %>
     					</div>
     				</li>
     			<% end %>
   		    <% if feature?(:multi_language) %>
   					<li class="row-fluid">
-  						<%= label(:user, :language, t('account.language'), :class => "span2") %>
-  						<div class="span10">
+  						<%= label(:user, :language, t('account.language'), :class => "control-label span2") %>
+  						<div class="span10  margin-bottom">
   							<%= select(:user, :language, I18n.available_locales_with_name , {:selected => @agent.user.language.to_sym()}, {:class => "span7 select2"})%>
   						</div>
   					</li>
   	     	<% end %>
   				<li class="row-fluid">
   					<div class="span2">
-  						<%= label(:agent, :signature_html, t('agent.signature')) %>
+  						<%= label(:agent, :signature_html, t('agent.signature'), :class => "control-label span2") %>
   					</div>
   					<div class="span10">
   					  <%= text_area(:agent, :signature_html , :class => "text span11", :cols => "40", :rows => "5", :id => "user_binfo" ) %>			
   					  <%= hidden_field(:agent, :user_id, :id => "user_id" ) %>
   					</div>
   				</li>
+          <% if(@agent.user != current_user) %>
   				<li class="seperator"></li>
   				<li class="row-fluid">
-  					<p class="lead">
-  						<%=t('agent.role_and_type')%>
-  					</p>
+  					<h5 class="lead">
+  						<%=t('agent.role_and_scope')%>
+            </h5>
   				</li>
           <li class="row-fluid" id="agent_ticket_permission">
             <label class="span2"><%=t('agent.ticket_scope')%></label>
@@ -147,22 +150,25 @@
                 <label class="radio">
                   <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets] ,{:checked => true ,:id=>"agent_all_tickets", :class=>"radio"}) %> 
                   <%=t('agent.global')%>
+                  <%= content_tag( :span, t('agent.global_info'), :class => "muted info_data" ) %> 	
                 </label>
-                <%= content_tag( :span, t('agent.global_info'), :class => "muted info_data" ) %> 				              
+                			              
               </li>
               <li>
                 <label class="radio">              
                  <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets] ,{:id=>"agent_group_tickets", :class => "radio"}) %> 
                  <%=t('agent.group')%>
+                  <%= content_tag( :span, t('agent.group_info'), :class => "muted info_data" ) %>
                </label>
-               <%= content_tag( :span, t('agent.group_info'), :class => "muted info_data" ) %>
+              
               </li>
               <li>
                 <label class="radio">              
                  <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] ,{:id=>"agent_assigned_tickets", :class => "radio"}) %> 
                  <%=t('agent.individual')%>
+                  <%= content_tag( :span, t('agent.individual_info'), :class => "muted info_data" ) %>
                </label>
-               <%= content_tag( :span, t('agent.individual_info'), :class => "muted info_data" ) %>
+              
               </li>
             </ul>
           </li>
@@ -173,49 +179,31 @@
                 data-selector="#selected-roles ul li" />
   						<ul class="unstyled">
                 <% @agent.user.roles.each do |role| %>
-          				<li id = <%= "#{role.id}" %> >
-        							<div class="icon_remove tooltip" title="Remove role" id = <%= "#{role.id}" %>>
-        								<span></span>
-        							</div>
-        							<b><%= label( :agent, :ticket_permission, role.name) %></b>
-        							<%= content_tag( :span, role.description, :class => "muted info_data" ) %>
+          				<li id = <%= "#{role.id}" %> 
+                        <%= label( :agent, :ticket_permission, 
+                        "<div class='icon_remove tooltip' title='Remove role' id = '#{role.id}'><span></span>
+        							   </div><b>#{role.name}</b><span class='muted info_data ellipsis'>#{role.description}</span>") %>
                       <input type='hidden' name='user[role_ids][]' value= <%= "#{role.id}" %> />
           				</li>
                 <% end %>				 			
   						</ul>
               <div>
-                <a class="btn" id="add-role" data-controls-modal="agent-role-modal" data-backdrop="static">
-                  <b> <%= t('agent.add_role')%> </b>
+                <a href="#agent-role-container" rel="freshdialog" data-width="400px" class="btn" id="add-role"
+                   title="<%= t('agent.roles') %>" data-submit-label="<%= t('agent.assign') %>"
+                   data-close-on-submit="true">
+                  <b> <%= t('agent.assign_role')%> </b>
                 </a>
               </div>
   					</div>
   				</li>
      		</ul>
      	</div>
-     	<!-- Modal -->
-			<div id="agent-role-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h3 class="title"><%=t('agent.roles')%></h3>
-					<p><%=t('agent.roles_description')%></p><br/>
-				</div>
-				<div class="modal-body">
-					<ul class="unstyled">
-						 <div id="agent_role">
-			          <ul>
-			          </ul>
-				     </div>			
-					</ul>
-				</div>
-				<div class="modal-footer">
-          <button class="btn close" data-dismiss="modal" aria-hidden="true"><%= t('cancel') %></button>
-					<button class="btn btn-primary close" data-dismiss="modal" id="save-roles"><%= t('agent.assign_role') %></button>
-				</div>			
-			</div>
     </div>	 	
+    <% end %>
 <% end %>
+
 <% javascript_tag do %>
-  (function($) {  
+  (function($) { 
     var roles = {};
     var role_details = {};
     $(document).ready(function() {
@@ -232,19 +220,23 @@
       roles[this.id] = false;
     });
     
+    $('#agent_role ul li input').live("click", function(){
+      jQuery(this).parents("li").toggleClass("selected_to_yellow", this.checked);
+    });
+    
     $('#add-role').click(function(){
       $("#agent_role ul").children().remove();
       for(var key in roles){
         if(!roles[key]){
-          $("#agent_role ul").append("<li id='" + key + "'><label class='checkbox' for='agent_ticket_permission'><input id= '" + key + "' multiple='multiple' name='roles[]' type='checkbox' value='" +  key + "'>" + role_details[key][0] + "<p class='muted'>" + role_details[key][1] + "</p></label></li>");
+          $("#agent_role ul").append("<li id='" + key + "'><label class='check_box checkbox'><input id= '" + key + "' multiple='multiple' name='roles[]' type='checkbox' value='" +  key + "'><b>" + role_details[key][0] + "</b><p class='muted ellipsis'>" + role_details[key][1] + "</p></label></li>");
         }
       }
     });
-    
-    $('#save-roles').click(function(){
+        
+    $('#agent-role-container-submit').live("click", function(){
       $('#agent_role input:checked').each(function(){
         roles[this.id] = true;
-        $("#selected-roles ul").append("<li id='" + this.id + "'><div class='icon_remove tooltip' title='Remove role' id='" + this.id +"'><span></span></div><label for='agent_ticket_permission'><b>" + role_details[this.id][0] + "</b></label><span class='muted info_data'>" + role_details[this.id][1] + "</span><input type='hidden' name='user[role_ids][]' value='"+ this.id +"' /></li>");
+        $("#selected-roles ul").append("<li id='" + this.id + "'><div class='icon_remove tooltip' title='Remove role' id='" + this.id +"'><span></span></div><label for='agent_ticket_permission'><b>" + role_details[this.id][0] + "</b><span class='muted info_data ellipsis'>" + role_details[this.id][1] + "</span></label><input type='hidden' name='user[role_ids][]' value='"+ this.id +"' /></li>");
       });
       
       $('#agent_role input:unchecked').each(function(){
@@ -253,11 +245,7 @@
       
       jQuery("#agent_form").valid();
     });    
-    
-    $('#agent-role-modal').modal({
-      keyboard: true
-    });
-    
+        
     $('#agent_form').submit(function(ev) {
 
       if(!$("#selected-roles ul li").length > 0)
@@ -273,9 +261,11 @@
   
 <% end %>
 
-<style>
-  .modal {
-    width:500px;
-  }
-</style>
+<!-- Agent role modal -->
+<div id="agent-role-container" class="hide">
+		<p class="margin-bottom"><%=t('agent.roles_description')%></p>
 
+    <div id="agent_role" class="agent-role-modal">
+      <ul class="unstyled"></ul>
+	  </div>
+</div>

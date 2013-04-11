@@ -9,6 +9,12 @@ body{
   line-height: 30px;
   text-transform: capitalize;
 }
+h5{
+  &.lead{
+    font-size:18px;
+    line-height:20px;
+  }
+}
 .lead-sub{
   line-height: 15px;
   font-size: 20px;
@@ -25,6 +31,10 @@ strong {
 .top-space-none{
   margin-top:0;
   padding-top:0;
+}
+/* fix for form label center alignment*/
+.control-label{
+  padding-top: 5px;
 }
 
 .muted {
@@ -45,6 +55,9 @@ strong {
     background: none;
     color: inherit;
   }
+}
+.tooltip{
+  cursor:pointer;
 }
 .table th, .table td {
       padding: 12px;
