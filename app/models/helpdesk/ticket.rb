@@ -1263,6 +1263,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       elsif self.product
         self.email_config = self.product.primary_email_config
       end
+      self.group_id ||= email_config.group_id unless email_config.nil?
     end
 
     def assign_email_config
