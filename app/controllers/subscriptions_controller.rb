@@ -66,10 +66,9 @@ class SubscriptionsController < ApplicationController
   end
 
   def calculate_amount
-    @subscription.renewal_period = @subscription.billing_cycle = params[:billing_cycle].to_i
+    @subscription.billing_cycle = params[:billing_cycle].to_i
     @subscription.plan = @subscription_plan
     @subscription.agent_limit = params[:agent_limit]
-    @subscription.free_agents = @subscription_plan.free_agents
     
     render :partial => "calculate_amount", :locals => { :amount => @subscription.total_amount }
   end
@@ -81,7 +80,6 @@ class SubscriptionsController < ApplicationController
       @subscription.billing_cycle = params[:billing_cycle].to_i
       @subscription.plan = @subscription_plan
       @subscription.agent_limit = params[:agent_limit]
-      @subscription.free_agents = @subscription_plan.free_agents
       
       response = billing_subscription.update_subscription(@subscription, !no_prorate?)
       
@@ -126,7 +124,7 @@ class SubscriptionsController < ApplicationController
     def load_plans
       plans = SubscriptionPlan.current
       plans << @subscription.subscription_plan if @subscription.subscription_plan.classic?
-      @plans = plans.collect {|p| p.discount = @discount; p }
+      @plans = plans
     end
 
     def admin_selected_tab

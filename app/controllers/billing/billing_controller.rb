@@ -12,7 +12,7 @@ class Billing::BillingController < ApplicationController
   
   EVENTS = [ "subscription_changed", "subscription_activated", "subscription_renewed", 
               "subscription_cancelled", "subscription_reactivated", "card_added", 
-              "card_updated", "payment_succeeded" ]          
+              "card_updated", "payment_succeeded", "payment_refunded" ]          
 
   INVOICE_TYPES = { :recurring => "0", :non_recurring => "1" }
 

@@ -1,5 +1,8 @@
 class Billing::Subscription
 
+  CUSTOMER_INFO   = { :first_name => :admin_first_name, :last_name => :admin_last_name, 
+                      :email => :admin_email, :company => :name }
+
   CREDITCARD_INFO = { :number => :number, :expiry_month => :month, :expiry_year => :year }   
 
   ADDRESS_INFO    = { :first_name => :first_name, :last_name => :last_name, :billing_addr1 => :address1, 
@@ -10,10 +13,7 @@ class Billing::Subscription
 
   TRIAL_END = "0"
 
-  VALID_CARD = "valid"
-
-  PLANS = [ :basic, :pro, :premium, :sprout_classic, :blossom_classic, :garden_classic, :estate_classic, 
-            :sprout, :blossom, :garden, :estate ]
+  PLANS = SubscriptionPlan.find(:all).map { |plan| plan.canon_name }
 
   BILLING_PERIOD  = { 1 => "monthly", 3 => "quarterly", 6 => "half_yearly", 12 => "annual" }
 
@@ -43,9 +43,15 @@ class Billing::Subscription
 
   #instance methods
   def create_subscription(account)
-    data = account_info(account).merge(subscription_info(account.subscription))
+    data = account_info(account).merge(subscription_data(account.subscription))
     
-    ChargeBee::Subscription.create(data)
+    begin
+      ChargeBee::Subscription.create(data)
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e)
+      FreshdeskErrorsMailer.deliver_error_email(nil, nil, e,
+        { :subject => "Error creating account in ChargeBee. Account Id - #{account.id}" })
+    end
   end
 
   def calculate_estimate(subscription)
@@ -99,12 +105,7 @@ class Billing::Subscription
     end
     
     def customer_data(account)
-      {
-        :first_name => account.admin_first_name,
-        :last_name => account.admin_last_name,
-        :email =>  %(vijayaraj+#{account.id}@freshdesk.com), # account.admin_email,
-        :company => account.name
-      }
+      CUSTOMER_INFO.inject({}) { |h, (k, v)| h[k] = account.send(v); h }
     end
     
     def subscription_data(subscription)
@@ -116,10 +117,6 @@ class Billing::Subscription
 
     def plan_code(subscription)
       %{#{subscription.subscription_plan.canon_name.to_s}_#{BILLING_PERIOD[subscription.renewal_period]}}
-    end
-
-    def has_valid_card?(account)
-      ChargeBee::Subscription.retrieve(account.id).customer.card_status.eql?(VALID_CARD)
     end
 
     def card_info(card)

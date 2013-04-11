@@ -43,10 +43,10 @@ class Subscription < ActiveRecord::Base
   # renewal_period is the number of months to bill at a time
   # default is 1
   validates_numericality_of :renewal_period, :only_integer => true, :greater_than => 0
-  validates_numericality_of :amount, :greater_than_or_equal_to => 0
+  # validates_numericality_of :amount, :greater_than_or_equal_to => 0
   # validate_on_create :card_storage
   validates_inclusion_of :state, :in => SUBSCRIPTION_TYPES
-  validates_numericality_of :amount, :if => :free?, :equal_to => 0.00, :message => I18n.t('not_eligible_for_free_plan')
+  # validates_numericality_of :amount, :if => :free?, :equal_to => 0.00, :message => I18n.t('not_eligible_for_free_plan')
   validates_numericality_of :agent_limit, :if => :free?, :less_than_or_equal_to => AGENTS_FOR_FREE_PLAN, :message => I18n.t('not_eligible_for_free_plan')
 
   def self.customer_count

@@ -837,7 +837,7 @@ class Account < ActiveRecord::Base
   private 
 
     def add_to_billing
-      Resque.enqueue(Billing::AddToBilling::CreateSubscription, id)
+      Resque.enqueue(Billing::AddToBilling, { :account_id => id })
     end
 
     def update_billing
