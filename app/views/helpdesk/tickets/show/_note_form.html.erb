@@ -23,7 +23,7 @@
         <div class="email_container">
           <%= select_tag "helpdesk_note[to_emails]", 
                           options_for_select(current_account.agents.map { |agent| "#{agent.user.name} <#{agent.user.email}>" }, 
-                              [( @ticket.responder_id and @ticket.responder_id != current_user.id ? 
+                              [( (@ticket.responder_id and @ticket.responder_id != current_user.id and ticket.responder.present?) ? 
                                       "#{@ticket.responder.name} <#{@ticket.responder.email}>" : nil ) ]), 
                           :multiple => true, :class => 'select2', "data-placeholder" => 'Select agents to notify' %>
         </div>
