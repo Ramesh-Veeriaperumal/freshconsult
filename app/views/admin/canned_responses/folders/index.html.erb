@@ -1,9 +1,10 @@
-<% content_for :sidebar do -%>
-<%= render :partial => 'helpnote' %>
-<%- end %>
+<% content_for :sidebar do -%><%= render :partial => 'helpnote' %><%- end %>
+<%= include_stylesheets :pattern %>
+
 <div class="floatr" pjax-container>
-	<%= link_to t('canned_folders.new_response'), new_admin_canned_responses_folder_response_path(@ca_res_folder), :id => "new_resp", 
-	:class => "uiButton"  %>
+	<%= link_to t('canned_folders.new_response'), 
+			new_admin_canned_responses_folder_response_path(@ca_res_folder), 
+			:id => "new_resp", :class => "uiButton"  %>
 </div>
 <div id="can-res-full">
 <h3 class="title"><%= t('canned_folders.responses') %></h3>
@@ -25,7 +26,7 @@
 		<% end %>
 	</div>
 </div>
-	<div id="can-menu" class="fd-ajaxmenu">
+<div id="can-menu" class="fd-ajaxmenu">
 	<% @ca_res_folders.each do |folds| %>
 	<a id="folder<%= folds.id %>" href= "<%= admin_canned_responses_folders_path %>/<%= folds.id %>" data-folder="<%= folds.id %>" data-pjax="#responses"
 		data-name="<%= folds.name %>"
@@ -53,7 +54,7 @@
 	:onclick => "return confirm(t('canned_folders.delete_canned_response'))" %>
 	<button id="move" class="button", disabled="disabled"><%= t('canned_folders.move') %></button>
 </div>
-<div id ="responses" class="table-grid load"><%= render :partial => 'show' %></div></div>
+<div id="responses" class="load"><%= render :partial => 'show' %></div></div>
 <div id="moves" class="hide">
 	<%= render :partial => 'move', :locals => {:f => f} %>
 </div>

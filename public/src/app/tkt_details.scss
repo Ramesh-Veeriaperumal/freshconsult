@@ -1,11 +1,7 @@
 @import "lib/settings";
 @import "lib/animations";
-/*Requester Info Tabs in Ticket Details page */
-@import "requester-info/*.png";
-@import "conv-actions/*.png";
 
-$tktdetailicon: sprite-map("ticket-details/*.png");
-$collision: sprite-map("collision/*.png");
+/*Requester Info Tabs in Ticket Details page */
 $message_window_bg_color: #FDFDFD;
 
 .ticket_details .pagearea{
@@ -111,7 +107,7 @@ p strong{
 	width: 10px;
 	margin-right: 10px;
 	display: inline-block;
-	@include corners(2px);
+	@include border-radius(2px);
 
 	&.priority_color_1 {
 		background-color: $COL_PRI_LOW;
@@ -173,7 +169,7 @@ p strong{
 					color: #FFF;
 					@include text-shadow(none);
 					background: #555;
-					@include corners(5px);
+					@include border-radius(5px);
 					display: inline-block;
 					padding: 0 10px;
 					margin: 0 10px 0 0;
@@ -218,14 +214,6 @@ p strong{
 				margin-bottom:  -4px;
 			}
 
-			.monitor {
-				background: sprite($symbol, tkt-not-monitoring);
-			}
-			.monitor_active {
-				background: sprite($symbol, tkt-monitoring);					
-			}
-
-
 			.source-badge-wrap{
 				position: absolute;
 				left: -30px;
@@ -248,13 +236,9 @@ p strong{
 					width: 46px;
 					height: 46px;
 
-					&.collision_refresh {
-						background: sprite($symbol, collision_refresh);
+					&.collision_refresh {						
 						cursor: pointer;
-
-						span {
-							display: none;
-						}
+						span{ display: none; }
 					}
 
 					background-color: $COL_RESOLVED_CLOSED;		//Fallback
@@ -282,43 +266,7 @@ p strong{
 						display:inline-block;
 						width: 46px;
 						height: 46px;
-
-						&.source_1 {
-							// Email
-							background: sprite($symbol, source-badge-email);
-						}
-						&.source_2 {
-							// Portal
-							background: sprite($symbol, source-badge-portal);
-						}
-						&.source_3 {
-							// Phone
-							background: sprite($symbol, source-badge-phone);
-						}
-						&.source_4 {
-							// Forum
-							background: sprite($symbol, source-badge-forum);
-						}
-						&.source_5 {
-							// Twitter
-							background: sprite($symbol, source-badge-twitter);
-						}
-						&.source_6 {
-							// Facebook
-							background: sprite($symbol, source-badge-facebook);
-						}
-						&.source_7 {
-							// Chat
-							background: sprite($symbol, source-badge-chat);
-						}
-						&.source_8 {
-							// Mobihelp
-							background: sprite($symbol, source-badge-mobihelp);
-						}
-
 					}
-
-
 				}
 			}
 		}
@@ -370,31 +318,14 @@ p strong{
 		cursor: pointer;
 	}
 
-	
-	.note-visible i {
-		background:sprite($symbol, note-visible);
-	}
-	.note-hidden i {
-		background:sprite($symbol, note-hidden);
-	}
-
-	.note-visible {
-		display: none;
-	}
+	.note-visible { display: none; }
 
 	&.visible {
-		.note-visible{
-			display:block;
-		}
-
-		.note-hidden {
-			display: none;
-		}
+		.note-visible{ display:block; }
+		.note-hidden{ display: none; }
 	}
 
-	input[type=checkbox] {
-		display: none;
-	}
+	input[type=checkbox]{ display: none; }
 }
 
 .ticket-actions{
@@ -420,38 +351,29 @@ p strong{
 		@include box-shadow(0px 0px 1px #fff);
 	}
 	.menu-dropdown, .dropdown-menu { 
-	float: left;
-	position: absolute;
-	top: 30px;
-	left: 0;
-	z-index: 900;
-	margin: 2px 0 0;
-	padding: 5px 0;
-	border: 1px solid rgba(0, 0, 0, 0.2);
-	-webkit-border-radius: 6px;
-	-moz-border-radius: 0 0 6px 6px;
-	border-radius: 6px;
-	-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-	-moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+		float: left;
+		position: absolute;
+		top: 30px;
+		left: 0;
+		z-index: 900;
+		margin: 2px 0 0;
+		padding: 5px 0;
+		border: 1px solid rgba(0, 0, 0, 0.2);
+		-webkit-border-radius: 6px;
+		-moz-border-radius: 0 0 6px 6px;
+		border-radius: 6px;
+		-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+		-moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+		box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 	}
 
 	.ticket-btns{
 		float: left;
 		margin-right: 6px;
 
-		#spamicon img {
-			display: none; 
-		}
-
-		& > .btn {
-			margin-right: 0;
-		}
-
-		.btn {
-			padding: 4px 12px;
-		}
-
+		#spamicon img{ display: none; }
+		& > .btn { margin-right: 0; }
+		.btn { padding: 4px 12px; }
 	}
 
 	.ticket-btn{
@@ -476,10 +398,7 @@ p strong{
         }
 	}
 
-	.forward{
-		padding: 10px 0px 10px 25px;
-		background: sprite($tktdetailicon,forward-icon) no-repeat;
-	}
+	.forward{ padding: 10px 0 10px 25px; }
 
 	.reply .down-arrow{
 		position: relative;
@@ -498,24 +417,12 @@ p strong{
 		width: 18px;
 		height: 15px;
 		margin: -5px 4px -2px 0
-	}
-
-	.reply-inner{
-		background: sprite($tktdetailicon,reply-icon) no-repeat;
-	}
-	.forward-inner{
-		background: sprite($tktdetailicon,forward-icon) no-repeat;
-	}
-	.note-inner{
-		background: sprite($tktdetailicon,note-icon) no-repeat;
-	}
+	}	
 }
 
 .content-wrapper{
 	width: 100%;
 	display: block;
-
-
 }
 
 .pseudo_reply {
@@ -527,9 +434,7 @@ p strong{
 	border-radius: 5px;
 	@include box-shadow( inset 0 1px 3px rgba(0,0,0,.1));
 	border: 1px solid #ccc;
-	a {
-		margin: 10px;
-	}
+	a{ margin: 10px; }
 }
 
 
@@ -669,10 +574,8 @@ p strong{
     		padding: 1px 7px 0;
     	}
 
-    	&.saving {
-    		.sav {
-    			@include corners(4px);
-    		}
+    	&.saving { 
+    		.sav { @include border-radius(4px); }
     	}
 
     	.close-img {
@@ -689,26 +592,22 @@ p strong{
 	display: inline-block;
 	height: 14px;
 	width: 16px;
-	margin: 0 5px;
-	background:sprite($symbol, open_in_new) no-repeat transparent;
+	margin: 0 5px;	
 }
-.search_text_box{
-	
+.search_text_box{	
 	input {
-		@include corners(5px);
+		@include border-radius(5px);
 		padding: 5px 20px 5px 10px;
 		border: solid 1px #CCC;
 		@include box-shadow(rgba(0,0,0,0.1) 0px 0px 5px inset);
 	}
-
 	.btn {
 		display: block;
 		height: 15px;
 		width: 15px;
 		position: absolute;
 		top: 3px;
-		right: 2px;
-		background:sprite($symbol, search) no-repeat transparent;
+		right: 2px;		
 	}
 }
 
@@ -785,18 +684,15 @@ p strong{
     	}
     }
 
-	.comment-lock{
-		background: sprite($tktdetailicon,lock) no-repeat;
+	.comment-lock{		
 		display: inline-block;
 		z-index: 100;
 		width: 12px;
 		height: 16px;
-
 		vertical-align: top;
-
 	}
 
-    .form_title {
+    .form_title{
     	font-weight: 300;
 		font-size: 1.4em;
 		text-overflow: ellipsis;
@@ -811,7 +707,7 @@ p strong{
 
     .ui-form {
     	border: solid 1px #CCC;
-		@include corners(5px);
+		@include border-radius(5px);
 		margin: 10px 0 0;
 		background: #fdfdfd;
     }
@@ -1120,8 +1016,7 @@ p strong{
 				width: 300px;
 				label {
 					width: auto;
-					margin: 8px 5px 0;
-					background: sprite($tktdetailicon, dropbox) no-repeat;
+					margin: 8px 5px 0;					
 					padding:0 0 0 25px;
 					cursor: pointer;
 					color: #1272de;
@@ -1176,7 +1071,7 @@ p strong{
     	padding: 5px;
     	margin: 0 0 20px;
     	background: transparent;
-    	@include corners(5px);
+    	@include border-radius(5px);
 
     }
 
@@ -1249,8 +1144,6 @@ p strong{
 		margin: -9px -10px 0 0;
 	}
 
-
-	@include all-conv-actions-sprites;
 	a.conv-action-icon {
 		height:32px;
 		width: 50px;
@@ -1297,9 +1190,7 @@ p strong{
 		text-align: left;
 		padding: 0px;
 		line-height: 130%;
-		a {
-			font-weight:bold;
-		}
+		a{ font-weight:bold; }
 
 		.ticket-details-twitter {
 			width: 200px;
@@ -1307,8 +1198,7 @@ p strong{
 			margin: 0 10px;
 			text-align: right;
 
-			.twitter-logo {
-				background: sprite($tktdetailicon,twitter) no-repeat;
+			.twitter-logo{				
 				display: inline-block;
 				width: 17px;
 				height: 16px;
@@ -1317,9 +1207,7 @@ p strong{
 				top: 3px;
 			}
 
-			a {
-				font-weight: normal;
-			}
+			a{ font-weight: normal; }
 		}
 	}
 
@@ -1336,7 +1224,7 @@ p strong{
 		@include text-shadow(-1px 0 0 rgba(0,0,0,0.28));
 		max-width: 150px;
 		display: block;
-		@include corners(5px);
+		@include border-radius(5px);
 		font-size: 12px;
 		padding: 3px 15px 5px;
 		font-weight: bold;
@@ -1690,8 +1578,7 @@ p strong{
 
 		span{
 			font-size: 13px;
-			color: #777;
-			background: sprite($tktdetailicon,jira-icon) no-repeat;
+			color: #777;			
 			padding: 12px 12px 12px 38px;
 			display: block;
 		}
@@ -2069,8 +1956,6 @@ p strong{
 					position: relative;
 					z-index: 200;
 				}
-				@include all-requester-info-sprites;
-
 
 				li:hover{
 					opacity: 0.7;
@@ -2259,8 +2144,7 @@ p strong{
 		display: inline-block;
 	}
 
-	.attachment-close{
-		background: sprite($tktdetailicon,attachment-close) no-repeat;
+	.attachment-close{		
 		display: inline-block;
 		width: 9px;
 		height: 9px;
@@ -2510,9 +2394,7 @@ p strong{
 		margin-top: 10px;
 		float: left;
 		width: 78%;
-
 		.addnew{
-			background: sprite($tktdetailicon,addnew-btn) no-repeat;
 			padding: 2px 0px;
 			margin-left: 10px;
 			padding-left: 25px;
@@ -2709,20 +2591,6 @@ p strong{
 		}
 	}
 }
-.reply-flip .flip-front {
-	background: sprite($collision, show-reply-inactive);
-}
-
-.view-flip .flip-front {
-	background: sprite($collision, show-viewing-inactive);
-}
-.reply-flip.active .flip-front {
-	background: sprite($collision, show-reply-active);
-}
-
-.view-flip.active .flip-front {
-	background: sprite($collision, show-viewing-active);
-}
 
 $collision_animation_duration: 4s;
 $collision_delay: 1s;
@@ -2776,7 +2644,7 @@ $collision_delay: 1s;
 	margin: 0 0 20px;
 	padding: 5px 0;
 	border: solid 1px #DEDEDE;
-	@include corners(5px);
+	@include border-radius(5px);
 	text-align: center;
 
 	a.switch {
