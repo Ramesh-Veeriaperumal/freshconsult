@@ -160,8 +160,8 @@
             </span>            
             <input type="hidden" name="status_id" value="${status_id}" />
             <input type="checkbox" name="deleted" {{if deleted}}checked="checked"{{/if}} class="hide" />
-            <span class="dropchoice"><input type="text" rel="status-companion" name="name" value="${name}" {{if (status_id == 2 || status_id == 3 || status_id == 4 || status_id == 5) }} disabled="disabled" {{/if}} /></span>
-            <span class="dropchoice"><input type="text" name="customer_display_name" value="${customer_display_name}" /></span>
+            <span class="dropchoice"><input type="text" maxlength="40" class="required"rel="status-companion"  name="agent_display_name_${status_id}" value="${name}" {{if (status_id == 2 || status_id == 3 || status_id == 4 || status_id == 5) }} disabled="disabled" {{/if}} /></span>
+            <span class="dropchoice"><input type="text" maxlength="40" class="required" name="customer_display_name_${status_id}" value="${customer_display_name}" /></span>
             {{if (status_id != 2 && status_id != 4 && status_id != 5) }}
             <input rel="toggle" type="checkbox" name="stop_sla_timer" data-inverted=true {{if stop_sla_timer}}checked="checked"{{/if}} value=true />
             {{/if}}

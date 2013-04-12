@@ -86,11 +86,11 @@
 
       $("input[rel=status-companion]")
         .live({ 
-          "keyup": function(ev){            
-            if($(this).data("companionEmpty")) $(this).parent().parent().find("input[name=customer_display_name]").val(this.value);
+          "keyup": function(ev){
+            if($(this).data("companionEmpty")) $(this).parent().parent().find("input[name*=customer_display_name]").val(this.value);
           }, 
           "focus": function(ev){
-            _entity = $(this).parent().parent().find("input[name=customer_display_name]");
+            _entity = $(this).parent().parent().find("input[name*=customer_display_name]");
             $(this).data("companionEmpty", (_entity && _entity.val().strip() === ""));
           }
       });
@@ -366,7 +366,9 @@
 
       function addStatusinDialog(_data){
         _template = $("#statusTemplate").template();
-        _data = _data || [{ status_id : 0, name : "", customer_display_name : "", stop_sla_timer : false }]
+        _id=parseInt(jQuery("input[name=status_id]").last().val())+1;
+
+        _data = _data || [{ status_id : _id, name : "", customer_display_name : "", stop_sla_timer : false }]
         _data.each(function(item){
           $.tmpl( _template, item ).appendTo( (item.deleted) ? "#statuschoicesdeleted" : "#statuschoices" );  
         });
@@ -385,18 +387,28 @@
             if(_item.name == "status_id")
               _value = parseInt(_item.value);
 
-            if(_item.name == "customer_display_name")
-              _value = _item.value || $(_item).parent().parent().find("input[name=name]").val();
+            // if(_item.name == "customer_display_name")
+            //   _value = _item.value || $(_item).parent().parent().find("input[name=name]").val();
 
-            _status.set(_item.name, _value);
+            _status.set(getModelStatusName(_item.name), _value); 
+
           });
           allstatus.push(_status.toObject());          
         });
         return allstatus;
       }
 
+      // For validation purpose we have named the status form fields along with their ids ( eg customer_display_name_1 )
+      // The below function will sanitize the form elements to their respective model names for status before saving them
+      function getModelStatusName(name){
+        if(/agent_display_name/.test(name))
+          return "name"
+        else if(/customer_display_name_/.test(name))
+          return "customer_display_name"
+        else
+          return name
+      }
 
-      
       function getAllChoices(dom){      
          var choices = $A();         
          dom.find('fieldset').each(function(choiceset){
@@ -575,10 +587,7 @@
       function manageFieldOptions(sourceField){
         sourceData = $(sourceField).data("raw");
         $.each(sourceData.field_options ,(function(item ,value){
-
-               switch(item) 
-               {
-                  
+               switch(item){                  
                   case 'portalcc':
                       dialogDOMMap.portalcc.attr("checked", value);
                       if (value){$("#cc_to_option").show();}
@@ -866,6 +875,7 @@
       $("#custom_form li").live("click", function(e){           
          showFieldDialog(this); 
       });
+
 
       $("#SaveForm").click(function(ev){
          ev.preventDefault();
