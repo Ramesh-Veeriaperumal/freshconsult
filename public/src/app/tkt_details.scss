@@ -5,7 +5,7 @@
 $message_window_bg_color: #FDFDFD;
 
 .ticket_details .pagearea{
-	min-width: 1100px;
+	@include min-width(1100px);
 	margin: 0 auto;
 	border: none;
 	@include box-shadow(0px 5px 6px #ccc);
@@ -71,7 +71,7 @@ p strong{
 
 .tkt-wrap{
 	clear: both;
-	min-width: 1102px;
+	@include min-width(1102px);
 	width: 80%;
 	margin: 0 auto;
 }
@@ -147,7 +147,7 @@ p strong{
 				padding: 0 10px;
 
 				&:hover {
-					min-height: 21px;
+					@include min-height(21px);
 					background: #f7f7f7;
 					overflow: visible;
 					height: auto;
@@ -175,7 +175,7 @@ p strong{
 					margin: 0 10px 0 0;
 					position: relative;
 					top: -3px;
-					box-shadow: 1px 1px 0 #FFF;
+					@include box-shadow(1px 1px 0 #FFF);
 
 					&.deleted {
 						background: #D00;
@@ -431,7 +431,7 @@ p strong{
 	padding: 10px 10px 13px;
 	font-size: 16px;
 	color: #999;
-	border-radius: 5px;
+	@include border-radius(5px);
 	@include box-shadow( inset 0 1px 3px rgba(0,0,0,.1));
 	border: 1px solid #ccc;
 	a{ margin: 10px; }
@@ -534,6 +534,18 @@ p strong{
 		font-size: 22px;
 		font-weight: bold;
 		margin-right: 0px;
+	}
+}
+
+.ticket_details #response_dialog {
+	.pick-response-outer.back1{
+		width: 462px;
+	}
+}
+
+.ticket_details #response_dialog.no_recently_used{
+	.pick-response-outer.back1{
+		width: 640px;
 	}
 }
 
@@ -960,10 +972,6 @@ p strong{
     		border: none;
     	}
 
-
-		.redactor_editor {
-			@include text-formatting;
-		}
 		
     	&.continous {
     		border: none;
@@ -1092,7 +1100,7 @@ p strong{
 	margin-left: 29px;
 	padding: 10px;
 	line-height: 150%;
-	background: #fffdf8;
+	background: #fefef0;
 	border: 1px solid #bbb;
 	@include min-height(30px);
 	@include border-radius(4px);
@@ -1175,15 +1183,7 @@ p strong{
 		float: right;
 		margin-left: 10px;
 	}
-	p{
-		margin: 0 0 15px 0;
-		width: 95%;
-		font-size: 13px;
-		font-weight: normal;
-		color: #333;
-		line-height: 17px;
-	}
-
+	
 	.author-mail-detail{
 		margin: 0;
 		color: #a2a19f;
@@ -1228,6 +1228,9 @@ p strong{
 		font-size: 12px;
 		padding: 3px 15px 5px;
 		font-weight: bold;
+		text-overflow: ellipsis;
+		height: 18px;
+		white-space: nowrap;
 	}
 
 	&.private-note .helpdesk_note {
@@ -2549,7 +2552,7 @@ p strong{
 
 	.flip-front{
 	   z-index: 5;
-	   border-radius: 50%;
+	   @include border-radius(50%);
 	   background: #333;
 	   color: #fff;
 	   width: 37px;
@@ -2559,7 +2562,7 @@ p strong{
 
 	.flip-back {
 		z-index: 0;
-		border-radius: 50%;
+		@include border-radius(50%);
 		font-size: 15px;
 		font-weight: bold;
 		vertical-align: middle;

@@ -84,7 +84,7 @@ body#gcgadget {
 	}
 
 	.commentbox .actions, .ticket_details #show_more{
-		display: none;
+		display: none !important;
 	}
 }
 
