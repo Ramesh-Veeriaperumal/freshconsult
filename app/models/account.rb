@@ -685,8 +685,11 @@ class Account < ActiveRecord::Base
   end
 
   def delete_search_index
-    Tire.index(search_index_name).delete
-    es_enabled_account.disable_elastic_search
+    es_enable_status = MemcacheKeys.fetch(MemcacheKeys::ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
+    if es_enable_status.key?(self.id)
+      Tire.index(search_index_name).delete
+      es_enabled_account.disable_elastic_search
+    end
   end
 
   def es_enabled?

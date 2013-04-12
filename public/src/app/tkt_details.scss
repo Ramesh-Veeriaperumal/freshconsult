@@ -1064,6 +1064,11 @@ p strong{
     		border: none;
     	}
 
+
+		.redactor_editor {
+			@include text-formatting;
+		}
+		
     	&.continous {
     		border: none;
     	}
@@ -1562,7 +1567,7 @@ p strong{
 			-webkit-background-size: 19px 19px;
 			-webkit-animation: animate-stripes .4s linear infinite, fade-in .4s linear 1;
 
-			background-image: -moz-gradient(linear, 0 0, 100% 100%, color-stop(.26, rgba(255, 255, 255, 0.3)), color-stop(.26, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .3)), color-stop(.76, rgba(255, 255, 255, .3)), color-stop(.76, transparent), to(transparent) );
+			background-image: -moz-linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
 			-moz-background-size: 19px 19px;
 			-moz-animation: animate-stripes .4s linear infinite, fade-in .4s linear 1;
 

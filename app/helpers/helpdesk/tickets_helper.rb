@@ -222,7 +222,7 @@ module Helpdesk::TicketsHelper
     o.join
   end
   
-  def bind_last_conv (item, signature, forward = false, quoted=false)
+  def bind_last_conv (item, signature, forward = false, quoted=true)
     ticket = (item.is_a? Helpdesk::Ticket) ? item : item.notable
     last_conv = (item.is_a? Helpdesk::Note) ? item : 
                 ((!forward && (last_visible_note = ticket.notes.visible.public.last)) ? last_visible_note : item)

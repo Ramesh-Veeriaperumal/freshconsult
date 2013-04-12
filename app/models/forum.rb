@@ -88,7 +88,7 @@ class Forum < ActiveRecord::Base
   
   format_attribute :description
   attr_protected :forum_category_id , :account_id
-  xss_terminate  :html5lib_sanitize => [:description_html,:description]
+  # xss_terminate  :html5lib_sanitize => [:description_html,:description]
  
   # after_save :set_topic_delta_flag
   before_update :clear_customer_forums, :backup_forum_changes
@@ -210,7 +210,7 @@ class Forum < ActiveRecord::Base
   end
 
   def update_search_index
-    Resque.enqueue(Search::IndexUpdate::ForumTopics, { :forum_id => id })
+    Resque.enqueue(Search::IndexUpdate::ForumTopics, { :current_account_id => account_id, :forum_id => id })
   end
 
   private
