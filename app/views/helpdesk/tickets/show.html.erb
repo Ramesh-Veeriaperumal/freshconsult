@@ -187,7 +187,6 @@
   						contentType: 'application/text',
   						async: true,
 						success: function(data){	
-  									insertIntoConversation(data);
   									jQuery(element).removeClass("response-loading");
   									jQuery(element).qtip('hide');
   									jQuery('.ui-icon-closethick').trigger('click');
