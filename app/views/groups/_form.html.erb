@@ -68,7 +68,7 @@
 						<%= f.select :assign_time , Group::ASSIGNTIME_OPTIONS, :class =>'select2' %>
 						<div class="offset1">
 							<span> &nbsp; &nbsp;<%#=t('group.info3')%> ....then send escalation email to :</span>
-							<%= f.collection_select :escalate_to, Agent.technician_list(account_id), :id, :name, {:include_blank => '...'}, :class =>'span4' %>
+							<input type="hidden" id="escalate_to" name="group[escalate_to]" class="span3"/>
 						</div>
             		</div>
             	</li>
@@ -119,6 +119,40 @@ jQuery('#agent_list').select2({
 	
 });
 jQuery("#agent_list").select2("val",[]);
+
+<%
+	technicians = []
+	account_id =  @group.account_id
+	if account_id.nil?
+		account_id = current_account.id
+	end
+	technician_list = Agent.technician_list(account_id)
+	if technician_list
+		technician_list.each do |req|
+			technicians << "{id: '#{req.id}',
+                  value: '#{escape_javascript(req.name)}',
+                  text: '#{escape_javascript(req.name)}'}"
+		end
+	end
+
+	escalate_to_agent = []
+	if @group.escalate
+		escalate_to_agent << "{id: '#{@group.escalate.id}',
+                  value: '#{escape_javascript(@group.escalate.name)}',
+                  text: '#{escape_javascript(@group.escalate.name)}'}"
+    end
+%>
+jQuery('#escalate_to').select2({
+	multiple: false,
+	data: [<%=technicians.join(",")%>],
+	initSelection : function (element, callback) {
+        var data = {id: '<%=@group.escalate_to%>', text: '<%=@group.escalate && @group.escalate.name%>'};
+        callback(data);
+    }
+});
+
+jQuery("#escalate_to").select2("val",[]);
+
 
 });
 

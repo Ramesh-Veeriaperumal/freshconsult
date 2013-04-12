@@ -16,7 +16,7 @@
   	<div class="header-link-wrapper" title="<%= t("header.user_available") %>">
   		<% if feature?(:round_robin) %>
 	  		<a href="#">
-	  			<img alt="" height="35px" src="/images/spacer.gif" class="header-icons-autoAssign-<%= current_user.available? ? "on" : "off" %>" id="available_icon" onclick="toggle_availability()">
+	  			<img alt="" height="35px" src="/images/spacer.gif" class="header-icons-autoAssign-<%= current_user.available? ? "on" : "off" %>" id="available_icon" onclick="processAgent('<%= current_user.id %>')">
 	  		</a>
 	  	<% end %>
 		<a href="#" class="nav-trigger" menuid="#LoggedOptions">
@@ -101,16 +101,3 @@
   <% end %>
 <% end %>
 
-<script type="text/javascript">
-
-  function toggle_availability() {
-  	var img =  document.getElementById('available_icon');
-  	if(img.hasClassName('header-icons-autoAssign-on')) 
-  		img.removeClassName('header-icons-autoAssign-on').addClassName('header-icons-autoAssign-off');
-  	else
-  		img.removeClassName('header-icons-autoAssign-off').addClassName('header-icons-autoAssign-on');
-
-  	processAgent('<%= current_user.id %>')
-  }
-
-</script>

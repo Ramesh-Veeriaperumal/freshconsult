@@ -32,8 +32,17 @@ function processAgent(user_id) {
  
   new Ajax.Request('/agents/toggle_availability', 
                    { parameters: {value: value, id: user_id},
+                      onLoading: function() {
+                        
+                      },
                       onSuccess: function(response) {
-                       //nothing doing here.
+                       //change the icon class.
+                       var img =  document.getElementById('available_icon');
+                      if(img.hasClassName('header-icons-autoAssign-on')) 
+                        img.removeClassName('header-icons-autoAssign-on').addClassName('header-icons-autoAssign-off');
+                      else
+                        img.removeClassName('header-icons-autoAssign-off').addClassName('header-icons-autoAssign-on');
+
                      } });
 }
 
