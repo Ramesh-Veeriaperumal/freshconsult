@@ -3,6 +3,18 @@
 		<%= link_to user_avatar(current_user), "javascript:void()", :class => 'avatar-wrap' %>
 		<div class="commentbox commentbox-dark">
 			<div id="TicketForms">
+				<div class="hide">
+		      <%= link_to( t(:'ticket.canned_responses.ca_response'), 
+		      							"/helpdesk/canned_responses/index/#{@ticket.display_id}", 
+		      							"data-width" => "700", "data-template-footer" => '', :rel => 'freshdialog', 
+		      							:id => "canned_response_show", "data-target" => "#canned_responses", 
+		      							:title => t(:'ticket.canned_responses.ca_responses')) %>
+					<%= link_to( t('solution.title_singular'), 
+												"/helpdesk/tickets/component/#{@ticket.id}?component=related_solutions", 
+												:title => t(:'ticket.suggested_solutions.title'), :rel => 'freshdialog',
+												"data-target" => "#related_solutions", "data-template-footer" => '', 
+												:id => "suggested_solutions_show") %>
+				</div>
 			  	<%= render(	:partial => '/helpdesk/tickets/show/reply_form', 
 			  				:locals => { 	:id => 'send-email', 
 			  								:cntid => 'cnt-reply', 

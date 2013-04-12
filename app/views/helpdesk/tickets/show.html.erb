@@ -185,13 +185,13 @@
   			jQuery.ajax({	type: 'POST',
   						url: '/helpdesk/canned_responses/show/'+ticket_id+'?ca_resp_id='+ca_resp_id,
   						contentType: 'application/text',
-  						async: false,
+  						async: true,
 						success: function(data){	
   									insertIntoConversation(data);
   									jQuery(element).removeClass("response-loading");
   									jQuery(element).qtip('hide');
   									jQuery('.ui-icon-closethick').trigger('click');
-
+  									loadRecent();
   								}
   						});
 		return true;

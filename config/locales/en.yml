@@ -1101,9 +1101,9 @@ en:
         long: "{{user_path}} has deleted a post from '{{notable_path}}'"
     tickets: 
       assigned_to_nobody: 
-        short: Assigned to 'Nobody' by {{user_path}}
-        long: "{{user_path}} assigned the ticket {{notable_path}} to 'Nobody'"
-        without_user: assigned to <strong>'Nobody'</strong>
+        short: Assigned to 'None' by {{user_path}}
+        long: "{{user_path}} assigned the ticket {{notable_path}} to 'None'"
+        without_user: assigned to <strong>'None'</strong>
       reassigned: 
         long: "{{user_path}} reassigned the ticket {{notable_path}} to {{responder_path}}"
         without_user: "reassigned the ticket <strong>{{responder_path}}</strong>"
@@ -1903,6 +1903,7 @@ en:
     info10: Private (Visible to Agents only)
     add_new_solution: Add a new solution
     title: Solutions
+    title_singular: Solution
     info1: Solutions in Freshdesk is  your Knowledge base
     info2: Solutions can be <b>public</b> or <b>private</b>. Public Solutions are visible in the Self Service Portal and also appear in Search results
     info3: Private solutions are agent-only solutions used for internal knowledge sharing
