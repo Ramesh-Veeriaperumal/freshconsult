@@ -917,12 +917,12 @@ $(document).ready(function() {
 
 	//For showing canned response and solutions
 
-	$('a[rel="ticket_canned_response"]').bind('click', function(ev){
+	$('body').on('click.ticket_details', 'a[rel="ticket_canned_response"]', function(ev){
 		ev.preventDefault();
 		$('#canned_response_show').trigger('click');
 	});
 
-	$('a[rel="ticket_solutions"]').bind('click', function(ev){
+	$('body').on('click.ticket_details', 'a[rel="ticket_solutions"]', function(ev){
 		ev.preventDefault();
 		$('#suggested_solutions_show').trigger('click');
 	});
