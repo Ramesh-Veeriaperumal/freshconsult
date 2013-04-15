@@ -43,8 +43,8 @@
   			<% unless @allowed_to_assume.blank? %>
 				<span class="seperator"></span>
 				<div class="info">   	
-					<i class='header-arrow-right'></i>				
-					<%= select_tag 'assumed_select_id', options_from_collection_for_select(@allowed_to_assume, :id, :name), { :class => "customSelect", "data-placeholder"=> t('swith_agent_msg'), "onchange" => "assume_identity_url()", :style => "width:210px" } %>
+					<i class='header-arrow-right  top-margin'></i>				
+					<%= select_tag 'assumed_select_id', options_from_collection_for_select(@allowed_to_assume, :id, :name), { :class => "select2", "data-placeholder"=> t('swith_agent_msg'), "data-dropdown-css-class" => "header-select2-dropdown","onchange" => "assume_identity_url()", :style => "width:235px" } %> 
 					<% javascript_tag do%>
 					  function assume_identity_url() {
 					    window.location = '/users/'+$('assumed_select_id').value+'/assume_identity';

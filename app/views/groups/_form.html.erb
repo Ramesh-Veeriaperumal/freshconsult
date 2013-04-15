@@ -9,20 +9,20 @@
 		 		<li class="row-fluid">
 		 			<%= f.label :name, "<b> #{t('group.name')} </b>" , :class => "control-label span2" %>
 					  <div class="span9">
-						 <%= f.text_field :name , :class => "text required", :placeholder => t('group.name')  %>
+						 <%= f.text_field :name , :class => "text required span12", :placeholder => t('group.name')  %>
 					  </div>
 		 		</li>
 		 		<li class="row-fluid">
 		 			 <%= f.label :description, "<b> #{t('description')} </b>", :class => "control-label span2" %>
 					  <div class="span9">
-						 <%= f.text_area :description , :class => "text required smallpara", :placeholder => t('group.name')  %>
+						 <%= f.text_area :description , :class => "text required smallpara span12", :placeholder => t('group.name')  %>
 					  </div>
 		 		</li>
-			 		<li class="row-fluid">
-			 			<label class="control-label span2"><b><%=t('group.info1')%></b></label>
-			 			<input type="hidden" id="agent_list" name="group[agent_list]" class="span9"
-			 			data-placeholder = "<%= t("helpdesk.tickets.add_watcher.add_agent") %>"/>
-					</li>
+		 		<li class="row-fluid">
+		 			<label class="control-label span2"><b><%=t('group.info1')%></b></label>
+		 			<input type="hidden" id="agent_list" name="group[agent_list]" class="span9"
+		 			data-placeholder = "<%= t("helpdesk.tickets.add_watcher.add_agent") %>"/>
+				</li>
 		 		<li class="row-fluid">
 		 			 
 		 			 <% 
@@ -41,7 +41,7 @@
 		 		<% if feature?(:round_robin) %>
 			 		<li class="row-fluid">
 						<label class="control-label span2"><b><%=t('group.ticket_assignment') %></b></label>
-						<div class="span10">
+						<div class="span9">
 							<ul class="unstyled">
 								<li class="margin-bottom">
 									<label class="radio">
@@ -62,14 +62,19 @@
 						</div>
 	            	</li>
             	<% end %>
+            	<br/>
             	<li class="row-fluid">
             		<div class="offset2 span9">
-            			<%=t('group.info4')%> :
-						<%= f.select :assign_time , Group::ASSIGNTIME_OPTIONS, :class =>'select2' %>
-						<div class="offset1">
-							<span> &nbsp; &nbsp;<%#=t('group.info3')%> ....then send escalation email to :</span>
-							<input type="hidden" id="escalate_to" name="group[escalate_to]" class="span3"/>
-						</div>
+            			<ul class="unstyled group-ticket-assign">
+            				<li class="row-fluid">
+            					<span class="span6 group-text-align"><%=t('group.info4')%> :</span>
+            					<%= f.select :assign_time , Group::ASSIGNTIME_OPTIONS,{}, { :class => 'select2 span3' } %>
+            				</li>
+            				<li class="row-fluid">
+            					<span class="span6 group-text-align"> &nbsp; &nbsp;<%#=t('group.info3')%> ....then send escalation email to :</span>
+            					<input type="hidden" id="escalate_to" name="group[escalate_to]" class="span3"/>
+            				</li>
+            			</ul>
             		</div>
             	</li>
 		 	</ul>
