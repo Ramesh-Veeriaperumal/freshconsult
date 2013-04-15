@@ -3488,6 +3488,8 @@ en:
   select_free_plan: "Select your Free plan"
   change_details_anytime: "Subscription details or plans can be changed at anytime."
   enter_payment_details_to_add: "Enter Payment details to add more agents or to upgrade your current plan"
+  card_error: "There was an error adding your card. Please try again."
+  insufficient_funds_in_card: "Subscription cannot be updated due to insufficient funds in credit-card on file."
   plan_is_selected: "Your account is now active with the %{plan} plan"
   error_in_plan: "Error changing the plan"
   change_free_plan: "Change your Free plan"

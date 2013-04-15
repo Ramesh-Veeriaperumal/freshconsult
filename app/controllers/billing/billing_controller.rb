@@ -193,7 +193,7 @@ class Billing::BillingController < ApplicationController
       return billing_address.update_attributes(address(card)) if billing_address
 
       billing_address = subscription.build_billing_address(address(card))
-      billing_address.account = account
+      billing_address.account = @account
       billing_address.save
     end
 

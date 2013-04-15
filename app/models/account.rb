@@ -232,7 +232,6 @@ class Account < ActiveRecord::Base
   before_destroy :update_crm, :notify_totango
 
   after_commit_on_create :add_to_billing, :add_to_totango, :create_search_index
-  before_destroy :update_billing
 
   after_commit_on_update :clear_cache
   after_commit_on_destroy :clear_cache, :delete_search_index
@@ -841,10 +840,6 @@ class Account < ActiveRecord::Base
 
     def add_to_billing
       Resque.enqueue(Billing::AddToBilling, { :account_id => id })
-    end
-
-    def update_billing
-      Billing::Subscription.new.cancel_subscription(self)
     end
 
     def add_to_totango

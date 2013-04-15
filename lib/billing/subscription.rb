@@ -87,11 +87,7 @@ class Billing::Subscription
   end
 
   def cancel_subscription(account)
-    begin
-      ChargeBee::Subscription.cancel(account.id)
-    rescue Exception => e
-      NewRelic::Agent.notice_error(e)
-    end
+    account.active? ? ChargeBee::Subscription.cancel(account.id) : true
   end
 
   

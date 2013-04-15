@@ -19,6 +19,8 @@ class SubscriptionsController < ApplicationController
 
   NO_PRORATION_PERIOD_CYCLES = [1, 3]
 
+  ACTIVE = "active"
+
   def convert_subscription_to_free
     @subscription.subscription_plan = SubscriptionPlan.find(:first, :conditions => {:name => SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout]})
     @subscription.convert_to_free
@@ -45,12 +47,12 @@ class SubscriptionsController < ApplicationController
     if request.post?
       @address.first_name = @creditcard.first_name
       @address.last_name = @creditcard.last_name
-      @subscription.state = "active"
+      @subscription.state = ACTIVE
 
       begin
         billing_subscription.store_card(@creditcard, @address, @subscription)
       rescue Exception => e
-        flash[:notice] = t('error_adding_card')
+        flash[:notice] = t('card_error')
         redirect_to :action => "billing" and return
       end
 
@@ -69,6 +71,7 @@ class SubscriptionsController < ApplicationController
     @subscription.billing_cycle = params[:billing_cycle].to_i
     @subscription.plan = @subscription_plan
     @subscription.agent_limit = params[:agent_limit]
+    @subscription.free_agents = @subscription_plan.free_agents
     
     render :partial => "calculate_amount", :locals => { :amount => @subscription.total_amount }
   end
@@ -80,10 +83,16 @@ class SubscriptionsController < ApplicationController
       @subscription.billing_cycle = params[:billing_cycle].to_i
       @subscription.plan = @subscription_plan
       @subscription.agent_limit = params[:agent_limit]
+      @subscription.free_agents = @subscription_plan.free_agents
       
-      response = billing_subscription.update_subscription(@subscription, !no_prorate?)
+      begin
+        billing_subscription.update_subscription(@subscription, !no_prorate?)
+      rescue Exception => e
+        flash[:notice] = t('insufficient_funds_in_card')
+        redirect_to subscription_url and return
+      end
       
-      if response and @subscription.save
+      if @subscription.save
         #SubscriptionNotifier.deliver_plan_changed(@subscription)    
       else
         load_plans        
@@ -118,7 +127,8 @@ class SubscriptionsController < ApplicationController
     end
 
     def load_subscription
-      @old_subscription =  @subscription = current_account.subscription
+      @cached_subscription = Subscription.find(current_account.subscription.id) if current_account.subscription
+      @subscription = current_account.subscription
     end
     
     def load_plans
@@ -153,8 +163,8 @@ class SubscriptionsController < ApplicationController
     end
 
     def no_prorate?
-      @old_subscription.active? and (@subscription.total_amount < @old_subscription.amount) and 
-        NO_PRORATION_PERIOD_CYCLES.include?(@old_subscription.renewal_period)
+      @cached_subscription.active? and (@subscription.total_amount < @cached_subscription.amount) and 
+        NO_PRORATION_PERIOD_CYCLES.include?(@cached_subscription.renewal_period)
     end
 
 end 
