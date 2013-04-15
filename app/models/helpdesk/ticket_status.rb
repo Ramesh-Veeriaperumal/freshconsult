@@ -7,6 +7,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
 
   belongs_to_account
   
+  validates_length_of :name, :in => 1..25
   validates_presence_of :name, :message => I18n.t('status_name_validate_presence_msg')
   validates_uniqueness_of :name, :scope => :account_id, :message => I18n.t('status_name_validate_uniqueness_msg'), :case_sensitive => false
   
