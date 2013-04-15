@@ -6,6 +6,7 @@ class Account < ActiveRecord::Base
   include Mobile::Actions::Account
   include Tire::Model::Search
   include Cache::Memcache::Account
+  include ErrorHandle
 
   #rebranding starts
   serialize :preferences, Hash
@@ -546,7 +547,7 @@ class Account < ActiveRecord::Base
   end
 
   def create_search_index
-    begin
+    sandbox(0) {
       Tire.index(search_index_name) do
         create(
           :settings => {
@@ -685,9 +686,7 @@ class Account < ActiveRecord::Base
           }
         )
       end
-    rescue Errno::ECONNREFUSED => e
-      NewRelic::Agent.notice_error(e)
-    end
+    }
   end
 
   def enable_elastic_search

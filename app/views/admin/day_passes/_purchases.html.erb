@@ -6,9 +6,9 @@
   <%= content_tag :td, t(purchases.paid_width_type) %>
   <% content_tag :td do
       if purchases.success?
-        concat content_tag :span, t("success"), :class => "label success"
+        concat content_tag :span, t("success"), :class => "label label-success"
       else
-        concat content_tag :span, t("failure"), :class => "label important custom-tip-top", :title => purchases.status_message
+        concat content_tag :span, t("failure"), :class => "label label-important custom-tip-top", :title => purchases.status_message
       end
      end %>   
 </tr> 

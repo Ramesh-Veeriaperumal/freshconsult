@@ -46,7 +46,7 @@
 }
 
 .freshwidget-theme{
-	@include shadows(rgba(0,0,0, 0.6), 0px, 0px, 3px);  
+	@include box-shadow(rgba(0,0,0, 0.6) 0 0 3px);  
 	@include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px);
 	padding:6px 16px 8px 16px;
 	background-color:#7eb600;

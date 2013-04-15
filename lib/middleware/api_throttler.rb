@@ -16,7 +16,8 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   def allowed?
     begin
       return true if by_pass_throttle?
-      @count = get_key(API_THROTTLER % {:host => @host}).to_i
+      remove_key(key) if get_key(key+"_expiry").nil?
+      @count = get_key(key).to_i
       return max_per_hour > @count
     rescue Exception => e
       true
@@ -32,11 +33,10 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     if allowed?
       @status, @headers, @response = @app.call(env)
       unless by_pass_throttle?
-        key = API_THROTTLER % {:host => @host}
+        remove_key(key) if get_key(key+"_expiry").nil?
         increment(key)
         value = get_key(key).to_i
-        ttl = get_expiry(key).to_i
-        set_expiry(key, ONE_HOUR) if value == 1 || ttl == -1
+        set_key(key+"_expiry",1,ONE_HOUR) if value == 1
       end
     else
       @status, @headers, @response = [302, {"Location" => "/403.html"}, 
@@ -53,6 +53,10 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     else
       return !THROTTLED_TYPES.include?(@content_type)
     end
+  end
+
+  def key
+    API_THROTTLER % {:host => @host}
   end
 
 end

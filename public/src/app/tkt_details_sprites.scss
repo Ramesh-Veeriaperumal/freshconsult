@@ -1,0 +1,33 @@
+@import "lib/settings";
+
+// Icon sprite creation
+// --------------------------------------------------
+@import "requester-info/*.png";
+@import "conv-actions/*.png";
+@import "ticket-details/*.png";
+@import "collision/*.png";
+
+/* %% more styles set for this class in some other file */
+.tkt-tabs-wrap{ @include all-requester-info-sprites; }
+.commentbox{ @include all-conv-actions-sprites; }
+
+/* %% tkt_details */
+.ticket-actions{
+	.forward{ @include ticket-details-sprite(forward-icon); }
+	.reply-inner{ @include ticket-details-sprite(reply-icon); }
+	.forward-inner{ @include ticket-details-sprite(forward-icon); }
+	.note-inner{ @include ticket-details-sprite(note-icon); }
+}
+.notify-wrap .addnew{ @include ticket-details-sprite(addnew-btn); }
+.conversation_thread{
+	.comment-lock{ @include ticket-details-sprite(lock); }
+	.attachment-options .dropbox_div label{ @include ticket-details-sprite(dropbox); background-repeat: no-repeat; }
+} 
+.ticket-details-twitter .twitter-logo { @include ticket-details-sprite(twitter); }
+.tkt-sidebar .jira-wrap span{ @include ticket-details-sprite(jira-icon); background-repeat: no-repeat; }
+.attachments-wrap .attachment-close{ @include ticket-details-sprite(attachment-close); }
+
+.reply-flip .flip-front { 			@include collision-sprite(show-reply-inactive); }
+.view-flip .flip-front { 			@include collision-sprite(show-viewing-inactive); }
+.reply-flip.active .flip-front { 	@include collision-sprite(show-reply-active); }
+.view-flip.active .flip-front { 	@include collision-sprite(show-viewing-active); }

@@ -21,20 +21,20 @@
 	<% cache(["v2","portal","fav_ico",current_portal]) do %>
 		<link rel="shortcut icon" href="<%=current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' : current_portal.fav_icon.content.url%>" />
 	<%end%>
-	<%= include_stylesheets :non_pattern_1 %>
-	<%= include_stylesheets :non_pattern_2 %>
-	<%= include_stylesheets :app  %>
-	<%= include_stylesheets :common  %>
-	<%= include_stylesheets :tour_my_app %>	
-	<%= render :partial => "shared/theme.css"  %>
+	<%= include_stylesheets :common %>
+	<%= include_stylesheets :plugins  %>
+	<%= include_stylesheets :sprites  %>
+	<%= include_stylesheets :app %>
+	<%= include_stylesheets :non_pattern %>
+	<%= include_stylesheets :tour_my_app %>
+	<%= include_stylesheets :ie_hacks %>
 	
+	<%= render :partial => "shared/theme.css"  %>
 	<%= include_javascripts :defaults  %>
 	<%= include_javascripts :frameworks %>
 	<%= include_javascripts :workspace %>
 	<%= include_javascripts :notifications %>
-	<%= include_stylesheets :redactor  %>
 	<%= include_javascripts :redactor  %>
-	
 	<%= yield :totango %>
 
 <script type="text/javascript">
