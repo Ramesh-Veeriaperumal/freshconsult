@@ -20,7 +20,7 @@ module HelpdeskControllerMethods
   
   def post_persist #Need to check whether this should be called only inside create by Shan to do 
     #create_attachments 
-    flash.now[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase) unless params[:xhr].present?
+    flash.now[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
     process_item #    
     options = {}
     options.merge!({:human=>true}) if(!params[:human].blank? && params[:human].to_s.eql?("true"))  #to avoid unneccesary queries to users

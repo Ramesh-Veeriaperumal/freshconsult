@@ -2,7 +2,9 @@ en:
   meta:
    language_name: 'English'
   any: Any
-  or: or
+  or: or  
+  plain_yes: "Yes"
+  plain_no: "No"
   unspam: "Unspam"
   unblock: "Whitelist"
   enabled: "Enabled"
@@ -1099,9 +1101,9 @@ en:
         long: "{{user_path}} has deleted a post from '{{notable_path}}'"
     tickets: 
       assigned_to_nobody: 
-        short: Assigned to 'Nobody' by {{user_path}}
-        long: "{{user_path}} assigned the ticket {{notable_path}} to 'Nobody'"
-        without_user: assigned to <strong>'Nobody'</strong>
+        short: Assigned to 'None' by {{user_path}}
+        long: "{{user_path}} assigned the ticket {{notable_path}} to 'None'"
+        without_user: assigned to <strong>'None'</strong>
       reassigned: 
         long: "{{user_path}} reassigned the ticket {{notable_path}} to {{responder_path}}"
         without_user: "reassigned the ticket <strong>{{responder_path}}</strong>"
@@ -1197,7 +1199,7 @@ en:
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
   your_email_address: Your e-mail address
   username: Username
-  reply: reply
+  reply: Reply
   is_not: Is not
   during: during
   less_than: Less than
@@ -1596,6 +1598,7 @@ en:
   zendesk_url_info: e.g:- http://acme.zendesk.com
   portal_customizer_anon_for_i: Turn this feature off, if you want to hide 'Forums' tab in public customer portal.
   portal_customizer_option_for_i: Disable this feature  if you want users to login to view solutions
+  portal_customizer_option_forums_i: Disable this feature  if you want users to login to view forums
   portal_customizer_anon_for_g: Enable this feature if you want customers to be able to sign in using their Google username and password. 
   portal_customizer_anon_for_t: Enable this feature if you want customers to be able to sign in using their Twitter username and password. 
   portal_customizer_anon_for_f: Enable this feature if you want customers to be able to sign in using their Facebook username and password. 
@@ -1762,7 +1765,14 @@ en:
   no_signup: "To submit a ticket, please <a href={{login}}><b>Login</b></a>."
   register: Register
   by: by
-  portal: 
+  portal:
+    cookie:
+      cookie_policy: "Cookie policy"
+      why_we_love_cookies: "Why we love Cookies"
+      cookie_dialog_info1: "We use cookies to try and give you a better experience in Freshdesk. "
+      cookie_dialog_info2: "You can learn more about what kind of cookies we use, why, and how from our %{privacy_link}. If you hate cookies, or are just on a diet, you can disable them altogether too. Just note that the Freshdesk service is pretty big on some cookies (we love the choco-chip ones), and some portions of Freshdesk may not work properly if you disable cookies. "
+      cookie_dialog_info3: "We’ll also assume you agree to the way we use cookies and are ok with it as described in our %{privacy_link}, unless you choose to disable them altogether through your browser. "
+      privacy_policy: "Privacy Policy"
     no_topics_in_this_view: "~ No topics in this view ~"
     reported: reported
     said: said
@@ -1893,6 +1903,7 @@ en:
     info10: Private (Visible to Agents only)
     add_new_solution: Add a new solution
     title: Solutions
+    title_singular: Solution
     info1: Solutions in Freshdesk is  your Knowledge base
     info2: Solutions can be <b>public</b> or <b>private</b>. Public Solutions are visible in the Self Service Portal and also appear in Search results
     info3: Private solutions are agent-only solutions used for internal knowledge sharing
@@ -3355,6 +3366,7 @@ en:
           title: Time Sheet Report
           select_customer: Select Customer
           select_agent: Select Agent
+          select_group: Select Group
           select_billable: Select Billable/Non-Billable
           view_between: View report between
           from: From

@@ -121,7 +121,7 @@ class Solution::Folder < ActiveRecord::Base
   end
 
   def update_search_index
-    Resque.enqueue(Search::IndexUpdate::FolderArticles, { :folder_id => id })
+    Resque.enqueue(Search::IndexUpdate::FolderArticles, { :current_account_id => account_id, :folder_id => id })
   end
 
   private

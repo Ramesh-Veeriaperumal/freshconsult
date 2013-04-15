@@ -304,6 +304,9 @@ insertIntoConversation = function(value,element_id){
 		else if (note_area.css('display') =='block'){
 			element_id = "cnt-note-body";
 		}
+		else if (fwd_area.css('display') == 'block'){
+			element_id = "cnt-fwd-body";
+		}
 	}
 	if(tweet_area.css("display") == 'block'){
 		get_short_url(value, function(bitly){
@@ -322,19 +325,18 @@ insertIntoConversation = function(value,element_id){
 }
 
 getCannedResponse = function(ticket_id, ca_resp_id, element) {
-	$("#canned_response_container").addClass("loading")
 	$(element).addClass("response-loading");
 	$.ajax({
 		type: 'POST',
 		url: '/helpdesk/canned_responses/show/'+ticket_id+'?ca_resp_id='+ca_resp_id,
 		contentType: 'application/text',
-		async: false,
-		success: function(data){	
-			insertIntoConversation(data);
+		dataType: "script",
+		async: true,
+		success: function(script){
 			$(element).removeClass("response-loading");
 			$(element).qtip('hide');
-			$('.ui-icon-closethick').trigger('click');
-
+			$('[data-dismiss="modal"]').trigger('click');
+			loadRecent();
 		}
 	});
 	return true;
@@ -513,6 +515,10 @@ $(document).ready(function() {
 
 // End of Due-by time JS
 
+	if (jQuery('.requester-info-sprite').length < 2) {
+		jQuery('.requester-info-sprite').parents('.tkt-tabs').remove();
+	}
+	
 	$('ul.tkt-tabs').each(function(){
 		// For each set of tabs, we want to keep track of
 		// which tab is active and it's associated content
@@ -776,7 +782,7 @@ $(document).ready(function() {
 				});
 			}
 
-			if ($('html').hasClass('ie6') || $('html').hasClass('ie7') || $('html').hasClass('ie8') || $('html').hasClass('ie9')|| $('html').hasClass('ie10')) {
+			if($.browser.msie) {
 				stopDraftSaving();
 				$.ajax({
 					url: TICKET_DETAILS_DATA['draft']['clear_path'],
@@ -809,12 +815,15 @@ $(document).ready(function() {
 						$('#' + _form.data('panel')).trigger('visibility');
 					}
 
+					if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
+						stopDraftSaving();
+					}	
+
 					if (_form.attr('rel') == 'edit_note_form')  {
 						
 						$('#note_details_' + _form.data('cntId')).html($(response).find("body-html").text());
 						$('#note_details_' + _form.data('cntId')).show();
 					}
-
 
 					if (_form.data('cntId') && _form.data('destroyEditor')){
 						$('#' + _form.data('cntId') + '-body').destroyEditor(); //Redactor
@@ -825,6 +834,10 @@ $(document).ready(function() {
 					if (_form.attr('rel') == 'forward_form')  {
 						//Remove To Address
 						_form.find('.forward_email li.choice').remove();
+					}
+
+					if (_form.attr('rel') == 'note_form')  {
+						$('#toggle-note-visibility').removeClass('visible');
 					}
 
 					//Enabling original attachments
@@ -858,6 +871,11 @@ $(document).ready(function() {
 
 					if (_form.data('panel')) {
 						$('#' + _form.data('panel')).unblock();
+					}
+
+
+					if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
+						triggerDraftSaving();
 					}
 
 				}
@@ -896,6 +914,20 @@ $(document).ready(function() {
 		}
 	});
 	// -----   END OF TICKET BAR FIXED TOP ------ //
+
+	//For showing canned response and solutions
+
+	$('body').on('click.ticket_details', 'a[rel="ticket_canned_response"]', function(ev){
+		ev.preventDefault();
+		$('#canned_response_show').trigger('click');
+	});
+
+	$('body').on('click.ticket_details', 'a[rel="ticket_solutions"]', function(ev){
+		ev.preventDefault();
+		$('#suggested_solutions_show').trigger('click');
+	});
+
+	//End
 
 	//Toggling Note visiblity
 	$('body').on('click.ticket_details', '#toggle-note-visibility', function(ev){
@@ -940,7 +972,7 @@ $(document).ready(function() {
       jQuery('body').click();
 
       changeStatusTo(jQuery(this).data('statusVal'));
-      jQuery("#HelpdeskReply").trigger('submit');
+      $(this).parents('form').trigger('submit');
     });
 
 	$('#custom_ticket_form').on('submit.ticket_details', function(ev) {

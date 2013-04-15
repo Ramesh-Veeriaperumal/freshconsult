@@ -720,8 +720,6 @@ function fetchResponses(url, element){
       var temp_resp = jQuery('.list2').detach();
       jQuery('#cf_cache').append(temp_resp);
       jQuery('#fold-list').append('<div id="responses" class="list2"></div>');
-      if(!localStorage["local_ca_response"])
-        jQuery('#responses').addClass('no_recently_used');
       jQuery('#responses').addClass('loading-center');
       jQuery.getScript(url, function(){
       jQuery('#responses').attr('id', use_id);
@@ -852,3 +850,17 @@ Date.prototype.toISOStringCustom = function() {
             + pad(this.getMinutes()) + ':'
             + pad(this.getSeconds()) +"."+pad(this.getMilliseconds()) +"+1100";
     };
+
+function escapeHtml(str) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+};
+
+function unescapeHtml(escapedStr) {
+        var div = document.createElement('div');
+        div.innerHTML = escapedStr;
+        var child = div.childNodes[0];
+        return child ? child.nodeValue : '';
+};
+

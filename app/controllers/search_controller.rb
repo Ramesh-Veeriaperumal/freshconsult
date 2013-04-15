@@ -101,8 +101,9 @@ class SearchController < ApplicationController
       @items = []
       if f_classes.include?(Solution::Article) && current_portal.solution_category_id
         s_options[:category_id] = current_portal.solution_category_id
-        @items.concat(Solution::Article.search params[:search_key],
+        @items.concat(ThinkingSphinx.search params[:search_key],
                                                :with => s_options,
+                                               :classes => [ Solution::Article ],
                                                :sphinx_select => content_select(f_classes),
                                                :max_matches => (4 if @widget_solutions),
                                                :per_page => page_limit)
@@ -110,8 +111,9 @@ class SearchController < ApplicationController
       
       if f_classes.include?(Topic) && current_portal.forum_category_id
         s_options[:category_id] = current_portal.forum_category_id
-        @items.concat(Topic.search params[:search_key],
+        @items.concat(ThinkingSphinx.search params[:search_key],
                         :sphinx_select => content_select(f_classes),
+                        :classes => [ Topic ],
                         :with => s_options, :per_page => 10)
       end
 

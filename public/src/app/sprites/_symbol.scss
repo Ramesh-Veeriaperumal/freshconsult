@@ -1,0 +1,159 @@
+@import "symbols/*.png";
+
+/* %% more styles set for this class in some other file */
+
+.symbols-article-list{
+	@include inline-block;
+	width: 20px; height: 20px;	
+	/* Hack to be removed later */
+	margin-top: -2px;
+}
+.private-icon{	
+	width:16px;
+	height:16px;
+	display:inline-block;
+}
+.quoted_button{
+  margin:0 0;
+  display:inline-block;
+  width:31px;
+  height:14px;  
+}
+
+.setting_bottom{
+   position:absolute;
+   right:7px;
+   bottom:10px;
+   width:16px;
+   height:16px;   
+}
+
+/* %% inside */ 
+.symbols-article-list{ 	@include symbols-sprite(article-list); }
+.quoted_button{ 		@include symbols-sprite(quote_button); /* %% inside */ }
+.private-icon{ 			@include symbols-sprite(private-lock-grey); /* %% inside */ }
+.setting_bottom{ 		@include symbols-sprite(setting); }
+
+/* %% app-bootstrap */ 
+.searchicon{ 				 	@include symbols-sprite(search); }
+.clock{ 						@include symbols-sprite(clock-inactive); }
+.time_running .clock{ 			@include symbols-sprite(clock); }
+.timeentry .billable{ 			@include symbols-sprite(billable); }
+.symbols-ac-refreshon{  		@include symbols-sprite(ac-refreshon); }
+.symbols-ac-viewingon{  		@include symbols-sprite(ac-viewingon);  }
+.symbols-ac-replyon{  			@include symbols-sprite(ac-replyon);  }
+.symbols-ac-viewingon-listview{ @include symbols-sprite(ac-viewingon-listview);  }
+.symbols-ac-replyon-listview{  	@include symbols-sprite(ac-replyon-listview);  }
+.contact_hover .user_phone{ 	@include symbols-sprite(phone); }
+.contact_hover .user_mobile{ 	@include symbols-sprite(mobile); }
+.contact_hover .user_fb{ 		@include symbols-sprite(reply-fb); }
+.contact_hover .user_twitter{ 	@include symbols-sprite(reply-tweet);	}
+
+.preview_pic .tweet_pic{ 	@include symbols-sprite(product-twitter-active); }
+.preview_pic .fb_pic{ 		@include symbols-sprite(product-facebook-active); }
+.replylinks .forward span{ 	@include symbols-sprite(reply-forward); }
+.replylinks .email span{ 	@include symbols-sprite(reply-email); }
+.replylinks .tweet span{ 	@include symbols-sprite(reply-tweet); }
+.replylinks .facebook span{ @include symbols-sprite(reply-fb); }
+
+/* The below source styles are being used in view_ticket.widget.erb */
+.source-email{   	@include symbols-sprite(source-email); }
+.source-facebook{   @include symbols-sprite(source-facebook); }
+.source-twitter{   	@include symbols-sprite(source-twitter); }
+.source-portal{   	@include symbols-sprite(source-portal); }
+.source-phone{   	@include symbols-sprite(source-phone); }
+.source-chat{   	@include symbols-sprite(source-chat); }
+.source-forum{   	@include symbols-sprite(source-forum); }
+
+ /* %% app-common */
+.reminders, .todo{ .delete{ @include symbols-sprite(trash); } }
+.idea-likes .like-image{ 	@include symbols-sprite(like); }
+.list_with_icon{
+	li, .list-item{
+		.forum-bullet{ @include symbols-sprite(forum-bullet); }
+	}
+}
+.search-keys li .icon{ @include symbols-sprite(search); }
+.view_filters .link-item.active:after{ @include symbols-sprite(arrow-selected-right); }
+.ticksymbol{ @include symbols-sprite(selected); }
+.fd-menu, .fd-ajaxmenu, #tickets-expanded .fd-menu, #tickets-expanded .fd-ajaxmenu{ 	
+	a:hover, a.selected{ @include symbols-sprite(selected-negtive); }
+}
+
+#resp-icon{ 
+	@include symbols-sprite(bullet-folder1); 
+	&:hover{ @include symbols-sprite(bullet-folder1_hover); }
+}
+.pick-response, .recently_used{
+ 	a:hover #resp-icon{ @include symbols-sprite(bullet-folder1_hover); }
+}
+#results li, .merge_results li{
+	&:hover #resp-icon{ @include symbols-sprite(bullet-folder1_hover); }
+}
+#resp-icon.clicked{ @include symbols-sprite(resp-icon-clicked); }
+#cont-chosen:hover #resp-icon{ @include symbols-sprite(email_config_active); }
+#contact-area #resp-icon{ @include symbols-sprite(removeButton); }
+
+#marker{ @include symbols-sprite(tickUnselect); }
+.cont-primary #marker{ @include symbols-sprite(tickSelect); }
+
+.sla_policy_form .delete, .sla_policy_form .delete_conditions{ @include symbols-sprite(delete);  }
+
+/* %% tkt_details  */
+.content .controls{
+	.monitor{ @include symbols-sprite(tkt-not-monitoring); }
+	.monitor_active{ @include symbols-sprite(tkt-monitoring); }
+	.source-badge-wrap .source{
+		&.collision_refresh{ @include symbols-sprite(collision_refresh); }
+		span{
+			// Email
+			&.source_1 { @include symbols-sprite(source-badge-email); }
+			// Portal
+			&.source_2 { @include symbols-sprite(source-badge-portal); }
+			// Phone
+			&.source_3 { @include symbols-sprite(source-badge-phone); }
+			// Forum
+			&.source_4 { @include symbols-sprite(source-badge-forum); }
+			// Twitter
+			&.source_5 { @include symbols-sprite(source-badge-twitter); }
+			// Facebook
+			&.source_6 { @include symbols-sprite(source-badge-facebook); }
+			// Chat
+			&.source_7 { @include symbols-sprite(source-badge-chat); }
+			// Mobihelp
+			&.source_8 { @include symbols-sprite(source-badge-mobihelp); }
+		}
+	}
+}
+
+#toggle-note-visibility {
+	.note-visible i { @include symbols-sprite(note-visible); }
+	.note-hidden i { @include symbols-sprite(note-hidden); }
+}
+
+.open_in_new{ @include symbols-sprite(open_in_new); background-repeat: no-repeat; background-color: transparent; }
+.search_text_box{ @include symbols-sprite(search); background-repeat: no-repeat; background-color: transparent; }
+
+/* %% buttons */
+.close-button{ @include symbols-sprite(close-delete); }
+.icon-detail .symbols-add{ @include symbols-sprite(add); }
+.toolbar_pagination .prev_page span{ @include symbols-sprite(arrow-left); }
+.toolbar_pagination .next_page span{ @include symbols-sprite(arrow-right); }
+
+/* %% form */
+.ui-datepicker-trigger{ @include symbols-sprite(calendar); }
+.colsets .deleteChoice{ @include symbols-sprite(delete); }
+.colsets .deleteChoice.disabled{ @include symbols-sprite(delete-inactive); }
+#duration .error{ @include symbols-sprite(warning); }
+.due-date-dialog .right_pointer{ @include symbols-sprite(calender-pointer-right); }
+.due-date-dialog .ui-datepicker-prev .ui-icon{ @include symbols-sprite(calender-left); }
+.due-date-dialog .ui-datepicker-next .ui-icon{ @include symbols-sprite(calender-right); } 
+
+.nav_search .searchIcon{ @include symbols-sprite(search); }
+a.new_ticket span{ @include symbols-sprite(add); }
+.nav-drop .nav-item-icon .item-options{ @include symbols-sprite(item-options); }
+.canned-response-menu span.bullet{ @include symbols-sprite(bullet-folder); }
+.close-img span{ @include symbols-sprite(draft-close); }
+
+.symbol-done-tick{ @include symbols-sprite(done-tick); }
+.ui-solution-suggest:after{ @include symbols-sprite(new-solution-arrow); }

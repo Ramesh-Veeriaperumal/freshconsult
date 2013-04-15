@@ -22,7 +22,7 @@ TICKET_DETAILS_DATA = {
 							clear_path		: '<%=clear_draft_helpdesk_ticket_path%>',
 							cleared_flag	: <%= @draft.blank?.to_s %>,
 							hasChanged		: false,
-							default_reply	: "<%= escape_javascript(bind_last_conv(@ticket, @signature, false, false)) %>"
+							default_reply	: "<%= escape_javascript(bind_last_conv(@ticket, @signature, false, true)) %>"
 						}
 };
 </script>

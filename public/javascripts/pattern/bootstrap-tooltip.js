@@ -23,6 +23,8 @@
 
   "use strict"; // jshint ;_;
 
+  if($.fn.tooltip) return
+
 
  /* TOOLTIP PUBLIC CLASS DEFINITION
   * =============================== */
