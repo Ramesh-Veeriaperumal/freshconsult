@@ -537,6 +537,8 @@ class Account < ActiveRecord::Base
                 :word_filter  => {
                        "type" => "word_delimiter",
                        "split_on_numerics" => false,
+                       "generate_word_parts" => false,
+                       "generate_number_parts" => false,
                        "split_on_case_change" => false,
                        "preserve_original" => true
                 }
@@ -686,7 +688,7 @@ class Account < ActiveRecord::Base
 
   def es_enabled?
     es_status = MemcacheKeys.fetch(ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
-    es_status.key?(self.id) ? es_status[self.id] : false
+    es_status.key?(self.id) ? !es_status[self.id].zero? : false
   end
   
   protected
