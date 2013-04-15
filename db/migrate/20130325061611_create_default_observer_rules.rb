@@ -1,7 +1,5 @@
 class CreateDefaultObserverRules < ActiveRecord::Migration
   def self.up
-    shard :none
-    
   	Account.all.each do |account|
       account.all_observer_rules.create({ 
       	:name => 'Automatically assign ticket to first responder', 
