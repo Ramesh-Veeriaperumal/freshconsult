@@ -12,9 +12,8 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::AdjacentTickets
   include Helpdesk::Activities
   include Helpdesk::ToggleEmailNotification
-  include SeamlessDatabasePool::ControllerFilter
 
-  use_database_pool [:user_ticket, :export_csv] => :persistent
+  around_filter :run_on_slave, :only => :user_ticket
 
   before_filter :set_mobile, :only => [:index, :show,:update, :create, :execute_scenario, :assign, :spam ]
   before_filter :check_user, :only => [:show, :forward_conv]
@@ -875,5 +874,9 @@ class Helpdesk::TicketsController < ApplicationController
   def set_selected_tab
     @selected_tab = :tickets
   end
+
+  def run_on_slave(&block)
+    ActiveRecord::Base.on_slave(&block)
+  end 
 
 end

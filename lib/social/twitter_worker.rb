@@ -5,6 +5,7 @@ class Social::TwitterWorker
 
   def self.perform(args)
     account = Account.current
+    return if account.twitter_handles.empty? 
     twitter_handles = account.twitter_handles.active   
     twitter_handles.each do |twt_handle|
       @twt_handle = twt_handle 
