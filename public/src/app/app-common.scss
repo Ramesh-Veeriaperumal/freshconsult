@@ -976,6 +976,10 @@ h4.title{
 					font-weight:bold;
 					color:#666666;
 				}
+				&.custom_checkbox label{
+					position: relative;
+					top: 5px;
+				}
 				select{
 					font-size:11px;
 					max-width:100%;
@@ -1546,13 +1550,11 @@ h4.list_title{
 span.sort_handle{
 	position:relative;
 	float:left;
-	left:0px;
-	top:1px;
 	width:10px;
 	height:10px;
 	cursor:move;
-	background:url(/images/sort_handle.gif) no-repeat;
-	@include border-radius(5px);
+	background:url(/images/sort_handle.png) no-repeat;
+	@include border-radius(0px);
 }
 
 
@@ -10028,7 +10030,13 @@ div.gcal-confirm-modal-content{ width: 100%; }
 		> *{ margin-left: 5px; }
 
 		.choicelist input[type=radio]{ margin-left: 1%;	}
-		.va_rule_performer_members_container{margin-top: 10px;}
+		.va_rule_performer_members_container{
+			margin-top: 10px;
+			.select2{
+				width:339px;
+				ul{	border-radius: 4px;	}
+			}
+		}
 	}
 
 	.select2-container a{
@@ -10127,6 +10135,11 @@ div.gcal-confirm-modal-content{ width: 100%; }
 		}
 		.addchoice p{font-weight: normal;}
 	}
+}
+
+.ui-custom-form .checkbox div span:not(.overlay-field){
+	position: relative;
+	top: 1px;
 }
 
 .error-text{ color: #D00; }
