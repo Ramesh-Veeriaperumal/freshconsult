@@ -807,6 +807,7 @@ en:
     edit: Edit Forum
     title: Forums
     start_topic: Start a Topic
+    forum_created: The forum has been created.
     visibility:
       anyone: Anyone
       logged_users: Logged In Users

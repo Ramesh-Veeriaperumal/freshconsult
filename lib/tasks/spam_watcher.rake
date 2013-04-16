@@ -11,7 +11,7 @@ namespace :spam_watcher do
     shards.each do |shard_name|
      shard_sym = shard_name.to_sym
      puts "shard_name is #{shard_name}"
-     Sharding.run_on_shard(shard_name.to_sym) {
+     Sharding.run_on_shard(shard_name) {
       check_for_spam('helpdesk_tickets', 'requester_id', LIMITS[shard_sym][:tickets_limit], SPAM_TICKETS_THRESHOLD)
       check_for_spam('helpdesk_notes', 'user_id', LIMITS[shard_sym][:notes_limit], SPAM_CONVERSATIONS_THRESHOLD)
      }

@@ -112,6 +112,7 @@ es:
         one: "1 error prohibió que este %{model} se guardara"
         other: "%{count} errores prohibieron que este %{model} se guardara"
   activities: 
+    action_verb: actualizado
     forums: 
       delete_forum: 
         long: "Eliminar el Foro {{user_path}}{{notable_path}} y categoria{{category_name}}"
@@ -141,13 +142,45 @@ es:
       new_solution: 
         long: "{{user_path}} creó una solución nueva {{notable_path}}"
         short: "{{user_path}} creó la nueva solución"
+    tag: 
+      assigned: "Agente asignado"
+      assigned_to_nobody: "Agente no asignado"
+      conversation: 
+        in_email: "Cliente respondido"
+        note: "Nueva nota"
+        out_email: 
+          default: "Agente contestó"
+          private: "Ticket reenviado"
+        twitter: Tweet
+      deleted: "Ticket borrado"
+      execute_scenario: "Escenario ejecutado"
+      group_change: "Cambio del grupo de agente"
+      group_change_none: "Cambio del grupo de agente"
+      new_ticket: "Nuevo ticket"
+      priority_change: "{{value}}"
+      product_change: "Producto actualizado"
+      product_change_none: "Producto actualizado"
+      reassigned: "Agente reasignado"
+      restored: "Ticket reiniciado"
+      solutions: "Mueva solución"
+      source_change: "Fuente del ticket"
+      status_change: "{{value}}"
+      ticket_merge: "Tickets combinados"
+      ticket_split: "Ticket dividido"
+      ticket_type_change: "Tipo de ticket"
+      timesheet: 
+        new: "Hora de registro"
+        timer_started: "Inicio del temporizador"
+        timer_stopped: "Paro del temporizador"
     tickets: 
       assigned: 
         long: "{{user_path}} asignó el ticket {{notable_path}} a {{responder_path}}"
         short: "Asignado a {{responder_path}} por {{user_path}}"
+        without_user: "asignado a <strong>{{responder_path}}</strong>"
       assigned_to_nobody: 
         long: "{{user_path}} asignó el ticket {{notable_path}} a &quot;Nadie&quot;"
         short: "Asignado a 'Nadie' por {{user_path}}"
+        without_user: "asignado a <strong>'Nadie'</strong>"
       conversation: 
         in_email: 
           long: "{{user_path}} envió un(a) {{email_response_path}} al ticket {{notable_path}}"
@@ -167,57 +200,74 @@ es:
       deleted: 
         long: "{{user_path}} borró el ticket {{notable_path}}"
         short: "{{user_path}} borró este ticket"
+        without_user: "ha borrado el ticket"
       execute_scenario: 
         long: "{{user_path}} ejecutó el escenario '{{scenario_name}}' en {{notable_path}}"
         short: "{{user_path}} ejecutó el escenario '{{scenario_name}}"
+        without_user: "ejecutar el escenario <strong>{{scenario_name}}</strong>"
       group_change: 
         long: "{{user_path}} cambió el grupo de {{notable_path}} a {{group_name}}"
         short: "{{user_path}} cambió el grupo a {{group_name}}"
+        without_user: "grupo actualizado a <strong>{{group_name}}</strong>"
       group_change_none: 
         long: "{{user_path}} cambió el grupo de {{notable_path}} a 'ninguno'"
         short: "{{user_path}} cambió el grupo a 'ninguno'"
+        without_user: "grupo actualizado a <strong>'none'</strong>"
       new_ticket: 
         long: "{{user_path}} envió un ticket nuevo {{notable_path}}"
         short: "{{user_path}} envió el ticket"
       priority_change: 
         long: "{{user_path}} cambió la prioridad del ticket de {{notable_path}} a {{priority_name}}"
         short: "{{user_path}} cambió la prioridad a {{priority_name}}"
+        without_user: "prioridad del ticket actualizada a <strong>{{priority_name}}</strong>"
       product_change: 
         long: "{{user_path}} cambió el producto de {{notable_path}} a {{product_name}}"
         short: "{{user_path}} cambió el producto a {{product_name}}"
+        without_user: "producto actualizado a <strong>{{product_name}}</strong>"
       product_change_none: 
         long: "{{user_path}} cambió el producto de {{notable_path}} a 'ninguno'"
         short: "{{user_path}} cambió el producto a 'ninguno'"
+        without_user: "producto actualizado a <strong>'none'"
       reassigned: 
         long: "{{user_path}} reasignó el ticket {{notable_path}} a {{responder_path}}"
+        without_user: "reasignar el ticket <strong>{{responder_path}}</strong>"
       restored: 
         long: "{{user_path}} ha restaurado el ticket {{notable_path}}"
         short: "{{user_path}} restableció este ticket"
+        without_user: "ha restablecido el ticket"
       source_change: 
         long: "{{user_path}} cambió el origen del ticket de {{notable_path}} a {{source_name}}"
         short: "{{user_path}} cambió el origen a {{source_name}}"
+        without_user: "fuente actualizada a <strong>{{source_name}}</strong>"
       status_change: 
         long: "{{user_path}} cambió el estado del ticket {{notable_path}} a {{status_name}}"
         short: "{{user_path}} cambió el estado a {{status_name}}"
+        without_user: "actualizar estado a <strong>{{status_name}}</strong>"
       ticket_merge: 
         long: "{{user_path}} combinó el ticket {{notable_path}} con {{merge_ticket_path}}"
         short: "{{user_path}} combinó el ticket {{notable_path}} con {{merge_ticket_path}} "
+        without_user: "combinar ticket  {{notable_path}} to {{merge_ticket_path}}"
       ticket_split: 
         long: "{{user_path}} dividió el ticket {{notable_path}} desde {{split_ticket_path}}"
         short: "{{user_path}} dividió el ticket {{notable_path}} desde {{split_ticket_path}}"
+        without_user: "Dividir el ticket de {{split_ticket_path}}"
       ticket_type_change: 
         long: "{{user_path}} cambió el tipo de ticket de {{notable_path}} a {{ticket_type}}"
         short: "{{user_path}} cambió el tipo de ticket a {{ticket_type}}"
+        without_user: "tipo de ticket actualizado a <strong>{{ticket_type}}</strong>"
       timesheet: 
         new: 
           long: "{{user_path}} añadió un(a) {{timesheet_path}} al ticket {{notable_path}}"
           short: "{{user_path}} agregó un(a) {{timesheet_path}}"
+          without_user: "añadido a {{timesheet_path}}"
         timer_started: 
           long: "{{user_path}} inició un temporizador el {{timesheet_path}} al ticket {{notable_path}}"
           short: "{{user_path}} inició el temporizador el {{timesheet_path}}"
+          without_user: "temporizador iniciado  {{timesheet_path}}"
         timer_stopped: 
           long: "{{user_path}} detuvo un temporizador el {{timesheet_path}} al ticket {{notable_path}}"
           short: "{{user_path}} detuvo el temporizador el {{timesheet_path}}"
+          without_user: "temporizador parado  {{timesheet_path}}"
   add: Añadir
   add_a_new_folder: "Agregar a una carpeta"
   add_a_topic: "Comenzar un tema"
@@ -790,6 +840,7 @@ es:
   assuming_identity_not_allowed_msg: "No está autorizado a asumir este usuario."
   assuming_identity_user_does_not_exist_msg: "El usuario que has tratado de asumir no existe."
   at: a
+  attach_file: "Archivo adjunto"
   attach_file_local: "Adjuntar archivo desde el ordenador"
   attach_files: "Adjuntar archivos"
   attachment: Adjunto
@@ -854,6 +905,7 @@ es:
     title: "Horario hábil"
     to: "para:"
     valid_time: "Introducir un tiempo válido"
+  by: por
   cancel: Cancelar
   cancel_and_back: "Cancelar y regresar"
   cancel_my_account: "Cancelar mi cuenta"
@@ -916,6 +968,7 @@ es:
   choose_free_plan: "Seleccione su %{plan} GRATUITO"
   choose_plan: "Escoger plan"
   choose_plan_trial: "Nota; tu cuenta será desactivada al finalizar el periodo de prueba. <br /> Para continuar utilizando Freshdesk, elige un plan a continuación."
+  clear: Limpiar
   clear_draft_text: "Limpiar el borrador guardado?"
   click_select_action: "Seleccione la acción"
   click_to_change_sort_order: "Presione para cambiar el orden"
@@ -1104,6 +1157,7 @@ es:
   downgrade_dialog_title: "¿Estás seguro de que quieres bajar de categoría?"
   downgrade_plan: "Nota: Si bajas el plan de categoría podrías perder algunas de las características actuales."
   draft: Borrador
+  dropbox_attach_from: "Adjuntar desde Dropbox"
   dropbox_attach_label: "Adjuntar desde"
   dropbox_choose_file: "Elegir archivo"
   due_in: "Debido %{time_words}"
@@ -1312,6 +1366,7 @@ es:
     customers: clientes
     due_by: Vencido
     group_id: grupos
+    mygroups: "Mis grupos"
     priority: prioridad
     requester: solicitante
     responder_id: Agentes
@@ -1319,8 +1374,7 @@ es:
     status: estado
     tags: Etiquetas
     ticket_type: tipo
-    mygroups: Mis Grupos
-    unassigned: No asignados
+    unassigned: "No asignado"
   find_more_solutions: "Encontrar más soluciones"
   first_name: Nombre
   first_response_sla: "Incumplimiento del ANS de Primera Respuesta"
@@ -1723,6 +1777,7 @@ es:
       tickets_update_with_errors: "%{tickets} Actualizado, pero tiene cuestiones que requieren atencion"
     merge: 
       bulk_merge: 
+        continue: Continuar
         mark_primary: "Marcar como principal"
         primary_ticket: "Este es tu ticket principal"
         remove: "Eliminar este ticket"
@@ -1846,13 +1901,20 @@ es:
       note: 
         attachment_size: 
           exceed: "¡Vaya! Tu documento adjunto supera los 15 MB. Adjuntar un archivo más pequeño."
+        created_on: 
+          forward: "%{user_name} reenviado en %{note_date}"
+          private_note: "%{user_name} se agregó una nota privada en %{note_date}"
+          public_note: "%{user_name} se agregó una nota pública en %{note_date}"
+          reply: "%{user_name} contestado en %{note_date}"
         delete_note: "Borrar esto de la conversación del ticket?"
         edit_note: "Editar nota"
         inbound_email: "Correo entrante"
         outbound_email: "Correo saliente"
         posted_on: "%{user_name} el %{note_date}"
         private_note: "Nota privada"
+        private_note_tip: "Oculto para el cliente"
         public_note: "Nota pública"
+        public_note_tip: "Visible para el cliente"
         split_this_as_new_ticket: "Dividir como nuevo ticket"
         split_ticket_confirm: "¿Desea dividir esta nota y crearla como nuevo ticket?"
       overlay_fwd_time: " Enviado, hace %{time_in_words}"
@@ -1863,9 +1925,40 @@ es:
         view_ticket: "Ver ticket"
       show: 
         conversation: "Conversación "
+        due_date: 
+          due: Listo
+          earlier_date_and_time: "Dar una fecha y hora más actual que la fecha y hora de creación del ticket."
+          next_week: "Próxima semana"
+          set_date_time: "Establecer fecha/hora"
+          specific_date: "Fecha/hora... específica"
+          this_week: "Esta semana"
+          today: Hoy
+          tomorrow: Mañana
+          when_is_it_due: "¿Cuando estará listo?"
+        facebook_form: 
+          title: "Responder a %{user}"
+        forward_form: 
+          addbcc: "Agregar CCO"
+          addcc: "Agregar CC"
+          bcc: CCO
+          cc: CC
+          removebcc: "Eliminar CCO"
+          removecc: "Eliminar CC"
+        history: 
+          recent_item: "Asuntos recientes"
         linked_ticket: "Este ticket está vinculado al foro"
         meta: Meta
+        reply_form: 
+          addbcc: "Agregar CCO"
+          addcc: "Agregar CC"
+          bcc: CCO
+          cc: CC
+          removebcc: "Eliminar CCO"
+          removecc: "Eliminar CC"
+          title: "Responder a"
         timesheet: "Hoja de tiempo"
+        tweet_form: 
+          title: "Responder a %{user}"
       tabular_view: 
         assigned: Asignado
         posted: Publicado
@@ -1927,6 +2020,7 @@ es:
       index: 
         no_timeentry: "No existen entradas de tiempo para este ticket"
       new: 
+        hours_format_tip: "Introducir el tiempo como HH:MM o decimales (1:30 o 1,5 para una hora y media). Dejar en blanco para iniciar el temporizador automático."
         title: "Nueva entrada de tiempo"
       non_billable: "No facturable"
       note: Nota
@@ -1934,10 +2028,41 @@ es:
       report: 
         no_timeentry: "No hay datos disponibles"
         total: Total
+      sidebar_title: "Tiempo transcurrido"
       ticket: Ticket
       time_entry: 
         toggle_timer_false: "Detener temporizador"
         toggle_timer_true: "Iniciar temporizador"
+      v2: 
+        agent: Agente
+        billing_type: "Tipo de facturación"
+        customer: Cliente
+        executed_at: Fecha
+        form: 
+          add_entry: "Agregar entrada de tiempo"
+          agent: Agente
+          billing_hours: Facturable
+          hours: Horas
+          note: Nota
+          start_timer: "Comenzar el temporizador"
+          ? "true"
+          : "1"
+        group_by: "Agrupar por"
+        hours: Horas
+        index: 
+          add_entry: "Agregar entrada de tiempo"
+          no_timeentry: "No se ha registrado ningún tiempo para este ticket."
+          start_timer: "Iniciar el temporizador"
+        new: 
+          title: "Nueva entrada de tiempo"
+        note: Notas
+        report: 
+          no_timeentry: "Información no disponible"
+          total: Total
+        ticket: Ticket
+        time_entry: 
+          toggle_timer_false: "Parar el temporizador"
+          toggle_timer_true: "Iniciar el temporizador"
   helpdesk_quests: 
     all: Todo
     available_quests: "Misiones disponibles"
@@ -2235,6 +2360,8 @@ es:
       info1: "Cuando un ticket de Freshdesk está vinculado a un problema de JIRA, realizar las siguientes acciones."
       info2: "Cuando el estado del ticket se actualiza en Freshdesk "
       info3: "Cuando se añade un comentario en Freshdesk "
+      info4: "Cuando se actualiza el estado del problema en JIRA"
+      info5: "Cuando se añade un comentario en Freshdesk"
       none: "No hacer nada."
       send_reply_in_fd: "Notificar al cliente via email"
       sync_updates: "Sincronizar actualizaciones"
@@ -2339,6 +2466,7 @@ es:
       remember: Recordarme
       sign_in_error: "Correo o contraseña incorrectos"
       sign_in_using: "...o entra usando"
+  more: más
   myself: Yo
   name: Nombre
   never: Nunca
@@ -2364,7 +2492,7 @@ es:
   non_covered_feature_error: "Esta opción está actualmente bloqueada"
   not_eligible_for_free_plan: "No apto para seleccionar el plan gratuito"
   not_eligible_for_sprout_plan: "No apto para seleccionar el plan Sprout"
-  not_given: Sin comentarios
+  not_given: "No dado."
   not_selected: "No seleccionado"
   note: "Nota:"
   notified_to: "Notificar a"
@@ -2397,6 +2525,8 @@ es:
     article: 
       see_all_articles: "Ver los %{count} artículos"
     community_forums: "Foros de la comunidad"
+    folder: 
+      filler_text: "En este espacio habrá artículo sobre %{folder_name}"
     header: 
       preview_message: "<b>Modo preliminar</b> - <a href='javascript:window.close()'>Pulsar aquí</a> para volver."
     knowledge_base: "Base de Conocimiento"
@@ -2404,6 +2534,7 @@ es:
     login_details: "Introducir los datos que registraste con nosotros"
     login_options: "...o iniciar sesión usando"
     login_portal: "Iniciar sesión en el portal de asistencia"
+    new_support_ticket: "Nuevo ticket de ayuda"
     no_articles_info_1: "Lo sentimos, no hemos publicado ningún artículo en esta sección. "
     no_articles_info_2: "Vuelve otra vez más tarde. "
     no_forums_info_1: "No hay temas en el foro todavía"
@@ -2411,7 +2542,9 @@ es:
     no_topics_in_this_view: "~ No hay temas en esta vista ~"
     or_signup: "o %{signup} para una cuenta"
     popular_topics: "Temas populares"
+    reported: declarado
     reset_password: "Envíanos tu dirección de correo y te enviaremos las instrucciones para restablecer la contraseña."
+    said: dicho
     search: 
       filters: 
         all: Todo
@@ -2419,21 +2552,41 @@ es:
         tickets: Tickets
         topics: Temas
       placeholder: "Introducir el término de búsqueda aquí..."
+      results_for: "Buscar en resultados"
     showing_recent_updates: "Mostando actualizaciones recientes"
     showing_recently_popular_topics: "Mostrando temas populares recientes"
     signup: Registrarse
     solutions_home: "Soluciones, inicio"
+    submit_new_ticket: "... o enviar un nuevo ticket"
     tickets: 
+      add_or_remove_emails: "Agregar o eliminar emails que necesitan copiarse cuando se envía una notificación para este ticket."
+      add_people: "Añadir personas"
+      add_people_title: "Agregar personas a la conversación"
+      details: "Datos del ticket"
       export: "Exportar consultas"
       export_ticket_data: "Exportar los datos de consulata a CSV"
       export_to_csv: "Exportar a CSV"
+      mark_closed: "Marcar ticket como cerrado"
+      reopen_reply: "Reabrir y responder"
+      reply_placeholder: "Pulsar aquí para responder a este ticket"
+      ticket_list: "Lista de tickets"
     to_post_comment: " para publicar un comentario"
     to_post_topic: " para publicar un tema"
     to_submit_ticket: " para enviar una nueva consulta"
     topic: 
+      comment_placeholder: "Pulsar aquí para añadir un comentario"
       comments_closed: "¡Los comentarios de esta discusión están cerrados!"
+      default_select_option: "Seleccionar un tipo de foro"
+      follow: Seguir
+      following: Siguiendo
+      last_reply: "Última respuesta"
+      monitor_topic: "Seguir ente tema"
+      more_topic: "Más temas en"
+      post_topic: "Publicar tema en"
       see_all_topics: "Ver los %{count} temas"
       start_new_topic: "Empezar un tema nuevo"
+      started: "empezó un tema"
+      topic_title: "Título del tema"
     topic_vote: 
       howto: 
         one: "tiene esta pregunta"
@@ -2573,6 +2726,7 @@ es:
     confirm_password_message: "Debe ser igual que la contraseña"
     current_password: "Contraseña actual"
     edit: "Editar perfil"
+    manage: "Gestionar tu perfil"
     new_password: "Nueva contraseña"
   profile_settings: "Configuración de perfil"
   question: Preguntas
@@ -2603,6 +2757,7 @@ es:
   recent_activity: "Actividad reciente"
   recent_forum_posts: "Publicaciones recientes ene l foro"
   referral: "Crédito por recomendación"
+  register: Registrar
   remove: Eliminar
   reorder: Reordenar
   replied_to: "Respondido a"
@@ -2720,6 +2875,7 @@ es:
   save_this_view: Guardar
   save_this_view_tooltip: "Guardar Vista"
   saved_draft: Guardado
+  saving: Guardando...
   saving_draft: Guardando
   scenario_label: "Etiqueta del escenario"
   search: 
@@ -2747,6 +2903,7 @@ es:
   seven_days: "Esta semana"
   show_me_how: "Muestrame como"
   show_quoted_text: "Mostrar el texto citado"
+  show_recent: "Mostrar recientes"
   showing: Mostrando
   sign_in_info: "Ud vá a registrarse con"
   signup: Inscribirse
@@ -2780,7 +2937,9 @@ es:
     escalate_to: "Escalar a"
     escalation_email: "Email de intensificación"
     escalation_resolution: "Establecer reglas de intensificación cuando un ticket no <b>se resuelve</b> a tiempo"
+    escalation_resolution_text: "Establecer reglas de intensificación cuando un ticket no <b>se resuelve</b> a tiempo"
     escalation_response: "Establecer reglas de intensificación cuando un ticket no <b>se responde</b> a tiempo"
+    escalation_response_text: "Establecer regla de intensificación cuando un ticket no <b>se responde</b> a tiempo"
     group_id_placeholder: "Introducir los nombre de grupos"
     helpcard: 
       info1: "<p>Un contrato de políticas de nivel de servicio (ANS) te permite establecer niveles de rendimiento para el equipo de apoyo. Puedes establecer políticas que los agentes tengan que cumplir y resolver los tickets en base a prioridades. Puedes elegir que cada norma del contrato sea calculada sobre el horario del calendario o sobre tu horario de trabajo. </p><p>Las políticas de tu contrato se utilizarán en Freshdesk para determinar el tiempo de “Finalización” de cada ticket.</p>"
@@ -2789,7 +2948,8 @@ es:
       info_1: "<p>Un acuerdo de políticas de nivel de servicio (ANS) te permite establecer niveles de rendimiento para el equipo de apoyo. Puedes establecer políticas que los agentes tengan que cumplir y resolver los tickets en base a prioridades. Puedes elegir que cada norma del contrato sea calculada sobre el horario del calendario o sobre tu horario de trabajo.</p><p>Las políticas de tu contrato se utilizarán en Freshdesk para determinar el tiempo de “Finalización” de cada ticket.</p>"
       info_2: "<p>Puedes tener múltiples políticas de ANS, que se desencadenan por condiciones específicas como el cliente que solicitó el ticket, el grupo al que está asignado, su fuente o producto.</p><p>Por ejemplo, puedes haber establecido una política especial para los tickets que vienen de Twitter y asignarlos al equipo de ventas. O puedes tener una política especial para los clientes que tienen suscripciones prioritarias. Si das asistencia a múltiples marcas o productos, también puedes tener un flujo de trabajo para cada producto.</p> <p><strong>El orden de tus reglas de ANS es importante.</strong> La primera regla que cumple las condiciones de un ticket será la que se aplique a este, así que recuerda ordenar las reglas importantes más cerca del principio</p>"
       info_3: "<p>Opcionalmente se pueden establecer jerarquías de intensificación para cada política que informen a agentes específicos cuando se esté incumpliendo una norma del contrato.</p>"
-      title: "Poliza SLA"
+      sla_info_2: "<p>Puedes tener múltiples políticas de ANS, que se desencadenan por condiciones específicas como el cliente que solicitó el ticket, el grupo al que está asignado, su fuente o producto.</p><p>Por ejemplo, puedes haber establecido una política especial para los tickets que vienen de Twitter y asignarlos al equipo de ventas. O puedes tener una política especial para los clientes que tienen suscripciones prioritarias. Si das asistencia a múltiples marcas o productos, también puedes tener un flujo de trabajo para cada producto.</p> <p><strong>El orden de tus reglas de ANS es importante.</strong> La primera regla que cumple las condiciones de un ticket será la que se aplique a este, así que recuerda ordenar las reglas importantes más cerca del principio</p>"
+      title: "Politica SLA"
       title1: "Ejecutar las reglas de intensificación"
       title2: "Utilizar múltiples políticas de ANS"
       title_1: "Utilizar múltiples políticas de ANS"
@@ -3048,6 +3208,7 @@ es:
   ticket: 
     activities: Actividades
     activity: Actividad
+    activity_toggle: "Mostrar actividades"
     add_note: "Agregar nota"
     add_time: "Añadir hora"
     agent: Agente
@@ -3079,6 +3240,7 @@ es:
     delete_btn: Eliminar
     delete_btn_title: "Mover este ticket a la papelera"
     delete_forever: "eliminar para siempre"
+    deleted: BASURA
     due_by: "Horas desde demorado"
     due_by_time: "Vencido por tiempo"
     edit: "Edit Ticket"
@@ -3086,6 +3248,7 @@ es:
     edit_note: "<b>Editar Nota</b>"
     empty_trash: "Papelera vacio"
     execute_scenario: "Ejecutar situación"
+    expand: Expandir
     export: Exportar
     facebook_form: 
       send: Enviar
@@ -3099,8 +3262,12 @@ es:
     id: ID
     id_placeholder: "Introducir un ID para encontrar tickets"
     inbound_count: "Cantidad de interacciones del solicitante"
+    include_quoted_text: "Incluir respuestas anteriores"
+    insert: Introducir
     integrations: 
       jira: 
+        add_new: "Vincular un problema"
+        existing: "Ver problema"
         tooltip: "Ver el problema JIRA asociado"
     merge_btn: Combinar
     merge_ticket_list_status_agent_responded_at: "De; %{username}<br /> El agente respondió: <span class='emphasize'>hace %{time_ago}</span>"
@@ -3110,7 +3277,9 @@ es:
     merge_ticket_list_status_resolved_at: "De; %{username}<br /> Resuelta: <span class='emphasize'>hace %{time_ago}</span>"
     merge_title: "Combinar tickets"
     monitor_btn_title: "Monitorear este ticket"
+    more_details: "Más detalles..."
     myself: Yo
+    next: " Nuevo ticket"
     none: ninguno
     note_content: "Contenido de la nota"
     note_form: 
@@ -3125,6 +3294,7 @@ es:
     pick_up: Recoger
     portal_created_on: "Creado por <span class='emphasize'>%{username}</span>sobre<span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Creado en <span class='emphasize'>%{date}</span>"
+    previous: "Ticket anterior"
     priority: Prioridad
     properties: "Propiedades del ticket"
     recent_tickets: "Tickets recientes"
@@ -3134,6 +3304,7 @@ es:
       reply_email_id: "Enviar respuesta desde el siguiente ID de correo"
       send: Enviar
       send_and_resolve: "Enviar y resolver"
+      send_and_set_as: "Enviar y marcar como <strong>%{status}</strong>"
       send_satisfaction_survey: "Incluir encuesta de satisfaccion"
     reply_to: Responder
     reported_by: "Proviene de %{requester}"
@@ -3150,6 +3321,7 @@ es:
     singular: Ticket
     sort_by: "Ordenar por"
     source: Fuente
+    spam: SPAM
     spam_btn_title: "Marcar como basura"
     split_ticket: Dividir
     status: Estado
@@ -3160,15 +3332,22 @@ es:
     submit_ticket_title: "Crear un ticket"
     suggest_solutions: "Sugerir soluciones"
     suggested_solutions: 
+      content: Contenido
       insert_content: "Insertar contenido"
       insert_content_tip: "Inserte este artículo de solución en su respuesta o nota"
       insert_url: "Insertar URL"
       insert_url_tip: "Insertar esta URL de solución en su respuesta o nota"
+      link: Enlace
       no_result: "No se encontraron soluciones"
       title: "Soluciones sugeridas"
     support: 
       reply: Responder
       reply_and_open: "Responder y volver a abrir"
+    switch_view: 
+      new_view: "Probar la <strong>Vista de nuevo ticket</strong>"
+      revert_view: "Cambiar a Vista clásica"
+      submit_feedback: "Enviar comentario"
+      whats_new: Novedad
     tags: 
       add_tag: "Añadir una etiqueta"
       create_success: "Se agregó la etiqueta"
@@ -3197,6 +3376,8 @@ es:
     unassigned: "No asignados"
     unflag_spam: "Unflag Spam"
     unwatch: "sin observador"
+    update_done: Hecho
+    updating: Actualizando...
     verify_human: "Para verificar que usted es humano, porfavor digite las letras distorsionadas"
     view_twitter: "Ver en Twitter"
   ticket_cancel_multiple_button: Cancelar
@@ -3281,6 +3462,8 @@ es:
     saving_ticket: "Guardando los campos de ticket..."
     second_choice: "Segunda opción"
     untitled: "Sin título"
+  ticket_future_due_by: "Esperado en %{time}"
+  ticket_past_due_by: "Esperado hace %{time}"
   ticket_pending_since_time: "Pendiente desde"
   ticket_resolved_at_time: "Resuelto a las"
   ticket_update_multiple_button: Actualizar
@@ -3384,6 +3567,7 @@ es:
     choose_another_photo: "Elegir otra foto"
     company: Empresa
     email: Correo
+    facebook: Facebook
     full_name: "Nombre completo"
     info1: "Una imagen de perfil de la persona es mejor si la imagen posee el mismo largo y alto"
     mobile: Móvil
