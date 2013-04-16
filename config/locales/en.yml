@@ -1504,7 +1504,8 @@ en:
     name: Group Name
     edit: Edit Group
     title: Groups
-    info1: Agents in this Group
+    ticket_assignment: Ticket Assignment
+    info1: Agents
     info2: No Agents in this group
     info3: Send an Escalation email to
     info4: if a ticket remains un-assigned for more than
@@ -1514,6 +1515,10 @@ en:
     tour: Help me create a new agent group
     helptext: You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, set email notifications, create business rules and generate reports at the group level. Note that the same agent can be a member of multiple groups as well. 
     select_agents: Select Agents
+    manual: Manual
+    automatic: Automatic
+    manual_desc: Agents should <i>manually</i> pick up tickets assigned to this group
+    automatic_desc: Tickets assigned to this group by the dispatcher are <i>automatically</i> distributed equally among the available agents
     assigntime:
       half: 30 Minutes
       one: 1 Hour
@@ -2002,6 +2007,7 @@ en:
     help_center: "How can we help you today?"
     new_support_ticket: "New support ticket"
     check_ticket_status: "Check ticket status"
+    user_available: "Availability for automatic ticket assignment"
     tabs:
       reports: Reports
       dashboard: Dashboard
@@ -2624,6 +2630,7 @@ en:
         watcher_text: Agents added as watchers receive email alerts when the ticket is updated
         unwatch: Unwatch
         pick_agents: Add agents
+        add_agent: Enter agent's name
         all_agents_watching: All agents are watching this ticket
         mail:
           hi: Hi

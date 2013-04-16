@@ -5,7 +5,7 @@ class AgentsController < ApplicationController
   
   include Gamification::GamificationUtil
 
-  before_filter :authorized_to_manage_agents, :except => :show
+  before_filter :authorized_to_manage_agents, :except => [:show, :toggle_availability]
   before_filter :authorized_to_view_agents, :only => :show
 
   skip_before_filter :check_account_state, :only => :destroy
@@ -77,6 +77,13 @@ class AgentsController < ApplicationController
       format.html # edit.html.erb
       format.xml  { render :xml => @agent }
     end    
+  end
+
+  def toggle_availability
+    @agent = current_account.agents.find_by_user_id(params[:id])
+    @agent.available = params[:value]
+    @agent.save
+    render :nothing => true
   end
   
   def delete_avatar

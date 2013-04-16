@@ -136,6 +136,39 @@ div.bg_pulp{
 	padding:5px 0px 0px 0px;
 	background:$header_color;	
 }
+.header-link-wrapper *{
+	vertical-align: middle;
+}
+.header-link-wrapper{
+	border: 2px solid #000;
+    border: 2px solid rgba(#000, .2);
+    -webkit-background-clip: padding-box; /* for Safari */
+    background-clip: padding-box; /* for IE9+, Firefox 4+, Opera, Chrome */
+	float:right;
+	margin: 2px 12px;
+    margin-bottom:10px;
+	height:35px;
+	overflow:hidden;
+	@include border-radius(3px);
+	a{
+		float:left;
+		background-color:#000;
+		background-color:rgba(#000, 0.2);
+
+		img{
+			height:35px;
+		}
+	}
+	div.preview_pic{
+		float: right;
+		margin: 0;
+		img {
+			@include border-radius(0);
+			width: auto;
+			height: 35px;
+		}
+	}
+}
 
 .brand{
 	@include pie-clearfix;

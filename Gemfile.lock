@@ -74,7 +74,7 @@ GEM
     activesupport (2.3.18)
     addressable (2.2.7)
     after_commit (1.0.11)
-      activerecord (< 3.0.0, >= 1.15.6)
+      activerecord (>= 1.15.6, < 3.0.0)
     akami (1.2.0)
       gyoku (>= 0.4.0)
       nokogiri (>= 1.4.0)
@@ -145,7 +145,10 @@ GEM
     map-fields (1.0.0)
       fastercsv (>= 1.2.3)
     memcache-client (1.8.5)
+    metaclass (0.0.1)
     mime-types (1.16)
+    mocha (0.13.3)
+      metaclass (~> 0.0.1)
     mongrel (1.1.5)
       cgi_multipart_eof_fix (>= 2.4)
       daemons (>= 1.0.3)
@@ -262,6 +265,7 @@ GEM
       tilt (>= 1.2.2, < 2.0)
     soap4r (1.5.8)
       httpclient (>= 2.1.1)
+    spork (0.8.5)
     spreadsheet (0.6.8)
       ruby-ole (>= 1.0)
     susy (1.0.5)
@@ -315,6 +319,7 @@ DEPENDENCIES
   map-fields (= 1.0.0)
   marketo!
   memcache-client (= 1.8.5)
+  mocha (~> 0.13.3)
   mongrel
   mysql
   net-dns (= 0.6.1)
@@ -347,6 +352,7 @@ DEPENDENCIES
   sanitize (= 2.0.3)
   sass (= 3.2.1)
   sax-machine (~> 0.1.0)
+  spork (~> 0.8.0)
   spreadsheet (= 0.6.8)
   susy
   thinking-sphinx (= 1.4.3)

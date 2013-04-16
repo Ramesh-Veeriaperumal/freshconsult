@@ -27,6 +27,25 @@ function catchException(fn, message) {
   }
 }
 
+function processAgent(user_id) {
+  var value = ( jQuery("#available_icon").attr("class") == "header-icons-autoAssign-on" )
+ 
+  new Ajax.Request('/agents/toggle_availability', 
+                   { parameters: {value: value, id: user_id},
+                      onLoading: function() {
+                        
+                      },
+                      onSuccess: function(response) {
+                       //change the icon class.
+                       var img =  document.getElementById('available_icon');
+                      if(img.hasClassName('header-icons-autoAssign-on')) 
+                        img.removeClassName('header-icons-autoAssign-on').addClassName('header-icons-autoAssign-off');
+                      else
+                        img.removeClassName('header-icons-autoAssign-off').addClassName('header-icons-autoAssign-on');
+
+                     } });
+}
+
 function freshdate(str) {
   var month_names = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   var d =  parseUTCDate(str);
@@ -401,8 +420,8 @@ active_dialog = null;
  }; 
 
  $(document).bind('mousedown', function(e) {       
-	if($(e.target).hasClass("chzn-results")) return;
-  if ($(e.target).parent().is(".fd-ajaxmenu, .fd-ajaxmenu .contents")) { return };
+	 if($(e.target).hasClass("select2-choice") || $(e.target).hasClass("item-in-menu")) return;
+  if ($(e.target).parents().is(".fd-ajaxmenu, .fd-ajaxmenu .contents, .profile_info, .select2-container")) { return };
     if($(this).data("active-menu")){
       if(!$(e.target).data("menu-active")) hideActiveMenu();
       else setTimeout(hideActiveMenu, 500);         
