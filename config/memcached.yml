@@ -1,5 +1,6 @@
 defaults: &defaults
-  servers: "localhost:11211"
+  servers: 
+    - localhost:11211
   ttl: 1800
   readonly: false
   urlencode: false

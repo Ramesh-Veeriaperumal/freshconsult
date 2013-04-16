@@ -1,6 +1,7 @@
 class SubscriptionAdmin::SpamWatchController < ApplicationController
 
   include AdminControllerMethods
+  skip_filter :read_on_slave, :only => [:block_user,:spam_user]
 
   
 

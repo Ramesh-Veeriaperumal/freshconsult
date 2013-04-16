@@ -4,7 +4,7 @@
 	{% endif %}
 	<div class="breadcrumb">
 		<a href="{{ portal.discussions_home_url }}">{% translate portal_pages.groups.discussions %}</a>
-		<a href="{{ forum.forum_category.url }}">{{ forum.forum_category.name }}</a>
+		<a href="{{ forum.forum_category.url }}">{{ forum.forum_category.name | h }}</a>
 	</div>	
 	<i class="page-stamp page-stamp-{{ forum.type_name }}">
 		<i class="icon-page-{{ forum.type_name }}"></i>

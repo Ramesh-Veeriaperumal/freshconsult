@@ -6,9 +6,7 @@ class Integrations::Application < ActiveRecord::Base
     :class_name => 'Integrations::Widget',
     :dependent => :destroy
   belongs_to :account
-  named_scope :available_apps, lambda {|account_id| { 
-    :conditions => ["account_id  in (?)", [account_id, SYSTEM_ACCOUNT_ID]], 
-    :order => :listing_order }}
+  
   after_destroy :destroy_installed_apps
 
   has_many :app_business_rules, 
@@ -16,6 +14,10 @@ class Integrations::Application < ActiveRecord::Base
     :dependent => :destroy
 
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
+
+  named_scope :available_apps, lambda {|account_id| { 
+    :conditions => ["account_id  in (?)", [account_id, SYSTEM_ACCOUNT_ID]], 
+    :order => :listing_order }}
 
   def to_liquid
     JSON.parse(self.to_json)["application"]
@@ -33,6 +35,7 @@ class Integrations::Application < ActiveRecord::Base
   def user_specific_auth?
     !!self.options[:user_specific_auth]
   end
+
 
   def self.install_or_update(app_name, account_id, params={})
     app = Integrations::Application.find_by_name(app_name)

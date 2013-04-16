@@ -2,7 +2,7 @@
 
 # The production environment is meant for finished, "live" apps.
 # Code is not reloaded between requests
-config.log_level = :info
+config.log_level = :debug
 
 config.cache_classes = true
 
@@ -19,9 +19,15 @@ config.after_initialize do
   ActiveMerchant::Billing::Base.gateway_mode = :test
 end
 
+# Don't auto compile css in production
+config.after_initialize do
+	Sass::Plugin.options[:never_update] = true
+end
 
 # Use a different cache store in production
 # config.cache_store = :mem_cache_store
+
+#ActiveRecord::Base.logger = Logger.new("log/debug.log")
 
 # Enable serving of images, stylesheets, and javascripts from an asset server
 # config.action_controller.asset_host                  = "http://assets.example.com"

@@ -69,23 +69,26 @@ gem "resque","1.22.0"
 gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
 gem 'rforce'
 
-gem "seamless_database_pool", :git => "git://github.com/freshdesk/seamless_database_pool.git"
-gem 'after_commit', :git => "git://github.com/freshdesk/after_commit.git"
+gem 'after_commit', "1.0.11"
+
 gem 'chargebee', "~> 1.1.1"
 
 gem 'memcache-client', '1.8.5'
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
+gem 'tire', :git => "git://github.com/freshdesk/tire.git"
 gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
 gem "rinku", :git => "git://github.com/freshdesk/rinku.git"
 
 gem "people", '0.2.1' #https://github.com/mericson/people/tree/master/lib
+gem "useragent", "~> 0.4.16"
 gem "xss_terminate", "~> 0.2"
+gem "active_record_shards","2.7.0", :require => 'active_record_shards'
 gem "rack-throttle", "~> 0.3.0"
 
-
 group :development,:test do
-   gem "rspec", "1.3.1"
-   gem "rspec-rails", "1.3.3"
+   #gem "rspec", "1.3.1"
+   #gem "thoughtbot-shoulda","2.10.2"
+   #gem "rspec-rails", "1.3.3"
    gem "forgery","0.5.0"
    gem "factory_girl", "1.2.3" 
    gem "mongrel" 
@@ -98,4 +101,6 @@ group :assets do
 	gem "compass-rails"
 	# Portal grid system is done using susy grids
 	gem "susy" 
+   # To optimize sprite generation
+   gem "oily_png"
 end

@@ -1,0 +1,20 @@
+<% content_tag :div, :id => "timeentry_add" do %>
+  <% remote_form_for :time_entry, 
+                   :url => helpdesk_ticket_helpdesk_time_sheets_path(@ticket), 
+                   :before => 'if (jQuery("#timeentry_apps_add .app-logo input[type=checkbox]").filter(":checked").parentsUntil("#time_integration").filter(".still_loading").length) return false;',
+                   :html => { 
+                        :id => "add_new_time_entry", 
+                        :class => "timesheet_form",
+                        "data-modal-id" => "new_timeentry"
+                    } do |f| %>
+    <%= hidden_field(:time_entry, :workable_id , { :value => @ticket.id }  )%>
+    <%= render :partial => "/helpdesk/time_sheets/v2/form", :object => f, :locals => { :type => :new } %>
+  <% end %>
+<% end %>
+
+<script type="text/javascript">
+  jQuery('#timeentry_apps_add').detach().appendTo('#timeentry_add');
+  jQuery('#timeentry_apps_add').show();
+
+  jQuery('.modal.in #time_entry_hhmm').focus();
+</script>

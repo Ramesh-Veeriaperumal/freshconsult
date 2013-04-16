@@ -34,7 +34,6 @@
   end
 
   map.connect '/agents/filter/:state' ,:controller => 'agents' ,:action => 'index'
-  map.connect '/agents/toggle_availability/:id', :controller => 'agents', :action => 'toggle_availability'
   map.resources :sla_details
   
 #  map.mobile '/mob', :controller => 'home', :action => 'mobile_index'
@@ -122,6 +121,10 @@
     admin.resources :email_commands_setting, :member => { :update => :put }
     admin.resources :account_additional_settings, :member => { :update => :put, :assign_bcc_email => :get}
   end
+
+  map.namespace :search do |search|
+    search.resources :home, :only => :index, :collection => { :suggest => :get, :solutions => :get, :topics => :get }
+  end
   
   map.resources :reports
   map.resources :timesheet_reports , :controller => 'reports/timesheet_reports' , :collection => {:report_filter => :post , :export_csv => :post} 
@@ -206,7 +209,6 @@
   
   map.resources :search, :only => :index, :member => { :suggest => :get }
   
-  
   #SAAS copy ends here
 
 
@@ -268,11 +270,11 @@
                                  :member => { :reply_to_conv => :get, :forward_conv => :get, :view_ticket => :get, 
                                     :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :post, 
                                     :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put, 
-                                    :change_due_by => :put, :split_the_ticket =>:post, 
-                                    :merge_with_this_request => :post, :print => :any, :latest_note => :get, 
+                                    :change_due_by => :put, :split_the_ticket =>:post, :status => :get, 
+                                    :merge_with_this_request => :post, :print => :any, :latest_note => :get,  :activities => :get, 
                                     :clear_draft => :delete, :save_draft => :post } do |ticket|
 
-
+      ticket.resources :notes, :member => { :restore => :put }, :collection => {:since => :get}, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :subscriptions, :collection => { :create_watchers => :post, 
                                                         :unsubscribe => :get,

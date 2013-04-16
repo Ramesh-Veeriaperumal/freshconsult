@@ -5,8 +5,7 @@
   <%= f.error_messages %>
   <% current_portal.customer_editable_ticket_fields.each do |field| %>
     <div class="control-group">
-      <%= ticket_label :helpdesk_ticket, field %>
-      <%= ticket_form_element :helpdesk_ticket, field %>
+      <%= ticket_field_container :helpdesk_ticket, field %>
     </div>
   <% end %>
      
@@ -32,11 +31,21 @@
     jQuery(document).ready(function(){      
       <% if feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
         callbackToSolutionSearch = function(string){
-          jQuery.ajax({ url: "/search/widget_solutions?search_key="+string, 
+          jQuery.ajax({ url: "/support/search/solutions?max_matches=4&term="+string, 
+            dataType: 'json',
             success: function(data){
-                var data_available = jQuery(data).find("a").length;
-                if(data_available){
-                  $("#new-ticket-search").html(data).show()
+                var search_items = jQuery("<ul class='unstyled'>")
+                jQuery.each(data, function(i, item){
+                  jQuery( "<li>" )
+                    //.append('<span class="label label-small label-light ">'+ item.group +'</span>')
+                    .append("<a href='"+item.url+"'>" + item.title + "</a> ")                    
+                    .append('<div>'+ item.desc +'</div>')
+                    .addClass(item.type.toLowerCase()+'-item')
+                    .appendTo( search_items )
+                })
+                if(data.length > 0){
+                  jQuery("#new-ticket-search")
+                    .html(search_items).show()
                 }
                 jQuery("#helpdesk_ticket_subject").removeClass("loading-right");
               }
@@ -45,7 +54,6 @@
         
           jQuery("#helpdesk_ticket_subject").live("blur", function(ev){
               var searchString = this.value.replace(/^\s+|\s+$/g, "");
-              console.log(searchString)
               if(searchString != '' && searchString.length > 1){
                 jQuery(this).addClass("loading-right");
                 callbackToSolutionSearch(searchString);

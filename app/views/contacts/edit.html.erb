@@ -1,5 +1,5 @@
 <% content_for :sidebar do -%><%- end %>
-<h3 class="title"><%=t('contacts.edit')%> <span class="info_data">"<%= @user.display_name %>"</span> </h3>
+<h3 class="title"><%=t('contacts.edit')%> <span class="info_data">"<%= h(@user.display_name) %>"</span> </h3>
 <% form_for @user, :url => { :controller => "contacts", :action => "update" },:html => { :multipart => true }  do |f| %>
 	  <%= render :partial => "form", :locals => { :f => f, :type => "edit" } %>
 	  <div class="button-container">

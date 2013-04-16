@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
   include Helpdesk::Ticketfields::TicketStatus
   include Mobile::Actions::User
   include Users::Activator
+  include Search::ElasticSearchIndex
   include Cache::Memcache::User
 
   USER_ROLES = [
@@ -60,14 +61,16 @@ class User < ActiveRecord::Base
   before_create :set_time_zone , :set_company_name , :set_language
   before_save :set_contact_name, :check_email_value , :set_default_role
   after_update :drop_authorization , :if => :email_changed?
+  after_commit :update_es_index
 
   after_commit_on_create :clear_agent_list_cache, :if => :agent?
   after_commit_on_update :clear_agent_list_cache, :if => :agent?
   after_commit_on_destroy :clear_agent_list_cache, :if => :agent?
   after_commit_on_update :clear_agent_list_cache, :if => :user_role_updated?
   before_update :bakcup_user_changes
+  after_commit_on_update :update_search_index, :if => :customer_id_updated?
   
-  xss_terminate  :only => [:name,:email]
+  # xss_terminate  :only => [:name,:email]
   named_scope :account_admin, :conditions => ["user_role = #{USER_ROLES_KEYS_BY_TOKEN[:account_admin]}" ]
   named_scope :contacts, :conditions => ["user_role in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})" ]
   named_scope :technicians, :conditions => ["user_role not in (#{USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{USER_ROLES_KEYS_BY_TOKEN[:client_manager]})"]
@@ -94,15 +97,13 @@ class User < ActiveRecord::Base
   end
   
   validates_presence_of :email, :unless => :customer?
-
-  delegate :overloaded?, :available?, :to => :agent, :if => :agent?
-
+  
   def check_email_value
     if email.blank?
       self.email = nil
     end
   end
-
+  
   def chk_email_validation?
     (is_not_deleted?) and (twitter_id.blank? || !email.blank?) and (fb_profile_id.blank? || !email.blank?) and
                           (external_id.blank? || !email.blank?) and (phone.blank? || !email.blank?) and
@@ -383,7 +384,7 @@ class User < ActiveRecord::Base
   end
 
   def is_not_deleted?
-    logger.debug "not ::deleted ?:: #{!self.deleted}"
+    Rails.logger.debug "not ::deleted ?:: #{!self.deleted}"
     !self.deleted
   end
   
@@ -492,6 +493,17 @@ class User < ActiveRecord::Base
     agent.destroy
   end
 
+  def to_indexed_json
+    to_json( 
+              :only => [ :name, :email, :description, :job_title, :phone, :mobile, :twitter_id, :fb_profile_id, :account_id, :deleted ], 
+              :include => { :customer => { :only => [:name] } } 
+           )
+  end
+
+  def update_search_index
+    Resque.enqueue(Search::IndexUpdate::UserTickets, { :current_account_id => account_id, :user_id => id })
+  end
+
   protected
 
   def set_contact_name 
@@ -554,6 +566,10 @@ class User < ActiveRecord::Base
 
     def user_role_updated?
       @all_changes.has_key?(:user_role)
+    end
+
+    def customer_id_updated?
+      @all_changes.has_key?(:customer_id)
     end
     
 end

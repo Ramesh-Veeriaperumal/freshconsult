@@ -1,6 +1,7 @@
 class Customer < ActiveRecord::Base
   
   include Cache::Memcache::Customer
+  include Search::ElasticSearchIndex
   serialize :domains
     
   validates_presence_of :name,:account
@@ -20,13 +21,14 @@ class Customer < ActiveRecord::Base
   belongs_to :sla_policy, :class_name =>'Helpdesk::SlaPolicy'
 
   named_scope :domains_like, lambda { |domain|
-    { :conditions => [ "domains like ?", "#{domain}%" ] } if domain
+    { :conditions => [ "domains like ?", "%#{domain}%" ] } if domain
   }
 
-  after_commit_on_create :clear_cache
+  after_commit_on_create :map_contacts_to_customers, :clear_cache
   after_commit_on_destroy :clear_cache
   after_commit_on_update :clear_cache
-  
+  after_update :map_contacts_on_update, :if => :domains_changed?
+   
   #Sphinx configuration starts
   define_index do
     indexes :name, :sortable => true
@@ -48,6 +50,7 @@ class Customer < ActiveRecord::Base
   
   before_create :check_sla_policy
   before_update :check_sla_policy
+  after_commit :update_es_index
   
   has_many :tickets , :through =>:users , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id"
   
@@ -55,8 +58,6 @@ class Customer < ActiveRecord::Base
     [ :customer,    "Customer",         1 ], 
     [ :prospect,    "Prospect",      2 ], 
     [ :partner,     "Partner",        3 ], 
-   
-   
   ]
 
   CUST_TYPE_OPTIONS = CUST_TYPES.map { |i| [i[1], i[2]] }
@@ -93,10 +94,31 @@ class Customer < ActiveRecord::Base
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:import_id,:delta]) 
   end
 
+  def to_indexed_json
+    to_json( :only => [ :name, :note, :description, :account_id ] )
+  end
+  
   def to_json(options = {})
     options[:except] = [:account_id,:import_id,:delta]
     json_str = super options
     json_str
   end
+
+  private
+    def map_contacts_on_update
+      domain_changes = self.changes["domains"]
+      domain_changes[0].split(",").map { |domain| domain_changes[1].gsub!( /(^#{domain}\s?,)|(,?\s?#{domain})/, '') }
+      map_contacts_to_customers(domain_changes[1])
+    end
+
+    def map_contacts_to_customers(domains = self.domains)
+      User.update_all("customer_id = #{self.id}", 
+        ['SUBSTRING_INDEX(email, "@", -1) IN (?) and customer_id is null and user_role = ? and account_id = ?', 
+        get_domain(domains), User::USER_ROLES_KEYS_BY_TOKEN[:customer], self.account_id]) unless domains.blank?
+    end
+
+    def get_domain(domains)
+      domains.split(",").map{ |s| s.gsub(/^(\s)?(http:\/\/)?(www\.)?/,'').gsub(/\/.*$/,'') }
+    end
   
 end

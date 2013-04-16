@@ -18,9 +18,10 @@ if (typeof RELANG === 'undefined')
 	var RELANG = {};
 }
 //⌘⇧7
-var ctrlkeyname = (navigator.appVersion.indexOf("Mac") != -1) ? "⌘" : "Ctrl-"
-var shiftkeyname = (navigator.appVersion.indexOf("Mac") != -1) ? "⇧" : "Shift-"
-var altkeyname = (navigator.appVersion.indexOf("Mac") != -1) ? "-Alt-" : "Alt-"
+var isMacintosh = navigator.appVersion.indexOf("Macintosh") > -1
+var ctrlkeyname = isMacintosh ? "⌘" : "Ctrl-"
+var shiftkeyname = isMacintosh ? "⇧" : "Shift-"
+var altkeyname = isMacintosh ? "-Alt-" : "Alt-"
 var RLANG = {
 	html: 'HTML',
 	video: 'Insert Video...',
@@ -924,7 +925,7 @@ Redactor.prototype = {
 				else if(key === 37)	
 				{
 					//Ctrl + left arrow
-					if(navigator.userAgent.indexOf('Firefox') > -1)
+					if(isMacintosh && $.browser.mozilla)
 					{
 						e.preventDefault();
 						this.getSelection().modify("move", "backward", "lineboundary");
