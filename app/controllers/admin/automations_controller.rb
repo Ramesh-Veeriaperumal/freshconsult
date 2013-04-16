@@ -133,7 +133,7 @@ class Admin::AutomationsController < Admin::AdminController
     end
     
     def add_custom_actions action_hash
-      no_value = [['', t('any_val.none')]]
+      none_value = [['', t('any_val.none')]]
        current_account.ticket_fields.custom_fields.each do |field|
          action_hash.push({ 
            :id => field.id,
@@ -141,7 +141,7 @@ class Admin::AutomationsController < Admin::AdminController
            :field_type => field.field_type,
            :value => t('set_field_label_as', :custom_field_name => field.label), 
            :domtype => (field.field_type == "nested_field") ? "nested_field" : field.flexifield_def_entry.flexifield_coltype,
-           :choices => (field.field_type == "nested_field") ? (field.nested_choices no_value) : no_value+field.picklist_values.collect { |c| [c.value, c.value ] },
+           :choices => (field.field_type == "nested_field") ? (field.nested_choices none_value) : none_value+field.picklist_values.collect { |c| [c.value, c.value ] },
            :action => "set_custom_field", 
            :handler => field.flexifield_def_entry.flexifield_coltype,
            :nested_fields => nested_fields(field)
