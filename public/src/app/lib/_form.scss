@@ -543,6 +543,7 @@ a.addchoice:hover{
 			
 			input.text{
 				width:300px;
+				height:18px;
 				font-size:10pt;
 			}
 			textarea.paragraph{
@@ -950,7 +951,7 @@ span.sort_handle{
    cursor:move;
 
    background:url(/images/sort_handle.png) no-repeat;
-   @include corners(0px);
+   @include border-radius(0px);
 }
 
 .ui-custom-fields, .ui-custom-form{
@@ -2330,6 +2331,8 @@ input[type="text"].points{
 
 input[type="text"].number{
 	width:70px;
+	height:16px;
+	margin:0px;
 }
 
 #takescreen-btn{

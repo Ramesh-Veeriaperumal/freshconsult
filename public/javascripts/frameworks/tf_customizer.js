@@ -176,7 +176,7 @@
             break;
 
             case 'checkbox':               
-               field.append('<input type="checkbox" disabled="true" '+ fieldAttr +' />' + dataItem.label );
+               field.append('<input type="checkbox" disabled="true" '+ fieldAttr +' />' + '<span>'+dataItem.label+'</span>' );
             break;
          
             case 'dropdown':
