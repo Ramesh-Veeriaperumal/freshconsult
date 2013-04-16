@@ -88,7 +88,7 @@ class SubscriptionsController < ApplicationController
       begin
         billing_subscription.update_subscription(@subscription, !no_prorate?)
       rescue Exception => e
-        flash[:notice] = t('insufficient_funds_in_card')
+        flash[:notice] = t('payment_failed')
         redirect_to subscription_url and return
       end
       
