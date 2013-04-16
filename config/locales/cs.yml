@@ -67,9 +67,17 @@ cs:
       tour: "Pomozte mi změnit vzhled mého helpdesku"
     show: 
       account_settings: "Nastavení účtu"
+      contact_email: E-mail
+      contact_first_name: Jméno
+      contact_last_name: Příjmení
+      contact_phone: Telefon
       export_data: "Exportovat data"
       export_data_text: "Vygenerovat XML všeho v HelpDesku a zaslat je přes email"
       export_now: "Exportovat nyní"
+      invoice_email_info: "Odeslat faktury na e-mail"
+      invoice_emails: E-maily
+      primary_contact: "Podrobnosti o primárním kontaktu"
+      primary_contact_info: "(Používá se pro veškerou komunikaci spojenou s účtem z aplikace Freshdesk)"
   activate: Aktivovat
   activate_account: "Aktivujte svůj účet"
   activate_and_login: "Aktivovat & přihlásit"
@@ -104,6 +112,7 @@ cs:
         one: "1 chyba zabránila uložení tohoto %{model}"
         other: "%{count} chyb zabránilo uložení tohoto %{model}"
   activities: 
+    action_verb: aktualizováno
     forums: 
       delete_forum: 
         long: "{{user_path}} smazal z kategorie {{category_name}} fórum {{notable_path}}"
@@ -133,13 +142,45 @@ cs:
       new_solution: 
         long: "{{user_path}} navrhnul nové řešení k {{notable_path}}"
         short: "{{user_path}} navrhnul nové řešení"
+    tag: 
+      assigned: "Zástupce přiřazen"
+      assigned_to_nobody: "Zástupce nepřiřazen"
+      conversation: 
+        in_email: "Zákazník reagoval"
+        note: "Nová poznámka"
+        out_email: 
+          default: "Zástupce odpověděl"
+          private: "Lístek předán dál"
+        twitter: Tweet
+      deleted: "Lístek odstraněn"
+      execute_scenario: "Scénář proveden"
+      group_change: "Skupina zástupce změněna"
+      group_change_none: "Skupina zástupce změněna"
+      new_ticket: "Nový lístek"
+      priority_change: "{{value}}"
+      product_change: "Produkt aktualizován"
+      product_change_none: "Produkt aktualizován"
+      reassigned: "Zástupce nově přiřazen"
+      restored: "Lístek obnoven"
+      solutions: "Nové řešení"
+      source_change: "Zdroj lístku"
+      status_change: "{{value}}"
+      ticket_merge: "Lístek sloučen"
+      ticket_split: "Lístek rozdělen"
+      ticket_type_change: "Typ lístku"
+      timesheet: 
+        new: "Doba přihlášení"
+        timer_started: "Časovač spuštěn"
+        timer_stopped: "Časovač zastaven"
     tickets: 
       assigned: 
         long: "{{user_path}} přiřadil událost {{notable_path}} k {{responder_path}}"
         short: "Přiřazeno k {{responder_path}} uživatelem {{user_path}}"
+        without_user: "přiřazen <strong>{{responder_path}}</strong>"
       assigned_to_nobody: 
         long: "{{user_path}} přiřadil událost {{notable_path}} na 'Nikdo'"
         short: "Přiřazeno k &quot;nikomu&quot; prostřednictvím {{user_path}}"
+        without_user: "přiřazeno <strong>'Nobody'</strong>"
       conversation: 
         in_email: 
           long: "{{user_path}} poslal {{email_response_path}} k události {{notable_path}}"
@@ -159,57 +200,74 @@ cs:
       deleted: 
         long: "{{user_path}} vymazal lístek {{notable_path}}"
         short: "{{user_path}} vymazal tento lístek"
+        without_user: "odstranil lístek"
       execute_scenario: 
         long: "{{user_path}} spustil scénář '{{scenario_name}}' na {{notable_path}}"
         short: "{{user_path}} spustil scénář '{{scenario_name}}"
+        without_user: "proveden scénář <strong>{{scenario_name}}</strong>"
       group_change: 
         long: "{{user_path}} změnil skupinu {{notable_path}} na {{group_name}}"
         short: "{{user_path}} změnil skupinu na {{group_name}}"
+        without_user: "skupina aktualizována na <strong>{{group_name}}</strong>"
       group_change_none: 
         long: "{{user_path}} změnil skupinu {{notable_path}} na 'žádná'"
         short: "{{user_path}} změnil skupinu na 'žádná'"
+        without_user: "skupina aktualizována na <strong>'none'</strong>"
       new_ticket: 
         long: "{{user_path}} předložil novou Událost {{notable_path}}"
         short: "{{user_path}} předložil Událost"
       priority_change: 
         long: "{{user_path}} změnil prioritu události z {{notable_path}} na {{priority_name}}"
         short: "{{user_path}} změnil prioritu {{priority_name}}"
+        without_user: "priorita lístku aktualizována na <strong>{{priority_name}}</strong>"
       product_change: 
         long: "{{user_path}} změnil produkt {{notable_path}} na {{product_name}}"
         short: "{{user_path}} změnil produkt na {{product_name}}"
+        without_user: "produkt aktualizován na <strong>{{product_name}}</strong>"
       product_change_none: 
         long: "{{user_path}} změnil produkt {{notable_path}} na 'žádný'"
         short: "{{user_path}} změnil produkt na 'žádný'"
+        without_user: "produkt aktualizován na <strong>'none'"
       reassigned: 
         long: "{{user_path}} znovu přidělil událost {{notable_path}} na {{responder_path}}"
+        without_user: "lístek nově přiřazen <strong>{{responder_path}}</strong>"
       restored: 
         long: "{{user_path}} obnovil lístek {{notable_path}}"
         short: "{{user_path}} obnovil tento lístek"
+        without_user: "obnovil lístek"
       source_change: 
         long: "{{user_path}} změnil zdroj lístku {{notable_path}} na {{source_name}}"
         short: "{{user_path}} změnil zdroj na {{source_name}}"
+        without_user: "zdroj aktualizován na <strong>{{source_name}}</strong>"
       status_change: 
         long: "{{user_path}} změnil stav Události {{notable_path}} na {{status_name}}"
         short: "{{user_path}} změnil stav na {{status_name}}"
+        without_user: "stav aktualizován na <strong>{{status_name}}</strong>"
       ticket_merge: 
         long: "{{user_path}} spojil Událost  {{notable_path}} s {{merge_ticket_path}}"
         short: "{{user_path}} spojil Událost {{notable_path}} s {{merge_ticket_path}} "
+        without_user: "lístek  {{notable_path}} sloučen do {{merge_ticket_path}}"
       ticket_split: 
         long: "{{user_path}} rozdělil událost {{notable_path}} z {{split_ticket_path}}"
         short: "{{user_path}} rozdělil událost {{notable_path}} z {{split_ticket_path}}"
+        without_user: "Lístek rozdělen z {{split_ticket_path}}"
       ticket_type_change: 
         long: "{{user_path}} změnil typ lístku {{notable_path}} na {{ticket_type}}"
         short: "{{user_path}} změnil typ lístku na {{ticket_type}}"
+        without_user: "typ lístku aktualizován na <strong>{{ticket_type}}</strong>"
       timesheet: 
         new: 
           long: "{{user_path}} přidal {{timesheet_path}} k lístku {{notable_path}}"
           short: "{{user_path}} přidal {{timesheet_path}}"
+          without_user: "přidán {{timesheet_path}}"
         timer_started: 
           long: "{{user_path}} spustil časovač v {{timesheet_path}} k lístku {{notable_path}}"
           short: "{{user_path}} spustil časovač v {{timesheet_path}}"
+          without_user: "časovač spuštěn v  {{timesheet_path}}"
         timer_stopped: 
           long: "{{user_path}} zastavil časovač v {{timesheet_path}} k lístku {{notable_path}}"
           short: "{{user_path}} zastavil časovač v {{timesheet_path}}"
+          without_user: "časovač zastaven v  {{timesheet_path}}"
   add: Přidat
   add_a_new_folder: "přidat novou složku"
   add_a_topic: "Založit téma"
@@ -780,6 +838,7 @@ cs:
   assuming_identity_not_allowed_msg: "Není vám umožněno převzít tohoto uživatele."
   assuming_identity_user_does_not_exist_msg: "Uživatel, kterého jste se snažili napodobit, neexistuje."
   at: v
+  attach_file: "Přiložit soubor"
   attach_file_local: "Přiožit soubor z vašeho počítače"
   attach_files: "Připojit přílohu"
   attachment: Příloha
@@ -844,6 +903,7 @@ cs:
     title: "Pracovní doba"
     to: do
     valid_time: "Vložte, prosím, korektní čas"
+  by: podle
   cancel: Zrušit
   cancel_and_back: "Zrušit a jít zpět"
   cancel_my_account: "Zrušit můj účet"
@@ -906,6 +966,7 @@ cs:
   choose_free_plan: "Vyberte svůj plán Free %{plan}"
   choose_plan: "Zvolit licenci"
   choose_plan_trial: "Ppoznámka: zkušební doba končí a chystáme se váš účet deaktivovat.<br /> Pokud chcete FreshDesk používat i nadále, zvolte si některou licenci dole."
+  clear: Vymazat
   clear_draft_text: "Smazat uložený koncept?"
   click_select_action: "Klikněte pro výběr akce"
   click_to_change_sort_order: "Klikněte pro změnu řazení položek"
@@ -953,6 +1014,8 @@ cs:
     contact: "osoba zákazníka"
     contacts: "osoby zákazníka"
     contacts_in_companies: "%{contacts}"
+    convert_fulltime: "Zástupce na plný úvazek"
+    convert_occasional: "Příležitostný zástupce"
     deleted: 
       no_contacts: "Nemáte žádné kontakty k obnovení."
       no_contacts_with_letter: "Nemáte žádné odstraněné kontakty s počátečním písmenem '%{alphabet}'"
@@ -1076,7 +1139,7 @@ cs:
     info4: "Dispečer provede automatickou kontrolu nově vytvořených Událostí založených na základě definovaných pravidel a akcí"
     info5: "Pamatujte, pořadí pravidel je velmi důležité. Dispečer pro každou příchozí Událost spustí první proveditelné pravidlo a zastaví se"
     match_all: "Souhlasí všechno"
-    match_any: "Odpovídá kterákoli"
+    match_any: "Souhlasí kterýkoliv"
     new: "Dispečer - Nové pravidlo"
     new_rule: "Nové pravidlo"
     reorder: "Změnit pořadí"
@@ -1092,6 +1155,7 @@ cs:
   downgrade_dialog_title: "Opravdu chcete provést downgrade?"
   downgrade_plan: "Poznámka: Když snížíte svou licenci, můžete přijít o některé funkce"
   draft: "Koncept:"
+  dropbox_attach_from: "Přiložit ze služby Dropbox"
   dropbox_attach_label: "Přiložit z"
   dropbox_choose_file: "Vybrat soubor"
   due_in: "Splnit do %{time_words}"
@@ -1264,6 +1328,7 @@ cs:
   facebook_source: Facebook
   facebook_user: "Uživatel Facebooku"
   failure: "Chyba ..."
+  failure_msg: "Nastavení účtu se nepodařilo aktualizovat!"
   fav_delete_msg: "Jste si jistí, že chcete smazat tuto ikonu oblíbené položky?"
   favicon: "Ikona pro adresní řádek internetového prohlížeče"
   ? "feature request"
@@ -1299,6 +1364,7 @@ cs:
     customers: Zákazníci
     due_by: "Termín řešení"
     group_id: Skupiny
+    mygroups: "Moje skupiny"
     priority: Priorita
     requester: Žadatelé
     responder_id: Zástupci
@@ -1306,6 +1372,7 @@ cs:
     status: Stav
     tags: Značky
     ticket_type: Typ
+    unassigned: Nepřiřazeno
   find_more_solutions: "Najit další řešení"
   first_name: "Křestní jméno"
   first_response_sla: "Narušení SLA první odpovědi"
@@ -1708,13 +1775,15 @@ cs:
       tickets_update_with_errors: "%{tickets} aktualizováno, ale jsou zde nějaké problémy, které si žádají vaši pozornost."
     merge: 
       bulk_merge: 
+        continue: Pokračovat
         mark_primary: "Označit jako primární"
         primary_ticket: "Toto je váš primární požadavek"
         remove: "Odstranit tento požadavek"
         target_merge_description: "Požadavek {{ticket.id}}{{ticket.subject}} je sloučen s tímto požadavkem"
+        target_merge_description1: "Sloučeno z lístku <a href='/helpdesk/tickets/%{ticket_id}' target='_blank'>%{ticket_id}</a>"
         target_note_description1: 
           one: "Požadavek s ID"
-          other: "Požadavek s IDs"
+          other: "Požadavky s IDs"
         target_note_description2: 
           one: "byl sloučen do tohoto požadavku."
           other: "byly sloučeny do tohoto požadavku."
@@ -1830,13 +1899,20 @@ cs:
       note: 
         attachment_size: 
           exceed: "Jejda! Vaše příloha přesahuje 15 MB. Přiložte prosím menší soubor."
+        created_on: 
+          forward: "Uživatel %{user_name} předal dál dne %{note_date}"
+          private_note: "Uživatel %{user_name} přidal soukromou poznámku dne %{note_date}"
+          public_note: "Uživatel %{user_name} přidal veřejnou poznámku dne %{note_date}"
+          reply: "Uživatel %{user_name} odpověděl dne %{note_date}"
         delete_note: "Odebrat z konverzace lístku?"
         edit_note: "Upravit poznámku"
         inbound_email: "Příchozí email"
         outbound_email: "Odchozí email"
         posted_on: "%{user_name} dne %{note_date}"
         private_note: "Soukromá poznámka"
+        private_note_tip: "Skryto zákazníkovi"
         public_note: "Veřejná poznámka"
+        public_note_tip: "Viditelné zákazníkovi"
         split_this_as_new_ticket: "Rozdělit jako novou událost"
         split_ticket_confirm: "Rozdělit tuto poznámku a vytvořit ji jako novou událost?"
       overlay_fwd_time: " předáno dál, před %{time_in_words}"
@@ -1847,9 +1923,40 @@ cs:
         view_ticket: "Zobrazit událost"
       show: 
         conversation: "Konverzace "
+        due_date: 
+          due: Do
+          earlier_date_and_time: "Uveďte prosím datum a čas, které jsou novější než vytvořené datum a čas lístku."
+          next_week: "Další týden"
+          set_date_time: "Nastavit datum/čas"
+          specific_date: "Konkrétní datum/čas…"
+          this_week: "Tento týden"
+          today: Dnes
+          tomorrow: Zítra
+          when_is_it_due: "Kdy to má být splněno?"
+        facebook_form: 
+          title: "Odpovědět uživateli %{user}"
+        forward_form: 
+          addbcc: "Přidat skrytou kopii"
+          addcc: "Přidat kopii"
+          bcc: "Skrytá kopie"
+          cc: Kopie
+          removebcc: "Odebrat skrytou kopii"
+          removecc: "Odebrat kopii"
+        history: 
+          recent_item: "Poslední problémy"
         linked_ticket: "Tato událost je propojena na fórum"
         meta: meta
+        reply_form: 
+          addbcc: "Přidat skrytou kopii"
+          addcc: "Přidat kopii"
+          bcc: "Skrytá kopie"
+          cc: Kopie
+          removebcc: "Odebrat skrytou kopii"
+          removecc: "Odebrat kopii"
+          title: "Komu odpovědět"
         timesheet: "Časový list"
+        tweet_form: 
+          title: "Odpovědět uživateli %{user}"
       tabular_view: 
         assigned: Přiřazeno
         posted: Vystaveno
@@ -1896,6 +2003,7 @@ cs:
         tickets_twitter: "Události zaslané přes Twitter"
     time_sheets: 
       agent: Zástupce
+      billable: Fakturovatelné
       billable_entry: "Označit jako účtovanou položku"
       billing_type: "Typ fakturování"
       customer: Zákazník
@@ -1904,20 +2012,55 @@ cs:
         agent: Zástupce
         hours: Hodiny
         note: Poznámka
+      group: Skupina
       group_by: "Seskupit dle"
       hours: Hodiny
       index: 
         no_timeentry: "U tohoto lístku není zaznamenána časová položka"
       new: 
+        hours_format_tip: "Zadejte čas ve tvaru HH:MM nebo v desetinných číslech (např. 1:30 nebo 1.5 pro hodinu a 30 minut). Ponecháte-li pole prázdná, spustí se automatický časovač."
         title: "Nová časová položka"
+      non_billable: Nefakturovatelné
       note: Poznámka
+      product: Produkt
       report: 
         no_timeentry: "Žádná data nejsou dostupná"
         total: Celkem
+      sidebar_title: "Sledovaný čas"
       ticket: Událost
       time_entry: 
         toggle_timer_false: "zastavit časovač"
         toggle_timer_true: "Spustit časovač"
+      v2: 
+        agent: Zástupce
+        billing_type: "Typ fakturace"
+        customer: Zákazník
+        executed_at: Datum
+        form: 
+          add_entry: "Přidat časový záznam"
+          agent: Zástupce
+          billing_hours: Fakturovatelné
+          hours: Hodiny
+          note: Poznámka
+          start_timer: "Spustit časovač"
+          ? "true"
+          : "1"
+        group_by: "Seskupit podle"
+        hours: Hodiny
+        index: 
+          add_entry: "Přidat časový záznam"
+          no_timeentry: "Pro tento lístek nebyl zaznamenán časový záznam"
+          start_timer: "Spustit časovač"
+        new: 
+          title: "Nový časový záznam"
+        note: Poznámky
+        report: 
+          no_timeentry: "Nejsou dostupná žádná data"
+          total: Celkem
+        ticket: Lístek
+        time_entry: 
+          toggle_timer_false: "Zastavit časovač"
+          toggle_timer_true: "Spustit časovač"
   helpdesk_quests: 
     all: Vše
     available_quests: "Dostupné výzvy"
@@ -2214,6 +2357,8 @@ cs:
       info1: "Když je požadavek na Freshdesku spojen s problémem v JIRA, proveď tyto akce."
       info2: "Když je stav požadavku aktualizován ve FreshDesku "
       info3: "Když je na FreshDesku přidán komentář "
+      info4: "Jakmile je stav problému aktualizován v aplikaci JIRA"
+      info5: "Jakmile je přidán komentář v aplikaci JIRA"
       none: "Neudělat nic."
       send_reply_in_fd: "Upozornit zákazníka e-mailem."
       sync_updates: "Synchronizovat změny"
@@ -2318,6 +2463,7 @@ cs:
       remember: "Zapamatuj si mně"
       sign_in_error: "Nesprávný e-mail nebo heslo."
       sign_in_using: "…nebo použití Přihlásit se"
+  more: více
   myself: Já
   name: Jméno
   never: Nikdy
@@ -2343,6 +2489,7 @@ cs:
   non_covered_feature_error: "Váše současná licence neumožňuje ovládat tuto funkci"
   not_eligible_for_free_plan: "Nezpůsobilý k volbě plánu Free"
   not_eligible_for_sprout_plan: "Není vhodné vybrat licenci Sprout"
+  not_given: Neuvedeno.
   not_selected: Nezvolen
   note: "Poznámka:"
   notified_to: "Oznámeno komu"
@@ -2375,10 +2522,16 @@ cs:
     article: 
       see_all_articles: "Podívejte se na všechny články (%{count})"
     community_forums: "Komunitní fóra"
+    folder: 
+      filler_text: "Sledovat v tomto prostoru články týkající se %{folder_name}"
     header: 
       preview_message: "<b>Režim náhledu</b> - pro návrat <a href='javascript:window.close()'>klikněte zde</a>."
     knowledge_base: "Databáze znalostí"
     login: Přihlášení
+    login_details: "Zadejte přihlašovací údaje, které jste uvedli při registraci."
+    login_options: "… nebo se přihlaste pomocí"
+    login_portal: "Přihlaste se k portálu podpory"
+    new_support_ticket: "Nový lístek pro podporu"
     no_articles_info_1: "Omlouváme se, ale nebyly publikovány žádné články. "
     no_articles_info_2: "Prosím, zkuste to později. "
     no_forums_info_1: "Zatím zde není žádné téma"
@@ -2386,6 +2539,9 @@ cs:
     no_topics_in_this_view: "~ V tomto pohledu není žádný požadavek ~"
     or_signup: "%{signup} pro účet"
     popular_topics: "Oblíbená témata"
+    reported: ohlášeno
+    reset_password: "Uveďte svou e-mailovou adresu a my vám zašleme pokyny k obnovení vašeho hesla."
+    said: řekl
     search: 
       filters: 
         all: Vše
@@ -2393,20 +2549,41 @@ cs:
         tickets: Požadavky
         topics: Témata
       placeholder: "Hledat pomocí klíčového slova nebo pomocí plného dotazu"
+      results_for: "Hledat výsledky pro"
     showing_recent_updates: "Zobrazení naposledy změněných"
     showing_recently_popular_topics: "Zobrazení nedávno oblíbených témat"
     signup: Registrace
+    solutions_home: "Řešení – úvod"
+    submit_new_ticket: "…nebo Odešlete nový lístek"
     tickets: 
+      add_or_remove_emails: "Přidejte nebo odeberte e-maily, které je nutné zkopírovat při odesílání oznámení pro tento lístek."
+      add_people: "Přidat osoby"
+      add_people_title: "Přidat osoby ke konverzaci"
+      details: "Podrobnosti o lístku"
       export: "Exportovat požadavky"
       export_ticket_data: "Exportovat požadavky do CSV souboru"
       export_to_csv: "Export do CSV"
+      mark_closed: "Označit lístek jako uzavřený"
+      reopen_reply: "Znovu otevřít a odpovědět"
+      reply_placeholder: "Klepnutím sem odpovězte na tento lístek"
+      ticket_list: "Seznam lístků"
     to_post_comment: "pro odeslání komentáře"
     to_post_topic: "pro odeslání tématu"
     to_submit_ticket: "pro odeslání nového požadavku"
     topic: 
+      comment_placeholder: "Klepnutím sem přidejte komentář"
       comments_closed: "K této diskusi již není možné přidávat komentáře!"
+      default_select_option: "Zvolit typ fóra"
+      follow: Sledovat
+      following: Následující
+      last_reply: "Poslední odpověď"
+      monitor_topic: "Monitorovat toto téma"
+      more_topic: "Více témat v"
+      post_topic: "Vyvěsit téma v"
       see_all_topics: "Podívejte se na všechna témata (%{count})"
       start_new_topic: "Zahájit nové téma"
+      started: "zahájil téma"
+      topic_title: "Název tématu"
     topic_vote: 
       howto: 
         one: "má tuto otázku"
@@ -2474,6 +2651,7 @@ cs:
       portal_home: "Domovská stránka portálu"
       profile_edit: "Profil uživatele"
       search: "Výsledky vyhledání"
+      solution_category: "Kategorie řešení – úvod"
       solution_home: "Domovská stránka řešení"
       submit_ticket: "Nový požadavek"
       ticket_list: "Požadavky uživatele"
@@ -2514,7 +2692,7 @@ cs:
     reset_all_confirm_message: "Tato akce vyresetuje všechna vaše uživatelská nastavení na implicitní hodnoty. Jste si jisti, že chcete pokračovat?"
     reset_to_last_published: "Resetovat stránku do poslední publikované podoby"
     save_and_continue: Uložit
-    title: "Přizpůsobneí portálu \"%{portal}\""
+    title: "Přizpůsobení portálu \"%{portal}\""
   posted_by: "Posláno "
   premium_brief: "Zpět na začátek řádku"
   premium_details: "Vše v  &quot;Pro&quot;plánu + podpora více produktů, podpora více časových zón, Komunita, E-mailová & telefonní podpora"
@@ -2527,6 +2705,7 @@ cs:
     ten_minutes: "10 minut"
   preview: Náhled
   previous: Předchozí
+  print: Tisk
   pro_brief: "Pro větší tým"
   pro_details: "Vše jako v &quot;Základní&quot; licenci + navíc: Automatizace scénářů, Zákazníkem specifikovaná SLA pravidla, Pracovní doba, Fóra, Komunitní a emailová podpora."
   problem: Problém
@@ -2544,6 +2723,7 @@ cs:
     confirm_password_message: "Musí být stejné jako heslo"
     current_password: "Současné heslo"
     edit: "Upravit profil"
+    manage: "Spravujte svůj profil"
     new_password: "Nové heslo"
   profile_settings: "Nastavení profilu"
   question: Otázka
@@ -2574,6 +2754,7 @@ cs:
   recent_activity: "Poslední aktivita"
   recent_forum_posts: "Poslední příspěvky do fóra"
   referral: Doporučení
+  register: Registrovat
   remove: Odstranit
   reorder: "Změnit pořadí"
   replied_to: "Odpovězeno komu"
@@ -2691,6 +2872,7 @@ cs:
   save_this_view: "Uložit toto zobrazení..."
   save_this_view_tooltip: "Uložit pohled"
   saved_draft: Uloženo
+  saving: Ukládání…
   saving_draft: Ukládání…
   scenario_label: "Název scénáře"
   search: 
@@ -2718,6 +2900,7 @@ cs:
   seven_days: "Tento týden"
   show_me_how: "Ukažte mi jak"
   show_quoted_text: "Zobrazit citovaný text"
+  show_recent: "Zobrazit poslední"
   showing: Předvedení
   sign_in_info: "Budete se přihlašovat pomocí"
   signup: "Registrovat se"
@@ -2746,19 +2929,30 @@ cs:
     default_policy: "Implicitní SLA politiku nelze vypnout."
     disabled_old_policy: "Nastavte spouštěcí podmínku pro povolení této SLA politiky"
     edit: "Upravit SLA politiku"
+    escalate: "Co se stane, když dojde k porušení této smlouvy o úrovni služeb?"
     escalate_after: Eskalovat
     escalate_to: "Eskalovat na"
     escalation_email: "Eskalační email"
+    escalation_resolution: "Nastavit hierarchii eskalace, když není lístek <b>vyřešen</b> včas"
+    escalation_resolution_text: "Nastavit hierarchii eskalace, pokud není lístek <b>vyřešen</b> včas"
+    escalation_response: "Nastavit pravidla eskalace, když nedojde k <b>reakci</b> na lístek včas"
+    escalation_response_text: "Nastavit pravidlo eskalace, pokud není na lístek <b>reagováno</b> včas"
     group_id_placeholder: "Vložit název skupiny"
     helpcard: 
       info1: "Dohoda o úrovni služeb (SLA politika) definuje výkonnostní standardy vašeho týmu podpory. Můžete nastavit SLA politiku jako čas, do kdy musí zástupce odpovědět na požadavek, resp. vyřešit jej a to v závislosti na prioritě. Pro každé pravidlo SLA (dané priority) můžete zvolit, zda je čas měřen v rámci kalenářní či pracovní doby. Také můžete zvolit automatickou eskalaci (odeslání mailu) pro případ, kdy zástupce dané časy nedodrží. "
       info2: "Vaše politiky SLA budou Freshdeskem použity ke stanovení \"času vyřízení\" všech požadavků. Můžete mít jednu společnou politiku SLA pro všechny  zákazníky, nebo více politik pro speciální zákazníky, např. takové, kteří si předplatí \"Prémiovou podporu\"."
       info3: "<p>Můžete mít implicitní SLA politiku pro všechny zákazníky, nebo více SLA politik pro různé zákazníky - např. standardní a Prémiové.</p><p>Když přidáte SLA politiku (krom té implicitní), budete muset určit podmínky, za kterých bude ta která politika uplatněna.</p>"
+      info_1: "<p>Smlouva o úrovni služeb (Service level agreement – SLA) vám umožňuje nastavit standardy výkonu pro váš tým podpory. Můžete nastavit zásady SLA pro čas, v rámci kterého by zástupci měli reagovat, a pro řešení lístků na základě jejich priorit. Můžete si vybrat, zda se každé pravidlo SLA vypočte na základě kalendářních hodin nebo vašich pracovních hodin.</p> <p>Vaše zásady SLA budou použity v aplikaci Freshdesk k určení doby položky „Splnit do“ pro každý lístek.</p>"
+      info_2: "<p>Můžete mít více zásad smlouvy o úrovni služeb (Service level agreement – SLA) spouštěných podle konkrétních podmínek, například podle zákazníka, který vyžádal lístek, skupiny, ke které je lístek přiřazen, jeho zdroje nebo podle produktu.</p><p>Můžete mít například sadu speciálních zásad SLA pro lístky přicházející z Twitteru a lístky přiřazené k týmu prodeje. Nebo mít speciální zásadu pro zákazníky, kteří mají prioritně přihlášeny odběry. Pokud podporujete více značek nebo produktů, můžete mít také různý pracovní postup SLA pro každý produkt.</p> <p><strong>Pořadí vašich pravidel SLA je důležité.</strong> První pravidlo SLA, které odpovídá všem podmínkám pro lístek, bude použito pro lístek, takže řaďte svá důležitá pravidla co nejvýše.</p>"
+      info_3: "<p>Volitelně můžete nastavit hierarchie eskalace pro každou zásadu, abyste upozornili konkrétní zástupce, pokud dojde k porušení pravidla smlouvy o úrovni služeb.</p>"
+      sla_info_2: "<p>Můžete mít více zásad smlouvy o úrovni služeb (Service level agreement – SLA) spouštěných konkrétními podmínkami, například zákazníkem, který si lístek vyžádal, skupinou, ke které je lístek přiřazen, jeho zdrojem nebo produktem.</p><p>Můžete například nastavit zvláštní zásadu SLA pro lístky přicházející z Twitteru a lístky přiřazené týmu prodeje. Nebo mít zvláštní zásadu pro zákazníky, kteří mají přihlášeny prioritní odběry. Pokud podporujete více značek nebo produktů, můžete mít různé pracovní postupy SLA pro každý produkt.</p> <p><strong>Pořadí vašich zásad SLA je důležité.</strong> První zásada SLA, která odpovídá všem podmínkám lístku, bude použita pro lístek. Takže svá důležitá pravidla řaďte co nejvýše.</p>"
       title: "SLA politika"
       title1: "Uplatnění eskalačního pravidla"
       title2: "Použití vícenásobné politiky SLA"
+      title_1: "Použití více zásad SLA"
+      title_2: "Vynucení pravidel eskalace"
       tour: "Pomozte mi vytvořit SLA politiku"
-    info1: "	Zásada SLA je sada cílových časů odpovědi a vyřízení podle priority lístku. V tomto oboru se úrovně služeb většinou stanovují podle priority. Vaše zásada SLA by měla být co nejjednodušší, např. “lístky s vysokou prioritou je nutné vyřešit za 2 hodiny” atd."
+    info1: "  Zásada SLA je sada cílových časů odpovědi a vyřízení podle priority lístku. V tomto oboru se úrovně služeb většinou stanovují podle priority. Vaše zásada SLA by měla být co nejjednodušší, např. “lístky s vysokou prioritou je nutné vyřešit za 2 hodiny” atd."
     info2: "Freshdesk používá zásadu SLA ke stanovení &quot;času vyřízení&quot; lístků. Můžete mít výchozí zásadu SLA pro všechny své zákazníky, máte-li ovšem speciálního zákazníka, který vyžaduje rychlejší reakci a kratší časy vyřízení, můžete pro něj vždy vytvořit speciální zásadu SLA."
     info3: "Zásada SLA pracuje ve spojení s provozními hodinami"
     new: "Nová SLA politika"
@@ -2945,6 +3139,7 @@ cs:
       quarterly: Čtvrtletně
       sixmonth: Půlročně
   success: Úspěch
+  success_msg: "Nastavení účtu byla úspěšně aktualizována!"
   support: 
     login: 
       form: 
@@ -3010,6 +3205,7 @@ cs:
   ticket: 
     activities: Aktivity
     activity: Aktivity
+    activity_toggle: "Zobrazit činnosti"
     add_note: "Přidat poznámku"
     add_time: "Přidat čas"
     agent: Zástupce
@@ -3041,6 +3237,7 @@ cs:
     delete_btn: Smazat
     delete_btn_title: "Přesuňte tuto událost do koše"
     delete_forever: "Nevratně smazat"
+    deleted: KOŠ
     due_by: "Hodin od termínu splnění"
     due_by_time: "Splněno dle času"
     edit: "Upravit událost"
@@ -3048,6 +3245,7 @@ cs:
     edit_note: "<b>Upravit poznámku</b>"
     empty_trash: "Vysypat koš"
     execute_scenario: "Spustit scénář"
+    expand: Rozšířit
     export: Exportovat
     facebook_form: 
       send: Odeslat
@@ -3061,8 +3259,12 @@ cs:
     id: Id
     id_placeholder: "Pro nalezení požadavků zadejte ID"
     inbound_count: "Počet interakcí žadatele"
+    include_quoted_text: "Včetně předchozích odpovědí"
+    insert: Vložit
     integrations: 
       jira: 
+        add_new: "Propojit problém"
+        existing: "Zobrazit problém"
         tooltip: "Zobrazit přiřazený problém JIRA"
     merge_btn: Sloučit
     merge_ticket_list_status_agent_responded_at: "Od: %{username}<br /> Zástupce odpověděl před: <span class='emphasize'>%{time_ago}</span>"
@@ -3072,7 +3274,9 @@ cs:
     merge_ticket_list_status_resolved_at: "Od: %{username}<br /> Vyřešeno před: <span class='emphasize'>%{time_ago}</span>"
     merge_title: "Sloučit požadavky"
     monitor_btn_title: "Sledovat tuto událost"
+    more_details: "Více podrobností…"
     myself: Já
+    next: "Další  lístek"
     none: Žádný
     note_content: "Obsah poznámky"
     note_form: 
@@ -3087,6 +3291,7 @@ cs:
     pick_up: Převzít
     portal_created_on: "Vytvořil uživatel <span class='emphasize'>%{username}</span> dne <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Vytvořeno dne <span class='emphasize'>%{date}</span>"
+    previous: "Předchozí lístek"
     priority: Priorita
     properties: "Vlastnosti události"
     recent_tickets: "Aktuální události"
@@ -3096,6 +3301,7 @@ cs:
       reply_email_id: "Zaslat odpověď z následujícího email id"
       send: Odeslat
       send_and_resolve: "Odeslat a vyřešit"
+      send_and_set_as: "Odeslat a nastavit jako <strong>%{status}</strong>"
       send_satisfaction_survey: "Zahrnuje průzkum spokojenosti"
     reply_to: Odpovědět
     reported_by: "od %{requester}"
@@ -3112,6 +3318,7 @@ cs:
     singular: Událost
     sort_by: "Seřazeno dle"
     source: Zdroj
+    spam: SPAM
     spam_btn_title: "Označit jako spam"
     split_ticket: Rozdělit
     status: Stav
@@ -3122,15 +3329,22 @@ cs:
     submit_ticket_title: "Odeslat událost"
     suggest_solutions: "Navrhnout řešení"
     suggested_solutions: 
+      content: Obsah
       insert_content: "Vložte obsah"
       insert_content_tip: "Vložit článek k tomuto řešení do odpovědi nebo poznámky"
       insert_url: "Vložte URL odkaz"
       insert_url_tip: "Umístěte odkaz tohoto řešení do Vaši odpovědi nebo poznámky"
+      link: Odkaz
       no_result: "Žádné řešení nebylo nalezeno"
       title: "Navrhovaná řešení"
     support: 
       reply: Odpovědět
       reply_and_open: "Odpovědět & otevřít"
+    switch_view: 
+      new_view: "Vyzkoušejte <strong>nové zobrazení lístků</strong>"
+      revert_view: "Přepnout na klasické zobrazení"
+      submit_feedback: "Odeslat názor"
+      whats_new: "Co je nového"
     tags: 
       add_tag: "Přidat značku:"
       create_success: "Značka byla přidána."
@@ -3159,6 +3373,8 @@ cs:
     unassigned: Nepřiřazené
     unflag_spam: "Není spam"
     unwatch: "Zrušit sledování"
+    update_done: Hotovo
+    updating: "Probíhá aktualizace"
     verify_human: "K ověření, zda-li jste \"živý\" uživatel, prosím, opište náhodně poskládaná písmenka."
     view_twitter: "Prohlédout na Twitteru"
   ticket_cancel_multiple_button: Zrušit
@@ -3243,6 +3459,8 @@ cs:
     saving_ticket: "Ukládání položek požadavku..."
     second_choice: "Druhá volba"
     untitled: "Bez názvu"
+  ticket_future_due_by: "Má být splněno do %{time}"
+  ticket_past_due_by: "Mělo být splněno před %{time}"
   ticket_pending_since_time: "Čekající od"
   ticket_resolved_at_time: "Vyřešeno v"
   ticket_update_multiple_button: Aktualizovat
@@ -3253,6 +3471,7 @@ cs:
     sort_fields: 
       asc: Vzestupně
       created_at: "Datum vytvoření"
+      customer_response: "Reakce zákazníka"
       date_created: "Datum vytvoření"
       desc: Sestupně
       due_by: "Splněno dle času"
@@ -3345,6 +3564,7 @@ cs:
     choose_another_photo: "Vyberte jinou fotografii"
     company: Společnost
     email: E-mail
+    facebook: Facebook
     full_name: "Celé jméno"
     info1: "Obrázek profilu osoby, doporučujeme pro zachování kvality, mít obrázek takový, aby měl jak šířku, tak výšku stejnou"
     mobile: Mobil

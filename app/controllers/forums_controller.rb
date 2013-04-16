@@ -57,7 +57,7 @@ class ForumsController < ApplicationController
     @forum.account_id ||= current_account.id
     if @forum.save
       respond_to do |format|
-        format.html { redirect_to(category_forum_path( @forum_category,@forum), :notice => 'The forum has been created.') }
+        format.html { redirect_to(category_forum_path( @forum_category,@forum), :notice => I18n.t('forum.forum_created')) }
         format.xml  { render :xml => @forum,:status => 200 }
       end
     else
