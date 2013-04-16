@@ -777,5 +777,13 @@ module ApplicationHelper
     end
     return
   end
+  
+  def requester(ticket)
+    if privilege?(:view_contacts)
+      "<a class = 'user_name' href='/users/#{ticket.requester.id}'><span class='emphasize'>#{h(ticket.requester.display_name)}</span></a>"
+    else
+      "<span class = 'user_name emphasize'>#{h(ticket.requester.display_name)}</span>"
+    end
+  end
 
 end
