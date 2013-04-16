@@ -1,6 +1,7 @@
 class CreateDefaultObserverRules < ActiveRecord::Migration
   def self.up
   	Account.all.each do |account|
+      p account
       account.all_observer_rules.create({ 
       	:name => 'Automatically assign ticket to first responder', 
   			:description =>  'When an agent replies to, or adds a note to an unassigned ticket, it gets assigned to him/her automatically.',
@@ -21,8 +22,9 @@ class CreateDefaultObserverRules < ActiveRecord::Migration
       								],
       	:active => true
 			})
-      
+      p account
       ticket_reopening_notification = account.email_notifications.find_by_notification_type(9)
+      p ticket_reopening_notification
       if ticket_reopening_notification.agent_notification?
   			account.all_observer_rules.create!({
   				:name => 'Automatically reopen closed tickets after a response', 
