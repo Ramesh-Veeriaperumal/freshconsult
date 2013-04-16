@@ -92,6 +92,10 @@ group :development,:test do
    gem "forgery","0.5.0"
    gem "factory_girl", "1.2.3" 
    gem "mongrel" 
+   
+end
+
+group :test do
    gem "spork", "~> 0.8.0"
    gem "mocha", "~> 0.13.3"
 end
