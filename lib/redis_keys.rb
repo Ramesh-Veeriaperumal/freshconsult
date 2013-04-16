@@ -56,6 +56,10 @@ module RedisKeys
 		end
 	end
 
+	def get_expiry(key)
+		newrelic_begin_rescue { $redis.ttl(key) }
+	end
+
 	def add_to_set(key, values, expires = 86400)
 		newrelic_begin_rescue do
 			values.each do |val|

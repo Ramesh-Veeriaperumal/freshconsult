@@ -32,8 +32,13 @@
 
     <% form_tag "/events", :method => 'get' do %>
 
-      <%= date_select("date", "period", { :discard_day => true, :order => [:month, :year], 
-                                            :start_year => 2013, :prompt => true}) %>
+      <% options = { :discard_day => true, :order => [:month, :year], :start_year => 2013, 
+                      :end_year => Time.now.year } %>
+
+      <% options.merge!(:default => { :month => params[:date]["period(2i)"], 
+               :year => params[:date]["period(1i)"] }) if params[:date] %>
+
+      <%= date_select("date", "period", options ) %>
                                                
       <%= submit_tag "Show Stats", :class => "btn" %>
       

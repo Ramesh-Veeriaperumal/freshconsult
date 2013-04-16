@@ -22,6 +22,8 @@
 
   "use strict"; // jshint ;_;
 
+  if($.fn.modal) return
+
 
  /* MODAL CLASS DEFINITION
   * ====================== */

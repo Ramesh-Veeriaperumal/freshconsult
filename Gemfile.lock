@@ -178,6 +178,8 @@ GEM
     oauth2 (0.5.2)
       faraday (~> 0.7)
       multi_json (~> 1.0)
+    oily_png (1.0.3)
+      chunky_png (~> 1.2.1)
     omniauth (1.0.0)
       hashie (~> 1.2)
       rack
@@ -327,6 +329,7 @@ DEPENDENCIES
   net-dns (= 0.6.1)
   newrelic_rpm (= 3.5.3.25)
   nori (= 1.1.4)
+  oily_png
   omniauth (= 1.0)
   omniauth-constantcontact2 (~> 1.0.4)
   omniauth-facebook

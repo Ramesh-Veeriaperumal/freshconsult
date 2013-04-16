@@ -98,4 +98,6 @@ group :assets do
 	gem "compass-rails"
 	# Portal grid system is done using susy grids
 	gem "susy" 
+   # To optimize sprite generation
+   gem "oily_png"
 end
