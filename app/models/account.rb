@@ -688,7 +688,7 @@ class Account < ActiveRecord::Base
 
   def es_enabled?
     es_status = MemcacheKeys.fetch(ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
-    es_status.key?(self.id) ? !es_status[self.id].zero? : false
+    es_status.key?(self.id) ? es_status[self.id] : false
   end
   
   protected
