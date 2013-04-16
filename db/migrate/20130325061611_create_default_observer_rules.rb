@@ -57,5 +57,14 @@ class CreateDefaultObserverRules < ActiveRecord::Migration
   end
 
   def self.down
+    Account.all.each do |account|
+      p account.id
+      rule1 = account.all_observer_rules.find_by_name('Automatically reopen closed tickets after a response')
+      p rule1
+      rule1.destroy if rule1
+      rule2 = account.all_observer_rules.find_by_name('Automatically assign ticket to first responder')
+      p rule2
+      rule2.destroy if rule2
+    end
   end
 end

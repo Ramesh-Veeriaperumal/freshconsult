@@ -31,7 +31,12 @@ class VARule < ActiveRecord::Base
   end
 
   def deserialize_all
-    p self, rule_type, VAConfig::OBSERVER_RULE 
+    p "deserialize_all begins"
+    p self
+    p VAConfig::OBSERVER_RULE 
+    p rule_type
+    p "deserialize_all ends"
+
     if rule_type == VAConfig::OBSERVER_RULE
       filter_data.symbolize_keys!
       @performer = Va::Performer.new(filter_data[:performer].symbolize_keys)
