@@ -99,7 +99,7 @@ class Helpdesk::TicketsController < ApplicationController
       end
       
       format.xml do
-        render :xml => @response_errors.nil? ? @items.to_xml({:ticket_only => true}) : @response_errors.to_xml(:root => 'errors')
+        render :xml => @response_errors.nil? ? @items.to_xml({:shallow => true}) : @response_errors.to_xml(:root => 'errors')
       end
 
       format.json do
