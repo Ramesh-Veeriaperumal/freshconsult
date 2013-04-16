@@ -67,6 +67,7 @@ en:
   upgrade_plan: Upgrade
   go_back: Go Back
   add_note: Add Note
+  set_field_label_as: Set %{custom_field_name} as
   contact_name: Contact Name
   eight: 8 Hours
   security_code: Security code

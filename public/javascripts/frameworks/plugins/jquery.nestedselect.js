@@ -20,6 +20,7 @@
              category_name = $("<input type='hidden' value='"+opts.category_name+"' name='name' />"),
              subcategory = $("<select />"),
              items = $("<select />"),
+             special_cases = { '--':'Any Value', '':'None' },
 
              rule_type = $("<input type='hidden' name='rule_type' value='nested_rule' />"),
              nested_rules = $("<input type='hidden' name='"+nested_rules_name+"' value='' />");
@@ -29,9 +30,9 @@
               subcategory.data( _dataAttr);
               items.data( _dataAttr);
              }
-
+          
            (tree.getCategoryList()||[]).each(function(key){
-              value = ((key == '--') ? 'Any Value' : key);
+              value = $.inArray(key, Object.keys(special_cases))!=-1 ? special_cases[key] : key
               $("<option />")
                 .html(value)
                 .val(key)
@@ -44,7 +45,7 @@
             .bind("change", function(ev){
               subcategory.empty();
 
-              (tree.getSubcategoryList(category.val())||$H()).each(function(pair){
+              (tree.getSubcategoryListWithNone(category.val())).each(function(pair){
                 $("<option />")
                   .html(pair.value.id)
                   .val(pair.key)
@@ -137,8 +138,8 @@
     },
 
      setNestedRule : function( nested_rules, subcategory_name, subcategory, item_name, item ){
-        item_check = (item) ? (', { "name" : "'+item_name+'", "value" : "'+item+'" }') : "";
-        nested_rules.val('[{ "name" : "'+subcategory_name+'", "value" : "'+subcategory+'" }'+item_check+']');
+        item_val = ', { "name" : "'+item_name+'", "value" : "'+item+'" }' ;
+        nested_rules.val('[{ "name" : "'+subcategory_name+'", "value" : "'+subcategory+'" }'+item_val+']');
      }
   };
 
