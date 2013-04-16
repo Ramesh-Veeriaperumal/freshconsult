@@ -3468,7 +3468,7 @@ en:
   identity_reverted_error_msg: "Sorry, we couldn't find your original user."
   assume_identity_button: "Assume Identity"
   revert_identity_link_msg: "Revert Identity"
-  swith_agent_msg: "Switch to Another Agent"
+  swith_agent_msg: "Switch Agent"
   switch_heading: "Switch Agent"
   email_notifications_agent_selection_msg: "Select agents to notify"
   on_hold: "On Hold"
