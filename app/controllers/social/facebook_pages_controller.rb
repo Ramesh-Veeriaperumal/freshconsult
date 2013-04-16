@@ -18,7 +18,8 @@ class Social::FacebookPagesController < Admin::AdminController
   def authdone
     begin      
       @fb_pages = @fb_client.auth(params[:code])
-    rescue
+    rescue => e
+      NewRelic::Agent.notice_error(e)
       flash[:error] = t('facebook.not_authorized')
     end
   end
