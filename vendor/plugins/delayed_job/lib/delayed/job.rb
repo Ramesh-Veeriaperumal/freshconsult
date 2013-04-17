@@ -10,7 +10,6 @@ module Delayed
   class Job < ActiveRecord::Base
     set_table_name :delayed_jobs
     not_sharded
-    establish_connection(Rails.configuration.database_configuration[Rails.env])
 
     MAX_ATTEMPTS = 25
     MAX_RUN_TIME = 4.hours

@@ -1,6 +1,5 @@
 class DomainMapping < ActiveRecord::Base
 	not_sharded
-	establish_connection(Rails.configuration.database_configuration[Rails.env])
 
 	include MemcacheKeys
     

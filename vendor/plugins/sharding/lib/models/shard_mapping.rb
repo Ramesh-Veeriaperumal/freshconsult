@@ -1,8 +1,6 @@
 class ShardMapping < ActiveRecord::Base
-  not_sharded
-  establish_connection(Rails.configuration.database_configuration[Rails.env])
   set_primary_key "account_id"
-
+  not_sharded
 
   include MemcacheKeys
 
