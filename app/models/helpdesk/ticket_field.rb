@@ -188,7 +188,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   def levels
     nested_ticket_fields.map{ |l| { :id => l.id, :label => l.label, :label_in_portal => l.label_in_portal, 
-      :description => l.description, :level => l.level, :position => 1, :field_type => "nested_child", 
+      :description => l.description, :level => l.level, :position => 1,
       :type => "dropdown" } } if field_type == "nested_field"
   end
 
