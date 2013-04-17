@@ -1,5 +1,5 @@
 require 'test/unit'
-require 'mocha'
+require 'mocha/api'
 
 require 'stub_environment'
 require 'rails_development_boost'

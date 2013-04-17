@@ -797,11 +797,26 @@ class Helpdesk::Ticket < ActiveRecord::Base
    begin
     evaluate_on = check_rules     
     update_custom_field evaluate_on unless evaluate_on.nil?
+    assign_tickets_to_agents
     autoreply
    rescue Exception => e #better to write some rescue code 
     NewRelic::Agent.notice_error(e)
    end
     save #Should move this to unless block.. by Shan
+  end
+
+  def assign_tickets_to_agents
+    #Ticket already has an agent assigned to it or doesn't have a group
+    return if group.nil? || self.responder_id
+    schedule_round_robin_for_agents if group.round_robin_eligible?
+  end 
+
+  def schedule_round_robin_for_agents
+    next_agent = group.next_available_agent
+
+    return if next_agent.nil? #There is no agent available to assign ticket.
+    self.responder_id = next_agent.user_id
+    self.save
   end
  
   def check_rules
@@ -884,7 +899,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Liquid ends here
   
   def respond_to?(attribute)
-    return false if [:to_ary].include?(attribute.to_sym)    
+    return false if [:to_ary,:after_initialize_without_slave].include?(attribute.to_sym)    
     # Array.flatten calls respond_to?(:to_ary) for each object.
     #  Rails calls array's flatten method on query result's array object. This was added to fix that.
 
@@ -963,9 +978,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
           :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name])
     end
 
-    return super(:builder =>xml, :skip_instruct => true) if options[:ticket_only]
+    ticket_attributes = [:notes,:attachments]
+    ticket_attributes = [] if options[:shallow]
 
-    super(:builder => xml, :skip_instruct => true,:include => [:notes,:attachments],:except => [:account_id,:import_id], 
+    super(:builder => xml, :skip_instruct => true,:include => ticket_attributes, :except => [:account_id,:import_id], 
       :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name]) do |xml|
       xml.custom_field do
         self.account.ticket_fields.custom_fields.each do |field|
@@ -1346,6 +1362,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       elsif self.product
         self.email_config = self.product.primary_email_config
       end
+      self.group_id ||= email_config.group_id unless email_config.nil?
     end
 
     def assign_email_config

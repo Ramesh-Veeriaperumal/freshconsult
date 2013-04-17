@@ -1,0 +1,1 @@
+class DomainNotReady < StandardError; end

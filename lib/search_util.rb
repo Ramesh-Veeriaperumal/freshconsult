@@ -40,7 +40,7 @@ module SearchUtil
   end
 
   def self.es_filter_exact(query)
-    query = "<#{query.gsub(/^<|>$/,'').strip}>" unless query.blank?
+    query = "#{query.gsub(/^<|>$/,'').strip}" unless query.blank?
     query
   end
 

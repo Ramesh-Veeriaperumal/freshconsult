@@ -1,6 +1,5 @@
 class  Helpdesk::TicketNotifier < ActionMailer::Base
   
-  layout "mail_fontstyle"
   def self.notify_by_email(notification_type, ticket, comment = nil)
     e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
     if e_notification.agent_notification?

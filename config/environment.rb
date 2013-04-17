@@ -14,7 +14,7 @@ require 'gapps_openid'
 
 Rails::Initializer.run do |config|
 
-  config.middleware.use "Middleware::ApiThrottler", :max =>  100
+  config.middleware.use "Middleware::ApiThrottler", :max =>  200
   # Settings in config/environments/* take precedence over those specified here.
   # Application configuration should go into files in config/initializers
   # -- all .rb files in that directory are automatically loaded.
@@ -95,6 +95,9 @@ Rails::Initializer.run do |config|
   config.action_controller.allow_forgery_protection = false
   #config.middleware.use 'ResqueWeb'
 end
+
+#ActiveRecord::Base.logger = Logger.new("log/debug.log")
+
 
 ActiveRecord::ConnectionAdapters::MysqlAdapter::NATIVE_DATABASE_TYPES[:primary_key] = "BIGINT UNSIGNED DEFAULT NULL auto_increment PRIMARY KEY"
 
