@@ -56,7 +56,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   edit_conversation do
-    resource :"helpdesk/note", :only => [:destroy]
+    resource :"helpdesk/note", :only => [:destroy, :restore]
   end
 
   edit_note do
