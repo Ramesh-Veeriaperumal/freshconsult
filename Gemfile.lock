@@ -1,4 +1,12 @@
 GIT
+  remote: git://github.com/bucharestdev/active_record_shards.git
+  revision: e0a05e299a3de5645dd150b114d6f43ef218a9d3
+  branch: 2_7_stable
+  specs:
+    active_record_shards (2.7.0)
+      activerecord (>= 2.3.5, < 3.3)
+
+GIT
   remote: git://github.com/freshdesk/Marketo.git
   revision: 4a0c19bd7ce53408e1dea25e5024d37f97f639be
   specs:
@@ -65,8 +73,6 @@ GEM
     actionpack (2.3.18)
       activesupport (= 2.3.18)
       rack (~> 1.1.0)
-    active_record_shards (2.7.0)
-      activerecord (>= 2.3.5, < 3.3)
     activerecord (2.3.18)
       activesupport (= 2.3.18)
     activeresource (2.3.18)
@@ -298,7 +304,7 @@ PLATFORMS
 DEPENDENCIES
   RedCloth (= 4.2.3)
   SystemTimer (= 1.2.3)
-  active_record_shards (= 2.7.0)
+  active_record_shards!
   after_commit (= 1.0.11)
   arel (= 2.0.7)
   authlogic (= 2.1.6)
