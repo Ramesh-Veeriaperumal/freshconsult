@@ -1,3 +1,4 @@
+if ENV["RAILS_ENV"] == "test"
 Factory.define :group do |g|
   g.name "group1"
   g.description "test group one"
@@ -80,4 +81,5 @@ Factory.define :subscription do |f|
   f.amount 49.00
 end
 
+end
 
