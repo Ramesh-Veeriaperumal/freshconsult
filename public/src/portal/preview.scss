@@ -12,6 +12,9 @@
 @import "lib/buttons";
 
 @import "portal/preview/*.png";
+$preview-sprite-dimensions: true;
+$preview-layout:horizontal;
+@include all-preview-sprites;
 
 body{ 
 	overflow: hidden; 
@@ -24,10 +27,6 @@ body{
 	display: block;
 	margin: auto;
 }
-
-$preview-sprite-dimensions: true;
-$preview-layout:horizontal;
-@include all-preview-sprites;
 
 #responsive-buttons{
 	@include clearfix;

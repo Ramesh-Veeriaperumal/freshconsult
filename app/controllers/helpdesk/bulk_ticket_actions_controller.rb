@@ -60,7 +60,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
     end
 
     def facebook_reply ticket, note
-      ticket.is_fb_message? ? send_facebook_message (ticket, note) : send_facebook_comment (ticket, note)
+      ticket.is_fb_message? ? send_facebook_message(ticket, note) : send_facebook_comment(ticket, note)
     end
     
     def twitter_reply ticket, note

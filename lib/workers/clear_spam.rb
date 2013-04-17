@@ -1,15 +1,11 @@
 class Workers::ClearSpam
-  extend Resque::Plugins::Retry  
-  @retry_limit = 3
+  extend Resque::AroundPerform  
 
-  @retry_delay = 60*2
   @queue = 'clear_spam_worker'
 
-  def self.perform(account_id)
-    begin
+  def self.perform
       time = 30.days.ago(Time.zone.now).to_s(:db)
-      account =  Account.find(account_id)
-      account.make_current
+      account =  Account.current
       conditions =  ["(deleted = ? OR blocked = ?) and deleted_at < ? 
         and whitelisted = false AND account_id = ?", true, true, time, account.id]
       User.with_conditions(conditions).find_in_batches do |batches|
@@ -26,7 +22,6 @@ class Workers::ClearSpam
       puts "something is wrong: #{e.message}::#{e.backtrace.join("\n")}"
     rescue
       puts "something went wrong"
-    end
-    Account.reset_current_account 
   end
+
 end

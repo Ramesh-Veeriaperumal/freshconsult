@@ -11,9 +11,9 @@
   color: $white;
   vertical-align: middle;
   white-space: nowrap;
-  margin-right: 5px;
-  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.5);
+  margin-right: 5px;  
   background-color: $grayLight;
+  @include text-shadow(1px 1px 0 rgba(0, 0, 0, 0.5));
   @include border-radius(3px);
   @include inline-block;
   -webkit-font-smoothing: antialiased;
@@ -43,7 +43,8 @@ $labels:
   answered #6b9d56,
   deferred #735000,
   inprogress #cf8e00,
-  status #0c8519, 
+  status-pending #eba600,
+  status-closed #0d7624,
   sticky #6d6d6d,
   warning $orange,
   success $successText,

@@ -100,7 +100,7 @@ class ContactsController < ApplicationController
       User.update_all({ :blocked => false, :whitelisted => true,:deleted => false, :blocked_at => nil }, 
         [" id in (?) and (blocked_at IS NULL OR blocked_at <= ?) and (deleted_at IS NULL OR deleted_at <= ?) and account_id = ? ",
          ids, (Time.now+5.days).to_s(:db), (Time.now+5.days).to_s(:db), current_account.id])
-      enqueue_worker(Workers::RestoreSpamTickets, current_account.id, ids)
+      enqueue_worker(Workers::RestoreSpamTickets, :user_ids => ids)
       flash[:notice] = t(:'flash.contacts.whitelisted')
     end
     redirect_to contacts_path and return if params[:ids]
@@ -295,9 +295,9 @@ protected
     end
 
     def fetch_contacts
-       connection_to_be_used =  params[:format].eql?("xml") ? "use_persistent_read_connection" : "use_master_connection"  
+       connection_to_be_used =  params[:format].eql?("xml") ? "run_on_slave" : "run_on_master"  
        begin
-         @contacts =   SeamlessDatabasePool.send(connection_to_be_used.to_sym) do
+         @contacts =   Sharding.send(connection_to_be_used.to_sym) do
           scoper.filter(params[:letter], params[:page], params.fetch(:state, "verified"))
         end
       rescue Exception => e

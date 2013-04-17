@@ -10,7 +10,7 @@ class Agent < ActiveRecord::Base
   
   validates_presence_of :user_id
   
-  attr_accessible :signature_html, :user_id , :ticket_permission, :occasional
+  attr_accessible :signature_html, :user_id , :ticket_permission, :occasional, :available
   
   
   has_many :agent_groups, :class_name => 'AgentGroup', :through => :user , 
@@ -80,7 +80,6 @@ end
   end
 
 def signature_htm
-  puts "#{self.signature_html}"
   self.signature_html
 end
 

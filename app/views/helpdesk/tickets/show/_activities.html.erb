@@ -1,0 +1,5 @@
+<ol class="conversation_thread" id="all_activities" rel="activity_container">
+	<% unless @activities.blank? %>
+		<%= render :partial => "helpdesk/tickets/show/activity.html.erb", :collection => @activities %>
+	<% end %>
+</ol>

@@ -8,7 +8,7 @@
 	<% if params[:controller].ends_with("customer_reports") %>
 		<div class="ff_item" container="dropdown" id="div_ff_customer">
 			<h4 class="title"><%= label_tag "customer_id", t("reports.select_customer") %></h4>           
-		    <%= select_tag "customer_id", options_for_select(current_account.customers.collect{ |c| [c.name, c.id] }) ,:class => "customSelect filter_item" %>     
+		    <%= select_tag "customer_id", options_for_select(current_account.customers.collect{ |c| [h(c.name), h(c.id)] }) ,:class => "customSelect filter_item" %>     
 	    </div>
 	<% end %> 
 	<% @show_options.each_with_index do |c_hash, i| %> 

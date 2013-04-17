@@ -27,6 +27,25 @@ function catchException(fn, message) {
   }
 }
 
+function processAgent(user_id) {
+  var value = ( jQuery("#available_icon").attr("class") == "header-icons-autoAssign-on" )
+ 
+  new Ajax.Request('/agents/toggle_availability', 
+                   { parameters: {value: !value, id: user_id},
+                      onLoading: function() {
+                        
+                      },
+                      onSuccess: function(response) {
+                       //change the icon class.
+                       var img =  document.getElementById('available_icon');
+                      if(img.hasClassName('header-icons-autoAssign-on')) 
+                        img.removeClassName('header-icons-autoAssign-on').addClassName('header-icons-autoAssign-off');
+                      else
+                        img.removeClassName('header-icons-autoAssign-off').addClassName('header-icons-autoAssign-on');
+
+                     } });
+}
+
 function freshdate(str) {
   var month_names = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   var d =  parseUTCDate(str);
@@ -54,11 +73,21 @@ function plural( count, text1, text2 ){
 
 function totalTime(listClass, updateId){
  total_hours = $$(listClass)
-                .collect(function(t){ return t.innerHTML; })
+                .collect(function(t){ return jQuery(t).data('runningTime'); })
                 .inject(0, function(acc, n) { return parseFloat(acc) + parseFloat(n); });
  
- jQuery(updateId).html(sprintf( "%0.02f", total_hours));    
+ jQuery(updateId).html(time_in_hhmm(total_hours));    
 }
+
+function time_in_hhmm(seconds) {
+  var hh = parseInt(seconds/3600), mm = parseInt((seconds % 3600) / 60), ss = seconds % 60;
+  return pad2(hh) + ":" + pad2(mm); 
+}
+
+function pad2(number) {
+  return (number < 10 ? '0' : '') + number;
+}
+
 
 // Primarly for the form customizer page. Used for making the text unselectable
 makePageNonSelectable = function(source){
@@ -296,7 +325,6 @@ active_dialog = null;
           return this.each(function(i, item){
             curItem = $(item);
             var dialog = null;
-
             curItem.click(function(e){
               e.preventDefault();
             
@@ -392,8 +420,8 @@ active_dialog = null;
  }; 
 
  $(document).bind('mousedown', function(e) {       
-	if($(e.target).hasClass("chzn-results")) return;
-  if ($(e.target).parent().is(".fd-ajaxmenu, .fd-ajaxmenu .contents")) { return };
+	 if($(e.target).hasClass("select2-choice") || $(e.target).hasClass("item-in-menu")) return;
+  if ($(e.target).parents().is(".fd-ajaxmenu, .fd-ajaxmenu .contents, .profile_info, .select2-container")) { return };
     if($(this).data("active-menu")){
       if(!$(e.target).data("menu-active")) hideActiveMenu();
       else setTimeout(hideActiveMenu, 500);         
@@ -660,6 +688,11 @@ getCookie = function(name)
     }
   }
 }
+
+deleteCookie = function(name, path) 
+{
+  setCookie(name,'',-1,path);
+}
 supports_html5_storage = function() {
   try {
     return 'localStorage' in window && window['localStorage'] !== null;
@@ -706,8 +739,6 @@ function fetchResponses(url, element){
       var temp_resp = jQuery('.list2').detach();
       jQuery('#cf_cache').append(temp_resp);
       jQuery('#fold-list').append('<div id="responses" class="list2"></div>');
-      if(!localStorage["local_ca_response"])
-        jQuery('#responses').addClass('no_recently_used');
       jQuery('#responses').addClass('loading-center');
       jQuery.getScript(url, function(){
       jQuery('#responses').attr('id', use_id);
@@ -838,3 +869,17 @@ Date.prototype.toISOStringCustom = function() {
             + pad(this.getMinutes()) + ':'
             + pad(this.getSeconds()) +"."+pad(this.getMilliseconds()) +"+1100";
     };
+
+function escapeHtml(str) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+};
+
+function unescapeHtml(escapedStr) {
+        var div = document.createElement('div');
+        div.innerHTML = escapedStr;
+        var child = div.childNodes[0];
+        return child ? child.nodeValue : '';
+};
+

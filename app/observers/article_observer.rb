@@ -20,6 +20,7 @@ class ArticleObserver < ActiveRecord::Observer
 	end
 
 	def after_commit(article)
+		article.update_es_index
 		return unless gamification_feature?(article.account)
 		changed_filter_attributes = @article_changes.keys & SOLUTION_UPDATE_ATTRIBUTES
 		add_resque_job(article) if changed_filter_attributes.any?
@@ -55,8 +56,8 @@ private
   	end
 
 	def set_un_html_content(article)
-      article.desc_un_html = (article.description.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") unless article.description.empty?
-  end
+		article.desc_un_html = Helpdesk::HTMLSanitizer.plain(article.description) unless article.description.empty?
+    end
 
   def article_changes(article)
   	@article_changes = article.changes.clone

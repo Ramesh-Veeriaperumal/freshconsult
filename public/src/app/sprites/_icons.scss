@@ -1,0 +1,40 @@
+// Icon sprite creation
+// --------------------------------------------------
+
+@import "icons/*.png";
+
+/* %% more styles set for this class in some other file */
+
+/* %% app-common */ 
+
+.results{ 
+	.ticket_icon	span.icon{ @include icons-sprite(page-white); }
+	.contact_icon	span.icon{ @include icons-sprite(user); }
+	.company_icon	span.icon{ @include icons-sprite(building); }
+	.solution_icon	span.icon{ @include icons-sprite(solutions); }
+	.forum_icon		span.icon{ @include icons-sprite(comments); }
+}
+
+.request-list div.item a.item-title{
+	.bulb{ 			@include icons-sprite(lightbulb); }
+	.wand{ 			@include icons-sprite(wand); }
+	&:hover .bulb{ 	@include icons-sprite(lightbulb-grey); }
+	&:hover .wand{ 	@include icons-sprite(wand-grey); }
+}
+
+.sort .sort_order{	
+	.ASC{  @include icons-sprite(sort-asc); }
+	.DESC{ @include icons-sprite(sort-desc); }
+}
+
+.forum_list .base-set{
+	.forum_type_howto{ 		@include icons-sprite(forum_howto); }
+	.forum_type_ideas{ 		@include icons-sprite(forum_ideas); }
+	.forum_type_problem{ 	@include icons-sprite(forum_problem); }
+	.forum_type_announce{ 	@include icons-sprite(forum_announce); }
+}
+
+.ui-form .inline-field .google_contacts_sync {
+	li.freshdesk{ 	@include icons-sprite(freshdesk); }
+	li.google{ 		@include icons-sprite(google); }
+}

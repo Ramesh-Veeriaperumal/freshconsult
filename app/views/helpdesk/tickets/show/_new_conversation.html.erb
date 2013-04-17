@@ -1,0 +1,65 @@
+<ol class="redactor conversation_thread">
+	<li class="conversation">
+		<%= link_to user_avatar(current_user), "javascript:void()", :class => 'avatar-wrap' %>
+		<div class="commentbox commentbox-dark">
+			<div id="TicketForms">
+				<div class="hide">
+		      <%= link_to( t(:'ticket.canned_responses.ca_response'), 
+		      							"/helpdesk/canned_responses/index/#{@ticket.display_id}", 
+		      							"data-width" => "700", "data-template-footer" => '', :rel => 'freshdialog', 
+		      							:id => "canned_response_show", "data-target" => "#canned_responses", 
+		      							:title => t(:'ticket.canned_responses.ca_responses')) %>
+					<%= link_to( t('solution.title_singular'), 
+												"/helpdesk/tickets/component/#{@ticket.id}?component=related_solutions", 
+												:title => t(:'ticket.suggested_solutions.title'), :rel => 'freshdialog',
+												"data-target" => "#related_solutions", "data-template-footer" => '', 
+												:id => "suggested_solutions_show") %>
+				</div>
+			  	<%= render(	:partial => '/helpdesk/tickets/show/reply_form', 
+			  				:locals => { 	:id => 'send-email', 
+			  								:cntid => 'cnt-reply', 
+		  									:note => [@ticket, Helpdesk::Note.new(:private => false)], 
+		  									:conv_id => nil 
+		  								}) if !(@ticket.is_twitter? or @ticket.is_facebook?) and (@item.from_email.present? or @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobi_help]) %>
+
+			  	
+				<div class="request_panel hide" id="cnt-fwd" rel="emitter" data-node-name="agent_replying">
+				<%= render(:partial => '/helpdesk/tickets/show/forward_form', 
+							:locals => { 
+										:id => 'send-fwd-email', 
+										:cntid => 'cnt-fwd', 
+										:note => [@ticket, Helpdesk::Note.new(:private => true)], 
+										:conv_id => nil 
+									}) %>
+				</div>
+
+				<%= render(:partial => '/helpdesk/tickets/show/note_form', 
+							:locals => { 
+										:id => 'add-note',	
+										:cntid => "cnt-note", 
+										:note => [@ticket, Helpdesk::Note.new(:private => true)] 
+									}) %>
+				<%= render(	:partial => '/helpdesk/tickets/show/tweet_form', 
+							:locals => { 
+										:id => 'send-tweet', 
+										:cntid => 'cnt-reply', 
+										:note => [@ticket, Helpdesk::Note.new(:private => true)] 
+									})  if @ticket.is_twitter? %>
+				<%= render(	:partial => '/helpdesk/tickets/show/facebook_form', 
+							:locals => { 
+										:id => 'send-fb-post', 
+										:cntid => 'cnt-reply', 
+										:note => [@ticket, Helpdesk::Note.new(:private => true)] 
+									}) if @ticket.is_facebook? %>
+			</div> 
+			<div id="TicketPseudoReply" class="pseudo_reply">
+				<% if (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present? or @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobi_help]) %>
+				<a href="" id="FwdButton" rel="note-button" data-note-type="reply" ><%= t('ticket.reply_to')  %></a> /
+				<% end %>
+				<a href="" id="FwdButton" rel="note-button" data-note-type="fwd" ><%= t('fwd_to') %></a> /
+				<a href="#"  rel="note-button" data-note-type="note" ><%= t('ticket.add_note') %></a>
+			</div>
+		</div>
+
+	</li>
+</ol>

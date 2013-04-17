@@ -19,7 +19,4 @@ config/database.yml
 config/sphinx.yml
 config/redis.yml
 .sass-cache/
-public/stylesheets/app
-public/stylesheets/app/lib
-public/stylesheets/print
-public/stylesheets/portal
+public/stylesheets/*

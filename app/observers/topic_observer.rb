@@ -23,6 +23,7 @@ class TopicObserver < ActiveRecord::Observer
 	end
 
 	def after_commit(topic)
+    topic.update_es_index
 		changed_topic_attributes = @topic_changes.keys & TOPIC_UPDATE_ATTRIBUTES
 		add_resque_job(topic) if gamification_feature?(topic.account) && changed_topic_attributes.any?
 	end

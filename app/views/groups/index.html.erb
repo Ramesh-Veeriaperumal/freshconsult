@@ -1,20 +1,28 @@
 <% content_for :sidebar do %>
   <%= render :partial => "helpnote" %>
 <% end %>
-<div class="floatr">
-	<%= link_to t('group.new'), new_group_path, :class => "uiButton"  %>
-</div>	
-<h3 class="title"><%=t('group.title')%></h3>
-<ul class="admin_list">
-	<% @groups.each do |group| %>
-	  	<li>
-	  		<div class="item_actions">
-	  	    	<%= link_to t('edit'), edit_group_path(group), :class => "button" %>		
-	    		<%= link_to t('delete'), group, :confirm => "#{t('group.info5')}?", :method => :delete, :class => "button" %>
-			</div>
-			<%= link_to(h(group.name), edit_group_path(group), :class => "item_info") %>
-			<div><%=h(group.description)%></div>
-	 	</li>
-	<% end %>
-</ul>
+<%= include_stylesheets :pattern %>
+<%= include_javascripts :pattern %>
 
+<div class="list-page group-management">
+  <div class="list-page-header row-fluid"> 
+  	<h3 class="lead span6"><%=t('group.title')%></h3>
+  	<span class="span6"><%= link_to t('group.new'), new_group_path, :class => "btn btn-primary pull-right "  %></span>
+  </div>
+  <div class="list-page-body"> 
+      <table class="table table-striped">
+      	<% @groups.each do |group| %>
+        <tr>
+          <td>
+             <%= link_to(h(group.name), edit_group_path(group), :class => "item_info") %>
+			 <div class="muted"><%=h(group.description)%></div>
+          </td>
+          <td class="text-right">
+          	<%= link_to t('edit'), edit_group_path(group), :class => "btn btn-mini" %>
+          	<%= link_to "<i class='icon-trash'></i>", group, :confirm => "#{t('group.info5')}?", :method => :delete, :class => "btn btn-mini"%>
+          </td>
+        </tr>
+        <% end %>
+      </table>
+  </div>
+</div>

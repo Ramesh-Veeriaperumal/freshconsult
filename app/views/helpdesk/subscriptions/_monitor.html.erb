@@ -1,7 +1,7 @@
-<%= link_to_remote(image_tag("/images/spacer.gif", :width => "24px", :height => "24px"), 
-                   { :url => "#"}, :class => "monitor" ) if not 
+<%= link_to_function(image_tag("/images/spacer.gif", :width => "24px", :height => "24px"), 
+                   "", :class => "monitor" ) if not 
                    (@ticket.subscriptions.map(&:user_id).include? current_user.id) %>
 
-<%= link_to_remote(image_tag("/images/spacer.gif", :width => "24px", :height => "24px"),
- 					{ :url => "#"}, :class => "monitor_active" ) if 
+<%= link_to_function(image_tag("/images/spacer.gif", :width => "24px", :height => "24px"),
+ 					"", :class => "monitor_active" ) if 
  					(@ticket.subscriptions.map(&:user_id).include? current_user.id) %>

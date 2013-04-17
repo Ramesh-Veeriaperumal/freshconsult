@@ -1,5 +1,4 @@
-<h3 class="title"><%= t(:'ticket.suggested_solutions.title') %></h3>
-  <div class="request-list">
+  <div class="request-list" id="default_solution_suggestions">
     <%= each_or_message("helpdesk/tickets/components/article", @articles, t(:'ticket.suggested_solutions.no_result')) %>
   </div>
   <div class="panel_area"> 
