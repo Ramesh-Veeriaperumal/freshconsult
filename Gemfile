@@ -86,16 +86,14 @@ gem "active_record_shards","2.7.0", :require => 'active_record_shards'
 gem "rack-throttle", "~> 0.3.0"
 
 group :development,:test do
-   #gem "rspec", "1.3.1"
-   #gem "thoughtbot-shoulda","2.10.2"
-   #gem "rspec-rails", "1.3.3"
    gem "forgery","0.5.0"
    gem "factory_girl", "1.2.3" 
    gem "mongrel" 
-   
 end
 
 group :test do
+   gem "rspec", "1.3.1"
+   gem "rspec-rails", "1.3.3"
    gem "spork", "~> 0.8.0"
    gem "mocha", "~> 0.13.3"
 end

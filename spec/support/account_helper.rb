@@ -18,6 +18,8 @@ module AccountHelper
     @acc.subscription = sub
     @acc.main_portal = @portal
     PortalObserver.any_instance.stubs(:after_save => true)
+    Account.any_instance.stubs(:change_shard_mapping => true)
+    Account.any_instance.stubs(:change_shard_status => true)
     create_dummy_customer
     @acc.save(false)
     @acc
