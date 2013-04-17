@@ -66,7 +66,7 @@ window.FactoryUI = {
 						.appendTo(_optgroup)
 						.get(0).value = option[0];
 				});
-				_optgroup.appendTo(select)
+				_optgroup.appendTo(select);
 			}else{
 				jQuery( "<option />" )
 						.text( item[1] )
