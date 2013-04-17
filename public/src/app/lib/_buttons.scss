@@ -159,12 +159,9 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 }
 
 .ui-after-submit{
-   border-color:#cfcfcf;
-	background-color:#eeeeee;
-	background-image:url('/images/load.gif');
-	background-repeat:no-repeat; 
-	background-position: center;	
-   color:rgba(0, 0, 0, 0);
+  border-color:#cfcfcf;
+  background-color:#eeeeee;
+  color:rgba(0, 0, 0, 0);
 	text-shadow: 1px 1px 0 rgba(0, 0, 0, 0);   
 }
 

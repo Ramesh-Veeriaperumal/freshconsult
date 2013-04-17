@@ -23,20 +23,24 @@ class FBClient
   def auth(code)
     oauth_access_token = @oauth.get_access_token(code)
     @graph = Koala::Facebook::GraphAPI.new(oauth_access_token)
+    @rest = Koala::Facebook::GraphAndRestAPI.new(oauth_access_token)
     profile = @graph.get_object("me")     
     profile_id=profile["id"]
     pages = @graph.get_connections(profile_id, "accounts")
     pages = pages.collect{|p| p  unless p["category"].eql?("Application")}.compact
+    pages_id = pages.map { |page|  "'#{page["id"]}'" }.join(',')
+    query = "SELECT page_id,access_token FROM page WHERE page_id in (#{pages_id}) and is_published = 1 "
+    published_pages = @rest.fql_query(query)
     fb_pages = Array.new
-    pages.each do |page|
+    published_pages.each do |page|
       page.symbolize_keys!
-      page_id = page[:id]
+      page_id = page[:page_id]
       page_info = @graph.get_object(page_id)
       page_info.symbolize_keys!
       fb_pages << {:profile_id => profile_id , :access_token =>oauth_access_token, :page_id=> page_id,:page_name => page_info[:name], 
                    :page_token => page[:access_token],:page_img_url => page_info[:picture] || DEFAULT_PAGE_IMG_URL, :page_link => page_info[:link] , :fetch_since => 0,
                    :reauth_required => false , :last_error => nil} unless page[:access_token].blank?
-    
+
     end
     fb_pages
   end
