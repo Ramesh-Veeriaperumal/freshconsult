@@ -5,7 +5,9 @@ class ApplicationController < ActionController::Base
 
   layout Proc.new { |controller| controller.request.headers['X-PJAX'] ? 'maincontent' : 'application' }
   
-  before_filter :reset_current_account, :redactor_form_builder, :redirect_to_mobile_url
+  before_filter :unset_current_account, :set_current_account
+  include Authority::Rails::ControllerHelpers
+  before_filter :redactor_form_builder, :redirect_to_mobile_url
   before_filter :check_account_state, :except => [:show,:index]
   before_filter :set_default_locale
   before_filter :set_time_zone, :check_day_pass_usage 
@@ -54,12 +56,7 @@ class ApplicationController < ActionController::Base
   end
   
   def set_time_zone
-    begin
-      current_account.make_current
-      User.current = current_user
-      TimeZone.set_time_zone
-    rescue ActiveRecord::RecordNotFound
-    end
+    TimeZone.set_time_zone
   end
   
   def activerecord_error_list(errors)
@@ -78,8 +75,16 @@ class ApplicationController < ActionController::Base
     I18n.locale = I18n.default_locale
   end
   
-  def reset_current_account
+  def unset_current_account
     Thread.current[:account] = nil
+  end
+  
+  def set_current_account
+    begin
+      current_account.make_current
+      User.current = current_user
+    rescue ActiveRecord::RecordNotFound
+    end    
   end
 
   def render_404
