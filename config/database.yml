@@ -8,21 +8,18 @@
 #   password: 
 
 development:
-  adapter: mysql
-  encoding: utf8
+  adapter: seamless_database_pool
   database: helpkit1
-  pool: 5
-  host: 127.0.0.1
   username: root
-  password:
-  shards:
-    shard_1:
-      host: 127.0.0.1
-      database: helpkit1
-      not_a_shard: false
-      slave:
-        host: 127.0.0.1
-        database: helpkit2
+  password: 
+  pool_adapter: mysql
+  port: 3306
+  master:
+    pool_weight: 0
+    username: root
+    password: 
+  read_pool:
+
 
 slave:
   adapter: mysql
