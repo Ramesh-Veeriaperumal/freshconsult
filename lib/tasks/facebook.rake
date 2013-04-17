@@ -6,6 +6,7 @@ namespace :facebook do
     if queue_empty?(queue_name)
       puts "Facebook Worker initialized at #{Time.zone.now}"
       Account.active_accounts.each do |account|
+          next if account.facebook_pages.empty?
           Resque.enqueue( Social::FacebookWorker ,{:account_id => account.id} )           
       end
     else
@@ -17,6 +18,7 @@ namespace :facebook do
     queue_name = "facebook_comments_worker"
     if queue_empty?(queue_name)
       puts "Facebook Comments Worker initialized at #{Time.zone.now}"
+      SeamlessDatabasePool.use_persistent_read_connection do
         Social::FacebookPage.active.find_in_batches( 
           :joins => %(
             LEFT JOIN  accounts on accounts.id = social_facebook_pages.account_id 
@@ -28,6 +30,7 @@ namespace :facebook do
                 {:account_id => page.account_id, :fb_page_id => page.id} ) 
           end          
         end
+      end
     else
       puts "Facebook Comments Worker is already running . skipping at #{Time.zone.now}" 
     end

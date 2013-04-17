@@ -899,7 +899,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Liquid ends here
   
   def respond_to?(attribute)
-    return false if [:to_ary,:after_initialize_without_slave].include?(attribute.to_sym)    
+    return false if [:to_ary].include?(attribute.to_sym)    
     # Array.flatten calls respond_to?(:to_ary) for each object.
     #  Rails calls array's flatten method on query result's array object. This was added to fix that.
 

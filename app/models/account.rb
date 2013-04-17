@@ -221,7 +221,14 @@ class Account < ActiveRecord::Base
 
 
   before_create :set_default_values
-  before_create :set_shard_mapping
+  
+ 
+  
+
+
+
+  
+
   
   before_update :check_default_values, :update_users_time_zone
     
@@ -229,10 +236,7 @@ class Account < ActiveRecord::Base
   after_create :populate_seed_data
   after_create :populate_features
   after_create :send_welcome_email
-  after_create :change_shard_status
   after_update :update_users_language
-  after_update :change_shard_mapping
-
   after_create :enable_elastic_search
 
   before_destroy :update_crm, :notify_totango
@@ -245,6 +249,15 @@ class Account < ActiveRecord::Base
   before_update :backup_changes
   before_destroy :backup_changes
   
+  named_scope :active_accounts,
+              :conditions => [" subscriptions.next_renewal_at > now() "], 
+              :joins => [:subscription]
+
+  named_scope :premium_accounts, {:conditions => {:premium => true}}
+              
+  named_scope :non_premium_accounts, {:conditions => {:premium => false}}
+             
+
   
   Limits = {
     'agent_limit' => Proc.new {|a| a.full_time_agents.count }
@@ -825,27 +838,9 @@ class Account < ActiveRecord::Base
    end
 
     def backup_changes
-      @old_object = Account.find(id)
+      @old_object = self.clone
       @all_changes = self.changes.clone
       @all_changes.symbolize_keys!
-    end
-
-     def self.active_accounts
-      results = Sharding.run_on_all_shards do
-        Account.find(:all,:joins => :subscription, :conditions => "subscriptions.next_renewal_at > now()")
-      end
-    end
-
-    def self.premium_accounts
-      results =  Sharding.run_on_all_shards do
-        Account.find(:all,:joins => :subscription, :conditions => "subscriptions.next_renewal_at > now() and accounts.premium = 1")
-      end
-    end
-
-    def self.non_premium_accounts
-      results = Sharding.run_on_all_shards do
-        Account.find(:all,:joins => :subscription, :conditions => "subscriptions.next_renewal_at > now() and accounts.premium = 0")
-      end
     end
 
 
@@ -878,27 +873,6 @@ class Account < ActiveRecord::Base
         :billing_emails => { :invoice_emails => [ self.user.email ] }
       }
     end
-
-    def set_shard_mapping
-      shard_mapping = ShardMapping.new({:shard_name => ShardMapping.latest_shard, :status => ShardMapping::STATUS_CODE[:not_found]})
-      shard_mapping.domains.build({:domain => full_domain})  
-      shard_mapping.save                             
-      self.id = shard_mapping.id
-    end
-
-    def change_shard_mapping
-      if full_domain_changed?
-        domain_mapping = DomainMapping.find_by_account_id_and_domain(id,@old_object.full_domain)
-        domain_mapping.update_attribute(:domain,full_domain)
-      end
-    end
-
-    def change_shard_status
-      shard_mapping = ShardMapping.find_by_account_id(id)
-      shard_mapping.status = ShardMapping::STATUS_CODE[:ok]
-      shard_mapping.save
-    end
-
 
 
 end

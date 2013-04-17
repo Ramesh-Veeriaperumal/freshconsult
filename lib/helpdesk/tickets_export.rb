@@ -5,7 +5,7 @@ class Helpdesk::TicketsExport
 
   def self.perform(export_params)
 
-    Sharding.run_on_slave do
+    SeamlessDatabasePool.use_persistent_read_connection do
       export_params.symbolize_keys!
       user = Account.current.users.find(export_params[:current_user_id])
       user.make_current
@@ -55,9 +55,13 @@ class Helpdesk::TicketsExport
           end
         end
       end
+      # if (export_params[:later])
       Rails.logger.info "<--- Triggering export tickets csv mail. User Email Id: #{User.current.email} --->"
       Rails.logger.info "<--- Params #{export_params[:ticket_state_filter]}, #{export_params[:start_date]}, #{export_params[:end_date]} --->"
       Helpdesk::TicketNotifier.deliver_export(export_params, csv_string, User.current)
+      # else
+      #   csv_string
+      # end
     end
   end
 end
