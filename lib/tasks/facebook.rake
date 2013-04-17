@@ -17,11 +17,6 @@ namespace :facebook do
     queue_name = "facebook_comments_worker"
     if queue_empty?(queue_name)
       puts "Facebook Comments Worker initialized at #{Time.zone.now}"
-      shards = Sharding.all_shards
-        shards.each do |shard_name|
-        shard_sym = shard_name.to_sym
-        puts "shard_name is #{shard_name}"
-        Sharding.run_on_shard(shard_name) {
         Social::FacebookPage.active.find_in_batches( 
           :joins => %(
             LEFT JOIN  accounts on accounts.id = social_facebook_pages.account_id 
@@ -33,8 +28,6 @@ namespace :facebook do
                 {:account_id => page.account_id, :fb_page_id => page.id} ) 
           end          
         end
-       }
-       end
     else
       puts "Facebook Comments Worker is already running . skipping at #{Time.zone.now}" 
     end
