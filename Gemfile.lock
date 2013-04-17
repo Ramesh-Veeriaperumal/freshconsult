@@ -1,12 +1,4 @@
 GIT
-  remote: git://github.com/bucharestdev/active_record_shards.git
-  revision: e0a05e299a3de5645dd150b114d6f43ef218a9d3
-  branch: 2_7_stable
-  specs:
-    active_record_shards (2.7.0)
-      activerecord (>= 2.3.5, < 3.3)
-
-GIT
   remote: git://github.com/freshdesk/Marketo.git
   revision: 4a0c19bd7ce53408e1dea25e5024d37f97f639be
   specs:
@@ -48,6 +40,14 @@ GIT
       multi_json (~> 1.0)
       rake
       rest-client (~> 1.6)
+
+GIT
+  remote: git://github.com/osheroff/active_record_shards.git
+  revision: 3a99bf55b3215e98cd8f033bac843cdc7278a9a8
+  tag: v2.4.2
+  specs:
+    active_record_shards (2.4.2)
+      activerecord (~> 2.3.5)
 
 PATH
   remote: vendor/gems/twitter-2.1.1
