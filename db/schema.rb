@@ -352,6 +352,17 @@ ActiveRecord::Schema.define(:version => 20130326092144) do
 
   add_index "features", ["account_id"], :name => "index_features_on_account_id"
 
+  create_table "es_enabled_accounts", :force => true do |t|
+    t.integer  "account_id", :limit => 8
+    t.string   "index_name"
+    t.boolean  "imported",                :default => true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "es_enabled_accounts", ["account_id"], :name => "index_es_enabled_accounts_on_account_id"
+
+
   create_table "flexifield_def_entries", :force => true do |t|
     t.integer  "flexifield_def_id",  :limit => 8, :null => false
     t.string   "flexifield_name",                 :null => false
