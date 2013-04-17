@@ -79,7 +79,7 @@
 		  var query = $('solution_search').value;
 			jQuery("#componentlist").addClass("loading-center");
 			jQuery('#more_search_results')
-			  .load('/helpdesk/tickets/component/'+<%=@ticket.id%>+'?component=search_solutions&q='+query, 
+			  .load('/helpdesk/tickets/component/'+<%=@ticket.id%>+'?component=search_solutions&q='+encodeURIComponent(query), 
 			        function() {
                 jQuery("#componentlist").removeClass("loading-center");
               });

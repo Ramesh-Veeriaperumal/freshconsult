@@ -31,18 +31,12 @@ function respondWithSol(select, sol_id, url){
 
 function insertSuggestions(value)
 {
-	note_area  = jQuery('#cnt-note');
-	reply_area = jQuery('#cnt-reply');
-	if(reply_area.css('display')== 'block') {
-	 	element_id = "cnt-reply-body";
-	}
-	else if (note_area.css('display') =='block'){
-		element_id = "cnt-note-body";
-	}
+	element_id = jQuery('#suggested_solutions_show').data('editorId');
+
 	if(jQuery(element_id)){
-    	jQuery("#"+element_id).getEditor().focus();
-		restoreCaretPosition(element_id);//method in ticket show page.
-   		jQuery("#"+element_id).insertHtml(value);
+  	jQuery("#"+element_id).getEditor().focus();
+	restoreCaretPosition(element_id);//method in ticket show page.
+ 		jQuery("#"+element_id).insertHtml(value);
 	}
 
 	jQuery('#related_solutions').modal('hide');
@@ -90,7 +84,7 @@ jQuery("#searchmoreform").submit(function(ev){
 	jQuery('#default_solution_suggestions').hide();
 	jQuery("#more_search_results").show().addClass("loading-center");
 	jQuery('#more_search_results')
-	  .load('/helpdesk/tickets/component/' + <%=@ticket.id%> + '?component=search_solutions&q='+query, 
+	  .load('/helpdesk/tickets/component/' + <%=@ticket.id%> + '?component=search_solutions&q='+encodeURIComponent(query), 
 	        function() {
 	    jQuery("#more_search_results").removeClass("loading-center");
 	  });

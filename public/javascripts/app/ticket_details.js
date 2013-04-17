@@ -291,23 +291,10 @@ showCannedResponse = function(button, ticket_id){
 }
 
 	 
-insertIntoConversation = function(value,element_id){
-	note_area  = $('#cnt-note');
-	reply_area = $('#cnt-reply');
-	fwd_area = $('#cnt-fwd')
+insertIntoConversation = function(value){
 	tweet_area = $('#cnt-tweet');
+	element_id = $('#canned_response_show').data('editorId');
 
-	if(element_id == undefined){
-		 if(reply_area.css('display')== 'block') {
-			 element_id = "cnt-reply-body";
-		}
-		else if (note_area.css('display') =='block'){
-			element_id = "cnt-note-body";
-		}
-		else if (fwd_area.css('display') == 'block'){
-			element_id = "cnt-fwd-body";
-		}
-	}
 	if(tweet_area.css("display") == 'block'){
 		get_short_url(value, function(bitly){
 				insertTextAtCursor( $('#send-tweet-cnt-tweet-body'), bitly || value );
@@ -319,8 +306,7 @@ insertIntoConversation = function(value,element_id){
 	if(jQuery(element_id)){
 			jQuery("#"+element_id).getEditor().focus();
 			jQuery("#"+element_id).insertHtml(value);
-	}        
-
+	}    
 	return;
 }
 
@@ -919,11 +905,13 @@ $(document).ready(function() {
 
 	$('body').on('click.ticket_details', 'a[rel="ticket_canned_response"]', function(ev){
 		ev.preventDefault();
+		$('#canned_response_show').data('editorId', $(this).data('editorId'));
 		$('#canned_response_show').trigger('click');
 	});
 
 	$('body').on('click.ticket_details', 'a[rel="ticket_solutions"]', function(ev){
 		ev.preventDefault();
+		$('#suggested_solutions_show').data('editorId', $(this).data('editorId'));
 		$('#suggested_solutions_show').trigger('click');
 	});
 
