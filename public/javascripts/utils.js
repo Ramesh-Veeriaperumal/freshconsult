@@ -37,11 +37,11 @@ function processAgent(user_id) {
                       },
                       onSuccess: function(response) {
                        //change the icon class.
-                       var img =  document.getElementById('available_icon');
-                      if(img.hasClassName('header-icons-autoAssign-on')) 
-                        img.removeClassName('header-icons-autoAssign-on').addClassName('header-icons-autoAssign-off');
+                      if (jQuery('#available_icon').hasClass('header-icons-autoAssign-on'))
+                        jQuery('#available_icon').removeClass('header-icons-autoAssign-on').addClass('header-icons-autoAssign-off')
                       else
-                        img.removeClassName('header-icons-autoAssign-off').addClassName('header-icons-autoAssign-on');
+                        jQuery('#available_icon').removeClass('header-icons-autoAssign-off').addClass('header-icons-autoAssign-on')
+
 
                      } });
 }
