@@ -106,9 +106,10 @@ class Customer < ActiveRecord::Base
 
   private
     def map_contacts_on_update
-      domain_changes = self.changes["domains"]
-      domain_changes[0].split(",").map { |domain| domain_changes[1].gsub!( /(^#{domain}\s?,)|(,?\s?#{domain})/, '') }
-      map_contacts_to_customers(domain_changes[1])
+      domain_changes = self.changes["domains"].compact
+      domain_changes[0].split(",").map { |domain| 
+                    domain_changes[1].gsub!( /(^#{domain}\s?,)|(,?\s?#{domain})/, '') } if domain_changes[1]
+      map_contacts_to_customers(domain_changes[1].blank? ? domain_changes[0] : domain_changes[1])
     end
 
     def map_contacts_to_customers(domains = self.domains)
