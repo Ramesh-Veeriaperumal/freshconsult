@@ -15,6 +15,8 @@ module Va::Observer::Util
 	  def filter_observer_events
 	  	@evaluate_on = (self.class == Helpdesk::Ticket) ? self : 
 	  																									self.send(FETCH_EVALUATE_ON[self.class.name])
+	  	p "Obz"
+	  	p @model_changes
 	    @observer_changes = @model_changes.inject({}) do |filtered, (change_key, change_value)| 
 	    																			filter_events filtered, change_key, change_value  end
 			send_events unless @observer_changes.blank? 
@@ -29,6 +31,7 @@ module Va::Observer::Util
 
 	  def send_events
 	  	@observer_changes.merge! ticket_event @observer_changes
+	  	p "Enqueuing"
 	    Resque.enqueue(Workers::Observer,
 	     { :ticket_id => @evaluate_on.id, :current_events => @observer_changes })
 	    #Workers::Observer.perform @evaluate_on.id, User.current.id, @observer_changes
