@@ -17,27 +17,29 @@ describe Helpdesk::Ticket do
 
   before(:each) do
     @ticket.responder_id = nil
-    @ticket.save!
+    @ticket.save(false)
     @new_ticket.responder_id = nil
-    @new_ticket.save!
+    @new_ticket.save(false)
   end
 
 
   def setup_data
-    @group = Group.find(:last)
+    @group = create_group(@account,{:ticket_assign_type => 1, :name =>  "dummy group"})
     @group.ticket_assign_type = 1
     @group.save!
 
-    @agent = Agent.find(:last)
+    @agent = add_agent_to_account(@account, {:name => "testing2", :email => "unit2@testing.com", 
+                                        :token => "xtoQaHDQ7TtTLQ3OKt9", :active => 1, :role => 1
+                                        })
     @agent.available = 1
     @agent.save!
 
     ag_grp = AgentGroup.new(:user_id => @agent.user_id , :account_id =>  @account.id, :group_id => @group.id)
     ag_grp.save!
 
-    @ticket = Helpdesk::Ticket.find(:first)
+    @ticket = create_ticket({:status => 2, :display_id =>9}, @group)
     @ticket.group_id = @group.id
-    @ticket.save!
+    @ticket.save(false)
   end
 
   it "should be assigning tickets to agents in round robin" do

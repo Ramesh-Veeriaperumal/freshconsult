@@ -5,8 +5,10 @@ module AccountHelper
 
   def create_test_account(name = "test_account", domain = "test@freshdesk.local")
     @acc = Account.last
-    return @acc unless @acc.nil?
-    
+    unless @acc.nil?
+      create_dummy_customer
+      return @acc
+    end
     @email_config = Factory.build(:primary_email_config)
     @portal = Factory.build(:main_portal)
     
@@ -26,6 +28,8 @@ module AccountHelper
   end
 
   def create_dummy_customer
+    @customer = User.find_by_email("customer@customer.in")
+    return unless @customer.nil?
     @customer = Factory.build(:user, :account => @acc, :email => "customer@customer.in",
                               :user_role => 3, :single_access_token => "blahblahblah")
     @customer.save(false)
@@ -33,7 +37,7 @@ module AccountHelper
   end
 
   def clear_data
-    Account.destroy_all
+    #Account.destroy_all
     User.destroy_all
     Group.destroy_all
     Agent.destroy_all
