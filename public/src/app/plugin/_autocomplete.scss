@@ -97,9 +97,9 @@ ul.multi_value_field li.choice:hover {
 
 /* based on paned search */
 
-div.autocompletepane{ position: relative; }
+.autocompletepane{ position: relative; }
 
-div.autocompletepane ul {
+.autocompletepane ul {
   list-style-type: none;
   z-index:99999;
   padding: 0;
@@ -107,7 +107,7 @@ div.autocompletepane ul {
   width:100%;
 }
 
-div.autocompletepane ul li {
+.autocompletepane li {
   border: 1px solid #CCC;
   padding: 4px 12px 5px;
   font-size: 11px;
@@ -123,7 +123,7 @@ div.autocompletepane ul li {
   }
 }
 
-div.autocompletepane ul li.selected {
+.autocompletepane li.selected {
   background: #B1CECB;
   border: none;
   padding: 4px 12px 5px;
