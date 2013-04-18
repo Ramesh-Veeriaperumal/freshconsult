@@ -11,9 +11,20 @@ class Workers::Observer
       doer = account.users.find args[:current_user_id]
       current_events = args[:current_events].symbolize_keys
 
+      p evaluate_on
+      p evaluate_on.flexifield
+      p evaluate_on.schema_less_ticket
+
+      p evaluate_on.changes
+
       account.observer_rules.each do |vr|
         vr.check_events doer, evaluate_on, current_events
       end
+
+      p "Done"
+      p evaluate_on.changes
+      p evaluate_on.flexifield.changes
+      p evaluate_on.schema_less_ticket.changes
 
       evaluate_on.flexifield.save unless evaluate_on.flexifield.changes.blank?
       evaluate_on.save unless evaluate_on.changes.blank? 

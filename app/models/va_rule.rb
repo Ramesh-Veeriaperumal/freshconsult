@@ -31,12 +31,6 @@ class VARule < ActiveRecord::Base
   end
 
   def deserialize_all
-    p "deserialize_all begins"
-    p self
-    p VAConfig::OBSERVER_RULE 
-    p rule_type
-    p "deserialize_all ends"
-
     if rule_type == VAConfig::OBSERVER_RULE
       filter_data.symbolize_keys!
       @performer = Va::Performer.new(filter_data[:performer].symbolize_keys)
@@ -61,8 +55,10 @@ class VARule < ActiveRecord::Base
   end
 
   def check_events doer, evaluate_on, current_events
+    p performer.matches? doer, evaluate_on
     return unless performer.matches? doer, evaluate_on
     is_a_match = event_matches? current_events, evaluate_on
+    p is_a_match
     pass_through evaluate_on, nil, doer if is_a_match
   end
 
@@ -75,6 +71,7 @@ class VARule < ActiveRecord::Base
   def pass_through(evaluate_on, actions=nil, doer=nil)
     RAILS_DEFAULT_LOGGER.debug "INSIDE pass_through WITH evaluate_on : #{evaluate_on.inspect}, actions #{actions}"
     is_a_match = matches(evaluate_on, actions)
+    p is_a_match
     trigger_actions(evaluate_on, doer) if is_a_match
     return evaluate_on if is_a_match
     return nil
@@ -96,6 +93,7 @@ class VARule < ActiveRecord::Base
   end
   
   def trigger_actions(evaluate_on, doer=nil)
+    p "Actions"
     Va::Action.initialize_activities
     actions.each { |a| a.trigger(evaluate_on, doer) }
   end
