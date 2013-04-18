@@ -5,6 +5,8 @@ module Va::Observer::Util
 	private
 
 		def user_present?
+			p "Obz"
+	  	p @model_changes
 			User.current && @model_changes && !zendesk_import?
 	  end
 
@@ -15,8 +17,6 @@ module Va::Observer::Util
 	  def filter_observer_events
 	  	@evaluate_on = (self.class == Helpdesk::Ticket) ? self : 
 	  																									self.send(FETCH_EVALUATE_ON[self.class.name])
-	  	p "Obz"
-	  	p @model_changes
 	    @observer_changes = @model_changes.inject({}) do |filtered, (change_key, change_value)| 
 	    																			filter_events filtered, change_key, change_value  end
 			send_events unless @observer_changes.blank? 
