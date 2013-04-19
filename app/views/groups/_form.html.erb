@@ -42,7 +42,9 @@
 						<div class="span10">
 							<ul class="unstyled">
 								<li class="margin-bottom">
-									  <div class="margin-bottom"><input type="radio" rel="toggle" name="group[ticket_assign_type]" id="ticket_assign_type" value="1" <%= @group.ticket_assign_type == Group::TICKET_ASSIGN_TYPE[:round_robin] ? "checked" : "" %> >
+									  <div class="margin-bottom">
+									  	<%= f.check_box :ticket_assign_type, :value => '1', :checked => @group.ticket_assign_type == Group::TICKET_ASSIGN_TYPE[:round_robin],
+									  		:rel => "toggle"  %>
 									  </div>
 									  <div class="muted info_data">
 									  	<%=t('group.round_robin_desc')%>&nbsp;<a href="https://support.freshdesk.com/support/solutions/articles/77157" target="_blank"><%=t('group.learn_more')%></a>
