@@ -27,7 +27,8 @@
       </tr>
     <% else %>
       <tr>
-        <th>CMRR</th>
+        <th>Additional CMRR</th>
+        <th>Monthly Revenue</th>
         <th>Affiliates</th>          
         <th>New Revenue</th>
         <th>Free to Paid</th>
@@ -37,6 +38,7 @@
       </tr>
       <tr>
         <td>$<%= @cmrr_last_30_days %></td>
+        <td>$<%= @actual_revenue_current %></td>
         <td>$<%= handle_nil(@records_last_30_days[:revenue][codes[:affiliates]]) %></td> 
         <td>$<%= handle_nil(@records_last_30_days[:revenue][codes[:paid]]) %></td>
         <td>$<%= handle_nil(@records_last_30_days[:revenue][codes[:free_to_paid]]) %></td> 
