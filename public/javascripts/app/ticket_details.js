@@ -303,9 +303,12 @@ insertIntoConversation = function(value){
 						.trigger("keydown");
 		});         
 	}
-	if(jQuery(element_id)){
-			jQuery("#"+element_id).getEditor().focus();
-			jQuery("#"+element_id).insertHtml(value);
+
+	$('#canned_responses').modal('hide');
+
+	if($("#" + element_id)){
+			$("#"+element_id).getEditor().focus();
+			$("#"+element_id).insertHtml(value);
 	}    
 	return;
 }
@@ -318,10 +321,10 @@ getCannedResponse = function(ticket_id, ca_resp_id, element) {
 		contentType: 'application/text',
 		dataType: "script",
 		async: true,
-		success: function(script){
+		success: function(){
 			$(element).removeClass("response-loading");
 			$(element).qtip('hide');
-			$('[data-dismiss="modal"]').trigger('click');
+			//$('[data-dismiss="modal"]').trigger('click');
 			loadRecent();
 		}
 	});
