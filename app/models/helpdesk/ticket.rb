@@ -797,7 +797,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
    begin
     evaluate_on = check_rules     
     update_custom_field evaluate_on unless evaluate_on.nil?
-    assign_tickets_to_agents
+    assign_tickets_to_agents unless spam? || deleted?
     autoreply
    rescue Exception => e #better to write some rescue code 
     NewRelic::Agent.notice_error(e)

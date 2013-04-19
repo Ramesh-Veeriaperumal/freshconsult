@@ -8966,7 +8966,7 @@ div.db-chooser{
 	display: inline-block;
 }
 
-#results li, .merge_results li{
+#results li, .merge_results .autocompletepane li, .merge_results .autocompletepane li.selected{
 	border: none;
 	background-color: white;
 	height: 50px;
@@ -9183,7 +9183,7 @@ div.db-chooser{
 
 
 /* end */
-#ticket-merge{
+.ticket-merge{
 	overflow: hidden;
 	.merge-ticket-info{
 		font-size:11px;
@@ -9279,8 +9279,8 @@ div.db-chooser{
 	.merge_results{
 		width:97.4%;
 		max-height: 327px;
-		clear: both !important;
-		li{
+		clear:both;
+		.autocompletepane li{
 			height:48px;
 		}
 	}
@@ -10054,10 +10054,8 @@ div.gcal-confirm-modal-content{ width: 100%; }
 	margin: 10px auto 40px;
 	clear: both;
 }
-.group-management .info_data{
-  display: block;
-  margin-top: -10px;
-  padding-left: 16px;
+.group-management .toggle-button{
+	margin-left:0;
 }
 .group-ticket-assign{
 	li{

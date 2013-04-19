@@ -1505,7 +1505,7 @@ en:
     name: Group Name
     edit: Edit Group
     title: Groups
-    ticket_assignment: Ticket Assignment
+    ticket_assignment: Automatic Ticket Assignment
     info1: Agents
     info2: No Agents in this group
     info3: Send an Escalation email to
@@ -1516,10 +1516,9 @@ en:
     tour: Help me create a new agent group
     helptext: You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, set email notifications, create business rules and generate reports at the group level. Note that the same agent can be a member of multiple groups as well. 
     select_agents: Select Agents
-    manual: Manual
-    automatic: Automatic
-    manual_desc: Agents should <i>manually</i> pick up tickets assigned to this group
-    automatic_desc: Tickets assigned to this group by the dispatcher are <i>automatically</i> distributed equally among the available agents
+    select_an_agent: Select Agent
+    learn_more: Learn more 
+    round_robin_desc: "Once turned ON, tickets assigned to this group will be distributed among agents in round robin fashion. If you wish to manually assign tickets or dispatch them using the Dispatch'r or Supervisor automations, you can turn this OFF. "
     assigntime:
       half: 30 Minutes
       one: 1 Hour

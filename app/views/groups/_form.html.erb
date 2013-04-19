@@ -8,22 +8,21 @@
 		 	<ul class="unstylGroup::d">
 		 		<li class="row-fluid">
 		 			<%= f.label :name, "<b> #{t('group.name')} </b>" , :class => "control-label span2" %>
-					  <div class="span9">
+					  <div class="span10">
 						 <%= f.text_field :name , :class => "text required span12", :placeholder => t('group.name')  %>
 					  </div>
 		 		</li>
 		 		<li class="row-fluid">
 		 			 <%= f.label :description, "<b> #{t('description')} </b>", :class => "control-label span2" %>
-					  <div class="span9">
+					  <div class="span10">
 						 <%= f.text_area :description , :class => "text required smallpara span12", :placeholder => t('group.name')  %>
 					  </div>
 		 		</li>
-		 		<li class="row-fluid">
+		 		<li class="row-fluid margin-bottom">
 		 			<label class="control-label span2"><b><%=t('group.info1')%></b></label>
-		 			<input type="hidden" id="agent_list" name="group[agent_list]" class="span9"
+		 			<input type="hidden" id="agent_list" name="group[agent_list]" class="span10"
 		 			data-placeholder = "<%= t("helpdesk.tickets.add_watcher.add_agent") %>"/>
 				</li>
-		 		<li class="row-fluid">
 		 			 
 		 			 <% 
 						account_id =  @group.account_id
@@ -37,34 +36,27 @@
 						end 
 					%>
 					
-		 		</li>
 		 		<% if feature?(:round_robin) %>
 			 		<li class="row-fluid">
 						<label class="control-label span2"><b><%=t('group.ticket_assignment') %></b></label>
-						<div class="span9">
+						<div class="span10">
 							<ul class="unstyled">
 								<li class="margin-bottom">
-									<label class="radio">
-									  <input type="radio" name="group[ticket_assign_type]" id="ticket_assign_type" value="0" <%= @group.ticket_assign_type == Group::TICKET_ASSIGN_TYPE[:default] ? "checked" : "" %> >
-									  <%= t('group.manual') %>
-									</label>
-									<%= content_tag( :span, t('group.manual_desc'), :class => "muted info_data" ) %> 	
+									  <div class="margin-bottom">
+									  	<%= f.check_box :ticket_assign_type, :value => '1', :checked => @group.ticket_assign_type == Group::TICKET_ASSIGN_TYPE[:round_robin],
+									  		:rel => "toggle"  %>
+									  </div>
+									  <div class="muted info_data">
+									  	<%=t('group.round_robin_desc')%>&nbsp;<a href="https://support.freshdesk.com/support/solutions/articles/77157" target="_blank"><%=t('group.learn_more')%></a>
+									  </div>
+
 								</li>
-								
-									<li class="margin-bottom">
-										<label class="radio">
-										  <input type="radio" name="group[ticket_assign_type]" id="ticket_assign_type" value="1" <%= @group.ticket_assign_type == Group::TICKET_ASSIGN_TYPE[:round_robin] ? "checked" : "" %>>
-										  <%= t('group.automatic') %>
-										</label>
-										<%= content_tag( :span, t('group.automatic_desc'), :class => "muted info_data" ) %> 	
-									</li>
-								
 						</div>
 	            	</li>
             	<% end %>
             	<br/>
             	<li class="row-fluid">
-            		<div class="offset2 span9">
+            		<div class="offset2 span10">
             			<ul class="unstyled group-ticket-assign">
             				<li class="row-fluid">
             					<span class="span6 group-text-align"><%=t('group.info4')%> :</span>
@@ -72,7 +64,8 @@
             				</li>
             				<li class="row-fluid">
             					<span class="span6 group-text-align"> &nbsp; &nbsp;<%#=t('group.info3')%> ....then send escalation email to :</span>
-            					<input type="hidden" id="escalate_to" name="group[escalate_to]" class="span3"/>
+            					<input type="hidden" id="escalate_to" name="group[escalate_to]" class="span3"
+            					data-placeholder = "<%= t("group.select_an_agent") %>"/>
             				</li>
             			</ul>
             		</div>
@@ -81,18 +74,15 @@
 		 </div>
 	  <br />
 	  <div class="button-container">	    
-		<%= f.submit t('save'), :class => "btn btn-primary" %>
 		<%= link_to t('cancel'), groups_path, :class => "btn" %>	
+		<%= f.submit t('save'), :class => "btn btn-primary" %>
 	  </div>
 <% end %>
 
 <script type="text/javascript">
 
 jQuery(document).ready(function() {
-	jQuery("#group_form").submit(function(ev){
-			if(jQuery("#agent_id").val() != null)
-			jQuery("#agent_list").val(jQuery("#agent_id").val().join()); 
-		});
+
 <%
 all_agents = []
 all_agents_list = @group.all_agents_list(current_account)
