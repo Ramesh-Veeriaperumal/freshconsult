@@ -32,14 +32,15 @@ function respondWithSol(select, sol_id, url){
 function insertSuggestions(value)
 {
 	element_id = jQuery('#suggested_solutions_show').data('editorId');
+	jQuery('#related_solutions').modal('hide');
 
-	if(jQuery(element_id)){
-  	jQuery("#"+element_id).getEditor().focus();
-	restoreCaretPosition(element_id);//method in ticket show page.
+
+	if(jQuery('#' + element_id)){
+		//restoreCaretPosition(element_id);//method in ticket show page.
+	  jQuery("#"+element_id).getEditor().focus();
  		jQuery("#"+element_id).insertHtml(value);
 	}
 
-	jQuery('#related_solutions').modal('hide');
 }
 
 //Method to restore the caret position when editor loses focus.[Suggest solutions]
