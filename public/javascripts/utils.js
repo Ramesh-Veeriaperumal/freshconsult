@@ -27,24 +27,7 @@ function catchException(fn, message) {
   }
 }
 
-function processAgent(user_id) {
-  var value = ( jQuery("#available_icon").attr("class") == "header-icons-autoAssign-on" )
- 
-  new Ajax.Request('/agents/toggle_availability', 
-                   { parameters: {value: !value, id: user_id},
-                      onLoading: function() {
-                        
-                      },
-                      onSuccess: function(response) {
-                       //change the icon class.
-                      if (jQuery('#available_icon').hasClass('header-icons-autoAssign-on'))
-                        jQuery('#available_icon').removeClass('header-icons-autoAssign-on').addClass('header-icons-autoAssign-off')
-                      else
-                        jQuery('#available_icon').removeClass('header-icons-autoAssign-off').addClass('header-icons-autoAssign-on')
 
-
-                     } });
-}
 
 function freshdate(str) {
   var month_names = ['January','February','March','April','May','June','July','August','September','October','November','December'];
