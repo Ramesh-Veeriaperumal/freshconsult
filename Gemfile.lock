@@ -356,7 +356,6 @@ DEPENDENCIES
   sass (= 3.2.1)
   sax-machine (~> 0.1.0)
   seamless_database_pool!
-  spork (~> 0.8.0)
   spreadsheet (= 0.6.8)
   susy
   thinking-sphinx (= 1.4.3)
