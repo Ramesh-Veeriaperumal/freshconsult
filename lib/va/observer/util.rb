@@ -6,7 +6,9 @@ module Va::Observer::Util
 
 		def user_present?
 			p "Obz"
+			Rails.logger.debug "Obz"
 	  	p @model_changes
+	  	Rails.logger.debug @model_changes
 			User.current && @model_changes && !zendesk_import?
 	  end
 
@@ -32,6 +34,7 @@ module Va::Observer::Util
 	  def send_events
 	  	@observer_changes.merge! ticket_event @observer_changes
 	  	p "Enqueuing"
+	  	Rails.logger.debug "Enqueuing"
 	    Resque.enqueue(Workers::Observer,
 	     { :ticket_id => @evaluate_on.id, :current_events => @observer_changes })
 	    #Workers::Observer.perform @evaluate_on.id, User.current.id, @observer_changes
