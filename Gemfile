@@ -27,7 +27,7 @@ gem "omniauth-constantcontact2", "~> 1.0.4"
 gem "nori", "1.1.4"
 
 gem "jira4r", "0.3.0"
-gem "ruby-openid", "2.1.8", :require => "openid"
+gem "ruby-openid", :git => "git://github.com/freshdesk/ruby-openid.git", :require => "openid"
 gem "ruby-openid-apps-discovery", "1.2.0"
 
 gem "aws-s3", "0.6.2", :require => "aws/s3"
