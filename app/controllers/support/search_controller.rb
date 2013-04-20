@@ -175,14 +175,17 @@ class Support::SearchController < SupportController
           search.from options[:size].to_i * (options[:page].to_i-1)
           search.highlight :desc_un_html, :title, :description, :subject, :options => { :tag => '<span class="match">', :fragment_size => 200, :number_of_fragments => 4 }
         end
+
+        @items = @es_items.results
+        @longest_collection = @es_items.results unless main_portal?
+        params[:term].gsub!(/\\/,'')
+        process_results
+
       rescue Exception => e
         @search_results = []
+        @items = []
         NewRelic::Agent.notice_error(e)
       end
-      @items = @es_items.results
-      @longest_collection = @es_items.results unless main_portal?
-      params[:term].gsub!(/\\/,'')
-      process_results
     end
 
     def filter_key(query = "")
