@@ -25,7 +25,7 @@
   		%>
 	  		<a href="#" id="availabilty-toggle" class="tooltip" data-placement="below"  
 	  		title="<%= availabilty_tooltip %>" >
-	  			<img alt="" height="35px" src="/images/spacer.gif" class="header-icons-autoassign-<%= current_user.available? ? "on" : "off" %>" id="available_icon" onclick="toggleAgent()">
+	  			<img alt="" height="35px" src="/images/spacer.gif" class="header-icons-autoAssign-<%= current_user.available? ? "on" : "off" %>" id="available_icon" onclick="toggleAgent()">
 	  		</a>
 	  	<% end %>
 		<a href="#" class="nav-trigger" menuid="#LoggedOptions" id="header-profile-avatar">
@@ -141,7 +141,7 @@
 <% javascript_tag do %>
  function toggleAgent() {
 	var user_id = '<%= current_user.id %>'
-  	var value = ( jQuery("#available_icon").attr("class") == "header-icons-autoassign-on" )
+  	var value = ( jQuery("#available_icon").attr("class") == "header-icons-autoAssign-on" )
  
   	new Ajax.Request('/agents/toggle_availability', 
                    { parameters: {value: !value, id: user_id},
@@ -151,14 +151,14 @@
                       onSuccess: function(response) {
                        //change the icon class.
                       jQuery('#available_icon').removeClass('header-spinner')
-                      if (jQuery('#available_icon').hasClass('header-icons-autoassign-on'))
+                      if (jQuery('#available_icon').hasClass('header-icons-autoAssign-on'))
                       {
-                        jQuery('#available_icon').removeClass('header-icons-autoassign-on').addClass('header-icons-autoassign-off')
+                        jQuery('#available_icon').removeClass('header-icons-autoAssign-on').addClass('header-icons-autoAssign-off')
                         jQuery('#availabilty-toggle')
                         	.attr('title',"<%= t('header.user_not_available') %>")
                       }
                       else{
-                        jQuery('#available_icon').removeClass('header-icons-autoassign-off').addClass('header-icons-autoassign-on')
+                        jQuery('#available_icon').removeClass('header-icons-autoAssign-off').addClass('header-icons-autoAssign-on')
                         jQuery('#availabilty-toggle')
                         	.attr('title',"<%= t('header.user_available') %>")
                       }
