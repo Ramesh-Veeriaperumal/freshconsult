@@ -252,6 +252,7 @@ class Support::SearchController < SupportController
       @search_results = []
       pre_process_results if current_account.es_enabled?
       @items.each do |item|
+        next if item.nil?
         result = item_based_selection(item)
         result.merge!('source' => item) if !request.xhr?
         @search_results << result
@@ -266,8 +267,10 @@ class Support::SearchController < SupportController
     end
 
     def highlight_results(result, hit)
-      hit['highlight'].keys.each do |i|
-        result[i] = hit['highlight'][i].to_s
+      unless result.blank?
+        hit['highlight'].keys.each do |i|
+          result[i] = hit['highlight'][i].to_s
+        end
       end
     end
 
