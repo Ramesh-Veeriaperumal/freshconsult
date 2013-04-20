@@ -978,6 +978,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
           :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name])
     end
 
+
     ticket_attributes = [:notes,:attachments]
     ticket_attributes = [] if options[:shallow]
 
