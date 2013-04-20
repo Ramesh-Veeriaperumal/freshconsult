@@ -114,14 +114,16 @@
 <script type="text/javascript">
 	jQuery(document).ready(function() {
 	<%
-		@allowed_to_assume = current_account.users.technicians.visible.allowed_to_assume(current_user) 
 		assume_agent = []
-		
-		if @allowed_to_assume
-			@allowed_to_assume.each do |req|
-				assume_agent << "{id: '#{req.id}',
-	                  value: '#{escape_javascript(req.name)}',
-	                  text: '#{escape_javascript(req.name)}'}"
+		if current_user
+			@allowed_to_assume = current_account.users.technicians.visible.allowed_to_assume(current_user) 
+			
+			if @allowed_to_assume
+				@allowed_to_assume.each do |req|
+					assume_agent << "{id: '#{req.id}',
+		                  value: '#{escape_javascript(req.name)}',
+		                  text: '#{escape_javascript(req.name)}'}"
+				end
 			end
 		end
 	%>
@@ -138,34 +140,36 @@
 
 </script>
 
-<% javascript_tag do %>
- function toggleAgent() {
-	var user_id = '<%= current_user.id %>'
-  	var value = ( jQuery("#available_icon").attr("class") == "header-icons-autoAssign-on" )
- 
-  	new Ajax.Request('/agents/toggle_availability', 
-                   { parameters: {value: !value, id: user_id},
-                      onLoading: function() {
-                        jQuery('#available_icon').addClass('header-spinner')
-                      },
-                      onSuccess: function(response) {
-                       //change the icon class.
-                      jQuery('#available_icon').removeClass('header-spinner')
-                      if (jQuery('#available_icon').hasClass('header-icons-autoAssign-on'))
-                      {
-                        jQuery('#available_icon').removeClass('header-icons-autoAssign-on').addClass('header-icons-autoAssign-off')
-                        jQuery('#availabilty-toggle')
-                        	.attr('title',"<%= t('header.user_not_available') %>")
-                      }
-                      else{
-                        jQuery('#available_icon').removeClass('header-icons-autoAssign-off').addClass('header-icons-autoAssign-on')
-                        jQuery('#availabilty-toggle')
-                        	.attr('title',"<%= t('header.user_available') %>")
-                      }
+<% if current_user %>
+	<% javascript_tag do %>
+	 function toggleAgent() {
+		var user_id = '<%= current_user.id %>'
+	  	var value = ( jQuery("#available_icon").attr("class") == "header-icons-autoAssign-on" )
+	 
+	  	new Ajax.Request('/agents/toggle_availability', 
+	                   { parameters: {value: !value, id: user_id},
+	                      onLoading: function() {
+	                        jQuery('#available_icon').addClass('header-spinner')
+	                      },
+	                      onSuccess: function(response) {
+	                       //change the icon class.
+	                      jQuery('#available_icon').removeClass('header-spinner')
+	                      if (jQuery('#available_icon').hasClass('header-icons-autoAssign-on'))
+	                      {
+	                        jQuery('#available_icon').removeClass('header-icons-autoAssign-on').addClass('header-icons-autoAssign-off')
+	                        jQuery('#availabilty-toggle')
+	                        	.attr('title',"<%= t('header.user_not_available') %>")
+	                      }
+	                      else{
+	                        jQuery('#available_icon').removeClass('header-icons-autoAssign-off').addClass('header-icons-autoAssign-on')
+	                        jQuery('#availabilty-toggle')
+	                        	.attr('title',"<%= t('header.user_available') %>")
+	                      }
 
 
-                     } });
-}
+	                     } });
+	    
+	}
 
+	<% end %>
 <% end %>
-
