@@ -1193,7 +1193,7 @@ input.search{
     textarea{ height:auto; }
 }
 
-.dialog-panel{
+.dialog-panel, .dialog-panel.sidepanel{
 	position: absolute;	
 	width:650px;
 	left:50%;
