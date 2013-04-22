@@ -1,21 +1,14 @@
-<!DOCTYPE html>
-	<%= include_stylesheets :non_pattern_1 %>
-	<%= include_stylesheets :non_pattern_2 %>
-	<%= include_stylesheets :app  %>
-	<%= include_stylesheets :common  %>
-	<%= include_javascripts :defaults  %>
+<!DOCTYPE html>	
+<html lang="en">
+	<link href="stylesheets/subscription/resque.css" media="screen" rel="stylesheet" type="text/css">
+	<%= include_javascripts :defaults %>
 	<%= include_javascripts :frameworks %>
 	<%= include_javascripts :workspace %>
 	<%= include_javascripts :notifications %>
-	<%= render :partial => "layouts/shared/html" %>
-
 	<body>
-		<div style=" width:95%; margin: 10px auto;" > 
-			<%= stylesheet_link_tag "app/admin.css" %>
-			<%= yield %>
-			<div class='load-mask' style='display:none'><img src='/images/ajax-loader.gif'/></div>
-			<%= render :partial => "layouts/shared/scripts" %>  
-		</div>	
-	</body> 
-	<div id="footer" class="wrapper"> </div>
+		<%= yield %>
+		<div class='load-mask' style='display:none'><img src='/images/ajax-loader.gif'/></div>
+		<%= render :partial => "layouts/shared/scripts" %>
+		<div id="footer" class="wrapper"> </div>
+	</body>
 </html>

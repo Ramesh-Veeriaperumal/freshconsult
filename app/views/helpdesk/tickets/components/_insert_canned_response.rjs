@@ -1,0 +1,7 @@
+if @a_template
+	page << "insertIntoConversation(\"#{escape_javascript(@a_template)}\")"
+else
+	page << 'var msg_body_id =  "reply-multiple-cnt-reply-multiple"'
+	page << 'jQuery("#"+msg_body_id+"-body").getEditor().focus();'
+	page << "jQuery(\"#\"+msg_body_id+\"-body\").insertHtml(\"#{escape_javascript(@ca_resp.content_html)}\");"
+end

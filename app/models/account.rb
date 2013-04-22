@@ -6,6 +6,7 @@ class Account < ActiveRecord::Base
   include Mobile::Actions::Account
   include Tire::Model::Search
   include Cache::Memcache::Account
+  include ErrorHandle
 
   #rebranding starts
   serialize :preferences, Hash
@@ -300,7 +301,7 @@ class Account < ActiveRecord::Base
     },
 
     :estate => {
-      :features => [ :gamification, :agent_collision, :layout_customization ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin ],
       :inherits => [ :garden ]
     },
 
@@ -320,7 +321,7 @@ class Account < ActiveRecord::Base
     },
 
     :estate_classic => {
-      :features => [ :gamification, :agent_collision, :layout_customization ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin ],
       :inherits => [ :garden_classic ]
     }
 
@@ -540,7 +541,7 @@ class Account < ActiveRecord::Base
   end
 
   def create_search_index
-    begin
+    sandbox(0) {
       Tire.index(search_index_name) do
         create(
           :settings => {
@@ -549,6 +550,8 @@ class Account < ActiveRecord::Base
                 :word_filter  => {
                        "type" => "word_delimiter",
                        "split_on_numerics" => false,
+                       "generate_word_parts" => false,
+                       "generate_number_parts" => false,
                        "split_on_case_change" => false,
                        "preserve_original" => true
                 }
@@ -679,9 +682,7 @@ class Account < ActiveRecord::Base
           }
         )
       end
-    rescue Errno::ECONNREFUSED => e
-      NewRelic::Agent.notice_error(e)
-    end
+    }
   end
 
   def enable_elastic_search

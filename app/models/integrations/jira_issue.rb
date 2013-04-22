@@ -89,7 +89,8 @@ class Integrations::JiraIssue
     else
       return add_comment(params[:remote_key],params[:ticket_data])
     end  
-    if(res_data && res_data[:exception] && custom_field_id && res_data[:json_data]["errors"][custom_field_id])
+    if(res_data && res_data[:exception] && custom_field_id)
+      delete_custom_field
       if retry_flag
         res_data = update(params, false) 
       else

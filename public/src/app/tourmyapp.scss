@@ -2,6 +2,7 @@
 @import "lib/settings";
 $walkthru-spacing: 40px;
 @import "walkthru/*.png";
+
 #tourmyapp {
 	z-index: 1000000 !important;
 }
@@ -128,7 +129,7 @@ $walkthru-spacing: 40px;
 	}
 
 	button {
-		@include corners(5px);
+		@include border-radius(5px);
 		background: #338484;
 		@include background-with-css2-fallback(linear-gradient(#338484, #166666));
 		border: solid 1px #005454;

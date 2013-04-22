@@ -1,5 +1,4 @@
 @import "lib/settings";
-@import "lib/mixins";
 
 $report-number-color:#333;
 $report-number-positive-color:#006063;
@@ -15,7 +14,7 @@ $single_stackbar_chart_height: 120px;
 
 #date_range{
 	font-size:12px;
-  height:20px;
+  	height:20px;
 }
 
 .caption{

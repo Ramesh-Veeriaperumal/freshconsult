@@ -1268,7 +1268,6 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
 	height:15px;
 	width:15px;
 	cursor:pointer;
-	background: sprite($symbol, search);
 }
 
 /* To be removed after bootstrap migration */
@@ -1335,14 +1334,9 @@ a.pill.help{
 	right:0;
 	position:absolute;
 	z-index:3;	
-	background: sprite($symbol, clock-inactive);
 	cursor: pointer;
 	width:26px;
 	height:26px;
-}
- 
-.time_running .clock{
-	background: sprite($symbol, clock);
 }
 
 .time_running .clock .timer{
@@ -1408,8 +1402,7 @@ a.pill.help{
 	.user_name{ padding-bottom:3px;  display:block; }
 	.timespent{	width:16%; text-align:right; margin-right: 2%; }
 	.note{ width:40%; padding-left: 4%; em{ color:#336666; font-style:italic; } }
-	.billable{
-		background: sprite($symbol, billable);
+	.billable{		
 		position:absolute;
 		left:0;
 		top:1px;
@@ -1551,14 +1544,6 @@ a.pill.help{
     }
   }
 }
-
-                     
-
-.symbols-ac-refreshon{  background:sprite($symbol, ac-refreshon) no-repeat;  }
-.symbols-ac-viewingon{  background:sprite($symbol, ac-viewingon) no-repeat;  }
-.symbols-ac-replyon{  background:sprite($symbol, ac-replyon) no-repeat;  }
-.symbols-ac-viewingon-listview{  background:sprite($symbol, ac-viewingon-listview) no-repeat;  }
-.symbols-ac-replyon-listview{  background:sprite($symbol, ac-replyon-listview) no-repeat;  }
 
 .popover .ticket-notice-popover{
   background:#5f5f5f;

@@ -291,20 +291,10 @@ showCannedResponse = function(button, ticket_id){
 }
 
 	 
-insertIntoConversation = function(value,element_id){
-	note_area  = $('#cnt-note');
-	reply_area = $('#cnt-reply');
-	fwd_area = $('#cnt-fwd')
+insertIntoConversation = function(value){
 	tweet_area = $('#cnt-tweet');
+	element_id = $('#canned_response_show').data('editorId');
 
-	if(element_id == undefined){
-		 if(reply_area.css('display')== 'block') {
-			 element_id = "cnt-reply-body";
-		}
-		else if (note_area.css('display') =='block'){
-			element_id = "cnt-note-body";
-		}
-	}
 	if(tweet_area.css("display") == 'block'){
 		get_short_url(value, function(bitly){
 				insertTextAtCursor( $('#send-tweet-cnt-tweet-body'), bitly || value );
@@ -313,28 +303,29 @@ insertIntoConversation = function(value,element_id){
 						.trigger("keydown");
 		});         
 	}
-	if(jQuery(element_id)){
-			jQuery("#"+element_id).getEditor().focus();
-			jQuery("#"+element_id).insertHtml(value);
-	}        
 
+	$('#canned_responses').modal('hide');
+
+	if($("#" + element_id)){
+			$("#"+element_id).getEditor().focus();
+			$("#"+element_id).insertHtml(value);
+	}    
 	return;
 }
 
 getCannedResponse = function(ticket_id, ca_resp_id, element) {
-	$("#canned_response_container").addClass("loading")
 	$(element).addClass("response-loading");
 	$.ajax({
 		type: 'POST',
 		url: '/helpdesk/canned_responses/show/'+ticket_id+'?ca_resp_id='+ca_resp_id,
 		contentType: 'application/text',
-		async: false,
-		success: function(data){	
-			insertIntoConversation(data);
+		dataType: "script",
+		async: true,
+		success: function(){
 			$(element).removeClass("response-loading");
 			$(element).qtip('hide');
-			$('.ui-icon-closethick').trigger('click');
-
+			//$('[data-dismiss="modal"]').trigger('click');
+			loadRecent();
 		}
 	});
 	return true;
@@ -912,6 +903,22 @@ $(document).ready(function() {
 		}
 	});
 	// -----   END OF TICKET BAR FIXED TOP ------ //
+
+	//For showing canned response and solutions
+
+	$('body').on('click.ticket_details', 'a[rel="ticket_canned_response"]', function(ev){
+		ev.preventDefault();
+		$('#canned_response_show').data('editorId', $(this).data('editorId'));
+		$('#canned_response_show').trigger('click');
+	});
+
+	$('body').on('click.ticket_details', 'a[rel="ticket_solutions"]', function(ev){
+		ev.preventDefault();
+		$('#suggested_solutions_show').data('editorId', $(this).data('editorId'));
+		$('#suggested_solutions_show').trigger('click');
+	});
+
+	//End
 
 	//Toggling Note visiblity
 	$('body').on('click.ticket_details', '#toggle-note-visibility', function(ev){

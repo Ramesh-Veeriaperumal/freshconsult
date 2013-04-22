@@ -2,7 +2,9 @@ en:
   meta:
    language_name: 'English'
   any: Any
-  or: or
+  or: or  
+  plain_yes: "Yes"
+  plain_no: "No"
   unspam: "Unspam"
   unblock: "Whitelist"
   enabled: "Enabled"
@@ -805,6 +807,7 @@ en:
     edit: Edit Forum
     title: Forums
     start_topic: Start a Topic
+    forum_created: The forum has been created.
     visibility:
       anyone: Anyone
       logged_users: Logged In Users
@@ -1197,7 +1200,7 @@ en:
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
   your_email_address: Your e-mail address
   username: Username
-  reply: reply
+  reply: Reply
   is_not: Is not
   during: during
   less_than: Less than
@@ -1502,7 +1505,8 @@ en:
     name: Group Name
     edit: Edit Group
     title: Groups
-    info1: Agents in this Group
+    ticket_assignment: Automatic Ticket Assignment
+    info1: Agents
     info2: No Agents in this group
     info3: Send an Escalation email to
     info4: if a ticket remains un-assigned for more than
@@ -1512,6 +1516,9 @@ en:
     tour: Help me create a new agent group
     helptext: You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, set email notifications, create business rules and generate reports at the group level. Note that the same agent can be a member of multiple groups as well. 
     select_agents: Select Agents
+    select_an_agent: Select Agent
+    learn_more: Learn more 
+    round_robin_desc: "Once turned ON, tickets assigned to this group will be distributed among agents in round robin fashion. If you wish to manually assign tickets or dispatch them using the Dispatch'r or Supervisor automations, you can turn this OFF. "
     assigntime:
       half: 30 Minutes
       one: 1 Hour
@@ -1596,6 +1603,7 @@ en:
   zendesk_url_info: e.g:- http://acme.zendesk.com
   portal_customizer_anon_for_i: Turn this feature off, if you want to hide 'Forums' tab in public customer portal.
   portal_customizer_option_for_i: Disable this feature  if you want users to login to view solutions
+  portal_customizer_option_forums_i: Disable this feature  if you want users to login to view forums
   portal_customizer_anon_for_g: Enable this feature if you want customers to be able to sign in using their Google username and password. 
   portal_customizer_anon_for_t: Enable this feature if you want customers to be able to sign in using their Twitter username and password. 
   portal_customizer_anon_for_f: Enable this feature if you want customers to be able to sign in using their Facebook username and password. 
@@ -1762,7 +1770,14 @@ en:
   no_signup: "To submit a ticket, please <a href={{login}}><b>Login</b></a>."
   register: Register
   by: by
-  portal: 
+  portal:
+    cookie:
+      cookie_policy: "Cookie policy"
+      why_we_love_cookies: "Why we love Cookies"
+      cookie_dialog_info1: "We use cookies to try and give you a better experience in Freshdesk. "
+      cookie_dialog_info2: "You can learn more about what kind of cookies we use, why, and how from our %{privacy_link}. If you hate cookies, or are just on a diet, you can disable them altogether too. Just note that the Freshdesk service is pretty big on some cookies (we love the choco-chip ones), and some portions of Freshdesk may not work properly if you disable cookies. "
+      cookie_dialog_info3: "We’ll also assume you agree to the way we use cookies and are ok with it as described in our %{privacy_link}, unless you choose to disable them altogether through your browser. "
+      privacy_policy: "Privacy Policy"
     no_topics_in_this_view: "~ No topics in this view ~"
     reported: reported
     said: said
@@ -1893,6 +1908,7 @@ en:
     info10: Private (Visible to Agents only)
     add_new_solution: Add a new solution
     title: Solutions
+    title_singular: Solution
     info1: Solutions in Freshdesk is  your Knowledge base
     info2: Solutions can be <b>public</b> or <b>private</b>. Public Solutions are visible in the Self Service Portal and also appear in Search results
     info3: Private solutions are agent-only solutions used for internal knowledge sharing
@@ -1991,6 +2007,8 @@ en:
     help_center: "How can we help you today?"
     new_support_ticket: "New support ticket"
     check_ticket_status: "Check ticket status"
+    user_available: "New tickets will be auto-assigned to you."
+    user_not_available: "New tickets will NOT be auto-assigned to you."
     tabs:
       reports: Reports
       dashboard: Dashboard
@@ -2613,6 +2631,7 @@ en:
         watcher_text: Agents added as watchers receive email alerts when the ticket is updated
         unwatch: Unwatch
         pick_agents: Add agents
+        add_agent: Enter agent's name
         all_agents_watching: All agents are watching this ticket
         mail:
           hi: Hi
@@ -3355,6 +3374,7 @@ en:
           title: Time Sheet Report
           select_customer: Select Customer
           select_agent: Select Agent
+          select_group: Select Group
           select_billable: Select Billable/Non-Billable
           view_between: View report between
           from: From
@@ -3449,7 +3469,7 @@ en:
   identity_reverted_error_msg: "Sorry, we couldn't find your original user."
   assume_identity_button: "Assume Identity"
   revert_identity_link_msg: "Revert Identity"
-  swith_agent_msg: "Switch to Another Agent"
+  swith_agent_msg: "Switch Agent"
   switch_heading: "Switch Agent"
   email_notifications_agent_selection_msg: "Select agents to notify"
   on_hold: "On Hold"

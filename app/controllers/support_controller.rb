@@ -23,6 +23,10 @@ class SupportController < ApplicationController
   protected
     def set_portal_page page_token
       @skip_liquid_compile = false
+
+      # Name of the page to be used to render the static or dynamic page
+      @current_page_token = page_token.to_s
+
       # Setting up page layout variable
       process_page_liquid page_token
 

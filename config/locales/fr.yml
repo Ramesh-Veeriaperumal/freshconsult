@@ -110,6 +110,7 @@ fr:
         one: "1 erreur a empêché l'enregistrement de ce %{model}"
         other: "%{count} erreurs ont empêché l'enregistrement de ce %{model}"
   activities: 
+    action_verb: "Mis à jour"
     forums: 
       delete_forum: 
         long: "{{user_path}} a supprimé le forum «{{notable_path}}» sous «{{category_name}}»"
@@ -139,13 +140,45 @@ fr:
       new_solution: 
         long: "{{user_path}} a créé une nouvelle solution {{notable_path}}"
         short: "{{user_path}} a créé la nouvelle solution"
+    tag: 
+      assigned: "Agent affecté"
+      assigned_to_nobody: "Agent non affecté"
+      conversation: 
+        in_email: "Le client a répondu"
+        note: "Nouvelle note"
+        out_email: 
+          default: "L'agent a répondu"
+          private: "Ticket renvoyé"
+        twitter: Tweet
+      deleted: "Ticket supprimé"
+      execute_scenario: "Scénario exécuté"
+      group_change: "Groupe d'agents changé"
+      group_change_none: "Groupe d'agents changé"
+      new_ticket: "Nouveau ticket"
+      priority_change: "{{value}}"
+      product_change: "Produit mis à jour"
+      product_change_none: "Produit mis à jour"
+      reassigned: "Agent réaffecté"
+      restored: "Ticket restauré"
+      solutions: "Nouvelle solution"
+      source_change: "Source du ticket "
+      status_change: "{{value}}"
+      ticket_merge: "Ticket fusionné"
+      ticket_split: "Ticket ventilé"
+      ticket_type_change: "Type de ticket"
+      timesheet: 
+        new: "Temps de connexion"
+        timer_started: "Minuteur démarré"
+        timer_stopped: "Minuteur arrêté"
     tickets: 
       assigned: 
         long: "{{user_path}} a attribué le ticket {{notable_path}} à {{responder_path}}"
         short: "Attribué à {{responder_path}} par {{user_path}}"
+        without_user: "affecté à <strong>{{responder_path}}</strong>"
       assigned_to_nobody: 
         long: "{{user_path}} a attribué le ticket {{notable_path}} à « Personne »"
         short: "Attribué à « Personne » par {{user_path}}"
+        without_user: "Attribué à <strong>« Personne »</strong>"
       conversation: 
         in_email: 
           long: "{{user_path}} a envoyé un {{email_response_path}} au ticket {{notable_path}}"
@@ -165,59 +198,77 @@ fr:
       deleted: 
         long: "{{user_path}} a supprimé le ticket {{notable_path}}"
         short: "{{user_path}} a supprimé ce ticket"
+        without_user: "a supprimé le ticket"
       execute_scenario: 
         long: "{{user_path}} a exécuté le scénario « {{scenario_name}} » le {{notable_path}}"
         short: "{{user_path}} a exécuté le scénario « {{scenario_name}} »"
+        without_user: "a exécuté le scénario <strong>{{scenario_name}}</strong>"
       group_change: 
         long: "{{user_path}} a modifié le groupe de {{notable_path}} en {{group_name}}"
         short: "{{user_path}} a modifié le groupe en {{group_name}}"
+        without_user: "a modifié le groupe en <strong>{{group_name}}</strong>"
       group_change_none: 
         long: "{{user_path}} a modifié le groupe de {{notable_path}} en « aucun »"
         short: "{{user_path}} a modifié le groupe en « aucun »"
+        without_user: "a modifié le groupe en <strong>« aucun »</strong>"
       new_ticket: 
         long: "{{user_path}} a soumis un nouveau ticket {{notable_path}}"
         short: "{{user_path}} a soumis le ticket"
       priority_change: 
         long: "{{user_path}} a modifié la priorité du ticket de {{notable_path}} en {{priority_name}}"
         short: "{{user_path}} a modifié la priorité en {{priority_name}}"
+        without_user: "a modifié la priorité du ticket en <strong>{{priority_name}}</strong>"
       product_change: 
         long: "{{user_path}} a modifié le produit de {{notable_path}} en {{product_name}}"
         short: "{{user_path}} a modifié le produit en {{product_name}}"
+        without_user: "a modifié le produit en <strong>{{product_name}}</strong>"
       product_change_none: 
         long: "{{user_path}} a modifié le produit de {{notable_path}} en « aucun »"
         short: "{{user_path}} a modifié le produit en « aucun »"
+        without_user: "a modifié le produit en <strong>« aucun »"
       reassigned: 
         long: "{{user_path}} a réattribué le ticket {{notable_path}} à {{responder_path}}"
+        without_user: "a réattribué le ticket à <strong>{{responder_path}}</strong>"
       restored: 
         long: "{{user_path}} a restauré le ticket {{notable_path}}"
         short: "{{user_path}} a restauré ce ticket"
+        without_user: "a restauré le ticket"
       source_change: 
         long: "{{user_path}} a modifié la source du ticket de {{notable_path}} en {{source_name}}"
         short: "{{user_path}} a modifié la source en {{source_name}}"
+        without_user: "a modifié la source en <strong>{{source_name}}</strong>"
       status_change: 
         long: "{{user_path}} a modifié le statut du ticket de {{notable_path}} en {{status_name}}"
         short: "{{user_path}} a modifié le statut en {{status_name}}"
+        without_user: "a modifié le statut en <strong>{{status_name}}</strong>"
       ticket_merge: 
         long: "{{user_path}} a fusionné le ticket {{notable_path}} avec {{merge_ticket_path}}"
         short: "{{user_path}} a fusionné le ticket {{notable_path}} avec {{merge_ticket_path}}"
+        without_user: "a fusionné le ticket {{notable_path}} avec {{merge_ticket_path}}"
       ticket_split: 
         long: "{{user_path}} a ventilé le ticket {{notable_path}} de {{split_ticket_path}}"
         short: "{{user_path}} a ventilé le ticket {{notable_path}} de {{split_ticket_path}}"
+        without_user: "A ventilé le ticket de {{split_ticket_path}}"
       ticket_type_change: 
         long: "{{user_path}} a modifié le type du ticket de {{notable_path}} en {{ticket_type}}"
         short: "{{user_path}} a modifié le type de ticket en {{ticket_type}}"
+        without_user: "a modifié le type de ticket en <strong>{{ticket_type}}</strong>"
       timesheet: 
         new: 
           long: "{{user_path}} a ajouté un {{timesheet_path}} au ticket {{notable_path}}"
           short: "{{user_path}} a ajouté un {{timesheet_path}}"
+          without_user: "a ajouté un {{timesheet_path}}"
         timer_started: 
           long: "{{user_path}} a démarré le minuteur à {{timesheet_path}} pour le ticket {{notable_path}}"
           short: "{{user_path}} a démarré le minuteur à {{timesheet_path}}"
+          without_user: "a démarré le minuteur à {{timesheet_path}}"
         timer_stopped: 
           long: "{{user_path}} a arrêté le minuteur à {{timesheet_path}} pour le ticket {{notable_path}}"
           short: "{{user_path}} a arrêté le minuteur à {{timesheet_path}}"
+          without_user: "a arrêté le minuteur à {{timesheet_path}}"
   add_a_new_folder: "Ajouter un nouveau dossier"
   add_a_topic: "Commencer une rubrique"
+  add_cc: "Ajouter un champ CC"
   add_holiday: "Ajouter un jour férié"
   add_more_free: "Ajouter plus de %{free_agents} agents ?"
   add_new_email: "Ajouter un nouvel email"
@@ -370,6 +421,7 @@ fr:
         email_sent_success: "L'e-mail a été envoyé."
         emails_invalid: "Une ou plusieurs adresses e-mail ne sont pas valides."
         footer_msg: "<strong>Remarque :<strong> vous pouvez modifier ces paramètres quand vous voulez dans<a href='/admin/home' target='_blank' style='text-decoration:none; color:#1272DE'>l'onglet Admin</a>"
+        helpdesk_preview: "Aperçu de votre centre d'assistance"
         helpdesk_preview_text: Aperçu
         implement_changes: "Mise en œuvre des modifications..."
         info: "Vous devrez créer une simple règle de renvoi sur votre boite mail d'assistance afin de rediriger les e-mails vers cette adresse."
@@ -468,6 +520,7 @@ fr:
         feedback: "Widget de commentaire"
         gamification-settings: Arcade
         group: Groupes
+        helpdesk: "Centre d'assistance"
         import: "Importer des données depuis Zendesk"
         integrations: Intégrations
         multi-product: "Produits multiples"
@@ -501,6 +554,7 @@ fr:
         tab_hover_color: "Onglet actif"
         textColor: "Couleur de base"
     products: 
+      add_another_email: "Ajouter une nouvelle adresse e-mail"
       assign_product: "Assigner un produit"
       edit: 
         title: "Modifier un produit"
@@ -766,6 +820,7 @@ fr:
   assuming_identity_not_allowed_msg: "Vous n'êtes pas autorisé à assumer le rôle de cet utilisateur."
   assuming_identity_user_does_not_exist_msg: "L'utilisateur n'existe pas."
   at: au
+  attach_file: "Joindre un fichier"
   attach_file_local: "Joindre un fichier"
   attach_files: "Joindre des fichiers"
   attachment: "Pièce jointe"
@@ -827,6 +882,7 @@ fr:
     title: "Heures de bureau"
     to: à
     valid_time: "Veuillez entrer une heure valide"
+  by: par
   cancel: Annuler
   cancel_and_back: "Annuler et revenir en arrière"
   cancel_my_account: "Annuler mon compte"
@@ -888,6 +944,7 @@ fr:
   choose_free_plan: "Modifier votre programme %{plan} gratuit"
   choose_plan: "Choisir le plan"
   choose_plan_trial: "Remarque : votre compte sera désactivé après la période d'essai.<br /> Pour continuer d'utiliser Freshdesk, veuillez choisir un programme ci-dessous."
+  clear: Effacer
   clear_draft_text: "Supprimer les brouillons ?"
   click_select_action: "Cliquer pour sélectionner une action"
   click_to_change_sort_order: "Cliquez pour changer l'ordre de tri"
@@ -1009,7 +1066,7 @@ fr:
     ago: "il y a"
     day: jour
     days: jours
-    from: "De Maintenant"
+    from: "il y a"
     hour: heure
     hours: heures
     minute: minute
@@ -1074,6 +1131,7 @@ fr:
   downgrade_dialog_title: "Êtes-vous sûr de vouloir passer à un plan inférieur ?"
   downgrade_plan: "Remarque : si vous revenez à un plan inférieur, il se peut que vous perdiez certaines fonctionnalités"
   draft: "Brouillon :"
+  dropbox_attach_from: "Joindre depuis Dropbox"
   dropbox_attach_label: "Joint depuis"
   dropbox_choose_file: "Selectionner fichier"
   due_in: "Échéance dans %{time_words}"
@@ -1111,6 +1169,7 @@ fr:
     Personalized_email_replies_message: "Paramètres sauvegardés."
     Personalized_email_replies_no: Non
     Personalized_email_replies_yes: Oui
+    add_bcc_text: "Ajouter champ Bcc"
     add_supp_emails: "Adresse(s) e-mail d'assistance supplémentaire(s)"
     assign_to_product_info: "Si vous voulez lier cet e-mail à un nouveau produit, vous devez d'abord <a href='{{products_path}}'> ajouter le produit </a>"
     assign_to_product_msg: "Lier cet e-mail d'assistance avec un produit"
@@ -1159,10 +1218,12 @@ fr:
     remove_msg: "Êtes-vous sûr de vouloir supprimer cette adresse e-mail ?"
     reply_email: "Votre e-mail d'assistance"
     reply_emails: "E-mails de réponse reçus de Freshdesk"
+    secondary_supp_email_tool_tip: "Configurer cette adresse comme adresse e-mail principale"
     send_verification_email: "Envoyer la vérification"
     set_bcc_email_text: "Configurer un champ Bcc automatique"
     spf_info: "La plupart de vos e-mails arriveront à bon port, mais par mesure de sécurité, vous devez créer de votre côté un <a target=\"_blank\" title=\"Learn more about creating SPF records\" href=\"{{solution_url}}\">enregistrement SPF</a> dans votre fichier de zone DNS si vous utilisez des e-mails de votre propre domaine. Cela garantira la distribution correcte de vos e-mails."
     supp_email_add: "Adresse e-mail d'assistance"
+    support_email: "Adresse e-mail d'assistance"
     support_email_exists: "Cette adresse e-mail d'assistance existe déjà"
     title: "Paramètres de messagerie"
     unverified: "E-mail non vérifié"
@@ -1272,6 +1333,7 @@ fr:
     customers: Clients
     due_by: "Due le"
     group_id: Groupes
+    mygroups: "Mes groupes"
     priority: Priorité
     requester: Demandeurs
     responder_id: Agents
@@ -1279,6 +1341,7 @@ fr:
     status: Statut
     tags: Balises
     ticket_type: Type
+    unassigned: "Non affecté"
   find_more_solutions: "Trouver plus de solutions"
   first_name: Prénom
   first_response_sla: "Première réponse en cas de violation de la SLA"
@@ -1678,6 +1741,7 @@ fr:
       tickets_update_with_errors: "%{tickets} mis à jour, mais vous devez résoudre certains problèmes."
     merge: 
       bulk_merge: 
+        continue: Continuer
         mark_primary: "Marquer comme principal"
         primary_ticket: "C'est votre ticket principal"
         remove: "Retirer ce ticket"
@@ -1711,9 +1775,12 @@ fr:
       facebook_form: 
         title: "Répondre à %{user}"
       forward_form: 
+        addbcc: "Ajouter champ Bcc"
+        addcc: "Ajouter un champ CC"
         bcc: Bcc
         cc: Copie
         removebcc: "Retirer le champ Bcc"
+        removecc: "Retirer le champ Cc"
       history: 
         recent_item: "Les articles récents"
       reply_form: 
@@ -1792,12 +1859,19 @@ fr:
       note: 
         attachment_size: 
           exceed: "Oups ! Votre pièce jointe dépasse 15 Mo. Veuillez joindre un fichier plus petit."
+        created_on: 
+          forward: "%{user_name} a renvoyé le %{note_date}"
+          private_note: "%{user_name} a ajouté une note privée le %{note_date}"
+          public_note: "%{user_name} a ajouté une note publique le %{note_date}"
+          reply: "%{user_name} a répondu le %{note_date}"
         delete_note: "Retirer ceci de la conversation ?"
         inbound_email: "E-mails entrants"
         outbound_email: "E-mail sortant"
         posted_on: "%{user_name} le %{note_date}"
         private_note: "Remarque privée"
+        private_note_tip: "Masquée au client"
         public_note: "Remarque publique"
+        public_note_tip: "Visible au client"
         split_this_as_new_ticket: "La ventiler comme nouveau ticket"
         split_ticket_confirm: "Ventiler cette remarque et la créer en tant que nouveau ticket ?"
       overlay_fwd_time: " renvoyé, il y a %{time_in_words} "
@@ -1808,9 +1882,40 @@ fr:
         view_ticket: "Voir le ticket"
       show: 
         conversation: "Conversation "
+        due_date: 
+          due: Due
+          earlier_date_and_time: "Veuillez donner une date et une heure plus récentes que la date et l'heure de création du ticket"
+          next_week: "Semaine prochaine"
+          set_date_time: "Fixer la date/l'heure"
+          specific_date: "Date/heure spécifique..."
+          this_week: "Cette semaine"
+          today: Aujourd'hui
+          tomorrow: Demain
+          when_is_it_due: "Quelle est l’échéance?"
+        facebook_form: 
+          title: "Répondre à %{user}"
+        forward_form: 
+          addbcc: "Ajouter une Cci"
+          addcc: "Ajouter une Cc"
+          bcc: Cci
+          cc: Cc
+          removebcc: "Supprimer une Cci"
+          removecc: "Supprimer une Cc"
+        history: 
+          recent_item: "Articles récents"
         linked_ticket: "Ce ticket est lié au forum"
         meta: méta
+        reply_form: 
+          addbcc: "Ajouter une Cci"
+          addcc: "Ajouter une Cc"
+          bcc: Cci
+          cc: Cc
+          removebcc: "Supprimer une Cci"
+          removecc: "Supprimer une Cc"
+          title: "Répondre à"
         timesheet: "Feuille de temps"
+        tweet_form: 
+          title: "Répondre à %{user}"
       tabular_view: 
         assigned: Affecté
         priority: Priorité
@@ -1870,6 +1975,7 @@ fr:
       index: 
         no_timeentry: "Aucune entrée d'heure n'est journalisée pour ce ticket"
       new: 
+        hours_format_tip: "Entrez le temps au format HH:MM ou décimal (comme 1:30 ou 1.5 pour une heure et trente minutes). Laissez ceci vide pour démarrer le minuteur automatique."
         title: "Nouvelle entrée d'heure"
       non_billable: Non-facturable
       note: Remarque
@@ -1877,10 +1983,41 @@ fr:
       report: 
         no_timeentry: "Aucune donnée disponible"
         total: Total
+      sidebar_title: "Temps suivi"
       ticket: Ticket
       time_entry: 
         toggle_timer_false: "Arrêter le minuteur"
         toggle_timer_true: "Démarrer le minuteur"
+      v2: 
+        agent: Agent
+        billing_type: "Type de facturation"
+        customer: Client
+        executed_at: Date
+        form: 
+          add_entry: "Ajouter une entrée de temps"
+          agent: Agent
+          billing_hours: Facturable
+          hours: Heures
+          note: Note
+          start_timer: "Démarrer le minuteur"
+          ? "true"
+          : "1"
+        group_by: "Grouper par"
+        hours: Heures
+        index: 
+          add_entry: "Ajouter une entrée de temps"
+          no_timeentry: "Aucune entrée de temps n'est journalisée pour ce ticket"
+          start_timer: "Démarrer le minuteur"
+        new: 
+          title: "Nouvelle entrée de temps"
+        note: Notes
+        report: 
+          no_timeentry: "Aucune donnée disponible"
+          total: Total
+        ticket: Ticket
+        time_entry: 
+          toggle_timer_false: "Arrêter le minuteur"
+          toggle_timer_true: "Démarrer le minuteur"
   helpdesk_quests: 
     all: Tout
     available_quests: "Quêtes disponibles"
@@ -2162,6 +2299,8 @@ fr:
       info1: "Lorsqu'un ticket Freshdesk est lié à un problème JIRA, effectuez les actions ci-dessous."
       info2: "Lorsque le statut du ticket est mis à jour sur Freshdesk."
       info3: "Lorsqu'un commentaire est ajouté dans Freshdesk."
+      info4: "Lorsque le statut d'un problème est mis à jour dans JIRA"
+      info5: "Lorsqu'un commentaire est ajouté dans JIRA"
       none: "Ne rien faire."
       send_reply_in_fd: "Informer le client via e-mail"
       sync_updates: "Synchro. mises à jour"
@@ -2173,10 +2312,12 @@ fr:
         company_id: "ID de la société"
         logmein_company_info: "Pour connaître l'ID de votre société, allez dans Centre Admin -> Groupe technicien -> Paramètres généraux -> ASP.Net C# exemple côté serveur "
         logmein_sso_pwd_info: "Pour définir votre mot de passe d'authentification unique, allez dans Centre Admin -> Groupe technicien -> Paramètres généraux -> Authentification unique -> nouveau mot de passe d'authentification unique"
+        password: "Mot de passe d'authentification unique"
         widget_title: "Titre du widget"
       helptext: "<h4>Aide à l'intégration de LogMeIn Rescue</h4><p><br/> Pour intégrer LogMeIn Rescue à Freshdesk, entrez l'ID de votre société et votre mot de passe d'authentification unique LogMeIn Rescue et cliquez sur Mettre à jour. <br/>Une fois activé, vous trouverez le widget LogMeIn Rescue dans la page des informations sur les tickets. <br/><br/>Utilisez la fonction &quot;Lancer la console d'assistance&quot; pour lancer la console d'assistance direcetment depuis le widget Freshdesk. <br/>Vous pouvez maintenant générer un mot de passe et partager les informations avec le requérant pour continuer l'assistanc via LogMeIn Rescue. <br/><br/> <b>Remarque :</b> L'adresse e-mail de l'agent doit correspondre à l'ID d'authentification unique de LogMeIn Rescue. Pour définir votre ID d'authentification unique, allez dans Centre Admin -> Groupe technicien -> Organisation -> ID d'authentification unique"
       label: "LogMeIn Rescue"
       note: 
+        chatlog: "Journal de discussion"
         header: "Les informations concernant votre session LogMeIn Rescue"
         platform: "Plateforme de l'utilisateur final"
         session_id: "ID de session"
@@ -2261,6 +2402,7 @@ fr:
       remember: "Se souvenir de moi"
       sign_in_error: "Adresse e-mail ou mot de passe incorrect."
       sign_in_using: "...ou inscrivez-vous en utilisant"
+  more: plus
   myself: Moi
   name: Nom
   never: Jamais
@@ -2286,6 +2428,7 @@ fr:
   non_covered_feature_error: "Cette fonctionnalité est actuellement verrouillée"
   not_eligible_for_free_plan: "Vous n'êtes pas éligible à un programme gratuit"
   not_eligible_for_sprout_plan: "Vous n'êtes pas éligible au programme Sprout"
+  not_given: "Non accordé."
   not_selected: "Non sélectionné"
   note: "Note:"
   notified_to: "Informé de"
@@ -2318,6 +2461,8 @@ fr:
     article: 
       see_all_articles: "Voir les %{count} articles"
     community_forums: "Forums de la communauté"
+    folder: 
+      filler_text: "Suivez cet espace pour les articles concernant %{folder_name}"
     header: 
       preview_message: "<b>Mode aperçu</b> -<a href='javascript:window.close()'>Cliquez ici</a> pour revenir en arrière."
     knowledge_base: "Base de connaissances"
@@ -2325,6 +2470,7 @@ fr:
     login_details: "Veuillez saisir les identifiants de connexion que vous nous avez donnés lorsque vous vous êtes inscrit chez nous"
     login_options: "... connectez-vous en utilisant"
     login_portal: "Connexion au portail d'assistance"
+    new_support_ticket: "Nouveau ticket d'assistance"
     no_articles_info_1: "Désolé, nous n'avons pas encore publié d'articles dans cette section."
     no_articles_info_2: "Veuillez vérifier ultérieurement."
     no_forums_info_1: "Aucun sujet de forum pour l'instant"
@@ -2332,7 +2478,9 @@ fr:
     no_topics_in_this_view: "- Aucun sujet dans cette section -"
     or_signup: " ou %{signup} inscrivez-vous"
     popular_topics: "Sujets populaires"
+    reported: signalé
     reset_password: "Donnez-nous votre adresse e-mail et nous vous enverrons les instructions de réinitialisation du mot de passe par e-mail."
+    said: dit
     search: 
       filters: 
         all: Tout
@@ -2340,21 +2488,41 @@ fr:
         tickets: Tickets
         topics: Sujets
       placeholder: "Entrez votre terme de recherche ici..."
+      results_for: "Résultats de recherche de"
     showing_recent_updates: "Affichage des mises à jour récentes"
     showing_recently_popular_topics: "Affichage des sujets populaires récents"
     signup: Inscription
     solutions_home: "Accueil solutions"
+    submit_new_ticket: "...ou soumettez un nouveau ticket"
     tickets: 
+      add_or_remove_emails: "Ajoutez ou supprimez les e-mails qui ont besoin d'être copiés lorsqu'une notification pour ce ticket est envoyée."
+      add_people: "Ajouter des personnes"
+      add_people_title: "Ajouter des personnes à la conversation"
+      details: "Détails du ticket"
       export: "Exporter les tickets"
       export_ticket_data: "Exporter les données du ticket au format CSV"
       export_to_csv: "Exporter au format CSV"
+      mark_closed: "Marquer le ticket comme clos"
+      reopen_reply: "Rouvrir et répondre"
+      reply_placeholder: "Cliquez ici pour répondre à ce ticket"
+      ticket_list: "Liste des tickets"
     to_post_comment: "pour poster un commentaire"
     to_post_topic: "pour poster un sujet"
     to_submit_ticket: "pour soumettre un nouveau ticket"
     topic: 
+      comment_placeholder: "Cliquez ici pour ajouter un commentaire"
       comments_closed: "Il n'est plus possible de transmettre des commentaires pour cette discussion !"
+      default_select_option: "Type de forum"
+      follow: Suivre
+      following: Abonné
+      last_reply: "Dernière réponse"
+      monitor_topic: "Suivre ce sujet"
+      more_topic: "Plus de sujets dans"
+      post_topic: "Publier le sujet dans "
       see_all_topics: "Voir les %{count} sujets"
       start_new_topic: "Commencer un nouveau sujet"
+      started: "a créé un sujet"
+      topic_title: "Titre du sujet"
     topic_vote: 
       howto: 
         one: "pose cette question"
@@ -2476,6 +2644,7 @@ fr:
     ten_minutes: "10 Minutes"
   preview: Aperçu
   previous: Précédent
+  print: Imprimer
   pro_brief: "Pour les grandes équipes"
   pro_details: "Toutes les fonctions du Basic Plan et celles concernant l'automatisation des scénarios, les SLA spécifiques du client, les heures d'ouverture, les forums, l'assistance par e-mail et de la communauté."
   problem: Problème
@@ -2493,6 +2662,7 @@ fr:
     confirm_password_message: "Doit être identique au mot de passe"
     current_password: "Mot de passe actuel"
     edit: "Modifier le profil"
+    manage: "Gérer votre profil"
     new_password: "Nouveau mot de passe"
   profile_settings: "Paramètres du profil"
   question: Question
@@ -2523,6 +2693,7 @@ fr:
   recent_activity: "Activité récente"
   recent_forum_posts: "Contributions récentes sur le forum"
   referral: "Crédit de référence"
+  register: Enregistrer
   remove: Supprimer
   reorder: Réorganiser
   replied_to: "Répondu à"
@@ -2620,6 +2791,7 @@ fr:
   requester_reopens: "Le demandeur rouvre le ticket"
   requester_replies: "Le demandeur répond au ticket"
   reset_my_password: "Réinitialiser mon mot de passe"
+  reset_password_title: "Réinitialiser le mot de passe"
   resolution_time_sla: "Temps de résolution de la violation SLA"
   resolved: Résolus
   resolved_late: "Résolu en retard"
@@ -2633,6 +2805,8 @@ fr:
   save_and_new: "Enregistrer et Nouveau"
   save_this_view_tooltip: "Sauvegarder la vue"
   saved_draft: Sauvegardé
+  saving: "Sauvegarde en cours..."
+  saving_draft: "Sauvegarde en cours..."
   scenario_label: "Libellé du scénario"
   search: 
     no_results_msg: "Aucun résultat n'a été trouvé"
@@ -2658,6 +2832,7 @@ fr:
   seven_days: "Cette semaine"
   show_me_how: "Montrez-moi comment"
   show_quoted_text: "Afficher le texte cité"
+  show_recent: "Afficher les éléments récents"
   showing: Affiche
   sign_in_info: "Vous vous connecterez avec"
   signup: </b>S'inscrire<b>
@@ -2691,7 +2866,9 @@ fr:
     escalate_to: "Remonter vers"
     escalation_email: "E-mail de hiérarchisation"
     escalation_resolution: "Définir les règles de hiérarchisation lorsqu'un ticket n'est <b>pas résolu</b> à temps"
+    escalation_resolution_text: "Définir les règles de hiérarchisation lorsqu'un ticket n'est <b>pas résolu</b> à temps"
     escalation_response: "Définir les règles de hiérarchisation lorsqu'un ticket n'est <b>pas résolu</b> à temps"
+    escalation_response_text: "Définir les règles de hiérarchisation lorsqu'un ticket n'a pas <b>reçu de réponse</b> à temps"
     group_id_placeholder: "Entrer les noms des groupes"
     helpcard: 
       info1: "<p>Un accord sur les niveaux de service (SLA) vous permet de définir les standards en matière de performances pour votre équipe d'assistance. Le SLA vous permet de définir le délai imparti aux agents pour répondre et résoudre un ticket, en fonction de sa priorité. Vous pouvez déterminer si vous voulez que vos règles SLA soient calculées en fonction des heures du calendrier ou de vos horaires de travail.</p><p>Freshdesk utilisera vos politiques SLA pour déterminer la « Date butoir » pour chaque ticket.</p>"
@@ -2700,6 +2877,7 @@ fr:
       info_1: "<p>Un accord sur les niveaux de service (SLA) vous permet de définir les standards en matière de performances pour votre équipe d'assistance. Le SLA vous permet de définir le délai imparti aux agents pour répondre et résoudre un ticket, en fonction de sa priorité. Vous pouvez déterminer si vous voulez que vos règles SLA soient calculées en fonction des heures du calendrier ou de vos horaires de travail.</p><p>Freshdesk utilisera vos politiques SLA pour déterminer la « Date butoir » pour chaque ticket.</p>"
       info_2: "<p>Vous pouvez avoir plusieurs politiques SLA, déclenchées par des conditions spécifiques, comme le client qui a demandé le ticket, le groupe auquel il est assigné, sa source et/ou son produit.</p><p>Par exemple, vous pouvez définir une politique SLA spéciale pour les tickets provenant de Twitter et assignés à l'équipe des ventes. Vous pouvez définir une politique spéciale pour les clients qui possèdent un abonnement prioritaire. Si vous proposer une assistance pour plusieurs marques ou produits, vous pouvez aussi avoir un flux de travail SLA différent pour chaque produit.</p><p><strong>L'ordre de vos règles SLA est important.</strong> La première règle SLA correspondant à toutes les conditions d'un ticket lui sera appliquée, pensez donc à placer vos règles les plus importantes en premières</p>"
       info_3: "<p>La hiérarchisation est un paramètre optionnel qui permet de classer les règles afin d'envoyer une notification à certains agents spécifiques lorsque une règle du SLA est violée.</p>"
+      sla_info_2: "<p>Vous pouvez avoir plusieurs politiques SLA, déclenchées par des conditions spécifiques, comme le client qui a demandé le ticket, le groupe auquel il est assigné, sa source et/ou son produit.</p><p>Par exemple, vous pouvez définir une politique SLA spéciale pour les tickets provenant de Twitter et assignés à l'équipe des ventes. Vous pouvez définir une politique spéciale pour les clients qui possèdent un abonnement prioritaire. Si vous proposez une assistance pour plusieurs marques ou produits, vous pouvez aussi avoir un flux de travail SLA différent pour chaque produit.</p><p><strong>L'ordre de vos règles SLA est important.</strong>La première règle SLA correspondant à toutes les conditions d'un ticket lui sera appliquée, pensez donc à placer vos règles les plus importantes en premier</p>"
       title: "Politique SLA"
       title1: "Appliquer les règles de hiérarchisation"
       title2: "Utiliser plusieurs politiques SLA"
@@ -2959,6 +3137,7 @@ fr:
   ticket: 
     activities: Activités
     activity: Activité
+    activity_toggle: "Afficher les activités"
     add_note: "Ajouter une note"
     add_time: "Ajouter l'heure"
     agent: Agent
@@ -2990,6 +3169,7 @@ fr:
     delete_btn: Supprimer
     delete_btn_title: "Déplacer ce ticket dans la corbeille"
     delete_forever: "Suppression permanente"
+    deleted: CORBEILLE
     due_by: "Nombre d'heures depuis l'échéance du ticket"
     due_by_time: "Heure d'échéance"
     edit: "Modifier un ticket"
@@ -2997,6 +3177,7 @@ fr:
     edit_note: "<b>Modifier la note</b>"
     empty_trash: "Vider la corbeille"
     execute_scenario: "Exécuter un scénario"
+    expand: Étendre
     export: Exporter
     facebook_form: 
       send: Envoyer
@@ -3009,8 +3190,12 @@ fr:
     id: Id
     id_placeholder: "Saisir un ID pour trouver les tickets"
     inbound_count: "Nombre d'interactions avec le demandeur"
+    include_quoted_text: "Inclure des réponses précendentes"
+    insert: Insérer
     integrations: 
       jira: 
+        add_new: "Lier à un problème"
+        existing: "Afficher le problème"
         tooltip: "Afficher le problème JIRA associé"
     merge_btn: Fusionner
     merge_ticket_list_status_agent_responded_at: "De : %{username}<br /> L'agent a répondu : il y a <span class='emphasize'>%{time_ago}</span>"
@@ -3020,7 +3205,9 @@ fr:
     merge_ticket_list_status_resolved_at: "De : %{username}<br /> Résolu : il y a <span class='emphasize'>%{time_ago}</span>"
     merge_title: "Fusionner les tickets"
     monitor_btn_title: "Suivre ce ticket"
+    more_details: "Plus de détails..."
     myself: Moi-même
+    next: "Ticket suivant"
     none: Aucun
     note_content: "Contenu de la remarque"
     note_form: 
@@ -3034,6 +3221,7 @@ fr:
     pick_up: Récupérer
     portal_created_on: "Créé par <span class='emphasize'>%{username}</span> le <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Créé le <span class='emphasize'>%{date}</span>"
+    previous: "Ticket précédent"
     priority: Priorité
     properties: "Propriétés du ticket"
     recent_tickets: "Tickets récents"
@@ -3043,6 +3231,7 @@ fr:
       reply_email_id: "Envoyer la réponse depuis l'identifiant de messagerie suivant"
       send: Envoyer
       send_and_resolve: "Envoyer et résoudre"
+      send_and_set_as: "Envoyer et mettre en tant que <strong>%{status}</strong>"
       send_satisfaction_survey: "Inclure le sondage de satisfaction"
     reply_to: Répondre
     reported_by: "de %{requester}"
@@ -3058,6 +3247,7 @@ fr:
     singular: Ticket
     sort_by: "Trier par"
     source: Source
+    spam: INDÉSIRABLES
     split_ticket: Ventiler
     status: Etat
     stop_monitor_btn_title: "Arrêter de suivre ce ticket"
@@ -3067,15 +3257,22 @@ fr:
     submit_ticket_title: "Soumettre un ticket"
     suggest_solutions: "Suggérer des solutions"
     suggested_solutions: 
+      content: Contenu
       insert_content: "Insérer un contenu"
       insert_content_tip: "Insérer cet article de solution dans votre réponse ou dans la note"
       insert_url: "Insérer une URL"
       insert_url_tip: "Insérer cette URL de solution dans votre réponse ou dans la note"
+      link: Lien
       no_result: "Aucune solution n'a été trouvée"
       title: "Solutions suggérées"
     support: 
       reply: Répondre
       reply_and_open: "Répondre et rouvrir"
+    switch_view: 
+      new_view: "Essayez la <strong>nouvelle vue des tickets</strong>"
+      revert_view: "Opter pour la vue classique"
+      submit_feedback: "Soumettre des commentaires "
+      whats_new: "Quoi de neuf"
     tags: 
       add_tag: "Ajouter une balise :"
       create_success: "La balise a été ajoutée"
@@ -3104,6 +3301,8 @@ fr:
     unassigned: "Non affecté"
     unflag_spam: Non-spam
     unwatch: "Ne plus suivre"
+    update_done: Exécuté
+    updating: "Mise à jour"
     verify_human: "Pour vérifier que vous n'êtes pas un automate, nous vous invitons à copier les lettres affichées ici"
     view_twitter: "Vue sur Twitter"
   ticket_cancel_multiple_button: Annuler
@@ -3185,6 +3384,8 @@ fr:
     saving_ticket: "Sauvegarde des champs du ticket..."
     second_choice: "Deuxième choix"
     untitled: "Sans titre"
+  ticket_future_due_by: "Échéance dans %{time}"
+  ticket_past_due_by: "Du il y a %{time}"
   ticket_pending_since_time: "En attente depuis"
   ticket_resolved_at_time: "Résolu à"
   ticket_was: "le ticket était"
@@ -3282,6 +3483,7 @@ fr:
     choose_another_photo: "Choisir une autre photo"
     company: Société
     email: E-mail
+    facebook: Facebook
     full_name: "Nom complet"
     info1: "Photo de profil de la personne (si possible même longueur et même hauteur)"
     mobile: Portable
@@ -3355,3 +3557,4 @@ fr:
   zendesk_credentials: "Informations d'identification Zendesk"
   zendesk_url: "URL Zendesk"
   zendesk_url_info: "par ex. :- http://acme.zendesk.com"
+  zip: Compresser
