@@ -301,7 +301,7 @@ class Account < ActiveRecord::Base
     },
 
     :estate => {
-      :features => [ :gamification, :agent_collision, :layout_customization ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin ],
       :inherits => [ :garden ]
     },
 
@@ -321,7 +321,7 @@ class Account < ActiveRecord::Base
     },
 
     :estate_classic => {
-      :features => [ :gamification, :agent_collision, :layout_customization ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin ],
       :inherits => [ :garden_classic ]
     }
 
@@ -550,6 +550,8 @@ class Account < ActiveRecord::Base
                 :word_filter  => {
                        "type" => "word_delimiter",
                        "split_on_numerics" => false,
+                       "generate_word_parts" => false,
+                       "generate_number_parts" => false,
                        "split_on_case_change" => false,
                        "preserve_original" => true
                 }
@@ -693,8 +695,11 @@ class Account < ActiveRecord::Base
   end
 
   def delete_search_index
-    Tire.index(search_index_name).delete
-    es_enabled_account.disable_elastic_search
+    es_enable_status = MemcacheKeys.fetch(MemcacheKeys::ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
+    if es_enable_status.key?(self.id)
+      Tire.index(search_index_name).delete
+      es_enabled_account.disable_elastic_search
+    end
   end
 
   def es_enabled?

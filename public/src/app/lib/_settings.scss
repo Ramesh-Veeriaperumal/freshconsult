@@ -1,9 +1,9 @@
 // Here is where you can define your constants for your application and to configure the blueprint framework.
 // Feel free to delete these if you want keep the defaults:
 @import "susy";
-@import "mixins";
 @import "animations";
 @import "compass";
+@import "mixins";
 
 $blueprint-liquid-grid-columns: 24;
 $blueprint-liquid-grid-width: 3.167%;

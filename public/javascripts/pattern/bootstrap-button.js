@@ -22,7 +22,7 @@
 
   "use strict"; // jshint ;_;
 
-  if($.fn.button) return
+  // if($.fn.button) return
 
  /* BUTTON PUBLIC CLASS DEFINITION
   * ============================== */

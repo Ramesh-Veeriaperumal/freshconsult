@@ -8,9 +8,9 @@ module MemcacheKeys
 
   ACCOUNT_TICKET_TYPES = "v2/ACCOUNT_TICKET_TYPES:%{account_id}"
 
-  ACCOUNT_AGENTS = "v2/ACCOUNT_AGENTS:%{account_id}"
+  ACCOUNT_AGENTS = "v3/ACCOUNT_AGENTS:%{account_id}"
 
-  ACCOUNT_GROUPS = "v1/ACCOUNT_GROUPS:%{account_id}"
+  ACCOUNT_GROUPS = "v2/ACCOUNT_GROUPS:%{account_id}"
 
   ACCOUNT_TAGS = "v1/ACCOUNT_TAGS:%{account_id}"
 

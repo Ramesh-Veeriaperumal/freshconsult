@@ -32,6 +32,12 @@ GIT
     rinku (1.7.2)
 
 GIT
+  remote: git://github.com/freshdesk/ruby-openid.git
+  revision: 5a55b54e63f9858c0fb4ebddd8aaf0ba3fe1ac52
+  specs:
+    ruby-openid (2.2.3)
+
+GIT
   remote: git://github.com/freshdesk/ruby-yui-compressor.git
   revision: 8e1d110528c986cb5cd13487bded7a7449bdcd2e
   specs:
@@ -47,7 +53,7 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/tire.git
-  revision: 8c323dc3ea6245c71cdbc9cbf9c560f571050496
+  revision: 915c18f2929fd1ca8978afece65cff199ef41faa
   specs:
     tire (0.4.3)
       hashr (~> 0.0.19)
@@ -155,7 +161,10 @@ GEM
     map-fields (1.0.0)
       fastercsv (>= 1.2.3)
     memcache-client (1.8.5)
+    metaclass (0.0.1)
     mime-types (1.16)
+    mocha (0.13.3)
+      metaclass (~> 0.0.1)
     mongrel (1.1.5)
       cgi_multipart_eof_fix (>= 2.4)
       daemons (>= 1.0.3)
@@ -240,13 +249,16 @@ GEM
       builder (~> 3.0)
       oauth (~> 0.4)
     riddle (1.2.2)
+    rspec (1.3.1)
+    rspec-rails (1.3.3)
+      rack (>= 1.0.0)
+      rspec (= 1.3.1)
     ruby-debug (0.10.3)
       columnize (>= 0.1)
       ruby-debug-base (~> 0.10.3.0)
     ruby-debug-base (0.10.3)
       linecache (>= 0.3)
     ruby-ole (1.2.11.3)
-    ruby-openid (2.1.8)
     ruby-openid-apps-discovery (1.2.0)
       ruby-openid (>= 2.1.7)
     rubyzip (0.9.4)
@@ -272,6 +284,7 @@ GEM
       tilt (>= 1.2.2, < 2.0)
     soap4r (1.5.8)
       httpclient (>= 2.1.1)
+    spork (0.8.5)
     spreadsheet (0.6.8)
       ruby-ole (>= 1.0)
     susy (1.0.5)
@@ -324,6 +337,7 @@ DEPENDENCIES
   map-fields (= 1.0.0)
   marketo!
   memcache-client (= 1.8.5)
+  mocha (~> 0.13.3)
   mongrel
   mysql
   net-dns (= 0.6.1)
@@ -349,14 +363,17 @@ DEPENDENCIES
   resque (= 1.22.0)
   rforce
   rinku!
+  rspec (= 1.3.1)
+  rspec-rails (= 1.3.3)
   ruby-debug (= 0.10.3)
-  ruby-openid (= 2.1.8)
+  ruby-openid!
   ruby-openid-apps-discovery (= 1.2.0)
   rubyzip (= 0.9.4)
   sanitize (= 2.0.3)
   sass (= 3.2.1)
   sax-machine (~> 0.1.0)
   seamless_database_pool!
+  spork (~> 0.8.0)
   spreadsheet (= 0.6.8)
   susy
   thinking-sphinx (= 1.4.3)

@@ -47,7 +47,7 @@
 	word-wrap: break-word; /* Internet Explorer 5.5+ */
 }
 
-@mixin rotate($degree: -90deg, $location: bottom left) {
+@mixin widget-rotate($degree: -90deg, $location: bottom left) {
 	transform: rotate($degree);
   transform-origin: $location;
   -moz-transform:rotate($degree); 
