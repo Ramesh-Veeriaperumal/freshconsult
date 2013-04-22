@@ -50,7 +50,7 @@ class Billing::Subscription
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
       FreshdeskErrorsMailer.deliver_error_email(nil, nil, e,
-        { :subject => "Error creating account in ChargeBee. Account Id - #{account.id}" })
+        { :subject => "Error creating account in ChargeBee. Account Id - #{account.id}" }) if Rails.env.production?
     end
   end
 
