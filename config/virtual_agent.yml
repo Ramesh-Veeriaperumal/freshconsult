@@ -17,6 +17,7 @@ fields:
         company: text
         responder_id: object_id
         group_id: object_id
+        company_id: object_id
 
         created_at: date_time
         opened_at: date_time
