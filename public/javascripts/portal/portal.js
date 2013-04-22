@@ -183,7 +183,7 @@
 		})
 		
 		$("img[rel=lazyloadimage]").jail({
-			// placeholder : '/images/load.gif',
+			// placeholder : '/images/animated/ajax-loader.gif',
 		})
 
 	

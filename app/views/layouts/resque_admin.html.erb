@@ -1,5 +1,5 @@
 <!DOCTYPE html>	
-  	<%= open_html_tag %>
+<html lang="en">
 	<link href="stylesheets/subscription/resque.css" media="screen" rel="stylesheet" type="text/css">
 	<%= include_javascripts :defaults %>
 	<%= include_javascripts :frameworks %>
@@ -7,7 +7,6 @@
 	<%= include_javascripts :notifications %>
 	<body>
 		<%= yield %>
-		<div class='load-mask' style='display:none'><img src='/images/ajax-loader.gif'/></div>
 		<%= render :partial => "layouts/shared/scripts" %>
 		<div id="footer" class="wrapper"> </div>
 	</body>

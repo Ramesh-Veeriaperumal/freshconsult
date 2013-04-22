@@ -1193,7 +1193,7 @@ input.search{
     textarea{ height:auto; }
 }
 
-.dialog-panel{
+.dialog-panel, .dialog-panel.sidepanel{
 	position: absolute;	
 	width:650px;
 	left:50%;
@@ -1314,8 +1314,6 @@ input.search{
 			position:absolute;
 			right:15px;
 			margin-top:12px;
-			background-image:url('/images/load-fb-style.gif');
-			background-repeat:no-repeat;
 			visibility:hidden;
 			background-position: 0 0;
 		}
@@ -1850,11 +1848,7 @@ a.new_ticket:hover{
       }
    }   
 }
-.canned-response-menu.loading{
-   background-image:url('/images/load.gif');
-   background-repeat:no-repeat;
-   background-position: center 8px;
-}
+
 .canned-response-menu{
    border:2px #4b4b4b solid;
    background-color:#ffffff;
