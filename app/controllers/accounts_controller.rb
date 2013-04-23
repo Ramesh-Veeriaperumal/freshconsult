@@ -10,7 +10,8 @@ class AccountsController < ApplicationController
                       :associate_local_to_google, :create, :rebrand, :dashboard]
 
   skip_before_filter :set_locale, :except => [:cancel, :show, :edit]
-  skip_before_filter :set_time_zone, :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show]
+  skip_before_filter :set_time_zone, :set_current_account,
+    :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show]
   skip_before_filter :check_account_state
   skip_before_filter :redirect_to_mobile_url
   

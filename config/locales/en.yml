@@ -742,6 +742,8 @@ en:
       new: New Role
       edit: Edit Role
       default_role: Default Role
+      role_name: Role Name
+      role_description: Description
       scroll:
         scroll_to : Scroll to
         tickets: Tickets

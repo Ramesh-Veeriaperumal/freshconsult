@@ -3,6 +3,7 @@ class PartnerAdmin::AffiliatesController < ApplicationController
 	prepend_before_filter :check_admin_subdomain
   skip_before_filter :check_privilege
   skip_before_filter :set_time_zone
+  skip_before_filter :set_current_account
   skip_before_filter :set_locale
   skip_before_filter :check_account_state
   skip_before_filter :ensure_proper_protocol

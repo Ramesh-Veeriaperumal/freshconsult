@@ -5,13 +5,13 @@
  			<li class="row-fluid">
  				<%= role_form.label :name, t('name'), :class =>'control-label span2' %> 
 				<div class="span10">
-					<%= role_form.text_field :name , :class => "text required span10", :placeholder => "Agent Name"%>
+					<%= role_form.text_field :name , :class => "text required span10", :placeholder => t('admin.roles.role_name')%>
 				</div>
 			</li>	
 			<li class="row-fluid">
 				<%= role_form.label :description, t('description'), :class =>'control-label span2' %> 
 				<div class="span10">
-					<%= role_form.text_area :description , :class => "text span10", :cols => "40", :rows => "5", 						:placeholder => "Description"%>		
+					<%= role_form.text_area :description , :class => "text span10", :cols => "40", :rows => "5", 						:placeholder => t('admin.roles.role_description')%>		
 				</div>
 			</li>	
 		</ul>
