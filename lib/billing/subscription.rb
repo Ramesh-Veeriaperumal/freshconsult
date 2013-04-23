@@ -1,7 +1,7 @@
 class Billing::Subscription
 
   CUSTOMER_INFO   = { :first_name => :admin_first_name, :last_name => :admin_last_name, 
-                      :email => :admin_email, :company => :name }
+                       :company => :name }
 
   CREDITCARD_INFO = { :number => :number, :expiry_month => :month, :expiry_year => :year }   
 
@@ -101,7 +101,8 @@ class Billing::Subscription
     end
     
     def customer_data(account)
-      CUSTOMER_INFO.inject({}) { |h, (k, v)| h[k] = account.send(v); h }
+      data = CUSTOMER_INFO.inject({}) { |h, (k, v)| h[k] = account.send(v); h }
+      data.merge(:email => account.invoice_emails.first)
     end
     
     def subscription_data(subscription)
