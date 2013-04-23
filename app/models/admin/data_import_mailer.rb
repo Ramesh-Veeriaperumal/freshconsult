@@ -1,4 +1,6 @@
 class Admin::DataImportMailer < ActionMailer::Base
+
+  layout "email_font"
   
  def import_email(options={}) 
     recipients    options[:email]
