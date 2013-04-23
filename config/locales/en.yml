@@ -1503,6 +1503,7 @@ en:
   group: 
     new: New Group
     name: Group Name
+    description: Group description
     edit: Edit Group
     title: Groups
     ticket_assignment: Automatic Ticket Assignment

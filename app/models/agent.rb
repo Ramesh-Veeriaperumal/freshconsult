@@ -89,6 +89,12 @@ def self.filter(page, state = "active", per_page = 20)
            :conditions => { :users => { :deleted  => !state.eql?("active") } }
 end
 
+#This method returns true if atleast one of the groups that he belongs to has round robin feature
+def in_round_robin?
+  return self.agent_groups.count(:conditions => ['ticket_assign_type = ?', 
+          Group::TICKET_ASSIGN_TYPE[:round_robin]], :joins => :group) > 0
+end
+
 protected
   
   def update_agents_level
