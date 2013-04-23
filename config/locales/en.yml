@@ -2008,8 +2008,8 @@ en:
     help_center: "How can we help you today?"
     new_support_ticket: "New support ticket"
     check_ticket_status: "Check ticket status"
-    user_available: "New tickets will be auto-assigned to you."
-    user_not_available: "New tickets will NOT be auto-assigned to you."
+    user_available: "New tickets will be <br>auto-assigned to you."
+    user_not_available: "New tickets will NOT be <br>auto-assigned to you."
     tabs:
       reports: Reports
       dashboard: Dashboard
