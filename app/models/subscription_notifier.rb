@@ -1,5 +1,7 @@
 class SubscriptionNotifier < ActionMailer::Base
   include ActionView::Helpers::NumberHelper
+
+  layout "email_font"
   
   def setup_email(to, subject, from = AppConfig['billing_email'])
     @sent_on = Time.now
