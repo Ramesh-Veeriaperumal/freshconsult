@@ -105,6 +105,8 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.ui.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/frameworks/plugins/select2.js
+    - public/javascripts/frameworks/plugins/moment.js
+    - public/javascripts/frameworks/plugins/livestamp.js
     - public/javascripts/frameworks/plugins/jquery.blockUI.js
     - public/javascripts/hackz.js
     - public/javascripts/lib/nestedtree.js

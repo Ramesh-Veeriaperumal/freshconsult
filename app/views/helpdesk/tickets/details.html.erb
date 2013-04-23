@@ -29,8 +29,11 @@
 				<%= render :partial => "helpdesk/tickets/show/requester.html.erb" %> 
 				<% unless @ticket.deleted or @ticket.spam %> 
 					<%= render :partial => "helpdesk/tickets/show/ticket_fields.html.erb" %>
-					<%= render :partial => "helpdesk/tickets/show/integrations.html.erb" %> 
 					<% if feature?(:timesheets) %>
+					<div class="modal hide fade" role="dialog" id="timesheets_loading">
+						<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button></div>
+						<div class="modal-body"><div class="loading-box"></div></div>
+					</div>
 					<div class="widget time-tracked inactive load_remote" id="TimesheetTab">
 						<h3>
 							<%= t('helpdesk.time_sheets.sidebar_title') %>
@@ -44,6 +47,8 @@
 						<%# render :partial => "helpdesk/time_sheets/v2/index" %>
 					</div>
 					<% end %>
+					
+					<%= render :partial => "helpdesk/tickets/show/integrations.html.erb" %> 
 				<% end %>
 			</div>
 			<!--content Left-->

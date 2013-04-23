@@ -48,3 +48,4 @@ default_fields.sort! {|x,y| default_field_order.index(x.first) <=> default_field
 		.val("<%=@ticket.status%>")
 	<% end %>
 <% end %>
+<%= render :partial => '/helpdesk/tickets/show/tags.html.erb' %>

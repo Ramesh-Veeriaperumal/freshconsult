@@ -1,4 +1,6 @@
 class SlaNotifier < ActionMailer::Base
+	
+    layout "email_font"
 
 	def escalation(ticket, agents, params)
 		subject       params[:subject]

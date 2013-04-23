@@ -1618,7 +1618,9 @@ en:
   reset: Reset
   ticket_due_by_time: Due by
   ticket_past_due_by: Due %{time} ago
+  ticket_past_due_by_live: Due <abbr data-livestamp='%{timestamp}'>%{time} ago</abbr>
   ticket_future_due_by: Due in %{time}
+  ticket_future_due_by_live: Due <abbr data-livestamp='%{timestamp}'> in %{time}</abbr>
   ticket_pending_since_time: Pending Since
   ticket_resolved_at_time: Resolved at
   ticket_closed_at_time: Closed at
@@ -2176,7 +2178,9 @@ en:
       submit_feedback: "Submit Feedback"
     include_quoted_text: "Include previous replies"
     more_details: "More details..."
+    reported: "reported"
     reported_on: "from %{username}, Last updated: on %{date}"
+    scenarios: "Scenarios"
     ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_resolved_at: "From: %{username}, Resolved: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_agent_responded_at: "From: %{username}, Agent responded: <span class='emphasize'>%{time_ago} ago</span>"
@@ -2289,11 +2293,13 @@ en:
       add_tag: "Add a tag:"
     type: Type
     execute_scenario: Execute Scenario
+    conv_form_status_set_as: "and set as <strong>%{status}</strong>"
     note_form: 
       private_note: "Add as Private Note, and don't notify the requester"
       description_note: "The Subject and Description of the merged tickets will be added as notes in the primary ticket"
       form_title: Add a Note
       add_and_resolve: Add and Resolve
+      add_public_note: Add Public Note
       notify_agents: Notify Agents
     tweet_form:
       tweet_and_resolve: Tweet and Resolve
@@ -2753,9 +2759,16 @@ en:
           public_note: "%{user_name} added a public note on %{note_date}"
           reply: "%{user_name} replied on %{note_date}"
           forward: "%{user_name} forwarded on %{note_date}"
+        created_on_live:
+          private_note: "%{user_name} added a private note <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
+          public_note: "%{user_name} added a public note <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
+          reply: "%{user_name} replied <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
+          forward: "%{user_name} forwarded <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
+          survey: "%{user_name} rated this ticket <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
         edit_note: Edit Note
         split_this_as_new_ticket: Split this as a new Ticket
         delete_note: "Remove this from the ticket converstion?"
+        deleted_note: "Deleted"
         split_ticket_confirm: Split this note and create it as a new ticket?
         private_note: Private note
         public_note: Public note

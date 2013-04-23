@@ -60,11 +60,11 @@ class Helpdesk::TimeSheetsController < ApplicationController
       end
     end
 
-    time_entry = params[:time_entry].merge!({:start_time => Time.zone.now(),
-                                             :executed_at => Time.zone.now(),
-                                             :time_spent => convert_duration(hours_spent),
-                                             :timer_running => hours_spent.blank?
-                                             })
+    time_entry =  { "start_time" => Time.zone.now(),
+                    "executed_at" => Time.zone.now(),
+                    "time_spent" => convert_duration(hours_spent),
+                    "timer_running" => hours_spent.blank?
+                  }.merge(params[:time_entry])
     
     @time_entry = scoper.new(time_entry)    #throws unknown attribute error
     if @time_entry.save!
