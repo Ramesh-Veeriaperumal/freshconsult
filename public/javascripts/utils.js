@@ -866,3 +866,15 @@ function unescapeHtml(escapedStr) {
         return child ? child.nodeValue : '';
 };
 
+jQuery.scrollTo = function(element, options) {
+  var defaults = {
+    speed: 500,
+    offset: 0
+  };
+  var opts = jQuery.extend({}, defaults, options || {});
+  var el = jQuery(element);
+  if(el.length > 0)
+    jQuery('body').animate({
+      scrollTop: el.offset().top - opts.offset
+    }, opts.speed);
+};

@@ -96,19 +96,6 @@ $("body").on("click.ticket_details", ".ticket_show #clear-draft", function(){
 
 
 var dontAjaxUpdate = false;
-var deferredTicketUpdate = function(timeout) {
-	timeout = timeout || 3000;
-	if (typeof(ticket_update_timeout) != 'undefined') {
-		clearTimeout(ticket_update_timeout);
-	}
-
-	// if ($('#custom_ticket_form').valid()) {
-	//     ticket_update_timeout = setTimeout(function() {
-	//         $('#custom_ticket_form').submit();
-	//     },3000);
-	// }
-
-}
 
 silenceTktFieldsUpdate = function() {
 	dontAjaxUpdate = false;
@@ -272,6 +259,7 @@ swapEmailNote = function(formid, link){
 	}
 }
 
+// CHECK AND REMOVE OLD UNUSED CODE
 var activeTinyMce = null;
 showCannedResponse = function(button, ticket_id){
 	$("#canned_response_container").css($(button).offset());
@@ -289,7 +277,7 @@ showCannedResponse = function(button, ticket_id){
 		})
 		.show();        
 }
-
+// END OF CHECK AND REMOVE OLD UNUSED CODE
 	 
 insertIntoConversation = function(value){
 	tweet_area = $('#cnt-tweet');
@@ -564,6 +552,29 @@ $(document).ready(function() {
 		$(this).parent().toggleClass('inactive');
 	});
 
+	$("body").on('click.ticket_details', '[rel=triggerAddTimer]', function(ev){
+		var timesheets = $('#timesheetlist');
+		if(timesheets.length) {
+			$('#triggerAddTime').trigger('click');
+		} else {
+			var timesheetTab = $('#TimesheetTab');
+			if(timesheetTab.hasClass('load_remote'))  {
+				timesheetTab.trigger('click.ticket_details');
+			}
+			$('#timesheets_loading').modal('show');
+			var timesheetsLoading = setInterval(function() {
+				console.log('timesheetsLoading');
+				if($('#timesheetlist').length) {
+					console.log('loaded');
+					$('#triggerAddTime').trigger('click');
+					$('#timesheets_loading').modal('hide');
+					clearInterval(timesheetsLoading);
+				}
+			}, 200);
+		}
+	});
+
+
 	$("select").data('placeholder','');
 	$("#TicketProperties select.dropdown, #TicketProperties select.dropdown_blank, #TicketProperties select.nested_field, select.select2").livequery(function(){
 		if (this.id == 'helpdesk_ticket_priority') {
@@ -593,7 +604,7 @@ $(document).ready(function() {
 	$("body").on("change.ticket_details", '#twitter_handle', function (){
 		twitter_handle= $('#twitter_handle').val();
 		req_twt_id = $('#requester_twitter_handle').val();
-		istwitter = $('#cnt-tweet').data('isTwitter');
+		istwitter = $('#cnt-reply').data('isTwitter');
 		if (!istwitter || req_twt_id == "" || twitter_handle == "")        
 			return ;
 
@@ -798,6 +809,17 @@ $(document).ready(function() {
 				},
 				success: function(response) {
 
+					var statusChangeField = jQuery('#reply_ticket_status_' + _form.data('cntId'));
+					if(statusChangeField.length) {
+						if(statusChangeField.val() != '') {
+							refreshStatusBox();
+							if(statusChangeField.val() == '4' || statusChangeField.val() == '5') {
+								window.location = "/helpdesk/tickets"
+							}
+							statusChangeField.val('')
+						}
+					}
+
 					if (_form.data('panel')) {
 						$('#' + _form.data('panel')).unblock();
 						$('#' + _form.data('panel')).hide();
@@ -816,9 +838,11 @@ $(document).ready(function() {
 
 					if (_form.data('cntId') && _form.data('destroyEditor')){
 						$('#' + _form.data('cntId') + '-body').destroyEditor(); //Redactor
-						_form.resetForm();
-						_form.trigger('reset');
 					}
+
+					_form.resetForm();
+					_form.trigger('reset');
+
 
 					if (_form.attr('rel') == 'forward_form')  {
 						//Remove To Address
@@ -826,7 +850,9 @@ $(document).ready(function() {
 					}
 
 					if (_form.attr('rel') == 'note_form')  {
-						$('#toggle-note-visibility').removeClass('visible');
+						$('#toggle-note-visibility .toggle-button').addClass('active');
+						var submit_btn = _form.find('.submit_btn');
+						submit_btn.text(submit_btn.data('defaultText'));
 					}
 
 					//Enabling original attachments
@@ -847,11 +873,7 @@ $(document).ready(function() {
 					_form.find('input[type=submit]').prop('disabled', false);
 					if (_form.data('showPseudoReply')) {
 						$('#TicketPseudoReply').show();
-						refreshStatusBox();	//Only Reply/Add Note/Fwd forms need this, and they might have status changes.
 					}
-						
-
-
 
 				},
 				error: function(response) {
@@ -884,24 +906,39 @@ $(document).ready(function() {
 	//For having the ticket subject and the action bar floating at the top when Scrolling down	
 	var REAL_TOP = $("#wrap .header").first().height() + 110;
 	var outerHeight = $('.fixedStrap').outerHeight();
-	var the_window = $(window);
+	var the_window = $(window),
+		hasScrolled = false;
 
-	the_window.on('scroll.ticket_details', function () {
+	var fixedStrap = $('.fixedStrap'),
+		at_the_top = $('.fixedStrap, .fixedbg'),
+		forFixed = $('#forFixed'),
+		firstchild = $('#firstchild');
+
+	var handleScroll = function() {
 		if (the_window.scrollTop() > REAL_TOP) {
-			if (!$('.fixedStrap').hasClass('at_the_top')) {
+			if (!fixedStrap.hasClass('at_the_top')) {
 
-				$('.fixedStrap, .fixedbg').addClass('at_the_top');
-				$('#forFixed').show();
-				$('.fixedStrap, .fixedbg').css({top: -outerHeight}).animate({ top: 0}, 300, 'easeOutExpo');
-				$('#firstchild').addClass('firstchild');
+				at_the_top.addClass('at_the_top');
+				forFixed.show();
+				at_the_top.css({top: -outerHeight}).animate({ top: 0}, 300, 'easeOutExpo');
+				firstchild.addClass('firstchild');
 			}
 
 		} else {
-			$('.fixedStrap, .fixedbg').removeClass('at_the_top').css({top: ''});
-			$('#forFixed').hide();
-			$('#firstchild').removeClass('firstchild');
+			at_the_top.removeClass('at_the_top').css({top: ''});
+			forFixed.hide();
+			firstchild.removeClass('firstchild');
 		}
-	});
+
+		hasScrolled = false;
+	};
+
+	the_window.on('scroll.ticket_details', function() { hasScrolled = true; });
+	setInterval(function() {
+		if(hasScrolled) {
+			handleScroll();
+		}
+	},150);
 	// -----   END OF TICKET BAR FIXED TOP ------ //
 
 	//For showing canned response and solutions
@@ -921,10 +958,13 @@ $(document).ready(function() {
 	//End
 
 	//Toggling Note visiblity
-	$('body').on('click.ticket_details', '#toggle-note-visibility', function(ev){
-		var checkbox = $(this).find('input[type=checkbox]');
-		checkbox.prop("checked", !checkbox.prop("checked"));
-		$(this).toggleClass('visible');
+	$('body').on('change.ticket_details', '#toggle-note-visibility input[type=checkbox]', function(ev){
+		var submit_btn = $(this).parents('form').find('.submit_btn');
+		if($(this).is(':checked')) {
+			submit_btn.text(submit_btn.data('defaultText'));
+		} else {
+			submit_btn.text(submit_btn.data('publicText'));
+		}
 	});
 
 	$('body').on('click.ticket_details', '.ticket_show #close_ticket_btn', function(ev){
@@ -940,18 +980,8 @@ $(document).ready(function() {
 	$('#custom_ticket_form').on('change.ticket_details',function(ev) {
 		if (!dontAjaxUpdate) 
 		{
-			$('#helpdesk_ticket_submit').show();
 			TICKET_DETAILS_DATA['updating_properties'] = true;
 			$(ev.target).data('updated', true);
-			// var submit_timeout = 1500;
-			// if (ev.target.id == 'helpdesk_ticket_group_id') {
-			//     return true;
-			//     //Avoiding Updates firing for changes to Group Field
-			//     //This will be fired after the Agents are loaded.
-			// }
-
-			
-			// deferredTicketUpdate(submit_timeout);
 		}
 		dontAjaxUpdate = false;
 	} );
@@ -1055,6 +1085,10 @@ $(document).ready(function() {
 
 	//Previous Next Buttons request
 	$.getScript("/helpdesk/tickets/prevnext/" + TICKET_DETAILS_DATA['displayId']);
+
+	if(TICKET_DETAILS_DATA['scroll_to_last']) {
+		$.scrollTo('[rel=activity_container] .conversation:last', { offset: 143 });
+	}
 
 	//Hack for those who visit upon hitting the back button
 	$('#activity_toggle .toggle-button').removeClass('active');

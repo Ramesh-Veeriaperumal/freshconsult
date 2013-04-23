@@ -33,7 +33,7 @@
 				<div class="control-left">
 					<div class="source-badge-wrap">
 						<div href="#" 
-							 class='source 
+							 class='source
 							 		<%= "priority_color_#{@ticket.priority} 
 							 		status_#{@ticket.status} " + 
 							 		("spam" if @ticket.spam).to_s + 
@@ -82,17 +82,19 @@
 										<%= t("ticket.deleted") %>
 									</span>
 									
-								<% end %>													
+								<% end %>
+
+								<%
+						            customer_opinion = ""                                
+						            unless @ticket.survey_results.nil? || @ticket.survey_results.last.nil?
+						              customer_opinion = ["<div class='customer-opinion ", @ticket.survey_results.last.get_small_img_class ,"'></div>"].join
+						            end  
+							    %>				
+							    <%=customer_opinion%>									
 
 								<%= h(@ticket.subject) %>
 							</h2>
-							<%
-					            customer_opinion = ""                                
-					            unless @ticket.survey_results.nil? || @ticket.survey_results.last.nil?
-					              customer_opinion = ["<div class='customer-opinion ", @ticket.survey_results.last.get_small_img_class ,"'></div>"].join
-					            end  
-						    %>
-						    <%=customer_opinion%>
+						    
 							<div class="ticket-actions clearfix <%= 'hide' if @ticket.deleted or @ticket.spam or params[:format]=='widget' %>">
 								<ul>
 									<li class="ticket-btns">
@@ -127,6 +129,12 @@
 										%>
 									</li>
 									<li class="ticket-btns">
+										<%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/component/#{@ticket.id}?component=scenarios", 
+										  				:rel => 'freshdialog', "data-target" => "#execute_scenario", :class => 'btn',
+										  				"data-submit-label" => t('ticket.execute_scenario'),
+										  				:title => t('ticket.execute_scenario') ) %>
+									</li>
+									<li class="ticket-btns">
 										<div class="btn-group">
 
 										  <a class="btn dropdown-toggle" data-toggle="dropdown">
@@ -135,13 +143,11 @@
 										  </a>
 
 										  <ul class="dropdown-menu" id="reply_options" role="menu" aria-labelledby="dLabel">
-										  	
+										  	<% if feature?(:timesheets) %>
 										  	<li>
-										  		<%= link_to( t('ticket.execute_scenario'), "/helpdesk/tickets/component/#{@ticket.id}?component=scenarios", 
-										  				:rel => 'freshdialog', "data-target" => "#execute_scenario", 
-										  				"data-submit-label" => t('ticket.execute_scenario'),
-										  				:title => t('ticket.execute_scenario') ) %>
+										  		<a rel="triggerAddTimer"><%= t('ticket.add_time') %></a>
 										  	</li>
+										  	<% end %>
 										  	<li>
 										  		<%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %>
 										  	</li>
