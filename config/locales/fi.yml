@@ -111,6 +111,7 @@ fi:
         one: "Virhe syötteessä esti mallin %{model} tallentamisen"
         other: "%{count} virhettä esti mallin %{model} tallentamisen"
   activities: 
+    action_verb: päivitetty
     forums: 
       delete_forum: 
         long: "{{user_path}} poisti foorumin nimeltä '{{notable_path}}', {{category_name}} alta"
@@ -140,13 +141,45 @@ fi:
       new_solution: 
         long: "{{user_path}} loi uuden artikkelin {{notable_path}}"
         short: "{{user_path}} loi uuden artikkelin"
+    tag: 
+      assigned: "Edustajalle osoitettu "
+      assigned_to_nobody: "Edustajalle ei ole osoitettu"
+      conversation: 
+        in_email: "Asiakas vastasi"
+        note: "Uusi huomio"
+        out_email: 
+          default: "Edustaja vastasi"
+          private: "Tiketti edelleenlähetettiin"
+        twitter: Tweet
+      deleted: "Tiketti poistettiin"
+      execute_scenario: "Skenaario suoritettu"
+      group_change: "Edustajaryhmä vaihdettiin"
+      group_change_none: "Edustajaryhmä vaihdettiin"
+      new_ticket: "Uusi tiketti"
+      priority_change: "{{value}}"
+      product_change: "Tuote päivitettiin"
+      product_change_none: "Tuote päivitettiin"
+      reassigned: "Edustajalle uudelleen osoitettu"
+      restored: "Tiketti palautettiin"
+      solutions: "Uusi ratkaisu"
+      source_change: "Tiketin lähde"
+      status_change: "{{value}}"
+      ticket_merge: "Tiketti liitettiin"
+      ticket_split: "Tiketti jaettiin"
+      ticket_type_change: Tikettityyppi
+      timesheet: 
+        new: "Kirjattu aika"
+        timer_started: "Ajastin käynnistettiin"
+        timer_stopped: "Ajastin pysäytettiin"
     tickets: 
       assigned: 
         long: "{{user_path}} siirsi casen {{notable_path}} {{responder_path}}lle"
         short: "{{user_path}} antoi casen {{responder_path}}lle "
+        without_user: "osoitettiin <strong>{{responder_path}}</strong>"
       assigned_to_nobody: 
         long: "{{user_path}} antoi casen {{notable_path}} ei-kenellekään."
         short: "{{user_path}} antoi casen \"ei kenellekään\""
+        without_user: "osoitettiin <strong>'Ei kenellekkään'</strong>"
       conversation: 
         in_email: 
           long: "{{user_path}} lähetti {{email_response_path}} liittyen caseen {{notable_path}}"
@@ -166,57 +199,74 @@ fi:
       deleted: 
         long: "{{user_path}} on poistanut casen {{notable_path}}"
         short: "{{user_path}} on poistanut tämän casen"
+        without_user: "on poistanut tiketin"
       execute_scenario: 
         long: "{{user_path}} suoritti makron '{{scenario_name}}' caselle {{notable_path}}"
         short: "{{user_path}} suoritti makron {{scenario_name}}"
+        without_user: "suoritettiin skenaario <strong>{{scenario_name}}</strong>"
       group_change: 
         long: "{{user_path}} vaihtoi casen {{notable_path}} ryhmäksi {{group_name}}"
         short: "{{user_path}} vaihtoi ryhmäksi {{group_name}}"
+        without_user: "päivitetty ryhmä kohteeseen <strong>{{group_name}}</strong>"
       group_change_none: 
         long: "{{user_path}} poisti casen {{notable_path}} ryhmämerkinnän"
         short: "{{user_path}} poisti ryhmämerkinnän"
+        without_user: "päivitetty ryhmä kohteeseen <strong>'ei mihinkään'</strong>"
       new_ticket: 
         long: "{{user_path}} lähetti uuden casen {{notable_path}}"
         short: "{{user_path}} lähetti uuden casen"
       priority_change: 
         long: "{{user_path}} vaihtoi casen prioriteetin {{notable_path}} prioriteetiksi {{priority_name}}"
         short: "{{user_path}} vaihtoi prioriteetiksi {{priority_name}}"
+        without_user: "päivitettiin tiketin tärkeys kohteeseen <strong>{{priority_name}}</strong>"
       product_change: 
         long: "{{user_path}} vaihtoi casen {{notable_path}} tuotteeksi {{product_name}}"
         short: "{{user_path}} vaihtoi tuotteeksi {{product_name}}"
+        without_user: "päivitetty tuote kohteeseen <strong>{{product_name}}</strong>"
       product_change_none: 
         long: "{{user_path}} poisti tuotemerkinnän casesta {{notable_path}}"
         short: "{{user_path}} poisti tuotemerkinnän"
+        without_user: "päivitetty tuote kohteeseen <strong>'ei mikään'"
       reassigned: 
         long: "{{user_path}} siirsi casen {{notable_path}} asiakaspalvelijalle {{responder_path}}"
+        without_user: "Uudelleen osoita tiketti <strong>{{responder_path}}</strong>"
       restored: 
         long: "{{user_path}} on palauttanut casen {{notable_path}}"
         short: "{{user_path}} on palauttanut tämän casen"
+        without_user: "on palauttanut tiketin"
       source_change: 
         long: "{{user_path}} vaihtoi casen {{notable_path}} lähteeksi {{source_name}}"
         short: "{{user_path}} vaihtoi lähteeksi {{source_name}}"
+        without_user: "päivitetty lähde kohteeseen <strong>{{source_name}}</strong>"
       status_change: 
         long: "{{user_path}} vaihtoi casen {{notable_path}} statukseksi {{status_name}}"
         short: "{{user_path}} vaihtoi statukseksi {{status_name}}"
+        without_user: "päivitetty tila kohteeseen<strong>{{status_name}}</strong>"
       ticket_merge: 
         long: "{{user_path}} yhdisti casen {{notable_path}} caseen {{merge_ticket_path}}"
         short: "{{user_path}} yhdisti casen {{notable_path}} caseen {{merge_ticket_path}}"
+        without_user: "yhdistä tiketti {{notable_path}} tähän {{merge_ticket_path}}"
       ticket_split: 
         long: "{{user_path}} on luonut casesta {{split_ticket_path}} uuden casen {{notable_path}}"
         short: "{{user_path}} on luonut casesta {{split_ticket_path}} uuden casen {{notable_path}}"
+        without_user: "Jaa tiketti kohteesta {{split_ticket_path}} "
       ticket_type_change: 
         long: "{{user_path}} vaihtoi casen {{notable_path}} tyypiksi {{ticket_type}}"
         short: "{{user_path}} vaihtoi casen tyypiksi {{ticket_type}}"
+        without_user: "päivitetty tikettityyppi kohteeseen <strong>{{ticket_type}}</strong>"
       timesheet: 
         new: 
           long: "{{user_path}} lisäsin caseen {{notable_path}} kommentin {{timesheet_path}}"
           short: "{{user_path}} lisäsi kommentin {{timesheet_path}}"
+          without_user: "lisättiin {{timesheet_path}}"
         timer_started: 
           long: "{{user_path}} käynnisti ajastimen {{timesheet_path}} casessa {{notable_path}}"
           short: "{{user_path}} käynnisti ajastimen {{timesheet_path}}  "
+          without_user: "ajastin käynnistettiin {{timesheet_path}}"
         timer_stopped: 
           long: "{{user_path}} pysäytti ajastimen {{timesheet_path}} casessa {{notable_path}}"
           short: "{{user_path}} pysäytti ajastimen {{timesheet_path}}  "
+          without_user: "ajastin pysäytettiin {{timesheet_path}}"
   add: Lisää
   add_a_new_folder: "lisää uusi kansio"
   add_a_topic: "Aloita uusi aihe"
@@ -767,6 +817,7 @@ fi:
   assuming_identity_not_allowed_msg: "Sinulla ei ole oikeuksia ottaa tätä käyttäjänimeä."
   assuming_identity_user_does_not_exist_msg: "Käyttäjä, jota yritit lähestyä, ei ole olemassa."
   at: klo
+  attach_file: "Liitä tiedosto"
   attach_file_local: "Liitä tiedosto tietokoneeltasi"
   attach_files: "Liitä tiedostoja."
   attachment: Liite
@@ -829,6 +880,7 @@ fi:
     title: Aukioloajat
     to: "-"
     valid_time: "Syötä kelvollinen aika"
+  by: "-"
   cancel: Keskeytä
   cancel_and_back: "Keskeytä ja palaa takaisin"
   cancel_my_account: "Poista tilini"
@@ -890,6 +942,7 @@ fi:
   choose_free_plan: "Valitse ilmainen %{plan}"
   choose_plan: "Valitse sopimus"
   choose_plan_trial: "Huomio: Tilisi deaktivoidaan kokeilujakson jälkeen. <br /> Jatkaaksesi Freshdeskin käyttöä, ole hyvä ja valitse alhaalta suunnitelma."
+  clear: Tyhjennä
   clear_draft_text: "Tyhjennetäänkö tallennettu luonnos?"
   click_select_action: "Valitse toimenpide"
   click_to_change_sort_order: "Klikkaa vaihtaaksesi lajittelujärjestystä"
@@ -1076,6 +1129,7 @@ fi:
   downgrade_dialog_title: "Oletko varma, että haluat alentaa tasoa?"
   downgrade_plan: "Huomio: Jos alennat suunnitelmasi arvoa, saatat menettää joitain olemassaolevia ominaisuuksia"
   draft: "Luonnos:"
+  dropbox_attach_from: "Liitä Dropboxista"
   dropbox_attach_label: "Liitä kohteesta"
   dropbox_choose_file: "Valitse tiedosto"
   due_in: "Deadline %{time_words}"
@@ -1276,6 +1330,7 @@ fi:
     customers: Asiakkaat
     due_by: Takaraja
     group_id: Ryhmät
+    mygroups: Ryhmäni
     priority: Prioriteetti
     requester: "Pyynnön esittäjät"
     responder_id: Asiakaspalvelija
@@ -1283,6 +1338,7 @@ fi:
     status: Tila
     tags: Tagit
     ticket_type: Tyyppi
+    unassigned: "Ei ole osoitettu"
   find_more_solutions: "Löydä lisää ratkaisuja"
   first_name: Etunimi
   first_response_sla: "Palvelutason alitus: Ensimmäinen vastaus"
@@ -1675,6 +1731,7 @@ fi:
       tickets_update_with_errors: "%{tickets} päivitettiin, mutta niissä on vielä ongelmia, jotka tarvitsevat huomiotasi."
     merge: 
       bulk_merge: 
+        continue: jatka
         mark_primary: "Merkkaa ensisijaiseksi"
         primary_ticket: "Tämä on ensisijainen tikettisi"
         remove: "Poista tämä tiketti"
@@ -1793,13 +1850,20 @@ fi:
       note: 
         attachment_size: 
           exceed: "Oho! Liitteesi koko on yli 15MB. Ole hyvä ja liitä pienempi tiedosto."
+        created_on: 
+          forward: "%{user_name} edelleenlähetettiin %{note_date}"
+          private_note: "%{user_name} lisäsi yksityisen huomion %{note_date}"
+          public_note: "%{user_name} lisäsi yleisen huomion %{note_date}"
+          reply: "%{user_name}vastasi %{note_date}"
         delete_note: "Haluatko poistaa tämän tikettikeskustelusta?"
         edit_note: "Muokkaa kommenttia"
         inbound_email: "Saapuva sähköposti"
         outbound_email: "Lähtevä sähköposti"
         posted_on: "%{user_name} %{note_date}"
         private_note: "Sisäinen kommentti"
+        private_note_tip: "Piilotettu asiakkaalta"
         public_note: Kommentti
+        public_note_tip: "Näytetään asiakkaalle"
         split_this_as_new_ticket: "Jaa tämä uudeksi caseksi"
         split_ticket_confirm: "Jaetaanko tämä huomautus ja luodaan siitä uusi case?"
       overlay_fwd_time: " edelleenlähetetty, %{time_in_words} sitten"
@@ -1810,9 +1874,40 @@ fi:
         view_ticket: "Näytä case"
       show: 
         conversation: "Keskustelu "
+        due_date: 
+          due: Vanhenee
+          earlier_date_and_time: "Ole hyvä ja anna uusi päivämäärä & aika, joka on uudempi kuin tiketin luomispäivämäärä & -aika"
+          next_week: "Ensi viikolla"
+          set_date_time: "Aseta päivämäärä/aika"
+          specific_date: "Tietty päivämäärä/aika..."
+          this_week: "Tällä viikolla"
+          today: Tänään
+          tomorrow: Huomenna
+          when_is_it_due: "Milloin se vanhenee?"
+        facebook_form: 
+          title: "Vastaa %{user}"
+        forward_form: 
+          addbcc: "Lisää piilokopio"
+          addcc: "Lisää kopio"
+          bcc: Piilokopio
+          cc: Kopio
+          removebcc: "Poista piilokopio"
+          removecc: "Poista kopio"
+        history: 
+          recent_item: "Viimeisimmät kohdat"
         linked_ticket: "Tämä case on linkitetty foorumiin"
         meta: Meta
+        reply_form: 
+          addbcc: "Lisää piilokopio"
+          addcc: "Lisää kopio"
+          bcc: Piilokopio
+          cc: Kopio
+          removebcc: "Poista piilokopio"
+          removecc: "Poista kopio"
+          title: Vastaa
         timesheet: Aikatiedot
+        tweet_form: 
+          title: "Vastaa %{user}"
       tabular_view: 
         assigned: Osoitetut
         posted: Lähetetty
@@ -1870,16 +1965,48 @@ fi:
       index: 
         no_timeentry: "Tällä caselle ei ole kirjattu aikamerkintää"
       new: 
+        hours_format_tip: "Lisää aika "
         title: "Uusi aikamerkintä"
       non_billable: "Ei laskutettava"
       product: Tuote
       report: 
         no_timeentry: "Ei tietoja saatavilla"
         total: Yhteensä
+      sidebar_title: "Seurattu aika"
       ticket: Case
       time_entry: 
         toggle_timer_false: "Pysäytä ajastin"
         toggle_timer_true: "Käynnistä ajastin"
+      v2: 
+        agent: Edustaja
+        billing_type: Laskutustyyppi
+        customer: Asiakas
+        executed_at: Päivämäärä
+        form: 
+          add_entry: "Lisää aikamerkintä"
+          agent: Edustaja
+          billing_hours: Laskutettava
+          hours: Tunnit
+          note: Huomio
+          start_timer: "Käynnistä ajastin"
+          ? "true"
+          : "1"
+        group_by: "Ryhmä "
+        hours: Tunnit
+        index: 
+          add_entry: "Lisää aikamerkintä"
+          no_timeentry: "Ei kirjattuja aikamerkintöjä tälle tiketille"
+          start_timer: "Käynnistä ajastin"
+        new: 
+          title: "Uusi aikamerkintä"
+        note: Huomiot
+        report: 
+          no_timeentry: "Tietoja ei ole saatavilla"
+          total: Yhteensä
+        ticket: Tiketti
+        time_entry: 
+          toggle_timer_false: "Pysäytä ajastin"
+          toggle_timer_true: "Käynnistä ajastin"
   helpdesk_quests: 
     all: Kaikki
     available_quests: "Saatavilla olevat pyynnöt"
@@ -2162,6 +2289,8 @@ fi:
       info1: "Kun Freshdeskin tikettiin linkitetään JIRA-ongelma, suorita alapuolella olevat toiminnot."
       info2: "Kun tiketin tila päivitetään Freshdeskissä"
       info3: "Kun kommentti lisätään Freshdeskissä"
+      info4: "Kun ongelman tila päivitetään JIRASSA"
+      info5: "Kun kommentti lisätään JIRASSA"
       none: "Älä tee mitään."
       send_reply_in_fd: "Ilmoita asiakkaalle sähköpostitse"
       sync_updates: "Synkronoi päivitykset"
@@ -2262,6 +2391,7 @@ fi:
       remember: "Muista minut"
       sign_in_error: "Väärä sähköposti tai salasana."
       sign_in_using: "…tai kirjaudu käyttäen"
+  more: lisää
   myself: Minä
   name: Nimi
   never: "Ei koskaan"
@@ -2287,6 +2417,7 @@ fi:
   non_covered_feature_error: "Tämä toiminto on tällä hetkellä lukittu"
   not_eligible_for_free_plan: "Ei oikeutta valita ilmaista suunnitelmaa"
   not_eligible_for_sprout_plan: "Ei oikeutta valita Verso-suunnitelmaa"
+  not_given: "Ei annettu."
   not_selected: "Ei valittu"
   note: Kommentti
   notified_to: Tiedota
@@ -2319,6 +2450,8 @@ fi:
     article: 
       see_all_articles: "Näe kaikki %{count} artikkelia"
     community_forums: Yhteisöfoorumit
+    folder: 
+      filler_text: "Katso tästä sijainnista artikkeleja, koskien %{folder_name}"
     header: 
       preview_message: "<b>Esikatselutila</b> - <a href='javascript:window.close()'>Klikkaa tästä</a> palataksesi takaisin."
     knowledge_base: Tietotaso
@@ -2326,6 +2459,7 @@ fi:
     login_details: "Syötä kirjautumistietosi, jotka annoit rekisteröinnin yhteydessä"
     login_options: "...tai kirjaudu käyttäen"
     login_portal: "Kirjaudu tukiportaaliin"
+    new_support_ticket: "Uusi tukitiketti"
     no_articles_info_1: "Pahoittelemme, mutta emme ole julkaisseet yhtään artikkelia tässä osiossa."
     no_articles_info_2: "Ole hyvä ja palaa myöhemmin uudelleen. "
     no_forums_info_1: "Ei foorumiaihetta vielä"
@@ -2333,7 +2467,9 @@ fi:
     no_topics_in_this_view: "~ Ei aiheita tässä näkymässä ~"
     or_signup: " tai %{signup} itsellesi tili"
     popular_topics: "Suosituimmat aiheet"
+    reported: raportoi
     reset_password: "Anna meille sähköpostiosoitteesi, niin lähetämme sinulle sähköpostitse ohjeet salasanan palauttamiseen."
+    said: sanoi
     search: 
       filters: 
         all: Kaikki
@@ -2341,21 +2477,41 @@ fi:
         tickets: Tiketit
         topics: Aiheet
       placeholder: "Syötä hakuehtosi tähän..."
+      results_for: "Hakutuloksen haulle"
     showing_recent_updates: "Näytetään uusimmat päivitykset"
     showing_recently_popular_topics: "Näytetään uusimmat suosituimmista aiheista"
     signup: Rekisteröidy
     solutions_home: Ratkaisu-kotisivu
+    submit_new_ticket: "...tai lähetä uusi tiketti"
     tickets: 
+      add_or_remove_emails: "Lisää tai poista kopioitavia sähköposteja, kun tämän tiketin ilmoitus on lähetetty. "
+      add_people: "Lisää henkilö"
+      add_people_title: "Lisää keskusteluun henkilö"
+      details: "Tiketin tiedot"
       export: "Vie tiketit"
       export_ticket_data: "Vie tiketin tiedot CSV:hen"
       export_to_csv: "Vie CSV:hen"
+      mark_closed: "Merkitse tiketti suljetuksi"
+      reopen_reply: "Avaa uudelleen ja vastaa"
+      reply_placeholder: "Klikkaa tästä vastataksesi tähän tikettin"
+      ticket_list: Tikettilista
     to_post_comment: " lähettääksesi kommentin"
     to_post_topic: " lähettääksesi aiheen"
     to_submit_ticket: " jättääksesi uuden tiketin"
     topic: 
+      comment_placeholder: "Klikkaa tästä lisätäksesi kommentin"
       comments_closed: "Tämän keskustelun kommentointi on nyt suljettu!"
+      default_select_option: "Valitse foorumityyppi"
+      follow: Seuraa
+      following: Seurataan
+      last_reply: "Viimeisin vastaus"
+      monitor_topic: "Valvo tätä aihetta"
+      more_topic: "Lisää aiheita"
+      post_topic: "Lähetä aihe"
       see_all_topics: "Näe kaikki %{count} aiheet"
       start_new_topic: "Aloita uusi aihe"
+      started: "aloitti aiheen"
+      topic_title: Aiheotsikko
     topic_vote: 
       howto: 
         one: "on tämä kysymys"
@@ -2477,6 +2633,7 @@ fi:
     ten_minutes: "10 minuuttia"
   preview: Esikatsele
   previous: Edellinen
+  print: Tulosta
   pro_brief: "Suuremmille tiimeille"
   pro_details: "Kaikki \"Basic\"-tuotteen ominaisuudet sekä lisäksi makrojen automatisointi, asiakaskohtaiset palvelutasot (SLA), aukioloajat, keskustelualueet sekä yhteisö- ja sähköpostituki."
   problem: Ongelma
@@ -2491,6 +2648,7 @@ fi:
     confirm_password_message: "Täytyy olla sama kuin salasana"
     current_password: "Tämänhetkinen salasana"
     edit: "Muokkaa profiilia"
+    manage: "Hallitse profiiliasi"
     new_password: "Uusi salasana"
   profile_settings: Profiiliasetukset
   question: Kysymys
@@ -2521,6 +2679,7 @@ fi:
   recent_activity: "Viimeaikaiset tapahtumat"
   recent_forum_posts: "Foorumin viimeisimmät viestit"
   referral: Luottoviite
+  register: Rekisteröi
   remove: Poista
   replied_to: Vastasi
   replies: vastausta
@@ -2625,6 +2784,7 @@ fi:
   save_changes: "Tallenna muutokset"
   save_reply: "Tallenna vastaus"
   save_this_view_tooltip: "Talleta katsominen"
+  saving: Tallennetaan...
   saving_draft: Tallennetaan…
   scenario_label: "Makron tunnus"
   search: 
@@ -2651,6 +2811,7 @@ fi:
   seven_days: "Tämä viikko"
   show_me_how: "Näytä minulle kuinka"
   show_quoted_text: "Näytä lainaus"
+  show_recent: "Näytä viimeisin"
   showing: Näytetään
   sign_in_info: "Kirjaudut sisään "
   signup: <b>Rekisteröidy</b>
@@ -2684,7 +2845,9 @@ fi:
     escalate_to: Eskaloi
     escalation_email: Noususähköposti
     escalation_resolution: "Aseta nousuhierarkia, kun tikettiä ei <b>ratkaista</b> ajallaan"
+    escalation_resolution_text: "Aseta nousuhierarkia, kun tikettiä ei <b>ratkaista</b> ajallaan"
     escalation_response: "Aseta nousuohjeet, kun tikettiin ei <b>vastata</b> ajallaan"
+    escalation_response_text: "Nousuohjeet, kun tikettiin ei <b>vastata</b> ajallaan"
     group_id_placeholder: "Syötä ryhmänimet"
     helpcard: 
       info1: "<p>Palvelutasosopimuksen (SLA) käytäntö antaa sinun asettaa toimenpiteiden standardit tukitiimillesi . Voit asettaa SLA-käytäntöihin missä ajassa edustajan tulisi vastata tikettiin sekä ratkaista tiketit niiden tärkeyden mukaan. Voit valita, että lasketaanko kaikki SLA-ohjeet kalenteritunteihin vai  aukioloaikoihin</p><p> SLA-käytäntöjäsi käytetään Freshdeskissä määrittelemään  jokaisen tiketin \"Toimitusaikaa\". </p>"
@@ -2693,6 +2856,7 @@ fi:
       info_1: "<p>Palvelutasosopimuksen (SLA) käytäntö antaa sinun asettaa toimenpiteiden standardit tukitiimillesi . Voit asettaa SLA-käytäntöihin missä ajassa edustajan tulisi vastata tikettiin sekä ratkaista tiketit niiden tärkeyden mukaan. Voit valita, että lasketaanko kaikki SLA-ohjeet kalenteritunteihin vai  aukioloaikoihin</p><p> SLA-käytäntöjäsi käytetään Freshdeskissä määrittelemään  jokaisen tiketin \"Toimitusaikaa\". </p>"
       info_2: "<p>Voit käyttää useita SLA-käytäntöjä, jotka laukeavat tietyistä tiloista, kuten esimerkiksi tikettiä pyytävästä asiakkaasta, ryhmä jolle tiketti osoitetaan, sen lähde sekä/tai tuote.</p><p>Esimerkiksi, voit asettaa tietyn SLA-käytännön, jos tiketit tulevat Twitterin kautta ja ne osoitetaan myyntitiimille. Tai sinulla voi olla tietty käytäntö asiakkaille, joilla on korkeamman tason tilaus sinulta. Jos tuet useita tavaramerkkejä tai tuotteita, voit käyttää jokaiselle tuotteelle erilaisia SLA-käytäntöjä. </p><p><strong>SLA-ohjeiden järjestys on tärkeää.</strong> Sitä SLA-ohjetta käytetään ensimmäisenä, joka täyttää kaikki tiketin tilat, joten muistathan sijoittaa tärkeimmät ohjeesi ensimmäisten joukkoon</p>"
       info_3: "<p>Voit vaihtoehtoisesti asettaa nousuhierarkiat jokaiseen käytäntöön, ilmoittaaksesi tietyille edustajille, kun SLA-ohjetta rikotaan.</p>"
+      sla_info_2: "<p>Voit käyttää useita SLA-käytäntöjä, jotka laukeavat tietyistä tiloista, kuten esimerkiksi tikettiä pyytävästä asiakkaasta, ryhmä jolle tiketti osoitetaan, sen lähde sekä/tai tuote. </p><p>Esimerkiksi, voit asettaa tietyn SLA-käytännön, jos tiketit tulevat Twitterin kautta ja ne osoitetaan myyntitiimille. Tai sinulla voi olla tietty käytäntö asiakkaille, joilla on korkeamman tason tilaus sinulta. Jos tuet useita tavaramerkkejä tai tuotteita, voit käyttää jokaiselle tuotteelle erilaisia SLA-käytäntöjä. </p><p><strong>SLA-käytäntöjen järjestys on tärkeää. </strong> Sitä SLA-käytäntöä käytetään ensimmäisenä, joka täyttää kaikki tiketin tilat, joten muistathan sijoittaa tärkeimmät ohjeesi ensimmäisten joukkoon</p>"
       title: SLA-käytäntö
       title1: "Aseta voimaan nousuohjeet"
       title2: "Käytetään useita SLA-käytäntöjä"
@@ -2948,6 +3112,7 @@ fi:
   ticket: 
     activities: Toimenpiteet
     activity: Tapahtumat
+    activity_toggle: "Näytä aktiivisuudet"
     add_note: "Lisää huomautus"
     add_time: "Lisää aika"
     agent: Edustaja
@@ -2979,6 +3144,7 @@ fi:
     delete_btn: Poista
     delete_btn_title: "Siirrä case roskapostiin"
     delete_forever: "Poista lopullisesti"
+    deleted: ROSKAKORI
     due_by: Myöhässä
     due_by_time: Deadline
     edit: "Muokkaa casea"
@@ -2986,6 +3152,7 @@ fi:
     edit_note: "<b>Muokkaa huomiota</b>"
     empty_trash: "Tyhjennä roskat"
     execute_scenario: "Suorita makro"
+    expand: Laajenna
     export: Vie
     facebook_form: 
       send: Lähetä
@@ -2998,8 +3165,12 @@ fi:
     id: Tunnus
     id_placeholder: "Löytääksesi tiketin, kirjoita sen tunnus"
     inbound_count: "Asiakkaan toimenpiteiden määrä"
+    include_quoted_text: "Sisällytä aikaisemmat vastaukset"
+    insert: Lisää
     integrations: 
       jira: 
+        add_new: "Linkitä ongelma"
+        existing: "Katso ongelmaa"
         tooltip: "Näytä liittyvä JIRA-ongelma"
     merge_btn: Yhdistä
     merge_ticket_list_status_agent_responded_at: "Lähettäjä:: %{username}<br /> Edustaja vastasi: <span class='emphasize'>%{time_ago} sitten </span>"
@@ -3009,7 +3180,9 @@ fi:
     merge_ticket_list_status_resolved_at: "Lähettäjä:: %{username}<br /> Ratkaistu: <span class='emphasize'>%{time_ago} sitten</span>"
     merge_title: "Yhdistä tiketit"
     monitor_btn_title: "Seuraa tätä casea"
+    more_details: Lisätietoja...
     myself: Itselleni
+    next: "Seuraava tiketti"
     none: "Ei yhtään"
     note_content: "Muistiinpanon sisältö"
     note_form: 
@@ -3023,6 +3196,7 @@ fi:
     pick_up: "Poimi itselle"
     portal_created_on: "Luonut <span class='emphasize'>%{username}</span> <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Luotu <span class='emphasize'>%{date}</span>"
+    previous: "Aikaisempi tiketti"
     priority: Prioriteetti
     properties: "Casen asetukset"
     recent_tickets: "Viimeaikaiset caset"
@@ -3032,6 +3206,7 @@ fi:
       reply_email_id: "Lähetä vastaus osoitteella"
       send: Lähetä
       send_and_resolve: "Lähetä ja ratkaise"
+      send_and_set_as: "Lähetä ja aseta <strong>%{status}</strong>"
       send_satisfaction_survey: "Lisää tyytyväisyyskysely"
     reply_to: Vastaa
     reported_by: "asiakkaalta %{requester}"
@@ -3048,6 +3223,7 @@ fi:
     singular: Case
     sort_by: Lajittele
     source: Lähde
+    spam: ROSKAPOSTI
     spam_btn_title: "Merkitse roskapostiksi"
     split_ticket: Jako
     status: Tila
@@ -3058,15 +3234,22 @@ fi:
     submit_ticket_title: "Lähetä case"
     suggest_solutions: "Ehdota artikkeleita"
     suggested_solutions: 
+      content: Sisältö
       insert_content: "Lisää sisältöä"
       insert_content_tip: "Lisää tämä artikkeli vastaukseesi tai kommenttiisi"
       insert_url: "Lisää osoite"
       insert_url_tip: "Lisää tämän artikkelin osoite vastaukseesi tai kommenttiisi"
+      link: Linkki
       no_result: "Ei artikkeleita"
       title: "Ehdotetut artikkelit"
     support: 
       reply: Vastaa
       reply_and_open: "Vastaa & avaa uudelleen"
+    switch_view: 
+      new_view: "Kokeile <strong>uuden tiketin näkymää</strong>"
+      revert_view: "Vaihda klassiseen näkymään"
+      submit_feedback: "Lähetä palautetta"
+      whats_new: "Mitä uutta"
     tags: 
       add_tag: "Lisää tagi"
       create_success: "Tagi on lisätty"
@@ -3095,6 +3278,8 @@ fi:
     unassigned: Antamattomat
     unflag_spam: "Ei roskapostia"
     unwatch: "Poista tarkkailulistalta"
+    update_done: Valmis
+    updating: Päivitetään
     verify_human: "Kirjoita kuvassa näkyvät kirjaimet"
     view_twitter: "Katso Twitterissä"
   ticket_cancel_multiple_button: Keskeytä
@@ -3179,6 +3364,8 @@ fi:
     saving_ticket: "Tallennetaan tikettikenttiä..."
     second_choice: "Toinen valinta"
     untitled: "Nimetön "
+  ticket_future_due_by: "Vanhenee %{time} sisällä"
+  ticket_past_due_by: "Vanheni %{time} sitten"
   ticket_pending_since_time: "Odottanut tästä saakka:"
   ticket_resolved_at_time: "Ratkaistu:"
   ticket_update_multiple_button: Päivitä
@@ -3281,6 +3468,7 @@ fi:
     choose_another_photo: "Valitse toinen kuva"
     company: Yritys
     email: Sähköposti
+    facebook: Facebook
     full_name: "Koko nimi"
     info1: "Käyttäjän profiilikuva. Suosittelemme, että kuva on yhtä korkea kuin leveä."
     mobile: Matkapuhelin

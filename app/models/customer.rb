@@ -24,9 +24,9 @@ class Customer < ActiveRecord::Base
     { :conditions => [ "domains like ?", "%#{domain}%" ] } if domain
   }
 
-  after_commit_on_create :map_contacts_to_customers, :clear_cache
-  after_commit_on_destroy :clear_cache
-  after_commit_on_update :clear_cache
+  after_commit_on_create :map_contacts_to_customers, :clear_cache, :update_es_index
+  after_commit_on_destroy :clear_cache, :remove_es_document
+  after_commit_on_update :clear_cache, :update_es_index
   after_update :map_contacts_on_update, :if => :domains_changed?
    
   #Sphinx configuration starts
@@ -50,7 +50,6 @@ class Customer < ActiveRecord::Base
   
   before_create :check_sla_policy
   before_update :check_sla_policy
-  after_commit :update_es_index
   
   has_many :tickets , :through =>:users , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id"
   
@@ -106,9 +105,10 @@ class Customer < ActiveRecord::Base
 
   private
     def map_contacts_on_update
-      domain_changes = self.changes["domains"]
-      domain_changes[0].split(",").map { |domain| domain_changes[1].gsub!( /(^#{domain}\s?,)|(,?\s?#{domain})/, '') }
-      map_contacts_to_customers(domain_changes[1])
+      domain_changes = self.changes["domains"].compact
+      domain_changes[0].split(",").map { |domain| 
+                    domain_changes[1].gsub!( /(^#{domain}\s?,)|(,?\s?#{domain})/, '') } if domain_changes[1]
+      map_contacts_to_customers(domain_changes[1].blank? ? domain_changes[0] : domain_changes[1])
     end
 
     def map_contacts_to_customers(domains = self.domains)

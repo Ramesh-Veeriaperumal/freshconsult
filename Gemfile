@@ -27,7 +27,7 @@ gem "omniauth-constantcontact2", "~> 1.0.4"
 gem "nori", "1.1.4"
 
 gem "jira4r", "0.3.0"
-gem "ruby-openid", "2.1.8", :require => "openid"
+gem "ruby-openid", :git => "git://github.com/freshdesk/ruby-openid.git", :require => "openid"
 gem "ruby-openid-apps-discovery", "1.2.0"
 
 gem "aws-s3", "0.6.2", :require => "aws/s3"
@@ -85,12 +85,16 @@ gem "xss_terminate", "~> 0.2"
 gem "rack-throttle", "~> 0.3.0"
 
 group :development,:test do
-   #gem "rspec", "1.3.1"
-   #gem "thoughtbot-shoulda","2.10.2"
-   #gem "rspec-rails", "1.3.3"
    gem "forgery","0.5.0"
    gem "factory_girl", "1.2.3" 
    gem "mongrel" 
+end
+
+group :test do
+   gem "rspec", "1.3.1"
+   gem "rspec-rails", "1.3.3"
+   gem "spork", "~> 0.8.0"
+   gem "mocha", "~> 0.13.3"
 end
 
 group :assets do

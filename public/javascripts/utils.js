@@ -27,6 +27,8 @@ function catchException(fn, message) {
   }
 }
 
+
+
 function freshdate(str) {
   var month_names = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   var d =  parseUTCDate(str);
@@ -401,8 +403,8 @@ active_dialog = null;
  }; 
 
  $(document).bind('mousedown', function(e) {       
-	if($(e.target).hasClass("chzn-results")) return;
-  if ($(e.target).parent().is(".fd-ajaxmenu, .fd-ajaxmenu .contents")) { return };
+	 if($(e.target).hasClass("select2-choice") || $(e.target).hasClass("item-in-menu")) return;
+  if ($(e.target).parents().is(".fd-ajaxmenu, .fd-ajaxmenu .contents, .profile_info, .select2-container")) { return };
     if($(this).data("active-menu")){
       if(!$(e.target).data("menu-active")) hideActiveMenu();
       else setTimeout(hideActiveMenu, 500);         

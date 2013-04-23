@@ -10,7 +10,7 @@ class Agent < ActiveRecord::Base
   
   validates_presence_of :user_id
   
-  attr_accessible :signature_html, :user_id , :ticket_permission, :occasional
+  attr_accessible :signature_html, :user_id , :ticket_permission, :occasional, :available
   
   
   has_many :agent_groups, :class_name => 'AgentGroup', :through => :user , 
@@ -87,6 +87,12 @@ def self.filter(page, state = "active", per_page = 20)
   paginate :per_page => per_page, :page => page,
            :include => [ {:user => :avatar} ], 
            :conditions => { :users => { :deleted  => !state.eql?("active") } }
+end
+
+#This method returns true if atleast one of the groups that he belongs to has round robin feature
+def in_round_robin?
+  return self.agent_groups.count(:conditions => ['ticket_assign_type = ?', 
+          Group::TICKET_ASSIGN_TYPE[:round_robin]], :joins => :group) > 0
 end
 
 protected

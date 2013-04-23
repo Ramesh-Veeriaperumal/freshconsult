@@ -807,6 +807,7 @@ en:
     edit: Edit Forum
     title: Forums
     start_topic: Start a Topic
+    forum_created: The forum has been created.
     visibility:
       anyone: Anyone
       logged_users: Logged In Users
@@ -1502,9 +1503,11 @@ en:
   group: 
     new: New Group
     name: Group Name
+    description: Group description
     edit: Edit Group
     title: Groups
-    info1: Agents in this Group
+    ticket_assignment: Automatic Ticket Assignment
+    info1: Agents
     info2: No Agents in this group
     info3: Send an Escalation email to
     info4: if a ticket remains un-assigned for more than
@@ -1514,6 +1517,9 @@ en:
     tour: Help me create a new agent group
     helptext: You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, set email notifications, create business rules and generate reports at the group level. Note that the same agent can be a member of multiple groups as well. 
     select_agents: Select Agents
+    select_an_agent: Select Agent
+    learn_more: Learn more 
+    round_robin_desc: "Once turned ON, tickets assigned to this group will be distributed among agents in round robin fashion. If you wish to manually assign tickets or dispatch them using the Dispatch'r or Supervisor automations, you can turn this OFF. "
     assigntime:
       half: 30 Minutes
       one: 1 Hour
@@ -2002,6 +2008,8 @@ en:
     help_center: "How can we help you today?"
     new_support_ticket: "New support ticket"
     check_ticket_status: "Check ticket status"
+    user_available: "New tickets will be auto-assigned to you."
+    user_not_available: "New tickets will NOT be auto-assigned to you."
     tabs:
       reports: Reports
       dashboard: Dashboard
@@ -2624,6 +2632,7 @@ en:
         watcher_text: Agents added as watchers receive email alerts when the ticket is updated
         unwatch: Unwatch
         pick_agents: Add agents
+        add_agent: Enter agent's name
         all_agents_watching: All agents are watching this ticket
         mail:
           hi: Hi
@@ -3461,7 +3470,7 @@ en:
   identity_reverted_error_msg: "Sorry, we couldn't find your original user."
   assume_identity_button: "Assume Identity"
   revert_identity_link_msg: "Revert Identity"
-  swith_agent_msg: "Switch to Another Agent"
+  swith_agent_msg: "Switch Agent"
   switch_heading: "Switch Agent"
   email_notifications_agent_selection_msg: "Select agents to notify"
   on_hold: "On Hold"
