@@ -86,7 +86,9 @@ class SubscriptionsController < ApplicationController
       @subscription.free_agents = @subscription_plan.free_agents
       
       begin
-        billing_subscription.update_subscription(@subscription, !no_prorate?)
+        unless current_account.subscription.chk_change_agents
+          billing_subscription.update_subscription(@subscription, !no_prorate?)
+        end
       rescue Exception => e
         flash[:notice] = t('payment_failed')
         redirect_to subscription_url and return

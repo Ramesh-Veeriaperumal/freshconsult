@@ -189,21 +189,25 @@ class Subscription < ActiveRecord::Base
       end
     end
     
-    def chk_change_billing_cycle
-      if renewal_period and (account.subscription.renewal_period > renewal_period) and paid_account? and (trial_days > 30)
-        errors.add_to_base("You can't downgrade to lower billing cycle")
-      end
-    end
+    # def chk_change_billing_cycle
+    #   if renewal_period and (account.subscription.renewal_period > renewal_period) and paid_account? and (trial_days > 30)
+    #     errors.add_to_base("You can't downgrade to lower billing cycle")
+    #   end
+    # end
     
     def cache_old_model
       @old_subscription = Subscription.find id
     end
     
     def validate_on_update
-      chk_change_billing_cycle
+      # chk_change_billing_cycle
+      chk_change_agents       
+    end
+
+    def chk_change_agents 
       if(agent_limit && agent_limit < account.full_time_agents.count)
        errors.add_to_base(I18n.t("subscription.error.lesser_agents", {:agent_count => account.full_time_agents.count}))
-      end         
+      end  
     end
 
     def available_free_agents
