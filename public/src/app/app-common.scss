@@ -5345,6 +5345,7 @@ a.close{
 	.user{
 		margin:0; 
 		background:#eee;  
+		@include border-radius(5px);
 		span{
 			position:relative;
 		 	top:7px; 
