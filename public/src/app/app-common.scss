@@ -10016,3 +10016,12 @@ div.gcal-confirm-modal-content{ width: 100%; }
     75%  { -moz-transform: rotate(360deg); }
     100% { -moz-transform: rotate(180deg); }
 }
+
+
+// To be removed when Classic Tkt View is removed - !V2
+.fields .helpdesk_note_notify_agents {
+	width: 100%;
+	li.select2-search-choice {
+		width: auto;
+	}
+}

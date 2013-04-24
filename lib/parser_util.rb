@@ -16,27 +16,37 @@ VALID_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/
     emails.map { |email| parse_email_text(email)[:email] }.join(", ") 
   end
 
-  def scan_for_valid_email(email)
-    if (email =~ /<(.+?)>/) 
-      email 
-    else 
-      email.scan(VALID_EMAIL_REGEX).uniq[0]
+  def fetch_valid_emails(addresses)
+    if addresses.is_a? String
+      addresses = addresses.split(/,|;/)
     end
-  end
+     
+    addresses = addresses.collect do |address|
+      next if address.blank?
+      address = address.gsub('"','').gsub("'",'')
 
-  def fetch_valid_emails email_array
-    unless email_array.blank?
-      if email_array.is_a? String
-        email_array = email_array.split(/,|;/)
-      end
-      email_array = email_array.collect do |email|  
-        scanned_email = scan_for_valid_email(email)
-        scanned_email.strip if scanned_email
-      end
-      email_array = email_array.compact.uniq
-    else
-      email_array = []
+      matches = address.strip.scan(/(\w[^<\>]*)<(\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,10}\b)\>\z|\A<!--?((\b[A-Z0-9._%+-]+)@[A-Z0-9.-]+\.[A-Z]{2,10}\b)-->?\z/i)
+      
+      if matches[0] && matches[0][1]
+        email = matches[0][1]
+        name = matches[0][0]
+      elsif matches[0] && matches[0][2]
+        email = matches[0][2]
+        name = matches [0][3]
+      else
+        # Validating plain email addresses,
+        simple_email_regex = /\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}\b/
+        simple_email  = address.scan(simple_email_regex)
+        if simple_email
+          email = simple_email[0]
+          name = ""
+        end
     end
+      unless email.blank? and name.blank?
+        "#{name.gsub(/\./, ' ').strip} <#{email.downcase.strip}>".strip
+      end
+    end
+    addresses.compact.uniq
   end
 
   def validate_emails(email_array, ticket = @parent)
