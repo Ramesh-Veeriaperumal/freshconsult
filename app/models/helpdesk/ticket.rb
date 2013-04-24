@@ -861,13 +861,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def custom_field= custom_field_hash
-    @custom_field = custom_field_hash
+    @custom_field = new_record? ? custom_field_hash : nil
     assign_ff_values custom_field_hash unless new_record?
   end
 
-  def set_ff_value field, arg
-    custom_field[field] = arg
-    flexifield.set_ff_value field, arg
+  def set_ff_value ff_alias, ff_value
+    @custom_field = nil
+    flexifield.set_ff_value ff_alias, ff_value
   end
 
 # flexifield - custom_field syncing code ends here
@@ -1366,6 +1366,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       build_flexifield
       self.ff_def = FlexifieldDef.find_by_account_id_and_module(self.account_id, 'Ticket').id
       assign_ff_values custom_field
+      @custom_field = nil
     end
 
     def assign_email_config_and_product
