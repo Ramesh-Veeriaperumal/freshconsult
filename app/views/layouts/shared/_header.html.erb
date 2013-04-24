@@ -24,7 +24,7 @@
   			end
   		%>
 	  		<a href="#" id="availabilty-toggle" class="tooltip" data-placement="below"  
-	  		title="<%= availabilty_tooltip %>" >
+	  		title="<%= availabilty_tooltip %>" data-html="true">
 	  			<img alt="" height="35px" src="/images/spacer.gif" class="header-icons-autoAssign-<%= current_user.available? ? "on" : "off" %>" id="available_icon" onclick="toggleAgent()">
 	  		</a>
 	  	<% end %>
