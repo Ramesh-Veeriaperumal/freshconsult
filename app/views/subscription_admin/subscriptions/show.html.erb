@@ -20,9 +20,9 @@
 		  </tr>
 		  <tr>
 		    <th>Non-Active Agents</th>
-        <%= @subscription.account.technicians.active(false).each do |agent| %>
+        <% @subscription.account.technicians.active(false).each do |agent| %>
 		      <td> <%= agent.email %> </td>
-        <%= end %>
+        <% end %>
 		  </tr>
 		  <tr>
 		    <th>Monthly Revenue</th>
