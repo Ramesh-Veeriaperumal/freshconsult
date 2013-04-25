@@ -950,7 +950,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def to_json(options = {}, deep=true)
-    options[:methods] = [:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name] unless options.has_key?(:methods)
+    options[:methods] = [:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name,:to_emails] unless options.has_key?(:methods)
     unless options[:basic].blank? # basic prop is made sure to be set to true from controllers always.
       options[:only] = [:display_id,:subject,:deleted]
       json_str = super options
@@ -984,6 +984,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     super(:builder => xml, :skip_instruct => true,:include => ticket_attributes, :except => [:account_id,:import_id], 
       :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name]) do |xml|
+      xml.to_emails do
+        self.to_emails.each do |emails|
+          xml.tag!(:to_email,emails)
+        end
+      end
       xml.custom_field do
         self.account.ticket_fields.custom_fields.each do |field|
           begin
