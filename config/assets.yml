@@ -40,6 +40,10 @@ stylesheets:
   preview:
     - public/stylesheets/portal/preview.css
 
+  widget:
+    - public/stylesheets/app/common.css
+    - public/stylesheets/app/ie.css
+
   freshwidget:
     - public/stylesheets/freshwidget.css
 
@@ -248,4 +252,4 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.validate.js      
     - public/javascripts/utils.js
     - public/javascripts/hackz.js
-    - public/javascripts/getting_started.js    
+    - public/javascripts/getting_started.js
