@@ -17,7 +17,7 @@ class SubscriptionsController < ApplicationController
 
   ssl_required :billing
 
-  NO_PRORATION_PERIOD_CYCLES = [1, 3]
+  NO_PRORATION_PERIOD_CYCLES = [ 1 ]
 
   ACTIVE = "active"
 
@@ -87,7 +87,7 @@ class SubscriptionsController < ApplicationController
       
       begin
         unless current_account.subscription.chk_change_agents
-          billing_subscription.update_subscription(@subscription, !no_prorate?)
+          billing_subscription.update_subscription(@subscription, prorate?)
         end
       rescue Exception => e
         flash[:notice] = t('payment_failed')
@@ -164,9 +164,9 @@ class SubscriptionsController < ApplicationController
       end 
     end
 
-    def no_prorate?
-      @cached_subscription.active? and (@subscription.total_amount < @cached_subscription.amount) and 
-        NO_PRORATION_PERIOD_CYCLES.include?(@cached_subscription.renewal_period)
+    def prorate?
+      !(@cached_subscription.active? and (@subscription.total_amount < @cached_subscription.amount) and 
+        NO_PRORATION_PERIOD_CYCLES.include?(@cached_subscription.renewal_period))
     end
 
 end 
