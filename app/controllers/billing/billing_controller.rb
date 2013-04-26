@@ -83,7 +83,8 @@ class Billing::BillingController < ApplicationController
 
     def subscription_info(subscription, customer)
       {
-        :subscription_plan => SubscriptionPlan.find_by_name(subscription_plan(subscription[:plan_id])),
+        :subscription_plan => subscription_plan(subscription[:plan_id]),
+        :day_pass_amount => subscription_plan(subscription[:plan_id]).day_pass_amount,
         :renewal_period => billing_period(subscription[:plan_id]),
         :agent_limit => subscription[:plan_quantity],
         :state => subscription_state(subscription, customer),
@@ -92,6 +93,10 @@ class Billing::BillingController < ApplicationController
     end
 
     def subscription_plan(plan_code)
+      SubscriptionPlan.find_by_name(helpkit_subscription_plan(plan_code))
+    end
+
+    def helpkit_subscription_plan(plan_code)
       SubscriptionPlan::SUBSCRIPTION_PLANS[Billing::Subscription.helpkit_plan[plan_code].to_sym]
     end
 
@@ -128,8 +133,7 @@ class Billing::BillingController < ApplicationController
     end
 
     def subscription_activated(content)
-      puts "HI!!!!!!"
-      puts @account.subscription.update_attributes(@subscription_data)
+      @account.subscription.update_attributes(@subscription_data)
     end
 
     def subscription_renewed(content)
@@ -137,7 +141,7 @@ class Billing::BillingController < ApplicationController
     end
 
     def subscription_cancelled(content)
-      @account.subscription.update_attributes(@subscription_data)
+      @account.subscription.update_attribute(state, SUSPENDED)
     end
 
     def subscription_reactivated
