@@ -141,7 +141,7 @@ class Billing::BillingController < ApplicationController
     end
 
     def subscription_cancelled(content)
-      @account.subscription.update_attribute(state, SUSPENDED)
+      @account.subscription.update_attribute(:state, SUSPENDED)
     end
 
     def subscription_reactivated
