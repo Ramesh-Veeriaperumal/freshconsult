@@ -121,9 +121,9 @@ class Billing::BillingController < ApplicationController
 
     def next_billing(subscription)
       if (renewal_date = subscription[:current_term_end])
-        Time.at(renewal_date).to_datetime.to_s(:db)
+        Time.at(renewal_date).to_datetime.utc
       else
-        Time.at(subscription[:trial_end]).to_datetime.to_s(:db)
+        Time.at(subscription[:trial_end]).to_datetime.utc
       end
     end
 
