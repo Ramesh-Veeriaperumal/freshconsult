@@ -3,6 +3,6 @@
 			<%= check_box_tag ('ids[]', h(ca_response.id)) %>
 	</td>
 	<td class="response-table">
-		<%= link_to(h(ca_response.title), edit_admin_canned_responses_folder_response_path(ca_response.folder_id, ca_response.id), :class => "custom-tip-left", :title => truncate(ca_response.content, :length => 200), "data-tip-classes" => 'ui-tooltip-response', "data-placement" => "below" )%>								
+		<%= link_to(h(ca_response.title), edit_admin_canned_responses_folder_response_path(ca_response.folder_id, ca_response.id), :class => "custom-tip-left", :title =>CGI.escapeHTML(h(truncate(ca_response.content, :length => 200))), "data-tip-classes" => 'ui-tooltip-response', "data-placement" => "below" )%>								
 	</td>
 </tr>
