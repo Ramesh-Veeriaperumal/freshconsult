@@ -57,7 +57,7 @@ class Billing::Subscription
   def calculate_estimate(subscription)
     data = subscription_data(subscription).merge(:id => subscription.account_id) 
     
-    unless ChargeBee::Subscription.retrieve(subscription.account_id).status == "cancelled"
+    unless ChargeBee::Subscription.retrieve(subscription.account_id).subscription.status == "cancelled"
       attributes = { :subscription => data, :end_of_term => true }
     else
       attributes = { :subscription => data }
