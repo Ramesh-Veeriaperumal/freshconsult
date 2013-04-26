@@ -204,11 +204,12 @@
       });
 	  });
 
+  jQuery('#form_tweet').validate();
   jQuery('#tweet_text_area').NobleCount('#SendTweetCounter', { on_negative : "error", in_dom: true }); 	  
 <%- end %> 
 
 <div id="tweet_form" style="display:none;">  
-  <% form_remote_tag :url => { :action => "send_tweet" }, :html => { :class => "uniForm" } do %>
+  <% form_remote_tag :url => { :action => "send_tweet" }, :html => { :class => "uniForm", :id => "form_tweet" } do %>
   <div class="dialog-special">
    <div class="content">
     <table>

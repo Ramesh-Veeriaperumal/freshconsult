@@ -1,8 +1,9 @@
 // Here is where you can define your constants for your application and to configure the blueprint framework.
 // Feel free to delete these if you want keep the defaults:
 @import "susy";
-@import "mixins";
+@import "animations";
 @import "compass";
+@import "mixins";
 
 $blueprint-liquid-grid-columns: 24;
 $blueprint-liquid-grid-width: 3.167%;
@@ -64,11 +65,3 @@ $break-desktop:		60em 12;
 $break-large:		75em 16;
 
 $container-width: 	1140px; 
-
-// Sprite sheet creation
-// --------------------------------------------------
-
-/* Sprite variables used inside the sheet */
-$symbol: sprite-map("symbols/*.png");
-$ticketicon: sprite-map("ticket-icon/*.png");
-$icons: sprite-map("icons/*.png");

@@ -5,8 +5,7 @@
   <%= f.error_messages %>
   <% current_portal.customer_editable_ticket_fields.each do |field| %>
     <div class="control-group">
-      <%= ticket_label :helpdesk_ticket, field %>
-      <%= ticket_form_element :helpdesk_ticket, field %>
+      <%= ticket_field_container :helpdesk_ticket, field %>
     </div>
   <% end %>
      

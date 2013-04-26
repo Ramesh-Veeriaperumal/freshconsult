@@ -10,6 +10,7 @@ class PortalDrop < BaseDrop
 
   def context=(current_context)
     @current_tab = current_context['current_tab']
+    @current_page = current_context['current_page_token']
     @context = current_context
     
     super
@@ -94,6 +95,10 @@ class PortalDrop < BaseDrop
 
   def current_tab
     @current_tab ||= @current_tab
+  end
+
+  def current_page
+    @current_page ||= @current_page
   end
 
   def tabs

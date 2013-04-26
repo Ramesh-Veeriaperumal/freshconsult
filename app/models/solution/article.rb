@@ -114,13 +114,16 @@ class Solution::Article < ActiveRecord::Base
           end
 
           item.results.each_with_hit do |result,hit|
-            hit['highlight'].keys.each do |i|
-              result[i] = hit['highlight'][i].to_s
+            unless result.blank?
+              hit['highlight'].keys.each do |i|
+                result[i] = hit['highlight'][i].to_s
+              end
             end
           end
           item.results
         rescue Exception => e
           NewRelic::Agent.notice_error(e)
+          []
         end
     else
       ThinkingSphinx.search(search_by, :with => { :account_id => ticket.account.id },

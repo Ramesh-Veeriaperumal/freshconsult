@@ -3,7 +3,7 @@ require 'tempfile'
 require 'test/unit'
 
 require 'shoulda'
-require 'mocha'
+require 'mocha/api'
 
 require 'active_record'
 require 'active_record/version'

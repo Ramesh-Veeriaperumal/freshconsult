@@ -48,7 +48,7 @@
                   <td><%= record.cmrr.abs %></td>
                 <% end %>
 
-                <td><%= record.created_at.strftime("%b %d, %Y") %></td>
+                <td><%= record.code.eql?(200) ? record.updated_at.strftime("%b %d, %Y") : record.created_at.strftime("%b %d, %Y")%> </td>
                 <td><%= record.account.created_at.strftime("%b %d, %Y") %></td>
               </tr>    
 

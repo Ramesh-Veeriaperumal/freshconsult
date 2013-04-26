@@ -4,13 +4,19 @@
   </div>
   <div class="list_agents_replying" class="hide"></div>
   <input type="hidden" value="<%= @ticket.requester.twitter_id %>" id="requester_twitter_handle" />
-  <% form_for note, :html => {:multipart => true,  :id => "HelpdeskFbComment" } do |f| %>
+  <% form_for note, :html => {
+                        :multipart => true,  
+                        :id => "HelpdeskFbComment",
+                        "data-panel" => cntid,
+                        "data-show-pseudo-reply" => 'true',
+                        "data-fetch-latest" => 'true',
+                        "data-cnt-id" => cntid  } do |f| %>
     <%= f.error_messages %>
     <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
     <%= hidden_field_tag :fb_post, "true", :id => "fb_comment" %>
     <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"]%>          
     <%= f.hidden_field :private , :value => "false" %>
-    <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>:fb_ticket_status  )%>
+    <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=> "reply_ticket_status_#{cntid}"  )%>
 
     <ul class="ui-form dont-validate">
       <li class="inline-field field">
@@ -34,14 +40,14 @@
             <span class="caret"></span>
           </a>
         </a>
-        <ul class="dropdown-menu">
+        <ul class="dropdown-menu custom_statuses">
           <%
           ticket_statuses = current_account.ticket_status_values.reject{|status| status.status_id == 2 }
           %>
           <% ticket_statuses.each do |status| %>
           <li>
             <a href="#" rel="custom-reply-status" data-status-name='<%= status.name %>' data-cnt-id='<%=cntid%>' data-status-val='<%= status.status_id %>' >
-              &amp; Set as <%= status.name %>
+              <%= t('ticket.reply_form.send_and_set_as', {:status => status.name}) %>
             </a>
           </li>
           <% end %>

@@ -31,7 +31,7 @@ class Subscription < ActiveRecord::Base
   after_update :add_to_crm, :if => :free_customer?
   after_update :notify_totango, :if => :free_customer?
 
-  after_update :add_subscription_event
+  after_commit_on_update :add_subscription_event
   before_destroy :add_churn
 
   attr_accessor :creditcard, :address, :billing_cycle
