@@ -6,7 +6,7 @@ note = activity[:is_note] ? @prefetched_notes[activity[:stack].first.note_id] : 
 <% else %>
 <li class="conversation activity <%= 'hide' if activity[:important][:type] == 'new_ticket' %>">
 	<%= link_to user_avatar(activity[:user]), activity[:user], :class => 'avatar-wrap'  if activity[:user] %>
-	<div class="commentbox <%= 'commentbox-gray' if activity[:user].blank? or activity[:user].agent? %>">
+	<div class="commentbox <%= (activity[:user].blank? or activity[:user].agent?) ? 'commentbox-gray' : 'commentbox-requester' %>">
 		<div class="tag">
 			<%= t('activities.tag.' + activity[:important][:type], {:value => activity[:important][:value]} ) %>
 		</div>

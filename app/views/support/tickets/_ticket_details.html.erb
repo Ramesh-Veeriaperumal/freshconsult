@@ -8,13 +8,14 @@
 				<% if field.visible_in_view_form? %>					
 					<% if field.editable_in_portal %>
 						<% edit_field_present = true %>
-						<%= ticket_label :helpdesk_ticket, field %>
-						<%= ticket_form_element :helpdesk_ticket, field, ticket_field_form_value(field, @ticket) %>
+						<%= ticket_field_container :helpdesk_ticket, field, ticket_field_form_value(field, @ticket) %>
 					<% elsif field.visible_in_portal %>
 						<% field_value = ticket_field_display_value(field, @ticket) %>						
 						<% if field_value.present? %>
 							<%= ticket_label :helpdesk_ticket, field %>
-							<div class="lead-small"><%= field_value %></div>
+							<div class="lead-small">
+								<%= field_value %>
+							</div>
 							<% if field.field_type == "nested_field" %>
 								<div class="tabbed">
 									<% field.nested_ticket_fields.each do |ff|%>

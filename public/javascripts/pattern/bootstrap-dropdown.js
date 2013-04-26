@@ -22,6 +22,7 @@
 
   "use strict"; // jshint ;_;
 
+  if($.fn.dropdown) return
 
  /* DROPDOWN CLASS DEFINITION
   * ========================= */

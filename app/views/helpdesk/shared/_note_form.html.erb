@@ -28,25 +28,9 @@
                		 <%= t("ticket.note_form.notify_agents") %>:
            		 </label>
             <div class="fields">
-                <% content_for :onload_script do -%>
-				        function agent_lookup(searchString, callback) { 
-                    new Ajax.Request('<%= agent_autocomplete_helpdesk_authorizations_path %>?v='+searchString, 
-                                                              { parameters: {name: searchString, rand: (new Date()).getTime()},
-                                                              onSuccess: function(response) {
-                                                                var choices = $A();
-                                                                response.responseJSON.results.each(function(item){
-                                                                  choices.push([item.value +" <"+item.id+">", item.value +" <"+item.id+">" ]);
-                                                                });                                                
-                                                                callback(choices);
-                                                              } });
-                                                            }
-                  var agent_cachedBackend = new Autocompleter.Cache(agent_lookup, {searchKey: 0, choices: 10});
-                  var agent_cachedLookup = agent_cachedBackend.lookup.bind(agent_cachedBackend);
-				
-	               new Autocompleter.MultiValue("notify_emails", agent_cachedLookup, $A(), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
-
-                <%- end %>
-                <input type="text" id="notify_emails" name="helpdesk_note[to_emails]" />
+                <%= select_tag "helpdesk_note[to_emails]", 
+                          options_for_select(current_account.agents.map { |agent| "#{agent.user.name} <#{agent.user.email}>" }), 
+                          :multiple => true, :class => 'select2 helpdesk_note_notify_agents', "data-placeholder" => 'Select agents to notify' %>
             </div>
 		</li>
 	    </li>	
@@ -54,7 +38,7 @@
     </ul> 
     <div class="button-container">
     	<%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton special") %>
-    	<%= submit_tag(t('ticket.note_form.add_and_resolve'), :onclick => "jQuery('#note_ticket_status').val('resolved');" , :class => "uiButton") %> 
+    	<%= submit_tag(t('ticket.note_form.add_and_resolve'), :onclick => "jQuery('#note_ticket_status').val('4');" , :class => "uiButton") %> 
 			<%= button_to_function(t('cancel'), "jQuery('#cnt-note').hide().trigger('visibility');", :class => "uiButton" ) %>   
     </div>
   <% end %>

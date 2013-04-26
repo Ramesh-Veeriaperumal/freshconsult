@@ -578,11 +578,11 @@ module ApplicationHelper
           element = label + select(object_name, field_name, choices, {:selected => field_value},{:class => element_class}) 
           #Just avoiding the include_blank here.
         else
-          element = label + select(object_name, field_name, choices, {:include_blank => "...", :selected => field_value},{:class => element_class})
+          element = label + select(object_name, field_name, field.html_unescaped_choices, { :include_blank => "...", :selected => field_value},{:class => element_class})
         end
       when "dropdown_blank" then
         element = label + select(object_name, field_name, 
-                                              field.choices(@ticket), 
+                                              field.html_unescaped_choices(@ticket), 
                                               {:include_blank => "...", :selected => field_value}, 
                                               {:class => element_class})
       when "nested_field" then
@@ -620,7 +620,7 @@ module ApplicationHelper
   # The field_value(init value) for the nested field should be in the the following format
   # { :category_val => "", :subcategory_val => "", :item_val => "" }
   def nested_field_tag(_name, _fieldname, _field, _opt = {}, _htmlopts = {}, _field_values = {}, in_portal = false)        
-    _category = select(_name, _fieldname, _field.choices, _opt, _htmlopts)
+    _category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
     _javascript_opts = {
       :data_tree => _field.nested_choices,
       :initValues => _field_values,
@@ -656,7 +656,7 @@ module ApplicationHelper
       field_value = field.dropdown_selected(field.all_status_choices, field_value) if(dom_type == "dropdown") || (dom_type == "dropdown_blank")
       element = label + label_tag(field_name, field_value, :class => "value_label")
     else
-      field_value = field.dropdown_selected(field.choices, field_value) if(dom_type == "dropdown") || (dom_type == "dropdown_blank")
+      field_value = field.dropdown_selected(field.html_unescaped_choices, field_value) if(dom_type == "dropdown") || (dom_type == "dropdown_blank")
       element = label + label_tag(field_name, field_value, :class => "value_label")
     end
     
@@ -701,7 +701,8 @@ module ApplicationHelper
   
   def truncate_filename filename
     extension = filename.include?('.') ? filename.split('.').last : nil
-    simple_name = extension ? filename[0..-(extension.length + 2)] : filename
+    extension = nil if filename.gsub('.','') == extension
+    simple_name = extension ? filename[0..-(extension.to_s.length + 2)] : filename
     if filename.length > 20
       return simple_name[0,15] + "..." + simple_name[-2..-1] + (extension ? ".#{extension}" : "")
     end

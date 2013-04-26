@@ -22,6 +22,8 @@
 
   "use strict"; // jshint ;_;
 
+  if($.fn.scrollspy) return
+
 
  /* SCROLLSPY CLASS DEFINITION
   * ========================== */
