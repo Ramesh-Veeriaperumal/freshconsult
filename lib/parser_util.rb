@@ -21,7 +21,7 @@ VALID_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/
       addresses = addresses.split(/,|;/)
     end
 
-    return if addresses.blank?
+    return [] if addresses.blank?
      
     addresses = addresses.collect do |address|
       next if address.blank?
