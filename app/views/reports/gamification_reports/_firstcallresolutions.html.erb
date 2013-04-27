@@ -13,7 +13,7 @@
 <tr>
  	<td width="1%"><div class="bignum floatleft"><%= (index + 1)%></div></td>
  	<td width="1%"><%= user_avatar(fcr_agent.user, :thumb, 'preview_pic') %></td>
- 	<td><b><%= fcr_agent.user.display_name %></b></td>
+ 	<td><b><%= h(fcr_agent.user.display_name) %></b></td>
  	<td width="5%" class="up"><%= fcr_agent.tot_score %> &#9650;</td>
 </tr>
 <% end %>
