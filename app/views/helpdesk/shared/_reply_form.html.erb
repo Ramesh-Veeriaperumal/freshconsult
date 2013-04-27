@@ -20,7 +20,7 @@
 
       </div>
 
-      <%= content_tag( :h4, t(".title", :email => @ticket.requester.email || @ticket.requester.name ), :class => "title", :id => "reply_email_id" ) %>
+      <%= content_tag( :h4, t(".title", :email => @ticket.requester.email || h(@ticket.requester.name) ), :class => "title", :id => "reply_email_id" ) %>
         <li class="inline-field field" >
             <%= f.label(:reply_email, t('ticket.from'), :class => "caption" ) %>
             <div class="fields">

@@ -423,9 +423,9 @@ module ApplicationHelper
   # User details page link should be shown only to agents and admin
   def link_to_user(user, options = {})
     if current_user && !current_user.customer?
-      link_to(user.display_name, user, options)
+      link_to(h(user.display_name), user, options)
     else 
-      content_tag(:strong, user.display_name, options)
+      content_tag(:strong, h(user.display_name), options)
     end
   end
   

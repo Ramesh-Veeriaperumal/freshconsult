@@ -34,7 +34,7 @@
 			<div class="user-info">
 				{{ first_post.user | profile_image:'user-pointer-bottom', '40px', '40px' }}				
 				<div class="user-details">
-					<h4 class="user-name">{{ first_post.user.name }}</h4>
+					<h4 class="user-name">{{ first_post.user.name | h}}</h4>
 					<div class="p-info">
 						{% translate portal.topic.started %} {{ first_post.created_on | time_ago }}
 					</div>
@@ -79,7 +79,7 @@
 						{{ post.user | profile_image:'user-pointer-bottom', '40px', '40px' }}
 						<div class="user-details">
 							{{ post | post_actions }}
-							<h4 class="user-name">{{ post.user.name }}</h4>
+							<h4 class="user-name">{{ post.user.name | h}}</h4>
 							<div class="p-info">
 								{% translate portal.said %} {{ post.created_on | time_ago }}
 							</div>
@@ -135,7 +135,7 @@
 			<div class="user-info">
 				{{ portal.user | profile_image:'user-pointer-bottom', '40px', '40px' }}
 				<div class="user-details">						
-					<h4 class="user-name">{{ portal.user.name }}</h4>
+					<h4 class="user-name">{{ portal.user.name | h }}</h4>
 				</div>
 			</div>
 			<div class="p-content">
@@ -157,7 +157,7 @@
 	<div class="cs-g-c">
 		<section class="topic-list">
 			<div class="list-lead">
-			 	{% translate portal.topic.more_topic %} {{ forum.name }}
+			 	{% translate portal.topic.more_topic %} {{ forum.name | h}}
 			</div>
 			<ul>
 				{% assign topic_count = 10 %}
@@ -165,7 +165,7 @@
 					{% if topic.id != o_topic.id %}
 					<li class="cs-g-3">
 						<div class="ellipsis">
-							<a href="{{o_topic.url}}" title="{{o_topic.title}}">{{o_topic.title}}</a>
+							<a href="{{o_topic.url}}" title="{{o_topic.title | h}}">{{o_topic.title | h}}</a>
 						</div>
 					</li>
 					{% endif %}
