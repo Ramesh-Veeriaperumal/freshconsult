@@ -187,6 +187,8 @@ GoogleCalendar.prototype = {
 
 	loadOtherTicketEvents: function(){
 		gcal.allCalendars.each(function(cal){
+			if(cal.id.indexOf('contacts@group.v.calendar.google.com')>=0 ||
+				cal.id.indexOf('holiday@group.v.calendar.google.com')>=0) return;
 			gcal.nLoadingEvents++;
 			gcal.freshdeskWidget.request({
 				rest_url: 'calendar/v3/calendars/' + cal.id + '/events?' + 
