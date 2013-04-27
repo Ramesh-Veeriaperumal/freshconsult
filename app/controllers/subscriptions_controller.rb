@@ -90,7 +90,8 @@ class SubscriptionsController < ApplicationController
           billing_subscription.update_subscription(@subscription, prorate?)
         end
       rescue Exception => e
-        flash[:notice] = t('payment_failed')
+        flash[:notice] = t('error_in_update')
+        flash[:notice] = t('payment_failed') if @subscription.card_number.present?
         redirect_to subscription_url and return
       end
       

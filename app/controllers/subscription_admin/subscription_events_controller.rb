@@ -36,21 +36,19 @@ class SubscriptionAdmin::SubscriptionEventsController < ApplicationController
       @overall_upgrades_last_30_days = SubscriptionEvent.upgrades
       @overall_downgrades_last_30_days = SubscriptionEvent.downgrades
       @cmrr_last_30_days = SubscriptionEvent.cmrr_last_30_days
-      @actual_revenue_current = SubscriptionEvent.actual_revenue
     end
 
     def monthly_summary(date)
       date = Date.new(date["period(1i)"].to_i, date["period(2i)"].to_i)
-      @records_month = SubscriptionEvent.events(date.beginning_of_month, date.end_of_month)
+      @records_month = SubscriptionEvent.events(date.beginning_of_month.beginning_of_day, date.end_of_month.end_of_day)
 
       @events_month = categorize_events(@records_month[:list])
       @upgrades_month = categorize_upgrades(@records_month[:list])
       @downgrades_month = categorize_downgrades(@records_month[:list])
 
-      @overall_upgrades_month = SubscriptionEvent.upgrades(date.beginning_of_month, date.end_of_month)
-      @overall_downgrades_month = SubscriptionEvent.downgrades(date.beginning_of_month, date.end_of_month)
-      @cmrr_month = SubscriptionEvent.cmrr(date.beginning_of_month, date.end_of_month)
-      @actual_revenue_custom = SubscriptionEvent.actual_revenue(date.beginning_of_month, date.end_of_month)
+      @overall_upgrades_month = SubscriptionEvent.upgrades(date.beginning_of_month.beginning_of_day, date.end_of_month.end_of_day)
+      @overall_downgrades_month = SubscriptionEvent.downgrades(date.beginning_of_month.beginning_of_day, date.end_of_month.end_of_day)
+      @cmrr_month = SubscriptionEvent.cmrr(date.beginning_of_month.beginning_of_day, date.end_of_month.end_of_day)
     end 
 
     def categorize_events(events)

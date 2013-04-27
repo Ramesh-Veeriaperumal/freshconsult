@@ -1,6 +1,6 @@
 <% if @subscription.card_number.present? %>
   <%= render :partial => "/subscriptions/state/active", :locals => { :subscription => @subscription, :plans => @plans } %>
 <% else %>
-  <%= render :partial => "/subscriptions/state/trial", :locals => { :subscription => @subscription, :plans => @plans } %>
+  <%= render :partial => "select_plans", :locals => { :plans => @plans, :subscription => @subscription, :show_all => true } %>
 <% end %>
 
