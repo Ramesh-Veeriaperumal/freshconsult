@@ -36,7 +36,7 @@ class ThemeController < SupportController
 		end
 
 		def merged_scss	
-			@default_custom_css = render_to_string(:file => "#{RAILS_ROOT}/public/src/portal/portal.scss")
+			@default_custom_css = render_to_string(:file => "#{RAILS_ROOT}/public/src/portal/_portal.scss")
 			@default_custom_css = "#{@default_custom_css}\r\n #{custom_scss}"
 		end	    
 

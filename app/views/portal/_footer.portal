@@ -1,8 +1,13 @@
-{% if portal.tabs.size > 0 %}
-	<footer class="footer rounded-6">
-		{% for tab in portal.tabs %}
-			<a href="{{tab.url}}" class="{% if tab.tab_type == current_tab %}active{% endif %}">{{ tab.label }}</a>
-		{% endfor %}
-	</footer>
-{% endif %}
+{% unless portal.current_page == "user_login" %}
+<footer class="footer rounded-6">
+	{{ portal | link_to_cookie_law }}
+	{% if portal.tabs.size > 0 %}
+		<nav class="footer-links">
+			{% for tab in portal.tabs %}
+				<a href="{{tab.url}}" class="{% if tab.tab_type == current_tab %}active{% endif %}">{{ tab.label }}</a>
+			{% endfor %}
+		</nav>
+	{% endif %}
+</footer>
+{% endunless %}
 {{ portal | portal_copyright }}

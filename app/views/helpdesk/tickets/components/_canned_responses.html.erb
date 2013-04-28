@@ -1,4 +1,4 @@
-<div id = "response_dialog" class="over">
+<div id = "response_dialog" class="no_recently_used over">
   <div  class="recently_used" id="recently_used_container">
 	  <div class="pick-response-header"><h3><%= t('canned_folders.recently') %></h3></div>
 	  <div id="recently_used_list"></div>
@@ -13,14 +13,14 @@
 			</div>
     </div>
 		<div id = "search-list" class="pick-response autocomplete"></div>
-			<div id="fold-list" class="pick-response">
-			  <div id="canned_response_list">
-		      <ul class="small-list-left">
-    	    <%= each_or_message("helpdesk/tickets/components/ca_res_folder", current_account.canned_response_folders.accessible_for(current_user), t('canned_folders.no_folders')) %>
-		      </ul>
-		    </div>
-			  <div id="responses" class="list2"></div>
-		  </div>
+		<div id="fold-list" class="pick-response">
+		  <div id="canned_response_list">
+	      <ul class="small-list-left">
+  	    <%= each_or_message("helpdesk/tickets/components/ca_res_folder", current_account.canned_response_folders.accessible_for(current_user), t('canned_folders.no_folders')) %>
+	      </ul>
+	    </div>
+		  <div id="responses" class="list2"></div>
+	  </div>
 	</div>
 </div>
 

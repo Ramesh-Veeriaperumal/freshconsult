@@ -4,7 +4,7 @@ $:.unshift File.expand_path('../../lib', __FILE__)
 require 'rubygems'
 require 'test/unit'
 require 'money'
-require 'mocha'
+require 'mocha/api'
 require 'yaml'
 require 'active_merchant'
 

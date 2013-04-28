@@ -18,8 +18,12 @@ ActionController::Dispatcher.middleware.use OmniAuth::Builder do
   # https://github.com/intridea/omniauth/issues/569
   on_failure do |env|
     message_key = env['omniauth.error.type']
-    origin = env['omniauth.origin'].split('?').last
-    new_path = "#{env['SCRIPT_NAME']}#{OmniAuth.config.path_prefix}/failure?message=#{message_key}&origin=#{URI.escape(origin)}"
+    origin = env['omniauth.origin']
+    new_path = "#{env['SCRIPT_NAME']}#{OmniAuth.config.path_prefix}/failure?message=#{message_key}"
+    unless origin.blank?
+      origin = origin.split('?').last
+      new_path += "&origin=#{URI.escape(origin)}"
+    end
     [302, {'Location' => new_path, 'Content-Type'=> 'text/html'}, []]
   end
   

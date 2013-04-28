@@ -21,7 +21,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             "escalation_level", "sla_policy_id", "sla_policy"]
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
-  ES_FLEXIFIELD_COLUMNS = Flexifield.column_names.select {|v| v =~ /^ff(s|_text)/}
 
   set_table_name "helpdesk_tickets"
   
@@ -798,11 +797,26 @@ class Helpdesk::Ticket < ActiveRecord::Base
    begin
     evaluate_on = check_rules     
     update_custom_field evaluate_on unless evaluate_on.nil?
+    assign_tickets_to_agents unless spam? || deleted?
     autoreply
    rescue Exception => e #better to write some rescue code 
     NewRelic::Agent.notice_error(e)
    end
     save #Should move this to unless block.. by Shan
+  end
+
+  def assign_tickets_to_agents
+    #Ticket already has an agent assigned to it or doesn't have a group
+    return if group.nil? || self.responder_id
+    schedule_round_robin_for_agents if group.round_robin_eligible?
+  end 
+
+  def schedule_round_robin_for_agents
+    next_agent = group.next_available_agent
+
+    return if next_agent.nil? #There is no agent available to assign ticket.
+    self.responder_id = next_agent.user_id
+    self.save
   end
  
   def check_rules
@@ -936,7 +950,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def to_json(options = {}, deep=true)
-    options[:methods] = [:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name] unless options.has_key?(:methods)
+    options[:methods] = [:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name,:to_emails] unless options.has_key?(:methods)
     unless options[:basic].blank? # basic prop is made sure to be set to true from controllers always.
       options[:only] = [:display_id,:subject,:deleted]
       json_str = super options
@@ -964,10 +978,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
           :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name])
     end
 
-    return super(:builder =>xml, :skip_instruct => true) if options[:shallow]
 
-    super(:builder => xml, :skip_instruct => true,:include => [:notes,:attachments],:except => [:account_id,:import_id], 
+    ticket_attributes = [:notes,:attachments]
+    ticket_attributes = [] if options[:shallow]
+
+    super(:builder => xml, :skip_instruct => true,:include => ticket_attributes, :except => [:account_id,:import_id], 
       :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name]) do |xml|
+      xml.to_emails do
+        self.to_emails.each do |emails|
+          xml.tag!(:to_email,emails)
+        end
+      end
       xml.custom_field do
         self.account.ticket_fields.custom_fields.each do |field|
           begin
@@ -1085,12 +1106,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return false
   end
 
+  def es_flexifield_columns
+    @@es_flexi_txt_cols ||= Flexifield.column_names.select {|v| v =~ /^ff(s|_text)/}
+  end
+
   def to_indexed_json
     to_json({
             :root => "helpdesk/ticket",
             :methods => [:es_notes, :company_id, :es_from, :to_emails, :es_cc_emails, :es_fwd_emails],
             :only => [ :display_id, :subject, :description, :account_id, :responder_id, :group_id, :requester_id, :status, :spam, :deleted ], 
-            :include => { :flexifield => { :only => ES_FLEXIFIELD_COLUMNS },
+            :include => { :flexifield => { :only => es_flexifield_columns },
                           :attachments => { :only => [:content_file_name] }
                         }
             },
@@ -1343,6 +1368,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       elsif self.product
         self.email_config = self.product.primary_email_config
       end
+      self.group_id ||= email_config.group_id unless email_config.nil?
     end
 
     def assign_email_config

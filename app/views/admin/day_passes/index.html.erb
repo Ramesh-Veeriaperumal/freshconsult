@@ -1,6 +1,8 @@
 <% content_for :sidebar do %>
   <%= render :partial => "helpnote" %>
 <% end %>
+<%= include_stylesheets :pattern %>
+
       <div class="admin_icon_image">
         <div class="content">
           <%= content_tag :h2, t(".title"), :class => "title" %>  
@@ -42,12 +44,11 @@
       </div> 
    
   
-	<% unless @day_pass_purchases.empty? %> 
+<!-- 	<% unless @day_pass_purchases.empty? %> 
 	<br /><br />
 	<div class="tabbed">
-	  <%= content_tag :h4, t(".day_pass_history"), :class => "title" %>
-	  <div class="table-grid">
-	  <table>
+	  <%= content_tag :h4, t(".day_pass_history"), :class => "title" %>	  
+	  <table class="table">
       <thead>
         <tr>
           <th><%= t("date_title") %></th>
@@ -62,9 +63,8 @@
        <%= render :partial => "purchases", :collection => @day_pass_purchases %> 
 	    </tbody>
     </table>
-    </div>
 	</div> 
-  <% end %>	                     
+  <% end %> -->	                     
 
 <% content_for :sidebar do -%>
 	<% if current_account.has_credit_card? %>      

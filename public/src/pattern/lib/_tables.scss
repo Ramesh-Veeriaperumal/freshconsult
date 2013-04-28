@@ -27,6 +27,9 @@ table {
     text-align: left;
     vertical-align: top;
     border-top: 1px solid $tableBorder;
+    &.text-right{
+      text-align: right;
+    }
   }
   th {
     font-weight: bold;

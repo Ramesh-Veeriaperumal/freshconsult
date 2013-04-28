@@ -1,0 +1,1599 @@
+nb-NO: 
+  meta: 
+    language_name: 'Norwegian'
+  Agent: Kundebehandler
+  Chat: Chat
+  Description: Beskrivelse
+  Email: E-post
+  Facebook: Facebook
+  Forum: Forum
+  Group: Gruppe
+  MobiHelp: MobiHelp
+  Phone: Telefon
+  Portal: Portal
+  Priority: Prioritering
+  Product: Produkt
+  Requester: "Søk etter supportkunde"
+  Source: Kilde
+  Status: Status
+  Subject: Tema
+  Twitter: Twitter
+  Type: Type
+  account: 
+    active_since: "Aktiv siden"
+    cancel: Slett
+    info3: "Gjenopprett opprinnelige farger"
+    info5: "Gjenopprett farger"
+    language: Språk
+    name: "Konto Navn"
+    page_colors: 
+      background: Bakgrunn
+      header: Header
+      tab_color: Fanfarge
+    save: Lagre
+    time_zone: Tidssone
+  account_admin_updated: "Administratorkonto har blitt oppdatert!"
+  activate: Aktivér
+  activate_and_login: "Aktivér & logg inn"
+  activation_link: "Godkjent aktiveringslenke er blitt sendt til %{email}"
+  activities: 
+    action_verb: oppdatert
+    tag: 
+      assigned: "Agent tildelt"
+      assigned_to_nobody: "Agent ikke tildelt"
+      conversation: 
+        note: "Ny Merknad"
+        out_email: 
+          private: "Sak videresendt"
+        twitter: Tweet
+      new_ticket: "Ny Sak"
+      priority_change: "{{value}}"
+      reassigned: "Agent tildelt på nytt"
+      solutions: "Ny Løsning"
+      timesheet: 
+        new: "Tid loggført"
+    tickets: 
+      assigned: 
+        long: "{{user_path}} tildelt saken {{notable_path}} til {{responder_path}}"
+        short: "Tildelt til {{responder_path}} av {{user_path}}"
+        without_user: "tildelt til <strong>{{responder_path}}</strong>"
+      deleted: 
+        long: "{{user_path}} har slettet denne sake {{notable_path}}"
+        short: "{{user_path}} har slettet denne saken"
+        without_user: "har slettet saken"
+      product_change: 
+        long: "{{user_path}} oppdatert produkt {{notable_path}} til{{product_name}}"
+        short: "{{user_path}} oppdatert produkt til {{product_name}}"
+        without_user: "oppdatert produkt til <strong>{{product_name}}</strong>"
+      product_change_none: 
+        short: "{{user_path}} oppdatert product til 'ingen'"
+      restored: 
+        long: "{{user_path}} har gjenopprettet saken {{notable_path}}"
+        short: "{{user_path}} har gjenopprettet denne saken"
+        without_user: "har gjenopprettet saken"
+      status_change: 
+        without_user: "oppdatert status til <strong>{{status_name}}</strong>"
+      timesheet: 
+        timer_stopped: 
+          long: "{{user_path}} stoppet tidtager på{{timesheet_path}} for saken {{notable_path}}"
+          short: "{{user_path}} stoppet tidtager på {{timesheet_path}}"
+          without_user: "stoppet tidtager på {{timesheet_path}}"
+  add: "Legg til"
+  add_a_new_folder: "legg til en ny mappe"
+  add_cc: "Legg til Cc"
+  add_note: "Legg til notat"
+  add_to_do: "Legg til gjøremål"
+  admin: 
+    canned_responses: 
+      form: 
+        all_agents: "Alle agenter"
+        available_for: "Tilgjengelig for"
+        me_only: "Kun meg"
+    day_passes: 
+      index: 
+        add_confirm: "Ditt kredittkort vil bli belastet "
+        auto_recharge: "Automatisk fornyelse"
+        buy_now: "Kjøp nå"
+        buy_pass: "Kjøp flere pass"
+        current_balance: "Du har %{balance} gjenstående"
+        day_pass_history: Kjøpshistorikk
+        day_pass_pack: "%{quantity} Dagspass pakker (%{currency}%{amount})"
+        day_passes: Dagspass
+        daypass_quantity: "%{quantity} Dagspass"
+        helptext: "Dine dagspass vil fornyes automatisk når det kun er 2 tilgjenglige dagspass igjen."
+        no_of_day_passes: "Antall dagspass"
+        order: "Ordre nr."
+        recharge_quantity: "Forny antall:"
+        title: Dadspass
+    gamification: 
+      gamification_settings: 
+        bonus_points: "Bonus poeng"
+        bonus_points_for: "Bonus poeng for: "
+        happy_customer: "Fornøyd kunde"
+        late_resolution: Forsinket<span>(Forfalt)</span>
+        ontime_resolution: "I tide <span>(Innen SLA)</span>"
+        title_levels: "Agent nivåer"
+        title_trophies: Premier
+        unhappy_customer: "Misfornøyd kunde"
+      help_text: 
+        why_game: "Poeng og nivå"
+    getting_started: 
+      index: 
+        agent_email_exist: "E-post er allerede i bruk."
+        agent_email_partial: "Delvis vellykket."
+        agent_email_required: "E-post ID påkrevd for å sende invitasjon."
+        agent_email_sending: "Sender Invitasjoner..."
+        agent_email_taken: "Følgende e-post er allerede i bruk: <br>%{emails}"
+        agent_invite_field_placeholder: "Legg til e-post adressen til din gruppe"
+        agent_invite_multi_info: "Bruk komma ( , ) for å legge til flere e-post."
+        agent_send_invite_label: "Send invitasjon til agenter"
+        agent_sub_title: "Inviter gruppen din til Freshdesk"
+        agent_title_info: "Legg til e-post adressene til dine gruppemedlemmer for å invitere over hit til Freshdesk. Bruk komma for å skille mellom e-post."
+        agents_sub_title: "Invitér dine kundeservice agenter"
+        agents_subtitle: "Inviter din gruppe til å bli med på morroa"
+        agents_title: Agenter
+        agents_title_1: "Legg til<br> Agenter"
+        agents_title_info: "Inviter dine agenter til å bruke Freshdesk, benytt komma for å skille mellom hver e-post adresse"
+        back_link: Tilbake
+        config-support-email-address: "Sett opp din e-post adresse til support"
+        congrats: "Gratulerer! Dine \"fresh\" kundeservice er klar."
+        congratulations: "Gratulerer! Din Freshdesk er klar!"
+        email_config_field_title: "Din e-post adresse til support"
+        email_config_sub_title: "La Freshdesk håndtere dine Support e-post"
+        email_config_title: "Hva er din e-post adresse til support?"
+        email_invalid: "Din e-post adresse er ugyldig, vennligst kontroller"
+        email_send_problem: "Problemer med å sende e-posten."
+        email_sent_success: "E-post har blitt sendt."
+        emails_invalid: "En eller flere av dine e-post er ugyldig"
+        helpdesk_preview: "Kundeservice forhåndsvisning"
+        helpdesk_preview_text: Forhåndsvisning
+        implement_changes: "Oppdaterer med endringene..."
+        info2: "Ikke fornøyd? Legg til en ny e-post og velg \"Lagre\""
+        next_alt_link: "Gå til kundeservice"
+        next_alt_text: "Hopp i det!"
+        next_link: Neste
+        next_please_wait: "Vennligst vent..."
+        rebrand_company_field_placeholder: "Skriv inn ditt firmanavn"
+        rebrand_company_label: Firmanavn
+        rebrand_header: "Ditt kundeservice navn og logo"
+        rebrand_paint_title: F
+        save: Endre
+        save-and-next: "Lagre og Gå til neste"
+        save_text: Lagre
+        send_invite: "Send Invitasjon"
+        send_verification_email: "Send e-post verifisering"
+        sending_test_mail_progress: "Sender test e-post, vennligst vent..."
+        skip_link: "Hopp over og gå til kundeservice"
+        social_add_account: "Legg til Konto"
+        social_facebook: Facebook
+        social_facebook_add: "Legg til en Side"
+        social_info: "Ta med deg din kundeservice til Facebook, Twitter eller så å si over alt hvor dine kunder er"
+        social_sub_title: "Gå sosialt"
+        social_subtitle: "Gjør din kundeservice tilgjengelig i sosiale medier"
+        social_title: Sosial
+        social_title_1: "Gå<br> Sosialt"
+        social_twitter: Twitter
+        social_twitter_add: "Legg til konto"
+        sub_title: "Her er mye nyttig informasjon for å hjelpe deg komme i gang"
+        support_email_sub_msg: "Din support e-post adresse er påkrevd for at kundeservice skal fungere riktig."
+        support_email_sub_title: "Oppgi din kundeservice e-post adresse."
+        support_email_submsg: "Dette vil også være den forhåndsvalgte svar-til adressen når du besvarer <br> spørringer fra Freshdesk."
+        support_email_subtitle: "Legg til din primære e-post adresse til support"
+        support_email_title: "Support<br> e-post"
+        title1: "La oss nå legge til e-post til Freshdesk"
+        title_message: "Hurtigstart din kundeservice i 4 steg..."
+        title_msg: "Bare fyll inn noen detaljer for å komme i gang."
+      send_mail_content: 
+        button_again_title: "...send test på nytt"
+        button_sending: Sender...
+        button_title: "Send test"
+        info: "Du må videresende en kopi av sakene til e-post adressen vist nedenfor:"
+        send_test_mail_confirm_no: "Nei, jeg kan ikke se noen saker."
+        send_test_mail_confirm_yes: "Ja, jeg har mottat den."
+        send_test_mail_info1: "Forsikre deg om at du har registrert videresending av e-post til <b>%{to_email}</b>."
+        send_test_mail_info2: "Lær hvordan"
+        send_test_mail_info3: "Om du tror alt skal være greit så langt, forsøk å sende en e-post. <br>%{send_test_mail_link}"
+        send_test_mail_link_title: "Send e-post"
+        send_test_mail_response1: "Vi har sent en test e-post til <b><span id=reply_email_1>%{reply_email}</span></b>. Hvis alt går greit, vil du kunne se henvendelsen <a href=\"/helpdesk/tickets\" target=\"_blank\"> ny sak </a> i saksvisning."
+        send_test_mail_response_1: "Vi har nettopp sendt en test e-post til <b><span id=reply_email_1>%{reply_email}</span></b>. Om alt gikk bra vil du se det har blitt opprettet en ny sak. <a href=\"/helpdesk/tickets\" target=\"_blank\">Kontroller at den er registrert</a>."
+        send_test_mail_response_no1: "Det ser ut til å være noen problemer ->"
+        send_test_mail_yes_response: "Bra jobba! Din support e-post fungerer nå med Freshdesk. Lykke til!"
+        test_info1: "Hvis du tror alt så langt er OK, forsøk å teste å sende oss en e-post"
+        test_info_1: "Ser alt bra ut så langt? Forsøk å sende en e-post."
+    home: 
+      index: 
+        account: Konto
+        account-settings: Konto
+        agent: Agenter
+        billing: "Planer & Faktuerering"
+        business-hours: Arbeidstid
+        customer: Kunde
+        customer-portal: Kundeportal
+        day_pass: Dagspass
+        else: annet
+        email-notifications: "E-post varsling"
+        email-settings: "E-post Instillinger"
+        email_commands_setting: "E-post kommandoer"
+        everything: Alt
+        facebook-setting: Facebook
+        feedback: "Tilbakemelding widget"
+        group: Grupper
+        import: "Importer data fra Zendesk"
+        integrations: Integrasjoner
+        portal: Portal
+        productivity: Produktivitet
+        security: Sikkerhet
+        settings: Innstillinger
+        sla: "Retningslinjer SLA"
+        survey: "Innstillinger Undersøkelse"
+        survey-settings: Kundetilfredshet
+        title: Admin
+        twitter-setting: Twitter
+    portal_settings: 
+      simple: 
+        baseFont: "Basis font"
+        bg_color: Innhold
+        footer_color: Fot
+        header_color: Header
+        help_center_color: Kundeservice
+        linkColor: "Lenke tekst"
+        linkColorHover: "Lenke tekst aktiv"
+        tab_color: Bakgrunn
+        textColor: "Basis farge"
+    products: 
+      add_another_email: "Legg til flere E-post"
+      assign_product: "Tildel Produkt"
+      edit: 
+        title: "Endre Produkt"
+      form: 
+        configure_email: "Konfigurere E-post"
+        configure_seperate_portal: "Konfigurere en egen portal for dette produktet"
+        enable_product_portal: "Aktivér Produkt portal"
+        enter_support_email_id: "Din support e-post"
+        forwarding_email_info: "Din videresendings e-post er:"
+        product_desc: "Produkt beskrivelse"
+        product_name: "Produkt navn"
+        product_support_emails: "Produkt Support E-post"
+      index: 
+        add_product: "Nytt produkt"
+        enable_portal: "Aktivér Produkter"
+        title: Produkter
+      portal: 
+        portal_language: "Portal språk"
+        portal_language_info: "Dette vil være standard språk for besøkende til portalen"
+        portal_name: "Portal navn"
+      primary_email_required: "En primær e-post må være angitt"
+      product: 
+        customize_portal: "Tilpasse portal"
+        delete: "Er du sikker på at du vil slette dette Produktet?"
+        edit_facebook_page: "Endre Facebook side %{page_name}"
+        edit_twitter_account: "Endre Twitter Konto @%{screen_name}"
+        email_not_verified: "E-post ikke verifisert"
+        enable_portal: "Aktivér Portal"
+      product_label_msg: Produkt
+    quests: 
+      index: 
+        sideinfo1: "Info 1"
+      quest_form: 
+        change: Endre
+        final: "... og til slutt"
+        ticket: "Løser <br /><strong> Saker </strong>"
+    security: 
+      index: 
+        click_to_disable: "Klikk for å deaktivere SSL"
+        click_to_enable: "Klikk for å aktivere SSL"
+        disabled: Deaktivert
+        enabled: Aktivert
+        security_title: Sikkerhet
+    shared: 
+      filter_jsinit: 
+        body: Body
+        insert_placeholder: "Legg til bokmerke"
+        to: Til
+    supervisor_rules: 
+      edit: 
+        title: "Leder - Endre regel"
+      helpnote: 
+        help_title: Leder
+        tour: "Hjelp meg med å opprette en ny regel for leder"
+      index: 
+        title: "Leder - Regler"
+      new: 
+        title: "Leder - Ny regel"
+    surveys: 
+      error_updated: "Feil ved oppdatering av innstillinger for undersøkelser."
+      index: 
+        title: "Instillinger kundetilfredshet"
+      satisfaction_settings: 
+        enable_label: "Undersøkerlser om kundetilfredshet"
+        enter_happy_text: "Legg til fornøyd tekst"
+        enter_neutral_text: "Legg til nøytral tekst"
+        enter_unhappy_text: "Legg til misfornøyd tekst"
+        link_text_info: "Denne teksten vises under signaturen nederst på siden i e-post sendt til kunden."
+        link_text_input: "Vennligst gi oss en tilbakemelding på opplevelsen av vår support."
+        link_text_label: "Kundetilfredshets undersøkel tekstlenke"
+        send_while_option1: "Alle e-post sendt til kunde."
+        send_while_option2: "E-post sendt etter at en sak er \"Løst\"."
+        send_while_option3: "E-post sendt etter at en sak er \"Lukket\"."
+        send_while_option4: "Tillat agenter å legge til tekstlenker til kundetilfredshets undersøkelser i e-post."
+        send_while_title: "Velg hvilke e-post som har tekstlenke til kundetilfredshets undersøkelse"
+      successfully_updated: "Innstillinger for kundetilfredshet har blitt oppdatert."
+    twitters: 
+      change: 
+        edit_twitter: "Endre Twitter"
+        screen_name: Brukernavn
+      index: 
+        add_search: "Legg til Søk"
+        search_keys: "Søk Nøkler"
+      search: 
+        add_key: "Legg til spørring for Søk"
+        edit_key: "Endre spørring for Søk"
+        name: "Søk Navn"
+        screen_name: "Twitter konto"
+        search_key: "Søk Spørring"
+    widget_config: 
+      index: 
+        thankyou_default: "Takk for din tilbakemelding"
+        thankyou_info: "Melding som vises etter at en bruker har registrert en ny sak"
+        thankyou_label: "Legg til beskjed"
+  after_day: "Etter en dag"
+  after_eight: "Etter åtte timer"
+  after_four: "Etter fire timer"
+  after_half: "Etter 30 minutter"
+  after_one: "Etter en time"
+  after_onemonth: "Etter en måned"
+  after_oneweek: "Etter en uke"
+  after_threeday: "Etter tre dager"
+  after_twelve: "Etter tolv timer"
+  after_two: "Etter to timer"
+  after_twoday: "Etter to dager"
+  after_twoweek: "Etter to uker"
+  agent: 
+    active: 
+      no_agents: "Du har ikke lagt til noen agenter i listen"
+    add_signature: "Legg til signatur"
+    admin: Administrator
+    agent_restored: "Denne agenten er gjenopprettet"
+    day_pass_expired: "Ditt dagspass har utløpt, vennligst logg inn for nytt dagspass."
+    deleted: 
+      agent_deleted: "Agenten har blitt slettet"
+      no_agents: "Du har ingen slettede agenter"
+    edit: "Endre Agent"
+    full_time: Heltid
+    global: "Agent (global tilgang)"
+    group: "Agent (gruppetilgang)"
+    individual: "Agent (begrenset tilgang)"
+    info1: "Dette er en slettet Agent"
+    info2: "E-post er allerede i bruk"
+    info3: "Er du sikker på at du vil slette"
+    info4: "Konverter til en Kontakt"
+    make_admin: "Gjør denne agenten en admin"
+    new: "Ny Agent"
+    occasional: Tidvis
+    permissions: Rettigheter
+    restore: Gjenopprette
+    showing: "Viser:"
+    signature: Signatur
+    status: 
+      active: Aktiv
+      deleted: Slettet
+    supervisor: Leder
+    title: Agenter
+    update: Oppdater
+    use_email: "Bruk denne e-posten"
+    view_user: "Vis bruker"
+  agent_adds_comment: "Agent legger til kommentar til sak"
+  agent_assigned_info: "ingen åpne saker eller saker på vent for denne kundebehandler"
+  agent_closes_tkt: "Agent lukker Saken"
+  agent_deleted_message: "Dette er en slettet kundebehandler"
+  agent_emailnotverified: "Epostadressen har ikke blitt verifisert av denne agenten!"
+  agent_working_on_this_ticket: "Agent som jobber på denne saken"
+  always: Alltid
+  amount: Mengde
+  amount_for_annual: "%{amount} årlig"
+  amount_per_month: "%{amount}%{period}"
+  answered: Besvart
+  any: "Hvilken som helst"
+  any_time: "Når som helst"
+  apply: Svare
+  assign: Tildel
+  assigned_to: "Tildelt til"
+  assume_identity_button: "Anntatt identitet"
+  attach_file: "Vedlegg fil"
+  attach_file_local: "Legg ved en fil fra din datamaskin"
+  attach_files: "Legg ved filer"
+  attachment: Vedlegg
+  attachment_delete: "Du er i ferd med å slette dette vedlegget permanent. Vil du fortsette?"
+  attachment_help_info: "Størrelsen på vedlegg kan være opptil 20 Mb"
+  attachments: Vedlegg
+  awaiting_your_reply: "Avventer ditt svar"
+  bcc_email_updated_failure_msg: "Misslykket oppdatering av Bcc e-post"
+  bcc_email_updated_success_msg: "Vellykket oppdatering av Bcc e-post"
+  bcc_emails_key: ", bcc : %{bcc_emails}"
+  bcc_emails_key_pop: "<li class='left'>bcc :</li> <li>%{bcc_emails}<li>"
+  being_processed: "Blir behandlet"
+  billed_amount_annually: "Du vil bli fakturert $%{amount} årlig"
+  billed_amount_per_month: "Du vil bli fakturert $%{amount}%{period}"
+  billing_address: Fakturaadresse
+  billing_info: "Informasjon om abonnementet"
+  business_hours: 
+    holiday_added: "Fridag allerede lagt til"
+    holiday_list: "Liste over årlige fridager"
+    holiday_name: "Navn på fridag"
+    holidays: Fridager
+    info3: "Definert Arbeidstid"
+    title: Åpningstider
+    to: til
+  by: av
+  cancel: Angre
+  cancel_my_account: "Kanseller min konto"
+  canned_folders: 
+    create: "Opprett Mappe"
+    del: Slett
+    delete: Slett
+    delete_confirmation: "Slette mappe med alt innhold ??"
+    delete_folder: "Er du sikker på at du vil slette mappen og alt innhold?"
+    edit: "Endre navn"
+    folder: Mappe
+    important: "Viktig: "
+    insert_placeholder: "Sett inn Bokmerke"
+    move: Flytt
+    new: "Navn på mappe"
+    no_response: "Ingen svar"
+    recently: "Sist brukte..."
+    viewing: "Mappe: "
+  captcha_verify_message: "Vaptcha verifisering feilet, vennligst prøv igjen!"
+  card_number: "Kort nummer"
+  cc_emails_key: ", cc : %{cc_emails}"
+  cc_emails_key_pop: "<li class='left'>cc : </li><li>%{cc_emails}</li>"
+  change: Endre
+  change_deleted_status_msg: "Vennligst endre statusen, eksisterende status er slettet"
+  change_details_anytime: "Abonnement eller planer kan endres når som helst"
+  change_free_plan: "Endre din Gratis plan"
+  change_my_password: "Endre mitt passord"
+  change_plan_info: "Du kan endre din plan når som helst, din neste faktura forfaller %{date}"
+  chat: Chat
+  choose_different_plan: "Velg en annen plan"
+  choose_free_plan: "Velg din Gratis %{plan}"
+  choose_plan: "Velg plan"
+  clear: Fjern
+  clear_draft_text: "Er du sikker på at du vil fjerne lagret utkast?"
+  click_to_select_filter: "Klikk for å velge Filter"
+  close: Lukk
+  close_this_ticket: "Lukk denne supportsaken"
+  closed: Lukket
+  comments: Kommentar
+  companies: 
+    active: 
+      no_companies: "Du har ingen firma lagt til i listen"
+      no_companies_with_letter: "Du har ingen firma med bokstaven '%{alphabet}'"
+  confirm: Bekreft
+  connect_ticket: "Lenke til sak"
+  contact_name: Kontaktnavn
+  contacts: 
+    add_new_user: "Legg til en ny bruker"
+    confirm_delete: "Er du sikker på at du vil slette denne brukeren?"
+    contacts_in_companies: "%{contacts}"
+    deleted_message: "Denne kontakten er slettet"
+    edit: "Endre kontakt"
+    edit_contact: "Endre kontakt"
+    new: "Ny Kontakt"
+    save_changes: "Lagre endringer"
+    search_by: "Søk på Navn eller E-post eller Tagger..."
+  contains: Inneholder
+  continue_using_free: "Fortsett å bruke Freshdesk som en"
+  conv_contacts_info: "%{conv_type_msg} : %{to_emails} %{cc_emails_key} %{bcc_emails_key}"
+  conv_contacts_info_pop: "<ul><li class='left'>%{conv_type_msg} : </li><li>%{to_emails}</li> %{cc_emails_key} %{bcc_emails_key}</ul>"
+  country: Land
+  create: Lag
+  created_on: "Opprettet den "
+  credit_card: "Registrert kort"
+  credit_card_info: "Kredittkort opplysninger"
+  current_free_plan: "Gjeldende Gratis plan"
+  current_plan: "Gjeldende plan"
+  current_plan_details: "%{plan_name}"
+  customers: Kunder
+  date_title: Dato
+  day: "1 dag"
+  days: dager
+  default_folder: Utkast
+  default_reply_template: "Agent Svar Mal"
+  disabled: Lukke
+  dislikes: Misliker
+  dispatch: 
+    add_condition: "Legg til nytt vilkår"
+    delete: "Er du sikker på at du vil slette denne regelen"
+    inactive_rules: "Inaktive Regler"
+    info2: "Alle saker relatert til abonnement vil bli tildelt Susan"
+    info3: "Når skal denne regelen gjelde"
+    new_rule: "Ny Regel"
+    reorder: "Endre rekkefølge"
+    rule_name: "Regel Navn"
+    skip_notification_no: Nei
+    skip_notification_yes: Ja
+  does_not_contain: "Inneholder ikke"
+  done: Utført
+  downgrade_dialog_title: "Sikker på at du vil nedgradere"
+  downgrade_plan: "Merk: hvis du nedgraderer en plan kan du miste enkelte funksjoner"
+  draft: Utkast
+  dropbox_attach_from: "Vedlegg fra Dropbox"
+  dropbox_attach_label: "Legg ved fra"
+  dropbox_choose_file: "Velg fil"
+  during: mens
+  edit_agent: "Endre Agent"
+  eight: "8 timer"
+  email: Epost
+  email_command_preview_subject: Emne
+  email_command_preview_subject_value: "Support Sak"
+  email_command_preview_to_email: Til
+  email_command_preview_to_email_value: support@acme.freshdesk.com
+  email_command_setting: 
+    helpcard: 
+      ticket_type_example: Spørsmål
+  email_configs: 
+    Personalized_email_replies: "Bruke Agent navn for å gjøre E-post svar personlige ?"
+    Personalized_email_replies_message: "Dine innstillinger er lagret."
+    Personalized_email_replies_no: Nei
+    Personalized_email_replies_yes: Ja
+    add_bcc_text: "Legg til Bcc"
+    add_supp_emails: "Flere support e-post adresse(r)"
+    bcc_text: Bcc
+    change_this: "Endre denne"
+    delete: "Er du sikker på at du vil slette denne e-posten?"
+    edit: Endre
+    email: E-post
+    forwarding_email: "Videresend E-post"
+    freshdesk: Freshdesk
+    global_support_emails: "Globale Support E-poster"
+    group: Gruppe
+    helpcard: 
+      tour1: "Hjelp meg med å konfigurere min support e-post"
+    inactive_info1: "Dine support e-post adresser er fortsatt ikke verifisert, du må verifisere minst en av dem"
+    info1: "Dine brukere sende support e-post til"
+    info10: "Nye saker til denne e-posten vil automatisk bli tildelt til en gruppe"
+    info11: "Oversikt over alle e-post adresser Support"
+    info12: "Legg til flere E-post adresser"
+    info13: "Din support e-post adresse er"
+    info14: "Enhver e-post sendt til denne adressen vil bli konvertert til en sak"
+    info15: "Du må videresende disse e-postene til"
+    info3: "Freshdesk vil fange opp de e-postene og konvertere dem til saker"
+    info9: "Legg til Gruppe"
+    mark_as_primary_msg: "Er du sikker på at du vil angi denne som primær support e-post"
+    name: Navn
+    name_info_msg: "Navn på e-post som vil bli brukt som svar på saker"
+    new_support_email: "Ny Support E-post"
+    primary_supp_email_tool_tip: "Primær support e-post"
+    remove_msg: "Er du sikker på at du vil fjerne denne e-posten"
+    secondary_supp_email_tool_tip: "Angi denne som primær e-post"
+    send_verification_email: "Send verifisering"
+    set_bcc_email_text: "Set Bcc e-post automatisk"
+    supp_email_add: "E-post adresse Support"
+    support_email: "Support E-post"
+    support_email_exists: "Support e-post er i bruk"
+    title: "Instillinger E-post"
+    unverified: "E-post er ikke verifisert"
+  email_notifications: 
+    agent_notification: "Varsling Agent"
+    customize_email: "Tilpass E-post"
+    edit_reply_template: "Endre Mal"
+    event: Hendelse
+    subject: Emne
+  email_notifications_agent_selection_msg: "Velg agenter som skal varsles"
+  enabled: Åpne
+  ends_with: "Slutter med"
+  enter_payment_details_to_add: "Legg til Betalinginformasjon for å legge til flere agenter eller oppgradere eksisterende plan"
+  error_in_plan: "Feil ved endring av plan"
+  errors_in_payment: "Det har oppstått feil med din betaling:"
+  example: eksempel
+  export: Eksport
+  export_to_CSV: "Eksporter til CSV"
+  facebook: 
+    add_page: "Legg til Facebook Side"
+    deleted: "Facebook siden %{facebook_page} har blitt fjernet."
+    not_authorized: "Du ble ikke gitt tilgang av Facebook"
+  facebook_source: Facebook
+  facebook_user: "Facebook bruker"
+  failure: Feil
+  favicon: Favicon
+  ? "feature request"
+  : "Fremtidig Forespørsel"
+  feedback: 
+    down_vote_form_title: "Kan du vennligst si noe om hvordan vi kan forbedre denne artikkelen?"
+    downvote: Nei
+    up_vote_thank_you_message: "Glade for at vi kunne bistå. Takk for tilbakemeldingen."
+    upvote: Ja
+  feedbackwidget_bgcolor: Bakgrunnsfarge
+  feedbackwidget_custom_image: Brukervalgt
+  feedbackwidget_custom_image_info: "hvis du bruker et modifisert bilde vil tekst og farge bli ignorert"
+  feedbackwidget_defaultbutton: Support
+  feedbackwidget_formcustomize: "Tilpassning av skjema"
+  feedbackwidget_offset_info: "Offsett vil være avstanden (i piksler) fra venstre eller fra øverst på skjermen widget knappen blir plassert."
+  feedbackwidget_text: Tekst
+  fifteen_minutes: "Innefor 15 minutt"
+  filter_options: 
+    created_at: Opprettet
+    customers: Kunder
+    due_by: "Forsinket til"
+    group_id: Grupper
+    mygroups: "Mine grupper"
+    priority: Prioritet
+    requester: Anmodere
+    responder_id: Agenter
+    source: Kilde
+    status: Status
+    tags: Tagger
+    ticket_type: Type
+    unassigned: "Ikke tildelt"
+  find_more_solutions: "Finn flere løsninger"
+  five_minutes: "Innenfor fem minutt"
+  flash: 
+    application: 
+      already: "Integrsjonen er allerede installert."
+      not_installed: "Integrasjonen er ikke installert enda."
+      uninstall: 
+        error: "Feil ved forsøk på å deaktivere integrasjonen."
+        success: "Integrasjonen har blitt deaktivert!"
+      update: 
+        error: "Feil i konfigurering av intergrasjonen."
+        success: "Integrasjonen har blitt oppdatert!"
+    daypass: 
+      failed: "Feil ved forsøk på å legge til dagspass"
+    facebook: 
+      updated: "Instillinger for Facebook har blitt oppdatert"
+    filter: 
+      delete_success: "Visningen har blitt slettet!"
+      save_success: "Visningen har blir lagret!"
+    forum: 
+      page_not_found: "Dette forumet ble ikke funnet. Det kan ha blitt slettet eller det er skrevet feil inn URL."
+    forum_category: 
+      page_not_found: "Denne forum kategorien ble ikke funnet. Det kan ha blitt slettet eller det er skrevet feil inn URL."
+    g_app: 
+      authentication_failed: "Verifisering Feilet"
+      authentication_success: "Vellykket verifisering fullført"
+      no_subdomain: "Det eksisterer ingen slike sub-domener. Vennligst forsøk igjen."
+      user_deleted: "Bruker er slettet!"
+    general: 
+      activation: 
+        failure: "%{human_name} kunne ikke bli aktivert"
+        success: "%{human_name} har blitt aktivert"
+      create: 
+        failure: "Kunne ikke lagre %{human_name}"
+        success: "%{human_name} har blitt opprettet."
+      deactivation: 
+        failure: "%{human_name} kunne ikke bli deaktivert"
+        success: "%{human_name} har blitt deaktivert"
+      destroy: 
+        failure: "%{human_name} kunne ikke slettes"
+        success: "%{human_name} har blitt slettet"
+      restore: 
+        failure: "%{human_name} kunne ikke gjenopprettes"
+      update: 
+        success: "%{human_name} har blitt oppdatert."
+    gmail_gadgets: 
+      agent_missing: "Du er ikke registrert som en agent i Freshdesk. Endre brukeren til en agent og forsøk på nytt."
+      kvp_missing: "Ugyldig verifisering. Åpen e-posten og forsøk på nytt."
+      user_missing: "Din e-post eksisterer ikke Freshdesk. Legg til en agent med din e-post og forsøk på nytt."
+    not_allowed_in_demo_site: "Demo siden har ikke denne tilgangen!"
+    profile: 
+      api_key: 
+        reset_failure: "Feil ved nullstilling av API nøkkel."
+        reset_success: "Vellykket nullstilling av API nøkkel"
+    topic: 
+      deleted: "Emne {title} ble slettet."
+      page_not_found: "Dette emnet ble ikke funnet. Det kan ha blitt slettet eller det er skrevet feil inn URL."
+    twitter: 
+      updated: "Twitter er oppdatert"
+  folder: 
+    add_folder: "Legg til mappe"
+    edit: "Editer mappen"
+    info1: "Er du sikker på at du vil slette denne mappen?"
+  folder_edit_not_allowed: "Denne mappen kan ikke endres"
+  for: for
+  for_this_article: "For denne artikkelen"
+  forgot_password_intro: "Fyll inn skjemaet nedenfor og du vil motta en e-post om hvordan du nullstiller ditt passord"
+  formatting_help: "Hjelp Formattering"
+  forum: 
+    confim_msg1: "Er du sikker på at du vil slette dette forumet?"
+    edit: "Endre Forum"
+    new: "Nytt Forum"
+    start_topic: "Opprett et Emne"
+    title: Forum
+    types: 
+      announce: Kunngjøring
+      howto: Spørsmål
+      ideas: Ideér
+      problem: Problemer
+    verb: 
+      announcement: "Annonsert av"
+      ideas: "Idé delt av"
+      problems: "Problem Rapportert av"
+      questions: "Spørsmål stilt av"
+    visibility: 
+      agents: Agenter
+      all: Alle
+      anyone: "Hvem som helst"
+      logged_users: "Innloggede brukere"
+      select_company: "Velg Firma"
+  forum_confirm_msg1: "Er du sikker på at du vil slette denne kommentaren?"
+  forum_shared: 
+    post: 
+      delete_post: "Slett post"
+      delete_post_confirm: "Slett denne poste? Er du sikker?"
+  forums: 
+    search: 
+      placeholder: "Søk %{name}"
+    search_all: 
+      placeholder: "Søk alle Emner"
+  forums_order: 
+    deferred: Utsatt
+    implemented: Implementert
+    inprogress: "Under behandling"
+    nottaken: "Ikke tatt"
+    overview: Overblikk
+    planned: Planlagt
+    popular: Populær
+    recent: Nylig
+  forward: Videresende
+  forwarded_email: "Videresend e-post"
+  forwarded_to: "Videresend til"
+  four: "4 timer"
+  four_hours: "Innenfor fire timer"
+  free_account: "Gratis konto"
+  free_plan_agents: "for %{free_agents} agenter"
+  from_email: "Fra E-post"
+  fwd_success_msg: "Denne saken har blitt videresendt"
+  fwd_to: Videresend
+  gamification: 
+    leaderboard: 
+      love_trophie_info: "Agent med flest Fornøyd kunde poeng denne måneden"
+      love_trophie_label: "Wow Kunde Mester"
+      mvp_trophie_info: "Kundebehandleren med flest poeng denne måneden"
+      mvp_trophie_info_group: "Gruppe med flest poeng totalt denne måneden"
+      mvp_trophie_label: "Mest verdsatte kundebehandler"
+      mvp_trophie_label_group: "Mest verdsatte gruppe"
+      sharpshooter_trophie_label: Skarpskytter
+      sharpshooter_trophie_label_group: Skarpskyttere
+      speed_trophie_label: Fartsfantom
+    levels: 
+      beginner: Nybegynner
+      expert: Ekspert
+      guru: Guru
+      intermediate: Amatør
+      master: Mester
+      professional: Profesjonell
+    notifications: 
+      newlevel: "<b> Hurra! </b><br/> Nå har du blitt <b>%{name}</b>"
+  go_back: "Gå tilbake"
+  greater_than: "Større enn"
+  header: 
+    edit_profile: "Endre profil"
+    guest: Gjest
+    help_center: "Hvordan kan vi bistå deg i dag?"
+    login: "<b>Logg inn</b>"
+    new_ticket: "Ny Sak"
+    search: Søk
+    signout: "Logg ut"
+    tabs: 
+      admin: Admin
+      company_tickets: "Kunde Saker"
+      customers: Kunder
+      forums: Forum
+      home: Hjem
+      reports: Rapporter
+      social: Sosial
+      solutions: Løsninger
+      tickets: Saker
+  header_logo: "Header Logo"
+  helpdesk: 
+    dashboard: 
+      summary: 
+        due_today: "Forfaller i dag"
+        on_hold: "På hold"
+        unassigned: "Ikke tildelt"
+    shared: 
+      forward_form: 
+        addbcc: "Legg til Bcc"
+        addcc: "Legg til Cc"
+        bcc: Bcc
+        cc: Cc
+        removebcc: "Fjern Bcc"
+        removecc: "Fjern Cc"
+      reply_form: 
+        addbcc: "Legg til Bcc"
+        addcc: "Legg til Cc"
+        bcc: Bcc
+        cc: Cc
+        removebcc: "Fjern Bcc"
+        removecc: "Fjern Cc"
+        title: "Svar til %{email}"
+      tweet_form: 
+        title: "Svar til %{user}"
+    ticket_created_on_n_by: "av %{requester} den %{date_time}"
+    ticket_notifier: 
+      reply: 
+        happy: Fantastisk
+        neutral: Greit
+        unhappy: "Ikke bra"
+    tickets: 
+      add_watcher: 
+        add_button: "Legg til"
+        all_agents_watching: "Alle agenter følger denne saken"
+        cancel: Slett
+        mail: 
+          activity: Aktivitet
+          added_as_watcher: "%{agent_name} har lagt deg til for å følge en sak"
+          agent_response: "Svar fra Agent"
+          customer: Kunden
+          customer_response: "Svar fra Kunde"
+          hi: Hei
+          new_activity: "Ny aktivitet på saken du følger"
+          stop_emails: "Slutt å følge denne saken"
+          ticket: Sak
+          ticket_details: "Beskrivelse av saken"
+        me: "Meg selv"
+        no_agents: "Ingen agent følger denne saken"
+        no_watcher_text: "Ingen agent følger denne saken"
+        pick_agents: "Legg til agenter"
+        unwatch: "Ikke overvåk"
+        view_watchers_link: "Se Overvåkere"
+        watcher_text: "Agenter som blir tildelt saker mottar e-post varsler når en sak blir oppdatert"
+      close_notice: 
+        ticket_has_been_cloased: "Denne saken er lukket."
+        view_ticket: "Vis saken"
+      customview: 
+        new: 
+          give_a_name: "Gi denne visningen et navn"
+          visible_to: "Denne visningen er synlig for"
+      execute_scenario_notice: 
+        view_details: visningsdetaljer
+      friendly_status: 
+        new: Ny
+        overdue: Forfalt
+        resolved: Løst
+      no_email_found: "Bruker med e-post %{email} er ikke tilgjengelig i systemet."
+      save_and_close_notice: 
+        ticket_saved_and_closed: "Denne saken er opprettet og lukket."
+        view_ticket: "Vis saken"
+      show: 
+        conversation: Dialog
+        due_date: 
+          due: Forfaller
+          earlier_date_and_time: "Vennligst angi en dato & tid etter dato & tid for når saken ble opprettet"
+          next_week: "Neste uke"
+          set_date_time: "Angi dato/tid"
+          specific_date: "Angitt dato/tid..."
+          this_week: "Denne uken"
+          today: "I dag"
+          tomorrow: "I morgen"
+          when_is_it_due: "Når forfaller den?"
+        facebook_form: 
+          title: "Svar til %{user}"
+        forward_form: 
+          addbcc: "Legg til Bcc"
+          addcc: "Legg til Cc"
+          bcc: Bcc
+          cc: Cc
+          removebcc: "Fjern Bcc"
+          removecc: "Fjern Cc"
+        linked_ticket: "Denne saken er koblet til forum"
+        meta: meta
+        reply_form: 
+          addbcc: "Legg til Bcc"
+          addcc: "Og Cc"
+          bcc: Bcc
+          cc: Cc
+          removebcc: "Fjern Bcc"
+          removecc: "Fjern Cc"
+          title: "Svar til"
+        tweet_form: 
+          title: "Svar til %{user}"
+      tabular_view: 
+        assigned: Tildelt
+        posted: Publisert
+        priority: Prioritet
+        sla: "Forfaller den"
+        status: Status
+        time_ago: "%{time_in_words} siden"
+        title: Tittel
+      to: "Til: "
+      views: 
+        all: "Alle Saker"
+        all_tickets: "Alle Saker"
+        my_resolved: "Mine Løste Saker"
+        new: "Nye Saker"
+        new_and_my_open: "Nye & Mine Åpne Saker"
+        new_my_open: "Nye & Mine Åpne Saker"
+        on_hold: "Saker På Hold"
+        this_view: "denne visningen"
+    time_sheets: 
+      agent: Agent
+      billable: "Kan faktureres"
+      customer: Kunde
+      executed_at: Dato
+      form: 
+        agent: Agent
+        hours: Timer
+        note: Merknad
+      group: Gruppe
+      group_by: "Grupper etter"
+      hours: Timer
+      new: 
+        title: "Angi ny tid"
+      non_billable: "Kan ikke faktureres"
+      note: Merknad
+      product: Produkt
+      report: 
+        no_timeentry: "Ingen data tilgjengelig"
+        total: Totalt
+      sidebar_title: "Tid registrert"
+      ticket: Sak
+      time_entry: 
+        toggle_timer_false: "Stopp tidtagning"
+        toggle_timer_true: "Start tidtagning"
+      v2: 
+        agent: Agent
+        customer: Kunde
+        executed_at: Dato
+        form: 
+          add_entry: "Legg til tidsregistrering"
+          agent: Agent
+          hours: Timer
+          start_timer: "Start tidtagning"
+        group_by: "Grupper etter"
+        hours: Timer
+        index: 
+          add_entry: "Legg til tid registrert"
+          no_timeentry: "Ingen tid registrert for denne saken"
+          start_timer: "Start tidtagning"
+        new: 
+          title: "Ny tidsregistering"
+        note: Merknad
+        report: 
+          no_timeentry: "Ingen data tilgjengelig"
+          total: Totalt
+        ticket: Sak
+        time_entry: 
+          toggle_timer_false: "Stopp tidtagning"
+          toggle_timer_true: "Start tidtagning"
+  helpdesk_quests: 
+    all: Alle
+    available_quests: "Tilgjengelige oppdrag"
+    back_to_dashboard: "< Tilbake til oversikt"
+    quests: Oppdrag
+    see_all: "Se alle"
+    un_achieved: Uoppnådd
+  high: Høy
+  how_to: Spørsmål
+  identity_reverted_error_msg: "Beklager, vi kunne ikke finne din opprinnelige bruker."
+  immediately: Umiddelbart
+  import: Importer
+  import_added_newly: "Lagt til nylig"
+  import_articles: "Løsning Artikler"
+  import_data: "Dato Importert"
+  import_topics: Emner
+  import_updated: Oppdatert
+  import_zendesk_summary: "Oppsummering av import fra Zendesk"
+  import_zendesk_title: "Importer fra zendesk"
+  incident: Hendelse
+  index_tooltip_loading_msg: Laster...
+  integration: 
+    helpcard: 
+      title1: Integrasjoner
+  integrations: 
+    batchbook: 
+      form: 
+        api_key: "API Nøkkel"
+        version: 
+          classic: Klassisk
+          label: Versjon
+          new: Ny
+    google_analytics: 
+      form: 
+        copy_settings: "Benytt Sporings ID over for alle portaler"
+    google_calendar: 
+      desc: "Du kan organisere hendelser for hver sak med Google kalender."
+      form: 
+        google_calendar_settings: "Innstillinger Google Kalender"
+      helptext: "Med Google kalender kan du holde orden på hendelser knyttet til saker. Agenter må knytte sin Google konto til Freshdesk for å organisere hendelser med Google kalender."
+      label: "Google kalender"
+    google_contacts: 
+      delete_action: 
+        error: "Feil ved sletting av Google konto."
+        success: "Slettet Google konto."
+      edit_form: 
+        edit_app_title: "Endre instillinger for kontakter fra Google"
+        import_group: "Velg grupper for import (valgfritt)"
+        import_title: "Instillinger for import av kontakter fra Google"
+        install_title: "Instillinger for kontakter fra Google"
+        mail_box_detail: "Synkroniser med"
+      form: 
+        sync_type: Synkroniseringstype
+        sync_type_info: "Hvordan vil du synkronisere kontakter mellom Google og Freshdesk."
+      sync_status: 
+        deleted: slettet
+        freshdesk: "Status importerte kontakter i Freshdesk"
+      update_action: 
+        also: " Også "
+        error: "Feil ved oppdatering av Google konto."
+        success: "Lagt til Google konto."
+    highrise: 
+      label: Highrise
+    jira: 
+      form: 
+        domain: Domene
+        jira_note: "Beskrivende tekst"
+        password: Passord
+        username: Brukernavn
+    jira_settings: 
+      add_public_note_in_fd: "Legg til offentlig notat i Freshdesk."
+      none: "Ikke gjør noe."
+    sugarcrm: 
+      desc: "Du kan se kontaktinformasjon fra SugarCRM i Freshdesk."
+      form: 
+        domain: "URL til SugarCRM konto"
+        password: Passord
+        username: Brukernavn
+      label: SugarCRM
+    workflow_max: 
+      form: 
+        account_key: "Konto Nøkkel"
+        api_key: "API Nøkkel"
+  is_expiring_today: "utløper i dag"
+  is_not: "Er ikke"
+  last: Sist
+  last_draft: "Ditt siste utkast"
+  last_name: Etternavn
+  last_renewed_on: "Sist Fornyet den"
+  latest_ticket: "ny oppdatering"
+  latest_tickets: "nye oppdateringer"
+  left: Venstre
+  less_than: "Mindre enn"
+  likes: Liker
+  logmein_source: "LogMeIn Rescue"
+  logo: Logo
+  logo_delete_msg: "Er du sikker på at du vil slette denne logoen?"
+  low: Lav
+  medium: Middels
+  mobi_help: MobiHelp
+  more: Mer
+  myself: Meg
+  never: Aldri
+  next: Neste
+  next_charge_date: "Neste Fornyelse"
+  no_change: "Ingen endring"
+  no_date_to_display: "Ingen data å vise"
+  no_password_reset: Nei
+  no_tags: "Ingen tagger funnet"
+  no_twitter_handle: "Vennligst konfigurer minst en twitter konto"
+  not_eligible_for_free_plan: "Ikke kvalifisert til å velge gratis plan"
+  not_given: "Ikke oppgitt."
+  note: "Merk: "
+  notified_to: "Varslet til"
+  number_of_attachments: " vedlegg"
+  of: av
+  ok: OK
+  on_hold: "På hold"
+  one_hour: "Innenfor en time"
+  onemonth: "1 måned"
+  oneweek: "1 uke"
+  oneyear: "1 år"
+  open: Åpne
+  open_tickets: "Åpne Saker"
+  or: eller
+  paid_with: "Betalt med"
+  password: Passord
+  password_confirmation: "Passord bekreftelsen:"
+  password_reset_email: "Nullstille Passord E-post"
+  payment_info: Betalingsinformasjon
+  pending: "Venter på"
+  plan_amount: "pr agent/måned"
+  plan_info_update: "Din plan er endret."
+  plan_is_selected: "Din konto er nå aktiv med plan %{plan}"
+  plans_and_pricing: "Planer og prising"
+  plans_billing: "Planer & Fakturering"
+  please_wait: "Vennligst vent..."
+  portal: 
+    article: 
+      see_all_articles: "Se alle %{count} artikler"
+    folder: 
+      filler_text: "Følg med her for artikler om %{folder_name}"
+    knowledge_base: Kunnskapsbase
+    login: "Logg inn"
+    login_options: "... eller logg inn ved å bruke"
+    no_articles_info_1: "Beklager, vi har ikke publisert noen artikler i denne seksjonen. "
+    no_articles_info_2: "Vennligst sjekk igjen senere. "
+    no_topics_in_this_view: "~ Ingen emnefelt i denne visningen ~"
+    or_signup: " eller %{signup} en konto"
+    popular_topics: "Populære emner"
+    reported: rapportert
+    said: sagt
+    search: 
+      filters: 
+        all: Alle
+        solutions: Løsning
+        tickets: Saker
+        topics: Emne
+      placeholder: "Skrive det du søker etter her..."
+      results_for: "Søkeresultat for"
+    showing_recent_updates: "Vis siste oppdateringer"
+    showing_recently_popular_topics: "Viser siste populære emner"
+    signup: Registrér
+    to_post_comment: " publiser en kommentar"
+    to_post_topic: " publiser et emne"
+  portal_customizer_anon_tickets: "Hvem som helst kan sende inn en sak"
+  portal_customizer_open_forums: "Hvem som helst kan se forum"
+  portal_customizer_option_forums: "Brukere kan se forum uten å logge inn"
+  portal_pages: 
+    groups: 
+      discussions: Diskusjoner
+      general: "Generelle sider"
+      solutions: Løsninger
+      tickets: Saker
+    pages: 
+      article_list: "Artikkel liste"
+      article_view: "Artikler visning"
+      discussions_home: "Diskusjoner hjem"
+      forgot_password: "Glemt passord"
+      new_topic: "Nytt emne"
+      portal_home: "Portal hjem"
+      profile_edit: Brukerprofil
+      search: Søkeresultater
+      solution_category: "Løsninger kategori hjem"
+      solution_home: "Løsninger hjem"
+      submit_ticket: "Ny sak"
+      ticket_list: "Samer fra brukere"
+      ticket_view: Saksdetaljer
+      topic_list: "Emne liste"
+      topic_view: "Emne visning"
+      user_login: "Logg inn side"
+      user_signup: "Ny bruker registrering"
+  portalcss: 
+    cosmetic: 
+      css_help_message: "Legg til eller skriv over freshdesk sine standardstiler med dine egne css."
+      css_subheader: "Tilpasset stilart"
+      subheader_background_color: Bakgrunnsfarge
+      subheader_form_elements: Skjemaelementer
+      subheader_link_color: Lenkefarger
+      subheader_portal_fonts: "Portal fonter"
+      subheader_tab_color: Fanefarger
+    layout_pages: 
+      pagelayout_help_message: "Tilpass hele visningen av din supportside"
+      subheader_pages: "Portal sider"
+  preview: Forhåndsvisning
+  previous: Forrige
+  problem: Problem
+  proceed_now: "Fortsette nå?"
+  profile: 
+    api_key: 
+      reset: "Nullstille API nøkkel"
+      title: "Din API nøkkel"
+    change_password: "Endre passord"
+    confirm_password: "Bekreft passord"
+    confirm_password_message: "Må være likt som passord"
+    current_password: "Gjeldende passord"
+    edit: "Endre profil"
+    new_password: "Nytt passord"
+  question: Spørsmål
+  quests: 
+    customer_votes: "Antall stemmer"
+    date: Dato
+    forum_category: Kategori
+    forums: Forum
+    satisfaction: "Kundetilfredshets rangering"
+    solution_articles: Artikkel
+    solution_folder: Mappe
+    solution_likes: "Antall likes"
+    ? "true"
+    : "1"
+  referral: Vervekreditt
+  register: Registrere
+  remove: Fjern
+  replied_to: "Besvart til"
+  reply: svar
+  reply_comment: "Legg til kommentar"
+  reply_topic: "Svar på emne"
+  reported_by: "Rapportert av "
+  reports: 
+    date_ranges: 
+      custom: "Dato intervall"
+    summary: 
+      open_tickets: "Åpne saker"
+      received_tickets: "Mottatte saker"
+      resolved_tickets: "Løste saker"
+      title: "Oppsummering av sak"
+      total_tickets: "Antall saker"
+    survey_reports: 
+      back_to: "Tilbake til Visningsliste"
+      feedbacks: 
+        in_response_to: "- - Som svar på"
+      index: 
+        agent_list_loading: "Henter agent liste"
+      list: 
+        no_feedback: "Ingen har gitt noen tilabkemelding i løpet av denne perioden."
+      list_content: 
+        happy: fantastisk
+        neutral: "bare okay"
+        rating_msg_multiple: "%{count} sa %{rating}"
+        rating_msg_none: "ingen sa %{rating}"
+        rating_msg_single: "en sa %{rating}"
+        rating_primary_msg_multiple: "%{count} kunder sa %{rating}"
+        rating_primary_msg_single: "en kunde sa %{rating}"
+        unhappy: "ikke bra"
+      sidebar: 
+        from: Fra
+        to: Til
+        view_report_date: "Se rapporter mens"
+    surveys_title_nav: "Kundetilfredshets rapport"
+    timesheet_reports: 
+      index: 
+        filter_report: "Filtrér rapport på"
+        from: Fra
+        select_agent: "Velg Agent"
+        select_customer: "Velg Kunde"
+        to: Til
+  reset: Nullstille
+  reset_my_password: "Nullstill mitt passord"
+  resolved: Løst
+  resolved_late: "Løst for sent"
+  resolved_on_time: "Løst innenfor tiden"
+  resolved_tickets: "Løste Saker"
+  revert_identity_link_msg: "Tilbakestill identitet"
+  right: Høyre
+  sales: Salg
+  save: Lagre
+  save_and_close: "Lagre og Lukk"
+  save_and_create: "Lagre og Opprett en til"
+  save_and_new: "Lagre og Ny"
+  saved_draft: Lagret
+  saving: Lagrer...
+  saving_draft: Lagrer...
+  search: 
+    no_results_msg: "Ingen resultater funnet"
+  search_button: Søk
+  search_results: Søkeresultat
+  search_solutions: "Søk i løsninger"
+  security_code: Sikkerhetskode
+  select: "Velg ..."
+  select_a_plan: "Velg en Plan"
+  select_a_plan_gain_access: "Velg en plan nedenfor for på nytt å få tilgang til din konto."
+  select_another_plan: "Velg en annen plan"
+  select_free_plan: "Velg din Gratis plan"
+  select_plan: "Marker plan"
+  selected: Valgt
+  send_email_to_agent: "Send E-post til Agent"
+  send_feedback: "Send tilbakemelding"
+  set_password: "Opprett passord"
+  set_status_as: "Sett Status som"
+  seven_days: "Denne uken"
+  show_quoted_text: "Vis sitert tekst"
+  show_recent: "Vis siste"
+  showing: Viser
+  signup: "Registrer deg"
+  signup_complete_activate_info: "Velkommen! Vi har sendt deg en epost med en lenke der du kan registrere ditt passord og aktivere din konto"
+  signup_help_information: "Når du har registrert deg, så vil du ha tilgang til våre løsninger og FAQ. Spør spørsmål og lær fra vår brukergruppe. Du vil også kunne legge inn supportsaker og spore status på de."
+  signup_title: "Registrer deg på %{current_portal}"
+  signup_up_with_us: "Registrer deg hos oss"
+  since: Siden
+  since_last_time: "siden sist %{time_words}"
+  since_time: "Siden %{time_words}"
+  six_months: "Siste 6 måneder"
+  sixmonth: "6 måneder"
+  sla_policy: 
+    add_level: "Legg til nivå"
+    add_new: "Legg til ny"
+    add_resolution_esc: regel
+    add_response_esc: "Legg til regel"
+    agent_placeholder: "Velg Agenter å eskalere til"
+    company_placeholder: "Legg til Firmanavn"
+    escalate_after: Eskalere
+    group_id_placeholder: "Legg til Grruppenavn"
+    product_id_placeholder: "Legg til Produktnavn"
+    source_placeholder: "Legg til Kildenavn"
+  social: 
+    twitter_handles: 
+      form: 
+        search_keywords: "Søk Nøkkelord"
+      index: 
+        search: Søk
+        search_twitter: "Søk twitter"
+  solution: 
+    articles: 
+      add_article: "Legg til en artikkel"
+      add_to_guide: "Legg til Guide"
+      article_not_useful: "Takk for tilbakemeldingen. Vi vil forbedre denne artikkelen."
+      article_useful: "Glade for at vi kunne være til hjelp. Takk for tilbakemeldingen."
+      assign_to_guide: "Tildel til Guide"
+      clear_search: "Fjern søkeresultat"
+      deselect_all: "Avmerk alle"
+      error_message: "Det er en feil %{error_msg}"
+      expanded_view: "Utvidet visning"
+      guides: Guider
+      list_view: Listevisning
+      search_articles: "Søk Artikler"
+      select_all: "Merk alle"
+      where: Hvor
+    char_count: tegn
+    description_counter_message: "De beste SEO sidene anbefaler maks 150 tegn i beskrivelsen."
+    folder: Mappe
+    info1: "Løsninger i Freshdesk er din Kunnskapsbase"
+    info2: "Løsninger kan være <b>offentlige</b> eller </b>private<b>. Offentlige Løsninger er synlige i selvbetjeningsportalen og vil også bli synlige i søkeresultat."
+    info7: "Ingen løsninger i denne mappen"
+    info8: "Er du sikker på at du vil slette denne løsningen"
+    meta_keywords_message: "Skill nøkkelord med komma"
+    solution_meta: "Meta tagger for søkemotorer"
+    solution_meta_description: "Meta beskrivelse"
+    solution_meta_keywords: "Meta nøkkelord"
+    solution_meta_title: "Tittel tag"
+    status: "Status løsning"
+    title_counter_message: "De beste SEO sidene anbefaler maks 72 tegn i tittelen."
+    visibility: Synlighet
+  solutions: 
+    search: 
+      placeholder: "Søk %{name}"
+    search_all: 
+      placeholder: "Søk alle Løsninger"
+    status: 
+      draft: Utkast
+      published: Publisert
+    visibility: 
+      agents: Agenter
+      anyone: "Hvem som helst"
+      logged_in_users: "Innloggede Brukere"
+  special_beta_offer: "Spesielt tilbud for Beta kontoer"
+  status: Status
+  status_deleted: "Status slettet"
+  status_name_validate_presence_msg: " Status navn kan ikke være blank"
+  status_name_validate_uniqueness_msg: " Status navn er brukt"
+  step1: "Steg 1"
+  step2: "Steg 2"
+  subject_or_description: "Emne eller Beskrivelse"
+  submit: send
+  subscription: 
+    agents: Agenter
+    billing: Fakturering
+    error: 
+      lesser_agents: "Din Freshdesk konto har nå %{agent_count} agenter og du kan ikke abonnere på et mindre antall agenter. Vennligst slett noen agenter og forsøk på nytt."
+    free: Gratis
+    paid: Betalt
+    total: Totalt
+    upgrade: 
+      cname: "Vil du bruke ditt eget domene her? Vennligst oppgrader din konto."
+      message: "Oppgrader din konto for å åpne denne funksjonaliteten."
+  success: Suksess
+  support: 
+    login: 
+      form: 
+        email: Epost
+        forgot: "glemt passordet ditt?"
+        help: Hjelp
+        login: "Logg inn"
+        password: Passord
+        remember: "Husk meg på denne enheten"
+        sign_in_using: "Logg inn"
+        sign_in_using_google: "Logg inn ved å bruke din Googlekonto"
+    shared: 
+      comments: Kommentarer
+      email: "Din e-postadresse *"
+      info1: "Kan du fortelle oss hvordan vi kan forbedre denne artikkelen?"
+      send_feedback: "Send tilbakemelding"
+      survey_form: 
+        cancel: Kanseller
+        change_of_mind: "Har du endret mening?"
+        feedback_title: "Ris og ros kan også hjelpe oss til bedre support i fremtiden"
+        rate_again: "Vurder oss igjen"
+        rated_on: "Du ga oss denne vurderingen %{rated_on}"
+        submit: Send
+        survey_title: "Vi setter stor pris på om du kan vurdere vår support"
+    surveys: 
+      feedback_already_done: "Du har allerede gitt din tilbakemelding for denne supportsaken."
+      new: 
+        additional_info: "I tillegg kan du også dele din erfaring med å ha jobbet med oss."
+        feedback_info: "Din tilbakemelding er svært verdsatt."
+        feedback_optional: "Tilbakemelding er valgfri"
+        happy_info: "Det har vært vår fornøyelse å hjelpe deg, tusen takk for at du likte vår supportservice."
+        neutral_info: "Håper du kan være litt gladere."
+        send: Send
+        sorry: "Men, vi er virkelig lei oss for det inntrufne"
+        thanks: "Tusen takk for at du gir din vurdering av oss!"
+        thanks_info: "Tusen takk for at du gir din vurdering av vår support."
+        unhappy_info: "Håper vi kan gi deg bedre support neste gang du tar kontakt med oss."
+      thanks_for_feedback: "Vi har motatt din tilbakemelding. Tusen takk."
+    tickets: 
+      ticket_survey: 
+        cancel: Kanseller
+        change_of_mind: "Har du forandret mening?"
+        feedback_title: "Beskriv i detaljer din supportopplevelse (valgfri)"
+        rate_again: "Vurder oss gjerne igjen"
+        rated_on: "på%{rated_on}"
+        rating_sub_title: "Du har vurdert oss"
+        submit: Send
+        survey_title: "Vi setter stor pris på om du kan vurdere vår support"
+        title: Kundeundersøkelse
+  suspended_plan_info: "Din konto har blitt stoppet vennligst velg en plan for å fortsette!"
+  switch_heading: "Bytt Agent"
+  swith_agent_msg: "Bytt til en annen Agent"
+  thirty_days: "Denne måneden"
+  thirty_minutes: "Innenfor 30 minutt"
+  this_ticket_has_been_closed: "Denne saken er Lukket"
+  this_ticket_has_been_resolved: "Denne saken er Løst"
+  threeday: "3 dager"
+  threemonth: "3 måneder"
+  ticket: 
+    deleted: SØPPEL
+    expand: Utvid
+    include_quoted_text: "Inkluder tidligere svar"
+    insert: "Sett inn"
+    more_details: "Flere detaljer..."
+    next: "Neste Sak"
+    previous: "Forrige Sak"
+    reply_form: 
+      send_satisfaction_survey: "Inkluder kundetilfredshets undersøkelse"
+    reported_on: "fra %{username}, Sist oppdatert: den %{date}"
+    spam: SPAM
+    switch_view: 
+      new_view: "Forsøk den <strong> nye visningen av saker</strong>"
+      revert_view: "Bytt til Klassisk visning"
+      submit_feedback: "Send tilbakemelding"
+      whats_new: "Hva er nytt"
+  ticket_cancel_multiple_button: Slett
+  ticket_cc_email_more: mer
+  ticket_close_success: "Din sak har blitt lukket."
+  ticket_closed_at_time: "Lukket den"
+  ticket_deleted: "Denne supportsaken har blitt slettet"
+  ticket_due_by_time: "Forfaller den"
+  ticket_field: 
+    helpcard: 
+      info1: "Dette skjemaet er den enkleste måten å innhente alle opplysninger du trenger fra kunden samtidig med at de registrerer en ny sak. For eksempel kan en kundes ordrenr. være nyttig informasjon for å få fortgang på ting. Du kan endre ditt skjema i Freshdesk for best å tilpasse det din virksomhet. Kunder og agenter kan fylle inn all den informasjon du trenger, i det formatet du ønsker"
+      title1: Saksfelt
+      tour: "Hjelp meg å forstå saksfelt"
+  ticket_fields: 
+    confirm_delete: "Er du sikker på at du vil slette dette feltet"
+    fields: 
+      agent: Agent
+      created_at: Opprettet
+      description: Beskrivelse
+      group: Gruppe
+      priority: Prioritet
+      product: Produkt
+      requester: "Søk etter anmoder"
+      source: Kilde
+      status: Status
+      subject: Emne
+      ticket_type: Type
+    first_choice: Førstevalg
+    formfield_props: 
+      add_new_choice: "Legg til nytt valg"
+      agent_info1: "Dette feltet kan ikke være blankt når du vil sende inn supportsaken"
+      agent_info2: "Dette feltet kan ikke være blankt når forsøker å lukke supportsaken"
+      agent_mandatory_closure: "Nødvendig for å lukke supportsaken"
+      agent_mandatory_submission: "Nødvendig for å sende inn skjemaet"
+      behavior: Oppførsel
+      cc_any_email: "Kan CC alle e-post adresser"
+      cc_company_contacts: "Kan bare CC kontakter tilhørende firma"
+      choices: Valg
+      customer_edit: "Kunde kan editere"
+      customer_info1: "Dette feltet kan ikke være blankt når du vil sende inn supportsaken online"
+      customer_mandatory: "Nødvendig for å sende inn skjemaet"
+      customer_visible: "Vises for kunde"
+      delete_field: "Slett felt"
+      description: Beskrivelse
+      display_cc_field: "Vis CC feltet"
+      display_to_customer: "Vis melding til kunde"
+      dropdown_choices: Menyvalg
+      dropdown_items_edit: "Nedtrekkselementer - redigeringsvisning"
+      dropdown_items_preview: "Nedtrekkselementer - forhåndsvisning"
+      field_label_agents: "Feltetikett for kundebehandlere"
+      field_label_customer: "Feltetikett for kunder"
+      for_agents: "For kundebehandler"
+      for_customer: "For kunde"
+      form_title: Feltegenskaper
+      label: Feltetikett
+      label_in_portal: "Etikett i portal"
+      label_in_portal_info: "Etiketten som vises på din selvbetjeningsside"
+      level1: "Nivå 1"
+      level2: "Nivå 2"
+      level3: "Nivå 3"
+      nested_label: "Etikett sammenhengende felt"
+      nestedfield_helptext: "Bruk fritekst skjemaet nedenfor til å legge til eller endre valg i nedtrekksmenyen, for innrykk bruk tab-tasten en til to ganger. Vi vil konvertere skjemaet til valg i nedtrekksmenyen basert på innrykkene i teksten. <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'> Lær mer</a> "
+      nestedfield_helptext_preview: "Dette er \"forhåndsvisning\" av prøver av nedtrekkselementer, bruk det åpne tekstfeltet i \"Redigerinsvisningen\" for å redigere elementene."
+      sla_timer: "SLA tidsur"
+      status_choices: Statusvalg
+    index: 
+      add_custom_field: "Legg til et egendefinert felt"
+      checkbox: Avmerkingsboks
+      customize_form: "Tilpass \"Ny sak\" skjemaet ditt."
+      drag_drop_intro: "Dra og slipp hvilket som helst felt inni \"Ny supportsak\" skjemaet under for å legge til ett egendefinert felt."
+      dropdown: Nedtrekksliste
+      nestedfield: "Sammenhengende felt"
+      number: Nummer
+      paragraph: Paragraftekst
+      save: "Lagre feltene for denne saken"
+      single_line: "Separat linjetekst"
+      title: "Felter til denne saken"
+    no_choice_message: "Minst ett gyldig valg må være tilstede"
+    saving_ticket: "Lagre dette feltet..."
+    second_choice: Andrevalg
+    untitled: "Uten tittel"
+  ticket_future_due_by: "Forfaller om %{time}"
+  ticket_past_due_by: "Forfalt for %{time} siden"
+  ticket_resolved_at_time: "Løst den"
+  ticket_update_multiple_button: Oppdatering
+  ticket_was: "saken var"
+  tickets_were: "saken er"
+  tip_off: "Trykk for å lukke"
+  tip_on: "Trykk for å åpne"
+  to: til
+  to_do: Gjøremål
+  today: "I dag"
+  topic: 
+    ideas_stamps: 
+      implemented: Implenetert
+      nottaken: "Ikke Tatt"
+      planned: Planlagt
+    reply: "Svar på dette Emnet"
+  total: Totalt
+  trial_expired_on: "Prøveperioden din har gått ut"
+  twelve_hours: "Innenfor 12 timer"
+  twentyfour_hours: "Innenfor 24 timer"
+  twitter: 
+    associate_twitter: "Koble til en twitter konto så du kan hjelpe kunder via tweets."
+    deleted: "Twitter kontoen @%{twitter_screen_name} har blitt fjernet."
+    error_sending: "Feil ved sending av tweet. Twitter kan være ustabil. Forsøk på nytt."
+    not_authorized: "Du ble ikke verifisert av Twitter"
+    sent: "Tweet sendt"
+    ticket_save: "Tweet er konvertert til sak"
+    usr_not_thr: "Bruker er ikke tilstede."
+  twitter_source: Twitter
+  two_months: "Siste to måneder"
+  twoday: "2 dager"
+  twomonth: "2 måneder"
+  twoweek: "2 uker"
+  unable_to_charge: "Ikke mulig å belaste kortet for agenten som er lagt til!"
+  unauthorized_msg: "Verifisering feilet"
+  unblock: Hviteliste
+  undelete: Gjenopprett
+  undo: Angre
+  unspam: "Ikke søppelpost"
+  update_and_login: "Oppdater & logg inn"
+  upgrade_plan: Oppdater
+  upgrade_trial: "Oppgrader din demoversjon!"
+  user: 
+    address: Adresse
+    back_info: Bakgrunnsinformasjon
+    change_photo: "Endre bildet"
+    choose_another_photo: "Velg et annet bilde"
+    company: Firma
+    email: Epost
+    facebook: Facebook
+    full_name: "Fullt navn"
+    info1: "Ett profilbilde av personen bør ha samme høyde som bredde"
+    mobile: Mobil
+    name: Navn
+    phone_no: Telefonnummer
+    photo: Foto
+    remove_photo: "Fjern bildet"
+    remove_profile_image: "Profilbildet er fjernet"
+    remove_profile_image_confirm: "Er du sikker på at du vil slette dette profilbildet?"
+    secondary: sekundær
+    title: Tittel
+    twitter_id: "Twitter ID"
+    work: Arbeid
+  user_activation_email: "E-post for aktivering av bruker"
+  username: Brukernavn
+  validate_fwd_to_email_msg: "Vennligst oppgi en gyldig e-post adresse"
+  waiting_on_customer: "Venter på Kunde"
+  waiting_on_third_party: "Venter på 3.part"
+  warning: ADVARSEL
+  what_is_cvv: "Hva er cvv?"
+  working: "Arbeider hos"
+  wrong_portal: 
+    title: "Ikke tilgjengelig!"
+  yes_password_reset: Ja
+  yesterday: "i går"
+  your_email: "Din e-post"
+  your_email_address: "Din e-post adresse"
+  your_trial_account: "Din prøvekonto"
+  zendesk_backup: "Backup fil"
+  zendesk_backup_info: "Velg Zendesk backup-fil lastet ned fra zendesk"
+  zendesk_url: "Zendesk URL"
+  zip: Postnr

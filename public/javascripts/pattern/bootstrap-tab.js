@@ -22,6 +22,8 @@
 
   "use strict"; // jshint ;_;
 
+  if($.fn.tab) return
+
 
  /* TAB CLASS DEFINITION
   * ==================== */

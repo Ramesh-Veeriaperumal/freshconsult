@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130405084952) do
+ActiveRecord::Schema.define(:version => 20130427074254) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -140,6 +140,7 @@ ActiveRecord::Schema.define(:version => 20130405084952) do
     t.integer  "points",              :limit => 8
     t.integer  "scoreboard_level_id", :limit => 8
     t.integer  "account_id",          :limit => 8
+    t.boolean  "available",                        :default => true
   end
 
   add_index "agents", ["account_id", "user_id"], :name => "index_agents_on_account_id_and_user_id"
@@ -361,6 +362,7 @@ ActiveRecord::Schema.define(:version => 20130405084952) do
 
   add_index "es_enabled_accounts", ["account_id"], :name => "index_es_enabled_accounts_on_account_id"
 
+
   create_table "flexifield_def_entries", :force => true do |t|
     t.integer  "flexifield_def_id",  :limit => 8, :null => false
     t.string   "flexifield_name",                 :null => false
@@ -544,6 +546,7 @@ ActiveRecord::Schema.define(:version => 20130405084952) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "import_id",       :limit => 8
+    t.integer  "ticket_assign_type",              :default => 0
   end
 
   add_index "groups", ["account_id", "name"], :name => "index_groups_on_account_id", :unique => true

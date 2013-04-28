@@ -91,8 +91,10 @@ class Search::HomeController < ApplicationController
   end
 
   def highlight_results(result, hit)
-    hit['highlight'].keys.each do |i|
-      result[i] = hit['highlight'][i].to_s
+    unless result.blank?
+      hit['highlight'].keys.each do |i|
+        result[i] = hit['highlight'][i].to_s
+      end
     end
     result
   end

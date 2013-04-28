@@ -1,0 +1,61 @@
+.list-page{
+    margin:0 auto;
+    .list-page-header{
+        margin-bottom: 20px;
+    }
+    .list-page-subheader{
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
+    .list-page-body{
+        border:1px solid #eee; /* depands upon bootstrap table variable $tableBorder  */
+        @include box-sizing(border-box);
+        background:#f6f6f6;
+        padding:8px 0 8px 0;
+        @include border-radius(5px);
+        @include box-shadow(0px 0px 10px rgba(200, 200, 200, 0.2));
+
+        .list-page-table-header{
+            padding:4px 12px 12px;
+        }
+        .list-page-table-footer{
+            padding:12px 12px 4px;
+        }
+        table{
+            background:#fff;
+            margin:0;
+            border-bottom: 1px solid $tableBorder;
+            tr{
+                &:hover{
+                    td{
+                        background-color: #FEFDEE;
+                    }
+                }
+            }
+            tr td, tr th
+            {
+                vertical-align: middle;
+                word-wrap: break-word;
+                padding: 12px;
+            }           
+        }  
+        .item_actions, .item-actions{
+            padding-right: 5px;
+        }
+        .pagination{
+            background:#f6f6f6;
+            border-top:1px solid $tableBorder; 
+            margin:0px;  
+            padding:10px; 
+            padding-bottom:0;
+            line-height:0;    
+        }  
+        .btn-mini{
+            background-image:none;
+            background-color:#fdfdfd; 
+            &:hover{
+              background-color:#f1f1f1;  
+            }        
+        }   
+    }
+}

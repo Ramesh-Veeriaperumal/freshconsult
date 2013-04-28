@@ -22,6 +22,7 @@
 
   "use strict"; // jshint ;_;
 
+  if($.fn.collapse) return
 
  /* COLLAPSE PUBLIC CLASS DEFINITION
   * ================================ */

@@ -6,6 +6,7 @@ class Account < ActiveRecord::Base
   include Mobile::Actions::Account
   include Tire::Model::Search
   include Cache::Memcache::Account
+  include ErrorHandle
 
   #rebranding starts
   serialize :preferences, Hash
@@ -220,15 +221,6 @@ class Account < ActiveRecord::Base
 
 
   before_create :set_default_values
-  
- 
-  
-
-
-
-  
-
-  
   before_update :check_default_values, :update_users_time_zone
     
   after_create :create_portal, :create_admin
@@ -241,7 +233,6 @@ class Account < ActiveRecord::Base
   before_destroy :update_crm, :notify_totango
 
   after_commit_on_create :add_to_billing, :add_to_totango, :create_search_index
-  before_destroy :update_billing
 
   after_commit_on_update :clear_cache
   after_commit_on_destroy :clear_cache, :delete_search_index
@@ -300,7 +291,7 @@ class Account < ActiveRecord::Base
     },
 
     :estate => {
-      :features => [ :gamification, :agent_collision, :layout_customization ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin ],
       :inherits => [ :garden ]
     },
 
@@ -320,7 +311,7 @@ class Account < ActiveRecord::Base
     },
 
     :estate_classic => {
-      :features => [ :gamification, :agent_collision, :layout_customization ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin ],
       :inherits => [ :garden_classic ]
     }
 
@@ -408,7 +399,7 @@ class Account < ActiveRecord::Base
   end
   
   def active?
-    5.days.since(self.subscription.next_renewal_at) >= Time.now
+    !self.subscription.suspended?
   end
   
   def plan_name
@@ -540,7 +531,7 @@ class Account < ActiveRecord::Base
   end
 
   def create_search_index
-    begin
+    sandbox(0) {
       Tire.index(search_index_name) do
         create(
           :settings => {
@@ -549,6 +540,8 @@ class Account < ActiveRecord::Base
                 :word_filter  => {
                        "type" => "word_delimiter",
                        "split_on_numerics" => false,
+                       "generate_word_parts" => false,
+                       "generate_number_parts" => false,
                        "split_on_case_change" => false,
                        "preserve_original" => true
                 }
@@ -679,9 +672,7 @@ class Account < ActiveRecord::Base
           }
         )
       end
-    rescue Errno::ECONNREFUSED => e
-      NewRelic::Agent.notice_error(e)
-    end
+    }
   end
 
   def enable_elastic_search
@@ -849,15 +840,11 @@ class Account < ActiveRecord::Base
   private 
 
     def add_to_billing
-      Resque.enqueue(Billing::AddToBilling::CreateSubscription, id)
-    end 
+      Resque.enqueue(Billing::AddToBilling, { :account_id => id })
+    end
 
     def add_to_totango
       Resque.enqueue(CRM::Totango::TrialCustomer, {:account_id => id})
-    end
-
-    def update_billing
-      Resque.enqueue(Billing::AddToBilling::DeleteSubscription, id)
     end
 
     def update_crm

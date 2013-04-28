@@ -22,6 +22,8 @@
 
   "use strict"; // jshint ;_;
 
+  if($.fn.typeahead) return
+
 
  /* TYPEAHEAD PUBLIC CLASS DEFINITION
   * ================================= */

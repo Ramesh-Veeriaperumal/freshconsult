@@ -1,4 +1,4 @@
-<table id="canned_table_big" class="zebra-striped">
+<table id="canned_table_big" class="table table-striped">
 <tbody>
 	<% fields_for :ids do |f| %>
 		<%= each_or_message("ca_response", @ca_responses, t('canned_folders.no_response_admin', {:link =>new_admin_canned_responses_folder_response_path(@ca_res_folder)}), { :f => f }) %>

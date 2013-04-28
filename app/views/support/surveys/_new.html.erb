@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html>
-<head>
-	
+<head>	
 	<link rel="stylesheet" href="/stylesheets/support/rating.css">
 	<%= include_javascripts :survey  %>
-
 </head>
-<body>
-	
+<body>	
 	<div class="top-strip" style="background-color:<%=@account.main_portal.preferences[:header_color]%>">
 		<div class="brand">
 	    	<% link_to (portal_pref(@account.main_portal, :logo_link).empty?) ? "/home" : portal_pref(@account.main_portal, :logo_link), :class => "logo" do %>
@@ -18,9 +15,8 @@
     	</div>
 	</div>
 	
-	<div class="wrapper">
-		
-			<div class="position">
+	<div class="wrapper">		
+		<div class="position">
 			<div class="pointer"></div>
 			<div class="highlighter">
 				<div class="smily">
@@ -58,11 +54,7 @@
 			</div>
 		</div>
 
-	</div>
-	
-	<script>
-		$("#survey_form").validate();
-	</script>
-
+	</div>	
+	<script> $("#survey_form").validate(); </script>
 </body>
 </html>

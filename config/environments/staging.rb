@@ -19,6 +19,10 @@ config.after_initialize do
   ActiveMerchant::Billing::Base.gateway_mode = :test
 end
 
+# Don't auto compile css in production
+config.after_initialize do
+	Sass::Plugin.options[:never_update] = true
+end
 
 # Use a different cache store in production
 # config.cache_store = :mem_cache_store
