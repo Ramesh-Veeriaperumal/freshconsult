@@ -6,7 +6,7 @@ class CRM::Salesforce < Resque::Job
                             :opportunity_contact_role => "OpportunityContactRole" }
 
   PAYMENT_ATTRIBUTES  =   { :Name => :to_s, :Agents__c => :agents, :Plan__c => :plan_name, 
-                            :Amount__c => :amount, :Discount__c => :discount, :Amount => :amount, 
+                            :Amount__c => :amount, :Amount => :amount, 
                             :Renewal_Period__c => :renewal_period }
 
   CRM_IDS             =   { :account => :AccountId, :contact => :Id }

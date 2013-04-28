@@ -2373,6 +2373,7 @@ en:
   enter_billing_for_free: Please enter the credit card details before you choose the paid plan
   will_expire_in: will expire in
   choose_plan_trial: "Note: Your account will get deactivated after the trial period. <br /> To continue using Freshdesk, please choose a plan below." 
+  trial_expired: "Your trial has expired and the account is deactivated. Please contact support@freshdesk.com to update your subscription."
   asked_on: Asked on
   this_ticket_has_been_deleted: This ticket has been deleted
   state: State
