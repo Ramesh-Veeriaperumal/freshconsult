@@ -168,7 +168,8 @@ class Billing::BillingController < ApplicationController
     def card_info(card)
       {
         :card_number => card[:masked_number],
-        :card_expiration => "%02d-%d" % [card[:expiry_month], card[:expiry_year]]
+        :card_expiration => "%02d-%d" % [card[:expiry_month], card[:expiry_year]],
+        :state => ACTIVE
       }
     end
 
