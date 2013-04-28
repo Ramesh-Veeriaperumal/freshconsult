@@ -1248,7 +1248,7 @@ en:
       contact_email : Email
       contact_phone : Phone
       invoice_email_info : Send Invoices to
-      invoice_emails : Emails
+      invoice_emails : Email
   success_msg : Account settings updated successfully!
   failure_msg : Failed to update Account Settings!
   
