@@ -112,6 +112,7 @@ nl:
         one: "Door 1 fout kon dit %{model} niet worden opgeslagen"
         other: "%{count} fouten zorgden ervoor dat dit %{model} niet kon worden opgeslagen"
   activities: 
+    action_verb: geüpdate
     forums: 
       delete_forum: 
         long: "{{user_path}} heeft het forum '{{notable_path}}' onder {{category_name}}' verwijderd"
@@ -141,13 +142,45 @@ nl:
       new_solution: 
         long: "{{user_path}} heeft een nieuwe oplossing gemaakt {{notable_path}}"
         short: "{{user_path}} heeft de nieuwe oplossing gemaakt"
+    tag: 
+      assigned: "Medewerker toegewezen"
+      assigned_to_nobody: "Medewerker niet toegewezen"
+      conversation: 
+        in_email: "Klant reageerde"
+        note: "Nieuwe notitie"
+        out_email: 
+          default: "Medewerker antwoordde"
+          private: "Ticket doorgestuurd"
+        twitter: Tweet
+      deleted: "Ticket verwijderd"
+      execute_scenario: "Scenario uitgevoerd"
+      group_change: "Medewerkersgroep gewijzigd"
+      group_change_none: "Medewerkersgroep gewijzigd"
+      new_ticket: "Nieuwe ticket"
+      priority_change: "{{value}}"
+      product_change: "Product geüpdatet"
+      product_change_none: "Product geüpdatet"
+      reassigned: "Medewerker opnieuw toegewezen"
+      restored: "Ticket hersteld"
+      solutions: "Nieuwe oplossing"
+      source_change: "Ticket bron"
+      status_change: "{{value}}"
+      ticket_merge: "Ticket samengevoegd"
+      ticket_split: "Ticket gesplitst"
+      ticket_type_change: Ticketsoort
+      timesheet: 
+        new: "Tijd ingelogd"
+        timer_started: "Timer gestart"
+        timer_stopped: "Timer gestopt"
     tickets: 
       assigned: 
         long: "{{user_path}} heeft het ticket {{notable_path}} toegewezen aan {{responder_path}}"
         short: "Toegewezen aan {{responder_path}} door {{user_path}}"
+        without_user: "toegewezen aan <strong>{{responder_path}}</strong>"
       assigned_to_nobody: 
         long: "{{user_path}} heeft het ticket {{notable_path}} toegewezen aan 'Niemand'"
         short: "Toegewezen aan 'Niemand' door {{user_path}}"
+        without_user: "toegewezen aan <strong>Niemand</strong>"
       conversation: 
         in_email: 
           long: "{{user_path}} heeft een {{email_response_path}} naar het ticket {{notable_path}} verstuurd"
@@ -167,57 +200,74 @@ nl:
       deleted: 
         long: "{{user_path}}  heeft het ticket {{notable_path}} verwijderd"
         short: "{{user_path}} heeft dit ticket verwijderd"
+        without_user: "heeft de ticket verwijderd"
       execute_scenario: 
         long: "{{user_path}} heeft het scenario '{{scenario_name}}' in {{notable_path}} uitgevoerd."
         short: "{{user_path}} heeft het scenario '{{scenario_name}} uitgevoerd."
+        without_user: "het scenario uitgevoerd <strong>{{scenario_name}}</strong>"
       group_change: 
         long: "{{user_path}} heeft de groep van {{notable_path}} gewijzigd in {{group_name}}"
         short: "{{user_path}} heeft de groep gewijzigd in {{group_name}}"
+        without_user: "groep geüpdatet naar <strong>{{group_name}}</strong>"
       group_change_none: 
         long: "{{user_path}} heeft de groep van {{notable_path}} gewijzigd in 'geen'"
         short: "{{user_path}} heeft de groep gewijzigd in 'geen'"
+        without_user: "groep geüpdatet naar <strong>'none'</strong>"
       new_ticket: 
         long: "{{user_path}} heeft een nieuw ticket aangemaakt {{notable_path}}"
-        short: "{{user_path}} heeft de ticket aangemaakt"
+        short: "{{user_path}} heeft het ticket aangemaakt"
       priority_change: 
         long: "{{user_path}} heeft de ticketprioriteit van {{notable_path}} gewijzigd in {{priority_name}}"
         short: "{{user_path}} heeft de prioriteit gewijzigd in {{priority_name}}"
+        without_user: "ticketprioriteit gewijzigd naar <strong>{{priority_name}}</strong>"
       product_change: 
         long: "{{user_path}} heeft het product van {{notable_path}} gewijzigd in {{product_name}}"
         short: "{{user_path}} heeft het product gewijzigd in {{product_name}}"
+        without_user: "product geüpdatet naar <strong>{{product_name}}</strong>"
       product_change_none: 
         long: "{{user_path}} heeft het product van {{notable_path}} gewijzigd in 'geen'"
         short: "{{user_path}} heeft het product gewijzigd in 'geen'"
+        without_user: "product geüpdatet naar <strong>'geen'"
       reassigned: 
         long: "{{user_path}} heeft het ticket {{notable_path}} opnieuw toegewezen aan {{responder_path}}"
+        without_user: "het ticket opnieuw toewijzen <strong>{{responder_path}}</strong>"
       restored: 
         long: "{{user_path}}  heeft het ticket {{notable_path}} hersteld"
         short: "{{user_path}} heeft dit ticket hersteld"
+        without_user: "heeft de ticket hersteld"
       source_change: 
         long: "{{user_path}} heeft de ticketbron van {{notable_path}} gewijzigd in {{source_name}}"
         short: "{{user_path}} heeft de bron gewijzigd in {{source_name}}"
+        without_user: "bron geüpdatet naar <strong>{{source_name}}</strong>"
       status_change: 
         long: "{{user_path}} heeft de ticketstatus van {{notable_path}} gewijzigd in {{status_name}}"
         short: "{{user_path}} heeft de status gewijzigd in {{status_name}}"
+        without_user: "status geüpdatet naar <strong>{{status_name}}</strong>"
       ticket_merge: 
         long: "{{user_path}} heeft het ticket {{notable_path}} samengevoegd met {{merge_ticket_path}}"
         short: "{{user_path}} heeft het ticket {{notable_path}} samengevoegd met {{merge_ticket_path}} "
+        without_user: "het ticket {{notable_path}} naar {{merge_ticket_path}} samengevoegd"
       ticket_split: 
         long: "{{user_path}} heeft het ticket {{notable_path}} gesplitst uit {{split_ticket_path}}"
         short: "{{user_path}} heeft het ticket {{notable_path}} gesplitst uit {{split_ticket_path}}"
+        without_user: "Heeft het ticket opgedeeld van {{split_ticket_path}}"
       ticket_type_change: 
         long: "{{user_path}} heeft het tickettype van {{notable_path}} gewijzigd in {{ticket_type}}"
         short: "{{user_path}} heeft het tickettype gewijzigd in {{ticket_type}}"
+        without_user: "ticketsoort geüpdatet naar <strong>{{ticket_type}}</strong>"
       timesheet: 
         new: 
           long: "{{user_path}} heeft een {{timesheet_path}} aan het ticket {{notable_path}} toegevoegd"
           short: "{{user_path}} heeft een {{timesheet_path}} toegevoegd"
+          without_user: "een {{timesheet_path}} toegevoegd"
         timer_started: 
           long: "{{user_path}} startte timer op {{timesheet_path}} op het ticket {{notable_path}}"
           short: "{{user_path}} startte timer op  {{timesheet_path}}"
+          without_user: "timer gestart op {{timesheet_path}}"
         timer_stopped: 
           long: "{{user_path}} stopte timer op {{timesheet_path}} op het ticket {{notable_path}}"
           short: "{{user_path}} stopte timer op  {{timesheet_path}}"
+          without_user: "timer gestopt op {{timesheet_path}}"
   add: Toevoegen
   add_a_new_folder: "voeg een nieuwe map toe"
   add_a_topic: "Begin onderwerp"
@@ -495,7 +545,7 @@ nl:
         settings: Instellingen
         sla: "SLA beleid"
         supervisor: Supervisor
-        survey: "Enquete instellingen"
+        survey: Enquête-instellingen
         survey-settings: "Klant Tevredenheid"
         ticket-fields: Ticketvelden
         title: Beheerder
@@ -521,7 +571,7 @@ nl:
       add_another_email: "Nog een e-mail toevoegen"
       assign_product: "Product toewijzen"
       edit: 
-        title: "Product  bewerken"
+        title: "Product bewerken"
       form: 
         configure_email: "E-mail configureren"
         configure_seperate_portal: "Een gescheiden portaal voor dit product configureren"
@@ -549,7 +599,7 @@ nl:
         cname_configure_info: "Voordat u dit veld gebruikt moet u een CNAME DNS-record in uw DNS Zone-bestand hebben gemaakt, voor het verwijzen van <strong>hulp.<b id=\"domain_info_name\">mijnbedrijfsnaam</b>.com</strong> naar %{full_domain}. Uw webmaster of serverbeheerder kan u hiermee helpen."
         portal_language: Portaaltaal
         portal_language_info: "Dit moet de standaardtaal zijn wanneer klanten uw portaal bezoeken"
-        portal_name: Portaalnaam
+        portal_name: "Portaal naam"
         portal_name_info: "De naam wordt in uw productenportaal naast het koplogo weergegeven"
         portal_rebranding: "Huisstijl van portaal wijzigen"
         portal_settings: Portaalinstellingen
@@ -664,7 +714,7 @@ nl:
     twitters: 
       change: 
         capture_dm: "Directe berichten omzetten in tickets"
-        capture_mention: "Openbare vermeldingen omzetten in tickets"
+        capture_mention: "Openbare vermeldingen omzetten in tickets       "
         default_group: Standaardgroep
         edit_twitter: "Twitter bewerken"
         screen_name: Schermnaam
@@ -788,6 +838,7 @@ nl:
   assuming_identity_not_allowed_msg: "U heeft geen bevoegdheid voor aannemen van deze gebruiker."
   assuming_identity_user_does_not_exist_msg: "Gebruiker die u probeert aan te nemen bestaat niet."
   at: op
+  attach_file: "Bijlage toevoegen"
   attach_file_local: "Voeg een lokale bijlage toe"
   attach_files: "Voeg bestanden toe"
   attachment: Bijlage
@@ -854,6 +905,7 @@ nl:
     title: Werktijden
     to: naar
     valid_time: "Voer een geldige tijd in"
+  by: door
   cancel: Annuleren
   cancel_and_back: "Annuleer en ga terug"
   cancel_my_account: "Mijn acount annuleren"
@@ -916,6 +968,7 @@ nl:
   choose_free_plan: "Kies uw gratis %{plan}"
   choose_plan: "Plan kiezen"
   choose_plan_trial: "Let op: uw account zal uitgeschakeld worden na afloop van de proefperiode. <br />Om Freshdesk te blijven gebruik, kies een van de onderstaande plannen."
+  clear: Wissen
   clear_draft_text: "Opgeslagen concept verwijderen?"
   click_select_action: "Klik om actie te selecteren"
   click_to_change_sort_order: "Klik om de volgorde te wijzigen"
@@ -1037,7 +1090,7 @@ nl:
   date: 
     ago: geleden
     day: dag
-    days: Dagen
+    days: dagen
     from: "Vanaf nu"
     hour: Uur
     hours: Uren
@@ -1107,8 +1160,9 @@ nl:
   downgrade_dialog_title: "Weet u zeker dat u wilt downgraden?"
   downgrade_plan: "Let op: als u een plan downgradet, kunt u een aantal van de bestaande functies verliezen"
   draft: "Concept:"
+  dropbox_attach_from: "Bijlage vanuit Dropbox toevoegen"
   dropbox_attach_label: "toevoegen via"
-  dropbox_choose_file: "Kies bestand"
+  dropbox_choose_file: "Selecteer bestand"
   due_in: "Vervalt in %{time_words}"
   due_next_eight: "Volgende 8 uren"
   due_today: Vandaag
@@ -1315,6 +1369,7 @@ nl:
     customers: Klanten
     due_by: "Klaar op"
     group_id: Groepen
+    mygroups: "Mijn groepen"
     priority: Prioriteit
     requester: Aanvragers
     responder_id: Medewerkers
@@ -1322,6 +1377,7 @@ nl:
     status: Status
     tags: Labels
     ticket_type: Type
+    unassigned: "Niet toegewezen"
   find_more_solutions: "Zoek meer oplossingen"
   first_name: Voornaam
   first_response_sla: "Eerste antwoord SLA-overtreding"
@@ -1683,7 +1739,7 @@ nl:
     new_ticket: "Nieuw ticket"
     search: Zoeken
     signout: Afmelden
-    submit_a_ticket: "Een ticket aanmaken"
+    submit_a_ticket: "Een ticket indienen"
     tabs: 
       admin: Beheer
       checkstatus: "Controleer uw ticketstatus"
@@ -1724,6 +1780,7 @@ nl:
       tickets_update_with_errors: "%{tickets} bijgewerkt, maar er is een probleem dat uw aandacht nodig heeft."
     merge: 
       bulk_merge: 
+        continue: Doorgaan
         mark_primary: "Markeer als primair"
         primary_ticket: "Dit is uw primaire ticket"
         remove: "Verwijder dit ticket"
@@ -1847,13 +1904,20 @@ nl:
       note: 
         attachment_size: 
           exceed: "Oeps! Uw bijlage is groter dan 15 MB. Voeg a.u.b. een kleiner bestand bij."
+        created_on: 
+          forward: "doorgestuurd door %{user_name} op %{note_date}"
+          private_note: "%{user_name} heeft op %{note_date} een privé notitie toegevoegd"
+          public_note: "%{user_name} heeft op %{note_date} een openbare notitie toegevoegd"
+          reply: "%{user_name} antwoordde op %{note_date}"
         delete_note: "Verwijder dit uit conversatie"
         edit_note: "Bewerk notitie"
         inbound_email: "Inkomende email"
         outbound_email: "Uitgaand bericht"
         posted_on: "%{user_name} op %{note_date}"
         private_note: "Persoonlijk bericht"
+        private_note_tip: "Verborgen voor de klant"
         public_note: "Openbaar bericht"
+        public_note_tip: "Zichtbaar voor de klant"
         split_this_as_new_ticket: "Dit als een nieuw ticket splitsen"
         split_ticket_confirm: "Deze opmerking splitsen en als nieuw ticket creëren?"
       overlay_fwd_time: " doorgestuurd, %{time_in_words} geleden"
@@ -1864,9 +1928,40 @@ nl:
         view_ticket: "Ticket weergeven"
       show: 
         conversation: "Conversatie "
+        due_date: 
+          due: Deadline
+          earlier_date_and_time: "Voer een datum & tijd in dat nieuwer is dan de datum & tijd waarop het ticket is aangemaakt"
+          next_week: "Volgende week"
+          set_date_time: "Stel datum/tijd in"
+          specific_date: "Specifieke datum/tijd..."
+          this_week: "Deze week"
+          today: Vandaag
+          tomorrow: Morgen
+          when_is_it_due: "Wanneer moet hij klaar zijn?"
+        facebook_form: 
+          title: "Antwoorden aan %{user}"
+        forward_form: 
+          addbcc: "Voeg Bcc toe"
+          addcc: "Cc toevoegen"
+          bcc: Bcc
+          cc: Cc
+          removebcc: "Verwijder Bcc"
+          removecc: "Cc verwijderen"
+        history: 
+          recent_item: "Recente items"
         linked_ticket: "Dit ticket is gekoppeld aan het forum"
         meta: meta
+        reply_form: 
+          addbcc: "Bcc toevoegen"
+          addcc: "Cc toevoegen"
+          bcc: Bcc
+          cc: Cc
+          removebcc: "Bcc verwijderen"
+          removecc: "Cc verwijderen"
+          title: "Antwoorden aan"
         timesheet: Tijdsblad
+        tweet_form: 
+          title: "Antwoorden aan %{user}"
       tabular_view: 
         assigned: Toegewezen
         posted: Geplaatst
@@ -1928,6 +2023,7 @@ nl:
       index: 
         no_timeentry: "Geen tijdsinvoer voor dit ticket geregistreed"
       new: 
+        hours_format_tip: "Voer de tijd in als HH:MM of als decimalen (zoals 1:30 of 1.5 voor anderhalf uur). Laat dit veld leeg om de auto-timer te starten."
         title: "Nieuwe tijdsinvoer"
       non_billable: Niet-factureerbaar
       note: Opmerking
@@ -1935,10 +2031,41 @@ nl:
       report: 
         no_timeentry: "Geen data beschikbaar"
         total: Totaal
+      sidebar_title: "Bijgehouden tijd"
       ticket: Ticket
       time_entry: 
         toggle_timer_false: "Timer stoppen"
         toggle_timer_true: "Timer starten"
+      v2: 
+        agent: Medewerker
+        billing_type: Factureringstype
+        customer: Klant
+        executed_at: Datum
+        form: 
+          add_entry: "Voef tijdinvoer toe"
+          agent: Medewerker
+          billing_hours: Factureerbaar
+          hours: Uren
+          note: Notitie
+          start_timer: "Timer starten"
+          ? "true"
+          : "1"
+        group_by: "Groeperen op"
+        hours: Uren
+        index: 
+          add_entry: "Voeg tijdinvoer toe"
+          no_timeentry: "Bij dit ticket is geen tijd ingevoerd"
+          start_timer: "Timer starten"
+        new: 
+          title: "Nieuwe tijdinvoer"
+        note: Notities
+        report: 
+          no_timeentry: "Geen gegevens beschikbaar"
+          total: Totaal
+        ticket: Ticket
+        time_entry: 
+          toggle_timer_false: "Timer stoppen"
+          toggle_timer_true: "Timer starten"
   helpdesk_quests: 
     all: Alle
     available_quests: "Beschikbare quests"
@@ -2114,7 +2241,7 @@ nl:
       OVERWRITE_REMOTE_small: Importeren
       account: Klant
       account_not_configured: "Google-account is niet correct geconfigureerd. Probeer het a.u.b. opnieuw."
-      add_more: Autoriseren
+      add_more: "Nieuwe account synchroniseren"
       already_exist: "Er is al een account geconfigureerd. Er kan niet weer een extra account worden toegevoegd."
       delete: Verwijderen
       delete_action: 
@@ -2230,6 +2357,8 @@ nl:
       info1: "Wanneer een Freshdesk-ticket wordt verbonden met een JIRA-issue, voer de onderstaande acties uit."
       info2: "Wanneer de ticket-status is bijgewerkt in Freshdesk."
       info3: "Wanneer een opmerking is toegevoegd in Freshdesk"
+      info4: "Wanneer de uitgavestatus bijgewerkt wordt in JIRA"
+      info5: "Wanneer er een opmerking wordt toegevoegd in JIRA"
       none: "Doe niets"
       send_reply_in_fd: "Attendeer de klant via e-mail"
       sync_updates: "Updates synchroniseren"
@@ -2333,6 +2462,7 @@ nl:
       remember: "Onthoudt mijn gegevens"
       sign_in_error: "Foutief e-mailadres of wachtwoord."
       sign_in_using: "...of inloggen met"
+  more: meer
   myself: Ik
   name: Naam
   never: Nooit
@@ -2351,13 +2481,14 @@ nl:
     canned_responses: "Geen standaardantwoorden beschikbaar."
     products: "U heeft nog geen producten aangemaakt."
   no_password_reset: Nee
-  no_signup: "Om een ticket te kunnen versturen dien u <a href={{login}}><b>in te loggen</b></a>."
+  no_signup: "Om een ticket te kunnen versturen dient u <a href={{login}}><b>in te loggen</b></a>."
   no_tags: "Geen tags gevonden."
   no_topics_text: "Geen onderwerpen in dit forum"
   no_twitter_handle: "Configureer a.u.b. minstens één twitter-account"
   non_covered_feature_error: "Deze functie is momenteel vergrendeld"
   not_eligible_for_free_plan: "Niet in aanmerking om het gratis plan te selecteren"
   not_eligible_for_sprout_plan: "Niet in aanmerking om het Sprout-plan te selecteren"
+  not_given: "Niet opgegeven."
   not_selected: "Niet geselecteerd"
   note: "Opmerking:"
   notified_to: "Meegedeeld aan"
@@ -2390,6 +2521,8 @@ nl:
     article: 
       see_all_articles: "Bekijk alle %{count} artikelen"
     community_forums: Gemeenschapsforums
+    folder: 
+      filler_text: "Houd deze ruimte in de gaten voor artikelen over %{folder_name}"
     header: 
       preview_message: "<b>Voorbeeldmodus</b> - <a href='javascript:window.close()'>Klik hier</a> om terug te gaan."
     knowledge_base: Kennisbank
@@ -2397,6 +2530,7 @@ nl:
     login_details: "Voer de inloggegevens in die u opgegeven heeft tijdens uw registratie"
     login_options: "...of log-in met"
     login_portal: "Inloggen bij de ondersteuningsportaal"
+    new_support_ticket: "Nieuw support-ticket"
     no_articles_info_1: "Sorry, wij hebben nog geen artikelen gepubliceerd in deze sectie."
     no_articles_info_2: "Controleer het later nog eens. "
     no_forums_info_1: "Nog geen onderwerp voor het forum"
@@ -2404,7 +2538,9 @@ nl:
     no_topics_in_this_view: "~ Geen onderwerpen bij deze weergave ~"
     or_signup: " of %{signup} voor een account"
     popular_topics: "Meest bekeken onderwerpen"
+    reported: gerapporteerd
     reset_password: "Geef ons uw e-mailadres en de instructies om uw wachtwoord te resetten zullen naar u verstuurd worden."
+    said: zei
     search: 
       filters: 
         all: Alle
@@ -2412,21 +2548,41 @@ nl:
         tickets: Tickets
         topics: Onderwerpen
       placeholder: "Voer hier uw zoekterm in..."
+      results_for: "Zoekresultaten voor"
     showing_recent_updates: "Recente wijzigingen"
     showing_recently_popular_topics: "Meest bekeken onderwerpen van de laatste tijd"
     signup: "Meld aan"
     solutions_home: "Oplossingen startpagina"
+    submit_new_ticket: "...of verstuur een nieuwe ticket"
     tickets: 
+      add_or_remove_emails: "Voeg e-mailadressen toe of verwijder ze die gekopieerd dienen te worden wanneer er een bericht wordt verstuurd voor dit ticket."
+      add_people: "Mensen toevoegen"
+      add_people_title: "Voeg mensen toe aan dit gesprek"
+      details: Ticketdetails
       export: "Tickets exporteren"
       export_ticket_data: "Ticketgegevens exporteren naar CSV"
       export_to_csv: "Exporteer naar CSV"
+      mark_closed: "Markeer ticket als gesloten"
+      reopen_reply: "Heropenen en antwoorden"
+      reply_placeholder: "Klik hier om op dit ticket te antwoorden"
+      ticket_list: Ticketlijst
     to_post_comment: " om een opmerking te plaatsen"
     to_post_topic: " om een onderwerp te plaatsen"
     to_submit_ticket: " om een nieuwe ticket te versturen"
     topic: 
+      comment_placeholder: "Klik hier om een opmerking toe te voegen"
       comments_closed: "De mogelijkheid om opmerkingen toe te voegen aan deze discussie is nu gesloten!"
+      default_select_option: "Selecteer het soort forum"
+      follow: Volg
+      following: "Aan het volgen"
+      last_reply: "Laatste antwoord"
+      monitor_topic: "Houd dit onderwerp bij"
+      more_topic: "Meer onderwerpen in"
+      post_topic: "Plaats onderwerp in"
       see_all_topics: "Bekijk alle %{count} onderwerpen"
       start_new_topic: "Begin een nieuw onderwerp"
+      started: "is een onderwerp begonnen"
+      topic_title: "Naam onderwerp"
     topic_vote: 
       howto: 
         one: "heeft deze vraag"
@@ -2461,7 +2617,7 @@ nl:
   portal_customizer_anon_for_g: "Schakel deze functie in, als u wilt dat klanten kunnen aanmelden met hun gebruikersnaam en wachtwoord van Google."
   portal_customizer_anon_for_i: "Schakel deze funtie uit als u het tabblad 'Forums' in het openbare klantenportaal wilt verbergen."
   portal_customizer_anon_for_t: "Schakel deze functie in, als u wilt dat gebruikers zich kunnen aanmelden met hun gebruikersnaam en wachtwoord van Twitter. "
-  portal_customizer_anon_tickets: "Iedereen kan een ticket aanmaken"
+  portal_customizer_anon_tickets: "Iedereen kan een ticket indienen"
   portal_customizer_anon_tickets_i: "Schakel deze funtie uit, als u wilt dat gebruikers aangemeld moeten zijn om een ticket aan te kunnen maken."
   portal_customizer_auto_suggest_solutions: "Maak het mogelijk bestaande oplossingen aan te bieden als een gebruiker een nieuw ticket aanmaakt."
   portal_customizer_facebook_signin: "Sta gebruikers toe in te loggen met Facebook account"
@@ -2474,7 +2630,7 @@ nl:
   portal_customizer_option_forums: "Gebruikers kunnen forums bekijken zonder aan te melden"
   portal_customizer_option_sol_i: "Schakel deze functie uit, als u wilt dat gebruikers moeten aanmelden om oplossingen weer te kunnen geven"
   portal_customizer_option_solutions: "Gebruikers kunnen openbare oplossingen bekijken zonder aan te melden"
-  portal_customizer_option_tickets: "Gebruikers kunnen een ticket aanmaken zonder aan te melden"
+  portal_customizer_option_tickets: "Gebruikers kunnen een ticket aanmaken zonder aan te melden "
   portal_customizer_option_tickets_i: "Schakel deze functie uit, als u wilt dat gebruikers eerst moeten aanmelden om een ticket aan te kunnen maken"
   portal_customizer_title: "Uw openbare klantenportaal aanpassen"
   portal_customizer_twitter_signin: "Gebruikers toestaan om aan te melden via Twitter"
@@ -2548,6 +2704,7 @@ nl:
     ten_minutes: "10 minuten"
   preview: Voorbeeld
   previous: Vorige
+  print: Afdrukken
   pro_brief: "Voor grotere teams"
   pro_details: "Alles in 'Basis' Plan plus, Scenario Automations, Klantspecifieke SLA's, Werktijden, Forums, Community en e-mailondersteuning."
   problem: Probleem
@@ -2565,6 +2722,7 @@ nl:
     confirm_password_message: "Wachtwoord komt niet overeen"
     current_password: "Huidig wachtwoord"
     edit: "Wijzig profiel"
+    manage: "Beheer je profiel"
     new_password: "Nieuw wachtwoord"
   profile_settings: Profielinstellingen
   question: Vraag
@@ -2588,13 +2746,14 @@ nl:
     solution_folder: Map
     solution_likes: "Aantal likes"
     solution_mand: "Vul het aantal oplossingen in."
-    ticket_mand: "Vul het aantal opgeloste tickets in."
+    ticket_mand: "Vul aub het aantal opgeloste tickets in."
     ? "true"
     : "1"
   recent_activities: "Recente activiteiten"
   recent_activity: "Recente activiteit"
   recent_forum_posts: "Recente forumberichten"
   referral: "Credit voor verwijzing"
+  register: Registreren
   remove: Verwijderen
   reorder: Herschikken
   replied_to: "Beantwoord aan"
@@ -2712,6 +2871,7 @@ nl:
   save_this_view: Bewaar
   save_this_view_tooltip: "Weergave opslaan"
   saved_draft: Opgeslagen
+  saving: "Bezig met opslaan..."
   saving_draft: Opslaan...
   scenario_label: Scenariolabel
   search: 
@@ -2739,6 +2899,7 @@ nl:
   seven_days: "Deze week"
   show_me_how: "Laat me zien"
   show_quoted_text: "Geciteerde tekst weergeven"
+  show_recent: "Toon recente"
   showing: Toont
   sign_in_info: "U wordt aangemeld met"
   signup: registreren
@@ -2772,7 +2933,9 @@ nl:
     escalate_to: "Escaleren naar"
     escalation_email: Escalatiebericht
     escalation_resolution: "Stel escalatiehiërarchie in voor wanneer een ticket niet op tijd <b>afgehandeld is</b>"
+    escalation_resolution_text: "Ingestelde escalatiehiërarchie wanneer een ticket niet op tijd <b>afgehandeld</b> wordt"
     escalation_response: "Stel escalatieregels in voor wanneer een ticket niet op tijd <b>beantwoord wordt</b>"
+    escalation_response_text: "Ingestelde escalatieregel wanneer een ticket niet op tijd <b>beantwoord wordt</b>"
     group_id_placeholder: "Voer groepsnamen in"
     helpcard: 
       info1: "<p>Met een Service Level Agreement (SLA) kunt u prestatienormen instellen voor uw supportteam. U kunt een SLA-beleid instellen voor de tijdsduur waarin medewerkers een antwoord dienen te geven, en tickets af dienen te handelen op basis van ticketprioriteit. U kunt kiezen of u elke SLA-regel wilt berekenen per 24 uur of uw kantooruren.</p><p>Uw SLA-beleid zal binnen Freshdesk gebruikt worden om te bepalen wat de \"deadline\" is voor elk ticket.</p>"
@@ -2781,6 +2944,7 @@ nl:
       info_1: "<p>Met een Service Level Agreement (SLA) kunt u prestatienormen instellen voor uw supportteam. U kunt een SLA-beleid instellen voor de tijdsduur waarin medewerkers een antwoord dienen te geven, en tickets af dienen te handelen op basis van ticketprioriteit. U kunt kiezen of u elke SLA-regel wilt berekenen per 24 uur of uw kantooruren.</p><p>Uw SLA-beleid zal binnen Freshdesk gebruikt worden om te bepalen wat de \"deadline\" is voor elk ticket.</p>"
       info_2: "<p>U kunt meedere SLA-beleidsmaatregelen hebben die geactiveerd worden door specifieke voorwaarden, zoals de klant die het ticket heeft aangevraagd, de groep waaraan het is toegewezen, de bron en/of het product.</p><p>U kunt bijvoorbeeld een speciaal SLA-beleid hebben ingesteld voor tickets die binnenkomen via Twitter en toegewezen zijn aan het verkoopteam. Of een speciaal beleid hebben voor klanten die voorrangsabonnementen hebben. Wanneer u meerdere merken of producten ondersteunt, dan kunt u een verschillende SLA-workflow hebben voor elk product.</p><p><strong>De volgorde van de SLA-regels is belangrijk.</strong>De eerste SLA-regel die aan alle voorwaarden voor een ticket voldoet, zal hierop worden toegepast. Denk er dus aan om belangrijkere regels bovenaan te plaatsen</p>"
       info_3: "<p>U kunt eventueel escalatiehiërarchieën instellen voor elk beleid om bepaalde medewerkers te waarschuwen wanneer een SLA-regel wordt overtreden.</p>"
+      sla_info_2: "<p>Je kunt meerdere SLA-beleidsmaatregelen hebben die geactiveerd worden door specifieke voorwaarden, zoals de klant die het ticket heeft aangevraagd, de groep waaraan het is toegewezen, de bron en/of het product.</p><p>Je kunt bijvoorbeeld een speciaal SLA-beleid hebben ingesteld voor tickets die binnenkomen via Twitter en toegewezen zijn aan het verkoopteam. Of een speciaal beleid hebben voor klanten die voorrangsabonnementen hebben. Wanneer je meerdere merken of producten ondersteunt, dan kun je een verschillende SLA-workflow hebben voor elk product.</p><p><strong>De volgorde van de SLA-regels is belangrijk.</strong>De eerste SLA-regel die aan alle voorwaarden voor een ticket voldoet, zal hierop worden toegepast. Denk er dus aan om belangrijkere regels bovenaan te plaatsen</p> "
       title: SLA-beleid
       title1: "Handhaven van escalatieregels"
       title2: "Gebruik van meerdere SLA-beleidsmaatregelen"
@@ -2874,7 +3038,7 @@ nl:
       add_article: "Voeg een artikel toe"
       add_to_guide: "Toevoegen aan gids"
       article_not_useful: "Bedankt voor de feedback. Wij zullen dit artikel verbeteren."
-      article_useful: "Leuk dat we u hebben kunnen helpen. Bedankt voor de feedback."
+      article_useful: "Fijn dat we u hebben kunnen helpen. Bedankt voor de feedback."
       assign_to_guide: "Toekennen aan gids"
       clear_search: "Zoekresultaten leegmaken"
       deselect_all: "Alles deselecteren"
@@ -2982,14 +3146,14 @@ nl:
         forgot: "Wachtwoord vergeten?"
         help: Help
         login: Inloggen
-        password: Wachtword
+        password: Wachtwoord
         remember: "Onthoud mij op deze computer"
         sign_in_using: Inloggen
         sign_in_using_google: "Log in met uw Google account"
     shared: 
       comments: Reacties
       email: "Uw e-mail adres *"
-      info1: "Vertel ons wat verbetert kan worden aan deze oplossing"
+      info1: "Vertel ons wat verbeterd kan worden aan deze oplossing."
       send_feedback: "Stuur feedback"
       survey_form: 
         cancel: Annuleren
@@ -3040,7 +3204,8 @@ nl:
   ticket: 
     activities: Activiteiten
     activity: Activiteit
-    add_note: "+ Notitie"
+    activity_toggle: "Toon activiteiten"
+    add_note: "Notitie toevoegen"
     add_time: "Tijd toevoegen"
     agent: Medewerker
     agent_notify: "heeft een aantekening toegevoegd en vraagt u om het te bekijken"
@@ -3071,13 +3236,15 @@ nl:
     delete_btn: Verwijderen
     delete_btn_title: "Dit ticket naar de prullenbak verplaatsen"
     delete_forever: "Permanent verwijderen"
+    deleted: PRULLENBAK
     due_by: "Uren sinds ticket is verlopen"
     due_by_time: Oplostermijn
-    edit: "Wijzig Ticket"
+    edit: "Wijzig ticket"
     edit_btn: Wijzigen
     edit_note: "<b>Aantekening bewerken</b>"
     empty_trash: "Prullenbak leegmaken"
     execute_scenario: "Voer scenario uit"
+    expand: Uitklappen
     export: Export
     facebook_form: 
       send: Verstuur
@@ -3091,8 +3258,12 @@ nl:
     id: Id
     id_placeholder: "Voer een ID in om tickets te vinden"
     inbound_count: "Aantal reacties van aanvrager"
+    include_quoted_text: "Eerdere correspondentie toevoegen"
+    insert: Invoegen
     integrations: 
       jira: 
+        add_new: "Koppel een issue"
+        existing: "Issue bekijken"
         tooltip: "Bekijk het gerelateerde JIRA issue"
     merge_btn: Samenvoegen
     merge_ticket_list_status_agent_responded_at: "Van: %{username}<br /> Medewerker antwoordde: <span class='emphasize'>%{time_ago} geleden</span>"
@@ -3102,7 +3273,9 @@ nl:
     merge_ticket_list_status_resolved_at: "Van: %{username}<br /> Afgehandeld: <span class='emphasize'>%{time_ago} geleden</span>"
     merge_title: "Tickets samenvoegen"
     monitor_btn_title: "Dit ticket monitoren"
+    more_details: "Meer details..."
     myself: Mijzelf
+    next: "Volgende ticket"
     none: Geen
     note_content: "Inhoud van aantekening"
     note_form: 
@@ -3117,6 +3290,7 @@ nl:
     pick_up: Oppakken
     portal_created_on: "Aangemaakt door <span class='emphasize'>%{username}</span> op <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Gemaakt op <span class='emphasize'>%{date}</span>"
+    previous: "Vorige ticket"
     priority: Prioriteit
     properties: "Ticket Eigenschappen"
     recent_tickets: "Recente tickets"
@@ -3126,6 +3300,7 @@ nl:
       reply_email_id: "De reactie met het volgende e-mailadres versturen"
       send: Verstuur
       send_and_resolve: "Versturen en oplossen"
+      send_and_set_as: "Versturen en status instellen als <strong>%{status}</strong>"
       send_satisfaction_survey: "Tevredenheidsonderzoek toevoegen"
     reply_to: Antwoord
     reported_by: "Van %{requester}"
@@ -3142,25 +3317,33 @@ nl:
     singular: Ticket
     sort_by: "Sorteer op"
     source: Bron
+    spam: SPAM
     spam_btn_title: "Markeren als spam"
     split_ticket: Splitsen
     status: Status
     stop_monitor_btn_title: "Het monitoren van dit ticket stoppen"
     subject: Onderwerp
     subject_placeholder: "Zoek tickets op onderwerp"
-    submit_ticket: "Aanmaken "
+    submit_ticket: Indienen
     submit_ticket_title: "Een ticket indienen"
     suggest_solutions: "Mogelijke oplossingen"
     suggested_solutions: 
+      content: Inhoud
       insert_content: "Inhoud invoegen"
       insert_content_tip: "Dit oplossingsbericht invoegen in uw reactie of aantekening"
       insert_url: "URL invoegen"
       insert_url_tip: "Deze oplossings-URL invoegen in uw reactie of aantekening"
+      link: Link
       no_result: "Geen oplossingen gevonden"
       title: "Mogelijke oplossingen"
     support: 
       reply: Beantwoorden
       reply_and_open: "Beantwoorden & heropenen"
+    switch_view: 
+      new_view: "Probeer <strong>het nieuwe ticketoverzicht</strong>"
+      revert_view: "Overschakelen naar klassieke weergave"
+      submit_feedback: "Feedback geven"
+      whats_new: "Wat is er nieuw"
     tags: 
       add_tag: "Een label toevoegen:"
       create_success: "Het labels is toegevoegd"
@@ -3189,6 +3372,8 @@ nl:
     unassigned: "Niet toegewezen"
     unflag_spam: "Geen Spam"
     unwatch: Unwatch
+    update_done: Klaar
+    updating: "Bezig met updaten"
     verify_human: "Typ de gegeven vervormde letters om te verzekeren dat u geen machine bent"
     view_twitter: "Bekijk op Twitter"
   ticket_cancel_multiple_button: Annuleren
@@ -3227,7 +3412,7 @@ nl:
       agent_mandatory_closure: "Verplicht om af te kunnen sluiten"
       agent_mandatory_submission: "Verplicht voor het aanmaken van tickets"
       behavior: Gedrag
-      cc_any_email: "Bewaar elk Cc e-mailadres"
+      cc_any_email: "Kan elk e-mailadres Cc'en"
       cc_company_contacts: "Cc geldt alleen voor medewerkers"
       choices: Keuzes
       customer_edit: "Klant mag bewerken"
@@ -3238,7 +3423,7 @@ nl:
       description: Omschrijving
       display_cc_field: "Toon Cc veld"
       display_to_customer: "Toon bericht aan klant"
-      dropdown_choices: "Dropdown keuzelijst"
+      dropdown_choices: "Keuzelijst Opties"
       dropdown_items_edit: "Keuzelijst - bewerk lijst"
       dropdown_items_preview: "Keuzelijst - voorbeeld"
       field_label_agents: "Veld label voor medewerkers"
@@ -3273,6 +3458,8 @@ nl:
     saving_ticket: "Ticket velden aan het bewaren...."
     second_choice: "Tweede keuze"
     untitled: Naamloos
+  ticket_future_due_by: "Moet binnen %{time} klaar zijn"
+  ticket_past_due_by: "Moest %{time} geleden klaar zijn"
   ticket_pending_since_time: "In wachtrij sinds"
   ticket_resolved_at_time: "Opgelost op"
   ticket_update_multiple_button: Actualiseren
@@ -3376,6 +3563,7 @@ nl:
     choose_another_photo: "Kies een andere foto"
     company: Bedrijf
     email: E-mail
+    facebook: Facebook
     full_name: "Volledige naam"
     info1: "Een pasfoto van de persoon is het beste wanneer de foto dezelfde lengte en hoogte heeft."
     mobile: Mobiel

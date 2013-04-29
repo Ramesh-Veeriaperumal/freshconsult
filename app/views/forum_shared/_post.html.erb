@@ -19,8 +19,8 @@
 					<li class="menu-item">
 						<%if post != @posts.first and @forum.questions? %> 
 								<% if logged_in? && current_user.has_manage_forums?  %>
-									<%= link_to (t(".unmark_answer"), toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post), :method=>:put ) if post.answer?  %>
-									<%= link_to (t(".mark_answer"), toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post ),  :method=>:put ) if !post.answer?  %>
+									<%= link_to(t(".unmark_answer"), toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post), :method=>:put ) if post.answer?  %>
+									<%= link_to(t(".mark_answer"), toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post ),  :method=>:put ) if !post.answer?  %>
 								<%end%> 
 						<%end%>
 					</li>
@@ -37,7 +37,7 @@
 		<textarea id='<%= "post-agent-hovercard_#{post.id}" %>' style="display:none;">
 			<div class="contact_hover" style="min-height:50px;">
 			  <%= user_avatar(post.user) if post.user %>
-			  <%= content_tag :div, link_to(h(post.user), post.user), :class => "user_name" %>
+			  <%= content_tag :div, link_to(CGI.escapeHTML(h(post.user)), post.user), :class => "user_name" %>
 			  <% if post.user.agent? %>
 			  	<strong><%= content_tag :div, h(post.user.agent.level.name) unless post.user.agent.level.blank? %></strong>
 			  <% end %>

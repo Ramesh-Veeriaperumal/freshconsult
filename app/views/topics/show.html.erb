@@ -45,7 +45,7 @@
 						<textarea id="agent-hovercard" style="display:none;">
 							<div class="contact_hover" style="min-height:50px;">
 							  <%= user_avatar(@topic.user) if @topic.user %>
-							  <%= content_tag :div, link_to(h(@topic.user), @topic.user), :class => "user_name" %>
+							  <%= content_tag :div, link_to(CGI.escapeHTML(h(@topic.user)), @topic.user), :class => "user_name" %>
 							  <% if @topic.user.agent? %>
 							  	<strong><%= content_tag :div, h(@topic.user.agent.level.name) unless @topic.user.agent.level.blank? %></strong>
 							  <% end %>
@@ -107,7 +107,7 @@
 					<% end %>             
 					<div class="alignright">
            <%= content_tag(:h4, t('topic.msg1'), :class => "title" ) if @topic.locked? %>
-           <%= link_to_function (t('reply_comment'), "ReplyForm.init()", :class => "uiButton special") if logged_in? && !@topic.locked? %>
+           <%= link_to_function (t('reply_comment'), "jQuery('#reply').toggle();jQuery('#post_body_html').getEditor().focus();", :class => "uiButton special") if logged_in? && !@topic.locked? %>
           </div>
 					</div>   
         </div>

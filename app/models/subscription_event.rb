@@ -7,7 +7,7 @@ class SubscriptionEvent < ActiveRecord::Base
 
     include Subscription::Events::Constants
 
-    def events(start_date = 30.days.ago, end_date = Time.now.end_of_day)
+    def events(start_date = Time.now.beginning_of_month, end_date = Time.now.end_of_day)
       {
         :list => find(:all, :include => :account, 
                       :conditions => { :created_at => (start_date..end_date) } ), 
@@ -18,7 +18,7 @@ class SubscriptionEvent < ActiveRecord::Base
       }
     end
 
-    def upgrades(start_date = 30.days.ago, end_date = Time.now.end_of_day)
+    def upgrades(start_date = Time.now.beginning_of_month, end_date = Time.now.end_of_day)
       {
         :list => find(:all, :conditions => { :created_at => (start_date..end_date),
                                               :code => (METRICS[:upgrades]) }), 
@@ -28,7 +28,7 @@ class SubscriptionEvent < ActiveRecord::Base
       }
     end
 
-    def downgrades(start_date = 30.days.ago, end_date = Time.now.end_of_day)
+    def downgrades(start_date = Time.now.beginning_of_month, end_date = Time.now.end_of_day)
       {
         :list => find(:all, :conditions => { :created_at => (start_date..end_date),
                                               :code => (METRICS[:downgrades]) }), 
@@ -39,7 +39,7 @@ class SubscriptionEvent < ActiveRecord::Base
     end
 
     def cmrr_last_30_days
-      sum(:cmrr, :conditions => { :created_at => (30.days.ago..Time.now.end_of_day),
+      sum(:cmrr, :conditions => { :created_at => (Time.now.beginning_of_month..Time.now.end_of_day),
                                   :code => (METRICS[:cmrr]) })
     end
 
@@ -47,7 +47,6 @@ class SubscriptionEvent < ActiveRecord::Base
       sum(:cmrr, :conditions => { :created_at => (start_date..end_date),
                                   :code => (METRICS[:cmrr]) })
     end
-
 
 
     #Adding Event to db

@@ -1,0 +1,397 @@
+tr: 
+  meta:
+   language_name: 'Turkish' 
+  account: 
+    cancel: "İptal et ve geri dön"
+    language: Dili
+    save: "Değişiklikleri kaydet"
+    time_zone: "Zaman Dilimi"
+  accounts: 
+    cancel: 
+      cancel_account: "Freshdesk hesabını iptal et"
+      delete_my_account: "Hesabımı sil"
+  activerecord: 
+    errors: 
+      messages: 
+        accepted: "kabul edilmeli"
+        blank: "boş bırakılamaz"
+        empty: "boş bırakılamaz"
+  add_cc: "CC Ekle"
+  add_new_email: "Yeni mail ekle"
+  add_note: "Not ekle"
+  admin: 
+    canned_responses: 
+      form: 
+        all_agents: "Tüm adminler"
+        groups: "Gruptaki adminler"
+    getting_started: 
+      index: 
+        agent_email_exist: "Mail kullanılmakta"
+        emails_invalid: "Mail adresin hatalı."
+    home: 
+      index: 
+        account: Hesap
+        account-settings: Hesap
+        agent: Adminler
+        email-notifications: "Email Bildirimleri"
+        email-settings: "Email Ayarları"
+        email_commands_setting: "Email Yorumları"
+        everything: Herşey
+        facebook-setting: Facebook
+        group: Gruplar
+        helpdesk: "Yardım Masası"
+        portal: Portal
+        security: Güvenlik
+        settings: Ayarlar
+    products: 
+      portal: 
+        portal_language: "Portal Dili"
+    widget_config: 
+      index: 
+        thankyou_label: "Mesajı gönder"
+  agent: 
+    title: Adminler
+  agent_info_title: "Admin bilgisi"
+  agent_solves_tkt: "Admin bileti cevaplıyor."
+  apply: Uygula
+  assigned_to: Aktarıldı
+  attach_files: "Dosya ekle"
+  attachment: Ek
+  attachment_help_info: "Ek dosyalar 15 MB geçemez"
+  attachments: Ekler
+  cancel: İptal
+  cancel_and_back: "İptal et ve geri dön"
+  cancel_my_account: "Hesabımı iptal et"
+  clear_draft_text: "Kaydedilmiş taslağı sil?"
+  closed: Kapanan
+  company: 
+    title: Şirketler
+  company_name: "Şirket Adı"
+  contact_name: "Kontak Adı"
+  contacts: 
+    deleted_message: "Bu silinmiş bir kontaktır"
+    import_google_yes: Evet
+    save_changes: "Değişiklikleri kaydet"
+    status: 
+      active: Aktiv
+      deleted: Silindi
+    title: Kontaklar
+  conversation: Dialog
+  created_on: Oluşturuldu
+  date_title: Tarih
+  delete: Sil
+  delete_confirm_scenario: "Bu seneryoyu silmek istediğinden emin misin?"
+  description: Açıklama
+  dispatch: 
+    skip_notification_yes: Evet
+  email_command_preview_subject: Konu
+  email_command_preview_subject_value: "Destek Bileti"
+  email_configs: 
+    Personalized_email_replies_yes: Evet
+  email_notifications: 
+    subject: Konu
+  example: örnek
+  export_data: 
+    closed_at: "Kapanış saati"
+    export_to_csv: "CSV olarak kaydet"
+    field_select_title: "İndirilecek alanları seç"
+    filter_label_agent: "Biletleri Filtreleme"
+    filter_label_customer: "Biletleri oluşturmaya göre filtrele"
+    from: Kimden
+    resolved_at: "Çözüm tarihi"
+    twenty_four: Dünden
+  facebook_source: Facebook
+  failure: "Hata ..."
+  flash: 
+    contacts: 
+      cancel: iptal
+    g_app: 
+      user_deleted: "Kullanıcı silindi!"
+    general: 
+      destroy: 
+        failure: "%{human_name} silininemedi"
+    login: 
+      failed: "Giriş başarılı oldu!"
+      success: "Giriş başarılı!"
+    portal: 
+      tickets: 
+        create: 
+          success: "Biletin oluşturuldu ve bir kopyası mailine gönderildi."
+    profile: 
+      change_password: 
+        failure: "Şifre değiştirilemedi, şimdiki şifreni kontrol et."
+        success: "Profilin başarıyla değiştirildi. Tekrar giriş yapmalısın."
+      update: 
+        success: "Profilin değiştirildi."
+    tickets: 
+      merge: 
+        success: "Bilet başarıyla birleştirildi."
+      notes: 
+        create: 
+          success: "Biletine notun eklenmiştir."
+  forum: 
+    new: "Yeni Forum"
+    title: Forumlar
+    verb: 
+      problems: "Problemi bildiren"
+  forum_key: Forum
+  forums: 
+    form: 
+      type: "Forum Tipi"
+    search: 
+      placeholder: "%{name} Ara"
+    search_all: 
+      placeholder: "Tüm Konularda Ara"
+  forums_order: 
+    overview: Görünüm
+    popular: Popüler
+    recent: Geçen
+  fwd_success_msg: "Bilet başarıyla iletildi."
+  header: 
+    search: Ara
+    signout: Çıkış
+    submit_a_ticket: "Bilet oluştur"
+    tabs: 
+      checkstatus: "Bilet durumunu kontrol et"
+      forums: Forumlar
+      home: Ana
+      solutions: Çözümler
+    welcome: Hoşgeldin
+  helpdesk: 
+    dashboard: 
+      summary: 
+        open: Açık
+    flash: 
+      tickets_closed: "%{tickets} kapandı"
+    merge: 
+      confirm_merge: 
+        source_merge_description: "Bu bilet kapatılıp %{ticket_id} numaralı bilete aktarıldı"
+        source_ticket_close_info: "Bu bilet takip eden not ile kapatılacak"
+      merge: 
+        other_tickets: "Diğer biletler %{requester} tarafından bildirildi"
+    shared: 
+      forward_form: 
+        addcc: "CC Ekle"
+      reply_form: 
+        addcc: "CC Ekle"
+    tickets: 
+      close_notice: 
+        ticket_has_been_cloased: "Bu bilet kapatıldı"
+      friendly_status: 
+        new: Yeni
+        overdue: Geçen
+        resolved: Çözüldü
+      note: 
+        attachment_size: 
+          exceed: "Hoppa! Eklediğin dosya 15 MB geçiyor. Daha küçük bir dosya yüklemeyi denemelisin."
+        delete_note: "Bu bileti dialogdan çıkar?"
+        public_note: "Açık not"
+      save_and_close_notice: 
+        ticket_saved_and_closed: "Bu bilet oluşturulmuş ve kapatılmıştır"
+      show: 
+        conversation: Dialog
+      tabular_view: 
+        priority: Öncelik
+        status: Durum
+      view_ticket: 
+        conversation: Dialog
+      views: 
+        all: "Tüm Biletler"
+        all_tickets: "Tüm Biletler"
+        closed: "Kapatılan Biletler"
+        my_closed: "Kapanan Biletlerim"
+        my_open: "Açık Biletlerim"
+        my_resolved: "Çözülen Biletlerim"
+        new_and_my_open: "Yeni ve Açık Biletler"
+        new_my_open: "Yeni ve Açık Biletler"
+        no_tickets: "Görünürde hiçbir biletin yer almıyor."
+        open: "Açık biletler"
+        open_or_pending: "Açık veya Bekletilen"
+        resolved: "Çözülen Biletler"
+        resolved_or_closed: "Çözümlende ve Kapatıldı"
+  home: 
+    mobile_index: 
+      email: Mail
+      forgot: "Şifremi unuttum"
+      help: Yardım
+      login: Giriş
+      password: Şifre
+      remember: "Beni hatırla"
+      sign_in_using: "Giriş yapılmış"
+      sign_in_using_google: "Google hesabını kullanarak giriş yap"
+  import_forum: Forumlar
+  integrations: 
+    custom_application: 
+      description: Açıklama
+    google_contacts: 
+      OVERWRITE_LOCAL_small: "Dışa aktar"
+      sync_status: 
+        added: eklendi
+        deleted: silindi
+        modified: değiştirildi
+    jira: 
+      form: 
+        jira_note: "Açıklama satırı"
+  mobile: 
+    home: 
+      login: Giriş
+      remember: "Beni hatırla"
+      sign_in_error: "Yanış mail veya şifre"
+      sign_in_using: "...veya giriş kulanımda"
+  no_forum_category: "Bu katagoride forum yok"
+  no_tags: "Tag bulunamadı"
+  no_twitter_handle: "Lütfen en az bir twitter hesabı ayarla."
+  open: Açık
+  open_tickets: "Açık Biletler"
+  portal: 
+    search: 
+      placeholder: "Bir kelime veye tüm bir cümle ara"
+  portal_customizer_anon_tickets: "Herkes bir bilet yazabilir"
+  preview: "Ön Görünüm"
+  proceed_now: |-
+      
+      
+      İşleme devam?
+  profile: 
+    change_password: "Şifre değiştir"
+    confirm_password: "Şifreni doğrula"
+    current_password: "Şimdiki şifren"
+    edit: "Profilini değiştir"
+    new_password: "Yeni şifre"
+  quests: 
+    forums: Forumlar
+  recent_forum_posts: "Son Forum Girdileri"
+  remove: Kaldır
+  reports: 
+    summary: 
+      open_tickets: "Açık Biletler"
+      resolved_tickets: "Çözülen Biletler"
+  reset_my_password: "Şifremi yenile"
+  resolved: Çözüldü
+  resolved_late: "Çözüm tarihi"
+  resolved_on_time: "Çözüm saati"
+  resolved_tickets: "Çözülen Biletler"
+  save_changes: "Değişiklikleri Kaydet"
+  search: 
+    no_results_msg: "Bir sonuç bulunamadı"
+  security_code: "Güvenlik kodu"
+  set_priority_as: "Önceliği Ayarla"
+  signup_complete_activate_info: "Hoşgeldin! Hesabını aktive etmen için mail adresine ilgili linki gönderdik."
+  solution: 
+    info7: "Bu sayfada bir çözüm yer almamaktadır"
+    no_solutions_info: "Bu sayfada bir çözüm yer almamaktadır"
+    status: "Çözüm Durumu"
+    title: Çözümler
+  solutions: 
+    search: 
+      placeholder: "%{name} Ara"
+    search_all: 
+      placeholder: "Tüm çözümlerde ara"
+    status: 
+      draft: Taslak
+      published: Yayınlanan
+    visibility: 
+      agents: Adminler
+      all: Hepsi
+      anyone: Hiçkimse
+  start_typing_a_question: "Bir soru gir ve aynı anda cevabını gör"
+  state: Yeri
+  status: Durum
+  status_deleted: "Durumu silindi"
+  status_name_validate_presence_msg: " Durum adı boş bırakılamaz"
+  subject_or_description: "Konu veya Açıklama"
+  submit: gönder
+  success: Başarılı
+  support: 
+    shared: 
+      survey_form: 
+        cancel: İptal
+        submit: Gönder
+  this_ticket_has_been_closed: "Bu bilet kapatılmıştır"
+  ticket: 
+    add_note: "Not ekle"
+    assigned_to: Aktarıldı
+    close_btn_title: "Bu bileti kapat"
+    closed_at: "Kapatıldığı saaten şimdiye süre"
+    created_on: "Oluşturma zamanı%{time}"
+    delete_btn: Sil
+    export: "Dışa aktar"
+    note_form: 
+      form_title: "Bir not ekle"
+    portal_created_on_same_user: "Oluşturma zamanı <span class='emphasize'></span>%{date}"
+    priority: Öncelik
+    properties: "Bilet Ayarları"
+    reply_form: 
+      form_title: "Dialoğu cevapla"
+    resolved_at: "Çözüm tarihinden kalan"
+    sort_by: Sırala
+    status: Durum
+    subject: Konu
+    submit_ticket_title: "Bilet oluştur"
+    suggested_solutions: 
+      insert_content: "Konu ekle"
+      insert_url: "URL ekle"
+      no_result: "Çözüm bulunamadı"
+      title: "Önerilen çözümler"
+  ticket_cancel_multiple_button: İptal
+  ticket_close_success: "Biletin başarıyla kapatıldı."
+  ticket_closed_at_time: "Kapanış saati"
+  ticket_fields: 
+    confirm_delete: "Bu alanı silmek istediğinden emin misin?"
+    fields: 
+      agent: Admin
+      description: Açıklama
+      group: Grubu
+      priority: Öncelik
+      product: Ürün
+      requester: Talepçi
+      source: Kaynak
+      status: Durum
+      subject: Konu
+      ticket_type: Tipi
+    first_choice: "İlk Seçim"
+    formfield_props: 
+      description: Açıklama
+      form_title: "Alan Ayarları"
+      status_choices: "Durum seçimi"
+    index: 
+      checkbox: "Seçim Kutucuğu"
+      number: Sayısı
+      paragraph: "Paragraf Yazısı"
+      title: "Bilet Alanları"
+    no_choice_message: "En azından bir seçenek olmalı"
+    second_choice: "İkinci Seçim"
+    untitled: Başlıksız
+  ticket_resolved_at_time: "Çözüm saati"
+  tickets_filter: 
+    sort_fields: 
+      asc: Yukarı
+      date_created: "Oluşturma Tarihi"
+      desc: Aşağı
+      last_modified: "Son Değişiklik"
+      priority: Öncelik
+      status: Durum
+  topic: 
+    msg1: "Bu konu için yorum kapatılmıştır"
+    open: "Konuyu tekrar aç"
+  twitter_source: Twitter
+  undelete: "Geri Getir"
+  user: 
+    address: Adresi
+    back_info: "Geriplan bilgisi"
+    company: Şiketi
+    email: Mail
+    full_name: "Tam Adın"
+    info1: "Profil resmi için en uygunu, resmin genişlik ve yüksekliğinin aynı olduğu durumdur."
+    mobile: Cep
+    name: Adı
+    phone_no: Telefon
+    photo: Foto
+    title: Ünvan
+    twitter_id: "Twitter Adı"
+    work: İşi
+  user_block: Evet
+  wf: 
+    messages: 
+      no_tickets_for_user: "%{user_name} için daha başka açık bilet kalmadı."
+  yes_password_reset: Evet

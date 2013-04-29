@@ -90,7 +90,7 @@
 #results li, .merge_results li{
 	&:hover #resp-icon{ @include symbols-sprite(bullet-folder1_hover); }
 }
-#resp-icon.clicked{ @include symbols-sprite(resp-icon-clicked); }
+.merge_results li #resp-icon.clicked, .merge_results li #resp-icon.clicked:hover{ @include symbols-sprite(resp-icon-clicked); }
 #cont-chosen:hover #resp-icon{ @include symbols-sprite(email_config_active); }
 #contact-area #resp-icon{ @include symbols-sprite(removeButton); }
 
@@ -132,7 +132,6 @@
 }
 
 .open_in_new{ @include symbols-sprite(open_in_new); background-repeat: no-repeat; background-color: transparent; }
-.search_text_box{ @include symbols-sprite(search); background-repeat: no-repeat; background-color: transparent; }
 
 /* %% buttons */
 .close-button{ @include symbols-sprite(close-delete); }

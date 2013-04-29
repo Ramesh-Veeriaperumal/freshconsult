@@ -1,10 +1,9 @@
-class Billing::Subscription 
+class Billing::Subscription
 
-  BILLING_PERIOD  = { 1 => "_monthly", 3 => "_quarterly", 6 => "_half_yearly", 12 => "_annual" }
+  CUSTOMER_INFO   = { :first_name => :admin_first_name, :last_name => :admin_last_name, 
+                       :company => :name }
 
-  #dummy card for initial testing
-  CREDITCARD_INFO = { :number => "4111111111111111", :expiry_month => 5.months.from_now.month, 
-                      :expiry_year => 5.years.from_now.year, :gateway => "chargebee" }   
+  CREDITCARD_INFO = { :number => :number, :expiry_month => :month, :expiry_year => :year }   
 
   ADDRESS_INFO    = { :first_name => :first_name, :last_name => :last_name, :billing_addr1 => :address1, 
                       :billing_addr2 => :address2, :billing_city => :city, :billing_state => :state, 
@@ -14,47 +13,87 @@ class Billing::Subscription
 
   TRIAL_END = "0"
 
-  VALID_CARD = "valid"
+  PLANS = SubscriptionPlan.find(:all).map { |plan| plan.canon_name }
+
+  BILLING_PERIOD  = { 1 => "monthly", 3 => "quarterly", 6 => "half_yearly", 12 => "annual" }
+
+  MAPPED_PLANS = Array.new
+
+  PLANS.map { |plan|
+    BILLING_PERIOD.each do |months, cycle_name|
+      MAPPED_PLANS << [ %{#{plan}_#{cycle_name}}, plan.to_s, months ]
+    end
+  }  # [ [ "sprout_annual", "sprout", 12 ], ... ]
 
 
+  #class methods
+  def self.helpkit_plan
+    Hash[*MAPPED_PLANS.map { |i| [i[0], i[1]] }.flatten]
+  end
+
+  def self.billing_cycle
+    Hash[*MAPPED_PLANS.map { |i| [i[0], i[2]] }.flatten]
+  end
+
+  #constructor
   def initialize
     ChargeBee.configure(:site => AppConfig['chargebee'][RAILS_ENV]['site'],
                         :api_key => AppConfig['chargebee'][RAILS_ENV]['api_key'])
   end
 
+  #instance methods
   def create_subscription(account)
-    ChargeBee::Subscription.create(account_info(account))
+    data = account_info(account).merge(subscription_data(account.subscription))
+    
+    begin
+      ChargeBee::Subscription.create(data)
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e)
+      FreshdeskErrorsMailer.deliver_error_email(nil, nil, e,
+        { :subject => "Error creating account in ChargeBee. Account Id - #{account.id}" }) if Rails.env.production?
+    end
+  end
+
+  def calculate_estimate(subscription)
+    data = subscription_data(subscription).merge(:id => subscription.account_id) 
+    
+    unless ChargeBee::Subscription.retrieve(subscription.account_id).subscription.status == "cancelled"
+      attributes = { :subscription => data, :end_of_term => true }
+    else
+      attributes = { :subscription => data }
+    end
+    
+    ChargeBee::Estimate.update_subscription(attributes)
   end
 
   def update_subscription(subscription, prorate)
     data = (subscription_data(subscription)).merge({ :prorate => prorate })
-    ChargeBee::Subscription.update(subscription.account_id, data) if has_valid_card?(subscription.account)
+    
+    ChargeBee::Subscription.update(subscription.account_id, data)
   end 
 
-  def store_card(subscription)
-    card_info = CREDITCARD_INFO.merge(billing_address(subscription))
+  def store_card(card, address, subscription)
+    card_info = card_info(card).merge(billing_address(address))
+
     ChargeBee::Card.update_card_for_customer(subscription.account.id, card_info)
   end
 
   def activate_subscription(subscription)
-    ChargeBee::Subscription.update(subscription.account_id, 
-          subscription_data(subscription).merge({ :trial_end => TRIAL_END }))
+    data = subscription_data(subscription).merge( :trial_end => TRIAL_END )
+
+    ChargeBee::Subscription.update(subscription.account_id, data)
   end
 
   def update_admin(config)
     ChargeBee::Customer.update(config.account_id, customer_data(config.account))
   end
 
-  def buy_day_passes(day_pass_purchase)
-    ChargeBee::Invoice.charge_addon( add_on_data(day_pass_purchase) )                                           
+  def buy_day_passes(account, quantity)
+    ChargeBee::Invoice.charge_addon( add_on_data(account, quantity) )                                           
   end
 
-  def delete_subscription(account_id)
-    begin
-      ChargeBee::Subscription.cancel(account_id)
-    rescue Exception => e
-      NewRelic::Agent.notice_error(e)
-    end
+  def cancel_subscription(account)
+    account.active? ? ChargeBee::Subscription.cancel(account.id) : true
   end
 
   
@@ -63,45 +102,39 @@ class Billing::Subscription
     def account_info(account)
       {
         :id => account.id,
-        :customer => customer_data(account),
-        :plan_id => plan_code(account),
-        :plan_quantity => TRIAL_PLAN_QUANTITY
+        :customer => customer_data(account)
       }
     end
     
     def customer_data(account)
-      {
-        :first_name => account.admin_first_name,
-        :last_name => account.admin_last_name,
-        :email =>  %(vijayaraj+#{account.id}@freshdesk.com), # account.admin_email,
-        :company => account.name
-      }
+      data = CUSTOMER_INFO.inject({}) { |h, (k, v)| h[k] = account.send(v); h }
+      data.merge(:email => account.invoice_emails.first)
     end
     
     def subscription_data(subscription)
       { 
-        :plan_id => plan_code(subscription.account), 
-        :plan_quantity => subscription.agent_limit 
+        :plan_id => plan_code(subscription), 
+        :plan_quantity => subscription.agent_limit.blank? ? TRIAL_PLAN_QUANTITY : subscription.agent_limit
       }
     end
 
-    def plan_code(account)
-      (account.plan_name.to_s).concat(BILLING_PERIOD[account.subscription.renewal_period])
+    def plan_code(subscription)
+      %{#{subscription.subscription_plan.canon_name.to_s}_#{BILLING_PERIOD[subscription.renewal_period]}}
     end
 
-    def has_valid_card?(account)
-      ChargeBee::Subscription.retrieve(account.id).customer.card_status.eql?(VALID_CARD)
+    def card_info(card)
+      CREDITCARD_INFO.inject({}) { |h, (k, v)| h[k] = card.send(v); h }
     end
 
-    def billing_address(subscription)
-      address_attributes = ADDRESS_INFO.inject({}) { |h, (k, v)| h[k] = subscription.billing_address.send(v); h }
+    def billing_address(address)
+       ADDRESS_INFO.inject({}) { |h, (k, v)| h[k] = address.send(v); h }
     end
 
-    def add_on_data(day_pass_purchase)
+    def add_on_data(account, quantity)
       { 
-        :subscription_id => day_pass_purchase.account_id,
-        :addon_id => day_pass_purchase.account.plan_name.to_s, 
-        :addon_quantity => day_pass_purchase.quantity_purchased 
+        :subscription_id => account.id,
+        :addon_id => account.plan_name.to_s, 
+        :addon_quantity => quantity
       }
     end
 

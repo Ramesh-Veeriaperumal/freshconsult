@@ -227,15 +227,6 @@ class Account < ActiveRecord::Base
 
 
   before_create :set_default_values
-  
- 
-  
-
-
-
-  
-
-  
   before_update :check_default_values, :update_users_time_zone
     
   after_create :create_portal, :create_admin
@@ -248,7 +239,6 @@ class Account < ActiveRecord::Base
   before_destroy :update_crm, :notify_totango
 
   after_commit_on_create :add_to_billing, :add_to_totango, :create_search_index
-  before_destroy :update_billing
 
   after_commit_on_update :clear_cache
   after_commit_on_destroy :clear_cache, :delete_search_index
@@ -307,7 +297,7 @@ class Account < ActiveRecord::Base
     },
 
     :estate => {
-      :features => [ :gamification, :agent_collision, :layout_customization ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin ],
       :inherits => [ :garden ]
     },
 
@@ -327,7 +317,7 @@ class Account < ActiveRecord::Base
     },
 
     :estate_classic => {
-      :features => [ :gamification, :agent_collision, :layout_customization ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin ],
       :inherits => [ :garden_classic ]
     }
 
@@ -415,7 +405,7 @@ class Account < ActiveRecord::Base
   end
   
   def active?
-    5.days.since(self.subscription.next_renewal_at) >= Time.now
+    !self.subscription.suspended?
   end
   
   def plan_name
@@ -556,6 +546,8 @@ class Account < ActiveRecord::Base
                 :word_filter  => {
                        "type" => "word_delimiter",
                        "split_on_numerics" => false,
+                       "generate_word_parts" => false,
+                       "generate_number_parts" => false,
                        "split_on_case_change" => false,
                        "preserve_original" => true
                 }
@@ -699,8 +691,11 @@ class Account < ActiveRecord::Base
   end
 
   def delete_search_index
-    Tire.index(search_index_name).delete
-    es_enabled_account.disable_elastic_search
+    es_enable_status = MemcacheKeys.fetch(MemcacheKeys::ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
+    if es_enable_status.key?(self.id)
+      Tire.index(search_index_name).delete
+      es_enabled_account.disable_elastic_search
+    end
   end
 
   def es_enabled?
@@ -851,15 +846,11 @@ class Account < ActiveRecord::Base
   private 
 
     def add_to_billing
-      Resque.enqueue(Billing::AddToBilling::CreateSubscription, id)
-    end 
+      Resque.enqueue(Billing::AddToBilling, { :account_id => id })
+    end
 
     def add_to_totango
       Resque.enqueue(CRM::Totango::TrialCustomer, {:account_id => id})
-    end
-
-    def update_billing
-      Resque.enqueue(Billing::AddToBilling::DeleteSubscription, id)
     end
 
     def update_crm

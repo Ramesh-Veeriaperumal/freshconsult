@@ -5298,62 +5298,118 @@ a.close{
 .profile_info{     
 	visibility:hidden;
 	right:0;     
-	margin-top:30px;     
+	margin-top:40px;     
 	position:absolute;
-	font-size:13px;
-	background:#ffffff;
-	padding:0 0 10px 0;     
-  	z-index:999999;
+  	font-size:13px;
+  	background:#ffffff;
+	padding:0;     
+  	z-index:999;
 	width:300px;
-	@include opacity(0.95);
+	border-bottom: 7px solid #eee;
 	@include border-radius(5px);
 	@include box-shadow( rgba(0, 0, 0, 0.8) 0px 3px 8px );
-	&:before{           
+	&:after{           
 		content:"";
 		position:absolute;
 		border:6px solid transparent;
-		border-bottom-color:#fff;
+		border-bottom-color:#eee;
 		width:1px;        
-		top:-12px; right:40px;
+		top:-12px; right:24px;
+	}
+	&:before{           
+		content:"";
+		position:absolute;
+		border:8px solid transparent;
+		border-bottom-color: #AAA;
+		width: 1px;
+		top: -16px;
+		right: 22px;
 	}
 	.seperator{
 		border-color:#e0e0e0;
+		padding:0;
+		margin:0;
+		height:0;
 	}                  
 	.link, h5, .user{          
 		font-size:14px;
 	} 
+	.header-arrow-right {
+			display:inline-block;
+			width: 0; 
+			height: 0; 
+			border-top: 5px solid transparent;
+			border-bottom: 5px solid transparent;
+			border-left: 5px solid #909090;
+			margin-right:10px;
+			margin-left:-5px;
+	}
 	.user{
-		margin:10px 0 5px 0;     
+		margin:0; 
+		background:#eee;  
 		span{
 			position:relative;
 		 	top:7px; 
 			color:#888;
+			font-weight: 300;
+			font-size: 18px;
+			text-shadow: 1px 1px 0 #FFF;
 		}
 	}               
 	h5{ padding-bottom:6px; }
 	a.link{
 		display:block;
-		padding:4px 12px 4px 24px;
+		padding:10px 12px 10px 24px;
 		color:$default_txt_color;
 		text-decoration:none;
 	}
 	a.link:hover{
-		@include background(linear-gradient(top, #5469f9, #2433f6));
-		@include single-box-shadow( rgba(0, 0, 0, 0.6), 0, 0px, 1px, false, true );
-		@include filter-gradient(#5469f9, #2433f6, vertical); 
-		color:#ffffff;      
+		background: #999;
+		color:#ffffff; 
+		.header-arrow-right {
+			border-left-color:#fff;
+		}   
 	}
 	.info{
 		padding:4px 24px;
 	}            
 	.user{
-		padding:2px 18px;
+		padding:2px 18px 18px;
 	}
 	.preview_pic img{     
 		width:30px;height:30px;  
 		@include box-shadow( rgba(0, 0, 0, 0.8) 0px 1px 5px inset );
 		@include border-radius(50px);
-	}                              
+	}  
+	.top-margin{
+		margin-top:8px;
+
+	}                         
+	.select2-container .select2-choice{
+		color:$default_txt_color;
+		font-size: 14px;
+		border-color:rgba(#000, 0.1);
+		background-image:none;
+		background-color: transparent;
+		padding-left:5px;
+	}
+	.header-agent-select{
+	 width:235px;
+	}
+}
+.header-select2-dropdown{
+	&.select2-drop{
+		padding-top: 5px;
+		border-color:rgba(#000, 0.1);
+		@include box-shadow(none);
+		.select2-search input, .select2-search input[type="text"]{
+			border-color:rgba(#000, 0.1);
+		}
+		.select2-results .select2-highlighted{
+			background: #999;
+			padding: 3px 0;
+		}
+	}
 }
 
 .list-noinfo{
@@ -8803,7 +8859,7 @@ div.db-chooser{
 	display: inline-block;
 }
 
-#results li, .merge_results li{
+#results li, .merge_results .autocompletepane li, .merge_results .autocompletepane li.selected{
 	border: none;
 	background-color: white;
 	height: 50px;
@@ -9028,7 +9084,7 @@ div.db-chooser{
 
 
 /* end */
-#ticket-merge{
+.ticket-merge{
 	overflow: hidden;
 	.merge-ticket-info{
 		font-size:11px;
@@ -9124,8 +9180,8 @@ div.db-chooser{
 	.merge_results{
 		width:97.4%;
 		max-height: 327px;
-		clear: both !important;
-		li{
+		clear:both;
+		.autocompletepane li{
 			height:48px;
 		}
 	}
@@ -10038,4 +10094,85 @@ div.gcal-confirm-modal-content{ width: 100%; }
 #footer {
 	margin: 10px auto 40px;
 	clear: both;
+}
+
+.group-management .toggle-button{
+	margin-left:0;
+}
+.group-ticket-assign{
+	li{
+		padding-bottom:5px;
+		.group-text-align{
+			padding-top:5px;
+			text-align: right;
+		}
+	}
+}
+/* must have to remove or change to spin.js */
+.header-link-wrapper a img{
+	&.header-spinner{
+	    position: relative;
+	    border-radius: 50%;
+	    width: 21px;
+		height: 21px;
+		margin: 7px 7px 8px 7px;
+	    background: #FF4F72;
+	    background-repeat: no-repeat;
+	    @include box-shadow(inset 0 0 0 .12em rgba(0,0,0,0.2),0 0 0 .12em rgba(255,255,255,0.1));
+	    @include opacity(0.6);
+	    animation: rota 3s infinite alternate;
+	    -webkit-animation: rota 3s infinite alternate;
+	    -o-animation: rota 3s infinite alternate;
+	    -ms-animation: rota 3s infinite alternate;
+	    -moz-animation: rota 3s infinite alternate;
+	    &:after {
+		    content: "";
+		    width: 50%;
+		    height: 50%;
+		    position: absolute;
+		    top: 25%;
+		    left: 25%;
+		    border: .12em solid rgba(255,255,255,0.3);
+		    border-radius: inherit;
+		}
+	}
+}
+@keyframes rota {
+    25%  { transform: rotate(270deg); }
+    50%  { transform: rotate( 90deg); }
+    75%  { transform: rotate(360deg); }
+    100% { transform: rotate(180deg); }
+}
+@-webkit-keyframes rota {
+    25%  { -webkit-transform: rotate(270deg); }
+    50%  { -webkit-transform: rotate( 90deg); }
+    75%  { -webkit-transform: rotate(360deg); }
+    100% { -webkit-transform: rotate(180deg); }
+}
+@-ms-keyframes rota {
+    25%  { -ms-transform: rotate(270deg); }
+    50%  { -ms-transform: rotate( 90deg); }
+    75%  { -ms-transform: rotate(360deg); }
+    100% { -ms-transform: rotate(180deg); }
+}
+@-o-keyframes rota {
+    25%  { -o-transform: rotate(270deg); }
+    50%  { -o-transform: rotate( 90deg); }
+    75%  { -o-transform: rotate(360deg); }
+    100% { -o-transform: rotate(180deg); }
+}
+@-moz-keyframes rota {
+    25%  { -moz-transform: rotate(270deg); }
+    50%  { -moz-transform: rotate( 90deg); }
+    75%  { -moz-transform: rotate(360deg); }
+    100% { -moz-transform: rotate(180deg); }
+}
+
+
+// To be removed when Classic Tkt View is removed - !V2
+.fields .helpdesk_note_notify_agents {
+	width: 100%;
+	li.select2-search-choice {
+		width: auto;
+	}
 }
