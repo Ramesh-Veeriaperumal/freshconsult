@@ -248,7 +248,7 @@
         
     $('#agent_form').submit(function(ev) {
 
-      if(!$("#selected-roles ul li").length > 0)
+      if($("#selected-roles").length > 0 && !$("#selected-roles ul li").length > 0)
       {
           $('<input>').attr({
             type: 'hidden',
