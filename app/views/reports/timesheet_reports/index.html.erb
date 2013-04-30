@@ -1,7 +1,6 @@
-
-<%= javascript_include_tag  '/javascripts/report/date' %>
-<%= javascript_include_tag  '/javascripts/report/daterangepicker.jQuery.js' %>
-<%= stylesheet_link_tag 'ui.daterangepicker' %>
+<script src="/javascripts/report/date.js" type="text/javascript"></script>
+<script src="/javascripts/report/daterangepicker.jQuery.js" type="text/javascript"></script>
+<link href="/stylesheets/ui.daterangepicker.css" media="screen" rel="stylesheet" type="text/css">
   <span class="floatr">
     <%= submit_tag t('export_to_CSV'),{ :class => "slim-button" , :id =>'export_as_csv' }%>
   	<%= link_to("&larr; #{t('reports.summary_report.back_to_reports')}", reports_url, :class => "slim-button") %>

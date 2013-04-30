@@ -1,9 +1,9 @@
 <%
 date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} - #{Time.now.strftime("%d %B %Y")}" :  h(params[:date_range])
 %>
-<%= javascript_include_tag  '/javascripts/report/date' %>
-<%= javascript_include_tag  '/javascripts/report/daterangepicker.jQuery.js' %>
-<%= stylesheet_link_tag 'ui.daterangepicker' %>
+<script src="/javascripts/report/date.js" type="text/javascript"></script>
+<script src="/javascripts/report/daterangepicker.jQuery.js" type="text/javascript"></script>
+<link href="/stylesheets/ui.daterangepicker.css" media="screen" rel="stylesheet" type="text/css">
 <%= include_cloudfront_css :reports, :media => "screen, print, projection"  %>
 <%= include_cloudfront_css :report_print, :media => "print, projection" %>
 <span class="floatr">
