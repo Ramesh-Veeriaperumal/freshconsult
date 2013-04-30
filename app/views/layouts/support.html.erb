@@ -23,7 +23,7 @@
 		<%= include_cloudfront_css :portal %>
 
 		<!-- Theme stylesheet -->
-		<link href="<%= theme_url %>" media="screen" rel="stylesheet" type="text/css">
+		<link href="<%=theme_url%>" media="screen" rel="stylesheet" type="text/css">
 
 		<!-- Google font url if present -->
 		<%= portal_fonts %>
@@ -43,7 +43,8 @@
 		<%= render :partial => "layouts/shared/scripts" %> 
 
 		<!-- Including default portal based script at the bottom -->
-		<%= include_cloudfront_js :portal_bottom, :redactor %>
+		<%= include_cloudfront_js :portal_bottom%>
+		<%= include_cloudfront_js :redactor %>
 
 		<%= cookie_law %>
 	</body>
