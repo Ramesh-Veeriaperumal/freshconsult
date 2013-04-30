@@ -39,14 +39,14 @@
             <% end %>
 	<div id="survey_form" style="display:<%=form_display%>">
                 <div class="survey-form-left">
-                    <h3><%= t('.survey_title') %></h3>
+                    <h3><%= h(t('.survey_title')) %></h3>
                     
                 </div>
                 <div class="survey-form-right clearfix">
                     <ul class="survey-options clearfix">
-                        <li><a href="#" class="happy" id="happy_tab" data-rating="<%=Survey::HAPPY%>"><%=current_account.survey.happy_text%></a></li>
-                        <li><a href="#" class="neutral" id="neutral_tab" data-rating="<%=Survey::NEUTRAL%>"><%=current_account.survey.neutral_text%></a></li>
-                        <li><a href="#" class="unhappy" id="unhappy_tab" data-rating="<%=Survey::UNHAPPY%>"><%=current_account.survey.unhappy_text%></a></li>
+                        <li><a href="#" class="happy" id="happy_tab" data-rating="<%=Survey::HAPPY%>"><%=h(current_account.survey.happy_text)%></a></li>
+                        <li><a href="#" class="neutral" id="neutral_tab" data-rating="<%=Survey::NEUTRAL%>"><%=h(current_account.survey.neutral_text)%></a></li>
+                        <li><a href="#" class="unhappy" id="unhappy_tab" data-rating="<%=Survey::UNHAPPY%>"><%=h(current_account.survey.unhappy_text)%></a></li>
                     </ul>
                     <div class="survey-comment">
                     <% form_for :survey, :url => support_portal_survey_path(@ticket) , :html => { :method => "put" } do %>

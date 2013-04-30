@@ -1,4 +1,4 @@
-<% cache ["v3","theme",current_portal] do %>
+<% cache ["v4","theme",current_portal] do %>
 <% 
 	cssText = render(:partial=>"/shared/theme_text")
 	engine = Sass::Engine.new(cssText , :syntax => :scss, :cache => true, :style => :compressed)

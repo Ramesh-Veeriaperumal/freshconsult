@@ -71,7 +71,7 @@ gem 'rforce'
 
 gem "seamless_database_pool", :git => "git://github.com/freshdesk/seamless_database_pool.git"
 gem 'after_commit', :git => "git://github.com/freshdesk/after_commit.git"
-gem 'chargebee', "~> 1.1.1"
+gem 'chargebee', "~> 1.1.7"
 
 gem 'memcache-client', '1.8.5'
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"

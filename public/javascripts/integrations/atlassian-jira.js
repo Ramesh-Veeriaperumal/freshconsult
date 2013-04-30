@@ -257,7 +257,7 @@ JiraWidget.prototype = {
 			type:'hidden',
 			id: 'fields[summary]',
 			name: 'fields[summary]',
-			value: jiraBundle.ticketSubject}).appendTo('#jira-add-form');
+			value: escapeHtml(jiraBundle.ticketSubject).replace(/"/g, "&quot;")}).appendTo('#jira-add-form');
 		}
 	},
 	jiraCreateIssueSuccess: function(evt) {
@@ -313,7 +313,7 @@ JiraWidget.prototype = {
 		jQuery('#jira-issue-id').html(issueIdHtml);
 		jQuery('#jira-view').attr("href", issueLink);
 		jQuery('#jira-issue-type').text(issueType);
-		jQuery('#jira-issue-summary').html(issueSummary);
+		jQuery('#jira-issue-summary').text(issueSummary);
 		jQuery('#jira-issue-status').text(issueStatus);
 		jQuery('#jira-issue-createdon').text(freshdate(issueCreated));
 		this.displayIssueWidgetStatus = false;
@@ -688,7 +688,7 @@ JiraWidget.prototype = {
 		else{	
 		jiraWidget.fieldContainer += '<label>'+fieldData["name"]+'</label>';
 		if(fieldData["name"] == "Summary")
-			jiraWidget.fieldContainer += '<input type="text" name="fields['+fieldKey+']" id="fields['+ fieldKey+']	" value="'+jQuery(".request-title .subject").text()+'"/>';
+			jiraWidget.fieldContainer += '<input type="text" name="fields['+fieldKey+']" id="fields['+ fieldKey+']	" value="'+(jQuery(".request-title .subject").text()).replace(/"/g, "&quot;")+'"/>';
 		else
 			jiraWidget.fieldContainer += '<input type="text" name="fields['+fieldKey+']" id="fields['+ fieldKey+']	"/>';
 		}
