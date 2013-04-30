@@ -13,9 +13,9 @@
 	<!-- Mobile viewport optimized-->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <%= include_stylesheets :getting_started %>
-   	<%= include_javascripts :defaults %>
-    <%= include_javascripts :getting_started %>
+    <%= include_cloudfront_css :getting_started %>
+   	<%= include_cloudfront_js :defaults %>
+    <%= include_cloudfront_js :getting_started %>
     <%= render :partial => "layouts/totango" %>
 	 
     <link rel="shortcut icon" href="/images/favicon.ico">

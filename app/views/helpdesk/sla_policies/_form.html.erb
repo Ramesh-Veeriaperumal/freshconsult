@@ -1,5 +1,5 @@
-<%= include_stylesheets :pattern %>
-<%= include_javascripts :pattern %>
+<%= include_cloudfront_css :pattern %>
+<%= include_cloudfront_js :pattern %>
 <%= f.error_messages %>
 <% conditions = @sla_policy.conditions || {} %>
 <ul class="ui-form dont-validate">

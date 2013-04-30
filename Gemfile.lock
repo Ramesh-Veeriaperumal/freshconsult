@@ -14,6 +14,13 @@ GIT
       activerecord (>= 1.15.6, < 3.0.0)
 
 GIT
+  remote: git://github.com/freshdesk/cloudfront_asset_host.git
+  revision: b45046a5e6f9b4768d0f3c35ff9f91b2dca0e2e1
+  specs:
+    cloudfront_asset_host (1.1.0)
+      right_aws
+
+GIT
   remote: git://github.com/freshdesk/deadlock_retry.git
   revision: 801e84f45aed2ccde10aa085af0aa94f1bf46975
   specs:
@@ -249,6 +256,9 @@ GEM
       builder (~> 3.0)
       oauth (~> 0.4)
     riddle (1.2.2)
+    right_aws (3.0.5)
+      right_http_connection (>= 1.2.5)
+    right_http_connection (1.3.0)
     rspec (1.3.1)
     rspec-rails (1.3.3)
       rack (>= 1.0.0)
@@ -319,6 +329,7 @@ DEPENDENCIES
   aws-s3 (= 0.6.2)
   braintree (= 2.10.0)
   chargebee (~> 1.1.7)
+  cloudfront_asset_host!
   compass-rails
   deadlock_retry!
   delayed_job (= 1.8.4)

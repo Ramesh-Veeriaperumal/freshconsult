@@ -1,8 +1,8 @@
 <%= javascript_include_tag  'highcharts.js' %>
 <%= javascript_include_tag  '/javascripts/report/date' %>
 <%= javascript_include_tag  '/javascripts/report/daterangepicker.jQuery.js' %>
-<%= include_stylesheets :reports, :media => "screen, print, projection"  %>
-<%= include_stylesheets :report_print, :media => "print, projection" %>
+<%= include_cloudfront_css :reports, :media => "screen, print, projection"  %>
+<%= include_cloudfront_css :report_print, :media => "print, projection" %>
 <%= stylesheet_link_tag 'ui.daterangepicker' %>
 
 <% content_for :sidebar do %>

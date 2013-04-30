@@ -8,6 +8,8 @@ css_dir = "public/stylesheets"
 sass_dir = "public/src"
 images_dir = "public/images"
 javascripts_dir = "public/javascripts"
+generated_images_dir = "public/images/sprites"
+http_generated_images_path = "/images/sprites/"
 
 # You can select your preferred output style here (can be overridden via the command line):
 # output_style = :expanded or :nested or :compact or :compressed

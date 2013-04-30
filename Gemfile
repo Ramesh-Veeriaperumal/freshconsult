@@ -84,6 +84,8 @@ gem "useragent", "~> 0.4.16"
 gem "xss_terminate", "~> 0.2"
 gem "rack-throttle", "~> 0.3.0"
 
+gem "cloudfront_asset_host", :git => "git://github.com/freshdesk/cloudfront_asset_host.git"
+
 group :development,:test do
    gem "forgery","0.5.0"
    gem "factory_girl", "1.2.3" 

@@ -1,5 +1,5 @@
 <% content_for :sidebar do -%><%= render :partial => 'helpnote' %><%- end %>
-<%= include_stylesheets :pattern %>
+<%= include_cloudfront_css :pattern %>
 
 <div class="floatr" pjax-container>
 	<%= link_to t('canned_folders.new_response'), 

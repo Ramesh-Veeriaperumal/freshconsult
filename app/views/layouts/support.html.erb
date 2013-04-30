@@ -20,7 +20,7 @@
 		<%= portal_fav_ico %>
 
 		<!-- Base stylesheet -->
-		<%= include_stylesheets :portal %>
+		<%= include_cloudfront_css :portal %>
 
 		<!-- Theme stylesheet -->
 		<%= stylesheet_link_tag theme_url  %>
@@ -29,7 +29,7 @@
 		<%= portal_fonts %>
 
 		<!-- Including default portal based script framework at the top -->
-		<%= include_javascripts :portal_head %>
+		<%= include_cloudfront_js :portal_head %>
 
 		<!-- Access variables for the portal -->
 		<%= portal_access_varibles %>
@@ -43,7 +43,7 @@
 		<%= render :partial => "layouts/shared/scripts" %> 
 
 		<!-- Including default portal based script at the bottom -->
-		<%= include_javascripts :portal_bottom, :redactor %>
+		<%= include_cloudfront_js :portal_bottom, :redactor %>
 
 		<%= cookie_law %>
 	</body>

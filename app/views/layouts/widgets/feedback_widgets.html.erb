@@ -9,10 +9,10 @@
 	  	<title><%= "#{h(current_account.name)} Widget" %></title>
 
 		<%#= stylesheet_link_tag "widget", :media => "screen, projection" %>
-		<%= include_stylesheets :common %>
-		<%= include_stylesheets :ie_hacks %>
-		<%= include_javascripts :fdwidget %>
-		<!--[if IE]><%= include_javascripts :excanvas %><![endif]-->
+		<%= include_cloudfront_css :common %>
+		<%= include_cloudfront_css :ie_hacks %>
+		<%= include_cloudfront_js :fdwidget %>
+		<!--[if IE]><%= include_cloudfront_js :excanvas %><![endif]-->
 	  <%= yield :head %>
 	  <script type="text/javascript">
 	  	document.domain = document.domain;
