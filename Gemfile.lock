@@ -15,7 +15,7 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/cloudfront_asset_host.git
-  revision: 79d4591f74c2c21447014f040986ee18b9bf89f9
+  revision: 53a5ce53f24daff486988ea0f0a72fd0194817d2
   specs:
     cloudfront_asset_host (1.1.0)
       right_aws
