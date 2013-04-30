@@ -1,0 +1,22 @@
+<% @user_tickets = current_account.tickets.requester_active(@ticket.requester).visible.newest(5).find(:all, 
+      :include => [ :ticket_states,:ticket_status,:responder,:requester ]) %>
+<div id="tickets-expanded" class="contact_tickets row-fluid">
+	<div class="detailed_view">
+		<% if @user_tickets.blank? %>
+			<%= "#{t('contacts.info5')}" %>
+		<% else %>
+			<% @onhold_and_closed_statuses = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(current_account) %>
+			<table class="tickets" id="tickets_view" width="100%">	
+		    	<tbody id="view_tickets">
+					<%= render :partial => "/helpdesk/shared/expanded/ticket", :collection => @user_tickets, 
+						:inline => true, :locals => { :user_page => true, :modal => true } %>
+			    </tbody>
+		  	</table>
+		  	<% if @ticket.requester.tickets.visible.size > 5 %>
+			  	<div class="more_results">
+			  		<%= link_to t('contacts.show_more',:nick_name => @ticket.requester.display_name), helpdesk_requester_filter_path(:requester_id => @ticket.requester.id) , :id => "show_more" %>
+			  	</div>
+		  	<% end %>
+	  	<% end %>
+	</div>
+</div>

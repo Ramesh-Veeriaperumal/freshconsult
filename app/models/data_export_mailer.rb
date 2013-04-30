@@ -1,4 +1,6 @@
 class DataExportMailer < ActionMailer::Base
+	
+  layout "email_font"
   
   def export_email(options={}) 
     recipients    options[:email]

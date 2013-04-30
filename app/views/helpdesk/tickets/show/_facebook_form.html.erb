@@ -16,7 +16,7 @@
     <%= hidden_field_tag :fb_post, "true", :id => "fb_comment" %>
     <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"]%>          
     <%= f.hidden_field :private , :value => "false" %>
-    <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=> "reply_ticket_status_#{cntid}"  )%>
+    <%= hidden_field_tag(:ticket_status , '', :id=> "reply_ticket_status_#{cntid}"  )%>
 
     <ul class="ui-form dont-validate">
       <li class="inline-field field">

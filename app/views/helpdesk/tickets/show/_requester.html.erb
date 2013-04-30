@@ -1,4 +1,4 @@
-<div class="widget clearfix">
+<div class="widget clearfix" id="requester_info">
 	<h3><%=t('ticket.requestor_info')%></h3>
 	<div class="content">
 	<% unless params[:format] == 'widget' %>
@@ -24,7 +24,7 @@
 	%>
 	<div id="contact_info_default" class='requester_tab'>
 		<div class="requester-avatar-wrap">
-			<%= user_avatar(user, :medium)  %>
+			<%= user_avatar(user)  %>
 		</div>
 
 		<div class="requester-details">
@@ -36,8 +36,18 @@
 			<%= content_tag(:p, "#{t('user.phone_no')}: #{h(user.phone)}" ) unless user.phone.blank? %>
 			<%= content_tag(:p, "#{t('user.mobile')}: #{h(user.mobile)}" ) unless user.mobile.blank? %>
 			
-			<p class='more_details'><%= link_to(t('ticket.more_details'), contact) %></p>
+			<% if current_user.can_view_all_tickets? %>
+			<div class='more_details'>
+				<%= link_to( "Recent tickets", "/helpdesk/tickets/component/#{@ticket.id}?component=requester_tickets", 
+										  				:rel => 'freshdialog', "data-target" => "#requester_tickets",
+										  				"data-template-footer" => "",
+
+										  				:title => t('contacts.info4',:nick_name => user.display_name) ) %>
+			</div>
+			<% end %>
 		</div>
+		<div class="clearfix"></div>
+		
 	</div>
 	<%
 	unless params[:format] == 'widget' 

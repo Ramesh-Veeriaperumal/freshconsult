@@ -530,7 +530,7 @@ HTML
 	end
 
 	def theme_url
-		preview? ? "/theme/#{current_portal.template.id}-#{current_user.id}-preview.css?v=#{Time.now}" : 
+		preview? ? "/theme/#{current_portal.template.id}-#{current_user.id}-preview.css?v=#{Time.now.to_i}" : 
 			"/theme/#{current_portal.template.id}.css?v=#{current_portal.template.updated_at.to_i}"
 	end
 

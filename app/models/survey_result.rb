@@ -51,6 +51,18 @@ class SurveyResult < ActiveRecord::Base
         end
   end
 
+  def text
+    if happy?
+      txt = 'happy_text'
+    elsif unhappy?
+      txt = 'unhappy_text'
+    else
+      txt = 'neutral_text'
+    end
+
+    Account.current.survey.send(txt)
+  end
+
   def self.generate_reports_list(survey_reports,category,sort_by)
     
   agents_report = Hash.new

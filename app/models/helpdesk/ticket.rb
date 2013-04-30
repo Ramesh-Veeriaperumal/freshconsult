@@ -47,7 +47,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_update :update_message_id, :if => :deleted_changed?
 
-  after_commit :update_es_index
 
   before_validation_on_create :set_token
   
@@ -56,11 +55,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_save :save_custom_field
 
   after_commit_on_create :create_initial_activity,  :update_content_ids, :pass_thro_biz_rules,
-    :support_score_on_create, :process_quests
+    :support_score_on_create, :process_quests, :update_es_index
   
   after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity, 
     :stop_timesheet_timers, :fire_update_event, :support_score_on_update, 
-    :process_quests, :publish_to_update_channel
+    :process_quests, :publish_to_update_channel, :update_es_index
+
+  after_commit_on_destroy :remove_es_document
 
 
   has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy

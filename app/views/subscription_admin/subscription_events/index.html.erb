@@ -67,6 +67,8 @@
     
     <% unless params[:date]["period(2i)"].blank? or params[:date]["period(1i)"].blank? %>
 
+      <% actual_revenue_custom = @cmrr_month - handle_nil(@overall_downgrades_month[:revenue]).abs - handle_nil(@records_month[:revenue][codes[:deleted]]).abs %>
+
       <h4><%= %(#{I18n.t("date.month_names")[params[:date]["period(2i)"].to_i]}, 
                                               #{params[:date]["period(1i)"]}) %></h4>
       <br/>
@@ -91,7 +93,7 @@
             <tr>
               <% revenue = @records_month[:revenue] %>
               <td>$<%= @cmrr_month %></td>
-              <td>$<%= @actual_revenue_custom %></td>
+              <td>$<%= actual_revenue_custom %></td>
               <td>$<%= handle_nil(revenue[codes[:affiliates]]) %></td> 
               <td>$<%= handle_nil(revenue[codes[:paid]]) %></td>
               <td>$<%= handle_nil(revenue[codes[:free_to_paid]]) %></td> 

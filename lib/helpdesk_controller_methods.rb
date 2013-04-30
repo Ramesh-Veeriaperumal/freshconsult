@@ -83,7 +83,10 @@ module HelpdeskControllerMethods
         redirect_to after_destroy_url
       end
       expects.json  { render :json => :deleted}
-      expects.js { after_destory_js }
+      expects.js { 
+        process_destroy_message
+        after_destory_js 
+      }
       #until we impl query based retrieve we show only limited data on deletion.
       expects.xml{ render :xml => @items.to_xml(options)}
     end
@@ -227,7 +230,10 @@ protected
   end
   
   def after_destory_js
-    render(:update) { |page| @items.each { |i| page.visual_effect('fade', dom_id(i)) } }
+    render(:update) { |page| 
+      @items.each { |i| page.visual_effect('fade', dom_id(i)) } 
+      show_ajax_flash(page)
+    }
   end
   
   def after_restore_url

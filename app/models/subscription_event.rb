@@ -48,9 +48,6 @@ class SubscriptionEvent < ActiveRecord::Base
                                   :code => (METRICS[:cmrr]) })
     end
 
-    def actual_revenue(start_date = Time.now.beginning_of_month, end_date = Time.now.end_of_day)
-      sum(:cmrr, :conditions => { :created_at => (start_date..end_date) })
-    end
 
     #Adding Event to db
     def add_event(account, attributes)

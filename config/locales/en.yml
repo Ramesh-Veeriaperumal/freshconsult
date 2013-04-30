@@ -1251,7 +1251,7 @@ en:
       contact_email : Email
       contact_phone : Phone
       invoice_email_info : Send Invoices to
-      invoice_emails : Emails
+      invoice_emails : Email
   success_msg : Account settings updated successfully!
   failure_msg : Failed to update Account Settings!
   
@@ -1503,6 +1503,7 @@ en:
   group: 
     new: New Group
     name: Group Name
+    description: Group description
     edit: Edit Group
     title: Groups
     ticket_assignment: Automatic Ticket Assignment
@@ -1610,6 +1611,7 @@ en:
   portal_signup_anon: Enable this feature if you want users to be able to sign up and create their own user accounts. This will enable users to login and participate in forum discussions, vote on ideas etc.
   portal_captcha_anon: Enable this feature if you want users to submit tickets with captcha
   card_process: Thank you for your payment. Your Freshdesk account is now live!
+  card_error: There was an error adding your card. Please try again.
   chat: Chat
   card_number: Card Number
   forgot_password_intro: Fill out the form below and instructions to reset your password will be emailed to you
@@ -1617,7 +1619,9 @@ en:
   reset: Reset
   ticket_due_by_time: Due by
   ticket_past_due_by: Due %{time} ago
+  ticket_past_due_by_live: Due <abbr data-livestamp='%{timestamp}'>%{time} ago</abbr>
   ticket_future_due_by: Due in %{time}
+  ticket_future_due_by_live: Due <abbr data-livestamp='%{timestamp}'> in %{time}</abbr>
   ticket_pending_since_time: Pending Since
   ticket_resolved_at_time: Resolved at
   ticket_closed_at_time: Closed at
@@ -2007,8 +2011,8 @@ en:
     help_center: "How can we help you today?"
     new_support_ticket: "New support ticket"
     check_ticket_status: "Check ticket status"
-    user_available: "New tickets will be auto-assigned to you."
-    user_not_available: "New tickets will NOT be auto-assigned to you."
+    user_available: "New tickets will be <br>auto-assigned to you."
+    user_not_available: "New tickets will NOT be <br>auto-assigned to you."
     tabs:
       reports: Reports
       dashboard: Dashboard
@@ -2175,7 +2179,9 @@ en:
       submit_feedback: "Submit Feedback"
     include_quoted_text: "Include previous replies"
     more_details: "More details..."
+    reported: "reported"
     reported_on: "from %{username}, Last updated: on %{date}"
+    scenarios: "Scenarios"
     ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_resolved_at: "From: %{username}, Resolved: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_agent_responded_at: "From: %{username}, Agent responded: <span class='emphasize'>%{time_ago} ago</span>"
@@ -2288,11 +2294,13 @@ en:
       add_tag: "Add a tag:"
     type: Type
     execute_scenario: Execute Scenario
+    conv_form_status_set_as: "and set as <strong>%{status}</strong>"
     note_form: 
       private_note: "Add as Private Note, and don't notify the requester"
       description_note: "The Subject and Description of the merged tickets will be added as notes in the primary ticket"
       form_title: Add a Note
       add_and_resolve: Add and Resolve
+      add_public_note: Add Public Note
       notify_agents: Notify Agents
     tweet_form:
       tweet_and_resolve: Tweet and Resolve
@@ -2391,6 +2399,7 @@ en:
   enter_billing_for_free: Please enter the credit card details before you choose the paid plan
   will_expire_in: will expire in
   choose_plan_trial: "Note: Your account will get deactivated after the trial period. <br /> To continue using Freshdesk, please choose a plan below." 
+  trial_expired: "Your trial has expired and the account is deactivated. Please contact support@freshdesk.com to update your subscription."
   asked_on: Asked on
   this_ticket_has_been_deleted: This ticket has been deleted
   state: State
@@ -2752,9 +2761,16 @@ en:
           public_note: "%{user_name} added a public note on %{note_date}"
           reply: "%{user_name} replied on %{note_date}"
           forward: "%{user_name} forwarded on %{note_date}"
+        created_on_live:
+          private_note: "%{user_name} added a private note <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
+          public_note: "%{user_name} added a public note <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
+          reply: "%{user_name} replied <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
+          forward: "%{user_name} forwarded <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
+          survey: "%{user_name} rated this ticket <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
         edit_note: Edit Note
         split_this_as_new_ticket: Split this as a new Ticket
         delete_note: "Remove this from the ticket converstion?"
+        deleted_note: "Deleted"
         split_ticket_confirm: Split this note and create it as a new ticket?
         private_note: Private note
         public_note: Public note
@@ -3507,6 +3523,9 @@ en:
   select_free_plan: "Select your Free plan"
   change_details_anytime: "Subscription details or plans can be changed at anytime."
   enter_payment_details_to_add: "Enter Payment details to add more agents or to upgrade your current plan"
+  card_error: "There was an error adding your card. Please try again."
+  payment_failed: "We are unable to process your credit-card payment. If the problem persists, write to us at support@freshdesk.com."
+  error_in_update: "We are unable to update your subscription. If the problem persists, write to us at support@freshdesk.com."
   plan_is_selected: "Your account is now active with the %{plan} plan"
   error_in_plan: "Error changing the plan"
   change_free_plan: "Change your Free plan"

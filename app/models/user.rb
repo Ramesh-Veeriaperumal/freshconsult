@@ -98,7 +98,7 @@ class User < ActiveRecord::Base
   
   validates_presence_of :email, :unless => :customer?
 
-  delegate :available?, :to => :agent, :allow_nil => true
+  delegate :available?, :in_round_robin?, :to => :agent, :allow_nil => true
   
   def check_email_value
     if email.blank?
