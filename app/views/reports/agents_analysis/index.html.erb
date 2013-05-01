@@ -1,5 +1,5 @@
 <% content_for :layoutType do -%>ticket_list<%- end %>
-<%= stylesheet_link_tag 'ui.daterangepicker' %>
+<link href="/stylesheets/ui.daterangepicker.css" media="screen" rel="stylesheet" type="text/css">
 
 <%= include_cloudfront_css :pattern %>
 <%= include_cloudfront_css :reports %>
@@ -42,5 +42,5 @@ jQuery(document).ready(function(){
 });
 
 </script>
-<%= javascript_include_tag  '/javascripts/report/date.js' %>
-<%= javascript_include_tag  '/javascripts/report/daterangepicker.jQuery.js' %>
+<script type="text/javascript" src="/javascripts/report/date.js"></script>
+<script type="text/javascript" src="/javascripts/report/daterangepicker.jQuery.js"></script>
