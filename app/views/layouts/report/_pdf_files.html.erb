@@ -1,4 +1,4 @@
-<% domain_url = 'http://pineapple.freshaxis.com'%>
+<% domain_url = "http://static.#{Helpdesk::HOST[Rails.env.to_sym]}"%>
 <link rel="stylesheet" type="text/css" href="<%=domain_url%>/stylesheets/app/reports.css">
 <link rel="stylesheet" type="text/css" href="<%=domain_url%>/stylesheets/pattern/pattern.css">
 <script src='<%=domain_url%>/javascripts/jquery-1.7.1.min.js'></script>

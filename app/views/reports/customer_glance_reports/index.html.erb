@@ -1,10 +1,10 @@
 <% content_for :layoutType do -%>ticket_list<%- end %>
 <%= stylesheet_link_tag 'ui.daterangepicker' %>
 
-<%= include_stylesheets :pattern %>
-<%= include_stylesheets :reports %>
-<%= include_javascripts :pattern  %>
-<%= include_javascripts :reports  %>
+<%= include_cloudfront_css :pattern %>
+<%= include_cloudfront_css :reports %>
+<%= include_cloudfront_js :pattern  %>
+<%= include_cloudfront_js :reports  %>
 <div id="loading-box" class="loading-box"></div>
 <!-- select model for agent start-->
 <%= render :partial => "reports/helpdesk_glance_reports/glance_model_dialog", :locals => {:select_option=>'customer_id',:dialog_box_title=>"#{t('adv_reports.customer_at_a_glance')} #{t('adv_reports.report')}",:field_title=> t('adv_reports.glance.select_customer_msg'),

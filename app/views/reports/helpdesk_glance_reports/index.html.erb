@@ -1,10 +1,10 @@
 <% content_for :layoutType do -%>ticket_list<%- end %>
 <%= stylesheet_link_tag 'ui.daterangepicker' %>
 
-<%= include_stylesheets :pattern %>
-<%= include_stylesheets :reports %>
-<%= include_javascripts :pattern  %>
-<%= include_javascripts :reports  %>
+<%= include_cloudfront_css :pattern %>
+<%= include_cloudfront_css :reports %>
+<%= include_cloudfront_js :pattern  %>
+<%= include_cloudfront_js :reports  %>
 <div id="loading-box" class="loading-box"></div>
 
 <div class="row-fluid">
