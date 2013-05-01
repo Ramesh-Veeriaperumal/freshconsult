@@ -1,33 +1,31 @@
 /* Importing admin icons */
+@import "cdn-ignored/sprites/admin-icon/*.png";
 $admin-icon-layout:horizontal;
-$application-logo-layout:vertical;
-$sync-status-layout:smart;
-$reports-icon-layout:horizontal;
-$ticket-view-layout:smart;
-
-@import "admin-icon/*.png";
 @include all-admin-icon-sprites;
 
 @import "application-logo/*.png";
+$application-logo-layout:vertical;
 @include all-application-logo-sprites;
 
 /*Report tab icons */
-@import "reports-icon/*.png";
-.report_items{ @include all-reports-icon-sprites; }
+@import "cdn-ignored/sprites/reports-icon/*.png";
+$reports-icon-layout:horizontal;
+@include all-reports-icon-sprites;
 
 /*Ticket View icons */
-@import "ticket-view/*.png";
-#ticket_view_choices .icon{ @include all-ticket-view-sprites; }
+@import "cdn-ignored/sprites/ticket-view/*.png";
+$ticket-view-layout:smart;
+@include all-ticket-view-sprites;
 
 /*header icons */
-@import "header-icons/*.png";
-.header-link-wrapper{@include all-header-icons-sprites;}
+@import "cdn-ignored/sprites/header-icons/*.png";
+@include all-header-icons-sprites;
 
 /*Admin product source icons */
-@import "product/*.png";
+@import "cdn-ignored/sprites/product/*.png";
 @include all-product-sprites;
 
-@import "file-types/*.png";
+@import "cdn-ignored/sprites/file-types/*.png";
 @include all-file-types-sprites;
 
 /* !IMPORTANT ALL GAMIFICATION RELATED STYLES WILL BE UNDER "app/gamification.scss" 

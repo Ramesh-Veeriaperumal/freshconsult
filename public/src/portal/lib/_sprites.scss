@@ -15,10 +15,15 @@
 // <i class="icon-inbox icon-white"></i>
 
 /* Importing admin icons */
-@import "portal/icon/*.png";
-$icon-sprite-dimensions: true;
+@import "cdn-ignored/sprites/portal/icon/*.png";
+$icon-sprite-dimensions:true;
 $icon-layout:horizontal;
 @include all-icon-sprites;
+
+@import "cdn-ignored/sprites/portal/sources/*.png";
+$sources-layout:smart;
+$sources-sprite-dimensions:true;
+@include all-sources-sprites;
 
 [class^="icon-"],
 [class*=" icon-"]{

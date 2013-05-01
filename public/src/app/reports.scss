@@ -147,28 +147,28 @@ $single_stackbar_chart_height: 120px;
 	display: inline;
 }
 .center-by-margin {margin-left:auto; margin-right:auto;}
-.sla-compliance {                
-			h4.percent-diff {
-				width:75px;
-				margin: 0;
-				font-size: 14px;
-				background: url(/images/reports/report_arrow-up.png) right no-repeat;
-				padding-right: 20px;
-				color:$report-number-positive-color;
-				text-align:right;
-				.percent {
-					color:lighten($report-number-positive-color, 5%);
-					font-size:10px;
-					display:inline;
-				}
-			}
+.sla-compliance {
+	h4.percent-diff {
+		width:75px;
+		margin: 0;
+		font-size: 14px;
+		background: url(/images/reports/report_arrow-up.png) right no-repeat;
+		padding-right: 20px;
+		color:$report-number-positive-color;
+		text-align:right;
+		.percent {
+			color:lighten($report-number-positive-color, 5%);
+			font-size:10px;
+			display:inline;
+		}
+	}
 		
-			h4.negative.percent-diff {
-				color:$report-number-negative-color;
-				background: url(/images/reports/report_arrow-down.png) right no-repeat;
-				.percent {
-					color:lighten($report-number-negative-color,5%);
-			}
+	h4.negative.percent-diff {
+		color:$report-number-negative-color;
+		background: url(/images/reports/report_arrow-down.png) right no-repeat;
+		.percent {
+			color:lighten($report-number-negative-color,5%);
+		}
 
 	}
 }
