@@ -160,6 +160,11 @@
   
   map.resources :reports
   map.resources :timesheet_reports , :controller => 'reports/timesheet_reports' , :collection => {:report_filter => :post , :export_csv => :post} 
+  map.customer_activity   '/activity_reports/customer', :controller => 'reports/customer_reports', :action => 'index'
+  map.helpdesk_activity   '/activity_reports/helpdesk', :controller => 'reports/helpdesk_reports', :action => 'index'
+  map.customer_activity_generate   '/activity_reports/customer/generate', :controller => 'reports/customer_reports', :action => 'generate'
+  map.helpdesk_activity_generate   '/activity_reports/helpdesk/generate', :controller => 'reports/helpdesk_reports', :action => 'generate'
+  map.helpdesk_activity_export   '/activity_reports/helpdesk/export_to_excel', :controller => 'reports/helpdesk_reports', :action => 'export_to_excel'
   map.scoreboard_activity '/gamification/reports', :controller => 'reports/gamification_reports', :action => 'index'   
   map.survey_activity '/survey/reports', :controller => 'reports/survey_reports', :action => 'index'
   map.survey_back_to_list '/survey/reports/:category/:view', :controller => 'reports/survey_reports', :action => 'index'

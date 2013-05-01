@@ -6,9 +6,9 @@
         <li><h1><%= @data_obj[:received_tickets] %></h1></li>
         <li><h1><%= @data_obj[:resolved_tickets] %></h1></li>
         <li><h1><%= @data_obj[:backlog_tickets] %></h1></li>
-        <li><h1><%= (@data_obj[:avgresponsetime]).to_f.round(2) %></h1></li>
-        <li><h1><%= (@data_obj[:avgfirstresptime]).to_f.round(2) %></h1></li>
-        <li><h1><%= (@data_obj[:avgresolutiontime]).to_f.round(2) %></h1></li>
+        <li><h1><%= in_hrs_mins(@data_obj[:avgresponsetime]) %></h1></li>
+        <li><h1><%= in_hrs_mins(@data_obj[:avgfirstresptime]) %></h1></li>
+        <li><h1><%= in_hrs_mins(@data_obj[:avgresolutiontime]) %></h1></li>
       </ul>
     </div>
     <div class="report-summary-data">
@@ -26,15 +26,15 @@
           <small><span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%></small>
         </li>
         <li>
-          <% metric_obj = percentage_change(@prev_data_obj[:avgresponsetime].to_f,@data_obj[:avgresponsetime].to_f,:avgresponsetime)%>
+          <% metric_obj = percentage_change(@prev_data_obj[:avgresponsetime].to_i,@data_obj[:avgresponsetime].to_i,:avgresponsetime)%>
           <small><span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%></small>
         </li>
         <li>
-          <% metric_obj = percentage_change(@prev_data_obj[:avgfirstresptime].to_f,@data_obj[:avgfirstresptime].to_f,:avgfirstresptime)%>
+          <% metric_obj = percentage_change(@prev_data_obj[:avgfirstresptime].to_i,@data_obj[:avgfirstresptime].to_i,:avgfirstresptime)%>
           <small><span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%></small>
         </li>
         <li>
-          <% metric_obj = percentage_change(@prev_data_obj[:avgresolutiontime].to_f,@data_obj[:avgresolutiontime].to_f,:avgresolutiontime)%>
+          <% metric_obj = percentage_change(@prev_data_obj[:avgresolutiontime].to_i,@data_obj[:avgresolutiontime].to_i,:avgresolutiontime)%>
           <small><span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%></small>
         </li>
       </ul>
@@ -57,12 +57,12 @@
         <li><h1><%= (@data_obj[:avgagentinteractions]).to_f.round(1) %></h1></li>
         <li><h1><%= @data_obj[:num_of_reopens] %></h1></li>
         <li><h1><%= @data_obj[:num_of_reassigns] %></h1></li>
-        <li>
-          <div id="sla_gauge_container" style="width: 150px; height: 120px; margin: 0 auto"><div class="noinfo-bar">N/A</div></div>
-        </li>
-        <li>
-          <div id="fcr_gauge_container" style="width: 150px; height: 120px; margin: 0 auto"><div class="noinfo-bar">N/A</div></div>
-        </li>
+        <%
+        sla_perc = @data_obj[:resolved_tickets].to_i == 0 ? 0 : (@data_obj[:sla_tickets].to_f / @data_obj[:resolved_tickets].to_f)
+        fcr_perc = @data_obj[:resolved_tickets].to_i == 0 ? 0 : (@data_obj[:fcr_tickets].to_f / @data_obj[:resolved_tickets].to_f)
+        %>
+        <li><h1><%= (sla_perc * 100).to_i %></h1></li>
+        <li><h1><%= (fcr_perc * 100).to_i %></h1></li>
       </ul>
     </div>
     <div class="report-summary-data">
@@ -86,14 +86,12 @@
         <li>
           <% 
           prev_sla_perc = @prev_data_obj[:resolved_tickets].to_i == 0 ? 0 : (@prev_data_obj[:sla_tickets].to_f / @prev_data_obj[:resolved_tickets].to_f)
-          sla_perc = @data_obj[:resolved_tickets].to_i == 0 ? 0 : (@data_obj[:sla_tickets].to_f / @data_obj[:resolved_tickets].to_f)
           metric_obj = percentage_change(prev_sla_perc,sla_perc,:sla_tickets)%>
           <small><span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%></small>
         </li>
         <li>
           <% 
           prev_fcr_perc = @prev_data_obj[:resolved_tickets].to_i == 0 ? 0 : (@prev_data_obj[:fcr_tickets].to_f / @prev_data_obj[:resolved_tickets].to_f)
-          fcr_perc = @data_obj[:resolved_tickets].to_i == 0 ? 0 : (@data_obj[:fcr_tickets].to_f / @data_obj[:resolved_tickets].to_f)
           metric_obj = percentage_change(prev_fcr_perc,fcr_perc,:fcr_tickets)%>
           <small><span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%></small>
         </li>
@@ -111,19 +109,3 @@
     </div>
   </div>
 </div>
-<script type="text/javascript">
-jQuery(document).ready(function() {
-  var gaugeChartSLA = new gaugeChart(
-    {renderTo: 'sla_gauge_container',chartText:'',yAxisText:'',tooltipName:'SLA',chartData:[Math.round((<%= @data_obj[:sla_tickets] %> / <%= @data_obj[:resolved_tickets] %>)*100)],valueSuffix:'%'}
-    ),
-    gaugeChartFCR = new gaugeChart(
-      {renderTo: 'fcr_gauge_container',chartText:'',yAxisText:'',tooltipName:'FCR',chartData:[Math.round((<%= @data_obj[:fcr_tickets] %> / <%= @data_obj[:resolved_tickets] %>)*100)],valueSuffix:'%'}
-    );
-  if(<%= @data_obj[:resolved_tickets] %> > 0) gaugeChartSLA.gaugeChartGraph();
-  
-  if(<%= @data_obj[:resolved_tickets] %> > 0) gaugeChartFCR.gaugeChartGraph();
-  //below code is to handle the height of the gauge charts.
-  jQuery("#sla_gauge_container,#fcr_gauge_container").height(80);
-  jQuery("#sla_gauge_container,#fcr_gauge_container").children('.highcharts-container').children('svg').height(70);
-});
-</script>

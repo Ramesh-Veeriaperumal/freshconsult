@@ -31,4 +31,9 @@ module Reports::GlanceReportsHelper
 		comparison_hash
 	end
 
+	def in_hrs_mins(seconds)
+		return "00:00" if seconds.blank?
+		(Time.mktime(0)+seconds.to_i).strftime("%H:%M")
+	end
+
 end
