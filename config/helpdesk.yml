@@ -73,7 +73,7 @@ EMAIL:
           ssl: true
           use_login: true
           username: support@freshdesk.com
-          password: opmanager12345
+          password: opmanager123
           processed_folder: fdver2m
           
         development:
@@ -98,7 +98,7 @@ EMAIL:
           domain: freshdesk.com
           authentication: :plain
           user_name: girish@freshdesk.com
-          password: opmanager12345
+          password: opmanager123
           
         development:
           <<: *defaults
