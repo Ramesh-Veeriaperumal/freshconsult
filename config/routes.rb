@@ -125,6 +125,38 @@
   map.namespace :search do |search|
     search.resources :home, :only => :index, :collection => { :suggest => :get, :solutions => :get, :topics => :get }
   end
+
+  map.namespace :reports do |report|
+    report.resources :helpdesk_glance_reports, :controller => 'helpdesk_glance_reports', 
+      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
+      :fetch_activity_ajax => :post,:fetch_metrics=> :post} 
+    report.resources :analysis_reports, :controller => 'helpdesk_load_analysis', 
+      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post} 
+    report.resources :performance_analysis_reports, :controller => 'helpdesk_performance_analysis', 
+      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post} 
+    report.resources :agent_glance_reports, :controller => 'agent_glance_reports', 
+      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
+      :fetch_activity_ajax => :post,:fetch_metrics=> :post} 
+    report.resources :group_glance_reports, :controller => 'group_glance_reports', 
+      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
+      :fetch_activity_ajax => :post,:fetch_metrics=> :post} 
+    report.resources :agent_analysis_reports, :controller => 'agents_analysis', 
+      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
+      :fetch_chart_data => :post} 
+    report.resources :group_analysis_reports, :controller => 'groups_analysis', 
+      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
+      :fetch_chart_data => :post} 
+    report.resources :agents_comparison_reports, :controller => 'agents_comparison', 
+      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post}  
+    report.resources :groups_comparison_reports, :controller => 'groups_comparison', 
+      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post}
+    report.resources :customer_glance_reports, :controller => 'customer_glance_reports', 
+      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
+      :fetch_activity_ajax => :post,:fetch_metrics=> :post}
+    report.resources :customers_analysis_reports, :controller => 'customers_analysis', 
+      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
+      :fetch_chart_data => :post}
+  end
   
   map.resources :reports
   map.resources :timesheet_reports , :controller => 'reports/timesheet_reports' , :collection => {:report_filter => :post , :export_csv => :post} 
@@ -141,7 +173,8 @@
   map.survey_overall_report '/survey/overall_report/:category', :controller => 'reports/survey_reports', :action => 'report_details'
   map.survey_feedbacks '/reports/survey_reports/feedbacks', :controller => 'reports/survey_reports', :action => 'feedbacks'
   map.survey_refresh_details '/reports/survey_reports/refresh_details', :controller => 'reports/survey_reports', :action => 'refresh_details'
-    
+
+  
   map.namespace :social do |social|
     social.resources :twitters, :controller => 'twitter_handles',
                 :collection =>  { :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any, :tweet_exists => :get , :user_following => :any, :authdone => :any },

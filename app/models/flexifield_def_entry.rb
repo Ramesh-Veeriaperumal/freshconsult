@@ -8,7 +8,7 @@ class FlexifieldDefEntry < ActiveRecord::Base
   has_one :ticket_field, :class_name => 'Helpdesk::TicketField', :dependent => :destroy
   validates_presence_of :flexifield_name, :flexifield_alias, :flexifield_order
 
-  named_scope :drop_down_fields, :condition => {:flexifield_coltype => 'dropdown' }
+  named_scope :drop_down_fields, :conditions => {:flexifield_coltype => 'dropdown' }
   
   before_save :ensure_alias_is_one_word
   before_create :set_account_id
@@ -63,6 +63,11 @@ class FlexifieldDefEntry < ActiveRecord::Base
   end
   def to_ff_alias ff_field = nil
     (ff_field.nil? || flexifield_name == ff_field) ? flexifield_alias : nil
+  end
+
+  def self.dropdown_custom_fields(account=Account.current)
+    account.flexi_field_defs.first.flexifield_def_entries.
+              drop_down_fields.all(:select => :flexifield_name).map(&:flexifield_name)
   end
 
   private

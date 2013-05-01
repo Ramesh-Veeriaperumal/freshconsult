@@ -27,9 +27,10 @@ namespace :cloudfront_assets do
     puts "::::Compile started:::#{Time.now}"
     sh "bundle exec compass compile -e production"
     sh "bundle exec jammit --output #{RAILS_ROOT}/public/#{Jammit.package_path}" 
+    sh "sudo rm -rf #{RAILS_ROOT}/public/#{Jammit.package_path}/images"
     sh "mkdir #{RAILS_ROOT}/public/#{Jammit.package_path}/images/"
     sh "mkdir #{RAILS_ROOT}/public/#{Jammit.package_path}/images/sprites"
-    sh "cp -r #{RAILS_ROOT}/public/images/sprites/ #{RAILS_ROOT}/public/#{Jammit.package_path}/images/sprites/"
+    sh "cp -r #{RAILS_ROOT}/public/images/sprites/ #{RAILS_ROOT}/public/#{Jammit.package_path}/images/"
     puts "::::Compile ended:::#{Time.now}"
   end
 

@@ -1,0 +1,101 @@
+<% content_for :layoutType do -%>ticket_list<%- end %>
+<link href="/stylesheets/ui.daterangepicker.css" media="screen" rel="stylesheet" type="text/css">
+
+<%= include_cloudfront_css :pattern %>
+<%= include_cloudfront_css :reports %>
+<%= include_cloudfront_js :pattern  %>
+<%= include_cloudfront_js :reports  %>
+<div id="loading-box" class="loading-box hide"></div>
+<!-- select model for agent start-->
+<a href="#dialog-select" class="hide" data-backdrop="static" 
+		data-show-close="false" title="Agents Comparison Report" rel="freshdialog" id="select-opt"></a>
+<div id="dialog-select">
+	<p class="hide" id="mandatory-check"></p><br/>
+	<% c_hash = @show_options[Reports::Constants::DEFAULT_COLUMNS_ORDER.index(:responder_id)]
+    container = "multi_select"
+  %>
+  	<div>
+  		<span class="title"><%=t('adv_reports.comparison_reports.select_agent_msg')%></span><br/>
+  		<%= select_tag 'agent_select_option', options_for_select(c_hash[:options].map {|k, v| [v, k.to_s]}), { :multiple => true, :class => "select2 filter_item span4",:size => 5,:placeholder => "#{t('adv_reports.select_an_option')}"}%>
+  	</div>
+  	<div style="clear:both;">
+      <span class="title"><%=t('adv_reports.comparison_reports.select_metrics_msg')%></span><br/>
+      <%= select_tag 'metric_select_option', options_for_select(@comparison_fields.map {|k, v| [v, k.to_s]}), { :multiple => true, :class => "select2 filter_item span4",:size => 5,:placeholder => "#{t('adv_reports.select_an_option')}"}%>
+    </div>
+</div>
+<!-- select model for agent end-->
+
+<div class="row-fluid">
+	<div class="span12 report-breadcrum-wrapper">
+		<ul class="breadcrumb span8">
+		  <li><a href="<%=reports_url%>"><%=t('adv_reports.glance.all_reports')%></a> <span class="divider">/</span></li>
+		  <li><%=t('adv_reports.glance.report_view')%></li>
+		</ul>
+		<ul class="nav pull-right">
+	       <li class=""><a href="#" class="proxy-generate-pdf" ><i class="reports-icon-download"></i><%=t('adv_reports.glance.download')%></a></li>
+	      <li class="dropdown">
+	        <a href="#" class="proxy-generate-pdf"><i class="reports-icon-print"></i><%=t('adv_reports.glance.print')%></a>
+	      </li>
+	    </ul>
+	</div>
+</div>
+<div class="row-fluid">
+	<div id="ticket-list-body-content">
+		<!-- header skeleton-->
+		<div class="report-page" id="report-page">
+  		<div class="report-content-wrapper">
+				<div class="row-fluid report-header">
+				  <div class="row-fluid">
+				    <div class="span12 report-header-content">
+				      <div class="span6">
+				        <img src="/images/reports-icon/report-icon.png" alt="" class="vertical-alignment report-header-icon"/>
+				        <div class="vertical-alignment">
+				          <p class="lead" style="margin-bottom:0;" id="report_header_title"><%=t('adv_reports.agent_comparison')%></p>
+				          <p class="muted" id="report_header_date"><%="#{30.days.ago.strftime("%d %B %Y")} - #{1.days.ago.strftime("%d %B %Y")}"%></p>
+				        </div>
+				      </div>
+				    </div>
+				  </div>
+				  <!--filter data code-->
+				  <div class="row-fluid" >
+				    <div class="report-filter span12">
+				      <div class="vertical-alignment report-filter-slide-btn">
+				        <% unless defined?(is_pdf) %>
+				          <a class="btn btn-primary" href="#report-filter-edit" data-parent="#report-page" id="sliding"><%=t('edit')%></a>
+				        <%end%>
+				      </div>
+				      <div id="report-filter-details" class="report-filter-details">
+				        <ul class="inline" id="filter_container">
+				          <li><%=t('adv_reports.filtered_by')%>:</li>
+				          <%@filter_data.each do |obj|%>
+				            <li><%=obj["name"]%> : <strong><%=obj["value"]%></strong></li>
+				          <%end%>
+				          <li><%=t('adv_reports.time_period')%>: <strong><%=@report_date%></strong></li>
+				        </ul>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+			</div>
+		</div>
+		<!-- header skeleton-->
+	</div>
+	<div class="report-left-filter hide" id="report-filter-edit">
+		<div class="left-filter">    
+		  <!-- <div> <a href="#" data-dismiss="slider">close</a> </div> -->
+		  <%= render :partial => "reports/shared/filter_options", :locals => {:neglect_fields => [:responder_id,:group_id,:customer_id],:current_page => 'agents_comparison', :action_url => reports_agents_comparison_reports_url}%>
+		</div>
+	</div>
+</div>
+<script type="text/javascript" src="/javascripts/report/date.js"></script>
+<script type="text/javascript" src="/javascripts/report/daterangepicker.jQuery.js"></script>
+
+<script type="text/javascript">
+jQuery(document).ready(function() {
+	Helpkit.ComparisonReport.init({
+		report_type: 'agent',
+		date_range: jQuery("#date_range").val(),
+		_url: '<%=reports_agents_comparison_reports_url%>'
+	});
+});
+</script>

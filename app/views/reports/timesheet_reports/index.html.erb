@@ -88,7 +88,7 @@
 				}
 			}); 
 	
-	    jQuery("#report_filters, #date_range").change(function(){
+	    jQuery("#report_filters").change(function(){
     	jQuery("#time_sheet_report").html("<div class='loading-box'></div>"); 
     	jQuery.ajax({
         url: '<%=report_filter_timesheet_reports_url%>',
