@@ -67,6 +67,7 @@ class User < ActiveRecord::Base
   after_commit_on_update :clear_agent_list_cache, :if => :agent?
   after_commit_on_destroy :clear_agent_list_cache, :if => :agent?
   after_commit_on_update :clear_agent_list_cache, :if => :user_role_updated?
+
   before_update :bakcup_user_changes
   after_commit_on_update :update_search_index, :if => :customer_id_updated?
   

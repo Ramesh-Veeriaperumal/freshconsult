@@ -164,6 +164,8 @@ class Account < ActiveRecord::Base
   has_many :facebook_posts, :class_name =>'Social::FbPost' 
   
   has_many :ticket_filters , :class_name =>'Helpdesk::Filters::CustomTicketFilter' 
+
+  #has_many :report_filters, :class_name=>'Reports::Filters::ReportsFilter'
   
   has_many :twitter_handles, :class_name =>'Social::TwitterHandle' 
   has_many :tweets, :class_name =>'Social::Tweet'  
@@ -236,7 +238,7 @@ class Account < ActiveRecord::Base
   after_commit_on_create :add_to_billing, :add_to_totango, :create_search_index
 
   after_commit_on_update :clear_cache
-  after_commit_on_destroy :clear_cache, :delete_search_index
+  after_commit_on_destroy :clear_cache, :delete_search_index, :delete_reports_archived_data
   before_update :backup_changes
   before_destroy :backup_changes
   
@@ -281,18 +283,17 @@ class Account < ActiveRecord::Base
     
     :blossom => {
       :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
-        :custom_domain, :multiple_emails ],
+        :custom_domain, :multiple_emails, :advanced_reporting ],
       :inherits => [ :sprout ]
     },
     
     :garden => {
-      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :advanced_reporting, :css_customization ],
+      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :css_customization ],
       :inherits => [ :blossom ]
     },
 
     :estate => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting ],
       :inherits => [ :garden ]
     },
 
@@ -301,18 +302,17 @@ class Account < ActiveRecord::Base
     },
     
     :blossom_classic => {
-      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets],
+      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets,  :advanced_reporting],
       :inherits => [ :sprout_classic ]
     },
     
     :garden_classic => {
-      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :advanced_reporting, :css_customization ],
+      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :css_customization],
       :inherits => [ :blossom_classic ]
     },
 
     :estate_classic => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting ],
       :inherits => [ :garden_classic ]
     }
 
@@ -864,5 +864,8 @@ class Account < ActiveRecord::Base
       }
     end
 
+    def delete_reports_archived_data
+      Resque.enqueue(Workers::DeleteArchivedData, {:account_id => id})
+    end
 
 end

@@ -1,0 +1,55 @@
+<%= render :partial => "layouts/report/pdf_files", :locals => {} %>
+<div class="report-page" id="report-page">
+  <div class="report-content-wrapper">
+    <!--report header-->
+    <%= render :partial => "reports/shared/report_view_header", :locals => {:is_pdf=>true} %>
+
+    <% @data_obj.fetch('selected_comparison').each do |selected| %>
+      <div class="row-fluid">
+        <h3 class="header-lead"><span><%=@data_obj['comparison_field'][selected.to_sym]%></span></h3>
+        <div>
+          <div id="<%=selected%>_line_chart" style="width:600px" class="graph-container">
+            <div class="noinfo">No data to display!</div>
+          </div>
+          <div id="<%=selected%>_bar_chart" style="width:600px" class="graph-container">
+            <div class="noinfo">No data to display!</div>
+          </div> 
+        </div> 
+      </div>
+      <div style="clear:both">&nbsp;</div>
+      <script type="text/javascript">
+        jQuery(document).ready(function() {
+          var <%=selected%>_lineChart = new lineChart(
+            {renderTo: '<%=selected%>_line_chart',
+             chartData:<%=@data_obj.fetch(selected+'_line').to_json%>,
+             yAxisTitle:'<%=@data_obj.fetch(selected+'_yAxis_label')%>',
+             toolTipLabel: 'ticket(s)',
+             isPDF:true,
+             chart_width:600}
+            );
+          <%=selected%>_lineChart.lineChartGraph();
+
+          var <%=selected%>_barChart = new xaxis_bar_chart(
+            {renderTo: '<%=selected%>_bar_chart',
+             chartData:<%=@data_obj.fetch(selected+'_bar').to_json%>,
+             yAxis_label:'<%=@data_obj.fetch(selected+'_yAxis_label')%>',
+             xAxisLabel:['Agent'],
+             toolTipLabel: 'ticket(s)',
+             isPDF:true,
+             chart_width:600}
+            );
+          <%=selected%>_barChart.xaxisbarGraph();
+        });
+        </script>
+    <%end%>
+    
+  </div>
+</div>
+<script type="text/javascript">
+jQuery(document).ready(function() {
+  jQuery('.showHideDiv').click(function(){
+    clicked_id = jQuery(this).attr('id');
+    jQuery("#"+clicked_id+"_line_chart, #"+clicked_id+"_bar_chart").toggle();
+  });
+});
+</script>

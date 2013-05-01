@@ -13,7 +13,7 @@ $ticket-view-layout:smart;
 
 /*Report tab icons */
 @import "reports-icon/*.png";
-.report_items{ @include all-reports-icon-sprites; }
+@include all-reports-icon-sprites(true);
 
 /*Ticket View icons */
 @import "ticket-view/*.png";

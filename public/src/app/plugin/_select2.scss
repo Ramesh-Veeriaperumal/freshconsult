@@ -356,6 +356,7 @@ disabled look for already selected choices in the results dropdown
       background-image: -ms-linear-gradient(top, #eeeeee 1%, #ffffff 15%);
       background-image: linear-gradient(top, #eeeeee 1%, #ffffff 15%);
       border: 1px solid #C6C6C6;
+      @include border-radius(4px);
       margin: 0;
       padding: 0;
       cursor: text;

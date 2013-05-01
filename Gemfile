@@ -65,6 +65,7 @@ gem "insensitive_hash", "0.2.3"
 gem "SystemTimer", "1.2.3" 
 gem "redis","2.2.2"
 gem "resque","1.22.0"
+gem "resque-status", "0.4.1"
 
 gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
 gem 'rforce'
@@ -83,6 +84,11 @@ gem "people", '0.2.1' #https://github.com/mericson/people/tree/master/lib
 gem "useragent", "~> 0.4.16"
 gem "xss_terminate", "~> 0.2"
 gem "rack-throttle", "~> 0.3.0"
+
+gem 'clockwork', '0.4.1'
+gem "wkhtmltopdf-binary", "~> 0.9.9.1"
+gem "wicked_pdf", "~> 0.9.2"
+gem "pg"
 
 gem "cloudfront_asset_host", :git => "git://github.com/freshdesk/cloudfront_asset_host.git"
 

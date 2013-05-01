@@ -145,6 +145,7 @@ class SurveyResult < ActiveRecord::Base
       return unless surveyable.is_a? Helpdesk::Ticket
 
       surveyable.st_survey_rating= rating
+      surveyable.survey_rating_updated_at= created_at
       surveyable.save
     end
     
