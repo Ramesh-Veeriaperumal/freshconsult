@@ -15,11 +15,11 @@
   <!--filter data code-->
   <div class="row-fluid" >
     <div class="report-filter span12">
-      <div class="vertical-alignment report-filter-slide-btn">
-        <% unless defined?(is_pdf) %>
-          <a class="btn btn-primary" href="#report-filter-edit" data-parent="#report-page" id="sliding">Edit</a>
-        <%end%>
-      </div>
+      <% unless defined?(is_pdf) %>
+        <div class="vertical-alignment report-filter-slide-btn">
+            <a class="btn btn-primary" href="#report-filter-edit" data-parent="#report-page" id="sliding">Edit</a>
+        </div>
+      <%end%>
       <div id="report-filter-details" class="report-filter-details">
         <ul class="inline" id="filter_container">
           <li>Filtered by:</li>

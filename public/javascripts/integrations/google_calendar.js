@@ -262,7 +262,7 @@ GoogleCalendar.prototype = {
 		reqBody = gcal.EVENT_REQUEST_BODY.evaluate({summary: escapeJSON(jQuery("#gcal-event-summary").val()),
 			start_datetime_string: cFrom, end_datetime_string: cTo,
 			description: escapeJSON(jQuery("#google_calendar_event_description").val()
-						 + '\n' + SEARCH_KEYWORD + ': ' + jQuery(".subject").html() + '\n' + document.location.href)
+						 + '\n' + SEARCH_KEYWORD + ': ' + google_calendar_options.ticket_subject + '\n' + document.location.href)
 		});
 
 		selected_calendar_id = jQuery('#gcal-calendar-list option:selected').val();
@@ -334,7 +334,7 @@ GoogleCalendar.prototype = {
 		reqBody = gcal.EVENT_REQUEST_BODY.evaluate({summary: escapeJSON(jQuery("#gcal-event-summary").val()),
 			start_datetime_string: cFrom, end_datetime_string: cTo,
 			description: escapeJSON( jQuery("#google_calendar_event_description").val()
-									+ '\n' + SEARCH_KEYWORD + ': ' + jQuery(".subject").html() + '\n' + document.location.href)
+									+ '\n' + SEARCH_KEYWORD + ': ' + google_calendar_options.ticket_subject + '\n' + document.location.href)
 		});
 
 		selected_calendar_id = jQuery('#gcal-calendar-list option:selected').val();
