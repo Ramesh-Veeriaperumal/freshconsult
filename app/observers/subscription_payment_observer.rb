@@ -6,7 +6,7 @@ class SubscriptionPaymentObserver < ActiveRecord::Observer
   end
 
   def after_create(payment)
-    send_receipt(payment)
+    # send_receipt(payment)
     update_affiliate(payment) if payment.affiliate
     #add_to_crm(payment)
   end

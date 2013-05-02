@@ -221,15 +221,6 @@ class Account < ActiveRecord::Base
 
 
   before_create :set_default_values
-  
- 
-  
-
-
-
-  
-
-  
   before_update :check_default_values, :update_users_time_zone
     
   after_create :create_portal, :create_admin
@@ -242,7 +233,6 @@ class Account < ActiveRecord::Base
   before_destroy :update_crm, :notify_totango
 
   after_commit_on_create :add_to_billing, :add_to_totango, :create_search_index
-  before_destroy :update_billing
 
   after_commit_on_update :clear_cache
   after_commit_on_destroy :clear_cache, :delete_search_index
@@ -409,7 +399,7 @@ class Account < ActiveRecord::Base
   end
   
   def active?
-    5.days.since(self.subscription.next_renewal_at) >= Time.now
+    !self.subscription.suspended?
   end
   
   def plan_name
@@ -850,15 +840,11 @@ class Account < ActiveRecord::Base
   private 
 
     def add_to_billing
-      Resque.enqueue(Billing::AddToBilling::CreateSubscription, id)
-    end 
+      Resque.enqueue(Billing::AddToBilling, { :account_id => id })
+    end
 
     def add_to_totango
       Resque.enqueue(CRM::Totango::TrialCustomer, {:account_id => id})
-    end
-
-    def update_billing
-      Resque.enqueue(Billing::AddToBilling::DeleteSubscription, id)
     end
 
     def update_crm
