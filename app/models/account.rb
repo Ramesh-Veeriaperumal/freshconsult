@@ -283,17 +283,18 @@ class Account < ActiveRecord::Base
     
     :blossom => {
       :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
-        :custom_domain, :multiple_emails, :advanced_reporting ],
+        :custom_domain, :multiple_emails],
       :inherits => [ :sprout ]
     },
     
     :garden => {
-      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :css_customization ],
+      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
+        :css_customization, :advanced_reporting ],
       :inherits => [ :blossom ]
     },
 
     :estate => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin ],
       :inherits => [ :garden ]
     },
 
@@ -302,17 +303,18 @@ class Account < ActiveRecord::Base
     },
     
     :blossom_classic => {
-      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets,  :advanced_reporting],
+      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets],
       :inherits => [ :sprout_classic ]
     },
     
     :garden_classic => {
-      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :css_customization],
+      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
+        :css_customization, :advanced_reporting ],
       :inherits => [ :blossom_classic ]
     },
 
     :estate_classic => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin ],
       :inherits => [ :garden_classic ]
     }
 
@@ -327,7 +329,7 @@ class Account < ActiveRecord::Base
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
     :anonymous_tickets =>true, :survey_links => true, :gamification_enable => true, :google_signin => true,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
-    :personalized_email_replies => false}
+    :personalized_email_replies => false, :enterprise_reporting => false}
     
   
   has_features do

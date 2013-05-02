@@ -70,8 +70,8 @@
         sla_perc = @data_obj[:resolved_tickets].to_i == 0 ? 0 : (@data_obj[:sla_tickets].to_f / @data_obj[:resolved_tickets].to_f)
         fcr_perc = @data_obj[:resolved_tickets].to_i == 0 ? 0 : (@data_obj[:fcr_tickets].to_f / @data_obj[:resolved_tickets].to_f)
         %>
-        				<li><h1><%= (sla_perc * 100).to_i %></h1></li>
-        				<li><h1><%= (fcr_perc * 100).to_i %></h1></li>
+        				<li><h1><%= (sla_perc * 100).to_i %>%</h1></li>
+        				<li><h1><%= (fcr_perc * 100).to_i %>%</h1></li>
 		          </ul>
 		        </div>
 		        <div class="report-summary-data">
