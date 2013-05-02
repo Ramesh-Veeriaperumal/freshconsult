@@ -29,7 +29,7 @@
 
 		// USED in New ticket form		    
 		// Checking if the email is already present in the system
-    	// If email is new requester then a name field will be shown to the user as an optional input in the request form
+    	// If email is new requester then a "name" field will be shown to the user as an optional input in the request form
 	    $("#helpdesk_ticket_email").focusout(function(){
 	    	var $this = $(this),
 				ticket_email = $this.val(),

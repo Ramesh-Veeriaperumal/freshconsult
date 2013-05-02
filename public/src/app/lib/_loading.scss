@@ -2,12 +2,12 @@
 .loading-center, .loading-box,
 .ui-autocomplete-loading, .paddingloading,
 .page-list .list-group .loadingbox,
-.loading-amount, .ui-after-submit{ background-image:url('/images/animated/ajax-loader.gif'); }
-.response-loading #resp-icon{ background: url('/images/animated/canned-response.gif') no-repeat !important; }
-#ticket_list_count.fetching{ background: url("/images/animated/ticket-count.gif"); }
-#tickets-expanded .fd-ajaxmenu.loading{ background-image:url('/images/animated/loading.gif'); }
+.loading-amount, .ui-after-submit{ background-image:image-url('/images/animated/ajax-loader.gif') !important; }
+.response-loading #resp-icon{ background: image-url('/images/animated/canned-response.gif') no-repeat !important; }
+#ticket_list_count.fetching{ background: image-url("/images/animated/ticket-count.gif"); }
+#tickets-expanded .fd-ajaxmenu.loading{ background-image:image-url('/images/animated/loading.gif'); }
 .loading-fb, .request_details .request-cnt-first .loading-edit, .due-date-dialog .calender-buttons .loading-item{ 
-	background-image:url('/images/animated/load-fb-style.gif'); background-repeat:no-repeat;
+	background-image:image-url('/images/animated/load-fb-style.gif'); background-repeat:no-repeat;
 }
 
 .ajax-loader, .loading, .loading-right, .loading-center, .loading-box, .loading-fb, .paddingloading{

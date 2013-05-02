@@ -311,16 +311,17 @@ a.addchoice:hover{
    /*li.dropdown, li.dropdown_blank{
       select{ margin-bottom:8px; }
    }*/
-   div.checkbox, label.checkbox{
-      padding-bottom:5px;
-      padding-left:18px;
-      font-size:1.1em;
-      position:relative;
-	  input[type="checkbox"] {
-      	float:left;
-	    margin-left:-18px;
-	  }
-   }
+   	div.checkbox, label.checkbox{
+   		@include inline-block;
+		padding-bottom:5px;
+		padding-left:18px;
+		font-size:1.1em;
+		position:relative;
+		input[type="checkbox"] {
+			float:left;
+			margin-left:-18px;
+		}
+   	}
 	label, li.checkbox{
 		font-weight:normal;
 		margin:0;
@@ -2623,4 +2624,29 @@ input[type="text"].number{
 	padding: 8px 10px; 
 	border: 1px solid #efefef; 
 	@include border-radius(5px); 
+}
+
+/* Dropbox attachment styles */
+div.db-chooser{
+	label{ margin-right: 50%; }
+	.dropbox_button{
+		background: url("/images/dropbox-attach.png") no-repeat left -11px #f3f2f2;
+	    height: 26px;
+	    padding-left:90px;
+	    border:1px solid #d6d6d6;
+	    border-radius:4px;
+		cursor:pointer;
+		text-shadow: 1px 1px 0px #fff;
+	    &:hover{
+			background-color:darken(#f2f2f2, 5%);
+		}
+	}
+}
+.attach_wrapper{
+	width:100%;
+	.dropbox_div{
+		border-left: 1px solid #AAAAAA; float: left; margin: 10px; padding-left: 20px; margin-top:1px;
+		div.db-chooser .dropbox_button{ cursor: pointer; }
+	}
+	.attach_file{ float:left; padding-right:20px }
 }

@@ -18,8 +18,7 @@ jQuery("document").ready(function(){
  		
 	
  	jQuery('#fd_feedback_widget').submit(function(ev) {
- 		if (screenshot_flag==0) {
- 			
+ 		if (screenshot_flag==0) { 			
 			var img = img_data.replace("data:image/png;base64,","");
 			var time = new Date();
 			var name = String(time);		
