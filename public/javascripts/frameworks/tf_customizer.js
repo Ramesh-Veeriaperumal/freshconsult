@@ -378,7 +378,7 @@
         $.each($("#statuschoices fieldset"), function(i, item){
           var _status = $H();
           $.each($(item).find("input"), function(_i, _item){
-            _value = _item.value;
+            _value = escapeHtml(_item.value);
             if(_item.type == "checkbox")
               _value = ($(_item).prop("checked"));
             
@@ -386,7 +386,7 @@
               _value = parseInt(_item.value);
 
             if(_item.name == "customer_display_name")
-              _value = _item.value || $(_item).parent().parent().find("input[name=name]").val();
+              _value = escapeHtml(_item.value || $(_item).parent().parent().find("input[name=name]").val());
 
             _status.set(_item.name, _value);
           });
