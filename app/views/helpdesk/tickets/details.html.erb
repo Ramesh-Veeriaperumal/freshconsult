@@ -13,44 +13,9 @@
 		<div id="forFixed" class="conversation_thread"></div>
 		<div id="tkt-inner" class="scollable_content">
 
-			<div class="tkt-sidebar" id="ticket_details_sidebar">
-				<div id="revert_details_view">
-					<strong>
-							<%= link_to t('ticket.switch_view.whats_new'), 
-									"#tkt_view_whatsnew", 
-									:title => "#{t('ticket.switch_view.whats_new')}?", "data-width" => '600', "data-height" => 600, 
-									"data-template-footer" => '',
-									:target => "_blank", :class => 'switch', :rel => 'freshdialog' %>
-
-					</strong>
-					<%= link_to_function t('ticket.switch_view.submit_feedback'), "window.FreshWidget.show();" %>	
-					<div><%= link_to t('ticket.switch_view.revert_view'), helpdesk_ticket_path(@ticket), :id => 'switch' %></div>
-				</div>
-				<%= render :partial => "helpdesk/tickets/show/requester.html.erb" %> 
-				<% unless @ticket.deleted or @ticket.spam %> 
-					<%= render :partial => "helpdesk/tickets/show/ticket_fields.html.erb" %>
-					<% if feature?(:timesheets) %>
-					<div class="modal hide fade" role="dialog" id="timesheets_loading">
-						<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button></div>
-						<div class="modal-body"><div class="loading-box"></div></div>
-					</div>
-					<div class="widget time-tracked inactive load_remote" id="TimesheetTab">
-						<h3>
-							<%= t('helpdesk.time_sheets.sidebar_title') %>
-							<div class="tracked_time">
-								<span class="time" id="timeentry_timer_total"><%= get_time_in_hours(@ticket.time_tracked) %></span>
-								<span class="time_unit">Hrs </span>
-							</div>
-						</h3>
-						<div class="content" rel="remote" data-remote-url="<%= helpdesk_ticket_helpdesk_time_sheets_path(@ticket) %>"></div>
-
-						<%# render :partial => "helpdesk/time_sheets/v2/index" %>
-					</div>
-					<% end %>
-					
-					<%= render :partial => "helpdesk/tickets/show/integrations.html.erb" %> 
-				<% end %>
-			</div>
+			<% unless params[:format] == 'widget' %>
+				<%= render :partial => "helpdesk/tickets/show/sidebar.html.erb" %>
+			<% end %>
 			<!--content Left-->
 			<div class="leftcontent">
 				<ol class="conversation_thread" id="original_request">
