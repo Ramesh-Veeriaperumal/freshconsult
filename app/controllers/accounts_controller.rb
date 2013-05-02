@@ -266,10 +266,13 @@ class AccountsController < ApplicationController
   
   def cancel
     if request.post? and !params[:confirm].blank?
-      SubscriptionNotifier.deliver_account_deleted(current_account) if Rails.env.production?
-      create_deleted_customers_info
-      perform_destroy(current_account)
-      redirect_to "http://www.freshdesk.com"
+      response = Billing::Subscription.new.cancel_subscription(current_account)
+      if response
+        SubscriptionNotifier.deliver_account_deleted(current_account) if Rails.env.production?
+        create_deleted_customers_info
+        perform_destroy(current_account)
+        redirect_to "http://www.freshdesk.com"
+      end
     end
   end
   
@@ -282,7 +285,6 @@ class AccountsController < ApplicationController
        :admin_name => current_account.admin_first_name,
        :admin_email => current_account.admin_email,
        :account_info => {:plan => sub.subscription_plan_id,
-                         :discount => sub.subscription_discount_id,
                          :agents_count => current_account.agents.count,
                          :tickets_count => current_account.tickets.count,
                          :user_count => current_account.contacts.count,
@@ -335,7 +337,6 @@ class AccountsController < ApplicationController
     
     def build_plan
       redirect_to :action => "plans" unless @plan = SubscriptionPlan.find_by_name(params[:plan])
-      @plan.discount = @discount
       @account.plan = @plan
     end
     
@@ -366,14 +367,6 @@ class AccountsController < ApplicationController
     def load_billing
       @creditcard = ActiveMerchant::Billing::CreditCard.new(params[:creditcard])
       @address = SubscriptionAddress.new(params[:address])
-    end
-
-    # Load the discount by code, but not if it's not available
-    def load_discount
-#     if params[:discount].blank? || !(@discount = SubscriptionDiscount.find_by_code(params[:discount])) || !@discount.available? || (@subscription.subscription_plan_id != @discount.plan_id)
-#        @discount = nil
-#      end     
-      @discount = @subscription.discount unless @subscription.discount.blank?
     end
     
     def authorized?

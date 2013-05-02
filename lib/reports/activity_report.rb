@@ -106,7 +106,7 @@ def get_nested_field_reports(column_name)
                 top_level_data.push(value)
 
                 count = get_data_count(value,column_names[0],nested_data,nil,nil)
-                percentage = count.to_i/tot_count.to_i * 100
+                percentage = count/tot_count.to_f * 100
 
                 data_arr.push({:y=>0}) #to add the space b/w two categories in the chart
                 xaxis_arr.push('')#to add the empty category 
@@ -120,7 +120,7 @@ def get_nested_field_reports(column_name)
                 value = data.send(column_names[1])
                 next if value.nil?
                 count = get_data_count(value,column_names[1],nested_data,column_names[0],data.send(column_names[0]))
-                percentage = count.to_i/tot_count.to_i * 100
+                percentage = count/tot_count.to_f * 100
                 if((second_vs_first[value] != data.send(column_names[0])))
                     second_vs_first[value] = data.send(column_names[0])
                     xaxis_arr.push(value)
@@ -133,7 +133,7 @@ def get_nested_field_reports(column_name)
                 value = data.send(column_names[2])
                 next if value.nil?
                   count = data.count
-                  percentage = count.to_i/tot_count.to_i * 100
+                  percentage = count.to_f/tot_count.to_f * 100
                   xaxis_arr.push(value)  
                   column_width = (value.length * 8) if((value.length * 8) > 60 && column_width< (value.length * 8))
                   data_arr.push({:name=>value,:y=>sprintf( "%0.02f",percentage).to_f,:count=>count,:color=>'#4572A7',:borderColor=>'black',:borderWidth=>1})

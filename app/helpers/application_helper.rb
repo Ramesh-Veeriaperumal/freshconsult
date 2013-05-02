@@ -224,7 +224,6 @@ module ApplicationHelper
     tabs = [
       [customers_admin_subscriptions_path, :customers, "Customers" ],
       [admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
-      [admin_subscription_discounts_path, :discounts, "Discounts" ],
       [admin_subscription_payments_path, :payments, "Payments" ],
       [admin_subscription_announcements_path, :announcements, "Announcements" ]
     ]
@@ -423,9 +422,9 @@ module ApplicationHelper
   # User details page link should be shown only to agents and admin
   def link_to_user(user, options = {})
     if current_user && !current_user.customer?
-      link_to(user.display_name, user, options)
+      link_to(h(user.display_name), user, options)
     else 
-      content_tag(:strong, user.display_name, options)
+      content_tag(:strong, h(user.display_name), options)
     end
   end
   
