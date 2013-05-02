@@ -229,7 +229,7 @@ class Account < ActiveRecord::Base
   after_create :create_portal, :create_admin
   after_create :populate_seed_data
   after_create :populate_features
-  after_create :send_welcome_email
+  
   after_update :update_users_language
   after_create :enable_elastic_search
 
@@ -825,9 +825,7 @@ class Account < ActiveRecord::Base
       PopulateAccountSeed.populate_for(self)
     end
 
-   def send_welcome_email
-      SubscriptionNotifier.send_later(:deliver_welcome, self) unless google_domain.blank?
-    end
+   
     
    def subscription_next_renewal_at
        subscription.next_renewal_at
