@@ -8,6 +8,7 @@ class Support::SearchController < SupportController
 
   before_filter :forums_allowed_in_portal?, :only => :topics
   before_filter :solutions_allowed_in_portal?, :only => :solutions
+  before_filter :require_user_login, :only => :tickets
 
   def show
     search_portal(content_classes)
@@ -322,6 +323,10 @@ class Support::SearchController < SupportController
         }
         format.json { render :json => @search_results.to_json }
       end
+    end
+
+    def require_user_login
+      return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless current_user
     end
 
 end
