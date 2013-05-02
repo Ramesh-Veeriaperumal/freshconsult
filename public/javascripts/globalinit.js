@@ -220,6 +220,13 @@ is_touch_device = function() {
         hideWatcherTimer = setTimeout(function() { $("#new_watcher_page").hide(); },1000);
     });
 
+    $("body").on('input propertychange', 'textarea[maxlength]', function() {  
+        var maxLength = $(this).attr('maxlength');  
+        if ($(this).val().length > maxLength) {  
+            $(this).val($(this).val().substring(0, maxLength));  
+        }  
+    });
+
       // - Labels with overlabel will act a Placeholder for form elements
       $("label.overlabel").livequery(function(){ $(this).overlabel(); });
       $(".nav-trigger").livequery(function(){ $(this).showAsMenu(); });
