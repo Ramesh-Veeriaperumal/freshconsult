@@ -1,0 +1,156 @@
+@import "lib/settings";
+
+#SearchResultsBar, #wrap > .header, #agent_collision_show, 
+.monitor_div, .ticket-actions, 
+#revert_details_view, .tkt-tabs-wrap,
+.conversation_thread.redactor, .popover {
+	display: none !important;
+}
+
+
+a {
+	text-decoration: none;
+	color: #333;
+	border-bottom: dotted 1px #999;
+}
+.tkt-sidebar .widget h3 {
+	margin: 0;
+}
+
+.tkt-sidebar #TicketProperties {
+
+	.cnt {
+		padding: 15px 5px;
+	}
+
+	label {
+		margin-bottom: 0;
+	}
+	input, input[type=text], input.number, input.text {
+		border: none;
+		@include box-shadow(none);
+	}
+
+	.select2-choice {
+		text-decoration: none;
+		color:#333;
+		border: none;
+	}
+
+	.btn, .select2-input {
+		display: none;
+	}
+
+	li {
+		list-style: none;
+	}
+
+	li.field > label {
+		padding: 15px 0 5px;
+	}
+
+	li.field textarea {
+		height: auto;
+		border: none;
+		@include box-shadow(none);
+	}
+
+	.select2-container-multi .select2-search-choice {
+		margin: 5px;
+	}
+	.select2-container-multi .select2-choices {
+		padding: 0;
+	}
+
+	.button-container {
+		display: none;
+	}
+}
+
+#jira_issue {
+	display: none;
+}
+.toEmailMoreLink { display: none}
+.commentbox .toEmailMoreContainer { display: inline; }
+
+.content .controls .open-box{
+	p, h4 { margin: 0; }
+
+	a { display: none}
+}
+#firstchild > .controls:first-child {
+	display: none;
+}
+
+.avatar-wrap-collapse p {
+	margin: 0;
+}
+
+
+.content .controls {
+	margin: 0 -10px;
+}
+.control-left .commentbox-info {
+	margin: 0;
+}
+.content .controls .control-left h2 {
+	@include text-shadow(none);
+}
+.commentbox {
+	@include box-shadow(none);
+}
+
+.commentbox .commentbox-requester {
+	border: solid 1px #999;
+}
+
+.conversation_thread, .content .controls .control-left {
+	border: none;
+}
+
+#ticket_status_box {
+	&:after, &:before {
+		display: none;
+	}
+}
+
+.content .controls .control-left .source-badge-wrap {
+	display: none;
+}
+
+#show_more {
+	.commentbox {
+		display: none;
+	}
+	a {
+		text-decoration: none;
+	}
+
+	.avatar-wrap-collapse {
+		@include box-shadow(none);
+		p .count_number {
+			@include text-shadow(none);
+		}
+	}
+}
+
+#contact_info_default {
+	.more_details { display :none }
+}
+.tkt-sidebar .requester-details p {
+	margin: 3px 0 7px;
+}
+
+.fixedbg.at_the_top { display: none}
+
+.fixedStrap.at_the_top {
+	position: static;
+	width: auto;
+	min-width: none;
+	background: none;
+}
+
+.ticket_details #freshwidget-button, .twipsy, #forFixed {
+	display: none !important;
+}
+

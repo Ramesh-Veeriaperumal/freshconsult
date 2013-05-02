@@ -3,7 +3,11 @@
 <div class="item">
 <% link_to article_url, :target => "blank", :class => "item-title #{( !article.folder.visible?(current_user) ) ? 'private' : '' }", :title => truncate ( article.desc_un_html, 100) do %>
   <span class='bulb'></span> <span class='private-icon'></span> 
-  <%= article.excerpts.title %>
+  <% if es_enabled? then %>
+		<%= article.title %>
+	<% else %>
+		<%= article.excerpts.title %>
+	<% end %>
 <% end %>
 	<div class="item-menu">
 		<ul>

@@ -8,21 +8,28 @@
 		<meta name="description" content="<%= page_description %>">
 		<meta name="author" content="">
 		<meta name="keywords" content="<%= page_keywords %>">
+		
+	    <link rel="apple-touch-icon" href="/images/touch/touch-icon-iphone.png" />
+		<link rel="apple-touch-icon" sizes="72x72" href="/images/touch/touch-icon-ipad.png" />
+		<link rel="apple-touch-icon" sizes="114x114" href="/images/touch/touch-icon-iphone-retina.png" />
+		<link rel="apple-touch-icon" sizes="144x144" href="/images/touch/touch-icon-ipad-retina.png" />
 
-		<meta name="viewport" content="width=device-width">
+		<meta name="viewport" content="width=device-width,user-scalable=no" />
+		<meta name="viewport" content="initial-scale = 1.0">
+
 		<%= portal_fav_ico %>
 
 		<!-- Base stylesheet -->
-		<%= include_stylesheets :portal %>
+		<%= include_cloudfront_css :portal %>
 
 		<!-- Theme stylesheet -->
-		<%= stylesheet_link_tag theme_url  %>
+		<link href="<%=theme_url%>" media="screen" rel="stylesheet" type="text/css">
 
 		<!-- Google font url if present -->
 		<%= portal_fonts %>
 
 		<!-- Including default portal based script framework at the top -->
-		<%= include_javascripts :portal_head %>
+		<%= include_cloudfront_js :portal_head %>
 
 		<!-- Access variables for the portal -->
 		<%= portal_access_varibles %>
@@ -36,6 +43,9 @@
 		<%= render :partial => "layouts/shared/scripts" %> 
 
 		<!-- Including default portal based script at the bottom -->
-		<%= include_javascripts :portal_bottom, :redactor %>
+		<%= include_cloudfront_js :portal_bottom%>
+		<%= include_cloudfront_js :redactor %>
+
+		<%= cookie_law %>
 	</body>
 </html>

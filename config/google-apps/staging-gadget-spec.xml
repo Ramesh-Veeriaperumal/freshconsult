@@ -36,11 +36,21 @@
    "html" and "card" are required for all Gmail contextual gadgets. -->
   <Content type="html" view="card">
     <![CDATA[
-	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshitil.com/packages/gadget.css?20130322">
-	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshitil.com/packages/redactor.css?20130322">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshitil.com/stylesheets/app/common.css?20130322">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshitil.com/stylesheets/app/sprites.css?20130322">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshitil.com/stylesheets/app/app-common.css?20130322">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshitil.com/stylesheets/app/app-bootstrap.css?20130322">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshitil.com/stylesheets/app/plugins.css?20130322">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshitil.com/stylesheets/app/ie.css?20130322">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshitil.com/stylesheets/app/tkt_details.css?20130322">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshitil.com/stylesheets/app/tkt_details_sprites.css?20130322">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshitil.com/stylesheets/app/gadget.css?20130322">
+		
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshitil.com/stylesheets/redactor.css?20130322">
 	
 	<script type='text/javascript' src='https://asset.freshitil.com/javascripts/frameworks/jquery.js?20130322'></script>
-    <script src="https://asset.freshitil.com/packages/redactor.js?20130322" type="text/javascript"></script>
+    <script src="https://asset.freshitil.com/javascripts/redactor/redactor.js?20130322" type="text/javascript"></script>
+    <script src="https://asset.freshitil.com/javascripts/redactor/freshdesk_redactor.js?20130322" type="text/javascript"></script>
 
       <style type="text/css">
 		html {
@@ -389,7 +399,7 @@
 			var loading_div = jQuery('<div></div>')
 					.attr('id',"gcgLoading")
 					.attr('style','text-align:center; padding: 20px;')
-					.html( '<img src="https://asset.freshitil.com/images/load.gif" />' );
+					.html( '<img src="https://asset.freshitil.com/images/animated/ajax-loader.gif" />' );
 			
 			jQuery('body').prepend(loading_div);
 			autoHeight();

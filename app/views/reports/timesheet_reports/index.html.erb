@@ -1,7 +1,6 @@
-
-<%= javascript_include_tag  '/javascripts/report/date' %>
-<%= javascript_include_tag  '/javascripts/report/daterangepicker.jQuery.js' %>
-<%= stylesheet_link_tag 'ui.daterangepicker' %>
+<script src="/javascripts/report/date.js" type="text/javascript"></script>
+<script src="/javascripts/report/daterangepicker.jQuery.js" type="text/javascript"></script>
+<link href="/stylesheets/ui.daterangepicker.css" media="screen" rel="stylesheet" type="text/css">
   <span class="floatr">
     <%= submit_tag t('export_to_CSV'),{ :class => "slim-button" , :id =>'export_as_csv' }%>
   	<%= link_to("&larr; #{t('reports.summary_report.back_to_reports')}", reports_url, :class => "slim-button") %>
@@ -35,6 +34,13 @@
 						{ :multiple => true,
 						  :class => "customSelect auto", 
 									 "data-placeholder".to_sym() => t('.select_agent') } %>
+        <label><%=t('helpdesk.time_sheets.group')%></label>	
+		<%= select_tag :group_id, 
+						options_for_select(current_account.groups.collect{ |c| [c.name, c.id] },
+											 @group_id), 
+						{ :multiple => true,
+						  :class => "customSelect auto", 
+									 "data-placeholder".to_sym() => t('.select_group') } %>
         
 		<label><%=t('helpdesk.time_sheets.billing_type')%></label>
 		<%= select_tag :billable, options_for_select(Helpdesk::TimeSheet.billable_options , 
@@ -82,7 +88,7 @@
 				}
 			}); 
 	
-	    jQuery("#report_filters, #date_range").change(function(){
+	    jQuery("#report_filters").change(function(){
     	jQuery("#time_sheet_report").html("<div class='loading-box'></div>"); 
     	jQuery.ajax({
         url: '<%=report_filter_timesheet_reports_url%>',

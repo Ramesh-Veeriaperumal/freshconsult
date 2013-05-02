@@ -1,4 +1,9 @@
 <% content_for :sidebar do -%>
+	<div id="switch_details_view" class="sidepanel">
+		<%= link_to t('ticket.switch_view.new_view'), helpdesk_ticket_path(@ticket), :class => "switch" %>
+		<%= link_to t('ticket.switch_view.whats_new'), "https://support.freshdesk.com/support/solutions/articles/70760-new-enhanced-ticket-view-page", :target => "_blank" %>
+	</div>
+
   <%= render :partial => "/helpdesk/integrations/crm_widget", :locals => {:user => @ticket.requester} %>
 
   <div class="rtCnt sidepanel ticket-panel">
@@ -9,8 +14,8 @@
   
   <%= render :partial => "/helpdesk/integrations/remote_support", :locals => {:user => @ticket.requester, :agent => @ticket.responder} %>
 <%- end %>
-<%= include_stylesheets :pattern %>
-<%= include_javascripts :pattern %>
+<%= include_cloudfront_css :pattern %>
+<%= include_cloudfront_js :pattern %>
 <script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
 <%= render :partial => "ticket_info" %>       
 
@@ -180,13 +185,12 @@
   			jQuery.ajax({	type: 'POST',
   						url: '/helpdesk/canned_responses/show/'+ticket_id+'?ca_resp_id='+ca_resp_id,
   						contentType: 'application/text',
-  						async: false,
+  						async: true,
 						success: function(data){	
-  									insertIntoConversation(data);
   									jQuery(element).removeClass("response-loading");
   									jQuery(element).qtip('hide');
   									jQuery('.ui-icon-closethick').trigger('click');
-
+  									loadRecent();
   								}
   						});
 		return true;
@@ -224,4 +228,10 @@
 	<% end %>
 	jQuery.getScript("/helpdesk/tickets/prevnext/<%=@item.display_id%>");
 	setTimeout(function(){jQuery('#TicketProperties').trigger('afterShow')},50);
+	deleteCookie('new_details_view', '/');
+	jQuery('#switch_details_view .switch').click(function(ev) {
+		ev.preventDefault();
+		setCookie('new_details_view', 'true', 90,'/');
+		window.location = '<%= helpdesk_ticket_path(@ticket) %>';
+	});
 <%- end %>

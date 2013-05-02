@@ -1,0 +1,12 @@
+<% content_for :layoutType do -%>single<%- end %>
+<div class="big_results">
+  <h3 class="title">Search results</h3>
+  <% form_tag '/search/home', :method => :get do %>
+    <input class="search" value="<%= h(@search_key) %>" placeholder="Search" autocomplete="off" name="search_key" />
+    <input type="submit" value="Search" class="uiButton blue" />
+  <% end %>
+  <span class="seperator"></span>
+  <!-- h3 class="sub_title">Search for "Freshdesk" has 120 results</h3 -->
+  <%= render :partial => '/search/home/search_results' %>
+  <%= will_paginate @search_results if @total_results > 0 %>
+</div>

@@ -4,7 +4,10 @@ class Account < ActiveRecord::Base
   require 'uri' 
 
   include Mobile::Actions::Account
+  include Tire::Model::Search
   include Cache::Memcache::Account
+  include ErrorHandle
+
   #rebranding starts
   serialize :preferences, Hash
   serialize :sso_options, Hash
@@ -66,9 +69,10 @@ class Account < ActiveRecord::Base
 
   RESERVED_DOMAINS = %W(  blog help chat smtp mail www ftp imap pop faq docs doc wiki team people india us talk 
                           upload download info lounge community forums ticket tickets tour about pricing bugs in out 
-                          logs projects itil marketing sales partners partner store channel reseller resellers online 
+                          logs projects itil marketing sales partner store channel reseller resellers online 
                           contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab 
-                          productdemo resources )
+                          productdemo resources static static0 static1 static2 static3 static4 static5 
+                          static6 static7 static8 static9 static10 )
 
   #
   # Tell authlogic that we'll be scoping users by account
@@ -160,6 +164,8 @@ class Account < ActiveRecord::Base
   has_many :facebook_posts, :class_name =>'Social::FbPost' 
   
   has_many :ticket_filters , :class_name =>'Helpdesk::Filters::CustomTicketFilter' 
+
+  #has_many :report_filters, :class_name=>'Reports::Filters::ReportsFilter'
   
   has_many :twitter_handles, :class_name =>'Social::TwitterHandle' 
   has_many :tweets, :class_name =>'Social::Tweet'  
@@ -188,6 +194,8 @@ class Account < ActiveRecord::Base
   
   has_many :support_scores, :class_name => 'SupportScore', :dependent => :delete_all
 
+  has_one  :es_enabled_account, :class_name => 'EsEnabledAccount'
+
   delegate :bcc_email, :ticket_id_delimiter, :email_cmds_delimeter, :pass_through_enabled, :to => :account_additional_settings
 
   has_many :subscription_events 
@@ -214,9 +222,8 @@ class Account < ActiveRecord::Base
                             :message => "Value must be less than six digits"
                             
 
+
   before_create :set_default_values
-  
-  
   before_update :check_default_values, :update_users_time_zone
     
   after_create :create_portal, :create_admin
@@ -224,14 +231,14 @@ class Account < ActiveRecord::Base
   after_create :populate_features
   after_create :send_welcome_email
   after_update :update_users_language
+  after_create :enable_elastic_search
 
   before_destroy :update_crm, :notify_totango
 
-  after_commit_on_create :add_to_billing, :add_to_totango
-  before_destroy :update_billing
+  after_commit_on_create :add_to_billing, :add_to_totango, :create_search_index
 
   after_commit_on_update :clear_cache
-  after_commit_on_destroy :clear_cache
+  after_commit_on_destroy :clear_cache, :delete_search_index, :delete_reports_archived_data
   before_update :backup_changes
   before_destroy :backup_changes
   
@@ -243,6 +250,7 @@ class Account < ActiveRecord::Base
               
   named_scope :non_premium_accounts, {:conditions => {:premium => false}}
              
+
   
   Limits = {
     'agent_limit' => Proc.new {|a| a.full_time_agents.count }
@@ -275,18 +283,17 @@ class Account < ActiveRecord::Base
     
     :blossom => {
       :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
-        :custom_domain, :multiple_emails ],
+        :custom_domain, :multiple_emails, :advanced_reporting ],
       :inherits => [ :sprout ]
     },
     
     :garden => {
-      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :advanced_reporting, :css_customization ],
+      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :css_customization ],
       :inherits => [ :blossom ]
     },
 
     :estate => {
-      :features => [ :gamification, :agent_collision, :layout_customization ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting ],
       :inherits => [ :garden ]
     },
 
@@ -295,18 +302,17 @@ class Account < ActiveRecord::Base
     },
     
     :blossom_classic => {
-      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets],
+      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets,  :advanced_reporting],
       :inherits => [ :sprout_classic ]
     },
     
     :garden_classic => {
-      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :advanced_reporting, :css_customization ],
+      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :css_customization],
       :inherits => [ :blossom_classic ]
     },
 
     :estate_classic => {
-      :features => [ :gamification, :agent_collision, :layout_customization ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting ],
       :inherits => [ :garden_classic ]
     }
 
@@ -394,7 +400,7 @@ class Account < ActiveRecord::Base
   end
   
   def active?
-    5.days.since(self.subscription.next_renewal_at) >= Time.now
+    !self.subscription.suspended?
   end
   
   def plan_name
@@ -525,6 +531,172 @@ class Account < ActiveRecord::Base
     pass_through_enabled
   end
 
+  def create_search_index
+    sandbox(0) {
+      Tire.index(search_index_name) do
+        create(
+          :settings => {
+            :analysis => {
+              :filter => {
+                :word_filter  => {
+                       "type" => "word_delimiter",
+                       "split_on_numerics" => false,
+                       "generate_word_parts" => false,
+                       "generate_number_parts" => false,
+                       "split_on_case_change" => false,
+                       "preserve_original" => true
+                }
+              },
+              :analyzer => {
+                :default => { :type => "custom", :tokenizer => "whitespace", :filter => [ "word_filter", "lowercase" ] },
+                :include_stop => { :type => "custom", :tokenizer => "whitespace", :filter => [ "word_filter", "lowercase", "stop" ] }
+              }
+            }
+          },
+          :mappings => {
+            :user => {
+              :properties => {
+                  :name => { :type => :string, :boost => 10, :store => 'yes' },
+                  :email => { :type => :string, :boost => 50 },
+                  :description => { :type => :string, :boost => 3 },
+                  :job_title => { :type => :string, :boost => 4, :store => 'yes' },
+                  :phone => { :type => :string },
+                  :mobile => { :type => :string },
+                  :customer => { :type => "object", 
+                                 :properties => {
+                                   :name => { :type => :string, :boost => 5, :store => 'yes' } 
+                                 }
+                               },
+                  :twitter_id => { :type => :string },
+                  :fb_profile_id => { :type => :string },
+                  :account_id => { :type => :long, :include_in_all => false },
+                  :deleted => { :type => :boolean, :include_in_all => false }
+              }
+            },
+            :customer => {
+              :properties => {
+                  :name => { :type => :string, :boost => 10, :store => 'yes' },
+                  :description => { :type => :string, :boost => 3 },
+                  :note => { :type => :string, :boost => 4 },
+                  :account_id => { :type => :long, :include_in_all => false }
+              }
+            },
+            :"helpdesk/ticket" => {
+              :properties => {
+                :display_id => { :type => :long, :store => 'yes' },
+                :subject => { :type => :string, :boost => 10, :store => 'yes' },
+                :description => { :type => :string, :boost => 5, :store => 'yes' },
+                :account_id => { :type => :long, :include_in_all => false },
+                :responder_id => { :type => :long, :null_value => 0, :include_in_all => false },
+                :group_id => { :type => :long, :null_value => 0, :include_in_all => false },
+                :requester_id => { :type => :long, :include_in_all => false },
+                :status => { :type => :long, :include_in_all => false },
+                :spam => { :type => :boolean, :include_in_all => false },
+                :deleted => { :type => :boolean, :include_in_all => false },
+                :attachments => { :type => "object", 
+                                  :properties => {
+                                    :content_file_name => { :type => :string } 
+                                  }
+                                },
+                :es_notes => { :type => "object", 
+                               :properties => {
+                                 :body => { :type => :string },
+                                 :private => { :type => :boolean, :include_in_all => false },
+                                 :attachments => { :type => :string }
+                               }
+                             },
+                :es_from => { :type => :string },
+                :to_emails => { :type => :string },
+                :es_cc_emails => { :type => :string },
+                :es_fwd_emails => { :type => :string },
+                :company_id => { :type => :long, :null_value => 0, :include_in_all => false }
+              }
+            },
+            :"solution/article" => {
+              :properties => {
+                :title => { :type => :string, :boost => 10, :store => 'yes' },
+                :desc_un_html => { :type => :string, :boost => 6, :store => 'yes' },
+                :tags => { :type => "object", 
+                           :properties => {
+                             :name => { :type => :string } 
+                           }
+                         },
+                :user_id => { :type => :long, :include_in_all => false },
+                :status => { :type => :integer, :include_in_all => false },
+                :account_id => { :type => :long, :include_in_all => false },
+                :folder => { :type => "object", 
+                             :properties => { 
+                               :category_id => { :type => :long, :include_in_all => false },
+                               :visibility => { :type => :long, :include_in_all => false },
+                               :customer_folders => { :type => "object",
+                                                      :properties => {
+                                                        :customer_id => { :type => :long, :include_in_all => false }  
+                                                      }
+                                                    }
+                             }
+                           },
+                :attachments => { :type => "object", 
+                                  :properties => {
+                                    :content_file_name => { :type => :string } 
+                                  }
+                                }
+              }
+            },
+            :topic => {
+              :properties => {
+                  :title => { :type => :string, :boost => 10, :store => 'yes' },
+                  :user_id => { :type => :long, :include_in_all => false },
+                  :posts => { :type => "object", 
+                              :properties => {
+                                :body => { :type => :string, :boost => 4, :store => 'yes' },
+                                :attachments => { :type => "object", 
+                                                  :properties => {
+                                                    :content_file_name => { :type => :string } 
+                                                  }
+                                                }
+                              }
+                            },
+                  :account_id => { :type => :long, :include_in_all => false },
+                  :forum => { :type => "object", 
+                              :properties => {
+                                :forum_category_id => { :type => :long, :include_in_all => false },
+                                :forum_visibility => { :type => :integer, :include_in_all => false },
+                                :customer_forums => { :type => "object",
+                                                       :properties => {
+                                                         :customer_id => { :type => :long, :include_in_all => false }  
+                                                       }
+                                                     }
+                              }
+                            }
+              }
+            }
+          }
+        )
+      end
+    }
+  end
+
+  def enable_elastic_search
+    EsEnabledAccount.create(:account_id => self.id, :index_name => self.search_index_name)
+    MemcacheKeys.cache(ES_ENABLED_ACCOUNTS, EsEnabledAccount.all_es_indices)
+  end
+
+  def search_index_name
+    "account-#{self.id}"
+  end
+
+  def delete_search_index
+    es_enable_status = MemcacheKeys.fetch(MemcacheKeys::ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
+    if es_enable_status.key?(self.id)
+      Tire.index(search_index_name).delete
+      es_enabled_account.disable_elastic_search
+    end
+  end
+
+  def es_enabled?
+    es_status = MemcacheKeys.fetch(ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
+    es_status.key?(self.id) ? es_status[self.id] : false
+  end
   
   protected
   
@@ -571,7 +743,7 @@ class Account < ActiveRecord::Base
           return cn.sub(/\.?$/, '') if cn.include?(full_domain)
         end
       rescue Exception => e
-        logger.debug "Host name verification failed #{e.message}"
+        Rails.logger.debug "Host name verification failed #{e.message}"
       end
     end
     
@@ -669,15 +841,11 @@ class Account < ActiveRecord::Base
   private 
 
     def add_to_billing
-      Resque.enqueue(Billing::AddToBilling::CreateSubscription, id)
-    end 
+      Resque.enqueue(Billing::AddToBilling, { :account_id => id })
+    end
 
     def add_to_totango
       Resque.enqueue(CRM::Totango::TrialCustomer, {:account_id => id})
-    end
-
-    def update_billing
-      Resque.enqueue(Billing::AddToBilling::DeleteSubscription, id)
     end
 
     def update_crm
@@ -696,5 +864,8 @@ class Account < ActiveRecord::Base
       }
     end
 
+    def delete_reports_archived_data
+      Resque.enqueue(Workers::DeleteArchivedData, {:account_id => id})
+    end
 
 end

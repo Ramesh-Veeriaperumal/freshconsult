@@ -23,10 +23,10 @@ module TicketConstants
   SOURCE_KEYS_BY_NAME = Hash[*SOURCES.map { |i| [i[1], i[2]] }.flatten]
 
   PRIORITIES = [
-    [ :low,       'low',         1 ], 
-    [ :medium,    'medium',      2 ], 
-    [ :high,      'high',        3 ], 
-    [ :urgent,    'urgent',      4 ]   
+    [ :low,       'low',         1,    '#7ebf00' ], 
+    [ :medium,    'medium',      2,    '#008ff9' ], 
+    [ :high,      'high',        3,    '#ffb613' ], 
+    [ :urgent,    'urgent',      4,    '#de0000' ]   
   ]
 
   PRIORITY_OPTIONS = PRIORITIES.map { |i| [i[1], i[2]] }
@@ -34,6 +34,7 @@ module TicketConstants
   PRIORITY_KEYS_BY_TOKEN = Hash[*PRIORITIES.map { |i| [i[0], i[2]] }.flatten]
   PRIORITY_KEYS_BY_NAME = Hash[*PRIORITIES.map { |i| [i[1], i[2]] }.flatten]
   PRIORITY_TOKEN_BY_KEY = Hash[*PRIORITIES.map { |i| [i[2], i[0]] }.flatten]
+  PRIORITY_COLOR_BY_KEY = Hash[*PRIORITIES.map { |i| [i[2], i[3]] }.flatten]
   
   TYPE = [
     [ :how_to,    I18n.t('how_to'),          1 ], 

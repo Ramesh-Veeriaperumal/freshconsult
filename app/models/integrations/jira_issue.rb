@@ -89,7 +89,8 @@ class Integrations::JiraIssue
     else
       return add_comment(params[:remote_key],params[:ticket_data])
     end  
-    if(res_data && res_data[:exception] && custom_field_id && res_data[:json_data]["errors"][custom_field_id])
+    if(res_data && res_data[:exception] && custom_field_id)
+      delete_custom_field
       if retry_flag
         res_data = update(params, false) 
       else
@@ -178,9 +179,8 @@ class Integrations::JiraIssue
           return customField["id"]
         end
       end
-    else
-      return false
     end
+    return false
   end
 
   def customFieldChecker
@@ -197,7 +197,7 @@ class Integrations::JiraIssue
     rescue Exception => e
       Rails.logger.error "Problem in fetching the custom field. \t#{e.message}"
     end
-    unless custom_field_id.blank?
+    if custom_field_id
       @installed_app[:configs][:inputs]['customFieldId'] = custom_field_id
       @installed_app.disable_observer = true
       @installed_app.save!

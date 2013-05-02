@@ -21,8 +21,57 @@ class Helpdesk::MergeTicketsController < ApplicationController
     end
 
 	def merge_search
-		scope = current_account.tickets.permissible(current_user)
-  		items = scope.send( params[:search_method], params[:search_string] ) 
+		if params[:search_method] == 'with_subject' && current_account.es_enabled?
+      		options = { :load => { :include => 'requester' }, :size => 1000, :preference => :_primary_first }
+      		es_items = Tire.search [current_account.search_index_name], options do |search|
+        		search.query do |query|
+          			query.filtered do |f|
+            			if SearchUtil.es_exact_match?(params[:search_string])
+              				f.query { |q| q.text :subject, SearchUtil.es_filter_exact(params[:search_string]), :type => :phrase }
+            			else
+              				f.query { |q| q.string SearchUtil.es_filter_key(params[:search_string]), :fields => ['subject'], :analyzer => "include_stop" }
+            			end
+            			f.filter :terms, :_type => ['helpdesk/ticket']
+            			f.filter :term, { :deleted => false }
+            			f.filter :term, { :spam => false }
+            			if current_user.restricted?
+              				user_groups = current_user.group_ticket_permission ? current_user.agent_groups.map(&:group_id) : []
+              				f.filter :or, { :not => { :exists => { :field => :responder_id } } },
+                            			  { :term => { :responder_id => current_user.id } },
+                            			  { :terms => { :group_id => user_groups } }
+            			end
+          			end
+        		end
+      		end
+      		items = es_items.results
+		else
+			if params[:search_method] == 'with_subject'
+				with_params = { :account_id => current_account.id, :deleted => false }
+				select_str = "*"
+    			if current_user.restricted?
+    				with_params[:restricted] = 1
+    				restriction = "responder_id = #{current_user.id} OR responder_id = #{SearchUtil::DEFAULT_SEARCH_VALUE}"
+	    			if current_user.agent.group_ticket_permission
+	      				restriction += " OR group_id = #{SearchUtil::DEFAULT_SEARCH_VALUE}"
+	      				restriction = current_user.agent_groups.reduce(restriction) do |val, ag|
+	         				"#{val} OR group_id = #{ag.group_id}"
+	      				end
+	    			end
+	    			select_str += ", IF( #{restriction}, 1, 0 ) AS restricted"
+	    		end
+				items = ThinkingSphinx.search :conditions => { :subject => params[:search_string] },
+									  :include => :requester,
+                                      :with => with_params,
+                                      :classes => [ Helpdesk::Ticket ],
+                                      :sphinx_select => select_str,
+                                      :star => true,
+                                      :order => :status,
+                                      :limit => 1000
+			else
+      			scope = current_account.tickets.permissible(current_user)
+				items = scope.send( params[:search_method], params[:search_string] )
+			end
+		end
 		r = {:results => items.map{|i| {
 					:display_id => i.display_id, :subject => i.subject, :title => h(i.subject),
 					:searchKey => (params[:key] == 'requester') ? i[:requester_name] : i.send(params[:key]).to_s, 

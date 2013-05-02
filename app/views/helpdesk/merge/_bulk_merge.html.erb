@@ -1,7 +1,7 @@
-<%= javascript_include_tag 'app/merge.js' %>
-<%= javascript_include_tag 'app/merge_tickets.js' %>
+<script src="/javascripts/app/merge.js" type="text/javascript"></script>
+<script src="/javascripts/app/merge_tickets.js" type="text/javascript"></script>
 <script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
-<div id = "ticket-merge">
+<div id="ticket-merge" class="ticket-merge">
   <span class="merge-sub-title" 
     data-default-text="<%= t('ticket.ticket_selected') %>"
     data-pluralized-text="<%= t('ticket.tickets_selected') %>" >

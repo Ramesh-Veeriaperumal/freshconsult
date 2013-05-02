@@ -6,12 +6,13 @@ class CRM::Salesforce < Resque::Job
                             :opportunity_contact_role => "OpportunityContactRole" }
 
   PAYMENT_ATTRIBUTES  =   { :Name => :to_s, :Agents__c => :agents, :Plan__c => :plan_name, 
-                            :Amount__c => :amount, :Discount__c => :discount, :Amount => :amount, 
+                            :Amount__c => :amount, :Amount => :amount, 
                             :Renewal_Period__c => :renewal_period }
 
   CRM_IDS             =   { :account => :AccountId, :contact => :Id }
 
-  BUSINESS_TYPES      =   { :new =>  "New Business", :existing => "Existing Business" }
+  BUSINESS_TYPES      =   { :new =>  "New Business", :existing => "Existing Business - Renewal",
+                            :misc => "Existing Business - Upgrade", :day_pass => "Day Pass" }
 
   CUSTOMER_STATUS     =   { :free => "Free", :paid => "Customer", :deleted => "Deleted" }
   
@@ -139,8 +140,10 @@ class CRM::Salesforce < Resque::Job
     end
 
     def opportunity_details(crm_ids, payment)
-      ((payment_attributes(payment)).merge(opportunity_attributes)).merge(
-        { :AccountId => crm_ids[:account], :Type => business_type(payment) })
+      ((payment_attributes(payment)).merge(opportunity_attributes(payment))).merge(
+        { :AccountId => crm_ids[:account], 
+          :Type => business_type(payment), 
+          :OwnerId => opportunity_owner(crm_ids) })
     end
 
     def account_attributes(account)
@@ -166,20 +169,32 @@ class CRM::Salesforce < Resque::Job
       payment_attr = PAYMENT_ATTRIBUTES.inject({}) { |h, (k, v)| h[k] = payment.send(v).to_s; h } 
     end
 
-    def opportunity_attributes
+    def opportunity_attributes(payment)
       {
         :Payment_Tye__c => PAYMENT_TYPE,
         :StageName => STAGE_NAME,
         :Status__c => CUSTOMER_STATUS[:paid],
-        :CloseDate =>  Time.now.to_s(:db)
+        :CloseDate =>  Time.now.to_s(:db),
+        :CMRR__c => (payment.subscription.amount/payment.subscription.renewal_period).to_s
       }
     end
 
     def business_type(payment)
-      return BUSINESS_TYPES[:existing] if payment.misc? 
+      return BUSINESS_TYPES[:day_pass] if DayPassPurchase.find_by_payment_id(payment.id)
+
+      return BUSINESS_TYPES[:misc] if payment.misc?
       
       (payment.account.subscription_payments.length > 1) ? BUSINESS_TYPES[:existing] : 
         BUSINESS_TYPES[:new] 
+    end
+
+    def opportunity_owner(crm_ids)
+      begin
+        search_string = %(SELECT OwnerId FROM Contact WHERE Id = '#{crm_ids[:contact]}')
+        binding.query(:searchString => search_string).queryResponse.result.records.OwnerId
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+      end
     end
 
 end

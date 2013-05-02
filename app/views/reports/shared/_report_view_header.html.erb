@@ -1,0 +1,34 @@
+<div class="row-fluid report-header">
+  <div class="row-fluid">
+    <div class="span12 report-header-content">
+      <div class="span6">
+        <% unless defined?(is_pdf) %>
+          <img src="/images/reports-icon/report-icon.png" alt="" class="vertical-alignment report-header-icon"/>
+        <%end%>
+        <div class="vertical-alignment">
+          <p class="lead" style="margin-bottom:0;" id="report_header_title"><%=@report_title%></p>
+          <p class="muted" id="report_header_date"><%=@report_date%></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--filter data code-->
+  <div class="row-fluid" >
+    <div class="report-filter span12">
+      <% unless defined?(is_pdf) %>
+        <div class="vertical-alignment report-filter-slide-btn">
+            <a class="btn btn-primary" href="#report-filter-edit" data-parent="#report-page" id="sliding">Edit</a>
+        </div>
+      <%end%>
+      <div id="report-filter-details" class="report-filter-details">
+        <ul class="inline" id="filter_container">
+          <li>Filtered by:</li>
+          <%@filter_data.each do |obj|%>
+            <li><%=obj["name"]%> : <strong><%=obj["value"]%></strong></li>
+          <%end%>
+          <li>Time Period: <strong><%=@report_date%></strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

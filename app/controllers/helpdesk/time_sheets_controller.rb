@@ -1,9 +1,12 @@
 class Helpdesk::TimeSheetsController < ApplicationController
   
+  include RedisKeys
+  
   before_filter { |c| c.requires_feature :timesheets }
   before_filter { |c| c.requires_permission :manage_tickets }  
+  before_filter :set_show_version
   before_filter :load_time_entry, :only => [ :show,:edit, :update, :destroy, :toggle_timer ] 
-  before_filter :load_ticket, :only => [:create, :index, :edit, :update, :toggle_timer] 
+  before_filter :load_ticket, :only => [:new, :create, :index, :edit, :update, :toggle_timer] 
   before_filter :check_agents_in_account, :only =>[:create]
 
   rescue_from ActiveRecord::UnknownAttributeError , :with => :handle_error
@@ -26,10 +29,23 @@ class Helpdesk::TimeSheetsController < ApplicationController
       end
     end
   end
+
+  def new
+    render :layout => false
+  end
+
+  def edit
+    respond_to do |format|
+      format.html do
+        render :layout => false
+      end
+      format.js
+    end
+  end
   
   def create
-    hours_spent = params[:time_entry][:hours]
-    params[:time_entry].delete(:hours)
+    hours_spent = params[:time_entry][:hhmm]
+    params[:time_entry].delete(:hhmm)
 
     update_running_timer params[:time_entry][:user_id] if hours_spent.blank?
     
@@ -44,11 +60,13 @@ class Helpdesk::TimeSheetsController < ApplicationController
       end
     end
 
-    time_entry = params[:time_entry].merge!({:start_time => Time.zone.now(),
-                                             :executed_at => Time.zone.now(),
-                                             :time_spent => get_time_in_second(hours_spent),
-                                             :timer_running => hours_spent.blank?})
-      @time_entry = scoper.new(time_entry)    #throws unknown attribute error
+    time_entry =  { "start_time" => Time.zone.now(),
+                    "executed_at" => Time.zone.now(),
+                    "time_spent" => convert_duration(hours_spent),
+                    "timer_running" => hours_spent.blank?
+                  }.merge(params[:time_entry])
+    
+    @time_entry = scoper.new(time_entry)    #throws unknown attribute error
     if @time_entry.save!
       respond_to_format @time_entry
     end
@@ -59,16 +77,17 @@ class Helpdesk::TimeSheetsController < ApplicationController
   end
 
   def update  
-    hours_spent = params[:time_entry][:hours]
-    params[:time_entry].delete(:hours)
-    time_entry = params[:time_entry].merge!({:time_spent => get_time_in_second(hours_spent)})
+    hours_spent = params[:time_entry][:hhmm]
+    params[:time_entry].delete(:hhmm)
+    time_entry = params[:time_entry].merge!({:time_spent => convert_duration(hours_spent)})
+
     unless params[:time_entry][:user_id].blank?
       raise ActiveRecord::RecordNotFound if current_account.agents.find_by_user_id(params[:time_entry][:user_id]).blank? 
     end
 
-      if @time_entry.update_attributes(time_entry)
-        respond_to_format @time_entry
-      end
+    if @time_entry.update_attributes(time_entry)
+      respond_to_format @time_entry
+    end
   end 
   
   def toggle_timer     
@@ -114,6 +133,18 @@ private
   def get_time_in_second time_hour
     s = time_hour.to_f * 60 * 60 
   end
+
+  def convert_duration(duration)
+    if duration =~ /^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/
+      time_pieces = duration.split(":")
+      hours = time_pieces[0].to_i
+      minutes = (time_pieces[1].to_f/60.0)
+
+      duration = hours + minutes
+    end
+
+    (duration.to_f * 60 * 60).to_i
+  end
   
   def load_time_entry
     @time_entry = scoper.find(params[:id])
@@ -148,6 +179,13 @@ private
     return (time_entry.time_spent + running_time)
   end
 
+  def set_show_version
+    @new_show_page = (get_key(show_version_key) == "1")
+  end
+  
+  def show_version_key
+    HELPDESK_TKTSHOW_VERSION % { :account_id => current_account.id, :user_id => current_user.id }
+  end
 
   def respond_to_format result
     respond_to do |format|

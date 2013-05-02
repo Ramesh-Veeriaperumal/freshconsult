@@ -6,22 +6,30 @@ javascript_compressor:  uglifier    # (yui, closure)
 allow_debugging:        on
 
 stylesheets:
-  print:
-    - public/stylesheets/print/print.css
-
   common:
-    - public/stylesheets/app/lib/validation.css    
-    - public/stylesheets/app/lib/autocomplete.css
-    - public/stylesheets/app/lib/jquery-ui.css
-    - public/stylesheets/app/lib/qtip.css
+    - public/stylesheets/app/common.css
 
   app:
-    - public/stylesheets/app/lib/chosen.css    
-    - public/stylesheets/app/lib/select2.css    
-    - public/stylesheets/app/satisfaction.css
-    - public/stylesheets/app/gamification.css
-    - public/stylesheets/app/lib/hacks.css
-    - public/stylesheets/app/lib/ie.css
+    - public/stylesheets/app/application.css
+
+  plugins:
+    - public/stylesheets/plugins.css
+
+  non_pattern:    
+    - public/stylesheets/app/app-common.css
+    - public/stylesheets/app/app-bootstrap.css
+
+  sprites:
+    - public/stylesheets/app/sprites.css
+
+  ie_hacks:
+    - public/stylesheets/app/ie.css
+
+  pattern:
+    - public/stylesheets/pattern/pattern.css
+
+  tour_my_app:
+    - public/stylesheets/app/tourmyapp.css
 
   codemirror:
     - public/stylesheets/codemirror.css
@@ -32,73 +40,45 @@ stylesheets:
   preview:
     - public/stylesheets/portal/preview.css
 
-  # !PATTERN TODO These css files will be migrated in to the pattern library at a later point
-  non_pattern_1:
-    - public/stylesheets/app/lib/defaults.css
-    - public/stylesheets/app/lib/layout.css
-    - public/stylesheets/app/lib/table.css
-    - public/stylesheets/app/app-common.css
-    - public/stylesheets/app/admin.css
-
-  non_pattern_2:
-    - public/stylesheets/app/app-bootstrap.css
-    - public/stylesheets/app/lib/form.css
-    - public/stylesheets/app/lib/buttons.css
-
-  pattern:
-    - public/stylesheets/pattern/pattern.css
-
-  tour_my_app:
-    - public/stylesheets/app/tourmyapp.css
-    - public/stylesheets/app/lib/gritter.css
-
-  notifications:
-    - public/stylesheets/app/lib/gritter.css
-
   widget:
-    - public/stylesheets/app/lib/defaults.css
-    - public/stylesheets/app/lib/form.css
-    - public/stylesheets/app/lib/buttons.css
-    - public/stylesheets/app/lib/ie.css
+    - public/stylesheets/app/common.css
+    - public/stylesheets/app/ie.css
 
   freshwidget:
     - public/stylesheets/freshwidget.css
 
+  tkt_details:
+    - public/stylesheets/app/tkt_details.css
+    - public/stylesheets/app/tkt_details_sprites.css
+
+  tkt_details_print:
+    - public/stylesheets/app/tkt_details_print.css
+
   gadget:
-    - public/stylesheets/app/lib/defaults.css
-    - public/stylesheets/app/lib/layout.css    
+    - public/stylesheets/app/common.css
+    - public/stylesheets/app/sprites.css
     - public/stylesheets/app/app-common.css
     - public/stylesheets/app/app-bootstrap.css
-    - public/stylesheets/app/lib/validation.css
-    - public/stylesheets/app/lib/form.css
-    - public/stylesheets/app/lib/buttons.css
-    - public/stylesheets/app/lib/chosen.css    
-    - public/stylesheets/app/lib/autocomplete.css
-    - public/stylesheets/app/lib/jquery-ui.css
-    - public/stylesheets/app/lib/qtip.css
-    - public/stylesheets/app/lib/ie.css
+    - public/stylesheets/app/plugins.css
+    - public/stylesheets/app/ie.css
+    - public/stylesheets/app/tkt_details.css
+    - public/stylesheets/app/tkt_details_sprites.css
     - public/stylesheets/app/gadget.css
 
   subscription:
-    - public/stylesheets/subscription/bootstrap.css
-    - public/stylesheets/subscription/bootstrap-responsive.css
     - public/stylesheets/subscription/subscription.css
-    - public/stylesheets/app/lib/buttons.css
 
   reports:
     - public/stylesheets/app/reports.css
 
+  print:
+    - public/stylesheets/print/print.css
+
   report_print:
     - public/stylesheets/print/report-print.css  
 
-  redactor:
-    - public/stylesheets/redactor.css
-
   getting_started:
-    - public/stylesheets/gs/screen.css
-    - public/stylesheets/app/lib/autocomplete.css
-    - public/stylesheets/gs/ie.css
-    - public/stylesheets/gs/print.css
+    - public/stylesheets/app/getting_started.css
 
 javascripts:
   defaults:
@@ -106,7 +86,7 @@ javascripts:
     - public/javascripts/effects.js
     - public/javascripts/dragdrop.js
     - public/javascripts/controls.js
-    - public/javascripts/application.js
+
   frameworks:
     - public/javascripts/jquery-1.7.1.min.js
     - public/javascripts/jquery.pjax.js
@@ -125,6 +105,9 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.ui.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/frameworks/plugins/select2.js
+    - public/javascripts/frameworks/plugins/moment.js
+    - public/javascripts/frameworks/plugins/livestamp.js
+    - public/javascripts/frameworks/plugins/jquery.blockUI.js
     - public/javascripts/hackz.js
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/helpdesk/multifile.js
@@ -157,6 +140,7 @@ javascripts:
     - public/javascripts/lib/json2.js
     - public/javascripts/custom_validators.js
     - public/javascripts/globalinit.js
+    - public/javascripts/application.js
     - public/javascripts/navsearch.js
     - public/javascripts/report/date.js
 
@@ -168,13 +152,17 @@ javascripts:
     # - public/javascripts/pattern/bootstrap-collapse.js
     - public/javascripts/pattern/bootstrap-dropdown.js
     - public/javascripts/pattern/bootstrap-modal.js
+    - public/javascripts/pattern/bootstrap-dialog.js
     # - public/javascripts/pattern/bootstrap-scrollspy.js
     - public/javascripts/pattern/bootstrap-transition.js
     - public/javascripts/pattern/bootstrap-tab.js
     #- public/javascripts/pattern/bootstrap-tooltip.js    
     # - public/javascripts/pattern/bootstrap-popover.js
+    - public/javascripts/jquery.pageslide.js
   timesheet:
     - public/javascripts/timesheet.js
+  ticket_details:
+    - public/javascripts/app/ticket_details.js
   freshwidget:
     - public/javascripts/freshwidget.js
   html2canvas:
@@ -231,71 +219,34 @@ javascripts:
     - public/javascripts/bootstrap.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.itoggle.js
+
   conditional:
     - public/javascripts/autosuggest.js    
     - public/javascripts/frameworks/plugins/jquery.nestedselect.js
-    - public/javascripts/condition-filter.js  
+    - public/javascripts/condition-filter.js
+
   ticket_fields:
     - public/javascripts/frameworks/plugins/jquery.tabby.js
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/frameworks/tf_customizer.js
+
   survey:
     - public/javascripts/frameworks/jquery.js
     - public/javascripts/frameworks/plugins/jquery.validate.js
+
   redactor:
     - public/javascripts/redactor/redactor.js
     - public/javascripts/redactor/freshdesk_redactor.js
+
   notifications:
     - public/javascripts/jquery.gritter/jquery.gritter.js
     - public/javascripts/requestAnimFrame.js
     - public/javascripts/notifications.js
+
   excanvas:
     - public/javascripts/excanvas.js
-  freshdesk:
-    - public/javascripts/prototype.js
-    - public/javascripts/effects.js
-    - public/javascripts/dragdrop.js
-    - public/javascripts/controls.js
-    - public/javascripts/jquery-1.7.1.min.js
-    - public/javascripts/jquery.pjax.js
-    - public/javascripts/frameworks/sprintf.js
-    - public/javascripts/frameworks/plugins/jquery.chosen.js
-    - public/javascripts/frameworks/plugins/jquery.cookie.js
-    - public/javascripts/frameworks/plugins/jquery.form.js
-    - public/javascripts/frameworks/plugins/jquery.livequery.js
-    - public/javascripts/frameworks/plugins/jquery.noblecount.js
-    - public/javascripts/frameworks/plugins/jquery.overlabel.js
-    - public/javascripts/frameworks/plugins/jquery.pageless.js
-    - public/javascripts/frameworks/plugins/jquery.qtip.js
-    - public/javascripts/frameworks/plugins/jquery.tweetfeed.js
-    - public/javascripts/frameworks/plugins/jquery.tmpl.js
-    - public/javascripts/frameworks/plugins/jquery.itoggle.js
-    - public/javascripts/frameworks/plugins/jquery.ui.js
-    - public/javascripts/frameworks/plugins/jquery.validate.js
-    - public/javascripts/hackz.js
-    - public/javascripts/lib/nestedtree.js
-    - public/javascripts/helpdesk/multifile.js
-    - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
-    - public/javascripts/frameworks/session.js            
-    # - public/javascripts/bootstrap/*.js
-    - public/javascripts/dyn_menu.js
-    - public/javascripts/utils.js
-    - public/javascripts/fast_autocompleter.js    
-    - public/javascripts/humane.js
-    - public/javascripts/factory_ui.js
-    - public/javascripts/lib/json2.js
-    - public/javascripts/globalinit.js
-    - public/javascripts/navsearch.js
-    - public/javascripts/jquery.gritter/jquery.gritter.js
-    - public/javascripts/requestAnimFrame.js
-    - public/javascripts/notifications.js
-    - public/javascripts/application.js
 
-  gs_defaults: 
-    - public/javascripts/prototype.js    
-    - public/javascripts/effects.js
-    - public/javascripts/controls.js    
-  gs_frameworks:
+  getting_started:
     - public/javascripts/jquery-1.7.1.min.js
     - public/javascripts/utils.js
     - public/javascripts/fast_autocompleter.js
@@ -305,6 +256,10 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.validate.js      
     - public/javascripts/utils.js
     - public/javascripts/hackz.js
-  getting_started:        
-    # - public/javascripts/mColorPicker.min.js
     - public/javascripts/getting_started.js
+
+  reports:
+    - public/javascripts/highcharts.src.js
+    - public/javascripts/highcharts-more.js
+    - public/javascripts/adv_reports/report_charts.js
+    - public/javascripts/adv_reports/adv_reports.js

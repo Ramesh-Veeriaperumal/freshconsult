@@ -43,26 +43,6 @@
   display: none; 
 }
 
-/* Loading content */
-.loading-box, .loading, .ui-autocomplete-loading{
-  background-image:image-url('/images/load.gif');
-  background-repeat:no-repeat;
-}
-
-.loading-box{  
-  background-position:center center;
-  height:100px;
-}
-
-input[type="text"].loading, .ui-autocomplete-loading{
-  background-position:right 3px;
-}
-
-.special.ui-autocomplete-loading{
-  background-position:99% 5px; 
-}
-
-
 @include at-breakpoint($break-tablet){
   // Rounded options only for tablet and desktop
 	.rounded-6{ @include border-radius($content-border-radius); }

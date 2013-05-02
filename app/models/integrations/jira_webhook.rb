@@ -14,10 +14,11 @@ class Integrations::JiraWebhook
   end
 
   def register_webhooks
-    current_url = (@installed_app.account.ssl_enabled ? "https://" : "http://")+@installed_app.account.full_domain
+    current_url = @installed_app.account.url_protocol+"://"+@installed_app.account.full_domain +
+                   "/integrations/jira_issue/notify?auth_key="+@installed_app[:configs][:inputs][:auth_key]
     req_data = {
           "name" => "Freshdesk webhook",
-          "url"  =>  current_url+"/integrations/jira_issue/notify?auth_key="+@installed_app[:configs][:inputs][:auth_key],
+          "url"  =>  current_url,
           "events" =>  [
               # "jira:issue_created",
               "jira:issue_updated",

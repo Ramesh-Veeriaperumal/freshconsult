@@ -1,0 +1,2 @@
+
+<%= select_tag name, options_for_select(options.map {|k, v| [v, k.to_s]}, selected_val), { :multiple => true, :class => "select2 filter_item",:size => 5, :placeholder => "#{t('adv_reports.select_an_option')}"}%>

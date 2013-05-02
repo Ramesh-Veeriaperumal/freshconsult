@@ -4,5 +4,11 @@ run "sudo chmod 755 #{release_path}/script/runner"
 
 # Added a compilation of core css files used under public/src/app
 # All files in public/stylesheets/app will be ignored and cannot be checked in
-run "bundle exec compass compile -e production"
-run "bundle exec jammit"
+on_app_servers do
+	
+	if current_role == "app_master"
+		run "RAILS_ENV=#{node[:environment][:framework_env]} bundle exec rake cloudfront_assets:upload"
+	else
+		run "RAILS_ENV=#{node[:environment][:framework_env]} bundle exec rake cloudfront_assets:compile"
+	end
+end

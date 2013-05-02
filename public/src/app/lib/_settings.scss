@@ -1,8 +1,10 @@
 // Here is where you can define your constants for your application and to configure the blueprint framework.
 // Feel free to delete these if you want keep the defaults:
+
 @import "susy";
-@import "mixins";
+@import "animations";
 @import "compass";
+@import "mixins";
 
 $blueprint-liquid-grid-columns: 24;
 $blueprint-liquid-grid-width: 3.167%;
@@ -32,14 +34,14 @@ $use-mozilla-ellipsis-binding:true;
 // Typography Configuration
 $blueprint-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !default;
 
-/* Bullet icon */ 
-$bullet-icon: "symbols/request_nav_seperator.gif";
-
 /* Priority Color Codes */
 $COL_PRI_HIGH: #ffb613;		
 $COL_PRI_MEDIUM: #008ff9;		
 $COL_PRI_LOW: #7ebf00;		
 $COL_PRI_URGENT: #de0000;
+$COL_RESOLVED_CLOSED: #e5e5e5;
+$COL_SPAM: #555;
+$COL_DELETED: #D00;
 $TKT_LIST_VIEW_PRIORITY_BORDER_SIZE: 6px;
 
 $priority-default-alpha: 1;
@@ -61,12 +63,3 @@ $break-desktop:		60em 12;
 $break-large:		75em 16;
 
 $container-width: 	1140px; 
-
-// Sprite sheet creation
-// --------------------------------------------------
-
-/* Sprite variables used inside the sheet */
-$symbol: sprite-map("symbols/*.png");
-$ticketicon: sprite-map("ticket-icon/*.png");
-$icons: sprite-map("icons/*.png");
-

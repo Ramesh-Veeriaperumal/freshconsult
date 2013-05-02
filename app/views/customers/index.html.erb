@@ -1,5 +1,5 @@
-<%= include_stylesheets :pattern %>
-<%= include_javascripts :pattern %>
+<%= include_cloudfront_css :pattern %>
+<%= include_cloudfront_js :pattern %>
 <div id="customers-page">
 	<%content_for :sidebar do%>
 		<div class="sidepanel">
@@ -44,7 +44,7 @@
 									<div class="item_actions" align="right">
 								    	<%= link_to(t('edit'), edit_customer_path(customer), :class => "btn btn-mini") %>
 								    	<%= link_to "<i class='icon-trash'></i>", {:controller => "customers", :action => "destroy", :id => customer}, :confirm =>  
-								    		"#{t('company.info11')} #{customer.name}?\n#{t('company.info10')}", 
+								    		"#{t('company.info11')} #{h(customer.name)}?\n#{t('company.info10')}", 
 								    		:method => 'delete', :class => "btn btn-mini" %>
 									</div> 
 								</td>

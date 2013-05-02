@@ -1,5 +1,6 @@
 @import "lib/settings";
 @import "lib/mixins";
+@import "lib/animations";
 
 $report-number-color:#333;
 $report-number-positive-color:#006063;
@@ -16,6 +17,7 @@ $single_stackbar_chart_height: 120px;
 #date_range{
 	font-size:12px;
   height:20px;
+
 }
 
 .caption{
@@ -33,6 +35,22 @@ $single_stackbar_chart_height: 120px;
   padding:15px 25px 0;
   @include clearfix;  
 } 
+
+.loading-box {
+	padding-top: 200px;
+	height: 400px;
+}
+
+.noinfo-bar {
+	text-align: center;
+	margin: 30px 0 0;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+#sla_gauge_container .noinfo-bar, #fcr_gauge_container .noinfo-bar{
+	text-align: left;
+}
 
 .nested-wrapper {
   	border: 1px solid #aaaaaa;
@@ -141,6 +159,29 @@ $single_stackbar_chart_height: 120px;
 
 .single-stacked-bar {
 	height:$single_stackbar_chart_height;
+	padding: 10px 0;
+	margin: 10px 0;
+	//border: 1px solid #bfbfbf;
+}
+
+.single-line-bar {
+	width:47%;
+	float:left;
+}
+.single-line-bar .graph-container{
+	height: 350px;
+	//border: 1px solid #bfbfbf;
+	overflow-x:hidden;
+	overflow-y:auto;
+	.noinfo{ 
+	  width:250px;
+	  text-align:center;
+	  margin:10px 0 0;
+	  background: url("/images/fillers/no-pie-doughnut.png") no-repeat center;
+	  font-size:16px;
+	  font-weight:bold;
+	  padding:110px 0;
+	}
 }
 .gauge-chart {
 	height:$gauge_chart_size;
@@ -148,33 +189,32 @@ $single_stackbar_chart_height: 120px;
 	display: inline;
 }
 .center-by-margin {margin-left:auto; margin-right:auto;}
-.sla-compliance {                
-			h4.percent-diff {
-				width:75px;
-				margin: 0;
-				font-size: 14px;
-				background: url(/images/reports/report_arrow-up.png) right no-repeat;
-				padding-right: 20px;
-				color:$report-number-positive-color;
-				text-align:right;
-				.percent {
-					color:lighten($report-number-positive-color, 5%);
-					font-size:10px;
-					display:inline;
-				}
-			}
-		
-			h4.negative.percent-diff {
-				color:$report-number-negative-color;
-				background: url(/images/reports/report_arrow-down.png) right no-repeat;
-				.percent {
-					color:lighten($report-number-negative-color,5%);
-			}
+.sla-compliance, .summary {                
+	h4.percent-diff,h1.percent-diff {
+		width:75px;
+		margin: 0;
+		font-size: 14px;
+		background: url(/images/reports/report_arrow-up.png) right no-repeat;
+		padding-right: 20px;
+		color:$report-number-positive-color;
+		text-align:right;
+		.percent {
+			color:lighten($report-number-positive-color, 5%);
+			font-size:10px;
+			display:inline;
+		}
+	}
+	h4.negative.percent-diff,h1.negative.percent-diff {
+		color:$report-number-negative-color;
+		background: url(/images/reports/report_arrow-down.png) right no-repeat;
+		.percent {
+			color:lighten($report-number-negative-color,5%);
+		}
 
 	}
 }
 .report-unit {
-    margin: 0 0 20px;	              
+    margin: 0 0 20px 20px;	              
 		h3 {
 			font-size:12px;
 			color:#333;
@@ -190,10 +230,10 @@ $single_stackbar_chart_height: 120px;
         
         li{
             width: auto;
-            margin: 15px 3% 0;
+            margin: 15px 1% 0 0;
             text-align:center;
             width:38%;                             
-            border-right:1px dotted #dfdfdf;
+            border-right:0px dotted #dfdfdf;
             span{
                 display:inline-block;
                 font-size:12px;
@@ -209,6 +249,7 @@ $single_stackbar_chart_height: 120px;
             }
         }
         li.last { margin:15px 0 0; border:0; }
+        li.first { margin:15px 0 0 1%;}
         li.big {
         	margin: 10px inherit;
         	font-size:1.4em;
@@ -225,7 +266,9 @@ $single_stackbar_chart_height: 120px;
         }
     }
 }
-
+.report-close{
+	cursor: pointer;
+}
 .report-title {
 	margin: 15px;
 }
@@ -245,4 +288,481 @@ $single_stackbar_chart_height: 120px;
 .ui-datepicker-next.ui-corner-all.ui-state-hover,.ui-datepicker-prev.ui-corner-all.ui-state-hover {
 	cursor: pointer;
 	background-color:#FFF;
+}
+
+.multiselect_fields {
+	display: inline-block;
+}
+.margin_left{
+	margin: 0 100px 30px 100px; 
+}
+.multiBox {
+	border: 1px solid #C6C6C6;
+	font-weight: 400;
+	padding: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-ms-border-radius: 5px;
+	-o-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-box-shadow: #dfdfdf 1px 1px 2px inset;
+	-moz-box-shadow: #dfdfdf 1px 1px 2px inset;
+	box-shadow: #dfdfdf 1px 1px 2px inset;
+}
+.report-header-container{
+	padding:10px 0;
+	span {
+		color:#777;
+	}
+}
+
+/* New report css */
+@include at-breakpoint($break-tablet){
+	@include layout(5){
+		.report-left-filter{ @include span-columns(1); }
+		.report-page{ 
+			@include span-columns(4 omega); 
+			background:#fff; 
+			@include border-radius(5px); 
+			@include min-height(450px);
+			@include box-shadow(rgba(0, 0, 0, 0.2) 0px 2px 3px);
+		}
+	}
+	.report-filter{
+		display: inline-table;
+	}
+	.report-filter-slide-btn{ 
+		width: 6%;
+		float: left;
+		.btn{
+			margin-right:10px;
+		}
+	}
+	.report-filter-details{ width: 93%; }
+}
+.report-content-wrapper{
+	padding:10px;
+}
+.report-left-filter{
+	.control-label{
+		padding: 10px 0 5px;
+		font-weight: 500;
+	}
+}
+.report-header{
+	background:#f8f8f8;
+	border:1px solid #cccccc;
+	@include border-radius(5px);
+	margin-bottom:20px;
+	.report-header-content{
+		padding:10px 20px;
+		.report-header-icon{
+			margin-right:20px;
+		}
+		div.preview_pic{
+			margin-right: 0;
+			margin-left: 5px;
+		}
+	}
+	.report-filter{
+		position:relative;
+		background-color: #f1f1f1;
+		box-shadow: inset 0px 2px 5px #ccc;
+		padding:10px;
+		.dropdown-menu {
+			position: absolute;
+			top: 0;
+			min-width:auto;
+			max-width:none;
+			width:100%;
+			background:#ebebeb;
+		}
+
+	}
+	.report-filter-details{
+		position: relative;
+		top: 4px;
+		float:left;
+		display: table !important;
+		ul{
+			display: table-cell;
+			vertical-align: middle;
+		}
+
+	}
+	.report-user-details{
+		float:right;
+		text-align: right;
+		.lead{
+			margin:0;
+		}
+		.preview_pic img{
+			@include border-radius(50%);
+		}
+	}
+}
+
+
+.report-summary{
+	@include layout(6){
+		.report-summary-wrapper{
+			.report-summary-header, .report-summary-footer, .report-summary-data{
+				@include span-columns(6);
+				ul{
+					width:100%;
+					float:left;
+					li{
+						@include span-columns(1);
+						margin-right: 0.899%;
+						display:inline-block;
+			            float:none;
+			            vertical-align:top;
+						&:last-child{
+							margin-right:0;
+						}
+					}
+				}
+			}
+			.report-summary-header{
+				margin-bottom:5px;
+				ul li{
+					vertical-align:baseline;
+				}
+			}
+			.report-summary-footer{
+				margin-bottom:25px;
+			}
+		}
+	}
+	ul {
+		li{
+			label{
+				text-transform: uppercase;
+				font-size: 11px;
+				margin: 0;
+			}
+			h1{
+				font-size: 28px;
+				line-height: 28px;
+				margin: 0;
+				padding: 0;
+				font-weight: 200;
+			}
+			small{
+				font-size: 10px;	
+				i{
+					width:7px;
+					height:7px;
+					display: inline-block;
+				}
+			}
+		}
+	}
+}
+.row-fluid [class*="span"]{
+ 	&.report-breadcrum-wrapper{
+		height: 20px;
+		.nav{
+			a, a:hover{
+				color: inherit;
+				background-color: transparent;
+				padding: 8px 10px 0;
+			}
+			i{
+				width: 14px;
+				height: 14px;
+				display: inline-block;
+				margin-right: 5px;
+				vertical-align: middle;
+				&.reports-icon-download{
+					vertical-align: top;
+				}
+			}
+		}
+	}
+}
+.slide-shadow{
+	&:after{
+		    content: " ";
+		    position: absolute;
+		    @include box-shadow(1px 9px 14px 0px rgba(#000, 0.3), 0px 15px 1px rgba(#000,0.5));
+		    left:100%;
+		    top:0;
+		    width:3px;
+		    height:97%; 
+		    z-index:999;
+		    display: table-cell !important;
+	}
+}
+
+.left-filter{
+	.lead{
+		margin-bottom:10px;
+	}
+	ul{
+		li{
+			.select2, input, form, label, .ff_item .select2, .ff_item{
+				width:100%;
+			}
+			.nested-input{
+				width:95%;
+				padding-left: 8px;
+				border-left: 1px dotted #CCC;
+				margin-left: 2px;
+			}
+			input{
+				padding-right:0;
+				padding-left:0;
+			}
+		}
+	}
+}
+
+/* Reports arrow */
+.report-arrow{
+	display:inline-block;
+	margin-right: 5px;
+	width:0;
+	height:0;
+	&.up{
+		border-left: 5px solid transparent;
+		border-right: 5px solid transparent;
+		border-bottom: 5px solid;
+		&.green{
+		border-bottom-color:#009900;
+		}
+		&.red{
+			border-bottom-color:#990000;
+		}
+	}
+	&.down{
+		border-left: 5px solid transparent;
+		border-right: 5px solid transparent;
+		border-top: 5px solid;
+		&.green{
+		border-top-color:#009900;
+		}
+		&.red{
+			border-top-color:#990000;
+		}
+	}
+}
+li.bargraph-icon, li.bargraph-icon-dark{
+	@include border-radius(3px);
+	border:0;
+	background-color: #f1f1f1;
+	height:20px;
+	width:20px;
+	cursor: pointer;
+}
+li.bargraph-icon-dark{
+	background-color:#aaa;
+}
+ul.showHideDiv_container{
+	padding-top:5px;
+	li {
+		float: left;
+		padding: 2px 5px;
+		border: 1px solid #EFEFEF;
+		&:first-child{
+			border-radius: 3px 0 0 3px;
+		}
+		&:last-child{
+			border-radius: 0 3px 3px 0;
+			margin-left: 1px;
+		}
+		&.active{
+			background: #bfbfbf;
+			border: 1px solid #ababab;
+		}
+	}
+}
+
+/* Style for printing  */
+.report-print{
+	.report-header{ 
+		@include border-radius(5px);
+		.report-filter{
+			border-top:1px solid #ccc;
+		}
+	}
+}	
+
+/* Home page Style */
+
+
+$vreport_color:#8c99a3;
+$report_hover_color:#8c99a3;
+
+$hover_boxshadow_start: 0 0 0 0px;
+$hover_boxshadow_middle: 0 0 0 7px;
+$hover_boxshadow_final: 0 0 0 5px;
+$animation_timing: .2s;
+
+// Add more colors with 1st value as class name and 2nd value as color
+		$report-colors:
+		 	ataglance #8c99a3,
+		 	summary #9db2ab,
+		 	load #afb29d,
+		 	comparison #b2a39d,
+		 	topn #9f9db2;
+
+.report-home {
+	padding:0px 0px 5px 0px;
+	margin: 10px;
+	.report-separation{
+		border-top: 2px solid #d9d9d9;
+		margin-bottom: 15px;
+		display:table;
+		width:100%;
+	}
+	.report-home-header{
+		background-color: #f1f1f1;
+		width:20%;
+		display: table-cell;
+		vertical-align: top;
+			h3{
+			&.title{
+				margin-bottom:0px;
+				font-weight: 200;
+				color:#666;
+				padding:10px 20px;
+			}
+			span{
+				display:inline-block;
+				padding-top:2px;
+			}
+		}
+	}
+	ul{
+		width:80%;
+		display: table-cell;
+		margin-left:-32px;
+		&.report_icons{
+			@include clearfix;
+			list-style:none;
+			padding-top:8px;
+			li{
+				float:left;
+				padding: 0px 18px;
+				position:relative;
+				@include min-height(130px);
+				a{
+					position:relative;
+					display:block;
+					padding:8px 0px 2px 0px;
+					text-align:center; 
+					text-decoration:none;
+					color:#666;
+					width:100px;
+					.img-outer{
+						height: 70px;
+						width: 70px;
+						margin: 0 auto;
+						padding:1px;
+						@include border-radius(50%);
+						margin-bottom:5px; 
+
+					}
+					img{ 
+						height: 70px; 
+						width: 70px;
+						@include border-radius(50%); 
+						@include transition(all 0.1s ease);
+					}
+					div.report-icon-text{
+						@include wrap;
+						font-size:13px;
+						line-height:16px;
+						margin:0px 0px;
+						padding:1px 3px;
+						position:relative;
+					}
+				}
+			}
+		}	
+	}
+	&.report{
+	    ul.report_icons{
+			li a 
+			{
+				img{
+					background-color: $vreport_color;
+				}
+				&:hover{
+					color:darken($report_hover_color, 10%);
+					.img-outer{
+						background-color: $report_hover_color;
+					}
+					img{
+						background-color: $report_hover_color;
+						@include animation(report_beat $animation_timing);
+						@include box-shadow( $hover_boxshadow_final $report_hover_color);
+					}
+				}
+			}
+		}
+		@each $report-color in $report-colors{
+			.#{nth($report-color,1)}{
+				.report-home-header{
+					background-color: rgba(nth($report-color,2), 0.2);
+				}
+				ul.report_icons{
+					li a 
+					{
+						img{
+							background-color: nth($report-color,2);
+						}
+						&:hover{
+							color:darken(nth($report-color,2), 10%);
+							.img-outer{
+								background-color: nth($report-color,2);
+							}
+							img{
+								background-color: nth($report-color,2);
+								@include animation(#{nth($report-color,1)}_beat $animation_timing);
+								@include box-shadow( $hover_boxshadow_final nth($report-color,2));
+							}
+						}
+					}
+				}
+			}
+		}			
+	}
+}
+/* report Animation */
+@each $report-color in $report-colors{
+	@include keyframes(#{nth($report-color,1)}_beat) {
+		from {
+			@include box-shadow($hover_boxshadow_start nth($report-color,2));
+		}
+		50% {
+			@include box-shadow($hover_boxshadow_middle nth($report-color,2));
+		}
+		to {
+			@include box-shadow($hover_boxshadow_final nth($report-color,2));
+		}
+	}
+}
+.loading-box{
+	z-index:99999; 
+	position:absolute;
+	width:101%;
+	height:82%;
+	background-color:#efefef; 
+	left:-1px;
+}
+.row-fluid{
+	position: relative;
+}
+/*Please dont remove this... hardcoded bcz on chart toggle the hidden chart is overlaping */
+.hide-chart{
+		position: absolute;
+		z-index: 1;
+		visibility: hidden;
+		width:48.93%;
+}
+
+.highcharts-container text{
+	text-shadow: none;
 }

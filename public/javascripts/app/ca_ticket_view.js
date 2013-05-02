@@ -22,7 +22,7 @@
 
   if (jQuery('#fold-list .small-list-left').children().hasClass('list-noinfo'))
   {
-    localStorage.removeItem('local_ca_response')
+    localStorage.removeItem('local_ca_response');
     jQuery('#response_dialog').addClass('no_folders');
   }
 
@@ -57,8 +57,6 @@
    		recId.splice(8);
    	}
     localStorage["local_ca_response"]=recId.toString();
-    if(jQuery(this).parents('#recently_used_list').length == 0)
-      loadRecent();
   });
 
   function loadRecent()
@@ -66,11 +64,12 @@
   	if(!localStorage["local_ca_response"])
   	{
   		jQuery('#recently_used_container').hide();
-      jQuery('.back1, .pick-response, #clear-search, .pick-response-header, .small-list-right, .list2, .canned-icons').addClass('no_recently_used');
   	}
   	else
   	{
-  		jQuery('#recently_used_list').empty().addClass('loading-center');
+      jQuery('#recently_used_container').show();
+      jQuery('#response_dialog').removeClass('no_recently_used');
+      jQuery('#recently_used_list').empty().addClass('loading-center');
   		new Ajax.Request(ca_responses_recent_url+localStorage["local_ca_response"]+']', 
     		{
     			asynchronous: true,

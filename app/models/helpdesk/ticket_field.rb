@@ -14,14 +14,16 @@ class Helpdesk::TicketField < ActiveRecord::Base
     :dependent => :destroy, :order => "position"
   has_many :nested_ticket_fields, :class_name => 'Helpdesk::NestedTicketField', :dependent => :destroy, :order => "level"
     
-  has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :autosave => true, :dependent => :destroy, :order => "position"
-  
+  has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
+  validates_associated :ticket_statuses
+  accepts_nested_attributes_for :ticket_statuses, :allow_destroy => true
+
   before_validation :populate_choices
 
   before_destroy :delete_from_ticket_filter
   before_update :delete_from_ticket_filter
   before_save :set_portal_edit
-  xss_terminate
+  # xss_terminate
   acts_as_list
 
   after_commit :clear_cache
@@ -144,6 +146,31 @@ class Helpdesk::TicketField < ActiveRecord::Base
     }
   end
 
+  def html_unescaped_choices(ticket = nil)
+    case field_type
+       when "custom_dropdown" then
+         picklist_values.collect { |c| [CGI.unescapeHTML(c.value), c.value] }
+       when "default_priority" then
+         TicketConstants.priority_names
+       when "default_source" then
+         TicketConstants.source_names
+       when "default_status" then
+         Helpdesk::TicketStatus.statuses_from_cache(account).collect{|c|  [CGI.unescapeHTML(c[0]),c[1]] }
+       when "default_ticket_type" then
+         account.ticket_types_from_cache.collect { |c| [CGI.unescapeHTML(c.value), c.value] }
+       when "default_agent" then
+        return group_agents(ticket)
+       when "default_group" then
+         account.groups_from_cache.collect { |c| [c.name, c.id] }
+       when "default_product" then
+         account.products.collect { |e| [e.name, e.id] }
+       when "nested_field" then
+         picklist_values.collect { |c| [CGI.unescapeHTML(c.value), c.value] }
+       else
+         []
+     end
+  end
+
   def all_status_choices(disp_col_name=nil)
     disp_col_name = disp_col_name.nil? ? "customer_display_name" : "name"
     self.ticket_statuses.collect{|st| [Helpdesk::TicketStatus.translate_status_name(st, disp_col_name), st.status_id]}
@@ -161,7 +188,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   def levels
     nested_ticket_fields.map{ |l| { :id => l.id, :label => l.label, :label_in_portal => l.label_in_portal, 
-      :description => l.description, :level => l.level, :position => 1, :field_type => "nested_child", 
+      :description => l.description, :level => l.level, :position => 1,
       :type => "dropdown" } } if field_type == "nested_field"
   end
 

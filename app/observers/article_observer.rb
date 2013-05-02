@@ -25,6 +25,18 @@ class ArticleObserver < ActiveRecord::Observer
 		add_resque_job(article) if changed_filter_attributes.any?
 	end
 
+	def after_commit_on_create(article)
+		article.update_es_index
+	end
+
+	def after_commit_on_update(article)
+		article.update_es_index
+	end
+
+	def after_commit_on_destroy(article)
+		article.remove_es_document
+	end
+
 	def add_resque_job(article)
 		return unless article.published?
 		Resque.enqueue(Gamification::Quests::ProcessSolutionQuests, { :id => article.id, 
@@ -55,8 +67,8 @@ private
   	end
 
 	def set_un_html_content(article)
-      article.desc_un_html = (article.description.gsub(/<\/?[^>]*>/, "")).gsub(/&nbsp;/i,"") unless article.description.empty?
-  end
+		article.desc_un_html = Helpdesk::HTMLSanitizer.plain(article.description) unless article.description.empty?
+    end
 
   def article_changes(article)
   	@article_changes = article.changes.clone
