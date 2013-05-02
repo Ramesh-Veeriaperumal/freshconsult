@@ -7,9 +7,12 @@ module ReportsHelper
     
   end
 
-  def report_item(item_info)
-	    link_content = image_tag( "/images/spacer.gif", :class => "reports-icon-#{ item_info[:class] }", :width => 60, :height =>60 ) +
-	                   content_tag( :div, item_info[:label] )
+  	def report_item(item_info)
+  		link_content = %(<div class="img-outer">
+	                    	<img width="70px" height="70px" src="/images/spacer.gif" class = "reports-icon-#{ item_info[:class] }" />
+	                    </div>
+	                    <div class="report-icon-text">#{item_info[:label]}</div> )
+
 	    content_tag( :li, link_to( link_content, item_info[:url] ) )
 	end
   

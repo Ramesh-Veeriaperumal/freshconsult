@@ -14,8 +14,8 @@
   
   <%= render :partial => "/helpdesk/integrations/remote_support", :locals => {:user => @ticket.requester, :agent => @ticket.responder} %>
 <%- end %>
-<%= include_stylesheets :pattern %>
-<%= include_javascripts :pattern %>
+<%= include_cloudfront_css :pattern %>
+<%= include_cloudfront_js :pattern %>
 <script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
 <%= render :partial => "ticket_info" %>       
 

@@ -104,7 +104,7 @@
 	},
 
 	(function($){	
-
+		var calculate_request;
 		selected_plan 	= null;
 		agents		  	  = null;
 		plan_cost	  	  = null;
@@ -194,7 +194,9 @@
    });
 
     function calculateCost(){
-      $.post( "/subscription/calculate_amount",
+    	if(calculate_request)
+    		calculate_request.abort();
+			calculate_request = $.post( "/subscription/calculate_amount",
               { "billing_cycle": billing_cycle, "agent_limit" : agents, "plan_id" : current_plan_id },              
               function(data){
               		$(".billing-submit").removeAttr("disabled");

@@ -5,6 +5,7 @@ namespace :db do
     puts 'Creating tables...'
     Rake::Task["db:schema:load"].invoke
 #    Rake::Task["db:migrate"].invoke
+    Rake::Task["db:create_reporting_tables"].invoke unless Rails.env.production?
     
     Rake::Task["db:create_trigger"].invoke #To do.. Need to make sure the db account has super privs.
     Rake::Task["db:perform_table_partition"].invoke
@@ -26,6 +27,11 @@ namespace :db do
     end
     
     puts "All done!  You can now login to the test account at the localhost domain with the login sample@freshdesk.com and password test.\n\n"
+  end
+
+  task :create_reporting_tables => :environment do
+    puts 'Creating reporting tables...'
+    Reports::CreateReportingMonthlyTables.create_tables
   end
   
   task :create_trigger => :environment do

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130326092144) do
+ActiveRecord::Schema.define(:version => 20130427074254) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -53,6 +53,7 @@ ActiveRecord::Schema.define(:version => 20130326092144) do
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
   add_index "accounts", ["helpdesk_url"], :name => "index_accounts_on_helpdesk_url"
+  add_index "accounts", ["time_zone"], :name => "index_accounts_on_time_zone"
 
   create_table "achieved_quests", :force => true do |t|
     t.integer  "user_id",    :limit => 8

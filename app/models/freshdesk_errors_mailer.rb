@@ -1,5 +1,7 @@
 class FreshdeskErrorsMailer < ActionMailer::Base
   
+  layout "email_font"
+  
   def error_email(object, params, e, options={}) 
     recipients    "dev-ops@freshdesk.com"
     from          "rachel@freshdesk.com"

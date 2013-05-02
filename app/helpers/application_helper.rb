@@ -224,7 +224,6 @@ module ApplicationHelper
     tabs = [
       [customers_admin_subscriptions_path, :customers, "Customers" ],
       [admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
-      [admin_subscription_discounts_path, :discounts, "Discounts" ],
       [admin_subscription_payments_path, :payments, "Payments" ],
       [admin_subscription_announcements_path, :announcements, "Announcements" ]
     ]
@@ -423,9 +422,9 @@ module ApplicationHelper
   # User details page link should be shown only to agents and admin
   def link_to_user(user, options = {})
     if current_user && !current_user.customer?
-      link_to(user.display_name, user, options)
+      link_to(h(user.display_name), user, options)
     else 
-      content_tag(:strong, user.display_name, options)
+      content_tag(:strong, h(user.display_name), options)
     end
   end
   
@@ -702,6 +701,7 @@ module ApplicationHelper
   
   def truncate_filename filename
     extension = filename.include?('.') ? filename.split('.').last : nil
+    extension = nil if filename.gsub('.','') == extension
     simple_name = extension ? filename[0..-(extension.to_s.length + 2)] : filename
     if filename.length > 20
       return simple_name[0,15] + "..." + simple_name[-2..-1] + (extension ? ".#{extension}" : "")
@@ -764,9 +764,7 @@ module ApplicationHelper
   end
 
   def tour_button(text, tour_id)
-    link_to(content_tag(:div, text, :class=> 'guided-tour-start') , '#', 
-              :rel => 'guided-tour',
-              "data-tour-id" => tour_id)
+    link_to(text, '#', :rel => 'guided-tour', "data-tour-id" => tour_id, :class=> 'guided-tour-button')
   end
   
   def check_fb_reauth_required

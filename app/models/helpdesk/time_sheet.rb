@@ -128,7 +128,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     if deep
       self[:ticket_id] = self.workable.display_id
       self[:agent_name] = self.agent_name
-      self[:timespent] = sprintf( "%0.02f", self.time_spent/3600) # converting to hours as in UI
+      self[:timespent] = sprintf( "%0.02f", self.time_spent.to_f/3600) # converting to hours as in UI
       self[:agent_email] = user.email
       self[:customer_name] = self.customer_name
       self[:contact_email] = workable.requester.email
@@ -147,7 +147,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       [:account_id,:workable_id,:time_spent],:root=>:time_entry) do |xml|
       xml.tag!(:ticket_id,workable.display_id)
       xml.tag!(:agent_name,agent_name)
-      xml.tag!(:time_spent,sprintf( "%0.02f", self.time_spent/3600)) # converting to hours as in UI
+      xml.tag!(:time_spent,sprintf( "%0.02f", self.time_spent.to_f/3600)) # converting to hours as in UI
       xml.tag!(:agent_email,user.email) 
       xml.tag!(:customer_name,self.customer_name)
       xml.tag!(:contact_email,workable.requester.email)

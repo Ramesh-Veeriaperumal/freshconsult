@@ -20,16 +20,16 @@
 		<%= portal_fav_ico %>
 
 		<!-- Base stylesheet -->
-		<%= include_stylesheets :portal %>
+		<%= include_cloudfront_css :portal %>
 
 		<!-- Theme stylesheet -->
-		<%= stylesheet_link_tag theme_url  %>
+		<link href="<%=theme_url%>" media="screen" rel="stylesheet" type="text/css">
 
 		<!-- Google font url if present -->
 		<%= portal_fonts %>
 
 		<!-- Including default portal based script framework at the top -->
-		<%= include_javascripts :portal_head %>
+		<%= include_cloudfront_js :portal_head %>
 
 		<!-- Access variables for the portal -->
 		<%= portal_access_varibles %>
@@ -43,7 +43,8 @@
 		<%= render :partial => "layouts/shared/scripts" %> 
 
 		<!-- Including default portal based script at the bottom -->
-		<%= include_javascripts :portal_bottom, :redactor %>
+		<%= include_cloudfront_js :portal_bottom%>
+		<%= include_cloudfront_js :redactor %>
 
 		<%= cookie_law %>
 	</body>

@@ -2,7 +2,7 @@
 	<%= each_or_message "helpdesk/time_sheets/v2/time_entry", @ticket.time_sheets, t(".no_timeentry") %>
 </div>
 <div class="new_timer">
-	<a href="<%= new_helpdesk_ticket_helpdesk_time_sheet_path(@ticket) %>" title="<%= t('ticket.add_time') %>" 
+	<a id="triggerAddTime" href="<%= new_helpdesk_ticket_helpdesk_time_sheet_path(@ticket) %>" title="<%= t('ticket.add_time') %>" 
 		rel="freshdialog" data-target="#new_timeentry" data-width="450"
 		 data-submit-label="<%= t('save')%>" data-submit-loading="<%= t('saving')%>"
 		 ><%= t('ticket.add_time') %></a>
@@ -11,7 +11,7 @@
    totalTime("#timesheetlist .time", "#timeentry_timer_total");
    jQuery('#timesheetlist .time-tracked-details:last .toggle_timer').show();
 <% end %>
-<%= include_javascripts :timesheet %>
+<%= include_cloudfront_js :timesheet %>
 <div id="timeentry_apps_add" class="ui-form hide">   
 	<%= render :partial => "integration" if timesheet_integrations_enabled? %>
 </div>

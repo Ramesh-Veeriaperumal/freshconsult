@@ -1,0 +1,51 @@
+<%= render :partial => "layouts/report/pdf_files", :locals => {} %>
+<div class="report-page report-print" id="report-page">
+  <div class="report-content-wrapper">
+    <!--report header-->
+    <%= render :partial => "reports/shared/report_view_header", :locals => {:is_pdf =>true} %>
+
+    <div class="row-fluid">
+      <div class="span12">
+        <h3 class="header-lead"><span>Tickets Received vs Resolved vs Backlog</span></h3>
+        <div id="received_resolved_backlog_line_chart" class="single-stacked-bar" style="height:220px;"><div class="noinfo">No data to display!</div></div>
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="span12">
+        <h3 class="header-lead"><span>Tickets by Source</span></h3>
+        <div id="tickets_by_source_line_chart" class="single-stacked-bar" style="height:220px;"><div class="noinfo">No data to display!</div></div>
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="span12">
+        <h3 class="header-lead"><span>Tickets by Time of Arrival</span></h3>
+        <div id="tickets_by_arrival_bar_chart" class="single-stacked-bar" style="height:260px;"><div class="noinfo">No data to display!</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+var data_obj = <%=@data_obj.to_json%>
+jQuery(document).ready(function() {
+  var analysis_1_lineChart = new lineChart(
+      {renderTo: 'received_resolved_backlog_line_chart',chartData:[data_obj['received_tickets'],data_obj['resolved_tickets'],data_obj['backlog_tickets']],isPDF:true}
+    );
+  analysis_1_lineChart.lineChartGraph();
+  
+  var analysis_2_lineChart = new lineChart(
+      {renderTo: 'tickets_by_source_line_chart',chartData:data_obj['tickets_by_source'],isPDF:true}
+    );
+  analysis_2_lineChart.lineChartGraph();
+  var analysis_3_barChart = new xaxis_bar_chart(
+      {renderTo: 'tickets_by_arrival_bar_chart',
+       chartData:[<%=@data_obj.fetch('tickets_by_arrival')['received'].to_json%>,
+                  <%=@data_obj.fetch('tickets_by_arrival')['resolved'].to_json%>],
+       yAxis_label:'No. of Tickets',
+       xAxisLabel:['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23'],
+       toolTipLabel: 'ticket(s)',
+       isPDF: true,
+       chart_width:600}
+      );
+    analysis_3_barChart.xaxisbarGraph();
+});
+</script>

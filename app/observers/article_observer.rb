@@ -20,10 +20,21 @@ class ArticleObserver < ActiveRecord::Observer
 	end
 
 	def after_commit(article)
-		article.update_es_index
 		return unless gamification_feature?(article.account)
 		changed_filter_attributes = @article_changes.keys & SOLUTION_UPDATE_ATTRIBUTES
 		add_resque_job(article) if changed_filter_attributes.any?
+	end
+
+	def after_commit_on_create(article)
+		article.update_es_index
+	end
+
+	def after_commit_on_update(article)
+		article.update_es_index
+	end
+
+	def after_commit_on_destroy(article)
+		article.remove_es_document
 	end
 
 	def add_resque_job(article)

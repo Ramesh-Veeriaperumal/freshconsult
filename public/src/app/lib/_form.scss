@@ -732,7 +732,7 @@ li.nested_field{
 				margin-right:20px; 
 				.close{
 					position:absolute;
-					background:url(/images/icons/btn_close_icon.png) no-repeat;
+					background:image-url("btn_close_icon.png") no-repeat;
 					width:18px;
 					height:18px;
 					right:6px;
@@ -797,12 +797,10 @@ input.time{
 		th{			
 			line-height:18px;	
 			font-weight:bold;
-			background-image:url(/images/overlay-button.png);
 			background-color:#f2f2f2;
 			background-repeat:repeat-x; 
-			span{
-				display:block; 
-			}
+			@include background-image(linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(18,18,18,0.05) 100%));
+			span{ display:block; }
 		}
 		td{			
 			label{
@@ -1193,7 +1191,7 @@ input.search{
     textarea{ height:auto; }
 }
 
-.dialog-panel{
+.dialog-panel, .dialog-panel.sidepanel{
 	position: absolute;	
 	width:650px;
 	left:50%;
@@ -1314,8 +1312,6 @@ input.search{
 			position:absolute;
 			right:15px;
 			margin-top:12px;
-			background-image:url('/images/load-fb-style.gif');
-			background-repeat:no-repeat;
 			visibility:hidden;
 			background-position: 0 0;
 		}
@@ -1850,11 +1846,7 @@ a.new_ticket:hover{
       }
    }   
 }
-.canned-response-menu.loading{
-   background-image:url('/images/load.gif');
-   background-repeat:no-repeat;
-   background-position: center 8px;
-}
+
 .canned-response-menu{
    border:2px #4b4b4b solid;
    background-color:#ffffff;
@@ -2292,7 +2284,7 @@ input[type="text"].number{
 }
 
 #takescreen-btn{
-	background: #f3f3f3 url(/images/takescreenshot.png) no-repeat 10px 4px;
+	background: #f3f3f3 inline-image('cdn-ignored/inline-images/camera.png') no-repeat 10px 4px;
 	padding: 5px 10px 5px 40px;
 	float: right;
 	border: 1px #ccc solid;

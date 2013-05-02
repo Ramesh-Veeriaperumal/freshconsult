@@ -3099,7 +3099,7 @@ Redactor.prototype = {
 	},
 	_insertLink: function(a, text, link, target)
 	{
-		this.$editor.focus();
+		// this.$editor.focus();
 		this.restoreSelection();	
 	
 		if (text !== '')

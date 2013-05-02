@@ -1,5 +1,5 @@
- <%= include_stylesheets :pattern %>
-<%= include_javascripts :pattern %>
+ <%= include_cloudfront_css :pattern %>
+<%= include_cloudfront_js :pattern %>
 
  <h3 class="lead"><%=title%></h3> <br/>
 	<% form_for(@group, :html => {:id => "group_form"}) do |f|  %>
@@ -15,7 +15,7 @@
 		 		<li class="row-fluid">
 		 			 <%= f.label :description, "<b> #{t('description')} </b>", :class => "control-label span2" %>
 					  <div class="span10">
-						 <%= f.text_area :description , :class => "text required smallpara span12", :placeholder => t('group.name')  %>
+						 <%= f.text_area :description , :class => "text required smallpara span12", :placeholder => t('group.description')  %>
 					  </div>
 		 		</li>
 		 		<li class="row-fluid margin-bottom">

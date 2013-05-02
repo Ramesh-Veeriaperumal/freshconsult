@@ -104,7 +104,7 @@
 			button = document.createElement('div');
 			button.setAttribute('id', 'freshwidget-button');
 			button.style.display = 'none';
-			button.className = "freshwidget-button " + class_name;
+			button.className = "freshwidget-button fd-btn-" + class_name;
 
 			if(Browser.Version() <= 10)
 				button.className += " ie"+Browser.Version();

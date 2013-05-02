@@ -11,6 +11,7 @@ TICKET_DETAILS_DATA = {
 	activities_pagination_url: "/helpdesk/tickets/activities/<%= escape_javascript(h(@ticket.display_id)) %>?",
 	last_activity		: -1,
 	loaded_activities	: 0,
+	scroll_to_last		: <%= (@ticket.responder_id == current_user.id).to_s %>,
 	fetch_notes_url		: "/helpdesk/tickets/<%= escape_javascript(h(@ticket.display_id)) %>/notes", 
 	tag_list			: tag_list.split(","),
 	created_on			: new Date("<%= @ticket.created_at.strftime("%B %e, %Y %H:%M") %>"),

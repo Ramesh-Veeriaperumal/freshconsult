@@ -18,6 +18,14 @@ module RedisKeys
 	PORTAL_CACHE_ENABLED = "PORTAL_CACHE_ENABLED"
 	PORTAL_CACHE_VERSION = "PORTAL_CACHE_VERSION:%{account_id}"
 	API_THROTTLER  = "API_THROTTLER:%{host}"
+	#AUTH_REDIRECT_CONFIG = "AUTH_REDIRECT:%{account_id}:%{user_id}:%{provider}:%{auth}"
+	SSO_AUTH_REDIRECT_OAUTH = "AUTH_REDIRECT:%{account_id}:%{user_id}:%{provider}:oauth"
+	APPS_AUTH_REDIRECT_OAUTH = "AUTH_REDIRECT:%{account_id}:%{provider}:oauth"
+	AUTH_REDIRECT_GOOGLE_OPENID = "AUTH_REDIRECT:%{account_id}:google:open_id:%{token}"
+	
+	REPORT_STATS_REGENERATE_KEY = "REPORT_STATS_REGENERATE:%{account_id}" # set of dates for which stats regeneration will happen
+	REPORT_STATS_EXPORT_HASH = "REPORT_STATS_EXPORT_HASH:%{account_id}" # last export date, last archive job id and last regen job id
+	ENTERPRISE_REPORTS_ENABLED = "ENTERPRISE_REPORTS_ENABLED"
 	
 	def newrelic_begin_rescue
     begin
@@ -66,8 +74,12 @@ module RedisKeys
 			values.each do |val|
 				$redis.sadd(key, val)
 			end
-			 $redis.expire(key,expires) if expires
+			$redis.expire(key,expires) if expires
 	  end
+	end
+
+	def remove_value_from_set(key, value)
+		newrelic_begin_rescue { $redis.srem(key, value) }
 	end
 
 	def set_members(key)
@@ -77,7 +89,7 @@ module RedisKeys
 	def list_push(key,values,direction = 'right', expires = 3600)
 		newrelic_begin_rescue do
 			command = direction == 'right' ? 'rpush' : 'lpush'
-			unless values.type == Array
+			unless values.is_a?(Array)
 				$redis.send(command, key, values)
 			else
 				values.each do |val|
@@ -123,4 +135,18 @@ module RedisKeys
 	  	return $redis.publish(channel, message)
 	  end
 	end
+
+	def add_to_hash(hash, key, value, expires = 86400)
+		newrelic_begin_rescue do
+			$redis.hset(hash, key, value)
+			$redis.expire(hash, expires)
+	  end
+	end
+
+	def get_hash_value(hash, key)
+		newrelic_begin_rescue do
+			$redis.hget(hash, key)
+	  end
+	end
+
 end

@@ -15,10 +15,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Gamification::GamificationUtil
   include Search::ElasticSearchIndex
   include RedisKeys
+  include Reports::TicketStats
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
-                            "header_info", "st_survey_rating", "trashed", "access_token", 
-                            "escalation_level", "sla_policy_id", "sla_policy"]
+                            "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
+                            "access_token", "escalation_level", "sla_policy_id", "sla_policy"]
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
 
@@ -47,7 +48,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_update :update_message_id, :if => :deleted_changed?
 
-  after_commit :update_es_index
 
   before_validation_on_create :set_token
   
@@ -56,11 +56,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_save :save_custom_field
 
   after_commit_on_create :create_initial_activity,  :update_content_ids, :pass_thro_biz_rules,
-    :support_score_on_create, :process_quests
+    :support_score_on_create, :process_quests, :update_es_index
   
   after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity, 
     :stop_timesheet_timers, :fire_update_event, :support_score_on_update, 
-    :process_quests, :publish_to_update_channel
+    :process_quests, :publish_to_update_channel, :update_es_index, :regenerate_reports_data
+
+  after_commit_on_destroy :remove_es_document
 
 
   has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
@@ -899,7 +901,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Liquid ends here
   
   def respond_to?(attribute)
-    return false if [:to_ary].include?(attribute.to_sym)    
+    return false if [:to_ary].include?(attribute.to_sym)
     # Array.flatten calls respond_to?(:to_ary) for each object.
     #  Rails calls array's flatten method on query result's array object. This was added to fix that.
 
@@ -950,7 +952,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def to_json(options = {}, deep=true)
-    options[:methods] = [:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name] unless options.has_key?(:methods)
+    options[:methods] = [:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name,:to_emails] unless options.has_key?(:methods)
     unless options[:basic].blank? # basic prop is made sure to be set to true from controllers always.
       options[:only] = [:display_id,:subject,:deleted]
       json_str = super options
@@ -978,11 +980,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
           :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name])
     end
 
+
     ticket_attributes = [:notes,:attachments]
     ticket_attributes = [] if options[:shallow]
 
     super(:builder => xml, :skip_instruct => true,:include => ticket_attributes, :except => [:account_id,:import_id], 
       :methods=>[:status_name, :requester_status_name, :priority_name, :source_name, :requester_name,:responder_name]) do |xml|
+      xml.to_emails do
+        self.to_emails.each do |emails|
+          xml.tag!(:to_email,emails)
+        end
+      end
       xml.custom_field do
         self.account.ticket_fields.custom_fields.each do |field|
           begin
@@ -1433,5 +1441,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def can_add_requester?
       email.present? || twitter_id.present? || external_id.present? 
     end
+
+    def regenerate_reports_data
+      deleted_or_spam = @ticket_changes.keys & [:deleted, :spam]
+      return unless deleted_or_spam.any? && (created_at.strftime("%Y-%m-%d") != updated_at.strftime("%Y-%m-%d"))
+      set_reports_redis_key(account_id, created_at)
+    end
+
 end
 

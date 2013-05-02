@@ -71,7 +71,8 @@ class Account < ActiveRecord::Base
                           upload download info lounge community forums ticket tickets tour about pricing bugs in out 
                           logs projects itil marketing sales partner store channel reseller resellers online 
                           contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab 
-                          productdemo resources )
+                          productdemo resources static static0 static1 static2 static3 static4 static5 
+                          static6 static7 static8 static9 static10 )
 
   #
   # Tell authlogic that we'll be scoping users by account
@@ -163,6 +164,8 @@ class Account < ActiveRecord::Base
   has_many :facebook_posts, :class_name =>'Social::FbPost' 
   
   has_many :ticket_filters , :class_name =>'Helpdesk::Filters::CustomTicketFilter' 
+
+  #has_many :report_filters, :class_name=>'Reports::Filters::ReportsFilter'
   
   has_many :twitter_handles, :class_name =>'Social::TwitterHandle' 
   has_many :tweets, :class_name =>'Social::Tweet'  
@@ -221,15 +224,6 @@ class Account < ActiveRecord::Base
 
 
   before_create :set_default_values
-  
- 
-  
-
-
-
-  
-
-  
   before_update :check_default_values, :update_users_time_zone
     
   after_create :create_portal, :create_admin
@@ -242,10 +236,9 @@ class Account < ActiveRecord::Base
   before_destroy :update_crm, :notify_totango
 
   after_commit_on_create :add_to_billing, :add_to_totango, :create_search_index
-  before_destroy :update_billing
 
   after_commit_on_update :clear_cache
-  after_commit_on_destroy :clear_cache, :delete_search_index
+  after_commit_on_destroy :clear_cache, :delete_search_index, :delete_reports_archived_data
   before_update :backup_changes
   before_destroy :backup_changes
   
@@ -290,18 +283,17 @@ class Account < ActiveRecord::Base
     
     :blossom => {
       :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
-        :custom_domain, :multiple_emails ],
+        :custom_domain, :multiple_emails, :advanced_reporting ],
       :inherits => [ :sprout ]
     },
     
     :garden => {
-      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :advanced_reporting, :css_customization ],
+      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :css_customization ],
       :inherits => [ :blossom ]
     },
 
     :estate => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting ],
       :inherits => [ :garden ]
     },
 
@@ -310,18 +302,17 @@ class Account < ActiveRecord::Base
     },
     
     :blossom_classic => {
-      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets],
+      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets,  :advanced_reporting],
       :inherits => [ :sprout_classic ]
     },
     
     :garden_classic => {
-      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :advanced_reporting, :css_customization ],
+      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, :css_customization],
       :inherits => [ :blossom_classic ]
     },
 
     :estate_classic => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting ],
       :inherits => [ :garden_classic ]
     }
 
@@ -409,7 +400,7 @@ class Account < ActiveRecord::Base
   end
   
   def active?
-    5.days.since(self.subscription.next_renewal_at) >= Time.now
+    !self.subscription.suspended?
   end
   
   def plan_name
@@ -695,8 +686,11 @@ class Account < ActiveRecord::Base
   end
 
   def delete_search_index
-    Tire.index(search_index_name).delete
-    es_enabled_account.disable_elastic_search
+    es_enable_status = MemcacheKeys.fetch(MemcacheKeys::ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
+    if es_enable_status.key?(self.id)
+      Tire.index(search_index_name).delete
+      es_enabled_account.disable_elastic_search
+    end
   end
 
   def es_enabled?
@@ -847,15 +841,11 @@ class Account < ActiveRecord::Base
   private 
 
     def add_to_billing
-      Resque.enqueue(Billing::AddToBilling::CreateSubscription, id)
-    end 
+      Resque.enqueue(Billing::AddToBilling, { :account_id => id })
+    end
 
     def add_to_totango
       Resque.enqueue(CRM::Totango::TrialCustomer, {:account_id => id})
-    end
-
-    def update_billing
-      Resque.enqueue(Billing::AddToBilling::DeleteSubscription, id)
     end
 
     def update_crm
@@ -874,5 +864,8 @@ class Account < ActiveRecord::Base
       }
     end
 
+    def delete_reports_archived_data
+      Resque.enqueue(Workers::DeleteArchivedData, {:account_id => id})
+    end
 
 end

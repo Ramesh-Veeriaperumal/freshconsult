@@ -1,7 +1,7 @@
 <% content_for :sidebar do %>
   <%= render :partial => "helpnote" %>
 <% end %>
-<%= include_stylesheets :pattern %>
+<%= include_cloudfront_css :pattern %>
 
       <div class="admin_icon_image">
         <div class="content">
@@ -44,7 +44,7 @@
       </div> 
    
   
-	<% unless @day_pass_purchases.empty? %> 
+<!-- 	<% unless @day_pass_purchases.empty? %> 
 	<br /><br />
 	<div class="tabbed">
 	  <%= content_tag :h4, t(".day_pass_history"), :class => "title" %>	  
@@ -64,7 +64,7 @@
 	    </tbody>
     </table>
 	</div> 
-  <% end %>	                     
+  <% end %> -->	                     
 
 <% content_for :sidebar do -%>
 	<% if current_account.has_credit_card? %>      

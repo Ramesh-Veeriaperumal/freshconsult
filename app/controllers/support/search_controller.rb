@@ -175,14 +175,17 @@ class Support::SearchController < SupportController
           search.from options[:size].to_i * (options[:page].to_i-1)
           search.highlight :desc_un_html, :title, :description, :subject, :options => { :tag => '<span class="match">', :fragment_size => 200, :number_of_fragments => 4 }
         end
+
+        @items = @es_items.results
+        @longest_collection = @es_items.results unless main_portal?
+        params[:term].gsub!(/\\/,'')
+        process_results
+
       rescue Exception => e
         @search_results = []
+        @items = []
         NewRelic::Agent.notice_error(e)
       end
-      @items = @es_items.results
-      @longest_collection = @es_items.results unless main_portal?
-      params[:term].gsub!(/\\/,'')
-      process_results
     end
 
     def filter_key(query = "")
@@ -249,6 +252,7 @@ class Support::SearchController < SupportController
       @search_results = []
       pre_process_results if current_account.es_enabled?
       @items.each do |item|
+        next if item.nil?
         result = item_based_selection(item)
         result.merge!('source' => item) if !request.xhr?
         @search_results << result
@@ -263,8 +267,10 @@ class Support::SearchController < SupportController
     end
 
     def highlight_results(result, hit)
-      hit['highlight'].keys.each do |i|
-        result[i] = hit['highlight'][i].to_s
+      unless result.blank?
+        hit['highlight'].keys.each do |i|
+          result[i] = hit['highlight'][i].to_s
+        end
       end
     end
 
