@@ -590,11 +590,12 @@ module ApplicationHelper
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
-        element = content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ) + label)
+        element = content_tag(:label, (check_box(object_name, field_name, :class => element_class, :checked => field_value ) + label), :class => "checkbox")
       when "html_paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class , :value => field_value)
     end
-    content_tag :li, element, :class => " #{ dom_type } #{ field.field_type } field"
+    li_class_name = (dom_type == "checkbox") ? "" : dom_type
+    content_tag :li, element, :class => " #{ li_class_name } #{ field.field_type } field"
   end
 
   def add_cc_field_tag element , field    
