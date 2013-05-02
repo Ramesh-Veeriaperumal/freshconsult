@@ -213,7 +213,39 @@
     display_in_pages: 
     - helpdesk_tickets_show_page_side_bar
 
-  script: "\n      <link href=\"/stylesheets/pattern/pattern.css\" media=\"screen\" rel=\"stylesheet\" type=\"text/css\">\n      <script src=\"/javascripts/pattern/bootstrap-typeahead.js\" type=\"text/javascript\"></script>\n\n      <div id=\"google_calendar_widget\"\">\n        <div class=\"content\">\n          <div class=\"title\">\n            <span>\n              Google Calendar\n            </span>\n\n            <a href=\"#\" class=\"pull-right\" id=\"add_event_link\">Add Event</a><br>\n            <span id=\"gcal-email-container\" class=\"hide\">{{installed_app.user_registered_email}}</span>\n            <br>\n            <a href=\"{{installed_app.oauth_url}}\" id=\"gcal-change-account-link\" class=\"hide\">Change</a>\n          </div>\n          <div class=\"gcal-content-body\">\n            <div id=\"gcal-older-events-link-container\" class=\"hide\"><span class=\"arrow-right\" id=\"gcal-older-events-arrow\"></span><a id=\"gcal-older-events-link\" href=\"#older_events\">Older Events</a></div> \n            <div id=\"google_calendar_events_container\"></div>\n          </div>\n        </div>\n      </div>\n\n      <script type=\"text/javascript\">\n        var google_calendar_options={\n          domain:\"www.googleapis.com\",\n          application_id: {{application.id}},\n          oauth_token:\"{{installed_app.user_access_token}}\",\n          ticket_id: parseInt('{{ticket.id}}'),\n          events_list: [{{installed_app.events_list}}],\n          oauth_url: \"{{installed_app.oauth_url}}\"\n        };\n        CustomWidget.include_js(\"/javascripts/integrations/google_calendar.js\");\n      </script>\n    "
+  script: |-            
+          <link href="/stylesheets/pattern/pattern.css" media="screen" rel="stylesheet" type="text/css">
+          <script src="/javascripts/pattern/bootstrap-typeahead.js" type="text/javascript"></script>
+          <div id="google_calendar_widget"">
+            <div class="content">
+              <div class="title">
+                <span>
+                  Google Calendar
+                </span>
+                <a href="#" class="pull-right" id="add_event_link">Add Event</a><br>
+                <span id="gcal-email-container" class="hide">{{installed_app.user_registered_email}}</span>
+                <br>
+                <a href="{{installed_app.oauth_url}}" id="gcal-change-account-link" class="hide">Change</a>
+              </div>
+              <div class="gcal-content-body">
+                <div id="gcal-older-events-link-container" class="hide"><span class="arrow-right" id="gcal-older-events-arrow"></span><a id="gcal-older-events-link" href="#older_events">Older Events</a></div> 
+                <div id="google_calendar_events_container"></div>
+              </div>
+            </div>
+          </div>
+          <script type="text/javascript">
+            var google_calendar_options={
+              domain:"www.googleapis.com",
+              application_id: {{application.id}},
+              oauth_token:"{{installed_app.user_access_token}}",
+              ticket_id: parseInt('{{ticket.id}}'),
+              ticket_subject: "{{ticket.subject | encode_html}}",
+              events_list: [{{installed_app.events_list}}],
+              oauth_url: "{{installed_app.oauth_url}}"
+            };
+            CustomWidget.include_js("/javascripts/integrations/google_calendar.js");
+          </script>
+    
   name: google_calendar_widget
   id: 16
   description: google_calendar.widgets.google_calendar.description
