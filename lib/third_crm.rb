@@ -40,8 +40,8 @@ class ThirdCRM
 
   def add_contact(account)
     lead_contact = {}
-    lead_contact[:FirstName] = account.admin_first_name
-    lead_contact[:LastName] = account.admin_last_name    
+    lead_contact[:LastName] = account.admin_first_name
+    lead_contact[:FirstName] = account.admin_last_name    
     lead_contact[:Phone] = account.admin_phone
     lead_contact[:Email] = account.admin_email
     lead_contact[:Company ] = account.name

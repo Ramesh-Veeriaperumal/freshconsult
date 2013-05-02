@@ -1251,7 +1251,7 @@ en:
       contact_email : Email
       contact_phone : Phone
       invoice_email_info : Send Invoices to
-      invoice_emails : Emails
+      invoice_emails : Email
   success_msg : Account settings updated successfully!
   failure_msg : Failed to update Account Settings!
   
@@ -1611,6 +1611,7 @@ en:
   portal_signup_anon: Enable this feature if you want users to be able to sign up and create their own user accounts. This will enable users to login and participate in forum discussions, vote on ideas etc.
   portal_captcha_anon: Enable this feature if you want users to submit tickets with captcha
   card_process: Thank you for your payment. Your Freshdesk account is now live!
+  card_error: There was an error adding your card. Please try again.
   chat: Chat
   card_number: Card Number
   forgot_password_intro: Fill out the form below and instructions to reset your password will be emailed to you
@@ -2398,6 +2399,7 @@ en:
   enter_billing_for_free: Please enter the credit card details before you choose the paid plan
   will_expire_in: will expire in
   choose_plan_trial: "Note: Your account will get deactivated after the trial period. <br /> To continue using Freshdesk, please choose a plan below." 
+  trial_expired: "Your trial has expired and the account is deactivated. Please contact support@freshdesk.com to update your subscription."
   asked_on: Asked on
   this_ticket_has_been_deleted: This ticket has been deleted
   state: State
@@ -3521,6 +3523,9 @@ en:
   select_free_plan: "Select your Free plan"
   change_details_anytime: "Subscription details or plans can be changed at anytime."
   enter_payment_details_to_add: "Enter Payment details to add more agents or to upgrade your current plan"
+  card_error: "There was an error adding your card. Please try again."
+  payment_failed: "We are unable to process your credit-card payment. If the problem persists, write to us at support@freshdesk.com."
+  error_in_update: "We are unable to update your subscription. If the problem persists, write to us at support@freshdesk.com."
   plan_is_selected: "Your account is now active with the %{plan} plan"
   error_in_plan: "Error changing the plan"
   change_free_plan: "Change your Free plan"

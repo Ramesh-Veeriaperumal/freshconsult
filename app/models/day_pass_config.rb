@@ -34,7 +34,13 @@ class DayPassConfig < ActiveRecord::Base
   end
   
   def buy_now(quantity)
-    if (s_payment = account.subscription.charge_day_passes(quantity))
+    begin
+      response = Billing::Subscription.new.buy_day_passes(account, quantity)
+    rescue Exception => e
+      failed_purchase(quantity, e)
+    end
+
+    if response
       connection.execute(
         %(update day_pass_configs set available_passes = 
         (available_passes + #{ActiveRecord::Base.sanitize(quantity)}) where id=#{id}))
@@ -42,17 +48,20 @@ class DayPassConfig < ActiveRecord::Base
       account.day_pass_purchases.create(
         :paid_with => DayPassPurchase::PAID_WITH[:credit_card],
         :status => DayPassPurchase::STATUS[:success],
-        :quantity_purchased => quantity,
-        :payment => s_payment
+        :quantity_purchased => quantity
       )
-    else # A bit of duplication?!
-      account.day_pass_purchases.create(
+    end
+
+    response
+  end
+
+  def failed_purchase(quantity, error)
+    account.day_pass_purchases.create(
         :paid_with => DayPassPurchase::PAID_WITH[:credit_card],
         :status => DayPassPurchase::STATUS[:failure],
         :quantity_purchased => quantity,
-        :status_message => account.subscription.errors.full_messages.to_sentence
+        :status_message => error.error_code
       )
-    end
   end
   
 end

@@ -105,8 +105,8 @@ class AuthorizationsController < ApplicationController
     Rails.logger.debug "config_params: #{config_params}"
     #Redis::KeyValueStore is used to store oauth2 configurations since we redirect from login.freshdesk.com to the
     #user's account and install the application from inside the user's account.
-    key_options = { :account_id => account.id, :user_id => current_user.id, :provider => app_name}
-    key_spec = Redis::KeySpec.new(RedisKeys::AUTH_REDIRECT_OAUTH, key_options)
+    key_options = { :account_id => account.id, :provider => app_name}
+    key_spec = Redis::KeySpec.new(RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options)
     Redis::KeyValueStore.new(key_spec, config_params, 300).save
     port = (Rails.env.development? ? ":#{request.port}" : '')
     controller = ( Integrations::Application.find_by_name(app_name).user_specific_auth? ? 'integrations/user_credentials' : 'integrations/applications' )
@@ -128,8 +128,8 @@ class AuthorizationsController < ApplicationController
 
     #Redis::KeyValueStore is used to store salesforce/nimble configurations since we redirect from login.freshdesk.com to the 
     #user's account and install the application from inside the user's account.
-    key_options = { :account_id => account.id, :user_id => current_user.id, :provider => provider}
-    key_spec = Redis::KeySpec.new(RedisKeys::AUTH_REDIRECT_OAUTH, key_options)
+    key_options = { :account_id => account.id, :provider => provider}
+    key_spec = Redis::KeySpec.new(RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options)
     Redis::KeyValueStore.new(key_spec, config_params, 300).save
     redirect_url = protocol +  domain + "/integrations/applications/oauth_install/"+provider
      
@@ -154,7 +154,7 @@ class AuthorizationsController < ApplicationController
       curr_time = ((DateTime.now.to_f * 1000).to_i).to_s
       random_hash = Digest::MD5.hexdigest(curr_time)
       key_options = { :account_id => user_account.id, :user_id => @current_user.id, :provider => @omniauth['provider']}
-      key_spec = Redis::KeySpec.new(RedisKeys::AUTH_REDIRECT_OAUTH, key_options)
+      key_spec = Redis::KeySpec.new(RedisKeys::SSO_AUTH_REDIRECT_OAUTH, key_options)
       Redis::KeyValueStore.new(key_spec, curr_time, 300).save
       redirect_to portal_url + "/sso/login?provider=facebook&uid=#{@omniauth['uid']}&s=#{random_hash}" 
     end

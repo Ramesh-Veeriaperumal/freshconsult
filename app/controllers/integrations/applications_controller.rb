@@ -10,8 +10,8 @@ class Integrations::ApplicationsController < Admin::AdminController
   end
 
   def oauth_install
-    key_options = { :account_id => current_account.id, :user_id => current_user.id, :provider => params['id']}
-    kv_store = Redis::KeyValueStore.new Redis::KeySpec.new(RedisKeys::AUTH_REDIRECT_OAUTH, key_options)
+    key_options = { :account_id => current_account.id, :provider => params['id']}
+    kv_store = Redis::KeyValueStore.new Redis::KeySpec.new(RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options)
     app_config = kv_store.get
   	begin
   		unless app_config.blank?

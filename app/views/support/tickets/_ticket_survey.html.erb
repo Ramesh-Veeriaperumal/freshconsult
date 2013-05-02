@@ -35,19 +35,19 @@
                 </div>
                 <% end %>
     	<div id="survey-feedback" class="<%= form_display %>">        
-            <p><%= t('.survey_title') %></p>
+            <p><%=h(t('.survey_title'))%></p>
             <div class="survey-buttons">
                 <a href="#" id="happy_tab" data-rating="<%=Survey::HAPPY%>">
                     <i class="icon-smiley-happy-small"></i>
-                    <%=current_account.survey.happy_text%>
+                    <%=h(current_account.survey.happy_text)%>
                 </a>
                 <a href="#" id="neutral_tab" data-rating="<%=Survey::NEUTRAL%>">
                     <i class="icon-smiley-neutral-small"></i>
-                    <%=current_account.survey.neutral_text%>
+                    <%=h(current_account.survey.neutral_text)%>
                 </a>
                 <a href="#" id="unhappy_tab" data-rating="<%=Survey::UNHAPPY%>">
                     <i class="icon-smiley-unhappy-small"></i>
-                    <%=current_account.survey.unhappy_text%>
+                    <%=h(current_account.survey.unhappy_text)%>
                 </a>
             </div>
             <div id="survey-comment" class="hide">
