@@ -1,12 +1,9 @@
 <% content_for :sidebar do %>
   <%= render :partial => "helpnote" %>
 <% end %>
-<%# link_to image_tag("symbols/add.png"), new_integrations_application_path, :class => "button custom-tip-bottom floatr", :title => t("application.add_addon") %>
 <h3 class="title"><%=t('application.title')%></h3>
 <div class="intro"><%=t('application.desc')%></div>
-
 <div id="integrations-list">
-
 	<div class="request-well">
 		<ul class="tabs">
 			<li class="active first">
@@ -21,7 +18,6 @@
 		<%= link_to t('integrations.new_freshplug'), new_integrations_application_path, 
 					:class => "uiButton new_custom_app floatr" %>
 	</div>
-	<!-- <input class="search floatr" placeholder="Search Integrations"/> -->
 	<ul class="table-list">
 		<% disp_header = 0
 			no_custom_app = true
@@ -30,7 +26,7 @@
 
 			<li class="app-<%= application.system_app? ? "native" : "custom" %>">
 				<div class="application">
-					<div class="logo application-logo-<%= application.system_app? ? application.name : "custom_app" %>"></div>
+				<div class="logo application-logo-<%= application.system_app? ? application.name : "custom_app" %>"></div>
 		  		<div class="actions"> 
 		  			<% i_app_index=@installed_applications.index { |i_app| true if(i_app.application == application) }
 
@@ -51,7 +47,9 @@
 		  	    		
 					  <%else
 						if application[:options][:direct_install].blank? &&  application[:options][:no_settings].blank?%>
-			  	    		<%= link_to image_tag("symbols/setting.png"), edit_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "button custom-tip-bottom", :title => t("application.configure_addon") %>		
+			  	    		<%= link_to "Edit", 
+			  	    				edit_integrations_installed_application_path(@installed_applications[i_app_index]), 
+			  	    				:class => "btn tooltip", :title => t("application.configure_addon") %>		
 			  	    	<% end %>
 			  	    	<%= link_to t('application.enabled') + "<span></span>", uninstall_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "uiButton special iphone-active custom-tip-bottom", :confirm => t("application.confirm_disable"), :title => t("application.click_to_disable") %>	
 					  <%end%>
@@ -67,12 +65,14 @@
 				<%else # Custom Applications
 					no_custom_app = false%>
 
-				    <%= link_to image_tag("symbols/delete-inactive.png"), application, :confirm => 'Are you sure?', :method => :delete, :class => "button custom-tip-bottom", :title => t('delete') %>
-	    			<%= link_to image_tag("symbols/setting.png"), edit_integrations_application_path(application), :class => "button custom-tip-bottom", :title => t("application.configure_custom_addon") %>		
+				    <%= link_to "Delete", application, :confirm => 'Are you sure?', :method => :delete, :class => "btn" %>
+	    			<%= link_to "Edit", 
+	    					edit_integrations_application_path(application), 
+	    					:class => "btn tooltip", :title => t("application.configure_custom_addon") %>		
 					  <%if i_app_index.nil?%>
-				  		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", install_integrations_installed_application_path(application), :method=>:put, :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>		
+				  		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", install_integrations_installed_application_path(application), :method=>:put, :class => "uiButton special iphone-inactive tooltip", :title => t("application.click_to_enable") %>		
 				  	<%else%>
-	  	    		<%= link_to t('application.enabled') + "<span></span>", uninstall_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "uiButton special iphone-active custom-tip-bottom", :confirm => t("application.confirm_disable"), :title => t("application.click_to_disable") %>	
+	  	    		<%= link_to t('application.enabled') + "<span></span>", uninstall_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "uiButton special iphone-active tooltip", :confirm => t("application.confirm_disable"), :title => t("application.click_to_disable") %>	
 	  	    	<%end%>
 					</div>
 					<div class="col-center">

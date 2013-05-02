@@ -13,7 +13,7 @@ stylesheets:
     - public/stylesheets/app/application.css
 
   plugins:
-    - public/stylesheets/app/plugins.css
+    - public/stylesheets/plugins.css
 
   non_pattern:    
     - public/stylesheets/app/app-common.css

@@ -216,10 +216,8 @@ input{
 }
 
 .button{
-  background: url("/images/button.png") #616161;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
+  background: url("cdn-ignored/bg-repeats/rating-button-bg.png") #616161;
+  @include border-radius(5px);
   width:62px;
   height:26px;
   float: right;

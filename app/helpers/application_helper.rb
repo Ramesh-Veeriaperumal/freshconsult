@@ -764,9 +764,7 @@ module ApplicationHelper
   end
 
   def tour_button(text, tour_id)
-    link_to(content_tag(:div, text, :class=> 'guided-tour-start') , '#', 
-              :rel => 'guided-tour',
-              "data-tour-id" => tour_id)
+    link_to(text, '#', :rel => 'guided-tour', "data-tour-id" => tour_id, :class=> 'guided-tour-button')
   end
   
   def check_fb_reauth_required

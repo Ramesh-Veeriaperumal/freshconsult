@@ -1,6 +1,11 @@
 jQuery("document").ready(function(){
 		setTimeout(function() {
-	 		jQuery("#fd_feedback_widget").validate();
+	 		jQuery("#fd_feedback_widget").validate({
+				onkeyup: false,
+				focusCleanup: true,
+				focusInvalid: false,
+				ignore:".nested_field:not(:visible), .portal_url:not(:visible)"
+	 		});
  	},500);
 
  	jQuery("#freshwidget-submit-frame").bind("load", function() {
