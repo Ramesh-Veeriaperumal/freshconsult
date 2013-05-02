@@ -115,7 +115,7 @@ Helpkit.GlanceReport = (function(){
       });
 
       jQuery("#dialog-select-submit").live('click',function(event){
-        if(jQuery("#select_option_div").val() === null){
+        if(jQuery("#select_option_div").val() === null || jQuery("#select_option_div").val() === ""){
           jQuery("#mandatory-check").removeClass("hide");
           event.stopPropagation();
           return;

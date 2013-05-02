@@ -606,7 +606,6 @@ $animation_timing: .2s;
 		 	load #afb29d,
 		 	comparison #b2a39d,
 		 	topn #9f9db2;
-
 .report-home {
 	padding:0px 0px 5px 0px;
 	margin: 10px;
@@ -647,6 +646,17 @@ $animation_timing: .2s;
 				padding: 0px 18px;
 				position:relative;
 				@include min-height(130px);
+				.report-classic{
+					@include border-radius(3px);
+					background: #FFF;
+					padding: 0px 2px 2px;
+					border: 1px dotted $vreport_color;
+					font-size: 0.8em;
+					font-weight: bold;
+					position: absolute;
+					top: 56%;
+					left: 30%;
+				}
 				a{
 					position:relative;
 					display:block;

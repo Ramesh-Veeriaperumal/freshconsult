@@ -37,7 +37,6 @@
 	    });
 
       	$slider.change(function(){
-      		console.log('height:', $slider.height())
       		if($slider.height() > $parent.height()){
       			$parent.height($slider.height())
       		}

@@ -1,20 +1,20 @@
 <!-- select model for agent start-->
 <a href="#dialog-select" class="hide" title="<%=dialog_box_title%>" rel="freshdialog"
-data-backdrop="static" data-show-close="false" id="select-opt"></a>
-<div id="dialog-select">
+data-backdrop="static" data-show-close="false" id="select-opt" data-width="500"></a>
+<div id="dialog-select" class="row-fluid">
   <% c_hash = @show_options[Reports::Constants::DEFAULT_COLUMNS_ORDER.index(select_option.to_sym)] 
-    if(!c_hash[:options].blank?) 
-    %>
-      <span class="title" style="line-height:33px;"><%=field_title%></span>
-      <p class="hide" id="mandatory-check"><%=t('adv_reports.select_option_msg')%></p><br/>
-      <%= select_tag 'select_option_div', options_for_select(c_hash[:options].map {|k, v| [v, k.to_s]}), { :multiple => false, :selected_val => '', :class => "select2 filter_item span4",:size => 5,:placeholder => "#{t('adv_reports.select_an_option')}"}%>
-    <%
-    else
-      %>
-      <%=no_option_message%>
-      <%
-    end
-    %>
+    if(!c_hash[:options].blank?) %>
+      <% c_hash[:options].unshift(["", ""]) %>
+      <p class="hide" id="mandatory-check"><%=t('adv_reports.select_option_msg')%></p>
+      <label class="title"><%= field_title %></label>
+      <%= select_tag 'select_option_div', options_for_select(c_hash[:options].map {|k, v| [v, k.to_s]}), 
+          { :class => "select2 filter_item span5", 
+            "data-minimum-results-for-search" => 5, 
+            "data-placeholder" => "#{t('adv_reports.select_an_option')}"}%>
+
+    <% else %>
+      <%= no_option_message %>
+    <% end %>
 </div>
 <!-- select model for agent end-->
 <script type="text/javascript">
