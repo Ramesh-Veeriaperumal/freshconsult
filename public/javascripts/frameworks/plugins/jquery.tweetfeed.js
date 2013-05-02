@@ -10,42 +10,62 @@
       fresh_results  = [];  
   
   var settings = {
-                'baseurl'         : 'https://search.twitter.com/search.json',
+                'searchurl'       : '',
                 'query'           : '',
+                'twitter_handle'  : '',
                 'resultsperpage'  : 10,
-                'refresh_timeout' : 30000,
+                'refresh_timeout' : 63000,
                 'templateid'      : '',
                 onbeforeload      : function(){},
                 onafterload       : function(){}
   };
   
   populateTweets = function(response, status, xhr){
-     if($.param({q:settings.query}) == ("q="+response.query)){
-        loading.remove(); 
+
+    if($.param({q:settings.query}) == ("q="+response.attrs["search_metadata"].query)){
+        loading.remove();
         var newTweets = $(tweetsettings.template) 
-                           .tmpl( response.results )
+                           .tmpl( response.attrs["statuses"] )
                            .appendTo("<div />");
                            
         newTweets.appendTo(tweetlist);
         newTweets.find(".autolink").autoLink();
  
-        tweetsettings.next_page   = response.next_page;
-        tweetsettings.refresh_url = response.refresh_url;
-        hasresults = (response.results.length == 0 && response.page == 1)?false:true;
+        tweetsettings.next_page   = response.attrs["search_metadata"].next_results;
+        tweetsettings.refresh_url = response.attrs["search_metadata"].refresh_url;
+        hasresults = response.attrs["statuses"].length==0  ? false:true;
+        settings.onafterload(settings, hasresults, newTweets);
+     }
+  }
+  populateOldTweets = function(response, status, xhr){
+
+    if($.param({q:settings.query}) == ("q="+response.attrs["search_metadata"].query)){
+        loading.remove(); 
+        var newTweets = $(tweetsettings.template) 
+                           .tmpl( response.attrs["statuses"] )
+                           .appendTo("<div />");
+                           
+        newTweets.appendTo(tweetlist);
+        newTweets.find(".autolink").autoLink();
+ 
+        tweetsettings.next_page   = response.attrs["search_metadata"].next_results;
+        hasresults = response.attrs["statuses"].length==0  ? false:true;
         settings.onafterload(settings, hasresults, newTweets);
      }
   }
   
   refreshData = function(response){  
-     if($.param({q:settings.query}) == ("q="+response.query)){
-        fresh_results = fresh_results.concat(response.results);
-        tweetsettings.refresh_url = response.refresh_url;
+  
+    if($.param({q:settings.query}) == ("q="+response.attrs["search_metadata"].query)){
+      
+        fresh_results = fresh_results.concat(response.attrs["statuses"]);
+        tweetsettings.refresh_url = response.attrs["search_metadata"].refresh_url;
      
-        if(response.results.length){
+        if(response.attrs["statuses"].length){
           counter.html(fresh_results.length + " new tweets");
           new_result.show();
         }
-     }
+    }
   }
   
   prependTweets = function(){
@@ -75,7 +95,7 @@
      new_result.hide();
      tweetsettings.next_page = null;
      tweetsettings.refresh_url = null;
-     getData(settings.baseurl, populateTweets, { 'q': settings.query, 'rpp': settings.resultsperpage });
+     getData(settings.searchurl, populateTweets, { 'q': settings.query, 'rpp': settings.resultsperpage, 'handle' : settings.twitter_handle });
   }
  
   var methods = {
@@ -86,7 +106,7 @@
       self = $(this);
       self.data("tweetfeed", {
                   'template'     : settings.templateid,
-                  'url'          : settings.baseurl
+                  'url'          : settings.searchurl
                });
 
       new_result.append(counter);
@@ -99,7 +119,7 @@
                
       setInterval(function(){ 
          if(tweetsettings.refresh_url){
-            getData( settings.baseurl + tweetsettings.refresh_url, refreshData );
+            getData( settings.searchurl + tweetsettings.refresh_url, refreshData, {'handle' : settings.twitter_handle});
          }
       }, settings.refresh_timeout);
                  
@@ -108,11 +128,12 @@
      nextpage : function( ) { 
        if(tweetsettings.next_page){
          self.append(loading);
-         getData( settings.baseurl + tweetsettings.next_page, populateTweets );
+         getData( settings.searchurl + tweetsettings.next_page, populateOldTweets, {'handle' : settings.twitter_handle});
        }
      },
-     search_query : function( query ) { 
+     search_query : function( query, handle ) { 
         settings.query = query;
+        settings.twitter_handle = handle
         new_search();
      }     
   };
