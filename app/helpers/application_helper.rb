@@ -489,7 +489,7 @@ module ApplicationHelper
     if installed_app.blank? or installed_app.application.blank?
       return ""
     else
-      widget = installed_app.application.widgets[0]
+      widget = installed_app.application.widget
       widget_script(installed_app, widget, liquid_objs)
     end
   end
