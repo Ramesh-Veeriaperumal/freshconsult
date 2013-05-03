@@ -1,6 +1,7 @@
 <% content_for :sidebar do -%>
 <%-end %>
 <% first_search = nil %>
+<% handle_id = nil %>
 <h3 class="title">Twitter</h3>
 <div class="page-list">
 	<table class="tweet-table">
@@ -17,6 +18,7 @@
   							<% product_id = twitter_handle.product ? twitter_handle.product.id : nil %>
   							<%= link_to( h(search_key), "#", :class => "item_info #{selected_class}", :twitter_id => twitter_handle.id,:product_id => product_id, :title => h(search_key) ) %>
   							<% first_search ||= h(search_key)  %>
+  							<% handle_id ||= twitter_handle.id %>
   						</li>
 					  <% end %>
 					</ul>
@@ -46,7 +48,7 @@
 				<script id="tweetTemplate" type="text/x-jquery-tmpl">
 				  <div class="list-item" id="TWEET_DIV_${id_str}" data-tweet-id="${id_str}">
 						<div class="preview-pic">
-							<img src="${profile_image_url}" />
+							<img src="${user.profile_image_url}" />
 						</div>
 						<a href="http://twitter.com/${from_user}" target="_blank" class="username">${from_user}</a>
 						<div class="primary-text autolink">${text}</div>
@@ -110,10 +112,12 @@
   var current_twitter_id = <%= @twitter_accounts.first.id %>;
   var feed = null;
       
-	function initTweetFeed(query){
+	function initTweetFeed(query,twitter_handle){
 	  jQuery("#tweet_no_search").hide();
 		feed = jQuery("#twitter_results").tweetfeed({ 
                     "query"       : query, 
+                    "searchurl"   : 'twitter_search',
+                    "twitter_handle": twitter_handle,
                     "templateid"  : "#tweetTemplate",
                     onbeforeload  : function(setting){
                       jQuery("#tweet_results_info").hide();
@@ -138,7 +142,7 @@
 <%- end %>
 <% content_for :onload_script do -%>
   <% unless first_search.blank? %>
-    initTweetFeed("<%= first_search %>");
+    initTweetFeed("<%= first_search %>",<%=handle_id%>);
   <% end %>   
 	jQuery("#search_keys .item_info")
 			.click(function(e){
@@ -154,9 +158,9 @@
 	jQuery("#search_twitter")
 			.submit(function(){
 			  if(!feed){
-			    initTweetFeed(jQuery('#twittersearch').val());
+			    initTweetFeed(jQuery('#twittersearch').val(),current_twitter_id);
 			  }else{  
-				  jQuery('#twitter_results').tweetfeed('search_query', jQuery('#twittersearch').val());
+				  jQuery('#twitter_results').tweetfeed('search_query', jQuery('#twittersearch').val(),current_twitter_id);
 			  }
 				return false;
 			});
