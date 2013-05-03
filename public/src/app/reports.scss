@@ -278,6 +278,17 @@ $single_stackbar_chart_height: 120px;
 }
 .report-close{
 	cursor: pointer;
+	font-size: 20px;
+	text-decoration: none;
+	font-weight: bold;
+	line-height: 20px;
+	color: #000;
+	@include text-shadow(0 1px 0 #FFF);
+	@include opacity(0.2);
+	&:hover, &:focus{
+		@include opacity(0.4);
+		text-decoration: none;
+	}
 }
 .report-title {
 	margin: 15px;
