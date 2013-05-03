@@ -427,22 +427,18 @@ disabled look for already selected choices in the results dropdown
 
 .select2-search-choice-close {
   display: block;
-  position: absolute;
-  right: 3px;
-  top: 4px;
+  float: left;
   width: 12px;
   height: 13px;
   font-size: 1px;
   background: image-url('#{$select-sprite-bg-url}') right top no-repeat;
   outline: none;
+  margin-left: 8px;
 }
-
 .select2-container-multi .select2-search-choice-close {
-  left: 5px;
-  top: 2px;
+  left: 3px;
+  top: 3px;
 }
-
-
 .select2-container-multi .select2-choices .select2-search-choice .select2-search-choice-close:hover {
   background-position: right -11px;
 }

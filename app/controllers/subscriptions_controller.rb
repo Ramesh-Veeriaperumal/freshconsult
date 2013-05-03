@@ -53,6 +53,7 @@ class SubscriptionsController < ApplicationController
         billing_subscription.store_card(@creditcard, @address, @subscription)
       rescue Exception => e
         flash[:notice] = t('card_error')
+        flash[:notice] = e.message.match(/[A-Z][\w\W]*\./).to_s if e.message
         redirect_to :action => "billing" and return
       end
 
@@ -86,12 +87,12 @@ class SubscriptionsController < ApplicationController
       @subscription.free_agents = @subscription_plan.free_agents
       
       begin
-        unless current_account.subscription.chk_change_agents
+        unless !current_account.subscription.trial? and current_account.subscription.chk_change_agents
           billing_subscription.update_subscription(@subscription, prorate?)
         end
       rescue Exception => e
         flash[:notice] = t('error_in_update')
-        flash[:notice] = t('payment_failed') if @subscription.card_number.present?
+        flash[:notice] = e.message.match(/[A-Z][\w\W]*\./).to_s if e.message
         redirect_to subscription_url and return
       end
       

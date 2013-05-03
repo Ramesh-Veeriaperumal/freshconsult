@@ -2,7 +2,7 @@
 .loading-center, .loading-box,
 .ui-autocomplete-loading, .paddingloading,
 .page-list .list-group .loadingbox,
-.loading-amount, .ui-after-submit{ background-image:image-url('/images/animated/ajax-loader.gif') !important; }
+.loading-amount, .ui-after-submit{ background-image:image-url('/images/animated/ajax-loader.gif'); }
 .response-loading #resp-icon{ background: image-url('/images/animated/canned-response.gif') no-repeat !important; }
 #ticket_list_count.fetching{ background: image-url("/images/animated/ticket-count.gif"); }
 #tickets-expanded .fd-ajaxmenu.loading{ background-image:image-url('/images/animated/loading.gif'); }
@@ -92,4 +92,8 @@ input[type="text"].loading, .ui-autocomplete-loading{
 	width:16px;
 	height:11px;
 	margin:3px 8px;
+}
+
+.report-page .loading-center{
+	padding-top:50%;
 }
