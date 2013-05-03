@@ -26,6 +26,7 @@ class Billing::BillingController < ApplicationController
   IN_TRIAL = "in_trial"
   CANCELLED = "cancelled"
   NO_CARD = "no_card"
+  OFFLINE = "off"
 
   TRIAL = "trial"
   FREE = "free"
@@ -87,6 +88,7 @@ class Billing::BillingController < ApplicationController
         :day_pass_amount => subscription_plan(subscription[:plan_id]).day_pass_amount,
         :renewal_period => billing_period(subscription[:plan_id]),
         :agent_limit => subscription[:plan_quantity],
+        :free_agents => subscription_plan(subscription[:plan_id]).free_agents,
         :state => subscription_state(subscription, customer),
         :next_renewal_at => next_billing(subscription)
       }
@@ -108,6 +110,8 @@ class Billing::BillingController < ApplicationController
       status =  subscription[:status]
       
       case
+        when (customer[:auto_collection].eql?(OFFLINE) and status.eql?(ACTIVE))
+          ACTIVE
         when status.eql?(IN_TRIAL)
           TRIAL
         when (status.eql?(ACTIVE) and customer[:card_status].eql?(NO_CARD))
