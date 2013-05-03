@@ -10,8 +10,9 @@
 				<div class="reports-icon-at-a-glance pull-right"></div>
 			</div>
 			<ul class="report_icons">
-				<%= report_item({:label => t('reports.helpdesk_title_nav'), :class => 'helpdesk', :url => helpdesk_activity_url}) %>
-				<%= report_item({:label => t('reports.customer_title_nav'), :class => 'customer', :url => customer_activity_url}) %>
+				<%= report_item({:label => t('reports.helpdesk_title_nav'), :class => 'helpdesk-glance', 
+						:url => helpdesk_activity_url, :classic => true}) %>
+				<%= report_item({:label => t('reports.customer_title_nav'), :class => 'customer-at-a-glance', :url => customer_activity_url, :classic => true}) %>
 				
 				<% if feature?(:enterprise_reporting) %>
 				<%= report_item({:label => t('adv_reports.helpdesk_at_a_glance'), :class => 'helpdesk-glance', :url => reports_helpdesk_glance_reports_url}) %>

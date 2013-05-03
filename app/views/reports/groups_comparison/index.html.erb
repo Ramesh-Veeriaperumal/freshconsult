@@ -1,4 +1,4 @@
-<% content_for :layoutType do -%>ticket_list<%- end %>
+<% content_for :layoutType do -%>reports_page<%- end %>
 <link href="/stylesheets/ui.daterangepicker.css" media="screen" rel="stylesheet" type="text/css">
 
 <%= include_cloudfront_css :pattern %>
@@ -8,19 +8,20 @@
 <div id="loading-box" class="loading-box hide"></div>
 <!-- select model for agent start-->
 <a href="#dialog-select" class="hide" title="Groups Comparison Report" 
-		data-backdrop="static" data-show-close="false" rel="freshdialog" id="select-opt"></a>
+		data-backdrop="static" data-show-close="false" rel="freshdialog" id="select-opt" data-width="500"></a>
 <div id="dialog-select">
-	<p class="hide" id="mandatory-check"></p><br/>
+	<p class="hide" id="mandatory-check"></p>
   <% c_hash = @show_options[Reports::Constants::DEFAULT_COLUMNS_ORDER.index(:group_id)]
     container = "multi_select"
   %>
-  	<div style="padding:5px 0px;">
-  		<span class="title"><%=t('adv_reports.comparison_reports.select_group_msg')%></span><br/>
-  		<%= select_tag 'agent_select_option', options_for_select(c_hash[:options].map {|k, v| [v, k.to_s]}), { :multiple => true, :class => "select2 filter_item span4",:size => 5,:placeholder => "#{t('adv_reports.select_an_option')}"}%>
+  	<div class="row-fluid">
+  		<label class="title"><%=t('adv_reports.comparison_reports.select_group_msg')%></label>
+  		<%= select_tag 'agent_select_option', options_for_select(c_hash[:options].map {|k, v| [v, k.to_s]}), { :multiple => true, :class => "select2 filter_item span9",:size => 5,:placeholder => "#{t('adv_reports.select_an_option')}"}%>
   	</div>
-  	<div style="clear:both;padding:5px 0px;">
-      <span class="title"><%=t('adv_reports.comparison_reports.select_metrics_msg')%></span><br/>
-      <%= select_tag 'metric_select_option', options_for_select(@comparison_fields.map {|k, v| [v, k.to_s]}), { :multiple => true, :class => "select2 filter_item span4",:size => 5,:placeholder => "#{t('adv_reports.select_an_option')}"}%>
+  	<br/>
+  	<div class="row-fluid">
+      <label class="title"><%=t('adv_reports.comparison_reports.select_metrics_msg')%></label>
+      <%= select_tag 'metric_select_option', options_for_select(@comparison_fields.map {|k, v| [v, k.to_s]}), { :multiple => true, :class => "select2 filter_item span9",:size => 5,:placeholder => "#{t('adv_reports.select_an_option')}"}%>
     </div>
 </div>
 <!-- select model for agent end-->
@@ -48,7 +49,7 @@
 				  <div class="row-fluid">
 				    <div class="span12 report-header-content">
 				      <div class="span6">
-				        <img src="/images/reports-icon/report-icon.png" alt="" class="vertical-alignment report-header-icon"/>
+				        <img src="/images/reports/report-icon.png" alt="" class="vertical-alignment report-header-icon"/>
 				        <div class="vertical-alignment">
 				          <p class="lead" style="margin-bottom:0;" id="report_header_title"><%=t('adv_reports.group_comparison')%></p>
 				          <p class="muted" id="report_header_date"><%="#{30.days.ago.strftime("%d %B %Y")} - #{1.days.ago.strftime("%d %B %Y")}"%></p>

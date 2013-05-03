@@ -475,7 +475,7 @@ disabled look for already selected choices in the results dropdown
 .select2-result-unselectable .select2-result-selectable .select2-match { text-decoration: underline; }
 .select2-result-unselectable .select2-match { text-decoration: none; }
 
-.select2-offscreen { position: absolute; left: -10000px; }
+.select2-offscreen { position: absolute; left: -10000px; margin-top:-15px/* Fix for scroll bar in modal dialogue box */;}
 
 /* Retina-ize icons */
 

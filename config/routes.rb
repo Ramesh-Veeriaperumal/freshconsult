@@ -177,7 +177,7 @@
   
   map.namespace :social do |social|
     social.resources :twitters, :controller => 'twitter_handles',
-                :collection =>  { :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any, :tweet_exists => :get , :user_following => :any, :authdone => :any },
+                :collection =>  { :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any, :tweet_exists => :get , :user_following => :any, :authdone => :any , :twitter_search => :get},
                 :member     =>  { :search => :any, :edit => :any }
 
     social.resources :facebook, :controller => 'facebook_pages', 

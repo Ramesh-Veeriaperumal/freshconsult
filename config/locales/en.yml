@@ -3340,6 +3340,7 @@ en:
   reorder: "Reorder"
   reports:
       no_data: No data to display!
+      classic: "Classic"
       tab_heading: "Reports"
       select_customer: "Select Customer"
       select_options: "Reports by"

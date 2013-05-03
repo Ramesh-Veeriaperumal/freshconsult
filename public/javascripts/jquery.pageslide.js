@@ -20,7 +20,7 @@
 		$parent.css({
 			'left':"0", 
 			'position':'relative', 
-			'width': org_width+parent_width, 
+			'width': org_width+parent_width+2, 
 			'min-height': parent_height,
 			'height':'auto !important', 
    			'height': parent_height
@@ -37,7 +37,6 @@
 	    });
 
       	$slider.change(function(){
-      		console.log('height:', $slider.height())
       		if($slider.height() > $parent.height()){
       			$parent.height($slider.height())
       		}
