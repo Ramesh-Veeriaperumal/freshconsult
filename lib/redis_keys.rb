@@ -74,7 +74,7 @@ module RedisKeys
 			values.each do |val|
 				$redis.sadd(key, val)
 			end
-			$redis.expire(key,expires) if expires
+			# $redis.expire(key,expires) if expires
 	  end
 	end
 
@@ -139,7 +139,7 @@ module RedisKeys
 	def add_to_hash(hash, key, value, expires = 86400)
 		newrelic_begin_rescue do
 			$redis.hset(hash, key, value)
-			$redis.expire(hash, expires)
+			# $redis.expire(hash, expires)
 	  end
 	end
 
