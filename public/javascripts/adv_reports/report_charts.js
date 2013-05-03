@@ -91,7 +91,7 @@ function gaugeChart(opts){
 	    plotBorderColor: 'fff'
     },
     title: {
-      text: (typeof opts['chartText'] === undefined) ? '' : opts['chartText'],
+      text: (typeof opts['chartText'] === 'undefined') ? '' : opts['chartText'],
       style: {fontSize: '15px'}
     },
     
@@ -259,7 +259,7 @@ function pieChart(opts){
 	    margin:[00, 10, 0, 10]
 	  },
     title: {
-      text: (typeof opts['title'] === undefined) ? '' : opts['title'],
+      text: (typeof opts['title'] === 'undefined') ? '' : opts['title'],
       style: {fontSize: '12px'},
     },
 	  plotOptions: {
@@ -338,7 +338,7 @@ function lineChart(opts){
       borderColor: 'rgba(0,0,0,0)'
     },
     title: {
-      text: (typeof opts['title'] === undefined) ? '' : opts['title'],
+      text: (typeof opts['title'] === 'undefined') ? '' : opts['title'],
       style: {fontSize: '12px'}
     },
     legend: {
@@ -416,7 +416,7 @@ function pare_to_chart(opts){
       backgroundColor: 'rgba(255,255,255,0.1)'
     },
     title: {
-      text: (typeof opts['title'] === undefined) ? '' : opts['title'],
+      text: (typeof opts['title'] === 'undefined') ? '' : opts['title'],
       style: {fontSize: '12px'}
     },
     xAxis: {
@@ -500,7 +500,7 @@ function bar_chart(opts){
       backgroundColor: 'rgba(255,255,255,0.1)'
     },
     title: {
-      text: (typeof opts['title'] === undefined) ? '' : opts['title'],
+      text: (typeof opts['title'] === 'undefined') ? '' : opts['title'],
       style: {fontSize: '12px'}
     },
     xAxis: {
@@ -519,7 +519,7 @@ function bar_chart(opts){
       gridLineColor: '#cccccc',
       gridLineDashStyle: 'dot',
       title: {
-        text: (typeof opts['yAxis_label'] === undefined) ? 'No. of Tickets' : opts['yAxis_label'],
+        text: (typeof opts['yAxis_label'] === 'undefined') ? 'No. of Tickets' : opts['yAxis_label'],
         align: 'high',
         style: {
           font: 'normal 11px Helvetica Neue, sans-serif'
@@ -582,7 +582,7 @@ function xaxis_bar_chart(opts){
       backgroundColor: 'rgba(255,255,255,0.1)'
     },
     title: {
-      text: (typeof opts['title'] === undefined) ? '' : opts['title'],
+      text: (typeof opts['title'] === 'undefined') ? '' : opts['title'],
       style: {fontSize: '12px'}
     },
     xAxis: {
@@ -598,7 +598,7 @@ function xaxis_bar_chart(opts){
       gridLineColor: '#cccccc',
       gridLineDashStyle: 'dot',
       title: {
-        text: (typeof opts['yAxis_label'] === undefined) ? 'No. of Tickets' : opts['yAxis_label'],
+        text: (typeof opts['yAxis_label'] === 'undefined') ? 'No. of Tickets' : opts['yAxis_label'],
         align: 'high',
         style: {
           font: 'normal 11px Helvetica Neue, sans-serif'
