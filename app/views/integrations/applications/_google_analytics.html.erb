@@ -2,8 +2,8 @@
 <div class="google_analytics">
 <fieldset>
 <% if portals.size > 1 %>
-	<%portals.each { |portal|
-		portal_name = (portal.name.blank?) ? portal.product.name : portal.name %>
+	<% portals.each { |portal|
+		portal_name = "#{portal.portal_name.presence} <i>#{portal.host}</i>" %>
 	<div class="fields">
 		<label for="configs_<%=portal.id%>_account_number">
 			<%= t('integrations.google_analytics.form.tracking_id') + portal_name %>

@@ -16,6 +16,9 @@
 
 		<meta name="viewport" content="width=device-width,user-scalable=no" />
 		<meta name="viewport" content="initial-scale = 1.0">
+		<% unless page_canonical.blank? %>
+			<link rel="canonical" href="<%= page_canonical %>" />
+		<% end %>
 
 		<%= portal_fav_ico %>
 
@@ -31,19 +34,20 @@
 		<!-- Including default portal based script framework at the top -->
 		<%= include_cloudfront_js :portal_head %>
 
-		<!-- Access variables for the portal -->
+		<%= render :partial => "layouts/support/google_analytics_integration" %>
+
+		<!-- Access variables for portal -->
 		<%= portal_access_varibles %>
 	</head>
 	<body>
 		<%= assumed_identity_message %>
 		
 		<%= @layout %>
-		
-		<%= render :partial => "layouts/integrations" %>
+				
 		<%= render :partial => "layouts/shared/scripts" %> 
 
 		<!-- Including default portal based script at the bottom -->
-		<%= include_cloudfront_js :portal_bottom%>
+		<%= include_cloudfront_js :portal_bottom %>
 		<%= include_cloudfront_js :redactor %>
 
 		<%= cookie_law %>

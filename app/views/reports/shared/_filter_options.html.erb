@@ -6,7 +6,7 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
     <ul class="unstyled">
       <li>
         <h3 class="lead">Edit Filter
-          <span class="muted report-close pull-right" data-dismiss="slider"> x </span>
+          <span class="muted report-close pull-right" id="filter-close-icon">×</span>
         </h3>
       <li>
       <form id="FilterOptions" method="post" action='<%=action_url%>/generate_pdf' target="_blank">
@@ -125,6 +125,11 @@ jQuery(document).ready(function() {
 
     jQuery("#cancel").on('click',function(){
       jQuery('#sliding').click();
+    });
+
+    //add the link which fire event on close button.
+    jQuery("#filter-close-icon").on('click',function(){
+      jQuery("#cancel").click();
     });
   });
 
