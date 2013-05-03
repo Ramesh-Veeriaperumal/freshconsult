@@ -325,7 +325,7 @@ $single_stackbar_chart_height: 120px;
 			background:#fff; 
 			@include border-radius(5px); 
 			@include min-height(450px);
-			@include box-shadow(rgba(0, 0, 0, 0.2) 0px 2px 3px);
+			//@include box-shadow(rgba(0, 0, 0, 0.2) 0px 2px 3px);
 		}
 	}
 	.report-filter{
@@ -512,7 +512,9 @@ $single_stackbar_chart_height: 120px;
 			}
 			input{
 				padding-right:0;
-				padding-left:0;
+				min-height: 30px;
+				width: 100%;
+				@include box-sizing(border-box);
 			}
 		}
 	}

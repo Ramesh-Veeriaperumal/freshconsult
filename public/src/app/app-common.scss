@@ -6718,7 +6718,20 @@ margin:10px;
 .survey_text {
 	width: 70%;
 }
-
+.reports_page .pagearea{
+	background: none;
+	border:none;
+	@include box-shadow(rgba(0,0,0, 0.05) 0 0 0);	
+	@include text-shadow(white 1px 1px 0px);
+	margin-bottom: 0;
+	padding-bottom: 0;
+	padding-left:0;
+	padding-right:0;
+	.contentCol {
+		background: none;
+		border:none;
+	}
+}
 .ticket_list .pagearea{
 	background: none;
 	border:none;

@@ -1,4 +1,4 @@
-<% content_for :layoutType do -%>ticket_list<%- end %>
+<% content_for :layoutType do -%>reports_page<%- end %>
 <link href="/stylesheets/ui.daterangepicker.css" media="screen" rel="stylesheet" type="text/css">
 
 <%= include_cloudfront_css :pattern %>
@@ -49,7 +49,7 @@
 				  <div class="row-fluid">
 				    <div class="span12 report-header-content">
 				      <div class="span6">
-				        <img src="/images/reports-icon/report-icon.png" alt="" class="vertical-alignment report-header-icon"/>
+				        <img src="/images/reports/report-icon.png" alt="" class="vertical-alignment report-header-icon"/>
 				        <div class="vertical-alignment">
 				          <p class="lead" style="margin-bottom:0;" id="report_header_title"><%=t('adv_reports.agent_comparison')%></p>
 				          <p class="muted" id="report_header_date"><%="#{30.days.ago.strftime("%d %B %Y")} - #{1.days.ago.strftime("%d %B %Y")}"%></p>
