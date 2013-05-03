@@ -50,15 +50,15 @@
 						<div class="preview-pic">
 							<img src="${user.profile_image_url}" />
 						</div>
-						<a href="http://twitter.com/${from_user}" target="_blank" class="username">${from_user}</a>
+						<a href="http://twitter.com/${user.screen_name}" target="_blank" class="username">${user.screen_name}</a>
 						<div class="primary-text autolink">${text}</div>
 						<div class="info-data">
 						  <div class="floatr">
 						    <span class="item_actions">
-						      <a href="#" data-user="${from_user}" class="button reply_button">
+						      <a href="#" data-user="${user.screen_name}" class="button reply_button">
 						        <%= t('social.twitter_handles.index.reply') %>
 					        </a>
-  						    <a href="#" data-text="${text}" data-user="${from_user}" data-id="${id_str}" class="button convert_as_ticket">
+  						    <a href="#" data-text="${text}" data-user="${user.screen_name}" data-id="${id_str}" class="button convert_as_ticket">
   							    <%= t('social.twitter_handles.index.convert_to_ticket') %>
   						    </a>
   						  </span>
