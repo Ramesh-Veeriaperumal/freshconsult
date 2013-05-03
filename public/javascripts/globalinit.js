@@ -26,6 +26,11 @@ is_touch_device = function() {
       $('html').addClass('touch');
     }
 
+    //IE10
+    if ($.browser.msie && parseInt($.browser.version) == 10) {
+      $('html').addClass('ie ie10');
+    }
+
     $("body").click(function(ev){
       hideWidgetPopup(ev);
     });

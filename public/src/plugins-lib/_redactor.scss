@@ -35,20 +35,6 @@ body .redactor_air {
 	white-space: normal;	
 }
 
-.redactor_editor, .redactor_editor:focus {
-	position: relative;
-	outline: none;
-	box-shadow: none !important;
-	padding: 15px !important;
-	margin: 0 !important;
-	background: none;	
-	background: #fff !important;
-	overflow: auto;
-	font-family: $blueprint-font-family !important;
-	font-size: 13px;
-	white-space: normal;
-	border-radius:0 0 5px 5px;
-}
 .redactor_editor {
 	@include text-formatting;
 	span, b, u, i, strong, em, strike, font, a, code, del, s, blockquote,
@@ -59,6 +45,20 @@ body .redactor_air {
 		line-height: 18px;
 		margin:0;
 	}           
+}
+.redactor_editor, .redactor_editor:focus {
+	position: relative;
+	outline: none;
+	box-shadow: none !important;
+	padding: 15px !important;
+	margin: 0 !important;
+	background: none;	
+	background: #fff !important;
+	overflow-y: auto;
+	font-family: $blueprint-font-family !important;
+	font-size: 13px;
+	white-space: normal;
+	border-radius:0 0 5px 5px;
 }
 .redactor_editor li{
 	padding:0px;

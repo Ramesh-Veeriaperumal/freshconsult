@@ -126,20 +126,29 @@ $single_stackbar_chart_height: 120px;
   .tickets-summary, .sla-compliance{
     float:left;            
   }
-  .tickets-summary{ width:60%;  }
-  .sla-compliance{ width:20%; }
+  .tickets-summary{ width:50%;  }
+  .sla-compliance{ width:25%; }
 }
 
+#report-content{
+	div:last-child{
+		.seperator{
+			border:0;
+			height: 0;
+			margin:0;
+			background: none;
+		}
+	}
+}
 #pie-charts {
 	width:100%;
 	float:none;
 	@include clearfix;
 }
 .report-unit.report-pie-chart {
-	height:$pie_chart_size;
 	width:50%;
 	float:left;
-	margin:0;
+	margin-bottom:5px;
 	.chart-container {
 		height:$pie_chart_size - 30;
 		width:$pie_chart_size - 30;
@@ -214,12 +223,12 @@ $single_stackbar_chart_height: 120px;
 	}
 }
 .report-unit {
-    margin: 0 0 20px 20px;	              
+    margin: 0 0 20px 0px;	              
 		h3 {
-			font-size:12px;
-			color:#333;
-			font-weight:bold;
-			line-height:18px;
+			margin-bottom: 16px;
+			font-size: 20px;
+			font-weight: 200;
+			line-height: 24px;
 		}
     ul.summary{
 /*        background-color:$tickets_summary_bg;*/
@@ -231,20 +240,21 @@ $single_stackbar_chart_height: 120px;
         li{
             width: auto;
             margin: 15px 1% 0 0;
-            text-align:center;
+            text-align:left;
             width:38%;                             
             border-right:0px dotted #dfdfdf;
             span{
                 display:inline-block;
-                font-size:12px;
+                font-size:11px;
                 line-height:18px;
+                text-transform: uppercase;
             }
             h4{
-                font-size:26px;
+                font-size:28px;
                 line-height:56px;
                 color:$report-number-color;
                 padding-top:0;
-                font-weight:bold;  
+                font-weight:200;  
 
             }
         }
@@ -268,6 +278,17 @@ $single_stackbar_chart_height: 120px;
 }
 .report-close{
 	cursor: pointer;
+	font-size: 20px;
+	text-decoration: none;
+	font-weight: bold;
+	line-height: 20px;
+	color: #000;
+	@include text-shadow(0 1px 0 #FFF);
+	@include opacity(0.2);
+	&:hover, &:focus{
+		@include opacity(0.4);
+		text-decoration: none;
+	}
 }
 .report-title {
 	margin: 15px;
@@ -756,14 +777,20 @@ $animation_timing: .2s;
 		}
 	}
 }
-.loading-box{
+.loading-box, #loading-box{
 	z-index:99999; 
 	position:absolute;
 	width:101%;
 	height:82%;
 	background-color:#efefef; 
 	left:-1px;
+	margin-left:-3px;
+	padding-left:3px;
 }
+#loading-box{
+	height:110%;
+}
+
 .row-fluid{
 	position: relative;
 }

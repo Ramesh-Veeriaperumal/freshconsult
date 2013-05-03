@@ -335,16 +335,20 @@ Helpkit.ComparisonReport = (function(){
     _const:{
       'date_field': 'date_range',
       'filter_container': 'filter_container',
-      'report_home_url': '/reports'
+      'report_home_url': '/reports',
+      'agent_max_alert': 'You can select a maximum of 4 agents.',
+      'group_max_alert': 'You can select a maximum of 4 groups.',
+      'agent_mand_alert': 'Agent and Metrics are required to generate report.',
+      'group_mand_alert': 'Group and Metrics are required to generate report.'
     },
     validateSelectedComparison: function(members_select_id,comparison_select_id,error_id){
       if(jQuery("#"+members_select_id).length === 1 && jQuery("#"+comparison_select_id).length === 1){
         if(jQuery("#"+members_select_id).val() === null || jQuery("#"+comparison_select_id).val() === null){
-          jQuery("#"+error_id).text('Fields Select Agents and Select Metrice are mandatory.').show();
+          jQuery("#"+error_id).text(_FD._const[_FD.report_type+"_mand_alert"]).show();
           return false;
         }
         else if(jQuery("#"+members_select_id).val().length > 4){
-          jQuery("#"+error_id).text('Fields Select Agents can have only 4 values at max.').show();
+          jQuery("#"+error_id).text(_FD._const[_FD.report_type+"_max_alert"]).show();
           return false;
         }
       }

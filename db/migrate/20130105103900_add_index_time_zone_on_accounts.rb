@@ -1,9 +1,13 @@
 class AddIndexTimeZoneOnAccounts < ActiveRecord::Migration
   def self.up
-  	add_index :accounts, :time_zone, :name => 'index_accounts_on_time_zone'
+  	Lhm.change_table :accounts, :atomic_switch => true do |m|
+  		m.add_index :time_zone
+    end
   end
 
   def self.down
-  	remove_index :accounts, :time_zone
+  	Lhm.change_table :accounts, :atomic_switch => true do |m|
+  		m.remove_index :time_zone
+    end
   end
 end
