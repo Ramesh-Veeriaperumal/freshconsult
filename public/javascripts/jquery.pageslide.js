@@ -20,7 +20,7 @@
 		$parent.css({
 			'left':"0", 
 			'position':'relative', 
-			'width': org_width+parent_width, 
+			'width': org_width+parent_width+2, 
 			'min-height': parent_height,
 			'height':'auto !important', 
    			'height': parent_height
