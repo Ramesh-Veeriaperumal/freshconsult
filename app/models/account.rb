@@ -69,7 +69,7 @@ class Account < ActiveRecord::Base
 
   RESERVED_DOMAINS = %W(  blog help chat smtp mail www ftp imap pop faq docs doc wiki team people india us talk 
                           upload download info lounge community forums ticket tickets tour about pricing bugs in out 
-                          logs projects itil marketing sales partner store channel reseller resellers online 
+                          logs projects itil marketing partner store channel reseller resellers online 
                           contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab 
                           productdemo resources static static0 static1 static2 static3 static4 static5 
                           static6 static7 static8 static9 static10 )

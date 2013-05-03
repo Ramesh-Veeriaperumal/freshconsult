@@ -553,6 +553,7 @@ $(document).ready(function() {
 	});
 
 	$("body").on('click.ticket_details', '[rel=triggerAddTimer]', function(ev){
+		ev.preventDefault();
 		var timesheets = $('#timesheetlist');
 		if(timesheets.length) {
 			$('#triggerAddTime').trigger('click');
