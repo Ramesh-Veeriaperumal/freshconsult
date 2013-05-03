@@ -209,7 +209,12 @@ class Social::TwitterHandlesController < ApplicationController
     in_reply_to_status_id = nil
     
     return_value = sandbox(0) { 
-     in_reply_to_status_id = Twitter.status(params[:helpdesk_tickets][:tweet_attributes][:tweet_id]).in_reply_to_status_id
+      twt_handle = current_account.twitter_handles.find(params[:helpdesk_tickets][:tweet_attributes][:twitter_handle_id])
+      if twt_handle
+        wrapper = TwitterWrapper.new twt_handle
+        twitter = wrapper.get_twitter
+        in_reply_to_status_id = twitter.status(params[:helpdesk_tickets][:tweet_attributes][:tweet_id]).in_reply_to_status_id
+      end
     }
     
     if return_value == 0
