@@ -81,9 +81,9 @@ module ApplicationHelper
     end     
   end
 
-  def page_title
-    portal_name = h(current_portal.portal_name) + " : "
-    portal_name += @page_title || t('helpdesk_title')
+  def page_title    
+    portal_name = " : #{h(current_portal.portal_name)}" if current_portal.portal_name.present?
+    "#{(@page_title || t('helpdesk_title'))}#{portal_name}"
   end 
   
   def page_description
@@ -590,12 +590,11 @@ module ApplicationHelper
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
-        element = content_tag(:label, (check_box(object_name, field_name, :class => element_class, :checked => field_value ) + label), :class => "checkbox")
+        element = content_tag(:div, (check_box(object_name, field_name, :class => element_class, :checked => field_value ) + label))
       when "html_paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class , :value => field_value)
     end
-    li_class_name = (dom_type == "checkbox") ? "" : dom_type
-    content_tag :li, element, :class => " #{ li_class_name } #{ field.field_type } field"
+    content_tag :li, element, :class => " #{ dom_type } #{ field.field_type } field"
   end
 
   def add_cc_field_tag element , field    
