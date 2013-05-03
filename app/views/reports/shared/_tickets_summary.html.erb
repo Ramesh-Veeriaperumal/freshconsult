@@ -3,12 +3,12 @@
     <h3><%= t('reports.summary.title')%></h3>
     <ul class="summary clearfix">
       <li>
-        <span><%= t('reports.summary.received_tickets')%> </span>
         <h4><%= number_with_delimiter(@current_month_tot_tickets) %></h4>
+        <span><%= t('reports.summary.received_tickets')%> </span>
       </li>
       <li class="last">
-        <span><%= t('reports.summary.resolved_tickets')%> </span>
         <h4><%= number_with_delimiter(@count_of_resolved_tickets) %></h4>
+        <span><%= t('reports.summary.resolved_tickets')%> </span>
         
       </li>
     </ul>
