@@ -155,6 +155,7 @@ module ApplicationHelper
         when "facebook" then
           auto_link("http://facebook.com/#{value}")
         when "twitter" then
+          value = value.gsub('@','')
           link_to("@#{value}" , "http://twitter.com/#{value}")
         when "link" then
           auto_link(value)
