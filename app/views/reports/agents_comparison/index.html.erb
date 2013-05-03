@@ -10,7 +10,7 @@
 <a href="#dialog-select" class="hide" data-backdrop="static" 
 		data-show-close="false" title="Agents Comparison Report" rel="freshdialog" id="select-opt" data-width="500"></a>
 <div id="dialog-select">
-	<p class="hide" id="mandatory-check"></p>
+	<p class="hide alert-text" id="mandatory-check"></p>
 	<% c_hash = @show_options[Reports::Constants::DEFAULT_COLUMNS_ORDER.index(:responder_id)]
     container = "multi_select"
   %>
