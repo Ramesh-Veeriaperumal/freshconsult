@@ -777,7 +777,7 @@ $animation_timing: .2s;
 		}
 	}
 }
-.loading-box{
+.loading-box, #loading-box{
 	z-index:99999; 
 	position:absolute;
 	width:101%;
@@ -787,6 +787,10 @@ $animation_timing: .2s;
 	margin-left:-3px;
 	padding-left:3px;
 }
+#loading-box{
+	height:110%;
+}
+
 .row-fluid{
 	position: relative;
 }
