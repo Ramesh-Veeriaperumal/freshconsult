@@ -3263,42 +3263,11 @@ div.addReminder{
 			.status-source {
 				text-align: right;
 				background-position:top right;
-		   		width: 30px;
+		   		width: 36px;
 		   		height: 36px;
 				padding: 20px 0 0;
-		   		&.source-detailed-portal {
-		   			background-image: url('/images/sources/detailed-portal.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   		&.source-detailed-email {
-		   			background-image: url('/images/sources/detailed-email.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   		&.source-detailed-facebook {
-		   			background-image: url('/images/sources/detailed-facebook.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   		&.source-detailed-twitter {
-		   			background-image: url('/images/sources/detailed-twitter.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   		&.source-detailed-phone {
-		   			background-image: url('/images/sources/detailed-phone.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   		&.source-detailed-chat {
-		   			background-image: url('/images/sources/detailed-chat.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   		&.source-detailed-forum {
-		   			background-image: url('/images/sources/detailed-forum.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   		&.source-detailed-mobihelp {
-		   			background-image: url('/images/sources/detailed_mobihelp.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   }
+				background-repeat: no-repeat;
+			}
 
 		   &.assign {
 		   		padding-left:0; padding-right:0;
@@ -9967,4 +9936,20 @@ div.gcal-confirm-modal-content{ width: 100%; }
 	li.select2-search-choice {
 		width: auto;
 	}
+}
+
+// Pjax Debug related styles
+#benchmarkresult{
+	width: 25%;
+	display: inline-block;
+	position: fixed;
+	z-index: 999;
+	background: #DFDFDF;
+	bottom: 10px;
+	right: 10px;
+	border: 1px solid gainsboro;
+	padding: 10px;
+	box-shadow: 2px 2px #AAA;
+	color: #333;
+	border-radius: 5px;
 }
