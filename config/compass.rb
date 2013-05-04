@@ -10,6 +10,7 @@ generated_images_dir = "public/images/sprites"
 http_generated_images_path = "/images/sprites/"
 
 generated_images_dir = "public/images/sprites"
+disable_warnings	 = true
 
 # You can select your preferred output style here (can be overridden via the command line):
 # output_style = :expanded or :nested or :compact or :compressed

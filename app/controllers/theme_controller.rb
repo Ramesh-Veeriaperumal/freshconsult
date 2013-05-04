@@ -11,7 +11,7 @@ class ThemeController < SupportController
 								linkColor linkColorHover inputFocusRingColor)
 
 	def index		
-		_options = Compass.configuration.to_sass_engine_options.merge(:syntax => :scss, :always_update => true, :style => :compact)
+		_options = Compass.configuration.to_sass_engine_options.merge(:syntax => :scss, :always_update => true, :style => :compressed)
 		_options[:load_paths] << "#{RAILS_ROOT}/public/src/portal"
 
 		engine = Sass::Engine.new("#{@theme_colors} #{@default_custom_css}", _options)
@@ -36,7 +36,7 @@ class ThemeController < SupportController
 		end
 
 		def merged_scss	
-			@default_custom_css = render_to_string(:file => "#{RAILS_ROOT}/public/src/portal/_portal.scss")
+			@default_custom_css = render_to_string(:file => "#{RAILS_ROOT}/public/src/portal/portal.scss")
 			@default_custom_css = "#{@default_custom_css}\r\n #{custom_scss}"
 		end	    
 
