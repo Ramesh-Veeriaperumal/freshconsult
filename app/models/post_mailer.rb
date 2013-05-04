@@ -1,4 +1,6 @@
 class PostMailer < ActionMailer::Base
+	
+  layout "email_font"
   
   def monitor_email(emailcoll,post,user)
     recipients    emailcoll

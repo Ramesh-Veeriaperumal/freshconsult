@@ -5,11 +5,11 @@ FreshbooksWidget.prototype = {
 	CLIENT_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="client.list"> <page>#{page}</page><per_page>100</per_page></request>'),
 	PROJECT_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="project.list"> <page>#{page}</page><per_page>100</per_page></request>'),
 	TASK_LIST_REQ:new Template('<?xml version="1.0" encoding="utf-8"?> <request method="task.list" > <project_id>#{project_id}</project_id> </request>'),
-	CREATE_TIMEENTRY_REQ:new Template('<?xml version="1.0" encoding="ISO-8859-1"?><request method="time_entry.create"> <time_entry> <project_id>#{project_id}</project_id> <task_id>#{task_id}</task_id> <hours>#{hours}</hours> <notes><![CDATA[#{notes}]]></notes> <staff_id>#{staff_id}</staff_id> </time_entry></request>'),
-	RETRIEVE_TIMEENTRY_REQ:new Template('<?xml version="1.0" encoding="ISO-8859-1"?><request method="time_entry.get"> <time_entry_id>#{time_entry_id}</time_entry_id> </request>'),
-	UPDATE_TIMEENTRY_REQ:new Template('<?xml version="1.0" encoding="ISO-8859-1"?><request method="time_entry.update"> <time_entry> <time_entry_id>#{time_entry_id}</time_entry_id> <project_id>#{project_id}</project_id> <task_id>#{task_id}</task_id> <staff_id>#{staff_id}</staff_id> <hours>#{hours}</hours> <date>#{date}</date> <notes><![CDATA[#{notes}]]></notes> </time_entry></request>'),
-	UPDATE_TIMEENTRY_ONLY_HOURS_REQ:new Template('<?xml version="1.0" encoding="ISO-8859-1"?><request method="time_entry.update"> <time_entry> <time_entry_id>#{time_entry_id}</time_entry_id> <hours>#{hours}</hours> </time_entry></request>'),
-	DELETE_TIMEENTRY_REQ:new Template('<?xml version="1.0" encoding="ISO-8859-1"?><request method="time_entry.delete"> <time_entry_id>#{time_entry_id}</time_entry_id> </request>'),
+	CREATE_TIMEENTRY_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="time_entry.create"> <time_entry> <project_id>#{project_id}</project_id> <task_id>#{task_id}</task_id> <hours>#{hours}</hours> <notes><![CDATA[#{notes}]]></notes> <staff_id>#{staff_id}</staff_id> </time_entry></request>'),
+	RETRIEVE_TIMEENTRY_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="time_entry.get"> <time_entry_id>#{time_entry_id}</time_entry_id> </request>'),
+	UPDATE_TIMEENTRY_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="time_entry.update"> <time_entry> <time_entry_id>#{time_entry_id}</time_entry_id> <project_id>#{project_id}</project_id> <task_id>#{task_id}</task_id> <staff_id>#{staff_id}</staff_id> <hours>#{hours}</hours> <date>#{date}</date> <notes><![CDATA[#{notes}]]></notes> </time_entry></request>'),
+	UPDATE_TIMEENTRY_ONLY_HOURS_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="time_entry.update"> <time_entry> <time_entry_id>#{time_entry_id}</time_entry_id> <hours>#{hours}</hours> </time_entry></request>'),
+	DELETE_TIMEENTRY_REQ:new Template('<?xml version="1.0" encoding="utf-8"?><request method="time_entry.delete"> <time_entry_id>#{time_entry_id}</time_entry_id> </request>'),
 
 	initialize:function(freshbooksBundle, loadInline){
 		widgetInst = this; // Assigning to some variable so that it will be accessible inside custom_widget.

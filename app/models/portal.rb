@@ -41,8 +41,7 @@ class Portal < ActiveRecord::Base
               :foreign_key => 'solution_category_id'
   belongs_to :forum_category
 
-
-  APP_CACHE_VERSION = "FD14"
+  APP_CACHE_VERSION = "FD20"
     
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr

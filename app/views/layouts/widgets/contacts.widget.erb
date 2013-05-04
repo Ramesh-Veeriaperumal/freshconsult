@@ -10,8 +10,8 @@
 	  
 	  <title><%= "#{h(current_account.name)} Widget" %></title>
 
-		<%= include_stylesheets :common  %> 	    
-		<%= include_stylesheets :app  %> 	    
+		<%= include_cloudfront_css :common  %> 	    
+		<%= include_cloudfront_css :app  %> 	    
 		<%= render :partial => "shared/theme.css"  %>
 	  <%= yield :head %>
 	</head>

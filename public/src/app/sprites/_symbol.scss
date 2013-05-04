@@ -1,4 +1,4 @@
-@import "symbols/*.png";
+@import "cdn-ignored/sprites/symbols/*.png";
 
 /* %% more styles set for this class in some other file */
 
@@ -103,8 +103,14 @@
 .content .controls{
 	.monitor{ @include symbols-sprite(tkt-not-monitoring); }
 	.monitor_active{ @include symbols-sprite(tkt-monitoring); }
-	.source-badge-wrap .source{
-		&.collision_refresh{ @include symbols-sprite(collision_refresh); }
+	.source-badge-wrap .source{ 
+		&.collision_refresh{ 
+			@include symbols-sprite(collision_refresh);
+			&.status_4, &.status_5 {
+				@include symbols-sprite(collision_refresh_closed);		
+			}
+		}
+
 		span{
 			// Email
 			&.source_1 { @include symbols-sprite(source-badge-email); }

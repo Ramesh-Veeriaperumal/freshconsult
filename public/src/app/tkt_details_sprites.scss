@@ -2,10 +2,10 @@
 
 // Icon sprite creation
 // --------------------------------------------------
-@import "requester-info/*.png";
-@import "conv-actions/*.png";
-@import "ticket-details/*.png";
-@import "collision/*.png";
+@import "cdn-ignored/sprites/requester-info/*.png";
+@import "cdn-ignored/sprites/conv-actions/*.png";
+@import "cdn-ignored/sprites/ticket-details/*.png";
+@import "cdn-ignored/sprites/collision/*.png";
 
 /* %% more styles set for this class in some other file */
 .tkt-tabs-wrap{ @include all-requester-info-sprites; }

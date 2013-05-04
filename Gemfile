@@ -53,7 +53,7 @@ gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
 gem "newrelic_rpm","3.5.3.25"
 
-gem "twitter" , "2.1.1", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/twitter-2.1.1" 
+gem "twitter", "~> 4.6.2"
 gem "sanitize", "2.0.3"
 gem "koala", "~> 1.0.0"
 gem "spreadsheet", "0.6.8"
@@ -65,6 +65,7 @@ gem "insensitive_hash", "0.2.3"
 gem "SystemTimer", "1.2.3" 
 gem "redis","2.2.2"
 gem "resque","1.22.0"
+gem "resque-status", "0.4.1"
 
 gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
 gem 'rforce'
@@ -83,6 +84,14 @@ gem "people", '0.2.1' #https://github.com/mericson/people/tree/master/lib
 gem "useragent", "~> 0.4.16"
 gem "xss_terminate", "~> 0.2"
 gem "rack-throttle", "~> 0.3.0"
+gem "faraday","0.8"
+
+gem 'clockwork', '0.4.1'
+gem "wkhtmltopdf-binary", "~> 0.9.9.1"
+gem "wicked_pdf", "~> 0.9.2"
+gem "pg"
+
+gem "cloudfront_asset_host", :git => "git://github.com/freshdesk/cloudfront_asset_host.git"
 
 group :development,:test do
    gem "forgery","0.5.0"

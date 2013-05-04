@@ -1,5 +1,7 @@
 class  Helpdesk::WatcherNotifier < ActionMailer::Base
 
+  layout "email_font"
+  
   def notify_new_watcher(ticket, subscription, agent_name)
     subject       new_watcher_subject(ticket, agent_name)
     recipients    subscription.user.email

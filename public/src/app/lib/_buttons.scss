@@ -55,10 +55,10 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 }
 
 .uiButton, .uiButton:visited, .special-button, .special-button:visited, .uiButton-active, .uiButton-iphone, .ui-after-submit{
-	@include button-base; 
-	background-image:url(/images/overlay-button.png);
+	@include button-base;  
 	background-color:#f8f8f8;
-	background-repeat:repeat-x; 
+	background-repeat:repeat-x;
+  @include background(linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(18,18,18,0.05) 100%));
 	color: #333333;
 	display:inline-block;
 	text-decoration:none;
@@ -159,12 +159,9 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 }
 
 .ui-after-submit{
-   border-color:#cfcfcf;
-	background-color:#eeeeee;
-	background-image:url('/images/load.gif');
-	background-repeat:no-repeat; 
-	background-position: center;	
-   color:rgba(0, 0, 0, 0);
+  border-color:#cfcfcf;
+  background-color:#eeeeee;
+  color:rgba(0, 0, 0, 0);
 	text-shadow: 1px 1px 0 rgba(0, 0, 0, 0);   
 }
 
@@ -203,10 +200,10 @@ div.action_buttons{
 	position:relative;
 	float:right;
 	@include border-radius(4px);
-	margin:-5px 6px 2px 5px;
-	background-image:url(/images/overlay-button.png);
+	margin:-5px 6px 2px 5px;	
 	background-color:#f8f8f8;
 	background-repeat:repeat-x; 
+  @include background(linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(18,18,18,0.05) 100%));
 	padding:2px 7px 3px 3px; 
 	border:1px solid darken(#f2f2f2, 5%);
 	> a{
@@ -258,9 +255,8 @@ div.action_buttons:hover{
   font-family: $blueprint-font-family;
 	@include link-colors(#3f3f3f, #666666, #3f3f3f, #3f3f3f);
   @include border-radius(4px);
-	@include box-shadow(rgba(0, 0, 0, 0.05) 0 -2px 0 inset);
-	@include box-shadow(rgba(0, 0, 0, 0.05) 0  1px 0);	
-  background-image:url(/images/overlay-button.png);
+	@include box-shadow(rgba(0, 0, 0, 0.05) 0  1px 0, rgba(0, 0, 0, 0.05) 0 -2px 0 inset);
+  @include background(linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(18,18,18,0.05) 100%));
 	background-color:#f8f8f8;
 	img{ width:auto; height:auto; margin: 0 3px -3px 0 !important; }	
   border: 1px solid #cfcfcf;
@@ -268,9 +264,7 @@ div.action_buttons:hover{
   font-family:inherit;  
 }
 
- .button[disabled]:hover {
-    padding:5px 10px;
-  }
+.button[disabled]:hover{ padding:5px 10px; }
 
 .close-button{
 	display:inline-block;
@@ -505,6 +499,22 @@ div.action_buttons:hover{
     span{ padding-right:12px; }
   }
   .off-label span{ padding-left:12px; }
+}
+
+/* Tourmyapp admin help button */
+.guided-tour-button{
+  border: 1px solid #CCC;
+  display: block;
+  @include border-radius(20px);
+  height: auto;
+  padding: 6px 0 7px 33px;
+  background-image: inline-image("cdn-ignored/inline-images/tourmyapp-btn-arrow.png");
+  background-repeat: no-repeat;
+  background-position: 7px 6px;
+  font-weight:bold;
+  display: block;
+  line-height:20px;
+  &:hover{ border-color: darken(#CCC, 5%); }
 }
 
 // BUTTON GROUPS

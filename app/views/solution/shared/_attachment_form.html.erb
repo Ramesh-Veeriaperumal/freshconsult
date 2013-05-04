@@ -1,5 +1,5 @@
-<%= javascript_include_tag "helpdesk/expanding_textarea" %>
-<%= javascript_include_tag "helpdesk/article_section" %>
+<script src="/javascripts/helpdesk/expanding_textarea.js" type="text/javascript"></script>
+<script src="/javascripts/helpdesk/article_section.js" type="text/javascript"></script>
 <% attach_id = attach_id || "solution_article" %>
 <label><%=t('attach_files')%></label>
 <input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="solution_article[attachments][][resource]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />

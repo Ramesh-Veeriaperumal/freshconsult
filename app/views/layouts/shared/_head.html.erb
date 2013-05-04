@@ -21,27 +21,27 @@
 	<% cache(["v2","portal","fav_ico",current_portal]) do %>
 		<link rel="shortcut icon" href="<%=current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' : current_portal.fav_icon.content.url%>" />
 	<%end%>
-	<%= include_stylesheets :common %>
-	<%= include_stylesheets :plugins  %>
-	<%= include_stylesheets :sprites  %>
-	<%= include_stylesheets :app %>
-	<%= include_stylesheets :non_pattern %>
-	<%= include_stylesheets :tour_my_app %>
-	<%= include_stylesheets :ie_hacks %>
+	<%= include_cloudfront_css :common %>
+	<%= include_cloudfront_css :plugins  %>
+	<%= include_cloudfront_css :sprites  %>
+	<%= include_cloudfront_css :app %>
+	<%= include_cloudfront_css :non_pattern %>
+	<%= include_cloudfront_css :tour_my_app %>
+	<%= include_cloudfront_css :ie_hacks %>
 	
 	<%= render :partial => "shared/theme.css"  %>
-	<%= include_javascripts :defaults  %>
-	<%= include_javascripts :frameworks %>
-	<%= include_javascripts :workspace %>
-	<%= include_javascripts :notifications %>
-	<%= include_javascripts :redactor  %>
+	<%= include_cloudfront_js :defaults  %>
+	<%= include_cloudfront_js :frameworks %>
+	<%= include_cloudfront_js :workspace %>
+	<%= include_cloudfront_js :notifications %>
+	<%= include_cloudfront_js :redactor  %>
 	<%= yield :totango %>
 
 <script type="text/javascript">
 	PROFILE_BLANK_THUMB_PATH = '<%= image_path("fillers/profile_blank_thumb.gif") %>';
 	PROFILE_BLANK_MEDIUM_PATH = '<%= image_path("fillers/profile_blank_medium.gif") %>';
 </script>	
-	<%= include_javascripts :custom_widget %>
+	<%= include_cloudfront_js :custom_widget %>
 	<%= yield :head %>
 </head>
 

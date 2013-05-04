@@ -13,9 +13,9 @@
 	<!-- Mobile viewport optimized-->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <%= include_stylesheets :getting_started %>
-   	<%= include_javascripts :defaults %>
-    <%= include_javascripts :getting_started %>
+    <%= include_cloudfront_css :getting_started %>
+   	<%= include_cloudfront_js :defaults %>
+    <%= include_cloudfront_js :getting_started %>
     <%= render :partial => "layouts/totango" %>
 	 
     <link rel="shortcut icon" href="/images/favicon.ico">
@@ -53,9 +53,6 @@
 <% end %>
 
 	<div class="wrapper">  
-		<div class="top-pattern">
-		</div>
-
 		<!--HEADER-->
 		<div class="getting-started-header">
 			<div class="header-left">
@@ -76,8 +73,14 @@
 			<div class="header-right">
 				<a href="javascript:goto_helpdesk();" class="skip-link"><%=t('.skip_text')%></a>
 				<div class="controls">
-					<a href="javascript:void(0);" class="simple inactive" id="back"> <span class="back"></span> <span id="back_text"><%=t('.back_link')%></span> </a>
-					<a href="javascript:void(0);" class="simple active" id="next">  <span id="next_text"><%=t('.next_link')%></span> <span class="next"></span></a>
+					<a href="#" class="simple inactive" id="back"> 
+						<span class="back"></span>
+						<span id="back_text"><%=t('.back_link')%></span> 
+					</a>
+					<a href="#" class="simple active" id="next">
+						<span id="next_text"> <%=t('.next_link')%> </span> 
+						<span class="next"></span>
+					</a>
 				</div>	
 			</div>
  

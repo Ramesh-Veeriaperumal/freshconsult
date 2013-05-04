@@ -1,6 +1,6 @@
 <% content_for :pagefixed do %>
-  <%= stylesheet_link_tag "helpdesk/autosuggest" %>
-  <%= javascript_include_tag "helpdesk/autosuggest" %>
+  <link href="/stylesheets/autosuggest_inquisitor.css" media="screen" rel="stylesheet" type="text/css">
+  <script src="/javascripts/helpdesk/autosuggest.js" type="text/javascript"></script>
 
   <% javascript_tag do %>
     document.observe("dom:loaded", function(){

@@ -206,6 +206,18 @@ html.ie6, html.ie7, html.ie8{  height:100%; overflow-y:scroll; }
 		}
 	}
 
+	.modal-header .close {
+    	background-color: #5e5e5e;
+	}
+
+    .ticket_details .btn-toolbar {
+    	padding: 5px;
+    }
+
+}
+
+.ie6, .ie7, .ie8, .ie9, .ie10 {
+
 	.hidden_upload {
 		width: 250px;
 		margin-top: 0;
@@ -216,17 +228,8 @@ html.ie6, html.ie7, html.ie8{  height:100%; overflow-y:scroll; }
 		div { display: none;}
 	}
 
-	.modal-header .close {
-    	background-color: #5e5e5e;
-	}
-
-
 	.ticket_details .clearfix .overflowh {
     	overflow: visible;
-    }
-
-    .ticket_details .btn-toolbar {
-    	padding: 5px;
     }
 
 }

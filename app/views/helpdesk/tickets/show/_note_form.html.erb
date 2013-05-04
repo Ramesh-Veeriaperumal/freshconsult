@@ -12,7 +12,6 @@
                     } do |f| %>
     <div class="list_agents_replying" class="hide"></div>
     <%= content_tag( :div, t("ticket.note_form.form_title"), :class => "form_title" ) %>
-
     <%= f.error_messages %>
     <ul class="ui-form dont-validate">
 
@@ -43,7 +42,13 @@
     </ul> 
     <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>
     <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
-    <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>"reply_ticket_status_#{cntid}"  )%>
+    <%= hidden_field_tag(:ticket_status ,'', :id=>"reply_ticket_status_#{cntid}"  )%>
+
+    <div id="toggle-note-visibility">
+      <label><%= t("helpdesk.tickets.note.public_note_tip") %></label>
+      <%= f.check_box(:private, :checked => true, :class => 'tooltip', "rel" => "toggle",  "data-checked-label" => "No", "data-unchecked-label" => "Yes") %>
+    </div>
+
 
     <div class="btn-toolbar">
       
@@ -61,27 +66,18 @@
       </span>
 
       <span class="btn-group">
-        <button class="btn btn-primary submit_btn">
-          <%= local_assigns[:submit] || ActiveSupport::Inflector.titleize(id) %>
+        <button class="btn btn-primary submit_btn" 
+                data-public-text="<%= t('ticket.note_form.add_public_note') %>" 
+                data-default-text="<%= t('ticket.note_form.add_private_note') %>" >
+          <%= t('ticket.note_form.add_private_note') %>
         </button>
       </span>
-
-      <span id="toggle-note-visibility">
-        <div class="note-visible tooltip" title="<%= t("helpdesk.tickets.note.public_note_tip") %>">
-          <i></i>
-        </div>
-        <div class="note-hidden tooltip" title="<%= t("helpdesk.tickets.note.private_note_tip") %>">
-          <i></i>
-        </div>
-        <%= f.check_box(:private, :checked => true, :class => 'tooltip') %>
-      </span>
-
     </div>
   <% end %>
   <div class="clearfix overflowh" ></div>
 </div> 
 <% content_for :pagefixed do %>
-  <%= javascript_include_tag "helpdesk/page_switcher" %>
+  <script src="/javascripts/helpdesk/page_switcher.js" type="text/javascript"></script>
   <% javascript_tag do %>
     document.observe("dom:loaded", function(){
       new Helpdesk.PageSwitcher({

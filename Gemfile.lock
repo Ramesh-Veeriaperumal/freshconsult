@@ -14,6 +14,13 @@ GIT
       activerecord (>= 1.15.6, < 3.0.0)
 
 GIT
+  remote: git://github.com/freshdesk/cloudfront_asset_host.git
+  revision: 53a5ce53f24daff486988ea0f0a72fd0194817d2
+  specs:
+    cloudfront_asset_host (1.1.0)
+      right_aws
+
+GIT
   remote: git://github.com/freshdesk/deadlock_retry.git
   revision: 801e84f45aed2ccde10aa085af0aa94f1bf46975
   specs:
@@ -61,15 +68,6 @@ GIT
       rake
       rest-client (~> 1.6)
 
-PATH
-  remote: vendor/gems/twitter-2.1.1
-  specs:
-    twitter (2.1.1)
-      activesupport (~> 2.3.8)
-      faraday (~> 0.7)
-      multi_json (~> 1.0)
-      simple_oauth (~> 0.1)
-
 GEM
   remote: http://rubygems.org/
   remote: http://gems.github.com/
@@ -90,7 +88,6 @@ GEM
     activeresource (2.3.18)
       activesupport (= 2.3.18)
     activesupport (2.3.18)
-    addressable (2.2.7)
     akami (1.2.0)
       gyoku (>= 0.4.0)
       nokogiri (>= 1.4.0)
@@ -110,6 +107,8 @@ GEM
       json_pure (~> 1.5)
       rest-client (~> 1.4)
     chunky_png (1.2.6)
+    clockwork (0.4.1)
+      tzinfo
     columnize (0.3.2)
     compass (0.12.2)
       chunky_png (~> 1.2)
@@ -120,10 +119,8 @@ GEM
     daemons (1.1.8)
     delayed_job (1.8.4)
     factory_girl (1.2.3)
-    faraday (0.7.6)
-      addressable (~> 2.2)
+    faraday (0.8.0)
       multipart-post (~> 1.1)
-      rack (~> 1.1)
     fastercsv (1.5.4)
     fastthread (1.0.7)
     forgery (0.5.0)
@@ -175,7 +172,7 @@ GEM
       gem_plugin (>= 0.2.3)
     multi_json (1.3.6)
     multi_xml (0.5.1)
-    multipart-post (1.1.2)
+    multipart-post (1.2.0)
     mysql (2.8.1)
     mysql (2.8.1-x86-mingw32)
     net-dns (0.6.1)
@@ -221,6 +218,8 @@ GEM
       omniauth-oauth2 (~> 1.0)
     open4 (1.3.0)
     people (0.2.1)
+    pg (0.14.1)
+    pg (0.14.1-x86-mingw32)
     rack (1.1.6)
     rack-openid (1.3.1)
       rack (>= 1.1.0)
@@ -243,12 +242,17 @@ GEM
       redis-namespace (~> 1.0)
       sinatra (>= 0.9.2)
       vegas (~> 0.1.2)
+    resque-status (0.4.1)
+      resque (~> 1.19)
     rest-client (1.6.7)
       mime-types (>= 1.16)
     rforce (0.8.1)
       builder (~> 3.0)
       oauth (~> 0.4)
     riddle (1.2.2)
+    right_aws (3.0.5)
+      right_http_connection (>= 1.2.5)
+    right_http_connection (1.3.0)
     rspec (1.3.1)
     rspec-rails (1.3.3)
       rack (>= 1.0.0)
@@ -295,12 +299,19 @@ GEM
       after_commit (>= 1.0.7)
       riddle (>= 1.2.2)
     tilt (1.3.3)
+    twitter (4.6.2)
+      faraday (~> 0.8, < 0.10)
+      multi_json (~> 1.0)
+      simple_oauth (~> 0.2)
     tzinfo (0.3.26)
     useragent (0.4.16)
     vegas (0.1.11)
       rack (>= 1.0.0)
     wasabi (2.3.0)
       nokogiri (>= 1.4.0)
+    wicked_pdf (0.9.2)
+      rails
+    wkhtmltopdf-binary (0.9.9.1)
     xml-simple (1.0.15)
     xss_terminate (0.2)
       html5 (>= 0.10.0)
@@ -319,10 +330,13 @@ DEPENDENCIES
   aws-s3 (= 0.6.2)
   braintree (= 2.10.0)
   chargebee (~> 1.1.7)
+  clockwork (= 0.4.1)
+  cloudfront_asset_host!
   compass-rails
   deadlock_retry!
   delayed_job (= 1.8.4)
   factory_girl (= 1.2.3)
+  faraday (= 0.8)
   forgery (= 0.5.0)
   http_accept_language (= 1.0.1)
   httparty (= 0.10.0)
@@ -355,12 +369,14 @@ DEPENDENCIES
   omniauth-openid
   omniauth-salesforce
   people (= 0.2.1)
+  pg
   rack (~> 1.1.6)
   rack-throttle (~> 0.3.0)
   rails (= 2.3.18)
   rake (= 0.8.7)
   redis (= 2.2.2)
   resque (= 1.22.0)
+  resque-status (= 0.4.1)
   rforce
   rinku!
   rspec (= 1.3.1)
@@ -378,9 +394,11 @@ DEPENDENCIES
   susy
   thinking-sphinx (= 1.4.3)
   tire!
-  twitter (= 2.1.1)!
+  twitter (~> 4.6.2)
   tzinfo
   useragent (~> 0.4.16)
+  wicked_pdf (~> 0.9.2)
+  wkhtmltopdf-binary (~> 0.9.9.1)
   xss_terminate (~> 0.2)
   yui-compressor!
   zendesk-features

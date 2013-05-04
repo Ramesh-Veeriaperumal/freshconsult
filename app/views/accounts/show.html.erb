@@ -1,5 +1,5 @@
-<%= include_stylesheets :pattern %>
-<%= include_javascripts :pattern  %>
+<%= include_cloudfront_css :pattern %>
+<%= include_cloudfront_js :pattern  %>
 
 <%
 	admin_choice = current_account.all_admins.inject ([]) { |choice, admin| 

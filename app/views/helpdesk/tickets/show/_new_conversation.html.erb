@@ -1,6 +1,6 @@
 <ol class="redactor conversation_thread">
 	<li class="conversation">
-		<%= link_to user_avatar(current_user), "javascript:void()", :class => 'avatar-wrap' %>
+		<div class="avatar-wrap"><%= user_avatar(current_user) %></div>
 		<div class="commentbox commentbox-dark">
 			<div id="TicketForms">
 				<div class="hide">
@@ -23,7 +23,7 @@
 		  								}) if !(@ticket.is_twitter? or @ticket.is_facebook?) and (@item.from_email.present? or @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobi_help]) %>
 
 			  	
-				<div class="request_panel hide" id="cnt-fwd" rel="emitter" data-node-name="agent_replying">
+				<div class="request_panel hide" id="cnt-fwd">
 				<%= render(:partial => '/helpdesk/tickets/show/forward_form', 
 							:locals => { 
 										:id => 'send-fwd-email', 

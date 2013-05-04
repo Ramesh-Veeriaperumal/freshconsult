@@ -1,4 +1,7 @@
 class EmailConfigNotifier < ActionMailer::Base
+  
+  layout "email_font"
+
   def activation_instructions(email_config)
     subject       "#{email_config.account.portal_name} email activation instructions"
     body          :activation_url => admin_register_email_url(email_config.activator_token, 

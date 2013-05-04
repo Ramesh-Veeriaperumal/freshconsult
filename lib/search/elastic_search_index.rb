@@ -8,6 +8,11 @@ module Search::ElasticSearchIndex
         Resque.enqueue(Search::UpdateSearchIndex, { :klass_name => self.class.name, :id => self.id }) if es_available?
       end
 
+      def remove_es_document
+        Resque.enqueue(Search::RemoveFromIndex, { :klass_name => self.class.name, :id => self.id,
+                                                  :account_id => self.account_id }) if es_available?
+      end
+
       def es_available?
           es_enable_status = MemcacheKeys.fetch(MemcacheKeys::ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
           es_enable_status.key?(self.account_id)
