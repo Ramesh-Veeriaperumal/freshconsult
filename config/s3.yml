@@ -23,4 +23,4 @@ production:
   secret_access_key: 5wETxzKgNRS/L2GHz1uSt0CKCXyRuEZ74mkoRa4G
   AWS_CALLING_FORMAT: SUBDOMAIN
   bucket: cdn.freshdesk.com
-  reports_bucket: reports_archive_data
+  reports_bucket: reports_archive_data_production
