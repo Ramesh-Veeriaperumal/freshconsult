@@ -68,9 +68,12 @@ class SubscriptionsController < ApplicationController
         redirect_to :action => "billing" and return
       end
 
-      if @subscription.save
+      if response and @subscription.save
         flash[:notice] = t('billing_info_update')
         flash[:notice] = t('card_process') if params[:charge_now].eql?("true")
+      else
+        flash[:notice] = t("subscription.error.lesser_agents", 
+              {:agent_count => current_account.full_time_agents.count}) if current_account.subscription.chk_change_agents 
       end
 
       redirect_to :action => "show"
@@ -96,7 +99,9 @@ class SubscriptionsController < ApplicationController
       @subscription.free_agents = @subscription_plan.free_agents
       
       begin
-        billing_subscription.update_subscription(@subscription, prorate?)
+        unless current_account.subscription.chk_change_agents
+          billing_subscription.update_subscription(@subscription, prorate?)
+        end
       rescue Exception => e
         flash[:notice] = t('error_in_update')
         flash[:notice] = e.message.match(/[A-Z][\w\W]*\./).to_s if e.message
