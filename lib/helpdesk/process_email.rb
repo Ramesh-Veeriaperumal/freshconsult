@@ -18,7 +18,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       kbase_email = account.kbase_email
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
         email_config = account.email_configs.find_by_to_email(to_email[:email])
-        return if from_email[:email] == email_config.reply_email
+        return if email_config && (from_email[:email] == email_config.reply_email)
         user = get_user(account, from_email, email_config)
         Rails.logger.debug "PROCESS USER : #{user.inspect}"
         if !user.blocked?
