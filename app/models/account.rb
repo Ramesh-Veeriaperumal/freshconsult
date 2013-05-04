@@ -231,11 +231,11 @@ class Account < ActiveRecord::Base
   after_create :populate_features
   
   after_update :update_users_language
-  after_create :enable_elastic_search
+  #after_create :enable_elastic_search
 
   before_destroy :update_crm, :notify_totango
 
-  after_commit_on_create :add_to_billing, :add_to_totango, :create_search_index
+  after_commit_on_create :add_to_billing, :add_to_totango #, :create_search_index
 
   after_commit_on_update :clear_cache
   after_commit_on_destroy :clear_cache, :delete_search_index, :delete_reports_archived_data
