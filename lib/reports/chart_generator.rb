@@ -132,7 +132,7 @@ module Reports::ChartGenerator
           :left => 2,
         },
         :borderWidth => 0,
-        :y => 15,
+        :y => -40,
         :verticalAlign => 'bottom',
         :floating => false,
         
@@ -282,7 +282,7 @@ end
           :top => 75,
         },
         :borderWidth => 0,
-        :y => -25,
+        :y => -15,
         :reversed => true,
         :verticalAlign => 'top',
         :floating => false,
