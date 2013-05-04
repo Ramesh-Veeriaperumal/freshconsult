@@ -49,6 +49,7 @@ module Workers
 							stats_table_name = stats_table(Time.zone.parse(created_date), account)
 							select_sql = %(SELECT * FROM #{stats_table_name} where ticket_id = #{tkt.id} and 
 									account_id = #{account_id} and created_at = '#{created_date} 00:00:00')
+							SeamlessDatabasePool.use_master_connection
 							result = ActiveRecord::Base.connection.execute(select_sql)
 							if result.num_rows == 0 # tkt received case
 								sql = %(INSERT INTO #{stats_table_name} (#{REPORT_STATS.join(",")}) VALUES(#{account_id},#{tkt.id},
@@ -60,6 +61,7 @@ module Workers
 							end
 							begin
 								ActiveRecord::Base.connection.execute(sql)
+								SeamlessDatabasePool.use_persistent_read_connection
 							rescue Exception => e
 								puts "Record might already be exist in ticket received case:::#{e.message}"
 								puts "account_id:::#{account_id}:::ticket_id:::#{tkt.id}:::date:::#{created_date}"
@@ -90,6 +92,7 @@ module Workers
 								stats_table_name = stats_table(Time.zone.parse(date_val), account)
 								select_sql = %(SELECT * FROM #{stats_table_name} where ticket_id = #{tkt.id} and 
 									account_id = #{account_id} and created_at = '#{date_val} 00:00:00')
+								SeamlessDatabasePool.use_master_connection
 								result = ActiveRecord::Base.connection.execute(select_sql)
 								if result.num_rows == 0 # tkt received case
 									query = %(INSERT INTO #{stats_table_name} (#{REPORT_STATS.join(",")}) VALUES(#{account_id},#{tkt.id},
@@ -101,6 +104,7 @@ module Workers
 								end
 								begin
 									ActiveRecord::Base.connection.execute(query)
+									SeamlessDatabasePool.use_persistent_read_connection
 								rescue Exception => e
 									puts "Record might already be exist::::#{e.message}"
 									puts "account_id:::#{account_id}:::ticket_id:::#{tkt.id}:::date:::#{date_val}"
@@ -131,6 +135,7 @@ module Workers
 							stats_table_name = stats_table(Time.zone.parse(resolved_date), account)
 							select_sql = %(SELECT * FROM #{stats_table_name} where ticket_id = #{tkt.id} and 
 									account_id = #{account.id} and created_at = '#{resolved_date} 00:00:00')
+							SeamlessDatabasePool.use_master_connection
 							result = ActiveRecord::Base.connection.execute(select_sql)
 							if result.num_rows == 0 # tkt resolved on any other day case
 								query = %(INSERT INTO #{stats_table_name} (#{REPORT_STATS.join(",")}) VALUES(#{account.id},#{tkt.id},
@@ -142,9 +147,10 @@ module Workers
 							end
 							begin
 								ActiveRecord::Base.connection.execute(query)
+								SeamlessDatabasePool.use_persistent_read_connection
 							rescue Exception => e
 								puts "Record might already be exist::::#{e.message}"
-								puts "account_id:::#{account.id}:::ticket_id:::#{tkt.id}:::date:::#{date_val}"
+								puts "account_id:::#{account.id}:::ticket_id:::#{tkt.id}"
 							end
 						end
 				end
