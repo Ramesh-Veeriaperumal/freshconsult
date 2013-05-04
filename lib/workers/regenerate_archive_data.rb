@@ -21,10 +21,11 @@ module Workers
 				# This check is to handle the following scenario....
 				# If regeneration (archiving + loading data to redshift) for an account for a date happens before 
 				# the normal archiving, then data duplication can happen after the normal archiving data loaded into redshift.
-				# This case can happen during 1/2 months data migration into redshift
+				# This case can happen during 1 month data migration into redshift
 				if num_of_deleted_rows == 0
 					AWS::S3::S3Object.delete($st_env_name+'/'+@s3_folder+'/redshift_'+@s3_folder+'.csv', S3_CONFIG[:reports_bucket])
-					return
+					remove_value_from_set REPORT_STATS_REGENERATE_KEY % {:account_id => id}, date
+					next
 				end
 				load_regenerated_data
 				remove_value_from_set REPORT_STATS_REGENERATE_KEY % {:account_id => id}, date

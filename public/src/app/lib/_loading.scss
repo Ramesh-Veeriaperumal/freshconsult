@@ -17,19 +17,21 @@
 .reports-loading{
 	z-index:99999; 
 	margin: 0 auto;
-	width: 150px;
+	width: 200px;
+	color:#666;
 	margin-top:15%;
 	border: 1px solid #CCC;
-	padding: 5px 5px 5px 10px;
+	padding: 8px 5px 8px 10px;
 	text-align: center;
 	background-repeat: no-repeat;
 	background-position: center;
-	background-position-x: 6px;
+	background-position-x: 8px;
 	background-color: #FFF;
 	@include border-radius(24px);
 	@include box-shadow(0px 0px 10px rgba(0, 0, 0, 0.2));
-	font-size: 20px;
+	font-size: 18px;
 	font-weight: 200;
+	text-indent: 12px;
 }
 .loading-box{  
   background-position:center center;

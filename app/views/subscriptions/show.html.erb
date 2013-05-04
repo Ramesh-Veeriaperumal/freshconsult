@@ -1,6 +1,6 @@
 <% content_for :sidebar do -%>
 
-<% if @subscription.card_number.present?  %>
+<% if !@subscription.trial? and @subscription.card_number.present? %>
   <div class="sidepanel">    
     <%= render :partial => "/subscriptions/payment_info" %>  
   </div>
