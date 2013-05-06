@@ -90,7 +90,8 @@ class AccountsController < ApplicationController
   
   def create_account_google   
     create_account
-    if @account.save       
+    if @account.save
+       add_to_crm       
        rediret_url = params[:call_back]+"&EXTERNAL_CONFIG=true" unless params[:call_back].blank?
        rediret_url = "https://www.google.com/a/cpanel/"+@account.google_domain if rediret_url.blank?
        redirect_to rediret_url

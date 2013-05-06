@@ -81,9 +81,9 @@ module ApplicationHelper
     end     
   end
 
-  def page_title
-    portal_name = h(current_portal.portal_name) + " : "
-    portal_name += @page_title || t('helpdesk_title')
+  def page_title    
+    portal_name = " : #{h(current_portal.portal_name)}" if current_portal.portal_name.present?
+    "#{(@page_title || t('helpdesk_title'))}#{portal_name}"
   end 
   
   def page_description
@@ -155,6 +155,7 @@ module ApplicationHelper
         when "facebook" then
           auto_link("http://facebook.com/#{value}")
         when "twitter" then
+          value = value.gsub('@','')
           link_to("@#{value}" , "http://twitter.com/#{value}")
         when "link" then
           auto_link(value)
@@ -590,7 +591,7 @@ module ApplicationHelper
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
-        element = content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ) + label)
+        element = content_tag(:div, (check_box(object_name, field_name, :class => element_class, :checked => field_value ) + label))
       when "html_paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class , :value => field_value)
     end
@@ -764,9 +765,7 @@ module ApplicationHelper
   end
 
   def tour_button(text, tour_id)
-    link_to(content_tag(:div, text, :class=> 'guided-tour-start') , '#', 
-              :rel => 'guided-tour',
-              "data-tour-id" => tour_id)
+    link_to(text, '#', :rel => 'guided-tour', "data-tour-id" => tour_id, :class=> 'guided-tour-button')
   end
   
   def check_fb_reauth_required

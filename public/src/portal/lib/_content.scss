@@ -152,6 +152,11 @@ li.article-item, li.topic-item, li.ticket-item {
 	}
 }
 
+.p-desc{
+	word-break: normal; 
+	word-wrap: break-word; 
+}
+
 .comment-by-agent .p-content{
 	background-color:$comments-agent-background;
 	border-color:$comments-agent-border-color;

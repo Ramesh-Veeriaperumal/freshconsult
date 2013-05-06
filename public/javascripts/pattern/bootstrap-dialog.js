@@ -18,6 +18,7 @@
 		this.$dialogid = this.options.targetId.substring(1)
 
 		// Getting static content id and dom if it is present in the document
+
 		this.$content = $(this.options.targetId)
 		// Building the base wrapper for the modal dialog
 		this.$dynamicTarget = $('<div class="modal fade" role="dialog" aria-hidden="true"></div>')
@@ -33,12 +34,20 @@
         	// Title for the header        
         	this.dialogTitle = element.getAttribute('title') || this.options.title
 
-	        // Setting modal dialogs header and its title
+
+        // Setting modal dialogs header and its title
 	    	this.$dynamicTarget
-	    			.append(this.options.templateHeader)
-					.find(".modal-title")
-					.attr("title", this.dialogTitle)
-					.html(this.dialogTitle)
+		    		.append(this.options.templateHeader)
+						.find(".modal-title")
+						.attr("title", this.dialogTitle)
+						.html(this.dialogTitle)
+
+				// Setting close link for the dialog
+				if(this.options.showClose == true)
+        	this.$dynamicTarget
+        			.find(".modal-header")
+        			.prepend('<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>')
+        
 		}
 
         // Setting up content body 
@@ -52,11 +61,11 @@
 		this.$dynamicTarget.append(this.$body)
 
 		// Building the footer content
-		if(this.options.templateFooter != ""){		
+		if(this.options.templateFooter != ""){
 			this.$closeBtn = $('<a href="#" data-dismiss="modal" class="btn">' +
-								this.options.closeLabel + '</a>')
-			this.$submitBtn = $('<a href="#" data-submit="modal" class="btn btn-primary" data-toggle="button">' +
-								this.options.submitLabel + '</a>')
+								this.options.closeLabel + '</a>').attr('id', this.$dialogid + '-cancel')
+			this.$submitBtn = $('<a href="#" data-submit="modal" class="btn btn-primary">' +
+								this.options.submitLabel + '</a>').attr('id', this.$dialogid + '-submit')
 			if(this.options.submitLoading != "") {
 				this.$submitBtn.data('loadingText',this.options.submitLoading )
 			}
@@ -102,19 +111,19 @@
 	}
 
 	$.fn.freshdialog.defaults = {
-	  	width: 		"710px",
+	  width: 		"710px",
 		title: 		'',
 		classes: 	'',
 		keyboard: 	true, 
 		templateHeader: '<div class="modal-header">' +
-							'<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>' +
 							'<h3 class="ellipsis modal-title"></h3>' +
 						'</div>',
 		templateBody:	'<div class="modal-body"><div class="loading-box"></div></div>',
-        templateFooter: '<div class="modal-footer"></div>',
-        submitLabel: 	"Submit",
-        submitLoading: 	"", 
-        closeLabel: 	"Close"
+    templateFooter: '<div class="modal-footer"></div>',
+    submitLabel: 	"Submit",
+    submitLoading: 	"", 
+    closeLabel: 	"Close",
+    showClose: true
 	}
 
 	$.fn.freshdialog.Constructor = Freshdialog

@@ -70,9 +70,10 @@ class Account < ActiveRecord::Base
 
   RESERVED_DOMAINS = %W(  blog help chat smtp mail www ftp imap pop faq docs doc wiki team people india us talk 
                           upload download info lounge community forums ticket tickets tour about pricing bugs in out 
-                          logs projects itil marketing sales partner store channel reseller resellers online 
+                          logs projects itil marketing partner store channel reseller resellers online 
                           contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab 
-                          productdemo resources )
+                          productdemo resources static static0 static1 static2 static3 static4 static5 
+                          static6 static7 static8 static9 static10 )
 
   #
   # Tell authlogic that we'll be scoping users by account
@@ -169,6 +170,8 @@ class Account < ActiveRecord::Base
   has_many :facebook_posts, :class_name =>'Social::FbPost' 
   
   has_many :ticket_filters , :class_name =>'Helpdesk::Filters::CustomTicketFilter' 
+
+  #has_many :report_filters, :class_name=>'Reports::Filters::ReportsFilter'
   
   has_many :twitter_handles, :class_name =>'Social::TwitterHandle' 
   has_many :tweets, :class_name =>'Social::Tweet'  
@@ -232,16 +235,16 @@ class Account < ActiveRecord::Base
   after_create :create_portal, :create_admin
   after_create :populate_seed_data
   after_create :populate_features
-  after_create :send_welcome_email
+  
   after_update :update_users_language
-  after_create :enable_elastic_search
+  #after_create :enable_elastic_search
 
   before_destroy :update_crm, :notify_totango
 
-  after_commit_on_create :add_to_billing, :add_to_totango, :create_search_index
+  after_commit_on_create :add_to_billing, :add_to_totango #, :create_search_index
 
   after_commit_on_update :clear_cache
-  after_commit_on_destroy :clear_cache, :delete_search_index
+  after_commit_on_destroy :clear_cache, :delete_search_index, :delete_reports_archived_data
   before_update :backup_changes
   before_destroy :backup_changes
   
@@ -286,13 +289,13 @@ class Account < ActiveRecord::Base
     
     :blossom => {
       :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
-        :custom_domain, :multiple_emails ],
+        :custom_domain, :multiple_emails],
       :inherits => [ :sprout ]
     },
     
     :garden => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :advanced_reporting, :css_customization ],
+        :css_customization, :advanced_reporting ],
       :inherits => [ :blossom ]
     },
 
@@ -312,7 +315,7 @@ class Account < ActiveRecord::Base
     
     :garden_classic => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :advanced_reporting, :css_customization ],
+        :css_customization, :advanced_reporting ],
       :inherits => [ :blossom_classic ]
     },
 
@@ -332,7 +335,7 @@ class Account < ActiveRecord::Base
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
     :anonymous_tickets =>true, :survey_links => true, :gamification_enable => true, :google_signin => true,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
-    :personalized_email_replies => false}
+    :personalized_email_replies => false, :enterprise_reporting => false}
     
   
   has_features do
@@ -828,9 +831,7 @@ class Account < ActiveRecord::Base
       PopulateAccountSeed.populate_for(self)
     end
 
-   def send_welcome_email
-      SubscriptionNotifier.send_later(:deliver_welcome, self) unless google_domain.blank?
-    end
+   
     
    def subscription_next_renewal_at
        subscription.next_renewal_at
@@ -869,5 +870,8 @@ class Account < ActiveRecord::Base
       }
     end
 
+    def delete_reports_archived_data
+      Resque.enqueue(Workers::DeleteArchivedData, {:account_id => id})
+    end
 
 end

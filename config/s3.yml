@@ -1,20 +1,26 @@
 common: &common
-  access_key_id: AKIAJWGOEYKNTQ75K5TQ
-  secret_access_key: 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
+  access_key_id: AKIAIHDER33SHQTRDUHQ
+  secret_access_key: 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
   AWS_CALLING_FORMAT: SUBDOMAIN
  
 development:
   <<: *common
-  bucket: cdn.freshdesk.com
+  bucket: cdn.freshpo.com
+  reports_bucket: reports_archive_data_dev
 
 staging:
   <<: *common
-  bucket: cdn.freshdesk.com
+  bucket: cdn.freshpo.com
+  reports_bucket: reports_archive_data_staging
 
 test:
   <<: *common
   bucket: fdesk-testbed
+  reports_bucket: reports_archive_data_test
 
 production:
-  <<: *common
+  access_key_id: AKIAJWGOEYKNTQ75K5TQ
+  secret_access_key: 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
+  AWS_CALLING_FORMAT: SUBDOMAIN
   bucket: cdn.freshdesk.com
+  reports_bucket: reports_archive_data_production

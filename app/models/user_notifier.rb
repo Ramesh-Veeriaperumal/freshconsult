@@ -1,5 +1,5 @@
 class UserNotifier < ActionMailer::Base
-  
+  layout "email_font"
   def user_activation(user, params)
     subject       params[:subject]
     send_the_mail(user, params[:email_body], params[:reply_email])

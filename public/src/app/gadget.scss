@@ -1,7 +1,7 @@
 // This import applies a global reset to any page that imports this stylesheet.
 @import "lib/settings";
 
-@import "gmail-gadget/*.png";
+@import "cdn-ignored/sprites/gmail-gadget/*.png";
 
 $min-width: 600px;
 $main_content_bradius: 5px;

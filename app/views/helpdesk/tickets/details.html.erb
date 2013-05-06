@@ -1,10 +1,9 @@
 <!-- INCLUDING PATTERN CSS -->
-<%= include_stylesheets :pattern, :media => "screen, print, projection"  %>
-<%# javascript_include_tag  'bootstrap' %>
-<%= include_javascripts :redactor  %>
-<%= include_javascripts :pattern  %>
-<%= include_stylesheets :tkt_details, :media => "screen, print, projection"  %>
-<%= include_stylesheets :tkt_details_print, :media => "print"  %>
+<%= include_cloudfront_css :pattern, :media => "screen, print, projection"  %>
+<%= include_cloudfront_js :redactor  %>
+<%= include_cloudfront_js :pattern  %>
+<%= include_cloudfront_css :tkt_details, :media => "screen, print, projection"  %>
+<%= include_cloudfront_css :tkt_details_print, :media => "print"  %>
 <%= render :partial => "helpdesk/tickets/show/scriptvars.html.erb" %>
 <div class="tkt-wrapper ticket_show" data-showing='notes'>
 	<div class="tkt-wrapper-inner clearfix">
@@ -29,8 +28,11 @@
 				<%= render :partial => "helpdesk/tickets/show/requester.html.erb" %> 
 				<% unless @ticket.deleted or @ticket.spam %> 
 					<%= render :partial => "helpdesk/tickets/show/ticket_fields.html.erb" %>
-					<%= render :partial => "helpdesk/tickets/show/integrations.html.erb" %> 
 					<% if feature?(:timesheets) %>
+					<div class="modal hide fade" role="dialog" id="timesheets_loading">
+						<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button></div>
+						<div class="modal-body"><div class="loading-box"></div></div>
+					</div>
 					<div class="widget time-tracked inactive load_remote" id="TimesheetTab">
 						<h3>
 							<%= t('helpdesk.time_sheets.sidebar_title') %>
@@ -44,6 +46,8 @@
 						<%# render :partial => "helpdesk/time_sheets/v2/index" %>
 					</div>
 					<% end %>
+					
+					<%= render :partial => "helpdesk/tickets/show/integrations.html.erb" %> 
 				<% end %>
 			</div>
 			<!--content Left-->
@@ -81,7 +85,7 @@ jQuery(document).ready(function(){
 </script>
 <%= render :partial => "helpdesk/tickets/show/due_date.html.erb" %>
 <%= render :partial => "helpdesk/tickets/show/collision", :locals => { :ticket => @ticket } if feature?(:agent_collision) %>
-<%= include_javascripts :ticket_details  %>
+<%= include_cloudfront_js :ticket_details  %>
 <script type="text/javascript">
 <% unless @draft.nil? %>
 	swapEmailNote('cnt-reply', null);

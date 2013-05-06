@@ -1,6 +1,11 @@
 jQuery("document").ready(function(){
 		setTimeout(function() {
-	 		jQuery("#fd_feedback_widget").validate();
+	 		jQuery("#fd_feedback_widget").validate({
+				onkeyup: false,
+				focusCleanup: true,
+				focusInvalid: false,
+				ignore:".nested_field:not(:visible), .portal_url:not(:visible)"
+	 		});
  	},500);
 
  	jQuery("#freshwidget-submit-frame").bind("load", function() {
@@ -13,8 +18,7 @@ jQuery("document").ready(function(){
  		
 	
  	jQuery('#fd_feedback_widget').submit(function(ev) {
- 		if (screenshot_flag==0) {
- 			
+ 		if (screenshot_flag==0) { 			
 			var img = img_data.replace("data:image/png;base64,","");
 			var time = new Date();
 			var name = String(time);		

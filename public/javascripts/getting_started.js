@@ -230,12 +230,12 @@ jQuery(document).ready(function(){
 		jQuery("#indicator-arrow").css("left", jQuery(this).data("translateArrow"));
 		activeSlide = parseInt(this.id.split("-")[1]);
 		if(activeSlide>1){
-			jQuery("a#back").removeClass("inactive");
-			jQuery("a#back").addClass("active");		
+			jQuery("#back").removeClass("inactive");
+			jQuery("#back").addClass("active");		
 		}
 		else{
-			jQuery("a#back").removeClass("active");
-			jQuery("a#back").addClass("inactive");
+			jQuery("#back").removeClass("active");
+			jQuery("#back").addClass("inactive");
 		}
 		if(activeSlide==4){	jQuery("#next_text").text(GettingStarted.translate("next_alt_link")); }
 		else{jQuery("#next_text").text(GettingStarted.translate("next_link"));}
@@ -361,30 +361,28 @@ function rebrand(){
 	IS_REBRAND_TIMEOUT_ALIVE = false;
 }
 
-function validate_colorcode(){
-			
-			var form = jQuery('form#rebrand');
-			
-			
-			var header_color = form.find("#HeaderColor");
-			var tab_color = form.find("#TabColor");
-			var bg_color = form.find("#BackgroundColor");
-			
-			var errorMessage = "";							
-			if(!Validate.colorCode(header_color.val())){	
-				errorMessage = Validate.isEmpty(header_color.val())?GettingStarted.translate("rebrand_header_empty"):GettingStarted.translate("rebrand_header_invalid");							
-				header_color.focus();
-			}
-			else if(!Validate.colorCode(tab_color.val())){
-				errorMessage = Validate.isEmpty(tab_color.val())?GettingStarted.translate("rebrand_tab_empty"):GettingStarted.translate("rebrand_tab_invalid");							
-				tab_color.focus();
-			}
-			else if(!Validate.colorCode(bg_color.val())){
-				errorMessage = Validate.isEmpty(bg_color.val())?GettingStarted.translate("rebrand_bg_empty"):GettingStarted.translate("rebrand_bg_invalid");
-				bg_color.focus();
-			}
+function validate_colorcode(){			
+	var form = jQuery('form#rebrand');
 
-			return show_rebrand_error(errorMessage);
+	var header_color = form.find("#HeaderColor");
+	var tab_color = form.find("#TabColor");
+	var bg_color = form.find("#BackgroundColor");
+	
+	var errorMessage = "";							
+	if(!Validate.colorCode(header_color.val())){	
+		errorMessage = Validate.isEmpty(header_color.val())?GettingStarted.translate("rebrand_header_empty"):GettingStarted.translate("rebrand_header_invalid");							
+		header_color.focus();
+	}
+	else if(!Validate.colorCode(tab_color.val())){
+		errorMessage = Validate.isEmpty(tab_color.val())?GettingStarted.translate("rebrand_tab_empty"):GettingStarted.translate("rebrand_tab_invalid");							
+		tab_color.focus();
+	}
+	else if(!Validate.colorCode(bg_color.val())){
+		errorMessage = Validate.isEmpty(bg_color.val())?GettingStarted.translate("rebrand_bg_empty"):GettingStarted.translate("rebrand_bg_invalid");
+		bg_color.focus();
+	}
+
+	return show_rebrand_error(errorMessage);
 
 }
 

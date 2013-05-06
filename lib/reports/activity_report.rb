@@ -133,7 +133,7 @@ def get_nested_field_reports(column_name)
                 value = data.send(column_names[2])
                 next if value.nil?
                   count = data.count
-                  percentage = count/tot_count.to_f * 100
+                  percentage = count.to_f/tot_count.to_f * 100
                   xaxis_arr.push(value)  
                   column_width = (value.length * 8) if((value.length * 8) > 60 && column_width< (value.length * 8))
                   data_arr.push({:name=>value,:y=>sprintf( "%0.02f",percentage).to_f,:count=>count,:color=>'#4572A7',:borderColor=>'black',:borderWidth=>1})

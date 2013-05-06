@@ -131,23 +131,6 @@ ul.activityfeed li{
 	text-align:center;
 } 
 
-.guided-tour-start{
-    
-    border: 1px solid #CCC;
-    @include border-radius(15px);
-    height: auto;
-    padding: 6px 0px 7px 29px ;
-    background-image: url("/images/walkthru/touricon-teal.png");
-	background-repeat: no-repeat;
-	background-position: 5px 4px;
-	font-weight:bold;
-	display: block;
-}
-
-.guided-tour-start:hover{
-	border: 1px solid #666;
-}
-
 .sidepanel{
 	p{
 		font-size:1.1em; 
@@ -197,8 +180,7 @@ ul.activityfeed li{
 	margin:12px 0px;
 }
 
-.ui-list_with_icon{ 
-	@include pretty-bullets($bullet-icon, 8px, 0px);
+.ui-list_with_icon{	
 	padding-top:5px;
 	list-style:none;
 	margin:0px;
@@ -1986,21 +1968,17 @@ h4.border_title{
 	padding:10px 0px;
 	float:left;
 	width:47%;
-	font-size:12px;
-	a{
-		@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
-		text-decoration:none;
-	}	
-	ul{
-		@include pretty-bullets($bullet-icon, 15px, 8px);
-	}	
+	h4 a{ color: #333; }
 	li{ 
 		line-height:22px;
-		padding:0px 0px 4px 18px;
-		color:black;
-		a{ 
-			font-size:13px; 
-			@include link-colors(#21759B, #3399cc, #21759B, #21759B); 
+		padding-top:5px;
+		&:before{
+			content:"";
+			@include inline-block;
+			width: 20px;
+			height: 20px;
+			margin-top: -3px;
+			margin-right: 3px;
 		}
 	} 
 }
@@ -3287,42 +3265,11 @@ div.addReminder{
 			.status-source {
 				text-align: right;
 				background-position:top right;
-		   		width: 30px;
+		   		width: 36px;
 		   		height: 36px;
 				padding: 20px 0 0;
-		   		&.source-detailed-portal {
-		   			background-image: url('/images/sources/detailed-portal.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   		&.source-detailed-email {
-		   			background-image: url('/images/sources/detailed-email.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   		&.source-detailed-facebook {
-		   			background-image: url('/images/sources/detailed-facebook.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   		&.source-detailed-twitter {
-		   			background-image: url('/images/sources/detailed-twitter.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   		&.source-detailed-phone {
-		   			background-image: url('/images/sources/detailed-phone.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   		&.source-detailed-chat {
-		   			background-image: url('/images/sources/detailed-chat.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   		&.source-detailed-forum {
-		   			background-image: url('/images/sources/detailed-forum.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   		&.source-detailed-mobihelp {
-		   			background-image: url('/images/sources/detailed_mobihelp.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   }
+				background-repeat: no-repeat;
+			}
 
 		   &.assign {
 		   		padding-left:0; padding-right:0;
@@ -5347,6 +5294,7 @@ a.close{
 	.user{
 		margin:0; 
 		background:#eee;  
+		@include border-radius(5px);
 		span{
 			position:relative;
 		 	top:7px; 
@@ -6741,7 +6689,20 @@ margin:10px;
 .survey_text {
 	width: 70%;
 }
-
+.reports_page .pagearea{
+	background: none;
+	border:none;
+	@include box-shadow(rgba(0,0,0, 0.05) 0 0 0);	
+	@include text-shadow(white 1px 1px 0px);
+	margin-bottom: 0;
+	padding-bottom: 0;
+	padding-left:0;
+	padding-right:0;
+	.contentCol {
+		background: none;
+		border:none;
+	}
+}
 .ticket_list .pagearea{
 	background: none;
 	border:none;
@@ -6989,7 +6950,7 @@ margin:10px;
 			height: 34px;
 			td{
 				color:#222;
-				background: url('/images/overlay-button.png') repeat-x 0px 0px;
+				@include background-image(linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(18,18,18,0.05) 100%));
 				font-weight: 600;
 				font-size: 13px;
 			}
@@ -7953,16 +7914,16 @@ p.imp{
 	padding-right: 18px}
 }
 
-#clear-search{
-		background: url(/images/close-search.png) no-repeat;
-		position: absolute;
-		top: 9px;
-		right: 14px;
-		display: none;
-		float: left;
-		width: 12px;
-		height: 10px;
-		background-color: white;
+.clear-search{
+	background: url(/images/close-search.png) no-repeat;
+	position: absolute;
+	top: 9px;
+	right: 14px;
+	display: none;
+	float: left;
+	width: 12px;
+	height: 10px;
+	background-color: white;
 }
 
 #bulk_canned_response_holder #clear-search {
@@ -7979,23 +7940,6 @@ p.imp{
 	z-index: 100;
 	display: none;
 	height: 266px;
-}
-
-.canned-icons .canned-search{
-    background: url(../images/canned-search.png) no-repeat;
-    width: 20px;
-    height: 20px;
-    display: inline-block;
-    padding-bottom: 10px;
-}
-
-.canned-icons .canned-close{
-    background: url(../images/close-button.png) no-repeat;
-    position: absolute;
-    left: -25px;
-    width: 24px;
-    height: 29px;
-    display: inline-block;
 }
 
 .pick-response{
@@ -8116,15 +8060,13 @@ p.imp{
     float: left;
 }
 
-.canned-searchbox{
-
-	input[type="text"]{
+.canned-searchbox input[type="text"]{
     display: none;
     width: 45%;
     clear: both;
     border: 1px #b7b7b7 solid;
     @include border-radius(5px);
-    float:left;}
+    float:left;
 }
 
 #canned_response_list{
@@ -8724,36 +8666,6 @@ height: auto;
 		background-color: #373737;
 	}
 }
-div.db-chooser{
-	label{
-	margin-right: 50%;
-
-	}
-	.dropbox_button{
-		background: url("/images/dropbox-attach.png") no-repeat left -11px #f3f2f2;
-	    height: 26px;
-	    padding-left:90px;
-	    border:1px solid #d6d6d6;
-	    border-radius:4px;
-		cursor:pointer;
-		text-shadow: 1px 1px 0px #fff;
-	    &:hover{
-			background-color:darken(#f2f2f2, 5%);
-		}
-	}
-}
-.attach_wrapper{
-	width:100%;
-	.dropbox_div{
-	border-left: 1px solid #AAAAAA; float: left; margin: 10px; padding-left: 20px; margin-top:1px;
-	div.db-chooser .dropbox_button{
-		cursor: pointer;
-	}
-	}
-	.attach_file{
-		float:left; padding-right:20px
-	}
-}
 .ff_item{
 	.select2{
 		width: 190px;
@@ -9334,7 +9246,7 @@ div.db-chooser{
 
 #google_calendar_widget div.title{
 	padding-left: 30px;
-	background-image: url('/images/google-small.png');
+	background-image: inline-image('cdn-ignored/inline-images/google-small.png');
 	background-position: 0px 2px;
 	background-repeat: no-repeat;
 	padding-top: 0px;
@@ -9854,7 +9766,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 				float:right;
 				@include hide-text();
 				padding: 2px 3px 2px 7px !important;
-				background: image-url('/images/select2.png') right top no-repeat !important;
+				background: image-url("select2/select2.png") right top no-repeat !important;
 				width: 12px;
 				height: 8px;
 				left: -2px;
@@ -10176,3 +10088,21 @@ div.gcal-confirm-modal-content{ width: 100%; }
 		width: auto;
 	}
 }
+
+// Pjax Debug related styles
+#benchmarkresult{
+	width: 25%;
+	display: inline-block;
+	position: fixed;
+	z-index: 999;
+	background: #DFDFDF;
+	bottom: 10px;
+	right: 10px;
+	border: 1px solid gainsboro;
+	padding: 10px;
+	box-shadow: 2px 2px #AAA;
+	color: #333;
+	border-radius: 5px;
+}
+
+.tweet-table .search-grey-box{ margin-top: 0; }

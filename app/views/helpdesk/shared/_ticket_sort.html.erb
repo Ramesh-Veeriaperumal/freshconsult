@@ -9,7 +9,7 @@
       <%= t('showing') %> 
       <b><%= @items.offset + 1 %></b> - <b><%= @items.offset + @items.length %></b>
         <%= t('of') %>
-        <b rel="load-rjs" id="ticket_list_count"><img src="/images/ticketCount.gif"></b>
+        <b id="ticket_list_count" class="fetching"></b>
     </div>   
     <% end %>
   </div>

@@ -17,4 +17,12 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 
 	attr_protected :note_id, :account_id
 
+	def self.resp_time_column
+		:int_nc02
+	end
+
+	def self.resp_time_by_bhrs_column
+		:int_nc03
+	end
+
 end

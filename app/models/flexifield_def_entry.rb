@@ -10,6 +10,7 @@ class FlexifieldDefEntry < ActiveRecord::Base
   validates_presence_of :flexifield_name, :flexifield_alias, :flexifield_order
 
   named_scope :drop_down_fields, :conditions => {:flexifield_coltype => 'dropdown' }
+
   named_scope :event_fields, 
               :conditions => [ "flexifield_coltype = 'dropdown' or flexifield_coltype = 'checkbox'" ]  
   
@@ -69,6 +70,11 @@ class FlexifieldDefEntry < ActiveRecord::Base
   end
   def to_ff_alias ff_field = nil
     (ff_field.nil? || flexifield_name == ff_field) ? flexifield_alias : nil
+  end
+
+  def self.dropdown_custom_fields(account=Account.current)
+    account.flexi_field_defs.first.flexifield_def_entries.
+              drop_down_fields.all(:select => :flexifield_name).map(&:flexifield_name)
   end
 
   private
