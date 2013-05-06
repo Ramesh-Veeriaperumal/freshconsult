@@ -9,8 +9,8 @@
 		<meta name="viewport" content="width=device-width">  
 		<link rel="shortcut icon" href="<%= current_portal.fav_icon_url %>" />		
 		<!-- <link href="/theme.css" media="screen" rel="stylesheet" type="text/css"> -->
-		<%= include_stylesheets :preview %>
-		<%= include_javascripts :preview %>
+		<%= include_cloudfront_css :preview %>
+		<%= include_cloudfront_js :preview %>
 	</head>
 	<body>
 		<%= yield %>

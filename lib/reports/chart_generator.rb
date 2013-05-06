@@ -279,7 +279,7 @@ end
         :align => 'center',
         :style => {
           :left => 40,
-          :top => 75,
+          :top => 95,
         },
         :borderWidth => 0,
         :y => -25,

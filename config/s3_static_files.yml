@@ -1,0 +1,19 @@
+defaults: &defaults
+  access_key_id: AKIAIHDER33SHQTRDUHQ
+  secret_access_key: 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
+
+development:
+  <<: *defaults
+
+slave:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+production:
+  access_key_id: AKIAJWGOEYKNTQ75K5TQ
+  secret_access_key: 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
+
+staging:
+  <<: *defaults

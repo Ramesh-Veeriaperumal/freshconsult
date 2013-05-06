@@ -50,17 +50,30 @@ class SubscriptionsController < ApplicationController
       @subscription.state = ACTIVE
 
       begin
-        billing_subscription.store_card(@creditcard, @address, @subscription)
+        unless current_account.subscription.chk_change_agents
+          billing_subscription.store_card(@creditcard, @address, @subscription)
+        end
       rescue Exception => e
         flash[:notice] = t('card_error')
+        flash[:notice] = e.message.match(/[A-Z][\w\W]*\./).to_s if e.message
         redirect_to :action => "billing" and return
       end
 
-      response = billing_subscription.activate_subscription(@subscription)
+      begin
+        unless current_account.subscription.chk_change_agents
+          response = billing_subscription.activate_subscription(@subscription)
+        end
+      rescue Exception => e
+        flash[:notice] = e.message.match(/[A-Z][\w\W]*\./).to_s if e.message
+        redirect_to :action => "billing" and return
+      end
 
       if response and @subscription.save
         flash[:notice] = t('billing_info_update')
         flash[:notice] = t('card_process') if params[:charge_now].eql?("true")
+      else
+        flash[:notice] = t("subscription.error.lesser_agents", 
+              {:agent_count => current_account.full_time_agents.count}) if current_account.subscription.chk_change_agents 
       end
 
       redirect_to :action => "show"
@@ -91,7 +104,7 @@ class SubscriptionsController < ApplicationController
         end
       rescue Exception => e
         flash[:notice] = t('error_in_update')
-        flash[:notice] = t('payment_failed') if @subscription.card_number.present?
+        flash[:notice] = e.message.match(/[A-Z][\w\W]*\./).to_s if e.message
         redirect_to subscription_url and return
       end
       

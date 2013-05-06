@@ -1,0 +1,204 @@
+
+<%= render :partial => "layouts/report/pdf_files", :locals => {} %>
+	<div class="row-fluid">
+		<div class="report-page" id="report-page">
+		  <div class="report-content-wrapper">
+		    <!--report header-->
+		    <%= render :partial => "reports/shared/report_view_header", :locals => {:is_pdf =>true} %>
+
+		    <!--metrics-->
+		    <div class="row-fluid  report-summary">
+		      <h3 class="header-lead"><span>Summary </span></h3>
+		      <div class="row-fluid report-summary-wrapper">
+		        <div class="report-summary-header">
+		          <ul class="inline">
+		            <li><h1><%= @data_obj[:received_tickets] %></h1></li>
+		            <li><h1><%= @data_obj[:resolved_tickets] %></h1></li>
+		            <li><h1><%= @data_obj[:backlog_tickets] %></h1></li>
+		            <li><h1><%= in_hrs_mins(@data_obj[:avgresponsetime]) %></h1></li>
+		            <li><h1><%= in_hrs_mins(@data_obj[:avgfirstresptime]) %></h1></li>
+		            <li><h1><%= in_hrs_mins(@data_obj[:avgresolutiontime]) %></h1></li>
+		          </ul>
+		        </div>
+		        <div class="report-summary-data">
+		          <ul class="inline">
+		            <li> 
+		              <% metric_obj = percentage_change(@prev_data_obj[:received_tickets].to_i,@data_obj[:received_tickets].to_i,:received_tickets)%>
+		              <small><span class="<%=metric_obj[:class]%>"><i></i><i></i></span><%=metric_obj[:val]%></small>
+		            </li>
+		            <li> 
+		              <% metric_obj = percentage_change(@prev_data_obj[:resolved_tickets].to_i,@data_obj[:resolved_tickets].to_i,:resolved_tickets)%>
+		              <small><span class="<%=metric_obj[:class]%>"><i></i><i></i></span><%=metric_obj[:val]%></small>
+		            </li>
+		            <li>
+		              <% metric_obj = percentage_change(@prev_data_obj[:backlog_tickets].to_i,@data_obj[:backlog_tickets].to_i,:backlog_tickets)%>
+		              <small><span class="<%=metric_obj[:class]%>"><i></i><i></i></span><%=metric_obj[:val]%></small>
+		            </li>
+		            <li>
+		              <% metric_obj = percentage_change(@prev_data_obj[:avgresponsetime].to_i,@data_obj[:avgresponsetime].to_i,:avgresponsetime)%>
+		              <small><span class="<%=metric_obj[:class]%>"><i></i><i></i></span><%=metric_obj[:val]%></small>
+		            </li>
+		            <li>
+		              <% metric_obj = percentage_change(@prev_data_obj[:avgfirstresptime].to_i,@data_obj[:avgfirstresptime].to_i,:avgfirstresptime)%>
+		              <small><span class="<%=metric_obj[:class]%>"><i></i><i></i></span><%=metric_obj[:val]%></small>
+		            </li>
+		            <li>
+		              <% metric_obj = percentage_change(@prev_data_obj[:avgresolutiontime].to_i,@data_obj[:avgresolutiontime].to_i,:avgresolutiontime)%>
+		              <small><span class="<%=metric_obj[:class]%>"><i></i><i></i></span><%=metric_obj[:val]%></small>
+		            </li>
+		          </ul>
+		        </div>
+		        <div class="report-summary-footer">
+		          <ul class="inline">
+		            <li> <label><%= t('reports.summary.received_tickets')%></label></li>
+		            <li> <label><%= t('reports.summary.resolved_tickets')%></label></li>
+		            <li><label><%=t('adv_reports.glance.backlog_tickets')%></label></li>
+        				<li><label><%=t('adv_reports.glance.avg_resp_time_in_hrs')%></label></li>
+        				<li><label><%=t('adv_reports.glance.avg_first_resp_time_in_hrs')%></label></li>
+        				<li><label><%=t('adv_reports.glance.avg_resolution_time_in_hrs')%></label></li>
+		          </ul>
+		        </div>
+		      </div>
+		      <div class="row-fluid report-summary-wrapper">
+		        <div class="report-summary-header">
+		          <ul class="inline">
+		            <li><h1><%= (@data_obj[:avgcustomerinteractions]).to_f.round(1) %></h1></li>
+		            <li><h1><%= (@data_obj[:avgagentinteractions]).to_f.round(1) %></h1></li>
+		            <li><h1><%= @data_obj[:num_of_reopens] %></h1></li>
+		            <li><h1><%= @data_obj[:num_of_reassigns] %></h1></li>
+		     <%
+        sla_perc = @data_obj[:resolved_tickets].to_i == 0 ? 0 : (@data_obj[:sla_tickets].to_f / @data_obj[:resolved_tickets].to_f)
+        fcr_perc = @data_obj[:resolved_tickets].to_i == 0 ? 0 : (@data_obj[:fcr_tickets].to_f / @data_obj[:resolved_tickets].to_f)
+        %>
+        				<li><h1><%= (sla_perc * 100).to_i %>%</h1></li>
+        				<li><h1><%= (fcr_perc * 100).to_i %>%</h1></li>
+		          </ul>
+		        </div>
+		        <div class="report-summary-data">
+		          <ul class="inline">
+		            <li> 
+		              <% metric_obj = percentage_change(@prev_data_obj[:avgcustomerinteractions].to_f,@data_obj[:avgcustomerinteractions].to_f,:avgcustomerinteractions)%>
+		              <small><span class="<%=metric_obj[:class]%>"><i></i><i></i></span><%=metric_obj[:val]%></small>
+		            </li>
+		            <li> 
+		               <% metric_obj = percentage_change(@prev_data_obj[:avgagentinteractions].to_i,@data_obj[:avgagentinteractions].to_i,:avgagentinteractions)%>
+		               <small><span class="<%=metric_obj[:class]%>"><i></i><i></i></span><%=metric_obj[:val]%></small>
+		            </li>
+		            <li>
+		              <% metric_obj = percentage_change(@prev_data_obj[:num_of_reopens].to_i,@data_obj[:num_of_reopens].to_i,:num_of_reopens)%>
+		              <small><span class="<%=metric_obj[:class]%>"><i></i><i></i></span><%=metric_obj[:val]%></small>
+		            </li>
+		            <li>
+		              <% metric_obj = percentage_change(@prev_data_obj[:num_of_reassigns].to_i,@data_obj[:num_of_reassigns].to_i,:num_of_reassigns)%>
+		              <small><span class="<%=metric_obj[:class]%>"><i></i><i></i></span><%=metric_obj[:val]%></small>
+		            </li>
+		            <li>
+          <% 
+          prev_sla_perc = @prev_data_obj[:resolved_tickets].to_i == 0 ? 0 : (@prev_data_obj[:sla_tickets].to_f / @prev_data_obj[:resolved_tickets].to_f)
+          metric_obj = percentage_change(prev_sla_perc,sla_perc,:sla_tickets)%>
+          <small><span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%></small>
+        </li>
+        <li>
+          <% 
+          prev_fcr_perc = @prev_data_obj[:resolved_tickets].to_i == 0 ? 0 : (@prev_data_obj[:fcr_tickets].to_f / @prev_data_obj[:resolved_tickets].to_f)
+          metric_obj = percentage_change(prev_fcr_perc,fcr_perc,:fcr_tickets)%>
+          <small><span class="<%=metric_obj[:class]%>"></span><%=metric_obj[:val]%></small>
+        </li>
+		          </ul>
+		        </div>
+		        <div class="report-summary-footer">
+		          <ul class="inline">
+		            <li> <label><%=t('adv_reports.glance.avg_cust_intr')%></label> </li>
+				        <li> <label><%=t('adv_reports.glance.avg_agent_intr')%></label> </li>
+				        <li> <label><%=t('adv_reports.glance.num_of_reopens')%></label> </li>
+				        <li> <label><%=t('adv_reports.glance.num_of_reassigns')%></label> </li>
+				        <li> <label><%=t('adv_reports.glance.sla_percentage')%></label> </li>
+				        <li> <label><%=t('reports.summary_report.fcr_percent')%></label> </li>
+		          </ul>
+		        </div>
+		      </div>
+		    </div>
+		    <div class="row-fluid">
+		      <h3 class="header-lead"><span>Ticket by source</span></h3>
+		      <div id="source_freshdesk_single_stacked_bar_chart" class="single-stacked-bar span12" style="height:150px;"><div class="noinfo-bar">No data to display!</div></div>
+		    </div> 
+		    <div class="row-fluid">
+		      <div class="span6">
+		        <h3 class="header-lead"><span>Tickets By  Type</span></h3>
+		        <div id="ticket_type_freshdesk_chart" class="chart-container"><div class="noinfo">No data to display!</div></div>
+		      </div> 
+		      <div class="span6">
+		        <h3 class="header-lead"><span>Tickets By  Priority</span></h3>
+		        <div id="priority_freshdesk_chart" class="chart-container"><div class="noinfo">No data to display!</div></div>
+		      </div>
+
+		      <% @activity_data_hash.fetch('custom_fields').each do |label,pie_chart| %>
+		      <div class="span6">
+		        <h3 id="<%=label%>_title" class="header-lead"><span><%= t('reports.pie_chart_title_prefix') %>&nbsp;</span></h3>
+		        <div id="<%=label%>_freshdesk_chart" class="chart-container">
+		          <div class="noinfo">No data to display!</div>
+		        </div>
+		      </div>
+		      <script type="text/javascript">
+		        jQuery(document).ready(function() {
+		          <%unless pie_chart.empty?%>
+		          var ticketByType<%=label%> = new pieChart({renderTo:'<%=label%>_freshdesk_chart'
+		                                                      ,chartData:<%=pie_chart.to_json%>
+		                                                      ,isPDF:true});
+		          ticketByType<%=label%>.pieChartGraph();
+		          <%end%>
+		          jQuery('#<%=label%>_title').html("<span>"+jQuery('#<%=label%>_title').text()+ custom_fields['<%=label%>']+"</span>");
+		        });
+		        </script>
+		      <%end%>
+		    </div>
+
+		    <% @activity_data_hash.fetch('nested_fields').each do |label,pare_to_chart|%>
+		    <div class="row-fluid">
+		      <h3 id="<%=label%>_title" class="header-lead"><span><%= t('reports.pie_chart_title_prefix') %>&nbsp;</span></h3>
+		      <div class='nested-wrapper'>
+		        <div class="nested-unit" style="overflow-y: initial;"> 
+		          <div id="<%=label%>_freshdesk_chart" name='level_0' class="nested-stacked-bar" style="height:auto">
+		              <div class="noinfo"><%=t('adv_reports.no_data_to_display_msg')%></div>
+		          </div>
+		        </div>
+		      </div>
+		    </div>
+		    <script type="text/javascript">
+		      jQuery(document).ready(function() {
+		      <%unless pare_to_chart[:chartData].empty?%>
+		        var ticketByType<%=label%> = new pare_to_chart({renderTo:'<%=label%>_freshdesk_chart'
+		                                                    ,chartData:<%=pare_to_chart[:chartData].to_json%>
+		                                                    ,xaxis_arr:<%=pare_to_chart[:xaxis_arr].to_json%>
+		                                                    ,column_width:<%=pare_to_chart[:column_width].to_json%>
+		                                                    ,isPDF:true});
+		        ticketByType<%=label%>.pareToGraph();
+		        <%end%>
+		        jQuery('#<%=label%>_title').html("<span>"+jQuery('#<%=label%>_title').text()+ custom_fields['<%=label%>']+"</span>");
+		      });
+		      </script>
+		    <%end%>
+		  </div>
+		</div>
+	</div>
+	<script type="text/javascript">
+	var data_json = <%= @activity_data_hash.to_json%>;
+	var custom_fields = JSON.parse(<%=@custom_fields.to_json%>);
+	jQuery(document).ready(function() {
+	  var singleStakedBar = new single_stacked_bar_chart(
+	        {renderTo: 'source_freshdesk_single_stacked_bar_chart',chartData:data_json["source"],isPDF:true}
+	      ),
+	      ticketByTypeChart = new pieChart(
+	        {renderTo:'ticket_type_freshdesk_chart',chartData:data_json["ticket_type"],title:'Tickets By Type',isPDF:true}
+	      ),
+	      ticketByPriorityChart = new pieChart(
+	        {renderTo:'priority_freshdesk_chart',chartData:data_json["priority"],title:'Tickets By Priority',isPDF:true}
+	      );
+	  singleStakedBar.single_stacked_bar_chart_Graph();
+	  ticketByTypeChart.pieChartGraph();
+	  ticketByPriorityChart.pieChartGraph();
+	});
+	</script>
+		</div>
+	</div>
+</html>

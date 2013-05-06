@@ -1,4 +1,4 @@
- <%= include_stylesheets :reports  %>
+ <%= include_cloudfront_css :reports  %>
 
 <%
 date_range = params[:date_range].blank? ? "#{(Time.zone.now.ago 30.day).strftime("%d %B %Y")} - #{Time.zone.now.strftime("%d %B %Y")}" :  h(params[:date_range])

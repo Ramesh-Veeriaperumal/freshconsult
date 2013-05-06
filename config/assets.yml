@@ -13,7 +13,7 @@ stylesheets:
     - public/stylesheets/app/application.css
 
   plugins:
-    - public/stylesheets/app/plugins.css
+    - public/stylesheets/plugins.css
 
   non_pattern:    
     - public/stylesheets/app/app-common.css
@@ -141,6 +141,7 @@ javascripts:
     - public/javascripts/lib/json2.js
     - public/javascripts/custom_validators.js
     - public/javascripts/globalinit.js
+    - public/javascripts/application.js
     - public/javascripts/navsearch.js
     - public/javascripts/report/date.js
 
@@ -158,6 +159,7 @@ javascripts:
     - public/javascripts/pattern/bootstrap-tab.js
     #- public/javascripts/pattern/bootstrap-tooltip.js    
     # - public/javascripts/pattern/bootstrap-popover.js
+    - public/javascripts/jquery.pageslide.js
   timesheet:
     - public/javascripts/timesheet.js
   ticket_details:
@@ -256,3 +258,9 @@ javascripts:
     - public/javascripts/utils.js
     - public/javascripts/hackz.js
     - public/javascripts/getting_started.js
+
+  reports:
+    - public/javascripts/highcharts.src.js
+    - public/javascripts/highcharts-more.js
+    - public/javascripts/adv_reports/report_charts.js
+    - public/javascripts/adv_reports/adv_reports.js

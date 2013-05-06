@@ -1,7 +1,7 @@
 // Icon sprite creation
 // --------------------------------------------------
 
-@import "icons/*.png";
+@import "cdn-ignored/sprites/icons/*.png";
 
 /* %% more styles set for this class in some other file */
 
@@ -37,4 +37,8 @@
 .ui-form .inline-field .google_contacts_sync {
 	li.freshdesk{ 	@include icons-sprite(freshdesk); }
 	li.google{ 		@include icons-sprite(google); }
+}
+
+.solution-list li:before{
+	@include icons-sprite(article-list);
 }

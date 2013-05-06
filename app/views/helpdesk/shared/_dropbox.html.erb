@@ -19,8 +19,7 @@
 		(<%=h("dropbox link")%>)
 		<% if local_assigns[:show_delete] %>
 	    <span class="delete">
-	      <!--%= link_to_remote image_tag("icons/btn_close_icon.png"), :url=>helpdesk_dropbox_path(dropbox), :method => 'delete', :confirm => "You're about to permanently delete this attachment. Continue?", :update=>{:success=>"noticeajax" }, :success=>"jQuery(this).parent().hide();", :class => "delete" %-->
-	      <%= link_to image_tag("icons/btn_close_icon.png"), helpdesk_dropbox_path(dropbox), :method => 'delete', :confirm => "You're about to permanently delete this attachment. Continue?", :class => "delete" %>
+	      <%= link_to image_tag("btn_close_icon.png"), helpdesk_dropbox_path(dropbox), :method => 'delete', :confirm => "You're about to permanently delete this attachment. Continue?", :class => "delete" %>
 	    </span>
 	  <% end %>
 	<div>

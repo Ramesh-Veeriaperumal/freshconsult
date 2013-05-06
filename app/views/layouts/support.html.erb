@@ -16,34 +16,39 @@
 
 		<meta name="viewport" content="width=device-width,user-scalable=no" />
 		<meta name="viewport" content="initial-scale = 1.0">
+		<% unless page_canonical.blank? %>
+			<link rel="canonical" href="<%= page_canonical %>" />
+		<% end %>
 
 		<%= portal_fav_ico %>
 
 		<!-- Base stylesheet -->
-		<%= include_stylesheets :portal %>
+		<%= include_cloudfront_css :portal %>
 
 		<!-- Theme stylesheet -->
-		<%= stylesheet_link_tag theme_url  %>
+		<link href="<%=theme_url%>" media="screen" rel="stylesheet" type="text/css">
 
 		<!-- Google font url if present -->
 		<%= portal_fonts %>
 
 		<!-- Including default portal based script framework at the top -->
-		<%= include_javascripts :portal_head %>
+		<%= include_cloudfront_js :portal_head %>
 
-		<!-- Access variables for the portal -->
+		<%= render :partial => "layouts/support/google_analytics_integration" %>
+
+		<!-- Access variables for portal -->
 		<%= portal_access_varibles %>
 	</head>
 	<body>
 		<%= assumed_identity_message %>
 		
 		<%= @layout %>
-		
-		<%= render :partial => "layouts/integrations" %>
+				
 		<%= render :partial => "layouts/shared/scripts" %> 
 
 		<!-- Including default portal based script at the bottom -->
-		<%= include_javascripts :portal_bottom, :redactor %>
+		<%= include_cloudfront_js :portal_bottom %>
+		<%= include_cloudfront_js :redactor %>
 
 		<%= cookie_law %>
 	</body>

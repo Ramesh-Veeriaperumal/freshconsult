@@ -310,7 +310,7 @@ p strong{
 	display: inline-block;
 	float: left;
 	position: relative;
-	margin: 5px 0 0;
+	margin: 10px 0 0;
 	width: 250px;
 
 	label {
@@ -1778,6 +1778,10 @@ p strong{
 					display: inline-block;
 					padding: 0;
 				}
+
+				input[type="checkbox"] {
+					padding-left: 0;
+				}
 			}
 
 			label.error {
@@ -2780,6 +2784,10 @@ $collision_delay: 1s;
 .ticket_details {
 	div.watchers_tooltip {
 		margin: 30px 0px 0px -10px;
+	}
+
+	#view_tickets .assign {
+		position: relative;
 	}
 }
 

@@ -1,0 +1,141 @@
+ <%
+date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} - #{1.days.ago.strftime("%d %B %Y")}" :  h(params[:date_range])
+%>
+  
+  <%#= will_filter_scripts_tag %>
+    <ul class="unstyled">
+      <li>
+        <h3 class="lead">Edit Filter
+          <span class="muted report-close pull-right" id="filter-close-icon">×</span>
+        </h3>
+      <li>
+      <form id="FilterOptions" method="post" action='<%=action_url%>/generate_pdf' target="_blank">
+      <input type="hidden" name="data_hash" class="serialize" value="" />
+      <input type="hidden" name="ticket_nested_fields" class="serialize" value='<%=@ticket_nested_fields.to_json%>' />
+      <input type="hidden" name="agent_select_field" class="serialize" value=''/>
+      <input type="hidden" name="group_select_field" class="serialize" value=''/>
+      <input type="hidden" name="customer_select_field" class="serialize" value=''/>
+      <input type="hidden" name="custom_fields" class="serialize" value='<%=@show_fields.to_json%>' />
+      <input type="hidden" name="selected_filter_data" class="serialize" value=''/>
+      <li class="row-fluid ff_item">
+        <div>
+          <label class="control-label"><%= t('reports.select_time_period')%></label>
+          <%= text_field_tag :date_range, date_range, :class => "required serialize" %>
+        </div>
+      </li>
+      <li>
+        <%if (current_page == 'agents_comparison' || current_page == 'groups_comparison')%>
+          <% @show_options.each_with_index do |c_hash, i| 
+          if ((c_hash[:condition].to_s == "responder_id" && current_page == 'agents_comparison') || 
+              (c_hash[:condition].to_s == "group_id" && current_page == 'groups_comparison'))
+            container = "multi_select"
+          %>
+            <div class="multiselect_fields ff_item" container="multi_select" condition="<%=c_hash[:condition].to_s%>" id="diff_ff_<%=c_hash[:condition].to_s%>" data-label="<%= c_hash[:name] %>" operator="is_in">
+              <label class="control-label">Select <%= c_hash[:name] %> (4 max)</label>
+                <%= render :partial => "/reports/containers/multi_select", :locals => { :options => c_hash[:options], :name => 'members_select', :selected_val => '', :field_id => 'members_select', :nested_fields => c_hash[:nested_fields], :current_options => {}, :c_hash => c_hash,:extra_class => c_hash[:extra_class]} %>
+            </div>
+            <div class="multiselect_fields ff_item">
+              <label class="control-label">Select Metrics</label>
+              <%= render :partial => "/reports/containers/multi_select", :locals => { :options => @comparison_fields, :name => 'comparison_select', :selected_val => '', :field_id => 'comparison_select'} %>
+            </div>
+          <%
+            end
+          end
+        end
+        %>
+      </li>
+      <li>
+        <% @show_options.each_with_index do |c_hash, i| %>
+          <%
+            unless neglect_fields.include? c_hash[:condition]
+              if ((!c_hash[:field_type].nil?) && (c_hash[:field_type] == "nested_field"))
+                container = "nested_field"
+              elsif (c_hash[:condition].to_s == "responder_id" || c_hash[:condition].to_s == "group_id" || c_hash[:condition].to_s == "customer_id")
+                container = "select"
+              elsif     
+                container = "multi_select" 
+              end
+            %> 
+            <% 
+            unless c_hash[:options].blank?
+              content_tag :div,{ :id          => "div_ff_#{c_hash[:condition]}", 
+                                    :class       => "ff_item", 
+                                    :condition   => c_hash[:condition],
+                                    :operator    => c_hash[:operator],
+                                    :container   => container,
+                                    :"data-label"=> c_hash[:name] } do %>
+                <label class="control-label"><%= c_hash[:name] %></label>
+                <%= render :partial => "/reports/containers/#{container}", :locals => { :options => c_hash[:options], :name => c_hash[:name], :selected_val => '', :field_id => c_hash[:field_id], :nested_fields => c_hash[:nested_fields], :current_options => {}, :c_hash => c_hash,:extra_class => c_hash[:extra_class]} %>
+              <% end
+              end 
+            end
+          end %>
+      </li>
+      <li>
+        <% if (!(defined?(current_page)).nil? && current_page == 'glance_report' && !@show_fields.empty?) %>
+          <label class="control-label">Reports by</label>
+          <%= select_tag :reports, options_for_select(@show_fields.map {|k,v| [v, k]}, []), { :multiple => true,:placeholder=>"#{t('adv_reports.select_an_option')}", :class => "select2 filter_item serialize" } %>    
+        <%end%>
+      </li>
+      <li>
+          <br/>
+          <a class="btn btn-primary" id="submit" href="javascript:void(0)">Generate</a>
+          <a class="btn" id="cancel" href="javascript:void(0)">Close</a>
+          <%= submit_tag "Generate PDF", :class => "hide", :id => "generate-pdf" %>
+      </li>
+      </form>
+    </ul>
+<% javascript_tag do %>
+var custom_fields = <%= @show_fields.to_json%>;
+custom_fields['ticket_type'] = 'Type';
+custom_fields['source'] = 'Source';
+custom_fields['priority'] = 'Priority';
+jQuery(document).ready(function() {
+  jQuery("#date_range").daterangepicker({
+    latestDate:Date.parse('Today-1'),
+    presetRanges: [
+      {text: '<%= t('reports.date_ranges.last_7_days') %>', dateStart: 'Today-8', dateEnd: 'Today-1' },
+      {text: '<%= t('reports.date_ranges.last_30_days') %>',dateStart: 'Today-31', dateEnd: 'Today-1'},
+      {text: '<%= t('reports.date_ranges.last_90_days') %>',dateStart: 'Today-91',  dateEnd: 'Today-1'}
+    ],
+    presets: {
+      dateRange: '<%= t('reports.date_ranges.custom') %>'
+    },
+    dateFormat: 'dd MM yy',
+    closeOnSelect: true
+  });
+  
+
+  jQuery("#date_range").bind('keypress keyup keydown', function(ev) {
+    ev.preventDefault();
+    return false;
+  });
+
+});
+<% end %>
+<script type="text/javascript"> 
+	jQuery(document).ready(function(){
+    Helpkit.reports_util.getFilterData();
+    Helpkit.reports_util.getFilterDisplayData();
+    jQuery("#FilterOptions input[name=data_hash]").val(Helpkit.reports_util.query_hash.toJSON())
+    jQuery("#FilterOptions input[name=selected_filter_data]").val(Helpkit.reports_util.select_hash.toJSON())
+    jQuery(".filter_item").bind("change", function(){
+      Helpkit.reports_util.refresh_tickets();
+    });
+
+    jQuery("#cancel").on('click',function(){
+      jQuery('#sliding').click();
+    });
+
+    //add the link which fire event on close button.
+    jQuery("#filter-close-icon").on('click',function(){
+      jQuery("#cancel").click();
+    });
+  });
+
+  jQuery(".proxy-generate-pdf").click(function(ev){
+    ev.preventDefault()
+    jQuery("#generate-pdf").trigger("click")
+  })
+
+</script>

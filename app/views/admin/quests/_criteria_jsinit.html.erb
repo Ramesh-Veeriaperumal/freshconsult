@@ -1,6 +1,6 @@
-<%= javascript_include_tag  '/javascripts/report/date' %>
-<%= javascript_include_tag  '/javascripts/report/daterangepicker.jQuery.js' %>
-<%= stylesheet_link_tag 'ui.daterangepicker' %>
+<script src="/javascripts/report/date.js" type="text/javascript"></script>
+<script src="/javascripts/report/daterangepicker.jQuery.js" type="text/javascript"></script>
+<link href="/stylesheets/ui.daterangepicker.css" media="screen" rel="stylesheet" type="text/css">
 
 <% content_for :pagefixed do %>
   <% content_for :onload_script do %> 
@@ -205,7 +205,7 @@
     }
     var active_email_body = null;
   <% end %>
-  <%= javascript_include_tag "condition-filter" %>
+  <script src="/javascripts/condition-filter.js" type="text/javascript"></script>
 <% end %>
 
 <% content_for :onload_script do %>

@@ -15,10 +15,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Gamification::GamificationUtil
   include Search::ElasticSearchIndex
   include RedisKeys
+  include Reports::TicketStats
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
-                            "header_info", "st_survey_rating", "trashed", "access_token", 
-                            "escalation_level", "sla_policy_id", "sla_policy"]
+                            "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
+                            "access_token", "escalation_level", "sla_policy_id", "sla_policy"]
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
 
@@ -59,7 +60,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity, 
     :stop_timesheet_timers, :fire_update_event, :support_score_on_update, 
-    :process_quests, :publish_to_update_channel, :update_es_index
+    :process_quests, :publish_to_update_channel, :update_es_index, :regenerate_reports_data
 
   after_commit_on_destroy :remove_es_document
 
@@ -900,7 +901,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Liquid ends here
   
   def respond_to?(attribute)
-    return false if [:to_ary].include?(attribute.to_sym)    
+    return false if [:to_ary].include?(attribute.to_sym)
     # Array.flatten calls respond_to?(:to_ary) for each object.
     #  Rails calls array's flatten method on query result's array object. This was added to fix that.
 
@@ -1440,5 +1441,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def can_add_requester?
       email.present? || twitter_id.present? || external_id.present? 
     end
+
+    def regenerate_reports_data
+      deleted_or_spam = @ticket_changes.keys & [:deleted, :spam]
+      return unless deleted_or_spam.any? && (created_at.strftime("%Y-%m-%d") != updated_at.strftime("%Y-%m-%d"))
+      set_reports_redis_key(account_id, created_at)
+    end
+
 end
 

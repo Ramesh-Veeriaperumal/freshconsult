@@ -201,7 +201,7 @@ class Subscription < ActiveRecord::Base
     
     def validate_on_update
       # chk_change_billing_cycle
-      chk_change_agents       
+      chk_change_agents unless trial?
     end
 
     def chk_change_agents 

@@ -14,13 +14,14 @@
         jQuery.ajax({ url: "<%= check_email_support_tickets_path %>?v="+ticket_email,
           success: function(data){
             jQuery("#helpdesk_ticket_email").removeClass("loading-right");
-            if(data.user_exists)
-              jQuery("#name_field").slideDown();
-            else
-              jQuery("#name_field").slideUp();              
-        }
-      });
-    } 
-  });
+            if(data.user_exists){
+              jQuery("#name_field").slideUp();
+            }else{
+              jQuery("#name_field").slideDown();              
+            }
+          }
+        });
+      } 
+    });
   <% end %>
 <% end %>

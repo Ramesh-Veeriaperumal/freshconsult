@@ -47,10 +47,7 @@
 					</div>
 					<%if @forum.questions? && topic.answered? %>
 						<%= t('answered') %>
-					<%end%> 
-				  <% if topic.paged? -%>
-				  	<small><%= link_to t('last') %></small>
-				  <% end -%> 
+					<%end%>
 			</li>
 		<% end %>
 	</ul>
