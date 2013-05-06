@@ -4,6 +4,12 @@ module Helpdesk::TimeSheetsHelper
       page.replace "timeentry_#{timeentry_cleared.id}", :partial => "/helpdesk/time_sheets/time_entry", :object => timeentry_cleared
     end
   end
+
+  def clear_view_timers_v2(page, timeentry, timeentry_cleared)
+    if !timeentry.nil? && !timeentry_cleared.nil? && (timeentry.workable.eql?(timeentry_cleared.workable))
+      page.replace "timeentry_#{timeentry_cleared.id}", :partial => "/helpdesk/time_sheets/v2/time_entry", :object => timeentry_cleared
+    end
+  end
   
   def renderTimesheetIntegratedApps( liquid_values ) 
     integrated_apps.map do |app|
@@ -30,6 +36,21 @@ module Helpdesk::TimeSheetsHelper
         page << "#{app[2]}.set_timesheet_entry_id(#{timeentry.id});" # This is not needed for update.  But no harm in calling.
         page << "}"
         page << "}catch(e){ log(e)}"
+      end
+    end
+  end
+
+
+  def updateToTimesheetIntegratedApps(page, timeentry, type = :create)
+    integrated_apps.each do |app|
+      app_detail = get_app_details(app[0])
+      unless app_detail.blank? or timeentry.blank?
+        integrated_app = timeentry.integrated_resources.find_by_installed_application_id(app_detail)
+        unless integrated_app.blank?
+          page << "#{app[2]}.updateNotesAndTimeSpent(#{timeentry.note.to_json}, #{timeentry.time_spent == 0? "0.01" : timeentry.hours}, #{timeentry.billable}, #{timeentry.executed_at.to_json});"
+          page << "#{app[2]}.logTimeEntry();"
+          page << "#{app[2]}.set_timesheet_entry_id(#{timeentry.id});" # This is not needed for update.  But no harm in calling.
+        end
       end
     end
   end
@@ -72,6 +93,17 @@ module Helpdesk::TimeSheetsHelper
   def agent_list
     privilege?(:edit_time_entries) ?
       current_account.users.technicians.visible : [current_user]
+  end
+
+  def timesheet_integrations_enabled?
+    integrated_apps.each do |app|
+      app_detail = get_app_details(app[0])
+      unless app_detail.blank?
+        return true
+      end
+    end
+
+    return false
   end
   
   private 

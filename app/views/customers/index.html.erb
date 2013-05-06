@@ -1,5 +1,5 @@
-<%= include_stylesheets :pattern %>
-<%= include_javascripts :pattern %>
+<%= include_cloudfront_css :pattern %>
+<%= include_cloudfront_js :pattern %>
 <div id="customers-page">
 	<%content_for :sidebar do%>
 		<% if privilege?(:manage_contacts) %>
@@ -51,7 +51,7 @@
                     <% end %>
                     <% if privilege?(:delete_contact) %>
 								    	<%= link_to "<i class='icon-trash'></i>", {:controller => "customers", :action => "destroy", :id => customer}, :confirm =>  
-								    		"#{t('company.info11')} #{customer.name}?\n#{t('company.info10')}", 
+								    		"#{t('company.info11')} #{h(customer.name)}?\n#{t('company.info10')}", 
 								    		:method => 'delete', :class => "btn btn-mini" %>
                     <% end %>
 									</div> 

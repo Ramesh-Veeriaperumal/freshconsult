@@ -1,5 +1,6 @@
 class Topic < ActiveRecord::Base
   include Juixe::Acts::Voteable
+  include Search::ElasticSearchIndex
   include ActionController::UrlWriter
 
   acts_as_voteable 
@@ -193,6 +194,19 @@ class Topic < ActiveRecord::Base
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
   end
 
+  def to_indexed_json
+    to_json( 
+          :only => [ :title, :user_id, :account_id ], 
+          :include => { :posts => { :only => [:body],
+                                    :include => { :attachments => { :only => [:content_file_name] } }
+                                  }, 
+                        :forum => { :only => [:forum_category_id, :forum_visibility],
+                                    :include => { :customer_forums => { :only => [:customer_id] } } 
+                                  } 
+                      } 
+       )
+  end
+  
   # Added for portal customisation drop
   def self.filter(_per_page = self.per_page, _page = 1)
     paginate :per_page => _per_page, :page => _page

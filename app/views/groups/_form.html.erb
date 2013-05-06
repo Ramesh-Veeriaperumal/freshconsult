@@ -1,156 +1,154 @@
- <script type="text/javascript"> 	
- 	var agent_select = null; 
- 	function toggleText(){
-		if (jQuery("ul#Active_list li").size()) {			
-			jQuery("ul#Active_list div.info").hide();
-		}else{			
-			jQuery("ul#Active_list div.info").show();			
-		}						
-	}	
-	
-	function removeUser(element){
-		agentName 	= element.getAttribute("agent_name");
-		agentID	  	= element.getAttribute("agent_id");
-		agentThumb  = element.getAttribute("agent_thumb");
-			
-		jQuery(agent_select)
-			.append("<option agent_name='"+agentName+"' agent_id='"+agentID+"' agent_thumb='"+agentThumb+"' value='"+agentID+"'>"+agentName+"</option>");
-		jQuery("#All_Agents").show();		
-	}
-	function AddUser(){		
-			option	  	= jQuery(agent_select.options[agent_select.selectedIndex]);	
-			agentName 	= option.get(0).getAttribute("agent_name");
-			agentID	  	= option.get(0).getAttribute("agent_id");
-			agentThumb  = option.get(0).getAttribute("agent_thumb");			
-			
-			option.remove();
-			
-			if(!agent_select.options.length)
-				jQuery("#All_Agents").hide();
-			
-			
-			var userBox = jQuery('<li />')							
-							.append("<div class=\"preview_pic\"><img src=\""+agentThumb+"\" /></div><a href=\"javascript:void(0)\" class=\"slim-button control\">remove</a><b title='"+agentName+"'>"+agentName.truncate(30)+"</b>");
-			
-			jQuery("ul#Active_list")
-					.append(userBox);
-			
-			jQuery(userBox).get(0).setAttribute("agent_name", agentName);
-			jQuery(userBox).get(0).setAttribute("agent_id", agentID);
-			jQuery(userBox).get(0).setAttribute("agent_thumb", agentThumb);
-					
-			toggleText();
-	}
-	jQuery(document).ready(function(){
-		agent_select = jQuery('select#group_escalate_to').get(0);
-		
-		jQuery("ul#Active_list li a.control")
-			.live("click", function(ev){
-				removeUser(this.parentNode);
-				jQuery(this.parentNode)
-					.remove();	
-				toggleText();				
-			});			
-		
-		jQuery("#group_form").submit(function(ev){
-			activeAgents = new Array();
-			jQuery("ul#Active_list li").each(function(index, item){
-				activeAgents.push(item.getAttribute("agent_id"));
-			});
-			jQuery("#agent_list").val(activeAgents); 
-		});
-		
-		toggleText();
-		
-		jQuery("#Active_list li").live('mouseover mouseout', function(event) {
-		  if (event.type == 'mouseover') { 
-		  	jQuery(this).find(".button").show();
-		  } else {
-		  	jQuery(this).find(".button").hide(); 
-		  }
-		}); 
-	});
- </script>
- <h3 class="title"><%=title%></h3> 
+ <%= include_cloudfront_css :pattern %>
+<%= include_cloudfront_js :pattern %>
+
+ <h3 class="lead"><%=title%></h3> <br/>
 	<% form_for(@group, :html => {:id => "group_form"}) do |f|  %>
 	  <%= f.error_messages %>
-	  <ul class="ui-form">
-		  <li>
-		    <%= f.label :name, t('group.name') %>
-		    <%= f.text_field :name ,:class => "text required" %>
-		  </li>
-		  <li>
-		    <%= f.label :description, t('description') %>
-		    <%= f.text_area :description, :class => "smallpara" %>
-		  </li>
-		  <li>		  	
-		  	<label><%=t('group.info1')%></label>
-			<% 
-				
-					account_id =  @group.account_id
-					if account_id.nil?
-						account_id = current_account.id
-					end
-					 @exclude_list = @group.excluded_agents(current_account) %>
-			<%  
-				if(@exclude_list.nil? ||@exclude_list.size == 0)
-					showagent = "display:none"
-				end 
-			%>
-			<span id="All_Agents" style="<%= showagent %>">
-					<b><%=t('group.select_agents')%> </b>							  			
-					<select id="group_escalate_to">
-						<% @exclude_list.each do |user| %>
-							<% 
-								avatar_url = '/images/fillers/profile_blank_thumb.gif'
-								unless user.avatar.nil?
-									avatar_url = user.avatar.expiring_url(:thumb)
-								end 
-							%>
-							<option agent_thumb="<%=avatar_url%>" agent_name="<%=user.name%>" agent_id="<%=user.id%>">
-								<%= user.name %>
-							</option>
-						<% end %>
-					</select>			
-					<%= link_to_function t('add'), 'AddUser()', :class => "button" %>
-			</span>
-			
-				<%= f.hidden_field :agent_list, { :id =>"agent_list", :value => ""} %>			
-						
-			
-			
-			<ul class="item_list active" id="Active_list">	
+	   <div class="row-fluid group-management">
+		 	<ul class="unstylGroup::d">
+		 		<li class="row-fluid">
+		 			<%= f.label :name, "<b> #{t('group.name')} </b>" , :class => "control-label span2" %>
+					  <div class="span10">
+						 <%= f.text_field :name , :class => "text required span12", :placeholder => t('group.name')  %>
+					  </div>
+		 		</li>
+		 		<li class="row-fluid">
+		 			 <%= f.label :description, "<b> #{t('description')} </b>", :class => "control-label span2" %>
+					  <div class="span10">
+						 <%= f.text_area :description , :class => "text required smallpara span12", :placeholder => t('group.description')  %>
+					  </div>
+		 		</li>
+		 		<li class="row-fluid margin-bottom">
+		 			<label class="control-label span2"><b><%=t('group.info1')%></b></label>
+		 			<input type="hidden" id="agent_list" name="group[agent_list]" class="span10"
+		 			data-placeholder = "<%= t("helpdesk.tickets.add_watcher.add_agent") %>"/>
+				</li>
+		 			 
+		 			 <% 
+						account_id =  @group.account_id
+						if account_id.nil?
+							account_id = current_account.id
+						end
+						 @exclude_list = @group.excluded_agents(current_account) %>
 					<%  
-						@group.agents.each do |user| 
-						avatar_agent = '/images/fillers/profile_blank_thumb.gif'
-						unless user.avatar.nil?
-							avatar_agent = user.avatar.expiring_url(:thumb)
-						end					  
-					%> 
-					<li agent_thumb="<%=avatar_agent%>" agent_id="<%=user.id %>" agent_name="<%= user.name %>">
-						<%= user_avatar(user, :thumb) %>
-						<a href="javascript:void(0)" class="slim-button control"><%= t("remove") %></a>				
-						<%= content_tag :b, truncate(user.name, 30), :title => user.name %>
-					</li>
-					<% end %>
-				
-					<div class="info padding6"><%=t('group.info2')%></div>
-							
-			</ul>		
-			<br />	
-		  </li>
-		 
+						if(@exclude_list.nil? ||@exclude_list.size == 0)
+							showagent = "display:none"
+						end 
+					%>
+					
+		 		<% if feature?(:round_robin) %>
+			 		<li class="row-fluid">
+						<label class="control-label span2"><b><%=t('group.ticket_assignment') %></b></label>
+						<div class="span10">
+							<ul class="unstyled">
+								<li class="margin-bottom">
+									  <div class="margin-bottom">
+									  	<%= f.check_box :ticket_assign_type, :value => '1', :checked => @group.ticket_assign_type == Group::TICKET_ASSIGN_TYPE[:round_robin],
+									  		:rel => "toggle"  %>
+									  </div>
+									  <div class="muted info_data">
+									  	<%=t('group.round_robin_desc')%>&nbsp;<a href="https://support.freshdesk.com/support/solutions/articles/77157" target="_blank"><%=t('group.learn_more')%></a>
+									  </div>
 
-		  <li>		
-			<%=t('group.info3')%> 
-			<%= f.collection_select :escalate_to, Agent.technician_list(account_id), :id, :name, {:include_blank => '...'} %>
-			<%=t('group.info4')%>
-			<%= f.select :assign_time , Group::ASSIGNTIME_OPTIONS %>			
-	   	  </li>
-	  </ul>
+								</li>
+						</div>
+	            	</li>
+            	<% end %>
+            	<br/>
+            	<li class="row-fluid">
+            		<div class="offset2 span10">
+            			<ul class="unstyled group-ticket-assign">
+            				<li class="row-fluid">
+            					<span class="span6 group-text-align"><%=t('group.info4')%> :</span>
+            					<%= f.select :assign_time , Group::ASSIGNTIME_OPTIONS,{}, { :class => 'select2 span3' } %>
+            				</li>
+            				<li class="row-fluid">
+            					<span class="span6 group-text-align"> &nbsp; &nbsp;<%#=t('group.info3')%> ....then send escalation email to :</span>
+            					<input type="hidden" id="escalate_to" name="group[escalate_to]" class="span3"
+            					data-placeholder = "<%= t("group.select_an_agent") %>"/>
+            				</li>
+            			</ul>
+            		</div>
+            	</li>
+		 	</ul>
+		 </div>
 	  <br />
 	  <div class="button-container">	    
-		<%= f.submit t('save'), :class => "uiButton" %>
-		<%= link_to t('cancel'), groups_path, :class => "uiButton" %>	
+		<%= link_to t('cancel'), groups_path, :class => "btn" %>	
+		<%= f.submit t('save'), :class => "btn btn-primary" %>
 	  </div>
 <% end %>
+
+<script type="text/javascript">
+
+jQuery(document).ready(function() {
+
+<%
+all_agents = []
+all_agents_list = @group.all_agents_list(current_account)
+if all_agents_list
+  all_agents_list.each do |req|
+    all_agents << "{id: '#{req.user_id}',
+                  value: '#{escape_javascript(req.user.name)}',
+                  text: '#{escape_javascript(req.user.name)}'}"
+  end
+end
+
+selected_agents = []
+agents = @group.agents
+if agents
+	 agents.each do |req|
+    selected_agents << "{id: '#{req.id}',
+                  value: '#{escape_javascript(req.name)}',
+                  text: '#{escape_javascript(req.name)}'}"
+  end
+end 
+%>
+
+jQuery('#agent_list').select2({
+	multiple: true,
+	data: [<%=all_agents.join(",")%>],
+	initSelection : function (element, callback) {
+      callback( [<%=selected_agents.join(",")%>] );
+    }
+	
+});
+jQuery("#agent_list").select2("val",[]);
+
+<%
+	technicians = []
+	account_id =  @group.account_id
+	if account_id.nil?
+		account_id = current_account.id
+	end
+	technician_list = Agent.technician_list(account_id)
+	if technician_list
+		technician_list.each do |req|
+			technicians << "{id: '#{req.id}',
+                  value: '#{escape_javascript(req.name)}',
+                  text: '#{escape_javascript(req.name)}'}"
+		end
+	end
+
+	escalate_to_agent = []
+	if @group.escalate
+		escalate_to_agent << "{id: '#{@group.escalate.id}',
+                  value: '#{escape_javascript(@group.escalate.name)}',
+                  text: '#{escape_javascript(@group.escalate.name)}'}"
+    end
+%>
+jQuery('#escalate_to').select2({
+	multiple: false,
+	data: [<%=technicians.join(",")%>],
+	initSelection : function (element, callback) {
+        var data = {id: '<%=@group.escalate_to%>', text: '<%=@group.escalate && @group.escalate.name%>'};
+        callback(data);
+    }
+});
+
+jQuery("#escalate_to").select2("val",[]);
+
+
+});
+
+</script>

@@ -1,3 +1,4 @@
+<% unless @new_show_page %>
 <%= render :partial => "helpdesk/time_sheets/new" %>
 <div id="timesheetlist">
 	<%= each_or_message "helpdesk/time_sheets/time_entry", @time_sheets, t(".no_timeentry") %>
@@ -10,4 +11,11 @@
                     :id => "timeentry_timer_total" %>
 	</div>
 </div>
-<%= include_javascripts :timesheet %>
+<%= include_cloudfront_js :timesheet %>
+<% 
+else 
+%>
+<%= render :partial => "helpdesk/time_sheets/v2/index" %>
+<%
+end 
+%>

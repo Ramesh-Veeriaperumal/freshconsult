@@ -27,6 +27,18 @@ class TopicObserver < ActiveRecord::Observer
 		add_resque_job(topic) if gamification_feature?(topic.account) && changed_topic_attributes.any?
 	end
 
+  def after_commit_on_create(topic)
+    topic.update_es_index
+  end
+
+  def after_commit_on_update(topic)
+    topic.update_es_index
+  end
+
+  def after_commit_on_destroy(topic)
+    topic.remove_es_document
+  end
+
 	def after_save(topic)
 		update_forum_counter_cache(topic)
 	end

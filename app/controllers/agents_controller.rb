@@ -73,6 +73,13 @@ class AgentsController < ApplicationController
       format.xml  { render :xml => @agent }
     end    
   end
+
+  def toggle_availability
+    @agent = current_account.agents.find_by_user_id(params[:id])
+    @agent.available = params[:value]
+    @agent.save
+    render :nothing => true
+  end
   
   def delete_avatar
     @user = current_account.all_users.find(params[:id])

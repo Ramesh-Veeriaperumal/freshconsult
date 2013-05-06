@@ -30,11 +30,11 @@ class Reports::TimesheetReportsController < ApplicationController
   end
   
    def time_sheet_list
-     @time_sheets = current_account.time_sheets.for_customers(@customer_id).by_agent(@user_id).created_at_inside(@start_date,@end_date).hour_billable(@billable).group_by(&group_by_caluse)
+     @time_sheets = current_account.time_sheets.for_customers(@customer_id).by_agent(@user_id).by_group(@group_id).created_at_inside(@start_date,@end_date).hour_billable(@billable).group_by(&group_by_caluse)
    end
   
   def time_sheet_for_export
-     @time_sheets = current_account.time_sheets.for_customers(@customer_id).by_agent(@user_id).created_at_inside(@start_date,@end_date).hour_billable(@billable)
+     @time_sheets = current_account.time_sheets.for_customers(@customer_id).by_agent(@user_id).by_group(@group_id).created_at_inside(@start_date,@end_date).hour_billable(@billable)
   end
 
   private

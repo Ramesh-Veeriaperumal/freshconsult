@@ -101,8 +101,9 @@ class SearchController < ApplicationController
       @items = []
       if f_classes.include?(Solution::Article) && current_portal.solution_category_id
         s_options[:category_id] = current_portal.solution_category_id
-        @items.concat(Solution::Article.search params[:search_key],
+        @items.concat(ThinkingSphinx.search params[:search_key],
                                                :with => s_options,
+                                               :classes => [ Solution::Article ],
                                                :sphinx_select => content_select(f_classes),
                                                :max_matches => (4 if @widget_solutions),
                                                :per_page => page_limit)
@@ -110,8 +111,9 @@ class SearchController < ApplicationController
       
       if f_classes.include?(Topic) && current_portal.forum_category_id
         s_options[:category_id] = current_portal.forum_category_id
-        @items.concat(Topic.search params[:search_key],
+        @items.concat(ThinkingSphinx.search params[:search_key],
                         :sphinx_select => content_select(f_classes),
+                        :classes => [ Topic ],
                         :with => s_options, :per_page => 10)
       end
 
@@ -119,18 +121,21 @@ class SearchController < ApplicationController
   
     def search
       begin
-        if current_user
-          if current_user.agent?
+        
+        if privilege?(:manage_tickets)
+          unless current_account.es_enabled?
             @items = ThinkingSphinx.search filter_key(params[:search_key]), 
                                                                 :with => search_with, 
                                                                 :classes => searchable_classes,
                                                                 :sphinx_select => sphinx_select,
                                                                 :star => false,
                                                                 :match_mode => :any,                                          
-                                                                :page => params[:page], :per_page => 10                                          
+                                                                :page => params[:page], :per_page => 10
           else
-            search_portal_for_logged_in_user
+            return redirect_to search_home_index_url(:search_key => params[:search_key])
           end
+        elsif current_user && current_user.customer?
+          search_portal_for_logged_in_user
         end
         process_results
       rescue Exception => e
@@ -234,7 +239,7 @@ class SearchController < ApplicationController
      classes = [Helpdesk::Ticket, Solution::Article, Topic]
      sphinx_select = nil
 
-     if current_user.client_manager?
+     if current_user.privilege?(client_manager)
        with_options[:customer_id] = [SearchUtil::DEFAULT_SEARCH_VALUE, current_user.customer_id]
      else
        with_options[:requester_id] = [SearchUtil::DEFAULT_SEARCH_VALUE, current_user.id]

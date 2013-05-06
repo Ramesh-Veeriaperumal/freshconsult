@@ -65,7 +65,7 @@
                  , pagination: '.pagination'
                  , params: {}
                  , url: location.href
-                 , loaderImage: "/images/load.gif"
+                 , loaderImage: "/images/animated/ajax-loader.gif"
                  }
     , container
     , $container;

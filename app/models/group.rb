@@ -1,6 +1,7 @@
 class Group < ActiveRecord::Base
   
   include Cache::Memcache::Group
+  include RedisKeys
 
   after_commit_on_create :clear_cache
   after_commit_on_destroy :clear_cache
@@ -17,12 +18,12 @@ class Group < ActiveRecord::Base
    
    belongs_to :escalate , :class_name => "User", :foreign_key => "escalate_to"
    
-   attr_accessible :name,:description,:email_on_assign,:escalate_to,:assign_time ,:import_id
+   attr_accessible :name,:description,:email_on_assign,:escalate_to,:assign_time ,:import_id, 
+                   :ticket_assign_type
    
    accepts_nested_attributes_for :agent_groups
    liquid_methods :name
-  
-  
+    
   ASSIGNTIME = [
     [ :half,    I18n.t("group.assigntime.half"),      1800 ], 
     [ :one,     I18n.t("group.assigntime.one"),       3600 ], 
@@ -37,6 +38,13 @@ class Group < ActiveRecord::Base
    
   ]
 
+  TICKET_ASSIGN_TYPE = {:default => 0, :round_robin => 1}
+
+  TICKET_ASSIGN_OPTIONS = [
+                            ['group_ticket_options.default',         '0'], 
+                            ['group_ticket_options.round_robin',     '1']
+                          ]
+
   ASSIGNTIME_OPTIONS = ASSIGNTIME.map { |i| [i[1], i[2]] }
   ASSIGNTIME_NAMES_BY_KEY = Hash[*ASSIGNTIME.map { |i| [i[2], i[1]] }.flatten]
   ASSIGNTIME_KEYS_BY_TOKEN = Hash[*ASSIGNTIME.map { |i| [i[0], i[2]] }.flatten]
@@ -44,6 +52,14 @@ class Group < ActiveRecord::Base
   def excluded_agents(account)      
    return account.users.find(:all , :conditions=>['helpdesk_agent = true and id not in (?)',agents.map(&:id)]) unless agents.blank? 
    return account.users.find(:all , :conditions=> { :helpdesk_agent => true })  
+  end
+
+  def self.ticket_assign_options
+    TICKET_ASSIGN_OPTIONS.map {|t| [I18n.t(t[0]),t[1]]}
+  end
+
+  def all_agents_list(account)
+    account.agents_from_cache
   end
 
   def agent_emails
@@ -70,6 +86,48 @@ class Group < ActiveRecord::Base
                     :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
                     :helpdesk_agent,:fb_profile_id,:external_id,:language,:address] }}}
     super options
+  end
+
+  def next_available_agent
+    #this method returns the next available agent
+    #for the group, provided the group has
+    #round robin scheduled.
+    return nil if !round_robin_eligible?
+
+    #Take from DB if its not available in redis.
+    last_assigned_agent = get_key(GROUP_AGENT_TICKET_ASSIGNMENT % 
+                                 {:account_id => self.account_id, :group_id => self.id})
+    
+
+    if last_assigned_agent.nil?
+      agent_ids = self.agents.map { |ag| ag.id  }
+    else
+      agent_ids = last_assigned_agent.split(",")
+    end
+
+    count = 1
+    agent_ids.each do |agent_id|
+      agent = Agent.find_by_user_id(agent_id)
+      next if agent.nil?
+      if agent.available?
+          #rotating the array. Put the latest assigned agent at last.
+          agent_ids = agent_ids.push(agent_ids.shift(count)).flatten
+          store_in_redis(agent_ids)
+          return agent
+      end
+      count = count + 1
+    end
+    return nil
+
+  end
+
+  def store_in_redis(agent_arr)
+    set_key(GROUP_AGENT_TICKET_ASSIGNMENT % 
+            {:account_id => self.account_id, :group_id => self.id}, agent_arr.join(","), false)
+  end
+
+  def round_robin_eligible?
+    ticket_assign_type == TICKET_ASSIGN_TYPE[:round_robin]
   end
   
 end

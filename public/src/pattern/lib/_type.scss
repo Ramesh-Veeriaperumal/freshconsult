@@ -19,6 +19,18 @@ p {
  color: #ccc;
  font-size:$baseFontSize;
 }
+.header-lead{
+  margin-top: 15px;
+  border-top: 2px solid #c7c7c7;
+  margin-bottom: $baseLineHeight;
+  font-size: $baseFontSize * 1.5;;
+  font-weight: 200;
+  line-height: $baseLineHeight * 1.5; 
+  span{
+    display: inline-block;
+    border-top: 4px solid #c7c7c7;
+  }
+}
 
 // Emphasis & misc
 // -------------------------
@@ -100,7 +112,7 @@ h4 small { font-size: 14px; }
 // Unordered and Ordered lists
 ul, ol {
   padding: 0;
-  margin: 0 0 $baseLineHeight / 2 25px;
+ // margin: 0 0 $baseLineHeight / 2 25px;
 }
 ul ul,
 ul ol,
@@ -115,6 +127,11 @@ ul.unstyled,
 ol.unstyled {
   margin-left: 0;
   list-style: none;
+}
+ul.inline > li, ol.inline > li {
+  display: inline-block;
+  padding-right: 5px;
+  padding-left: 5px;
 }
 
 // Description Lists

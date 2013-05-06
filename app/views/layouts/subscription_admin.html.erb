@@ -8,7 +8,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
 		<link rel="shortcut icon" href="/images/favicon.ico" />
-		<%= include_stylesheets :subscription %>		
+		<%= include_cloudfront_css :subscription %>		
 	</head>
 	<body>     
 		<div class="navbar navbar-fixed-top">
@@ -28,7 +28,6 @@
 		              	  [
 										      [customers_admin_subscriptions_path(), :customers, "Customers" ],
 										      [admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
-										      [admin_subscription_discounts_path, :discounts, "Discounts" ],
 										      [admin_subscription_payments_path, :payments, "Payments" ],
 										      [admin_subscription_announcements_path, :announcements, "Announcements" ],
 										      [admin_subscription_plans_path, :plans, "Plans" ],      
@@ -53,7 +52,7 @@
 			<%= [:notice, :warning, :error].collect {|type| content_tag('div', "<a class='close' data-dismiss='alert'>×</a>" + flash[type], :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }   %>
 			<%= yield %>
 		</div>
-		<%= include_javascripts :subscription%>    
+		<%= include_cloudfront_js :subscription%>    
 		<% javascript_tag do %>
 			jQuery.noConflict();
 		<% end %>

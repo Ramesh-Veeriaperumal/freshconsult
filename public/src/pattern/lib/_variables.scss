@@ -82,13 +82,17 @@ $btnSuccessBackgroundHighlight:     #51a351 !default;
 $btnWarningBackground:              lighten($orange, 15%) !default;
 $btnWarningBackgroundHighlight:     $orange !default;
 
-$btnDangerBackground:               #bb0000 !default;
-$btnDangerBackgroundHighlight:      #770000 !default;
+$btnDangerBackground:               #ee5f5b !default;
+$btnDangerBackgroundHighlight:      #bd362f !default;
 
 $btnInverseBackground:              $linkColor !default;
 $btnInverseBackgroundHighlight:     adjust-hue($btnPrimaryBackground, 20%) !default;
 
+$btnDisabledColor:              	$black !default;
+$btnDisabledBackground:     		#e8e8e8 !default;
 
+$btnDoneColor:						$black !default;
+$btnDoneBackground:					#FFF398 !default;
 // Forms
 // -------------------------
 $inputBackground:               $white !default;
@@ -112,7 +116,6 @@ $dropdownLinkBackgroundActive:  $grayLight !default;
 $dropdownLinkBackgroundHover:   $dropdownLinkBackgroundActive !default;
 
 
-
 // COMPONENT VARIABLES
 // --------------------------------------------------
 
@@ -130,8 +133,8 @@ $zindexModal:             1050 !default;
 
 // Sprite icons path
 // -------------------------
-$iconSpritePath:          "/images/glyphicons-halflings.png" !default;
-$iconWhiteSpritePath:     "/images/glyphicons-halflings-white.png" !default;
+$iconSpritePath:          "cdn-ignored/bootstrap-icons/glyphicons-halflings.png" !default;
+$iconWhiteSpritePath:     "cdn-ignored/bootstrap-icons/glyphicons-halflings-white.png" !default;
 
 
 // Input placeholder text color

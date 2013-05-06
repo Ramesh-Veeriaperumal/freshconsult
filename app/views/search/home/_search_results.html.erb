@@ -1,0 +1,84 @@
+
+  <ul class="results">
+    <% if @total_results == 0 %>
+      <li class="ticket_icon"> 
+        <div class="group">
+          <p><strong><%= t('search.no_results_msg') %></strong></p>
+        </div>
+      </li>
+    <% end %>
+
+    <% unless @searched_tickets.nil? || @searched_tickets.size==0 %>
+      <li class="ticket_icon"> 
+        <strong class="title">Tickets</strong>
+        <% @searched_tickets.each do |ticket| %>
+          <div class="group">
+            <span class="icon"></span>
+            <%= link_to("#{ticket.subject} (##{ticket.display_id})", ticket, :class => "big") %>
+            <span class="light"><%= "Requested by, <b>#{ticket.requester}</b>" %> </span>
+            <p><%= ticket.description %></p>
+          </div>
+        <% end %>
+      </li>
+    <% end %>
+    
+    <% unless @searched_users.nil? %>
+      <li> 
+        <strong class="title">People</strong>
+        <% @searched_users.each do |user| %>
+          <div class="group"> 
+            <%= user_avatar(user) %>
+            <%= link_to user, user, :class => "user" %>
+            <% if user.customer? %>
+              <% if user.customer %>
+                <span class="light"><%= user.job_title.blank? ? "#{user.customer.name}" : 
+                      "#{user.job_title} at #{user.customer.name}" %></span> 
+              <% end %>
+            <% else %>
+              <span class="light"><%= user.admin? ? "Administrator" : "Agent" %></span>
+            <% end %>
+            
+          </div>
+        <% end %>
+      </li>
+    <% end %>
+    
+    <% unless @searched_companies.nil? %>
+      <li class="company_icon"> 
+        <strong class="title">Companies</strong>
+        <% @searched_companies.each do |company| %>
+          <div class="group">
+            <span class="icon"></span>
+            <%= link_to(company.name, company, :class => "big") %>
+          </div>
+        <% end %>
+      </li>
+    <% end %>
+
+    <% unless @searched_articles.nil? %>
+      <li class="solution_icon"> 
+        <% if @skip_title.nil? %><strong class="title">Solutions</strong><% end %>
+        <% @searched_articles.each do |article| %>
+          <div class="group">
+            <span class="icon"></span>
+            <%= link_to(article.title, article, :class => "big") %>
+            <p><%= article.desc_un_html  %></p>
+          </div>
+        <% end %>
+      </li>
+    <% end %>
+    
+    <% unless @searched_topics.nil? %>
+      <li class="forum_icon"> 
+        <% if @skip_title.nil? %><strong class="title">Forums</strong><% end %>
+        <% @searched_topics.each do |topic| %>
+          <div class="group">
+            <span class="icon"></span>
+            <%= link_to(topic.title, category_forum_topic_path(topic.forum.forum_category, topic.forum, topic), :class => "big") %>
+            <p><%= truncate(topic.posts.first.body.gsub(/<\/?[^>]*>/, ""), :length => 300)  %></p>
+          </div>
+        <% end %>
+      </li>
+    <% end %> 
+  </ul>
+  

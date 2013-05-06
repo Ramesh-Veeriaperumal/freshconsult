@@ -44,7 +44,7 @@ class AccountConfiguration < ActiveRecord::Base
   	end
 
   	def update_billing
-  		Resque.enqueue(Billing::AddToBilling::UpdateAdmin, id)
+  		Billing::Subscription.new.update_admin(self)
   	end
 
 end

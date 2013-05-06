@@ -1,6 +1,5 @@
 class Admin::CannedResponses::ResponsesController < Admin::AdminController
   include HelpdeskControllerMethods
-  uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
 
   before_filter :load_multiple_items, :only => [:delete_multiple, :update_folder]
   before_filter :load_all_folders, :only => [:new, :edit, :create]

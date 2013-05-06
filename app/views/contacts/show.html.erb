@@ -1,5 +1,5 @@
-<%= include_stylesheets :pattern %>
-<%= include_javascripts :pattern %>
+<%= include_cloudfront_css :pattern %>
+<%= include_cloudfront_js :pattern %>
 <% content_for :sidebar do %>
   <%= render :partial => "/integrations/widgets/contacts_show_side_bar_widget", :locals => {:user => @user}%>
 <%- end %>
@@ -26,7 +26,7 @@
 		</div>
 	<% end %>
 		<%= user_avatar(@user, :medium, "profile_pic") %>
-		<h1 class="title"><%= @user.display_name %></h1>
+		<h1 class="title"><%= h(@user.display_name) %></h1>
 		<%= render :partial => "helpdesk/tickets/components/company_info", :locals => { :user => @user } %>
 		<%= render :partial => "/helpdesk/tags/tag_list", :object => @user.tags %>
 		<div id="email_mark" class="hide"></div>
@@ -56,7 +56,7 @@
 </div>
 
 <div class="row-fluid">
-	<h4 class="title"><%=t('contacts.info3',:nick_name => @user.display_name)%></h4>
+	<h4 class="title"><%=t('contacts.info3',:nick_name => h(@user.display_name))%></h4>
 		<% form_for @user do |f| %>
 			<%= f.label :description, t("contacts.form_placeholder.description"), :class => "overlabel" %>
 			<%= f.text_area :description, :class=> "sp_paragraph span12",:cols => 20,:rows => 10 %>
@@ -70,7 +70,7 @@
 <% unless @user.deleted %>
 	<div id="tickets-expanded" class="contact_tickets row-fluid">
 		<div class="detailed_view">
-			<h4 class="title"><%=t('contacts.info4',:nick_name => @user.display_name)%></h4>
+			<h4 class="title"><%=t('contacts.info4',:nick_name => h(@user.display_name))%></h4>
 			<span class="seperator"></span>
 			<% if @user_tickets.blank? %>
 				<%= "#{t('contacts.info5')}" %>
@@ -84,7 +84,7 @@
 			  	</table>
 			  	<% if @user.tickets.visible.size > 5 %>
 				  	<div class="more_results">
-				  		<%= link_to t('contacts.show_more',:nick_name => @user.display_name), helpdesk_requester_filter_path(:requester_id => @user.id) , :id => "show_more" %>
+				  		<%= link_to t('contacts.show_more',:nick_name => h(@user.display_name)), helpdesk_requester_filter_path(:requester_id => @user.id) , :id => "show_more" %>
 				  	</div>
 			  	<% end %>
 		  	<% end %>

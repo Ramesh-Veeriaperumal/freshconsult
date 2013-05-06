@@ -16,7 +16,8 @@ module ApplicationHelper
                         ["IE 7", "ie7"],
                         ["IE 8", "ie8"],
                         ["IE 9", "ie9"],
-                        ["(gt IE 9)|!(IE)", "", true]]
+                        ["IE 10", "ie10"],
+                        ["(gt IE 10)|!(IE)", "", true]]
 
     html_conditions.map { |h| %( 
         <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{ 
@@ -79,9 +80,9 @@ module ApplicationHelper
     end     
   end
 
-  def page_title
-    portal_name = h(current_portal.portal_name) + " : "
-    portal_name += @page_title || t('helpdesk_title')
+  def page_title    
+    portal_name = " : #{h(current_portal.portal_name)}" if current_portal.portal_name.present?
+    "#{(@page_title || t('helpdesk_title'))}#{portal_name}"
   end 
   
   def page_description
@@ -152,6 +153,9 @@ module ApplicationHelper
           content_tag :div, value
         when "facebook" then
           auto_link("http://facebook.com/#{value}")
+        when "twitter" then
+          value = value.gsub('@','')
+          link_to("@#{value}" , "http://twitter.com/#{value}")
         when "link" then
           auto_link(value)
       end
@@ -237,7 +241,6 @@ module ApplicationHelper
     tabs = [
       [customers_admin_subscriptions_path, :customers, "Customers" ],
       [admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
-      [admin_subscription_discounts_path, :discounts, "Discounts" ],
       [admin_subscription_payments_path, :payments, "Payments" ],
       [admin_subscription_announcements_path, :announcements, "Announcements" ]
     ]
@@ -354,7 +357,7 @@ module ApplicationHelper
   end
   
    def timesheet_path(args_hash, link_display = 'time entry')
-    link_to(link_display, "#{helpdesk_ticket_path args_hash['ticket_id']}#time_entry#{args_hash['timesheet_id']}")
+    link_to(link_display, "#{helpdesk_ticket_path args_hash['ticket_id']}#timeentry_#{args_hash['timesheet_id']}")
   end
   #Liquid ends here..
   
@@ -436,9 +439,9 @@ module ApplicationHelper
   # User details page link should be shown only to agents and admin
   def link_to_user(user, options = {})
     if privilege?(:view_contacts)
-      link_to(user.display_name, user, options)
+      link_to(h(user.display_name), user, options)
     else 
-      content_tag(:strong, user.display_name, options)
+      content_tag(:strong, h(user.display_name), options)
     end
   end
   
@@ -457,8 +460,15 @@ module ApplicationHelper
    color
  end
  
+ # def get_time_in_hours seconds
+ #   sprintf( "%0.02f", seconds/3600)
+ # end
+ 
  def get_time_in_hours seconds
-   sprintf( "%0.02f", seconds/3600)
+  hh = (seconds/3600).to_i
+  mm = ((seconds % 3600) / 60).to_i
+
+  hh.to_s.rjust(2,'0') + ":" + mm.to_s.rjust(2,'0')
  end
  
  def get_total_time time_sheets
@@ -548,7 +558,7 @@ module ApplicationHelper
       when "checkbox" then
         element = content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ) + field_label)
       when "html_paragraph" then
-        element = label + text_area(object_name, field_name, :class => "mceEditor", :value => field_value)
+        element = label + text_area(object_name, field_name, :value => field_value)
     end
     element
   end
@@ -562,6 +572,7 @@ module ApplicationHelper
     field_name      = (field_name.blank?) ? field.field_name : field_name
     object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
     label = label_tag object_name+"_"+field.field_name, field_label
+    choices = field.choices
     case dom_type
       when "requester" then
         element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => requester_autocomplete_helpdesk_authorizations_path, :object_name => object_name }))  
@@ -580,12 +591,15 @@ module ApplicationHelper
       when "dropdown" then
         if (field.field_type == "default_status" and in_portal)
           element = label + select(object_name, field_name, field.visible_status_choices, {:selected => field_value},{:class => element_class})
+        elsif (['default_priority','default_source','default_status'].include?(field.field_type) )
+          element = label + select(object_name, field_name, choices, {:selected => field_value},{:class => element_class}) 
+          #Just avoiding the include_blank here.
         else
-          element = label + select(object_name, field_name, field.choices, {:selected => field_value},{:class => element_class})
+          element = label + select(object_name, field_name, field.html_unescaped_choices, { :include_blank => "...", :selected => field_value},{:class => element_class})
         end
       when "dropdown_blank" then
         element = label + select(object_name, field_name, 
-                                              field.choices(@ticket), 
+                                              field.html_unescaped_choices(@ticket), 
                                               {:include_blank => "...", :selected => field_value}, 
                                               {:class => element_class})
       when "nested_field" then
@@ -593,11 +607,11 @@ module ApplicationHelper
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
-        element = content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ) + label)
+        element = content_tag(:div, (check_box(object_name, field_name, :class => element_class, :checked => field_value ) + label))
       when "html_paragraph" then
-        element = label + text_area(object_name, field_name, :class => element_class +" mceEditor", :value => field_value)
+        element = label + text_area(object_name, field_name, :class => element_class , :value => field_value)
     end
-    content_tag :li, element, :class => dom_type
+    content_tag :li, element, :class => " #{ dom_type } #{ field.field_type } field"
   end
 
   def add_cc_field_tag element , field    
@@ -623,7 +637,7 @@ module ApplicationHelper
   # The field_value(init value) for the nested field should be in the the following format
   # { :category_val => "", :subcategory_val => "", :item_val => "" }
   def nested_field_tag(_name, _fieldname, _field, _opt = {}, _htmlopts = {}, _field_values = {}, in_portal = false)        
-    _category = select(_name, _fieldname, _field.choices, _opt, _htmlopts)
+    _category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
     _javascript_opts = {
       :data_tree => _field.nested_choices,
       :initValues => _field_values,
@@ -659,7 +673,7 @@ module ApplicationHelper
       field_value = field.dropdown_selected(field.all_status_choices, field_value) if(dom_type == "dropdown") || (dom_type == "dropdown_blank")
       element = label + label_tag(field_name, field_value, :class => "value_label")
     else
-      field_value = field.dropdown_selected(field.choices, field_value) if(dom_type == "dropdown") || (dom_type == "dropdown_blank")
+      field_value = field.dropdown_selected(field.html_unescaped_choices, field_value) if(dom_type == "dropdown") || (dom_type == "dropdown_blank")
       element = label + label_tag(field_name, field_value, :class => "value_label")
     end
     
@@ -697,6 +711,20 @@ module ApplicationHelper
     nodejs_port = Rails.env.development? ? 5000 : (current_account.ssl_enabled ? 2050 : 1050)      
     "#{nodejs_protocol}://#{request.host}:#{nodejs_port}/#{namespace}"
   end  
+
+  def es_enabled?
+    current_account.es_enabled?
+  end
+  
+  def truncate_filename filename
+    extension = filename.include?('.') ? filename.split('.').last : nil
+    extension = nil if filename.gsub('.','') == extension
+    simple_name = extension ? filename[0..-(extension.to_s.length + 2)] : filename
+    if filename.length > 20
+      return simple_name[0,15] + "..." + simple_name[-2..-1] + (extension ? ".#{extension}" : "")
+    end
+    filename
+  end
 
   def assumed_identity_message
     _output = []
@@ -751,9 +779,7 @@ module ApplicationHelper
     end
     
   def tour_button(text, tour_id)
-    link_to(content_tag(:div, text, :class=> 'guided-tour-start') , '#', 
-              :rel => 'guided-tour',
-              "data-tour-id" => tour_id)
+    link_to(text, '#', :rel => 'guided-tour', "data-tour-id" => tour_id, :class=> 'guided-tour-button')
   end
   
   def check_fb_reauth_required
@@ -784,6 +810,10 @@ module ApplicationHelper
     else
       "<span class = 'user_name emphasize'>#{h(ticket.requester.display_name)}</span>"
     end
+  end
+  
+  def quick_action
+    privilege?(:edit_ticket_properties) ? 'quick-action dynamic-menu' : ''
   end
 
 end

@@ -1,16 +1,29 @@
-content = ''
-unless @previous_ticket.blank? or  @previous_ticket == -1
-	content << link_to("<span></span>", "/helpdesk/tickets/#{@previous_ticket}", :class => 'prev_page', :rel => 'previous')
+
+next_link = 'javascript:void(0)'
+next_class = 'pagi-btn next_page'
+if !@next_ticket.blank? &&  @next_ticket.to_s != '-1'
+	next_link = "/helpdesk/tickets/#{@next_ticket}"
 else
-	content << '<span class="disabled prev_page"><span></span></span> '
+	next_class << " disabled"
 end
 
-unless @next_ticket.blank? or  @next_ticket == -1
-	content << link_to("<span></span>", "/helpdesk/tickets/#{@next_ticket}", :class => 'next_page', :rel => 'next')
+previous_link = 'javascript:void(0)'
+previous_class = 'pagi-btn prev_page'
+if !@previous_ticket.blank? &&  @previous_ticket.to_s != '-1'
+	previous_link = "/helpdesk/tickets/#{@previous_ticket}"
 else
-	content << '<span class="disabled next_page"><span></span></span> '
+	previous_class << " disabled"
 end
-content << ''
+
+content = '<ul><li>'
+content << link_to("<span class='arrow-next'></span>", next_link, 
+						:class => "#{next_class} tooltip" , :rel => 'next', 
+						:title => t('ticket.next'), "data-placement" => 'below')
+content << '</li><li>'
+content << link_to(" <span class='arrow-previous'></span>",  previous_link, 
+						:class => "#{previous_class} tooltip" , :rel => 'previous', 
+						:title => t('ticket.previous'), "data-placement" => 'below')
+content << '</li></ul>'
 
 page.replace_html 'adjacents', content
 page << "jQuery('#adjacents').removeClass('hide');"

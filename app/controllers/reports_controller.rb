@@ -26,8 +26,8 @@ class ReportsController < ApplicationController
   end
   
   def report_list
-    @t_reports = [{ :name => "responder", :label => "Agent ticket summary", :title => "Agent", :object => "agents" }, 
-                  { :name => "group"    , :label => "Group ticket summary", :title => "Group", :object => "groups" }
+    @t_reports = [{ :name => "responder", :label => t('adv_reports.agent_ticket_summary'), :title => "Agent", :object => "agents" }, 
+                  { :name => "group"    , :label => t('adv_reports.group_ticket_summary'), :title => "Group", :object => "groups" }
                  ]
   end
   

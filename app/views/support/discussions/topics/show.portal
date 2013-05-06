@@ -7,8 +7,8 @@
 	{% endif %}
 	<div class="breadcrumb">
 		<a href="{{ portal.discussions_home_url }}">{% translate portal_pages.groups.discussions %}</a>
-		<a href="{{ forum_category.url }}">{{ forum_category.name }}</a>
-		<a href="{{ forum.url }}">{{ forum.name }}</a>
+		<a href="{{ forum_category.url }}">{{ forum_category.name | h }}</a>
+		<a href="{{ forum.url }}">{{ forum.name | h}}</a>
 	</div>
 	
 	<section class="topic-header clearfix">
@@ -17,11 +17,11 @@
 			<i class="icon-page-{{ forum.type_name }}"></i>
 		</b>
 		<h2 class="post-title heading">
-			{{ topic.title }}
+			{{ topic.title | h}}
 		</h2>
 		{% if portal.user %}
 			<div class="toolbar-actions btn-group" id="topic-toolbar">
-				<a href="#reply-to-post" class="btn btn-small" data-proxy-for="#new-post-form">Reply</a>
+				<a href="#reply-to-post" class="btn btn-small" data-proxy-for="#new-post-form">{% translate ticket.support.reply %}</a>
 				{{ topic | follow_topic_button }}
 				{{ topic | link_to_topic_edit }}				
 			</div>
@@ -34,9 +34,9 @@
 			<div class="user-info">
 				{{ first_post.user | profile_image:'user-pointer-bottom', '40px', '40px' }}				
 				<div class="user-details">
-					<h4 class="user-name">{{ first_post.user.name }}</h4>
+					<h4 class="user-name">{{ first_post.user.name | h}}</h4>
 					<div class="p-info">
-						started a topic {{ first_post.created_on | time_ago }}
+						{% translate portal.topic.started %} {{ first_post.created_on | time_ago }}
 					</div>
 				</div>
 			</div>
@@ -79,9 +79,9 @@
 						{{ post.user | profile_image:'user-pointer-bottom', '40px', '40px' }}
 						<div class="user-details">
 							{{ post | post_actions }}
-							<h4 class="user-name">{{ post.user.name }}</h4>
+							<h4 class="user-name">{{ post.user.name | h}}</h4>
 							<div class="p-info">
-								said {{ post.created_on | time_ago }}
+								{% translate portal.said %} {{ post.created_on | time_ago }}
 							</div>
 						</div>
 					</div>
@@ -89,7 +89,7 @@
 						<div class="p-desc">
 							{% if post.answer? %}
 								<span class="label label-small label-answered pull-left">
-									Answer
+									{% translate forum_shared.post.answer %}
 								</span>
 							{% endif %}
 							{{ post.body_html }}
@@ -135,12 +135,12 @@
 			<div class="user-info">
 				{{ portal.user | profile_image:'user-pointer-bottom', '40px', '40px' }}
 				<div class="user-details">						
-					<h4 class="user-name">{{ portal.user.name }}</h4>
+					<h4 class="user-name">{{ portal.user.name | h }}</h4>
 				</div>
 			</div>
 			<div class="p-content">
 				<input type="text" class="special span12" 
-						placeholder="Click here to add a comment" id="reply-form-proxy" 
+						placeholder="{% translate portal.topic.comment_placeholder %}" id="reply-form-proxy" 
 						data-proxy-for="#new-post-form" />
 				<section id="new-post-form" class="hide">
 					{% snippet topic_reply %}
@@ -152,12 +152,12 @@
 	{% endif %}
 </section>
 
-{% if forum.total_topics > 0 %}
+{% if forum.topics_count > 0 %}
 <section class="sidebar content rounded-6 min-height-on-desktop">	
 	<div class="cs-g-c">
 		<section class="topic-list">
 			<div class="list-lead">
-			 	More topics in {{ forum.name }}
+			 	{% translate portal.topic.more_topic %} {{ forum.name | h}}
 			</div>
 			<ul>
 				{% assign topic_count = 10 %}
@@ -165,14 +165,14 @@
 					{% if topic.id != o_topic.id %}
 					<li class="cs-g-3">
 						<div class="ellipsis">
-							<a href="{{o_topic.url}}" title="{{o_topic.title}}">{{o_topic.title}}</a>
+							<a href="{{o_topic.url}}" title="{{o_topic.title | h}}">{{o_topic.title | h}}</a>
 						</div>
 					</li>
 					{% endif %}
 				{% endfor %}
 			</ul>
-			{% if forum.total_topics > topic_count %}
-				<a href="{{forum.url}}" class="see-more">See all {{ forum.total_topics }} topics</a>
+			{% if forum.topics_count > topic_count %}
+				{{ forum | link_to_see_all_topics }}
 			{% endif %}
 		</section>
 	</div>

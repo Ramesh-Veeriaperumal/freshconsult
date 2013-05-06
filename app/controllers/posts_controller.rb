@@ -15,7 +15,6 @@ class PostsController < ApplicationController
   #caches_formatted_page :rss, :index, :monitored
   cache_sweeper :posts_sweeper, :only => [:create, :update, :destroy]
   
-  uses_tiny_mce :options => Helpdesk::FRESH_EDITOR
   
   
   def index

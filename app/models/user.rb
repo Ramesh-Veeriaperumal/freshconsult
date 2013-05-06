@@ -8,6 +8,7 @@ class User < ActiveRecord::Base
   include Mobile::Actions::User
   include Users::Activator
   include Authority::Rails::ModelHelpers
+  include Search::ElasticSearchIndex
   include Cache::Memcache::User
   
   USER_ROLES = [
@@ -68,15 +69,18 @@ class User < ActiveRecord::Base
   before_update :destroy_user_roles, :if => :deleted?
   before_save :set_contact_name, :check_email_value
   after_update :drop_authorization , :if => :email_changed?
+  after_commit :update_es_index
 
   after_commit_on_create :clear_agent_list_cache, :if => :agent?
   after_commit_on_update :clear_agent_list_cache, :if => :agent?
   after_commit_on_destroy :clear_agent_list_cache, :if => :agent?
   after_commit_on_update :clear_agent_list_cache, :if => :helpdesk_agent_updated?
   before_update :bakcup_user_changes
+  after_commit_on_update :update_search_index, :if => :customer_id_updated?
   
   named_scope :contacts, :conditions => { :helpdesk_agent => false }
   named_scope :technicians, :conditions => { :helpdesk_agent => true }
+  # xss_terminate  :only => [:name,:email]
   named_scope :visible, :conditions => { :deleted => false }
   named_scope :active, lambda { |condition| { :conditions => { :active => condition }} }
   named_scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
@@ -99,6 +103,8 @@ class User < ActiveRecord::Base
       self.privileges = Role.privileges_mask([:client_manager])
     end
   end
+
+  delegate :available?, :in_round_robin?, :to => :agent, :allow_nil => true
   
   def check_email_value
     if email.blank?
@@ -359,7 +365,7 @@ class User < ActiveRecord::Base
   end
 
   def is_not_deleted?
-    logger.debug "not ::deleted ?:: #{!self.deleted}"
+    Rails.logger.debug "not ::deleted ?:: #{!self.deleted}"
     !self.deleted
   end
   
@@ -478,6 +484,17 @@ class User < ActiveRecord::Base
     end
   end
 
+  def to_indexed_json
+    to_json( 
+              :only => [ :name, :email, :description, :job_title, :phone, :mobile, :twitter_id, :fb_profile_id, :account_id, :deleted ], 
+              :include => { :customer => { :only => [:name] } } 
+           )
+  end
+
+  def update_search_index
+    Resque.enqueue(Search::IndexUpdate::UserTickets, { :current_account_id => account_id, :user_id => id })
+  end
+
   protected
 
   def set_contact_name 
@@ -542,6 +559,10 @@ class User < ActiveRecord::Base
       if(!(abilities.length == 1) && !privilege?(:client_manager))
         destroy_user_roles
       end
+    end
+
+    def customer_id_updated?
+      @all_changes.has_key?(:customer_id)
     end
     
     def destroy_user_roles

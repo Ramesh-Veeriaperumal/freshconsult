@@ -45,7 +45,7 @@
   map.gauth_done '/authdone/google', :controller => 'user_sessions', :action => 'google_auth_completed'
   map.login '/login', :controller => 'user_sessions', :action => 'new'  
   map.sso_login '/login/sso', :controller => 'user_sessions', :action => 'sso_login'
-  map.login_normal '/login/normal', :controller => 'support/login', :action => 'new'
+  map.login_normal '/login/normal', :controller => 'user_sessions', :action => 'new'
   map.signup_complete '/signup_complete/:token', :controller => 'user_sessions', :action => 'signup_complete'
 
   map.openid_done '/google/complete', :controller => 'accounts', :action => 'openid_complete'
@@ -119,6 +119,42 @@
     admin.resources :account_additional_settings, :member => { :update => :put, :assign_bcc_email => :get}
     admin.resources :roles
   end
+
+  map.namespace :search do |search|
+    search.resources :home, :only => :index, :collection => { :suggest => :get, :solutions => :get, :topics => :get }
+  end
+
+  map.namespace :reports do |report|
+    report.resources :helpdesk_glance_reports, :controller => 'helpdesk_glance_reports', 
+      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
+      :fetch_activity_ajax => :post,:fetch_metrics=> :post} 
+    report.resources :analysis_reports, :controller => 'helpdesk_load_analysis', 
+      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post} 
+    report.resources :performance_analysis_reports, :controller => 'helpdesk_performance_analysis', 
+      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post} 
+    report.resources :agent_glance_reports, :controller => 'agent_glance_reports', 
+      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
+      :fetch_activity_ajax => :post,:fetch_metrics=> :post} 
+    report.resources :group_glance_reports, :controller => 'group_glance_reports', 
+      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
+      :fetch_activity_ajax => :post,:fetch_metrics=> :post} 
+    report.resources :agent_analysis_reports, :controller => 'agents_analysis', 
+      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
+      :fetch_chart_data => :post} 
+    report.resources :group_analysis_reports, :controller => 'groups_analysis', 
+      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
+      :fetch_chart_data => :post} 
+    report.resources :agents_comparison_reports, :controller => 'agents_comparison', 
+      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post}  
+    report.resources :groups_comparison_reports, :controller => 'groups_comparison', 
+      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post}
+    report.resources :customer_glance_reports, :controller => 'customer_glance_reports', 
+      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
+      :fetch_activity_ajax => :post,:fetch_metrics=> :post}
+    report.resources :customers_analysis_reports, :controller => 'customers_analysis', 
+      :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
+      :fetch_chart_data => :post}
+  end
   
   map.resources :reports
   map.resources :timesheet_reports , :controller => 'reports/timesheet_reports' , :collection => {:report_filter => :post , :export_csv => :post} 
@@ -135,10 +171,11 @@
   map.survey_overall_report '/survey/overall_report/:category', :controller => 'reports/survey_reports', :action => 'report_details'
   map.survey_feedbacks '/reports/survey_reports/feedbacks', :controller => 'reports/survey_reports', :action => 'feedbacks'
   map.survey_refresh_details '/reports/survey_reports/refresh_details', :controller => 'reports/survey_reports', :action => 'refresh_details'
-    
+
+  
   map.namespace :social do |social|
     social.resources :twitters, :controller => 'twitter_handles',
-                :collection =>  { :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any, :tweet_exists => :get , :user_following => :any, :authdone => :any },
+                :collection =>  { :feed => :any, :create_twicket => :post, :send_tweet => :any, :signin => :any, :tweet_exists => :get , :user_following => :any, :authdone => :any , :twitter_search => :get},
                 :member     =>  { :search => :any, :edit => :any }
 
     social.resources :facebook, :controller => 'facebook_pages', 
@@ -153,7 +190,7 @@
       admin.resources :subscriptions, :member => { :charge => :post, :extend_trial => :post, :add_day_passes => :post }, :collection => {:customers => :get, :customers_csv => :get}
       admin.resources :accounts, :collection => {:agents => :get, :helpdesk_urls => :get, :tickets => :get, :renewal_csv => :get}
       admin.resources :subscription_plans, :as => 'plans'
-      admin.resources :subscription_discounts, :as => 'discounts'
+      # admin.resources :subscription_discounts, :as => 'discounts'
       admin.resources :subscription_affiliates, :as => 'affiliates', :collection => {:add_affiliate_transaction => :post}
       admin.resources :subscription_payments, :as => 'payments'
       admin.resources :subscription_announcements, :as => 'announcements'
@@ -202,7 +239,6 @@
   map.reset_password '/account/reset/:token', :controller => 'user_sessions', :action => 'reset'
   
   map.resources :search, :only => :index, :member => { :suggest => :get }
-  
   
   #SAAS copy ends here
 
@@ -265,15 +301,14 @@
                                  :member => { :reply_to_conv => :get, :forward_conv => :get, :view_ticket => :get, 
                                     :assign => :put, :restore => :put, :spam => :put, :unspam => :put, :close => :post, 
                                     :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put, 
-                                    :change_due_by => :put, :split_the_ticket =>:post, 
-                                    :merge_with_this_request => :post, :print => :any, :latest_note => :get, 
+                                    :change_due_by => :put, :split_the_ticket =>:post, :status => :get, 
+                                    :merge_with_this_request => :post, :print => :any, :latest_note => :get,  :activities => :get, 
                                     :clear_draft => :delete, :save_draft => :post, :update_ticket_properties => :put } do |ticket|
-
-
+                                      
       ticket.resources :conversations, :collection => {:reply => :post, :forward => :post, :note => :post,
                                        :twitter => :post, :facebook => :post}
 
-      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
+      ticket.resources :notes, :member => { :restore => :put }, :collection => {:since => :get}, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :subscriptions, :collection => { :create_watchers => :post, 
                                                         :unsubscribe => :get,
                                                         :unwatch => :delete,
@@ -322,8 +357,6 @@
     helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get, 
                   :requester_autocomplete => :get, :company_autocomplete => :get }
     
-    helpdesk.resources :mailer, :collection => { :fetch => :get }
-            
     helpdesk.resources :sla_policies, :collection => {:reorder => :put}, :member => {:activate => :put},
                       :except => :show
 

@@ -13,7 +13,7 @@
   <div class='nested-wrapper'>
     <div class="nested-unit"> 
         <%if bar_chart.nil? %>
-          <div class="noinfo"><%=t('no_date_to_display')%></div>
+          <div class="noinfo"><%=t('adv_reports.no_data_to_display_msg')%></div>
         <% else %>
           <div id="<%=label%>_bar_chart" name='level_0' class="nested-stacked-bar"></div>
         <%end%>

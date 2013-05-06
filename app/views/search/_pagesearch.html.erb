@@ -1,6 +1,7 @@
 <% 
 	placeholder ||= "Search"
 	url			||= "/search/content?search_key="
+	url = url.gsub('/search', '/search/home') if es_enabled?
 %>
 <form class="page-search" >
 	<div class="live_search">
@@ -32,7 +33,6 @@
 			jQuery(this).removeClass("loading");				
 		}
 	});
-
 	jQuery('.page-search').bind("submit", function(ev){
 		ev.preventDefault()
 		return false

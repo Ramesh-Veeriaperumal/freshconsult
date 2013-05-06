@@ -1,0 +1,1 @@
+page << "jQuery('##{dom_id(@item)}').fadeOut(500, function(){ jQuery(this).remove() });"

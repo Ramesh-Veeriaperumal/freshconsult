@@ -5,15 +5,17 @@ class Integrations::ApplicationsController < Admin::AdminController
   before_filter :load_object, :only => [:show, :edit, :update, :destroy]
 
   def index
-    @applications = Integrations::Application.available_apps(current_account).order(:listing_order)
+    @applications = Integrations::Application.available_apps(current_account)
     @installed_applications = get_installed_apps
   end
 
   def oauth_install
-  	app_config = KeyValuePair.find_by_account_id_and_key(current_account.id, "#{params['id']}_oauth_config")
+    key_options = { :account_id => current_account.id, :provider => params['id']}
+    kv_store = Redis::KeyValueStore.new Redis::KeySpec.new(RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options)
+    app_config = kv_store.get
   	begin
   		unless app_config.blank?
-		    config_hash = JSON.parse(app_config.value)
+  		  config_hash = JSON.parse(app_config)
   			app_name = config_hash["app_name"]
   			config_hash.delete("app_name")	    
         if params['id'] == 'salesforce' 
@@ -22,7 +24,7 @@ class Integrations::ApplicationsController < Admin::AdminController
         end
 		    installed_application = Integrations::Application.install_or_update(app_name, current_account.id, config_hash)
 		    flash[:notice] = t(:'flash.application.install.success') if installed_application
-		    app_config.delete
+		    kv_store.remove
 	    end	
   	rescue Exception => msg
   		puts "Something went wrong while configuring an installed application ( #{msg})"

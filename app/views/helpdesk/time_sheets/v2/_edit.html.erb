@@ -1,0 +1,7 @@
+<% form_remote_for :time_entry, edit, :url => helpdesk_time_sheet_path, :html => { :method => :put, :class => "timesheet_form" } do |f| %>
+  <%= render :partial => "/helpdesk/time_sheets/v2/form", :object => f, :locals => {:edit => edit} %>
+<% end %>
+
+<script type="text/javascript">
+  jQuery('.modal.in #time_entry_hhmm').focus();
+</script>

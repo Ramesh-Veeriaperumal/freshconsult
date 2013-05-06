@@ -1,0 +1,24 @@
+defaults: &defaults
+  env_name: dev
+  host: examplecluster.chkcxmn20ap0.us-east-1.redshift.amazonaws.com
+  dbname: reporting
+  port: 5439
+  connect_timeout: 120
+  write:
+    user: admin_user
+    password: Opmanager123
+  read:
+    user: read_only_user
+    password: Opmanager123
+
+development:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+slave:
+  <<: *defaults
+
+test:
+  <<: *defaults

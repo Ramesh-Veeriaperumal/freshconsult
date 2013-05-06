@@ -1,5 +1,4 @@
 <div class="page-header">
-	<%= link_to('Edit Subscription', edit_admin_subscription_path(@subscription), :class => "btn btn-success pull-right") %>	
 	<h2><%= @page_title = @subscription.account %></h2>                                                                         
 </div>
 <div class="row">     
@@ -43,10 +42,6 @@
 		  <tr>
 		    <th>Plan</th>
 		    <td><%= @subscription.subscription_plan %></td>
-		  </tr>
-		  <tr>
-		    <th>Discount</th>
-		    <td><%= @subscription.discount ? "#{@subscription.discount.name} (#{@subscription.discount.code}) - #{discount_label(@subscription.discount)}" : 'None' %></td>
 		  </tr>
 		  <tr>
 		    <th>Remaining Day Passes</th>
@@ -98,6 +93,32 @@
 		
     <table>	
 	</div>	      
+
+	<div class="span4">
+		<h3>Agents</h3>
+		<table class="table">
+			<tr>
+		    <th>Email</th>
+		    <th>Role</th>
+		    <th>Verified</th>
+		  </tr>
+		  <% @subscription.account.agents.each do |agent| %>
+		    <tr>
+		      <td><%= agent.user.email %></td>
+		      <td><%= User::USER_ROLES_NAMES_BY_KEY[agent.user.user_role] %></td>
+		      <td><%= agent.user.active %></td>
+		    </tr>
+		  <% end %>		  
+		</table>
+
+		<b>Invoices are sent to</b>
+			<table class="table">
+				<% @subscription.account.invoice_emails.each do |email| %>
+	      	<tr><td><%= email %></td></tr>
+	      <% end %>
+	    </table>
+	</div>	
+
 	<div class="span4">
 		<h3>Transactions</h3>
 		<table id="transactions" class="table">
@@ -118,13 +139,6 @@
 		</table>    
 	</div>	
  	<div class="span4">
-
-		<h3>Extend trial</h3>
-
-		<% form_tag({:action => 'extend_trial'}, :id => 'trial_form', :class => "well form-inline") do %>
-		  <input type="text" name="trial_days" id="trial_days" placeholder="No. of trial days" />
-		  <input type="submit" value="Extend trial" class="btn" />
-		<% end %>
 
 		<h3>Add Day Passes</h3>
 

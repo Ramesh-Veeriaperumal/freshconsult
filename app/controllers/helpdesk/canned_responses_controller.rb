@@ -8,11 +8,8 @@ class Helpdesk::CannedResponsesController < ApplicationController
   end
  
   def show
-    if ticket_present?
-      render_parsed_content
-    else
-      render :text => @ca_resp.content_html 
-    end
+    render_parsed_content if ticket_present?
+    render :partial => '/helpdesk/tickets/components/insert_canned_response.rjs'
   end
 
   def recent
@@ -49,9 +46,8 @@ class Helpdesk::CannedResponsesController < ApplicationController
     def render_parsed_content
       content    = @ca_resp.content_html 
       content    = mobile_content(content) if mobile?
-      a_template = Liquid::Template.parse(content).render('ticket' => @ticket, 
+      @a_template = Liquid::Template.parse(content).render('ticket' => @ticket, 
                                 'helpdesk_name' => @ticket.account.portal_name)    
-      render :text => a_template || ""
     end
 
     def mobile_content content

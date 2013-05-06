@@ -6,7 +6,6 @@ class Solution::ArticlesController < ApplicationController
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :page_title 
   
-  uses_tiny_mce :options => Helpdesk::LARGE_EDITOR 
   
   def index    
     redirect_to_url = solution_category_folder_url(params[:category_id], params[:folder_id])    

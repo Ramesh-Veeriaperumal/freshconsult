@@ -41,7 +41,7 @@
 	<textarea id="<%= "agent-hovercard_#{note.id}" %>" style="display:none;">
 		<div class="contact_hover" style="min-height:50px;">	
 		  <%= user_avatar(note.user,:thumb, "preview_pic" , { :width => "36px", :height => "36px" }) if note.user.agent? %>
-		  <%= content_tag :div, link_to(h(note.user), note.user), :class => "user_name" %>
+		  <%= content_tag :div, link_to(CGI.escapeHTML(h(note.user)), note.user), :class => "user_name" %>
 		  <% if feature?(:gamification) %>
 		  		<% if note.user.agent? %>
 		  			<strong><%= content_tag :div, h(note.user.agent.level.name) unless note.user.agent.level.blank? %></strong>

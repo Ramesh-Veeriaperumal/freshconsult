@@ -223,7 +223,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
   top: 5px;
   @include opacity(0.5);
   cursor: pointer;
-  background: url('/images/codemirror/fullscreen.png') no-repeat #ffffff;
+  background: inline-image('cdn-ignored/inline-images/cm-fullscreen.png') no-repeat #ffffff;
 }
 
 /** Textmate Style Theme **/

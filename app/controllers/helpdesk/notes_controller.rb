@@ -1,21 +1,38 @@
 class Helpdesk::NotesController < ApplicationController
   
   before_filter :load_parent_ticket_or_issue
+
+  helper 'helpdesk/tickets'
   
   include HelpdeskControllerMethods
   include ParserUtil
   include Helpdesk::Social::Facebook
   include Helpdesk::Social::Twitter
+  include RedisKeys
+  include Helpdesk::Activities
   
   before_filter :fetch_item_attachments, :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
   before_filter :set_mobile, :prepare_mobile_note, :only => [:create]
-    
-  uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
+  before_filter :set_show_version
 
   def index
-    @notes = @parent.conversation(params[:page])
+
+    if params[:since_id].present?
+      @notes = @parent.conversation_since(params[:since_id])
+    elsif params[:before_id].present?
+      @notes = @parent.conversation_before(params[:before_id])
+    else
+      @notes = @parent.conversation(params[:page])
+    end
+    
     if request.xhr?
-      render(:partial => "helpdesk/tickets/note", :collection => @notes)
+      unless params[:v].blank? or params[:v] != '2'
+        @ticket_notes = @notes.reverse
+        @ticket_notes_total = @parent.conversation_count
+        render :partial => "helpdesk/tickets/show/conversations"
+      else
+        render(:partial => "helpdesk/tickets/note", :collection => @notes)
+      end
     else 
       options = {}
       options.merge!({:human=>true}) if(!params[:human].blank? && params[:human].to_s.eql?("true"))  #to avoid unneccesary queries to users
@@ -29,9 +46,29 @@ class Helpdesk::NotesController < ApplicationController
       end
     end    
   end
+
+  def since
+    @notes = @parent.notes.newest_first.since(params[:last_note])
+    render(:partial => "helpdesk/tickets/show/note", :collection => @notes.reverse) 
+  end
+
+  def since
+    @notes = @parent.notes.newest_first.since(params[:last_note])
+    render(:partial => "helpdesk/tickets/show/note", :collection => @notes.reverse) 
+  end
+
   
-  def create  
+  def create
     build_attachments @item, :helpdesk_note
+    @item.send_survey = params[:send_survey]
+    
+    unless params[:ticket_status].blank?
+      @item.notable.status = params[:ticket_status]
+      Thread.current[:notifications] = current_account.email_notifications
+      Thread.current[:notifications][EmailNotification::TICKET_RESOLVED][:requester_notification] = false
+    end
+
+    @item.quoted_text = params[:quoted_text].present? && params[:quoted_text] == 'true'
     if @item.save
       if params[:post_forums]
         @topic = Topic.find_by_id_and_account_id(@parent.ticket_topic.topic_id,current_account.id)
@@ -48,11 +85,19 @@ class Helpdesk::NotesController < ApplicationController
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end
+
+      if params[:showing] == 'activities'
+        activity_records = @parent.activities.activity_since(params[:since_id])
+        @activities = stacked_activities(activity_records.reverse)
+      end
   
       post_persist
+  
     else
       create_error
     end
+  ensure
+    Thread.current[:notifications] = nil
   end
   
   def edit
@@ -60,6 +105,15 @@ class Helpdesk::NotesController < ApplicationController
   end
 
   protected
+
+    def set_show_version
+      @new_show_page = (get_key(show_version_key) == "1")
+    end
+    
+    def show_version_key
+      HELPDESK_TKTSHOW_VERSION % { :account_id => current_account.id, :user_id => current_user.id }
+    end
+
     def scoper
       @parent.notes
     end
@@ -85,11 +139,13 @@ class Helpdesk::NotesController < ApplicationController
     end
 
     def process_item
-      Thread.current[:notifications] = current_account.email_notifications
       if @parent.is_a? Helpdesk::Ticket
         if @item.email_conversation?
-          send_reply_email
-          @item.create_fwd_note_activity(params[:helpdesk_note][:to_emails]) if @item.fwd_email?
+           if @item.fwd_email?
+            flash[:notice] = t(:'fwd_success_msg')
+           elsif @item.to_emails.present? or @item.cc_emails.present? or @item.bcc_emails.present?
+            flash[:notice] = t(:'flash.tickets.reply.success')
+           end
         end
         if tweet?
           twt_type = params[:tweet_type] || :mention.to_s
@@ -101,58 +157,12 @@ class Helpdesk::NotesController < ApplicationController
         elsif facebook?  
           send_facebook_reply  
         end
-        @parent.responder ||= @item.user unless @item.user.customer? 
-        unless params[:ticket_status].blank?
-          Thread.current[:notifications][EmailNotification::TICKET_RESOLVED][:requester_notification] = false
-          @parent.status = Helpdesk::TicketStatus.status_keys_by_name(current_account)[I18n.t(params[:ticket_status])]
-        end
-        if @item.note? and !params[:helpdesk_note][:to_emails].blank?
-          notify_array = validate_emails(params[:helpdesk_note][:to_emails])
-          Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, @parent, @item ,@parent.friendly_reply_email,{:notify_emails =>notify_array}) unless notify_array.blank? 
-        end
       end
-
-      if @parent.is_a? Helpdesk::Issue
-        unless @item.private
-          @parent.tickets.each do |t|
-            t.notes << (c = @item.clone)
-            Helpdesk::TicketNotifier.deliver_reply(t, c)
-          end
-        end
-        @parent.owner ||= current_user  if @parent.respond_to?(:owner)
-      end
-      @parent.save
       Thread.current[:notifications] = nil
     end
     
     def tweet?
       (!@parent.tweet.nil?) and (!params[:tweet].blank?)  and (params[:tweet].eql?("true")) 
-    end
-    
-    def add_cc_email
-      cc_email_hash_value = @parent.cc_email_hash.nil? ? {:cc_emails => [], :fwd_emails => []} : @parent.cc_email_hash
-      if @item.fwd_email?
-        fwd_emails = @item.to_emails | @item.cc_emails | @item.bcc_emails | cc_email_hash_value[:fwd_emails]
-        fwd_emails.delete_if {|email| (email == @parent.requester.email)}
-        cc_email_hash_value[:fwd_emails]  = fwd_emails
-      else
-        cc_emails = @item.cc_emails | cc_email_hash_value[:cc_emails]
-        cc_emails.delete_if {|email| (email == @parent.requester.email)}
-        cc_email_hash_value[:cc_emails] = cc_emails
-      end
-      @parent.update_attribute(:cc_email, cc_email_hash_value)      
-    end
-
-    def send_reply_email      
-      add_cc_email     
-      if @item.fwd_email?
-        Helpdesk::TicketNotifier.send_later(:deliver_forward, @parent, @item)
-        flash[:notice] = t(:'fwd_success_msg')
-      elsif @item.to_emails.present? or @item.cc_emails.present? or @item.bcc_emails.present?
-        Helpdesk::TicketNotifier.send_later(:deliver_reply, @parent, @item, {:include_cc => params[:include_cc] , 
-                :send_survey => ((!params[:send_survey].blank? && params[:send_survey].to_i == 1) ? true : false)})
-        flash[:notice] = t(:'flash.tickets.reply.success')
-      end
     end
 
     def create_error

@@ -1,13 +1,13 @@
 <section class="main content rounded-6 min-height-on-desktop">
 	<div class="breadcrumb">
-		<a href="/">Home</a>
-		<a href="{{ portal.tickets_home_url }}">Tickets list</a>
+		<a href="/">{% translate header.tabs.home %}</a>
+		<a href="{{ portal.tickets_home_url }}">{% translate portal.tickets.ticket_list %}</a>
 	</div>
 	
 	<section class="ticket-main">
 		{{ ticket | status_alert }}
 		
-		<h2 class="heading">#{{ ticket.id }} {{ ticket.subject }}</h2>
+		<h2 class="heading">#{{ ticket.id }} {{ ticket.subject | h}}</h2>
 
 		{% if portal.user %}
 			<section class="toolbar-actions" id="ticket-toolbar">
@@ -19,12 +19,12 @@
 				</span>
 				<div class="btn-group" id="ticket-toolbar">
 					{% unless ticket.closed? %}
-						<a href="#reply-to-ticket" class="btn btn-small" data-proxy-for="#add-note-form">Reply</a>
+						<a href="#reply-to-ticket" class="btn btn-small" data-proxy-for="#add-note-form">{% translate reply %}</a>
 						<a href="{{ ticket.close_ticket_url }}" data-method="post" class="btn btn-small">
-							Mark ticket as closed
+							{% translate portal.tickets.mark_closed %}
 						</a>
-						<a href="#add-people" rel="freshdialog" title="Add people to conversation" 
-							data-width="400" class="btn btn-small" data-submit-label="Add people">Add people</a>
+						<a href="#add-people" rel="freshdialog" title="{% translate portal.tickets.add_people_title %}" 
+							data-width="400" class="btn btn-small" data-submit-label="{% translate portal.tickets.add_people %}">{% translate portal.tickets.add_people %}</a>
 					{% endunless %}
 				</div>			
 			</section>
@@ -34,8 +34,8 @@
 			<div class="user-info">
 				{{ ticket.requester | profile_image:'user-pointer-bottom', '40px', '40px' }}
 				<div class="user-details">
-					<h4 class="user-name">{{ ticket.requester.name }}</h4>
-					<div class="p-info">reported {{ ticket.created_on | time_ago }}</div>
+					<h4 class="user-name">{{ ticket.requester.name | h}}</h4>
+					<div class="p-info">{% translate portal.reported %} {{ ticket.created_on | time_ago }}</div>
 				</div>
 			</div>
 			<div class="p-content">
@@ -98,8 +98,8 @@
 					<div class="user-info">
 						{{ comment.user | profile_image:'user-pointer-bottom', '40px', '40px' }}
 						<div class="user-details">
-							<h4 class="user-name">{{ comment.user.name }}</h4> 
-							<div class="p-info">said {{ comment.created_on | time_ago }}</div>
+							<h4 class="user-name">{{ comment.user.name | h }}</h4> 
+							<div class="p-info">{% translate portal.said %} {{ comment.created_on | time_ago }}</div>
 						</div>
 					</div>
 
@@ -165,12 +165,12 @@
 				<div class="user-info">
 					{{ portal.user | profile_image:'user-pointer-bottom', '40px', '40px' }}
 					<div class="user-details">
-						<h4 class="user-name">{{ portal.user.name }}</h4>
+						<h4 class="user-name">{{ portal.user.name | h}}</h4>
 					</div>
 				</div>
 				<div class="p-content">
 					<input type="text" class="special span12" 
-							placeholder="Click here to reply to this ticket" id="add-note-form-proxy" 
+							placeholder="{% translate portal.tickets.reply_placeholder %}" id="add-note-form-proxy" 
 							data-proxy-for="#add-note-form" />
 
 					<div id="add-note-form" class="hide">

@@ -1,0 +1,235 @@
+@import "lib/settings";
+
+// Height adjustment for ticket customization drag and drop
+html.ie6, html.ie7, html.ie8{  height:100%; overflow-y:scroll; }
+
+.ie6, .ie7{
+	.wrapper{ 
+		//expressions are too dangoreus ... pratheepv
+		// width: expression((document.body.clientWidth < 982)? "982px" : "#{$blueprint-liquid-container-width}");
+		width: 980px; 
+	}
+
+	.search-content{
+		.searchicon{
+			top: 45px;
+		}
+	}
+
+	.typed{
+		top: 48px !important;
+	}
+	
+	ul.header-tabs{
+		li.active a, li.active a:hover{
+			top:1px;
+			padding-top:7px;
+		}
+	}
+	
+	input, button {
+		overflow: visible;
+	}
+	input.text{
+		overflow-x:hidden;
+	}
+  
+	ul.summary{ border-color:#ececec; }
+	
+	ul.icon_grid li a div{ font-weight:bold; }
+	
+	ul.ui-form li.inline-field{
+		width:96%;
+	}
+	
+	.reminders, .reminders-ticket{
+	   ul li{display:inline-block;}
+   }
+	
+	.uniForm, .uniForm fieldset, .uniForm .ctrlHolder, .uniForm .formHint, .uniForm .buttonHolder, .uniForm .ctrlHolder ul{ zoom:1; }
+	.uniForm .textInput,
+	      .uniForm .fileUpload,
+	      .uniForm .selectInput,
+	      .uniForm select{ height:24px; }
+	      
+	
+	.ui-form{
+		.attachment_list li{
+			width:200px;
+			.delete{
+				display:block;
+			}
+			border:0px;
+		}
+	}
+	.request-list div.item{ 
+		.bulb, .wand{
+			left:0px;
+			margin-left:-25px;
+		}
+	}
+	
+	input.search{
+		height:28px;	
+	}
+	
+	div.description{  
+		margin-top:0px;
+		margin-bottom:0px;
+		padding-top:0px;
+		padding-bottom:0px;
+		.details{
+			padding:0px;
+		}
+	}
+	
+	
+	.rtCnt .rtDetails h3.title{
+		margin-top:14px;
+		padding-bottom:0px;
+	}
+	
+	div.panel_area .tag_delete{
+		right:12px;
+	}
+	
+	.placeholder-list dl dt a{
+		width:180px;
+	}
+	
+	.auto-expand{
+		overflow-x:hidden;
+	}
+	.search_bar{width:220px;}
+	
+	.uiButton{
+		padding:4px 8px;
+		font-size:11px;
+	}
+	
+	a.uiButton, a.uiButton:visited{
+		padding-top:5px;
+		padding-bottom:6px;
+		font-size:11px;
+	}
+	.ui-login, .ui-signup{
+		.ui-form{ @include box-shadow(0 1px 6px #cfcfcf); }
+	}
+	
+	.dialog-panel, .due-date-dialog{
+		@include box-shadow(#9f9f9f 0 2px 4px);
+	}
+	.due-date-dialog{
+		margin-left:0px;
+		top:-8px;
+	}
+	.ui-form .conditionset fieldset div.s_email div input.text, .ui-form .conditionset fieldset div.s_email div textarea.paragraph {
+		width:550px;
+	}
+	.ui-widget-container{ @include box-shadow(#afafaf -3px 5px 10px); }
+   .fd-menu{ z-index:999999 }
+
+   .content .controls .control-left .source-badge-wrap .source {
+   		display:block;
+   }
+}
+.ie6, .ie7, .ie8{
+	.ie8plusonly {
+		display:none;
+	}
+   .fd-menu{ border:1px solid #afafaf; a:hover{ background: #5469f9; } }
+
+   .reply-flip, .view-flip {
+   		.flip-back {
+   			display: none;
+   		}
+
+   		&:hover {
+   			.flip-back {
+   				display: block;
+   			}
+   		}
+   }
+
+	.modal.in {
+		left: 50%;
+
+		.modal-header .close {
+			right: auto;
+			left: -29px;
+		}
+	}
+}
+
+.ie8, .ie9{
+		.search-content{
+		.searchicon{
+			top: 28px;
+		}
+	}
+
+	.typed{
+		top: 31px !important;
+	}
+}
+
+.ie6, .ie7, .ie8, .ie9{
+	.ticket-leftcol .leftFilter .item {
+		padding: 0;
+	}
+
+	.tickets .subject_style, .tickets-expanded .subject_style {
+		font-family: "System" !important;
+		text-transform: uppercase;
+		letter-spacing: 0em !important;
+		font-weight: bold;
+	}
+
+	.fd-ajaxmenu {
+		border: solid 1px #DDD;
+	}
+
+	#tickets-expanded{
+		tr, tr.active, tr:hover {
+			td {
+				&.priority-high, &.priority-medium , &.priority-low , &.priority-urgent {
+					filter:none;
+				}
+			}
+			&.ticket-status-4, &.ticket-status-5 {
+				td {
+					&.priority-high, &.priority-medium , &.priority-low , &.priority-urgent {
+						filter:none;
+					}
+				}
+			}
+		}
+	}
+
+	.modal-header .close {
+    	background-color: #5e5e5e;
+	}
+
+    .ticket_details .btn-toolbar {
+    	padding: 5px;
+    }
+
+}
+
+.ie6, .ie7, .ie8, .ie9, .ie10 {
+
+	.hidden_upload {
+		width: 250px;
+		margin-top: 0;
+		input[type=file] {
+			@include opacity(1);
+			top: 0;
+		}
+		div { display: none;}
+	}
+
+	.ticket_details .clearfix .overflowh {
+    	overflow: visible;
+    }
+
+}

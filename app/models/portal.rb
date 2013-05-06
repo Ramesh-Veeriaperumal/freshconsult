@@ -17,6 +17,7 @@ class Portal < ActiveRecord::Base
   after_commit_on_destroy :clear_portal_cache
   before_update :backup_changes
   before_destroy :backup_changes
+  after_create :create_template
 
   has_one :logo,
     :as => :attachable,
@@ -40,9 +41,7 @@ class Portal < ActiveRecord::Base
               :foreign_key => 'solution_category_id'
   belongs_to :forum_category
 
-  after_create :create_template
-
-  APP_CACHE_VERSION = "FD11"
+  APP_CACHE_VERSION = "FD21"
     
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
@@ -132,10 +131,7 @@ class Portal < ActiveRecord::Base
       to_ret
     end
 
-    def create_template
-      self.build_template()
-      self.template.save()
-    end
+    
 
     def backup_changes
       @old_object = self.clone
@@ -146,5 +142,10 @@ class Portal < ActiveRecord::Base
     def cache_version
       key = PORTAL_CACHE_VERSION % { :account_id => self.account_id }
       get_key(key) || "0"
+    end
+
+    def create_template
+      self.build_template()
+      self.template.save()
     end
 end

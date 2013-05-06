@@ -46,7 +46,7 @@ class Social::FacebookWorker
       else
         @fan_page.attributes = {:enable_page => false} if e.to_s.include?(ERROR_MESSAGES[:access_token_error]) ||
                                                           e.to_s.include?(ERROR_MESSAGES[:permission_error])
-        @fan_page.attributes = { :reauth_required => true, :last_error => e.to_s }
+        @fan_page.attributes = { :reauth_required => true, :last_error => e.to_s }  if ERROR_MESSAGES.any? {|k,v| e.to_s.include?(v)} 
         @fan_page.save
         NewRelic::Agent.notice_error(e, {:custom_params => {:error_type => e.fb_error_type, :error_msg => e.to_s, 
                                             :account_id => @fan_page.account_id, :id => @fan_page.id }})

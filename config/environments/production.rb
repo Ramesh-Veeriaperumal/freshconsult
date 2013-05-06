@@ -14,6 +14,11 @@ config.action_controller.consider_all_requests_local = false
 config.action_controller.perform_caching             = true
 config.action_view.cache_template_loading            = true
 
+# Don't auto compile css in production
+config.after_initialize do
+	Sass::Plugin.options[:never_update] = true
+end
+
 # Use a different cache store in production
 # config.cache_store = :mem_cache_store
 

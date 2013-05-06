@@ -16,7 +16,12 @@ class Support::Solutions::ArticlesController < SupportController
     redirect_to support_solutions_path
   end
   
-  def show    
+  def show
+    @page_title = @article.article_title
+    @page_description = @article.article_description
+    @page_keywords = @article.article_keywords
+    @page_canonical = support_article_url(@article)
+
     set_portal_page :article_view   
   end
    

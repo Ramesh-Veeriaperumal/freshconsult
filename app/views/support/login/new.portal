@@ -16,10 +16,10 @@
 				<hr />
 				<div>
 					<a href="{{ portal.new_ticket_url }}" class="btn btn-newticket">
-						New support ticket
+						{% translate portal.new_support_ticket %}
 					</a>
 					<h3 class="heading">
-						...or Submit a new ticket
+						{% translate portal.submit_new_ticket %}
 					</h3>
 				</div>				
 				{% endunless %}

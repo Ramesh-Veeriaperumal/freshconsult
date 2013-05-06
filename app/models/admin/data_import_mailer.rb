@@ -1,4 +1,6 @@
 class Admin::DataImportMailer < ActionMailer::Base
+
+  layout "email_font"
   
  def import_email(options={}) 
     recipients    options[:email]
@@ -20,7 +22,6 @@ class Admin::DataImportMailer < ActionMailer::Base
   
   def google_contacts_import_email(options)
     @last_stats = options[:status]
-    puts "@last_stats #{@last_stats.inspect}"
     set_default_mail_options options[:email], "Successfully imported Google contacts for #{options[:domain]}"
     body          (options)
   end

@@ -13,7 +13,7 @@
 	  <% @subscriptions.each do |subscription| %>
 	    <tr class="<%= 'expired' unless subscription.current? %>">
 	      <td><%= link_to(h(subscription.account), [:admin, subscription]) %></td>
-	      <td><%= number_to_currency(subscription.amount) %> <%= "(#{subscription.discount.name})" if subscription.discount %></td>
+	      <td><%= number_to_currency(subscription.amount) %></td>
 	      <td><%= subscription.created_at.to_s(:short_day) %></td>
 	      <td><%= subscription.next_renewal_at.to_s(:short_day) %></td>
 	      <td><%= subscription.state %></td>

@@ -1,8 +1,8 @@
 require 'resque/server'
-require 'resque-retry'
-require 'resque-retry/server'
-require 'resque/status_server'
-require 'resque/job_with_status'
+# require 'resque-retry'
+# require 'resque-retry/server'
+# require 'resque/status_server'
+# require 'resque/job_with_status'
 require 'resque/failure/multiple'
 require 'resque/failure/redis'
 
@@ -19,10 +19,10 @@ Resque::Server.use Rack::Auth::Basic do |username, password|
   password == 'USD40$'
 end
 
-Resque::Plugins::Status::Hash.expire_in = (24 * 60 * 60) # 24hrs in seconds
+Resque::Plugins::Status::Hash.expire_in = (7 * 24 * 60 * 60) # 1 week in seconds
 
 # Exclude sending actual emails in these environments
 #Resque::Mailer.excluded_environments = [:test, :cucumber, :development]
 
-Resque::Failure::MultipleWithRetrySuppression.classes = [Resque::Failure::Redis]
-Resque::Failure.backend = Resque::Failure::MultipleWithRetrySuppression
+# Resque::Failure::MultipleWithRetrySuppression.classes = [Resque::Failure::Redis]
+# Resque::Failure.backend = Resque::Failure::MultipleWithRetrySuppression

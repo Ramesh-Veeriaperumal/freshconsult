@@ -16,6 +16,29 @@ class Social::TwitterHandlesController < ApplicationController
       redirect_to social_twitters_url
     end
   end
+
+  def twitter_search
+    twt_handle = current_account.twitter_handles.first if params[:handle] == "0"
+    twt_handle = current_account.twitter_handles.find(params[:handle]) unless twt_handle
+    if twt_handle
+      wrapper = TwitterWrapper.new twt_handle
+      begin
+        twitter = wrapper.get_twitter
+        if params[:max_id]
+          response = twitter.search(params[:q],:max_id => params[:max_id])
+        elsif params[:since_id]
+          response = twitter.search(params[:q],:since_id => params[:since_id])
+        else
+          response = twitter.search(params[:q])
+        end
+      rescue Twitter::Error::TooManyRequests => e
+        response = e.to_s
+        NewRelic::Agent.notice_error(e)
+      end
+    end
+    render :json => response.to_json, :callback => params[:callback]
+   
+  end
   
   def tweet_exists
     converted_tweets = current_account.tweets.find(:all,
@@ -178,7 +201,12 @@ class Social::TwitterHandlesController < ApplicationController
     in_reply_to_status_id = nil
     
     return_value = sandbox(0) { 
-     in_reply_to_status_id = Twitter.status(params[:helpdesk_tickets][:tweet_attributes][:tweet_id]).in_reply_to_status_id
+      twt_handle = current_account.twitter_handles.find(params[:helpdesk_tickets][:tweet_attributes][:twitter_handle_id])
+      if twt_handle
+        wrapper = TwitterWrapper.new twt_handle
+        twitter = wrapper.get_twitter
+        in_reply_to_status_id = twitter.status(params[:helpdesk_tickets][:tweet_attributes][:tweet_id]).in_reply_to_status_id
+      end
     }
     
     if return_value == 0

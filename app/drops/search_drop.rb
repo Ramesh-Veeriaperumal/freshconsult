@@ -29,21 +29,21 @@ class SearchDrop < BaseDrop
 		def_list = []
 
 		def_list.push({ :name => :solutions,
-	    			 	:url => solutions_support_search_path(:term => term) }) if
+	    			 	:url => h(solutions_support_search_path(:term => term)) }) if
 				( allowed_in_portal? :open_solutions )
 
 		def_list.push({ :name => :topics,
-	    			 		:url => topics_support_search_path(:term => term) }) if
+	    			 		:url => h(topics_support_search_path(:term => term)) }) if
 				( allowed_in_portal? :open_forums )			
 
 		if(portal_user)
 			def_list.push({ :name => :tickets,
-	    			  		:url => tickets_support_search_path(:term => term) })
+	    			  		:url => h(tickets_support_search_path(:term => term)) })
         end
 
         if(def_list.size > 1)
 			def_list.unshift({ :name => :all, 
-		    			  	:url => support_search_path(:term => term) })
+		    			  	:url => h(support_search_path(:term => term)) })
 
 			def_list
 		else

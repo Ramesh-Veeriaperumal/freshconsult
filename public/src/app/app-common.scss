@@ -1,10 +1,5 @@
 /* This import applies a global reset to any page that imports this stylesheet.*/
 @import "lib/settings";
-@import "compass";
-
-@import "lib/sprites";
-@import "lib/font";
-@import "lib/animations";
 
 body { 
 	color: $default_txt_color; 
@@ -136,23 +131,6 @@ ul.activityfeed li{
 	text-align:center;
 } 
 
-.guided-tour-start{
-    
-    border: 1px solid #CCC;
-    @include border-radius(15px);
-    height: auto;
-    padding: 6px 0px 7px 29px ;
-    background-image: url("/images/walkthru/touricon-teal.png");
-	background-repeat: no-repeat;
-	background-position: 5px 4px;
-	font-weight:bold;
-	display: block;
-}
-
-.guided-tour-start:hover{
-	border: 1px solid #666;
-}
-
 .sidepanel{
 	p{
 		font-size:1.1em; 
@@ -202,8 +180,7 @@ ul.activityfeed li{
 	margin:12px 0px;
 }
 
-.ui-list_with_icon{ 
-	@include pretty-bullets($bullet-icon, 8px, 0px);
+.ui-list_with_icon{	
 	padding-top:5px;
 	list-style:none;
 	margin:0px;
@@ -227,35 +204,20 @@ ul.activityfeed li{
 .user_name{ font-weight:bold; color:#527eaa; }
 .ticket_title{ font-weight:bold; color:#527eaa; }
 .popover.topRight { margin-left: -3px;}
-div.contact_hover{
+.contact_hover{
 	@include clearfix;
 	.user_name{ font-weight:bold; font-size:1.25em; color:#527eaa; display: inline-block; }
 	.user_desig, .user_email { margin-top:3px;}
 	.user_phone, .user_mobile, .user_fb, .user_twitter{
 		padding: 1px 20px;
-		margin:5px 5px 0 0;
+		margin: 5px 5px 0 0;
 		height: 14px;
 		display: inline-block;
+		background-color: #ffffff;
 	}
-	 .user_fb, .user_twitter{
-		padding: 0 20px;
-	}
-	
-	.user_phone{
-		background:sprite($symbol, phone) no-repeat #ffffff;
-	}
-	.user_mobile{
-		background:sprite($symbol, mobile) no-repeat #ffffff;	
-		margin-left:10px;
-	}
-	.user_fb{
-		height:11px;
-		background:sprite($symbol, reply-fb) no-repeat #ffffff;
-	}
-	.user_twitter{
-		height:11px;
-		background:sprite($symbol, reply-tweet) no-repeat #ffffff;
-	}
+	.user_mobile{ margin-left:10px; }
+	.user_fb, .user_twitter{ padding: 0 20px; height:11px; }
+	.infoblock{ display: inline-block; }
 }
 
 .popover.topRight, {
@@ -422,7 +384,7 @@ h2.content_title{
 .actions_bar{
 	margin:10px 0px 4px 0px;
 	display:block;
-	@include corners(6px);
+	@include border-radius(6px);
 	padding:2px 4px;
 	background-color:#efefef;
 	border:1px solid #efefef;
@@ -485,7 +447,7 @@ div.leader-right{
 	padding:6px 12px;
 	color:#ffffff;
 	text-transform:uppercase;
-	@include corners(4px, 4px, 0px, 0px);
+	@include border-radius(4px 4px 0 0);
 	margin:10px 6px 0px 6px;
 	font-weight:bold;
 	font-size:9px;
@@ -538,7 +500,7 @@ a.nav_new{
 }
 
 
-div.preview_pic{
+.preview_pic{
 	padding:0px;
 	@include float-left;
 	margin-right:10px;
@@ -547,27 +509,20 @@ div.preview_pic{
 		background:#ffffff;
 		width:50px;
 		height:50px;
-		@include corners(6px); 
+		@include border-radius(6px); 
 	}
-	span.tweet_pic, span.fb_pic{
+	.tweet_pic, .fb_pic{
 	   position:absolute;
 	   width:18px;
 	   height:18px;
 	   bottom:3px;
 	   right:0px;
-	}
-	span.tweet_pic{
-	   background:sprite($symbol, product-twitter-active) no-repeat #ffffff;
-	}
-	span.fb_pic{
-	   background:sprite($symbol, product-facebook-active) no-repeat #ffffff;	
-	}
+	}	
 }
 
 div.profile_pic img{
-   @include shadows(#dfdfdf, 0px, 1px, 3px);
-   @include corners(6px);
-   @include shadows;
+   @include box-shadow(#dfdfdf 0px 1px 3px);
+   @include border-radius(6px);
 }
 
 body h5{
@@ -596,9 +551,9 @@ body h5{
 }
 
 .replylinks{
-  position:absolute;
-  right:10px;             
-  top: 0;             
+	position:absolute;
+	right:10px;
+	top: 0;
 	z-index:20;
 	text-align:right;
 	.button{ position:relative; }
@@ -611,11 +566,7 @@ body h5{
 	      left:7px;
 	      top:6px;
 	    }       
-	} 
-	.forward span{ background: sprite($symbol, reply-forward) no-repeat; }
-	.email span{ background: sprite($symbol, reply-email) no-repeat; }
-	.tweet span{ background: sprite($symbol, reply-tweet) no-repeat; }
- 	.facebook span{ background: sprite($symbol, reply-fb) no-repeat; } 	
+	}
 }
                          
 .status-pointer, .priority-pointer{
@@ -721,13 +672,6 @@ h4.title{
 					font-style:italic;
 					color:#afafaf;
 				}
-				.loading-edit{
-					position:absolute;
-					width:16px;
-					height:11px;
-					margin:3px 8px;
-					@extend .loading-fb;
-				}
 			}
 		}
 	}
@@ -794,7 +738,7 @@ h4.title{
 				   margin-right:2em; 
 				}
 				.ui-form{
-					@include corners(0px);
+					@include border-radius(0px);
 					border-left:0px;
 					border-right:0px;
 					padding:0px;
@@ -886,7 +830,7 @@ h4.title{
 	@include clearfix;	
 	li{
 		@include clearfix;
-		@include corners(3px);
+		@include border-radius(3px);
 		float:left;
 		font-size:11px;
 		width:25%;
@@ -934,7 +878,7 @@ h4.title{
 }
  
 .ticket-panel{
-	@include corners(0, 12px, 12px, 0);
+	@include border-radius(0 12px 12px 0);
 	background-color:#3f3f3f;
 }
 
@@ -953,7 +897,7 @@ h4.title{
 	}
 	
 	.rtDetails_forum{
-		@include corners(6px);
+		@include border-radius(6px);
 		padding:14px 14px 6px 14px;
 		h4.title{
 			font-size:13px; 
@@ -1020,9 +964,7 @@ h4.title{
 				border-bottom:0px;
 			}
 		}
-	}
-	
-	$spritesize:44px;
+	}	
 	
 	.rtPanel{
 		float:right;
@@ -1047,29 +989,8 @@ h4.title{
 				position:absolute;
 				left:13px;
 				top:0;
+				background-repeat: no-repeat;
 			}
-			span.ticket{
-				background: sprite($ticketicon, properties) no-repeat;
-			}
-			span.related_solutions{
-				background: sprite($ticketicon, solutions) no-repeat;
-			}
-			span.scenarios{ 
-				background: sprite($ticketicon, scenario) no-repeat;
-			}
-			span.requesterinfo{ 
-				background: sprite($ticketicon, user-info) no-repeat;
-			}
-			span.todo{ 
-				background: sprite($ticketicon, todo) no-repeat;
-			}
-			span.tags{ 
-				background: sprite($ticketicon, tag) no-repeat;
-			}
-			span.activity{ 
-				background: sprite($ticketicon, activity) no-repeat;
-			}
-			
 			em{
 				display:block;
 				font-style:normal;
@@ -1077,33 +998,9 @@ h4.title{
 				white-space:normal;
 				padding-top:0px;
 				@include wrap;
-			} 
+			}
 		}
-		li.active, a:hover{
-			span.ticket{ 
-				background: sprite($ticketicon, properties_active) no-repeat;
-			}
-			span.related_solutions{ 
-				background: sprite($ticketicon, solutions_active) no-repeat;
-			}
-			span.scenarios{ 
-				background: sprite($ticketicon, scenario_active) no-repeat;
-			}
-			span.requesterinfo{ 
-				background: sprite($ticketicon, user-info_active) no-repeat;
-			}
-			span.todo{ 
-				background: sprite($ticketicon, todo_active) no-repeat;
-			}
-			span.tags{ 
-				background: sprite($ticketicon, tag_active) no-repeat;
-			}
-			span.activity{ 
-				background: sprite($ticketicon, activity_active) no-repeat;
-			}
-			em{color:#ffffff;}
-		}
-		
+		li.active, a:hover{ em{color:#ffffff;} }
 	}
 }
 
@@ -1111,7 +1008,7 @@ h4.title{
 	a, .stamp{
 		padding:2px 6px; 
 		margin:0px 0px 6px 0px;
-		@include corners(4px);
+		@include border-radius(4px);
 		@include link_colors(#ffffff, #ffffaf, #ffffff, #ffffff);
 		text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
 		font-size:12px;
@@ -1131,7 +1028,7 @@ h4.title{
 	}
 	
 	a.hover, a.active{
-		@include inset-shadows(#000000, 0px, 1px, 2px);				
+		@include box-shadow(#000000 0px 1px 2px inset);				
 	}
 	
 	.stamp.stamp_type_1{
@@ -1155,7 +1052,7 @@ h4.title{
 	background-color:#336600;
 	color:#ffffff;
 	padding:3px 12px;
-	@include corners(4px);
+	@include border-radius(4px);
 	margin:2px 5px;
 	position:relative;
 	top:-6px;
@@ -1171,7 +1068,7 @@ div.panel_area{
    }
 	.tag_item{
 		background:#efefef; 
-		@include corners(6px);
+		@include border-radius(6px);
 		padding:3px 8px;
 		display:block;
 		margin:3px 0px;
@@ -1195,26 +1092,14 @@ div.panel_area{
 		background-color:none;
 		width:24px;
 		height:24px;
+
+		display: inline-block;
+	}	
+	.spam, .spam_active {
+		/*For compatibility with new tkt details !V2 */
+		span{ display: none; }
 	}
-	.monitor img{ 
-		background: sprite($ticketicon, monitor) no-repeat;
-	}
-	.monitor_active img{ 
-		background: sprite($ticketicon, monitor_active) no-repeat;
-	}
-	.spam img{
-		background: sprite($ticketicon, flag-spam) no-repeat;
-	}
-	.spam_active img{ 
-		background: sprite($ticketicon, flag-spam_active) no-repeat;
-	}
-	.jira img{ 
-		background: sprite($ticketicon, jira) no-repeat;
-	}
-	.jira_active img{ 
-		background: sprite($ticketicon, jira_active) no-repeat;
-	}
-} 
+}
 
 .request_panel_list{
 	margin:5px 3px;
@@ -1257,9 +1142,7 @@ a.request_bt:hover{
 	background:#fff; 
 	border-color:#dae0c1; 
 	color:$default_txt_color;	
-}
-
- 
+} 
 .user_details_widget{ 
 	padding:0 10px;
 	line-height:20px;
@@ -1383,7 +1266,7 @@ a.request_bt:hover{
 		display:inline-block; 
 		border:1px solid #afafaf;
 		padding:3px 2px;
-		@include corners(6px);
+		@include border-radius(6px);
 		width:300px;
 	}
 	
@@ -1467,12 +1350,12 @@ h4.list_title{
 	background-color:#888888;
 	color:#ffffff;
 	padding:0px 2px;
-	@include corners(3px);
+	@include border-radius(3px);
 }
 
 .list_icon_large_full_width{
 	background:#ffffff;
-	@include corners(6px);
+	@include border-radius(6px);
 	@include clearfix;
 	margin:5px 8px;
 	padding:6px;
@@ -1607,7 +1490,7 @@ h4.list_title{
 
 .contact_table{
 	border:3px solid #e8e8e8;
-	@include corners(6px);	
+	@include border-radius(6px);	
 	@include no-bullets;
 	margin:0px;padding:0px;
 	li{
@@ -1644,7 +1527,7 @@ span.sort_handle{
 	height:25px;
 	cursor:move;
 	background:url(/images/sort_handle.gif) no-repeat;
-	@include corners(5px);
+	@include border-radius(5px);
 }
 
 
@@ -1670,7 +1553,7 @@ span.sort_handle{
 		margin:1px 10px;
 		font-size:1.2em;
 		padding:8px 5px;
-		@include corners(4px);
+		@include border-radius(4px);
 	}
 	li.ui-sortable-placeholder{
 		border-color:#efefef;
@@ -1778,7 +1661,7 @@ ul.item_list{
 		margin:5px 0;
 		@include clearfix;
 		position:relative; 
-		@include corners(6px);
+		@include border-radius(6px);
 		@include min-width(150px);
 		a{
 			text-decoration:none;
@@ -1879,8 +1762,8 @@ h3.t_padding{
 	width:600px;
 	top:2%;
 	right:40px;
-	@include shadows(#888888, 0px, 0px, 2px);
-	@include corners(6px);
+	@include box-shadow(#888888 0 0 2px);
+	@include border-radius(6px);
 	margin:0px 0px;
 	padding:10px 15px;
 	background:#f8f8f8; 
@@ -1954,28 +1837,15 @@ h3.t_padding{
 	}
 }
 
-.mceEditorView{
-	line-height: 20px;
-	vertical-align: baseline;
-	font-size:12px;
-	color:$default_txt_color;	
-	img{
-		margin:0px 10px 10px 10px;
-	}
-	p{
-		margin: 0px 0px 1.5em;
-	} 
-}
-
 
 div.information_tip{
 	padding:15px 20px;
-	@include corners(8px);
-	margin:0px 0px 10px 0px;
+	@include border-radius(8px);
+	margin:0 0 10px 0;
 	background: #F3F1EC;
 	h3.title, h4.title{
-		padding:0px;
-		margin:3px 0px 6px 0px;
+		padding:0;
+		margin:3px 0 6px 0;
 		font-weight:bold;		
 		color:#666666;
 	}
@@ -2012,7 +1882,7 @@ div.search{
 
 .innerContent{
 	padding:8px;
-	@include corners(6px);
+	@include border-radius(6px);
 	background:#efefef;
 }
 
@@ -2047,7 +1917,7 @@ h4.border_title{
 		background-color:#f5f5f5;
 		padding:4px;
 		margin-left:20%;
-		@include corners(4px);
+		@include border-radius(4px);
 	}
 	
 	.forum-list{
@@ -2096,21 +1966,17 @@ h4.border_title{
 	padding:10px 0px;
 	float:left;
 	width:47%;
-	font-size:12px;
-	a{
-		@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);
-		text-decoration:none;
-	}	
-	ul{
-		@include pretty-bullets($bullet-icon, 15px, 8px);
-	}	
+	h4 a{ color: #333; }
 	li{ 
 		line-height:22px;
-		padding:0px 0px 4px 18px;
-		color:black;
-		a{ 
-			font-size:13px; 
-			@include link-colors(#21759B, #3399cc, #21759B, #21759B); 
+		padding-top:5px;
+		&:before{
+			content:"";
+			@include inline-block;
+			width: 20px;
+			height: 20px;
+			margin-top: -3px;
+			margin-right: 3px;
 		}
 	} 
 }
@@ -2172,12 +2038,10 @@ h4.border_title{
 }
 
 .white_curved_cont{
-	@include corners(6px);
+	@include border-radius(6px);
 	background-color:#ffffff;
 	padding:10px;
-	p{
-		font-size:12px;
-	}
+	p{ font-size:12px; }
 }
 
 .tr_wrap{
@@ -2193,8 +2057,8 @@ h4.border_title{
 		@include opacity(0.3);
 	}
 	.tr_dialog{
-		@include shadows(#888888, 0px, 0px, 20px);
-		@include corners(8px);
+		@include box-shadow(#888888 0 0 20px);
+		@include border-radius(8px);
 		padding:0px;
 		margin:0px;		
 		width:80%;		
@@ -2205,7 +2069,7 @@ h4.border_title{
 		background-color:#ffffff;
 		border:1px solid #afafaf;	
 		.header_area{
-			@include corners(8px, 8px, 0, 0);
+			@include border-radius(8px 8px 0 0);
 		}		
 		.page_area{
 			overflow:auto;
@@ -2238,7 +2102,7 @@ h4.border_title{
 	.actions{
 		float:right;
 		a{
-			@include corners(6px);
+			@include border-radius(6px);
 			padding:8px 2px 0px 2px;
 			text-decoration:none;
 		}
@@ -2254,42 +2118,12 @@ h4.border_title{
 	}
 }		
 
-.ajax-loader, .loading, .loading-right, .loading-center, .loading-box{
-	background-image:url('/images/load.gif');
-	background-repeat:no-repeat;
-	background-position: 10px 10px;
-}
 
-.paddingloading{
-	background-image:url('/images/ajax-loader.gif');
-	background-repeat:no-repeat;
-	background-position: 10px 10px;
-	min-height:33px;
-}
-
-.loading-center, .loading-box{
-	background-position: center center;	
-}
-
-.loading-box{
-	height:100px;
-}
-
-.loading-right, .paddingloading{
-	background-position: right 3px;
-}
-
-.loading-fb{
-	min-height:20px;
-	background-image:url('/images/load-fb-style.gif');
-	background-repeat:no-repeat;
-	background-position: 0px 0px;	
-}
 
 .search_results{
 	background-color:#ffffff;
-	@include inset-shadows;
-	@include corners(6px);
+	@include box-shadow(#aaaaaa 1px 1px 1px inset);
+	@include border-radius(6px);
 	border:1px solid #dfdfdf;
 	padding:10px;
 	.result{
@@ -2330,7 +2164,7 @@ h4.border_title{
 	width:200px;
 	display:inline-block;
 	margin-left:10px;
-	@include corners(18px);
+	@include border-radius(18px);
 	background:$default_txt_color;
 	border-bottom:1px solid #b4b4b4;
 	a{
@@ -2346,10 +2180,10 @@ h4.border_title{
 	ul{
 		@include no-bullets;
 		background: #f5f5f5;
-		@include corners(6px);
+		@include border-radius(6px);
 		border-right:1px solid #dfdfdf;
 		border-bottom:1px solid #dfdfdf;
-		@include inset-shadows(#cfcfcf, 0px, 2px, 1px);
+		@include box-shadow(#cfcfcf 0px 2px 1px);
 		padding:10px 10px 5px 10px;
 		margin:3px 0px;
 	}
@@ -2371,7 +2205,7 @@ h4.border_title{
 }
 
 div.survey_check{
-	top:0px;
+	padding:0px 10px;
 	text-align:right;	
 }
 
@@ -2402,11 +2236,6 @@ a.page_title{
 
 .title_area{
 	background:#efefef;
-}
-
-
-.ui-autocomplete-loading{
-	 background: white url('/images/ajax-loader.gif') right center no-repeat;  
 }
 
 .ui-autocomplete{
@@ -2470,7 +2299,7 @@ a.page_title{
 	color:#999999;
 	text-align:center;
 	padding:1px 5px 2px 5px;
-	@include corners(6px);
+	@include border-radius(6px);
 	font-size:9px; 
 }
 
@@ -2513,7 +2342,7 @@ a.page_title{
 	padding:14px 20px;
 	background:#F6F6F6;
 	border-bottom:1px solid #f3f3f3;
-	@include corners(6px, 6px, 0px, 0px);
+	@include border-radius(6px 6px 0 0);
 }
 
 .contact-box-additional{
@@ -2607,7 +2436,7 @@ a.page_title{
 	z-index:9999999;
 	.results{
 		width:300px;
-		@include corners(0px, 0px, 6px, 0);
+		@include border-radius(0 0 6px 0);
 		background:#f6f6f6;
 		border-left:1px solid #dedede;
 		li{
@@ -2628,12 +2457,7 @@ a.page_title{
 
 .results{ 
 	padding-bottom:8px;
-	.ticket_icon, 	.contact_icon, .company_icon, .solution_icon, .forum_icon { display:block; }
-	.ticket_icon	span.icon{ background:sprite($icons, page-white) no-repeat; }
-	.contact_icon	span.icon{ background:sprite($icons, user) no-repeat; } 
-	.company_icon	span.icon{ background:sprite($icons, building) no-repeat; } 
-	.solution_icon	span.icon{ background:sprite($icons, solutions) no-repeat; } 
-	.forum_icon		span.icon{ background:sprite($icons, comments) no-repeat; }  
+	.ticket_icon, 	.contact_icon, .company_icon, .solution_icon, .forum_icon { display:block; }	
 	
 	li{
 		list-style:none;
@@ -2822,7 +2646,7 @@ a.page_title{
 	padding: 8px;
 	padding-right: 12px;
 	padding-left: 12px;
-	@include corners(4px);
+	@include border-radius(4px);
 	font-weight: lighter;
 }
 
@@ -2831,7 +2655,7 @@ a.page_title{
     border-bottom: 1px solid #E8E8E8;
     color:#999999;
     font-size: 12px;
-    @include corners(0, 6px, 0, 0);
+    @include border-radius(0 6px 0 0);
     margin: -20px -20px 10px;
     padding: 7px 15px;
     a{  
@@ -2857,7 +2681,7 @@ a.page_title{
 	
 .status_text{
 	background-color:#888888;
-	@include corners(6px);
+	@include border-radius(6px);
 	color:#ffffff;
 	padding:4px 8px 2px 8px;
 	text-transform:uppercase;
@@ -2937,6 +2761,7 @@ a.page_title{
 		
 	}
 
+
 .request-list{
 	background-color:#f4f4f4;
 	margin:4px 1px;
@@ -2955,14 +2780,12 @@ a.page_title{
 				position:absolute;
 			}
 			.bulb{
-				background:sprite($icons, lightbulb) no-repeat;
 				width:16px; 
 				height:16px;
 				left:6px;
 				top:10px;
 			} 
 			.wand{
-				background:sprite($icons, wand) no-repeat;
 				width:22px; 
 				height:22px;
 				left:2px;
@@ -2971,9 +2794,6 @@ a.page_title{
 		}
 		.private-icon{
 			display:none;
-			background:sprite($symbol, private-lock-grey) no-repeat;
-			width:16px;
-			height:16px;
 			position:relative;
 			left:5px;
 			float:right;			
@@ -2984,12 +2804,8 @@ a.page_title{
 				border-color:#666666;
 				border-right-color:#ffffff;
 			}
-			.bulb{ background:sprite($icons, lightbulb-grey) no-repeat; }
-			.wand{ background:sprite($icons, wand-grey) no-repeat; }
 		}
-		a.private .private-icon{
-			display:block;			
-		}
+		a.private .private-icon{ display:block; }
 	} 
 }
 
@@ -3007,8 +2823,8 @@ a.page_title{
 		top:0px;
 		width:170px;
 		background: #f6f6f6;
-		@include corners(6px, 0px, 0px, 6px);
-		@include shadows(#bbbbbb, 0px, 3px, 10px);
+		@include border-radius(6px 0 0 6px);
+		@include box-shadow(#bbbbbb 0 3 10px);
 		border:1px solid #cfcfcf;
 		border-right-color:#dfdfdf;
 		padding:3px 0px;
@@ -3114,8 +2930,7 @@ a.page_title{
 				overflow:hidden;
 				text-indent:-99999px;
 				background-color:#999999;
-				@include corners(6px);
-				background: sprite($symbol, trash) no-repeat;
+				@include border-radius(6px);				
 				visibility:hidden;
 				position:relative;
 				left:-3px;
@@ -3139,8 +2954,7 @@ div.addReminder{
 	padding:0px;
 	position:relative;
 	form{
-//    @include pie;
-		@include corners(6px);
+		@include border-radius(6px);
 		border:2px solid #e3dcc1;
 		padding:3px 0px;
 		margin:8px 0px 8px 0px;
@@ -3148,7 +2962,7 @@ div.addReminder{
 		input.text{
 			color:#734e3d;
 			border:0px; background:0px;
-			@include shadows(0, 0, 0, 0);	
+			@include box-shadow(none);
 			font-size:14px;
 			display:block;
 			margin:2px 0px 0px 0px;
@@ -3156,7 +2970,7 @@ div.addReminder{
 			width: 245px;
 			@include box-shadow(0 0 0 #fff);
 		}
-		input:focus{ @include shadows(0, 0, 0, 0); @include border-radius(0); box-shadow:none; }
+		input:focus{ @include box-shadow(none); @include border-radius(0); }
 		label.overlabel{
 			margin:2px 5px 4px 10px;
 			padding:0px;
@@ -3176,19 +2990,17 @@ div.addReminder{
 	}	
 }
 
-
-
 .tab_panel{
 	border-bottom:1px solid #cfcfcf;
 	margin:5px -20px 0px -20px;
-	padding:0px 20px;
+	padding:0 20px;
+	display:block;
 	@include clearfix;
 	b{
 		margin-right:10px;
 		padding:5px 0px 0px 0px;
 		float:right;
-	}
-	display:block;
+	}	
 	a{
 		background:#cfcfcf; 
 		position:relative;
@@ -3206,10 +3018,10 @@ div.addReminder{
 		border-bottom:1px solid #eaeaea;
 	}
 	a.last{
-		@include corners(0px, 4px, 4px, 0px);
+		@include border-radius(0 4px 4px 0);
 	}
 	a.first{
-		@include corners(4px, 0px, 0px, 4px);
+		@include border-radius(4px 0 0 4px);
 	}
 	a.active, a:hover{
 		@include vertical-gradient(#f5f5f5, #e1e1e1);			
@@ -3228,7 +3040,7 @@ div.addReminder{
 	padding:0px;	
 	div.item{
 		float:left;
-		@include corners(5px);
+		@include border-radius(5px);
 		height:17px;
 		background-color:#e7e7e7;
 		color:#666666;
@@ -3272,13 +3084,6 @@ div.addReminder{
    height:18px;
    margin-right:6px;
 }
-.source-email{   background: sprite($symbol, source-email) no-repeat; }
-.source-facebook{   background: sprite($symbol, source-facebook) no-repeat; }
-.source-twitter{   background: sprite($symbol, source-twitter) no-repeat; }
-.source-portal{   background: sprite($symbol, source-portal) no-repeat; }
-.source-phone{   background: sprite($symbol, source-phone) no-repeat; }
-.source-chat{   background: sprite($symbol, source-chat) no-repeat; }
-.source-forum{   background: sprite($symbol, source-forum) no-repeat; }
 
 .quick-action {
 	cursor: pointer;
@@ -3458,42 +3263,11 @@ div.addReminder{
 			.status-source {
 				text-align: right;
 				background-position:top right;
-		   		width: 30px;
+		   		width: 36px;
 		   		height: 36px;
 				padding: 20px 0 0;
-		   		&.source-detailed-portal {
-		   			background-image: url('/images/sources/detailed-portal.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   		&.source-detailed-email {
-		   			background-image: url('/images/sources/detailed-email.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   		&.source-detailed-facebook {
-		   			background-image: url('/images/sources/detailed-facebook.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   		&.source-detailed-twitter {
-		   			background-image: url('/images/sources/detailed-twitter.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   		&.source-detailed-phone {
-		   			background-image: url('/images/sources/detailed-phone.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   		&.source-detailed-chat {
-		   			background-image: url('/images/sources/detailed-chat.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   		&.source-detailed-forum {
-		   			background-image: url('/images/sources/detailed-forum.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   		&.source-detailed-mobihelp {
-		   			background-image: url('/images/sources/detailed_mobihelp.png');
-		   			background-repeat: no-repeat;
-		   		}
-		   }
+				background-repeat: no-repeat;
+			}
 
 		   &.assign {
 		   		padding-left:0; padding-right:0;
@@ -3575,12 +3349,12 @@ div.addReminder{
          margin:0px;
          margin-top:3px;
          margin-left:-55px;         
-         @include corners(5px);
+         @include border-radius(5px);
          border:1px solid #CCC;
          height:45px;
          img{ 
             width:45px; height:45px;
-            @include corners(4px);
+            @include border-radius(4px);
          }
       }
       .new_ticket {
@@ -3729,10 +3503,10 @@ div.addReminder{
 
 #ticket-toolbar {
 	padding:8px;
-	@include corners(6px, 6px, 0, 0);
+	@include border-radius(6px 6px 0 0);
 }
 #ticket-toolbar-bottom {
-	@include corners( 0, 0, 6px, 6px);
+	@include border-radius(0 0 6px 6px);
 }
 .detailed_view {
 	.hideForDetails {
@@ -3805,24 +3579,6 @@ div.addReminder{
 	    width: 32px;
 	    height: 32px;
 	    margin: 0px; 
-	}
-	.email-reply{ 
-		background: sprite($ticketicon, email-reply);
-	}
-	.email-forward{ 
-		background: sprite($ticketicon, email-forward);
-	}
-	.email-receive{
-		background: sprite($ticketicon, email-receive);
-	}
-	.note-public{
-		background: sprite($ticketicon, note-public);
-	}
-	.note-private{
-		background: sprite($ticketicon, note-private);
-	}
-	.tweet-note{
-	   background: sprite($ticketicon, tweet-note);
 	}
 }
 
@@ -3932,15 +3688,11 @@ div.addReminder{
 	   font-size:12px;
 	   text-transform:uppercase;
 	}
-	.sort_order{
-		.image{
-			position:absolute;
-			right:0px;
-			top:-2px;
-			width:32px; height:32px;
-		}
-		.ASC{ background:sprite($icons, sort-asc); }
-		.DESC{ background:sprite($icons, sort-desc); }
+	.sort_order .image{
+		position:absolute;
+		right:0px;
+		top:-2px;
+		width:32px; height:32px;
 	}
 }
 
@@ -4172,7 +3924,7 @@ div.addReminder{
 	}
 
 	#ticket-list {
-		@include corners(5px);
+		@include border-radius(5px);
 		@include text-shadow(white 1px 1px 0px);
 		@include box-shadow(0 0 8px rgba(107,107,107,0.7));
 		border: #AAA solid 1px;
@@ -4212,12 +3964,12 @@ div.addReminder{
 		font-size:12px; 
 		font-weight:bold;
 		float:left;
-		@include corners(6px);
+		@include border-radius(6px);
 	}
 	
 	
 	.leftflat{
-		@include corners(0px, 6px, 6px, 0px);
+		@include border-radius(0 6px 6px 0);
 	}
 	.stamp{	  
 		@include min-width(80px);
@@ -4251,20 +4003,19 @@ div.addReminder{
 	margin:0px;
 	font-size:12px; 
 	font-weight:bold;
-		color:#666666;
-		border-color:#dadada;
-		padding-left:24px;
-		@include corners(6px);
-		position:relative;
-		background-color:#f4f4f4;
-		.like-image{
-			left:3px;
-			top: 1px;
-			position:absolute;
-			background: sprite($symbol, like);
-			width:18px;
-			height:18px;
-		} 
+	color:#666666;
+	border-color:#dadada;
+	padding-left:24px;
+	@include border-radius(6px);
+	position:relative;
+	background-color:#f4f4f4;
+	.like-image{
+		left:3px;
+		top: 1px;
+		position:absolute;		
+		width:18px;
+		height:18px;
+	} 
 }
 
 #ChangePlan{
@@ -4644,7 +4395,7 @@ p.info-text{
 	margin-top:-130px;
 	text-align:center;
 	z-index:9999;
-	@include corners(8px);
+	@include border-radius(8px);
 }
 
 .table-padding-5{
@@ -4705,8 +4456,7 @@ a.close{
 		position:relative;
 		display:inline-block;
 		width:100%;
-		span.forum-bullet{
-			background:sprite($symbol, forum-bullet) no-repeat;
+		span.forum-bullet{			
 			position:absolute;
 			left:0px;
 			top:1px;
@@ -4740,7 +4490,7 @@ a.close{
 		float:right;
 		font-size:10px;
 		background-color:#F3F1EC;
-		@include corners(6px);
+		@include border-radius(6px);
 		border:1px solid #cfcfcf;
 		color:#afafaf;
 		padding:2px 8px;
@@ -4772,14 +4522,10 @@ a.close{
 				position:relative;
 			}
 			span.icon{
-            position:absolute;
-            left:3px; top:-1px;
-            width:32px; height:32px;
+	            position:absolute;
+	            left:3px; top:-1px;
+	            width:32px; height:32px;
 			} 
-			span.forum_type_howto{ background: sprite($icons, forum_howto) no-repeat; }
-			span.forum_type_ideas{ background: sprite($icons, forum_ideas) no-repeat; }
-			span.forum_type_problem{ background: sprite($icons, forum_problem) no-repeat;	}
-			span.forum_type_announce{ background: sprite($icons, forum_announce) no-repeat; }
 			.topic-list{ 
 				padding:6px 0px 12px 0px;
 				margin-left:34px;
@@ -4790,9 +4536,7 @@ a.close{
 					padding:5px 0px;
 					font-size:13px;
 				}
-				a{ 
-					@include link-colors(#4D769F, #3399cc, #4D769F, #4D769F);	
-				}
+				a{ @include link-colors(#4D769F, #3399cc, #4D769F, #4D769F); }
 			}
 		}
 		li.odd{
@@ -4902,12 +4646,6 @@ a.close{
    		   visibility:visible;
    		}
       }
-      .loadingbox{
-         background-image:url('/images/load.gif');
-   	   background-repeat:no-repeat;
-   	   background-position: center center;
-   	   height:200px;
-      }
    }
 }
 
@@ -4951,12 +4689,11 @@ a.close{
 }
 
 .search-keys{
-   margin:0px 0px 8px 0px;
+   margin:0 0 8px 0;
    li{
 		padding:3px 8px 5px 18px;
 		position:relative;
-		span.icon{
-		   background:sprite($symbol, search) no-repeat;
+		.icon{		   
 		   position:absolute;
 		   left:0px;
 		   width:15px; height:15px;
@@ -5030,40 +4767,21 @@ a.close{
    font-weight:bold;
 }
 
-.loading-amount{
-   background-image:url('/images/load.gif');
-	background-repeat:no-repeat;
-	background-position: center;
-   div{
-      visibility:hidden;
-   }
-}
- 
-.quoted_button{
-  margin:0 0;
-  background:sprite($symbol, quote_button) no-repeat;
-  display:inline-block;
-  width:31px;
-  height:14px;  
-}
-
 .customSelect{ width:100%; } 
    
 .containerFull{
-  @include pie-clearfix;
+  	@include pie-clearfix;
 	margin:-14px -20px;
 	padding:0px;
 }
 
-.greyImage{
-   background-color:#F1F1F1;
-}
+.greyImage{ background-color:#F1F1F1; }
 
 .drop-right{
    padding:2px 18px 2px 6px;
    margin-left:-6px;
    color:#666666;
-   @include corners(4px);
+   @include border-radius(4px);
    text-decoration:none;
    &:after{
 		content:"";
@@ -5181,18 +4899,17 @@ a.close{
 }
 
 .view_filters{
-		display:inline-block;
-		margin:8px 0 2px;
+	display:inline-block;
+	margin:8px 0 2px;
 
 	.link-item.active, a.link-item:hover{
-     margin:0px -5px;
-     padding-left:13px;
-     background: #e2f1fa;
+		margin:0px -5px;
+		padding-left:13px;
+		background: #e2f1fa;
 	}
 	.link-item.active{
 		color:#336699;
 		font-weight:bold;
-		/* @include linear-gradient(color-stops(darken(#e2f1fa, 2%), lighten(#e2f1fa, 2%)), bottom); */
 		@include single-box-shadow( rgba(0, 0, 0, 0.07), 0px, 0px, 2px, false, true);         
 	}
 	.link-item.active:after{
@@ -5201,8 +4918,7 @@ a.close{
 	   right:9px;
 	   top:8px;
 	   width:11px;
-	   height:11px;
-	   background: sprite($symbol, arrow-selected-right) no-repeat;
+	   height:11px;	   
 	}
 	.link-item{ 
 		font-size:13px;
@@ -5331,6 +5047,12 @@ a.close{
 	}
 }
 
+.required_start {
+	font-size: 24px;
+	line-height: 2px;
+	color: #d00;
+	display: inline-block;
+}
 
 .fd-menu, .fd-ajaxmenu, #tickets-expanded .fd-menu, #tickets-expanded .fd-ajaxmenu{
    position:absolute;
@@ -5341,7 +5063,7 @@ a.close{
    z-index:999999;
    @include min-width(250px);
    @include opacity(0.95);
-   @include corners(5px);
+   @include border-radius(5px);
    @include single-box-shadow( rgba(0, 0, 0, 0.6), 0px, 2px, 4px );
    li{ padding:0px; margin:0px; }
    .seperator{ border-color:#e0e0e0; }
@@ -5352,27 +5074,23 @@ a.close{
       text-decoration:none;
       position:relative;
       @include text-shadow(#FFF 1px 1px 0);
-      &.active { font-weight:bold;}      
+      &.active { font-weight:bold; }      
       .icon{
          position:absolute;
          left:5px;
          top:2px;
          width:16px;
          height:16px;
-      }
-      .ticksymbol{ background: sprite($symbol, selected) no-repeat; }      
+      }      
    }
-   a.hide {
-   	display:none;
-   }
+   a.hide{ display:none; }
    a:hover, a.selected{
       color:#FFF;
       background: #999;
-	  @include text-shadow(none);
-      .selected{ background: sprite($symbol, selected-negtive) no-repeat; }      
+	  @include text-shadow(none);      
    }
 
-   h4.title {
+   h4.title{
    		font-size: 13px;
    		background: none;
    		padding:2px 12px 2px 24px;
@@ -5417,30 +5135,15 @@ a.close{
 		.no_results {
 			text-align:center;
 			font-style:italic;
-		}
+		}		
 		
-		&.loading {
-			background-image:url('/images/loading.gif');
-			background-repeat:no-repeat;
-			background-position: center;
-			padding:20px 10px;
-
-
-			a, li, .contents {
-				display:none;
-			}
-		}
 		&.hasSearch{
 			padding: 0;
-			&.loading {
+			&.loading{
 				padding: 20px 10px;
-				.search_container {
-					display:none;
-				}
+				.search_container{ display:none; }
 			}
-			.search_container {
-				display:block;
-			}
+			.search_container { display:block; }
 		}
 		.search_container {
 			display:none;
@@ -5457,7 +5160,7 @@ a.close{
 			margin: 5px 1% 8px;
 
 			&:focus {
-				@include shadows(#999, 0, 0, 3px);
+				@include box-shadow(#999 0 0 3px);
 				border-color: #999 !important;
 			}
 		}
@@ -5536,74 +5239,123 @@ a.close{
 		right:auto;
 	}
 }
-.setting_bottom{
-   position:absolute;
-   right:7px;
-   bottom:10px;
-   width:16px;
-   height:16px;
-   background:sprite($symbol, setting) no-repeat;
-}
 
 .profile_info{     
 	visibility:hidden;
 	right:0;     
-	margin-top:30px;     
+	margin-top:40px;     
 	position:absolute;
-  font-size:13px;
-  background:#ffffff;
-	padding:0 0 10px 0;     
-  z-index:999999;
+  	font-size:13px;
+  	background:#ffffff;
+	padding:0;     
+  	z-index:999;
 	width:300px;
-  @include opacity(0.95);
-  @include corners(5px);
-  @include box-shadow( rgba(0, 0, 0, 0.8) 0px 3px 8px );
-	&:before{           
+	border-bottom: 7px solid #eee;
+	@include border-radius(5px);
+	@include box-shadow( rgba(0, 0, 0, 0.8) 0px 3px 8px );
+	&:after{           
 		content:"";
 		position:absolute;
 		border:6px solid transparent;
-		border-bottom-color:#fff;
+		border-bottom-color:#eee;
 		width:1px;        
-		top:-12px; right:40px;
+		top:-12px; right:24px;
+	}
+	&:before{           
+		content:"";
+		position:absolute;
+		border:8px solid transparent;
+		border-bottom-color: #AAA;
+		width: 1px;
+		top: -16px;
+		right: 22px;
 	}
 	.seperator{
 		border-color:#e0e0e0;
+		padding:0;
+		margin:0;
+		height:0;
 	}                  
 	.link, h5, .user{          
 		font-size:14px;
 	} 
+	.header-arrow-right {
+			display:inline-block;
+			width: 0; 
+			height: 0; 
+			border-top: 5px solid transparent;
+			border-bottom: 5px solid transparent;
+			border-left: 5px solid #909090;
+			margin-right:10px;
+			margin-left:-5px;
+	}
 	.user{
-		margin:10px 0 5px 0;     
+		margin:0; 
+		background:#eee;  
+		@include border-radius(5px);
 		span{
 			position:relative;
 		 	top:7px; 
 			color:#888;
+			font-weight: 300;
+			font-size: 18px;
+			text-shadow: 1px 1px 0 #FFF;
 		}
 	}               
 	h5{ padding-bottom:6px; }
-  a.link{
-    display:block;
-    padding:4px 12px 4px 24px;
-    color:$default_txt_color;
-    text-decoration:none;
-  }
-  a.link:hover{
-     @include background(linear-gradient(top, #5469f9, #2433f6));
-     @include single-box-shadow( rgba(0, 0, 0, 0.6), 0, 0px, 1px, false, true );
-     @include filter-gradient(#5469f9, #2433f6, vertical); 
-     color:#ffffff;      
-  }
+	a.link{
+		display:block;
+		padding:10px 12px 10px 24px;
+		color:$default_txt_color;
+		text-decoration:none;
+	}
+	a.link:hover{
+		background: #999;
+		color:#ffffff; 
+		.header-arrow-right {
+			border-left-color:#fff;
+		}   
+	}
 	.info{
 		padding:4px 24px;
 	}            
 	.user{
-		padding:2px 18px;
+		padding:2px 18px 18px;
 	}
 	.preview_pic img{     
 		width:30px;height:30px;  
 		@include box-shadow( rgba(0, 0, 0, 0.8) 0px 1px 5px inset );
 		@include border-radius(50px);
-	}                              
+	}  
+	.top-margin{
+		margin-top:8px;
+
+	}                         
+	.select2-container .select2-choice{
+		color:$default_txt_color;
+		font-size: 14px;
+		border-color:rgba(#000, 0.1);
+		background-image:none;
+		background-color: transparent;
+		padding-left:5px;
+	}
+	.header-agent-select{
+	 width:235px;
+	}
+}
+.header-select2-dropdown{
+	&.select2-drop{
+		padding-top: 5px;
+		border-color:rgba(#000, 0.1);
+		@include box-shadow(none);
+		.select2-search input, .select2-search input[type="text"]{
+			border-color:rgba(#000, 0.1);
+		}
+		.select2-results .select2-highlighted{
+			background: #999;
+			padding: 3px 0;
+		}
+	}
 }
 
 .list-noinfo{
@@ -5612,41 +5364,32 @@ a.close{
 	text-align:center;
 	color:#666666;
 	@include text-shadow(#ffffff, 0px, 1px, 1px);
-
-	.small {
-		font-size: 0.8em;
-	}
+	.small{ font-size: 0.8em; }
 }
-.sidepanel {
-	.cnt {
-		li {
-			border-bottom: 1px solid #F3F3F3;
-			padding: 6px 0;
-			
-			a{
-				text-decoration:none;
-			}
-			label{
-				display:block;
-				font-size:11px;
-				font-weight:bold;
-				color:#666666;
-			}
-			select{
-				font-size:11px;
-				max-width:100%;
-			} 
-			.name_label {
-				color: #666666;
-				font-size: 12px;
-				font-weight: bold;
-			}
-			.value_label {
-				color: #666666;
-				font-size: 11px;
-				font-weight: normal;
-			}
-		}
+.sidepanel .cnt li {
+	border-bottom: 1px solid #F3F3F3;
+	padding: 6px 0;
+	
+	a{ text-decoration:none; }
+	label{
+		display:block;
+		font-size:11px;
+		font-weight:bold;
+		color:#666666;
+	}
+	select{
+		font-size:11px;
+		max-width:100%;
+	} 
+	.name_label {
+		color: #666666;
+		font-size: 12px;
+		font-weight: bold;
+	}
+	.value_label {
+		color: #666666;
+		font-size: 11px;
+		font-weight: normal;
 	}
 }
 
@@ -5706,7 +5449,7 @@ a.close{
 			&:hover {
 				color: $default_txt_color;
 				background:#f2f2f2;
-				@include inset-shadows(rgba(0,0,0, 0.2), 0, 1px, 2px);	
+				@include box-shadow(rgba(0,0,0, 0.2) 0 1px 2px);	
 			}
 		}
 	}
@@ -5825,18 +5568,13 @@ a.close{
 		}
 	}
 }
-.ui-form .inline-field .google_contacts_sync {
- 	label.caption {
- 		font-size: 1em;
- 	}
 
-	div.fields  {
-		ul.sync_status.freshdesk {
-			color: #00868f;
-		}
-		ul.sync_status.google {
-			color: #0078BD;
-		}
+.ui-form .inline-field .google_contacts_sync {
+ 	label.caption{ font-size: 1em; }
+
+	div.fields {
+		ul.sync_status.freshdesk{ color: #00868f; }
+		ul.sync_status.google { color: #0078BD; }
 
 		ul.sync_status {
 			display: block;
@@ -5855,49 +5593,33 @@ a.close{
 					margin: 3px;
 				}
 			}
-			li.freshdesk {
+			li.freshdesk, li.google {
 				width: 35px;
 				height:24px;
-				@include sync-status-sprite(freshdesk);
-			}			
-			li.google {
-				width: 35px;
-				height:24px;
-				@include sync-status-sprite(google);
 			}		
 			
 			li.added {
 				color:#00868f;
 				width: 100px;
-				span {
-					background: #00868f;
-				}
+				span{ background: #00868f; }
 			}
 			li.modified {
 				color:#3c7ed3;
-
-				span {
-					background: #3c7ed3;
-				}
+				span{ background: #3c7ed3; }
 			}	
 			li.deleted {
 				color:#fe552e;
-
-				span {
-					background: #fe552e;
-				}
+				span{ background: #fe552e; }
 			}	
 		}
 
-		label {
+		label{
 			font-size: 1em;
 			font-weight:bold;
 		}
 	}
 }
-.single_click_link {
-	cursor: pointer;
-}     
+.single_click_link{ cursor: pointer; }     
 
 .forum_info{
 	background:#fff7b4; 
@@ -5972,11 +5694,6 @@ a.close{
 		border:none;
 	}
 
-	.loading-fb {
-		width:90%;
-		margin: 3px 5%;
-	}
-
 	.external_link {
 		clear: both;
 	}
@@ -6034,12 +5751,8 @@ a.close{
 
 		.uiButton[type=submit] {
 			margin:15px 0 10px;
+			display: block;
 		}
-	}
-
-	.loading-fb {
-		width:90%;
-		margin: 3px 5%;
 	}
 
 	.jira_issue_details {
@@ -6418,7 +6131,7 @@ a.close{
 		background: #FFF;
 		border: solid 1px #c9c9c9;
 		@include box-shadow(#c2c2c2 0 0 2px);
-		@include corners(5px);
+		@include border-radius(5px);
 		padding: 5px 10px 7px;
 		color: $default_txt_color;
 		display: inline-block;
@@ -6498,32 +6211,30 @@ a.close{
 		}
 	
 		background: url(/images/integrations/sugar_icon.png) 0 2px no-repeat;
+		background-position: 223px 7px;
+		background-repeat: no-repeat;
 	}
 
 	/* div. added for higher specificity */
 	div.salesforce_widget_bg {
-		background: url(/images/integrations/salesforce_icon.png) 0 2px no-repeat;
-		background-position: 223px 7px;
+		background-image: url(/images/integrations/salesforce_icon.png);
  	}
 
  	div.batchbook_widget_bg {
-		background: url(/images/integrations/batchbook_icon.png) 0 2px no-repeat;
-		background-position: 223px 7px;
+		background-image: url(/images/integrations/batchbook_icon.png);
   	}
 
  	div.highrise_widget_bg {
-		background: url(/images/integrations/highrise_icon.png) 0 2px no-repeat;
-		background-position: 223px 7px;
+		background-image: url(/images/integrations/highrise_icon.png);
   	}
 
  	div.zohocrm_widget_bg {
-		background: url(/images/integrations/zohocrm_icon.png) 0 2px no-repeat;
+		background-image: url(/images/integrations/zohocrm_icon.png);
 		background-position: 210px -6px;
   	}
 
  	div.nimble_widget_bg {
-		background: url(/images/integrations/nimble_icon.png) 0 2px no-repeat;
-		background-position: 223px 7px;
+		background-image: url(/images/integrations/nimble_icon.png);
   	}
 	
 
@@ -6976,11 +6687,24 @@ margin:10px;
 .survey_text {
 	width: 70%;
 }
-
+.reports_page .pagearea{
+	background: none;
+	border:none;
+	@include box-shadow(rgba(0,0,0, 0.05) 0 0 0);	
+	@include text-shadow(white 1px 1px 0px);
+	margin-bottom: 0;
+	padding-bottom: 0;
+	padding-left:0;
+	padding-right:0;
+	.contentCol {
+		background: none;
+		border:none;
+	}
+}
 .ticket_list .pagearea{
 	background: none;
 	border:none;
-	@include shadows(rgba(0,0,0, 0.05), 0px, 0px, 0px);	
+	@include box-shadow(rgba(0,0,0, 0.05) 0 0 0);	
 	@include text-shadow(white 1px 1px 0px);
 	.contentCol {
 		background: none;
@@ -6990,10 +6714,10 @@ margin:10px;
 		@include text-shadow(white 1px 1px 0px);
 		background: white;
 		border: #FFF solid 1px;
-		@include corners(4px);
+		@include border-radius(4px);
 		#ticket-list-body-content {
 			border: #AAA solid 1px;
-			@include corners(5px);
+			@include border-radius(5px);
 			@include box-shadow(0 0 10px rgba(107, 107, 107, 0.4));
 		}
 	}
@@ -7224,7 +6948,7 @@ margin:10px;
 			height: 34px;
 			td{
 				color:#222;
-				background: url('/images/overlay-button.png') repeat-x 0px 0px;
+				@include background-image(linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(18,18,18,0.05) 100%));
 				font-weight: 600;
 				font-size: 13px;
 			}
@@ -7312,7 +7036,7 @@ margin:10px;
 							background-color:#f8f8f8;
 							border: 1px solid #919191;
 							@include link-colors(#3f3f3f, #666666, #3f3f3f, #3f3f3f);
-							@include corners(8px);
+							@include border-radius(8px);
 							cursor: pointer;
 						}
 					}
@@ -7507,17 +7231,6 @@ a.mobile_switchBtn {
  	}
 }
 
-.load-mask {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	z-index: 9;
-	img{
-		position: relative;
-		top: 300px;
-	}
-}
-
 .field-item{
 	display:inline;
 	float:left;
@@ -7548,26 +7261,6 @@ a.mobile_switchBtn {
 	border:1px solid #CCC;
 	color:#222;
 	padding:10px;
-}
-
-a[rel="load-rjs"] {
-	float:right;
-	min-width:30px;
-	height: 14px;
-	padding-left: 6px;
-	font-weight:bold;
-	color: inherit;
-	text-align:center;
-	&.fetching {
-		background-image: url("/images/ajax-loader-self.gif");
-	  background-repeat: no-repeat;
-	  background-position: center;
-	}
-	&.done {
-		cursor:default;
-		text-align:left;
-		color: inherit;
-	}
 }
 
 // !PATTERN TODO to be moved into mixins and cleaned up later
@@ -7616,8 +7309,6 @@ a[rel="load-rjs"] {
     line-height: 20px;
 } 
 
-@import "../animate-custom";
-
 .arrow-right,
 .arrow-top,
 .arrow-down {
@@ -7657,6 +7348,10 @@ a[rel="load-rjs"] {
 
 div.monitor_div{
 	display: inline-block;
+	zoom: 1;
+	*display: block;
+	*float: left;
+	*width: 43px;
 }
 
 div.watchers_tooltip{
@@ -7895,12 +7590,12 @@ div.watchers_tooltip{
 	@include text-shadow(white 1px 1px 0px);
 	background: white;
 	border: #FFF solid 1px;
-	@include corners(5px);
+	@include border-radius(5px);
 }
 
 .list-body-content {
 	border: #AAA solid 1px;
-	@include corners(5px);
+	@include border-radius(5px);
 	@include box-shadow(0 0 10px rgba(107, 107, 107, 0.4));
 }
 
@@ -7910,9 +7605,8 @@ div.watchers_tooltip{
 	border-bottom:1px solid #dfdfdf;
 }
 
-#list-table [disabled]
-{
-	opacity: .4;
+#list-table [disabled]{
+	@include opacity(0.4);
 	cursor: default;
 	padding: 4px 8px;
 	box-shadow: none;
@@ -7946,11 +7640,8 @@ div.watchers_tooltip{
 	text-align: center;
 }
 
-#new_canned_response_folder{
-
-	.uiButton[disabled]{
-		color: #333 !important;
-	}
+#new_canned_response_folder .uiButton[disabled]{
+	color: #333 !important;
 }
 
 #create-folder{
@@ -8093,12 +7784,7 @@ div.watchers_tooltip{
 	margin-top: 13px;
 }
 
-#can-menu{
-	.ticksymbol{
-		background: sprite($symbol, selected) no-repeat !important;
-		padding-right: 23px !important;
-	}
-}
+#can-menu .ticksymbol{ padding-right: 23px; }
 
 p.imp{
 	color: white;
@@ -8111,17 +7797,14 @@ p.imp{
 	display: inline-block;
 }
 
-.selected_resp{
-	#resp-boxes{
-		background-color: #F9ECD8 !important;
-	}
-	.response-table{
-		background-color: #F9ECD8 !important;
-	}
 
-	td{
-		border-top: 1px solid white !important;
-	}
+#canned_table_big tr.odd td{
+	background-color: #fbfbfb;
+}
+
+#canned_table_big tr.selected_resp td{
+	background-color: #F9ECD8;
+	border-top: 1px solid white; 
 }
 
 .delete-buttons{
@@ -8129,19 +7812,15 @@ p.imp{
 	margin-top: 10px;
 }
 
-#edit_form{
-	#admin_canned_responses_folder_name{
-		margin-left: 5px;
-		margin-top: 10px;
-		width: 478px;
-	}
+#edit_form #admin_canned_responses_folder_name{
+	margin-left: 5px;
+	margin-top: 10px;
+	width: 478px;
 }
 
 #canned_table_big tr{
 	border-top: 1px solid #eee;
-	td{
-		border-top: 1px solid #eee;
-	}
+	td{ border-top: 1px solid #eee; }
 }
 
 #canned_table_big{
@@ -8152,14 +7831,6 @@ p.imp{
 	margin: 0px;
 }
 
-#canned_table_big tr.odd{
-		#resp-boxes{
-			background-color: #fbfbfb;
-		}
-		.response-table{
-			background-color: #fbfbfb;
-		}
-}
 /* end */
 
 /* canned response ticket view */
@@ -8176,6 +7847,7 @@ p.imp{
     .close-dialog{
     	margin-top: 10px;
     }
+    display: none;
 }
 
 #recently_used_list{
@@ -8205,20 +7877,12 @@ p.imp{
     }
 }
 
-.recently_used ul li a:hover{
-	#resp-icon{
-	background:sprite($symbol, bullet-folder1_hover) no-repeat;}
-}
-
 .pick-response-outer{
     width: 452px;
     float: right;
 }
 
-.pick-response-outer.back1.no_recently_used{
-	width: 640px;
-	@include border-left-radius(5px);
-}
+
 
 .pick-response-header{
     width: 442px;
@@ -8226,9 +7890,7 @@ p.imp{
     clear: both;
     display: inline-block;
 }
-.pick-response-header.no_recently_used{
-    	width: 622px;
-}
+
 
 .pick-response-header h3{
     float: left;
@@ -8241,6 +7903,7 @@ p.imp{
 
 .canned-icons{
     margin-bottom: 5px;
+    position: relative;
     
     input[type="text"]{
     width: 187px;
@@ -8249,40 +7912,23 @@ p.imp{
 	padding-right: 18px}
 }
 
-.canned-icons.no_recently_used{
-    	float: right;
-}
-
-#clear-search{
-		background: url(/images/close-search.png) no-repeat;
-		position: absolute;
-		top: 25px;
-		right: 21px;
-		display: none;
-		float: left;
-		width: 12px;
-		height: 10px;
-		background-color: white;
+.clear-search{
+	background: url(/images/close-search.png) no-repeat;
+	position: absolute;
+	top: 9px;
+	right: 14px;
+	display: none;
+	float: left;
+	width: 12px;
+	height: 10px;
+	background-color: white;
 }
 
 #bulk_canned_response_holder #clear-search {
-	top: 50px;
-	right: 36px;
+	top: 9px;
+	right: 14px;
 }
 
-#bulk_canned_response_holder{
-	.no_recently_used{
-		#clear-search{
-			right:36px !important;
-		}
-	}
-}
-
-.no_recently_used{
-	#clear-search{
-		right:21px !important;
-	}
-}
 .canned-icons a{
     float: right;
     margin-right: 10px;
@@ -8292,23 +7938,6 @@ p.imp{
 	z-index: 100;
 	display: none;
 	height: 266px;
-}
-
-.canned-icons .canned-search{
-    background: url(../images/canned-search.png) no-repeat;
-    width: 20px;
-    height: 20px;
-    display: inline-block;
-    padding-bottom: 10px;
-}
-
-.canned-icons .canned-close{
-    background: url(../images/close-button.png) no-repeat;
-    position: absolute;
-    left: -25px;
-    width: 24px;
-    height: 29px;
-    display: inline-block;
 }
 
 .pick-response{
@@ -8373,17 +8002,9 @@ p.imp{
     float: left;
 }
 
-.small-list-right.no_recently_used{
-    width: 394px;
-}
-
 .pick-response ul.small-list-right li span{
     float: left;
     top: 0px;
-}
-
-.pick-response.no_recently_used{
-	width: 612px;
 }
 
 .pick-response ul.small-list-right li a{
@@ -8400,24 +8021,13 @@ p.imp{
 }
 
 #resp-icon{
-	background:sprite($symbol, bullet-folder1) no-repeat;
 	height: 17px;
 	width:17px;
 	margin-right: 10px;
 	float: left;
-
-	&:hover{
-		background:sprite($symbol, bullet-folder1_hover) no-repeat;
-	}
 }
 
-.pick-response ul.small-list-right li a:hover{
-	#resp-icon{
-		background:sprite($symbol, bullet-folder1_hover) no-repeat;
-	}
-
-	color: #000;
-}
+.pick-response ul.small-list-right li a:hover{ color: #000; }
 
 .pick-response ul.big-list{
     border-radius: 0px 5px 5px 0px;
@@ -8448,15 +8058,13 @@ p.imp{
     float: left;
 }
 
-.canned-searchbox{
-
-	input[type="text"]{
+.canned-searchbox input[type="text"]{
     display: none;
     width: 45%;
     clear: both;
     border: 1px #b7b7b7 solid;
     @include border-radius(5px);
-    float:left;}
+    float:left;
 }
 
 #canned_response_list{
@@ -8470,15 +8078,6 @@ p.imp{
 	width:214px;
 	height: 266px;
 	float:right;
-	.no_recently_used{
-		width: 395px;
-		float: left;
-	}
-}
-
-.list2.no_recently_used{
-	width: 395px;
-	float: left;
 }
 
 .folderSelected{
@@ -8491,6 +8090,7 @@ p.imp{
 	overflow: hidden;
 	float: left;
 	width: 650px;
+	min-height: 100px;
 	margin-top: 10px;
 }
 
@@ -8543,11 +8143,6 @@ height: auto;
 	}
 }
 
-#searchbox .no_recently_used{
-	top: 31px;
-	right: 22px;
-}
-
 .folder-pane{
 	.caption{
 		display: inline-block;
@@ -8571,9 +8166,58 @@ height: auto;
 	}
 }
 
-.response-loading{
-	#resp-icon{
-		background: url(/images/AddingCannedresponse.gif) no-repeat !important;
+#response_dialog.no_recently_used{
+
+	.pick-response-outer.back1{
+		width: 640px;
+		@include border-left-radius(5px);
+		.pick-response-header{
+			.canned-icons{
+    		float: right;
+    		#clear-search{
+					right:6px !important;
+				}
+				#searchbox{
+					top: 31px;
+					right: 22px;	
+				}
+			}
+		}
+
+		#search-list.pick-response{
+			width: 619px;
+			.small-list-right{
+				width: 99%;
+			}
+		}
+
+		#fold-list{
+			width: 622px;
+			.list2{
+				width: 395px;
+				float: left;
+				.small-list-right{
+						width: 394px;
+				}
+			}
+		}
+
+	}
+
+	.pick-response-header{
+    	width: 622px;
+	}
+
+	.small-list-right{
+    width: 394px;
+	}
+}
+
+#bulk_canned_response_holder{
+	.no_recently_used{
+		#clear-search{
+			right:36px !important;
+		}
 	}
 }
 
@@ -8598,12 +8242,6 @@ height: auto;
 	}
 }
 /* end */	
-
-
-// !PATTERN TODO to be moved into mixins and cleaned up later
-// CSS animation
-
-@import "../animate-custom";
 
 /* customers page CSS start */
 
@@ -9091,6 +8729,18 @@ height: auto;
 .select2-highlighted .select2_list_detail{
 	color:#fff;
 }
+
+#switch_details_view {
+	background: #fffad3;
+
+	a.switch {
+		width:150px;
+		border-right: solid 1px #CCC;
+		display: inline-block;
+		margin-right: 10px;
+	}
+}
+
 /*!pattern Need to delete after pattern intagrated to product */
 .watchers_tooltip{
 	.btn-primary {
@@ -9115,36 +8765,6 @@ height: auto;
 	.btn-primary[disabled]:hover{
 		border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 		background-color: #373737;
-	}
-}
-div.db-chooser{
-	label{
-	margin-right: 50%;
-
-	}
-	.dropbox_button{
-		background: url("/images/dropbox-attach.png") no-repeat left -11px #f3f2f2;
-	    height: 26px;
-	    padding-left:90px;
-	    border:1px solid #d6d6d6;
-	    border-radius:4px;
-		cursor:pointer;
-		text-shadow: 1px 1px 0px #fff;
-	    &:hover{
-			background-color:darken(#f2f2f2, 5%);
-		}
-	}
-}
-.attach_wrapper{
-	width:100%;
-	.dropbox_div{
-	border-left: 1px solid #AAAAAA; float: left; margin: 10px; padding-left: 20px; margin-top:1px;
-	div.db-chooser .dropbox_button{
-		cursor: pointer;
-	}
-	}
-	.attach_file{
-		float:left; padding-right:20px
 	}
 }
 .ff_item{
@@ -9200,7 +8820,7 @@ div.db-chooser{
 		padding: 1px;
 		overflow-y: scroll;
 		border: 1px solid #b7b7b7;
-		@include corners(4px);
+		@include border-radius(4px);
 		display: none;
 		clear: both;
 	}
@@ -9251,41 +8871,22 @@ div.db-chooser{
 	margin-left: 5px;
 	display: inline-block;
 }
-#mergebox{
-	#results li, .merge_results li{
-		border: none;
-		background-color: white;
-		height: 50px;
-		&:hover{
-			background-color: #f8f8f8;
-			#resp-icon{
-				vertical-align: middle;
-				background:sprite($symbol, bullet-folder1_hover) no-repeat;
-			}
-			#resp-icon.clicked{
-				vertical-align: middle;
-	 			background: sprite($symbol, resp-icon-clicked) no-repeat;
-			}
-		}
+
+#results li, .merge_results .autocompletepane li, .merge_results .autocompletepane li.selected{
+	border: none;
+	background-color: white;
+	height: 50px;
+	&:hover{
+		background-color: #f8f8f8;
+		#resp-icon{ vertical-align: middle; }
 	}
 }
 
-#resp-icon.clicked{
- background: sprite($symbol, resp-icon-clicked) no-repeat;
-}
-
-#selected-contacts{
-	min-height: 50px;
-}
+#selected-contacts{ min-height: 50px; }
 
 #cont-chosen{
 	height: 65px;
-	&:hover{
-		cursor: pointer;
-		#resp-icon{
-			background: sprite($symbol, email_config_active) no-repeat;
-		}
-	}
+	&:hover{ cursor: pointer; }
 	#resp-text{
 		vertical-align: middle;
 		width: 190px;
@@ -9293,9 +8894,7 @@ div.db-chooser{
 	}
 }
 
-#pic{
-	vertical-align: middle;
-}
+#pic{ vertical-align: middle; }
 
 .contactdiv{
 	.item_info{
@@ -9326,7 +8925,7 @@ div.db-chooser{
 }
 
 .merge-cont{
-	@include corners(4px);
+	@include border-radius(4px);
 	border: 1px solid #eeeeee;
 	height: 60px;
 	margin-top: 2px;
@@ -9339,8 +8938,7 @@ div.db-chooser{
 
 #contact-area{
 	background-color: white;
-	#resp-icon{
-		background: sprite($symbol, removeButton) no-repeat;
+	#resp-icon{		
 		opacity: 0.5;
 		margin-left: 10px;
 		margin-top: 10px;
@@ -9356,13 +8954,8 @@ div.db-chooser{
 	border: 1px solid #bdbdbd;
 	.primary-marker{
 		background-color: #bdbdbd;
-		&:hover{
-			cursor:pointer;
-		}
-	}
-	#marker{
-		background: sprite($symbol, tickSelect) no-repeat;
-	}
+		&:hover{ cursor:pointer; }
+	}	
 	#resp-icon{
 		opacity: 0.1 !important;
 		&:hover{
@@ -9393,13 +8986,10 @@ div.db-chooser{
 	width: 45px;
 	float: left;
 	@include border-left-radius(4px);
-	&:hover{
-		cursor: pointer;
-	}
+	&:hover{ cursor: pointer; }
 }
 
-#marker{
-	background: sprite($symbol, tickUnselect) no-repeat;
+#marker{	
 	padding-right: 17px;
 	margin-left: 12px;
 }
@@ -9409,8 +8999,7 @@ div.db-chooser{
 	margin-top: 8px;
 }
 
-#mergebox_confirm
-{
+#mergebox_confirm{
 	.info-text{
 		float: right;
 		background-color: #fffcdb;
@@ -9422,7 +9011,7 @@ div.db-chooser{
 		padding: 15px;
 		line-height: 17px;
 		border: 1px solid #eeeeee;
-		@include corners(4px);
+		@include border-radius(4px);
 		h3{
 			display: block;
 			font-weight: bold;
@@ -9444,7 +9033,7 @@ div.db-chooser{
 	height: 60px;
 	vertical-align: middle;
 	border: 1px solid #eeeeee;
-	@include corners(4px);
+	@include border-radius(4px);
 }
 
 #mergeboxconfirm{
@@ -9480,7 +9069,7 @@ div.db-chooser{
 		height: 60px;
 		vertical-align: middle;
 		border: 1px solid #eeeeee;
-		@include corners(4px);
+		@include border-radius(4px);
 		margin-top: 2px;
 		#resp-icon{
 			margin-top: 20px;
@@ -9500,7 +9089,7 @@ div.db-chooser{
 
 
 /* end */
-#ticket-merge{
+.ticket-merge{
 	overflow: hidden;
 	.merge-ticket-info{
 		font-size:11px;
@@ -9596,8 +9185,8 @@ div.db-chooser{
 	.merge_results{
 		width:97.4%;
 		max-height: 327px;
-		clear: both !important;
-		li{
+		clear:both;
+		.autocompletepane li{
 			height:48px;
 		}
 	}
@@ -9750,7 +9339,7 @@ div.db-chooser{
 
 #google_calendar_widget div.title{
 	padding-left: 30px;
-	background-image: url('/images/google-small.png');
+	background-image: inline-image('cdn-ignored/inline-images/google-small.png');
 	background-position: 0px 2px;
 	background-repeat: no-repeat;
 	padding-top: 0px;
@@ -9957,7 +9546,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 /* SLA policy reorder */
 #sla_policies_sort {
 	@include box-shadow(#EEE 0 0 20px);
-	@include corners(4px);
+	@include border-radius(4px);
 	margin: 20px 5px 0px 2px;
 	border: 1px solid #CCC;
 	padding: 20px 20px 5px;
@@ -10045,7 +9634,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 		padding: 4px 8px 10px;
 		border: 1px solid #CCC;
 		margin-right: 3px;
-		@include corners(4px);
+		@include border-radius(4px);
 		margin-top: 10px;
 		background: #F6F6F6;
 		.grid:first-of-type {
@@ -10057,7 +9646,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 		}
 	}
 	.grid {
-		@include corners(4px);
+		@include border-radius(4px);
 		&.sla_detail {
 			padding: 10px 10px 5px;
 			label {
@@ -10086,7 +9675,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 			}
 			&.sla_policies {
 				tr.add_next_level td {
-					@include corners(4px);
+					@include border-radius(4px);
 					background-color:white;
 					color: #369;
 					padding: 10px 0px;
@@ -10103,7 +9692,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 				}
 				tr.escalations {
 					td {
-						@include corners(4px);
+						@include border-radius(4px);
 						padding:8px 4px 0px;
 
 						.select2-container {
@@ -10119,7 +9708,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 							width:210px;
 						}
 						ul {
-							@include corners(4px);
+							@include border-radius(4px);
 						}
 					}
 					&.response {
@@ -10146,8 +9735,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 						@include opacity(0.7);
 						margin-top:7px;
 						padding-left: 4px;
-						padding-right: 4px;
-						background: sprite($symbol, delete);
+						padding-right: 4px;						
 						width: 16px;
 						height: 16px;
 						position: absolute;
@@ -10171,7 +9759,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 	}
 	.condition {
 		ul {
-			@include corners(6px);
+			@include border-radius(6px);
 			width: auto;
 			padding:0;
 			&.multi_value_field {
@@ -10198,7 +9786,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 		border:1px solid #CFCFCF;
 		margin-right: 3px;
 		margin-top: 15px;
-		@include corners(4px);
+		@include border-radius(4px);
 		.condition {
 			background-color:#F6F6F6;
 			padding:5px 10px;
@@ -10206,7 +9794,6 @@ div.gcal-confirm-modal-content{ width: 100%; }
 			.delete_conditions {
 				@include opacity(0.7);
 				margin-top:7px;
-				background: sprite($symbol, delete);
 				width: 16px;
 				height: 16px;
 				position: absolute;
@@ -10272,7 +9859,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 				float:right;
 				@include hide-text();
 				padding: 2px 3px 2px 7px !important;
-				background: image-url('/images/select2.png') right top no-repeat !important;
+				background: image-url("select2/select2.png") right top no-repeat !important;
 				width: 12px;
 				height: 8px;
 				left: -2px;
@@ -10287,10 +9874,10 @@ div.gcal-confirm-modal-content{ width: 100%; }
 		.autocomplete {
 			ul{
 				@include select2-drop;
-	      margin-top: -4px;
-	      padding: 3px;
-	      overflow: hidden;
-	      width: 98%;
+				margin-top: -4px;
+				padding: 3px;
+				overflow: hidden;
+				width: 98%;
 				li {
 					background:none;
 					border:none;
@@ -10319,7 +9906,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 .sla-policy-tooltip {
 	.ui-tooltip-content{
 		@include box-shadow(rgba(0, 0, 0, 0.1) 0px 0px 6px);
-		@include corners(4px);
+		@include border-radius(4px);
 		background-color: #FCFAE7;
 		border-color: #E2E2E2;
 		padding: 11px;
@@ -10334,7 +9921,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 	}
 	.ui-tooltip-content{
 		@include box-shadow(none);
-		@include corners(4px);
+		@include border-radius(4px);
 		background-color: #FCFAE7;
 		border-color: #E2E2E2;
 		padding: 11px 14px;
@@ -10343,10 +9930,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 /* end of SLA policy */
 
 /* Used to highlight records upon creation or update */
-
-.record_highlight {
-	@include animation(record_blink 1s ease-out 1);
-}
+.record_highlight{ @include animation(record_blink 1s ease-out 1); }
 
 @include keyframes(record_blink) {
 	0% { background-color: rgba(#ff0,.8);}
@@ -10364,23 +9948,116 @@ div.gcal-confirm-modal-content{ width: 100%; }
 	font-weight: 200;
 }
 .rebrand-page{
-	label.overlabel {
-		margin: 5px;
+	label.overlabel{ margin: 5px; }
+	.lead{ font-weight: 400; }
+	label{ margin-bottom:0px; }
+	.linkback-url{ margin: 5px 0; }
+	.reset-color{ margin-top: 5px; }
+}
+.error-text{ color: #D00; }
+
+#footer {
+	margin: 10px auto 40px;
+	clear: both;
+}
+.group-management .toggle-button{
+	margin-left:0;
+}
+.group-ticket-assign{
+	li{
+		padding-bottom:5px;
+		.group-text-align{
+			padding-top:5px;
+			text-align: right;
+		}
 	}
-	.lead{
-		font-weight: 400;
+}
+/* must have to remove or change to spin.js */
+.header-link-wrapper a img{
+	&.header-spinner{
+	    position: relative;
+	    border-radius: 50%;
+	    width: 21px;
+		height: 21px;
+		margin: 7px 7px 8px 7px;
+	    background: #FF4F72;
+	    background-repeat: no-repeat;
+	    @include box-shadow(inset 0 0 0 .12em rgba(0,0,0,0.2),0 0 0 .12em rgba(255,255,255,0.1));
+	    @include opacity(0.6);
+	    animation: rota 3s infinite alternate;
+	    -webkit-animation: rota 3s infinite alternate;
+	    -o-animation: rota 3s infinite alternate;
+	    -ms-animation: rota 3s infinite alternate;
+	    -moz-animation: rota 3s infinite alternate;
+	    &:after {
+		    content: "";
+		    width: 50%;
+		    height: 50%;
+		    position: absolute;
+		    top: 25%;
+		    left: 25%;
+		    border: .12em solid rgba(255,255,255,0.3);
+		    border-radius: inherit;
+		}
 	}
-	label{
-		margin-bottom:0px;
-	}
-	.linkback-url{
-		margin: 5px 0;
-	}
-	.reset-color{
-			margin-top: 5px;
+}
+@keyframes rota {
+    25%  { transform: rotate(270deg); }
+    50%  { transform: rotate( 90deg); }
+    75%  { transform: rotate(360deg); }
+    100% { transform: rotate(180deg); }
+}
+@-webkit-keyframes rota {
+    25%  { -webkit-transform: rotate(270deg); }
+    50%  { -webkit-transform: rotate( 90deg); }
+    75%  { -webkit-transform: rotate(360deg); }
+    100% { -webkit-transform: rotate(180deg); }
+}
+@-ms-keyframes rota {
+    25%  { -ms-transform: rotate(270deg); }
+    50%  { -ms-transform: rotate( 90deg); }
+    75%  { -ms-transform: rotate(360deg); }
+    100% { -ms-transform: rotate(180deg); }
+}
+@-o-keyframes rota {
+    25%  { -o-transform: rotate(270deg); }
+    50%  { -o-transform: rotate( 90deg); }
+    75%  { -o-transform: rotate(360deg); }
+    100% { -o-transform: rotate(180deg); }
+}
+@-moz-keyframes rota {
+    25%  { -moz-transform: rotate(270deg); }
+    50%  { -moz-transform: rotate( 90deg); }
+    75%  { -moz-transform: rotate(360deg); }
+    100% { -moz-transform: rotate(180deg); }
+}
+
+
+// To be removed when Classic Tkt View is removed - !V2
+.fields .helpdesk_note_notify_agents {
+	width: 100%;
+	li.select2-search-choice {
+		width: auto;
 	}
 }
 .error-text {
 	color: #D00;
 }
-  
+ 
+// Pjax Debug related styles
+#benchmarkresult{
+	width: 25%;
+	display: inline-block;
+	position: fixed;
+	z-index: 999;
+	background: #DFDFDF;
+	bottom: 10px;
+	right: 10px;
+	border: 1px solid gainsboro;
+	padding: 10px;
+	box-shadow: 2px 2px #AAA;
+	color: #333;
+	border-radius: 5px;
+}
+
+.tweet-table .search-grey-box{ margin-top: 0; }

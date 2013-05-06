@@ -1,26 +1,26 @@
-<div id = "response_dialog" class="over">
+<div id = "response_dialog" class="no_recently_used over">
   <div  class="recently_used" id="recently_used_container">
 	  <div class="pick-response-header"><h3><%= t('canned_folders.recently') %></h3></div>
 	  <div id="recently_used_list"></div>
 	</div>
 	<div class="pick-response-outer back1">
 		<div class="pick-response-header">
-      <h3><%= t('canned_folders.pick') %></h3>
+      		<h3><%= t('canned_folders.pick') %></h3>
 			<div class="canned-icons">
 				<input type="text" id="searchbox" value="" placeholder= <%= t('canned_folders.search') %> 
 				class="canned-searchbox required" />
-				<span id="clear-search"></span>
+				<span id="clear-search" class="clear-search"></span>
 			</div>
-    </div>
-		<div id = "search-list" class="pick-response autocomplete"></div>
-			<div id="fold-list" class="pick-response">
-			  <div id="canned_response_list">
-		      <ul class="small-list-left">
-    	    <%= each_or_message("helpdesk/tickets/components/ca_res_folder", current_account.canned_response_folders.accessible_for(current_user), t('canned_folders.no_folders')) %>
-		      </ul>
-		    </div>
-			  <div id="responses" class="list2"></div>
-		  </div>
+    	</div>
+		<div id="search-list" class="pick-response autocomplete"></div>
+		<div id="fold-list" class="pick-response">
+		  <div id="canned_response_list">
+	      <ul class="small-list-left">
+  	    	<%= each_or_message("helpdesk/tickets/components/ca_res_folder", current_account.canned_response_folders.accessible_for(current_user), t('canned_folders.no_folders')) %>
+	      </ul>
+	    </div>
+		<div id="responses" class="list2"></div>
+	  </div>
 	</div>
 </div>
 
@@ -34,4 +34,4 @@ jQuery('.ui-icon-closethick').bind('click', function(){
 });
 <% end %>
 
-<%= javascript_include_tag 'app/ca_ticket_view.js' %>
+<script src="/javascripts/app/ca_ticket_view.js" type="text/javascript"></script>

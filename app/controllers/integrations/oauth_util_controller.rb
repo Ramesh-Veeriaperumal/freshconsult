@@ -22,7 +22,7 @@ include Integrations::OauthHelper
 				
 				## STORE THE NEW "ACCESS TOKEN" IN DATABASE.
 					if(app.user_specific_auth?)
-						user_credential.auth_info.merge! ({'oauth_token' => access_token.token})
+						user_credential.auth_info.merge!({'oauth_token' => access_token.token})
 						user_credential.save
 					else
 						inst_app[:configs][:inputs]['oauth_token'] = access_token.token

@@ -103,7 +103,7 @@ class Integrations::ObjectMapper
         :map=>[
           {:ours=>"body", :theirs_to_ours=>{:value=>"JIRA comment {{notification_cause}} # {{comment.id}}:\n {{comment.body}}\n"}}, 
           {:ours=>"user", :theirs_to_ours=>{:handler=>:db_fetch, :use_if_empty=>"admin", :entity=>User, :using=>{:conditions=>["email=?", "{{comment.author}}"]}}},
-          {:ours=>"source", :theirs_to_ours=>{:handler=>:static_value, :value=>0}},
+          {:ours=>"source", :theirs_to_ours=>{:handler=>:static_value, :value=>Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]}},
           {:ours=>"private", :theirs_to_ours=>{:handler=>:static_value, :value=>true}},
           {:ours=>"notable", :theirs_to_ours=>{:handler=>:db_fetch, :entity=>Helpdesk::Ticket, 
                         :using=>{:select=>"helpdesk_tickets.*", :joins=>"INNER JOIN integrated_resources ON integrated_resources.local_integratable_id=helpdesk_tickets.id", 
@@ -113,29 +113,58 @@ class Integrations::ObjectMapper
         ], 
         :update=>{:theirs_to_ours_handler=>:db_save}
       }
-
+  generic_config_external_notes = {
+        :fetch => {:ours =>{
+           :handler=>:db_fetch,
+           :entity=>Helpdesk::ExternalNote,
+           :using=>{:select=>"helpdesk_external_notes.*",:conditions=>["note_id=?", "{{note_id}}"]},
+           :create_if_empty=>true 
+          }
+        },
+        :map=>[
+          {:ours=>"external_id",:theirs_to_ours=>{:value=>"{{comment.id}}"}},
+          {:ours=>"note_id",:theirs_to_ours=>{:value=>"{{note_id}}"}},
+          {:ours=>"installed_application_id",:theirs_to_ours=>{:value=>"{{installed_application_id}}"}},
+          {:ours=>"account_id", :theirs_to_ours=>{:value=>"{{account_id}}"}}
+        ],
+        :update=>{:theirs_to_ours_handler=>:db_save}
+  }
+  generic_config[:fetch][:ours][:using] = {:select=>"helpdesk_notes.*",
+                                           :joins=>"INNER JOIN helpdesk_external_notes ON helpdesk_external_notes.note_id=helpdesk_notes.id and helpdesk_external_notes.account_id = helpdesk_notes.account_id", 
+                                           :conditions=>["helpdesk_external_notes.external_id=?", "{{comment.id}}"]}
   PRIVATE_NOTE_CONFIG = clone(generic_config)
-
+  PRIVATE_NOTE_CONFIG[:map].push({:ours=>"body_html",:theirs_to_ours=> {:value => "<div>JIRA comment {{notification_cause}} # {{comment.id}}:<br/> {{comment.body}} <br/></div>"}})
+  PRIVATE_NOTE_CONFIG[:map].push({:ours=>"to_emails",:theirs_to_ours=> {:handler=>:db_fetch, :entity=>User, :data_type => "String",:field_type => "email", 
+                         :using=>{:select=>"users.email",
+                                  :joins=>"INNER JOIN helpdesk_tickets INNER JOIN integrated_resources ON integrated_resources.local_integratable_id=helpdesk_tickets.id and  helpdesk_tickets.responder_id = users.id 
+                                  and users.account_id = helpdesk_tickets.account_id",
+                                  :conditions=>["integrated_resources.remote_integratable_id=?", "{{issue.key}}"]}}})
+  EXTERNAL_NOTE_CONFIG = clone(generic_config_external_notes)
   STATUS_AS_PRIVATE_NOTE_CONFIG = clone(generic_config)
-  STATUS_AS_PRIVATE_NOTE_CONFIG[:map][0][:theirs_to_ours][:value] = "JIRA issue status changed to {{issue.status}}.\n"
+  STATUS_AS_PRIVATE_NOTE_CONFIG[:map][0][:theirs_to_ours][:value] = "JIRA issue status changed to {{issue.fields.status.name}}.\n"
   STATUS_AS_PRIVATE_NOTE_CONFIG[:map][1][:theirs_to_ours][:using] = {:conditions=>["email=?", "{{user}}"]}
-
+  STATUS_AS_PRIVATE_NOTE_CONFIG[:map].push({:ours=>"to_emails",:theirs_to_ours=> {:handler=>:db_fetch, :entity=>User, :data_type => "String",:field_type => "email",
+                         :using=>{:select=>"users.email",
+                                  :joins=>"INNER JOIN helpdesk_tickets INNER JOIN integrated_resources ON integrated_resources.local_integratable_id=helpdesk_tickets.id and  helpdesk_tickets.responder_id = users.id 
+                                  and users.account_id = helpdesk_tickets.account_id",
+                                  :conditions=>["integrated_resources.remote_integratable_id=?", "{{issue.key}}"]}}})
   PUBLIC_NOTE_CONFIG = clone(generic_config)
   PUBLIC_NOTE_CONFIG[:map][3][:theirs_to_ours][:value] = false
-
+  PUBLIC_NOTE_CONFIG[:map].push({:ours=>"body_html",:theirs_to_ours=> {:value => "<div>JIRA comment {{notification_cause}} # {{comment.id}}:<br/> {{comment.body}} <br/></div>"}})
   STATUS_AS_PUBLIC_NOTE_CONFIG = clone(generic_config)
-  STATUS_AS_PUBLIC_NOTE_CONFIG[:map][0][:theirs_to_ours][:value] = "JIRA issue status changed to {{issue.status}}.\n"
+  STATUS_AS_PUBLIC_NOTE_CONFIG[:map][0][:theirs_to_ours][:value] = "JIRA issue status changed to {{issue.fields.status.name}}.\n"
   STATUS_AS_PUBLIC_NOTE_CONFIG[:map][1][:theirs_to_ours][:using] = {:conditions=>["email=?", "{{user}}"]}
   STATUS_AS_PUBLIC_NOTE_CONFIG[:map][3][:theirs_to_ours][:value] = false
 
   REPLY_CONFIG = clone(generic_config)
-  REPLY_CONFIG[:map][2][:theirs_to_ours][:value] = 2 #source
+  REPLY_CONFIG[:map][2][:theirs_to_ours][:value] = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"] #source
   REPLY_CONFIG[:map][3][:theirs_to_ours][:value] = false #private
-  REPLY_CONFIG[:map].push({:ours=>"private", :theirs_to_ours=>{:handler=>:static_value, :value=>true}})
-
+  REPLY_CONFIG[:map].push({:ours=>"body_html",:theirs_to_ours=> {:value => "<div>JIRA comment {{notification_cause}} # {{comment.id}}:<br/> {{comment.body}} <br/></div>"}})
+  
   MAPPER_CONFIGURATIONS = {
       :add_private_note_in_fd => PRIVATE_NOTE_CONFIG,
       :add_public_note_in_fd => PUBLIC_NOTE_CONFIG,
+      :add_helpdesk_external_note_in_fd => EXTERNAL_NOTE_CONFIG,
       :add_status_as_private_note_in_fd => STATUS_AS_PRIVATE_NOTE_CONFIG,
       :add_status_as_public_note_in_fd => STATUS_AS_PUBLIC_NOTE_CONFIG,
       :send_reply_in_fd => REPLY_CONFIG,
@@ -148,10 +177,11 @@ class Integrations::ObjectMapper
           }
         },
         :map=>[
-          {:ours=>"status", :theirs_to_ours=>{:handler=>:map_field, :value=>"{{issue.status}}", :mapping_values=>{
-                      "Default"=>OPEN,
+          {:ours=>"status", :theirs_to_ours=>{:handler=>:map_field, :value=>"{{issue.fields.status.name}}", :mapping_values=>{
                       "Resolved"=>RESOLVED,
-                      "Closed"=>CLOSED}
+                      "Closed"=>CLOSED,
+                      "Default" => OPEN,
+                      "In Progress" => PENDING}
                     }},
           {:ours=>"disable_observer", :theirs_to_ours=>{:handler=>:static_value, :value=>true}}
         ], 

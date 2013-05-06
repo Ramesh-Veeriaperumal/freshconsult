@@ -13,7 +13,7 @@ TicketTimesheet.prototype = {
             seconds = jQuery(this).data('runningTime');
             timeout = 10 - seconds % 10;
             jQuery(this)
-               .html(sprintf( "%0.02f", seconds/3600))
+               .html(time_in_hhmm(seconds))
                .data('runningTime', seconds+timeout);                	    
             });
             totalTime("#timesheetlist .time", "#timeentry_timer_total");

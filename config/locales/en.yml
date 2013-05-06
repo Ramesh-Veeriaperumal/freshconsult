@@ -2,11 +2,14 @@ en:
   meta:
    language_name: 'English'
   any: Any
-  or: or
+  or: or  
+  plain_yes: "Yes"
+  plain_no: "No"
   unspam: "Unspam"
   unblock: "Whitelist"
   enabled: "Enabled"
   disabled: "Disabled"
+  more: "more"
   tip_on: "Click to Enable"
   tip_off: "Click to Disable"
   credit_card: "Card on file"
@@ -38,6 +41,8 @@ en:
     tags: "Tags"
     requester: "Requesters"
     created_at: "Created"
+    mygroups: My Groups
+    unassigned: Unassigned
   proceed_now: "\n\nProceed now?"
   forward: "Forward"
   apply: "Apply"
@@ -74,7 +79,9 @@ en:
   attachments: Attachments
   attachment_delete: "You're about to permanently delete this attachment. Continue?"
   attach_file_local: Attach a file from your computer
+  attach_file: Attach file
   dropbox_attach_label: Attach from
+  dropbox_attach_from: Attach from Dropbox
   dropbox_choose_file: Choose file
   show_quoted_text: Show Quoted text
   cancel_my_account: Cancel my account
@@ -82,6 +89,7 @@ en:
   resolved_late: Resolved late
   remove: Remove
   no_tags: No tags found.
+  show_recent: Show Recent
   immediately: Immediately
   after_half: After 30 Minutes
   after_one: After 1 Hour
@@ -102,11 +110,13 @@ en:
     info1: A Profile image of the person, its best if the picture has the same length and height
     back_info: Background information
     mobile: Mobile
-    twitter_id: Twitter Id
+    twitter_id: Twitter
+    facebook: Facebook
     full_name: Full Name
     name: Name
     secondary: secondary
     phone_no: Phone No
+    mobile: Mobile
     address: Address
     work: Work
     email: Email
@@ -857,6 +867,7 @@ en:
     edit: Edit Forum
     title: Forums
     start_topic: Start a Topic
+    forum_created: The forum has been created.
     visibility:
       anyone: Anyone
       logged_users: Logged In Users
@@ -1101,6 +1112,37 @@ en:
   from_email: From Email
   feedbackwidget_custom_image: Custom image URL
   activities: 
+    action_verb: 'updated'
+    tag:
+      solutions: "New Solution"
+      assigned_to_nobody: "Agent Unassigned"
+      reassigned: "Agent Reassigned"
+      assigned: "Agent Assigned"
+      priority_change: "{{value}}"
+      new_ticket: "New Ticket"
+      conversation:
+        out_email: 
+          default: "Agent Replied"
+          private: "Ticket Forwarded"
+        in_email: "Customer Responded"
+        note: "New Note"
+        twitter: "Tweet"
+      timesheet:
+        new: "Time logged"
+        timer_started: "Timer Started"
+        timer_stopped: "Timer Stopped"
+      execute_scenario: "Scenario Executed"
+      ticket_merge: "Ticket Merged"
+      ticket_split: "Ticket Splitted"
+      status_change: "{{value}}"
+      deleted: "Ticket Deleted"
+      restored: "Ticket Restored"
+      product_change: "Product Updated"
+      product_change_none: "Product Updated"
+      ticket_type_change: "Ticket Type"
+      group_change: "Agent Group Changed"
+      group_change_none: "Agent Group Changed"
+      source_change: "Ticket Source"
     solutions: 
       new_solution: 
         short: "{{user_path}} created a new solution"
@@ -1132,13 +1174,16 @@ en:
         long: "{{user_path}} has deleted a post from '{{notable_path}}'"
     tickets: 
       assigned_to_nobody: 
-        short: Assigned to 'Nobody' by {{user_path}}
-        long: "{{user_path}} assigned the ticket {{notable_path}} to 'Nobody'"
+        short: Assigned to 'None' by {{user_path}}
+        long: "{{user_path}} assigned the ticket {{notable_path}} to 'None'"
+        without_user: assigned to <strong>'None'</strong>
       reassigned: 
         long: "{{user_path}} reassigned the ticket {{notable_path}} to {{responder_path}}"
+        without_user: "reassigned the ticket <strong>{{responder_path}}</strong>"
       priority_change: 
-        short: "{{user_path}} changed the priority to {{priority_name}}"
-        long: "{{user_path}} changed the ticket priority of {{notable_path}} to {{priority_name}}"
+        short: "{{user_path}} changed priority to {{priority_name}}"
+        long: "{{user_path}} changed ticket priority of {{notable_path}} to {{priority_name}}"
+        without_user: "updated ticket priority to <strong>{{priority_name}}</strong>"
       new_ticket: 
         short: "{{user_path}} submitted the ticket"
         long: "{{user_path}} submitted a new ticket {{notable_path}}"
@@ -1162,56 +1207,72 @@ en:
         new:
           short: "{{user_path}} added a {{timesheet_path}}"
           long: "{{user_path}} added a {{timesheet_path}} to the ticket {{notable_path}}"
+          without_user: "added a {{timesheet_path}}"
         timer_started:
           short: "{{user_path}} started timer on  {{timesheet_path}}"
+          without_user: "started timer on  {{timesheet_path}}"
           long: "{{user_path}} started timer on {{timesheet_path}} to the ticket {{notable_path}}"
         timer_stopped:
           short: "{{user_path}} stopped timer on  {{timesheet_path}}"
+          without_user: "stopped timer on  {{timesheet_path}}"
           long: "{{user_path}} stopped timer on {{timesheet_path}} to the ticket {{notable_path}}"
       assigned: 
         short: Assigned to {{responder_path}} by {{user_path}}
+        without_user: assigned to <strong>{{responder_path}}</strong>
         long: "{{user_path}} assigned the ticket {{notable_path}} to {{responder_path}}"
       execute_scenario: 
         short: "{{user_path}} executed the scenario '{{scenario_name}}"
+        without_user: "executed the scenario <strong>{{scenario_name}}</strong>"
         long: "{{user_path}} executed the scenario '{{scenario_name}}' on {{notable_path}}"
       ticket_merge: 
         short: "{{user_path}} has merged the ticket {{notable_path}} to {{merge_ticket_path}} "
         long: "{{user_path}} has merged the ticket  {{notable_path}} to {{merge_ticket_path}}"
+        without_user: "merged the ticket  {{notable_path}} to {{merge_ticket_path}}"
       ticket_split: 
         short: "{{user_path}} has split the ticket {{notable_path}} from {{split_ticket_path}}"
         long: "{{user_path}} has split the ticket {{notable_path}} from {{split_ticket_path}}"
+        without_user: "Splitted the ticket from {{split_ticket_path}}"
       status_change: 
-        short: "{{user_path}} changed the status to {{status_name}}"
-        long: "{{user_path}} changed the ticket status of {{notable_path}} to {{status_name}}"
+        short: "{{user_path}} updated status to {{status_name}}"
+        without_user: "updated status to <strong>{{status_name}}</strong>"
+        long: "{{user_path}} updated ticket status of {{notable_path}} to {{status_name}}"
       deleted:
         short: "{{user_path}} has deleted this ticket"
+        without_user: "has deleted the ticket"
         long: "{{user_path}} has deleted the ticket {{notable_path}}"
       restored:
         short: "{{user_path}} has restored this ticket"
+        without_user: "has restored the ticket"
         long: "{{user_path}} has restored the ticket {{notable_path}}"
       product_change:
-        short: "{{user_path}} changed the product to {{product_name}}"
-        long: "{{user_path}} changed the product of {{notable_path}} to {{product_name}}"
+        short: "{{user_path}} updated product to {{product_name}}"
+        without_user: "updated product to <strong>{{product_name}}</strong>"
+        long: "{{user_path}} updated product of {{notable_path}} to {{product_name}}"
       product_change_none: 
-        short: "{{user_path}} changed the product to 'none'"
-        long: "{{user_path}} changed the product of {{notable_path}} to 'none'"
+        short: "{{user_path}} updated product to 'none'"
+        without_user: "updated product to <strong>'none'"
+        long: "{{user_path}} updated product of {{notable_path}} to 'none'"
       ticket_type_change:
-        short: "{{user_path}} changed the ticket type to {{ticket_type}}"
-        long: "{{user_path}} changed the ticket type of {{notable_path}} to {{ticket_type}}"
+        short: "{{user_path}} updated ticket type to {{ticket_type}}"
+        without_user: "updated ticket type to <strong>{{ticket_type}}</strong>"
+        long: "{{user_path}} updated ticket type of {{notable_path}} to {{ticket_type}}"
       group_change:
-        short: "{{user_path}} changed the group to {{group_name}}"
-        long: "{{user_path}} changed the group of {{notable_path}} to {{group_name}}"
+        short: "{{user_path}} updated group to {{group_name}}"
+        without_user: "updated group to <strong>{{group_name}}</strong>"
+        long: "{{user_path}} updated group of {{notable_path}} to {{group_name}}"
       group_change_none: 
-        short: "{{user_path}} changed the group to 'none'"
-        long: "{{user_path}} changed the group of {{notable_path}} to 'none'"
+        short: "{{user_path}} updated group to 'none'"
+        without_user: "updated group to <strong>'none'</strong>"
+        long: "{{user_path}} updated group of {{notable_path}} to 'none'"
       source_change:
-        short: "{{user_path}} changed the source to {{source_name}}"
-        long: "{{user_path}} changed the ticket source of {{notable_path}} to {{source_name}}"
+        short: "{{user_path}} updated source to {{source_name}}"
+        without_user: "updated source to <strong>{{source_name}}</strong>"
+        long: "{{user_path}} updated ticket source of {{notable_path}} to {{source_name}}"
   credit_card_info: Credit card information
   zendesk_backup_info: Select the Zendesk backup file downloaded from zendesk
   your_email_address: Your e-mail address
   username: Username
-  reply: reply
+  reply: Reply
   is_not: Is not
   during: during
   less_than: Less than
@@ -1262,7 +1323,7 @@ en:
       contact_email : Email
       contact_phone : Phone
       invoice_email_info : Send Invoices to
-      invoice_emails : Emails
+      invoice_emails : Email
   success_msg : Account settings updated successfully!
   failure_msg : Failed to update Account Settings!
   
@@ -1527,9 +1588,11 @@ en:
   group: 
     new: New Group
     name: Group Name
+    description: Group description
     edit: Edit Group
     title: Groups
-    info1: Agents in this Group
+    ticket_assignment: Automatic Ticket Assignment
+    info1: Agents
     info2: No Agents in this group
     info3: Send an Escalation email to
     info4: if a ticket remains un-assigned for more than
@@ -1539,6 +1602,9 @@ en:
     tour: Help me create a new agent group
     helptext: You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, set email notifications, create business rules and generate reports at the group level. Note that the same agent can be a member of multiple groups as well. 
     select_agents: Select Agents
+    select_an_agent: Select Agent
+    learn_more: Learn more 
+    round_robin_desc: "Once turned ON, tickets assigned to this group will be distributed among agents in round robin fashion. If you wish to manually assign tickets or dispatch them using the Dispatch'r or Supervisor automations, you can turn this OFF. "
     assigntime:
       half: 30 Minutes
       one: 1 Hour
@@ -1643,18 +1709,24 @@ en:
   zendesk_url_info: e.g:- http://acme.zendesk.com
   portal_customizer_anon_for_i: Turn this feature off, if you want to hide 'Forums' tab in public customer portal.
   portal_customizer_option_for_i: Disable this feature  if you want users to login to view solutions
+  portal_customizer_option_forums_i: Disable this feature  if you want users to login to view forums
   portal_customizer_anon_for_g: Enable this feature if you want customers to be able to sign in using their Google username and password. 
   portal_customizer_anon_for_t: Enable this feature if you want customers to be able to sign in using their Twitter username and password. 
   portal_customizer_anon_for_f: Enable this feature if you want customers to be able to sign in using their Facebook username and password. 
   portal_signup_anon: Enable this feature if you want users to be able to sign up and create their own user accounts. This will enable users to login and participate in forum discussions, vote on ideas etc.
   portal_captcha_anon: Enable this feature if you want users to submit tickets with captcha
   card_process: Thank you for your payment. Your Freshdesk account is now live!
+  card_error: There was an error adding your card. Please try again.
   chat: Chat
   card_number: Card Number
   forgot_password_intro: Fill out the form below and instructions to reset your password will be emailed to you
   done: Done
   reset: Reset
   ticket_due_by_time: Due by
+  ticket_past_due_by: Due %{time} ago
+  ticket_past_due_by_live: Due <abbr data-livestamp='%{timestamp}'>%{time} ago</abbr>
+  ticket_future_due_by: Due in %{time}
+  ticket_future_due_by_live: Due <abbr data-livestamp='%{timestamp}'> in %{time}</abbr>
   ticket_pending_since_time: Pending Since
   ticket_resolved_at_time: Resolved at
   ticket_closed_at_time: Closed at
@@ -1746,8 +1818,8 @@ en:
       tour: Help me create a new SLA policy
       info_1: '<p>A service level agreement (SLA) policy lets you set standards of performance for your support team. You can set SLA policies for the time within which agents should respond to, and resolve tickets based on ticket priorities. You can choose whether you want each SLA rule to be calculated over calendar hours or your business hours.</p> <p>Your SLA Policies will be used in Freshdesk to determine the “Due By” time for each ticket.</p>'
       title_1: 'Using Multiple SLA Policies'
-      info_2: '<p>You can have multiple SLA policies, triggered by specific conditions like the customer who requested the ticket, the group it is assigned to, its source and/or product.</p><p>For example, you can have set a special SLA policy for tickets coming in through Twitter and assigned to the Sales team. Or have a special policy for customers having priority subscriptions with you. If you are supporting multiple brands or products, you can also have a different SLA workflow for each product.</p>
-<p><strong>The order of your SLA rules is important.</strong> The first SLA rule that matches all conditions for a ticket will be applied to it, so remember to order your important rules closer to the top</p>'
+      sla_info_2: '<p>You can have multiple SLA policies, triggered by specific conditions like the customer who requested the ticket, the group it is assigned to, its source and/or product.</p><p>For example, you can have set a special SLA policy for tickets coming in through Twitter and assigned to the Sales team. Or have a special policy for customers having priority subscriptions with you. If you are supporting multiple brands or products, you can also have a different SLA workflow for each product.</p>
+<p><strong>The order of your SLA policies is important.</strong> The first SLA Policy that matches all conditions for a ticket will be applied to it, so remember to order your important rules closer to the top</p>'
       title_2: 'Enforcing Escalation Rules'
       info_3: '<p>You can optionally set escalation hierarchies for each policy to notify specific agents when an SLA rule is violated.</p>'
     override: Override
@@ -1760,8 +1832,8 @@ en:
     applicable_to: Apply this to
     applicable_details: Choose when this SLA policy must be enforced
     applicable_error: You need to add at least 1 condition
-    escalation_response: Set Escalation Rules when a ticket is not <b>responded to</b> on time
-    escalation_resolution: Set Escalation Hierarchy when a ticket is not <b>resolved</b> on time
+    escalation_response_text: Set Escalation Rule when a ticket is not <b>responded to</b> on time
+    escalation_resolution_text: Set Escalation Hierarchy when a ticket is not <b>resolved</b> on time
     respond_within: Respond within
     resolve_within: Resolve within
     op_hrs: Operational Hrs
@@ -1805,11 +1877,24 @@ en:
   import_solution_article_info: "Note: We will not save the forum comments"
   no_anonymous_tickets: "To submit a ticket, <a href={{signup}}><b>Sign up</b></a> as a new user or <a href={{login}}><b>Login</b></a>."
   no_signup: "To submit a ticket, please <a href={{login}}><b>Login</b></a>."
-  portal: 
+  register: Register
+  by: by
+  portal:
+    cookie:
+      cookie_policy: "Cookie policy"
+      why_we_love_cookies: "Why we love Cookies"
+      cookie_dialog_info1: "We use cookies to try and give you a better experience in Freshdesk. "
+      cookie_dialog_info2: "You can learn more about what kind of cookies we use, why, and how from our %{privacy_link}. If you hate cookies, or are just on a diet, you can disable them altogether too. Just note that the Freshdesk service is pretty big on some cookies (we love the choco-chip ones), and some portions of Freshdesk may not work properly if you disable cookies. "
+      cookie_dialog_info3: "We’ll also assume you agree to the way we use cookies and are ok with it as described in our %{privacy_link}, unless you choose to disable them altogether through your browser. "
+      privacy_policy: "Privacy Policy"
     no_topics_in_this_view: "~ No topics in this view ~"
+    reported: reported
+    said: said
     solutions_home: "Solution home"
     header: 
       preview_message: "<b>Preview mode</b> - <a href='javascript:window.close()'>Click here</a> to go back."
+    new_support_ticket: New support ticket
+    submit_new_ticket: "...or Submit a new ticket"
     login: Login
     login_portal: "Login to the support portal"
     login_details: "Enter the login details you gave when you registered with us"
@@ -1827,6 +1912,7 @@ en:
         topics: "Topics"
         tickets: "Tickets"
       placeholder: "Enter your search term here..."
+      results_for: Search results for
     popular_topics: "Popular topics"
     showing_recently_popular_topics: "Showing recently popular topics"
     community_forums: "Community forums"
@@ -1838,10 +1924,22 @@ en:
     no_forums_info_2: "Why don't you start a %{start_topic_link}?"
     article:
       see_all_articles: "See all %{count} articles"
-    topic:      
+    folder:
+      filler_text: "Watch this space for articles regarding %{folder_name}"
+    topic:   
+      follow: Follow
+      following: Following
+      topic_title: Topic title   
+      post_topic: Post topic in
+      monitor_topic: Monitor this topic
+      default_select_option: Select a forum type
       comments_closed: "Comments to this discussion are now closed!"
       start_new_topic: "Start a new topic"
       see_all_topics: "See all %{count} topics"
+      comment_placeholder: Click here to add a comment
+      started: started a topic
+      more_topic: More topics in
+      last_reply: Last Reply
     topic_vote:
       you: 
         one: "You"
@@ -1874,6 +1972,14 @@ en:
       export: "Export tickets"
       export_ticket_data: "Export ticket data to CSV"
       export_to_csv: "Export to CSV"
+      ticket_list: Tickets list
+      mark_closed: Mark ticket as closed
+      add_people: Add people
+      reply_placeholder: "Click here to reply to this ticket"
+      details: Ticket details
+      add_or_remove_emails: "Add or remove emails that need to be copied when a notification for this ticket is sent."
+      add_people_title: Add people to conversation
+      reopen_reply: Reopen and reply
   feedbackwidget_form_title: Widget form title
   cancel_and_back: Cancel and go back
   due_in: Due in %{time_words}
@@ -1911,6 +2017,7 @@ en:
     info10: Private (Visible to Agents only)
     add_new_solution: Add a new solution
     title: Solutions
+    title_singular: Solution
     info1: Solutions in Freshdesk is  your Knowledge base
     info2: Solutions can be <b>public</b> or <b>private</b>. Public Solutions are visible in the Self Service Portal and also appear in Search results
     info3: Private solutions are agent-only solutions used for internal knowledge sharing
@@ -1952,6 +2059,7 @@ en:
   twoday: 2 Days
   profile: 
     change_password: Change Password
+    manage: Manage your profile
     edit: Edit Profile
     current_password: Current password
     confirm_password: Confirm password
@@ -2008,6 +2116,8 @@ en:
     help_center: "How can we help you today?"
     new_support_ticket: "New support ticket"
     check_ticket_status: "Check ticket status"
+    user_available: "New tickets will be <br>auto-assigned to you."
+    user_not_available: "New tickets will NOT be <br>auto-assigned to you."
     tabs:
       reports: Reports
       dashboard: Dashboard
@@ -2161,7 +2271,22 @@ en:
   question: "Question"
   feature request: "Feature Request"
   ticket:
+    spam: "SPAM"
+    deleted: "TRASH"
+    next: "Next Ticket"
+    previous: "Previous Ticket"
+    expand: "Expand"
+    insert: "Insert"
+    switch_view: 
+      new_view: "Try the <strong>New Ticket View</strong>"
+      whats_new: "What's new"
+      revert_view: "Switch to Classic View"
+      submit_feedback: "Submit Feedback"
+    include_quoted_text: "Include previous replies"
+    more_details: "More details..."
+    reported: "reported"
     reported_on: "from %{username}, Last updated: on %{date}"
+    scenarios: "Scenarios"
     ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_resolved_at: "From: %{username}, Resolved: <span class='emphasize'>%{time_ago} ago</span>"
     ticket_list_status_agent_responded_at: "From: %{username}, Agent responded: <span class='emphasize'>%{time_ago} ago</span>"
@@ -2206,11 +2331,13 @@ en:
     from: "From:"
     suggested_solutions: 
       insert_url: Insert URL
+      link: Link
       title: Suggested Solutions
       insert_content_tip: Insert this solution article to your Reply or Note
       no_result: No Solutions found
       insert_url_tip: Insert this solution URL to your Reply or Note
       insert_content: Insert Content
+      content: Content
     unassigned: Unassigned
     assigned_none: "-"
     suggest_solutions: Suggest Solutions
@@ -2256,6 +2383,7 @@ en:
       form_title: Reply to the conversation
       reply_email_id: Send the reply from the following email id
       send_and_resolve: Send and Resolve
+      send_and_set_as: "Send and set as <strong>%{status}</strong>"
       send: Send
       send_satisfaction_survey: Include satisfaction survey
     facebook_form:
@@ -2271,16 +2399,20 @@ en:
       add_tag: "Add a tag:"
     type: Type
     execute_scenario: Execute Scenario
+    conv_form_status_set_as: "and set as <strong>%{status}</strong>"
     note_form: 
       private_note: "Add as Private Note, and don't notify the requester"
       description_note: "The Subject and Description of the merged tickets will be added as notes in the primary ticket"
       form_title: Add a Note
       add_and_resolve: Add and Resolve
+      add_public_note: Add Public Note
+      add_private_note: Add Private Note
       notify_agents: Notify Agents
     tweet_form:
       tweet_and_resolve: Tweet and Resolve
       user_not_following: This user is not following your twitter account
     activities: Activities
+    activity_toggle: Show Activities
     requestor_info: Requestor Info
     view_twitter: View on Twitter 
     reply_to: Reply
@@ -2304,6 +2436,8 @@ en:
     edit_btn: Edit
     requester: Requester
     properties: Ticket Properties
+    updating: "Updating"
+    update_done: "Done"
     submit_ticket: Submit 
     stop_monitor_btn_title: Stop monitoring this ticket
     merge_btn: Merge
@@ -2315,7 +2449,9 @@ en:
     ticket_url: Ticket URL
     integrations:      
       jira: 
-        tooltip: "View the associated JIRA Issue"      
+        tooltip: "View the associated JIRA Issue"
+        add_new: "Link an issue"
+        existing: "View issue"      
   recent_activity: Recent Activity
   recent_activities: Recent Activites
   forgot_password: Forgot Password
@@ -2369,6 +2505,7 @@ en:
   enter_billing_for_free: Please enter the credit card details before you choose the paid plan
   will_expire_in: will expire in
   choose_plan_trial: "Note: Your account will get deactivated after the trial period. <br /> To continue using Freshdesk, please choose a plan below." 
+  trial_expired: "Your trial has expired and the account is deactivated. Please contact support@freshdesk.com to update your subscription."
   asked_on: Asked on
   this_ticket_has_been_deleted: This ticket has been deleted
   state: State
@@ -2471,7 +2608,9 @@ en:
         toggle_timer_false: "Stop timer"
       new:
         title: "New time entry"
+        hours_format_tip: "Enter time in HH:MM or decimals (like 1:30 or 1.5 for an hour and 30 minutes). Leave this blank to start the auto-timer."
       ticket: Ticket
+      sidebar_title: "Time tracked"
       customer: Customer
       executed_at: Date
       hours: Hours
@@ -2490,6 +2629,36 @@ en:
       form:
         agent: Agent
         hours: Hours
+        note: Note
+      v2:
+        index:
+          no_timeentry: "No time entry logged for this ticket"
+          start_timer: "Start Timer"
+          add_entry: "Add Time Entry"
+        time_entry:
+          toggle_timer_true: "Start timer"
+          toggle_timer_false: "Stop timer"
+        new:
+          title: "New time entry"
+        ticket: Ticket
+        customer: Customer
+        executed_at: Date
+        hours: Hours
+        agent: Agent
+        note: Note
+        billing_type: Billing Type
+        group_by: Group By
+        report:
+          no_timeentry: "No data available"
+          total: Total
+        form:
+          start_timer: "Start Timer"
+          add_entry: "Add Time Entry"
+          agent: Agent
+          hours: Hours
+          billing_hours: Billable
+          note: Note
+          on: on
         note: Notes
 
     tags:
@@ -2577,6 +2746,7 @@ en:
         watcher_text: Agents added as watchers receive email alerts when the ticket is updated
         unwatch: Unwatch
         pick_agents: Add agents
+        add_agent: Enter agent's name
         all_agents_watching: All agents are watching this ticket
         mail:
           hi: Hi
@@ -2611,6 +2781,37 @@ en:
         linked_ticket: This ticket is linked to the forum
         conversation: Conversation 
         timesheet: Time Sheet
+        reply_form:
+          title: Reply to
+          cc: Cc
+          addcc: Add Cc
+          removecc: Remove Cc
+          bcc: Bcc
+          addbcc: Add Bcc
+          removebcc: Remove Bcc
+        forward_form:
+          cc: Cc
+          addcc: Add Cc
+          removecc: Remove Cc
+          bcc: Bcc
+          addbcc: Add Bcc
+          removebcc: Remove Bcc
+        tweet_form:
+          title: "Reply to %{user}"
+        facebook_form:
+          title: "Reply to %{user}"
+        history:
+          recent_item: Recent Items
+        due_date:
+          when_is_it_due: When's it Due?
+          today: Today
+          tomorrow: Tomorrow
+          this_week: This week
+          next_week: Next week
+          specific_date: "Specific date/time..."
+          set_date_time: "Set Date/time"
+          due: Due
+          earlier_date_and_time: Please give a date & time that is newer than the ticket's created date & time
       view_ticket:
         meta: meta
         linked_ticket: This ticket is linked to the forum
@@ -2661,12 +2862,26 @@ en:
         no_tickets: You don't have any tickets in current view
       note:
         posted_on: "%{user_name} on %{note_date}"
+        created_on:
+          private_note: "%{user_name} added a private note on %{note_date}"
+          public_note: "%{user_name} added a public note on %{note_date}"
+          reply: "%{user_name} replied on %{note_date}"
+          forward: "%{user_name} forwarded on %{note_date}"
+        created_on_live:
+          private_note: "%{user_name} added a private note <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
+          public_note: "%{user_name} added a public note <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
+          reply: "%{user_name} replied <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
+          forward: "%{user_name} forwarded <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
+          survey: "%{user_name} rated this ticket <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
         edit_note: Edit Note
         split_this_as_new_ticket: Split this as a new Ticket
         delete_note: "Remove this from the ticket converstion?"
+        deleted_note: "Deleted"
         split_ticket_confirm: Split this note and create it as a new ticket?
         private_note: Private note
         public_note: Public note
+        private_note_tip: Hidden to the customer
+        public_note_tip: Visible to the customer
         inbound_email: Incoming email
         outbound_email: Outbound email
         attachment_size: 
@@ -2686,6 +2901,7 @@ en:
         target_merge_description2: Description in ticket %{ticket_id}
         confirm_and_merge: Confirm and merge  
       bulk_merge:
+        continue: "Continue"
         mark_primary: "Mark as primary"
         primary_ticket: "This is your primary ticket"
         remove: "Remove this ticket"
@@ -2698,8 +2914,8 @@ en:
           one: "is merged into this ticket."
           other: "are merged into this ticket."
         target_note_description3:
-          one: "Ticket with id %{source_tickets} is merged into ticket %{target_ticket_id} with this request"
-          other: "Tickets with ids %{source_tickets} are merged into ticket %{target_ticket_id} with this request"
+          one: "The ticket %{source_tickets} has been merged with the ticket %{target_ticket_id}. The conversation will be added in a few minutes. "
+          other: "The tickets %{source_tickets} have been merged into the ticket %{target_ticket_id}. The conversations will be added in a few minutes."
   import_ticket_group: Tickets &amp; Group
   or: or
   tickets_filter:
@@ -2847,6 +3063,7 @@ en:
   due_today: Today
   due_tomo: Tomorrow
   due_next_eight: Next 8 hours
+  print: Print
   block_users: Do you want to block the contact(s) as well?
   user_block: "Yes"
   users_blocked_message: "Following contact(s) (%{users}) have been blocked"
@@ -3057,6 +3274,8 @@ en:
       info1: "When a Freshdesk ticket is linked with JIRA issue, perform the below actions."
       info2: "When ticket status is updated in Freshdesk "
       info3: "When a comment is added in Freshdesk "
+      info4: "When issue status is updated in JIRA"
+      info5: "When a comment is added in JIRA"
       none: "Do nothing."
       add_private_note_in_fd: "Add a private note in Freshdesk and notify agent."
       add_public_note_in_fd: "Add a public note in Freshdesk."
@@ -3226,6 +3445,7 @@ en:
   reorder: "Reorder"
   reports:
       no_data: No data to display!
+      classic: "Classic"
       tab_heading: "Reports"
       select_customer: "Select Customer"
       select_options: "Reports by"
@@ -3277,6 +3497,7 @@ en:
           title: Time Sheet Report
           select_customer: Select Customer
           select_agent: Select Agent
+          select_group: Select Group
           select_billable: Select Billable/Non-Billable
           view_between: View report between
           from: From
@@ -3371,7 +3592,7 @@ en:
   identity_reverted_error_msg: "Sorry, we couldn't find your original user."
   assume_identity_button: "Assume Identity"
   revert_identity_link_msg: "Revert Identity"
-  swith_agent_msg: "Switch to Another Agent"
+  swith_agent_msg: "Switch Agent"
   switch_heading: "Switch Agent"
   email_notifications_agent_selection_msg: "Select agents to notify"
   on_hold: "On Hold"
@@ -3409,6 +3630,9 @@ en:
   select_free_plan: "Select your Free plan"
   change_details_anytime: "Subscription details or plans can be changed at anytime."
   enter_payment_details_to_add: "Enter Payment details to add more agents or to upgrade your current plan"
+  card_error: "There was an error adding your card. Please try again."
+  payment_failed: "We are unable to process your credit-card payment. If the problem persists, write to us at support@freshdesk.com."
+  error_in_update: "We are unable to update your subscription. If the problem persists, write to us at support@freshdesk.com."
   plan_is_selected: "Your account is now active with the %{plan} plan"
   error_in_plan: "Error changing the plan"
   change_free_plan: "Change your Free plan"
@@ -3424,9 +3648,11 @@ en:
   cc_emails_key_pop: " <li class='left'>cc : </li><li>%{cc_emails}</li>"
   bcc_emails_key_pop: " <li class='left'>bcc :</li> <li>%{bcc_emails}<li>"
   conv_contacts_info_pop: "<ul><li class='left'>%{conv_type_msg} : </li><li>%{to_emails}</li> %{cc_emails_key} %{bcc_emails_key}</ul>"
+  clear: "Clear"
   saved_draft: "Saved"
   saving_draft: "Saving..."
-  draft: "Draft:"
+  saving: "Saving..."
+  draft: "Draft"
   last_draft: "Your last draft"
   clear_draft_text: "Are you sure you want to clear saved draft?"
   ticket_close_success: Your ticket has been successfully closed.
@@ -3558,3 +3784,88 @@ en:
   plans_and_pricing: "Plans & Pricing"
   number_of_attachments: " attachments"
   activation_link: Successfully registered activation link has been sent to %{email}
+  not_given: "Not given."
+  adv_reports:
+    at_a_glance: "At-a-glance"
+    select_an_option: "Select an option"
+    report: " Report "
+    reports: "Reports"
+    helpdesk_at_a_glance: "Helpdesk At A Glance"
+    customer_at_a_glance: "Customer At A Glance"
+    agent_at_a_glance: "Agent At A Glance"
+    group_at_a_glance: "Group At A Glance"
+    summary: "Summary"
+    agent_ticket_summary: "Agent ticket summary"
+    group_ticket_summary: "Group ticket summary"
+    load_analysis: "Load Analysis"
+    helpdesk_load_analysis: "Helpdesk Load Analysis"
+    helpdesk_performance_analysis: "Helpdesk Performance Analysis"
+    comparison: "Comparison"
+    agent_comparison: "Agent Comparison"
+    group_comparison: "Group Comparison"
+    top_n_analysis: "Top-N Analysis"
+    agent_top_n_analysis: "Agent Top-N Analysis"
+    group_top_n_analysis: "Group Top-N Analysis"
+    customer_top_n_analysis: "Customer Top-N Analysis"
+    select_option_msg: "Please select an option"
+    no_data_to_display_msg: "No data to display!"
+    filtered_by: "Filtered by"
+    time_period: "Time Period"
+    tickets_resolved: "Tickets Resolved"
+    tickets_backlog: "Tickets Backlog"
+    deleted_agent: "Deleted Agent"
+    deleted_group: "Deleted Group"
+    deleted_customer: "Deleted Customer"
+    glance:
+      all_reports: "All Reports"
+      report_view: "Report View"
+      download: "Download"
+      print: "Print"
+      backlog_tickets: "Backlog Tickets"
+      avg_resp_time_in_hrs: "Average Response Time (in Hrs)"
+      avg_first_resp_time_in_hrs: "Average First Response Time (in Hrs)"
+      avg_resolution_time_in_hrs: "Average Resolution Time (in Hrs)"
+      avg_cust_intr: "Average Customer Interactions"
+      avg_agent_intr: "Average Agent Interactions"
+      num_of_reopens: "Num. of Reopens"
+      num_of_reassigns: "Num. of Reassigns"
+      sla_percentage: "SLA %"
+      select_customer_msg: "Select Customer"
+      select_agent_msg: "Select Agent"
+      select_group_msg: "Select Group"
+      no_customers_msg: "You don't have any customers"
+      no_groups_msg: "You don't have any groups"
+    load:
+      recived_resolved_backlog: "Tickets Received vs Resolved vs Backlog"
+      time_of_arrival: "Time of Arrival"
+      resp_accuracy: "Response Accuracy"
+      resp_time: "Response Time"
+      tkt_assignment: "Tickets Assignment"
+      num_of_tickets: "No. of Tickets"
+      time_in_hrs: "Time in Hrs"
+      avg_num_of_interactions: "Avg. No. of Interactions"
+      num_of_operations: "No. of Ticket Operations"
+      tickets_received: "Tickets Received"
+      tickets_with_fcr: "Tickets with FCR"
+      tickets_within_SLA: "Tickets within SLA"
+      tickets_reopened: "Tickets Reopened"
+    comparison_reports:
+      select_agent_msg: "Select agent(max 4)"
+      select_metrics_msg: "Select Metrics"
+      select_group_msg: "Select Group(max 4)"
+      ticket_assigned: "Tickets Assigned"
+      avg_resolution_time: "Average Resolution Time"
+      avg_first_resp_time: "Average First Response Time"
+      avg_resp_time: "Average Response Time"
+      label_num_of_tickets: "No. of tickets"
+      label_in_percentage: "in Percentage %"
+      label_num_of_interactions: "No. of Interactions per resolved Tickets"
+      label_in_hrs: "in Time (Hrs)"
+    top_n:
+      sla_comp_desc: "SLA Compliance (Descending)"
+      sla_comp_asc: "SLA Compliance (Ascending)"
+      fcr: "First Contact Resolution"
+      tickets_submitted: "Tickets Submitted"
+      sla_violations: "SLA Violations"
+      happy_customers: "Happy Customers"
+      frustrated_customers: "Frustrated Customers"

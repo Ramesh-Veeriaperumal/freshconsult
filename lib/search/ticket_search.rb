@@ -1,13 +1,15 @@
 module Search::TicketSearch
   
-  def show_options
+  def show_options ( column_order = TicketConstants::DEFAULT_COLUMNS_ORDER,
+   columns_keys_by_token = TicketConstants::DEFAULT_COLUMNS_KEYS_BY_TOKEN,
+    columns_option = TicketConstants::DEFAULT_COLUMNS_OPTIONS)
      @show_options ||= begin
       defs = []
       i = 0
       #default fields
-      TicketConstants::DEFAULT_COLUMNS_ORDER.each do |name|
-        cont = TicketConstants::DEFAULT_COLUMNS_KEYS_BY_TOKEN[name]
-        defs.insert(i,{ get_op_list(cont).to_sym => cont  , :condition => name , :name => TicketConstants::DEFAULT_COLUMNS_OPTIONS[name], :container => cont,     
+      column_order.each do |name|
+        cont = columns_keys_by_token[name]
+        defs.insert(i,{ get_op_list(cont).to_sym => cont  , :condition => name , :name => columns_option[name], :container => cont,     
         :operator => get_op_list(cont), :options => get_default_choices(name), :value => "", :f_type => :default  })
         i = i+ 1
       end
@@ -78,17 +80,17 @@ module Search::TicketSearch
 
     if criteria_key == :responder_id
       agents = []
-      agents.push([0, "Me" ])
+      agents.push([0, I18n.t("helpdesk.tickets.add_watcher.me") ])
       agents.concat(Account.current.agents_from_cache.collect { |au| [au.user.id, au.user.name] })
-      agents.push([-1, "Unassigned" ])
+      agents.push([-1, I18n.t("filter_options.unassigned") ])
       return agents
     end
 
     if criteria_key == :group_id
       groups = []
-      groups.push([0, "My Groups" ])
+      groups.push([0, I18n.t('filter_options.mygroups') ])
       groups.concat(Account.current.groups_from_cache.collect { |g| [g.id, g.name]})
-      groups.push([-1, "Unassigned" ])
+      groups.push([-1, I18n.t("filter_options.unassigned") ])
       return groups
     end
 

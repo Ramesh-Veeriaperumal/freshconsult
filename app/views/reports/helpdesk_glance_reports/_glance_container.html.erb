@@ -1,0 +1,108 @@
+<div class="report-page" id="report-page">
+  
+  <div class="report-content-wrapper" id="chart_page_container">
+    <!--report header-->
+    <%= render :partial => "reports/shared/report_view_header", :locals => {} %>
+
+    <!--metrics-->
+    <div class="row-fluid  report-summary" id="metric_container">
+      <div>
+        <h3 class="header-lead"><span><%=t('adv_reports.summary')%> </span></h3>
+        <div class="row-fluid report-summary-wrapper">
+          <div class="report-summary-header">
+            <ul class="inline">
+              <li><h1>---</h1></li>
+              <li><h1>---</h1></li>
+              <li><h1>---</h1></li>
+              <li><h1>---</h1></li>
+              <li><h1>---</h1></li>
+              <li><h1>---</h1></li>
+            </ul>
+          </div>
+          <div class="report-summary-data">
+            <ul class="inline">
+              <li> 
+                <small>---</small>
+              </li>
+              <li> 
+                <small>---</small>
+              </li>
+               <li> 
+                <small>---</small>
+              </li>
+               <li> 
+                <small>---</small>
+              </li>
+               <li> 
+                <small>---</small>
+              </li>
+              <li> 
+                <small>---</small>
+              </li>
+            </ul>
+          </div>
+          <div class="report-summary-footer">
+            <ul class="inline">
+              <li> <label><%= t('reports.summary.received_tickets')%></label></li>
+              <li> <label><%= t('reports.summary.resolved_tickets')%></label></li>
+              <li><label><%=t('adv_reports.glance.backlog_tickets')%></label></li>
+              <li><label><%=t('adv_reports.glance.avg_resp_time_in_hrs')%></label></li>
+              <li><label><%=t('adv_reports.glance.avg_first_resp_time_in_hrs')%></label></li>
+              <li><label><%=t('adv_reports.glance.avg_resolution_time_in_hrs')%></label></li>
+            </ul>
+          </div>
+        </div>
+        <div class="row-fluid report-summary-wrapper">
+          <div class="report-summary-header">
+            <ul class="inline">
+              <li><h1>---</h1></li>
+              <li><h1>---</h1></li>
+              <li><h1>---</h1></li>
+              <li><h1>---</h1></li>
+              <li><h1>---</h1></li>
+              <li><h1>---</h1></li>
+            </ul>
+          </div>
+          <div class="report-summary-data">
+            <ul class="inline">
+              <li> 
+                <small>---</small>
+              </li>
+              <li> 
+                <small>---</small>
+              </li>
+              <li> 
+                <small>---</small>
+              </li>
+              <li> 
+                <small>---</small>
+              </li>
+              <li> 
+                <small>---</small>
+              </li>
+              <li> 
+                <small>---</small>
+              </li>
+            </ul>
+          </div>
+          <div class="report-summary-footer">
+            <ul class="inline">
+              <li> <label><%=t('adv_reports.glance.avg_cust_intr')%></label> </li>
+              <li> <label><%=t('adv_reports.glance.avg_agent_intr')%></label> </li>
+              <li> <label><%=t('adv_reports.glance.num_of_reopens')%></label> </li>
+              <li> <label><%=t('adv_reports.glance.num_of_reassigns')%></label> </li>
+              <li> <label><%=t('adv_reports.glance.sla_percentage')%></label> </li>
+              <li> <label><%=t('reports.summary_report.fcr_percent')%></label> </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row-fluid" id="source_container">
+    </div> 
+    <div class="row-fluid" id="pie_chart_container">
+    </div>
+    <div id="nested_fields_container">
+    </div>
+  </div>
+</div>

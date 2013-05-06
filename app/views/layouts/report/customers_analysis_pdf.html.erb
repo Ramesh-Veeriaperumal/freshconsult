@@ -1,0 +1,73 @@
+<%= render :partial => "layouts/report/pdf_files", :locals => {} %>
+<div class="report-page" id="report-page">
+  <div class="report-content-wrapper">
+    <!--report header-->
+    <%= render :partial => "reports/shared/report_view_header", :locals => {:is_pdf=>true} %>
+
+    <div class="row-fluid">
+      <div class="span6 single-line-bar">
+        <h3 class="header-lead"><span>Tickets Submitted</span></h3>
+        <div id="received_tickets_line_chart" class="graph-container"><div class="noinfo">No data to display!</div></div>
+      </div>
+      <div class="span6 single-line-bar">
+        <h3 class="header-lead"><span>Ticket Resolved</span></h3>
+        <div id="resolved_tickets_line_chart" class="graph-container"><div class="noinfo">No data to display!</div></div>
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="span6 single-line-bar">
+        <h3 class="header-lead"><span>Tickets Backlog</span></h3>
+        <div id="backlog_tickets_line_chart" class="graph-container"><div class="noinfo">No data to display!</div></div>
+      </div>
+      <div class="span6 single-line-bar">
+        <h3 class="header-lead"><span>SLA Violations</span></h3>
+        <div id="sla_tickets_line_chart" class="graph-container"><div class="noinfo">No data to display!</div></div>
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="span6 single-line-bar">
+        <h3 class="header-lead"><span>Happy Customers</span></h3>
+        <div id="happy_customer_line_chart" class="graph-container"><div class="noinfo">No data to display!</div></div>
+      </div>
+      <div class="span6 single-line-bar">
+        <h3 class="header-lead"><span>Frustrated Customers</span></h3>
+        <div id="frustrated_customer_line_chart" class="graph-container"><div class="noinfo">No data to display!</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+var data_obj = <%=@data_obj.to_json%>
+jQuery(document).ready(function() {
+  var analysis_1_barChart = new bar_chart(
+      {renderTo: 'received_tickets_line_chart',chartData:data_obj['received_tickets']['chartData'],
+        xaxis_arr: data_obj['received_tickets']['xaxis_arr'],title:data_obj['received_tickets']['title'],isPDF:true}
+    );
+  analysis_1_barChart.barGraph();
+  var analysis_2_barChart = new bar_chart(
+      {renderTo: 'resolved_tickets_line_chart',chartData:data_obj['resolved_tickets']['chartData'],
+        xaxis_arr: data_obj['resolved_tickets']['xaxis_arr'],title:data_obj['resolved_tickets']['title'],isPDF:true}
+    );
+  analysis_2_barChart.barGraph();
+  var analysis_3_barChart = new bar_chart(
+      {renderTo: 'backlog_tickets_line_chart',chartData:data_obj['backlog_tickets']['chartData'],
+        xaxis_arr: data_obj['backlog_tickets']['xaxis_arr'],title:data_obj['backlog_tickets']['title'],isPDF:true}
+    );
+  analysis_3_barChart.barGraph();
+  var analysis_4_barChart = new bar_chart(
+      {renderTo: 'sla_tickets_line_chart',chartData:data_obj['SLA_tickets']['chartData'],
+        xaxis_arr: data_obj['SLA_tickets']['xaxis_arr'],title:data_obj['SLA_tickets']['title'], yAxis_label: 'Percentage %',isPDF:true}
+    );
+  analysis_4_barChart.barGraph();
+  var analysis_5_barChart = new bar_chart(
+      {renderTo: 'happy_customer_line_chart',chartData:data_obj['happy_customers']['chartData'],
+        xaxis_arr: data_obj['happy_customers']['xaxis_arr'],title:data_obj['happy_customers']['title'], yAxis_label: 'Percentage %',isPDF:true}
+    );
+  analysis_5_barChart.barGraph();
+  var analysis_6_barChart = new bar_chart(
+      {renderTo: 'frustrated_customer_line_chart',chartData:data_obj['frustrated_customers']['chartData'],
+        xaxis_arr: data_obj['frustrated_customers']['xaxis_arr'],title:data_obj['frustrated_customers']['title'], yAxis_label: 'Percentage %',isPDF:true}
+    );
+  analysis_6_barChart.barGraph();
+});
+</script>

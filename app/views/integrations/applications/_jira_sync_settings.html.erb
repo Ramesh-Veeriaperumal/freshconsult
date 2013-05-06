@@ -12,16 +12,16 @@
 	</td></tr>
 	<tr><td>&nbsp;</td><td></td></tr>
 	<tr><td colspan="2" ></td></tr>
-<!-- 	<tr>
-		<td>When issue status is updated in JIRA </td>
+	<tr>
+		<td><label for="configs_fd_status_sync" ><%= t("integrations.jira_settings.info4") %></label> </td>
 		<td><%=select_tag "configs[jira_status_sync]", options_for_select(jira_status_sync_opts, installed_app.configs_jira_status_sync) %></td>
 	</tr>
 	<tr>
-		<td>When a comment is added in JIRA</td>
+		<td><label for="configs_fd_comment_sync" ><%= t("integrations.jira_settings.info5") %></label></td>
 		<td><%=select_tag "configs[jira_comment_sync]", options_for_select(jira_comment_sync_opts, installed_app.configs_jira_comment_sync) %></td>
 	</tr>
 	<tr><td>&nbsp;</td><td></td></tr>
- -->	<tr>
+	<tr>
 		<td><label for="configs_fd_status_sync" ><%= t("integrations.jira_settings.info2") %></label></td>
 		<td><%=select_tag "configs[fd_status_sync]", options_for_select(fd_status_sync_opts, installed_app.configs_fd_status_sync) %></td>
 	</tr>
