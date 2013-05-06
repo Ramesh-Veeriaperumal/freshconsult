@@ -53,7 +53,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_validation_on_create :set_token
   
-  before_save :update_ticket_changes, :set_sla_policy, :load_ticket_status, :update_dueby
+  before_save :update_ticket_related_changes, :set_sla_policy, :load_ticket_status, :update_dueby
 
   after_commit_on_create :create_initial_activity,  :update_content_ids, :pass_thro_biz_rules,
     :support_score_on_create, :process_quests, :update_es_index
@@ -1315,7 +1315,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                 :remove_score => false }) unless ticket_states.resolved_at.nil?
     end
 
-    def update_ticket_changes
+    def update_ticket_related_changes
       @model_changes = self.changes.clone
       @model_changes.merge!(schema_less_ticket.changes.clone) unless schema_less_ticket.nil?
       @model_changes.merge!(flexifield.changes) unless flexifield.nil?
@@ -1472,7 +1472,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def regenerate_reports_data
-      deleted_or_spam = @ticket_changes.keys & [:deleted, :spam]
+      deleted_or_spam = @model_changes.keys & [:deleted, :spam]
       return unless deleted_or_spam.any? && (created_at.strftime("%Y-%m-%d") != updated_at.strftime("%Y-%m-%d"))
       set_reports_redis_key(account_id, created_at)
     end
