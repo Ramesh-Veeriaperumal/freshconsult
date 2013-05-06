@@ -3,7 +3,7 @@ require 'rack/throttle'
 class Middleware::ApiThrottler < Rack::Throttle::Hourly
 
   include RedisKeys
-  SKIPPED_SUBDOMAINS = ["admin", "billing", "partner","signup", "email"] 
+  SKIPPED_SUBDOMAINS = ["admin", "billing", "partner","signup", "email","login"] 
   THROTTLED_TYPES = ["application/json", "application/x-javascript", "text/javascript",
                       "text/x-javascript", "text/x-json", "application/xml", "text/xml"]
   ONE_HOUR = 3600

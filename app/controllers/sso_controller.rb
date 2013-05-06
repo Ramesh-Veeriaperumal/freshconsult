@@ -4,7 +4,7 @@ class SsoController < ApplicationController
     unless auth.blank?
       curr_user = auth.user
       key_options = { :account_id => current_account.id, :user_id => curr_user.id, :provider => params['provider']}
-      kv_store = Redis::KeyValueStore.new Redis::KeySpec.new(RedisKeys::AUTH_REDIRECT_OAUTH, key_options)
+      kv_store = Redis::KeyValueStore.new Redis::KeySpec.new(RedisKeys::SSO_AUTH_REDIRECT_OAUTH, key_options)
       value = kv_store.get
       unless value.nil?
         random_hash = Digest::MD5.hexdigest(value)

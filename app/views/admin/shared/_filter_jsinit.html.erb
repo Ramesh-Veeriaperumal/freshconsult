@@ -22,7 +22,7 @@
   				filter.choices.each(function(arrayItem){
   					choices.push({
   						name: arrayItem[0],
-  						value: arrayItem[1]
+  						value: unescapeHtml(arrayItem[1])
   					});
   				});
   				c_dom = FactoryUI.dropdown(choices, "value");
@@ -46,7 +46,7 @@
   					filter.choices.each(function(arrayItem){
   						choices.push({
   							name: arrayItem[0],
-  							value: arrayItem[1]
+  							value: unescapeHtml(arrayItem[1])
   						});
   					});
   					control = FactoryUI.dropdown(choices, "email_to");				

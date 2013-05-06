@@ -38,13 +38,6 @@ class SubscriptionPayment < ActiveRecord::Base
     SubscriptionPlan.find(plan_id).name
   end
 
-  def discount
-    if !meta_info[:discount].blank?
-      discount_id = meta_info[:discount] 
-      SubscriptionDiscount.find(discount_id).name
-    end
-  end
-
   def renewal_period
     meta_info[:renewal_period]
   end

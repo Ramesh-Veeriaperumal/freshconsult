@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130326092144) do
+ActiveRecord::Schema.define(:version => 20130427074254) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -157,6 +157,7 @@ ActiveRecord::Schema.define(:version => 20130326092144) do
     t.integer "listing_order"
     t.text    "options"
     t.integer "account_id",    :default => 0
+    t.string  "application_type", :default => "freshplug", :null => false
   end
 
   create_table "authorizations", :force => true do |t|

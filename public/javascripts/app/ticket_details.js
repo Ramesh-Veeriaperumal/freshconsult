@@ -1053,6 +1053,15 @@ $(document).ready(function() {
 			
 	});
 
+
+	// Scripts for ToDo List
+	$('body').on('keydown.ticket_details', '.addReminder textarea', function(ev) {
+		if(ev.keyCode == 13){
+			ev.preventDefault();
+			$(this).parents('form').trigger('submit');
+		}
+	});
+
 	/*
 		When the ticket subjects are long, we hide the extra content and show them only on mouseover. 
 		While doing this, the ticket subject occupies more height that normal we are hiding that

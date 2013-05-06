@@ -35,7 +35,7 @@ module SupportHelper
 		output << %(<div class="welcome">#{ t('header.welcome') })
 
 		# Showing logged in user name or displaying as Guest
-		output << %(<b>#{ portal['user'] || t('header.guest') }</b> </div> )
+		output << %(<b>#{ h((portal['user']).to_s) || t('header.guest') }</b> </div> )
 
 		# Showing portal login link or signout link based on user logged in condition 
 		if portal['user']
@@ -259,12 +259,12 @@ HTML
 		if topic.last_post.present?
 			post = topic.last_post.to_liquid
 			%(<a href="#{topic.last_post_url}"> #{h(link_label)} </a> #{t('by')}
-				#{post.user.name} #{time_ago post.created_on})
+				#{h(post.user.name)} #{time_ago post.created_on})
 		end
 	end
 		
 	def topic_brief topic
-		%(#{t('posted_by')} #{bold topic.user.name}, #{time_ago topic.created_on})
+		%(#{t('posted_by')} #{bold h(topic.user.name)}, #{time_ago topic.created_on})
 	end
 
 	def topic_votes topic

@@ -10,8 +10,8 @@ class Integrations::ApplicationsController < Admin::AdminController
   end
 
   def oauth_install
-    key_options = { :account_id => current_account.id, :user_id => current_user.id, :provider => params['id']}
-    kv_store = Redis::KeyValueStore.new Redis::KeySpec.new(RedisKeys::AUTH_REDIRECT_OAUTH, key_options)
+    key_options = { :account_id => current_account.id, :provider => params['id']}
+    kv_store = Redis::KeyValueStore.new Redis::KeySpec.new(RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options)
     app_config = kv_store.get
   	begin
   		unless app_config.blank?
@@ -48,7 +48,7 @@ class Integrations::ApplicationsController < Admin::AdminController
       widget_script = application_params.delete(:script)
       view_pages = application_params.delete(:view_pages)
       @installing_application.update_attributes(application_params)
-      wid = @installing_application.widgets[0]
+      wid = @installing_application.custom_widget
       wid.script = widget_script
       wid.display_in_pages_option = view_pages
       wid.save!

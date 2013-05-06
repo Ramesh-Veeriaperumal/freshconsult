@@ -97,6 +97,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.noblecount.js
     - public/javascripts/frameworks/plugins/jquery.overlabel.js
+    - public/javascripts/frameworks/plugins/jquery.autosize.js
     - public/javascripts/frameworks/plugins/jquery.pageless.js
     - public/javascripts/frameworks/plugins/jquery.qtip.js
     - public/javascripts/frameworks/plugins/jquery.tweetfeed.js
