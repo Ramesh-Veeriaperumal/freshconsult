@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Helpdesk::Issue < ActiveRecord::Base
   set_table_name "helpdesk_issues"
 
@@ -116,8 +117,10 @@ class Helpdesk::Issue < ActiveRecord::Base
     exact_match = {field => value}
 
     conditions = case field.to_sym
-      when :title        :  loose_match
-      when :description  :  loose_match
+      when :title 
+        loose_match
+      when :description 
+        loose_match
     end
 
     # Protect us from SQL injection in the 'field' param

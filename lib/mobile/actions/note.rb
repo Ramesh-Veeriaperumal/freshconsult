@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Mobile::Actions::Note
   
   def body_mobile

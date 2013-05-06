@@ -1,3 +1,4 @@
+# encoding: utf-8
 class FlexifieldDefEntry < ActiveRecord::Base
 
   include Cache::Memcache::FlexifieldDefEntry

@@ -10,6 +10,7 @@
        <div class="span6 pull-right pagination-right header_buttons align-right" >
         <%= link_to t('reorder'),'#', :id => "va_rules_reorder_button", :class => "btn" if(@va_rules.active.size > 1) %>
         <%= link_to t('dispatch.new_rule'), new_admin_supervisor_rule_path, :class => "btn btn-primary" %>
+
       </div>
     </div>
   </div>

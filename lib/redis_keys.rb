@@ -89,7 +89,7 @@ module RedisKeys
 	def list_push(key,values,direction = 'right', expires = 3600)
 		newrelic_begin_rescue do
 			command = direction == 'right' ? 'rpush' : 'lpush'
-			unless values.is_a?(Array)
+			unless values.class == Array
 				$redis.send(command, key, values)
 			else
 				values.each do |val|

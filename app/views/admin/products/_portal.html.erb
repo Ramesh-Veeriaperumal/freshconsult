@@ -70,7 +70,7 @@
       <label class="overlabel" for="link_back_text">
         http://<%= @product.portal.portal_url.presence %>
       </label>
-      <input name="product[portal_attributes][preferences][logo_link]" id="link_back_text" value="<%=(@product.portal[:preferences]||[]).fetch(:logo_link, '')%>" class="text url auto" size="50" />
+      <input name="product[portal_attributes][preferences][logo_link]" id="link_back_text" value="<%=(@product.portal[:preferences]||{}).fetch(:logo_link, '')%>" class="text url auto" size="50" />
       <div class="info-data"> <%= t("linkback_info") %> </div>
     </div>
     <div class="inline-field">

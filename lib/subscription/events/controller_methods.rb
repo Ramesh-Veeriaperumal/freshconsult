@@ -2,7 +2,7 @@ module Subscription::Events::ControllerMethods
 
   #CSV
   def export_to_csv
-    csv_string = FasterCSV.generate do |csv|
+    csv_string = CSVBridge.generate do |csv|
       csv << csv_columns
 
       params[:data].each do |event_id|

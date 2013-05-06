@@ -1,5 +1,5 @@
 <% content_for :sidebar do -%><%- end %>
-<%= content_tag (:h3, t(".security_title"), :class => "title") %>
+<%= content_tag(:h3, t(".security_title"), :class => "title") %>
 <% form_for  :account,@account, :url=> update_admin_security_path(@account) ,  :html => { :method => :put, :id => "sso_form"  } do |f| %>
 	<%= f.error_messages %>
 	<ul class="ui-form">
