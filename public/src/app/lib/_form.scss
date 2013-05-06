@@ -548,33 +548,55 @@ a.addchoice:hover{
 				font-size:10pt;
 			}
 			textarea.paragraph{
-				width:400px;
+				width:521px;
+				min-height: 130px;
 			}
 			
 			div.s_comment{				
 				width:520px;
 				.paragraph{ width:98%; }
 			}
+			.webhook{
+				margin: 10px 0;
+				margin-left: -150px;
+				margin-top: 50px;
+				.select2-container{top:-6px;}
+				.url{ width:520px; }
+				.params{ width:520px; height:130px; }
+			}
 			.s_email{
-					min-width: 640px;
+					min-width: 680px;
 					margin: 10px 0;
 					margin-left: -150px;
 					margin-top: 50px;
-					.required_star{
-						top: 10px;
-						right: 63px;
-					}
-					label.error{ width:100%; }
 					.select2-container{top:-6px;}
-					textarea{margin-left: 3px;}
+					label.error{ width:100%; }
 					.l_placeholder{
-						float: right;
-						margin-right: -17px;
-						margin-top: -24px;
+							float: right;
+							margin-right: -17px;
+							margin-top: -33px;
+						}
+					.required_star{top: 10px;}
+					.body_div{
+						.required_star{right: 76px;}
+						>div >textarea{
+							margin:0px; 
+							width:100%; 
+							margin-left: 3px; 
+							height: 130px;
+						}
+					}
+					.subject_div{
+						.required_star{right: 62px;}
+						>div >input[type='text']{
+							margin:0px; 
+							margin-left: 3px;
+							width:79%; 
+							height: 13px;
+						}
 					}
 			}
-			.email_body{ width:100%; height: 130px; margin: 0; }
-			
+
 			span{
 				margin:0; padding:0;
 			}

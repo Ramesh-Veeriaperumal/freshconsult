@@ -31,10 +31,10 @@ var ObserverDom = {}
 			case $(this).val()=='ticket_update':
 			case $(this).val()=='time_sheet_action':
 			case /ff_boolean/.test($(this).val()):
-				$(this).prev().animate({width: '150px'}, 500);
+				$(this).prev().animate({width: '150px'}, 400);
 			break;
 			default:
-				$(this).prev().animate({width: '303px'}, 500);
+				$(this).prev().animate({width: '303px'}, 400);
 		}
 	};
 

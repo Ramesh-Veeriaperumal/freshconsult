@@ -20,7 +20,7 @@
              category_name = $("<input type='hidden' value='"+opts.category_name+"' name='name' />"),
              subcategory = $("<select />"),
              items = $("<select />"),
-             special_cases = { '--':'Any Value', '':'None' },
+             special_cases = { '--':'Any Value', '':'None', '0':'None' },
 
              rule_type = $("<input type='hidden' name='rule_type' value='nested_rule' />"),
              nested_rules = $("<input type='hidden' name='"+nested_rules_name+"' value='' />");
@@ -39,15 +39,15 @@
                 .appendTo(category);
             });
 
-
          category
-            .val(_init.value || "")
+            .val(_init.value)
             .bind("change", function(ev){
               subcategory.empty();
 
               (tree.getSubcategoryListWithNone(category.val())).each(function(pair){
+                value = $.inArray(pair.value.id, Object.keys(special_cases))!=-1 ? special_cases[pair.value.id] : pair.value.id
                 $("<option />")
-                  .html(pair.value.id)
+                  .html(value)
                   .val(pair.key)
                   .appendTo(subcategory);
             });
@@ -62,9 +62,11 @@
           }
           if(tree.third_level){
             items.empty();
-            (tree.getItemsList(category.val(), subcategory.val())).each(function(pair){
+            (tree.getItemsListWithNone(category.val(), subcategory.val())).each(function(pair){
+              value = $.inArray(pair.value.id, Object.keys(special_cases))!=-1 ? special_cases[pair.value.id] : pair.value.id
+
               $("<option />")
-                .html(pair.value.id)
+                .html(value)
                 .val(pair.key)
                 .appendTo(items);
             });  
@@ -95,7 +97,7 @@
             }
             $(this).append(rule_type)
                    .append(nested_rules); 
-        }else if(opts.type != "action"){
+         }else if(opts.type != "action"){
             $(this).append(category)
                    .append(category_name)
                    .append(subcategory);
@@ -105,7 +107,6 @@
 
             $(this).append(rule_type)
                    .append(nested_rules);
-            
          }else{
             category_name.prop("value", "set_nested_fields");
             $(this).append(category_name)
@@ -119,18 +120,23 @@
          }
 
          var selectopts = { minimumResultsForSearch : 10 }
+         if(_init.value=='')
+          {jQuery(category).attr('placeholder', 'None');} // Hack coz select2 takes the first value as placeholder,
+                                                                                  // when its value is set to null
+
          category.select2(selectopts)
          subcategory.select2(selectopts)
          items.select2(selectopts)
 
-         category.trigger("change");
+         category.trigger("change"); 
        });
 
      }, 
 
      hideEmptySelectBoxes : function(select_box){
         if(select_box.options.length == 0 || 
-            ((select_box.options[0].value == ["--"] || select_box.options[0].value == [""])&& select_box.options.length == 1)) {
+            ((select_box.options[0].value == ["--"] || select_box.options[0].value == [""])&& select_box.options.length == 1) ||
+            (select_box.options[0].value == ["--"] && select_box.options[1].value == [""] && select_box.options.length == 2)) {
           jQuery(select_box).prev().css('display','none');
         }else{
           jQuery(select_box).prev().css('display','block');

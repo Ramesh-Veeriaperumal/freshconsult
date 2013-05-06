@@ -330,11 +330,11 @@ rules_filter = function(_name, filter_data, parentDom, options){
                   	if(hg_item.valuelabel)
               				rule_drop.append(FactoryUI.label(hg_item.valuelabel, 'fromto_text'));
 
-                  	rule_drop.append(conditional_dom(hg_item, data_id, name, null, "value", 'select2 test_value_field ', {'minimumResultsForSearch':'10'}));
+                  	rule_drop.append(conditional_dom(hg_item, data_id, name, {value:'--'}, "value", 'select2 test_value_field ', {'minimumResultsForSearch':'10'}));
                   	break;
                   case 2:
-                  	from_select = conditional_dom(hg_item, data_id, name, null, "from", 'select2 test_from_field', {'minimumResultsForSearch':'10', 'formatResult':disableOtherSelectValue});
-                  	to_select = conditional_dom(hg_item, data_id, name, null, "to", 'select2 test_to_field', {'minimumResultsForSearch':'10', 'formatResult':disableOtherSelectValue});
+                  	from_select = conditional_dom(hg_item, data_id, name, {from:'--'}, "from", 'select2 test_from_field', {'minimumResultsForSearch':'10', 'formatResult':disableOtherSelectValue});
+                  	to_select = conditional_dom(hg_item, data_id, name, {to:'--'}, "to", 'select2 test_to_field', {'minimumResultsForSearch':'10', 'formatResult':disableOtherSelectValue});
 
                   	rule_drop.append(FactoryUI.label(event_lang['from'], 'fromto_text'))
                 							.append(from_select)

@@ -172,7 +172,7 @@ var NestedField = Class.create({
   },
   
   getItemsListWithNone: function(category_key, subcategory_key){          
-      return (subcategory_key != "-1" && this.tree.get(category_key) ? this.tree.get(category_key).get(subcategory_key).children : $H()) || $H();
+      return ((subcategory_key != "-1" && this.tree.get(category_key)!='-1') ? this.tree.get(category_key).get(subcategory_key).children : $H()) || $H();
   },
 
   toString: function(){

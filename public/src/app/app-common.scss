@@ -9901,6 +9901,8 @@ div.gcal-confirm-modal-content{ width: 100%; }
 	.select2-container a{
 		margin-left: 0px;
 		margin-right: 0px;
+		span{ color: #444; padding-right: 12px;} /* Hack for setting the placeholder color as normal one 
+														since  its considering option with value null as placeholders*/
 	}
 
 	
