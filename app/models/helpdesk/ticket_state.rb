@@ -140,7 +140,9 @@ private
       sql = %(INSERT INTO #{stats_table} (#{REPORT_STATS.join(",")}) VALUES(#{account_id},#{ticket_id},
             '#{created_at.strftime('%Y-%m-%d 00:00:00')}','#{created_hour}',
             #{resolved_hour},1,#{resolved_tkt},0,#{assign_tkt},0,#{fcr_tkt},#{sla_tkt}))
-      connection.execute(sql)
+      SeamlessDatabasePool.use_master_connection do 
+        connection.execute(sql)
+      end
     rescue Exception => e
       puts "Exception occurred while inserting data into stats table"
       NewRelic::Agent.notice_error(e)
@@ -154,11 +156,13 @@ private
       datetime = updated_at.strftime('%Y-%m-%d 00:00:00')
       select_sql = %(SELECT * FROM #{stats_table_name} where ticket_id = #{ticket_id} and 
         account_id = #{account_id} and created_at = '#{datetime}' )
-      result = connection.execute(select_sql)
-      f_hash = result.fetch_hash
-      f_hash.symbolize_keys! unless f_hash.nil?
-      result.free
-      check_and_update_ticket_stats(stats_table_name,f_hash,datetime)
+      SeamlessDatabasePool.use_master_connection do 
+        result = connection.execute(select_sql)
+        f_hash = result.fetch_hash
+        f_hash.symbolize_keys! unless f_hash.nil?
+        result.free
+        check_and_update_ticket_stats(stats_table_name,f_hash,datetime)
+      end
     rescue Exception => e
       puts "Exception occurred while updating data into stats table"
       NewRelic::Agent.notice_error(e)
