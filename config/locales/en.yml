@@ -330,9 +330,9 @@ en:
     js_solution_txt: Create $$questvalue$$ knowledge base article in a span of $$questtime$$ and matching these conditions.
     js_forum_txt: $$questmode$$ $$questvalue$$ forum posts in a span of $$questtime$$ and matching these conditions.
     js_quest_txt: On successful completion of the quest you can unlock $$badgename$$ badge and $$questpoints$$ bonus points.
+  none: None
   any_val:
     any: Any
-    none: None
     any_value: Any Value
     any_feedback: Any
     any_priority: Any Priority
@@ -659,6 +659,7 @@ en:
       event_performer: Event Performing Agent
       filter_jsinit:
         insert_placeholder: Insert Placeholder
+        subject: Subject
         body: Body
         to: To
         selected: Selected
@@ -668,7 +669,11 @@ en:
         deselected: Deselected
     shared:
       filter_jsinit:
+        request_type: Request Type
+        params: Params
+        url: URL
         insert_placeholder: Insert Placeholder
+        subject: Subject
         body: Body
         to: To
         selected: Selected
@@ -2570,6 +2575,7 @@ en:
   feedbackwidget_defaulttitle: Help &amp; Support
   two: 2 Hours
   set_status_as: Set Status as
+  trigger_webhook: Trigger Webhook
   selected: Selected
   connect_ticket: Link to ticket
   edit_agent: Edit Agent
