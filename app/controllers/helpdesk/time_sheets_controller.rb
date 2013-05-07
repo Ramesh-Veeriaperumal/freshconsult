@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Helpdesk::TimeSheetsController < ApplicationController
   
   include RedisKeys

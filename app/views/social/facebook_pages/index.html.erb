@@ -8,7 +8,7 @@
     <% @fb_pages.each do |page| %>
       <li>
   		  <div class="item_actions">
-  		  	<%= link_to (t(".reauthorize"),  @fb_client.authorize_url(session[:state]), :class => "button") if page.reauth_required %>
+  		  	<%= link_to(t(".reauthorize"),  @fb_client.authorize_url(session[:state]), :class => "button") if page.reauth_required %>
   		    <%= link_to t("edit"),  edit_social_facebook_url(page), :class => "button" %>
   		    <%= link_to(t('remove'), social_facebook_path(page), :method => 'delete', :confirm => "Are you sure you want to remove this facebook page?", :class => "button" ) %>    
   		  </div>

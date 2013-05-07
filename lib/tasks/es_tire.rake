@@ -1,5 +1,6 @@
 require 'tire/tasks'
-require 'lib/memcache_keys.rb'
+# require 'lib/memcache_keys.rb'
+require File.expand_path('../../memcache_keys.rb', __FILE__)
 include MemcacheKeys
 
 namespace :freshdesk_tire do

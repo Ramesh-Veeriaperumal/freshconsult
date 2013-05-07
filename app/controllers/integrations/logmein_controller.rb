@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Integrations::LogmeinController < ApplicationController
   include RedisKeys
   include Integrations::AppsUtil

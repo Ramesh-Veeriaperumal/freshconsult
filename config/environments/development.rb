@@ -30,6 +30,9 @@ config.after_initialize do
   ActiveMerchant::Billing::Base.gateway_mode = :test
 end
 
-require 'ftools'
-File.copy('config/sphinx_development.yml', 'config/sphinx.yml', true)
-File.copy('config/redis_development.yml', 'config/redis.yml', true)
+# require 'ftools'
+# File.copy('config/sphinx_development.yml', 'config/sphinx.yml', true)
+# File.copy('config/redis_development.yml', 'config/redis.yml', true)
+
+FileUtils.cp('config/sphinx_development.yml', 'config/sphinx.yml')
+FileUtils.cp('config/redis_development.yml', 'config/redis.yml')

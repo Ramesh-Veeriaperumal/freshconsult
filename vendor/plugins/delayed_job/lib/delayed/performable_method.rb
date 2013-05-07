@@ -1,11 +1,11 @@
 module Delayed
-  class PerformableMethod < Struct.new(:object, :method, :args)
-    attr_accessor :account
+  class PerformableMethod < Struct.new(:object, :method, :args, :account)
+    # attr_accessor :account
     
     CLASS_STRING_FORMAT = /^CLASS\:([A-Z][\w\:]+)$/
     AR_STRING_FORMAT    = /^AR\:([A-Z][\w\:]+)\:(\d+)$/
 
-    def initialize(object, method, args)
+    def initialize(object, method, args, account=Account.current)
       raise NoMethodError, "undefined method `#{method}' for #{self.inspect}" unless object.respond_to?(method)
 
       self.object = dump(object)

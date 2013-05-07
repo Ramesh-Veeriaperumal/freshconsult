@@ -1,3 +1,4 @@
+# encoding: utf-8
 class ConversionMetric < ActiveRecord::Base
   belongs_to :account
   has_one :subscription, :through => :account

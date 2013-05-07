@@ -8,7 +8,7 @@
     <% @twitter_handles.each do |twitter_handle| %>
       <li>
   		  <div class="item_actions">
-          <%= link_to (t(".reauthorize"), @auth_redirect_url , :class => "button") if twitter_handle.reauth_required? %>
+          <%= link_to(t(".reauthorize"), @auth_redirect_url , :class => "button") if twitter_handle.reauth_required? %>
   		    <%= link_to t("edit"),  edit_social_twitter_url(twitter_handle), :class => "button" %>
   		    <%= link_to(t('remove'), social_twitter_path(twitter_handle), :method => 'delete', :confirm => t('.remove_handle_msg'), :class => "button" ) %>    
   		  </div>
