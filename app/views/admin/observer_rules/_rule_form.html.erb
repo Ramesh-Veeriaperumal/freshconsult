@@ -1,5 +1,5 @@
 <% content_for :sidebar do -%><%- end %>
-<%= include_javascripts :observer_event %>
+<%= include_cloudfront_js :observer_event %>
 <%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "observer"} %>
 <%= f.error_messages :object_name => 'rule' %>
 <input type="hidden" name="id"   value="" />
