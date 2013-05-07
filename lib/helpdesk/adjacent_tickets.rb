@@ -59,8 +59,27 @@ module Helpdesk::AdjacentTickets
 			find_in_adjacent_pages(direction)
 		end
 
+		def list_adjacent_members(key)
+			count = 0
+		    tries = 3
+		    begin
+					length = $redis_secondary.llen(key)
+					$redis_secondary.lrange(key,0,length - 1)
+			  rescue Exception => e
+			  	NewRelic::Agent.notice_error(e,{:key => key, 
+		        :value => length,
+		        :description => "Redis issue",
+		        :count => count})
+		      if count<tries
+		          count += 1
+		          retry
+		      end
+			  end
+		end
+
+
 		def tickets_adjacents_list
-			@tickets_adjacents_list ||= list_members(adjacent_list_redis_key)
+			@tickets_adjacents_list ||= list_adjacent_members(adjacent_list_redis_key)
 		end
 
 		def within_bounds?(index)
@@ -121,8 +140,8 @@ module Helpdesk::AdjacentTickets
 		def new_page(filter_params, direction)
 			count = 0
 			tries = 3
-	    begin
-				end_page = get_key(adjacent_meta_key) || {}
+		    begin
+				end_page = $redis_secondary.get(adjacent_meta_key) || {}
 
 				unless end_page.blank?
 					end_page = JSON.parse(end_page).symbolize_keys
@@ -159,11 +178,13 @@ module Helpdesk::AdjacentTickets
 		end
 
 		def adjacent_meta_key
-			prepare_redis_key(HELPDESK_TICKET_ADJACENTS_META)
+			"HELPDESK_TICKET_ADJACENTS_META:#{current_account.id}:#{current_user.id}:#{session.session_id}"			
+			#prepare_redis_key(HELPDESK_TICKET_ADJACENTS_META)
 		end
 
 		def adjacent_list_redis_key
-			prepare_redis_key(HELPDESK_TICKET_ADJACENTS)
+			"HELPDESK_TICKET_ADJACENTS:#{current_account.id}:#{current_user.id}:#{session.session_id}"
+			#prepare_redis_key(HELPDESK_TICKET_ADJACENTS)
 		end
 
 		def cached_filters_key

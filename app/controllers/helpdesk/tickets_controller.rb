@@ -744,7 +744,8 @@ class Helpdesk::TicketsController < ApplicationController
       tries = 3
       count = 0
       begin
-        filters_str = get_key(redis_key)
+        filters_str = $redis_secondary.get("HELPDESK_TICKET_FILTERS:#{current_account.id}:#{current_user.id}:#{session.session_id}")
+        Rails.logger.info "In get_cached_filters - filters_str : #{filters_str.inspect}"
         JSON.parse(filters_str) if filters_str
       rescue Exception => e
         NewRelic::Agent.notice_error(e, {:key => redis_key, 
