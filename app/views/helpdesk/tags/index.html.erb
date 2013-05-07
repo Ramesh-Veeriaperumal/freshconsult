@@ -1,6 +1,6 @@
 <% content_for :pagefixed do %>
-  <%= javascript_include_tag "helpdesk/core" %>
-  <%= javascript_include_tag "helpdesk/id_selector" %>
+  <script src="/javascripts/helpdesk/core.js" type="text/javascript"></script>
+  <script src="/javascripts/helpdesk/id_selector.js" type="text/javascript"></script>
   <% javascript_tag do %>
     document.observe("dom:loaded", function(){  
 	  Helpdesk.sel = new Helpdesk.MultiSelector({

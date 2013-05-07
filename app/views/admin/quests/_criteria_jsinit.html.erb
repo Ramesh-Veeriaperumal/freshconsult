@@ -1,6 +1,6 @@
-<%= javascript_include_tag  '/javascripts/report/date' %>
-<%= javascript_include_tag  '/javascripts/report/daterangepicker.jQuery.js' %>
-<%= stylesheet_link_tag 'ui.daterangepicker' %>
+<script src="/javascripts/report/date.js" type="text/javascript"></script>
+<script src="/javascripts/report/daterangepicker.jQuery.js" type="text/javascript"></script>
+<link href="/stylesheets/ui.daterangepicker.css" media="screen" rel="stylesheet" type="text/css">
 
 <% content_for :pagefixed do %>
   <% content_for :onload_script do %> 
@@ -160,7 +160,7 @@
           filter.choices.each(function(arrayItem){
             choices.push({
               name: arrayItem[0],
-              value: arrayItem[1]
+              value: unescapeHtml(arrayItem[1])
             });
           });
           c_dom = FactoryUI.dropdown(choices, "value");
@@ -205,7 +205,7 @@
     }
     var active_email_body = null;
   <% end %>
-  <%= javascript_include_tag "condition-filter" %>
+  <script src="/javascripts/condition-filter.js" type="text/javascript"></script>
 <% end %>
 
 <% content_for :onload_script do %>
@@ -260,10 +260,10 @@ var getFilterDef = function(name,quest_type){
         var cri = value,
             game_type = game_types[questtype],
             filterDef = getFilterDef(cri.name,game_type)[0],
-            operator_name = filterDef.value,
+            operator_name = unescapeHtml(filterDef.value),
             operator = op_list[cri.operator],
             operationValue = getSelectedChoice(filterDef.choices,cri.value,filterDef.domtype),
-            operationValue = operationValue && operator ? operationValue[1] : '',
+            operationValue = operationValue && operator ? unescapeHtml(operationValue[1]) : '',
             prev_cri = humaneCriteria[cri.name+'_'+cri.operator];
             if(prev_cri){
               prev_cri[2].push(operationValue);

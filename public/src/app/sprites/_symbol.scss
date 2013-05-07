@@ -1,4 +1,4 @@
-@import "symbols/*.png";
+@import "cdn-ignored/sprites/symbols/*.png";
 
 /* %% more styles set for this class in some other file */
 
@@ -67,6 +67,7 @@
 
  /* %% app-common */
 .reminders, .todo{ .delete{ @include symbols-sprite(trash); } }
+.delete_black {@include symbols-sprite(trash_black); }
 .idea-likes .like-image{ 	@include symbols-sprite(like); }
 .list_with_icon{
 	li, .list-item{

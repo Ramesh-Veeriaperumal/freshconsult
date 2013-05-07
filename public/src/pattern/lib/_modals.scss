@@ -21,7 +21,7 @@
   z-index: $zindexModalBackdrop;
   background-color: #efefef;
   background-color: rgba(0,0,0,0.2);
-  background-image: url("/images/dialog/popOverlay.png");
+  background-image: inline-image("cdn-ignored/inline-images/dialog/overlay.gif");
   background-repeat: repeat;
   // Fade for backdrop
   &.fade { opacity: 0; }
@@ -43,7 +43,7 @@
   z-index: $zindexModal;
   background-color: $white;
   border-top: solid 1px #808080;
-  background-image: inline-image('popup-headpattern.png','image/png');
+  background-image: inline-image("cdn-ignored/inline-images/dialog/popup-headpattern.png");
   background-repeat: repeat-x;
   @include border-radius(6px);
   @include box-shadow(0 10px 40px rgba(0,0,0,0.5), $white 0 0 1px inset);
@@ -116,7 +116,7 @@
     border: solid 2px rgba(255,255,255,0.8);
     border-right: none;
     padding: 8px;
-    text-align:center;    
+    text-align:center;
     left:-29px;
     top:15px;
     @include background-image(linear-gradient(#4f4f4f, #646464));
@@ -133,7 +133,7 @@
       text-indent: 100%;
       white-space: nowrap;
       overflow: hidden;
-      background: url("/images/dialog/icon-close.gif") no-repeat;
+      background: inline-image("cdn-ignored/inline-images/dialog/icon-close.gif") no-repeat;
       display:inline-block;
       width:11px;
       height:11px;

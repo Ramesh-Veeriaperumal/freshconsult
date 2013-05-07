@@ -553,6 +553,7 @@ $(document).ready(function() {
 	});
 
 	$("body").on('click.ticket_details', '[rel=triggerAddTimer]', function(ev){
+		ev.preventDefault();
 		var timesheets = $('#timesheetlist');
 		if(timesheets.length) {
 			$('#triggerAddTime').trigger('click');
@@ -1051,6 +1052,15 @@ $(document).ready(function() {
 			});
 		}
 			
+	});
+
+
+	// Scripts for ToDo List
+	$('body').on('keydown.ticket_details', '.addReminder textarea', function(ev) {
+		if(ev.keyCode == 13){
+			ev.preventDefault();
+			$(this).parents('form').trigger('submit');
+		}
 	});
 
 	/*

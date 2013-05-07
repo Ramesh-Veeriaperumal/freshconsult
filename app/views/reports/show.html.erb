@@ -1,11 +1,11 @@
 <%
 date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} - #{Time.now.strftime("%d %B %Y")}" :  h(params[:date_range])
 %>
-<%= javascript_include_tag  '/javascripts/report/date' %>
-<%= javascript_include_tag  '/javascripts/report/daterangepicker.jQuery.js' %>
-<%= stylesheet_link_tag 'ui.daterangepicker' %>
-<%= include_stylesheets :reports, :media => "screen, print, projection"  %>
-<%= include_stylesheets :report_print, :media => "print, projection" %>
+<script src="/javascripts/report/date.js" type="text/javascript"></script>
+<script src="/javascripts/report/daterangepicker.jQuery.js" type="text/javascript"></script>
+<link href="/stylesheets/ui.daterangepicker.css" media="screen" rel="stylesheet" type="text/css">
+<%= include_cloudfront_css :reports, :media => "screen, print, projection"  %>
+<%= include_cloudfront_css :report_print, :media => "print, projection" %>
 <span class="floatr">
 	<%= link_to("&larr; #{t('reports.summary_report.back_to_reports')}", reports_url, :class => "slim-button") %>
 </span>
@@ -140,5 +140,40 @@ jQuery(document).ready(function() {
 			</td>
 		</tr>
 		<% end %>
+		<%if @report_data.key?("Unassigned")
+			data = @report_data["Unassigned"]
+			resolved_count = data.fetch(:tot_tkts, 0).to_i
+			otr_percentage = percentage(data.fetch(:tkt_res_on_time,0).to_i,resolved_count)
+			fcr_percentage = percentage(data.fetch(:fcr,0).to_i,resolved_count)
+			afrt = data.fetch(:average_first_response_time, 0)
+			art = data.fetch(:average_response_time, 0)
+		%>
+		<tr class="<%= cycle("odd", "even") %>">
+			<td><%=t('filter_options.unassigned')%></td>
+			<td>
+				<%= resolved_count %>
+			</td>
+			<td>
+				<%= otr_percentage %> 
+				<% count = data.fetch(:tkt_res_on_time, 0) %>
+				<% if count != 0 %>
+					(<%= count %>)
+				<% end %>
+			</td>
+			<td>
+				<%= fcr_percentage %> 
+				<% count = data.fetch(:fcr, 0) %>
+				<% if count != 0 %>
+					(<%= count %>)
+				<% end %>
+			</td>
+			<td>
+				<%= timediff_in_words(afrt) %>
+			</td>
+			<td>
+				<%= timediff_in_words(art) %>
+			</td>
+		</tr>
+		<%end%>
 	</table>	
 </div>

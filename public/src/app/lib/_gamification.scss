@@ -2,17 +2,19 @@
 
 /* Sprite sheet creation for badges and trophies */
 /*Gamification-Trophy */
-@import "trophy/*.png";
+@import "cdn-ignored/sprites/trophy/*.png";
 $trophy-sprite-dimensions:true;
 $trophy-layout:smart;
 @include all-trophy-sprites;
 
-/*Gamification-Badges */
+/* Gamification-Badges */
+/* The badges list is seperated into 2 sprites to optimize loading */
+@import "cdn-ignored/sprites/badges/*.png";
 $badges-layout:smart;
-$badges-a-layout:smart;
-@import "badges/*.png";
-@import "badges-a/*.png";
 @include all-badges-sprites;
+
+@import "cdn-ignored/sprites/badges-a/*.png";
+$badges-a-layout:smart;
 @include all-badges-a-sprites;
 
 .trophy{ @include inline-block; }
@@ -331,7 +333,7 @@ li.dashboard-quest-points {
 		position: relative;
 		border-top:0;
 		border-left: 7px solid transparent;
-		@include min-height(40px);
+		@include min-height(43px);
 		.help-text{
 			color:#adadad;
 		}

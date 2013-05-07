@@ -103,7 +103,9 @@ class Admin::QuestsController < Admin::AdminController
           :choices => TicketConstants.source_list.sort, :operatortype => "choicelist" },
         { :name => "inbound_count", :value => I18n.t('quests.fcr'), :domtype => "blank_boolen" },
         { :name => "st_survey_rating", :value => I18n.t('quests.satisfaction'), :domtype => "dropdown", 
-          :choices => Survey.survey_names(current_account), :operatortype => "choicelist" },
+          :choices => Survey.survey_names(current_account).collect { |c| 
+            [c[0],CGI.escapeHTML(c[1])]
+          }, :operatortype => "choicelist" },
       ]
     end
 
@@ -141,8 +143,12 @@ class Admin::QuestsController < Admin::AdminController
       [
         { :name => -1, :value => "--- #{I18n.t('click_to_select_filter')} ---" },
         { :name => "folder_id", :value => I18n.t('quests.solution_folder'), :domtype => "optgroup", 
-          :choices => Solution::Category.folder_names(current_account), :operatortype => "choicelist" },
-         { :name => "thumbs_up", :value => I18n.t('quests.solution_likes'), :domtype => "number", 
+          :choices => Solution::Category.folder_names(current_account).collect{ |category|  
+            [CGI.escapeHTML(category[0]),category[1].collect{ |folder|
+               [folder[0],CGI.escapeHTML(folder[1])]
+              }]
+            }, :operatortype => "choicelist" },
+        { :name => "thumbs_up", :value => I18n.t('quests.solution_likes'), :domtype => "number", 
           :operatortype => 'greater' }
       ]
     end
@@ -151,7 +157,11 @@ class Admin::QuestsController < Admin::AdminController
       [
         { :name => -1, :value => "--- #{I18n.t('click_to_select_filter')} ---" },
         { :name => "forum_id", :value => I18n.t('quests.forums'), :domtype => "optgroup", 
-          :choices => ForumCategory.forum_names(current_account), :operatortype => "choicelist" }, 
+          :choices => ForumCategory.forum_names(current_account).collect{ |category|  
+            [CGI.escapeHTML(category[0]),category[1].collect{ |forum|
+               [forum[0],CGI.escapeHTML(forum[1])]
+              }]
+            }, :operatortype => "choicelist" }, 
         { :name => "user_votes", :value => I18n.t('quests.customer_votes'), :domtype => "number", 
           :operatortype => 'greater' }
       ]

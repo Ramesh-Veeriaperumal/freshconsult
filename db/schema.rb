@@ -53,6 +53,7 @@ ActiveRecord::Schema.define(:version => 20130427074254) do
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
   add_index "accounts", ["helpdesk_url"], :name => "index_accounts_on_helpdesk_url"
+  add_index "accounts", ["time_zone"], :name => "index_accounts_on_time_zone"
 
   create_table "achieved_quests", :force => true do |t|
     t.integer  "user_id",    :limit => 8
@@ -157,6 +158,7 @@ ActiveRecord::Schema.define(:version => 20130427074254) do
     t.integer "listing_order"
     t.text    "options"
     t.integer "account_id",    :default => 0
+    t.string  "application_type", :default => "freshplug", :null => false
   end
 
   create_table "authorizations", :force => true do |t|

@@ -1,7 +1,8 @@
 // Ticket icon sprite creation
 // --------------------------------------------------
 
-@import "ticket-icon/*.png";
+@import "cdn-ignored/sprites/ticket-icon/*.png";
+@import "cdn-ignored/sprites/portal/sources/*.png";
 
 /* %% more styles set for this class in some other file */
 
@@ -46,4 +47,14 @@
 	.note-public{ @include ticket-icon-sprite(note-public); }
 	.note-private{ @include ticket-icon-sprite(note-private); }
 	.tweet-note{ @include ticket-icon-sprite(tweet-note); }
+}
+
+/* Source sprites for tickets list view */
+$sources: portal, email, facebook, twitter, phone, chat, forum, mobihelp;
+#tickets-expanded .status-source {	
+	@each $source in $sources{
+		&.source-detailed-#{$source}{
+			@include sources-sprite(detailed-#{$source});
+		}
+	}
 }

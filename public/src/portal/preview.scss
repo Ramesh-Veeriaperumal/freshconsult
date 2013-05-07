@@ -11,7 +11,7 @@
 @import "lib/scaffolding";
 @import "lib/buttons";
 
-@import "portal/preview/*.png";
+@import "cdn-ignored/sprites/portal/preview/*.png";
 $preview-sprite-dimensions: true;
 $preview-layout:horizontal;
 @include all-preview-sprites;

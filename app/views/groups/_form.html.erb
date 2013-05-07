@@ -1,5 +1,5 @@
- <%= include_stylesheets :pattern %>
-<%= include_javascripts :pattern %>
+ <%= include_cloudfront_css :pattern %>
+<%= include_cloudfront_js :pattern %>
 
  <h3 class="lead"><%=title%></h3> <br/>
 	<% form_for(@group, :html => {:id => "group_form"}) do |f|  %>

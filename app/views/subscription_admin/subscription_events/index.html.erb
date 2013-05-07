@@ -141,7 +141,7 @@
                                   :column => "Churn"} %>
       <% } %>
 
-      <%= include_javascripts :subscription%>
+      <%= include_cloudfront_js :subscription%>
       
       <% javascript_tag do %>
         jQuery("#slide-down").live('click', function(ev){

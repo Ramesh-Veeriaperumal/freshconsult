@@ -53,7 +53,7 @@ window.FactoryUI = {
 			var _optgroup = jQuery("<optgroup label='"+item[0]+"' />");
 			item[1].each(function(option){
 				jQuery( "<option />" )
-				.text( option[1] )				
+				.text(unescapeHtml(option[1]) )				
 				.appendTo(_optgroup)
 				.get(0).value = option[0];
 			});

@@ -57,10 +57,6 @@
 										<span id="monitor">
 											<%= render :partial => "/helpdesk/subscriptions/monitor.html.erb" %>
 										</span>
-										<div class="watchers_tooltip " id="new_watcher_page" style="display:none" rel="remote-load" 
-												data-url= "<%=helpdesk_ticket_helpdesk_subscriptions_path(@ticket)%>" data-load-unique="true" >
-											<span class="arrow-top"></span>
-										</div>
 									</div>
 									<% end %>
 								<% end %>
@@ -145,7 +141,7 @@
 										  <ul class="dropdown-menu" id="reply_options" role="menu" aria-labelledby="dLabel">
 										  	<% if feature?(:timesheets) %>
 										  	<li>
-										  		<a rel="triggerAddTimer"><%= t('ticket.add_time') %></a>
+										  		<a rel="triggerAddTimer" href="#"><%= t('ticket.add_time') %></a>
 										  	</li>
 										  	<% end %>
 										  	<li>

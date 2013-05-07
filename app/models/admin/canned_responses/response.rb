@@ -11,7 +11,7 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
   attr_accessor :visibility 
   
   unhtml_it :content
-  
+  xss_sanitize :only =>[:content_html],  :html_sanitize => [:content_html]
   has_one :accessible, 
     :class_name => 'Admin::UserAccess',
     :as => 'accessible',

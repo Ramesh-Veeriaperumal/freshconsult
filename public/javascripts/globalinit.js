@@ -26,6 +26,11 @@ is_touch_device = function() {
       $('html').addClass('touch');
     }
 
+    //IE10
+    if ($.browser.msie && parseInt($.browser.version) == 10) {
+      $('html').addClass('ie ie10');
+    }
+
     $("body").click(function(ev){
       hideWidgetPopup(ev);
     });
@@ -218,6 +223,13 @@ is_touch_device = function() {
       clearTimeout(hidePopoverTimer);
     }).live('mouseleave',function(ev) {
         hideWatcherTimer = setTimeout(function() { $("#new_watcher_page").hide(); },1000);
+    });
+
+    $("body").on('input propertychange', 'textarea[maxlength]', function() {  
+        var maxLength = $(this).attr('maxlength');  
+        if ($(this).val().length > maxLength) {  
+            $(this).val($(this).val().substring(0, maxLength));  
+        }  
     });
 
       // - Labels with overlabel will act a Placeholder for form elements

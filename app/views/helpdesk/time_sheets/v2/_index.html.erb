@@ -11,7 +11,7 @@
    totalTime("#timesheetlist .time", "#timeentry_timer_total");
    jQuery('#timesheetlist .time-tracked-details:last .toggle_timer').show();
 <% end %>
-<%= include_javascripts :timesheet %>
+<%= include_cloudfront_js :timesheet %>
 <div id="timeentry_apps_add" class="ui-form hide">   
 	<%= render :partial => "integration" if timesheet_integrations_enabled? %>
 </div>
