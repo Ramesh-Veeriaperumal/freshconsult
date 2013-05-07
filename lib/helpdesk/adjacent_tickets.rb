@@ -119,23 +119,32 @@ module Helpdesk::AdjacentTickets
 		end
 
 		def new_page(filter_params, direction)
-			end_page = get_key(adjacent_meta_key) || {}
+			count = 0
+			tries = 3
+	    begin
+				end_page = get_key(adjacent_meta_key) || {}
 
-			unless end_page.blank?
-				end_page = JSON.parse(end_page).symbolize_keys
-				current = end_page[direction]
-			end
+				unless end_page.blank?
+					end_page = JSON.parse(end_page).symbolize_keys
+					current = end_page[direction]
+				end
 
-			current = send("new_page_" + direction.to_s , filter_params, current)
+				current = send("new_page_" + direction.to_s , filter_params, current)
 
-			end_page[direction] = current
-			set_key(adjacent_meta_key, end_page.to_json, 3600)
-			current
+				end_page[direction] = current
+				set_key(adjacent_meta_key, end_page.to_json, 3600)
+				current
 			rescue Exception => e
 	      NewRelic::Agent.notice_error(e, :request_params => {:key => adjacent_meta_key, 
 	        :value => end_page,
-	        :class => end_page.class,
-	        :description => "Redis issue"})
+	        :class => end_page.class.name,
+	        :description => "Redis issue",
+	        :count => count})
+	      if count<tries
+          count += 1
+          retry
+      	end
+      end
 		end
 
 		def new_page_prev(filter_params,current)

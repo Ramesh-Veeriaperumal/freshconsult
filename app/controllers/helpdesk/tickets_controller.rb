@@ -548,12 +548,19 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def save_draft
+    count = 0
+    tries = 3
     begin
       set_key(draft_key, params[:draft_data])
     rescue Exception => e
       NewRelic::Agent.notice_error(e,{:key => draft_key, 
         :value => params[:draft_data],
-        :description => "Redis issue"})
+        :description => "Redis issue",
+        :count => count})
+      if count<tries
+          count += 1
+          retry
+      end
     end
     render :nothing => true
   end
@@ -734,7 +741,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def get_cached_filters
-      tries = 2
+      tries = 3
       count = 0
       begin
         filters_str = get_key(redis_key)
@@ -742,7 +749,7 @@ class Helpdesk::TicketsController < ApplicationController
       rescue Exception => e
         NewRelic::Agent.notice_error(e, {:key => redis_key, 
           :value => filters_str,
-          :class => filters_str.class,
+          :class => filters_str.class.name,
           :uri => request.url,
           :referer => request.referer,
           :count => count,

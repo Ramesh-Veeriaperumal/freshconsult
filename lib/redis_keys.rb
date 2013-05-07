@@ -108,9 +108,20 @@ module RedisKeys
 	end
 
 	def list_members(key)
-		newrelic_begin_rescue do
+		count = 0
+    tries = 3
+    begin
 			length = $redis.llen(key)
 			$redis.lrange(key,0,length - 1)
+	  rescue Exception => e
+	  	NewRelic::Agent.notice_error(e,{:key => key, 
+        :value => length,
+        :description => "Redis issue",
+        :count => count})
+      if count<tries
+          count += 1
+          retry
+      end
 	  end
 	end
 

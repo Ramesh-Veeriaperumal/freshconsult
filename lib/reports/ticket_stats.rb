@@ -18,6 +18,8 @@ module Reports::TicketStats
 	end
 
 	def set_reports_redis_key(account_id, date)
+		count = 0
+	  tries = 3
 		begin
 			return unless stats_table_exists?(stats_table(date))
 			export_hash = REPORT_STATS_EXPORT_HASH % {:account_id => account_id}
@@ -28,7 +30,12 @@ module Reports::TicketStats
 			add_to_set(reports_redis_key, regenerate_date, 864000)
 		rescue Exception => e
 			NewRelic::Agent.notice_error(e,:key => export_hash, 
-				:value => last_export_date, :description => "Redis issue")
+				:value => last_export_date, :description => "Redis issue",
+				:count => count)
+			if count<tries
+        count += 1
+        retry
+			end
 		end
 	end
 
