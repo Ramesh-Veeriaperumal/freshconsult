@@ -131,6 +131,11 @@ module Helpdesk::AdjacentTickets
 			end_page[direction] = current
 			set_key(adjacent_meta_key, end_page.to_json, 3600)
 			current
+			rescue Exception => e
+	      NewRelic::Agent.notice_error(e, :request_params => {:key => adjacent_meta_key, 
+	        :value => end_page,
+	        :class => end_page.class,
+	        :description => "Redis issue"})
 		end
 
 		def new_page_prev(filter_params,current)

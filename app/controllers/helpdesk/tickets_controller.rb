@@ -548,7 +548,13 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def save_draft
-    set_key(draft_key, params[:draft_data])
+    begin
+      set_key(draft_key, params[:draft_data])
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e, :request_params => {:key => draft_key, 
+        :value => params[:draft_data],
+        :description => "Redis issue"})
+    end
     render :nothing => true
   end
 
@@ -730,6 +736,13 @@ class Helpdesk::TicketsController < ApplicationController
     def get_cached_filters
       filters_str = get_key(redis_key)
       JSON.parse(filters_str) if filters_str
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e, :request_params => {:key => redis_key, 
+        :value => filters_str,
+        :class => filters_str.class,
+        :uri => request.url,
+        :referer => request.referer,
+        :description => "Redis issue"})
     end
 
     def load_cached_ticket_filters

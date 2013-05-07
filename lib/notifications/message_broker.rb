@@ -47,6 +47,13 @@ module Notifications::MessageBroker
 				results.push($redis.lpop(key))
 			end
 			results
+			rescue Exception => e
+				NewRelic::Agent.notice_error(e,{:count => count,
+					:total_length => total_length,
+					:total_length_class => total_length.class,
+					:key => key,
+					:description => "Redis issue"})
+				return []
 		end
 
 end
