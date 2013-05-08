@@ -77,7 +77,7 @@ class Va::Action
       end
 
       if group || value.empty?
-        act_on.group_id = group
+        act_on.group = group
         add_activity("Set group as <b>#{group.name}</b>") unless group.nil?
       else
         add_activity("<b>Unable to set the group, consider updating this scenario if the group has been deleted recently.</b>")
@@ -201,13 +201,13 @@ class Va::Action
     end
 
     def substitute_placeholders_for_agents act_on, content
-      Liquid::Template.parse(RedCloth.new(content).to_html).render(
+      Liquid::Template.parse(RedCloth.new(content.to_s).to_html).render(
                 'ticket' => act_on, 'helpdesk_name' => act_on.account.portal_name)
     end
 
     def substitute_placeholders_for_requester act_on, content
       content.to_s.gsub!("{{ticket.status}}","{{ticket.requester_status_name}}")
-      Liquid::Template.parse(RedCloth.new(content).to_html).render(
+      Liquid::Template.parse(RedCloth.new(content.to_s).to_html).render(
                 'ticket' => act_on, 'helpdesk_name' => act_on.account.portal_name)
     end
 
