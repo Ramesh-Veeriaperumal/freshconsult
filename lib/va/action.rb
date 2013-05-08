@@ -206,7 +206,7 @@ class Va::Action
     end
 
     def substitute_placeholders_for_requester act_on, content
-      content.gsub!("{{ticket.status}}","{{ticket.requester_status_name}}")
+      content.to_s.gsub!("{{ticket.status}}","{{ticket.requester_status_name}}")
       Liquid::Template.parse(RedCloth.new(content).to_html).render(
                 'ticket' => act_on, 'helpdesk_name' => act_on.account.portal_name)
     end
