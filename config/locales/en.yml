@@ -918,9 +918,9 @@ en:
       empty_trash: 
         success: The trash was emptied.
       delete_forever:
-        success: %{tickets} deleted.
+        success: '%{tickets} deleted.'
       unwatch: 
-        success: %{tickets} removed from the watch-list.
+        success: '%{tickets} removed from the watch-list.'
         failure: Ticket unwatch action failed.
         unsubscribe_success: The ticket has been removed from your watch-list.
       bulk_merge_success : 'The tickets with ids %{merged_tickets} were merged into  <a href="/helpdesk/tickets/%{target_ticket}">%{target_ticket_subject} #%{target_ticket}</a> '
@@ -930,13 +930,13 @@ en:
         success: Ticket fields successfully updated.
     email_settings: 
       send_activation: 
-        success: Verification email has been sent to %{reply_email}!
+        success: 'Verification email has been sent to %{reply_email}!'
       activation: 
         invalid_code: The activation code is not valid!
         success: "%{reply_email} has been activated!"
         already_activated: "%{reply_email} has been activated already!"
       make_primary: 
-        success: <b>%{reply_email}</b> is now your primary support email!
+        success: '<b>%{reply_email}</b> is now your primary support email!'
     data_import: 
       zendesk: 
         no_contact: Unable to contact zendesk . Please verify your zendesk credentials and try again !!
@@ -2645,14 +2645,14 @@ en:
         all_agents_watching: All agents are watching this ticket
         mail:
           hi: Hi
-          added_as_watcher: %{agent_name} has added you as a watcher of a ticket
+          added_as_watcher: '%{agent_name} has added you as a watcher of a ticket'
           new_activity: New activity on your watched ticket
           activity: Activity
           ticket: Ticket
           requester: Requester
           customer: The Customer
-          status_change:  %{agent_name} has %{status} a ticket you are watching
-          response: %{responder} has responded to a ticket you are watching
+          status_change: ' %{agent_name} has %{status} a ticket you are watching'
+          response: '%{responder} has responded to a ticket you are watching'
           ticket_details: Ticket Description
           customer_response: Customer Response
           agent_response: Agent Response

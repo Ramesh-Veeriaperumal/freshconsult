@@ -131,12 +131,18 @@ module TicketsFilter
     exact_match = {field => value}
 
     conditions = case field.to_sym
-      when :subject      :  loose_match
-      when :display_id   :  exact_match
-      when :description  :  loose_match
-      when :status       :  exact_match
-      when :urgent       :  exact_match
-      when :source       :  exact_match
+      when :subject
+        loose_match
+      when :display_id
+        exact_match
+      when :description
+        loose_match
+      when :status
+        exact_match
+      when :urgent
+        exact_match
+      when :source
+        exact_match
     end
 
     # Protect us from SQL injection in the 'field' param

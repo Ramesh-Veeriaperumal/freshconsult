@@ -39,7 +39,7 @@
 	  <!-- another one... -->
 	  <label class="caption"><%=t('.message_thread_time')%></label>
       <div class="fields">
-      	<%= select (:social_facebook_page ,:dm_thread_time, Social::FacebookPage::DM_THREADTIME_OPTIONS ,{:selected => facebook_page.dm_thread_time}) %>
+      	<%= select(:social_facebook_page ,:dm_thread_time, Social::FacebookPage::DM_THREADTIME_OPTIONS ,{:selected => facebook_page.dm_thread_time}) %>
       </div>
       <div class="info-data tabbed">
         <%=t('.message_thread_time_info')%>

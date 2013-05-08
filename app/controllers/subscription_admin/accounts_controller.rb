@@ -29,7 +29,7 @@ class SubscriptionAdmin::AccountsController < ApplicationController
       params[:start_date] = params[:from_date]
       params[:end_date] = params[:to_date]
       @accounts = search
-      csv_string = FasterCSV.generate do |csv| 
+      csv_string = CSVBridge.generate do |csv| 
       # header row 
       csv << ["name","full_domain","contact name","email","phone","Time Zone","created_at","next_renewal_at"] 
  

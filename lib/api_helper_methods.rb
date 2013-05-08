@@ -1,3 +1,4 @@
+# encoding: utf-8
 #Module for common utility API methods (DRY...)
 module APIHelperMethods
 

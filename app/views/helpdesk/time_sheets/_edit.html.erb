@@ -2,7 +2,7 @@
 <div class="request_panel timeentry_edit">
 <% form_remote_for :time_entry, edit, :url => helpdesk_time_sheet_path, 
 	:html => { :method => :put, :class => "ui-form dont-validate" } do |f| %>
-  <%= render :partial => "/helpdesk/time_sheets/form", :object => f %>
+  <%= render :partial => "/helpdesk/time_sheets/form", :object => f, :type => 'edit' %>
   <fieldset>
     <div class="agent"></div>
 	  <div class="timespent"></div>
