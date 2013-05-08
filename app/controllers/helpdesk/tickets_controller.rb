@@ -714,7 +714,7 @@ class Helpdesk::TicketsController < ApplicationController
       filter_params.delete(:controller)
       begin
         $redis_secondary.set(redis_key, filter_params.to_json)
-        $redis_secondary.set(redis_key, 86400)
+        $redis_secondary.expire(redis_key, 86400)
       rescue Exception => e
         NewRelic::Agent.notice_error(e) 
       end
