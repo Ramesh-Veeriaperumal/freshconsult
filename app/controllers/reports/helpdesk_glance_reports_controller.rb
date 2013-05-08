@@ -5,7 +5,7 @@ class Reports::HelpdeskGlanceReportsController < ApplicationController
   include Reports::HelpdeskReportControllerMethods
   include Reports::GlanceReportControllerMethods
   
-  before_filter { |c| c.requires_feature :advanced_reporting }
+  before_filter { |c| c.requires_feature :enterprise_reporting }
   before_filter { |c| c.requires_permission :manage_reports }
   before_filter :parse_wf_params,:set_selected_tab, 
                 :only => [:generate,:generate_pdf,:send_report_email,:fetch_activity_ajax,:fetch_metrics]

@@ -1,4 +1,5 @@
 <% content_tag :div, :id => "timeentry_#{time_entry.id}", :class => (time_entry.timer_running) ? "time_running" : "" do %>
+  <% @ticket ||= time_entry.workable %>
   <div class="timeentry" id="timeentry_view_<%= time_entry.id %>">     
       <div class="actions">
   	    <%= link_to_remote( t('edit'), 

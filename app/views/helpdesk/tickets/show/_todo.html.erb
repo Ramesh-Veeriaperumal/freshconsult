@@ -1,0 +1,5 @@
+<%= render :partial => '/helpdesk/tickets/show/reminders/reminders', 
+               :locals  => { :reminders => ticket.reminders, :form_controller => [ticket, Helpdesk::Reminder.new()] } %> 
+<script type="text/javascript">
+	jQuery('.addReminder textarea').autosize({append: "\n"});
+</script>

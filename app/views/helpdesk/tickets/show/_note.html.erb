@@ -10,7 +10,7 @@ minimizable ||= false
 
 <li id="<%= note_view_id %>" class="conversation <%= 'minimized minimizable' if minimizable %>">
 	<% if note.user %>
-	<div class="avatar-wrap" name="note<%= note.id %>"><%= user_avatar(current_user) %></div>
+	<div class="avatar-wrap" name="note<%= note.id %>"><%= user_avatar(note.user) %></div>
 	<% end %>
 	<div class="commentbox 
 					<%= (note.user.blank? or note.user.agent?) ? 'commentbox-gray' : 'commentbox-requester' %> 

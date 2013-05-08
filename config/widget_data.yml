@@ -1,0 +1,270 @@
+---  
+- options: 
+    display_in_pages: 
+    - contacts_show_page_side_bar
+
+  script: <div id="capsule_widget" domain="{{capsule_crm.domain}}" title="{{capsule_crm.title}}"><div class="content"></div></div><script type="text/javascript">CustomWidget.include_js("/javascripts/capsule_crm.js");capsuleBundle={ t:"{{capsule_crm.api_key}}", reqId:"{{requester.id}}", reqName:"{{requester.name | escape_html}}", reqOrg:"{{requester.company_name}}", reqPhone:"{{requester.phone}}", reqEmail:"{{requester.email}}"}; </script>
+  name: contact_widget
+  id: 1
+  description: widgets.contact_widget.description
+  application_type: capsule_crm
+
+- options: 
+  script: "\n      <div id=\"freshbooks_widget\" api_url=\"{{freshbooks.api_url}}\" title=\"{{freshbooks.title}}\">\n        <div class=\"content\"></div>\n      </div>\n      <div class=\"hide\" id=\"freshbooks-note\" >{{freshbooks.freshbooks_note}}</div>\n      <script type=\"text/javascript\">\n        CustomWidget.include_js(\"/javascripts/integrations/freshbooks.js\");\n        freshbooksBundle={ k:\"{{freshbooks.api_key}}\", application_id:\"{{application.id}}\", integrated_resource_id:\"{{integrated_resource.id}}\", remote_integratable_id:\"{{integrated_resource.remote_integratable_id}}\", ticketId:\"{{ticket.display_id}}\", agentEmail:\"{{agent.email}}\", reqEmail:\"{{requester.email}}\"};\n      </script>\n    "
+  name: freshbooks_timeentry_widget
+  id: 2
+  description: freshbooks.widgets.timeentry_widget.description
+  application_type: freshbooks
+
+- options: 
+  script: "\n\
+    \t    <div id=\"harvest_widget\" title=\"{{harvest.title}}\">\n       <div class=\"content\"></div>\n      </div>\n      <div class=\"hide\" id=\"harvest-note\" >{{harvest.harvest_note}}</div>\n      <script type=\"text/javascript\">\n        CustomWidget.include_js(\"/javascripts/integrations/harvest.js\");\n        harvestBundle={domain:\"{{harvest.domain}}\", application_id:\"{{application.id}}\", integrated_resource_id:\"{{integrated_resource.id}}\", remote_integratable_id:\"{{integrated_resource.remote_integratable_id}}\", ticketId:\"{{ticket.display_id}}\", agentEmail:\"{{agent.email}}\", reqEmail:\"{{requester.email}}\"};\n      </script>\n\
+    \t  "
+  name: harvest_timeentry_widget
+  id: 3
+  description: harvest.widgets.timeentry_widget.description
+  application_type: harvest
+
+- options: 
+  script: |-
+    
+          <div id="jira_widget">
+            <div class="content"></div>
+          </div>
+          <div class="hide" id="jira-note">
+            {{jira.jira_note}}
+           </div>
+          <script type="text/javascript">
+            CustomWidget.include_js("/javascripts/integrations/atlassian-jira.js");
+            jiraBundle={domain:"{{jira.domain}}", application_id:"{{application.id}}", integrated_resource_id:"{{integrated_resource.id}}", remote_integratable_id:"{{integrated_resource.remote_integratable_id}}", ticketId:"{{ticket.id}}", ticket_rawId:"{{ticket.raw_id}}", ticketSubject:"{{ticket.subject | escape_html}}", agentEmail:"{{agent.email}}", reqEmail:"{{requester.email}}", username:"{{jira.username}}", custom_field_id:"{{jira.customFieldId}}" } ;
+          </script>
+  name: jira_widget
+  id: 4
+  description: jira.widgets.jira_widget.description
+  application_type: jira
+
+- options: 
+    display_in_pages: 
+    - contacts_show_page_side_bar
+
+  script: "\n  \t\t<div id=\"sugarcrm_widget\" class=\"integration_widget crm_contact_widget\">\n        <div class=\"content\"></div>\n\
+    \t\t<div class=\"error name hide\"></div>\n        </div>\n      <script type=\"text/javascript\">\n        CustomWidget.include_js(\"/javascripts/integrations/sugarcrm.js\");\n        sugarcrmBundle={domain:\"{{sugarcrm.domain}}\", reqEmail:\"{{requester.email}}\", username:\"{{sugarcrm.username}}\", password:\"{{sugarcrm.password}}\"} ;\n       </script>\n    "
+  name: sugarcrm_widget
+  id: 5
+  description: sugarcrm.widgets.sugarcrm_widget.description
+  application_type: sugarcrm
+
+- options: 
+  script: "\n      <div id=\"workflow_max_widget\" title=\"{{workflow_max.title}}\">\n        <div class=\"content\"></div>\n      </div>\n      <div class=\"hide\" id=\"workflowmax-note\" >{{workflow_max.workflow_max_note}}</div>\n      <script type=\"text/javascript\">\n        CustomWidget.include_js(\"/javascripts/integrations/workflow_max.js\");\n        workflowMaxBundle={ k:\"{{workflow_max.api_key}}\", a:\"{{workflow_max.account_key}}\", api_url:\"https://api.workflowmax.com\" , application_id:\"{{application.id}}\", integrated_resource_id:\"{{integrated_resource.id}}\", remote_integratable_id:\"{{integrated_resource.remote_integratable_id}}\", ticketId:\"{{ticket.display_id}}\", agentEmail:\"{{agent.email}}\", reqEmail:\"{{requester.email}}\"};\n      </script>\n    "
+  name: workflow_max_timeentry_widget
+  id: 6
+  description: workflow_max.widgets.timeentry_widget.description
+  application_type: workflow_max
+
+- options: 
+    display_in_pages: 
+    - contacts_show_page_side_bar
+
+  script: |-
+    
+          <div id="salesforce_widget" class="integration_widget crm_contact_widget">
+            <div class="content"></div>
+            <div class="salesforce-name error hide"></div>
+            </div>
+          <script type="text/javascript">
+            CustomWidget.include_js("/javascripts/integrations/salesforce.js");
+            salesforceBundle={domain:"{{salesforce.instance_url}}", reqEmail:"{{requester.email}}", token:"{{salesforce.oauth_token}}", contactFields:"{{salesforce.contact_fields}}", leadFields:"{{salesforce.lead_fields}}", reqName:"{{requester.name}}"} ;
+          </script>
+  name: salesforce_widget
+  id: 7
+  description: salesforce.widgets.salesforce_widget.description
+  application_type: salesforce
+
+- options: 
+  script: |-
+    <div class="logmein-logo"><h3 class="title">{{logmein.title | encode_html}} </h3></div>
+            <div id="logmein_widget">
+              <div class="content"></div>
+              <div class="error hide"></div>
+            </div>
+          <script type="text/javascript">
+            CustomWidget.include_js("/javascripts/integrations/logmein.js");
+            logmeinBundle={ticketId:"{{ticket.raw_id}}", installed_app_id:"{{installed_app_id}}", agentId:"{{agent.id}}", accountId: "{{account_id}}", reqName:"{{requester.name}}", secret:"{{md5secret}}", pincode:"{{cache.pincode}}", pinTime:"{{cache.pintime}}", ssoId:"{{agent.email}}", companyId:"{{logmein.company_id}}", authcode:"{{logmein.authcode}}"} ;
+           </script>
+  name: logmein_widget
+  id: 8
+  description: logmein.widgets.logmein_widget.description
+  application_type: logmein
+
+- options:
+    display_in_pages: 
+    - contacts_show_page_side_bar
+
+  script: "      \n      <div id=\"batchbook_widget\"  class=\"integration_widget crm_contact_widget\">\n        <div class=\"content\"></div>\n      </div>\n      <script type=\"text/javascript\">\n        jQuery(document).ready(function(){\n          batchbookBundle={ domain:\"{{batchbook.domain}}\", k:\"{{batchbook.api_key}}\", reqEmail: \"{{requester.email}}\", reqName: \"{{requester.name}}\", ver: \"{{batchbook.version}}\"};\n          CustomWidget.include_js(\"/javascripts/integrations/batchbook.js\");\n        });\n      </script>\n      "
+  name: batchbook_widget
+  id: 9
+  description: batchbook.widgets.batchbook_widget.description
+  application_type: batchbook
+
+- options:
+    display_in_pages: 
+    - contacts_show_page_side_bar
+
+  script: "\n\n      <div id=\"highrise_widget\"  class=\"integration_widget crm_contact_widget\">\n        <div class=\"content\"></div>\n      </div>\n      <script type=\"text/javascript\">\n\
+    \tjQuery(document).ready(function(){\n        highrise_options={ domain:\"{{highrise.domain}}\", k:\"{{highrise.api_key}}\", reqEmail: \"{{requester.email}}\", reqName: \"{{requester.name}}\"};\n        CustomWidget.include_js(\"/javascripts/integrations/highrise.js\");\n\
+    \t});\n       </script>\n\
+    \t"
+  name: highrise_widget
+  id: 10
+  description: highrise.widgets.highrise_widget.description
+  application_type: highrise
+
+- options:
+    display_in_pages: 
+    - contacts_show_page_side_bar
+    clazz: hide
+
+  script: |-
+    
+          <div id="mailchimp_widget">
+            <div class="error modal_error hide"></div>
+            <div class="content"></div>
+            </div>
+          <script type="text/javascript">
+            CustomWidget.include_js("/javascripts/integrations/mailchimp.js");
+            mailchimpBundle={api_endpoint:"{{mailchimp.api_endpoint}}", reqEmail:"{{requester.email}}", reqName:"{{requester.name}}",  token:"{{mailchimp.oauth_token}}", export: "{{export}}"  } ;
+           </script>
+  name: mailchimp_widget
+  id: 11
+  description: mailchimp.widgets.mailchimp_widget.description
+  application_type: mailchimp
+
+- options:
+    display_in_pages: 
+    - contacts_show_page_side_bar
+    clazz: hide
+
+  script: |-
+    
+          <div id="constantcontact_widget">
+            <div class="error modal_error hide"></div>
+            <div class="content"></div>
+            </div>
+          <script type="text/javascript">
+            CustomWidget.include_js("/javascripts/integrations/constantcontact.js");
+            ccBundle={reqEmail:"{{requester.email}}", reqName:"{{requester.name}}",  token:"{{constantcontact.oauth_token}}", export: "{{export}}", uid: "{{constantcontact.uid}}"  } ;
+           </script>
+  name: constantcontact_widget
+  id: 12
+  description: constantcontact.widgets.constantcontact_widget.description
+  application_type: constantcontact
+
+- options:
+    display_in_pages: 
+    - contacts_show_page_side_bar
+    clazz: hide
+
+  script: |-
+    
+          <div id="icontact_widget">
+            <div class="error modal_error hide"></div>
+            <div class="content"></div>
+            </div>
+          <script type="text/javascript">
+            CustomWidget.include_js("/javascripts/integrations/icontact.js");
+            icontactBundle={reqEmail:"{{requester.email}}", reqName:"{{requester.name}}",  app_id:"{{icontact.app_id}}", username:"{{icontact.username}}", api_url:"{{icontact.api_url}}", app_id:"{{icontact.app_id}}", export: "{{export}}"  } ;
+           </script>
+  name: icontact_widget
+  id: 13
+  description: icontact.widgets.icontact_widget.description
+  application_type: icontact
+
+- options:
+    display_in_pages: 
+    - contacts_show_page_side_bar
+    clazz: hide
+
+  script: |-
+    
+          <div id="campaignmonitor_widget">
+            <div class="error modal_error hide"></div>
+            <div class="content"></div>
+            </div>
+          <script type="text/javascript">
+            CustomWidget.include_js("/javascripts/integrations/campaignmonitor.js");
+            cmBundle={reqEmail:"{{requester.email}}", reqName:"{{requester.name}}", api_key:"{{campaignmonitor.api_key}}", client_id:"{{campaignmonitor.client_id}}", export: "{{export}}" } ;
+           </script>
+  name: campaignmonitor_widget
+  id: 14
+  description: campaignmonitor.widgets.campaignmonitor_widget.description
+  application_type: campaignmonitor
+
+- options:
+    display_in_pages: 
+    - contacts_show_page_side_bar
+
+  script: "\n      <div id=\"zohocrm_widget\"  class=\"integration_widget crm_contact_widget\">\n        <div class=\"content\"></div>\n        <div class=\"error\"></div>\n      </div>\n      <script type=\"text/javascript\">\n        zohocrm_options={ k:\"{{zohocrm.api_key}}\", reqEmail: \"{{requester.email}}\", reqName: \"{{requester.name | escape_html}}\"};\n        CustomWidget.include_js(\"/javascripts/integrations/zohocrm.js\");\n       </script>\n    "
+  name: zohocrm_widget
+  id: 15
+  description: Zoho CRM widget.
+  application_type: zohocrm
+
+- options:
+    display_in_pages: 
+    - helpdesk_tickets_show_page_side_bar
+
+  script: |-            
+          <link href="/stylesheets/pattern/pattern.css" media="screen" rel="stylesheet" type="text/css">
+          <script src="/javascripts/pattern/bootstrap-typeahead.js" type="text/javascript"></script>
+          <div id="google_calendar_widget"">
+            <div class="content">
+              <div class="title">
+                <span>
+                  Google Calendar
+                </span>
+                <a href="#" class="pull-right" id="add_event_link">Add Event</a><br>
+                <span id="gcal-email-container" class="hide">{{installed_app.user_registered_email}}</span>
+                <br>
+                <a href="{{installed_app.oauth_url}}" id="gcal-change-account-link" class="hide">Change</a>
+              </div>
+              <div class="gcal-content-body">
+                <div id="gcal-older-events-link-container" class="hide"><span class="arrow-right" id="gcal-older-events-arrow"></span><a id="gcal-older-events-link" href="#older_events">Older Events</a></div> 
+                <div id="google_calendar_events_container"></div>
+              </div>
+            </div>
+          </div>
+          <script type="text/javascript">
+            var google_calendar_options={
+              domain:"www.googleapis.com",
+              application_id: {{application.id}},
+              oauth_token:"{{installed_app.user_access_token}}",
+              ticket_id: parseInt('{{ticket.id}}'),
+              ticket_subject: "{{ticket.subject | encode_html}}",
+              events_list: [{{installed_app.events_list}}],
+              oauth_url: "{{installed_app.oauth_url}}"
+            };
+            CustomWidget.include_js("/javascripts/integrations/google_calendar.js");
+          </script>
+    
+  name: google_calendar_widget
+  id: 16
+  description: google_calendar.widgets.google_calendar.description
+  application_type: google_calendar
+
+- options:
+    display_in_pages: 
+    - contacts_show_page_side_bar
+  script: |- 
+          <div id="nimble_widget" class="integration_widget crm_contact_widget">
+            <div class="content"></div>
+            <div class="error"></div>
+            </div>
+          <script type="text/javascript">
+            CustomWidget.include_js("/javascripts/integrations/nimble.js");
+            nimbleBundle={domain:"{{nimble.instance_url}}", reqName: "{{requester.name | escape_html}}", reqEmail:"{{requester.email}}", oauth_token:"{{nimble.oauth_token}}" } ;
+           </script>
+  name: nimble_widget
+  id: 17
+  description: nimble.widgets.nimble_widget.description
+  application_type: nimble
+

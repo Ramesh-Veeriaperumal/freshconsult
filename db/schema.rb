@@ -158,6 +158,7 @@ ActiveRecord::Schema.define(:version => 20130427074254) do
     t.integer "listing_order"
     t.text    "options"
     t.integer "account_id",    :default => 0
+    t.string  "application_type", :default => "freshplug", :null => false
   end
 
   create_table "authorizations", :force => true do |t|
