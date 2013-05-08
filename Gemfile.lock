@@ -313,12 +313,9 @@ GEM
       rails
     wkhtmltopdf-binary (0.9.9.1)
     xml-simple (1.0.15)
-<<<<<<< HEAD
-    zendesk-features (1.0.2)
-=======
     xss_terminate (0.2)
       html5 (>= 0.10.0)
->>>>>>> origin/observer
+    zendesk-features (1.0.2)
 
 PLATFORMS
   ruby
