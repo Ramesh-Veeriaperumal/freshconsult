@@ -1936,7 +1936,7 @@ en:
       details: Ticket details
       add_or_remove_emails: "Add or remove emails that need to be copied when a notification for this ticket is sent."
       add_people_title: Add people to conversation
-      reopen_reply: Reopen and reply
+      reopen_reply: Reply
   feedbackwidget_form_title: Widget form title
   cancel_and_back: Cancel and go back
   due_in: Due in %{time_words}
@@ -2322,7 +2322,7 @@ en:
     add_time: Add time
     support:
       reply: "Reply"
-      reply_and_open: "Reply & re-open"
+      reply_and_open: "Reply"
     from: "From:"
     suggested_solutions: 
       insert_url: Insert URL
