@@ -106,7 +106,7 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
     end
 
     def on_status_change_bhrs(ticket, due_by_type)
-      bhrs_during_elapsed_time =  Time.zone.parse(ticket.ticket_states.sla_timer_stopped_at.to_s).business_time_until(
+      bhrs_during_elapsed_time =  ticket.ticket_states.sla_timer_stopped_at.business_time_until(
         Time.zone.now)
       if due_by_type > ticket.ticket_states.sla_timer_stopped_at
         bhrs_during_elapsed_time.div(60).business_minute.after(due_by_type) 
