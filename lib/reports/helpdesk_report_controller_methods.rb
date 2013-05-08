@@ -35,8 +35,10 @@ module Reports::HelpdeskReportControllerMethods
     end
     conditions = []
     action_hash.each do |filter|
-      conditions.push create_condtion(filter["condition"], 
-        filter["value"].split(",")) unless (filter["condition"].blank? || filter["value"].blank?)
+      if Reports::Constants::REDSHIFT_COLUMNS.include? filter["condition"]
+        conditions.push create_condtion(filter["condition"], 
+          filter["value"].split(",")) unless (filter["condition"].blank? || filter["value"].blank?)
+      end
     end
     return conditions
   end

@@ -75,6 +75,11 @@ adv_grid_report.prototype = {
   },
   xaxis_bar_dataLabels: function(){
     if(this.y>0) return this.y;
+  },
+  bar_dataLabels_tooltip: function(){
+    var text      = this.value,
+        formatted = text.length > 25 ? text.substring(0, 25) + '...' : text;
+    return '<div class="tooltip" style="width:50px; overflow:hidden; cursor:pointer" title="' + text + '">' + formatted.replace(' ','<br/>') + '</div>'; 
   }
 }
 
@@ -508,10 +513,12 @@ function bar_chart(opts){
       categories: opts['xaxis_arr'],
       tickWidth: 0,
       labels: {
+        formatter: this.bar_dataLabels_tooltip,
         style: {
           font: 'normal 11px Helvetica Neue, sans-serif',
           width: '50px'
-        }
+        },
+        useHTML: true
       }
     },
     yAxis: {
