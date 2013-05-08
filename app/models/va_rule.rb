@@ -1,4 +1,7 @@
 class VARule < ActiveRecord::Base
+
+  include Cache::Memcache::VARule
+
   serialize :filter_data
   serialize :action_data
   
@@ -6,6 +9,8 @@ class VARule < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => [:account_id, :rule_type]
   validate :has_events?, :has_conditions?, :has_actions?
   
+  after_commit :clear_observer_rules_cache, :if => :observer_rule?
+
   attr_accessor :conditions, :actions, :events, :performer
   
   belongs_to :account
@@ -126,6 +131,10 @@ class VARule < ActiveRecord::Base
     def has_actions?
       deserialize_all
       errors.add_to_base(I18n.t("errors.actions_empty")) if(action_data.blank?)
+    end
+
+    def observer_rule?
+      rule_type == VAConfig::OBSERVER_RULE
     end
   
 end

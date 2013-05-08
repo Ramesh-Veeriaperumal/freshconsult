@@ -45,7 +45,8 @@ class CreateDefaultObserverRules < ActiveRecord::Migration
   	        {
   	          :email_to => Va::Action::ASSIGNED_AGENT,
   	          :name => 'send_email_to_agent',
-  	          :email_body => ticket_reopening_notification.agent_template
+  	          :email_body => ticket_reopening_notification.agent_template,
+              :email_subject => ticket_reopening_notification.agent_subject_template
   	        }
         	],
         	:active => true

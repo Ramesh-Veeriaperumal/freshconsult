@@ -121,7 +121,7 @@
 
          var selectopts = { minimumResultsForSearch : 10 }
          if(_init.value=='')
-          {jQuery(category).attr('placeholder', 'None');} // Hack coz select2 takes the first value as placeholder,
+          {$(category).attr('placeholder', 'None');} // Hack coz select2 takes the first value as placeholder,
                                                                                   // when its value is set to null
 
          category.select2(selectopts)
@@ -134,12 +134,12 @@
      }, 
 
      hideEmptySelectBoxes : function(select_box){
-        if(select_box.options.length == 0 || 
-            ((select_box.options[0].value == ["--"] || select_box.options[0].value == [""])&& select_box.options.length == 1) ||
-            (select_box.options[0].value == ["--"] && select_box.options[1].value == [""] && select_box.options.length == 2)) {
-          jQuery(select_box).prev().css('display','none');
+        options = $.map(select_box.options, function(opt){ return opt.value})
+        // Below used ''+[] for converting arrays to strings n comapring
+        if(select_box.options.length == 0 || ''+options == ''+["--"] || ''+options == ''+[""]){
+          $(select_box).prev().css('display','none');
         }else{
-          jQuery(select_box).prev().css('display','block');
+          $(select_box).prev().css('display','block');
         }
     },
 

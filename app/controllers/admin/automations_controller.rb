@@ -83,17 +83,22 @@ class Admin::AutomationsController < Admin::AdminController
         f["nested_rules"] = (ActiveSupport::JSON.decode f["nested_rules"]).map{ |a| a.symbolize_keys! } if (f["nested_rules"])
       end
     end
+
+    def get_event_performer
+      []
+    end
     
     def load_config
-      @agents = [[0, t('admin.observer_rules.assigned_agent')], [-2, t('admin.observer_rules.event_performer')]]
-      @agents.concat current_account.users.technicians.collect { |au| [au.id, au.name] }
+      @agents = [[0, t('admin.observer_rules.assigned_agent')]]
+      @agents.concat get_event_performer
+      @agents.concat [['', t('none')]]+current_account.users.technicians.collect { |au| [au.id, au.name] }
 
-      @groups = [[0, t('admin.observer_rules.assigned_group')]]
+      @groups = [[0, t('admin.observer_rules.assigned_group')], ['', t('none')]]
       @groups.concat current_account.groups.find(:all, :order=>'name' ).collect { |g| [g.id, g.name]}
 
       @products = current_account.products.collect {|p| [p.id, p.name]}
       
-      action_hash     = [
+      action_hash     = [ 
         { :name => -1, :value => t('click_to_select_action') },
         { :name => "priority", :value => t('set_priority_as'), :domtype => "dropdown", 
           :choices => TicketConstants.priority_list.sort },
@@ -107,18 +112,20 @@ class Admin::AutomationsController < Admin::AdminController
         { :name => "responder_id", :value => t('ticket.assign_to_agent'), 
           :domtype => 'dropdown', :choices => @agents[1..-1] },
         { :name => "group_id", :value => t('email_configs.info9'), :domtype => 'dropdown', 
-          :choices => @groups },
+          :choices => @groups[1..-1] },
         { :name => -1, :value => "-----------------------" },
         { :name => "send_email_to_group", :value => t('send_email_to_group'), 
-          :domtype => 'email_select', :choices => @groups },
+          :domtype => 'email_select', :choices => @groups-[@groups[1]] },
         { :name => "send_email_to_agent", :value => t('send_email_to_agent'), 
-          :domtype => 'email_select', :choices => @agents },
+          :domtype => 'email_select', 
+          :choices => get_event_performer.empty? ? @agents-[@agents[1]] : @agents-[@agents[2]] },
         { :name => "send_email_to_requester", :value => t('send_email_to_requester'), 
           :domtype => 'email' },
         { :name => -1, :value => "-----------------------" },
         { :name => "delete_ticket", :value => t('delete_the_ticket')},
         { :name => "mark_as_spam", :value => t('mark_as_spam')},
-        { :name => -1, :value => "-----------------------" } ]
+        { :name => -1, :value => "-----------------------" }
+      ]
                         
       additional_actions.each { |index, value| action_hash.insert(index, value) }
       add_custom_actions action_hash
@@ -128,12 +135,12 @@ class Admin::AutomationsController < Admin::AdminController
     def additional_actions
       actions = {5 => {:name => "add_comment"  , :value => t('add_note')      , :domtype => 'comment'}}
       actions[10] = { :name => "product_id", :value => t('admin.products.assign_product'),
-          :domtype => 'dropdown', :choices => @products } if current_account.features?(:multi_product)
+          :domtype => 'dropdown', :choices => [['', t('none')]]+@products } if current_account.features?(:multi_product)
       actions
     end
     
     def add_custom_actions action_hash
-      none_value = [['', t('any_val.none')]]
+      special_case = [['', t('none')]]
        current_account.ticket_fields.custom_fields.each do |field|
          action_hash.push({ 
            :id => field.id,
@@ -141,7 +148,7 @@ class Admin::AutomationsController < Admin::AdminController
            :field_type => field.field_type,
            :value => t('set_field_label_as', :custom_field_name => field.label), 
            :domtype => (field.field_type == "nested_field") ? "nested_field" : field.flexifield_def_entry.flexifield_coltype,
-           :choices => (field.field_type == "nested_field") ? (field.nested_choices none_value) : none_value+field.picklist_values.collect { |c| [c.value, c.value ] },
+           :choices => (field.field_type == "nested_field") ? (field.nested_choices_with_special_case special_case) : special_case+field.picklist_values.collect { |c| [c.value, c.value ] },
            :action => "set_custom_field", 
            :handler => field.flexifield_def_entry.flexifield_coltype,
            :nested_fields => nested_fields(field)

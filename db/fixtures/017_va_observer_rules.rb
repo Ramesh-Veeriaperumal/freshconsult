@@ -37,7 +37,8 @@ VARule.seed_many(:account_id, :name, :rule_type, [
         {
           :email_to => Va::Action::ASSIGNED_AGENT,
           :name => 'send_email_to_agent',
-          :email_body => '<p>Hi {{ticket.agent.name}},<br /><br />Ticket "#{{ticket.id}} - {{ticket.subject}}" has been reopened, please visit {{ticket.url}} to view the ticket.<br /><br />Ticket comment<br />{{comment.body}}</p>'
+          :email_body => '<p>Hi {{ticket.agent.name}},<br /><br />Ticket "#{{ticket.id}} - {{ticket.subject}}" has been reopened, please visit {{ticket.url}} to view the ticket.<br /><br />Ticket comment<br />{{comment.body}}</p>',
+          :email_subject => 'Ticket re-opened - [#{{ticket.id}}] {{ticket.subject}}'
         }
       ]
     ]

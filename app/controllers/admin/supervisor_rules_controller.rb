@@ -51,7 +51,7 @@ class Admin::SupervisorRulesController < Admin::VaRulesController
     def additional_actions
       if current_account.features?(:multi_product)
         { 9 => { :name => "product_id", :value => t('admin.products.assign_product'),
-                :domtype => 'dropdown', :choices => @products } }
+                :domtype => 'dropdown', :choices => [['', t('none')]]+@products } }
       else
         {}
       end

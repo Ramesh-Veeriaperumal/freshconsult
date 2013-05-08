@@ -1,6 +1,6 @@
 class Admin::ObserverRulesController < Admin::SupervisorRulesController
 
-  NESTED_FIELDS = ['nested_rules', 'from_nested_rules', 'to_nested_rules']
+  NESTED_EVENTS_SEPERATION = ['nested_rules', 'from_nested_rules', 'to_nested_rules']
   OBSERVER_FILTERS = [
     { :name => -1, :value => "-----------------------" },
     { :name => "inbound_count", :value => I18n.t('ticket.inbound_count'), :domtype => "number",
@@ -27,6 +27,10 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
       @event_input = ActiveSupport::JSON.encode @va_rule.filter_data[:events]
       @filter_input = ActiveSupport::JSON.encode @va_rule.filter_data[:conditions]
       @action_input = ActiveSupport::JSON.encode @va_rule.action_data
+    end
+
+    def get_event_performer
+      [[-2, t('admin.observer_rules.event_performer')]]
     end
 
     def load_config
@@ -70,7 +74,7 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
     end
 
     def add_custom_events event_hash
-      any_value = [['--', t('any_val.any_value')]]
+      special_cases = [['--', t('any_val.any_value')], ['', t('none')]]
       cf = current_account.ticket_fields.event_fields
       unless cf.blank? 
         event_hash.push({ :name => -1,
@@ -85,10 +89,10 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
                           "nested_field" :
                             field.flexifield_def_entry.flexifield_coltype,
             :choices => (field.field_type == "nested_field") ? 
-                          (field.nested_choices any_value) : 
-                            any_value+field.picklist_values.collect { |c| [c.value, c.value ] },
+                          (field.nested_choices_with_special_case special_cases) : 
+                            special_cases+field.picklist_values.collect{ |c| [c.value, c.value ] },
             :type => (field.field_type == "custom_checkbox") ? 1 : 2,
-            :nested_fields => nested_fields(field)
+            :nested_fields => nested_fields_by_dbname(field)
           })
         end
       end
@@ -107,7 +111,7 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
                 filter_data.blank? ? [] : filter_data
     end
     
-    def nested_fields ticket_field
+    def nested_fields_by_dbname ticket_field
       nestedfields = { :subcategory => "", :items => "" }
       if ticket_field.field_type == "nested_field"
         ticket_field.nested_ticket_fields.each do |field|
@@ -120,7 +124,7 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
 
     def set_nested_fields_data(data)      
       data.each do |f|       
-        NESTED_FIELDS.each do |field|
+        NESTED_EVENTS_SEPERATION.each do |field|
           f[field] = 
               (ActiveSupport::JSON.decode f[field]).map{ |a| 
                                             a.symbolize_keys! } unless f[field].nil?

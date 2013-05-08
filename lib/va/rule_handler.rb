@@ -6,6 +6,7 @@ class Va::RuleHandler
   end
 
   def value
+    @value_key||= :value
     rule_hash[value_key]
   end
 
@@ -30,7 +31,6 @@ class Va::RuleHandler
   end
   
   def evaluate_rule(evaluate_on_value)
-    @value_key = :value
     #return evaluate_on_value.send(:casecmp, value)
     send(condition.operator, evaluate_on_value)
   end

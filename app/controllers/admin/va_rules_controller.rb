@@ -88,7 +88,7 @@ class Admin::VaRulesController < Admin::AutomationsController
         ]
 
       filter_hash.insert(11, { :name => "product_id", :value => t('admin.products.product_label_msg'),:domtype => 'dropdown', 
-        :choices => [['', I18n.t('ticket.none')]]+@products, :operatortype => "choicelist" }) if current_account.features?(:multi_product)
+        :choices => [['', t('none')]]+@products, :operatortype => "choicelist" }) if current_account.features?(:multi_product)
 
       filter_hash = filter_hash + additional_filters
       business_hours_filter filter_hash
@@ -101,7 +101,7 @@ class Admin::VaRulesController < Admin::AutomationsController
     def additional_actions
       if current_account.features?(:multi_product)
       { 9 => { :name => "product_id", :value => t('admin.products.assign_product'),
-          :domtype => 'dropdown', :choices => @products },
+          :domtype => 'dropdown', :choices => [['', t('none')]]+@products },
         16 => { :name => "skip_notification", :value => t('dispatch.skip_notifications')}}
       else
         {16 => { :name => "skip_notification", :value => t('dispatch.skip_notifications')}}
@@ -113,6 +113,7 @@ class Admin::VaRulesController < Admin::AutomationsController
     end
   
     def add_custom_filters filter_hash
+      special_case = [['', t('none')]]
       cf = current_account.ticket_fields.custom_fields
       unless cf.blank? 
         filter_hash.push({ :name => -1,
@@ -125,7 +126,7 @@ class Admin::VaRulesController < Admin::AutomationsController
             :value => field.label,
             :field_type => field.field_type,
             :domtype => (field.field_type == "nested_field") ? "nested_field" : field.flexifield_def_entry.flexifield_coltype,
-            :choices =>  (field.field_type == "nested_field") ? field.nested_choices : field.picklist_values.collect { |c| [c.value, c.value ] },
+            :choices =>  (field.field_type == "nested_field") ? (field.nested_choices_with_special_case special_case) : special_case+field.picklist_values.collect { |c| [c.value, c.value ] },
             :action => "set_custom_field",
             :operatortype => CF_OPERATOR_TYPES.fetch(field.field_type, "text"),
             :nested_fields => nested_fields(field)

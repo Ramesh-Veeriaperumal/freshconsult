@@ -2249,7 +2249,7 @@ en:
     reply: Reply is sent
     due_date: Due date is changed
     ticket: Ticket is
-    customer_feedback: Custome Feedback is received
+    customer_feedback: Customer Feedback is received
     time_entry: Time Entry is 
   ticket:
     spam: "SPAM"

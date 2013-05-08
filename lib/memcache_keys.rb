@@ -35,6 +35,10 @@ module MemcacheKeys
 
   ACCOUNT_EVENT_FIELDS = "v1/ACCOUNT_EVENT_FIELDS:%{account_id}"
 
+  ACCOUNT_FLEXIFIELDS = "v1/ACCOUNT_FLEXIFIELDS:%{account_id}"
+
+  ACCOUNT_OBSERVER_RULES = "v1/ACCOUNT_OBSERVER_RULES:%{account_id}"
+
   ES_ENABLED_ACCOUNTS = "ES_ENABLED_ACCOUNTS"
  
   # Portal customization related keys

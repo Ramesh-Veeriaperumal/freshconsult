@@ -19,10 +19,10 @@
         case 'autocompelete':
           c_dom = FactoryUI.text("", value, initFeed[value], type + ' required text row-fluid ');
           jQuery(c_dom).prop("id", id);
-          break;
+        break;
         case 'dropdown':
           var choices = [];
-          initFeed[value] = initFeed[value] || " ";
+          initFeed[value] = initFeed[value] || "";
           filter.choices.each(function(arrayItem){
             choices.push({
               name: arrayItem[0],
@@ -31,6 +31,9 @@
           });
           c_dom = FactoryUI.dropdown(choices, value, _class_name, _data_attr);
           jQuery(c_dom).val(initFeed[value]);
+
+          //Monkey patch
+          if(initFeed[value]==''){ jQuery(c_dom).attr('placeholder', 'None'); }
         break;
         case 'optgroup':
           c_dom = FactoryUI.optgroup(filter.choices, "value", _class_name, _data_attr);
@@ -68,20 +71,23 @@
                       .append(jQuery("<div class='span10' />")
                       .append(control));
           }
+
+          var subject = jQuery('<div class="subject_div row-fluid" />')
+                  .append("<label class='span2'><%= t('.subject') %></label>")
+                  .append(jQuery("<div class='span10' />")
+                  .append(FactoryUI.text("", "email_subject", initFeed["email_subject"])))
         
-          var body  = jQuery('<div class="row-fluid" />')
+          var body  = jQuery('<div class="body_div row-fluid" />')
                   .append("<label class='span2'><%= t('.body') %></label>")
-                  .append("<span class='required_star'>*</span>")
                   .append(jQuery("<div class='span10' />")
                   .append("<a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a>")
-                  .append(FactoryUI.paragraph("", "email_body", initFeed["email_body"], "email_body required")))
-                  
+                  .append(FactoryUI.paragraph("", "email_body", initFeed["email_body"])))
 
-          c_dom = jQuery("<div class=\"s_email\" />")
+          c_dom = jQuery("<div class='s_email' />")
                 .append(to || "")
+                .append(subject)
                 .append(body);
         break;  
-      
         case 'checkbox':
           if (compName == 'action' || compName == 'event') {
             var choices = [{
@@ -91,7 +97,7 @@
               name: 0,
               value: compName == 'action' ? "<%= t(".not_selected") %>" : "<%= t(".unchecked") %>"
             }];
-            c_dom = FactoryUI.dropdown(choices, value, _class_name, {'minimumResultsForSearch':'10'});
+            c_dom = FactoryUI.dropdown(choices, value, _class_name, _data_attr);
             jQuery(c_dom).val(initFeed[value]);
           } 
         break;
@@ -121,7 +127,6 @@
           if(!filter.tree) filter.tree = new NestedField(filter.choices);
           c_dom = jQuery("<div />").addClass(_class_name).nestedselect(filter.tree, _opts, value, _data_attr);
         break;
-        
         default:
         c_dom = "";
       }     

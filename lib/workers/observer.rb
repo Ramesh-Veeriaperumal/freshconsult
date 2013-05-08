@@ -15,9 +15,7 @@ class Workers::Observer
       p evaluate_on.flexifield
       p evaluate_on.schema_less_ticket
 
-      p evaluate_on.changes
-
-      account.observer_rules.each do |vr|
+      account.observer_rules_from_cache.each do |vr|
         vr.check_events doer, evaluate_on, current_events
       end
 
@@ -26,8 +24,7 @@ class Workers::Observer
       p evaluate_on.flexifield.changes
       p evaluate_on.schema_less_ticket.changes
 
-      evaluate_on.flexifield.save unless evaluate_on.flexifield.changes.blank?
-      evaluate_on.save unless evaluate_on.changes.blank? 
+      evaluate_on.save
       
     rescue Exception => e
       puts "something is wrong  : #{e.message}"
