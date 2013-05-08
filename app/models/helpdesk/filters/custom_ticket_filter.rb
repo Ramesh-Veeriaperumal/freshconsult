@@ -340,7 +340,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       order_parts = order_columns.split('.')
       
       if order.eql? "requester_responded_at"
-        "if(helpdesk_ticket_states.#{order} IS NULL, helpdesk_tickets.created_at, helpdesk_ticket_states.#{order}) #{order_type}"
+        "helpdesk_tickets.id"
       else
         if order_parts.size > 1
           "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
