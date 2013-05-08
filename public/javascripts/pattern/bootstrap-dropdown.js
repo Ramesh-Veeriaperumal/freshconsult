@@ -51,12 +51,11 @@
       isActive = $parent.hasClass('open')
 
       clearMenus()
-
       if (!isActive) {
         $parent.toggleClass('open')
-        $parent.find(".dropdown-menu").toggle().toggle().style.display='block';
+        $parent.find(".dropdown-menu").toggle().toggle()
       }else{
-        $parent.find(".dropdown-menu").toggle().toggle().style.display='none';
+        $parent.find(".dropdown-menu")[0].style.display='none'
       }
 
       $this.focus()
