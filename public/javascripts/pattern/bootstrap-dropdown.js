@@ -54,9 +54,10 @@
 
       if (!isActive) {
         $parent.toggleClass('open')
-        $parent.find(".dropdown-menu").toggle().toggle()
+        $parent.find(".dropdown-menu").toggle().toggle().style.display='block';
+      }else{
+        $parent.find(".dropdown-menu").toggle().toggle().style.display='none';
       }
-
 
       $this.focus()
 
