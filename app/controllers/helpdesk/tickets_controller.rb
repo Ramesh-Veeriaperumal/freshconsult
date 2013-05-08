@@ -551,7 +551,7 @@ class Helpdesk::TicketsController < ApplicationController
     count = 0
     tries = 3
     begin
-      set_key(draft_key, params[:draft_data])
+      $redis_secondary.set(draft_key, params[:draft_data])
     rescue Exception => e
       NewRelic::Agent.notice_error(e,{:key => draft_key, 
         :value => params[:draft_data],
@@ -712,8 +712,12 @@ class Helpdesk::TicketsController < ApplicationController
       filter_params = params.clone
       filter_params.delete(:action)
       filter_params.delete(:controller)
-      
-      set_key(redis_key, filter_params.to_json, 86400)
+      begin
+        $redis_secondary.set(redis_key, filter_params.to_json)
+        $redis_secondary.set(redis_key, 86400)
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e) 
+      end
 
       @cached_filter_data = get_cached_filters
     end
@@ -893,11 +897,15 @@ class Helpdesk::TicketsController < ApplicationController
 
   def set_show_version
     if cookies[:new_details_view].present?
-      set_key(show_version_key, cookies[:new_details_view].eql?("true") ? "1" : "0", 86400 * 50)
+      $redis_secondary.set(show_version_key, cookies[:new_details_view].eql?("true") ? "1" : "0")
+      $redis_secondary.expire(show_version_key, 86400 * 50)
       # Expiry set to 50 days
       cookies.delete(:new_details_view) 
     end
-    @new_show_page = (get_key(show_version_key) == "1")
+    @new_show_page = ($redis_secondary.get(show_version_key) == "1")
+  rescue Exception => e
+    NewRelic::Agent.notice_error(e)
+    return
   end
 
   def show_version_key
