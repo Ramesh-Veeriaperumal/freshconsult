@@ -107,7 +107,6 @@
 
   function clearMenus() {
     $(toggle).each(function () {
-      //debugger
       getParent($(this)).removeClass('open')
       getParent($(this)).find(".dropdown-menu").toggle().toggle()[0].style.display='none'
     })
