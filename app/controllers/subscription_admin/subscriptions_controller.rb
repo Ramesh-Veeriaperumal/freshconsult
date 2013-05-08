@@ -106,7 +106,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   #"name","full_domain","name","email","created_at","next_renewal_at","amount","agent_limit","subscription_plan_id","renewal_period","subscription_discount_id"
   def customers_csv
    #subscriptions = Subscription.find(:all,:include => :account, :order => 'accounts.created_at desc',:conditions => {:state => 'active'} )
-    csv_string = FasterCSV.generate do |csv| 
+    csv_string = CSVBridge.generate do |csv| 
       # header row 
       csv << ["name","full_domain","contact name","email","created_at","next_renewal_at","amount","agent_limit","plan","renewal_period","Free agents"] 
  

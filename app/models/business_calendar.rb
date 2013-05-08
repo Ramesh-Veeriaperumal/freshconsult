@@ -1,3 +1,4 @@
+# encoding: utf-8
 #Well, it is not a sexy name, but everything else is taken by business_time plugin.
 
 class BusinessCalendar < ActiveRecord::Base

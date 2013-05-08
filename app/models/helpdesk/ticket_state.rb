@@ -133,39 +133,29 @@ private
 
   # populating data in monthly stats table for created and update cases
   def create_ticket_stats
-    begin
-      resolved_tkt, fcr_tkt, sla_tkt, created_hour, resolved_hour = 0, 0, 0, created_at.hour, "\\N"
-      resolved_tkt, fcr_tkt, sla_tkt, resolved_hour  = 1, 1, 1, created_hour unless tickets.active?
-      assign_tkt = first_assigned_at ? 1 : 0
-      sql = %(INSERT INTO #{stats_table} (#{REPORT_STATS.join(",")}) VALUES(#{account_id},#{ticket_id},
-            '#{created_at.strftime('%Y-%m-%d 00:00:00')}','#{created_hour}',
-            #{resolved_hour},1,#{resolved_tkt},0,#{assign_tkt},0,#{fcr_tkt},#{sla_tkt}))
-      SeamlessDatabasePool.use_master_connection do 
-        connection.execute(sql)
-      end
-    rescue Exception => e
-      puts "Exception occurred while inserting data into stats table"
-      NewRelic::Agent.notice_error(e)
+    resolved_tkt, fcr_tkt, sla_tkt, created_hour, resolved_hour = 0, 0, 0, created_at.hour, "\\N"
+    resolved_tkt, fcr_tkt, sla_tkt, resolved_hour  = 1, 1, 1, created_hour unless tickets.active?
+    assign_tkt = first_assigned_at ? 1 : 0
+    sql = %(INSERT INTO #{stats_table} (#{REPORT_STATS.join(",")}) VALUES(#{account_id},#{ticket_id},
+          '#{created_at.strftime('%Y-%m-%d 00:00:00')}','#{created_hour}',
+          #{resolved_hour},1,#{resolved_tkt},0,#{assign_tkt},0,#{fcr_tkt},#{sla_tkt}))
+    SeamlessDatabasePool.use_master_connection do 
+      connection.execute(sql)
     end
   end
 
   def update_ticket_stats
     return unless (@ticket_state_changes.keys & STATS_ATTRIBUTES).any?
-    begin
-      stats_table_name = stats_table
-      datetime = updated_at.strftime('%Y-%m-%d 00:00:00')
-      select_sql = %(SELECT * FROM #{stats_table_name} where ticket_id = #{ticket_id} and 
-        account_id = #{account_id} and created_at = '#{datetime}' )
-      SeamlessDatabasePool.use_master_connection do 
-        result = connection.execute(select_sql)
-        f_hash = result.fetch_hash
-        f_hash.symbolize_keys! unless f_hash.nil?
-        result.free
-        check_and_update_ticket_stats(stats_table_name,f_hash,datetime)
-      end
-    rescue Exception => e
-      puts "Exception occurred while updating data into stats table"
-      NewRelic::Agent.notice_error(e)
+    stats_table_name = stats_table
+    datetime = updated_at.strftime('%Y-%m-%d 00:00:00')
+    select_sql = %(SELECT * FROM #{stats_table_name} where ticket_id = #{ticket_id} and 
+      account_id = #{account_id} and created_at = '#{datetime}' )
+    SeamlessDatabasePool.use_master_connection do 
+      result = connection.execute(select_sql)
+      f_hash = result.fetch_hash
+      f_hash.symbolize_keys! unless f_hash.nil?
+      result.free
+      check_and_update_ticket_stats(stats_table_name,f_hash,datetime)
     end
   end
 

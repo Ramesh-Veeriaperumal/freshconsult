@@ -93,7 +93,7 @@ class Admin::QuestsController < Admin::AdminController
     
     def ticket_filters
       [
-        { :name => -1, :value => "--- #{I18n.t('click_to_select_filter')} ---" },
+        { :name => -1, :value => "#{I18n.t('click_to_select_filter')}" },
         { :name => "priority", :value => I18n.t('ticket.priority'), :domtype => "dropdown", 
           :choices => TicketConstants.priority_list.sort, :operatortype => "choicelist" },
         { :name => "ticket_type", :value => t('ticket.type'), :domtype => "dropdown", 
@@ -141,7 +141,7 @@ class Admin::QuestsController < Admin::AdminController
     
     def solution_filters
       [
-        { :name => -1, :value => "--- #{I18n.t('click_to_select_filter')} ---" },
+        { :name => -1, :value => "#{I18n.t('click_to_select_filter')}" },
         { :name => "folder_id", :value => I18n.t('quests.solution_folder'), :domtype => "optgroup", 
           :choices => Solution::Category.folder_names(current_account).collect{ |category|  
             [CGI.escapeHTML(category[0]),category[1].collect{ |folder|
@@ -155,7 +155,7 @@ class Admin::QuestsController < Admin::AdminController
     
     def forum_filters
       [
-        { :name => -1, :value => "--- #{I18n.t('click_to_select_filter')} ---" },
+        { :name => -1, :value => "#{I18n.t('click_to_select_filter')}" },
         { :name => "forum_id", :value => I18n.t('quests.forums'), :domtype => "optgroup", 
           :choices => ForumCategory.forum_names(current_account).collect{ |category|  
             [CGI.escapeHTML(category[0]),category[1].collect{ |forum|

@@ -1,7 +1,7 @@
 class Admin::SupervisorRulesController < Admin::VaRulesController
   
   STATE_FILTERS = [
-    { :name => -1, :value => "------------------------------" },
+    { :name => -1, :value => "-----------------------" },
     { :name => "created_at", :value => I18n.t('ticket.created_at'), :domtype => "number",
       :operatortype => "hours" },
     { :name => "pending_since", :value => I18n.t('ticket.pending_since'), :domtype => "number",
@@ -26,7 +26,8 @@ class Admin::SupervisorRulesController < Admin::VaRulesController
       :operatortype => "hours" },
     { :name => "inbound_count", :value => I18n.t('ticket.inbound_count'), :domtype => "number",
       :operatortype => "hours" },
-    { :name => -1, :value => "------------------------------" }
+    { :name => "outbound_count", :value => I18n.t('ticket.outbound_count'), :domtype => "number",
+      :operatortype => "hours" },
   ]
   
   protected
@@ -50,7 +51,7 @@ class Admin::SupervisorRulesController < Admin::VaRulesController
     def additional_actions
       if current_account.features?(:multi_product)
         { 9 => { :name => "product_id", :value => t('admin.products.assign_product'),
-                :domtype => 'dropdown', :choices => @products } }
+                :domtype => 'dropdown', :choices => [['', t('none')]]+@products } }
       else
         {}
       end

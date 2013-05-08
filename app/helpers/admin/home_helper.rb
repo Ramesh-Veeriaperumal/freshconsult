@@ -41,6 +41,7 @@ HTML
       [ [t(".helpdesk"),t(".productivity")], [ 
           ['/admin/va_rules',             'dispatcher'              ],
           ['/admin/supervisor_rules',     'supervisor'              ],
+          ['/admin/observer_rules',       'observer'                ],
           ['/admin/automations',          'scenario',       feature?(:scenario_automations) ],
           ['/admin/email_commands_settings', 'email_commands_setting'], 
           ['/integrations/applications',  'integrations'            ],

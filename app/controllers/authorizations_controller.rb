@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'httparty'
 require 'cgi'
 require 'json'

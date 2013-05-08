@@ -1,3 +1,4 @@
+# encoding: utf-8
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
   
@@ -771,7 +772,7 @@ module ApplicationHelper
     if fb_page
       return content_tag('div', "<a href='javascript:void(0)'></a>  Your Facebook channel is inaccessible. 
         It looks like username, password, or permission has been changed recently.Kindly 
-        <a href='/social/facebook' target='_blank'> fix </a> it.  ", :id => type, :class => 
+        <a href='/social/facebook' target='_blank'> fix </a> it.  ", :class => 
         "alert-message block-message warning full-width")
     end
     return
@@ -782,7 +783,7 @@ module ApplicationHelper
     if twt_handle
       return content_tag('div', "<a href='javascript:void(0)'></a>  Your Twitter channel is inaccessible. 
         It looks like username or password has been changed recently. Kindly 
-        <a href='/social/twitters' target='_blank'> fix </a> it.  ", :id => type, :class => 
+        <a href='/social/twitters' target='_blank'> fix </a> it.  ", :class => 
         "alert-message block-message warning full-width")
     end
     return

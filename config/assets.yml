@@ -1,8 +1,8 @@
-package_assets:         on      # (on, off, always)
+package_assets:         on          # (on, off, always)
 embed_assets:           off         # (on, off, datauri)
 compress_assets:        on          # (on, off)
 package_path:           packages    # (defaults to assets)
-javascript_compressor:  uglifier    # (yui, closure)
+javascript_compressor:  yui         # (yui, closure)
 allow_debugging:        on
 
 stylesheets:
@@ -220,6 +220,9 @@ javascripts:
     - public/javascripts/bootstrap.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.itoggle.js
+
+  observer_event:
+    - public/javascripts/observer_events.js 
 
   conditional:
     - public/javascripts/autosuggest.js    

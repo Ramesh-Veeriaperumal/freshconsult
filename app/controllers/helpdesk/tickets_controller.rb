@@ -37,7 +37,6 @@ class Helpdesk::TicketsController < ApplicationController
   alias :load_ticket :load_item
   before_filter :load_ticket, :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :activities, :status]
 
-  before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
   before_filter :check_ticket_status, :only => [:update]
@@ -335,10 +334,9 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
   
-  def execute_scenario 
+  def execute_scenario
     va_rule = current_account.scn_automations.find(params[:scenario_id])    
     va_rule.trigger_actions(@item)
-    update_custom_field @item    
     @item.save
     @item.create_activity(current_user, 'activities.tickets.execute_scenario.long', 
       { 'scenario_name' => va_rule.name }, 'activities.tickets.execute_scenario.short')
@@ -626,28 +624,6 @@ class Helpdesk::TicketsController < ApplicationController
       end
     end
 
-    def load_flexifield   
-      flexi_arr = Hash.new
-      @item.ff_aliases.each do |label|    
-        value = @item.get_ff_value(label.to_sym())    
-        flexi_arr[label] = value    
-        @item.write_attribute label, value
-      end  
-      @item.custom_field = flexi_arr  
-    end
-
-    def update_custom_field  evaluate_on
-      flexi_field = evaluate_on.custom_field      
-      evaluate_on.custom_field.each do |key,value|    
-        flexi_field[key] = evaluate_on.read_attribute(key)      
-      end     
-      ff_def_id = FlexifieldDef.find_by_account_id(evaluate_on.account_id).id    
-      evaluate_on.ff_def = ff_def_id       
-      unless flexi_field.nil?     
-        evaluate_on.assign_ff_values flexi_field    
-      end
-    end
-
     def choose_layout 
       layout_name = request.headers['X-PJAX'] ? 'maincontent' : 'application'
       case action_name
@@ -672,7 +648,7 @@ class Helpdesk::TicketsController < ApplicationController
   def load_email_params
     @signature = current_user.agent.signature_value || ""
     @email_config = current_account.primary_email_config
-    @reply_email = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
+    @reply_emails = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
     @ticket ||= current_account.tickets.find_by_display_id(params[:id])
     @selected_reply_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
   end

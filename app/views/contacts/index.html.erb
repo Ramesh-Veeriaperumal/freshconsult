@@ -39,7 +39,7 @@
 		        		<% if @contacts.present? %>
 					        <div class="cust_list_table_body">
 					        	<!-- Add content here for top of the table-->
-					        	<%= render(:partial => '/shared/customers_toolbar', :locals => {:path => contacts_path}) %>
+					        	<%= render(:partial => '/shared/customers_toolbar', :locals => {:type => "user", :path => contacts_path}) %>
 					        		<table class="table table-striped" id = "contacts-table">
 										<%= render :partial => "contact", :collection => @contacts %> 
 									</table>  

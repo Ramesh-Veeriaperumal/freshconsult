@@ -54,7 +54,7 @@
       <input type="hidden" value='<%= redirect_back %>' id="redirect"/>
     </div>
 
-      <% form_remote_tag (:url =>{ :controller => "merge_tickets", :action=>"merge" },:html => {:id=>"bulk_merge_tickets"}) do -%>  
+      <% form_remote_tag(:url =>{ :controller => "merge_tickets", :action=>"merge" },:html => {:id=>"bulk_merge_tickets"}) do -%>  
       <div class="divide"></div>
       <input type="hidden" name="target[ticket_id]" id="target_ticket" />
         <div class="button-container" id="bulk-merge-button-container">

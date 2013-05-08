@@ -14,7 +14,7 @@ class Reports::TimesheetReportsController < ApplicationController
   end
   
   def export_csv
-    csv_string = FasterCSV.generate do |csv|
+    csv_string = CSVBridge.generate do |csv|
       headers = csv_hash.keys.sort
       csv << headers
        @time_sheets.each do |record|

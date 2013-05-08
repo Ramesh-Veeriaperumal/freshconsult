@@ -66,6 +66,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
   named_scope :status_field, :conditions => { :name => "status" }
   named_scope :nested_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'nested_field'"]
   named_scope :nested_and_dropdown_fields, :conditions=>["flexifield_def_entry_id is not null and (field_type = 'nested_field' or field_type='custom_dropdown')"]
+  named_scope :event_fields, :conditions=>["flexifield_def_entry_id is not null and (field_type = 'nested_field' or field_type='custom_dropdown' or field_type='custom_checkbox')"]
+
 
   # Enumerator constant for mapping the CSS class name to the field type
   FIELD_CLASS = { :default_subject      => { :type => :default, :dom_type => "text",
@@ -82,18 +84,12 @@ class Helpdesk::TicketField < ActiveRecord::Base
                                               :form_field => "description_html", :visible_in_view_form => false },
                   :default_product      => { :type => :default, :dom_type => "dropdown_blank",
                                              :form_field => "product_id" },
-                  :custom_text          => { :type => :custom, :dom_type => "text", 
-                                             :va_handler => "text" },
-                  :custom_paragraph     => { :type => :custom, :dom_type => "paragraph", 
-                                             :va_handler => "text" },
-                  :custom_checkbox      => { :type => :custom, :dom_type => "checkbox", 
-                                             :va_handler => "checkbox" },
-                  :custom_number        => { :type => :custom, :dom_type => "number", 
-                                             :va_handler => "numeric"},
-                  :custom_dropdown      => { :type => :custom, :dom_type => "dropdown", 
-                                             :va_handler => "dropdown"},
-                  :nested_field         => {:type => :custom, :dom_type => "dropdown_blank",
-                                              :va_handler => "nested_field"}
+                  :custom_text          => { :type => :custom, :dom_type => "text"},
+                  :custom_paragraph     => { :type => :custom, :dom_type => "paragraph"},
+                  :custom_checkbox      => { :type => :custom, :dom_type => "checkbox"},
+                  :custom_number        => { :type => :custom, :dom_type => "number"},
+                  :custom_dropdown      => { :type => :custom, :dom_type => "dropdown"},
+                  :nested_field         => { :type => :custom, :dom_type => "dropdown_blank"}
                 }
 
   def dom_type
@@ -137,13 +133,40 @@ class Helpdesk::TicketField < ActiveRecord::Base
          []
      end
   end  
-  
+
   def nested_choices
     self.picklist_values.collect { |c| 
       [c.value, c.value, c.sub_picklist_values.collect { |sub_c|
             [sub_c.value, sub_c.value, sub_c.sub_picklist_values.collect { |i_c| [i_c.value,i_c.value] } ] }
       ]
     }
+  end
+
+  def nested_choices_with_special_case special_cases = []
+    special_cases = special_cases.collect{ |default| 
+                                            Helpdesk::PicklistValue.new(:value =>default[0]) }
+
+    (special_cases + self.picklist_values).collect{ |c|
+        current_sp = [] 
+        unless c.sub_picklist_values.empty? && special_cases.map(&:value).exclude?(c.value)
+          current_sp = special_cases.select{ |sp| sp.value == c.value }
+          current_sp = current_sp.empty? ? special_cases : current_sp
+        end
+
+        subcategory_val = (current_sp + c.sub_picklist_values).collect{ |sub_c|
+          current_sp = []
+          unless sub_c.sub_picklist_values.empty? && special_cases.map(&:value).exclude?(sub_c.value)
+            current_sp = special_cases.select{ |sp| sp.value == sub_c.value }
+            current_sp = current_sp.empty? ? special_cases : current_sp   
+          end
+
+          item_val = (current_sp + sub_c.sub_picklist_values).collect{ |i_c|
+            [i_c.value, i_c.value]
+          };
+        [sub_c.value, sub_c.value, item_val ]
+        };
+      [c.value, c.value, subcategory_val ]
+    };
   end
 
   def html_unescaped_choices(ticket = nil)
