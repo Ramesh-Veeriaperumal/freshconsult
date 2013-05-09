@@ -12,11 +12,12 @@ module HtmlSanitizer
         :html_sanitize => (options[:html_sanitize] || []),
         :full_sanitizer => (options[:full_sanitizer] || [])
       }
-      sanitize_field_data
+      sanitize_field_data if self.table_exists?
     end
 
     def sanitize_field_data
-      if(xss_terminate_options[:only].empty?)
+      begin
+        if(xss_terminate_options[:only].empty?)
           self.columns.each do |column|
             next  unless column.type == :text || column.type == :string
             field = column.name.to_sym
@@ -26,7 +27,7 @@ module HtmlSanitizer
               handle_sanitization(xss_terminate_options,field)
             end
           end
-      else
+        else
           self.columns.each do |column|
             next  unless column.type == :text || column.type == :string
             field = column.name.to_sym
@@ -36,6 +37,9 @@ module HtmlSanitizer
               next
             end
           end
+        end
+      rescue Exception => e
+
       end
     end
 
@@ -54,21 +58,21 @@ module HtmlSanitizer
         def #{attr_name.to_s}=(value)
           write_attribute("#{attr_name.to_sym}",Helpdesk::HTMLSanitizer.clean(value))
         end
-        )
+      )
     end
     def generate_setters_full_sanitizer(attr_name)
       class_eval %Q(
         def #{attr_name.to_s}=(value)
           write_attribute("#{attr_name.to_sym}",CGI.escapeHTML(value))
         end
-        )
+      )
     end
     def generate_setters_plain(attr_name)
       class_eval %Q(
         def #{attr_name.to_s}=(value)
           write_attribute("#{attr_name.to_sym}",RailsSanitizer.full_sanitizer.sanitize(value))
-        end 
-        )
+        end
+      )
     end
 
   end

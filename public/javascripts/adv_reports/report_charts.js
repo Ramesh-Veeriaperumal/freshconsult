@@ -209,9 +209,13 @@ function single_stacked_bar_chart(opts){
     		dataLabels: {
     			enabled: true,
     			formatter: this.pie_label_formatter,
-    			color: '#eee',
+    			color: '#fefefe',
     			align: 'center',
     			y: 0,
+          style:{
+            fontSize: '12px',
+            fontWeight:'bold'
+          }
     		},
     		showInLegend : true,
         animation: opts['isPDF'] ? false : true
@@ -281,7 +285,11 @@ function pieChart(opts){
 	          font: "6pt",
 	          textTransform: "capitalize"
 	        },
-	      color: '#eee'
+	        color: '#fefefe',
+          style:{
+            fontSize: '12px',
+            fontWeight:'bold'
+          }
 	      },
 	      showInLegend: true,
         animation: opts['isPDF'] ? false : true

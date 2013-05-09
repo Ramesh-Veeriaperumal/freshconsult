@@ -4999,7 +4999,8 @@ a.close{
 
 		.note {
 			margin-top:0;
-			background: url(/images/overlay/note_quote.png) no-repeat;
+			background-image: inline-image('cdn-ignored/inline-images/note_quote.png');
+			background-repeat: no-repeat;
 			padding-left: 27px;
 			min-height:13px;
 			padding-top:5px;
@@ -9222,9 +9223,14 @@ height: auto;
 #TicketProperties{
 	.edit_helpdesk_ticket{
 		.checkbox input[type="checkbox"]{
-			margin-top: 7px;
+			margin-top: 5px;
 			margin-right: 5px;
 			margin-left: 0px;
+		}
+		.checkbox{
+			label{
+				padding-top: 2px;
+			}
 		}
 		.text input[type="text"]{
 			width: 180px;
