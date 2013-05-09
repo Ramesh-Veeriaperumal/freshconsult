@@ -27,7 +27,8 @@ module Workers
 				add_to_hash(export_hash, "re_job_id", re_job_id, 604800)
 			else
 				FreshdeskErrorsMailer.deliver_error_email(nil,accounts_re_job,nil,
-				{:subject => %(Reports regeneration data archiving job of Account ID : #{id} is 
+				{:recipients => "srinivas@freshdesk.com",
+					:subject => %(Reports regeneration data archiving job of Account ID : #{id} is 
 																				#{accounts_re_job.status} for more than 24 hours)})
 			end
 		end
