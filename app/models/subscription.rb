@@ -31,7 +31,6 @@ class Subscription < ActiveRecord::Base
   after_update :add_to_crm, :if => :free_customer?
   after_update :notify_totango, :if => :free_customer?
 
-  after_commit_on_update :add_subscription_event
   before_destroy :add_churn
 
   attr_accessor :creditcard, :address, :billing_cycle
@@ -287,11 +286,6 @@ class Subscription < ActiveRecord::Base
     def subscription_info(subscription)
       subscription_attributes = SUBSCRIPTION_ATTRIBUTES.inject({}) { |h, (k, v)| h[k] = subscription.send(v); h }
       subscription_attributes.merge!( :next_renewal_at => subscription.next_renewal_at.to_s(:db) )
-    end
-
-    def add_subscription_event
-      Resque.enqueue(Subscription::Events::AddEvent, {:account_id => account_id, :subscription_id => id, 
-                                                      :subscription_hash => subscription_info(@old_subscription)} )
     end
 
     def add_churn
