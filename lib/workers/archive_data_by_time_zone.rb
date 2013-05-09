@@ -27,7 +27,8 @@ module Workers
 								add_to_hash(export_hash, "job_id", job_id, 604800)
   						elsif (accounts_last_job and !accounts_last_job.completed?)
   							FreshdeskErrorsMailer.deliver_error_email(nil,accounts_last_job,nil,
-  							{:subject => %(Reports data archiving job of Account ID : #{id} is 
+  							{:recipients => "srinivas@freshdesk.com",
+  								:subject => %(Reports data archiving job of Account ID : #{id} is 
   																						#{accounts_last_job.status} for more than 24 hours)})
   						end
 						end
