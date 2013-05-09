@@ -1059,7 +1059,7 @@ $(document).ready(function() {
 	$('body').on('keydown.ticket_details', '.addReminder textarea', function(ev) {
 		if(ev.keyCode == 13){
 			ev.preventDefault();
-			if($(this).val().trim() != '') $(this).parents('form').trigger('submit');
+			if(trim($(this).val()) != '') $(this).parents('form').submit();
 		}
 	});
 
