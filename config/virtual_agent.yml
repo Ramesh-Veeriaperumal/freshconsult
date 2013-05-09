@@ -1,102 +1,71 @@
+fields:
+    rule:
+        default: default
+        any: allow_all
+        from_email: text
+        to_email: email
+        subject: text
+        description: text
+        subject_or_description: text_array
+        priority: numeric
+        tag_names: text_array
+        ticket_type: text
+        status: numeric
+        source: numeric
+        product_id: object_id
+        contact: text
+        company: text
+        responder_id: object_id
+        group_id: object_id
+        company_id: object_id
 
-default_fields:
-    date_time: &date_time
-        handler: date_time
-    
-    from_email:
-        handler: text
-        
-    to_email:
-        handler: email
-    subject:
-        handler: text
+        created_at: date_time
+        opened_at: date_time
+        pending_since: date_time
+        resolved_at: date_time
+        closed_at: date_time
+        first_assigned_at: date_time
+        assigned_at: date_time
+        requester_responded_at: date_time
+        agent_responded_at: date_time
+        first_response_time: date_time
+        due_by: date_time
 
-    description:
-        handler: text
-        
-    subject_or_description:
-        handler: text_array
+        inbound_count: numeric
+        outbound_count: numeric
+        st_survey_rating: numeric
+        int_tc01: numeric
+        folder_id: numeric
+        thumbs_up: numeric
+        forum_id: numeric
+        user_votes: numeric
 
-    priority:
-        handler: numeric
-      
-    tag_names:
-        handler: text_array
-        
-    ticket_type:
-        handler: text
-    
-    status:
-        handler: numeric
+        note_type: text
+        reply_sent: text
+        ticket_update: text
+        time_sheet_action: text
 
-    source:
-        handler: numeric
+        custom_text: text
+        custom_paragraph: text
+        custom_checkbox: checkbox
+        custom_number: numeric
+        custom_dropdown: dropdown 
+        nested_field: nested_field
 
-    product_id:
-        handler: numeric
+    event:
+        default: default
+        priority: update
+        ticket_type: update
+        status: update
+        responder_id: change
+        group_id: update
+        note_type: value
+        reply_sent: change
+        ticket_update: value
+        time_sheet_action: value
+        int_tc01: value
+        due_by: change
 
-    contact:
-        handler: text
-
-    company:
-        handler: text
-        
-    responder_id:
-        handler: object_id
-        
-    group_id:
-        handler: object_id
-    company_id:
-        handler: object_id
-
-    created_at:
-        handler: date_time
-
-    created_at:
-        <<: *date_time
-    opened_at:
-        <<: *date_time
-    pending_since:
-        <<: *date_time
-    resolved_at:
-        <<: *date_time
-    closed_at:
-        <<: *date_time
-    first_assigned_at:
-        <<: *date_time
-    assigned_at:
-        <<: *date_time
-    requester_responded_at:
-        <<: *date_time
-    agent_responded_at:
-        <<: *date_time
-    first_response_time:
-        <<: *date_time
-    due_by:
-        <<: *date_time
-    inbound_count:
-        handler: numeric
-    any:
-        handler: allow_all
-    st_survey_rating:
-        handler: numeric
-    folder_id:
-        handler: numeric
-    thumbs_up:
-        handler: numeric
-    forum_id:
-        handler: numeric
-    user_votes:
-        handler: numeric
-
-handlers:
-    email: Va::Handlers::Email
-    text: Va::Handlers::Text
-    text_array: Va::Handlers::TextArray
-    numeric: Va::Handlers::Numeric
-    date_time: Va::Handlers::DateTime
-    dropdown:  Va::Handlers::Text
-    checkbox: Va::Handlers::Boolean
-    object_id: Va::Handlers::ObjectId
-    nested_field: Va::Handlers::NestedField
-    allow_all: Va::Handlers::AllowAll
+        custom_checkbox: value
+        custom_dropdown: update
+        nested_field: nested_field

@@ -1,10 +1,11 @@
 <div class="time-tracked-details <%= 'time_running' if time_entry.timer_running %>" id="timeentry_<%= time_entry.id %>">
   <div class="actions">
-    <%= link_to_remote( t(".toggle_timer_#{!time_entry.timer_running}"), 
+    <% @ticket ||= time_entry.workable %>
+    <%= link_to_remote(t(".toggle_timer_#{!time_entry.timer_running}"), 
                     { :url => toggle_timer_helpdesk_time_sheet_path(time_entry),
                           :method => :put },
                     :class => 'toggle_timer') %>
-    <%= link_to ( t('edit'), 
+    <%= link_to(t('edit'), 
                   edit_helpdesk_ticket_helpdesk_time_sheet_path(@ticket, time_entry), 
                   "rel" => 'freshdialog', "data-target" => "#edit_timeentry_#{time_entry.id}",
                   "data-width" => 450,

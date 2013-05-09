@@ -1,3 +1,4 @@
+# encoding: utf-8
 class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   layout "email_font"
@@ -162,8 +163,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "text/html"
   end
   
-  def email_to_requester(ticket, content)
-    subject       formatted_subject(ticket)
+  def email_to_requester(ticket, sub, content)
+    subject       (sub.blank? ? formatted_subject(ticket) : sub)
     recipients    ticket.requester.email
     from          ticket.friendly_reply_email
     body          content
@@ -172,8 +173,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "text/html"
   end
   
-  def internal_email(ticket, receips, content)
-    subject       formatted_subject(ticket)
+  def internal_email(ticket, receips, sub, content)
+    subject       (sub.blank? ? formatted_subject(ticket) : sub)
     recipients    receips
     from          ticket.friendly_reply_email
     body          content

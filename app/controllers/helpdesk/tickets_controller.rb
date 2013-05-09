@@ -37,7 +37,6 @@ class Helpdesk::TicketsController < ApplicationController
   alias :load_ticket :load_item
   before_filter :load_ticket, :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :activities, :status]
 
-  before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
   before_filter :check_ticket_status, :only => [:update]
@@ -335,10 +334,9 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
   
-  def execute_scenario 
+  def execute_scenario
     va_rule = current_account.scn_automations.find(params[:scenario_id])    
     va_rule.trigger_actions(@item)
-    update_custom_field @item    
     @item.save
     @item.create_activity(current_user, 'activities.tickets.execute_scenario.long', 
       { 'scenario_name' => va_rule.name }, 'activities.tickets.execute_scenario.short')
@@ -548,7 +546,20 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def save_draft
-    set_key(draft_key, params[:draft_data])
+    count = 0
+    tries = 3
+    begin
+      $redis_secondary.set(draft_key, params[:draft_data])
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e,{:key => draft_key, 
+        :value => params[:draft_data],
+        :description => "Redis issue",
+        :count => count})
+      if count<tries
+          count += 1
+          retry
+      end
+    end
     render :nothing => true
   end
 
@@ -613,28 +624,6 @@ class Helpdesk::TicketsController < ApplicationController
       end
     end
 
-    def load_flexifield   
-      flexi_arr = Hash.new
-      @item.ff_aliases.each do |label|    
-        value = @item.get_ff_value(label.to_sym())    
-        flexi_arr[label] = value    
-        @item.write_attribute label, value
-      end  
-      @item.custom_field = flexi_arr  
-    end
-
-    def update_custom_field  evaluate_on
-      flexi_field = evaluate_on.custom_field      
-      evaluate_on.custom_field.each do |key,value|    
-        flexi_field[key] = evaluate_on.read_attribute(key)      
-      end     
-      ff_def_id = FlexifieldDef.find_by_account_id(evaluate_on.account_id).id    
-      evaluate_on.ff_def = ff_def_id       
-      unless flexi_field.nil?     
-        evaluate_on.assign_ff_values flexi_field    
-      end
-    end
-
     def choose_layout 
       layout_name = request.headers['X-PJAX'] ? 'maincontent' : 'application'
       case action_name
@@ -659,7 +648,7 @@ class Helpdesk::TicketsController < ApplicationController
   def load_email_params
     @signature = current_user.agent.signature_value || ""
     @email_config = current_account.primary_email_config
-    @reply_email = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
+    @reply_emails = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
     @ticket ||= current_account.tickets.find_by_display_id(params[:id])
     @selected_reply_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
   end
@@ -699,8 +688,12 @@ class Helpdesk::TicketsController < ApplicationController
       filter_params = params.clone
       filter_params.delete(:action)
       filter_params.delete(:controller)
-      
-      set_key(redis_key, filter_params.to_json, 86400)
+      begin
+        $redis_secondary.set(redis_key, filter_params.to_json)
+        $redis_secondary.expire(redis_key, 86400)
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e) 
+      end
 
       @cached_filter_data = get_cached_filters
     end
@@ -728,8 +721,27 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def get_cached_filters
-      filters_str = get_key(redis_key)
-      JSON.parse(filters_str) if filters_str
+      tries = 3
+      count = 0
+      begin
+        filters_str = $redis_secondary.get("HELPDESK_TICKET_FILTERS:#{current_account.id}:#{current_user.id}:#{session.session_id}")
+        Rails.logger.info "In get_cached_filters - filters_str : #{filters_str.inspect}"
+        JSON.parse(filters_str) if filters_str
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e, {:key => redis_key, 
+          :value => filters_str,
+          :class => filters_str.class.name,
+          :uri => request.url,
+          :referer => request.referer,
+          :count => count,
+          :description => "Redis issue"})
+        if count<tries
+          count += 1
+          retry
+        else
+          return
+        end
+      end
     end
 
     def load_cached_ticket_filters
@@ -861,11 +873,15 @@ class Helpdesk::TicketsController < ApplicationController
 
   def set_show_version
     if cookies[:new_details_view].present?
-      set_key(show_version_key, cookies[:new_details_view].eql?("true") ? "1" : "0", 86400 * 50)
+      $redis_secondary.set(show_version_key, cookies[:new_details_view].eql?("true") ? "1" : "0")
+      $redis_secondary.expire(show_version_key, 86400 * 50)
       # Expiry set to 50 days
       cookies.delete(:new_details_view) 
     end
-    @new_show_page = (get_key(show_version_key) == "1")
+    @new_show_page = ($redis_secondary.get(show_version_key) == "1")
+  rescue Exception => e
+    NewRelic::Agent.notice_error(e)
+    return
   end
 
   def show_version_key

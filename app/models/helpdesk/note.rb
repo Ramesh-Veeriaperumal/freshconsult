@@ -2,6 +2,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   include ParserUtil
   include BusinessRulesObserver
+  include Va::Observer::Util
 
   set_table_name "helpdesk_notes"
 
@@ -36,16 +37,17 @@ class Helpdesk::Note < ActiveRecord::Base
   attr_protected :attachments, :notable_id
   has_one :external_note, :class_name => 'Helpdesk::ExternalNote',:dependent => :destroy
   
-  before_create :validate_schema_less_note
+  before_create :validate_schema_less_note, :update_observer_events
   before_save :load_schema_less_note, :update_category
   after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
+
   after_commit_on_create :update_ticket_states, :notify_ticket_monitor
   after_update :update_search_index
 
   accepts_nested_attributes_for :tweet , :fb_post
   
   unhtml_it :body
-  # xss_terminate :html5lib_sanitize => [:body_html,:body]
+  xss_sanitize :only => [:body_html],  :html_sanitize => [:body_html]
   named_scope :newest_first, :order => "created_at DESC"
   named_scope :visible, :conditions => { :deleted => false } 
   named_scope :public, :conditions => { :private => false } 
@@ -86,6 +88,8 @@ class Helpdesk::Note < ActiveRecord::Base
               :order => "created_at desc"
 
   SOURCES = %w{email form note status meta twitter feedback facebook forward_email}
+
+  NOTE_TYPE = { true => :private, false => :public }
   
   SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.zip((0..SOURCES.size-1).to_a).flatten]
   
@@ -137,10 +141,6 @@ class Helpdesk::Note < ActiveRecord::Base
 
   def note?
   	source == SOURCE_KEYS_BY_TOKEN["note"]
-  end
-  
-  def note?
-    source == SOURCE_KEYS_BY_TOKEN["note"]
   end
   
   def tweet?
@@ -236,6 +236,11 @@ class Helpdesk::Note < ActiveRecord::Base
     end
   end
 
+  def trigger_observer model_changes
+    @model_changes = model_changes.symbolize_keys
+    filter_observer_events if user_present?
+  end
+
   def update_note_level_resp_time(ticket_state)
     if ticket_state.first_response_time.nil?
       resp_time = created_at - notable.created_at
@@ -288,15 +293,10 @@ class Helpdesk::Note < ActiveRecord::Base
       return unless human_note_for_ticket?
       
       if user.customer?
-        # Will re-open the ticket if it is not in open status and not feedback
-        # Will re-open when the system gets a reply from third party and the ticket is not in resolved/closed statuses.
-        unless notable.open? || feedback? || (replied_by_third_party? and !notable.active?)
-          notable.status = Helpdesk::Ticketfields::TicketStatus::OPEN unless notable.import_id
-          notification_type = EmailNotification::TICKET_REOPENED
-        end
-        e_notification = account.email_notifications.find_by_notification_type(notification_type ||= EmailNotification::REPLIED_BY_REQUESTER)
-        Helpdesk::TicketNotifier.send_later(:notify_by_email, (notification_type ||= 
-              EmailNotification::REPLIED_BY_REQUESTER), notable, self) if notable.responder && e_notification.agent_notification?
+        # Ticket re-opening, moved as an observer's default rule
+        e_notification = account.email_notifications.find_by_notification_type(EmailNotification::REPLIED_BY_REQUESTER)
+        Helpdesk::TicketNotifier.send_later(:notify_by_email, (EmailNotification::REPLIED_BY_REQUESTER),
+                                              notable, self) if notable.responder && e_notification.agent_notification?
       else    
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)     
         #notify the agents only for notes
@@ -312,7 +312,7 @@ class Helpdesk::Note < ActiveRecord::Base
           send_reply_email
           create_fwd_note_activity(self.to_emails) if fwd_email?
         end
-        notable.responder ||= self.user
+        # notable.responder ||= self.user # Added as a default observer rule
       end
       # syntax to move code from delayed jobs to resque.
       #Resque::MyNotifier.deliver_reply( notable.id, self.id , {:include_cc => true})
@@ -402,10 +402,6 @@ class Helpdesk::Note < ActiveRecord::Base
       (self.notable.is_a? Helpdesk::Ticket) && user && (source != SOURCE_KEYS_BY_TOKEN['meta'])
     end
 
-    def zendesk_import?
-      Thread.current["zenimport_#{account_id}"]
-    end
-
     # Replied by third pary to the forwarded email
     # Use this method only after checking human_note_for_ticket? and user.customer?
     def replied_by_third_party? 
@@ -456,7 +452,35 @@ class Helpdesk::Note < ActiveRecord::Base
     end 
 
     def update_ticket_states
-      Resque.enqueue(Helpdesk::UpdateTicketStates, { :id => id }) unless private? || zendesk_import?
+      Resque.enqueue(Helpdesk::UpdateTicketStates, 
+            { :id => id, :model_changes => @model_changes }) unless zendesk_import?
+    end
+
+    def update_avg_response_time(ticket_state)
+      if ticket_state.first_response_time.nil?
+        resp_time = created_at - notable.created_at
+      else
+        customer_resp = notable.notes.visible.customer_responses.
+          created_between(ticket_state.agent_responded_at,created_at).first(
+          :select => "helpdesk_notes.id,helpdesk_notes.created_at", 
+          :order => "helpdesk_notes.created_at ASC")
+        resp_time = created_at - customer_resp.created_at unless customer_resp.blank?
+      end
+      schema_less_note.update_attribute(:response_time_in_seconds, resp_time) unless resp_time.blank?
+
+      notable_values = notable.notes.visible.agent_public_responses.first(
+        :select => 'count(*) as outbounds, avg(helpdesk_schema_less_notes.int_nc02) as avg_resp_time')
+      ticket_state.outbound_count = notable_values.outbounds
+      ticket_state.avg_response_time = notable_values.avg_resp_time
+    end
+    
+    # VA - Observer Rule 
+    def update_observer_events
+      if !feedback? && note?
+        @model_changes = {:note_type => NOTE_TYPE[private]}
+      else
+        @model_changes = {:reply_sent => :sent}
+      end
     end
 
 end

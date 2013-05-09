@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Integrations::Jira::Api
 
 JIRA_REST_API = {

@@ -1,3 +1,4 @@
+# encoding: utf-8
 # WARNING!!!  This class is little raw.  It do not disable any notifications, do not handle paging completely or do not have import, export and sync time knowledge.  
 # Check out google_contacts_importer for proper import, export or merge functionalities.
 

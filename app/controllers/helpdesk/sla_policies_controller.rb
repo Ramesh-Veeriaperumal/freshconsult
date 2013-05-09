@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Helpdesk::SlaPoliciesController < Admin::AdminController
  
   include Helpdesk::ReorderUtility

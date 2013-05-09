@@ -6,10 +6,13 @@
 		jQuery("textarea").live("focus", function(){
 			active_email_body = jQuery(this);
 		});
-		jQuery("#placeholder-list-1 a").click(function(ev){       
+		jQuery('input[type="text"]').live("focus", function(){
+			active_email_body = jQuery(this);
+		});
+
+		jQuery("#placeholder-list-1 a").click(function(ev){  
       if(active_email_body.get(0)){
-        var placeHolderText = jQuery(this).data("placeholder");  
-				//console.log(active_email_body);  
+        var placeHolderText = jQuery(this).data("placeholder"); 
         insertTextAtCursor(active_email_body.get(0), placeHolderText);
 		  }
 		});

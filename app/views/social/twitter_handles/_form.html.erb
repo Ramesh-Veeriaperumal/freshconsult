@@ -46,7 +46,7 @@
 	  <span class="seperator"></span>
 	  <label class="caption"><%=t('.dm_time_msg')%></label>
       <div class="fields">
-      	<%= select (:social_twitter_handle ,:dm_thread_time, Social::TwitterHandle::DM_THREADTIME_OPTIONS ,{:selected => twitter_handle.dm_thread_time}) %>
+      	<%= select(:social_twitter_handle ,:dm_thread_time, Social::TwitterHandle::DM_THREADTIME_OPTIONS ,{:selected => twitter_handle.dm_thread_time}) %>
       </div>
       <div class="info-data tabbed">
         <%=t('.dm_time_info')%>

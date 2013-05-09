@@ -3,7 +3,7 @@
 	<div class="clearfix">
 		<% if logged_in? %>	
 		    <div class="floatr">
-			   <%= link_to (t('forum.start_topic'), new_category_forum_topic_path(@forum_category, @forum), :class => 
+			   <%= link_to(t('forum.start_topic'), new_category_forum_topic_path(@forum_category, @forum), :class => 
 			   "uiButton special") unless @forum.announcement? && !permission?(:manage_forums) %>
 			</div>
 		<% end %>

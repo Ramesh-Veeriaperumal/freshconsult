@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Search::TicketSearch
   
   def show_options ( column_order = TicketConstants::DEFAULT_COLUMNS_ORDER,
@@ -89,7 +90,7 @@ module Search::TicketSearch
     if criteria_key == :group_id
       groups = []
       groups.push([0, I18n.t('filter_options.mygroups') ])
-      groups.concat(Account.current.groups_from_cache.collect { |g| [g.id, g.name]})
+      groups.concat(Account.current.groups_from_cache.collect { |g| [g.id, CGI.escapeHTML(g.name)]})
       groups.push([-1, I18n.t("filter_options.unassigned") ])
       return groups
     end
@@ -103,12 +104,12 @@ module Search::TicketSearch
     end
 
     if criteria_key == "users.customer_id"
-      return Account.current.customers_from_cache.collect { |au| [au.id, au.name] }
+      return Account.current.customers_from_cache.collect { |au| [au.id, CGI.escapeHTML(au.name)] }
     end
 
     if criteria_key == :requester_id
       if @requester_id_param
-        requester_id = @requester_id_param.to_a
+        requester_id = @requester_id_param.lines.to_a
       elsif @current_options && @current_options.has_key?("requester_id")
         requester_id = @current_options["requester_id"].split(',')
       end

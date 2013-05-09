@@ -1,5 +1,5 @@
 <% form_remote_for :time_entry, edit, :url => helpdesk_time_sheet_path, :html => { :method => :put, :class => "timesheet_form" } do |f| %>
-  <%= render :partial => "/helpdesk/time_sheets/v2/form", :object => f, :locals => {:edit => edit} %>
+  <%= render :partial => "/helpdesk/time_sheets/v2/form", :object => f, :locals => {:edit => edit, :type =>"edit"} %>
 <% end %>
 
 <script type="text/javascript">

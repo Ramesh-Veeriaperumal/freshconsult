@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Reports::ChartGenerator
   
   def ticket_columns
@@ -279,7 +280,7 @@ end
         :align => 'center',
         :style => {
           :left => 40,
-          :top => 75,
+          :top => 95,
         },
         :borderWidth => 0,
         :y => -25,

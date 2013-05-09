@@ -45,6 +45,7 @@ class Account < ActiveRecord::Base
  
   has_many :features
   has_many :flexi_field_defs, :class_name => 'FlexifieldDef'
+  has_many :flexifield_def_entries
   
   has_one :data_export
   
@@ -121,10 +122,15 @@ class Account < ActiveRecord::Base
     :rule_type => VAConfig::SUPERVISOR_RULE, :active => true }, :order => "position"
   has_many :all_supervisor_rules, :class_name => 'VARule', :conditions => {
     :rule_type => VAConfig::SUPERVISOR_RULE }, :order => "position"
+
+  has_many :observer_rules, :class_name => 'VARule', :conditions => { 
+    :rule_type => VAConfig::OBSERVER_RULE, :active => true }, :order => "position"
+  has_many :all_observer_rules, :class_name => 'VARule', :conditions => {
+    :rule_type => VAConfig::OBSERVER_RULE }, :order => "position"
   
   has_many :scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
-  
-  
+  has_many :all_scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
+
   
   has_many :email_notifications
   has_many :groups
@@ -231,11 +237,11 @@ class Account < ActiveRecord::Base
   after_create :populate_features
   
   after_update :update_users_language
-  after_create :enable_elastic_search
+  #after_create :enable_elastic_search
 
   before_destroy :update_crm, :notify_totango
 
-  after_commit_on_create :add_to_billing, :add_to_totango, :create_search_index
+  after_commit_on_create :add_to_billing, :add_to_totango #, :create_search_index
 
   after_commit_on_update :clear_cache
   after_commit_on_destroy :clear_cache, :delete_search_index, :delete_reports_archived_data
@@ -341,7 +347,7 @@ class Account < ActiveRecord::Base
   end
   
   def installed_apps_hash
-    installed_apps = installed_applications.all(:include => {:application => :widgets})
+    installed_apps = installed_applications.all(:include => :application )
     installed_apps.inject({}) do |result,installed_app|
      result[installed_app.application.name.to_sym] = installed_app
      result

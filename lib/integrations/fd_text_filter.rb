@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Integrations::FDTextFilter
   def escape_html(input)
     input = input.to_s.gsub("\"", "\\\"")

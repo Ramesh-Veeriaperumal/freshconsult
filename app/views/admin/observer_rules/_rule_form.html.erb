@@ -1,0 +1,94 @@
+<% content_for :sidebar do -%><%- end %>
+<%= include_cloudfront_js :observer_event %>
+<%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "observer"} %>
+<%= f.error_messages :object_name => 'rule' %>
+<input type="hidden" name="id"   value="" />
+<input type="hidden" name="type" value="virtual_agents" />
+<ul class="ui-form observer no-background">
+	<li>
+		<div class="row-fluid">
+			<%= f.label :name, t('dispatch.rule_name') + "<span class='required_star'>*</span>", :class => "span2" %>			
+			<div class="span8">
+				<label class="overlabel" for="va_rule_name"><%= t("example") %>: <em>"<%=t('dispatch.info1')%>"</em> </label>
+				<%= f.text_field :name, :class => "required text" %>
+			</div>
+		</div>
+		<div class="row-fluid">
+			<%= f.label :description, t('dispatch.description'), :class => "span2" %>
+			<div class="span8">
+				<label class="overlabel" for="va_rule_description">
+					<%= t("example") %>: <em>"<%=t('dispatch.info2')%>"</em>
+				</label>
+				<%= f.text_area :description, :class => "smallpara" %>
+			</div>
+		</div>
+	</li>
+
+	<li>
+		<h3 class="lead"><%=t('admin.observer_rules.events')%></h3>
+		<div class="conditionset" id="eventDOM">
+		<div id="EventList" class="rule_list"></div>
+			<fieldset class="addchoice">
+		   		<p><%=t('admin.observer_rules.add_new_event')%></p> 
+		   		<img alt="<%=t('admin.observer_rules.add_new_event')%>" class="add" src="/images/add.png" />
+		  </fieldset>			
+		</div>
+	</li>
+
+	<li>
+		<h3 class="lead"><%=t('admin.observer_rules.performed_by')%></h3>
+		<div class="doer">
+			<% f.fields_for :performer do |s| %>
+				<div class="choicelist">	
+					<%	Va::Performer::TYPE_CHECK.each do |number, type|	%>
+						<%= s.radio_button  :type, number, :class => "radio", :checked => (@va_rule.performer.type == number) %> 
+						<%= s.label :type, t("admin.observer_rules.#{type[0..-2]}"), :value => number, :class => "radiolabel" %>				
+					<%	end	%>
+				</div>
+				<div class="va_rule_performer_members_container">
+					<%= s.select :members, 
+								options_for_select((@agents.map {|id, name| [name, id.to_s]}), 	
+									(@va_rule.performer.nil? || @va_rule.performer.members.nil?) ? [] : @va_rule.performer.members.map(&:to_s) ),{'formatResult' => 'ensure_performed_by'}, { :multiple => true, :class => "select2", :id => 'members' } %>
+				</div>
+			<% end %>
+		</div>
+	</li>
+
+	<li>
+		<h3 class="lead"><%=t('admin.observer_rules.conditions')%></h3>	
+		<div class="choicelist">
+			<%= f.radio_button  :match_type, 'any', :class => "radio" %> 
+			<%= f.label :match_type_any, t('dispatch.match_any'), :class => "radiolabel" %>
+			<%= f.radio_button  :match_type, 'all', :class => "radio" %> 
+			<%= f.label :match_type_all, t('dispatch.match_all'), :class => "radiolabel" %>
+		</div>			
+		<div class="conditionset" id="filterDOM">
+		<div id="RuleList" class="rule_list"></div>
+		<fieldset class="addchoice">
+	      <p><%=t('dispatch.add_condition')%></p>
+	      <img alt="<%=t('dispatch.add_new_choice')%>" class="add" src="/images/add.png" />
+	  </fieldset>			
+		</div>
+	</li>
+	<li>
+		<h3 class="lead"><%=t('admin.observer_rules.actions')%></h3>
+		<div class="conditionset" id="actionDOM">
+			<div id="ActionList" class="rule_list"></div>
+			<fieldset class="addchoice">
+	        <p><%=t('dispatch.add_new_action')%></p>
+	        <img alt="<%=t('dispatch.add_new_action')%>" class="add" src="/images/add.png" />
+	   	</fieldset>		
+		</div>
+	</li>
+</ul>		
+
+<div class="button-container">
+	<input type="hidden" name="save_json" id="savejson" value="" />
+	<input type="submit" class="uiButton" id="dispatchr_submit" value="<%=t('save')%>" />
+	<%= link_to t('cancel'), {:action => 'index'}, :class => "uiButton" %>
+</div>
+
+<% content_for :pagefixed do %>	
+	<%= render :partial => "/shared/placeholder_help" %>
+<% end %>
+
