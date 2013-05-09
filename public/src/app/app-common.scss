@@ -9222,9 +9222,14 @@ height: auto;
 #TicketProperties{
 	.edit_helpdesk_ticket{
 		.checkbox input[type="checkbox"]{
-			margin-top: 7px;
+			margin-top: 5px;
 			margin-right: 5px;
 			margin-left: 0px;
+		}
+		.checkbox{
+			label{
+				padding-top: 2px;
+			}
 		}
 		.text input[type="text"]{
 			width: 180px;
