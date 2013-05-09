@@ -2,7 +2,7 @@
   
   <div class="report-content-wrapper" id="chart_page_container">
     <!--report header-->
-    <%= render :partial => "reports/shared/report_view_header", :locals => {} %>
+    <%= render :partial => "reports/shared/report_view_header", :locals => {:report_for=> report_for} %>
 
     <!--metrics-->
     <div class="row-fluid  report-summary" id="metric_container">
