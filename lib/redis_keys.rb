@@ -19,9 +19,9 @@ module RedisKeys
 	PORTAL_CACHE_VERSION = "PORTAL_CACHE_VERSION:%{account_id}"
 	API_THROTTLER  = "API_THROTTLER:%{host}"
 	#AUTH_REDIRECT_CONFIG = "AUTH_REDIRECT:%{account_id}:%{user_id}:%{provider}:%{auth}"
-	SSO_AUTH_REDIRECT_OAUTH = "AUTH_REDIRECT:%{account_id}:%{user_id}:%{provider}:oauth"
-	APPS_AUTH_REDIRECT_OAUTH = "AUTH_REDIRECT:%{account_id}:%{provider}:oauth"
-	AUTH_REDIRECT_GOOGLE_OPENID = "AUTH_REDIRECT:%{account_id}:google:open_id:%{token}"
+	#SSO_AUTH_REDIRECT_OAUTH = "AUTH_REDIRECT:%{account_id}:%{user_id}:%{provider}:oauth"
+	#APPS_AUTH_REDIRECT_OAUTH = "AUTH_REDIRECT:%{account_id}:%{provider}:oauth"
+	#AUTH_REDIRECT_GOOGLE_OPENID = "AUTH_REDIRECT:%{account_id}:google:open_id:%{token}"
 	
 	REPORT_STATS_REGENERATE_KEY = "REPORT_STATS_REGENERATE:%{account_id}" # set of dates for which stats regeneration will happen
 	REPORT_STATS_EXPORT_HASH = "REPORT_STATS_EXPORT_HASH:%{account_id}" # last export date, last archive job id and last regen job id
@@ -108,9 +108,20 @@ module RedisKeys
 	end
 
 	def list_members(key)
-		newrelic_begin_rescue do
+		count = 0
+    tries = 3
+    begin
 			length = $redis.llen(key)
 			$redis.lrange(key,0,length - 1)
+	  rescue Exception => e
+	  	NewRelic::Agent.notice_error(e,{:key => key, 
+        :value => length,
+        :description => "Redis issue",
+        :count => count})
+      if count<tries
+          count += 1
+          retry
+      end
 	  end
 	end
 
