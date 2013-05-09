@@ -41,12 +41,12 @@
     </div>
     <div class="report-summary-footer">
       <ul class="inline">
-        <li> <label><%= t('reports.summary.received_tickets')%></label></li>
-        <li> <label><%= t('reports.summary.resolved_tickets')%></label></li>
-        <li><label><%=t('adv_reports.glance.backlog_tickets')%></label></li>
-        <li><label><%=t('adv_reports.glance.avg_resp_time_in_hrs')%></label></li>
-        <li><label><%=t('adv_reports.glance.avg_first_resp_time_in_hrs')%></label></li>
-        <li><label><%=t('adv_reports.glance.avg_resolution_time_in_hrs')%></label></li>
+        <li><label class="tooltip" title='<%=t("adv_reports.helptext.glance.#{@helptext_for}_recieved_tickets")%>' data-placement="below"><%= t('reports.summary.received_tickets')%></label></li>
+        <li><label class="tooltip" title='<%=t("adv_reports.helptext.glance.#{@helptext_for}_resolved_tickets")%>' data-placement="below"><%= t('reports.summary.resolved_tickets')%></label></li>
+        <li><label class="tooltip" title='<%=t("adv_reports.helptext.glance.#{@helptext_for}_backlog_tickets")%>' data-placement="below"><%=t('adv_reports.glance.backlog_tickets')%></label></li>
+        <li><label class="tooltip" title='<%=t("adv_reports.helptext.glance.#{@helptext_for}_avg_resp_time")%>' data-placement="below"><%=t('adv_reports.glance.avg_resp_time_in_hrs')%></label></li>
+        <li><label class="tooltip" data-placement="below" title='<%=t("adv_reports.helptext.glance.#{@helptext_for}_avg_first_resp_time")%>'><%=t('adv_reports.glance.avg_first_resp_time_in_hrs')%></label></li>
+        <li><label class="tooltip" data-placement="below" title='<%=t("adv_reports.helptext.glance.#{@helptext_for}_avg_resol_time")%>' ><%=t('adv_reports.glance.avg_resolution_time_in_hrs')%></label></li>
       </ul>
     </div>
   </div>
@@ -99,12 +99,12 @@
     </div>
     <div class="report-summary-footer">
       <ul class="inline">
-        <li> <label><%=t('adv_reports.glance.avg_cust_intr')%></label> </li>
-        <li> <label><%=t('adv_reports.glance.avg_agent_intr')%></label> </li>
-        <li> <label><%=t('adv_reports.glance.num_of_reopens')%></label> </li>
-        <li> <label><%=t('adv_reports.glance.num_of_reassigns')%></label> </li>
-        <li> <label><%=t('adv_reports.glance.sla_percentage')%></label> </li>
-        <li> <label><%=t('reports.summary_report.fcr_percent')%></label> </li>
+        <li><label class="tooltip" title='<%=t("adv_reports.helptext.glance.#{@helptext_for}_avg_cust_inter")%>' data-placement="below"><%=t('adv_reports.glance.avg_cust_intr')%></label> </li>
+        <li><label class="tooltip" title='<%=t("adv_reports.helptext.glance.#{@helptext_for}_avg_agent_inter")%>' data-placement="below"><%=t('adv_reports.glance.avg_agent_intr')%></label> </li>
+        <li><label class="tooltip" title='<%=t("adv_reports.helptext.glance.#{@helptext_for}_reopens")%>' data-placement="below"><%=t('adv_reports.glance.num_of_reopens')%></label> </li>
+        <li><label class="tooltip" title='<%=t("adv_reports.helptext.glance.#{@helptext_for}_reassigns")%>' data-placement="below"><%=t('adv_reports.glance.num_of_reassigns')%></label> </li>
+        <li><label class="tooltip" title='<%=t("adv_reports.helptext.glance.#{@helptext_for}_sla")%>' data-placement="below"><%=t('adv_reports.glance.sla_percentage')%></label> </li>
+        <li><label class="tooltip" title='<%=t("adv_reports.helptext.glance.#{@helptext_for}_fcr")%>' data-placement="below"><%=t('reports.summary_report.fcr_percent')%></label> </li>
       </ul>
     </div>
   </div>

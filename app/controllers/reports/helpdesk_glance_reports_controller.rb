@@ -5,7 +5,7 @@ class Reports::HelpdeskGlanceReportsController < ApplicationController
   include Reports::HelpdeskReportControllerMethods
   include Reports::GlanceReportControllerMethods
   
-  before_filter { |c| c.requires_feature :enterprise_reporting }
+  before_filter { |c| c.requires_feature :advanced_reporting }
   before_filter { |c| c.requires_permission :manage_reports }
   before_filter :parse_wf_params,:set_selected_tab, 
                 :only => [:generate,:generate_pdf,:send_report_email,:fetch_activity_ajax,:fetch_metrics]
@@ -36,6 +36,7 @@ class Reports::HelpdeskGlanceReportsController < ApplicationController
     conditions = @sql_condition.join(" AND ")
     @data_obj = helpdesk_activity_query conditions
     @prev_data_obj = helpdesk_activity_query(conditions, true)
+    @helptext_for = "helpdesk"
     render :partial => "/reports/helpdesk_glance_reports/glance_report_metric"
   end
   def fetch_activity_ajax
