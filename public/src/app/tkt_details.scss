@@ -357,8 +357,19 @@ p strong{
 		-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 		-moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 		box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+		display:none;
 	}
+	// Open state for the dropdown
+	// ---------------------------
+	.open {
+	  // IE7's z-index only goes to the nearest positioned ancestor, which would
+	  // make the menu appear below buttons that appeared later on the page
+	  *z-index: 1000;
 
+	  & > .dropdown-menu {
+	    display: block;
+	  }
+	}
 	.ticket-btns{
 		float: left;
 		margin-right: 6px;
