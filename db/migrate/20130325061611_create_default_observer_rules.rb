@@ -55,6 +55,7 @@ class CreateDefaultObserverRules < ActiveRecord::Migration
   	# 		})
    #    end
     end
+    raise "To stop rails from adding this migration to schema_migrations"
   end
 
   def self.down
