@@ -4999,7 +4999,8 @@ a.close{
 
 		.note {
 			margin-top:0;
-			background: url(/images/overlay/note_quote.png) no-repeat;
+			background-image: inline-image('cdn-ignored/inline-images/note_quote.png');
+			background-repeat: no-repeat;
 			padding-left: 27px;
 			min-height:13px;
 			padding-top:5px;
