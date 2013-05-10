@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130427074254) do
+ActiveRecord::Schema.define(:version => 20130505120152) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -92,7 +92,7 @@ ActiveRecord::Schema.define(:version => 20130427074254) do
     t.integer  "folder_id",    :limit => 8
   end
 
-  add_index "admin_canned_responses", ["account_id", "folder_id", "title"], :name => "Index_ca_responses_on_account_id_folder_id_and_title", :length => {"account_id"=>nil, "folder_id"=>nil, "title"=>"20"}
+  add_index "admin_canned_responses", ["account_id", "folder_id", "title"], :name => "Index_ca_responses_on_account_id_folder_id_and_title", :length => {"account_id"=>nil, "title"=>"20", "folder_id"=>nil}
 
   create_table "admin_data_imports", :force => true do |t|
     t.string   "import_type"
@@ -157,7 +157,7 @@ ActiveRecord::Schema.define(:version => 20130427074254) do
     t.string  "description"
     t.integer "listing_order"
     t.text    "options"
-    t.integer "account_id",    :default => 0
+    t.integer "account_id",       :default => 0
     t.string  "application_type", :default => "freshplug", :null => false
   end
 
@@ -345,15 +345,6 @@ ActiveRecord::Schema.define(:version => 20130427074254) do
 
   add_index "email_notifications", ["account_id", "notification_type"], :name => "index_email_notifications_on_notification_type", :unique => true
 
-  create_table "features", :force => true do |t|
-    t.string   "type",                    :null => false
-    t.integer  "account_id", :limit => 8, :null => false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "features", ["account_id"], :name => "index_features_on_account_id"
-
   create_table "es_enabled_accounts", :force => true do |t|
     t.integer  "account_id", :limit => 8
     t.string   "index_name"
@@ -364,6 +355,14 @@ ActiveRecord::Schema.define(:version => 20130427074254) do
 
   add_index "es_enabled_accounts", ["account_id"], :name => "index_es_enabled_accounts_on_account_id"
 
+  create_table "features", :force => true do |t|
+    t.string   "type",                    :null => false
+    t.integer  "account_id", :limit => 8, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "features", ["account_id"], :name => "index_features_on_account_id"
 
   create_table "flexifield_def_entries", :force => true do |t|
     t.integer  "flexifield_def_id",  :limit => 8, :null => false
@@ -541,13 +540,13 @@ ActiveRecord::Schema.define(:version => 20130427074254) do
   create_table "groups", :force => true do |t|
     t.string   "name"
     t.text     "description"
-    t.integer  "account_id",      :limit => 8
+    t.integer  "account_id",         :limit => 8
     t.boolean  "email_on_assign"
-    t.integer  "escalate_to",     :limit => 8
+    t.integer  "escalate_to",        :limit => 8
     t.integer  "assign_time"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "import_id",       :limit => 8
+    t.integer  "import_id",          :limit => 8
     t.integer  "ticket_assign_type",              :default => 0
   end
 
@@ -583,7 +582,7 @@ ActiveRecord::Schema.define(:version => 20130427074254) do
     t.integer  "account_id",           :limit => 8
   end
 
-  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"account_id"=>nil, "attachable_id"=>nil, "attachable_type"=>"14"}
+  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"attachable_type"=>"14", "attachable_id"=>nil, "account_id"=>nil}
   add_index "helpdesk_attachments", ["id"], :name => "helpdesk_attachments_id"
 
   create_table "helpdesk_authorizations", :force => true do |t|
@@ -616,8 +615,8 @@ ActiveRecord::Schema.define(:version => 20130427074254) do
     t.integer "installed_application_id", :limit => 8
     t.string  "external_id"
   end
- 
-  add_index "helpdesk_external_notes", ["account_id", "installed_application_id", "external_id"], :name => "index_helpdesk_external_id", :length => {"installed_application_id"=>nil, "external_id"=>"20", "account_id"=>nil}
+
+  add_index "helpdesk_external_notes", ["account_id", "installed_application_id", "external_id"], :name => "index_helpdesk_external_id", :length => {"account_id"=>nil, "external_id"=>"20", "installed_application_id"=>nil}
   add_index "helpdesk_external_notes", ["id"], :name => "helpdesk_external_notes_id"
 
   create_table "helpdesk_issues", :force => true do |t|
@@ -818,8 +817,8 @@ ActiveRecord::Schema.define(:version => 20130427074254) do
   add_index "helpdesk_schema_less_tickets", ["int_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_int_02"
   add_index "helpdesk_schema_less_tickets", ["long_tc01", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_long_01"
   add_index "helpdesk_schema_less_tickets", ["long_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_long_02"
-  add_index "helpdesk_schema_less_tickets", ["string_tc01", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_01", :length => {"account_id"=>nil, "string_tc01"=>"10"}
-  add_index "helpdesk_schema_less_tickets", ["string_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_02", :length => {"account_id"=>nil, "string_tc02"=>"10"}
+  add_index "helpdesk_schema_less_tickets", ["string_tc01", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_01", :length => {"string_tc01"=>"10", "account_id"=>nil}
+  add_index "helpdesk_schema_less_tickets", ["string_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_02", :length => {"string_tc02"=>"10", "account_id"=>nil}
   add_index "helpdesk_schema_less_tickets", ["ticket_id", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_account_id_ticket_id", :unique => true
 
   create_table "helpdesk_subscriptions", :force => true do |t|
@@ -841,7 +840,7 @@ ActiveRecord::Schema.define(:version => 20130427074254) do
   end
 
   add_index "helpdesk_tag_uses", ["tag_id"], :name => "index_helpdesk_tag_uses_on_tag_id"
-  add_index "helpdesk_tag_uses", ["taggable_id", "taggable_type"], :name => "helpdesk_tag_uses_taggable", :length => {"taggable_id"=>nil, "taggable_type"=>"10"}
+  add_index "helpdesk_tag_uses", ["taggable_id", "taggable_type"], :name => "helpdesk_tag_uses_taggable", :length => {"taggable_type"=>"10", "taggable_id"=>nil}
 
   create_table "helpdesk_tags", :force => true do |t|
     t.string  "name"
@@ -1044,6 +1043,57 @@ ActiveRecord::Schema.define(:version => 20130427074254) do
 
   add_index "lhma_2013_03_25_12_33_08_810_social_twitter_handles", ["account_id", "twitter_user_id"], :name => "social_twitter_handle_product_id", :unique => true
 
+  create_table "lhma_2013_05_09_15_34_02_916_accounts", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "full_domain"
+    t.string   "time_zone"
+    t.string   "helpdesk_name"
+    t.string   "helpdesk_url"
+    t.text     "preferences"
+    t.integer  "ticket_display_id", :limit => 8, :default => 0
+    t.boolean  "sso_enabled",                    :default => false
+    t.string   "shared_secret"
+    t.text     "sso_options"
+    t.string   "google_domain"
+    t.boolean  "ssl_enabled",                    :default => false
+    t.boolean  "premium",                        :default => false
+  end
+
+  add_index "lhma_2013_05_09_15_34_02_916_accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
+  add_index "lhma_2013_05_09_15_34_02_916_accounts", ["helpdesk_url"], :name => "index_accounts_on_helpdesk_url"
+
+  create_table "lhma_2013_05_09_15_34_05_712_groups", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "account_id",      :limit => 8
+    t.boolean  "email_on_assign"
+    t.integer  "escalate_to",     :limit => 8
+    t.integer  "assign_time"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "import_id",       :limit => 8
+  end
+
+  add_index "lhma_2013_05_09_15_34_05_712_groups", ["account_id", "name"], :name => "index_groups_on_account_id", :unique => true
+
+  create_table "lhma_2013_05_09_15_34_07_803_agents", :force => true do |t|
+    t.integer  "user_id",             :limit => 8
+    t.text     "signature"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "ticket_permission",                :default => 1
+    t.boolean  "occasional",                       :default => false
+    t.string   "google_viewer_id"
+    t.text     "signature_html"
+    t.integer  "points",              :limit => 8
+    t.integer  "scoreboard_level_id", :limit => 8
+    t.integer  "account_id",          :limit => 8
+  end
+
+  add_index "lhma_2013_05_09_15_34_07_803_agents", ["account_id", "user_id"], :name => "index_agents_on_account_id_and_user_id"
+
   create_table "moderatorships", :force => true do |t|
     t.integer "forum_id", :limit => 8
     t.integer "user_id",  :limit => 8
@@ -1237,7 +1287,7 @@ ActiveRecord::Schema.define(:version => 20130427074254) do
     t.string   "thread_id"
   end
 
-  add_index "social_fb_posts", ["account_id", "postable_id", "postable_type"], :name => "index_social_fb_posts_account_id_postable_id_postable_type", :length => {"postable_id"=>nil, "account_id"=>nil, "postable_type"=>"15"}
+  add_index "social_fb_posts", ["account_id", "postable_id", "postable_type"], :name => "index_social_fb_posts_account_id_postable_id_postable_type", :length => {"postable_id"=>nil, "postable_type"=>"15", "account_id"=>nil}
 
   create_table "social_tweets", :force => true do |t|
     t.integer  "tweet_id",          :limit => 8
@@ -1510,6 +1560,222 @@ ActiveRecord::Schema.define(:version => 20130427074254) do
 
   add_index "surveys", ["account_id"], :name => "index_account_id_on_surrveys"
 
+  create_table "ticket_stats_2013_1", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2013_1", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2013_1", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_stats_2013_10", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2013_10", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2013_10", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_stats_2013_11", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2013_11", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2013_11", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_stats_2013_12", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2013_12", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2013_12", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_stats_2013_2", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2013_2", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2013_2", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_stats_2013_3", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2013_3", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2013_3", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_stats_2013_4", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2013_4", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2013_4", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_stats_2013_5", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2013_5", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2013_5", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_stats_2013_6", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2013_6", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2013_6", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_stats_2013_7", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2013_7", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2013_7", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_stats_2013_8", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2013_8", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2013_8", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
+  create_table "ticket_stats_2013_9", :id => false, :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "ticket_id",        :limit => 8
+    t.datetime "created_at"
+    t.integer  "created_hour"
+    t.integer  "resolved_hour"
+    t.integer  "received_tickets",              :default => 0, :null => false
+    t.integer  "resolved_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reopens",                :default => 0, :null => false
+    t.integer  "assigned_tickets",              :default => 0, :null => false
+    t.integer  "num_of_reassigns",              :default => 0, :null => false
+    t.integer  "fcr_tickets",                   :default => 0, :null => false
+    t.integer  "sla_tickets",                   :default => 0, :null => false
+  end
+
+  add_index "ticket_stats_2013_9", ["account_id", "created_at"], :name => "index_ticket_stats_on_account_id_created_at"
+  add_index "ticket_stats_2013_9", ["ticket_id", "account_id", "created_at"], :name => "index_ticket_stats_on_ticket_id_created_at_account_id", :unique => true
+
   create_table "ticket_topics", :force => true do |t|
     t.integer  "ticket_id",  :limit => 8
     t.integer  "topic_id",   :limit => 8
@@ -1590,7 +1856,7 @@ ActiveRecord::Schema.define(:version => 20130427074254) do
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
-  add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"external_id"=>"20", "account_id"=>nil}
+  add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"account_id"=>nil, "external_id"=>"20"}
   add_index "users", ["account_id", "import_id"], :name => "index_users_on_account_id_and_import_id", :unique => true
   add_index "users", ["id"], :name => "users_id"
   add_index "users", ["perishable_token", "account_id"], :name => "index_users_on_perishable_token_and_account_id"

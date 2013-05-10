@@ -163,7 +163,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "text/html"
   end
   
-  def email_to_requester(ticket, sub, content)
+  def email_to_requester(ticket, content, sub=nil)
     subject       (sub.blank? ? formatted_subject(ticket) : sub)
     recipients    ticket.requester.email
     from          ticket.friendly_reply_email
@@ -173,7 +173,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "text/html"
   end
   
-  def internal_email(ticket, receips, sub, content)
+  def internal_email(ticket, receips, content, sub=nil)
     subject       (sub.blank? ? formatted_subject(ticket) : sub)
     recipients    receips
     from          ticket.friendly_reply_email

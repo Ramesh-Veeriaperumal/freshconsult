@@ -126,8 +126,8 @@ class Va::Action
     def send_email_to_requester(act_on)
       if act_on.requester_has_email?
         Helpdesk::TicketNotifier.send_later(:deliver_email_to_requester, 
-                act_on, substitute_placeholders_for_requester(act_on, act_hash[:email_subject]),
-                         substitute_placeholders_for_requester(act_on, act_hash[:email_body])) 
+                act_on, substitute_placeholders_for_requester(act_on, :email_body),
+                        substitute_placeholders_for_requester(act_on, :email_subject)) 
         add_activity("Sent an email to the requester") 
       end
     end
@@ -196,18 +196,19 @@ class Va::Action
 
     def send_internal_email act_on, receipients
       Helpdesk::TicketNotifier.send_later(:deliver_internal_email,
-        act_on, receipients, substitute_placeholders_for_agents( act_on, act_hash[:email_subject]),
-          substitute_placeholders_for_agents(act_on, act_hash[:email_body]))
+        act_on, receipients, substitute_placeholders(act_on, :email_body),
+          substitute_placeholders(act_on, :email_subject))
     end
 
-    def substitute_placeholders_for_agents act_on, content
-      Liquid::Template.parse(RedCloth.new(content.to_s).to_html).render(
-                'ticket' => act_on, 'helpdesk_name' => act_on.account.portal_name)
+    def substitute_placeholders_for_requester act_on, content_key
+      act_hash[content_key] = act_hash[content_key].to_s.gsub("{{ticket.status}}","{{ticket.requester_status_name}}")
+      substitute_placeholders act_on, content_key
     end
 
-    def substitute_placeholders_for_requester act_on, content
-      content.to_s.gsub!("{{ticket.status}}","{{ticket.requester_status_name}}")
-      Liquid::Template.parse(RedCloth.new(content.to_s).to_html).render(
+    def substitute_placeholders act_on, content_key     
+      content = act_hash[content_key].to_s
+      content = RedCloth.new(content).to_html unless content_key == :email_subject
+      Liquid::Template.parse(content).render(
                 'ticket' => act_on, 'helpdesk_name' => act_on.account.portal_name)
     end
 

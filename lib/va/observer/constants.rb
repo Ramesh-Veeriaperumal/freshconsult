@@ -2,7 +2,7 @@ module Va::Observer::Constants
 
 	FETCH_EVALUATE_ON = { 'Helpdesk::Note' => 'notable',
 												'SurveyResult' => 'surveyable',
-												'Helpdesk::TimeSheet' => 'ticket'	}
+												'Helpdesk::TimeSheet' => 'workable'	}
 
 	TICKET_EVENTS = [ :status, :priority, :ticket_type, :group_id, :responder_id, :due_by,
 										:time_sheet_action, :deleted, :spam, :reply_sent, :note_type,
