@@ -80,6 +80,9 @@ stylesheets:
   getting_started:
     - public/stylesheets/app/getting_started.css
 
+  facebook:
+    - public/stylesheets/portal/facebook.css
+
 javascripts:
   defaults:
     - public/javascripts/prototype.js

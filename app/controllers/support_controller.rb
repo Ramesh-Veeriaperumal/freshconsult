@@ -1,5 +1,7 @@
 class SupportController < ApplicationController
 
+  before_filter :check_facebook
+  layout :resolve_layout
   before_filter :portal_context, :page_message
   include RedisKeys
 
@@ -22,20 +24,23 @@ class SupportController < ApplicationController
 
   protected
     def set_portal_page page_token
-      @skip_liquid_compile = false
-
       # Name of the page to be used to render the static or dynamic page
       @current_page_token = page_token.to_s
-
-      # Setting up page layout variable
-      process_page_liquid page_token
 
       # Setting up current_tab based on the page type obtained
       current_tab page_token
 
-      # Setting dynamic header, footer, layout and misc. information
-      process_template_liquid
-      @skip_liquid_compile = true if active_layout.present?
+      if !facebook?
+        @skip_liquid_compile = false
+        
+        # Setting up page layout variable
+        process_page_liquid page_token
+
+        # Setting dynamic header, footer, layout and misc. information
+        process_template_liquid
+
+        @skip_liquid_compile = true if active_layout.present?
+      end
     end
 
     def preview?
@@ -45,6 +50,7 @@ class SupportController < ApplicationController
         !get_key(is_preview).blank? && !current_user.blank? && current_user.agent?
       end
     end
+
   private
 
     def portal_context
@@ -115,10 +121,28 @@ class SupportController < ApplicationController
       end
     end
 
+    def check_facebook
+      session.delete(:facebook_tab) if params[:clear_facebook]
+      @facebook_login = true if session[:facebook_login]
+    end
+
     def template_data(sym)
       data = @portal_template[sym] 
       data = @portal_template.get_draft[sym] if preview? && @portal_template.get_draft
       data
+    end
+
+    def resolve_layout
+      facebook? ? "facebook" : "support"
+    end
+
+    def facebook?
+      if params[:source]
+        session[:facebook_tab] = true if session
+        return true
+      else
+        session[:facebook_tab]
+      end
     end
     
 end

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<%= open_html_tag %>
+	<head>
+		<% javascript_tag do %>
+		console.log("this is outside the check")
+			if(window.self==window.top)
+			{
+				console.log("we are here")
+				console.log("now redirecting")
+				window.location.href="home/clear_facebook"
+			}
+		<% end %>
+		<script src='http://connect.facebook.net/en_US/all.js'></script>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<title><%= page_title %></title>
+		<meta name="description" content="<%= page_description %>">
+		<meta name="author" content="">
+		<meta name="keywords" content="<%= page_keywords %>">
+		
+	    <link rel="apple-touch-icon" href="/images/touch/touch-icon-iphone.png" />
+		<link rel="apple-touch-icon" sizes="72x72" href="/images/touch/touch-icon-ipad.png" />
+		<link rel="apple-touch-icon" sizes="114x114" href="/images/touch/touch-icon-iphone-retina.png" />
+		<link rel="apple-touch-icon" sizes="144x144" href="/images/touch/touch-icon-ipad-retina.png" />
+
+		<meta name="viewport" content="width=device-width,user-scalable=no" />
+		<meta name="viewport" content="initial-scale = 1.0">
+		<% unless page_canonical.blank? %>
+			<link rel="canonical" href="<%= page_canonical %>" />
+		<% end %>
+
+		<%= portal_fav_ico %>
+
+		<!-- Base stylesheet -->
+		<%= include_cloudfront_css :portal %>
+
+		<!-- Theme stylesheet -->
+		<link href="<%=theme_url%>" media="screen" rel="stylesheet" type="text/css">
+
+		<!-- Google font url if present -->
+		<%= portal_fonts %>
+
+		<!-- Including default portal based script framework at the top -->
+		<%= include_cloudfront_js :portal_head %>
+
+		<%= render :partial => "layouts/support/google_analytics_integration" %>
+
+		<!-- Access variables for portal -->
+		<%= portal_access_varibles %>
+	</head>
+	<body>
+		<script src="http://connect.facebook.net/en_US/all.js"></script>
+		<div id="fb-root"></div>
+    <script type="text/javascript">
+        FB.init({
+          appId      : "183781041774128",                     // App ID
+          status     : true,                                    // check login status
+          cookie     : true,                                    // enable cookies to allow the server to access the session
+          xfbml      : true,                                     // parse XFBML
+          oauth			 : true
+        });
+
+        // Listen to the auth.login which will be called when the user logs in
+        // using the Login button
+        FB.Event.subscribe('auth.login', function(response) {
+          // We want to reload the page now so Ruby can read the cookie that the
+          // Javascript SDK sat. But we don't want to use
+          // window.location.reload() because if this is in a canvas there was a
+          // post made to this page and a reload will trigger a message to the
+          // user asking if they want to send data again.
+          window.location = window.location;
+        });
+
+        FB.Canvas.setAutoGrow();
+    </script>
+		<%= assumed_identity_message %>
+
+		<%= portal_navigation current_portal.to_liquid %>
+
+		<% unless @facebook_login %>
+		<div class="fb-login-button" data-scope="user_likes,email">Log In</div>
+		<% end %>
+		<%= yield %>
+				
+		<%= render :partial => "layouts/shared/scripts" %> 
+
+		<!-- Including default portal based script at the bottom -->
+		<%= include_cloudfront_js :portal_bottom %>
+		<%= include_cloudfront_js :redactor %>
+
+		<%= cookie_law %>
+	</body>
+</html>

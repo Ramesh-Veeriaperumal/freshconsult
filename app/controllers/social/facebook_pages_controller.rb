@@ -9,7 +9,7 @@ class Social::FacebookPagesController < Admin::AdminController
   before_filter :set_session_state , :only =>[:index , :edit]
   before_filter :fb_client , :only => [:authdone, :index,:edit]
   before_filter :build_item, :only => [:authdone]
-  before_filter :load_item,  :only => [:edit, :update, :destroy]  
+  before_filter :load_item,  :only => [:edit, :update, :destroy, :add_tab]  
   
   def index
     @fb_pages = scoper 
@@ -28,6 +28,12 @@ class Social::FacebookPagesController < Admin::AdminController
     pages = pages.reject(&:blank?)   
     add_to_db pages
     redirect_to :action => :index
+  end
+
+  def add_tab
+    page = fb_client.add_page_tab(params[:custom_name])
+    flash[:success] = "The Freshdesk tab has been added to your page"
+    redirect_to :back
   end
   
   def add_to_db fb_pages

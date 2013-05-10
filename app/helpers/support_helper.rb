@@ -81,6 +81,22 @@ module SupportHelper
 		output << %(</nav>)
 	end
 
+	# Portal tab navigation
+	def portal_navigation portal
+		output = []
+		output << %( <nav class="page-tabs"> )		
+		if(portal['tabs'].present?)
+			output << %(<div class="nav-link" id="header-tabs">)
+			portal['tabs'].each do |tab|
+				active_class = (tab['tab_type'] == portal['current_tab']) ? "active" : ""
+				output << %( <a href="#{tab['url']}" class="#{active_class}">#{tab['label']}</a>) if(tab['url'])
+			end
+			output << %(</div>)
+		end
+		output << %(</nav>)
+		output.join("").html_safe
+	end
+
 	# User image page
 	def profile_image user, more_classes = "", width = "50px", height = "50px" 
 		output = []

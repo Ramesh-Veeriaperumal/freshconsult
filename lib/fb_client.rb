@@ -44,6 +44,11 @@ class FBClient
   def get_page
     @graph = Koala::Facebook::GraphAPI.new(@fb_page.page_token)
   end
+
+  def add_page_tab name
+    @page = get_profile
+    @page.put_connections("me", "tabs", {:access_token => @fb_page.access_token, :app_id => @tokens['app_id'], :custom_name => name})
+  end
   
   def get_profile
     @graph = Koala::Facebook::GraphAPI.new(@fb_page.access_token)

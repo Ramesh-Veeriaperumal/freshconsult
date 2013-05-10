@@ -182,7 +182,10 @@
 
     social.resources :facebook, :controller => 'facebook_pages', 
                 :collection =>  { :signin => :any ,:authdone => :any , :event_listener =>:any , :enable_pages =>:any },
-                :member     =>  { :edit => :any }
+                :member     =>  { :edit => :any, :add_tab => :any }
+
+    social.resources :fb, :controller => 'facebook_app',
+                :collection => { :fb_index => :any }
   end
   
   #SAAS copy starts here
@@ -391,7 +394,7 @@
   # Support Portal routes  
   map.namespace :support do |support|
     # Portal home
-    support.home 'home', :controller => "home"
+    support.home 'home', :controller => "home", :only => [:index, :clear_facebook]
 
     # Portal preview
     support.preview 'preview', :controller => "preview"
