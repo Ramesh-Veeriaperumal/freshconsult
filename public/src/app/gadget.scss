@@ -1,7 +1,7 @@
 // This import applies a global reset to any page that imports this stylesheet.
 @import "lib/settings";
 
-@import "gmail-gadget/*.png";
+@import "cdn-ignored/sprites/gmail-gadget/*.png";
 
 $min-width: 600px;
 $main_content_bradius: 5px;
@@ -75,6 +75,16 @@ body#gcgadget {
 
 	#fullbody .alert-message {
 		margin: 0 10px;
+	}
+
+
+	// New Ticket Details View
+	.tkt-wrapper {
+		padding: 0 20px;
+	}
+
+	.commentbox .actions, .ticket_details #show_more{
+		display: none !important;
 	}
 }
 

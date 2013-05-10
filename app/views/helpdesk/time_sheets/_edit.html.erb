@@ -1,6 +1,8 @@
+<% unless @new_show_page %>
 <div class="request_panel timeentry_edit">
-<% form_remote_for :time_entry, edit, :url => helpdesk_time_sheet_path, :html => { :method => :put, :class => "ui-form" } do |f| %>
-  <%= render :partial => "/helpdesk/time_sheets/form", :object => f %>
+<% form_remote_for :time_entry, edit, :url => helpdesk_time_sheet_path, 
+	:html => { :method => :put, :class => "ui-form dont-validate" } do |f| %>
+  <%= render :partial => "/helpdesk/time_sheets/form", :object => f, :type => 'edit' %>
   <fieldset>
     <div class="agent"></div>
 	  <div class="timespent"></div>
@@ -18,3 +20,6 @@
 <% end %>
 <%= content_tag :div, "", :id => "timeentry_apps_#{edit.id}", :class => "ui-form" %>
 </div>
+<% else 
+  render :partial => "helpdesk/time_sheets/v2/edit"
+end %>

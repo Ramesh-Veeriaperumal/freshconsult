@@ -1,3 +1,4 @@
+require 'solution/article'
 class Solution::Folder < ActiveRecord::Base
   
   attr_protected :category_id, :account_id
@@ -12,7 +13,8 @@ class Solution::Folder < ActiveRecord::Base
   
   before_create :populate_account
   after_save :set_article_delta_flag
-  before_update :clear_customer_folders
+  before_update :clear_customer_folders, :backup_folder_changes
+  after_commit_on_update :update_search_index, :if => :visibility_updated?
   
   has_many :articles, :class_name =>'Solution::Article', :dependent => :destroy, :order => "position"
   has_many :published_articles, :class_name =>'Solution::Article', :order => "position",
@@ -119,9 +121,22 @@ class Solution::Folder < ActiveRecord::Base
     @solution_folder_drop ||= Solution::FolderDrop.new self
   end
 
+  def update_search_index
+    Resque.enqueue(Search::IndexUpdate::FolderArticles, { :current_account_id => account_id, :folder_id => id })
+  end
+
   private
     def populate_account
       self.account = category.account
+    end
+
+    def backup_folder_changes
+      @all_changes = self.changes.clone
+      @all_changes.symbolize_keys!
+    end
+
+    def visibility_updated?
+      @all_changes.has_key?(:visibility)
     end
   
 end

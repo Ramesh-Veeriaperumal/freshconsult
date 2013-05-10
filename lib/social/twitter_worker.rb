@@ -49,6 +49,11 @@ class Social::TwitterWorker
                   :id => @twt_handle.id}})
         puts "Twitter Api Error -#{e.to_s} :: Account_id => #{@twt_handle.account_id}
                                   :: id => #{@twt_handle.id} "
+      rescue Twitter::Error::TooManyRequests => e
+        puts "Twitter API Rate Limit Error  -#{e.to_s} :: Account_id => #{@twt_handle.account_id}
+                                  :: id => #{@twt_handle.id}"
+        NewRelic::Agent.notice_error(e,{:custom_params => {:account_id => @twt_handle.account_id,
+                  :id => @twt_handle.id}})
       rescue Exception => e
         puts "Something wrong happened in twitter! Error-#{e.to_s} :: Account_id => #{@twt_handle.account_id}
                                   :: id => #{@twt_handle.id} "

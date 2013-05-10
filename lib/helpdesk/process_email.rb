@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Helpdesk::ProcessEmail < Struct.new(:params)
  
   include EmailCommands
@@ -18,13 +19,19 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       kbase_email = account.kbase_email
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
         email_config = account.email_configs.find_by_to_email(to_email[:email])
+        return if email_config && (from_email[:email] == email_config.reply_email)
         user = get_user(account, from_email, email_config)
+        Rails.logger.debug "PROCESS USER : #{user.inspect}"
         if !user.blocked?
           ticket = fetch_ticket(account, from_email, user)
+          Rails.logger.debug "PROCESS USER : #{ticket.inspect}"
           if ticket
+            Rails.logger.debug "PROCESS FROM EMAIL : #{from_email.inspect}"
+            Rails.logger.debug "PROCESS TICKET REPLY : #{ticket.reply_email}"
             return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
             add_email_to_ticket(ticket, from_email, user)
           else
+            Rails.logger.debug "CANNOT FIND TICKET"
             create_ticket(account, from_email, to_email, user, email_config)
           end
         end
@@ -156,9 +163,12 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
     def fetch_ticket(account, from_email, user)
       display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
+      Rails.logger.debug "PROCESS display_id : #{display_id}"
       ticket = account.tickets.find_by_display_id(display_id) if display_id
+      Rails.logger.debug "PROCESS USER inside fetch : #{ticket.inspect}"
       return ticket if can_be_added_to_ticket?(ticket, user)
       ticket = ticket_from_headers(from_email, account)
+      Rails.logger.debug "PROCESS USER failed first check : #{ticket.inspect}"
       return ticket if can_be_added_to_ticket?(ticket, user)
     end
     

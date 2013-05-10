@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Import::CustomField
   
   ZENDESK_FIELD_TYPES = {
@@ -8,13 +9,19 @@ module Import::CustomField
     'FieldTextarea' => 'paragraph'
   }
   
+  CHARACTER_FIELDS = (1..30).collect { |n| "ffs_#{"%02d" % n}" }
+  NUMBER_FIELDS = (1..10).collect { |n| "ff_int#{"%02d" % n}" }
+  DATE_FIELDS = (1..10).collect { |n| "ff_date#{"%02d" % n}" }
+  CHECKBOX_FIELDS = (1..10).collect { |n| "ff_boolean#{"%02d" % n}" }
+  TEXT_FIELDS = (1..10).collect { |n| "ff_text#{"%02d" % n}" }
+
   FIELD_COLUMN_MAPPING = {
-    "text"      => [["text" , "dropdown"], Helpdesk::FormCustomizer::CHARACTER_FIELDS],
-    "dropdown"  => [["text" , "dropdown"], Helpdesk::FormCustomizer::CHARACTER_FIELDS],
-    "number"    => ["number", Helpdesk::FormCustomizer::NUMBER_FIELDS],
-    "checkbox"  => ["checkbox", Helpdesk::FormCustomizer::CHECKBOX_FIELDS],
-    "date"      => ["date", Helpdesk::FormCustomizer::DATE_FIELDS],
-    "paragraph" => ["paragraph", Helpdesk::FormCustomizer::TEXT_FIELDS]
+    "text"      => [["text" , "dropdown"], CHARACTER_FIELDS],
+    "dropdown"  => [["text" , "dropdown"], CHARACTER_FIELDS],
+    "number"    => ["number", NUMBER_FIELDS],
+    "checkbox"  => ["checkbox", CHECKBOX_FIELDS],
+    "date"      => ["date", DATE_FIELDS],
+    "paragraph" => ["paragraph", TEXT_FIELDS]
   }
 
   def import_flexifields (base_dir, account = current_account)

@@ -31,7 +31,7 @@ end
 def uses_mocha(test_name)
   unless Object.const_defined?(:Mocha)
     gem 'mocha', '>= 0.9.5'
-    require 'mocha'
+    require 'mocha/api'
   end
 rescue LoadError => load_error
   $stderr.puts "Skipping #{test_name} tests. `gem install mocha` and try again."

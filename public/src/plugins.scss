@@ -1,0 +1,24 @@
+// Styles for plugins used in freshdesk
+@import "app/lib/settings";
+@import "app/lib/mixins";
+
+// jQuery Time, Dialog and Drag styles
+@import "plugins-lib/jquery-ui.scss";
+
+// QTip tooltip style
+@import "plugins-lib/qtip.scss";
+
+// Fast autocompelete styles
+@import "plugins-lib/autocomplete.scss";
+
+// Chosen custom select box
+@import "plugins-lib/chosen.scss";
+
+// Select2 custom select box
+@import "plugins-lib/select2.scss";
+
+// Redactor rich text editor
+@import "plugins-lib/redactor.scss";
+
+// Growl notification styles
+@import "plugins-lib/gritter.scss";

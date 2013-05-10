@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Helpdesk::AttachmentsController < ApplicationController
   
   include HelpdeskControllerMethods
@@ -8,7 +9,8 @@ class Helpdesk::AttachmentsController < ApplicationController
   before_filter :check_destroy_permission, :only => [:destroy]
 
   def show
-    redir_url = AWS::S3::S3Object.url_for(@attachment.content.path,@attachment.content.bucket_name,
+    style = params[:style] || "original"
+    redir_url = AWS::S3::S3Object.url_for(@attachment.content.path(style.to_sym),@attachment.content.bucket_name,
                                           :expires_in => 300.seconds)
     respond_to do |format|
       format.html do

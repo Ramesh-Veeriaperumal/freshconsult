@@ -1,5 +1,5 @@
-<%= include_stylesheets :pattern %>
-<%= include_javascripts :pattern %>
+<%= include_cloudfront_css :pattern %>
+<%= include_cloudfront_js :pattern %>
 <%= f.error_messages %>
 <% conditions = @sla_policy.conditions || {} %>
 <ul class="ui-form dont-validate">
@@ -120,7 +120,7 @@
 	<li>
 		<%= f.label :conditions, "#{t('sla_policy.escalate')}", :class => "large" %>
 		<div class="escalate_to">
-			<label><%= t('sla_policy.escalation_response') %></label>
+			<label><%= t('sla_policy.escalation_response_text') %></label>
 			<div class="grid">
 				<table data-max-level=1 data-type="response" class="sla_policies">
 					<%= select_tag('response_time', 
@@ -154,7 +154,7 @@
 						</tr>
 				</table>
 			</div>
-			<label><%= t('sla_policy.escalation_resolution') %></label>
+			<label><%= t('sla_policy.escalation_resolution_text') %></label>
 			<div class="grid resolution_container">
 				<table data-max-level = <%= Helpdesk::SlaPolicy::ESCALATION_LEVELS_MAX %> 
 							 class="sla_policies">
@@ -200,7 +200,7 @@
 	<%= f.submit t('save'), :class => "btn btn-primary" %>
 </div>	 
 
-<%= javascript_include_tag 'helpdesk/sla_policy' %>
+<script src="/javascripts/helpdesk/sla_policy.js" type="text/javascript"></script>
 <% javascript_tag do %>
 	var time = <%= ActiveSupport::JSON.encode(@time && {1 => @time['resolution_1'], 
 										2 => @time['resolution_2'],	3 => @time['resolution_3'], 

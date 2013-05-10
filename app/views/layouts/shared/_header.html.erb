@@ -1,59 +1,72 @@
 <%= assumed_identity_message %>
 <div class="header">
   <div class="wrapper">
-  <div class="brand">
-    <% link_to (portal_pref(current_portal, :logo_link).empty?) ? "/home" : portal_pref(current_portal, :logo_link), :class => "logo" do %>
-    	<% cache(["v2","portal","logo",current_portal]) do %>
-      	<%= image_tag (current_portal.logo.nil? ? "/images/logo.png?721013" : current_portal.logo.content.url(:logo)) %>
-      <% end %>
-    <% end %>      
-    <%= link_to(current_portal.name, "/home", :class => "logo_text") %>
-    <%= link_to_function("Switch to mobile version", 
-    										 "jQuery.cookie('classic_view','false',{path:'/'});location.href='/';", 
-    										 :class => 'mobile_switchBtn') if mobile_agent? && allowed_domain? %>
-  </div>		
-
-
-    <div class="header_links">
-      <% if current_user then %>  
-		<%= content_tag(:span, t('header.welcome')) %>
-		<%= link_to h(current_user.name), "#", :class => "nav-trigger", :menuid => "#LoggedOptions" %>
-     <% else %>
-
-        <%= link_to( t('header.login') , login_path) %>
-		<%= link_to( t('signup') , current_portal.support_signup_path ) if feature?(:signup_link) %>
-    <% end %>
-    </div>     
-		<% if current_user then %>                        
-		<div class="profile_info" id="LoggedOptions">                          
-			<div class="info user clearfix">
-				<%= user_avatar(current_user, :thumb, "preview_pic", {:width => "30px", :height => "30px" }) %>
-				<span><%= truncate(h(current_user.name), :length => 30) %></span>
-			</div>
+	<div class="brand">
+	<% link_to (portal_pref(current_portal, :logo_link).empty?) ? "/home" : portal_pref(current_portal, :logo_link), :class => "logo" do %>
+		<% cache(["v2","portal","logo",current_portal]) do %>
+	  	<%= image_tag (current_portal.logo.nil? ? "/images/logo.png?721013" : current_portal.logo.content.url(:logo)) %>
+	  <% end %>
+	<% end %>      
+	<%= link_to(current_portal.name, "/home", :class => "logo_text") %>
+	<%= link_to_function("Switch to mobile version", 
+											 "jQuery.cookie('classic_view','false',{path:'/'});location.href='/';", 
+											 :class => 'mobile_switchBtn') if mobile_agent? && allowed_domain? %>
+	</div>	
+	 <% if current_user then %>  
+  	<div class="header-link-wrapper">
+  		<% if feature?(:round_robin) && current_user.in_round_robin? %>
+  		<%
+  			availabilty_tooltip = ""
+  			if current_user.available?
+  				availabilty_tooltip = t('header.user_available')
+  			else
+  				availabilty_tooltip = t('header.user_not_available')
+  			end
+  		%>
+	  		<a href="#" id="availabilty-toggle" class="tooltip" data-placement="below"  
+	  		title="<%= availabilty_tooltip %>" data-html="true">
+	  			<img alt="" height="35px" src="/images/spacer.gif" class="header-icons-autoAssign-<%= current_user.available? ? "on" : "off" %>" id="available_icon" onclick="toggleAgent()">
+	  		</a>
+	  	<% end %>
+		<a href="#" class="nav-trigger" menuid="#LoggedOptions" id="header-profile-avatar">
+			<%= user_avatar(current_user, :thumb, "preview_pic", {:width => "30px", :height => "30px" }) %>
+		</a>
+	</div>
+	<% else %>
+	 	<div class="header_links">
+	        <%= link_to( t('header.login') , login_path) %>
+			<%= link_to( t('signup') , current_portal.support_signup_path ) if feature?(:signup_link) %>
+		</div>
+    <% end %>    
+	<% if current_user then %>                        
+	<div class="profile_info" id="LoggedOptions">                          
+		<div class="info user clearfix">
+			<span><%= truncate(h(current_user.name), :length => 30) %></span>
+		</div>
+		<%= link_to "<i class='header-arrow-right'></i> #{t('profile_settings')}", edit_profile_path(current_user), :class => "link" %>
+		<% if is_assumed_user? %>    
 			<span class="seperator"></span>
-			<%= link_to t('profile_settings'), edit_profile_path(current_user), :class => "link" %>
-			<% if is_assumed_user? %>    
+			<%= link_to t('revert_identity_link_msg'), revert_identity_users_path, :class => "link" %>			
+  		<% elsif !is_assumed_user? && (current_user.admin? || current_user.account_admin? || current_user.supervisor?) %>
+  			<% @allowed_to_assume = current_account.users.technicians.visible.allowed_to_assume(current_user) %>
+  			<% unless @allowed_to_assume.blank? %>
 				<span class="seperator"></span>
-				<%= link_to t('revert_identity_link_msg'), revert_identity_users_path, :class => "link" %>
-      		<% elsif !is_assumed_user? && (current_user.admin? || current_user.account_admin? || current_user.supervisor?) %>
-      			<% @allowed_to_assume = current_account.users.technicians.visible.allowed_to_assume(current_user) %>
-      			<% unless @allowed_to_assume.blank? %>
-					<span class="seperator"></span>
-					<div class="info">
-						<h5><%=t('switch_heading')%></h5>      					
-						<%= select_tag 'assumed_select_id', options_from_collection_for_select(@allowed_to_assume, :id, :name), { :class => "customSelect", "data-placeholder"=> t('swith_agent_msg'), "onchange" => "assume_identity_url()", :style => "width:250px" } %>
-						<% javascript_tag do%>
-						  function assume_identity_url() {
-						    window.location = '/users/'+$('assumed_select_id').value+'/assume_identity';
-						  }
-						<%end%>
-					</div>
-				<% end %>
-			<% end %>                      
-			<span class="seperator"></span>			
-			<%= link_to t('header.signout'), logout_path, :class => "link" %>
-		</div>                                                             
-		<% end %>
+				<div class="info">   	
+					<i class='header-arrow-right  top-margin'></i>				
+					<input type="hidden" id="assumed_select_id" class="header-agent-select"
+					data-placeholder = "<%= t("swith_agent_msg") %>" onchange="assume_identity_url()"/>
+					<% javascript_tag do%>
+					  function assume_identity_url() {
+					    window.location = '/users/'+$('assumed_select_id').value+'/assume_identity';
+					  }
+					<%end%>
+				</div>
+			<% end %>
+		<% end %>                      
+		<span class="seperator"></span>			
+		<%= link_to "<i class='header-arrow-right'></i> #{t('header.signout')}", logout_path, :class => "link" %>
+	</div>                                                             
+	<% end %>
   </div>
 	<div class="top_nav_bg"> 
 		<div class="wrapper">
@@ -65,11 +78,11 @@
 						<%= link_to( "<span></span> #{t('header.submit_a_ticket')}", new_support_ticket_path, :class => "new_ticket" ) if allowed_in_portal?(:anonymous_tickets) %>
 					<% end %>
           <% if current_user then %>
-					 <% form_tag '/search', :method => :get, :class => "nav_search" do %>
+					 <% form_tag (es_enabled? ? search_home_index_path : search_index_path), :method => :get, :class => "nav_search" do %>
 					 	<div class="search_bar" id="SearchBar">
 					 	  <span class="searchIcon"></span>
 							<label class="overlabel" for="header_search"><%= t("header.search") %></label>
-							<input value="" type="text" id="header_search" autocomplete="off" name="search_key" />
+							<input value="" type="text" id="header_search" autocomplete="off" name="search_key" data-es-enabled="<%= es_enabled? %>" />
 						</div>
 					 <% end %>
           <% end %>
@@ -96,4 +109,67 @@
 			});
 	  <% end %>
   <% end %>
+<% end %>
+
+<script type="text/javascript">
+	jQuery(document).ready(function() {
+	<%
+		assume_agent = []
+		if current_user
+			@allowed_to_assume = current_account.users.technicians.visible.allowed_to_assume(current_user) 
+			
+			if @allowed_to_assume
+				@allowed_to_assume.each do |req|
+					assume_agent << "{id: '#{req.id}',
+		                  value: '#{escape_javascript(req.name)}',
+		                  text: '#{escape_javascript(req.name)}'}"
+				end
+			end
+		end
+	%>
+		jQuery("#assumed_select_id").select2("val",[]);
+
+		jQuery('#assumed_select_id').select2({
+		multiple: false,
+		data: [<%=assume_agent.join(",")%>]
+		
+	});
+
+});
+
+
+</script>
+
+<% if current_user %>
+	<% javascript_tag do %>
+	 function toggleAgent() {
+		var user_id = '<%= current_user.id %>'
+	  	var value = ( jQuery("#available_icon").attr("class") == "header-icons-autoAssign-on" )
+	 
+	  	new Ajax.Request('/agents/toggle_availability', 
+	                   { parameters: {value: !value, id: user_id},
+	                      onLoading: function() {
+	                        jQuery('#available_icon').addClass('header-spinner')
+	                      },
+	                      onSuccess: function(response) {
+	                       //change the icon class.
+	                      jQuery('#available_icon').removeClass('header-spinner')
+	                      if (jQuery('#available_icon').hasClass('header-icons-autoAssign-on'))
+	                      {
+	                        jQuery('#available_icon').removeClass('header-icons-autoAssign-on').addClass('header-icons-autoAssign-off')
+	                        jQuery('#availabilty-toggle')
+	                        	.attr('title',"<%= t('header.user_not_available') %>")
+	                      }
+	                      else{
+	                        jQuery('#available_icon').removeClass('header-icons-autoAssign-off').addClass('header-icons-autoAssign-on')
+	                        jQuery('#availabilty-toggle')
+	                        	.attr('title',"<%= t('header.user_available') %>")
+	                      }
+
+
+	                     } });
+	    
+	}
+
+	<% end %>
 <% end %>

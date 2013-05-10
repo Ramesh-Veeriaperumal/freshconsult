@@ -12,15 +12,15 @@ class Reports::HelpdeskReportsController < ApplicationController
 
 
   def generate
-    @pie_charts_hash = {}
+      @pie_charts_hash = {}
 
     @bar_charts_hash ={}
 
-    fetch_activity
-    calculate_resolved_on_time
-    calculate_fcr
-    get_tickets_time_line
-    render :partial => "/reports/shared/report"
+      fetch_activity
+      calculate_resolved_on_time
+      calculate_fcr
+      get_tickets_time_line
+      render :partial => "/reports/shared/report"
   end
   
    def export_to_excel

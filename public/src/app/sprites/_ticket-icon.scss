@@ -1,0 +1,60 @@
+// Ticket icon sprite creation
+// --------------------------------------------------
+
+@import "cdn-ignored/sprites/ticket-icon/*.png";
+@import "cdn-ignored/sprites/portal/sources/*.png";
+
+/* %% more styles set for this class in some other file */
+
+/* %% app-common */ 
+.rtCnt .rtPanel{
+	a{
+		span.ticket{ @include ticket-icon-sprite(properties); }
+		span.related_solutions{ @include ticket-icon-sprite(solutions); }
+		span.scenarios{ @include ticket-icon-sprite(scenario); }
+		span.requesterinfo{ @include ticket-icon-sprite(user-info); }
+		span.todo{ @include ticket-icon-sprite(todo); }
+		span.tags{ @include ticket-icon-sprite(tag); }
+		span.activity{ @include ticket-icon-sprite(activity); }
+	}	
+	li.active, a:hover{
+		span.ticket{ @include ticket-icon-sprite(properties_active); }
+		span.related_solutions{ @include ticket-icon-sprite(solutions_active); }
+		span.scenarios{ @include ticket-icon-sprite(scenario_active); }
+		span.requesterinfo{ @include ticket-icon-sprite(user-info_active); }
+		span.todo{ @include ticket-icon-sprite(todo_active); }
+		span.tags{ @include ticket-icon-sprite(tag_active); }
+		span.activity{ @include ticket-icon-sprite(activity_active); }		
+	}	
+}
+
+.action_icons{
+	.monitor img{ @include ticket-icon-sprite(monitor); }
+	.monitor_active img{ @include ticket-icon-sprite(monitor_active); }
+
+	.spam img{ @include ticket-icon-sprite(flag-spam); }
+	.spam_active img{ @include ticket-icon-sprite(flag-spam_active); }
+}
+
+
+.jira img{ @include ticket-icon-sprite(jira); }
+.jira_active img{ @include ticket-icon-sprite(jira_active); } 
+
+.conversation-sprite{	
+	.email-reply{ @include ticket-icon-sprite(email-reply); }
+	.email-forward{ @include ticket-icon-sprite(email-forward); }
+	.email-receive{ @include ticket-icon-sprite(email-receive); }
+	.note-public{ @include ticket-icon-sprite(note-public); }
+	.note-private{ @include ticket-icon-sprite(note-private); }
+	.tweet-note{ @include ticket-icon-sprite(tweet-note); }
+}
+
+/* Source sprites for tickets list view */
+$sources: portal, email, facebook, twitter, phone, chat, forum, mobihelp;
+#tickets-expanded .status-source {	
+	@each $source in $sources{
+		&.source-detailed-#{$source}{
+			@include sources-sprite(detailed-#{$source});
+		}
+	}
+}

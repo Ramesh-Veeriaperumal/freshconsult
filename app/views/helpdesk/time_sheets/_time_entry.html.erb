@@ -1,11 +1,12 @@
 <% content_tag :div, :id => "timeentry_#{time_entry.id}", :class => (time_entry.timer_running) ? "time_running" : "" do %>
+  <% @ticket ||= time_entry.workable %>
   <div class="timeentry" id="timeentry_view_<%= time_entry.id %>">     
       <div class="actions">
-  	    <%= link_to_remote( t('edit'), 
+  	    <%= link_to_remote(t('edit'), 
   	                    { :url => edit_helpdesk_ticket_helpdesk_time_sheet_path(@ticket, time_entry),
   	                      :method => :get },
-  	                    { :class => "slim-button timeedit" } ) %> 
-  	    <%= link_to_remote( "",
+  	                    { :class => "slim-button timeedit" }) %> 
+  	    <%= link_to_remote("",
                         { :url => helpdesk_time_sheet_url(time_entry),
                           :method => :delete ,
                           :confirm => "Delete this time entry?" },
@@ -41,7 +42,7 @@
     	<% content_tag :div, :class => "note" do
     	    concat content_tag(:span, "", :class => "billable tooltip", :title => "Billable time entry") if time_entry.billable
 
-          concat link_to_remote( RedCloth.new(time_entry.note.blank? ? "_add note_" : time_entry.note).to_html, 
+          concat link_to_remote( RedCloth.new(time_entry.note.blank? ? "_add note_" : h(time_entry.note)).to_html, 
                                { :url => edit_helpdesk_time_sheet_path(time_entry), 
                                  :method => :get } )
          end	%>

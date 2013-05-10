@@ -12,10 +12,10 @@ class CalendarDateSelect
       cds_css_file = style ? "calendar_date_select/#{style}" : "calendar_date_select/default"
       
       output = []
-      output << javascript_include_tag("calendar_date_select/calendar_date_select")
-      output << javascript_include_tag("calendar_date_select/locale/#{locale}") if locale
-      output << javascript_include_tag(CalendarDateSelect.javascript_format_include) if CalendarDateSelect.javascript_format_include
-      output << stylesheet_link_tag(cds_css_file)
+      output << %( <script src="/javascripts/calendar_date_select/calendar_date_select.js" type="text/javascript"></script> )
+      output << %( <script src="/javascripts/calendar_date_select/locale/#{locale}.js" type="text/javascript"></script> ) if locale
+      output << %( <script src="/javascripts/#{CalendarDateSelect.javascript_format_include}.js" type="text/javascript"></script> ) if CalendarDateSelect.javascript_format_include
+      output << %( <link href="/stylesheets/#{cds_css_file}.css" media="screen" rel="stylesheet" type="text/css"> )
       output * "\n"
     end
   end

@@ -13,9 +13,9 @@
 					 <% Topic::IDEAS_STAMPS_OPTIONS.each do |k,v| %>
 					 	<% class_name = "stamp_type_#{v}" %>
 					 	<%if @topic.stamp_type != v %>
-							<%= link_to (k , update_stamp_category_forum_topic_path(@forum_category,@forum,@topic,:stamp_type => v),  :method=>:put, :class => class_name )   %>
+							<%= link_to(k , update_stamp_category_forum_topic_path(@forum_category,@forum,@topic,:stamp_type => v),  :method=>:put, :class => class_name )   %>
 						<%else%>
-							<%= link_to (k , remove_stamp_category_forum_topic_path(@forum_category,@forum,@topic), :method=>:put , :class => class_name + " active")   %>
+							<%= link_to(k , remove_stamp_category_forum_topic_path(@forum_category,@forum,@topic), :method=>:put , :class => class_name + " active")   %>
 						<%end%>
 					<% end %>
 			    </div>
@@ -45,7 +45,7 @@
 						<textarea id="agent-hovercard" style="display:none;">
 							<div class="contact_hover" style="min-height:50px;">
 							  <%= user_avatar(@topic.user) if @topic.user %>
-							  <%= content_tag :div, link_to(h(@topic.user), @topic.user), :class => "user_name" %>
+							  <%= content_tag :div, link_to(CGI.escapeHTML(h(@topic.user)), @topic.user), :class => "user_name" %>
 							  <% if @topic.user.agent? %>
 							  	<strong><%= content_tag :div, h(@topic.user.agent.level.name) unless @topic.user.agent.level.blank? %></strong>
 							  <% end %>
@@ -54,7 +54,7 @@
             		<% end %>
 					<div class="user_details">
 						<%= user_avatar( @topic.user ) %>
-            			<%=t('posted_by')%> <%= link_to_user ( @topic.user, :class => "user_name", "data-placement" => "topRight", :rel => "hover-popover", "data-widget-container" => "agent-hovercard" ) %>
+            			<%=t('posted_by')%> <%= link_to_user( @topic.user, :class => "user_name", "data-placement" => "topRight", :rel => "hover-popover", "data-widget-container" => "agent-hovercard" ) %>
             			<div class="info">
 						  <%= formated_date(@topic.created_at) %>
 						  <% if @forum.ideas? %>
@@ -102,12 +102,12 @@
  					<% end %>
 					<% unless @topic.forum.announcement? %>   
 						<div class="status" id="voting_container"> 
-							  <%= render (:partial => "/forum_shared/topic_vote", :object => @topic) if logged_in? %> 
+							  <%= render(:partial => "/forum_shared/topic_vote", :object => @topic) if logged_in? %> 
 						</div>
 					<% end %>             
 					<div class="alignright">
            <%= content_tag(:h4, t('topic.msg1'), :class => "title" ) if @topic.locked? %>
-           <%= link_to_function (t('reply_comment'), "ReplyForm.init()", :class => "uiButton special") if logged_in? && !@topic.locked? %>
+           <%= link_to_function(t('reply_comment'), "jQuery('#reply').toggle();jQuery('#post_body_html').getEditor().focus();", :class => "uiButton special") if logged_in? && !@topic.locked? %>
           </div>
 					</div>   
         </div>

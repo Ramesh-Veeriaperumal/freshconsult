@@ -1,17 +1,17 @@
 <div class="contact-box clearfix">
 		<%= user_avatar(@user, :medium, "profile_pic") %>
-		<h1 class="title"><%= @user.display_name %></h1>
+		<h1 class="title"><%= h(@user.display_name) %></h1>
 		<%= render :partial => "helpdesk/tickets/components/company_info.html", :locals => { :user => @user } %>
 		<%= render :partial => "/helpdesk/tags/tag_cloud.html", :object => @user.tags %>
 		<div class="user-info">
-			<%= content_tag (:div, "#{content_tag(:span, t('user.email'))}  #{h(@user.email)}") unless @user.email.blank? %>
-			<%= content_tag (:div, "#{content_tag(:span, t('user.secondary'))}  #{h(@user.second_email)}") unless @user.second_email.blank? %>
-			<%= content_tag (:div, "#{content_tag(:span, t('user.phone_no'))}  #{h(@user.phone)}") unless @user.phone.blank? %>
-			<%= content_tag (:div, "#{content_tag(:span, t('user.mobile'))}  #{h(@user.mobile)}") unless @user.mobile.blank? %>
-			<%= content_tag (:div, "#{content_tag(:span, t('user.address'))}  <div>#{h(@user.address)}</div>") unless @user.address.blank? %>
-			<%= content_tag (:div, "#{content_tag(:span, t('user.twitter_id'))}  #{h(@user.twitter_id)}") unless @user.twitter_id.blank? %>
-			<%= content_tag (:div, "#{content_tag(:span, t('facebook_source'))}  <a target='_blank' href=http://facebook.com/#{h(@user.fb_profile_id) }>http://facebook.com/people/#{h(@user.fb_profile_id)}</a>") unless @user.fb_profile_id.blank? %>
-			<%= content_tag (:div, "#{content_tag(:span, t('account.time_zone'))}  #{h(@user.time_zone)}") %>
+			<%= content_tag(:div, "#{content_tag(:span, t('user.email'))}  #{h(@user.email)}") unless @user.email.blank? %>
+			<%= content_tag(:div, "#{content_tag(:span, t('user.secondary'))}  #{h(@user.second_email)}") unless @user.second_email.blank? %>
+			<%= content_tag(:div, "#{content_tag(:span, t('user.phone_no'))}  #{h(@user.phone)}") unless @user.phone.blank? %>
+			<%= content_tag(:div, "#{content_tag(:span, t('user.mobile'))}  #{h(@user.mobile)}") unless @user.mobile.blank? %>
+			<%= content_tag(:div, "#{content_tag(:span, t('user.address'))}  <div>#{h(@user.address)}</div>") unless @user.address.blank? %>
+			<%= content_tag(:div, "#{content_tag(:span, t('user.twitter_id'))}  #{h(@user.twitter_id)}") unless @user.twitter_id.blank? %>
+			<%= content_tag(:div, "#{content_tag(:span, t('facebook_source'))}  <a target='_blank' href=http://facebook.com/#{h(@user.fb_profile_id) }>http://facebook.com/people/#{h(@user.fb_profile_id)}</a>") unless @user.fb_profile_id.blank? %>
+			<%= content_tag(:div, "#{content_tag(:span, t('account.time_zone'))}  #{h(@user.time_zone)}") %>
 		</div>
 		<% if @user.deleted || (!@user.active? and @user.has_email?) %>
 		<div class="info-highlight">

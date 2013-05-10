@@ -43,7 +43,7 @@
 // Components: Nav
 @import "lib/navs";
 @import "lib/navbar";
-//@import "lib/breadcrumbs";
+@import "lib/breadcrumbs";
 @import "lib/pagination";
 //@import "lib/pager";
 
@@ -54,7 +54,7 @@
 
 // Components: Misc
 //@import "lib/thumbnails";
-//@import "lib/labels-badges";
+@import "lib/labels-badges";
 //@import "lib/progress-bars";
 //@import "lib/accordion";
 //@import "lib/carousel";
@@ -62,5 +62,7 @@
 
 // Utility classes
 @import "lib/utilities"; // Has to be last to override when necessary
+
 //# !PATTERN TODO
 @import "patternhack";
+@import "lib/list-page-theme"

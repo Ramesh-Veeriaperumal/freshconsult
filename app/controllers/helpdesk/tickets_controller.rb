@@ -1,5 +1,4 @@
 require 'fastercsv'
-require 'html2textile'
 
 class Helpdesk::TicketsController < ApplicationController  
   
@@ -11,6 +10,7 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::Ticketfields::TicketStatus
   include RedisKeys
   include Helpdesk::AdjacentTickets
+  include Helpdesk::Activities
   include Helpdesk::ToggleEmailNotification
   include SeamlessDatabasePool::ControllerFilter
 
@@ -19,6 +19,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :set_mobile, :only => [:index, :show,:update, :create, :execute_scenario, :assign, :spam ]
   before_filter :check_user, :only => [:show, :forward_conv]
   before_filter { |c| c.requires_permission :manage_tickets }
+  before_filter :set_show_version
   before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index, :filter_options]
   before_filter :clear_filter, :only => :index
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
@@ -27,16 +28,14 @@ class Helpdesk::TicketsController < ApplicationController
   after_filter  :enable_notification, :if => :notification_not_required?
   before_filter :set_selected_tab
 
-
   layout :choose_layout 
   
-
   before_filter :load_multiple_items, :only => [ :destroy, :restore, :spam, :unspam, :assign, 
     :close_multiple ,:pick_tickets, :delete_forever ]  
   
   skip_before_filter :load_item
   alias :load_ticket :load_item
-  before_filter :load_ticket, :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext]
+  before_filter :load_ticket, :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :activities, :status]
 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
@@ -50,7 +49,6 @@ class Helpdesk::TicketsController < ApplicationController
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
 
-  uses_tiny_mce :options => Helpdesk::TICKET_EDITOR
   
  
   def user_ticket
@@ -102,7 +100,7 @@ class Helpdesk::TicketsController < ApplicationController
       end
       
       format.xml do
-        render :xml => @response_errors.nil? ? @items.to_xml : @response_errors.to_xml(:root => 'errors')
+        render :xml => @response_errors.nil? ? @items.to_xml({:shallow => true}) : @response_errors.to_xml(:root => 'errors')
       end
 
       format.json do
@@ -186,6 +184,7 @@ class Helpdesk::TicketsController < ApplicationController
       else
         if verify_permission
           @ticket_notes = @ticket.conversation
+          @ticket_notes_total = @ticket.conversation_count
           render :layout => "widgets/contacts"
         else
           @no_auth = true
@@ -212,9 +211,18 @@ class Helpdesk::TicketsController < ApplicationController
     @subscription = current_user && @item.subscriptions.find(
       :first, 
       :conditions => {:user_id => current_user.id})
-      
+
+    @page_title = "[##{@ticket.display_id}] #{@ticket.subject}"
+    
     respond_to do |format|
-      format.html  
+      format.html  {
+        if @new_show_page
+          @ticket_notes.reverse!
+          @ticket_notes_total = @ticket.conversation_count
+
+          render :action => "details"
+        end
+      }
       format.atom
       format.xml  { 
         render :xml => @item.to_xml  
@@ -238,7 +246,8 @@ class Helpdesk::TicketsController < ApplicationController
     old_item = @item.clone
     #old_timer_count = @item.time_sheets.timer_active.size -  we will enable this later
     if @item.update_attributes(params[nscname])
-      #flash[:notice] = flash[:notice].chomp(".")+"& \n"+ t(:'flash.tickets.timesheet.timer_stopped') if ((old_timer_count - @item.time_sheets.timer_active.size) > 0)
+
+      update_tags unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
       respond_to do |format|
         format.html { 
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
@@ -251,7 +260,7 @@ class Helpdesk::TicketsController < ApplicationController
           render :xml => @item.to_xml({:basic => true})
         }
         format.json { 
-          render :json => @item.to_json({:basic => true}) 
+          render :json => request.xhr? ? { :success => true }.to_json  : @item.to_json({:basic => true}) 
         }
       end
     else
@@ -262,6 +271,9 @@ class Helpdesk::TicketsController < ApplicationController
           render :json => result.to_json
         }
         format.mobile { 
+          render :json => { :failure => true, :errors => edit_error }.to_json 
+        }
+        format.json { 
           render :json => { :failure => true, :errors => edit_error }.to_json 
         }
         format.xml {
@@ -339,7 +351,10 @@ class Helpdesk::TicketsController < ApplicationController
       }
       format.xml { render :xml => @item, :status=>:success }
       format.json { render :json => @item, :status=>:success }  
-      format.js
+      format.js { 
+        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice', 
+                                      :locals => { :actions_executed => Va::Action.activities, :rule_name => va_rule.name })
+      }
       format.mobile { 
         render :json => {:success => true, :id => @item.id, :actions_executed => Va::Action.activities, :rule_name => va_rule.name }.to_json 
       }
@@ -428,7 +443,7 @@ class Helpdesk::TicketsController < ApplicationController
   def change_due_by     
     due_date = get_due_by_time    
     @item.update_attributes(:due_by => due_date)
-    render :partial => "due_by", :object => @item.due_by
+    render :partial => @new_show_page ? "/helpdesk/tickets/show/due_by" : "due_by", :object => @item.due_by
   end  
   
   def get_due_by_time
@@ -533,13 +548,48 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def save_draft
-    set_key(draft_key, params[:draft_data])
+    count = 0
+    tries = 3
+    begin
+      $redis_secondary.set(draft_key, params[:draft_data])
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e,{:key => draft_key, 
+        :value => params[:draft_data],
+        :description => "Redis issue",
+        :count => count})
+      if count<tries
+          count += 1
+          retry
+      end
+    end
     render :nothing => true
   end
 
   def clear_draft
     remove_key(draft_key)
     render :nothing => true
+  end
+
+  def activities
+    if params[:since_id].present?
+      activity_records = @item.activities.activity_since(params[:since_id])
+    elsif params[:before_id].present?
+      activity_records = @item.activities.activity_before(params[:before_id])
+    else
+      activity_records = @item.activities.newest_first.first(3)
+    end
+
+    @activities = stacked_activities(activity_records.reverse)
+    @total_activities =  @item.activities_count
+    if params[:since_id].present? or params[:before_id].present?
+      render :partial => "helpdesk/tickets/show/activity.html.erb", :collection => @activities
+    else
+      render :layout => false
+    end
+  end
+
+  def status
+    render :partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @ticket}
   end
 
   protected
@@ -622,7 +672,7 @@ class Helpdesk::TicketsController < ApplicationController
   def load_email_params
     @signature = current_user.agent.signature_value || ""
     @email_config = current_account.primary_email_config
-    @reply_email = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
+    @reply_emails = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
     @ticket ||= current_account.tickets.find_by_display_id(params[:id])
     @selected_reply_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
   end
@@ -633,7 +683,8 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def load_reply_to_all_emails
-    @ticket_notes = @ticket.conversation(nil,5,[:survey_remark, :user, :attachments, :schema_less_note, :dropboxes])
+    default_notes_count = @new_show_page ? 3 : 5
+    @ticket_notes = @ticket.conversation(nil,default_notes_count,[:survey_remark, :user, :attachments, :schema_less_note, :dropboxes])
     reply_to_all_emails
   end
 
@@ -661,8 +712,12 @@ class Helpdesk::TicketsController < ApplicationController
       filter_params = params.clone
       filter_params.delete(:action)
       filter_params.delete(:controller)
-      
-      set_key(redis_key, filter_params.to_json, 86400)
+      begin
+        $redis_secondary.set(redis_key, filter_params.to_json)
+        $redis_secondary.expire(redis_key, 86400)
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e) 
+      end
 
       @cached_filter_data = get_cached_filters
     end
@@ -690,8 +745,27 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def get_cached_filters
-      filters_str = get_key(redis_key)
-      JSON.parse(filters_str) if filters_str
+      tries = 3
+      count = 0
+      begin
+        filters_str = $redis_secondary.get("HELPDESK_TICKET_FILTERS:#{current_account.id}:#{current_user.id}:#{session.session_id}")
+        Rails.logger.info "In get_cached_filters - filters_str : #{filters_str.inspect}"
+        JSON.parse(filters_str) if filters_str
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e, {:key => redis_key, 
+          :value => filters_str,
+          :class => filters_str.class.name,
+          :uri => request.url,
+          :referer => request.referer,
+          :count => count,
+          :description => "Redis issue"})
+        if count<tries
+          count += 1
+          retry
+        else
+          return
+        end
+      end
     end
 
     def load_cached_ticket_filters
@@ -781,6 +855,62 @@ class Helpdesk::TicketsController < ApplicationController
       :ticket_id => @ticket.id}
   end
 
+  def update_tags
+    new_tag_list= params[:helpdesk][:tags].split(",").map { |tag| tag.strip}
+    old_tag_list = @item.tags.map{|tag| tag.name.strip }
+
+    add_ticket_tags( new_tag_list.select {|tag| !old_tag_list.include?(tag) })
+    #Choosing the ones that are not in the old list.
+
+    remove_ticket_tags(old_tag_list.select {|tag| !new_tag_list.include?(tag) }) 
+    #Choosing the ones that are in the old list and not in the new ones.
+
+  end
+
+  def add_ticket_tags(tags_to_be_added)
+
+    begin
+      tags_to_be_added.each do |tag_string|
+        tag = Helpdesk::Tag.find_by_name_and_account_id(tag_string, current_account) || Helpdesk::Tag.new(:name => tag_string, :account_id => current_account.id)
+        @item.tags << tag
+      end
+    rescue ActiveRecord::RecordInvalid => e
+    end
+
+  end
+
+  def remove_ticket_tags(tags_to_be_removed)
+
+    tags = current_account.tags.find_all_by_name(tags_to_be_removed)  
+    unless tags.blank?
+
+      # Helpdesk::TagUse.find_all_by_taggable_id_and_tag_id_and_taggable_type().destroy is not working - Hence trying a different route.
+      tag_uses = Helpdesk::TagUse.find_all_by_taggable_id_and_tag_id_and_taggable_type(@item.id, tags.map{ |tag| tag.id } ,"Helpdesk::Ticket" ).collect(&:id)
+      Helpdesk::TagUse.destroy tag_uses
+
+      #Decrementing Tag Uses Count (on multiple items)
+      # Helpdesk::Tag.update_all("tag_uses_count = tag_uses_count -1", {:id => tags.collect(&:id)})
+
+    end
+
+  end
+
+  def set_show_version
+    if cookies[:new_details_view].present?
+      $redis_secondary.set(show_version_key, cookies[:new_details_view].eql?("true") ? "1" : "0")
+      $redis_secondary.expire(show_version_key, 86400 * 50)
+      # Expiry set to 50 days
+      cookies.delete(:new_details_view) 
+    end
+    @new_show_page = ($redis_secondary.get(show_version_key) == "1")
+  rescue Exception => e
+    NewRelic::Agent.notice_error(e)
+    return
+  end
+
+  def show_version_key
+    HELPDESK_TKTSHOW_VERSION % { :account_id => current_account.id, :user_id => current_user.id }
+  end
 
   def set_selected_tab
     @selected_tab = :tickets

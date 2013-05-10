@@ -2,7 +2,7 @@ module Subscription::Events::ControllerMethods
 
   #CSV
   def export_to_csv
-    csv_string = FasterCSV.generate do |csv|
+    csv_string = CSVBridge.generate do |csv|
       csv << csv_columns
 
       params[:data].each do |event_id|
@@ -22,7 +22,7 @@ module Subscription::Events::ControllerMethods
     def csv_columns
       [ "name", "full_domain", "created_at", "admin_name", "admin_email", 
         "amount/month", "plan", "renewal_period", "total_agents", "free_agents", 
-        "affiliate_id", "discount" ]
+        "affiliate_id" ]
     end
 
     def account_details(event)
@@ -45,18 +45,11 @@ module Subscription::Events::ControllerMethods
 
     def subscription_info(event)
       [ event.cmrr, plan_name(event), event.renewal_period, event.total_agents, 
-        event.free_agents, event.subscription_affiliate_id, discount_name(event) ]
+        event.free_agents, event.subscription_affiliate_id ]
     end
 
     def plan_name(event)
       SubscriptionPlan.find(event.subscription_plan_id).name
-    end
-
-    def discount_name(event)
-      discount_id = event.subscription_discount_id
-      discount = SubscriptionDiscount.find(discount_id) if discount_id 
-      
-      %(#{discount.name} ($#{discount.amount} / agent)) if discount
     end
 
 end

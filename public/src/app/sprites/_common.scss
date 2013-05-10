@@ -1,0 +1,32 @@
+/* Importing admin icons */
+@import "cdn-ignored/sprites/admin-icon/*.png";
+$admin-icon-layout:horizontal;
+@include all-admin-icon-sprites;
+
+@import "application-logo/*.png";
+$application-logo-layout:vertical;
+@include all-application-logo-sprites;
+
+/*Report tab icons */
+@import "cdn-ignored/sprites/reports-icon/*.png";
+$reports-icon-layout:horizontal;
+@include all-reports-icon-sprites;
+
+/*Ticket View icons */
+@import "cdn-ignored/sprites/ticket-view/*.png";
+$ticket-view-layout:smart;
+@include all-ticket-view-sprites;
+
+/*header icons */
+@import "cdn-ignored/sprites/header-icons/*.png";
+@include all-header-icons-sprites;
+
+/*Admin product source icons */
+@import "cdn-ignored/sprites/product/*.png";
+@include all-product-sprites;
+
+@import "cdn-ignored/sprites/file-types/*.png";
+@include all-file-types-sprites;
+
+/* !IMPORTANT ALL GAMIFICATION RELATED STYLES WILL BE UNDER "app/gamification.scss" 
+* These sprites are moved there so that they can be imported only if the feature is enabled */

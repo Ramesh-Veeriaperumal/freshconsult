@@ -296,7 +296,14 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     all_joins[0].concat(users_join) if all_conditions[0].include?("users.customer_id")
     all_joins[0].concat(tags_join) if all_conditions[0].include?("helpdesk_tags.name")
     all_joins[0].concat(states_join) if order.eql? "requester_responded_at"
+    all_joins[0].concat(statues_join) if all_conditions[0].include?("helpdesk_ticket_statuses")
     all_joins
+  end
+
+  def statues_join
+    "STRAIGHT_JOIN helpdesk_ticket_statuses ON 
+          helpdesk_tickets.account_id = helpdesk_ticket_statuses.account_id AND 
+          helpdesk_tickets.status = helpdesk_ticket_statuses.status_id"
   end
 
   def schema_less_join
@@ -340,7 +347,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       order_parts = order_columns.split('.')
       
       if order.eql? "requester_responded_at"
-        "if(helpdesk_ticket_states.#{order} IS NULL, helpdesk_tickets.created_at, helpdesk_ticket_states.#{order}) #{order_type}"
+        "helpdesk_tickets.id #{order_type}"
       else
         if order_parts.size > 1
           "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"

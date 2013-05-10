@@ -8,7 +8,7 @@ free_plan_agts: 1
 base_domain: 
     development: freshdesk-dev.com
     production: freshdesk.com
-    staging: freshpo.com
+    staging: freshitil.com
     test: freshpo.com
 
 demo_site:
@@ -74,15 +74,16 @@ chargebee:
     site: "freshpo-test"
     api_key: "fmjVVijvPTcP0RxwEwWV3aCkk1kxVg8e"
   production:
-    site: "fd-pre-production-test"
-    api_key: "nXCFiuuDju8YnhL7G1BjJrF61cdY3xe2S"
+    site: "freshdesk"
+    api_key: "0jYcdSmNzhSfiBdPue1cudI0JOOaFtHMSf"
 
 
 integrations_url:
     development: "http://localhost:3000"
     production: "https://login.freshdesk.com"
     #staging: "https://login.freshbugs.com"
-    staging: "https://login.freshitil.com"
+    #staging: "https://login.freshitil.com"
+    staging: "https://login.freshpo.com"
 
 
 

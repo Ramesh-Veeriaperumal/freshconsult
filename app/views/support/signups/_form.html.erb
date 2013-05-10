@@ -18,14 +18,14 @@
 				</div>
 			</div>
 			<div class="control-group"> 
-	        	<%#= content_tag ( :label, t('ticket.verify_human'), :class => "control-label" ) %>
+	        	<%#= content_tag( :label, t('ticket.verify_human'), :class => "control-label" ) %>
 	        	<div class="controls recaptcha-control">
 	        		<%= recaptcha_tags :display => { :theme => "white" }, :ssl => current_account.ssl_enabled? %>
 	        	</div>
 	      	</div>
 		</fieldset>
 		<div class="form-actions">	
-			<%= submit_tag "Register", { :class => "btn btn-primary" } -%> 
+			<%= submit_tag t('register'), { :class => "btn btn-primary" } -%> 
 			<%= link_to(t('cancel'), '/home', :class => "btn" ) -%>
 		</div>
 	<% end -%>

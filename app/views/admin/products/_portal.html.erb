@@ -70,14 +70,14 @@
       <label class="overlabel" for="link_back_text">
         http://<%= @product.portal.portal_url.presence %>
       </label>
-      <input name="product[portal_attributes][preferences][logo_link]" id="link_back_text" value="<%=(@product.portal[:preferences]||[]).fetch(:logo_link, '')%>" class="text url auto" size="50" />
+      <input name="product[portal_attributes][preferences][logo_link]" id="link_back_text" value="<%=(@product.portal[:preferences]||{}).fetch(:logo_link, '')%>" class="text url auto" size="50" />
       <div class="info-data"> <%= t("linkback_info") %> </div>
     </div>
     <div class="inline-field">
       <label class="caption">Helpdesk Phone</label>
       <div class="fields">
         <label class="overlabel" for="contact_info_text">Contact us @ 888 888 888</label>
-        <input name="account[main_portal_attributes][preferences][contact_info]" id="contact_info_text" 
+        <input name="product[portal_attributes][preferences][contact_info]" id="contact_info_text" 
           value="<%=portal_pref(@product.portal, :contact_info) %>" class="text auto" size="50" />
       </div>
     </div>
@@ -134,10 +134,4 @@
       <% end %>
     }
   })
-
-  jQuery('.fileAdminUpload').live("change", function(){
-    setPostParam(this.form, "redirect_url", window.location)
-    jQuery(this.form).submit()
-  })
-
 <% end %>

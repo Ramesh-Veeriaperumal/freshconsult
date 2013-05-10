@@ -1,20 +1,90 @@
-<% content_for :sidebar do -%><%- end %>
-<h3 class="title"><%= t('reports.tab_heading') %></h3>
-<div>
-	<ul class="report_items">
-	<% @t_reports.each_with_index do |report, index| %>
-		<%= report_item({:label => report[:label], :class => report[:object], :url => report_path(index+1)}) %>
-	<% end %>
-	<% if feature?(:timesheets) %>
-		<%= report_item({:label => t('reports.timesheet_reports.index.title'), :class => 'timesheet', :url => timesheet_reports_url}) %>
-	<% end %>
+<%= include_cloudfront_css :reports %>
+<div class="report-home report ">
 	<% if feature?(:advanced_reporting) %>
-		<%= report_item({:label => t('reports.customer_title_nav'), :class => 'customer', :url => customer_activity_url}) %>
-		<%= report_item({:label => t('reports.helpdesk_title_nav'), :class => 'helpdesk', :url => helpdesk_activity_url}) %>
-	<% end %>
-	<% if feature?(:surveys) %>
-		<%= report_item({:label => t('reports.surveys_title_nav'), :class => 'survey', :url => 
-			survey_activity_url}) %>
-	<% end %>	
-	</ul>
+	<div class="report-separation ataglance">
+			<div class="report-home-header">
+				<h3 class="title">
+					<b><%=t('adv_reports.at_a_glance')%></b>
+					<div><%=t('adv_reports.reports')%></div>
+				</h3>
+				<div class="reports-icon-at-a-glance pull-right"></div>
+			</div>
+			<% classic_val = feature?(:enterprise_reporting) ? true : false %>
+			<ul class="report_icons">
+				<%= report_item({:label => t('reports.helpdesk_title_nav'), :class => 'helpdesk-glance', 
+						:url => helpdesk_activity_url, :classic => classic_val}) %>
+				<%= report_item({:label => t('reports.customer_title_nav'), :class => 'customer-at-a-glance', :url => customer_activity_url, :classic => classic_val}) %>
+				
+				<% if feature?(:enterprise_reporting) %>
+				<%= report_item({:label => t('adv_reports.helpdesk_at_a_glance'), :class => 'helpdesk-glance', :url => reports_helpdesk_glance_reports_url}) %>
+				<%= report_item({:label => t('adv_reports.customer_at_a_glance'), :class => 'customer-at-a-glance', :url => reports_customer_glance_reports_url}) %>
+				<%= report_item({:label => t('adv_reports.agent_at_a_glance'), :class => 'agent-at-a-glance', :url => reports_agent_glance_reports_url}) %>
+				<%= report_item({:label => t('adv_reports.group_at_a_glance'), :class => 'group-at-a-glance', :url => reports_group_glance_reports_url}) %>
+				<%end%>
+			</ul>
+	</div>
+	<%end%>
+	<div class="report-separation summary">
+			<div class="report-home-header">
+			<h3 class="title">
+				<b><%=t('adv_reports.summary')%></b>
+				<div><%=t('adv_reports.reports')%></div>
+			</h3>
+			<div class="reports-icon-summary  pull-right"></div>
+		</div>
+		<ul class="report_icons">
+			<% @t_reports.each_with_index do |report, index| %>
+				<%= report_item({:label => report[:label], :class => "summary-#{index+1}", :url => report_path(index+1)}) %>
+			<% end %>
+			<% if feature?(:timesheets) %>
+				<%= report_item({:label => t('reports.timesheet_reports.index.title'), :class => 'time-sheet-report', :url => timesheet_reports_url}) %>
+			<%end%>
+			<% if feature?(:surveys) %>
+				<%= report_item({:label => t('reports.surveys_title_nav'), :class => 'customer-satisfaction-report', :url => 
+					survey_activity_url}) %>
+			<%end%>
+		</ul>
+	</div>
+	<% if feature?(:enterprise_reporting) %>
+	<div class="report-separation load">
+			<div class="report-home-header">
+			<h3 class="title">
+				<b><%=t('adv_reports.load_analysis')%></b>
+				<div><%=t('adv_reports.reports')%></div>
+			</h3>
+			<div class="reports-icon-load-analysis  pull-right"></div>
+		</div>
+		<ul class="report_icons">
+			<%= report_item({:label => t('adv_reports.helpdesk_load_analysis'), :class => 'helpdesk-load-analysis', :url => reports_analysis_reports_url}) %>
+			<%= report_item({:label => t('adv_reports.helpdesk_performance_analysis'), :class => 'helpdesk-performance-analysis', :url => reports_performance_analysis_reports_url}) %>
+		</ul>
+		</div>
+	<div class="report-separation comparison">
+			<div class="report-home-header">
+			<h3 class="title">
+				<b><%=t('adv_reports.comparison')%></b>
+				<div><%=t('adv_reports.reports')%></div>
+			</h3>
+			<div class="reports-icon-comparison  pull-right"></div>
+		</div>
+		<ul class="report_icons">
+			<%= report_item({:label => t('adv_reports.agent_comparison'), :class => 'agent-comparison', :url => reports_agents_comparison_reports_url}) %>
+			<%= report_item({:label => t('adv_reports.group_comparison'), :class => 'group-comparison', :url => reports_groups_comparison_reports_url}) %>
+		</ul>
+		</div>
+		<div class="report-separation topn">
+			<div class="report-home-header">
+			<h3 class="title">
+				<b><%=t('adv_reports.top_n_analysis')%></b>
+				<div><%=t('adv_reports.reports')%></div>
+			</h3>
+			<div class="reports-icon-top-n-analysis  pull-right"></div>
+		</div>
+		<ul class="report_icons">
+			<%= report_item({:label => t('adv_reports.agent_top_n_analysis'), :class => 'agent-top-n-analysis', :url => reports_agent_analysis_reports_url}) %>
+			<%= report_item({:label => t('adv_reports.group_top_n_analysis'), :class => 'group-top-n-analysis', :url => reports_group_analysis_reports_url}) %>
+			<%= report_item({:label => t('adv_reports.customer_top_n_analysis'), :class => 'customer-top-n-analysis', :url => reports_customers_analysis_reports_url}) %>
+		</ul>
+		</div>
+	<%end%>
 </div>

@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Helpdesk::Tag < ActiveRecord::Base
   
   include Cache::Memcache::Helpdesk::Tag
@@ -35,6 +36,8 @@ class Helpdesk::Tag < ActiveRecord::Base
   named_scope :with_taggable_type, lambda { |taggable_type| { 
             :include => :tag_uses,
             :conditions => ["helpdesk_tag_uses.taggable_type = ?", taggable_type] }
+        }
+  named_scope :most_used, lambda { |num| { :limit => num, :order => 'tag_uses_count DESC'}
         }
 
   SORT_FIELDS = [

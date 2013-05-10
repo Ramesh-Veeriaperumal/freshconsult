@@ -1,0 +1,55 @@
+<%
+label = @activity_data_hash['label']
+if(@activity_data_hash['chart_id'] == 'pie_chart_container')
+%>
+  <div class="span6" data-chart-id="<%=@activity_data_hash['chart_id']%>">
+    <h3 id="<%=label%>_title" class="header-lead"><span><%= t('reports.pie_chart_title_prefix') %>&nbsp;</span></h3>
+    <div id="<%=label%>_freshdesk_chart" class="chart-container">
+      <div class="noinfo"><%=t('adv_reports.no_data_to_display_msg')%></div>
+    </div>
+  </div>
+<script type="text/javascript">
+  jQuery(document).ready(function() {
+    <%unless @activity_data_hash['data'].empty?%>
+    var ticketByType<%=label%> = new pieChart({renderTo:'<%=label%>_freshdesk_chart'
+                                                ,chartData:<%=@activity_data_hash['data'].to_json%>});
+    ticketByType<%=label%>.pieChartGraph();
+    <%end%>
+    jQuery('#<%=label%>_title').html("<span>"+jQuery('#<%=label%>_title').text()+ custom_fields['<%=label%>']+"</span>");
+  });
+</script>
+<%elsif (@activity_data_hash['chart_id'] == 'nested_fields_container')%>
+<div class="row-fluid" data-chart-id="<%=@activity_data_hash['chart_id']%>">
+  <h3 id="<%=label%>_title" class="header-lead"><span><%= t('reports.pie_chart_title_prefix') %>&nbsp;</span></h3>
+  <div class='nested-wrapper'>
+    <div class="nested-unit"> 
+      <div id="<%=label%>_freshdesk_chart" name='level_0' class="nested-stacked-bar">
+          <div class="noinfo"><%=t('adv_reports.no_data_to_display_msg')%></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  jQuery(document).ready(function() {
+  <%unless @activity_data_hash['data'][:chartData].empty?%>
+    var ticketByType<%=label%> = new pare_to_chart({renderTo:'<%=label%>_freshdesk_chart'
+                                                ,chartData:<%=@activity_data_hash['data'][:chartData].to_json%>
+                                                ,xaxis_arr:<%=@activity_data_hash['data'][:xaxis_arr].to_json%>
+                                                ,column_width:<%=@activity_data_hash['data'][:column_width].to_json%>});
+    ticketByType<%=label%>.pareToGraph();
+    <%end%>
+    jQuery('#<%=label%>_title').html("<span>"+jQuery('#<%=label%>_title').text()+ custom_fields['<%=label%>']+"</span>");
+  });
+</script>
+<%elsif (@activity_data_hash['chart_id'] == 'source_container')%>
+<div class="row-fluid" data-chart-id="<%=@activity_data_hash['chart_id']%>">
+  <h3 class="header-lead"><span><%=t('reports.pie_chart_title_prefix')%><%=t('filter_options.source')%></span></h3>
+  <div id="source_freshdesk_single_stacked_bar_chart" class="single-stacked-bar span12" style="height:150px;"><div class="noinfo-bar"><%=t('adv_reports.no_data_to_display_msg')%></div></div>
+</div>
+<script type="text/javascript">
+  var singleStakedBar = new single_stacked_bar_chart(
+        {renderTo: 'source_freshdesk_single_stacked_bar_chart',chartData:<%=@activity_data_hash['data'].to_json%>}
+      );
+  if(<%=@activity_data_hash['data'].to_json%>.length > 0) singleStakedBar.single_stacked_bar_chart_Graph();
+</script>
+<%end%>

@@ -1,11 +1,11 @@
 <% content_for :sidebar do -%>
-<% if @subscription.active? %>
-  <% if @subscription.card_number.present?  %>
-    <div class="sidepanel">    
-      <%= render :partial => "/subscriptions/payment_info" %>  
-    </div>
-  <% end %>
+
+<% if !@subscription.trial? and @subscription.card_number.present? %>
+  <div class="sidepanel">    
+    <%= render :partial => "/subscriptions/payment_info" %>  
+  </div>
 <% end %>
+
 <% end %>
 
 <h3 class= "title"><%= @page_title = t("admin.home.index.billing") %></h3>

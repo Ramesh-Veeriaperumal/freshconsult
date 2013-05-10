@@ -99,7 +99,7 @@
 		var date  = jQuery("#holiday_date_3i").val();
 		var name  = jQuery("#holiday_name").val();
 		month_date = month + " " + date;
-		addHolidaytoList(month_date, name);
+		addHolidaytoList(month_date, escapeHtml(name));
 	}
 	
 	jQuery(document).ready(function(){
@@ -162,9 +162,9 @@
 				holidays_array = $A();
 				
 				HolidayList.each(function(pair) {
-				  	holidays_array.push(pair.value);
-				}); 
 				
+				  	holidays_array.push([pair.value[0],unescapeHtml(pair.value[1])]);
+				}); 
 				jQuery("#holiday_data").val( holidays_array.toJSON() );
 
 				form.submit();
@@ -239,7 +239,7 @@
 													<% end_of_workday ="5:00" %>
 													<% end_of_workday_range = "pm" %>
 												<%end%>
-												<%= check_box_tag ( weekday_human_list[days_index], cal_index, checked, :class => "checked")  %>
+												<%= check_box_tag( weekday_human_list[days_index], cal_index, checked, :class => "checked")  %>
 												<%= days %>
 											</label>
 											<%= select "time", "morning_#{cal_index.to_s}", BusinessCalendar::TIME_LIST, 
@@ -283,7 +283,7 @@
  						<% content_for :pagefixed do %>
 						<% javascript_tag do %>
 							<% @business_calendars.holiday_data.each do |holiday| %>
-								addHolidaytoList("<%=holiday[0]%>", "<%=holiday[1]%>");
+								addHolidaytoList("<%=holiday[0]%>", "<%=h(holiday[1])%>");
 							<% end %>	
 						<% end %>
 						<% end %>

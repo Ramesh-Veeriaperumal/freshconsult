@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Helpdesk::MergeTicketActions
 
 	include Helpdesk::Ticketfields::TicketStatus
@@ -6,28 +7,29 @@ module Helpdesk::MergeTicketActions
 	include RedisKeys
 
 	def handle_merge 
-		@header = @target_ticket.header_info || {}
-		@source_tickets.each do |source_ticket|
-			move_source_notes_to_target(source_ticket)
+    @header = @target_ticket.header_info || {}
+    @source_tickets.each do |source_ticket|
 			move_source_time_sheets_to_target(source_ticket)
 			move_source_description_to_target(source_ticket)
-			add_note_to_source_ticket(source_ticket) 
 			close_source_ticket(source_ticket)
 			update_header_info(source_ticket.header_info) if source_ticket.header_info
 			update_merge_activity(source_ticket) 
 		end
+    move_source_notes_to_target
 		add_header_to_target if !@header.blank?
-		move_source_requesters_to_target
+		# Moving requesters part removed from the feature for now!
+		# move_source_requesters_to_target 
 		add_note_to_target_ticket
 	end
 
 	private
 
-		def move_source_notes_to_target source_ticket
-	    source_ticket.notes.each do |note|
-	      note.update_attribute( :notable_id , @target_ticket.id )
-	    end
-		end
+		def move_source_notes_to_target
+			Resque.enqueue( Workers::MergeTickets,{ :source_ticket_ids => @source_tickets.map(&:display_id),
+                                              :target_ticket_id => @target_ticket.id, 
+                                              :source_note_private => params[:source][:is_private],
+                                              :source_note => params[:source][:note] })
+	  end
 
 		def move_source_description_to_target source_ticket
 			desc_pvt_note = params[:target][:is_private]
@@ -109,24 +111,6 @@ module Helpdesk::MergeTicketActions
 			@target_ticket.schema_less_ticket.save
 		end
 
-		def add_note_to_source_ticket source_ticket
-		  pvt_note =  source_ticket.requester_has_email? ? params[:source][:is_private] : true
-		    source_note = source_ticket.notes.create(
-		      :body => params[:source][:note],
-		      :private => pvt_note || false,
-		      :source => pvt_note ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : 
-		      											Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
-		      :account_id => current_account.id,
-		      :user_id => current_user && current_user.id,
-		      :from_email => source_ticket.reply_email,
-		      :to_emails => pvt_note ? [] : source_ticket.requester.email.to_a,
-		      :cc_emails => pvt_note ? [] : source_ticket.cc_email_hash && source_ticket.cc_email_hash[:cc_emails]
-		    )
-		    if !source_note.private
-		      Helpdesk::TicketNotifier.send_later(:deliver_reply, source_ticket, source_note , {:include_cc => true})
-		    end
-		end
-
 		def add_note_to_target_ticket
 		  target_pvt_note = @target_ticket.requester_has_email? ? params[:target][:is_private] : true
 			@target_note = @target_ticket.notes.create(
@@ -137,7 +121,7 @@ module Helpdesk::MergeTicketActions
 				:account_id => current_account.id,
 				:user_id => current_user && current_user.id,
 				:from_email => @target_ticket.reply_email,
-				:to_emails => target_pvt_note ? [] : @target_ticket.requester.email.to_a,
+				:to_emails => target_pvt_note ? [] : @target_ticket.requester.email.lines.to_a,
 				:cc_emails => target_pvt_note ? [] : @target_ticket.cc_email_hash && @target_ticket.cc_email_hash[:cc_emails]
 			)
 			if !@target_note.private
@@ -145,16 +129,17 @@ module Helpdesk::MergeTicketActions
 			end
 		end
 
-		def convert_to_cc_format ticket
-		  %{#{ticket.requester} <#{ticket.requester.email}>}
-		end
+		# Moving requesters part removed from the feature for now!
+		# def convert_to_cc_format ticket
+		#   %{#{ticket.requester} <#{ticket.requester.email}>}
+		# end
 
-    def get_cc_email_from_hash ticket
-      ticket.cc_email ? (ticket.cc_email[:cc_emails] ? ticket.cc_email[:cc_emails] : []) : []
-    end 
+  #   def get_cc_email_from_hash ticket
+  #     ticket.cc_email ? (ticket.cc_email[:cc_emails] ? ticket.cc_email[:cc_emails] : []) : []
+  #   end 
 
-		def check_source source_ticket
-		  source_ticket.requester_has_email? and ( !source_ticket.requester.eql?(@target_ticket.requester) or 
-		  																									get_cc_email_from_hash(source_ticket).any?)
-		end
+		# def check_source source_ticket
+		#   source_ticket.requester_has_email? and ( !source_ticket.requester.eql?(@target_ticket.requester) or 
+		#   																									get_cc_email_from_hash(source_ticket).any?)
+		# end
 end	

@@ -1,0 +1,122 @@
+= Features
+Features is a nice little gem for associating application features with an active record model in a Rails app.
+
+Developed and used on http://zendesk.com for account owners to switch different application features on and off.
+
+== Sponsored by Zendesk - Enlightened Customer Support
+
+== Description
+
+If the feature set of your application grows, some customers would like to limit the features to only include what they
+need. To enable your customers at Zendesk to customize their help desk to their needs, we developed this nice lille feature
+management system, that we thought someone else out there might find useful.
+
+You can define your feature set in a nice directly in the class that should be associated with features:
+
+  class Account < ActiveRecord::Base
+    has_features do
+      feature :archive
+      feature :ssl
+    end
+  end
+  
+Which would enable code like:
+
+  account.features.archive? # checks weather an account has the archive feature.
+  account.features.archive.create # adds the archive feature to the account
+  account.features.archive.destroy # removes the archive feature to the account
+  account.features?(:account, :ssl) # checks if the account has both the archive and ssl features
+
+You can also define feature dependencies:
+
+  class Account < ActiveRecord::Base
+    has_features do
+      feature :archive
+      feature :premium
+      feature :ssl, :requires => [:premium]
+    end
+  end
+
+Which would enable code like:
+
+  account.features.ssl.available? # returns true if all the required features of the ssl feature are met.
+  account.features.ssl.create # raises a Features::RequirementsError if the account doesn't have the premium feature
+  account.features.premium.destroy # would also destroy the ssl feature
+
+Features can also be updated with the update_attributes and update_attributes! methods.
+  
+  #assuming params include { :account => { :features => { :archive => '1', :ssl => '0' } } }
+  account.update_attributes(params[:account]) # would add the archive feature and remove the ssl feature
+  
+WARNING: You might want to protect some features from being updated with update_attributes. You can do this with:
+
+  class Account < ActiveRecord::Base
+    has_features do
+      feature :archive
+      feature :premium, :protected => true
+      feature :ssl, :requires => [:premium]
+    end
+  end
+
+This would protect the premium feature from being updated with update_attributes and update_attributes! The premium feature can only be updated with account.features.premium.create and account.features.premium.destroy.
+
+We also created a view helper to help you generate the UI for enabling and disabling features:
+
+  <% form_for(:account, :html => { :method => :put }) do |f| %>
+    <h3>
+      <%= f.feature_check_box :ssl %> Enable SSL on your account
+    </h3>
+  <% end %>
+
+== Installation
+
+Install the gem in your rails project by putting it in your environment.rb:
+
+  config.gem 'zendesk-features', :lib => 'features', :source => 'http://gems.github.com'
+
+and do a sudo rake gems:install
+
+Also remember to create the features table. Depending on the name of the model you choose to associate with features in
+your project, you could create the table like:
+
+  create_table :features do |t|
+    t.string :type, :null => false
+    t.integer :account_id, :null => false
+    t.timestamps
+  end
+
+== Known issues
+
+Let us know if you find any.
+
+== Requirements
+
+* ActiveRecord
+* ActionPack
+
+== LICENSE:
+
+(The MIT License)
+
+Copyright (c) 2009 Zendesk
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.

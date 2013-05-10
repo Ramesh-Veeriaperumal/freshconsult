@@ -36,11 +36,21 @@
    "html" and "card" are required for all Gmail contextual gadgets. -->
   <Content type="html" view="card">
     <![CDATA[
-	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshdesk.com/packages/gadget.css">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshdesk.com/stylesheets/app/common.css?20130322">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshdesk.com/stylesheets/app/sprites.css?20130322">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshdesk.com/stylesheets/app/app-common.css?20130322">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshdesk.com/stylesheets/app/app-bootstrap.css?20130322">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshdesk.com/stylesheets/app/plugins.css?20130322">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshdesk.com/stylesheets/app/ie.css?20130322">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshdesk.com/stylesheets/app/tkt_details.css?20130322">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshdesk.com/stylesheets/app/tkt_details_sprites.css?20130322">
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshdesk.com/stylesheets/app/gadget.css?20130322">
+		
+	<link type="text/css" rel="stylesheet" media="screen, projection" href="https://asset.freshdesk.com/stylesheets/redactor.css?20130322">
 	
-	<script type='text/javascript' src='https://asset.freshdesk.com/javascripts/frameworks/jquery.js?1328620567'></script>
-    <script src="https://asset.freshdesk.com/javascripts/frameworks/plugins/jquery.tinymce.js?1325848019" type="text/javascript"></script>
-    <script src="https://asset.freshdesk.com/javascripts/tiny_mce/tiny_mce_src.js?1325848020" type="text/javascript"></script>
+	<script type='text/javascript' src='https://asset.freshdesk.com/javascripts/frameworks/jquery.js?20130322'></script>
+    <script src="https://asset.freshdesk.com/javascripts/redactor/redactor.js?20130322" type="text/javascript"></script>
+    <script src="https://asset.freshdesk.com/javascripts/redactor/freshdesk_redactor.js?20130322" type="text/javascript"></script>
 
       <style type="text/css">
 		html {
@@ -68,6 +78,10 @@
 	<div id="error"></div>
 
 	<script type="text/javascript">
+		if (typeof console === "undefined" || typeof console.log === "undefined") {
+			console = { };
+			console.log = function() { };
+		}
 
 		function updateCookie(cookieId, value, expireDays){
 			var expireString="";
@@ -228,49 +242,14 @@
 				body_field = jQuery("#helpdesk_ticket_description_html")
 				//if(body_field != null) body_field.val(body);
 					
-				tinyMCE.init({
-					apply_source_formatting : false,
-					content_css : '/stylesheets/fresh-mce/content.css',
-					convert_urls : false,
-					dialog_type : 'modal',
-					editor_selector : 'mceEditor',
-					entity_encoding : 'raw',
-					force_br_newlines : true,
-					force_p_newlines : false,
-					forced_root_block : '',
-					handle_event_callback : function(editor){
-					   tinyMCE.triggerSave();
-					   return true;
-					},
-					setupcontent_callback: function(editor_id, body, doc) {
-						autoHeight();
-					},
-					height : '250',
-					inline_styles : false,
-					inlinepopups_skin : 'fresh',
-					language : 'en',
-					mode : 'textareas',
-					paste_auto_cleanup_on_paste : true,
-					paste_convert_headers_to_strong : false,
-					paste_convert_middot_lists : false,
-					paste_create_linebreaks : false,
-					paste_create_paragraphs : false,
-					paste_remove_styles : false,
-					paste_text_sticky : true,
-					paste_unindented_list_class : 'unindentedList',
-					paste_use_dialog : true,
-					plugins : "safari,media,advimage,paste,inlinepopups,table",
-					skin : 'fresh',
-					theme : 'advanced',
-					theme_advanced_buttons1 : 'bold,italic,|,underline,bullist,numlist,|,forecolor,backcolor,|,link,unlink',
-					theme_advanced_buttons2 : '',
-					theme_advanced_buttons3 : '',
-					theme_advanced_resizing : true,
-					theme_advanced_styles : 'Code=codeStyle;Quote=quoteStyle',
-					theme_advanced_toolbar_align : 'left',
-					theme_advanced_toolbar_location : 'top',
-					width : '100%'
-
+				body_field.redactor({ 
+					focus: true,
+					convertDivs: false,  
+					autoresize:false, 
+					tabindex: 2,
+					buttons:['bold','italic','underline','|',
+									 'unorderedlist', 'orderedlist',  '|',
+									 'fontcolor', 'backcolor', '|' ,'link']
 				});
 			}
 		}
@@ -419,7 +398,7 @@
 			var loading_div = jQuery('<div></div>')
 					.attr('id',"gcgLoading")
 					.attr('style','text-align:center; padding: 20px;')
-					.html( '<img src="https://asset.freshdesk.com/images/load.gif" />' );
+					.html( '<img src="https://asset.freshdesk.com/images/animated/ajax-loader.gif" />' );
 			
 			jQuery('body').prepend(loading_div);
 			autoHeight();
@@ -448,7 +427,7 @@
 			jQuery('.request-conversation').removeClass('hide');
 			// For tickets view, showing 
 
-			jQuery('#ui-widget-container a').each( function (i, item) {
+			jQuery('#ui-widget-container a:not(.redactor_box a)').each( function (i, item) {
 				if (!$(this).hasClass('post_processed')) {
 					var current_url = $(this).attr('href');
 					if (current_url) {

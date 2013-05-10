@@ -13,7 +13,7 @@
 <tr>
 	<td width="1%"><%= (index + 1)%></td>
 	<td width="1%"><%= user_avatar(champion.user, :thumb, 'preview_pic') %></td>
-	<td width="20%"><b><%= champion.user.display_name %></b></td>
+	<td width="20%"><b><%= h(champion.user.display_name) %></b></td>
 	<td width="30%">&nbsp;</td>
 	<td width="40%">
 		<% progress_percentage =  ((champion.tot_score.to_i / high_score) * 100).to_i %>

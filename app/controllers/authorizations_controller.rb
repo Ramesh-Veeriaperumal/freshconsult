@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'httparty'
 require 'cgi'
 require 'json'
@@ -103,7 +104,6 @@ class AuthorizationsController < ApplicationController
     config_params['instance_url'] = "#{access_token.params['instance_url']}" if provider=='salesforce'
     config_params = config_params.to_json
     Rails.logger.debug "config_params: #{config_params}"
-
     # KeyValuePair is used to store oauth2 configurations since we redirect from login.freshdesk.com to the
     # user's account and install the application from inside the user's account.
    
@@ -115,7 +115,7 @@ class AuthorizationsController < ApplicationController
     redirect_url = protocol +  domain + port + "/#{controller}/oauth_install/#{app_name}"
     redirect_to redirect_url
   end
-
+ 
     def create_for_email_marketing_oauth(provider, params)
     config_params = {}
     Account.reset_current_account
@@ -127,11 +127,11 @@ class AuthorizationsController < ApplicationController
     config_params["mailchimp"] = "{'app_name':'#{provider}', 'api_endpoint':'#{@omniauth.extra.metadata.api_endpoint}', 'oauth_token':'#{@omniauth.credentials.token}'}" if provider == "mailchimp"
     config_params["constantcontact"] = "{'app_name':'#{provider}', 'oauth_token':'#{@omniauth.credentials.token}', 'uid':'#{@omniauth.uid}'}" if provider == "constantcontact"
     config_params = config_params[provider].gsub("'","\"")
+
     key_value_pair = KeyValuePair.find_by_account_id_and_key(account.id, provider+'_oauth_config')
     key_value_pair.delete unless key_value_pair.blank?
     #KeyValuePair is used to store salesforce/nimble configurations since we redirect from login.freshdesk.com to the user's account and install the application from inside the user's account.
     create_key_value_pair(provider+"_oauth_config", config_params, account.id) 
-    
     redirect_url = protocol +  domain + "/integrations/applications/oauth_install/"+provider
      
     redirect_to redirect_url

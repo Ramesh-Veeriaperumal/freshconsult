@@ -39,14 +39,31 @@ module Notifications::MessageBroker
 		end
 
 		def pull(count=USER_FEED_LIMIT)
-			key = game_notification_key
-			total_length = $redis.llen(key)
-			results = []
-			count = total_length if count > total_length
-			count.times do |index|
-				results.push($redis.lpop(key))
+			retrycount = 0
+	    tries = 3
+	    begin
+				key = game_notification_key
+				total_length = $redis.llen(key)
+				results = []
+				count = total_length if count > total_length
+				count.times do |index|
+					results.push($redis.lpop(key))
+				end
+				results
+			rescue Exception => e
+				NewRelic::Agent.notice_error(e,{:count => count,
+					:total_length => total_length,
+					:total_length_class => total_length.class.name,
+					:key => key,
+					:description => "Redis issue",
+					:count => retrycount})
+				if retrycount<tries
+          retrycount += 1
+          retry
+      	else
+					return []
+				end
 			end
-			results
 		end
 
 end

@@ -1,4 +1,4 @@
-
+# encoding: utf-8
 class Helpdesk::Activity < ActiveRecord::Base
   set_table_name "helpdesk_activities"
   
@@ -31,11 +31,13 @@ class Helpdesk::Activity < ActiveRecord::Base
     }
   }
 
-  named_scope :activty_before, lambda { |account, activity_id|
-    { :conditions => ["helpdesk_activities.account_id = ? and helpdesk_activities.id <= ?", account, activity_id], 
+  named_scope :activity_before, lambda { | activity_id|
+    { :conditions => ["helpdesk_activities.id < ?", activity_id], 
       :order => "helpdesk_activities.id DESC"
     }
   }
+
+  named_scope :newest_first, :order => "helpdesk_activities.id DESC"
 
   
  named_scope :permissible , lambda {|user| { 
@@ -51,6 +53,32 @@ class Helpdesk::Activity < ActiveRecord::Base
                   }
                   
      return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
+  end
+
+  def ticket_activity_type
+    #Getting the Activity type ( Eg: activities.tickets.status_change.long ) to just "status_change"
+    description.chomp('.long').gsub('activities.tickets.','')
+  end
+
+  def activity_type
+    description.split('.')[1]
+  end
+
+  def ticket?
+    activity_type == 'tickets'
+  end
+
+  def note?
+    ticket_activity_type.start_with?('conversation.')
+  end
+
+  def note
+    return Helpdesk::Note.find(note_id) if note?
+  end
+
+  def note_id
+    key = activity_data["eval_args"].keys.first
+    return activity_data['eval_args'][key][1]['comment_id']
   end
 
   private

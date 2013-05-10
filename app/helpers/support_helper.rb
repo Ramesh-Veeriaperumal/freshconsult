@@ -1,3 +1,4 @@
+# encoding: utf-8
 module SupportHelper
 	include Portal::PortalFilters
 	include RedisKeys
@@ -35,7 +36,7 @@ module SupportHelper
 		output << %(<div class="welcome">#{ t('header.welcome') })
 
 		# Showing logged in user name or displaying as Guest
-		output << %(<b>#{ portal['user'] || t('header.guest') }</b> </div> )
+		output << %(<b>#{ h((portal['user']).to_s) || t('header.guest') }</b> </div> )
 
 		# Showing portal login link or signout link based on user logged in condition 
 		if portal['user']
@@ -104,6 +105,10 @@ module SupportHelper
 		   <div class="no-results">#{ I18n.t('portal.no_articles_info_2') }</div> )
 	end
 
+	def filler_for_folders folder
+		%( <div class="no-results">#{ I18n.t('portal.folder.filler_text', :folder_name => h(folder['name'])) }</div> )
+	end
+
 	# Logo for the portal
 	def logo portal
 		_output = []
@@ -128,7 +133,7 @@ module SupportHelper
 		output << %(<ul class="nav nav-pills nav-filter">)		
 			search.filters.each do |f|
 				output << %(<li class="#{search.current_filter == f[:name] ? "active" : ""}">)
-				output << link_to(t("portal.search.filters.#{f[:name]}"), f[:url])
+				output << link_to(t("portal.search.filters.#{f[:name]}"), h(f[:url]))
 				output << %(</li>)
 			end
 		output << %(</ul>)
@@ -149,7 +154,7 @@ module SupportHelper
 	# Follow/unfollow button 
 	# To modify label the liquid can be modified as so
 	# {{ topic | follow_topic_button : "Click to follow", "Click to unfollow" }}
-	def follow_topic_button topic, follow_label = "Follow", unfollow_label = "Following"
+	def follow_topic_button topic, follow_label = t('portal.topic.follow'), unfollow_label = t('portal.topic.following')
 		if User.current
 			_monitoring = !Monitorship.count(:id, 
 							:conditions => ['user_id = ? and topic_id = ? and active = ?', 
@@ -166,19 +171,19 @@ module SupportHelper
 	end
 
 	def link_to_folder_with_count folder, *args
-		label = " #{folder['name']} <span class='item-count'>#{folder['articles_count']}</span>"
-		content_tag :a, label, { :href => folder['url'], :title => folder['name'] }.merge(options)
+		label = " #{h(folder['name'])} <span class='item-count'>#{folder['articles_count']}</span>"
+		content_tag :a, label, { :href => folder['url'], :title => h(folder['name']) }.merge(options)
 	end
 
 	def link_to_forum_with_count forum, *args
-		label = " #{forum['name']} <span class='item-count'>#{forum['topics_count']}</span>"
-		content_tag :a, label, { :href => forum['url'], :title => forum['name'] }.merge(options)
+		label = " #{h(forum['name'])} <span class='item-count'>#{forum['topics_count']}</span>"
+		content_tag :a, label, { :href => forum['url'], :title => h(forum['name']) }.merge(options)
 	end
 
 	def link_to_start_topic portal, *args
 		options = link_args_to_options(args)
     	label = options.delete(:label) || I18n.t('portal.topic.start_new_topic')
-    	content_tag :a, label, { :href => portal['new_topic_url'], :title => label }.merge(options)
+    	content_tag :a, label, { :href => portal['new_topic_url'], :title => h(label) }.merge(options)
 	end
 
 	def article_list folder, limit = 5, reject_article = nil
@@ -200,7 +205,7 @@ module SupportHelper
 		output = <<HTML
 			<li>
 				<div class="ellipsis">
-					<a href="#{article['url']}">#{article['title']}</a>
+					<a href="#{article['url']}">#{h(article['title'])}</a>
 				</div>
 			</li>
 HTML
@@ -226,7 +231,7 @@ HTML
 		output = <<HTML
 			<li>
 				<div class="ellipsis">
-					<a href="#{topic['url']}">#{topic['title']}</a>
+					<a href="#{topic['url']}">#{h(topic['title'])}</a>
 				</div>
 				<div class="help-text">
 					#{ topic_info topic }
@@ -251,16 +256,16 @@ HTML
 		output.join(", ")
 	end
 
-	def last_post_brief topic, link_label = "Last reply"
+	def last_post_brief topic, link_label = t('portal.topic.last_reply')
 		if topic.last_post.present?
 			post = topic.last_post.to_liquid
-			%(<a href="#{topic.last_post_url}"> #{link_label} </a> by
-				#{post.user.name} #{time_ago post.created_on})
+			%(<a href="#{topic.last_post_url}"> #{h(link_label)} </a> #{t('by')}
+				#{h(post.user.name)} #{time_ago post.created_on})
 		end
 	end
 		
 	def topic_brief topic
-		%(Posted by #{bold topic.user.name}, #{time_ago topic.created_on})
+		%(#{t('posted_by')} #{bold h(topic.user.name)}, #{time_ago topic.created_on})
 	end
 
 	def topic_votes topic
@@ -304,6 +309,16 @@ HTML
 		end
 	end	
 
+	def link_to_see_all_topics forum
+		label = I18n.t('portal.topic.see_all_topics', :count => forum['topics_count'])
+		link_to label, forum['url'], :title => label, :class => "see-more"
+	end
+
+	def link_to_see_all_articles folder
+		label = I18n.t('portal.article.see_all_articles', :count => folder['articles_count'])
+		link_to label, folder['url'], :title => label, :class => "see-more"
+	end
+
 	def post_actions post
 		if User.current == post.user
 			output = <<HTML
@@ -344,8 +359,24 @@ HTML
 		_text << %( <b> #{ ticket['status'] } </b> )
 		_text << I18n.t('since_last_time', :time_words => timediff_in_words(Time.now() - ticket['status_changed_on']))
 		_text << %( <a href='#reply-to-ticket' data-proxy-for='#add-note-form' 
-			data-show-dom='#reply-to-ticket'>Reopen and reply</a> ) if ticket['closed?']
+			data-show-dom='#reply-to-ticket'>#{ t('portal.tickets.reopen_reply') }</a> ) if ticket['closed?']
 		content_tag :div, _text.join(" "), :class => "alert alert-ticket-status"
+	end
+
+	def ticket_field_container object_name, field, field_value = ""
+		case field.dom_type
+			when "checkbox" then
+				%(  <div class="controls"> 
+						<label class="checkbox">
+							#{ ticket_form_element :helpdesk_ticket, field, field_value } #{ field[:label_in_portal] }
+						</label>
+					</div> )
+			else
+				%( #{ ticket_label object_name, field }
+		   			<div class="controls"> 
+		   				#{ ticket_form_element :helpdesk_ticket, field, field_value }
+		   			</div> )
+		end
 	end
 
 	def ticket_label object_name, field
@@ -363,64 +394,36 @@ HTML
 
 	    case dom_type
 	      when "requester" then
-	      	element = render(:partial => "/support/shared/requester", 
-	      			:locals => { :object_name => object_name, :field => field })
-	      when "email" then
-	        element = content_tag(:div, text_field(object_name, field_name, :class => element_class, :value => field_value), :class => "controls")
-	        element = add_cc_field_tag element, field if (field.portal_cc_field? && !is_edit && controller_name.singularize != "feedback_widget") #dirty fix
-	        element += add_name_field
+	      	render(:partial => "/support/shared/requester", :locals => { :object_name => object_name, :field => field })	      
 	      when "text", "number" then
-	        element = content_tag(:div, text_field(object_name, field_name, :class => element_class + " span12", :value => field_value), :class => "controls")
+			text_field(object_name, field_name, :class => element_class + " span12", :value => field_value)
 	      when "paragraph" then
-	        element = content_tag(:div, text_area(object_name, field_name, :class => element_class + " span12", :value => field_value, :rows => 6), :class => "controls")
+			text_area(object_name, field_name, :class => element_class + " span12", :value => field_value, :rows => 6)
 	      when "dropdown" then	        
-          	element = content_tag(:div, 
-          		select(object_name, field_name, field.field_type == "default_status" ? field.visible_status_choices : field.choices, 
-          			{:selected => field_value}, {:class => element_class}), :class => "controls")
+          	select(object_name, field_name, 
+          			field.field_type == "default_status" ? field.visible_status_choices : field.html_unescaped_choices, 
+          			{:selected => field_value}, {:class => element_class})
 	      when "dropdown_blank" then
-	        element = content_tag(:div, 
-	        	select(object_name, field_name, field.choices, { :include_blank => "...", :selected => field_value }, {:class => element_class}), :class => "controls")
+	        select(object_name, field_name, field.html_unescaped_choices, 
+	        		{ :include_blank => "...", :selected => field_value }, {:class => element_class})
 	      when "nested_field" then
-	        element = content_tag(:div, nested_field_tag(object_name, field_name, field, 
+			nested_field_tag(object_name, field_name, field, 
 	        	{:include_blank => "...", :selected => field_value}, 
-	        	{:class => element_class}, field_value, true), :class => "controls")
+	        	{:class => element_class}, field_value, true)
 	      when "hidden" then
-	        element = hidden_field(object_name , field_name , :value => field_value)
+			hidden_field(object_name , field_name , :value => field_value)
 	      when "checkbox" then
-	        element = content_tag(:div, check_box(object_name, field_name, :class => element_class, :checked => field_value ), :class => "controls")
+			check_box(object_name, field_name, :checked => field_value )
 	      when "html_paragraph" then
-	      	_output = []
-	      	_output << %( #{ text_area(object_name, field_name, :class => element_class, :value => field_value, :rows => 6) } )
-	      	_output << %( #{ render(:partial=>"/support/shared/attachment_form") } )
-	        element = content_tag(:div, _output.join(" "), :class => "controls")
+	      	%( #{ text_area(object_name, field_name, :class => element_class, :value => field_value, :rows => 6) } 
+	      	   #{ render(:partial=>"/support/shared/attachment_form") } )
 	    end
-	    content_tag :div, element, :class => dom_type
-	end
-
-	def add_cc_field_tag element, field    
-		if current_user && current_user.agent? 
-		  element = element + content_tag(:div, render(:partial => "/shared/cc_email_all.html")) 
-		elsif current_user && current_user.customer? && field.all_cc_in_portal?
-		  element = element + content_tag(:div, render(:partial => "/shared/cc_email_all.html"))
-		else
-		   element = element + content_tag(:div, render(:partial => "/shared/cc_email.html")) if (current_user && field.company_cc_in_portal? && current_user.customer) 
-		end
-		return element
-	end
-
-	def add_requester_field
-		content_tag(:div, render(:partial => "/shared/add_requester")) if (current_user && current_user.can_view_all_tickets?)
-	end
-
-	def add_name_field
-		content_tag(:li, content_tag(:div, render(:partial => "/shared/name_field")),
-			:id => "name_field", :class => "hide") unless current_user
 	end
 
 	# The field_value(init value) for the nested field should be in the the following format
 	# { :category_val => "", :subcategory_val => "", :item_val => "" }
 	def nested_field_tag(_name, _fieldname, _field, _opt = {}, _htmlopts = {}, _field_values = {}, in_portal = false)        
-		_category = select(_name, _fieldname, _field.choices, _opt, _htmlopts)
+		_category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
 		_javascript_opts = {
 		  :data_tree => _field.nested_choices,
 		  :initValues => _field_values,
@@ -436,7 +439,6 @@ HTML
 	end
 
 	# NON-FILTER HELPERS
-
 	# Options list for forums in new and edit topics page
 	def forum_options
 		_forum_options = []
@@ -471,7 +473,7 @@ HTML
 
 	def portal_fonts
 		include_google_font portal_preferences.fetch(:baseFont, ""), 
-			portal_preferences.fetch(:headingsFont, ""), "Helvetica Neue"
+			portal_preferences.fetch(:headingsFont, "")
 	end
 
 	def ticket_field_display_value(field, ticket)
@@ -487,8 +489,10 @@ HTML
 					ticket.get_ff_value(field.name)
 			    else
 					field.dropdown_selected(((_field_type == "default_status") ? 
-						field.all_status_choices : field.choices), _field_value)
+						field.all_status_choices : field.html_unescaped_choices), _field_value)
 			    end
+			when "checkbox"
+				_field_value ? I18n.t('plain_yes') : I18n.t('plain_no')
 			else
 			  	_field_value
 		end
@@ -527,7 +531,7 @@ HTML
 	end
 
 	def theme_url
-		preview? ? "/theme/#{current_portal.template.id}-#{current_user.id}-preview.css" : 
+		preview? ? "/theme/#{current_portal.template.id}-#{current_user.id}-preview.css?v=#{Time.now.to_i}" : 
 			"/theme/#{current_portal.template.id}.css?v=#{current_portal.template.updated_at.to_i}"
 	end
 
@@ -536,6 +540,22 @@ HTML
 				<a href="http://www.freshdesk.com" target="_blank"> #{ I18n.t('footer.helpdesk_software') } </a>
 				#{ I18n.t('footer.by_freshdesk') }
 			</div> ) unless portal.paid_account
+	end
+
+	def link_to_cookie_law portal
+		%(	<a href="#portal-cookie-info" rel="freshdialog" class="cookie-link" 
+				data-width="450px" title="#{ I18n.t('portal.cookie.why_we_love_cookies') }" data-template-footer="">
+				#{ I18n.t('portal.cookie.cookie_policy') }
+			</a>)
+	end
+
+	def cookie_law
+		privacy_link = %(<a href="http://freshdesk.com/privacy/" target="_blank">#{ I18n.t('portal.cookie.privacy_policy') }</a>)
+		%(  <div id="portal-cookie-info" class="hide">
+				<p>#{ I18n.t('portal.cookie.cookie_dialog_info1') }</p>
+				<p>#{ I18n.t('portal.cookie.cookie_dialog_info2', :privacy_link => privacy_link) }</p>
+				<p>#{ I18n.t('portal.cookie.cookie_dialog_info3', :privacy_link => privacy_link) }</p>
+			</div>)
 	end
 
 	private

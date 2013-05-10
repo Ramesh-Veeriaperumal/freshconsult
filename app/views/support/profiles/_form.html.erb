@@ -71,13 +71,13 @@
 				</div>
 			<% end %>
 
-			<%= f.hidden_field(:user_role, :value => @profile.user_role) %>
+			<%#= f.hidden_field(:user_role, :value => @profile.user_role) %>
 
 			<div class="control-group">
 				<%= f.label(:phone, t("user.phone_no"), :class => "control-label" ) %>	
 				<div class="controls multiple-inputs">
-					<%= f.text_field(:phone, :placeholder => "work") %>
-					<%= f.text_field(:mobile, :placeholder => "mobile") %>
+					<%= f.text_field(:phone, :placeholder => t("user.work")) %>
+					<%= f.text_field(:mobile, :placeholder => t("user.mobile")) %>
 				</div>
 			</div>			
 			
@@ -92,7 +92,7 @@
 			<div class="control-group">
 				<%= f.label(:time_zone, t("account.time_zone"), :class => "control-label" ) %>			
 				<div class="controls">
-					<%= f.time_zone_select (:time_zone, ActiveSupport::TimeZone.all, :default => @profile.time_zone) %>
+					<%= f.time_zone_select(:time_zone, ActiveSupport::TimeZone.all, :default => @profile.time_zone) %>
 				</div>
 			</div>
 			<% end %>

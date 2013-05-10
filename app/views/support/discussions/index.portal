@@ -4,7 +4,7 @@
 	{% for category in portal.forum_categories %}
 		{% if category.forums_count > 0 %}
 			<div class="cs-s">
-				<h3 class="heading">{{category.name}}</h3>
+				<h3 class="heading">{{category.name | h}}</h3>
 				<div class="cs-g-c">
 				{% for forum in category.forums %}
 					<section class="cs-g topic-list">
@@ -29,7 +29,7 @@
 			{% for topic in portal.recent_popular_topics %}
 				<li class="cs-g-3">
 					<div class="ellipsis">
-						<a href="{{topic.url}}">{{topic.title}}</a>
+						<a href="{{topic.url}}">{{topic.title | h}}</a>
 					</div>
 					<div class="help-text">
 						{{ topic | topic_info }}

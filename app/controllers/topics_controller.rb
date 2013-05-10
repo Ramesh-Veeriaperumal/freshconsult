@@ -18,7 +18,6 @@ class TopicsController < ApplicationController
   
   before_filter :set_selected_tab
   
-  uses_tiny_mce :options => Helpdesk::FRESH_EDITOR
 
   # @WBH@ TODO: This uses the caches_formatted_page method.  In the main Beast project, this is implemented via a Config/Initializer file.  Not
   # sure what analogous place to put it in this plugin.  It don't work in the init.rb  
@@ -192,10 +191,10 @@ def users_voted
 end
 
  def build_attachments
-   return unless @topic.posts.first.respond_to?(:attachments) 
+   return unless @post.respond_to?(:attachments) 
     unless params[:post].nil?
     (params[:post][:attachments] || []).each do |a|
-      @topic.posts.first.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @topic.posts.first.account_id)
+      @post.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
     end
    end
   end

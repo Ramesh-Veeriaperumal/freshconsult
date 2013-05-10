@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Solution::ArticlesController < ApplicationController
   
   include Helpdesk::ReorderUtility
@@ -11,7 +12,6 @@ class Solution::ArticlesController < ApplicationController
   end
   before_filter :page_title 
   
-  uses_tiny_mce :options => Helpdesk::LARGE_EDITOR 
   
   def index    
     redirect_to_url = solution_category_folder_url(params[:category_id], params[:folder_id])    

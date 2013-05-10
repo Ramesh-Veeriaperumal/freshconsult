@@ -1,4 +1,4 @@
-<%= content_tag (:h3, (params[:formTitle].blank?) ? t('feedbackwidget_defaulttitle') : params[:formTitle], :class => "title") %>
+<%= content_tag(:h3, (params[:formTitle].blank?) ? t('feedbackwidget_defaulttitle') : params[:formTitle], :class => "title") %>
 <% form_for :helpdesk_ticket, @ticket, :url => widgets_feedback_widget_path(:submit_message => params[:submitThanks]) , :html => {:method => :post, :multipart => true, :id => "fd_feedback_widget", :target => "freshwidget-submit-frame"}  do |f| %>
   <%= f.error_messages %>
     <ul class="ui-form"> 
@@ -34,7 +34,7 @@
 					</li>
 				</ul>	
 			</div>
-			<div class="attachment"><%= render :partial=>"/helpdesk/shared/attachment_form"  %></div>
+			<%= render :partial=>"/helpdesk/shared/attachment_form" %>
 		</li>	
 	</ul>
 	 

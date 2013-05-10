@@ -14,6 +14,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :skip_notification, :boolean_tc01
 	alias_attribute :header_info, :text_tc01
 	alias_attribute :st_survey_rating, :int_tc01
+	alias_attribute :survey_rating_updated_at, :datetime_tc01
 	alias_attribute :trashed, :boolean_tc02
 	alias_attribute :access_token, :string_tc01
 	alias_attribute :escalation_level, :int_tc02
@@ -26,6 +27,14 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 
 	def self.trashed_column
 		:boolean_tc02
+	end
+
+	def self.survey_rating_column
+		:int_tc01
+	end
+
+	def self.survey_rating_updated_at_column
+		:datetime_tc01
 	end
 
 	def self.find_by_access_token(token)

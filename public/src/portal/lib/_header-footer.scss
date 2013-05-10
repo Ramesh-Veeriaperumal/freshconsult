@@ -1,6 +1,5 @@
 $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 
-
 .banner{
 	text-align:center;
 	background-color: $header_color;
@@ -21,7 +20,7 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
     a:hover{ color: inherit; }
 }
 
-.banner-title .heading{ color: inherit; line-height: 33px; }
+.banner-title .heading{ color: inherit; }
 
 .banner-nav{
 	font-size: 0.929em;
@@ -63,28 +62,17 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 	width: auto;
 }
 
-.footer{
-	margin-top:10px;
+.footer{	
 	background-color: $footer_color;
 	padding: $content-padding-mobile;
 	border: 1px solid darken($footer_color, 10%);
 	color: $footer_text_color;
-	text-align: center;
-	a{ color: inherit; margin:0 10px; }
-	a:hover{ color: inherit; }
-	a:before{ 
-		content: "";
-		position: absolute;
-		border: 3px solid fade-out(#fff, 0.6);
-		margin-left: -15px;
-    	margin-top: 7px;
-	}
-	a:first-child:before{
-		content: none;
-	}
-	a:last-child{
-		margin-right: 0;
-	}
+	@include pie-clearfix;
+}
+
+.cookie-link{ 
+	float:right; @include opacity(0.6);
+	&:hover{ @include opacity(1); }
 }
 
 .copyright{
@@ -92,6 +80,83 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 	text-align: center;
 	color: $gray;
 }
+
+/* Applying styles for tablet and above */
+@include at-breakpoint($break-tablet){
+	.banner{ 
+		text-align:left; 
+		@include border-top-radius($content-border-radius); 
+		h1{
+			line-height: $baseLineHeight * 2;
+		}
+		.banner-title{ @include span-columns(7); }
+		.banner-nav{ 
+			@include span-columns(3 omega);
+			margin-top: 5px;
+			.welcome{ 
+				display: block;
+			}
+		}
+		nav{ text-align: right; }
+	}
+	.page-tabs{	
+		display:inline-block;
+		@include border-bottom-radius($content-border-radius);		
+		&:before{
+			background:none;
+			height:auto;
+			width:auto;
+		}
+		.nav-link{
+			display:block !important; /* overwrite mobile inline style in desktop view */
+			background:none;
+			padding:0;
+			margin:0;
+			a{ 
+				display: inline-block; 
+				float: left; 
+				border-width: 0 1px 0 0;
+				text-align: center; 
+				width: auto;
+				padding: 0 15px;
+				background:none;				
+				&:first-child{
+					border-top: 0;
+					@include border-top-radius(0px);
+					@include border-bottom-left-radius($content-border-radius); 
+				}
+				
+			}
+			a:hover, a.active{
+				text-decoration: none;
+				background-color: $tab_hover_color;
+				color: $tab_hover_text_color;
+			}
+			a{ 
+				padding:0 15px;				
+				@include min-width(100px); 
+			}	
+			a.active{ display: block; }
+		}
+	}
+	.footer{
+		margin-top:10px;
+		a{ color: inherit; margin:0 10px; }
+		a:hover{ color: inherit; }
+	}
+	.footer-links{
+		a:before{ 
+			content: "";
+			position: absolute;
+			border: 3px solid fade-out(#fff, 0.6);
+			margin-left: -15px;
+	    	margin-top: 7px;
+		}
+		a:first-child:before{ content: none; }
+		a:last-child{ margin-right: 0; }
+	}
+}
+
 
 /* Applying styles only for mobile */
 @include at-breakpoint($media-mobile){
@@ -159,87 +224,19 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 		text-align:center;
 		margin-bottom:5px;
 	}
-	footer{
-		margin-top:0;
+	.footer{ 
 		padding:$content-padding-mobile $content-padding-mobile/2;
 		a{
 			@include box-shadow(inset 0 1px 3px $footer_color, 0 0 2px darken($footer_color, 30%));
-			background: $footer_text_color;
-			color:$footer_color;
 			@include border-radius(20px);
-			padding: 4px 10px;
-			margin:0 4px;
-			line-height:$baseLineHeight * 1.5;
-			&:before{
-				content:none;
-				margin:0;
-			}
-			&:hover{
-				text-decoration: underline;
-				color:$footer_color;
-			}
+			background:$footer_text_color;
+			color:$footer_color;
+			padding-left:10px;
+			padding-right:10px;
+			margin-right:4px;
+			margin-left:4px;
+			line-height:24px;
+			display: inline-block;
 		}
-	}
-}
-/* Applying styles for tablet and above */
-@include at-breakpoint($break-tablet){
-	.banner{ 
-		text-align:left; 
-		@include border-top-radius($content-border-radius); 
-		h1{
-			line-height: $baseLineHeight * 2;
-		}
-		.banner-title{ @include span-columns(9); }
-		.banner-nav{ 
-			@include span-columns(3 omega);
-			margin-top: 5px;
-			.welcome{ 
-				display: block;
-			}
-		}
-		nav{ text-align: right; }
-	}
-	.page-tabs{	
-		display:inline-block;
-		@include border-bottom-radius($content-border-radius);		
-		&:before{
-			background:none;
-			height:auto;
-			width:auto;
-		}
-		.nav-link{
-			display:block !important; /* overwrite mobile inline style in desktop view */
-			background:none;
-			padding:0;
-			margin:0;
-			a{ 
-				display: inline-block; 
-				float: left; 
-				border-width: 0 1px 0 0;
-				text-align: center; 
-				width: auto;
-				padding: 0 15px;
-				background:none;				
-				&:first-child{
-					border-top: 0;
-					@include border-top-radius(0px);
-					@include border-bottom-left-radius($content-border-radius); 
-				}
-				
-			}
-			a:hover, a.active{
-				text-decoration: none;
-				background-color: $tab_hover_color;
-				color: $tab_hover_text_color;
-			}
-			a{ 
-				padding:0 15px;				
-				@include min-width(100px); 
-			}	
-			a.active{ display: block; }
-		}
-	}
-	footer{
-		padding: 1.8em 2.2em;
 	}
 }

@@ -1,33 +1,36 @@
 /* This import applies a global reset to any page that imports this stylesheet.*/
 @import "lib/settings";
 $walkthru-spacing: 40px;
-@import "walkthru/*.png";
-#tourmyapp {
-	z-index: 1000000 !important;
+@import "cdn-ignored/sprites/walkthru/*.png";
+
+/* Sprite sheet for walkthru */
+#tourmyapp{
+	.tourmyapp{ background: inline-image("cdn-ignored/bg-repeats/walkthru-bg.png"); }
+	.tourmyapp-close{ @include walkthru-sprite(tour-close); }
+	.tourmyapp-pointer-bottom{ @include walkthru-sprite(arrow_top); }
+	.tourmyapp-pointer-right{ @include walkthru-sprite(arrow_left); }
+	.tourmyapp-pointer-top{ @include walkthru-sprite(arrow_bottom); }
+	.tourmyapp-pointer-left{ @include walkthru-sprite(arrow_right); }
+	.tourmyapp-content h3{ @include walkthru-sprite(touricon-white); }
 }
-#tourmyapp .tourmyapp {
-	background: url(/images/walkthru/pattern-bg.png);
+
+#tourmyapp{ z-index: 1000000 !important; }
+#tourmyapp .tourmyapp {	
 	border: 1px solid #666;
 	font-family: $blueprint-font-family;
 	width: 400px;
 	margin-top: -5px;
-	box-shadow: 0px 8px 40px rgba(0, 0, 0, 0.5);
-	-webkit-box-shadow: 0px 8px 40px rgba(0, 0, 0, 0.5);
-	-moz-box-shadow: 0px 8px 40px rgba(0, 0, 0, 0.5);
+	@include box-shadow(0px 8px 40px rgba(0, 0, 0, 0.5));
 
-	.tourmyapp-title {
-		background: url(/images/walkthru/patten_green_top.jpg);
+	.tourmyapp-title {		
 		@include border-radius(5px 5px 0 0);
+		background-color:#243838;
 		height: 40px;
-		box-shadow: 0 1px 0 rgba(255, 255, 255, 0.3) inset;
+		@include box-shadow(0 1px 0 rgba(255, 255, 255, 0.3) inset);
 	}
 
 	.tourmyapp-close {
-		background: url(/images/walkthru/tour-close.png);
-		background-repeat: no-repeat;
-		background-position: 3px 0px;
 		margin: 14px 17px 0 0;
-
 	}
 
 	.tourmyapp-pointer-border {
@@ -40,14 +43,12 @@ $walkthru-spacing: 40px;
 		height: 25px;
 		width: 31px;
 		left: 184px;
-
 	}
 
 	.tourmyapp-pointer-bottom {
 		height: 21px;
 		width: 26px;
 		left: 184px;
-
 	}
 
 	.tourmyapp-pointer-right, .tourmyapp-pointer-left {
@@ -56,53 +57,29 @@ $walkthru-spacing: 40px;
 		width: 26px;
 	}
 
-	.tourmyapp-pointer-bottom {
-		@include walkthru-sprite(arrow_top);
-		top: -18px;
-	}
-
+	.tourmyapp-pointer-bottom{ top: -18px; }
 	
-	.tourmyapp-pointer-right {
-		@include walkthru-sprite(arrow_left);
+	.tourmyapp-pointer-right{
 		left: -25px;
 		height: 32px;
 		width: 27px;
 		margin-top:-3px;
 	}
 
-	.tourmyapp-pointer-top {
-		@include walkthru-sprite(arrow_bottom);
-		margin-top: -14px;
-	}
-
-	.tourmyapp-pointer-left {
-		@include walkthru-sprite(arrow_right);
-		left: 387px;
-	}
-
-
-
-	.tourmyapp-pointer-fill {
-		display:none;
-	}
-
+	.tourmyapp-pointer-top{ margin-top: -14px; }
+	.tourmyapp-pointer-left{ left: 387px; }
+	.tourmyapp-pointer-fill{ display:none; }
     .tourmyapp-content, .tourmyapp-toolbar {
 		padding: 10px;
 		font-size: 13px;
 		line-height: 20px;
 		color: #333;
-
-		p {
-			margin: 0;
-		}
+		p{ margin: 0; }
 	}
 
-	.tourmyapp-content {
-
-	    margin-top: -40px;
-	    
-        h3 {
-            @include walkthru-sprite(touricon-white);
+	.tourmyapp-content{
+	    margin-top: -40px;	    
+        h3{
             color: #FFF;
             font-size: 16px;
             font-weight: bold;
@@ -128,7 +105,7 @@ $walkthru-spacing: 40px;
 	}
 
 	button {
-		@include corners(5px);
+		@include border-radius(5px);
 		background: #338484;
 		@include background-with-css2-fallback(linear-gradient(#338484, #166666));
 		border: solid 1px #005454;
@@ -139,16 +116,16 @@ $walkthru-spacing: 40px;
 		text-decoration: none;
 	}
 
-	.tourmyapp-branding {
-		display:none !important;
-	}
+	.tourmyapp-branding{ display:none !important; }
 	
 	.next_button_arrow:after{
-		content: "";
-		background-image: url("/images/walkthru/nav-arrow-right.png");
-		background-repeat: no-repeat;
-		background-position: 5px 5px;
-		padding-left: 9px;
+		content: "";		
+		border: 5px solid transparent;
+		float: right;
+		border-left-color: #faf9f6;
+		position: relative;
+		left: 8px;
+		top: 3px;
 	}
 
 	.tourmyapp-next_button:hover{

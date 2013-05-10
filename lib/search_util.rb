@@ -1,3 +1,4 @@
+# encoding: utf-8
 module SearchUtil
 
 	DEFAULT_SEARCH_VALUE = "1"
@@ -27,6 +28,21 @@ module SearchUtil
   	else
   		[ Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone] ]
   	end
+  end
+
+  def self.es_filter_key(query)
+    query.strip!
+    query.gsub!(/([\(\)\[\]\{\}\?\\\"!\^\+\-\*:~])/,'\\\\\1')
+    query = "*#{query}*"
+  end
+
+  def self.es_exact_match?(query)
+    query.blank? || ( query.start_with?('<') && query.end_with?('>') )
+  end
+
+  def self.es_filter_exact(query)
+    query = "#{query.gsub(/^<|>$/,'').strip}" unless query.blank?
+    query
   end
 
   private

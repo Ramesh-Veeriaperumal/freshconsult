@@ -38,7 +38,7 @@ class Helpdesk::TicketsExport
       headers = csv_hash.keys.sort
       select = "helpdesk_tickets.* "
       select = "DISTINCT(helpdesk_tickets.id) as 'unique_id' , #{select}" if sql_conditions[0].include?("helpdesk_tags.name")
-      csv_string = FasterCSV.generate do |csv|
+      csv_string = CSVBridge.generate do |csv|
         csv << headers
         Account.current.tickets.find_in_batches(:select => select,
                                         :conditions => sql_conditions, 
@@ -56,7 +56,9 @@ class Helpdesk::TicketsExport
         end
       end
       # if (export_params[:later])
-        Helpdesk::TicketNotifier.deliver_export(export_params, csv_string, User.current)
+      Rails.logger.info "<--- Triggering export tickets csv mail. User Email Id: #{User.current.email} --->"
+      Rails.logger.info "<--- Params #{export_params[:ticket_state_filter]}, #{export_params[:start_date]}, #{export_params[:end_date]} --->"
+      Helpdesk::TicketNotifier.deliver_export(export_params, csv_string, User.current)
       # else
       #   csv_string
       # end

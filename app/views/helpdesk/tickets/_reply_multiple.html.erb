@@ -21,7 +21,6 @@
 <% end %>
 </div>
 
- <!--<%= tiny_mce_init Helpdesk::SMALL_EDITOR %>-->
 
 <% javascript_tag do %>
 
@@ -39,13 +38,10 @@
 
     function show_canned_response(){
       var user_id=jQuery('#helpdesk_note_user_id').val();
-      jQuery("#bulk_canned_response_contaner_folder").addClass("loading");
+      jQuery("#bulk_canned_response_holder").addClass("loading-center");
       jQuery("#bulk_canned_response_holder")
-        .load("/helpdesk/canned_responses", function(){
-                                jQuery("#canned_response_contaner")
-            .removeClass("loading");
-        })
-        .show();        
+        .load("/helpdesk/canned_responses")
+        .show();
     }
 
     show_canned_response();
@@ -56,16 +52,14 @@
         jQuery.ajax({   type: 'POST',
                         url: '/helpdesk/canned_responses/show/?ca_resp_id='+ca_resp_id,
                         contentType: 'application/text',
-                        async: false,
-                        success: function(data){    
-                                    var msg_body_id =  "reply-multiple-cnt-reply-multiple"
-                                    jQuery("#"+msg_body_id+"-body").getEditor().focus();
-                                    jQuery("#"+msg_body_id+"-body").insertHtml(data);
+                        dataType: "script",
+                        async: true,
+                        success: function(data){     
+                                    jQuery(element).removeClass("response-loading");
+                                    jQuery(element).qtip('hide');
+                                    jQuery('#no-response').click();
                                     }
                     });
-        jQuery(element).removeClass("response-loading");
-        jQuery(element).qtip('hide');
-        jQuery('#no-response').click();
         return true;
     } 
 

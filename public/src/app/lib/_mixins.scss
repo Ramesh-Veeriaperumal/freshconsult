@@ -1,29 +1,4 @@
-//@import "compass/css3/pie";
 @import "compass/css3";
-
-@mixin shadows($color: #aaaaaa, $x: 1px, $y: 2px, $spread: 2px) { 
-  -moz-box-shadow: $color $x $y $spread;
-  -webkit-box-shadow: $color $x $y $spread;
-  box-shadow: $color $x $y $spread; }
-
-@mixin inset-shadows($color: #aaaaaa, $x: 1px, $y: 1px, $spread: 1px) { 
-  -moz-box-shadow: inset $x $y $spread $color;
-  -webkit-box-shadow: inset $x $y $spread $color;
-  box-shadow: inset $x $y $spread $color; 
-}
-
-@mixin corners($tl: 5px, $tr: nil, $br: nil, $bl: nil) { 
-  @if $tr == nil {
-    $tr: $tl; }
-  @if $br == nil {
-    $br: $tl; }
-  @if $bl == nil {
-    $bl: $tl; }
-  -moz-border-radius: $tl $tr $br $bl;
-  -webkit-border-radius: $tl $tr $br $bl;
-  border-radius: $tl $tr $br $bl;
-}
-
 
 @mixin pointer-title($bg: #afafaf, $ht: 9px){
   @include border-left-radius(3px);
@@ -72,7 +47,7 @@
 	word-wrap: break-word; /* Internet Explorer 5.5+ */
 }
 
-@mixin rotate($degree: -90deg, $location: bottom left) {
+@mixin widget-rotate($degree: -90deg, $location: bottom left) {
 	transform: rotate($degree);
   transform-origin: $location;
   -moz-transform:rotate($degree); 
@@ -87,7 +62,6 @@
    p, li, div{ 
       font-size: 13px;
       line-height: 18px;
-      font-style: normal;
       margin:0;
    }              
    code, pre, p, li, div{ 
@@ -140,6 +114,12 @@
   }
 }
 
+
+@mixin hide-text() {
+  text-indent: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+}
 
 //// TRIANGLES ////
 
@@ -244,8 +224,53 @@
     }
   }
 }
+
+// Animation Mixins for cross browser compatibility
+@mixin animation-name($name) {
+  -webkit-animation-name: $name;
+  -moz-animation-name: $name;
+  -o-animation-name: $name;
+  animation-name: $name;
+}
+
+@mixin animation-duration($interval) {
+  -moz-animation-duration: $interval;
+  -webkit-animation-duration: $interval;
+  -o-animation-duration: $interval;
+  animation-duration: $interval;
+}
+
+@mixin animation-timing-function($func) {
+  -moz-animation-timing-function: $func;
+  -webkit-animation-timing-function: $func;
+  -o-animation-timing-function: $func;
+  animation-timing-function: $func;
+}
+
+@mixin animation-delay($delay:0) {
+  -moz-animation-delay: $delay;
+  -webkit-animation-delay: $delay;
+  -o-animation-delay: $delay;
+  animation-delay: $delay;
+
+}
+
+@mixin animation-iteration-count($count:infinite) {
+  -moz-animation-iteration-count: $count;
+  -webkit-animation-iteration-count: $count;
+  -o-animation-iteration-count: $count;
+  animation-iteration-count: $count;
+
+}
+
+@mixin animation-direction($direction) {
+  -moz-animation-direction: $direction;
+  -webkit-animation-direction: $direction;
+  -o-animation-direction: $direction;
+  animation-direction: $direction;
+}
 @mixin select2_container_choice {
-  @include corners(3px);
+  @include border-radius(3px);
   @include background-clip(padding-box);
   background-color: #e4e4e4;
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f4f4f4', endColorstr='#eeeeee', GradientType=0 );

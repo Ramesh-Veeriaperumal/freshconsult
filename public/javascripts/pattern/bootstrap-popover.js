@@ -22,6 +22,8 @@
 
   "use strict"; // jshint ;_;
 
+  if($.fn.popover) return
+
 
  /* POPOVER PUBLIC CLASS DEFINITION
   * =============================== */
