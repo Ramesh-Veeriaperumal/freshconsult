@@ -70,7 +70,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   belongs_to :email_config
   belongs_to :group
-  xss_sanitize :only => [:description_html], :html_sanitize => [:description_html]
+  # xss_terminate :except => [:subject,:cc_email], :html5lib_sanitize => [:description_html,:description]
  
   belongs_to :responder,
     :class_name => 'User',

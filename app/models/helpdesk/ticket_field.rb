@@ -128,7 +128,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
        when "default_agent" then
         return group_agents(ticket)
        when "default_group" then
-         account.groups_from_cache.collect { |c| [CGI.escapeHTML(c.name), c.id] }
+         account.groups_from_cache.collect { |c| [c.name, c.id] }
        when "default_product" then
          account.products.collect { |e| [e.name, e.id] }
        when "nested_field" then
@@ -178,7 +178,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   def visible_status_choices(disp_col_name=nil)
     disp_col_name = disp_col_name.nil? ? "customer_display_name" : "name"
-    self.ticket_statuses.visible.collect{|st| [Helpdesk::TicketStatus.translate_status_name(st, CGI.unescapeHTML(disp_col_name)), st.status_id]}
+    self.ticket_statuses.visible.collect{|st| [Helpdesk::TicketStatus.translate_status_name(st, disp_col_name), st.status_id]}
   end
 
   def nested_levels

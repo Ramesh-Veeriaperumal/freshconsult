@@ -1,4 +1,4 @@
-<%= h(t(".execute_the_scenario", :rule_name => rule_name)) %>
+<%= t(".execute_the_scenario", :rule_name => rule_name) %>
 <%= link_to_function t(".view_details"), "jQuery('#scenario_actions_performed').slideDown(300); $(this).hide()" %>
 <div class='list' id="scenario_actions_performed" style="display:none;">
   <h4 class='title'><%= t(".actions_performed") %></h4>

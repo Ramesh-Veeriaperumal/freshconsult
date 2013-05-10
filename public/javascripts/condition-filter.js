@@ -216,20 +216,6 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			},
 		init: 
 			function(){
-
-				filter_data.each(function(item){
-					if(item.value != undefined){
-						item.value = unescapeHtml(item.value)
-					}
-					else{
-						jQuery.each(item, function(i, game_category){
-							jQuery.each(game_category, function(j, game_option){
-								game_option.value = unescapeHtml(game_option.value)
-							})
-						})
-					}	
-				})
-
 				domUtil.add_to_hash(filter_data);
 
 				if(setting.init_feed.size())

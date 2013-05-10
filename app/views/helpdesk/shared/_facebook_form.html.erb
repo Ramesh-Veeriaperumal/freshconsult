@@ -6,7 +6,7 @@
 	  <%= hidden_field_tag :fb_post, "true", :id => "fb_comment" %>
     <ul class="ui-form dont-validate">
       <li class="inline-field field">     
-	   <%= content_tag( :h4, t(".title", :user => h(@ticket.requester.name)), :class => "title" ) %>  
+	   <%= content_tag( :h4, t(".title", :user => @ticket.requester.name), :class => "title" ) %>  
         <label class="caption">From:</label>
         <div class="fields">
         	<strong>&nbsp;<%= @ticket.fb_post.facebook_page.page_name if @ticket.fb_post && @ticket.fb_post.facebook_page %></strong>

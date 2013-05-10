@@ -32,7 +32,7 @@ class Sanitize
       :remove_contents => [ 'style' ],
       :attributes => {
         :all         => ['dir', 'lang', 'title'],
-        'a'          => ['href','target'],
+        'a'          => ['href'],
         'blockquote' => ['cite'],
         'col'        => ['span', 'width'],
         'colgroup'   => ['span', 'width'],
@@ -50,7 +50,7 @@ class Sanitize
       },
 
       :protocols => {
-        'a'          => {'href' => ['ftp', 'http', 'https', 'mailto', :relative],'target' => ['_blank','_self','_parent','_top',:relative]},
+        'a'          => {'href' => ['ftp', 'http', 'https', 'mailto', :relative]},
         'blockquote' => {'cite' => ['http', 'https', :relative]},
         'del'        => {'cite' => ['http', 'https', :relative]},
         'img'        => {'src'  => ['http', 'https', :relative,'cid']},

@@ -9,7 +9,6 @@ class Post < ActiveRecord::Base
   named_scope :answered_posts, :conditions => { :answer => true }
 
   format_attribute :body
-  xss_sanitize :only=>[:body_html], :html_sanitize => [:body_html]
   before_create { |r| r.forum_id = r.topic.forum_id }
   after_create  :update_cached_fields
   after_destroy :update_cached_fields

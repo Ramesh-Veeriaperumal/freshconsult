@@ -1,7 +1,7 @@
 <% options.each do |key, value| %>
   <label class="item"> 
     <%= check_box_tag value, key, (selected_val.include? key.to_s), { :class => "filter_item" } %> 
-    <span><%=value%></span>
+    <span><%= h(value) %></span>
   </label>
 <% end %>
 
