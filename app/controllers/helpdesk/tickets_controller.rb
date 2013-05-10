@@ -275,9 +275,6 @@ class Helpdesk::TicketsController < ApplicationController
         format.mobile { 
           render :json => { :failure => true, :errors => edit_error }.to_json 
         }
-        format.json { 
-          render :json => { :failure => true, :errors => edit_error }.to_json 
-        }
         format.xml {
           render :xml =>@item.errors
         }
@@ -298,12 +295,28 @@ class Helpdesk::TicketsController < ApplicationController
         format.mobile { 
           render :json => { :success => true, :item => @item }.to_json 
         }
+        format.xml { 
+          render :xml => @item.to_xml({:basic => true})
+        }
+        format.json { 
+          render :json => request.xhr? ? { :success => true }.to_json  : @item.to_json({:basic => true}) 
+        }
       end
     else
       respond_to do |format|
         format.html { edit_error }
         format.mobile { 
           render :json => { :failure => true, :errors => edit_error }.to_json 
+        }
+        format.json {
+          result = {:errors=>@item.errors.full_messages }
+          render :json => result.to_json
+        }
+        format.json { 
+          render :json => { :failure => true, :errors => edit_error }.to_json 
+        }
+        format.xml {
+          render :xml =>@item.errors
         }
       end
     end
@@ -364,11 +377,12 @@ class Helpdesk::TicketsController < ApplicationController
   def execute_scenario 
     va_rule = current_account.scn_automations.find(params[:scenario_id])
     unless va_rule.trigger_actions(@item)
+      flash[:notice] = I18n.t("admin.automations.failure")
       respond_to do |format|
         format.html { 
-          flash[:notice] = I18n.t("admin.automations.failure")
           redirect_to :back 
         }
+        format.js
       end
     else  
       update_custom_field @item    
@@ -392,6 +406,7 @@ class Helpdesk::TicketsController < ApplicationController
           render :json => {:success => true, :id => @item.id, :actions_executed => Va::Action.activities, :rule_name => va_rule.name }.to_json 
         }
       end
+    end
   end 
   
   def mark_requester_deleted(item,opt)

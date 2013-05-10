@@ -4,8 +4,8 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
   include ActionView::Helpers::TextHelper
   include ParserUtil
   include HelpdeskControllerMethods  
-  include Helpdesk::Social::Facebook
-  include Helpdesk::Social::Twitter
+  include Conversations::Twitter
+  include Conversations::Facebook
 
   before_filter :load_multiple_items, :only => :update_multiple
 

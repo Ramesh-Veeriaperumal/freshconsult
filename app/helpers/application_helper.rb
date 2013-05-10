@@ -804,6 +804,7 @@ module ApplicationHelper
     return
   end
   
+  # This helper is for the partial expanded/_ticket.html.erb
   def requester(ticket)
     if privilege?(:view_contacts)
       "<a class = 'user_name' href='/users/#{ticket.requester.id}'><span class='emphasize'>#{h(ticket.requester.display_name)}</span></a>"
@@ -812,8 +813,18 @@ module ApplicationHelper
     end
   end
   
+  # This helper is for the partial expanded/_ticket.html.erb
   def quick_action
     privilege?(:edit_ticket_properties) ? 'quick-action dynamic-menu' : ''
   end
-
+  
+  def note_responder(note)
+    if privilege?(:view_contacts)
+      link_to_user(note.user, :class => "user_name", "data-placement" => "topRight",
+        :rel => "hover-popover", "data-widget-container" => "agent-hovercard_#{note.id}" )
+    else
+      link_to_user(note.user, :class => "user_name", "data-placement" => "topRight")
+    end
+  end
+  
 end

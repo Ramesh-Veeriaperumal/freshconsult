@@ -75,7 +75,7 @@ def check_for_spam(table,column_name, id_limit, threshold)
     results.each{ |x| user_ids << x[column_name]; }
     
     user_sql = <<-eos
-      select id,deleted,deleted_at, account_id from users where user_role in (#{User::USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]})
+      select id,deleted,deleted_at, account_id from users where helpdesk_agent = false)
       and blocked = 0 and whitelisted = 0 and id in (#{user_ids*","})
     eos
     puts user_sql

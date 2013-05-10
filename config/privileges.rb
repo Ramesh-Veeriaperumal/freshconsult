@@ -15,12 +15,14 @@ Authority::Authorization::PrivilegeList.build do
                       :spam, :unspam, :execute_scenario, :pick_tickets,
                       :get_ca_response_content, :merge_with_this_request, :print, :latest_note,
                       :clear_draft, :save_draft, :prevnext, :component, :custom_search, :configure_export,
-                      :quick_assign, :canned_reponse, :full_paginate, :edit, :update, :custom_view_save, :filter_options]           
+                      :quick_assign, :canned_reponse, :full_paginate, :custom_view_save,
+                      :filter_options, :activities, :status]
     resource :"helpdesk/subscription"
  		resource :"helpdesk/tag_use"
     resource :"helpdesk/tag"
     resource :"mobile/ticket"
-    resource :"social/twitter_handle", :only => [:create_twicket, :feed, :user_following, :tweet_exists, :send_tweet]
+    resource :"social/twitter_handle",
+       :only => [:create_twicket, :feed, :user_following, :tweet_exists, :send_tweet, :twitter_search]
 
     resource :"integrations/integrated_resource"
     resource :"integrations/jira_issue"
@@ -31,11 +33,13 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/conversation", :only => [:note]
     resource :"helpdesk/canned_response"
     resource :"helpdesk/ca_folder"
+    resource :agent, :only => [:toggle_availability]
 	end
 
   reply_ticket do
     resource :"helpdesk/ticket", :only => [:reply_to_conv]
     resource :"helpdesk/conversation", :only => [:reply, :twitter, :facebook]
+    resource :"social/twitter_handle", :only => [:send_tweet]
   end
 
   forward_ticket do
@@ -49,7 +53,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   edit_ticket_properties do
-    resource :"helpdesk/ticket", :only => [:update_ticket_properties, :assign_to_agent, :assign, :close,
+    resource :"helpdesk/ticket", :only => [:edit, :update, :update_ticket_properties, :assign_to_agent, :assign, :close,
                                    :close_multiple, :update_multiple_tickets, :change_due_by]
     resource :"helpdesk/bulk_ticket_action" 
     resource :"helpdesk/common", :only => [:group_agents]                                  
@@ -64,7 +68,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   view_time_entries do
-    resource :"helpdesk/time_sheet", :only => [:index, :create, :toggle_timer]
+    resource :"helpdesk/time_sheet", :only => [:index, :new, :create, :toggle_timer]
   end
 
   edit_time_entries do
@@ -137,8 +141,8 @@ Authority::Authorization::PrivilegeList.build do
   # ************** CONTACTS **************************
 
 	view_contacts do
-		resource :contact, :only => [:index, :show, :hover_card, :configure_export, :export_csv]
-		resource :customer, :only => [:index, :show]
+	 resource :contact, :only => [:index, :show, :hover_card, :configure_export, :export_csv]
+	 resource :customer, :only => [:index, :show]
     resource :agent, :only => [:show]
     resource :user, :only => [:index, :show]
 	end
@@ -163,12 +167,23 @@ Authority::Authorization::PrivilegeList.build do
   # ************** REPORTS **************************
 
 	view_reports do
-		resource :report
-		resource :"reports/timesheet_report"
-		resource :"reports/customer_report"
-		resource :"reports/helpdesk_report"
-		resource :"reports/survey_report"
-    resource :"reports/gamification_report"
+      resource :report
+      resource :"reports/agent_glance_report"
+      resource :"reports/agents_analysi"
+      resource :"reports/agents_comparison"
+      resource :"reports/customer_glance_report"
+      resource :"reports/customer_report"
+      resource :"reports/customers_analysi"
+      resource :"reports/gamification_report"      
+      resource :"reports/group_glance_report"
+      resource :"reports/groups_analysi"
+      resource :"reports/groups_comparison"
+      resource :"reports/helpdesk_glance_report"
+      resource :"reports/helpdesk_load_analysi"
+      resource :"reports/helpdesk_performance_analysi"
+      resource :"reports/helpdesk_report"
+      resource :"reports/survey_report"
+   	resource :"reports/timesheet_report"
 	end
 
   # ************** ADMIN **************************
@@ -209,12 +224,12 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/email_config"
     resource :"admin/email_notification"
     resource :"admin/email_commands_setting"
+    resource :"admin/account_additional_setting"
   end
 
   # **************** super admin *******************
   # super_admin
   admin_tasks do
-    resource :"admin/account_additional_setting"
     resource :"admin/business_calendar"
     resource :"admin/supervisor_rule"
     resource :"social/twitter_handle", :only => [:index, :edit, :update, :destroy, :signin, :authdone, :search]

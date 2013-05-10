@@ -38,7 +38,9 @@
     </ul> 
     <div class="button-container">
     	<%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton special") %>
-    	<%= submit_tag(t('ticket.note_form.add_and_resolve'), :onclick => "jQuery('#note_ticket_status').val('4');" , :class => "uiButton") %> 
+      <% if privilege?(:edit_ticket_properties) %>
+      	<%= submit_tag(t('ticket.note_form.add_and_resolve'), :onclick => "jQuery('#note_ticket_status').val('4');" , :class => "uiButton") %> 
+      <% end %>
 			<%= button_to_function(t('cancel'), "jQuery('#cnt-note').hide().trigger('visibility');", :class => "uiButton" ) %>   
     </div>
   <% end %>

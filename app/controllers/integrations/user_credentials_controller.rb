@@ -11,7 +11,7 @@ class Integrations::UserCredentialsController < ApplicationController
         app_name = config_hash["app_name"]
         config_hash.delete("app_name")	    
         
-        if current_user.permission? :manage_users
+        if privilege?(:view_admin)
           Integrations::Application.install_or_update( app_name, current_account.id ) 
         end
       

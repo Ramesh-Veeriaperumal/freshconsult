@@ -28,7 +28,7 @@
 				<%= render :partial => "helpdesk/tickets/show/requester.html.erb" %> 
 				<% unless @ticket.deleted or @ticket.spam %> 
 					<%= render :partial => "helpdesk/tickets/show/ticket_fields.html.erb" %>
-					<% if feature?(:timesheets) %>
+					<% if feature?(:timesheets) && privilege?(:view_time_entries) %>
 					<div class="modal hide fade" role="dialog" id="timesheets_loading">
 						<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button></div>
 						<div class="modal-body"><div class="loading-box"></div></div>

@@ -97,20 +97,11 @@
 // ------------
 .dropdown-menu .active > a,
 .dropdown-menu .active > a:hover {
-  /*color: $dropdownLinkColorHover;
+  color: $dropdownLinkColorHover;
   text-decoration: none;
   outline: 0;
   background-color: $dropdownLinkBackgroundActive;
-  @include gradient-vertical(darken($dropdownLinkBackgroundActive,5%), $dropdownLinkBackgroundActive);*/
-  &:before{ 
-    content:"";
-    position: absolute;
-    vertical-align: text-top;
-    margin-left: -20px;
-    background: sprite($symbol, selected) no-repeat;
-    height:16px; 
-    width: 16px;
-  }
+  @include gradient-vertical(darken($dropdownLinkBackgroundActive,5%), $dropdownLinkBackgroundActive);
 }
 
 // Disabled state

@@ -1,5 +1,5 @@
 <div class="request_panel" id="<%=cntid%>" style="display:none;" rel="emitter" data-node-name="agent_replying">
-  <% form_for note, :html => {
+  <% form_for note, :url => note_helpdesk_ticket_conversations_path(@ticket), :html => {
                       :multipart => true,  
                       :id => "HelpdeskNotes",
                       :rel => 'note_form', 
@@ -57,14 +57,14 @@
           <%= t('cancel') %>
         </button>
       </span>
-
-      <span class="btn-group">
-        <button class="btn" rel="custom-reply-status" 
-                data-cnt-id='<%=cntid%>' data-status-val='4'>
-          <%= t('ticket.note_form.add_and_resolve') %>
-        </button>
-      </span>
-
+      <% if privilege?(:edit_ticket_properties) %>
+        <span class="btn-group">
+          <button class="btn" rel="custom-reply-status" 
+                  data-cnt-id='<%=cntid%>' data-status-val='4'>
+            <%= t('ticket.note_form.add_and_resolve') %>
+          </button>
+        </span>
+      <% end %>
       <span class="btn-group">
         <button class="btn btn-primary submit_btn" 
                 data-public-text="<%= t('ticket.note_form.add_public_note') %>" 

@@ -33,7 +33,11 @@
 	<% unless @ticket.ticket_topic.nil? %>
 	<div class="info-highlight">
 		<%= t("helpdesk.tickets.show.linked_ticket") %>
-		"<%= link_to("#{truncate(h(@ticket.topic.title))}", category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
+    <% if privilege?(:view_forums) %>
+    "<%= link_to("#{truncate(h(@ticket.topic.title))}", category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
+    <% else %>
+      "<%= truncate(h(@ticket.topic.title)) %>"
+    <% end %>
 	</div>
 	<% end %>
 

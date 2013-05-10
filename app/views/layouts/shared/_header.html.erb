@@ -112,7 +112,7 @@
 	<%
 		assume_agent = []
 		if privilege?(:manage_users)
-			@allowed_to_assume = current_account.users.technicians.visible.allowed_to_assume(current_user)
+			@allowed_to_assume = current_user.agent.assumable_agents
 			
 			if @allowed_to_assume
 				@allowed_to_assume.each do |req|

@@ -14,9 +14,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
 
   def index
     unless @ticket.nil?
-      @time_sheets = privilege?(:edit_time_entries) ?
-        @ticket.time_sheets :
-        @ticket.time_sheets.by_agent(current_user.id)
+      @time_sheets = @ticket.time_sheets 
     else
       get_time_sheets #Added for time_sheets API
     end

@@ -77,7 +77,7 @@
 									<span class='label deleted'>
 										<%= link_to("×", restore_helpdesk_ticket_path(@ticket), :method => :put, 
 													:class => "tooltip", "data-placement" => "below", 
-													:title => t('ticket.restore_btn_title') ) unless params[:format]=='widget' 
+													:title => t('ticket.restore_btn_title') ) unless params[:format]=='widget' if privilege?(:delete_ticket)
 													%>
 										<%= t("ticket.deleted") %>
 									</span>
@@ -99,35 +99,41 @@
 								<ul>
 									<li class="ticket-btns">
 										<div class="btn-group">
-											<% if (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present?) %>
+											<% if privilege?(:reply_ticket) && (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present?) %>
 										  	<a class="btn" rel="note-button" data-note-type="reply" id="ReplyButton">
 										  		<span class="reply-inner"></span>
 									    		<%= t('ticket.reply_to')  %>
 									    	</a>
 											<% end %>
+                      <% if privilege?(:forward_ticket) %>
 										  	<a href="#" id="FwdButton" class="btn" rel="note-button" data-note-type="fwd" >
 										  		<span class="forward-inner"></span>
 									    		<%= t('fwd_to') %>
 									    	</a>
+                      <% end %>
 										  	<a href="#"  rel="note-button" class="btn" data-note-type="note" >
 										  		<span class="note-inner"></span>
 												<%= t('ticket.add_note') %>
 											</a>
 										</div>
 									</li>
-									<li class="ticket-btns">
-										<%= link_to(t('ticket.close_btn'), "#", 
-												:title  => t('ticket.close_btn_title'), 
-												:class => "btn" , :id=>"close_ticket_btn" , 
-												:"data-href" => close_helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]})) unless @ticket.closed? %> 
+                  <% if privilege?(:edit_ticket_properties) %>
+  									<li class="ticket-btns">
+  										<%= link_to(t('ticket.close_btn'), "#", 
+  												:title  => t('ticket.close_btn_title'), 
+  												:class => "btn" , :id=>"close_ticket_btn" , 
+  												:"data-href" => close_helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]})) unless @ticket.closed? %> 
 
-									</li>
-									<li class="ticket-btns">
-										<%= link_to t('ticket.merge_btn'), "/helpdesk/merge_tickets/bulk_merge?source_tickets=#{@ticket.display_id}", 
-												:id => "Merge", :title => t('ticket.merge_title'), :class => 'btn',
-												"data-ajax-dialog" => true, "data-width" => "727"
-										%>
-									</li>
+  									</li>
+                  <% end %>
+                  <% if privilege?(:merge_or_split_ticket) %>
+  									<li class="ticket-btns">
+  										<%= link_to t('ticket.merge_btn'), "/helpdesk/merge_tickets/bulk_merge?source_tickets=#{@ticket.display_id}", 
+  												:id => "Merge", :title => t('ticket.merge_title'), :class => 'btn',
+  												"data-ajax-dialog" => true, "data-width" => "727"
+  										%>
+  									</li>
+                  <% end %>
 									<li class="ticket-btns">
 										<%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/component/#{@ticket.id}?component=scenarios", 
 										  				:rel => 'freshdialog', "data-target" => "#execute_scenario", :class => 'btn',
@@ -143,14 +149,16 @@
 										  </a>
 
 										  <ul class="dropdown-menu" id="reply_options" role="menu" aria-labelledby="dLabel">
-										  	<% if feature?(:timesheets) %>
+										  	<% if feature?(:timesheets) && privilege?(:view_time_entries) %>
 										  	<li>
 										  		<a rel="triggerAddTimer" href="#"><%= t('ticket.add_time') %></a>
 										  	</li>
 										  	<% end %>
-										  	<li>
-										  		<%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %>
-										  	</li>
+                        <% if privilege?(:edit_ticket_properties) %>
+  										  	<li>
+  										  		<%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %>
+  										  	</li>
+                        <% end %>
 										  	
 										  	<li>
 										  		<%= link_to( "Print", print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
@@ -159,12 +167,13 @@
 										  	<li id="spamicon">
 										  		<%= render :partial => "spam.html.erb", :locals => { :ticket => @ticket, :page => params[:page] } %>
 										  	</li>
-
-										  	<li>
-										  		<%= link_to(t('ticket.delete_btn'), 
-										  					helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]}), 
-										  					:method => :delete, :title => t('ticket.delete_btn_title')) %>
-							  				</li>
+                        <% if privilege?(:delete_ticket) %>
+  										  	<li>
+  										  		<%= link_to(t('ticket.delete_btn'), 
+  										  					helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]}), 
+  										  					:method => :delete, :title => t('ticket.delete_btn_title')) %>
+  							  				</li>
+                        <% end %>
 										  </ul>
 										</div>
 									</li>

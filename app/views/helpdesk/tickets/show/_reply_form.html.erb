@@ -26,7 +26,7 @@
   
   <div class="form_title"><%= t('.title') %>: <span><%= @ticket.requester.email %></span> </div>
   <div class="list_agents_replying" class="hide"></div>
-  <% form_for note, :html => { 
+  <% form_for note, :url => reply_helpdesk_ticket_conversations_path(@ticket), :html => { 
                         :multipart => true, 
                         :id => "HelpdeskReply",
                         "data-panel" => cntid,
@@ -115,7 +115,7 @@
         <!-- <label>
           <%# check_box_tag :quoted_text, "true", true %><%= t("ticket.include_quoted_text") %>
         </label> -->
-        <% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) %>    
+        <% if privilege?(:view_forums) && !@ticket.ticket_topic.nil? && !(@ticket.ticket_topic.topic.locked) %>    
           <label>
               <%= check_box_tag :post_forums %><%= t("ticket.reply_form.post_to_linked_forum") %>
           </label>
@@ -141,22 +141,26 @@
         <span class="btn-group">
           <a class="btn btn-primary submit_btn">
             <%= t('ticket.reply_form.send') %>
-            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
-              <span class="caret"></span>
-            </a>
-          </a>
-          <ul class="dropdown-menu custom_statuses">
-            <%
-            ticket_statuses = current_account.ticket_status_values.reject{|status| status.status_id == 2 }
-            %>
-            <% ticket_statuses.each do |status| %>
-            <li>
-              <a href="#" rel="custom-reply-status" data-status-name='<%= status.name %>' data-cnt-id='<%=cntid%>' data-status-val='<%= status.status_id %>' >
-                <%= t('ticket.reply_form.send_and_set_as', {:status => status.name}) %>
+            <% if privilege?(:edit_ticket_properties) %>
+              <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+                <span class="caret"></span>
               </a>
-            </li>
             <% end %>
-          </ul>
+          </a>
+          <% if privilege?(:edit_ticket_properties) %>
+            <ul class="dropdown-menu custom_statuses">
+              <%
+              ticket_statuses = current_account.ticket_status_values.reject{|status| status.status_id == 2 }
+              %>
+              <% ticket_statuses.each do |status| %>
+              <li>
+                <a href="#" rel="custom-reply-status" data-status-name='<%= status.name %>' data-cnt-id='<%=cntid%>' data-status-val='<%= status.status_id %>' >
+                  <%= t('ticket.reply_form.send_and_set_as', {:status => status.name}) %>
+                </a>
+              </li>
+              <% end %>
+            </ul>
+          <% end %>
         </span>
         
       </div>

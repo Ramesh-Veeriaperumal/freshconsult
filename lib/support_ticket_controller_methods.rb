@@ -30,9 +30,8 @@ module SupportTicketControllerMethods
   end
   
   def can_access_support_ticket?
-    # permission?(:manage_tickets)
     @ticket && (privilege?(:manage_tickets)  ||  (current_user  &&  ((@ticket.requester_id == current_user.id) || 
-                          ( current_user.client_manager?  && @ticket.requester.customer == current_user.customer))))
+                          ( privilege?(:client_manager) && @ticket.requester.customer == current_user.customer))))
   end
   
   def show_survey_form

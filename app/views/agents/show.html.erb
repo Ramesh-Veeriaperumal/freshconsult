@@ -1,13 +1,3 @@
-<script>
-function setUserRole(){
-	if (jQuery('input[name=user_role]').is(':checked')){
-		jQuery('#role_taken').val('admin');
-	}
-	else{
-		jQuery('#role_taken').val('poweruser');		
-	}
-}
-</script>
 <% content_for :sidebar do -%>
 	<%if gamification_feature?(current_account)%>
 	<div class="side-panel">

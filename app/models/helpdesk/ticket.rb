@@ -1093,7 +1093,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def can_access?(user)
     if user.agent.blank?
       return true if self.requester_id==user.id
-      if user.client_manager?
+      if user.privilege?(:client_manager)
         return self.requester.customer_id == user.customer_id
       end
     else

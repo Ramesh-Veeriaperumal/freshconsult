@@ -44,7 +44,6 @@ gem "delayed_job", "1.8.4"
 
 gem "net-dns", "0.6.1"
 
-gem "freshdesk_authority", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/freshdesk_authority-0.1"
 
 gem "jammit", "0.6.5"
 gem "yui-compressor", :git => "git://github.com/freshdesk/ruby-yui-compressor.git"
@@ -82,32 +81,25 @@ gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
 gem "rinku", :git => "git://github.com/freshdesk/rinku.git"
 
 gem "people", '0.2.1' #https://github.com/mericson/people/tree/master/lib
+gem "useragent", "~> 0.4.16"
+gem "xss_terminate", "~> 0.2"
+gem "rack-throttle", "~> 0.3.0"
+gem "faraday","0.8"
+
+gem 'clockwork', '0.4.1'
+gem "wkhtmltopdf-binary", "~> 0.9.9.1"
+gem "wicked_pdf", "~> 0.9.2"
+gem "pg"
+
+gem "cloudfront_asset_host", :git => "git://github.com/freshdesk/cloudfront_asset_host.git"
+
+gem "freshdesk_authority", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/freshdesk_authority-0.1"
 gem "active_presenter", "1.4.0"
 
-group :development,:test do
-   gem "ZenTest", "4.4.1"
-   gem "rspec", "1.3.1"
-   #gem "thoughtbot-shoulda","2.10.2"
-   gem "rspec-rails", "1.3.3"
-   gem "autotest-fsevent", "0.1.1"
-   gem "autotest-growl", "0.2.0"
-   gem "autotest-rails", "4.1.0"
-   gem "spork", "0.8.5"
-   gem "useragent", "~> 0.4.16"
-   gem "xss_terminate", "~> 0.2"
-   gem "rack-throttle", "~> 0.3.0"
-   gem "faraday","0.8"
-
-   gem 'clockwork', '0.4.1'
-   gem "wkhtmltopdf-binary", "~> 0.9.9.1"
-   gem "wicked_pdf", "~> 0.9.2"
-   gem "pg"
-
-   gem "cloudfront_asset_host", :git => "git://github.com/freshdesk/cloudfront_asset_host.git"
+group :development,:test do   
    gem "forgery","0.5.0"
    gem "factory_girl", "1.2.3" 
    gem "mongrel"
-   gem "rr" 
 end
 
 group :test do
@@ -115,6 +107,11 @@ group :test do
    gem "rspec-rails", "1.3.3"
    gem "spork", "~> 0.8.0"
    gem "mocha", "~> 0.13.3"
+   gem "rr"
+   gem "ZenTest", "4.4.1"
+   gem "autotest-fsevent", "0.1.1"
+   gem "autotest-growl", "0.2.0"
+   gem "autotest-rails", "4.1.0"
 end
 
 group :assets do

@@ -25,7 +25,7 @@ class Search::HomeController < ApplicationController
       # The :load => true option will load the final results from database. It uses find_by_id internally.
       begin
         @total_results = 0
-        if permission? :manage_tickets
+        if privilege?(:manage_tickets)
           options = { :load => true, :page => (params[:page] || 1), :size => 10, :preference => :_primary_first }
           @items = Tire.search [current_account.search_index_name], options do |search|
             search.query do |query|

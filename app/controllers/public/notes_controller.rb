@@ -28,7 +28,7 @@ class Public::NotesController < ApplicationController
 
     build_attachments
     if @note.save
-      update_cc_list if (current_user || @requester).client_manager?
+      update_cc_list if (current_user || @requester).privilege?(:client_manager)
       flash[:notice] = t(:'flash.tickets.notes.create.success')
     else
       flash[:error] = t(:'flash.tickets.notes.create.failure')
@@ -56,7 +56,7 @@ class Public::NotesController < ApplicationController
             @requester = current_account.users.new #create an account for cc if not created
             @requester.signup!({:user => {
                                 :email => email, 
-                                :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}},current_portal)
+                                :helpdesk_agent => false}},current_portal)
           end
           return true # cc has added
         end

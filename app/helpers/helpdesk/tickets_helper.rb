@@ -78,11 +78,7 @@ module Helpdesk::TicketsHelper
   end
 
   def timesheets_size
-    if privilege?(:edit_time_entries)
-      @ticket.time_sheets.size
-    else
-      @ticket.time_sheets.by_agent(current_user.id).size
-    end
+    @ticket.time_sheets.size
   end
   
   def top_views(selected = "new_my_open", dynamic_view = [], show_max = 1)

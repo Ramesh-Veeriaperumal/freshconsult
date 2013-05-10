@@ -197,7 +197,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
       begin
         if (user.agent? && !user.deleted?)
-          process_email_commands(ticket, user, email_config)
+          process_email_commands(ticket, user, email_config) if user.privilege?(:edit_ticket_properties)
           email_cmds_regex = get_email_cmd_regex(account)
           ticket.description = ticket.description.gsub(email_cmds_regex, "") if(!ticket.description.blank? && email_cmds_regex)
           ticket.description_html = ticket.description_html.gsub(email_cmds_regex, "") if(!ticket.description_html.blank? && email_cmds_regex)
@@ -266,7 +266,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         ticket.cc_email = ticket_cc_emails_hash(ticket)
         if (user.agent? && !user.deleted?)
           ticket.responder ||= user
-          process_email_commands(ticket, user, ticket.email_config, note)
+          process_email_commands(ticket, user, ticket.email_config, note) if 
+            user.privilege?(:edit_ticket_properties)
           email_cmds_regex = get_email_cmd_regex(ticket.account)
           note.body = body.gsub(email_cmds_regex, "") if(!body.blank? && email_cmds_regex)
           note.body_html = body_html.gsub(email_cmds_regex, "") if(!body_html.blank? && email_cmds_regex)

@@ -8437,8 +8437,10 @@ height: auto;
 }
 .agent-role-modal {
   ul {
-    margin-left: -15px;
-    margin-right: -15px;
+     border:1px solid #eee;
+     @include border-radius(6px);
+     overflow-y: auto;
+     max-height: 360px;
     li{
       padding: 10px 15px 0;
       border-bottom: 1px solid #eee;
@@ -8449,7 +8451,8 @@ height: auto;
          }
       }
       &:first-child{
-        border-top: 1px solid #eee;
+         @include border-top-left-radius(6px);
+         @include border-top-right-radius(6px);         
       }
       &:last-child{
         border:0;

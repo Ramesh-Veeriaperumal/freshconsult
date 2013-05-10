@@ -21,7 +21,8 @@
   var cachedLookup = cachedBackend.lookup.bind(cachedBackend);
 
 </script>
-<% form_for note, 
+<% form_for note,
+            :url => forward_helpdesk_ticket_conversations_path(@ticket),
             :html => {
               :multipart => true, 
               :id => "HelpdeskFwd_#{cntid}", 

@@ -113,8 +113,8 @@ class Customer < ActiveRecord::Base
 
     def map_contacts_to_customers(domains = self.domains)
       User.update_all("customer_id = #{self.id}", 
-        ['SUBSTRING_INDEX(email, "@", -1) IN (?) and customer_id is null and user_role = ? and account_id = ?', 
-        get_domain(domains), User::USER_ROLES_KEYS_BY_TOKEN[:customer], self.account_id]) unless domains.blank?
+        ['SUBSTRING_INDEX(email, "@", -1) IN (?) and customer_id is null and helpdesk_agent = false and account_id = ?', 
+        get_domain(domains), self.account_id]) unless domains.blank?
     end
 
     def get_domain(domains)

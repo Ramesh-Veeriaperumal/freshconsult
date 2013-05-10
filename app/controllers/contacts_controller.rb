@@ -66,8 +66,7 @@ class ContactsController < ApplicationController
         format.xml  { render :xml => @user, :status => :created, :location => contacts_url(@user) }
         format.json {
             render :json => @user.to_json({:except=>[:account_id] ,:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
-                    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
-                    :user_role,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
+:phone,:mobile,:twitter_id,:description,:time_zone,:deleted,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
         }
         format.widget { render :action => :show}
         format.js
@@ -133,7 +132,7 @@ class ContactsController < ApplicationController
       format.xml  { render :xml => @user.to_xml} # bad request
       format.json { render :json => @user.to_json({:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
                     :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
-                    :user_role,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
+                    :fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
                   }
       format.mobile { render :json => @user.to_mob_json }
     end

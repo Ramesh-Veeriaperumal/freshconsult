@@ -153,7 +153,7 @@ class Support::SearchController < SupportController
                   f.filter :or, { :not => { :exists => { :field => 'folder.customer_folders.customer_id' } } },
                                 { :term => { 'folder.customer_folders.customer_id' => current_user.customer_id } }
                 end
-                if current_user.client_manager?
+                if privilege?(:client_manager)
                   f.filter :or, { :not => { :exists => { :field => :company_id } } },
                                 { :term => { :company_id => current_user.customer_id } }
                 else

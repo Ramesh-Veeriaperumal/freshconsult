@@ -99,13 +99,11 @@
 		<table class="table">
 			<tr>
 		    <th>Email</th>
-		    <th>Role</th>
 		    <th>Verified</th>
 		  </tr>
 		  <% @subscription.account.agents.each do |agent| %>
 		    <tr>
 		      <td><%= agent.user.email %></td>
-		      <td><%= User::USER_ROLES_NAMES_BY_KEY[agent.user.user_role] %></td>
 		      <td><%= agent.user.active %></td>
 		    </tr>
 		  <% end %>		  

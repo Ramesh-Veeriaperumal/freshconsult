@@ -11,7 +11,6 @@ module Import::Zen::User
    element :name
    element :email
    element :phone
-   # whats this?
    element :roles  , :as => :user_role
    element "time-zone" , :as => :time_zone
    element "organization-id", :as => :customer_id

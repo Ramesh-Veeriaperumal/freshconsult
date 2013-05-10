@@ -133,14 +133,9 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   
    def search(search)
     if search
-      subscriptions = Subscription.find(:all,:include => :account,
-                   :joins => "INNER JOIN accounts on accounts.id = subscriptions.account_id ",
-                   :conditions => ['full_domain LIKE ?', "%#{search}%"]) 
-      user_subscriptions = Subscription.find(:all,
-                   :joins => "INNER JOIN users on users.account_id = subscriptions.account_id and users.user_role = 4 ",
-                   :conditions => ['users.email LIKE ?', "%#{search}%"]) 
-      subscriptions =  subscriptions.concat(user_subscriptions) unless user_subscriptions.nil?
-      subscriptions.uniq
+      Subscription.find(:all,:include => :account,
+       :joins => "INNER JOIN accounts on accounts.id = subscriptions.account_id ",
+       :conditions => ['full_domain LIKE ?', "%#{search}%"])
     else
       Subscription.find(:all,:include => :account, :order => 'created_at desc')
     end

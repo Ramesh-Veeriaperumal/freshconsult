@@ -78,7 +78,7 @@
                 <%= f.text_area :body_html, :class => "required", :id => "#{cntid}-body", :value => bind_last_reply(conv_item, @signature, false, true) %>
             </div>
         </li>
-        <% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) and privilege?(:view_forums) %>
+        <% if privilege?(:view_forums) && !@ticket.ticket_topic.nil? && !(@ticket.ticket_topic.topic.locked) %>
         <li class="inline-field field">
             <div class="fields">
                 <label>
@@ -115,7 +115,9 @@
     </ul>
     <div class="button-container">        
       <%= submit_tag(t('ticket.reply_form.send'), :class => "uiButton special" ) %>
-      <%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status_#{cntid}').val('4');" , :class => "uiButton", :id => "send_resolve_btn") %>
+      <% if privilege?(:edit_ticket_properties) %>
+        <%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status_#{cntid}').val('4');" , :class => "uiButton", :id => "send_resolve_btn") %>
+      <% end %>
       <%= button_to_function(t('cancel'), "jQuery('##{cntid}').hide().trigger('visibility');jQuery('##{note_details_id}').show();cleardraft();jQuery('##{cntid}-body').destroyEditor();", :class => "uiButton" ) %>
     </div>
 

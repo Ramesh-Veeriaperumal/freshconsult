@@ -309,6 +309,11 @@ class User < ActiveRecord::Base
   end
   alias :is_customer :customer?
   
+  # Used in mobile
+  def is_client_manager?
+    self.privilege?(:client_manager)
+  end
+  
   def can_assume?(user)
     # => Not himself
     # => User is not deleted
