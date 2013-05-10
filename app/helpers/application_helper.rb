@@ -574,10 +574,8 @@ module ApplicationHelper
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)
       when "dropdown" then
-        if (field.field_type == "default_status" and in_portal)
-          element = label + select(object_name, field_name, field.visible_status_choices, {:selected => field_value},{:class => element_class})
-        elsif (['default_priority','default_source','default_status'].include?(field.field_type) )
-          element = label + select(object_name, field_name, choices, {:selected => field_value},{:class => element_class}) 
+        if (['default_priority','default_source','default_status'].include?(field.field_type) )
+          element = label + select(object_name, field_name, field.html_unescaped_choices, {:selected => field_value},{:class => element_class}) 
           #Just avoiding the include_blank here.
         else
           element = label + select(object_name, field_name, field.html_unescaped_choices, { :include_blank => "...", :selected => field_value},{:class => element_class})
