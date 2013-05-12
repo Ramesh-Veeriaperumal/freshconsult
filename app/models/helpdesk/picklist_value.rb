@@ -11,7 +11,6 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
     :dependent => :destroy
   
   acts_as_list
-  # xss_terminate
   before_create :set_account_id
   # scope_condition for acts_as_list
   def scope_condition
