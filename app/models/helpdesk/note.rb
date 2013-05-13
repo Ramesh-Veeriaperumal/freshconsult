@@ -82,7 +82,7 @@ class Helpdesk::Note < ActiveRecord::Base
   
   named_scope :latest_facebook_message,
               :conditions => [" incoming = 1 and social_fb_posts.postable_type = 'Helpdesk::Note'"], 
-              :joins => "INNER join social_fb_posts on helpdesk_notes.id = social_fb_posts.postable_id", 
+              :joins => "INNER join social_fb_posts on helpdesk_notes.id = social_fb_posts.postable_id and helpdesk_notes.account_id = social_fb_posts.account_id", 
               :order => "created_at desc"
 
   SOURCES = %w{email form note status meta twitter feedback facebook forward_email}
