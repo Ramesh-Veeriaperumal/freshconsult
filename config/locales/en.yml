@@ -894,6 +894,9 @@ en:
       no_file: Please upload a file
       success: "%{created_count} contacts has been newly imported and %{updated_count} existing contacts has been updated!"
     business_hours: 
+      create:
+        failure: Failed to create Business Hours
+        success: Business Hours has been created successfully
       update: 
         failure: Failed to update Business Hours
         success: Business Hours has been updated successfully
@@ -2451,7 +2454,9 @@ en:
   portal_customizer_open_forums: Anybody can view forums
   portal_customizer_option_forums: Users can view Forums without logging in
   business_hours: 
+    new: New Business Calendar
     to: to
+    delete: Are you sure
     valid_time: Please enter a valid time
     holiday_name: Holiday name
     title: Business Hours

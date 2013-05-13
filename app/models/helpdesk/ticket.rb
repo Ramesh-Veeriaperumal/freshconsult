@@ -565,30 +565,33 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.schema_less_ticket.changes.key?('product_id') 
   end
 
-  #shihab-- date format may need to handle later. methode will set both due_by and first_resp
   def update_dueby
+    Thread.current[TicketConstants::GROUP_THREAD] = self.group
+    set_sla_time
+    Thread.current[TicketConstants::GROUP_THREAD] = nil
+  end
 
+
+  def set_sla_time
     if self.new_record?
-      set_account_time_zone   
+      set_time_zone
       sla_detail = self.sla_policy.sla_details.find(:first, :conditions => {:priority => priority})
       set_dueby_on_priority_change(sla_detail)
 
       set_user_time_zone if User.current
       RAILS_DEFAULT_LOGGER.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
-      
     elsif priority_changed? || changed_condition? || status_changed?
 
-      set_account_time_zone   
+      set_time_zone
       sla_detail = self.sla_policy.sla_details.find(:first, :conditions => {:priority => priority})
 
       set_dueby_on_priority_change(sla_detail) if (priority_changed? || changed_condition?)
       set_dueby_on_status_change(sla_detail) if status_changed?
       set_user_time_zone if User.current
       RAILS_DEFAULT_LOGGER.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
-      
-    end
-
+    end 
   end
+  
 
   #end of SLA
   
@@ -596,7 +599,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.account.make_current
     Time.zone = self.account.time_zone    
   end
- 
+
+  def set_time_zone
+    if self.group.nil? || self.group.business_calendar.nil?
+      set_account_time_zone
+    else
+      Time.zone = self.group.business_calendar.time_zone
+    end
+  end
+
   def set_user_time_zone 
     Time.zone = User.current.time_zone  
   end

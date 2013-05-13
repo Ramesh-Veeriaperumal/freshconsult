@@ -12,31 +12,24 @@
 <div class="list-page group-management">
   <div class="list-page-header row-fluid"> 
   	<h3 class="lead span6"><%=t('business_hours.title')%></h3>
-  	<span class="span6"><%= link_to t('group.new'), new_group_path, :class => "btn btn-primary pull-right "  %></span>
+  	<span class="span6"><%= link_to t('business_hours.new'), new_admin_business_calendar_path, :class => "btn btn-primary pull-right "  %></span>
   </div>
   <div class="list-page-body"> 
       <table class="table table-striped">
-        <tr>
-          <td>
-             <%= link_to('Business Hours Title', '', :class => "item_info") %>
-			 <div class="muted">Business Hours Information</div>
-          </td>
-          <td class="text-right">
-          	<%= link_to t('edit'), '', :class => "btn btn-mini" %>
-          	<%= link_to "<i class='icon-trash'></i>", '', :confirm => "#{t('group.info5')}?", :method => :delete, :class => "btn btn-mini"%>
-          </td>
-        </tr>
-        <tr>
-          <td>
-             <%= link_to('Business Hours Title', '', :class => "item_info") %>
-			 <div class="muted">Business Hours Information</div>
-          </td>
-          <td class="text-right">
-          	<%= link_to t('edit'), '', :class => "btn btn-mini" %>
-          	<%= link_to "<i class='icon-trash'></i>", '', :confirm => "#{t('group.info5')}?", :method => :delete, :class => "btn btn-mini"%>
-          </td>
-        </tr>
-        
+        <% @business_calendars.each do |bc| %>
+          <tr>
+            <td>
+               <%= link_to(h(bc.name), edit_admin_business_calendar_path(bc), :class => "item_info") %>
+  			       <div class="muted"><%= bc.description %></div>
+            </td>
+            <td class="text-right">
+            	<%= link_to t('edit'), edit_admin_business_calendar_path(bc), :class => "btn btn-mini" %>
+              <% unless bc.is_default? %>
+            	 <%= link_to "<i class='icon-trash'></i>", admin_business_calendar_path(bc), :confirm => "#{t('business_hours.delete')}?", :method => :delete, :class => "btn btn-mini"%>
+               <% end %>
+            </td>
+          </tr>
+        <% end %>
       </table>
   </div>
 </div>

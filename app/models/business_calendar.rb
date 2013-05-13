@@ -8,9 +8,12 @@ class BusinessCalendar < ActiveRecord::Base
   #for now, a sporadically structured hash is used.
   #can revisit this data model later...
   belongs_to :account
+  belongs_to :workable, :polymorphic => true
   before_create :set_default_version 
-  attr_accessible :holiday_data,:business_time_data,:version
+  attr_accessible :holiday_data,:business_time_data,:version,:is_default,:name,:description,:time_zone
   validate_on_update :valid_working_hours?
+
+  named_scope :default, :conditions => { :is_default => true }
 
   #needed for upgrading business_time_data - Abhinav
   BUSINESS_TIME_INFO = [:fullweek, :weekdays] 
@@ -46,19 +49,19 @@ class BusinessCalendar < ActiveRecord::Base
     :fullweek => false
   }  
   def beginning_of_workday day
-    business_time_data[:working_hours][day][:beginning_of_workday]
+    business_hour_data[:working_hours][day][:beginning_of_workday]
   end
   
   def end_of_workday day
-    business_time_data[:working_hours][day][:end_of_workday]
+    business_hour_data[:working_hours][day][:end_of_workday]
   end
 
   def weekdays
-    business_time_data[:weekdays]
+    business_hour_data[:weekdays]
   end
   
   def fullweek
-    business_time_data[:fullweek]
+    business_hour_data[:fullweek]
   end
   
   def holidays    
@@ -66,11 +69,22 @@ class BusinessCalendar < ActiveRecord::Base
   end
 
   def working_hours 
-    business_time_data[:working_hours]
+    business_hour_data[:working_hours]
   end
   
   def self.config
-    Account.current ? Account.current.business_calendar : BusinessTime::Config
+    group = Thread.current[TicketConstants::GROUP_THREAD]
+    if group && group.business_calendar
+      group.business_calendar
+    elsif Account.current 
+      Account.current.business_calendar.default.first
+    else
+      BusinessTime::Config
+    end
+  end
+
+  def business_hour_data
+    business_time_data || DEFAULT_SEED_DATA
   end
 
   #migration code starts here..

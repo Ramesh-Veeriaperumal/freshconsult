@@ -1,5 +1,6 @@
 class Group < ActiveRecord::Base
   
+  belongs_to_account
   include Cache::Memcache::Group
   include RedisKeys
 
@@ -17,6 +18,7 @@ class Group < ActiveRecord::Base
    has_many :tickets, :class_name => 'Helpdesk::Ticket', :dependent => :nullify
    
    belongs_to :escalate , :class_name => "User", :foreign_key => "escalate_to"
+   has_one :business_calendar, :as => :workable, :class_name => "BusinessCalendar"
    
    attr_accessible :name,:description,:email_on_assign,:escalate_to,:assign_time ,:import_id, 
                    :ticket_assign_type

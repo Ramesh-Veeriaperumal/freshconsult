@@ -124,14 +124,13 @@ class Account < ActiveRecord::Base
   
   has_many :scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
   
-  
-  
   has_many :email_notifications
   has_many :groups
   has_many :agent_groups
   has_many :forum_categories, :order => "position"
   
-  has_one :business_calendar
+  has_one :business_calendar, :as => :workable, :class_name => "BusinessCalendar"
+  has_many :business_calendar 
 
   has_many :forums, :through => :forum_categories    
   has_many :portal_forums, :through => :forum_categories, 
@@ -294,7 +293,8 @@ class Account < ActiveRecord::Base
     },
 
     :estate => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting, 
+                      :multiple_business_hours ],
       :inherits => [ :garden ]
     },
 
@@ -314,7 +314,8 @@ class Account < ActiveRecord::Base
     },
 
     :estate_classic => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting,
+                    :multiple_business_hours ],
       :inherits => [ :garden_classic ]
     }
 

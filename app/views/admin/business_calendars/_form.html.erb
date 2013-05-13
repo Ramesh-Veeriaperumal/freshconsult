@@ -1,0 +1,107 @@
+<ul class="business_hours ui-form dont-validate"> 
+		<li><h4 class="title"><%=t('business_hours.helpdesk_hours')%></h4></li>
+		<li>
+			<table class="business_time">
+				<tr>
+					<td width="35%">
+						<label>
+							<%= f.radio_button :fullweek, true %> 24 x 7
+						</label>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label>
+							<%= f.radio_button :fullweek, false %> <%=t('business_hours.info3')%>
+						</label>
+						<% display_week = (@business_calendar.business_hour_data[:fullweek] == false) ? 'block':'none' %>
+						
+						
+						<div class="specific_hours" id="SpecificHoursDiv" style="display:<%=display_week%>"  >
+							
+							<h5 class="title"><%=t('business_hours.info4')%></h5>
+							<div id="DAYS_LIST" >
+								<% weekdays = @business_calendar.business_hour_data[:weekdays] %>
+								<% weekday_human_list = [ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" ] %>
+								<% weekday_human_list.each_with_index do |days, days_index| %>
+										<div class="timerange">
+											<label class="business_days">
+												<% cal_index = ( days_index+1 != 7 ) ? (days_index+1) : 0 %>
+												<% checked = weekdays.include?(cal_index) %>
+												<% if checked %>
+													<% beginning_of_workday = @business_calendar.business_hour_data[:working_hours][cal_index][:beginning_of_workday].split(" ")[0] %>
+													<% beginning_of_workday_range = @business_calendar.business_hour_data[:working_hours][cal_index][:beginning_of_workday].split(" ")[1] %>
+													<% end_of_workday = @business_calendar.business_hour_data[:working_hours][cal_index][:end_of_workday].split(" ")[0] %>
+													<% end_of_workday_range = @business_calendar.business_hour_data[:working_hours][cal_index][:end_of_workday].split(" ")[1] %>
+													<% if (end_of_workday.eql?("11:59:59") and beginning_of_workday.eql?("00:00:00")) %>
+														<% end_of_workday = beginning_of_workday = "12:00" %>
+														<% end_of_workday_range = beginning_of_workday_range = "am" %>
+													<% end %>
+												<%else%>
+													<% beginning_of_workday="8:00" %>
+													<% beginning_of_workday_range = "am" %>
+													<% end_of_workday ="5:00" %>
+													<% end_of_workday_range = "pm" %>
+												<%end%>
+												<%= check_box_tag ( weekday_human_list[days_index], cal_index, checked, :class => "checked")  %>
+												<%= days %>
+											</label>
+											<%= select "time", "morning_#{cal_index.to_s}", BusinessCalendar::TIME_LIST, 
+													{ :selected=> beginning_of_workday }, { :class => "morning_time", :id => "time_morning" } %>
+											<%= select "morning", "range_#{cal_index.to_s}", %w[am pm], 
+													{ :selected => beginning_of_workday_range }, { :class => "morning_time", :id => "morning_range" } %>
+											<span><%= t('business_hours.to') %></span>
+											<%= select "time","evening_#{cal_index.to_s}", BusinessCalendar::TIME_LIST, 
+													{ :selected => end_of_workday}, { :class => "evening_time", :id => "time_evening" } %> 
+											<%= select "evening", "range_#{cal_index.to_s}", %w[am pm], 
+													{ :selected => end_of_workday_range }, { :class => "evening_time time_validate", :id => "evening_range"  } %>
+											
+											<label id="duration"></label>	
+											<%= hidden_field_tag "business_time_data[working_hours][#{cal_index.to_s}][beginning_of_workday]", "",
+												:class => "db_start_time_data" %>
+											<%= hidden_field_tag "business_time_data[working_hours][#{cal_index.to_s}][end_of_workday]", "",
+												:class => "db_end_time_data" %>
+										</div>
+									<%end%>
+								<%= f.hidden_field :weekdays, :id => "weekdays" %>	
+							</div> 		
+						</div>
+					</td>
+				</tr>
+			</table> 
+		</li>
+	 </ul>
+
+	<ul class="business_hours ui-form dont-validate" id ="split"> 
+		<li> 
+			<h4 class="title"><%=  t('business_hours.holiday_list') %> </h4>
+			<span class="info_data"><%=t('business_hours.info5')%></span>
+			<table>
+				<tr>
+					<td width="55%" class="holidaylist"> 
+						<%= f.hidden_field :holiday_data, :id=>"holiday_data" %>
+						<ul class="nobullets" id="HolidayList" style="display:none"></ul>
+ 						<% content_for :pagefixed do %>
+						<% javascript_tag do %>
+							<% @business_calendar.holiday_data.each do |holiday| %>
+								addHolidaytoList("<%=holiday[0]%>", "<%=h(holiday[1])%>");
+							<% end %>	
+						<% end %>
+						<% end %>
+					</td>
+					<td class="borderleft" style="padding-left:10px;">
+						<%= date_select("holiday", "date", { :order => [:month, :day], :use_short_month => true } ) %><br />
+						<label class="overlabel" for="holiday_name"><%=t('business_hours.holiday_name')%></label>
+						<%= text_field("holiday", "name") %>
+						
+						<%= link_to_function( t('add_holiday'), "addHoliday()", :class => "button" ) %>
+						<b class="text_red" id="HolidayValidation" style="display:none;"> <%=t('business_hours.holiday_added')%> </b>
+					</td>
+				</tr>				
+			</table>	
+		</li>
+	</ul>
+	<div class="button-container">
+		<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", :class => "uiButton floatl" %>
+		<%= f.submit t('save'), :class => "uiButton" %>
+	</div>
