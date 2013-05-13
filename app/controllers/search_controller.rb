@@ -240,7 +240,7 @@ class SearchController < ApplicationController
      classes = [Helpdesk::Ticket, Solution::Article, Topic]
      sphinx_select = nil
 
-     if current_user.privilege?(client_manager)
+     if current_user.privilege?(:client_manager)
        with_options[:customer_id] = [SearchUtil::DEFAULT_SEARCH_VALUE, current_user.customer_id]
      else
        with_options[:requester_id] = [SearchUtil::DEFAULT_SEARCH_VALUE, current_user.id]
