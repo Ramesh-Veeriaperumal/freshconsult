@@ -122,7 +122,9 @@ module Helpdesk::TicketsHelper
   
   def filter_count(selector=nil)
     filter_scope = TicketsFilter.filter(filter(selector), current_user, current_account.tickets.permissible(current_user))
-    filter_scope.count
+    SeamlessDatabasePool.use_persistent_read_connection do
+     filter_scope.count
+    end
   end
   
   def sort_by_text(sort_key, order)
