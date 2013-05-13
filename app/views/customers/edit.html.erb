@@ -5,7 +5,7 @@
 	<div class="button-container">
 	   <div class="floatl">
     <% if privilege?(:delete_contact) %>
-			<%= link_to (t('delete'), @customer, :confirm => "#{t('company.info1')}?", :method => :delete, :class => "uiButton red" ) %>
+			<%= link_to(t('delete'), @customer, :confirm => "#{t('company.info1')}?", :method => :delete, :class => "uiButton red" ) %>
     <% end %>
 	   </div>
 	   <%= f.submit t('save'), {:class => "uiButton"} %> 

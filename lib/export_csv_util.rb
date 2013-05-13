@@ -1,3 +1,4 @@
+require 'csv'
 module ExportCsvUtil
 
   def set_date_filter
@@ -47,7 +48,7 @@ module ExportCsvUtil
     items = current_account.contacts
 
     unless csv_hash.blank?
-      csv_string = FasterCSV.generate do |csv|
+      csv_string = CSVBridge.generate do |csv|
         headers = csv_hash.keys
         csv << headers
         if headers.size == 1 and csv_hash[headers.first] == "customer_id"
@@ -77,7 +78,7 @@ module ExportCsvUtil
   def export_data(items, csv_hash, is_portal=false)
     csv_string = ""
     unless csv_hash.blank?
-      csv_string = FasterCSV.generate do |csv|
+      csv_string = CSVBridge.generate do |csv|
         headers = csv_hash.keys.sort
         if is_portal
           vfs = visible_fields

@@ -1,8 +1,8 @@
 <% content_for :sidebar do %>
   <%= render :partial => "helpnote_without_tour" %>
 <% end %>
-<%= include_stylesheets :pattern %>
-<%= include_javascripts :pattern  %>
+<%= include_cloudfront_css :pattern %>
+<%= include_cloudfront_js :pattern %>
 <% form_for @agent, :html => { :id => "agent_form", :rel => "validate", :multipart => true, 
     "data-focus-invalid" => false,  "data-ignore" => "" } do |f| %>
 	<%= f.error_messages %>
@@ -14,7 +14,7 @@
       </span>
     </h3>
     <div class="seperator"></div><br/>
- 	<%= render :partial => "agent_form" %>
+ 	<%= render :partial => "agent_form", :locals => { :type => "new" } %>
 	<ul class="admin-breadcrumb breadcum-footer clearfix">
 	  	<li class="non-arrow pull-right">
 	  		<%= f.submit t('save'), { :class => "btn btn-primary" } %>

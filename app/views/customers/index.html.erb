@@ -23,7 +23,7 @@
 		<% form_tag "", { :id => "contacts-expanded", :method => :put } do %>
 			<% if @customers.length > 0 %>
 				<div class="cust_list_table_body">
-					<%= render(:partial => '/shared/customers_toolbar', :locals => {:path => "customers"}) %>
+					<%= render(:partial => '/shared/customers_toolbar', :locals => {:type => "company", :path => "customers"}) %>
 					<table class="table table-striped" id="companies" >
 						<% @customers.each do |customer| %>
 							<tr>

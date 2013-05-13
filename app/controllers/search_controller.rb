@@ -1,3 +1,4 @@
+# encoding: utf-8
 class SearchController < ApplicationController
   skip_before_filter :check_privilege
   extend NewRelic::Agent::MethodTracer

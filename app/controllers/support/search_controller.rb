@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Support::SearchController < SupportController
   
   extend NewRelic::Agent::MethodTracer

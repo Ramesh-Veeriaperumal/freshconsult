@@ -93,7 +93,12 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
 
     def business_time(sla_time, created_time)
       fact = sla_time.div(86400)
-      (fact > 0) ?  fact.business_days.after(created_time) : sla_time.div(60).business_minute.after(created_time)
+      Rails.logger.info "$$$$ debug ruby bug : #{created_time.inspect}"
+      if (fact > 0)
+         fact.business_days.after(created_time)
+      else
+         sla_time.div(60).business_minute.after(created_time)
+      end
     end
 
     def on_status_change_override_bhrs(ticket, due_by_type)
@@ -106,7 +111,7 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
     end
 
     def on_status_change_bhrs(ticket, due_by_type)
-      bhrs_during_elapsed_time =  Time.zone.parse(ticket.ticket_states.sla_timer_stopped_at.to_s).business_time_until(
+      bhrs_during_elapsed_time =  ticket.ticket_states.sla_timer_stopped_at.business_time_until(
         Time.zone.now)
       if due_by_type > ticket.ticket_states.sla_timer_stopped_at
         bhrs_during_elapsed_time.div(60).business_minute.after(due_by_type) 

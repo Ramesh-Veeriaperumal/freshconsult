@@ -61,7 +61,7 @@
           <input type="checkbox" class="hide" id="include_cc" name="include_cc"  <%=@to_cc_emails.blank? ? "" : "checked" %>  />              
           <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" <%=bcc_drop_box_email.blank? ? "" : "checked" %> />
           
-          <%= select :reply_email, :id, options_for_select(@reply_email, @selected_reply_email),{}, {:class => 'select2 responder_field'} %>
+          <%= select :reply_email, :id, options_for_select(@reply_emails, @selected_reply_email),{}, {:class => 'select2 responder_field'} %>
       </li>
       <li class="inline-field field <%=@to_cc_emails.blank? ? "hide" : "" %> cc_fields" id="cc-form-container-<%=cntid%>">
         <label for="cc_emails_<%=cntid%>"><%= t(".cc") %>:</label>

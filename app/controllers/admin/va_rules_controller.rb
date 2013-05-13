@@ -59,7 +59,7 @@ class Admin::VaRulesController < Admin::AutomationsController
                 agents
               end
       @groups  = current_account.groups.find(:all, :order=>'name').inject([["", I18n.t('ticket.none')]]) do |groups, ag|
-                groups << [ag.id, ag.name]
+                groups << [ag.id, CGI.escapeHTML(ag.name)]
                 groups
               end
 

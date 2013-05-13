@@ -89,7 +89,7 @@ class Admin::AutomationsController < Admin::AdminController
       agents = current_account.users.technicians.collect { |au| [au.id, au.name] }
       agents << ([0, '{{ticket.agent}}'])
 
-      groups  = current_account.groups.find(:all, :order=>'name' ).collect { |g| [g.id, g.name]}
+      groups  = current_account.groups.find(:all, :order=>'name' ).collect { |g| [g.id, CGI.escapeHTML(g.name)]}
       groups << ([0, '{{ticket.group}}'])
 
       @products = current_account.products.collect {|p| [p.id, p.name]}

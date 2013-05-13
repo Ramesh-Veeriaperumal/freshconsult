@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Customer < ActiveRecord::Base
   
   include Cache::Memcache::Customer

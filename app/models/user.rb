@@ -1,3 +1,4 @@
+# encoding: utf-8
 class User < ActiveRecord::Base
   
   belongs_to_account
@@ -10,7 +11,8 @@ class User < ActiveRecord::Base
   include Authority::Rails::ModelHelpers
   include Search::ElasticSearchIndex
   include Cache::Memcache::User
-  
+  include RedisKeys
+
   USER_ROLES = [
      [ :admin,       "Admin",            1 ],
      [ :poweruser,   "Power User",       2 ],
@@ -75,12 +77,13 @@ class User < ActiveRecord::Base
   after_commit_on_update :clear_agent_list_cache, :if => :agent?
   after_commit_on_destroy :clear_agent_list_cache, :if => :agent?
   after_commit_on_update :clear_agent_list_cache, :if => :helpdesk_agent_updated?
-  before_update :bakcup_user_changes
+  
+  before_update :bakcup_user_changes, :clear_redis_for_agent
   after_commit_on_update :update_search_index, :if => :customer_id_updated?
   
+  xss_sanitize  :only => [:name,:email]
   named_scope :contacts, :conditions => { :helpdesk_agent => false }
   named_scope :technicians, :conditions => { :helpdesk_agent => true }
-  # xss_terminate  :only => [:name,:email]
   named_scope :visible, :conditions => { :deleted => false }
   named_scope :active, lambda { |condition| { :conditions => { :active => condition }} }
   named_scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
@@ -569,6 +572,15 @@ class User < ActiveRecord::Base
     def customer_id_updated?
       @all_changes.has_key?(:customer_id)
     end
+
+    def clear_redis_for_agent
+      return unless deleted_changed? || agent?
+      self.agent_groups.each do |ag|
+        next unless ag.group.round_robin_eligible?
+        remove_key(GROUP_AGENT_TICKET_ASSIGNMENT % 
+               {:account_id => account_id, :group_id => ag.group_id})
+      end
+  end
     
     def destroy_user_roles
       self.privileges = "0"

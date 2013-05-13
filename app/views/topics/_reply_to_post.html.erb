@@ -11,7 +11,7 @@
 			<%= render :partial=> "/forum_shared/attachment_form" %>
 		</li>
 		<li class="alignright">
-	    <%= submit_tag t('topic.post_comment'), :class => "uiButton", id => "post-submit-button"  %> 
+	    <%= submit_tag t('topic.post_comment'), :class => "uiButton", :id => "post-submit-button"  %> 
 		  <%= link_to_function t('cancel'), "$('reply').hide()", :class => "uiButton" %>
 		</li>
 	  </ul>

@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Import::Zen::FileUtil
   
 def extract_zendesk_zip    

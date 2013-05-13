@@ -15,7 +15,7 @@
   			    
             checkbox = check_box_tag object_name+"_"+field.field_name+"_label", "", false,
                           :class => "update-check-for-fields"
-            label = label_tag (object_name+"_"+field.field_name+"_label", checkbox + field.label,:rel => "inputcheckbox")
+            label = label_tag(object_name+"_"+field.field_name+"_label", checkbox + field.label,:rel => "inputcheckbox")
             
             if field.field_type == "nested_field"
               element = label + nested_field_tag(object_name, field.field_name, field, {:include_blank => t('select'), :selected => {}},{:class => dom_type, :rel => "inputselectbox"}, {}, false)

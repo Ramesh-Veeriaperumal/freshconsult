@@ -12,7 +12,7 @@
 	<div class="artical_section" id="article-section"> 
 		<div class="crumbs">
 			<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
-			<%= content_tag (:span, h(@item.name) ) %>
+			<%= content_tag(:span, h(@item.name) ) %>
 		</div>
 		<div class="search-grey-box">
 			<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search.placeholder', :name => h(@item.name)), :url => "/search/solutions?category_id=#{@item.id}&search_key=" } %>

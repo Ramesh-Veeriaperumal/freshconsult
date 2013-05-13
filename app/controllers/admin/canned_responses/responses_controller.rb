@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Admin::CannedResponses::ResponsesController < Admin::AdminController
   include HelpdeskControllerMethods
 

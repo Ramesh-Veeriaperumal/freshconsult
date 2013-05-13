@@ -1,3 +1,4 @@
+# encoding: utf-8
 module SearchUtil
 
 	DEFAULT_SEARCH_VALUE = "1"

@@ -1,6 +1,4 @@
-
-
-
+# encoding: utf-8
 class Import::ZendeskData < Struct.new(:params)
    require 'rexml/document'    
    require 'rexml/xpath'   

@@ -3,7 +3,7 @@
 	<div class="clearfix">
     <div class="floatr">
       <% if privilege?(:create_topic) %>
-	      <%= link_to (t('forum.start_topic'), new_category_forum_topic_path(@forum_category, @forum), :class => "uiButton special") %>
+	      <%= link_to(t('forum.start_topic'), new_category_forum_topic_path(@forum_category, @forum), :class => "uiButton special") %>
       <% end %>
 	  </div>
 		<h3 class="title">

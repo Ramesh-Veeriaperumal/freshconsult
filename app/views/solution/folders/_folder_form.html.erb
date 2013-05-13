@@ -14,7 +14,7 @@
     
     	<% f.fields_for :customer_folders_attributes do |cust| %>
 	    	<span id="company_folders">
-  			<%= cust.select (:customer_id , current_account.customers.collect{|c|[c.name, c.id]},{:selected => @folder.customer_folders.map(&:customer_id)}, { :multiple => true, :class => "customSelect" , "data-placeholder" => 'Select company'}) %>
+  			<%= cust.select(:customer_id , current_account.customers.collect{|c|[c.name, c.id]},{:selected => @folder.customer_folders.map(&:customer_id)}, { :multiple => true, :class => "customSelect" , "data-placeholder" => 'Select company'}) %>
   			</span>
       <%end%> 
     </li>

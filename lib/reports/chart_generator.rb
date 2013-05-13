@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Reports::ChartGenerator
   
   def ticket_columns

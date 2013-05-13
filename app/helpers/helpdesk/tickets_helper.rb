@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Helpdesk::TicketsHelper
   
   include Wf::HelperMethods
@@ -127,7 +128,8 @@ module Helpdesk::TicketsHelper
   end
   
   def filter_count(selector=nil)
-    TicketsFilter.filter(filter(selector), current_user, current_account.tickets.permissible(current_user)).count
+    filter_scope = TicketsFilter.filter(filter(selector), current_user, current_account.tickets.permissible(current_user))
+    filter_scope.count
   end
   
   def sort_by_text(sort_key, order)

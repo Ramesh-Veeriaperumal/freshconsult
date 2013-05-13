@@ -1,3 +1,4 @@
+# encoding: utf-8
 class AgentsController < ApplicationController
   include AgentsHelper
   helper AgentsHelper
@@ -168,7 +169,7 @@ class AgentsController < ApplicationController
   end
   
   def destroy    
-    if @agent.user.update_attribute(:deleted, true)    
+    if @agent.user.update_attributes(:deleted => true)    
        @restorable = true
        flash[:notice] = render_to_string(:partial => '/agents/flash/delete_notice')      
      else

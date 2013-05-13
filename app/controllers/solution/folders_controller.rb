@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Solution::FoldersController < ApplicationController
   include Helpdesk::ReorderUtility
 

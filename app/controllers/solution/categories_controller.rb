@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Solution::CategoriesController < ApplicationController
   include Helpdesk::ReorderUtility
   

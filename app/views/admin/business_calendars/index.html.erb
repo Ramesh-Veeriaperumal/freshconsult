@@ -239,7 +239,7 @@
 													<% end_of_workday ="5:00" %>
 													<% end_of_workday_range = "pm" %>
 												<%end%>
-												<%= check_box_tag ( weekday_human_list[days_index], cal_index, checked, :class => "checked")  %>
+												<%= check_box_tag( weekday_human_list[days_index], cal_index, checked, :class => "checked")  %>
 												<%= days %>
 											</label>
 											<%= select "time", "morning_#{cal_index.to_s}", BusinessCalendar::TIME_LIST, 

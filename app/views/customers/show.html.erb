@@ -69,7 +69,7 @@
 			  	<% if (user_name.length > 27) %>
 			  	<% user_name = user_name[0..27] + "..."  %>
 			  	<% end %> 
-			  	<%= link_to (h(user_name), user, :class => 'username') %>
+			  	<%= link_to(h(user_name), user, :class => 'username') %>
 				<%# link_to (h(user.name), user, :class => 'username') %>
 				<%# user.job_title %>
 			  </li>  

@@ -103,9 +103,9 @@ include RedisKeys
 
   def generate_random_hash(google_viewer_id, account)
      generated_hash = Digest::MD5.hexdigest(DateTime.now.to_s + google_viewer_id)
-     key_options = { :account_id => account.id, :token => generated_hash}
-     key_spec = Redis::KeySpec.new(RedisKeys::AUTH_REDIRECT_GOOGLE_OPENID, key_options)
-     Redis::KeyValueStore.new(key_spec, google_viewer_id, 300).save
+     KeyValuePair.delete_all(["value=? and obj_type=? and account_id=?", google_viewer_id, TOKEN_TYPE, account.id])
+     kvp = KeyValuePair.new({:key=>generated_hash, :value=>google_viewer_id, :obj_type=>TOKEN_TYPE, :account_id=>account.id})
+     kvp.save! # if it throws exception, let it propagate. Without storing this info anyway we cannot proceed. 
      return generated_hash;
   end
 
@@ -223,17 +223,16 @@ include RedisKeys
       @current_user = @auth.user unless @auth.blank?
       @current_user = current_account.all_users.find_by_email(email) if @current_user.blank?
       unless gmail_gadget_temp_token.blank?
-        key_options = { :account_id => current_account.id, :token => gmail_gadget_temp_token}
-        kv_store = Redis::KeyValueStore.new Redis::KeySpec.new(RedisKeys::AUTH_REDIRECT_GOOGLE_OPENID, key_options)
-        google_viewer_id = kv_store.get
+        kvp = KeyValuePair.find_by_key(gmail_gadget_temp_token)
         @gauth_error=true
-        if google_viewer_id.blank?
+        if kvp.blank? or kvp.value.blank?
           @notice = t(:'flash.gmail_gadgets.kvp_missing')
         elsif @current_user.blank?
           @notice = t(:'flash.gmail_gadgets.user_missing')
         elsif @current_user.agent.blank?
           @notice = t(:'flash.gmail_gadgets.agent_missing')
         else
+          google_viewer_id = kvp.value
           @gauth_error=false
         end
       else
@@ -322,4 +321,5 @@ include RedisKeys
       @contact.language = current_portal.language
       return @contact
     end
+    TOKEN_TYPE = "OpenSocialFirstTimeAccessToken"
 end

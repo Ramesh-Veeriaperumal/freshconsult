@@ -14,7 +14,6 @@
 	  </div>
   <% end %>
 </div>
-
 <% fields_for "user", @agent.user, :html => {:id => 'agent_form'} do |usr| %>
 
   <%if @agent.occasional? or @agent.new_record?%>
