@@ -175,8 +175,9 @@ class TopicsController < ApplicationController
   def build_attachments
    return unless @post.respond_to?(:attachments) 
     unless params[:post].nil?
-    (params[:post][:attachments] || []).each do |a|
-      @post.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
+      (params[:post][:attachments] || []).each do |a|
+        @post.attachments.build(:content => a[:resource], :description => a[:description], :account_id => @post.account_id)
+      end
     end
   end
  
