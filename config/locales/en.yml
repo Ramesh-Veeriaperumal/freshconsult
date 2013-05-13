@@ -3714,7 +3714,7 @@ en:
     glance:
       all_reports: "All Reports"
       report_view: "Report View"
-      download: "Download"
+      download: "Download as PDF"
       print: "Print"
       backlog_tickets: "Backlog Tickets"
       avg_resp_time_in_hrs: "Average Response Time (in Hrs)"
