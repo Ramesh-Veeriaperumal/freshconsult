@@ -15,7 +15,7 @@
 
 		<span class="seperator"></span>
 		<div class="solutions_text">
-			<%= @article.description %>
+			<%= @article.description.html_safe %>
 		</div>
 		<ul class="attachment_list">
 		    <%= render :partial => '/helpdesk/shared/attachment', :collection => @article.attachments %>

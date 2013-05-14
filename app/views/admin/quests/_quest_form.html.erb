@@ -8,7 +8,7 @@
 			<% Quest::GAME_TYPES.each do |game_type| %>
 			<label class="s-label radio-label span2">
 				<%= f.radio_button :category, game_type[3], :class => "quest_types" %>
-				<%= t(".#{game_type[0]}") %>
+				<%= t(".#{game_type[0]}").html_safe %>
 			</label>
 			<% end %>
 		</div>
@@ -16,7 +16,7 @@
 </div>
 <div id="enablequest">
 	<div class="gamecriteria">
-		<h3 class="s-title"><%= t('admin.quests.quest_form.quest_objectives') %></h3>
+		<h3 class="s-title"><%= t('admin.quests.quest_form.quest_objectives').html_safe %></h3>
 		<div class="ui-form gray-box-rounded">
 			<div id="questDOM"></div>
 			<div class="conditionset" id="filterDOM">
@@ -26,7 +26,7 @@
 		    	</fieldset>
 				<fieldset class="addchoice">
 		         	<p><%=t('dispatch.add_condition')%></p> 
-		         	<img alt="<%=t('dispatch.add_new_choice')%>" class="add" src="/images/add.png" />
+		         	<img alt="<%=t('dispatch.add_new_choice').html_safe%>" class="add" src="/images/add.png" />
 		    	</fieldset>
 	    	</div>
 		</div>
@@ -85,16 +85,16 @@
 	<input type="hidden" name="quest_data" id="quest_quest_data" value=""/>
 	<%= link_to t('cancel_and_back'), { :action => 'index' }, :class => "uiButton floatl" %>
 	<div class="hide" id="save-button">
-		<input type="submit" class="uiButton special" value="<%= t('admin.quests.quest_form.save') %>" />
+		<input type="submit" class="uiButton special" value="<%= t('admin.quests.quest_form.save').html_safe %>" />
 	</div>
 </div>
 
 <% content_for :sidebar do %>
 	<div class="sidepanel helpcard">
-		<h4><%= t('admin.gamification.help_text.quest') %> </h4>
-		<p><%= t('admin.gamification.help_text.quest_form_info1') %> </p>
-		<p><%= t('admin.gamification.help_text.quest_form_info2') %> </p>
-		<p><%= t('admin.gamification.help_text.quest_form_info3') %> </p>
-		<p><%= t('admin.gamification.help_text.quest_form_info4') %> </p>
+		<h4><%= t('admin.gamification.help_text.quest').html_safe %> </h4>
+		<p><%= t('admin.gamification.help_text.quest_form_info1').html_safe %> </p>
+		<p><%= t('admin.gamification.help_text.quest_form_info2').html_safe %> </p>
+		<p><%= t('admin.gamification.help_text.quest_form_info3').html_safe %> </p>
+		<p><%= t('admin.gamification.help_text.quest_form_info4').html_safe %> </p>
 	</div>
 <% end %> 

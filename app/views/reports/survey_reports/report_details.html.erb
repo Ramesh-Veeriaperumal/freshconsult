@@ -17,7 +17,7 @@ date_range = params[:date_range].blank? ? "#{(Time.zone.now.ago 30.day).strftime
 	   			back_to_link = survey_back_to_list_url(:category=> category, :view => :list, :date_range => params[:date_range])
 	   		end
 		%>
-		<%= link_to("&larr; #{t('reports.survey_reports.back_to')}", back_to_link, {:method => :post,:class => "slim-button", :id => "back_to_link"}) %>
+		<%= link_to("&larr; #{t('reports.survey_reports.back_to')}".html_safe, back_to_link, {:method => :post,:class => "slim-button", :id => "back_to_link"}) %>
 		</span>
 		<h3 class="title" id="report-main-title">		          
 		  <%= t('reports.satisfaction_title') %><br />		  

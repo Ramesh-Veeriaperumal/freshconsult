@@ -7,7 +7,7 @@
       <div class="content">
         <h2 class="title"><%=t('.engage_customers')%></h2>
        	<p class="info-data">
-       		<%=t('.associate_account', :account_name => current_account.name)%>
+       		<%=t('.associate_account', :account_name => current_account.name).html_safe%>
 
         </p>
         <a href="<%= @fb_client.authorize_url(session[:state]) %>" class="uiButton special medium"><%=t('.add_facebook')%></a>

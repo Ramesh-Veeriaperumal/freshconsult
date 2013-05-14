@@ -184,7 +184,7 @@
 	<hr>
 	<div class="row-fluid">
   		<input type="hidden" name="redirect_url" id="redirect_url" value="" />
-		<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", :class => "btn floatl" %>
+		<%= link_to "&larr; #{t('account.cancel')}".html_safe, "/admin/home", :class => "btn floatl" %>
 		<%= submit_tag t('account.save'), :class => 'btn btn-primary pull-right', :id => 'account_submit' %>
 	</div>
 

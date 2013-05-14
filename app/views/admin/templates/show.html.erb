@@ -11,16 +11,16 @@
 <div>
   <ul data-tabs="tabs" class="tabs" id="portal-tabs">
     <li class="active">      
-      <a href="#preferences" data-toggle="tab" id="preferences-tab"><%=t("portalcss.color_and_font_header")%></a>
+      <a href="#preferences" data-toggle="tab" id="preferences-tab"><%=t("portalcss.color_and_font_header").html_safe%></a>
     </li>
     <%if feature?(:css_customization)%>
     <li>
-      <a id="custom_css-tab" href="#custom_css" data-code-refresh="#portal_template_custom_css"><%=t("portalcss.css_header")%></a>
+      <a id="custom_css-tab" href="#custom_css" data-code-refresh="#portal_template_custom_css"><%=t("portalcss.css_header").html_safe%></a>
     </li>
     <%end%>
     <%if feature?(:layout_customization)%>
     <li>
-      <a id="layout-tab" href="#layout" data-toggle="tab" data-code-refresh="#portal_template_header, #portal_template_footer, #portal_template_layout"><%=t("portalcss.layout_and_pages_header")%></a>
+      <a id="layout-tab" href="#layout" data-toggle="tab" data-code-refresh="#portal_template_header, #portal_template_footer, #portal_template_layout"><%=t("portalcss.layout_and_pages_header").html_safe%></a>
     </li>
     <%end%>
   </ul>        
@@ -43,7 +43,7 @@
               </a>
             </li>
             <li>
-              <a id="pages-tab" href="#layout/#pages"><%=t("portalcss.layout_pages.subheader_pages")%></a> 
+              <a id="pages-tab" href="#layout/#pages"><%=t("portalcss.layout_pages.subheader_pages").html_safe%></a> 
             </li>
           </ul>
 

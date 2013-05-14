@@ -50,7 +50,7 @@
 	<% end %>
 	<div class="user_details">    
 		<%= user_avatar(note.user, :thumb, "preview_pic" , { :width => "36px", :height => "36px" }) if note.user %>
-    	<%= t(".posted_on", :user_name => link_to_user(note.user, :class => "user_name", "data-placement" => "topRight", :rel => "hover-popover", "data-widget-container" => "agent-hovercard_#{note.id}" ), :note_date => formated_date(note.created_at) ) %>
+    	<%= t(".posted_on", :user_name => link_to_user(note.user, :class => "user_name", "data-placement" => "topRight", :rel => "hover-popover", "data-widget-container" => "agent-hovercard_#{note.id}" ), :note_date => formated_date(note.created_at) ).html_safe %>
 		<br>
 		<%  if permission?(:manage_tickets)
 			conv_info = conversation_info(note) %>
@@ -67,7 +67,7 @@
 			       	notes = note.body_html		       
 			       	notes = "<span class='"+note.survey_remark.survey_result.get_small_img_class+"' style='float:left;margin-top:-11px;'></span>"+notes unless note.survey_remark.nil?
 				%>			
-				<%= notes %>
+				<%= notes.html_safe %>
 			</div>
 		</div>
 	    <% unless note.attachments.empty? %>

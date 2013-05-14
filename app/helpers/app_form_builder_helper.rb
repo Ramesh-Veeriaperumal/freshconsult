@@ -13,7 +13,7 @@ module AppFormBuilderHelper
 
     def code_editor(method, options = {})     
       options[:id] = field_id( method, options[:index] )
-      code_editor_tag(field_name(method), @object.send(method), options)
+      code_editor_tag(field_name(method), @object.send(method), options).html_safe
     end
 
     def code_editor_tag(name, content = nil, options = {})      

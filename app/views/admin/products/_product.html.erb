@@ -46,12 +46,12 @@
   </td>
   <td>
     <% if(product.portal_enabled?) %>
-      <%= link_to t(".customize_portal"), admin_portal_template_path(product.portal), :class => "btn btn-mini" %>
+      <%= link_to t(".customize_portal").html_safe, admin_portal_template_path(product.portal), :class => "btn btn-mini" %>
     <% else %>
-      <%= link_to t(".enable_portal"), edit_admin_product_path(product, :enable_portal => true), :class => "btn btn-mini" %>
+      <%= link_to t(".enable_portal").html_safe, edit_admin_product_path(product, :enable_portal => true), :class => "btn btn-mini" %>
     <% end %>
-    <%= link_to(t('edit'), edit_admin_product_path(product), :class => "btn btn-mini") %>
-    <%= link_to('<i class="icon-trash"></i>', admin_product_path(product), :method => 'delete', 
+    <%= link_to(t('edit').html_safe, edit_admin_product_path(product), :class => "btn btn-mini") %>
+    <%= link_to('<i class="icon-trash"></i>'.html_safe, admin_product_path(product), :method => 'delete', 
       :confirm => t(".delete"), :class => "btn btn-mini" ) %>
   </td>
 </tr>

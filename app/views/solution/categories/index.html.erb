@@ -1,27 +1,27 @@
 <% if logged_in? && current_user.has_manage_solutions? -%>
 	<% content_for :sidebar do -%>
 		<div class="sidepanel">
-			<h3 class="title"> <%=t('solution.title')%> </h3>
+			<h3 class="title"> <%=t('solution.title').html_safe%> </h3>
 			<p>
-				<%=t('solution.info1')%>.
+				<%=t('solution.info1').html_safe%>.
 			</p>
 			<p>
-				 <%=t('solution.info2')%>. 
+				 <%=t('solution.info2').html_safe%>. 
 			</p>
 			<p>
-				<%=t('solution.info3')%>.
+				<%=t('solution.info3').html_safe%>.
 			</p>
 			<p> 
-				<%=t('solution.info4')%>
+				<%=t('solution.info4').html_safe%>
 			</p>	  
 			
 			<p>
-				<%=t('solution.info5')%>. 
+				<%=t('solution.info5').html_safe%>. 
 				
 		    </p>
 			
 			<p>
-				<%=t('solution.info6')%>.
+				<%=t('solution.info6').html_safe%>.
 		    </p>
 			<span class="seperator"></span>			
 		</div>
@@ -30,26 +30,26 @@
 
 <% if logged_in? && current_user.has_manage_solutions? -%>
 	<div class="floatr">
-	    <%= link_to t('reorder'),'#', :id => "categories_reorder_button", :class => "uiButton" unless(@categories.size <= 1)%>
-		<%= link_to t('solution_category.new'), new_solution_category_path, :class => "uiButton" %>
+	    <%= link_to t('reorder').html_safe,'#', :id => "categories_reorder_button", :class => "uiButton" unless(@categories.size <= 1)%>
+		<%= link_to t('solution_category.new').html_safe, new_solution_category_path, :class => "uiButton" %>
 	</div>
 <%- end %>
-<h3 class="title"><%=t('solution.title')%></h3> 
+<h3 class="title"><%=t('solution.title').html_safe%></h3> 
 <div class="search-grey-box ignore-margin-20">
-	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search_all.placeholder'), :url => "/search/solutions?search_key=" } %>
+	<%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search_all.placeholder').html_safe, :url => "/search/solutions?search_key=" } %>
 </div>
 <div class="clearfix solution-list" id="categories_list">			
 	<% @categories.each do |category| %>
 		<div class="<%= cycle('odd', 'even') %>">
 			<% if (!category.is_default? && permission?(:manage_knowledgebase)) -%>
 					<div class="action_buttons">
-						<%= link_to t('folder.add_folder'), new_solution_category_folder_path(category), :class => "first"  %> 
-						<%= link_to t('edit') ,edit_solution_category_path(category), :class => "last"   %>
+						<%= link_to t('folder.add_folder').html_safe, new_solution_category_folder_path(category), :class => "first"  %> 
+						<%= link_to t('edit').html_safe ,edit_solution_category_path(category), :class => "last"   %>
 					</div>
 			<% end %>
 			<h4 class="border_title">
 				<% unless category.folders.empty? %>
-					<%= link_to  "#{h(category.name)} &raquo;", category %>
+					<%= link_to  "#{h(category.name)} &raquo;".html_safe, category %>
 				<% else %>
 					<%= h(category.name) %>
 				<% end %>
@@ -67,7 +67,7 @@
 			   </li>
 			<% end %> 
 			</ul>
-			<%= content_tag(:span, t('solution_category.info2'), :class => "no_info_text") if (category.folders.size == 0)  %>
+			<%= content_tag(:span, t('solution_category.info2').html_safe, :class => "no_info_text") if (category.folders.size == 0)  %>
 		</div>
 	<%end%>
 </div>

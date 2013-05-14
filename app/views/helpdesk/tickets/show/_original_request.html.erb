@@ -28,7 +28,7 @@
       	</div> 
 	</div>
 	<div id="ticket_original_request" class="request_mail">
-    	<%= @ticket.description_html %>
+    	<%= @ticket.description_html.html_safe %>
 	</div>
 	<% unless @ticket.ticket_topic.nil? %>
 	<div class="info-highlight">

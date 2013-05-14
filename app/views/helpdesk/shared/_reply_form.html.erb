@@ -36,7 +36,7 @@
       <div class="fields" id="reply_cc_emails_id" rel="cc_div" data-button="#add_cc_btn_<%=cntid%>" data-parent="#cc-form-container-<%=cntid%>">
         <input type="text" id="cc_emails_<%=cntid%>" name="helpdesk_note[cc_emails]" />
           <% javascript_tag do %>
-            new Autocompleter.MultiValue("cc_emails_<%=cntid%>", cachedLookup, $A(<%= @to_cc_emails.map{|item|[item, item]}.to_json %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
+            new Autocompleter.MultiValue("cc_emails_<%=cntid%>", cachedLookup, $A(<%= @to_cc_emails.map{|item|[item, item]}.to_json.html_safe %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
           <% end %>
       </div>
     </li>
@@ -136,7 +136,7 @@
           jQuery('[name="helpdesk_note[cc_emails][]"]').val('');
       if(!jQuery('#include_bcc').is(':checked'))
           jQuery('[name="helpdesk_note[bcc_emails][]"]').val('');
-        <%= remote_function :url => clear_draft_helpdesk_ticket_path, :method => :delete, :type => :synchronous %>
+        <%= (remote_function :url => clear_draft_helpdesk_ticket_path, :method => :delete, :type => :synchronous).html_safe %>
         isDirty = false;
       })
       .validate();  

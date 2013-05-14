@@ -15,7 +15,7 @@
 		</ul>
 	</div>
 	<div class="app-custom clearfix">
-		<%= link_to t('integrations.new_freshplug'), new_integrations_application_path, 
+		<%= link_to t('integrations.new_freshplug').html_safe, new_integrations_application_path, 
 					:class => "uiButton new_custom_app floatr" %>
 	</div>
 	<ul class="table-list">
@@ -34,14 +34,14 @@
 					  if i_app_index.nil?
 					  	#use direct_install option in applications to install the application directly from the "Enable" in applications menu.
 					  	if application[:options][:direct_install].blank? %>
-					  		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", integrations_application_path(application), :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>		
+					  		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>".html_safe, integrations_application_path(application), :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>		
 					  	<% else 
 					  		if application[:options][:oauth_url].blank? %>
 					  			<!-- Custom logic to call the installed_applications "Enable" directly from applications list when direct_install is provided and oauth_url is empty -->
 
 					  		<% else 
 					  			 auth_url = AppConfig['integrations_url'][Rails.env] + Liquid::Template.parse(application[:options][:oauth_url]).render("account_id" => current_portal.id, "portal_id" => current_portal.id)%>
-						  		 <%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", auth_url , :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>		
+						  		 <%= link_to "<strong> #{t('application.disabled')} </strong><span></span>".html_safe, auth_url , :class => "uiButton special iphone-inactive custom-tip-bottom", :title => t("application.click_to_enable") %>		
 					  		<% end %>
 					  	<% end %>
 		  	    		
@@ -51,7 +51,7 @@
 			  	    				edit_integrations_installed_application_path(@installed_applications[i_app_index]), 
 			  	    				:class => "btn tooltip", :title => t("application.configure_addon") %>		
 			  	    	<% end %>
-			  	    	<%= link_to t('application.enabled') + "<span></span>", uninstall_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "uiButton special iphone-active custom-tip-bottom", :confirm => t("application.confirm_disable"), :title => t("application.click_to_disable") %>	
+			  	    	<%= link_to (t('application.enabled') + "<span></span>").html_safe, uninstall_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "uiButton special iphone-active custom-tip-bottom", :confirm => t("application.confirm_disable").html_safe, :title => t("application.click_to_disable") %>	
 					  <%end%>
 				</div>
 				<div class="col-center">
@@ -70,9 +70,9 @@
 	    					edit_integrations_application_path(application), 
 	    					:class => "btn tooltip", :title => t("application.configure_custom_addon") %>		
 					  <%if i_app_index.nil?%>
-				  		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>", install_integrations_installed_application_path(application), :method=>:put, :class => "uiButton special iphone-inactive tooltip", :title => t("application.click_to_enable") %>		
+				  		<%= link_to "<strong> #{t('application.disabled')} </strong><span></span>".html_safe, install_integrations_installed_application_path(application), :method=>:put, :class => "uiButton special iphone-inactive tooltip", :title => t("application.click_to_enable") %>		
 				  	<%else%>
-	  	    		<%= link_to t('application.enabled') + "<span></span>", uninstall_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "uiButton special iphone-active tooltip", :confirm => t("application.confirm_disable"), :title => t("application.click_to_disable") %>	
+	  	    		<%= link_to (t('application.enabled') + "<span></span>").html_safe, uninstall_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "uiButton special iphone-active tooltip", :confirm => t("application.confirm_disable"), :title => t("application.click_to_disable") %>	
 	  	    	<%end%>
 					</div>
 					<div class="col-center">

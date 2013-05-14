@@ -36,7 +36,7 @@
 				
 				<%= t("ticket." + sentence_type + ticket.ticket_states.current_state, 
 						:username => "<a class = 'user_name' href='/users/#{ticket.requester.id}'><span class='emphasize'>#{h(ticket.requester.display_name)}</span></a>", 
-						:time_ago => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state))) 
+						:time_ago => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state))).html_safe 
 						%>
 				<div class="emphasize"><%= sla_status(ticket,@onhold_and_closed_statuses) %></div>
 			</div>
@@ -44,7 +44,7 @@
 	</div>
   </td>
   <td class="ralign hideForList">
-		<%= "<span class='#{ticket_style} subject_style'>" + t("helpdesk.tickets.friendly_status.#{ticket_style}") + "</span>" unless ticket_style.blank? %>
+		<%= ("<span class='#{ticket_style} subject_style'>" + t("helpdesk.tickets.friendly_status.#{ticket_style}") + "</span>").html_safe unless ticket_style.blank? %>
 	</td>
   <td class="source-icon hideForList">
 	<div class="status-source source-detailed-<%= ticket.source_name.to_s.downcase %> hideForList" 

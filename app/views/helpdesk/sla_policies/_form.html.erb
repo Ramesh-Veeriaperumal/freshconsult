@@ -21,13 +21,13 @@
 	  <div class="grid sla_detail">
 		<table>
 	  		<tr>
-	    		<th><%= t('ticket.priority') %></th>
-	    		<th><%= t('sla_policy.respond_within') %></th>
-	    		<th><%= t('sla_policy.resolve_within') %></th>	    		
+	    		<th><%= t('ticket.priority').html_safe %></th>
+	    		<th><%= t('sla_policy.respond_within').html_safe %></th>
+	    		<th><%= t('sla_policy.resolve_within').html_safe %></th>	    		
 				<% if feature?(:business_hours) %>
-					<th><%= t('sla_policy.op_hrs') %></th>
+					<th><%= t('sla_policy.op_hrs').html_safe %></th>
 				<% end %>
-					<th><%= t('sla_policy.escalation_email') %></th>
+					<th><%= t('sla_policy.escalation_email').html_safe %></th>
 	  		</tr>
 	 		<% 
 				sla_size = @sla_policy.sla_details.size
@@ -38,7 +38,7 @@
 					 priority = Helpdesk::SlaDetail::PRIORITY_NAMES_BY_KEY[priority_id]  %>
 					<tr>
 						<td>
-							<%= sla.label :name , "<em>#{t(priority)}</em>" %> 
+							<%= sla.label :name , "<em>#{t(priority)}</em>".html_safe %> 
 							<%= sla.hidden_field :name, { :value => "SLA for #{priority} priority"} %>
 							<%= sla.hidden_field :priority, { :value => (priority_id)} %>
 							<%= sla.hidden_field :id, { :value => slas.id} %>		
@@ -63,10 +63,10 @@
 	<% unless @sla_policy.is_default %>
 	<li class="seperator"></li>
 	<li>
-		<%= f.label :conditions, "#{t('sla_policy.applicable_to')}:" , :class => "large" %>
-		<p><%= t('sla_policy.applicable_details') %></p>
+		<%= f.label :conditions, "#{t('sla_policy.applicable_to').html_safe}:" , :class => "large" %>
+		<p><%= t('sla_policy.applicable_details').html_safe %></p>
 		<label for="sla_policy_conditions" class="hide">
-			<%= t('sla_policy.applicable_error') %>
+			<%= t('sla_policy.applicable_error').html_safe %>
 		</label>
 	    <% f.fields_for :conditions do |a| %>
 	    <div class="sla_policy_conditions_container">
@@ -96,7 +96,7 @@
 	    		<div class="btn-group">
 		  			<a class="btn dropdown-toggle" data-toggle="dropdown" title="<%= t('sla_policy.applicable_info') %>">
 		  				<div class="icon-detail"><span class="symbols-add"></span></div>
-		  					<%= t('sla_policy.add_new') %>
+		  					<%= t('sla_policy.add_new').html_safe %>
 		  				<span class="caret"></span>
 		  			</a>
 		  			<ul class="dropdown-menu" role="menu">
@@ -118,9 +118,9 @@
 	<% end %>
 	<li class="seperator"></li>
 	<li>
-		<%= f.label :conditions, "#{t('sla_policy.escalate')}", :class => "large" %>
+		<%= f.label :conditions, "#{t('sla_policy.escalate').html_safe}", :class => "large" %>
 		<div class="escalate_to">
-			<label><%= t('sla_policy.escalation_response_text') %></label>
+			<label><%= t('sla_policy.escalation_response_text').html_safe %></label>
 			<div class="grid">
 				<table data-max-level=1 data-type="response" class="sla_policies">
 					<%= select_tag('response_time', 
@@ -148,13 +148,13 @@
 						<tr class='add_next_level hide'>
 							<td colspan="5">
 								<%= content_tag :div, "<span class='symbols-add'></span> 
-																			#{t('sla_policy.add_response_esc')}", 
+																			#{t('sla_policy.add_response_esc')}".html_safe, 
 								:class => "icon-detail add_next" %>
 							</td>
 						</tr>
 				</table>
 			</div>
-			<label><%= t('sla_policy.escalation_resolution_text') %></label>
+			<label><%= t('sla_policy.escalation_resolution_text').html_safe %></label>
 			<div class="grid resolution_container">
 				<table data-max-level = <%= Helpdesk::SlaPolicy::ESCALATION_LEVELS_MAX %> 
 							 class="sla_policies">
@@ -185,7 +185,7 @@
 				  	<tr class="add_next_level hide" >
 				  		<td colspan="5">
 				  			<%= content_tag :div, "<span class='symbols-add'></span>
-				  														#{t('sla_policy.add_level')} <span class='level'></span> #{t('sla_policy.add_resolution_esc')}",
+				  														#{t('sla_policy.add_level')} <span class='level'></span> #{t('sla_policy.add_resolution_esc')}".html_safe,
 				  			{'data-type' => "resolution", :class => "icon-detail add_next"} %>
 				  		</td></tr>
 					<% end %>

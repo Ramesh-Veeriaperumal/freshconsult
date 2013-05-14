@@ -34,8 +34,8 @@
 	</div>
 	<% else %>
 	 	<div class="header_links">
-	        <%= link_to( t('header.login') , login_path) %>
-			<%= link_to( t('signup') , current_portal.support_signup_path ) if feature?(:signup_link) %>
+	        <%= link_to( t('header.login').html_safe , login_path) %>
+			<%= link_to( t('signup').html_safe , current_portal.support_signup_path ) if feature?(:signup_link) %>
 		</div>
     <% end %>    
 	<% if current_user then %>                        
@@ -43,10 +43,10 @@
 		<div class="info user clearfix">
 			<span><%= truncate(h(current_user.name), :length => 30) %></span>
 		</div>
-		<%= link_to "<i class='header-arrow-right'></i> #{t('profile_settings')}", edit_profile_path(current_user), :class => "link" %>
+		<%= link_to "<i class='header-arrow-right'></i> #{t('profile_settings')}".html_safe, edit_profile_path(current_user), :class => "link" %>
 		<% if is_assumed_user? %>    
 			<span class="seperator"></span>
-			<%= link_to t('revert_identity_link_msg'), revert_identity_users_path, :class => "link" %>			
+			<%= link_to t('revert_identity_link_msg').html_safe, revert_identity_users_path, :class => "link" %>			
   		<% elsif !is_assumed_user? && (current_user.admin? || current_user.account_admin? || current_user.supervisor?) %>
   			<% @allowed_to_assume = current_account.users.technicians.visible.allowed_to_assume(current_user) %>
   			<% unless @allowed_to_assume.blank? %>
@@ -64,7 +64,7 @@
 			<% end %>
 		<% end %>                      
 		<span class="seperator"></span>			
-		<%= link_to "<i class='header-arrow-right'></i> #{t('header.signout')}", logout_path, :class => "link" %>
+		<%= link_to "<i class='header-arrow-right'></i> #{t('header.signout')}".html_safe, logout_path, :class => "link" %>
 	</div>                                                             
 	<% end %>
   </div>
@@ -73,15 +73,15 @@
 			 <div class="top_nav"> 	
 				<div class="nav_right">
 					<% if current_user and permission?(:manage_tickets) then %>
-						<%= link_to( "<span></span> #{t('header.new_ticket')}", new_helpdesk_ticket_path, :class => "new_ticket" ) %>
+						<%= link_to( "<span></span> #{t('header.new_ticket')}".html_safe, new_helpdesk_ticket_path, :class => "new_ticket" ) %>
 					<% else %>
-						<%= link_to( "<span></span> #{t('header.submit_a_ticket')}", new_support_ticket_path, :class => "new_ticket" ) if allowed_in_portal?(:anonymous_tickets) %>
+						<%= link_to( "<span></span> #{t('header.submit_a_ticket')}".html_safe, new_support_ticket_path, :class => "new_ticket" ) if allowed_in_portal?(:anonymous_tickets) %>
 					<% end %>
           <% if current_user then %>
-					 <% form_tag (es_enabled? ? search_home_index_path : search_index_path), :method => :get, :class => "nav_search" do %>
+					 <% form_tag(es_enabled? ? search_home_index_path : search_index_path, :method => :get, :class => "nav_search") do %>
 					 	<div class="search_bar" id="SearchBar">
 					 	  <span class="searchIcon"></span>
-							<label class="overlabel" for="header_search"><%= t("header.search") %></label>
+							<label class="overlabel" for="header_search"><%= t("header.search").html_safe %></label>
 							<input value="" type="text" id="header_search" autocomplete="off" name="search_key" data-es-enabled="<%= es_enabled? %>" />
 						</div>
 					 <% end %>
@@ -97,7 +97,7 @@
 		<div class="top-loading-strip">
 		</div>
 		<div class="loadingmsg">
-			<%=t('index_tooltip_loading_msg')%>
+			<%=t('index_tooltip_loading_msg').html_safe%>
 		</div>
 	</div>	
 </div>

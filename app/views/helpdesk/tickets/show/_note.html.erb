@@ -20,7 +20,7 @@ minimizable ||= false
 		<div class="helpdesk_note">
 			<% if note.deleted? %>
 			<div class="tag">
-				<%= t("helpdesk.tickets.note.deleted_note") %>
+				<%= t("helpdesk.tickets.note.deleted_note").html_safe %>
 			</div>
 			<% else %>
 			<div class="actions">
@@ -49,7 +49,7 @@ minimizable ||= false
 		    <% end %>
 			<div class="author-mail-detail cc_bcc_info">
 				<% kind = note.survey_remark.nil? ? note.kind : 'survey' %>
-				<%= t("helpdesk.tickets.note.created_on_live.#{kind}", :user_name => link_to_user(note.user, :class => "user_name", "data-placement" => "topRight", :rel => "hover-popover", "data-widget-container" => "agent-hovercard_#{note.id}" ), :note_date => formated_date(note.created_at), :timestamp => note.created_at.to_i ) %>
+				<%= t("helpdesk.tickets.note.created_on_live.#{kind}", :user_name => link_to_user(note.user, :class => "user_name", "data-placement" => "topRight", :rel => "hover-popover", "data-widget-container" => "agent-hovercard_#{note.id}" ), :note_date => formated_date(note.created_at), :timestamp => note.created_at.to_i ).html_safe %>
 			</div>
 			<%  if permission?(:manage_tickets)
 				conv_info = conversation_info(note) %>
@@ -71,8 +71,8 @@ minimizable ||= false
 			<div class="details" id='<%= notedetails %>'>
 				<%= content_tag(:div, "", :class => "#{note.survey_remark.survey_result.get_small_img_class} smiley") unless note.survey_remark.nil? %>
 				<div class="request_mail <%= 'survey-note' unless note.survey_remark.nil? %>">
-					<%= "<div class='survey-text'>#{note.survey_remark.survey_result.text}</div>" unless note.survey_remark.nil? %>			
-					<%= note.body_html %>
+					<%= "<div class='survey-text'>#{note.survey_remark.survey_result.text}</div>".html_safe unless note.survey_remark.nil? %>			
+					<%= note.body_html.html_safe %>
 				</div>
 			</div>
 			<% unless note.attachments.empty? and note.dropboxes.empty? %>

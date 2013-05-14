@@ -1,11 +1,11 @@
 <% content_for :sidebar do -%>
   <div class="sidepanel helpcard">
-    <%= t("integrations.custom_application.helptext", :full_domain => current_account.full_domain) %>
+    <%= t("integrations.custom_application.helptext", :full_domain => current_account.full_domain).html_safe %>
   </div>
   <div id="sample_preview" class="hide">
     <div class="titlebar">
       <a class="preview_link" href="#"><%= t('integrations.freshplugs.refresh') %></a>
-      <%= t('integrations.freshplugs.custom_widget_preview') %>
+      <%= t('integrations.freshplugs.custom_widget_preview').html_safe %>
     </div>
     <div id="preview" class=""></div>
   </div>
@@ -20,25 +20,25 @@
       <label class="caption">
         <div class="logo application-logo-custom_app"></div>
         <div class="logo info-data">
-          <%= t("integrations.custom_application.small_help_text") %>
+          <%= t("integrations.custom_application.small_help_text").html_safe %>
         </div>
       </label>
       <div class="fields">
         <ul class="app-form">
           <li class="field">
-            <label class="caption"><%=t('integrations.custom_application.name')%></label>
+            <label class="caption"><%=t('integrations.custom_application.name').html_safe%></label>
             <%= text_field_tag "application[display_name]", @application.display_name%>
           </li>
           <li class="field">
-            <label class="caption"><%=t('integrations.custom_application.description')%></label>
+            <label class="caption"><%=t('integrations.custom_application.description').html_safe%></label>
             <%= text_field_tag "application[description]", @application.description%>
           </li>
           <li class="field">
-            <label class="caption"><%=t('integrations.custom_application.script')%></label>
+            <label class="caption"><%=t('integrations.custom_application.script').html_safe%></label>
             <%= text_area_tag "application[script]", widget.script%>
           </li>
           <li class="field custom_app_preview">
-            <a class='l_placeholder slim-button' href='javascript:void(0)'><%= t('integrations.custom_application.form.insert_placeholder') %> &raquo;</a>
+            <a class='l_placeholder slim-button' href='javascript:void(0)'><%= t('integrations.custom_application.form.insert_placeholder').html_safe %> &raquo;</a>
             <div class="custom_app_preview_link">
               <%=link_to t('integrations.freshplugs.show_preview'), "#", :class => "toggle_preview", 
                     "data-toggled-text" => t('integrations.freshplugs.hide_preview'), "data-toggled-class" => "active", 

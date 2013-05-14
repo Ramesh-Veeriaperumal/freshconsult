@@ -13,7 +13,7 @@
     elsif field.is_default_field? or !params[:topic_id].blank?
       field_value = @item[field.field_name]
     end
-    field_label = ( field.is_default_field? ) ? I18n.t("ticket_fields.fields.#{field.name}") : field.label
+    field_label = ( field.is_default_field? ) ? I18n.t("ticket_fields.fields.#{(field.name)}").html_safe : (field.label).html_safe
   %>
   <%= construct_ticket_element :helpdesk_ticket, field, field_label, field.dom_type, field.required, field_value , "" , false , is_edit  %>
   

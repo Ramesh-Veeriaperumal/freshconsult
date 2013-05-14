@@ -13,7 +13,8 @@ require 'openssl'
 include RedisKeys
   
   before_filter :set_mobile, :only => [:create, :destroy, :new]
-  skip_before_filter :require_user, :except => :destroy
+  skip_before_filter :require_user, :only => [:new, :sso_login, :opensocial_google, :show, :create,
+                                              :signup_complete, :openid_google, :google_auth_completed]
   skip_before_filter :check_account_state
   before_filter :check_sso_params, :only => :sso_login
   skip_before_filter :check_day_pass_usage
@@ -100,18 +101,6 @@ include RedisKeys
     Rails.logger.debug "result json #{json.inspect}"
     render :json => json
   end
-
-  def generate_random_hash(google_viewer_id, account)
-     generated_hash = Digest::MD5.hexdigest(DateTime.now.to_s + google_viewer_id)
-     key_options = { :account_id => account.id, :token => generated_hash}
-     key_spec = Redis::KeySpec.new(RedisKeys::AUTH_REDIRECT_GOOGLE_OPENID, key_options)
-     Redis::KeyValueStore.new(key_spec, google_viewer_id, 300).save
-     return generated_hash;
-  end
-
-  def gen_hash_from_params_hash
-    Digest::MD5.hexdigest(params[:name]+params[:email]+current_account.shared_secret)
-  end
   
   def show
     redirect_to :action => :new
@@ -197,17 +186,6 @@ include RedisKeys
     url = ("https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]) unless domain_name.blank?
     authenticate_with_open_id(url,{ :required => ["http://axschema.org/contact/email", :email] , :return_to => return_url, :trust_root =>re_alm}) do |result, identity_url, registration| end
   end
-  
-  def find_account_by_google_domain(google_domain_name)
-    unless google_domain_name.blank?
-      account = Account.find(:first,:conditions=>{:google_domain=>google_domain_name},:order=>"updated_at DESC")
-      if account.blank?
-        full_domain  = "#{google_domain_name.split('.').first}.#{AppConfig['base_domain'][RAILS_ENV]}"
-        account = Account.find_by_full_domain(full_domain)
-      end
-      account
-    end
-  end
 
   def google_auth_completed    
     resp = request.env[Rack::OpenID::RESPONSE]  
@@ -286,6 +264,29 @@ include RedisKeys
   end
 
   private
+
+    def find_account_by_google_domain(google_domain_name)
+      unless google_domain_name.blank?
+        account = Account.find(:first,:conditions=>{:google_domain=>google_domain_name},:order=>"updated_at DESC")
+        if account.blank?
+          full_domain  = "#{google_domain_name.split('.').first}.#{AppConfig['base_domain'][RAILS_ENV]}"
+          account = Account.find_by_full_domain(full_domain)
+        end
+        account
+      end
+    end
+
+    def generate_random_hash(google_viewer_id, account)
+       generated_hash = Digest::MD5.hexdigest(DateTime.now.to_s + google_viewer_id)
+       key_options = { :account_id => account.id, :token => generated_hash}
+       key_spec = Redis::KeySpec.new(RedisKeys::AUTH_REDIRECT_GOOGLE_OPENID, key_options)
+       Redis::KeyValueStore.new(key_spec, google_viewer_id, 300).save
+       return generated_hash;
+    end
+
+    def gen_hash_from_params_hash
+      Digest::MD5.hexdigest(params[:name]+params[:email]+current_account.shared_secret)
+    end
 
     def remove_old_filters
       remove_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session.session_id})

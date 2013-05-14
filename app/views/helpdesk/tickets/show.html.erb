@@ -1,7 +1,7 @@
 <% content_for :sidebar do -%>
 	<div id="switch_details_view" class="sidepanel">
-		<%= link_to t('ticket.switch_view.new_view'), helpdesk_ticket_path(@ticket), :class => "switch" %>
-		<%= link_to t('ticket.switch_view.whats_new'), "https://support.freshdesk.com/support/solutions/articles/70760-new-enhanced-ticket-view-page", :target => "_blank" %>
+		<%= link_to t('ticket.switch_view.new_view').html_safe, helpdesk_ticket_path(@ticket), :class => "switch" %>
+		<%= link_to t('ticket.switch_view.whats_new').html_safe, "https://support.freshdesk.com/support/solutions/articles/70760-new-enhanced-ticket-view-page", :target => "_blank" %>
 	</div>
 
   <%= render :partial => "/helpdesk/integrations/crm_widget", :locals => {:user => @ticket.requester} %>
@@ -24,13 +24,13 @@
 	<% unless @ticket.deleted %>
 		<div class="replylinks">
 			<span id="agent_replying_message_bottom" style="color:#048b00; font-size:12px;"></span>
-			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-reply', this)", :id => "ReplyButton", :class => "button email reply") if @item.from_email.present? or @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobi_help] %>
-			<%= link_to_function("<span></span>" + t('fwd_to'), "swapEmailNote('cnt-fwd', this)", 
+			<%= link_to_function(("<span></span>" + t('ticket.reply_to')).html_safe, "swapEmailNote('cnt-reply', this)", :id => "ReplyButton", :class => "button email reply") if @item.from_email.present? or @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobi_help] %>
+			<%= link_to_function(("<span></span>" + t('fwd_to')).html_safe, "swapEmailNote('cnt-fwd', this)", 
 				:id => "FwdButton", :class => "button forward reply") %>
-			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-tweet', this)",  :id => "TweetButton", :class => "button tweet reply") if @item.requester && @item.is_twitter?%>
-			<%= link_to_function("<span></span>" + t('ticket.reply_to'), "swapEmailNote('cnt-fb-post', this)",  :id => "FacebookButton", :class => "button facebook reply") if @item.requester && @item.is_facebook?%>
-			<%= link_to_function(t('ticket.add_note'), "swapEmailNote('cnt-note', this)", :id => "AddNoteButton", :class => "button") %>		
-			<%= link_to_function(t("ticket.add_time"), "jQuery('#TimesheetTab').click(); jQuery(this).button('toggle')", :id => "TimeSheetButton", :title => "Add time entry", :class => "button") if feature?(:timesheets) %>
+			<%= link_to_function(("<span></span>" + t('ticket.reply_to')).html_safe, "swapEmailNote('cnt-tweet', this)",  :id => "TweetButton", :class => "button tweet reply") if @item.requester && @item.is_twitter?%>
+			<%= link_to_function(("<span></span>" + t('ticket.reply_to')).html_safe, "swapEmailNote('cnt-fb-post', this)",  :id => "FacebookButton", :class => "button facebook reply") if @item.requester && @item.is_facebook?%>
+			<%= link_to_function(t('ticket.add_note').html_safe, "swapEmailNote('cnt-note', this)", :id => "AddNoteButton", :class => "button") %>		
+			<%= link_to_function(t("ticket.add_time").html_safe, "jQuery('#TimesheetTab').click(); jQuery(this).button('toggle')", :id => "TimeSheetButton", :title => "Add time entry", :class => "button") if feature?(:timesheets) %>
 		</div>
 	<% end %>
 </div>		

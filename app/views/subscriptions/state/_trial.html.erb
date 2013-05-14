@@ -21,7 +21,7 @@
         <%= "#{t('trial_expired_on')} #{subscription.next_renewal_at.to_s(:long_day)} " %>.
       <% end %>
       <div class = "choose-plan">
-        <%= t('choose_plan_trial') %>
+        <%= t('choose_plan_trial').html_safe %>
       </div>
     </div>    
     <br /><br />

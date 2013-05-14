@@ -173,7 +173,7 @@
           jQuery('[name="helpdesk_note[cc_emails][]"]').val('');
       if(!jQuery('#include_bcc').is(':checked'))
           jQuery('[name="helpdesk_note[bcc_emails][]"]').val('');
-        <%= remote_function :url => clear_draft_helpdesk_ticket_path, :method => :delete, :type => :synchronous %>
+        <%= (remote_function :url => clear_draft_helpdesk_ticket_path, :method => :delete, :type => :synchronous).html_safe %>
         isDirty = false;
       })
       .validate();  

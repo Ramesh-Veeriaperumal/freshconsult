@@ -21,8 +21,8 @@
 			    </div>
 			<% end %>
 			<div>
-				<%= link_to(t('connect_ticket') + " &raquo;", new_helpdesk_ticket_path(:topic_id => @topic.id), :class => "uiButton full-width") if logged_in? and @topic.ticket_topic.nil?  %>
-				<%= link_to(h(@topic.ticket.subject), helpdesk_ticket_path(@topic.ticket)) unless @topic.ticket_topic.nil? %>
+				<%= link_to((t('connect_ticket') + " &raquo;").html_safe, new_helpdesk_ticket_path(:topic_id => @topic.id), :class => "uiButton full-width") if logged_in? and @topic.ticket_topic.nil?  %>
+				<%= link_to((@topic.ticket.subject), helpdesk_ticket_path(@topic.ticket)) unless @topic.ticket_topic.nil? %>
 			</div> 
 		<% end %>
 		</div>
@@ -88,7 +88,7 @@
 		      <div class="request-wrapper">    	 
 					  <div class="details min_height">    
 					    <span class="seperator"></span>
-						  <%= first_post.body_html %>     
+						  <%= first_post.body_html.html_safe %>     
 							<span class="seperator"></span>  
 						</div>
 					 

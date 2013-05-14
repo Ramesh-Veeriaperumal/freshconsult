@@ -1,40 +1,40 @@
 <% content_for :sidebar do -%>
 	<% if @subscription.state == 'trial' %>
 		<div class="sidepanel">
-			<h3 class="title"><%= t("accounts.billing.billing") %></h3>
+			<h3 class="title"><%= t("accounts.billing.billing").html_safe %></h3>
 			<p>
-			  <strong><%= t('accounts.billing.begin_subscription') %></strong> <%= t("accounts.billing.begin_subscription_info") %>
+			  <strong><%= t('accounts.billing.begin_subscription').html_safe %></strong> <%= t("accounts.billing.begin_subscription_info").html_safe %>
 			</p>
 			<p>
-			  <strong><%= t('accounts.billing.save_billing_information') %></strong> <%= t("accounts.billing.save_billing_information_info") %>
+			  <strong><%= t('accounts.billing.save_billing_information').html_safe %></strong> <%= t("accounts.billing.save_billing_information_info").html_safe %>
 			</p>
 		</div>
 	<% end %>
 <%- end %>
-<h3 class= "title"><%= @page_title = t('plans_billing') %></h3>
+<h3 class= "title"><%= @page_title = t('plans_billing').html_safe %></h3>
 <% form_for :creditcard, @creditcard, :url => { :action => 'billing' } do |f| %>
 	<ul class="ui-form">
 		<li class="inline-field">  
 			<% if @subscription.trial? %>
 				<div class="info-highlight"> 
 					<h3 class="title">
-  					<%= t('current_plan_details', :plan_name  => @subscription.subscription_plan.name, :agent_limit => @subscription.agent_limit) %>
+  					<%= t('current_plan_details', :plan_name  => @subscription.subscription_plan.name, :agent_limit => @subscription.agent_limit).html_safe %>
 					</h3>	
 					<% if @subscription.amount > 0 %>			
 					<%= content_tag(:strong, get_payment_string( @subscription.renewal_period,@subscription.amount.to_i )) %>
 					<%end%>
 				</div>
 			<% end %>
-			<%= content_tag(:h3, t("credit_card_info"), :class => "title") %>
+			<%= content_tag(:h3, t("credit_card_info").html_safe, :class => "title") %>
 		   	<%= render :partial => 'shared/credit_card_form' %>
 				<%= hidden_field_tag :charge_now, "false", :id => "chargenow" %>
 				<span class="seperator"></span>
 				<div class="button-container">
 					<% if @subscription.trial? %>
-						<%= link_to( "&larr; #{t('select_another_plan')}", subscription_url, :class => "uiButton floatl" ) %>
+						<%= link_to( "&larr; #{t('select_another_plan')}".html_safe, subscription_url, :class => "uiButton floatl" ) %>
 						<%= submit_tag t('accounts.billing.begin_subscription'), :class => "uiButton special", :id => "begin_subscription" %>	
 					<% else %>
-						<%= link_to( "&larr; #{t("cancel_and_back")}", subscription_url, :class => "uiButton floatl" ) %>
+						<%= link_to( "&larr; #{t("cancel_and_back")}".html_safe, subscription_url, :class => "uiButton floatl" ) %>
 						<%= submit_tag t('accounts.billing.update_billing_info'), :class => "uiButton" %>
 					<% end %>
 				</div>

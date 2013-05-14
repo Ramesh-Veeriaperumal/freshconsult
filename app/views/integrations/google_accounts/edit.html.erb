@@ -1,5 +1,5 @@
-<% content_for :sidebar do %><div class="sidepanel helpcard"><%=t('integrations.google_contacts.edit_helptext')%></div><% end %>
-<h3 class="title"><%=t("integrations.google_contacts.edit_form.#{@omniauth_origin}_title")%></h3>
+<% content_for :sidebar do %><div class="sidepanel helpcard"><%=t('integrations.google_contacts.edit_helptext').html_safe%></div><% end %>
+<h3 class="title"><%=t("integrations.google_contacts.edit_form.#{@omniauth_origin}_title").html_safe%></h3>
 <% 
   action = @omniauth_origin == "import" ? "import_contacts" : "update"
   form_for @google_account, :url => { :controller=> "integrations/google_accounts", :action => action, :iapp_id => (params[:iapp_id] unless params[:iapp_id].blank?) } do |f| 
@@ -9,10 +9,10 @@
 	%>
 	<ul class="ui-form google_accounts">
 			
-		<h4 class="title"><%=t('integrations.google_contacts.edit_form.mail_box_detail')%> <%=@google_account.name%> ( <%=@google_account.email%> )</h4>
+		<h4 class="title"><%=t('integrations.google_contacts.edit_form.mail_box_detail').html_safe%> <%=@google_account.name%> ( <%=@google_account.email%> )</h4>
 		
 		<fieldset>
-			<legend><%=t('integrations.google_contacts.edit_form.import_group')%></legend>
+			<legend><%=t('integrations.google_contacts.edit_form.import_group').html_safe%></legend>
 			<div class="fields">
 				<%@google_groups.each {|gg| %>
 					<label class="checkwrapper"><%=check_box_tag "integrations_google_account[import_groups][]", gg.group_id%><%=gg.name%></label>

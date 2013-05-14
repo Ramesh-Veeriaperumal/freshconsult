@@ -12,21 +12,21 @@
 												<div class="plan-title">
 													<% bool_beta_plan = (plan_name == "premium" && @discount  && @discount.name.downcase == "beta users special") %>
 													<%= content_tag(:h2, plan.name) %>
-													<%= content_tag(:div, t("#{plan_name}_brief"), :class => "plan-brief" ) %>
+													<%= content_tag(:div, t("#{plan_name}_brief").html_safe, :class => "plan-brief" ) %>
 													<% if(bool_beta_plan) %>
 														<%= content_tag(:h3, "<span class='discount-strikethrough'>$29 </span> $19 " +  content_tag(:span, t('plan_amount'), :class => "info-data")) %>
 													<% else %> 
 															<% if plan_name == "sprout" %>
 																<%= content_tag(:h3, "Free") %>
-																<%= content_tag(:div, t('free_plan_agents', :free_agents => plan.free_agents), :class => "info-data") %>
+																<%= content_tag(:div, t('free_plan_agents', :free_agents => plan.free_agents).html_safe, :class => "info-data") %>
 															<% else %>
 																<%= content_tag(:h3, "$#{plan.amount.to_i}") %>
 																<%= content_tag(:div, t('plan_amount'), :class => "info-data") %>
 															<% end %>
 													<% end %>								
-													<%= content_tag(:div, (plan_name == "premium") ? t("special_beta_offer") : "&nbsp;", :class => "discount-info-text" ) if(@discount && @discount.name.downcase == "beta users special")  %>
+													<%= content_tag(:div, (plan_name == "premium") ? t("special_beta_offer") : "&nbsp;".html_safe, :class => "discount-info-text" ) if(@discount && @discount.name.downcase == "beta users special")  %>
 												</div>
-												<%= content_tag(:p,  t("#{plan_name}_details"), :class => "plan-details" ) %>
+												<%= content_tag(:p,  t("#{plan_name}_details").html_safe, :class => "plan-details" ) %>
 											</div>
 											<% subscribe_direct_flag =  (current_account.full_time_agents.count) <= plan.free_agents %>
 											<% if subscribe_direct_flag %> 

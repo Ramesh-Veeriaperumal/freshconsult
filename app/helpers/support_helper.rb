@@ -20,7 +20,7 @@ module SupportHelper
     def time_ago date_time 
 		%( <span class='timeago' data-timeago='#{date_time}' data-livestamp='#{date_time}'> 
 			#{distance_of_time_in_words_to_now date_time} #{I18n.t('date.ago')} 
-		   </span> )
+		   </span> ).html_safe
 	end
 
 	def short_day_with_time date_time
@@ -123,7 +123,7 @@ module SupportHelper
 			url = current_portal.fav_icon.nil? ? '/images/favicon.ico' : current_portal.fav_icon.content.url
 			"<link rel='shortcut icon' href='#{url}' />"
 		end
-		fav_icon_content
+		fav_icon_content.html_safe
 	end
 
 	# Default search filters for portal
@@ -170,12 +170,12 @@ module SupportHelper
 	end
 
 	def link_to_folder_with_count folder, *args
-		label = " #{h(folder['name'])} <span class='item-count'>#{folder['articles_count']}</span>"
+		label = " #{h(folder['name'])} <span class='item-count'>#{folder['articles_count']}</span>".html_safe
 		content_tag :a, label, { :href => folder['url'], :title => h(folder['name']) }.merge(options)
 	end
 
 	def link_to_forum_with_count forum, *args
-		label = " #{h(forum['name'])} <span class='item-count'>#{forum['topics_count']}</span>"
+		label = " #{h(forum['name'])} <span class='item-count'>#{forum['topics_count']}</span>".html_safe
 		content_tag :a, label, { :href => forum['url'], :title => h(forum['name']) }.merge(options)
 	end
 
@@ -359,7 +359,7 @@ HTML
 		_text << I18n.t('since_last_time', :time_words => timediff_in_words(Time.now() - ticket['status_changed_on']))
 		_text << %( <a href='#reply-to-ticket' data-proxy-for='#add-note-form' 
 			data-show-dom='#reply-to-ticket'>#{ t('portal.tickets.reopen_reply') }</a> ) if ticket['closed?']
-		content_tag :div, _text.join(" "), :class => "alert alert-ticket-status"
+		content_tag :div, _text.join(" ").html_safe, :class => "alert alert-ticket-status"
 	end
 
 	def ticket_field_container object_name, field, field_value = ""
@@ -369,19 +369,19 @@ HTML
 						<label class="checkbox">
 							#{ ticket_form_element :helpdesk_ticket, field, field_value } #{ field[:label_in_portal] }
 						</label>
-					</div> )
+					</div> ).html_safe
 			else
 				%( #{ ticket_label object_name, field }
 		   			<div class="controls"> 
 		   				#{ ticket_form_element :helpdesk_ticket, field, field_value }
-		   			</div> )
+		   			</div> ).html_safe
 		end
 	end
 
 	def ticket_label object_name, field
 		required = (field[:required_in_portal] && field[:editable_in_portal])
 		element_class = " #{required ? 'required' : '' } control-label"
-		label_tag "#{object_name}_#{field[:field_name]}", field[:label_in_portal], :class => element_class
+		label_tag "#{object_name}_#{field[:field_name]}", field[:label_in_portal].html_safe, :class => element_class
 	end
 
 	def ticket_form_element object_name, field, field_value = ""
@@ -466,7 +466,7 @@ HTML
 	def include_google_font *args
 		font_url = args.uniq.map { |f| FONT_INCLUDES[f] }.reject{ |c| c.nil? }
 		unless font_url.blank?
-			"<link href='https://fonts.googleapis.com/css?family=#{font_url.join("|")}' rel='stylesheet' type='text/css'>"
+			"<link href='https://fonts.googleapis.com/css?family=#{font_url.join("|")}' rel='stylesheet' type='text/css'>".html_safe
 		end
 	end
 
@@ -518,7 +518,7 @@ HTML
 		output << %( <script type="text/javascript"> )
 		output << %(  	var portal = #{portal_javascript_object}; )
 		output << %( </script> )
-		output.join("")
+		output.join("").html_safe
 	end
 
 	def portal_javascript_object
@@ -545,7 +545,7 @@ HTML
 		%(	<a href="#portal-cookie-info" rel="freshdialog" class="cookie-link" 
 				data-width="450px" title="#{ I18n.t('portal.cookie.why_we_love_cookies') }" data-template-footer="">
 				#{ I18n.t('portal.cookie.cookie_policy') }
-			</a>)
+			</a>).html_safe
 	end
 
 	def cookie_law
@@ -554,7 +554,7 @@ HTML
 				<p>#{ I18n.t('portal.cookie.cookie_dialog_info1') }</p>
 				<p>#{ I18n.t('portal.cookie.cookie_dialog_info2', :privacy_link => privacy_link) }</p>
 				<p>#{ I18n.t('portal.cookie.cookie_dialog_info3', :privacy_link => privacy_link) }</p>
-			</div>)
+			</div>).html_safe
 	end
 
 	private

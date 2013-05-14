@@ -25,36 +25,36 @@
       <div>
         <%= text_field "social_twitter_handle", :search_keys, { :value => twitter_handle.search_keys_string }   %>
       </div>
-      <div class="info-data"> <%=t('.info_data')%> </div>
+      <div class="info-data"> <%=t('.info_data').html_safe%> </div>
       <span class="seperator"></span>
       <label class="checkbox">
         <%= check_box "social_twitter_handle", :capture_mention_as_ticket, { :checked => twitter_handle.capture_mention_as_ticket } %> 	
-        <%= t('.capture_mentions_msg') %>
+        <%= t('.capture_mentions_msg').html_safe %>
       </label>
       <div class="info-data tabbed">
-        <%= t('.capture_mentions_info') %>
+        <%= t('.capture_mentions_info').html_safe %>
       </div>				
       <span class="seperator"></span>
       <label class="checkbox">
         <%= check_box "social_twitter_handle", :capture_dm_as_ticket, { :checked => twitter_handle.capture_dm_as_ticket } %> 
-        <%= t('.capture_dm_msg') %>
+        <%= t('.capture_dm_msg').html_safe %>
       </label>
       <div class="info-data tabbed">
-        <%= t('.capture_dm_info') %>
+        <%= t('.capture_dm_info').html_safe %>
       </div>
 	  <!-- another one... -->
 	  <span class="seperator"></span>
-	  <label class="caption"><%=t('.dm_time_msg')%></label>
+	  <label class="caption"><%=t('.dm_time_msg').html_safe%></label>
       <div class="fields">
       	<%= select (:social_twitter_handle ,:dm_thread_time, Social::TwitterHandle::DM_THREADTIME_OPTIONS ,{:selected => twitter_handle.dm_thread_time}) %>
       </div>
       <div class="info-data tabbed">
-        <%=t('.dm_time_info')%>
+        <%=t('.dm_time_info').html_safe%>
       </div>	 	
 	  <!-- --> 
       <% if current_account.products %>
         <span class="seperator"></span>
-        <label class="caption"><%= t('.product') %></label>
+        <label class="caption"><%= t('.product').html_safe %></label>
         <div class="fields">
     	    <%= collection_select(:social_twitter_handle, :product_id, current_account.products, :id, :name, { :include_blank => '...', :selected => twitter_handle.product_id })%>
     	  </div>   

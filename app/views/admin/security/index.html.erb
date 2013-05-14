@@ -56,7 +56,7 @@
 		})(jQuery)
 	<% end %>
 	<div class="button-container">
-		<%= link_to "&larr; #{t('back')}", "/admin/home", :class => "uiButton floatl" %>
+		<%= link_to "&larr; #{t('back')}".html_safe, "/admin/home", :class => "uiButton floatl" %>
 		<%= f.submit t('save'), :class => "uiButton" %>
 	</div>
 	

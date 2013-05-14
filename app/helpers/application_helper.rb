@@ -22,7 +22,7 @@ module ApplicationHelper
 
     html_conditions.map { |h| %( 
         <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{ 
-          current_portal.language }">#{h[2] ? '<!--' : ''}<![endif]--> ) }
+          current_portal.language }">#{h[2] ? '<!--' : ''}<![endif]--> ) }.to_s.html_safe
   end
   
   def format_float_value(val)
@@ -67,11 +67,11 @@ module ApplicationHelper
   end
   
   def show_flash
-    @show_flash = [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
+    @show_flash = [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }.to_s.html_safe
   end
   
   def show_admin_flash
-    [:notice, :warning, :error].collect {|type| content_tag('div', "<a class='close' data-dismiss='alert'>×</a>" + flash[type], :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }  
+    [:notice, :warning, :error].collect {|type| content_tag('div', "<a class='close' data-dismiss='alert'>×</a>" + flash[type], :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }.to_s.html_safe  
   end   
 
   def show_announcements                                                    
@@ -103,7 +103,7 @@ module ApplicationHelper
     if tab_name.eql?(:tickets)
       options.merge!({:"data-parallel-url" => "/helpdesk/tickets/filter_options", :"data-parallel-placeholder" => "#ticket-leftFilter"})
     end
-    content_tag('li', content_tag('span') + link_to(strip_tags(title), url, options ), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
+    content_tag('li', content_tag('span') + link_to(strip_tags(title), url, options), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
   end
   
   def show_ajax_flash(page)
@@ -126,7 +126,7 @@ module ApplicationHelper
   
 
   def each_or_message(partial, collection, message, locals = {})
-    render(:partial => partial, :collection => collection, :locals => locals) || content_tag(:div, message, :class => "list-noinfo")
+    render(:partial => partial, :collection => collection, :locals => locals) || content_tag(:div, message.html_safe, :class => "list-noinfo")
   end
   
   def each_or_new(partial_item, collection, partial_form, partial_form_locals = {})
@@ -216,9 +216,9 @@ module ApplicationHelper
     navigation = tabs.map do |s| 
       next unless s[2]
       active = (params[:controller] == s[0]) || (s[1] == @selected_tab || "/#{params[:controller]}" == s[0]) #selected_tab hack by Shan  !history_active &&
-      tab( s[3] || t("header.tabs.#{s[1].to_s}") , {:controller => s[0], :action => :index}, active && :active, s[1] ) 
+      tab(s[3] || t("header.tabs.#{s[1].to_s}") , {:controller => s[0], :action => :index}, active && :active, s[1] ).html_safe
     end
-    navigation
+    navigation.to_s.html_safe
   end          
 
   def subscription_tabs
@@ -246,7 +246,7 @@ module ApplicationHelper
     if elements.empty?
       "" 
     else
-      lis = elements.map { |x| content_tag("li", x, :class => ("active first" if (elements[activeitem] == x)))  }
+      lis = elements.map { |x| content_tag("li", x.html_safe, :class => ("active first" if (elements[activeitem] == x)))  }.to_s.html_safe
       content_tag(type, lis, options)
     end
   end
@@ -551,11 +551,11 @@ module ApplicationHelper
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
     element_class  += " required_closure" if (field.required_for_closure && !field.required)
-    field_label    += '<span class="required_star">*</span>' if required
-    field_label    += "#{add_requester_field}" if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
-    field_name      = (field_name.blank?) ? field.field_name : field_name
-    object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
-    label = label_tag object_name+"_"+field.field_name, field_label
+    field_label    += '<span class="required_star">*</span>'.html_safe if required
+    field_label    += "#{add_requester_field}".html_safe if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
+    field_name      = (field_name.blank?) ? field.field_name.html_safe : field_name.html_safe
+    object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }".html_safe
+    label = label_tag object_name+"_"+field.field_name, field_label.html_safe
     choices = field.choices
     case dom_type
       when "requester" then
@@ -589,11 +589,11 @@ module ApplicationHelper
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
-        element = content_tag(:div, (check_box(object_name, field_name, :class => element_class, :checked => field_value ) + label))
+        element = content_tag(:div, (check_box(object_name, field_name, :class => element_class, :checked => field_value ) + label).html_safe)
       when "html_paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class , :value => field_value)
     end
-    content_tag :li, element, :class => " #{ dom_type } #{ field.field_type } field"
+    content_tag :li, element.html_safe, :class => " #{ dom_type } #{ field.field_type } field"
   end
 
   def add_cc_field_tag element , field    
@@ -716,7 +716,7 @@ module ApplicationHelper
       _output << link_to(t('revert_identity_link_msg'), revert_identity_users_path, :class => "link")
       _output << %( </div> )
     end
-    _output.join("")
+    _output.join("").html_safe
   end
 
   def get_logo

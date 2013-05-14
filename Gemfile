@@ -5,7 +5,7 @@ gem "rake", "0.8.7"
 gem "rack", "~> 1.1.6"
 gem "rails","2.3.18"
 
-gem "json", "~> 1.5.5"
+gem 'json', '~> 1.7.7'
 gem "mysql"
 gem "i18n", "0.4.2"
 
@@ -92,6 +92,9 @@ gem "wicked_pdf", "~> 0.9.2"
 gem "pg"
 
 gem "cloudfront_asset_host", :git => "git://github.com/freshdesk/cloudfront_asset_host.git"
+
+gem "erubis", "2.7.0"
+gem "rails_xss", "0.4.0"
 
 group :development,:test do
    gem "forgery","0.5.0"

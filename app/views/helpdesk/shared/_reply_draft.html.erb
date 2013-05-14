@@ -38,7 +38,7 @@ function saveout(){
   var setval=replyEditor.getCode();
     if(setval!=""|| setval!=" ")
     {
-      <%= remote_function :url => save_draft_helpdesk_ticket_path, :method => :post, :type => :synchronous, :with => "'draft_data=' + encodeURIComponent(setval)" %>
+      <%= (remote_function :url => save_draft_helpdesk_ticket_path, :method => :post, :type => :synchronous, :with => "'draft_data=' + encodeURIComponent(setval)").html_safe %>
     }
 }
  
@@ -99,7 +99,7 @@ jQuery("#clear-draft").bind('click', function(){
 
 
 function cleardraft(){
-  <%= remote_function :url => clear_draft_helpdesk_ticket_path, :method => :delete %>
+  <%= (remote_function :url => clear_draft_helpdesk_ticket_path, :method => :delete).html_safe %>
   var draftData = "<%= escape_javascript(bind_last_conv(@ticket, @signature)) %>";
   jQuery('#cnt-reply-body').setCode(draftData)
   isDirty = false;

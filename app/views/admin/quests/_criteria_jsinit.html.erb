@@ -136,8 +136,7 @@
       }
 
     }(jQuery);
-
-    Gamification.init(<%= @criteria_defs %>, [<%= @quest_input%>], <%= @quest.sub_category.blank? ? 'undefined' : @quest.sub_category%>);    
+    Gamification.init(<%= @criteria_defs.html_safe if @criteria_defs %>, [<%= @quest_input.html_safe if @quest_input%>], <%= @quest.sub_category.blank? ? 'undefined' : @quest.sub_category%>);    
   <% end %>
   <% javascript_tag do %>
     // Condition Parsing 
@@ -225,7 +224,7 @@
 };
 
 var getFilterDef = function(name,quest_type){
-    var filter_defs = jQuery(<%= @filter_defs %>)[0][quest_type];
+    var filter_defs = jQuery(<%= @filter_defs.html_safe if @filter_defs %>)[0][quest_type];
     return filter_defs.filter(function(value,index){
       return value.name === name;
     });
@@ -252,8 +251,8 @@ var getFilterDef = function(name,quest_type){
     })[0];
   },
   getHumaneCriteria = function(criteria,questtype) {
-    var op_types = <%= @op_types %>,
-        op_list = <%= @op_list %>,
+    var op_types = <%= @op_types.html_safe if @op_types %>,
+        op_list = <%= @op_list.html_safe if @op_list %>,
         humaneCriteria = {},
         humaneCriteriaStr = '';
       jQuery(criteria).each(function(index,value){
@@ -295,7 +294,7 @@ var getFilterDef = function(name,quest_type){
         timeframe = +jQuery('#quest_data_date').val(),
         quest_data_mode_value = +jQuery('#quest_data_mode').val(),
         questtype = jQuery("input[name=quest[category]]:checked").val();
-        cridefs = <%= @criteria_defs %>,
+        cridefs = <%= @criteria_defs.html_safe if @criteria_defs %>,
         activeCriteria = cridefs[selectListArr[questtype]],
         display_name_tpl = stringTemplates[selectListArr[questtype]],
         timeframeStr = activeCriteria.questtime[timeframe-1][1];
@@ -320,9 +319,9 @@ var getFilterDef = function(name,quest_type){
   };
 
   <% if(filter_type == "quest") %>
-    var op_hash = preProcessCondition(<%= @op_types %>, <%= @op_list %>),
+    var op_hash = preProcessCondition(<%= @op_types.html_safe if @op_types %>, <%= @op_list.html_safe if @op_list %>),
         game_types = ['','ticket','solution','forum'],_is_Desc_edited = false,  
-        filter_rule = new rules_filter("filter", $A([<%= @filter_defs %>]), "#filterDOM", {"operators": op_hash, "init_feed":$A(<%= @filter_input %>), selectListArr: game_types, delete_last: true,
+        filter_rule = new rules_filter("filter", $A([<%= @filter_defs.html_safe if @filter_defs %>]), "#filterDOM", {"operators": op_hash, "init_feed":$A(<%= @filter_input.hmtl_safe if @filter_input %>), selectListArr: game_types, delete_last: true,
         change_filter_data : manipulateFilterData,onRuleSelect : populateQuestDes});
         jQuery("#quest_data_mode").live('change',function(){
            filter_rule.refresh_list();

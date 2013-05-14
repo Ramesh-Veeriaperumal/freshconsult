@@ -16,11 +16,11 @@ else
 end
 
 content = '<ul><li>'
-content << link_to("<span class='arrow-next'></span>", next_link, 
+content << link_to("<span class='arrow-next'></span>".html_safe, next_link, 
 						:class => "#{next_class} tooltip" , :rel => 'next', 
 						:title => t('ticket.next'), "data-placement" => 'below')
 content << '</li><li>'
-content << link_to(" <span class='arrow-previous'></span>",  previous_link, 
+content << link_to(" <span class='arrow-previous'></span>".html_safe,  previous_link, 
 						:class => "#{previous_class} tooltip" , :rel => 'previous', 
 						:title => t('ticket.previous'), "data-placement" => 'below')
 content << '</li></ul>'

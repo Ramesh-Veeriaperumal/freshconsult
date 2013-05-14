@@ -301,7 +301,7 @@
 		</li>
 	</ul>
 	<div class="button-container">
-		<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", :class => "uiButton floatl" %>
+		<%= link_to "&larr; #{t('account.cancel')}".html_safe, "/admin/home", :class => "uiButton floatl" %>
 		<%= f.submit t('save'), :class => "uiButton" %>
 	</div>
 	<% end %>

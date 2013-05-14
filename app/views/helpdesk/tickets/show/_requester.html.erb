@@ -28,11 +28,11 @@
 		<div class="requester-details">
 			<p><%= link_to(h(user.name), contact, :class => "user_name") %></p>
 			<p><%= render :partial => "helpdesk/tickets/components/company_info.html.erb", :locals => { :user => user } %></p>
-			<%= content_tag(:p, "#{t('user.email')}: #{render_item(h(user.email), "link")}" ) unless user.email.blank? %>
-			<%= content_tag(:p, "#{t('user.twitter_id')}: #{render_item(h(user.twitter_id),'twitter')}" ) unless user.twitter_id.blank? %>
-			<%= content_tag(:p, "#{t('user.facebook')}: #{render_item(h(user.fb_profile_id), "facebook")}" ) unless user.fb_profile_id.blank? %>
-			<%= content_tag(:p, "#{t('user.phone_no')}: #{h(user.phone)}" ) unless user.phone.blank? %>
-			<%= content_tag(:p, "#{t('user.mobile')}: #{h(user.mobile)}" ) unless user.mobile.blank? %>
+			<%= content_tag(:p, "#{t('user.email')}: #{render_item(h(user.email), "link")}".html_safe ) unless user.email.blank? %>
+			<%= content_tag(:p, "#{t('user.twitter_id')}: #{render_item(h(user.twitter_id),'twitter')}".html_safe ) unless user.twitter_id.blank? %>
+			<%= content_tag(:p, "#{t('user.facebook')}: #{render_item(h(user.fb_profile_id), "facebook")}".html_safe ) unless user.fb_profile_id.blank? %>
+			<%= content_tag(:p, "#{t('user.phone_no')}: #{h(user.phone)}".html_safe ) unless user.phone.blank? %>
+			<%= content_tag(:p, "#{t('user.mobile')}: #{h(user.mobile)}".html_safe ) unless user.mobile.blank? %>
 			
 			<% if current_user.can_view_all_tickets? %>
 			<div class='more_details'>
@@ -40,7 +40,7 @@
 										  				:rel => 'freshdialog', "data-target" => "#requester_tickets",
 										  				"data-template-footer" => "",
 
-										  				:title => t('contacts.info4',:nick_name => user.display_name) ) %>
+										  				:title => t('contacts.info4',:nick_name => CGI.escapeHTML(h(user.display_name))) ) %>
 			</div>
 			<% end %>
 		</div>

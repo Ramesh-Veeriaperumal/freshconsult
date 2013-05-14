@@ -7,10 +7,10 @@ module Admin::HomeHelper
                     <div class="img-outer"><img width="32px" height="32px" src="/images/spacer.gif" class = "admin-icon-#{ pref[1] }" /></div>
                     <div class="admin-icon-text">#{t(".#{pref[1]}")}</div>
 HTML
-                    content_tag( :li, link_to( link_content, pref[0] ) )
+                    content_tag( :li, link_to( link_content.html_safe, pref[0].html_safe ))
 
                 end
-    link_item
+    link_item.to_s.html_safe
   end
   
   # Defining the Array and constructing the Admin Page links
@@ -64,11 +64,11 @@ HTML
     admin_html = 
       admin_links.map do |group|
         content_tag( :div, 
-                        content_tag(:h3, "<span>#{group[0][0]} #{group[0][1]}</span>", :class => "title") +
-                        content_tag(:ul, admin_link(group[1]), :class => "admin_icons"),
+                        content_tag(:h3, "<span>#{group[0][0]} #{group[0][1]}</span>".html_safe, :class => "title") +
+                        content_tag(:ul, admin_link(group[1]), :class => "admin_icons").html_safe,
                         :class => "admin #{ cycle('odd', 'even') } #{group[2]} ")
       end
 
-    admin_html
+    admin_html.to_s.html_safe
   end
 end

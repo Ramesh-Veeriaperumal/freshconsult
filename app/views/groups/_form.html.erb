@@ -7,19 +7,19 @@
 	   <div class="row-fluid group-management">
 		 	<ul class="unstylGroup::d">
 		 		<li class="row-fluid">
-		 			<%= f.label :name, "<b> #{t('group.name')} </b>" , :class => "control-label span2" %>
+		 			<%= f.label :name, "<b> #{t('group.name')} </b>".html_safe , :class => "control-label span2" %>
 					  <div class="span10">
 						 <%= f.text_field :name , :class => "text required span12", :placeholder => t('group.name')  %>
 					  </div>
 		 		</li>
 		 		<li class="row-fluid">
-		 			 <%= f.label :description, "<b> #{t('description')} </b>", :class => "control-label span2" %>
+		 			 <%= f.label :description, "<b> #{t('description')} </b>".html_safe, :class => "control-label span2" %>
 					  <div class="span10">
-						 <%= f.text_area :description , :class => "text required smallpara span12", :placeholder => t('group.description')  %>
+						 <%= f.text_area :description , :class => "text required smallpara span12", :placeholder => t('group.description').html_safe  %>
 					  </div>
 		 		</li>
 		 		<li class="row-fluid margin-bottom">
-		 			<label class="control-label span2"><b><%=t('group.info1')%></b></label>
+		 			<label class="control-label span2"><b><%=t('group.info1').html_safe%></b></label>
 		 			<input type="hidden" id="agent_list" name="group[agent_list]" class="span10"
 		 			data-placeholder = "<%= t("helpdesk.tickets.add_watcher.add_agent") %>"/>
 				</li>
@@ -107,9 +107,9 @@ end
 
 jQuery('#agent_list').select2({
 	multiple: true,
-	data: [<%=all_agents.join(",")%>],
+	data: [<%=all_agents.join(",").html_safe%>],
 	initSelection : function (element, callback) {
-      callback( [<%=selected_agents.join(",")%>] );
+      callback( [<%=selected_agents.join(",").html_safe%>] );
     }
 	
 });
@@ -139,7 +139,7 @@ jQuery("#agent_list").select2("val",[]);
 %>
 jQuery('#escalate_to').select2({
 	multiple: false,
-	data: [<%=technicians.join(",")%>],
+	data: [<%=technicians.join(",").html_safe%>],
 	initSelection : function (element, callback) {
         var data = {id: '<%=@group.escalate_to%>', text: '<%=@group.escalate && @group.escalate.name%>'};
         callback(data);

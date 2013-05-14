@@ -19,7 +19,7 @@
           </td>
           <td class="text-right">
           	<%= link_to t('edit'), edit_group_path(group), :class => "btn btn-mini" %>
-          	<%= link_to "<i class='icon-trash'></i>", group, :confirm => "#{t('group.info5')}?", :method => :delete, :class => "btn btn-mini"%>
+          	<%= link_to "<i class='icon-trash'></i>".html_safe, group, :confirm => "#{t('group.info5')}?", :method => :delete, :class => "btn btn-mini"%>
           </td>
         </tr>
         <% end %>

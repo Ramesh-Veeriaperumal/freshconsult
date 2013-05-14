@@ -103,8 +103,8 @@
 
 <% content_for :onload_script do %>	
 	<% if(filter_type == "va_rule") %>
-		var op_hash = preProcessCondition(<%= @op_types %>, <%= @op_list %>);	 
-		filter_rule = new rules_filter("filter", $A(<%= @filter_defs %>), "#filterDOM", {"operators": op_hash, "init_feed":$A(<%= @filter_input %>)});	
+		var op_hash = preProcessCondition(<%= @op_types.html_safe if @op_types %>, <%= @op_list.html_safe if @op_list %>);	 
+		filter_rule = new rules_filter("filter", $A(<%= @filter_defs.html_safe if @filter_defs%>), "#filterDOM", {"operators": op_hash, "init_feed":$A(<%= @filter_input.html_safe if @filter_input %>)});	
 	<% end %>			
-	action_rule = new rules_filter("action", $A(<%= @action_defs %>), "#actionDOM", {"init_feed":$A(<%= @action_input %>)});
+	action_rule = new rules_filter("action", $A(<%= @action_defs.html_safe if @action_defs%>), "#actionDOM", {"init_feed":$A(<%= @action_input.html_safe if @action_input %>)});
 <% end %>

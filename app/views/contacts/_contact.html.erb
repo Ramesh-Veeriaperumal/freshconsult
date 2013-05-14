@@ -17,24 +17,24 @@
 		</div>
 	</td>
 	<td class="email">
-		<div><%= content_tag(:span, "#{h(contact.email)} ") unless contact.email.blank? %></div>
+		<div><%= content_tag(:span, "#{(contact.email)}") unless contact.email.blank? %></div>
 		<div>
-			<%= content_tag(:span, "#{I18n.t('phone')} : #{h(contact.phone)} ") unless contact.phone.blank? %>
+			<%= content_tag(:span, "#{I18n.t('phone')} : #{(contact.phone)} ") unless contact.phone.blank? %>
 		</div>
 		<% if contact.email.blank? and contact.phone.blank? and contact.mobile.blank? %>
-			<%= content_tag(:div, "<a target='_blank' href=http://twitter.com/#{h(contact.twitter_id) }>@#{h(contact.twitter_id)}</a>", :class => "user_twitter") if !contact.twitter_id.blank? %>
-			<%= content_tag(:div, "<a target='_blank' href=http://facebook.com/#{h(contact.fb_profile_id) }>#{t('facebook_user')}</a>") if !contact.fb_profile_id.blank? %>
+			<%= content_tag(:div, "<a target='_blank' href=http://twitter.com/#{h(contact.twitter_id) }>@#{h(contact.twitter_id)}</a>".html_safe, :class => "user_twitter") if !contact.twitter_id.blank? %>
+			<%= content_tag(:div, "<a target='_blank' href=http://facebook.com/#{h(contact.fb_profile_id) }>#{t('facebook_user')}</a>".html_safe) if !contact.fb_profile_id.blank? %>
 		<% end %>
 	</td>
 	<td>
 		<div class="user_actions" align="right">
-			<%= link_to(t('unblock'), {:controller => "contacts", :action => "unblock", :id => contact} , :method => 'put', :class => "btn btn-mini") if contact.spam? || contact.blocked?%>
-			<%= link_to(t('contacts.restore'), {:controller => "contacts", :action => "restore", :id => contact, :redirect_back => true} , :method => 'put', :class => "btn btn-mini") if contact.deleted? and !contact.spam? and !contact.blocked? %>
-			<%= link_to(t('contacts.send_activation'), send_invite_activation_path(contact), "data-method" => 'put', 	:class => "btn send-activation btn-mini", 
-					"data-loading-text" => t('admin.getting_started.index.next_please_wait'), 
-					"data-complete-text" => "<i class='icon-ok'></i><b class='sent-text'>#{t('users.activations.sent')}</b>") if !contact.active? and !contact.deleted and !contact.spam? and !contact.blocked? and !contact.email.blank? %>
-			<%= link_to(t('edit'), edit_contact_path(contact), :class => "btn btn-mini") if !contact.deleted? and !contact.spam? and !contact.blocked? %>
-			<%= link_to("<i class='icon-trash'></i>", {:controller => "contacts", :action => "destroy", :id => contact} , :method => 'delete', :confirm => "#{t('company.info11')} #{contact.name}?", :class => "btn btn-mini") if contact != current_user and !contact.deleted? and !contact.spam? and !contact.blocked? %>
+			<%= link_to(t('unblock').html_safe, {:controller => "contacts", :action => "unblock", :id => contact} , :method => 'put', :class => "btn btn-mini") if contact.spam? || contact.blocked?%>
+			<%= link_to(t('contacts.restore').html_safe, {:controller => "contacts", :action => "restore", :id => contact, :redirect_back => true} , :method => 'put', :class => "btn btn-mini") if contact.deleted? and !contact.spam? and !contact.blocked? %>
+			<%= link_to(t('contacts.send_activation').html_safe, send_invite_activation_path(contact), "data-method" => 'put', 	:class => "btn send-activation btn-mini", 
+					"data-loading-text" => t('admin.getting_started.index.next_please_wait').html_safe, 
+					"data-complete-text" => "<i class='icon-ok'></i><b class='sent-text'>#{t('users.activations.sent')}</b>".html_safe) if !contact.active? and !contact.deleted and !contact.spam? and !contact.blocked? and !contact.email.blank? %>
+			<%= link_to(t('edit').html_safe, edit_contact_path(contact), :class => "btn btn-mini") if !contact.deleted? and !contact.spam? and !contact.blocked? %>
+			<%= link_to("<i class='icon-trash'></i>".html_safe, {:controller => "contacts", :action => "destroy", :id => contact} , :method => 'delete', :confirm => "#{t('company.info11')} #{contact.name}?", :class => "btn btn-mini") if contact != current_user and !contact.deleted? and !contact.spam? and !contact.blocked? %>
 		</div>
 	</td>
 </tr>

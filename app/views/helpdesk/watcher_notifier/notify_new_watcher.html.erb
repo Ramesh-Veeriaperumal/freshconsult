@@ -22,7 +22,7 @@
 </table><br />
 
 ---------- <%=t('helpdesk.tickets.add_watcher.mail.ticket_details') %> ----------<br /> <br />
-<%=@ticket.description_html%> <br /> <br /> 
+<%=@ticket.description_html.html_safe%> <br /> <br /> 
 ---------- ---------- ----------<br /><br />
 
 <a href='<%=unsubscribe_helpdesk_ticket_helpdesk_subscriptions_url(@ticket,

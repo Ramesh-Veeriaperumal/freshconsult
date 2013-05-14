@@ -61,7 +61,7 @@
 
   <h3><%= h(@ticket.subject) %></h3>
   <div class="description"> 
-    <%= @ticket.description_html %>
+    <%= @ticket.description_html.html_safe %>
   </div>  
   <span class="seperator"></span>
   <% @ticket_notes = @ticket.notes.visible.exclude_source('meta').newest_first %>
@@ -86,7 +86,7 @@
   			</strong>
       </div>
       <div class="description"> 
-        <%= note.body_html %>
+        <%= note.body_html.html_safe %>
       </div>
       <span class="seperator"></span>
     <% end %>

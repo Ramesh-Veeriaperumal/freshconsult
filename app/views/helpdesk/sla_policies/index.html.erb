@@ -11,6 +11,7 @@
 				<%= link_to t('reorder'),'#', :id => "sla_policies_reorder_button", :class => "btn" unless(@sla_policies.active.size <= 2)%>
 				<%= (link_to t('sla_policy.new'), new_helpdesk_sla_policy_path, :class => "btn btn-primary") if feature?(:customer_slas) %>
 	        </div>
+	        </div>
 		</div>
 	</div>
 	<div>
@@ -33,7 +34,7 @@
 						<% form_for policy, :url => activate_helpdesk_sla_policy_path(policy) do |f| %>
 							<%= f.check_box :active, { :class => 'activate'}, true, false %>
 						<% end %>
-						<%= "<div class='itoggle-disable'></div>" if policy.conditions.blank? %>
+						<%= "<div class='itoggle-disable'></div>".html_safe if policy.conditions.blank? %>
 					</td>
 					<td>
 						<p class="text-info">
@@ -47,7 +48,7 @@
 					    	<%= link_to(t('edit'), edit_helpdesk_sla_policy_path(policy), :class => "btn btn-mini #{"default_policy" if policy.is_default}") %>
 
 					    	<%unless policy.is_default?%>
-						    	<%= link_to "<i class='icon-trash'></i>", policy, :confirm => "Are you sure you want to delete SLA policy?", :method => :delete, :class => "btn btn-mini" %>
+						    	<%= link_to "<i class='icon-trash'></i>".html_safe, policy, :confirm => "Are you sure you want to delete SLA policy?", :method => :delete, :class => "btn btn-mini" %>
 							<%end%>
 						</div>
 					</td>

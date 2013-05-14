@@ -67,7 +67,7 @@
 
   function submitBulkUpdate(){
     if(!$('addbulkreply').checked || jQuery("#reply-multiple-cnt-reply-multiple-body").valid()){
-      <%= "reply_multiple_submit('#{update_multiple_helpdesk_bulk_ticket_actions_path}', 'put', jQuery('#update-fields .update-check-for-fields:checked').parent().parent().find('select').get() )" %>
+      <%= "reply_multiple_submit('#{update_multiple_helpdesk_bulk_ticket_actions_path}', 'put', jQuery('#update-fields .update-check-for-fields:checked').parent().parent().find('select').get() )".html_safe %>
       jQuery("#ticket_update_multiple_button, #ticket_cancel_multiple_button").attr('disabled','disabled');
       jQuery('#loader').removeClass("hide");
     }

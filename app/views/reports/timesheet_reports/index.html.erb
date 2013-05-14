@@ -3,7 +3,7 @@
 <link href="/stylesheets/ui.daterangepicker.css" media="screen" rel="stylesheet" type="text/css">
   <span class="floatr">
     <%= submit_tag t('export_to_CSV'),{ :class => "slim-button" , :id =>'export_as_csv' }%>
-  	<%= link_to("&larr; #{t('reports.summary_report.back_to_reports')}", reports_url, :class => "slim-button") %>
+  	<%= link_to("&larr; #{t('reports.summary_report.back_to_reports')}".html_safe, reports_url, :class => "slim-button") %>
   </span>
   <h3 class="title">
     <%=t('.title')%>

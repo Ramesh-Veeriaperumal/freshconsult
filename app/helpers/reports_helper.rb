@@ -14,7 +14,7 @@ module ReportsHelper
 	                    </div>
 	                    <div class="report-icon-text">#{item_info[:label]}</div>)
 
-	    content_tag( :li, link_to( link_content, item_info[:url] ) )
+	    content_tag( :li, link_to( link_content.html_safe, item_info[:url].html_safe ) )
 	end
   
 end

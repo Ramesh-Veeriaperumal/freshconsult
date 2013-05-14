@@ -42,8 +42,8 @@
 								</td>
 								<td>
 									<div class="item_actions" align="right">
-								    	<%= link_to(t('edit'), edit_customer_path(customer), :class => "btn btn-mini") %>
-								    	<%= link_to "<i class='icon-trash'></i>", {:controller => "customers", :action => "destroy", :id => customer}, :confirm =>  
+								    	<%= link_to(t('edit').html_safe, edit_customer_path(customer), :class => "btn btn-mini") %>
+								    	<%= link_to "<i class='icon-trash'></i>".html_safe, {:controller => "customers", :action => "destroy", :id => customer}, :confirm =>  
 								    		"#{t('company.info11')} #{h(customer.name)}?\n#{t('company.info10')}", 
 								    		:method => 'delete', :class => "btn btn-mini" %>
 									</div> 

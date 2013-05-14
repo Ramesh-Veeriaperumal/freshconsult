@@ -46,11 +46,11 @@
 	<% end %>
 	<div class="user_details">
 		<%= user_avatar(post.user) if post.user %>
-		<%= t(".posted_on", :user_name => link_to_user(post.user, {:class => "user_name", "data-placement" => "topRight", :rel => "hover-popover", "data-widget-container" => "post-agent-hovercard_#{post.id}"}), :post_date => formated_date(post.created_at) ) %>
+		<%= t(".posted_on", :user_name => link_to_user(post.user, {:class => "user_name", "data-placement" => "topRight", :rel => "hover-popover", "data-widget-container" => "post-agent-hovercard_#{post.id}"}), :post_date => formated_date(post.created_at) ).html_safe %>
 		<div class="loading-center hide" id='<%= "loading_#{post.id}" %>'></div>
 	</div>
 	<div class="details" id='<%= "post_details_#{post.id}" %>'>
-		<%= auto_link(post.body_html, :all, :target => "_blank") %>
+		<%= auto_link(post.body_html.html_safe, :all, :target => "_blank") %>
 	</div>
 	<% unless post.attachments.empty? %>
 			<h4><%= pluralize(post.attachments.size, 'attachment')%></h4>

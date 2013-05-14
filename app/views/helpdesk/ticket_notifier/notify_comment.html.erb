@@ -24,7 +24,7 @@ Hi,
 <%= t('ticket.note_content') %>:
 <br/>
 <p>
-<%=@note.body_html%>
+<%=@note.body_html.html_safe%>
 </p><br />
 <%= render :partial => '/shared/free_plan_message' %>
 

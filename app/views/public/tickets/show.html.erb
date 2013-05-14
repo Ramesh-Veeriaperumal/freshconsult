@@ -22,7 +22,7 @@
 			<div class="request-wrapper">
 		       	<div id="description-full" class="details min_height">
 					<span class="seperator"></span>
-			    	<%= @ticket.description_html %>
+			    	<%= @ticket.description_html.html_safe %>
 			    </div>  
 		 		<% unless @ticket.attachments.empty? %>
 					<span class="seperator"></span>
@@ -60,7 +60,7 @@
 			    <li> 
 					<%= content_tag( :h4, t('ticket.note_form.form_title'), :class => "title" ) %>
 					<% unless current_user %>
-						<%= label_tag :requester_email, t('your_email')+'<span class="required_star">*</span>' %>
+						<%= label_tag :requester_email, (t('your_email')+'<span class="required_star">*</span>').html_safe %>
 						<%= text_field_tag :requester_email, nil, :class => "email required"  %>
 					<% end %>
 			  		<%= f.text_area :body_html, :id=>"portal_ticket_note_public" %>

@@ -35,7 +35,7 @@ date_range = params[:date_range].blank? ? "#{(Time.zone.now.ago 30.day).strftime
 </div>
 
 <div class="sidepanel helpcard">
-	<p>	<%= t('.helptext') %> </p>
+	<p>	<%= t('.helptext').html_safe %> </p>
 </div>
 
 <% javascript_tag do %> 	

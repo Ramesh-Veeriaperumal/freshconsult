@@ -1,6 +1,6 @@
 <%- javascript_tag do -%>
   // Partial Localizing for date elements
-	date_lang = <%= t("date").to_json %>;
+	date_lang = <%= t("date").to_json.html_safe %>;
 	
 	jQuery(document).ready(function() {
 		<%= yield :onload_script -%>

@@ -79,7 +79,7 @@ class PortalView
       Rails.logger.error err.backtrace.join("\n")
       NewRelic::Agent.notice_error(err)
     end
-    content
+    content.html_safe
   end
 
   def compilable?

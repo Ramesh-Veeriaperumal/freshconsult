@@ -55,7 +55,7 @@
     </div>
 
     <div class="add-email">
-        <%= link_to( "<span></span> #{t('admin.products.add_another_email')}", "javascript:void(0)", :class => "add-email-icon", :id => "addchoice" ) %>
+        <%= link_to( "<span></span> #{t('admin.products.add_another_email')}".html_safe, "javascript:void(0)", :class => "add-email-icon", :id => "addchoice" ) %>
     </div>
 
     <%= content_tag(:label, t('admin.products.form.product_desc'), :class => "tabbed caption") %>

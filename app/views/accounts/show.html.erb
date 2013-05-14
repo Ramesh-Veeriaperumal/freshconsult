@@ -31,7 +31,7 @@
 	<div class="sidepanel">
 		<h3 class="title"><%= t(".export_data") %></h3> 
 		<p><%= t('.export_data_text') %></p>
-		<%= link_to "#{t('.export_now')} &rsaquo;", export_admin_data_export_url, :class => "button" %>
+		<%= link_to "#{t('.export_now')} &rsaquo;".html_safe, export_admin_data_export_url, :class => "button" %>
 	</div>
 
 <%- end %>
@@ -151,7 +151,7 @@
 	  </ul>
 
 		<div class="button-container">
-			<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", :class => "uiButton floatl" %>
+			<%= link_to "&larr; #{t('account.cancel')}".html_safe, "/admin/home", :class => "uiButton floatl" %>
 		</div>
 
 	<% end %>
@@ -181,12 +181,12 @@
 
 
   	jQuery("#invoice_email_field").select2({
-  			data: [ <%= admin_choice.join(",")  %> ],
+  			data: [ <%= admin_choice.join(",").html_safe  %> ],
   			multiple: true,
   			maximumSelectionSize: 1,
 
   			initSelection : function (element, callback) {
-    			callback( [<%= added_invoice_emails.join(",") if added_invoice_emails %>] );
+    			callback( [<%= added_invoice_emails.join(",").html_safe if added_invoice_emails %>] );
   			},
 
   			specialFormatting: true,

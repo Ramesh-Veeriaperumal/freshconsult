@@ -1,11 +1,11 @@
 <%=t( due_by > Time.now() ? 'ticket_future_due_by_live' : 'ticket_past_due_by_live',
-		 {:time => distance_of_time_in_words(Time.now(), due_by), :timestamp => due_by.to_i}) %>
+		 {:time => distance_of_time_in_words(Time.now(), due_by), :timestamp => due_by.to_i}).html_safe %>
 <br />on <%= formated_date(due_by) %> 
 <% unless params[:format]=='widget' %>
 <a id="edit-dueby-time" 
 			data-placement="topRight" 
 			href="#" 
 			data-widget-container="due-date-dialog-container">
-	<%= t('change') %>
+	<%= t('change').html_safe %>
 </a>
 <% end %>
