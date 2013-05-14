@@ -47,7 +47,7 @@ class Helpdesk::Note < ActiveRecord::Base
   accepts_nested_attributes_for :tweet , :fb_post
   
   unhtml_it :body
-  xss_sanitize :only => [:body_html],  :html_sanitize => [:body_html]
+  # xss_sanitize :only => [:body_html],  :html_sanitize => [:body_html]
   named_scope :newest_first, :order => "created_at DESC"
   named_scope :visible, :conditions => { :deleted => false } 
   named_scope :public, :conditions => { :private => false } 
