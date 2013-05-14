@@ -32,7 +32,7 @@ class VARule < ActiveRecord::Base
   end
   
   def after_find
-    deserialize_all
+    deserialize_all if self.action_data?
   end
 
   def deserialize_all
