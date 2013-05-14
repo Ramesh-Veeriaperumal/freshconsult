@@ -200,6 +200,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def custom_search
+    params[:html_format] = true
     @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     render :partial => "custom_search"
   end
