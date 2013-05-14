@@ -75,8 +75,8 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def index
-
     #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
+    params[:html_format] = request.format.html?
     cookies.delete(:ticket_list_updated) 
     tkt = current_account.tickets.permissible(current_user)
     @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
