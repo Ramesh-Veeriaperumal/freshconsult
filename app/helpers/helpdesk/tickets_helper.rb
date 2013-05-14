@@ -121,7 +121,8 @@ module Helpdesk::TicketsHelper
   end
   
   def filter_count(selector=nil)
-    filter_scope = TicketsFilter.filter(filter(selector), current_user, current_account.tickets.permissible(current_user))
+    filter_scope = TicketsFilter.filter(filter(selector), current_user, 
+                      current_account.tickets.permissible(current_user).updated_in(2.month.ago))
     SeamlessDatabasePool.use_persistent_read_connection do
      filter_scope.count
     end

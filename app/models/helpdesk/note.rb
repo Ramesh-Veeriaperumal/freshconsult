@@ -52,7 +52,7 @@ class Helpdesk::Note < ActiveRecord::Base
   
   named_scope :latest_twitter_comment,
               :conditions => [" incoming = 1 and social_tweets.tweetable_type = 'Helpdesk::Note'"], 
-              :joins => "INNER join social_tweets on helpdesk_notes.id = social_tweets.tweetable_id", 
+              :joins => "INNER join social_tweets on helpdesk_notes.id = social_tweets.tweetable_id and helpdesk_notes.account_id = social_tweets.account_id", 
               :order => "created_at desc"
   
   

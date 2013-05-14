@@ -27,7 +27,7 @@ class Workers::Sla
                                                                       sp_hash[sp.id] = sp; sp_hash}
 
     overdue_tickets =  execute_on_db(db_name) {
-                        account.tickets.visible.find(:all, 
+                        account.tickets.visible.updated_in(2.month.ago).find(:all, 
                             :readonly => false, 
                             :conditions =>['due_by <=? AND isescalated=? AND status IN (?)',
                              Time.zone.now.to_s(:db),false, 
@@ -40,7 +40,7 @@ class Workers::Sla
     end
     
     froverdue_tickets = execute_on_db(db_name) {
-                        account.tickets.visible.find(:all, 
+                        account.tickets.updated_in(2.month.ago).visible.find(:all, 
                             :joins => "inner join helpdesk_ticket_states 
                                      on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
                                      and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id" , 
@@ -61,7 +61,7 @@ class Workers::Sla
     ##Tickets left unassigned in group
     
     tickets_unpicked =  execute_on_db(db_name) {
-                          account.tickets.visible.find(:all, 
+                          account.tickets.updated_in(2.month.ago).visible.find(:all, 
                             :joins => "inner join helpdesk_ticket_states 
                             on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
                             and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id 
