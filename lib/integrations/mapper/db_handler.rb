@@ -12,7 +12,7 @@ class Integrations::Mapper::DBHandler
       fetched_entity = self.create(data, config) unless fetch[:create_if_empty].blank?
       fetched_entity = data[fetch[:use_if_empty]] unless fetch[:use_if_empty].blank?
     end
-    fetched_entity = fetched_entity[fetch[:field_type]] if fetch[:data_type] && fetch[:field_type]
+    fetched_entity = fetched_entity[fetch[:field_type]] if fetch[:data_type] && fetch[:field_type] && fetched_entity
     fetched_entity
   end
 
