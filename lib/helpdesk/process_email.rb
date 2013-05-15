@@ -17,6 +17,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       account.make_current
       encode_stuffs
       kbase_email = account.kbase_email
+      params[:html] = params[:text] if params[:html].blank? && !params[:text].blank?
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
         email_config = account.email_configs.find_by_to_email(to_email[:email])
         return if email_config && (from_email[:email] == email_config.reply_email)
