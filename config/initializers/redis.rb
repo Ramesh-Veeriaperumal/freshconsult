@@ -13,8 +13,6 @@ Redis.class_eval {add_method_tracer :srem}
 Redis.class_eval {add_method_tracer :smembers}
 Redis.class_eval {add_method_tracer :rpush}
 Redis.class_eval {add_method_tracer :lpush}
-Redis.class_eval {add_method_tracer :rpull}
-Redis.class_eval {add_method_tracer :lpull}
 Redis.class_eval {add_method_tracer :lrange}
 Redis.class_eval {add_method_tracer :llen}
 Redis.class_eval {add_method_tracer :keys}
