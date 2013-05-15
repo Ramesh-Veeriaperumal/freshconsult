@@ -2,7 +2,7 @@
 <div class="commentbox">
 	<div class="author-mail-detail">
 		<div>
-			<%= show_contact_hovercard(@ticket.requester) %> <%= t('ticket.reported') %> 
+			<%= show_contact_hovercard(@ticket.requester).html_safe %> <%= t('ticket.reported') %> 
 			<abbr data-livestamp="<%= @ticket.created_at.to_i %>"></abbr> 
 			(<%= formated_date(@ticket.created_at) %>)
 			via <%= @ticket.source_name %>

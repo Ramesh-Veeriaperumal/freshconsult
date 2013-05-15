@@ -54,7 +54,7 @@ minimizable ||= false
 			<%  if permission?(:manage_tickets)
 				conv_info = conversation_info(note) %>
 				<div class="author-mail-detail">
-				<%= content_tag :span, truncate(conv_info, :length => 100), 
+				<%= content_tag :span, truncate(conv_info, :length => 100).html_safe, 
 						:rel => "hover-popover",
 						"data-placement" => "below",
 						"data-content" => conv_info.length > 100 ? conversation_popover_details(note) : "" %>

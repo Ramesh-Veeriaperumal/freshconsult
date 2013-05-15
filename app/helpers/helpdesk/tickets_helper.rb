@@ -302,13 +302,13 @@ module Helpdesk::TicketsHelper
     unless emails.blank?
       if emails.length < 3
         html << content_tag(:span, 
-                            "To: " + emails.collect{ |to_e| 
+                            ("To: " + emails.collect{ |to_e| 
                               to_e.gsub("<","&lt;").gsub(">","&gt;") 
-                            }.join(", "), 
+                            }.join(", ")).html_safe, 
                             :class => "") 
       else
         html << content_tag(:span, 
-                            "To: " + emails[0,2].collect{ |to_e| 
+                            ("To: " + emails[0,2].collect{ |to_e| 
                               to_e.gsub("<","&lt;").gsub(">","&gt;") 
                             }.join(", ") + 
                             "<span class='toEmailMoreContainer hide'>,&nbsp;" + 
@@ -316,10 +316,10 @@ module Helpdesk::TicketsHelper
                               to_e.gsub("<","&lt;").gsub(">","&gt;") 
                             }.join(", ") + 
                             " </span> <a href='javascript:showHideToEmailContainer();'  class='toEmailMoreLink'> #{emails.length-2} " + 
-                            t('ticket_cc_email_more')+"</a>", :class => "")
+                            t('ticket_cc_email_more')+"</a>").html_safe, :class => "")
       end
     end
-    html
+    html.html_safe
   end
   
   def visible_page_numbers(options,current_page,total_pages)
