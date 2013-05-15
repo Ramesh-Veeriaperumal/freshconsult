@@ -40,6 +40,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/ticket", :only => [:reply_to_conv]
     resource :"helpdesk/conversation", :only => [:reply, :twitter, :facebook]
     resource :"social/twitter_handle", :only => [:send_tweet]
+    # In bulk actions you can reply even if you do not have edit_ticket_properties
+    resource :"helpdesk/ticket", :only => [:update_multiple_tickets]
+    resource :"helpdesk/bulk_ticket_action"
   end
 
   forward_ticket do
@@ -55,7 +58,7 @@ Authority::Authorization::PrivilegeList.build do
   edit_ticket_properties do
     resource :"helpdesk/ticket", :only => [:edit, :update, :update_ticket_properties, :assign_to_agent, :assign, :close,
                                    :close_multiple, :update_multiple_tickets, :change_due_by]
-    resource :"helpdesk/bulk_ticket_action" 
+    resource :"helpdesk/bulk_ticket_action"
     resource :"helpdesk/common", :only => [:group_agents]                                  
   end
 

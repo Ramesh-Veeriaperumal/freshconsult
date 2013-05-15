@@ -29,7 +29,8 @@
             <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/multiple/close_multiple', 'put' , [{name: 'disable_notification' , value: event.shiftKey}]);" type="button" value="<%=t('close')%>" disabled="disabled">
         
             <button class="button dialog2" data-url="/helpdesk/tickets/assign_to_agent" data-width="360" title="<%=t('ticket.assign_to_agent')%>" disabled="disabled"><%=t('ticket.assign_to_agent')%></button>
-
+          <% end %>
+          <% if privilege?(:edit_ticket_properties) || privilege?(:reply_ticket) %>
             <button class="button dialog2" data-url="/helpdesk/tickets/update_multiple_tickets" data-width="667" title="<%=t('bulk_actions')%>" disabled="disabled"><%=t('bulk_actions')%></button>
           <% end %>
           <% if privilege?(:merge_or_split_ticket)%>    
