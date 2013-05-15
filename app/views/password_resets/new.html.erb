@@ -1,10 +1,10 @@
 <% content_for :sidebar do -%><%- end %>
-<%= content_tag (:h3, t('forgot_password'), :class => 'title') %>
-<%= content_tag (:div, t('forgot_password_intro')) %>
+<%= content_tag(:h3, t('forgot_password'), :class => 'title') %>
+<%= content_tag(:div, t('forgot_password_intro')) %>
 <% form_tag password_resets_path do %>
 	<ul class="ui-form">
 		<li> 
-			<%= content_tag (:label, t('your_email_address')) %>
+			<%= content_tag(:label, t('your_email_address')) %>
 	  		<%= text_field_tag "email", "", { :class => "required" } %>
 		</li>
 		<li>

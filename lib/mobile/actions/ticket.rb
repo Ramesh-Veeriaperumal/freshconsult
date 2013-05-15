@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Mobile::Actions::Ticket
   
   include ActionView::Helpers::DateHelper

@@ -1,3 +1,4 @@
+# encoding: utf-8
 class AgentsController < ApplicationController
   include AgentsHelper
   helper AgentsHelper
@@ -171,7 +172,7 @@ class AgentsController < ApplicationController
   end
   
   def destroy    
-    if @agent.user.update_attribute(:deleted, true)    
+    if @agent.user.update_attributes(:deleted => true)    
        @restorable = true
        flash[:notice] = render_to_string(:partial => '/agents/flash/delete_notice')      
      else
@@ -182,7 +183,7 @@ class AgentsController < ApplicationController
 
  def restore
    @agent = current_account.all_agents.find(params[:id])
-   if @agent.user.update_attribute(:deleted, false)   
+   if @agent.user.update_attributes(:deleted => false)   
     flash[:notice] = render_to_string(:partial => '/agents/flash/restore_notice')
    else
     flash[:notice] = t(:'flash.general.restore.failure', :human_name => 'Agent')

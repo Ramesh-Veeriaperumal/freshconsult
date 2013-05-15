@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'mime/types'
 
 class Helpdesk::Attachment < ActiveRecord::Base

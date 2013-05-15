@@ -7,7 +7,7 @@
 <%- end %>
 
 <% content_for :page_toolbar do -%>
-  <%= link_to (t('dispatch.reorder'), "#", :id => "Reorder", :class => "uiButton") if ( @va_rules.size > 1 ) %>
+  <%= link_to(t('dispatch.reorder'), "#", :id => "Reorder", :class => "uiButton") if ( @va_rules.size > 1 ) %>
   <%= link_to t('dispatch.new_rule'), new_admin_supervisor_rule_path, :class => "uiButton", :id => "supervisor_new"  %>
 <% end %>
 

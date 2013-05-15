@@ -1,3 +1,4 @@
+# encoding: utf-8
 module SupportHelper
 	include Portal::PortalFilters
 	include RedisKeys

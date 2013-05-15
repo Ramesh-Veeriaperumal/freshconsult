@@ -1,3 +1,4 @@
+# encoding: utf-8
 class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   layout "email_font"
@@ -142,7 +143,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "multipart/mixed"
     
     part "text/html" do |html|
-      html.body   render_message("send_cc_email", :ticket => ticket, :body => ticket.body_html,:dropboxes=>ticket.dropboxes)
+      html.body   render_message("send_cc_email", :ticket => ticket, :body => ticket.description_html,:dropboxes=>ticket.dropboxes)
     end
     
     ticket.attachments.each do |a|

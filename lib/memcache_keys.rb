@@ -36,7 +36,7 @@ module MemcacheKeys
   ES_ENABLED_ACCOUNTS = "ES_ENABLED_ACCOUNTS"
  
   # Portal customization related keys
-  PORTAL_TEMPLATE = "v1/PORTAL_TEMPLATE:%{account_id}:%{portal_id}"
+  PORTAL_TEMPLATE = "v2/PORTAL_TEMPLATE:%{account_id}:%{portal_id}"
 
   PORTAL_TEMPLATE_PAGE = "v1/PORTAL_TEMPLATE_PAGE:%{account_id}:%{template_id}:%{page_type}"
 

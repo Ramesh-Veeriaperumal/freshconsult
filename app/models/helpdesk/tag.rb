@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Helpdesk::Tag < ActiveRecord::Base
   
   include Cache::Memcache::Helpdesk::Tag

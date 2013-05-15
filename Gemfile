@@ -1,5 +1,5 @@
-source :gemcutter
-source "http://gems.github.com"
+# source :gemcutter
+source 'https://rubygems.org'
 
 gem "rake", "0.8.7"
 gem "rack", "~> 1.1.6"
@@ -9,13 +9,15 @@ gem 'json', '~> 1.7.7'
 gem "mysql"
 gem "i18n", "0.4.2"
 
-gem "RedCloth", "4.2.3"
+gem "RedCloth", "4.2.9"
 gem "authlogic", "2.1.6"
 gem "httparty", "0.10.0"
 gem "omniauth", "1.0"
 gem "omniauth-oauth"
 gem "tzinfo"
-gem "ruby-debug", "0.10.3"
+gem "ruby-debug", "0.10.3", :platforms => :ruby_18
+gem 'debugger', :platforms => :ruby_19
+gem 'test-unit', '1.2.3', :platforms => :ruby_19
 gem "omniauth-oauth2", "1.0"
 gem "omniauth-openid"
 gem "omniauth-google"
@@ -26,6 +28,7 @@ gem "omniauth-mailchimp", "~> 1.0.3"
 gem "omniauth-constantcontact2", "~> 1.0.4"
 gem "nori", "1.1.4"
 
+gem "soap4r-ruby1.9", "~> 2.0.5", :platforms => :ruby_19
 gem "jira4r", "0.3.0"
 gem "ruby-openid", :git => "git://github.com/freshdesk/ruby-openid.git", :require => "openid"
 gem "ruby-openid-apps-discovery", "1.2.0"
@@ -47,7 +50,7 @@ gem "net-dns", "0.6.1"
 
 gem "jammit", "0.6.5"
 gem "yui-compressor", :git => "git://github.com/freshdesk/ruby-yui-compressor.git"
-gem "zendesk-features", :require => "features"
+# gem "zendesk-features", :require => "features"
 
 gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
@@ -62,7 +65,7 @@ gem "sax-machine", "~> 0.1.0"
 
 gem "insensitive_hash", "0.2.3"
 
-gem "SystemTimer", "1.2.3" 
+gem "SystemTimer", "1.2.3", :platforms => :ruby_18
 gem "redis","2.2.2"
 gem "resque","1.22.0"
 gem "resque-status", "0.4.1"
@@ -99,7 +102,7 @@ gem "rails_xss", "0.4.0"
 group :development,:test do
    gem "forgery","0.5.0"
    gem "factory_girl", "1.2.3" 
-   gem "mongrel" 
+   gem "mongrel",  '>= 1.2.0.pre2'
 end
 
 group :test do

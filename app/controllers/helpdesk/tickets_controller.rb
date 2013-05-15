@@ -13,6 +13,7 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::Activities
   include Helpdesk::ToggleEmailNotification
   include SeamlessDatabasePool::ControllerFilter
+  include Helpdesk::ShowVersion
 
   use_database_pool [:user_ticket, :export_csv] => :persistent
 
@@ -74,8 +75,8 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def index
-
     #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
+    params[:html_format] = request.format.html?
     cookies.delete(:ticket_list_updated) 
     tkt = current_account.tickets.permissible(current_user)
     @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
@@ -199,6 +200,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def custom_search
+    params[:html_format] = true
     @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     render :partial => "custom_search"
   end
@@ -548,7 +550,20 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def save_draft
-    set_key(draft_key, params[:draft_data])
+    count = 0
+    tries = 3
+    begin
+      $redis_secondary.set(draft_key, params[:draft_data])
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e,{:key => draft_key, 
+        :value => params[:draft_data],
+        :description => "Redis issue",
+        :count => count})
+      if count<tries
+          count += 1
+          retry
+      end
+    end
     render :nothing => true
   end
 
@@ -659,7 +674,7 @@ class Helpdesk::TicketsController < ApplicationController
   def load_email_params
     @signature = current_user.agent.signature_value || ""
     @email_config = current_account.primary_email_config
-    @reply_email = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
+    @reply_emails = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
     @ticket ||= current_account.tickets.find_by_display_id(params[:id])
     @selected_reply_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
   end
@@ -699,8 +714,12 @@ class Helpdesk::TicketsController < ApplicationController
       filter_params = params.clone
       filter_params.delete(:action)
       filter_params.delete(:controller)
-      
-      set_key(redis_key, filter_params.to_json, 86400)
+      begin
+        $redis_secondary.set(redis_key, filter_params.to_json)
+        $redis_secondary.expire(redis_key, 86400)
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e) 
+      end
 
       @cached_filter_data = get_cached_filters
     end
@@ -728,8 +747,27 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def get_cached_filters
-      filters_str = get_key(redis_key)
-      JSON.parse(filters_str) if filters_str
+      tries = 3
+      count = 0
+      begin
+        filters_str = $redis_secondary.get("HELPDESK_TICKET_FILTERS:#{current_account.id}:#{current_user.id}:#{session.session_id}")
+        Rails.logger.info "In get_cached_filters - filters_str : #{filters_str.inspect}"
+        JSON.parse(filters_str) if filters_str
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e, {:key => redis_key, 
+          :value => filters_str,
+          :class => filters_str.class.name,
+          :uri => request.url,
+          :referer => request.referer,
+          :count => count,
+          :description => "Redis issue"})
+        if count<tries
+          count += 1
+          retry
+        else
+          return
+        end
+      end
     end
 
     def load_cached_ticket_filters
@@ -857,19 +895,6 @@ class Helpdesk::TicketsController < ApplicationController
 
     end
 
-  end
-
-  def set_show_version
-    if cookies[:new_details_view].present?
-      set_key(show_version_key, cookies[:new_details_view].eql?("true") ? "1" : "0", 86400 * 50)
-      # Expiry set to 50 days
-      cookies.delete(:new_details_view) 
-    end
-    @new_show_page = (get_key(show_version_key) == "1")
-  end
-
-  def show_version_key
-    HELPDESK_TKTSHOW_VERSION % { :account_id => current_account.id, :user_id => current_user.id }
   end
 
   def set_selected_tab

@@ -13,6 +13,8 @@ class SubscriptionsController < ApplicationController
   before_filter :check_credit_card_for_free, :only => [:plan,:plans]
   before_filter :billing_subscription, :only => [:plan, :billing, :calculate_amount, :convert_subscription_to_free]
   
+  after_filter :add_event, :only => [ :plan, :billing, :convert_subscription_to_free ]
+
   filter_parameter_logging :creditcard,:password
 
   ssl_required :billing
@@ -181,6 +183,17 @@ class SubscriptionsController < ApplicationController
     def prorate?
       !(@cached_subscription.active? and (@subscription.total_amount < @cached_subscription.amount) and 
         NO_PRORATION_PERIOD_CYCLES.include?(@cached_subscription.renewal_period))
+    end
+
+    def subscription_info(subscription)
+      subscription_attributes = Subscription::SUBSCRIPTION_ATTRIBUTES.inject({}) { |h, (k, v)| h[k] = subscription.send(v); h }
+      subscription_attributes.merge!( :next_renewal_at => subscription.next_renewal_at.to_s(:db) )
+    end    
+
+    def add_event
+      Resque.enqueue(Subscription::Events::AddEvent, 
+        { :account_id => @subscription.account_id, :subscription_id => @subscription.id, 
+          :subscription_hash => subscription_info(@cached_subscription) } )
     end
 
 end 
