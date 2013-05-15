@@ -603,6 +603,6 @@ class User < ActiveRecord::Base
   
     def has_role?
       self.errors.add(:base, I18n.t("activerecord.errors.messages.user_role")) if
-        (@role_change_flag && self.roles.blank?)
+        ((@role_change_flag or new_record?) && self.roles.blank?)
     end
 end
