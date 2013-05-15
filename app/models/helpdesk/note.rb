@@ -300,7 +300,7 @@ class Helpdesk::Note < ActiveRecord::Base
       else    
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)     
         #notify the agents only for notes
-        if note? && !self.to_emails.blank? && !inbound_email?
+        if note? && !self.to_emails.blank? && !incoming
           Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, notable, self ,notable.friendly_reply_email,{:notify_emails =>self.to_emails}) unless self.to_emails.blank? 
         end
         #notify the customer if it is public note
