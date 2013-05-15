@@ -41,10 +41,11 @@ minimizable ||= false
 								"jQuery('##{forward_note_id}').show().trigger('afterShow'); invokeRedactor('#{forward_note_id}-body') " ,
 								:class => "conv-action-icon conv-actions-forward tooltip", :title => t('fwd_to')) unless note.private %>
         <% end %>
-
+        <% if privilege?(:edit_note, note) %>
 					<%= link_to_function(t("edit"), 
 								"jQuery('##{notedetails}').hide(); jQuery('##{edit_id}').show().trigger('afterShow')",
 								:class => "conv-action-icon conv-actions-edit tooltip", :title => t('edit')) if(note.note? && note.user && note.user.agent?) %>
+        <% end %>
 		    </div>
 		    <% end %>
 			<div class="author-mail-detail cc_bcc_info">
