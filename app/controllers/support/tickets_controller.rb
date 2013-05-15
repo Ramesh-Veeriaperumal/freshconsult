@@ -39,7 +39,7 @@ class Support::TicketsController < SupportController
       respond_to do |format|
         format.html { 
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
-          redirect_to @item 
+          redirect_to support_ticket_path(@item)
         }
       end
     end
