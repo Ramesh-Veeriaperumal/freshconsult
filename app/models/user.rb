@@ -564,7 +564,9 @@ class User < ActiveRecord::Base
     end
     
     def set_customer_privilege
-      if(!(abilities.length == 1) && !privilege?(:client_manager))
+      # If the customer has only client_manager privilege and is not associated with
+      # any other privilege then dont set privileges to "0"
+      if(!privilege?(:client_manager) || !(abilities.length == 1))
         destroy_user_roles
       end
     end
@@ -580,7 +582,7 @@ class User < ActiveRecord::Base
         remove_key(GROUP_AGENT_TICKET_ASSIGNMENT % 
                {:account_id => account_id, :group_id => ag.group_id})
       end
-  end
+    end
     
     def destroy_user_roles
       self.privileges = "0"
