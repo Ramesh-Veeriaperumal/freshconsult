@@ -20,7 +20,7 @@
   			<%= link_to(t('edit'), edit_admin_va_rule_path(va_rule), :class => "button") %> 					
   		</div>
   		<%= link_to(h(va_rule.name), edit_admin_va_rule_path(va_rule), :class => "item_info") %>
-  		<%= content_tag :div, truncate(h(va_rule.description), :length => 80), :title => h(va_rule.description)  %>
+  		<%= content_tag :div, truncate(va_rule.description, :length => 80), :title =>va_rule.description %>
   	<% end %>
   <% end %>
 <%- end %>

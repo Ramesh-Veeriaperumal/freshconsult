@@ -19,7 +19,7 @@
 				<%= link_to(t('edit')  , edit_admin_automation_path(va_rule), :class => "button") %> 					
 			</div>
 			<%= link_to(h(va_rule.name), edit_admin_automation_path(va_rule), :class => "item_info") %>
-			<div><%= h va_rule.description %></div>				
+			<div><%= h(va_rule.description) %></div>				
 		</li>
 	<% end %>
 <%- end %>
