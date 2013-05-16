@@ -414,6 +414,7 @@ $single_stackbar_chart_height: 120px;
 	.report-user-details{
 		float:right;
 		text-align: right;
+		padding-top:12px;
 		.lead{
 			margin:0;
 		}
@@ -444,8 +445,10 @@ $single_stackbar_chart_height: 120px;
 					}
 				}
 			}
+			.report-summary-data{
+				margin-bottom:8px;
+			}
 			.report-summary-header{
-				margin-bottom:5px;
 				ul li{
 					vertical-align:baseline;
 				}
@@ -813,4 +816,19 @@ $animation_timing: .1s;
 }
 .twipsy.below .twipsy-arrow{
 	left:12%;	
+}
+.report-help-icon{
+	border: 0px;
+	float: right;
+	width: 24px;
+	height: 24px;
+	background-color: #c7c7c7;
+	text-align: center;
+	color: #fff;
+	@include text-shadow(none);
+	font-weight: bold;
+	&:hover{
+		color: #fff;
+		text-decoration:none;
+	}
 }

@@ -10,6 +10,7 @@ class Reports::AgentGlanceReportsController < ApplicationController
   before_filter :parse_wf_params,:set_selected_tab, 
                 :only => [:generate,:generate_pdf,:send_report_email,:fetch_activity_ajax,:fetch_metrics]
   before_filter :filter_data,:set_selected_tab, :only => [:index]
+  before_filter :pass_solution_artical_link, :only => [:fetch_activity_ajax,:fetch_metrics]
 
   def index
     
@@ -56,6 +57,10 @@ class Reports::AgentGlanceReportsController < ApplicationController
     # puts "===pdfclass=#{pdf.class}"
     # Reports::PdfSender.deliver_send_report_pdf(pdf)
 
+  end
+
+  def pass_solution_artical_link
+      @solution_artical_link = %(https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85337-how-to-read-agent-at-a-glance-report)
   end
 
   protected
