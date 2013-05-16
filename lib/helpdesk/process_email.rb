@@ -4,7 +4,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include EmailCommands
   include ParserUtil
   include Helpdesk::ProcessByMessageId
-  include ActionView::Helpers::TextHelper, WhiteListHelper
+  include ActionView::Helpers::TagHelper, ActionView::Helpers::TextHelper,ActionView::Helpers::UrlHelper, WhiteListHelper
 
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
   MESSAGE_LIMIT = 10.megabytes
