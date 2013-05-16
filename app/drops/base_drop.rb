@@ -7,7 +7,9 @@ class BaseDrop < Liquid::Drop
   
   def initialize(source)
     @source = source
-    @liquid = liquid_attributes.inject({}) { |h, k| h.update k.to_s => @source.send(k) }
+    @liquid = liquid_attributes.inject({}) do |h, k| 
+      h.update k.to_s => @source.send(k) if @source.respond_to?(k)
+    end
   end
   
   def context=(current_context)

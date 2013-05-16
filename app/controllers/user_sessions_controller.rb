@@ -321,4 +321,5 @@ include RedisKeys
       @contact.language = current_portal.language
       return @contact
     end
+    TOKEN_TYPE = "OpenSocialFirstTimeAccessToken"
 end

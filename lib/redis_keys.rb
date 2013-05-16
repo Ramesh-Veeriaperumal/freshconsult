@@ -71,8 +71,12 @@ module RedisKeys
 
 	def add_to_set(key, values, expires = 86400)
 		newrelic_begin_rescue do
-			values.each do |val|
-				$redis.sadd(key, val)
+			if values.respond_to?(:each)
+				values.each do |val|
+					$redis.sadd(key, val)
+				end
+			else
+				$redis.sadd(key, values)
 			end
 			# $redis.expire(key,expires) if expires
 	  end

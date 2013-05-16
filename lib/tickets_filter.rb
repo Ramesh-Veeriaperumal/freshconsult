@@ -37,6 +37,18 @@ module TicketsFilter
     
     
   ]
+
+  JOINS = {
+    :on_hold => "STRAIGHT_JOIN helpdesk_ticket_statuses ON 
+          helpdesk_tickets.account_id = helpdesk_ticket_statuses.account_id AND 
+          helpdesk_tickets.status = helpdesk_ticket_statuses.status_id",
+    :overdue => "STRAIGHT_JOIN helpdesk_ticket_statuses ON 
+          helpdesk_tickets.account_id = helpdesk_ticket_statuses.account_id AND 
+          helpdesk_tickets.status = helpdesk_ticket_statuses.status_id",
+    :due_today => "STRAIGHT_JOIN helpdesk_ticket_statuses ON 
+          helpdesk_tickets.account_id = helpdesk_ticket_statuses.account_id AND 
+          helpdesk_tickets.status = helpdesk_ticket_statuses.status_id",
+  }
   
   SELECTOR_NAMES = Hash[*SELECTORS.inject([]){ |a, v| a += [v[0], v[1]] }]
   ADDITIONAL_FILTERS = Hash[*SELECTORS.inject([]){ |a, v| a += [v[0], v[2]] }]
@@ -92,7 +104,7 @@ module TicketsFilter
   def self.filter(filter, user = nil, scope = nil)
     to_ret = (scope ||= default_scope)
     
-    conditions = load_conditions(user)
+    conditions = load_conditions(user,filter)
 
     if user && filter == :monitored_by
       to_ret = user.subscribed_tickets.scoped(:conditions => {:spam => false, :deleted => false})
@@ -103,7 +115,8 @@ module TicketsFilter
     ADDITIONAL_FILTERS[filter].each do |af|
       to_ret = to_ret.scoped(:conditions => conditions[af])
     end unless ADDITIONAL_FILTERS[filter].nil?
-
+    join = JOINS[filter]
+    to_ret = to_ret.scoped(:joins => join) if join
     to_ret
   end
 
@@ -139,13 +152,13 @@ module TicketsFilter
   end
   
   protected
-    def self.load_conditions(user)
+    def self.load_conditions(user,filter)
       donot_stop_sla_status_query = "select status_id from helpdesk_ticket_statuses where 
                   (stop_sla_timer is false and account_id = #{user.account.id} and deleted is false)"
       onhold_statuses_query = "select status_id from helpdesk_ticket_statuses where 
       (stop_sla_timer is true and account_id = #{user.account.id} and deleted is false and status_id not in (#{RESOLVED},#{CLOSED}))"
-      group_ids = user.agent_groups.find(:all, :select => 'group_id').map(&:group_id)
-      group_ids = [-1] if group_ids.empty? #The whole group thing is a hack till new views come..
+      group_ids = user.agent_groups.find(:all, :select => 'group_id').map(&:group_id) if filter.nil? || filter.eql?(:my_groups)
+      group_ids = [-1] if group_ids.nil? || group_ids.empty? #The whole group thing is a hack till new views come..
       
       {
         :spam         =>    { :spam => true, :deleted => false },
@@ -161,15 +174,24 @@ module TicketsFilter
         #:new_and_open     => ["status in (?, ?)", STATUS_KEYS_BY_TOKEN[:new], STATUS_KEYS_BY_TOKEN[:open]],
         :resolved         => ["status = ?", RESOLVED],
         :closed           => ["status = ?", CLOSED],
-        :due_today        => ["due_by >= ? and due_by <= ? and status in (#{donot_stop_sla_status_query})", Time.zone.now.beginning_of_day.to_s(:db), 
-                                 Time.zone.now.end_of_day.to_s(:db)],
-        :overdue          => ["due_by <= ? and status in (#{donot_stop_sla_status_query})", Time.zone.now.to_s(:db)],
+        # :due_today        => ["due_by >= ? and due_by <= ? and status in (#{donot_stop_sla_status_query})", Time.zone.now.beginning_of_day.to_s(:db), 
+        #                          Time.zone.now.end_of_day.to_s(:db)],
+        :due_today        => ["due_by >= ? and due_by <= ? 
+                                AND helpdesk_ticket_statuses.stop_sla_timer IS FALSE 
+                                AND helpdesk_ticket_statuses.deleted IS FALSE", 
+                                Time.zone.now.beginning_of_day.to_s(:db), Time.zone.now.end_of_day.to_s(:db)],
+        # :overdue          => ["due_by <= ? and status in (#{donot_stop_sla_status_query})", Time.zone.now.to_s(:db)],
+        :overdue          => ["due_by <= ? AND helpdesk_ticket_statuses.stop_sla_timer IS FALSE 
+                                AND helpdesk_ticket_statuses.deleted IS FALSE", Time.zone.now.to_s(:db)],
         :pending          => ["status = ?", PENDING],
-        :on_hold          => ["status in (#{onhold_statuses_query})"],
+        # :on_hold          => ["status in (#{onhold_statuses_query})"],
+        :on_hold          => ["helpdesk_ticket_statuses.stop_sla_timer IS TRUE 
+                                AND helpdesk_ticket_statuses.deleted IS FALSE
+                                and helpdesk_ticket_statuses.status_id NOT IN 
+                                (#{RESOLVED},#{CLOSED})"],
         :twitter          => ["source = ?", SOURCE_KEYS_BY_TOKEN[:twitter]],
         :open_or_pending  => ["status not in (?, ?) and helpdesk_tickets.deleted=?" , RESOLVED, CLOSED , false],
         :resolved_or_closed  => ["status in (?, ?) and helpdesk_tickets.deleted=?" , RESOLVED, CLOSED,false]
       }
     end
-
 end

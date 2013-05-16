@@ -1,8 +1,8 @@
 # encoding: utf-8
 class Helpdesk::TimeSheetsController < ApplicationController
   
-  include RedisKeys
-  
+  include Helpdesk::ShowVersion  
+
   before_filter { |c| c.requires_feature :timesheets }
   before_filter { |c| c.requires_permission :manage_tickets }  
   before_filter :set_show_version
@@ -178,14 +178,6 @@ private
     to_time = to_time.to_time if to_time.respond_to?(:to_time)
     running_time =  ((to_time - from_time).abs).round 
     return (time_entry.time_spent + running_time)
-  end
-
-  def set_show_version
-    @new_show_page = (get_key(show_version_key) == "1")
-  end
-  
-  def show_version_key
-    HELPDESK_TKTSHOW_VERSION % { :account_id => current_account.id, :user_id => current_user.id }
   end
 
   def respond_to_format result

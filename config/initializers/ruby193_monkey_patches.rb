@@ -3,6 +3,7 @@ MissingSourceFile::REGEXPS << [/^cannot load such file -- (.+)$/i, 1]
 
 
  Encoding.default_external = Encoding::UTF_8 if RUBY_VERSION > "1.9"
+ Encoding.default_internal = Encoding::UTF_8 if RUBY_VERSION > "1.9"
 
 # TZInfo needs to be patched.  In particular, you'll need to re-implement the datetime_new! method:
 require 'tzinfo'
@@ -143,6 +144,28 @@ if RUBY_VERSION > "1.9"
   end
  
  
+  # Serialized columns in AR don't support UTF-8 well, so set the encoding on those as well.
+  class ActiveRecord::Base
+    def unserialize_attribute_with_utf8(attr_name)
+      traverse = lambda do |object, block|
+        if object.kind_of?(Hash)
+          object.each_value { |o| traverse.call(o, block) }
+        elsif object.kind_of?(Array)
+          object.each { |o| traverse.call(o, block) }
+        else
+          block.call(object)
+        end
+        object
+      end
+      force_encoding = lambda do |o|
+        o.force_encoding(Encoding::UTF_8) if o.respond_to?(:force_encoding)
+      end
+      value = unserialize_attribute_without_utf8(attr_name)
+      traverse.call(value, force_encoding)
+    end
+    alias_method_chain :unserialize_attribute, :utf8
+  end
+
   #
   # Source: https://rails.lighthouseapp.com/projects/8994/tickets/2188-i18n-fails-with-multibyte-strings-in-ruby-19-similar-to-2038
   # (fix_params.rb)

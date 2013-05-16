@@ -1,5 +1,5 @@
 <% content_for :sidebar do -%><%- end %>
 <h3 class="title"><%=t('canned_folders.title')%></h3>
-<% form_for (@ca_res_folder, :html => {:id => "edit_canned_response_folder" }) do |f| %>
+<% form_for(@ca_res_folder, :html => {:id => "edit_canned_response_folder" }) do |f| %>
 	<%= render :partial => "folder_form", :locals => { :f => f } %>
 <% end %>

@@ -268,7 +268,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			},
 		init: 
 			function(){
-
+				
 				filter_data.each(function(item){
 					if(item.value != undefined){
 						item.value = unescapeHtml(item.value)
@@ -283,6 +283,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				})
 
 				domUtil.add_to_hash(filter_data);
+
 				if(setting.init_feed.size())
 					domUtil.feed_data(setting.init_feed);
 				else

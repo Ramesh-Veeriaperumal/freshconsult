@@ -13,6 +13,7 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::Activities
   include Helpdesk::ToggleEmailNotification
   include SeamlessDatabasePool::ControllerFilter
+  include Helpdesk::ShowVersion
 
   use_database_pool [:user_ticket, :export_csv] => :persistent
 
@@ -73,8 +74,8 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def index
-
     #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
+    params[:html_format] = request.format.html?
     cookies.delete(:ticket_list_updated) 
     tkt = current_account.tickets.permissible(current_user)
     @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
@@ -198,6 +199,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def custom_search
+    params[:html_format] = true
     @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     render :partial => "custom_search"
   end
@@ -869,23 +871,6 @@ class Helpdesk::TicketsController < ApplicationController
 
     end
 
-  end
-
-  def set_show_version
-    if cookies[:new_details_view].present?
-      $redis_secondary.set(show_version_key, cookies[:new_details_view].eql?("true") ? "1" : "0")
-      $redis_secondary.expire(show_version_key, 86400 * 50)
-      # Expiry set to 50 days
-      cookies.delete(:new_details_view) 
-    end
-    @new_show_page = ($redis_secondary.get(show_version_key) == "1")
-  rescue Exception => e
-    NewRelic::Agent.notice_error(e)
-    return
-  end
-
-  def show_version_key
-    HELPDESK_TKTSHOW_VERSION % { :account_id => current_account.id, :user_id => current_user.id }
   end
 
   def set_selected_tab

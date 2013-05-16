@@ -95,13 +95,15 @@ def init_es_indexing(es_account_ids)
   existing_accounts = Array.new
   es_account_ids.each do |account_id|
     account = Account.find_by_id(account_id)
+    next if account.nil?
     account.make_current
     if account.es_enabled_account.nil?
       account.enable_elastic_search
       account.create_search_index
       ENV['INDEX'] = account.search_index_name
       ENV['CLASS'] = import_classes(account_id, klasses)
-      Rake::Task["freshdesk_tire:multi_class_import"].execute("CLASS='#{ENV['CLASS']}' INDEX=#{ENV['INDEX']} ACCOUNT_ID=#{account_id}")
+      ENV['ACCOUNT_ID'] = account_id.to_s
+      Rake::Task["freshdesk_tire:multi_class_import"].execute("CLASS='#{ENV['CLASS']}' INDEX=#{ENV['INDEX']} ACCOUNT_ID=#{ENV['ACCOUNT_ID']}")
     else
       puts '='*100, ' '*10+"Index already exists for Account ID: #{account_id}. Please use reindex task for Account ID: #{account_id}", '='*100, ""
       existing_accounts.push(account_id)
@@ -118,6 +120,7 @@ def init_reindex(es_account_ids)
   end
   es_account_ids.each do |account_id|
     account = Account.find_by_id(account_id)
+    next if account.nil?
     account.make_current
     ENV['INDICES'] = account.search_index_name
     ENV['ACCOUNT_ID'] = account_id.to_s
