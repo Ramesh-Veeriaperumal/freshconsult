@@ -450,14 +450,6 @@ class User < ActiveRecord::Base
     customer? && customer
   end
 
-  def to_mob_json
-    options = { 
-      :methods => [ :original_avatar, :medium_avatar, :avatar_url, :is_agent, :is_customer, :recent_tickets, :is_client_manager, :company_name ],
-      :only => [ :id, :name, :email, :mobile, :phone, :job_title, :twitter_id, :fb_profile_id, :external_id ]
-    }
-    to_json options
-  end
-
   def recent_tickets(limit = 5)
     tickets.newest(limit)
   end

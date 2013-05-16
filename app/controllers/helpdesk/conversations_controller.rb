@@ -132,7 +132,11 @@ class Helpdesk::ConversationsController < ApplicationController
           update_activities
           render :file => "helpdesk/notes/create.rjs" 
         }
+        format.mobile {
+          render :json => {:success => true,:item => @item}.to_json
+        }
       end
+      
       ensure
         Thread.current[:notifications] = nil
     end

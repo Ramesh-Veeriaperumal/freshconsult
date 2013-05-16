@@ -285,9 +285,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def update_ticket_properties
     old_item = @item.clone
-    #old_timer_count = @item.time_sheets.timer_active.size -  we will enable this later
     if @item.update_attributes(params[nscname])
-      #flash[:notice] = flash[:notice].chomp(".")+"& \n"+ t(:'flash.tickets.timesheet.timer_stopped') if ((old_timer_count - @item.time_sheets.timer_active.size) > 0)
       respond_to do |format|
         format.html { 
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
@@ -301,6 +299,9 @@ class Helpdesk::TicketsController < ApplicationController
         }
         format.json { 
           render :json => request.xhr? ? { :success => true }.to_json  : @item.to_json({:basic => true}) 
+        }
+        format.mobile { 
+          render :json => { :success => true, :item => @item }.to_json 
         }
       end
     else
@@ -318,6 +319,9 @@ class Helpdesk::TicketsController < ApplicationController
         }
         format.xml {
           render :xml =>@item.errors
+        }
+        format.mobile { 
+          render :json => { :failure => true, :errors => edit_error }.to_json 
         }
       end
     end
@@ -384,6 +388,10 @@ class Helpdesk::TicketsController < ApplicationController
           redirect_to :back 
         }
         format.js
+        format.mobile {
+          render :json => { :failure => true,
+             :rule_name => I18n.t("admin.automations.failure") }.to_json 
+        }
       end
     else  
       update_custom_field @item    
