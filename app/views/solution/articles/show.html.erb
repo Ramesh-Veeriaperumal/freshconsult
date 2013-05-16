@@ -12,15 +12,12 @@
 		<%= link_to(t('edit'), edit_solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article), :class => "btn small") %>
 	</div>	
 	<h2 class="title"><%= h(@article.title) %></h2> 
-	<div class="info_data">
-		<div class="article_info">
-		By <b> <%= @article.user.name%></b> 
-		| <%= @article.updated_at.strftime("%B %e %Y at %I:%M %p")%> 
-		<% if( !@article.folder.visible?(current_user) )%> 
-			| <span class="status_text lock" title="This artical is visible only to Agents">Private</span>
-		<% end %>
-		<span class="status_text"><%= @article.type_name %></span>
-		</div>
+	<div class="help-text">
+		By <b> <%= @article.user.name %></b>, <%= @article.updated_at.to_s(:long_day_with_time) %> 
+		
+		<%= content_tag(:span, t('private'), :class => "label tooltip", 
+					:title => "This artical is visible only to Agents") if(!@article.folder.visible?(current_user)) %>
+		<span class="label"><%= @article.type_name %></span>
 	</div> 
 	 
 	

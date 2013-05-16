@@ -12,16 +12,8 @@ class Solution::FoldersController < ApplicationController
   before_filter :set_selected_tab       
   before_filter :page_title
   
-  
-  def index        
-    current_category  = current_account.solution_categories.find(params[:category_id])
-    @folders = current_category.folders.visible(current_user).all   
-    respond_to do |format|
-      format.html # index.html.erb
-      format.xml  { render :xml => @folders }
-      format.json  { render :json => @folders }
-    end
-    
+  def index
+    redirect_to solution_category_path(params[:category_id])
   end
 
   def show    

@@ -3,7 +3,7 @@ class Solution::ArticlesController < ApplicationController
   include Helpdesk::ReorderUtility
   
   before_filter :set_selected_tab, :portal_check
-  
+
   before_filter :check_solution_permission, :only => [:show]
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :except => [:index, :show] do |c| 
@@ -12,12 +12,12 @@ class Solution::ArticlesController < ApplicationController
   before_filter :page_title 
   
   
-  def index    
-    redirect_to_url = solution_category_folder_url(params[:category_id], params[:folder_id])    
-    redirect_to redirect_to_url    
+  def index
+    redirect_to solution_category_folder_url(params[:category_id], params[:folder_id])
   end
 
-  def show           
+  def show
+    @enable_pattern = true
     @article = current_account.solution_articles.find_by_id!(params[:id], :include => :folder)
     respond_to do |format|
       format.html

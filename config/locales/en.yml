@@ -9,6 +9,7 @@ en:
   unblock: "Whitelist"
   enabled: "Enabled"
   disabled: "Disabled"
+  private: "Private"
   more: "more"
   tip_on: "Click to Enable"
   tip_off: "Click to Disable"
