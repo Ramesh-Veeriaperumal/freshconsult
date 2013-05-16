@@ -1,5 +1,7 @@
 class Admin::RolesController < Admin::AdminController
   
+  before_filter { |c| c.requires_feature :custom_roles }
+  
   before_filter :load_object, :only => [ :show, :edit, :update, :destroy ]
   before_filter :check_default, :only => [ :update, :destroy ]
   before_filter :check_users, :only => :destroy

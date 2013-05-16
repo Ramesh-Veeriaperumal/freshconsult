@@ -34,7 +34,7 @@ HTML
           ['/admin/products',             'multi-product',           feature?(:multi_product) && privilege?(:admin_tasks) ],
           ['/social/twitters',            'twitter-setting',         feature?(:twitter) && privilege?(:admin_tasks) ],
           ['/social/facebook',            'facebook-setting',        current_account.features?(:facebook) && privilege?(:admin_tasks) ],
-          ['/admin/roles',                'role',                    privilege?(:admin_tasks) ],
+          ['/admin/roles',                'role',                    feature?(:custom_roles) && privilege?(:admin_tasks) ],
           ['/agents',                     'agent',                   privilege?(:manage_users) ],
           ['/groups',                     'group',                   privilege?(:admin_tasks) ],
           ['/admin/day_passes',           'day_pass',                privilege?(:manage_account) ]

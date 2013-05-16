@@ -290,7 +290,8 @@ class Account < ActiveRecord::Base
     },
 
     :estate => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin,
+        :custom_roles ],
       :inherits => [ :garden ]
     },
 
@@ -310,7 +311,8 @@ class Account < ActiveRecord::Base
     },
 
     :estate_classic => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin,
+        :custom_roles ],
       :inherits => [ :garden_classic ]
     }
 

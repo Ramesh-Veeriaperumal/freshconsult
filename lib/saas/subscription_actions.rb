@@ -11,13 +11,16 @@ class SAAS::SubscriptionActions
       drop_custom_domain(account)
       drop_multiple_emails(account)
       drop_css_customization(account)
+      drop_custom_roles(account)
     when :blossom
       drop_custom_sla(account)
       update_timezone_to_users(account)
       drop_products(account)
       drop_css_customization(account)
+      drop_custom_roles(account)
     when :garden
       drop_layout_customization(account)
+      drop_custom_roles(account)
     end
   end
   
@@ -81,6 +84,22 @@ class SAAS::SubscriptionActions
    def drop_css_customization(account)
     account.portal_templates.update_all( :custom_css => nil, :updated_at => Time.now)
     drop_layout_customization(account)
+   end
+   
+   def drop_custom_roles(account)
+     account.technicians.each do |agent|
+       if agent.privilege?(:manage_account)
+         new_roles = [account.roles.find_by_name("Account Administrator")]
+       elsif agent.roles.exists?(:default_role => true)
+         new_roles = agent.roles.find_all_by_default_role(true)
+       else
+         new_roles = [account.roles.find_by_name("Agent")]
+       end
+       agent.roles = new_roles
+       agent.save
+     end
+     
+     Role.destroy_all(:account_id => account.id, :default_role => false )
    end
  
 end
