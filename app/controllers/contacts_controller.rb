@@ -16,6 +16,7 @@ class ContactsController < ApplicationController
    include RedisKeys
 
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
+   before_filter :check_user_role, :only =>[:update,:create]
    before_filter :set_selected_tab
    before_filter :check_agent_limit, :only =>  :make_agent
    before_filter :load_item, :only => [:show, :edit, :update, :make_agent,:make_occasional_agent]
@@ -302,6 +303,14 @@ protected
         end
       rescue Exception => e
         @contacts = {:error => get_formatted_message(e)}
+      end
+    end
+
+    #To make sure no other roles are set via api except customer,client_manager
+    def check_user_role
+      user_role = params[:user][:user_role]
+      unless user_role == User::USER_ROLES_KEYS_BY_TOKEN[:customer] || user_role == User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]
+        params[:user][:user_role] = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
       end
     end
 end
