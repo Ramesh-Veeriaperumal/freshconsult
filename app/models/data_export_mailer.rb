@@ -8,7 +8,7 @@ class DataExportMailer < ActionMailer::Base
     subject       "Data Export for #{options[:domain]}"
     sent_on       Time.now
     body(:url => options[:url])
-    content_type  "text/plain"
+    content_type  "text/html"
   end 
 
 end
