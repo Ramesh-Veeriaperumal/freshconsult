@@ -100,3 +100,13 @@ handlers:
     object_id: Va::Handlers::ObjectId
     nested_field: Va::Handlers::NestedField
     allow_all: Va::Handlers::AllowAll
+
+DEFAULT_NEGATABLE_COLUMS:
+    - priority
+    - ticket_type
+    - status
+    - responder_id
+    - group_id
+    - product_id
+NEGATE_OPERATOR: is_not
+NEGATE_CONDITION_OPERATOR: ' OR ' 
