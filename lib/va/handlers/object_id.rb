@@ -16,10 +16,6 @@ class Va::Handlers::ObjectId < Va::RuleHandler
     def filter_query_is
       construct_query (proper_value ? '=' : 'is')
     end
-
-    def filter_query_is_not
-      construct_query '!='
-    end
     
     def construct_query(q_operator)
       [ "#{condition.db_column} #{q_operator} ?", proper_value ]
