@@ -34,8 +34,8 @@ module Notifications::MessageBroker
 
 		def push(reciever_id,message_json)
 			key = game_notification_key(reciever_id)
-			$redis.lpush(key,message_json)
-			$redis.rpop(key) if $redis.llen(key) > USER_FEED_LIMIT
+			$redis_secondary.lpush(key,message_json)
+			$redis_secondary.rpop(key) if $redis_secondary.llen(key) > USER_FEED_LIMIT
 		end
 
 		def pull(count=USER_FEED_LIMIT)
@@ -43,11 +43,11 @@ module Notifications::MessageBroker
 	    tries = 3
 	    begin
 				key = game_notification_key
-				total_length = $redis.llen(key)
+				total_length = $redis_secondary.llen(key)
 				results = []
 				count = total_length if count > total_length
 				count.times do |index|
-					results.push($redis.lpop(key))
+					results.push($redis_secondary.lpop(key))
 				end
 				results
 			rescue Exception => e
