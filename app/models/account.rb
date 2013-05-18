@@ -268,12 +268,12 @@ class Account < ActiveRecord::Base
     
     :pro => {
       :features => [ :scenario_automations, :customer_slas, :business_hours, :forums, 
-        :surveys, :scoreboard, :facebook, :timesheets, :css_customization ],
+        :surveys, :scoreboard, :facebook, :timesheets, :css_customization, :advanced_reporting ],
       :inherits => [ :basic ]
     },
     
     :premium => {
-      :features => [ :multi_product, :multi_timezone , :multi_language, :advanced_reporting],
+      :features => [ :multi_product, :multi_timezone , :multi_language, :enterprise_reporting],
       :inherits => [ :pro ] #To make the hierarchy easier
     },
     
@@ -283,18 +283,18 @@ class Account < ActiveRecord::Base
     
     :blossom => {
       :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
-        :custom_domain, :multiple_emails],
+        :custom_domain, :multiple_emails, :advanced_reporting],
       :inherits => [ :sprout ]
     },
     
     :garden => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :css_customization, :advanced_reporting ],
+        :css_customization ],
       :inherits => [ :blossom ]
     },
 
     :estate => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting ],
       :inherits => [ :garden ]
     },
 
@@ -303,18 +303,18 @@ class Account < ActiveRecord::Base
     },
     
     :blossom_classic => {
-      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets],
+      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, :advanced_reporting ],
       :inherits => [ :sprout_classic ]
     },
     
     :garden_classic => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :css_customization, :advanced_reporting ],
+        :css_customization],
       :inherits => [ :blossom_classic ]
     },
 
     :estate_classic => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting ],
       :inherits => [ :garden_classic ]
     }
 
@@ -329,7 +329,7 @@ class Account < ActiveRecord::Base
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
     :anonymous_tickets =>true, :survey_links => true, :gamification_enable => true, :google_signin => true,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
-    :personalized_email_replies => false, :enterprise_reporting => false}
+    :personalized_email_replies => false}
     
   
   has_features do
