@@ -69,7 +69,7 @@ class Billing::Subscription
 
   def update_subscription(subscription, prorate)
     data = (subscription_data(subscription)).merge({ :prorate => prorate })
-    data.merge!(:trial_end => subscription.next_renewal_at.to_i) if subscription.trial?
+    data.merge!(:trial_end => subscription.next_renewal_at.to_i) if subscription.trial? and subscription.next_renewal_at < Time.now
     
     ChargeBee::Subscription.update(subscription.account_id, data)
   end 
