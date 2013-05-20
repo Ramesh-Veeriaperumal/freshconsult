@@ -130,6 +130,9 @@ javascripts:
 
   workspace: 
     - public/javascripts/bootstrap/twipsy.js
+    - public/javascripts/pattern/spin.js
+    - public/javascripts/pattern/jquery.spin.js
+    - public/javascripts/app/loading-init.js
     # - public/javascripts/bootstrap/modal.js
     - public/javascripts/bootstrap/tabs.js
     - public/javascripts/bootstrap/popover.js

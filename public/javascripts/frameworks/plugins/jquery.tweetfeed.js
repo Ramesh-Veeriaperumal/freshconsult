@@ -2,7 +2,7 @@
   
   var self           = null,
       tweetlist      = $("<div />"),
-      loading        = $("<div class='loadingbox' />"),
+      loading        = $("<div class='sloading loading-block' />"),
       new_result     = $("<div class='info-highlight center' />").hide(),
       counter        = $("<a href='#' />")
                            .bind("click", function(ev){ ev.preventDefault(); prependTweets(); });

@@ -1,8 +1,12 @@
-.ajax-loader, .loading, .loading-right, 
+//Finished classes ui-autocomplete-loading, paddingloading,loading-box, ajax-loader, loading-center, 
+//.page-list .list-group .loadingbox, loading-amount, 
+
+
+/*.ajax-loader, .loading,
 .loading-center, .loading-box,
 .ui-autocomplete-loading, .paddingloading,
 .page-list .list-group .loadingbox,
-.loading-amount, .ui-after-submit,.reports-loading{ background-image:image-url('/images/animated/ajax-loader.gif'); }
+.loading-amount, .ui-after-submit{ background-image:image-url('/images/animated/ajax-loader.gif'); } */
 .response-loading #resp-icon{ background: image-url('/images/animated/canned-response.gif') no-repeat !important; }
 #ticket_list_count.fetching{ background: image-url("/images/animated/ticket-count.gif"); }
 #tickets-expanded .fd-ajaxmenu.loading{ background-image:image-url('/images/animated/loading.gif'); }
@@ -10,10 +14,11 @@
 	background-image:image-url('/images/animated/load-fb-style.gif'); background-repeat:no-repeat;
 }
 
-.ajax-loader, .loading, .loading-right, .loading-center, .loading-box, .loading-fb, .paddingloading{
+/*.ajax-loader, .loading, .loading-right, .loading-center, .loading-box, .loading-fb, .paddingloading{*/
+.loading-fb{
 	background-repeat:no-repeat;
 	background-position: 10px 10px;
-}
+} 
 .reports-loading{
 	z-index:99999; 
 	margin: 0 auto;
@@ -37,6 +42,45 @@
   background-position:center center;
   height:100px;
 }
+// Loader spin style sheet
+.loading-block{
+	@include min-height(100px);
+}
+.loading-align{
+	margin-top:15px;
+	display: -webkit-box;
+	-webkit-box-orient: horizontal;
+	-webkit-box-pack: center;
+	-webkit-box-align: center;
+
+	display: -moz-box;
+	-moz-box-orient: horizontal;
+	-moz-box-pack: center;
+	-moz-box-align: center;
+
+	 /* IE */
+    display: -ms-box;
+    -ms-box-pack: center;
+    -ms-box-align: center;
+
+	display: box;
+	box-orient: horizontal;
+	box-pack: center;
+	box-align: center;
+}
+.sloading.inner-form-hide{
+	@include min-height(100px);
+	form{ 
+   		visibility:hidden; 
+   	}
+}
+.page-search{
+	.live_search{
+		width:445px;
+	}
+}
+// Loader spin style sheet End
+/*
 
 input[type="text"].loading, .ui-autocomplete-loading{
   background-position:right 3px;
@@ -52,19 +96,13 @@ input[type="text"].loading, .ui-autocomplete-loading{
 	height:200px;
 }
 
-.loading-amount{
-	background-repeat:no-repeat;
-	background-position: center;
-   	div{ visibility:hidden; }
-}
-
 .canned-response-menu.loading{ background-position:center 8px; }
 
 .ui-after-submit{
 	background-repeat:no-repeat; 
 	background-position: center;	
 }
-
+*/
 #ticket_list_count{
 	@include inline-block;
 	width:18px;
@@ -86,7 +124,7 @@ input[type="text"].loading, .ui-autocomplete-loading{
 .loading-fb, .request_details .request-cnt-first .loading-edit{ 	
 	min-height:20px; background-position: 0 0;
 }
-
+/*
 .ui-autocomplete-loading{
 	 background-color: white;
 	 background-position: right center;
@@ -97,7 +135,7 @@ input[type="text"].loading, .ui-autocomplete-loading{
 .loading-center, .loading-box{ background-position: center center; }
 .loading-box{ height:100px; }
 .loading-right, .paddingloading{ background-position: right 3px; }
-
+*/
 .integration_widget, #jira_widget {
 	.loading-fb {
 		width:90%;
@@ -112,6 +150,7 @@ input[type="text"].loading, .ui-autocomplete-loading{
 	margin:3px 8px;
 }
 
+/*
 .report-page .loading-center{
 	padding-top:50%;
-}
+}*/

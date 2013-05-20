@@ -2423,17 +2423,15 @@ p strong{
 		margin-left: 0;
 		display: block;
 	}
-	.loading-center  {
-		display: none;
-		height: 22px;
-		width:50px;
-		margin-top: -3px;
-		float: right;
+	.loading-small{
+		display:none;
 	}
 	&.loading_activities {
 
-		.loading-center  {
+		.loading-small  {
 			display: block;
+			margin:11px 30px 11px 0px;
+			float:right;
 		}
 
 		.toggle-button {

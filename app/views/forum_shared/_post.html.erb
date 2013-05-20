@@ -1,6 +1,6 @@
 <div class="description <%= cycle('stripe', '') %>"  id="<%= dom_id post %>-row">
 	<a href="#<%= dom_id post %>" rel="bookmark"></a>
-	<div class="item-right-actions">		
+	<div class="item-right-actions">	
 		<ul class="nav-drop">
 			<% if logged_in? && (post.editable_by?(current_user) || current_user.has_manage_forums?) -%>
 			<li>
@@ -47,7 +47,7 @@
 	<div class="user_details">
 		<%= user_avatar(post.user) if post.user %>
 		<%= t(".posted_on", :user_name => link_to_user(post.user, {:class => "user_name", "data-placement" => "topRight", :rel => "hover-popover", "data-widget-container" => "post-agent-hovercard_#{post.id}"}), :post_date => formated_date(post.created_at) ) %>
-		<div class="loading-center hide" id='<%= "loading_#{post.id}" %>'></div>
+		<div class="sloading hide" id='<%= "loading_#{post.id}" %>'></div>
 	</div>
 	<div class="details" id='<%= "post_details_#{post.id}" %>'>
 		<%= auto_link(post.body_html, :all, :target => "_blank") %>

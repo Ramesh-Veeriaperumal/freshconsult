@@ -136,7 +136,7 @@ jQuery('body').append('<div id="agent_collision_container" class="hide"></div>')
 // ---- EXTRACTED FROM /helpdesk/shared/_ticket_view.html.erb ----
   
 	jQuery('#recent_ticket_count').click(function(){
-	    jQuery("#ticket-list").html("<div class='loading-box'></div>"); 
+	    jQuery("#ticket-list").html("<div class='sloading loading-small loading-block'></div>"); 
 	     jQuery.ajax({
 	        url: "/helpdesk/tickets/custom_search",
 	        type: "POST",

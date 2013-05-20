@@ -38,7 +38,7 @@
 
     function show_canned_response(){
       var user_id=jQuery('#helpdesk_note_user_id').val();
-      jQuery("#bulk_canned_response_holder").addClass("loading-center");
+      jQuery("#bulk_canned_response_holder").append("<div class='sloading'></div>");
       jQuery("#bulk_canned_response_holder")
         .load("/helpdesk/canned_responses")
         .show();
@@ -47,7 +47,6 @@
     show_canned_response();
 
     function getCannedResponse(ca_resp_id, element){
-      jQuery("#bulk_canned_response_holder").addClass("loading")
       jQuery(element).addClass("response-loading");
         jQuery.ajax({   type: 'POST',
                         url: '/helpdesk/canned_responses/show/?ca_resp_id='+ca_resp_id,
