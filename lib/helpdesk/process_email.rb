@@ -4,7 +4,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include EmailCommands
   include ParserUtil
   include Helpdesk::ProcessByMessageId
-  
+  include Utilities
+
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
   MESSAGE_LIMIT = 10.megabytes
 
@@ -17,7 +18,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       account.make_current
       encode_stuffs
       kbase_email = account.kbase_email
-      params[:html] = params[:text] if params[:html].blank? && !params[:text].blank?
+      params[:html] = body_html_with_formatting(params[:text]) if params[:html].blank? && !params[:text].blank?
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
         email_config = account.email_configs.find_by_to_email(to_email[:email])
         return if email_config && (from_email[:email] == email_config.reply_email)
@@ -416,4 +417,5 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         @description_html = "#{@description_html[0,MESSAGE_LIMIT]}<b>[message_cliped]</b>"
       end
     end
+    
 end
