@@ -3,7 +3,7 @@
 <% first_search = nil %>
 <% handle_id = nil %>
 <h3 class="title">Twitter</h3>
-<div class="page-list">
+<div class="sloading loading-small loading-block">
 	<table class="tweet-table">
 		<tr>
 			<td class="left-panel">
@@ -44,7 +44,7 @@
 				<div class="info-highlight" id="tweet_noresults" style="display:none;">
 				  <%= t('social.twitter_handles.index.no_tweet_results') %><strong id="tweet_noresults_string"></strong>.
 				</div>
-				<div id="twitter_results" class="list-group"></div>
+				<div id="twitter_results" class="sloading loading-small loading-block"></div>
 				<script id="tweetTemplate" type="text/x-jquery-tmpl">
 				  <div class="list-item" id="TWEET_DIV_${id_str}" data-tweet-id="${id_str}">
 						<div class="preview-pic">

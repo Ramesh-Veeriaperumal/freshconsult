@@ -49,7 +49,7 @@
 
 		var prepareEmptyMenu = function(menuid) {
 			return $('<div>').attr('id',"menu_" + menuid)
-							.addClass('loading fd-ajaxmenu')
+							.addClass('sloading loading-small  fd-ajaxmenu')
 							.html('<div class="contents"></div>');
 		}
 

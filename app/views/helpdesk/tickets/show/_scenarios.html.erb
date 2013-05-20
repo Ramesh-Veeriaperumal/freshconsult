@@ -9,8 +9,8 @@
 			", #JS Validation to check if there is atleast one scenario selected.
 			:after => "
 				jQuery('#execute_scenario form').hide(); 
-				jQuery('#execute_scenario .modal-body .loading-box').remove(); 
-				jQuery('#execute_scenario .modal-body').append('<div class=loading-box />');
+				jQuery('#execute_scenario .modal-body .sloading .loading-block').remove(); 
+				jQuery('#execute_scenario .modal-body').append('<div class=sloading  loading-small loading-block />');
 				jQuery('#execute_scenario [data-submit=modal]').button('loading');
 				") do %>
 <div class="dialog-well">

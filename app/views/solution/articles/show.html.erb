@@ -1,5 +1,62 @@
-<% if logged_in? && current_user.has_manage_solutions? %>
-	<%= render :partial => "agent_show", :locals => { :article => @article } %>
-<%else%>
-	<%= render :partial => "portal_show", :locals => { :article =>@article } %>
-<%end%>
+<div class="folder-2col"> 
+	<div class="folder_section" id="folder-section">
+		<%= render :partial => "/solution/shared/category_folder_list", :locals => { :category => @article.folder.category, :selected => @article.folder } %>
+ </div>  	
+ <div class="artical_section" id="article-section">
+ 	<div class="crumbs">
+	 	<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
+		<%= link_to h(@article.folder.category.name), solution_category_path(@article.folder.category) %> &rarr;
+		<%= link_to h(@article.folder.name), solution_category_folder_path(@article.folder.category_id, @article.folder)%>
+ 	</div>
+	<div class="floatr">
+		<%= link_to(t('edit'), edit_solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article), :class => "btn small") %>
+	</div>	
+	<h2 class="title"><%= h(@article.title) %></h2> 
+	<div class="help-text">
+		By <b> <%= @article.user.name %></b>, <%= @article.updated_at.to_s(:long_day_with_time) %> 
+		
+		<%= content_tag(:span, t('private'), :class => "label tooltip", 
+					:title => "This artical is visible only to Agents") if(!@article.folder.visible?(current_user)) %>
+		<span class="label"><%= @article.type_name %></span>
+	</div> 
+	 
+	
+	  <div class="solution_title">
+		    <div style="display:none;">
+		    	<span class="status_text"><%@article.status_name%></span> 
+				
+		  	</div>	
+			<span class="topic_icon" style="display:none;">
+				<% if( !@article.folder.visible?(current_user))%> 
+					<img src="/images/private_lock.gif" class="locked" width="20px" height="19px" />
+				<% end %>
+				<div class="icon_text"><%= @article.type_name %></div>
+			</span>	
+	  		 
+			<div class="tag_list"> 
+			<% @article.tags.map.each do |t| %> 
+				<div class="item">								
+					<%= link_to(image_tag('btn_close_icon.png'), solution_category_folder_article_tag_use_path(@article.folder.category_id,@article.folder,@article,t), :method => 'delete', :class => 'tag_delete') %>
+					<%= h(t.name) %>
+				</div>
+			<% end %>
+			</div>
+	 </div>
+	 <span class="seperator"></span>
+	 <div class="solutions_text">
+		<%= @article.description %>
+	 </div>
+	 <ul class="attachment_list">
+	    <%= render :partial => '/helpdesk/shared/attachment', :collection => @article.attachments %>
+     </ul>
+	 <span class="seperator"></span> 
+	 <div id="article_voting">
+		<%= render :partial => "voting", :object => @article %>
+	 </div>
+</div>
+</div>
+</div> 
+<% javascript_tag do -%>
+  if(jQuery("#folder-section").height() > jQuery("#article-section").height())
+    jQuery("#article-section").css("minHeight", jQuery("#folder-section").height());
+<%- end %>

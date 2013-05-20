@@ -25,7 +25,7 @@
 	    widget_code = widget_code.gsub("}}", " | encode_html}}")
 	    %>
 	    <%= Liquid::Template.parse(widget_code).render({"ticket" => @ticket}, :filters => [Integrations::FDTextFilter]) %>
-	    <div class="loading-box" id="jira_issue_loading"></div>
+	    <div class="sloading loading-block loading-small" id="jira_issue_loading"></div>
 	  </div></div>
 	</textarea>
 </div>

@@ -5,7 +5,7 @@
 <%= include_cloudfront_js :pattern  %>
 <%= include_cloudfront_js :reports  %>
 
-<div id="loading-box"> <div class="reports-loading">Generating Report...</div> </div>
+<div id="loading-box"> <div class="reports-loading sloading loading-small loading-left">Generating Report...</div> </div>
 <!-- select model for agent start-->
 <%= render :partial => "reports/helpdesk_glance_reports/glance_model_dialog", :locals => {:select_option=>'responder_id',:dialog_box_title=>"#{t('adv_reports.agent_at_a_glance')} #{t('adv_reports.report')}",:field_title=>t('adv_reports.glance.select_agent_msg'),
 	:no_option_message=>"You don't have any agents" } %>
