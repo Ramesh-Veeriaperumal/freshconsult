@@ -4,7 +4,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   include EmailCommands
   include ParserUtil
   include Helpdesk::ProcessByMessageId
-  include ActionView::Helpers::TagHelper, ActionView::Helpers::TextHelper,ActionView::Helpers::UrlHelper, WhiteListHelper
+  include Utilities
 
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
   MESSAGE_LIMIT = 10.megabytes
@@ -417,11 +417,5 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         @description_html = "#{@description_html[0,MESSAGE_LIMIT]}<b>[message_cliped]</b>"
       end
     end
-
-    def body_html_with_formatting(body)
-      body_html = auto_link(body) { |text| truncate(text, 100) }
-      textilized = RedCloth.new(body_html.gsub(/\n/, '<br />'), [ :hard_breaks ])
-      textilized.hard_breaks = true if textilized.respond_to?("hard_breaks=")
-      white_list(textilized.to_html)
-    end
+    
 end
