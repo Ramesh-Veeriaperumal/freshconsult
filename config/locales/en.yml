@@ -9,6 +9,7 @@ en:
   unblock: "Whitelist"
   enabled: "Enabled"
   disabled: "Disabled"
+  private: "Private"
   more: "more"
   tip_on: "Click to Enable"
   tip_off: "Click to Disable"
@@ -3766,6 +3767,7 @@ en:
       frustrated_customers: "Frustrated Customers"
     helptext:
       glance:
+        how_to_read: How to read this report
         helpdesk_recieved_tickets: Total number of tickets received in your support portal over the selected time period
         customer__recieved_tickets: Total number of tickets received from the customer over the selected time period
         agent_recieved_tickets: Total number of tickets received by the agent over the selected time period
