@@ -308,7 +308,7 @@ protected
 
     #To make sure no other roles are set via api except customer,client_manager
     def check_user_role
-      user_role = params[:user][:user_role]
+      user_role = (params[:user][:user_role]).to_i
       unless user_role == User::USER_ROLES_KEYS_BY_TOKEN[:customer] || user_role == User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]
         params[:user][:user_role] = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
       end
