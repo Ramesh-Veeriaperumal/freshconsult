@@ -60,14 +60,14 @@ module Reports
     # List of Countries in which Time falls to midnight at 0th,1st,2nd .... hour in UTC
 
     TIMEZONES_BY_UTC_TIME = {
-      "0" => ["Casablanca","Dublin","Edinburgh","Lisbon","London","Monrovia","UTC"],
+      "0" => ["Casablanca","Dublin","Edinburgh","Lisbon","London","Monrovia","UTC","Europe/London"],
       "1" => ["Azores","Cape Verde Is."],
       "2" => ["Mid-Atlantic"],
       "3" => ["Brasilia","Buenos Aires","Georgetown","Greenland"],
       "4" => ["Newfoundland","Atlantic Time (Canada)","La Paz","Santiago"],
-      "5" => ["Caracas","Bogota","Eastern Time (US & Canada)","Indiana (East)","Lima","Quito"],
+      "5" => ["Caracas","Bogota","America/Bogato","Eastern Time (US & Canada)","Indiana (East)","Lima","Quito"],
       "6" => ["Central America","Central Time (US & Canada)","Guadalajara","Mexico City","Monterrey",
-               "Saskatchewan"],
+               "Saskatchewan","America/Chicago"],
       "7" => ["Arizona","Chihuahua","Mazatlan","Mountain Time (US & Canada)"],
       "8" => ["Pacific Time (US & Canada)","Tijuana"],
       "9" => ["Alaska"],
