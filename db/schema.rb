@@ -1152,7 +1152,6 @@ ActiveRecord::Schema.define(:version => 20130427074254) do
     t.integer  "priority",           :limit => 8
     t.integer  "response_time"
     t.integer  "resolution_time"
-    t.integer  "escalateto",         :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sla_policy_id",      :limit => 8

@@ -17,8 +17,6 @@ class Customer < ActiveRecord::Base
   has_many :tickets , :through => :users , :class_name => 'Helpdesk::Ticket'
 
   has_many :customer_folders, :class_name => 'Solution::CustomerFolder', :dependent => :destroy
-  
-  belongs_to :sla_policy, :class_name =>'Helpdesk::SlaPolicy'
 
   named_scope :domains_like, lambda { |domain|
     { :conditions => [ "domains like ?", "%#{domain}%" ] } if domain
