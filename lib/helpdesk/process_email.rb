@@ -21,7 +21,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       account.make_current
       encode_stuffs
       kbase_email = account.kbase_email
-      params[:html] = body_html_with_formatting(params[:text]) if params[:html].blank? && !params[:text].blank?
+      
+      #need to format this code --Suman
+      if params[:html].blank? && !params[:text].blank? 
+       email_cmds_regex = get_email_cmd_regex(account) 
+       params[:html] = body_html_with_formatting(params[:text],email_cmds_regex) 
+      end
+
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
         email_config = account.email_configs.find_by_to_email(to_email[:email])
         return if email_config && (from_email[:email] == email_config.reply_email)
@@ -420,7 +426,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         @description_html = "#{@description_html[0,MESSAGE_LIMIT]}<b>[message_cliped]</b>"
       end
     end
-    def body_html_with_formatting(body)
+
+    #remove Redcloth from formatting
+    def body_html_with_formatting(body,email_cmds_regex)
+      body = body.gsub(email_cmds_regex,'<notextile>\0</notextile>')
       body_html = auto_link(body) { |text| truncate(text, 100) }
       textilized = RedCloth.new(body_html.gsub(/\n/, '<br />'), [ :hard_breaks ])
       textilized.hard_breaks = true if textilized.respond_to?("hard_breaks=")
