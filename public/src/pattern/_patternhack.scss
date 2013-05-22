@@ -305,7 +305,11 @@ select{
     border-top: 4px solid #c7c7c7;
   }
 }
-
+.sub-lead{
+  font-size: $baseFontSize * 1.4;
+  color:$gray;
+  font-weight: 200;
+}
 
 // Emphasis & misc
 // -------------------------

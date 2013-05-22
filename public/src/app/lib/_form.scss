@@ -683,61 +683,77 @@ li.nested_field{
 }
 
 .business_hours{
-	td{
-		vertical-align:top;
+	.select2{
+		margin-top: -5px;
 	}
-	td.borderleft{
-		border-left:1px solid darken(#f2f2f2,10%);
+	>ul li{
+		margin-bottom: 15px;
+	}
+	.working-days{
+		>li{
+			padding-left: 15px;
+			border-left: 1px solid #EEE;
+			margin: 0;
+			margin-left: 20px;
+			padding: 6px 0px 4px 15px;	
+		}
+	}
+	.business_days{
+		padding-top: 7px;
+		input[type="checkbox"]{
+			margin-right: 10px;
+			margin-top:-2px;
+		}
+		&.active{
+			font-weight:bold;
+		}
 	}
 	.business_time{
 		div.specific_hours{
 			padding:16px 26px;
 		}
-		div.timerange{
-			@include pie-clearfix;
-			padding:8px;	
-			input, strong{
-				float:left;
-			}
-			input{
-				width:80px;
-			}
-			span{
-				font-weight:normal;
-				margin:5px;
-			}
-			.checked{
-				float :left;
-				width : 25px;
-			}
+	}
+	.holidaylist-head{
+		background-color:#fbfbfb;
+		padding:10px;
+		padding-bottom:0px;
+		@include border-radius(6px);
+		@include border-bottom-left-radius(0);
+		@include border-bottom-right-radius(0);
+		border:1px solid #eee;
+		.date-selection{
+			padding-top:3px;
+		}
+		.import-link{
+			margin-top:8px;
 		}
 	}
-	.business_days{
-		width:150px;
-		float:left;	
-	}
-	.business_days.active{
-		font-weight:bold;
+	.holiday-name{
+		margin-left:60px;
 	}
 	.holidaylist{
-		padding-left:0;
+		border: 1px solid #EEE;
+		border-top:0;
+		@include border-radius(6px);
+		@include border-top-left-radius(0);
+		@include border-top-right-radius(0);
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box; 
 		ul{
 			color:#444444;
 			@include clearfix;
-			background-color:lighten(#f3f3f3, 5%);
-			padding:10px 5px 5px 10px;
-			margin:0;
-			@include border-radius(6px);
 			li{
 				position:relative;
-				margin-right:20px; 
+				margin: 15px 10px;
+				padding-left:25px;
 				.close{
 					position:absolute;
 					background:image-url("btn_close_icon.png") no-repeat;
 					width:18px;
 					height:18px;
-					right:6px;
-					top:0;
+					left:0px;
+					top:-2px;
 				}
 			}
 		}

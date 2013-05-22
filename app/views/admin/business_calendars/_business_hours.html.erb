@@ -87,7 +87,7 @@
 			HolidayList.set( month_id,  setArray);
 			jQuery("#HolidayValidation").hide();
 			jQuery("#HolidayList")
-				.append("<li month_date= "+month_id+"><a href='javascript:void(0)' class='close'></a>"+month_date+" - " + name +"</li>")
+				.append("<li month_date= "+month_id+"><a href='javascript:void(0)' class='close'></a>"+month_date+"<span class='holiday-name'>" + name +"</span></li>")
 				.show();
 		}else{
 			jQuery("#HolidayValidation").show();

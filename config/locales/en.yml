@@ -2463,7 +2463,8 @@ en:
     info1: Setting up your business hours in Freshdesk allows you to have more control over your SLAs. For eg. if your helpdesk works between 9am to 6pm Mon-Fri and a customer sends a high priority ticket at 4pm on Tuesday, with a SLA target resolution time of 4 hours, then the ticket Due By time is set as 11am on Wednesday.You can configure your SLAs to either respect or ignore business hours
     info2: Holidays work exactly like business hours. For eg. if your helpdesk works between 9am to 6pm Mon-Fri and a customer sends a medium priority ticket at 8pm on Friday with a SLA target resolution time of 24 hours, then the ticket Due By time is set as 9am on Tuesday.(not 8pm on Sat)
     holiday_added: Holiday already added
-    info3: Specific Working Hours
+    info3: Select working days/hours
+    info6: 24 hrs x 7 days
     info4: Working Days for your Helpdesk
     holiday_list: Yearly Holiday List
     info5: Holidays will be ignored when calculating SLA for a ticket
