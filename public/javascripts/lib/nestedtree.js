@@ -122,7 +122,7 @@ var NestedField = Class.create({
   getSubcategoryEscaped: function(category_key){
       _subcategories = [];
       if(this.tree.get(category_key) && this.tree.get(category_key).children)
-        this.tree.get(category_key).children.each(function(o){ _subcategories.push("<option value="+escapeHtml(o.value.id)+">"+escapeHtml(o.key)+"</option>") });          
+        this.tree.get(category_key).children.each(function(o){ _subcategories.push("<option value="+o.value.id+">"+o.key+"</option>") });          
       if(!_subcategories.first()) _subcategories = ["<option value='0'>"+this._blank+"</option>"];
 
       //console.log("subcategory: "+_subcategories);
