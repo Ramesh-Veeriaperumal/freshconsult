@@ -12,11 +12,11 @@ module Va::Observer::Constants
 										:time_sheet_action, :deleted, :spam, :reply_sent, :note_type,
 										:customer_feedback ]
 
-	TICKET_UPDATED = { :ticket_update => :updated }
-	TICKET_DELETED = { :ticket_update => :deleted }
-	TICKET_MARKED_SPAM = { :ticket_update => :marked_as_spam }
-	#TICKET_RESTORED = { :ticket_update => :restored }
-	#TICKET_UNMARKED_SPAM = { :ticket_update => :unmarked_as_spam }
+	TICKET_UPDATED = { :ticket_update_event => :updated }
+	TICKET_DELETED = { :ticket_update_event => :deleted }
+	TICKET_MARKED_SPAM = { :ticket_update_event => :marked_as_spam }
+	#TICKET_RESTORED = { :ticket_update_event => :restored }
+	#TICKET_UNMARKED_SPAM = { :ticket_update_event => :unmarked_as_spam }
 
 	CHECK_FOR_EVENT_SPECIAL_CASES = [ :deleted, :spam ]
 	UPDATE_EVENT_SPECIAL_CASES = { 

@@ -3,7 +3,7 @@ class Workers::Observer
   @queue = 'observer_worker'
   def self.perform args
     begin
-      # Rails.logger.debug "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$           RESQUE"
+      Rails.logger.debug "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$           RESQUE"
       account = Account.current
 #DJ
 # class Workers::Observer < Struct.new(:args)

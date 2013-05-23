@@ -61,7 +61,7 @@ fields:
         group_id: update
         note_type: value
         reply_sent: change
-        ticket_update: value
+        ticket_update_event: value
         time_sheet_action: value
         customer_feedback: value
         due_by: change

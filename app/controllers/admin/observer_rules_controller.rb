@@ -60,7 +60,7 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
           :choices => @note_types, :type => 1, :valuelabel => t('event.type') },
         { :name => 'reply_sent', :value => t('observer_events.reply'), :domtype => 'label', :type => 0 },
         { :name => 'due_by', :value => t('observer_events.due_date'), :domtype => 'label', :type => 0 },
-        { :name => 'ticket_update', :value => t('observer_events.ticket'), :domtype => 'dropdown',
+        { :name => 'ticket_update_event', :value => t('observer_events.ticket'), :domtype => 'dropdown',
           :choices => @ticket_actions, :type => 1 },
         { :name => 'customer_feedback', :value => t('observer_events.customer_feedback'), :domtype => 'dropdown',
           :choices =>[ ['--', t('any_val.any_feedback')] ]+Survey.survey_names(current_account), :type => 1,
