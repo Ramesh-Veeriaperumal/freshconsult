@@ -248,6 +248,16 @@ class Helpdesk::TicketField < ActiveRecord::Base
     end
   end
   
+
+  #Use as_json instead of to_json for future support Rails3 refer:(http://jonathanjulian.com/2010/04/rails-to_json-or-as_json/)
+  def as_json(options={})
+    options[:include] = [:nested_ticket_fields]
+    options[:except] = [:account_id]
+    options[:methods] = [:choices]
+    json_str = super options
+    json_str
+  end
+
   def to_xml_nested_fields(xml, picklist_value)
     return if picklist_value.sub_picklist_values.empty?
     
