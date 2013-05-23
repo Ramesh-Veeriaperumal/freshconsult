@@ -39,8 +39,8 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
       @agents[0..0] = ['--', t('any_val.any') ], ['-1', t('admin.observer_rules.assigned_agent') ]
       @note_types = [ ['--', t('ticket.any_note')], [:public, t('ticket.public_note')],
                        [:private, t('ticket.private_note')] ]
-      @ticket_actions = [ [:updated, t('ticket.updated')], [:deleted, t('ticket.deleted')],
-                           [:marked_as_spam, t('ticket.marked_spam')] ]
+      @ticket_actions = [ [:update_event, t('ticket.updated')], [:delete_event, t('ticket.deleted')],
+                           [:marked_spam_event, t('ticket.marked_spam')] ]
       @time_sheet_actions = [ [:added, t('ticket.new_time_entry')], [:updated, t('ticket.updated_time_entry')] ]
 
       event_hash = [
