@@ -872,7 +872,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def url_protocol
-    account.ssl_enabled? ? 'https' : 'http'
+    if self.product && !self.product.portal_url.blank?
+      return self.product.portal.ssl_enabled? ? 'https' : 'http'
+    else
+      return account.ssl_enabled? ? 'https' : 'http'
+    end
   end
   
   def description_with_attachments

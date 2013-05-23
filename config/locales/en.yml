@@ -639,11 +639,11 @@ en:
         remote_logout_url_info: This is the URL to which Freshdesk will redirect users when they click on the Logout link in Freshdesk.
         remote_login_url_info: This is the URL to which Freshdesk will redirect users for authentication when they attempt to access Freshdesk.
         enable_sso_info: Single Sign On allows you to use your own application or a centralized Server (like MS Active Directory) to authenticate agents and customers so that they can access Freshdesk without entering a separate username and password.
-        enable_sso: Enable Single Sign On
+        enable_sso: Single Sign On
         remote_logout_url: Remote logout URL
         remote_authentication: Remote Authentication
-        enable_SSL: "Enable SSL"
-        enable_SSL_anon: "SSL allows you to encrypt data that is transfered to and from freshdesk portals"
+        enable_SSL: "Secure Connection using SSL"
+        enable_SSL_anon: "Secure Sockets Layer allows you to encrypt data that is transfered to and from Freshdesk"
         customer_portal_ssl_warning: "Since custom helpdesk URL is configured for your account you will be redirected to " 
         multiple_product_ssl_warning: "SSL will not be applicable if multiple products are configured."  
         enabled: Enabled
@@ -651,6 +651,20 @@ en:
         click_to_enable: Click to enable SSL
         click_to_disable: Click to disable SSL
         security_title: Security
+        request_custom_ssl: Want to use Custom SSL for your support portal?
+        ssl_info: To set up Custom SSL, you need to configure your domain with a unique DNS record provided by Freshdesk. <br /> Please enter your Helpdesk URL and submit your request below.  The certification typically takes 5-6 working days. <br /> <br />
+        helpdesk_url: Helpdesk URL
+        submit_request: Submit Request
+        thanks_message: <span class=\"thanks_message\"> Thank you for requesting a Custom SSL certificate.</span> <br />
+        success_message: Your request for a Custom SSL certificate has been initiated and will be processed shortly. You will be receiving a confirmation email from our provider before approval. Please check your inbox for updates. 
+        default_ssl: Default SSL
+        custom_ssl: Custom SSL
+        dns_name: <b>Important:</b> Please update the CNAME DNS record in your DNS Zone file to point your domain name to the below ELB DNS name. <br /> <br />The ELB DNS name for %{url} is
+      helpnote:
+        title: Security Settings
+        info: Configuring security options help you streamline and control the accessibility of visitors to your support portal.
+        info1: <b>Allowing Single Sign On access </b><br />If your users already have login credentials with you, such as through Active Directory or your own web applications, you can allow them to login to your support portal with these credentials using Single Sign On. Learn more about setting up single sign on in Freshdesk<a href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk"> here</a>.
+        info2: <b>Enabling SSL security </b><br />You can ensure secure communication through your support portal by enabling SSL encryption. Freshdesk offers a default wildcard SSL certificate to all accounts on the freshdesk.com domain. <b> Note that you will not be able to use the wildcard SSL if you are using your own branded support URL. </b> If you are on the Estate Plan, you can request for a custom SSL certificate for your vanity support URL.
     products:
       helpnote:
         tour: Help me support multiple products

@@ -1077,6 +1077,8 @@ ActiveRecord::Schema.define(:version => 20130427074254) do
     t.integer  "forum_category_id",    :limit => 8
     t.string   "language",                          :default => "en"
     t.boolean  "main_portal",                       :default => false
+    t.boolean  "ssl_enabled",                       :default => false
+    t.string   "elb_dns_name"
   end
 
   add_index "portals", ["account_id", "portal_url"], :name => "index_portals_on_account_id_and_portal_url"

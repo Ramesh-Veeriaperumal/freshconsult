@@ -356,7 +356,11 @@ class User < ActiveRecord::Base
   ##Authorization copy ends here
   
   def url_protocol
-    account.ssl_enabled? ? 'https' : 'http'
+    if account.main_portal.portal_url.blank? 
+      return account.ssl_enabled? ? 'https' : 'http'
+    else 
+      return account.main_portal.ssl_enabled? ? 'https' : 'http'
+    end
   end
   
   def set_time_zone

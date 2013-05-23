@@ -95,6 +95,10 @@ class Portal < ActiveRecord::Base
     portal_url.blank? ? account.full_domain : portal_url
   end
 
+  def ssl_enabled?
+    portal_url.blank? ? account.ssl_enabled : ssl_enabled
+  end
+
   def portal_name
     (name.blank? && product) ? product.name : name
   end

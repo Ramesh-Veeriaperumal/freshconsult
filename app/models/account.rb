@@ -214,7 +214,9 @@ class Account < ActiveRecord::Base
   validate_on_create :valid_subscription?
   validates_uniqueness_of :google_domain ,:allow_blank => true, :allow_nil => true
   
-  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences,:logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain ,:language
+  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences,
+                  :logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain ,
+                  :language, :ssl_enabled
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
   
   validates_numericality_of :ticket_display_id,
@@ -294,7 +296,8 @@ class Account < ActiveRecord::Base
     },
 
     :estate => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting,
+      :custom_ssl ],
       :inherits => [ :garden ]
     },
 
@@ -314,7 +317,8 @@ class Account < ActiveRecord::Base
     },
 
     :estate_classic => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting,
+      :custom_ssl ],
       :inherits => [ :garden_classic ]
     }
 

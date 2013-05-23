@@ -27,6 +27,8 @@ module RedisKeys
 	REPORT_STATS_EXPORT_HASH = "REPORT_STATS_EXPORT_HASH:%{account_id}" # last export date, last archive job id and last regen job id
 	ENTERPRISE_REPORTS_ENABLED = "ENTERPRISE_REPORTS_ENABLED"
 	
+	CUSTOM_SSL = "CUSTOM_SSL:%{account_id}"
+
 	def newrelic_begin_rescue
     begin
       yield

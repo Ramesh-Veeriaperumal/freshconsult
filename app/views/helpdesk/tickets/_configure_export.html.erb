@@ -28,13 +28,13 @@
 	 			<% csv_headers.each do |head| %>
 	 			  	<div class="item <%= head[:type] %>">
 		  				<label class="checkbox prime"> 
-		    				<%= check_box_tag "export_fields[#{head[:label]}]", head[:value], head[:selected] %> 
+		    				<%= check_box_tag "export_fields[#{head[:value]}]", head[:label], head[:selected] %> 
 							<%= head[:label] %>														
 		  				</label>
 		  				<% head[:levels].each do |level| %>
 		  					<br />
 			  				<label class="checkbox level"> 
-			    				<%= check_box_tag "export_fields[#{level[:label]}]", level[:name], false  %> 
+			    				<%= check_box_tag "export_fields[#{level[:name]}]", level[:label], false  %> 
 								<%= level[:label] %>
 			  				</label>
 			  			<% end %>

@@ -690,9 +690,8 @@ module ApplicationHelper
   end
 
   def nodejs_url namespace
-    nodejs_protocol = (current_account && current_account.ssl_enabled) ? "https" : "http"
-    nodejs_port = Rails.env.development? ? 5000 : (current_account.ssl_enabled ? 2050 : 1050)      
-    "#{nodejs_protocol}://#{request.host}:#{nodejs_port}/#{namespace}"
+    nodejs_port = Rails.env.development? ? 5000 : (request.ssl? ? 2050 : 1050)      
+    "#{request.protocol}#{request.host}:#{nodejs_port}/#{namespace}"
   end  
 
   def es_enabled?
