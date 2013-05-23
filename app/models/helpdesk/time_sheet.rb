@@ -207,6 +207,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   # VA - Observer Rule 
 
   def update_observer_events
+    return unless workable.instance_of? Helpdesk::Ticket
     unless time_spent_change.nil?      
       from, to = time_spent_change
       if from == nil

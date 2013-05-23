@@ -1,6 +1,7 @@
 class SurveyResult < ActiveRecord::Base
 
   include Gamification::GamificationUtil  
+  include Va::Observer::Util
 
   belongs_to_account
     
@@ -13,6 +14,8 @@ class SurveyResult < ActiveRecord::Base
 
   after_create :update_ticket_rating, :add_support_score
   after_commit_on_create :process_ticket_quests_on_feedback
+  before_create :update_observer_events
+  after_commit_on_create :filter_observer_events, :if => :user_present?
   
   def add_feedback(feedback)
     note = surveyable.notes.build({
@@ -154,6 +157,12 @@ class SurveyResult < ActiveRecord::Base
     def process_ticket_quests_on_feedback
       Resque.enqueue(Gamification::Quests::ProcessTicketQuests, { :id => surveyable_id, 
                 :account_id => account_id }) if gamification_feature?(surveyable.account)
+    end
+
+    # VA - Observer Rule 
+    def update_observer_events
+      return unless surveyable.instance_of? Helpdesk::Ticket
+      @model_changes = { :customer_feedback => rating }
     end
 
 end

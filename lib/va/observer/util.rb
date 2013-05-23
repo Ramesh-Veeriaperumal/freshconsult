@@ -5,23 +5,19 @@ module Va::Observer::Util
 	private
 
 		def user_present?
-			p "Obz"
 			Rails.logger.debug "Obz"
-	  	p @model_changes
 	  	Rails.logger.debug @model_changes
-			User.current && @model_changes && !zendesk_import?
-	  end
+			@model_changes && (User.current || self.class == SurveyResult) && !zendesk_import?
+		end
 
 	  def zendesk_import?
       Thread.current["zenimport_#{account_id}"]
     end
 
 	  def filter_observer_events
-	  	@evaluate_on = (self.class == Helpdesk::Ticket) ? self : 
-	  																									self.send(FETCH_EVALUATE_ON[self.class.name])
-	    @observer_changes = @model_changes.inject({}) do |filtered, (change_key, change_value)| 
+	  	observer_changes = @model_changes.inject({}) do |filtered, (change_key, change_value)| 
 	    																			filter_events filtered, change_key, change_value  end
-			send_events unless @observer_changes.blank? 
+			send_events(observer_changes) unless observer_changes.blank? 
 	  end
 
 	  def filter_events filtered, change_key, change_value
@@ -31,14 +27,19 @@ module Va::Observer::Util
 	  			) ? filtered.merge!({change_key => change_value}) : filtered
 	  end
 
-	  def send_events
-	  	@observer_changes.merge! ticket_event @observer_changes
-	  	p "Enqueuing"
-	  	Rails.logger.debug "Enqueuing"
-	    Resque.enqueue(Workers::Observer,
-	     { :ticket_id => @evaluate_on.id, :current_events => @observer_changes })
-	    #Workers::Observer.perform @evaluate_on.id, User.current.id, @observer_changes
-	    #Delayed::Job.enqueue Workers::Observer.new(@evaluate_on.id, User.current.id, @observer_changes)
+	  def send_events observer_changes
+	  	observer_changes.merge! ticket_event observer_changes
+			doer_id = (self.class == Helpdesk::Ticket) ? User.current.id : self.send(FETCH_DOER_ID[self.class.name])
+			evaluate_on_id = self.send FETCH_EVALUATE_ON_ID[self.class.name]
+
+			Rails.logger.debug "ENQUEUING"
+			Resque.enqueue(Workers::Observer,
+	    					{ :doer_id => doer_id, :ticket_id => evaluate_on_id, 
+	    						:current_events => observer_changes })
+	    # Workers::Observer.perform evaluate_on_id, doer_id, observer_changes
+	    #DJ
+			# Delayed::Job.enqueue Workers::Observer.new(
+				# {:ticket_id => evaluate_on_id, :doer_id => doer_id, :current_events => observer_changes, :account_id => Account.current.id})
 	  end
 
 	  def ticket_event current_events

@@ -1,12 +1,16 @@
 module Va::Observer::Constants
 
-	FETCH_EVALUATE_ON = { 'Helpdesk::Note' => 'notable',
-												'SurveyResult' => 'surveyable',
-												'Helpdesk::TimeSheet' => 'workable'	}
+	FETCH_EVALUATE_ON_ID = {	'Helpdesk::Ticket' => :id,
+														'Helpdesk::Note' => :notable_id,
+														'SurveyResult' => :surveyable_id,
+														'Helpdesk::TimeSheet' => :workable_id }
+	FETCH_DOER_ID = { 	'Helpdesk::Note' => :user_id,
+											'SurveyResult' => :customer_id,
+											'Helpdesk::TimeSheet' => :user_id }
 
 	TICKET_EVENTS = [ :status, :priority, :ticket_type, :group_id, :responder_id, :due_by,
 										:time_sheet_action, :deleted, :spam, :reply_sent, :note_type,
-										Helpdesk::SchemaLessTicket.survey_result_column ]
+										:customer_feedback ]
 
 	TICKET_UPDATED = { :ticket_update => :updated }
 	TICKET_DELETED = { :ticket_update => :deleted }

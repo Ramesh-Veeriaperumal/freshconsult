@@ -21,9 +21,9 @@ var ObserverDom = {}
 
 	ObserverDom['performed_by_change'] = function(){ 
 		if($(this).val() == 1)
-			$(".va_rule_performer_members_container").slideDown();
+			$(".performer_data_members_container").slideDown();
 	 	else
-	  	$(".va_rule_performer_members_container").slideUp(); 
+	  	$(".performer_data_members_container").slideUp(); 
 	};
 
 	ObserverDom['resizeSelect2'] = function(ev){	
@@ -39,8 +39,8 @@ var ObserverDom = {}
 	};
 
 	ObserverDom['init'] = function(){
-		if( $( 'input[name="va_rule[performer][type]"]:checked' ).val() == null )
-			$( 'input[name="va_rule[performer][type]"][value = 1]' ).attr("checked","checked");
+		if( $( 'input[name="performer_data[type]"]:checked' ).val() == null )
+			$( 'input[name="performer_data[type]"][value = 1]' ).attr("checked","checked");
 		
 		setTimeout(function(ev){
 			$.each($('#EventList .controls > select'), function(i, item){
@@ -48,17 +48,17 @@ var ObserverDom = {}
 			})
 		}, 500);
 
-		ObserverDom['performed_by_change'].call($( 'input[name="va_rule[performer][type]"]:checked' ));
+		ObserverDom['performed_by_change'].call($( 'input[name="performer_data[type]"]:checked' ));
 		ObserverDom['ensure_performed_by'].call($('.doer select'));
 	};
 	
 
-	$('input[name = "va_rule[performer][type]"]').live( "change", ObserverDom['performed_by_change']	);
+	$('input[name = "performer_data[type]"]').live( "change", ObserverDom['performed_by_change']	);
 	$('.doer select').live( "change", ObserverDom['ensure_performed_by'] );
 	$('#EventList .controls > select').live("change", ObserverDom['resizeSelect2']);
 
 	$("#ObserverForm").submit(function(e){
-		var performed_by = $('input[name="va_rule[performer][type]"]:checked').val();
+		var performed_by = $('input[name="performer_data[type]"]:checked').val();
 		if( performed_by != '1' || $('#members').val().first() == "--" )
 			$('#members').remove();
 	});

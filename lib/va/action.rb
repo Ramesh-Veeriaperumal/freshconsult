@@ -15,24 +15,28 @@ class Va::Action
   end
   
   def trigger(act_on, doer=nil)
-    @doer = doer
-    RAILS_DEFAULT_LOGGER.debug "INSIDE trigger of Va::Action with act_on : #{act_on.inspect} action_key : #{action_key} value: #{value}"
-    return send(action_key, act_on) if respond_to?(action_key)
-    if act_on.respond_to?("#{action_key}=")
-      act_on.send("#{action_key}=", value)
-      add_activity(property_message act_on)
-      return
-    else
-      clazz = @action_key.constantize
-      obj = clazz.new
-      if obj.respond_to?(value)
-        obj.send(value, act_on, act_hash)
-        # add_activity(property_message act_on)  # TODO
+    begin
+      Rails.logger.debug "INSIDE trigger of Va::Action with act_on : #{act_on.inspect} action_key : #{action_key} value: #{value}"
+      @doer = doer
+      return send(action_key, act_on) if respond_to?(action_key)
+      if act_on.respond_to?("#{action_key}=")
+        act_on.send("#{action_key}=", value)
+        add_activity(property_message act_on)
         return
+      else
+        clazz = @action_key.constantize
+        obj = clazz.new
+        if obj.respond_to?(value)
+          obj.send(value, act_on, act_hash)
+          # add_activity(property_message act_on)  # TODO
+          return
+        end
       end
+      
+      puts "From the trigger of Action... Looks like #{action_key} is not supported!"
+    rescue Exception => e
+      Rails.logger.debug "For Va::Action #{self} Exception #{e} rescued"
     end
-    
-    puts "From the trigger of Action... Looks like #{action_key} is not supported!"
   end
   
   #POOR CODE - due to time constraint - by SHAN

@@ -38,17 +38,17 @@
 	<li>
 		<h3 class="lead"><%=t('admin.observer_rules.performed_by')%></h3>
 		<div class="doer">
-			<% f.fields_for :performer do |s| %>
+			<% fields_for :performer_data do |s| %>
 				<div class="choicelist">	
 					<%	Va::Performer::TYPE_CHECK.each do |number, type|	%>
-						<%= s.radio_button  :type, number, :class => "radio", :checked => (@va_rule.performer.type == number) %> 
+						<%= s.radio_button  :type, number, :class => "radio", :checked => (@va_rule.new_record? ? false : @va_rule.performer.type == number) %> 
 						<%= s.label :type, t("admin.observer_rules.#{type[0..-2]}"), :value => number, :class => "radiolabel" %>				
 					<%	end	%>
 				</div>
-				<div class="va_rule_performer_members_container">
+				<div class="performer_data_members_container">
 					<%= s.select :members, 
 								options_for_select((@agents.map {|id, name| [name, id.to_s]}), 	
-									(@va_rule.performer.nil? || @va_rule.performer.members.nil?) ? [] : @va_rule.performer.members.map(&:to_s) ),{'formatResult' => 'ensure_performed_by'}, { :multiple => true, :class => "select2", :id => 'members' } %>
+									(@va_rule.new_record? || @va_rule.performer.members.nil?) ? [] : @va_rule.performer.members.map(&:to_s) ),{'formatResult' => 'ensure_performed_by'}, { :multiple => true, :class => "select2", :id => 'members' } %>
 				</div>
 			<% end %>
 		</div>

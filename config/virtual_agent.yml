@@ -34,7 +34,7 @@ fields:
         inbound_count: numeric
         outbound_count: numeric
         st_survey_rating: numeric
-        int_tc01: numeric
+        customer_feedback: numeric
         folder_id: numeric
         thumbs_up: numeric
         forum_id: numeric
@@ -63,7 +63,7 @@ fields:
         reply_sent: change
         ticket_update: value
         time_sheet_action: value
-        int_tc01: value
+        customer_feedback: value
         due_by: change
 
         custom_checkbox: value

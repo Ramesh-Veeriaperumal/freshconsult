@@ -11,8 +11,8 @@ class VARule < ActiveRecord::Base
   
   after_commit :clear_observer_rules_cache, :if => :observer_rule?
 
-  attr_accessor :conditions, :actions, :events, :performer
-  
+  attr_writer :conditions, :actions, :events, :performer
+
   belongs_to :account
   
   has_one :app_business_rule, :class_name=>'Integrations::AppBusinessRule'
@@ -31,27 +31,24 @@ class VARule < ActiveRecord::Base
     "account_id = #{account_id} AND #{connection.quote_column_name("rule_type")} = #{rule_type}"
   end
   
-  def after_find
-    deserialize_all if self.action_data?
+  def filter_data
+    observer_rule? ? read_attribute(:filter_data).symbolize_keys : read_attribute(:filter_data)
   end
 
-  def deserialize_all
-    if rule_type == VAConfig::OBSERVER_RULE
-      filter_data.symbolize_keys!
-      @performer = Va::Performer.new(filter_data[:performer].symbolize_keys)
-      events_array = filter_data[:events]
-      @filter_array = filter_data[:conditions]
-      @events = events_array.blank? ? [] : 
-                               events_array.collect { |e| Va::Event.new(e.symbolize_keys, account) } 
-    end
-    deserialize_them
+  def performer
+    @performer ||= Va::Performer.new(filter_data[:performer].symbolize_keys)
   end
-  
-  def deserialize_them
-    @filter_array ||= filter_data
-    @conditions = @filter_array.blank? ? [] : 
-                          @filter_array.collect { |f| Va::Condition.new(f.symbolize_keys, account) }
-    @actions = action_data.map { |act| deserialize_action act } if action_data
+
+  def events
+    @events ||= filter_data[:events].collect{ |e| Va::Event.new(e.symbolize_keys, account) }
+  end
+
+  def conditions
+    @conditions ||= filter_array.collect{ |f| Va::Condition.new(f.symbolize_keys, account) }
+  end
+
+  def actions
+    @actions ||= action_data.collect{ |act_hash| deserialize_action act_hash }
   end
   
   def deserialize_action(act_hash)
@@ -119,7 +116,7 @@ class VARule < ActiveRecord::Base
   
   private
     def has_events?
-      return unless(rule_type == VAConfig::OBSERVER_RULE)
+      return unless observer_rule?
       errors.add_to_base(I18n.t("errors.events_empty")) if(filter_data[:events].blank?)
     end
     
@@ -129,8 +126,11 @@ class VARule < ActiveRecord::Base
     end
     
     def has_actions?
-      deserialize_all
       errors.add_to_base(I18n.t("errors.actions_empty")) if(action_data.blank?)
+    end
+
+    def filter_array
+      observer_rule? ? filter_data[:conditions] : filter_data
     end
 
     def observer_rule?

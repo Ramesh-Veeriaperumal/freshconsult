@@ -1,14 +1,19 @@
 class Workers::Observer
-# class Workers::Observer < Struct.new(:ticket_id, :user_id, :current_events)
   extend Resque::AroundPerform
   @queue = 'observer_worker'
-
   def self.perform args
-  # def perform
     begin
+      # Rails.logger.debug "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$           RESQUE"
       account = Account.current
+#DJ
+# class Workers::Observer < Struct.new(:args)
+#   def perform
+#     begin
+#       p args[:current_events]      
+#       account = Account.find args[:account_id]
+      
       evaluate_on = account.tickets.find args[:ticket_id]
-      doer = account.users.find args[:current_user_id]
+      doer = account.users.find args[:doer_id]
       current_events = args[:current_events].symbolize_keys
 
       p evaluate_on

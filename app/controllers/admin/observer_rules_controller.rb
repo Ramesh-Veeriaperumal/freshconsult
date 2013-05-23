@@ -62,7 +62,7 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
         { :name => 'due_by', :value => t('observer_events.due_date'), :domtype => 'label', :type => 0 },
         { :name => 'ticket_update', :value => t('observer_events.ticket'), :domtype => 'dropdown',
           :choices => @ticket_actions, :type => 1 },
-        { :name => 'int_tc01', :value => t('observer_events.customer_feedback'), :domtype => 'dropdown',
+        { :name => 'customer_feedback', :value => t('observer_events.customer_feedback'), :domtype => 'dropdown',
           :choices =>[ ['--', t('any_val.any_feedback')] ]+Survey.survey_names(current_account), :type => 1,
           :valuelabel => t('event.rating') },
         { :name => 'time_sheet_action', :value => t('observer_events.time_entry'), :domtype => 'dropdown',
@@ -99,9 +99,9 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
     end
 
     def set_filter_data
-      params[:va_rule][:performer][:members].map!(&:to_i) unless params[:va_rule][:performer][:members].nil?
+      params[:performer_data][:members].map!(&:to_i) unless params[:performer_data][:members].nil?
       filter_data = {
-        :performer => params[:va_rule][:performer],
+        :performer => params[:performer_data],
         :events => params[:event_data].blank? ? [] : (ActiveSupport::JSON.decode params[:event_data]),
         :conditions => params[:filter_data].blank? ? [] : (ActiveSupport::JSON.decode params[:filter_data]),
       }
