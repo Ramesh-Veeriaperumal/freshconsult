@@ -1,19 +1,15 @@
 <% javascript_tag do %>	
 	jQuery(document).ready(function(){
-		jQuery("input[name$=_subject_template]").live("focus", function(){
-			active_email_body = jQuery(this);
-		});
-		jQuery("textarea").live("focus", function(){
-			active_email_body = jQuery(this);
-		});
-		jQuery('input[type="text"]').live("focus", function(){
-			active_email_body = jQuery(this);
-		});
+		var active_email_body = null;
 
+		jQuery("input[name$=_subject_template], textarea, input[name=email_subject]" ).live("focus", function(){
+			active_email_body = this;
+		});
+		
 		jQuery("#placeholder-list-1 a").click(function(ev){  
-      if(active_email_body.get(0)){
+      if(active_email_body){
         var placeHolderText = jQuery(this).data("placeholder"); 
-        insertTextAtCursor(active_email_body.get(0), placeHolderText);
+        insertTextAtCursor(active_email_body, placeHolderText);
 		  }
 		});
 		jQuery('#placeholder_close').click(function(){
