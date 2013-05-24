@@ -44,6 +44,7 @@ class GroupsController < Admin::AdminController
      agents_data = params[:group][:agent_list] 
      #for api to pass agent_id as an comma separated value/otherwise UI sends as array so each will take care.
      agents_data.split(',').each { |agent| @group.agent_groups.build(:user_id =>agent) } unless agents_data.blank?
+     @group.business_calendar_id = params[:group][:business_calendar]
      if @group.save
       respond_to do |format|
         format.html { redirect_to :action => 'index' }
@@ -67,6 +68,7 @@ class GroupsController < Admin::AdminController
   def update
     
      @group = current_account.groups.find(params[:id])
+     @group.business_calendar_id = params[:group][:business_calendar]
      respond_to do |format|      
       if @group.update_attributes(params[nscname])
         update_agents        

@@ -4,18 +4,18 @@
 	TIME_CONTAINERS = ["time_morning", "morning_range", "time_evening", "evening_range"];
 
 	setFullWeek = function( fullweek ){ 
-		jQuery("#SpecificHoursDiv").toggle( (fullweek === "false") );
+		jQuery("#DAYS_LIST").toggle( (fullweek === "false") );
 	}
 
     jQuery.validator.addMethod("time_validate", function(value, element) {
        	if (this.optional(element)) // return true on optional element
         	return true;
 
-        _parent = jQuery(element).parent();
-
+        var _parent = jQuery(element).parents('.timerange').first();
+        var _cal_index = _parent.data('dayNumber');
         _condition = compute_validity(TIME_CONTAINERS.map(function(id){
-        		return _parent.find("#"+id).val();
-        	}));
+    		return _parent.find("#"+id + '_' + _cal_index).val();
+    	}));
 
         return _condition;
    }, '');
@@ -48,11 +48,12 @@
 	}
 
 	duration = function(item){
-		_parent = jQuery(item).parent();
+		var _parent = jQuery(item).parents('.timerange').first();
+		var _cal_index = _parent.data('dayNumber');
 
 		_time_array = TIME_CONTAINERS.map(function(id){
-        		return _parent.find("#"+id).val();
-        	})
+    		return _parent.find("#"+id + '_' + _cal_index).val();
+    	})
 
         _condition = compute_validity(_time_array);
 
@@ -124,7 +125,7 @@
 
 		
 		jQuery("#DAYS_LIST .checked").change(function(){
-			_day_container = jQuery(this).parent().parent();
+			_day_container = jQuery(this).parents('.timerange').first();
 			_day_container.removeClass('outline');
 			_day_container.find("select").attr('disabled', !this.checked);
 			_day_container.find("#duration").toggle( this.checked );
@@ -146,13 +147,12 @@
 				jQuery.each(jQuery("#DAYS_LIST input:checked"), function(){
 					days_array.push(this.value);
 
-					_parent = jQuery(this).parent().parent();
-						
-					_start_val = _parent.find("#time_morning").val() + " " + _parent.find( "#morning_range").val();
+					_parent = jQuery(this).parents('.timerange').first();
+					_start_val = _parent.find("#time_morning_" + _parent.data('dayNumber')).val() + " " + _parent.find( "#morning_range_" + _parent.data('dayNumber')).val();
+
 
 					_parent.find(".db_start_time_data").val( _start_val );
-
-					_end_val = _parent.find("#time_evening").val() + " " + _parent.find('#evening_range').val();
+					_end_val = _parent.find("#time_evening_" + _parent.data('dayNumber')).val() + " " + _parent.find('#evening_range_' + _parent.data('dayNumber')).val();
 					
 					_parent.find(".db_end_time_data").val( _end_val );
 				});
@@ -172,7 +172,7 @@
 		    onfocusout: false
 		});
 		
-		jQuery("input:radio").change(function(){ 
+		jQuery("#fullweek_toggle input:radio").change(function(){ 
 			setFullWeek(this.value); 
 		});	
 

@@ -129,7 +129,6 @@ class Account < ActiveRecord::Base
   has_many :agent_groups
   has_many :forum_categories, :order => "position"
   
-  has_one :business_calendar, :as => :workable, :class_name => "BusinessCalendar"
   has_many :business_calendar 
 
   has_many :forums, :through => :forum_categories    

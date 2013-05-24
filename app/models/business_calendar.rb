@@ -8,7 +8,6 @@ class BusinessCalendar < ActiveRecord::Base
   #for now, a sporadically structured hash is used.
   #can revisit this data model later...
   belongs_to :account
-  belongs_to :workable, :polymorphic => true
   before_create :set_default_version 
   attr_accessible :holiday_data,:business_time_data,:version,:is_default,:name,:description,:time_zone
   validate_on_update :valid_working_hours?
@@ -74,7 +73,7 @@ class BusinessCalendar < ActiveRecord::Base
   
   def self.config
     group = Thread.current[TicketConstants::GROUP_THREAD]
-    if group && group.business_calendar
+    if Account.current.features?(:multiple_business_hours) && group && group.business_calendar
       group.business_calendar
     elsif Account.current 
       Account.current.business_calendar.default.first

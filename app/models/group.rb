@@ -18,10 +18,10 @@ class Group < ActiveRecord::Base
    has_many :tickets, :class_name => 'Helpdesk::Ticket', :dependent => :nullify
    
    belongs_to :escalate , :class_name => "User", :foreign_key => "escalate_to"
-   has_one :business_calendar, :as => :workable, :class_name => "BusinessCalendar"
+   belongs_to :business_calendar
    
    attr_accessible :name,:description,:email_on_assign,:escalate_to,:assign_time ,:import_id, 
-                   :ticket_assign_type
+                   :ticket_assign_type, :business_calendar_id
    
    accepts_nested_attributes_for :agent_groups
    liquid_methods :name

@@ -580,7 +580,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
       set_user_time_zone if User.current
       RAILS_DEFAULT_LOGGER.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
-    elsif priority_changed? || changed_condition? || status_changed?
+    elsif priority_changed? || changed_condition? || status_changed? || group_id_changed?
 
       set_time_zone
       sla_detail = self.sla_policy.sla_details.find(:first, :conditions => {:priority => priority})
@@ -601,6 +601,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def set_time_zone
+    return set_account_time_zone unless account.features?(:multiple_business_hours)
     if self.group.nil? || self.group.business_calendar.nil?
       set_account_time_zone
     else

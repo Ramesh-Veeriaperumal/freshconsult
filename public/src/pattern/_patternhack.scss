@@ -358,11 +358,6 @@ ul.inline > li, ol.inline > li {
   padding-left: 5px;
 }
 
-.select2-container{
-  &[class*="span"]{
-    margin-left: 0;
-  }
-}
 .nested-input{
   border-left: 1px dotted #AFAFAF;
   padding-left: 8px;

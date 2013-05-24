@@ -22,17 +22,23 @@ class Admin::BusinessCalendarsController <  Admin::AdminController
   end
 
   def new
-    @business_calendar = current_account.business_calendar.new    
-    respond_to do |format|
-      format.html # new.html.erb
-      format.xml  { render :xml => @business_calendar }
+    if feature?(:multiple_business_hours)
+      @business_calendar = current_account.business_calendar.new    
+      respond_to do |format|
+        format.html # new.html.erb
+        format.xml  { render :xml => @business_calendar }
+      end
+    else
+      redirect_to :action => 'edit', :id => current_account.business_calendar.default.first.id
     end
   end
 
   def create
     process_data
     @business_calendar = current_account.business_calendar.new(
-                    :business_time_data =>@business_time, :holiday_data =>@holiday_data)
+                    :business_time_data =>@business_time, :holiday_data =>@holiday_data,
+                     :name => @name, :description => @description, :time_zone => @time_zone )
+
     @business_calendar.account_id = current_account.id
 
     if @business_calendar.save
@@ -53,7 +59,8 @@ class Admin::BusinessCalendarsController <  Admin::AdminController
   def update
     process_data
     
-    if @business_calendar.update_attributes(:business_time_data =>@business_time, :holiday_data =>@holiday_data )
+    if @business_calendar.update_attributes(:business_time_data =>@business_time, :holiday_data =>@holiday_data,
+                                            :name => @name, :description => @description, :time_zone => @time_zone )
      flash[:notice] = t(:'flash.business_hours.update.success')
     else
      flash[:notice] = t(:'flash.business_hours.update.failure')
@@ -85,7 +92,15 @@ class Admin::BusinessCalendarsController <  Admin::AdminController
       @holiday_data = ActiveSupport::JSON.decode params[:business_calenders][:holiday_data]
       weekdays = ActiveSupport::JSON.decode params[:business_calenders][:weekdays]
       working_hours = params[:business_time_data]["working_hours"]
-
+      if params[:time_zone].blank?
+        @time_zone = current_account.time_zone
+      else
+        zone = ActiveSupport::TimeZone.all[params[:time_zone].to_i]
+        @time_zone = zone.name if zone
+      end
+      
+      @name = params[:business_calenders]["name"] if params[:business_calenders]
+      @description = params[:business_calenders]["description"] if params[:business_calenders]
       @business_time = Hash.new
       @business_time[:weekdays] = weekdays.map {|i| i.to_i}
       @business_time[:working_hours] = Hash.new

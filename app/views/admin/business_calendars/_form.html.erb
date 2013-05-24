@@ -3,22 +3,37 @@
 		<li class="row-fluid"><h4 class="sub-lead"><%=t('business_hours.helpdesk_hours')%></h4></li>
 		<li class="row-fluid">
 			<div class="span3">
-				Helpdesk Time Zone
+				<%= t('business_hours.name') %>
 			</div>
 			<div class="span9">
-				<select class="select2" >
-					<option value="1:00">GMT (1:00) Chennai</option>
-					<option value="1:30">GMT (2:30) Chennai</option>
-					<option value="8:00" selected="selected">GMT (5:30) Chennai</option>
-				</select>
+				<%= f.text_field :name, :class => 'span9', :placeholder => t('business_hours.name') %>
 			</div>
 		</li>
 		<li class="row-fluid">
+			<div class="span3">
+				<%= t('business_hours.description') %>
+			</div>
+			<div class="span9">
+				<%= f.text_area :description, :class => 'text required smallpara span9', :placeholder => t('business_hours.description') %>
+			</div>
+		</li>
+		<%  if feature?(:multiple_business_hours) %>
+		<li class="row-fluid">
+			<div class="span3">
+				<%= t('business_hours.time_zone') %>
+			</div>
+			<div class="span9">
+				 <input type="hidden" id="time_zone" name="time_zone" class="span7"
+            		data-placeholder = "<%= t("business_hours.select_time_zone") %>"/>
+			</div>
+		</li>
+		<% end %>
+		<li class="row-fluid">
 			<ul class="unstyled">
 				<li class="span3">
-					Helpdesk Hours
+					<%= t('business_hours.helpdesk_hours') %>
 				</li>
-				<li class="span9">
+				<li class="span9" id ='fullweek_toggle'>
 					<div>
 						<label class="radio">
 							<%= f.radio_button :fullweek, true %>
@@ -30,14 +45,16 @@
 						  	<%= f.radio_button :fullweek, false %> 
 						  	<%=t('business_hours.info3')%>
 						</label>
-						<ul class="unstyled working-days row-fluid" id="DAYS_LIST">
+						<% display_week = (@business_calendar.business_hour_data[:fullweek] == false) ? 'block':'none' %>
+						<ul class="unstyled working-days row-fluid" id="DAYS_LIST" style="display:<%=display_week%>" >
 							<% weekdays = @business_calendar.business_hour_data[:weekdays] %>
 							<% weekday_human_list = [ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" ] %>
 							<% weekday_human_list.each_with_index do |days, days_index| %>
-							<li class="timerange row-fluid">
+							<% cal_index = ( days_index+1 != 7 ) ? (days_index+1) : 0 %>
+							<li class="timerange row-fluid" data-day-number = "<%= cal_index.to_s %>">
 								<div class="span3">
 									<label class="business_days">
-										<% cal_index = ( days_index+1 != 7 ) ? (days_index+1) : 0 %>
+										
 										<% checked = weekdays.include?(cal_index) %>
 										<% if checked %>
 											<% beginning_of_workday = @business_calendar.business_hour_data[:working_hours][cal_index][:beginning_of_workday].split(" ")[0] %>
@@ -60,14 +77,14 @@
 								</div>
 								<div class="span9">
 									<%= select "time", "morning_#{cal_index.to_s}", BusinessCalendar::TIME_LIST, 
-											{ :selected=> beginning_of_workday }, { :class => "morning_time", :id => "time_morning" } %>
+											{ :selected=> beginning_of_workday }, { :class => "morning_time", :id => "time_morning_#{cal_index.to_s}" } %>
 									<%= select "morning", "range_#{cal_index.to_s}", %w[am pm], 
-											{ :selected => beginning_of_workday_range }, { :class => "morning_time", :id => "morning_range" } %>
+											{ :selected => beginning_of_workday_range }, { :class => "morning_time", :id => "morning_range_#{cal_index.to_s}" } %>
 									<span><%= t('business_hours.to') %></span>
 									<%= select "time","evening_#{cal_index.to_s}", BusinessCalendar::TIME_LIST, 
-											{ :selected => end_of_workday}, { :class => "evening_time", :id => "time_evening" } %> 
+											{ :selected => end_of_workday}, { :class => "evening_time", :id => "time_evening_#{cal_index.to_s}" } %> 
 									<%= select "evening", "range_#{cal_index.to_s}", %w[am pm], 
-											{ :selected => end_of_workday_range }, { :class => "evening_time time_validate", :id => "evening_range"  } %>
+											{ :selected => end_of_workday_range }, { :class => "evening_time time_validate", :id => "evening_range_#{cal_index.to_s}"  } %>
 									
 									<label id="duration"></label>	
 									<%= hidden_field_tag "business_time_data[working_hours][#{cal_index.to_s}][beginning_of_workday]", "",
@@ -132,6 +149,40 @@
 	</ul>
 </div>
 	<div class="button-container">
-		<%= link_to "#{t('account.cancel')}", "/admin/home", :class => "btn floatl" %>
+		<%= link_to "#{t('account.cancel')}", "/admin/business_calendars", :class => "btn floatl" %>
 		<%= f.submit t('save'), :class => "btn btn-primary" %>
 	</div>
+
+<script type="text/javascript">
+
+jQuery(document).ready(function() {
+	<%
+		time_zone_data = []
+		i=0
+		selected_zone_id = ''
+			ActiveSupport::TimeZone.all.each do |req|
+				if req.name == @business_calendar.time_zone
+					selected_zone_id = i
+				end
+
+				time_zone_data << "{id: '#{i}',
+	                  value: '#{escape_javascript(req.to_s)}',
+	                  text: '#{escape_javascript(req.to_s)}'}"
+	            i = i + 1
+			end
+	%>
+
+	jQuery('#time_zone').select2({
+	multiple: false,
+	data: [<%=time_zone_data.join(",")%>],
+	initSelection : function (element, callback) {
+        var data = {id: '<%=selected_zone_id%>', text: '<%=@business_calendar.time_zone%>'};
+        callback(data);
+    }
+});
+
+jQuery("#time_zone").select2("val",[]);
+
+});
+
+</script>
