@@ -4,6 +4,7 @@ class Workers::Observer
   def self.perform args
     begin
       Rails.logger.debug "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$           RESQUE"
+      ActiveRecord::Base.connection.reset!
       account = Account.current
 #DJ
 # class Workers::Observer < Struct.new(:args)
@@ -11,8 +12,18 @@ class Workers::Observer
 #     begin
 #       p args[:current_events]      
 #       account = Account.find args[:account_id]
+      x = ActiveRecord::Base.connection.execute("SHOW STATUS LIKE 'Com_select'")
+      x.each_hash{|r_h| p r_h.inspect }
+      x = ActiveRecord::Base.connection.execute("SHOW STATUS LIKE 'Qcache_hits'")
+      x.each_hash{|r_h| p r_h.inspect }
       
       evaluate_on = account.tickets.find args[:ticket_id]
+
+      x = ActiveRecord::Base.connection.execute("SHOW STATUS LIKE 'Com_select'")
+      x.each_hash{|r_h| p r_h.inspect }
+      x = ActiveRecord::Base.connection.execute("SHOW STATUS LIKE 'Qcache_hits'")
+      x.each_hash{|r_h| p r_h.inspect }
+
       doer = account.users.find args[:doer_id]
       current_events = args[:current_events].symbolize_keys
 
