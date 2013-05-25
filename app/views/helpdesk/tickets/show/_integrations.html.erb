@@ -14,7 +14,6 @@
 			<%=t( "ticket.integrations.jira.#{jira_integrated_resource.nil? ? 'add_new' : 'existing' }")%>
 		</div>
 		<%= h(installedApp.configs_title)%>
-
 	</h3>
 </div>
 <div class="hide" id="jira_widget_dialog">
@@ -58,7 +57,7 @@ end %>
 <% unless installed_app.blank? %> 
 	<div id="logmein" class="widget">
 		<%
-		 @liquid_objects = {"ticket" => @ticket, "account_id" => @ticket.account_id, "installed_app_id" => installed_app.id, "requester" => @ticket.requester, "agent" => @agent, "cache" => get_cached_values(@ticket.id), "md5secret" => get_md5_secret}
+		 @liquid_objects = {"ticket" => @ticket, "account_id" => @ticket.account_id, "installed_app_id" => installed_app.id, "requester" => @ticket.requester, "agent" => @ticket.responder, "cache" => get_cached_values(@ticket.id), "md5secret" => get_md5_secret}
 		 widget_code = get_app_widget_script(Integrations::Constants::APP_NAMES[:logmein], "logmein_widget", @liquid_objects) 
 		%>
 		<%= Liquid::Template.parse(widget_code).render("ticket" => @ticket) %>

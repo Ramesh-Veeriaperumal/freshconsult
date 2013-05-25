@@ -168,23 +168,6 @@ refreshStatusBox = function() {
 	});
 }
 
-$('#helpdesk_ticket_group_id').bind("change", function(e){
-	$('#TicketProperties .default_agent')
-		.addClass('loading-right');
-
-	$.ajax({type: 'POST',
-		url: '/helpdesk/commons/group_agents/'+this.value,
-		contentType: 'application/text',
-		success: function(data){
-			$('#TicketProperties .default_agent select')
-				.html(data)
-				.trigger('change');
-
-			$('#TicketProperties .default_agent').removeClass('loading-right');
-		  }
-	});
-});
-
 function dueDateSelected(date){
 	new Date(date);
 }
@@ -535,6 +518,25 @@ $(document).ready(function() {
 
 		$active.click();
 	});
+
+
+	$("body").on('change.ticket_details', '#helpdesk_ticket_group_id', function(e){
+		$('#TicketProperties .default_agent')
+			.addClass('loading-right');
+
+		$.ajax({type: 'POST',
+			url: '/helpdesk/commons/group_agents/'+this.value,
+			contentType: 'application/text',
+			success: function(data){
+				$('#TicketProperties .default_agent select')
+					.html(data)
+					.trigger('change');
+
+				$('#TicketProperties .default_agent').removeClass('loading-right');
+			  }
+		});
+	});
+
 	
 	$("body").on('click.ticket_details', '.widget.load_on_click.inactive', function(ev){
 		var widget_code = $(this).find('textarea');
@@ -628,7 +630,6 @@ $(document).ready(function() {
 			}
 		});
 	}); 
-	
 
 	//End of Twitter Replybox JS
 
@@ -1054,6 +1055,15 @@ $(document).ready(function() {
 			
 	});
 
+
+	// Scripts for ToDo List
+	$('body').on('keydown.ticket_details', '.addReminder textarea', function(ev) {
+		if(ev.keyCode == 13){
+			ev.preventDefault();
+			if(trim($(this).val()) != '') $(this).parents('form').submit();
+		}
+	});
+
 	/*
 		When the ticket subjects are long, we hide the extra content and show them only on mouseover. 
 		While doing this, the ticket subject occupies more height that normal we are hiding that
@@ -1086,6 +1096,8 @@ $(document).ready(function() {
 
 	//Previous Next Buttons request
 	$.getScript("/helpdesk/tickets/prevnext/" + TICKET_DETAILS_DATA['displayId']);
+
+	$('#twitter_handle').change();
 
 	if(TICKET_DETAILS_DATA['scroll_to_last']) {
 		$.scrollTo('[rel=activity_container] .conversation:last', { offset: 143 });
