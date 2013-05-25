@@ -54,7 +54,7 @@ module SslRequirement
         redirect_to "https://" + request.host + request.request_uri
         flash.keep
         return false
-      elsif request.ssl? && (main_portal_without_ssl? || cnamed_portal_without_ssl?)
+      elsif request.ssl? && !ssl_required? && (main_portal_without_ssl? || cnamed_portal_without_ssl?)
         redirect_to "http://" + request.host + request.request_uri
         flash.keep
         return false
