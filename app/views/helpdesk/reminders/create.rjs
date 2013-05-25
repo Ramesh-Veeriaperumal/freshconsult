@@ -1,2 +1,3 @@
-page.insert_html :bottom, :reminderlist, :partial => '/helpdesk/reminders/reminder', :object => @item
+page.insert_html :bottom, :reminderlist, :partial => @reminder_partial, :object => @item
 page << "$('helpdesk_reminder_body').value = '';"
+page << "$('helpdesk_reminder_body').disabled = false;"

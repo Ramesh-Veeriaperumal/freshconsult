@@ -7,6 +7,7 @@ class Helpdesk::RemindersController < ApplicationController
   include HelpdeskControllerMethods
   
   before_filter :load_item, :only => [ :show, :edit, :update, :complete, :restore ]  
+  before_filter :reminder_partial
   
   def complete
     @item.update_attribute(:deleted, true)
@@ -47,6 +48,10 @@ protected
 
   def create_error
     redirect_to :back
+  end
+
+  def reminder_partial
+    @reminder_partial = (params[:source] && params[:source] == 'ticket_view') ? '/helpdesk/tickets/show/reminders/reminder' : '/helpdesk/reminders/reminder'
   end
 
 end
