@@ -9,7 +9,7 @@ module Helpdesk::ShowVersion
       # Expiry set to 50 days
       cookies.delete(:new_details_view) 
     end
-    @new_show_page = ($redis_secondary.get(show_version_key) == "1")
+    @new_show_page = ($redis_secondary.get(show_version_key) != "0")
   rescue Exception => e
     NewRelic::Agent.notice_error(e)
     return
