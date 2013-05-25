@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/freshdesk/Marketo.git
-  revision: 4a0c19bd7ce53408e1dea25e5024d37f97f639be
+  revision: 5f53130eb61d751b90e6a7f8b1452b308f15a39a
   specs:
     marketo (0.0.2)
       savon
@@ -130,7 +130,7 @@ GEM
     forgery (0.5.0)
     fssm (0.2.9)
     gem_plugin (0.2.3)
-    gyoku (0.4.6)
+    gyoku (1.0.0)
       builder (>= 2.1.2)
     hashie (1.2.0)
     hashr (0.0.22)
