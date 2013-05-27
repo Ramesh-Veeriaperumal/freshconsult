@@ -9884,16 +9884,9 @@ div.gcal-confirm-modal-content{ width: 100%; }
 		padding:10px;
 		margin-top:5px;
 
-		label:first-child{
-			padding:0;
-			float: left;
-			font-weight: bold;
-			width: 220px;
-		}
-
 		> *{ margin-left: 5px; }
 
-		.choicelist input[type=radio]{ margin-left: 1%;	}
+		.choicelist input[type=radio]{margin-left: 1%;}
 		.performer_data_members_container{
 			margin-top: 10px;
 			.select2{
