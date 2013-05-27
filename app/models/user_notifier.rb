@@ -38,6 +38,7 @@ class UserNotifier < ActionMailer::Base
     subject       "Custom SSL Activated"
     body          :account_admin_name => account_admin.name, :portal_url => portal_url, :elb_name => elb_name
     sent_on       Time.now
+  end
 
   def notify_contacts_import(user, results)
     subject       "Contacts Import Notification"
