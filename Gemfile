@@ -76,7 +76,6 @@ gem 'chargebee', "~> 1.1.7"
 
 gem 'memcache-client', '1.8.5'
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
-gem 'tire', :git => "git://github.com/freshdesk/tire.git"
 gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
 gem "rinku", :git => "git://github.com/freshdesk/rinku.git"
 
@@ -93,6 +92,10 @@ gem "pg"
 gem "routing-filter", "~> 0.3.1"
 
 gem "cloudfront_asset_host", :git => "git://github.com/freshdesk/cloudfront_asset_host.git"
+
+group :production,:test,:staging do
+ gem 'tire', :git => "git://github.com/freshdesk/tire.git"
+end
 
 group :development,:test do
    gem "forgery","0.5.0"
