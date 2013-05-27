@@ -3728,7 +3728,7 @@ en:
     glance:
       all_reports: "All Reports"
       report_view: "Report View"
-      download: "Download"
+      download: "Download as PDF"
       print: "Print"
       backlog_tickets: "Backlog Tickets"
       avg_resp_time_in_hrs: "Average Response Time (in Hrs)"
@@ -3778,3 +3778,55 @@ en:
       sla_violations: "SLA Violations"
       happy_customers: "Happy Customers"
       frustrated_customers: "Frustrated Customers"
+    helptext:
+      glance:
+        how_to_read: How to read this report
+        helpdesk_recieved_tickets: Total number of tickets received in your support portal over the selected time period
+        customer__recieved_tickets: Total number of tickets received from the customer over the selected time period
+        agent_recieved_tickets: Total number of tickets received by the agent over the selected time period
+        group_recieved_tickets: Total number of tickets received by the group over the selected time period
+        helpdesk_resolved_tickets: Total number of tickets in your helpdesk that have been resolved over the selected time period
+        customer_resolved_tickets: Total number of tickets coming from the customer that have been resolved over the selected time period
+        agent_resolved_tickets: Total number of tickets resolved by the agent over the selected time period
+        group_resolved_tickets: Total number of tickets resolved by the group over the selected time period
+        helpdesk_backlog_tickets: Total number of unresolved tickets in the helpdesk at the end of each day in the selected time period
+        customer_backlog_tickets: Total number of unresolved tickets coming from a customer at the end of each day in the selected time period
+        agent_backlog_tickets: Total number of unresolved tickets that have been assigned to the agent at the end of each day in the selected time period
+        group_backlog_tickets: Total number of unresolved tickets that have been assigned to the group at the end of each day in the selected time period
+        helpdesk_avg_resp_time: The average time taken across the helpdesk to respond to a ticket
+        customer_avg_resp_time: The average time taken to respond to a ticket from this customer
+        agent_avg_resp_time: The average time taken to by this agent to respond to a ticket
+        group_avg_resp_time: The average time taken by this group to respond to a ticket
+        helpdesk_avg_first_resp_time: The average time taken in the help desk to send the first response across all tickets
+        customer_avg_first_resp_time: The average time taken to send the first response to a ticket from the customer
+        agent_avg_first_resp_time: The average time taken to by this agents to send the first response to a ticket
+        group_avg_first_resp_time: The average time taken by this group to send the first response to a ticket
+        helpdesk_avg_resol_time: The average time taken in the help desk to resolve a ticket
+        customer_avg_resol_time: The average time taken to resolve a ticket from the customer
+        agent_avg_resol_time: The average time taken by this agent to resolve a ticket
+        group_avg_resol_time: The average time taken by this group to resolve a ticket
+        helpdesk_avg_cust_inter: The average number of customer replies to tickets across the helpdesk at the end of each day
+        customer_avg_cust_inter: The average number of ticket replies from this customer at the end of each day
+        agent_avg_cust_inter: The average number of customer replies to tickets assigned to this agent at the end of each day
+        group_avg_cust_inter: The average number of customer replies to tickets assigned to this group at the end of each day
+        helpdesk_avg_agent_inter: The average number of agent replies to tickets across the helpdesk at the end of each day
+        customer_avg_agent_inter: The average number of agent replies to tickets from this customer at the end of each day
+        agent_avg_agent_inter: The average number of agent replies to tickets assigned to this agent at the end of each day
+        group_avg_agent_inter: The average number of agent replies to tickets assigned to this group at the end of each day
+        helpdesk_reopens: The number of times a resolved or closed ticket in the helpdesk has been reopened
+        customer_reopens: The number of times a resolved or closed ticket has been reopened by this customer
+        agent_reopens: The number of times a resolved or closed ticket assigned to this agent has been reopened
+        group_reopens: The number of times a resolved or closed ticket assigned to this group has been reopened
+        helpdesk_reassigns: The number of times an assigned ticket in the helpdesk has been reassigned to another agent
+        customer_reassigns: The number of times a ticket raised by this customer and assigned to an agent has been reassigned
+        agent_reassigns: The number of times a ticket assigned to this agent has been reassigned to someone else
+        group_reassigns: The number of times a ticket assigned to an agent in this group has been reassigned to another agent
+        helpdesk_sla: The percentage of tickets that were resolved within the set SLA in the helpdesk
+        customer_sla: The percentage of tickets raised by this customer that were resolved within the set SLA
+        agent_sla: The percentage of tickets assigned to this agent that were resolved within the set SLA
+        group_sla: The percentage of tickets assigned to this group that were resolved within the set SLA
+        helpdesk_fcr: The percentage of tickets that were resolved within the first response in the helpdesk
+        customer_fcr: The percentage of tickets raised by this customer that were resolved within the first response
+        agent_fcr: The percentage of tickets assigned to this agent that were resolved within the first response
+        group_fcr: The percentage of tickets assigned to this group that were resolved within the first response
+
