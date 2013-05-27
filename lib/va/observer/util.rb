@@ -16,11 +16,11 @@ module Va::Observer::Util
 
 	  def filter_observer_events
 	  	observer_changes = @model_changes.inject({}) do |filtered, (change_key, change_value)| 
-	    																			filter_events filtered, change_key, change_value  end
+	    																			filter_event filtered, change_key, change_value  end
 			send_events(observer_changes) unless observer_changes.blank? 
 	  end
 
-	  def filter_events filtered, change_key, change_value
+	  def filter_event filtered, change_key, change_value
 	  	(	TICKET_EVENTS.include?( change_key ) ||
 	  		Account.current.event_flexifields_with_ticket_fields_from_cache.
 	  																			map(&:flexifield_name).map(&:to_sym).include?(change_key)
