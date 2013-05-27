@@ -38,6 +38,14 @@ class UserNotifier < ActionMailer::Base
     subject       "Custom SSL Activated"
     body          :account_admin_name => account_admin.name, :portal_url => portal_url, :elb_name => elb_name
     sent_on       Time.now
+
+  def notify_contacts_import(user, results)
+    subject       "Contacts Import Notification"
+    recipients    user.email
+    from          user.account.default_friendly_email
+    body          :result => results
+    sent_on       Time.now
+    headers       "Reply-to" => "#{user.account.default_friendly_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     content_type  "text/html"
   end
   
