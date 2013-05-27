@@ -573,25 +573,19 @@ a.addchoice:hover{
 					label.error{ width:100%; }
 					.l_placeholder{
 							float: right;
-							margin-right: -17px;
-							margin-top: -33px;
+							margin-right: 8px;
+							margin-top: -30px;
 						}
-					.required_star{top: 10px;}
 					.body_div{
-						.required_star{right: 76px;}
-						>div >textarea{
-							margin:0px; 
-							width:100%; 
-							margin-left: 3px; 
-							height: 130px;
+						>textarea{
+							margin: 3px; 
+							width: 81%; 
 						}
 					}
 					.subject_div{
-						.required_star{right: 62px;}
-						>div >input[type='text']{
-							margin:0px; 
-							margin-left: 3px;
-							width:79%; 
+						>input[type='text']{
+							margin: 3px; 
+							width: 63%; 
 							height: 13px;
 						}
 					}
