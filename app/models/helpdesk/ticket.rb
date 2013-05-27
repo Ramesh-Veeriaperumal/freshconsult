@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'digest/md5'
 
 
@@ -568,7 +569,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
-  def update_dueby
+  def update_dueby(ticket_status_changed=false)
 
     if self.new_record?
       set_account_time_zone   
@@ -578,13 +579,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
       set_user_time_zone if User.current
       RAILS_DEFAULT_LOGGER.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
       
-    elsif priority_changed? || changed_condition? || status_changed?
+    elsif priority_changed? || changed_condition? || status_changed? || ticket_status_changed
 
       set_account_time_zone   
       sla_detail = self.sla_policy.sla_details.find(:first, :conditions => {:priority => priority})
 
       set_dueby_on_priority_change(sla_detail) if (priority_changed? || changed_condition?)
-      set_dueby_on_status_change(sla_detail) if status_changed?
+      set_dueby_on_status_change(sla_detail) if status_changed? || ticket_status_changed
       set_user_time_zone if User.current
       RAILS_DEFAULT_LOGGER.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
       
@@ -873,7 +874,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def url_protocol
-    account.ssl_enabled? ? 'https' : 'http'
+    if self.product && !self.product.portal_url.blank?
+      return self.product.portal.ssl_enabled? ? 'https' : 'http'
+    else
+      return account.ssl_enabled? ? 'https' : 'http'
+    end
   end
   
   def description_with_attachments

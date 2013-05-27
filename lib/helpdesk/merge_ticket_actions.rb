@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Helpdesk::MergeTicketActions
 
 	include Helpdesk::Ticketfields::TicketStatus
@@ -120,7 +121,7 @@ module Helpdesk::MergeTicketActions
 				:account_id => current_account.id,
 				:user_id => current_user && current_user.id,
 				:from_email => @target_ticket.reply_email,
-				:to_emails => target_pvt_note ? [] : @target_ticket.requester.email.to_a,
+				:to_emails => target_pvt_note ? [] : @target_ticket.requester.email.lines.to_a,
 				:cc_emails => target_pvt_note ? [] : @target_ticket.cc_email_hash && @target_ticket.cc_email_hash[:cc_emails]
 			)
 			if !@target_note.private

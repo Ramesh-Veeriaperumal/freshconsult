@@ -1,4 +1,4 @@
-
+# encoding: utf-8
 class Helpdesk::Activity < ActiveRecord::Base
   set_table_name "helpdesk_activities"
   

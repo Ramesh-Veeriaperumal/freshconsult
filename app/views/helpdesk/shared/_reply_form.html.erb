@@ -24,7 +24,7 @@
         <li class="inline-field field" >
             <%= f.label(:reply_email, t('ticket.from'), :class => "caption" ) %>
             <div class="fields">
-              <%= select :reply_email, :id, options_for_select(@reply_email, @selected_reply_email) %>
+              <%= select :reply_email, :id, options_for_select(@reply_emails, @selected_reply_email) %>
               <input type="checkbox" class="hide" id="include_cc" name="include_cc"  />              
               <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" <%=bcc_drop_box_email.blank? ? "" : "checked" %> />
           </div>

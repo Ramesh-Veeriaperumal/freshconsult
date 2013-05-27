@@ -9,7 +9,7 @@
 		   				:category=> value[:category],:date_range => params[:date_range])
 		   		end
 		   	%>
-			<%= link_to ((render :partial => "/reports/survey_reports/list_content", :locals => {:content => value,:is_list => true})  ,link_url, {:class => "agent_report_list"})  %>
+			<%= link_to((render :partial => "/reports/survey_reports/list_content", :locals => {:content => value,:is_list => true})  ,link_url, {:class => "agent_report_list"})  %>
 			</li>	
 		  <%end%>
 	  </ul>

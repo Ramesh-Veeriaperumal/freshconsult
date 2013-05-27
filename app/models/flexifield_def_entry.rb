@@ -1,3 +1,4 @@
+# encoding: utf-8
 class FlexifieldDefEntry < ActiveRecord::Base
   
   belongs_to_account

@@ -39,7 +39,7 @@
 			<span id="tweet_type_selector">
 				<%= select_tag :tweet_type , 
 								options_for_select(Social::Tweet::TWEET_TYPES, @ticket.tweet ? @ticket.tweet.tweet_type.to_sym : :mention ) , 
-								{ :class => 'select2' } %>
+								{ } %>
 			</span>
 			<span>
 	          <%= link_to(t('cancel'), '#', :class => "btn cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true') %>
