@@ -142,6 +142,11 @@
 			},
 			submitHandler: function(form) {
 		    	days_array 	   = $A();
+
+		    	if(!jQuery('.checked:checked').length) {
+					alert('Please select atleast one weekday');
+					return true;
+				}
 				
 				jQuery.each(jQuery("#DAYS_LIST input:checked"), function(){
 					days_array.push(this.value);
@@ -192,6 +197,7 @@
 
 <h3 class="title"><%=t('business_hours.title')%></h3>
 	<% form_for :business_calenders, @business_calendars, :url => { :action => "update" },  :html => { :method => :put, :id => "BusinessHours" } do |f| %>
+	<%= f.error_messages %>
 	<ul class="business_hours ui-form dont-validate"> 
 		<li><h4 class="title"><%=t('business_hours.helpdesk_hours')%></h4>
 
@@ -239,7 +245,7 @@
 													<% end_of_workday ="5:00" %>
 													<% end_of_workday_range = "pm" %>
 												<%end%>
-												<%= check_box_tag ( weekday_human_list[days_index], cal_index, checked, :class => "checked")  %>
+												<%= check_box_tag( weekday_human_list[days_index], cal_index, checked, :class => "checked")  %>
 												<%= days %>
 											</label>
 											<%= select "time", "morning_#{cal_index.to_s}", BusinessCalendar::TIME_LIST, 

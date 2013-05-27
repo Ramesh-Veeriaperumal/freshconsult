@@ -1,3 +1,4 @@
+# encoding: utf-8
 class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   layout "email_font", :except => [:reply]

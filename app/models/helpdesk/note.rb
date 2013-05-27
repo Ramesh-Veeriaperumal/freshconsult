@@ -52,7 +52,7 @@ class Helpdesk::Note < ActiveRecord::Base
   
   named_scope :latest_twitter_comment,
               :conditions => [" incoming = 1 and social_tweets.tweetable_type = 'Helpdesk::Note'"], 
-              :joins => "INNER join social_tweets on helpdesk_notes.id = social_tweets.tweetable_id", 
+              :joins => "INNER join social_tweets on helpdesk_notes.id = social_tweets.tweetable_id and helpdesk_notes.account_id = social_tweets.account_id", 
               :order => "created_at desc"
   
   
@@ -82,7 +82,7 @@ class Helpdesk::Note < ActiveRecord::Base
   
   named_scope :latest_facebook_message,
               :conditions => [" incoming = 1 and social_fb_posts.postable_type = 'Helpdesk::Note'"], 
-              :joins => "INNER join social_fb_posts on helpdesk_notes.id = social_fb_posts.postable_id", 
+              :joins => "INNER join social_fb_posts on helpdesk_notes.id = social_fb_posts.postable_id and helpdesk_notes.account_id = social_fb_posts.account_id", 
               :order => "created_at desc"
 
   SOURCES = %w{email form note status meta twitter feedback facebook forward_email}
@@ -300,7 +300,7 @@ class Helpdesk::Note < ActiveRecord::Base
       else    
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)     
         #notify the agents only for notes
-        if note? && !self.to_emails.blank?
+        if note? && !self.to_emails.blank? && !incoming
           Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, notable, self ,notable.friendly_reply_email,{:notify_emails =>self.to_emails}) unless self.to_emails.blank? 
         end
         #notify the customer if it is public note

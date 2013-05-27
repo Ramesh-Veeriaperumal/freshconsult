@@ -7345,6 +7345,70 @@ a.mobile_switchBtn {
 	height: 50px;
 }
 
+/* Custom SSL */
+
+.security-form{
+	margin-left: -10px;
+
+	li{
+		padding-top: 30px;
+	}
+}
+
+.thanks_message{
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.helpdesk_url{
+	padding-top: 4px;
+	font-weight: bold;
+}
+
+.extra_tabbed{
+	padding-left: 80px;
+}
+
+.enable_heading{
+	margin-left: 5px;
+	font-weight: bold;
+	font-size: 15px;
+	margin-top: 3px;
+	display: inline-table;
+}
+
+.align{
+	margin-top: -2px;
+}
+
+.faded_text{
+	color: #999;
+}
+
+.custom_ssl_form{
+	border: 1px solid #CCC;
+	padding: 10px;
+	margin-top: 10px;
+	margin-bottom: 30px;
+	border-radius: 5px;
+
+	.domain_field{
+		width: 90%;
+	}
+}
+
+.ssl_enabled_info{
+	text-align: center;
+	background-color: #fdfde5;
+}
+
+.elb_name{
+	font-weight: bold;
+	font-size: 14px;
+}
+
+/* Custom SSL */
+
 /* Add Watcher Start */
 
 div.monitor_div{

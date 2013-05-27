@@ -45,22 +45,37 @@ module SslRequirement
       (self.class.read_inheritable_attribute(:ssl_allowed_actions) || []).include?(action_name.to_sym)
     end
     
-    def ssl_redirect_host
-      ## If the account has custom helpdesk URL configured then redirect him to the freshdesk full domain while applying SSL.
-      ## This will prevent the SSL errors the customers get.
-      current_account.main_portal.portal_url.blank? ? request.host : current_account.full_domain        
-    end  
-
   private
   
     def ensure_proper_protocol
-      ##  !current_portal.main_portal? - means if the account has multiple products configured then do not apply SSL ##
-      return true if !Rails.env.production? || ssl_allowed? || !current_portal.main_portal? 
-      
-      if ((ssl_required?  || current_account.ssl_enabled?) && !request.ssl?)       
-        redirect_to "https://" + ssl_redirect_host + request.request_uri
+      return true if !Rails.env.production? || ssl_allowed?
+
+      if !request.ssl? && (ssl_required? || main_portal_with_ssl? || cnamed_portal_with_ssl?)
+        redirect_to "https://" + request.host + request.request_uri
         flash.keep
         return false
-      end
+      elsif request.ssl? && !ssl_required? && (main_portal_without_ssl? || cnamed_portal_without_ssl?)
+        redirect_to "http://" + request.host + request.request_uri
+        flash.keep
+        return false
+      end      
+      return true
     end
+
+    def main_portal_with_ssl?
+      (current_account.main_portal.portal_url.blank? || (request.host == current_account.full_domain)) && current_account.ssl_enabled? 
+    end
+
+    def cnamed_portal_with_ssl?
+      (request.host == current_account.main_portal.portal_url) && current_account.main_portal.ssl_enabled?
+    end
+
+    def main_portal_without_ssl?
+      (current_account.main_portal.portal_url.blank? || (request.host == current_account.full_domain)) && !current_account.ssl_enabled?
+    end
+
+    def cnamed_portal_without_ssl?
+      (request.host == current_account.main_portal.portal_url) && !current_account.main_portal.ssl_enabled?
+    end
+
 end

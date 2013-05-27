@@ -1,3 +1,4 @@
+# encoding: utf-8
 module EmailCommands 
 
   def process_email_commands(ticket, user, email_config, note = nil)

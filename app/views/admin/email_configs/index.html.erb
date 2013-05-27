@@ -32,7 +32,7 @@
     </thead>
     <tbody>
       <% @global_email_configs.each do |email_config| %>
-        <%= render (:partial => "email_config", :object =>  email_config) %>      
+        <%= render(:partial => "email_config", :object =>  email_config) %>      
       <% end %>
     </tbody>
   </table>
@@ -51,7 +51,7 @@
         </thead>
         <tbody>
           <% product.email_configs.each do |email_config| %>
-            <%= render (:partial => "email_config", :object =>  email_config) %>      
+            <%= render(:partial => "email_config", :object =>  email_config) %>      
           <% end %>
         </tbody>
       </table>

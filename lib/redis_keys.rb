@@ -27,6 +27,8 @@ module RedisKeys
 	REPORT_STATS_EXPORT_HASH = "REPORT_STATS_EXPORT_HASH:%{account_id}" # last export date, last archive job id and last regen job id
 	ENTERPRISE_REPORTS_ENABLED = "ENTERPRISE_REPORTS_ENABLED"
 	
+	CUSTOM_SSL = "CUSTOM_SSL:%{account_id}"
+
 	def newrelic_begin_rescue
     begin
       yield
@@ -71,8 +73,12 @@ module RedisKeys
 
 	def add_to_set(key, values, expires = 86400)
 		newrelic_begin_rescue do
-			values.each do |val|
-				$redis.sadd(key, val)
+			if values.respond_to?(:each)
+				values.each do |val|
+					$redis.sadd(key, val)
+				end
+			else
+				$redis.sadd(key, values)
 			end
 			# $redis.expire(key,expires) if expires
 	  end
@@ -89,7 +95,7 @@ module RedisKeys
 	def list_push(key,values,direction = 'right', expires = 3600)
 		newrelic_begin_rescue do
 			command = direction == 'right' ? 'rpush' : 'lpush'
-			unless values.is_a?(Array)
+			unless values.class == Array
 				$redis.send(command, key, values)
 			else
 				values.each do |val|

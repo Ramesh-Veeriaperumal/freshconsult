@@ -12,7 +12,7 @@ require 'openssl'
 
 include RedisKeys
   
-  before_filter :set_mobile, :only => [:create, :destroy, :new]
+  before_filter :set_mobile, :only => [:create, :destroy]
   skip_before_filter :require_user, :except => :destroy
   skip_before_filter :check_account_state
   before_filter :check_sso_params, :only => :sso_login
@@ -321,4 +321,5 @@ include RedisKeys
       @contact.language = current_portal.language
       return @contact
     end
+    TOKEN_TYPE = "OpenSocialFirstTimeAccessToken"
 end

@@ -32,6 +32,12 @@ class UserNotifier < ActionMailer::Base
     content_type  "text/html"
   end
 
+  def custom_ssl_activation(account_admin, portal_url, elb_name)
+    from          AppConfig['from_email']
+    recipients    account_admin.email
+    subject       "Custom SSL Activated"
+    body          :account_admin_name => account_admin.name, :portal_url => portal_url, :elb_name => elb_name
+    sent_on       Time.now
 
   def notify_contacts_import(user, results)
     subject       "Contacts Import Notification"

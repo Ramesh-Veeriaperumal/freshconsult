@@ -23,11 +23,11 @@ module MemcacheKeys
   ACCOUNT_STATUSES = "v2/ACCOUNT_STATUSES:%{account_id}"
 
 
-  PORTAL_BY_URL = "v1/PORTAL_BY_URL:%{portal_url}"
+  PORTAL_BY_URL = "v2/PORTAL_BY_URL:%{portal_url}"
 
   ACCOUNT_BY_FULL_DOMAIN = "v2/ACCOUNT_BY_FULL_DOMAIN:%{full_domain}"
 
-  ACCOUNT_MAIN_PORTAL = "v2/ACCOUNT_MAIN_PORTAL:%{account_id}"
+  ACCOUNT_MAIN_PORTAL = "v3/ACCOUNT_MAIN_PORTAL:%{account_id}"
 
   ACCOUNT_CUSTOM_DROPDOWN_FIELDS = "v1/ACCOUNT_CUSTOM_DROPDOWN_FIELDS:%{account_id}"
 
@@ -36,7 +36,7 @@ module MemcacheKeys
   ES_ENABLED_ACCOUNTS = "ES_ENABLED_ACCOUNTS"
  
   # Portal customization related keys
-  PORTAL_TEMPLATE = "v1/PORTAL_TEMPLATE:%{account_id}:%{portal_id}"
+  PORTAL_TEMPLATE = "v2/PORTAL_TEMPLATE:%{account_id}:%{portal_id}"
 
   PORTAL_TEMPLATE_PAGE = "v1/PORTAL_TEMPLATE_PAGE:%{account_id}:%{template_id}:%{page_type}"
 
