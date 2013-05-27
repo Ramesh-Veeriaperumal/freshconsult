@@ -86,6 +86,7 @@ en:
   dropbox_attach_label: Attach from
   dropbox_attach_from: Attach from Dropbox
   dropbox_choose_file: Choose file
+  dropbox_plaintext: Dropbox Attachments
   show_quoted_text: Show Quoted text
   cancel_my_account: Cancel my account
   resolved_on_time: Resolved on time
