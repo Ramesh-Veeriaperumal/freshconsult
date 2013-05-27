@@ -4,8 +4,10 @@ class Workers::Observer
   def self.perform args
     begin
       Rails.logger.debug "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$           RESQUE"
+      
       p Account.current.tickets.find args[:ticket_id]
       ActiveRecord::Base.connection.reset!
+
       account = Account.current
 #DJ
 # class Workers::Observer < Struct.new(:args)

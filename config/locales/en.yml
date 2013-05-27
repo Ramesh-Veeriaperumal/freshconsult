@@ -1,6 +1,7 @@
 en:
   meta:
    language_name: 'English'
+  confirm_delete_message: Are you sure you want to delete the %{human_name}?
   any: Any
   or: or
   reorder_rules: Reorder Active Rules
@@ -621,6 +622,7 @@ en:
         thankyou_info: "Message to be displayed after a user submits the ticket form"
     supervisor_rules:
       index:
+        human_name: Supervisor Rule
         title: Supervisor - Rules
       helpnote:
         tour: Help me create a new supervisor rule
@@ -635,6 +637,7 @@ en:
         title: Supervisor - Edit Rule
     observer_rules:
       index:
+        human_name: Observer Rule
         title: Observer - Rules
       helpnote:
         tour: Help me create a new observer rule
@@ -668,6 +671,9 @@ en:
         checked: is checked
         unchecked: is unchecked
         deselected: Deselected
+    va_rules:
+      index:
+        human_name: Dispatch’r Rule
     shared:
       filter_jsinit:
         request_type: Request Type
@@ -683,6 +689,8 @@ en:
         unchecked: unchecked
         deselected: is deselected
     automations:
+      index:
+        human_name: Scenario
       edit:
         title: Edit Scenario
     security: 
@@ -1764,6 +1772,7 @@ en:
   add_new_forum: add a new forum
   no_forum_category: No forums in this category
   sla_policy: 
+    human_name: SLA Policy
     sla_targets: SLA Targets
     sla_targets_details: Set Service Level Targets for each ticket priority
     new: New SLA Policy
