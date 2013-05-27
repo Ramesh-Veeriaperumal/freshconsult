@@ -1,6 +1,6 @@
 class  Helpdesk::TicketNotifier < ActionMailer::Base
 
-  layout "email_font"
+  layout "email_font", :except => [:reply]
   
   def self.notify_by_email(notification_type, ticket, comment = nil)
     e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
@@ -97,12 +97,19 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     headers       "Reply-to" => "#{note.from_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     sent_on       Time.now
     content_type  "multipart/mixed"
-  
-    part "text/html" do |html|
-      html.body   render_message("reply",:ticket => ticket, :body => note.body_html, :note => note, :dropboxes=>note.dropboxes,
-                  :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]),
-                  :include_quoted_text => options[:quoted_text]
-                  )
+    part :content_type => "multipart/alternative" do |alt|
+      alt.part "text/plain" do |plain|
+        plain.body   render_message("reply.text.plain.erb",:ticket => ticket, :body => note.body, :note => note, :dropboxes=>note.dropboxes,
+                    :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]),
+                    :include_quoted_text => options[:quoted_text]
+                    )
+      end
+      alt.part "text/html" do |html|
+        html.body   render_message("reply.text.html.erb",:ticket => ticket, :body => note.body_html, :note => note, :dropboxes=>note.dropboxes,
+                    :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]),
+                    :include_quoted_text => options[:quoted_text]
+                    )
+      end
     end
 
     note.attachments.each do |a|
