@@ -192,8 +192,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket = Helpdesk::Ticket.new(
         :account_id => account.id,
         :subject => params[:subject],
-        :description => params[:text],
-        :description_html => Helpdesk::HTMLSanitizer.clean(params[:html]),
+        :ticket_body_attributes => {:description => params[:text], 
+                          :description_html => Helpdesk::HTMLSanitizer.clean(params[:html])},
         :requester => user,
         :to_email => to_email[:email],
         :to_emails => parse_to_emails,
@@ -211,8 +211,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         if (user.agent? && !user.deleted?)
           process_email_commands(ticket, user, email_config)
           email_cmds_regex = get_email_cmd_regex(account)
-          ticket.description = ticket.description.gsub(email_cmds_regex, "") if(!ticket.description.blank? && email_cmds_regex)
-          ticket.description_html = ticket.description_html.gsub(email_cmds_regex, "") if(!ticket.description_html.blank? && email_cmds_regex)
+          ticket.ticket_body.description = ticket.description.gsub(email_cmds_regex, "") if(!ticket.description.blank? && email_cmds_regex)
+          ticket.ticket_body.description_html = ticket.description_html.gsub(email_cmds_regex, "") if(!ticket.description_html.blank? && email_cmds_regex)
         end
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
@@ -225,7 +225,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       rescue ActiveRecord::RecordInvalid => e
         FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
       end
-      set_key(message_key(account, message_key), ticket.display_id, 86400*7) unless message_key.nil?
+      set_others_redis_key(message_key(account, message_key), ticket.display_id, 86400*7) unless message_key.nil?
     end
     
     def check_for_spam(ticket)
@@ -255,16 +255,28 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def add_email_to_ticket(ticket, from_email, user)
-      body = show_quoted_text(params[:text],ticket.reply_email)
-      body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html]), ticket.reply_email)
+      msg_hash = {}
+      # for plain text
+      msg_hash = show_quoted_text(params[:text],ticket.reply_email)
+      unless msg_hash.blank?
+        body = msg_hash[:body]
+        full_text = msg_hash[:full_text]
+      end
+      # for html text
+      msg_hash = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html]), ticket.reply_email)
+      unless msg_hash.blank?
+        body_html = msg_hash[:body]
+        full_text_html = msg_hash[:full_text]
+      end
+      
       from_fwd_recipients = from_fwd_emails?(ticket, from_email)
       parsed_cc_emails = parse_cc_email
       parsed_cc_emails.delete(ticket.account.kbase_email)
       note = ticket.notes.build(
         :private => (from_fwd_recipients and user.customer?) ? true : false ,
         :incoming => true,
-        :body => body,
-        :body_html => body_html ,
+        :note_body_attributes => {:body => body,:body_html => body_html,
+                                  :full_text => full_text, :full_text_html => full_text_html} ,
         :source => from_fwd_recipients ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] : 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
         :user => user, #by Shan temp
         :account_id => ticket.account_id,
@@ -280,8 +292,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           ticket.responder ||= user
           process_email_commands(ticket, user, ticket.email_config, note)
           email_cmds_regex = get_email_cmd_regex(ticket.account)
-          note.body = body.gsub(email_cmds_regex, "") if(!body.blank? && email_cmds_regex)
-          note.body_html = body_html.gsub(email_cmds_regex, "") if(!body_html.blank? && email_cmds_regex)
+          note.note_body.body = body.gsub(email_cmds_regex, "") if(!body.blank? && email_cmds_regex)
+          note.note_body.body_html = body_html.gsub(email_cmds_regex, "") if(!body_html.blank? && email_cmds_regex)
         end
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
@@ -386,12 +398,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
         
       unless old_msg.blank?
-       original_msg = original_msg +
+
+       full_text = original_msg +
        "<div class='freshdesk_quote'>" +
        "<blockquote class='freshdesk_quote'>" + old_msg + "</blockquote>" +
        "</div>"
-      end   
-      return original_msg
+      end 
+      {:body => original_msg,:full_text => full_text}
     end
 
     def get_envelope_to

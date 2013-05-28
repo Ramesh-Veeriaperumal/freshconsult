@@ -2,7 +2,8 @@ require 'openssl'
 require 'base64'
 
 module Integrations::AppsUtil
-  include RedisKeys
+  include Redis::RedisKeys
+  include Redis::IntegrationsRedis
   
   def get_installed_apps
     @installed_applications = Integrations::InstalledApplication.find(:all, :conditions => ["account_id = ?", current_account])
@@ -21,7 +22,7 @@ module Integrations::AppsUtil
   end
 
   def get_cached_values(ticket_id)
-    cache_val = get_key("INTEGRATIONS_LOGMEIN:#{current_account.id}:#{ticket_id}")
+    cache_val = get_integ_redis_key("INTEGRATIONS_LOGMEIN:#{current_account.id}:#{ticket_id}")
     (cache_val.blank?) ? {} : JSON.parse(cache_val)
   end
 

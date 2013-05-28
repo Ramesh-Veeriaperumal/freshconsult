@@ -23,7 +23,7 @@
 			field_value.merge!({:category_val => @ticket.get_ff_value(field.name)})
 		end
 
-		field_html = construct_ticket_element(:helpdesk_ticket, field, field.label, dom_type, field.required, field_value, '', false, false)
+		field_html = construct_ticket_element(form_builder, :helpdesk_ticket, field, field.label, dom_type, field.required, field_value, '', false, false)
 		if field.is_default_field?
 			default_fields << [ field.field_type , field_html ]
 		else

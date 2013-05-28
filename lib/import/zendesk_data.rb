@@ -414,7 +414,7 @@ def handle_ticket_import base_dir
         :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
         :user_id => note_created_by,
         :account_id =>@current_account && @current_account.id,
-        :body =>note_body        
+        :note_body_attributes => {:body =>note_body}        
         })
          @note.created_at = note_created_time.to_datetime()
          if @note.save

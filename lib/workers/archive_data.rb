@@ -4,23 +4,24 @@ module Workers
 
 		include Resque::Plugins::Status
 		include Reports::ArchiveData
-		include RedisKeys
+		include Redis::RedisKeys
+		include Redis::ReportsRedis
 
 		def perform
 			options.symbolize_keys!
 			archive(options)
 			completed
-			remove_key %(resque:status:#{uuid}) # uuid is job's unique id
+			remove_reports_redis_key %(resque:status:#{uuid}) # uuid is job's unique id
 			create_regeneration_job(options)			
 		end
 
 		def create_regeneration_job(options)
 			id = options[:account_id]
 		# Check if there is reports key for this account in redis to re-generate the data
-			set_of_dates = set_members REPORT_STATS_REGENERATE_KEY % {:account_id => id}
+			set_of_dates = set_reports_members REPORT_STATS_REGENERATE_KEY % {:account_id => id}
 			return if set_of_dates.empty?
 			export_hash = REPORT_STATS_EXPORT_HASH % {:account_id => id}
-			accounts_re_job_id = get_hash_value(export_hash, "re_job_id")
+			accounts_re_job_id = get_reports_hash_value(export_hash, "re_job_id")
 			accounts_re_job = Resque::Plugins::Status::Hash.get(accounts_re_job_id)
 			if accounts_re_job.nil? or accounts_re_job.completed?
 				re_job_id = Workers::RegenerateArchiveData.create({:account_id => id, :dates => set_of_dates})

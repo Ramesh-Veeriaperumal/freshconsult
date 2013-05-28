@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130427074254) do
+ActiveRecord::Schema.define(:version => 20130502164554) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -647,6 +647,21 @@ ActiveRecord::Schema.define(:version => 20130427074254) do
 
   add_index "helpdesk_nested_ticket_fields", ["account_id", "name"], :name => "index_helpdesk_nested_ticket_fields_on_account_id_and_name", :unique => true
 
+  create_table "helpdesk_note_bodies", :id => false, :force => true do |t|
+    t.integer  "id",             :limit => 8,        :null => false
+    t.integer  "note_id",        :limit => 8
+    t.text     "body",           :limit => 16777215
+    t.text     "body_html",      :limit => 16777215
+    t.text     "full_text",      :limit => 16777215
+    t.text     "full_text_html", :limit => 16777215
+    t.integer  "account_id",     :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "helpdesk_note_bodies", ["account_id", "note_id"], :name => "index_helpdesk_note_bodies_on_account_id_and_note_id"
+  add_index "helpdesk_note_bodies", ["id"], :name => "index_helpdesk_note_bodies_id"
+
   create_table "helpdesk_notes", :id => false, :force => true do |t|
     t.integer  "id",           :limit => 8,                             :null => false
     t.text     "body",         :limit => 2147483647
@@ -850,6 +865,19 @@ ActiveRecord::Schema.define(:version => 20130427074254) do
   end
 
   add_index "helpdesk_tags", ["account_id", "name"], :name => "index_helpdesk_tags_on_account_id_and_name", :unique => true
+
+  create_table "helpdesk_ticket_bodies", :id => false, :force => true do |t|
+    t.integer  "id",               :limit => 8,        :null => false
+    t.integer  "ticket_id",        :limit => 8
+    t.text     "description",      :limit => 16777215
+    t.text     "description_html", :limit => 16777215
+    t.integer  "account_id",       :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "helpdesk_ticket_bodies", ["account_id", "ticket_id"], :name => "index_helpdesk_ticket_bodies_on_account_id_and_ticket_id"
+  add_index "helpdesk_ticket_bodies", ["id"], :name => "index_helpdesk_ticket_bodies_id"
 
   create_table "helpdesk_ticket_fields", :force => true do |t|
     t.integer  "account_id",              :limit => 8

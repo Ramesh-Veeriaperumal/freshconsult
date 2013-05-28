@@ -4,7 +4,8 @@ module Helpdesk::MergeTicketActions
 	include Helpdesk::Ticketfields::TicketStatus
 	include Helpdesk::ToggleEmailNotification
 	include ParserUtil
-	include RedisKeys
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
 	def handle_merge 
     @header = @target_ticket.header_info || {}
@@ -34,7 +35,7 @@ module Helpdesk::MergeTicketActions
 		def move_source_description_to_target source_ticket
 			desc_pvt_note = params[:target][:is_private]
 			source_description_note = @target_ticket.notes.build(
-				:body_html => build_source_description_body_html(source_ticket),
+				:note_body_attributes => {:body_html => build_source_description_body_html(source_ticket)},
 				:private => desc_pvt_note || false,
 				:source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
 				:account_id => current_account.id,
@@ -101,7 +102,7 @@ module Helpdesk::MergeTicketActions
 				unless @header[:message_ids].include? source
 					@header[:message_ids] << source
 					source_key = EMAIL_TICKET_ID % { :account_id => current_account.id, :message_id => source }
-					set_key(source_key, @target_ticket.display_id)
+					set_tickets_redis_key(source_key, @target_ticket.display_id)
 				end
 			end
 		end
@@ -114,7 +115,7 @@ module Helpdesk::MergeTicketActions
 		def add_note_to_target_ticket
 		  target_pvt_note = @target_ticket.requester_has_email? ? params[:target][:is_private] : true
 			@target_note = @target_ticket.notes.create(
-				:body_html => params[:target][:note],
+				:note_body_attributes => {:body_html => params[:target][:note]},
 				:private => target_pvt_note  || false,
 				:source => target_pvt_note ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : 
 																Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],

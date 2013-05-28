@@ -15,7 +15,9 @@
 	  <li class="inline-field field">
 	    <label class="caption"><%=@ticket.is_fb_message? ? "Reply" : "Comment:"%></label>
 	    <div class="fields">
-	    <%= f.text_area :body, { :class => 'required facebook auto-height', :id => "#{id}-#{cntid}-body", :rows => "6" } %>
+      <% f.fields_for (:note_body, Helpdesk::NoteBody.new) do |ff| %>
+          <%= ff.text_area :body, { :class => 'required facebook auto-height', :id => "#{id}-#{cntid}-body", :rows => "6" } %>
+      <% end %>
       <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"]%>          
       <%= f.hidden_field :private , :value => "false" %>
 	  <%= hidden_field_tag(:ticket_status , params[:ticket_status], :id=>:fb_ticket_status  )%>
