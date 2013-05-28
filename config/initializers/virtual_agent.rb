@@ -39,11 +39,6 @@ module VAConfig
     t_field ? Helpdesk::TicketField::FIELD_CLASS[t_field.field_type.to_sym][:va_handler] : 
       'text'
   end
-
-  def self.negatable_columns(account)
-    custom_fields = account.ticket_fields.custom_fields.collect { |field| field.name }
-    custom_fields + DEFAULT_NEGATABLE_COLUMS
-  end
 end
 
 
