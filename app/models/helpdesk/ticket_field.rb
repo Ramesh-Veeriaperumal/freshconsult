@@ -253,7 +253,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   def as_json(options={})
     options[:include] = [:nested_ticket_fields]
     options[:except] = [:account_id]
-    options[:methods] = [:choices]
+    options[:methods] = [:choices,:nested_choices]
     json_str = super options
     json_str
   end
