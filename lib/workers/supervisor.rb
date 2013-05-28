@@ -27,21 +27,24 @@ class Workers::Supervisor
       begin
         conditions = rule.filter_query
         next if conditions.empty?
-        negate_conditions = rule.negation_query
-        
-        puts "rule name::::::::::#{rule.name}"
-        puts "conditions::::::: #{conditions.inspect}"
-        puts "negate_conditions::::#{negate_conditions.inspect}"
-        joins  = rule.get_joins(["#{conditions[0]} #{negate_conditions[0]}"])
-        account.tickets.scoped(:conditions => negate_conditions).scoped(:conditions => conditions).updated_in(1.month.ago).visible.find_in_batches(:joins => joins,:readonly => false, :batch_size => 300) do |tickets|
-          tickets.each do |ticket|
-            rule.trigger_actions ticket
-            ticket.save!
-          end
+      
+        tickets = account.tickets.updated_in(1.month.ago).visible.find( :all, 
+          :joins => %(inner join helpdesk_schema_less_tickets on helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id 
+            and helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id 
+            inner join helpdesk_ticket_states on helpdesk_tickets.id = 
+            helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = 
+            helpdesk_ticket_states.account_id inner join users on 
+            helpdesk_tickets.requester_id = users.id  and users.account_id = 
+            helpdesk_tickets.account_id  left join customers on users.customer_id = 
+            customers.id left join flexifields on helpdesk_tickets.id = 
+            flexifields.flexifield_set_id  and helpdesk_tickets.account_id = 
+            flexifields.account_id and flexifields.flexifield_set_type = 'Helpdesk::Ticket'), 
+          :conditions => conditions )
+        tickets.each do |ticket| 
+          rule.trigger_actions ticket
+          ticket.save!
         end
-
       rescue Exception => e
-        puts e.backtrace.join("\n")
         puts "something is wrong: #{e.message}"
       rescue
         puts "something went wrong"

@@ -83,7 +83,7 @@ integrations_url:
     production: "https://login.freshdesk.com"
     #staging: "https://login.freshbugs.com"
     #staging: "https://login.freshitil.com"
-    staging: "https://login.freshbugs.com"
+    staging: "https://login.freshpo.com"
 
 
 
