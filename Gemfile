@@ -90,6 +90,7 @@ gem 'clockwork', '0.4.1'
 gem "wkhtmltopdf-binary", "~> 0.9.9.1"
 gem "wicked_pdf", "~> 0.9.2"
 gem "pg"
+gem "routing-filter", "~> 0.3.1"
 
 gem "cloudfront_asset_host", :git => "git://github.com/freshdesk/cloudfront_asset_host.git"
 

@@ -139,6 +139,7 @@ class AuthorizationsController < ApplicationController
   def create_for_facebook(params)
     Account.reset_current_account
     portal_id = request.env["omniauth.origin"] unless request.env["omniauth.origin"].blank?
+    state = "/#{params[:state]}" if params[:state]
     portal = Portal.find_by_id(portal_id)
     user_account = portal.account
     portal_url = portal.host
@@ -156,7 +157,7 @@ class AuthorizationsController < ApplicationController
       key_options = { :account_id => user_account.id, :user_id => @current_user.id, :provider => @omniauth['provider']}
       key_spec = Redis::KeySpec.new(RedisKeys::SSO_AUTH_REDIRECT_OAUTH, key_options)
       Redis::KeyValueStore.new(key_spec, curr_time, 300).save
-      redirect_to portal_url + "/sso/login?provider=facebook&uid=#{@omniauth['uid']}&s=#{random_hash}" 
+      redirect_to portal_url + "#{state}/sso/login?provider=facebook&uid=#{@omniauth['uid']}&s=#{random_hash}" 
     end
   end
 

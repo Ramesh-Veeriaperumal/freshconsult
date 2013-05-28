@@ -40,14 +40,26 @@ class FBClient
     end
     fb_pages
   end
-  
-  def get_page
-    @graph = Koala::Facebook::GraphAPI.new(@fb_page.page_token)
+
+  def add_page_tab name, image_url = nil
+    @page = get_profile
+    @page.put_connections("me", "tabs", {:access_token => @fb_page.page_token, :app_id => @tokens['app_id']})
+    update_page_tab(name, image_url)
   end
 
-  def add_page_tab name
+  def get_page_tab
     @page = get_profile
-    @page.put_connections("me", "tabs", {:access_token => @fb_page.access_token, :app_id => @tokens['app_id'], :custom_name => name})
+    @page.get_connections("me", "tabs/#{@tokens['app_id']}", {:access_token => @fb_page.page_token})
+  end
+
+  def update_page_tab name, image_url = nil
+    @page = get_profile
+    @page.put_connections("me", "tabs/app_#{@tokens['app_id']}", {:access_token => @fb_page.page_token, :custom_name => name, :custom_image_url => image_url})
+  end
+
+  def remove_page_tab
+    @page = get_profile
+    @page.delete_connections("me", "tabs/app_#{@tokens['app_id']}", {:access_token => @fb_page.page_token})
   end
   
   def get_profile

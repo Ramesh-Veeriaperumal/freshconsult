@@ -11,15 +11,9 @@
       <li>
   		  <div class="item_actions">
   		  	<%= link_to (t(".reauthorize"),  @fb_client.authorize_url(session[:state]), :class => "button") if page.reauth_required %>
-          <%= link_to "Add Page tab", "#portal_div", :rel => 'freshdialog', :class => "button", "data-width" => "500", :title => "Portal Select", :id => "page_tab_link"  %>
-          <div id="portal_div" class="hide">
-            <% form_for page, :url => { :action => "add_tab", :id => page } do |f| %>
-            <%= text_field_tag "custom_name", "Enter the name of the tab", :class => "required" %>
-            <% end %>
-          </div>
-  		    <%= link_to t("edit"),  edit_social_facebook_url(page), :class => "button" %>
-  		    <%= link_to(t('remove'), social_facebook_path(page), :method => 'delete', :confirm => "Are you sure you want to remove this facebook page?", :class => "button" ) %>    
-  		  </div>
+          <%= link_to t("edit"),  edit_social_facebook_url(page), :class => "button" %>
+          <%= link_to(t('remove'), social_facebook_path(page), :method => 'delete', :confirm => "Are you sure you want to remove this facebook page?", :class => "button" ) %>    
+        </div>           
   		  <div class="preview_pic">
   		    <%= image_tag (page.page_img_url) if page.page_img_url %>
   		    <span class="fb_pic"></span>
@@ -30,9 +24,8 @@
 		  </h2>
 				<div class="intro">
 					<%= link_to page.page_link, page.page_link, { :target => "_blank" } %>				
-				</div>
-      			
-	  </li>
+				</div>   			
+	   </li>
     <% end %>
   </ul>
 <% else %>

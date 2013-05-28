@@ -52,6 +52,10 @@
     	    <%= collection_select(:social_facebook_page, :product_id, current_account.products, :id, :name, { :include_blank => '...', :selected => facebook_page.product_id })%>
     	  </div>	 
       <% end %>
+      <!-- add page tab -->
+      <span class="seperator"></span>
+      <a href="#" id="page_tab_edit">Configure Page Tab</a>
+      <div id="configure_page_tab" class="hide"></div>
     </div>
   </li>
 </ul>

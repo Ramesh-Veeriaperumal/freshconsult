@@ -1,8 +1,8 @@
 class SupportController < ApplicationController
 
-  before_filter :check_facebook
   layout :resolve_layout
   before_filter :portal_context, :page_message
+  before_filter :facebook_keys if :facebook?
   include RedisKeys
 
   caches_action :show, :index, :new,
@@ -30,7 +30,9 @@ class SupportController < ApplicationController
       # Setting up current_tab based on the page type obtained
       current_tab page_token
 
-      if !facebook?
+      if facebook?
+        @facebook_login = current_user 
+      else
         @skip_liquid_compile = false
         
         # Setting up page layout variable
@@ -39,8 +41,10 @@ class SupportController < ApplicationController
         # Setting dynamic header, footer, layout and misc. information
         process_template_liquid
 
-        @skip_liquid_compile = true if active_layout.present?
+        @skip_liquid_compile = true # if active_layout.present?
       end
+
+      
     end
 
     def preview?
@@ -62,6 +66,10 @@ class SupportController < ApplicationController
       request.env["HTTP_REFERER"] = support_home_url if @preview
     end
 
+    def facebook_keys
+      config = File.join(Rails.root, 'config', 'facebook.yml')
+      @tokens = (YAML::load_file config)[Rails.env]
+    end
     
     # Flash message for the page   
     # The helper method can be found in SupportHelper class      
@@ -121,11 +129,6 @@ class SupportController < ApplicationController
       end
     end
 
-    def check_facebook
-      session.delete(:facebook_tab) if params[:clear_facebook]
-      @facebook_login = true if session[:facebook_login]
-    end
-
     def template_data(sym)
       data = @portal_template[sym] 
       data = @portal_template.get_draft[sym] if preview? && @portal_template.get_draft
@@ -137,12 +140,6 @@ class SupportController < ApplicationController
     end
 
     def facebook?
-      if params[:source]
-        session[:facebook_tab] = true if session
-        return true
-      else
-        session[:facebook_tab]
-      end
+      params[:portal_type] == "facebook"
     end
-    
 end

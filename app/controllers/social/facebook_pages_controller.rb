@@ -9,7 +9,7 @@ class Social::FacebookPagesController < Admin::AdminController
   before_filter :set_session_state , :only =>[:index , :edit]
   before_filter :fb_client , :only => [:authdone, :index,:edit]
   before_filter :build_item, :only => [:authdone]
-  before_filter :load_item,  :only => [:edit, :update, :destroy, :add_tab]  
+  before_filter :load_item,  :only => [:edit, :update, :destroy, :configure_page_tab, :remove_page_tab]  
   
   def index
     @fb_pages = scoper 
@@ -30,10 +30,18 @@ class Social::FacebookPagesController < Admin::AdminController
     redirect_to :action => :index
   end
 
-  def add_tab
-    page = fb_client.add_page_tab(params[:custom_name])
-    flash[:success] = "The Freshdesk tab has been added to your page"
-    redirect_to :back
+  def configure_page_tab
+    @page_tab = fb_client.get_page_tab.first
+    render :partial => "configure_page_tab"
+  end
+
+  def remove_page_tab
+    if fb_client.remove_page_tab
+      flash[:success] = "Page Tab removed"
+    else
+      flash[:error] = "could not remove tab"
+    end
+    redirect_to social_facebook_path(@item)
   end
   
   def add_to_db fb_pages
@@ -69,8 +77,10 @@ class Social::FacebookPagesController < Admin::AdminController
     redirect_to :action => :index 
   end
 
-  def update    
-    if @item.update_attributes(params[:social_facebook_page])    
+  def update
+    if @item.update_attributes(params[:social_facebook_page])  
+      add_tab if params[:add_tab]  
+      fb_client.update_page_tab(params[:custom_name], params[:custom_image_url])
       flash[:notice] = I18n.t(:'flash.facebook.updated')
     else
       update_error
@@ -96,27 +106,29 @@ class Social::FacebookPagesController < Admin::AdminController
       @item = current_account.facebook_pages.find(params[:id]) 
     end
 
+    def add_tab
+      page = fb_client.add_page_tab(params[:custom_name], params[:custom_image_url])
+    end
+
     def human_name
       'Facebook'
-   end
+    end
   
-  def redirect_url
-      edit_social_facebook_url(@item)
-  end
-  
-  def fetch_fb_wall_posts fb_page 
-    fb_posts = Social::FacebookPosts.new(fb_page)
-    fb_posts.fetch    
-  end
-  
-  def fb_call_back_url
-   url_for(:host => current_account.full_domain, :action => 'authdone')
-  end
+    def redirect_url
+        edit_social_facebook_url(@item)
+    end
+    
+    def fetch_fb_wall_posts fb_page 
+      fb_posts = Social::FacebookPosts.new(fb_page)
+      fb_posts.fetch    
+    end
+    
+    def fb_call_back_url
+     url_for(:host => current_account.full_domain, :action => 'authdone')
+    end
 
-  def set_session_state
-    session[:state] = Digest::MD5.hexdigest(Helpdesk::SECRET_3+ Time.now.to_f.to_s)
-  end
-  
-  
+    def set_session_state
+      session[:state] = Digest::MD5.hexdigest(Helpdesk::SECRET_3+ Time.now.to_f.to_s)
+    end  
 
 end

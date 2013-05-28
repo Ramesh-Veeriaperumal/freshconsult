@@ -1,4 +1,25 @@
 <% content_for :sidebar do -%><%- end %>
+<% content_for :onload_script do %> 
+  var tab_data;
+    jQuery('#page_tab_edit').on('click', function(ev){
+      ev.preventDefault();
+
+      if(jQuery('#configure_page_tab').is(":visible")){
+        jQuery('#configure_page_tab').hide();
+      }else{
+        if(tab_data){
+          jQuery('#configure_page_tab').show();
+        }else{
+        	jQuery('#configure_page_tab').show().addClass('loading-center')
+          jQuery.get("<%=configure_page_tab_social_facebook_path%>", function(data){
+          tab_data = data;
+          jQuery('#configure_page_tab').removeClass('loading-center').html(data);
+          });
+        }
+      }
+
+    });
+<% end %>
 <h3 class="title">Facebook settings</h3>
 <% form_for :facebook_page, :url => social_facebook_path(@item), :html => { :method => :put } do |f| %>
 	<%= render :partial => 'form', :locals => { :facebook_page => @item } %>

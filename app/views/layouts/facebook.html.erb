@@ -7,7 +7,6 @@
 			{
 				console.log("we are here")
 				console.log("now redirecting")
-				window.location.href="home/clear_facebook"
 			}
 		<% end %>
 		<script src='http://connect.facebook.net/en_US/all.js'></script>
@@ -50,11 +49,11 @@
 		<%= portal_access_varibles %>
 	</head>
 	<body>
-		<script src="http://connect.facebook.net/en_US/all.js"></script>
+		<script src="https://connect.facebook.net/en_US/all.js"></script>
 		<div id="fb-root"></div>
     <script type="text/javascript">
         FB.init({
-          appId      : "183781041774128",                     // App ID
+          appId      : "<%= @tokens['app_id'] %>",                     // App ID
           status     : true,                                    // check login status
           cookie     : true,                                    // enable cookies to allow the server to access the session
           xfbml      : true,                                     // parse XFBML
@@ -79,7 +78,7 @@
 		<%= portal_navigation current_portal.to_liquid %>
 
 		<% unless @facebook_login %>
-		<div class="fb-login-button" data-scope="user_likes,email">Log In</div>
+		<div class="fb-login-button" data-scope="user_likes,email" data-display="page">Log In</div>
 		<% end %>
 		<%= yield %>
 				

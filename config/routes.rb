@@ -182,7 +182,7 @@
 
     social.resources :facebook, :controller => 'facebook_pages', 
                 :collection =>  { :signin => :any ,:authdone => :any , :event_listener =>:any , :enable_pages =>:any },
-                :member     =>  { :edit => :any, :add_tab => :any }
+                :member     =>  { :edit => :any, :configure_page_tab => :any, :remove_page_tab => :any }
 
     social.resources :fb, :controller => 'facebook_app',
                 :collection => { :fb_index => :any }
@@ -388,6 +388,7 @@
   # Removing the home as it is redundant route to home - by venom  
   # map.resources :home, :only => :index 
 
+  map.filter 'facebook'
   # Theme for the support portal
   map.connect "/theme/:id.:format", :controller => 'theme', :action => :index
 
