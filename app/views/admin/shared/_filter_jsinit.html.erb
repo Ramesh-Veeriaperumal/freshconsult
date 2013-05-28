@@ -68,8 +68,7 @@
             jQuery(control).val(initFeed["email_to"]);
             var to = jQuery('<div class="row-fluid" />')
                       .append("<label class='span2'><%= t(".to") %> </label>")
-                      .append(jQuery("<div class='span10' />")
-                      .append(control));
+                      .append(control);
           }
 
           var placeholder = jQuery("<a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a>")

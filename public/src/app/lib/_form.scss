@@ -565,30 +565,19 @@ a.addchoice:hover{
 				.params{ width:520px; height:130px; }
 			}
 			.s_email{
-					min-width: 680px;
-					margin: 10px 0;
-					margin-left: -150px;
-					margin-top: 50px;
-					.select2-container{top:-6px;}
-					label.error{ width:100%; }
-					.l_placeholder{
-							float: right;
-							margin-right: 8px;
-							margin-top: -30px;
-						}
-					.body_div{
-						>textarea{
-							margin: 3px; 
-							width: 81%; 
-						}
-					}
-					.subject_div{
-						>input[type='text']{
-							margin: 3px; 
-							width: 63%; 
-							height: 13px;
-						}
-					}
+				min-width: 680px;
+				margin: 50px 0 10px -150px;
+				.l_placeholder{
+					float: right;
+					top: 98px;
+					left: 622px;
+					position: absolute;
+				}
+				>div{ >input[type='text'], >textarea{position:relative; left: 41px; margin: 4px;}}
+				.select2-container{top:-4px; left: 42px;}
+				label.error{ width:100%; }
+				.subject_div{>input[type='text']{width: 58%; height: 13px;}}
+				.body_div{>textarea{ width: 75%; }}
 			}
 
 			span{
