@@ -1,3 +1,4 @@
+# encoding: utf-8
 #
 # Guid - Ruby library for portable GUID/UUID generation.
 #

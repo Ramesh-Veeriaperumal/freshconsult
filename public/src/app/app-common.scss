@@ -7345,6 +7345,70 @@ a.mobile_switchBtn {
 	height: 50px;
 }
 
+/* Custom SSL */
+
+.security-form{
+	margin-left: -10px;
+
+	li{
+		padding-top: 30px;
+	}
+}
+
+.thanks_message{
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.helpdesk_url{
+	padding-top: 4px;
+	font-weight: bold;
+}
+
+.extra_tabbed{
+	padding-left: 80px;
+}
+
+.enable_heading{
+	margin-left: 5px;
+	font-weight: bold;
+	font-size: 15px;
+	margin-top: 3px;
+	display: inline-table;
+}
+
+.align{
+	margin-top: -2px;
+}
+
+.faded_text{
+	color: #999;
+}
+
+.custom_ssl_form{
+	border: 1px solid #CCC;
+	padding: 10px;
+	margin-top: 10px;
+	margin-bottom: 30px;
+	border-radius: 5px;
+
+	.domain_field{
+		width: 90%;
+	}
+}
+
+.ssl_enabled_info{
+	text-align: center;
+	background-color: #fdfde5;
+}
+
+.elb_name{
+	font-weight: bold;
+	font-size: 14px;
+}
+
+/* Custom SSL */
+
 /* Add Watcher Start */
 
 div.monitor_div{
@@ -7362,18 +7426,16 @@ div.watchers_tooltip{
     @include min-height(84px);
     height: auto;
     width: 275px;
+    padding:10px;
+    font-size:13px;
     background-color: white;
     @include box-shadow(0px 0px 7px rgba(0,0,0, 0.3));
     @include border-radius(5px);
     z-index: 10000;
 
     .watcher_label{
-        margin-top: 14px;
-        margin-left: 16px;
-        float: left;
         font-size: 16px;
         font-weight: 300;
-        width: 141px;
     }
 
     #watcherlist{
@@ -7409,28 +7471,27 @@ div.watchers_tooltip{
 
     li{
     	display: block;
-    	padding: 5px 16px;
+    	padding: 5px 0px;
     	overflow: hidden;
     }
 
     .add_watcher_text, .view_watcher_text{
-        margin-top: -14px;
-        margin-right: 16px;
-        float: right;
-        text-align: right;
-        font-size: 13px;
-        width: 100px;
         a{
         	color: #369;
         }
     }
-
-    .add_watcher_text{
-		margin-top: -16px;
-	}
-
-	.view_watcher_text{
-		margin-top: 16px;
+    .changing-link{
+	    &.add_watcher_text,&.view_watcher_text{
+			position: absolute;
+			top: 23px;
+			right: -2px;
+			margin-top: -14px;
+	        margin-right: 16px;
+	        float: right;
+	        text-align: right;
+	        font-size: 13px;
+	        width: 100px;
+		}
 	}
 
     .link_disabled{
@@ -7448,11 +7509,8 @@ div.watchers_tooltip{
     }
 
     .watcher_text{
-    	color: #CCC;
-    	margin-left: 3px;
-    	text-align: center;
-    	padding-top: 15px;
-    	padding-right: 10px;
+    	color: #888;
+    	font-size:13px;
     }
 
     .watcher_list{
@@ -7517,8 +7575,8 @@ div.watchers_tooltip{
 	}
 
     .watcher_input{
-		margin: 9px 16px;
-		width: 241px;
+    	margin:10px 0;
+		width: 100%;
 	}
 
 	div.chzn-container{
@@ -7531,8 +7589,7 @@ div.watchers_tooltip{
 
 	.add_cancel_buttons{
 		float: right;
-		padding-right: 13px;
-		padding-bottom: 10px;
+		margin-right: -4px;
 	}
 
 	.submit_watcher{
@@ -8640,31 +8697,7 @@ height: auto;
 }
 
 /*!pattern Need to delete after pattern intagrated to product */
-.watchers_tooltip{
-	.btn-primary {
-		color: white;
-		text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-		background-color: #373737;
-		background-image: -moz-linear-gradient(top, #444, #222);
-		background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#444), to(#222));
-		background-image: -webkit-linear-gradient(top, #444, #222);
-		background-image: -o-linear-gradient(top, #444, #222);
-		background-image: linear-gradient(to bottom, #444, #222);
-		background-repeat: repeat-x;
-		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF444444', endColorstr='#FF222222', GradientType=0);
-		border-color: #222 #222 black;
-		border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-		filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-	}
-	.btn-primary:hover{
-		color: white;
-		background-color: #222;
-	}
-	.btn-primary[disabled]:hover{
-		border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-		background-color: #373737;
-	}
-}
+
 .ff_item{
 	.select2{
 		width: 190px;

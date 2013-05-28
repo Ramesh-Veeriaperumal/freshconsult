@@ -45,6 +45,7 @@ module SeedFu
               # Just load regular .rb files
               #
               File.open(file) do |file|
+                puts "Processing fixtures file - #{file.inspect}"
                 chunked_ruby = ''
                 file.each_line do |line|
                   if line == "# BREAK EVAL\n"

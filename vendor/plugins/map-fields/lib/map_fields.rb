@@ -56,7 +56,7 @@ module MapFields
         end
         csv_file = AWS::S3::S3Object.find(session[:map_fields][:file], S3_BUCKET_NAME)
         @mapped_fields = []
-        FasterCSV.parse(csv_file.value) do |row|
+        CSVBridge.parse(csv_file.value) do |row|
            @mapped_fields << row
         end
       end
@@ -66,11 +66,11 @@ module MapFields
       @rows = []
       begin
         csv_file = AWS::S3::S3Object.find(session[:map_fields][:file], S3_BUCKET_NAME)
-        FasterCSV.parse(csv_file.value) do |row|
+        CSVBridge.parse(csv_file.value) do |row|
            @rows << row
            break if @rows.size == 1
         end
-     rescue FasterCSV::MalformedCSVError => e
+     rescue CSVBridge::MalformedCSVError => e
         @map_fields_error = e
       end
       expected_fields = self.class.read_inheritable_attribute(:map_fields_fields)
@@ -154,7 +154,7 @@ module MapFields
 
     def each
       row_number = 1
-      FasterCSV.foreach(@file) do |csv_row|
+      CSVBridge.foreach(@file) do |csv_row|
         unless row_number == 1 && @ignore_first_row
           row = {}
           @mapping.each do |k,v|

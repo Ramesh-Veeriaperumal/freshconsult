@@ -133,7 +133,7 @@ class Billing::BillingController < ApplicationController
 
     #Events
     def subscription_changed(content)
-      @account.subscription.update_attributes(@subscription_data)
+      # @account.subscription.update_attributes(@subscription_data)
     end
 
     def subscription_activated(content)

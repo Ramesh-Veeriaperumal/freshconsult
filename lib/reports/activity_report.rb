@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Reports::ActivityReport
   
   include Helpdesk::Ticketfields::TicketStatus
@@ -287,7 +288,7 @@ end
       end
       unless @resolved_at_hash.nil?
         @resolved_at_hash.each do |tkt|
-          data_series_hash.store(tkt.date,(data_series_hash.fetch(tkt.date,{:created_count => 0})).merge({:resolved_count,tkt.count.to_i}))
+          data_series_hash.store(tkt.date,(data_series_hash.fetch(tkt.date,{:created_count => 0})).merge({:resolved_count => tkt.count.to_i}))
         end
       end
       data_series_hash.each do |date,count_hash|

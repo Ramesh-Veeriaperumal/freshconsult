@@ -1,3 +1,4 @@
+# encoding: utf-8
 module ParserUtil
 
 VALID_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/
@@ -43,9 +44,11 @@ VALID_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/
           email = simple_email[0]
           name = ""
         end
-    end
-      unless email.blank? and name.blank?
+      end
+      if email.present? and name.present?
         "#{name.gsub(/\./, ' ').strip} <#{email.downcase.strip}>".strip
+      elsif email.present?
+        email.downcase.strip
       end
     end
     addresses.compact.uniq

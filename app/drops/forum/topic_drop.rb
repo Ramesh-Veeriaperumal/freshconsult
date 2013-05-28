@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Forum::TopicDrop < BaseDrop
   
   include ActionController::UrlWriter

@@ -38,8 +38,9 @@ class Helpdesk::TicketsExport
       headers = csv_hash.keys.sort
       select = "helpdesk_tickets.* "
       select = "DISTINCT(helpdesk_tickets.id) as 'unique_id' , #{select}" if sql_conditions[0].include?("helpdesk_tags.name")
-      csv_string = FasterCSV.generate do |csv|
-        csv << headers
+      csv_string = CSVBridge.generate do |csv|
+        csv_headers = headers.collect {|header| csv_hash[header]}
+        csv << csv_headers
         Account.current.tickets.find_in_batches(:select => select,
                                         :conditions => sql_conditions, 
                                         :include => [:ticket_states, :ticket_status, :flexifield,
@@ -49,7 +50,8 @@ class Helpdesk::TicketsExport
           items.each do |record|
             csv_data = []
             headers.each do |val|
-              csv_data << record.send(csv_hash[val])
+              data = record.send(val)
+              csv_data << ((data.blank? || (data.is_a? Integer)) ? data : (CGI::unescapeHTML(data.to_s)))
             end
             csv << csv_data
           end

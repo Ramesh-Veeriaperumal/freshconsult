@@ -1,5 +1,4 @@
-require File.join(File.dirname(__FILE__), 'folder')
-
+# encoding: utf-8
 class Solution::Article < ActiveRecord::Base
   include Search::ElasticSearchIndex
   set_table_name "solution_articles"
