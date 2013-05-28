@@ -357,8 +357,19 @@ p strong{
 		-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 		-moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 		box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+		display:none;
 	}
+	// Open state for the dropdown
+	// ---------------------------
+	.open {
+	  // IE7's z-index only goes to the nearest positioned ancestor, which would
+	  // make the menu appear below buttons that appeared later on the page
+	  *z-index: 1000;
 
+	  & > .dropdown-menu {
+	    display: block;
+	  }
+	}
 	.ticket-btns{
 		float: left;
 		margin-right: 6px;
@@ -2355,17 +2366,15 @@ p strong{
 		margin-left: 0;
 		display: block;
 	}
-	.loading-center  {
-		display: none;
-		height: 22px;
-		width:50px;
-		margin-top: -3px;
-		float: right;
+	.loading-small{
+		display:none;
 	}
 	&.loading_activities {
 
-		.loading-center  {
+		.loading-small  {
 			display: block;
+			margin:11px 30px 11px 0px;
+			float:right;
 		}
 
 		.toggle-button {

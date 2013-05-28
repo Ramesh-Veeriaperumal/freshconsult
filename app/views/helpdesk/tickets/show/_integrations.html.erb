@@ -25,7 +25,7 @@
 	    widget_code = widget_code.gsub("}}", " | encode_html}}")
 	    %>
 	    <%= Liquid::Template.parse(widget_code).render({"ticket" => @ticket}, :filters => [Integrations::FDTextFilter]) %>
-	    <div class="loading-box" id="jira_issue_loading"></div>
+	    <div class="sloading loading-block loading-small" id="jira_issue_loading"></div>
 	  </div></div>
 	</textarea>
 </div>
@@ -34,7 +34,8 @@
 <% installed_apps.each do |key,installed_app|
   app = installed_app.application
   unless app.blank?
-    app.widgets.each do |widget|
+    widget = app.widget
+      unless widget.blank?
       dip = widget.display_in_pages_option
       if !dip.blank? && dip.include?('helpdesk_tickets_show_page_side_bar')
         @ticket.load_flexifield
@@ -49,7 +50,7 @@
 			</div>
         </div>
   <%  end
-    end
+	end
   end
 end %>
 

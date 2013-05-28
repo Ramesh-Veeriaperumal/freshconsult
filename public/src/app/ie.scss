@@ -217,11 +217,20 @@ html.ie6, html.ie7, html.ie8{  height:100%; overflow-y:scroll; }
 }
 
 .ie6, .ie7, .ie8, .ie9, .ie10 {
+	#TicketProperties{
+		.edit_helpdesk_ticket{
+			.checkbox input[type="checkbox"]{
+				margin-top:-1px;
+				padding-left:0;
+			}
+		}
+	}
 
 	.hidden_upload {
 		width: 250px;
 		margin-top: 0;
 		input[type=file] {
+			width:80px;
 			@include opacity(1);
 			top: 0;
 		}

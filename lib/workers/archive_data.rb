@@ -25,9 +25,10 @@ module Workers
 			if accounts_re_job.nil? or accounts_re_job.completed?
 				re_job_id = Workers::RegenerateArchiveData.create({:account_id => id, :dates => set_of_dates})
 				add_to_hash(export_hash, "re_job_id", re_job_id, 604800)
-			else
+			elsif Rails.env.production?
 				FreshdeskErrorsMailer.deliver_error_email(nil,accounts_re_job,nil,
-				{:subject => %(Reports regeneration data archiving job of Account ID : #{id} is 
+				{:recipients => "srinivas@freshdesk.com",
+					:subject => %(Reports regeneration data archiving job of Account ID : #{id} is 
 																				#{accounts_re_job.status} for more than 24 hours)})
 			end
 		end

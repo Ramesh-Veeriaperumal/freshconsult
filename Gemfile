@@ -79,14 +79,13 @@ gem 'chargebee', "~> 1.1.7"
 
 gem 'memcache-client', '1.8.5'
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
-gem 'tire', :git => "git://github.com/freshdesk/tire.git"
 gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
 gem "rinku", :git => "git://github.com/freshdesk/rinku.git"
 
 gem "people", '0.2.1' #https://github.com/mericson/people/tree/master/lib
 gem "useragent", "~> 0.4.16"
-gem "xss_terminate", "~> 0.2"
 gem "rack-throttle", "~> 0.3.0"
+gem "static_model", "~> 1.0.4"
 gem "faraday","0.8"
 
 gem 'clockwork', '0.4.1'
@@ -95,6 +94,10 @@ gem "wicked_pdf", "~> 0.9.2"
 gem "pg"
 
 gem "cloudfront_asset_host", :git => "git://github.com/freshdesk/cloudfront_asset_host.git"
+
+group :production,:test,:staging do
+ gem 'tire', :git => "git://github.com/freshdesk/tire.git"
+end
 
 group :development,:test do
    gem "forgery","0.5.0"

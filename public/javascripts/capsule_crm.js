@@ -20,7 +20,7 @@ CapsuleWidget = {
             rest_url: 'api/party/' + escape(id)
         });
         
-        $('capsule-title').addClassName('paddingloading');
+        $('capsule-title').addClassName('sloading loading-small loading-right');
      
         new Ajax.Request('/http_request_proxy/fetch', {
             asynchronous: true,
@@ -35,7 +35,7 @@ CapsuleWidget = {
                     if (person) {CapsuleWidget.renderContact(person);}
                     if (organisation) {CapsuleWidget.renderContact(organisation);}
                 }
-                $('capsule-title').removeClassName('paddingloading'); 
+                $('capsule-title').removeClassName('sloading loading-small loading-right'); 
             }
         });
     },
@@ -135,7 +135,7 @@ CapsuleWidget = {
         summary += '</form>';
          
         $('cap-contact-summary').update(summary);
-        $('capsule-title').removeClassName('paddingloading'); 
+        $('capsule-title').removeClassName('sloading loading-small loading-right'); 
     },
     showContactEmail: function(email) {
         var content = '<a href="mailto:' + email.emailAddress.escapeHTML() + '">' + email.emailAddress.escapeHTML() + '</a>';
@@ -152,7 +152,7 @@ CapsuleWidget = {
             alert('Please enter a name or email to search.');
             return;
         } 
-        $('capsule-title').addClassName('paddingloading'); 
+        $('capsule-title').addClassName('sloading loading-small loading-right'); 
         //disable_submit($('cap-search'));
         $('cap-contact-summary').update('');
         var parameters = $H({
@@ -174,13 +174,13 @@ CapsuleWidget = {
             onSuccess: function (response) {
                 CapsuleWidget.processSearch(response);
                 // enable_submit($('cap-search'));
-                $('capsule-title').removeClassName('paddingloading');  
+                $('capsule-title').removeClassName('sloading loading-small loading-right');  
             }
         });
     },
     
     processFailure: function(responseEvt){
-       $('capsule-title').removeClassName('paddingloading');  
+       $('capsule-title').removeClassName('sloading loading-small loading-right');  
        errorResult = '<center class="info-error"><b>Error in retrieving Contact information!!!</b><br />'
        switch(responseEvt.status){
          case 401:
@@ -246,7 +246,7 @@ CapsuleWidget = {
 
             $('cap-search-result').update(notFoundText);
         }
-        $('capsule-title').removeClassName('paddingloading');
+        $('capsule-title').removeClassName('sloading loading-small loading-right');
     },
 
     searchTerm: function() {
@@ -264,7 +264,7 @@ CapsuleWidget = {
             alert('Name is required.');
             return;
         }
-        $('capsule-title').addClassName('paddingloading'); 
+        $('capsule-title').addClassName('sloading loading-small loading-right'); 
         //disable_submit($('cap-person'));
         var parameters = $H({
             username: resource.options.username,
@@ -301,7 +301,7 @@ CapsuleWidget = {
     },
     addNote: function(theForm,resource) {
         $('cap-note-added').update('');
-        $('capsule-title').addClassName('paddingloading');
+        $('capsule-title').addClassName('sloading loading-small loading-right');
         if (theForm['note'].value == '') {
             alert('please enter a note.');
             return;
@@ -333,7 +333,7 @@ CapsuleWidget = {
             parameters: parameters,
             onSuccess: function (response) {
                 // enable_submit($('cap-note'));
-                $('capsule-title').removeClassName('paddingloading');                
+                $('capsule-title').removeClassName('sloading loading-small loading-right');                
                 $('cap-note-added').update('Note successfully added to Capsule CRM');
             }
         });
@@ -348,7 +348,7 @@ capsuleResourceOptions = {
 	content_type: "application/xml",
 	enable_resource_cache: false,
 	application_html: function() {
-		var content = '<div class="negtive-margin"><h3 id="capsule-title" class="title paddingloading">';
+		var content = '<div class="negtive-margin"><h3 id="capsule-title" class="title sloading loading-small loading-right">';
 		content += '<span class="searchicon" onclick="$(\'cap-search\').toggle()"></span>';
 		content += $('capsule_widget').getAttribute('title').escapeHTML() + '</h3>';
 	   content += '<div id="capsule-content" class="content">';

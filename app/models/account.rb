@@ -4,7 +4,7 @@ class Account < ActiveRecord::Base
   require 'uri' 
 
   include Mobile::Actions::Account
-  include Tire::Model::Search
+  include Tire::Model::Search if ES_ENABLED
   include Cache::Memcache::Account
   include ErrorHandle
 
@@ -345,7 +345,7 @@ class Account < ActiveRecord::Base
   end
   
   def installed_apps_hash
-    installed_apps = installed_applications.all(:include => {:application => :widgets})
+    installed_apps = installed_applications.all(:include => :application )
     installed_apps.inject({}) do |result,installed_app|
      result[installed_app.application.name.to_sym] = installed_app
      result

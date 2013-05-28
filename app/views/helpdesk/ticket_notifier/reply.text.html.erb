@@ -1,0 +1,9 @@
+<div style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif">
+	<%= @body %>
+	<%=render :partial => 'dropbox_template', :locals => { :dropboxes => @dropboxes} %>
+
+	<%=render :partial => "satisfaction_survey", :locals => {:ticket => @ticket, :survey_handle => @survey_handle}%>
+
+	<%= render :partial => 'shared/free_plan_message' %>
+	<%#render :partial => "quoted_text", :locals => { :ticket => @ticket, :note => @note } if @include_quoted_text %>
+</div>

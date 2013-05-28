@@ -83,11 +83,11 @@ jQuery("#searchmoreform").submit(function(ev){
 	ev.preventDefault();
 	var query = $('solution_search').value;
 	jQuery('#default_solution_suggestions').hide();
-	jQuery("#more_search_results").show().addClass("loading-center");
+	jQuery("#more_search_results").show().addClass("sloading loading-small");
 	jQuery('#more_search_results')
 	  .load('/helpdesk/tickets/component/' + <%=@ticket.id%> + '?component=search_solutions&q='+encodeURIComponent(query), 
 	        function() {
-	    jQuery("#more_search_results").removeClass("loading-center");
+	    jQuery("#more_search_results").removeClass("sloading loading-small");
 	  });
 	  
 	return false;

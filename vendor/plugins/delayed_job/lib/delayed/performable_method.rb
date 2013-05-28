@@ -26,7 +26,7 @@ module Delayed
        Account.reset_current_account
        load(account).send(:make_current) if account
        load(object).send(method, *args.map{|a| load(a)})
-      rescue ActiveRecord::RecordNotFound
+      #rescue ActiveRecord::RecordNotFound
            # We cannot do anything about objects which were deleted in the meantime
       true
     end

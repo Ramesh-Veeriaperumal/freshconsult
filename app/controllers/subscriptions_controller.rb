@@ -199,8 +199,8 @@ class SubscriptionsController < ApplicationController
     end
 
     def update_features
-      return if subscription_plan_id == @old_subscription.subscription_plan_id
-      SAAS::SubscriptionActions.new.change_plan(account, @old_subscription)
-    end   
+      return if @subscription.subscription_plan_id == @cached_subscription.subscription_plan_id
+      SAAS::SubscriptionActions.new.change_plan(@subscription.account, @cached_subscription)      
+    end
 
 end 

@@ -49,14 +49,13 @@
       $parent = getParent($this)
 
       isActive = $parent.hasClass('open')
-
       clearMenus()
-
       if (!isActive) {
         $parent.toggleClass('open')
-        $parent.find(".dropdown-menu").toggle().toggle()
+        $parent.find(".dropdown-menu").toggle().toggle()[0].style.display='block'
+      }else{
+        $parent.find(".dropdown-menu").toggle().toggle()[0].style.display='none'
       }
-
 
       $this.focus()
 
@@ -109,6 +108,7 @@
   function clearMenus() {
     $(toggle).each(function () {
       getParent($(this)).removeClass('open')
+      getParent($(this)).find(".dropdown-menu").toggle().toggle()[0].style.display='none'
     })
   }
 

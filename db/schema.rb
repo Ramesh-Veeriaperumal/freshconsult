@@ -158,6 +158,7 @@ ActiveRecord::Schema.define(:version => 20130427074254) do
     t.integer "listing_order"
     t.text    "options"
     t.integer "account_id",    :default => 0
+    t.string  "application_type", :default => "freshplug", :null => false
   end
 
   create_table "authorizations", :force => true do |t|
@@ -1153,7 +1154,6 @@ ActiveRecord::Schema.define(:version => 20130427074254) do
     t.integer  "priority",           :limit => 8
     t.integer  "response_time"
     t.integer  "resolution_time"
-    t.integer  "escalateto",         :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sla_policy_id",      :limit => 8

@@ -1,6 +1,6 @@
 class Search::UpdateSearchIndex
   extend Resque::AroundPerform
-  include Tire::Model::Search
+  include Tire::Model::Search if ES_ENABLED
   @queue = "es_index_queue"
 
   def self.perform(args)

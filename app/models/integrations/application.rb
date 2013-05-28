@@ -3,23 +3,32 @@ class Integrations::Application < ActiveRecord::Base
   include Integrations::Constants
 
   serialize :options, Hash
-  has_many :widgets, 
+  has_one :custom_widget, 
     :class_name => 'Integrations::Widget',
     :dependent => :destroy
   belongs_to :account
   named_scope :available_apps, lambda {|account_id| { 
     :conditions => ["account_id  in (?)", [account_id, SYSTEM_ACCOUNT_ID]], 
     :order => :listing_order }}
-  after_destroy :destroy_installed_apps
 
   has_many :app_business_rules, 
     :class_name => 'Integrations::AppBusinessRule',
     :dependent => :destroy
 
-  has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
+  has_many :installed_applications, 
+    :class_name => 'Integrations::InstalledApplication',
+    :dependent => :destroy
 
   def to_liquid
     JSON.parse(self.to_json)["application"]
+  end
+
+  def widget
+    if self.account_id == 0
+      Integrations::NativeWidget.find_by(:application_type,self.application_type) #+ self.widgets_data
+    else
+      self.custom_widget
+    end
   end
 
   def oauth_provider
@@ -58,7 +67,7 @@ class Integrations::Application < ActiveRecord::Base
     custom_widget.description = ""
     custom_widget.display_in_pages_option = display_in_pages
     custom_widget.script = widget_script
-    custom_app.widgets.push(custom_widget)
+    custom_app.custom_widget = custom_widget
     installed_application = Integrations::InstalledApplication.new
     installed_application.application = custom_app
     installed_application.account = account
@@ -82,7 +91,7 @@ class Integrations::Application < ActiveRecord::Base
   sample_highrise_options={ domain:"freshdesk3.highrisehq.com", api_key:"c1ca9cc10f8f8a2a8ef422da49d67f51", 
               reqId:"{{requester.id}}", reqName:"{{requester.name | escape_html}}", reqEmail:"{{requester.email}}"}; 
 </script>}
-    example_app.widgets.push Integrations::Widget.new(:script => script)
+    example_app.custom_widget = Integrations::Widget.new(:script => script)
     # example_app.options = {
     #   :keys_order => [:name, :widget_script],
     #   :name => { :type => :text, :required => true, :label => "integrations.custom_application.form.widget_title", :default_value => "My App"},
@@ -100,10 +109,4 @@ class Integrations::Application < ActiveRecord::Base
       "#{name.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase}" unless name.blank?
     end
 
-    def destroy_installed_apps
-      unless self.account == SYSTEM_ACCOUNT_ID
-        installed_apps = Integrations::InstalledApplication.find_by_account_id_and_application_id(self.account.id, self.id)
-        installed_apps.destroy unless installed_apps.blank?
-      end
-    end
 end

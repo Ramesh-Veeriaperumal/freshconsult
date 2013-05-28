@@ -47,7 +47,7 @@
                   jQuery("#new-ticket-search")
                     .html(search_items).show()
                 }
-                jQuery("#helpdesk_ticket_subject").removeClass("loading-right");
+                jQuery("#helpdesk_ticket_subject").removeClass("sloading loading-small loading-right");
               }
             });
           }
@@ -55,10 +55,10 @@
           jQuery("#helpdesk_ticket_subject").live("blur", function(ev){
               var searchString = this.value.replace(/^\s+|\s+$/g, "");
               if(searchString != '' && searchString.length > 1){
-                jQuery(this).addClass("loading-right");
+                jQuery(this).addClass("sloading loading-small loading-right");
                 callbackToSolutionSearch(searchString);
               }else{
-                jQuery(this).removeClass("loading-right");        
+                jQuery(this).removeClass("sloading loading-small loading-right");        
               }
           });
       <% end %>

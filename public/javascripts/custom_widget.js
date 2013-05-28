@@ -356,7 +356,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 	},
 
 	renderPrimary: function(){
-		jQuery('#' + this.app + "_widget").addClass('loading-center');
+		jQuery('#' + this.app + "_widget").addClass('sloading loading-small');
 		if(this.app == "icontact" || this.app == "constantcontact"){
 			this.getUserInfo(); 
 		}
@@ -443,7 +443,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 		var obj = this; var export_contact = {};
 		this.renderTemplate(_.template(this.Export, {name: this.options.reqName, email: this.options.reqEmail, appname: this.options.app_name}));
 		
-		jQuery('#' + this.options.widget_name).removeClass('loading-center');
+		jQuery('#' + this.options.widget_name).removeClass('sloading loading-small');
 		this.renderUser(export_contact);
 	},
 
@@ -460,7 +460,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 			});
 			this.exportFlag = false;
 			jQuery('#' + this.options.widget_name + ' .lists-load').hide();
-			jQuery('#' + this.options.widget_name).addClass('loading-center');
+			jQuery('#' + this.options.widget_name).addClass('sloading loading-small');
 			
 			if(this.app == "campaignmonitor" || this.app == "mailchimp"){
 				this.addContact(subscribed);
@@ -555,7 +555,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 		});
 		this.listsTmpl = jQuery('#' + this.options.widget_name + ' .lists-load')[0];
 		jQuery('#' + this.options.widget_name + ' .lists-load').removeClass('hide');
-		jQuery('#' + this.options.widget_name + ' .emailLists').removeClass('loading-center');
+		jQuery('#' + this.options.widget_name + ' .emailLists').removeClass('sloading loading-small');
 	},
 
 	handleLists: function(response){
@@ -567,7 +567,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 			}
 			if(this.exportFlag){
 				this.renderTemplate(_.template(this.NewLists, {lists: all_lists}), jQuery('#' + this.options.widget_name + ' .lists-load')[0]);
-				jQuery('#' + this.options.widget_name + ' .lists-load').removeClass('loading-center').prepend("<hr/>");
+				jQuery('#' + this.options.widget_name + ' .lists-load').removeClass('sloading loading-small').prepend("<hr/>");
 			}
 			else{
 				this.renderTemplate(_.template(this.MailingLists, {lists: all_lists}), jQuery('#' + this.options.widget_name + ' .emailLists')[0]);
@@ -680,7 +680,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 		}
 		jQuery.when.apply(null, updateCalls).then(this.handleUpdateSubscription.bind(this));
 		jQuery('#' + this.options.widget_name + ' .lists-load').hide();
-		jQuery('#' + this.options.widget_name + ' .emailLists').addClass('loading-center');
+		jQuery('#' + this.options.widget_name + ' .emailLists').addClass('sloading loading-small');
 	},
 
 	handleUpdateSubscription: function(){
@@ -752,7 +752,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 		if(this.listsTmpl){
 			jQuery(j + ' .emailLists').html(this.listsTmpl);
 			jQuery(j + ' .lists-load').show();
-			jQuery(j + ' .emailLists').removeClass('loading-center');
+			jQuery(j + ' .emailLists').removeClass('sloading loading-small');
 		}
 		else{
 			this.getAllLists();	
@@ -762,7 +762,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 
 	renderModal: function(){
 		var ecw = this;
-		jQuery('#' + this.app + "_widget").removeClass('loading-center');
+		jQuery('#' + this.app + "_widget").removeClass('sloading loading-small');
 		this.renderTemplate(_.template(this.Parent, {campaigns: this.campaignTmpl}));
 	},
 
@@ -792,7 +792,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 			errorMessage = "Unable to add the contact to " + this.options.app_name;
 			this.processFailure(errorMessage);	
 		}else{
-			jQuery('#' + this.options.widget_name).removeClass('loading-center');	
+			jQuery('#' + this.options.widget_name).removeClass('sloading loading-small');	
 		}
 	},
 
@@ -805,7 +805,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 		var obj = this;
 		this.alert_failure(this.options.app_name + " reports the following error : " + msg);
 		jQuery(obj.error_element).slideDown('slow');
-		jQuery('#' + this.app + "_widget").removeClass('loading-center');
+		jQuery('#' + this.app + "_widget").removeClass('sloading loading-small');
 		setTimeout(function(){
 			jQuery(obj.error_element).slideUp('slow');
 		}, 8000);
@@ -832,7 +832,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 										'</ul>'+
 									'</div>'+
 									'<div class="emailCampaigns"><%=campaigns%></div>'+
-									'<div class="hide loading-center emailLists"></div>'+
+									'<div class="hide sloading loading-small emailLists"></div>'+
 								'</div>'+
 						'</div>',
 
@@ -841,7 +841,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 						'<span><%=name%>&lt;<%=email%>&gt; cannot be found in <%=appname%></span>'+
 						'<div class="contact-submit"><input type="submit" class="uiButton contact-add" value="Subscribe" /></div>'+
 					'</div>'+
-					'<div class="lists-load loading-center hide"></div>',
+					'<div class="lists-load sloading loading-small hide"></div>',
 
 
 	NewLists: '<div class="mailing-msg"><b>Choose from the below mailing lists to add the contact and click Save</b></div>'+

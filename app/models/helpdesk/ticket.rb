@@ -20,7 +20,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
-                            "access_token", "escalation_level", "sla_policy_id", "sla_policy"]
+                            "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby"]
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
 
@@ -52,7 +52,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_validation_on_create :set_token
   
-  before_save :update_ticket_changes, :set_sla_policy, :load_ticket_status, :update_dueby
+  before_save :update_ticket_changes, :set_sla_policy, :load_ticket_status
+
+  before_save :update_dueby, :unless => :manual_sla?
 
   after_save :save_custom_field
 
@@ -1453,5 +1455,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       set_reports_redis_key(account_id, created_at)
     end
 
+    def manual_sla?
+      self.manual_dueby && self.due_by && self.frDueBy
+    end
 end
 
