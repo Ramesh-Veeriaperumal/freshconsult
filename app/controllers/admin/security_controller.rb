@@ -1,11 +1,12 @@
 class Admin::SecurityController <  Admin::AdminController
 
-  include RedisKeys
+  include Redis::RedisKeys
+  include Redis::OthersRedis
   
   def index
    @account = current_account  
    @portal = current_account.main_portal
-   @custom_ssl_requested = get_key(ssl_key).to_i
+   @custom_ssl_requested = get_others_redis_key(ssl_key).to_i
  end
  
  def update
@@ -33,7 +34,7 @@ class Admin::SecurityController <  Admin::AdminController
  end
 
  def request_custom_ssl
-   set_key(ssl_key, "1", 86400*10)
+   set_others_redis_key(ssl_key, "1", 86400*10)
    current_account.main_portal.update_attributes( :portal_url => params[:domain_name] )
    FreshdeskErrorsMailer.deliver_error_email( nil, 
                                               { "domain_name" => params[:domain_name] }, 

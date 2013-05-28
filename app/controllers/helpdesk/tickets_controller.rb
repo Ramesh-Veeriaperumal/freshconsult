@@ -8,7 +8,6 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::TicketActions
   include Search::TicketSearch
   include Helpdesk::Ticketfields::TicketStatus
-  include RedisKeys
   include Helpdesk::AdjacentTickets
   include Helpdesk::Activities
   include Helpdesk::ToggleEmailNotification
@@ -208,7 +207,7 @@ class Helpdesk::TicketsController < ApplicationController
   def show
     @to_emails = @ticket.to_emails
 
-    @draft = get_key(draft_key)
+    @draft = get_tickets_redis_key(draft_key)
 
     @subscription = current_user && @item.subscriptions.find(
       :first, 
@@ -553,7 +552,7 @@ class Helpdesk::TicketsController < ApplicationController
     count = 0
     tries = 3
     begin
-      $redis_secondary.set(draft_key, params[:draft_data])
+      set_tickets_redis_key(draft_key, params[:draft_data])
     rescue Exception => e
       NewRelic::Agent.notice_error(e,{:key => draft_key, 
         :value => params[:draft_data],
@@ -568,7 +567,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def clear_draft
-    remove_key(draft_key)
+    remove_tickets_redis_key(draft_key)
     render :nothing => true
   end
 
@@ -715,8 +714,7 @@ class Helpdesk::TicketsController < ApplicationController
       filter_params.delete(:action)
       filter_params.delete(:controller)
       begin
-        $redis_secondary.set(redis_key, filter_params.to_json)
-        $redis_secondary.expire(redis_key, 86400)
+        set_tickets_redis_key(redis_key, filter_params.to_json, 86400)
       rescue Exception => e
         NewRelic::Agent.notice_error(e) 
       end
@@ -750,7 +748,7 @@ class Helpdesk::TicketsController < ApplicationController
       tries = 3
       count = 0
       begin
-        filters_str = $redis_secondary.get("HELPDESK_TICKET_FILTERS:#{current_account.id}:#{current_user.id}:#{session.session_id}")
+        filters_str = get_tickets_redis_key("HELPDESK_TICKET_FILTERS:#{current_account.id}:#{current_user.id}:#{session.session_id}")
         Rails.logger.info "In get_cached_filters - filters_str : #{filters_str.inspect}"
         JSON.parse(filters_str) if filters_str
       rescue Exception => e
@@ -782,7 +780,7 @@ class Helpdesk::TicketsController < ApplicationController
           params.merge!(@cached_filter_data)
         end
       else 
-        remove_key(redis_key)
+        remove_tickets_redis_key(redis_key)
       end
     end
 

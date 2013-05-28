@@ -1,5 +1,4 @@
 module Reports::ArchiveDataMigration
-	include RedisKeys
 
 	START_DATE = "2013-01-01"
 
