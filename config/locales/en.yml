@@ -3764,3 +3764,7 @@ en:
       sla_violations: "SLA Violations"
       happy_customers: "Happy Customers"
       frustrated_customers: "Frustrated Customers"
+  facebook_tab:
+    remove_tab: "Remove Tab"
+    tab_not_removed: "Could not remove tab"
+    tab_removed: "Page Tab removed"

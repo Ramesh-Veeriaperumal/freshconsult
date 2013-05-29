@@ -37,9 +37,9 @@ class Social::FacebookPagesController < Admin::AdminController
 
   def remove_page_tab
     if fb_client.remove_page_tab
-      flash[:success] = "Page Tab removed"
+      flash[:success] = t('facebook_tab.tab_removed')
     else
-      flash[:error] = "could not remove tab"
+      flash[:error] = t('facebook_tab.tab_not_removed')
     end
     redirect_to social_facebook_path(@item)
   end

@@ -395,7 +395,7 @@
   # Support Portal routes  
   map.namespace :support do |support|
     # Portal home
-    support.home 'home', :controller => "home", :only => [:index, :clear_facebook]
+    support.home 'home', :controller => "home"
 
     # Portal preview
     support.preview 'preview', :controller => "preview"

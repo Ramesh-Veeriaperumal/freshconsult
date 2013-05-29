@@ -12,9 +12,4 @@ class Support::HomeController < SupportController
     set_portal_page :portal_home
   end
 
-  def clear_facebook
-    session.delete(:facebook_tab)
-    redirect_to :back
-  end
-
 end
