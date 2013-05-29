@@ -75,16 +75,17 @@
 
           var subject = jQuery('<div class="subject_div row-fluid" />')
                   .append("<label class='span2'><%= t('.subject') %></label>")
+                  .append(jQuery('<div class="sub_placeholder"/>')
                   .append(FactoryUI.text("", "email_subject", initFeed["email_subject"]))
+                  .append(placeholder))
         
           var body  = jQuery('<div class="body_div row-fluid" />')
                   .append("<label class='span2'><%= t('.body') %></label>")
                   .append(FactoryUI.paragraph("", "email_body", initFeed["email_body"]))
 
-          c_dom = jQuery("<div class='s_email' />")
-                .append(to || "")
+          c_dom = jQuery("<div class='s_email row-fluid' />")
+                .append(to)
                 .append(subject)
-                .append(placeholder)
                 .append(body);
         break;  
         case 'checkbox':
