@@ -120,6 +120,7 @@ def ticket_post_process ticket_prop , ticket
                                                                         :account_id => @current_account.id , 
                                                                         :note_body_attributes => {:body =>comment.body} ,:deleted => false ,
                                                                         :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] , :created_at =>comment.created_at.to_datetime()})
+    note_props = note_props.to_hash.tap{|hs| hs.delete(:body)}
     @note = ticket.notes.build(note_props)
     @note.save
     #set ticket_states at note level
