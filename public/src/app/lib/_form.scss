@@ -566,7 +566,8 @@ a.addchoice:hover{
 			}
 			.s_email{
 				margin: 20px 0 10px 0px;
-				.select2-container{top:-4px; left:1px;}
+				.select2-container{left:1px;}
+				label{margin-top: 7px;}
 				label.error{ width:100%; }
 				.subject_div{
 				.sub_placeholder{
