@@ -1,9 +1,9 @@
-class Social::FacebookAppController < ApplicationController
+class Social::FacebookTabController < ApplicationController
 	require 'koala'
 
-  def fb_index
-    @config = File.join(Rails.root, 'config', 'facebook.yml')
-    @tokens = (YAML::load_file @config)[Rails.env]
+  def home
+    config = File.join(Rails.root, 'config', 'facebook.yml')
+    @tokens = (YAML::load_file config)[Rails.env]
     if params[:signed_request]
       signed_request = authenticator.parse_signed_request(params[:signed_request])
       page_id = signed_request["page"]["id"] if signed_request["page"]

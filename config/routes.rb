@@ -183,10 +183,10 @@
     social.resources :facebook, :controller => 'facebook_pages', 
                 :collection =>  { :signin => :any ,:authdone => :any , :event_listener =>:any , :enable_pages =>:any },
                 :member     =>  { :edit => :any, :configure_page_tab => :any, :remove_page_tab => :any }
-
-    social.resources :fb, :controller => 'facebook_app',
-                :collection => { :fb_index => :any }
   end
+
+  map.resources :facebook_tab, :controller => 'social/facebook_tab', 
+                :collection => { :home => :any }
   
   #SAAS copy starts here
   map.with_options(:conditions => {:subdomain => AppConfig['admin_subdomain']}) do |subdom|
