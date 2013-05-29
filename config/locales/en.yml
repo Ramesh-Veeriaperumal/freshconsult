@@ -3782,7 +3782,7 @@ en:
       glance:
         how_to_read: How to read this report
         helpdesk_recieved_tickets: Total number of tickets received in your support portal over the selected time period
-        customer__recieved_tickets: Total number of tickets received from the customer over the selected time period
+        customer_recieved_tickets: Total number of tickets received from the customer over the selected time period
         agent_recieved_tickets: Total number of tickets received by the agent over the selected time period
         group_recieved_tickets: Total number of tickets received by the group over the selected time period
         helpdesk_resolved_tickets: Total number of tickets in your helpdesk that have been resolved over the selected time period
