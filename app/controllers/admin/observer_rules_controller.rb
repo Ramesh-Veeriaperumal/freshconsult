@@ -39,8 +39,8 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
       @agents[0..0] = ['--', t('any_val.any') ], ['-1', t('admin.observer_rules.assigned_agent') ]
       @note_types = [ ['--', t('ticket.any_note')], [:public, t('ticket.public_note')],
                        [:private, t('ticket.private_note')] ]
-      @ticket_actions = [ [:update_event, t('ticket.updated')], [:delete_event, t('ticket.deleted')],
-                           [:marked_spam_event, t('ticket.marked_spam')] ]
+      @ticket_actions = [ [:update, t('ticket.updated')], [:delete, t('ticket.deleted')],
+                           [:marked_spam, t('ticket.marked_spam')] ]
       @time_sheet_actions = [ [:added, t('ticket.new_time_entry')], [:updated, t('ticket.updated_time_entry')] ]
 
       event_hash = [
@@ -60,7 +60,7 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
           :choices => @note_types, :type => 1, :valuelabel => t('event.type') },
         { :name => 'reply_sent', :value => t('observer_events.reply'), :domtype => 'label', :type => 0 },
         { :name => 'due_by', :value => t('observer_events.due_date'), :domtype => 'label', :type => 0 },
-        { :name => 'ticket_update_event', :value => t('observer_events.ticket'), :domtype => 'dropdown',
+        { :name => 'ticket_update', :value => t('observer_events.ticket'), :domtype => 'dropdown',
           :choices => @ticket_actions, :type => 1 },
         { :name => 'customer_feedback', :value => t('observer_events.customer_feedback'), :domtype => 'dropdown',
           :choices =>[ ['--', t('any_val.any_feedback')] ]+Survey.survey_names(current_account), :type => 1,
