@@ -16,6 +16,7 @@ class Reports::HelpdeskPerformanceAnalysisController < ApplicationController
   def generate
     @report_title = "Helpdesk Performance Analysis"
     @data_obj = performance_analysis_data @sql_condition.join(" AND ")
+    @solution_artical_link = %(https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85343-how-to-read-helpdesk-performance-analysis-report)
     render :partial => "/reports/helpdesk_performance_analysis/performance_analysis"
   end
 
