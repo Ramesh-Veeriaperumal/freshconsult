@@ -77,6 +77,8 @@ adv_grid_report.prototype = {
     if(this.y>0) return this.y;
   },
   bar_dataLabels_tooltip: function(){
+    if(this.value == undefined) 
+      return;
     var text      = this.value,
         formatted = text.length > 25 ? text.substring(0, 25) + '...' : text;
     return '<div class="tooltip" style="width:50px; overflow:hidden; cursor:pointer" title="' + text + '">' + formatted.replace(' ','<br/>') + '</div>'; 
@@ -209,9 +211,13 @@ function single_stacked_bar_chart(opts){
     		dataLabels: {
     			enabled: true,
     			formatter: this.pie_label_formatter,
-    			color: '#eee',
+    			color: '#fefefe',
     			align: 'center',
     			y: 0,
+          style:{
+            fontSize: '12px',
+            fontWeight:'bold'
+          }
     		},
     		showInLegend : true,
         animation: opts['isPDF'] ? false : true
@@ -278,10 +284,10 @@ function pieChart(opts){
 	        distance: -25,
 	        formatter: this.pie_label_formatter,
 	        style: {
-	          font: "6pt",
-	          textTransform: "capitalize"
+            fontSize: '12px',
+            fontWeight:'bold'
 	        },
-	      color: '#eee'
+	        color: '#fefefe'
 	      },
 	      showInLegend: true,
         animation: opts['isPDF'] ? false : true
@@ -582,9 +588,8 @@ function xaxis_bar_chart(opts){
     chart:{
       renderTo: opts['renderTo'],
       type: 'column',
-      margin: [30,10,80,80],
+      margin: [10,30,80,70],
       borderColor: 'rgba(0,0,0,0)',
-      height: (opts['chartData'].length*20 < 320)? 320 : opts['chartData'].length*20,
       plotBackgroundColor: 'rgba(255,255,255,0.1)',
       backgroundColor: 'rgba(255,255,255,0.1)'
     },
