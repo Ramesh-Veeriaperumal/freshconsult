@@ -2,7 +2,7 @@
   
   var self           = null,
       tweetlist      = $("<div />"),
-      loading        = $("<div class='sloading loading-block' />"),
+      loadingClass   = 'sloading loading-block',
       new_result     = $("<div class='info-highlight center' />").hide(),
       counter        = $("<a href='#' />")
                            .bind("click", function(ev){ ev.preventDefault(); prependTweets(); });
@@ -23,7 +23,7 @@
   populateTweets = function(response, status, xhr){
 
     if($.param({q:settings.query}) == ("q="+response.attrs["search_metadata"].query)){
-        loading.remove();
+        self.removeClass(loadingClass);
         var newTweets = $(tweetsettings.template) 
                            .tmpl( response.attrs["statuses"] )
                            .appendTo("<div />");
@@ -40,7 +40,7 @@
   populateOldTweets = function(response, status, xhr){
 
     if($.param({q:settings.query}) == ("q="+response.attrs["search_metadata"].query)){
-        loading.remove(); 
+        self.removeClass(loadingClass);
         var newTweets = $(tweetsettings.template) 
                            .tmpl( response.attrs["statuses"] )
                            .appendTo("<div />");
@@ -90,7 +90,7 @@
   new_search = function(){
      settings.onbeforeload(settings);
      tweetlist.empty();
-     self.append(loading);
+     self.addClass(loadingClass);
      fresh_results = [];
      new_result.hide();
      tweetsettings.next_page = null;
@@ -127,7 +127,7 @@
      },
      nextpage : function( ) { 
        if(tweetsettings.next_page){
-         self.append(loading);
+         self.addClass(loadingClass);
          getData( settings.searchurl + tweetsettings.next_page, populateOldTweets, {'handle' : settings.twitter_handle});
        }
      },

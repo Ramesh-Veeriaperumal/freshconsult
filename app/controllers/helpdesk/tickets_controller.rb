@@ -27,6 +27,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :disable_notification, :if => :notification_not_required?
   after_filter  :enable_notification, :if => :notification_not_required?
   before_filter :set_selected_tab
+  before_filter :validate_manual_dueby, :only => :update
 
   layout :choose_layout 
   
@@ -917,4 +918,27 @@ class Helpdesk::TicketsController < ApplicationController
     @selected_tab = :tickets
   end
 
+  def validate_manual_dueby
+    if params[nscname][:manual_dueby]
+      unless validate_date(params[nscname][:due_by]) && validate_date(params[nscname][:frDueBy])
+        respond_to do |format|
+          format.json { 
+            render :json => { :update_failure => true, :errors => I18n.t('date_invalid') }.to_json and return
+          }
+          format.xml {
+            render :xml => { :update_failure => true, :errors => I18n.t('date_invalid') }.to_xml and return
+          }
+          format.html { render :text => I18n.t('date_invalid') and return }
+        end
+      end
+    end
+  end
+
+  def validate_date(date_string)
+    begin
+      date = Date.parse(date_string)
+    rescue
+      return false
+    end
+  end
 end

@@ -48,13 +48,13 @@ module SslRequirement
   private
   
     def ensure_proper_protocol
-      return true if !Rails.env.production? || ssl_allowed?
+      return true if !Rails.env.production? || ssl_allowed? || (request.ssl? && ssl_required?)
 
       if !request.ssl? && (ssl_required? || main_portal_with_ssl? || cnamed_portal_with_ssl?)
         redirect_to "https://" + request.host + request.request_uri
         flash.keep
         return false
-      elsif request.ssl? && !ssl_required? && (main_portal_without_ssl? || cnamed_portal_without_ssl?)
+      elsif request.ssl? && cnamed_portal_without_ssl?
         redirect_to "http://" + request.host + request.request_uri
         flash.keep
         return false
@@ -63,19 +63,15 @@ module SslRequirement
     end
 
     def main_portal_with_ssl?
-      (current_account.main_portal.portal_url.blank? || (request.host == current_account.full_domain)) && current_account.ssl_enabled? 
+      (request.host == current_account.full_domain) && current_account.ssl_enabled? 
     end
 
     def cnamed_portal_with_ssl?
-      (request.host == current_account.main_portal.portal_url) && current_account.main_portal.ssl_enabled?
-    end
-
-    def main_portal_without_ssl?
-      (current_account.main_portal.portal_url.blank? || (request.host == current_account.full_domain)) && !current_account.ssl_enabled?
+      (request.host == current_portal.portal_url) && current_portal.ssl_enabled?
     end
 
     def cnamed_portal_without_ssl?
-      (request.host == current_account.main_portal.portal_url) && !current_account.main_portal.ssl_enabled?
+      (request.host == current_portal.portal_url) && !current_portal.ssl_enabled?
     end
 
 end
