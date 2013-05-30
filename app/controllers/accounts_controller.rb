@@ -249,9 +249,6 @@ class AccountsController < ApplicationController
     params[:account][:main_portal_attributes][:updated_at] = Time.now
     @account.main_portal_attributes = params[:account][:main_portal_attributes]
     if @account.save
-      Resque::enqueue(CRM::Totango::SendUserAction, {:account_id => current_account.id,
-                                                     :email => current_user.email,
-                                                     :activity => totango_activity(:helpdesk_rebranding)})
       flash[:notice] = t(:'flash.account.update.success')
       redirect_to redirect_url
     else

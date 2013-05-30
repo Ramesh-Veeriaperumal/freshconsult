@@ -235,9 +235,9 @@ class Account < ActiveRecord::Base
   after_update :update_users_language
   #after_create :enable_elastic_search
 
-  before_destroy :update_crm, :notify_totango
+  before_destroy :update_crm
 
-  after_commit_on_create :add_to_billing, :add_to_totango #, :create_search_index
+  after_commit_on_create :add_to_billing #, :create_search_index
 
   after_commit_on_update :clear_cache
   after_commit_on_destroy :clear_cache, :delete_search_index, :delete_reports_archived_data
@@ -848,16 +848,8 @@ class Account < ActiveRecord::Base
       Resque.enqueue(Billing::AddToBilling, { :account_id => id })
     end
 
-    def add_to_totango
-      Resque.enqueue(CRM::Totango::TrialCustomer, {:account_id => id})
-    end
-
     def update_crm
       Resque.enqueue(CRM::AddToCRM::DeletedCustomer, id)
-    end
-
-    def notify_totango
-      Resque.enqueue(CRM::Totango::CanceledCustomer, id, full_domain)
     end
 
     def admin_contact_info
