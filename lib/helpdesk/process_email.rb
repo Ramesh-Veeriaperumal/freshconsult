@@ -263,7 +263,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         full_text = msg_hash[:full_text]
       end
       # for html text
-      msg_hash = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html]), ticket.reply_email)
+      msg_hash = show_quoted_text(params[:html], ticket.reply_email)
       unless msg_hash.blank?
         body_html = msg_hash[:body]
         full_text_html = msg_hash[:full_text]
@@ -388,18 +388,19 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       
       #Sanitizing the original msg   
       unless original_msg.blank?
-        sanitized_org_msg = Nokogiri::HTML(original_msg).at_css("body")
+        sanitized_org_msg = Nokogiri::HTML(Helpdesk::HTMLSanitizer.clean(original_msg)).at_css("body")
         original_msg = sanitized_org_msg.inner_html unless sanitized_org_msg.blank?  
       end
       #Sanitizing the old msg   
       unless old_msg.blank?
-        sanitized_old_msg = Nokogiri::HTML(old_msg).at_css("body")
+        sanitized_old_msg = Nokogiri::HTML(Helpdesk::HTMLSanitizer.clean(old_msg)).at_css("body")
         old_msg = sanitized_old_msg.inner_html unless sanitized_old_msg.blank?  
       end
         
+      full_text = original_msg
       unless old_msg.blank?
 
-       full_text = original_msg +
+       full_text = full_text +
        "<div class='freshdesk_quote'>" +
        "<blockquote class='freshdesk_quote'>" + old_msg + "</blockquote>" +
        "</div>"

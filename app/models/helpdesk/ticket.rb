@@ -377,7 +377,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.subject ||= ''
     self.group_id ||= email_config.group_id unless email_config.nil?
     self.priority ||= PRIORITY_KEYS_BY_TOKEN[:low]
-    build_ticket_body unless ticket_body
+    build_ticket_body(:description => self.description,
+     :description_html => self.description_html) unless ticket_body
     #self.description = subject if description.blank?
   end
   
@@ -1222,13 +1223,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
       description_updated = false
       attachments.each do |attach| 
         content_id = header[:content_ids][attach.content_file_name]
-        self.description_html.sub!("cid:#{content_id}", attach.content.url) if content_id
+        self.ticket_body.description_html = self.ticket_body.description_html.sub!("cid:#{content_id}", attach.content.url) if content_id
         description_updated = true
       end
-
+      
+      ticket_body.save! if description_updated
+       
       # For rails 2.3.8 this was the only i found with which we can update an attribute without triggering any after or before callbacks
-      Helpdesk::Ticket.update_all("description_html= #{ActiveRecord::Base.connection.quote(description_html)}", ["id=? and account_id=?", id, account_id]) \
-          if description_updated
+      # Helpdesk::Ticket.update_all("description_html= #{ActiveRecord::Base.connection.quote(description_html)}", ["id=? and account_id=?", id, account_id]) \
+      #     if description_updated
     end
 
     def create_source_activity
