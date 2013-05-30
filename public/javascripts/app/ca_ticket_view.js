@@ -10,7 +10,7 @@
       jQuery('#clear-search').show();
   	  jQuery('#search-list').show();
     	jQuery('#fold-list').hide();
-      jQuery('#search-list').empty().append("<div class='sloading'></div>");
+      jQuery('#search-list').empty().append("<div class='sloading loading-align'></div>");
     }
   });
 
