@@ -2,7 +2,6 @@
   
   var self           = null,
       tweetlist      = $("<div />"),
-      loading        = $("<div class='sloading loading-block' />"),
       loadingClass   = 'sloading loading-block',
       new_result     = $("<div class='info-highlight center' />").hide(),
       counter        = $("<a href='#' />")
