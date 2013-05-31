@@ -843,7 +843,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 						'<span><%=name%>&lt;<%=email%>&gt; cannot be found in <%=appname%></span>'+
 						'<div class="contact-submit"><input type="submit" class="uiButton contact-add" value="Subscribe" /></div>'+
 					'</div>'+
-					'<div class="lists-load sloading loading-small hide"></div>',
+					'<div class="lists-load hide"></div>',
 
 
 	NewLists: '<div class="mailing-msg"><b>Choose from the below mailing lists to add the contact and click Save</b></div>'+
