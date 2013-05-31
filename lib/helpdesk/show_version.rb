@@ -1,15 +1,15 @@
 module Helpdesk::ShowVersion
 
-  include RedisKeys
+  include Redis::RedisKeys
+  include Redis::TicketsRedis
 
   def set_show_version
     if cookies[:new_details_view].present?
-      $redis_secondary.set(show_version_key, cookies[:new_details_view].eql?("true") ? "1" : "0")
-      $redis_secondary.expire(show_version_key, 86400 * 50)
       # Expiry set to 50 days
+      set_tickets_redis_key(show_version_key, (cookies[:new_details_view].eql?("true") ? "1" : "0"),  86400 * 50)
       cookies.delete(:new_details_view) 
     end
-    @new_show_page = ($redis_secondary.get(show_version_key) != "0")
+    @new_show_page = ($get_tickets_redis_key(show_version_key) != "0")
   rescue Exception => e
     NewRelic::Agent.notice_error(e)
     return

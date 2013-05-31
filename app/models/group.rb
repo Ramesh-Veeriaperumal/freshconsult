@@ -1,7 +1,8 @@
 class Group < ActiveRecord::Base
   
   include Cache::Memcache::Group
-  include RedisKeys
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   after_commit_on_create :clear_cache
   after_commit_on_destroy :clear_cache
@@ -96,7 +97,7 @@ class Group < ActiveRecord::Base
     return nil if !round_robin_eligible?
 
     #Take from DB if its not available in redis.
-    last_assigned_agent = get_key(GROUP_AGENT_TICKET_ASSIGNMENT % 
+    last_assigned_agent = get_others_redis_key(GROUP_AGENT_TICKET_ASSIGNMENT % 
                                  {:account_id => self.account_id, :group_id => self.id})
     
 
@@ -123,7 +124,7 @@ class Group < ActiveRecord::Base
   end
 
   def store_in_redis(agent_arr)
-    set_key(GROUP_AGENT_TICKET_ASSIGNMENT % 
+    set_others_redis_key(GROUP_AGENT_TICKET_ASSIGNMENT % 
             {:account_id => self.account_id, :group_id => self.id}, agent_arr.join(","), false)
   end
 

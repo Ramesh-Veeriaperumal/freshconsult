@@ -15,7 +15,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Mobile::Actions::Ticket
   include Gamification::GamificationUtil
   include Search::ElasticSearchIndex
-  include RedisKeys
+  include Redis::RedisKeys
+  include Redis::TicketsRedis
+  include Redis::ReportsRedis
+  include Redis::OthersRedis
   include Reports::TicketStats
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
@@ -1178,7 +1181,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     if self.header_info
       self.header_info[:message_ids].each do |parent_message|
         message_key = EMAIL_TICKET_ID % {:account_id => self.account_id, :message_id => parent_message}
-        deleted ? remove_key(message_key) : set_key(message_key, self.display_id, 86400*7)
+        deleted ? remove_others_redis_key(message_key) : set_others_redis_key(message_key, self.display_id, 86400*7)
       end
     end
   end
@@ -1396,7 +1399,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       return unless account.features?(:agent_collision)
       agent_name = User.current ? User.current.name : ""
       message = HELPDESK_TICKET_UPDATED_NODE_MSG % {:ticket_id => self.id, :agent_name => agent_name, :type => "updated"}
-      publish_to_channel("tickets:#{self.account.id}:#{self.id}", message)
+      publish_to_tickets_channel("tickets:#{self.account.id}:#{self.id}", message)
     end
 
     def fire_update_event

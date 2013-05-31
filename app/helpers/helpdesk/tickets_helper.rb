@@ -4,8 +4,9 @@ module Helpdesk::TicketsHelper
   include Wf::HelperMethods
   include TicketsFilter
   include Helpdesk::Ticketfields::TicketStatus
+  include Redis::RedisKeys
+  include Redis::TicketsRedis
   include Helpdesk::NoteActions
-  include RedisKeys
   include Integrations::AppsUtil
   include Helpdesk::TicketsHelperMethods
 
@@ -275,7 +276,7 @@ module Helpdesk::TicketsHelper
                 # ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
     key = 'HELPDESK_REPLY_DRAFTS:'+current_account.id.to_s+':'+current_user.id.to_s+':'+ticket.id.to_s
 
-    return ( get_key(key) || bind_last_conv(item, signature, false, quoted) )
+    return ( get_tickets_redis_key(key) || bind_last_conv(item, signature, false, quoted) )
   end
 
   
