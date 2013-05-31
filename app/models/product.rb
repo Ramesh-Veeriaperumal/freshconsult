@@ -1,7 +1,10 @@
 class Product < ActiveRecord::Base
   
+  include Cache::Memcache::Product
 
   before_destroy :remove_primary_email_config_role
+
+  after_commit :clear_cache
 
   belongs_to :account
   has_one    :portal               , :dependent => :destroy

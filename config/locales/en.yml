@@ -44,6 +44,7 @@ en:
     created_at: "Created"
     mygroups: My Groups
     unassigned: Unassigned
+    products: Products
   proceed_now: "\n\nProceed now?"
   forward: "Forward"
   apply: "Apply"
