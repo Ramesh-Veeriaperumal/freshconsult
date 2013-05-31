@@ -76,17 +76,21 @@
 	   	}
 	}
 }
-.pick-response.autocomplete{
+.pick-response.autocomplete, .rtDetails{
 	.sloading{
 		width:100%;
 		height:100%;
 	}
 }
-.page-search{
-	.live_search{
-		width:445px;
-	}
+
+#campaignmonitor_widget, #icontact_widget, #mailchimp_widget, #constantcontact_widget{
+	&.sloading{
+		width:100% !important;	
+	}	
 }
+
+.page-search .live_search{ width:445px; }
+
 // Loader spin style sheet End
 /*
 

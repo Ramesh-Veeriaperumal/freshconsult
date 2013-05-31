@@ -80,6 +80,9 @@ stylesheets:
   getting_started:
     - public/stylesheets/app/getting_started.css
 
+  rating:
+    - public/stylesheets/portal/rating.css
+
 javascripts:
   defaults:
     - public/javascripts/prototype.js
