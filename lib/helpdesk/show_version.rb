@@ -10,9 +10,9 @@ module Helpdesk::ShowVersion
       cookies.delete(:new_details_view) 
     end
     @new_show_page = (get_tickets_redis_key(show_version_key) != "0")
-    rescue Exception => e
-      NewRelic::Agent.notice_error(e)
-      return
+  rescue Exception => e
+    NewRelic::Agent.notice_error(e)
+    return
   end
 
   def show_version_key

@@ -25,7 +25,7 @@ module Workers
 								start_date = last_export_date ? last_export_date.to_date + 1.day : end_date
 								job_id = Workers::ArchiveData.create({:account_id => id, :start_date => start_date,
 																											 :end_date => end_date})
-								add_to_hash(export_hash, "job_id", job_id, 604800)
+								add_to_reports_hash(export_hash, "job_id", job_id, 604800)
   						elsif (accounts_last_job and !accounts_last_job.completed? and Rails.env.production?)
   							FreshdeskErrorsMailer.deliver_error_email(nil,accounts_last_job,nil,
   							{:recipients => "srinivas@freshdesk.com",

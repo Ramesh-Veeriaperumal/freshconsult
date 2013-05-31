@@ -35,7 +35,7 @@ module Helpdesk::MergeTicketActions
 		def move_source_description_to_target source_ticket
 			desc_pvt_note = params[:target][:is_private]
 			source_description_note = @target_ticket.notes.build(
-				:note_body_attributes => {:body_html => build_source_description_body_html(source_ticket)},
+				:body_html => build_source_description_body_html(source_ticket),
 				:private => desc_pvt_note || false,
 				:source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
 				:account_id => current_account.id,
@@ -115,7 +115,7 @@ module Helpdesk::MergeTicketActions
 		def add_note_to_target_ticket
 		  target_pvt_note = @target_ticket.requester_has_email? ? params[:target][:is_private] : true
 			@target_note = @target_ticket.notes.create(
-				:note_body_attributes => {:body_html => params[:target][:note]},
+				:body_html => params[:target][:note],
 				:private => target_pvt_note  || false,
 				:source => target_pvt_note ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : 
 																Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],

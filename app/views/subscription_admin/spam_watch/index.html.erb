@@ -27,7 +27,7 @@
 							<%=ticket['subject']%>
 						</td>
 						<td>
-							<%=ticket['description_html'] || ticket['new_description_html']%>
+							<%=ticket['description_html']%>
 						</td>
 					</tr>
 				<%end%>
@@ -50,7 +50,7 @@
 							<%=time_ago_in_words(ticket['created_at'])%> ago
 						</td>
 						<td>
-							<%=ticket['body_html'] || ticket['new_body_html']%>
+							<%=ticket['body_html'][0,1000]%>
 						</td>
 					</tr>
 				<%end%>

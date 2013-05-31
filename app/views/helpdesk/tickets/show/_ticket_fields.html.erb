@@ -14,8 +14,7 @@
 		</li>
 		<% end %>
 		<!--form values starts here-->
-		<%= render :partial => '/helpdesk/tickets/show/ticket_field_elements.html.erb', 
-									:locals => {:form_builder => f} %>
+		<%= render :partial => '/helpdesk/tickets/show/ticket_field_elements.html.erb' %>
 		<!--form values ends here-->
 		<!-- Custom fields ends here-->
 		<% unless params[:format] == 'widget' %>

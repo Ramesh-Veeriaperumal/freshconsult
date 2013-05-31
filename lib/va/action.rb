@@ -85,8 +85,7 @@ class Va::Action
   
     def add_comment(act_on)
       note = act_on.notes.build()
-      note.build_note_body
-      note.note_body.body = act_hash[:comment]
+      note.body = act_hash[:comment]
       note.account_id = act_on.account_id
       note.user = User.current
       note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]

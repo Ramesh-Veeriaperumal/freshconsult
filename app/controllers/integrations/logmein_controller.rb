@@ -28,7 +28,7 @@ class Integrations::LogmeinController < ApplicationController
           ticket = Helpdesk::Ticket.find_by_id_and_account_id(ticket_id, account_id)
           unless ticket.blank?
               note = ticket.notes.build(
-                :note_body_attributes => {:body_html => note_head + note_body},
+                :body_html => note_head + note_body,
                 :private => true ,
                 :incoming => true,
                 :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"],

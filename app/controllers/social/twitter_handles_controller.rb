@@ -190,7 +190,7 @@ class Social::TwitterHandlesController < ApplicationController
     
     unless @ticket.blank?
       @note = @ticket.notes.build(
-        :note_body_attributes => {:body => params[:helpdesk_tickets][:ticket_body_attributes][:description]},
+        :body => params[:helpdesk_tickets][:description],
         :private => true ,
         :incoming => true,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],

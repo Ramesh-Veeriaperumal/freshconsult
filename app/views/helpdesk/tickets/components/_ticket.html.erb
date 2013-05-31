@@ -65,7 +65,7 @@
 		          	field_value.merge!({:category_val => @ticket.get_ff_value(field.name)})
 		          end
 		      %>
-         	  <%= construct_ticket_element f, :helpdesk_ticket, field, field.label, dom_type, field.required, field_value %>
+         	  <%= construct_ticket_element :helpdesk_ticket, field, field.label, dom_type, field.required, field_value %>
          	  <%# render(:partial => "/shared/nested_fields", :locals => { :ticket => @item, :category => field, :category_field_value =>  field_value, :type => "edit"}) if field.field_type == "nested_field"%>
          <% end %>
        <% end %>

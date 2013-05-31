@@ -14,9 +14,7 @@ class Account < ActiveRecord::Base
   
   
   has_many :tickets, :class_name => 'Helpdesk::Ticket', :dependent => :delete_all
-  has_many :ticket_bodies, :class_name => 'Helpdesk::TicketBody', :dependent => :delete_all
   has_many :notes, :class_name => 'Helpdesk::Note', :dependent => :delete_all
-  has_many :note_bodies, :class_name => 'Helpdesk::NoteBody', :dependent => :delete_all
   has_many :external_notes, :class_name => 'Helpdesk::ExternalNote', :dependent => :delete_all
   has_many :activities, :class_name => 'Helpdesk::Activity', :dependent => :delete_all
   has_many :flexifields, :dependent => :delete_all
@@ -201,7 +199,7 @@ class Account < ActiveRecord::Base
   delegate :bcc_email, :ticket_id_delimiter, :email_cmds_delimeter, :pass_through_enabled, :to => :account_additional_settings
 
   has_many :subscription_events 
-  
+  xss_sanitize  :only => [:name,:helpdesk_name]
   #Scope restriction ends
   
   validates_format_of :domain, :with => /(?=.*?[A-Za-z])[a-zA-Z0-9]*\Z/

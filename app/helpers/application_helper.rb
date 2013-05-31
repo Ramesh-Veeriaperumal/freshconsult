@@ -548,7 +548,7 @@ module ApplicationHelper
     element
   end
 
-  def construct_ticket_element(form_builder,object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
+  def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
     element_class  += " required_closure" if (field.required_for_closure && !field.required)
@@ -592,9 +592,7 @@ module ApplicationHelper
       when "checkbox" then
         element = content_tag(:div, (check_box(object_name, field_name, :class => element_class, :checked => field_value ) + label))
       when "html_paragraph" then
-        form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
-            element = label + builder.text_area(field_name, :class => element_class, :value => field_value )
-        end
+        element = label + text_area(object_name, field_name, :class => element_class , :value => field_value)
     end
     content_tag :li, element, :class => " #{ dom_type } #{ field.field_type } field"
   end
