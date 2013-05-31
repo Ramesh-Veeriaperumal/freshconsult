@@ -749,13 +749,14 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 		jQuery(j + ' .emailLists').removeClass('hide');
 		jQuery(j + ' .list-tab').addClass('active');
 		jQuery(j + ' .campaign-tab').removeClass('active');
+		jQuery(j + ' .emailLists').addClass('sloading loading-small');
 		if(this.listsTmpl){
 			jQuery(j + ' .emailLists').html(this.listsTmpl);
 			jQuery(j + ' .lists-load').show();
 			jQuery(j + ' .emailLists').removeClass('sloading loading-small');
 		}
 		else{
-			this.getAllLists();	
+			this.getAllLists();
 		}
 			
 	},
@@ -832,7 +833,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 										'</ul>'+
 									'</div>'+
 									'<div class="emailCampaigns"><%=campaigns%></div>'+
-									'<div class="hide sloading loading-small emailLists"></div>'+
+									'<div class="hide emailLists"></div>'+
 								'</div>'+
 						'</div>',
 
