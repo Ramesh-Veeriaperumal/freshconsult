@@ -48,18 +48,41 @@ module SslRequirement
   private
   
     def ensure_proper_protocol
-      return true if !Rails.env.production? || ssl_allowed? || (request.ssl? && ssl_required?)
+      return true if !Rails.env.production? || ssl_allowed? 
 
-      if !request.ssl? && (ssl_required? || main_portal_with_ssl? || cnamed_portal_with_ssl?)
-        redirect_to "https://" + request.host + request.request_uri
-        flash.keep
-        return false
-      elsif request.ssl? && cnamed_portal_without_ssl?
-        redirect_to "http://" + request.host + request.request_uri
-        flash.keep
-        return false
-      end      
+      if request.ssl? 
+        if ssl_required? && (cnamed_portal_with_ssl? || host_is_full_domain?) #like billing from ssl enabled portal/full_domain
+          return true #Allow
+        elsif ssl_required? && cnamed_portal_without_ssl? #like billing from ssl disabled portal
+          redirect_to "https://" + current_account.full_domain + request.request_uri #redirect to full_domain with https
+          flash.keep
+          return false        
+        elsif cnamed_portal_without_ssl? # like explicit https access of portal url with ssl disabled
+          redirect_to "http://" + request.host + request.request_uri #redirect to same url without https
+          flash.keep
+          return false
+        end
+      elsif !request.ssl?
+        if ssl_required? && (cnamed_portal_without_ssl? || host_is_full_domain?) # like billing from full_domain or "portal_url with SSL disabled" accessed from http
+          redirect_to "https://" + current_account.full_domain + request.request_uri #redirect to full_domain https
+          flash.keep
+          return false        
+        elsif (ssl_required? && cnamed_portal_with_ssl?) #like billing acceessed from portal_url with ssl enabled
+          redirect_to "https://" + request.host + request.request_uri #redirect to same url with https
+          flash.keep
+          return false
+        elsif (main_portal_with_ssl? || cnamed_portal_with_ssl?) #full_domain or portal_url access with SSL enabled accessed with http
+          redirect_to "https://" + request.host + request.request_uri #redirect to  same url with https
+          flash.keep
+          return false
+        end
+      end
+
       return true
+    end
+
+    def host_is_full_domain?
+      request.host == current_account.full_domain
     end
 
     def main_portal_with_ssl?
