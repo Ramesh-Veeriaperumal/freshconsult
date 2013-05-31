@@ -14,9 +14,7 @@ class Account < ActiveRecord::Base
   
   
   has_many :tickets, :class_name => 'Helpdesk::Ticket', :dependent => :delete_all
-  has_many :ticket_bodies, :class_name => 'Helpdesk::TicketBody', :dependent => :delete_all
   has_many :notes, :class_name => 'Helpdesk::Note', :dependent => :delete_all
-  has_many :note_bodies, :class_name => 'Helpdesk::NoteBody', :dependent => :delete_all
   has_many :external_notes, :class_name => 'Helpdesk::ExternalNote', :dependent => :delete_all
   has_many :activities, :class_name => 'Helpdesk::Activity', :dependent => :delete_all
   has_many :flexifields, :dependent => :delete_all

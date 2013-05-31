@@ -29,9 +29,7 @@
 								:class => 'select2 responder_field' %>
 			</li>				
 			<li class="inline-field field clearField continous message">
-				<% f.fields_for :note_body, Helpdesk::NoteBody.new do |ff| %>
-					<%= ff.text_area :body, { :class => 'required tweet auto-height', :id => "#{id}-#{cntid}-body", :value =>default_twitter_body_val(@ticket), :rows => "3" } %>
-				<% end %>
+				<%= f.text_area :body, { :class => 'required tweet auto-height', :id => "#{id}-#{cntid}-body", :value =>default_twitter_body_val(@ticket), :rows => "3" } %>
 			</li>
 		</ul>
 

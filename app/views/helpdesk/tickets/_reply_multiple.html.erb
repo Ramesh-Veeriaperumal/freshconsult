@@ -7,9 +7,7 @@
         </div>
               
         <li class="inline-field">
-            <% f.fields_for (:note_body_attributes, Helpdesk::NoteBody.new) do |ff| %>
-                <%= ff.text_area :body_html, :class => "required", :id => "#{id}-#{cntid}-body", :value => "" %>
-            <% end %>
+            <%= f.text_area :body_html, :class => "required", :value=>"", :id => "#{id}-#{cntid}-body" %>
             <%= f.hidden_field :private, :value=> 0 %>
             <%= f.hidden_field :user_id, :value=> current_user && current_user.id %>
             <%= f.hidden_field :source, :value=> Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"]%>

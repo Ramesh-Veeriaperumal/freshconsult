@@ -25,7 +25,7 @@ module Workers
 			accounts_re_job = Resque::Plugins::Status::Hash.get(accounts_re_job_id)
 			if accounts_re_job.nil? or accounts_re_job.completed?
 				re_job_id = Workers::RegenerateArchiveData.create({:account_id => id, :dates => set_of_dates})
-				add_to_hash(export_hash, "re_job_id", re_job_id, 604800)
+				add_to_reports_hash(export_hash, "re_job_id", re_job_id, 604800)
 			elsif Rails.env.production?
 				FreshdeskErrorsMailer.deliver_error_email(nil,accounts_re_job,nil,
 				{:recipients => "srinivas@freshdesk.com",

@@ -16,7 +16,7 @@
 		          end
 		          dom_type = (field.field_type == "default_source") ? "dropdown" : field.dom_type
 		       	%>
-	      	   <%= construct_ticket_element f, :helpdesk_ticket, field, field.label_in_portal, dom_type, field.required, field_value %>
+	      	   <%= construct_ticket_element :helpdesk_ticket, field, field.label_in_portal, dom_type, field.required, field_value %>
 	      	<% end %>
 	    <% end %>
 	    <div>

@@ -101,9 +101,7 @@ class Integrations::ObjectMapper
           }
         },
         :map=>[
-          {:ours=>"note_body", :theirs_to_ours=>{:handler=>:db_fetch, :create_if_empty=>true, :entity=>Helpdesk::NoteBody,
-                          :create_params => {:body => "JIRA comment {{notification_cause}} # {{comment.id}}:\n {{comment.body}}\n", 
-                          :account_id => "{{account_id}}"}}}, 
+          {:ours=>"body", :theirs_to_ours=>{:value=>"JIRA comment {{notification_cause}} # {{comment.id}}:\n {{comment.body}}\n"}}, 
           {:ours=>"user", :theirs_to_ours=>{:handler=>:db_fetch, :use_if_empty=>"account_admin", :entity=>User, :using=>{:conditions=>["email=?", "{{comment.author.emailAddress}}"]}}},
           {:ours=>"source", :theirs_to_ours=>{:handler=>:static_value, :value=>Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]}},
           {:ours=>"private", :theirs_to_ours=>{:handler=>:static_value, :value=>true}},
@@ -135,7 +133,7 @@ class Integrations::ObjectMapper
                                            :joins=>"INNER JOIN helpdesk_external_notes ON helpdesk_external_notes.note_id=helpdesk_notes.id and helpdesk_external_notes.account_id = helpdesk_notes.account_id", 
                                            :conditions=>["helpdesk_external_notes.external_id=?", "{{comment.id}}"]}
   PRIVATE_NOTE_CONFIG = clone(generic_config)
-  # PRIVATE_NOTE_CONFIG[:map].push({:ours=>"body_html",:theirs_to_ours=> {:value => "<div>JIRA comment {{notification_cause}} # {{comment.id}}:<br/> {{comment.body}} <br/></div>"}})
+  PRIVATE_NOTE_CONFIG[:map].push({:ours=>"body_html",:theirs_to_ours=> {:value => "<div>JIRA comment {{notification_cause}} # {{comment.id}}:<br/> {{comment.body}} <br/></div>"}})
   PRIVATE_NOTE_CONFIG[:map].push({:ours=>"to_emails",:theirs_to_ours=> {:handler=>:db_fetch, :entity=>User, :data_type => "String",:field_type => "email", 
                          :using=>{:select=>"users.email",
                                   :joins=>"INNER JOIN helpdesk_tickets INNER JOIN integrated_resources ON integrated_resources.local_integratable_id=helpdesk_tickets.id and  helpdesk_tickets.responder_id = users.id 
@@ -143,7 +141,7 @@ class Integrations::ObjectMapper
                                   :conditions=>["integrated_resources.remote_integratable_id=?", "{{issue.key}}"]}}})
   EXTERNAL_NOTE_CONFIG = clone(generic_config_external_notes)
   STATUS_AS_PRIVATE_NOTE_CONFIG = clone(generic_config)
-  STATUS_AS_PRIVATE_NOTE_CONFIG[:map][0][:theirs_to_ours][:create_params] = {:body => "JIRA issue status changed to {{issue.fields.status.name}}.\n"}
+  STATUS_AS_PRIVATE_NOTE_CONFIG[:map][0][:theirs_to_ours][:value] = "JIRA issue status changed to {{issue.fields.status.name}}.\n"
   STATUS_AS_PRIVATE_NOTE_CONFIG[:map][1][:theirs_to_ours][:using] = {:conditions=>["email=?", "{{user.emailAddress}}"]}
   STATUS_AS_PRIVATE_NOTE_CONFIG[:map].push({:ours=>"to_emails",:theirs_to_ours=> {:handler=>:db_fetch, :entity=>User, :data_type => "String",:field_type => "email",
                          :using=>{:select=>"users.email",
@@ -152,18 +150,16 @@ class Integrations::ObjectMapper
                                   :conditions=>["integrated_resources.remote_integratable_id=?", "{{issue.key}}"]}}})
   PUBLIC_NOTE_CONFIG = clone(generic_config)
   PUBLIC_NOTE_CONFIG[:map][3][:theirs_to_ours][:value] = false
-  # PUBLIC_NOTE_CONFIG[:map].push({:ours=>"body_html",:theirs_to_ours=> {:value => "<div>JIRA comment {{notification_cause}} # {{comment.id}}:<br/> {{comment.body}} <br/></div>"}})
+  PUBLIC_NOTE_CONFIG[:map].push({:ours=>"body_html",:theirs_to_ours=> {:value => "<div>JIRA comment {{notification_cause}} # {{comment.id}}:<br/> {{comment.body}} <br/></div>"}})
   STATUS_AS_PUBLIC_NOTE_CONFIG = clone(generic_config)
-  STATUS_AS_PUBLIC_NOTE_CONFIG[:map][0][:theirs_to_ours][:create_params] = {:body => "JIRA issue status changed to {{issue.fields.status.name}}.\n"}
+  STATUS_AS_PUBLIC_NOTE_CONFIG[:map][0][:theirs_to_ours][:value] = "JIRA issue status changed to {{issue.fields.status.name}}.\n"
   STATUS_AS_PUBLIC_NOTE_CONFIG[:map][1][:theirs_to_ours][:using] = {:conditions=>["email=?", "{{user.emailAddress}}"]}
   STATUS_AS_PUBLIC_NOTE_CONFIG[:map][3][:theirs_to_ours][:value] = false
 
   REPLY_CONFIG = clone(generic_config)
   REPLY_CONFIG[:map][2][:theirs_to_ours][:value] = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["email"] #source
   REPLY_CONFIG[:map][3][:theirs_to_ours][:value] = false #private
-  REPLY_CONFIG[:map][0][:theirs_to_ours][:create_params][:full_text] = "JIRA comment {{notification_cause}} # {{comment.id}}:\n {{comment.body}}\n"
-  
-  # REPLY_CONFIG[:map].push({:ours=>"body_html",:theirs_to_ours=> {:value => "<div>JIRA comment {{notification_cause}} # {{comment.id}}:<br/> {{comment.body}} <br/></div>"}})
+  REPLY_CONFIG[:map].push({:ours=>"body_html",:theirs_to_ours=> {:value => "<div>JIRA comment {{notification_cause}} # {{comment.id}}:<br/> {{comment.body}} <br/></div>"}})
   
   MAPPER_CONFIGURATIONS = {
       :add_private_note_in_fd => PRIVATE_NOTE_CONFIG,

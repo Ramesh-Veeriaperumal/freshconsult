@@ -4,10 +4,7 @@
 		<%= f.error_messages %>  	
 	  	<div class="row-fluid">
 			<p class="span12">
-				<% f.fields_for (:note_body, Helpdesk::NoteBody.new) do |ff| %>
-	  				<%= ff.rich_editor :body_html, "editor-type" => :ticket, :class=>"required", :height => "150px", 
-	  				:id => "helpdesk_note_note_body_attributes_body_html" %>
-	  			<% end %>
+	  			<%= f.rich_editor :body_html, "editor-type" => :ticket, :class=>"required", :height => "150px" %>
 		  	</p>
 		</div>
 	    <div class="control-group">

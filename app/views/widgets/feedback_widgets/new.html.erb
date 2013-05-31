@@ -7,11 +7,12 @@
 					dom_type_correction = 
 						(case field.dom_type
 							when "requester" then "email"
+							when "html_paragraph" then "paragraph"
 							else field.dom_type
 						 end)
 					field_name_correction = (field.field_name == "description_html") ? "description" : field.field_name
 				%>  
-		<%= construct_ticket_element f, :helpdesk_ticket, field, 
+		<%= construct_ticket_element :helpdesk_ticket, field, 
 		                               field.label_in_portal,
 		                               dom_type_correction, 
 		                               field.required_in_portal, 
