@@ -203,6 +203,7 @@ Freshdesk.Widget.prototype={
 			}			
 			if(reqData.after_failure) reqData.after_failure(evt);
 		}
+
 	},
 
 	alert_failure:function(errorMsg) {
@@ -212,7 +213,7 @@ Freshdesk.Widget.prototype={
 			jQuery(this.error_element).removeClass('hide').parent().removeClass('loading-fb');
 			this.error_element.innerHTML = errorMsg;
 		}
-		jQuery("#" + this.options.widget_name).removeClass('loading-fb');
+		jQuery("#" + this.options.widget_name).removeClass('sloading loading-small');
 	},
 
 	refresh_access_token:function(callback, reqHeader){
