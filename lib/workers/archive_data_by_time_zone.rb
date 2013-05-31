@@ -5,8 +5,7 @@ module Workers
 		class << self
 		
 			include Reports::Constants
-			include Redis::RedisKeys
-			include Redis::ReportsRedis
+			include RedisKeys
 
 			def perform(args)
 				args.symbolize_keys!
@@ -17,9 +16,9 @@ module Workers
 						accounts.each do |account|
 							id, Time.zone = account.id, account.time_zone
 							export_hash = REPORT_STATS_EXPORT_HASH % {:account_id => id}
-							last_export_date, end_date = get_reports_hash_value(export_hash, "date"), args[:yesterday_date].to_date
+							last_export_date, end_date = get_hash_value(export_hash, "date"), args[:yesterday_date].to_date
 
-							accounts_last_job_id = get_reports_hash_value(export_hash, "job_id")
+							accounts_last_job_id = get_hash_value(export_hash, "job_id")
 							accounts_last_job = Resque::Plugins::Status::Hash.get(accounts_last_job_id)
 							if (accounts_last_job.nil? or accounts_last_job.completed?) and (!(last_export_date.eql? end_date.to_s))
 								start_date = last_export_date ? last_export_date.to_date + 1.day : end_date

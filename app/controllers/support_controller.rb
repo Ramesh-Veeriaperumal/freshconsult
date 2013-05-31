@@ -1,8 +1,7 @@
 class SupportController < ApplicationController
 
   before_filter :portal_context, :page_message
-  include Redis::RedisKeys
-  include Redis::PortalRedis
+  include RedisKeys
 
   caches_action :show, :index, :new,
   :if => proc { |controller|
@@ -18,7 +17,7 @@ class SupportController < ApplicationController
   }
  
   def cache_enabled?
-    !(get_portal_redis_key(PORTAL_CACHE_ENABLED) === "false")
+    !(get_key(PORTAL_CACHE_ENABLED) === "false")
   end
 
   protected
@@ -43,7 +42,7 @@ class SupportController < ApplicationController
       if User.current
         is_preview = IS_PREVIEW % { :account_id => current_account.id, 
           :user_id => current_user.id, :portal_id => @portal.id}
-        !get_portal_redis_key(is_preview).blank? && !current_user.blank? && current_user.agent?
+        !get_key(is_preview).blank? && !current_user.blank? && current_user.agent?
       end
     end
   private

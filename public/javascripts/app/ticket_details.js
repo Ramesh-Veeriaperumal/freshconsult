@@ -808,14 +808,6 @@ $(document).ready(function() {
 					var input_since = $('<input type="hidden" rel="ajax_params" name="since_id" value="' + (showing_notes ? TICKET_DETAILS_DATA['last_note_id'] : TICKET_DETAILS_DATA['last_activity'] ) + '" />');
 					_form.append(input_since);
 
-					if (_form.data('fulltext')) {
-
-						var body_text = jQuery('<div>'+jQuery('#' + _form.data('cntId') + '-body').val()+'</div>'); 
-						jQuery('#' + _form.data('cntId') + '-body-fulltext').val(body_text.html());
-      					body_text.find('div.freshdesk_quote').remove();
-      					jQuery('#' + _form.data('cntId') + '-body').val(body_text.html());
-					}
-
 				},
 				success: function(response) {
 

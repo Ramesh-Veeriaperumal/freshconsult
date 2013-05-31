@@ -29,8 +29,6 @@ class Helpdesk::Note < ActiveRecord::Base
     
   has_one :survey_remark, :foreign_key => 'note_id', :dependent => :destroy
 
-  has_one :note_body, :class_name => 'Helpdesk::NoteBody', :dependent => :destroy
-
   has_one :schema_less_note, :class_name => 'Helpdesk::SchemaLessNote',
           :foreign_key => 'note_id', :autosave => true, :dependent => :destroy
 
@@ -39,13 +37,15 @@ class Helpdesk::Note < ActiveRecord::Base
   has_one :external_note, :class_name => 'Helpdesk::ExternalNote',:dependent => :destroy
   
   before_create :validate_schema_less_note
-  before_save :load_schema_less_note, :update_category, :load_note_body
+  before_save :load_schema_less_note, :update_category
   after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
   after_commit_on_create :update_ticket_states, :notify_ticket_monitor
   after_update :update_search_index
 
-  accepts_nested_attributes_for :tweet , :fb_post, :note_body
+  accepts_nested_attributes_for :tweet , :fb_post
   
+  unhtml_it :body
+  xss_sanitize :only => [:body_html],  :html_sanitize => [:body_html]
   named_scope :newest_first, :order => "created_at DESC"
   named_scope :visible, :conditions => { :deleted => false } 
   named_scope :public, :conditions => { :private => false } 
@@ -195,33 +195,6 @@ class Helpdesk::Note < ActiveRecord::Base
     Helpdesk::NoteDrop.new self
   end
   
-  def body
-    body
-  end
-
-  def body_html
-    body_html
-  end
-
-  def full_text
-    note_body ? note_body.full_text : read_attribute(:body)
-  end
-
-  def full_text_html
-    note_body ? note_body.full_text_html : read_attribute(:body_html)
-  end
- 
-  def body_with_note_body
-    note_body ? note_body.body : read_attribute(:body)
-  end
-  alias_method_chain :body, :note_body
-
-  def body_html_with_note_body
-    note_body ? note_body.body_html : read_attribute(:body_html)
-  end
-  alias_method_chain :body_html, :note_body
-
-
   def to_xml(options = {})
      options[:indent] ||= 2
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
@@ -303,12 +276,11 @@ class Helpdesk::Note < ActiveRecord::Base
       
       attachments.each do |attach| 
         content_id = header[:content_ids][attach.content_file_name]
-        self.note_body.body_html = self.note_body.body_html.sub("cid:#{content_id}", attach.content.url) if content_id
+        self.body_html.sub!("cid:#{content_id}", attach.content.url) if content_id
       end
       
-      note_body.save! if self.note_body.body_html_changed?
       # For rails 2.3.8 this was the only i found with which we can update an attribute without triggering any after or before callbacks
-      #Helpdesk::Note.update_all("note_body.body_html= #{ActiveRecord::Base.connection.quote(body_html)}", ["id=? and account_id=?", id, account_id]) if body_html_changed?
+      Helpdesk::Note.update_all("body_html= #{ActiveRecord::Base.connection.quote(body_html)}", ["id=? and account_id=?", id, account_id]) if body_html_changed?
     end
 
     
@@ -455,10 +427,6 @@ class Helpdesk::Note < ActiveRecord::Base
     def load_schema_less_note
       build_schema_less_note unless schema_less_note
       schema_less_note
-    end
-
-    def load_note_body
-      build_note_body(:body => self.body, :body_html => self.body_html) unless note_body
     end
 
     def fire_create_event

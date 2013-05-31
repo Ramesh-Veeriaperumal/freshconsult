@@ -1,7 +1,6 @@
 module Notifications::MessageBroker
 
-  include Redis::RedisKeys
-
+	include RedisKeys
 
 	# Maximum nof of feeds the user can have in memory
 	USER_FEED_LIMIT = 5
@@ -35,8 +34,8 @@ module Notifications::MessageBroker
 
 		def push(reciever_id,message_json)
 			key = game_notification_key(reciever_id)
-			$redis_tickets.lpush(key,message_json)
-			$redis_tickets.rpop(key) if $redis_tickets.llen(key) > USER_FEED_LIMIT
+			$redis_secondary.lpush(key,message_json)
+			$redis_secondary.rpop(key) if $redis_secondary.llen(key) > USER_FEED_LIMIT
 		end
 
 		def pull(count=USER_FEED_LIMIT)
@@ -44,11 +43,11 @@ module Notifications::MessageBroker
 	    tries = 3
 	    begin
 				key = game_notification_key
-				total_length = $redis_tickets.llen(key)
+				total_length = $redis_secondary.llen(key)
 				results = []
 				count = total_length if count > total_length
 				count.times do |index|
-					results.push($redis_tickets.lpop(key))
+					results.push($redis_secondary.lpop(key))
 				end
 				results
 			rescue Exception => e

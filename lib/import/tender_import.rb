@@ -53,8 +53,7 @@ def save_ticket ticket_file
   comments = ticket[:comments]
   first_comment = comments.first  
   first_comment.symbolize_keys!
-  ticket_hash ={:subject => ticket[:title] ,
-                :ticket_body_attributes => {:description => first_comment[:body] , :description_html => first_comment[:formatted_body]} ,
+  ticket_hash ={:subject => ticket[:title] ,:description => first_comment[:body] , :description_html => first_comment[:formatted_body],
                 :requester => get_requester(ticket) , :status => Helpdesk::TicketStatus.status_keys_by_name(@current_account)[ticket[:state]] , 
                 :source => TENDER_TICKET_SOURCE[ticket[:via].to_sym] , :import_id =>ticket[:id] , 
                 :ticket_type => Helpdesk::Ticket::TYPE_KEYS_BY_TOKEN[:problem] , :created_at => ticket[:created_at].to_datetime()  }
@@ -78,7 +77,7 @@ def create_notes_for_ticket ticket,comment
     user = get_requester(comment)
     @note = ticket.notes.build({:incoming => user.customer?, :private => false, :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
                                 :user => user,   :account_id =>@current_account && @current_account.id,
-                                :note_body_attributes => {:body =>comment[:body] , :body_html => comment[:formatted_body]}   , :created_at => comment[:created_at].to_datetime()      
+                                :body =>comment[:body] , :body_html => comment[:formatted_body]   , :created_at => comment[:created_at].to_datetime()      
                               })
     unless @note.save
       puts "unable to save note: #{@note.errors.inspect}"

@@ -2,9 +2,7 @@ require 'rack/throttle'
 
 class Middleware::ApiThrottler < Rack::Throttle::Hourly
 
-  include Redis::RedisKeys
-  include Redis::OthersRedis
-  
+  include RedisKeys
   SKIPPED_SUBDOMAINS = ["admin", "billing", "partner","signup", "email","login"] 
   THROTTLED_TYPES = ["application/json", "application/x-javascript", "text/javascript",
                       "text/x-javascript", "text/x-json", "application/xml", "text/xml"]
@@ -18,8 +16,8 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
   def allowed?
     begin
       return true if by_pass_throttle?
-      remove_others_redis_key(key) if get_others_redis_key(key+"_expiry").nil?
-      @count = get_others_redis_key(key).to_i
+      remove_key(key) if get_key(key+"_expiry").nil?
+      @count = get_key(key).to_i
       return max_per_hour > @count
     rescue Exception => e
       true
@@ -35,10 +33,10 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     if allowed?
       @status, @headers, @response = @app.call(env)
       unless by_pass_throttle?
-        remove_others_redis_key(key) if get_others_redis_key(key+"_expiry").nil?
-        increment_others_redis(key)
-        value = get_others_redis_key(key).to_i
-        set_others_redis_key(key+"_expiry",1,ONE_HOUR) if value == 1
+        remove_key(key) if get_key(key+"_expiry").nil?
+        increment(key)
+        value = get_key(key).to_i
+        set_key(key+"_expiry",1,ONE_HOUR) if value == 1
       end
     else
       @status, @headers, @response = [302, {"Location" => "/403.html"}, 

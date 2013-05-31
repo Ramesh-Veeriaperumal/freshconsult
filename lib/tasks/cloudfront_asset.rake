@@ -14,7 +14,7 @@ namespace :cloudfront_assets do
   end
 
   def change?
-    @cloudfront_version = $redis_portal.get("cloudfront_version")
+    @cloudfront_version = $redis.get("cloudfront_version")
     git_version_command = "git log --pretty=format:%h --max-count=1 --branches=HEAD -- ./public/"
     @git_version = `#{git_version_command}`
     @git_version.gsub!("\n","")
@@ -40,7 +40,7 @@ namespace :cloudfront_assets do
     CloudfrontAssetHost::Uploader.upload!(:verbose => true, 
       :dryrun =>  !CloudfrontAssetHost.enabled, 
       :force_write => true)
-    $redis_portal.set("cloudfront_version",@git_version)
+    $redis.set("cloudfront_version",@git_version)
     puts "::::upload started:::#{Time.now}"
   end
 

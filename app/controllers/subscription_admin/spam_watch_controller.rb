@@ -44,11 +44,9 @@ class SubscriptionAdmin::SpamWatchController < ApplicationController
       @spam_notes = []
       return if "tickets".eql? params["type"]
       notes_query_str = <<-eos
-        select note.created_at, note.body_html as 'body_html', note_body.body_html as 'new_body_html' 
-        from helpdesk_notes as note
-        inner join helpdesk_note_bodies as note_body on note.id = note_body.note_id
-        where user_id = #{params[:user_id]} and note.account_id = #{@user.account_id}
-        order by note.id desc limit 10
+        select created_at, body_html from helpdesk_notes 
+        where user_id = #{params[:user_id]} and account_id = #{@user.account_id}
+        order by id desc limit 10
       eos
       @spam_notes =  ActiveRecord::Base.connection.send(:select,notes_query_str)
     end
@@ -57,11 +55,9 @@ class SubscriptionAdmin::SpamWatchController < ApplicationController
       @spam_tickets = []
       return if "notes".eql? params["type"]
       tickets_query_str = <<-eos
-        select ticket.subject, ticket.created_at, ticket_body.description_html as 'new_description_html', 
-        ticket.description_html as 'description_html' from helpdesk_tickets as ticket 
-        inner join helpdesk_ticket_bodies as ticket_body on ticket.id = ticket_body.ticket_id 
-        where requester_id = #{params[:user_id]} and ticket.account_id = #{@user.account_id}
-        order by ticket.id desc limit 10
+        select subject,created_at, description_html from helpdesk_tickets 
+        where requester_id = #{params[:user_id]} and account_id = #{@user.account_id}
+        order by id desc limit 10
       eos
       @spam_tickets = ActiveRecord::Base.connection.send(:select,tickets_query_str)
     end

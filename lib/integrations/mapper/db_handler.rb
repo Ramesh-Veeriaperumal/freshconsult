@@ -22,11 +22,6 @@ class Integrations::Mapper::DBHandler
 
   def create(data, config)
     entity_type = config[:entity]
-    if config[:create_params]
-     replace_liquid_values(config[:create_params], data)
-     entity_type.new(config[:create_params]) 
-    else
-      entity_type.new
-    end
+    entity_type.new
   end
 end

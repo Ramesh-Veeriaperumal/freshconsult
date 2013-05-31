@@ -18,7 +18,7 @@ module Helpdesk::TicketActions
 
     if params[:meta]
       @ticket.notes.create(
-        :note_body_attributes => {:body => params[:meta].map { |k, v| "#{k}: #{v}" }.join("\n")},
+        :body => params[:meta].map { |k, v| "#{k}: #{v}" }.join("\n"),
         :private => true,
         :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
         :account_id => current_account.id,
@@ -117,6 +117,7 @@ module Helpdesk::TicketActions
     @source_ticket = current_account.tickets.find_by_display_id(params[:id])
     @note = @source_ticket.notes.find(params[:note_id])   
     params[:helpdesk_ticket] = {:subject =>@source_ticket.subject ,
+                                :description_html =>@note.body_html ,
                                 :email => @note.user.email,
                                 :priority =>@source_ticket.priority,
                                 :group_id =>@source_ticket.group_id,
@@ -126,8 +127,7 @@ module Helpdesk::TicketActions
                                 :source =>@source_ticket.source,
                                 :ticket_type =>@source_ticket.ticket_type,                             
                                 :cc_email => {:fwd_emails=>[],
-                                              :cc_emails => @note.cc_emails || []} ,
-                                :ticket_body_attributes => { :description_html => @note.body_html}                            
+                                              :cc_emails => @note.cc_emails || []}                             
                                 
                                }  
     unless @note.tweet.nil?

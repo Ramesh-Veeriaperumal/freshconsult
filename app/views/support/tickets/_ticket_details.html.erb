@@ -8,7 +8,7 @@
 				<% if field.visible_in_view_form? %>					
 					<% if field.editable_in_portal %>
 						<% edit_field_present = true %>
-						<%= ticket_field_container f,:helpdesk_ticket, field, ticket_field_form_value(field, @ticket) %>
+						<%= ticket_field_container :helpdesk_ticket, field, ticket_field_form_value(field, @ticket) %>
 					<% elsif field.visible_in_portal %>
 						<% field_value = ticket_field_display_value(field, @ticket) %>						
 						<% if field_value.present? %>

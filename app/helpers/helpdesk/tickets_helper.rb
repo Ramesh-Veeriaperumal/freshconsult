@@ -4,9 +4,8 @@ module Helpdesk::TicketsHelper
   include Wf::HelperMethods
   include TicketsFilter
   include Helpdesk::Ticketfields::TicketStatus
-  include Redis::RedisKeys
-  include Redis::TicketsRedis
   include Helpdesk::NoteActions
+  include RedisKeys
   include Integrations::AppsUtil
   include Helpdesk::TicketsHelperMethods
 
@@ -240,7 +239,7 @@ module Helpdesk::TicketsHelper
       last_reply_by = (h(last_conv.user.name) || '')+"&lt;"+(last_conv.user.email || '')+"&gt;" 
       last_reply_by  = (h(ticket.reply_name) || '')+"&lt;"+(ticket.reply_email || '')+"&gt;" unless last_conv.user.customer?       
       last_reply_time = last_conv.created_at
-      last_reply_content = last_conv.full_text_html
+      last_reply_content = last_conv.body_html
       unless last_reply_content.blank?
         doc = Nokogiri::HTML(last_reply_content)
         doc_fd_css = doc.css('div.freshdesk_quote')
@@ -266,7 +265,7 @@ module Helpdesk::TicketsHelper
     
     content = default_reply+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
               "<span class='separator' /> , "+ last_reply_by +" wrote:"+
-              last_reply_content.to_s+"</blockquote></div>"
+              last_reply_content+"</blockquote></div>"
     return content
   end
 
@@ -276,7 +275,7 @@ module Helpdesk::TicketsHelper
                 # ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
     key = 'HELPDESK_REPLY_DRAFTS:'+current_account.id.to_s+':'+current_user.id.to_s+':'+ticket.id.to_s
 
-    return ( get_tickets_redis_key(key) || bind_last_conv(item, signature, false, quoted) )
+    return ( get_key(key) || bind_last_conv(item, signature, false, quoted) )
   end
 
   

@@ -4,8 +4,7 @@ require 'jira4r'
 class Integrations::JiraIssueController < ApplicationController
   include Integrations::Constants
   include Integrations::AppsUtil
-  include Redis::RedisKeys
-  include Redis::IntegrationsRedis
+  include RedisKeys
 
   before_filter :validate_request, :only => [:notify] # TODO Needs to be replaced with OAuth authentication.
   before_filter :jira_object, :except => [:notify]
@@ -93,9 +92,9 @@ class Integrations::JiraIssueController < ApplicationController
        unless @installed_app.blank?
             local_integratable_id = @installed_app.local_integratable_id
             account_id = @installed_app.account_id
-            recently_updated_by_fd = get_integ_redis_key(INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account_id, :local_integratable_id=>local_integratable_id, :remote_integratable_id=>remote_integratable_id})
+            recently_updated_by_fd = get_key(INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account_id, :local_integratable_id=>local_integratable_id, :remote_integratable_id=>remote_integratable_id})
             if recently_updated_by_fd # If JIRA has been update recently with same params then ignore that event.
-              remove_integ_redis_key(INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account_id, :local_integratable_id=>local_integratable_id, :remote_integratable_id=>remote_integratable_id})
+              remove_key(INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account_id, :local_integratable_id=>local_integratable_id, :remote_integratable_id=>remote_integratable_id})
               @installed_app = nil
               Rails.logger.info("Recently freshdesk updated JIRA with same params. So ignoring the event.")
             end

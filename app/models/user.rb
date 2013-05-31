@@ -10,8 +10,7 @@ class User < ActiveRecord::Base
   include Users::Activator
   include Search::ElasticSearchIndex
   include Cache::Memcache::User
-  include Redis::RedisKeys
-  include Redis::OthersRedis
+  include RedisKeys
 
   USER_ROLES = [
     [ :admin,       "Admin",            1 ],
@@ -586,7 +585,7 @@ class User < ActiveRecord::Base
       return unless deleted_changed? || agent?
       self.agent_groups.each do |ag|
         next unless ag.group.round_robin_eligible?
-        remove_others_redis_key(GROUP_AGENT_TICKET_ASSIGNMENT % 
+        remove_key(GROUP_AGENT_TICKET_ASSIGNMENT % 
                {:account_id => account_id, :group_id => ag.group_id})
       end
   end

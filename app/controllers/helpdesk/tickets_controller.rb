@@ -8,6 +8,7 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::TicketActions
   include Search::TicketSearch
   include Helpdesk::Ticketfields::TicketStatus
+  include RedisKeys
   include Helpdesk::AdjacentTickets
   include Helpdesk::Activities
   include Helpdesk::ToggleEmailNotification
@@ -37,10 +38,6 @@ class Helpdesk::TicketsController < ApplicationController
   skip_before_filter :load_item
   alias :load_ticket :load_item
   before_filter :load_ticket, :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :activities, :status]
-
-  skip_before_filter :build_item, :only => [:create]
-  alias :build_ticket :build_item
-  before_filter :build_ticket_body_attributes, :build_ticket, :only => [:create]
 
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
@@ -212,7 +209,7 @@ class Helpdesk::TicketsController < ApplicationController
   def show
     @to_emails = @ticket.to_emails
 
-    @draft = get_tickets_redis_key(draft_key)
+    @draft = get_key(draft_key)
 
     @subscription = current_user && @item.subscriptions.find(
       :first, 
@@ -494,7 +491,6 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def new
-    @item.build_ticket_body
     unless params[:topic_id].nil?
       @topic = Topic.find(params[:topic_id])
       @item.subject     = @topic.title
@@ -558,7 +554,7 @@ class Helpdesk::TicketsController < ApplicationController
     count = 0
     tries = 3
     begin
-      set_tickets_redis_key(draft_key, params[:draft_data])
+      $redis_secondary.set(draft_key, params[:draft_data])
     rescue Exception => e
       NewRelic::Agent.notice_error(e,{:key => draft_key, 
         :value => params[:draft_data],
@@ -573,7 +569,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def clear_draft
-    remove_tickets_redis_key(draft_key)
+    remove_key(draft_key)
     render :nothing => true
   end
 
@@ -720,7 +716,8 @@ class Helpdesk::TicketsController < ApplicationController
       filter_params.delete(:action)
       filter_params.delete(:controller)
       begin
-        set_tickets_redis_key(redis_key, filter_params.to_json, 86400)
+        $redis_secondary.set(redis_key, filter_params.to_json)
+        $redis_secondary.expire(redis_key, 86400)
       rescue Exception => e
         NewRelic::Agent.notice_error(e) 
       end
@@ -754,7 +751,7 @@ class Helpdesk::TicketsController < ApplicationController
       tries = 3
       count = 0
       begin
-        filters_str = get_tickets_redis_key("HELPDESK_TICKET_FILTERS:#{current_account.id}:#{current_user.id}:#{session.session_id}")
+        filters_str = $redis_secondary.get("HELPDESK_TICKET_FILTERS:#{current_account.id}:#{current_user.id}:#{session.session_id}")
         Rails.logger.info "In get_cached_filters - filters_str : #{filters_str.inspect}"
         JSON.parse(filters_str) if filters_str
       rescue Exception => e
@@ -786,7 +783,7 @@ class Helpdesk::TicketsController < ApplicationController
           params.merge!(@cached_filter_data)
         end
       else 
-        remove_tickets_redis_key(redis_key)
+        remove_key(redis_key)
       end
     end
 
@@ -820,19 +817,6 @@ class Helpdesk::TicketsController < ApplicationController
     def check_user
       if !current_user.nil? and current_user.customer?
         return redirect_to support_ticket_url(@ticket)
-      end
-    end
-
-    def build_ticket_body_attributes
-      if params[:helpdesk_ticket][:description] || params[:helpdesk_ticket][:description_html]
-        unless params[:helpdesk_ticket].has_key?(:ticket_body_attributes)
-          ticket_body_hash = {:ticket_body_attributes => { :description => params[:helpdesk_ticket][:description],
-                                  :description_html => params[:helpdesk_ticket][:description_html] }} 
-          params[:helpdesk_ticket].merge!(ticket_body_hash).tap do |t| 
-            t.delete(:description) if t[:description]
-            t.delete(:description_html) if t[:description_html]
-          end 
-        end 
       end
     end
 

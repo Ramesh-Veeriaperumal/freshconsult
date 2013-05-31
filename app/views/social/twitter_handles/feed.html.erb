@@ -191,12 +191,12 @@
 	    var screen_name = this.getAttribute("data-user"),
 	        tweet_text  = this.getAttribute("data-text"), 
 	        json_data   = { "subject"          : screen_name + ' - ' + tweet_text,
+	                        "description"      : tweet_text,
 	                        "product_id"       : current_product_id, 
 	                        "twitter_id"       : screen_name,
 	                        "tweet_attributes" : { "tweet_id": this.getAttribute("data-id"),  
-	                        						"twitter_handle_id": jQuery("a.item_info.selected").attr("twitter_id")   },
-	                        "ticket_body_attributes" : { "description" : tweet_text }};
-                        					
+	                        						"twitter_handle_id": jQuery("a.item_info.selected").attr("twitter_id")   }};
+
       link = jQuery(this);
        
       jQuery.ajax({

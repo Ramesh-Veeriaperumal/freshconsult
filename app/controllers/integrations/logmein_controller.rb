@@ -1,7 +1,6 @@
 # encoding: utf-8
 class Integrations::LogmeinController < ApplicationController
-  include Redis::RedisKeys
-  include Redis::IntegrationsRedis
+  include RedisKeys
   include Integrations::AppsUtil
   def rescue_session
     tracking = params['Tracking0']
@@ -12,7 +11,7 @@ class Integrations::LogmeinController < ApplicationController
       ticket_id = redis_val[2]
       account_id = redis_val[1]
       Rails.logger.debug "Adding logging session. Redis Key #{redis_key}"
-      acc_ticket = JSON.parse(get_integ_redis_key(redis_key))
+      acc_ticket = JSON.parse(get_key(redis_key))
       unless acc_ticket.blank?
         if (acc_ticket["md5secret"] == secret)
           note_head = '<b>' + t("integrations.logmein.note.header") + ' </b> <br />'
@@ -28,7 +27,7 @@ class Integrations::LogmeinController < ApplicationController
           ticket = Helpdesk::Ticket.find_by_id_and_account_id(ticket_id, account_id)
           unless ticket.blank?
               note = ticket.notes.build(
-                :note_body_attributes => {:body_html => note_head + note_body},
+                :body_html => note_head + note_body,
                 :private => true ,
                 :incoming => true,
                 :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"],
@@ -37,7 +36,7 @@ class Integrations::LogmeinController < ApplicationController
                )
                note.save!
             end     
-            remove_integ_redis_key(redis_key) 
+            remove_key(redis_key) 
         end 
       end
     end
@@ -47,8 +46,8 @@ class Integrations::LogmeinController < ApplicationController
   def update_pincode
     begin
       redis_key = "INTEGRATIONS_LOGMEIN:#{params['account_id']}:#{params['ticket_id']}"
-        cache_val = get_integ_redis_key(redis_key)
-        set_integ_redis_key(redis_key, params['logmein_session'])
+        cache_val = get_key(redis_key)
+        set_key(redis_key, params['logmein_session'])
       render :json => {:status => "Success"}  
     rescue Exception => e
       render :json => {:error => e}

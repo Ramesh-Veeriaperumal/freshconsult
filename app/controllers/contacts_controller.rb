@@ -13,6 +13,7 @@ class ContactsController < ApplicationController
    include APIHelperMethods
    include HelpdeskControllerMethods
    include ExportCsvUtil
+   include RedisKeys
 
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
    before_filter :check_user_role, :only =>[:update,:create]
@@ -100,11 +101,7 @@ class ContactsController < ApplicationController
       User.update_all({ :blocked => false, :whitelisted => true,:deleted => false, :blocked_at => nil }, 
         [" id in (?) and (blocked_at IS NULL OR blocked_at <= ?) and (deleted_at IS NULL OR deleted_at <= ?) and account_id = ? ",
          ids, (Time.now+5.days).to_s(:db), (Time.now+5.days).to_s(:db), current_account.id])
-      begin
-        Resque.enqueue(Workers::RestoreSpamTickets, :user_ids => ids)
-      rescue Exception => e
-        NewRelic::Agent.notice_error(e)
-      end
+      enqueue_worker(Workers::RestoreSpamTickets, :user_ids => ids)
       flash[:notice] = t(:'flash.contacts.whitelisted')
     end
     redirect_to contacts_path and return if params[:ids]
@@ -139,7 +136,6 @@ class ContactsController < ApplicationController
     @user = nil # reset the user object.
     @user = current_account.all_users.find_by_email(email) unless email.blank?
     @user = current_account.all_users.find(params[:id]) if @user.blank?
-    Rails.logger.info "$$$$$$$$ -> #{@user.inspect}"
     @user_tickets = current_account.tickets.requester_active(@user).visible.newest(5).find(:all, 
       :include => [ :ticket_states,:ticket_status,:responder,:requester ])
     

@@ -1,7 +1,6 @@
 class Support::LoginController < SupportController
 
-	include Redis::RedisKeys
-	include Redis::TicketsRedis
+	include RedisKeys
 
 	skip_before_filter :check_account_state
 	
@@ -39,7 +38,7 @@ class Support::LoginController < SupportController
 	    end
 
 	    def remove_old_filters
-	      remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session.session_id})
+	      remove_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session.session_id})
 	    end
 
 end

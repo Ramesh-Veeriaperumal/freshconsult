@@ -3,15 +3,14 @@ class PortalObserver < ActiveRecord::Observer
 	ForumCategory, Forum, Solution::Category, Solution::Folder, Solution::Article,
 	Portal::Page
 
-	include Redis::RedisKeys
-	include Redis::PortalRedis
+	include RedisKeys
 
 	def increment_version(*args)
 		return unless Account.current
-		return if get_portal_redis_key(PORTAL_CACHE_ENABLED) === "false"
+		return if get_key(PORTAL_CACHE_ENABLED) === "false"
 		Rails.logger.debug "::::::::::Sweeping from portal"
 		key = PORTAL_CACHE_VERSION % { :account_id => Account.current.id }
-		increment_portal_redis_version key
+		increment key
 	end
 	alias_method :after_save, :increment_version
 	alias_method :after_destroy, :increment_version

@@ -2,8 +2,7 @@ class Portal::Template < ActiveRecord::Base
 
 	set_table_name "portal_templates"
 
-  include Redis::RedisKeys
-  include Redis::PortalRedis
+  include RedisKeys
   include Cache::Memcache::Portal::Template
 
   belongs_to_account
@@ -68,11 +67,11 @@ class Portal::Template < ActiveRecord::Base
   end
 
   def draft!
-    set_portal_redis_key(draft_key, Marshal.dump(self))
+    set_key(draft_key, Marshal.dump(self))
   end
 
   def get_draft
-    cached_template = get_portal_redis_key(draft_key)
+    cached_template = get_key(draft_key)
     Marshal.load(cached_template) if cached_template
   end
 
@@ -98,7 +97,7 @@ class Portal::Template < ActiveRecord::Base
 
   def page_from_cache(page_label)
     key = draft_key(page_label)
-    cached_page = get_portal_redis_key(key)
+    cached_page = get_key(key)
     Marshal.load(cached_page) if cached_page
   end
 
@@ -112,16 +111,16 @@ class Portal::Template < ActiveRecord::Base
   end
 
   def clear_cache!
-    remove_portal_redis_key(draft_key)
+    remove_key(draft_key)
   end
 
   def cache_page(page_label, page)
     key = draft_key(page_label)
-    set_portal_redis_key(key, Marshal.dump(page))
+    set_key(key, Marshal.dump(page))
   end
 
   def clear_page_cache!(page_label)
-    remove_portal_redis_key(draft_key(page_label))
+    remove_key(draft_key(page_label))
   end
 
   private

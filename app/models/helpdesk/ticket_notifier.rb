@@ -100,13 +100,13 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "multipart/mixed"
     part :content_type => "multipart/alternative" do |alt|
       alt.part "text/plain" do |plain|
-        plain.body   render_message("reply.text.plain.erb",:ticket => ticket, :body => note.full_text, :note => note, :dropboxes=>note.dropboxes,
+        plain.body   render_message("reply.text.plain.erb",:ticket => ticket, :body => note.body, :note => note, :dropboxes=>note.dropboxes,
                     :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]),
                     :include_quoted_text => options[:quoted_text]
                     )
       end
       alt.part "text/html" do |html|
-        html.body   render_message("reply.text.html.erb",:ticket => ticket, :body => note.full_text_html, :note => note, :dropboxes=>note.dropboxes,
+        html.body   render_message("reply.text.html.erb",:ticket => ticket, :body => note.body_html, :note => note, :dropboxes=>note.dropboxes,
                     :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]),
                     :include_quoted_text => options[:quoted_text]
                     )
@@ -131,7 +131,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "multipart/mixed"
 
     part "text/html" do |html|
-      html.body   render_message("forward",:ticket => ticket, :body => note.full_text_html,:dropboxes=>note.dropboxes)
+      html.body   render_message("forward",:ticket => ticket, :body => note.body_html,:dropboxes=>note.dropboxes)
     end
 
     note.attachments.each do |a|

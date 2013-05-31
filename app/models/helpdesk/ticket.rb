@@ -15,10 +15,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Mobile::Actions::Ticket
   include Gamification::GamificationUtil
   include Search::ElasticSearchIndex
-  include Redis::RedisKeys
-  include Redis::TicketsRedis
-  include Redis::ReportsRedis
-  include Redis::OthersRedis
+  include RedisKeys
   include Reports::TicketStats
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
@@ -32,6 +29,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   serialize :cc_email
 
   has_flexiblefields
+  
+  unhtml_it :description
   
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, :requester_name, :meta_data, :disable_observer
@@ -68,13 +67,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_commit_on_destroy :remove_es_document
 
- has_one :ticket_body, :class_name => 'Helpdesk::TicketBody', :dependent => :destroy
 
   has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
 
   belongs_to :email_config
   belongs_to :group
-  #xss_sanitize :only => [:description_html], :html_sanitize => [:description_html]
+  xss_sanitize :only => [:description_html], :html_sanitize => [:description_html]
  
   belongs_to :responder,
     :class_name => 'User',
@@ -168,7 +166,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   attr_protected :attachments #by Shan - need to check..
   
-  accepts_nested_attributes_for :tweet, :fb_post, :ticket_body
+  accepts_nested_attributes_for :tweet, :fb_post
   
   named_scope :created_at_inside, lambda { |start, stop|
           { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }
@@ -377,29 +375,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.subject ||= ''
     self.group_id ||= email_config.group_id unless email_config.nil?
     self.priority ||= PRIORITY_KEYS_BY_TOKEN[:low]
-    build_ticket_body(:description => self.description,
-     :description_html => self.description_html) unless ticket_body
     #self.description = subject if description.blank?
   end
   
-  def description
-    description
-  end
- 
-  def description_html
-    description_html
-  end
- 
-  def description_with_ticket_body
-    ticket_body ? ticket_body.description : read_attribute(:description)
-  end
-  alias_method_chain :description, :ticket_body
-
-
-  def description_html_with_ticket_body
-    ticket_body ? ticket_body.description_html : read_attribute(:description_html)
-  end
-  alias_method_chain :description_html, :ticket_body
+  
   
   def to_param 
     display_id ? display_id.to_s : nil
@@ -634,7 +613,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def create_meta_note
     if meta_data.present?  # Added for storing metadata from MobiHelp
       self.notes.create(
-        :note_body_attributes => {:body => meta_data.map { |k, v| "#{k}: #{v}" }.join("\n")},
+        :body => meta_data.map { |k, v| "#{k}: #{v}" }.join("\n"),
         :private => true,
         :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
         :account_id => self.account.id,
@@ -1199,7 +1178,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     if self.header_info
       self.header_info[:message_ids].each do |parent_message|
         message_key = EMAIL_TICKET_ID % {:account_id => self.account_id, :message_id => parent_message}
-        deleted ? remove_others_redis_key(message_key) : set_others_redis_key(message_key, self.display_id, 86400*7)
+        deleted ? remove_key(message_key) : set_key(message_key, self.display_id, 86400*7)
       end
     end
   end
@@ -1223,15 +1202,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
       description_updated = false
       attachments.each do |attach| 
         content_id = header[:content_ids][attach.content_file_name]
-        self.ticket_body.description_html = self.ticket_body.description_html.sub("cid:#{content_id}", attach.content.url) if content_id
+        self.description_html.sub!("cid:#{content_id}", attach.content.url) if content_id
         description_updated = true
       end
-      
-      ticket_body.save! if description_updated
-       
+
       # For rails 2.3.8 this was the only i found with which we can update an attribute without triggering any after or before callbacks
-      # Helpdesk::Ticket.update_all("description_html= #{ActiveRecord::Base.connection.quote(description_html)}", ["id=? and account_id=?", id, account_id]) \
-      #     if description_updated
+      Helpdesk::Ticket.update_all("description_html= #{ActiveRecord::Base.connection.quote(description_html)}", ["id=? and account_id=?", id, account_id]) \
+          if description_updated
     end
 
     def create_source_activity
@@ -1419,7 +1396,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       return unless account.features?(:agent_collision)
       agent_name = User.current ? User.current.name : ""
       message = HELPDESK_TICKET_UPDATED_NODE_MSG % {:ticket_id => self.id, :agent_name => agent_name, :type => "updated"}
-      publish_to_tickets_channel("tickets:#{self.account.id}:#{self.id}", message)
+      publish_to_channel("tickets:#{self.account.id}:#{self.id}", message)
     end
 
     def fire_update_event
