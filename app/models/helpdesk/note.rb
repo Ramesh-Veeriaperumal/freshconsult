@@ -303,7 +303,7 @@ class Helpdesk::Note < ActiveRecord::Base
       
       attachments.each do |attach| 
         content_id = header[:content_ids][attach.content_file_name]
-        self.note_body.body_html = self.note_body.body_html.sub!("cid:#{content_id}", attach.content.url) if content_id
+        self.note_body.body_html = self.note_body.body_html.sub("cid:#{content_id}", attach.content.url) if content_id
       end
       
       note_body.save! if self.note_body.body_html_changed?

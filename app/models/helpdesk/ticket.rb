@@ -1223,7 +1223,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       description_updated = false
       attachments.each do |attach| 
         content_id = header[:content_ids][attach.content_file_name]
-        self.ticket_body.description_html = self.ticket_body.description_html.sub!("cid:#{content_id}", attach.content.url) if content_id
+        self.ticket_body.description_html = self.ticket_body.description_html.sub("cid:#{content_id}", attach.content.url) if content_id
         description_updated = true
       end
       
