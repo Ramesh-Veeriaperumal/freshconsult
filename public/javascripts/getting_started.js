@@ -129,7 +129,7 @@ jQuery(document).ready(function(){
 		var to_email = form.find("#hidden_reply_to").val();
 		var url = jQuery(this).data('test-url');
 		var save_button = jQuery(this);
-		jQuery(this).val("").addClass("loading")
+		jQuery(this).val("").addClass("sloading loading-small")
 		if(Validate.email(reply_email))
 		{
 			totango.track( "Support Email Changed", "Getting Started Page");
@@ -140,7 +140,7 @@ jQuery(document).ready(function(){
 			  data : {"email_config[reply_email]" : reply_email, "email_config[to_email]" : to_email },
 			  dataType: "script",
 			  success: function(){
-			  				save_button.removeClass("loading").addClass("saved")
+			  				save_button.removeClass("sloading loading-small").addClass("saved")
 			  				setTimeout(function(){
 			  					save_button.removeClass("saved").fadeOut();
 			  				},1500);
@@ -151,7 +151,7 @@ jQuery(document).ready(function(){
 			});
 		}
 		else{
-			save_button.removeClass("loading").addClass("warning");
+			save_button.removeClass("sloading loading-small").addClass("warning");
 			jQuery('.warning-tip').show();
 			reply_email_ele.addClass("gs_error_highlight").focus();
 			setTimeout(function(){

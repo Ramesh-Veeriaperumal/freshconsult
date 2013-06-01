@@ -251,12 +251,12 @@ showCannedResponse = function(button, ticket_id){
 	
 	$("#canned_response_container")    
 		.show()
-		.addClass("loading");
+		.addClass("sloading");
 
 	$("#canned_response_list")
 		.load("/helpdesk/canned_responses/index/"+ticket_id, function(){
 			$("#canned_response_container")
-				.removeClass("loading");
+				.removeClass("sloading");
 		})
 		.show();        
 }
@@ -362,7 +362,7 @@ var updatePagination = function() {
 	$('#show_more').off('click.ticket_details');
 	$('#show_more').on('click.ticket_details',function(ev) {
 		ev.preventDefault();
-		$('#show_more').addClass('loading');
+		$('#show_more').addClass('sloading loading-small');
 		var href;
 		if (showing_notes)
 			href = TICKET_DETAILS_DATA['notes_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_note_id'];
@@ -373,7 +373,7 @@ var updatePagination = function() {
 
 			TICKET_DETAILS_DATA['first_activity'] = null;
 			TICKET_DETAILS_DATA['first_note_id'] = null;
-			$('#show_more').removeClass('loading').addClass('hide');
+			$('#show_more').removeClass('sloading loading-small').addClass('hide');
 			$('[rel=activity_container]').prepend(response);
 			
 		});
@@ -522,7 +522,7 @@ $(document).ready(function() {
 
 	$("body").on('change.ticket_details', '#helpdesk_ticket_group_id', function(e){
 		$('#TicketProperties .default_agent')
-			.addClass('loading-right');
+			.addClass('sloading loading-small loading-right');
 
 		$.ajax({type: 'POST',
 			url: '/helpdesk/commons/group_agents/'+this.value,
@@ -532,7 +532,7 @@ $(document).ready(function() {
 					.html(data)
 					.trigger('change');
 
-				$('#TicketProperties .default_agent').removeClass('loading-right');
+				$('#TicketProperties .default_agent').removeClass('sloading loading-small loading-right');
 			  }
 		});
 	});

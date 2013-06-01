@@ -831,34 +831,7 @@ Redactor.prototype = {
 
 			if (ctrl)
 			{
-				if(shift)
-				{
-					if(key === 82) {
-						this.shortcuts(e, 'JustifyRight');	// Ctrl + Shift + R
-					}
-					else if(key === 76) {
-						this.shortcuts(e, 'JustifyLeft');	// Ctrl + Shift + L
-					}
-					else if(key === 69) {
-						this.shortcuts(e, 'JustifyCenter');	// Ctrl + Shift + E
-					}
-					else if(key === 74) {
-						this.shortcuts(e, 'justifyfull');	// Ctrl + Shift + J
-					}
-					else if (key === 55) 
-					{
-						this.shortcuts(e, 'insertunorderedlist'); // Ctrl + Shift + 7
-					}
-					else if (key === 56)
-					{
-						this.shortcuts(e, 'insertorderedlist'); // Ctrl + Shift + 8
-					}
-					else if (key === 75)
-					{
-						this.shortcuts(e, 'unlink'); // Ctrl + Shift + K
-					}
-				}
-				else if(alt) 
+				if(alt) 
 				{	
 					if(key === 48) {
 						this.shortcuts(e, 'formatblock', 'p');	// Ctrl + Alt + 0
@@ -896,6 +869,33 @@ Redactor.prototype = {
 					else
 					{
 						this.shortcuts(e, 'undo'); // Ctrl + z
+					}
+				}
+				else if(shift)
+				{
+					if(key === 82) {
+						this.shortcuts(e, 'JustifyRight');	// Ctrl + Shift + R
+					}
+					else if(key === 76) {
+						this.shortcuts(e, 'JustifyLeft');	// Ctrl + Shift + L
+					}
+					else if(key === 69) {
+						this.shortcuts(e, 'JustifyCenter');	// Ctrl + Shift + E
+					}
+					else if(key === 74) {
+						this.shortcuts(e, 'justifyfull');	// Ctrl + Shift + J
+					}
+					else if (key === 55) 
+					{
+						this.shortcuts(e, 'insertunorderedlist'); // Ctrl + Shift + 7
+					}
+					else if (key === 56)
+					{
+						this.shortcuts(e, 'insertorderedlist'); // Ctrl + Shift + 8
+					}
+					else if (key === 75)
+					{
+						this.shortcuts(e, 'unlink'); // Ctrl + Shift + K
 					}
 				}
 				else if (key === 220)

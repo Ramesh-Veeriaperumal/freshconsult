@@ -4,7 +4,8 @@ module Helpdesk::MergeTicketActions
 	include Helpdesk::Ticketfields::TicketStatus
 	include Helpdesk::ToggleEmailNotification
 	include ParserUtil
-	include RedisKeys
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
 	def handle_merge 
     @header = @target_ticket.header_info || {}
@@ -101,7 +102,7 @@ module Helpdesk::MergeTicketActions
 				unless @header[:message_ids].include? source
 					@header[:message_ids] << source
 					source_key = EMAIL_TICKET_ID % { :account_id => current_account.id, :message_id => source }
-					set_key(source_key, @target_ticket.display_id)
+					set_tickets_redis_key(source_key, @target_ticket.display_id)
 				end
 			end
 		end

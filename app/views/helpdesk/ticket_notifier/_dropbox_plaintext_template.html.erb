@@ -1,0 +1,6 @@
+<%unless @dropboxes.blank? %>
+  <%= t('dropbox_plaintext') %>:
+	<% @dropboxes.each do |dbox| %>
+    <%=URI.escape(dbox.url)%>
+	<%end%>
+<%end%>

@@ -3,4 +3,4 @@ if !@ticket_id.blank?
     @ticket = current_account.tickets.find(@ticket_id) unless @ticket_id == 'bulk' 
     page.replace_html 'responses', :partial => 'helpdesk/tickets/components/ca_responses'
 end 
-page << "jQuery('#responses').removeClass('loading-center');"
+page << "jQuery('#responses').removeClass('sloading loading-small');"

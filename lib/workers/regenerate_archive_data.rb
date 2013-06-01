@@ -3,7 +3,8 @@ module Workers
 		@queue = "regenerate_archive_reports_data"
 
 		include Resque::Plugins::Status
-		include RedisKeys
+		include Redis::RedisKeys
+		include Redis::ReportsRedis
 		include Reports::Constants
 		include Reports::Redshift
 		include Reports::ArchiveData
@@ -24,14 +25,14 @@ module Workers
 				# This case can happen during 1 month data migration into redshift
 				if num_of_deleted_rows == 0
 					AWS::S3::S3Object.delete($st_env_name+'/'+@s3_folder+'/redshift_'+@s3_folder+'.csv', S3_CONFIG[:reports_bucket])
-					remove_value_from_set REPORT_STATS_REGENERATE_KEY % {:account_id => id}, date
+					remove_reports_member REPORT_STATS_REGENERATE_KEY % {:account_id => id}, date
 					next
 				end
 				load_regenerated_data
-				remove_value_from_set REPORT_STATS_REGENERATE_KEY % {:account_id => id}, date
+				remove_reports_member REPORT_STATS_REGENERATE_KEY % {:account_id => id}, date
 			end
 			completed
-			remove_key %(resque:status:#{uuid}) # uuid is job's unique id
+			remove_reports_redis_key %(resque:status:#{uuid}) # uuid is job's unique id
 		end
 
 		# delete out dated data for stats_date and account

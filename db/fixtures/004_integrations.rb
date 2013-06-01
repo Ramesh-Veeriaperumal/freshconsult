@@ -442,7 +442,7 @@ if Integrations::Application.count == 0
   end
 
   Integrations::Widget.seed(:application_id, :name) do |s|
-    s.name = @widget_name
+    s.name = 'google_calendar_widget'
     s.description = 'google_calendar.widgets.google_calendar.description'
     s.script = %(
       <link href="/stylesheets/pattern/pattern.css" media="screen" rel="stylesheet" type="text/css">

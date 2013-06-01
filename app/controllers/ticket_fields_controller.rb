@@ -32,7 +32,7 @@ class TicketFieldsController < Admin::AdminController
     end 
       }
       format.xml  { render :xml => @ticket_fields.to_xml } 
-      format.json  { render :json => Hash.from_xml(@ticket_fields.to_xml) } 
+      format.json  { render :json =>current_account.ticket_fields } 
     end
   end
 

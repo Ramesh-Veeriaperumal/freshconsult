@@ -38,7 +38,7 @@ class UserNotifier < ActionMailer::Base
     subject       "Custom SSL Activated"
     body          :account_admin_name => account_admin.name, :portal_url => portal_url, :elb_name => elb_name
     sent_on       Time.now
-    content_type  "text/html"
   end
+
   
 end

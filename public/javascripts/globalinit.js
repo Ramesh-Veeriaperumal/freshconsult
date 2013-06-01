@@ -113,10 +113,10 @@ is_touch_device = function() {
         template: '<div class="dbl_left arrow"></div><div class="hover_card inner"><div class="content"><p></p></div></div>',
         content: function(){
           var container_id = "user-info-div-"+$(this).data('contactId');
-          return jQuery("#"+container_id).html() || "<div class='loading-box' id='"+container_id+"' rel='remote-load' data-url='"+$(this).data('contactUrl')+"'></div>";
+          return jQuery("#"+container_id).html() || "<div class='sloading loading-small loading-block' id='"+container_id+"' rel='remote-load' data-url='"+$(this).data('contactUrl')+"'></div>";
         }
       }); 
-    });
+    });    
 
     $("[rel=hover-popover]").livequery(function(){ 
        $(this).popover({ 
@@ -141,7 +141,7 @@ is_touch_device = function() {
       $(this)
         .load($(this).data("url"), function(){
           $(this).attr("rel", "");
-          $(this).removeClass("loading-box");
+          $(this).removeClass("sloading loading-small loading-block");
           
           if(!$this.data("loadUnique"))            
             $(this).clone().prependTo('#remote_loaded_dom_elements');
@@ -261,7 +261,7 @@ is_touch_device = function() {
         $(this).bind("afterShow", function(ev){
           var _self = $(this);
           if(_self.data('remoteUrl')) {
-            _self.append("<div class='loading-box'></div>");
+            _self.append("<div class='sloading loading-small loading-block'></div>");
             _self.load(_self.data('remoteUrl'), function(){
                 _self.data('remoteUrl', false);
             });

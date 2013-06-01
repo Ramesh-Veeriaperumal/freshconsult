@@ -318,7 +318,7 @@ active_dialog = null;
                   params = $this.data('parameters');
 
               if(dialog == null){
-                  dialog = $("<div class='loading-center' />")
+                  dialog = $("<div class='sloading' />")
                               .html("<br />")
                               .dialog({  modal:true, width: width, height:'auto', position:'top',
                                          title: this.title, resizable: false,
@@ -329,7 +329,7 @@ active_dialog = null;
                                          } });
 
                   active_dialog = dialog.load(href, params || {}, function(responseText, textStatus, XMLHttpRequest) {
-                                                   dialog.removeClass("loading-center");
+                                                   dialog.removeClass("sloading");
                                                    dialog.css({"height": "auto"});
                                                 });
 
@@ -451,7 +451,7 @@ active_dialog = null;
           menu_container = $('<div>');
           menu_container.attr('id',"menu_" + menuid);
           menu_container.data('parent',$(node));
-          menu_container.addClass('loading fd-ajaxmenu');
+          menu_container.addClass('sloading loading-small fd-ajaxmenu');
           menu_container.html('<div class="contents"></div>');
           menu_container.insertAfter($(node));
 
@@ -460,7 +460,7 @@ active_dialog = null;
           $.ajax({
             url: $(node).data('options-url'),
             success: function (data, textStatus, jqXHR) {
-              $('#menu_' + menuid).removeClass('loading');
+              $('#menu_' + menuid).removeClass('sloading loading-small');
               $('#menu_' + menuid + ' .contents').html(data);  
 
               //Setting the Active Element
@@ -502,7 +502,7 @@ active_dialog = null;
           menuid = $(document).data('dynamic-menu-count') + 1;
           $(document).data('dynamic-menu-count',menuid);
           menu_container = $('<div>').attr('id',"menu_" + menuid)
-                          .addClass('loading fd-ajaxmenu')
+                          .addClass('sloading fd-ajaxmenu')
                           .html('<div class="contents"></div>')
                           .data('parent',$(node));
                           
@@ -598,7 +598,7 @@ active_dialog = null;
             dialogid = this.id + "_dialog";
             dialogcontent = this.id + "_dialogcontent";            
             var dialog = null;
-            $("body").prepend('<div id="'+dialogid+'" class="modal hide fade"><div class="modal-header"><a href="#" class="close"></a><h3 class="title">'+ this.title +'</h3></div><div id="'+dialogcontent+'"><p class="loading-box" ></p></div></div>');
+            $("body").prepend('<div id="'+dialogid+'" class="modal hide fade"><div class="modal-header"><a href="#" class="close"></a><h3 class="title">'+ this.title +'</h3></div><div id="'+dialogcontent+'"><p class="sloading loading-small loading-block" ></p></div></div>');
             
             $("#"+dialogid).data({"content": dialogcontent, "href": $this.attr("href")});
             $this.attr("data-controls-modal", dialogid);
@@ -722,7 +722,7 @@ function fetchResponses(url, element){
       var temp_resp = jQuery('.list2').detach();
       jQuery('#cf_cache').append(temp_resp);
       jQuery('#fold-list').append('<div id="responses" class="list2"></div>');
-      jQuery('#responses').addClass('loading-center');
+      jQuery('#responses').addClass('sloading loading-small');
       jQuery.getScript(url, function(){
       jQuery('#responses').attr('id', use_id);
       elem.addClass('clicked');

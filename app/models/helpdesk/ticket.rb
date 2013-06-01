@@ -15,12 +15,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Mobile::Actions::Ticket
   include Gamification::GamificationUtil
   include Search::ElasticSearchIndex
-  include RedisKeys
+  include Redis::RedisKeys
+  include Redis::TicketsRedis
+  include Redis::ReportsRedis
+  include Redis::OthersRedis
   include Reports::TicketStats
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
-                            "access_token", "escalation_level", "sla_policy_id", "sla_policy"]
+                            "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby"]
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
 
@@ -52,7 +55,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_validation_on_create :set_token
   
-  before_save :update_ticket_changes, :set_sla_policy, :load_ticket_status, :update_dueby
+  before_save :update_ticket_changes, :set_sla_policy, :load_ticket_status
+
+  before_save :update_dueby, :unless => :manual_sla?
 
   after_save :save_custom_field
 
@@ -143,7 +148,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :dependent => :destroy
     
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState',:dependent => :destroy
-  delegate :closed_at, :resolved_at, :to => :ticket_states, :allow_nil => true
+  delegate :closed_at, :resolved_at, :first_response_time, :to => :ticket_states, :allow_nil => true
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
   delegate :active?, :open?, :is_closed, :closed?, :resolved?, :pending?, :onhold?, :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
   
@@ -1176,7 +1181,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     if self.header_info
       self.header_info[:message_ids].each do |parent_message|
         message_key = EMAIL_TICKET_ID % {:account_id => self.account_id, :message_id => parent_message}
-        deleted ? remove_key(message_key) : set_key(message_key, self.display_id, 86400*7)
+        deleted ? remove_others_redis_key(message_key) : set_others_redis_key(message_key, self.display_id, 86400*7)
       end
     end
   end
@@ -1394,7 +1399,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       return unless account.features?(:agent_collision)
       agent_name = User.current ? User.current.name : ""
       message = HELPDESK_TICKET_UPDATED_NODE_MSG % {:ticket_id => self.id, :agent_name => agent_name, :type => "updated"}
-      publish_to_channel("tickets:#{self.account.id}:#{self.id}", message)
+      publish_to_tickets_channel("tickets:#{self.account.id}:#{self.id}", message)
     end
 
     def fire_update_event
@@ -1453,5 +1458,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       set_reports_redis_key(account_id, created_at)
     end
 
+    def manual_sla?
+      self.manual_dueby && self.due_by && self.frDueBy
+    end
 end
 

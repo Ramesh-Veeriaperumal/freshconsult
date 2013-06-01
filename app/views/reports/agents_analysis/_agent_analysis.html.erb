@@ -1,5 +1,5 @@
 <div class="report-page" id="report-page">
-<div id="loading-box"> <div class="reports-loading">Generating Report...</div> </div>
+<div id="loading-box"> <div class="reports-loading sloading loading-small loading-left">Generating Report...</div> </div>
   <div class="report-content-wrapper">
     <% solution_artical_link = 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85344-how-to-read-agent-top-n-analysis'%>
     <!--report header-->
@@ -11,14 +11,14 @@
           <span><%=t('adv_reports.tickets_resolved')%></span>
           <a class="report-help-icon tooltip" title='<%=t("adv_reports.helptext.glance.how_to_read")%>' href="<%=solution_artical_link%>" target="_blank">?</a>
         </h3>
-        <div id="resolved_tickets_line_chart" class="graph-container"><div class="loading-center"></div></div>
+        <div id="resolved_tickets_line_chart" class="graph-container"><div class="sloading"></div></div>
       </div>
       <div class="span6 single-line-bar">
         <h3 class="header-lead">
           <span><%=t('adv_reports.tickets_backlog')%></span>
           <a class="report-help-icon tooltip" title='<%=t("adv_reports.helptext.glance.how_to_read")%>' href="<%=solution_artical_link%>" target="_blank">?</a>
         </h3>
-        <div id="backlog_tickets_line_chart" class="graph-container"><div class="loading-center"></div></div>
+        <div id="backlog_tickets_line_chart" class="graph-container"><div class="sloading"></div></div>
       </div>
     </div>
     <div class="row-fluid">
@@ -27,14 +27,14 @@
           <span><%=t('adv_reports.top_n.sla_comp_desc')%></span>
           <a class="report-help-icon tooltip" title='<%=t("adv_reports.helptext.glance.how_to_read")%>' href="<%=solution_artical_link%>" target="_blank">?</a>
         </h3>
-        <div id="SLA_DESC_tickets_line_chart" class="graph-container"><div class="loading-center"></div></div>
+        <div id="SLA_DESC_tickets_line_chart" class="graph-container"><div class="sloading"></div></div>
       </div>
       <div class="span6 single-line-bar">
         <h3 class="header-lead">
           <span><%=t('adv_reports.top_n.sla_comp_asc')%></span>
           <a class="report-help-icon tooltip" title='<%=t("adv_reports.helptext.glance.how_to_read")%>' href="<%=solution_artical_link%>" target="_blank">?</a>
         </h3>
-        <div id="SLA_ASC_tickets_line_chart" class="graph-container"><div class="loading-center"></div></div>
+        <div id="SLA_ASC_tickets_line_chart" class="graph-container"><div class="sloading"></div></div>
       </div>
     </div>
     <div class="row-fluid">

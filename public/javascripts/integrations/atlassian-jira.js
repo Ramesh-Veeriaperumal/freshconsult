@@ -735,12 +735,12 @@ JiraWidget.prototype = {
 	ProcessJiraFieldArrayStringAllowedValues: function(fieldKey, fieldData) {
 		jiraWidget.fieldContainer += '<label>' + fieldData["name"] + '</label>';
 		if(fieldData["schema"]["type"] == "string")
-			jiraWidget.fieldContainer += '<select name="fields['+ fieldKey+']">';
+			jiraWidget.fieldContainer += '<select name="fields['+ fieldKey+'][id]">';
 		else
-		jiraWidget.fieldContainer += '<select name="fields['+ fieldKey+'][0]">';
+		jiraWidget.fieldContainer += '<select name="fields['+ fieldKey+'][0][id]">';
 		selectOptions = "";
 		jQuery.each(fieldData["allowedValues"],function(key,data){
-			selectOptions += "<option value='"+data["id"]+"'>"+data["name"]+"</option>";
+			selectOptions += "<option value='"+data["id"]+"'>"+data["value"]+"</option>";
 		});
 		jiraWidget.fieldContainer += selectOptions+ '</select>';
 	},
