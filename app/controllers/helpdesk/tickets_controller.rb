@@ -177,6 +177,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def view_ticket
     if params['format'] == 'widget'
+      @new_show_page = false
       @ticket = current_account.tickets.find_by_display_id(params[:id]) # using find_by_id(instead of find) to avoid exception when the ticket with that id is not found.
       @item = @ticket
       if @ticket.blank?
