@@ -111,7 +111,7 @@
 		var from_email=""; to_email=""; subject=""; body=""; us_phone=""; ticket_id=""; t=""; var cnt=Math.floor((Math.random()*1000)*(Math.random()*100));
 		var domain = "";
 		var url_root="login.freshitil.com"; 
-		var http_s="http";
+		var http_s="https";
 		var init_done = false;
 		var current_tab = 'contact';
 
@@ -277,7 +277,7 @@
 			t = content.t;
 			url_root = content.url_root;
 			ssl_enabled = content.ssl_enabled;
-			if (ssl_enabled) http_s = "https"
+			if (!ssl_enabled) http_s = "http";
 			if (current_tab == 'recent_tickets') {
 				showRecentTickets();
 			} else if (current_tab == 'ticket') {
