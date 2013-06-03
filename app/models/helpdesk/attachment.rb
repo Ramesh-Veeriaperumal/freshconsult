@@ -65,7 +65,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
   
   def authenticated_s3_get_url(options={})
-    options.reverse_merge! :expires_in => 5.minutes,:s3_host_alias => "cdn.freshdesk.com"
+    options.reverse_merge! :expires_in => 5.minutes,:s3_host_alias => "cdn.freshdesk.com", :use_ssl => true
     AWS::S3::S3Object.url_for content.path, content.bucket_name , options
   end
  
@@ -94,7 +94,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   def expiring_url(style = "original",expiry = 300)
     AWS::S3::S3Object.url_for(content.path(style.to_sym),content.bucket_name,
-                                          :expires_in => expiry.to_i.seconds)
+                                          :expires_in => expiry.to_i.seconds,
+                                          :use_ssl => true)
   end
 
   def to_liquid
