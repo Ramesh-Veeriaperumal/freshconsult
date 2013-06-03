@@ -4,7 +4,7 @@ namespace :sla do
     puts "Check for SLA violation initialized at #{Time.zone.now}"
     queue_name = "sla_worker"
     if sla_should_run?(queue_name)
-      puts "SLA violation check called at #{Time.zone.now}."
+      Monitoring::RecordMetrics.register({:task_name => "SLA Escalate"})
       Sharding.execute_on_all_shards do
         Account.active_accounts.each do |account|        
           Resque.enqueue(Workers::Sla::AccountSLA, { :account_id => account.id})
