@@ -14,7 +14,7 @@ class SlaNotifier < ActionMailer::Base
 
 	def self.send_email(ticket, agents, n_type)
 		# Sets portal timezone as current timezone while sending notifications
-		Time.zone = self.account.time_zone 
+		Time.zone = ticket.account.time_zone 
 
 		e_notification = ticket.account.email_notifications.find_by_notification_type(n_type)
 		return unless e_notification.agent_notification?
