@@ -443,13 +443,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def create_activity(user, description, activity_data = {}, short_descr = nil)
-    activities.create!(
+    activities.create(
       :description => description,
       :short_descr => short_descr,
       :account => account,
       :user => user,
       :activity_data => activity_data
-    )
+    ) if user
   end
   
   def create_initial_activity
