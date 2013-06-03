@@ -3795,7 +3795,7 @@ en:
       glance:
         how_to_read: How to read this report
         helpdesk_recieved_tickets: Total number of tickets received in your support portal over the selected time period
-        customer__recieved_tickets: Total number of tickets received from the customer over the selected time period
+        customer_recieved_tickets: Total number of tickets received from the customer over the selected time period
         agent_recieved_tickets: Total number of tickets received by the agent over the selected time period
         group_recieved_tickets: Total number of tickets received by the group over the selected time period
         helpdesk_resolved_tickets: Total number of tickets in your helpdesk that have been resolved over the selected time period
@@ -3842,3 +3842,4 @@ en:
         customer_fcr: The percentage of tickets raised by this customer that were resolved within the first response
         agent_fcr: The percentage of tickets assigned to this agent that were resolved within the first response
         group_fcr: The percentage of tickets assigned to this group that were resolved within the first response
+  date_invalid: Invalid date      

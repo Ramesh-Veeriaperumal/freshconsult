@@ -14,7 +14,7 @@ class SlaNotifier < ActionMailer::Base
 
 	def self.send_email(ticket, agents, n_type)
 		# Sets portal timezone as current timezone while sending notifications
-		ticket.set_account_time_zone
+		Time.zone = self.account.time_zone 
 
 		e_notification = ticket.account.email_notifications.find_by_notification_type(n_type)
 		return unless e_notification.agent_notification?
@@ -25,7 +25,7 @@ class SlaNotifier < ActionMailer::Base
 		                            'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
 
 		# Resets the Thread.current[:account] to nil and resets current timezone
-		Account.reset_current_account 
+		#Account.reset_current_account 
 		deliver_escalation(ticket, agents, 
 		                                :email_body => email_body, :subject => email_subject)
   end

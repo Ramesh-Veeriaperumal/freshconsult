@@ -203,6 +203,7 @@ Freshdesk.Widget.prototype={
 			}			
 			if(reqData.after_failure) reqData.after_failure(evt);
 		}
+
 	},
 
 	alert_failure:function(errorMsg) {
@@ -212,7 +213,7 @@ Freshdesk.Widget.prototype={
 			jQuery(this.error_element).removeClass('hide').parent().removeClass('loading-fb');
 			this.error_element.innerHTML = errorMsg;
 		}
-		jQuery("#" + this.options.widget_name).removeClass('loading-fb');
+		jQuery("#" + this.options.widget_name).removeClass('sloading loading-small');
 	},
 
 	refresh_access_token:function(callback, reqHeader){
@@ -749,13 +750,14 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 		jQuery(j + ' .emailLists').removeClass('hide');
 		jQuery(j + ' .list-tab').addClass('active');
 		jQuery(j + ' .campaign-tab').removeClass('active');
+		jQuery(j + ' .emailLists').addClass('sloading loading-small');
 		if(this.listsTmpl){
 			jQuery(j + ' .emailLists').html(this.listsTmpl);
 			jQuery(j + ' .lists-load').show();
 			jQuery(j + ' .emailLists').removeClass('sloading loading-small');
 		}
 		else{
-			this.getAllLists();	
+			this.getAllLists();
 		}
 			
 	},
@@ -832,7 +834,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 										'</ul>'+
 									'</div>'+
 									'<div class="emailCampaigns"><%=campaigns%></div>'+
-									'<div class="hide sloading loading-small emailLists"></div>'+
+									'<div class="hide emailLists"></div>'+
 								'</div>'+
 						'</div>',
 
@@ -841,7 +843,7 @@ Freshdesk.EmailMarketingWidget = Class.create(Freshdesk.Widget, {
 						'<span><%=name%>&lt;<%=email%>&gt; cannot be found in <%=appname%></span>'+
 						'<div class="contact-submit"><input type="submit" class="uiButton contact-add" value="Subscribe" /></div>'+
 					'</div>'+
-					'<div class="lists-load sloading loading-small hide"></div>',
+					'<div class="lists-load hide"></div>',
 
 
 	NewLists: '<div class="mailing-msg"><b>Choose from the below mailing lists to add the contact and click Save</b></div>'+

@@ -148,7 +148,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :dependent => :destroy
     
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState',:dependent => :destroy
-  delegate :closed_at, :resolved_at, :to => :ticket_states, :allow_nil => true
+  delegate :closed_at, :resolved_at, :first_response_time, :to => :ticket_states, :allow_nil => true
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
   delegate :active?, :open?, :is_closed, :closed?, :resolved?, :pending?, :onhold?, :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
   

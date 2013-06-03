@@ -1,12 +1,11 @@
 //Finished classes ui-autocomplete-loading, paddingloading,loading-box, ajax-loader, loading-center, 
-//.page-list .list-group .loadingbox, loading-amount, 
 
-
-/*.ajax-loader, .loading,
+.page-list .list-group .loadingbox, loading-amount, 
+.ajax-loader, .loading,
 .loading-center, .loading-box,
 .ui-autocomplete-loading, .paddingloading,
 .page-list .list-group .loadingbox,
-.loading-amount, .ui-after-submit{ background-image:image-url('/images/animated/ajax-loader.gif'); } */
+.loading-amount, .ui-after-submit{ background-image:image-url('/images/animated/ajax-loader.gif'); } 
 .response-loading #resp-icon{ background: image-url('/images/animated/canned-response.gif') no-repeat !important; }
 #ticket_list_count.fetching{ background: image-url("/images/animated/ticket-count.gif"); }
 #tickets-expanded .fd-ajaxmenu.loading{ background-image:image-url('/images/animated/loading.gif'); }
@@ -42,43 +41,55 @@
   background-position:center center;
   height:100px;
 }
-// Loader spin style sheet
-.loading-block{
-	@include min-height(100px);
-}
-.loading-align{
-	margin-top:15px;
-	display: -webkit-box;
-	-webkit-box-orient: horizontal;
-	-webkit-box-pack: center;
-	-webkit-box-align: center;
+.sloading{
+	// Loader spin style sheet
+	.loading-block, &.loading-block{
+		@include min-height(100px);
+	}
+	&.loading-align{
+		margin-top:15px;
+		display: -webkit-box;
+		-webkit-box-orient: horizontal;
+		-webkit-box-pack: center;
+		-webkit-box-align: center;
 
-	display: -moz-box;
-	-moz-box-orient: horizontal;
-	-moz-box-pack: center;
-	-moz-box-align: center;
+		display: -moz-box;
+		-moz-box-orient: horizontal;
+		-moz-box-pack: center;
+		-moz-box-align: center;
 
-	 /* IE */
-    display: -ms-box;
-    -ms-box-pack: center;
-    -ms-box-align: center;
+		 /* IE */
+	    display: -ms-box;
+	    -ms-box-pack: center;
+	    -ms-box-align: center;
 
-	display: box;
-	box-orient: horizontal;
-	box-pack: center;
-	box-align: center;
-}
-.sloading.inner-form-hide{
-	@include min-height(100px);
-	form{ 
-   		visibility:hidden; 
-   	}
-}
-.page-search{
-	.live_search{
-		width:445px;
+		display: box;
+		box-orient: horizontal;
+		box-pack: center;
+		box-align: center;
+	}
+	&.inner-form-hide{
+		@include min-height(100px);
+		form{ 
+	   		visibility:hidden; 
+	   	}
 	}
 }
+.pick-response.autocomplete, .rtDetails, #Timesheet{
+	.sloading{
+		width:100%;
+		height:100%;
+	}
+}
+
+#campaignmonitor_widget, #icontact_widget, #mailchimp_widget, #constantcontact_widget{
+	&.sloading{
+		width:100% !important;	
+	}	
+}
+
+.page-search .live_search{ width:445px; }
+
 // Loader spin style sheet End
 /*
 

@@ -25,6 +25,8 @@ class Admin::SecurityController <  Admin::AdminController
       flash[:notice] = t(:'flash.sso.update.success')
       redirect_to admin_home_index_path
    else
+      @portal = current_account.main_portal
+      @custom_ssl_requested = get_others_redis_key(ssl_key).to_i
       render :action => 'index'
    end
  end
