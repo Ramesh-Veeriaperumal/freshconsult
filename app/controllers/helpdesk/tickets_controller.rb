@@ -36,6 +36,10 @@ class Helpdesk::TicketsController < ApplicationController
   alias :load_ticket :load_item
   before_filter :load_ticket, :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :activities, :status]
 
+  skip_before_filter :build_item, :only => [:create]
+  alias :build_ticket :build_item
+  before_filter :build_ticket_body_attributes, :build_ticket, :only => [:create]
+
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
@@ -490,6 +494,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def new
+    @item.build_ticket_body
     unless params[:topic_id].nil?
       @topic = Topic.find(params[:topic_id])
       @item.subject     = @topic.title
@@ -815,6 +820,19 @@ class Helpdesk::TicketsController < ApplicationController
     def check_user
       if !current_user.nil? and current_user.customer?
         return redirect_to support_ticket_url(@ticket)
+      end
+    end
+
+    def build_ticket_body_attributes
+      if params[:helpdesk_ticket][:description] || params[:helpdesk_ticket][:description_html]
+        unless params[:helpdesk_ticket].has_key?(:ticket_body_attributes)
+          ticket_body_hash = {:ticket_body_attributes => { :description => params[:helpdesk_ticket][:description],
+                                  :description_html => params[:helpdesk_ticket][:description_html] }} 
+          params[:helpdesk_ticket].merge!(ticket_body_hash).tap do |t| 
+            t.delete(:description) if t[:description]
+            t.delete(:description_html) if t[:description_html]
+          end 
+        end 
       end
     end
 

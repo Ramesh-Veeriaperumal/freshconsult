@@ -246,7 +246,7 @@
 				if(tic_email_field != null) tic_email_field.val(from_email);
 				subject_field = jQuery("#helpdesk_ticket_subject")
 				if(subject_field != null) subject_field.val(subject);
-				body_field = jQuery("#helpdesk_ticket_description_html")
+				body_field = jQuery("#helpdesk_ticket_ticket_body_attributes_description_html")
 				//if(body_field != null) body_field.val(body);
 
 				body_field.redactor({ 
