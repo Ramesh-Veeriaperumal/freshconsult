@@ -43,6 +43,11 @@ class Billing::BillingController < ApplicationController
     end
   end
 
+  def select_shard(&block)
+    Sharding.select_shard_of(params[:content][:customer][:id]) do 
+        yield 
+    end
+  end
 
   private
 

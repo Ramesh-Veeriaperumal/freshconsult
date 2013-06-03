@@ -3,6 +3,7 @@ module Workers
 		@queue = "archive_reports_data"
 
 		class << self
+		extend Resque::AroundPerform 
 		
 			include Reports::Constants
 			include Redis::RedisKeys
@@ -11,7 +12,8 @@ module Workers
 			def perform(args)
 				args.symbolize_keys!
 				time_zones = TIMEZONES_BY_UTC_TIME[args[:hour]]
-				SeamlessDatabasePool.use_persistent_read_connection do
+					Sharding.execute_on_all_shards do
+					Sharding.run_on_slave do
 					Account.active_accounts.find_in_batches(:batch_size => 500 , 
 																					:conditions => {:time_zone => time_zones}) do |accounts|
 						accounts.each do |account|
@@ -34,9 +36,9 @@ module Workers
   						end
 						end
 					end
+				 end
 				end
-			end
-
+				end
 		end
 	end
 end

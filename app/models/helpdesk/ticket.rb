@@ -64,12 +64,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit_on_create :create_initial_activity,  :update_content_ids, :pass_thro_biz_rules,
     :support_score_on_create, :process_quests, :update_es_index
   
-  after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity, 
+  after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity,
     :stop_timesheet_timers, :fire_update_event, :support_score_on_update, 
     :process_quests, :publish_to_update_channel, :update_es_index, :regenerate_reports_data
 
   after_commit_on_destroy :remove_es_document
-
 
   has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
 
@@ -452,7 +451,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :account => account,
       :user => user,
       :activity_data => activity_data
-    )
+    ) if user
   end
   
   def create_initial_activity
@@ -911,7 +910,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Liquid ends here
   
   def respond_to?(attribute)
-    return false if [:to_ary].include?(attribute.to_sym)
+    return false if [:to_ary,:after_initialize_without_slave].include?(attribute.to_sym)
     # Array.flatten calls respond_to?(:to_ary) for each object.
     #  Rails calls array's flatten method on query result's array object. This was added to fix that.
 

@@ -1,0 +1,17 @@
+defaults: &defaults
+  api_host: api.splunkstorm.com
+  product_id: 83915f58ac1611e2913a22000a1ea029
+  access_token: 0BUMSjO8_XvEfKQhg88AJVt2AtA3bJX_MDUWVWFAixhNQDvS1wiaCMky1fgaZYdFZnZYxZnRAKQ=
+  source_type: json_predefined_timestamp
+
+development:
+  <<: *defaults
+  host: localhost
+
+staging:
+  <<: *defaults
+  host: staging
+
+production:
+  <<: *defaults
+  host: production

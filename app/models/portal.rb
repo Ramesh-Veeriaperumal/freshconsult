@@ -14,12 +14,6 @@ class Portal < ActiveRecord::Base
   include Redis::RedisKeys
   include Redis::PortalRedis
 
-  after_commit_on_update :clear_portal_cache
-  after_commit_on_destroy :clear_portal_cache
-  before_update :backup_changes
-  before_destroy :backup_changes
-  after_create :create_template
-
   has_one :logo,
     :as => :attachable,
     :class_name => 'Helpdesk::Attachment',
@@ -138,19 +132,8 @@ class Portal < ActiveRecord::Base
 
     
 
-    def backup_changes
-      @old_object = self.clone
-      @all_changes = self.changes.clone
-      @all_changes.symbolize_keys!
-    end
-
     def cache_version
       key = PORTAL_CACHE_VERSION % { :account_id => self.account_id }
       get_portal_redis_key(key) || "0"
-    end
-
-    def create_template
-      self.build_template()
-      self.template.save()
     end
 end
