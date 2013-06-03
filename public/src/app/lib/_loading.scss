@@ -1,12 +1,11 @@
 //Finished classes ui-autocomplete-loading, paddingloading,loading-box, ajax-loader, loading-center, 
-//.page-list .list-group .loadingbox, loading-amount, 
 
-
-/*.ajax-loader, .loading,
+.page-list .list-group .loadingbox, loading-amount, 
+.ajax-loader, .loading,
 .loading-center, .loading-box,
 .ui-autocomplete-loading, .paddingloading,
 .page-list .list-group .loadingbox,
-.loading-amount, .ui-after-submit{ background-image:image-url('/images/animated/ajax-loader.gif'); } */
+.loading-amount, .ui-after-submit{ background-image:image-url('/images/animated/ajax-loader.gif'); } 
 .response-loading #resp-icon{ background: image-url('/images/animated/canned-response.gif') no-repeat !important; }
 #ticket_list_count.fetching{ background: image-url("/images/animated/ticket-count.gif"); }
 #tickets-expanded .fd-ajaxmenu.loading{ background-image:image-url('/images/animated/loading.gif'); }

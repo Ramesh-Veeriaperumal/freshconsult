@@ -21,8 +21,6 @@ class ApplicationController < ActionController::Base
   include SslRequirement
   include SubscriptionSystem
   include Mobile::MobileHelperMethods
-  include CRM::SendEventToTotango
-  include CRM::TotangoModulesAndActions
   
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store

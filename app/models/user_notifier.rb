@@ -40,5 +40,15 @@ class UserNotifier < ActionMailer::Base
     sent_on       Time.now
   end
 
+  def notify_contacts_import(user)
+    subject       "Contacts Import for #{user.account.full_domain}"
+    recipients    user.email
+    from          user.account.default_friendly_email
+    body          :user => user
+    sent_on       Time.now
+    headers       "Reply-to" => "#{user.account.default_friendly_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    content_type  "text/html"
+  end
+
   
 end

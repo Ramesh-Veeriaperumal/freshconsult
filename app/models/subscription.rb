@@ -29,7 +29,6 @@ class Subscription < ActiveRecord::Base
   # after_update :update_features 
 
   after_update :add_to_crm, :if => :free_customer?
-  after_update :notify_totango, :if => :free_customer?
 
   before_destroy :add_churn
 
@@ -276,10 +275,6 @@ class Subscription < ActiveRecord::Base
 
     def add_to_crm
       Resque.enqueue(CRM::AddToCRM::FreeCustomer, { :item_id => id, :account_id => account_id })
-    end
-
-    def notify_totango
-      Resque.enqueue(CRM::Totango::FreeCustomer, {:account_id => account_id})
     end
 
     #Subscription Events

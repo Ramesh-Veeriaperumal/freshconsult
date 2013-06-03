@@ -12,53 +12,26 @@ class ContactImportController < ApplicationController
    
   
   def create
-    created = 0
-    updated = 0
-    
     if fields_mapped?
-       mapped_fields.each do |row|
-       @params_hash ={ :user => {:name => row[(params[:fields]["0"]).to_i],
-                                :job_title => row[(params[:fields]["1"]).to_i],
-                                :company => row[(params[:fields]["2"]).to_i],
-                                :phone => row[(params[:fields]["3"]).to_i],
-                                :email =>  row[(params[:fields]["4"]).to_i],
-                                :twitter_id => row[(params[:fields]["5"]).to_i], 
-                                :customer_id => nil,
-                                 }
-                      }
-         email = @params_hash[:user][:email]  
-         company_name = @params_hash[:user][:company]
-         unless company_name.nil?      
-           @params_hash[:user][:customer_id]= current_account.customers.find_or_create_by_name(company_name).id 
-         end
-        @user = current_account.all_users.find_by_email(email)        
-        unless @user.nil?
-          @params_hash[:user][:deleted] = false #To make already deleted user active
-          if @user.update_attributes(@params_hash[:user])
-             updated+=1
-          end
-        else
-          @user = current_account.users.new
-          @params_hash[:user][:user_role] = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
-          if @user.signup!(@params_hash)    
-            created+=1
-          end
-        end
-        
-        
+      redirect_to contacts_url, :flash => { :notice => t(:'flash.import.already_running')} if current_account.data_import
+      unless current_account.data_import
+        contact_params = {:account_id => current_account.id,
+                        :email => current_user.email,
+                        :contacts =>{:mapped_fields => mapped_fields,
+                                  :fields => params[:fields] ,
+                                  :ignore_first_row => params[:ignore_first_row]}}
+
+         Resque.enqueue(Workers::Import::ContactsImport ,contact_params)
+         current_account.create_data_import({:status => 1, :import_type => "ContactImport"})
+         redirect_to contacts_url, :flash =>{ :notice => t(:'flash.import.success')} 
       end
-       flash[:notice] = t(:'flash.contacts_import.success', :created_count => created, 
-          :updated_count => updated)
-      redirect_to contacts_url
     else
       render
     end
   rescue MapFields::InconsistentStateError
-    flash[:error] = t(:'flash.contacts_import.failure')
-    redirect_to :action => :new
+    redirect_to csv_contact_import_path, :flash => {:error => t(:'flash.contacts_import.failure')}
   rescue MapFields::MissingFileContentsError
-    flash[:error] = t(:'flash.contacts_import.no_file')
-    redirect_to :action => :new
+    redirect_to csv_contact_import_path, :flash => {:error => t(:'flash.contacts_import.no_file')}
   end
 
   def google

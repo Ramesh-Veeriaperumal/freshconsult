@@ -12,6 +12,8 @@ module MemcacheKeys
 
   ACCOUNT_GROUPS = "v2/ACCOUNT_GROUPS:%{account_id}"
 
+  ACCOUNT_PRODUCTS = "v1/ACCOUNT_PRODUCTS:%{account_id}"
+
   ACCOUNT_TAGS = "v1/ACCOUNT_TAGS:%{account_id}"
 
   ACCOUNT_CUSTOMERS = "v1/ACCOUNT_CUSTOMERS:%{account_id}"

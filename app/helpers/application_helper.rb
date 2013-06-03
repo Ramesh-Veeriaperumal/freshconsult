@@ -414,11 +414,11 @@ module ApplicationHelper
   end   
   
   def twitter_avatar( screen_name, profile_size = "normal" )
-    "http://api.twitter.com/1/users/profile_image?screen_name=#{screen_name}&size=#{profile_size}"
+    "https://api.twitter.com/1/users/profile_image?screen_name=#{screen_name}&size=#{profile_size}"
   end
   
   def facebook_avatar( facebook_id, profile_size = "square")
-    "http://graph.facebook.com/#{facebook_id}/picture?type=#{profile_size}"
+    "https://graph.facebook.com/#{facebook_id}/picture?type=#{profile_size}"
   end
   
   # User details page link should be shown only to agents and admin

@@ -95,6 +95,11 @@ module Search::TicketSearch
       return groups
     end
 
+    if criteria_key == "helpdesk_schema_less_tickets.product_id"
+      products = Account.current.products_from_cache.collect { |au| [au.id, au.name] }
+      return products.size > 1 ? products : []
+    end
+
     if criteria_key == :due_by
        return TicketConstants.due_by_list
     end
