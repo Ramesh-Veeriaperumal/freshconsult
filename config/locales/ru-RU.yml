@@ -3312,7 +3312,7 @@ ru-RU:
     ticket_list_status_agent_responded_at: "От: %{username}, Агент ответил: <span class='emphasize'>%{time_ago} назад </span>"
     ticket_list_status_closed_at: "От: %{username}, Закрыто: <span class='emphasize'>%{time_ago} назад </span>"
     ticket_list_status_created_at: "От: %{username}, Создано: <span class='emphasize'>%{time_ago} назад </span>"
-    ticket_list_status_requester_responded_at: "От: %{username}, Клиент ответил: <span class='emphasize'>%{time_words} назад </span>"
+    ticket_list_status_requester_responded_at: "От: %{username}, Клиент ответил: <span class='emphasize'>%{time_ago} назад </span>"
     ticket_list_status_resolved_at: "От: %{username}, Решено: <span class='emphasize'>%{time_ago} назад </span>"
     ticket_selected: " заявка выбрана (диалоги из объединенных заявок будут добавлены в главную заявку)"
     ticket_url: "URL талона"
