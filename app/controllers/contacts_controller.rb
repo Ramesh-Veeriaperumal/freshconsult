@@ -185,10 +185,8 @@ class ContactsController < ApplicationController
   end
   
   def make_occasional_agent
-    agent = build_agent
-    agent.occasional = true
     respond_to do |format|
-      if @item.save        
+      if @item.make_agent(:occasional => true)        
         format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
           redirect_to @item }
         format.xml  { render :xml => @item, :status => 200 }
@@ -199,10 +197,8 @@ class ContactsController < ApplicationController
     end 
   end
   def make_agent
-    agent = build_agent
-    agent.occasional = false
     respond_to do |format|
-      if @item.save        
+      if @item.make_agent        
         format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
           redirect_to @item }
         format.xml  { render :xml => @item, :status => 200 }
@@ -288,12 +284,6 @@ protected
   end
 
   private
-
-    def build_agent
-      @item.deleted = false
-      @item.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:poweruser]
-      @item.build_agent()
-    end
 
     def get_formatted_message(exception)
       exception.message # TODO: Proper error reporting.

@@ -274,6 +274,7 @@ class AccountsController < ApplicationController
         SubscriptionNotifier.deliver_account_deleted(current_account) if Rails.env.production?
         create_deleted_customers_info
         perform_destroy(current_account)
+        $redis_others.srem('authority_migrated', current_account.id)
         redirect_to "http://www.freshdesk.com"
       end
     end

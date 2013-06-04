@@ -1168,6 +1168,18 @@ ActiveRecord::Schema.define(:version => 20130604092132) do
 
   add_index "quests", ["account_id", "category"], :name => "index_quests_on_account_id_and_category"
 
+  create_table "roles", :force => true do |t|
+    t.string   "name"
+    t.string   "privileges"
+    t.text     "description"
+    t.boolean  "default_role",              :default => false
+    t.integer  "account_id",   :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "roles", ["account_id", "name"], :name => "index_roles_on_account_id_and_name", :unique => true
+
   create_table "scoreboard_levels", :force => true do |t|
     t.integer  "account_id", :limit => 8
     t.integer  "points"
@@ -1566,6 +1578,15 @@ ActiveRecord::Schema.define(:version => 20130604092132) do
   add_index "topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"
   add_index "topics", ["forum_id"], :name => "index_topics_on_forum_id"
 
+  create_table "user_roles", :id => false, :force => true do |t|
+    t.integer "user_id",    :limit => 8
+    t.integer "role_id",    :limit => 8
+    t.integer "account_id", :limit => 8
+  end
+
+  add_index "user_roles", ["role_id"], :name => "index_user_roles_on_role_id"
+  add_index "user_roles", ["user_id"], :name => "index_user_roles_on_user_id"
+
   create_table "users", :id => false, :force => true do |t|
     t.integer  "id",                  :limit => 8,                    :null => false
     t.string   "name",                             :default => "",    :null => false
@@ -1609,6 +1630,8 @@ ActiveRecord::Schema.define(:version => 20130604092132) do
     t.string   "external_id"
     t.string   "string_uc01"
     t.text     "text_uc01"
+    t.boolean  "helpdesk_agent",                   :default => false
+    t.string   "privileges",                       :default => "0"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true

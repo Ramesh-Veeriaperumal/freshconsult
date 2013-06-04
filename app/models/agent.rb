@@ -3,6 +3,7 @@ class Agent < ActiveRecord::Base
   belongs_to_account
   include Notifications::MessageBroker
   include Cache::Memcache::Agent
+  include Authority::Rails::ModelHelpers
 
   belongs_to :user, :class_name =>'User', :foreign_key =>'user_id'
 
@@ -33,12 +34,15 @@ class Agent < ActiveRecord::Base
   belongs_to :level, :class_name => 'ScoreboardLevel', :foreign_key => 'scoreboard_level_id'
   
   before_create :set_default_ticket_permission
-  before_update :update_agents_level
+  before_update :update_agents_level, :backup_agent_changes
   before_create :set_account_id
 
   after_save  :update_agent_levelup
   after_update :publish_game_notifications
   
+  before_create :set_authority_delta, :if => [:roles_enabled?, :roles_blank?]
+  before_update :set_authority_delta, :if => [:roles_enabled?, :poweruser?]
+    
   TICKET_PERMISSION = [
     [ :all_tickets, 1 ], 
     [ :group_tickets,  2 ], 
@@ -125,5 +129,33 @@ protected
   def set_account_id
     account_id = user.account_id
   end
+  
+private
 
+  def set_authority_delta
+    poweruser = self.all_ticket_permission ? "Agent" : "Restricted Agent"
+    self.user.roles = [self.account.roles.find_by_name(poweruser)]
+    self.user.privileges = union_privileges(self.user.roles).to_s
+    self.user.save
+  end
+  
+  def backup_agent_changes
+    @ticket_permission = self.changes.has_key?("ticket_permission")
+    true
+  end
+
+  def poweruser?
+    (@ticket_permission &&
+      self.user.user_role == User::USER_ROLES_KEYS_BY_TOKEN[:poweruser]) ||
+    roles_blank?
+  end
+  
+  def roles_blank?
+    self.user.roles.blank?
+  end
+  
+  def roles_enabled?
+    self.account.roles_enabled?
+  end
+  
 end

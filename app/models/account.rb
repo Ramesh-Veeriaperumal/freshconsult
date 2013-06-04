@@ -7,6 +7,7 @@ class Account < ActiveRecord::Base
   include Tire::Model::Search if ES_ENABLED
   include Cache::Memcache::Account
   include ErrorHandle
+  include Helpdesk::Roles
 
   #rebranding starts
   serialize :preferences, Hash
@@ -201,6 +202,7 @@ class Account < ActiveRecord::Base
   delegate :bcc_email, :ticket_id_delimiter, :email_cmds_delimeter, :pass_through_enabled, :to => :account_additional_settings
 
   has_many :subscription_events 
+  has_many :roles, :dependent => :delete_all
   xss_sanitize  :only => [:name,:helpdesk_name]
   #Scope restriction ends
   
@@ -226,13 +228,12 @@ class Account < ActiveRecord::Base
                             :message => "Value must be less than six digits"
                             
 
-
-  before_create :set_default_values
+  before_create :set_default_values, :create_roles
   before_create :set_shard_mapping
   
   before_update :check_default_values, :update_users_time_zone
     
-  after_create :create_portal, :create_admin
+  after_create :set_roles_flag, :create_portal, :create_admin
   after_create :populate_seed_data
   after_create :populate_features
 
@@ -712,6 +713,10 @@ class Account < ActiveRecord::Base
     es_status.key?(self.id) ? es_status[self.id] : false
   end
   
+  def roles_enabled?
+    $redis_others.sismember('authority_migrated', self.id)
+  end
+  
   protected
   
     def valid_domain?
@@ -813,10 +818,19 @@ class Account < ActiveRecord::Base
       HashWithIndifferentAccess.new({:login_url => "",:logout_url => ""})
     end
     
+    def create_roles
+      default_roles.each do |role|
+        self.roles.build(:name => role[0],
+          :privilege_list => role[1],
+          :description => role[2],
+          :default_role => true)
+      end
+    end
+    
     def create_admin
       self.user.active = true  
       self.user.account = self
-      self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:account_admin]  
+      self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:account_admin]
       self.user.build_agent()
       self.user.agent.account = self
       self.user.save
@@ -824,6 +838,10 @@ class Account < ActiveRecord::Base
       
       self.build_account_configuration(admin_contact_info)
       self.account_configuration.save
+    end
+    
+    def set_roles_flag
+      $redis_others.sadd('authority_migrated', self.id)
     end
     
     def create_portal
