@@ -1,10 +1,10 @@
 class Product < ActiveRecord::Base
   
-  include CRM::TotangoModulesAndActions 
+  include Cache::Memcache::Product
 
   before_destroy :remove_primary_email_config_role
 
-  after_create :notify_totango
+  after_commit :clear_cache
 
   belongs_to :account
   has_one    :portal               , :dependent => :destroy
@@ -58,10 +58,4 @@ class Product < ActiveRecord::Base
       primary_email_config.update_attribute(:primary_role, false)
     end
 
-    def notify_totango
-      Resque::enqueue(CRM::Totango::SendUserAction, 
-                                        {:account_id => account.id, 
-                                         :email => account.account_admin.email, 
-                                         :activity =>   totango_activity(:multiple_products)})
-    end
 end

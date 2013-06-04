@@ -108,5 +108,5 @@ DEFAULT_NEGATABLE_COLUMS:
     - responder_id
     - group_id
     - product_id
-NEGATE_OPERATOR: is_not
+NEGATE_OPERATOR: negation
 NEGATE_CONDITION_OPERATOR: ' OR ' 

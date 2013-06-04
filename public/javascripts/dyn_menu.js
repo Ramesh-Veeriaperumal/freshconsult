@@ -72,7 +72,7 @@
 
 		var loadContent = function(menuid, contents, text_to_match) {
 			var content_element = $('#menu_' + menuid).find('.contents').first();
-			$('#menu_' + menuid).removeClass('loading');
+			$('#menu_' + menuid).removeClass('sloading loading-small');
 			content_element.html(contents);  
 			setActiveElementStyle(menuid, text_to_match);
 

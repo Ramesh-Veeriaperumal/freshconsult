@@ -1,5 +1,9 @@
 ActiveRecord::Base.class_eval do
-  include ActionView::Helpers::TagHelper, ActionView::Helpers::TextHelper,ActionView::Helpers::UrlHelper, WhiteListHelper
+  include ActionView::Helpers::TagHelper
+  include ActionView::Helpers::TextHelper
+  include ActionView::Helpers::UrlHelper
+  include WhiteListHelper
+
   def self.format_attribute(*attr_names)
     prepare(*attr_names)
     before_save :format_content
@@ -30,7 +34,7 @@ ActiveRecord::Base.class_eval do
         self.send(:write_attribute , "#{body}_html", send(:read_attribute,body).blank? ? '' : body_html_with_formatting(send(:read_attribute,body)))
       end
     end
-    
+
     def body_html_with_formatting(body)
       body_html = auto_link(body) { |text| truncate(text, 100) }
       textilized = RedCloth.new(body_html.gsub(/\n/, '<br />'), [ :hard_breaks ])

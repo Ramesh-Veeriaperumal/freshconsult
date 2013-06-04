@@ -44,6 +44,7 @@ en:
     created_at: "Created"
     mygroups: My Groups
     unassigned: Unassigned
+    products: Products
   proceed_now: "\n\nProceed now?"
   forward: "Forward"
   apply: "Apply"
@@ -641,11 +642,11 @@ en:
         remote_logout_url_info: This is the URL to which Freshdesk will redirect users when they click on the Logout link in Freshdesk.
         remote_login_url_info: This is the URL to which Freshdesk will redirect users for authentication when they attempt to access Freshdesk.
         enable_sso_info: Single Sign On allows you to use your own application or a centralized Server (like MS Active Directory) to authenticate agents and customers so that they can access Freshdesk without entering a separate username and password.
-        enable_sso: Enable Single Sign On
+        enable_sso: Single Sign On
         remote_logout_url: Remote logout URL
         remote_authentication: Remote Authentication
-        enable_SSL: "Enable SSL"
-        enable_SSL_anon: "SSL allows you to encrypt data that is transfered to and from freshdesk portals"
+        enable_SSL: "Secure Connection using SSL"
+        enable_SSL_anon: "Secure Sockets Layer allows you to encrypt data that is transfered to and from Freshdesk"
         customer_portal_ssl_warning: "Since custom helpdesk URL is configured for your account you will be redirected to " 
         multiple_product_ssl_warning: "SSL will not be applicable if multiple products are configured."  
         enabled: Enabled
@@ -653,6 +654,20 @@ en:
         click_to_enable: Click to enable SSL
         click_to_disable: Click to disable SSL
         security_title: Security
+        request_custom_ssl: Want to use Custom SSL for your support portal?
+        ssl_info: To set up Custom SSL, you need to configure your domain with a unique DNS record provided by Freshdesk. <br /> Please enter your Helpdesk URL and submit your request below.  The certification typically takes 5-6 working days. <br /> <br />
+        helpdesk_url: Helpdesk URL
+        submit_request: Submit Request
+        thanks_message: <span class=\"thanks_message\"> Thank you for requesting a Custom SSL certificate.</span> <br />
+        success_message: Your request for a Custom SSL certificate has been initiated and will be processed shortly. You will be receiving a confirmation email from our provider before approval. Please check your inbox for updates. 
+        default_ssl: Default SSL
+        custom_ssl: Custom SSL
+        dns_name: <b>Important:</b> Please update the CNAME DNS record in your DNS Zone file to point your domain name to the below ELB DNS name. <br /> <br />The ELB DNS name for %{url} is
+      helpnote:
+        title: Security Settings
+        info: Configuring security options help you streamline and control the accessibility of visitors to your support portal.
+        info1: <b>Allowing Single Sign On access </b><br />If your users already have login credentials with you, such as through Active Directory or your own web applications, you can allow them to login to your support portal with these credentials using Single Sign On. Learn more about setting up single sign on in Freshdesk<a href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk"> here</a>.
+        info2: <b>Enabling SSL security </b><br />You can ensure secure communication through your support portal by enabling SSL encryption. Freshdesk offers a default wildcard SSL certificate to all accounts on the freshdesk.com domain. <b> Note that you will not be able to use the wildcard SSL if you are using your own branded support URL. </b> If you are on the Estate Plan, you can request for a custom SSL certificate for your vanity support URL.
     products:
       helpnote:
         tour: Help me support multiple products
@@ -895,6 +910,16 @@ en:
       failure: Please try again
       no_file: Please upload a file
       success: "%{created_count} contacts has been newly imported and %{updated_count} existing contacts has been updated!"
+    import:
+      already_running: Currently one csv import is running. you may try later !! 
+      failure: Please try again
+      no_file: Please upload a file
+      success: Your csv import has started and you will receive an email when it is completed. The import process may take several minutes depending on the volume of your data
+      thank_user: Thank you for submitting a import request. 
+      details: "Your CSV file has now been processed and the import has been completed successfully. You can open your helpdesk and go to %{customer}-->%{users} to check out the new information. "
+      help_desk: Please feel free to get in touch with us if you need anything else.
+      regards: Regards
+      freshdesk: Freshdesk Team
     business_hours: 
       update: 
         failure: Failed to update Business Hours
@@ -920,9 +945,9 @@ en:
       empty_trash: 
         success: The trash was emptied.
       delete_forever:
-        success: %{tickets} deleted.
+        success: '%{tickets} deleted.'
       unwatch: 
-        success: %{tickets} removed from the watch-list.
+        success: '%{tickets} removed from the watch-list.'
         failure: Ticket unwatch action failed.
         unsubscribe_success: The ticket has been removed from your watch-list.
       bulk_merge_success : 'The tickets with ids %{merged_tickets} were merged into  <a href="/helpdesk/tickets/%{target_ticket}">%{target_ticket_subject} #%{target_ticket}</a> '
@@ -932,13 +957,13 @@ en:
         success: Ticket fields successfully updated.
     email_settings: 
       send_activation: 
-        success: Verification email has been sent to %{reply_email}!
+        success: 'Verification email has been sent to %{reply_email}!'
       activation: 
         invalid_code: The activation code is not valid!
         success: "%{reply_email} has been activated!"
         already_activated: "%{reply_email} has been activated already!"
       make_primary: 
-        success: <b>%{reply_email}</b> is now your primary support email!
+        success: '<b>%{reply_email}</b> is now your primary support email!'
     data_import: 
       zendesk: 
         no_contact: Unable to contact zendesk . Please verify your zendesk credentials and try again !!
@@ -1023,7 +1048,7 @@ en:
   undelete: Restore
   import_zendesk_title: Import from zendesk
   closed: Closed
-  suspended_plan_info: Your account has been suspended please select a plan to proceed!
+  suspended_plan_info: Your account has been suspended!
   plan_info_update: Your plan has been changed.
   note: "Note: "
   warning: WARNING
@@ -2647,14 +2672,14 @@ en:
         all_agents_watching: All agents are watching this ticket
         mail:
           hi: Hi
-          added_as_watcher: %{agent_name} has added you as a watcher of a ticket
+          added_as_watcher: '%{agent_name} has added you as a watcher of a ticket'
           new_activity: New activity on your watched ticket
           activity: Activity
           ticket: Ticket
           requester: Requester
           customer: The Customer
-          status_change:  %{agent_name} has %{status} a ticket you are watching
-          response: %{responder} has responded to a ticket you are watching
+          status_change: ' %{agent_name} has %{status} a ticket you are watching'
+          response: '%{responder} has responded to a ticket you are watching'
           ticket_details: Ticket Description
           customer_response: Customer Response
           agent_response: Agent Response
@@ -3770,7 +3795,7 @@ en:
       glance:
         how_to_read: How to read this report
         helpdesk_recieved_tickets: Total number of tickets received in your support portal over the selected time period
-        customer__recieved_tickets: Total number of tickets received from the customer over the selected time period
+        customer_recieved_tickets: Total number of tickets received from the customer over the selected time period
         agent_recieved_tickets: Total number of tickets received by the agent over the selected time period
         group_recieved_tickets: Total number of tickets received by the group over the selected time period
         helpdesk_resolved_tickets: Total number of tickets in your helpdesk that have been resolved over the selected time period
@@ -3817,3 +3842,4 @@ en:
         customer_fcr: The percentage of tickets raised by this customer that were resolved within the first response
         agent_fcr: The percentage of tickets assigned to this agent that were resolved within the first response
         group_fcr: The percentage of tickets assigned to this group that were resolved within the first response
+  date_invalid: Invalid date      

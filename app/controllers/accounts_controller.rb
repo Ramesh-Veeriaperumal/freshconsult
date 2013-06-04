@@ -76,7 +76,7 @@ class AccountsController < ApplicationController
   def signup_google 
     base_domain = AppConfig['base_domain'][RAILS_ENV]
     logger.debug "base domain is #{base_domain}"   
-    return_url = "https://signup."+base_domain+"/google/complete?domain="+params[:domain]  
+    return_url = "https://login."+base_domain+"/google/complete?domain="+params[:domain]  
     #return_url = "http://localhost:3000/google/complete?domain="+params[:domain]   
     return_url = return_url+"&callback="+params[:callback] unless params[:callback].blank?    
     url = "https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]      
@@ -90,6 +90,7 @@ class AccountsController < ApplicationController
   
   def create_account_google   
     create_account
+    @account.ssl_enabled = true #temp fix by kiran for custom ssl bug
     if @account.save
        add_to_crm       
        @rediret_url = params[:call_back]+"&EXTERNAL_CONFIG=true" unless params[:call_back].blank?
@@ -249,9 +250,6 @@ class AccountsController < ApplicationController
     params[:account][:main_portal_attributes][:updated_at] = Time.now
     @account.main_portal_attributes = params[:account][:main_portal_attributes]
     if @account.save
-      Resque::enqueue(CRM::Totango::SendUserAction, {:account_id => current_account.id,
-                                                     :email => current_user.email,
-                                                     :activity => totango_activity(:helpdesk_rebranding)})
       flash[:notice] = t(:'flash.account.update.success')
       redirect_to redirect_url
     else

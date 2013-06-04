@@ -33,11 +33,10 @@ class Workers::Supervisor
         puts "conditions::::::: #{conditions.inspect}"
         puts "negate_conditions::::#{negate_conditions.inspect}"
         joins  = rule.get_joins(["#{conditions[0]} #{negate_conditions[0]}"])
-        account.tickets.scoped(:conditions => negate_conditions).scoped(:conditions => conditions).updated_in(1.month.ago).visible.find_in_batches(:joins => joins,:readonly => false, :batch_size => 300) do |tickets|
-          tickets.each do |ticket|
-            rule.trigger_actions ticket
-            ticket.save!
-          end
+        tickets = account.tickets.scoped(:conditions => negate_conditions).scoped(:conditions => conditions).updated_in(1.month.ago).visible.find(:all, :joins => joins, :select => "helpdesk_tickets.*")
+        tickets.each do |ticket|
+          rule.trigger_actions ticket
+          ticket.save!
         end
 
       rescue Exception => e

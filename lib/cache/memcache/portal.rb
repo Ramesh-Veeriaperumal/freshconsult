@@ -31,7 +31,8 @@ module Cache::Memcache::Portal
 
   def fetch_template
     key = PORTAL_TEMPLATE % { :account_id => self.account_id, :portal_id => self.id }
-    MemcacheKeys.fetch(key) { self.template }
+    MemcacheKeys.fetch(key) { Portal::Template.find_by_portal_id(self.id) }
+    # self.template
   end
 
 end

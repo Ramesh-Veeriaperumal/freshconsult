@@ -15,7 +15,7 @@
 	<div id="editing" class="hide">
 	<div id="edit_form" class="center">
 		<div class="dialog-special">
-		<% form_for (@ca_res_folder, :html => {:id => "folder_edit_form"}) do |f| %>
+		<% form_for(@ca_res_folder, :html => {:id => "folder_edit_form"}) do |f| %>
 			<%= f.error_messages :object_name => 'canned_response_folder' %>
 			<%= f.text_field :name, :class => "text required" %>
 		</div>

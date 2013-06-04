@@ -37,7 +37,7 @@
 
       	<% form.fields_for :customer_forums_attributes do |cust| %>
     	    	<span id="company_forums">
-      			<%= cust.select (:customer_id , current_account.customers.collect{|c|[c.name, c.id]},{:selected => @forum.customer_forums.map(&:customer_id)}, { :multiple => true, :class => "customSelect" , "data-placeholder" => 'Select company'}) %>
+      			<%= cust.select(:customer_id , current_account.customers.collect{|c|[c.name, c.id]},{:selected => @forum.customer_forums.map(&:customer_id)}, { :multiple => true, :class => "customSelect" , "data-placeholder" => 'Select company'}) %>
       			</span>
       		
       		<%end%> 

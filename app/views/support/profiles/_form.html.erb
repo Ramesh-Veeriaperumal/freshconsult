@@ -92,7 +92,7 @@
 			<div class="control-group">
 				<%= f.label(:time_zone, t("account.time_zone"), :class => "control-label" ) %>			
 				<div class="controls">
-					<%= f.time_zone_select (:time_zone, ActiveSupport::TimeZone.all, :default => @profile.time_zone) %>
+					<%= f.time_zone_select(:time_zone, ActiveSupport::TimeZone.all, :default => @profile.time_zone) %>
 				</div>
 			</div>
 			<% end %>

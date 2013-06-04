@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'digest/md5'
 
 
@@ -14,7 +15,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Mobile::Actions::Ticket
   include Gamification::GamificationUtil
   include Search::ElasticSearchIndex
-  include RedisKeys
+  include Redis::RedisKeys
+  include Redis::TicketsRedis
+  include Redis::ReportsRedis
+  include Redis::OthersRedis
   include Reports::TicketStats
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
@@ -144,7 +148,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :dependent => :destroy
     
   has_one :ticket_states, :class_name =>'Helpdesk::TicketState',:dependent => :destroy
-  delegate :closed_at, :resolved_at, :to => :ticket_states, :allow_nil => true
+  delegate :closed_at, :resolved_at, :first_response_time, :to => :ticket_states, :allow_nil => true
   belongs_to :ticket_status, :class_name =>'Helpdesk::TicketStatus', :foreign_key => "status", :primary_key => "status_id"
   delegate :active?, :open?, :is_closed, :closed?, :resolved?, :pending?, :onhold?, :onhold_and_closed?, :to => :ticket_status, :allow_nil => true
   
@@ -568,7 +572,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
-  def update_dueby
+  def update_dueby(ticket_status_changed=false)
 
     if self.new_record?
       set_account_time_zone   
@@ -578,13 +582,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
       set_user_time_zone if User.current
       RAILS_DEFAULT_LOGGER.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
       
-    elsif priority_changed? || changed_condition? || status_changed?
+    elsif priority_changed? || changed_condition? || status_changed? || ticket_status_changed
 
       set_account_time_zone   
       sla_detail = self.sla_policy.sla_details.find(:first, :conditions => {:priority => priority})
 
       set_dueby_on_priority_change(sla_detail) if (priority_changed? || changed_condition?)
-      set_dueby_on_status_change(sla_detail) if status_changed?
+      set_dueby_on_status_change(sla_detail) if status_changed? || ticket_status_changed
       set_user_time_zone if User.current
       RAILS_DEFAULT_LOGGER.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
       
@@ -873,7 +877,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def url_protocol
-    account.ssl_enabled? ? 'https' : 'http'
+    if self.product && !self.product.portal_url.blank?
+      return self.product.portal.ssl_enabled? ? 'https' : 'http'
+    else
+      return account.ssl_enabled? ? 'https' : 'http'
+    end
   end
   
   def description_with_attachments
@@ -1173,7 +1181,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     if self.header_info
       self.header_info[:message_ids].each do |parent_message|
         message_key = EMAIL_TICKET_ID % {:account_id => self.account_id, :message_id => parent_message}
-        deleted ? remove_key(message_key) : set_key(message_key, self.display_id, 86400*7)
+        deleted ? remove_others_redis_key(message_key) : set_others_redis_key(message_key, self.display_id, 86400*7)
       end
     end
   end
@@ -1391,7 +1399,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       return unless account.features?(:agent_collision)
       agent_name = User.current ? User.current.name : ""
       message = HELPDESK_TICKET_UPDATED_NODE_MSG % {:ticket_id => self.id, :agent_name => agent_name, :type => "updated"}
-      publish_to_channel("tickets:#{self.account.id}:#{self.id}", message)
+      publish_to_tickets_channel("tickets:#{self.account.id}:#{self.id}", message)
     end
 
     def fire_update_event

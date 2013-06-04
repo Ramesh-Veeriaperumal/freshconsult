@@ -3,7 +3,8 @@ class Billing::Subscription
   CUSTOMER_INFO   = { :first_name => :admin_first_name, :last_name => :admin_last_name, 
                        :company => :name }
 
-  CREDITCARD_INFO = { :number => :number, :expiry_month => :month, :expiry_year => :year }   
+  CREDITCARD_INFO = { :number => :number, :expiry_month => :month, :expiry_year => :year,
+                      :cvv => :verification_value }   
 
   ADDRESS_INFO    = { :first_name => :first_name, :last_name => :last_name, :billing_addr1 => :address1, 
                       :billing_addr2 => :address2, :billing_city => :city, :billing_state => :state, 
@@ -68,6 +69,7 @@ class Billing::Subscription
 
   def update_subscription(subscription, prorate)
     data = (subscription_data(subscription)).merge({ :prorate => prorate })
+    data.merge!(:trial_end => subscription.next_renewal_at.to_i) if subscription.trial? and subscription.next_renewal_at > Time.now
     
     ChargeBee::Subscription.update(subscription.account_id, data)
   end 

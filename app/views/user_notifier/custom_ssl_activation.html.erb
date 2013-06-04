@@ -1,0 +1,17 @@
+<div>
+	Hi <%= @account_admin_name %>,
+	<br><br>
+	<div>Your request for a custom SSL certificate has been approved.</div>
+	<br>
+	<div>We have already turned on Custom SSL in your portal, under Admin->Security. In order for it to work, please follow the steps below to update your CNAME records.</div>
+	<br>
+	<div>1. Login to DNS Control Panel for the custom domain - <%= @portal_url %>. </div>
+	<div>2. Create a CNAME record under <%= @portal_url %> and point it to <%= @elb_name %>.</div>
+	<div>3. Wait for a few hours for the changes to take effect.</div>
+	<br>
+	<div> Once ready, your support portal at <%= @portal_url %> will be secure thanks to the new SSL certificate. </div>
+	<br>
+	<div>Regards</div>
+	<div>Freshdesk Support</div>
+	<br>
+</div>

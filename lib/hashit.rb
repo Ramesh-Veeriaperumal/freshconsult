@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Hashit
 	# Useful for converting a has object to a ruby class
 	def initialize(hash)

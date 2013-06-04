@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+  <div>
+  	<div>
+  	  Hi <%= @user.name%>,
+  	</div>
+  	<div>
+ 
+    <p><%= t(:'flash.import.thank_user')%> </p>
+    <p><%= t(:'flash.import.details', :customer => "Customer", :users => "Contacts")%></p>
+    <p></p>
+    <p><%= t(:'flash.import.help_desk')%></p>
+    <p></p>
+    <div>
+    	<p><%= t(:'flash.import.regards')%></p>
+    	<p> <%= t(:'flash.import.freshdesk')%>
+    	</p>
+    </div>	
+    </div>
+  </div>
+</body>
+</html>

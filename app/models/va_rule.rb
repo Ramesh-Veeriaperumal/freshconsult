@@ -139,16 +139,27 @@ class VARule < ActiveRecord::Base
       conditions = []
       negatable_columns = VAConfig.negatable_columns(account)
       actions.map do |act|
-        next unless negatable_columns.include? act.action_key
-
-        c_hash = { 
-          :name => act.action_key, 
-          :value => act.value, 
-          :operator => VAConfig::NEGATE_OPERATOR
-        }
-        conditions << (Va::Condition.new(c_hash, account))
+        if negatable_columns.include? act.action_key
+          conditions << (Va::Condition.new({ 
+            :name => act.action_key, 
+            :value => act.value, 
+            :operator => VAConfig::NEGATE_OPERATOR
+          }, account))
+        elsif ( act.action_key.eql?("set_nested_fields") && negatable_columns.include?(act.act_hash[:category_name]) )
+          conditions << (Va::Condition.new({ 
+            :name => act.act_hash[:category_name], 
+            :value => act.value, 
+            :operator => VAConfig::NEGATE_OPERATOR
+          }, account))
+          act.act_hash[:nested_rules].each do |field|
+            conditions << (Va::Condition.new({ 
+              :name => field[:name], 
+              :value => field[:value], 
+              :operator => VAConfig::NEGATE_OPERATOR
+            }, account))
+          end
+        end
       end
       conditions
     end
-  
 end

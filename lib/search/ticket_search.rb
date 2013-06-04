@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Search::TicketSearch
   
   def show_options ( column_order = TicketConstants::DEFAULT_COLUMNS_ORDER,
@@ -94,6 +95,10 @@ module Search::TicketSearch
       return groups
     end
 
+    if criteria_key == "helpdesk_schema_less_tickets.product_id"
+      return Account.current.products_from_cache.collect { |au| [au.id, CGI.escapeHTML(au.name)] }
+    end
+
     if criteria_key == :due_by
        return TicketConstants.due_by_list
     end
@@ -108,7 +113,7 @@ module Search::TicketSearch
 
     if criteria_key == :requester_id
       if @requester_id_param
-        requester_id = @requester_id_param.to_a
+        requester_id = @requester_id_param.lines.to_a
       elsif @current_options && @current_options.has_key?("requester_id")
         requester_id = @current_options["requester_id"].split(',')
       end

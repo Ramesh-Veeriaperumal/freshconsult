@@ -56,14 +56,15 @@ private
   end
 
 	def remove_tag response, tag
-	    doc = Nokogiri::HTML.fragment(response)
+	    doc = Nokogiri::HTML.parse(response)
 	    node = doc.search(tag)
 	    node.remove
-	    doc.to_html
+	    doc.css('body').inner_html
   	end
 
   	def remove_script_tags(article)
-  		article.description = remove_tag(article.description, 'script') 
+  		description = remove_tag(article.description, 'script') 
+  		article.description = description
   	end
 
 	def set_un_html_content(article)

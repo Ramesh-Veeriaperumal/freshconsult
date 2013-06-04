@@ -33,7 +33,9 @@ module Reports::GlanceReportsHelper
 
 	def in_hrs_mins(seconds)
 		return "00:00" if seconds.blank?
-		(Time.mktime(0)+seconds.to_i).strftime("%H:%M")
+		hours = seconds/3600.to_i
+    minutes = (seconds/60 - hours * 60).to_i
+    sprintf("%02d:%02d", hours, minutes)
 	end
 
 end

@@ -77,6 +77,8 @@ adv_grid_report.prototype = {
     if(this.y>0) return this.y;
   },
   bar_dataLabels_tooltip: function(){
+    if(this.value == undefined) 
+      return;
     var text      = this.value,
         formatted = text.length > 25 ? text.substring(0, 25) + '...' : text;
     return '<div class="tooltip" style="width:50px; overflow:hidden; cursor:pointer" title="' + text + '">' + formatted.replace(' ','<br/>') + '</div>'; 
@@ -282,14 +284,10 @@ function pieChart(opts){
 	        distance: -25,
 	        formatter: this.pie_label_formatter,
 	        style: {
-	          font: "6pt",
-	          textTransform: "capitalize"
-	        },
-	        color: '#fefefe',
-          style:{
             fontSize: '12px',
             fontWeight:'bold'
-          }
+	        },
+	        color: '#fefefe'
 	      },
 	      showInLegend: true,
         animation: opts['isPDF'] ? false : true

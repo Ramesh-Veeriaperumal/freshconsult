@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Integrations::Application < ActiveRecord::Base 
   include Integrations::Constants
 
