@@ -112,32 +112,30 @@
 <% end %>
 
 <script type="text/javascript">
-	jQuery(document).ready(function() {
+jQuery(document).ready(function() {
 	<%
-		assume_agent = []
-		if current_user
-			@allowed_to_assume = current_account.users.technicians.visible.allowed_to_assume(current_user) 
-			
-			if @allowed_to_assume
-				@allowed_to_assume.each do |req|
-					assume_agent << "{id: '#{req.id}',
-		                  value: '#{escape_javascript(req.name)}',
-		                  text: '#{escape_javascript(req.name)}'}"
-				end
+	assume_agent = []
+	if current_user
+		@allowed_to_assume = current_account.users.technicians.visible.allowed_to_assume(current_user) 
+		
+		if @allowed_to_assume
+			@allowed_to_assume.each do |req|
+				assume_agent << "{id: '#{req.id}',
+	                  value: '#{escape_javascript(req.name)}',
+	                  text: '#{escape_javascript(req.name)}'}"
 			end
 		end
+	end
 	%>
-		jQuery("#assumed_select_id").select2("val",[]);
+	jQuery("#assumed_select_id").select2("val",[]);
 
-		jQuery('#assumed_select_id').select2({
+	jQuery('#assumed_select_id').select2({
 		multiple: false,
-		data: [<%=assume_agent.join(",")%>]
-		
+		data: [<%=assume_agent.join(",")%>],
+		dropdownCssClass: "header-agent-select-dropdown"
 	});
 
 });
-
-
 </script>
 
 <% if current_user %>
