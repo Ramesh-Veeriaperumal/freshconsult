@@ -2,7 +2,7 @@ module Search::ElasticSearchIndex
   def self.included(base)
     base.class_eval do
 
-      include Tire::Model::Search
+      include Tire::Model::Search if ES_ENABLED
 
       def update_es_index
         Resque.enqueue(Search::UpdateSearchIndex, { :klass_name => self.class.name, :id => self.id }) if es_available?
