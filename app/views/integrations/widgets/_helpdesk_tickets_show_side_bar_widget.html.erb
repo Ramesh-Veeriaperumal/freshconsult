@@ -1,7 +1,8 @@
 <% installed_apps.each do |key,installed_app|
   app = installed_app.application
-  unless app.blank?
-    app.widgets.each do |widget|
+  unless app.blank? 
+    widget = app.widget
+    unless widget.blank?
       dip = widget.display_in_pages_option
       if !dip.blank? && dip.include?('helpdesk_tickets_show_page_side_bar')
         ticket.load_flexifield

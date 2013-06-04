@@ -10,7 +10,8 @@ require 'oauth/request_proxy/action_controller_request'
 require 'oauth/signature/rsa/sha1'
 require 'openssl'
 
-include RedisKeys
+include Redis::RedisKeys
+include Redis::TicketsRedis
   
   before_filter :set_mobile, :only => [:create, :destroy]
   skip_before_filter :require_user, :except => :destroy
@@ -287,7 +288,7 @@ include RedisKeys
   private
 
     def remove_old_filters
-      remove_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session.session_id})
+      remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session.session_id})
     end
 
     def check_sso_params

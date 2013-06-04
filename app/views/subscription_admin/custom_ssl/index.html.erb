@@ -1,0 +1,39 @@
+<div class="rwow">
+
+	<div class="span4">
+		<h3> New Custom SSL :</h3>
+		<br/>
+		<% form_tag(enable_custom_ssl_admin_custom_ssl_path, :method => :post ) do %>
+			
+			<h5>Account ID : </h5>  
+			<%= text_field_tag :account_id, "", :class => "span4" %>
+			
+			<h5>ELB Name : </h5>  
+			<%= text_field_tag :elb_name, "", :class => "span4" %>
+			<br /><br />
+			
+			<%= submit_tag "Enable Custom SSL", :class => "btn btn-inverse" %>
+		<% end %>
+	</div>
+
+	<% if @portals.present? %>
+		<div class="span7">
+			<h3> Customers with Custom SSL :</h3>
+			<br/>
+			<table class="table">
+				<tr>
+					<th>Account ID</th>
+					<th>Account</th>
+					<th>ELB Name</th>
+				</tr>
+				<% @portals.each do |portal| %>
+					<tr>
+						<td><%= portal.account_id %></td>
+						<td><%= portal.account.full_domain %></td>
+						<td><%= portal.elb_dns_name %></td>
+					</tr>
+				<% end %>
+			</table>
+		</div>
+	<% end %>
+</div>

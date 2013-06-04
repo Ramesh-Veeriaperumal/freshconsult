@@ -31,5 +31,14 @@ class UserNotifier < ActionMailer::Base
           :activation_url => register_url(:activation_code => account_admin.perishable_token, :host => account_admin.account.host , :protocol => account_admin.url_protocol ))
     content_type  "text/html"
   end
+
+  def custom_ssl_activation(account_admin, portal_url, elb_name)
+    from          AppConfig['from_email']
+    recipients    account_admin.email
+    subject       "Custom SSL Activated"
+    body          :account_admin_name => account_admin.name, :portal_url => portal_url, :elb_name => elb_name
+    sent_on       Time.now
+  end
+
   
 end

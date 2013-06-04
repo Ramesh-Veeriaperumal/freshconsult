@@ -75,7 +75,7 @@
 		<% end %>	
   </div>			  
 	<div class="requestCnt request-conversation tab-pane" id="Timesheet">
-	  <div class="loading-box"></div>
+	  <div class="sloading loading-small loading-block"></div>
 	</div>
 </div>
 
@@ -131,12 +131,12 @@
       	
       	jQuery("#canned_response_container")   	
         	.show()
-        	.addClass("loading");
+        	.addClass("sloading loading-small");
 
       	jQuery("#canned_response_list")
         	.load("/helpdesk/canned_responses/index/"+ticket_id, function(){
           		jQuery("#canned_response_container")
-            		.removeClass("loading");
+            		.removeClass("sloading loading-small");
         	})
       		.show();        
     }
@@ -180,7 +180,7 @@
 		}
 
 		function getCannedResponse(ticket_id, ca_resp_id, element) {
-			jQuery("#canned_response_container").addClass("loading")
+			jQuery("#canned_response_container").addClass("sloading loading-small")
 			jQuery(element).addClass("response-loading");
   			jQuery.ajax({	type: 'POST',
   						url: '/helpdesk/canned_responses/show/'+ticket_id+'?ca_resp_id='+ca_resp_id,

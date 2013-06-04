@@ -1,2 +1,2 @@
 page.replace_html 'recently_used_list', :partial => 'helpdesk/tickets/components/ca_responses'
-page << "jQuery('#recently_used_list').removeClass('loading-center');"
+page << "jQuery('#recently_used_list').removeClass('sloading loading-small');"

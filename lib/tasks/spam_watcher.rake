@@ -24,7 +24,7 @@ namespace :spam_watcher do
   end
 
   task :clear_spam_tickets => :environment do
-    account_ids = $redis.smembers("SPAM_CLEARABLE_ACCOUNTS")
+    account_ids = $redis_others.smembers("SPAM_CLEARABLE_ACCOUNTS")
     return unless account_ids
     accounts = Account.active_accounts.find(:all,:conditions => ["accounts.id in (?)",account_ids])
     accounts.each { |account| Resque.enqueue( Workers::ClearSpam, account.id) }
@@ -107,7 +107,7 @@ def check_for_spam(table,column_name, id_limit, threshold)
     account_ids.keys.each do |account_id|
       account = Account.find(account_id)    
       puts "::::account->#{account}"
-      $redis.sadd("SPAM_CLEARABLE_ACCOUNTS",account.id)
+      $redis_others.sadd("SPAM_CLEARABLE_ACCOUNTS",account.id)
       puts "deleted_users 1::::::::->#{deleted_users}"
       deleted_users = account_ids[account_id]
       unless deleted_users.empty?
