@@ -15,7 +15,8 @@ module Resque::AroundPerform
   Sharding.select_shard_of(account_id) do
     account = Account.find_by_id(account_id)
     account.make_current if account
-      yield
+    time_spent = Benchmark.realtime {yield}
+    Monitoring::RecordMetrics.performance_data({:class_name => self.name, :time_spent => time_spent, :account_id => account_id })  
   end
  end
 end

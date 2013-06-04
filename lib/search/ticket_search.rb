@@ -96,8 +96,7 @@ module Search::TicketSearch
     end
 
     if criteria_key == "helpdesk_schema_less_tickets.product_id"
-      products = Account.current.products_from_cache.collect { |au| [au.id, au.name] }
-      return products.size > 1 ? products : []
+      return Account.current.products_from_cache.collect { |au| [au.id, CGI.escapeHTML(au.name)] }
     end
 
     if criteria_key == :due_by

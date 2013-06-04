@@ -27,7 +27,8 @@ class Workers::Supervisor
       begin
         conditions = rule.filter_query
         next if conditions.empty?
-        negate_conditions = rule.negation_query
+        negate_conditions = [""]
+        negate_conditions = rule.negation_query if $redis_others.get("SUPERVISOR_NEGATION")
         puts "rule name::::::::::#{rule.name}"
         puts "conditions::::::: #{conditions.inspect}"
         puts "negate_conditions::::#{negate_conditions.inspect}"
