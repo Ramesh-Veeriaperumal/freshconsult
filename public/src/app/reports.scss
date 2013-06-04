@@ -414,6 +414,7 @@ $single_stackbar_chart_height: 120px;
 	.report-user-details{
 		float:right;
 		text-align: right;
+		padding-top:12px;
 		.lead{
 			margin:0;
 		}
@@ -444,8 +445,10 @@ $single_stackbar_chart_height: 120px;
 					}
 				}
 			}
+			.report-summary-data{
+				margin-bottom:8px;
+			}
 			.report-summary-header{
-				margin-bottom:5px;
 				ul li{
 					vertical-align:baseline;
 				}
@@ -620,7 +623,7 @@ $report_hover_color:#8c99a3;
 $hover_boxshadow_start: 0 0 0 0px;
 $hover_boxshadow_middle: 0 0 0 7px;
 $hover_boxshadow_final: 0 0 0 5px;
-$animation_timing: .2s;
+$animation_timing: .1s;
 
 // Add more colors with 1st value as class name and 2nd value as color
 		$report-colors:
@@ -752,9 +755,9 @@ $animation_timing: .2s;
 								background-color: nth($report-color,2);
 							}
 							img{
-								background-color: nth($report-color,2);
+								background-color:darken(nth($report-color,2), 10%);
 								@include animation(#{nth($report-color,1)}_beat $animation_timing);
-								@include box-shadow( $hover_boxshadow_final nth($report-color,2));
+								@include box-shadow( $hover_boxshadow_final darken(nth($report-color,2), 10%));
 							}
 						}
 					}
@@ -804,4 +807,37 @@ $animation_timing: .2s;
 
 .highcharts-container text{
 	text-shadow: none;
+}
+
+.reports_page{
+	.twipsy-inner{
+		width:150px;
+	}
+}
+.twipsy.below .twipsy-arrow{
+	left:12%;	
+}
+
+.reports_page{
+	.twipsy-inner{
+		width:150px;
+	}
+}
+.twipsy.below .twipsy-arrow{
+	left:12%;	
+}
+.report-help-icon{
+	border: 0px;
+	float: right;
+	width: 24px;
+	height: 24px;
+	background-color: #c7c7c7;
+	text-align: center;
+	color: #fff;
+	@include text-shadow(none);
+	font-weight: bold;
+	&:hover{
+		color: #fff;
+		text-decoration:none;
+	}
 }

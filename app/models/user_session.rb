@@ -1,5 +1,4 @@
 class UserSession < Authlogic::Session::Base
-	include RedisKeys
 
   params_key :k
   single_access_allowed_request_types :any

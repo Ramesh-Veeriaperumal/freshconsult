@@ -145,7 +145,7 @@
 				else
 					$('.active').addClass("free-plan-options");
 			}else{
-				$("#billing-template").addClass("loading-amount");
+				$("#billing-template").addClass("sloading inner-form-hide");
 			}
 			if(current_active_plan_flag){
 				original_data = $(".subscribed-plan-details").html();
@@ -200,7 +200,7 @@
               { "billing_cycle": billing_cycle, "agent_limit" : agents, "plan_id" : current_plan_id },              
               function(data){
               		$(".billing-submit").removeAttr("disabled");
-									$("#billing-template").removeClass("loading-amount");
+									$("#billing-template").removeClass("sloading inner-form-hide");
                   $("#billing-template").html(data);
             			$("#plan_id").val(current_plan_id);
             			if(current_active_plan_flag) {

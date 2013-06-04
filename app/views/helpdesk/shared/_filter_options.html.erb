@@ -139,7 +139,7 @@
     });
   
   jQuery("#FilterOptions").change(function(){
-    jQuery("#ticket-list").html("<div class='loading-box'></div>");
+    jQuery("#ticket-list").html("<div class='sloading loading-small loading-block'></div>");
     if (supports_html5_storage()) {
       window.localStorage['is_unsaved_view'] = false;
     } 

@@ -125,9 +125,8 @@ class Helpdesk::TicketDrop < BaseDrop
 	end
 
 	def in_user_time_zone(time)
-		return time unless portal_user
-		user_time_zone = portal_user.time_zone 
-		time.in_time_zone(user_time_zone)
+		portal_user_or_account = (portal_user || portal_account)
+		portal_user_or_account.blank? ? time : time.in_time_zone(portal_user_or_account.time_zone)
 	end
 
 	def created_on

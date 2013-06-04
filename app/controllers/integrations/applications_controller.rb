@@ -46,7 +46,7 @@ class Integrations::ApplicationsController < Admin::AdminController
       widget_script = application_params.delete(:script)
       view_pages = application_params.delete(:view_pages)
       @installing_application.update_attributes(application_params)
-      wid = @installing_application.widgets[0]
+      wid = @installing_application.custom_widget
       wid.script = widget_script
       wid.display_in_pages_option = view_pages
       wid.save!

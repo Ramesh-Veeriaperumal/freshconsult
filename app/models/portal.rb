@@ -11,7 +11,8 @@ class Portal < ActiveRecord::Base
   
   include Mobile::Actions::Portal
   include Cache::Memcache::Portal
-  include RedisKeys
+  include Redis::RedisKeys
+  include Redis::PortalRedis
 
   after_commit_on_update :clear_portal_cache
   after_commit_on_destroy :clear_portal_cache
@@ -95,6 +96,10 @@ class Portal < ActiveRecord::Base
     portal_url.blank? ? account.full_domain : portal_url
   end
 
+  def ssl_enabled?
+    portal_url.blank? ? account.ssl_enabled : ssl_enabled
+  end
+
   def portal_name
     (name.blank? && product) ? product.name : name
   end
@@ -141,7 +146,7 @@ class Portal < ActiveRecord::Base
 
     def cache_version
       key = PORTAL_CACHE_VERSION % { :account_id => self.account_id }
-      get_key(key) || "0"
+      get_portal_redis_key(key) || "0"
     end
 
     def create_template

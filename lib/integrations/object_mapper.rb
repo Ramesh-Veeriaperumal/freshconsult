@@ -102,7 +102,7 @@ class Integrations::ObjectMapper
         },
         :map=>[
           {:ours=>"body", :theirs_to_ours=>{:value=>"JIRA comment {{notification_cause}} # {{comment.id}}:\n {{comment.body}}\n"}}, 
-          {:ours=>"user", :theirs_to_ours=>{:handler=>:db_fetch, :use_if_empty=>"account_admin", :entity=>User, :using=>{:conditions=>["email=?", "{{comment.author}}"]}}},
+          {:ours=>"user", :theirs_to_ours=>{:handler=>:db_fetch, :use_if_empty=>"account_admin", :entity=>User, :using=>{:conditions=>["email=?", "{{comment.author.emailAddress}}"]}}},
           {:ours=>"source", :theirs_to_ours=>{:handler=>:static_value, :value=>Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]}},
           {:ours=>"private", :theirs_to_ours=>{:handler=>:static_value, :value=>true}},
           {:ours=>"notable", :theirs_to_ours=>{:handler=>:db_fetch, :entity=>Helpdesk::Ticket, 
@@ -142,7 +142,7 @@ class Integrations::ObjectMapper
   EXTERNAL_NOTE_CONFIG = clone(generic_config_external_notes)
   STATUS_AS_PRIVATE_NOTE_CONFIG = clone(generic_config)
   STATUS_AS_PRIVATE_NOTE_CONFIG[:map][0][:theirs_to_ours][:value] = "JIRA issue status changed to {{issue.fields.status.name}}.\n"
-  STATUS_AS_PRIVATE_NOTE_CONFIG[:map][1][:theirs_to_ours][:using] = {:conditions=>["email=?", "{{user}}"]}
+  STATUS_AS_PRIVATE_NOTE_CONFIG[:map][1][:theirs_to_ours][:using] = {:conditions=>["email=?", "{{user.emailAddress}}"]}
   STATUS_AS_PRIVATE_NOTE_CONFIG[:map].push({:ours=>"to_emails",:theirs_to_ours=> {:handler=>:db_fetch, :entity=>User, :data_type => "String",:field_type => "email",
                          :using=>{:select=>"users.email",
                                   :joins=>"INNER JOIN helpdesk_tickets INNER JOIN integrated_resources ON integrated_resources.local_integratable_id=helpdesk_tickets.id and  helpdesk_tickets.responder_id = users.id 
@@ -153,7 +153,7 @@ class Integrations::ObjectMapper
   PUBLIC_NOTE_CONFIG[:map].push({:ours=>"body_html",:theirs_to_ours=> {:value => "<div>JIRA comment {{notification_cause}} # {{comment.id}}:<br/> {{comment.body}} <br/></div>"}})
   STATUS_AS_PUBLIC_NOTE_CONFIG = clone(generic_config)
   STATUS_AS_PUBLIC_NOTE_CONFIG[:map][0][:theirs_to_ours][:value] = "JIRA issue status changed to {{issue.fields.status.name}}.\n"
-  STATUS_AS_PUBLIC_NOTE_CONFIG[:map][1][:theirs_to_ours][:using] = {:conditions=>["email=?", "{{user}}"]}
+  STATUS_AS_PUBLIC_NOTE_CONFIG[:map][1][:theirs_to_ours][:using] = {:conditions=>["email=?", "{{user.emailAddress}}"]}
   STATUS_AS_PUBLIC_NOTE_CONFIG[:map][3][:theirs_to_ours][:value] = false
 
   REPLY_CONFIG = clone(generic_config)

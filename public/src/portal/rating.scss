@@ -1,5 +1,16 @@
+@import "compass";
+@import "cdn-ignored/sprites/smiley/*.png";
+$smiley-layout:horizontal;
+$smiley-sprite-dimensions:true;
+@include all-smiley-sprites;
+
+.smiley-happy, .smiley-neutral, .smiley-unhappy{
+  @include inline-block;
+  vertical-align: text-top;
+}
+
 body{
-  font:normal 13px/18px "HelveticaNeue-Light", Arial, sans-serif;
+  font:normal 13px/18px "Helvetica Neue", Arial, sans-serif;
   color:#181818;  
   margin:0px;   
   background-color: #f2f2f2;
@@ -10,12 +21,7 @@ body{
   margin: 0px auto;
 }
 
-.top-strip{
-  background-color:#313131;
-  height:52px;
-  width:100%;
-  left:0px;
-}
+.top-strip{ background-color:#313131; padding: 10px 0 0; }
 
 .star-logo{
   width:42px;
@@ -30,21 +36,13 @@ body{
     display: table;
 }
 
-.brand {
-    left: 0;
-    margin-left: 140px;
-    position: absolute;
-    text-decoration: none;
-    top: 3px;
-}
+.brand{ text-decoration: none; }
 
-.brand .logo {
-    margin: 0 0 0 4px;
-}
+.brand .logo { margin-left: -5px; }
 
 .brand .logo_text{
 	margin:15px 0 0 5px;
-	font-size:18px;
+	font-size:24px;
 	color:#f5f5f5;
 }
 
@@ -79,36 +77,33 @@ a {
     vertical-align: baseline;
 }
 
-.logo{
-  color: #fff;
-  font-size:20px;
-  text-align: left;
-  font-weight:normal;
-  line-height:52px;
-  padding-left:15px;
-  float: left;
-}
-
 /*Content area*/
 
 .highlighter{
-  width: 950px;
-  height: 95px;
   background-color: #fff4dc;
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
+  @include border-radius(6px);
   border:1px solid #a9a9a9;
-  box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.10);
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.10);
 }
 
 .pointer{
-  background-image: url("/images/pointer.png");
   width:17px;
   height:10px;
-  top:3px;
-  left:12px;
+  margin-left:12px;
   position: relative;
+  top: -9px;
+  &:before, &:after{
+    content: "";
+    position: absolute;
+    border: 10px solid transparent;
+    border-bottom-color:#fff4dc;
+  }
+  &:before{
+    border-width: 11px;
+    border-bottom-color:#a9a9a9; 
+    top: -2px;
+    left: -1px;
+  }
 }
 
 .smily{
@@ -124,27 +119,21 @@ h1{
 
 h2{
   font-size:22px;
-  color: #333333;
-  font-weight:normal;
-  text-shadow: 1px 0px 0px #fff;
+  text-shadow: 1px 0 0 #fff;
   margin-top: -6px;
-}
-
-.display{
-  display: none;
+  line-height: 1.4;
+  font-weight: 200;
 }
 
 .search-bar{
-  width: 920px;
-  height: 120px;
+  height: 210px;
   background-color: #f2f2f2;
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
+  @include border-bottom-radius(3px);
   border:1px solid #a9a9a9;
-  box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.05);
-  margin-top: -18px;
+  border-top: 0;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.05);
   margin-left: 15px;
+  margin-right: 15px;
 }
 
 .error{
@@ -153,12 +142,12 @@ h2{
 }
 
 .search-top{
-  font-family:"Helvetica Neue", Arial, sans-serif;;
   font-size:13px;
   color: #000;
   font-weight:normal;
   padding-top: 10px;
   padding-left: 12px;
+  margin: 0;
 }
 
 .position{
@@ -192,15 +181,16 @@ h2{
   border-right: 1px solid #E9E9E9;
   border-bottom: 1px solid #E9E9E9;
   width:819px;
-  height:44px;
+  height:124px;
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
   box-shadow: inset 0px 2px 6px #e4e4e4;
   position:relative;                   
   overflow:hidden;
-  margin-top: -10px;
   margin-left: 10px;
+  display:block;
+  resize:none;
 }
 
 input{
@@ -215,7 +205,7 @@ input{
 }
 
 .button{
-  background: url("cdn-ignored/bg-repeats/rating-button-bg.png") #616161;
+  background-color: #616161;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;

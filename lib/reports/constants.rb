@@ -65,7 +65,7 @@ module Reports
       "2" => ["Mid-Atlantic"],
       "3" => ["Brasilia","Buenos Aires","Georgetown","Greenland"],
       "4" => ["Newfoundland","Atlantic Time (Canada)","La Paz","Santiago"],
-      "5" => ["Caracas","Bogota","America/Bogato","Eastern Time (US & Canada)","Indiana (East)","Lima","Quito"],
+      "5" => ["Caracas","Bogota","America/Bogota","Eastern Time (US & Canada)","Indiana (East)","Lima","Quito"],
       "6" => ["Central America","Central Time (US & Canada)","Guadalajara","Mexico City","Monterrey",
                "Saskatchewan","America/Chicago"],
       "7" => ["Arizona","Chihuahua","Mazatlan","Mountain Time (US & Canada)"],
