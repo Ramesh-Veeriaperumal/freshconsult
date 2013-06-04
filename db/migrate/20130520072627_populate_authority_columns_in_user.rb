@@ -1,4 +1,5 @@
 class PopulateAuthorityColumnsInUser < ActiveRecord::Migration
+  shard :none
   def self.up
     default_roles = [
           [ "Account Administrator",

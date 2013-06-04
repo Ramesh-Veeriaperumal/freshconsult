@@ -1,4 +1,5 @@
 class CreateUserRoles < ActiveRecord::Migration
+  shard :none
   def self.up
     create_table :user_roles, :id => false do |t|
       t.column :user_id, "bigint unsigned"

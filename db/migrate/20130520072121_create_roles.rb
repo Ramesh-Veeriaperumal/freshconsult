@@ -1,4 +1,5 @@
 class CreateRoles < ActiveRecord::Migration
+  shard :none
   def self.up
     create_table :roles do |t|
       t.string :name
