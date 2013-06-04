@@ -9,7 +9,7 @@
     widget_code = widget_code.gsub("}}", " | encode_html | encode_html}}")
     %>
     <%= Liquid::Template.parse(widget_code).render({"ticket" => @ticket}, :filters => [Integrations::FDTextFilter]) %>
-    <div class="loading-box" id="jira_issue_loading"></div>
+    <div class="sloading loading-small loading-block" id="jira_issue_loading"></div>
   </div></div>
 </textarea>
 <span id="jira_issue_icon" class="custom-tip-bottom" title="<%=t('ticket.integrations.jira.tooltip')%>">

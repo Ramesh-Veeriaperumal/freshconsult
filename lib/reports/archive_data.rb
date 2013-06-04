@@ -3,7 +3,8 @@ module Reports
 
 		include Reports::Constants
 		include Reports::TicketStats
-		include RedisKeys
+		include Redis::RedisKeys
+		include Redis::ReportsRedis
 
 		attr_accessor :stats_date, :stats_date_time, :stats_end_time, :stats_table_name
 
@@ -18,7 +19,7 @@ module Reports
 						@stats_date_time = Time.zone.parse(stats_date)
 						@stats_table_name = stats_table(stats_date_time, account)
 						load_archive_data(account, regenerate)
-						add_to_hash(REPORT_STATS_EXPORT_HASH % {:account_id => account_id},"date",
+						add_to_reports_hash(REPORT_STATS_EXPORT_HASH % {:account_id => account_id},"date",
 																		stats_date_time.strftime("%Y-%m-%d"),604800) unless regenerate
 					end
 				end 

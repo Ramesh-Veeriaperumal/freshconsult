@@ -9,7 +9,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :account_id
 
   def before_save 
-    standardize_esccalations(self.escalations) if escalations_changed?
+    standardize_escalations(self.escalations) if escalations_changed?
     standardize_conditions if conditions_changed? 
     validate_conditions?
   end
@@ -18,8 +18,6 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
   
   has_many :sla_details , :class_name => "Helpdesk::SlaDetail", :foreign_key => "sla_policy_id", 
     :dependent => :destroy 
-
-  has_many :customers , :foreign_key => "sla_policy_id" 
   
   attr_accessible :name,:description, :is_default, :conditions, :escalations, :active
   
@@ -158,7 +156,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
       false
     end
 
-    def standardize_esccalations(sp_escalations)
+    def standardize_escalations(sp_escalations)
       return unless sp_escalations
       sp_escalations.each_pair do |k, v|
         next if v.blank?
@@ -166,7 +164,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
           v[:time] = v[:time].to_i
           v[:agents_id] = v[:agents_id].map(&:to_i) unless v[:agents_id].blank?
         else
-          standardize_esccalations(v)
+          standardize_escalations(v)
         end
       end
     end

@@ -23,8 +23,8 @@
 			<% end %>
 		</div>
 		<div class="info"> 
-			<%= content_tag :div, multiple_emails_container(@to_emails) unless @ticket.cc_email_hash.blank? or @to_emails.blank? %>
-			<%= content_tag :div, multiple_emails_container(@ticket.cc_email_hash[:cc_emails]) unless @ticket.cc_email_hash.blank? %>
+			<%= content_tag :div, multiple_emails_container(@to_emails,"To: ") unless @ticket.cc_email_hash.blank? or @to_emails.blank? %>
+			<%= content_tag :div, multiple_emails_container(@ticket.cc_email_hash[:cc_emails],"Cc: ") unless @ticket.cc_email_hash.blank? %>
       	</div> 
 	</div>
 	<div id="ticket_original_request" class="request_mail">

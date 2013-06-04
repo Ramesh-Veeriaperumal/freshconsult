@@ -1,6 +1,6 @@
 class EmailConfigNotifier < ActionMailer::Base
   
-  layout "email_font"
+  layout "email_font", :except => [:activation_instructions]
 
   def activation_instructions(email_config)
     subject       "#{email_config.account.portal_name} email activation instructions"

@@ -26,7 +26,7 @@ class Subscription < ActiveRecord::Base
   before_save :update_amount
   
   before_update :cache_old_model
-  after_update :update_features 
+  # after_update :update_features 
 
   after_update :add_to_crm, :if => :free_customer?
   after_update :notify_totango, :if => :free_customer?
@@ -275,7 +275,7 @@ class Subscription < ActiveRecord::Base
     end
 
     def add_to_crm
-      Resque.enqueue(CRM::AddToCRM::FreeCustomer, {:item_id => id})
+      Resque.enqueue(CRM::AddToCRM::FreeCustomer, { :item_id => id, :account_id => account_id })
     end
 
     def notify_totango

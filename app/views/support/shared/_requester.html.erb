@@ -22,7 +22,7 @@
 					options_for_select(current_user.customer.users.collect{|c|[c.email, c.email]}),
 	    			{ :multiple => true, "data-placeholder" => "Select contacts from #{current_user.customer.name}" }) %>
 	    <% else %>
-	    	<input type="text" id="cc_emails" />
+	    	<input type="text" id="cc_emails" name="cc_emails" />
 	    <% end %>
 	</div>
 <% end %>

@@ -3,7 +3,14 @@ label = @activity_data_hash['label']
 if(@activity_data_hash['chart_id'] == 'pie_chart_container')
 %>
   <div class="span6" data-chart-id="<%=@activity_data_hash['chart_id']%>">
-    <h3 id="<%=label%>_title" class="header-lead"><span><%= t('reports.pie_chart_title_prefix') %>&nbsp;</span></h3>
+    <h3 id="<%=label%>_title" class="header-lead">
+      <span><%= t('reports.pie_chart_title_prefix') %>&nbsp;</span>
+      <%if (label == 'priority' || label=='ticket_type')
+        tag = (label == 'priority') ? "tickets-by-priority" : "tickets-by-type" 
+        %>
+      <a class="report-help-icon tooltip" title='<%=t("adv_reports.helptext.glance.how_to_read")%>' href="<%=@solution_artical_link%>#<%=tag%>" target="_blank">?</a>
+      <%end%>
+    </h3>
     <div id="<%=label%>_freshdesk_chart" class="chart-container">
       <div class="noinfo"><%=t('adv_reports.no_data_to_display_msg')%></div>
     </div>
@@ -15,7 +22,7 @@ if(@activity_data_hash['chart_id'] == 'pie_chart_container')
                                                 ,chartData:<%=@activity_data_hash['data'].to_json%>});
     ticketByType<%=label%>.pieChartGraph();
     <%end%>
-    jQuery('#<%=label%>_title').html("<span>"+jQuery('#<%=label%>_title').text()+ custom_fields['<%=label%>']+"</span>");
+    jQuery('#<%=label%>_title').find("span").text(jQuery('#<%=label%>_title').find("span").text()+ custom_fields['<%=label%>']);
   });
 </script>
 <%elsif (@activity_data_hash['chart_id'] == 'nested_fields_container')%>
@@ -38,12 +45,15 @@ if(@activity_data_hash['chart_id'] == 'pie_chart_container')
                                                 ,column_width:<%=@activity_data_hash['data'][:column_width].to_json%>});
     ticketByType<%=label%>.pareToGraph();
     <%end%>
-    jQuery('#<%=label%>_title').html("<span>"+jQuery('#<%=label%>_title').text()+ custom_fields['<%=label%>']+"</span>");
+    jQuery('#<%=label%>_title').find("span").text(jQuery('#<%=label%>_title').find("span").text()+ custom_fields['<%=label%>']);
   });
 </script>
 <%elsif (@activity_data_hash['chart_id'] == 'source_container')%>
 <div class="row-fluid" data-chart-id="<%=@activity_data_hash['chart_id']%>">
-  <h3 class="header-lead"><span><%=t('reports.pie_chart_title_prefix')%><%=t('filter_options.source')%></span></h3>
+  <h3 class="header-lead">
+    <span><%=t('reports.pie_chart_title_prefix')%><%=t('filter_options.source')%></span>
+    <a class="report-help-icon tooltip" title='<%=t("adv_reports.helptext.glance.how_to_read")%>' href="<%=@solution_artical_link%>#tickets-by-source" target="_blank">?</a>
+  </h3>
   <div id="source_freshdesk_single_stacked_bar_chart" class="single-stacked-bar span12" style="height:150px;"><div class="noinfo-bar"><%=t('adv_reports.no_data_to_display_msg')%></div></div>
 </div>
 <script type="text/javascript">

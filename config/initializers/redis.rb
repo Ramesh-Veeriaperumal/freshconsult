@@ -1,9 +1,15 @@
 
 config = YAML::load_file(File.join(RAILS_ROOT, 'config', 'redis.yml'))[RAILS_ENV]
 
-$redis = Redis.new(:host => config["host"], :port => config["port"])
+#$redis = Redis.new(:host => config["host"], :port => config["port"])
 
-$redis_secondary = Redis.new(:host => config["host"], :port => config["port"])
+#$redis_secondary = Redis.new(:host => config["host"], :port => config["port"])
+
+$redis_tickets = Redis.new(:host => config["host"], :port => config["port"])
+$redis_reports = Redis.new(:host => config["host"], :port => config["port"])
+$redis_integrations = Redis.new(:host => config["host"], :port => config["port"])
+$redis_portal = Redis.new(:host => config["host"], :port => config["port"])
+$redis_others = Redis.new(:host => config["host"], :port => config["port"])
 
 Redis.class_eval {add_method_tracer :set}
 Redis.class_eval {add_method_tracer :get}

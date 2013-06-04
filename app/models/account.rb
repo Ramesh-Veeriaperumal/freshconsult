@@ -4,7 +4,7 @@ class Account < ActiveRecord::Base
   require 'uri' 
 
   include Mobile::Actions::Account
-  include Tire::Model::Search
+  include Tire::Model::Search if ES_ENABLED
   include Cache::Memcache::Account
   include ErrorHandle
 
@@ -199,7 +199,7 @@ class Account < ActiveRecord::Base
   delegate :bcc_email, :ticket_id_delimiter, :email_cmds_delimeter, :pass_through_enabled, :to => :account_additional_settings
 
   has_many :subscription_events 
-  
+  xss_sanitize  :only => [:name,:helpdesk_name]
   #Scope restriction ends
   
   validates_format_of :domain, :with => /(?=.*?[A-Za-z])[a-zA-Z0-9]*\Z/
@@ -214,7 +214,9 @@ class Account < ActiveRecord::Base
   validate_on_create :valid_subscription?
   validates_uniqueness_of :google_domain ,:allow_blank => true, :allow_nil => true
   
-  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences,:logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain ,:language
+  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences,
+                  :logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain ,
+                  :language, :ssl_enabled
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
   
   validates_numericality_of :ticket_display_id,
@@ -294,7 +296,8 @@ class Account < ActiveRecord::Base
     },
 
     :estate => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting,
+      :custom_ssl ],
       :inherits => [ :garden ]
     },
 
@@ -314,7 +317,8 @@ class Account < ActiveRecord::Base
     },
 
     :estate_classic => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting,
+      :custom_ssl ],
       :inherits => [ :garden_classic ]
     }
 
@@ -341,7 +345,7 @@ class Account < ActiveRecord::Base
   end
   
   def installed_apps_hash
-    installed_apps = installed_applications.all(:include => {:application => :widgets})
+    installed_apps = installed_applications.all(:include => :application )
     installed_apps.inject({}) do |result,installed_app|
      result[installed_app.application.name.to_sym] = installed_app
      result

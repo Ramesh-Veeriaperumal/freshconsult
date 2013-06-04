@@ -48,7 +48,7 @@ iContactWidget.prototype= {
 			});	
 		}
 		jQuery('#' + this.freshdeskWidget.options.widget_name + ' .lists-load').hide();
-		jQuery('#' + this.freshdeskWidget.options.widget_name + ' .emailLists').addClass('loading-center');
+		jQuery('#' + this.freshdeskWidget.options.widget_name + ' .emailLists').addClass('sloading loading-small');
 	},
 
 	updateSubscriptionSuccess: function(response){

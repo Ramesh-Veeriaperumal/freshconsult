@@ -14,7 +14,7 @@
 			<div id="activity_toggle" class="activity_toggle tooltip-bottom clearfix" title="Toggle Activities">
 				<div class="text"><%= t('ticket.activity_toggle') %></div>
 				<input rel="toggle" type="checkbox" data-checked-label="Yes" data-unchecked-label="No" />
-				<div class="loading-center"></div>
+				<div class="sloading loading-small"></div>
 			</div>
 			<% end %>
 			<!--Breadcrumb-->
@@ -57,10 +57,6 @@
 										<span id="monitor">
 											<%= render :partial => "/helpdesk/subscriptions/monitor.html.erb" %>
 										</span>
-										<div class="watchers_tooltip " id="new_watcher_page" style="display:none" rel="remote-load" 
-												data-url= "<%=helpdesk_ticket_helpdesk_subscriptions_path(@ticket)%>" data-load-unique="true" >
-											<span class="arrow-top"></span>
-										</div>
 									</div>
 									<% end %>
 								<% end %>
