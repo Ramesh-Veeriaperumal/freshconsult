@@ -3,7 +3,7 @@ namespace :supervisor do
   task :run => :environment do
     queue_name = "supervisor_worker"
     if supervisor_should_run?(queue_name)
-      puts "Supervisor called at #{Time.zone.now}."
+      Monitoring::RecordMetrics.register({:task_name => "Supervisor"})
       Sharding.execute_on_all_shards do
         Account.non_premium_accounts.each do |account| 
           if account.supervisor_rules.count > 0 
@@ -17,7 +17,7 @@ namespace :supervisor do
   task :premium => :environment do
     queue_name = "premium_supervisor_worker"
     if supervisor_should_run?(queue_name)
-        puts "Supervisor Premium accounts called at #{Time.zone.now}."
+        Monitoring::RecordMetrics.register({:task_name => "Supervisor Premium"})
         Sharding.execute_on_all_shards do
           Account.premium_accounts.each do |account|
             if account.supervisor_rules.count > 0 
