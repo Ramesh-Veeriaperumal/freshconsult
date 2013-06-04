@@ -493,6 +493,9 @@ is_touch_device = function() {
         jQuery('.top-loading-strip').switchClass('top-loading-strip', 'top-loading-strip-opera');  
       }
 
+      //Not using pjax for IE10- Temporary fix for IE pjax load issue
+      //in dashboard and tickets filter. Remove the condition once we get permanent fix
+    if ($.browser.msie && parseInt($.browser.version) != 10) {
       $(document).pjax('a[data-pjax]',{
           timeout: -1,
           push : false,
@@ -550,6 +553,7 @@ is_touch_device = function() {
         }
         return true;
       })
+    }
    });
  
 })(jQuery);
