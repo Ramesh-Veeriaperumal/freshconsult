@@ -2,32 +2,41 @@
 <%= include_javascripts :pattern %>
 <% content_for :sidebar do -%><%-end %>
 <% unless @fb_pages.empty? %>
-  <div class="floatr">
-    <%= link_to t('facebook.add_page'),  @fb_client.authorize_url(session[:state]) , :class => "uiButton special medium" %> 
+<div class="list-page facebook-list">
+  <div class="list-page-header row-fluid"> 
+    <h3 class="lead span6"><%= t('.title') %></h3>
+    <span class="span6">
+      <%= link_to t('facebook.add_page'),  @fb_client.authorize_url(session[:state]) , :class => "btn btn-primary pull-right special medium" %> 
+    </span>
   </div>
-	<h3 class="title"><%= t('.title') %></h3>
-  <ul class="admin_list">
-    <% @fb_pages.each do |page| %>
-      <li>
-  		  <div class="item_actions">
-  		  	<%= link_to (t(".reauthorize"),  @fb_client.authorize_url(session[:state]), :class => "button") if page.reauth_required %>
-          <%= link_to t("edit"),  edit_social_facebook_url(page), :class => "button" %>
-          <%= link_to(t('remove'), social_facebook_path(page), :method => 'delete', :confirm => "Are you sure you want to remove this facebook page?", :class => "button" ) %>    
-        </div>           
-  		  <div class="preview_pic">
-  		    <%= image_tag (page.page_img_url) if page.page_img_url %>
-  		    <span class="fb_pic"></span>
-  		  </div>
-  		  <h2 class="title">
-          <%= link_to "#{page.page_name}", edit_social_facebook_url(page) %> 
-          &nbsp;<%if page.reauth_required %><span class="label label-important align-fix"> <%=t(".reauth_required")%></span><%end%>
-		  </h2>
-				<div class="intro">
-					<%= link_to page.page_link, page.page_link, { :target => "_blank" } %>				
-				</div>   			
-	   </li>
-    <% end %>
-  </ul>
+  <div class="list-page-body"> 
+      <table class="table table-striped">
+        <% @fb_pages.each do |page| %>
+        <tr>
+          <td>
+            <div class="preview_pic">
+              <%= image_tag (page.page_img_url) if page.page_img_url %>
+            </div>
+          </td>
+          <td>
+            <%= link_to "#{page.page_name}", edit_social_facebook_url(page), :class => "item_info" %> 
+            <%if page.reauth_required %>
+              <span class="label label-important align-fix"> <%=t(".reauth_required")%></span>
+            <%end%>
+            <div class="muted">
+              <%= link_to "View on facebook", page.page_link, { :target => "_blank", :class =>"muted" } %>        
+            </div>  
+          </td>
+          <td class="text-right">
+            <%= link_to (t(".reauthorize"),  @fb_client.authorize_url(session[:state]), :class => "btn btn-mini") if page.reauth_required %>
+            <%= link_to t("edit"),  edit_social_facebook_url(page), :class => "btn btn-mini" %>
+            <%= link_to("<i class='icon-trash'></i>", social_facebook_path(page), :method => 'delete', :confirm => "Are you sure you want to remove this facebook page?", :class => "btn btn-mini" ) %> 
+          </td>
+        </tr>
+        <% end %>
+      </table>
+  </div>
+</div>
 <% else %>
   <%= render :partial => "engage_info" %>
 <% end %>

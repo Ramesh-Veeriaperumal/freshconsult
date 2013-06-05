@@ -1,5 +1,7 @@
+
+<%= include_stylesheets :pattern %>
+<%= include_javascripts :pattern %>
 <% content_for :sidebar do %><% end %>
-<h3 class="title">Associate "Facebook" pages</h3>
 <% if @fb_pages %>
 	<%= render :partial => 'enable_facebook_page'%>
 <% else %>
@@ -15,6 +17,6 @@
 	</div>
 </ul>
 <div>
-  <%= link_to t('back'), "/social/facebook", :class => "uiButton special medium" %> 
+  <%= link_to t('back'), "/social/facebook", :class => "btn btn-primary special medium" %> 
 </div>
 <% end %>

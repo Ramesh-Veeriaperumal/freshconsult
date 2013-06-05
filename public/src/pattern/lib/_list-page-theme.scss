@@ -2,6 +2,9 @@
     margin:0 auto;
     .list-page-header{
         margin-bottom: 20px;
+        .lead{
+            margin-bottom:2px;
+        }
     }
     .list-page-subheader{
         margin-top: 8px;
@@ -14,6 +17,12 @@
         padding:8px 0 8px 0;
         @include border-radius(5px);
         @include box-shadow(0px 0px 10px rgba(200, 200, 200, 0.2));
+        .preview_pic{
+            img{
+                width: 30px;
+                height: 30px;
+            }
+        }
 
         .list-page-table-header{
             padding:4px 12px 12px;
@@ -57,5 +66,16 @@
               background-color:#f1f1f1;  
             }        
         }   
+    }
+}
+
+.facebook-list{
+    .list-page-body table{
+        td{
+            width:48%;
+            &:first-child{
+                width:2%;
+            }
+        }
     }
 }
