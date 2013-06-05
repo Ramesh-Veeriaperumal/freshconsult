@@ -9,9 +9,9 @@ class BusinessCalendar < ActiveRecord::Base
   #for now, a sporadically structured hash is used.
   #can revisit this data model later...
   belongs_to :account
-  before_create :set_default_version 
+  before_create :set_default_version, :valid_working_hours?
   attr_accessible :holiday_data,:business_time_data,:version,:is_default,:name,:description,:time_zone
-  validate_on_update :valid_working_hours?
+  validates_presence_of :time_zone, :name
 
   named_scope :default, :conditions => { :is_default => true }
 

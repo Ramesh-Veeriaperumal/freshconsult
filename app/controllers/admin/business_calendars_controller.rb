@@ -1,4 +1,5 @@
 class Admin::BusinessCalendarsController <  Admin::AdminController
+  include GoogleClient
   
   before_filter { |c| c.requires_feature :business_hours }
   before_filter :load_object, :only => [:update, :destroy, :edit]
@@ -84,6 +85,13 @@ class Admin::BusinessCalendarsController <  Admin::AdminController
       format.xml  { head :ok }
       format.json { head :ok }
     end
+  end
+
+  def holidays
+    calendar_id = params["calendar_id"]
+    #pass google calendar id and get the holidays from google.
+    @holiday_data = GoogleClient::holidays_from_google(calendar_id)
+    render :json => @holiday_data
   end
 
   private

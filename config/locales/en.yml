@@ -2484,6 +2484,8 @@ en:
   portal_customizer_option_forums: Users can view Forums without logging in
   business_hours: 
     name: Name
+    name_eg: "eg: Chicago Business Hours"
+    description_eg: "eg: This Business Calendar belongs to Chicago timezone"
     description: Description
     new: New Business Calendar
     to: to
@@ -2491,10 +2493,13 @@ en:
     delete: Are you sure
     valid_time: Please enter a valid time
     holiday_name: Holiday name
+    import_holiday: Import Holidays
     title: Business Hours
     info1: Setting up your business hours in Freshdesk allows you to have more control over your SLAs. For eg. if your helpdesk works between 9am to 6pm Mon-Fri and a customer sends a high priority ticket at 4pm on Tuesday, with a SLA target resolution time of 4 hours, then the ticket Due By time is set as 11am on Wednesday.You can configure your SLAs to either respect or ignore business hours
     info2: Holidays work exactly like business hours. For eg. if your helpdesk works between 9am to 6pm Mon-Fri and a customer sends a medium priority ticket at 8pm on Friday with a SLA target resolution time of 24 hours, then the ticket Due By time is set as 9am on Tuesday.(not 8pm on Sat)
     holiday_added: Holiday already added
+    invalid_holiday: Invalid holiday added
+    import_holiday_info: <b>Important:</b> Importing will only import current year's holiday. we will not be updating the holiday list every year.
     info3: Select working days/hours
     info6: 24 hrs x 7 days
     info4: Working Days for your Helpdesk

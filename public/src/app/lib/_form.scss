@@ -728,9 +728,6 @@ li.nested_field{
 			margin-top:8px;
 		}
 	}
-	.holiday-name{
-		margin-left:60px;
-	}
 	.holidaylist{
 		border: 1px solid #EEE;
 		border-top:0;
@@ -743,16 +740,17 @@ li.nested_field{
 		ul{
 			color:#444444;
 			@include clearfix;
+			margin-top:10px;
 			li{
 				position:relative;
-				margin: 15px 10px;
+				margin: 5px 0;
 				padding-left:25px;
 				.close{
 					position:absolute;
 					background:image-url("btn_close_icon.png") no-repeat;
 					width:18px;
 					height:18px;
-					left:0px;
+					left:5px;
 					top:-2px;
 				}
 			}
