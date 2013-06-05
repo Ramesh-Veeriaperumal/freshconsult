@@ -571,14 +571,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.schema_less_ticket.changes.key?('product_id') 
   end
 
-  def update_dueby
+  def update_dueby(ticket_status_changed=false)
     Thread.current[TicketConstants::GROUP_THREAD] = self.group
-    set_sla_time
+    set_sla_time(ticket_status_changed)
     Thread.current[TicketConstants::GROUP_THREAD] = nil
   end
 
   #shihab-- date format may need to handle later. methode will set both due_by and first_resp
-  def set_sla_time
+  def set_sla_time(ticket_status_changed)
     if self.new_record?
       set_time_zone
       sla_detail = self.sla_policy.sla_details.find(:first, :conditions => {:priority => priority})
