@@ -106,6 +106,8 @@ class Helpdesk::NotesController < ApplicationController
   end
   
   def edit
+    @item.build_note_body(:body_html => @item.body_html,
+        :body => @item.body) unless @item.note_body
     render :partial => "edit_note"
   end
 

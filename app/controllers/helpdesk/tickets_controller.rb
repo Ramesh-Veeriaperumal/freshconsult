@@ -493,6 +493,11 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
 
+  def edit
+    @item.build_ticket_body(:description_html => @item.description_html,
+        :description => @item.description) unless @item.ticket_body
+  end
+
   def new
     @item.build_ticket_body
     unless params[:topic_id].nil?
