@@ -3,6 +3,7 @@ class Product < ActiveRecord::Base
   include CRM::TotangoModulesAndActions 
 
   before_destroy :remove_primary_email_config_role
+  validates_uniqueness_of :name , :case_sensitive => false, :scope => :account_id
 
   after_create :notify_totango
 
