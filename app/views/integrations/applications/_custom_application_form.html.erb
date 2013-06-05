@@ -70,7 +70,7 @@
   jQuery('.preview_link').bind("click", function(ev){
       ev.preventDefault();
       preview_box = jQuery("#preview")
-      preview_box.html("<div class='loading-box'>Generating Preview</div>"); 
+      preview_box.html("<div class='sloading loading-small loading-block'>Generating Preview</div>"); 
       params = {"application_script": jQuery("#application_script").val()};
       jQuery.ajax({
         url: "/integrations/applications/custom_widget_preview/",

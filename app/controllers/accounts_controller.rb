@@ -76,7 +76,7 @@ class AccountsController < ApplicationController
   def signup_google 
     base_domain = AppConfig['base_domain'][RAILS_ENV]
     logger.debug "base domain is #{base_domain}"   
-    return_url = "https://signup."+base_domain+"/google/complete?domain="+params[:domain]  
+    return_url = "https://login."+base_domain+"/google/complete?domain="+params[:domain]  
     #return_url = "http://localhost:3000/google/complete?domain="+params[:domain]   
     return_url = return_url+"&callback="+params[:callback] unless params[:callback].blank?    
     url = "https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]      
@@ -90,11 +90,12 @@ class AccountsController < ApplicationController
   
   def create_account_google   
     create_account
+    @account.ssl_enabled = true #temp fix by kiran for custom ssl bug
     if @account.save
        add_to_crm       
-       rediret_url = params[:call_back]+"&EXTERNAL_CONFIG=true" unless params[:call_back].blank?
-       rediret_url = "https://www.google.com/a/cpanel/"+@account.google_domain if rediret_url.blank?
-       redirect_to rediret_url
+       @rediret_url = params[:call_back]+"&EXTERNAL_CONFIG=true" unless params[:call_back].blank?
+       @rediret_url = "https://www.google.com/a/cpanel/"+@account.google_domain if @rediret_url.blank?
+       render "thank_you"
       #redirect to google.... else to the signup page
     else
       @call_back_url = params[:call_back]
@@ -158,9 +159,9 @@ class AccountsController < ApplicationController
     unless open_id_user.blank?
        if open_id_user.admin?   
          if @account.update_attribute(:google_domain,@google_domain)     
-            rediret_url = @call_back_url+"&EXTERNAL_CONFIG=true" unless @call_back_url.blank?
-            rediret_url = "https://www.google.com/a/cpanel/"+@google_domain if rediret_url.blank?
-            redirect_to rediret_url            
+            @rediret_url = @call_back_url+"&EXTERNAL_CONFIG=true" unless @call_back_url.blank?
+            @rediret_url = "https://www.google.com/a/cpanel/"+@google_domain if @rediret_url.blank?
+            render "thank_you"          
          end        
        else
          flash.now[:error] = t(:'flash.general.insufficient_privilege.admin')
@@ -249,9 +250,6 @@ class AccountsController < ApplicationController
     params[:account][:main_portal_attributes][:updated_at] = Time.now
     @account.main_portal_attributes = params[:account][:main_portal_attributes]
     if @account.save
-      Resque::enqueue(CRM::Totango::SendUserAction, {:account_id => current_account.id,
-                                                     :email => current_user.email,
-                                                     :activity => totango_activity(:helpdesk_rebranding)})
       flash[:notice] = t(:'flash.account.update.success')
       redirect_to redirect_url
     else
@@ -325,7 +323,7 @@ class AccountsController < ApplicationController
   protected
     
     def choose_layout 
-      (action_name == "openid_complete" || action_name == "create_account_google" || action_name == "associate_local_to_google" || action_name == "associate_google_account") ? 'signup_google' : 'application'
+      (["openid_complete", "create_account_google", "associate_local_to_google", "associate_google_account"].include?(action_name)) ? 'signup_google' : 'application'
 	  end
 	
     def load_object

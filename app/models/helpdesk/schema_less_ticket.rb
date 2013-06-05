@@ -19,6 +19,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :access_token, :string_tc01
 	alias_attribute :escalation_level, :int_tc02
 	alias_attribute :sla_policy_id, :long_tc01
+	alias_attribute :manual_dueby, :boolean_tc03
 
 	serialize :to_emails
 	serialize :text_tc01, Hash

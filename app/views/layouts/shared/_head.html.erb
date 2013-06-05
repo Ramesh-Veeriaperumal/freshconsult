@@ -35,13 +35,18 @@
 	<%= include_cloudfront_js :workspace %>
 	<%= include_cloudfront_js :notifications %>
 	<%= include_cloudfront_js :redactor  %>
-	<%= yield :totango %>
+
+	<% if @enable_pattern %>
+		<%= include_cloudfront_css :pattern %>
+		<%= include_cloudfront_js :pattern %>
+	<% end %>
 
 <script type="text/javascript">
 	PROFILE_BLANK_THUMB_PATH = '<%= image_path("fillers/profile_blank_thumb.gif") %>';
 	PROFILE_BLANK_MEDIUM_PATH = '<%= image_path("fillers/profile_blank_medium.gif") %>';
 </script>	
 	<%= include_cloudfront_js :custom_widget %>
+
 	<%= yield :head %>
 </head>
 

@@ -1,3 +1,4 @@
+# encoding: utf-8
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
   
@@ -413,11 +414,11 @@ module ApplicationHelper
   end   
   
   def twitter_avatar( screen_name, profile_size = "normal" )
-    "http://api.twitter.com/1/users/profile_image?screen_name=#{screen_name}&size=#{profile_size}"
+    "https://api.twitter.com/1/users/profile_image?screen_name=#{screen_name}&size=#{profile_size}"
   end
   
   def facebook_avatar( facebook_id, profile_size = "square")
-    "http://graph.facebook.com/#{facebook_id}/picture?type=#{profile_size}"
+    "https://graph.facebook.com/#{facebook_id}/picture?type=#{profile_size}"
   end
   
   # User details page link should be shown only to agents and admin
@@ -689,9 +690,8 @@ module ApplicationHelper
   end
 
   def nodejs_url namespace
-    nodejs_protocol = (current_account && current_account.ssl_enabled) ? "https" : "http"
-    nodejs_port = Rails.env.development? ? 5000 : (current_account.ssl_enabled ? 2050 : 1050)      
-    "#{nodejs_protocol}://#{request.host}:#{nodejs_port}/#{namespace}"
+    nodejs_port = Rails.env.development? ? 5000 : (request.ssl? ? 2050 : 1050)      
+    "#{request.protocol}#{request.host}:#{nodejs_port}/#{namespace}"
   end  
 
   def es_enabled?
@@ -771,7 +771,7 @@ module ApplicationHelper
     if fb_page
       return content_tag('div', "<a href='javascript:void(0)'></a>  Your Facebook channel is inaccessible. 
         It looks like username, password, or permission has been changed recently.Kindly 
-        <a href='/social/facebook' target='_blank'> fix </a> it.  ", :id => type, :class => 
+        <a href='/social/facebook' target='_blank'> fix </a> it.  ", :class => 
         "alert-message block-message warning full-width")
     end
     return
@@ -782,7 +782,7 @@ module ApplicationHelper
     if twt_handle
       return content_tag('div', "<a href='javascript:void(0)'></a>  Your Twitter channel is inaccessible. 
         It looks like username or password has been changed recently. Kindly 
-        <a href='/social/twitters' target='_blank'> fix </a> it.  ", :id => type, :class => 
+        <a href='/social/twitters' target='_blank'> fix </a> it.  ", :class => 
         "alert-message block-message warning full-width")
     end
     return

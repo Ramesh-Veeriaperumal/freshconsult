@@ -7,7 +7,7 @@
 <% end %>
 
 <% content_for :page_toolbar do -%>
-  <%= link_to (t('automations.reorder'), "#", :id => "Reorder", :class => "uiButton") if ( @va_rules.size > 1 ) %>
+  <%= link_to(t('automations.reorder'), "#", :id => "Reorder", :class => "uiButton") if ( @va_rules.size > 1 ) %>
   <%= link_to t('automations.new'), new_admin_automation_path, :class => "uiButton", :id => 'scenario_new' %>
 <% end %>
 

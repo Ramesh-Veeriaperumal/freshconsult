@@ -1,3 +1,4 @@
+# encoding: utf-8
 class CustomersController < ApplicationController
   # GET /customers
   # GET /customers.xml
@@ -72,9 +73,11 @@ class CustomersController < ApplicationController
       if build_and_save
         format.html { redirect_to(@customer, :notice => 'Company was successfully created.') }
         format.xml  { render :xml => @customer, :status => :created, :location => @customer }
+        format.json  { render :json => @customer, :status => :created }
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @customer.errors, :status => :unprocessable_entity }
+        format.json  { render :json => @customer.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -93,9 +96,11 @@ class CustomersController < ApplicationController
       if @customer.update_attributes(params[:customer])
         format.html { redirect_to(@customer, :notice => 'Company was successfully updated.') }
         format.xml  { head :ok }
+        format.json { head :ok }
       else
         format.html { render :action => "edit" }
         format.xml  { render :xml => @customer.errors, :status => :unprocessable_entity }
+        format.json  { render :json => @customer.errors, :status => :unprocessable_entity }
       end
     end
   end

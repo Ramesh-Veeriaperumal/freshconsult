@@ -168,23 +168,6 @@ refreshStatusBox = function() {
 	});
 }
 
-$('#helpdesk_ticket_group_id').bind("change", function(e){
-	$('#TicketProperties .default_agent')
-		.addClass('loading-right');
-
-	$.ajax({type: 'POST',
-		url: '/helpdesk/commons/group_agents/'+this.value,
-		contentType: 'application/text',
-		success: function(data){
-			$('#TicketProperties .default_agent select')
-				.html(data)
-				.trigger('change');
-
-			$('#TicketProperties .default_agent').removeClass('loading-right');
-		  }
-	});
-});
-
 function dueDateSelected(date){
 	new Date(date);
 }
@@ -268,12 +251,12 @@ showCannedResponse = function(button, ticket_id){
 	
 	$("#canned_response_container")    
 		.show()
-		.addClass("loading");
+		.addClass("sloading");
 
 	$("#canned_response_list")
 		.load("/helpdesk/canned_responses/index/"+ticket_id, function(){
 			$("#canned_response_container")
-				.removeClass("loading");
+				.removeClass("sloading");
 		})
 		.show();        
 }
@@ -379,7 +362,7 @@ var updatePagination = function() {
 	$('#show_more').off('click.ticket_details');
 	$('#show_more').on('click.ticket_details',function(ev) {
 		ev.preventDefault();
-		$('#show_more').addClass('loading');
+		$('#show_more').addClass('sloading loading-small');
 		var href;
 		if (showing_notes)
 			href = TICKET_DETAILS_DATA['notes_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_note_id'];
@@ -390,7 +373,7 @@ var updatePagination = function() {
 
 			TICKET_DETAILS_DATA['first_activity'] = null;
 			TICKET_DETAILS_DATA['first_note_id'] = null;
-			$('#show_more').removeClass('loading').addClass('hide');
+			$('#show_more').removeClass('sloading loading-small').addClass('hide');
 			$('[rel=activity_container]').prepend(response);
 			
 		});
@@ -535,6 +518,25 @@ $(document).ready(function() {
 
 		$active.click();
 	});
+
+
+	$("body").on('change.ticket_details', '#helpdesk_ticket_group_id', function(e){
+		$('#TicketProperties .default_agent')
+			.addClass('sloading loading-small loading-right');
+
+		$.ajax({type: 'POST',
+			url: '/helpdesk/commons/group_agents/'+this.value,
+			contentType: 'application/text',
+			success: function(data){
+				$('#TicketProperties .default_agent select')
+					.html(data)
+					.trigger('change');
+
+				$('#TicketProperties .default_agent').removeClass('sloading loading-small loading-right');
+			  }
+		});
+	});
+
 	
 	$("body").on('click.ticket_details', '.widget.load_on_click.inactive', function(ev){
 		var widget_code = $(this).find('textarea');
@@ -628,7 +630,6 @@ $(document).ready(function() {
 			}
 		});
 	}); 
-	
 
 	//End of Twitter Replybox JS
 
@@ -1059,7 +1060,7 @@ $(document).ready(function() {
 	$('body').on('keydown.ticket_details', '.addReminder textarea', function(ev) {
 		if(ev.keyCode == 13){
 			ev.preventDefault();
-			$(this).parents('form').trigger('submit');
+			if(trim($(this).val()) != '') $(this).parents('form').submit();
 		}
 	});
 
@@ -1095,6 +1096,8 @@ $(document).ready(function() {
 
 	//Previous Next Buttons request
 	$.getScript("/helpdesk/tickets/prevnext/" + TICKET_DETAILS_DATA['displayId']);
+
+	$('#twitter_handle').change();
 
 	if(TICKET_DETAILS_DATA['scroll_to_last']) {
 		$.scrollTo('[rel=activity_container] .conversation:last', { offset: 143 });

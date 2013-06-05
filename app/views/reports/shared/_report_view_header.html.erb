@@ -14,7 +14,7 @@
         if(report_for == 'helpdesk' || report_for == 'customer')
           old_report_link = (report_for == 'helpdesk') ? helpdesk_activity_url : customer_activity_url
           %>
-          <div class="span6 report-user-details"> <a href="<%=old_report_link%>">Show Report for March 2013 and earlier - Read more</a></div>
+          <div class="span6 report-user-details muted"> Note: This report shows data after April 1, 2013 <br/><a href="<%=old_report_link%>">View classic report</a></div>
         <%end
       end%>
     </div>

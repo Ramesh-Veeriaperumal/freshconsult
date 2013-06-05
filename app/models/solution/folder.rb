@@ -1,3 +1,4 @@
+require 'solution/article'
 class Solution::Folder < ActiveRecord::Base
   
   attr_protected :category_id, :account_id

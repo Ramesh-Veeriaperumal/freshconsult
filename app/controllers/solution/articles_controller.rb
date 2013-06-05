@@ -1,9 +1,10 @@
+# encoding: utf-8
 class Solution::ArticlesController < ApplicationController
   
   include Helpdesk::ReorderUtility
   
   before_filter :set_selected_tab, :portal_check
-  
+
   before_filter :check_solution_permission, :only => [:show]
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :except => [:index, :show] do |c| 
@@ -12,21 +13,15 @@ class Solution::ArticlesController < ApplicationController
   before_filter :page_title 
   
   
-  def index    
-    redirect_to_url = solution_category_folder_url(params[:category_id], params[:folder_id])    
-    redirect_to redirect_to_url    
+  def index
+    redirect_to solution_category_folder_url(params[:category_id], params[:folder_id])
   end
 
-  def show           
-    @article = current_account.solution_articles.find(params[:id], :include => :folder) 
-    wrong_portal and return unless(main_portal? || 
-        (@article.folder.category_id == current_portal.solution_category_id))
-    @page_title = @article.article_title
-    @page_description = @article.article_description
-    @page_keywords = @article.article_keywords
-        
+  def show
+    @enable_pattern = true
+    @article = current_account.solution_articles.find_by_id!(params[:id], :include => :folder)
     respond_to do |format|
-      format.html { @page_canonical = solution_category_folder_article_url(@article.folder.category, @article.folder.id, @article) }
+      format.html
       format.xml  { render :xml => @article.to_xml(:include => :folder) }
       format.json  { render :json => @article.to_json(:include => {:folder => {:except => [:is_default]}}) }
     end    
@@ -72,10 +67,8 @@ class Solution::ArticlesController < ApplicationController
     end
   end
   
-  def save_and_create
-    
-    logger debug "Inside save and create"
-    
+  def save_and_create    
+    logger debug "Inside save and create"    
   end
 
   def update
@@ -104,17 +97,14 @@ class Solution::ArticlesController < ApplicationController
     
   end
    
-   def delete_tag
-     
+   def delete_tag     
      logger.debug "delete_tag :: params are :: #{params.inspect} "     
      article = current_account.solution_articles.find(params[:article_id])     
      tag = article.tags.find_by_id(params[:tag_id])      
      raise ActiveRecord::RecordNotFound unless tag
      Helpdesk::TagUse.find_by_article_id_and_tag_id(article.id, tag.id).destroy
     flash[:notice] = t(:'flash.solutions.remove_tag.success')
-    redirect_to :back
-
-      
+    redirect_to :back    
   end
   
 protected
@@ -193,8 +183,8 @@ end
     def portal_check
       format = params[:format]
       if format.nil? && (current_user.nil? || current_user.customer?)
-        @article = current_account.solution_articles.find(params[:id]) 
-        return redirect_to support_solutions_article_path(@article)
+        # @article = current_account.solution_articles.find(params[:id]) 
+        return redirect_to support_solutions_article_path(params[:id])
       end
     end
 end

@@ -72,8 +72,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
                                               :form_field => "subject", :visible_in_view_form => false },
                   :default_requester    => { :type => :default, :dom_type => "requester",
                                               :form_field => "email"  , :visible_in_view_form => false },
-                  :default_ticket_type  => { :type => :default, :dom_type => "dropdown" },
-                  :default_status       => { :type => :default, :dom_type => "dropdown"}, 
+                  :default_ticket_type  => { :type => :default, :dom_type => "dropdown_blank"},
+                  :default_status       => { :type => :default, :dom_type => "dropdown_blank"}, 
                   :default_priority     => { :type => :default, :dom_type => "dropdown"},
                   :default_group        => { :type => :default, :dom_type => "dropdown_blank", :form_field => "group_id"},
                   :default_agent        => { :type => :default, :dom_type => "dropdown_blank", :form_field => "responder_id"},
@@ -90,7 +90,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
                                              :va_handler => "checkbox" },
                   :custom_number        => { :type => :custom, :dom_type => "number", 
                                              :va_handler => "numeric"},
-                  :custom_dropdown      => { :type => :custom, :dom_type => "dropdown", 
+                  :custom_dropdown      => { :type => :custom, :dom_type => "dropdown_blank", 
                                              :va_handler => "dropdown"},
                   :nested_field         => {:type => :custom, :dom_type => "dropdown_blank",
                                               :va_handler => "nested_field"}
@@ -248,6 +248,16 @@ class Helpdesk::TicketField < ActiveRecord::Base
     end
   end
   
+
+  #Use as_json instead of to_json for future support Rails3 refer:(http://jonathanjulian.com/2010/04/rails-to_json-or-as_json/)
+  def as_json(options={})
+    options[:include] = [:nested_ticket_fields]
+    options[:except] = [:account_id]
+    options[:methods] = [:choices,:nested_choices]
+    json_str = super options
+    json_str
+  end
+
   def to_xml_nested_fields(xml, picklist_value)
     return if picklist_value.sub_picklist_values.empty?
     

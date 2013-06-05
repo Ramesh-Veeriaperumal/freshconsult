@@ -1,10 +1,12 @@
+# encoding: utf-8
 module Helpdesk::TicketsHelper
   
   include Wf::HelperMethods
   include TicketsFilter
   include Helpdesk::Ticketfields::TicketStatus
+  include Redis::RedisKeys
+  include Redis::TicketsRedis
   include Helpdesk::NoteActions
-  include RedisKeys
   include Integrations::AppsUtil
   include Helpdesk::TicketsHelperMethods
 
@@ -54,7 +56,7 @@ module Helpdesk::TicketsHelper
       if(tabs.first == t)
         content_tag :div, content_tag(:div, "") ,{:class => "rtDetails tab-pane active #{t[2]}", :id => t[0], :rel => "remote", :"data-remote-url" => "/helpdesk/tickets/component/#{@ticket.id}?component=ticket"}
       else
-        content_tag :div, content_tag(:div, "", :class => "loading-box"), :class => "rtDetails tab-pane #{t[2]}", :id => t[0]
+        content_tag :div, content_tag(:div, "", :class => "loading-block sloading loading-small "), :class => "rtDetails tab-pane #{t[2]}", :id => t[0]
       end
     }, :class => "tab-content"
                
@@ -120,7 +122,11 @@ module Helpdesk::TicketsHelper
   end
   
   def filter_count(selector=nil)
-    TicketsFilter.filter(filter(selector), current_user, current_account.tickets.permissible(current_user)).count
+    filter_scope = TicketsFilter.filter(filter(selector), current_user, 
+                      current_account.tickets.permissible(current_user))
+    SeamlessDatabasePool.use_persistent_read_connection do
+     filter_scope.count
+    end
   end
   
   def sort_by_text(sort_key, order)
@@ -270,7 +276,7 @@ module Helpdesk::TicketsHelper
                 # ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
     key = 'HELPDESK_REPLY_DRAFTS:'+current_account.id.to_s+':'+current_user.id.to_s+':'+ticket.id.to_s
 
-    return ( get_key(key) || bind_last_conv(item, signature, false, quoted) )
+    return ( get_tickets_redis_key(key) || bind_last_conv(item, signature, false, quoted) )
   end
 
   
@@ -296,18 +302,18 @@ module Helpdesk::TicketsHelper
     show_params
   end
 
-  def multiple_emails_container(emails)
+  def multiple_emails_container(emails, label = "To: ")
     html = ""
     unless emails.blank?
       if emails.length < 3
         html << content_tag(:span, 
-                            "To: " + emails.collect{ |to_e| 
+                            "#{label}" + emails.collect{ |to_e| 
                               to_e.gsub("<","&lt;").gsub(">","&gt;") 
                             }.join(", "), 
                             :class => "") 
       else
         html << content_tag(:span, 
-                            "To: " + emails[0,2].collect{ |to_e| 
+                            "#{label}" + emails[0,2].collect{ |to_e| 
                               to_e.gsub("<","&lt;").gsub(">","&gt;") 
                             }.join(", ") + 
                             "<span class='toEmailMoreContainer hide'>,&nbsp;" + 

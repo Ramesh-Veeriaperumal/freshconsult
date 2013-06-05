@@ -25,7 +25,10 @@ class Wf::Containers::DueBy < Wf::FilterContainer
   
   TEXT_DELIMITER = ","
   
-  STATUS_QUERY = "helpdesk_tickets.status in (select status_id from helpdesk_ticket_statuses where (stop_sla_timer is false and deleted is false and account_id = %s))"
+  # STATUS_QUERY = "helpdesk_tickets.status in (select status_id from helpdesk_ticket_statuses where (stop_sla_timer is false and deleted is false and account_id = %s))"
+  STATUS_QUERY = "helpdesk_ticket_statuses.stop_sla_timer IS FALSE 
+                  AND helpdesk_ticket_statuses.deleted IS FALSE 
+                  AND helpdesk_ticket_statuses.account_id=%s"
   
   
   def self.operators

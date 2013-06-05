@@ -2,7 +2,6 @@ require 'fastercsv'
 
 module MapFields
   VERSION = '1.0.0'
-  S3_BUCKET_NAME = 'temp.freshdesk.com'
 
   def self.included(base)
     base.extend(ClassMethods)
@@ -30,8 +29,6 @@ module MapFields
       
       file_name = "csv_#{Account.current.id}/#{Time.now.to_i}/#{file_field.original_filename}"
       
-      s3_credentials = find_credentials
-      
       AWS::S3::Base.establish_connection!(
           :access_key_id     => s3_credentials[:access_key_id],
           :secret_access_key => s3_credentials[:secret_access_key]
@@ -40,7 +37,7 @@ module MapFields
       AWS::S3::S3Object.store(
             file_name,
             file_field,
-            S3_BUCKET_NAME,
+            s3_credentials[:bucket],
             :access => :private, 
             :content_type => file_field.content_type
      )
@@ -54,9 +51,9 @@ module MapFields
         if expected_fields.respond_to?(:call)
           expected_fields = expected_fields.call(params)
         end
-        csv_file = AWS::S3::S3Object.find(session[:map_fields][:file], S3_BUCKET_NAME)
+        csv_file = AWS::S3::S3Object.find(session[:map_fields][:file], s3_credentials[:bucket])
         @mapped_fields = []
-        FasterCSV.parse(csv_file.value) do |row|
+        CSVBridge.parse(csv_file.value) do |row|
            @mapped_fields << row
         end
       end
@@ -65,12 +62,12 @@ module MapFields
     unless @map_fields_error
       @rows = []
       begin
-        csv_file = AWS::S3::S3Object.find(session[:map_fields][:file], S3_BUCKET_NAME)
-        FasterCSV.parse(csv_file.value) do |row|
+        csv_file = AWS::S3::S3Object.find(session[:map_fields][:file], s3_credentials[:bucket])
+        CSVBridge.parse(csv_file.value) do |row|
            @rows << row
            break if @rows.size == 1
         end
-     rescue FasterCSV::MalformedCSVError => e
+     rescue CSVBridge::MalformedCSVError => e
         @map_fields_error = e
       end
       expected_fields = self.class.read_inheritable_attribute(:map_fields_fields)
@@ -89,6 +86,10 @@ module MapFields
     @mapped_fields
   end
   
+  def s3_credentials
+    @s3_credentials ||= find_credentials
+  end
+
   def find_credentials 
     creds = YAML::load(ERB.new(File.read("#{RAILS_ROOT}/config/s3.yml")).result)
     (creds[Rails.env] || creds).symbolize_keys
@@ -106,7 +107,7 @@ module MapFields
   def map_fields_cleanup
     if @mapped_fields
       if session[:map_fields][:file]
-        AWS::S3::S3Object.delete(session[:map_fields][:file], S3_BUCKET_NAME)
+        AWS::S3::S3Object.delete(session[:map_fields][:file], s3_credentials[:bucket])
       end
       session[:map_fields] = nil
       @mapped_fields = nil
@@ -154,7 +155,7 @@ module MapFields
 
     def each
       row_number = 1
-      FasterCSV.foreach(@file) do |csv_row|
+      CSVBridge.foreach(@file) do |csv_row|
         unless row_number == 1 && @ignore_first_row
           row = {}
           @mapping.each do |k,v|
@@ -188,28 +189,29 @@ module MapFields
     end
 
     private
-    def self.check_values(value, &block)
-      result = []
-      if value.kind_of?(Hash)
-        value.each do |k,v|
-          check_values(v) do |k2,v2|
-            result << ["[#{k.to_s}]#{k2}", v2]
+
+      def self.check_values(value, &block)
+        result = []
+        if value.kind_of?(Hash)
+          value.each do |k,v|
+            check_values(v) do |k2,v2|
+              result << ["[#{k.to_s}]#{k2}", v2]
+            end
           end
-        end
-      elsif value.kind_of?(Array)
-        value.each do |v|
-          check_values(v) do |k2, v2|
-            result << ["[]#{k2}", v2]
+        elsif value.kind_of?(Array)
+          value.each do |v|
+            check_values(v) do |k2, v2|
+              result << ["[]#{k2}", v2]
+            end
           end
+        else
+          result << ["", value]
         end
-      else
-        result << ["", value]
-      end
-      result.each do |arr|
-        yield arr[0], arr[1]
+        result.each do |arr|
+          yield arr[0], arr[1]
+        end
       end
     end
-  end
 end
 
 if defined?(Rails) and defined?(ActionController)

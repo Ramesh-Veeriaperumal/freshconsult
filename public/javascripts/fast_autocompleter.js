@@ -557,13 +557,13 @@ Autocompleter.PanedSearch = Class.create({
   
   show: function() {
     if (!this.choicesHolderList.empty()) {
-      this.choicesHolder.addClassName('loading-center');
+      this.choicesHolder.addClassName('sloading loading-small');
       if(Element.getStyle(this.choicesHolder, 'display')=='none') { 
         this.choicesHolder.update();
         this.options.onShow(this.holder, this.choicesHolder);
       }
     this.options.afterPaneShow();
-    this.choicesHolder.removeClassName('loading-center');
+    this.choicesHolder.removeClassName('sloading loading-small');
     };
   },
 

@@ -197,7 +197,7 @@ class Account < ActiveRecord::Base
   delegate :bcc_email, :ticket_id_delimiter, :email_cmds_delimeter, :pass_through_enabled, :to => :account_additional_settings
 
   has_many :subscription_events 
-  
+  xss_sanitize  :only => [:name,:helpdesk_name]
   #Scope restriction ends
   
   validates_format_of :domain, :with => /(?=.*?[A-Za-z])[a-zA-Z0-9]*\Z/
@@ -212,7 +212,9 @@ class Account < ActiveRecord::Base
   validate_on_create :valid_subscription?
   validates_uniqueness_of :google_domain ,:allow_blank => true, :allow_nil => true
   
-  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences,:logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain ,:language
+  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences,
+                  :logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain ,
+                  :language, :ssl_enabled
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
   
   validates_numericality_of :ticket_display_id,
@@ -231,9 +233,9 @@ class Account < ActiveRecord::Base
   after_update :update_users_language
   #after_create :enable_elastic_search
 
-  before_destroy :update_crm, :notify_totango
+  before_destroy :update_crm
 
-  after_commit_on_create :add_to_billing, :add_to_totango #, :create_search_index
+  after_commit_on_create :add_to_billing #, :create_search_index
 
   after_commit_on_update :clear_cache
   after_commit_on_destroy :clear_cache, :delete_search_index, :delete_reports_archived_data
@@ -293,7 +295,7 @@ class Account < ActiveRecord::Base
 
     :estate => {
       :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting, 
-                      :multiple_business_hours ],
+                      :custom_ssl, :multiple_business_hours ],
       :inherits => [ :garden ]
     },
 
@@ -314,7 +316,7 @@ class Account < ActiveRecord::Base
 
     :estate_classic => {
       :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting,
-                    :multiple_business_hours ],
+                    :custom_ssl, :multiple_business_hours ],
       :inherits => [ :garden_classic ]
     }
 
@@ -329,7 +331,7 @@ class Account < ActiveRecord::Base
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
     :anonymous_tickets =>true, :survey_links => true, :gamification_enable => true, :google_signin => true,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
-    :personalized_email_replies => false, :enterprise_reporting => false}
+    :personalized_email_replies => false}
     
   
   has_features do
@@ -844,16 +846,8 @@ class Account < ActiveRecord::Base
       Resque.enqueue(Billing::AddToBilling, { :account_id => id })
     end
 
-    def add_to_totango
-      Resque.enqueue(CRM::Totango::TrialCustomer, {:account_id => id})
-    end
-
     def update_crm
       Resque.enqueue(CRM::AddToCRM::DeletedCustomer, id)
-    end
-
-    def notify_totango
-      Resque.enqueue(CRM::Totango::CanceledCustomer, id, full_domain)
     end
 
     def admin_contact_info

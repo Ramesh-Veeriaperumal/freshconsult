@@ -1,4 +1,3 @@
-<% content_for :layoutType do%>single<% end %>  
 <div class="folder-2col">
   <div class="folder_section" id="folder-section">
 	  <%= render :partial => "/solution/shared/category_folder_list", :locals => { :category => @item.category, :selected => @item } %>
@@ -14,7 +13,7 @@
 	<div class="crumbs">
 		<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
 		<%= link_to h(@item.category.name), solution_category_path(@item.category) %> &rarr;
-		<%= content_tag (:span, h(@item.name) ) %>
+		<%= content_tag(:span, h(@item.name) ) %>
 	</div>
 	<div class="search-grey-box">
 	  <%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search.placeholder', :name => h(@item.category.name)), :url => "/search/solutions?category_id=#{@item.category.id}&search_key=" } %>

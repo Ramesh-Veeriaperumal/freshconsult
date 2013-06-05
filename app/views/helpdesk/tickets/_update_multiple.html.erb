@@ -15,7 +15,7 @@
   			    
             checkbox = check_box_tag object_name+"_"+field.field_name+"_label", "", false,
                           :class => "update-check-for-fields"
-            label = label_tag (object_name+"_"+field.field_name+"_label", checkbox + field.label,:rel => "inputcheckbox")
+            label = label_tag(object_name+"_"+field.field_name+"_label", checkbox + field.label,:rel => "inputcheckbox")
             
             if field.field_type == "nested_field"
               element = label + nested_field_tag(object_name, field.field_name, field, {:include_blank => t('select'), :selected => {}},{:class => dom_type, :rel => "inputselectbox"}, {}, false)
@@ -42,7 +42,7 @@
   </div>  
 </div> 
 <div class="button-container">
-  <div class="loading hide" id="loader">
+  <div class="sloading hide" id="loader">
   </div>
   <%= button_to_function t('ticket_update_multiple_button'), "submitBulkUpdate()", :class => "uiButton", :id =>"ticket_update_multiple_button"  %>
   <%= link_to t('ticket_cancel_multiple_button'), "#", :class => "uiButton", :id =>  "ticket_cancel_multiple_button"%>

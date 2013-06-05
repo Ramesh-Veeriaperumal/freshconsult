@@ -1,0 +1,7 @@
+account1_archive:
+  account_id: 1
+  type: ArchiveFeature
+
+account1_ssl:
+  account_id: 1
+  type: SslFeature

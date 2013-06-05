@@ -12,4 +12,8 @@ module Helpdesk::ToggleEmailNotification
     	Thread.current["notifications_#{account.id}"] = nil
   	end
 
+  	def enable_user_activation(account = current_account)
+    	Thread.current["notifications_#{account.id}"] = nil
+  	end
+
 end

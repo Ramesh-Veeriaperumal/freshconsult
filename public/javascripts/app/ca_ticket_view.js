@@ -10,7 +10,7 @@
       jQuery('#clear-search').show();
   	  jQuery('#search-list').show();
     	jQuery('#fold-list').hide();
-      jQuery('#search-list').empty().addClass('loading-center');
+      jQuery('#search-list').empty().append("<div class='sloading loading-align'></div>");
     }
   });
 
@@ -69,7 +69,7 @@
   	{
       jQuery('#recently_used_container').show();
       jQuery('#response_dialog').removeClass('no_recently_used');
-      jQuery('#recently_used_list').empty().addClass('loading-center');
+      jQuery('#recently_used_list').empty().addClass('sloading loading-small');
   		new Ajax.Request(ca_responses_recent_url+localStorage["local_ca_response"]+']', 
     		{
     			asynchronous: true,
@@ -87,7 +87,7 @@
 	});
 
   jQuery('[data-folder]').bind('click', function(){
-    jQuery('#responses').empty().addClass('loading-center');
+    jQuery('#responses').empty().addClass('sloading loading-small');
   });
 
   jQuery('#canned_response_list a').first().click();

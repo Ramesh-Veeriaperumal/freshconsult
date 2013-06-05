@@ -1,6 +1,8 @@
+# encoding: utf-8
 module SupportHelper
 	include Portal::PortalFilters
-	include RedisKeys
+  include Redis::RedisKeys
+  include Redis::PortalRedis
 
 	FONT_INCLUDES = { "Source Sans Pro" => "Source+Sans+Pro:regular,italic,700,700italic",
 					  "Droid Sans" => "Droid+Sans:regular,700",
@@ -569,7 +571,7 @@ HTML
 			if User.current
 		        is_preview = IS_PREVIEW % { :account_id => current_account.id, 
 		        :user_id => User.current.id, :portal_id => @portal.id}
-		        !get_key(is_preview).blank? && !current_user.blank? && current_user.agent?
+		        !get_portal_redis_key(is_preview).blank? && !current_user.blank? && current_user.agent?
 		    end
 	    end
 

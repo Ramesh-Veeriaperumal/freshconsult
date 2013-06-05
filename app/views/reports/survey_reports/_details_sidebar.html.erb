@@ -16,7 +16,7 @@ date_range = params[:date_range].blank? ? "#{(Time.zone.now.ago 30.day).strftime
         end        
 
 %>
-    <% form_for(details_link, { :action => details_link, :method => :post, :html => {:id => 'date_filter'}, :loading => "jQuery('#report_list').html('<div class=\"loading-box\"></div>');" }) do %>
+    <% form_for(details_link, { :action => details_link, :method => :post, :html => {:id => 'date_filter'}, :loading => "jQuery('#report_list').html('<div class=\"sloading loading-small loading-block\"></div>');" }) do %>
     <ul class="ui-form">
            <input type="hidden" name="category" value="<%=params[:category]%>">
            <input type="hidden" name="rating" value="<%=params[:rating]%>">

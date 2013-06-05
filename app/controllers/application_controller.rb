@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   before_filter :check_account_state, :except => [:show,:index]
   before_filter :set_default_locale
   before_filter :set_time_zone, :check_day_pass_usage 
-  before_filter :set_locale
+  before_filter :set_locale, :force_utf8_params
 
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
@@ -21,8 +21,6 @@ class ApplicationController < ActionController::Base
   include SslRequirement
   include SubscriptionSystem
   include Mobile::MobileHelperMethods
-  include CRM::SendEventToTotango
-  include CRM::TotangoModulesAndActions
   
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store
@@ -45,7 +43,7 @@ class ApplicationController < ActionController::Base
     if !current_account.active? 
       if permission?(:manage_account)
         flash[:notice] = t('suspended_plan_info')
-        return redirect_to(plan_subscription_url)
+        return redirect_to(subscription_url)
       else
         flash[:notice] = t('suspended_plan_admin_info', :email => current_account.admin_email) 
         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
@@ -90,7 +88,7 @@ class ApplicationController < ActionController::Base
   end
   
   def record_not_found (exception)
-    Rails.logger.debug "Error  =>" + exception
+    Rails.logger.debug "Error  =>" + exception.message
     Rails.logger.debug "API Error on invoking: "+request.url + "\t parameters =>"+params.to_json
     respond_to do |format|
       format.html {
@@ -112,7 +110,7 @@ class ApplicationController < ActionController::Base
 
 
   def handle_error (error)
-    Rails.logger.debug "API::Error  =>" + error
+    Rails.logger.debug "API::Error  =>" + error.message
     Rails.logger.debug "API Error on invoking: "+request.url + "\t parameters =>"+params.to_json
     result = {:error => error.message}
     respond_to do | format|
@@ -133,6 +131,26 @@ class ApplicationController < ActionController::Base
   private
     def redactor_form_builder
       ActionView::Base.default_form_builder = FormBuilders::RedactorBuilder
+    end
+
+    # See http://stackoverflow.com/questions/8268778/rails-2-3-9-encoding-of-query-parameters
+    # See https://rails.lighthouseapp.com/projects/8994/tickets/4807
+    # See http://jasoncodes.com/posts/ruby19-rails2-encodings (thanks for the following code, Jason!)
+    def force_utf8_params
+      traverse = lambda do |object, block|
+        if object.kind_of?(Hash)
+          object.each_value { |o| traverse.call(o, block) }
+        elsif object.kind_of?(Array)
+          object.each { |o| traverse.call(o, block) }
+        else
+          block.call(object)
+        end
+        object
+      end
+      force_encoding = lambda do |o|
+        RubyBridge.force_utf8_encoding(o)
+      end
+      traverse.call(params, force_encoding)
     end
 end
 

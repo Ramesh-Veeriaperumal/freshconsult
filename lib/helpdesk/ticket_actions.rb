@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Helpdesk::TicketActions
   
   include Helpdesk::Ticketfields::TicketStatus

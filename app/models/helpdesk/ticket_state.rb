@@ -1,7 +1,8 @@
 class Helpdesk::TicketState <  ActiveRecord::Base
 
   include Reports::TicketStats
-  include RedisKeys
+  include Redis::RedisKeys
+  include Redis::ReportsRedis
 
   # Attributes for populating data into monthly stats tables
   STATS_ATTRIBUTES = [:resolved_at,:first_assigned_at,:assigned_at,:opened_at]
@@ -228,7 +229,7 @@ private
   end
 
   def ent_reports_enabled?
-    !("false".eql?(get_key ENTERPRISE_REPORTS_ENABLED))
+    !("false".eql?(get_reports_redis_key ENTERPRISE_REPORTS_ENABLED))
   end
 
 end
