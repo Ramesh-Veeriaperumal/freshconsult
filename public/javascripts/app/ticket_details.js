@@ -810,10 +810,12 @@ $(document).ready(function() {
 
 					if (_form.data('fulltext')) {
 
-						var body_text = jQuery('<div>'+jQuery('#' + _form.data('cntId') + '-body').val()+'</div>'); 
+						var body_text = jQuery('<div class="hide">'+jQuery('#' + _form.data('cntId') + '-body').val()+'</div>'); 
+						jQuery("body").append(body_text);
 						jQuery('#' + _form.data('cntId') + '-body-fulltext').val(body_text.html());
       					body_text.find('div.freshdesk_quote').remove();
       					jQuery('#' + _form.data('cntId') + '-body').val(body_text.html());
+      					body_text.remove();
 					}
 
 				},

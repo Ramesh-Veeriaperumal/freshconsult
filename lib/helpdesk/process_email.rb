@@ -288,6 +288,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           email_cmds_regex = get_email_cmd_regex(ticket.account)
           note.note_body.body = body.gsub(email_cmds_regex, "") if(!body.blank? && email_cmds_regex)
           note.note_body.body_html = body_html.gsub(email_cmds_regex, "") if(!body_html.blank? && email_cmds_regex)
+          note.note_body.full_text = full_text.gsub(email_cmds_regex, "") if(!full_text.blank? && email_cmds_regex)
+          note.note_body.full_text_html = full_text_html.gsub(email_cmds_regex, "") if(!full_text_html.blank? && email_cmds_regex)
         end
       rescue Exception => e
         NewRelic::Agent.notice_error(e)

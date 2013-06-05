@@ -160,7 +160,9 @@
 
 <% javascript_tag do %>
     jQuery("#HelpdeskFwd_<%=cntid%>").bind("submit", function(ev){ 
-          var body_text = jQuery('<div>'+jQuery('#<%=cntid%>-body').val()+'</div>');
+          var body_text = jQuery('<div class="hide">'+jQuery('#<%=cntid%>-body').val()+'</div>');
+
+          jQuery("body").append(body_text);
 
           if(!jQuery('#fwd_include_cc_<%=cntid%>').is(':checked'))
             jQuery('[name="helpdesk_note[cc_emails][]"]').val('');
@@ -170,6 +172,8 @@
           jQuery('#<%=cntid%>-body-fulltext').val(body_text.html());
           body_text.find('div.freshdesk_quote').remove();
           jQuery('#<%=cntid%>-body').val(body_text.html());
+
+          body_text.remove();
 
           }).validate()
 <% end %>
