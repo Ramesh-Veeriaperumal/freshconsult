@@ -80,13 +80,14 @@ class Helpdesk::TicketsController < ApplicationController
     cookies.delete(:ticket_list_updated) 
     tkt = current_account.tickets.permissible(current_user)
     @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
-
-    if @items.empty? && !params[:page].nil? && params[:page] != '1'
-      params[:page] = '1'  
-      @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
-    end
     respond_to do |format|      
       format.html  do
+        #moving this condition inside to redirect to first page in case of close/resolve of only ticket in current page.
+        #For api calls(json/xml), the redirection is ignored, to use as indication of last page.
+        if @items.empty? && !params[:page].nil? && params[:page] != '1'
+          params[:page] = '1'  
+          @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
+        end
         @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
         @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
         unless request.headers['X-PJAX']
