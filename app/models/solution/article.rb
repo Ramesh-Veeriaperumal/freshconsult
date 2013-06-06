@@ -106,6 +106,7 @@ class Solution::Article < ActiveRecord::Base
               query.filtered do |f|
                 f.query { |q| q.string SearchUtil.es_filter_key(search_by), :fields => ['title', 'desc_un_html'], :analyzer => "include_stop" }
                 f.filter :terms, :_type => ['solution/article']
+                f.filter :term, { :account_id => ticket.account_id }
               end
             end
             search.from options[:size].to_i * (options[:page].to_i-1)

@@ -133,6 +133,7 @@ class Support::SearchController < SupportController
                 f.query { |q| q.string SearchUtil.es_filter_key(params[:term]), :analyzer => "include_stop" }
               end
               f.filter :terms, :_type => search_in
+              f.filter :term, { :account_id => current_account.id }
               f.filter :or, { :not => { :exists => { :field => :status } } },
                             { :not => { :term => { :status => SearchUtil::DEFAULT_SEARCH_VALUE } } }
 
@@ -165,11 +166,11 @@ class Support::SearchController < SupportController
               unless main_portal?
                 if search_in.include?('solution/article')
                   f.filter :or, { :not => { :exists => { :field => 'folder.category_id' } } },
-                                { :term => { 'folder.category_id' => current_portal.solution_category_id } }
+                                { :term => { 'folder.category_id' => current_portal.solution_category_id || 0 } }
                 end
                 if search_in.include?('topic')
                   f.filter :or, { :not => { :exists => { :field => 'forum.forum_category_id' } } },
-                                { :term => { 'forum.forum_category_id' => current_portal.forum_category_id } }
+                                { :term => { 'forum.forum_category_id' => current_portal.forum_category_id || 0 } }
                 end
               end
             end

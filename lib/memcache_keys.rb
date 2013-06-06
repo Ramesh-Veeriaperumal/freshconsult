@@ -36,6 +36,8 @@ module MemcacheKeys
   ACCOUNT_NESTED_FIELDS = "v1/ACCOUNT_NESTED_FIELDS:%{account_id}"
 
   ES_ENABLED_ACCOUNTS = "ES_ENABLED_ACCOUNTS"
+
+  ES_INDEX_NAME = "ES_INDEX_%{account_id}"
  
   # Portal customization related keys
   PORTAL_TEMPLATE = "v2/PORTAL_TEMPLATE:%{account_id}:%{portal_id}"
