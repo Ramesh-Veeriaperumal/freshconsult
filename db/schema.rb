@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130604092132) do
+ActiveRecord::Schema.define(:version => 20130606101905) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -666,6 +666,10 @@ ActiveRecord::Schema.define(:version => 20130604092132) do
     t.integer  "account_id",     :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "raw_text",       :limit => 16777215
+    t.text     "raw_html",       :limit => 16777215
+    t.text     "meta_info",      :limit => 16777215
+    t.integer  "version"
   end
 
   add_index "helpdesk_note_bodies", ["account_id", "note_id"], :name => "index_note_bodies_on_account_id_and_note_id", :unique => true
@@ -883,6 +887,10 @@ ActiveRecord::Schema.define(:version => 20130604092132) do
     t.integer  "account_id",       :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "raw_text",         :limit => 16777215
+    t.text     "raw_html",         :limit => 16777215
+    t.text     "meta_info",        :limit => 16777215
+    t.integer  "version"
   end
 
   add_index "helpdesk_ticket_bodies", ["account_id", "ticket_id"], :name => "index_ticket_bodies_on_account_id_and_ticket_id", :unique => true
