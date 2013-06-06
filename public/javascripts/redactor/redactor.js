@@ -1569,29 +1569,30 @@ Redactor.prototype = {
 		html = this.stripTags(html);
 			
 		// prevert
-		html = html.replace(/<td><br><\/td>/gi, '[td]');
-		html = html.replace(/<a(.*?)>([\w\W]*?)<\/a>/gi, '[a$1]$2[/a]');
-		html = html.replace(/<iframe(.*?)>([\w\W]*?)<\/iframe>/gi, '[iframe$1]$2[/iframe]');
-		html = html.replace(/<video(.*?)>([\w\W]*?)<\/video>/gi, '[video$1]$2[/video]');
-		html = html.replace(/<audio(.*?)>([\w\W]*?)<\/audio>/gi, '[audio$1]$2[/audio]');
-		html = html.replace(/<object(.*?)>([\w\W]*?)<\/object>/gi, '[object$1]$2[/object]');
-		html = html.replace(/<img(.*?)>/gi, '[img$1]');
+		// html = html.replace(/<td><br><\/td>/gi, '[td]');
+		// html = html.replace(/<a(.*?)>([\w\W]*?)<\/a>/gi, '[a$1]$2[/a]');
+		// html = html.replace(/<iframe(.*?)>([\w\W]*?)<\/iframe>/gi, '[iframe$1]$2[/iframe]');
+		// html = html.replace(/<video(.*?)>([\w\W]*?)<\/video>/gi, '[video$1]$2[/video]');
+		// html = html.replace(/<audio(.*?)>([\w\W]*?)<\/audio>/gi, '[audio$1]$2[/audio]');
+		// html = html.replace(/<object(.*?)>([\w\W]*?)<\/object>/gi, '[object$1]$2[/object]');
+		// html = html.replace(/<img(.*?)>/gi, '[img$1]');
 	
 		// remove attributes
-		html = html.replace(/<(\w+)([\w\W]*?)>/gi, '<$1>');
+		// Commented so that styles before and after pasting remain the same
+		// html = html.replace(/<(\w+)([\w\W]*?)>/gi, '<$1>');
 		
 		// remove empty  //Commented by John to avoid empty line cleanup on paste
 		// html = html.replace(/<[^\/>][^>]*>(\s*|\t*|\n*|&nbsp;|<br>)<\/[^>]+>/gi, '');
 		// html = html.replace(/<[^\/>][^>]*>(\s*|\t*|\n*|&nbsp;|<br>)<\/[^>]+>/gi, '');
 		
 		// revert
-		html = html.replace(/\[td\]/gi, '<td><br></td>');
-		html = html.replace(/\[a(.*?)\]([\w\W]*?)\[\/a\]/gi, '<a$1>$2</a>');
-		html = html.replace(/\[iframe(.*?)\]([\w\W]*?)\[\/iframe\]/gi, '<iframe$1>$2</iframe>');
-		html = html.replace(/\[video(.*?)\]([\w\W]*?)\[\/video\]/gi, '<video$1>$2[/video>');
-		html = html.replace(/\[audio(.*?)\]([\w\W]*?)\[\/audio\]/gi, '<audio$1>$2[/audio>');
-		html = html.replace(/\[object(.*?)\]([\w\W]*?)\[\/object\]/gi, '<object$1>$2</object>');
-		html = html.replace(/\[img(.*?)\]/gi, '<img$1>');				
+		// html = html.replace(/\[td\]/gi, '<td><br></td>');
+		// html = html.replace(/\[a(.*?)\]([\w\W]*?)\[\/a\]/gi, '<a$1>$2</a>');
+		// html = html.replace(/\[iframe(.*?)\]([\w\W]*?)\[\/iframe\]/gi, '<iframe$1>$2</iframe>');
+		// html = html.replace(/\[video(.*?)\]([\w\W]*?)\[\/video\]/gi, '<video$1>$2[/video>');
+		// html = html.replace(/\[audio(.*?)\]([\w\W]*?)\[\/audio\]/gi, '<audio$1>$2[/audio>');
+		// html = html.replace(/\[object(.*?)\]([\w\W]*?)\[\/object\]/gi, '<object$1>$2</object>');
+		// html = html.replace(/\[img(.*?)\]/gi, '<img$1>');				
 	
 		// convert div to p
 		if (this.opts.convertDivs)
