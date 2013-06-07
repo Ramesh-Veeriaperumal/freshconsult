@@ -433,10 +433,12 @@
 					if (current_url) {
 						current_url = current_url.replace(/(&k=)\w*/g,"");
 						current_url = current_url.replace("user_tickets.widget","");
+						if(current_url.indexOf('/') == 0)
+						{
+							$(this).attr('href',http_s+"://"+url_root+current_url);
+						}
 					}
 
-					
-					$(this).attr('href',http_s+"://"+url_root+current_url);
 					$(this).attr('target','__new');
 					$(this).addClass('post_processed')
 				}
