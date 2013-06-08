@@ -136,7 +136,7 @@ private
     poweruser = self.all_ticket_permission ? "Agent" : "Restricted Agent"
     self.user.roles = [self.account.roles.find_by_name(poweruser)]
     self.user.privileges = union_privileges(self.user.roles).to_s
-    self.user.save
+    self.user.send(:update_without_callbacks)
   end
   
   def backup_agent_changes

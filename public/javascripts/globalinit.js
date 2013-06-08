@@ -495,7 +495,7 @@ is_touch_device = function() {
 
       //Not using pjax for IE10- Temporary fix for IE pjax load issue
       //in dashboard and tickets filter. Remove the condition once we get permanent fix
-    if ($.browser.msie && parseInt($.browser.version) != 10) {
+    if (!$.browser.msie) {
       $(document).pjax('a[data-pjax]',{
           timeout: -1,
           push : false,
