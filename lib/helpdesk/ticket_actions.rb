@@ -205,7 +205,10 @@ module Helpdesk::TicketActions
       @ticket_filter.deserialize_from_params(params)
       joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
       options = { :joins => joins, :conditions => @ticket_filter.sql_conditions}
-      options[:distinct] = true if @ticket_filter.sql_conditions[0].include?("helpdesk_tags.name")
+      if @ticket_filter.sql_conditions[0].include?("helpdesk_tags.name")
+        options[:distinct] = true 
+        options[:select] = :id
+      end
       total_entries = current_account.tickets.permissible(current_user).count(options)
     end
     @ticket_count = total_entries.to_i
