@@ -22,6 +22,26 @@ class SupportController < ApplicationController
   end
 
   protected
+
+    def allow_monitor?
+      params[:user_id] = current_user.id if (params[:user_id].nil?)
+      unless current_user.admin?
+        if (!params[:user_id].blank? && params[:user_id].to_s!=current_user.id.to_s)
+          @errors = {:error=>"Permission denied for user"}
+          respond_to do |format|
+            format.xml {
+              render :xml => @errors.to_xml(:root=>:errors),:status=>:forbidden
+             }
+             format.json{
+              render :json => {:errors=>@errors}.as_json,:status=>:forbidden
+             }
+          end
+        end 
+
+      end
+    end
+
+
     def set_portal_page page_token
       @skip_liquid_compile = false
 
