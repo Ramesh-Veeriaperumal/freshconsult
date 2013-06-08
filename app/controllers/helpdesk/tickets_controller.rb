@@ -184,7 +184,8 @@ class Helpdesk::TicketsController < ApplicationController
       @ticket = current_account.tickets.find_by_display_id(params[:id]) # using find_by_id(instead of find) to avoid exception when the ticket with that id is not found.
       @item = @ticket
       if @ticket.blank?
-        @item = Helpdesk::Ticket.new
+        @item = @ticket = Helpdesk::Ticket.new
+        @ticket.build_ticket_body
         render :new, :layout => "widgets/contacts"
       else
         if verify_permission
