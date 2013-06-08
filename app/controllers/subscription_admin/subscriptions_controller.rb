@@ -7,7 +7,7 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   include ModelControllerMethods
   include AdminControllerMethods 
 
-  skip_filter :run_on_slave, :only => [:update]
+  skip_filter :run_on_slave, :only => [:update,:add_day_passes]
   
   before_filter :set_selected_tab, :only => [ :customers ]
   

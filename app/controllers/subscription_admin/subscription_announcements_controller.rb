@@ -1,5 +1,6 @@
 class SubscriptionAdmin::SubscriptionAnnouncementsController < ApplicationController
   include AdminControllerMethods
+  skip_filter :run_on_slave
   before_filter :build_object, :only => [ :new ]
   before_filter :load_object, :only => [ :edit, :update, :destroy ]        
   before_filter :set_selected_tab
