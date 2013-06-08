@@ -1,7 +1,7 @@
 SPAM_TICKETS_THRESHOLD = 50 #Allowed number of tickets in 30 minutes window..
 SPAM_CONVERSATIONS_THRESHOLD = 50
 
-LIMITS = {:shard_1 => {:tickets_limit => 8500000, :notes_limit => 7000000} } 
+LIMITS = {:shard_1 => {:tickets_limit => 13832938, :notes_limit => 12301435} } 
 
 namespace :spam_watcher do
   desc 'Check for abnormal activities and email us, if needed'
