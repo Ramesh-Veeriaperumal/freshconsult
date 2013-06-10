@@ -96,7 +96,6 @@ gem "wicked_pdf", "~> 0.9.2"
 gem "pg"
 
 gem "cloudfront_asset_host", :git => "git://github.com/freshdesk/cloudfront_asset_host.git"
-gem "freshdesk_authority", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/freshdesk_authority-0.1"
 
 group :production,:test,:staging do
  gem 'tire', :git => "git://github.com/freshdesk/tire.git"
