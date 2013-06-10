@@ -12,6 +12,7 @@ class User < ActiveRecord::Base
   include Cache::Memcache::User
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Authority::Rails::ModelHelpers
 
   USER_ROLES = [
     [ :admin,       "Admin",            1 ],
@@ -21,6 +22,12 @@ class User < ActiveRecord::Base
     [ :client_manager,"Client Manager", 5 ],
     [ :supervisor,    "Supervisor"    , 6 ]
    ]
+   
+   ROLE_NAME_MAPPING = {
+     :admin => "Administrator",
+     :account_admin => "Account Administrator",
+     :supervisor => "Supervisor"
+   }
 
   USER_ROLES_OPTIONS = USER_ROLES.map { |i| [i[1], i[2]] }
   USER_ROLES_NAMES_BY_KEY = Hash[*USER_ROLES.map { |i| [i[2], i[1]] }.flatten]
@@ -37,6 +44,13 @@ class User < ActiveRecord::Base
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :dependent => :destroy
    
   has_many :email_notification_agents,  :dependent => :destroy
+  
+  has_and_belongs_to_many :roles,
+      :join_table => "user_roles",
+      :insert_sql => 
+        'INSERT INTO user_roles (account_id, user_id, role_id) VALUES
+         (#{account_id}, #{id}, #{ActiveRecord::Base.sanitize(record.id)})',
+      :autosave => true
   
   validates_uniqueness_of :user_role, :scope => :account_id, :if => Proc.new { |user| user.user_role  == USER_ROLES_KEYS_BY_TOKEN[:account_admin] }
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
@@ -73,6 +87,11 @@ class User < ActiveRecord::Base
 
   before_update :bakcup_user_changes, :clear_redis_for_agent
   after_commit_on_update :update_search_index, :if => :customer_id_updated?
+
+  before_create :set_authority_delta, :if => :roles_enabled?
+  before_update :set_authority_delta, :if => [:roles_enabled?, :user_role_updated?]
+  before_update :set_authority_delta, :if => [:roles_enabled?, :user_restored?]
+  before_update :destroy_user_roles,  :if => [:roles_enabled?, :deleted?]
   
   xss_sanitize  :only => [:name,:email]
   named_scope :account_admin, :conditions => ["user_role = #{USER_ROLES_KEYS_BY_TOKEN[:account_admin]}" ]
@@ -156,7 +175,7 @@ class User < ActiveRecord::Base
   attr_accessor :import
   attr_accessible :name, :email, :password, :password_confirmation , :second_email, :job_title, :phone, :mobile, 
                   :twitter_id, :external_id, :description, :time_zone, :avatar_attributes,:user_role,:customer_id,:import_id,
-                  :deleted , :fb_profile_id , :language, :address
+                  :deleted , :fb_profile_id , :language, :address, :helpdesk_agent, :role_ids
 
   #Sphinx configuration starts
   define_index do
@@ -497,10 +516,22 @@ class User < ActiveRecord::Base
   
   def make_customer
     return if customer?
-    
-    update_attributes({:user_role => USER_ROLES_KEYS_BY_TOKEN[:customer], :deleted => false})
+    destroy_user_roles
+    update_attributes({
+      :user_role => USER_ROLES_KEYS_BY_TOKEN[:customer],
+      :helpdesk_agent => false,
+      :deleted => false})
     subscriptions.destroy_all
     agent.destroy
+  end
+  
+  def make_agent(args = {})
+    self.deleted = false
+    self.helpdesk_agent = true
+    self.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:poweruser]
+    agent = build_agent()
+    agent.occasional = !!args[:occasional]
+    save
   end
 
   def to_indexed_json
@@ -523,7 +554,10 @@ class User < ActiveRecord::Base
   end
  
  def set_default_role
-   self.user_role = USER_ROLES_KEYS_BY_TOKEN[:customer] if self.user_role.blank?
+   if self.user_role.blank?
+     self.user_role = USER_ROLES_KEYS_BY_TOKEN[:customer]
+     destroy_user_roles
+   end
  end
 
  def set_company_name
@@ -577,6 +611,10 @@ class User < ActiveRecord::Base
     def user_role_updated?
       @all_changes.has_key?(:user_role)
     end
+    
+    def user_restored?
+      @all_changes && @all_changes.has_key?(:deleted) && is_not_deleted?
+    end
 
     def customer_id_updated?
       @all_changes.has_key?(:customer_id)
@@ -589,6 +627,42 @@ class User < ActiveRecord::Base
         remove_others_redis_key(GROUP_AGENT_TICKET_ASSIGNMENT % 
                {:account_id => account_id, :group_id => ag.group_id})
       end
-  end
+    end
     
+    def agent_roles
+      [ :admin, :poweruser, :account_admin, :supervisor ]
+    end
+    
+    def set_authority_delta
+      role = USER_ROLES_SYMBOL_BY_KEY[self.user_role]
+
+      if agent_roles.include?(role)
+        self.helpdesk_agent = true
+
+        if role != :poweruser
+          self.roles = [self.account.roles.find_by_name(ROLE_NAME_MAPPING[role])]
+          self.privileges = union_privileges(self.roles).to_s
+        elsif (role == :poweruser) && user_restored?
+          poweruser = self.agent.all_ticket_permission ? "Agent" : "Restricted Agent"
+          self.roles = [self.account.roles.find_by_name(poweruser)]
+          self.privileges = union_privileges(self.roles).to_s
+        else
+          destroy_user_roles
+        end
+    
+      else 
+        self.helpdesk_agent = false
+        destroy_user_roles
+        self.privileges = Role.privileges_mask([:client_manager]) if self.client_manager?
+      end
+    end
+    
+    def destroy_user_roles
+      self.privileges = "0"
+      self.roles.clear
+    end
+    
+    def roles_enabled?
+      self.account.roles_enabled?
+    end
 end

@@ -11,7 +11,9 @@
 	<ul <%= 'class="ui-form dont-validate"' if @new_show_page %>>
 		<li class="inline-field field continous">
 			<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>
-			<%= f.text_area :body_html, :class => "required", :value => @item.body_html, :id =>"#{@item.id}-body" %>
+			<% f.fields_for :note_body, @item.note_body do |ff| %>
+				<%= ff.text_area :body_html, :class => "required", :value => @item.body_html, :id =>"#{@item.id}-body" %>
+			<% end %>
 		</li>
 		<li class="button-container  <%= 'hide' if @new_show_page %>">
 			<%= submit_tag(t("update"), :class => "uiButton special") %>

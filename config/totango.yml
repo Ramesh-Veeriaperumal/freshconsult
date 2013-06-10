@@ -1,8 +1,0 @@
-development:
- service_id: SP-3170-01
-
-staging:
- service_id: SP-3169-01
-
-production:
- service_id: SP-3051-01

@@ -1,7 +1,6 @@
 module Reports::PopulateStatsData
 
 	def stats_data(start_time)
-		SeamlessDatabasePool.use_persistent_read_connection do
 			Account.active_accounts.find_in_batches(:batch_size => 500) do |accounts|
 				accounts.each do |account|
 					Time.zone = account.time_zone
@@ -9,7 +8,6 @@ module Reports::PopulateStatsData
 						:end_time => Time.zone.now.to_s})
 				end
 			end
-		end
 	end
 	
 end

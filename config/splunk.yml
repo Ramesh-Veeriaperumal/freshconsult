@@ -1,0 +1,19 @@
+development:
+  project_id: 2ae2744eb0c311e2abfe22000a1cdcf0
+  access_token: h0ZIgNu4gYSc4EOos06f7gQcpnQcPze6jVf--OSSsM7WQLXyfXyT4oTT3fo02dwXy0faacL7RdQ=
+  host: www.fddev.com
+
+staging:
+  project_id: 2ae2744eb0c311e2abfe22000a1cdcf0
+  access_token: h0ZIgNu4gYSc4EOos06f7gQcpnQcPze6jVf--OSSsM7WQLXyfXyT4oTT3fo02dwXy0faacL7RdQ=
+  host: www.freshpo.com
+
+test:
+  project_id: 2ae2744eb0c311e2abfe22000a1cdcf0
+  access_token: h0ZIgNu4gYSc4EOos06f7gQcpnQcPze6jVf--OSSsM7WQLXyfXyT4oTT3fo02dwXy0faacL7RdQ=
+  host: www.freshtest.com
+
+production:
+  project_id: 478fc742856a11e2bb4822000a1ea029
+  access_token: JigcL6_3foRp6x8xfa81b2LKsCKZd15vGiCRPLDRJaU1Vlx9Wxp7ScUod94Mk19gy7eqTAE-0Eg=
+  host: www.freshdesk.com

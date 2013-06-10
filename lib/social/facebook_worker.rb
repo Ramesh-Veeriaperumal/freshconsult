@@ -9,6 +9,7 @@ class Social::FacebookWorker
   
   def self.perform(args)
     account = Account.current
+    return if account.facebook_pages.empty? 
     facebook_pages = account.facebook_pages.find(:all, :conditions => ["enable_page = 1"])    
     facebook_pages.each do |fan_page|   
         @fan_page =  fan_page

@@ -3,6 +3,8 @@ class SubscriptionAdmin::CustomSslController < ApplicationController
   include Redis::RedisKeys
   include Redis::OthersRedis
 
+  skip_filter :read_on_slave, :only => [:enable_custom_ssl]
+
 	def index
 		@portals = Portal.find(:all, :conditions => ["elb_dns_name is not null"])
 		@portals = @portals.paginate( :page => params[:page], :per_page => 30)

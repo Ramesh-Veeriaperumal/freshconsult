@@ -11,10 +11,9 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::AdjacentTickets
   include Helpdesk::Activities
   include Helpdesk::ToggleEmailNotification
-  include SeamlessDatabasePool::ControllerFilter
   include Helpdesk::ShowVersion
 
-  use_database_pool [:user_ticket, :export_csv] => :persistent
+  around_filter :run_on_slave, :only => :user_ticket
 
   before_filter :set_mobile, :only => [:index, :show,:update, :create, :execute_scenario, :assign, :spam ]
   before_filter :check_user, :only => [:show, :forward_conv]
@@ -37,11 +36,15 @@ class Helpdesk::TicketsController < ApplicationController
   alias :load_ticket :load_item
   before_filter :load_ticket, :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :activities, :status]
 
+  skip_before_filter :build_item, :only => [:create]
+  alias :build_ticket :build_item
+  before_filter :build_ticket_body_attributes, :build_ticket, :only => [:create]
+
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
   before_filter :check_ticket_status, :only => [:update]
-  # before_filter :validate_manual_dueby, :only => :update
+  before_filter :validate_manual_dueby, :only => :update
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
 
   before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv]
@@ -181,7 +184,8 @@ class Helpdesk::TicketsController < ApplicationController
       @ticket = current_account.tickets.find_by_display_id(params[:id]) # using find_by_id(instead of find) to avoid exception when the ticket with that id is not found.
       @item = @ticket
       if @ticket.blank?
-        @item = Helpdesk::Ticket.new
+        @item = @ticket = Helpdesk::Ticket.new
+        @ticket.build_ticket_body
         render :new, :layout => "widgets/contacts"
       else
         if verify_permission
@@ -490,7 +494,13 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
 
+  def edit
+    @item.build_ticket_body(:description_html => @item.description_html,
+        :description => @item.description) unless @item.ticket_body
+  end
+
   def new
+    @item.build_ticket_body
     unless params[:topic_id].nil?
       @topic = Topic.find(params[:topic_id])
       @item.subject     = @topic.title
@@ -819,6 +829,19 @@ class Helpdesk::TicketsController < ApplicationController
       end
     end
 
+    def build_ticket_body_attributes
+      if params[:helpdesk_ticket][:description] || params[:helpdesk_ticket][:description_html]
+        unless params[:helpdesk_ticket].has_key?(:ticket_body_attributes)
+          ticket_body_hash = {:ticket_body_attributes => { :description => params[:helpdesk_ticket][:description],
+                                  :description_html => params[:helpdesk_ticket][:description_html] }} 
+          params[:helpdesk_ticket].merge!(ticket_body_hash).tap do |t| 
+            t.delete(:description) if t[:description]
+            t.delete(:description_html) if t[:description_html]
+          end 
+        end 
+      end
+    end
+
     def verify_permission
       unless current_user && current_user.has_ticket_permission?(@item) && !@item.trashed
         flash[:notice] = t("flash.general.access_denied") 
@@ -901,29 +924,34 @@ class Helpdesk::TicketsController < ApplicationController
     @selected_tab = :tickets
   end
 
-  # def validate_manual_dueby
-  #   if(@item.manual_dueby && params[nscname].key?(:due_by) && params[nscname].key?(:frDueBy))
-  #     unless validate_date(params[nscname][:due_by]) && validate_date(params[nscname][:frDueBy])
-  #       respond_to do |format|
-  #         format.json { 
-  #           render :json => { :update_failure => true, :errors => I18n.t('date_invalid') }.to_json and return
-  #         }
-  #         format.xml {
-  #           render :xml => { :update_failure => true, :errors => I18n.t('date_invalid') }.to_xml and return
-  #         }
-  #         format.html { render :text => I18n.t('date_invalid') and return }
-  #       end
-  #     end
-  #   else
-  #     params[nscname].except!(:due_by, :frDueBy)
-  #   end
-  # end
+  def validate_manual_dueby
+    if(@item.manual_dueby && params[nscname].key?(:due_by) && params[nscname].key?(:frDueBy))
+      unless validate_date(params[nscname][:due_by]) && validate_date(params[nscname][:frDueBy])
+        respond_to do |format|
+          format.json { 
+            render :json => { :update_failure => true, :errors => I18n.t('date_invalid') }.to_json and return
+          }
+          format.xml {
+            render :xml => { :update_failure => true, :errors => I18n.t('date_invalid') }.to_xml and return
+          }
+          format.html { render :text => I18n.t('date_invalid') and return }
+        end
+      end
+    else
+      params[nscname].except!(:due_by, :frDueBy)
+    end
+  end
 
-  # def validate_date(date_string)
-  #   begin
-  #     date = Date.parse(date_string)
-  #   rescue
-  #     return false
-  #   end
-  # end
+  def validate_date(date_string)
+    begin
+      date = Date.parse(date_string)
+    rescue
+      return false
+    end
+  end
+  def run_on_slave(&block)
+    Sharding.run_on_slave(&block)
+  end 
+
+ 
 end

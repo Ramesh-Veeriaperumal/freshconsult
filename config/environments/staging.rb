@@ -9,6 +9,8 @@ config.cache_classes = true
 # Use a different logger for distributed setups
 # config.logger = SyslogLogger.new
 
+#ActiveRecord::Base.logger = Logger.new("log/debug.log")
+
 # Full error reports are disabled and caching is turned on
 config.action_controller.consider_all_requests_local = false
 config.action_controller.perform_caching             = true
@@ -27,6 +29,7 @@ end
 # Use a different cache store in production
 # config.cache_store = :mem_cache_store
 
+#ActiveRecord::Base.logger = Logger.new("log/debug.log")
 
 # Enable serving of images, stylesheets, and javascripts from an asset server
 # config.action_controller.asset_host                  = "http://assets.example.com"

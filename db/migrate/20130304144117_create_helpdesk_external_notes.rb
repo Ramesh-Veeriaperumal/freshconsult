@@ -1,4 +1,5 @@
 class CreateHelpdeskExternalNotes < ActiveRecord::Migration
+  shard :none
   def self.up
     execute("CREATE TABLE `helpdesk_external_notes` (
             `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
