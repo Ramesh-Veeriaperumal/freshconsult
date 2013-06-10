@@ -29,6 +29,7 @@ class SubscriptionsController < ApplicationController
     response = billing_subscription.activate_subscription(@subscription)
     
     if response and @subscription.save
+      update_features
       flash[:notice] = t('plan_is_selected', :plan => @subscription.subscription_plan.name )
       redirect_to subscription_url
     else
@@ -110,6 +111,7 @@ class SubscriptionsController < ApplicationController
       end
       
       if @subscription.save
+        update_features
         #SubscriptionNotifier.deliver_plan_changed(@subscription)    
       else
         load_plans        
@@ -193,6 +195,11 @@ class SubscriptionsController < ApplicationController
       Resque.enqueue(Subscription::Events::AddEvent, 
         { :account_id => @subscription.account_id, :subscription_id => @subscription.id, 
           :subscription_hash => subscription_info(@cached_subscription) } )
+    end
+
+    def update_features
+      return if @subscription.subscription_plan_id == @cached_subscription.subscription_plan_id
+      SAAS::SubscriptionActions.new.change_plan(@subscription.account, @cached_subscription)      
     end
 
 end 

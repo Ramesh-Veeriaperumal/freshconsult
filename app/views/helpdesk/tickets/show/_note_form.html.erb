@@ -30,8 +30,9 @@
 
       <li class="inline-field field">
         <%= render :partial => 'helpdesk/tickets/show/editor_insert_buttons', :locals => { :cntid => cntid } %>
-        <%= f.text_area :body_html, :class => "body_html required", :id => "#{cntid}-body", 
-                        :value => "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span>" %>
+        <% f.fields_for (:note_body, Helpdesk::NoteBody.new) do |ff| %>
+            <%= ff.text_area :body_html, :class => "body_html required", :id => "#{cntid}-body", :value => "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span>" %>
+        <% end %>
       </li>
 
       <li class="inline-field field attachment-options continous" id="attachment-options-note">

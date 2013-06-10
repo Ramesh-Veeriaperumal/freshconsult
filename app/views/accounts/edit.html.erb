@@ -3,9 +3,6 @@
 <% content_for :sidebar do %>
 <%= render :partial => "helpnote" %>
 <% end %>
-<% content_for :totango do %>
-    <%= render :partial => "layouts/totango" %>
-<% end %>
 <%= render :partial => "shared/colorpicker" %>
 <% javascript_tag do %>
 	jQuery(document).ready(function(){ 
@@ -24,11 +21,6 @@
 			    jQuery('#account_main_portal_attributes_portal_url').val(result_url);
 			}
 		});
-		jQuery("#account_submit").bind('click', function(){
-		    if ((jQuery("#edit_form").valid()) && (jQuery('.portal_url').val() != "")) {
-		        totango.track("CNAME Updated", "Portal Customization");
-	      	}
-    	});
 	}); 
 <% end %>
 <div id="admin-account-rebraning-page" class="rebrand-page">

@@ -31,14 +31,6 @@ class ActivationsController < SupportController
  
     if @user.activate!(params)
       flash[:notice] = t('users.activations.success')
-      Resque::enqueue(
-        CRM::Totango::SendUserAction, 
-        { 
-          :account_id => current_account.id, 
-          :email => @user.email, 
-          :activity => totango_activity(:account_activation) 
-        }
-      ) if @user.privilege?(:manage_account)
       @current_user = @user
       redirect_to(root_url) if grant_day_pass
     else

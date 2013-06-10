@@ -3,11 +3,25 @@ module Helpdesk
     
     def default_roles_list
     [  
-      ["Account Administrator", ACCOUNT_ADMINISTRATOR, "Account Administrator"],
-      ["Administrator",         ADMINISTRATOR,         "Administrator"],
-      ["Supervisor",            SUPERVISOR,            "Supervisor"],
-      ["Agent",                 AGENT,                 "Agent"]
-    ]
+      [ "Account Administrator",
+        ACCOUNT_ADMINISTRATOR,
+        "Has complete control over the help desk including access to Account or Billing
+         related information, and receives Invoices."],
+      
+      [ "Administrator",
+        ADMINISTRATOR,
+        "Can configure all features through the Admin tab, but is restricted from viewing
+         Account or Billing related information."],
+      
+      [ "Supervisor",
+        SUPERVISOR,
+        "Can perform all agent related activities and access reports, but cannot access or
+         change configurations in the Admin tab."],
+      
+      [ "Agent",
+        AGENT,
+        "Can log, view, reply, update and resolve tickets and manage contacts."],
+     ]
     end
         
     ACCOUNT_ADMINISTRATOR = [

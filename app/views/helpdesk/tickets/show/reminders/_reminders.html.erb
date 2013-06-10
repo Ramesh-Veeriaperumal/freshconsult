@@ -1,0 +1,16 @@
+<div class="addReminder">
+  <% form_remote_for(form_controller, :after => "$('helpdesk_reminder_body').disabled=true;") do |f| %>
+    <input type="hidden" name="source" value="ticket_view" />
+    <%= f.text_area :body, :class => "text", :autocomplete => "off", :placeholder => t('add_to_do'), :maxlength => 120 %>
+  <% end %>
+</div> 
+<ul id="reminderlist" class="reminderlist" >
+  <% reminders.visible.map do |r| %>   
+   <%= render :partial => "/helpdesk/tickets/show/reminders/reminder", :object => r %>
+  <% end %>
+</ul>
+<ul id="compeleted_reminders" class="reminderlist">
+  <% reminders.logged.map do |r| %>
+    <%= render :partial => "/helpdesk/tickets/show/reminders/reminder", :object => r %>
+  <% end %>
+</ul>

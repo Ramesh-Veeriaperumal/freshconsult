@@ -169,7 +169,7 @@ function lookup(searchString, callback) {
   var type = jQuery('#search-type option:selected').val();
   var list =  jQuery('#'+type+'_results').find('ul');
   list.empty();
-  jQuery('#'+type+'_results').addClass("loading-center");
+  jQuery('#'+type+'_results').addClass("sloading");
   new Ajax.Request('/helpdesk/merge_tickets/merge_search',
                     { 
                       parameters: {
@@ -179,7 +179,7 @@ function lookup(searchString, callback) {
                         rand: (new Date()).getTime()
                       },
                       onSuccess: function(response) {       
-                        jQuery('.merge_results:visible').removeClass("loading-center");
+                        jQuery('.merge_results:visible').removeClass("sloading");
                         callback(response.responseJSON.results);
                       } 
                     });

@@ -3,22 +3,23 @@ module Reports
 
 		include Reports::Constants
 		include Reports::TicketStats
-		include RedisKeys
+		include Redis::RedisKeys
+		include Redis::ReportsRedis
 
 		attr_accessor :stats_date, :stats_date_time, :stats_end_time, :stats_table_name
 
 			def archive(options)
 				account_id, regenerate = options[:account_id], options.key?(:regenerate)
 				start_date, end_date = options[:start_date].to_date, options[:end_date].to_date
-				SeamlessDatabasePool.use_persistent_read_connection do
-					account = Account.find_by_id(account_id)
+				Sharding.run_on_slave do
+					account = Account.current
 					Time.zone = account.time_zone
 					start_date.upto(end_date) do |day|
 						@stats_date, @stats_end_time = day.strftime("%Y-%m-%d 00:00:00"), Time.zone.parse(day.strftime("%Y-%m-%d 23:59:59"))
 						@stats_date_time = Time.zone.parse(stats_date)
 						@stats_table_name = stats_table(stats_date_time, account)
 						load_archive_data(account, regenerate)
-						add_to_hash(REPORT_STATS_EXPORT_HASH % {:account_id => account_id},"date",
+						add_to_reports_hash(REPORT_STATS_EXPORT_HASH % {:account_id => account_id},"date",
 																		stats_date_time.strftime("%Y-%m-%d"),604800) unless regenerate
 					end
 				end 

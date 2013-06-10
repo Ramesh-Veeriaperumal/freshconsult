@@ -7,7 +7,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   attr_accessor :query_hash 
   
   MODEL_NAME = "Helpdesk::Ticket"
-  
+
   def self.deleted_condition(input)
     { "condition" => "deleted", "operator" => "is", "value" => input}
   end
@@ -132,6 +132,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     @order                = params[:wf_order]       || default_order
     @without_pagination   = params[:without_pagination]         if params[:without_pagination]
     @filter_fields_to_select   = params[:select_fields]         if params[:select_fields]
+    @html_format = params[:html_format] || false
     
     
     self.id   =  params[:wf_id].to_i      unless params[:wf_id].blank?
@@ -181,6 +182,13 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   def add_requester_conditions(params)
     add_condition("requester_id", :is_in, params[:requester_id]) unless params[:requester_id].blank?
     add_condition("users.customer_id", :is_in, params[:company_id]) unless params[:company_id].blank?
+  end
+
+  def ticket_select
+    "helpdesk_tickets.id,helpdesk_tickets.subject,helpdesk_tickets.requester_id,helpdesk_tickets.responder_id,
+     helpdesk_tickets.status,helpdesk_tickets.priority,helpdesk_tickets.due_by,helpdesk_tickets.display_id,
+     helpdesk_tickets.frDueBy,helpdesk_tickets.source,helpdesk_tickets.group_id,helpdesk_tickets.isescalated,
+     helpdesk_tickets.ticket_type,helpdesk_tickets.email_config_id"
   end
   
   def sql_conditions
@@ -261,8 +269,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                                       :limit => per_page, :offset => (page - 1) * per_page,
                                       :conditions => all_conditions, :joins => all_joins)
       end
-
-      select = "helpdesk_tickets.*"
+      
+      select = @html_format ? ticket_select : "helpdesk_tickets.*"
       select = "DISTINCT(helpdesk_tickets.id) as 'unique_id' , #{select}" if all_conditions[0].include?("helpdesk_tags.name")
 
       recs = model_class.paginate(:select => select,
@@ -287,8 +295,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     all_joins[0].concat(schema_less_join) if all_conditions[0].include?("helpdesk_schema_less_tickets.boolean_tc02")
     all_joins[0].concat(users_join) if all_conditions[0].include?("users.customer_id")
     all_joins[0].concat(tags_join) if all_conditions[0].include?("helpdesk_tags.name")
-    all_joins[0].concat(states_join) if order.eql? "requester_responded_at"
     all_joins[0].concat(statues_join) if all_conditions[0].include?("helpdesk_ticket_statuses")
+    all_joins[0].concat(schema_less_join) if all_conditions[0].include?("helpdesk_schema_less_tickets.product_id")
     all_joins
   end
 

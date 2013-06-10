@@ -5122,7 +5122,7 @@ $.widget( "ui.autocomplete", {
 
 	_search: function( value ) {
 		this.pending++;
-		this.element.addClass( "ui-autocomplete-loading" );
+		this.element.addClass( "sloading loading-small" );
 
 		this.source( { term: value }, this.response );
 	},
@@ -5137,7 +5137,7 @@ $.widget( "ui.autocomplete", {
 		}
 		this.pending--;
 		if ( !this.pending ) {
-			this.element.removeClass( "ui-autocomplete-loading" );
+			this.element.removeClass( "sloading loading-small" );
 		}
 	},
 

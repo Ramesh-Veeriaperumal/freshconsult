@@ -21,7 +21,7 @@ class Workers::MergeTickets
   def self.add_note_to_source_ticket(source_ticket, source_note_private, source_info_note)
     pvt_note = source_ticket.requester_has_email? ? source_note_private : true
     source_note = source_ticket.notes.create(
-      :body => source_info_note,
+      :note_body_attributes => {:body_html => source_info_note},
       :private => pvt_note || false,
       :source => pvt_note ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : 
       										Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],

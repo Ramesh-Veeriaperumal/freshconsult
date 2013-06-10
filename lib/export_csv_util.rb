@@ -83,15 +83,16 @@ module ExportCsvUtil
         if is_portal
           vfs = visible_fields
           headers.delete_if{|header_key|
-            field_name = Helpdesk::TicketModelExtension.field_name csv_hash[header_key]
+            field_name = Helpdesk::TicketModelExtension.field_name header_key
             true unless vfs.include?(field_name)
           }
         end
-        csv << headers
+        csv << headers.collect {|header| csv_hash[header]}
         items.each do |record|
           csv_data = []
           headers.each do |val|
-            csv_data << record.send(csv_hash[val])
+            data = record.send(val)
+            csv_data << ((data.blank? || (data.is_a? Integer)) ? data : (CGI::unescapeHTML(data.to_s)))
           end
           csv << csv_data
         end

@@ -11,7 +11,9 @@ class User < ActiveRecord::Base
   include Authority::Rails::ModelHelpers
   include Search::ElasticSearchIndex
   include Cache::Memcache::User
-  include RedisKeys
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+  include Authority::Rails::ModelHelpers
 
   USER_ROLES = [
      [ :admin,       "Admin",            1 ],
@@ -37,7 +39,8 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :roles,
     :join_table => "user_roles",
     :insert_sql => 
-      'INSERT INTO user_roles (account_id, user_id, role_id) VALUES (#{account_id}, #{id}, #{record.id})',
+      'INSERT INTO user_roles (account_id, user_id, role_id) VALUES
+       (#{account_id}, #{id}, #{ActiveRecord::Base.sanitize(record.id)})',
     :after_add => :touch_role_change,
     :after_remove => :touch_role_change,
     :autosave => true
@@ -80,6 +83,11 @@ class User < ActiveRecord::Base
   
   before_update :bakcup_user_changes, :clear_redis_for_agent
   after_commit_on_update :update_search_index, :if => :customer_id_updated?
+
+  before_create :set_authority_delta, :if => :roles_enabled?
+  before_update :set_authority_delta, :if => [:roles_enabled?, :user_role_updated?]
+  before_update :set_authority_delta, :if => [:roles_enabled?, :user_restored?]
+  before_update :destroy_user_roles,  :if => [:roles_enabled?, :deleted?]
   
   xss_sanitize  :only => [:name,:email]
   named_scope :contacts, :conditions => { :helpdesk_agent => false }
@@ -159,7 +167,7 @@ class User < ActiveRecord::Base
   end
 
   attr_accessor :import
-  # FIXME: is the user_roles, :client_manager, :helpdesk_agent correct?
+  
   attr_accessible :name, :email, :password, :password_confirmation, :second_email, :job_title, :phone, :mobile, 
                   :twitter_id, :description, :time_zone, :avatar_attributes, :customer_id, :import_id,
                   :deleted, :fb_profile_id, :language, :address, :client_manager, :helpdesk_agent, :role_ids
@@ -349,7 +357,11 @@ class User < ActiveRecord::Base
   ##Authorization copy ends here
   
   def url_protocol
-    account.ssl_enabled? ? 'https' : 'http'
+    if account.main_portal.portal_url.blank? 
+      return account.ssl_enabled? ? 'https' : 'http'
+    else 
+      return account.main_portal.ssl_enabled? ? 'https' : 'http'
+    end
   end
   
   def set_time_zone
@@ -562,6 +574,10 @@ class User < ActiveRecord::Base
         destroy_user_roles
       end
     end
+    
+    def user_restored?
+      @all_changes && @all_changes.has_key?(:deleted) && is_not_deleted?
+    end
 
     def customer_id_updated?
       @all_changes.has_key?(:customer_id)
@@ -571,30 +587,30 @@ class User < ActiveRecord::Base
       return unless deleted_changed? || agent?
       self.agent_groups.each do |ag|
         next unless ag.group.round_robin_eligible?
-        remove_key(GROUP_AGENT_TICKET_ASSIGNMENT % 
+        remove_others_redis_key(GROUP_AGENT_TICKET_ASSIGNMENT % 
                {:account_id => account_id, :group_id => ag.group_id})
       end
     end
-    
+
     def destroy_user_roles
       self.privileges = "0"
       self.roles.clear
     end
-    
+
     def touch_role_change(role)
       @role_change_flag = true
     end
-  
+
     def roles_changed?
       !!@role_change_flag
     end
-  
+
     def populate_privileges
       self.privileges = union_privileges(self.roles).to_s
       @role_change_flag = false
       true
     end
-  
+
     def has_role?
       self.errors.add(:base, I18n.t("activerecord.errors.messages.user_role")) if
         ((@role_change_flag or new_record?) && self.roles.blank?)

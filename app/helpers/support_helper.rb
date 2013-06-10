@@ -1,7 +1,8 @@
 # encoding: utf-8
 module SupportHelper
 	include Portal::PortalFilters
-	include RedisKeys
+  include Redis::RedisKeys
+  include Redis::PortalRedis
 
 	FONT_INCLUDES = { "Source Sans Pro" => "Source+Sans+Pro:regular,italic,700,700italic",
 					  "Droid Sans" => "Droid+Sans:regular,700",
@@ -363,18 +364,18 @@ HTML
 		content_tag :div, _text.join(" "), :class => "alert alert-ticket-status"
 	end
 
-	def ticket_field_container object_name, field, field_value = ""
+	def ticket_field_container form_builder,object_name, field, field_value = ""
 		case field.dom_type
 			when "checkbox" then
 				%(  <div class="controls"> 
 						<label class="checkbox">
-							#{ ticket_form_element :helpdesk_ticket, field, field_value } #{ field[:label_in_portal] }
+							#{ ticket_form_element form_builder,:helpdesk_ticket, field, field_value } #{ field[:label_in_portal] }
 						</label>
 					</div> )
 			else
 				%( #{ ticket_label object_name, field }
 		   			<div class="controls"> 
-		   				#{ ticket_form_element :helpdesk_ticket, field, field_value }
+		   				#{ ticket_form_element form_builder,:helpdesk_ticket, field, field_value }
 		   			</div> )
 		end
 	end
@@ -385,7 +386,7 @@ HTML
 		label_tag "#{object_name}_#{field[:field_name]}", field[:label_in_portal], :class => element_class
 	end
 
-	def ticket_form_element object_name, field, field_value = ""
+	def ticket_form_element form_builder,object_name, field, field_value = ""
 	    dom_type = (field.field_type == "nested_field") ? "nested_field" : field.dom_type	    
 	    required = (field.required_in_portal && field.editable_in_portal)
 	    element_class = " #{required ? 'required' : '' } #{ dom_type }"
@@ -415,8 +416,12 @@ HTML
 	      when "checkbox" then
 			check_box(object_name, field_name, :checked => field_value )
 	      when "html_paragraph" then
-	      	%( #{ text_area(object_name, field_name, :class => element_class, :value => field_value, :rows => 6) } 
-	      	   #{ render(:partial=>"/support/shared/attachment_form") } )
+	      	_output = []
+	      	_output << %( #{ form_builder.fields_for (:ticket_body,@ticket.ticket_body) do |ff| 
+	      		ff.text_area(field_name, :class => element_class, :value => field_value, :rows => 6)
+	      		end } )
+	      	_output << %( #{ render(:partial=>"/support/shared/attachment_form") } )
+	        # element = content_tag(:div, _output.join(" "), :class => "controls")
 	    end
 	end
 
@@ -570,7 +575,7 @@ HTML
 			if User.current
 		        is_preview = IS_PREVIEW % { :account_id => current_account.id, 
 		        :user_id => User.current.id, :portal_id => @portal.id}
-		        !get_key(is_preview).blank? && !current_user.blank? && current_user.agent?
+		        !get_portal_redis_key(is_preview).blank? && !current_user.blank? && current_user.agent?
 		    end
 	    end
 

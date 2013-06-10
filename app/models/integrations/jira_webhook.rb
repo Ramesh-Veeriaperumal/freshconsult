@@ -62,7 +62,7 @@ class Integrations::JiraWebhook
       if(parse_matches[3] == "updated") # Pure issue related change.
         if(params["changelog"] && params["changelog"]["items"].collect{ |m| m["field"]}.include?("status"))
             self.params["updated_entity_type"] = self.updated_entity_type = "issue"
-            self.params["notification_cause"] = self.notification_cause = "status changed"
+            self.params["notification_cause"] = self.notification_cause = "added when status is changed"
         elsif(params["comment"])
             self.params["updated_entity_type"] = self.updated_entity_type = "comment"
             self.params["notification_cause"] = self.notification_cause = (params["comment"]["created"]==params["comment"]["updated"]) ? "added" : "edited"
@@ -77,13 +77,22 @@ class Integrations::JiraWebhook
       self.params["installed_application_id"] = installed_application.id
       notify_values.push installed_application.configs_jira_comment_sync
       notify_values.push "add_helpdesk_external_note_in_fd"
+      if self.params["comment"]["author"]
+        email = self.params["comment"]["author"]["emailAddress"]
+        name =  self.params["comment"]["author"]["displayName"]
+      end
     elsif self.updated_entity_type == "issue" and self.notification_cause != "updated" # Any notification other than update notification will be propagated to Freshdesk.  Even if we encouter any non-status related notification the same status will be updated one more time in Freshdesk, which is ok.
       notify_values.push installed_application.configs_jira_status_sync
       unless params["comment"].blank?
         notify_values.push installed_application.configs_jira_comment_sync 
         notify_values.push "add_helpdesk_external_note_in_fd"
       end 
+      if self.params["user"]
+        email = self.params["user"]["emailAddress"]
+        name =  self.params["user"]["displayName"]
+      end
     end
+    create_a_contact(installed_application,email,name) if email && name
     Rails.logger.debug "update_local #{notification_cause}, #{updated_entity_type}, #{notify_values}, installed_application #{installed_application}"
     obj_mapper = Integrations::ObjectMapper.new
     
@@ -95,6 +104,20 @@ class Integrations::JiraWebhook
         self.params["note_id"] = data
       end
     end
+  end
+
+  def create_a_contact(installed_app,email,name)
+    account = installed_app.account
+    user = account.all_users.find_by_email(email) 
+    unless user
+      user = account.contacts.new
+      if user.signup!({:user => {:name => name, :email => email, 
+                       :active => true,:user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+       else
+          puts "unable to save the contact:: #{user.errors.inspect}"
+       end   
+    end
+     user
   end
 end
 

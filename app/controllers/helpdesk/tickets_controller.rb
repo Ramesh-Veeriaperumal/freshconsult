@@ -8,14 +8,12 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::TicketActions
   include Search::TicketSearch
   include Helpdesk::Ticketfields::TicketStatus
-  include RedisKeys
   include Helpdesk::AdjacentTickets
   include Helpdesk::Activities
   include Helpdesk::ToggleEmailNotification
-  include SeamlessDatabasePool::ControllerFilter
   include Helpdesk::ShowVersion
 
-  use_database_pool [:user_ticket, :export_csv] => :persistent
+  around_filter :run_on_slave, :only => :user_ticket
 
   before_filter :set_mobile, :only => [:index, :show,:update, :create, :execute_scenario, :assign, :spam, :update_ticket_properties ]
   before_filter :check_user, :only => [:show, :forward_conv]
@@ -27,7 +25,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :disable_notification, :if => :notification_not_required?
   after_filter  :enable_notification, :if => :notification_not_required?
   before_filter :set_selected_tab
-
+  
   layout :choose_layout 
   
   before_filter :load_multiple_items, :only => [ :destroy, :restore, :spam, :unspam, :assign, 
@@ -35,15 +33,21 @@ class Helpdesk::TicketsController < ApplicationController
   
   skip_before_filter :load_item
   alias :load_ticket :load_item
+
   before_filter :load_ticket, :verify_permission,
-    :only => [ :show, :edit, :update, :execute_scenario, :close, :change_due_by,
-       :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents,
-       :quick_assign, :prevnext, :activities, :status, :update_ticket_properties
-    ]
+    :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print,
+      :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext,
+      :activities, :status, :update_ticket_properties ]
+
+  skip_before_filter :build_item, :only => [:create]
+  alias :build_ticket :build_item
+  before_filter :build_ticket_body_attributes, :build_ticket, :only => [:create]
+
   before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
   before_filter :check_ticket_status, :only => [:update, :update_ticket_properties]
+  before_filter :validate_manual_dueby, :only => :update
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
 
   before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv]
@@ -77,8 +81,8 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def index
-
     #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
+    params[:html_format] = request.format.html?
     cookies.delete(:ticket_list_updated) 
     tkt = current_account.tickets.permissible(current_user)
     @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
@@ -179,10 +183,12 @@ class Helpdesk::TicketsController < ApplicationController
 
   def view_ticket
     if params['format'] == 'widget'
+      @new_show_page = false
       @ticket = current_account.tickets.find_by_display_id(params[:id]) # using find_by_id(instead of find) to avoid exception when the ticket with that id is not found.
       @item = @ticket
       if @ticket.blank?
-        @item = Helpdesk::Ticket.new
+        @item = @ticket = Helpdesk::Ticket.new
+        @ticket.build_ticket_body
         render :new, :layout => "widgets/contacts"
       else
         if verify_permission
@@ -202,6 +208,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def custom_search
+    params[:html_format] = true
     @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     render :partial => "custom_search"
   end
@@ -209,7 +216,7 @@ class Helpdesk::TicketsController < ApplicationController
   def show
     @to_emails = @ticket.to_emails
 
-    @draft = get_key(draft_key)
+    @draft = get_tickets_redis_key(draft_key)
 
     @subscription = current_user && @item.subscriptions.find(
       :first, 
@@ -544,7 +551,13 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
 
+  def edit
+    @item.build_ticket_body(:description_html => @item.description_html,
+        :description => @item.description) unless @item.ticket_body
+  end
+
   def new
+    @item.build_ticket_body
     unless params[:topic_id].nil?
       @topic = Topic.find(params[:topic_id])
       @item.subject     = @topic.title
@@ -608,7 +621,7 @@ class Helpdesk::TicketsController < ApplicationController
     count = 0
     tries = 3
     begin
-      $redis_secondary.set(draft_key, params[:draft_data])
+      set_tickets_redis_key(draft_key, params[:draft_data])
     rescue Exception => e
       NewRelic::Agent.notice_error(e,{:key => draft_key, 
         :value => params[:draft_data],
@@ -623,7 +636,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def clear_draft
-    remove_key(draft_key)
+    remove_tickets_redis_key(draft_key)
     render :nothing => true
   end
 
@@ -770,8 +783,7 @@ class Helpdesk::TicketsController < ApplicationController
       filter_params.delete(:action)
       filter_params.delete(:controller)
       begin
-        $redis_secondary.set(redis_key, filter_params.to_json)
-        $redis_secondary.expire(redis_key, 86400)
+        set_tickets_redis_key(redis_key, filter_params.to_json, 86400)
       rescue Exception => e
         NewRelic::Agent.notice_error(e) 
       end
@@ -805,7 +817,7 @@ class Helpdesk::TicketsController < ApplicationController
       tries = 3
       count = 0
       begin
-        filters_str = $redis_secondary.get("HELPDESK_TICKET_FILTERS:#{current_account.id}:#{current_user.id}:#{session.session_id}")
+        filters_str = get_tickets_redis_key("HELPDESK_TICKET_FILTERS:#{current_account.id}:#{current_user.id}:#{session.session_id}")
         Rails.logger.info "In get_cached_filters - filters_str : #{filters_str.inspect}"
         JSON.parse(filters_str) if filters_str
       rescue Exception => e
@@ -837,7 +849,7 @@ class Helpdesk::TicketsController < ApplicationController
           params.merge!(@cached_filter_data)
         end
       else 
-        remove_key(redis_key)
+        remove_tickets_redis_key(redis_key)
       end
     end
 
@@ -871,6 +883,19 @@ class Helpdesk::TicketsController < ApplicationController
     def check_user
       if !current_user.nil? and current_user.customer?
         return redirect_to support_ticket_url(@ticket)
+      end
+    end
+
+    def build_ticket_body_attributes
+      if params[:helpdesk_ticket][:description] || params[:helpdesk_ticket][:description_html]
+        unless params[:helpdesk_ticket].has_key?(:ticket_body_attributes)
+          ticket_body_hash = {:ticket_body_attributes => { :description => params[:helpdesk_ticket][:description],
+                                  :description_html => params[:helpdesk_ticket][:description_html] }} 
+          params[:helpdesk_ticket].merge!(ticket_body_hash).tap do |t| 
+            t.delete(:description) if t[:description]
+            t.delete(:description_html) if t[:description_html]
+          end 
+        end 
       end
     end
 
@@ -956,4 +981,34 @@ class Helpdesk::TicketsController < ApplicationController
     @selected_tab = :tickets
   end
 
+  def validate_manual_dueby
+    if(@item.manual_dueby && params[nscname].key?(:due_by) && params[nscname].key?(:frDueBy))
+      unless validate_date(params[nscname][:due_by]) && validate_date(params[nscname][:frDueBy])
+        respond_to do |format|
+          format.json { 
+            render :json => { :update_failure => true, :errors => I18n.t('date_invalid') }.to_json and return
+          }
+          format.xml {
+            render :xml => { :update_failure => true, :errors => I18n.t('date_invalid') }.to_xml and return
+          }
+          format.html { render :text => I18n.t('date_invalid') and return }
+        end
+      end
+    else
+      params[nscname].except!(:due_by, :frDueBy)
+    end
+  end
+
+  def validate_date(date_string)
+    begin
+      date = Date.parse(date_string)
+    rescue
+      return false
+    end
+  end
+  def run_on_slave(&block)
+    Sharding.run_on_slave(&block)
+  end 
+
+ 
 end

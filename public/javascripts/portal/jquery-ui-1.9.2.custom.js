@@ -1919,7 +1919,7 @@ $.widget( "ui.autocomplete", {
 
 	_search: function( value ) {
 		this.pending++;
-		this.element.addClass( "ui-autocomplete-loading" );
+		this.element.addClass( "sloading loading-small" );
 		this.cancelSearch = false;
 
 		this.source( { term: value }, this._response() );
@@ -1936,7 +1936,7 @@ $.widget( "ui.autocomplete", {
 
 			that.pending--;
 			if ( !that.pending ) {
-				that.element.removeClass( "ui-autocomplete-loading" );
+				that.element.removeClass( "sloading loading-small" );
 			}
 		};
 	},

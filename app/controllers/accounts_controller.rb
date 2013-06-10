@@ -14,7 +14,11 @@ class AccountsController < ApplicationController
     :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show]
   skip_before_filter :check_account_state
   skip_before_filter :redirect_to_mobile_url
+  skip_before_filter :check_day_pass_usage, :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show]
+  skip_filter :select_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
   
+  around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
+   
   before_filter :build_user, :only => [ :new, :create ]
   before_filter :build_metrics, :only => [ :create ]
   before_filter :load_billing, :only => [ :show, :new, :create, :payment_info ]
@@ -52,7 +56,7 @@ class AccountsController < ApplicationController
   def signup_google 
     base_domain = AppConfig['base_domain'][RAILS_ENV]
     logger.debug "base domain is #{base_domain}"   
-    return_url = "https://signup."+base_domain+"/google/complete?domain="+params[:domain]  
+    return_url = "https://login."+base_domain+"/google/complete?domain="+params[:domain]  
     #return_url = "http://localhost:3000/google/complete?domain="+params[:domain]   
     return_url = return_url+"&callback="+params[:callback] unless params[:callback].blank?    
     url = "https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]      
@@ -176,9 +180,6 @@ class AccountsController < ApplicationController
     params[:account][:main_portal_attributes][:updated_at] = Time.now
     @account.main_portal_attributes = params[:account][:main_portal_attributes]
     if @account.save
-      Resque::enqueue(CRM::Totango::SendUserAction, {:account_id => current_account.id,
-                                                     :email => current_user.email,
-                                                     :activity => totango_activity(:helpdesk_rebranding)})
       flash[:notice] = t(:'flash.account.update.success')
       redirect_to redirect_url
     else
@@ -199,28 +200,12 @@ class AccountsController < ApplicationController
         SubscriptionNotifier.deliver_account_deleted(current_account) if Rails.env.production?
         create_deleted_customers_info
         perform_destroy(current_account)
+        $redis_others.srem('authority_migrated', current_account.id)
         redirect_to "http://www.freshdesk.com"
       end
     end
   end
-  
-  def create_deleted_customers_info
-    sub = current_account.subscription
-    if sub.active?
-     DeletedCustomers.create(
-       :full_domain => "#{current_account.name}(#{current_account.full_domain})",
-       :account_id => current_account.id,
-       :admin_name => current_account.admin_first_name,
-       :admin_email => current_account.admin_email,
-       :account_info => {:plan => sub.subscription_plan_id,
-                         :agents_count => current_account.agents.count,
-                         :tickets_count => current_account.tickets.count,
-                         :user_count => current_account.contacts.count,
-                         :account_created_on => current_account.created_at}
-     )
-    end
-  end
-  
+    
   def thanks
     redirect_to :action => "plans" and return unless flash[:domain]
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
@@ -388,6 +373,10 @@ class AccountsController < ApplicationController
       @account =  Account.find_by_full_domain(@full_domain)    
     end
 
+    def select_latest_shard(&block)
+      Sharding.select_latest_shard(&block)
+    end   
+
     def verify_open_id_user account   
       provider = 'open_id'
       identity_url = params[:user][:uid]
@@ -428,14 +417,8 @@ class AccountsController < ApplicationController
       params[:signup][:time_zone] = params[:utc_offset]
       params[:signup][:metrics] = build_metrics
     end
-    
+
     def add_to_crm
-      Resque.enqueue(
-        Marketo::AddLead,
-        { 
-          :account_id => @signup.account.id,
-          :cookie => ThirdCRM.fetch_cookie_info(request.cookies)
-        }
-      )
+      Resque.enqueue(Marketo::AddLead, { :account_id => @account.id, :cookie => ThirdCRM.fetch_cookie_info(request.cookies) })
     end   
 end

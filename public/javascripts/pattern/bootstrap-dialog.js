@@ -117,12 +117,12 @@
 		templateHeader: '<div class="modal-header">' +
 							'<h3 class="ellipsis modal-title"></h3>' +
 						'</div>',
-		templateBody:	'<div class="modal-body"><div class="loading-box"></div></div>',
-      templateFooter: '<div class="modal-footer"></div>',
-      submitLabel: 	"Submit",
-      submitLoading: 	"", 
-      closeLabel: 	"Close",
-      showClose: true
+		templateBody:	'<div class="modal-body"><div class="sloading loading-small loading-block"></div></div>',
+    templateFooter: '<div class="modal-footer"></div>',
+    submitLabel: 	"Submit",
+    submitLoading: 	"", 
+    closeLabel: 	"Close",
+    showClose: true
 	}
 
 	$.fn.freshdialog.Constructor = Freshdialog

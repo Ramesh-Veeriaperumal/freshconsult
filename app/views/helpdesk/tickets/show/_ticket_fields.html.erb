@@ -15,7 +15,8 @@
   		</li>
 		<% end %>
 		<!--form values starts here-->
-		<%= render :partial => '/helpdesk/tickets/show/ticket_field_elements.html.erb' %>
+		<%= render :partial => '/helpdesk/tickets/show/ticket_field_elements.html.erb', 
+									:locals => {:form_builder => f} %>
 		<!--form values ends here-->
 		<!-- Custom fields ends here-->
 		<% if privilege?(:edit_ticket_properties) %>

@@ -1,12 +1,16 @@
-<% content_for :sidebar do -%><%- end %>
-<%= content_tag(:h3, t(".security_title"), :class => "title") %>
+<%= include_cloudfront_js :pattern %>
+<%= include_cloudfront_css :pattern %>
+<% content_for :sidebar do %>
+	<%= render :partial => "helpnote" %>
+<% end %>
+<%= content_tag (:h3, t(".security_title"), :class => "lead") %>
 <% form_for  :account,@account, :url=> update_admin_security_path(@account) ,  :html => { :method => :put, :id => "sso_form"  } do |f| %>
 	<%= f.error_messages %>
-	<ul class="ui-form">
+	<ul class="security-form">
 		<li class="inline-field">
-		  <%= check_box('account', 'sso_enabled', options = { :checked => current_account.sso_enabled}, checked_value = "1", unchecked_value = "0") %> <%=t(".enable_sso")%>
-		  <%= content_tag( :div, t(".enable_sso_info"), :class => "info-data tabbed" ) %>
-			<div class="info-data tabbed"  id="sso-form" style="display:<%= current_account.sso_enabled ? "block": "none" %>;">				
+		  <%= check_box('account', 'sso_enabled', options = { :checked => current_account.sso_enabled}, checked_value = "1", unchecked_value = "0") %> <span class="enable_heading"> <%=t(".enable_sso")%> </span>
+		  <%= content_tag( :div, t(".enable_sso_info"), :class => "info-data extra_tabbed" ) %>
+			<div class="info-data extra_tabbed"  id="sso-form" style="display:<%= current_account.sso_enabled ? "block": "none" %>;">				
 				<ul class="ui-form-inline">
 					<li>
 						<%= f.label :shared_secret, t('.shared_secret') %>
@@ -30,14 +34,14 @@
 			</div>
 		</li>
 		<li>
-			<%= check_box('account', 'ssl_enabled', options = { :checked => current_account.ssl_enabled}, checked_value = "1", unchecked_value = "0") %> <%= t('.enable_SSL') %>
-			<% content_tag( :div, :class => "info-data tabbed" ) do %>
+			<%= check_box('account', 'ssl_enabled', options = { :checked => current_account.ssl_enabled}, checked_value = "1", unchecked_value = "0") %> <span class="enable_heading"> <%= t('.enable_SSL') %> </span>
+			<% content_tag( :div, :class => "info-data extra_tabbed" ) do %>
 				<p>
 					<%= t(".enable_SSL_anon") %>
 				</p>
 				<span class="warning">
 				<% if current_account.ssl_enabled? %>
-					<% if current_portal.main_portal? && !(current_account.main_portal.portal_url.blank?)%>
+					<% if current_portal.main_portal? && !(current_account.main_portal.portal_url.blank?) && !(feature?(:custom_ssl)) %>
 						<%= t(".customer_portal_ssl_warning") + current_account.full_domain + " to avoid SSL errors" %>
 					<%end%> 
 					<%if !current_portal.main_portal?%>
@@ -47,17 +51,92 @@
 				</span>
 			<% end %>
 		</li>
+		<span>
+			<% if current_portal.main_portal && feature?(:custom_ssl) %>
+				<% if @custom_ssl_requested == 0 && !@portal.elb_dns_name? %>
+					<div class="extra_tabbed">
+						<%= link_to_function t(".request_custom_ssl"), :id => "custom_ssl_link" %>
+						<div class="custom_ssl_form hide">
+							<p class="muted"><%= t(".ssl_info") %> </p>
+							<div class="row-fluid">
+								<label class="span2 helpdesk_url">
+									<%= t(".helpdesk_url") %>
+								</label>
+								<div class="span10">
+									<span class="span9">
+									<%= text_field_tag :domain_name, @portal.portal_url, { :class => "domain_field url_without_protocol required" } %></span>
+									<span class="span3"><%= link_to_function t(".submit_request"), :class => "btn submit_request", "data-loading-text" => "Submitting..." %></span>
+								</div>
+							</div>
+						</div>
+					</div>
+				<% elsif !@portal.elb_dns_name? %>
+					<div class="extra_tabbed">
+						<div class="custom_ssl_form" class="faded_text"> <%= t(".success_message")%> </div>
+					</div>
+				<% else %>
+					<div class="extra_tabbed ssl_options" style="display:<%= current_account.ssl_enabled ? "block": "none" %>;">
+						<br/>
+						<label class="radio"> 
+							<%= radio_button_tag "ssl_type", 0, !@portal.ssl_enabled?, { :class => "align" } %> 
+							<%= t(".default_ssl") %> 
+						</label>
+						<label class="radio"> 
+							<%= radio_button_tag "ssl_type", 1, @portal.ssl_enabled?, { :class => "align" } %> 
+							<%= t(".custom_ssl") %> 
+						</label>
+						<div class="custom_ssl_form ssl_enabled_info">
+							<%= t(".dns_name", :url => @portal.portal_url) %>
+							<br/>
+							<span class="elb_name"> <%= @portal.elb_dns_name %> </span>
+						</span>
+					</div>
+				<% end %>
+			<% end %>
+		</span>
 	</ul>
-	<% javascript_tag do %>
-		(function($){
-			$("#account_sso_enabled").bind("click", function(e){
-				$('#sso-form').toggle(this.checked);
-			}); 
-		})(jQuery)
-	<% end %>
 	<div class="button-container">
-		<%= link_to "&larr; #{t('back')}", "/admin/home", :class => "uiButton floatl" %>
-		<%= f.submit t('save'), :class => "uiButton" %>
-	</div>
-	
+		<%= link_to "#{t('cancel')}", "/admin/home", :class => "btn" %>
+		<%= f.submit t('save'), :class => "btn btn-primary" %>
+	</div>	
+<% end %>
+
+<% javascript_tag do %>
+	(function($){
+
+		$('.custom_ssl_form, input').keypress(function(event) { return event.keyCode != 13; });
+
+		$("#account_sso_enabled, #account_ssl_enabled").itoggle({
+			checkedLabel: 'On',
+			uncheckedLabel: 'Off'
+		});
+
+		$("#account_sso_enabled").bind("change", function(e){
+			$('#sso-form').slideToggle(this.checked);
+		});
+
+		$("#account_ssl_enabled").bind("change", function(){
+			$(".ssl_options").slideToggle(this.checked);
+			if(!(this.checked)) $("#ssl_type_1").val("0");
+		});
+
+		$("#custom_ssl_link").click(function() {
+			$(".custom_ssl_form").slideToggle();
+		});
+
+		$(".submit_request").click(function(){
+			if(jQuery("#sso_form").valid()){
+				$(".submit_request").button('loading');
+				var domain_name = $(".domain_field").val();
+				$.ajax({   
+					type: 'POST',
+	                url: '/admin/security/request_custom_ssl/?domain_name='+domain_name,
+	                success: function(data){    
+		                				$("#custom_ssl_link").hide();
+	                          $(".custom_ssl_form").html("<%= t(".thanks_message")%> <%= t(".success_message")%>");
+                                    }
+	            });
+			}
+		});
+	})(jQuery)
 <% end %>

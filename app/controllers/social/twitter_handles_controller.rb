@@ -93,10 +93,6 @@ class Social::TwitterHandlesController < ApplicationController
         redirect_to edit_social_twitter_url(handle)
       else
         twitter_handle.save
-        Resque::enqueue(CRM::Totango::SendUserAction, 
-                                        {:account_id => current_account.id, 
-                                         :email =>  current_user.email, 
-                                        :activity => totango_activity(:twitter) })
         portal_name = twitter_handle.product ? twitter_handle.product.name : current_account.portal_name
         flash[:notice] = t('twitter.success_signin', :twitter_screen_name => twitter_handle.screen_name, :helpdesk => portal_name)        
         redirect_to edit_social_twitter_url(twitter_handle)
@@ -182,7 +178,7 @@ class Social::TwitterHandlesController < ApplicationController
     
     unless @ticket.blank?
       @note = @ticket.notes.build(
-        :body => params[:helpdesk_tickets][:description],
+        :note_body_attributes => {:body => params[:helpdesk_tickets][:ticket_body_attributes][:description]},
         :private => true ,
         :incoming => true,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],

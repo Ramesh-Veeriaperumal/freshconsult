@@ -24,9 +24,17 @@ module Delayed
 
     def perform
        Account.reset_current_account
-       load(account).send(:make_current) if account
-       load(object).send(method, *args.map{|a| load(a)})
-      rescue ActiveRecord::RecordNotFound
+
+       account_id = nil
+       if account
+        account =~ AR_STRING_FORMAT
+        account_id = $2
+       end
+       Sharding.select_latest_shard do
+        load(account).send(:make_current) if account
+        load(object).send(method, *args.map{|a| load(a)})
+      end
+      #rescue ActiveRecord::RecordNotFound
            # We cannot do anything about objects which were deleted in the meantime
       true
     end

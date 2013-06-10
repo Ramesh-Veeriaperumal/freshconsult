@@ -299,14 +299,14 @@ Helpkit.AnalysisReport = (function(){
                 yAxis_label:data[val]['yAxisLabel']
               });
           analysis_1_barChart.barGraph();
-          jQuery("#"+chart_id).removeClass('loading-box');
+          jQuery("#"+chart_id).removeClass('sloading loading-small loading-block');
           jQuery("#loading-box").addClass('hide');
           jQuery("#report-page").height('auto');
         },
         error: function(data){
           var chart_id = val+'_line_chart';
           jQuery("#"+chart_id).text(data.statusText);
-          jQuery("#"+chart_id).removeClass('loading-box');
+          jQuery("#"+chart_id).removeClass('sloading loading-small loading-block');
         }
       };
       Helpkit.reports_util.makeAjaxRequest(args);

@@ -1,27 +1,27 @@
 <div class="description <%= cycle('stripe', '') %>"  id="<%= dom_id post %>-row">
 	<a href="#<%= dom_id post %>" rel="bookmark"></a>
   <% if privilege?(:edit_topic, post) -%>
-  	<div class="item-right-actions">		
+  	<div class="item-right-actions">	
   		<ul class="nav-drop">
   			<li>
   				<a href="#" class="menu-trigger nav-item-icon"><span class="item-options"></span></a>
   				<ul class="menu-box">
   					<li class="menu-item">
-  			      <%= link_to_remote(t('.edit_comment'),
-  										:loading => "$('loading_#{post.id}').removeClassName('hide');$('post_details_#{post.id}').hide();", 
-   										  :loaded  => "$('loading_#{post.id}').addClassName('hide');$('post_details_#{post.id}').show();",
-  										:update  => "post_details_#{post.id}", 
-  			              :url => edit_post_path(:forum_id => @forum, :topic_id => @topic, :id => post), :method => :get,
-  			              :href => edit_post_path(:forum_id => @forum, :topic_id => @topic, :id => post, :page => params[:page]) ) %>
+  						       <%= link_to_remote(t('.edit_comment'),
+  													:loading => "$('loading_#{post.id}').removeClassName('hide');$('post_details_#{post.id}').hide();", 
+  	 	 										  :loaded  => "$('loading_#{post.id}').addClassName('hide');$('post_details_#{post.id}').show();",
+  													:update  => "post_details_#{post.id}", 
+  						              :url => edit_post_path(:forum_id => @forum, :topic_id => @topic, :id => post), :method => :get,
+  						              :href => edit_post_path(:forum_id => @forum, :topic_id => @topic, :id => post, :page => params[:page]) ) %>
   					</li>
-            <li class="menu-item">
-              <%= link_to(t(".delete_comment"), post_path(:forum_id => @forum, :topic_id => @topic, :id => post, :page => params[:page]), :method => :delete, :confirm => t(".delete_comment_confirm")[:delete_post_conf]) %>
-            </li>
   					<li class="menu-item">
   						<%if post != @posts.first and @forum.questions? %> 
-  							<%= link_to(t(".unmark_answer"), toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post), :method=>:put ) if post.answer?  %>
-  							<%= link_to(t(".mark_answer"), toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post ),  :method=>:put ) if !post.answer?  %>
+  									<%= link_to(t(".unmark_answer"), toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post), :method=>:put ) if post.answer?  %>
+  									<%= link_to(t(".mark_answer"), toggle_answer_category_forum_topic_post_path(@forum_category,@forum,@topic,post ),  :method=>:put ) if !post.answer?  %>
   						<%end%>
+  					</li>
+  					<li class="menu-item">
+  							<%= link_to(t(".delete_comment"), post_path(:forum_id => @forum, :topic_id => @topic, :id => post, :page => params[:page]), :method => :delete, :confirm => t(".delete_comment_confirm")[:delete_post_conf]) %>
   					</li>
   				</ul>
   			</li>
@@ -43,7 +43,7 @@
 	<div class="user_details">
 		<%= user_avatar(post.user) if post.user %>
 		<%= t(".posted_on", :user_name => link_to_user(post.user, {:class => "user_name", "data-placement" => "topRight", :rel => "hover-popover", "data-widget-container" => "post-agent-hovercard_#{post.id}"}), :post_date => formated_date(post.created_at) ) %>
-		<div class="loading-center hide" id='<%= "loading_#{post.id}" %>'></div>
+		<div class="sloading hide" id='<%= "loading_#{post.id}" %>'></div>
 	</div>
 	<div class="details" id='<%= "post_details_#{post.id}" %>'>
 		<%= auto_link(post.body_html, :all, :target => "_blank") %>

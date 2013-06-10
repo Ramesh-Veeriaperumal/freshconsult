@@ -60,4 +60,12 @@ class Va::Handlers::Text < Va::RuleHandler
     def filter_query_ends_with
       [ "#{condition.db_column} like ?", "%#{value}" ]
     end
+
+    def filter_query_negation(field_key=nil,field_values=nil)
+      if field_key.nil?
+        [ "#{condition.db_column} IS NULL OR #{condition.db_column} != ?", value ]
+      else
+        ["flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} IS NULL OR flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} != ?", field_value.to_s]
+      end
+    end
 end

@@ -96,9 +96,6 @@ class AgentsController < ApplicationController
       @agent.user_id = @user.id
       @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id]
       if @agent.save
-         Resque::enqueue(CRM::Totango::SendUserAction,{ :account_id => current_account.id, 
-                                                        :email  => current_user.email, 
-                                                        :activity => totango_activity(:agents) })
          flash[:notice] = t(:'flash.agents.create.success', :email => @user.email)
          redirect_to :action => 'index'
       else      
@@ -146,6 +143,7 @@ class AgentsController < ApplicationController
     #check_agent_limit
     @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id] if gamification_feature?(current_account)
     @user = current_account.all_users.find(@agent.user_id)
+    
     if @agent.update_attributes(params[nscname])            
         if @user.update_attributes(params[:user])
           flash[:notice] = t(:'flash.general.update.success', :human_name => 'Agent')

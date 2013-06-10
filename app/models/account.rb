@@ -4,17 +4,19 @@ class Account < ActiveRecord::Base
   require 'uri' 
 
   include Mobile::Actions::Account
-  include Tire::Model::Search
+  include Tire::Model::Search if ES_ENABLED
   include Cache::Memcache::Account
   include ErrorHandle
-
+  
   #rebranding starts
   serialize :preferences, Hash
   serialize :sso_options, Hash
   
   
   has_many :tickets, :class_name => 'Helpdesk::Ticket', :dependent => :delete_all
+  has_many :ticket_bodies, :class_name => 'Helpdesk::TicketBody', :dependent => :delete_all
   has_many :notes, :class_name => 'Helpdesk::Note', :dependent => :delete_all
+  has_many :note_bodies, :class_name => 'Helpdesk::NoteBody', :dependent => :delete_all
   has_many :external_notes, :class_name => 'Helpdesk::ExternalNote', :dependent => :delete_all
   has_many :activities, :class_name => 'Helpdesk::Activity', :dependent => :delete_all
   has_many :flexifields, :dependent => :delete_all
@@ -198,7 +200,7 @@ class Account < ActiveRecord::Base
   delegate :bcc_email, :ticket_id_delimiter, :email_cmds_delimeter, :pass_through_enabled, :to => :account_additional_settings
 
   has_many :subscription_events 
-  
+  xss_sanitize  :only => [:name,:helpdesk_name]
   #Scope restriction ends
   
   validates_format_of :domain, :with => /(?=.*?[A-Za-z])[a-zA-Z0-9]*\Z/
@@ -212,7 +214,9 @@ class Account < ActiveRecord::Base
   validate_on_create :valid_subscription?
   validates_uniqueness_of :google_domain ,:allow_blank => true, :allow_nil => true
   
-  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences,:logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain ,:language
+  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences,
+                  :logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain ,
+                  :language, :ssl_enabled
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
   
   validates_numericality_of :ticket_display_id,
@@ -220,33 +224,38 @@ class Account < ActiveRecord::Base
                             :message => "Value must be less than six digits"
                             
 
-
   before_create :set_default_values
+  before_create :set_shard_mapping
+
   before_update :check_default_values, :update_users_time_zone
-    
+
   after_create :populate_features
-  
+
+  after_create :change_shard_status
+  after_update :change_shard_mapping
+
   after_update :update_users_language
-  #after_create :enable_elastic_search
+ 
 
-  before_destroy :update_crm, :notify_totango
+  before_destroy :update_crm
 
-  after_commit_on_create :add_to_billing, :add_to_totango #, :create_search_index
+  after_commit_on_create :add_to_billing #, :create_search_index
 
   after_commit_on_update :clear_cache
   after_commit_on_destroy :clear_cache, :delete_search_index, :delete_reports_archived_data
   before_update :backup_changes
   before_destroy :backup_changes
-  
+  before_destroy :make_shard_mapping_inactive
+  after_destroy :remove_shard_mapping
+
   named_scope :active_accounts,
-              :conditions => [" subscriptions.next_renewal_at > now() "], 
+              :conditions => [" subscriptions.state != 'suspended' "], 
               :joins => [:subscription]
 
   named_scope :premium_accounts, {:conditions => {:premium => true}}
               
   named_scope :non_premium_accounts, {:conditions => {:premium => false}}
-             
-
+  
   
   Limits = {
     'agent_limit' => Proc.new {|a| a.full_time_agents.count }
@@ -264,12 +273,12 @@ class Account < ActiveRecord::Base
     
     :pro => {
       :features => [ :scenario_automations, :customer_slas, :business_hours, :forums, 
-        :surveys, :scoreboard, :facebook, :timesheets, :css_customization ],
+        :surveys, :scoreboard, :facebook, :timesheets, :css_customization, :advanced_reporting ],
       :inherits => [ :basic ]
     },
     
     :premium => {
-      :features => [ :multi_product, :multi_timezone , :multi_language, :advanced_reporting],
+      :features => [ :multi_product, :multi_timezone , :multi_language, :enterprise_reporting],
       :inherits => [ :pro ] #To make the hierarchy easier
     },
     
@@ -279,7 +288,7 @@ class Account < ActiveRecord::Base
     
     :blossom => {
       :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
-        :custom_domain, :multiple_emails],
+        :custom_domain, :multiple_emails, :advanced_reporting],
       :inherits => [ :sprout ]
     },
     
@@ -290,8 +299,8 @@ class Account < ActiveRecord::Base
     },
 
     :estate => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin,
-        :custom_roles ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting,
+        :custom_ssl, :custom_roles ],
       :inherits => [ :garden ]
     },
 
@@ -300,7 +309,7 @@ class Account < ActiveRecord::Base
     },
     
     :blossom_classic => {
-      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets],
+      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, :advanced_reporting ],
       :inherits => [ :sprout_classic ]
     },
     
@@ -311,8 +320,8 @@ class Account < ActiveRecord::Base
     },
 
     :estate_classic => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin,
-        :custom_roles ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting,
+        :custom_ssl, :custom_roles ],
       :inherits => [ :garden_classic ]
     }
 
@@ -327,7 +336,7 @@ class Account < ActiveRecord::Base
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
     :anonymous_tickets =>true, :survey_links => true, :gamification_enable => true, :google_signin => true,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
-    :personalized_email_replies => false, :enterprise_reporting => false}
+    :personalized_email_replies => false}
     
   
   has_features do
@@ -339,7 +348,7 @@ class Account < ActiveRecord::Base
   end
   
   def installed_apps_hash
-    installed_apps = installed_applications.all(:include => {:application => :widgets})
+    installed_apps = installed_applications.all(:include => :application )
     installed_apps.inject({}) do |result,installed_app|
      result[installed_app.application.name.to_sym] = installed_app
      result
@@ -793,17 +802,22 @@ class Account < ActiveRecord::Base
     def set_sso_options_hash
       HashWithIndifferentAccess.new({:login_url => "",:logout_url => ""})
     end
-        
+
     def subscription_next_renewal_at
       subscription.next_renewal_at
     end
 
     def backup_changes
-      @old_object = self.clone
+      @old_object = Account.find(id)
       @all_changes = self.changes.clone
       @all_changes.symbolize_keys!
     end
 
+     def self.fetch_all_active_accounts
+      results = Sharding.run_on_all_shards do
+        Account.find(:all,:joins => :subscription, :conditions => "subscriptions.next_renewal_at > now()")
+      end
+    end
 
   private 
 
@@ -811,16 +825,39 @@ class Account < ActiveRecord::Base
       Resque.enqueue(Billing::AddToBilling, { :account_id => id })
     end
 
-    def add_to_totango
-      Resque.enqueue(CRM::Totango::TrialCustomer, {:account_id => id})
-    end
-
     def update_crm
       Resque.enqueue(CRM::AddToCRM::DeletedCustomer, id)
     end
 
-    def notify_totango
-      Resque.enqueue(CRM::Totango::CanceledCustomer, id, full_domain)
+    def set_shard_mapping
+      shard_mapping = ShardMapping.new({:shard_name => ShardMapping.latest_shard, :status => ShardMapping::STATUS_CODE[:not_found]})
+      shard_mapping.domains.build({:domain => full_domain})  
+      shard_mapping.save                             
+      self.id = shard_mapping.id
+    end
+
+    def change_shard_mapping
+      if full_domain_changed?
+        domain_mapping = DomainMapping.find_by_account_id_and_domain(id,@old_object.full_domain)
+        domain_mapping.update_attribute(:domain,full_domain)
+      end
+    end
+
+    def change_shard_status
+      shard_mapping = ShardMapping.find_by_account_id(id)
+      shard_mapping.status = ShardMapping::STATUS_CODE[:ok]
+      shard_mapping.save
+    end
+
+    def remove_shard_mapping
+      shard_mapping = ShardMapping.find_by_account_id(id)
+      shard_mapping.destroy
+    end
+
+    def make_shard_mapping_inactive
+      shard_mapping = ShardMapping.find_by_account_id(id)
+      shard_mapping.status = ShardMapping::STATUS_CODE[:not_found]
+      shard_mapping.save
     end
 
     def delete_reports_archived_data

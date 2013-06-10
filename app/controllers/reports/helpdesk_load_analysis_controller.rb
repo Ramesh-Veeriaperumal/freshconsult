@@ -15,6 +15,7 @@ class Reports::HelpdeskLoadAnalysisController < ApplicationController
   def generate
     @report_title = "Helpdesk Load Analysis"
     @data_obj = analysis_report_data @sql_condition.join(" AND ")
+    @solution_artical_link = %(https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85340-how-to-read-helpdesk-load-analysis-report)
     render :partial => "/reports/helpdesk_load_analysis/load_analysis"
   end
 

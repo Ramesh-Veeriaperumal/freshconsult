@@ -72,7 +72,7 @@ CampaignMonitorWidget.prototype= {
 
 	handleUpdateSubscription: function(){
 		cmWidget.freshdeskWidget.updateSubscriptionNotifier = true;
-		jQuery('#' + this.freshdeskWidget.options.widget_name + ' .emailLists').addClass('loading-center');
+		jQuery('#' + this.freshdeskWidget.options.widget_name + ' .emailLists').addClass('sloading loading-small');
 		cmWidget.freshdeskWidget.getCampaignsForEmail();
 	},
 

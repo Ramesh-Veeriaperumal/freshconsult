@@ -29,7 +29,9 @@
 								:class => 'select2 responder_field' %>
 			</li>				
 			<li class="inline-field field clearField continous message">
-				<%= f.text_area :body, { :class => 'required tweet auto-height', :id => "#{id}-#{cntid}-body", :value =>default_twitter_body_val(@ticket), :rows => "3" } %>
+				<% f.fields_for :note_body, Helpdesk::NoteBody.new do |ff| %>
+					<%= ff.text_area :body, { :class => 'required tweet auto-height', :id => "#{id}-#{cntid}-body", :value =>default_twitter_body_val(@ticket), :rows => "3" } %>
+				<% end %>
 			</li>
 		</ul>
 
@@ -39,7 +41,7 @@
 			<span id="tweet_type_selector">
 				<%= select_tag :tweet_type , 
 								options_for_select(Social::Tweet::TWEET_TYPES, @ticket.tweet ? @ticket.tweet.tweet_type.to_sym : :mention ) , 
-								{ :class => 'select2' } %>
+								{ } %>
 			</span>
 			<span>
 	          <%= link_to(t('cancel'), '#', :class => "btn cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true') %>

@@ -1,6 +1,4 @@
 class EmailConfigObserver < ActiveRecord::Observer
-
-  include CRM::TotangoModulesAndActions
     
   def before_validation_on_create(email_config)
     set_account email_config
@@ -19,10 +17,6 @@ class EmailConfigObserver < ActiveRecord::Observer
   def before_update(email_config)
     mark_as_primary email_config
     email_config.reset_activator_token
-  end
-
-  def after_update(email_config)
-    notify_totango email_config unless email_config.changes.blank?
   end
 
   #Methods used for the callbacks
@@ -46,12 +40,5 @@ class EmailConfigObserver < ActiveRecord::Observer
     if ( !email_config.active?) && (email_config.changed.include?("reply_email") || email_config.changed.include?("activator_token") )
       EmailConfigNotifier.send_later(:deliver_activation_instructions, email_config)
     end
-  end
-
-  def notify_totango(email_config)
-    Resque::enqueue(CRM::Totango::SendUserAction,
-                                        {:account_id => email_config.account_id, 
-                                         :email =>  email_config.account.admin_email, 
-                                         :activity =>  totango_activity(:email_config) })
   end
 end

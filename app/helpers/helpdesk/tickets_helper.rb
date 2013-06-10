@@ -4,8 +4,9 @@ module Helpdesk::TicketsHelper
   include Wf::HelperMethods
   include TicketsFilter
   include Helpdesk::Ticketfields::TicketStatus
+  include Redis::RedisKeys
+  include Redis::TicketsRedis
   include Helpdesk::NoteActions
-  include RedisKeys
   include Integrations::AppsUtil
   include Helpdesk::TicketsHelperMethods
 
@@ -55,7 +56,7 @@ module Helpdesk::TicketsHelper
       if(tabs.first == t)
         content_tag :div, content_tag(:div, "") ,{:class => "rtDetails tab-pane active #{t[2]}", :id => t[0], :rel => "remote", :"data-remote-url" => "/helpdesk/tickets/component/#{@ticket.id}?component=ticket"}
       else
-        content_tag :div, content_tag(:div, "", :class => "loading-box"), :class => "rtDetails tab-pane #{t[2]}", :id => t[0]
+        content_tag :div, content_tag(:div, "", :class => "loading-block sloading loading-small "), :class => "rtDetails tab-pane #{t[2]}", :id => t[0]
       end
     }, :class => "tab-content"
                
@@ -129,7 +130,9 @@ module Helpdesk::TicketsHelper
   
   def filter_count(selector=nil)
     filter_scope = TicketsFilter.filter(filter(selector), current_user, current_account.tickets.permissible(current_user))
-    filter_scope.count
+    Sharding.run_on_slave do
+     filter_scope.count
+    end
   end
   
   def sort_by_text(sort_key, order)
@@ -243,7 +246,7 @@ module Helpdesk::TicketsHelper
       last_reply_by = (h(last_conv.user.name) || '')+"&lt;"+(last_conv.user.email || '')+"&gt;" 
       last_reply_by  = (h(ticket.reply_name) || '')+"&lt;"+(ticket.reply_email || '')+"&gt;" unless last_conv.user.customer?       
       last_reply_time = last_conv.created_at
-      last_reply_content = last_conv.body_html
+      last_reply_content = last_conv.full_text_html
       unless last_reply_content.blank?
         doc = Nokogiri::HTML(last_reply_content)
         doc_fd_css = doc.css('div.freshdesk_quote')
@@ -269,7 +272,7 @@ module Helpdesk::TicketsHelper
     
     content = default_reply+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
               "<span class='separator' /> , "+ last_reply_by +" wrote:"+
-              last_reply_content+"</blockquote></div>"
+              last_reply_content.to_s+"</blockquote></div>"
     return content
   end
 
@@ -279,7 +282,7 @@ module Helpdesk::TicketsHelper
                 # ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
     key = 'HELPDESK_REPLY_DRAFTS:'+current_account.id.to_s+':'+current_user.id.to_s+':'+ticket.id.to_s
 
-    return ( get_key(key) || bind_last_conv(item, signature, false, quoted) )
+    return ( get_tickets_redis_key(key) || bind_last_conv(item, signature, false, quoted) )
   end
 
   
@@ -305,18 +308,18 @@ module Helpdesk::TicketsHelper
     show_params
   end
 
-  def multiple_emails_container(emails)
+  def multiple_emails_container(emails, label = "To: ")
     html = ""
     unless emails.blank?
       if emails.length < 3
         html << content_tag(:span, 
-                            "To: " + emails.collect{ |to_e| 
+                            "#{label}" + emails.collect{ |to_e| 
                               to_e.gsub("<","&lt;").gsub(">","&gt;") 
                             }.join(", "), 
                             :class => "") 
       else
         html << content_tag(:span, 
-                            "To: " + emails[0,2].collect{ |to_e| 
+                            "#{label}" + emails[0,2].collect{ |to_e| 
                               to_e.gsub("<","&lt;").gsub(">","&gt;") 
                             }.join(", ") + 
                             "<span class='toEmailMoreContainer hide'>,&nbsp;" + 

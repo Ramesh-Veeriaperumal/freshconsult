@@ -5,7 +5,9 @@ class Signup < ActivePresenter::Base
   
   before_validation :build_primary_email, :build_portal, :build_roles, :build_admin,
     :build_subscription, :build_account_configuration, :set_time_zone
-                    
+
+  #temp fix by kiran for custom ssl bug
+  before_save :set_custom_ssl
   after_save :make_user_current, :populate_seed_data
 
   def locale=(language)
@@ -106,6 +108,10 @@ class Signup < ActivePresenter::Base
   
     def support_email
       "support@#{account.full_domain}"
+    end
+    
+    def set_custom_ssl
+      account.ssl_enabled = true #temp fix by kiran for custom ssl bug
     end
 
 end

@@ -1,7 +1,6 @@
 <div class="widget clearfix" id="requester_info">
 	<h3><%=t('ticket.requestor_info')%></h3>
 	<div class="content">
-	<% unless params[:format] == 'widget' %>
 	<div class="tkt-tabs-wrap">
 		<ul class="tkt-tabs">
 			<li><a href="#contact_info_default" class="requester-info-sprite requester-info-default"></a></li>
@@ -17,7 +16,6 @@
 		</ul>
 	</div>
 	<%
-	end
 
 	user = @ticket.requester 
 	contact = (privilege?(:view_contacts) && current_user.can_view_all_tickets?) ? user : "javascript:void(0)"
@@ -50,8 +48,6 @@
 		
 	</div>
 	<%
-	unless params[:format] == 'widget' 
-
 	crm_apps.each do |crm_app| 
 		if is_application_installed?(Integrations::Constants::APP_NAMES[crm_app])  %>
 	<div id="contact_info_<%=crm_app%>" class='requester_tab'>
@@ -65,8 +61,6 @@
 	</div>
 	<% 
 		end 
-	end
-
 	end
 	%>
 	</div>

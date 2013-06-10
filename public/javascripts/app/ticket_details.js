@@ -168,23 +168,6 @@ refreshStatusBox = function() {
 	});
 }
 
-$('#helpdesk_ticket_group_id').bind("change", function(e){
-	$('#TicketProperties .default_agent')
-		.addClass('loading-right');
-
-	$.ajax({type: 'POST',
-		url: '/helpdesk/commons/group_agents/'+this.value,
-		contentType: 'application/text',
-		success: function(data){
-			$('#TicketProperties .default_agent select')
-				.html(data)
-				.trigger('change');
-
-			$('#TicketProperties .default_agent').removeClass('loading-right');
-		  }
-	});
-});
-
 function dueDateSelected(date){
 	new Date(date);
 }
@@ -268,12 +251,12 @@ showCannedResponse = function(button, ticket_id){
 	
 	$("#canned_response_container")    
 		.show()
-		.addClass("loading");
+		.addClass("sloading");
 
 	$("#canned_response_list")
 		.load("/helpdesk/canned_responses/index/"+ticket_id, function(){
 			$("#canned_response_container")
-				.removeClass("loading");
+				.removeClass("sloading");
 		})
 		.show();        
 }
@@ -379,7 +362,7 @@ var updatePagination = function() {
 	$('#show_more').off('click.ticket_details');
 	$('#show_more').on('click.ticket_details',function(ev) {
 		ev.preventDefault();
-		$('#show_more').addClass('loading');
+		$('#show_more').addClass('sloading loading-small');
 		var href;
 		if (showing_notes)
 			href = TICKET_DETAILS_DATA['notes_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_note_id'];
@@ -390,7 +373,7 @@ var updatePagination = function() {
 
 			TICKET_DETAILS_DATA['first_activity'] = null;
 			TICKET_DETAILS_DATA['first_note_id'] = null;
-			$('#show_more').removeClass('loading').addClass('hide');
+			$('#show_more').removeClass('sloading loading-small').addClass('hide');
 			$('[rel=activity_container]').prepend(response);
 			
 		});
@@ -535,6 +518,25 @@ $(document).ready(function() {
 
 		$active.click();
 	});
+
+
+	$("body").on('change.ticket_details', '#helpdesk_ticket_group_id', function(e){
+		$('#TicketProperties .default_agent')
+			.addClass('sloading loading-small loading-right');
+
+		$.ajax({type: 'POST',
+			url: '/helpdesk/commons/group_agents/'+this.value,
+			contentType: 'application/text',
+			success: function(data){
+				$('#TicketProperties .default_agent select')
+					.html(data)
+					.trigger('change');
+
+				$('#TicketProperties .default_agent').removeClass('sloading loading-small loading-right');
+			  }
+		});
+	});
+
 	
 	$("body").on('click.ticket_details', '.widget.load_on_click.inactive', function(ev){
 		var widget_code = $(this).find('textarea');
@@ -628,7 +630,6 @@ $(document).ready(function() {
 			}
 		});
 	}); 
-	
 
 	//End of Twitter Replybox JS
 
@@ -749,6 +750,17 @@ $(document).ready(function() {
 		$(this).parent().siblings('.integration_container').toggle($(this).prop('checked'));
 	});
 
+	function seperateQuoteText(_form){
+		if(_form.data('fulltext')) {
+			var body_text = jQuery('<div class="hide">'+jQuery('#' + _form.data('cntId') + '-body').val()+'</div>'); 
+			jQuery("body").append(body_text);
+			jQuery('#' + _form.data('cntId') + '-body-fulltext').val(body_text.html());
+			body_text.find('div.freshdesk_quote').remove();
+			jQuery('#' + _form.data('cntId') + '-body').val(body_text.html());
+			body_text.remove();
+		}
+	}
+
 	$('body').on('submit.ticket_details', ".conversation_thread .request_panel form", function(ev) {
 
 		var _form = $(this);
@@ -789,6 +801,7 @@ $(document).ready(function() {
 					url: TICKET_DETAILS_DATA['draft']['clear_path'],
 					type: 'delete'
 				});
+				seperateQuoteText(_form);
 				return true;
 			}
 			ev.preventDefault();
@@ -806,10 +819,12 @@ $(document).ready(function() {
 					_form.append(input_showing);
 					var input_since = $('<input type="hidden" rel="ajax_params" name="since_id" value="' + (showing_notes ? TICKET_DETAILS_DATA['last_note_id'] : TICKET_DETAILS_DATA['last_activity'] ) + '" />');
 					_form.append(input_since);
+					
+					seperateQuoteText(_form);					
 
 				},
 				success: function(response) {
-
+							
 					var statusChangeField = jQuery('#reply_ticket_status_' + _form.data('cntId'));
 					if(statusChangeField.length) {
 						if(statusChangeField.val() != '') {
@@ -1054,6 +1069,15 @@ $(document).ready(function() {
 			
 	});
 
+
+	// Scripts for ToDo List
+	$('body').on('keydown.ticket_details', '.addReminder textarea', function(ev) {
+		if(ev.keyCode == 13){
+			ev.preventDefault();
+			if(trim($(this).val()) != '') $(this).parents('form').submit();
+		}
+	});
+
 	/*
 		When the ticket subjects are long, we hide the extra content and show them only on mouseover. 
 		While doing this, the ticket subject occupies more height that normal we are hiding that
@@ -1086,6 +1110,8 @@ $(document).ready(function() {
 
 	//Previous Next Buttons request
 	$.getScript("/helpdesk/tickets/prevnext/" + TICKET_DETAILS_DATA['displayId']);
+
+	$('#twitter_handle').change();
 
 	if(TICKET_DETAILS_DATA['scroll_to_last']) {
 		$.scrollTo('[rel=activity_container] .conversation:last', { offset: 143 });
