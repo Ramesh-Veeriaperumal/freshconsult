@@ -150,6 +150,7 @@ class Support::Discussions::TopicsController < SupportController
   #method to fetch the monitored status of the topic given the user_id
   def check_monitor
     @monitorship = Monitorship.find_by_user_id_and_topic_id(params[:user_id], params[:id]) 
+    @monitorship = [] if @monitorship.nil?
     respond_to do |format|
       format.xml { render :xml => @monitorship.to_xml(:except=>:account_id) }
       format.json { render :json => @monitorship.as_json(:except=>:account_id) }
