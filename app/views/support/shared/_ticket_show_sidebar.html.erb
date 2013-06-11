@@ -122,7 +122,7 @@ jQuery('#add_cc_btn').bind("click", function(ev){
 						          end
 						          dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
 						       %>
-				          	   <%= construct_ticket_element :helpdesk_ticket, field, field.label_in_portal, dom_type, field.required_in_portal, field_value %>
+				          	   <%= construct_ticket_element f, :helpdesk_ticket, field, field.label_in_portal, dom_type, field.required_in_portal, field_value %>
 				          	   <%#= render(:partial => "/shared/nested_fields", :locals => { :ticket => @ticket, :category => field, :category_field_value =>  field_value, :type => "edit"}) if field.field_type == "nested_field"%>
 				             <% end %>
 				           <% end %>

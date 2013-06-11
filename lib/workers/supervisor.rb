@@ -21,19 +21,19 @@ class Workers::Supervisor
 
   def self.run
     account = Account.current
-    SeamlessDatabasePool.use_persistent_read_connection do
+    return unless account.supervisor_rules.count > 0 
       start_time = Time.now.utc
     account.supervisor_rules.each do |rule|
       begin
         conditions = rule.filter_query
         next if conditions.empty?
-        negate_conditions = rule.negation_query
-        
+        negate_conditions = [""]
+        negate_conditions = rule.negation_query if $redis_others.get("SUPERVISOR_NEGATION")
         puts "rule name::::::::::#{rule.name}"
         puts "conditions::::::: #{conditions.inspect}"
         puts "negate_conditions::::#{negate_conditions.inspect}"
         joins  = rule.get_joins(["#{conditions[0]} #{negate_conditions[0]}"])
-        tickets = account.tickets.scoped(:conditions => negate_conditions).scoped(:conditions => conditions).updated_in(1.month.ago).visible.find(:all, :joins => joins, :select => "helpdesk_tickets.*")
+        tickets = Sharding.run_on_slave { account.tickets.scoped(:conditions => negate_conditions).scoped(:conditions => conditions).updated_in(1.month.ago).visible.find(:all, :joins => joins, :select => "helpdesk_tickets.*") }
         tickets.each do |ticket|
           rule.trigger_actions ticket
           ticket.save!
@@ -50,7 +50,6 @@ class Workers::Supervisor
     if((end_time - start_time) > 250)
       total_time = Time.at(Time.now.utc - start_time).gmtime.strftime('%R:%S')
       puts "Time total time it took to execute the supervisor rules for, #{account.id}, #{account.full_domain}, #{total_time}"
-    end
   end
   end
 end

@@ -1,5 +1,7 @@
 module Workers
 	class ArchiveData
+		extend Resque::AroundPerform 
+
 		@queue = "archive_reports_data"
 
 		include Resque::Plugins::Status

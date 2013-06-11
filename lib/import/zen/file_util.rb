@@ -79,7 +79,7 @@ def import_file base_dir, file_arr
 end
 
 def handle_error
-     enable_notification
+     enable_notification(@current_account)
      delete_zip_file
      email_params = {:email => params[:email], :domain => params[:domain]}
      Admin::DataImportMailer.deliver_import_error_email(email_params)

@@ -69,7 +69,7 @@ namespace :freshdesk_tire do
     account = Account.find_by_id(ENV['ACCOUNT_ID'])
     account.make_current
     account.es_enabled_account.update_attribute(:imported, false)
-    SeamlessDatabasePool.use_persistent_read_connection do
+    Sharding.slave do
       klasses = ENV['CLASS'].split(';')
       klasses.each do |klass|
         ENV['CLASS'] = klass

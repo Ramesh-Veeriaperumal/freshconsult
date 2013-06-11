@@ -28,7 +28,7 @@ class Admin::ProductsController < Admin::AdminController
       redirect_to params[:customize_portal] ? admin_portal_template_path(@product.portal) : redirect_url
     else
       update_error
-      redirect_to :action => 'edit'
+      render :action => 'edit'
     end
     
   end

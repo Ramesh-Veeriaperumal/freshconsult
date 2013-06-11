@@ -34,7 +34,7 @@ def add_message_as_note thread, ticket
       message.symbolize_keys!
       user = get_facebook_user(message[:from])
       @note = ticket.notes.build(
-                        :body => message[:message],
+                        :note_body_attributes => {:body => message[:message]},
                         :private => true ,
                         :incoming => true,
                         :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"],
@@ -60,16 +60,17 @@ def add_message_as_ticket thread
   requester = get_facebook_user(message[:from])
   @ticket = @account.tickets.build(
           :subject => truncate_subject(message[:message], 100),
-          :description => message[:message],
-          :description_html => message[:message],
           :requester => requester,
           :product_id => @fb_page.product_id,
           :group_id => group_id,
           :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook],
           :created_at => Time.zone.parse(message[:created_time]),
           :fb_post_attributes => {:post_id => message[:id], :facebook_page_id =>@fb_page.id ,:account_id => @account.id ,
-                                  :msg_type =>'dm' ,:thread_id =>thread[:id]} )
-      
+                                  :msg_type =>'dm' ,:thread_id =>thread[:id]},
+          :ticket_body_attributes => {:description => message[:message], 
+                                      :description_html => message[:message]})
+                    
+                                   
    if @ticket.save
       if messages.size > 1
          add_message_as_note thread , @ticket

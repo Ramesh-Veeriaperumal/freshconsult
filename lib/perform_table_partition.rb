@@ -3,7 +3,8 @@ module PerformTablePartition
   PARTITION_TABLES = ["helpdesk_tickets","helpdesk_notes","users","helpdesk_ticket_states",
                       "flexifields","helpdesk_attachments","helpdesk_activities","survey_remarks",
                       "survey_handles","survey_results", "helpdesk_schema_less_tickets", 
-                      "helpdesk_schema_less_notes","support_scores","helpdesk_dropboxes","helpdesk_external_notes"]
+                      "helpdesk_schema_less_notes","support_scores","helpdesk_dropboxes","helpdesk_external_notes",
+                      "helpdesk_ticket_bodies","helpdesk_note_bodies"]
   PARTITION_SIZE = 128
   
   PARTITION_COLUMN = "account_id"

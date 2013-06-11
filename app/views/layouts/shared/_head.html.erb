@@ -18,7 +18,7 @@
 	<% unless page_canonical.blank? %>
 		<link rel="canonical" href="<%= page_canonical %>" />
 	<% end %>
-	<% cache(["v2","portal","fav_ico",current_portal]) do %>
+	<% cache(["v3","portal","fav_ico",current_portal]) do %>
 		<link rel="shortcut icon" href="<%=current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' : current_portal.fav_icon.content.url%>" />
 	<%end%>
 	<%= include_cloudfront_css :common %>
