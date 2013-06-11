@@ -7,13 +7,6 @@ GIT
       savon_model
 
 GIT
-  remote: git://github.com/freshdesk/after_commit.git
-  revision: af3e83dc6f071ae261478dbb7134d2ff534bc0a9
-  specs:
-    after_commit (1.0.11)
-      activerecord (>= 1.15.6, < 3.0.0)
-
-GIT
   remote: git://github.com/freshdesk/cloudfront_asset_host.git
   revision: 53a5ce53f24daff486988ea0f0a72fd0194817d2
   specs:
@@ -52,13 +45,6 @@ GIT
       POpen4 (>= 0.1.4)
 
 GIT
-  remote: git://github.com/freshdesk/seamless_database_pool.git
-  revision: 24d7c2ead61b85a05b73989af817e624ba660238
-  specs:
-    seamless_database_pool (1.0.12)
-      activerecord (>= 2.2.2)
-
-GIT
   remote: git://github.com/freshdesk/tire.git
   revision: 915c18f2929fd1ca8978afece65cff199ef41faa
   specs:
@@ -89,11 +75,15 @@ GEM
       activesupport (= 2.3.18)
       rack (~> 1.1.0)
     active_presenter (1.4.0)
+    active_record_shards (2.7.0)
+      activerecord (>= 2.3.5, < 3.3)
     activerecord (2.3.18)
       activesupport (= 2.3.18)
     activeresource (2.3.18)
       activesupport (= 2.3.18)
     activesupport (2.3.18)
+    after_commit (1.0.11)
+      activerecord (>= 1.15.6, < 3.0.0)
     akami (1.2.0)
       gyoku (>= 0.4.0)
       nokogiri (>= 1.4.0)
@@ -117,7 +107,6 @@ GEM
     braintree (2.10.0)
       builder
     builder (3.2.0)
-    chardet (0.9.0)
     chargebee (1.1.9)
       json_pure (~> 1.5)
       rest-client (~> 1.4)
@@ -153,9 +142,6 @@ GEM
     hashr (0.0.22)
     hoe (3.6.0)
       rake (>= 0.8, < 11.0)
-    html5 (0.10.0)
-      chardet (>= 0.9.0)
-      hoe (>= 1.2.0)
     http_accept_language (1.0.1)
     httparty (0.10.0)
       multi_json (~> 1.0)
@@ -311,6 +297,7 @@ GEM
     spork (0.8.5)
     spreadsheet (0.6.8)
       ruby-ole (>= 1.0)
+    static_model (1.0.4)
     susy (1.0.8)
       compass (>= 0.12.2)
       sass (>= 3.2.0)
@@ -337,8 +324,6 @@ GEM
       rails
     wkhtmltopdf-binary (0.9.9.1)
     xml-simple (1.1.2)
-    xss_terminate (0.2)
-      html5 (>= 0.10.0)
 
 PLATFORMS
   ruby
@@ -348,7 +333,8 @@ DEPENDENCIES
   SystemTimer (= 1.2.3)
   ZenTest (= 4.4.1)
   active_presenter (= 1.4.0)
-  after_commit!
+  active_record_shards (= 2.7.0)
+  after_commit (= 1.0.11)
   arel (= 2.0.7)
   authlogic (= 2.1.6)
   autotest-fsevent (= 0.1.1)
@@ -418,10 +404,10 @@ DEPENDENCIES
   sanitize (= 2.0.3)
   sass (= 3.2.1)
   sax-machine (~> 0.1.0)
-  seamless_database_pool!
   soap4r-ruby1.9 (~> 2.0.5)
   spork (~> 0.8.0)
   spreadsheet (= 0.6.8)
+  static_model (~> 1.0.4)
   susy
   test-unit (= 1.2.3)
   thinking-sphinx (= 1.4.3)
@@ -431,5 +417,4 @@ DEPENDENCIES
   useragent (~> 0.4.16)
   wicked_pdf (~> 0.9.2)
   wkhtmltopdf-binary (~> 0.9.9.1)
-  xss_terminate (~> 0.2)
   yui-compressor!

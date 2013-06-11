@@ -117,8 +117,8 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
                                            :conditions => [ "state != 'trial'"] ) do |subscriptions|
       subscriptions.each do |sub|
         account = sub.account
-        user = account.account_admin
-        csv << [account.name, account.full_domain, user.name,user.email,account.created_at.strftime('%Y-%m-%d'),sub.next_renewal_at.strftime('%Y-%m-%d'),sub.amount,sub.agent_limit,
+        admin_name = "#{account.admin_first_name} #{account.admin_last_name}"
+        csv << [account.name, account.full_domain, admin_name,account.admin_email,account.created_at.strftime('%Y-%m-%d'),sub.next_renewal_at.strftime('%Y-%m-%d'),sub.amount,sub.agent_limit,
                 sub.subscription_plan.name,sub.renewal_period,
                 sub.free_agents] 
       end 

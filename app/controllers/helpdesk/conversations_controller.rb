@@ -2,7 +2,7 @@ class Helpdesk::ConversationsController < ApplicationController
   
   helper 'helpdesk/tickets'
   
-  before_filter :load_parent_ticket_or_issue, :build_conversation
+  before_filter :load_parent_ticket_or_issue
   
   include HelpdeskControllerMethods
   include ParserUtil
@@ -11,6 +11,7 @@ class Helpdesk::ConversationsController < ApplicationController
   include Conversations::Facebook
   include Helpdesk::Activities
   
+  before_filter :build_note_body_attributes, :build_conversation
   before_filter :validate_fwd_to_email, :only => [:forward]
   before_filter :check_for_kbase_email, :set_quoted_text, :only => [:reply]
   before_filter :set_default_source, :set_mobile, :prepare_mobile_note,
@@ -85,6 +86,19 @@ class Helpdesk::ConversationsController < ApplicationController
   
   protected
 
+    def build_note_body_attributes
+      if params[:helpdesk_note][:body] || params[:helpdesk_note][:body_html]
+        unless params[:helpdesk_note].has_key?(:note_body_attributes)
+          note_body_hash = {:note_body_attributes => { :body => params[:helpdesk_note][:body],
+                                  :body_html => params[:helpdesk_note][:body_html] }} 
+          params[:helpdesk_note].merge!(note_body_hash).tap do |t| 
+            t.delete(:body) if t[:body]
+            t.delete(:body_html) if t[:body_html]
+          end 
+        end 
+      end
+    end
+    
     def build_conversation
       logger.debug "testing the caller class:: #{nscname} and cname::#{cname}"
       @item = self.instance_variable_set('@' + cname,
@@ -150,7 +164,7 @@ class Helpdesk::ConversationsController < ApplicationController
       def add_forum_post
         @topic = Topic.find_by_id_and_account_id(@parent.ticket_topic.topic_id,current_account.id)
         if !@topic.locked?
-          @post  = @topic.posts.build(:body_html => params[:helpdesk_note][:body])
+          @post  = @topic.posts.build(:body_html => params[:helpdesk_note][:note_body_attributes][:body_html])
           @post.user = current_user
           @post.account_id = current_account.id
           @post.save!

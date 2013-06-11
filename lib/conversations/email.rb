@@ -1,6 +1,6 @@
 module Conversations::Email
   def create_article
-    body_html = params[:helpdesk_note][:body_html]
+    body_html = params[:helpdesk_note][:note_body_attributes][:body_html]
     attachments = params[:helpdesk_note][:attachments]
     Helpdesk::KbaseArticles.create_article_from_note(current_account, current_user, @parent.subject, body_html, attachments)
   end

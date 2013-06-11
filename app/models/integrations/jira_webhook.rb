@@ -112,7 +112,7 @@ class Integrations::JiraWebhook
     unless user
       user = account.contacts.new
       if user.signup!({:user => {:name => name, :email => email, 
-                       :active => true,:user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+                       :active => true, :helpdesk_agent => false }})
        else
           puts "unable to save the contact:: #{user.errors.inspect}"
        end   
