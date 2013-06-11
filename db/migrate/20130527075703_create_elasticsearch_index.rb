@@ -1,4 +1,5 @@
 class CreateElasticsearchIndex < ActiveRecord::Migration
+  shard :none
   def self.up
     create_table :elasticsearch_indices do |t|
       t.string "name", :null => false
