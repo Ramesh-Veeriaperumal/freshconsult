@@ -240,10 +240,6 @@ class Account < ActiveRecord::Base
   after_update :change_shard_mapping
 
   after_update :update_users_language
-<<<<<<< HEAD
-=======
- 
->>>>>>> origin/master
 
   before_destroy :update_crm
 
