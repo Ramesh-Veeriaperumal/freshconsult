@@ -937,7 +937,7 @@ cs:
   assuming_identity_user_does_not_exist_msg: "Uživatel, kterého jste se snažili napodobit, neexistuje."
   at: v
   attach_file: "Přiložit soubor"
-  attach_file_local: "Přiožit soubor z vašeho počítače"
+  attach_file_local: "Přiložit soubor z vašeho počítače"
   attach_files: "Připojit přílohu"
   attachment: Příloha
   attachment_delete: "Chystáte se navždy smazat tuto přílohu. Pokračovat?"
@@ -1837,10 +1837,10 @@ cs:
     help_center: "Jak vám dnes můžeme pomoci?"
     login: "přihlásit se"
     new_support_ticket: "Nový požadavek na podporu"
-    new_ticket: "Nová událost"
+    new_ticket: "Nový požadavek"
     search: Hledat
     signout: "Odhlásit se"
-    submit_a_ticket: "Odeslat událost"
+    submit_a_ticket: "Nový požadavek"
     tabs: 
       admin: Administrátor
       checkstatus: "Zkontrolujte si stav vašich požadavků"
@@ -2089,7 +2089,7 @@ cs:
         timesheet: "Časový list"
       views: 
         all: "Všechny lístky"
-        all_tickets: "Všechny události"
+        all_tickets: "Všechny požadavky"
         closed: "Uzavřené události"
         deleted: Koš
         due_today: "Požadavky které mají být vyřešené dnes"
@@ -2685,14 +2685,14 @@ cs:
       add_or_remove_emails: "Přidejte nebo odeberte e-maily, které je nutné zkopírovat při odesílání oznámení pro tento lístek."
       add_people: "Přidat osoby"
       add_people_title: "Přidat osoby ke konverzaci"
-      details: "Podrobnosti o lístku"
+      details: "Podrobnosti požadavku"
       export: "Exportovat požadavky"
       export_ticket_data: "Exportovat požadavky do CSV souboru"
       export_to_csv: "Export do CSV"
-      mark_closed: "Označit lístek jako uzavřený"
+      mark_closed: "Označit požadavek jako uzavřený"
       reopen_reply: "Znovu otevřít a odpovědět"
       reply_placeholder: "Klepnutím sem odpovězte na tento lístek"
-      ticket_list: "Seznam lístků"
+      ticket_list: "Seznam požadavků"
     to_post_comment: "pro odeslání komentáře"
     to_post_topic: "pro odeslání tématu"
     to_submit_ticket: "pro odeslání nového požadavku"
@@ -2745,7 +2745,7 @@ cs:
   portal_customizer_anon_for_i: "Tato vlastnost by měla být vypnuta, pokud chcete schovat stránky fóra ve veřejně přístupném zákaznickém portálu."
   portal_customizer_anon_for_t: "Aktivujte tuto funkci, pokud mají mít uživatelé možnost přihlásit se svým uživatelským jménem a heslem služby Twitter. "
   portal_customizer_anon_tickets: "Kdokoliv může vložit událost"
-  portal_customizer_anon_tickets_i: "Tuto vlastnost vypněte, pokud chcete po Vašich uživatelých, aby k založení nové události museli být přihlášeni."
+  portal_customizer_anon_tickets_i: "Vypněte tuto vlastnost v případě, že budete požadovat, aby uživatelé byli při založení nového požadavku přihlášeni."
   portal_customizer_auto_suggest_solutions: "Tuto funkci povolte, pokud chcete navrhnout existující řešení, když uživatel vytvoří nový lístek."
   portal_customizer_facebook_signin: "Umožnit uživatelům, aby se přihlásili pomocí Facebooku"
   portal_customizer_google_signin: "Povolit uživatelům přihlášení prostřednictvím Google"
@@ -3426,8 +3426,8 @@ cs:
     portal_created_on_same_user: "Vytvořeno dne <span class='emphasize'>%{date}</span>"
     previous: "Předchozí lístek"
     priority: Priorita
-    properties: "Vlastnosti události"
-    recent_tickets: "Aktuální události"
+    properties: "Vlastnosti požadavku"
+    recent_tickets: "Nedávné požadavky"
     reply_form: 
       form_title: "Odpovědět na konverzaci"
       post_to_linked_forum: "Napsat na provázané fórum"
@@ -3476,7 +3476,7 @@ cs:
       reply: Odpovědět
       reply_and_open: "Odpovědět & otevřít"
     switch_view: 
-      new_view: "Vyzkoušejte <strong>nové zobrazení lístků</strong>"
+      new_view: "Vyzkoušejte si <strong>nové zobrazení požadavků</strong>"
       revert_view: "Přepnout na klasické zobrazení"
       submit_feedback: "Odeslat názor"
       whats_new: "Co je nového"
@@ -3553,7 +3553,7 @@ cs:
       choices: Volby
       customer_edit: "Zákazník může upravovat"
       customer_info1: "Pole nemůže být prázdné při online zadávání požadavku"
-      customer_mandatory: "Povinné pro zadání požadavku"
+      customer_mandatory: "Povinné pro zadání události"
       customer_visible: "Viditelné zákazníkům"
       delete_field: "Odstranit Pole"
       description: Popis
@@ -3589,7 +3589,7 @@ cs:
       paragraph: "Víceřádkový text"
       save: "Uložit Pole požadavku"
       single_line: "Jednořádkový text"
-      title: "Pole požadavku"
+      title: "Políčka události"
     no_choice_message: "Je nutné uvést aspoň jednu platnou volbu"
     saving_ticket: "Ukládání položek požadavku..."
     second_choice: "Druhá volba"

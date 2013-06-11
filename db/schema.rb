@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130604051421) do
+ActiveRecord::Schema.define(:version => 20130606101905) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -309,6 +309,15 @@ ActiveRecord::Schema.define(:version => 20130604051421) do
   end
 
   add_index "elasticsearch_indices", ["name"], :name => "index_elasticsearch_indices_on_name", :unique => true
+
+  create_table "domain_mappings", :force => true do |t|
+    t.integer "account_id", :limit => 8, :null => false
+    t.integer "portal_id",  :limit => 8
+    t.string  "domain",                  :null => false
+  end
+
+  add_index "domain_mappings", ["account_id", "portal_id"], :name => "index_domain_mappings_on_account_id_and_portal_id", :unique => true
+  add_index "domain_mappings", ["domain"], :name => "index_domain_mappings_on_domain", :unique => true
 
   create_table "email_configs", :force => true do |t|
     t.integer  "account_id",      :limit => 8
@@ -655,6 +664,25 @@ ActiveRecord::Schema.define(:version => 20130604051421) do
 
   add_index "helpdesk_nested_ticket_fields", ["account_id", "name"], :name => "index_helpdesk_nested_ticket_fields_on_account_id_and_name", :unique => true
 
+  create_table "helpdesk_note_bodies", :id => false, :force => true do |t|
+    t.integer  "id",             :limit => 8,          :null => false
+    t.integer  "note_id",        :limit => 8
+    t.text     "body",           :limit => 2147483647
+    t.text     "body_html",      :limit => 2147483647
+    t.text     "full_text",      :limit => 2147483647
+    t.text     "full_text_html", :limit => 2147483647
+    t.integer  "account_id",     :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "raw_text",       :limit => 16777215
+    t.text     "raw_html",       :limit => 16777215
+    t.text     "meta_info",      :limit => 16777215
+    t.integer  "version"
+  end
+
+  add_index "helpdesk_note_bodies", ["account_id", "note_id"], :name => "index_note_bodies_on_account_id_and_note_id", :unique => true
+  add_index "helpdesk_note_bodies", ["id"], :name => "index_helpdesk_note_bodies_id"
+
   create_table "helpdesk_notes", :id => false, :force => true do |t|
     t.integer  "id",           :limit => 8,                             :null => false
     t.text     "body",         :limit => 2147483647
@@ -858,6 +886,23 @@ ActiveRecord::Schema.define(:version => 20130604051421) do
   end
 
   add_index "helpdesk_tags", ["account_id", "name"], :name => "index_helpdesk_tags_on_account_id_and_name", :unique => true
+
+  create_table "helpdesk_ticket_bodies", :id => false, :force => true do |t|
+    t.integer  "id",               :limit => 8,          :null => false
+    t.integer  "ticket_id",        :limit => 8
+    t.text     "description",      :limit => 2147483647
+    t.text     "description_html", :limit => 2147483647
+    t.integer  "account_id",       :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "raw_text",         :limit => 16777215
+    t.text     "raw_html",         :limit => 16777215
+    t.text     "meta_info",        :limit => 16777215
+    t.integer  "version"
+  end
+
+  add_index "helpdesk_ticket_bodies", ["account_id", "ticket_id"], :name => "index_ticket_bodies_on_account_id_and_ticket_id", :unique => true
+  add_index "helpdesk_ticket_bodies", ["id"], :name => "index_helpdesk_ticket_bodies_id"
 
   create_table "helpdesk_ticket_fields", :force => true do |t|
     t.integer  "account_id",              :limit => 8
@@ -1139,6 +1184,18 @@ ActiveRecord::Schema.define(:version => 20130604051421) do
 
   add_index "quests", ["account_id", "category"], :name => "index_quests_on_account_id_and_category"
 
+  create_table "roles", :force => true do |t|
+    t.string   "name"
+    t.string   "privileges"
+    t.text     "description"
+    t.boolean  "default_role",              :default => false
+    t.integer  "account_id",   :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "roles", ["account_id", "name"], :name => "index_roles_on_account_id_and_name", :unique => true
+
   create_table "scoreboard_levels", :force => true do |t|
     t.integer  "account_id", :limit => 8
     t.integer  "points"
@@ -1148,6 +1205,11 @@ ActiveRecord::Schema.define(:version => 20130604051421) do
   end
 
   add_index "scoreboard_levels", ["account_id"], :name => "index_scoreboard_levels_on_account_id"
+
+  create_table "shard_mappings", :primary_key => "account_id", :force => true do |t|
+    t.string  "shard_name",                  :null => false
+    t.integer "status",     :default => 200, :null => false
+  end
 
   create_table "scoreboard_ratings", :force => true do |t|
     t.integer  "account_id",       :limit => 8
@@ -1532,6 +1594,15 @@ ActiveRecord::Schema.define(:version => 20130604051421) do
   add_index "topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"
   add_index "topics", ["forum_id"], :name => "index_topics_on_forum_id"
 
+  create_table "user_roles", :id => false, :force => true do |t|
+    t.integer "user_id",    :limit => 8
+    t.integer "role_id",    :limit => 8
+    t.integer "account_id", :limit => 8
+  end
+
+  add_index "user_roles", ["role_id"], :name => "index_user_roles_on_role_id"
+  add_index "user_roles", ["user_id"], :name => "index_user_roles_on_user_id"
+
   create_table "users", :id => false, :force => true do |t|
     t.integer  "id",                  :limit => 8,                    :null => false
     t.string   "name",                             :default => "",    :null => false
@@ -1575,6 +1646,8 @@ ActiveRecord::Schema.define(:version => 20130604051421) do
     t.string   "external_id"
     t.string   "string_uc01"
     t.text     "text_uc01"
+    t.boolean  "helpdesk_agent",                   :default => false
+    t.string   "privileges",                       :default => "0"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true

@@ -63,7 +63,10 @@
 						<%= label_tag :requester_email, t('your_email')+'<span class="required_star">*</span>' %>
 						<%= text_field_tag :requester_email, nil, :class => "email required"  %>
 					<% end %>
-			  		<%= f.text_area :body_html, :id=>"portal_ticket_note_public" %>
+					<% f.fields_for (:note_body, Helpdesk::NoteBody.new) do |ff| %>
+            			<%= ff.text_area :body_html, :class => "required",
+            			:id=>"portal_ticket_note_public", :value => "" %>
+          			<% end %>
 				</li>
 				<li class="attachment-options"  id="attachment-options">
 					<% unless local_assigns[:no_attachments] %>

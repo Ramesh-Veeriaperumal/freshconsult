@@ -33,8 +33,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   has_flexiblefields
   
-  unhtml_it :description
-  
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, :requester_name, :meta_data, :disable_observer
   
@@ -64,18 +62,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit_on_create :create_initial_activity,  :update_content_ids, :pass_thro_biz_rules,
     :support_score_on_create, :process_quests, :update_es_index
   
-  after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity, 
+  after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity,
     :stop_timesheet_timers, :fire_update_event, :support_score_on_update, 
     :process_quests, :publish_to_update_channel, :update_es_index, :regenerate_reports_data
 
   after_commit_on_destroy :remove_es_document
 
+ has_one :ticket_body, :class_name => 'Helpdesk::TicketBody', :dependent => :destroy
 
   has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
 
   belongs_to :email_config
   belongs_to :group
-  xss_sanitize :only => [:description_html], :html_sanitize => [:description_html]
+  #xss_sanitize :only => [:description_html], :html_sanitize => [:description_html]
  
   belongs_to :responder,
     :class_name => 'User',
@@ -169,7 +168,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   attr_protected :attachments #by Shan - need to check..
   
-  accepts_nested_attributes_for :tweet, :fb_post
+  accepts_nested_attributes_for :tweet, :fb_post, :ticket_body
   
   named_scope :created_at_inside, lambda { |start, stop|
           { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }
@@ -378,10 +377,29 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.subject ||= ''
     self.group_id ||= email_config.group_id unless email_config.nil?
     self.priority ||= PRIORITY_KEYS_BY_TOKEN[:low]
+    build_ticket_body(:description_html => self.description_html,
+      :description => self.description) unless ticket_body
     #self.description = subject if description.blank?
   end
   
-  
+  def description
+    description
+  end
+ 
+  def description_html
+    description_html
+  end
+ 
+  def description_with_ticket_body
+    ticket_body ? ticket_body.description : read_attribute(:description)
+  end
+  alias_method_chain :description, :ticket_body
+
+
+  def description_html_with_ticket_body
+    ticket_body ? ticket_body.description_html : read_attribute(:description_html)
+  end
+  alias_method_chain :description_html, :ticket_body
   
   def to_param 
     display_id ? display_id.to_s : nil
@@ -452,7 +470,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       :account => account,
       :user => user,
       :activity_data => activity_data
-    )
+    ) if user
   end
   
   def create_initial_activity
@@ -616,7 +634,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def create_meta_note
     if meta_data.present?  # Added for storing metadata from MobiHelp
       self.notes.create(
-        :body => meta_data.map { |k, v| "#{k}: #{v}" }.join("\n"),
+        :note_body_attributes => {:body => meta_data.map { |k, v| "#{k}: #{v}" }.join("\n")},
         :private => true,
         :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
         :account_id => self.account.id,
@@ -911,7 +929,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #Liquid ends here
   
   def respond_to?(attribute)
-    return false if [:to_ary].include?(attribute.to_sym)
+    return false if [:to_ary,:after_initialize_without_slave].include?(attribute.to_sym)
     # Array.flatten calls respond_to?(:to_ary) for each object.
     #  Rails calls array's flatten method on query result's array object. This was added to fix that.
 
@@ -1205,13 +1223,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
       description_updated = false
       attachments.each do |attach| 
         content_id = header[:content_ids][attach.content_file_name]
-        self.description_html.sub!("cid:#{content_id}", attach.content.url) if content_id
+        self.ticket_body.description_html = self.ticket_body.description_html.sub("cid:#{content_id}", attach.content.url) if content_id
         description_updated = true
       end
 
+      ticket_body.update_attribute(:description_html,self.ticket_body.description_html) if description_updated
+
       # For rails 2.3.8 this was the only i found with which we can update an attribute without triggering any after or before callbacks
-      Helpdesk::Ticket.update_all("description_html= #{ActiveRecord::Base.connection.quote(description_html)}", ["id=? and account_id=?", id, account_id]) \
-          if description_updated
+      #Helpdesk::Ticket.update_all("description_html= #{ActiveRecord::Base.connection.quote(description_html)}", ["id=? and account_id=?", id, account_id]) \
+         # if description_updated
     end
 
     def create_source_activity

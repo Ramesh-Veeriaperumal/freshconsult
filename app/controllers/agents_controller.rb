@@ -143,19 +143,19 @@ class AgentsController < ApplicationController
       @agent.occasional = params[:agent][:occasional]
       #check_agent_limit
       @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id] if gamification_feature?(current_account)
+      @user = current_account.all_users.find(@agent.user_id)
       
-      if @agent.update_attributes(params[nscname])            
-          @user = current_account.all_users.find(@agent.user_id)
-          if @user.update_attributes(params[:user])        
-             flash[:notice] = t(:'flash.general.update.success', :human_name => 'Agent')
-             redirect_to :action => 'index'
-         else
-             check_email_exist     
-             @agent.user =@user       
-             render :action => :edit 
-         end
+      if @user.update_attributes(params[:user])
+        if @agent.update_attributes(params[nscname])
+           flash[:notice] = t(:'flash.general.update.success', :human_name => 'Agent')
+           redirect_to :action => 'index'
+        else
+           @agent.user = @user
+           render :action => :edit
+        end
       else
-        @agent.user =@user       
+        check_email_exist
+        @agent.user =@user
         render :action => :edit
       end    
      

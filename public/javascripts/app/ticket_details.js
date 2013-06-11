@@ -750,6 +750,17 @@ $(document).ready(function() {
 		$(this).parent().siblings('.integration_container').toggle($(this).prop('checked'));
 	});
 
+	function seperateQuoteText(_form){
+		if(_form.data('fulltext')) {
+			var body_text = jQuery('<div class="hide">'+jQuery('#' + _form.data('cntId') + '-body').val()+'</div>'); 
+			jQuery("body").append(body_text);
+			jQuery('#' + _form.data('cntId') + '-body-fulltext').val(body_text.html());
+			body_text.find('div.freshdesk_quote').remove();
+			jQuery('#' + _form.data('cntId') + '-body').val(body_text.html());
+			body_text.remove();
+		}
+	}
+
 	$('body').on('submit.ticket_details', ".conversation_thread .request_panel form", function(ev) {
 
 		var _form = $(this);
@@ -790,6 +801,7 @@ $(document).ready(function() {
 					url: TICKET_DETAILS_DATA['draft']['clear_path'],
 					type: 'delete'
 				});
+				seperateQuoteText(_form);
 				return true;
 			}
 			ev.preventDefault();
@@ -807,10 +819,12 @@ $(document).ready(function() {
 					_form.append(input_showing);
 					var input_since = $('<input type="hidden" rel="ajax_params" name="since_id" value="' + (showing_notes ? TICKET_DETAILS_DATA['last_note_id'] : TICKET_DETAILS_DATA['last_activity'] ) + '" />');
 					_form.append(input_since);
+					
+					seperateQuoteText(_form);					
 
 				},
 				success: function(response) {
-
+							
 					var statusChangeField = jQuery('#reply_ticket_status_' + _form.data('cntId'));
 					if(statusChangeField.length) {
 						if(statusChangeField.val() != '') {

@@ -87,7 +87,9 @@
 				<ul class="ui-form">
 			    	<li> 
 						<%= content_tag( :h4, t('ticket.note_form.form_title'), :class => "title" ) %>
-			  			<%= f.text_area :body_html, :id=>"portal_ticket_note" %>
+			  			<% f.fields_for (:note_body, Helpdesk::NoteBody.new) do |ff| %>
+            				<%= ff.text_area :body_html, :class => "required", :id=>"portal_ticket_note", :value => "" %>
+          				<% end %>
 					</li>
 					<li class="attachment-options"  id="attachment-options">
 						<% unless local_assigns[:no_attachments] %>

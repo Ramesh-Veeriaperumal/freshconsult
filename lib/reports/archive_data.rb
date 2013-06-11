@@ -11,8 +11,8 @@ module Reports
 			def archive(options)
 				account_id, regenerate = options[:account_id], options.key?(:regenerate)
 				start_date, end_date = options[:start_date].to_date, options[:end_date].to_date
-				SeamlessDatabasePool.use_persistent_read_connection do
-					account = Account.find_by_id(account_id)
+				Sharding.run_on_slave do
+					account = Account.current
 					Time.zone = account.time_zone
 					start_date.upto(end_date) do |day|
 						@stats_date, @stats_end_time = day.strftime("%Y-%m-%d 00:00:00"), Time.zone.parse(day.strftime("%Y-%m-%d 23:59:59"))
