@@ -237,7 +237,7 @@ class Account < ActiveRecord::Base
   after_create :populate_seed_data
   after_create :populate_features
 
-  after_create :change_shard_status
+  #after_create :change_shard_status
   after_update :change_shard_mapping
 
   after_update :update_users_language
@@ -833,11 +833,11 @@ class Account < ActiveRecord::Base
       self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:account_admin]
       self.user.build_agent()
       self.user.agent.account = self
-      self.user.save
+      self.user.save!
       User.current = self.user
       
       self.build_account_configuration(admin_contact_info)
-      self.account_configuration.save
+      self.account_configuration.save!
     end
     
     def set_roles_flag
@@ -893,7 +893,7 @@ class Account < ActiveRecord::Base
 
 
     def set_shard_mapping
-      shard_mapping = ShardMapping.new({:shard_name => ShardMapping.latest_shard, :status => ShardMapping::STATUS_CODE[:not_found]})
+      shard_mapping = ShardMapping.new({:shard_name => ShardMapping.latest_shard, :status => ShardMapping::STATUS_CODE[:ok]})
       shard_mapping.domains.build({:domain => full_domain})  
       shard_mapping.save                             
       self.id = shard_mapping.id

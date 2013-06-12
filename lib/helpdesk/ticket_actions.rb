@@ -209,7 +209,7 @@ module Helpdesk::TicketActions
         options[:distinct] = true 
         options[:select] = :id
       end
-      total_entries = Sharding.run_on_slave { current_account.tickets.permissible(current_user).count(options) }
+      total_entries = current_account.tickets.permissible(current_user).count(options)
     end
     @ticket_count = total_entries.to_i
   end

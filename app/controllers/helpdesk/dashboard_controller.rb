@@ -12,8 +12,6 @@ class Helpdesk::DashboardController < ApplicationController
   before_filter :load_items, :only => [:activity_list]
   before_filter :set_selected_tab
 
-  around_filter :run_on_slave
-
   def index
     if request.xhr? and !request.headers['X-PJAX']
       load_items
@@ -58,9 +56,4 @@ class Helpdesk::DashboardController < ApplicationController
     def set_selected_tab
       @selected_tab = :dashboard
     end
-    
-    def run_on_slave(&block)
-      Sharding.run_on_slave(&block)
-    end 
-
 end
