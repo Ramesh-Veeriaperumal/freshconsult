@@ -95,6 +95,10 @@ module Search::TicketSearch
       return groups
     end
 
+    if criteria_key == "helpdesk_schema_less_tickets.product_id"
+      return Account.current.products_from_cache.collect { |au| [au.id, CGI.escapeHTML(au.name)] }
+    end
+
     if criteria_key == :due_by
        return TicketConstants.due_by_list
     end

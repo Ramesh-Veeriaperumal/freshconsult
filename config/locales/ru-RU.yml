@@ -447,6 +447,7 @@ ru-RU:
         rebrand_header_empty: "Необходим цвет шапки."
         rebrand_header_invalid: "Цвет шапки неверный."
         rebrand_paint_title: "Раскрасьте вашу техподдержку"
+        rebrand_sub_title: "Логотип и цвета"
         rebrand_submit_label: Забрендировать
         rebrand_subtitle: "Проведите ребрендинг: поменяйте логотип и цвета!"
         rebrand_tab_empty: "Необходим цвет табов"
@@ -467,6 +468,7 @@ ru-RU:
         social_facebook_add: "Добавить страницу"
         social_info: "Используйте Help Desk на Facebook, Twitter, в сообществах и других сайтах, где проводят время ваши клиенты"
         social_info_text: "Добавьте свои учетные записи в Facebook и Twitter и следите за ходом событий. Записи на стене, твиты, личные и публичные сообщения будут появляться прямо во Freshdesk."
+        social_sub_title: "Социальные сети"
         social_subtitle: "Расскажите о своей службе поддержки в социальных сетях!"
         social_title: "Go Social?"
         social_title_1: "Поделиться в <br> соцсетях"
@@ -660,6 +662,7 @@ ru-RU:
         security_title: Безопасность
         shared_secret: "Общий секретный ключ"
         shared_secret_info: "Скопируйте этот токен и храните его в безопасном месте. Он необходим для удаленной аутентификации. Это ваш общий с Freshdesk секрет."
+        submit_request: "Отправить Запрос"
     shared: 
       filter_jsinit: 
         body: Тело
@@ -730,13 +733,36 @@ ru-RU:
         thankyou_default: "Спасибо за ваше сообщение"
         thankyou_info: "Сообщение, которое появляется при заполнении формы пользователем"
         thankyou_label: "Отправить сообщение"
-  after_day: "Через 1 день"
+  adv_reports: 
+    agent_comparison: "Сравнение агентов"
+    agent_top_n_analysis: "Анализ N-лучших Агентов"
+    comparison: Сравнение
+    customer_top_n_analysis: "Анализ N-лучших Клиентов"
+    deleted_agent: "Удалить агента"
+    deleted_customer: "Удалить Клиента"
+    deleted_group: "Удалить группу"
+    filtered_by: "Отфильтровано по"
+    glance: 
+      all_reports: "Все отчеты"
+      download: Скачать
+      print: Печать
+    group_comparison: "Сравнение групп"
+    group_top_n_analysis: "Анализ N-лучших Групп"
+    no_data_to_display_msg: "Нет данных для отображения"
+    report: " Отчет "
+    reports: Отчеты
+    select_option_msg: "Пожалуйста выберите один из вариантов"
+    tickets_backlog: "История заявки"
+    tickets_resolved: "Заявка решена"
+    time_period: "Период времени"
+    top_n_analysis: "Анализ N-лучших"
+  after_day: "Через день"
   after_eight: "Через 8 часов"
   after_four: "Через 4 часа"
   after_half: "Через 30 минут"
-  after_one: "Через 1 час"
-  after_onemonth: "Через 1 месяц"
-  after_oneweek: "Через 1 неделю"
+  after_one: "Через час"
+  after_onemonth: "Через месяц"
+  after_oneweek: "Через неделю"
   after_threeday: "Через 3 дня"
   after_twelve: "Через 12 часов"
   after_two: "Через 2 часа"
@@ -834,7 +860,7 @@ ru-RU:
   assuming_identity_user_does_not_exist_msg: "Пользователя, которым вы себя идентифицируете, не существует. "
   at: на
   attach_file: "Прикрепить файл"
-  attach_file_local: "Прикрепить файл с вашего компьютера"
+  attach_file_local: "Приложить файл с компьютера"
   attach_files: "Присоединить файлы"
   attachment: Вложение
   attachment_delete: "Вы собираетесь безвозвратно удалить приложение. Продолжить?"
@@ -939,6 +965,7 @@ ru-RU:
     updated: "Папка с шаблонными ответами успешно обновлена!"
     viewing: "Папка: "
   captcha_verify_message: "Введенный код не верен, попробуйте еще раз!"
+  card_error: "При добавление вашей карты произошла ошибка. Пожалуйста попробуйте снова."
   card_number: "Номер карты"
   card_process: "Спасибо за оплату. Ваш Freshdesk аккаунт активен!"
   category: 
@@ -1074,7 +1101,7 @@ ru-RU:
   country: Страна
   create: Создать
   created_on: "Дата создания "
-  credit_card: "Карта файла"
+  credit_card: "Кредитная карта"
   credit_card_info: "Информация о банковской карте"
   current_free_plan: "Текущий свободный план"
   current_plan: "Текущий план"
@@ -1152,7 +1179,7 @@ ru-RU:
   draft: "Черновик:"
   dropbox_attach_from: "Прикрепить из Dropbox"
   dropbox_attach_label: "Прикрепить из"
-  dropbox_choose_file: "Выбрать файл"
+  dropbox_choose_file: "Выберите файл"
   due_in: "Будет выполнен через %{time_words}"
   due_next_eight: "Следующие 8 часов"
   due_today: Сегодня
@@ -1277,6 +1304,7 @@ ru-RU:
   enter_payment: "Введите информацию об оплаты"
   enter_payment_details_to_add: "Чтобы добавить больше агентов, введите платежную информацию"
   error_in_plan: "Ошибка изменения плана"
+  error_in_update: "Мы не смогли одновить вашу подписку. Если проблема повториться, напишите нам на support@freshdesk.com."
   errors: 
     actions_empty: "Действия не могут быть пустыми"
     conditions_empty: "Условия должны быть заполнены"
@@ -1570,6 +1598,7 @@ ru-RU:
   forum: 
     confim_msg1: "Вы действительно хотите удалить этот форум?"
     edit: "Редактировать форум"
+    forum_created: "Форум создан"
     new: "Новый форум"
     start_topic: "Создать тему"
     title: Форумы
@@ -1698,6 +1727,7 @@ ru-RU:
       threeday: "3 дня"
       two: "12 часов"
       twoday: "2 дня"
+    description: "Описание группы"
     edit: "Редактировать группу"
     helptext: "Можно распределить своих агентов по особым группам, например, «Продажи» и «Управление продукцией». Разделение по сегментам существенно упростит назначение заявок, создание специальных шаблонов ответов, рассылку уведомлений по E-mail, создание бизнес-правил и подготовку отчетов на уровне группы. Обратите внимание, что один агент может одновременно числиться в нескольких группах."
     info1: "Агенты в этой группе"
@@ -1737,6 +1767,8 @@ ru-RU:
       social: Общественный
       solutions: Решения
       tickets: Заявки
+    user_available: "Новые заявки будут автоматически назначаться на вас"
+    user_not_available: "Новые заявки НЕ будут автоматически назначаться на вас."
     welcome: "Добро пожаловать"
   header_logo: "Верхний лого"
   helpdesk: 
@@ -1886,7 +1918,13 @@ ru-RU:
           private_note: "%{user_name} добавил личное примечание %{note_date}"
           public_note: "%{user_name} добавил публичное примечание %{note_date}"
           reply: "%{user_name} ответил %{note_date}"
+        created_on_live: 
+          forward: "%{user_name} переслал <abbr data-livestamp='%{timestamp}'></abbr>%{note_date}"
+          private_note: "%{user_name} добавил приватную заметку к <abbr data-livestamp='%{timestamp}'></abbr> %{note_date}"
+          public_note: "%{user_name} добавил публичную заметку <abbr data-livestamp='%{timestamp}'></abbr> %{note_date}"
+          survey: "%{user_name} отметил заявку <abbr data-livestamp='%{timestamp}'></abbr> %{note_date}"
         delete_note: "Удалить это из обсуждения талона?"
+        deleted_note: Удалена
         inbound_email: "Входящие письма"
         outbound_email: "Исходящее письмо"
         posted_on: "%{user_name} в %{note_date}"
@@ -2062,7 +2100,7 @@ ru-RU:
   how_to: Вопрос
   identity_reverted_error_msg: "Извините, ваши пользовательские данные не найдены"
   identity_reverted_msg: "You have reverted your identify back to you."
-  immediately: Сейчас
+  immediately: Немедленно
   import: Импорт
   import_added_newly: "Вновь добавленные"
   import_articles: "Статьи о решениях"
@@ -2392,6 +2430,7 @@ ru-RU:
         api_key_info: "<a href='http://www.zoho.com/crm/help/api/using-authentication-token.html#Generate_Auth_Token' target='_blank'> Сгенерируйте токен авторизации</a> в режиме браузера Zoho CRM и вставьте сгенерированный токен сюда."
       helptext: "<h4>Помощь в интеграции Zoho CRM </h4><p><br/> Чтобы интегрировать Zoho CRM во Freshdesk, <a href='http://www.zoho.com/crm/help/api/using-authentication-token.html#Generate_Auth_Token' target='_blank'> сгенерируйте токен авторизации</a> в режиме браузера Zoho CRM и вставьте сгенерированный токен сюда.  Если токен уже сгенерирован, взять его можно здесь: <a href='https://accounts.zoho.com/u/h#setting/authtoken' target='_blank'>страница вашей учетной записи.</a> <br/><br/> После этого можно будет просматривать информацию о любых контактах и заявках.</p>"
       label: "Zoho CRM"
+  is: Это
   is_expiring_today: "истекает сегодня"
   is_not: "не "
   last: последний
@@ -2472,9 +2511,12 @@ ru-RU:
   password: Пароль
   password_confirmation: "Подтверждение пароля:"
   password_reset_email: "Письмо со сбросом пароля"
+  payment_failed: "Мы не смогли обработать платеж по вашей кредитной карте. Если проблема повториться, напишите нам на support@freshdesk.com."
   payment_info: "Информация о платежах"
   pending: "Ожидающий завершения"
   phone: Телефон
+  plain_no: Нет
+  plain_yes: Да
   plan_amount: "за агента в месяц"
   plan_info_update: "Тарифный план был изменен"
   plan_is_selected: "Для вашей учетной записи активирован план %{plan}"
@@ -2485,6 +2527,11 @@ ru-RU:
     article: 
       see_all_articles: "Просмотреть все %{count} статей"
     community_forums: "Форумы сообщества"
+    cookie: 
+      cookie_dialog_info1: "Мы используем Куки для того чтобы сделать использование Freshdesk более комфортным. "
+      cookie_policy: "Настройки Куки"
+      privacy_policy: "Политика конфиденциальности"
+      why_we_love_cookies: "Почему мы любим Куки"
     folder: 
       filler_text: "Здесь будут размещены статьи, касающиеся %{folder_name}"
     header: 
@@ -3036,6 +3083,7 @@ ru-RU:
     status: "Статус решения"
     title: Решения
     title_counter_message: "С точки зрения SEO, оптимальный заголовок не должен быть длиннее 72 знаков."
+    title_singular: Решение
     type: "Тип решения"
     visibility: Видимость
   solution_category: 
@@ -3182,6 +3230,7 @@ ru-RU:
     close_btn: Закрыть
     close_btn_title: "Закрыть заявку"
     closed_at: "Часов с момента закрытия"
+    conv_form_status_set_as: "и отметить как <strong>%{status}</strong>"
     convert_ticket_title: "Конвертировать в талон"
     create_ticket_title: "Создать талон"
     created_at: "Часов с момента создания"
@@ -3239,6 +3288,8 @@ ru-RU:
     note_content: "Содержание примечания"
     note_form: 
       add_and_resolve: "Добавить и решить"
+      add_private_note: "Добавить Приватную Заметку"
+      add_public_note: "Добавить Публичную Заметку"
       description_note: "Тема и Описание объединенных заявок будут добавлены в качестве примечаний к главной заявке"
       form_title: "Добавить заметку"
       notify_agents: "Известить агентов"
@@ -3272,6 +3323,7 @@ ru-RU:
     resolved_at: "Часов с момента решения"
     restore_btn: "Восстановить заявку"
     restore_btn_title: "Восстановить эту заявку"
+    scenarios: Сценарии
     select_to_agent: "Выберите агента"
     singular: Заявка
     sort_by: "Сортировать по"
@@ -3477,6 +3529,7 @@ ru-RU:
       mark_this_idea_as: "Отметить эту идею как"
   total: Всего
   total_price: Итого
+  trial_expired: "Время использования пробной версии истекло. Напишите на support@freshdesk.com чтобы обновить подписку."
   trial_expired_on: "Ваш ознакомительный период истекает"
   twelve: "12 часов"
   twelve_hours: "В течение 12 часов"

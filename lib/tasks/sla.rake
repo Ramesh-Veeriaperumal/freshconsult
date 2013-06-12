@@ -4,25 +4,17 @@ namespace :sla do
     puts "Check for SLA violation initialized at #{Time.zone.now}"
     queue_name = "sla_worker"
     if sla_should_run?(queue_name)
-      puts "SLA violation check called at #{Time.zone.now}."
-      Account.active_accounts.each do |account|        
-        Resque.enqueue(Workers::Sla::AccountSLA, { :account_id => account.id})
+      Monitoring::RecordMetrics.register({:task_name => "SLA Escalate"})
+      Sharding.execute_on_all_shards do
+        Account.active_accounts.each do |account|        
+          Resque.enqueue(Workers::Sla::AccountSLA, { :account_id => account.id})
+        end
       end
     end
     puts "SLA rule check finished at #{Time.zone.now}."
   end
 
-  task :premium => :environment do
-    puts "Check for SLA violation in Premium Accounts initialized at #{Time.zone.now}"
-    queue_name = "premium_sla_worker"
-    if sla_should_run?(queue_name)
-        puts "SLA violation check for Premium accounts called at #{Time.zone.now}."
-        Account.active_accounts.premium_accounts.each do |account|
-          Resque.enqueue(Workers::Sla::PremiumSLA, {:account_id => account.id})
-        end
-    end
-    puts "SLA rule check finished at #{Time.zone.now}."
-  end
+ 
 end
 
 def sla_should_run?(queue_name)

@@ -14,7 +14,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
   def update_multiple
     # params[nscname][:custom_field].delete_if {|key,value| value.blank? } unless 
     #           params[nscname][:custom_field].nil?
-    reply_content = params[:helpdesk_note][:body_html]
+    reply_content = params[:helpdesk_note][:note_body_attributes][:body_html]
     failed_tickets = []
     @items.each do |ticket|
       params[nscname].each do |key, value|
@@ -51,8 +51,8 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
     def build_note_params ticket, reply_content
       source = Helpdesk::Note::TICKET_NOTE_SOURCE_MAPPING[ticket.source]
       params[:helpdesk_note].merge!( :source => source, 
-        :body_html => Liquid::Template.parse(reply_content).render(
-        'ticket' => ticket, 'helpdesk_name' => ticket.portal_name) )
+        :note_body_attributes => {:body_html => Liquid::Template.parse(reply_content).render(
+        'ticket' => ticket, 'helpdesk_name' => ticket.portal_name)} )
     end  
 
     def email_reply ticket, note

@@ -346,7 +346,6 @@ var Redactor = function(element, options)
 					p:
 					{
 						title: RLANG.paragraph,
-						titleText: "(" + ctrlkeyname + altkeyname + "0)",
 						exec: 'formatblock'
 					},
 					blockquote:
@@ -365,28 +364,24 @@ var Redactor = function(element, options)
 					{
 						title: RLANG.header1,
 						exec: 'formatblock',
-						titleText: "(" + ctrlkeyname + altkeyname + "1)",
 						className: 'redactor_format_h1'
 					},
 					h2:
 					{
 						title: RLANG.header2,
 						exec: 'formatblock',
-						titleText: "(" + ctrlkeyname + altkeyname + "2)",
 						className: 'redactor_format_h2'
 					},
 					h3:
 					{
 						title: RLANG.header3,
 						exec: 'formatblock',
-						titleText: "(" + ctrlkeyname + altkeyname + "3)",
 						className: 'redactor_format_h3'
 					},
 					h4:
 					{
 						title: RLANG.header4,
 						exec: 'formatblock',
-						titleText: "(" + ctrlkeyname + altkeyname + "4)",
 						className: 'redactor_format_h4'
 					}
 				}
@@ -831,31 +826,7 @@ Redactor.prototype = {
 
 			if (ctrl)
 			{
-				if(alt) 
-				{	
-					if(key === 48) {
-						this.shortcuts(e, 'formatblock', 'p');	// Ctrl + Alt + 0
-					}
-					else if(key === 49) {
-						this.shortcuts(e, 'formatblock', 'h1');	// Ctrl + Alt + 1
-					}
-					else if(key === 50) {
-						this.shortcuts(e, 'formatblock', 'h2');	// Ctrl + Alt + 2
-					}
-					else if(key === 51) {
-						this.shortcuts(e, 'formatblock', 'h3');	// Ctrl + Alt + 3
-					}
-					else if(key === 52) {
-						this.shortcuts(e, 'formatblock', 'h4');	// Ctrl + Alt + 4
-					}
-					else if(key === 53) {
-						this.shortcuts(e, 'formatblock', 'h5');	// Ctrl + Alt + 5
-					}
-					else if(key === 54) {
-						this.shortcuts(e, 'formatblock', 'h6');	// Ctrl + Alt + 6
-					}
-				}
-				else if (key === 90)
+				if (key === 90)
 				{
 					if (this.opts.buffer !== false)
 					{
@@ -871,7 +842,7 @@ Redactor.prototype = {
 						this.shortcuts(e, 'undo'); // Ctrl + z
 					}
 				}
-				else if(shift)
+				else if(!alt && shift)
 				{
 					if(key === 82) {
 						this.shortcuts(e, 'JustifyRight');	// Ctrl + Shift + R

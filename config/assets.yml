@@ -53,6 +53,9 @@ stylesheets:
 
   tkt_details_print:
     - public/stylesheets/app/tkt_details_print.css
+    
+  survey:
+    - public/stylesheets/support/rating.css
 
   gadget:
     - public/stylesheets/app/common.css

@@ -4,6 +4,8 @@
 class ApplicationController < ActionController::Base
 
   layout Proc.new { |controller| controller.request.headers['X-PJAX'] ? 'maincontent' : 'application' }
+
+  around_filter :select_shard
   
   before_filter :reset_current_account, :redactor_form_builder, :redirect_to_mobile_url
   before_filter :check_account_state, :except => [:show,:index]
@@ -13,6 +15,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
+  rescue_from DomainNotReady, :with => :render_404
   
   include AuthenticationSystem
   #include SavageBeast::AuthenticationSystem
@@ -21,8 +24,6 @@ class ApplicationController < ActionController::Base
   include SslRequirement
   include SubscriptionSystem
   include Mobile::MobileHelperMethods
-  include CRM::SendEventToTotango
-  include CRM::TotangoModulesAndActions
   
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store
@@ -118,6 +119,12 @@ class ApplicationController < ActionController::Base
     respond_to do | format|
       format.xml  { render :xml => result.to_xml(:indent =>2,:root=>:errors)  and return }
       format.json { render :json => {:errors =>result}.to_json and return } 
+    end
+  end
+
+  def select_shard(&block)
+    Sharding.select_shard_of(request.host) do 
+        yield 
     end
   end
 

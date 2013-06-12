@@ -45,4 +45,7 @@ class Va::Handlers::Numeric < Va::RuleHandler
       [ "#{condition.db_column} #{q_operator} ?", numeric_value ]
     end
 
+    def filter_query_negation
+      [ "#{condition.db_column} IS NULL OR #{condition.db_column} != ?", numeric_value ]
+    end
 end

@@ -13,19 +13,21 @@ class SlaNotifier < ActionMailer::Base
 	end
 
 	def self.send_email(ticket, agents, n_type)
-		# Sets portal timezone as current timezone while sending notifications
+		time_zone = Time.zone # save current time_zone
+		# Sets portal timezone as current timezone while sending notifications		
 		Time.zone = ticket.account.time_zone 
+		begin
+			e_notification = ticket.account.email_notifications.find_by_notification_type(n_type)
+			return unless e_notification.agent_notification?
 
-		e_notification = ticket.account.email_notifications.find_by_notification_type(n_type)
-		return unless e_notification.agent_notification?
+			email_subject = Liquid::Template.parse(e_notification.agent_subject_template).render(
+			                            'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
+			email_body = Liquid::Template.parse(e_notification.formatted_agent_template).render(
+			                            'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
+		ensure
+			Time.zone = time_zone
+		end
 
-		email_subject = Liquid::Template.parse(e_notification.agent_subject_template).render(
-		                            'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
-		email_body = Liquid::Template.parse(e_notification.formatted_agent_template).render(
-		                            'ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
-
-		# Resets the Thread.current[:account] to nil and resets current timezone
-		#Account.reset_current_account 
 		deliver_escalation(ticket, agents, 
 		                                :email_body => email_body, :subject => email_subject)
   end

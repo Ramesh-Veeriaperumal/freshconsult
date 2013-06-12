@@ -2,7 +2,7 @@
 <%= content_tag(:h3, t("ticket.submit_ticket_title"), :class => "title") %>
 <% form_for @item, :html => {:multipart => true, :id => "NewTicket", :ignore => "" } do |f| %>
   <ul class="ui-form">  
-    <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => false } %>
+    <%= render :partial => "ticket_form", :object => f, :locals => { :is_edit => false, :f => f } %>
     <li>
       <%= render( :partial => "/helpdesk/shared/attachment_form" ) %>
     </li>
