@@ -1,6 +1,5 @@
 <div class="row-fluid business_hours">
 	<ul class="unstyled">
-		<li class="row-fluid"><h4 class="sub-lead"><%=t('business_hours.helpdesk_hours')%></h4></li>
 		<li class="row-fluid">
 			<div class="span3">
 				<%= t('business_hours.name') %>
@@ -174,6 +173,12 @@ jQuery(document).ready(function() {
         callback(data);
     }
 });
+
+<% if @business_calendar.is_default? %>
+  	jQuery("#time_zone").select2("disable", "");
+<% else %>
+ 	jQuery("#time_zone").select2("enable", "");
+<% end %>
 
 jQuery("#time_zone").select2("val",[]);
 

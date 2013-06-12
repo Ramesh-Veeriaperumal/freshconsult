@@ -2489,7 +2489,7 @@ en:
     description: Description
     new: New Business Calendar
     to: to
-    time_zone: Helpdesk Time Zone
+    time_zone: Time Zone
     delete: Are you sure
     valid_time: Please enter a valid time
     holiday_name: Holiday name
