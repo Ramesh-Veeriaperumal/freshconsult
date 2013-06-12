@@ -1,4 +1,5 @@
 class CreateHelpdeskNoteBody < ActiveRecord::Migration
+  shard :none
   def self.up
   	execute("CREATE TABLE `helpdesk_note_bodies` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
