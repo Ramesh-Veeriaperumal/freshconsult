@@ -1,4 +1,5 @@
 class CreateCustomRolesFeature < ActiveRecord::Migration
+  shard :none
   def self.up
     execute("INSERT INTO features (type, account_id, created_at, updated_at)
       SELECT 'CustomRolesFeature', account_id, now(), now()
