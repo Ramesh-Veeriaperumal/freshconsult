@@ -109,7 +109,7 @@ class Social::FacebookPosts
   def add_comment_as_note feed
   
     post_id = feed[:post_id]
-    post = @account.facebook_posts.find_by_post_id(post_id)
+    post = Sharding.run_on_slave { @account.facebook_posts.find_by_post_id(post_id) }
    
     comments = @rest.get_connections(post_id, "comments")  
     comments = comments.reject(&:blank?)
