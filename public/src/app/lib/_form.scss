@@ -943,19 +943,6 @@ input.time{
    }
 }
 
-
-span.sort_handle{
-   position:relative;
-   left: 20px;
-	 top: 10px;
-   width:10px;
-   height:10px;
-   cursor:move;
-
-   background:url(/images/sort_handle.png) no-repeat;
-   @include border-radius(0px);
-}
-
 .ui-custom-fields, .ui-custom-form{
    @include no-bullets;	
    margin:0 0 0 0; 
