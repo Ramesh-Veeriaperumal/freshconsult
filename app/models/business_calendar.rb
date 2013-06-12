@@ -65,7 +65,17 @@ class BusinessCalendar < ActiveRecord::Base
   end
   
   def holidays    
-    holiday_data.nil? ? [] : holiday_data.map {|hol| ("#{hol[0]}, #{Time.zone.now.year}").to_date}      
+    return [] if holiday_data.nil?
+    calendar_holidays =[]
+    holiday_data.each do |holiday|
+      begin
+        calendar_holidays << Date.parse(holiday[0])
+      rescue
+        #dont do anything, just skip the invalid holiday
+        next
+      end
+    end
+    calendar_holidays
   end
 
   def working_hours 
