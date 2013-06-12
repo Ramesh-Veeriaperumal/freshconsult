@@ -3,6 +3,7 @@
 	HolidayList = $H();
 	TIME_CONTAINERS = ["time_morning", "morning_range", "time_evening", "evening_range"];
 	INVALID_HOLIDAYS = ["feb30", "feb31","apr31","jun31","sep31","nov31"]
+	BASE_YEAR = 2000
 
 	setFullWeek = function( fullweek ){ 
 		jQuery("#DAYS_LIST").toggle( (fullweek === "false") );
@@ -124,7 +125,7 @@
 		var item_index = 0
 		jQuery("#HolidayList li").each (function(index){
 			var holiday = jQuery(this).find('span:first').text();
-			if (Date.parse(holiday) > Date.parse(month_date)) {
+			if (Date.parse(holiday + " " + BASE_YEAR) > Date.parse(month_date + " " + BASE_YEAR)) {
 				item_index = index - 1;
 				return false;
 			}
