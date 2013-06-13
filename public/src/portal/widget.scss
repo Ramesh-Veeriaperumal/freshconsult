@@ -15,42 +15,30 @@
 // Patterns
 @import "lib/forms";
 @import "lib/buttons";
-@import "lib/button-groups";
-@import "lib/sprites";
+@import "lib/close";
+/*@import "lib/alerts";*/
+/*@import "lib/button-groups";*/
+/*@import "lib/sprites";*/
 
 @import "lib/dropdowns";
-@import "lib/navs";
 
 // Components: Misc
-@import "lib/breadcrumbs";
-@import "lib/pagination";
-@import "lib/labels";
+/*@import "lib/labels";*/
 @import "lib/modals";
 @import "lib/component-animations";
 @import "lib/close";
-@import "lib/alerts";
-
-// Profile image styles
-@import "lib/profile";
 
 // Page related styles
-@import "lib/header-footer";
-@import "lib/page-lead";
 @import "lib/content";
-@import "lib/login";
-@import "lib/search";
 @import "lib/autocomplete";
 
-// Date picker
-@import "lib/jquery-ui";
+// Import redactor styles
+@import "../plugins-lib/redactor";
 
-// !PORTALCSS Existing styles from app
-// Need to be optimised
-@import "lib/ticket";
-@import "lib/survey";
 @import "lib/misc";
+
+@import "lib/widget";
+@import "lib/widget-icons";
 
 @import "lib/utilities";
 
-// Debug styles
-/*@import "lib/debug";*/

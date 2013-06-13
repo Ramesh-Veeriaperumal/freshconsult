@@ -26,7 +26,10 @@ en:
   sales: "Sales"
   preview: "Preview"
   send_feedback: "Send feedback"
-  your_email: "Your Email"
+  ticket_form:
+    your_email_address: "Email"
+    your_name: "Your Name"
+    select_contacts: "Select contacts from %{contact_name}"
   captcha_verify_message: "Captcha verification failed, try again!"
   your_email: "Your email"
   please_wait: Please wait...

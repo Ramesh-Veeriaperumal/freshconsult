@@ -10,7 +10,7 @@
 				<span class="label label-small label-light">{{ result.group }}</span>
 				<div>{{ result.desc }}</div>
 				<p class="help-text">
-					{{ result.source.created_on }}
+					{{ result.source.created_on | short_day_with_time }}
 				</p>
 			</li>
 			{% endfor %}
