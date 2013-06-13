@@ -755,7 +755,12 @@ Redactor.prototype = {
 		});
 		this.$editor.on('blur', function() { 
 			_redactor.syncCode();
+			$(this).parent().removeClass("redactor_focus");
 		});
+
+		this.$editor.on('focus', function() {
+			$(this).parent().addClass("redactor_focus");
+		})
 	},
 	//this.shortcuts() function is used to execute some action upon some shortcut ket hit
 	//formatblock cmd needs additional params for execution and so 'params' argument has been added

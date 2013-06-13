@@ -2645,13 +2645,6 @@ input[type="text"].number{
 	form{ margin-bottom: 0 }
 }
 
-.feedback-widget-container{
-	background-color: #fff; 
-	padding: 8px 10px; 
-	border: 1px solid #efefef; 
-	@include border-radius(5px); 
-}
-
 /* Dropbox attachment styles */
 div.db-chooser{
 	label{ margin-right: 50%; }

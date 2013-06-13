@@ -1,26 +1,29 @@
 <% _cc_condition = current_user && field.portal_cc_field? && ( current_user.customer || field.all_cc_in_portal? ) %>
 <div class="row-fluid">
 	<%= text_field object_name, :email, 
-			:value => @ticket.email, :class => "span12 email required",
-			"data-check-email-path" => (current_user ? "" : check_email_support_tickets_path),
-			:placeholder => "Email", "data-remote" => "true", "data-remote-triggers" => "focusout" %>
+			:value => "", :class => "span12 email required",
+			"data-check-email-path" => check_email_support_tickets_path,
+			:placeholder => t("ticket_form.your_email_address"), 
+			"data-remote" => "true", 
+			"data-remote-triggers" => "focusout" %>
 		
-	<div id="name_field" class="hide">
-		<input class="text span12" placeholder="Enter your full name" 
+	<div id="name_field" class="default_name_field hide">
+		<input class="text span12 name_field" placeholder="<%= t("ticket_form.your_name") %>" 
 			name="helpdesk_ticket[name]" type="text" disabled="disabled" />
 	</div>
 
 	<% if _cc_condition %>		
-		<a href="#" data-toggle-dom="#cc-emails" data-toggle-text="Hide cc" id="add-cc-button">Add cc</a>
+		<a href="#" data-toggle-dom="#cc-emails" data-toggle-text="Hide cc" id="add-cc-button"><%= t('helpdesk.shared.addcc') %></a>
 	<% end %>
 </div>
 <% if _cc_condition %>
 	<div id="cc-emails" class="cc-emails hide">
-		<span class="cc-label">Cc:</span>			
+		<span class="cc-label"><%= t('helpdesk.shared.cc') %>:</span>			
 		<% if field.company_cc_in_portal? %>
 			<%= select_tag(:cc_emails, 
-					options_for_select(current_user.customer.users.collect{|c|[c.email, c.email]}),
-	    			{ :multiple => true, "data-placeholder" => "Select contacts from #{current_user.customer.name}" }) %>
+					options_for_select(current_user.customer.users.collect{ |c| [c.email, c.email] }),
+	    			{ 	:multiple => true, 
+	    				"data-placeholder" => t("ticket_form.select_contacts", :contact_name => current_user.customer.name) }) %>
 	    <% else %>
 	    	<input type="text" id="cc_emails" name="cc_emails" />
 	    <% end %>

@@ -308,7 +308,7 @@ is_touch_device = function() {
          onkeyup: false,
          focusCleanup: true,
          focusInvalid: false,
-         ignore:".nested_field:not(:visible), .portal_url:not(:visible)"
+         ignore:"select.nested_field:empty, .portal_url:not(:visible)"
       };
       
       $("ul.ui-form, .cnt").livequery(function(ev){

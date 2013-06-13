@@ -291,7 +291,7 @@ class Support::SearchController < SupportController
     def solution_result article
       { 'title' => article.title, 
         'group' => article.folder.name, 
-        'desc' => article.desc_un_html,
+        'desc' => truncate(article.desc_un_html, :length => truncate_length ),
         'type' => "ARTICLE",
         'url' => support_solutions_article_path(article) }
     end
@@ -299,7 +299,7 @@ class Support::SearchController < SupportController
     def topic_result topic
       { 'title' => topic.title, 
         'group' => topic.forum.name, 
-        'desc' => truncate(topic.posts.first.body, :length => 120),
+        'desc' => truncate(topic.posts.first.body, :length => truncate_length),
         'type' => "TOPIC", 
         'url' => support_discussions_topic_path(topic) }
     end
@@ -307,9 +307,13 @@ class Support::SearchController < SupportController
     def ticket_result ticket
       { 'title' => ticket.subject, 
         'group' => "Ticket", 
-        'desc' => truncate(ticket.description, :length => 120),
+        'desc' => truncate(ticket.description, :length => truncate_length),
         'type' => "TICKET", 
         'url' => support_ticket_path(ticket) }
+    end
+
+    def truncate_length
+      request.xhr? ? 160 : 220
     end
 
     def render_search
