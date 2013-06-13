@@ -1,6 +1,5 @@
 # encoding: utf-8
 class SearchController < ApplicationController
-  skip_before_filter :check_privilege
   extend NewRelic::Agent::MethodTracer
   
   include SearchUtil
@@ -45,8 +44,10 @@ class SearchController < ApplicationController
     
     def content_classes
       to_ret = Array.new
-      to_ret << Solution::Article if allowed_in_portal?(:open_solutions)
-      to_ret << Topic if (feature?(:forums) && allowed_in_portal?(:open_forums))
+      to_ret << Solution::Article if 
+        (allowed_in_portal?(:open_solutions) && privilege?(:view_solutions))
+      to_ret << Topic if 
+        (feature?(:forums) && allowed_in_portal?(:open_forums) && privilege?(:view_forums))
       
       to_ret
     end
@@ -180,8 +181,14 @@ class SearchController < ApplicationController
   private
   
   def searchable_classes    
-    searchable = [ Helpdesk::Ticket, Solution::Article, User, Customer, Topic ]
-    searchable.delete_if{ |c| RESTRICTED_CLASSES.include?(c) } if current_user.restricted?
+    searchable = [ Helpdesk::Ticket ]
+    searchable << Solution::Article if privilege?(:view_solutions)
+    searchable << Topic             if privilege?(:view_forums)
+    
+    if privilege?(:view_contacts)
+      searchable << User
+      searchable << Customer
+    end
     
     searchable
   end 
