@@ -3,6 +3,9 @@ class Helpdesk::DashboardController < ApplicationController
   helper 'helpdesk/tickets' #by Shan temp
   include Reports::GamificationReport
 
+  skip_before_filter :check_account_state
+  before_filter :check_account_state, :only => [:index]
+  
   before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :set_mobile, :only => [:index]
   
