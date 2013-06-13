@@ -1,4 +1,5 @@
 class AddWorkableToBusinesscalendar < ActiveRecord::Migration
+  shard :none
   def self.up
     add_column :business_calendars, :name, :string
     add_column :business_calendars, :description, :string

@@ -1,4 +1,5 @@
 class AddBusinessCalendarToGroups < ActiveRecord::Migration
+	shard :none
   def self.up
   	 add_column :groups, :business_calendar_id, :integer
 
