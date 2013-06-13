@@ -228,7 +228,6 @@ class Account < ActiveRecord::Base
   before_create :set_shard_mapping
 
   before_update :check_default_values, :update_users_time_zone
-
   after_create :populate_features
 
   after_create :change_shard_status

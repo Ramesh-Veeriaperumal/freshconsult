@@ -9,7 +9,6 @@ class EmailController < ApplicationController
   skip_before_filter :verify_authenticity_token
   skip_before_filter :unset_current_account, :set_current_account, :redirect_to_mobile_url
   skip_before_filter :check_account_state, :except => [:show,:index]
-  skip_before_filter :set_default_locale
   skip_before_filter :set_time_zone, :check_day_pass_usage 
   skip_before_filter :set_locale
   
