@@ -33,14 +33,11 @@
       agent.resources :time_sheets, :controller=>'helpdesk/time_sheets'
   end
 
-  map.connect '/agents/filter/:state' ,:controller => 'agents' ,:action => 'index'
-  map.resources :sla_details
+  map.connect '/agents/filter/:state/*letter', :controller => 'agents', :action => 'index'
   
 #  map.mobile '/mob', :controller => 'home', :action => 'mobile_index'
 #  map.mobile '/mob_site', :controller => 'user_sessions', :action => 'mob_site'
   #map.resources :support_plans
-
-  map.resources :sl_as
 
   map.logout '/logout', :controller => 'user_sessions', :action => 'destroy'
   map.gauth '/openid/google', :controller => 'user_sessions', :action => 'openid_google'
@@ -59,7 +56,7 @@
   
   #map.register '/register', :controller => 'users', :action => 'create'
   #map.signup '/signup', :controller => 'users', :action => 'new'
-  map.resources :users, :member => { :delete_avatar => :delete, :change_account_admin => :put, 
+  map.resources :users, :member => { :delete_avatar => :delete, 
           :block => :put, :assume_identity => :get, :profile_image => :get }, :collection => {:revert_identity => :get}
   map.resource :user_session
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
@@ -120,6 +117,7 @@
     admin.resources :zen_import, :collection => {:import_data => :any }
     admin.resources :email_commands_setting, :member => { :update => :put }
     admin.resources :account_additional_settings, :member => { :update => :put, :assign_bcc_email => :get}
+    admin.resources :roles
   end
 
   map.namespace :search do |search|
@@ -306,10 +304,12 @@
                                     :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put, 
                                     :change_due_by => :put, :split_the_ticket =>:post, :status => :get, 
                                     :merge_with_this_request => :post, :print => :any, :latest_note => :get,  :activities => :get, 
-                                    :clear_draft => :delete, :save_draft => :post } do |ticket|
+                                    :clear_draft => :delete, :save_draft => :post, :update_ticket_properties => :put } do |ticket|
+                                      
+      ticket.resources :conversations, :collection => {:reply => :post, :forward => :post, :note => :post,
+                                       :twitter => :post, :facebook => :post}
 
       ticket.resources :notes, :member => { :restore => :put }, :collection => {:since => :get}, :name_prefix => 'helpdesk_ticket_helpdesk_'
-      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :subscriptions, :collection => { :create_watchers => :post, 
                                                         :unsubscribe => :get,
                                                         :unwatch => :delete,
@@ -357,11 +357,6 @@
     
     helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get, 
                   :requester_autocomplete => :get, :company_autocomplete => :get }
-    
-    
-    helpdesk.resources :sla_details
-    
-    helpdesk.resources :support_plans
     
     helpdesk.resources :sla_policies, :collection => {:reorder => :put}, :member => {:activate => :put},
                       :except => :show

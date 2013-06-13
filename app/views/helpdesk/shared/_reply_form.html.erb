@@ -4,9 +4,8 @@
   %>
 <div class="request_panel <%=hide_class%>" id="<%=cntid%>" rel="emitter" data-node-name="agent_replying">
   <div class="reply_box">
-    <% form_for note, :html => {:multipart => true, :id => "HelpdeskReply" } do |f| %>
+    <% form_for note, :url => reply_helpdesk_ticket_conversations_path(@ticket), :html => {:multipart => true, :id => "HelpdeskReply" } do |f| %>
     <%= f.error_messages %>
-       
     <ul class="ui-form dont-validate">
       <div class="request_form_options">
         <a href="#" class="slim-button" rel="cc_button_<%=cntid%>" data-input="#include_cc" data-parent="#cc-form-container-<%=cntid%>" data-show-text="<%= t(".addcc")%>" data-hide-text="<%= t(".removecc")%>" id="add_cc_btn_<%=cntid%>">
@@ -82,7 +81,7 @@
               <% end %>
             </div>
         </li>
-        <% if !@ticket.ticket_topic.nil? and !(@ticket.ticket_topic.topic.locked) %>
+        <% if privilege?(:view_forums) && !@ticket.ticket_topic.nil? && !(@ticket.ticket_topic.topic.locked) %>
         <li class="inline-field field">
             <div class="fields">
                 <label>
@@ -119,7 +118,9 @@
     </ul>
     <div class="button-container">        
       <%= submit_tag(t('ticket.reply_form.send'), :class => "uiButton special" ) %>
-      <%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status_#{cntid}').val('4');" , :class => "uiButton", :id => "send_resolve_btn") %>
+      <% if privilege?(:edit_ticket_properties) %>
+        <%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status_#{cntid}').val('4');" , :class => "uiButton", :id => "send_resolve_btn") %>
+      <% end %>
       <%= button_to_function(t('cancel'), "jQuery('##{cntid}').hide().trigger('visibility');jQuery('##{note_details_id}').show();cleardraft();jQuery('##{cntid}-body').destroyEditor();", :class => "uiButton" ) %>
     </div>
 

@@ -1,5 +1,6 @@
 class FlexifieldDefsController < ApplicationController
-  
+
+  skip_before_filter :check_privilege  
   before_filter :access_denied
   
   before_filter :find_flexifield_def, :only => %w(show edit update destroy)

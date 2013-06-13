@@ -96,10 +96,12 @@ class TopicsController < ApplicationController
     def assign_protected
       @topic.user     = current_user if @topic.new_record?
       # admins and moderators can sticky and lock topics
-      return unless admin? or current_user.moderator_of?(@topic.forum)
+      # admin?
+      return unless privilege?(:manage_forums) or current_user.moderator_of?(@topic.forum)
       @topic.sticky, @topic.locked = params[:topic][:sticky], params[:topic][:locked] 
       # only admins can move
-      return unless admin?
+      # admin?
+      return unless privilege?(:manage_forums)
       @topic.forum_id = params[:topic][:forum_id] if params[:topic][:forum_id]
     end
     
@@ -112,7 +114,7 @@ class TopicsController < ApplicationController
       @selected_tab = 'Forums'
     end
     
-    def authorized?
-      %w(new create).include?(action_name) || @topic.editable_by?(current_user)
-    end
+    # def authorized?
+    #   %w(new create).include?(action_name) || @topic.editable_by?(current_user)
+    # end
 end

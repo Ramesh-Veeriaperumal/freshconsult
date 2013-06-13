@@ -53,7 +53,7 @@ def check_for_spam(table,column_name, id_limit, threshold)
     results.each{ |x| user_ids << x[column_name]; }
     
     user_sql = <<-eos
-      select id,deleted,deleted_at, account_id from users where user_role in (#{User::USER_ROLES_KEYS_BY_TOKEN[:customer]}, #{User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]})
+      select id,deleted,deleted_at, account_id from users where helpdesk_agent = false)
       and blocked = 0 and whitelisted = 0 and id in (#{user_ids*","})
     eos
     puts user_sql
@@ -91,7 +91,7 @@ def check_for_spam(table,column_name, id_limit, threshold)
       unless deleted_users.empty?
         puts "deleted_users 2::::::::->#{deleted_users}"
         deleted_users = account.all_users.find(deleted_users)
-        SubscriptionNotifier.send_later(:deliver_account_admin_spam_watcher, account.admin_email, deleted_users)
+        SubscriptionNotifier.send_later(:deliver_admin_spam_watcher, account.admin_email, deleted_users)
       end
     end
 end

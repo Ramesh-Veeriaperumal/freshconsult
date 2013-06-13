@@ -104,7 +104,7 @@ class Integrations::ObjectMapper
           {:ours=>"note_body", :theirs_to_ours=>{:handler=>:db_fetch, :create_if_empty=>true, :entity=>Helpdesk::NoteBody,
                           :create_params => {:body => "JIRA comment {{notification_cause}} # {{comment.id}}:\n {{comment.body}}\n", 
                           :account_id => "{{account_id}}"}}}, 
-          {:ours=>"user", :theirs_to_ours=>{:handler=>:db_fetch, :use_if_empty=>"account_admin", :entity=>User, :using=>{:conditions=>["email=?", "{{comment.author.emailAddress}}"]}}},
+          {:ours=>"user", :theirs_to_ours=>{:handler=>:db_fetch, :use_if_empty=>"admin", :entity=>User, :using=>{:conditions=>["email=?", "{{comment.author.emailAddress}}"]}}},
 
           {:ours=>"source", :theirs_to_ours=>{:handler=>:static_value, :value=>Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]}},
           {:ours=>"private", :theirs_to_ours=>{:handler=>:static_value, :value=>true}},

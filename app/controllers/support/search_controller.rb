@@ -155,7 +155,7 @@ class Support::SearchController < SupportController
                   f.filter :or, { :not => { :exists => { :field => 'folder.customer_folders.customer_id' } } },
                                 { :term => { 'folder.customer_folders.customer_id' => current_user.customer_id } }
                 end
-                if current_user.client_manager?
+                if privilege?(:client_manager)
                   f.filter :or, { :not => { :exists => { :field => :company_id } } },
                                 { :term => { :company_id => current_user.customer_id } }
                 else
@@ -218,7 +218,7 @@ class Support::SearchController < SupportController
                 :deleted => false }
       
       if @current_user 
-        if @current_user.client_manager?
+        if privilege?(:client_manager)
           opts[:customer_id] = [@def_search_val, current_user.customer_id]
         else
           # Buggy hack... The first users tickets in the first account will also be searched 

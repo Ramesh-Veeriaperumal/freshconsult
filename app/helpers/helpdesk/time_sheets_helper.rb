@@ -90,6 +90,11 @@ module Helpdesk::TimeSheetsHelper
     script
   end
 
+  def agent_list
+    privilege?(:edit_time_entries) ?
+      current_account.users.technicians.visible : [current_user]
+  end
+
   def timesheet_integrations_enabled?
     integrated_apps.each do |app|
       app_detail = get_app_details(app[0])
@@ -100,7 +105,6 @@ module Helpdesk::TimeSheetsHelper
 
     return false
   end
-
   
   private 
     def integrated_apps 

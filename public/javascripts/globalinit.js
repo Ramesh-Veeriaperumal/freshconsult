@@ -344,7 +344,7 @@ is_touch_device = function() {
                                         }
       // Form validation any form append to the dom will be tested via live query and then be validated via jquery
       $("form[rel=validate]").livequery(function(ev){
-        $(this).validate(validateOptions)
+        $(this).validate($.extend( validateOptions, $(this).data()))
       })
 
     $('.single_click_link').live('click',function(ev) {

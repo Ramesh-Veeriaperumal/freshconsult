@@ -1,4 +1,6 @@
 class Widgets::FeedbackWidgetsController < SupportController
+
+  skip_before_filter :check_privilege
   skip_before_filter :verify_authenticity_token
   include SupportTicketControllerMethods 
 

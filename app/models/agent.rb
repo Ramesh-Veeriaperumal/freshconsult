@@ -3,7 +3,6 @@ class Agent < ActiveRecord::Base
   belongs_to_account
   include Notifications::MessageBroker
   include Cache::Memcache::Agent
-  include Authority::Rails::ModelHelpers
 
   belongs_to :user, :class_name =>'User', :foreign_key =>'user_id'
 
@@ -34,15 +33,12 @@ class Agent < ActiveRecord::Base
   belongs_to :level, :class_name => 'ScoreboardLevel', :foreign_key => 'scoreboard_level_id'
   
   before_create :set_default_ticket_permission
-  before_update :update_agents_level, :backup_agent_changes
+  before_update :update_agents_level
   before_create :set_account_id
 
   after_save  :update_agent_levelup
   after_update :publish_game_notifications
-  
-  before_create :set_authority_delta, :if => [:roles_enabled?, :roles_blank?]
-  before_update :set_authority_delta, :if => [:roles_enabled?, :poweruser?]
-    
+
   TICKET_PERMISSION = [
     [ :all_tickets, 1 ], 
     [ :group_tickets,  2 ], 
@@ -50,6 +46,8 @@ class Agent < ActiveRecord::Base
   ]
  
   named_scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
+  named_scope :full_time_agents, :conditions => { :occasional => false, 'users.deleted' => false}
+  named_scope :occasional_agents, :conditions => { :occasional => true, 'users.deleted' => false}
   
   PERMISSION_TOKENS_BY_KEY = Hash[*TICKET_PERMISSION.map { |i| [i[1], i[0]] }.flatten]
   PERMISSION_KEYS_BY_TOKEN = Hash[*TICKET_PERMISSION.map { |i| [i[0], i[1]] }.flatten]
@@ -87,10 +85,30 @@ def signature_htm
   self.signature_html
 end
 
-def self.filter(page, state = "active", per_page = 20)
-  paginate :per_page => per_page, :page => page,
-           :include => [ {:user => :avatar} ], 
-           :conditions => { :users => { :deleted  => !state.eql?("active") } }
+# State => Fulltime, Occational or Deleted
+# 
+def self.filter(state = "active", order = "name", order_type = "ASC", page = 1, per_page = 20)
+  order = "name" unless order
+  order_type = "ASC" unless order_type
+  paginate :per_page => per_page, 
+           :page => page,
+           :include => { :user => :avatar },
+           :conditions => filter_condition(state),
+           :order => "#{order} #{order_type}"
+end
+
+def self.filter_condition(state)
+  unless "deleted".eql?(state)
+    return ["users.deleted = ? and agents.occasional = ?", false, "occasional".eql?(state)]
+  else
+    return ["users.deleted = ?", true]
+  end
+end
+
+def assumable_agents
+  account.users.technicians.select do |agent|
+    user.can_assume?(agent)
+  end
 end
 
 #This method returns true if atleast one of the groups that he belongs to has round robin feature
@@ -129,33 +147,5 @@ protected
   def set_account_id
     account_id = user.account_id
   end
-  
-private
 
-  def set_authority_delta
-    poweruser = self.all_ticket_permission ? "Agent" : "Restricted Agent"
-    self.user.roles = [self.account.roles.find_by_name(poweruser)]
-    self.user.privileges = union_privileges(self.user.roles).to_s
-    self.user.send(:update_without_callbacks)
-  end
-  
-  def backup_agent_changes
-    @ticket_permission = self.changes.has_key?("ticket_permission")
-    true
-  end
-
-  def poweruser?
-    (@ticket_permission &&
-      self.user.user_role == User::USER_ROLES_KEYS_BY_TOKEN[:poweruser]) ||
-    roles_blank?
-  end
-  
-  def roles_blank?
-    self.user.roles.blank?
-  end
-  
-  def roles_enabled?
-    self.account.roles_enabled?
-  end
-  
 end

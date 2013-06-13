@@ -1,0 +1,56 @@
+	<% if agents.present? %>
+  <div class="cust_list_table_body">
+		<table class="table table-striped agent-list-page <%= 'deleted-list' if(params[:state] == "deleted") %> ">
+			<% agents.each do |agent| %>
+				<tr>
+					<td>
+						<a href="#" class="cust-list-avatar">
+							<%= user_avatar(agent.user)%> <!-- class="img-circle" have to add in img tag for circle-->
+						</a>
+						<p class="text-info"><strong><%= link_to(h(agent.user.display_name), agent_path(agent), :class => "item_info") %> </strong><br/><small class="muted"><%= h agent.user.job_title %></small></p>
+					</td>
+					<td>
+						<p><%= h(agent.user.email) %><br/><%= h(agent.user.phone) %></p>
+					</td>
+					<td>
+						<p <%= last_login_tooltip(agent) %>>
+							<%= agent.user.last_login_at ? t('agent.last_logged_in', :time => distance_of_time_in_words_to_now(agent.user.last_login_at)) : t('agent.never_logged_in') %><br/>
+              <% if agent.occasional? && agent.user.last_login_at %>
+                <%= t('agent.day_pass_used', :count => agent.user.day_pass_usages.length) %>
+              <% end %>
+						</p>
+					</td>
+          <% if(params[:state] == "deleted") %>          
+            <td class="muted">
+              <%= agent.occasional? ? t('agent.occasional_agent') : t('agent.full_time_agent')%>
+            </td>
+          <% end %>
+					<td>
+            <% if(params[:state] == "deleted") %>
+              <%= link_to t('agent.restore'), restore_agent_path(agent), :method => 'put', :class => "btn btn-mini"%>
+            <% else %>
+              <% if can_edit?(agent) %>
+                  <%= link_to t('edit'), edit_agent_path(agent), :class => "btn btn-mini" %>
+    						  <%= link_to ("<i class='icon-trash'></i>", agent, :confirm => "#{t('agent.info3')}?", 
+    												 :method => :delete, :class => "btn btn-mini") if(current_user != agent.user)%>
+              <% end %>
+            <% end %>
+					</td>
+				</tr>
+			<% end %>
+		</table>  
+		<%= will_paginate agents, 
+					:renderer => BootstrapPaginationRenderer, 
+					:previous_label => "<b class='arrow-left'></b>",
+					:next_label => "<b class='arrow-right'></b>",
+					:class => "pagination pagination-centered" %>	
+</div>
+	<% else %>
+  <div class="no-results">
+    <% unless params[:state] == "deleted" %>
+      <%= t('agent.active.no_agents') %>
+    <% else %>
+      <%= t('agent.deleted.no_agents') %>
+    <% end %>
+  </div>
+  <% end %>
