@@ -44,8 +44,14 @@
     $(document).ready(function() {
       $('input:checked').editFormShowChildren();
       $('input:radio:unchecked').editFormRadioSpecial();
+      
+      <% if @role.default_role? %>
+        $('input:radio').attr("disabled", true)
+        $('input:checkbox').attr("disabled", true)
+      <% end %>
+      
     });
-
+    
   })(jQuery);
 
 <% end %>

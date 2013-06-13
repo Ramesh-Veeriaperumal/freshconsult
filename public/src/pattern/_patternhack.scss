@@ -329,13 +329,23 @@ select{
   margin-left: 0px;
   margin-right: 0px;
 }
-
+h5{
+  &.lead{
+    font-size:18px;
+    line-height:20px;
+  }
+}
+.lead-sub{
+  line-height: 15px;
+  font-size: 20px;
+  color:#aaa;
+}
 /* have to remove after include type.scss from pattern */
 .lead {
   margin-bottom: $baseLineHeight;
   font-size: $baseFontSize * 1.5;;
   font-weight: 200;
-  line-height: $baseLineHeight * 1.5;
+  line-height: $baseLineHeight * 1.9;
 }
 .header-lead{
   margin-top: 15px;
