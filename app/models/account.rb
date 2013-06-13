@@ -233,7 +233,6 @@ class Account < ActiveRecord::Base
   
   before_update :check_default_values, :update_users_time_zone
     
-  after_create :set_roles_flag 
   after_create :create_portal
   after_create :create_admin
   after_create :populate_seed_data
@@ -715,10 +714,6 @@ class Account < ActiveRecord::Base
     es_status.key?(self.id) ? es_status[self.id] : false
   end
   
-  def roles_enabled?
-    $redis_others.sismember('authority_migrated', self.id)
-  end
-  
   protected
   
     def valid_domain?
@@ -843,11 +838,7 @@ class Account < ActiveRecord::Base
       self.build_account_configuration(admin_contact_info)
       self.account_configuration.save!
     end
-    
-    def set_roles_flag
-      $redis_others.sadd('authority_migrated', self.id)
-    end
-    
+
     def create_portal
       self.primary_email_config.account = self
       self.primary_email_config.save

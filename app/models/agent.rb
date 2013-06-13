@@ -40,8 +40,8 @@ class Agent < ActiveRecord::Base
   after_save  :update_agent_levelup
   after_update :publish_game_notifications
   
-  before_create :set_authority_delta, :if => [:roles_enabled?, :roles_blank?]
-  before_update :set_authority_delta, :if => [:roles_enabled?, :poweruser?]
+  before_create :set_authority_delta, :if => :roles_blank?
+  before_update :set_authority_delta, :if => :poweruser?
     
   TICKET_PERMISSION = [
     [ :all_tickets, 1 ], 
@@ -152,10 +152,6 @@ private
   
   def roles_blank?
     self.user.roles.blank?
-  end
-  
-  def roles_enabled?
-    self.account.roles_enabled?
   end
   
 end
