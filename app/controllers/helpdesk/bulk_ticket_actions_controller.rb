@@ -56,7 +56,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
     end  
 
     def email_reply ticket, note
-      Helpdesk::TicketNotifier.send_later(:deliver_reply, ticket, note);    
+      #Do nothing
     end
 
     def facebook_reply ticket, note

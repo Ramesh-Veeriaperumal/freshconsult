@@ -29,7 +29,7 @@
 	   <%end%>
   </div>
 </div>
-<div class="dialog-special small_curve" id="reply-fields">
+<div class="dialog-special small_curve top_spacing" id="reply-fields">
   <div id="content-bulk" class="content clearfix">
     <div class="field-item" id="bulkreplycheck">
       <label for="addbulkreply" rel="inputcheckbox">
@@ -42,8 +42,7 @@
   </div>  
 </div> 
 <div class="button-container">
-  <div class="sloading hide" id="loader">
-  </div>
+  <div id="loader"></div>
   <%= button_to_function t('ticket_update_multiple_button'), "submitBulkUpdate()", :class => "uiButton", :id =>"ticket_update_multiple_button"  %>
   <%= link_to t('ticket_cancel_multiple_button'), "#", :class => "uiButton", :id =>  "ticket_cancel_multiple_button"%>
 </div>
@@ -69,7 +68,7 @@
     if(!$('addbulkreply').checked || jQuery("#reply-multiple-cnt-reply-multiple-body").valid()){
       <%= "reply_multiple_submit('#{update_multiple_helpdesk_bulk_ticket_actions_path}', 'put', jQuery('#update-fields .update-check-for-fields:checked').parent().parent().find('select').get() )" %>
       jQuery("#ticket_update_multiple_button, #ticket_cancel_multiple_button").attr('disabled','disabled');
-      jQuery('#loader').removeClass("hide");
+      jQuery('#loader').addClass("sloading loading-small loading-align");
     }
   }
   jQuery('#no-response').die('click');
