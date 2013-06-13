@@ -1,5 +1,4 @@
-<% form_for :account_additional_settings, @account_additional_settings, :url => { :action => "update" },  :html => { :method => :put, 
-	:id => "add_bcc_form" } do |f| %>
+<% form_for :account_additional_settings, @account_additional_settings, :url => { :action => "update" },  :html => { :method => :put} do |f| %>
 	<%= f.error_messages %>
 	<div class="ui-form auto_bcc_email">
 		<label><%= t('email_configs.bcc_email')%></label>
@@ -15,5 +14,4 @@
 	closeDialog = function(){
 		active_dialog.dialog('close');
  	}
- 	jQuery('#add_bcc_form').validate();
 <% end %>

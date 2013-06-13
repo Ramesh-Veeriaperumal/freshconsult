@@ -4,7 +4,6 @@ class Account < ActiveRecord::Base
   require 'uri' 
 
   include Mobile::Actions::Account
-  include Tire::Model::Search if ES_ENABLED
   include Cache::Memcache::Account
   include ErrorHandle
   
@@ -195,7 +194,7 @@ class Account < ActiveRecord::Base
   
   has_many :support_scores, :class_name => 'SupportScore', :dependent => :delete_all
 
-  has_one  :es_enabled_account, :class_name => 'EsEnabledAccount'
+  has_one  :es_enabled_account, :class_name => 'EsEnabledAccount', :dependent => :destroy
 
   delegate :bcc_email, :ticket_id_delimiter, :email_cmds_delimeter, :pass_through_enabled, :to => :account_additional_settings
 
@@ -234,11 +233,10 @@ class Account < ActiveRecord::Base
   after_update :change_shard_mapping
 
   after_update :update_users_language
- 
 
   before_destroy :update_crm
 
-  after_commit_on_create :add_to_billing #, :create_search_index
+  after_commit_on_create :add_to_billing, :enable_elastic_search
 
   after_commit_on_update :clear_cache
   after_commit_on_destroy :clear_cache, :delete_search_index, :delete_reports_archived_data
@@ -545,170 +543,25 @@ class Account < ActiveRecord::Base
     pass_through_enabled
   end
 
-  def create_search_index
-    sandbox(0) {
-      Tire.index(search_index_name) do
-        create(
-          :settings => {
-            :analysis => {
-              :filter => {
-                :word_filter  => {
-                       "type" => "word_delimiter",
-                       "split_on_numerics" => false,
-                       "generate_word_parts" => false,
-                       "generate_number_parts" => false,
-                       "split_on_case_change" => false,
-                       "preserve_original" => true
-                }
-              },
-              :analyzer => {
-                :default => { :type => "custom", :tokenizer => "whitespace", :filter => [ "word_filter", "lowercase" ] },
-                :include_stop => { :type => "custom", :tokenizer => "whitespace", :filter => [ "word_filter", "lowercase", "stop" ] }
-              }
-            }
-          },
-          :mappings => {
-            :user => {
-              :properties => {
-                  :name => { :type => :string, :boost => 10, :store => 'yes' },
-                  :email => { :type => :string, :boost => 50 },
-                  :description => { :type => :string, :boost => 3 },
-                  :job_title => { :type => :string, :boost => 4, :store => 'yes' },
-                  :phone => { :type => :string },
-                  :mobile => { :type => :string },
-                  :customer => { :type => "object", 
-                                 :properties => {
-                                   :name => { :type => :string, :boost => 5, :store => 'yes' } 
-                                 }
-                               },
-                  :twitter_id => { :type => :string },
-                  :fb_profile_id => { :type => :string },
-                  :account_id => { :type => :long, :include_in_all => false },
-                  :deleted => { :type => :boolean, :include_in_all => false }
-              }
-            },
-            :customer => {
-              :properties => {
-                  :name => { :type => :string, :boost => 10, :store => 'yes' },
-                  :description => { :type => :string, :boost => 3 },
-                  :note => { :type => :string, :boost => 4 },
-                  :account_id => { :type => :long, :include_in_all => false }
-              }
-            },
-            :"helpdesk/ticket" => {
-              :properties => {
-                :display_id => { :type => :long, :store => 'yes' },
-                :subject => { :type => :string, :boost => 10, :store => 'yes' },
-                :description => { :type => :string, :boost => 5, :store => 'yes' },
-                :account_id => { :type => :long, :include_in_all => false },
-                :responder_id => { :type => :long, :null_value => 0, :include_in_all => false },
-                :group_id => { :type => :long, :null_value => 0, :include_in_all => false },
-                :requester_id => { :type => :long, :include_in_all => false },
-                :status => { :type => :long, :include_in_all => false },
-                :spam => { :type => :boolean, :include_in_all => false },
-                :deleted => { :type => :boolean, :include_in_all => false },
-                :attachments => { :type => "object", 
-                                  :properties => {
-                                    :content_file_name => { :type => :string } 
-                                  }
-                                },
-                :es_notes => { :type => "object", 
-                               :properties => {
-                                 :body => { :type => :string },
-                                 :private => { :type => :boolean, :include_in_all => false },
-                                 :attachments => { :type => :string }
-                               }
-                             },
-                :es_from => { :type => :string },
-                :to_emails => { :type => :string },
-                :es_cc_emails => { :type => :string },
-                :es_fwd_emails => { :type => :string },
-                :company_id => { :type => :long, :null_value => 0, :include_in_all => false }
-              }
-            },
-            :"solution/article" => {
-              :properties => {
-                :title => { :type => :string, :boost => 10, :store => 'yes' },
-                :desc_un_html => { :type => :string, :boost => 6, :store => 'yes' },
-                :tags => { :type => "object", 
-                           :properties => {
-                             :name => { :type => :string } 
-                           }
-                         },
-                :user_id => { :type => :long, :include_in_all => false },
-                :status => { :type => :integer, :include_in_all => false },
-                :account_id => { :type => :long, :include_in_all => false },
-                :folder => { :type => "object", 
-                             :properties => { 
-                               :category_id => { :type => :long, :include_in_all => false },
-                               :visibility => { :type => :long, :include_in_all => false },
-                               :customer_folders => { :type => "object",
-                                                      :properties => {
-                                                        :customer_id => { :type => :long, :include_in_all => false }  
-                                                      }
-                                                    }
-                             }
-                           },
-                :attachments => { :type => "object", 
-                                  :properties => {
-                                    :content_file_name => { :type => :string } 
-                                  }
-                                }
-              }
-            },
-            :topic => {
-              :properties => {
-                  :title => { :type => :string, :boost => 10, :store => 'yes' },
-                  :user_id => { :type => :long, :include_in_all => false },
-                  :posts => { :type => "object", 
-                              :properties => {
-                                :body => { :type => :string, :boost => 4, :store => 'yes' },
-                                :attachments => { :type => "object", 
-                                                  :properties => {
-                                                    :content_file_name => { :type => :string } 
-                                                  }
-                                                }
-                              }
-                            },
-                  :account_id => { :type => :long, :include_in_all => false },
-                  :forum => { :type => "object", 
-                              :properties => {
-                                :forum_category_id => { :type => :long, :include_in_all => false },
-                                :forum_visibility => { :type => :integer, :include_in_all => false },
-                                :customer_forums => { :type => "object",
-                                                       :properties => {
-                                                         :customer_id => { :type => :long, :include_in_all => false }  
-                                                       }
-                                                     }
-                              }
-                            }
-              }
-            }
-          }
-        )
-      end
-    }
-  end
-
   def enable_elastic_search
-    EsEnabledAccount.create(:account_id => self.id, :index_name => self.search_index_name)
-    MemcacheKeys.cache(ES_ENABLED_ACCOUNTS, EsEnabledAccount.all_es_indices)
+    es_index_id = ElasticsearchIndex.es_id_for(self.id)
+    self.create_es_enabled_account(:account_id => self.id, :index_id => es_index_id)
   end
 
   def search_index_name
-    "account-#{self.id}"
+    key = MemcacheKeys::ES_INDEX_NAME % { :account_id => self.id }
+    MemcacheKeys.fetch(key) { ElasticsearchIndex.find(self.es_enabled_account.index_id).name }
   end
 
   def delete_search_index
     es_enable_status = MemcacheKeys.fetch(MemcacheKeys::ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
     if es_enable_status.key?(self.id)
-      Tire.index(search_index_name).delete
-      es_enabled_account.disable_elastic_search
+      Resque.enqueue(Search::RemoveFromIndex::AllDocuments, { :account_id => self.id })
     end
   end
 
   def es_enabled?
-    es_status = MemcacheKeys.fetch(ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
+    es_status = MemcacheKeys.fetch(MemcacheKeys::ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
     es_status.key?(self.id) ? es_status[self.id] : false
   end
   

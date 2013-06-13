@@ -40,6 +40,7 @@ class Search::HomeController < ApplicationController
                               { :term => { :deleted => false } }
                 f.filter :or, { :not => { :exists => { :field => :spam } } },
                               { :term => { :spam => false } }
+                f.filter :term, { :account_id => current_account.id }
                 if current_user.restricted?
                   user_groups = current_user.group_ticket_permission ? current_user.agent_groups.map(&:group_id) : []
                   f.filter :not, { :terms => { :_type => ['user', 'customer'] } }

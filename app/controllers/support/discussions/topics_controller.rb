@@ -7,6 +7,7 @@ class Support::Discussions::TopicsController < SupportController
   before_filter { |c| c.check_portal_scope :open_forums }
   before_filter :check_user_permission, :only => [:edit, :update] 
   
+  before_filter :allow_monitor?, :only => [:monitor,:check_monitor]
   # @WBH@ TODO: This uses the caches_formatted_page method.  In the main Beast project, this is implemented via a Config/Initializer file.  Not
   # sure what analogous place to put it in this plugin.  It don't work in the init.rb  
   #caches_formatted_page :rss, :show
@@ -140,6 +141,27 @@ class Support::Discussions::TopicsController < SupportController
     
     render :nothing => true
   end 
+
+  #method to fetch the monitored status of the topic given the user_id
+  def check_monitor
+    @monitorship = Monitorship.find_by_user_id_and_topic_id(params[:user_id], params[:id]) 
+    @monitorship = [] if @monitorship.nil? || !@monitorship.active
+    respond_to do |format|
+      format.xml { render :xml => @monitorship.to_xml(:except=>:account_id) }
+      format.json { render :json => @monitorship.as_json(:except=>:account_id) }
+    end
+  end
+
+  #method to set the monitored status of the topic given the user_id and monitor status
+  def monitor
+    @monitorship = Monitorship.find_or_initialize_by_user_id_and_topic_id(params[:user_id], params[:id])
+    @monitorship.update_attribute(:active,params[:status]) unless params[:status].blank?
+    respond_to do |format|
+      format.xml { render :xml => @monitorship.to_xml(:except=>:account_id) }
+      format.json { render :json => @monitorship.as_json(:except=>:account_id) }
+    end
+  end
+
 
   def like
     unless @topic.voted_by_user?(current_user)

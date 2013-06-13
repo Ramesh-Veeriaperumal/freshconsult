@@ -73,9 +73,9 @@ class AccountsController < ApplicationController
    
     if @signup.save
        add_to_crm       
-       rediret_url = params[:call_back]+"&EXTERNAL_CONFIG=true" unless params[:call_back].blank?
-       rediret_url = "https://www.google.com/a/cpanel/"+@signup.account.google_domain if rediret_url.blank?
-       redirect_to rediret_url
+       @rediret_url = params[:call_back]+"&EXTERNAL_CONFIG=true" unless params[:call_back].blank?
+       @rediret_url = "https://www.google.com/a/cpanel/"+@signup.account.google_domain if @rediret_url.blank?
+       render "thank_you"
       #redirect to google.... else to the signup page
     else
       @call_back_url = params[:call_back]
@@ -116,9 +116,9 @@ class AccountsController < ApplicationController
     unless open_id_user.blank?
         if open_id_user.privilege?(:manage_account)
          if @account.update_attribute(:google_domain,@google_domain)     
-            rediret_url = @call_back_url+"&EXTERNAL_CONFIG=true" unless @call_back_url.blank?
-            rediret_url = "https://www.google.com/a/cpanel/"+@google_domain if rediret_url.blank?
-            redirect_to rediret_url            
+            @rediret_url = @call_back_url+"&EXTERNAL_CONFIG=true" unless @call_back_url.blank?
+            @rediret_url = "https://www.google.com/a/cpanel/"+@google_domain if @rediret_url.blank?
+            render "thank_you"          
          end        
        else
          flash.now[:error] = t(:'flash.general.insufficient_privilege.admin')
@@ -236,7 +236,7 @@ class AccountsController < ApplicationController
   protected
     
     def choose_layout 
-      (action_name == "openid_complete" || action_name == "create_account_google" || action_name == "associate_local_to_google" || action_name == "associate_google_account") ? 'signup_google' : 'application'
+      (["openid_complete", "create_account_google", "associate_local_to_google", "associate_google_account"].include?(action_name)) ? 'signup_google' : 'application'
 	  end
 	
     def load_object

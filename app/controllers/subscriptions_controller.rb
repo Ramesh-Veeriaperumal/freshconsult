@@ -26,7 +26,9 @@ class SubscriptionsController < ApplicationController
     @subscription.subscription_plan = SubscriptionPlan.find(:first, :conditions => {:name => SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout]})
     @subscription.convert_to_free
 
-    response = billing_subscription.activate_subscription(@subscription)
+    unless current_account.subscription.chk_change_agents
+      response = billing_subscription.activate_subscription(@subscription)
+    end
     
     if response and @subscription.save
       update_features

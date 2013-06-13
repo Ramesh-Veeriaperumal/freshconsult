@@ -410,7 +410,7 @@
       :member => { :solutions => :get, :topics => :get, :tickets => :get }
 
     # Forums for the portal, the items will be name spaced by discussions
-    support.resources :discussions, :only => [:index, :show]
+    support.resources :discussions, :only => [:index, :show],:collection =>{:user_monitored=>:get}
     support.namespace :discussions do |discussion|
       discussion.filter_topics "/forums/:id/:filter_topics_by", :controller => :forums,
         :action => :show
@@ -418,7 +418,7 @@
         :action => :show
       discussion.resources :forums, :only => :show
       discussion.resources :topics, :except => :index, :member => { :like => :put, 
-          :unlike => :put, :toggle_monitor => :put, :users_voted => :get } do |topic|
+          :unlike => :put, :toggle_monitor => :put,:monitor => :put, :check_monitor => :get, :users_voted => :get } do |topic|
         discussion.connect "/topics/:id/page/:page", :controller => :topics, 
           :action => :show
         topic.resources :posts, :except => [:index, :new, :show], 

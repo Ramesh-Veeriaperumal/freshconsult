@@ -39,6 +39,14 @@ namespace :freshdesk_tire do
         $ rake freshdesk_tire:reindex ACCOUNT_ID='Id/Ids'
   DESC
 
+  partial_reindex_comment = <<-DESC
+    - partial_reindex task aborted!!!
+      * Minimum number of account ids to be specified = 1
+      * If you want the task to be run for multiple accounts specify account ids seperated by a ','
+        in the ACCOUNT_ID variable
+        $ rake freshdesk_tire:partial_reindex ACCOUNT_ID='Id/Ids'
+  DESC
+
   desc 'Create elasticsearch index and import data to index'
 
   task :create_index  => :environment do
@@ -61,7 +69,7 @@ namespace :freshdesk_tire do
     account = Account.find_by_id(ENV['ACCOUNT_ID'])
     Sharding.select_shard_of(account.id) do
       account.make_current
-      account.es_enabled_account.switch_to_sphinx
+      account.es_enabled_account.update_attribute(:imported, false)
       Sharding.run_on_slave do
         klasses = ENV['CLASS'].split(';')
         klasses.each do |klass|
@@ -69,7 +77,7 @@ namespace :freshdesk_tire do
           Rake::Task["tire:import"].execute("CLASS='#{ENV['CLASS']}' INDEX=#{ENV['INDEX']}")
         end
       end
-      account.es_enabled_account.switch_to_es
+      account.es_enabled_account.update_attribute(:imported, true)
       Account.reset_current_account
     end
   end
@@ -82,13 +90,13 @@ namespace :freshdesk_tire do
     Rake::Task["tire:index:drop"].execute("INDICES=#{ENV['INDICES']}")
   end
 
-  task :reindex => :environment do
+  task :partial_reindex => :environment do
     if ENV['ACCOUNT_ID'].blank?
       puts '='*100, ' '*45+'USAGE', '='*100, reindex_comment, ""
       exit(1)
     end
     es_account_ids = ENV['ACCOUNT_ID'].split(',')
-    init_reindex(es_account_ids)
+    init_partial_reindex(es_account_ids)
   end
 end
 
@@ -101,7 +109,6 @@ def init_es_indexing(es_account_ids)
     account.make_current
     if account.es_enabled_account.nil?
       account.enable_elastic_search
-      account.create_search_index
       ENV['INDEX'] = account.search_index_name
       ENV['CLASS'] = import_classes(account_id, klasses)
       ENV['ACCOUNT_ID'] = account_id.to_s
@@ -115,7 +122,7 @@ def init_es_indexing(es_account_ids)
   puts '='*100, ' '*10+"Index already exists for following accounts: #{existing_accounts.inspect}. You can use reindex task to index the same", '='*100, "" unless existing_accounts.blank?
 end
 
-def init_reindex(es_account_ids)
+def init_partial_reindex(es_account_ids)
   if es_account_ids.blank?
     puts '='*100, ' '*45+'No predefined es-accounts available.', '='*100, ""
     exit(1)
@@ -128,11 +135,12 @@ def init_reindex(es_account_ids)
     ENV['ACCOUNT_ID'] = account_id.to_s
     unless account.es_enabled_account.nil?
       if account.es_enabled?
-        account.es_enabled_account.disable_elastic_search
-        Rake::Task["tire:index:drop"].execute("INDICES=#{ENV['INDICES']}")
+        Search::RemoveFromIndex::AllDocuments.perform({ :account_id => account.id })
+        account.es_enabled_account.destroy
+        ENV['CLASS'] = ''
         Rake::Task["freshdesk_tire:create_index"].execute("ACCOUNT_ID=#{ENV['ACCOUNT_ID']}")
       else
-        puts '='*100, ' '*10+"Import already running for Account ID: #{account_id}. Cancelled reindex for Account: #{account_id}", '='*100, ""
+        puts '='*100, ' '*10+"Import already running for Account ID: #{account_id}. Cancelled partial_reindex for Account: #{account_id}", '='*100, ""
       end
     else
       Rake::Task["freshdesk_tire:create_index"].execute("ACCOUNT_ID=#{ENV['ACCOUNT_ID']}")

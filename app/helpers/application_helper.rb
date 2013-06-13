@@ -33,6 +33,26 @@ module ApplicationHelper
     end
   end
 
+  def logo_url
+    MemcacheKeys.fetch(["v4","portal","logo",current_portal],30.days.to_i) do
+      image_tag(
+        current_portal.logo.nil? ? "/images/logo.png?721013" : 
+        AWS::S3::S3Object.url_for(current_portal.logo.content.path(:logo),current_portal.logo.content.bucket_name,
+                                          :expires_in => 30.days, :use_ssl => true)
+      )
+    end
+  end
+
+  def fav_icon_url
+    MemcacheKeys.fetch(["v4","portal","fav_ico",current_portal]) do
+      url = current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' : 
+            AWS::S3::S3Object.url_for(current_portal.fav_icon.content.path(:logo),current_portal.fav_icon.content.bucket_name,
+                                          :expires_in => 30.days, :use_ssl => true)
+      "<link rel=\"shortcut icon\" href=\"#{url}\" />"
+    end
+  end
+
+
   def timediff_in_words(interval)
     secs  = interval.to_i
     mins  = (secs / 60).to_i
