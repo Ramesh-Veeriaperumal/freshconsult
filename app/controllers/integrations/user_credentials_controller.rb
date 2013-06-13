@@ -9,7 +9,7 @@ class Integrations::UserCredentialsController < ApplicationController
         app_name = config_hash["app_name"]
         config_hash.delete("app_name")	    
         
-        if privilege?(:view_admin)
+        if privilege?(:admin_tasks)
           Integrations::Application.install_or_update( app_name, current_account.id ) 
         end
       
@@ -26,7 +26,7 @@ class Integrations::UserCredentialsController < ApplicationController
       flash[:error] = t(:'flash.application.install.error')
     end
 
-      redirect_back_using_cookie(request, current_user.admin? ? integrations_applications_path : root_path )
+      redirect_back_using_cookie(request, privilege?(:admin_tasks) ? integrations_applications_path : root_path )
   end
   
 end
