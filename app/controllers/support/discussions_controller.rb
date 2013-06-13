@@ -14,7 +14,14 @@ class Support::DiscussionsController < SupportController
 	end	
 
     def user_monitored
-	    @topics = current_account.portal_topics.find(:all,:joins=>"inner join #{Monitorship.table_name} on #{Topic.table_name}.id = #{Monitorship.table_name}.topic_id",:conditions=>["#{Monitorship.table_name}.active=? and #{Monitorship.table_name}.user_id = ?",true,params[:user_id]])
+    	options={}
+    	options[:joins]= "inner join #{Monitorship.table_name} on #{Topic.table_name}.id = #{Monitorship.table_name}.topic_id"
+    	options[:conditions] = ["#{Monitorship.table_name}.active=? and #{Monitorship.table_name}.user_id = ?",true,params[:user_id]]
+    	options[:page] = params[:page]
+    	# setting it to 10 as default count or if count mentioned >30.Never allow >30
+    	options[:per_page] = (params[:count_per_page].blank? || params[:count_per_page].to_i>30) ? 10 : params[:count_per_page]
+    	options[:count] =  {:select => "#{Topic.table_name}.id"}#this is avoid loading the whole record.
+	    @topics = Topic.paginate(options)
 	    respond_to do |format|
 	      format.xml { render :xml => @topics.to_xml(:except=>:account_id) }
 	      format.json { render :json => @topics.as_json(:except=>:account_id) }
