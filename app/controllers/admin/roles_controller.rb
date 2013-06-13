@@ -11,6 +11,7 @@ class Admin::RolesController < Admin::AdminController
   end
   
   def show
+    redirect_to edit_admin_role_path(@role)
   end
   
   def new

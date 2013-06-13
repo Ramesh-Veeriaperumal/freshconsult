@@ -9,8 +9,8 @@
   <h3 class="lead">
         <%= @role.default_role? ? t('admin.roles.default_role') : t('admin.roles.edit') %>
       <div class="pull-right">
-        <%= link_to t('cancel'), admin_roles_path, :class => "btn"%>
-        <%= role_form.submit t('save'), :class => "btn btn-primary" unless @role.default_role? %>
+        <%= link_to @role.default_role? ? t('go_back') : t('cancel'), admin_roles_path, :class => "btn"%>
+        <%= role_form.submit t('save'), :class => "btn btn-primary", 'data-loading-text' => t('saving') unless @role.default_role? %>
       </div>
   </h3>
   
