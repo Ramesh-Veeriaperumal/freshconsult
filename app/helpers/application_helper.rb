@@ -391,7 +391,7 @@ module ApplicationHelper
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)
     end 
-    avatar_content = MemcacheKeys.fetch(["v3","avatar",profile_size,user],30.days.to_i) do
+    avatar_content = MemcacheKeys.fetch(["v4","avatar",profile_size,user],30.days.to_i) do
       content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size), img_tag_options ), :class => profile_class, :size_type => profile_size )
     end
     avatar_content
@@ -548,7 +548,7 @@ module ApplicationHelper
     element
   end
 
-  def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
+  def construct_ticket_element(form_builder,object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
     element_class  += " required_closure" if (field.required_for_closure && !field.required)
@@ -592,7 +592,9 @@ module ApplicationHelper
       when "checkbox" then
         element = content_tag(:div, (check_box(object_name, field_name, :class => element_class, :checked => field_value ) + label))
       when "html_paragraph" then
-        element = label + text_area(object_name, field_name, :class => element_class , :value => field_value)
+        form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
+            element = label + builder.text_area(field_name, :class => element_class, :value => field_value )
+        end
     end
     content_tag :li, element, :class => " #{ dom_type } #{ field.field_type } field"
   end

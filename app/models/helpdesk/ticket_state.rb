@@ -141,7 +141,7 @@ private
       sql = %(INSERT INTO #{stats_table} (#{REPORT_STATS.join(",")}) VALUES(#{account_id},#{ticket_id},
             '#{created_at.strftime('%Y-%m-%d 00:00:00')}','#{created_hour}',
             #{resolved_hour},1,#{resolved_tkt},0,#{assign_tkt},0,#{fcr_tkt},#{sla_tkt}))
-      SeamlessDatabasePool.use_master_connection do 
+      Sharding.run_on_master do 
         connection.execute(sql)
       end
     rescue Exception => e
@@ -157,7 +157,8 @@ private
       datetime = updated_at.strftime('%Y-%m-%d 00:00:00')
       select_sql = %(SELECT * FROM #{stats_table_name} where ticket_id = #{ticket_id} and 
         account_id = #{account_id} and created_at = '#{datetime}' )
-      SeamlessDatabasePool.use_master_connection do 
+
+      Sharding.run_on_master do 
         result = connection.execute(select_sql)
         f_hash = result.fetch_hash
         f_hash.symbolize_keys! unless f_hash.nil?

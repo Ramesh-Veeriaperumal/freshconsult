@@ -18,7 +18,7 @@ class ContactsController < ApplicationController
    before_filter :check_user_role, :only =>[:update,:create]
    before_filter :set_selected_tab
    before_filter :check_agent_limit, :only =>  :make_agent
-   before_filter :load_item, :only => [:show, :edit, :update, :make_agent,:make_occasional_agent]
+   before_filter :load_item, :only => [:edit, :update, :make_agent,:make_occasional_agent]
    skip_before_filter :build_item , :only => [:new, :create]
    before_filter :set_mobile , :only => :show
    before_filter :fetch_contacts, :only => [:index]
@@ -185,10 +185,8 @@ class ContactsController < ApplicationController
   end
   
   def make_occasional_agent
-    agent = build_agent
-    agent.occasional = true
     respond_to do |format|
-      if @item.save        
+      if @item.make_agent(:occasional => true)        
         format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
           redirect_to @item }
         format.xml  { render :xml => @item, :status => 200 }
@@ -199,10 +197,8 @@ class ContactsController < ApplicationController
     end 
   end
   def make_agent
-    agent = build_agent
-    agent.occasional = false
     respond_to do |format|
-      if @item.save        
+      if @item.make_agent        
         format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
           redirect_to @item }
         format.xml  { render :xml => @item, :status => 200 }
@@ -289,20 +285,14 @@ protected
 
   private
 
-    def build_agent
-      @item.deleted = false
-      @item.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:poweruser]
-      @item.build_agent()
-    end
-
     def get_formatted_message(exception)
       exception.message # TODO: Proper error reporting.
     end
 
     def fetch_contacts
-       connection_to_be_used =  params[:format].eql?("xml") ? "use_persistent_read_connection" : "use_master_connection"  
+       connection_to_be_used =  params[:format].eql?("xml") ? "run_on_slave" : "run_on_master"  
        begin
-         @contacts =   SeamlessDatabasePool.send(connection_to_be_used.to_sym) do
+         @contacts =   Sharding.send(connection_to_be_used.to_sym) do
           scoper.filter(params[:letter], params[:page], params.fetch(:state, "verified"))
         end
       rescue Exception => e

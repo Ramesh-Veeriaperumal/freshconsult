@@ -7,7 +7,7 @@ unless Account.current
     
     a = Account.new(:name => 'Test Account', :domain => 'localhost', :plan => SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:estate]), :user => user)
     a.full_domain = 'localhost'
-    a.build_primary_email_config(:reply_email => "support@localhost", :to_email => "support@localhost" , :name => a.name, :primary_role => true)
+    a.build_primary_email_config(:reply_email => "support@localhost.com", :to_email => "support@localhost" , :name => a.name, :primary_role => true)
     a.primary_email_config.active = true
     a.build_main_portal(:name => a.helpdesk_name || a.name, :preferences => HashWithIndifferentAccess.new({:bg_color => "#efefef",:header_color => "#252525", :tab_color => "#006063"}), 
                                :language => I18n.default_locale.to_s() , :account => a, :main_portal => true)    

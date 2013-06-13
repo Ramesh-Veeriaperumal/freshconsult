@@ -2,7 +2,7 @@
 
 # The production environment is meant for finished, "live" apps.
 # Code is not reloaded between requests
-config.log_level = :info
+config.log_level = :debug
 
 config.cache_classes = true
 
@@ -14,6 +14,8 @@ config.action_controller.consider_all_requests_local = false
 config.action_controller.perform_caching             = true
 config.action_view.cache_template_loading            = true
 
+
+#ActiveRecord::Base.logger = Logger.new("log/debug.log")
 # Don't auto compile css in production
 config.after_initialize do
 	Sass::Plugin.options[:never_update] = true

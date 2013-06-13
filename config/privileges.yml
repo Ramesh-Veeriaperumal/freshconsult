@@ -1,0 +1,36 @@
+--- 
+:privileges: 
+  :edit_topic: 17
+  :merge_or_split_ticket: 3
+  :edit_note: 6
+  :delete_topic: 18
+  :manage_scenario_automation_rules: 28
+  :manage_users: 24
+  :view_contacts: 19
+  :delete_ticket: 9
+  :delete_solution: 12
+  :view_time_entries: 7
+  :publish_solution: 11
+  :manage_dispatch_rules: 26
+  :admin_tasks: 30
+  :forward_ticket: 2
+  :manage_email_settings: 29
+  :edit_ticket_properties: 4
+  :reply_ticket: 1
+  :manage_tickets: 0
+  :delete_contact: 21
+  :manage_account: 31
+  :view_solutions: 10
+  :manage_solutions: 13
+  :manage_forums: 15
+  :client_manager: 32
+  :manage_contacts: 20
+  :view_reports: 22
+  :manage_supervisor_rules: 27
+  :view_admin: 23
+  :manage_canned_responses: 25
+  :view_forums: 14
+  :create_topic: 16
+  :edit_conversation: 5
+  :edit_time_entries: 8
+:max_value: 32

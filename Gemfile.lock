@@ -7,13 +7,6 @@ GIT
       savon_model
 
 GIT
-  remote: git://github.com/freshdesk/after_commit.git
-  revision: af3e83dc6f071ae261478dbb7134d2ff534bc0a9
-  specs:
-    after_commit (1.0.11)
-      activerecord (>= 1.15.6, < 3.0.0)
-
-GIT
   remote: git://github.com/freshdesk/cloudfront_asset_host.git
   revision: 53a5ce53f24daff486988ea0f0a72fd0194817d2
   specs:
@@ -46,17 +39,10 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/ruby-yui-compressor.git
-  revision: 271908bbe2197ce167cc59ba79d4ea0dac15df3f
+  revision: 8e1d110528c986cb5cd13487bded7a7449bdcd2e
   specs:
     yui-compressor (0.9.6)
       POpen4 (>= 0.1.4)
-
-GIT
-  remote: git://github.com/freshdesk/seamless_database_pool.git
-  revision: 24d7c2ead61b85a05b73989af817e624ba660238
-  specs:
-    seamless_database_pool (1.0.12)
-      activerecord (>= 2.2.2)
 
 GIT
   remote: git://github.com/freshdesk/tire.git
@@ -67,6 +53,11 @@ GIT
       multi_json (~> 1.0)
       rake
       rest-client (~> 1.6)
+
+PATH
+  remote: vendor/gems/freshdesk_authority-0.1
+  specs:
+    freshdesk_authority (0.1)
 
 GEM
   remote: https://rubygems.org/
@@ -83,37 +74,35 @@ GEM
     actionpack (2.3.18)
       activesupport (= 2.3.18)
       rack (~> 1.1.0)
+    active_record_shards (2.7.0)
+      activerecord (>= 2.3.5, < 3.3)
     activerecord (2.3.18)
       activesupport (= 2.3.18)
     activeresource (2.3.18)
       activesupport (= 2.3.18)
     activesupport (2.3.18)
-    addressable (2.3.4)
+    after_commit (1.0.11)
+      activerecord (< 3.0.0, >= 1.15.6)
     akami (1.2.0)
       gyoku (>= 0.4.0)
       nokogiri (>= 1.4.0)
     arel (2.0.7)
     authlogic (2.1.6)
       activesupport
-    autoparse (0.3.3)
-      addressable (>= 2.3.1)
-      extlib (>= 0.9.15)
-      multi_json (>= 1.0.0)
     aws-s3 (0.6.2)
       builder
       mime-types
       xml-simple
-    backports (3.3.1)
     braintree (2.10.0)
       builder
-    builder (3.2.2)
-    chargebee (1.1.9)
+    builder (3.0.0)
+    chargebee (1.1.8)
       json_pure (~> 1.5)
       rest-client (~> 1.4)
-    chunky_png (1.2.8)
+    chunky_png (1.2.6)
     clockwork (0.4.1)
       tzinfo
-    columnize (0.3.6)
+    columnize (0.3.2)
     compass (0.12.2)
       chunky_png (~> 1.2)
       fssm (>= 0.2.7)
@@ -121,42 +110,31 @@ GEM
     compass-rails (1.0.3)
       compass (>= 0.12.2, < 0.14)
     daemons (1.0.10)
-    debugger (1.6.0)
+    debugger (1.5.0)
       columnize (>= 0.3.1)
       debugger-linecache (~> 1.2.0)
-      debugger-ruby_core_source (~> 1.2.1)
+      debugger-ruby_core_source (~> 1.2.0)
     debugger-linecache (1.2.0)
-    debugger-ruby_core_source (1.2.2)
+    debugger-ruby_core_source (1.2.0)
     delayed_job (1.8.4)
-    extlib (0.9.16)
     factory_girl (1.2.3)
-    faraday (0.8.7)
+    faraday (0.8.0)
       multipart-post (~> 1.1)
-    fastercsv (1.5.5)
+    fastercsv (1.5.4)
     forgery (0.5.0)
-    fssm (0.2.10)
+    fssm (0.2.9)
     gem_plugin (0.2.3)
-    google-api-client (0.6.4)
-      addressable (>= 2.3.2)
-      autoparse (>= 0.3.3)
-      extlib (>= 0.9.15)
-      faraday (~> 0.8.4)
-      jwt (>= 0.1.5)
-      launchy (>= 2.1.1)
-      multi_json (>= 1.0.0)
-      signet (~> 0.4.5)
-      uuidtools (>= 2.1.0)
     gyoku (1.0.0)
       builder (>= 2.1.2)
     hashie (1.2.0)
     hashr (0.0.22)
-    hoe (3.6.2)
+    hoe (3.5.2)
       rake (>= 0.8, < 11.0)
     http_accept_language (1.0.1)
     httparty (0.10.0)
       multi_json (~> 1.0)
       multi_xml
-    httpclient (2.3.3)
+    httpclient (2.2.4)
     httpi (0.9.7)
       rack
     i18n (0.4.2)
@@ -166,22 +144,17 @@ GEM
     jira4r (0.3.0)
       soap4r
     json (1.5.5)
-    json_pure (1.8.0)
-    jwt (0.1.8)
-      multi_json (>= 1.5)
+    json_pure (1.7.7)
     koala (1.0.0)
       json (~> 1.0)
       multipart-post (~> 1.0)
-    launchy (2.3.0)
-      addressable (~> 2.3)
-    linecache (0.46)
-      rbx-require-relative (> 0.0.4)
+    linecache (0.43)
     lockfile (1.4.3)
     map-fields (1.0.0)
       fastercsv (>= 1.2.3)
     memcache-client (1.8.5)
     metaclass (0.0.1)
-    mime-types (1.23)
+    mime-types (1.16)
     mocha (0.13.3)
       metaclass (~> 0.0.1)
     mongrel (1.2.0.pre2)
@@ -189,22 +162,22 @@ GEM
       gem_plugin (~> 0.2.3)
     mongrel (1.2.0.pre2-x86-mingw32)
       gem_plugin (~> 0.2.3)
-    multi_json (1.7.6)
-    multi_xml (0.5.4)
+    multi_json (1.3.6)
+    multi_xml (0.5.1)
     multipart-post (1.2.0)
-    mysql (2.9.1)
-    mysql (2.9.1-x86-mingw32)
+    mysql (2.8.1)
+    mysql (2.8.1-x86-mingw32)
+      multi_json (~> 1.0)
     net-dns (0.6.1)
     newrelic_rpm (3.5.3.25)
-    nokogiri (1.5.9)
-    nokogiri (1.5.9-x86-mingw32)
+    nokogiri (1.4.4)
+    nokogiri (1.4.4-x86-mingw32)
     nori (1.1.4)
-    oauth (0.4.7)
+    oauth (0.4.5)
     oauth2 (0.5.2)
       faraday (~> 0.7)
-      multi_json (~> 1.0)
-    oily_png (1.1.0)
-      chunky_png (~> 1.2.7)
+    oily_png (1.0.3)
+      chunky_png (~> 1.2.1)
     omniauth (1.0.0)
       hashie (~> 1.2)
       rack
@@ -215,16 +188,14 @@ GEM
       omniauth-oauth2 (~> 1.0)
     omniauth-facebook (1.2.0)
       omniauth-oauth2 (~> 1.0.0)
-    omniauth-google (1.0.2)
+    omniauth-google (1.0.1)
       multi_json
-      omniauth (~> 1.0)
+      omniauth (~> 1.0.0)
       omniauth-oauth
-    omniauth-google-oauth2 (0.1.17)
+    omniauth-google-oauth2 (0.1.13)
       omniauth (~> 1.0)
       omniauth-oauth2
     omniauth-mailchimp (1.0.3)
-      omniauth (~> 1.0)
-      omniauth-oauth2
     omniauth-oauth (1.0.1)
       oauth
       omniauth (~> 1.0)
@@ -234,13 +205,13 @@ GEM
     omniauth-openid (1.0.1)
       omniauth (~> 1.0)
       rack-openid (~> 1.3.1)
-    omniauth-salesforce (1.0.4)
+    omniauth-salesforce (1.0.3)
       omniauth (~> 1.0)
       omniauth-oauth2 (~> 1.0)
     open4 (1.3.0)
     people (0.2.1)
-    pg (0.15.1)
-    pg (0.15.1-x86-mingw32)
+    pg (0.14.1)
+    pg (0.14.1-x86-mingw32)
     rack (1.1.6)
     rack-openid (1.3.1)
       rack (>= 1.1.0)
@@ -255,7 +226,6 @@ GEM
       activesupport (= 2.3.18)
       rake (>= 0.8.3)
     rake (0.8.7)
-    rbx-require-relative (0.0.9)
     redis (2.2.2)
     redis-namespace (1.1.0)
       redis (< 3.0.0)
@@ -268,10 +238,10 @@ GEM
       resque (~> 1.19)
     rest-client (1.6.7)
       mime-types (>= 1.16)
-    rforce (0.10)
+    rforce (0.8.1)
       builder (~> 3.0)
       oauth (~> 0.4)
-    riddle (1.5.6)
+    riddle (1.2.2)
     right_aws (3.0.5)
       right_http_connection (>= 1.2.5)
     right_http_connection (1.3.0)
@@ -284,7 +254,7 @@ GEM
       ruby-debug-base (~> 0.10.3.0)
     ruby-debug-base (0.10.3)
       linecache (>= 0.3)
-    ruby-ole (1.2.11.6)
+    ruby-ole (1.2.11.3)
     ruby-openid-apps-discovery (1.2.0)
       ruby-openid (>= 2.1.7)
     rubyzip (0.9.4)
@@ -304,15 +274,9 @@ GEM
       savon (>= 0.8.2, < 0.9.8)
     sax-machine (0.1.0)
       nokogiri (> 0.0.0)
-    signet (0.4.5)
-      addressable (>= 2.2.3)
-      faraday (~> 0.8.1)
-      jwt (>= 0.1.5)
-      multi_json (>= 1.0.0)
     simple_oauth (0.2.0)
-    sinatra (1.2.9)
-      backports
-      rack (~> 1.1, < 1.5)
+    sinatra (1.2.8)
+      rack (~> 1.1)
       tilt (>= 1.2.2, < 2.0)
     soap4r (1.5.8)
       httpclient (>= 2.1.1)
@@ -321,7 +285,7 @@ GEM
     spreadsheet (0.6.8)
       ruby-ole (>= 1.0)
     static_model (1.0.4)
-    susy (1.0.8)
+    susy (1.0.5)
       compass (>= 0.12.2)
       sass (>= 3.2.0)
     test-unit (1.2.3)
@@ -330,22 +294,21 @@ GEM
       activerecord (>= 1.15.6, < 3.0.0)
       after_commit (>= 1.0.7)
       riddle (>= 1.2.2)
-    tilt (1.4.1)
+    tilt (1.3.3)
     twitter (4.6.2)
       faraday (~> 0.8, < 0.10)
       multi_json (~> 1.0)
       simple_oauth (~> 0.2)
-    tzinfo (1.0.0)
+    tzinfo (0.3.26)
     useragent (0.4.16)
-    uuidtools (2.1.4)
     vegas (0.1.11)
       rack (>= 1.0.0)
     wasabi (2.3.0)
       nokogiri (>= 1.4.0)
-    wicked_pdf (0.9.6)
+    wicked_pdf (0.9.2)
       rails
     wkhtmltopdf-binary (0.9.9.1)
-    xml-simple (1.1.2)
+    xml-simple (1.0.15)
 
 PLATFORMS
   ruby
@@ -354,7 +317,8 @@ PLATFORMS
 DEPENDENCIES
   RedCloth (= 4.2.9)
   SystemTimer (= 1.2.3)
-  after_commit!
+  active_record_shards (= 2.7.0)
+  after_commit (= 1.0.11)
   arel (= 2.0.7)
   authlogic (= 2.1.6)
   aws-s3 (= 0.6.2)
@@ -367,8 +331,9 @@ DEPENDENCIES
   debugger
   delayed_job (= 1.8.4)
   factory_girl (= 1.2.3)
+  faraday (= 0.8)
   forgery (= 0.5.0)
-  google-api-client (~> 0.6.3)
+  freshdesk_authority!
   http_accept_language (= 1.0.1)
   httparty (= 0.10.0)
   i18n (= 0.4.2)
@@ -419,7 +384,6 @@ DEPENDENCIES
   sanitize (= 2.0.3)
   sass (= 3.2.1)
   sax-machine (~> 0.1.0)
-  seamless_database_pool!
   soap4r-ruby1.9 (~> 2.0.5)
   spork (~> 0.8.0)
   spreadsheet (= 0.6.8)
