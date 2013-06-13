@@ -41,6 +41,7 @@ gem "rubyzip", "0.9.4" , :require => "zip/zip"
 
 gem "http_accept_language", "1.0.1"
 
+gem "riddle", "1.2.2"
 gem "thinking-sphinx", "1.4.3", :require => "thinking_sphinx"
 gem "delayed_job", "1.8.4"
 #gem "ts-delayed-delta", "1.1.0", :require => "thinking_sphinx/deltas/delayed_delta"

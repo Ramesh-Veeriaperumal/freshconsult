@@ -2,11 +2,11 @@
 class Search::HomeController < ApplicationController
 
   def index
-    search
+    search(searchable_classes)
   end
 
   def suggest
-    search
+    search(searchable_classes)
     render :partial => '/search/home/navsearch_items'
   end
 
@@ -111,5 +111,20 @@ class Search::HomeController < ApplicationController
       }
     end
   end
+  
+  private
+  
+    def searchable_classes
+      to_ret = [ Helpdesk::Ticket ]
+      to_ret << Solution::Article if privilege?(:view_solutions)
+      to_ret << Topic             if privilege?(:view_forums)
+      
+      if privilege?(:view_contacts)
+        to_ret << User
+        to_ret << Customer
+      end
+      
+      to_ret.map { |to_ret| to_ret = to_ret.document_type }
+    end
 
 end
