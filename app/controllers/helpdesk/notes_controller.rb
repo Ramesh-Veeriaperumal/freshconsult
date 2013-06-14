@@ -1,14 +1,13 @@
 class Helpdesk::NotesController < ApplicationController
   
-  before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :load_parent_ticket_or_issue
 
   helper 'helpdesk/tickets'
   
   include HelpdeskControllerMethods
   include ParserUtil
-  include Helpdesk::Social::Facebook
-  include Helpdesk::Social::Twitter
+  include Conversations::Twitter
+  include Conversations::Facebook
   include Helpdesk::Activities
   include Helpdesk::ShowVersion
   
@@ -52,17 +51,6 @@ class Helpdesk::NotesController < ApplicationController
     end    
   end
 
-  def since
-    @notes = @parent.notes.newest_first.since(params[:last_note])
-    render(:partial => "helpdesk/tickets/show/note", :collection => @notes.reverse) 
-  end
-
-  def since
-    @notes = @parent.notes.newest_first.since(params[:last_note])
-    render(:partial => "helpdesk/tickets/show/note", :collection => @notes.reverse) 
-  end
-
-  
   def create
     build_attachments @item, :helpdesk_note
     @item.send_survey = params[:send_survey]

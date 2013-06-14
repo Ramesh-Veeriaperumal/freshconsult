@@ -16,7 +16,8 @@ module Reports::TimesheetReport
   
   def csv_hash
     {"Agent"=>:agent_name, "Hours"=> :hours, "Date" =>:executed_at ,"Ticket"=>:ticket_display, 
-                                 "Product"=>:product_name , "Group"=>:group_name , "Note"=>:note }
+                                 "Product"=>:product_name , "Group"=>:group_name , "Note"=>:note,
+                                 "Customer" => :customer_name }
   end
   
   def list_view_items

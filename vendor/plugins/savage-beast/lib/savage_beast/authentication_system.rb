@@ -28,10 +28,10 @@ module SavageBeast::AuthenticationSystem
 			end
     end
     
-    def authorized?() 
-			true 
-			# in your code, redirect to an appropriate page if not an admin
-		end
+  #   def authorized?() 
+		# 	true 
+		# 	# in your code, redirect to an appropriate page if not an admin
+		# end
 
     def current_user
       #@current_user ||= ((session[:user_id] && User.find_by_id(session[:user_id])) || 0)

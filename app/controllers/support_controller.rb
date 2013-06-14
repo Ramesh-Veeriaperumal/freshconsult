@@ -1,5 +1,5 @@
 class SupportController < ApplicationController
-
+  skip_before_filter :check_privilege
   before_filter :portal_context, :page_message
   include Redis::RedisKeys
   include Redis::PortalRedis
@@ -16,12 +16,32 @@ class SupportController < ApplicationController
   :cache_path => proc { |c| 
     "#{c.send(:current_portal).cache_prefix}#{c.request.request_uri}" 
   }
- 
+  
   def cache_enabled?
     !(get_portal_redis_key(PORTAL_CACHE_ENABLED) === "false")
   end
 
   protected
+
+    def allow_monitor?
+      params[:user_id] = current_user.id if (params[:user_id].nil?)
+      unless current_user.admin?
+        if (!params[:user_id].blank? && params[:user_id].to_s!=current_user.id.to_s)
+          @errors = {:error=>"Permission denied for user"}
+          respond_to do |format|
+            format.xml {
+              render :xml => @errors.to_xml(:root=>:errors),:status=>:forbidden
+             }
+             format.json{
+              render :json => {:errors=>@errors}.as_json,:status=>:forbidden
+             }
+          end
+        end 
+
+      end
+    end
+
+
     def set_portal_page page_token
       @skip_liquid_compile = false
 

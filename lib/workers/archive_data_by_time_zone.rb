@@ -3,7 +3,6 @@ module Workers
 		@queue = "archive_reports_data"
 
 		class << self
-		extend Resque::AroundPerform 
 		
 			include Reports::Constants
 			include Redis::RedisKeys

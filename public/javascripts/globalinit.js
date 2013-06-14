@@ -218,7 +218,7 @@ is_touch_device = function() {
           hidePopoverTimer = setTimeout(function() { $("#new_watcher_page").hide(); },1000);
       });    
 
-    $("#new_watcher_page").live('mouseenter',function(ev) {
+    $("#new_watcher_page, .select2-results").live('mouseenter',function(ev) {
       clearTimeout(hideWatcherTimer);
       clearTimeout(hidePopoverTimer);
     }).live('mouseleave',function(ev) {
@@ -308,7 +308,7 @@ is_touch_device = function() {
          onkeyup: false,
          focusCleanup: true,
          focusInvalid: false,
-         ignore:".nested_field:not(:visible), .portal_url:not(:visible)"
+         ignore:"select.nested_field:empty, .portal_url:not(:visible)"
       };
       
       $("ul.ui-form, .cnt").livequery(function(ev){
@@ -344,7 +344,7 @@ is_touch_device = function() {
                                         }
       // Form validation any form append to the dom will be tested via live query and then be validated via jquery
       $("form[rel=validate]").livequery(function(ev){
-        $(this).validate(validateOptions)
+        $(this).validate($.extend( validateOptions, $(this).data()))
       })
 
     $('.single_click_link').live('click',function(ev) {
@@ -495,7 +495,7 @@ is_touch_device = function() {
 
       //Not using pjax for IE10- Temporary fix for IE pjax load issue
       //in dashboard and tickets filter. Remove the condition once we get permanent fix
-    if ($.browser.msie && parseInt($.browser.version) != 10) {
+    if (!$.browser.msie) {
       $(document).pjax('a[data-pjax]',{
           timeout: -1,
           push : false,

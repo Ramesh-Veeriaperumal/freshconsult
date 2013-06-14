@@ -22,8 +22,9 @@ module AuthenticationSystem
     end
   
     def is_allowed_to_assume?(user)
-      !is_assumed_user? && !user.deleted && !user.blocked && !user.account_admin? && 
-      (current_user.account_admin? || current_user.admin? || ((current_user.supervisor?) && !user.admin?))
+      return false if 
+        is_assumed_user? or !current_user.can_assume?(user) 
+      privilege?(:manage_users)
     end
 
     def assume_identity_for_user(user)

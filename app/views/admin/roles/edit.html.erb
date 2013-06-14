@@ -1,0 +1,57 @@
+<%= include_cloudfront_css :pattern %>
+<%= include_cloudfront_js :pattern %>
+
+<% content_for :sidebar do %>
+   <!-- FIXME: need to change content -->
+  <%= render :partial => "agents/helpnote_without_tour" %>
+<% end %>
+<% form_for @role, :url => admin_role_path(@role), :html => { :id => 'new_role' , :method => :put, :rel => "validate" } do |role_form| %>
+  <h3 class="lead">
+        <%= @role.default_role? ? t('admin.roles.default_role') : t('admin.roles.edit') %>
+      <div class="pull-right">
+        <%= link_to @role.default_role? ? t('go_back') : t('cancel'), admin_roles_path, :class => "btn"%>
+        <%= role_form.submit t('save'), :class => "btn btn-primary", 'data-loading-text' => t('saving') unless @role.default_role? %>
+      </div>
+  </h3>
+  
+  <%= render :partial => 'form', :locals => { :role_form => role_form} %>
+<% end %>
+
+<% javascript_tag do %>
+
+  (function($) {
+    
+    /* If an element is checked, then enable all
+       its children */
+       
+    $.fn.editFormShowChildren = function(){
+      return this.each(function(){
+        if($(this).hasClass('nested'))
+          $('input.' + this.id).prop('disabled', false);
+      });
+    };
+
+    /* If radio button is not checked, then disable all its children,
+       special case for hidden fields in admin set */
+       
+    $.fn.editFormRadioSpecial = function(){
+      return this.each(function(){
+        if($(this).hasClass('nested'))
+          $('input.' + this.id).prop({'disabled': true, 'checked': false});
+      });
+    };
+
+    $(document).ready(function() {
+      $('input:checked').editFormShowChildren();
+      $('input:radio:unchecked').editFormRadioSpecial();
+      
+      <% if @role.default_role? %>
+        $('input:radio').attr("disabled", true)
+        $('input:checkbox').attr("disabled", true)
+      <% end %>
+      
+    });
+    
+  })(jQuery);
+
+<% end %>

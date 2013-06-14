@@ -26,7 +26,10 @@ en:
   sales: "Sales"
   preview: "Preview"
   send_feedback: "Send feedback"
-  your_email: "Your Email"
+  ticket_form:
+    your_email_address: "Email"
+    your_name: "Your Name"
+    select_contacts: "Select contacts from %{contact_name}"
   captcha_verify_message: "Captcha verification failed, try again!"
   your_email: "Your email"
   please_wait: Please wait...
@@ -51,8 +54,6 @@ en:
   myself: "Myself"
   meta:
    language_name: 'English'
-  signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
-  attachment_help_info: File size < 15 MB
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
   attachment_help_info: "File size < 15 MB"
   feedbackwidget_offset_info: The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
@@ -634,6 +635,7 @@ en:
     automations:
       edit:
         title: Edit Scenario
+      failure: You are not permitted to perform certain actions in the scenario. Please contact the administrator 
     security: 
       index: 
         shared_secret: Shared Secret
@@ -765,6 +767,66 @@ en:
         capture_dm: Convert direct messages as tickets
         screen_name: Screen Name
         default_group : Default Group 
+    roles:
+      title: Agent Roles
+      new: New Role
+      edit: Edit Role
+      default_role: Default Role
+      role_name: Role Name
+      role_description: Description
+      scroll:
+        scroll_to : Scroll to
+        tickets: Tickets
+        solutions: Solutions
+        forums: Forums
+        customers: Customers
+        reports: Reports
+        administration: Administration
+      permissions: Permissions
+      privilege:
+        tickets: Tickets
+        manage_tickets: Manage tickets
+        reply_ticket: Send reply to a ticket
+        forward_ticket: Forward a conversation
+        edit_note_choice: Edit notes
+        edit_note: Edit everyone's notes
+        edit_note_false: Edit only their own notes
+        edit_conversation: Edit conversation
+        merge_or_split_ticket: Merge / split a ticket
+        edit_ticket_properties: Edit ticket properties
+        view_time_entries: View or edit time entries
+        edit_time_entries: Edit everyone's time entries
+        edit_time_entries_false: Edit only their time
+        delete_ticket: Delete a ticket
+        solutions: Solutions
+        view_solutions: View solutions tab
+        publish_solution: Publish a solution
+        delete_solution: Delete a solution
+        manage_solutions: Create / Edit category or folder
+        forums: Forums
+        view_forums: View forums tab
+        manage_forums: Create / Edit category or topic
+        create_topic: Create or Edit a forum topic
+        edit_topic: Edit everyone's forum topic
+        edit_topic_false: Edit only their own forum topic
+        delete_topic: Delete a forum topic
+        customers: Customers
+        view_contacts: View customers tab
+        manage_contacts: Create or edit new contact or company
+        delete_contact: Delete contact or company
+        reports: Reports
+        view_reports: View reports tab
+        admin: Admin
+        not_administrator: Not an administrator
+        operational_admin: An operational admin
+        manage_users: Manage Agents
+        manage_canned_responses: Manage canned responses
+        manage_dispatch_rules: Manage Dispatch'r rules
+        manage_supervisor_rules: Manage Supervisor rules   
+        manage_scenario_automation_rules: Manage Scenario automation rules
+        manage_email_settings: Manage Email Commands
+        admin_tasks: A Super admin
+        manage_account: Include account management 
     home:
       index: 
         group: Groups
@@ -792,6 +854,7 @@ en:
         email-settings: Email Setup
         everything: Everything
         helpdesk: Helpdesk
+        role: Roles
         else: else
         settings: Settings
         productivity: Productivity
@@ -906,6 +969,16 @@ en:
         not_allowed: You don't have access to delete it!
       create: 
         success: The Agent has been created and activation instructions sent to %{email}!
+      edit:
+        not_allowed: You cannot edit this agent
+    roles:
+      create:
+        success: The role "%{name}" has been created
+      update:
+        success: The role "%{name}" has been updated
+      default_roles: You cannot modify default roles    
+      delete:
+        not_allowed: You cannot delete this role. There are other users are associated with it.
     contacts_import: 
       failure: Please try again
       no_file: Please upload a file
@@ -930,6 +1003,7 @@ en:
         wrong_ticket_id: Please enter a valid ticket id
       reply: 
         success: The reply has been sent.
+        without_kbase: The reply has been sent. However, you are not permitted to create solutions.
       notes: 
         create: 
           invalid_email: You are not authorized to add a note
@@ -939,6 +1013,7 @@ en:
         success: All tickets in the spam folder were deleted.
       timesheet:
         timer_stopped: ticket timers has been stopped
+        create_error: You are not permitted to create timesheets for other agents.
       monitor: 
         stop: You are no longer monitoring this ticket
         start: You are now monitoring this ticket
@@ -1426,6 +1501,18 @@ en:
   portal_customizer_option_sol_i: Disable this feature if you want users to login to view solutions
   portal_customizer_auto_suggest_solutions: Enable this feature if you want to suggest existing solutions when user creates a new ticket.
   show_me_how: Show me how
+  agent_list:
+    tab:
+      active: "Full-Time"
+      occasional: "Occasional"
+      deleted: "Deleted"
+    sort:
+      sorted_by: Sorted by
+      name: "Name"
+      last_login_at: "Last logged in"
+      created_at: Created date
+      asc: Ascending
+      desc: Descending
   topic:
     ideas_stamps:
       planned: Planned
@@ -1470,6 +1557,7 @@ en:
         accepted: must be accepted
         not_a_number: is not a number
         inclusion: is not included in the list
+        user_role: A user must be associated with atleast one role
       full_messages: 
         format: "%{attribute} %{message}"
       template:
@@ -1572,10 +1660,13 @@ en:
   import_solution_article: Convert Article forum to solution
   close: Close
   agent: 
+    full_time_agent: Full-Time Agent
+    occasional_agent: Occasional Agent
     new: New Agent
     edit: Edit Agent
     showing: "Showing:"
-    agent_restored: The agent has been restored 
+    type: Agent Type
+    agent_restored: The agent has been restored
     status:
       active: Active
       deleted: Deleted
@@ -1584,6 +1675,19 @@ en:
     deleted:
       agent_deleted: The agent has been deleted
       no_agents: You dont have any deleted agents
+    trial: In trial version
+    buy: Buy more
+    available_seats: %{count} Agent seats available
+    available_seats_without_count: Agent seats available
+    no_seats: No agent seats available
+    last_logged_in: Last logged in %{time} ago.
+    never_logged_in: Never logged in
+    day_pass_used: Used %{count} day pass till date
+    day_pass_available: %{count} Day pass available
+    no_day_pass: No day pass available
+    assign_role: Assign Role
+    assign: Assign
+    role : Agent Role
     title: Agents
     info1: This is a deleted Agent
     info2: Email has already been taken
@@ -1604,15 +1708,19 @@ en:
     add_signature: Add signature
     update: Update
     permissions: Permissions
+    role_and_scope: Roles and Scope
+    roles: Roles
+    roles_description: Associate a role to an agent, an agent can play multiple role.
+    ticket_scope: Ticket Scope
     admin: Administrator
     supervisor: Supervisor
-    global: Agent (Global Access)
-    group: Agent (Group Access) 
-    individual: Agent (Restricted Access)
+    global: Global Access
+    group: Group Access
+    individual: Restricted Access
     admin_info: Can perform all Admin tasks
     supervisor_info: Can view all Tickets in the Helpdesk and access Reports (no admin privileges)
     global_info: Can view all Tickets in the Helpdesk
-    group_info: Can view Tickets in their Groups(s) and Tickets assigned to them
+    group_info: Can view Tickets in their Group(s) and Tickets assigned to them
     individual_info: Can only view Tickets assigned to them
     occasional_description: This agent will be accessing the support portal
     full_time: Full time
@@ -1997,7 +2105,7 @@ en:
   sprout_details: Email Response Management, All Automations, Default SLA Policy, Knowledge Base, Self-Service Portal, Basic Reporting, Community Support.
   blossom_details: Everything in &quot;Sprout&quot; Plan plus, Twitter Support, Facebook Support, Email Support, Forums, Community, Domain Mapping &amp; Multiple Emails.
   garden_details: Everything in &quot;Blossom&quot; Plan plus, Multiple Product Support, Advanced Reporting, Community, Email &amp; Phone Support
-  estate_details: Everything in &quot;Garden&quot; Plan plus, Gamification and Agent Collision.
+  estate_details: Everything in &quot;Garden&quot; Plan plus, Gamification , Agent Collision, Customer Portal Layout Customization and Enterprise Insights.
   zendesk_credentials: Zendesk Credentials
   how_to: Question
   customers: Customers
@@ -2600,6 +2708,8 @@ en:
       flagged_unspam: "%{tickets} removed from the spam folder."
 
     shared:
+      addcc: "Add cc"
+      cc: "cc"
       reply_form:
         title: Reply to %{email}
         cc: Cc

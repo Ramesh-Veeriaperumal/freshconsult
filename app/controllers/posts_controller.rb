@@ -4,14 +4,9 @@ class PostsController < ApplicationController
 
   before_filter :find_forum_topic, :only => :create
   before_filter :find_post,      :except =>  [:monitored, :create]
-  #before_filter :login_required, :except => [:index, :monitored, :search, :show]
-  before_filter :except => [:index, :monitored, :search, :show] do |c| 
-    c.requires_permission :post_in_forums
-  end
   
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
-  before_filter :check_user_permission,:only => [:edit,:destroy,:update] 
   
   @@query_options = { :select => "#{Post.table_name}.*, #{Topic.table_name}.title as topic_title, #{Forum.table_name}.name as forum_name", :joins => "inner join #{Topic.table_name} on #{Post.table_name}.topic_id = #{Topic.table_name}.id inner join #{Forum.table_name} on #{Topic.table_name}.forum_id = #{Forum.table_name}.id" }
 
@@ -21,13 +16,7 @@ class PostsController < ApplicationController
   cache_sweeper :posts_sweeper, :only => [:create, :update, :destroy]
   
   
-  def check_user_permission
-    if (current_user.id != @post.user_id and  !current_user.has_manage_forums?)
-          flash[:notice] =  t(:'flash.general.access_denied')
-          redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
-    end
-  end
-
+  
   def index
 #    conditions = []
 #    [:user_id, :forum_id, :topic_id].each { |attr| conditions << Post.send(:sanitize_sql, ["#{Post.table_name}.#{attr} = ?", params[attr]]) if params[attr] }
@@ -78,7 +67,7 @@ class PostsController < ApplicationController
     @post.user = current_user
     @post.account_id = current_account.id
     build_attachments
-    @post.save!
+    @post.save
     respond_to do |format|
       format.html do
         redirect_to category_forum_topic_path(:category_id => params[:category_id],:forum_id => params[:forum_id], :id => params[:topic_id], :anchor => @post.dom_id, :page => params[:page] || '1')
@@ -108,17 +97,17 @@ class PostsController < ApplicationController
   
   def update
     @post.attributes = params[:post]
-    @post.save!
-  rescue ActiveRecord::RecordInvalid
-    flash[:bad_reply] = 'An error occurred'[:error_occured_message]
-  ensure
-    respond_to do |format|
-      format.html do
-        redirect_to category_forum_topic_path(@post.topic.forum.forum_category_id,:forum_id => params[:forum_id], :id => params[:topic_id])
+    @post.save
+    rescue ActiveRecord::RecordInvalid
+      flash[:bad_reply] = 'An error occurred'[:error_occured_message]
+    ensure
+      respond_to do |format|
+        format.html do
+          redirect_to category_forum_topic_path(@post.topic.forum.forum_category_id,:forum_id => params[:forum_id], :id => params[:topic_id])
+        end
+        format.js
+        format.xml { head 200 }
       end
-      format.js
-      format.xml { head 200 }
-    end
   end
 
   def destroy
@@ -162,14 +151,12 @@ class PostsController < ApplicationController
 
       @forum_category = scoper.find(params[:category_id])
       @forum = @forum_category.forums.find(params[:forum_id])
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @forum.visible?(current_user)
       @topic = @forum.topics.find(params[:topic_id]) if params[:topic_id]
     end
     
     def find_post     
       @post = Post.find_by_id_and_topic_id_and_forum_id(params[:id], params[:topic_id], params[:forum_id]) || raise(ActiveRecord::RecordNotFound)
       (raise(ActiveRecord::RecordNotFound) unless (@post.account_id == current_account.id)) || @post
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @post.topic.forum.visible?(current_user)
     end
     
     def render_posts_or_xml(template_name = action_name)

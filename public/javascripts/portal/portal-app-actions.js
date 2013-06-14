@@ -46,11 +46,11 @@
 			if(email_path == "") return
 
 			if(ticket_email.isValidEmail()){				
-				$this.addClass("sloading loading-small")
+				$this.addClass("loading-right")
 
 				$.ajax({ url: email_path+"?v="+ticket_email,
 				  	success: function(data){
-					    $this.removeClass("sloading loading-small")
+					    $this.removeClass("loading-right")
 					    toggle_name(!data.user_exists)
 					}
 				})

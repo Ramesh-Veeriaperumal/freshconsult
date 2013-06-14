@@ -1,24 +1,13 @@
 class ContactsController < ApplicationController
 
-    before_filter :except => [:make_agent,:make_occasional_agent] do |c| 
-      c.requires_permission :manage_tickets
-    end
-
-    before_filter :only => [:make_agent,:make_occasional_agent] do |c| 
-      c.requires_permission :manage_users
-    end
-
-    before_filter :requires_all_tickets_access 
-    
    include APIHelperMethods
    include HelpdeskControllerMethods
    include ExportCsvUtil
 
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
-   before_filter :check_user_role, :only =>[:update,:create]
    before_filter :set_selected_tab
    before_filter :check_agent_limit, :only =>  :make_agent
-   before_filter :load_item, :only => [:show, :edit, :update, :make_agent,:make_occasional_agent]
+   before_filter :load_item, :only => [:edit, :update, :make_agent,:make_occasional_agent]
    skip_before_filter :build_item , :only => [:new, :create]
    before_filter :set_mobile , :only => :show
    before_filter :fetch_contacts, :only => [:index]
@@ -44,7 +33,7 @@ class ContactsController < ApplicationController
       format.json  do
         render :json => @contacts.to_json({:except=>[:account_id] ,:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
                     :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
-                    :user_role,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
+                    :helpdesk_agent,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
       end
       format.atom do
         @contacts = @contacts.newest(20)
@@ -76,8 +65,7 @@ class ContactsController < ApplicationController
         format.xml  { render :xml => @user, :status => :created, :location => contacts_url(@user) }
         format.json {
             render :json => @user.to_json({:except=>[:account_id] ,:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
-                    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
-                    :user_role,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
+:phone,:mobile,:twitter_id,:description,:time_zone,:deleted,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
         }
         format.widget { render :action => :show}
         format.js
@@ -148,7 +136,7 @@ class ContactsController < ApplicationController
       format.xml  { render :xml => @user.to_xml} # bad request
       format.json { render :json => @user.to_json({:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
                     :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
-                    :user_role,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
+                    :fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
                   }
       format.mobile { render :json => @user.to_mob_json }
     end
@@ -186,16 +174,17 @@ class ContactsController < ApplicationController
   
   def make_occasional_agent
     respond_to do |format|
-      if @item.make_agent(:occasional => true)        
+      if @item.make_agent(:occasional => true)
         format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
           redirect_to @item }
         format.xml  { render :xml => @item, :status => 200 }
       else
         format.html { redirect_to :back }
-        format.xml  { render :xml => @agent.errors, :status => 500 }
+        format.xml  { render :xml => @item.errors, :status => 500 }
       end   
-    end 
+    end
   end
+  
   def make_agent
     respond_to do |format|
       if @item.make_agent        
@@ -204,9 +193,9 @@ class ContactsController < ApplicationController
         format.xml  { render :xml => @item, :status => 200 }
       else
         format.html { redirect_to :back }
-        format.xml  { render :xml => @agent.errors, :status => 500 }
+        format.xml  { render :xml => @item.errors, :status => 500 }
       end   
-    end 
+    end
   end
 
   def autocomplete   
@@ -232,15 +221,11 @@ class ContactsController < ApplicationController
     end
   end
 
-  def requires_all_tickets_access              
-        access_denied unless current_user.can_view_all_tickets?
-  end
-  
 protected
 
   def initialize_new_user
     @user = current_account.users.new
-    @user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
+    @user.helpdesk_agent = false
     @user.avatar = Helpdesk::Attachment.new
     @user.time_zone = current_account.time_zone
     @user.language = current_account.language
@@ -261,11 +246,7 @@ protected
       current_account.all_contacts
     end
   end
-
-  def authorized?
-      (logged_in? && self.action_name == 'index') || admin?
-  end
-    
+   
   def set_selected_tab
       @selected_tab = :customers
   end
@@ -297,14 +278,6 @@ protected
         end
       rescue Exception => e
         @contacts = {:error => get_formatted_message(e)}
-      end
-    end
-
-    #To make sure no other roles are set via api except customer,client_manager
-    def check_user_role
-      user_role = (params[:user][:user_role]).to_i
-      unless user_role == User::USER_ROLES_KEYS_BY_TOKEN[:customer] || user_role == User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]
-        params[:user][:user_role] = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
       end
     end
 end

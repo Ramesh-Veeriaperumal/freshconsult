@@ -54,7 +54,7 @@ module Reports::HelpdeskAnalysisReport
         {:type => "line", :color => "#4a7ebb"},true))
     data_hash.store('avg_response_time',
       prepare_data_series(I18n.t('adv_reports.comparison_reports.avg_resp_time'),'avgresponsetime',tickets_count,
-        {:type => "line", :color => "#be4b48"}))
+        {:type => "line", :color => "#be4b48"},true))
 
     #Interactions..
     data_hash.store('customer_interactions',

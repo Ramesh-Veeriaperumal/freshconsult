@@ -18,7 +18,6 @@
 		this.$dialogid = this.options.targetId.substring(1)
 
 		// Getting static content id and dom if it is present in the document
-
 		this.$content = $(this.options.targetId)
 		// Building the base wrapper for the modal dialog
 		this.$dynamicTarget = $('<div class="modal fade" role="dialog" aria-hidden="true"></div>')
@@ -34,7 +33,6 @@
         	// Title for the header        
         	this.dialogTitle = element.getAttribute('title') || this.options.title
 
-
         // Setting modal dialogs header and its title
 	    	this.$dynamicTarget
 		    		.append(this.options.templateHeader)
@@ -42,12 +40,11 @@
 						.attr("title", this.dialogTitle)
 						.html(this.dialogTitle)
 
-				// Setting close link for the dialog
-				if(this.options.showClose == true)
-        	this.$dynamicTarget
+			// Setting close link for the dialog
+			if(this.options.showClose == true)
+        	   this.$dynamicTarget
         			.find(".modal-header")
         			.prepend('<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>')
-        
 		}
 
         // Setting up content body 
@@ -85,13 +82,14 @@
 		// To submit the first form inside the modal dialog
 	,	formSubmit: function(e){
 			e && e.preventDefault()
+         var form = this.$dynamicTarget.find('form:first')       
 
-			var form = this.$dynamicTarget.find('form:first')
-
-			if(form.get(0)){
-				if(this.options.submitLoading != "") this.$submitBtn.button('loading');
-					form.submit();
-			} 
+         if(form.get(0)){
+           if(this.options.submitLoading != "") this.$submitBtn.button('loading');
+             form.submit();
+         }
+      
+         if(this.options.closeOnSubmit) this.$dynamicTarget.modal("hide")
 		}
 	}
 
@@ -113,7 +111,8 @@
 	$.fn.freshdialog.defaults = {
 	  width: 		"710px",
 		title: 		'',
-		classes: 	'',
+		classes: 	'',      
+      closeOnSubmit: false,
 		keyboard: 	true, 
 		templateHeader: '<div class="modal-header">' +
 							'<h3 class="ellipsis modal-title"></h3>' +

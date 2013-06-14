@@ -1,9 +1,11 @@
 module Resque::AroundPerform
 
  def before_enqueue_add_account_and_user(*args)
+  if args[0].is_a?(Hash)
     args[0][:account_id] = Account.current.id if Account.current  
     args[0][:current_user_id] = User.current.id if User.current
   end
+end
 
   def before_perform_reset_account(*args)
     Account.reset_current_account

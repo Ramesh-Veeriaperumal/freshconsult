@@ -1,4 +1,5 @@
 class CreateHelpdeskTicketBody < ActiveRecord::Migration
+  shard :none
   def self.up
   	execute("CREATE TABLE `helpdesk_ticket_bodies` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,

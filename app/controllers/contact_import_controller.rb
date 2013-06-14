@@ -2,9 +2,9 @@ class ContactImportController < ApplicationController
    include Integrations::GoogleContactsUtil
    include Helpdesk::ToggleEmailNotification
 
-   before_filter { |c| c.requires_permission :manage_tickets }
    before_filter :disable_user_activation
    after_filter :enable_notification
+
    map_fields :create, 
                     ['Name','Job Title','Company','Phone','Email','Twitter Id'], 
                     :file_field => :file, 

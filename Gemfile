@@ -41,6 +41,7 @@ gem "rubyzip", "0.9.4" , :require => "zip/zip"
 
 gem "http_accept_language", "1.0.1"
 
+gem "riddle", "1.2.2"
 gem "thinking-sphinx", "1.4.3", :require => "thinking_sphinx"
 gem "delayed_job", "1.8.4"
 #gem "ts-delayed-delta", "1.1.0", :require => "thinking_sphinx/deltas/delayed_delta"
@@ -96,13 +97,15 @@ gem "wicked_pdf", "~> 0.9.2"
 gem "pg"
 
 gem "cloudfront_asset_host", :git => "git://github.com/freshdesk/cloudfront_asset_host.git"
-gem "freshdesk_authority", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/freshdesk_authority-0.1"
 
 group :production,:test,:staging do
  gem 'tire', :git => "git://github.com/freshdesk/tire.git"
 end
 
-group :development,:test do
+gem "freshdesk_authority", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/freshdesk_authority-0.1"
+gem "active_presenter", "1.4.0"
+
+group :development,:test do   
    gem "forgery","0.5.0"
    gem "factory_girl", "1.2.3" 
    gem "mongrel",  '>= 1.2.0.pre2'
@@ -113,6 +116,11 @@ group :test do
    gem "rspec-rails", "1.3.3"
    gem "spork", "~> 0.8.0"
    gem "mocha", "~> 0.13.3"
+   gem "rr"
+   gem "ZenTest", "4.4.1"
+   gem "autotest-fsevent", "0.1.1"
+   gem "autotest-growl", "0.2.0"
+   gem "autotest-rails", "4.1.0"
 end
 
 group :assets do

@@ -1,5 +1,6 @@
 class Admin::AdminController < ApplicationController
-  before_filter { |c| c.requires_permission :manage_users }
+  # 1. I have not added any authorization for this controller
+  # => i dont think it is being used anywhere
   before_filter :set_selected_tab
   
   protected
