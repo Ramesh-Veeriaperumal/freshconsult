@@ -13,14 +13,6 @@ jQuery.noConflict()
     
     // Attaching dom ready events
 
-    // Preventing default click & event handlers for disabled or active links
-    $(".pagination, .dropdown-menu") 
-    		.find(".disabled a, .active a")
-    		.on("click", function(ev){
-    				ev.preventDefault()
-    				ev.stopImmediatePropagation()
-    		})    
-
     // Remote ajax for links
     $("a[data-remote]").live("click", function(ev){
       ev.preventDefault()
