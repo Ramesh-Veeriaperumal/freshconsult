@@ -5,8 +5,9 @@ class AgentsController < ApplicationController
   include APIHelperMethods
   
   include Gamification::GamificationUtil
+  include MemcacheKeys
 
-  before_filter :authorized_to_manage_agents, :except => [:show, :toggle_availability]
+  before_filter :authorized_to_manage_agents, :except => [:show, :toggle_availability, :info_for_node]
   before_filter :authorized_to_view_agents, :only => :show
 
   skip_before_filter :check_account_state, :only => :destroy
@@ -193,6 +194,23 @@ class AgentsController < ApplicationController
       @agent.user.reset_agent_password(current_portal)
       flash[:notice] = t(:'flash.password_resets.email.reset', :requester => h(@agent.user.email))      
       redirect_to :back
+    end
+  end
+
+  def info_for_node
+    key = %{#{NodeConfig["secret_key"]}#{current_account.id}#{params[:user_id]}}
+    hash = Digest::SHA512.hexdigest(key)
+    
+    if hash == params[:hash]
+      agent = current_account.agents.find_by_user_id(params[:user_id])
+      agent_detail = { :ticket_permission => agent.ticket_permission, 
+                       :group_ids => agent.agent_groups.map(&:group_id) }
+      key = AUTO_REFRESH_AGENT_DETAILS % { :account_id => current_account.id, 
+                                           :user_id => params[:user_id] }
+      MemcacheKeys.cache(key, agent_detail.to_json, 86400*15, true)
+      render :json => agent_detail
+    else 
+      render :nothing => true
     end
   end
 

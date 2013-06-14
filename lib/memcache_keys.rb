@@ -31,9 +31,9 @@ module MemcacheKeys
 
   ACCOUNT_MAIN_PORTAL = "v3/ACCOUNT_MAIN_PORTAL:%{account_id}"
 
-  ACCOUNT_CUSTOM_DROPDOWN_FIELDS = "v1/ACCOUNT_CUSTOM_DROPDOWN_FIELDS:%{account_id}"
+  ACCOUNT_CUSTOM_DROPDOWN_FIELDS = "v2/ACCOUNT_CUSTOM_DROPDOWN_FIELDS:%{account_id}"
 
-  ACCOUNT_NESTED_FIELDS = "v1/ACCOUNT_NESTED_FIELDS:%{account_id}"
+  ACCOUNT_NESTED_FIELDS = "v2/ACCOUNT_NESTED_FIELDS:%{account_id}"
 
   ES_ENABLED_ACCOUNTS = "ES_ENABLED_ACCOUNTS"
 
@@ -53,6 +53,8 @@ module MemcacheKeys
   SHARD_BY_DOMAIN = "v1/SHARD_BY_DOMAIN:%{domain}"
  
   SHARD_BY_ACCOUNT_ID = "v1/SHARD_BY_ACCOUNT_ID:%{account_id}"
+
+  AUTO_REFRESH_AGENT_DETAILS = "AGENT_DETAILS:%{account_id}:%{user_id}"
   
   class << self
 
@@ -81,12 +83,12 @@ module MemcacheKeys
       newrelic_begin_rescue { $memcache.delete(memcache_view_key(key, account, user)) } 
     end
 
-    def get_from_cache(key)
-      newrelic_begin_rescue { $memcache.get(key) }
+    def get_from_cache(key, raw=false)
+      newrelic_begin_rescue { $memcache.get(key, raw) }
     end
 
-    def cache(key,value,expiry=0)
-      newrelic_begin_rescue { $memcache.set(key, value, expiry) }
+    def cache(key,value,expiry=0, raw=false)
+      newrelic_begin_rescue { $memcache.set(key, value, expiry, raw) }
     end
 
     def delete_from_cache(key)

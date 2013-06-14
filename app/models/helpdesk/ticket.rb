@@ -60,11 +60,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_save :save_custom_field
 
   after_commit_on_create :create_initial_activity,  :update_content_ids, :pass_thro_biz_rules,
-    :support_score_on_create, :process_quests, :update_es_index
+    :support_score_on_create, :process_quests, :update_es_index, :publish_new_ticket_properties
   
   after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity,
     :stop_timesheet_timers, :fire_update_event, :support_score_on_update, 
-    :process_quests, :publish_to_update_channel, :update_es_index, :regenerate_reports_data
+    :process_quests, :publish_to_update_channel, :update_es_index, :regenerate_reports_data, 
+    :publish_updated_ticket_properties
 
   after_commit_on_destroy :remove_es_document
 
@@ -1420,6 +1421,36 @@ class Helpdesk::Ticket < ActiveRecord::Base
       agent_name = User.current ? User.current.name : ""
       message = HELPDESK_TICKET_UPDATED_NODE_MSG % {:ticket_id => self.id, :agent_name => agent_name, :type => "updated"}
       publish_to_tickets_channel("tickets:#{self.account.id}:#{self.id}", message)
+    end
+
+    def publish_new_ticket_properties
+       publish_ticket_properties("new")
+    end
+
+    def publish_updated_ticket_properties
+      publish_ticket_properties("update")
+    end
+
+    def publish_ticket_properties(type)
+      user_id = User.current ? User.current.id : ""
+      ticket_responder_id = responder_id ? responder_id : -1
+      message = { 
+                  "ticket_id" => display_id, 
+                  "user_id" => user_id,
+                  "type" => type,
+                  "responder_id" => ticket_responder_id,
+                  "group_id" => group_id,
+                  "status" => status,
+                  "priority" => priority,
+                  "ticket_type" => ticket_type,
+                  "source" => source,
+                  "requester_id" => requester_id,
+                  "due_by" => (due_by - Time.zone.now).div(3600),
+                  "created_at" => "#{created_at}" 
+                }
+      custom_field_hash = load_flexifield
+      message.merge!(custom_field_hash) unless custom_field_hash.blank?
+      publish_to_tickets_channel("index_page:#{self.account.id}:#{self.id}", message.to_json)
     end
 
     def fire_update_event

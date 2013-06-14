@@ -2207,6 +2207,12 @@ en:
     include_quoted_text: "Include previous replies"
     more_details: "More details..."
     reported: "reported"
+    new_ticket: New ticket
+    new_tickets: New tickets
+    ticket_updated: Ticket updated
+    tickets_updated: Tickets updated
+    reload_view: Reload View
+    ticket_updated_icon: Ticket Updated
     reported_on: "from %{username}, Last updated: on %{date}"
     scenarios: "Scenarios"
     ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago</span>"
