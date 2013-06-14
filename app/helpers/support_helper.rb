@@ -387,7 +387,7 @@ HTML
 	end
 
 	def ticket_form_element form_builder, object_name, field, field_value = "", html_opts = {}
-	    dom_type = (field.field_type == "nested_field") ? "nested_field" : field.dom_type	    
+	    dom_type = (field.field_type == "nested_field") ? "nested_field" : (field['dom_type'] || field.dom_type)
 	    required = (field.required_in_portal && field.editable_in_portal)
 	    element_class = " #{required ? 'required' : '' } #{ dom_type }"
 	    field_name      = (field_name.blank?) ? field.field_name : field_name
@@ -395,7 +395,9 @@ HTML
 
 	    case dom_type
 	      when "requester" then
-	      	render(:partial => "/support/shared/requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts })	      
+	      	render(:partial => "/support/shared/requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts })
+	      when "widget_requester" then
+	      	render(:partial => "/support/shared/widget_requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts })
 	      when "text", "number" then
 			text_field(object_name, field_name, { :class => element_class + " span12", :value => field_value }.merge(html_opts))
 	      when "paragraph" then

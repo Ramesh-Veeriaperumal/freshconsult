@@ -2708,6 +2708,8 @@ en:
       flagged_unspam: "%{tickets} removed from the spam folder."
 
     shared:
+      addcc: "Add cc"
+      cc: "cc"
       reply_form:
         title: Reply to %{email}
         cc: Cc

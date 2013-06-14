@@ -1,87 +1,37 @@
-@font-face {
-	font-family: 'widget-icons';
-	src:url('fonts/widget-icons.eot');
-}
-@font-face {
-	font-family: 'widget-icons';
-	src: url(data:application/x-font-woff;charset=utf-8;base64,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) format('woff'),
-		 url(data:application/x-font-ttf;charset=utf-8;base64,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) format('truetype');
-	font-weight: normal;
-	font-style: normal;
+$wicon-layout:horizontal;
+@import "cdn-ignored/sprites/wicon/*.png";
+$wicon-sprite-dimensions:true;
+@include all-wicon-sprites;
+
+[class^="wicon-"],
+[class*=" wicon-"]{
+  display: inline-block;
+  @include ie7-restore-right-whitespace();
+  vertical-align: text-top;
+  background-repeat: no-repeat;
 }
 
-/* Use the following CSS code if you want to use data attributes for inserting your icons */
-[data-icon]:before {
-	font-family: 'widget-icons';
-	content: attr(data-icon);
-	speak: none;
-	font-weight: normal;
-	font-variant: normal;
-	text-transform: none;
-	line-height: 1;
-	color: #999999;
-	-webkit-font-smoothing: antialiased;
-}
-
-/* Use the following CSS code if you want to have a class per icon */
-/*
-Instead of a list of all class selectors,
-you can use the generic selector below, but it's slower:
-[class*="icon-"] {
-*/
-.icon-user, .icon-question-sign, .icon-paper-clip, .icon-search, .icon-camera, .icon-email {
-	font-family: 'widget-icons';
-	speak: none;
-	font-style: normal;
-	font-weight: normal;
-	font-variant: normal;
-	text-transform: none;
-	line-height: 1;
-	-webkit-font-smoothing: antialiased;
-	color: #999999;
-}
-.icon-user:before {
-	content: "\f007";
-}
-.icon-question-sign:before {
-	content: "\f059";
-}
-.icon-paper-clip:before {
-	content: "\f0c6";
-}
-.icon-search:before {
-	content: "\e007";
-}
-.icon-camera:before {
-	content: "\f030";
-}
-.icon-email:before {
-	content: "\e000";
-}
-
-.default_requester .controls{ @extend .icon-email; }
-.default_subject .controls{ @extend .icon-question-sign; }
-.default_name_field{ @extend .icon-user; }
-.hc-search-input{ @extend .icon-search; }
+.default_requester .controls:before{ @extend .wicon-email; }
+.default_subject .controls:before{ @extend .wicon-question-sign; }
+.default_name_field:before{ @extend .wicon-user; }
+.hc-search-input:before{ @extend .wicon-search; }
 .default_requester .controls, .default_subject .controls, .default_name_field, .hc-search-input{
 	&:before{
+		content: " ";
 		position: absolute;
 		margin-top: 6px;
-		margin-left: 3px;
-		font-size: 18px;
+		margin-left: 7px;
 		color: #aaa;
 		text-align: center;
-		width: 26px;
 	}
 }
 
 .hc-search-input:before{
-	margin-top: 12px;
-	margin-left: 7px;
-	font-size: 18px;
+	margin-top: 11px;
+	margin-left: 11px;
 }
 
-.icon-camera{
+.wicon-camera{
 	position: relative;
 	top: 1px;
 	left: -2px;

@@ -13,6 +13,7 @@
 	  		<% old_pos = @ticket_fields.map(&:field_type).index(tf_field) %>
 	  		<% if(old_pos != nil) %>
 	  			<% field = @ticket_fields.delete_at(old_pos) %>
+	  			<% field['dom_type'] = field.dom_type == "requester" ? "widget_requester" : field.dom_type %>
 	  			<div class="control-group <%= field.field_type %>">
 	  				<%= ticket_field_container f, :helpdesk_ticket, field %>
 	  			</div>
