@@ -289,25 +289,25 @@ class Support::SearchController < SupportController
     end
 
     def solution_result article
-      { 'title' => article.title, 
+      { 'title' => article.title.html_safe, 
         'group' => article.folder.name, 
-        'desc' => truncate(article.desc_un_html, :length => truncate_length ),
+        'desc' => truncate(article.desc_un_html.html_safe, :length => truncate_length ),
         'type' => "ARTICLE",
         'url' => support_solutions_article_path(article) }
     end
 
     def topic_result topic
-      { 'title' => topic.title, 
+      { 'title' => topic.title.html_safe, 
         'group' => topic.forum.name, 
-        'desc' => truncate(topic.posts.first.body, :length => truncate_length),
+        'desc' => truncate(topic.posts.first.body.html_safe, :length => truncate_length),
         'type' => "TOPIC", 
         'url' => support_discussions_topic_path(topic) }
     end
 
     def ticket_result ticket
-      { 'title' => ticket.subject, 
+      { 'title' => ticket.subject.html_safe, 
         'group' => "Ticket", 
-        'desc' => truncate(ticket.description, :length => truncate_length),
+        'desc' => truncate(ticket.description.html_safe, :length => truncate_length),
         'type' => "TICKET", 
         'url' => support_ticket_path(ticket) }
     end
