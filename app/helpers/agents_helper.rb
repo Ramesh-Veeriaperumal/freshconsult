@@ -111,5 +111,18 @@ module AgentsHelper
       "class='tooltip' title='#{formated_date(agent.user.last_login_at)}'"
     end
   end
+  
+  def ticket_permission(id)
+    ticket_permission_mapper[id]
+  end
+  
+  def ticket_permission_mapper
+    {
+      :all_tickets => 'agent.global',
+      :group_tickets => 'agent.group',
+      :assigned_tickets => 'agent.individual'
+    } 
+  end
+  
 
 end

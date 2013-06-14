@@ -113,7 +113,7 @@ en:
     company: Company
     photo: Photo
     title: Title
-    info1: A Profile image of the person, its best if the picture has the same length and height
+    info1: A Profile image of the person, it's best if the picture has the same length and height
     back_info: Background information
     mobile: Mobile
     twitter_id: Twitter
@@ -783,6 +783,14 @@ en:
         reports: Reports
         administration: Administration
       permissions: Permissions
+      helpcard:
+        title1: Understanding Roles
+        info1: Roles allow you to create and edit access permissions for agents. You can create new roles, specify what actions agents with these roles can perform within your help desk, and assign the role to agents.
+        info2: For example, you can create a role for your Support Co-ordinators, allowing them to update fields and assign tickets, and even add notes internally, but not reply to customers. 
+        info3: Once you create and save a new Role you will be able to assign it to agents when you create or edit their profile by clicking on the Agents icon under the admin tab.
+        title2: Admin Privileges
+        info4: You can nominate whether you want an agent to have access to settings under the Admin tab. Agents with admin access can be Operation Agents with limited access, or Super Admins with the ability to edit all configurations. You can have as many Super Admins with the ability to view and modify your billing details, or as few as one.
+        info5: Learn more about roles and privileges
       privilege:
         tickets: Tickets
         manage_tickets: Manage tickets
@@ -791,7 +799,7 @@ en:
         edit_note_choice: Edit notes
         edit_note: Edit everyone's notes
         edit_note_false: Edit only their own notes
-        edit_conversation: Edit conversation
+        edit_conversation: Delete a conversation
         merge_or_split_ticket: Merge / split a ticket
         edit_ticket_properties: Edit ticket properties
         view_time_entries: View or edit time entries
@@ -805,7 +813,7 @@ en:
         manage_solutions: Create / Edit category or folder
         forums: Forums
         view_forums: View forums tab
-        manage_forums: Create / Edit category or topic
+        manage_forums: Create / Edit category or forum
         create_topic: Create or Edit a forum topic
         edit_topic: Edit everyone's forum topic
         edit_topic_false: Edit only their own forum topic
@@ -817,15 +825,15 @@ en:
         reports: Reports
         view_reports: View reports tab
         admin: Admin
-        not_administrator: Not an administrator
-        operational_admin: An operational admin
+        not_administrator: Not view any Administrator options
+        operational_admin: Perform Operational Admin actions
         manage_users: Manage Agents
         manage_canned_responses: Manage canned responses
         manage_dispatch_rules: Manage Dispatch'r rules
         manage_supervisor_rules: Manage Supervisor rules   
         manage_scenario_automation_rules: Manage Scenario automation rules
         manage_email_settings: Manage Email Commands
-        admin_tasks: A Super admin
+        admin_tasks: Play God with Super Admin controls
         manage_account: Include account management 
     home:
       index: 
@@ -1685,7 +1693,8 @@ en:
     day_pass_used: Used %{count} day pass till date
     day_pass_available: %{count} Day pass available
     no_day_pass: No day pass available
-    assign_role: Assign Role
+    assign_role: Associate Roles
+    cannot_edit_roles: You will only be able to view your roles and scope, not edit them.
     assign: Assign
     role : Agent Role
     title: Agents
@@ -1697,10 +1706,16 @@ en:
     info3: Are you sure you want delete
     helpcard:
       tour: Help me add new agents
-      side_title: Adding Agents and Editing Details
-      info1: The list shows all Agents added in your help desk. You can edit an existing agent’s permissions and access rights by hovering over the agent and clicking on “Edit”. You can add new agents by clicking on the “New Agent” button. 
-      info2: When you add a new agent, you will have to provide the agent’s email, set their permission levels and access (full-time or occasional). Agents will receive an email with a confirmation link to activate their account after which they can be assigned to, or respond to tickets.
-      info3: Administrators can also edit an Agent’s profile to include the agent’s title, phone, profile picture, signature etc.
+      info1: An agent in Freshdesk is anybody who needs to access, work on and resolve your support tickets. The list shows all agents currently in your helpdesk.
+      info2: Hover over an agent to edit their details, or click on Add New Agent to add a new agent.
+      info3: Agents you add will receive an email with a confirmation link to activate their account after which they can be assigned, and respond to tickets.
+      title1: Full-time vs Occasional Agents
+      info4: You can choose whether your agents will need access to your support portal full-time, or will only be logging in occasionally. Occasional agents will use up a Day Pass for each day they login to your support, and you can purchase Day Passes in bulk from the Admin tab. Note that you will only be billed monthly for the number of full-time agents you add.
+      info5: Learn more about Day Passes
+      title2: Agent Scopes and Roles
+      info6: You can choose which tickets your agents can see by modifying their Ticket Scope. You should also specify what actions this agent should be able to perform within your helpdesk by choosing a Role.
+      info7: Note that you will not be able to modify your own roles, or delete yourself.
+      info8: Learn more about Agent Roles
     make_admin: Make this agent an admin
     view_user: View User
     use_email: Use this email
@@ -1710,7 +1725,7 @@ en:
     permissions: Permissions
     role_and_scope: Roles and Scope
     roles: Roles
-    roles_description: Associate a role to an agent, an agent can play multiple role.
+    roles_description: Associate one or more roles with this agent.
     ticket_scope: Ticket Scope
     admin: Administrator
     supervisor: Supervisor
@@ -1724,7 +1739,7 @@ en:
     individual_info: Can only view Tickets assigned to them
     occasional_description: This agent will be accessing the support portal
     full_time: Full time
-    occasional: Occasionally
+    occasional: Occasional
     day_pass_expired: Your day pass has expired, please login to acquire a new day pass.
     insufficient_day_pass: Unable to allocate a day pass for you, please contact your administrator.
     password_reset_message: "Do you want to reset %{requester}'s password?"

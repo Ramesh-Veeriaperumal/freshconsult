@@ -17,13 +17,5 @@
   </h3>
   <div class="seperator"></div><br/>
   <%= render :partial => "agent_form", :locals => { :type => "edit" } %>
-  <ul class="admin-breadcrumb breadcum-footer clearfix">
-      <li class="non-arrow pull-right">
-        <%= f.submit t('save'), { :class => "btn  btn-primary" , 'data-loading-text' => t('saving')} %>
-      </li>
-    	<li class="non-arrow pull-right">
-    		<%= link_to t('cancel'), {:action => 'index'}, :class => "btn" %>
-    	</li>
-  </ul>  
 <%end%>
  

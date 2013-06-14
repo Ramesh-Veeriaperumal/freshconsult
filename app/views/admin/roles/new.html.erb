@@ -1,7 +1,7 @@
 <%= include_cloudfront_css :pattern %>
 <%= include_cloudfront_js :pattern %>
 <% content_for :sidebar do %>
-  <%= render :partial => "agents/helpnote_without_tour" %>
+  <%= render :partial => "helpnote_without_tour" %>
 <% end %>
 <% form_for @role, :url => admin_roles_path, :html => { :id => 'new_role', :method => :post, :rel => "validate"} do |role_form| %>
 <h3 class="lead">
