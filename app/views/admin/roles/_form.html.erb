@@ -38,13 +38,13 @@
   <%= hidden_field_tag "role[privilege_list][]"%>
 </div>
 <ul class="admin-breadcrumb breadcum-footer clearfix">
+  <% unless @role.default_role? %>
+    <li class="non-arrow pull-right">
+      <%= role_form.submit t('save'), :class => "btn btn-primary", 'data-loading-text' => t('saving')%>
+    </li>
+  <% end %>
   <li class="non-arrow pull-right">
-    <% unless @role.default_role? %>
-      <%= role_form.submit t('save'), :class => "btn btn-primary"%>
-    <% end %>
-  </li>
-  <li class="non-arrow pull-right">
-    <%= link_to t('cancel'), admin_roles_path, :class => "btn"%>
+    <%= link_to @role.default_role? ? t('go_back') : t('cancel'), admin_roles_path, :class => "btn"%>
   </li>
 		
 </ul>

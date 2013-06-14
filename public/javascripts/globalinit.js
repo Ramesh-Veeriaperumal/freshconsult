@@ -218,7 +218,7 @@ is_touch_device = function() {
           hidePopoverTimer = setTimeout(function() { $("#new_watcher_page").hide(); },1000);
       });    
 
-    $("#new_watcher_page").live('mouseenter',function(ev) {
+    $("#new_watcher_page, .select2-results").live('mouseenter',function(ev) {
       clearTimeout(hideWatcherTimer);
       clearTimeout(hidePopoverTimer);
     }).live('mouseleave',function(ev) {
