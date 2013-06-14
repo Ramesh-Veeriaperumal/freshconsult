@@ -158,7 +158,9 @@
 	margin-left: 5px;
 	font-size: 12px;
 	color: #c4c4c4;
-	a, a:hover{ color: inherit; }
+	a{ text-decoration: underline; }
+	a:hover{ text-decoration: none; }
+	a, a:hover{ color: inherit;  }
 }
 
 .screenshot-remove{

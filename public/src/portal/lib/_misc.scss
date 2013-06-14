@@ -28,10 +28,13 @@
     padding: 10px 12px 3px;
     border: 1px solid #c6c6c6;
     margin-top: -3px;
-    .icon-paper-clip{
+    .wicon-paper-clip{
+    	background-image: inline-image("cdn-ignored/inline-images/paper-clip.png");
+    	background-repeat: no-repeat;
+    	width: 16px;
+    	height: 16px;
 		position: absolute;
 		left: 0;
-		font-size: 16px;
 		top: 1px;
     }
     .attach-link{ padding-left: 18px; position: relative; }

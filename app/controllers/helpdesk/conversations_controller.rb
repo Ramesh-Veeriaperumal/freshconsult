@@ -28,7 +28,6 @@ class Helpdesk::ConversationsController < ApplicationController
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end
-      send_email
       process_and_redirect
     else
       create_error
@@ -39,7 +38,6 @@ class Helpdesk::ConversationsController < ApplicationController
     build_attachments @item, :helpdesk_note
     if @item.save
       add_forum_post if params[:post_forums]
-      send_email
       @item.create_fwd_note_activity(params[:helpdesk_note][:to_emails])
       process_and_redirect
     else

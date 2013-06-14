@@ -1,6 +1,6 @@
 <% _cc_condition = current_user && field.portal_cc_field? && ( current_user.customer || field.all_cc_in_portal? ) %>
 <div class="row-fluid">
-	<%= text_field object_name, :email, 
+	<%= text_field object_name, :email,
 			:value => "", :class => "span12 email required",
 			"data-check-email-path" => check_email_support_tickets_path,
 			:placeholder => t("ticket_form.your_email_address"), 
@@ -18,7 +18,7 @@
 </div>
 <% if _cc_condition %>
 	<div id="cc-emails" class="cc-emails hide">
-		<span class="cc-label"><%= t('helpdesk.shared.cc') %>:</span>			
+		<span class="cc-label"><%= t('helpdesk.shared.cc') %>:</span>
 		<% if field.company_cc_in_portal? %>
 			<%= select_tag(:cc_emails, 
 					options_for_select(current_user.customer.users.collect{ |c| [c.email, c.email] }),
