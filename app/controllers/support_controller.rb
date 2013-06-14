@@ -25,7 +25,7 @@ class SupportController < ApplicationController
 
     def allow_monitor?
       params[:user_id] = current_user.id if (params[:user_id].nil?)
-      unless current_user.admin?
+      unless privilege?(:manage_forums)
         if (!params[:user_id].blank? && params[:user_id].to_s!=current_user.id.to_s)
           @errors = {:error=>"Permission denied for user"}
           respond_to do |format|
