@@ -30,22 +30,10 @@
 	   <%end%>
   </div>
 </div>
-<div class="dialog-special small_curve top_spacing" id="reply-fields">
-  <div id="content-bulk" class="content clearfix">
-    <div class="field-item" id="bulkreplycheck">
-      <label for="addbulkreply" rel="inputcheckbox">
-        <input id="addbulkreply" type="checkbox" name="Add Bulk Reply" value="addbulkreply" /> Add Bulk Reply
-      </label> 
-    </div>
-    <div class="request_panel clearBoth hide" id="bulkreplyform">
-      <%= render :partial => "/helpdesk/tickets/reply_multiple", :locals => { :helpdesk_submit_options=>helpdesk_submit_options, :id => 'reply-multiple', :cntid => "cnt-reply-multiple"} %>
-    </div>
-  </div>
-</div>
 <% end %>
 <% form_for :helpdesk_note,   :html => {  :multipart => true, :id =>"replymultiple"} do |f|%>
 <% if privilege?(:reply_ticket) %>
-  <div class="dialog-special small_curve" id="reply-fields">
+  <div class="dialog-special small_curve top_spacing" id="reply-fields">
     <div id="content-bulk" class="content clearfix">
       <div class="field-item" id="bulkreplycheck">
         <label for="addbulkreply" rel="inputcheckbox">
