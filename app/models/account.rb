@@ -239,7 +239,7 @@ class Account < ActiveRecord::Base
   after_commit_on_create :add_to_billing, :enable_elastic_search
 
   after_commit_on_update :clear_cache
-  after_commit_on_destroy :clear_cache, :delete_search_index, :delete_reports_archived_data
+  after_commit_on_destroy :clear_cache, :delete_reports_archived_data
   before_update :backup_changes
   before_destroy :backup_changes
   before_destroy :make_shard_mapping_inactive
@@ -551,13 +551,6 @@ class Account < ActiveRecord::Base
   def search_index_name
     key = MemcacheKeys::ES_INDEX_NAME % { :account_id => self.id }
     MemcacheKeys.fetch(key) { ElasticsearchIndex.find(self.es_enabled_account.index_id).name }
-  end
-
-  def delete_search_index
-    es_enable_status = MemcacheKeys.fetch(MemcacheKeys::ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
-    if es_enable_status.key?(self.id)
-      Resque.enqueue(Search::RemoveFromIndex::AllDocuments, { :account_id => self.id })
-    end
   end
 
   def es_enabled?
