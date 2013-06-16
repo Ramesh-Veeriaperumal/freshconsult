@@ -1,7 +1,7 @@
 <% _cc_condition = current_user && field.portal_cc_field? && ( current_user.customer || field.all_cc_in_portal? ) %>
 <div class="row-fluid">
 	<%= text_field object_name, :email,
-			:value => "", :class => "span12 email required",
+			:value => (current_user ? current_user.email : ""), :class => "span12 email required",
 			"data-check-email-path" => check_email_support_tickets_path,
 			:placeholder => t("ticket_form.your_email_address"), 
 			"data-remote" => "true", 
