@@ -75,7 +75,7 @@ $button-radius: 6px;
 	height:0px;
 	z-index:90000;
 	margin:0px;
-	outline:0;
+	outline:0;	
 }
 
 .freshwidget-button a{
@@ -84,6 +84,7 @@ $button-radius: 6px;
 	_position:absolute;
 	_right:0px;
 	outline:0;
+	&:hover{ text-decoration:none; }
 }
 
 .proxy-link{
