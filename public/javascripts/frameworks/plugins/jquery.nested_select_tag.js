@@ -28,8 +28,10 @@
                 .appendTo(_subcategory);
             });
 
-            if(_items_present)
+            if(_items_present){
               _subcategory.prepend(opts.default_option);
+              _subcategory.val("")
+            }
             
             _subcategory.trigger("change");
             _condition = (!_items_present || (!_category.val() || _category.val() == -1));
@@ -67,8 +69,10 @@
                   .val(pair.key)
                   .appendTo(_item);
               });
-              if(_items_present)
+              if(_items_present){
                 _item.prepend(opts.default_option);
+                _item.val("")
+              }
 
               _item.trigger("change");
               _condition = (!_items_present || (!_subcategory.val() || _subcategory.val() == -1));
