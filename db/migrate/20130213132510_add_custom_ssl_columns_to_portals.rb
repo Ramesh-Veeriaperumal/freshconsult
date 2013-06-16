@@ -1,4 +1,5 @@
 class AddCustomSslColumnsToPortals < ActiveRecord::Migration
+  shard :none
   def self.up
   	Lhm.change_table :portals, :atomic_switch => true do |m|
       m.add_column :ssl_enabled, "tinyint(1) DEFAULT '0'"

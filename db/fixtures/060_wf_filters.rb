@@ -1,4 +1,5 @@
 account = Account.current
+user = User.current
 
  def self.deleted_condition(input)
     { "condition" => "deleted", "operator" => "is", "value" => input}
@@ -20,9 +21,8 @@ account = Account.current
    
    DEFAULT_CUSTOM_FILTERS.each do |name,filter_data|
     filter_array.push({:account_id => account.id,:name  => name,:match => :and,:model_class_name => 'Helpdesk::Ticket',:query_hash => filter_data,
-                       :visibility => {:visibility => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents], :user_id => account.account_admin.id}})  
-   end
-    
+                       :visibility => {:visibility => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents], :user_id => user.id}})  
+   end    
    Helpdesk::Filters::CustomTicketFilter.seed_many(:account_id,:name,filter_array)
 
 

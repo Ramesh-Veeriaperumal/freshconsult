@@ -7,5 +7,5 @@ class ModeratorsController < ApplicationController
     redirect_to user_path(params[:user_id])
   end
   
-  alias authorized? admin?
+  # alias authorized? admin?
 end

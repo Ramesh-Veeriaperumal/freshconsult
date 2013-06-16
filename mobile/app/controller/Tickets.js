@@ -199,8 +199,8 @@ Ext.define('Freshdesk.controller.Tickets', {
                     handler:function(){
                         messageBox.hide();
                         var opts = {
-                            url: '/helpdesk/tickets/update/'+id,
-                            method:'POST',
+                            url: '/helpdesk/tickets/'+id+'/update_ticket_properties',
+                            method:'PUT',
                             params:{
                                 'helpdesk_ticket[status]' : 4
                             },
@@ -272,7 +272,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         autoTechStore = Ext.getStore('AutoTechnician');
         //notForm.items.items[0].setTitle('Ticket : '+id);
         formObj.reset();
-        formObj.setUrl('/helpdesk/tickets/'+id+'/notes');
+        formObj.setUrl('/helpdesk/tickets/'+id+'/conversations/note');
         if(FD.current_user.is_customer){
             formObj.setUrl('/support/tickets/'+id+'/notes');  
         }else{
@@ -343,7 +343,7 @@ Ext.define('Freshdesk.controller.Tickets', {
 
 
         //setting the url 
-        formObj.setUrl('/helpdesk/tickets/'+id+'/notes');
+        formObj.setUrl('/helpdesk/tickets/'+id+'/conversations/reply');
     },
     getConversationContainer : function(){
         return this.getTicketDetailsContainer().items.items[1].items.items[1].items.items[0];
@@ -395,7 +395,7 @@ Ext.define('Freshdesk.controller.Tickets', {
             fieldSetObj.items.items[5].setValue('@'+this.ticket.requester.twitter_id).show();
 
         //setting the url 
-        formObj.setUrl('/helpdesk/tickets/'+id+'/notes');
+        formObj.setUrl('/helpdesk/tickets/'+id+'/conversations/twitter');
     },
     initFacebookForm : function(id){
         var facebookForm = this.getTicketFacebookForm(),
@@ -426,7 +426,7 @@ Ext.define('Freshdesk.controller.Tickets', {
             
         fieldSetObj.items.items[5].setValue('');
         //setting the url 
-        formObj.setUrl('/helpdesk/tickets/'+id+'/notes');
+        formObj.setUrl('/helpdesk/tickets/'+id+'/conversations/facebook');
     }
 
 });

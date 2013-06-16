@@ -1,7 +1,11 @@
 <div class="floatr">
-	<%= link_to t('reorder'),'#', :id=>"article_reorder_button", :class => "button" unless(folder.articles.size <= 1)%>
-	<%= link_to t('solution.add') + "<span class='symbols-add'></span>", new_solution_category_folder_article_path(category , folder), :class => "icon-detail button" %>
-	<%= link_to t('edit'), edit_solution_category_folder_path(category, folder), :class => "button" unless category.is_default?%>
+  <% if privilege?(:publish_solution) %>
+  	<%= link_to t('reorder'),'#', :id=>"article_reorder_button", :class => "button" unless(folder.articles.size <= 1)%>
+  	<%= link_to t('solution.add') + "<span class='symbols-add'></span>", new_solution_category_folder_article_path(category , folder), :class => "icon-detail button" %>
+  <% end %>
+  <% if privilege?(:manage_solutions) %>
+  	<%= link_to t('edit'), edit_solution_category_folder_path(category, folder), :class => "button" unless category.is_default?%>
+  <% end %>
 </div>
 
 <h3 class="title"><%= h(folder.name) %></h3> 
@@ -11,12 +15,12 @@
 <div class="intro">
 	<%=t('solution.folders.folder_form.visible_to')%>:
 	<% if folder.has_company_visiblity?%>
-	<% folder.customer_folders.each do |cust|%>
-		<span class="label notice"><%=cust.customer.name%></span>
-	<%end%>
-    <%else%>
-    	<span class="label notice"><%=Solution::Folder::VISIBILITY_NAMES_BY_KEY[folder.visibility]%></span>
-    <%end%>
+	  <% folder.customer_folders.each do |cust|%>
+		  <span class="label notice"><%=cust.customer.name%></span>
+	  <%end%>
+  <%else%>
+    <span class="label notice"><%=Solution::Folder::VISIBILITY_NAMES_BY_KEY[folder.visibility]%></span>
+  <%end%>
 </div>
 
 <!-- Need to check visiblity is shown to the people or not -->
@@ -32,8 +36,12 @@
 <% else %>
 	<div class="big-info">
 		<div class="no-info-text"><%= t('solution.info7') %> </div>  
-		<%= link_to t('solution.add'), new_solution_category_folder_article_path(category, folder), :class => "uiButton special large" %>
+    <% if privilege?(:publish_solution) %>
+		  <%= link_to t('solution.add'), new_solution_category_folder_article_path(category, folder), :class => "uiButton special large" %>
+    <% end %>
 	</div>
 <% end %>
 
-<%= render :partial => "/shared/reorder_list", :locals => { :items => folder.articles, :action_url => reorder_solution_category_folder_articles_path(category, folder), :title => :title, :container_id => "artical_sort", :reorder_id => "article_reorder_button", :list_id => "article_list"} %>
+<% if privilege?(:publish_solution) %>
+  <%= render :partial => "/shared/reorder_list", :locals => { :items => folder.articles, :action_url => reorder_solution_category_folder_articles_path(category, folder), :title => :title, :container_id => "artical_sort", :reorder_id => "article_reorder_button", :list_id => "article_list"} %>
+<% end %>

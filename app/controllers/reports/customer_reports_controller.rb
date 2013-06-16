@@ -3,7 +3,6 @@ class Reports::CustomerReportsController < ApplicationController
   include Reports::CompanyReport
    
   before_filter { |c| c.requires_feature :advanced_reporting }
-  before_filter { |c| c.requires_permission :manage_reports }
   before_filter :set_selected_tab
   before_filter :set_default_values
   before_filter :select_customer, :only => :generate

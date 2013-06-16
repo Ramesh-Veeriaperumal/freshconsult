@@ -1,5 +1,7 @@
 @import "app/lib/settings";
 
+$button-radius: 6px;
+
 .widget-ovelay{
 	@include opacity(0.5);
 	background-color:white;
@@ -46,16 +48,16 @@
 }
 
 .freshwidget-theme{
-	@include box-shadow(rgba(0,0,0, 0.6) 0 0 3px);
 	@include text-shadow(rgba(0, 0, 0, 0.2), -1px, -1px, 1px);
-	padding:6px 16px 8px 16px;
-	background-color:#7eb600;
-	border:2px solid #ffffff;
+	padding:8px 16px;
+	background-color:rgb(1, 84, 83);
+	color: rgb(255, 255, 255);
+	/*border:0 solid rgba(255, 255, 255, 0.8);*/
 	color:#ffffff;
-	font-size:16px; 
+	font-size:14px; 
 	text-decoration:none;
 	font-weight:bold;
-	outline:0;
+	outline:0;	
 }
 
 .freshwidget-theme:hover{
@@ -67,13 +69,6 @@
 .fd-btn-right .freshwidget-customimage{ right:0px; }
 
 .freshwidget-button{
-	a{
-		position:fixed;
-		white-space: nowrap;
-		_position:absolute;
-		_right:0px;
-		outline:0;
-	}
 	position:fixed;
 	display:block !important;
 	width:0px;
@@ -83,18 +78,35 @@
 	outline:0;
 }
 
+.freshwidget-button a{
+	position:fixed;
+	white-space: nowrap;
+	_position:absolute;
+	_right:0px;
+	outline:0;
+}
+
 .proxy-link{
 	position: absolute;
 	z-index: 10;
 	outline:0;
 }
 
-.fd-btn-left a.freshwidget-theme, .fd-btn-top a.freshwidget-theme{  border-top-width:0px; }
+.fd-btn-left a.freshwidget-theme, .fd-btn-top a.freshwidget-theme{  
+	/*border-top-width:0; */
+	@include border-bottom-radius($button-radius); 
+	@include box-shadow( 0 0 10px rgba(0, 0, 0, 0.1), inset 0 -1px 0 rgba(0, 0, 0, 0.08), inset 0 -2px 0 rgba(255, 255, 255, 0.7), inset 0 9px 29px rgba(0, 0, 0, 0.1) );
+}
 .fd-btn-left a.freshwidget-theme{
 	@include widget-rotate(-90deg, top left);
-	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);	
 }
-.fd-btn-bottom a.freshwidget-theme, .fd-btn-right a.freshwidget-theme{  border-bottom-width:0px; }
+
+.fd-btn-bottom a.freshwidget-theme, .fd-btn-right a.freshwidget-theme{  
+	/*border-bottom-width:0; */
+	@include border-top-radius($button-radius); 
+	@include box-shadow( 0 0 10px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(0, 0, 0, 0.08), inset 0 2px 0 rgba(255, 255, 255, 0.7), inset 0 -9px 29px rgba(0, 0, 0, 0.1) );
+}
 .fd-btn-right a.freshwidget-theme{
 	@include widget-rotate;
 	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
@@ -109,25 +121,20 @@
 	-ms-transform: widget-rotate(-90deg);
 	-ms-transform-origin: bottom left;
 }
-/* Widget Form Style */ 
 
+/* Widget Form Style */ 
 .freshwidget-dialog{
 	position:absolute;
-	padding:8px 0px; 
+	padding:8px 0; 
 	left:50%;
-	margin-left:-260px;
-	top:100px;
-	z-index:900010; 
-	 
-	iframe{
-		width:612px; 
-		height:900px;
-	}    
-	
+	margin-left:-420px;
+	top:20px;
+	z-index:900010;
+	iframe{ width: 850px; height: 600px; }
 	.widget-close{
 		position:absolute;
-		right:5px;
-		top:6px;
+		left:-8px;
+		top:30px;
 		width: 28px;
 		height: 28px; 
 		cursor:pointer;

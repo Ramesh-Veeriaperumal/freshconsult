@@ -1,4 +1,5 @@
 class AddAppTypeToApplications < ActiveRecord::Migration
+  shard :none
   def self.up
     # add_column :applications, :application_type, :string, :null => false, :default => "freshplug"
     execute("ALTER TABLE `applications` ADD `application_type` varchar(255) DEFAULT 'freshplug' NOT NULL")

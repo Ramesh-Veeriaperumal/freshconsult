@@ -58,8 +58,13 @@
 .modal-header {
   padding: 20px 40px 0 15px;
   border-bottom: 1px solid #eee;
+  h3{
+    font-size: 1.5em;
+    line-height: 1.6em;
+  }
   .close {
     position: absolute;
+    cursor:pointer;
     right: 20px;
     top: 15px;
   }

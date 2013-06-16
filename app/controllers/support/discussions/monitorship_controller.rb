@@ -1,5 +1,7 @@
 class MonitorshipsController < ApplicationController
-  before_filter :login_required #To do Shan
+  
+  skip_before_filter :check_privilege
+  before_filter :require_user #To do Shan
 
   cache_sweeper :monitorships_sweeper, :only => [:create, :destroy]
 

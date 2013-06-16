@@ -1,7 +1,7 @@
 module Helpdesk
   module Roles
     
-    def default_roles
+    def default_roles_list
     [  
       [ "Account Administrator",
         ACCOUNT_ADMINISTRATOR,
@@ -18,11 +18,7 @@ module Helpdesk
       [ "Agent",
         AGENT,
         "Can log, view, reply, update and resolve tickets and manage contacts."],
-      
-      [ "Restricted Agent",
-        RESTRICTED_AGENT,
-        "Can log, view, reply, update and resolve tickets, but cannot view or edit contacts."]
-    ]
+     ]
     end
         
     ACCOUNT_ADMINISTRATOR = [

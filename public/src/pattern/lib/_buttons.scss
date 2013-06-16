@@ -66,8 +66,11 @@
   }
 
 }
-
-
+.pull-right{
+  .btn{
+    margin-right:0px; 
+  }
+}
 
 // Button Sizes
 // --------------------------------------------------
@@ -156,6 +159,9 @@ input[type="button"] {
 .btn-primary {
   font-weight: bold;
   @include buttonBackground($btnPrimaryBackground, $btnPrimaryBackgroundHighlight);
+  padding-left: 20px;
+  padding-right:20px;
+  font-weight:bold;
 }
 // Warning appears are orange
 .btn-warning {

@@ -1,13 +1,3 @@
-<script>
-function setUserRole(){
-	if (jQuery('input[name=user_role]').is(':checked')){
-		jQuery('#role_taken').val('admin');
-	}
-	else{
-		jQuery('#role_taken').val('poweruser');		
-	}
-}
-</script>
 <% content_for :sidebar do -%>
 	<%if gamification_feature?(current_account)%>
 	<div class="side-panel">
@@ -54,20 +44,19 @@ function setUserRole(){
 	<%end%>
 <%- end %> 
 <div class="contact-box clearfix">
-	  <% if manage_agents? %>
-		<div id="reset_password_template" >
-			<%= render :partial=> "reset_password" %>
-		</div>
-		<div class="action_buttons">
-
-			<%= link_to t('assume_identity_button'), assume_identity_user_path(@agent.user) if is_allowed_to_assume?(@agent.user) %>
-			
-			<% if can_reset_password?(@agent) %>
-				<%= link_to_function t('reset_password_title'), "confirm_password()"%>
-			<%end%>
-
-			<%= link_to t('agent.info4'), { :action => :convert_to_contact, :id => @agent.id } ,:method => 'put'  if can_destroy?(@agent) %> 
-			<%= link_to t('edit_agent'), edit_agent_path(@agent), :class => "last"  %>
+	  <% if privilege?(:manage_users) %>
+		<div class="action_buttons hide">	
+      <%= link_to t('assume_identity_button'), assume_identity_user_path(@agent.user) if is_allowed_to_assume?(@agent.user) %>
+      <% if can_edit?(@agent) %>
+      		<div id="reset_password_template" >
+      			<%= render :partial=> "reset_password" %>
+      		</div>
+          <%= link_to t('edit_agent'), edit_agent_path(@agent), :class => "last" %>
+          <% if(@agent.user != current_user)%>
+            <%= link_to t('agent.info4'), { :action => :convert_to_contact, :id => @agent.id } ,:method => 'put' %>
+            <%= link_to_function t('reset_password_title'), "confirm_password()" if @agent.user.active? %>
+          <% end %>
+			  <%end%>
 		</div>
 	  <% end %>
 
@@ -83,10 +72,10 @@ function setUserRole(){
 			<%= content_tag(:div, "#{content_tag(:span, t('user.mobile'))}  #{h(@user.mobile)}") unless @user.mobile.blank? %> 
 			<%= content_tag(:div, "#{content_tag(:span, t('account.time_zone'))}  #{h(@user.time_zone)}") %>
 		</div>
-		<% if ((@user.deleted || !@user.active?) && manage_agents?) %>
+		<% if ((@user.deleted || !@user.active?) && privilege?(:manage_users)) %>
 		<div class="info-highlight">
 			<%= content_tag(:div, "#{ t('agent_deleted_message') } #{ link_to( t('contacts.restore'), { :action => :restore, :id => @agent.id }, :method => :put ) }") if @user.deleted %>
-			<%= content_tag(:div, "#{ t('agent_emailnotverified') } #{ link_to( 'Send activation email', send_invite_activation_path(@user), :method => :put ) } " ) unless @user.active? %>
+			<%= content_tag(:div, "#{ t('agent_emailnotverified') } #{ link_to( 'Send activation email', send_invite_activation_path(@user), :method => :put ) } " ) if !@user.deleted && !@user.active? %>
 		</div>
 		<% end %>
 </div> 
@@ -112,4 +101,15 @@ function confirm_password()
        title: '<%= t('reset_password_title') %>'
     });
  }
+
+// need to convert this to util
+jQuery(document).ready(function(){
+  if (jQuery.trim( jQuery('div.info-highlight').text() ).length != 0) {
+    jQuery('div.info-highlight').show();
+  }
+
+  if (jQuery.trim( jQuery('div.action_buttons').text() ).length != 0) {
+    jQuery('div.action_buttons').show();
+  }
+});
 <%end%>

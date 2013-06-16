@@ -34,6 +34,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/canned_response"
     resource :"helpdesk/ca_folder"
     resource :agent, :only => [:toggle_availability]
+    resource :"search/home", :only => [:index, :suggest]
+    resource :search, :only => [:index, :suggest, :content]
 	end
 
   reply_ticket do
@@ -89,6 +91,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"solution/category", :only => [:index, :show]
     resource :"solution/folder", :only => [:index, :show]
     resource :"solution/article", :only => [:index, :show]
+    resource :"search/home", :only => [:solutions]
+    resource :search, :only => [:solutions]
+    resource :"helpdesk/ticket", :only => [:get_solution_detail]
   end
 
   publish_solution do
@@ -116,6 +121,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :post, :only => [:index, :show, :create, :toggle_answer, :monitored]
     # review code for monitorship?
     resource :monitorship
+    resource :"search/home", :only => [:topics]
+    resource :search, :only => [:topics]
   end
 
   # create_edit_forum_category

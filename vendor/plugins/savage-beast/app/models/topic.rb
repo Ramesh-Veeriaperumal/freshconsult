@@ -36,9 +36,9 @@ class Topic < ActiveRecord::Base
     [(posts_count.to_f / Post.per_page).ceil.to_i, 1].max
   end
 
-  def editable_by?(user)
-    user && (user.id == user_id || user.admin? || user.moderator_of?(forum_id))
-  end
+  # def editable_by?(user)
+  #   user && (user.id == user_id || user.admin? || user.moderator_of?(forum_id))
+  # end
   
   def update_cached_post_fields(post)
     # these fields are not accessible to mass assignment

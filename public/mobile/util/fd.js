@@ -24,7 +24,7 @@ FD.Util = {
         options.callback = function(data,operation,success){
             me.onAjaxCallback(data,operation,success,callBack,scope)
         };
-        options.headers = { 'Accept': 'application/json' };
+        options.headers = {'Accept' : 'application/json'};
         Ext.Ajax.request(options);
     },
     getJSON : function(options,callBack,scope){

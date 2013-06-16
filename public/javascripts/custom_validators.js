@@ -109,6 +109,14 @@ $.validator.addMethod("require_from_group", function(value, element, options) {
 
 $.validator.addClassRules("require_from_group" ,{require_from_group: [1, ".user_info"]});
 
+// Agent role validation
+// To check if atleast one role is present
+$.validator.addMethod("at_least_one_item", function(value, element, options) {
+  return($($(element).data("selector")).size() != 0)
+}, jQuery.format("At least one role is requied for the agent"));
+
+$.validator.addClassRules("at_least_one_item", { at_least_one_item: true});
+
 // Time validator
 $.validator.addMethod("time_12", function(value, element){
   if( ! /^[0-9]{1,2}:[0-9]{1,2} [ap]m$/i.test(value) ) return false;  
@@ -121,6 +129,5 @@ $.validator.addMethod("time_12", function(value, element){
   return true;
 }, 'Invalid time.');
 $.validator.addClassRules("time-12", { time_12: true });
-
 
 })(jQuery);

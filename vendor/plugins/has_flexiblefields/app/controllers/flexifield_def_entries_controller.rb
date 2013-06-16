@@ -1,5 +1,6 @@
 class FlexifieldDefEntriesController < ApplicationController
-  
+
+  skip_before_filter :check_privilege  
   before_filter :access_denied
   
   before_filter :get_flexifield_def

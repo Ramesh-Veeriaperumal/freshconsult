@@ -22,21 +22,22 @@ class UserNotifier < ActionMailer::Base
     end
   end
   
-  def account_admin_activation(account_admin)
+  def admin_activation(admin)
     from  AppConfig['from_email'] 
-    recipients account_admin.email
+    recipients admin.email
     subject "#{AppConfig['app_name']} Account Activation"
     sent_on Time.now
-    body(:account_admin => account_admin, 
-          :activation_url => register_url(:activation_code => account_admin.perishable_token, :host => account_admin.account.host , :protocol => account_admin.url_protocol ))
+    body(:admin => admin, 
+          :activation_url => register_url(:activation_code => admin.perishable_token, :host => admin.account.host , :protocol => admin.url_protocol ))
     content_type  "text/html"
   end
+  alias :account_admin_activation :admin_activation 
 
-  def custom_ssl_activation(account_admin, portal_url, elb_name)
+  def custom_ssl_activation(account, portal_url, elb_name)
     from          AppConfig['from_email']
-    recipients    account_admin.email
+    recipients    account.admin_email
     subject       "Custom SSL Activated"
-    body          :account_admin_name => account_admin.name, :portal_url => portal_url, :elb_name => elb_name
+    body          :admin_name => "#{account.admin_first_name} #{account.admin_last_name}", :portal_url => portal_url, :elb_name => elb_name
     sent_on       Time.now
   end
 
@@ -50,5 +51,4 @@ class UserNotifier < ActionMailer::Base
     content_type  "text/html"
   end
 
-  
 end
