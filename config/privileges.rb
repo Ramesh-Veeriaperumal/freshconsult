@@ -93,6 +93,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"solution/article", :only => [:index, :show]
     resource :"search/home", :only => [:solutions]
     resource :search, :only => [:solutions]
+    resource :"helpdesk/ticket", :only => [:get_solution_detail]
   end
 
   publish_solution do

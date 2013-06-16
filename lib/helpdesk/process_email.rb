@@ -89,8 +89,16 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           if !charset_encoding.nil? and !(["utf-8","utf8"].include?(charset_encoding.downcase))
             begin
               params[t_format] = Iconv.new('utf-8//IGNORE', charset_encoding).iconv(params[t_format])
-            rescue
-              #Do nothing here Need to add rescue code kiran
+            rescue Exception => e
+              mapping_encoding = {
+                "ks_c_5601-1987" => "CP949"
+              }
+              if mapping_encoding[charset_encoding.downcase]
+                params[t_format] = Iconv.new('utf-8//IGNORE', mapping_encoding[charset_encoding.downcase]).iconv(params[t_format])
+              else
+                Rails.logger.error "Error While encoding in process email  \n#{e.message}\n#{e.backtrace.join("\n\t")} #{params}"
+                NewRelic::Agent.notice_error(e,{:description => "Charset Encoding issue with ===============> #{charset_encoding}"})
+              end
             end
           end
         end
@@ -187,7 +195,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :account_id => account.id,
         :subject => params[:subject],
         :ticket_body_attributes => {:description => params[:text], 
-                          :description_html => Helpdesk::HTMLSanitizer.clean(params[:html])},
+                          :description_html => params[:html]},
         :requester => user,
         :to_email => to_email[:email],
         :to_emails => parse_to_emails,
@@ -257,7 +265,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         full_text = msg_hash[:full_text]
       end
       # for html text
-      msg_hash = show_quoted_text(params[:html], ticket.reply_email)
+      msg_hash = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html]), ticket.reply_email,false)
       unless msg_hash.blank?
         body_html = msg_hash[:body]
         full_text_html = msg_hash[:full_text]
@@ -359,7 +367,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         content_ids  
     end
   
-    def show_quoted_text(text, address)
+    def show_quoted_text(text, address,plain=true)
       
       return text if text.blank?
       
@@ -368,7 +376,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         Regexp.new("<" + Regexp.escape(address) + ">", Regexp::IGNORECASE),
         Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),   
         Regexp.new("\\n.*.\d.*." + Regexp.escape(address) ),
-        Regexp.new("<div>\n<br>On.*?wrote:"),
+        Regexp.new("<div>\n<br>On.*?wrote:"), #iphone
         Regexp.new("On.*?wrote:"),
         Regexp.new("-+original\s+message-+\s*", Regexp::IGNORECASE),
         Regexp.new("from:\s*", Regexp::IGNORECASE)
@@ -383,14 +391,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       original_msg = text[0, index]
       old_msg = text[index,text.size]
       
+      return  {:body => original_msg, :full_text => text } if plain
       #Sanitizing the original msg   
       unless original_msg.blank?
-        sanitized_org_msg = Nokogiri::HTML(Helpdesk::HTMLSanitizer.clean(original_msg)).at_css("body")
+        sanitized_org_msg = Nokogiri::HTML(original_msg).at_css("body")
         original_msg = sanitized_org_msg.inner_html unless sanitized_org_msg.blank?  
       end
       #Sanitizing the old msg   
       unless old_msg.blank?
-        sanitized_old_msg = Nokogiri::HTML(Helpdesk::HTMLSanitizer.clean(old_msg)).at_css("body")
+        sanitized_old_msg = Nokogiri::HTML(old_msg).at_css("body")
         old_msg = sanitized_old_msg.inner_html unless sanitized_old_msg.blank?  
       end
         

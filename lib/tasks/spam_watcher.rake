@@ -53,7 +53,7 @@ def check_for_spam(table,column_name, id_limit, threshold)
     results.each{ |x| user_ids << x[column_name]; }
     
     user_sql = <<-eos
-      select id,deleted,deleted_at, account_id from users where helpdesk_agent = false)
+      select id,deleted,deleted_at, account_id from users where helpdesk_agent = false
       and blocked = 0 and whitelisted = 0 and id in (#{user_ids*","})
     eos
     puts user_sql

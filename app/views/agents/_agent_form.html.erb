@@ -135,13 +135,13 @@
   					  <%= hidden_field(:agent, :user_id, :id => "user_id" ) %>
   					</div>
   				</li>
-          <% if(@agent.user != current_user) %>
   				<li class="seperator"></li>
   				<li class="row-fluid">
   					<h5 class="lead">
   						<%=t('agent.role_and_scope')%>
             </h5>
   				</li>
+          <% if(@agent.user != current_user) %>
           <li class="row-fluid" id="agent_ticket_permission">
             <label class="span2"><%=t('agent.ticket_scope')%></label>
             <ul class="span10">
@@ -172,7 +172,7 @@
             </ul>
           </li>
   				<li class="agent-role row-fluid">
-  					<%= label(:agent, :signature_html, t('agent.role'), :class => "span2") %>
+  					<%= label(:agent, :roles, t('agent.role'), :class => "span2") %>
   					<div class="span10" id="selected-roles">
               <input type="hidden" value="" name="roleValidate" class="at_least_one_item" 
                 data-selector="#selected-roles ul li" />
@@ -196,9 +196,40 @@
   					</div>
   				</li>
      		</ul>
-     	</div>
-    </div>	 	
+    <% else %>
+    <%= content_tag( :span, t('agent.cannot_edit_roles'), :class => "muted lead-desc" ) %>
+    <li class="row-fluid" id="agent_ticket_permission">
+      <label class="span2"><%=t('agent.ticket_scope')%></label>
+      <ul class="span10 disc-styled">
+        <li>
+          <% ticket_scope = ticket_permission(Agent::PERMISSION_TOKENS_BY_KEY[@agent.ticket_permission]) %>
+          <b><%= t(ticket_scope) %></b>
+          <%= content_tag( :span, t("#{ticket_scope}_info"), :class => "muted info_data" ) %>
+        </li>
+      </ul>
+    </li>
+		<li class="agent-role row-fluid">
+			<%= label(:agent, :roles, t('agent.role'), :class => "span2") %>
+				<ul class="span10 disc-styled">
+          <% @agent.user.roles.each do |role| %>
+    				<li> 
+              <b><%= role.name %></b>
+              <%= content_tag( :span, role.description, :class => "muted info_data ellipsis" ) %>
+    				</li>
+          <% end %>				 			
+				</ul>
+		</li>
     <% end %>
+    </div>
+    <ul class="admin-breadcrumb breadcum-footer clearfix">
+        <li class="non-arrow pull-right">
+          <%= usr.submit t('save'), { :class => "btn  btn-primary" , 'data-loading-text' => t('saving')} %>
+        </li>
+      	<li class="non-arrow pull-right">
+      		<%= link_to t('cancel'), {:action => 'index'}, :class => "btn" %>
+      	</li>
+    </ul>
+  </div>
 <% end %>
 
 <% javascript_tag do %>
@@ -262,7 +293,7 @@
 
 <!-- Agent role modal -->
 <div id="agent-role-container" class="hide">
-		<p class="margin-bottom"><%=t('agent.roles_description')%></p>
+		<p class="margin-bottom lead-desc"><%=t('agent.roles_description')%></p>
 
     <div id="agent_role" class="agent-role-modal">
       <ul class="unstyled"></ul>

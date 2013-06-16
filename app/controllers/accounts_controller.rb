@@ -418,6 +418,6 @@ class AccountsController < ApplicationController
     end
 
     def add_to_crm
-      Resque.enqueue(Marketo::AddLead, { :account_id => @account.id, :cookie => ThirdCRM.fetch_cookie_info(request.cookies) })
+      Resque.enqueue(Marketo::AddLead, { :account_id => @signup.account.id, :cookie => ThirdCRM.fetch_cookie_info(request.cookies) })
     end   
 end
