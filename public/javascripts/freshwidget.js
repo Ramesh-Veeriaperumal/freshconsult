@@ -240,6 +240,11 @@
 	 
 	 function initialize(params){ 
 		extend(params);
+
+		if(window.location.protocol)
+			options.assetUrl = (window.location.protocol == "https:") ? 
+								"https://s3.amazonaws.com/assets.freshdesk.com/widget" : 
+								"http://assets.freshdesk.com/widget";
 		
 		if(Browser.Version() > 8 && (typeof html2canvas === 'undefined'))
 			loadjsfile(options.assetUrl+"/html2canvas.js?ver=" + version);
