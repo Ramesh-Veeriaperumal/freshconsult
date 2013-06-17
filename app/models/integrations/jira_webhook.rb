@@ -95,7 +95,8 @@ class Integrations::JiraWebhook
     create_a_contact(installed_application,email,name) if email && name
     Rails.logger.debug "update_local #{notification_cause}, #{updated_entity_type}, #{notify_values}, installed_application #{installed_application}"
     obj_mapper = Integrations::ObjectMapper.new
-    params["account_admin"] = installed_application.account.users.account_admin.first
+    
+    params["admin"] = installed_application.account.account_managers.first
     notify_values.each do |notify_value| 
       self.params["comment"] = "" unless params["comment"]
       data = obj_mapper.map_it(installed_application.account_id, notify_value, self.params).id if notify_value 
@@ -111,7 +112,7 @@ class Integrations::JiraWebhook
     unless user
       user = account.contacts.new
       if user.signup!({:user => {:name => name, :email => email, 
-                       :active => true,:user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+                       :active => true, :helpdesk_agent => false }})
        else
           puts "unable to save the contact:: #{user.errors.inspect}"
        end   

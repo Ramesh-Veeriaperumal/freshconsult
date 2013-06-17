@@ -311,6 +311,14 @@ ActiveRecord::Schema.define(:version => 20130606101905) do
     t.datetime "updated_at"
   end
 
+  create_table "elasticsearch_indices", :force => true do |t|
+    t.string   "name",       :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "elasticsearch_indices", ["name"], :name => "index_elasticsearch_indices_on_name", :unique => true
+
   create_table "domain_mappings", :force => true do |t|
     t.integer "account_id", :limit => 8, :null => false
     t.integer "portal_id",  :limit => 8
@@ -365,10 +373,10 @@ ActiveRecord::Schema.define(:version => 20130606101905) do
 
   create_table "es_enabled_accounts", :force => true do |t|
     t.integer  "account_id", :limit => 8
-    t.string   "index_name"
     t.boolean  "imported",                :default => true
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "index_id",   :limit => 8
   end
 
   add_index "es_enabled_accounts", ["account_id"], :name => "index_es_enabled_accounts_on_account_id"

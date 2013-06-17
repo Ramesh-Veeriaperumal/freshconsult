@@ -1,0 +1,52 @@
+// Redactor reset 
+.redactor_toolbar{
+	background: #fff;
+	border: 0;
+}
+.redactor_toolbar li.redactor_separator {
+	height: 23px;
+	border-left-color:#f6f6f6;
+	margin-top: 3px !important;
+}
+.redactor_box{
+	@include box-shadow(inset 0 1px 2px rgba(0, 0, 0, 0.18));
+	@include border-radius($inputBorderRadius $inputBorderRadius 0 0);
+}
+.redactor_focus{
+	border-color: rgba($inputFocusRingColor, 0.8);
+    outline: 0;
+    outline: thin dotted \9; /* IE6-9 */
+    @include box-shadow(#{inset 0 1px 2px rgba(0, 0, 0, 0.18), 0 0 8px rgba($inputFocusRingColor,.6)});
+}
+
+.redactor_editor, .redactor_editor:focus{ padding: 5px 13px !important; background: none !important; }
+
+// Attachment overrides
+.attach-wrapper{
+	background: #fafafa;
+    @include border-bottom-radius($inputBorderRadius);
+    padding: 10px 12px 3px;
+    border: 1px solid #c6c6c6;
+    margin-top: -3px;
+    .wicon-paper-clip{
+    	background-image: inline-image("cdn-ignored/inline-images/paper-clip.png");
+    	background-repeat: no-repeat;
+    	width: 16px;
+    	height: 16px;
+		position: absolute;
+		left: 0;
+		top: 1px;
+    }
+    .attach-link{ padding-left: 18px; position: relative; }
+    .dropdown-menu a { padding-left: 15px; padding-right: 15px; } 
+    .dropdown-menu{ @include min-width(155px); }
+}
+
+.attach-close{
+	color: #afafaf;
+	font-weight: 400;
+	margin-right: 6px;
+	margin-top: -3px;
+	margin-left: 0px;
+	float:left;
+}

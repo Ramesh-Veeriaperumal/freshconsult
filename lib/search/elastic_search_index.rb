@@ -10,7 +10,7 @@ module Search::ElasticSearchIndex
       end
 
       def remove_es_document
-        Resque.enqueue(Search::RemoveFromIndex, { :klass_name => self.class.name, :id => self.id,
+        Resque.enqueue(Search::RemoveFromIndex::Document, { :klass_name => self.class.name, :id => self.id,
                                                   :account_id => self.account_id }) if es_available? and ES_ENABLED
       end
 

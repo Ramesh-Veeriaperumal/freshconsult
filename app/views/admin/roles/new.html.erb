@@ -1,0 +1,15 @@
+<%= include_cloudfront_css :pattern %>
+<%= include_cloudfront_js :pattern %>
+<% content_for :sidebar do %>
+  <%= render :partial => "helpnote_without_tour" %>
+<% end %>
+<% form_for @role, :url => admin_roles_path, :html => { :id => 'new_role', :method => :post, :rel => "validate"} do |role_form| %>
+<h3 class="lead">
+      <%= t('admin.roles.new') %>
+    <div class="pull-right">
+      <%= link_to @role.default_role? ? t('go_back') : t('cancel'), admin_roles_path, :class => "btn"%>
+      <%= role_form.submit t('save'), :class => "btn btn-primary", 'data-loading-text' => t('saving') %>
+    </div>
+</h3>
+  <%= render :partial => 'form', :locals => { :role_form => role_form} %>
+<% end %>

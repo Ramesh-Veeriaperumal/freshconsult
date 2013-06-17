@@ -15,23 +15,38 @@
 												"data-target" => "#related_solutions", "data-template-footer" => '', 
 												:id => "suggested_solutions_show") %>
 				</div>
+        <% if privilege?(:reply_ticket) %>
 			  	<%= render(	:partial => '/helpdesk/tickets/show/reply_form', 
 			  				:locals => { 	:id => 'send-email', 
 			  								:cntid => 'cnt-reply', 
 		  									:note => [@ticket, Helpdesk::Note.new(:private => false)], 
 		  									:conv_id => nil 
 		  								}) if !(@ticket.is_twitter? or @ticket.is_facebook?) and (@item.from_email.present? or @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobi_help]) %>
+  				<%= render(	:partial => '/helpdesk/tickets/show/tweet_form', 
+  							:locals => { 
+  										:id => 'send-tweet', 
+  										:cntid => 'cnt-reply', 
+  										:note => [@ticket, Helpdesk::Note.new(:private => true)] 
+  									})  if @ticket.is_twitter? %>
+  				<%= render(	:partial => '/helpdesk/tickets/show/facebook_form', 
+  							:locals => { 
+  										:id => 'send-fb-post', 
+  										:cntid => 'cnt-reply', 
+  										:note => [@ticket, Helpdesk::Note.new(:private => true)] 
+  									}) if @ticket.is_facebook? %>
+        <% end %>
 
-			  	
-				<div class="request_panel hide" id="cnt-fwd">
-				<%= render(:partial => '/helpdesk/tickets/show/forward_form', 
-							:locals => { 
-										:id => 'send-fwd-email', 
-										:cntid => 'cnt-fwd', 
-										:note => [@ticket, Helpdesk::Note.new(:private => true)], 
-										:conv_id => nil 
-									}) %>
-				</div>
+			  <% if privilege?(:forward_ticket) %>
+  				<div class="request_panel hide" id="cnt-fwd">
+  				<%= render(:partial => '/helpdesk/tickets/show/forward_form', 
+  							:locals => { 
+  										:id => 'send-fwd-email', 
+  										:cntid => 'cnt-fwd', 
+  										:note => [@ticket, Helpdesk::Note.new(:private => true)], 
+  										:conv_id => nil 
+  									}) %>
+  				</div>
+        <% end %>
 
 				<%= render(:partial => '/helpdesk/tickets/show/note_form', 
 							:locals => { 
@@ -39,24 +54,14 @@
 										:cntid => "cnt-note", 
 										:note => [@ticket, Helpdesk::Note.new(:private => true)] 
 									}) %>
-				<%= render(	:partial => '/helpdesk/tickets/show/tweet_form', 
-							:locals => { 
-										:id => 'send-tweet', 
-										:cntid => 'cnt-reply', 
-										:note => [@ticket, Helpdesk::Note.new(:private => true)] 
-									})  if @ticket.is_twitter? %>
-				<%= render(	:partial => '/helpdesk/tickets/show/facebook_form', 
-							:locals => { 
-										:id => 'send-fb-post', 
-										:cntid => 'cnt-reply', 
-										:note => [@ticket, Helpdesk::Note.new(:private => true)] 
-									}) if @ticket.is_facebook? %>
 			</div> 
 			<div id="TicketPseudoReply" class="pseudo_reply">
-				<% if (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present? or @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobi_help]) %>
+				<% if privilege?(:reply_ticket) && (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present? or @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobi_help]) %>
 				<a href="" id="FwdButton" rel="note-button" data-note-type="reply" ><%= t('ticket.reply_to')  %></a> /
 				<% end %>
-				<a href="" id="FwdButton" rel="note-button" data-note-type="fwd" ><%= t('fwd_to') %></a> /
+        <% if privilege?(:forward_ticket) %>
+				  <a href="" id="FwdButton" rel="note-button" data-note-type="fwd" ><%= t('fwd_to') %></a> /
+        <% end %>
 				<a href="#"  rel="note-button" data-note-type="note" ><%= t('ticket.add_note') %></a>
 			</div>
 		</div>

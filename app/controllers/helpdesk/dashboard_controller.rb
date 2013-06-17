@@ -3,7 +3,9 @@ class Helpdesk::DashboardController < ApplicationController
   helper 'helpdesk/tickets' #by Shan temp
   include Reports::GamificationReport
 
-  before_filter { |c| c.requires_permission :manage_tickets }
+  skip_before_filter :check_account_state
+  before_filter :check_account_state, :only => [:index]
+  
   before_filter :set_mobile, :only => [:index]
   
   prepend_before_filter :silence_logging, :only => :latest_activities
@@ -48,6 +50,7 @@ class Helpdesk::DashboardController < ApplicationController
         Helpdesk::Activity.freshest(current_account).permissible(current_user)
       end
     end
+
   private
     def load_items
       @items = recent_activities(params[:activity_id]).paginate(:page => params[:page], :per_page => 10)

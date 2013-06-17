@@ -19,11 +19,11 @@ class Import::ZendeskData < Struct.new(:params)
                              4 =>5
                             }
                             
-   ZENDESK_ROLE_MAP = {0 =>3,
-                       4 => 2,
-                       2 => 1
-                      }
-                          
+    ZENDESK_ROLE_MAP = {
+      0 => 'Customer',
+      4 => 'Agent',
+      2 => 'Administrator'
+    }               
   
   def perform
 
@@ -185,7 +185,7 @@ def handle_user_import base_dir
     
   REXML::XPath.each(doc,'//user') do |user|    
     
-     usr_role = 3
+     usr_role = 'Customer'
      usr_name =  user.elements["name"].text
      usr_email = user.elements["email"].text
      usr_phone = user.elements["phone"].text
@@ -210,7 +210,6 @@ def handle_user_import base_dir
                                 :twitter_id => nil, 
                                 :customer_id => org_id,
                                 :import_id => import_id,
-                                :user_role => usr_role,
                                 :time_zone =>usr_time_zone,
                               }
                      }     
@@ -223,7 +222,7 @@ def handle_user_import base_dir
      unless @user.blank?
           if @user.update_attribute(:import_id , import_id )
              updated+=1
-              if usr_role != 3               
+              if usr_role != 'Customer'               
                @agent = Agent.find_or_create_by_user_id(@user.id )
            end
          else
@@ -236,14 +235,20 @@ def handle_user_import base_dir
               puts "Import id is :: #{import_id}"
              #puts "email is blank:: #{@user.inspect}"
              @user.deleted=true
-             @params_hash[:user][:user_role] = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
              puts  "after ::email is blank:: #{@user.inspect} is del: #{@user.deleted}"             
           end
-          #@params_hash[:user][:user_role] = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
+          
+          # Not a customer
+          if usr_role != 'Customer'
+            @params_hash[:user][:helpdesk_agent] = true
+            @params_hash[:user][:role_ids] =
+              [@current_account.roles.find_by_name(usr_role).id]
+          end
+          
           if @user.signup!(@params_hash) 
             puts "user has been save #{@user.inspect}"
             created+=1
-            if usr_role != 3
+            if usr_role != 'Customer'
                puts "Its an agents and the user_id is :: #{@user.id}"
                @agent = Agent.create(:user_id =>@user.id )
             end

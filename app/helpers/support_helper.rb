@@ -121,10 +121,12 @@ module SupportHelper
 	end
 
 	def portal_fav_ico
-		fav_icon_content = MemcacheKeys.fetch(["v2","portal","fav_ico",current_portal]) do
-			url = current_portal.fav_icon.nil? ? '/images/favicon.ico' : current_portal.fav_icon.content.url
+    fav_icon_content = MemcacheKeys.fetch(["v3","portal","fav_ico",current_portal]) do
+    	url = current_portal.fav_icon.nil? ? '/images/favicon.ico' : 
+    		AWS::S3::S3Object.url_for(current_portal.fav_icon.content.path, current_portal.fav_icon.content.bucket_name,:use_ssl => true)
 			"<link rel='shortcut icon' href='#{url}' />"
-		end
+    end
+
 		fav_icon_content
 	end
 
@@ -382,12 +384,12 @@ HTML
 
 	def ticket_label object_name, field
 		required = (field[:required_in_portal] && field[:editable_in_portal])
-		element_class = " #{required ? 'required' : '' } control-label"
-		label_tag "#{object_name}_#{field[:field_name]}", field[:label_in_portal], :class => element_class
+		element_class = " #{required ? 'required' : '' } control-label #{field[:name]}-label"
+		label_tag "#{object_name}_#{field[:name]}", field[:label_in_portal], :class => element_class
 	end
 
-	def ticket_form_element form_builder,object_name, field, field_value = ""
-	    dom_type = (field.field_type == "nested_field") ? "nested_field" : field.dom_type	    
+	def ticket_form_element form_builder, object_name, field, field_value = "", html_opts = {}
+	    dom_type = (field.field_type == "nested_field") ? "nested_field" : (field['dom_type'] || field.dom_type)
 	    required = (field.required_in_portal && field.editable_in_portal)
 	    element_class = " #{required ? 'required' : '' } #{ dom_type }"
 	    field_name      = (field_name.blank?) ? field.field_name : field_name
@@ -395,11 +397,13 @@ HTML
 
 	    case dom_type
 	      when "requester" then
-	      	render(:partial => "/support/shared/requester", :locals => { :object_name => object_name, :field => field })	      
+	      	render(:partial => "/support/shared/requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts })
+	      when "widget_requester" then
+	      	render(:partial => "/support/shared/widget_requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts })
 	      when "text", "number" then
-			text_field(object_name, field_name, :class => element_class + " span12", :value => field_value)
+			text_field(object_name, field_name, { :class => element_class + " span12", :value => field_value }.merge(html_opts))
 	      when "paragraph" then
-			text_area(object_name, field_name, :class => element_class + " span12", :value => field_value, :rows => 6)
+			text_area(object_name, field_name, { :class => element_class + " span12", :value => field_value, :rows => 6 }.merge(html_opts))
 	      when "dropdown" then	        
           	select(object_name, field_name, 
           			field.field_type == "default_status" ? field.visible_status_choices : field.html_unescaped_choices, 
@@ -417,11 +421,14 @@ HTML
 			check_box(object_name, field_name, :checked => field_value )
 	      when "html_paragraph" then
 	      	_output = []
-	      	_output << %( #{ form_builder.fields_for (:ticket_body,@ticket.ticket_body) do |ff| 
-	      		ff.text_area(field_name, :class => element_class, :value => field_value, :rows => 6)
-	      		end } )
+	      	form_builder.fields_for(:ticket_body, @ticket.ticket_body) do |ff|
+	      		_output << %( #{ ff.text_area(field_name, 
+	      			{ :class => element_class + " span12", :value => field_value, :rows => 6 }.merge(html_opts)) } )
+	      	end
 	      	_output << %( #{ render(:partial=>"/support/shared/attachment_form") } )
 	        # element = content_tag(:div, _output.join(" "), :class => "controls")
+	      	# %( #{ text_area(object_name, field_name, { :class => element_class + " span12", :value => field_value, :rows => 6 }.merge(html_opts)) } 
+	      	   #{ render(:partial=>"/support/shared/attachment_form") } )
 	    end
 	end
 
@@ -561,6 +568,11 @@ HTML
 				<p>#{ I18n.t('portal.cookie.cookie_dialog_info2', :privacy_link => privacy_link) }</p>
 				<p>#{ I18n.t('portal.cookie.cookie_dialog_info3', :privacy_link => privacy_link) }</p>
 			</div>)
+	end
+
+	def attach_a_file_link attach_id
+		link_to_function("Attach a <b>file</b>", "Helpdesk.Multifile.clickProxy(this)", 
+                "data-file-id" => "#{ attach_id }_file", :id => "#{ attach_id }_proxy_link" )
 	end
 
 	private

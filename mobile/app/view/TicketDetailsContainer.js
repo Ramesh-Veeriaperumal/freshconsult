@@ -107,7 +107,7 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
         formData = FD.Util.construct_ticket_form(resJson,true,formListeners),
         formObj = this.items.items[1].items.items[2].items.items[1].items.items[1];
         formObj.items.items[0].setItems(formData);
-        formObj.setUrl('/helpdesk/tickets/'+id);
+        formObj.setUrl('/helpdesk/tickets/'+id+'/update_ticket_properties');
         if(FD.current_user.is_customer) 
             formObj.setUrl('/support/tickets/'+id)
 
@@ -143,7 +143,9 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
         };
 
         iconBtn.hide(true);
-        updateBtn.show();
+        if(FD.current_user.can_edit_ticket_properties){
+          updateBtn.show();
+        }
         this.disableUpdateBtn();
         titleBarItems.items[0].setText('Back');
         titleBarItems.items[0].backToConversation=true;

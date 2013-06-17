@@ -49,3 +49,9 @@ default_fields.sort! {|x,y| default_field_order.index(x.first) <=> default_field
 	<% end %>
 <% end %>
 <%= render :partial => '/helpdesk/tickets/show/tags.html.erb' %>
+
+<% unless privilege?(:edit_ticket_properties) %>
+  <% javascript_tag do %> 
+    jQuery('#custom_ticket_form').find('select, input').attr('disabled', 'disabled');
+  <% end %>
+<% end %>

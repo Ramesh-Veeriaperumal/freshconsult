@@ -39,8 +39,8 @@ Ext.define("Freshdesk.view.ContactForm", {
                     },
                     {
                         xtype: 'hiddenfield',
-                        name: 'user[user_role]',
-                        value: 3
+                        name: 'user[helpdesk_agent]',
+                        value: false
                     },
                     {
                         xtype: 'textfield',

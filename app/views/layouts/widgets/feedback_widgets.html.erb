@@ -7,24 +7,26 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	  
 	  	<title><%= "#{h(current_account.name)} Widget" %></title>
-		<%= include_cloudfront_css :common %>
-		<%= include_cloudfront_css :ie_hacks %>
+		<%= include_cloudfront_css :widget %>
+		<%= include_cloudfront_css :ie_hacks %>		
+
 		<%= include_cloudfront_js :fdwidget %>
+		<%= include_cloudfront_js :pattern %>
+		<%= include_cloudfront_js :redactor %>
 		<!--[if IE]><%= include_cloudfront_js :excanvas %><![endif]-->
-	  <%= yield :head %>
-	  <script type="text/javascript">
-	  	document.domain = document.domain;
-	  	var $J = jQuery.noConflict();
-	  </script>
+
+	  	<%= yield :head %>
+		<script type="text/javascript">
+			document.domain = document.domain;
+			var $J = jQuery.noConflict();
+		</script>
 	</head>
     <body>
     	<style> body{ background:transparent; }</style>
-    	<div class="feedbackwidget-tooltip" id="widget_search_results"></div>
-		  <div class="content feedback-widget-container" id="ui-widget-container" name="ui-widget-container">
-		  	<%= yield%> 
-			<%= render :partial => "layouts/shared/footer" %>
-		  </div>
-		  <div class="content ui-widget-container" id="ui-thanks-container" name="ui-widget-container" style="display:none">
-		  </div>
+    	<div class="feedback-wrapper">
+	    	<div class="modal modal-widget modal-panel-active" id="feedback-widget-container">
+				<%= yield %>
+			</div>
+		</div>		
     </body>
 </html>

@@ -1,5 +1,6 @@
 class Support::PreviewController < SupportController
-	before_filter { |c| c.requires_permission :manage_users }
+  
+  before_filter :check_privilege
 	before_filter :preview_url, :only => :index
   include Redis::RedisKeys
   include Redis::PortalRedis

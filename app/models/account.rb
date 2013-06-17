@@ -4,11 +4,9 @@ class Account < ActiveRecord::Base
   require 'uri' 
 
   include Mobile::Actions::Account
-  include Tire::Model::Search if ES_ENABLED
   include Cache::Memcache::Account
   include ErrorHandle
-  include Helpdesk::Roles
-
+  
   #rebranding starts
   serialize :preferences, Hash
   serialize :sso_options, Hash
@@ -30,6 +28,7 @@ class Account < ActiveRecord::Base
   has_many :global_email_configs, :class_name => 'EmailConfig', :conditions => {:product_id => nil}, :order => "primary_role desc"
   has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true, :product_id => nil }
   has_many :products, :order => "name"
+  has_many :roles, :dependent => :delete_all, :order => "default_role desc"
   has_many :portals
   has_one  :main_portal, :class_name => 'Portal', :conditions => { :main_portal => true}
 
@@ -54,6 +53,7 @@ class Account < ActiveRecord::Base
   has_one :account_additional_settings
 
   has_one :account_configuration
+  validates_associated :account_configuration, :on => :create
   
   delegate :contact_info, :admin_first_name, :admin_last_name, :admin_email, :admin_phone, 
             :invoice_emails, :to => "account_configuration"
@@ -89,9 +89,7 @@ class Account < ActiveRecord::Base
   has_many :users, :conditions =>{:deleted =>false}, :order => :name
   has_many :all_users , :class_name => 'User'
   
-  has_one :account_admin, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:account_admin] } #has_one ?!?!?!?!
-  has_many :admins, :class_name => "User", :conditions => { :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:admin] } ,:order => "created_at"
-  has_many :all_admins, :class_name => "User", :conditions => ["user_role in (?,?) and deleted = ?", User::USER_ROLES_KEYS_BY_TOKEN[:admin],User::USER_ROLES_KEYS_BY_TOKEN[:account_admin],false] ,:order => "name desc"
+  has_many :technicians, :class_name => "User", :conditions => { :helpdesk_agent => true, :deleted => false }, :order => "name desc"
   
   has_one :subscription
   has_many :subscription_payments
@@ -102,12 +100,11 @@ class Account < ActiveRecord::Base
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
   has_many :user_credentials, :class_name => 'Integrations::UserCredential', :dependent => :destroy
   has_many :customers
-  has_many :contacts, :class_name => 'User' , :conditions =>{:user_role =>[User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]] , :deleted =>false}
-  has_many :all_agents, :through =>:users, :order => "users.name"
+  has_many :contacts, :class_name => 'User' , :conditions => { :helpdesk_agent => false , :deleted =>false }
   has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}, :order => "users.name"
   has_many :full_time_agents, :through =>:users, :conditions => { :occasional => false, 
       :users=> { :deleted => false } }
-  has_many :all_contacts , :class_name => 'User', :conditions =>{:user_role => [User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]]}
+  has_many :all_contacts , :class_name => 'User', :conditions => { :helpdesk_agent => false }
   has_many :all_agents, :class_name => 'Agent', :through =>:all_users  , :source =>:agent
   has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy' 
   has_one  :default_sla ,  :class_name => 'Helpdesk::SlaPolicy' , :conditions => { :is_default => true }
@@ -195,12 +192,11 @@ class Account < ActiveRecord::Base
   
   has_many :support_scores, :class_name => 'SupportScore', :dependent => :delete_all
 
-  has_one  :es_enabled_account, :class_name => 'EsEnabledAccount'
+  has_one  :es_enabled_account, :class_name => 'EsEnabledAccount', :dependent => :destroy
 
   delegate :bcc_email, :ticket_id_delimiter, :email_cmds_delimeter, :pass_through_enabled, :to => :account_additional_settings
 
   has_many :subscription_events 
-  has_many :roles, :dependent => :delete_all
   xss_sanitize  :only => [:name,:helpdesk_name]
   #Scope restriction ends
   
@@ -210,7 +206,6 @@ class Account < ActiveRecord::Base
   validate :valid_domain?
   validate :valid_helpdesk_url? 
   validate :valid_sso_options?
-  validate_on_create :valid_user?
   validate_on_create :valid_plan?
   validate_on_create :valid_payment_info?
   validate_on_create :valid_subscription?
@@ -226,29 +221,23 @@ class Account < ActiveRecord::Base
                             :message => "Value must be less than six digits"
                             
 
-  before_create :set_default_values, :create_roles
+  before_create :set_default_values
   before_create :set_shard_mapping
-  
+
   before_update :check_default_values, :update_users_time_zone
-    
-  after_create :set_roles_flag 
-  after_create :create_portal
-  after_create :create_admin
-  after_create :populate_seed_data
   after_create :populate_features
 
   after_create :change_shard_status
   after_update :change_shard_mapping
 
   after_update :update_users_language
- 
 
   before_destroy :update_crm
 
-  after_commit_on_create :add_to_billing #, :create_search_index
+  after_commit_on_create :add_to_billing, :enable_elastic_search
 
   after_commit_on_update :clear_cache
-  after_commit_on_destroy :clear_cache, :delete_search_index, :delete_reports_archived_data
+  after_commit_on_destroy :clear_cache, :delete_reports_archived_data
   before_update :backup_changes
   before_destroy :backup_changes
   before_destroy :make_shard_mapping_inactive
@@ -305,8 +294,8 @@ class Account < ActiveRecord::Base
     },
 
     :estate => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting, 
-                      :custom_ssl, :multiple_business_hours ],
+      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting,
+        :custom_ssl, :custom_roles, :multiple_business_hours ],
       :inherits => [ :garden ]
     },
 
@@ -327,7 +316,7 @@ class Account < ActiveRecord::Base
 
     :estate_classic => {
       :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting,
-                    :custom_ssl, :multiple_business_hours ],
+        :custom_ssl, :custom_roles, :multiple_business_hours ],
       :inherits => [ :garden_classic ]
     }
 
@@ -387,6 +376,12 @@ class Account < ActiveRecord::Base
     dis_max_id = get_max_display_id
     if self.ticket_display_id.blank? or (self.ticket_display_id < dis_max_id)
        self.ticket_display_id = dis_max_id
+    end
+  end
+  
+  def account_managers
+    technicians.select do |user|
+      user.privilege?(:manage_account)
     end
   end
   
@@ -546,175 +541,19 @@ class Account < ActiveRecord::Base
     pass_through_enabled
   end
 
-  def create_search_index
-    sandbox(0) {
-      Tire.index(search_index_name) do
-        create(
-          :settings => {
-            :analysis => {
-              :filter => {
-                :word_filter  => {
-                       "type" => "word_delimiter",
-                       "split_on_numerics" => false,
-                       "generate_word_parts" => false,
-                       "generate_number_parts" => false,
-                       "split_on_case_change" => false,
-                       "preserve_original" => true
-                }
-              },
-              :analyzer => {
-                :default => { :type => "custom", :tokenizer => "whitespace", :filter => [ "word_filter", "lowercase" ] },
-                :include_stop => { :type => "custom", :tokenizer => "whitespace", :filter => [ "word_filter", "lowercase", "stop" ] }
-              }
-            }
-          },
-          :mappings => {
-            :user => {
-              :properties => {
-                  :name => { :type => :string, :boost => 10, :store => 'yes' },
-                  :email => { :type => :string, :boost => 50 },
-                  :description => { :type => :string, :boost => 3 },
-                  :job_title => { :type => :string, :boost => 4, :store => 'yes' },
-                  :phone => { :type => :string },
-                  :mobile => { :type => :string },
-                  :customer => { :type => "object", 
-                                 :properties => {
-                                   :name => { :type => :string, :boost => 5, :store => 'yes' } 
-                                 }
-                               },
-                  :twitter_id => { :type => :string },
-                  :fb_profile_id => { :type => :string },
-                  :account_id => { :type => :long, :include_in_all => false },
-                  :deleted => { :type => :boolean, :include_in_all => false }
-              }
-            },
-            :customer => {
-              :properties => {
-                  :name => { :type => :string, :boost => 10, :store => 'yes' },
-                  :description => { :type => :string, :boost => 3 },
-                  :note => { :type => :string, :boost => 4 },
-                  :account_id => { :type => :long, :include_in_all => false }
-              }
-            },
-            :"helpdesk/ticket" => {
-              :properties => {
-                :display_id => { :type => :long, :store => 'yes' },
-                :subject => { :type => :string, :boost => 10, :store => 'yes' },
-                :description => { :type => :string, :boost => 5, :store => 'yes' },
-                :account_id => { :type => :long, :include_in_all => false },
-                :responder_id => { :type => :long, :null_value => 0, :include_in_all => false },
-                :group_id => { :type => :long, :null_value => 0, :include_in_all => false },
-                :requester_id => { :type => :long, :include_in_all => false },
-                :status => { :type => :long, :include_in_all => false },
-                :spam => { :type => :boolean, :include_in_all => false },
-                :deleted => { :type => :boolean, :include_in_all => false },
-                :attachments => { :type => "object", 
-                                  :properties => {
-                                    :content_file_name => { :type => :string } 
-                                  }
-                                },
-                :es_notes => { :type => "object", 
-                               :properties => {
-                                 :body => { :type => :string },
-                                 :private => { :type => :boolean, :include_in_all => false },
-                                 :attachments => { :type => :string }
-                               }
-                             },
-                :es_from => { :type => :string },
-                :to_emails => { :type => :string },
-                :es_cc_emails => { :type => :string },
-                :es_fwd_emails => { :type => :string },
-                :company_id => { :type => :long, :null_value => 0, :include_in_all => false }
-              }
-            },
-            :"solution/article" => {
-              :properties => {
-                :title => { :type => :string, :boost => 10, :store => 'yes' },
-                :desc_un_html => { :type => :string, :boost => 6, :store => 'yes' },
-                :tags => { :type => "object", 
-                           :properties => {
-                             :name => { :type => :string } 
-                           }
-                         },
-                :user_id => { :type => :long, :include_in_all => false },
-                :status => { :type => :integer, :include_in_all => false },
-                :account_id => { :type => :long, :include_in_all => false },
-                :folder => { :type => "object", 
-                             :properties => { 
-                               :category_id => { :type => :long, :include_in_all => false },
-                               :visibility => { :type => :long, :include_in_all => false },
-                               :customer_folders => { :type => "object",
-                                                      :properties => {
-                                                        :customer_id => { :type => :long, :include_in_all => false }  
-                                                      }
-                                                    }
-                             }
-                           },
-                :attachments => { :type => "object", 
-                                  :properties => {
-                                    :content_file_name => { :type => :string } 
-                                  }
-                                }
-              }
-            },
-            :topic => {
-              :properties => {
-                  :title => { :type => :string, :boost => 10, :store => 'yes' },
-                  :user_id => { :type => :long, :include_in_all => false },
-                  :posts => { :type => "object", 
-                              :properties => {
-                                :body => { :type => :string, :boost => 4, :store => 'yes' },
-                                :attachments => { :type => "object", 
-                                                  :properties => {
-                                                    :content_file_name => { :type => :string } 
-                                                  }
-                                                }
-                              }
-                            },
-                  :account_id => { :type => :long, :include_in_all => false },
-                  :forum => { :type => "object", 
-                              :properties => {
-                                :forum_category_id => { :type => :long, :include_in_all => false },
-                                :forum_visibility => { :type => :integer, :include_in_all => false },
-                                :customer_forums => { :type => "object",
-                                                       :properties => {
-                                                         :customer_id => { :type => :long, :include_in_all => false }  
-                                                       }
-                                                     }
-                              }
-                            }
-              }
-            }
-          }
-        )
-      end
-    }
-  end
-
   def enable_elastic_search
-    EsEnabledAccount.create(:account_id => self.id, :index_name => self.search_index_name)
-    MemcacheKeys.cache(ES_ENABLED_ACCOUNTS, EsEnabledAccount.all_es_indices)
+    es_index_id = ElasticsearchIndex.es_id_for(self.id)
+    self.create_es_enabled_account(:account_id => self.id, :index_id => es_index_id)
   end
 
   def search_index_name
-    "account-#{self.id}"
-  end
-
-  def delete_search_index
-    es_enable_status = MemcacheKeys.fetch(MemcacheKeys::ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
-    if es_enable_status.key?(self.id)
-      Tire.index(search_index_name).delete
-      es_enabled_account.disable_elastic_search
-    end
+    key = MemcacheKeys::ES_INDEX_NAME % { :account_id => self.id }
+    MemcacheKeys.fetch(key) { ElasticsearchIndex.find(self.es_enabled_account.index_id).name }
   end
 
   def es_enabled?
-    es_status = MemcacheKeys.fetch(ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
+    es_status = MemcacheKeys.fetch(MemcacheKeys::ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
     es_status.key?(self.id) ? es_status[self.id] : false
-  end
-  
-  def roles_enabled?
-    $redis_others.sismember('authority_migrated', self.id)
   end
   
   protected
@@ -766,17 +605,6 @@ class Account < ActiveRecord::Base
       end
     end
     
-    # An account must have an associated user to be the administrator
-    def valid_user?
-      if !@user
-        errors.add_to_base("Missing user information")
-      elsif !@user.valid?
-        @user.errors.full_messages.each do |err|
-          errors.add_to_base(err)
-        end
-      end
-    end
-    
     def valid_payment_info?
       if needs_payment_info?
         unless @creditcard && @creditcard.valid?
@@ -817,51 +645,10 @@ class Account < ActiveRecord::Base
     def set_sso_options_hash
       HashWithIndifferentAccess.new({:login_url => "",:logout_url => ""})
     end
-    
-    def create_roles
-      default_roles.each do |role|
-        self.roles.build(:name => role[0],
-          :privilege_list => role[1],
-          :description => role[2],
-          :default_role => true)
-      end
-    end
-    
-    def create_admin
-      Rails.logger.debug "create_admin is called"
-      Rails.logger.debug "$$$$$$$$$$$$$$$$$$$$$$$$$$$$ user is #{self.user}"
-      self.user.active = true  
-      self.user.account = self
-      self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:account_admin]
-      self.user.build_agent()
-      self.user.agent.account = self
-      self.user.save!
-      User.current = self.user
-      
-      self.build_account_configuration(admin_contact_info)
-      self.account_configuration.save!
-    end
-    
-    def set_roles_flag
-      $redis_others.sadd('authority_migrated', self.id)
-    end
-    
-    def create_portal
-      self.primary_email_config.account = self
-      self.primary_email_config.save
-      self.main_portal.account = self
-      self.main_portal.save
-    end
 
-    def populate_seed_data
-      PopulateAccountSeed.populate_for(self)
+    def subscription_next_renewal_at
+      subscription.next_renewal_at
     end
-
-   
-    
-   def subscription_next_renewal_at
-       subscription.next_renewal_at
-   end
 
     def backup_changes
       @old_object = Account.find(id)
@@ -884,15 +671,6 @@ class Account < ActiveRecord::Base
     def update_crm
       Resque.enqueue(CRM::AddToCRM::DeletedCustomer, id)
     end
-
-    def admin_contact_info
-      {
-        :contact_info => { :first_name => self.user.first_name, :last_name => self.user.last_name,
-                           :email => self.user.email, :phone => self.user.phone },
-        :billing_emails => { :invoice_emails => [ self.user.email ] }
-      }
-    end
-
 
     def set_shard_mapping
       shard_mapping = ShardMapping.new({:shard_name => ShardMapping.latest_shard, :status => ShardMapping::STATUS_CODE[:not_found]})
@@ -924,7 +702,6 @@ class Account < ActiveRecord::Base
       shard_mapping.status = ShardMapping::STATUS_CODE[:not_found]
       shard_mapping.save
     end
-
 
     def delete_reports_archived_data
       Resque.enqueue(Workers::DeleteArchivedData, {:account_id => id})

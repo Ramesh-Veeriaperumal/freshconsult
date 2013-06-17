@@ -3,6 +3,7 @@
 	 var document 	   = window.document,
 	 	 locationClass = { 1: "top", 2: "right", 3: "bottom", 4: "left", top: "top", right: "right", bottom: "bottom", left: "left"},
 		 urlWithScheme = /^[a-zA-Z]+:\/\//,
+		 version  	   = 2,
 		 options = {
 			widgetId:		0,					 	
 			buttonText: 	"Support",
@@ -169,7 +170,7 @@
 			
 			container.innerHTML = '<div class="widget-ovelay" id="freshwidget-overlay">&nbsp;</div>' +
 						'<div class="freshwidget-dialog" id="freshwidget-dialog">' +
-						' <img id="freshwidget-close" class="widget-close" src="'+options.assetUrl+'/widget_close.png" />' +
+						' <img id="freshwidget-close" class="widget-close" src="'+options.assetUrl+'/widget_close.png?ver='+ version +'" />' +
 						' <div class="frame-container">' +
 						' 	<iframe id="freshwidget-frame" src="about:blank" frameborder="0" scrolling="auto" allowTransparency="true"/>' +
 						' </div>'
@@ -189,8 +190,7 @@
 			bind(overlay, 	  'click', function(){ window.FreshWidget.close(); });
 
 			bind(iframe, 'load', function() {
-				if(!iframeLoaded && iframe.src.indexOf("/widgets/feedback_widget/new?") != -1)
-				{
+				if(!iframeLoaded && iframe.src.indexOf("/widgets/feedback_widget/new?") != -1){
 					iframeLoaded = true;
 				}	
 			});
@@ -198,7 +198,7 @@
 	 }; 
 	 
 	 function loadingIframe(){
-	 	iframe.src = options.url + "/loading.html";
+	 	iframe.src = options.url + "/loading.html?ver=" + version;
 	 }  
 	 
 	 function widgetFormUrl(){
@@ -240,16 +240,21 @@
 	 
 	 function initialize(params){ 
 		extend(params);
+
+		if(window.location.protocol)
+			options.assetUrl = (window.location.protocol == "https:") ? 
+								"https://s3.amazonaws.com/assets.freshdesk.com/widget" : 
+								"http://assets.freshdesk.com/widget";
 		
 		if(Browser.Version() > 8 && (typeof html2canvas === 'undefined'))
-			loadjsfile(options.assetUrl+"/html2canvas.js");
+			loadjsfile(options.assetUrl+"/html2canvas.js?ver=" + version);
 
 		bind(window, 'load', function(){
 			// File name to be changed later when uploaded			
 			createButton();
 			createContainer();
 		});
-		loadcssfile(options.assetUrl+"/freshwidget.css");
+		loadcssfile(options.assetUrl+"/freshwidget.css?ver=" + version);
 	 }
 	 
 	 function updateWidget(params){
