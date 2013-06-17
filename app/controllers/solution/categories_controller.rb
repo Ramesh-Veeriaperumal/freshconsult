@@ -2,6 +2,9 @@
 class Solution::CategoriesController < ApplicationController
   include Helpdesk::ReorderUtility
   
+  skip_before_filter :check_privilege, :only => [:index, :show]
+  before_filter :portal_check, :only => [:index, :show]
+  
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :portal_category?, :except => :index
   before_filter :set_selected_tab     
@@ -115,6 +118,8 @@ class Solution::CategoriesController < ApplicationController
       format = params[:format]
       if format.nil? && (current_user.nil? || current_user.customer?)
         return redirect_to support_solutions_path
+      elsif !privilege?(:view_solutions)
+        access_denied
       end
     end
     
