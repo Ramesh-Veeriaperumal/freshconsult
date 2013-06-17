@@ -8,7 +8,7 @@
 
 // Make all forms have space below them
 form {
-  //margin: 0 0 $baseLineHeight;
+  // margin: 0 0 $baseLineHeight;
 }
 
 fieldset {
@@ -59,7 +59,6 @@ label {
 
 // Form controls
 // -------------------------
-
 // Shared size and type resets
 select,
 textarea,
@@ -152,13 +151,12 @@ input[type="checkbox"] {
 }
 
 // Set the height of select and file controls to match text inputs
-select,
+select,  
 input[type="file"] {
   height: 30px; /* In IE7, the height of the select element cannot be changed by height, only font-size */
   *margin-top: 4px; /* For IE7, add top margin to align select with labels */
   line-height: 30px;
 }
-
 // Make select elements obey height by applying a border
 select {
   //width: 220px; // default input width + 10px of padding that doesn't get applied
@@ -602,7 +600,6 @@ legend + .control-group {
   margin-top: $baseLineHeight;
   -webkit-margin-top-collapse: separate;
 }
-
 // Horizontal-specific styles
 // --------------------------
 

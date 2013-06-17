@@ -40,13 +40,15 @@
                   jQuery( "<li>" )
                     //.append('<span class="label label-small label-light ">'+ item.group +'</span>')
                     .append("<a href='"+item.url+"'>" + item.title + "</a> ")                    
-                    .append('<div>'+ item.desc +'</div>')
-                    .addClass(item.type.toLowerCase()+'-item')
+                    .append('<p>'+ item.desc +'</p>')
+                    //.addClass(item.type.toLowerCase()+'-item')
                     .appendTo( search_items )
                 })
                 if(data.length > 0){
                   jQuery("#new-ticket-search")
-                    .html(search_items).show()
+                    .html(search_items)
+                    .prepend("<h4>Related articles...</h4>")
+                    .show()
                 }
                 jQuery("#helpdesk_ticket_subject").removeClass("sloading loading-small loading-right");
               }

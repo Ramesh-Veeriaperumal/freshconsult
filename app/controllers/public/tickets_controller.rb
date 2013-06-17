@@ -1,8 +1,9 @@
 class Public::TicketsController < ApplicationController
 
-include SupportTicketControllerMethods
-
-before_filter :load_ticket, :check_scope, :set_selected_tab
+  include SupportTicketControllerMethods
+  
+  skip_before_filter :check_privilege
+  before_filter :load_ticket, :check_scope, :set_selected_tab
 
   def show
     respond_to do |format|
@@ -13,7 +14,7 @@ before_filter :load_ticket, :check_scope, :set_selected_tab
     end
 	end
 
- private
+  private
 
    def load_ticket
     schema_less_ticket = current_account.schema_less_tickets.find_by_access_token(params[:id])

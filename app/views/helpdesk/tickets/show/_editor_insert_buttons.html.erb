@@ -4,6 +4,8 @@
 	</button>
 	<div class="dropdown-menu right" id="reply_options" role="menu" aria-labelledby="dLabel">
 		<%= link_to( t('ticket.canned_responses.insert_ca_response'), "#", :rel => "ticket_canned_response", 'data-editor-id' => "#{cntid}-body") %>
-		<%= link_to( t('solution.title_singular'), "#", :rel => "ticket_solutions", 'data-editor-id' => "#{cntid}-body") %>
+    <% if privilege?(:view_solutions) %>
+		  <%= link_to( t('solution.title_singular'), "#", :rel => "ticket_solutions", 'data-editor-id' => "#{cntid}-body") %>
+    <% end %>
 	</div>
 </div>

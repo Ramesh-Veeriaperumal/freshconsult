@@ -1,4 +1,5 @@
 class UpdateGoogleCalendarScript < ActiveRecord::Migration
+  shard :none
 @widget_name = "google_calendar_widget"
 
   def self.up

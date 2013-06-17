@@ -6,7 +6,6 @@ class CustomersController < ApplicationController
   helper ContactsHelper
   include HelpdeskControllerMethods
 
-  before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :set_selected_tab
   
   def index

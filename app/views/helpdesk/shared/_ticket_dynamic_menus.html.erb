@@ -1,7 +1,8 @@
 <div id="ticket_statuses" class="hide">
-	<% statuses = Helpdesk::TicketStatus.status_names_from_cache(current_account)
-	statuses.each do |status|
-		%>
+	<%
+    statuses = Helpdesk::TicketStatus.status_names_from_cache(current_account)
+  	statuses.each do |status|
+	%>
 		<a data-value="<%= status.first %>" class="action_assign" data-assign-action="status" tabindex = '99'><%=status.second%></a>
 		<%
 	end

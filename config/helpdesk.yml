@@ -7,8 +7,12 @@ HOST:
     test:           "localhost:3000"
     production:     "freshdesk.com"
     staging:        "freshpo.com"
-    
-ASSET_URL: "http://assets.freshdesk.com/widget" 
+
+ASSET_URL: 
+    development:    "http://localhost:3000/widget"
+    test:           "http://localhost:3000/widget"
+    production:     "http://assets.freshdesk.com/widget"
+    staging:        "http://assets.freshpo.com/widget"
 
 # This is the title staff members will see when they are using the helpdesk application
 STAFF_FACING_TITLE: FreshDesk

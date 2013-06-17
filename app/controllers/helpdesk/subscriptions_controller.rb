@@ -2,7 +2,6 @@ class Helpdesk::SubscriptionsController < ApplicationController
 
   include ActionView::Helpers::TextHelper
 
-  before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :load_parent_ticket , :except => :unwatch_multiple
 
   def index

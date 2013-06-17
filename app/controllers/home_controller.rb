@@ -1,11 +1,12 @@
 class HomeController < ApplicationController
-	
+
+  skip_before_filter :check_privilege	
  	before_filter { @hash_of_additional_params = { :format => "html" } }
   before_filter :set_content_scope, :set_mobile #, :set_selected_tab
   
   def index
     # redirect_to MOBILE_URL and return if (current_user && mobile?)
-    if (current_user && current_user.permission?(:manage_tickets))
+    if (current_user && privilege?(:manage_tickets))
       redirect_to helpdesk_dashboard_path and return
     else
       redirect_to support_home_path and return
@@ -28,7 +29,7 @@ class HomeController < ApplicationController
   
     def set_content_scope
       @content_scope = 'portal_'
-      @content_scope = 'user_' if permission?(:post_in_forums) 
+      @content_scope = 'user_'  if privilege?(:view_forums)
     end
   
     def recent_topics
