@@ -46,6 +46,7 @@ class Helpdesk::ConversationsController < ApplicationController
   end
 
   def note
+    build_attachments @item, :helpdesk_note
     if @item.save
       unless params[:helpdesk_note][:to_emails].blank?
         notify_array = validate_emails(params[:helpdesk_note][:to_emails])
