@@ -8,7 +8,6 @@ class Support::ProfilesController < SupportController
   end
 
   def update
-    params[:user][:user_role] = current_user.user_role
     if @profile.update_attributes(params[:user])
       flash[:notice] = t(:'flash.profile.update.success')
       redirect_to :back

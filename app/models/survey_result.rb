@@ -17,7 +17,7 @@ class SurveyResult < ActiveRecord::Base
   def add_feedback(feedback)
     note = surveyable.notes.build({
       :user_id => customer_id,
-      :body => feedback,
+      :note_body_attributes => {:body => feedback},
       :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["feedback"],
       :incoming => true,
       :private => false

@@ -23,8 +23,8 @@
 			<% end %>
 		</div>
 		<div class="info"> 
-			<%= content_tag :div, multiple_emails_container(@to_emails) unless @ticket.cc_email_hash.blank? or @to_emails.blank? %>
-			<%= content_tag :div, multiple_emails_container(@ticket.cc_email_hash[:cc_emails]) unless @ticket.cc_email_hash.blank? %>
+			<%= content_tag :div, multiple_emails_container(@to_emails,"To: ") unless @ticket.cc_email_hash.blank? or @to_emails.blank? %>
+			<%= content_tag :div, multiple_emails_container(@ticket.cc_email_hash[:cc_emails],"Cc: ") unless @ticket.cc_email_hash.blank? %>
       	</div> 
 	</div>
 	<div id="ticket_original_request" class="request_mail">
@@ -33,7 +33,11 @@
 	<% unless @ticket.ticket_topic.nil? %>
 	<div class="info-highlight">
 		<%= t("helpdesk.tickets.show.linked_ticket") %>
-		"<%= link_to("#{truncate(h(@ticket.topic.title))}", category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
+    <% if privilege?(:view_forums) %>
+    "<%= link_to("#{truncate(h(@ticket.topic.title))}", category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
+    <% else %>
+      "<%= truncate(h(@ticket.topic.title)) %>"
+    <% end %>
 	</div>
 	<% end %>
 

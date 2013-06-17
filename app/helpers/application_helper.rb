@@ -1,7 +1,6 @@
 # encoding: utf-8
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
-  
   include SavageBeast::ApplicationHelper
   include Juixe::Acts::Voteable
   include ActionView::Helpers::TextHelper
@@ -33,6 +32,26 @@ module ApplicationHelper
       return val.to_s
     end
   end
+
+  def logo_url
+    MemcacheKeys.fetch(["v4","portal","logo",current_portal],30.days.to_i) do
+      image_tag(
+        current_portal.logo.nil? ? "/images/logo.png?721013" : 
+        AWS::S3::S3Object.url_for(current_portal.logo.content.path(:logo),current_portal.logo.content.bucket_name,
+                                          :expires_in => 30.days, :use_ssl => true)
+      )
+    end
+  end
+
+  def fav_icon_url
+    MemcacheKeys.fetch(["v4","portal","fav_ico",current_portal]) do
+      url = current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' : 
+            AWS::S3::S3Object.url_for(current_portal.fav_icon.content.path(:logo),current_portal.fav_icon.content.bucket_name,
+                                          :expires_in => 30.days, :use_ssl => true)
+      "<link rel=\"shortcut icon\" href=\"#{url}\" />"
+    end
+  end
+
 
   def timediff_in_words(interval)
     secs  = interval.to_i
@@ -76,7 +95,7 @@ module ApplicationHelper
   end   
 
   def show_announcements                                                    
-    if permission?(:manage_tickets)
+    if privilege?(:manage_tickets)
       @current_announcements ||= SubscriptionAnnouncement.current_announcements(session[:announcement_hide_time])  
       render :partial => "/shared/announcement", :object => @current_announcements unless @current_announcements.blank?
     end     
@@ -188,19 +207,36 @@ module ApplicationHelper
     output.html_safe
   end
 
+  def dropdown_menu(list, options = {})
+    return if list.blank?
+    output = ""
+    output << %(<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">)
+    
+    list.each do |item|
+      unless item.blank?
+        if item[0] == :divider
+          output << %(<li class="divider"></li>)
+        else
+          output << %(<li class="#{item[2] ? "active" : ""}">#{ link_to item[0], item[1], options, "tabindex" => "-1" }</li>)
+        end
+      end
+    end
+    output << %(</ul>)
+    output.html_safe
+  end
+
   def navigation_tabs
     tabs = [
-      ['/home',               :home,        !permission?(:manage_tickets) ],
-      ['/helpdesk/dashboard',  :dashboard,    permission?(:manage_tickets)],
-      ['/helpdesk/tickets',    :tickets,      permission?(:manage_tickets)],
+      ['/home',               :home,        !privilege?(:manage_tickets) ],
+      ['/helpdesk/dashboard',  :dashboard,    privilege?(:manage_tickets)],
+      ['/helpdesk/tickets',    :tickets,      privilege?(:manage_tickets)],
       ['/social/twitters/feed', :social,     can_view_twitter?  ],
       solutions_tab,      
       forums_tab,
-      ['/contacts',           :customers,    (current_user && current_user.can_view_all_tickets?)],
-      ['/support/tickets',     :checkstatus, !permission?(:manage_tickets)],
-      ['/reports',            :reports,      permission?(:manage_reports) ],
-      ['/admin/home',         :admin,        permission?(:manage_users)],
-      company_tickets_tab
+      ['/contacts',           :customers,    privilege?(:view_contacts)],
+      ['/support/tickets',     :checkstatus, !privilege?(:manage_tickets)],
+      ['/reports',            :reports,      privilege?(:view_reports) ],
+      ['/admin/home',         :admin,        privilege?(:view_admin)],
     ]
 
 #    history_active = false;
@@ -236,7 +272,7 @@ module ApplicationHelper
   end
 
   def show_contact_hovercard(user, options=nil)
-    if current_user.can_view_all_tickets?
+    if privilege?(:view_contacts)
       link_to(h(user), user, :class => "username", "data-placement" => "topRight", :rel => "contact-hover", "data-contact-id" => user.id, "data-contact-url" => hover_card_contact_path(user)) unless user.blank?
     else
       link_to(h(user), "javascript:void(0)", :class => "username") unless user.blank?
@@ -391,7 +427,7 @@ module ApplicationHelper
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)
     end 
-    avatar_content = MemcacheKeys.fetch(["v3","avatar",profile_size,user],30.days.to_i) do
+    avatar_content = MemcacheKeys.fetch(["v4","avatar",profile_size,user],30.days.to_i) do
       content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size), img_tag_options ), :class => profile_class, :size_type => profile_size )
     end
     avatar_content
@@ -414,16 +450,16 @@ module ApplicationHelper
   end   
   
   def twitter_avatar( screen_name, profile_size = "normal" )
-    "http://api.twitter.com/1/users/profile_image?screen_name=#{screen_name}&size=#{profile_size}"
+    "https://api.twitter.com/1/users/profile_image?screen_name=#{screen_name}&size=#{profile_size}"
   end
   
   def facebook_avatar( facebook_id, profile_size = "square")
-    "http://graph.facebook.com/#{facebook_id}/picture?type=#{profile_size}"
+    "https://graph.facebook.com/#{facebook_id}/picture?type=#{profile_size}"
   end
   
   # User details page link should be shown only to agents and admin
   def link_to_user(user, options = {})
-    if current_user && !current_user.customer?
+    if privilege?(:view_contacts)
       link_to(h(user.display_name), user, options)
     else 
       content_tag(:strong, h(user.display_name), options)
@@ -491,7 +527,7 @@ module ApplicationHelper
     if installed_app.blank? or installed_app.application.blank?
       return ""
     else
-      widget = installed_app.application.widgets[0]
+      widget = installed_app.application.widget
       widget_script(installed_app, widget, liquid_objs)
     end
   end
@@ -548,7 +584,7 @@ module ApplicationHelper
     element
   end
 
-  def construct_ticket_element(object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
+  def construct_ticket_element(form_builder,object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
     element_class  += " required_closure" if (field.required_for_closure && !field.required)
@@ -592,7 +628,9 @@ module ApplicationHelper
       when "checkbox" then
         element = content_tag(:div, (check_box(object_name, field_name, :class => element_class, :checked => field_value ) + label))
       when "html_paragraph" then
-        element = label + text_area(object_name, field_name, :class => element_class , :value => field_value)
+        form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
+            element = label + builder.text_area(field_name, :class => element_class, :value => field_value )
+        end
     end
     content_tag :li, element, :class => " #{ dom_type } #{ field.field_type } field"
   end
@@ -609,7 +647,7 @@ module ApplicationHelper
   end
   
   def add_requester_field
-    render(:partial => "/shared/add_requester") if (params[:format] != 'widget' && current_user && current_user.can_view_all_tickets?)
+    render(:partial => "/shared/add_requester") if (params[:format] != 'widget' && privilege?(:manage_contacts))
   end
   
   def add_name_field
@@ -729,10 +767,10 @@ module ApplicationHelper
   private
     def solutions_tab
       if current_portal.main_portal?
-        ['/solution/categories', :solutions, allowed_in_portal?(:open_solutions)]
+        ['/solution/categories', :solutions, solutions_visibility?]
       elsif current_portal.solution_category
         [solution_category_path(current_portal.solution_category), :solutions, 
-              allowed_in_portal?(:open_solutions)]
+              solutions_visibility?]
       else
         ['#', :solutions, false]
       end
@@ -748,20 +786,18 @@ module ApplicationHelper
       end
     end
     
+    def solutions_visibility?
+      allowed_in_portal?(:open_solutions) && privilege?(:view_solutions)
+    end
+
     def forums_visibility?
-      feature?(:forums) && allowed_in_portal?(:open_forums)
+      feature?(:forums) && allowed_in_portal?(:open_forums) && privilege?(:view_forums)
     end
     
     def can_view_twitter?
-      permission?(:manage_tickets) && !current_account.twitter_handles.blank? && feature?(:twitter)
+      privilege?(:manage_tickets) && !current_account.twitter_handles.blank? && feature?(:twitter)
     end
     
-  
-  def company_tickets_tab
-    tab = ['support/company_tickets', :company_tickets , !permission?(:manage_tickets) , current_user.customer.name] if (current_user && current_user.customer && current_user.client_manager?)
-    tab || ""
-  end
-
   def tour_button(text, tour_id)
     link_to(text, '#', :rel => 'guided-tour', "data-tour-id" => tour_id, :class=> 'guided-tour-button')
   end
@@ -787,5 +823,28 @@ module ApplicationHelper
     end
     return
   end
-
+  
+  # This helper is for the partial expanded/_ticket.html.erb
+  def requester(ticket)
+    if privilege?(:view_contacts)
+      "<a class = 'user_name' href='/users/#{ticket.requester.id}'><span class='emphasize'>#{h(ticket.requester.display_name)}</span></a>"
+    else
+      "<span class = 'user_name emphasize'>#{h(ticket.requester.display_name)}</span>"
+    end
+  end
+  
+  # This helper is for the partial expanded/_ticket.html.erb
+  def quick_action
+    privilege?(:edit_ticket_properties) ? 'quick-action dynamic-menu' : ''
+  end
+  
+  def note_responder(note)
+    if privilege?(:view_contacts)
+      link_to_user(note.user, :class => "user_name", "data-placement" => "topRight",
+        :rel => "hover-popover", "data-widget-container" => "agent-hovercard_#{note.id}" )
+    else
+      link_to_user(note.user, :class => "user_name", "data-placement" => "topRight")
+    end
+  end
+  
 end

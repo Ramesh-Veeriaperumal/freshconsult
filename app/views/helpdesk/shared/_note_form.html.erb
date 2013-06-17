@@ -1,6 +1,6 @@
 <div class="request_panel" id="<%=cntid%>" style="display:none;" rel="emitter" data-node-name="agent_replying">
   <div class="reply_box">
-  <% form_for note, :html => {:multipart => true,  :id => "HelpdeskNotes" } do |f| %>
+  <% form_for note, :url => note_helpdesk_ticket_conversations_path(@ticket), :html => {:multipart => true,  :id => "HelpdeskNotes", :method => :post } do |f| %>
     <%= f.error_messages %>
     <ul class="ui-form dont-validate">
       <li class="inline-field field">
@@ -10,7 +10,9 @@
         <%= content_tag( :h4, t("ticket.note_form.form_title"), :class => "title" ) %>
         <label class="caption"><%= t("message")%>:</label>
         <div class="fields">
-          <%= f.text_area :body_html, :class => "required", :id => "#{cntid}-body", :value => "" %>
+          <% f.fields_for (:note_body, Helpdesk::NoteBody.new) do |ff| %>
+            <%= ff.text_area :body_html, :class => "required", :id => "#{cntid}-body", :value => "" %>
+          <% end %>
           <%= f.label(:private, f.check_box(:private, :checked => true) + t("ticket.note_form.private_note"), :class => "checkbox") %>
           <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]%>
           <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
@@ -38,7 +40,9 @@
     </ul> 
     <div class="button-container">
     	<%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton special") %>
-    	<%= submit_tag(t('ticket.note_form.add_and_resolve'), :onclick => "jQuery('#note_ticket_status').val('4');" , :class => "uiButton") %> 
+      <% if privilege?(:edit_ticket_properties) %>
+      	<%= submit_tag(t('ticket.note_form.add_and_resolve'), :onclick => "jQuery('#note_ticket_status').val('4');" , :class => "uiButton") %> 
+      <% end %>
 			<%= button_to_function(t('cancel'), "jQuery('#cnt-note').hide().trigger('visibility');", :class => "uiButton" ) %>   
     </div>
   <% end %>

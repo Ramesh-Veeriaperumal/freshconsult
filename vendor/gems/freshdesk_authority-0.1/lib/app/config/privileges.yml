@@ -1,0 +1,8 @@
+--- 
+:max_value: 4
+:privileges: 
+  :edit_project: 1
+  :deploy_project: 4
+  :destroy_project: 2
+  :follow_project: 3
+  :create_project: 0

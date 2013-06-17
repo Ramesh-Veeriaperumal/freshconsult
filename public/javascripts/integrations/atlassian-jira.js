@@ -688,7 +688,7 @@ JiraWidget.prototype = {
 		else{	
 		jiraWidget.fieldContainer += '<label>'+fieldData["name"]+'</label>';
 		if(fieldData["name"] == "Summary")
-			jiraWidget.fieldContainer += '<input type="text" name="fields['+fieldKey+']" id="fields['+ fieldKey+']	" value="'+(jQuery(".request-title .subject").text()).replace(/"/g, "&quot;")+'"/>';
+			jiraWidget.fieldContainer += '<input type="text" name="fields['+fieldKey+']" id="fields['+ fieldKey+']	" value="'+escapeHtml(jiraBundle.ticketSubject).replace(/"/g, "&quot;")+'"/>';
 		else
 			jiraWidget.fieldContainer += '<input type="text" name="fields['+fieldKey+']" id="fields['+ fieldKey+']	"/>';
 		}
@@ -735,12 +735,12 @@ JiraWidget.prototype = {
 	ProcessJiraFieldArrayStringAllowedValues: function(fieldKey, fieldData) {
 		jiraWidget.fieldContainer += '<label>' + fieldData["name"] + '</label>';
 		if(fieldData["schema"]["type"] == "string")
-			jiraWidget.fieldContainer += '<select name="fields['+ fieldKey+']">';
+			jiraWidget.fieldContainer += '<select name="fields['+ fieldKey+'][id]">';
 		else
-		jiraWidget.fieldContainer += '<select name="fields['+ fieldKey+'][0]">';
+		jiraWidget.fieldContainer += '<select name="fields['+ fieldKey+'][0][id]">';
 		selectOptions = "";
 		jQuery.each(fieldData["allowedValues"],function(key,data){
-			selectOptions += "<option value='"+data["id"]+"'>"+data["name"]+"</option>";
+			selectOptions += "<option value='"+data["id"]+"'>"+data["value"]+"</option>";
 		});
 		jiraWidget.fieldContainer += selectOptions+ '</select>';
 	},

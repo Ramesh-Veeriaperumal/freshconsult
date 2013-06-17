@@ -1,17 +1,20 @@
 class Helpdesk::NotesController < ApplicationController
   
-  before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :load_parent_ticket_or_issue
 
   helper 'helpdesk/tickets'
   
   include HelpdeskControllerMethods
   include ParserUtil
-  include Helpdesk::Social::Facebook
-  include Helpdesk::Social::Twitter
+  include Conversations::Twitter
+  include Conversations::Facebook
   include Helpdesk::Activities
   include Helpdesk::ShowVersion
   
+  skip_before_filter :build_item, :only => [:create]
+  alias :build_note :build_item
+  before_filter :build_note_body_attributes, :build_note, :only => [:create]
+
   before_filter :fetch_item_attachments, :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
   before_filter :set_mobile, :prepare_mobile_note, :only => [:create]
   before_filter :set_show_version
@@ -48,17 +51,6 @@ class Helpdesk::NotesController < ApplicationController
     end    
   end
 
-  def since
-    @notes = @parent.notes.newest_first.since(params[:last_note])
-    render(:partial => "helpdesk/tickets/show/note", :collection => @notes.reverse) 
-  end
-
-  def since
-    @notes = @parent.notes.newest_first.since(params[:last_note])
-    render(:partial => "helpdesk/tickets/show/note", :collection => @notes.reverse) 
-  end
-
-  
   def create
     build_attachments @item, :helpdesk_note
     @item.send_survey = params[:send_survey]
@@ -74,7 +66,7 @@ class Helpdesk::NotesController < ApplicationController
       if params[:post_forums]
         @topic = Topic.find_by_id_and_account_id(@parent.ticket_topic.topic_id,current_account.id)
         if !@topic.locked?
-          @post  = @topic.posts.build(:body_html => params[:helpdesk_note][:body_html])
+          @post  = @topic.posts.build(:body_html => params[:helpdesk_note][:note_body_attributes][:body_html])
           @post.user = current_user
           @post.account_id = current_account.id
           @post.save!
@@ -102,10 +94,25 @@ class Helpdesk::NotesController < ApplicationController
   end
   
   def edit
+    @item.build_note_body(:body_html => @item.body_html,
+        :body => @item.body) unless @item.note_body
     render :partial => "edit_note"
   end
 
   protected
+
+    def build_note_body_attributes
+      if params[:helpdesk_note][:body] || params[:helpdesk_note][:body_html]
+        unless params[:helpdesk_note].has_key?(:note_body_attributes)
+          note_body_hash = {:note_body_attributes => { :body => params[:helpdesk_note][:body],
+                                  :body_html => params[:helpdesk_note][:body_html] }} 
+          params[:helpdesk_note].merge!(note_body_hash).tap do |t| 
+            t.delete(:body) if t[:body]
+            t.delete(:body_html) if t[:body_html]
+          end 
+        end 
+      end
+    end
 
     def scoper
       @parent.notes
@@ -125,7 +132,7 @@ class Helpdesk::NotesController < ApplicationController
     
     def create_article
       if @kbase_email_exists
-        body_html = params[:helpdesk_note][:body_html]
+        body_html = params[:helpdesk_note][:note_body_attributes][:body_html]
         attachments = params[:helpdesk_note][:attachments]
         Helpdesk::KbaseArticles.create_article_from_note(current_account, current_user, @parent.subject, body_html, attachments)
       end

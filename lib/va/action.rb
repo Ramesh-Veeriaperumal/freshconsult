@@ -1,5 +1,19 @@
 class Va::Action
   attr_accessor :action_key, :act_hash
+
+  ACTION_PRIVILEGE =
+    {  
+      :priority                => :edit_ticket_properties,
+      :ticket_type             => :edit_ticket_properties,
+      :status                  => :edit_ticket_properties,
+      :responder_id            => :edit_ticket_properties,
+      :group_id                => :edit_ticket_properties,
+      :product_id              => :edit_ticket_properties,
+      :send_email_to_group     => :reply_ticket,
+      :send_email_to_agent     => :reply_ticket,
+      :send_email_to_requester => :reply_ticket,
+      :delete_ticket           => :delete_ticket
+    }
   
   def initialize(act_hash)
     @act_hash = act_hash
@@ -85,7 +99,8 @@ class Va::Action
   
     def add_comment(act_on)
       note = act_on.notes.build()
-      note.body = act_hash[:comment]
+      note.build_note_body
+      note.note_body.body = act_hash[:comment]
       note.account_id = act_on.account_id
       note.user = User.current
       note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]

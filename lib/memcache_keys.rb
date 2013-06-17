@@ -12,6 +12,8 @@ module MemcacheKeys
 
   ACCOUNT_GROUPS = "v2/ACCOUNT_GROUPS:%{account_id}"
 
+  ACCOUNT_PRODUCTS = "v1/ACCOUNT_PRODUCTS:%{account_id}"
+
   ACCOUNT_TAGS = "v1/ACCOUNT_TAGS:%{account_id}"
 
   ACCOUNT_CUSTOMERS = "v1/ACCOUNT_CUSTOMERS:%{account_id}"
@@ -34,6 +36,8 @@ module MemcacheKeys
   ACCOUNT_NESTED_FIELDS = "v1/ACCOUNT_NESTED_FIELDS:%{account_id}"
 
   ES_ENABLED_ACCOUNTS = "ES_ENABLED_ACCOUNTS"
+
+  ES_INDEX_NAME = "ES_INDEX_%{account_id}"
  
   # Portal customization related keys
   PORTAL_TEMPLATE = "v2/PORTAL_TEMPLATE:%{account_id}:%{portal_id}"
@@ -45,6 +49,10 @@ module MemcacheKeys
   FB_REAUTH_CHECK = "v1/FB_REAUTH_CHECK:%{account_id}"
 
   TWITTER_REAUTH_CHECK = "v1/TWITTER_REAUTH_CHECK:%{account_id}"
+
+  SHARD_BY_DOMAIN = "v1/SHARD_BY_DOMAIN:%{domain}"
+ 
+  SHARD_BY_ACCOUNT_ID = "v1/SHARD_BY_ACCOUNT_ID:%{account_id}"
   
   class << self
 

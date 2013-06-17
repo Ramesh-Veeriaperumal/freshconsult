@@ -1,0 +1,30 @@
+<div class="ui-form">
+	<div class="aligncenter">
+	<img src="/images/logo.png" class="logo_rect">
+	<h2 class="title"> All right! Let’s refresh your helpdesk.</h2>
+	<p>Creating your account now...</h3>
+	<div class="topborder"></div>
+		
+		<!-- <div id="message"><i>Launching Twitter & Facebook support</i></div> -->
+		<div id="thankyou_message" class="thankyou_message"></div>
+		<div class="sloading loading-block"></div>
+	</div>
+</div>
+<!-- google analytices starts here -->
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-20651269-1']);
+_gaq.push(['_setDomainName', '.freshdesk.com']);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+<!-- google analytices ends here -->
+<% javascript_tag do%>				  
+ setTimeout(function(){
+ window.location = '<%= @rediret_url %>'
+},2000);
+<%end%>

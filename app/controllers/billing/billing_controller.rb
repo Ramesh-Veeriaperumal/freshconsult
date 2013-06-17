@@ -1,8 +1,9 @@
 class Billing::BillingController < ApplicationController
-
+  
+  skip_before_filter :check_privilege
   before_filter :login_from_basic_auth, :ssl_check
 
-  skip_before_filter :set_time_zone, :set_locale, :check_account_state, :ensure_proper_protocol,
+  skip_before_filter :set_current_account, :set_time_zone, :set_locale, :check_account_state, :ensure_proper_protocol,
                       :check_day_pass_usage, :redirect_to_mobile_url
 
   before_filter :ensure_right_parameters, :retrieve_account, :if => :event_monitored?
@@ -43,6 +44,11 @@ class Billing::BillingController < ApplicationController
     end
   end
 
+  def select_shard(&block)
+    Sharding.select_shard_of(params[:content][:customer][:id]) do 
+        yield 
+    end
+  end
 
   private
 

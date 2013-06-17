@@ -54,7 +54,7 @@
   jQuery('.wf_order_type, .wf_order').live("click", function(ev){
       ev.preventDefault();
       setCookie(this.className, this.getAttribute(this.className),'/support/');
-      jQuery("#ticket-list").html("<div class='loading-box'></div>"); 
+      jQuery("#ticket-list").html("<div class='sloading loading-small loading-block'></div>"); 
       jQuery.ajax({
         url: "/support/tickets/filter/<%=current_filter%>?partial=true",
         type: "POST",

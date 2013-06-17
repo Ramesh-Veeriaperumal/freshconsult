@@ -38,7 +38,7 @@ class Agent < ActiveRecord::Base
 
   after_save  :update_agent_levelup
   after_update :publish_game_notifications
-  
+
   TICKET_PERMISSION = [
     [ :all_tickets, 1 ], 
     [ :group_tickets,  2 ], 
@@ -46,6 +46,8 @@ class Agent < ActiveRecord::Base
   ]
  
   named_scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
+  named_scope :full_time_agents, :conditions => { :occasional => false, 'users.deleted' => false}
+  named_scope :occasional_agents, :conditions => { :occasional => true, 'users.deleted' => false}
   
   PERMISSION_TOKENS_BY_KEY = Hash[*TICKET_PERMISSION.map { |i| [i[1], i[0]] }.flatten]
   PERMISSION_KEYS_BY_TOKEN = Hash[*TICKET_PERMISSION.map { |i| [i[0], i[1]] }.flatten]
@@ -83,10 +85,30 @@ def signature_htm
   self.signature_html
 end
 
-def self.filter(page, state = "active", per_page = 20)
-  paginate :per_page => per_page, :page => page,
-           :include => [ {:user => :avatar} ], 
-           :conditions => { :users => { :deleted  => !state.eql?("active") } }
+# State => Fulltime, Occational or Deleted
+# 
+def self.filter(state = "active", order = "name", order_type = "ASC", page = 1, per_page = 20)
+  order = "name" unless order
+  order_type = "ASC" unless order_type
+  paginate :per_page => per_page, 
+           :page => page,
+           :include => { :user => :avatar },
+           :conditions => filter_condition(state),
+           :order => "#{order} #{order_type}"
+end
+
+def self.filter_condition(state)
+  unless "deleted".eql?(state)
+    return ["users.deleted = ? and agents.occasional = ?", false, "occasional".eql?(state)]
+  else
+    return ["users.deleted = ?", true]
+  end
+end
+
+def assumable_agents
+  account.users.technicians.select do |agent|
+    user.can_assume?(agent)
+  end
 end
 
 #This method returns true if atleast one of the groups that he belongs to has round robin feature

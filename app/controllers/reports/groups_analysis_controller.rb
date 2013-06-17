@@ -5,7 +5,6 @@ class Reports::GroupsAnalysisController < ApplicationController
   include Reports::HelpdeskReportControllerMethods
   
   before_filter { |c| c.requires_feature :enterprise_reporting }
-  before_filter { |c| c.requires_permission :manage_reports }
   before_filter :parse_wf_params,:set_selected_tab, :set_time_range,
                 :only => [:generate,:generate_pdf,:send_report_email,:fetch_chart_data]
   before_filter :filter_data,:set_selected_tab, :only => [:index]

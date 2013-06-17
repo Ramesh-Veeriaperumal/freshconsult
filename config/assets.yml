@@ -41,8 +41,7 @@ stylesheets:
     - public/stylesheets/portal/preview.css
 
   widget:
-    - public/stylesheets/app/common.css
-    - public/stylesheets/app/ie.css
+    - public/stylesheets/portal/widget.css    
 
   freshwidget:
     - public/stylesheets/freshwidget.css
@@ -53,6 +52,12 @@ stylesheets:
 
   tkt_details_print:
     - public/stylesheets/app/tkt_details_print.css
+
+  survey:
+    - public/stylesheets/support/rating.css
+
+  survey:
+    - public/stylesheets/support/rating.css
 
   gadget:
     - public/stylesheets/app/common.css
@@ -79,6 +84,9 @@ stylesheets:
 
   getting_started:
     - public/stylesheets/app/getting_started.css
+
+  rating:
+    - public/stylesheets/portal/rating.css
 
 javascripts:
   defaults:
@@ -130,6 +138,9 @@ javascripts:
 
   workspace: 
     - public/javascripts/bootstrap/twipsy.js
+    - public/javascripts/pattern/spin.js
+    - public/javascripts/pattern/jquery.spin.js
+    - public/javascripts/app/loading-init.js
     # - public/javascripts/bootstrap/modal.js
     - public/javascripts/bootstrap/tabs.js
     - public/javascripts/bootstrap/popover.js
@@ -175,8 +186,10 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
-    - public/javascripts/helpdesk/multifile.js
+    - public/javascripts/portal/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
+    - public/javascripts/frameworks/plugins/select2.js
+    # - public/javascripts/lte-ie7/feeback-widget.js    
     - public/javascripts/feedback_widget_form.js
     - public/javascripts/utils.js
 
@@ -200,7 +213,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
     - public/javascripts/hackz.js
-    - public/javascripts/helpdesk/multifile.js
+    - public/javascripts/portal/multifile.js
     - public/javascripts/lib/nestedtree.js    
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/portal/jquery-ui-1.9.2.custom.js

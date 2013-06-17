@@ -51,10 +51,10 @@ module Reports::HelpdeskAnalysisReport
     #Response Time
     data_hash.store('first_response_time',
       prepare_data_series(I18n.t('adv_reports.comparison_reports.avg_first_resp_time'),'avgfirstresptime',tickets_count,
-        {:type => "line", :color => "#4a7ebb"}))
+        {:type => "line", :color => "#4a7ebb"},true))
     data_hash.store('avg_response_time',
       prepare_data_series(I18n.t('adv_reports.comparison_reports.avg_resp_time'),'avgresponsetime',tickets_count,
-        {:type => "line", :color => "#be4b48"}))
+        {:type => "line", :color => "#be4b48"},true))
 
     #Interactions..
     data_hash.store('customer_interactions',
@@ -74,12 +74,12 @@ module Reports::HelpdeskAnalysisReport
     return data_hash
   end
 
-  def prepare_data_series(name,col_name,data_array,options={})
+  def prepare_data_series(name,col_name,data_array,options={},convertTimeToHrs = false)
     data_hash, series_data, dates_with_data = {}, [], {}
     data_hash.store(:name,name)
     data_array.each do |tkt|
       next if tkt['created_at'].nil?
-      data_value = tkt[col_name].to_f.round(2)
+      data_value = convertTimeToHrs ? ((tkt[col_name].to_f)/3600).round(2) : tkt[col_name].to_f.round(2)
       dates_with_data.store(Time.parse("#{tkt['created_at']}").to_i*1000, data_value)
     end
     # Pushing the dates with 0 tickets

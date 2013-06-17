@@ -66,9 +66,9 @@ module Users
             :subject => Liquid::Template.parse(e_notification.requester_subject_template).render , :reply_email => reply_email)
       end
     end
-    
-    def deliver_account_admin_activation
-        UserNotifier.send_later(:deliver_account_admin_activation,self)
+  
+    def deliver_admin_activation
+      UserNotifier.send_later(:deliver_admin_activation,self)
     end
 
     private

@@ -10,7 +10,7 @@ $application-logo-layout:vertical;
 /*Report tab icons */
 @import "cdn-ignored/sprites/reports-icon/*.png";
 $reports-icon-layout:horizontal;
-@include all-reports-icon-sprites;
+@include all-reports-icon-sprites(true);
 
 /*Ticket View icons */
 @import "cdn-ignored/sprites/ticket-view/*.png";

@@ -1,4 +1,5 @@
 class AddTimestampsToEsEnabledAccount < ActiveRecord::Migration
+  shard :none
   def self.up
   	add_timestamps(:es_enabled_accounts)
   end

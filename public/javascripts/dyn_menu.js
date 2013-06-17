@@ -49,7 +49,7 @@
 
 		var prepareEmptyMenu = function(menuid) {
 			return $('<div>').attr('id',"menu_" + menuid)
-							.addClass('loading fd-ajaxmenu')
+							.addClass('sloading loading-small  fd-ajaxmenu')
 							.html('<div class="contents"></div>');
 		}
 
@@ -72,7 +72,7 @@
 
 		var loadContent = function(menuid, contents, text_to_match) {
 			var content_element = $('#menu_' + menuid).find('.contents').first();
-			$('#menu_' + menuid).removeClass('loading');
+			$('#menu_' + menuid).removeClass('sloading loading-small');
 			content_element.html(contents);  
 			setActiveElementStyle(menuid, text_to_match);
 

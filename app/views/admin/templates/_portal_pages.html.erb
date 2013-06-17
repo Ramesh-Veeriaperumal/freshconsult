@@ -12,7 +12,7 @@
 										:portal_id => @portal.id,
 										:page_type => page_id,
 										:page_group => key), 
-							:before => "jQuery('#Customizepage').html('<div class=\"loading-box\"></div>')",
+							:before => "jQuery('#Customizepage').html('<div class=\"sloading loading-block loading-small\"></div>')",
 							:method => :get, 
 							:html => { :id => "page_id_#{page_id}", :class => "page-btn" },
 							:update => "Customizepage" %>

@@ -359,26 +359,13 @@ hr.content-divider{
 	}
 }
 
-.avatar-span{
-	margin-bottom: 15px;
-}
-
-
-.attachments-list-form{
-	margin: 8px 0;
-	padding: 5px 10px;
-	background: #f3f3f3;
-	border: 1px solid #efefef;
-}
-.attach-wrapper{ margin-top: 5px; }
-
+.avatar-span{ margin-bottom: 15px; }
+.attach-wrapper, .attachments-list-form{ margin-top: 5px; }
 .dropbox_div{
 	border-left: 1px solid #AAAAAA; float: left; margin: 10px; padding-left: 20px; margin-top:1px;
 	.db-chooser .dropbox_button{ cursor: pointer; }
 }
-.attach_file{
-	float:left; padding-right:20px
-}
+.attach_file{ float:left; padding-right:20px }
 
 .db-chooser{
 	label{ margin-right: 50%; }
