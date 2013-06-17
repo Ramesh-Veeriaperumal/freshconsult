@@ -121,7 +121,7 @@ module SupportHelper
 	end
 
 	def portal_fav_ico
-    fav_icon_content = MemcacheKeys.fetch(["v3","portal","fav_ico",current_portal]) do
+    fav_icon_content = MemcacheKeys.fetch(["v4","portal","fav_ico",current_portal]) do
     	url = current_portal.fav_icon.nil? ? '/images/favicon.ico' : 
     		AWS::S3::S3Object.url_for(current_portal.fav_icon.content.path, current_portal.fav_icon.content.bucket_name,:use_ssl => true, :expires_in => 30.days)
 			"<link rel='shortcut icon' href='#{url}' />"

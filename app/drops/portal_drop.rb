@@ -18,7 +18,7 @@ class PortalDrop < BaseDrop
 
   # Portal branding related information
   def logo_url
-    @logo_url ||= MemcacheKeys.fetch(["v2","portal","logo_href",source]) do
+    @logo_url ||= MemcacheKeys.fetch(["v3","portal","logo_href",source]) do
       source.logo.present? ? 
         AWS::S3::S3Object.url_for(source.logo.content.path(:logo), source.logo.content.bucket_name,:use_ssl => true, :expires_in => 30.days) : 
         "/images/logo.png"
