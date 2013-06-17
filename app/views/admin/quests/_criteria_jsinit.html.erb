@@ -30,7 +30,7 @@
 
           base.questinput = questinput[0];
           
-          if(base.questinput) {
+          if(base.questinput.length > 0) {
               base.processInputFeeds();
           }
           
@@ -51,7 +51,7 @@
             $("#showbadges").html("Change");
           });
 
-          $('#formQuestNew input[type = submit]').click(function(e) {
+          $('#formQuestNew').submit(function(e) {
             var questObj = {};
             var questData = [];
 
@@ -79,7 +79,6 @@
               e.stopImmediatePropagation();
               return false;
             }
-            $('#formQuestNew').submit();
           });
       };
       
