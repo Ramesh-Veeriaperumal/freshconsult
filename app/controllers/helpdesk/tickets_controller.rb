@@ -294,6 +294,7 @@ class Helpdesk::TicketsController < ApplicationController
   def update_ticket_properties
     old_item = @item.clone
     if @item.update_attributes(params[nscname])
+      update_tags unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
       respond_to do |format|
         format.html { 
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
