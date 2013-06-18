@@ -32,6 +32,7 @@ class Helpdesk::ConversationsController < ApplicationController
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end
+      flash[:notice] = t(:'flash.tickets.reply.success')
       process_and_redirect
     else
       create_error
@@ -43,6 +44,7 @@ class Helpdesk::ConversationsController < ApplicationController
     if @item.save
       add_forum_post if params[:post_forums]
       @item.create_fwd_note_activity(params[:helpdesk_note][:to_emails])
+      flash[:notice] = t(:'fwd_success_msg')
       process_and_redirect
     else
       create_error
