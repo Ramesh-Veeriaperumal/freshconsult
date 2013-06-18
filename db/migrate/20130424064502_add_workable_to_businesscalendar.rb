@@ -2,10 +2,10 @@ class AddWorkableToBusinesscalendar < ActiveRecord::Migration
   shard :none
   def self.up
     Lhm.change_table :business_calendars, :atomic_switch => true do |m|
-      m.add_column :name, :string
-      m.add_column :description, :string
-      m.add_column :time_zone, :string
-      m.add_column :is_default, :boolean, :default => false
+      m.add_column :name, "varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL"
+      m.add_column :description, "varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL"
+      m.add_column :time_zone, "varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL"
+      m.add_column :is_default, "tinyint(1) DEFAULT '0'"
     end
 
   	execute("update business_calendars,accounts set business_calendars.time_zone = accounts.time_zone 
