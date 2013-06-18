@@ -94,7 +94,7 @@
     admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications
     admin.resources :getting_started, :collection => {:rebrand => :put}
-    admin.resources :business_calender, :member => { :update => :put }
+    admin.resources :business_calendars
     admin.resources :security, :member => { :update => :put }, :collection => { :request_custom_ssl => :post }
     admin.resources :data_export, :collection => {:export => :any }    
     admin.resources :portal, :only => [ :index, :update ]

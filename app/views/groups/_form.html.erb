@@ -18,6 +18,15 @@
 						 <%= f.text_area :description , :class => "text required smallpara span12", :placeholder => t('group.description')  %>
 					  </div>
 		 		</li>
+		 		<% if feature?(:multiple_business_hours) %>
+		 		<li class="row-fluid margin-bottom">
+		 			 <%= f.label :business_calendar, "<b> #{t('group.business_calendar')} </b>", :class => "control-label span2" %>
+					  <div class="span10">
+					  	<input type="hidden" id="business_calendar" name="group[business_calendar]" class="span5"
+            					data-placeholder = "<%= t("group.select_business_calendar") %>"/>
+					  </div>
+		 		</li>
+		 		<% end %>
 		 		<li class="row-fluid margin-bottom">
 		 			<label class="control-label span2"><b><%=t('group.info1')%></b></label>
 		 			<input type="hidden" id="agent_list" name="group[agent_list]" class="span10"
@@ -64,7 +73,7 @@
             				</li>
             				<li class="row-fluid">
             					<span class="span6 group-text-align"> &nbsp; &nbsp;<%#=t('group.info3')%> ....then send escalation email to :</span>
-            					<input type="hidden" id="escalate_to" name="group[escalate_to]" class="span3"
+            					 <input type="hidden" id="escalate_to" name="group[escalate_to]" class="span3"
             					data-placeholder = "<%= t("group.select_an_agent") %>"/>
             				</li>
             			</ul>
@@ -146,8 +155,40 @@ jQuery('#escalate_to').select2({
     }
 });
 
-jQuery("#escalate_to").select2("val",[]);
+jQuery("#escalate_to").select2("val",'<%=@group.escalate_to%>');
 
+<%  if feature?(:multiple_business_hours) %>
+<%
+	calendar = []
+	current_account.business_calendar.each do |bc|
+		calendar << "{id: '#{bc.id}',
+                  value: '#{escape_javascript(bc.name)}',
+                  text: '#{escape_javascript(bc.name)}'}"
+	end
+
+	selected_bc = []
+	if @group.business_calendar
+		selected_bc << "{id: '#{@group.business_calendar.id}',
+                  value: '#{escape_javascript(@group.business_calendar.name)}',
+                  text: '#{escape_javascript(@group.business_calendar.name)}'}"
+    end
+
+%>
+
+
+jQuery('#business_calendar').select2({
+	multiple: false,
+	minimumResultsForSearch: 1000, //Keep high search value to shut off search box. Couldnt find a better way.
+	data: [<%=calendar.join(",")%>],
+	initSelection : function (element, callback) {
+		var data = {id: '<%=@group.business_calendar && @group.business_calendar.id%>', text: '<%=@group.business_calendar && @group.business_calendar.name%>'};
+        callback(data);
+    }
+});
+
+jQuery("#business_calendar").select2("val",'<%=@group.business_calendar && @group.business_calendar.id%>');
+
+<% end %>
 
 });
 
