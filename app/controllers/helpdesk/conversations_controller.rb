@@ -46,6 +46,7 @@ class Helpdesk::ConversationsController < ApplicationController
   end
 
   def note
+    build_attachments @item, :helpdesk_note
     if @item.save
       unless params[:helpdesk_note][:to_emails].blank?
         notify_array = validate_emails(params[:helpdesk_note][:to_emails])
@@ -135,7 +136,9 @@ class Helpdesk::ConversationsController < ApplicationController
 
     def process_and_redirect
       Thread.current[:notifications] = current_account.email_notifications
-    
+      options = {}
+      options.merge!({:human=>true}) if(!params[:human].blank? && params[:human].to_s.eql?("true"))  #to avoid unneccesary queries to users
+      
       respond_to do |format|
         format.html { redirect_to item_url }
         format.xml  { render :xml => @item.to_xml(options), :status => :created, :location => url_for(@item) }

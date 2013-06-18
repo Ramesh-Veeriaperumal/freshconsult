@@ -1,6 +1,10 @@
 class ForumCategoriesController < ApplicationController
+  
   include ModelControllerMethods
   include Helpdesk::ReorderUtility
+  
+  skip_before_filter :check_privilege, :only => [:index, :show]
+  before_filter :portal_check, :only => [:index, :show]
   
   rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
   
@@ -104,5 +108,14 @@ class ForumCategoriesController < ApplicationController
       flash[:notice] = I18n.t(:'flash.forum_category.page_not_found')
       redirect_to categories_path
     end
-
+    
+  private
+  
+    def portal_check
+      if current_user.nil? || current_user.customer?
+        return redirect_to support_discussions_path
+      elsif !privilege?(:view_forums)
+        access_denied
+      end
+    end
 end

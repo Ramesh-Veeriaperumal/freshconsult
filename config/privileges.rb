@@ -29,6 +29,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/logmein"
     resource :"integrations/oauth_util"
     resource :"integrations/salesforce" 
+    resource :"integrations/user_credential"
 
     resource :"helpdesk/conversation", :only => [:note]
     resource :"helpdesk/canned_response"

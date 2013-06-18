@@ -2,6 +2,9 @@
 class Solution::FoldersController < ApplicationController
   include Helpdesk::ReorderUtility
 
+  skip_before_filter :check_privilege, :only => :show
+  before_filter :portal_check, :only => :show
+  
   before_filter { |c| c.check_portal_scope :open_solutions }
   before_filter :portal_category?
   before_filter :set_selected_tab       
@@ -146,6 +149,8 @@ class Solution::FoldersController < ApplicationController
       format = params[:format]
       if format.nil? && (current_user.nil? || current_user.customer?)
         return redirect_to support_solutions_folder_path(@folder)
+      elsif !privilege?(:view_solutions)
+        access_denied
       end
     end
 

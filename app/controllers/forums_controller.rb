@@ -1,6 +1,10 @@
 #To Do Shan - Need to use ModelController or HelpdeskController classes, instead of
 #writing/duplicating all the CRUD methods here.
 class ForumsController < ApplicationController 
+  
+  skip_before_filter :check_privilege, :only => [:index, :show]
+  before_filter :portal_check, :only => [:index, :show]
+  
   include Helpdesk::ReorderUtility
 
   rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
@@ -125,5 +129,16 @@ class ForumsController < ApplicationController
     def RecordNotFoundHandler
       flash[:notice] = I18n.t(:'flash.forum.page_not_found')
       redirect_to categories_path
+    end
+    
+  private
+    
+    def portal_check
+      if current_user.nil? || current_user.customer?
+        @forum = params[:id] ? current_account.portal_forums.find(params[:id]) : nil
+        return redirect_to support_discussions_forum_path(@forum)
+      elsif !privilege?(:view_forums)
+        access_denied
+      end      
     end
 end
