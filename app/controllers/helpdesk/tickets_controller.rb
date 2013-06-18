@@ -1,7 +1,7 @@
 require 'fastercsv'
 
 class Helpdesk::TicketsController < ApplicationController  
-  
+    
   include ActionView::Helpers::TextHelper
   include ParserUtil
   include HelpdeskControllerMethods  
@@ -12,11 +12,13 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::Activities
   include Helpdesk::ToggleEmailNotification
   include Helpdesk::ShowVersion
+  
+  skip_before_filter :check_privilege, :only => :show
+  before_filter :portal_check, :only => :show
 
   around_filter :run_on_slave, :only => :user_ticket
 
   before_filter :set_mobile, :only => [:index, :show,:update, :create, :execute_scenario, :assign, :spam, :update_ticket_properties ]
-  before_filter :check_user, :only => [:show, :forward_conv]
   before_filter :set_show_version
   before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index, :filter_options]
   before_filter :clear_filter, :only => :index
@@ -294,6 +296,7 @@ class Helpdesk::TicketsController < ApplicationController
   def update_ticket_properties
     old_item = @item.clone
     if @item.update_attributes(params[nscname])
+      update_tags unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
       respond_to do |format|
         format.html { 
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
@@ -881,9 +884,11 @@ class Helpdesk::TicketsController < ApplicationController
       @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
     end
 
-    def check_user
+    def portal_check
       if !current_user.nil? and current_user.customer?
         return redirect_to support_ticket_url(@ticket)
+      elsif !privilege?(:manage_tickets)
+        access_denied
       end
     end
 

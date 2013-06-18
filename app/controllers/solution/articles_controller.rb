@@ -3,6 +3,9 @@ class Solution::ArticlesController < ApplicationController
 
   include Helpdesk::ReorderUtility
   
+  skip_before_filter :check_privilege, :only => :show
+  before_filter :portal_check, :only => :show
+  
   before_filter :set_selected_tab
 
   before_filter { |c| c.check_portal_scope :open_solutions }
@@ -161,5 +164,14 @@ class Solution::ArticlesController < ApplicationController
         end
 
       end   
+    end
+    
+    def portal_check
+      format = params[:format]
+      if format.nil? && (current_user.nil? || current_user.customer?)
+        return redirect_to support_solutions_article_path(params[:id])
+      elsif !privilege?(:view_solutions)
+        access_denied
+      end
     end
 end

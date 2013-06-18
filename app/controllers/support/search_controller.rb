@@ -291,7 +291,7 @@ class Support::SearchController < SupportController
     def solution_result article
       { 'title' => article.title.html_safe, 
         'group' => article.folder.name, 
-        'desc' => truncate(article.desc_un_html.html_safe, :length => truncate_length ),
+        'desc' => article.desc_un_html.html_safe,
         'type' => "ARTICLE",
         'url' => support_solutions_article_path(article) }
     end

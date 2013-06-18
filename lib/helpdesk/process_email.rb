@@ -85,13 +85,18 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       charsets = params[:charsets].blank? ? {} : ActiveSupport::JSON.decode(params[:charsets])
       [ :html, :text ].each do |t_format|
         unless params[t_format].nil?
-          charset_encoding = charsets[t_format.to_s] 
+          charset_encoding = charsets[t_format.to_s].strip()
           if !charset_encoding.nil? and !(["utf-8","utf8"].include?(charset_encoding.downcase))
             begin
               params[t_format] = Iconv.new('utf-8//IGNORE', charset_encoding).iconv(params[t_format])
             rescue Exception => e
               mapping_encoding = {
-                "ks_c_5601-1987" => "CP949"
+                "ks_c_5601-1987" => "CP949",
+                "unicode-1-1-utf-7"=>"UTF-7",
+                "_iso-2022-jp$esc" => "ISO-2022-JP",
+                "charset=us-ascii" => "us-ascii",
+                "iso-8859-8-i" => "iso-8859-8",
+                "unicode" => "utf-8"
               }
               if mapping_encoding[charset_encoding.downcase]
                 params[t_format] = Iconv.new('utf-8//IGNORE', mapping_encoding[charset_encoding.downcase]).iconv(params[t_format])
