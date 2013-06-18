@@ -48,6 +48,11 @@ class Admin::SupervisorRulesController < Admin::VaRulesController
       STATE_FILTERS
     end
 
+    def remove_description_filter filter_hash
+      filter_hash.delete_if {|option| option[:name].to_s.include?('description')}
+      filter_hash
+    end
+
     def additional_actions
       if current_account.features?(:multi_product)
         { 9 => { :name => "product_id", :value => t('admin.products.assign_product'),

@@ -4990,7 +4990,8 @@ a.close{
 
 		.note {
 			margin-top:0;
-			background: url(/images/overlay/note_quote.png) no-repeat;
+			background-image: inline-image('cdn-ignored/inline-images/note_quote.png');
+			background-repeat: no-repeat;
 			padding-left: 27px;
 			min-height:13px;
 			padding-top:5px;
@@ -5827,6 +5828,10 @@ a.close{
 	.contact_title{
 		width: 550px;
 	}
+}
+
+.ui-dialog.email_marketing_widget {
+	padding: 8px 20px;
 }
 
 .contact-box{
@@ -7113,135 +7118,6 @@ a.mobile_switchBtn {
 	}
 }
 
-/* Update multiple tickets css start */
-
-.field-item{
-	display:inline;
-	float:left;
-	width:33%;
-	margin-bottom:12px; 
-	label{
-		font-size:13px;
-	} 
-	label.active{
-		font-weight:bold;
-	}
-}
-
-.bulktickets{
-	.update-check-for-fields{
-		margin: -2px 4px 0 0;
-	}
-	#reply-multiple_file{
-		line-height: 16px;
-	}
-    .small_curve{
-        @include border-radius(5px);
-    }
-    .top_spacing{
-        margin-top : 10px;
-    }
-    select{
-        width : 150px;
-    }
-    .inline-field{
-        width: 575px;
-    }
-    .fields{
-        float :left;
-        margin-left : 0px ;
-        width : 575px;
-    }
-    .field-item{
-        @include min-height(50px);
-    }
-    .label{
-        max-height: 18px;
-    }
-    #bulkreplycheck{
-        margin-bottom:0;
-    }
-    #bulkreplyform{
-    	.ui-form{
-    	 min-height: 250px;
-    	}
-    }
-    .request_panel .ui-form li.inline-field div.fields, .request_panel .ui-form fieldset div.fields { margin-left: 0px; padding-top: 4px; position: relative; }
-    .request_panel { 
-    	padding : 0 0px 0px 0px; 
-    	border-spacing: 0px 0px;
-    }
-    .attachment-options { clear : both;}    
-    .request_panel .ui-form .request_form_options .insert-canned-response {
-        position: relative;
-        z-index: 1001;
-    }
-    .canned-response-menu{
-        right : -1px;
-        z-index : 1000;
-        top : -24px;
-    }
-    #update-fields
-    {
-        max-height : 160px;
-        overflow : auto;
-    }
-	.menu-item{
-        width : 350px;
-        a{
-        	padding-left:20px;
-        }
-    }
-    #reply-multiple-cnt-reply-multiple-body{
-    	height: 110px;
-    }
-    #replymultiple{
-    	margin-bottom: 0px;
-    }
-}
-.button-container #loader{
-        height: 35px;
-        width: 33px;
-        float: left;
-        position: relative;
-        left: 390px;
-        top: -6px;
-    }
-.ui-widget-content {
-    .bulktickets li a{
-        color:#369 !important;
-    }
-}
- 
-#cnt-reply-multiple{
-    .request_form_options{ z-index:1000; top:-25px; right:0; }
-    .slim-button { z-index : 1001;}
- 	.ui-form li{
- 		padding-left:0;
- 		padding-right:0;
- 	}
-}
-
-.field-item{
-	display:inline;
-	float:left;
-	width:33%;
-	margin-bottom:12px; 
-	label{
-		font-size:13px;
-	} 
-	label.active{
-		font-weight:bold;
-	}
-}
-
-#reply-fields{
-	.field-item{
-		min-height: 0px;
-	}
-
-}
-
 .page-notification{
 	display:none;
 	position:fixed;
@@ -7335,6 +7211,70 @@ a.mobile_switchBtn {
 	height: 50px;
 }
 
+/* Custom SSL */
+
+.security-form{
+	margin-left: -10px;
+
+	li{
+		padding-top: 30px;
+	}
+}
+
+.thanks_message{
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.helpdesk_url{
+	padding-top: 4px;
+	font-weight: bold;
+}
+
+.extra_tabbed{
+	padding-left: 80px;
+}
+
+.enable_heading{
+	margin-left: 5px;
+	font-weight: bold;
+	font-size: 15px;
+	margin-top: 3px;
+	display: inline-table;
+}
+
+.align{
+	margin-top: -2px;
+}
+
+.faded_text{
+	color: #999;
+}
+
+.custom_ssl_form{
+	border: 1px solid #CCC;
+	padding: 10px;
+	margin-top: 10px;
+	margin-bottom: 30px;
+	border-radius: 5px;
+
+	.domain_field{
+		width: 90%;
+	}
+}
+
+.ssl_enabled_info{
+	text-align: center;
+	background-color: #fdfde5;
+}
+
+.elb_name{
+	font-weight: bold;
+	font-size: 14px;
+}
+
+/* Custom SSL */
+
 /* Add Watcher Start */
 
 div.monitor_div{
@@ -7352,18 +7292,16 @@ div.watchers_tooltip{
     @include min-height(84px);
     height: auto;
     width: 275px;
+    padding:10px;
+    font-size:13px;
     background-color: white;
     @include box-shadow(0px 0px 7px rgba(0,0,0, 0.3));
     @include border-radius(5px);
     z-index: 10000;
 
     .watcher_label{
-        margin-top: 14px;
-        margin-left: 16px;
-        float: left;
         font-size: 16px;
         font-weight: 300;
-        width: 141px;
     }
 
     #watcherlist{
@@ -7399,28 +7337,27 @@ div.watchers_tooltip{
 
     li{
     	display: block;
-    	padding: 5px 16px;
+    	padding: 5px 0px;
     	overflow: hidden;
     }
 
     .add_watcher_text, .view_watcher_text{
-        margin-top: -14px;
-        margin-right: 16px;
-        float: right;
-        text-align: right;
-        font-size: 13px;
-        width: 100px;
         a{
         	color: #369;
         }
     }
-
-    .add_watcher_text{
-		margin-top: -16px;
-	}
-
-	.view_watcher_text{
-		margin-top: 16px;
+    .changing-link{
+	    &.add_watcher_text,&.view_watcher_text{
+			position: absolute;
+			top: 23px;
+			right: -2px;
+			margin-top: -14px;
+	        margin-right: 16px;
+	        float: right;
+	        text-align: right;
+	        font-size: 13px;
+	        width: 100px;
+		}
 	}
 
     .link_disabled{
@@ -7438,11 +7375,8 @@ div.watchers_tooltip{
     }
 
     .watcher_text{
-    	color: #CCC;
-    	margin-left: 3px;
-    	text-align: center;
-    	padding-top: 15px;
-    	padding-right: 10px;
+    	color: #888;
+    	font-size:13px;
     }
 
     .watcher_list{
@@ -7507,8 +7441,8 @@ div.watchers_tooltip{
 	}
 
     .watcher_input{
-		margin: 9px 16px;
-		width: 241px;
+    	margin:10px 0;
+		width: 100%;
 	}
 
 	div.chzn-container{
@@ -7521,8 +7455,7 @@ div.watchers_tooltip{
 
 	.add_cancel_buttons{
 		float: right;
-		padding-right: 13px;
-		padding-bottom: 10px;
+		margin-right: -4px;
 	}
 
 	.submit_watcher{
@@ -8259,22 +8192,19 @@ height: auto;
      }
 }
 .cust_list_table_body{
-    border:1px solid #eee; /* depands upon bootstrap table variable $tableBorder  */
+    border:1px solid #f1f1f1; /* depands upon bootstrap table variable $tableBorder  */
     background:#f6f6f6;
     padding:8px 0 8px 0;
     @include border-radius(5px);
-    @include box-shadow(0px 0px 10px rgba(200, 200, 200, 0.2));
+    @include box-shadow(0px 0px 8px rgba(200, 200, 200, 0.3));
     table{
         background:#fff;
-    	margin:0;
-    	table-layout: fixed;
-    }
-    .item_actions{
-    	padding-right: 5px;
+    	  margin:0;
+        table-layout:fixed;
     }
     .pagination{
     	background:#f6f6f6;
-        border-top:1px solid #eee;     /* depands upon bootstrap table variable $tableBorder  */ 
+        border-top:1px solid #f1f1f1;     /* depands upon bootstrap table variable $tableBorder  */ 
         margin:0px;  
         padding:10px; 
         padding-bottom:0;
@@ -8284,14 +8214,14 @@ height: auto;
     {
     	div.preview_pic{
     	border: 2px solid #CCC;
-		@include border-radius(100%);
-		width: 30px;
-		height: 30px;
+  		@include border-radius(100%);
+  		width: 30px;
+  		height: 30px;
 		}
     	img{
 	        width:30px;
 	        height:30px;  
-			@include border-radius(100%);     
+			    @include border-radius(100%);     
     	}
     }
     .btn-mini{
@@ -8315,10 +8245,58 @@ height: auto;
 		}
 	}
 }
-.va_rule-index, .sla-index{
+
+.agent-list-page {
+  &.deleted-list{
+    tr td
+    {
+    	width:26%; 
+      &:nth-child(4){
+          width:12%;
+      }
+	    &:last-child{
+	        width:10%;
+	    }
+	  } 
+  }
+}
+.agent-list-count{
+  padding: 1px 8px;
+  margin-left: 10px;
+  color: #888;
+  font-size: 0.9em;
+  background-color:#f1f1f1;
+  font-weight: bold;
+  @include border-radius(10px);
+  @include text-shadow(1px 1px 2px #fff);
+  @include box-shadow(1px 1px 2px #fff);
+  &.bg-dark{
+    color:#fff;
+    @include text-shadow(1px 1px 2px #aaa);
+    background-color:#888;
+  }
+  &.bg-red{
+    color:#fff;
+    @include text-shadow(1px 1px 2px #aaa);
+    background-color:#990303;
+  }
+}
+
+.agent-count-message{
+  margin-right:20px;
+}
+.table-striped-body{
+	table td{
+		width:75%;
+		&:last-child{
+			width:25%;
+		}
+	}
+}
+
+.va_rule-index,.sla-index{
 	table{
-	    tr td
-	    {
+	    tr td{
 	    	&:first-child{
 					width:110px;
 					padding: 3px;
@@ -8330,8 +8308,17 @@ height: auto;
 		    form{
 		    	margin:0;
 		    }
-		}
-	}
+  		}
+  }
+}
+
+.agent-roles-list{
+   table tr td{
+     width:85%;
+     &:last-child{
+       width:15%;
+     }
+   }
 }
 .agent_edit{
 	label{
@@ -8341,8 +8328,8 @@ height: auto;
 	}
 	.info_data, .info-data {
 		display: block;
-		margin-top: -5px;
-		padding-left: 25px;
+		margin-top: 1px;
+    font-weight:normal;
 	}
 	.avatar-controls{
 		color:#999;
@@ -8363,18 +8350,53 @@ height: auto;
 		clear:both;
 	}
 }
-	.agent-role{
-		margin-top:30px;
-		li{
-			margin-bottom:15px;
-		}
-		input[type="radio"]{
-			float: left;
-			margin-right: 10px;
-			margin-top: 8px;	
-		}
+.agent-role{
+	margin-top:30px;
+	margin-bottom:30px;
+	li{	margin-bottom:10px; }
+	input[type="radio"]{
+		float: left;
+		margin-right: 10px;
+		margin-top: 8px;	
 	}
+}
+.agent-role-modal {
+  ul {
+     border:1px solid #eee;
+     @include border-radius(6px);
+     overflow-y: auto;
+     max-height: 360px;
+    li{
+      padding: 10px 15px 0;
+      border-bottom: 1px solid #eee;
+      &.selected_to_yellow {
+        background-color:#fffad8;
+         &:nth-child(odd){
+           background-color:#fffad8;
+         }
+      }
+      &:first-child{
+         @include border-top-left-radius(6px);
+         @include border-top-right-radius(6px);         
+      }
+      &:last-child{
+        border:0;
+      }
+      &:nth-child(odd){
+        background-color: #fbfbfb;
+      }
+      .checkbox input[type="checkbox"]{
+        margin-top: 2px;
+      }
+      label {
+        cursor: pointer;
+      }
+    }
+    
+  }
+}
 .icon_remove{
+  cursor:pointer;
 	width: 15px;
 	height: 15px;
 	position: relative;
@@ -8385,6 +8407,7 @@ height: auto;
 	float: left;
 	margin: 8px;
 	margin-left: 0;
+  margin-top: 0;
 	span {
 		background-color: white;
 		height: 2px;
@@ -8415,16 +8438,33 @@ height: auto;
 		margin-bottom:0;
 	}
 }
+.new-role{
+	padding:15px 0;
+	.role-section{
+		border-left:1px solid #bebebe;
+		padding-left:20px;
+		margin-bottom:40px;
+	}
+}
 .role-nav{
-	padding:0px 0 35px 0;
-	border-left:1px solid #ccc;
 	li{
-		padding:10px;
-		background:#f6f6f6;
-		border-top:1px solid #fff;
-		padding-right:20px;
-		&:hover{
-			background:#f3f3f3;
+		padding:0px 0px 30px 10px;
+		float:left;
+		background:#fff;
+		&:first-child{
+			padding-left:0;
+		}
+		&:last-child{
+			a{
+				border:0;
+			}
+		}
+		a{
+			padding-right:10px;
+			border-right:1px solid #f6f6f6;
+			&:hover{
+				text-decoration:underline;
+			}
 		}
 	}
 }
@@ -8630,31 +8670,7 @@ height: auto;
 }
 
 /*!pattern Need to delete after pattern intagrated to product */
-.watchers_tooltip{
-	.btn-primary {
-		color: white;
-		text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-		background-color: #373737;
-		background-image: -moz-linear-gradient(top, #444, #222);
-		background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#444), to(#222));
-		background-image: -webkit-linear-gradient(top, #444, #222);
-		background-image: -o-linear-gradient(top, #444, #222);
-		background-image: linear-gradient(to bottom, #444, #222);
-		background-repeat: repeat-x;
-		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF444444', endColorstr='#FF222222', GradientType=0);
-		border-color: #222 #222 black;
-		border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-		filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-	}
-	.btn-primary:hover{
-		color: white;
-		background-color: #222;
-	}
-	.btn-primary[disabled]:hover{
-		border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-		background-color: #373737;
-	}
-}
+
 .ff_item{
 	.select2{
 		width: 190px;
@@ -9226,10 +9242,10 @@ height: auto;
 			margin-left: 0px;
 		}
 		.checkbox{
-	      label{
-	        padding-top: 2px;
-	      }
-	    }
+			label{
+				padding-top: 2px;
+			}
+		}
 		.text input[type="text"]{
 			width: 180px;
 		}
@@ -10081,7 +10097,10 @@ div.gcal-confirm-modal-content{ width: 100%; }
 		width: auto;
 	}
 }
-
+.error-text {
+	color: #D00;
+}
+ 
 // Pjax Debug related styles
 #benchmarkresult{
 	width: 25%;

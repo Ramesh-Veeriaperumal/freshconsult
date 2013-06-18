@@ -5,11 +5,11 @@ class Reports::CustomerGlanceReportsController < ApplicationController
   include Reports::HelpdeskReportControllerMethods
   include Reports::GlanceReportControllerMethods
   
-  before_filter { |c| c.requires_feature :enterprise_reporting }
-  before_filter { |c| c.requires_permission :manage_reports }
+  before_filter { |c| c.requires_feature :advanced_reporting }
   before_filter :parse_wf_params,:set_selected_tab,
                 :only => [:generate,:generate_pdf,:send_report_email,:fetch_activity_ajax,:fetch_metrics]
   before_filter :filter_data,:set_selected_tab, :only => [:index]
+  before_filter :pass_solution_artical_link, :only => [:fetch_activity_ajax,:fetch_metrics]
 
   def index
     
@@ -40,6 +40,7 @@ class Reports::CustomerGlanceReportsController < ApplicationController
     conditions = @sql_condition.join(" AND ")
     @data_obj = helpdesk_activity_query conditions
     @prev_data_obj = helpdesk_activity_query(conditions, true)
+    @helptext_for = "customer"
     render :partial => "/reports/helpdesk_glance_reports/glance_report_metric"
   end
   def fetch_activity_ajax
@@ -58,6 +59,10 @@ class Reports::CustomerGlanceReportsController < ApplicationController
     # puts "===pdfclass=#{pdf.class}"
     # Reports::PdfSender.deliver_send_report_pdf(pdf)
 
+  end
+
+  def pass_solution_artical_link
+      @solution_artical_link = %(https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85336-how-to-read-customer-at-a-glance-report)
   end
 
   protected

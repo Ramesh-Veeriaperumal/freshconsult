@@ -5,7 +5,7 @@ class Helpdesk::TicketsExport
 
   def self.perform(export_params)
 
-    SeamlessDatabasePool.use_persistent_read_connection do
+    Sharding.run_on_slave do
       export_params.symbolize_keys!
       user = Account.current.users.find(export_params[:current_user_id])
       user.make_current
@@ -39,7 +39,8 @@ class Helpdesk::TicketsExport
       select = "helpdesk_tickets.* "
       select = "DISTINCT(helpdesk_tickets.id) as 'unique_id' , #{select}" if sql_conditions[0].include?("helpdesk_tags.name")
       csv_string = CSVBridge.generate do |csv|
-        csv << headers
+        csv_headers = headers.collect {|header| csv_hash[header]}
+        csv << csv_headers
         Account.current.tickets.find_in_batches(:select => select,
                                         :conditions => sql_conditions, 
                                         :include => [:ticket_states, :ticket_status, :flexifield,
@@ -49,19 +50,16 @@ class Helpdesk::TicketsExport
           items.each do |record|
             csv_data = []
             headers.each do |val|
-              csv_data << record.send(csv_hash[val])
+              data = record.send(val)
+              csv_data << ((data.blank? || (data.is_a? Integer)) ? data : (CGI::unescapeHTML(data.to_s)))
             end
             csv << csv_data
           end
         end
       end
-      # if (export_params[:later])
       Rails.logger.info "<--- Triggering export tickets csv mail. User Email Id: #{User.current.email} --->"
       Rails.logger.info "<--- Params #{export_params[:ticket_state_filter]}, #{export_params[:start_date]}, #{export_params[:end_date]} --->"
       Helpdesk::TicketNotifier.deliver_export(export_params, csv_string, User.current)
-      # else
-      #   csv_string
-      # end
     end
   end
 end

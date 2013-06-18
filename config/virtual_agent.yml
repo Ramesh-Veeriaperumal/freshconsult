@@ -69,3 +69,13 @@ fields:
         custom_checkbox: value
         custom_dropdown: update
         nested_field: nested_field
+
+DEFAULT_NEGATABLE_COLUMS:
+    - priority
+    - ticket_type
+    - status
+    - responder_id
+    - group_id
+    - product_id
+NEGATE_OPERATOR: negation
+NEGATE_CONDITION_OPERATOR: ' OR ' 

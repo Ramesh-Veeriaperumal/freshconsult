@@ -1,5 +1,6 @@
 class Support::SurveysController < ApplicationController
 
+  skip_before_filter :check_privilege
   before_filter :load_handle, :except => [:create_for_portal]
   
   include SupportTicketControllerMethods

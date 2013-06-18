@@ -16,7 +16,7 @@
   <div class="control-group">
     <label id="description-label" for="helpdesk_ticket_description" class="control-label"><%= t('comments') %></label>
     <div class="controls">
-      <%= text_area_tag "helpdesk_ticket[description]", "", :rows => 5, :class => "span8" %>
+      <%= text_area_tag "helpdesk_ticket[ticket_body_attributes][description]", "", :rows => 5, :class => "span8" %>
     </div>
   </div>
   <div class="form-actions">

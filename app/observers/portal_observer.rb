@@ -1,17 +1,75 @@
 class PortalObserver < ActiveRecord::Observer
-	observe Topic, Portal::Template, Post, Helpdesk::TicketField, Portal, 
-	ForumCategory, Forum, Solution::Category, Solution::Folder, Solution::Article,
-	Portal::Page
+  include Cache::Memcache::Portal
+	include Redis::RedisKeys
 
-	include RedisKeys
+  	def before_update(portal)
+  	  backup_changes(portal)
+    end
 
-	def increment_version(*args)
-		return unless Account.current
-		return if get_key(PORTAL_CACHE_ENABLED) === "false"
-		Rails.logger.debug "::::::::::Sweeping from portal"
-		key = PORTAL_CACHE_VERSION % { :account_id => Account.current.id }
-		increment key
-	end
-	alias_method :after_save, :increment_version
-	alias_method :after_destroy, :increment_version
+    def before_destroy(portal)
+      backup_changes(portal)
+    end
+
+    def after_create(portal)
+      create_shard_mapping(portal)
+      create_template(portal)
+    end
+
+    def after_update(portal)
+      update_shard_mapping(portal)
+    end
+  	 
+  	def after_destroy(portal)
+  	  remove_domain_mapping(portal)
+  	end
+
+    def after_commit_on_update(portal)
+      clear_portal_cache
+    end
+
+    def after_commit_on_destroy(portal)
+      clear_portal_cache
+    end
+
+ private
+
+   def create_template(portal)
+      portal.build_template()
+      portal.template.save()
+    end
+
+    def backup_changes(portal)
+      @old_object = Portal.find_by_account_id_and_id(portal.account_id,portal.id)
+      @all_changes = portal.changes.clone
+      @all_changes.symbolize_keys!
+    end
+
+	
+	def create_shard_mapping(portal)
+      unless portal.portal_url.blank?
+        create_domain_mapping(portal)
+      end
+    end
+
+    def update_shard_mapping(portal)
+      if portal.portal_url.blank? 
+        remove_domain_mapping(portal)
+      elsif  @old_object.portal_url.blank? and !portal.portal_url.blank?
+        create_domain_mapping(portal)
+      else
+        domain_mapping = DomainMapping.find_by_portal_id_and_account_id(portal.id,portal.account_id)
+        domain_mapping.update_attribute(:domain,portal.portal_url)  
+      end
+    end
+
+    def create_domain_mapping(portal)
+      shard_mapping = ShardMapping.find_by_account_id(portal.account_id)
+      shard_mapping.domains.create!({:domain => portal.portal_url,:account_id => portal.account_id, :portal_id => portal.id})
+    end
+
+    def remove_domain_mapping(portal)
+      domain_mapping = DomainMapping.find_by_portal_id_and_account_id(portal.id,portal.account_id)
+      domain_mapping.destroy if domain_mapping
+    end
+	
 end

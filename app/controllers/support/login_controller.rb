@@ -1,11 +1,12 @@
 class Support::LoginController < SupportController
 
-	include RedisKeys
+	include Redis::RedisKeys
+	include Redis::TicketsRedis
 
 	skip_before_filter :check_account_state
 	
 	def new
-		if current_account.sso_enabled? and (request.request_uri != "/login/normal") 
+		if current_account.sso_enabled? and check_request_referrer 
 		  	redirect_to current_account.sso_options[:login_url]
 		else
 		  	@user_session = current_account.user_sessions.new
@@ -38,7 +39,10 @@ class Support::LoginController < SupportController
 	    end
 
 	    def remove_old_filters
-	      remove_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session.session_id})
+	      remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session.session_id})
 	    end
 
+      def check_request_referrer
+        request.referrer ? (URI(request.referrer).path != "/login/normal") : true
+      end
 end

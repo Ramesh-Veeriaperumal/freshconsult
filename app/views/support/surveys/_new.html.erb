@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html>
-<head>	
-	<link rel="stylesheet" href="/stylesheets/support/rating.css">
+<head>
+	<%= include_cloudfront_css :rating %>
 	<%= include_cloudfront_js :survey  %>
 </head>
 <body>	
 	<div class="top-strip" style="background-color:<%=@account.main_portal.preferences[:header_color]%>">
-		<div class="brand">
-	    	<% link_to (portal_pref(@account.main_portal, :logo_link).empty?) ? "/home" : portal_pref(@account.main_portal, :logo_link), :class => "logo" do %>
-	          <%= image_tag (@account.main_portal.logo.nil? ? "/images/logo.png?722013" : @account.main_portal.logo.content.url(:logo)) %>
+		<div class="wrapper">
+			<div class="brand">
+		    	<% link_to (portal_pref(@account.main_portal, :logo_link).empty?) ? "/home" : portal_pref(@account.main_portal, :logo_link), :class => "logo" do %>
+		        <%= image_tag (@account.main_portal.logo.nil? ? "/images/logo.png?722013" : @account.main_portal.logo.content.url(:logo)) %>
 
-	        <% end %>
-	        <%= link_to(@account.main_portal.name, "/home", :class => "logo_text") %>
+		        <% end %>
+		        <%= link_to(@account.main_portal.name, "/home", :class => "logo_text") %>
+	    	</div>
     	</div>
 	</div>
 	
@@ -21,7 +23,7 @@
 			<div class="highlighter">
 				<div class="smily">
 					<% rating_img = (@rating==Survey::HAPPY) ? "happy" : (@rating==Survey::UNHAPPY) ? "unhappy" : "neutral" %>
-					<img src="/images/<%=rating_img%>-smily-tab.png">
+					<i class="smiley-<%=rating_img%>"></i>
 				</div>
 				<div>
 				<%if @rating==Survey::HAPPY%>	
@@ -44,7 +46,9 @@
 				<p class="search-top"><%= t('.additional_info') %></p>
 				<% form_for :survey_handle, :url  => support_survey_feedback_path(@survey_handle.id_token, @rating), :html => { :method => :post, :id => "survey_form" } do |f| -%>
 					<div class="text_con">
-						<%= text_area(:survey, :feedback, :autocomplet => "off", :rel => "ghostwriter", :size => "24", :width => "100%", :class=> "textfield required", :style=>"display:block;resize:none;") %>
+						<%= text_area(:survey, :feedback, :autocomplete => "off", 
+							:rel => "ghostwriter", :size => "24", :width => "100%", 
+							:class=> "textfield required") %>
 					</div>	
 					
 					<div>						

@@ -72,7 +72,7 @@
         var key = "u" + jQuery(this).attr("qid");
         if(!userData[key]) {
           jQuery.ajax({
-              url: "/profiles/info/" + jQuery(this).attr("qid"),
+              url: "/contacts/hover_card/" + jQuery(this).attr("qid"),
               context: jQuery(this),
               type: "GET",
               success: function(data){

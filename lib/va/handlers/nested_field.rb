@@ -58,4 +58,8 @@ class Va::Handlers::NestedField < Va::RuleHandler
     def construct_query query_operator, field_key, field_value
       "flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} #{query_operator} #{field_value}"
     end
+
+    def filter_query_negation(field_key,field_value)
+      "flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} IS NULL OR flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} != '#{field_value.to_s}'"
+    end
 end

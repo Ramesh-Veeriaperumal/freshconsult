@@ -49,7 +49,8 @@ def save_ticket ticket_xml
   return unless requester
   priority_id = ticket_prop.priority_id.to_i() unless ticket_prop.priority_id.blank?
   priority_id = 1 if priority_id < 1
-  props = {:subject=> ticket_prop.subject,:description => ticket_prop.description,:requester_id => requester.id , 
+  props = {:subject=> ticket_prop.subject,:ticket_body_attributes => {:description => ticket_prop.description},
+                    :requester_id => requester.id , 
                     :account_id => @current_account.id , :status =>ZENDESK_TICKET_STATUS[ticket_prop.status.to_i], :due_by => ticket_prop.updated_at.to_datetime(),
                     :ticket_type => ZENDESK_TICKET_TYPES[ticket_prop.ticket_type.to_i] , :created_at =>ticket_prop.created_at.to_datetime(),
                     :updated_at => ticket_prop.updated_at.to_datetime() , :import_id => ticket_prop.display_id , :priority => priority_id  }  
@@ -116,8 +117,10 @@ def ticket_post_process ticket_prop , ticket
     user = @current_account.all_users.find_by_import_id(comment.user_id)
     next if user.blank?
     note_props = comment.to_hash.tap { |hs| hs.delete(:public) }.merge({:user_id =>user.id, :private => !(comment.public.to_bool) ,:incoming =>user.customer?,
-                                                                        :account_id => @current_account.id , :body =>comment.body,:deleted => false ,
+                                                                        :account_id => @current_account.id , 
+                                                                        :note_body_attributes => {:body =>comment.body} ,:deleted => false ,
                                                                         :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] , :created_at =>comment.created_at.to_datetime()})
+    note_props = note_props.to_hash.tap{|hs| hs.delete(:body)}
     @note = ticket.notes.build(note_props)
     @note.save
     #set ticket_states at note level

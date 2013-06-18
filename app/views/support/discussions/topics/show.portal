@@ -67,7 +67,7 @@
 				{% endif %}
 			</div>
 			<div class="p-content hide" id="post-{{first_post.id}}-edit">
-				<div class="loading-box"></div>
+				<div class="sloading loading-small loading-block"></div>
 			</div>
 		</section>
 
@@ -115,7 +115,7 @@
 						{% endif %}
 					</div>
 					<div class="p-content hide" id="post-{{post.id}}-edit">
-						<div class="loading-box"></div>
+						<div class="sloading loading-small loading-block"></div>
 					</div>
 				</section>
 				{% endif %}

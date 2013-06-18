@@ -41,6 +41,11 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) { self.groups.find(:all, :order=>'name' ) }
   end
 
+  def products_from_cache
+    key = ACCOUNT_PRODUCTS % { :account_id => self.id }
+    MemcacheKeys.fetch(key) { self.products.find(:all, :order => 'name') }
+  end
+
   def tags_from_cache
     key = tags_memcache_key
     MemcacheKeys.fetch(key) { self.tags.all }

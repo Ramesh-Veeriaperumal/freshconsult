@@ -55,14 +55,14 @@ reversePaging = function(url, containerId, total, options) {
 				currentSize = jQuery(qryItems).length;
 				if (currentSize < total) {
 
-					jQuery('#' + containerId + ' .oldconvMsg').addClass('loading-center');
+					jQuery('#' + containerId + ' .oldconvMsg').addClass('sloading loading-small');
 					console.log('next-page:'+jQuery('#' + containerId + ' .oldconvMsg').data('next-page'));
 					jQuery.ajax({
 						url: url+oldconvMsg.data('next-page'),
 						success: function (data, textStatus, jqXHR) {
 							jQuery('#' + containerId + ' .oldconvMsg').after(data);
 							
-							jQuery('#' + containerId + ' .oldconvMsg').removeClass('loading-center');
+							jQuery('#' + containerId + ' .oldconvMsg').removeClass('sloading loading-small');
 							currentSize = jQuery(qryItems).length;
 							console.log('currentSize : ' + currentSize);
 							console.log('total : ' + total);

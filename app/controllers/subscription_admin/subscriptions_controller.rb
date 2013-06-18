@@ -6,6 +6,8 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   
   include ModelControllerMethods
   include AdminControllerMethods 
+
+  skip_filter :run_on_slave, :only => [:update,:add_day_passes]
   
   before_filter :set_selected_tab, :only => [ :customers ]
   
@@ -115,8 +117,8 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
                                            :conditions => [ "state != 'trial'"] ) do |subscriptions|
       subscriptions.each do |sub|
         account = sub.account
-        user = account.account_admin
-        csv << [account.name, account.full_domain, user.name,user.email,account.created_at.strftime('%Y-%m-%d'),sub.next_renewal_at.strftime('%Y-%m-%d'),sub.amount,sub.agent_limit,
+        admin_name = "#{account.admin_first_name} #{account.admin_last_name}"
+        csv << [account.name, account.full_domain, admin_name,account.admin_email,account.created_at.strftime('%Y-%m-%d'),sub.next_renewal_at.strftime('%Y-%m-%d'),sub.amount,sub.agent_limit,
                 sub.subscription_plan.name,sub.renewal_period,
                 sub.free_agents] 
       end 
@@ -130,17 +132,14 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   end
   
   protected
+
+
   
    def search(search)
     if search
-      subscriptions = Subscription.find(:all,:include => :account,
-                   :joins => "INNER JOIN accounts on accounts.id = subscriptions.account_id ",
-                   :conditions => ['full_domain LIKE ?', "%#{search}%"]) 
-      user_subscriptions = Subscription.find(:all,
-                   :joins => "INNER JOIN users on users.account_id = subscriptions.account_id and users.user_role = 4 ",
-                   :conditions => ['users.email LIKE ?', "%#{search}%"]) 
-      subscriptions =  subscriptions.concat(user_subscriptions) unless user_subscriptions.nil?
-      subscriptions.uniq
+      Subscription.find(:all,:include => :account,
+       :joins => "INNER JOIN accounts on accounts.id = subscriptions.account_id ",
+       :conditions => ['full_domain LIKE ?', "%#{search}%"])
     else
       Subscription.find(:all,:include => :account, :order => 'created_at desc')
     end
@@ -153,5 +152,5 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   def set_selected_tab
      @selected_tab = :customers
   end
-  
+
 end

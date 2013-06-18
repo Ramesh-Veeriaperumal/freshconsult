@@ -22,7 +22,7 @@ class CreateDefaultObserverRules < ActiveRecord::Migration
       	:active => true
 			})
 
-      ticket_reopening_notification = account.email_notifications.find_by_notification_type(9)
+      ticket_reopening_notification = account.email_notifications.find_by_notification_type(9) if account.email_notifications
       if ticket_reopening_notification.agent_notification?
   			account.all_observer_rules.create!({
   				:name => 'Automatically reopen closed tickets after a response', 

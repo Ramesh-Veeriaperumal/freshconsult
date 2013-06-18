@@ -45,9 +45,9 @@
   z-index: $zindexDropdown;
   display: none; // none by default, but block on "open" of the menu
   float: left;
-  min-width: 160px;
-  padding: 5px 0;
-  margin: 2px 0 0; // override default ul
+  min-width: 195px;
+  padding: 4px 0;
+  margin: 1px 0 0; // override default ul
   list-style: none;
   background-color: $dropdownBackground;
   border: 1px solid #ccc; // Fallback for IE7-8
@@ -73,7 +73,7 @@
   // Links within the dropdown menu
   a {
     display: block;
-    padding: 3px 20px;
+    padding: 3px 24px;
     clear: both;
     font-weight: normal;
     line-height: $baseLineHeight;

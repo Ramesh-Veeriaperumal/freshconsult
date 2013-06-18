@@ -217,7 +217,9 @@ html.ie6, html.ie7, html.ie8{  height:100%; overflow-y:scroll; }
 }
 
 .ie6, .ie7, .ie8, .ie9, .ie10 {
+
 	.choicelist .radiolabel { padding-top: 5px; }
+	
 	#TicketProperties{
 		.edit_helpdesk_ticket{
 			.checkbox input[type="checkbox"]{
@@ -226,6 +228,7 @@ html.ie6, html.ie7, html.ie8{  height:100%; overflow-y:scroll; }
 			}
 		}
 	}
+
 	.hidden_upload {
 		width: 250px;
 		margin-top: 0;

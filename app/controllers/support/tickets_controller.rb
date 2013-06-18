@@ -4,8 +4,7 @@ class Support::TicketsController < SupportController
   include SupportTicketControllerMethods 
   include Support::TicketsHelper
   include ExportCsvUtil
-
-  before_filter { |c| c.requires_permission :portal_request }
+  
   before_filter :only => [:new, :create] do |c| 
     c.check_portal_scope :anonymous_tickets
   end
@@ -40,7 +39,7 @@ class Support::TicketsController < SupportController
       respond_to do |format|
         format.html { 
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
-          redirect_to @item 
+          redirect_to support_ticket_path(@item)
         }
       end
     end
@@ -109,7 +108,7 @@ class Support::TicketsController < SupportController
     def build_tickets
       @company = current_user.customer.presence
       @filter_users = current_user.customer.users if 
-            @company && current_user.client_manager? && @company.users.size > 1 
+            @company && privilege?(:client_manager) && @company.users.size > 1 
 
       @requested_by = current_requested_by
 
@@ -127,13 +126,13 @@ class Support::TicketsController < SupportController
     end
 
     def many_employees_in_company?
-      current_user.client_manager? && has_company? && customer.user > 1
+      privilege?(:client_manager) && has_company? && customer.user > 1
     end
 
 
     # Used for scoping of filters
     def ticket_scope
-      if current_user.client_manager?
+      if privilege?(:client_manager)
         if @requested_by.to_i == 0
           current_user.customer
         else

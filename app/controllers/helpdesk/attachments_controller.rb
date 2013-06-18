@@ -2,19 +2,17 @@
 class Helpdesk::AttachmentsController < ApplicationController
   
   include HelpdeskControllerMethods
- 
-
-  before_filter :check_download_permission, :only => [:show]
-  
+  skip_before_filter :check_privilege
+  before_filter :check_download_permission, :only => [:show]  
   before_filter :check_destroy_permission, :only => [:destroy]
 
   def show
     style = params[:style] || "original"
     redir_url = AWS::S3::S3Object.url_for(@attachment.content.path(style.to_sym),@attachment.content.bucket_name,
-                                          :expires_in => 300.seconds)
+                                          :expires_in => 300.seconds, :use_ssl => true)
     respond_to do |format|
       format.html do
-        redirect_to(  redir_url.gsub( "#{AWS::S3::DEFAULT_HOST}/", '' ))
+        redirect_to redir_url
       end
       format.xml  do
         render :xml => @attachment.to_xml
@@ -36,15 +34,15 @@ class Helpdesk::AttachmentsController < ApplicationController
       @items.each do |attachment|
         if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? attachment.attachable_type
           ticket = attachment.attachable.respond_to?(:notable) ? attachment.attachable.notable : attachment.attachable
-          can_destroy = true if permission?(:manage_tickets) or (current_user && ticket.requester_id == current_user.id)
+          can_destroy = true if privilege?(:manage_tickets) or (current_user && ticket.requester_id == current_user.id)
         elsif ['Solution::Article'].include? attachment.attachable_type
-          can_destroy = true if permission?(:manage_knowledgebase) or (current_user && attachment.attachable.user_id == current_user.id)
+          can_destroy = true if privilege?(:publish_solution) or (current_user && attachment.attachable.user_id == current_user.id)
         elsif ['Account'].include? attachment.attachable_type
-          can_destroy = true if permission?(:manage_users)
+          can_destroy = true if privilege?(:manage_account)
         elsif ['Post'].include? attachment.attachable_type
-          can_destroy = true if permission?(:manage_forums) or (current_user && attachment.attachable.user_id == current_user.id)
+          can_destroy = true if privilege?(:edit_topic) or (current_user && attachment.attachable.user_id == current_user.id)
         elsif ['User'].include? attachment.attachable_type
-          can_destroy = true if permission?(:manage_users) or (current_user && attachment.attachable.id == current_user.id)
+          can_destroy = true if privilege?(:manage_users) or (current_user && attachment.attachable.id == current_user.id)
         end
       end
       
@@ -69,26 +67,24 @@ class Helpdesk::AttachmentsController < ApplicationController
       if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? @attachment.attachable_type
   
         # If the user has high enough permissions, let them download it
-        return true if permission?(:manage_tickets)
+        return true if(current_user && current_user.agent?)
   
         # Or if the note belogs to a ticket, and the user is the originator of the ticket
         ticket = @attachment.attachable.respond_to?(:notable) ? @attachment.attachable.notable : @attachment.attachable
         return (current_user && (ticket.requester_id == current_user.id || ticket.included_in_cc?(current_user.email) || 
-          (current_user.client_manager?  && ticket.requester.customer == current_user.customer))) || 
+          (privilege?(:client_manager)  && ticket.requester.customer == current_user.customer))) || 
           (params[:access_token] && ticket.access_token == params[:access_token])
   
       # Is the attachment on a solution  If so, it's always downloadable.
 
       elsif ['Solution::Article'].include? @attachment.attachable_type
-        return true if permission?(:manage_knowledgebase)
         return @attachment.attachable.folder.visible?(current_user) 
       elsif ['Post'].include? @attachment.attachable_type      
-        return true if permission?(:manage_forums)
         return @attachment.attachable.forum.visible?(current_user)     
       elsif ['Account', 'Portal'].include? @attachment.attachable_type
         return  true     
       elsif ['DataExport'].include? @attachment.attachable_type
-        return true if permission?(:manage_users)
+        return true if privilege?(:manage_account)
       end         
 
     end

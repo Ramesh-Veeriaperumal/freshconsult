@@ -1,18 +1,11 @@
-class UsersController < ApplicationController   
-  
+class UsersController < ApplicationController 
+
   include ModelControllerMethods #Need to remove this, all we need is only show.. by Shan. to do must!
   include HelpdeskControllerMethods
 
+  skip_before_filter :check_privilege, :only => [:revert_identity, :profile_image]
   before_filter :set_selected_tab
   skip_before_filter :load_object , :only => [ :show, :edit ]
-  
-  before_filter :only => :change_account_admin do |c| 
-    c.requires_permission :manage_account
-  end
-  
-  before_filter :except => [ :revert_identity, :profile_image ] do |c|
-   c.requires_permission :manage_tickets 
-  end
   before_filter :load_multiple_items, :only => :block
 
   ##redirect to contacts
@@ -73,26 +66,6 @@ class UsersController < ApplicationController
     render :text => "success"
   end
   
-  def change_account_admin 
-    pre_owner_saved, new_owner_saved = false, false    
-    User.transaction do
-      if current_account.account_admin.id != params[:account_admin].to_i
-        @pre_owner = current_account.account_admin
-        @pre_owner.user_role =  User::USER_ROLES_KEYS_BY_TOKEN[:admin]
-        @new_owner = current_account.admins.find(params[:account_admin])
-        @new_owner.user_role =  User::USER_ROLES_KEYS_BY_TOKEN[:account_admin]
-        pre_owner_saved = @pre_owner.save 
-        new_owner_saved = @new_owner.save 
-      end
-    end
-    if pre_owner_saved and new_owner_saved
-      flash[:notice] = t('account_admin_updated')
-      redirect_to admin_home_index_url
-    else
-      redirect_to account_url
-    end
-  end
-
   def assume_identity
     user = current_account.users.find params[:id]
 
@@ -125,9 +98,6 @@ class UsersController < ApplicationController
       current_account.all_users
     end
     
-    def authorized?
-      (logged_in? && self.action_name == 'index') || admin?
-    end
 
     def set_selected_tab
       @selected_tab = :customers

@@ -1,6 +1,5 @@
 class Integrations::OauthUtilController < ApplicationController
 include Integrations::OauthHelper
-before_filter :require_user 
 	def get_access_token
 			begin
 				app_name = params[:app_name]

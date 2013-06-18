@@ -113,10 +113,10 @@ is_touch_device = function() {
         template: '<div class="dbl_left arrow"></div><div class="hover_card inner"><div class="content"><p></p></div></div>',
         content: function(){
           var container_id = "user-info-div-"+$(this).data('contactId');
-          return jQuery("#"+container_id).html() || "<div class='loading-box' id='"+container_id+"' rel='remote-load' data-url='"+$(this).data('contactUrl')+"'></div>";
+          return jQuery("#"+container_id).html() || "<div class='sloading loading-small loading-block' id='"+container_id+"' rel='remote-load' data-url='"+$(this).data('contactUrl')+"'></div>";
         }
       }); 
-    });
+    });    
 
     $("[rel=hover-popover]").livequery(function(){ 
        $(this).popover({ 
@@ -141,7 +141,7 @@ is_touch_device = function() {
       $(this)
         .load($(this).data("url"), function(){
           $(this).attr("rel", "");
-          $(this).removeClass("loading-box");
+          $(this).removeClass("sloading loading-small loading-block");
           
           if(!$this.data("loadUnique"))            
             $(this).clone().prependTo('#remote_loaded_dom_elements');
@@ -218,7 +218,7 @@ is_touch_device = function() {
           hidePopoverTimer = setTimeout(function() { $("#new_watcher_page").hide(); },1000);
       });    
 
-    $("#new_watcher_page").live('mouseenter',function(ev) {
+    $("#new_watcher_page, .select2-results").live('mouseenter',function(ev) {
       clearTimeout(hideWatcherTimer);
       clearTimeout(hidePopoverTimer);
     }).live('mouseleave',function(ev) {
@@ -261,7 +261,7 @@ is_touch_device = function() {
         $(this).bind("afterShow", function(ev){
           var _self = $(this);
           if(_self.data('remoteUrl')) {
-            _self.append("<div class='loading-box'></div>");
+            _self.append("<div class='sloading loading-small loading-block'></div>");
             _self.load(_self.data('remoteUrl'), function(){
                 _self.data('remoteUrl', false);
             });
@@ -308,7 +308,7 @@ is_touch_device = function() {
          onkeyup: false,
          focusCleanup: true,
          focusInvalid: false,
-         ignore:".nested_field:not(:visible), .portal_url:not(:visible)"
+         ignore:"select.nested_field:empty, .portal_url:not(:visible)"
       };
       
       $("ul.ui-form, .cnt").livequery(function(ev){
@@ -344,7 +344,7 @@ is_touch_device = function() {
                                         }
       // Form validation any form append to the dom will be tested via live query and then be validated via jquery
       $("form[rel=validate]").livequery(function(ev){
-        $(this).validate(validateOptions)
+        $(this).validate($.extend( validateOptions, $(this).data()))
       })
 
     $('.single_click_link').live('click',function(ev) {
@@ -493,6 +493,9 @@ is_touch_device = function() {
         jQuery('.top-loading-strip').switchClass('top-loading-strip', 'top-loading-strip-opera');  
       }
 
+      //Not using pjax for IE10- Temporary fix for IE pjax load issue
+      //in dashboard and tickets filter. Remove the condition once we get permanent fix
+    if (!$.browser.msie) {
       $(document).pjax('a[data-pjax]',{
           timeout: -1,
           push : false,
@@ -550,6 +553,7 @@ is_touch_device = function() {
         }
         return true;
       })
+    }
    });
  
 })(jQuery);

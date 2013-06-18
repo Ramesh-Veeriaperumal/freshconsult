@@ -31,6 +31,11 @@ module VAConfig
     fetch_handler field, account, :event
   end
 
+  def self.negatable_columns(account)
+    custom_fields = account.ticket_fields.custom_fields.collect { |field| field.name }
+    custom_fields + DEFAULT_NEGATABLE_COLUMS
+  end
+
   private
 
     def self.fetch_handler(field, account, handler_type)

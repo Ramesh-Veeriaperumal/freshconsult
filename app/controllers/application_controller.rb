@@ -4,8 +4,12 @@
 class ApplicationController < ActionController::Base
 
   layout Proc.new { |controller| controller.request.headers['X-PJAX'] ? 'maincontent' : 'application' }
+
+  around_filter :select_shard
   
-  before_filter :reset_current_account, :redactor_form_builder, :redirect_to_mobile_url
+  before_filter :unset_current_account, :set_current_account
+  include Authority::Rails::ControllerHelpers
+  before_filter :redactor_form_builder, :redirect_to_mobile_url
   before_filter :check_account_state, :except => [:show,:index]
   before_filter :set_default_locale
   before_filter :set_time_zone, :check_day_pass_usage 
@@ -13,6 +17,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
+  rescue_from DomainNotReady, :with => :render_404
   
   include AuthenticationSystem
   #include SavageBeast::AuthenticationSystem
@@ -21,8 +26,6 @@ class ApplicationController < ActionController::Base
   include SslRequirement
   include SubscriptionSystem
   include Mobile::MobileHelperMethods
-  include CRM::SendEventToTotango
-  include CRM::TotangoModulesAndActions
   
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store
@@ -42,10 +45,10 @@ class ApplicationController < ActionController::Base
   end
  
   def check_account_state
-    if !current_account.active? 
-      if permission?(:manage_account)
+    unless current_account.active? 
+      if privilege?(:manage_account)
         flash[:notice] = t('suspended_plan_info')
-        return redirect_to(plan_subscription_url)
+        return redirect_to(subscription_url)
       else
         flash[:notice] = t('suspended_plan_admin_info', :email => current_account.admin_email) 
         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
@@ -54,12 +57,7 @@ class ApplicationController < ActionController::Base
   end
   
   def set_time_zone
-    begin
-      current_account.make_current
-      User.current = current_user
-      TimeZone.set_time_zone
-    rescue ActiveRecord::RecordNotFound
-    end
+    TimeZone.set_time_zone
   end
   
   def activerecord_error_list(errors)
@@ -78,8 +76,16 @@ class ApplicationController < ActionController::Base
     I18n.locale = I18n.default_locale
   end
   
-  def reset_current_account
+  def unset_current_account
     Thread.current[:account] = nil
+  end
+  
+  def set_current_account
+    begin
+      current_account.make_current
+      User.current = current_user
+    rescue ActiveRecord::RecordNotFound
+    end    
   end
 
   def render_404
@@ -91,7 +97,6 @@ class ApplicationController < ActionController::Base
   
   def record_not_found (exception)
     Rails.logger.debug "Error  =>" + exception.message
-    Rails.logger.debug "API Error on invoking: "+request.url + "\t parameters =>"+params.to_json
     respond_to do |format|
       format.html {
         unless @current_account
@@ -113,11 +118,16 @@ class ApplicationController < ActionController::Base
 
   def handle_error (error)
     Rails.logger.debug "API::Error  =>" + error.message
-    Rails.logger.debug "API Error on invoking: "+request.url + "\t parameters =>"+params.to_json
     result = {:error => error.message}
     respond_to do | format|
       format.xml  { render :xml => result.to_xml(:indent =>2,:root=>:errors)  and return }
       format.json { render :json => {:errors =>result}.to_json and return } 
+    end
+  end
+
+  def select_shard(&block)
+    Sharding.select_shard_of(request.host) do 
+        yield 
     end
   end
 

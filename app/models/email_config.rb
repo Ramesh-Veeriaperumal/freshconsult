@@ -9,6 +9,7 @@ class EmailConfig < ActiveRecord::Base
   validates_presence_of :to_email, :reply_email
   validates_uniqueness_of :reply_email, :scope => :account_id
   validates_uniqueness_of :activator_token, :allow_nil => true
+  validates_format_of :reply_email, :with => ParserUtil::VALID_EMAIL_REGEX
   
   def active?
     active

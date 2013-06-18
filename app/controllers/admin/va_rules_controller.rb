@@ -91,6 +91,7 @@ class Admin::VaRulesController < Admin::AutomationsController
         :choices => [['', t('none')]]+@products, :operatortype => "choicelist" }) if current_account.features?(:multi_product)
 
       filter_hash = filter_hash + additional_filters
+      remove_description_filter filter_hash
       business_hours_filter filter_hash
       add_custom_filters filter_hash
       @filter_defs  = ActiveSupport::JSON.encode filter_hash
@@ -112,6 +113,9 @@ class Admin::VaRulesController < Admin::AutomationsController
       []
     end
   
+    def remove_description_filter filter_hash
+    end
+
     def add_custom_filters filter_hash
       special_case = [['', t('none')]]
       cf = current_account.ticket_fields.custom_fields

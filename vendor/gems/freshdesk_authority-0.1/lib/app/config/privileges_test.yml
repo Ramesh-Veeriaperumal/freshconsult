@@ -1,0 +1,9 @@
+--- 
+:privileges: 
+  :deploy_project: 4
+  :destroy_project: 2
+  :new_privilege_1: 5
+  :follow_project: 3
+  :new_privilege_2: 6
+  :create_project: 0
+:max_value: 6

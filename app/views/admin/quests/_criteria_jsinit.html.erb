@@ -51,7 +51,7 @@
             $("#showbadges").html("Change");
           });
 
-          $('#formQuestNew').submit(function(e) {
+          $('#formQuestNew input[type = submit]').click(function(e) {
             var questObj = {};
             var questData = [];
 
@@ -79,7 +79,7 @@
               e.stopImmediatePropagation();
               return false;
             }
-
+            $('#formQuestNew').submit();
           });
       };
       

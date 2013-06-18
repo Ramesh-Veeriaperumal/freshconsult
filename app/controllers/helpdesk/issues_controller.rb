@@ -1,7 +1,5 @@
 class Helpdesk::IssuesController < ApplicationController
-
-  before_filter { |c| c.requires_permission :manage_tickets }
-
+  
   include HelpdeskControllerMethods
 
   before_filter :load_item, :only => [:show, :edit, :update, :delete_all, :restore_all]

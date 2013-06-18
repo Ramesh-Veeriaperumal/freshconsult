@@ -8,6 +8,7 @@ class AuthorizationsController < ApplicationController
   include Integrations::OauthHelper
   include HTTParty
 
+  skip_before_filter :check_privilege
   before_filter :require_user, :only => [:destroy]
   before_filter :fetch_request_details,:only => :create
 
@@ -94,7 +95,7 @@ class AuthorizationsController < ApplicationController
     portal = Portal.find_by_id(portal_id)
     account = portal.account
     domain = portal.host
-    protocol = (account.ssl_enabled?) ? "https://" : "http://"
+    protocol = (portal.ssl_enabled?) ? "https://" : "http://"
 
     config_params = { 
       'app_name' => "#{app_name}",
@@ -123,7 +124,7 @@ class AuthorizationsController < ApplicationController
     portal = Portal.find_by_id(portal_id)
     account = portal.account
     domain = portal.host
-    protocol = (account.ssl_enabled?) ? "https://" : "http://"
+    protocol = (portal.ssl_enabled?) ? "https://" : "http://"
     config_params["mailchimp"] = "{'app_name':'#{provider}', 'api_endpoint':'#{@omniauth.extra.metadata.api_endpoint}', 'oauth_token':'#{@omniauth.credentials.token}'}" if provider == "mailchimp"
     config_params["constantcontact"] = "{'app_name':'#{provider}', 'oauth_token':'#{@omniauth.credentials.token}', 'uid':'#{@omniauth.uid}'}" if provider == "constantcontact"
     config_params = config_params[provider].gsub("'","\"")
@@ -143,7 +144,7 @@ class AuthorizationsController < ApplicationController
     portal = Portal.find_by_id(portal_id)
     user_account = portal.account
     portal_url = portal.host
-    protocol = (user_account.ssl_enabled?) ? "https://" : "http://"
+    protocol = (portal.ssl_enabled?) ? "https://" : "http://"
     portal_url = protocol + portal_url
     fb_email = @omniauth['info']['email']
     unless user_account.blank?
@@ -212,7 +213,7 @@ class AuthorizationsController < ApplicationController
       user.twitter_id = hash['info']['nickname'] if hash['provider'] == 'twitter'
       user.fb_profile_id = hash['info']['nickname'] if hash['provider'] == 'facebook'
     end
-    user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
+    user.helpdesk_agent = false
     user.active = true
     user.save 
     user.reset_persistence_token! 
@@ -233,7 +234,7 @@ class AuthorizationsController < ApplicationController
     flash[:notice] = t(:'flash.g_app.authentication_failed')
     unless portal.blank?
       domain = portal.host
-      protocol = (portal.account.ssl_enabled?) ? "https://" : "http://"
+      protocol = (portal.ssl_enabled?) ? "https://" : "http://"
       redirect_to protocol+domain+port
     else
       redirect_to root_url

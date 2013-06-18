@@ -1,4 +1,7 @@
 class SsoController < ApplicationController
+
+  skip_before_filter :check_privilege
+  
   def login
     auth = Authorization.find_by_provider_and_uid_and_account_id(params['provider'], params['uid'], current_account.id)
     unless auth.blank?
