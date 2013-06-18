@@ -37,7 +37,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :agent, :only => [:toggle_availability]
     resource :"search/home", :only => [:index, :suggest]
     resource :search, :only => [:index, :suggest, :content]
-    resource :"helpdesk/common", :only => [:group_agents]
+    # resource :"helpdesk/common", :only => [:group_agents]
 	end
 
   reply_ticket do
