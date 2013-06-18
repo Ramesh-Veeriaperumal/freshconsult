@@ -92,7 +92,7 @@ ActiveRecord::Schema.define(:version => 20130606101905) do
     t.integer  "folder_id",    :limit => 8
   end
 
-  add_index "admin_canned_responses", ["account_id", "folder_id", "title"], :name => "Index_ca_responses_on_account_id_folder_id_and_title", :length => {"title"=>"20", "account_id"=>nil, "folder_id"=>nil}
+  add_index "admin_canned_responses", ["account_id", "folder_id", "title"], :name => "Index_ca_responses_on_account_id_folder_id_and_title", :length => {"folder_id"=>nil, "account_id"=>nil, "title"=>"20"}
 
   create_table "admin_data_imports", :force => true do |t|
     t.string   "import_type"
@@ -157,7 +157,7 @@ ActiveRecord::Schema.define(:version => 20130606101905) do
     t.string  "description"
     t.integer "listing_order"
     t.text    "options"
-    t.integer "account_id",    :default => 0
+    t.integer "account_id",       :default => 0
     t.string  "application_type", :default => "freshplug", :null => false
   end
 
@@ -177,6 +177,10 @@ ActiveRecord::Schema.define(:version => 20130606101905) do
     t.datetime "updated_at"
     t.text     "holiday_data"
     t.integer  "version",                         :default => 1
+    t.string   "name"
+    t.string   "description"
+    t.string   "time_zone"
+    t.boolean  "is_default",                      :default => false
   end
 
   add_index "business_calendars", ["account_id"], :name => "index_business_calendars_on_account_id"
@@ -245,6 +249,11 @@ ActiveRecord::Schema.define(:version => 20130606101905) do
     t.boolean  "status"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "datedemo", :id => false, :force => true do |t|
+    t.datetime  "mydatetime"
+    t.timestamp "mytimestamp", :null => false
   end
 
   create_table "day_pass_configs", :force => true do |t|
@@ -362,15 +371,6 @@ ActiveRecord::Schema.define(:version => 20130606101905) do
 
   add_index "email_notifications", ["account_id", "notification_type"], :name => "index_email_notifications_on_notification_type", :unique => true
 
-  create_table "features", :force => true do |t|
-    t.string   "type",                    :null => false
-    t.integer  "account_id", :limit => 8, :null => false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "features", ["account_id"], :name => "index_features_on_account_id"
-
   create_table "es_enabled_accounts", :force => true do |t|
     t.integer  "account_id", :limit => 8
     t.boolean  "imported",                :default => true
@@ -381,6 +381,14 @@ ActiveRecord::Schema.define(:version => 20130606101905) do
 
   add_index "es_enabled_accounts", ["account_id"], :name => "index_es_enabled_accounts_on_account_id"
 
+  create_table "features", :force => true do |t|
+    t.string   "type",                    :null => false
+    t.integer  "account_id", :limit => 8, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "features", ["account_id"], :name => "index_features_on_account_id"
 
   create_table "flexifield_def_entries", :force => true do |t|
     t.integer  "flexifield_def_id",  :limit => 8, :null => false
@@ -558,14 +566,15 @@ ActiveRecord::Schema.define(:version => 20130606101905) do
   create_table "groups", :force => true do |t|
     t.string   "name"
     t.text     "description"
-    t.integer  "account_id",      :limit => 8
+    t.integer  "account_id",           :limit => 8
     t.boolean  "email_on_assign"
-    t.integer  "escalate_to",     :limit => 8
+    t.integer  "escalate_to",          :limit => 8
     t.integer  "assign_time"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "import_id",       :limit => 8
-    t.integer  "ticket_assign_type",              :default => 0
+    t.integer  "import_id",            :limit => 8
+    t.integer  "ticket_assign_type",                :default => 0
+    t.integer  "business_calendar_id"
   end
 
   add_index "groups", ["account_id", "name"], :name => "index_groups_on_account_id", :unique => true
@@ -600,7 +609,7 @@ ActiveRecord::Schema.define(:version => 20130606101905) do
     t.integer  "account_id",           :limit => 8
   end
 
-  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"account_id"=>nil, "attachable_type"=>"14", "attachable_id"=>nil}
+  add_index "helpdesk_attachments", ["account_id", "attachable_id", "attachable_type"], :name => "index_helpdesk_attachments_on_attachable_id", :length => {"attachable_id"=>nil, "account_id"=>nil, "attachable_type"=>"14"}
   add_index "helpdesk_attachments", ["id"], :name => "helpdesk_attachments_id"
 
   create_table "helpdesk_authorizations", :force => true do |t|
@@ -633,8 +642,8 @@ ActiveRecord::Schema.define(:version => 20130606101905) do
     t.integer "installed_application_id", :limit => 8
     t.string  "external_id"
   end
- 
-  add_index "helpdesk_external_notes", ["account_id", "installed_application_id", "external_id"], :name => "index_helpdesk_external_id", :length => {"installed_application_id"=>nil, "external_id"=>"20", "account_id"=>nil}
+
+  add_index "helpdesk_external_notes", ["account_id", "installed_application_id", "external_id"], :name => "index_helpdesk_external_id", :length => {"installed_application_id"=>nil, "account_id"=>nil, "external_id"=>"20"}
   add_index "helpdesk_external_notes", ["id"], :name => "helpdesk_external_notes_id"
 
   create_table "helpdesk_issues", :force => true do |t|
@@ -785,8 +794,8 @@ ActiveRecord::Schema.define(:version => 20130606101905) do
   end
 
   add_index "helpdesk_schema_less_notes", ["account_id", "note_id"], :name => "index_helpdesk_schema_less_notes_on_account_id_note_id", :unique => true
-  add_index "helpdesk_schema_less_notes", ["account_id", "string_nc01"], :name => "index_helpdesk_schema_less_notes_on_account_id_string_nc01", :length => {"account_id"=>nil, "string_nc01"=>"10"}
-  add_index "helpdesk_schema_less_notes", ["account_id", "string_nc02"], :name => "index_helpdesk_schema_less_notes_on_account_id_string_nc02", :length => {"account_id"=>nil, "string_nc02"=>"10"}
+  add_index "helpdesk_schema_less_notes", ["account_id", "string_nc01"], :name => "index_helpdesk_schema_less_notes_on_account_id_string_nc01", :length => {"string_nc01"=>"10", "account_id"=>nil}
+  add_index "helpdesk_schema_less_notes", ["account_id", "string_nc02"], :name => "index_helpdesk_schema_less_notes_on_account_id_string_nc02", :length => {"string_nc02"=>"10", "account_id"=>nil}
   add_index "helpdesk_schema_less_notes", ["id"], :name => "helpdesk_schema_less_notes_id"
   add_index "helpdesk_schema_less_notes", ["int_nc01", "account_id"], :name => "index_helpdesk_schema_less_notes_on_int_nc01_account_id"
   add_index "helpdesk_schema_less_notes", ["int_nc02", "account_id"], :name => "index_helpdesk_schema_less_notes_on_int_nc02_account_id"
@@ -936,8 +945,8 @@ ActiveRecord::Schema.define(:version => 20130606101905) do
   add_index "helpdesk_ticket_issues", ["ticket_id"], :name => "index_helpdesk_ticket_issues_on_ticket_id"
 
   create_table "helpdesk_ticket_states", :id => false, :force => true do |t|
-    t.integer  "id",                     :limit => 8,                    :null => false
-    t.integer  "ticket_id",              :limit => 8
+    t.integer  "id",                        :limit => 8,                    :null => false
+    t.integer  "ticket_id",                 :limit => 8
     t.datetime "opened_at"
     t.datetime "pending_since"
     t.datetime "resolved_at"
@@ -949,12 +958,12 @@ ActiveRecord::Schema.define(:version => 20130606101905) do
     t.datetime "agent_responded_at"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "group_escalated",                     :default => false
-    t.integer  "inbound_count",                       :default => 1
-    t.integer  "account_id",             :limit => 8
+    t.boolean  "group_escalated",                        :default => false
+    t.integer  "inbound_count",                          :default => 1
+    t.integer  "account_id",                :limit => 8
     t.datetime "status_updated_at"
     t.datetime "sla_timer_stopped_at"
-    t.integer  "outbound_count",                      :default => 0
+    t.integer  "outbound_count",                         :default => 0
     t.float    "avg_response_time"
     t.integer  "first_resp_time_by_bhrs"
     t.integer  "resolution_time_by_bhrs"
@@ -1076,6 +1085,48 @@ ActiveRecord::Schema.define(:version => 20130606101905) do
     t.integer "account_id", :limit => 8
   end
 
+  create_table "lhma_2013_03_21_15_19_58_648_social_twitter_handles", :force => true do |t|
+    t.integer  "twitter_user_id",           :limit => 8
+    t.string   "screen_name"
+    t.string   "access_token"
+    t.string   "access_secret"
+    t.boolean  "capture_dm_as_ticket",                   :default => false
+    t.boolean  "capture_mention_as_ticket",              :default => false
+    t.integer  "product_id",                :limit => 8
+    t.integer  "last_dm_id",                :limit => 8
+    t.integer  "last_mention_id",           :limit => 8
+    t.integer  "account_id"
+    t.text     "search_keys"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "dm_thread_time",                         :default => 0
+    t.integer  "state"
+    t.text     "last_error"
+  end
+
+  add_index "lhma_2013_03_21_15_19_58_648_social_twitter_handles", ["account_id", "twitter_user_id"], :name => "social_twitter_handle_product_id", :unique => true
+
+  create_table "lhma_2013_05_08_16_25_34_672_accounts", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "full_domain"
+    t.string   "time_zone"
+    t.string   "helpdesk_name"
+    t.string   "helpdesk_url"
+    t.text     "preferences"
+    t.integer  "ticket_display_id", :limit => 8, :default => 0
+    t.boolean  "sso_enabled",                    :default => false
+    t.string   "shared_secret"
+    t.text     "sso_options"
+    t.string   "google_domain"
+    t.boolean  "ssl_enabled",                    :default => false
+    t.boolean  "premium",                        :default => false
+  end
+
+  add_index "lhma_2013_05_08_16_25_34_672_accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
+  add_index "lhma_2013_05_08_16_25_34_672_accounts", ["helpdesk_url"], :name => "index_accounts_on_helpdesk_url"
+
   create_table "moderatorships", :force => true do |t|
     t.integer "forum_id", :limit => 8
     t.integer "user_id",  :limit => 8
@@ -1099,21 +1150,21 @@ ActiveRecord::Schema.define(:version => 20130606101905) do
   end
 
   create_table "portal_pages", :force => true do |t|
-    t.integer  "template_id", :limit => 8,        :null => false
-    t.integer  "account_id",  :limit => 8,        :null => false
-    t.integer  "page_type",                       :null => false
-    t.text     "content",     :limit => 16777215
+    t.integer  "template_id", :limit => 8,          :null => false
+    t.integer  "account_id",  :limit => 8,          :null => false
+    t.integer  "page_type",                         :null => false
+    t.text     "content",     :limit => 2147483647
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "portal_templates", :force => true do |t|
-    t.integer  "account_id",  :limit => 8,        :null => false
-    t.integer  "portal_id",   :limit => 8,        :null => false
+    t.integer  "account_id",  :limit => 8,          :null => false
+    t.integer  "portal_id",   :limit => 8,          :null => false
     t.text     "preferences"
     t.text     "header"
     t.text     "footer"
-    t.text     "custom_css",  :limit => 16777215
+    t.text     "custom_css",  :limit => 2147483647
     t.text     "layout"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1219,6 +1270,11 @@ ActiveRecord::Schema.define(:version => 20130606101905) do
     t.datetime "updated_at"
   end
 
+  create_table "shard_mappings", :primary_key => "account_id", :force => true do |t|
+    t.string  "shard_name",                  :null => false
+    t.integer "status",     :default => 200, :null => false
+  end
+
   create_table "sla_details", :force => true do |t|
     t.string   "name"
     t.integer  "priority",           :limit => 8
@@ -1287,20 +1343,20 @@ ActiveRecord::Schema.define(:version => 20130606101905) do
     t.string   "thread_id"
   end
 
-  add_index "social_fb_posts", ["account_id", "postable_id", "postable_type"], :name => "index_social_fb_posts_account_id_postable_id_postable_type", :length => {"account_id"=>nil, "postable_type"=>"15", "postable_id"=>nil}
+  add_index "social_fb_posts", ["account_id", "postable_id", "postable_type"], :name => "index_social_fb_posts_account_id_postable_id_postable_type", :length => {"postable_id"=>nil, "account_id"=>nil, "postable_type"=>"15"}
 
   create_table "social_tweets", :force => true do |t|
-    t.integer  "tweet_id",       :limit => 8
-    t.integer  "tweetable_id",   :limit => 8
+    t.integer  "tweet_id",          :limit => 8
+    t.integer  "tweetable_id",      :limit => 8
     t.string   "tweetable_type"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "account_id"
-    t.string   "tweet_type",                  :default => "mention"
+    t.string   "tweet_type",                     :default => "mention"
     t.integer  "twitter_handle_id", :limit => 8
   end
 
-  add_index "social_tweets", ["account_id", "tweetable_id", "tweetable_type"], :name => "index_social_tweets_account_id_tweetable_id_tweetable_type", :length => {"account_id"=>nil, "tweetable_id"=>nil, "tweetable_type"=>"15"}
+  add_index "social_tweets", ["account_id", "tweetable_id", "tweetable_type"], :name => "index_social_tweets_account_id_tweetable_id_tweetable_type", :length => {"tweetable_type"=>"15", "account_id"=>nil, "tweetable_id"=>nil}
 
   create_table "social_twitter_handles", :force => true do |t|
     t.integer  "twitter_user_id",           :limit => 8
@@ -1651,7 +1707,7 @@ ActiveRecord::Schema.define(:version => 20130606101905) do
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
-  add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"external_id"=>"20", "account_id"=>nil}
+  add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"account_id"=>nil, "external_id"=>"20"}
   add_index "users", ["account_id", "import_id"], :name => "index_users_on_account_id_and_import_id", :unique => true
   add_index "users", ["id"], :name => "users_id"
   add_index "users", ["perishable_token", "account_id"], :name => "index_users_on_perishable_token_and_account_id"

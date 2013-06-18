@@ -47,6 +47,8 @@ Authority::Authorization::PrivilegeList.build do
     # In bulk actions you can reply even if you do not have edit_ticket_properties
     resource :"helpdesk/ticket", :only => [:update_multiple_tickets]
     resource :"helpdesk/bulk_ticket_action"
+    # Used for API
+    resource :"helpdesk/note", :only => [:create]
   end
 
   forward_ticket do

@@ -1,0 +1,39 @@
+<% content_for :dialogs do %>
+<div id="importholiday" class="hide">
+	<% form_for :import_holiday, @business_calendar, :url => { :controller => "business_calendars", :action => "holidays_list" }, :html => { :id => "holiday_import" } do |f| %>
+		<div class="row-fluid">
+			<%= select "import_holiday", "import_holiday",GoogleClient::calendars, 
+													{}, { :class => "select2 span12", :id => "import_holiday" } %>
+			<p><%= t('business_hours.import_holiday_info') %>	</p>
+		</div>
+	<% end %>
+</div>
+
+<script type="text/javascript">
+	jQuery('#holiday_import').submit(function() {
+	  var calendar_id = jQuery('#import_holiday').attr('value');
+
+	  new Ajax.Request('/admin/business_calendars/holidays', 
+	                   { parameters: {calendar_id: calendar_id},
+	                   	  onLoading: function() {
+	                   	  	jQuery(".modal-backdrop").remove();
+	                   	  	jQuery("#importholiday").modal('hide');
+	                   	  	jQuery("#HolidayList a.close").trigger('click');
+	                   	  	jQuery("#HolidayList")
+	                   	  		.before('<div id="HolidayListLoading" class="sloading loading-block"></div>')
+
+	                      },
+	                      onSuccess: function(response) {
+	                      	jQuery("#HolidayListLoading").remove();
+
+	                      	var holidays_list = response["responseJSON"];
+	                      	for(var i = 0; i < holidays_list.length; i++){
+	                      		addHolidaytoList(holidays_list[i][0], escapeHtml(holidays_list[i][1]));
+	                      	}
+
+	                     } });
+	  return false;
+	});
+</script>
+
+<% end %>
