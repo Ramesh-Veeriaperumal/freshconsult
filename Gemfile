@@ -6,7 +6,7 @@ gem "rack", "~> 1.1.6"
 gem "rails","2.3.18"
 
 gem "json", "~> 1.5.5"
-gem "mysql"
+gem "mysql", "2.8.1"
 gem "i18n", "0.4.2"
 
 gem "RedCloth", "4.2.9"
@@ -116,7 +116,7 @@ group :test do
    gem "rspec-rails", "1.3.3"
    gem "spork", "~> 0.8.0"
    gem "mocha", "~> 0.13.3"
-   gem "rr"
+   gem "rr", "1.1.0"
    gem "ZenTest", "4.4.1"
    gem "autotest-fsevent", "0.1.1"
    gem "autotest-growl", "0.2.0"
@@ -124,10 +124,10 @@ group :test do
 end
 
 group :assets do
-	gem "sass", "3.2.1"
-	gem "compass-rails"
-	# Portal grid system is done using susy grids
-	gem "susy" 
+   gem "sass", "3.2.1"
+   gem "compass-rails"
+   # Portal grid system is done using susy grids
+   gem "susy" 
    # To optimize sprite generation
    gem "oily_png"
 end

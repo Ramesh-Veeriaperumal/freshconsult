@@ -223,6 +223,7 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_dispatch_rules do
     resource :"admin/va_rule"
+    resource :"admin/observer_rule"
   end
 
   manage_supervisor_rules do
