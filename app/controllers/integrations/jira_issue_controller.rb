@@ -7,6 +7,7 @@ class Integrations::JiraIssueController < ApplicationController
   include Redis::RedisKeys
   include Redis::IntegrationsRedis
 
+  skip_before_filter :check_privilege, :only => [:notify]
   before_filter :validate_request, :only => [:notify] # TODO Needs to be replaced with OAuth authentication.
   before_filter :jira_object, :except => [:notify]
   before_filter :authenticated_agent_check,:except => [:notify]

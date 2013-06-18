@@ -43,6 +43,17 @@
   display: none; 
 }
 
+// Loading styles
+.loading, .loading-right, .loading-left{ 
+  background-image:image-url('/images/animated/ajax-loader.gif');   
+  background-repeat: no-repeat; 
+}
+
+.loading{ background-position: center; }
+.loading-right{ background-position: 98% center; }
+.loading-left{ background-position: 2% center; }
+
+
 @include at-breakpoint($break-tablet){
   // Rounded options only for tablet and desktop
 	.rounded-6{ @include border-radius($content-border-radius); }

@@ -1,13 +1,12 @@
 class ForumCategoriesController < ApplicationController
+  
   include ModelControllerMethods
   include Helpdesk::ReorderUtility
   
-  before_filter :portal_check
+  skip_before_filter :check_privilege, :only => [:index, :show]
+  before_filter :portal_check, :only => [:index, :show]
+  
   rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
-
-  before_filter :except => [:index, :show] do |c| 
-    c.requires_permission :manage_forums
-  end
   
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
@@ -16,8 +15,8 @@ class ForumCategoriesController < ApplicationController
   before_filter :content_scope
   
   def index
-     @forum_categories = current_portal.forum_categories
-     respond_to do |format|
+    @forum_categories = current_portal.forum_categories
+    respond_to do |format|
       format.html { @page_canonical = categories_url }
       format.xml  { render :xml => @forum_categories }
       format.json  { render :json => @forum_categories }
@@ -29,9 +28,9 @@ class ForumCategoriesController < ApplicationController
     if @obj.save
       flash[:notice] = create_flash
       respond_to do |format|
-      format.html { redirect_back_or_default redirect_url }
-      format.xml { render :xml => @obj, :status => :created, :location => category_url(@obj) }
-    end
+        format.html { redirect_back_or_default redirect_url }
+        format.xml { render :xml => @obj, :status => :created, :location => category_url(@obj) }
+      end
     else
       create_error
       respond_to do |format|
@@ -71,16 +70,13 @@ class ForumCategoriesController < ApplicationController
       end
       wants.xml { render :xml =>@result}
       wants.json { render :json =>@result}
-
     end
   end  
     
   protected
   
     def content_scope
-      @content_scope = 'portal_' 
-      @content_scope = 'user_'  if permission?(:post_in_forums) 
-      @content_scope = ''  if permission?(:manage_forums)
+      @content_scope = ''
     end
     
     def scoper
@@ -105,25 +101,21 @@ class ForumCategoriesController < ApplicationController
     end
     
     def fetch_forum_scope
-      if current_user && current_user.has_manage_forums?
       :forums
-     elsif current_user
-      :user_forums
-     else
-      :portal_forums 
-     end
     end
 
     def RecordNotFoundHandler
       flash[:notice] = I18n.t(:'flash.forum_category.page_not_found')
       redirect_to categories_path
     end
-
+    
   private
+  
     def portal_check
       if current_user.nil? || current_user.customer?
         return redirect_to support_discussions_path
+      elsif !privilege?(:view_forums)
+        access_denied
       end
     end
-    
 end

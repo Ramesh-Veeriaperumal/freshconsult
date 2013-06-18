@@ -3,7 +3,7 @@ class SubscriptionAdmin::CustomSslController < ApplicationController
   include Redis::RedisKeys
   include Redis::OthersRedis
 
-  skip_filter :read_on_slave, :only => [:enable_custom_ssl]
+  skip_filter :run_on_slave, :only => [:enable_custom_ssl]
 
 	def index
 		@portals = Portal.find(:all, :conditions => ["elb_dns_name is not null"])
@@ -15,7 +15,7 @@ class SubscriptionAdmin::CustomSslController < ApplicationController
 		account.update_attributes( :ssl_enabled => 1 )
 		account.main_portal.update_attributes( :elb_dns_name => params[:elb_name], :ssl_enabled => 1 )
 		remove_others_redis_key(ssl_key)
-		UserNotifier.send_later(:deliver_custom_ssl_activation, account.account_admin, 
+		UserNotifier.send_later(:deliver_custom_ssl_activation, account, 
 																account.main_portal.portal_url, 
 																params[:elb_name])
 		redirect_to admin_custom_ssl_index_path

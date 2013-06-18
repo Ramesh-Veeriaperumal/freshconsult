@@ -155,7 +155,7 @@ class Support::SearchController < SupportController
                   f.filter :or, { :not => { :exists => { :field => 'folder.customer_folders.customer_id' } } },
                                 { :term => { 'folder.customer_folders.customer_id' => current_user.customer_id } }
                 end
-                if current_user.client_manager?
+                if privilege?(:client_manager)
                   f.filter :or, { :not => { :exists => { :field => :company_id } } },
                                 { :term => { :company_id => current_user.customer_id } }
                 else
@@ -218,7 +218,7 @@ class Support::SearchController < SupportController
                 :deleted => false }
       
       if @current_user 
-        if @current_user.client_manager?
+        if privilege?(:client_manager)
           opts[:customer_id] = [@def_search_val, current_user.customer_id]
         else
           # Buggy hack... The first users tickets in the first account will also be searched 
@@ -289,27 +289,31 @@ class Support::SearchController < SupportController
     end
 
     def solution_result article
-      { 'title' => article.title, 
+      { 'title' => article.title.html_safe, 
         'group' => article.folder.name, 
-        'desc' => article.desc_un_html,
+        'desc' => article.desc_un_html.html_safe,
         'type' => "ARTICLE",
         'url' => support_solutions_article_path(article) }
     end
 
     def topic_result topic
-      { 'title' => topic.title, 
+      { 'title' => topic.title.html_safe, 
         'group' => topic.forum.name, 
-        'desc' => truncate(topic.posts.first.body, :length => 120),
+        'desc' => truncate(topic.posts.first.body.html_safe, :length => truncate_length),
         'type' => "TOPIC", 
         'url' => support_discussions_topic_path(topic) }
     end
 
     def ticket_result ticket
-      { 'title' => ticket.subject, 
+      { 'title' => ticket.subject.html_safe, 
         'group' => "Ticket", 
-        'desc' => truncate(ticket.description, :length => 120),
+        'desc' => truncate(ticket.description.html_safe, :length => truncate_length),
         'type' => "TICKET", 
         'url' => support_ticket_path(ticket) }
+    end
+
+    def truncate_length
+      request.xhr? ? 160 : 220
     end
 
     def render_search

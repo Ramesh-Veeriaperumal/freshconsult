@@ -67,17 +67,19 @@ namespace :freshdesk_tire do
 
   task :multi_class_import => :environment do
     account = Account.find_by_id(ENV['ACCOUNT_ID'])
-    account.make_current
-    account.es_enabled_account.update_attribute(:imported, false)
-    Sharding.slave do
-      klasses = ENV['CLASS'].split(';')
-      klasses.each do |klass|
-        ENV['CLASS'] = klass
-        Rake::Task["tire:import"].execute("CLASS='#{ENV['CLASS']}' INDEX=#{ENV['INDEX']}")
+    Sharding.select_shard_of(account.id) do
+      account.make_current
+      account.es_enabled_account.update_attribute(:imported, false)
+      Sharding.run_on_slave do
+        klasses = ENV['CLASS'].split(';')
+        klasses.each do |klass|
+          ENV['CLASS'] = klass
+          Rake::Task["tire:import"].execute("CLASS='#{ENV['CLASS']}' INDEX=#{ENV['INDEX']}")
+        end
       end
+      account.es_enabled_account.update_attribute(:imported, true)
+      Account.reset_current_account
     end
-    account.es_enabled_account.update_attribute(:imported, true)
-    Account.reset_current_account
   end
 
   task :delete_indices => :environment do

@@ -15,6 +15,10 @@ p {
   font-weight: 200;
   line-height: $baseLineHeight * 1.5;
 }
+.no-results{
+ color: #ccc;
+ font-size:$baseFontSize;
+}
 .header-lead{
   margin-top: 15px;
   border-top: 2px solid #c7c7c7;
@@ -27,7 +31,6 @@ p {
     border-top: 4px solid #c7c7c7;
   }
 }
-
 
 // Emphasis & misc
 // -------------------------

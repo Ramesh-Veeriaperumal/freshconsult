@@ -4,14 +4,6 @@ class Social::TwitterHandlesController < ApplicationController
   
   before_filter { |c| c.requires_feature :twitter }
   
-  before_filter :except => [:create_twicket,:feed, :user_following,:tweet_exists,:twitter_search] do |c| 
-    c.requires_permission :manage_users
-  end
-  
-  before_filter :only => [ :create_twicket,:feed, :user_following,:tweet_exists] do |c| 
-    c.requires_permission :manage_tickets
-  end
-  
   prepend_before_filter :load_product, :only => [ :signin, :authdone ]
   before_filter :build_item, :only => [:signin, :authdone]
   before_filter :load_item,  :only => [:tweet, :edit, :update, :destroy]       
@@ -171,7 +163,7 @@ class Social::TwitterHandlesController < ApplicationController
       user = current_account.contacts.new
       user.signup!({:user => {:twitter_id => screen_name, :name => screen_name, 
                     :active => true,
-                    :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+                    :helpdesk_agent => false}})
     end
     user 
   end

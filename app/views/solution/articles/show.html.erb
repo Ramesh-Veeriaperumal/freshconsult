@@ -9,7 +9,9 @@
 		<%= link_to h(@article.folder.name), solution_category_folder_path(@article.folder.category_id, @article.folder)%>
  	</div>
 	<div class="floatr">
-		<%= link_to(t('edit'), edit_solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article), :class => "btn small") %>
+    <% if privilege?(:publish_solution) %>
+  		<%= link_to(t('edit'), edit_solution_category_folder_article_path(@article.folder.category_id,@article.folder,@article), :class => "btn small") %>
+    <% end %>
 	</div>	
 	<h2 class="title"><%= h(@article.title) %></h2> 
 	<div class="help-text">
@@ -35,8 +37,10 @@
 	  		 
 			<div class="tag_list"> 
 			<% @article.tags.map.each do |t| %> 
-				<div class="item">								
-					<%= link_to(image_tag('btn_close_icon.png'), solution_category_folder_article_tag_use_path(@article.folder.category_id,@article.folder,@article,t), :method => 'delete', :class => 'tag_delete') %>
+				<div class="item">			
+          <% if privilege?(:publish_solution) %>					
+					  <%= link_to(image_tag('btn_close_icon.png'), solution_category_folder_article_tag_use_path(@article.folder.category_id,@article.folder,@article,t), :method => 'delete', :class => 'tag_delete') %>
+          <% end %>
 					<%= h(t.name) %>
 				</div>
 			<% end %>

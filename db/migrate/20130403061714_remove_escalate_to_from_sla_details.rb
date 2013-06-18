@@ -1,4 +1,5 @@
 class RemoveEscalateToFromSlaDetails < ActiveRecord::Migration
+  shard :none
 	def self.up
 		Lhm.change_table :sla_details, :atomic_switch => true do |sd|
 			sd.remove_column :escalateto

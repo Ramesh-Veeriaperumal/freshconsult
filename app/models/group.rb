@@ -51,9 +51,8 @@ class Group < ActiveRecord::Base
   ASSIGNTIME_KEYS_BY_TOKEN = Hash[*ASSIGNTIME.map { |i| [i[0], i[2]] }.flatten]
   
   def excluded_agents(account)      
-   cust_roles=  User::USER_ROLES_KEYS_BY_TOKEN[:customer],User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]
-   return account.users.find(:all , :conditions=>['user_role not in(?) and id not in (?)', cust_roles, agents.map(&:id)]) unless agents.blank? 
-   return account.users.find(:all , :conditions=>['user_role not in(?)', cust_roles])  
+   return account.users.find(:all , :conditions=>['helpdesk_agent = true and id not in (?)',agents.map(&:id)]) unless agents.blank? 
+   return account.users.find(:all , :conditions=> { :helpdesk_agent => true })  
   end
 
   def self.ticket_assign_options
@@ -86,7 +85,7 @@ class Group < ActiveRecord::Base
     #options for user which is included within the groups as agents
     options ={:except=>[:account_id,:email_on_assign,:import_id] ,:include=>{:agents=>{:only=>[:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
                     :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
-                    :user_role,:fb_profile_id,:external_id,:language,:address] }}}
+                    :helpdesk_agent,:fb_profile_id,:external_id,:language,:address] }}}
     super options
   end
 

@@ -4,13 +4,10 @@ class AgentObserver < ActiveRecord::Observer
 
   def before_create(agent)
     set_default_values(agent)
-    set_authority_delta(agent) if roles_enabled(agent) and roles_blank(agent)
   end
 
   def before_update(agent)
     update_agents_level(agent)
-    backup_agent_changes(agent)
-    set_authority_delta(agent) if roles_enabled(agent) and poweruser(agent)
   end
 
   def after_update(agent)
@@ -55,33 +52,6 @@ class AgentObserver < ActiveRecord::Observer
       if agent.level and ((agent.points ? agent.points : 0) < new_point)
         SupportScore.add_agent_levelup_score(agent.user, new_point)
       end 
-    end
-
-    
-    def set_authority_delta(agent)
-      poweruser = agent.all_ticket_permission ? "Agent" : "Restricted Agent"
-      agent.user.roles = [agent.account.roles.find_by_name(poweruser)]
-      agent.user.privileges = union_privileges(agent.user.roles).to_s
-      agent.user.send(:update_without_callbacks)
-    end
-    
-    def backup_agent_changes(agent)
-      @ticket_permission = agent.changes.has_key?("ticket_permission")
-      true
-    end
-
-    def poweruser(agent)
-      (@ticket_permission &&
-        agent.user.user_role == User::USER_ROLES_KEYS_BY_TOKEN[:poweruser]) ||
-      roles_blank?
-    end
-    
-    def roles_blank(agent)
-      agent.user.roles.blank?
-    end
-    
-    def roles_enabled(agent)
-      agent.account.roles_enabled?
     end
 
 

@@ -159,7 +159,7 @@
 				onkeyup: false,
          		focusCleanup: true,
          		focusInvalid: false,
-         		ignore:".nested_field:not(:visible), .portal_url:not(:visible)",
+         		ignore:"select.nested_field:empty, .portal_url:not(:visible)",
 				errorElement: "div", // Adding div as the error container to highlight it in red
 				submitHandler: function(form, btn) {
 					// Setting the submit button to a loading state

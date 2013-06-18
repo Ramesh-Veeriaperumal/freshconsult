@@ -1,7 +1,6 @@
 class Helpdesk::TagsController < ApplicationController  
   helper 'helpdesk/tickets'
 
-  before_filter { |c| c.requires_permission :manage_tickets }
   before_filter :set_selected_tab
 
   include HelpdeskControllerMethods

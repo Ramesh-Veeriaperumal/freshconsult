@@ -115,9 +115,9 @@ class PostsController < ApplicationController
   end
 
   protected
-    def authorized?
-      action_name == 'create' || @post.editable_by?(current_user)
-    end
+    # def authorized?
+    #   action_name == 'create' || @post.editable_by?(current_user)
+    # end
     
     def post_order
       "#{Post.table_name}.created_at#{params[:forum_id] && params[:topic_id] ? nil : " desc"}"

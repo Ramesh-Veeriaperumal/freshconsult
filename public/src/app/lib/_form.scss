@@ -2408,19 +2408,28 @@ input[type="text"].number{
 
 /* Update multiple tickets css start */
 .bulktickets{
+	.update-check-for-fields{
+		margin: -2px 4px 0 0;
+	}
+	#reply-multiple_file{
+		line-height: 16px;
+	}
     .small_curve{
         @include border-radius(5px);
     }
+    .top_spacing{
+        margin-top : 10px;
+    }
     select{
         width : 150px;
-    }
-    .inline-field{
-        width: 639px;
     }
     .fields{
         float :left;
         margin-left : 0px ;
         width : 575px;
+    }
+    .inline-field{
+    	width: 641px;
     }
     .field-item{
         @include min-height(50px);
@@ -2447,16 +2456,14 @@ input[type="text"].number{
         z-index: 1001;
     }
     .canned-response-menu{
-        right : 0;
+        right : -1px;
         z-index : 1000;
-        top : 100px;
+        top : -24px;
     }
     #update-fields
     {
         max-height : 160px;
         overflow : auto;
-        margin-top: 10px;
-        margin-bottom: 10px;
     }
 	.menu-item{
         width : 350px;
@@ -2464,14 +2471,18 @@ input[type="text"].number{
         	padding-left:20px;
         }
     }
+    #reply-multiple-cnt-reply-multiple-body{
+    	height: 110px;
+    }
+    #replymultiple{
+    	margin-bottom: 0px;
+    }
 }
 .button-container #loader{
-        height: 35px;
-        width: 33px;
-        float: left;
+		float: left;
         position: relative;
-        left: 390px;
-        top: -6px;
+        left: 480px;
+        top: 1px;
     }
 .ui-widget-content {
     .bulktickets li a{
@@ -2488,8 +2499,23 @@ input[type="text"].number{
  	}
 }
 
-#reply-fields .field-item{
-	min-height: 0px;
+.field-item{
+	display:inline;
+	float:left;
+	width:33%;
+	margin-bottom:12px; 
+	label{
+		font-size:13px;
+	} 
+	label.active{
+		font-weight:bold;
+	}
+}
+
+#reply-fields{
+	.field-item{
+		min-height: 0px;
+	}
 }
  
 /* end */
@@ -2617,13 +2643,6 @@ input[type="text"].number{
 		padding-top: 6px;
 	}
 	form{ margin-bottom: 0 }
-}
-
-.feedback-widget-container{
-	background-color: #fff; 
-	padding: 8px 10px; 
-	border: 1px solid #efefef; 
-	@include border-radius(5px); 
 }
 
 /* Dropbox attachment styles */

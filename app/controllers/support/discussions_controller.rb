@@ -22,8 +22,8 @@ class Support::DiscussionsController < SupportController
     	options[:per_page] = (params[:count_per_page].blank? || params[:count_per_page].to_i>30) ? 10 : params[:count_per_page]
 	    @topics = current_account.topics.paginate(options)
 	    respond_to do |format|
-	      format.xml { render :xml => @monitorships.to_xml(:except=>:account_id) }
-	      format.json { render :json => @monitorships.as_json(:except=>:account_id) }
+	      format.xml { render :xml => @topics.to_xml(:except=>:account_id) }
+	      format.json { render :json => @topics.as_json(:except=>:account_id) }
 	    end
   	end
 

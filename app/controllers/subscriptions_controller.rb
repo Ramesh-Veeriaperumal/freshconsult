@@ -2,7 +2,6 @@ class SubscriptionsController < ApplicationController
 
   skip_before_filter :check_account_state
 
-  before_filter { |c| c.requires_permission :manage_account }
   
   before_filter :load_billing, :only => [ :show, :billing, :payment_info ]
   before_filter :load_subscription, :only => [ :show, :billing, :plan, :plans, :calculate_amount, :free, :convert_subscription_to_free ]
@@ -27,7 +26,9 @@ class SubscriptionsController < ApplicationController
     @subscription.subscription_plan = SubscriptionPlan.find(:first, :conditions => {:name => SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout]})
     @subscription.convert_to_free
 
-    response = billing_subscription.activate_subscription(@subscription)
+    unless current_account.subscription.chk_change_agents
+      response = billing_subscription.activate_subscription(@subscription)
+    end
     
     if response and @subscription.save
       update_features

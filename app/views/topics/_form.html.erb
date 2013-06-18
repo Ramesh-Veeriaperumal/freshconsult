@@ -9,14 +9,14 @@
 			:value => !@topic.new_record? ? @topic.posts.first.body_html : "", 
 			:tabindex => 20, :height => "250px", 'editor-type' => :forum) %>
 	</li>
-	<% if admin? and not @topic.new_record? %>
+	<% if privilege?(:view_admin) and not @topic.new_record? %>
 		<li id="topic_forum_id">
 	  		<label for="topic_forum_id"><%= t('forum.title') %></label>
 	  		<%= form.select :forum_id, Forum.find(:all,:conditions =>['account_id = ?',current_account.id], :order => "position").map {|x| [x.name, x.id] } %>
 		</li>
 	<% end %>
 	<li class="inlineChecklist">
-		<% if admin? or current_user.moderator_of?(@topic.forum) %>
+		<% if privilege?(:view_admin) or current_user.moderator_of?(@topic.forum) %>
 			<label>
 				<%= form.check_box :sticky %> <%= t('topic.sticky') %>
 			</label>
@@ -26,7 +26,7 @@
 		<% end %>
 		<% if ["new"].include? params[:action] %>
 			<label id="monitor-topic-lable">
-				<%=check_box_tag 'monitor', '',true%> Monitor this topic
+				<%= check_box_tag 'monitor', '', true %> Monitor this topic
 			</label>
 		<%end%>
 	</li>	  

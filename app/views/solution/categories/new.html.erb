@@ -4,8 +4,8 @@
 	<%= render :partial => "category_form" , :locals => { :f => f }%>
 
 	<div class="button-container">
-	    <%= submit_tag t('save'), :class => "uiButton" %>
-	    <%= submit_tag t('solution_category.save_and_create'), :name => "save_and_create", :class => "uiButton" %>
+	  <%= submit_tag t('save'), :class => "uiButton" %>
+	  <%= submit_tag t('solution_category.save_and_create'), :name => "save_and_create", :class => "uiButton" %>
 		<%= link_to(t('cancel'), solution_categories_url, :class => "uiButton" ) %>
 	</div>
 	
