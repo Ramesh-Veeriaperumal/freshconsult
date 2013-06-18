@@ -29,6 +29,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/logmein"
     resource :"integrations/oauth_util"
     resource :"integrations/salesforce" 
+    resource :"integrations/user_credential"
 
     resource :"helpdesk/conversation", :only => [:note]
     resource :"helpdesk/canned_response"
@@ -36,6 +37,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :agent, :only => [:toggle_availability]
     resource :"search/home", :only => [:index, :suggest]
     resource :search, :only => [:index, :suggest, :content]
+    resource :"helpdesk/common", :only => [:group_agents]
 	end
 
   reply_ticket do
@@ -61,7 +63,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/ticket", :only => [:edit, :update, :update_ticket_properties, :assign_to_agent, :assign, :close,
                                    :close_multiple, :update_multiple_tickets, :change_due_by]
     resource :"helpdesk/bulk_ticket_action"
-    resource :"helpdesk/common", :only => [:group_agents]                                  
   end
 
   edit_conversation do

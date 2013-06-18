@@ -17,6 +17,10 @@ class Helpdesk::ConversationsController < ApplicationController
   before_filter :set_default_source, :set_mobile, :prepare_mobile_note,
     :fetch_item_attachments
   before_filter :set_ticket_status, :except => :forward
+
+  TICKET_REDIRECT_MAPPINGS = {
+    "helpdesk_ticket_index" => "/helpdesk/tickets"
+  }
     
   def reply
     build_attachments @item, :helpdesk_note
@@ -46,12 +50,8 @@ class Helpdesk::ConversationsController < ApplicationController
   end
 
   def note
+    build_attachments @item, :helpdesk_note
     if @item.save
-      unless params[:helpdesk_note][:to_emails].blank?
-        notify_array = validate_emails(params[:helpdesk_note][:to_emails])
-        Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, @parent, @item, 
-          @parent.friendly_reply_email,{:notify_emails =>notify_array}) unless notify_array.blank? 
-      end
       flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
       process_and_redirect
     else
@@ -135,9 +135,12 @@ class Helpdesk::ConversationsController < ApplicationController
 
     def process_and_redirect
       Thread.current[:notifications] = current_account.email_notifications
-    
+      options = {}
+      options.merge!({:human=>true}) if(!params[:human].blank? && params[:human].to_s.eql?("true"))  #to avoid unneccesary queries to users
+      url_redirect = params[:redirect_to].present? ? TICKET_REDIRECT_MAPPINGS[params[:redirect_to]] : item_url
+
       respond_to do |format|
-        format.html { redirect_to item_url }
+        format.html { redirect_to url_redirect }
         format.xml  { render :xml => @item.to_xml(options), :status => :created, :location => url_for(@item) }
         format.json { render :json => @item.to_json(options) }
         format.js { 

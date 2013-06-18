@@ -28,7 +28,7 @@ jQuery.noConflict()
         if($(this).hasClass('btn')) $(this).button("loading")
 
         // A data-loading-box will show a loading box in the specified container
-        $(_o_data.loadingBox||"").html("<div class='loading-box'></div>")
+        $(_o_data.loadingBox||"").html("<div class='sloading loading-align'></div>")
 
         $.ajax({
           type: _o_data.type || 'POST',
