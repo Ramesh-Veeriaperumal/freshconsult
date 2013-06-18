@@ -1,4 +1,5 @@
 class CreateDefaultObserverRules < ActiveRecord::Migration
+  shard :none
   def self.up
   	Account.all.each do |account|
       account.all_observer_rules.create({ 
