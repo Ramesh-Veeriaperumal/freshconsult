@@ -30,7 +30,7 @@
 </div>
 <div class="modal-footer">
 	<div class="copyright">
-		<% if(current_account.subscription.paid_account?) %>
+		<% unless(current_account.subscription.paid_account?) %>
 			<%= link_to(t('footer.helpdesk_software'), "http://www.freshdesk.com", :target => "_blank") %>
 			<%= t('footer.by_freshdesk') %>
 		<% end %>
@@ -39,6 +39,7 @@
 	<%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
 	<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
 </div>
+<% end %>
 
 <div class="modal-panel" id="feedback-suggest">
 	<form class="hc-search-form" autocomplete="off" action="<%= solutions_support_search_path %>" id="hc-search-form">
@@ -59,7 +60,7 @@
 				{ :target => "_blank", :class => "link-pointer" } %>
 	</div>
 </div>
-<% end %>
+
 <iframe id="freshwidget-submit-frame" name="freshwidget-submit-frame" 
 	src="about:blank" frameborder="0" scrolling="auto" 
 	allowTransparency="true" style="position:absolute; visibility:hidden; width:0px; height:0px;">
