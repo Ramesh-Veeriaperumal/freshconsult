@@ -137,7 +137,7 @@ class Helpdesk::ConversationsController < ApplicationController
       Thread.current[:notifications] = current_account.email_notifications
     
       respond_to do |format|
-        format.html { redirect_to item_url }
+        format.html { redirect_to params[:redirect_to].present? ? params[:redirect_to] : item_url }
         format.xml  { render :xml => @item.to_xml(options), :status => :created, :location => url_for(@item) }
         format.json { render :json => @item.to_json(options) }
         format.js { 
