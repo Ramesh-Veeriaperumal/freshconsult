@@ -1,13 +1,17 @@
 class AddBusinessCalendarToGroups < ActiveRecord::Migration
 	shard :none
   def self.up
-  	 add_column :groups, :business_calendar_id, :integer
+  	Lhm.change_table :groups, :atomic_switch => true do |m|
+  		m.add_column :groups, :business_calendar_id, :integer
+  	end
 
-  	 execute("update groups,business_calendars set groups.business_calendar_id = business_calendars.id 
+  	execute("update groups,business_calendars set groups.business_calendar_id = business_calendars.id 
   	 		where groups.account_id = business_calendars.account_id;")
   end
 
   def self.down
-  	remove_column :groups, :business_calendar_id
+  	Lhm.change_table :groups, :atomic_switch => true do |m|
+  		m.remove_column :business_calendar_id
+  	end
   end
 end
