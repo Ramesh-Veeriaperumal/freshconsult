@@ -6,7 +6,7 @@ gem "rack", "~> 1.1.6"
 gem "rails","2.3.18"
 
 gem "json", "~> 1.5.5"
-gem "mysql"
+gem "mysql", "2.8.1"
 gem "i18n", "0.4.2"
 
 gem "RedCloth", "4.2.9"

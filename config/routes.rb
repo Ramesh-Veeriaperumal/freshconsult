@@ -86,10 +86,12 @@
     admin.resources :home, :only => :index
     admin.resources :day_passes, :only => [:index, :update], :member => { :buy_now => :put, :toggle_auto_recharge => :put }
     admin.resources :widget_config, :only => :index
-    admin.resources :automations, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
-    admin.resources :va_rules, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
-    admin.resources :supervisor_rules, :member => { :deactivate => :put, :activate => :put }, 
-      :collections => { :reorder => :put }
+    admin.resources :automations, :collection => { :reorder => :put }
+    admin.resources :va_rules, :member => { :activate_deactivate => :put }, :collection => { :reorder => :put }
+    admin.resources :supervisor_rules, :member => { :activate_deactivate => :put }, 
+      :collection => { :reorder => :put }
+    admin.resources :observer_rules, :member => { :activate_deactivate => :put }, 
+      :collection => { :reorder => :put }
     admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get, :test_email => :put}
     admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications

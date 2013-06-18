@@ -5,7 +5,6 @@
     unless widget.blank?
       dip = widget.display_in_pages_option
       if !dip.blank? && dip.include?('helpdesk_tickets_show_page_side_bar')
-        ticket.load_flexifield
         liquid_objects = {"ticket" => ticket, "requester" => user}
         widget_code = widget_script(installed_app, widget, liquid_objects) %>
         <div id="<%=app.name%>" class="sidepanel">

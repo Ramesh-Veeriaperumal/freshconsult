@@ -394,7 +394,7 @@ DEPENDENCIES
   memcache-client (= 1.8.5)
   mocha (~> 0.13.3)
   mongrel (>= 1.2.0.pre2)
-  mysql
+  mysql (= 2.8.1)
   net-dns (= 0.6.1)
   newrelic_rpm (= 3.5.3.25)
   nori (= 1.1.4)

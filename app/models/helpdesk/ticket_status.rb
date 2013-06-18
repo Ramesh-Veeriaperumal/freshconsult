@@ -12,7 +12,6 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   validates_presence_of :name, :message => I18n.t('status_name_validate_presence_msg')
   validates_uniqueness_of :name, :scope => :account_id, :message => I18n.t('status_name_validate_uniqueness_msg'), :case_sensitive => false
   
-
   attr_protected :account_id, :status_id
   
   belongs_to :ticket_field, :class_name => 'Helpdesk::TicketField'
