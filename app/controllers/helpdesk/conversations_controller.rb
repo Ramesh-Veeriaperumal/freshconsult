@@ -47,11 +47,6 @@ class Helpdesk::ConversationsController < ApplicationController
 
   def note
     if @item.save
-      unless params[:helpdesk_note][:to_emails].blank?
-        notify_array = validate_emails(params[:helpdesk_note][:to_emails])
-        Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, @parent, @item, 
-          @parent.friendly_reply_email,{:notify_emails =>notify_array}) unless notify_array.blank? 
-      end
       flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
       process_and_redirect
     else
