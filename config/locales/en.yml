@@ -25,6 +25,7 @@ en:
   status: "Status"
   sales: "Sales"
   preview: "Preview"
+  no_agents_in_selected_group: "No agents in selected group"
   send_feedback: "Send feedback"
   ticket_form:
     your_email_address: "Email"
