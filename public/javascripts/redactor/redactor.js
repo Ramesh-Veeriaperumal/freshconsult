@@ -829,7 +829,7 @@ Redactor.prototype = {
 				this.opts.keydownCallback(this, e);	
 			}
 
-			if (ctrl)
+			if (!alt && ctrl)
 			{
 				if (key === 90)
 				{
@@ -847,7 +847,7 @@ Redactor.prototype = {
 						this.shortcuts(e, 'undo'); // Ctrl + z
 					}
 				}
-				else if(!alt && shift)
+				else if(shift)
 				{
 					if(key === 82) {
 						this.shortcuts(e, 'JustifyRight');	// Ctrl + Shift + R

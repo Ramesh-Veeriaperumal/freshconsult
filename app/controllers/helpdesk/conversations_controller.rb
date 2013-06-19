@@ -48,11 +48,6 @@ class Helpdesk::ConversationsController < ApplicationController
   def note
     build_attachments @item, :helpdesk_note
     if @item.save
-      unless params[:helpdesk_note][:to_emails].blank?
-        notify_array = validate_emails(params[:helpdesk_note][:to_emails])
-        Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, @parent, @item, 
-          @parent.friendly_reply_email,{:notify_emails =>notify_array}) unless notify_array.blank? 
-      end
       flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
       process_and_redirect
     else
@@ -140,7 +135,7 @@ class Helpdesk::ConversationsController < ApplicationController
       options.merge!({:human=>true}) if(!params[:human].blank? && params[:human].to_s.eql?("true"))  #to avoid unneccesary queries to users
       
       respond_to do |format|
-        format.html { redirect_to item_url }
+        format.html { redirect_to params[:redirect_to].present? ? params[:redirect_to] : item_url }
         format.xml  { render :xml => @item.to_xml(options), :status => :created, :location => url_for(@item) }
         format.json { render :json => @item.to_json(options) }
         format.js { 
