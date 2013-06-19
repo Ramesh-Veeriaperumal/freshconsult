@@ -1,3 +1,4 @@
+<% @enable_pattern = true %>
 <% content_for :sidebar do -%><%- end %> 
 
 <%= content_tag( :h3,  t('portal_customizer_title'),	   :class => "title" ) %>
@@ -59,7 +60,7 @@
 		</li>
 	</ul>
 	<div class="button-container">
-		<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", { :class => "uiButton floatl" } %>
-		<%= f.submit t('save'), { :class => "uiButton" } %>
+		<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", { :class => "btn floatl" } %>
+		<%= f.submit t('save'), { :class => "btn btn-primary" } %>
 	</div>
 <% end %>
