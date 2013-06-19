@@ -4,6 +4,6 @@
 	</span>
 	<%= t('admin.quests.quest_form.edit') %>
 </h3> 
-<% form_for :quest, @quest, :url => admin_quest_path, :html => { :method => :put , :id => "formQuestNew" } do |f| %>
+<% form_for :quest, @quest, :url => admin_quest_path, :html => { :method => :put , :id => "formQuestNew", :rel => "validate" } do |f| %>
 	<%= render :partial => "/admin/quests/quest_form", :locals => { :f => f } %>
 <% end %>
