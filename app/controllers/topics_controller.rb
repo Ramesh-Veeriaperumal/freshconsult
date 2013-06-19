@@ -1,7 +1,9 @@
 class TopicsController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, :with => :RecordNotFoundHandler
 
+  skip_before_filter :check_privilege, :only => :show
   before_filter :find_forum_and_topic, :except => :index 
+  before_filter :portal_check, :only => :show
   
   before_filter { |c| c.requires_feature :forums }
   before_filter { |c| c.check_portal_scope :open_forums }
@@ -228,7 +230,17 @@ class TopicsController < ApplicationController
       flash[:notice] = I18n.t(:'flash.topic.page_not_found')
       redirect_to categories_path
     end
-
+    
+    private
+    
+    def portal_check
+      if current_user.nil? || current_user.customer?
+        @topic = params[:id] ? current_account.portal_topics.find(params[:id]) : nil
+        return redirect_to support_discussions_topic_path(@topic)
+      elsif !privilege?(:view_forums)
+        access_denied
+      end
+    end
 #    def authorized?
 #      %w(new create).include?(action_name) || @topic.editable_by?(current_user)
 #    end

@@ -97,7 +97,6 @@ class ApplicationController < ActionController::Base
   
   def record_not_found (exception)
     Rails.logger.debug "Error  =>" + exception.message
-    Rails.logger.debug "API Error on invoking: "+request.url + "\t parameters =>"+params.to_json
     respond_to do |format|
       format.html {
         unless @current_account
@@ -119,7 +118,6 @@ class ApplicationController < ActionController::Base
 
   def handle_error (error)
     Rails.logger.debug "API::Error  =>" + error.message
-    Rails.logger.debug "API Error on invoking: "+request.url + "\t parameters =>"+params.to_json
     result = {:error => error.message}
     respond_to do | format|
       format.xml  { render :xml => result.to_xml(:indent =>2,:root=>:errors)  and return }
