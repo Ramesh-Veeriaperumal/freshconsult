@@ -33,8 +33,8 @@ minimizable ||= false
 					<%= link_to(t('ticket.split_ticket'), 
 								{ :action => :split_the_ticket , :note_id => note.id }, 
 								:method => :post, :confirm => t("helpdesk.tickets.note.split_ticket_confirm"),
-								:class => "tooltip conv-action-icon conv-actions-split tooltip", 
-								:title => t("helpdesk.tickets.note.split_this_as_new_ticket")) if note.incoming and @item && !@item.fb_post %>
+								:class => "tooltip conv-action-icon conv-actions-split tooltip",
+								:title => t("helpdesk.tickets.note.split_this_as_new_ticket")) if note.incoming and notable_object and !notable_object.fb_post %>
         <% end %>
         <% if privilege?(:forward_ticket) %>
 					<%= link_to_function(t("fwd_to"), 

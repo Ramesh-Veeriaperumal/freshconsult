@@ -1,11 +1,14 @@
-<div class="btn-group redactor_insert_btns">
-	<button class="btn dropdown-toggle" data-toggle="dropdown">
-  	<%= t('ticket.insert') %> <span class="caret"></span>
-	</button>
-	<div class="dropdown-menu right" id="reply_options" role="menu" aria-labelledby="dLabel">
-		<%= link_to( t('ticket.canned_responses.insert_ca_response'), "#", :rel => "ticket_canned_response", 'data-editor-id' => "#{cntid}-body") %>
-    <% if privilege?(:view_solutions) %>
-		  <%= link_to( t('solution.title_singular'), "#", :rel => "ticket_solutions", 'data-editor-id' => "#{cntid}-body") %>
-    <% end %>
-	</div>
+<div class="redactor_insert_btns">
+<ul class="redactor_toolbar">
+	<% if privilege?(:view_solutions) %>
+	<li>
+		<%= link_to( t('solution.title_singular'), "#", :rel => "ticket_solutions", 'data-editor-id' => "#{cntid}-body", :class => 'insert_solution') %>
+	</li>
+	<li class="redactor_separator"></li>
+	<% end %>
+	<li>
+		<%= link_to( t('ticket.canned_responses.insert_ca_response'), "#", :rel => "ticket_canned_response", 'data-editor-id' => "#{cntid}-body", :class => 'insert_ca_response') %>
+		<a href="javascript:void(null);" title="Bold (⌘B)" class="redactor_btn_bold" tabindex="-1"></a>
+	</li>
+</ul>
 </div>

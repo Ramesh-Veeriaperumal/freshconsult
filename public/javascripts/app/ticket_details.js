@@ -1,17 +1,8 @@
 (function($) {
-// Initialisation
-TICKET_DETAILS_DATA['updating_properties'] = false;
-//Ticket Properties Update Ajax Function
-var ticket_update_timeout;
-var tmp_count = 0;
 
-
+var activeForm, savingDraft, draftFirstFlag, draftClearedFlag, draftSavedTime,dontSaveDraft, replyEditor, draftInterval;
 
 // ----- SAVING REPLIES AS DRAFTS -------- //
-var savingDraft = false, draftFirstFlag = 0, draftClearedFlag = TICKET_DETAILS_DATA['draft']['cleared_flag'];
-var draftSavedTime,dontSaveDraft, replyEditor, draftInterval;
-
-
 save_draft = function(content) {
 	if ($.trim(content) != '') {
 		$(".ticket_show #reply-draft").show().addClass('saving');
@@ -56,7 +47,6 @@ stopDraftSaving = function() {
 	dontSaveDraft = 1;
 	clearInterval(draftInterval);
 }
- 
 
 clearSavedDraft = function(){
 	$.ajax({
@@ -71,28 +61,7 @@ clearSavedDraft = function(){
 	draftClearedFlag = true;
 }
 
-$('body').on('mouseover.ticket_details', ".ticket_show #draft-save", function() {
-	if(savingDraft != 0){
-	  jQuery(".ticket_show #draft-save").attr('title',humaneDate(draftSavedTime,new Date()));
-	}
-});
-
-$("body").on("mouseout.ticket_details", ".ticket_show #draft-save",function(){
-  $(".ticket_show #draft-save").attr('title','');
-});
-
-// This has been moved as a on click event directly to the cancel button 
-// jQuery('input[type="button"][value="Cancel"]').bind('click', function(){cleardraft();});
-
-$("body").on("click.ticket_details", ".ticket_show #clear-draft", function(){
-  if (confirm(TICKET_DETAILS_DATA['draft']['clear_text']))
-  	clearSavedDraft();
-});
-
-
 // ----- END OF DRAFT JS ---- //
-
-//Agents updation on Group Change.
 
 
 var dontAjaxUpdate = false;
@@ -108,7 +77,7 @@ unsilenceTktFieldsUpdate = function() {
 showHideDueByDialog = function(showHide){
 	if(showHide){
 		var duedate_container = $("#duedate-dialog-container").detach();
-		$('#ticket_status_box').append(duedate_container);
+		$('#due-by-element-parent').append(duedate_container);
 	   
 		$("#duedate-dialog-container").show();
 		$("#due-date-dialog").fadeIn();
@@ -117,6 +86,7 @@ showHideDueByDialog = function(showHide){
 			my: "right top",
 			at: "left top"
 		});
+		console.log($("#due-date-dialog"));
 		$("#due-date-dialog").css({top: $("#due-date-dialog").position().top + 30 });
 	}else{
 		$("#due-date-dialog")
@@ -130,67 +100,12 @@ showHideDueByDialog = function(showHide){
 }
 
 
-showHideEmailContainer = function(){
-	$(".ccEmailMoreContainer").toggle();
-	if($(".ccEmailMoreContainer").css("display") == "inline"){
-		$(".ccEmailMoreLink").text('');
-	}
-}
 
-showHideToEmailContainer = function(){
-	$(".toEmailMoreContainer").toggle();
-	if($(".toEmailMoreContainer").css("display") == "inline"){
-		$(".toEmailMoreLink").text('');
-	}
-}
-
-changeStatusToResolved = function() {
-	$('#helpdesk_ticket_status option').prop('selected', false);
-	$('#helpdesk_ticket_status option[value=4]').prop('selected', true);
-	dontAjaxUpdate = true;
-	$('#helpdesk_ticket_status').trigger('change');
-}
-
-changeStatusTo = function(status) {
-	$('#helpdesk_ticket_status option').prop('selected', false);
-	$('#helpdesk_ticket_status option[value=' + status + ']').prop('selected', true);
-	dontAjaxUpdate = true;
-	$('#helpdesk_ticket_status').trigger('change');
-}
-
-refreshStatusBox = function() {
-	$.ajax({
-		url: TICKET_DETAILS_DATA['status_refresh_url'],
-		success: function(response) {
-			$('#due-by-element-parent').replaceWith(response)
-			$('#due-by-element-parent').show('highlight',3000);
-		}
-	});
-}
 
 function dueDateSelected(date){
 	new Date(date);
 }
 
-var fetchLatestNotes = function() {
-	var href;
-	var showing_notes = $('#all_notes').length > 0;
-	if (showing_notes) {
-		href = TICKET_DETAILS_DATA['notes_pagination_url'] + 'since_id=' + TICKET_DETAILS_DATA['last_note_id'];
-	} else {
-		href = TICKET_DETAILS_DATA['activities_pagination_url'] + 'since_id=' + TICKET_DETAILS_DATA['last_activity'];
-	}
-	 
-	$.ajax({
-		url: href,
-		type: 'GET',
-		success: function(response) {
-			$('[rel=activity_container]').append(response);
-		}
-	});
-}
-//   Copied from Old Show Page
-var activeForm = null;
 swapEmailNote = function(formid, link){
 	$('#TicketPseudoReply').hide();
 	
@@ -200,6 +115,7 @@ swapEmailNote = function(formid, link){
 
 
 	activeForm = $('#'+formid).removeClass('hide').show();
+	$.scrollTo('#'+formid, {offset: 100});
 	if (activeForm.data('type') == 'textarea') {
 		//For Facebook and Twitter Reply forms.
 		setCaretToPos($('#' + formid + ' textarea').get(0), 0);
@@ -242,26 +158,6 @@ swapEmailNote = function(formid, link){
 	}
 }
 
-// CHECK AND REMOVE OLD UNUSED CODE
-var activeTinyMce = null;
-showCannedResponse = function(button, ticket_id){
-	$("#canned_response_container").css($(button).offset());
-
-	activeTinyMce = $(button).data("tinyMceId") || "";
-	
-	$("#canned_response_container")    
-		.show()
-		.addClass("sloading");
-
-	$("#canned_response_list")
-		.load("/helpdesk/canned_responses/index/"+ticket_id, function(){
-			$("#canned_response_container")
-				.removeClass("sloading");
-		})
-		.show();        
-}
-// END OF CHECK AND REMOVE OLD UNUSED CODE
-	 
 insertIntoConversation = function(value){
 	tweet_area = $('#cnt-tweet');
 	element_id = $('#canned_response_show').data('editorId');
@@ -301,8 +197,46 @@ getCannedResponse = function(ticket_id, ca_resp_id, element) {
 	});
 	return true;
 }
-//  End of Old Show page copy
 
+TICKET_DETAILS_DOMREADY = function() {
+
+activeForm = null, savingDraft = false, draftFirstFlag = 0, draftClearedFlag = TICKET_DETAILS_DATA['draft']['cleared_flag'];
+
+$('body').on("change.ticket_details", '#helpdesk_ticket_group_id' , function(e){
+	$('#TicketProperties .default_agent')
+		.addClass('loading-right');
+
+	var group_id = $('#helpdesk_ticket_group_id').val();
+	$.ajax({type: 'POST',
+		url: '/helpdesk/commons/group_agents/' + group_id,
+		contentType: 'application/text',
+		success: function(data){
+			$('#TicketProperties .default_agent select')
+				.html(data)
+				.trigger('change');
+
+			$('#TicketProperties .default_agent').removeClass('loading-right');
+		  }
+	});
+});
+
+$('body').on('mouseover.ticket_details', ".ticket_show #draft-save", function() {
+	if(savingDraft != 0){
+	  jQuery(".ticket_show #draft-save").attr('title',humaneDate(draftSavedTime,new Date()));
+	}
+});
+
+$("body").on("mouseout.ticket_details", ".ticket_show #draft-save",function(){
+  $(".ticket_show #draft-save").attr('title','');
+});
+
+// This has been moved as a on click event directly to the cancel button 
+// jQuery('input[type="button"][value="Cancel"]').bind('click', function(){cleardraft();});
+
+$("body").on("click.ticket_details", ".ticket_show #clear-draft", function(){
+  if (confirm(TICKET_DETAILS_DATA['draft']['clear_text']))
+  	clearSavedDraft();
+});
 
 // Functions for Select2
 var formatPriority = function(item) {
@@ -322,8 +256,6 @@ var defaultSelect2Format = function(item) {
 var formatTag = function(item) {
 	return item.value;
 }
-
-
 
 
 // ----- CODE FOR REVERSE PAGINATION ------ //
@@ -382,8 +314,22 @@ var updatePagination = function() {
 
 // ----- END FOR REVERSE PAGINATION ------ //
 
-$(document).ready(function() {
+changeStatusTo = function(status) {
+	$('#helpdesk_ticket_status option').prop('selected', false);
+	$('#helpdesk_ticket_status option[value=' + status + ']').prop('selected', true);
+	dontAjaxUpdate = true;
+	$('#helpdesk_ticket_status').trigger('change');
+}
 
+refreshStatusBox = function() {
+	$.ajax({
+		url: TICKET_DETAILS_DATA['status_refresh_url'],
+		success: function(response) {
+			$('#due-by-element-parent').replaceWith(response)
+			$('#due-by-element-parent').show('highlight',3000);
+		}
+	});
+}
 
 // For Setting Due-by Time
 
@@ -479,7 +425,7 @@ $(document).ready(function() {
 		jQuery('.requester-info-sprite').parents('.tkt-tabs').remove();
 	}
 	
-	$('ul.tkt-tabs').each(function(){
+	$('body.ticket_details ul.tkt-tabs').each(function(){
 		// For each set of tabs, we want to keep track of
 		// which tab is active and it's associated content
 		var $active, $content, $links = $(this).find('a');
@@ -566,9 +512,9 @@ $(document).ready(function() {
 			}
 			$('#timesheets_loading').modal('show');
 			var timesheetsLoading = setInterval(function() {
-				console.log('timesheetsLoading');
+				
 				if($('#timesheetlist').length) {
-					console.log('loaded');
+				
 					$('#triggerAddTime').trigger('click');
 					$('#timesheets_loading').modal('hide');
 					clearInterval(timesheetsLoading);
@@ -578,8 +524,8 @@ $(document).ready(function() {
 	});
 
 
-	$("select").data('placeholder','');
-	$("#TicketProperties select.dropdown, #TicketProperties select.dropdown_blank, #TicketProperties select.nested_field, select.select2").livequery(function(){
+	$("body.ticket_details .ticket_show select").data('placeholder','');
+	$("#TicketProperties select.dropdown, #TicketProperties select.dropdown_blank, #TicketProperties select.nested_field, body.ticket_details select.select2").livequery(function(){
 		if (this.id == 'helpdesk_ticket_priority') {
 			$(this).select2({
 				formatSelection: formatPriority,
@@ -595,7 +541,7 @@ $(document).ready(function() {
 		}
 	});
 
-	$('[rel=tagger]').livequery(function() {
+	$('body.ticket_details [rel=tagger]').livequery(function() {
 		$(this).select2({
 			tags: TICKET_DETAILS_DATA['tag_list'],
 			tokenSeparators: [',']
@@ -656,14 +602,15 @@ $(document).ready(function() {
 		}
 	});
 
-	//Loading Ticket Activities
-	$('body').on('change.ticket_details', '.ticket_show #activity_toggle input[type=checkbox]', function(ev) {
 
-		ev.preventDefault();
-		var _toggle = $(this).parent();
-		var _checkbox = $(this);
-		_toggle.addClass('loading_activities');
+	//Hack for those who visit upon hitting the back button
+	$('#activity_toggle').removeClass('active');
+	$('#activity_toggle [rel=toggle]').prop('checked', false);
+	$('body').on('click.ticket_details', '#activity_toggle', function(ev) {
+		var _toggle = $(this);
 
+		if (_toggle.hasClass('disabled')) return false;
+		_toggle.addClass('disabled')
 		var showing_notes = $('#all_notes').length > 0;
 		var url = showing_notes ? TICKET_DETAILS_DATA['activities_pagination_url'] : TICKET_DETAILS_DATA['notes_pagination_url'];
 		
@@ -683,18 +630,16 @@ $(document).ready(function() {
 				$('[rel=activity_container]').replaceWith(response);
 				$('#show_more').data('next-page',null);  //Resetting
 				if (updateShowMore()) updatePagination();
-				_toggle.removeClass('loading_activities');
+				_toggle.removeClass('loading_activities disabled');
 			}, 
 			error: function(response) {
 				$('#show_more').removeClass('hide');
-				_checkbox.prop('checked', !_checkbox.prop('checked'));
-				_toggle.removeClass('loading_activities')
-				_checkbox.next().toggleClass('active');
+				_toggle.toggleClass('active disabled');
 			}
 		})
 	});
 
-	$('.ticket_details').on('click.ticket_details', '[rel=activity_container] .minimizable', function(ev){
+	$('body').on('click.ticket_details', '[rel=activity_container] .minimizable', function(ev){
 		if ($(ev.target).is('a')) return;
 
 		$(this).toggleClass('minimized');
@@ -734,6 +679,7 @@ $(document).ready(function() {
 			$('#' + _form.data('cntId') + '-body').destroyEditor(); //Redactor
 			_form.resetForm();
 			_form.trigger('reset');
+			_form.find('select.select2').trigger('change'); //Resetting select2
 
 			//Removing the Dropbox attachments
 			_form.find('.dropbox_div input[filelist]:not(.original_input)').remove();
@@ -784,12 +730,13 @@ $(document).ready(function() {
 					message: " <h1>...</h1> ",
 					css: {
 						display: 'none',
-						backgroundColor: '#FFFFFF',
+						backgroundColor: '#e9e9e9',
 						border: 'none',
-						color: '#FFFFFF'
+						color: '#FFFFFF',
+						opacity:0
 					},
 					overlayCSS: {
-						backgroundColor: '#FFFFFF',
+						backgroundColor: '#e9e9e9',
 						opacity: 0.6
 					}
 				});
@@ -830,7 +777,7 @@ $(document).ready(function() {
 						if(statusChangeField.val() != '') {
 							refreshStatusBox();
 							if(statusChangeField.val() == '4' || statusChangeField.val() == '5') {
-								window.location = "/helpdesk/tickets"
+								$('[rel=link_ticket_list]').click();
 							}
 							statusChangeField.val('')
 						}
@@ -858,7 +805,7 @@ $(document).ready(function() {
 
 					_form.resetForm();
 					_form.trigger('reset');
-
+					_form.find('select.select2').trigger('change'); //For resetting the values in Select2.
 
 					if (_form.attr('rel') == 'forward_form')  {
 						//Remove To Address
@@ -918,45 +865,6 @@ $(document).ready(function() {
 		$('#ReplyButton').click();
 	});
 
-	// -----   START OF TICKET BAR FIXED TOP ------ //
-	//For having the ticket subject and the action bar floating at the top when Scrolling down	
-	var REAL_TOP = $("#wrap .header").first().height() + 110;
-	var outerHeight = $('.fixedStrap').outerHeight();
-	var the_window = $(window),
-		hasScrolled = false;
-
-	var fixedStrap = $('.fixedStrap'),
-		at_the_top = $('.fixedStrap, .fixedbg'),
-		forFixed = $('#forFixed'),
-		firstchild = $('#firstchild');
-
-	var handleScroll = function() {
-		if (the_window.scrollTop() > REAL_TOP) {
-			if (!fixedStrap.hasClass('at_the_top')) {
-
-				at_the_top.addClass('at_the_top');
-				forFixed.show();
-				at_the_top.css({top: -outerHeight}).animate({ top: 0}, 300, 'easeOutExpo');
-				firstchild.addClass('firstchild');
-			}
-
-		} else {
-			at_the_top.removeClass('at_the_top').css({top: ''});
-			forFixed.hide();
-			firstchild.removeClass('firstchild');
-		}
-
-		hasScrolled = false;
-	};
-
-	the_window.on('scroll.ticket_details', function() { hasScrolled = true; });
-	setInterval(function() {
-		if(hasScrolled) {
-			handleScroll();
-		}
-	},150);
-	// -----   END OF TICKET BAR FIXED TOP ------ //
-
 	//For showing canned response and solutions
 
 	$('body').on('click.ticket_details', 'a[rel="ticket_canned_response"]', function(ev){
@@ -1002,7 +910,7 @@ $(document).ready(function() {
 		dontAjaxUpdate = false;
 	} );
 
-    $('.ticket_details').on('click.ticket_details', '[rel=custom-reply-status]', function(ev){
+    $('body').on('click.ticket_details', '[rel=custom-reply-status]', function(ev){
       ev.preventDefault();
       ev.stopPropagation();
       jQuery('#reply_ticket_status_' + jQuery(this).data('cntId')).val(jQuery(this).data('statusVal'));
@@ -1085,19 +993,19 @@ $(document).ready(function() {
 
 		Being done to make sure that there is no visible jump in the infobox.
 	*/
-	$('body').on('mouseenter.ticket_details', '.ticket_show .control-left h2.subject:not(.show_full)', function(){
-		if ($(this).height() > 30) {
-			$(this).siblings('.ticket-actions').hide();
-		}
-	});
-	$('body').on('mouseleave.ticket_details', '.ticket_show .control-left h2.subject:not(.show_full)', function() {
-		if (!$(this).siblings('.ticket-actions').is(':visible')) {
-			$(this).siblings('.ticket-actions').show();
-		}
-	})
+	// $('body').on('mouseenter.ticket_details', '.ticket_show .control-left h2.subject:not(.show_full)', function(){
+	// 	if ($(this).height() > 30) {
+	// 		$(this).siblings('.ticket-actions').hide();
+	// 	}
+	// });
+	// $('body').on('mouseleave.ticket_details', '.ticket_show .control-left h2.subject:not(.show_full)', function() {
+	// 	if (!$(this).siblings('.ticket-actions').is(':visible')) {
+	// 		$(this).siblings('.ticket-actions').show();
+	// 	}
+	// })
 
 	//Binding the Reply/Forward/Add Note buttons
-	$('.ticket_show').on('click.ticket_details', '[rel=note-button]', function(ev) {
+	$('body').on('click.ticket_details', '[rel=note-button]', function(ev) {
 		if (!$(this).parent().parent().hasClass('dropdown-menu')) {
 			ev.preventDefault();
 			ev.stopPropagation();
@@ -1114,14 +1022,65 @@ $(document).ready(function() {
 	$('#twitter_handle').change();
 
 	if(TICKET_DETAILS_DATA['scroll_to_last']) {
-		$.scrollTo('[rel=activity_container] .conversation:last', { offset: 143 });
+		$.scrollTo('[rel=activity_container] .conversation:last', { offset: $('#sticky_header').outerHeight() });
+		$('#scroll-to-top').show();
 	}
 
 	//Hack for those who visit upon hitting the back button
-	$('#activity_toggle .toggle-button').removeClass('active');
-	jQuery('#activity_toggle [rel=toggle]').prop('checked', false);
+	$('#activity_toggle').removeClass('active');
+	jQuery('#activity_toggle').prop('checked', false);
 
-});
+	// Capturing the Unload and making sure everything is fine, before we let the 
+	$(window).on('unload.ticket_details',function(e) {
+		var messages = [];
+		if ($('#custom_ticket_form .error:input').length > 0 ) {
+			messages.push('There are errors in the form.');
+		}
+		
+		if (TICKET_DETAILS_DATA['updating_properties']) {
+			messages.push('Unsaved changes in the form');
+		}
+
+		if (TICKET_DETAILS_DATA['draft']['hasChanged'] && dontSaveDraft == 0) {
+			autosaveDraft();
+		}
+
+		if (messages.length > 0) {
+			var msg = '';
+			messages.forEach(function(str) {
+				msg += str + "\n";
+			});
+
+			e = e || window.event;
+			if (e) {
+				e.returnValue = msg;
+			}
+
+			return msg;
+		}
+	});
+
+};
+
+TICKET_DETAILS_CLEANUP = function() {
+	if($('body').hasClass('ticket_details')) return;
+	$("#TicketProperties select.dropdown, #TicketProperties select.dropdown_blank, #TicketProperties select.nested_field, body.ticket_details select.select2").expire();
+	$('body.ticket_details [rel=tagger]').expire();
+	jQuery('body').off('click.ticket_details')
+    				.off('change.ticket_details')
+    				.off('mouseover.ticket_details')
+    				.off('mouseout.ticket_details')
+    				.off('mouseenter.ticket_details')
+    				.off('mouseleave.ticket_details')
+    				.off('keydown.ticket_details')
+    				.off('keyup.ticket_details')
+    				.off('change.ticket_details')
+    				.off('submit.ticket_details')
+    jQuery(window).off('unload.ticket_details');
+
+    jQuery('body').removeClass('ticket_details');
+
+};
 
 
 // MOVE TO !PATTERN
@@ -1130,33 +1089,4 @@ $('body').on('change.pattern', '.selected_to_yellow [type=radio], .selected_to_y
 	$(this).parents('td').first().toggleClass('stripe-select', $(this).prop('checked'));
 });
 
-// Capturing the Unload and making sure everything is fine, before we let the 
-$(window).on('unload.ticket_details',function(e) {
-	var messages = [];
-	if ($('#custom_ticket_form .error:input').length > 0 ) {
-		messages.push('There are errors in the form.');
-	}
-	
-	if (TICKET_DETAILS_DATA['updating_properties']) {
-		messages.push('Unsaved changes in the form');
-	}
-
-	if (TICKET_DETAILS_DATA['draft']['hasChanged'] && dontSaveDraft == 0) {
-		autosaveDraft();
-	}
-
-	if (messages.length > 0) {
-		var msg = '';
-		messages.forEach(function(str) {
-			msg += str + "\n";
-		});
-
-		e = e || window.event;
-		if (e) {
-			e.returnValue = msg;
-		}
-
-		return msg;
-	}
-});
 })(jQuery);

@@ -2915,11 +2915,11 @@ en:
           reply: "%{user_name} replied on %{note_date}"
           forward: "%{user_name} forwarded on %{note_date}"
         created_on_live:
-          private_note: "%{user_name} added a private note <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
-          public_note: "%{user_name} added a public note <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
-          reply: "%{user_name} replied <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
-          forward: "%{user_name} forwarded <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
-          survey: "%{user_name} rated this ticket <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
+          private_note: "%{user_name} added a private note <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          public_note: "%{user_name} added a public note <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          reply: "%{user_name} replied <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          forward: "%{user_name} forwarded <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          survey: "%{user_name} rated this ticket <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         edit_note: Edit Note
         split_this_as_new_ticket: Split this as a new Ticket
         delete_note: "Remove this from the ticket converstion?"
