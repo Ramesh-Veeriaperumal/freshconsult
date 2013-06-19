@@ -294,7 +294,7 @@ var updatePagination = function() {
 	$('#show_more').off('click.ticket_details');
 	$('#show_more').on('click.ticket_details',function(ev) {
 		ev.preventDefault();
-		$('#show_more').addClass('sloading loading-small');
+		$('#show_more').addClass('loading');
 		var href;
 		if (showing_notes)
 			href = TICKET_DETAILS_DATA['notes_pagination_url'] + 'before_id=' + TICKET_DETAILS_DATA['first_note_id'];
