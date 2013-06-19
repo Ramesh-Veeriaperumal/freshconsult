@@ -2669,3 +2669,56 @@ div.db-chooser{
 	}
 	.attach_file{ float:left; padding-right:20px }
 }
+
+/* account cancel form */
+
+.form-bordered{
+	margin-top: 5px;
+	margin-bottom: 10px;
+	border: 1px solid #EFEFEF;
+	@include border-radius(6px);
+	overflow: hidden;
+	li {
+		padding-bottom: 1px;
+		border-bottom: 1px solid #EFEFEF;
+		&:last-child{ border-bottom: none; }
+		line-height: 1.2;
+		.reason-followup{ display: none; }
+		&:hover{ background: #FAFAFA; }
+		&.expanded{
+			background: #fefdee;
+			label{
+				font-weight: bold;
+				padding-bottom: 5px;
+				&:hover{ cursor: auto; }
+			}			
+			.reason-followup{ display: block; }
+		}
+		textarea { 
+			width: 85%; 
+			&:focus { border-color: #ccc; box-shadow: none; } 
+		}
+	}
+	.reason-followup{ margin: 0 20px 15px 42px; }
+	input[type="radio"].cancel-reason{
+		margin-left: 0;
+		margin-right: 12px;
+	}	
+}
+.reason-followup, .label-choice { font-size: 13px; line-height: 1.4; }
+.label-choice{ padding: 10px 20px 10px 15px; }
+label.label-choice{ cursor: pointer; }
+
+.confirm-section{
+	margin-left: 19px;
+	.cancel-checkbox{ margin-right: 12px; margin-top: 3px;  }
+	.reason-followup{ margin-left: 22px; }
+}
+
+.cancel-form label.error{ font-weight: 500; }
+.confirm-section.show-confirm-followup{
+	label{ font-weight: bold; }
+	.reason-followup{ display: block; }
+}	
+
+/* end */

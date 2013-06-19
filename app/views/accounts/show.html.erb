@@ -20,12 +20,18 @@
 	
 	<div class="sidepanel">
 		<h3 class="title"><%= current_account.name %></h3> 
-		<p>			
-			<strong><%=t('account.active_since')%></strong>
-			<br />
-			<%= formated_date(current_account.created_at) %>			
-		</p>
-		<%= link_to(t("cancel_my_account"), cancel_account_url, :class => "button") %>
+		<% unless (del_customer = DeletedCustomers.find_by_account_id(current_account.id)) %>
+			<p>			
+				<strong><%=t('account.active_since')%></strong>
+				<br />
+				<%= formated_date(current_account.created_at) %>			
+			</p>
+			<%= link_to(t("cancel_my_account"), cancel_account_url, :class => "button") %>
+		<% else %>
+			<p>
+				<%= t(".restore_account", :delete_at => 2.days.since(del_customer.created_at).strftime('%a, %b %d, %Y')) %>
+			</p>
+		<% end %>
 	</div>
 
 	<div class="sidepanel">

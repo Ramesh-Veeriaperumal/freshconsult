@@ -234,8 +234,6 @@ class Account < ActiveRecord::Base
 
   after_update :update_users_language
 
-  before_destroy :update_crm
-
   after_commit_on_create :add_to_billing, :enable_elastic_search
 
   after_commit_on_update :clear_cache
@@ -668,10 +666,6 @@ class Account < ActiveRecord::Base
 
     def add_to_billing
       Resque.enqueue(Billing::AddToBilling, { :account_id => id })
-    end
-
-    def update_crm
-      Resque.enqueue(CRM::AddToCRM::DeletedCustomer, id)
     end
 
     def set_shard_mapping

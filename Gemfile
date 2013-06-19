@@ -70,6 +70,7 @@ gem "SystemTimer", "1.2.3", :platforms => :ruby_18
 gem "redis","2.2.2"
 gem "resque","1.22.0"
 gem "resque-status", "0.4.1"
+gem 'resque-scheduler', :require => 'resque_scheduler'
 
 gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
 gem 'rforce'

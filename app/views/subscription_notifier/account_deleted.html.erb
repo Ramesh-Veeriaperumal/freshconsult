@@ -1,16 +1,29 @@
-<%="The email of the admin is  #{@account.admin_email} and the state is #{@account.subscription.state}"%>
-<br>
-Discount is <%=@account.subscription.subscription_discount_id%>
-<br>
-<%unless @account.subscription_payments.blank?%>
-     
-   
+<div>
+	<%= %(#{@account.name}(#{@account.full_domain}) has been deleted. ) %>
+</div><br />
+
+<div>
+	<%= %(Reason : )%><b><%= @reason %></b>
+</div>
+
+<div>
+	<h3>Account details :</h3>	
+	<ul style = "list-style: none;">
+		<li><%= %(Admin Name : #{@account.admin_first_name}) %></li>
+		<li><%= %(Admin Email : #{@account.admin_email}) %></li>
+		<li><%= %(Customer Status : #{@account.subscription.state}) %></li>
+	</ul>
+</div>
+
+<%unless @account.subscription_payments.blank?%>  
+	<h3>Payments :</h3>	     
 	 <ol>
 	 	<dl>&nbsp;ID &nbsp; Amount &nbsp; Paid On</dl>
-	<%@account.subscription_payments.each do |payment|%>
-	 <li>
-	 	<%=payment.id%> &nbsp; $<%=payment.amount%> &nbsp; <%=payment.created_at.to_s(:short_day).strip%>
-	 </li>
-	<%end%>
+		
+		<%@account.subscription_payments.each do |payment|%>
+		 <li>
+		 	<%=payment.id%> &nbsp; $<%=payment.amount%> &nbsp; <%=payment.created_at.to_s(:short_day).strip%>
+		 </li>
+		<%end%>
 	</ol>
 <%end%>

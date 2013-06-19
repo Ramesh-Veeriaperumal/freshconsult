@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130606101905) do
+ActiveRecord::Schema.define(:version => 20130614064141) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -300,6 +300,7 @@ ActiveRecord::Schema.define(:version => 20130606101905) do
     t.text     "account_info"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "status",       :default => 0
   end
 
   create_table "elasticsearch_indices", :force => true do |t|
