@@ -14,8 +14,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   
   has_many :integrated_resources, 
     :class_name => 'Integrations::IntegratedResource',
-    :as => 'local_integratable',
-    :dependent => :destroy
+    :as => 'local_integratable'
     
   named_scope :timer_active , :conditions =>["timer_running=?" , true]
 
