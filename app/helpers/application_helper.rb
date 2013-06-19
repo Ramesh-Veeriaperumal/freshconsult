@@ -13,11 +13,11 @@ module ApplicationHelper
   ASSETIMAGE = { :help => "/images/helpimages" }
 
   def open_html_tag
-    html_conditions = [ ["lt IE 7", "ie6"],
-                        ["IE 7", "ie7"],
-                        ["IE 8", "ie8"],
-                        ["IE 9", "ie9"],
-                        ["IE 10", "ie10"],
+    html_conditions = [ ["lt IE 7", "ie6 ie"],
+                        ["IE 7", "ie7 ie"],
+                        ["IE 8", "ie8 ie"],
+                        ["IE 9", "ie9 ie"],
+                        ["IE 10", "ie10 ie"],
                         ["(gt IE 10)|!(IE)", "", true]]
 
     html_conditions.map { |h| %( 

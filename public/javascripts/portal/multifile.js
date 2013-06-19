@@ -104,7 +104,7 @@ Helpdesk.Multifile = {
         
         $("[rel=attach-file]").on("click", function(ev){
             var $this = $(this) 
-            console.log($this.data("attachContainer"))
+            // console.log($this.data("attachContainer"))
 
         })
 
