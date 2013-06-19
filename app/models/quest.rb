@@ -17,6 +17,8 @@ class Quest < ActiveRecord::Base
   serialize :filter_data
   serialize :quest_data
 
+  validate :has_quest_data_value?
+
   before_create :set_active
 
   before_save :modify_quest_data, :denormalize_filter_data
@@ -263,6 +265,12 @@ class Quest < ActiveRecord::Base
       end
 
       to_ret
+    end
+
+    def has_quest_data_value?
+      if(quest_data && ( quest_data.first["value"].blank? || (quest_data.first["value"].to_i == 0)))
+        errors.add_to_base(I18n.t("quests.#{GAME_TYPE_TOKENS_BY_KEY[category].to_s}_mand")) 
+      end
     end
 
     # forum quest related methods
