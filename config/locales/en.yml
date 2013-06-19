@@ -1581,7 +1581,7 @@ en:
   import_ignore_first_row: Ignore the first row (headings)
   portal_customizer_open_sol_i: Turn this feature off, if you want to hide 'Solutions' tab in public customer portal.
   portal_customizer_option_sol_i: Disable this feature if you want users to login to view solutions
-  portal_customizer_auto_suggest_solutions: Enable this feature if you want to suggest existing solutions when user creates a new ticket.
+  portal_customizer_auto_suggest_solutions: Enable this feature if you want to suggest existing solutions when user creates a new ticket. This also applies to the search feature inside feedback widget.
   show_me_how: Show me how
   agent_list:
     tab:
