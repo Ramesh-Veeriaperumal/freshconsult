@@ -152,7 +152,7 @@ class Solution::ArticlesController < ApplicationController
     def set_solution_tags      
       @article.tags.clear    
       tags = params[:tags][:name]
-      ar_tags =  tags.scan(/\w+/)    
+      ar_tags =  tags.split(',').map(&:strip).uniq   
       new_tag = nil
 
       ar_tags.each do |tag|      
