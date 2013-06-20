@@ -190,7 +190,7 @@ class AgentsController < ApplicationController
  end
 
   def reset_password
-    if agent.user.active?
+    if @agent.user.active?
       @agent.user.reset_agent_password(current_portal)
       flash[:notice] = t(:'flash.password_resets.email.reset', :requester => h(@agent.user.email))      
       redirect_to :back

@@ -36,6 +36,7 @@ stylesheets:
 
   portal:
     - public/stylesheets/redactor.css
+    - public/stylesheets/portal/ie.css
 
   preview:
     - public/stylesheets/portal/preview.css
