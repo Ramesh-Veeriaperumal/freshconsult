@@ -19,6 +19,7 @@ class Admin::AutomationsController < Admin::AdminController
     set_nested_fields_data @va_rule.action_data if @va_rule.action_data
     if @va_rule.save
       flash[:notice] = t(:'flash.general.create.success', :human_name => human_name)
+      flash[:highlight] = dom_id(@va_rule)
       redirect_back_or_default redirect_url
     else
       load_config
@@ -36,6 +37,7 @@ class Admin::AutomationsController < Admin::AdminController
     set_nested_fields_data @va_rule.action_data
     if @va_rule.update_attributes(params[:va_rule])
       flash[:notice] = t(:'flash.general.update.success', :human_name => human_name)
+      flash[:highlight] = dom_id(@va_rule)
       redirect_back_or_default redirect_url
     else
       load_config
