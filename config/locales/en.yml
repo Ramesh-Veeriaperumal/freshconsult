@@ -646,8 +646,8 @@ en:
       helpnote:
         tour: Help me create a new observer rule
         help_title: Observer
-        help_info_1: The Observer performs actions on tickets that you specify based on time and event driven triggers.
-        help_info_2: The Observer will run on every event trigger.
+        help_info_1: The Observer lets you trigger specific actions in your support desk as soon as a certain event occurs. For example, you could create an Observer Rule that looks for customers replying to a resolved ticket, and reopens it automatically.
+        help_info_2: You can use the Observer to modify fields, change status, or even send out notification alerts as soon as certain conditions are met. Observer rules are processed sequentially so the order of the rules is important. A rule may cause actions that might trigger subsequent rules.
         help_info_3: Observer help_info_3
         help_info_4: Observer rule orders are not important.
       new:

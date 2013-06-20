@@ -5,8 +5,6 @@ module Va::Observer::Util
 	private
 
 		def user_present?
-			Rails.logger.debug "Obz"
-	  	Rails.logger.debug @model_changes
 			@model_changes && (User.current || self.class == SurveyResult) && !zendesk_import?
 		end
 
@@ -32,14 +30,9 @@ module Va::Observer::Util
 			doer_id = (self.class == Helpdesk::Ticket) ? User.current.id : self.send(FETCH_DOER_ID[self.class.name])
 			evaluate_on_id = self.send FETCH_EVALUATE_ON_ID[self.class.name]
 
-			Rails.logger.debug "ENQUEUING"
 			Resque.enqueue(Workers::Observer,
 	    					{ :doer_id => doer_id, :ticket_id => evaluate_on_id, 
 	    						:current_events => observer_changes })
-	    # Workers::Observer.perform evaluate_on_id, doer_id, observer_changes
-	    #DJ
-			# Delayed::Job.enqueue Workers::Observer.new(
-				# {:ticket_id => evaluate_on_id, :doer_id => doer_id, :current_events => observer_changes, :account_id => Account.current.id})
 	  end
 
 	  def ticket_event current_events

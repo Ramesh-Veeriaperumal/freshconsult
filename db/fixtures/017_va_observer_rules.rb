@@ -23,13 +23,11 @@ VARule.seed_many(:account_id, :name, :rule_type, [
       2,
       {
         :events => [
-                      { :name => 'reply_sent' },
-                      { :value => 'public', :name => 'note_type'  }
+                      { :name => 'reply_sent' }
                     ],
         :performer => { :type => Va::Performer::CUSTOMER },
         :conditions => [
-                          { :value => Helpdesk::Ticketfields::TicketStatus::RESOLVED, :operator => 'is', :name => 'status' },
-                          { :value => Helpdesk::Ticketfields::TicketStatus::CLOSED, :operator => 'is', :name => 'status' }
+                          { :value => "2", :operator => 'is_not', :name => 'status' }
                       ]
       },
       [
