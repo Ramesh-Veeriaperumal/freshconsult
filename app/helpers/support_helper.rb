@@ -528,6 +528,37 @@ HTML
 		return form_value
 	end
 
+	def default_ticket_list_item ticket
+		label_class_name = ticket['active?'] ? "label-status-pending" : "label-status-closed"
+
+		unless ticket['requester'] or User.current.eql?(ticket['requester'])
+			time_ago_text = I18n.t('ticket.portal_created_on', { :username => h(ticket['requester']['name']), :date => formated_date(ticket['created_on']) })
+		else
+			time_ago_text = I18n.t('ticket.portal_created_on_same_user', { :date => formated_date(ticket['created_on']) })
+		end
+		unless ticket['freshness'] == "new"
+			unique_agent = "#{I18n.t("ticket.assigned_agent")} : <span class='emphasize'> #{ h(ticket['agent']) }</span>"
+		end
+
+		%( <div class="c-row c-ticket-row">
+			<span class="status-source sources-detailed-#{ ticket['source_name'].downcase }"> </span>
+			<span class="#{label_class_name} label label-small"> 
+				#{ ticket['status'] }
+			</span>
+			<div class="ticket-brief">
+				<div class="ellipsis">
+					<a href="#{ ticket['portal_url'] }" class="c-link" title="#{ h(ticket.description_text) }">
+						#{ ticket['subject'] } ##{ ticket['id'] }
+					</a>
+				</div>
+				<div class="help-text">
+					#{ time_ago_text }
+					#{ unique_agent }
+				</div>
+			</div>
+		</div> )
+	end
+
 	# Portal placeholders to access dynamic data inside javascripts
 	def portal_access_varibles
 		output = []

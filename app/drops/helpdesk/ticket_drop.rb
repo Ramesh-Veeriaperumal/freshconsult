@@ -143,7 +143,7 @@ class Helpdesk::TicketDrop < BaseDrop
 	end
 
 	def freshness
-		@source.freshness
+		@source.freshness.to_s
 	end
 
 	def close_ticket_url
@@ -152,6 +152,10 @@ class Helpdesk::TicketDrop < BaseDrop
 
 	def closed?
 		@source.closed?
+	end
+
+	def active?
+		@source.active?
 	end
 
 	def before_method(method)

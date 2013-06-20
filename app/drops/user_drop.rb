@@ -36,6 +36,10 @@ class UserDrop < BaseDrop
 		name_part(:last)
 	end
 
+	def recent_tickets
+		source.tickets.visible.newest(5)
+	end
+
 	private
 		def name_part(part)
 			parsed_name[part].blank? ? parsed_name[:clean] : parsed_name[part]
