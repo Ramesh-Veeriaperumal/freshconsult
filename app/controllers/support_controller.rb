@@ -29,22 +29,16 @@ class SupportController < ApplicationController
 
       # Setting up current_tab based on the page type obtained
       current_tab page_token
-
-      if facebook?
-        @facebook_login = current_user 
-      else
-        @skip_liquid_compile = false
-        
-        # Setting up page layout variable
-        process_page_liquid page_token
-
-        # Setting dynamic header, footer, layout and misc. information
-        process_template_liquid
-
-        @skip_liquid_compile = true # if active_layout.present?
-      end
-
       
+      @skip_liquid_compile = false
+      
+      # Setting up page layout variable
+      process_page_liquid page_token
+
+      # Setting dynamic header, footer, layout and misc. information
+      process_template_liquid
+
+      @skip_liquid_compile = true # if active_layout.present?      
     end
 
     def preview?
@@ -92,7 +86,8 @@ class SupportController < ApplicationController
       dynamic_template = page_data(page_token) if feature?(:layout_customization)
       _content = render_to_string :file => partial,
                   :locals => { :dynamic_template => dynamic_template } if dynamic_template.nil? || !dynamic_template.blank?
-      @content_for_layout = _content
+
+      @page_yield = @content_for_layout = _content
     end
 
     def page_data(page_token)

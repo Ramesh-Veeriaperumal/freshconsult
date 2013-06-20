@@ -78,9 +78,10 @@
 		<%= portal_navigation current_portal.to_liquid %>
 
 		<% unless @facebook_login %>
-		<div class="fb-login-button" data-scope="user_likes,email" data-display="page">Log In</div>
+			<div class="fb-login-button" data-scope="user_likes,email" data-display="page">Log In</div>
 		<% end %>
-		<%= yield %>
+
+		<%= @page_yield %>
 				
 		<%= render :partial => "layouts/shared/scripts" %> 
 
