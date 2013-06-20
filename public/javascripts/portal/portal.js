@@ -5,6 +5,8 @@
 
 !function( $ ) {
 
+	if($.browser.msie) $("body").addClass("ie")
+
 	$(function () {
 
 		"use strict"
