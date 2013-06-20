@@ -735,16 +735,6 @@ module ApplicationHelper
   def es_enabled?
     current_account.es_enabled?
   end
-  
-  def truncate_filename filename
-    extension = filename.include?('.') ? filename.split('.').last : nil
-    extension = nil if filename.gsub('.','') == extension
-    simple_name = extension ? filename[0..-(extension.to_s.length + 2)] : filename
-    if filename.length > 20
-      return simple_name[0,15] + "..." + simple_name[-2..-1] + (extension ? ".#{extension}" : "")
-    end
-    filename
-  end
 
   def assumed_identity_message
     _output = []
