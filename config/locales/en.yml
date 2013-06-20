@@ -1581,7 +1581,7 @@ en:
   import_ignore_first_row: Ignore the first row (headings)
   portal_customizer_open_sol_i: Turn this feature off, if you want to hide 'Solutions' tab in public customer portal.
   portal_customizer_option_sol_i: Disable this feature if you want users to login to view solutions
-  portal_customizer_auto_suggest_solutions: Enable this feature if you want to suggest existing solutions when user creates a new ticket.
+  portal_customizer_auto_suggest_solutions: Enable this feature if you want to suggest existing solutions when user creates a new ticket. This also applies to the search feature inside feedback widget.
   show_me_how: Show me how
   agent_list:
     tab:
@@ -1713,7 +1713,11 @@ en:
     info6: "Email Agent when a new ticket is assigned to this group "
     info7: "if a ticket remains un-assigned for more than "
     tour: Help me create a new agent group
-    helptext: You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, set email notifications, create business rules and generate reports at the group level. Note that the same agent can be a member of multiple groups as well. <br> <br>You can create multiple business hour sets to match various needs. You can assign specific business hours to specific Groups with different working hours and holidays. If you have teams working in two shifts, you can separate agents into a Day Shift Group and a Night Shift Group and assign them different business hours. This feature is also useful if your agents are across several time zones. For example, If one team is working from PST and another is working from GMT, you can create separate groups for the time zones. 
+    helptext: You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that the same agent can be a member of multiple groups as well
+    automatic_assignment: Once you create homogeneous agent groups, you can choose to automatically assign new tickets in this group to the next agent in Round Robin. <a href="https://support.freshdesk.com/support/solutions/articles/77157" target="_blank">Learn more</a>
+    automatic_assignment_header: Auto-ticket Assignment
+    working_hours_header: Working Hours
+    working_hours: You can assign a different set of business hours and holidays to each Group. For example, you can separate agents by shifts and assign them different business hours, or create separate groups for each time zone your agents work at
     select_agents: Select Agents
     select_an_agent: Select Agent
     select_business_calendar: Select Business Hours
@@ -2721,7 +2725,7 @@ en:
     name_eg: "eg: Chicago Business Hours"
     description_eg: "eg: This Business Calendar belongs to Chicago timezone"
     description: Description
-    new: New Business Calendar
+    new: New Business Hours
     to: to
     time_zone: Time Zone
     delete: Are you sure
@@ -2729,8 +2733,9 @@ en:
     holiday_name: Holiday name
     import_holiday: Import Holidays
     title: Business Hours
-    info1: This feature allows you to have more control over your SLAs. If your helpdesk works between 9am to 6pm Mon-Fri and a customer sends a high priority ticket at 4pm on Tuesday, with a resolution time of 4 hours, then the ticket Due By time is set as 11am on Wednesday. <br> <br> You can also create multiple business hour sets for agents working in different time zones. If you have one team working from PST and another from GMT, then you can let each group have its own set of business hours and holidays based on a different time zones
+    info1: Business Hours give you more control over SLAs in your helpdesk, and when a ticket is due. For example, if your helpdesk works between 9am to 6pm Mon-Fri and a customer logs a ticket at 7pm on Tuesday, the "Due by" timers do not start ticking till Wednesday morning at 9
     info2: Holidays work exactly like business hours. If your helpdesk works between 9am to 6pm Mon-Fri and a customer sends a medium priority ticket at 8pm on Friday with a resolution time of 24 hours, then the ticket Due By time is set as 9am on Tuesday.(not 8pm on Sat)
+    multiple_info: You can also create multiple sets of business hours and holidays, and apply them for specific groups. If you have one support team working on PST and another on GMT, you can let each group have its own set of business hours and holidays. <a href="https://support.freshdesk.com/solution/articles/98945" target="_blank">Learn more</a>
     holiday_added: Holiday already added
     invalid_holiday: Invalid holiday added
     import_holiday_info: <b>Important:</b> Importing will only import current year's holiday. we will not be updating the holiday list every year.
@@ -2740,6 +2745,7 @@ en:
     holiday_list: Yearly Holiday List
     info5: Holidays will be ignored when calculating SLA for a ticket
     holidays: Holidays
+    multiple: Multiple Business Hours
     helpdesk_hours: Helpdesk Hours
     select_time_zone: Select a Time Zone 
   import_org_companies: Organizations &rarr; Companies
@@ -3051,7 +3057,7 @@ en:
           survey: "%{user_name} rated this ticket <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
         edit_note: Edit Note
         split_this_as_new_ticket: Split this as a new Ticket
-        delete_note: "Remove this from the ticket converstion?"
+        delete_note: "Remove this from the ticket conversation?"
         deleted_note: "Deleted"
         split_ticket_confirm: Split this note and create it as a new ticket?
         private_note: Private note

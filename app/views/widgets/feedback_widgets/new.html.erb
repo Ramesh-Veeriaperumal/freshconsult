@@ -1,5 +1,6 @@
 <% @ticket ||= current_account.tickets.new %>
 <% @widget_form ||= widget_option(:enable_screenshot) || true %>
+
 <div class="modal-header">
 	<%= content_tag(:h3, widget_option(:formTitle), :class => "ellipsis", :title => widget_option(:formTitle)) %>
 </div>
@@ -30,7 +31,7 @@
 </div>
 <div class="modal-footer">
 	<div class="copyright">
-		<% if(current_account.subscription.paid_account?) %>
+		<% unless(current_account.subscription.paid_account?) %>
 			<%= link_to(t('footer.helpdesk_software'), "http://www.freshdesk.com", :target => "_blank") %>
 			<%= t('footer.by_freshdesk') %>
 		<% end %>
@@ -39,112 +40,116 @@
 	<%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
 	<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
 </div>
-
-<div class="modal-panel" id="feedback-suggest">
-	<form class="hc-search-form" autocomplete="off" action="<%= solutions_support_search_path %>" id="hc-search-form">
-		<div class="hc-search-input">
-			<input placeholder="Search" type="text" id="fs-input"
-				name="term" class="span12 special" value="" 
-	            rel="page-search" data-max-matches="10">
-		</div>
-	</form>
-	<div id="panel-content" class="panel-content hide">
-		<h4 id="ws-results-title">Search results</h4>
-		<ul class="unstyled" id="ws-results"></ul>	
-	</div>
-	<div id="panel-info" class="panel-info">
-		<h2 class="lead">Search our <br />
-			Knowledge base </h2>
-		<%= link_to "or Browse help articles", support_solutions_path, 
-				{ :target => "_blank", :class => "link-pointer" } %>
-	</div>
-</div>
 <% end %>
+
+<% if feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
+	<div class="modal-panel" id="feedback-suggest">
+		<form class="hc-search-form" autocomplete="off" action="<%= solutions_support_search_path %>" id="hc-search-form">
+			<div class="hc-search-input">
+				<input placeholder="Search" type="text" id="fs-input"
+					name="term" class="span12 special" value="" 
+		            rel="page-search" data-max-matches="10">
+			</div>
+		</form>
+		<div id="panel-content" class="panel-content hide">
+			<h4 id="ws-results-title">Search results</h4>
+			<ul class="unstyled" id="ws-results"></ul>	
+		</div>
+		<div id="panel-info" class="panel-info">
+			<h2 class="lead">Search our <br />
+				Knowledge base </h2>
+			<%= link_to "or Browse help articles", support_solutions_path, 
+					{ :target => "_blank", :class => "link-pointer" } %>
+		</div>
+	</div>
+
+	<script id="ws-tmpl" type="text/x-jquery-tmpl">      
+		<li>
+			<div class="ellipsis">
+				<a href="${url}" target="_blank">{{html title}}</a>
+			</div>
+			<p class="help-text">{{html desc}}</p>
+		</li>
+	</script>
+	<script type="text/javascript">
+		var suggestQuery, suggestDelay, suggestForSubject = true;
+		window['suggest-cache'] = {};
+
+		jQuery("#feedback-widget-container").addClass("modal-panel-active");
+
+		var suggestResponse = function(data, term){		
+		    if(data.length > 0){	    	
+				jQuery("#ws-results")
+					.html(jQuery.tmpl(jQuery("#ws-tmpl").template(), data))
+					.append("<li><a href='/support/search/solutions?term="+term+"' target='_blank'>Show all results</a></li>")
+				
+		    }else{
+		    	jQuery("#ws-results").html("No results for " + term)
+		    }	    
+
+		    jQuery("#panel-content").show()
+		    jQuery("#fs-input").removeClass("loading-right");
+		}
+
+		var callbackToSolutionSearch = function(string){
+			var term = string.trim(),
+		        cache = window['suggest-cache'],
+		        suggest_url = "/support/search/solutions.json",
+		        request = { max_matches:5, term:term };
+
+		    if(suggestQuery) suggestQuery.abort();
+
+		    if( term in cache || term == '' ) {
+		        suggestResponse( cache[ term ], term )
+		        return
+		    }
+
+		    jQuery("#fs-input").addClass("loading-right");
+
+	        suggestQuery = jQuery.getJSON(suggest_url, request, function( data, status, xhr ) {
+				window['suggest-cache'][ term ] = data
+				suggestResponse( data, term )
+	        });
+		}
+
+	  	jQuery("#helpdesk_ticket_subject").live("blur paste", function(ev){
+	  		if(!suggestForSubject) return
+
+	  		var searchString = this.value.replace(/^\s+|\s+$/g, "");
+
+	  		if(searchString != '' && searchString.length > 2){
+	  			jQuery("#fs-input").val(this.value).trigger("change")	
+	  		}
+	  	});
+
+	  	jQuery("#fs-input").live("keydown change paste", function(ev){
+			var $this = jQuery(this);
+			clearTimeout(suggestDelay);
+		    suggestDelay = setTimeout(function() {
+		    	suggestForSubject = false
+		    	
+		    	var searchString = $this.val().replace(/^\s+|\s+$/g, "");
+
+				if(searchString != '' && searchString.length > 2){
+					$this.addClass("loading-right");
+					jQuery("#panel-info").hide();
+					callbackToSolutionSearch(searchString);
+				}else{
+					$this.removeClass("loading-right");
+					jQuery("#ws-results").empty();
+					jQuery("#panel-content").hide()
+					jQuery("#panel-info").show();
+				}
+		    }, 500)		
+	  	});
+	</script>
+<% end %>
+
 <iframe id="freshwidget-submit-frame" name="freshwidget-submit-frame" 
 	src="about:blank" frameborder="0" scrolling="auto" 
 	allowTransparency="true" style="position:absolute; visibility:hidden; width:0px; height:0px;">
 </iframe>
 
-<% if feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
-<script id="ws-tmpl" type="text/x-jquery-tmpl">      
-	<li>
-		<div class="ellipsis">
-			<a href="${url}" target="_blank">{{html title}}</a>
-		</div>
-		<p class="help-text">{{html desc}}</p>
-	</li>
-</script>
-<script type="text/javascript">
-	var suggestQuery, suggestDelay, suggestForSubject = true;
-	window['suggest-cache'] = {};
-
-	var suggestResponse = function(data, term){		
-	    if(data.length > 0){	    	
-			jQuery("#ws-results")
-				.html(jQuery.tmpl(jQuery("#ws-tmpl").template(), data))
-				.append("<li><a href='/support/search/solutions?term="+term+"' target='_blank'>Show all results</a></li>")
-			
-	    }else{
-	    	jQuery("#ws-results").html("No results for " + term)
-	    }	    
-
-	    jQuery("#panel-content").show()
-	    jQuery("#fs-input").removeClass("loading-right");
-	}
-
-	var callbackToSolutionSearch = function(string){
-		var term = string.trim(),
-	        cache = window['suggest-cache'],
-	        suggest_url = "/support/search/solutions.json",
-	        request = { max_matches:5, term:term };
-
-	    if(suggestQuery) suggestQuery.abort();
-
-	    if( term in cache || term == '' ) {
-	        suggestResponse( cache[ term ], term )
-	        return
-	    }
-
-	    jQuery("#fs-input").addClass("loading-right");
-
-        suggestQuery = jQuery.getJSON(suggest_url, request, function( data, status, xhr ) {
-			window['suggest-cache'][ term ] = data
-			suggestResponse( data, term )
-        });
-	}
-
-  	jQuery("#helpdesk_ticket_subject").live("blur paste", function(ev){
-  		if(!suggestForSubject) return
-
-  		var searchString = this.value.replace(/^\s+|\s+$/g, "");
-
-  		if(searchString != '' && searchString.length > 2){
-  			jQuery("#fs-input").val(this.value).trigger("change")	
-  		}
-  	});
-
-  	jQuery("#fs-input").live("keydown change paste", function(ev){
-		var $this = jQuery(this);
-		clearTimeout(suggestDelay);
-	    suggestDelay = setTimeout(function() {
-	    	suggestForSubject = false
-	    	
-	    	var searchString = $this.val().replace(/^\s+|\s+$/g, "");
-
-			if(searchString != '' && searchString.length > 2){
-				$this.addClass("loading-right");
-				jQuery("#panel-info").hide();
-				callbackToSolutionSearch(searchString);
-			}else{
-				$this.removeClass("loading-right");
-				jQuery("#ws-results").empty();
-				jQuery("#panel-content").hide()
-				jQuery("#panel-info").show();
-			}
-	    }, 500)		
-  	});
-</script>
-<% end %>
 <script type="text/javascript">
 	jQuery('.modal-body').scroll(function() {
 		if(this.scrollTop > 8){

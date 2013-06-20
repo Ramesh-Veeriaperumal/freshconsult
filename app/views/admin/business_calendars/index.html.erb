@@ -2,12 +2,7 @@
 <%= include_cloudfront_js :pattern %>
 
 <% content_for :sidebar do %>
-  <div class="sidepanel">
-		<h3 class="title"><%=t('business_hours.title')%></h3>
-		<p><%=t('business_hours.info1')%>.</p>
-		<h3 class="title"><%=t('business_hours.holidays')%></h3>
-		<p><%=t('business_hours.info2')%></p>
-	</div>
+  <%= render :partial => "helpnote" %>
 <% end %>
 <div class="list-page group-management">
   <div class="list-page-header row-fluid"> 
