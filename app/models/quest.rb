@@ -268,7 +268,9 @@ class Quest < ActiveRecord::Base
     end
 
     def has_quest_data_value?
-      if(quest_data && ( quest_data.first["value"].blank? || (quest_data.first["value"].to_i == 0)))
+      return false if quest_data.blank?
+      quest_data.first.symbolize_keys!
+      if quest_data.first[:value].blank? || (quest_data.first[:value].to_i == 0)
         errors.add_to_base(I18n.t("quests.#{GAME_TYPE_TOKENS_BY_KEY[category].to_s}_mand")) 
       end
     end
