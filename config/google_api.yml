@@ -14,8 +14,8 @@ production:
     options:
       scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email
     base_calendar_id: admin@freshdesk.com
-    access_token: ya29.AHES6ZSRqeaV8qk61vGbaiIzSbUDG4P2qNQZzsp-qB4iKqg
-    refresh_token: 1/ZA9IRr_mFmXIqRLZSMAAZaYna4sPQeQuiXnpbOdlyIM
+    access_token: ya29.AHES6ZTov2LGx_Oq9YAJfOzF2d_VbyPtoR6dSUb4-XNMhg
+    refresh_token: 1/9hrdUPFh1_xllrIlAyzcxg4GJIDgtiDOFbmwF2npy4I
 test: 
   google_oauth2: *id001
 slave: 
