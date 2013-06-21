@@ -117,7 +117,7 @@ class VARule < ActiveRecord::Base
     p "Actions"
     Va::Action.initialize_activities
     return false unless check_user_privilege
-    actions.each { |a| a.trigger(evaluate_on) }
+    actions.each { |a| a.trigger(evaluate_on, doer) }
   end
   
   def filter_query
