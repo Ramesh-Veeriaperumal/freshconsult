@@ -644,46 +644,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
-  def populate_requester #by Shan temp  
-    portal =  self.product.portal if self.product
-    if email.present?
-      self.email = parse_email email
-      if(requester_id.nil? or !email.eql?(requester.email))
-        @requester = account.all_users.find_by_email(email) unless email.nil?
-        if @requester.nil?
-          @requester = account.users.new
-          @requester.signup!({:user => {
-            :email => self.email, 
-            :name => (name || ''), 
-            :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}},portal)
-        end
-      end
-      self.requester = @requester  if @requester.valid?
-    elsif twitter_id.present?
-     logger.debug "twitter_handle :: #{twitter_id.inspect} "
-      if(requester_id.nil? or twitter_id.eql?(requester.twitter_id))
-        @requester = account.all_users.find_by_twitter_id(twitter_id)
-        if @requester.nil?
-          @requester = account.users.new
-          @requester.signup!({:user => {:twitter_id =>twitter_id , :name => twitter_id ,
-          :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer], :active => true, :email => nil}})
-        end
-      end
-      self.requester = @requester
-    elsif external_id.present? # Added for storing iOS user id from MobiHelp
-     logger.debug "external_id :: #{external_id.inspect} "
-      if(requester_id.nil? or external_id.eql?(requester.external_id))
-        @requester = account.all_users.find_by_external_id(external_id)
-        if @requester.nil?
-          @requester = account.users.new
-          @requester.signup!({:user => {:external_id =>external_id , :name => @requester_name || external_id,
-          :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer], :active => true, :email => nil}})
-        end
-      end
-      self.requester = @requester
-    end
-  end
-
   def create_meta_note
     if meta_data.present?  # Added for storing metadata from MobiHelp
       self.notes.create(
@@ -1406,7 +1366,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       else email =~ EMAIL_REGEX
         email = $1
       end
-      email
+
+      { :email => email, :name => name}
   end 
 
   def set_dueby_on_priority_change(sla_detail)
