@@ -512,7 +512,7 @@ class Helpdesk::Note < ActiveRecord::Base
     # VA - Observer Rule 
     def update_observer_events
       return if feedback? || !(notable.instance_of? Helpdesk::Ticket)
-      if user.customer? || !note?
+      if user && user.customer? || !note?
         @model_changes = {:reply_sent => :sent}
       else
         @model_changes = {:note_type => NOTE_TYPE[private]}
