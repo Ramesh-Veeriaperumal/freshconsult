@@ -93,7 +93,6 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
 
     def business_time(sla_time, created_time)
       fact = sla_time.div(86400)
-      Rails.logger.info "$$$$ debug ruby bug : #{created_time.inspect}"
       if (fact > 0)
          fact.business_days.after(created_time)
       else
