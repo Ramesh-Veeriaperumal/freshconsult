@@ -18,8 +18,8 @@ VARule.seed_many(:account_id, :name, :rule_type, [
         { :name => 'responder_id', :value => Va::Action::EVENT_PERFORMER }
       ]
     ],
-    [ 'Automatically reopen closed tickets after a response', 
-      "When a requester replies to a ticket that is resolved or closed, it's status is changed back to open.",
+    [ 'Automatically reopen tickets when the customer responds', 
+      "When a requester replies to a ticket in any state (pending, resolved, closed or a custom status), its status is changed back to open.",
       2,
       {
         :events => [

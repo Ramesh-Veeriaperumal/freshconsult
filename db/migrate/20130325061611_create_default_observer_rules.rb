@@ -35,8 +35,8 @@ class CreateDefaultObserverRules < ActiveRecord::Migration
       end
 
 			account.all_observer_rules.create!({
-				:name => 'Automatically reopen closed tickets after a response', 
-      	:description => "When a requester replies to a ticket that is resolved or closed, it's status is changed back to open.",
+				:name => 'Automatically reopen tickets when the customer responds', 
+      	:description => "When a requester replies to a ticket in any state (pending, resolved, closed or a custom status), its status is changed back to open.",
       	:rule_type => VAConfig::OBSERVER_RULE,
       	:match_type => 'any',
 	      :filter_data =>  {
