@@ -47,6 +47,7 @@ class Account < ActiveRecord::Base
  
   has_many :features
   has_many :flexi_field_defs, :class_name => 'FlexifieldDef'
+  has_many :flexifield_def_entries
   
   has_one :data_export
   
@@ -121,17 +122,21 @@ class Account < ActiveRecord::Base
     :rule_type => VAConfig::SUPERVISOR_RULE, :active => true }, :order => "position"
   has_many :all_supervisor_rules, :class_name => 'VARule', :conditions => {
     :rule_type => VAConfig::SUPERVISOR_RULE }, :order => "position"
+
+  has_many :observer_rules, :class_name => 'VARule', :conditions => { 
+    :rule_type => VAConfig::OBSERVER_RULE, :active => true }, :order => "position"
+  has_many :all_observer_rules, :class_name => 'VARule', :conditions => {
+    :rule_type => VAConfig::OBSERVER_RULE }, :order => "position"
   
   has_many :scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
-  
-  
+  has_many :all_scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
   
   has_many :email_notifications
   has_many :groups
   has_many :agent_groups
   has_many :forum_categories, :order => "position"
   
-  has_one :business_calendar
+  has_many :business_calendar 
 
   has_many :forums, :through => :forum_categories    
   has_many :portal_forums, :through => :forum_categories, 
@@ -291,13 +296,13 @@ class Account < ActiveRecord::Base
     
     :garden => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :css_customization, :advanced_reporting ],
+        :css_customization, :advanced_reporting, :multiple_business_hours ],
       :inherits => [ :blossom ]
     },
 
     :estate => {
       :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles ],
+        :custom_ssl, :custom_roles, :multiple_business_hours ],
       :inherits => [ :garden ]
     },
 
@@ -318,7 +323,7 @@ class Account < ActiveRecord::Base
 
     :estate_classic => {
       :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles ],
+        :custom_ssl, :custom_roles, :multiple_business_hours ],
       :inherits => [ :garden_classic ]
     }
 

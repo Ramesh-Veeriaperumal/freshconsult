@@ -663,6 +663,7 @@ nl:
         remote_login_url_info: "Dit is de URL waarnaar Freshdesk gebruikers zal doorsturen voor verificatie wanneer ze zich aanmelden bij Freshdesk."
         remote_logout_url: "URL voor afmelding op afstand"
         remote_logout_url_info: "Dit is de URL waarnaar Freshdesk gebruikers zal doorsturen voor verificatie wanneer ze klikken op de afmeldingskoppeling in Freshdesk."
+        request_custom_ssl: "Wilt u gebruik maken van ssl voor uw support portal?"
         security_title: Beveiliging
         shared_secret: "Gedeeld geheim"
         shared_secret_info: "Kopieer dit token en bewaar het op een veilige plaats U heeft het nodig voor het inschakelen van verificatie op afstand. Het is een gedeeld geheim tussen u en Freshdesk."
@@ -1163,6 +1164,7 @@ nl:
   dropbox_attach_from: "Bijlage vanuit Dropbox toevoegen"
   dropbox_attach_label: "toevoegen via"
   dropbox_choose_file: "Selecteer bestand"
+  dropbox_plaintext: "Dropbox bijlages"
   due_in: "Vervalt in %{time_words}"
   due_next_eight: "Volgende 8 uren"
   due_today: Vandaag
@@ -2511,6 +2513,8 @@ nl:
   payment_info: Betalingsgegevens
   pending: "in afwachting"
   phone: Telefoon
+  plain_no: Nee
+  plain_yes: Ja
   plan_amount: "per medewerker/maand"
   plan_info_update: "Uw plan is gewijzigd."
   plan_is_selected: "Uw account is nu actief met het %{plan}-plan"
@@ -2705,6 +2709,7 @@ nl:
   preview: Voorbeeld
   previous: Vorige
   print: Afdrukken
+  private: Prive
   pro_brief: "Voor grotere teams"
   pro_details: "Alles in 'Basis' Plan plus, Scenario Automations, Klantspecifieke SLA's, Werktijden, Forums, Community en e-mailondersteuning."
   problem: Probleem
@@ -3280,6 +3285,7 @@ nl:
     note_content: "Inhoud van aantekening"
     note_form: 
       add_and_resolve: "Toevoegen en oplossen"
+      add_private_note: "Notitie Toevoegen"
       description_note: "Het onderwerp en de omschrijving van de samengevoegde tickets zullen worden toegevoegd als aantekening bij het hoofdticket"
       form_title: "Notitie toevoegen"
       notify_agents: "Medewerkers berichten"
@@ -3480,7 +3486,7 @@ nl:
       updated_at: "Laatst gewijzigd"
     title: "Filter tickets"
     unsaved_view: "Naamloze weergave"
-  tickets_were: "tickets waren"
+  tickets_were: "tickets werden"
   tip_off: "Klik om uit te schakelen"
   tip_on: "Klik om in te schakelen"
   title: Titel

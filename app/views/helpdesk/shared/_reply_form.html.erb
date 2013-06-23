@@ -132,7 +132,7 @@
   <% javascript_tag do %>
 
     jQuery("#send_resolve_btn").bind("click",function(){
-      jQuery('[name="redirect_to"]').val("/helpdesk/tickets");
+      jQuery('[name="redirect_to"]').val("helpdesk_ticket_index");
   });
     jQuery("#HelpdeskReply")      
       .bind("submit", function(ev){
