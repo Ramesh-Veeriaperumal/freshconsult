@@ -858,6 +858,7 @@ $(document).ready(function() {
 
 					_form.resetForm();
 					_form.trigger('reset');
+					_form.find('select.select2').trigger('change'); //For resetting the values in Select2
 
 
 					if (_form.attr('rel') == 'forward_form')  {

@@ -15,6 +15,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Mobile::Actions::Ticket
   include Gamification::GamificationUtil
   include Search::ElasticSearchIndex
+  include Va::Observer::Util
   include Redis::RedisKeys
   include Redis::TicketsRedis
   include Redis::ReportsRedis
@@ -25,6 +26,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
                             "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby"]
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+  OBSERVER_ATTR = []
 
 
   set_table_name "helpdesk_tickets"
@@ -38,7 +40,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   before_validation :populate_requester, :set_default_values
   
-  before_create :assign_schema_less_attributes, :assign_email_config_and_product, :save_ticket_states
+  before_create :assign_flexifield, :assign_schema_less_attributes, :assign_email_config_and_product, :save_ticket_states
 
   has_many_attachments
 
@@ -53,16 +55,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_validation_on_create :set_token
   
-  before_save :update_ticket_changes, :set_sla_policy, :load_ticket_status
+  before_save :update_ticket_related_changes, :set_sla_policy, :load_ticket_status
 
   before_save :update_dueby, :unless => :manual_sla?
-
-  after_save :save_custom_field
 
   after_commit_on_create :create_initial_activity,  :update_content_ids, :pass_thro_biz_rules,
     :support_score_on_create, :process_quests, :update_es_index, :publish_new_ticket_properties
   
-  after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity,
+  after_commit_on_update :filter_observer_events, :if => :user_present?
+  after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity, 
     :stop_timesheet_timers, :fire_update_event, :support_score_on_update, 
     :process_quests, :publish_to_update_channel, :update_es_index, :regenerate_reports_data, 
     :publish_updated_ticket_properties
@@ -70,6 +71,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit_on_destroy :remove_es_document
 
  has_one :ticket_body, :class_name => 'Helpdesk::TicketBody', :dependent => :destroy
+
 
   has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
 
@@ -589,30 +591,33 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.schema_less_ticket.changes.key?('product_id') 
   end
 
-  #shihab-- date format may need to handle later. methode will set both due_by and first_resp
   def update_dueby(ticket_status_changed=false)
+    Thread.current[TicketConstants::GROUP_THREAD] = self.group
+    set_sla_time(ticket_status_changed)
+    Thread.current[TicketConstants::GROUP_THREAD] = nil
+  end
 
+  #shihab-- date format may need to handle later. methode will set both due_by and first_resp
+  def set_sla_time(ticket_status_changed)
     if self.new_record?
-      set_account_time_zone   
+      set_time_zone
       sla_detail = self.sla_policy.sla_details.find(:first, :conditions => {:priority => priority})
       set_dueby_on_priority_change(sla_detail)
 
       set_user_time_zone if User.current
       RAILS_DEFAULT_LOGGER.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
-      
-    elsif priority_changed? || changed_condition? || status_changed? || ticket_status_changed
+    elsif priority_changed? || changed_condition? || status_changed? || group_id_changed? || ticket_status_changed
 
-      set_account_time_zone   
+      set_time_zone
       sla_detail = self.sla_policy.sla_details.find(:first, :conditions => {:priority => priority})
 
       set_dueby_on_priority_change(sla_detail) if (priority_changed? || changed_condition?)
       set_dueby_on_status_change(sla_detail) if status_changed? || ticket_status_changed
       set_user_time_zone if User.current
       RAILS_DEFAULT_LOGGER.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
-      
-    end
-
+    end 
   end
+  
 
   #end of SLA
   
@@ -620,7 +625,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.account.make_current
     Time.zone = self.account.time_zone    
   end
- 
+
+  def set_time_zone
+    return set_account_time_zone unless account.features?(:multiple_business_hours)
+    if self.group.nil? || self.group.business_calendar.nil?
+      set_account_time_zone
+    else
+      Time.zone = self.group.business_calendar.time_zone
+    end
+  end
+
   def set_user_time_zone 
     Time.zone = User.current.time_zone  
   end
@@ -670,12 +684,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def notify_on_update
     return if spam? || deleted?
-    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if (@ticket_changes.key?(:group_id) && group)
-    if (@ticket_changes.key?(:responder_id) && responder && responder != User.current)
+    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if (@model_changes.key?(:group_id) && group)
+    if (@model_changes.key?(:responder_id) && responder && responder != User.current)
       notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT)
     end
     
-    if @ticket_changes.key?(:status)
+    if @model_changes.key?(:status)
       if (status == RESOLVED)
         notify_by_email(EmailNotification::TICKET_RESOLVED) 
         notify_watchers("resolved")
@@ -712,12 +726,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def update_ticket_states 
     
-    ticket_states.assigned_at=Time.zone.now if (@ticket_changes.key?(:responder_id) && responder)    
-    if (@ticket_changes.key?(:responder_id) && @ticket_changes[:responder_id][0].nil? && responder)
+    ticket_states.assigned_at=Time.zone.now if (@model_changes.key?(:responder_id) && responder)    
+    if (@model_changes.key?(:responder_id) && @model_changes[:responder_id][0].nil? && responder)
       ticket_states.first_assigned_at = Time.zone.now
     end
     
-    if @ticket_changes.key?(:status)
+    if @model_changes.key?(:status)
       if reopened_now?
         ticket_states.opened_at=Time.zone.now
         ticket_states.reset_tkt_states
@@ -741,7 +755,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Helpdesk::TicketNotifier.notify_by_email(notification_type, self) if notify_enabled?(notification_type)
   end
   
-  def notify_by_email(notification_type)    
+  def notify_by_email(notification_type)
     Helpdesk::TicketNotifier.send_later(:notify_by_email, notification_type, self) if notify_enabled?(notification_type)
   end
   
@@ -816,13 +830,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   #virtual agent things end here..
   
   def pass_thro_biz_rules
-     send_later(:delayed_rule_check) unless import_id
+    send_later(:delayed_rule_check) unless import_id
   end
   
   def delayed_rule_check
    begin
     evaluate_on = check_rules     
-    update_custom_field evaluate_on unless evaluate_on.nil?
     assign_tickets_to_agents unless spam? || deleted?
     autoreply
    rescue Exception => e #better to write some rescue code 
@@ -846,48 +859,32 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
  
   def check_rules
-    load_flexifield 
-    evaluate_on = self  
+    evaluate_on = self
     account.va_rules.each do |vr|
-      evaluate_on= vr.pass_through(self)
+      evaluate_on = vr.pass_through(self)
       return evaluate_on unless evaluate_on.nil?
-    end  
-    return evaluate_on       
-  end
-  
-  def load_flexifield 
-    flexi_arr = Hash.new
-    self.ff_aliases.each do |label|    
-      value = self.get_ff_value(label.to_sym())    
-      flexi_arr[label] = value
-      self.write_attribute label, value
     end
-    
-    self.custom_field = flexi_arr
+    return evaluate_on
   end
-  
-  def update_custom_field  evaluate_on
-    flexi_field = evaluate_on.custom_field      
-    evaluate_on.custom_field.each do |key,value|    
-      flexi_field[key] = evaluate_on.read_attribute(key)      
-    end
-    
-    ff_def_id = FlexifieldDef.find_by_account_id(evaluate_on.account_id).id    
-    evaluate_on.ff_def = ff_def_id       
-    unless flexi_field.nil?     
-      evaluate_on.assign_ff_values flexi_field    
-    end
+
+# To keep flexifield & @custom_field in sync
+
+  def custom_field
+    @custom_field ||= retrieve_ff_values
   end
-  
-  def save_custom_field   
-    ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id    
-    self.ff_def = ff_def_id
-    self.flexifield.account_id = account_id
-    unless self.custom_field.nil?          
-      self.assign_ff_values self.custom_field    
-    end
+
+  def custom_field= custom_field_hash
+    @custom_field = new_record? ? custom_field_hash : nil
+    assign_ff_values custom_field_hash unless new_record?
   end
-  
+
+  def set_ff_value ff_alias, ff_value
+    @custom_field = nil
+    flexifield.set_ff_value ff_alias, ff_value
+  end
+
+# flexifield - custom_field syncing code ends here
+
   #To use liquid template...
   #Might be darn expensive db queries, need to revisit - shan.
   def to_liquid
@@ -946,16 +943,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def custom_field_attribute attribute, args    
     RAILS_DEFAULT_LOGGER.debug "method_missing :: custom_field_attribute  args is #{args.inspect}  and attribute: #{attribute}"
-    
-    load_flexifield if custom_field.nil?
+
     attribute = attribute.to_s
     return custom_field[attribute] unless attribute.include?("=")
       
-    ff_def_id = FlexifieldDef.find_by_account_id(self.account_id).id
     field = attribute.to_s.chomp("=")
     args = args.first if !args.blank? && args.is_a?(Array) 
-    self.ff_def = ff_def_id
-    custom_field[field] = args
+    self.ff_def = FlexifieldDef.find_by_account_id_and_module(self.account_id, 'Ticket').id
+    set_ff_value field, args
   end
 
   def method_missing(method, *args, &block)
@@ -987,7 +982,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
       return json_str
     end
     if deep
-      self.load_flexifield
       self[:notes] = self.notes
       options[:include] = [:attachments]
       options[:except] = [:account_id,:import_id]
@@ -1057,7 +1051,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def update_activity
-    @ticket_changes.each_key do |attr|
+    @model_changes.each_key do |attr|
       send(ACTIVITY_HASH[attr.to_sym()]) if ACTIVITY_HASH.has_key?(attr.to_sym())
     end
   end
@@ -1084,7 +1078,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     
     
    def stop_timesheet_timers
-    if @ticket_changes.key?(:status) && [RESOLVED, CLOSED].include?(status)
+    if @model_changes.key?(:status) && [RESOLVED, CLOSED].include?(status)
        running_timesheets =  time_sheets.find(:all , :conditions =>{:timer_running => true})
        running_timesheets.each{|t| t.stop_timer}
     end
@@ -1292,7 +1286,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                                    'activities.tickets.assigned_to_nobody.short')
       else
         create_activity(User.current, 
-          @ticket_changes[:responder_id][0].nil? ? 'activities.tickets.assigned.long' : 'activities.tickets.reassigned.long', 
+          @model_changes[:responder_id][0].nil? ? 'activities.tickets.assigned.long' : 'activities.tickets.reassigned.long', 
             {'eval_args' => {'responder_path' => ['responder_path', 
               {'id' => responder.id, 'name' => responder.name}]}}, 
             'activities.tickets.assigned.short')
@@ -1306,7 +1300,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def support_score_on_update
       return unless gamification_feature?(account)
 
-      if (reopened_now? or (@ticket_changes.key?(:deleted) && deleted?))
+      if (reopened_now? or (@model_changes.key?(:deleted) && deleted?))
         Resque.enqueue(Gamification::Scoreboard::ProcessTicketScore, { :id => id, 
                 :account_id => account_id,
                 :remove_score => true })
@@ -1323,10 +1317,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
                 :remove_score => false }) unless ticket_states.resolved_at.nil?
     end
 
-    def update_ticket_changes
-      @ticket_changes = self.changes.clone
-      @ticket_changes.merge!(schema_less_ticket.changes.clone) if schema_less_ticket
-      @ticket_changes.symbolize_keys!
+    def update_ticket_related_changes
+      @model_changes = self.changes.clone
+      @model_changes.merge!(schema_less_ticket.changes.clone) unless schema_less_ticket.nil?
+      @model_changes.merge!(flexifield.changes) unless flexifield.nil?
+      @model_changes.symbolize_keys!
     end
     
     #Temporary move of quest processing from observer - Shan
@@ -1353,13 +1348,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   	end
 
   	def resolved_now?
-      @ticket_changes.key?(:status) && ((resolved? && @ticket_changes[:status][0] != CLOSED) || 
-            (closed? && @ticket_changes[:status][0] != RESOLVED))
+      @model_changes.key?(:status) && ((resolved? && @model_changes[:status][0] != CLOSED) || 
+            (closed? && @model_changes[:status][0] != RESOLVED))
   	end
 
   	def reopened_now?
-      @ticket_changes.key?(:status) && (active? && 
-                      [RESOLVED, CLOSED].include?(@ticket_changes[:status][0]))
+      @model_changes.key?(:status) && (active? && 
+                      [RESOLVED, CLOSED].include?(@model_changes[:status][0]))
   	end
     #Quest processing ends here..
 
@@ -1373,7 +1368,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
         email = $1
       end
 
-      { :email => email, :name => name }
+      { :email => email, :name => name}
   end 
 
   def set_dueby_on_priority_change(sla_detail)
@@ -1392,6 +1387,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def assign_schema_less_attributes
       build_schema_less_ticket unless schema_less_ticket
       schema_less_ticket.account_id ||= account_id
+    end
+
+    def assign_flexifield
+      build_flexifield
+      self.ff_def = FlexifieldDef.find_by_account_id_and_module(self.account_id, 'Ticket').id
+      assign_ff_values custom_field
+      @custom_field = nil
     end
 
     def assign_email_config_and_product
@@ -1453,7 +1455,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def fire_update_event
-      fire_event(:update, @ticket_changes) unless disable_observer
+      fire_event(:update, @model_changes) unless disable_observer
     end
 
     def set_token   
@@ -1503,7 +1505,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def regenerate_reports_data
-      deleted_or_spam = @ticket_changes.keys & [:deleted, :spam]
+      deleted_or_spam = @model_changes.keys & [:deleted, :spam]
       return unless deleted_or_spam.any? && (created_at.strftime("%Y-%m-%d") != updated_at.strftime("%Y-%m-%d"))
       set_reports_redis_key(account_id, created_at)
     end

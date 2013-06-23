@@ -42,10 +42,10 @@
 			<span><%= truncate(h(current_user.name), :length => 30) %></span>
 		</div>
 		<%= link_to "<i class='header-arrow-right'></i> #{t('profile_settings')}", edit_profile_path(current_user), :class => "link" %>
-		<span class="seperator"></span>
 		<% if is_assumed_user? %>
 			<%= link_to t('revert_identity_link_msg'), revert_identity_users_path, :class => "link" %>			
-		<% elsif privilege?(:manage_users) %>  			
+		<% elsif privilege?(:manage_users) && !current_user.agent.assumable_agents.blank? %>  			
+		<span class="seperator"></span>
 				<div class="info">   	
 					<i class='header-arrow-right  top-margin'></i>				
 					<input type="hidden" id="assumed_select_id" class="header-agent-select"

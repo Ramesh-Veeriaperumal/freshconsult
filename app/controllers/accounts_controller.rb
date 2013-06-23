@@ -77,6 +77,8 @@ class AccountsController < ApplicationController
        render "thank_you"
       #redirect to google.... else to the signup page
     else
+      @account = @signup.account
+      @user = @signup.user
       @call_back_url = params[:call_back]
       render :action => :signup_google 
     end    

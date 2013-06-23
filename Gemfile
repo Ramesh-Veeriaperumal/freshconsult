@@ -6,7 +6,7 @@ gem "rack", "~> 1.1.6"
 gem "rails","2.3.18"
 
 gem "json", "~> 1.5.5"
-gem "mysql"
+gem "mysql", "2.8.1"
 gem "i18n", "0.4.2"
 
 gem "RedCloth", "4.2.9"
@@ -27,6 +27,7 @@ gem "omniauth-salesforce"
 gem "omniauth-mailchimp", "~> 1.0.3"
 gem "omniauth-constantcontact2", "~> 1.0.4"
 gem "nori", "1.1.4"
+gem "google-api-client", "~> 0.6.3"
 
 gem "soap4r-ruby1.9", "~> 2.0.5", :platforms => :ruby_19
 gem "jira4r", "0.3.0"
@@ -90,7 +91,6 @@ gem "useragent", "~> 0.4.16"
 gem "active_record_shards","2.7.0", :require => 'active_record_shards'
 gem "rack-throttle", "~> 0.3.0"
 gem "static_model", "~> 1.0.4"
-gem "faraday","0.8"
 
 gem 'clockwork', '0.4.1'
 gem "wkhtmltopdf-binary", "~> 0.9.9.1"
@@ -117,7 +117,7 @@ group :test do
    gem "rspec-rails", "1.3.3"
    gem "spork", "~> 0.8.0"
    gem "mocha", "~> 0.13.3"
-   gem "rr"
+   gem "rr", "1.1.0"
    gem "ZenTest", "4.4.1"
    gem "autotest-fsevent", "0.1.1"
    gem "autotest-growl", "0.2.0"
@@ -125,10 +125,10 @@ group :test do
 end
 
 group :assets do
-	gem "sass", "3.2.1"
-	gem "compass-rails"
-	# Portal grid system is done using susy grids
-	gem "susy" 
+   gem "sass", "3.2.1"
+   gem "compass-rails"
+   # Portal grid system is done using susy grids
+   gem "susy" 
    # To optimize sprite generation
    gem "oily_png"
 end
