@@ -200,7 +200,6 @@ GEM
     mysql (2.8.1)
     mysql (2.8.1-x86-mingw32)
       multi_json (~> 1.0)
-    net-dns (0.6.1)
     newrelic_rpm (3.5.3.25)
     nokogiri (1.4.4)
     nokogiri (1.4.4-x86-mingw32)
@@ -403,7 +402,6 @@ DEPENDENCIES
   mocha (~> 0.13.3)
   mongrel (>= 1.2.0.pre2)
   mysql (= 2.8.1)
-  net-dns (= 0.6.1)
   newrelic_rpm (= 3.5.3.25)
   nori (= 1.1.4)
   oily_png

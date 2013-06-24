@@ -45,14 +45,9 @@ gem "http_accept_language", "1.0.1"
 gem "riddle", "1.2.2"
 gem "thinking-sphinx", "1.4.3", :require => "thinking_sphinx"
 gem "delayed_job", "1.8.4"
-#gem "ts-delayed-delta", "1.1.0", :require => "thinking_sphinx/deltas/delayed_delta"
-
-gem "net-dns", "0.6.1"
-
 
 gem "jammit", "0.6.5"
 gem "yui-compressor", :git => "git://github.com/freshdesk/ruby-yui-compressor.git"
-# gem "zendesk-features", :require => "features"
 
 gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
