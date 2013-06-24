@@ -33,9 +33,10 @@
 
 		<!-- Base stylesheet -->
 		<%= include_cloudfront_css :portal %>
+		<%= include_cloudfront_css :facebook %>
 
 		<!-- Theme stylesheet -->
-		<link href="<%=theme_url%>" media="screen" rel="stylesheet" type="text/css">
+		<!-- <link href="<%=theme_url%>" media="screen" rel="stylesheet" type="text/css"> -->
 
 		<!-- Google font url if present -->
 		<%= portal_fonts %>
@@ -51,31 +52,32 @@
 	<body>
 		<script src="https://connect.facebook.net/en_US/all.js"></script>
 		<div id="fb-root"></div>
-    <script type="text/javascript">
-        FB.init({
-          appId      : "<%= @tokens['app_id'] %>",                     // App ID
-          status     : true,                                    // check login status
-          cookie     : true,                                    // enable cookies to allow the server to access the session
-          xfbml      : true,                                     // parse XFBML
-          oauth			 : true
-        });
+	    <script type="text/javascript">
+	        FB.init({
+	          appId      : "<%= @tokens['app_id'] %>",                     // App ID
+	          status     : true,                                    // check login status
+	          cookie     : true,                                    // enable cookies to allow the server to access the session
+	          xfbml      : true,                                     // parse XFBML
+	          oauth			 : true
+	        });
 
-        // Listen to the auth.login which will be called when the user logs in
-        // using the Login button
-        FB.Event.subscribe('auth.login', function(response) {
-          // We want to reload the page now so Ruby can read the cookie that the
-          // Javascript SDK sat. But we don't want to use
-          // window.location.reload() because if this is in a canvas there was a
-          // post made to this page and a reload will trigger a message to the
-          // user asking if they want to send data again.
-          window.location = window.location;
-        });
+	        // Listen to the auth.login which will be called when the user logs in
+	        // using the Login button
+	        FB.Event.subscribe('auth.login', function(response) {
+	          // We want to reload the page now so Ruby can read the cookie that the
+	          // Javascript SDK sat. But we don't want to use
+	          // window.location.reload() because if this is in a canvas there was a
+	          // post made to this page and a reload will trigger a message to the
+	          // user asking if they want to send data again.
+	          window.location = window.location;
+	        });
 
-        FB.Canvas.setAutoGrow();
-    </script>
+	        FB.Canvas.setAutoGrow();
+	    </script>
 		<%= assumed_identity_message %>
 
-		<%= portal_navigation current_portal.to_liquid %>
+		<%= facebook_header current_portal.to_liquid %>
+		<%#= portal_navigation current_portal.to_liquid %>
 
 		<% unless @facebook_login %>
 			<div class="fb-login-button" data-scope="user_likes,email" data-display="page">Log In</div>

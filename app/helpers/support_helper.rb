@@ -97,6 +97,30 @@ module SupportHelper
 		output.join("").html_safe
 	end
 
+	# Portal header
+	def facebook_header portal
+		%( 	<header class="banner">
+				<div class="banner-wrapper">
+					<div class="banner-title">
+						#{ logo portal }
+						<h1 class="ellipsis heading">#{ portal['name'] }</h1>
+					</div>
+				</div>
+			</header>
+			<section>	
+					<div class="hc-search-c">
+						<form class="hc-search-form" autocomplete="off" action="#{ tab_based_search_url }" id="hc-search-form">
+							<div class="hc-search-input">
+								<input placeholder="#{ I18n.t('portal.search.placeholder') }" type="text" 
+									name="term" class="special" value="#{ h(params[:term]) }" 
+						            rel="page-search" data-max-matches="10">
+						        <span class="search-icon mobile-icon-search"></span>
+							</div>
+						</form>
+					</div>
+			</section> )
+	end
+
 	# User image page
 	def profile_image user, more_classes = "", width = "50px", height = "50px" 
 		output = []

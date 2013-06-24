@@ -9,7 +9,7 @@ class Support::HomeController < SupportController
   			(current_portal.solution_categories.blank? && current_portal.forum_categories.blank?)
   	end
 
-    set_portal_page :portal_home
+    set_portal_page facebook? ? :facebook_home : :portal_home
   end
 
 end
