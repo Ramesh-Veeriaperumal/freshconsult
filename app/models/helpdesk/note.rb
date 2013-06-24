@@ -265,7 +265,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def trigger_observer model_changes
-    @model_changes = model_changes.symbolize_keys
+    @model_changes = model_changes.symbolize_keys unless model_changes.nil?
     filter_observer_events if user_present?
   end
 
