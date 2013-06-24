@@ -1449,7 +1449,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                   "due_by" => (due_by - Time.zone.now).div(3600),
                   "created_at" => "#{created_at}" 
                 }
-      custom_field_hash = load_flexifield
+      custom_field_hash = custom_field
       message.merge!(custom_field_hash) unless custom_field_hash.blank?
       publish_to_tickets_channel("index_page:#{self.account.id}:#{self.id}", message.to_json)
     end
