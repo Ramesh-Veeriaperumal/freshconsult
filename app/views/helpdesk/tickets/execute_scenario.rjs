@@ -1,9 +1,8 @@
 show_ajax_flash page
 page << "try { 
 	jQuery('#execute_scenario').modal('hide'); 
-	jQuery('#execute_scenario form').show().resetForm();
-	jQuery('#execute_scenario [data-submit=modal]').button('reset');
-	jQuery('#execute_scenario .sloading loading-small .loading-block').remove();
+	jQuery('#execute_scenario .dialog-well').show();
+	jQuery('#execute_scenario .modal-body .sloading').remove();
 } catch(e) {}"
 
 page << "silenceTktFieldsUpdate();"

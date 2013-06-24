@@ -127,6 +127,7 @@ javascripts:
     - public/javascripts/AsyncJSLoader.js
     - public/javascripts/lib/detectmobilebrowsers.js
     - public/javascripts/frameworks/plugins/jquery-ui-timepicker-addon.js
+    - public/javascripts/app/ticket_details.js
 
   # Code editor for portal cms
   codemirror:

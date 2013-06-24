@@ -594,8 +594,10 @@ is_touch_device = function() {
 
           // BeforeSend
           return Fjax.callBeforeSend();
+      }).bind('pjax:beforeReplace',function(evnt,xhr,settings){
+        Fjax.callBeforeReplace();
       }).bind('pjax:end',function(evnt,xhr,settings){
-        console.log('pjax:end');
+        
         //AfterReceive
         Fjax.callAfterReceive();
 

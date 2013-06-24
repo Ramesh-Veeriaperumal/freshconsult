@@ -39,7 +39,6 @@
 
 <%= render :partial => "helpdesk/tickets/show/due_date.html.erb" %>
 <%= render :partial => "helpdesk/tickets/show/collision", :locals => { :ticket => @ticket } if feature?(:agent_collision) %>
-<%= include_cloudfront_js :ticket_details  %>
 <script type="text/javascript">
 Fjax.bodyClass = 'ticket_details';
 TICKET_DETAILS_DOMREADY();

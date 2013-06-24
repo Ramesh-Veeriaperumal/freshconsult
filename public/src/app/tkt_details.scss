@@ -777,6 +777,7 @@ h2.subject{
 				padding: 5px 10px;
 				border: none;
 				box-shadow: none;
+				height: 280px;
 	    	}
     	}
 
@@ -1026,8 +1027,8 @@ h2.subject{
     	width: 150px;
     	text-align: right;
     	a {
-    		margin: 10px;
-    		padding: 5px;
+    		margin: 10px 0 10px 10px;
+			padding: 5px 0 5px 5px;
     	}
     }
 
@@ -1469,8 +1470,8 @@ h2.subject{
 	}
 }
 .ticket_show .avatar-wrap {
-	width: 45px;
-	height: 45px;
+	width: 44px;
+	height: 44px;
 	z-index: 100;
 	@include border-radius(50%);
 	background: #fff;
@@ -1488,9 +1489,9 @@ h2.subject{
 		img {
 			@include border-radius(50%);
 			position: relative;
-			top: 2px;
-			height: 41px;
-			width: 41px;
+			top: 0px;
+			height: 44px;
+			width: 44px;
 		}
 	}
 	.avatar {
@@ -1973,17 +1974,17 @@ h2.subject{
 
 			.requester-avatar-wrap{
 				border: 1px #ccc solid;
-				@include border-radius(6px);
+				@include border-radius(4px);
 				float: left;
-				width: 54px;
-				height: 54px;
+				width: 42px;
+				height: 42px;
 				display: inline-block !important;
-				padding: 4px;
+				padding: 2px;
 				text-align: center;
 				img{
-					@include border-radius(5px);
-					width: 54px;
-					height: 54px;
+					@include border-radius(3px);
+					width: 42px;
+					height: 42px;
 				}
 			}
 
@@ -2647,7 +2648,7 @@ $collision_delay: 1s;
 .redactor_insert_btns {
 	position: absolute;
 	z-index:5;
-	right: 5px;
+	right: 10px;
 }
 
 
@@ -2796,45 +2797,5 @@ $collision_delay: 1s;
 #sticky_header.stuck {
 	.status_info {
 		visibility: visible;
-	}
-}
-#sticky_header {
-	border-bottom: solid 1px #DADADA;
-	margin: -14px -20px 10px;
-	padding: 10px 20px;
-	background: #FFF;
-	border-radius: 5px 5px 0 0;
-}
-#sticky_header.stuck {
-	position: fixed;
-	border-radius: 0;
-	top: 0;
-	z-index: 99;
-	margin-top:0;
-	box-shadow:0 2px 4px rgba(63, 63, 63, 0.1);
-}
-
-#scroll-to-top {
-	height: 37px;
-	width: 37px;
-	position: fixed;
-	right: 20px;
-	bottom: -40px;
-	opacity: 0.2;
-	@include border-radius(50%);
-	border: solid 1px #bbb;
-	cursor: pointer;
-	@include transition(all 0.5s ease-out);
-	
-	
-
-	&:hover {
-		opacity: 1;
-	}
-
-	&.visible {
-		display: block;
-		opacity: 0.6;
-		bottom: 100px;
 	}
 }

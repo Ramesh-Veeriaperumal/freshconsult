@@ -37,11 +37,15 @@ FreshdeskPjax.prototype = {
     	return true;
     },
 
+    callBeforeReplace: function() {
+    	console.log('callBeforeReplace');
+    	if(typeof(this._prevAfterNextPage) == 'function') this._prevAfterNextPage();
+    	this._prevAfterNextPage = null;
+    },
+
     callAfterReceive: function() {
     	this._removeLoading();
     	this._afterReceiveCleanup();
-    	if(typeof(this._prevAfterNextPage) == 'function') this._prevAfterNextPage();
-    	this.after = null;
 
     	var body = $(body);
     	if(this._prevBodyClass != this.bodyClass)
@@ -89,8 +93,9 @@ FreshdeskPjax.prototype = {
     },
 
     _afterReceiveCleanup: function() {
-    	$('.popover').remove();
-    	$('.twipsy').remove();
+			$('.popover').remove();
+			$('.modal').remove();
+			$('.twipsy').remove();
     }
 }
 }(window.jQuery);

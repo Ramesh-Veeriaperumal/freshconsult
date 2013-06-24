@@ -86,7 +86,7 @@ showHideDueByDialog = function(showHide){
 			my: "right top",
 			at: "left top"
 		});
-		console.log($("#due-date-dialog"));
+		
 		$("#due-date-dialog").css({top: $("#due-date-dialog").position().top + 30 });
 	}else{
 		$("#due-date-dialog")
@@ -760,8 +760,6 @@ refreshStatusBox = function() {
 
 					var format = $('<input type="hidden" rel="ajax_params" name="format" value="js" />');
 					_form.append(format);
-					var input_xhr = $('<input type="hidden" rel="ajax_params" name="xhr" value="true" />');
-					_form.append(input_xhr);
 					var input_showing = $('<input type="hidden" rel="ajax_params" name="showing" value="' + (showing_notes ? 'notes' : 'activities' ) + '" />');
 					_form.append(input_showing);
 					var input_since = $('<input type="hidden" rel="ajax_params" name="since_id" value="' + (showing_notes ? TICKET_DETAILS_DATA['last_note_id'] : TICKET_DETAILS_DATA['last_activity'] ) + '" />');
@@ -901,7 +899,8 @@ refreshStatusBox = function() {
 		return false;
 	});
 
-	$('#custom_ticket_form').on('change.ticket_details',function(ev) {
+	$('body').on('change.ticket_details', '#custom_ticket_form', function(ev) {
+		
 		if (!dontAjaxUpdate) 
 		{
 			TICKET_DETAILS_DATA['updating_properties'] = true;
@@ -920,8 +919,10 @@ refreshStatusBox = function() {
       $(this).parents('form').trigger('submit');
     });
 
-	$('#custom_ticket_form').on('submit.ticket_details', function(ev) {
+    $('body').on('submit.ticket_details', '#custom_ticket_form', function(ev) {
+    	
 		ev.preventDefault(); 
+		ev.stopPropagation();
 		var tkt_form = $('#custom_ticket_form');
 		if (tkt_form.valid()) {
 
@@ -942,21 +943,21 @@ refreshStatusBox = function() {
 					}, 2000);
 
 					var updateStatusBox = false;
-					if ($('.ticket_show #helpdesk_ticket_priority').data('updated') || $('.ticket_show #helpdesk_ticket_status').data('updated')) {
-						$('.ticket_show .source-badge-wrap .source')
+					if ($('.ticket_details #helpdesk_ticket_priority').data('updated') || $('.ticket_details #helpdesk_ticket_status').data('updated')) {
+						$('.ticket_details .source-badge-wrap .source')
 								.attr('class','')
 								.addClass('source ')
-								.addClass('priority_color_' + $('.ticket_show #helpdesk_ticket_priority').val())
-								.addClass('status_' + $('.ticket_show #helpdesk_ticket_status').val());
+								.addClass('priority_color_' + $('.ticket_details #helpdesk_ticket_priority').val())
+								.addClass('status_' + $('.ticket_details #helpdesk_ticket_status').val());
 
 						updateStatusBox = true;
 					}
 
-					if ($('.ticket_show #helpdesk_ticket_source').data('updated')) {
+					if ($('.ticket_details #helpdesk_ticket_source').data('updated')) {
 
-						$('.ticket_show .source-badge-wrap .source span')
+						$('.ticket_details .source-badge-wrap .source span')
 								.attr('class','')
-								.addClass('source_' + $('.ticket_show #helpdesk_ticket_source').val());
+								.addClass('source_' + $('.ticket_details #helpdesk_ticket_source').val());
 
 					}
 
@@ -976,6 +977,8 @@ refreshStatusBox = function() {
 		}
 			
 	});
+
+	
 
 
 	// Scripts for ToDo List
@@ -1062,8 +1065,66 @@ refreshStatusBox = function() {
 
 };
 
+TICKET_DETAILS_UPDATE_FORM_SUBMIT = function() {
+	var tkt_form = $('#custom_ticket_form');
+
+	if (tkt_form.valid()) {
+		
+		var submit = $('#custom_ticket_form .btn-primary');
+		submit.button('loading');
+		submit.attr('disabled','disabled');
+
+		$.ajax({
+			type: 'POST',
+			url: tkt_form.attr('action'),
+			data: tkt_form.serialize(),
+			dataType: 'json',
+			success: function(response) {
+				TICKET_DETAILS_DATA['updating_properties'] = false;
+				submit.val(submit.data('saved-text')).addClass('done');
+				setTimeout( function() {
+					submit.button('reset').removeClass('done');
+				}, 2000);
+
+				var updateStatusBox = false;
+				if ($('.ticket_details #helpdesk_ticket_priority').data('updated') || $('.ticket_details #helpdesk_ticket_status').data('updated')) {
+					$('.ticket_details .source-badge-wrap .source')
+							.attr('class','')
+							.addClass('source ')
+							.addClass('priority_color_' + $('.ticket_details #helpdesk_ticket_priority').val())
+							.addClass('status_' + $('.ticket_details #helpdesk_ticket_status').val());
+
+					updateStatusBox = true;
+				}
+
+				if ($('.ticket_details #helpdesk_ticket_source').data('updated')) {
+
+					$('.ticket_details .source-badge-wrap .source span')
+							.attr('class','')
+							.addClass('source_' + $('.ticket_details #helpdesk_ticket_source').val());
+
+				}
+
+				tkt_form.find('input, select, textarea').each(function() {
+					$(this).data('updated', false);
+				});
+
+				if (updateStatusBox) {
+					refreshStatusBox();
+				}
+
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				submit.text(submit.data('default-text')).prop('disabled',false);
+			}
+		});
+	}
+
+	return false;
+};
+
 TICKET_DETAILS_CLEANUP = function() {
-	if($('body').hasClass('ticket_details')) return;
+	// if($('body').hasClass('ticket_details')) return;
 	$("#TicketProperties select.dropdown, #TicketProperties select.dropdown_blank, #TicketProperties select.nested_field, body.ticket_details select.select2").expire();
 	$('body.ticket_details [rel=tagger]').expire();
 	jQuery('body').off('click.ticket_details')

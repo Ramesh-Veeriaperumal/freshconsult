@@ -1,15 +1,7 @@
 <div id="sticky_header">
 	<div class="sticky_right">
 		<div class="status_info">
-			<strong><%= h(@ticket.status_name) %></strong>,
-			<% unless (@ticket.onhold_and_closed? or @ticket.ticket_status.deleted?)%>
-				<%=t( @ticket.due_by > Time.now() ? 'ticket_future_due_by_live' : 'ticket_past_due_by_live',
-		 				{:time => distance_of_time_in_words(Time.now(), @ticket.due_by), :timestamp => @ticket.due_by.to_i}) %>
-			<% else %>
-				<% changed_time = @ticket.ticket_states.send(status_changed_time_value_hash(@ticket)[:method]) %>
-				<abbr data-livestamp="<%= changed_time.to_i %>"><%= distance_of_time_in_words(Time.now(), changed_time) %></abbr>	
-			<% end %>
-			 
+
 		</div>
 		<% unless @ticket.deleted or @ticket.spam or params[:format]=='widget' %>
 		<div class="pagination-link" id="adjacents">
@@ -76,7 +68,7 @@
 				<li class="ticket-btns">
 					<%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/component/#{@ticket.id}?component=scenarios", 
 					  				:rel => 'freshdialog', "data-target" => "#execute_scenario", :class => 'btn',
-					  				"data-submit-label" => t('ticket.execute_scenario'),
+					  				"data-template-footer" => "",
 					  				:title => t('ticket.execute_scenario') ) %>
 				</li>
 				<li class="ticket-btns">
@@ -116,7 +108,6 @@
 			</ul>
 		</div>
 		<% end %>
-
 	</div>
 
 	<div class="sticky_left">
