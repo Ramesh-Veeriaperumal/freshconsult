@@ -330,7 +330,7 @@ is_touch_device = function() {
                                           $(btn).button("loading")
 
                                           // IF the form has an attribute called data-remote then it will be submitted via ajax
-                                          if($(form).data("remote"))
+                                          if($(form).data("remote")){
                                               $(form).ajaxSubmit({
                                                 dataType: 'script',
                                                 success: function(response, status){
@@ -341,8 +341,12 @@ is_touch_device = function() {
                                                   $("#"+$(form).data("update")).html(response)
                                                 }
                                               })
-                                          // For all other form it will be a direct page submission         
-                                          else form.submit()
+                                          // For all other form it will be a direct page submission
+                                          }else{
+                                            setTimeout(function(){ 
+                                              form.submit()
+                                            }, 50)
+                                          } 
                                         }
       // Form validation any form append to the dom will be tested via live query and then be validated via jquery
       $("form[rel=validate]").livequery(function(ev){

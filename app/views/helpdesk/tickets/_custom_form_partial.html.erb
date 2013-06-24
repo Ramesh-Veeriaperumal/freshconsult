@@ -61,7 +61,7 @@
 				<li class="<%= field['label'] %>">		 
 
 					<%= cust_form.label "#{field["label"]}", field_label %>  
- 					<%= cust_form.text_field "#{field["label"]}" , :class=> field_class, :value => @item.get_ff_value(field["label"]) %>
+ 					<%= cust_form.text_field "#{field["label"]}" , :class=> field_class, :value => @item.send(field["label"]) %>
 
 				</li>		 
 						
@@ -69,7 +69,7 @@
 				<li class="paragraph">
 
 					<%= cust_form.label "#{field["label"]}", field_label %>  
- 					<%= cust_form.text_area "#{field["label"]}" ,:class=> field_class , :value =>@item.get_ff_value(field["label"]) %>
+ 					<%= cust_form.text_area "#{field["label"]}" ,:class=> field_class , :value =>@item.send(field["label"]) %>
 
 				</li>
 					
@@ -79,14 +79,14 @@
 						field["choices"].each {|choice| values.push(choice["value"])}%>
 
 						 <%= cust_form.label "#{field["label"]}", field_label %>  
- 						 <%= cust_form.select "#{field["label"]}", values ,:class=> field_class , :selected =>@item.get_ff_value(field["label"]) %>
+ 						 <%= cust_form.select "#{field["label"]}", values ,:class=> field_class , :selected =>@item.send(field["label"]) %>
 
 			    </li>
 							
 		   <% when "checkbox" then %>
 				<li class="checkbox">
 
-					<%= cust_form.check_box "#{field["label"]}" ,:class => field_class  , :checked =>@item.get_ff_value(field["label"])%>					
+					<%= cust_form.check_box "#{field["label"]}" ,:class => field_class  , :checked =>@item.send(field["label"])%>					
 					<%= field_label %>
 
 			     </li>

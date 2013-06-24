@@ -216,7 +216,7 @@ class Support::Discussions::TopicsController < SupportController
     end
     
     def load_topic
-      @topic = scoper.find_by_id(params[:id])
+      @topic = scoper.find(params[:id])
       @forum = @topic.forum
       @forum_category = @forum.forum_category
 

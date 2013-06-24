@@ -28,12 +28,24 @@
    height:16px;   
 }
 
+.sort_handle{
+	position:relative;
+	float:left;
+	left: 18px;
+	top: 10px;
+	width:10px;
+	height:10px;
+	cursor:move;
+	background-repeat: no-repeat;
+	@include border-radius(none);
+}
+
 /* %% inside */ 
 .symbols-article-list{ 	@include symbols-sprite(article-list); }
 .quoted_button{ 		@include symbols-sprite(quote_button); /* %% inside */ }
 .private-icon{ 			@include symbols-sprite(private-lock-grey); /* %% inside */ }
 .setting_bottom{ 		@include symbols-sprite(setting); }
-
+.sort_handle{  		@include symbols-sprite(sort_handle); }
 /* %% app-bootstrap */ 
 .searchicon{ 				 	@include symbols-sprite(search); }
 .clock{ 						@include symbols-sprite(clock-inactive); }

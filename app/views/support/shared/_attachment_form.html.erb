@@ -10,8 +10,19 @@
           <i class="wicon-paper-clip"></i>Attach<b class="caret"></b>
         </a>
         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-          <li>
-            <%= attach_a_file_link attach_id %>
+          <li class="portal-attach">
+            <span class="attach-proxy"> 
+              <%= attach_a_file_link attach_id %>
+            </span>
+            <div class="attach-file hide" id="<%= attach_id %>-attach-container">  
+              <input type="file" name="emptyfile" 
+                id="<%=attach_id%>_file"
+                data-attach-id="<%=attach_id%>"
+                nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
+                fileContainer="<%=attach_id%>-container" 
+                fileList="<%=attach_id%>-attachments"
+                sendFocusTo="<%=attach_id%>-body" />
+            </div>
           </li>
           <li id="dropboxjs" data-app-key="<%=dropbox_app_key%>">
               <input type="hidden"  id="<%=attach_id%>_url" name="dropboxURL" nameWhenFilled="[dropbox_url][]" 
@@ -22,9 +33,18 @@
         </ul>      
       </div>
     <% else %>      
-      <div class="attach-link">
+      <div class="attach-link portal-attach">
         <i class="wicon-paper-clip"></i> 
-        <%= attach_a_file_link attach_id %>
+        <span class="attach-proxy"> <%= attach_a_file_link attach_id %></span>
+        <div class="attach-file hide" id="<%= attach_id %>-attach-container">  
+          <input type="file" name="emptyfile" 
+            id="<%=attach_id%>_file"
+            data-attach-id="<%=attach_id%>"
+            nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
+            fileContainer="<%=attach_id%>-container" 
+            fileList="<%=attach_id%>-attachments"
+            sendFocusTo="<%=attach_id%>-body" />
+        </div>
       </div>
     <% end %>    
     <div class="attachments-list-form" id="<%= attach_id %>-container">
@@ -49,16 +69,6 @@
         </div>
     </div>
   <% end %>
-</div>
-
-<div class="attach-file hide" id="<%= attach_id %>-attach-container">  
-  <input type="file" name="emptyfile" 
-    id="<%=attach_id%>_file"
-    data-attach-id="<%=attach_id%>"
-    nameWhenFilled="<%=nsc_param%>[attachments][][resource]" 
-    fileContainer="<%=attach_id%>-container" 
-    fileList="<%=attach_id%>-attachments"
-    sendFocusTo="<%=attach_id%>-body" />
 </div>
 
 

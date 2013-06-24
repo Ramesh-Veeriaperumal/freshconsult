@@ -13,6 +13,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
     # params[nscname][:custom_field].delete_if {|key,value| value.blank? } unless 
     #           params[nscname][:custom_field].nil?
     failed_tickets = []
+    reply_content =  params[:helpdesk_note][:note_body_attributes][:body_html]
     @items.each do |ticket|
       params[nscname].each do |key, value|
         ticket.send("#{key}=", value) if !value.blank? and ticket.respond_to?("#{key}=")
@@ -20,7 +21,6 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
       ticket.save
       if privilege?(:reply_ticket)
         begin
-          reply_content =  params[:helpdesk_note][:note_body_attributes][:body_html]
           reply_multiple reply_content, ticket
         rescue Exception => e
           if e.is_a?(HelpdeskExceptions::AttachmentLimitException)

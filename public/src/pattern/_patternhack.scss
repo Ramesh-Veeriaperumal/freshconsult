@@ -380,7 +380,11 @@ h5{
     border-top: 4px solid #c7c7c7;
   }
 }
-
+.sub-lead{
+  font-size: $baseFontSize * 1.4;
+  color:$gray;
+  font-weight: 200;
+}
 
 // Emphasis & misc
 // -------------------------
@@ -433,11 +437,6 @@ ul.inline > li, ol.inline > li {
   padding-left: 5px;
 }
 
-.select2-container{
-  &[class*="span"]{
-    margin-left: 0;
-  }
-}
 .nested-input{
   border-left: 1px dotted #AFAFAF;
   padding-left: 8px;

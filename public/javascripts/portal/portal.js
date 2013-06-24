@@ -5,6 +5,8 @@
 
 !function( $ ) {
 
+	if($.browser.msie) $("body").addClass("ie")
+
 	$(function () {
 
 		"use strict"
@@ -166,18 +168,20 @@
 					$(btn).button("loading")
 
 					// IF the form has an attribute called data-remote then it will be submitted via ajax
-					if($(form).data("remote"))
-			  	   	$(form).ajaxSubmit({
-			  	   		success: function(response, status){
-			  	   			// Resetting the submit button to its default state
-			  				$(btn).button("reset")
+					if($(form).data("remote")){
+				  	   	$(form).ajaxSubmit({
+				  	   		success: function(response, status){
+				  	   			// Resetting the submit button to its default state
+				  				$(btn).button("reset")
 
-			  				// If the form has an attribute called update it will used to update the response obtained
-			  	   			$("#"+$(form).data("update")).html(response)
-			  	   		}
-			  	   	})
-					// For all other form it will be a direct page submission			  	
-				  	else form.submit()
+				  				// If the form has an attribute called update it will used to update the response obtained
+				  	   			$("#"+$(form).data("update")).html(response)
+				  	   		}
+				  	   	})
+			  	    }else{
+			  	    	// For all other form it will be a direct page submission			  	
+			  	    	form.submit()
+			  	    }
 				}
 			})
 		})

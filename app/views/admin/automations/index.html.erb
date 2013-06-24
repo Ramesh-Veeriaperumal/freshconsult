@@ -1,36 +1,60 @@
+<%= include_cloudfront_css :pattern %>
+<%= include_cloudfront_js :pattern %>
 <% content_for :sidebar do %>
- <%= render :partial => "helpnote" %>
+  <%= render :partial => "helpnote_without_tour" %>
 <% end %>
+<div id="cust-list" class="cust_list_table">
+  <div class="cust_list_table_header" >
+    <div class="row-fluid">
+      <div class="span6"><h3 class="title"><%=t('automations.title')%></h3></div>
+       <div class="span6 pull-right pagination-right header_buttons align-right" >
+        <%= link_to t('reorder'),'#', :id => "va_rules_reorder_button", :class => "btn" if(@va_rules.active.size > 1) %>
+        <%= (link_to t('dispatch.new_rule'), new_admin_automation_path, :class => "btn btn-primary") %>
+      </div>
+    </div>
+  </div>
 
-<% content_for :page_title do -%>
-  <%=t('automations.title')%>
+  <div>
+  <%= render :partial => "/shared/reorder_list", :locals => { 
+      :items => @va_rules.active,  
+      :action_url => reorder_admin_automations_path, 
+      :title => :name, :container_id => "va_rules_sort", 
+      :reorder_id => "va_rules_reorder_button", :list_id => "va_rules_list"} %>
+  </div>
+
+  <div class="cust_list_table_body " id="va_rules_list">
+    <table class="table table-striped">
+      
+      <% (@va_rules.active + @va_rules.inactive).each do |va_rule| %>
+        <tr id=<%= dom_id(va_rule) %>>
+          <td>
+            <strong>
+              <%= link_to(h(va_rule.name), edit_admin_automation_path(va_rule), :class => "item_info") %>
+            </strong><br/>
+            <span class="muted"><%= h va_rule.description %></span>
+          </td>
+          <td>
+            <div class="item_actions" align="right">
+                <%= link_to(t('edit'), edit_admin_automation_path(va_rule), :class => "btn btn-mini") %>
+                <%= link_to "<i class='icon-trash'></i>", admin_automation_path(va_rule), :confirm => t('confirm_delete_message', :human_name => t('.human_name')), :method => :delete, :class => "btn btn-mini" %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+
+
+    </table>  
+  </div>
+
+</div>
+
+<% javascript_tag do %>
+  (function($){
+    $('.activate').itoggle({
+      checkedLabel: 'On',
+      uncheckedLabel: 'Off'
+    }).change(function() {
+      $(this).parent().submit();  
+    });
+  })(jQuery)
 <% end %>
-
-<% content_for :page_toolbar do -%>
-  <%= link_to(t('automations.reorder'), "#", :id => "Reorder", :class => "uiButton") if ( @va_rules.size > 1 ) %>
-  <%= link_to t('automations.new'), new_admin_automation_path, :class => "uiButton", :id => 'scenario_new' %>
-<% end %>
-
-<% content_for :page_active_list do -%>
-  <% @va_rules.each do |va_rule| %>
-		<li class="<%=cycle('stripe', '') %>"> 
-			<div class="item_actions">
-				<%= link_to(t('delete'), admin_automation_path(va_rule), :method => 'delete', :confirm => t('delete_confirm_scenario'), :class => "button" ) %>					
-				<%= link_to(t('edit')  , edit_admin_automation_path(va_rule), :class => "button") %> 					
-			</div>
-			<%= link_to(h(va_rule.name), edit_admin_automation_path(va_rule), :class => "item_info") %>
-			<div><%= h va_rule.description %></div>				
-		</li>
-	<% end %>
-<%- end %>
-
-<% content_for :page_reorder_list do -%>
-  <% @va_rules.each do |va_rule| %>
-	  <% content_tag :li, :ruleid => va_rule.id do %> 
-			<span class="sort_handle"></span>
-			<%= h(va_rule.name) %> 
-		<% end %>
-	<% end %>
-<% end %>
-
-<%= render :partial => "/admin/shared/rule_page" %>

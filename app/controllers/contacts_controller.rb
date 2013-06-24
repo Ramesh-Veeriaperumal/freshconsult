@@ -67,7 +67,7 @@ class ContactsController < ApplicationController
             render :json => @user.to_json({:except=>[:account_id] ,:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
 :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
         }
-        format.widget { render :action => :show}
+        format.widget { render :action => :show, :layout => "widgets/contacts"}
         format.js
       end
     else
