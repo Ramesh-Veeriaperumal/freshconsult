@@ -2745,7 +2745,7 @@ en:
     multiple_info: You can also create multiple sets of business hours and holidays, and apply them for specific groups. If you have one support team working on PST and another on GMT, you can let each group have its own set of business hours and holidays. <a href="https://support.freshdesk.com/solution/articles/98945" target="_blank">Learn more</a>
     holiday_added: Holiday already added
     invalid_holiday: Invalid holiday added
-    import_holiday_info: <b>Important:</b> Importing will only import current year's holiday. we will not be updating the holiday list every year.
+    import_holiday_info: <b>Important:</b> Importing will only add this year's holidays to the list. The list will not be automatically updated next year.
     info3: Select working days/hours
     info6: 24 hrs x 7 days
     info4: Working Days for your Helpdesk
