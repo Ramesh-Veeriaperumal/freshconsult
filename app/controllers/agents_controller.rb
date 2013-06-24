@@ -185,6 +185,7 @@ class AgentsController < ApplicationController
     )   
     flash[:notice] = render_to_string(:partial => '/agents/flash/restore_notice')
    else
+    logger.info "Errors in agent restore :: #{@agent.user.errors.full_messages}" 
     flash[:notice] = t(:'flash.general.restore.failure', :human_name => 'Agent')
    end 
    redirect_to :back  

@@ -71,6 +71,7 @@ en:
   upgrade_trial: Upgrade your trial!
   upgrade_plan: Upgrade
   go_back: Go Back
+  go_back_small: go back
   add_note: Add Note
   set_field_label_as: Set %{custom_field_name} as
   contact_name: Contact Name
@@ -841,6 +842,7 @@ en:
       new: New Role
       edit: Edit Role
       default_role: Default Role
+      default_role_edit: This is a default system role. It cannot be edited or removed. You can view its permissions here, or %{go_back}.
       role_name: Role Name
       role_description: Description
       scroll:

@@ -14,7 +14,7 @@ class Account < ActiveRecord::Base
 
   	def valid_domain?
       conditions = new_record? ? ['full_domain = ?', self.full_domain] : ['full_domain = ? and id <> ?', self.full_domain, self.id]
-      self.errors.add(:domain, 'is not available') if self.full_domain.blank? || self.class.count(:conditions => conditions) > 0
+      self.errors.add_to_base('domain is not available') if self.full_domain.blank? || self.class.count(:conditions => conditions) > 0
     end
     
     def valid_sso_options?
