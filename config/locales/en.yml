@@ -1460,6 +1460,9 @@ en:
       restore_account: Your account is cancelled and the data will be deleted on <strong>%{delete_at}</strong>. To restore your account, contact <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>.
   success_msg : Account settings updated successfully!
   failure_msg : Failed to update Account Settings!
+  domain_not_available_msg: The domain <strong>%{domain_name}</strong> is not available.
+  long_company_name_error: Company name shouldn't exceed 100 characters.
+  short_company_name_error: Company name should be atleast 3 characters
   
   forum_key: Forum
   topics:
