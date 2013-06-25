@@ -877,7 +877,7 @@ jQuery.scrollTo = function(element, options) {
   var opts = jQuery.extend({}, defaults, options || {});
   var el = jQuery(element);
   if(el.length > 0)
-    jQuery('body').animate({
+    jQuery('body, html').animate({
       scrollTop: el.offset().top - opts.offset
     }, opts.speed);
 };

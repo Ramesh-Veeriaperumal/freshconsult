@@ -889,7 +889,7 @@ refreshStatusBox = function() {
 		}
 	});
 
-	$('body').on('click.ticket_details', '.ticket_show #close_ticket_btn', function(ev){
+	$('body').on('click.ticket_details', '#close_ticket_btn', function(ev){
 		ev.preventDefault();
 		var form = $("<form>")
 			.attr("method", "post")

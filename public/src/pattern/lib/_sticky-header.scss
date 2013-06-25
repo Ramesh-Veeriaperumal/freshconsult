@@ -26,13 +26,14 @@
 	cursor: pointer;
 	@include transition(all 0.2s ease-out);
 
-	&:hover {
-		opacity: 1;
-	}
-
 	&.visible {
 		display: block;
 		opacity: 0.6;
 		bottom: 50px;
+		
+		&:hover {
+			opacity: 1;
+		}
+
 	}
 }
