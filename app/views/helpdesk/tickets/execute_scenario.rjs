@@ -6,9 +6,11 @@ page << "try {
 } catch(e) {}"
 
 page << "silenceTktFieldsUpdate();"
-page << "jQuery('#custom_ticket_form ul>li.field:not(#helpdesk_ticket_tags)').remove()"
 f = ActionView::Helpers::FormBuilder.new(:helpdesk_ticket, @ticket, self, {}, proc {})
-page.insert_html :before,'helpdesk_ticket_tags',
-	render(:partial => "helpdesk/tickets/show/ticket_field_elements.html.erb",:locals => { :form_builder => f })
+page.replace_html 'TicketPropertiesFields',
+	render(:partial => "helpdesk/tickets/show/ticket_field_elements.html.erb",
+		:locals => { 
+			:form_builder => ActionView::Helpers::FormBuilder.new(:helpdesk_ticket, @ticket, self, {}, proc {}) 
+		})
 page.replace "due-by-element-parent", render(:partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @ticket})
 page << "unsilenceTktFieldsUpdate();"

@@ -989,24 +989,6 @@ refreshStatusBox = function() {
 		}
 	});
 
-	/*
-		When the ticket subjects are long, we hide the extra content and show them only on mouseover. 
-		While doing this, the ticket subject occupies more height that normal we are hiding that
-		and showing that back on Mouseleave event.
-
-		Being done to make sure that there is no visible jump in the infobox.
-	*/
-	// $('body').on('mouseenter.ticket_details', '.ticket_show .control-left h2.subject:not(.show_full)', function(){
-	// 	if ($(this).height() > 30) {
-	// 		$(this).siblings('.ticket-actions').hide();
-	// 	}
-	// });
-	// $('body').on('mouseleave.ticket_details', '.ticket_show .control-left h2.subject:not(.show_full)', function() {
-	// 	if (!$(this).siblings('.ticket-actions').is(':visible')) {
-	// 		$(this).siblings('.ticket-actions').show();
-	// 	}
-	// })
-
 	//Binding the Reply/Forward/Add Note buttons
 	$('body').on('click.ticket_details', '[rel=note-button]', function(ev) {
 		if (!$(this).parent().parent().hasClass('dropdown-menu')) {
@@ -1065,63 +1047,6 @@ refreshStatusBox = function() {
 
 };
 
-TICKET_DETAILS_UPDATE_FORM_SUBMIT = function() {
-	var tkt_form = $('#custom_ticket_form');
-
-	if (tkt_form.valid()) {
-		
-		var submit = $('#custom_ticket_form .btn-primary');
-		submit.button('loading');
-		submit.attr('disabled','disabled');
-
-		$.ajax({
-			type: 'POST',
-			url: tkt_form.attr('action'),
-			data: tkt_form.serialize(),
-			dataType: 'json',
-			success: function(response) {
-				TICKET_DETAILS_DATA['updating_properties'] = false;
-				submit.val(submit.data('saved-text')).addClass('done');
-				setTimeout( function() {
-					submit.button('reset').removeClass('done');
-				}, 2000);
-
-				var updateStatusBox = false;
-				if ($('.ticket_details #helpdesk_ticket_priority').data('updated') || $('.ticket_details #helpdesk_ticket_status').data('updated')) {
-					$('.ticket_details .source-badge-wrap .source')
-							.attr('class','')
-							.addClass('source ')
-							.addClass('priority_color_' + $('.ticket_details #helpdesk_ticket_priority').val())
-							.addClass('status_' + $('.ticket_details #helpdesk_ticket_status').val());
-
-					updateStatusBox = true;
-				}
-
-				if ($('.ticket_details #helpdesk_ticket_source').data('updated')) {
-
-					$('.ticket_details .source-badge-wrap .source span')
-							.attr('class','')
-							.addClass('source_' + $('.ticket_details #helpdesk_ticket_source').val());
-
-				}
-
-				tkt_form.find('input, select, textarea').each(function() {
-					$(this).data('updated', false);
-				});
-
-				if (updateStatusBox) {
-					refreshStatusBox();
-				}
-
-			},
-			error: function(jqXHR, textStatus, errorThrown) {
-				submit.text(submit.data('default-text')).prop('disabled',false);
-			}
-		});
-	}
-
-	return false;
-};
 
 TICKET_DETAILS_CLEANUP = function() {
 	// if($('body').hasClass('ticket_details')) return;
@@ -1138,7 +1063,6 @@ TICKET_DETAILS_CLEANUP = function() {
     				.off('change.ticket_details')
     				.off('submit.ticket_details')
     jQuery(window).off('unload.ticket_details');
-
     jQuery('body').removeClass('ticket_details');
 
 };

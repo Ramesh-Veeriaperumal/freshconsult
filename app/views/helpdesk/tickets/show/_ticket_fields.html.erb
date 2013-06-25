@@ -1,33 +1,35 @@
 <div class="widget" id='TicketProperties'>
 	<h3 class="title"><%=t('ticket.properties')%></h3>
-	<% form_disable = params[:format] == 'widget' ? {:onsubmit=> 'return false'} : {:onsubmit => 'TICKET_DETAILS_UPDATE_FORM_SUBMIT(); return false;'} %>
+	<% form_disable = params[:format] == 'widget' ? {:onsubmit=> 'return false'} : {} %>
 	<% form_for @ticket,
-   :url => url_for(:controller => "helpdesk/tickets", :action => "update_ticket_properties", :id => @ticket.display_id), :html => { :id => 'custom_ticket_form', :class => 'ui-form content ticket_properties_form'}.merge(form_disable) do |f| %>
-	<ul class="cnt">
+   :url => url_for(:controller => "helpdesk/tickets", :action => "update_ticket_properties", :id => @ticket.display_id), :html => { :id => 'custom_ticket_form', :class => 'ui-form content dont-validate'}.merge(form_disable) do |f| %>
 
 		<% if privilege?(:edit_ticket_properties) %>
-  		<li class="button-container top">
-  			<%= f.submit t('update'), :class => "btn btn-primary", :id => "helpdesk_ticket_submit_dup",
-  			"data-loading-text" => "#{t('ticket.updating')}...", 
-  			"data-saved-text" => "✔ #{t('ticket.update_done')}", 
+			<div class="button-container top">
+				<%= f.submit t('update'), :class => "btn btn-primary", :id => "helpdesk_ticket_submit_dup",
+				"data-loading-text" => "#{t('ticket.updating')}...", 
+				"data-saved-text" => "✔ #{t('ticket.update_done')}", 
 			
-  			"data-default-text" => t('update') %>
-  		</li>
+				"data-default-text" => t('update') %>
+			</div>
 		<% end %>
-		<!--form values starts here-->
-		<%= render :partial => '/helpdesk/tickets/show/ticket_field_elements.html.erb', 
-									:locals => {:form_builder => f} %>
-		<!--form values ends here-->
-		<!-- Custom fields ends here-->
+		<ul class="cnt dont-validate" id="TicketPropertiesFields">
+
+			<!--form values starts here-->
+			<%= render :partial => '/helpdesk/tickets/show/ticket_field_elements.html.erb', 
+										:locals => {:form_builder => f} %>
+			<!--form values ends here-->
+			<!-- Custom fields ends here-->
+		</ul>
+
 		<% if privilege?(:edit_ticket_properties) %>
-  		<li class="button-container">
+  		<div class="button-container">
   			<%= f.submit t('update'), :class => "btn btn-primary", :id => "helpdesk_ticket_submit",
   			"data-loading-text" => "#{t('ticket.updating')}...", 
   			"data-saved-text" => "✔ #{t('ticket.update_done')}", 
 			
   			"data-default-text" => t('update') %>
-  		</li>
+  		</div>
 		<% end %>
-	</ul>
 	<% end %> 
 </div> 
