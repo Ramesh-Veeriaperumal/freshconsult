@@ -57,6 +57,7 @@ $help_center_icons_bg: 		if(lightness($help_center_color) > 50, darken($help_cen
 $page-background: 			$white !default;
 $page-light-background: 	rgba($white, 0.9) !default;
 $page-form-background: 		rgba(#f4f4f4, 0.9) !default;
+$facebook-background:		#edeff4;
 
 // GRID SYSTEM FOR SUSY
 // --------------------------------------------------
@@ -218,7 +219,7 @@ $row-border-color: #f3f3f3;
 $comments-padding-side: 1em !default;
 $comments-padding: 0.8em $comments-padding-side !default;
 $comments-border-color: #ebebeb !default;
-$comments-background: #fafafa !default;
+$comments-background: $facebook-background !default;
 
 $comments-agent-background: #fffdf8 !default;
 $comments-agent-border-color: #cccccc !default;
