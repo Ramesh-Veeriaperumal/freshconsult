@@ -6,7 +6,7 @@
 			</h2>
 		</div>
 		<span class="span3 omega">
-			<a href="/support/tickets" class="view-all pull-right">View all</a>
+			<a href="/support/tickets" class="btn pull-right">View all</a>
 	  </span>
 	  	<div class="span12 c-list">
 		{% for ticket in portal.user.recent_tickets %}
@@ -16,7 +16,6 @@
 	  	<div class="span12">
 	      <a href="/support/tickets" class="c-all"><span> >> </span>See all Tickets</a>
 		</div>
-	</div>
 	</section>
 	{% if portal.has_solutions %}
 	<section class="content" id="solutions-index-home">
@@ -26,7 +25,7 @@
 			</h2>
 		</div>
 		<span class="span3 omega">
-			<a href="/support/solutions" class="view-all pull-right">View all</a>
+			<a href="/support/solutions" class="btn pull-right">View all</a>
 		</span>
 	</section>
 	{% endif %}
@@ -40,8 +39,8 @@
 		</div>
 		<div class="span4 omega">
 			<span class="pull-right">
-				<a href="/discussions/topics/new" title="Start a new topic" class="facebook-button">Start a new topic</a>
-				<a href="support/discussions" class="view-all">View all</a>
+				<a href="/discussions/topics/new" title="Start a new topic" class=" btn btn-primary">Start a new topic</a>
+				<a href="support/discussions" class="btn">View all</a>
 			</span>
 		</div>
 		{% if portal.recent_popular_topics != empty %}
