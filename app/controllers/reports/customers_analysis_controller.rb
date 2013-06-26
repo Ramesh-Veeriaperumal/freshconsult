@@ -7,14 +7,19 @@ class Reports::CustomersAnalysisController < ApplicationController
   before_filter { |c| c.requires_feature :enterprise_reporting }
   before_filter :parse_wf_params,:set_selected_tab, :set_time_range,
                 :only => [:generate,:generate_pdf,:send_report_email,:fetch_chart_data]
-  before_filter :filter_data,:set_selected_tab, :only => [:index]
+  before_filter :filter_data,:set_selected_tab,:saved_reports, :only => [:index]
 
   def index
   end
 
+  def saved_reports
+    @report_filter_data = report_filter_data_hash REPORT_TYPE_BY_KEY[:customer_analysis]
+    @report_type = REPORT_TYPE_BY_KEY[:customer_analysis]
+  end
+
   def generate
     render :text => "You don't have any customers." and return if params[:customer_select_field].blank?
-    @report_title = "Customer Top N Analysis"
+    @report_title = t('adv_reports.customer_top_n_analysis')
     @data_obj = top_n_analysis_data(Reports::Constants::CUSTOMERS_TOP_N_ANALYSIS_COLUMNS,
       @sql_condition.join(" AND "), 'customer_id')
     render :partial => "/reports/customers_analysis/customers_analysis"
@@ -30,7 +35,7 @@ class Reports::CustomersAnalysisController < ApplicationController
   end
   
   def generate_pdf
-    @report_title = "Customer Top N Analysis"
+    @report_title = t('adv_reports.customer_top_n_analysis')
     @data_obj = top_n_analysis_data(Reports::Constants::CUSTOMERS_TOP_N_ANALYSIS_COLUMNS,
       @sql_condition.join(" AND "), 'customer_id')
     @custom_fields = params[:custom_fields] unless params[:custom_fields].nil?

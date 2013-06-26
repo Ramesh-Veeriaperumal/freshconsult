@@ -7,20 +7,25 @@ class Reports::AgentsComparisonController < ApplicationController
   before_filter { |c| c.requires_feature :enterprise_reporting }
   before_filter :parse_wf_params,:set_selected_tab, :set_time_range,
                 :only => [:generate,:generate_pdf,:send_report_email]
-  before_filter :filter_data,:set_selected_tab, :only => [:index]
+  before_filter :filter_data,:set_selected_tab,:saved_reports, :only => [:index]
 
   def index
+    @report_title = t('adv_reports.agent_comparison')
     @comparison_fields = Reports::Constants.comparison_metrics
   end
 
+  def saved_reports
+    @report_filter_data = report_filter_data_hash REPORT_TYPE_BY_KEY[:agent_comparison]
+    @report_type = REPORT_TYPE_BY_KEY[:agent_comparison]
+  end
+
   def generate
-    @report_title = "Agents Comparison"
     @data_obj = comparison_data @sql_condition.join(" AND "),'responder_id'
     render :partial => "/reports/agents_comparison/agents_comparison"
   end
   
   def generate_pdf
-    @report_title = "Agents Comparison"
+    @report_title = t('adv_reports.agent_comparison')
     @data_obj = comparison_data @sql_condition.join(" AND "),'responder_id'
     render :pdf => @report_title,
       :layout => 'report/agents_comparison_pdf.html', # uses views/layouts/pdf.haml

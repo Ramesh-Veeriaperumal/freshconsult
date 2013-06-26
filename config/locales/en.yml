@@ -4034,6 +4034,11 @@ en:
     deleted_agent: "Deleted Agent"
     deleted_group: "Deleted Group"
     deleted_customer: "Deleted Customer"
+    unsaved_report_filter: "Unsaved Report"
+    saved_report_filters: "There are no Saved report(s)"
+    save_filter_title: "Save this report"
+    delete_filter_title: "Delete this report"
+    report_filter_title: "Saved Report Title"
     glance:
       all_reports: "All Reports"
       report_view: "Report View"

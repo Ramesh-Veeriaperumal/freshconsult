@@ -182,5 +182,7 @@ class Account < ActiveRecord::Base
 
   has_many :portal_templates,  :class_name=> 'Portal::Template'
   has_many :portal_pages,  :class_name=> 'Portal::Page'
+
+  has_many :report_filters, :class_name => 'Helpdesk::ReportFilter'
   
 end

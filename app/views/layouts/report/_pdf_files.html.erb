@@ -1,4 +1,8 @@
-<%= include_cloudfront_css :reports  %>
-<%= include_cloudfront_css :pattern  %>
-<%= include_cloudfront_js :frameworks  %>
-<%= include_cloudfront_js :reports  %>
+<% domain_url = 'http://localhost:3000'%>
+<link rel="stylesheet" type="text/css" href="<%=domain_url%>/stylesheets/app/reports.css">
+<link rel="stylesheet" type="text/css" href="<%=domain_url%>/stylesheets/pattern/pattern.css">
+<script src='<%=domain_url%>/javascripts/jquery-1.7.1.min.js'></script>
+<script src='<%=domain_url%>/javascripts/highcharts.src.js' ></script>
+<script src='<%=domain_url%>/javascripts/highcharts-more.js' ></script>
+<script src='<%=domain_url%>/javascripts/adv_reports/report_charts.js' ></script>
+<script src='<%=domain_url%>/javascripts/adv_reports/adv_reports.js' ></script>

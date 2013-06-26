@@ -7,13 +7,18 @@ class Reports::AgentsAnalysisController < ApplicationController
   before_filter { |c| c.requires_feature :enterprise_reporting }
   before_filter :parse_wf_params,:set_selected_tab, :set_time_range,
                 :only => [:generate,:generate_pdf,:send_report_email,:fetch_chart_data]
-  before_filter :filter_data,:set_selected_tab, :only => [:index]
+  before_filter :filter_data,:set_selected_tab,:saved_reports, :only => [:index]
 
   def index
   end
 
+  def saved_reports
+    @report_filter_data = report_filter_data_hash REPORT_TYPE_BY_KEY[:agent_analysis]
+    @report_type = REPORT_TYPE_BY_KEY[:agent_analysis]
+  end
+
   def generate
-    @report_title = "Agent Top N Analysis"
+    @report_title = t('adv_reports.agent_top_n_analysis')
     @data_obj = top_n_analysis_data(Reports::Constants::TOP_N_ANALYSIS_COLUMNS,
       @sql_condition.join(" AND "), 'responder_id')
     render :partial => "/reports/agents_analysis/agent_analysis"
@@ -29,7 +34,7 @@ class Reports::AgentsAnalysisController < ApplicationController
   end
   
   def generate_pdf
-    @report_title = "Agent Top N Analysis"
+    @report_title = t('adv_reports.agent_top_n_analysis')
     @data_obj = top_n_analysis_data(Reports::Constants::TOP_N_ANALYSIS_COLUMNS,
       @sql_condition.join(" AND "), 'responder_id')
     render :pdf => @report_title,

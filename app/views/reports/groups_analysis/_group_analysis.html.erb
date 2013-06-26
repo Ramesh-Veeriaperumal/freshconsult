@@ -3,7 +3,7 @@
   <div class="report-content-wrapper">
     <% solution_artical_link = 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85345-how-to-read-group-top-n-analysis'%>
     <!--report header-->
-    <%= render :partial => "reports/shared/report_view_header", :locals => {} %>
+    <%= render :partial => "reports/shared/report_view_header", :locals => {:report_type_id => @report_type} %>
 
     <div class="row-fluid">
       <div class="span6 single-line-bar">

@@ -8,17 +8,22 @@ class Reports::CustomerGlanceReportsController < ApplicationController
   before_filter { |c| c.requires_feature :advanced_reporting }
   before_filter :parse_wf_params,:set_selected_tab,
                 :only => [:generate,:generate_pdf,:send_report_email,:fetch_activity_ajax,:fetch_metrics]
-  before_filter :filter_data,:set_selected_tab, :only => [:index]
+  before_filter :filter_data,:set_selected_tab,:saved_reports, :only => [:index]
   before_filter :pass_solution_artical_link, :only => [:fetch_activity_ajax,:fetch_metrics]
 
   def index
     
   end
 
+  def saved_reports
+    @report_filter_data = report_filter_data_hash REPORT_TYPE_BY_KEY[:customer_glance]
+    @report_type = REPORT_TYPE_BY_KEY[:customer_glance]
+  end
+
   def generate
     render :text => "You don't have any customers." and return if params[:customer_select_field].blank?
     glance_report_data
-    @report_title = "Customer At A Glance"
+    @report_title = t('adv_reports.customer_at_a_glance')
     @agent_name = customer_name
     render :partial => "/reports/helpdesk_glance_reports/activity_report"
   end
@@ -26,7 +31,7 @@ class Reports::CustomerGlanceReportsController < ApplicationController
   def generate_pdf
     glance_report_data
     @custom_fields = params[:custom_fields] unless params[:custom_fields].nil?
-    @report_title = "Customer At A Glance"
+    @report_title = t('adv_reports.customer_at_a_glance')
     @agent_name = customer_name
     render :pdf => "#{@report_title} - #{@agent_name}",
       :layout => 'report/glance_report_pdf.html', # uses views/layouts/pdf.haml

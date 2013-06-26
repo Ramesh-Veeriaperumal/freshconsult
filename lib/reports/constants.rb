@@ -138,5 +138,21 @@ module Reports
       Hash[*COMPARISON_FIELDS.map { |i| [i[0], I18n.t(i[2])] }.flatten]
     end
 
+    REPORT_TYPE =  [
+      [ :helpdesk_glance,              101],
+      [ :customer_glance,              102],
+      [ :agent_glance,                 103],
+      [ :group_glance,                 104],
+      [ :agent_analysis,               201],
+      [ :group_analysis,               202],
+      [ :customer_analysis,            203],
+      [ :helpdesk_peformance_analysis, 204],
+      [ :helpdesk_load_analysis,       205],            
+      [ :agent_comparison,             301],            
+      [ :group_comparison,             302]
+    ]
+    
+    REPORT_TYPE_BY_KEY = Hash[*REPORT_TYPE.map { |i| [i[0], i[1]] }.flatten]
+
 	end
 end

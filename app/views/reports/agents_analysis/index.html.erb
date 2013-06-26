@@ -30,12 +30,16 @@
 <script type="text/javascript">
 
 jQuery(document).ready(function(){
-		Helpkit.AnalysisReport.init({
-			report_type: 'Agent',
-			title: "<%=t('adv_reports.agent_top_n_analysis')%>",
-			date_range: jQuery("#date_range").val(),
-			_url: '<%=reports_agent_analysis_reports_url%>/fetch_chart_data'
-		});
+	Helpkit.AnalysisReport.init({
+		report_type: 'Agent',
+		title: "<%=t('adv_reports.agent_top_n_analysis')%>",
+		date_range: jQuery("#date_range").val(),
+		_url: '<%=reports_agent_analysis_reports_url%>/fetch_chart_data'
+	});
+
+	/**save report filters code**/
+	Helpkit.report_filter_data = <%=@report_filter_data.to_json%>;
+	Helpkit.reports_util.bindEventsForReportFilter();
 });
 
 </script>

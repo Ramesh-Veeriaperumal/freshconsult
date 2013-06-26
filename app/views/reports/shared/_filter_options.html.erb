@@ -65,7 +65,7 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
                                     :container   => container,
                                     :"data-label"=> c_hash[:name] } do %>
                 <label class="control-label"><%= c_hash[:name] %></label>
-                <%= render :partial => "/reports/containers/#{container}", :locals => { :options => c_hash[:options], :name => c_hash[:name], :selected_val => '', :field_id => c_hash[:field_id], :nested_fields => c_hash[:nested_fields], :current_options => {}, :c_hash => c_hash,:extra_class => c_hash[:extra_class]} %>
+                <%= render :partial => "/reports/containers/#{container}", :locals => { :options => c_hash[:options], :name => c_hash[:condition], :selected_val => '', :field_id => c_hash[:field_id], :nested_fields => c_hash[:nested_fields], :current_options => {}, :c_hash => c_hash,:extra_class => c_hash[:extra_class]} %>
               <% end
               end 
             end
@@ -122,6 +122,11 @@ jQuery(document).ready(function() {
     jQuery("#FilterOptions input[name=selected_filter_data]").val(Helpkit.reports_util.select_hash.toJSON())
     jQuery(".filter_item").bind("change", function(){
       Helpkit.reports_util.refresh_tickets();
+      if(jQuery("#active_filter").length > 0){
+        jQuery("#active_filter").text("Unsaved Report Filter");
+        jQuery("#save-filter-link").removeClass('hide');
+        jQuery("#delete-filter-link").addClass('hide');
+      }
     });
 
     jQuery("#cancel").on('click',function(){

@@ -103,7 +103,8 @@ module FreshdeskCore::Model
                         
                         "votes", 
                         "va_rules", 
-                        "wf_filters" 
+                        "wf_filters",
+                        "report_filters"
                     ]
 
   STATUS = {

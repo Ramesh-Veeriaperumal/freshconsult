@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130613193138) do
+ActiveRecord::Schema.define(:version => 20130620124657) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1227,6 +1227,19 @@ ActiveRecord::Schema.define(:version => 20130613193138) do
 
   add_index "quests", ["account_id", "category"], :name => "index_quests_on_account_id_and_category"
 
+  create_table "report_filters", :force => true do |t|
+    t.integer  "report_type", :limit => 8
+    t.string   "filter_name"
+    t.text     "data_hash"
+    t.integer  "user_id",     :limit => 8
+    t.integer  "account_id",  :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "report_filters", ["account_id", "report_type"], :name => "index_report_filters_account_id_and_report_type"
+
+  
   create_table "roles", :force => true do |t|
     t.string   "name"
     t.string   "privileges"

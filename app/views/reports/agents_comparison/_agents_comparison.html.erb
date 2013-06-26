@@ -1,66 +1,56 @@
-<script type="text/javascript">
-jQuery(document).ready(function() {
-  jQuery('#sliding').slide();
-});
-</script>
 
-<div class="report-page" id="report-page">
-  <div class="report-content-wrapper">
-    <!--report header-->
-    <%= render :partial => "reports/shared/report_view_header", :locals => {} %>
-    <% obj_array_size = @data_obj.fetch('selected_comparison').length %>
-     <% @data_obj.fetch('selected_comparison').each_with_index do |selected,index| %>
-      <%if index % 2 == 0%>
-      <div class="row-fluid">
-      <%end%>
-        <div class="span6 single-line-bar">
-          <h3 class="header-lead">
-            <span><%=@data_obj['comparison_field'][selected.to_sym]%></span>
-            <ul class="showHideDiv_container pull-right">
-              <li data-graph="line_chart" data-type="<%=selected%>" class="bargraph-icon  active">
-                <img src="/images/spacer.gif" class="reports-icon-barGraph-icon-b" width="20px" height="20px"/>
-              </li>
-              <li data-graph="bar_chart" data-type="<%=selected%>" class="bargraph-icon">
-                <img src="/images/spacer.gif" class="reports-icon-lineGraph-icon-b" width="20px" height="20px"/>
-              </li>
-            </ul>
-          </h3>
-          
-          <div id="<%=selected%>_line_chart" class="graph-container hide-chart  ">
-            <div class="loading-center"></div>
-          </div>
-          <div id="<%=selected%>_bar_chart" class="graph-container">
-            <div class="loading-center"></div>
-          </div>
-        </div>
-      <%if index % 2 != 0 || ((obj_array_size-1) == index)%>
+<% obj_array_size = @data_obj.fetch('selected_comparison').length %>
+ <% @data_obj.fetch('selected_comparison').each_with_index do |selected,index| %>
+  <%if index % 2 == 0%>
+  <div class="row-fluid">
+  <%end%>
+    <div class="span6 single-line-bar">
+      <h3 class="header-lead">
+        <span><%=@data_obj['comparison_field'][selected.to_sym]%></span>
+        <ul class="showHideDiv_container pull-right">
+          <li data-graph="line_chart" data-type="<%=selected%>" class="bargraph-icon  active">
+            <img src="/images/spacer.gif" class="reports-icon-barGraph-icon-b" width="20px" height="20px"/>
+          </li>
+          <li data-graph="bar_chart" data-type="<%=selected%>" class="bargraph-icon">
+            <img src="/images/spacer.gif" class="reports-icon-lineGraph-icon-b" width="20px" height="20px"/>
+          </li>
+        </ul>
+      </h3>
+      
+      <div id="<%=selected%>_line_chart" class="graph-container hide-chart  ">
+        <div class="sloading"></div>
       </div>
-      <%end%>
-      <script type="text/javascript">
-        jQuery(document).ready(function() {
-          var <%=selected%>_lineChart = new lineChart(
-            {renderTo: '<%=selected%>_line_chart',
-             chartData:<%=@data_obj.fetch(selected+'_line').to_json%>,
-             yAxisTitle:'<%=@data_obj.fetch(selected+'_yAxis_label')%>',
-             toolTipLabel: 'ticket(s)'}
-            );
-          <%=selected%>_lineChart.lineChartGraph();
-
-          var <%=selected%>_barChart = new xaxis_bar_chart(
-            {renderTo: '<%=selected%>_bar_chart',
-             chartData:<%=@data_obj.fetch(selected+'_bar').to_json%>,
-             yAxis_label:'<%=@data_obj.fetch(selected+'_yAxis_label')%>',
-             xAxisLabel:[''],
-             toolTipLabel: 'ticket(s)',
-             chart_width:450}
-            );
-          <%=selected%>_barChart.xaxisbarGraph();
-        });
-        </script>
-    <%end%>
-    <div class="span12">&nbsp;</div>
+      <div id="<%=selected%>_bar_chart" class="graph-container">
+        <div class="sloading"></div>
+      </div>
+    </div>
+  <%if index % 2 != 0 || ((obj_array_size-1) == index)%>
   </div>
-</div>
+  <%end%>
+  <script type="text/javascript">
+    jQuery(document).ready(function() {
+      var <%=selected%>_lineChart = new lineChart(
+        {renderTo: '<%=selected%>_line_chart',
+         chartData:<%=@data_obj.fetch(selected+'_line').to_json%>,
+         yAxisTitle:'<%=@data_obj.fetch(selected+'_yAxis_label')%>',
+         toolTipLabel: 'ticket(s)'}
+        );
+      <%=selected%>_lineChart.lineChartGraph();
+
+      var <%=selected%>_barChart = new xaxis_bar_chart(
+        {renderTo: '<%=selected%>_bar_chart',
+         chartData:<%=@data_obj.fetch(selected+'_bar').to_json%>,
+         yAxis_label:'<%=@data_obj.fetch(selected+'_yAxis_label')%>',
+         xAxisLabel:[''],
+         toolTipLabel: 'ticket(s)',
+         chart_width:450}
+        );
+      <%=selected%>_barChart.xaxisbarGraph();
+    });
+    </script>
+<%end%>
+<div class="span12">&nbsp;</div>
+  
 <script type="text/javascript">
 jQuery(document).ready(function() {
   jQuery('.bargraph-icon').click(function(){
