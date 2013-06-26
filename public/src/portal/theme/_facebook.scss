@@ -18,13 +18,6 @@ body, .heading {
 h2 {
     font-size:14px;
 }
-.cs-s{
-    border:0;
-    .heading{
-        border:0;
-        color:$widgetHeaderTextColor;
-    }
-}
 [id*="article-show"]{
     .page-stamp{
         display:block;
@@ -47,16 +40,33 @@ h2 {
     }
 }
 
-.heading {
-    color: $headingColor;
+h2.heading{
+    font-size: 18px;
+    color: inherit;
+    margin-bottom: 20px;
 }
+h2.post-title{
+    margin-bottom:0;
+}
+h3.heading{
+    font-size: 14px;
+    color:inherit;
+    font-weight: bold;
+}
+.article-list{
+    .list-lead{
+        font-weight: bold;
+        color:$linkColor;
+    }
+}
+
 //Header End 
 .content, .content-form, .content-light {
     padding:5px;
     border-radius:0;
     border:0;
-    border-top:$content-border;
 }
+
 //Search 
 .hc-search-c {
     padding: 8px;
@@ -160,6 +170,15 @@ h2 {
     display:none;
 }
 .index-page {
+    .content, .content-form, .content-light {
+        border-top:$content-border;
+    }
+    .cs-g-3{
+        width:100%;
+    }
+    h2{
+        font-size:14px;
+    }
     .c-link {
         font-size: 1.06em;
     }
@@ -240,6 +259,11 @@ h2 {
             margin-top: 3px;
             margin-right: 15px;
         }
+        .post-actions{
+            border: 0;
+            box-shadow: none;
+            background: rgba(0, 0, 0, 0);
+        }
 	}
 	.user-name{
 		margin-top:10px;
@@ -278,6 +302,12 @@ h2 {
         @include border-radius(0);
     }
 }
+.user-comment {
+    .lead-small{
+        font-size:inherit;
+    }
+}
+
 #reply-to-post {
     background: $facebook-background;
     &.user-comment {

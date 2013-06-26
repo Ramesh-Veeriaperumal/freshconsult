@@ -16,7 +16,6 @@
 	  	<div class="span12">
 	      <a href="/support/tickets" class="c-all"><span> >> </span>See all Tickets</a>
 		</div>
-	</div>
 	</section>
 	{% if portal.has_solutions %}
 	<section class="content" id="solutions-index-home">
