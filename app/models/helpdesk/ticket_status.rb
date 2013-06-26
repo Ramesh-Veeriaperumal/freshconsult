@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Helpdesk::TicketStatus < ActiveRecord::Base
   
   include Helpdesk::Ticketfields::TicketStatus
@@ -154,7 +155,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
             next if(fetch_ticket.nil?)
             sla_timer_stopped_at_time = fetch_ticket.ticket_states.sla_timer_stopped_at
             if(!sla_timer_stopped_at_time.nil? and fetch_ticket.due_by > sla_timer_stopped_at_time)
-              fetch_ticket.set_dueby(true)
+              fetch_ticket.update_dueby(true)
               fetch_ticket.send(:update_without_callbacks)
             end
             fetch_ticket.ticket_states.sla_timer_stopped_at = nil

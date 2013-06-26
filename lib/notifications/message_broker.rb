@@ -1,6 +1,7 @@
 module Notifications::MessageBroker
 
-	include RedisKeys
+  include Redis::RedisKeys
+
 
 	# Maximum nof of feeds the user can have in memory
 	USER_FEED_LIMIT = 5
@@ -34,19 +35,36 @@ module Notifications::MessageBroker
 
 		def push(reciever_id,message_json)
 			key = game_notification_key(reciever_id)
-			$redis.lpush(key,message_json)
-			$redis.rpop(key) if $redis.llen(key) > USER_FEED_LIMIT
+			$redis_tickets.lpush(key,message_json)
+			$redis_tickets.rpop(key) if $redis_tickets.llen(key) > USER_FEED_LIMIT
 		end
 
 		def pull(count=USER_FEED_LIMIT)
-			key = game_notification_key
-			total_length = $redis.llen(key)
-			results = []
-			count = total_length if count > total_length
-			count.times do |index|
-				results.push($redis.lpop(key))
+			retrycount = 0
+	    tries = 3
+	    begin
+				key = game_notification_key
+				total_length = $redis_tickets.llen(key)
+				results = []
+				count = total_length if count > total_length
+				count.times do |index|
+					results.push($redis_tickets.lpop(key))
+				end
+				results
+			rescue Exception => e
+				NewRelic::Agent.notice_error(e,{:count => count,
+					:total_length => total_length,
+					:total_length_class => total_length.class.name,
+					:key => key,
+					:description => "Redis issue",
+					:count => retrycount})
+				if retrycount<tries
+          retrycount += 1
+          retry
+      	else
+					return []
+				end
 			end
-			results
 		end
 
 end

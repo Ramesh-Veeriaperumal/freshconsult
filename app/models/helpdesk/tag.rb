@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Helpdesk::Tag < ActiveRecord::Base
   
   include Cache::Memcache::Helpdesk::Tag
@@ -30,7 +31,7 @@ class Helpdesk::Tag < ActiveRecord::Base
     :source => :taggable,
     :source_type => "User",
     :through => :tag_uses,
-    :conditions =>{:user_role =>[User::USER_ROLES_KEYS_BY_TOKEN[:customer], User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]] , :deleted =>false}
+    :conditions => { :helpdesk_agent => false, :deleted => false }
 
   named_scope :with_taggable_type, lambda { |taggable_type| { 
             :include => :tag_uses,

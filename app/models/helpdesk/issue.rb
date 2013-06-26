@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Helpdesk::Issue < ActiveRecord::Base
   set_table_name "helpdesk_issues"
 
@@ -72,7 +73,7 @@ class Helpdesk::Issue < ActiveRecord::Base
     notes.create(
       :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['status'],
       :user => user,
-      :body => message
+      :note_body_attributes => {:body => message}
     )
   end
 
@@ -116,8 +117,10 @@ class Helpdesk::Issue < ActiveRecord::Base
     exact_match = {field => value}
 
     conditions = case field.to_sym
-      when :title        :  loose_match
-      when :description  :  loose_match
+      when :title 
+        loose_match
+      when :description 
+        loose_match
     end
 
     # Protect us from SQL injection in the 'field' param

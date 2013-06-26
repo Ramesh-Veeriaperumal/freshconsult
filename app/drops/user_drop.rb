@@ -3,8 +3,7 @@ class UserDrop < BaseDrop
 	include ActionController::UrlWriter
 
 	liquid_attributes << :name  << :first_name << :last_name << :email << :phone << :mobile << 
-						:job_title << :user_role << :time_zone << :twitter_id << :external_id
-
+						:job_title  << :time_zone << :twitter_id << :external_id
 
   include Integrations::AppsUtil
 
@@ -25,8 +24,12 @@ class UserDrop < BaseDrop
 	end
 
 	def is_agent
-		source.agent?
+		source.helpdesk_agent
 	end
+  
+  def is_client_manager
+    source.privilege?(:client_manager)
+  end
 
 	def firstname
 		name_part(:first)

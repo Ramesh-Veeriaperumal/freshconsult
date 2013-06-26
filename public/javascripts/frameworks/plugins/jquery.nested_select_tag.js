@@ -17,7 +17,9 @@
 
          _category.bind("change", function(ev){
             var _items_present = false;
-            _subcategory.html(opts.default_option);
+
+            _subcategory.html("");
+            
             (_tree.getSubcategoryList(_category.val())).each(function(pair){
               _items_present = true;
               $("<option />")
@@ -25,6 +27,11 @@
                 .val(pair.key)
                 .appendTo(_subcategory);
             });
+
+            if(_items_present){
+              _subcategory.prepend(opts.default_option);
+              _subcategory.val("")
+            }
             
             _subcategory.trigger("change");
             _condition = (!_items_present || (!_category.val() || _category.val() == -1));
@@ -52,14 +59,21 @@
             }
             if(_tree.third_level){
               var _items_present = false;
-              _item.html(opts.default_option);
+
+              _item.html("");
+
               (_tree.getItemsList(_category.val(), _subcategory.val())).each(function(pair){
                 _items_present = true;
                 $("<option />")
                   .html(pair.key)
                   .val(pair.key)
                   .appendTo(_item);
-              });                 
+              });
+              if(_items_present){
+                _item.prepend(opts.default_option);
+                _item.val("")
+              }
+
               _item.trigger("change");
               _condition = (!_items_present || (!_subcategory.val() || _subcategory.val() == -1));
               

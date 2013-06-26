@@ -1,9 +1,10 @@
 class SupportController < ApplicationController
 
+  skip_before_filter :check_privilege
   layout :resolve_layout
   before_filter :portal_context, :page_message
-  before_filter :facebook_keys if :facebook?
-  include RedisKeys
+  include Redis::RedisKeys
+  include Redis::PortalRedis
 
   caches_action :show, :index, :new,
   :if => proc { |controller|
@@ -17,12 +18,32 @@ class SupportController < ApplicationController
   :cache_path => proc { |c| 
     "#{c.send(:current_portal).cache_prefix}#{c.request.request_uri}" 
   }
- 
+  
   def cache_enabled?
-    !(get_key(PORTAL_CACHE_ENABLED) === "false")
+    !(get_portal_redis_key(PORTAL_CACHE_ENABLED) === "false")
   end
 
   protected
+
+    def allow_monitor?
+      params[:user_id] = current_user.id if (params[:user_id].nil?)
+      unless privilege?(:manage_forums)
+        if (!params[:user_id].blank? && params[:user_id].to_s!=current_user.id.to_s)
+          @errors = {:error=>"Permission denied for user"}
+          respond_to do |format|
+            format.xml {
+              render :xml => @errors.to_xml(:root=>:errors),:status=>:forbidden
+             }
+             format.json{
+              render :json => {:errors=>@errors}.as_json,:status=>:forbidden
+             }
+          end
+        end 
+
+      end
+    end
+
+
     def set_portal_page page_token
       # Name of the page to be used to render the static or dynamic page
       @current_page_token = page_token.to_s
@@ -45,7 +66,7 @@ class SupportController < ApplicationController
       if User.current
         is_preview = IS_PREVIEW % { :account_id => current_account.id, 
           :user_id => current_user.id, :portal_id => @portal.id}
-        !get_key(is_preview).blank? && !current_user.blank? && current_user.agent?
+        !get_portal_redis_key(is_preview).blank? && !current_user.blank? && current_user.agent?
       end
     end
 

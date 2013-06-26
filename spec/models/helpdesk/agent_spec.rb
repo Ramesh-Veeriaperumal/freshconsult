@@ -4,8 +4,8 @@ describe Agent do
 
   before (:all) do
   	@account = create_test_account
-  	@agent1 = add_agent_to_account(@account, {:name => "testing2", :email => "unit2@testing.com", 
-                                        :token => "xtoQaHDQ7TtTLQ3OKt9", :active => 1, :role => 1
+  	@agent1 = add_agent_to_account(@account, {:name => "testing2", :email => "unit2@test.com", 
+                                        :token => "xtoQaHDQ7TtTLQ3OKtw", :active => 1, :role => 1
                                         })
   end
 

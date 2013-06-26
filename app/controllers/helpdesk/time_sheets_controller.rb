@@ -1,19 +1,21 @@
+# encoding: utf-8
 class Helpdesk::TimeSheetsController < ApplicationController
   
-  include RedisKeys
-  
+  include Helpdesk::ShowVersion  
+
   before_filter { |c| c.requires_feature :timesheets }
-  before_filter { |c| c.requires_permission :manage_tickets }  
   before_filter :set_show_version
   before_filter :load_time_entry, :only => [ :show,:edit, :update, :destroy, :toggle_timer ] 
   before_filter :load_ticket, :only => [:new, :create, :index, :edit, :update, :toggle_timer] 
+  before_filter :create_permission, :only => :create 
+  before_filter :timer_permission, :only => :toggle_timer
   before_filter :check_agents_in_account, :only =>[:create]
 
   rescue_from ActiveRecord::UnknownAttributeError , :with => :handle_error
 
   def index
     unless @ticket.nil?
-      @time_sheets = @ticket.time_sheets  unless @ticket.nil?
+      @time_sheets = @ticket.time_sheets 
     else
       get_time_sheets #Added for time_sheets API
     end
@@ -179,14 +181,6 @@ private
     return (time_entry.time_spent + running_time)
   end
 
-  def set_show_version
-    @new_show_page = (get_key(show_version_key) == "1")
-  end
-  
-  def show_version_key
-    HELPDESK_TKTSHOW_VERSION % { :account_id => current_account.id, :user_id => current_user.id }
-  end
-
   def respond_to_format result
     respond_to do |format|
       format.js
@@ -243,6 +237,26 @@ private
     #ADDED for SECURITY ISSUE: Users from other account are allowed to be added
     #by specifying user_id in the api.
    handle_error(StandardError.new("Agent not found for given user_id")) if current_account.agents.find_by_user_id(params[:time_entry][:user_id]).blank?
+  end
+
+  def create_permission
+    if(!privilege?(:edit_time_entries) &&
+      params[:time_entry][:user_id].to_i != current_user.id)
+      flash[:error] = t('flash.timesheet.create_error')
+      respond_to do |format|
+        format.js
+      end
+    end
+  end
+
+  def timer_permission
+    if(!privilege?(:edit_time_entries) &&
+      @time_entry.user_id != current_user.id)
+      flash[:error] = t('flash.timesheet.create_error')
+      respond_to do |format|
+        format.js
+      end
+    end
   end
 
 end

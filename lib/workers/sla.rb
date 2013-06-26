@@ -21,26 +21,25 @@ class Workers::Sla
 
  def self.run
     account = Account.current
-    db_name = account.premium? ? "use_master_connection" : "use_persistent_read_connection"
+    db_name = account.premium? ? "run_on_master" : "run_on_slave"
     sla_default = account.sla_policies.default.first
     sla_rule_based = account.sla_policies.rule_based.active.inject({}) { |sp_hash, sp| 
                                                                       sp_hash[sp.id] = sp; sp_hash}
 
     overdue_tickets =  execute_on_db(db_name) {
-                        account.tickets.visible.find(:all, 
+                        account.tickets.visible.updated_in(2.month.ago).find(:all, 
                             :readonly => false, 
                             :conditions =>['due_by <=? AND isescalated=? AND status IN (?)',
                              Time.zone.now.to_s(:db),false, 
                              Helpdesk::TicketStatus::donot_stop_sla_statuses(account)] )
                       }
     overdue_tickets.each do |ticket|  
-      ticket.save if ticket.sla_policy_id.blank?
       sla_policy = sla_rule_based[ticket.sla_policy_id] || sla_default
-      sla_policy.escalate_resolution_overdue ticket #escalate_rosultion_overdue
+      sla_policy.escalate_resolution_overdue ticket #escalate_resolution_overdue
     end
     
     froverdue_tickets = execute_on_db(db_name) {
-                        account.tickets.visible.find(:all, 
+                        account.tickets.updated_in(2.month.ago).visible.find(:all, 
                             :joins => "inner join helpdesk_ticket_states 
                                      on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
                                      and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id" , 
@@ -51,7 +50,6 @@ class Workers::Sla
                           Helpdesk::TicketStatus::donot_stop_sla_statuses(account),nil] )
                        }
     froverdue_tickets.each do |fr_ticket|
-      fr_ticket.save if fr_ticket.sla_policy_id.blank?
       fr_sla_policy = sla_rule_based[fr_ticket.sla_policy_id] || sla_default
       fr_sla_policy.escalate_response_overdue fr_ticket
       #If there is no email-id /agent still escalted will show as true. This is to avoid huge sending if 
@@ -61,7 +59,7 @@ class Workers::Sla
     ##Tickets left unassigned in group
     
     tickets_unpicked =  execute_on_db(db_name) {
-                          account.tickets.visible.find(:all, 
+                          account.tickets.updated_in(2.month.ago).visible.find(:all, 
                             :joins => "inner join helpdesk_ticket_states 
                             on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
                             and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id 
@@ -78,7 +76,7 @@ class Workers::Sla
   end
 
   def self.execute_on_db(db_name)
-    SeamlessDatabasePool.send(db_name.to_sym) do
+    Sharding.send(db_name.to_sym) do
       yield
     end
   end

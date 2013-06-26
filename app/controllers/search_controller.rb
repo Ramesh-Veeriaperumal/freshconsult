@@ -1,5 +1,5 @@
+# encoding: utf-8
 class SearchController < ApplicationController
-  
   extend NewRelic::Agent::MethodTracer
   
   include SearchUtil
@@ -44,8 +44,10 @@ class SearchController < ApplicationController
     
     def content_classes
       to_ret = Array.new
-      to_ret << Solution::Article if allowed_in_portal?(:open_solutions)
-      to_ret << Topic if (feature?(:forums) && allowed_in_portal?(:open_forums))
+      to_ret << Solution::Article if 
+        (allowed_in_portal?(:open_solutions) && privilege?(:view_solutions))
+      to_ret << Topic if 
+        (feature?(:forums) && allowed_in_portal?(:open_forums) && privilege?(:view_forums))
       
       to_ret
     end
@@ -121,7 +123,8 @@ class SearchController < ApplicationController
   
     def search
       begin
-        if permission? :manage_tickets
+        
+        if privilege?(:manage_tickets)
           unless current_account.es_enabled?
             @items = ThinkingSphinx.search filter_key(params[:search_key]), 
                                                                 :with => search_with, 
@@ -133,7 +136,7 @@ class SearchController < ApplicationController
           else
             return redirect_to search_home_index_url(:search_key => params[:search_key])
           end
-        elsif current_user && (permission? :portal_request)
+        elsif current_user && current_user.customer?
           search_portal_for_logged_in_user
         end
         process_results
@@ -178,8 +181,14 @@ class SearchController < ApplicationController
   private
   
   def searchable_classes    
-    searchable = [ Helpdesk::Ticket, Solution::Article, User, Customer, Topic ]
-    searchable.delete_if{ |c| RESTRICTED_CLASSES.include?(c) } if current_user.restricted?
+    searchable = [ Helpdesk::Ticket ]
+    searchable << Solution::Article if privilege?(:view_solutions)
+    searchable << Topic             if privilege?(:view_forums)
+    
+    if privilege?(:view_contacts)
+      searchable << User
+      searchable << Customer
+    end
     
     searchable
   end 
@@ -238,7 +247,7 @@ class SearchController < ApplicationController
      classes = [Helpdesk::Ticket, Solution::Article, Topic]
      sphinx_select = nil
 
-     if current_user.client_manager?
+     if current_user.privilege?(:client_manager)
        with_options[:customer_id] = [SearchUtil::DEFAULT_SEARCH_VALUE, current_user.customer_id]
      else
        with_options[:requester_id] = [SearchUtil::DEFAULT_SEARCH_VALUE, current_user.id]

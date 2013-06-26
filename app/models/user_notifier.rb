@@ -22,14 +22,33 @@ class UserNotifier < ActionMailer::Base
     end
   end
   
-  def account_admin_activation(account_admin)
+  def admin_activation(admin)
     from  AppConfig['from_email'] 
-    recipients account_admin.email
+    recipients admin.email
     subject "#{AppConfig['app_name']} Account Activation"
     sent_on Time.now
-    body(:account_admin => account_admin, 
-          :activation_url => register_url(:activation_code => account_admin.perishable_token, :host => account_admin.account.host , :protocol => account_admin.url_protocol ))
+    body(:admin => admin, 
+          :activation_url => register_url(:activation_code => admin.perishable_token, :host => admin.account.host , :protocol => admin.url_protocol ))
     content_type  "text/html"
   end
-  
+  alias :account_admin_activation :admin_activation 
+
+  def custom_ssl_activation(account, portal_url, elb_name)
+    from          AppConfig['from_email']
+    recipients    account.admin_email
+    subject       "Custom SSL Activated"
+    body          :admin_name => "#{account.admin_first_name} #{account.admin_last_name}", :portal_url => portal_url, :elb_name => elb_name
+    sent_on       Time.now
+  end
+
+  def notify_contacts_import(user)
+    subject       "Contacts Import for #{user.account.full_domain}"
+    recipients    user.email
+    from          user.account.default_friendly_email
+    body          :user => user
+    sent_on       Time.now
+    headers       "Reply-to" => "#{user.account.default_friendly_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    content_type  "text/html"
+  end
+
 end

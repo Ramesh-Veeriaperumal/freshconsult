@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Admin::CannedResponses::FoldersController < Admin::AdminController
 
   before_filter :load_object, :only => [:update, :edit, :show, :destroy]

@@ -27,7 +27,7 @@
 							<%=ticket['subject']%>
 						</td>
 						<td>
-							<%=ticket['description_html']%>
+							<%=ticket['description_html'] || ticket['new_description_html']%>
 						</td>
 					</tr>
 				<%end%>
@@ -50,7 +50,7 @@
 							<%=time_ago_in_words(ticket['created_at'])%> ago
 						</td>
 						<td>
-							<%=ticket['body_html'][0,1000]%>
+							<%=ticket['body_html'] || ticket['new_body_html']%>
 						</td>
 					</tr>
 				<%end%>
@@ -64,7 +64,7 @@
 			<li class="nav-header">User Details</li>
 			<li ><%=h(@user.name)%></li>
 			<li ><%=h(@user.email)%></li>
-			<li ><%=User::USER_ROLES_NAMES_BY_KEY[@user.user_role]%></li>
+			<li >Agent : <%= @user.helpdesk_agent %></li>
 			<li ><%=@user.account.name%>(<%=@user.account_id%>)</li>
 			<li>
 				<%if @user.whitelisted?%>

@@ -3,7 +3,8 @@ class Billing::Subscription
   CUSTOMER_INFO   = { :first_name => :admin_first_name, :last_name => :admin_last_name, 
                        :company => :name }
 
-  CREDITCARD_INFO = { :number => :number, :expiry_month => :month, :expiry_year => :year }   
+  CREDITCARD_INFO = { :number => :number, :expiry_month => :month, :expiry_year => :year,
+                      :cvv => :verification_value }   
 
   ADDRESS_INFO    = { :first_name => :first_name, :last_name => :last_name, :billing_addr1 => :address1, 
                       :billing_addr2 => :address2, :billing_city => :city, :billing_state => :state, 
@@ -12,6 +13,7 @@ class Billing::Subscription
   TRIAL_PLAN_QUANTITY = "1"
 
   TRIAL_END = "0"
+
 
   PLANS = SubscriptionPlan.find(:all).map { |plan| plan.canon_name }
 
@@ -56,33 +58,30 @@ class Billing::Subscription
 
   def calculate_estimate(subscription)
     data = subscription_data(subscription).merge(:id => subscription.account_id) 
-    
-    unless ChargeBee::Subscription.retrieve(subscription.account_id).subscription.status == "cancelled"
-      attributes = { :subscription => data, :end_of_term => true }
-    else
-      attributes = { :subscription => data }
-    end
-    
+    attributes = subscription.suspended? ? { :subscription => data } : 
+                                { :subscription => data, :end_of_term => true }
+
     ChargeBee::Estimate.update_subscription(attributes)
   end
 
   def update_subscription(subscription, prorate)
     data = (subscription_data(subscription)).merge({ :prorate => prorate })
+    merge_trial_end(data, subscription)
     
     ChargeBee::Subscription.update(subscription.account_id, data)
-  end 
+  end
 
   def store_card(card, address, subscription)
     card_info = card_info(card).merge(billing_address(address))
 
     ChargeBee::Card.update_card_for_customer(subscription.account.id, card_info)
-  end
+  end 
 
   def activate_subscription(subscription)
     data = subscription_data(subscription).merge( :trial_end => TRIAL_END )
 
     ChargeBee::Subscription.update(subscription.account_id, data)
-  end
+  end 
 
   def update_admin(config)
     ChargeBee::Customer.update(config.account_id, customer_data(config.account))
@@ -96,6 +95,9 @@ class Billing::Subscription
     account.active? ? ChargeBee::Subscription.cancel(account.id) : true
   end
 
+  def retrieve_subscription(account_id)
+    ChargeBee::Subscription.retrieve(account_id)
+  end
   
   private
 
@@ -136,6 +138,16 @@ class Billing::Subscription
         :addon_id => account.plan_name.to_s, 
         :addon_quantity => quantity
       }
+    end
+
+    def merge_trial_end(data, subscription)
+      extend_trial(subscription) ? data.merge!(:trial_end => extend_trial(subscription)) : data
+    end
+
+    def extend_trial(subscription)
+      return subscription.next_renewal_at.to_i if subscription.trial? and subscription.next_renewal_at > Time.now
+        
+      1.hour.from_now.to_i if subscription.suspended?
     end
 
 end

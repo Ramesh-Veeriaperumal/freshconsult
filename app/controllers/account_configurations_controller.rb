@@ -1,7 +1,5 @@
 class AccountConfigurationsController < ApplicationController
 
-	before_filter { |c| c.requires_permission :manage_account }
-
 	def update
 		account_configuration = current_account.account_configuration
 

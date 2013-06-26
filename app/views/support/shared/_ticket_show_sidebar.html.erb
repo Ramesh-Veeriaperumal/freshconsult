@@ -68,7 +68,7 @@ jQuery('#add_cc_btn').bind("click", function(ev){
 		has_editable_field = false;
 
 		current_portal.ticket_fields.each do |field|
-			field_value = (field.is_default_field?) ? @ticket.send(field.field_name) : @ticket.get_ff_value(field.name)
+			field_value = @ticket.send(field.field_name)
 			has_visible_field = true if (field.visible_in_view_form? && field.visible_in_portal && !field_value.blank?)
 			has_editable_field = true if (field.visible_in_view_form? && field.editable_in_portal)
 		end
@@ -88,14 +88,14 @@ jQuery('#add_cc_btn').bind("click", function(ev){
 				   <% current_portal.ticket_fields.each do |field| %>
 				     <% if (field.visible_in_view_form? && field.visible_in_portal)%>
 				       <% 
-				          field_value = (field.is_default_field?) ? @ticket.send(field.field_name) : @ticket.get_ff_value(field.name)
+				          field_value = @ticket.send(field.field_name)
 				          dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
 				          if(field.field_type == "nested_field")
 				          	field_value = {}
 				          	field.nested_levels.each do |ff|
-				          		field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = @ticket.get_ff_value(ff[:name])
+				          		field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = @ticket.send(ff[:name])
 				          	end
-				          	field_value.merge!({:category_val => @ticket.get_ff_value(field.name)})
+				          	field_value.merge!({:category_val => @ticket.send(field.field_name)})
 				          end
 				       %>
 		          	   <%= construct_ticket_text_element :helpdesk_ticket, field, field.label_in_portal, dom_type, field.required_in_portal, field_value %>
@@ -112,17 +112,17 @@ jQuery('#add_cc_btn').bind("click", function(ev){
 						   <% current_portal.ticket_fields.each do |field| %>
 						     <% if (field.visible_in_view_form? && field.editable_in_portal)%>
 						       <% 
-						          field_value = (field.is_default_field?) ? @ticket.send(field.field_name) : @ticket.get_ff_value(field.name)
+						          field_value = @ticket.send(field.field_name)
 						          if(field.field_type == "nested_field")
 						          	field_value = {}
 						          	field.nested_levels.each do |ff|
-						          	field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = @ticket.get_ff_value(ff[:name])
+						          	field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = @ticket.send(ff[:name])
 						          	end
-						          	field_value.merge!({:category_val => @ticket.get_ff_value(field.name)})
+						          	field_value.merge!({:category_val => @ticket.send(field.field_name)})
 						          end
 						          dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
 						       %>
-				          	   <%= construct_ticket_element :helpdesk_ticket, field, field.label_in_portal, dom_type, field.required_in_portal, field_value %>
+				          	   <%= construct_ticket_element f, :helpdesk_ticket, field, field.label_in_portal, dom_type, field.required_in_portal, field_value %>
 				          	   <%#= render(:partial => "/shared/nested_fields", :locals => { :ticket => @ticket, :category => field, :category_field_value =>  field_value, :type => "edit"}) if field.field_type == "nested_field"%>
 				             <% end %>
 				           <% end %>

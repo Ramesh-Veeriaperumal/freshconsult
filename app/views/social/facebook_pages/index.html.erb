@@ -23,6 +23,7 @@
             <%if page.reauth_required %>
               <span class="label label-important align-fix"> <%=t(".reauth_required")%></span>
             <%end%>
+            <%= link_to(t(".reauthorize"),  @fb_client.authorize_url(session[:state]), :class => "button") if page.reauth_required %>
             <div class="muted">
               <%= link_to "View on facebook", page.page_link, { :target => "_blank", :class =>"muted" } %>        
             </div>  

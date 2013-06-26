@@ -2,25 +2,25 @@
 <%= hidden_field_tag  :topic_id,  params[:topic_id] %> 
 <% current_portal.ticket_fields.each do |field|
     if is_edit
-      field_value = ((field.is_default_field?) ? @item.send(field.field_name) : @item.get_ff_value(field.name)) 
+      field_value = @item.send(field.field_name)
       if(field.field_type == "nested_field")
         field_value = {}
         field.nested_levels.each do |ff|
-          field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = @item.get_ff_value(ff[:name])
+          field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = @item.send(ff[:name])
         end
-        field_value.merge!({:category_val => @item.get_ff_value(field.name)})
+        field_value.merge!({:category_val => @item.send(field.field_name)})
       end
     elsif field.is_default_field? or !params[:topic_id].blank?
       field_value = @item[field.field_name]
     end
     field_label = ( field.is_default_field? ) ? I18n.t("ticket_fields.fields.#{field.name}") : field.label
   %>
-  <%= construct_ticket_element :helpdesk_ticket, field, field_label, field.dom_type, field.required, field_value , "" , false , is_edit  %>
+  <%= construct_ticket_element f, :helpdesk_ticket, field, field_label, field.dom_type, field.required, field_value , "" , false , is_edit  %>
   
   <%#= render(:partial => "/shared/nested_fields", :locals => { :ticket => nil, :category => field, :category_field_value =>  field_value, :type => "edit"}) if field.field_type == "nested_field"%>
 <% end %>
 <% content_for :onload_script do -%> 
-jQuery('#helpdesk_ticket_description_html').redactor({ focus: false, autoresize:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link']});
+jQuery('#helpdesk_ticket_ticket_body_attributes_description_html').redactor({ focus: false, autoresize:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link']});
   jQuery('#helpdesk_ticket_group_id')
     .on("change", function(e){
       jQuery('#helpdesk_ticket_responder_id')

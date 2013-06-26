@@ -3,7 +3,7 @@
   <li class="inline-field">
     <label class="caption">
       <div class="preview_pic">
-        <%= image_tag (@item.page_img_url) %>  		    
+        <%= image_tag(@item.page_img_url) %>  		    
 				<span class="fb_pic"></span>
       </div>
       <%= content_tag(:h2, @item.page_name, :class => "title") %>
@@ -39,7 +39,7 @@
 	  <!-- another one... -->
 	  <label class="caption"><%=t('.message_thread_time')%></label>
       <div class="fields">
-      	<%= select (:social_facebook_page ,:dm_thread_time, Social::FacebookPage::DM_THREADTIME_OPTIONS ,{:selected => facebook_page.dm_thread_time}) %>
+      	<%= select(:social_facebook_page ,:dm_thread_time, Social::FacebookPage::DM_THREADTIME_OPTIONS ,{:selected => facebook_page.dm_thread_time}) %>
       </div>
       <div class="info-data tabbed">
         <%=t('.message_thread_time_info')%>

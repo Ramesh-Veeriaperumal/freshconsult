@@ -1,9 +1,10 @@
 module Helpdesk::AdjacentTickets
-	include RedisKeys
+	include Redis::RedisKeys
+	include Redis::TicketsRedis
 
 	def set_adjacent_list
 		clear_adjacent_data
-		list_push(adjacent_list_redis_key, @items.collect { |ticket| ticket.display_id.to_s })
+		tickets_list_push(adjacent_list_redis_key, @items.collect { |ticket| ticket.display_id.to_s })
 	end
 
 	def find_adjacent(direction = :next)
@@ -32,8 +33,8 @@ module Helpdesk::AdjacentTickets
 		NO_ADJACENT_TICKET_FLAG = -1
 
 		def clear_adjacent_data
-			remove_key(adjacent_list_redis_key)
-			remove_key(adjacent_meta_key)
+			remove_tickets_redis_key(adjacent_list_redis_key)
+			remove_tickets_redis_key(adjacent_meta_key)
 		end
 
 		def find_in_all(direction)
@@ -60,7 +61,7 @@ module Helpdesk::AdjacentTickets
 		end
 
 		def tickets_adjacents_list
-			@tickets_adjacents_list ||= list_members(adjacent_list_redis_key)
+			@tickets_adjacents_list ||= ticket_list_members(adjacent_list_redis_key)
 		end
 
 		def within_bounds?(index)
@@ -82,7 +83,7 @@ module Helpdesk::AdjacentTickets
 				unless tickets.blank?
 					adding_to_list = tickets.collect { |ticket| ticket.display_id.to_s }
 					adding_to_list.reverse! unless direction == :next
-					list_push(adjacent_list_redis_key,adding_to_list, (SWITCHES[direction][:list_push]))
+					tickets_list_push(adjacent_list_redis_key,adding_to_list, (SWITCHES[direction][:list_push]))
 					return tickets.send(SWITCHES[direction][:which_end]).display_id
 				end
 			end
@@ -91,7 +92,7 @@ module Helpdesk::AdjacentTickets
 
 		def criteria
 			@adjacent_tickets_criteria ||= begin
-				filter_params = get_key(cached_filters_key)
+				filter_params = get_tickets_redis_key(cached_filters_key)
 				if filter_params
 					filter_params = JSON.parse(filter_params) 
 					filter_params["data_hash"] = JSON.parse(filter_params["data_hash"])
@@ -119,18 +120,32 @@ module Helpdesk::AdjacentTickets
 		end
 
 		def new_page(filter_params, direction)
-			end_page = get_key(adjacent_meta_key) || {}
+			count = 0
+			tries = 3
+		    begin
+				end_page = get_tickets_redis_key(adjacent_meta_key) || {}
 
-			unless end_page.blank?
-				end_page = JSON.parse(end_page).symbolize_keys
-				current = end_page[direction]
-			end
+				unless end_page.blank?
+					end_page = JSON.parse(end_page).symbolize_keys
+					current = end_page[direction]
+				end
 
-			current = send("new_page_" + direction.to_s , filter_params, current)
+				current = send("new_page_" + direction.to_s , filter_params, current)
 
-			end_page[direction] = current
-			set_key(adjacent_meta_key, end_page.to_json, 3600)
-			current
+				end_page[direction] = current
+				set_tickets_redis_key(adjacent_meta_key, end_page.to_json,3600)
+				current
+			rescue Exception => e
+	      NewRelic::Agent.notice_error(e, :request_params => {:key => adjacent_meta_key, 
+	        :value => end_page,
+	        :class => end_page.class.name,
+	        :description => "Redis issue",
+	        :count => count})
+	      if count<tries
+          count += 1
+          retry
+      	end
+      end
 		end
 
 		def new_page_prev(filter_params,current)

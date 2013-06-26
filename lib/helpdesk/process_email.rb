@@ -1,36 +1,44 @@
+# encoding: utf-8
 class Helpdesk::ProcessEmail < Struct.new(:params)
  
   include EmailCommands
   include ParserUtil
   include Helpdesk::ProcessByMessageId
-  
+  include ActionView::Helpers::TagHelper
+  include ActionView::Helpers::TextHelper
+  include ActionView::Helpers::UrlHelper
+  include WhiteListHelper
+
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
   MESSAGE_LIMIT = 10.megabytes
 
   def perform
     from_email = parse_from_email
     to_email = parse_to_email
+    Sharding.select_shard_of(to_email[:domain]) do
     account = Account.find_by_full_domain(to_email[:domain])
     if !account.nil? and account.active?
       # clip_large_html
       account.make_current
       encode_stuffs
       kbase_email = account.kbase_email
+      
+      #need to format this code --Suman
+      if params[:html].blank? && !params[:text].blank? 
+       email_cmds_regex = get_email_cmd_regex(account) 
+       params[:html] = body_html_with_formatting(params[:text],email_cmds_regex) 
+      end
+
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
         email_config = account.email_configs.find_by_to_email(to_email[:email])
         return if email_config && (from_email[:email] == email_config.reply_email)
         user = get_user(account, from_email, email_config)
-        Rails.logger.debug "PROCESS USER : #{user.inspect}"
         if !user.blocked?
           ticket = fetch_ticket(account, from_email, user)
-          Rails.logger.debug "PROCESS USER : #{ticket.inspect}"
           if ticket
-            Rails.logger.debug "PROCESS FROM EMAIL : #{from_email.inspect}"
-            Rails.logger.debug "PROCESS TICKET REPLY : #{ticket.reply_email}"
             return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
             add_email_to_ticket(ticket, from_email, user)
           else
-            Rails.logger.debug "CANNOT FIND TICKET"
             create_ticket(account, from_email, to_email, user, email_config)
           end
         end
@@ -44,7 +52,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         NewRelic::Agent.notice_error(e)
       end
       Account.reset_current_account
-    end 
+    end
+    end
   end
   
   def create_article(account, from_email, to_email)
@@ -76,12 +85,25 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       charsets = params[:charsets].blank? ? {} : ActiveSupport::JSON.decode(params[:charsets])
       [ :html, :text ].each do |t_format|
         unless params[t_format].nil?
-          charset_encoding = charsets[t_format.to_s] 
+          charset_encoding = charsets[t_format.to_s].strip()
           if !charset_encoding.nil? and !(["utf-8","utf8"].include?(charset_encoding.downcase))
             begin
               params[t_format] = Iconv.new('utf-8//IGNORE', charset_encoding).iconv(params[t_format])
-            rescue
-              #Do nothing here Need to add rescue code kiran
+            rescue Exception => e
+              mapping_encoding = {
+                "ks_c_5601-1987" => "CP949",
+                "unicode-1-1-utf-7"=>"UTF-7",
+                "_iso-2022-jp$esc" => "ISO-2022-JP",
+                "charset=us-ascii" => "us-ascii",
+                "iso-8859-8-i" => "iso-8859-8",
+                "unicode" => "utf-8"
+              }
+              if mapping_encoding[charset_encoding.downcase]
+                params[t_format] = Iconv.new('utf-8//IGNORE', mapping_encoding[charset_encoding.downcase]).iconv(params[t_format])
+              else
+                Rails.logger.error "Error While encoding in process email  \n#{e.message}\n#{e.backtrace.join("\n\t")} #{params}"
+                NewRelic::Agent.notice_error(e,{:description => "Charset Encoding issue with ===============> #{charset_encoding}"})
+              end
             end
           end
         end
@@ -162,12 +184,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
     def fetch_ticket(account, from_email, user)
       display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
-      Rails.logger.debug "PROCESS display_id : #{display_id}"
       ticket = account.tickets.find_by_display_id(display_id) if display_id
-      Rails.logger.debug "PROCESS USER inside fetch : #{ticket.inspect}"
       return ticket if can_be_added_to_ticket?(ticket, user)
       ticket = ticket_from_headers(from_email, account)
-      Rails.logger.debug "PROCESS USER failed first check : #{ticket.inspect}"
       return ticket if can_be_added_to_ticket?(ticket, user)
     end
     
@@ -180,8 +199,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       ticket = Helpdesk::Ticket.new(
         :account_id => account.id,
         :subject => params[:subject],
-        :description => params[:text],
-        :description_html => Helpdesk::HTMLSanitizer.clean(params[:html]),
+        :ticket_body_attributes => {:description => params[:text], 
+                          :description_html => params[:html]},
         :requester => user,
         :to_email => to_email[:email],
         :to_emails => parse_to_emails,
@@ -197,10 +216,10 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
       begin
         if (user.agent? && !user.deleted?)
-          process_email_commands(ticket, user, email_config)
+          process_email_commands(ticket, user, email_config) if user.privilege?(:edit_ticket_properties)
           email_cmds_regex = get_email_cmd_regex(account)
-          ticket.description = ticket.description.gsub(email_cmds_regex, "") if(!ticket.description.blank? && email_cmds_regex)
-          ticket.description_html = ticket.description_html.gsub(email_cmds_regex, "") if(!ticket.description_html.blank? && email_cmds_regex)
+          ticket.ticket_body.description = ticket.description.gsub(email_cmds_regex, "") if(!ticket.description.blank? && email_cmds_regex)
+          ticket.ticket_body.description_html = ticket.description_html.gsub(email_cmds_regex, "") if(!ticket.description_html.blank? && email_cmds_regex)
         end
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
@@ -213,7 +232,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       rescue ActiveRecord::RecordInvalid => e
         FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
       end
-      set_key(message_key(account, message_key), ticket.display_id, 86400*7) unless message_key.nil?
+      set_others_redis_key(message_key(account, message_key), ticket.display_id, 86400*7) unless message_key.nil?
     end
     
     def check_for_spam(ticket)
@@ -243,16 +262,28 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def add_email_to_ticket(ticket, from_email, user)
-      body = show_quoted_text(params[:text],ticket.reply_email)
-      body_html = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html]), ticket.reply_email)
+      msg_hash = {}
+      # for plain text
+      msg_hash = show_quoted_text(params[:text],ticket.reply_email)
+      unless msg_hash.blank?
+        body = msg_hash[:body]
+        full_text = msg_hash[:full_text]
+      end
+      # for html text
+      msg_hash = show_quoted_text(Helpdesk::HTMLSanitizer.clean(params[:html]), ticket.reply_email,false)
+      unless msg_hash.blank?
+        body_html = msg_hash[:body]
+        full_text_html = msg_hash[:full_text]
+      end
+      
       from_fwd_recipients = from_fwd_emails?(ticket, from_email)
       parsed_cc_emails = parse_cc_email
       parsed_cc_emails.delete(ticket.account.kbase_email)
       note = ticket.notes.build(
         :private => (from_fwd_recipients and user.customer?) ? true : false ,
         :incoming => true,
-        :body => body,
-        :body_html => body_html ,
+        :note_body_attributes => {:body => body,:body_html => body_html,
+                                  :full_text => full_text, :full_text_html => full_text_html} ,
         :source => from_fwd_recipients ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] : 0, #?!?! use SOURCE_KEYS_BY_TOKEN - by Shan
         :user => user, #by Shan temp
         :account_id => ticket.account_id,
@@ -266,10 +297,13 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         ticket.cc_email = ticket_cc_emails_hash(ticket)
         if (user.agent? && !user.deleted?)
           ticket.responder ||= user
-          process_email_commands(ticket, user, ticket.email_config, note)
+          process_email_commands(ticket, user, ticket.email_config, note) if 
+            user.privilege?(:edit_ticket_properties)
           email_cmds_regex = get_email_cmd_regex(ticket.account)
-          note.body = body.gsub(email_cmds_regex, "") if(!body.blank? && email_cmds_regex)
-          note.body_html = body_html.gsub(email_cmds_regex, "") if(!body_html.blank? && email_cmds_regex)
+          note.note_body.body = body.gsub(email_cmds_regex, "") if(!body.blank? && email_cmds_regex)
+          note.note_body.body_html = body_html.gsub(email_cmds_regex, "") if(!body_html.blank? && email_cmds_regex)
+          note.note_body.full_text = full_text.gsub(email_cmds_regex, "") if(!full_text.blank? && email_cmds_regex)
+          note.note_body.full_text_html = full_text_html.gsub(email_cmds_regex, "") if(!full_text_html.blank? && email_cmds_regex)
         end
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
@@ -298,7 +332,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         user = account.contacts.new
         portal = (email_config && email_config.product) ? email_config.product.portal : account.main_portal
         user.signup!({:user => {:email => from_email[:email], :name => from_email[:name], 
-          :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}, :email_config => email_config},portal)
+          :helpdesk_agent => false}, :email_config => email_config},portal)
       end
       user.make_current
       user
@@ -338,7 +372,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         content_ids  
     end
   
-    def show_quoted_text(text, address)
+    def show_quoted_text(text, address,plain=true)
       
       return text if text.blank?
       
@@ -347,7 +381,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         Regexp.new("<" + Regexp.escape(address) + ">", Regexp::IGNORECASE),
         Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),   
         Regexp.new("\\n.*.\d.*." + Regexp.escape(address) ),
-        Regexp.new("<div>\n<br>On.*?wrote:"),
+        Regexp.new("<div>\n<br>On.*?wrote:"), #iphone
         Regexp.new("On.*?wrote:"),
         Regexp.new("-+original\s+message-+\s*", Regexp::IGNORECASE),
         Regexp.new("from:\s*", Regexp::IGNORECASE)
@@ -362,6 +396,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       original_msg = text[0, index]
       old_msg = text[index,text.size]
       
+      return  {:body => original_msg, :full_text => text } if plain
       #Sanitizing the original msg   
       unless original_msg.blank?
         sanitized_org_msg = Nokogiri::HTML(original_msg).at_css("body")
@@ -373,13 +408,15 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         old_msg = sanitized_old_msg.inner_html unless sanitized_old_msg.blank?  
       end
         
+      full_text = original_msg
       unless old_msg.blank?
-       original_msg = original_msg +
+
+       full_text = full_text +
        "<div class='freshdesk_quote'>" +
        "<blockquote class='freshdesk_quote'>" + old_msg + "</blockquote>" +
        "</div>"
-      end   
-      return original_msg
+      end 
+      {:body => original_msg,:full_text => full_text}
     end
 
     def get_envelope_to
@@ -414,4 +451,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         @description_html = "#{@description_html[0,MESSAGE_LIMIT]}<b>[message_cliped]</b>"
       end
     end
+
+    #remove Redcloth from formatting
+    def body_html_with_formatting(body,email_cmds_regex)
+      body = body.gsub(email_cmds_regex,'<notextile>\0</notextile>')
+      body_html = auto_link(body) { |text| truncate(text, 100) }
+      textilized = RedCloth.new(body_html.gsub(/\n/, '<br />'), [ :hard_breaks ])
+      textilized.hard_breaks = true if textilized.respond_to?("hard_breaks=")
+      white_list(textilized.to_html)
+    end
+    
 end

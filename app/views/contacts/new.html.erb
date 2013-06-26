@@ -4,7 +4,7 @@
 <% else %>
   <h3 class="title"><%=t('contacts.new')%></h3>
   <% form_for @user,:url => { :controller => "contacts", :action => "create" }, :html => { :multipart => true }  do |f| -%>
-    <%= render :partial => "form", :locals => { :f => f } %>
+    <%= render :partial => "form", :locals => { :f => f, :type => "user" } %>
 	<div class="button-container">
 	      <%= f.submit t('contacts.save_changes'), :class => "uiButton" %> 
 		  <%= link_to t('cancel'), (@user.new_record? ? {:controller =>'contacts', :action => 'index'} : @user ), :class => "uiButton grey" %>

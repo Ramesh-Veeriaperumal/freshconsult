@@ -22,7 +22,6 @@
       <%= add_requester.text_field :customer %>
       <div id="user_customer_choices" class="autocomplete"></div>
     </li>
-  	<%= add_requester.hidden_field :user_role, :id=>"user_role", :value => User::USER_ROLES_KEYS_BY_TOKEN[:customer] %>
   </ul>
   <div class="button-container">
     <%= add_requester.submit t('create'), :class => "btn primary" %>

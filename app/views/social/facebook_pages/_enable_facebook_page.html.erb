@@ -1,6 +1,5 @@
 <%if @fb_pages.size > 0%>
 <% form_for :facebook_page, :url => { :controller=>"social/facebook_pages", :action=>"enable_pages"}, :html => { :multipart => true , :method => :put } do |f| %>
-
 <div class="list-page facebook-list">
   <div class="list-page-header row-fluid"> 
   	<div class="span6">

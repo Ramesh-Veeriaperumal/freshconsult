@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Helpdesk::TicketActions
   
   include Helpdesk::Ticketfields::TicketStatus
@@ -17,7 +18,7 @@ module Helpdesk::TicketActions
 
     if params[:meta]
       @ticket.notes.create(
-        :body => params[:meta].map { |k, v| "#{k}: #{v}" }.join("\n"),
+        :note_body_attributes => {:body => params[:meta].map { |k, v| "#{k}: #{v}" }.join("\n")},
         :private => true,
         :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
         :account_id => current_account.id,
@@ -116,7 +117,6 @@ module Helpdesk::TicketActions
     @source_ticket = current_account.tickets.find_by_display_id(params[:id])
     @note = @source_ticket.notes.find(params[:note_id])   
     params[:helpdesk_ticket] = {:subject =>@source_ticket.subject ,
-                                :description_html =>@note.body_html ,
                                 :email => @note.user.email,
                                 :priority =>@source_ticket.priority,
                                 :group_id =>@source_ticket.group_id,
@@ -126,7 +126,8 @@ module Helpdesk::TicketActions
                                 :source =>@source_ticket.source,
                                 :ticket_type =>@source_ticket.ticket_type,                             
                                 :cc_email => {:fwd_emails=>[],
-                                              :cc_emails => @note.cc_emails || []}                             
+                                              :cc_emails => @note.cc_emails || []} ,
+                                :ticket_body_attributes => { :description_html => @note.body_html}                            
                                 
                                }  
     unless @note.tweet.nil?
@@ -203,8 +204,11 @@ module Helpdesk::TicketActions
       load_ticket_filter
       @ticket_filter.deserialize_from_params(params)
       joins = @ticket_filter.get_joins(@ticket_filter.sql_conditions)
-      options = { :joins => joins, :conditions => @ticket_filter.sql_conditions, :select => :id}
-      options[:distinct] = true if @ticket_filter.sql_conditions[0].include?("helpdesk_tags.name")
+      options = { :joins => joins, :conditions => @ticket_filter.sql_conditions}
+      if @ticket_filter.sql_conditions[0].include?("helpdesk_tags.name")
+        options[:distinct] = true 
+        options[:select] = :id
+      end
       total_entries = current_account.tickets.permissible(current_user).count(options)
     end
     @ticket_count = total_entries.to_i

@@ -1,7 +1,5 @@
 class Helpdesk::TagUsesController < ApplicationController
 
-  before_filter { |c| c.requires_permission :manage_tickets }
-
   def create
     ticket = Helpdesk::Ticket.find_by_param(params[:ticket_id], current_account)
     raise ActiveRecord::RecordNotFound unless ticket

@@ -1,6 +1,7 @@
 module Reports::TicketStats
 
-	include RedisKeys
+	include Redis::RedisKeys
+	include Redis::ReportsRedis
 	include Helpdesk::Ticketfields::TicketStatus
 
 	REPORT_STATS = ['account_id', 'ticket_id', 'created_at','created_hour','resolved_hour',
@@ -18,12 +19,25 @@ module Reports::TicketStats
 	end
 
 	def set_reports_redis_key(account_id, date)
-		export_hash = REPORT_STATS_EXPORT_HASH % {:account_id => account_id}
-		last_export_date = get_hash_value(export_hash, "date")
-		regenerate_date = date.strftime('%Y-%m-%d')
-		return if (last_export_date && regenerate_date.to_date > last_export_date.to_date)
-		reports_redis_key = REPORT_STATS_REGENERATE_KEY % {:account_id => account_id}
-		add_to_set(reports_redis_key, regenerate_date, 864000)
+		count = 0
+	  tries = 3
+		begin
+			return unless stats_table_exists?(stats_table(date))
+			export_hash = REPORT_STATS_EXPORT_HASH % {:account_id => account_id}
+			last_export_date = get_reports_hash_value(export_hash, "date")
+			regenerate_date = date.strftime('%Y-%m-%d')
+			return if (last_export_date && regenerate_date.to_date > last_export_date.to_date)
+			reports_redis_key = REPORT_STATS_REGENERATE_KEY % {:account_id => account_id}
+			add_to_reports_set(reports_redis_key, regenerate_date, 864000)
+		rescue Exception => e
+			NewRelic::Agent.notice_error(e,:key => export_hash, 
+				:value => last_export_date, :description => "Redis issue",
+				:count => count)
+			if count<tries
+        count += 1
+        retry
+			end
+		end
 	end
 
 	def tickets_join_query(ff_cols = []) # ff_cols parameter change does not handled for mysql_queries

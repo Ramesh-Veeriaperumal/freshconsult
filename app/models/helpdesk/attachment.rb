@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'mime/types'
 
 class Helpdesk::Attachment < ActiveRecord::Base
@@ -21,7 +22,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     :s3_credentials => "#{RAILS_ROOT}/config/s3.yml",
     :path => "/data/helpdesk/attachments/#{Rails.env}/:id/:style/:filename",
     :url => ":s3_alias_url",
-    :s3_host_alias => "cdn.freshdesk.com",
+    :s3_host_alias => S3_CONFIG[:bucket],
     :whiny => false,
     :styles => Proc.new  { |attachment| attachment.instance.attachment_sizes }
     
@@ -64,7 +65,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
   
   def authenticated_s3_get_url(options={})
-    options.reverse_merge! :expires_in => 5.minutes,:s3_host_alias => "cdn.freshdesk.com"
+    options.reverse_merge! :expires_in => 5.minutes,:s3_host_alias => "cdn.freshdesk.com", :use_ssl => true
     AWS::S3::S3Object.url_for content.path, content.bucket_name , options
   end
  
@@ -93,7 +94,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   def expiring_url(style = "original",expiry = 300)
     AWS::S3::S3Object.url_for(content.path(style.to_sym),content.bucket_name,
-                                          :expires_in => expiry.to_i.seconds)
+                                          :expires_in => expiry.to_i.seconds,
+                                          :use_ssl => true)
   end
 
   def to_liquid

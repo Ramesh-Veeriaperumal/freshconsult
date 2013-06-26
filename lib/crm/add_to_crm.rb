@@ -7,7 +7,7 @@ class CRM::AddToCRM
     def self.perform(args)
       item = scoper.find_by_account_id_and_id(Account.current.id,args[:item_id])
       crm = CRM::Salesforce.new
-      perform_job(crm, item)
+      perform_job(crm, item) if Rails.env.production?
     end
   end
 

@@ -1,3 +1,4 @@
+require 'solution/article'
 class Solution::Folder < ActiveRecord::Base
   
   attr_protected :category_id, :account_id
@@ -47,7 +48,7 @@ class Solution::Folder < ActiveRecord::Base
   end
 
   def visible?(user)    
-    return true if (user and user.has_manage_solutions? )
+    return true if (user and user.privilege?(:manage_tickets) )
     return true if self.visibility == VISIBILITY_KEYS_BY_TOKEN[:anyone]
     return true if (user and (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:logged_users]))
     return true if (user && (self.visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]) && user.customer  && customer_folders.map(&:customer_id).include?(user.customer.id))
@@ -55,7 +56,7 @@ class Solution::Folder < ActiveRecord::Base
   
   def self.get_visibility_array(user)   
     vis_arr = Array.new
-    if user && user.has_manage_solutions?
+    if user && user.privilege?(:manage_tickets)
       vis_arr = VISIBILITY_NAMES_BY_KEY.keys
     elsif user
       vis_arr = [VISIBILITY_KEYS_BY_TOKEN[:anyone],VISIBILITY_KEYS_BY_TOKEN[:logged_users]]

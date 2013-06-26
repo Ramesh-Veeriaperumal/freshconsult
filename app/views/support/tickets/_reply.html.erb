@@ -4,12 +4,15 @@
 		<%= f.error_messages %>  	
 	  	<div class="row-fluid">
 			<p class="span12">
-	  			<%= f.rich_editor :body_html, "editor-type" => :ticket, :class=>"required", :height => "150px" %>
+				<% f.fields_for (:note_body, Helpdesk::NoteBody.new) do |ff| %>
+	  				<%= ff.rich_editor :body_html, "editor-type" => :ticket, :class=>"required", :height => "150px", 
+	  				:id => "helpdesk_note_note_body_attributes_body_html" %>
+	  			<% end %>
 		  	</p>
 		</div>
 	    <div class="control-group">
 	    	<%= render :partial => "/support/shared/attachment_form", :locals => 
-	    		{ :attach_id => id , :nsc_param => "helpdesk_note" } %>
+	    		{ :attach_id => @ticket.display_id , :nsc_param => "helpdesk_note" } %>
 		</div>
 		
 		<%= f.submit t("ticket.support.#{@ticket.closed? ? '.reply_and_open' : '.reply'}" ), {:class => "btn btn-primary"} %>

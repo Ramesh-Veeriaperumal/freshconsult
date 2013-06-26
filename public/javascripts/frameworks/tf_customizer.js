@@ -176,7 +176,7 @@
             break;
 
             case 'checkbox':               
-               field.append('<input type="checkbox" disabled="true" '+ fieldAttr +' />' + dataItem.label );
+               field.append('<input type="checkbox" disabled="true" '+ fieldAttr +' />' + '<span>'+dataItem.label+'</span>' );
             break;
          
             case 'dropdown':
@@ -326,14 +326,21 @@
       });
 
       function innerLevelExpand(checkbox){ 
+        var next_ele=$("#"+checkbox.getAttribute("toggle_ele"));
         if(checkbox.checked){
-          $("#"+checkbox.getAttribute("toggle_ele"))
+          next_ele
             .children("label")
             .removeClass("disabled")
             .children("input:checkbox")
             .attr("disabled", false);
+            if(sourceData.field_type == 'default_ticket_type' || sourceData.field_type ==  'default_status'){
+              if(next_ele.selector=="#nestedlvl3")
+              {
+                next_ele.find("input:checkbox").attr("checked",true).attr("disabled",true);
+              }
+            }
         }else{
-          $("#"+checkbox.getAttribute("toggle_ele"))
+          next_ele
             .find("label")
             .addClass("disabled")
             .children("input:checkbox")
@@ -567,7 +574,14 @@
               case 'default_ticket_type':
                 $("#DropFieldChoices").show();
               break;
-            }           
+            }      
+            if(sourceData.field_type == 'default_ticket_type' || sourceData.field_type ==  'default_status'){
+               $('[name="agentrequired"]').attr("disabled",true );
+             }
+             else
+             {
+                $('[name="agentrequired"]').removeAttr("disabled");
+             }             
                
         }catch(e){}
       }

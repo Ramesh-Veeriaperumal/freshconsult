@@ -1,8 +1,7 @@
-<% content_for :layoutType do%>single<% end %>  
 <div class="folder-2col">
   <div class="folder_section" id="folder-section">
 	  <%= render :partial => "/solution/shared/category_folder_list", :locals => { :category => @item.category, :selected => @item } %>
-	  <% if permission?(:manage_knowledgebase) %>
+	  <% if privilege?(:manage_solutions) %>
 	   	  <%= render :partial => "/shared/reorder_list", :locals => { :items => @item.category.folders.visible(current_user), :action_url => reorder_solution_category_folders_path(@item.category), :title => :name, :container_id => "folder_sort", :reorder_id => "folder_reorder_button", :list_id => "folder_list"} %>
 		  <span class="seperator"></span>
 		  <div class="alignright">
@@ -11,20 +10,15 @@
 	  <% end %>	
   </div>
   <div class="artical_section" id="article-section"> 
-	<div class="crumbs">
-		<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
-		<%= link_to h(@item.category.name), solution_category_path(@item.category) %> &rarr;
-		<%= content_tag (:span, h(@item.name) ) %>
-	</div>
-	<div class="search-grey-box">
-	  <%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search.placeholder', :name => h(@item.category.name)), :url => "/search/solutions?category_id=#{@item.category.id}&search_key=" } %>
-	</div>
-	 <% if logged_in? && current_user.has_manage_solutions? %>
-	  		<%= render :partial => "/solution/shared/solution_list", :locals => { :category => @item.category, :folder => @item } %>
-	  <%else%>
-	  		<%= render :partial => "/solution/shared/portal_sol_list", :locals => { :category => @item.category, :folder => @item } %>
-	  <%end%>
-	
+  	<div class="crumbs">
+  		<%= link_to t('solution.title'), solution_categories_path %> &rarr; 
+  		<%= link_to h(@item.category.name), solution_category_path(@item.category) %> &rarr;
+  		<%= content_tag(:span, h(@item.name) ) %>
+  	</div>
+  	<div class="search-grey-box">
+  	  <%= render :partial => "/search/pagesearch", :locals => { :placeholder => t('solutions.search.placeholder', :name => h(@item.category.name)), :url => "/search/solutions?category_id=#{@item.category.id}&search_key=" } %>
+  	</div>
+  	<%= render :partial => "/solution/shared/solution_list", :locals => { :category => @item.category, :folder => @item } %>
   </div>
 </div>
 <% javascript_tag do -%>

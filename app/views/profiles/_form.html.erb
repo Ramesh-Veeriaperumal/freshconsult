@@ -9,7 +9,7 @@
 <% user = @profile %>
 <% user = @profile.user unless current_user.customer? %>
  
-<% fields_for "users", @profile do |usr| %>
+<% fields_for "user", @profile do |usr| %>
     <%= error_messages_for :user %> 
  	<ul class="ui-form">
 		<li>
@@ -23,7 +23,6 @@
 		<li class="medium">
 			<%= label(:user, :email, t("user.email")) %>			
 			<%= text_field(:user, :email, :class => "text required email disabled", :id => "email_primary" , :value => user.email , :disabled =>true) %>
-			<%= hidden_field(:user, :user_role, :id=>"user_role", :value => user.user_role) %>			
 		</li>
 		<li class="small">
 			<%= label(:user, :phone, t("user.phone_no")) %>	
@@ -60,7 +59,7 @@
 			<% if feature?(:multi_timezone) %>
 			<li>
 				<%= label(:user , :time_zone, t("account.time_zone")) %>			
-				<%= time_zone_select (:user, :time_zone, ActiveSupport::TimeZone.all, :default => user.time_zone) %>
+				<%= time_zone_select(:user, :time_zone, ActiveSupport::TimeZone.all, :default => user.time_zone) %>
 			</li>
 			<% end %>
 			<% if feature?(:multi_language) %>

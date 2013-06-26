@@ -4,15 +4,20 @@
 class ApplicationController < ActionController::Base
 
   layout Proc.new { |controller| controller.request.headers['X-PJAX'] ? 'maincontent' : 'application' }
+
+  around_filter :select_shard
   
-  before_filter :reset_current_account, :redactor_form_builder, :redirect_to_mobile_url
+  before_filter :unset_current_account, :set_current_account
+  include Authority::Rails::ControllerHelpers
+  before_filter :redactor_form_builder, :redirect_to_mobile_url
   before_filter :check_account_state, :except => [:show,:index]
   before_filter :set_default_locale
   before_filter :set_time_zone, :check_day_pass_usage 
-  before_filter :set_locale
+  before_filter :set_locale, :force_utf8_params
 
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
+  rescue_from DomainNotReady, :with => :render_404
   
   include AuthenticationSystem
   #include SavageBeast::AuthenticationSystem
@@ -21,8 +26,6 @@ class ApplicationController < ActionController::Base
   include SslRequirement
   include SubscriptionSystem
   include Mobile::MobileHelperMethods
-  include CRM::SendEventToTotango
-  include CRM::TotangoModulesAndActions
   
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store
@@ -42,10 +45,10 @@ class ApplicationController < ActionController::Base
   end
  
   def check_account_state
-    if !current_account.active? 
-      if permission?(:manage_account)
+    unless current_account.active? 
+      if privilege?(:manage_account)
         flash[:notice] = t('suspended_plan_info')
-        return redirect_to(plan_subscription_url)
+        return redirect_to(subscription_url)
       else
         flash[:notice] = t('suspended_plan_admin_info', :email => current_account.admin_email) 
         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
@@ -54,12 +57,7 @@ class ApplicationController < ActionController::Base
   end
   
   def set_time_zone
-    begin
-      current_account.make_current
-      User.current = current_user
-      TimeZone.set_time_zone
-    rescue ActiveRecord::RecordNotFound
-    end
+    TimeZone.set_time_zone
   end
   
   def activerecord_error_list(errors)
@@ -78,8 +76,16 @@ class ApplicationController < ActionController::Base
     I18n.locale = I18n.default_locale
   end
   
-  def reset_current_account
+  def unset_current_account
     Thread.current[:account] = nil
+  end
+  
+  def set_current_account
+    begin
+      current_account.make_current
+      User.current = current_user
+    rescue ActiveRecord::RecordNotFound
+    end    
   end
 
   def render_404
@@ -90,8 +96,7 @@ class ApplicationController < ActionController::Base
   end
   
   def record_not_found (exception)
-    Rails.logger.debug "Error  =>" + exception
-    Rails.logger.debug "API Error on invoking: "+request.url + "\t parameters =>"+params.to_json
+    Rails.logger.debug "Error  =>" + exception.message
     respond_to do |format|
       format.html {
         unless @current_account
@@ -112,12 +117,17 @@ class ApplicationController < ActionController::Base
 
 
   def handle_error (error)
-    Rails.logger.debug "API::Error  =>" + error
-    Rails.logger.debug "API Error on invoking: "+request.url + "\t parameters =>"+params.to_json
+    Rails.logger.debug "API::Error  =>" + error.message
     result = {:error => error.message}
     respond_to do | format|
       format.xml  { render :xml => result.to_xml(:indent =>2,:root=>:errors)  and return }
       format.json { render :json => {:errors =>result}.to_json and return } 
+    end
+  end
+
+  def select_shard(&block)
+    Sharding.select_shard_of(request.host) do 
+        yield 
     end
   end
 
@@ -133,6 +143,26 @@ class ApplicationController < ActionController::Base
   private
     def redactor_form_builder
       ActionView::Base.default_form_builder = FormBuilders::RedactorBuilder
+    end
+
+    # See http://stackoverflow.com/questions/8268778/rails-2-3-9-encoding-of-query-parameters
+    # See https://rails.lighthouseapp.com/projects/8994/tickets/4807
+    # See http://jasoncodes.com/posts/ruby19-rails2-encodings (thanks for the following code, Jason!)
+    def force_utf8_params
+      traverse = lambda do |object, block|
+        if object.kind_of?(Hash)
+          object.each_value { |o| traverse.call(o, block) }
+        elsif object.kind_of?(Array)
+          object.each { |o| traverse.call(o, block) }
+        else
+          block.call(object)
+        end
+        object
+      end
+      force_encoding = lambda do |o|
+        RubyBridge.force_utf8_encoding(o)
+      end
+      traverse.call(params, force_encoding)
     end
 end
 

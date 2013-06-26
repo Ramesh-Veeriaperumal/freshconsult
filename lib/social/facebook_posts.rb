@@ -44,14 +44,14 @@ class Social::FacebookPosts
      unless feed[:message].blank?
         @ticket = @account.tickets.build(
           :subject => truncate_subject(feed[:message], 100),
-          :description => feed[:message],
-          :description_html => get_html_content(feed[:post_id]),
           :requester => requester,
           :product_id => @fb_page.product_id,
           :group_id => group_id,
           :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook],
           :created_at => Time.zone.at(feed[:created_time]),
-          :fb_post_attributes => {:post_id => feed[:post_id], :facebook_page_id =>@fb_page.id ,:account_id => @account.id} )
+          :fb_post_attributes => {:post_id => feed[:post_id], :facebook_page_id =>@fb_page.id ,:account_id => @account.id},
+          :ticket_body_attributes => {:description => feed[:message], 
+                                      :description_html =>get_html_content(feed[:post_id]) }) 
       
        if @ticket.save
         if feed[:comments]["count"] > 0
@@ -98,7 +98,7 @@ class Social::FacebookPosts
       user = @account.contacts.new
       if user.signup!({:user => {:fb_profile_id => profile_id, :name => profile[:name] || profile[:id], 
                     :active => true,
-                    :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+                    :helpdesk_agent => false}})
        else
           puts "unable to save the contact:: #{user.errors.inspect}"
        end   
@@ -127,7 +127,7 @@ class Social::FacebookPosts
         user = get_facebook_user(profile_id)
 
         @note = @ticket.notes.build(
-                        :body => comment[:message],
+                        :note_body_attributes => { :body => comment[:message]} ,
                         :private => true ,
                         :incoming => true,
                         :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"],
@@ -171,7 +171,7 @@ class Social::FacebookPosts
           profile_id = comment[:fromid]
           user = get_facebook_user(profile_id)
           @note = @ticket.notes.build(
-                        :body => comment[:text],
+                        :note_body_attributes => {:body => comment[:text]},
                         :private => true, 
                         :incoming => true,
                         :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["facebook"],

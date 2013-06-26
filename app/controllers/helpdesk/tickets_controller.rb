@@ -1,24 +1,24 @@
 require 'fastercsv'
 
 class Helpdesk::TicketsController < ApplicationController  
-  
+    
   include ActionView::Helpers::TextHelper
   include ParserUtil
   include HelpdeskControllerMethods  
   include Helpdesk::TicketActions
   include Search::TicketSearch
   include Helpdesk::Ticketfields::TicketStatus
-  include RedisKeys
   include Helpdesk::AdjacentTickets
   include Helpdesk::Activities
   include Helpdesk::ToggleEmailNotification
-  include SeamlessDatabasePool::ControllerFilter
+  include Helpdesk::ShowVersion
+  
+  skip_before_filter :check_privilege, :only => :show
+  before_filter :portal_check, :only => :show
 
-  use_database_pool [:user_ticket, :export_csv] => :persistent
+  around_filter :run_on_slave, :only => :user_ticket
 
-  before_filter :set_mobile, :only => [:index, :show,:update, :create, :execute_scenario, :assign, :spam ]
-  before_filter :check_user, :only => [:show, :forward_conv]
-  before_filter { |c| c.requires_permission :manage_tickets }
+  before_filter :set_mobile, :only => [:index, :show,:update, :create, :execute_scenario, :assign, :spam, :update_ticket_properties ]
   before_filter :set_show_version
   before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index, :filter_options]
   before_filter :clear_filter, :only => :index
@@ -27,7 +27,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :disable_notification, :if => :notification_not_required?
   after_filter  :enable_notification, :if => :notification_not_required?
   before_filter :set_selected_tab
-
+  
   layout :choose_layout 
   
   before_filter :load_multiple_items, :only => [ :destroy, :restore, :spam, :unspam, :assign, 
@@ -35,12 +35,20 @@ class Helpdesk::TicketsController < ApplicationController
   
   skip_before_filter :load_item
   alias :load_ticket :load_item
-  before_filter :load_ticket, :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :activities, :status]
 
-  before_filter :load_flexifield ,    :only => [:execute_scenario]
+  before_filter :load_ticket, :verify_permission,
+    :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print,
+      :clear_draft, :save_draft, :draft_key, :get_ticket_agents, :quick_assign, :prevnext,
+      :activities, :status, :update_ticket_properties ]
+
+  skip_before_filter :build_item, :only => [:create]
+  alias :build_ticket :build_item
+  before_filter :build_ticket_body_attributes, :build_ticket, :only => [:create]
+
   before_filter :set_date_filter ,    :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
-  before_filter :check_ticket_status, :only => [:update]
+  before_filter :check_ticket_status, :only => [:update, :update_ticket_properties]
+  before_filter :validate_manual_dueby, :only => :update
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
 
   before_filter :load_email_params, :only => [:show, :reply_to_conv, :forward_conv]
@@ -74,18 +82,19 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def index
-
     #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
+    params[:html_format] = request.format.html?
     cookies.delete(:ticket_list_updated) 
     tkt = current_account.tickets.permissible(current_user)
     @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
-
-    if @items.empty? && !params[:page].nil? && params[:page] != '1'
-      params[:page] = '1'  
-      @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
-    end
     respond_to do |format|      
       format.html  do
+        #moving this condition inside to redirect to first page in case of close/resolve of only ticket in current page.
+        #For api calls(json/xml), the redirection is ignored, to use as indication of last page.
+        if @items.empty? && !params[:page].nil? && params[:page] != '1'
+          params[:page] = '1'  
+          @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
+        end
         @filters_options = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
         @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
         unless request.headers['X-PJAX']
@@ -176,10 +185,12 @@ class Helpdesk::TicketsController < ApplicationController
 
   def view_ticket
     if params['format'] == 'widget'
+      @new_show_page = false
       @ticket = current_account.tickets.find_by_display_id(params[:id]) # using find_by_id(instead of find) to avoid exception when the ticket with that id is not found.
       @item = @ticket
       if @ticket.blank?
-        @item = Helpdesk::Ticket.new
+        @item = @ticket = Helpdesk::Ticket.new
+        @ticket.build_ticket_body
         render :new, :layout => "widgets/contacts"
       else
         if verify_permission
@@ -199,6 +210,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def custom_search
+    params[:html_format] = true
     @items = current_account.tickets.permissible(current_user).filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
     render :partial => "custom_search"
   end
@@ -206,7 +218,7 @@ class Helpdesk::TicketsController < ApplicationController
   def show
     @to_emails = @ticket.to_emails
 
-    @draft = get_key(draft_key)
+    @draft = get_tickets_redis_key(draft_key)
 
     @subscription = current_user && @item.subscriptions.find(
       :first, 
@@ -273,11 +285,53 @@ class Helpdesk::TicketsController < ApplicationController
         format.mobile { 
           render :json => { :failure => true, :errors => edit_error }.to_json 
         }
+        format.xml {
+          render :xml =>@item.errors
+        }
+      end
+    end
+  end
+
+  def update_ticket_properties
+    old_item = @item.clone
+    if @item.update_attributes(params[nscname])
+      update_tags unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
+      respond_to do |format|
+        format.html { 
+          flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
+          redirect_to item_url 
+        }
+        format.mobile { 
+          render :json => { :success => true, :item => @item }.to_json 
+        }
+        format.xml { 
+          render :xml => @item.to_xml({:basic => true})
+        }
+        format.json { 
+          render :json => request.xhr? ? { :success => true }.to_json  : @item.to_json({:basic => true}) 
+        }
+        format.mobile { 
+          render :json => { :success => true, :item => @item }.to_json 
+        }
+      end
+    else
+      respond_to do |format|
+        format.html { edit_error }
+        format.mobile { 
+          render :json => { :failure => true, :errors => edit_error }.to_json 
+        }
+        format.json {
+          result = {:errors=>@item.errors.full_messages }
+          render :json => result.to_json
+        }
         format.json { 
           render :json => { :failure => true, :errors => edit_error }.to_json 
         }
         format.xml {
           render :xml =>@item.errors
+        }
+        format.mobile { 
+          render :json => { :failure => true, :errors => edit_error }.to_json 
         }
       end
     end
@@ -336,28 +390,40 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def execute_scenario 
-    va_rule = current_account.scn_automations.find(params[:scenario_id])    
-    va_rule.trigger_actions(@item)
-    update_custom_field @item    
-    @item.save
-    @item.create_activity(current_user, 'activities.tickets.execute_scenario.long', 
-      { 'scenario_name' => va_rule.name }, 'activities.tickets.execute_scenario.short')
+    va_rule = current_account.scn_automations.find(params[:scenario_id])
+    unless va_rule.trigger_actions(@item)
+      flash[:notice] = I18n.t("admin.automations.failure")
+      respond_to do |format|
+        format.html { 
+          redirect_to :back 
+        }
+        format.js
+        format.mobile {
+          render :json => { :failure => true,
+             :rule_name => I18n.t("admin.automations.failure") }.to_json 
+        }
+      end
+    else
+      @item.save
+      @item.create_activity(current_user, 'activities.tickets.execute_scenario.long', 
+        { 'scenario_name' => va_rule.name }, 'activities.tickets.execute_scenario.short')
 
-    respond_to do |format|
-      format.html { 
-        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice', 
-                                      :locals => { :actions_executed => Va::Action.activities, :rule_name => va_rule.name })
-        redirect_to :back 
-      }
-      format.xml { render :xml => @item, :status=>:success }
-      format.json { render :json => @item, :status=>:success }  
-      format.js { 
-        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice', 
-                                      :locals => { :actions_executed => Va::Action.activities, :rule_name => va_rule.name })
-      }
-      format.mobile { 
-        render :json => {:success => true, :id => @item.id, :actions_executed => Va::Action.activities, :rule_name => va_rule.name }.to_json 
-      }
+      respond_to do |format|
+        format.html {
+          flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice',
+                                        :locals => { :actions_executed => Va::Action.activities, :rule_name => va_rule.name })
+          redirect_to :back
+        }
+        format.xml { render :xml => @item, :status=>:success }
+        format.json { render :json => @item, :status=>:success }  
+        format.js { 
+          flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice', 
+                                        :locals => { :actions_executed => Va::Action.activities, :rule_name => va_rule.name })
+        }
+        format.mobile {
+          render :json => {:success => true, :id => @item.id, :actions_executed => Va::Action.activities, :rule_name => va_rule.name }.to_json 
+        }
+      end
     end
   end 
   
@@ -440,7 +506,7 @@ class Helpdesk::TicketsController < ApplicationController
     redirect_to :back
   end
   
-  def change_due_by     
+  def change_due_by
     due_date = get_due_by_time    
     @item.update_attributes(:due_by => due_date)
     render :partial => @new_show_page ? "/helpdesk/tickets/show/due_by" : "due_by", :object => @item.due_by
@@ -487,7 +553,13 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
 
+  def edit
+    @item.build_ticket_body(:description_html => @item.description_html,
+        :description => @item.description) unless @item.ticket_body
+  end
+
   def new
+    @item.build_ticket_body
     unless params[:topic_id].nil?
       @topic = Topic.find(params[:topic_id])
       @item.subject     = @topic.title
@@ -548,12 +620,25 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def save_draft
-    set_key(draft_key, params[:draft_data])
+    count = 0
+    tries = 3
+    begin
+      set_tickets_redis_key(draft_key, params[:draft_data])
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e,{:key => draft_key, 
+        :value => params[:draft_data],
+        :description => "Redis issue",
+        :count => count})
+      if count<tries
+          count += 1
+          retry
+      end
+    end
     render :nothing => true
   end
 
   def clear_draft
-    remove_key(draft_key)
+    remove_tickets_redis_key(draft_key)
     render :nothing => true
   end
 
@@ -613,28 +698,6 @@ class Helpdesk::TicketsController < ApplicationController
       end
     end
 
-    def load_flexifield   
-      flexi_arr = Hash.new
-      @item.ff_aliases.each do |label|    
-        value = @item.get_ff_value(label.to_sym())    
-        flexi_arr[label] = value    
-        @item.write_attribute label, value
-      end  
-      @item.custom_field = flexi_arr  
-    end
-
-    def update_custom_field  evaluate_on
-      flexi_field = evaluate_on.custom_field      
-      evaluate_on.custom_field.each do |key,value|    
-        flexi_field[key] = evaluate_on.read_attribute(key)      
-      end     
-      ff_def_id = FlexifieldDef.find_by_account_id(evaluate_on.account_id).id    
-      evaluate_on.ff_def = ff_def_id       
-      unless flexi_field.nil?     
-        evaluate_on.assign_ff_values flexi_field    
-      end
-    end
-
     def choose_layout 
       layout_name = request.headers['X-PJAX'] ? 'maincontent' : 'application'
       case action_name
@@ -659,7 +722,7 @@ class Helpdesk::TicketsController < ApplicationController
   def load_email_params
     @signature = current_user.agent.signature_value || ""
     @email_config = current_account.primary_email_config
-    @reply_email = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
+    @reply_emails = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
     @ticket ||= current_account.tickets.find_by_display_id(params[:id])
     @selected_reply_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
   end
@@ -692,15 +755,18 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def allowed_quick_assign_fields
-      ['agent','status','priority']
+      ['agent', 'status', 'priority']
     end
 
     def cache_filter_params
       filter_params = params.clone
       filter_params.delete(:action)
       filter_params.delete(:controller)
-      
-      set_key(redis_key, filter_params.to_json, 86400)
+      begin
+        set_tickets_redis_key(redis_key, filter_params.to_json, 86400)
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e) 
+      end
 
       @cached_filter_data = get_cached_filters
     end
@@ -728,8 +794,27 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def get_cached_filters
-      filters_str = get_key(redis_key)
-      JSON.parse(filters_str) if filters_str
+      tries = 3
+      count = 0
+      begin
+        filters_str = get_tickets_redis_key("HELPDESK_TICKET_FILTERS:#{current_account.id}:#{current_user.id}:#{session.session_id}")
+        Rails.logger.info "In get_cached_filters - filters_str : #{filters_str.inspect}"
+        JSON.parse(filters_str) if filters_str
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e, {:key => redis_key, 
+          :value => filters_str,
+          :class => filters_str.class.name,
+          :uri => request.url,
+          :referer => request.referer,
+          :count => count,
+          :description => "Redis issue"})
+        if count<tries
+          count += 1
+          retry
+        else
+          return
+        end
+      end
     end
 
     def load_cached_ticket_filters
@@ -744,7 +829,7 @@ class Helpdesk::TicketsController < ApplicationController
           params.merge!(@cached_filter_data)
         end
       else 
-        remove_key(redis_key)
+        remove_tickets_redis_key(redis_key)
       end
     end
 
@@ -775,9 +860,24 @@ class Helpdesk::TicketsController < ApplicationController
       @ticket_filter.accessible.visibility = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
     end
 
-    def check_user
+    def portal_check
       if !current_user.nil? and current_user.customer?
         return redirect_to support_ticket_url(@ticket)
+      elsif !privilege?(:manage_tickets)
+        access_denied
+      end
+    end
+
+    def build_ticket_body_attributes
+      if params[:helpdesk_ticket][:description] || params[:helpdesk_ticket][:description_html]
+        unless params[:helpdesk_ticket].has_key?(:ticket_body_attributes)
+          ticket_body_hash = {:ticket_body_attributes => { :description => params[:helpdesk_ticket][:description],
+                                  :description_html => params[:helpdesk_ticket][:description_html] }} 
+          params[:helpdesk_ticket].merge!(ticket_body_hash).tap do |t| 
+            t.delete(:description) if t[:description]
+            t.delete(:description_html) if t[:description_html]
+          end 
+        end 
       end
     end
 
@@ -859,21 +959,38 @@ class Helpdesk::TicketsController < ApplicationController
 
   end
 
-  def set_show_version
-    if cookies[:new_details_view].present?
-      set_key(show_version_key, cookies[:new_details_view].eql?("true") ? "1" : "0", 86400 * 50)
-      # Expiry set to 50 days
-      cookies.delete(:new_details_view) 
-    end
-    @new_show_page = (get_key(show_version_key) == "1")
-  end
-
-  def show_version_key
-    HELPDESK_TKTSHOW_VERSION % { :account_id => current_account.id, :user_id => current_user.id }
-  end
-
   def set_selected_tab
     @selected_tab = :tickets
   end
 
+  def validate_manual_dueby
+    if(@item.manual_dueby && params[nscname].key?(:due_by) && params[nscname].key?(:frDueBy))
+      unless validate_date(params[nscname][:due_by]) && validate_date(params[nscname][:frDueBy])
+        respond_to do |format|
+          format.json { 
+            render :json => { :update_failure => true, :errors => I18n.t('date_invalid') }.to_json and return
+          }
+          format.xml {
+            render :xml => { :update_failure => true, :errors => I18n.t('date_invalid') }.to_xml and return
+          }
+          format.html { render :text => I18n.t('date_invalid') and return }
+        end
+      end
+    else
+      params[nscname].except!(:due_by, :frDueBy)
+    end
+  end
+
+  def validate_date(date_string)
+    begin
+      date = Date.parse(date_string)
+    rescue
+      return false
+    end
+  end
+  def run_on_slave(&block)
+    Sharding.run_on_slave(&block)
+  end 
+
+ 
 end

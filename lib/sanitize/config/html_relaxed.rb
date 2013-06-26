@@ -24,16 +24,16 @@ class Sanitize
   module Config
     HTML_RELAXED = {
       :elements => %w[
-        a abbr b bdo blockquote br caption cite code col colgroup dd del dfn dl div
-        dt em figcaption figure h1 h2 h3 h4 h5 h6 hgroup i img ins kbd li mark
-        ol p pre q rp rt ruby s samp small strike strong sub sup table tbody td
-        tfoot th thead time tr u ul var wbr span
+        a abbr acronym address b bdo blockquote br caption cite code col colgroup dd del details dfn dl div
+        dt em figcaption figure h1 h2 h3 h4 h5 h6 hgroup hr i img ins kbd li mark
+        ol p pre q rp rt ruby s samp section summary small strike strong sub sup table tbody td
+        tfoot th thead time tr tt u ul var wbr span
       ],
-      :remove_contents => [ 'style' ],
+      :remove_contents => [ 'style','title' ],
       :attributes => {
-        :all         => ['dir', 'lang', 'title'],
+        :all         => ['dir', 'lang', 'title','style'],
         'a'          => ['href','target'],
-        'blockquote' => ['cite'],
+        'blockquote' => ['cite',"class"],
         'col'        => ['span', 'width'],
         'colgroup'   => ['span', 'width'],
         'del'        => ['cite', 'datetime'],
@@ -46,7 +46,7 @@ class Sanitize
         'th'         => ['abbr', 'axis', 'colspan', 'rowspan', 'scope', 'width'],
         'time'       => ['datetime', 'pubdate'],
         'ul'         => ['type'],
-        'span'       => ['style']
+        'div'        => ['class']
       },
 
       :protocols => {

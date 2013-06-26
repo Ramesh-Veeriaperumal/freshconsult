@@ -1,11 +1,11 @@
 module Delayed
-  class PerformableMethod < Struct.new(:object, :method, :args)
-    attr_accessor :account
+  class PerformableMethod < Struct.new(:object, :method, :args, :account)
+    # attr_accessor :account
     
     CLASS_STRING_FORMAT = /^CLASS\:([A-Z][\w\:]+)$/
     AR_STRING_FORMAT    = /^AR\:([A-Z][\w\:]+)\:(\d+)$/
 
-    def initialize(object, method, args)
+    def initialize(object, method, args, account=Account.current)
       raise NoMethodError, "undefined method `#{method}' for #{self.inspect}" unless object.respond_to?(method)
 
       self.object = dump(object)
@@ -24,9 +24,17 @@ module Delayed
 
     def perform
        Account.reset_current_account
-       load(account).send(:make_current) if account
-       load(object).send(method, *args.map{|a| load(a)})
-      rescue ActiveRecord::RecordNotFound
+
+       account_id = nil
+       if account
+        account =~ AR_STRING_FORMAT
+        account_id = $2
+       end
+       Sharding.select_latest_shard do
+        load(account).send(:make_current) if account
+        load(object).send(method, *args.map{|a| load(a)})
+      end
+      #rescue ActiveRecord::RecordNotFound
            # We cannot do anything about objects which were deleted in the meantime
       true
     end

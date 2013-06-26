@@ -16,7 +16,7 @@ class Workers::ClearSpam
             end
           end
         end
-        $redis.srem("SPAM_CLEARABLE_ACCOUNTS",account.id)
+        $redis_others.srem("SPAM_CLEARABLE_ACCOUNTS",account.id)
       end
     rescue Exception => e
       puts "something is wrong: #{e.message}::#{e.backtrace.join("\n")}"

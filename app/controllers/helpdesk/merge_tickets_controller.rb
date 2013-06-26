@@ -15,12 +15,17 @@ class Helpdesk::MergeTicketsController < ApplicationController
  #    "closed_at" => 1
  #  }
 
+ 	SEARCH_METHODS = [ "with_display_id", "with_requester" ]
+
+ 	SEARCH_KEYS = [ "display_id", "subject" ]
+
     def bulk_merge
         @ticket_search = Array.new
         render :partial => "helpdesk/merge/bulk_merge", :locals => { :redirect_back => params[:redirect_back]}
     end
 
 	def merge_search
+		items = []
 		if params[:search_method] == 'with_subject' && current_account.es_enabled?
       		options = { :load => { :include => 'requester' }, :size => 1000, :preference => :_primary_first }
       		es_items = Tire.search [current_account.search_index_name], options do |search|
@@ -34,6 +39,7 @@ class Helpdesk::MergeTicketsController < ApplicationController
             			f.filter :terms, :_type => ['helpdesk/ticket']
             			f.filter :term, { :deleted => false }
             			f.filter :term, { :spam => false }
+            			f.filter :term, { :account_id => current_account.id }
             			if current_user.restricted?
               				user_groups = current_user.group_ticket_permission ? current_user.agent_groups.map(&:group_id) : []
               				f.filter :or, { :not => { :exists => { :field => :responder_id } } },
@@ -69,15 +75,16 @@ class Helpdesk::MergeTicketsController < ApplicationController
                                       :limit => 1000
 			else
       			scope = current_account.tickets.permissible(current_user)
-				items = scope.send( params[:search_method], params[:search_string] )
+				items = scope.send( params[:search_method], params[:search_string] ) if SEARCH_METHODS.include?(params[:search_method])
 			end
 		end
 		r = {:results => items.map{|i| {
-					:display_id => i.display_id, :subject => i.subject, :title => h(i.subject),
-					:searchKey => (params[:key] == 'requester') ? i[:requester_name] : i.send(params[:key]).to_s, 
-				 	:info => t("ticket.merge_ticket_list_status_created_at", 
-						:username => "<span class='muted'>#{( (params[:key] == 'requester') ? i[:requester_name] : i.requester )}</span>", 
-						:time_ago => time_ago_in_words(i.created_at) ) }}}
+				:display_id => i.display_id, :subject => i.subject, :title => h(i.subject),
+				:searchKey => 
+					(params[:key] == 'requester') ? i[:requester_name] : ( i.send(params[:key]).to_s if SEARCH_KEYS.include?(params[:key]) ),  
+			 	:info => t("ticket.merge_ticket_list_status_created_at", 
+					:username => "<span class='muted'>#{( (params[:key] == 'requester') ? i[:requester_name] : i.requester )}</span>", 
+					:time_ago => time_ago_in_words(i.created_at) ) }}}
 		respond_to do |format|
 		  format.json { render :json => r.to_json }
 		end

@@ -9,15 +9,10 @@
 				</h3>
 				<div class="reports-icon-at-a-glance pull-right"></div>
 			</div>
-			<% classic_val = feature?(:enterprise_reporting) ? true : false %>
 			<ul class="report_icons">
-				<%= report_item({:label => t('reports.helpdesk_title_nav'), :class => 'helpdesk-glance', 
-						:url => helpdesk_activity_url, :classic => classic_val}) %>
-				<%= report_item({:label => t('reports.customer_title_nav'), :class => 'customer-at-a-glance', :url => customer_activity_url, :classic => classic_val}) %>
-				
-				<% if feature?(:enterprise_reporting) %>
 				<%= report_item({:label => t('adv_reports.helpdesk_at_a_glance'), :class => 'helpdesk-glance', :url => reports_helpdesk_glance_reports_url}) %>
 				<%= report_item({:label => t('adv_reports.customer_at_a_glance'), :class => 'customer-at-a-glance', :url => reports_customer_glance_reports_url}) %>
+				<% if feature?(:enterprise_reporting) %>
 				<%= report_item({:label => t('adv_reports.agent_at_a_glance'), :class => 'agent-at-a-glance', :url => reports_agent_glance_reports_url}) %>
 				<%= report_item({:label => t('adv_reports.group_at_a_glance'), :class => 'group-at-a-glance', :url => reports_group_glance_reports_url}) %>
 				<%end%>
@@ -36,7 +31,7 @@
 			<% @t_reports.each_with_index do |report, index| %>
 				<%= report_item({:label => report[:label], :class => "summary-#{index+1}", :url => report_path(index+1)}) %>
 			<% end %>
-			<% if feature?(:timesheets) %>
+			<% if feature?(:timesheets) && privilege?(:view_time_entries) %>
 				<%= report_item({:label => t('reports.timesheet_reports.index.title'), :class => 'time-sheet-report', :url => timesheet_reports_url}) %>
 			<%end%>
 			<% if feature?(:surveys) %>

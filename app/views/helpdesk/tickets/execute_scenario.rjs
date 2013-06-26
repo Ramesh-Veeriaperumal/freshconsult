@@ -3,11 +3,13 @@ page << "try {
 	jQuery('#execute_scenario').modal('hide'); 
 	jQuery('#execute_scenario form').show().resetForm();
 	jQuery('#execute_scenario [data-submit=modal]').button('reset');
-	jQuery('#execute_scenario .loading-box').remove();
+	jQuery('#execute_scenario .sloading loading-small .loading-block').remove();
 } catch(e) {}"
 
 page << "silenceTktFieldsUpdate();"
 page << "jQuery('#custom_ticket_form ul>li.field:not(#helpdesk_ticket_tags)').remove()"
-page.insert_html :before, 'helpdesk_ticket_tags', :partial => "helpdesk/tickets/show/ticket_field_elements.html.erb"
+f = ActionView::Helpers::FormBuilder.new(:helpdesk_ticket, @ticket, self, {}, proc {})
+page.insert_html :before,'helpdesk_ticket_tags',
+	render(:partial => "helpdesk/tickets/show/ticket_field_elements.html.erb",:locals => { :form_builder => f })
 page.replace "due-by-element-parent", render(:partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @ticket})
 page << "unsilenceTktFieldsUpdate();"

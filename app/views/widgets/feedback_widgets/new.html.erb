@@ -1,47 +1,161 @@
-<%= content_tag (:h3, (params[:formTitle].blank?) ? t('feedbackwidget_defaulttitle') : params[:formTitle], :class => "title") %>
-<% form_for :helpdesk_ticket, @ticket, :url => widgets_feedback_widget_path(:submit_message => params[:submitThanks]) , :html => {:method => :post, :multipart => true, :id => "fd_feedback_widget", :target => "freshwidget-submit-frame"}  do |f| %>
-  <%= f.error_messages %>
-    <ul class="ui-form"> 
-		<% current_portal.customer_editable_ticket_fields.each do |field| %>
-				<% 
-					dom_type_correction = 
-						(case field.dom_type
-							when "requester" then "email"
-							when "html_paragraph" then "paragraph"
-							else field.dom_type
-						 end)
-					field_name_correction = (field.field_name == "description_html") ? "description" : field.field_name
-				%>  
-		<%= construct_ticket_element :helpdesk_ticket, field, 
-		                               field.label_in_portal,
-		                               dom_type_correction, 
-		                               field.required_in_portal, 
-		                               (field.dom_type == "requester" && logged_in?) ? @ticket.email : "",
-		                               field_name_correction, true %>
-		<%#= render(:partial => "/shared/nested_fields", :locals => { :ticket => nil, :category => field, :category_field_value =>  nil, :type => "edit"}) if field.field_type == "nested_field"%>                                       
-		<% end %>                                                              
-		<li class="widget_attachment">
-			<div class="screenshot-wrap" >
-				<ul>
-					<li class="ie8plusonly" >       				
-						<input type="button" value="Take screenshot" id="takescreen-btn"/>
-					<!--<input type="checkbox" name="screen" id="screen" /> Attach a screenshot-->
-					</li>
-					<li class="ie8plusonly">
-						<div class="flash" style="display:none"></div>
-						<canvas class="screenshotpop" id="mycanvas" style="display:none"></canvas>
-						<a href="#" class="closeBtn" style="display:none" onClick="remove_screenshot()">Remove</a>
-					</li>
-				</ul>	
-			</div>
-			<%= render :partial=>"/helpdesk/shared/attachment_form" %>
-		</li>	
-	</ul>
-	 
-	<div class="button-container">
-		<%= f.submit t('ticket.submit_ticket'), :class => "uiButton" %>
-		<%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
-		<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %> 
+<% @ticket ||= current_account.tickets.new %>
+<% @widget_form ||= widget_option(:enable_screenshot) || true %>
+
+<div class="modal-header">
+	<%= content_tag(:h3, widget_option(:formTitle), :class => "ellipsis", :title => widget_option(:formTitle)) %>
+</div>
+<div class="modal-body">
+<% form_for :helpdesk_ticket, @ticket, 
+		:url => widgets_feedback_widget_path(:submit_message => params[:submitThanks]), 
+		:html => { :method => :post, :multipart => true, :class => "form form-widget", :id => "fd_feedback_widget" } do |f| %>
+  	<%= f.error_messages %>  	
+  	<div class="form-placeholder">
+	  	<% @ticket_fields_def_pos.each do |tf_field| %>
+	  		<% old_pos = @ticket_fields.map(&:field_type).index(tf_field) %>
+	  		<% if(old_pos != nil) %>
+	  			<% field = @ticket_fields.delete_at(old_pos) %>
+	  			<% field['dom_type'] = field.dom_type == "requester" ? "widget_requester" : field.dom_type %>
+	  			<div class="control-group <%= field.field_type %>">
+	  				<%= ticket_field_container f, :helpdesk_ticket, field %>
+	  			</div>
+			<% end %>
+	  	<% end %>
+  	</div>
+  	<div class="form-portal">
+		<% @ticket_fields.each do |field| %>
+			<div class="control-group <%= field.field_type %>">
+    			<%= ticket_field_container f, :helpdesk_ticket, field %>
+    		</div>
+		<% end %>
 	</div>
+</div>
+<div class="modal-footer">
+	<div class="copyright">
+		<% unless(current_account.subscription.paid_account?) %>
+			<%= link_to(t('footer.helpdesk_software'), "http://www.freshdesk.com", :target => "_blank") %>
+			<%= t('footer.by_freshdesk') %>
+		<% end %>
+	</div>
+	<%= f.submit t('ticket.submit_ticket'), :class => "btn btn-primary" %>
+	<%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
+	<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
+</div>
 <% end %>
-<iframe id="freshwidget-submit-frame" name="freshwidget-submit-frame" src="about:blank" frameborder="0" scrolling="auto" allowTransparency="true" style="visibility:hidden; width:0px; height:0px;"></iframe>
+
+<% if feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
+	<div class="modal-panel" id="feedback-suggest">
+		<form class="hc-search-form" autocomplete="off" action="<%= solutions_support_search_path %>" id="hc-search-form">
+			<div class="hc-search-input">
+				<input placeholder="Search" type="text" id="fs-input"
+					name="term" class="span12 special" value="" 
+		            rel="page-search" data-max-matches="10">
+			</div>
+		</form>
+		<div id="panel-content" class="panel-content hide">
+			<h4 id="ws-results-title">Search results</h4>
+			<ul class="unstyled" id="ws-results"></ul>	
+		</div>
+		<div id="panel-info" class="panel-info">
+			<h2 class="lead">Search our <br />
+				Knowledge base </h2>
+			<%= link_to "or Browse help articles", support_solutions_path, 
+					{ :target => "_blank", :class => "link-pointer" } %>
+		</div>
+	</div>
+
+	<script id="ws-tmpl" type="text/x-jquery-tmpl">      
+		<li>
+			<div class="ellipsis">
+				<a href="${url}" target="_blank">{{html title}}</a>
+			</div>
+			<p class="help-text">{{html desc}}</p>
+		</li>
+	</script>
+	<script type="text/javascript">
+		var suggestQuery, suggestDelay, suggestForSubject = true;
+		window['suggest-cache'] = {};
+
+		jQuery("#feedback-widget-container").addClass("modal-panel-active");
+
+		var suggestResponse = function(data, term){		
+		    if(data.length > 0){	    	
+				jQuery("#ws-results")
+					.html(jQuery.tmpl(jQuery("#ws-tmpl").template(), data))
+					.append("<li><a href='/support/search/solutions?term="+term+"' target='_blank'>Show all results</a></li>")
+				
+		    }else{
+		    	jQuery("#ws-results").html("No results for " + term)
+		    }	    
+
+		    jQuery("#panel-content").show()
+		    jQuery("#fs-input").removeClass("loading-right");
+		}
+
+		var callbackToSolutionSearch = function(string){
+			var term = string.trim(),
+		        cache = window['suggest-cache'],
+		        suggest_url = "/support/search/solutions.json",
+		        request = { max_matches:5, term:term };
+
+		    if(suggestQuery) suggestQuery.abort();
+
+		    if( term in cache || term == '' ) {
+		        suggestResponse( cache[ term ], term )
+		        return
+		    }
+
+		    jQuery("#fs-input").addClass("loading-right");
+
+	        suggestQuery = jQuery.getJSON(suggest_url, request, function( data, status, xhr ) {
+				window['suggest-cache'][ term ] = data
+				suggestResponse( data, term )
+	        });
+		}
+
+	  	jQuery("#helpdesk_ticket_subject").live("blur paste", function(ev){
+	  		if(!suggestForSubject) return
+
+	  		var searchString = this.value.replace(/^\s+|\s+$/g, "");
+
+	  		if(searchString != '' && searchString.length > 2){
+	  			jQuery("#fs-input").val(this.value).trigger("change")	
+	  		}
+	  	});
+
+	  	jQuery("#fs-input").live("keydown change paste", function(ev){
+			var $this = jQuery(this);
+			clearTimeout(suggestDelay);
+		    suggestDelay = setTimeout(function() {
+		    	suggestForSubject = false
+		    	
+		    	var searchString = $this.val().replace(/^\s+|\s+$/g, "");
+
+				if(searchString != '' && searchString.length > 2){
+					$this.addClass("loading-right");
+					jQuery("#panel-info").hide();
+					callbackToSolutionSearch(searchString);
+				}else{
+					$this.removeClass("loading-right");
+					jQuery("#ws-results").empty();
+					jQuery("#panel-content").hide()
+					jQuery("#panel-info").show();
+				}
+		    }, 500)		
+	  	});
+	</script>
+<% end %>
+
+<iframe id="freshwidget-submit-frame" name="freshwidget-submit-frame" 
+	src="about:blank" frameborder="0" scrolling="auto" 
+	allowTransparency="true" style="position:absolute; visibility:hidden; width:0px; height:0px;">
+</iframe>
+
+<script type="text/javascript">
+	jQuery('.modal-body').scroll(function() {
+		if(this.scrollTop > 8){
+			jQuery(this).parent().addClass("modal-scroll");
+		}else{
+			jQuery(this).parent().removeClass("modal-scroll");
+		}
+	});
+</script>

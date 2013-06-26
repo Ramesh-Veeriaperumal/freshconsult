@@ -11,7 +11,7 @@ describe TestController do
           path.should match(Regexp.new(Dir::tmpdir))
           flags.should == 'wb'
         end
-        FasterCSV.should_receive(:foreach)
+        CSVBridge.should_receive(:foreach)
 
         post :create, :file => test_file, :user => {:first_name => 'Test', :last_name => 'User'}
       end
@@ -47,7 +47,7 @@ describe TestController do
   context "on second post" do
     it "should map the fields" do
       session[:map_fields] = {:file => '/tmp/test'}
-      FasterCSV.expects(:foreach)
+      CSVBridge.expects(:foreach)
       File.expects(:delete).with('/tmp/test')
 
       post :create, :fields => {"1" => "2", "2" => "3", "3" => "1"}

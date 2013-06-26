@@ -13,7 +13,7 @@ class Wf::Containers::Time < Wf::FilterContainer
 
   def time
     begin
-      Time.zone.now.ago(value.to_i.minutes)
+      Time.zone.now.ago(value.to_i.minutes).to_s(:db)
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
       nil
@@ -23,18 +23,18 @@ class Wf::Containers::Time < Wf::FilterContainer
   def sql_condition
     case value
       when "today" then
-        return [" `helpdesk_tickets`.created_at > '#{Time.zone.now.beginning_of_day}' "]
+        return [" `helpdesk_tickets`.created_at > '#{Time.zone.now.beginning_of_day.to_s(:db)}' "]
       when "yesterday" then
-        return [%( `helpdesk_tickets`.created_at > '#{Time.zone.now.yesterday.beginning_of_day}' and
-          `helpdesk_tickets`.created_at < '#{Time.zone.now.beginning_of_day}' )]
+        return [%( `helpdesk_tickets`.created_at > '#{Time.zone.now.yesterday.beginning_of_day.to_s(:db)}' and
+          `helpdesk_tickets`.created_at < '#{Time.zone.now.beginning_of_day.to_s(:db)}' )]
       when "week" then
-        return [" `helpdesk_tickets`.created_at > '#{Time.zone.now.beginning_of_week}' "]
+        return [" `helpdesk_tickets`.created_at > '#{Time.zone.now.beginning_of_week.to_s(:db)}' "]
       when "month" then
-        return [" `helpdesk_tickets`.created_at > '#{Time.zone.now.beginning_of_month}' "]
+        return [" `helpdesk_tickets`.created_at > '#{Time.zone.now.beginning_of_month.to_s(:db)}' "]
       when "two_months" then
-        return [" `helpdesk_tickets`.created_at > '#{Time.zone.now.beginning_of_day.ago(2.months)}' "]
+        return [" `helpdesk_tickets`.created_at > '#{Time.zone.now.beginning_of_day.ago(2.months).to_s(:db)}' "]
       when "six_months" then
-        return [" `helpdesk_tickets`.created_at > '#{Time.zone.now.beginning_of_day.ago(6.months)}' "]
+        return [" `helpdesk_tickets`.created_at > '#{Time.zone.now.beginning_of_day.ago(6.months).to_s(:db)}' "]
       else
         return [" `helpdesk_tickets`.created_at > ? ", time]
     end 

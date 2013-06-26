@@ -1,8 +1,8 @@
-package_assets:         on      # (on, off, always)
+package_assets:         on          # (on, off, always)
 embed_assets:           off         # (on, off, datauri)
 compress_assets:        on          # (on, off)
 package_path:           packages    # (defaults to assets)
-javascript_compressor:  uglifier    # (yui, closure)
+javascript_compressor:  yui         # (yui, closure)
 allow_debugging:        on
 
 stylesheets:
@@ -36,13 +36,13 @@ stylesheets:
 
   portal:
     - public/stylesheets/redactor.css
+    - public/stylesheets/portal/ie.css
 
   preview:
     - public/stylesheets/portal/preview.css
 
   widget:
-    - public/stylesheets/app/common.css
-    - public/stylesheets/app/ie.css
+    - public/stylesheets/portal/widget.css    
 
   freshwidget:
     - public/stylesheets/freshwidget.css
@@ -53,6 +53,12 @@ stylesheets:
 
   tkt_details_print:
     - public/stylesheets/app/tkt_details_print.css
+
+  survey:
+    - public/stylesheets/support/rating.css
+
+  survey:
+    - public/stylesheets/support/rating.css
 
   gadget:
     - public/stylesheets/app/common.css
@@ -82,6 +88,10 @@ stylesheets:
 
   facebook:
     - public/stylesheets/portal/facebook.css
+
+  rating:
+    - public/stylesheets/portal/rating.css
+
 
 javascripts:
   defaults:
@@ -133,6 +143,9 @@ javascripts:
 
   workspace: 
     - public/javascripts/bootstrap/twipsy.js
+    - public/javascripts/pattern/spin.js
+    - public/javascripts/pattern/jquery.spin.js
+    - public/javascripts/app/loading-init.js
     # - public/javascripts/bootstrap/modal.js
     - public/javascripts/bootstrap/tabs.js
     - public/javascripts/bootstrap/popover.js
@@ -178,8 +191,10 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
-    - public/javascripts/helpdesk/multifile.js
+    - public/javascripts/portal/multifile.js
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
+    - public/javascripts/frameworks/plugins/select2.js
+    # - public/javascripts/lte-ie7/feeback-widget.js    
     - public/javascripts/feedback_widget_form.js
     - public/javascripts/utils.js
 
@@ -203,7 +218,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.validate.js
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
     - public/javascripts/hackz.js
-    - public/javascripts/helpdesk/multifile.js
+    - public/javascripts/portal/multifile.js
     - public/javascripts/lib/nestedtree.js    
     - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/portal/jquery-ui-1.9.2.custom.js
@@ -223,6 +238,9 @@ javascripts:
     - public/javascripts/bootstrap.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.itoggle.js
+
+  observer_event:
+    - public/javascripts/observer_events.js 
 
   conditional:
     - public/javascripts/autosuggest.js    

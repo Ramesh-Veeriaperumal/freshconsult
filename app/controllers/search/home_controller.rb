@@ -1,11 +1,12 @@
+# encoding: utf-8
 class Search::HomeController < ApplicationController
 
   def index
-    search
+    search(searchable_classes)
   end
 
   def suggest
-    search
+    search(searchable_classes)
     render :partial => '/search/home/navsearch_items'
   end
 
@@ -25,7 +26,7 @@ class Search::HomeController < ApplicationController
       # The :load => true option will load the final results from database. It uses find_by_id internally.
       begin
         @total_results = 0
-        if permission? :manage_tickets
+        if privilege?(:manage_tickets)
           options = { :load => true, :page => (params[:page] || 1), :size => 10, :preference => :_primary_first }
           @items = Tire.search [current_account.search_index_name], options do |search|
             search.query do |query|
@@ -39,6 +40,7 @@ class Search::HomeController < ApplicationController
                               { :term => { :deleted => false } }
                 f.filter :or, { :not => { :exists => { :field => :spam } } },
                               { :term => { :spam => false } }
+                f.filter :term, { :account_id => current_account.id }
                 if current_user.restricted?
                   user_groups = current_user.group_ticket_permission ? current_user.agent_groups.map(&:group_id) : []
                   f.filter :not, { :terms => { :_type => ['user', 'customer'] } }
@@ -110,5 +112,20 @@ class Search::HomeController < ApplicationController
       }
     end
   end
+  
+  private
+  
+    def searchable_classes
+      to_ret = [ Helpdesk::Ticket ]
+      to_ret << Solution::Article if privilege?(:view_solutions)
+      to_ret << Topic             if privilege?(:view_forums)
+      
+      if privilege?(:view_contacts)
+        to_ret << User
+        to_ret << Customer
+      end
+      
+      to_ret.map { |to_ret| to_ret = to_ret.document_type }
+    end
 
 end

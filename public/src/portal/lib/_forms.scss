@@ -42,7 +42,7 @@ input,
 button,
 select,
 textarea {
-  @include font-shorthand($baseFontSize, normal, $baseFontSize * 1.2 ); // Set size, weight, line-height here
+  @include font-shorthand($baseFontSize, normal, 1.2 ); // Set size, weight, line-height here
 }
 input,
 button,
@@ -118,7 +118,7 @@ input[type="color"],
   background-color: $inputBackground;
   border: 1px solid $inputBorder;
   @include border-radius($inputBorderRadius);
-  @include box-shadow(inset 0 1px 1px rgba(0,0,0,.075));
+  @include box-shadow(inset 0 1px 2px rgba(0, 0, 0, 0.18));
   @include transition(#{border linear .2s, box-shadow linear .2s});
 
   // Focus state
@@ -126,7 +126,7 @@ input[type="color"],
     border-color: rgba($inputFocusRingColor, 0.8);
     outline: 0;
     outline: thin dotted \9; /* IE6-9 */
-    @include box-shadow(#{inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba($inputFocusRingColor,.6)});
+    @include box-shadow(#{inset 0 1px 2px rgba(0, 0, 0, 0.18), 0 0 8px rgba($inputFocusRingColor,.6)});
   }
 }
 
@@ -201,7 +201,7 @@ input[type="checkbox"]:focus {
 .radio,
 .checkbox {
   min-height: 18px; // clear the floating input if there is no label text
-  padding-left: 18px;
+  padding-left: 20px;
 }
 .radio input[type="radio"],
 .checkbox input[type="checkbox"] {
@@ -671,7 +671,7 @@ label.required:after{
     .control-label {
       float: left;
       width: 140px;
-      padding-top: 5px;
+      padding-top: 4px;
     }
     // Move over all input controls and content
     .controls {

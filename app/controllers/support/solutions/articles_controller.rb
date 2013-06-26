@@ -2,7 +2,6 @@ class Support::Solutions::ArticlesController < SupportController
   
   include Helpdesk::TicketActions
   
-  before_filter { |c| c.requires_permission :portal_knowledgebase }
   before_filter :load_and_check_permission
 
   rescue_from ActionController::UnknownAction, :with => :handle_unknown
@@ -18,6 +17,9 @@ class Support::Solutions::ArticlesController < SupportController
   end
   
   def show
+    wrong_portal and return unless(main_portal? || 
+        (@article.folder.category_id == current_portal.solution_category_id))
+
     @page_title = @article.article_title
     @page_description = @article.article_description
     @page_keywords = @article.article_keywords
@@ -52,7 +54,7 @@ class Support::Solutions::ArticlesController < SupportController
 
   private
     def load_and_check_permission      
-      @article = current_account.solution_articles.find(params[:id], :include => :folder)
+      @article = current_account.solution_articles.find_by_id!(params[:id], :include => :folder)
       unless @article && @article.folder.visible?(current_user)    
         flash[:warning] = t(:'flash.general.access_denied')
         redirect_to support_solutions_path and return
