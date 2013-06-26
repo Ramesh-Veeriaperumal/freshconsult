@@ -1239,6 +1239,7 @@ h2.subject{
 
 .touch .commentbox .actions {
 	visibility: visible;
+	@include opacity(1);
 }
 
 .commentbox-blue {
@@ -1412,8 +1413,9 @@ h2.subject{
 
 	.avatar-wrap-collapse {
 		background: #1272de;
-		border-color: #FFF;
+		border:3px solid #EEE;
 		color: #FFF;
+		left: -40px;
 		@include box-shadow(-8px 0px 12px 8px white);
 		@include transition(all 0.2s linear);
 	}
