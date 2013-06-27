@@ -201,7 +201,7 @@ class AgentsController < ApplicationController
 
   def info_for_node
     key = %{#{NodeConfig["secret_key"]}#{current_account.id}#{params[:user_id]}}
-    hash = Digest::SHA512.hexdigest(key)
+    hash = Digest::MD5.hexdigest(key)
     
     if hash == params[:hash]
       agent = current_account.agents.find_by_user_id(params[:user_id])
