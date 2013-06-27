@@ -16,7 +16,7 @@ module Helpdesk::TicketsHelperMethods
         if(Time.now > ticket.due_by )
           t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
         else
-          t('due_in',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
+          I18n.t('due_in',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
         end
       else
         " #{h(status_changed_time_value_hash(ticket)[:title])} #{t('for')} 

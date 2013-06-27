@@ -21,6 +21,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Redis::ReportsRedis
   include Redis::OthersRedis
   include Reports::TicketStats
+  include Helpdesk::TicketsHelperMethods
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
@@ -263,7 +264,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
                   
     return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
   end
-  
+ 
+  # 2 newly added method - ajs
+    def ticket_notes
+        notes.visible.all(:limit=>1, :order=>"created_at DESC")
+    end
+    def ticket_sla_status
+        closed_status = Helpdesk::TicketStatus.onhold_and_closed_statuses(account)
+        sla_status(self,closed_status);
+    end
+ 
   def agent_permission_condition user
      permissions = {:all_tickets => "" , 
                    :group_tickets => " AND (group_id in (#{user.agent_groups.collect{|ag| ag.group_id}.insert(0,0)}) OR responder_id= #{user.id}) " , 
@@ -514,7 +524,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def conversation_before(before_id)
-    return notes.visible.exclude_source('meta').newest_first.before(before_id)
+    return notes.visible.exclude_source('meta').before(before_id) #ajs - removed newest_first.
   end
 
   def conversation_count(page = nil, no_of_records = 5)

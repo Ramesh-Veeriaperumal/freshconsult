@@ -4,7 +4,7 @@ module Mobile::MobileHelperMethods
   MOBILE_URL = "/mobile/"
 
   MOBILE_VIEWS = { :tickets => { 
-                      :show => "#{MOBILE_URL}#tickets/show/{{params.id}}"
+                      :shows => "#{MOBILE_URL}#tickets/show/{{params.id}}"
                     },
                    :dashboard => {
                       :index  => MOBILE_URL
@@ -88,5 +88,36 @@ module Mobile::MobileHelperMethods
         # formate_body_html
         populate_private
       end 
+    end
+
+    def top_view
+
+      dynamic_views = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
+
+
+
+      default_views = [
+        { :id => "new_my_open",  :name => t("helpdesk.tickets.views.new_my_open"),     :default => true },
+        { :id => "all_tickets",  :name => t("helpdesk.tickets.views.all_tickets"),     :default => true },
+        { :id => "monitored_by", :name => t("helpdesk.tickets.views.monitored_by"),    :default => true },
+        { :id => "spam"   ,      :name => t("helpdesk.tickets.views.spam"),            :default => true },
+        { :id => "deleted",      :name => t("helpdesk.tickets.views.deleted"),         :default => true }
+      ]
+
+      default_view=""
+      sep=""
+      quots="\"";
+      default_views.each { |view|    default_view << sep + "{name:"+quots+view[:name]+quots + ",id:"+quots+view[:id].to_s+quots +",type:default}" ; sep=",";}
+
+      dynamic_view=""
+      sep=""
+      dynamic_views.each { |view|    dynamic_view << sep + "{ name:"+quots+view[:name]+quots + ",id:"+quots+view[:id].to_s+quots +",type:dynamic}" ; sep=",";}
+
+      top_view=default_view+","+dynamic_view;
+
+      whole_array = "["
+      whole_array <<  top_view;
+      whole_array << "]"
+
     end
 end

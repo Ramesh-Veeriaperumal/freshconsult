@@ -319,7 +319,22 @@ class User < ActiveRecord::Base
   def is_client_manager?
     self.privilege?(:client_manager)
   end
-  
+
+#  def can_reply_ticket?
+#    privilege?(:reply_ticket)
+#  end
+#  alias :can_reply :can_reply_ticket?
+
+#  def can_edit_ticket_properties?
+#    privilege?(:edit_ticket_properties)
+#  end
+#  alias :can_edit :can_edit_ticket_properties?
+
+#  def can_delete_ticket?
+#    privilege?(:delete_ticket)
+#  end
+#  alias :can_delete :can_delete_ticket?
+ 
   def can_assume?(user)
     # => Not himself
     # => User is not deleted

@@ -177,7 +177,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
   
   def to_json(options = {})
-    options[:include] = [:attachments]
+	options[:include] = {:user =>{:only => [ :name, :email, :id ], :methods => [ :avatar_url, :is_agent, :is_customer ]}}
     options[:methods] = [:user_name,:source_name] unless options[:human].blank?
     options[:except] = [:account_id,:notable_id,:notable_type]
     super options

@@ -344,6 +344,10 @@
     helpdesk.filter_view_custom    '/tickets/view/:filter_key', :controller => 'tickets', :action => 'index'
     helpdesk.requester_filter      '/tickets/filter/requester/:requester_id', :controller => 'tickets', :action => 'index'
 
+    helpdesk.filter_topview        '/tickets/filter/mobi/topview', :controller => 'tickets', :action => 'get_top_view'
+    helpdesk.filter_recent_tickets '/tickets/filter/mobi/recent_tickets', :controller => 'tickets', :action => 'recent_tickets'
+    helpdesk.filter_old_tickets    '/tickets/filter/mobi/old_tickets', :controller => 'tickets', :action => 'old_tickets'
+
     #helpdesk.filter_issues '/issues/filter/*filters', :controller => 'issues', :action => 'index'
 
     helpdesk.formatted_dashboard '/dashboard.:format', :controller => 'dashboard', :action => 'index'

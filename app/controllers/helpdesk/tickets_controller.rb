@@ -18,9 +18,9 @@ class Helpdesk::TicketsController < ApplicationController
 
   around_filter :run_on_slave, :only => :user_ticket
 
-  before_filter :set_mobile, :only => [:index, :show,:update, :create, :execute_scenario, :assign, :spam, :update_ticket_properties ]
+  before_filter :set_mobile, :only => [:get_top_view,:recent_tickets,:old_tickets, :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties]
   before_filter :set_show_version
-  before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index, :filter_options]
+  before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index, :filter_options, :old_tickets,:recent_tickets]
   before_filter :clear_filter, :only => :index
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :cache_filter_params, :only => [:custom_search]
@@ -137,7 +137,7 @@ class Helpdesk::TicketsController < ApplicationController
 
             json << sep + tic.to_json({
               :except => [ :description_html, :description ],
-              :methods => [ :status_name, :priority_name, :source_name, :requester_name,
+              :methods => [ :ticket_sla_status, :status_name, :priority_name, :source_name, :requester_name,
                             :responder_name, :need_attention, :pretty_updated_date ]
             }, false)[19..-2]; sep=","
           }
@@ -147,6 +147,98 @@ class Helpdesk::TicketsController < ApplicationController
     end
   end
 
+  def get_top_view
+    puts "coming to top_view tickets"
+    respond_to do |format|
+      format.mobile do
+        json = ""
+        json << top_view
+        render :json => json
+      end
+    end
+  end
+
+  def recent_tickets
+    tkt = current_account.tickets.permissible(current_user)
+    updated_time=DateTime.strptime(params[:latest_updated_at],'%s')
+    tkt =  tkt.latest_tickets(updated_time).leave_old_tickets(params[:ids])
+
+    p "total count of tickets ***************************** #{tkt.count}"
+    p " #{params.inspect}"
+
+    @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+
+
+
+    respond_to do |format|
+      format.mobile do
+        json = "["; sep=""
+        @items.each { |tic|
+          #Removing the root node, so that it conforms to JSON REST API standards
+          # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
+          json << sep + tic.to_json({
+            :except => [ :description_html,:description ],
+            :methods => [ :ticket_subject_style,:ticket_sla_status, :status_name, :priority_name, :source_name, :requester_name,
+                          :responder_name, :need_attention, :pretty_updated_date,:formatted_created_at ]
+          }, false)[19..-2]; sep=","
+        }
+          json << "]"
+          render :json => json
+      end
+    end
+  end
+
+  def old_tickets
+    tkt = current_account.tickets.permissible(current_user)
+    updated_time=DateTime.strptime(params[:least_updated_at],'%s')
+    tkt =  tkt.next_set_tickets(updated_time).leave_old_tickets(params[:ids])
+    @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+
+    respond_to do |format|
+      format.mobile do
+        json = "["; sep=""
+        @items.each { |tic|
+
+          puts "whatisthis #{tic}"
+          #Removing the root node, so that it conforms to JSON REST API standards
+          # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
+          json << sep + tic.to_json({
+            :except => [ :description_html,:description ],
+            :methods => [ :ticket_subject_style,:ticket_sla_status, :status_name, :priority_name, :source_name, :requester_name,
+                          :responder_name, :need_attention, :pretty_updated_date,:formatted_created_at ]
+          }, false)[19..-2]; sep=","
+        }
+          json << "]"
+          render :json => json
+      end
+    end
+  end
+
+  def old_tickets
+    tkt = current_account.tickets.permissible(current_user)
+    updated_time=DateTime.strptime(params[:least_updated_at],'%s')
+    tkt =  tkt.next_set_tickets(updated_time).leave_old_tickets(params[:ids])
+    @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
+
+    respond_to do |format|
+      format.mobile do
+        json = "["; sep=""
+        @items.each { |tic|
+
+          puts "whatisthis #{tic}"
+          #Removing the root node, so that it conforms to JSON REST API standards
+          # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
+          json << sep + tic.to_json({
+            :except => [ :description_html,:description ],
+            :methods => [ :ticket_subject_style,:ticket_sla_status, :status_name, :priority_name, :source_name, :requester_name,
+                          :responder_name, :need_attention, :pretty_updated_date,:formatted_created_at ]
+          }, false)[19..-2]; sep=","
+        }
+          json << "]"
+          render :json => json
+      end
+    end
+  end
   
   def filter_options
     @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
@@ -225,9 +317,11 @@ class Helpdesk::TicketsController < ApplicationController
       :conditions => {:user_id => current_user.id})
 
     @page_title = "[##{@ticket.display_id}] #{@ticket.subject}"
-    
+     
     respond_to do |format|
       format.html  {
+		puts "DEBUG item :: #{@item.inspect}"
+		puts "DEBUG ticket :: #{@ticket.inspect}"
         if @new_show_page
           @ticket_notes.reverse!
           @ticket_notes_total = @ticket.conversation_count
@@ -244,7 +338,8 @@ class Helpdesk::TicketsController < ApplicationController
       }
       format.js
       format.mobile {
-        render :json => @item.to_mob_json
+		response = "{#{@item.to_mob_json[1..-2]},#{current_user.to_mob_json[1..-2]}}"
+        render :json => response
       }
     end
   end
@@ -476,6 +571,7 @@ class Helpdesk::TicketsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to (@items.size == 1) ? helpdesk_ticket_path(@items.first) : :back }
       format.js
+	  format.mobile {  render :json => { :success => true }.to_json }
     end
   end
 
@@ -598,10 +694,16 @@ class Helpdesk::TicketsController < ApplicationController
     #@old_timer_count = @item.time_sheets.timer_active.size - will enable this later..not a good solution
     if @item.update_attributes(:status => status_id)
       flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice')
-      redirect_to redirect_url
+      respond_to do |format|
+        format.html { redirect_to redirect_url  }
+          format.mobile {  render :json => { :success => true }.to_json }
+       end
     else
       flash[:error] = t("helpdesk.flash.closing_the_ticket_failed")
-      redirect_to :back
+      respond_to do |format|
+        format.html { redirect_to :back  }
+        format.mobile {  render :json => { :success => false }.to_json }
+      end
     end
   end
  
