@@ -684,9 +684,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def notify_on_update
     return if spam? || deleted?
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if (@model_changes.key?(:group_id) && group)
-    if (@model_changes.key?(:responder_id) && responder && responder != User.current)
-      notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT)
-    end
+    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if send_agent_assigned_notification?
     
     if @model_changes.key?(:status)
       if (status == RESOLVED)
@@ -1207,6 +1205,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def custom_field_aliases
       return flexifield ? ff_aliases : account.flexi_field_defs.first.ff_aliases
+    end
+
+    def send_agent_assigned_notification?
+      doer_id = Thread.current[:observer_doer_id]
+      @model_changes.symbolize_keys[:responder_id] && responder && responder_id != doer_id && responder != User.current
     end
 
     def update_content_ids
