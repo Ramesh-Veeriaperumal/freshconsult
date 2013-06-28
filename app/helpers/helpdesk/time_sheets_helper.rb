@@ -32,8 +32,7 @@ module Helpdesk::TimeSheetsHelper
         page << "try{"
         page << "if (jQuery('##{app[0]}-timeentry-enabled').is(':checked')) {"
         page << "#{app[2]}.updateNotesAndTimeSpent(#{timeentry.note.to_json}, #{timeentry.time_spent == 0? "0.01" : timeentry.hours}, #{timeentry.billable}, #{timeentry.executed_at.to_json});"
-        page << "#{app[2]}.logTimeEntry();"
-        page << "#{app[2]}.set_timesheet_entry_id(#{timeentry.id});" # This is not needed for update.  But no harm in calling.
+        page << "#{app[2]}.logTimeEntry(#{timeentry.id});"
         page << "}"
         page << "}catch(e){ log(e)}"
       end
@@ -48,8 +47,7 @@ module Helpdesk::TimeSheetsHelper
         integrated_app = timeentry.integrated_resources.find_by_installed_application_id(app_detail)
         unless integrated_app.blank?
           page << "#{app[2]}.updateNotesAndTimeSpent(#{timeentry.note.to_json}, #{timeentry.time_spent == 0? "0.01" : timeentry.hours}, #{timeentry.billable}, #{timeentry.executed_at.to_json});"
-          page << "#{app[2]}.logTimeEntry();"
-          page << "#{app[2]}.set_timesheet_entry_id(#{timeentry.id});" # This is not needed for update.  But no harm in calling.
+          page << "#{app[2]}.logTimeEntry(#{timeentry.id});"
         end
       end
     end
