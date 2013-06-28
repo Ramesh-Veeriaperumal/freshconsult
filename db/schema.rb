@@ -40,8 +40,6 @@ ActiveRecord::Schema.define(:version => 20130613193138) do
     t.string   "full_domain"
     t.string   "time_zone"
     t.string   "helpdesk_name"
-    t.string   "helpdesk_url"
-    t.text     "preferences"
     t.integer  "ticket_display_id", :limit => 8, :default => 0
     t.boolean  "sso_enabled",                    :default => false
     t.string   "shared_secret"
@@ -52,7 +50,6 @@ ActiveRecord::Schema.define(:version => 20130613193138) do
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
-  add_index "accounts", ["helpdesk_url"], :name => "index_accounts_on_helpdesk_url"
   add_index "accounts", ["time_zone"], :name => "index_accounts_on_time_zone"
 
   create_table "achieved_quests", :force => true do |t|
