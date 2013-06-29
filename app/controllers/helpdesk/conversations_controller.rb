@@ -43,7 +43,6 @@ class Helpdesk::ConversationsController < ApplicationController
     build_attachments @item, :helpdesk_note
     if @item.save
       add_forum_post if params[:post_forums]
-      @item.create_fwd_note_activity(params[:helpdesk_note][:to_emails])
       flash[:notice] = t(:'fwd_success_msg')
       process_and_redirect
     else
