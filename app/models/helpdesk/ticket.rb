@@ -660,21 +660,21 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   # To keep flexifield & @custom_field in sync
 
-    def custom_field
-      @custom_field ||= retrieve_ff_values
-    end
+  def custom_field
+    @custom_field ||= retrieve_ff_values
+  end
 
-    def custom_field= custom_field_hash
-      @custom_field = new_record? ? custom_field_hash : nil
-      assign_ff_values custom_field_hash unless new_record?
-    end
+  def custom_field= custom_field_hash
+    @custom_field = new_record? ? custom_field_hash : nil
+    assign_ff_values custom_field_hash unless new_record?
+  end
 
-    def set_ff_value ff_alias, ff_value
-      @custom_field = nil
-      flexifield.set_ff_value ff_alias, ff_value
-    end
+  def set_ff_value ff_alias, ff_value
+    @custom_field = nil
+    flexifield.set_ff_value ff_alias, ff_value
+  end
 
-    # flexifield - custom_field syncing code ends here
+  # flexifield - custom_field syncing code ends here
 
   private
 

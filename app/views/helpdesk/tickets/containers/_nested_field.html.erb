@@ -30,7 +30,6 @@
                 :class       => "ff_item level_2", 
                 :condition   => sub_category[:condition],
                 :operator    => sub_category[:operator],
-                :ff_name     => sub_category[:ff_name],
                 :container   => 'nested_field' } do %>
     <h4 class="title"><%= sub_category[:name] %></h4>
     <%= select_tag sub_category[:name], "", :id => sub_category_id, 

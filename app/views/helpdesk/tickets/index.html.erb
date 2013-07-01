@@ -17,12 +17,7 @@
   });
   jQuery.getScript('/helpdesk/tickets/full_paginate');
 <% end %>
-
-<% content_for :pagefixed do %>
-  <%= render :partial => "collision_index" if feature?(:agent_collision) %>
-  <%= render :partial => "auto_refresh" %>
-<% end %>  
-
+<%= render :partial => "collision_index" if feature?(:agent_collision) %>
 <% content_for :layoutType do -%>ticket_list<%- end %>
 <div class="containerFull">
   <div id="leftcol" class="ticket-leftcol" style="display:<%=(@current_view != 'deleted' && @current_view != 'spam' && @current_view != 'monitored_by') ? 'block' : 'none' %>">
