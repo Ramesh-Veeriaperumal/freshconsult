@@ -942,32 +942,34 @@ refreshStatusBox = function() {
 						submit.button('reset').removeClass('done');
 					}, 2000);
 
-					var updateStatusBox = false;
-					if ($('.ticket_details #helpdesk_ticket_priority').data('updated') || $('.ticket_details #helpdesk_ticket_status').data('updated')) {
-						$('.ticket_details .source-badge-wrap .source')
-								.attr('class','')
-								.addClass('source ')
-								.addClass('priority_color_' + $('.ticket_details #helpdesk_ticket_priority').val())
-								.addClass('status_' + $('.ticket_details #helpdesk_ticket_status').val());
-
-						updateStatusBox = true;
-					}
-
-					if ($('.ticket_details #helpdesk_ticket_source').data('updated')) {
-
-						$('.ticket_details .source-badge-wrap .source span')
-								.attr('class','')
-								.addClass('source_' + $('.ticket_details #helpdesk_ticket_source').val());
-
+					var postProcess = false;
+					//Priority, Status, Group, Type, Product
+					var fields_to_check = ['priority', 'status', 'group_id', 'ticket_type', 'product', 'source'];
+					for(i in fields_to_check) {
+						if (typeof(fields_to_check[i]) == 'string' && $('.ticket_details #helpdesk_ticket_' + fields_to_check[i]).data('updated')) {
+							console.log('Setting postProcess to true');
+							postProcess = true;	
+							break;
+						}
 					}
 
 					tkt_form.find('input, select, textarea').each(function() {
 						$(this).data('updated', false);
 					});
 
-					if (updateStatusBox) {
+					if(postProcess) {
+						$('.ticket_details .source-badge-wrap .source')
+								.attr('class','')
+								.addClass('source ')
+								.addClass('priority_color_' + $('.ticket_details #helpdesk_ticket_priority').val())
+								.addClass('status_' + $('.ticket_details #helpdesk_ticket_status').val());
+
+						$('.ticket_details .source-badge-wrap .source span')
+								.attr('class','')
+								.addClass('source_' + $('.ticket_details #helpdesk_ticket_source').val());
 						refreshStatusBox();
 					}
+
 
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
@@ -977,8 +979,6 @@ refreshStatusBox = function() {
 		}
 			
 	});
-
-	
 
 
 	// Scripts for ToDo List
