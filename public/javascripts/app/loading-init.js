@@ -5,8 +5,8 @@
     "use strict"
 
     var $spin_default = {
-      lines: 11, // The number of lines to draw
-      length: 6, // The length of each line
+      lines: 8, // The number of lines to draw
+      length: 3, // The length of each line
       width: 2, // The line thickness
       radius: 8, // The radius of the inner circle
       color: '#000', // #rbg or #rrggbb
@@ -22,6 +22,8 @@
         left:0,
     }, $spin_right = {
         left:'right',
+    }, $spin_redactor = {
+        color: '#000',
     };
 
     $(".sloading").livequery(function(){     
@@ -32,11 +34,19 @@
       
         if($(this).hasClass("loading-small")){
         $.extend(opts, $spin_small);}
+        if($(this).hasClass("loading-with-text")){
+          if(!$(this).hasClass("loading-align"))
+            $(this).addClass('loading-align')
+          var textWidth = -($(this).find('span').width() / 4) - 10;
+          $.extend(opts, {left: textWidth});  
+        }
 
         if($(this).hasClass("loading-left")){
           $.extend(opts, $spin_left);}
         else if($(this).hasClass("loading-right")){
           $.extend(opts, $spin_right);}
+        else if($(this).hasClass("redactor-loading")){
+          $.extend(opts, $spin_redactor);}
         
 
         $(this).spin(opts);

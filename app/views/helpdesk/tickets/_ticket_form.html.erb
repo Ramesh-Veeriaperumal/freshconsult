@@ -20,7 +20,7 @@
   <%#= render(:partial => "/shared/nested_fields", :locals => { :ticket => nil, :category => field, :category_field_value =>  field_value, :type => "edit"}) if field.field_type == "nested_field"%>
 <% end %>
 <% content_for :onload_script do -%> 
-jQuery('#helpdesk_ticket_ticket_body_attributes_description_html').redactor({ focus: false, autoresize:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link']});
+jQuery('#helpdesk_ticket_ticket_body_attributes_description_html').redactor({ focus: false, autoresize:false, imageUpload: "/tickets_uploaded_images", buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link', 'image']});
   jQuery('#helpdesk_ticket_group_id')
     .on("change", function(e){
       jQuery('#helpdesk_ticket_responder_id')

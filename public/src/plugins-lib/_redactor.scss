@@ -466,12 +466,12 @@ body .redactor_toolbar li a.redactor_btn_removeFormat 		{ background-position: -
 	position: relative;
     text-align: center;    
     width: 99%;
-    padding: 60px 0;
+    padding: 45px 0;
     border: 2px dashed #bbb;
 }
 .redactor_droparea .redactor_dropareabox, .redactor_dropalternative {
     color: #777;
-    font-size: 12px;
+    font-size: 14px;
 }
 .redactor_dropalternative {
 	margin: 4px 0 2px 0;
@@ -506,4 +506,42 @@ body .redactor_toolbar li a.redactor_btn_removeFormat 		{ background-position: -
 }
 .hide {
 	display: none;
+}
+
+// File upload design
+div.custom-file-upload {
+  position: relative;
+  width:100%;
+  border:1px solid #ddd;
+  @include border-radius(5px);
+  background:#f6f6f6;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 14px;
+  &:hover{
+    background: #efefef;
+  }
+  input[type='file']{
+    z-index: 999999;
+    @include border-radius(5px);
+    width:100%;
+    height:55px;
+    @include opacity(0);
+    cursor: pointer;
+  }
+  .file-upload{
+    position: absolute;
+    left:50%;
+    top:18px;
+    .file-upload-text{
+      position: relative;
+      left:-50%;
+      color: #0066cc;
+      font-weight:bold;
+    }
+  }
+}
+img.image-loader{
+	width: 49px;
+	height: 24px;
 }

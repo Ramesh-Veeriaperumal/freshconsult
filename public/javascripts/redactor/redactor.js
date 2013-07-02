@@ -80,7 +80,7 @@ var RLANG = {
 	choose: 'Select Existing',
 	choose_text: 'Showing recent 20 images',
 	or_choose: 'Or choose',
-	drop_file_here: 'Drag and Drop Image file here to upload',
+	drop_file_here: '...or Drop a file here',
 	align_left:	'Align Left (' + ctrlkeyname + shiftkeyname + 'L)',	
 	align_center: 'Align Center (' + ctrlkeyname + shiftkeyname + 'E)',
 	align_right: 'Align Right (' + ctrlkeyname + shiftkeyname + 'R)',
@@ -91,7 +91,7 @@ var RLANG = {
 	anchor: 'Anchor',
 	link_new_tab: 'Open link in new tab',
 	removeFormat: 'Remove formatting (' + ctrlkeyname + '\\)',
-	invalid_image_file: 'Please upload a valid image file',
+	invalid_image_file: 'Error occurred while uploading',
 	confirm_remove_format_for_entire_content: 'Converting the entire content to plain text will remove formatting and inserted items. Are you sure you want to continue?'
 };
 
@@ -146,10 +146,6 @@ var Redactor = function(element, options)
 		mobile: true,
 		air: false,
 		wym: false,
-		convertLinks: true,
-		convertDivs: true,
-
-		autosave: false, // false or url
 		interval: 60, // seconds
 
 		imageGetJson: false, // url (ex. /folder/images.json ) or false
@@ -261,7 +257,12 @@ var Redactor = function(element, options)
 			'</div>' +
 			'<form id="redactorInsertImageForm" method="post" action="" enctype="multipart/form-data">' +
 				'<div id="redactor_tab1" class="redactor_tab">' +
-					'<input type="file" id="redactor_file" name="image[uploaded_data]" accept="image/*" />' +
+					'<div class="custom-file-upload">' +
+						'<div class="file-upload">' +
+							'<span class="file-upload-text">Select a file to upload</span>'+
+						'</div>' +
+						'<input type="file" id="redactor_file" name="image[uploaded_data]" accept="image/*" />' +
+					'</div>'+
 				'</div>' +
 				'<div id="redactor_tab2" class="redactor_tab" style="display: none;">' +
 					'<div id="redactor_image_box"></div>' +
@@ -273,8 +274,8 @@ var Redactor = function(element, options)
 			'</div>' +
 			'<div id="redactor_modal_footer">' +
 				'<span class="redactor_btns_box">' +
-					'<a href="javascript:void(null);" class="uiButton" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
-					'<input type="button" class="uiButton" name="upload" id="redactor_upload_btn" value="' + RLANG.insert + '" />' +
+					'<input type="button" class="btn btn-primary" name="' + RLANG.cancel + '" id="redactor_btn_modal_close" value="' + RLANG.cancel + '" />' +
+					'<input type="button" class="btn btn-primary" name="upload" id="redactor_upload_btn" value="' + RLANG.insert + '" />' +
 				'</span>' +
 			'</div>',
 
@@ -2469,6 +2470,7 @@ Redactor.prototype = {
 				if (new_h > min_h)
 				{
 					$(resize).height(new_h);
+					$(resize).attr('data-height', new_h)
 				}
 				
 				start_x = Math.round(e.pageX - $(this).eq(0).offset().left);
@@ -2852,11 +2854,11 @@ Redactor.prototype = {
 						{
 							url: this.opts.imageUpload,
 							uploadFields: this.opts.uploadFields,
-							success: $.proxy(this.imageUploadCallback, this)
+							success: $.proxy(this.imageUploadCallback, this),
+							ondropCallback: $.proxy(this.insertLoadingAtCaret, this)
 						});
 					}
 				}
-
 				// ajax upload
 				this.uploadInit('redactor_file', { auto: true, url: this.opts.imageUpload, success: $.proxy(this.imageUploadCallback, this)  });
 			}
@@ -2913,7 +2915,7 @@ Redactor.prototype = {
 		}
 	},
 	imageUploadCallback: function(data)
-	{        
+	{   
 		this._imageSet(data);
 	},
 	_imageSet: function(json, link)
@@ -2926,10 +2928,11 @@ Redactor.prototype = {
 			if (link !== true)
 			{
 				data = $.parseJSON(json);
-				if(data.filelink != undefined)		
-					html = '<p><img src="' + data.filelink + '" /></p>';
+				if(data.filelink != undefined)
+					html = '<p><img src="' + data.filelink + '" class= "inline-image" data-id = "' + data.fileid + '" height/></p>';
 				else {
 					alert(RLANG.invalid_image_file);
+					this.$editor.find('img.image-loader').remove()
 					validupload = false;
 				}
 			}
@@ -2938,8 +2941,9 @@ Redactor.prototype = {
 				html = json;
 			}
 			
-			this.execCommand('inserthtml', html);
-		
+			var imageNode = $(html)
+			this.$editor.find('img.image-loader').replaceWith(imageNode)
+	
 			// upload image callback
 			if (link !== true && typeof this.opts.imageUploadCallback === 'function') 
 			{
@@ -2947,7 +2951,6 @@ Redactor.prototype = {
 			}
 		}
 		if (validupload) {
-			this.modalClose();
 			this.observeImages();
 		}
 	},
@@ -3409,7 +3412,12 @@ Redactor.prototype = {
 	
 			this.element.submit();
 		}
-	
+		this.insertLoadingAtCaret();
+	},
+	insertLoadingAtCaret: function(){
+		this.modalClose();	
+		var loadingNode = $('<img src="/images/cdn-ignored/sprites/symbols/preloader.gif" class="image-loader">');
+		this.insertNodeAtCaret(loadingNode.get(0));
 	},
 	uploadLoaded : function()
 	{
@@ -3606,7 +3614,7 @@ $.fn.destroyEditor = function()
 
 $.fn.setFocus = function()
 {
-	this.data('redactor').focus();
+	this.data('redactor').$editor.focus();
 };
 
 $.fn.execCommand = function(cmd, param)
@@ -3658,13 +3666,11 @@ $.fn.execCommand = function(cmd, param)
 			if (!$.browser.msie) 
 			{	
 				this.droparea = $('<div class="redactor_droparea"></div>');
-				this.dropareabox = $('<div class="redactor_dropareabox">' + this.opts.text + '</div>');	
-				this.dropalternative = $('<div class="redactor_dropalternative">' + this.opts.atext + '</div>');
+				this.dropareabox = $('<div class="redactor_dropareabox">' + this.opts.text + '</div>');
 				
 				this.droparea.append(this.dropareabox);
 				
-				this.$el.before(this.droparea);
-				this.$el.before(this.dropalternative);
+				this.$el.parent().after(this.droparea);
 
 				// drag over
 				this.dropareabox.bind('dragover', $.proxy(function() { return this.ondrag(); }, this));
@@ -3674,9 +3680,9 @@ $.fn.execCommand = function(cmd, param)
 		
 				var uploadProgress = $.proxy(function(e) 
 				{ 
-					var percent = parseInt(e.loaded / e.total * 100, 10);
-					this.dropareabox.text('Loading ' + percent + '%');
-					
+					if(this.opts.ondropCallback){
+						this.opts.ondropCallback()
+					}
 				}, this);
 		
 				var xhr = jQuery.ajaxSettings.xhr();

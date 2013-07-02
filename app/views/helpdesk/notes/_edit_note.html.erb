@@ -30,7 +30,8 @@
     <% end %>
 <% end %>
 <% javascript_tag do %>
-	invokeRedactor('<%= "#{@item.id}-body" %>');
+	invokeRedactor('<%= "#{@item.id}-body" %>', 'cnt-reply');
+
 	jQuery(document).ready(function(){
 		jQuery("#Edit_Note_<%= @item.id %>")
 			.validate();
