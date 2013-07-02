@@ -155,7 +155,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def changed_condition?
-    group_id_changed? || source_changed? || has_product_changed?
+    group_id_changed? || source_changed? || has_product_changed? || ticket_type_changed?
   end
 
   def has_product_changed?
@@ -177,7 +177,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
       set_user_time_zone if User.current
       RAILS_DEFAULT_LOGGER.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
-    elsif priority_changed? || changed_condition? || status_changed? || group_id_changed? || ticket_status_changed
+    elsif priority_changed? || changed_condition? || status_changed? || ticket_status_changed
 
       set_time_zone
       sla_detail = self.sla_policy.sla_details.find(:first, :conditions => {:priority => priority})

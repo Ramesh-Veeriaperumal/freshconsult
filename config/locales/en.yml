@@ -2002,6 +2002,7 @@ en:
     group_id_placeholder: "Enter Group names"
     product_id_placeholder: "Enter Product names"
     source_placeholder: "Enter Source names"
+    ticket_type_placeholder: "Enter Type names"
     agent_placeholder: Pick Agents to escalate to...
     applicable_info: Select at least one trigger condition.
     disabled_old_policy: Set a trigger condition to enable this SLA policy.
