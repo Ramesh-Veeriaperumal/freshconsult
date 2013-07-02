@@ -18,7 +18,7 @@ class PortalDrop < BaseDrop
 
   # Portal branding related information
   def logo_url
-    @logo_url ||= MemcacheKeys.fetch(["v1","portal","logo_href",source]) do
+    @logo_url ||= MemcacheKeys.fetch(["v4","portal","logo_href",source]) do
       source.logo.present? ? source.logo.content.url(:logo) : "/images/logo.png"
     end
   end
@@ -120,7 +120,7 @@ class PortalDrop < BaseDrop
   end
 
   def recent_popular_topics
-    @recent_popular_topics ||= source.recent_popular_topics(portal_user, DateTime.now - 30.days)
+    @recent_popular_topics ||= source.recent_popular_topics(portal_user, 30.days.ago)
   end
 
   def topics_count

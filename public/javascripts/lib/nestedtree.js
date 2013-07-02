@@ -122,7 +122,7 @@ var NestedField = Class.create({
   getSubcategoryEscaped: function(category_key){
       _subcategories = [];
       if(this.tree.get(category_key) && this.tree.get(category_key).children)
-        this.tree.get(category_key).children.each(function(o){ _subcategories.push("<option value="+escapeHtml(o.value.id)+">"+escapeHtml(o.key)+"</option>") });          
+        this.tree.get(category_key).children.each(function(o){ _subcategories.push("<option value="+o.value.id+">"+o.key+"</option>") });          
       if(!_subcategories.first()) _subcategories = ["<option value='0'>"+this._blank+"</option>"];
 
       //console.log("subcategory: "+_subcategories);
@@ -161,10 +161,19 @@ var NestedField = Class.create({
       //console.log(this.tree.get(category_key).children.toJSON());
       return ((category_key && category_key != "-1") ? this.tree.get(category_key).children : $H()) || $H()
   },
+  
+  getSubcategoryListWithNone: function(category_key){
+      return ( category_key != "-1" ? this.tree.get(category_key).children : $H()) || $H()
+  },
 
   getItemsList: function(category_key, subcategory_key){          
       //console.log(this.tree.get(category_key) + "  " + subcategory_key);
       return ((subcategory_key && subcategory_key != "-1" && this.tree.get(category_key)) ? this.tree.get(category_key).get(subcategory_key).children : $H()) || $H();
+  },
+  
+  getItemsListWithNone: function(category_key, subcategory_key){          
+      return ((subcategory_key != "-1" && this.tree.get(category_key)!='-1') ? 
+              ( subcategory_key ? this.tree.get(category_key).get(subcategory_key).children : $H()) : $H() ) || $H();
   },
 
   toString: function(){

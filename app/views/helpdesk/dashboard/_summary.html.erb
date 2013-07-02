@@ -1,48 +1,46 @@
-<% cache(["v1","dashboardsummary",current_user], :expires_in => 5.minutes) do %>
-	<div id="TicketSummary">
-		<%= content_tag :h3, t(".title"),:class => "title" %>
-		<ul class="summary clearfix">  
-		  <li>
-		  	<a class="overdue" href="/helpdesk/tickets/filter/overdue" data-pjax="#body-container"
-		  		data-parallel-url = "/helpdesk/tickets/filter_options?filter_name=overdue" data-parallel-placeholder = "#ticket-leftFilter">
-					<%= content_tag :span, t(".overdue") %>
-					<h4><%= filter_count(:overdue)%></h4>
-				</a>
-		  </li>
-		  <%if (open_ticket_count = filter_count(:open)) %>
-		  <li>
-		     <a href="/helpdesk/tickets/filter/open" data-pjax="#body-container"
-		     		data-parallel-url = "/helpdesk/tickets/filter_options?filter_name=open" data-parallel-placeholder = "#ticket-leftFilter">
-					<%= content_tag :span, t(".open") %>
-			   	<h4><%= open_ticket_count %></h4>
-		     </a>
-		  </li>
-		  <% end %>
-		  <% if (on_hold_ticket_count = filter_count(:on_hold)) %>
-		  <li>
-		     <a href="/helpdesk/tickets/filter/on_hold" data-pjax="#body-container"
-		     data-parallel-url = "/helpdesk/tickets/filter_options?filter_name=on_hold" data-parallel-placeholder = "#ticket-leftFilter">
-					<%= content_tag :span, t(".on_hold") %>
-			   	<h4><%= on_hold_ticket_count %></h4>
-		     </a>
-		  </li>
-		  <% end %>
-		  <% if (due_today_ticket_count = filter_count(:due_today)) %>
-		  <li>
-		    <a href="/helpdesk/tickets/filter/due_today" data-pjax="#body-container"
-		    data-parallel-url = "/helpdesk/tickets/filter_options?filter_name=due_today" data-parallel-placeholder = "#ticket-leftFilter">
-				 <%= content_tag :span, t(".due_today") %>
-			   <h4><%= due_today_ticket_count%></h4>
-			  </a>
-		  </li>
-		  <% end %>
-		  <li class="last">
-		      <a href="/helpdesk/tickets/filter/new" data-pjax="#body-container"
-		      data-parallel-url = "/helpdesk/tickets/filter_options?filter_name=new" data-parallel-placeholder = "#ticket-leftFilter">
-	 				 <%= content_tag :span, t(".unassigned") %>
-				 <h4><%= filter_count(:new)%></h4>
-			  </a>
-		  </li>
-		</ul>
-	</div>
-<%end%>
+<div id="TicketSummary">
+	<%= content_tag :h3, t(".title"),:class => "title" %>
+	<ul class="summary clearfix">  
+	  <li>
+	  	<a class="overdue" href="/helpdesk/tickets/filter/overdue" data-pjax="#body-container"
+	  		data-parallel-url = "/helpdesk/tickets/filter_options?filter_name=overdue" data-parallel-placeholder = "#ticket-leftFilter">
+				<%= content_tag :span, t(".overdue") %>
+				<h4><%= filter_count(:overdue)%></h4>
+			</a>
+	  </li>
+	  <%if (open_ticket_count = filter_count(:open)) %>
+	  <li>
+	     <a href="/helpdesk/tickets/filter/open" data-pjax="#body-container"
+	     		data-parallel-url = "/helpdesk/tickets/filter_options?filter_name=open" data-parallel-placeholder = "#ticket-leftFilter">
+				<%= content_tag :span, t(".open") %>
+		   	<h4><%= open_ticket_count %></h4>
+	     </a>
+	  </li>
+	  <% end %>
+	  <% if (on_hold_ticket_count = filter_count(:on_hold)) %>
+	  <li>
+	     <a href="/helpdesk/tickets/filter/on_hold" data-pjax="#body-container"
+	     data-parallel-url = "/helpdesk/tickets/filter_options?filter_name=on_hold" data-parallel-placeholder = "#ticket-leftFilter">
+				<%= content_tag :span, t(".on_hold") %>
+		   	<h4><%= on_hold_ticket_count %></h4>
+	     </a>
+	  </li>
+	  <% end %>
+	  <% if (due_today_ticket_count = filter_count(:due_today)) %>
+	  <li>
+	    <a href="/helpdesk/tickets/filter/due_today" data-pjax="#body-container"
+	    data-parallel-url = "/helpdesk/tickets/filter_options?filter_name=due_today" data-parallel-placeholder = "#ticket-leftFilter">
+			 <%= content_tag :span, t(".due_today") %>
+		   <h4><%= due_today_ticket_count%></h4>
+		  </a>
+	  </li>
+	  <% end %>
+	  <li class="last">
+	      <a href="/helpdesk/tickets/filter/new" data-pjax="#body-container"
+	      data-parallel-url = "/helpdesk/tickets/filter_options?filter_name=new" data-parallel-placeholder = "#ticket-leftFilter">
+ 				 <%= content_tag :span, t(".unassigned") %>
+			 <h4><%= filter_count(:new)%></h4>
+		  </a>
+	  </li>
+	</ul>
+</div>

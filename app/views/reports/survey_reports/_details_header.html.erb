@@ -15,7 +15,7 @@ date_range = params[:date_range].blank? ? "#{(Time.zone.now.ago 30.day).strftime
         <li class="first active report-grid">
             <% link_title = "<span class='tab-text top-p'>All ("+content[:total].to_s+")</span>" %>
             <%= link_to_remote link_title,{:url => {:action =>'refresh_details', :entity_id =>params[:entity_id], :category=>params[:category], 
-                     :date_range => date_range},:update => "report_feedback",:loading => "jQuery('#report_feedback').html('<div class=\"loading-box\"></div>');"}, {:class => "all_link",:id=>"PagesTab",:href=>"#Pages"}  %>            
+                     :date_range => date_range},:update => "report_feedback",:loading => "jQuery('#report_feedback').html('<div class=\"sloading loading-block loading-small\"></div>');"}, {:class => "all_link",:id=>"PagesTab",:href=>"#Pages"}  %>            
         </li>
         <li class="tab-width">
             
@@ -23,7 +23,7 @@ date_range = params[:date_range].blank? ? "#{(Time.zone.now.ago 30.day).strftime
                  (((content[:happy]*100)/content[:total]).to_f.round).to_s + "%" +
                  "<p class='tab-bottom'>"+content[:happy].to_s+" responses</p></span>" %> 
                 <%= link_to_remote link_title,{:url => {:action =>'refresh_details', :entity_id =>params[:entity_id], :category=>params[:category],
-                    :date_range => date_range, :rating => Survey::HAPPY},:update => "report_feedback",:loading => "jQuery('#report_feedback').html('<div class=\"loading-box\"></div>');"}, {:class => "happy_link",:id=>"PagesTab",:href=>"#Pages"}  %> 
+                    :date_range => date_range, :rating => Survey::HAPPY},:update => "report_feedback",:loading => "jQuery('#report_feedback').html('<div class=\"sloading loading-block loading-small\"></div>');"}, {:class => "happy_link",:id=>"PagesTab",:href=>"#Pages"}  %> 
         </li>
         <li class="tab-width">
             
@@ -31,7 +31,7 @@ date_range = params[:date_range].blank? ? "#{(Time.zone.now.ago 30.day).strftime
                  (((content[:neutral]*100)/content[:total]).to_f.round).to_s + "%" +
                  "<p class='tab-bottom'>"+content[:neutral].to_s+" responses</p></span>" %>             
             <%= link_to_remote link_title,{:url => {:action =>'refresh_details', :entity_id =>params[:entity_id], :category=>params[:category],
-                     :date_range => date_range, :rating => Survey::NEUTRAL},:update => "report_feedback",:loading => "jQuery('#report_feedback').html('<div class=\"loading-box\"></div>');"}, {:class => "neutral_link",:id=>"PagesTab",:href=>"#Pages"}  %>
+                     :date_range => date_range, :rating => Survey::NEUTRAL},:update => "report_feedback",:loading => "jQuery('#report_feedback').html('<div class=\"sloading loading-block loading-small\"></div>');"}, {:class => "neutral_link",:id=>"PagesTab",:href=>"#Pages"}  %>
         </li>
         <li class="tab-width">
             
@@ -39,7 +39,7 @@ date_range = params[:date_range].blank? ? "#{(Time.zone.now.ago 30.day).strftime
                  (((content[:unhappy]*100)/content[:total]).to_f.round).to_s + "%" +
                  "<p class='tab-bottom'>"+content[:unhappy].to_s+" responses</p></span>" %>            
             <%= link_to_remote link_title,{:url => {:action =>'refresh_details', :entity_id =>params[:entity_id], :category=>params[:category],
-                :date_range => date_range, :rating => Survey::UNHAPPY},:update => "report_feedback",:loading => "jQuery('#report_feedback').html('<div class=\"loading-box\"></div>');"}, {:class => "unhappy_link",:id=>"PagesTab",:href=>"#Pages"}  %>
+                :date_range => date_range, :rating => Survey::UNHAPPY},:update => "report_feedback",:loading => "jQuery('#report_feedback').html('<div class=\"sloading loading-block loading-small\"></div>');"}, {:class => "unhappy_link",:id=>"PagesTab",:href=>"#Pages"}  %>
         </li>
     </ul> 
 </div>

@@ -5,8 +5,8 @@ gem "rake", "0.8.7"
 gem "rack", "~> 1.1.6"
 gem "rails","2.3.18"
 
-gem 'json', '~> 1.7.7'
-gem "mysql"
+gem "json", "~> 1.5.5"
+gem "mysql", "2.8.1"
 gem "i18n", "0.4.2"
 
 gem "RedCloth", "4.2.9"
@@ -27,6 +27,7 @@ gem "omniauth-salesforce"
 gem "omniauth-mailchimp", "~> 1.0.3"
 gem "omniauth-constantcontact2", "~> 1.0.4"
 gem "nori", "1.1.4"
+gem "google-api-client", "~> 0.6.3"
 
 gem "soap4r-ruby1.9", "~> 2.0.5", :platforms => :ruby_19
 gem "jira4r", "0.3.0"
@@ -41,6 +42,7 @@ gem "rubyzip", "0.9.4" , :require => "zip/zip"
 
 gem "http_accept_language", "1.0.1"
 
+gem "riddle", "1.2.2"
 gem "thinking-sphinx", "1.4.3", :require => "thinking_sphinx"
 gem "delayed_job", "1.8.4"
 #gem "ts-delayed-delta", "1.1.0", :require => "thinking_sphinx/deltas/delayed_delta"
@@ -73,21 +75,21 @@ gem "resque-status", "0.4.1"
 gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
 gem 'rforce'
 
-gem "seamless_database_pool", :git => "git://github.com/freshdesk/seamless_database_pool.git"
-gem 'after_commit', :git => "git://github.com/freshdesk/after_commit.git"
+gem 'after_commit', "1.0.11"
+
 gem 'chargebee', "~> 1.1.7"
 
 gem 'memcache-client', '1.8.5'
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
-gem 'tire', :git => "git://github.com/freshdesk/tire.git"
 gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
 gem "rinku", :git => "git://github.com/freshdesk/rinku.git"
 
 gem "people", '0.2.1' #https://github.com/mericson/people/tree/master/lib
 gem "useragent", "~> 0.4.16"
+
+gem "active_record_shards","2.7.0", :require => 'active_record_shards'
 gem "rack-throttle", "~> 0.3.0"
 gem "static_model", "~> 1.0.4"
-gem "faraday","0.8"
 
 gem 'clockwork', '0.4.1'
 gem "wkhtmltopdf-binary", "~> 0.9.9.1"
@@ -95,11 +97,17 @@ gem "wicked_pdf", "~> 0.9.2"
 gem "pg"
 
 gem "cloudfront_asset_host", :git => "git://github.com/freshdesk/cloudfront_asset_host.git"
-
 gem "erubis", "2.7.0"
 gem "rails_xss", "0.4.0"
 
-group :development,:test do
+group :production,:test,:staging do
+ gem 'tire', :git => "git://github.com/freshdesk/tire.git"
+end
+
+gem "freshdesk_authority", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/freshdesk_authority-0.1"
+gem "active_presenter", "1.4.0"
+
+group :development,:test do   
    gem "forgery","0.5.0"
    gem "factory_girl", "1.2.3" 
    gem "mongrel",  '>= 1.2.0.pre2'
@@ -110,13 +118,18 @@ group :test do
    gem "rspec-rails", "1.3.3"
    gem "spork", "~> 0.8.0"
    gem "mocha", "~> 0.13.3"
+   gem "rr", "1.1.0"
+   gem "ZenTest", "4.4.1"
+   gem "autotest-fsevent", "0.1.1"
+   gem "autotest-growl", "0.2.0"
+   gem "autotest-rails", "4.1.0"
 end
 
 group :assets do
-	gem "sass", "3.2.1"
-	gem "compass-rails"
-	# Portal grid system is done using susy grids
-	gem "susy" 
+   gem "sass", "3.2.1"
+   gem "compass-rails"
+   # Portal grid system is done using susy grids
+   gem "susy" 
    # To optimize sprite generation
    gem "oily_png"
 end

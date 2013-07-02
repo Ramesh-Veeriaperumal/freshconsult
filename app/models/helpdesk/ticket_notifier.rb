@@ -1,7 +1,7 @@
 # encoding: utf-8
 class  Helpdesk::TicketNotifier < ActionMailer::Base
 
-  layout "email_font"
+  layout "email_font", :except => [:reply]
   
   def self.notify_by_email(notification_type, ticket, comment = nil)
     e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
@@ -98,12 +98,20 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     headers       "Reply-to" => "#{note.from_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     sent_on       Time.now
     content_type  "multipart/mixed"
-  
-    part "text/html" do |html|
-      html.body   render_message("reply",:ticket => ticket, :body => note.body_html, :note => note, :dropboxes=>note.dropboxes,
-                  :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]),
-                  :include_quoted_text => options[:quoted_text]
-                  )
+
+    part :content_type => "multipart/alternative" do |alt|
+      alt.part "text/plain" do |plain|
+        plain.body   render_message("reply.text.plain.erb",:ticket => ticket, :body => note.full_text, :note => note, :dropboxes=>note.dropboxes,
+                    :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]),
+                    :include_quoted_text => options[:quoted_text]
+                    )
+      end
+      alt.part "text/html" do |html|
+        html.body   render_message("reply.text.html.erb",:ticket => ticket, :body => note.full_text_html, :note => note, :dropboxes=>note.dropboxes,
+                    :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]),
+                    :include_quoted_text => options[:quoted_text]
+                    )
+      end
     end
 
     note.attachments.each do |a|
@@ -124,7 +132,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "multipart/mixed"
 
     part "text/html" do |html|
-      html.body   render_message("forward",:ticket => ticket, :body => note.body_html,:dropboxes=>note.dropboxes)
+      html.body   render_message("forward",:ticket => ticket, :body => note.full_text_html,:dropboxes=>note.dropboxes)
     end
 
     note.attachments.each do |a|
@@ -163,8 +171,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "text/html"
   end
   
-  def email_to_requester(ticket, content)
-    subject       formatted_subject(ticket)
+  def email_to_requester(ticket, content, sub=nil)
+    subject       (sub.blank? ? formatted_subject(ticket) : sub)
     recipients    ticket.requester.email
     from          ticket.friendly_reply_email
     body          content
@@ -173,8 +181,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     content_type  "text/html"
   end
   
-  def internal_email(ticket, receips, content)
-    subject       formatted_subject(ticket)
+  def internal_email(ticket, receips, content, sub=nil)
+    subject       (sub.blank? ? formatted_subject(ticket) : sub)
     recipients    receips
     from          ticket.friendly_reply_email
     body          content

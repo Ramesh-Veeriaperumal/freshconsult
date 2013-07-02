@@ -8,7 +8,7 @@ free_plan_agts: 1
 base_domain: 
     development: freshdesk-dev.com
     production: freshdesk.com
-    staging: freshitil.com
+    staging: freshpo.com
     test: freshpo.com
 
 demo_site:
@@ -53,18 +53,18 @@ marketo:
   development:
     access_key: "freshdesk1_239416885003D634EEFB51"
     secret_key: "987509605187632255000033DD663356EEFF59C93D90"
-    api_subdomain: "na-b"
-    api_version: "1_5"
+    api_subdomain: "626-CPN-682"
+    api_version: "2_1"
   production:
     access_key: "freshdesk1_239416885003D634EEFB51"
     secret_key: "987509605187632255000033DD663356EEFF59C93D90"
-    api_subdomain: "na-b"
-    api_version: "1_5"
+    api_subdomain: "626-CPN-682"
+    api_version: "2_1"
   staging:
     access_key: "freshdesk1_239416885003D634EEFB51"
     secret_key: "987509605187632255000033DD663356EEFF59C93D90"
-    api_subdomain: "na-b"
-    api_version: "1_5"
+    api_subdomain: "626-CPN-682"
+    api_version: "2_1"
 
 chargebee:
   development:

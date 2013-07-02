@@ -32,7 +32,7 @@ class TicketFieldsController < Admin::AdminController
     end 
       }
       format.xml  { render :xml => @ticket_fields.to_xml } 
-      format.json  { render :json => Hash.from_xml(@ticket_fields.to_xml) } 
+      format.json  { render :json =>current_account.ticket_fields } 
     end
   end
 
@@ -53,18 +53,18 @@ class TicketFieldsController < Admin::AdminController
         send("#{action}_field", f_d) 
       end
     end
-    
+
     err_str = ""
     @invalid_fields.each do |tf|
       tf.errors.each { |attr,msg| err_str << " #{tf.label} : #{msg} <br />"  }
     end
-     
+
     unless err_str.empty?
       flash[:error] = err_str
     else
       flash[:notice] = t(:'flash.custom_fields.update.success')
     end
-     
+
     redirect_to :action => :index
   end
   

@@ -9,9 +9,11 @@ class BusinessCalendar < ActiveRecord::Base
   #for now, a sporadically structured hash is used.
   #can revisit this data model later...
   belongs_to :account
-  before_create :set_default_version 
-  attr_accessible :holiday_data,:business_time_data,:version
-  validate_on_update :valid_working_hours?
+  before_create :set_default_version, :valid_working_hours?
+  attr_accessible :holiday_data,:business_time_data,:version,:is_default,:name,:description,:time_zone
+  validates_presence_of :time_zone, :name
+
+  named_scope :default, :conditions => { :is_default => true }
 
   #needed for upgrading business_time_data - Abhinav
   BUSINESS_TIME_INFO = [:fullweek, :weekdays] 
@@ -47,31 +49,52 @@ class BusinessCalendar < ActiveRecord::Base
     :fullweek => false
   }  
   def beginning_of_workday day
-    business_time_data[:working_hours][day][:beginning_of_workday]
+    business_hour_data[:working_hours][day][:beginning_of_workday]
   end
   
   def end_of_workday day
-    business_time_data[:working_hours][day][:end_of_workday]
+    business_hour_data[:working_hours][day][:end_of_workday]
   end
 
   def weekdays
-    business_time_data[:weekdays]
+    business_hour_data[:weekdays]
   end
   
   def fullweek
-    business_time_data[:fullweek]
+    business_hour_data[:fullweek]
   end
   
   def holidays    
-    holiday_data.nil? ? [] : holiday_data.map {|hol| ("#{hol[0]}, #{Time.zone.now.year}").to_date}      
+    return [] if holiday_data.nil?
+    calendar_holidays =[]
+    holiday_data.each do |holiday|
+      begin
+        calendar_holidays << Date.parse(holiday[0])
+      rescue
+        #dont do anything, just skip the invalid holiday
+        next
+      end
+    end
+    calendar_holidays
   end
 
   def working_hours 
-    business_time_data[:working_hours]
+    business_hour_data[:working_hours]
   end
   
   def self.config
-    Account.current ? Account.current.business_calendar : BusinessTime::Config
+    group = Thread.current[TicketConstants::GROUP_THREAD]
+    if Account.current.features?(:multiple_business_hours) && group && group.business_calendar
+      group.business_calendar
+    elsif Account.current 
+      Account.current.business_calendar.default.first
+    else
+      BusinessTime::Config
+    end
+  end
+
+  def business_hour_data
+    business_time_data || DEFAULT_SEED_DATA
   end
 
   #migration code starts here..
@@ -97,11 +120,13 @@ class BusinessCalendar < ActiveRecord::Base
   private 
 
     def valid_working_hours?
-      if (version != 1)
+      if (version != 1) && !weekdays.blank?
         weekdays.each do |n|
           errors.add_to_base("Enter a valid Time") if (Time.zone.parse(beginning_of_workday(n))  >
              Time.zone.parse(end_of_workday(n)))
         end
+      else
+        errors.add_to_base("Atleast one working day must be checked")
       end
     end
 

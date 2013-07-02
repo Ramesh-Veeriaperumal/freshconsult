@@ -1,10 +1,8 @@
 module Reports::ArchiveDataMigration
-	include RedisKeys
 
 	START_DATE = "2013-01-01"
 
 	def data_migration
-		SeamlessDatabasePool.use_persistent_read_connection do
 			Account.active_accounts.find_in_batches(:batch_size => 500) do |accounts|
 				accounts.each do |account|
 					Time.zone = account.time_zone
@@ -16,7 +14,6 @@ module Reports::ArchiveDataMigration
 					end
 				end
 			end
-		end
 	end
 
 end

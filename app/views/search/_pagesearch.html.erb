@@ -17,20 +17,20 @@
 									success: function(data){
 									 			jQuery("#search_results").show();
 												jQuery("#search_results").html(data);
-												jQuery("#PageSearch").removeClass("loading");
+												jQuery("#PageSearch").removeClass("sloading loading-small");
 									}});
 								};
 				
 	jQuery("#PageSearch").bind("keyup", function(ev){
 		var searchString = this.value.replace(/^\s+|\s+$/g, "");
 		if(searchString != '' && searchString.length > 1){
-			jQuery(this).addClass("loading");
+			jQuery(this).parent().addClass("sloading loading-small loading-right");
 			delay(function(){
 		    	callbackToPageSearch(searchString);
 			}, 200 ); 
 		}else{
 			jQuery("#search_results").hide()
-			jQuery(this).removeClass("loading");				
+			jQuery(this).parent().removeClass("sloading loading-small loading-right");				
 		}
 	});
 	jQuery('.page-search').bind("submit", function(ev){

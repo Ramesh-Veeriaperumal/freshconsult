@@ -3,9 +3,7 @@
   <div class="wrapper">
 	<div class="brand">
 	<% link_to (portal_pref(current_portal, :logo_link).empty?) ? "/home" : portal_pref(current_portal, :logo_link), :class => "logo" do %>
-		<% cache(["v2","portal","logo",current_portal]) do %>
-	  	<%= image_tag (current_portal.logo.nil? ? "/images/logo.png?721013" : current_portal.logo.content.url(:logo)) %>
-	  <% end %>
+		<%=logo_url%>
 	<% end %>      
 	<%= link_to(current_portal.name, "/home", :class => "logo_text") %>
 	<%= link_to_function("Switch to mobile version", 
@@ -44,13 +42,10 @@
 			<span><%= truncate(h(current_user.name), :length => 30) %></span>
 		</div>
 		<%= link_to "<i class='header-arrow-right'></i> #{t('profile_settings')}".html_safe, edit_profile_path(current_user), :class => "link" %>
-		<% if is_assumed_user? %>    
-			<span class="seperator"></span>
+		<% if is_assumed_user? %>
 			<%= link_to t('revert_identity_link_msg').html_safe, revert_identity_users_path, :class => "link" %>			
-  		<% elsif !is_assumed_user? && (current_user.admin? || current_user.account_admin? || current_user.supervisor?) %>
-  			<% @allowed_to_assume = current_account.users.technicians.visible.allowed_to_assume(current_user) %>
-  			<% unless @allowed_to_assume.blank? %>
-				<span class="seperator"></span>
+		<% elsif privilege?(:manage_users) && !current_user.agent.assumable_agents.blank? %>  			
+		<span class="seperator"></span>
 				<div class="info">   	
 					<i class='header-arrow-right  top-margin'></i>				
 					<input type="hidden" id="assumed_select_id" class="header-agent-select"
@@ -61,8 +56,7 @@
 					  }
 					<%end%>
 				</div>
-			<% end %>
-		<% end %>                      
+		<% end %>                    
 		<span class="seperator"></span>			
 		<%= link_to "<i class='header-arrow-right'></i> #{t('header.signout')}".html_safe, logout_path, :class => "link" %>
 	</div>                                                             
@@ -72,8 +66,13 @@
 		<div class="wrapper">
 			 <div class="top_nav"> 	
 				<div class="nav_right">
+<<<<<<< HEAD
 					<% if current_user and permission?(:manage_tickets) then %>
 						<%= link_to( "<span></span> #{t('header.new_ticket')}".html_safe, new_helpdesk_ticket_path, :class => "new_ticket" ) %>
+=======
+					<% if privilege?(:manage_tickets) then %>
+						<%= link_to( "<span></span> #{t('header.new_ticket')}", new_helpdesk_ticket_path, :class => "new_ticket" ) %>
+>>>>>>> master
 					<% else %>
 						<%= link_to( "<span></span> #{t('header.submit_a_ticket')}".html_safe, new_support_ticket_path, :class => "new_ticket" ) if allowed_in_portal?(:anonymous_tickets) %>
 					<% end %>
@@ -115,8 +114,8 @@
 	jQuery(document).ready(function() {
 	<%
 		assume_agent = []
-		if current_user
-			@allowed_to_assume = current_account.users.technicians.visible.allowed_to_assume(current_user) 
+		if privilege?(:manage_users)
+			@allowed_to_assume = current_user.agent.assumable_agents
 			
 			if @allowed_to_assume
 				@allowed_to_assume.each do |req|

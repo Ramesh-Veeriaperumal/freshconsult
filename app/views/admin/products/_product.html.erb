@@ -4,7 +4,7 @@
         product.portal.logo.content.url(:logo) : "logo-preview.png", :class => "portal-logo" %>
   </td>
   <td class="portal-text">
-    <h4 class="title"><%= link_to product.name, edit_admin_product_path(product) %></h4>
+    <h4 class="title"><%= link_to h(product.name), edit_admin_product_path(product) %></h4>
   </td>  
   <td class="channel">
     <div class="channel-text">

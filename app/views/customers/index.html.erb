@@ -2,6 +2,7 @@
 <%= include_cloudfront_js :pattern %>
 <div id="customers-page">
 	<%content_for :sidebar do%>
+		<% if privilege?(:manage_contacts) %>
 		<div class="sidepanel">
 		<h3 class="title"><%=t('company.quick_company')%></h3> 
 		<% form_tag :action=> :quick, :method =>:post do %> 
@@ -14,6 +15,7 @@
 	  	<div class="button-container"><%= submit_tag t('create'), :class => "uiButton small" %></div>
 		<% end %>
 		</div>
+		<% end %>
 	<%end%> 
 	<div id="cust-list" class="cust_list_table">
 		<%= render(:partial => '/shared/companyheader', :locals => {:type => "company", :path => customers_path}) %>
@@ -26,7 +28,9 @@
 						<% @customers.each do |customer| %>
 							<tr>
 								<td class="selector-box">
-									<%= check_box_tag('ids[]', customer.to_param, false, :class => 'customers_selector') %>
+                  <% if privilege?(:delete_contact) %>
+									  <%= check_box_tag('ids[]', customer.to_param, false, :class => 'customers_selector') %>
+                  <% end %>
 								</td>
 								<td class="name">
 									<p class="text-info">
@@ -42,10 +46,14 @@
 								</td>
 								<td>
 									<div class="item_actions" align="right">
+                    <% if privilege?(:manage_contacts) %>
 								    	<%= link_to(t('edit').html_safe, edit_customer_path(customer), :class => "btn btn-mini") %>
+                    <% end %>
+                    <% if privilege?(:delete_contact) %>
 								    	<%= link_to "<i class='icon-trash'></i>".html_safe, {:controller => "customers", :action => "destroy", :id => customer}, :confirm =>  
 								    		"#{t('company.info11')} #{h(customer.name)}?\n#{t('company.info10')}", 
 								    		:method => 'delete', :class => "btn btn-mini" %>
+                    <% end %>
 									</div> 
 								</td>
 							</tr>

@@ -1,17 +1,18 @@
 <% @ticket ||= current_account.tickets.new %>
+<% @ticket.build_ticket_body %>
 <% @ticket.email = current_user.email if current_user %>
 <% form_for @ticket, :url => support_tickets_path, :html => { :multipart => true, 
     :class => "form-portal ticket-form", :rel => "validate" } do |f| %>
   <%= f.error_messages %>
   <% current_portal.customer_editable_ticket_fields.each do |field| %>
     <div class="control-group">
-      <%= ticket_field_container :helpdesk_ticket, field %>
+      <%= ticket_field_container f,:helpdesk_ticket, field %>
     </div>
   <% end %>
      
   <% if feature?(:captcha) && !logged_in? %>
     <div class="control-group">
-        <%= content_tag( :label, t('ticket.verify_human'), :class => "control-label" ) %>
+        <%= content_tag ( :label, t('ticket.verify_human'), :class => "control-label" ) %>
         <div class="controls recaptcha-control">
           <%= recaptcha_tags :display => { :theme => "white" }, :ssl => current_account.ssl_enabled? %>
         </div>
@@ -39,15 +40,17 @@
                   jQuery( "<li>" )
                     //.append('<span class="label label-small label-light ">'+ item.group +'</span>')
                     .append("<a href='"+item.url+"'>" + item.title + "</a> ")                    
-                    .append('<div>'+ item.desc +'</div>')
-                    .addClass(item.type.toLowerCase()+'-item')
+                    .append('<p>'+ item.desc +'</p>')
+                    //.addClass(item.type.toLowerCase()+'-item')
                     .appendTo( search_items )
                 })
                 if(data.length > 0){
                   jQuery("#new-ticket-search")
-                    .html(search_items).show()
+                    .html(search_items)
+                    .prepend("<h4>Related articles...</h4>")
+                    .show()
                 }
-                jQuery("#helpdesk_ticket_subject").removeClass("loading-right");
+                jQuery("#helpdesk_ticket_subject").removeClass("sloading loading-small loading-right");
               }
             });
           }
@@ -55,15 +58,15 @@
           jQuery("#helpdesk_ticket_subject").live("blur", function(ev){
               var searchString = this.value.replace(/^\s+|\s+$/g, "");
               if(searchString != '' && searchString.length > 1){
-                jQuery(this).addClass("loading-right");
+                jQuery(this).addClass("sloading loading-small loading-right");
                 callbackToSolutionSearch(searchString);
               }else{
-                jQuery(this).removeClass("loading-right");        
+                jQuery(this).removeClass("sloading loading-small loading-right");        
               }
           });
       <% end %>
       if( !isMobile.any() ){
-        invokeRedactor('helpdesk_ticket_description_html');
+        invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html');
       }
     }); 
   })(jQuery);

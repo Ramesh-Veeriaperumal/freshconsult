@@ -10,11 +10,13 @@ require 'oauth/request_proxy/action_controller_request'
 require 'oauth/signature/rsa/sha1'
 require 'openssl'
 
-include RedisKeys
-  
-  before_filter :set_mobile, :only => [:create, :destroy, :new]
-  skip_before_filter :require_user, :only => [:new, :sso_login, :opensocial_google, :show, :create,
-                                              :signup_complete, :openid_google, :google_auth_completed]
+
+include Redis::RedisKeys
+include Redis::TicketsRedis
+
+  skip_before_filter :check_privilege  
+  before_filter :set_mobile, :only => [:create, :destroy]
+  skip_before_filter :require_user, :except => :destroy
   skip_before_filter :check_account_state
   before_filter :check_sso_params, :only => :sso_login
   skip_before_filter :check_day_pass_usage
@@ -155,7 +157,7 @@ include RedisKeys
     
     @user_session = current_account.user_sessions.new(@current_user)
     if @user_session.save
-      @current_user.deliver_account_admin_activation
+      @current_user.deliver_admin_activation
       #SubscriptionNotifier.send_later(:deliver_welcome, current_account)
       flash[:notice] = t('signup_complete_activate_info')
       redirect_to admin_getting_started_index_path  
@@ -238,7 +240,7 @@ include RedisKeys
 
           if gmail_gadget_temp_token.blank?
             flash[:notice] = t(:'flash.g_app.authentication_success')        
-            if (@current_user.account_admin? && @current_user.first_login?)
+            if (@current_user.first_login? && @current_user.privilege?(:manage_account))
                redirect_to admin_getting_started_index_path
             else
               redirect_back_or_default('/')            
@@ -289,7 +291,7 @@ include RedisKeys
     end
 
     def remove_old_filters
-      remove_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session.session_id})
+      remove_tickets_redis_key(HELPDESK_TICKET_FILTERS % {:account_id => current_account.id, :user_id => current_user.id, :session_id => session.session_id})
     end
 
     def check_sso_params
@@ -319,7 +321,7 @@ include RedisKeys
       @contact = account.users.new
       @contact.name = options[:name] unless options[:name].blank? 
       @contact.email = email
-      @contact.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
+      @contact.helpdesk_agent = false
       @contact.language = current_portal.language
       return @contact
     end

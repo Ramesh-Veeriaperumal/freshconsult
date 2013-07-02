@@ -25,17 +25,22 @@ class Va::Handlers::NestedField < Va::RuleHandler
   end
 
   def filter_query
-    query_conditions = send("filter_query_#{condition.operator}", condition.key, value)
+    query_conditions = send("filter_query_#{condition.operator}", condition.key, (query_value value))
     (nested_rules || []).each do |nested_rule|
-      query_condition = send("filter_query_#{condition.operator}", nested_rule[:name], nested_rule[:value])
+      query_condition = send("filter_query_#{condition.operator}", nested_rule[:name], (query_value nested_rule[:value]))
       query_conditions = "#{query_conditions} and #{query_condition}"
     end
     ["(#{query_conditions})"]
   end
 
   private
+
+    def query_value value
+      value.empty? ? 'null' : "'#{value}'"
+    end
+
     def is(evaluate_on_value, field_value)
-      evaluate_on_value && evaluate_on_value.casecmp(field_value.to_s) == 0
+      evaluate_on_value.to_s.casecmp(field_value.to_s) == 0
     end
 
     def is_not(evaluate_on_value, field_value)
@@ -43,10 +48,18 @@ class Va::Handlers::NestedField < Va::RuleHandler
     end
    
     def filter_query_is(field_key,field_value)
-      "flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} = '#{field_value.to_s}'"
+      construct_query (field_value != 'null' ? '=' : 'is'), field_key, field_value
     end
     
     def filter_query_is_not(field_key,field_values)
-      "flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} != '#{field_value.to_s}'"
+      construct_query (field_value != 'null' ? '!=' : 'is not'), field_key, field_value
+    end
+
+    def construct_query query_operator, field_key, field_value
+      "flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} #{query_operator} #{field_value}"
+    end
+
+    def filter_query_negation(field_key,field_value)
+      "flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} IS NULL OR flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} != '#{field_value.to_s}'"
     end
 end

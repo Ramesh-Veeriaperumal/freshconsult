@@ -1,52 +1,63 @@
+<%= include_cloudfront_css :pattern %>
+<%= include_cloudfront_js :pattern %>
 <% content_for :sidebar do %>
-	<%= render :partial => "helpnote" %>
+  <%= render :partial => "helpnote_without_tour" %>
 <% end %>
+<div id="cust-list" class="cust_list_table">
+  <div class="cust_list_table_header" >
+    <div class="row-fluid">
+      <div class="span6"><h3 class="title"><%=t('dispatch.dispatch_rules')%></h3></div>
+       <div class="span6 pull-right pagination-right header_buttons align-right" >
+        <%= link_to t('reorder'),'#', :id => "va_rules_reorder_button", :class => "btn" if(@va_rules.active.size > 1) %>
+        <%= (link_to t('dispatch.new_rule'), new_admin_va_rule_path, :class => "btn btn-primary") %>
+      </div>
+    </div>
+  </div>
 
-<% content_for :page_title do -%>
-  <%= t('dispatch.dispatch_rules') %>
-<%- end %>
+  <div>
+  <%= render :partial => "/shared/reorder_list", :locals => { 
+      :items => @va_rules.active,  
+      :action_url => reorder_admin_va_rules_path, 
+      :title => :name, :container_id => "va_rules_sort", 
+      :reorder_id => "va_rules_reorder_button", :list_id => "va_rules_list"} %>
+  </div>
 
-<% content_for :page_toolbar do -%>
-  <%= link_to(t('dispatch.reorder'), "#", :id => "Reorder", :class => "uiButton") if ( @va_rules.size > 1 ) %>
-  <%= link_to t('dispatch.new_rule'), new_admin_va_rule_path, :class => "uiButton", :id => "new_dispatchr_rule"  %>
+  <div class="cust_list_table_body va_rule-index" id="va_rules_list">
+    <table class="table table-striped">
+      
+      <% (@va_rules.active + @va_rules.inactive).each do |va_rule| %>
+        <tr id=<%= dom_id(va_rule) %>>
+          <td>
+            <% form_for va_rule, :url => activate_deactivate_admin_va_rule_path(va_rule) do |f| %>
+              <%= f.check_box :active, { :class => 'activate'}, true, false %>
+            <% end %>
+          </td>
+          <td>
+            <strong>
+              <%= link_to(h(va_rule.name), edit_admin_va_rule_path(va_rule), :class => "item_info") %>
+            </strong><br/>
+            <span class="muted"><%= h va_rule.description %></span>
+          </td>
+          <td>
+            <div class="item_actions" align="right">
+                <%= link_to(t('edit'), edit_admin_va_rule_path(va_rule), :class => "btn btn-mini") %>
+                <%= link_to "<i class='icon-trash'></i>".html_safe, admin_va_rule_path(va_rule), :confirm => t('confirm_delete_message', :human_name => t('.human_name')), :method => :delete, :class => "btn btn-mini" %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </table>  
+  </div>
+
+</div>
+
+<% javascript_tag do %>
+  (function($){
+    $('.activate').itoggle({
+      checkedLabel: 'On',
+      uncheckedLabel: 'Off'
+    }).change(function() {
+      $(this).parent().submit();  
+    });
+  })(jQuery)
 <% end %>
-
-<% content_for :page_active_list do -%>
-  <% @va_rules.each do |va_rule| %>
-    <% content_tag :li, :ruleid => va_rule.id, :class => cycle('odd', 'even') do %>
-  		<div class="item_actions">
-  			<%= link_to(t('delete'), admin_va_rule_path(va_rule), :method => 'delete', :confirm => t("dispatch.delete"), :class => "button" ) %>					
-  			<%= link_to(t('deactivate'), deactivate_admin_va_rule_path(va_rule), :method => 'put', :class => "button") %>
-  			<%= link_to(t('edit'), edit_admin_va_rule_path(va_rule), :class => "button") %> 					
-  		</div>
-  		<%= link_to(h(va_rule.name), edit_admin_va_rule_path(va_rule), :class => "item_info") %>
-  		<%= content_tag :div, truncate(va_rule.description, :length => 80), :title =>va_rule.description %>
-  	<% end %>
-  <% end %>
-<%- end %>
-
-<% content_for :page_reorder_list do -%>
-  <% @va_rules.each do |va_rule| %>
-  	<% content_tag :li, :ruleid => va_rule.id do %>
-  		<span class="sort_handle"></span>
-  		<%= h(va_rule.name) %> 
-  	<% end %>
-  <% end %>
-<% end %>
-
-<% unless @inactive_rules.empty? %>
-  <% content_for :page_inactive_list do -%>
-    <% @inactive_rules.each do |va_rule| %>
-      <% content_tag :li, :ruleid => va_rule.id, :class => cycle('odd', 'even') do %>
-        <div class="item_actions">
-          <%= link_to(t('delete'), admin_va_rule_path(va_rule), :method => 'delete', :confirm => t("dispatch.delete"), :class => "button" ) %>					
-          <%= link_to(t('activate'), activate_admin_va_rule_path(va_rule), :method => 'put', :class => "button") %>
-          <%= link_to(t('edit'), edit_admin_va_rule_path(va_rule), :class => "button") %> 					
-        </div>
-        <%= link_to(h(va_rule.name), edit_admin_va_rule_path(va_rule), :class => "item_info") %> 
-			<% end %>
-		<% end %>
-  <% end %>
-<% end %>
-
-<%= render :partial => "/admin/shared/rule_page" %>

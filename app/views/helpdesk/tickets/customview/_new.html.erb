@@ -8,7 +8,7 @@
         <%= text_field_tag( :filter_name, "", :class => "required text", :size => 30) %>
       </div>
     </li>
-    <% if permission?(:manage_users) %>
+    <% if privilege?(:manage_users) %>
     <li class="inline-field">
       <label><%= t('.visible_to') %>:</label>
       <div class="inline-radio">
@@ -38,7 +38,7 @@
 <% javascript_tag do %>
   jQuery("#freshFilter").validate({
     submitHandler: function(){
-	 		jQuery("#freshFilterSave").prop('disabled', 'disabled').switchClass("uiButton", "ui-after-submit", 0);
+	 		jQuery("#freshFilterSave").prop('disabled', 'disabled').switchClass("uiButton", "sloading", 0);
       jQuery.ajax({
         url: "/wf/filter/save_filter",
         type: "POST",

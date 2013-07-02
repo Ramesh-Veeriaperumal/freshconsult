@@ -33,14 +33,11 @@
       agent.resources :time_sheets, :controller=>'helpdesk/time_sheets'
   end
 
-  map.connect '/agents/filter/:state' ,:controller => 'agents' ,:action => 'index'
-  map.resources :sla_details
+  map.connect '/agents/filter/:state/*letter', :controller => 'agents', :action => 'index'
   
 #  map.mobile '/mob', :controller => 'home', :action => 'mobile_index'
 #  map.mobile '/mob_site', :controller => 'user_sessions', :action => 'mob_site'
   #map.resources :support_plans
-
-  map.resources :sl_as
 
   map.logout '/logout', :controller => 'user_sessions', :action => 'destroy'
   map.gauth '/openid/google', :controller => 'user_sessions', :action => 'openid_google'
@@ -59,7 +56,7 @@
   
   #map.register '/register', :controller => 'users', :action => 'create'
   #map.signup '/signup', :controller => 'users', :action => 'new'
-  map.resources :users, :member => { :delete_avatar => :delete, :change_account_admin => :put, 
+  map.resources :users, :member => { :delete_avatar => :delete, 
           :block => :put, :assume_identity => :get, :profile_image => :get }, :collection => {:revert_identity => :get}
   map.resource :user_session
   map.register '/register/:activation_code', :controller => 'activations', :action => 'new'
@@ -89,16 +86,18 @@
     admin.resources :home, :only => :index
     admin.resources :day_passes, :only => [:index, :update], :member => { :buy_now => :put, :toggle_auto_recharge => :put }
     admin.resources :widget_config, :only => :index
-    admin.resources :automations, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
-    admin.resources :va_rules, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
-    admin.resources :supervisor_rules, :member => { :deactivate => :put, :activate => :put }, 
-      :collections => { :reorder => :put }
+    admin.resources :automations, :collection => { :reorder => :put }
+    admin.resources :va_rules, :member => { :activate_deactivate => :put }, :collection => { :reorder => :put }
+    admin.resources :supervisor_rules, :member => { :activate_deactivate => :put }, 
+      :collection => { :reorder => :put }
+    admin.resources :observer_rules, :member => { :activate_deactivate => :put }, 
+      :collection => { :reorder => :put }
     admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get, :test_email => :put}
     admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications
     admin.resources :getting_started, :collection => {:rebrand => :put}
-    admin.resources :business_calender, :member => { :update => :put }
-    admin.resources :security, :member => { :update => :put }
+    admin.resources :business_calendars
+    admin.resources :security, :member => { :update => :put }, :collection => { :request_custom_ssl => :post }
     admin.resources :data_export, :collection => {:export => :any }    
     admin.resources :portal, :only => [ :index, :update ]
     admin.namespace :canned_responses do |ca_response|
@@ -120,6 +119,7 @@
     admin.resources :zen_import, :collection => {:import_data => :any }
     admin.resources :email_commands_setting, :member => { :update => :put }
     admin.resources :account_additional_settings, :member => { :update => :put, :assign_bcc_email => :get}
+    admin.resources :roles
   end
 
   map.namespace :search do |search|
@@ -208,6 +208,7 @@
       admin.spam_user '/spam_user/:user_id', :controller => :spam_watch, :action => :spam_user
       admin.block_user '/block_user/:user_id', :controller => :spam_watch, :action => :block_user
       admin.resources :subscription_events, :as => 'events', :collection => { :export_to_csv => :get }
+      admin.resources :custom_ssl, :as => 'customssl', :collection => { :enable_custom_ssl => :post }
     end
   end
   
@@ -305,10 +306,12 @@
                                     :execute_scenario => :post, :close_multiple => :put, :pick_tickets => :put, 
                                     :change_due_by => :put, :split_the_ticket =>:post, :status => :get, 
                                     :merge_with_this_request => :post, :print => :any, :latest_note => :get,  :activities => :get, 
-                                    :clear_draft => :delete, :save_draft => :post } do |ticket|
+                                    :clear_draft => :delete, :save_draft => :post, :update_ticket_properties => :put } do |ticket|
+                                      
+      ticket.resources :conversations, :collection => {:reply => :post, :forward => :post, :note => :post,
+                                       :twitter => :post, :facebook => :post}
 
       ticket.resources :notes, :member => { :restore => :put }, :collection => {:since => :get}, :name_prefix => 'helpdesk_ticket_helpdesk_'
-      ticket.resources :notes, :member => { :restore => :put }, :name_prefix => 'helpdesk_ticket_helpdesk_'
       ticket.resources :subscriptions, :collection => { :create_watchers => :post, 
                                                         :unsubscribe => :get,
                                                         :unwatch => :delete,
@@ -356,11 +359,6 @@
     
     helpdesk.resources :authorizations, :collection => { :autocomplete => :get, :agent_autocomplete => :get, 
                   :requester_autocomplete => :get, :company_autocomplete => :get }
-    
-    
-    helpdesk.resources :sla_details
-    
-    helpdesk.resources :support_plans
     
     helpdesk.resources :sla_policies, :collection => {:reorder => :put}, :member => {:activate => :put},
                       :except => :show
@@ -414,7 +412,7 @@
       :member => { :solutions => :get, :topics => :get, :tickets => :get }
 
     # Forums for the portal, the items will be name spaced by discussions
-    support.resources :discussions, :only => [:index, :show]
+    support.resources :discussions, :only => [:index, :show],:collection =>{:user_monitored=>:get}
     support.namespace :discussions do |discussion|
       discussion.filter_topics "/forums/:id/:filter_topics_by", :controller => :forums,
         :action => :show
@@ -422,7 +420,7 @@
         :action => :show
       discussion.resources :forums, :only => :show
       discussion.resources :topics, :except => :index, :member => { :like => :put, 
-          :unlike => :put, :toggle_monitor => :put, :users_voted => :get } do |topic|
+          :unlike => :put, :toggle_monitor => :put,:monitor => :put, :check_monitor => :get, :users_voted => :get } do |topic|
         discussion.connect "/topics/:id/page/:page", :controller => :topics, 
           :action => :show
         topic.resources :posts, :except => [:index, :new, :show], 

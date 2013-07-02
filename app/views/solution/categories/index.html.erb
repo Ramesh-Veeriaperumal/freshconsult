@@ -1,5 +1,4 @@
-<% if logged_in? && current_user.has_manage_solutions? -%>
-	<% content_for :sidebar do -%>
+<% content_for :sidebar do -%>
 		<div class="sidepanel">
 			<h3 class="title"> <%=t('solution.title').html_safe%> </h3>
 			<p>
@@ -26,9 +25,7 @@
 			<span class="seperator"></span>			
 		</div>
 	<%- end %>
-<%- end %> 
-
-<% if logged_in? && current_user.has_manage_solutions? -%>
+<% if privilege?(:manage_solutions) -%>
 	<div class="floatr">
 	    <%= link_to t('reorder').html_safe,'#', :id => "categories_reorder_button", :class => "uiButton" unless(@categories.size <= 1)%>
 		<%= link_to t('solution_category.new').html_safe, new_solution_category_path, :class => "uiButton" %>
@@ -41,7 +38,7 @@
 <div class="clearfix solution-list" id="categories_list">			
 	<% @categories.each do |category| %>
 		<div class="<%= cycle('odd', 'even') %>">
-			<% if (!category.is_default? && permission?(:manage_knowledgebase)) -%>
+			<% if (!category.is_default? && privilege?(:manage_solutions)) -%>
 					<div class="action_buttons">
 						<%= link_to t('folder.add_folder').html_safe, new_solution_category_folder_path(category), :class => "first"  %> 
 						<%= link_to t('edit').html_safe ,edit_solution_category_path(category), :class => "last"   %>
@@ -55,24 +52,19 @@
 				<% end %>
 			</h4>  
 			<ul>			
-	  		<% category.folders.visible(current_user).each do |folder| %>
-				<li><%= link_to h(folder.name),  solution_category_folder_path(category, folder)  %>
-				<span>
-				<% if logged_in? && current_user.has_manage_solutions? %>
-					(<%= folder.articles.size %>)
-				<%else%>
-	  				(<%= folder.articles.visible.size %>)
-				<%end%>
-			   </span> 
-			   </li>
-			<% end %> 
+	  		<% category.folders.each do |folder| %>
+  				<li><%= link_to h(folder.name),  solution_category_folder_path(category, folder)  %>
+  				  <span>
+  					  (<%= folder.articles.size %>)
+  			    </span> 
+  			  </li>
+			 <% end %> 
 			</ul>
 			<%= content_tag(:span, t('solution_category.info2').html_safe, :class => "no_info_text") if (category.folders.size == 0)  %>
 		</div>
 	<%end%>
 </div>
-
-<% if logged_in? && current_user.has_manage_solutions? -%>	
+<% if privilege?(:manage_solutions) -%>	
 	<%= render :partial => "/shared/reorder_list", :locals => { :items => @categories,  :action_url => reorder_solution_categories_path, :title => :name, :container_id => "categories_sort", :reorder_id => "categories_reorder_button", :list_id => "categories_list"} %>
 <% end %>
    

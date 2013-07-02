@@ -4,8 +4,9 @@ module Helpdesk::TicketsHelper
   include Wf::HelperMethods
   include TicketsFilter
   include Helpdesk::Ticketfields::TicketStatus
+  include Redis::RedisKeys
+  include Redis::TicketsRedis
   include Helpdesk::NoteActions
-  include RedisKeys
   include Integrations::AppsUtil
   include Helpdesk::TicketsHelperMethods
 
@@ -36,7 +37,7 @@ module Helpdesk::TicketsHelper
   
   def ticket_sidebar
     tabs = [["TicketProperties", t('ticket.properties').html_safe,         "ticket"],
-            ["RelatedSolutions", t('ticket.suggest_solutions').html_safe,  "related_solutions"],
+            ["RelatedSolutions", t('ticket.suggest_solutions').html_safe,  "related_solutions", privilege?(:view_solutions)],
             ["Scenario",         t('ticket.execute_scenario').html_safe,   "scenarios",       feature?(:scenario_automations)],
             ["RequesterInfo",    t('ticket.requestor_info').html_safe,     "requesterinfo"],
             ["Reminder",         t('to_do').html_safe,                     "todo"],
@@ -56,7 +57,7 @@ module Helpdesk::TicketsHelper
       if(tabs.first == t)
         content_tag :div, content_tag(:div, "") ,{:class => "rtDetails tab-pane active #{t[2]}", :id => t[0], :rel => "remote", :"data-remote-url" => "/helpdesk/tickets/component/#{@ticket.id}?component=ticket"}
       else
-        content_tag :div, content_tag(:div, "", :class => "loading-box"), :class => "rtDetails tab-pane #{t[2]}", :id => t[0]
+        content_tag :div, content_tag(:div, "", :class => "loading-block sloading loading-small "), :class => "rtDetails tab-pane #{t[2]}", :id => t[0]
       end
     }.to_s.html_safe, :class => "tab-content"
                
@@ -64,16 +65,23 @@ module Helpdesk::TicketsHelper
   end
     
   def ticket_tabs
-    tabs = [['Pages',     t(".conversation").html_safe, @ticket_notes.total_entries],
-            ['Timesheet', t(".timesheet").html_safe,    @ticket.time_sheets.size, 
-                                               helpdesk_ticket_helpdesk_time_sheets_path(@ticket), 
-                                               feature?(:timesheets)]]
+    tabs = [
+            ['Pages',     t(".conversation").html_safe, @ticket_notes.total_entries],
+            ['Timesheet', t(".timesheet").html_safe,    timesheets_size, 
+                helpdesk_ticket_helpdesk_time_sheets_path(@ticket), 
+                feature?(:timesheets) && privilege?(:view_time_entries)
+            ]
+           ]
     
     ul tabs.map{ |t| 
                   next if !t[4].nil? && !t[4]
                   link_to t[1] + (content_tag :span, t[2], :class => "pill #{ t[2] == 0 ? 'hide' : ''}", :id => "#{t[0]}Count"), "##{t[0]}", "data-remote-load" => t[3], :id => "#{t[0]}Tab"
                 }, { :class => "tabs ticket_tabs", "data-tabs" => "tabs" }
                 
+  end
+
+  def timesheets_size
+    @ticket.time_sheets.size
   end
   
   def top_views(selected = "new_my_open", dynamic_view = [], show_max = 1)
@@ -122,9 +130,8 @@ module Helpdesk::TicketsHelper
   end
   
   def filter_count(selector=nil)
-    filter_scope = TicketsFilter.filter(filter(selector), current_user, 
-                      current_account.tickets.permissible(current_user).updated_in(2.month.ago))
-    SeamlessDatabasePool.use_persistent_read_connection do
+    filter_scope = TicketsFilter.filter(filter(selector), current_user, current_account.tickets.permissible(current_user))
+    Sharding.run_on_slave do
      filter_scope.count
     end
   end
@@ -240,7 +247,7 @@ module Helpdesk::TicketsHelper
       last_reply_by = (h(last_conv.user.name) || '')+"<"+(last_conv.user.email || '')+">" 
       last_reply_by  = (h(ticket.reply_name) || '')+"<"+(ticket.reply_email || '')+">" unless last_conv.user.customer?       
       last_reply_time = last_conv.created_at
-      last_reply_content = last_conv.body_html
+      last_reply_content = last_conv.full_text_html
       unless last_reply_content.blank?
         doc = Nokogiri::HTML(last_reply_content)
         doc_fd_css = doc.css('div.freshdesk_quote')
@@ -266,7 +273,7 @@ module Helpdesk::TicketsHelper
     
     content = default_reply+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
               "<span class='separator' /> , "+ last_reply_by +" wrote:"+
-              last_reply_content+"</blockquote></div>"
+              last_reply_content.to_s+"</blockquote></div>"
     return content
   end
 
@@ -276,7 +283,7 @@ module Helpdesk::TicketsHelper
                 # ((!forward && ticket.notes.visible.public.last) ? ticket.notes.visible.public.last : item)
     key = 'HELPDESK_REPLY_DRAFTS:'+current_account.id.to_s+':'+current_user.id.to_s+':'+ticket.id.to_s
 
-    return ( get_key(key) || bind_last_conv(item, signature, false, quoted) )
+    return ( get_tickets_redis_key(key) || bind_last_conv(item, signature, false, quoted) )
   end
 
   
@@ -302,18 +309,18 @@ module Helpdesk::TicketsHelper
     show_params
   end
 
-  def multiple_emails_container(emails)
+  def multiple_emails_container(emails, label = "To: ")
     html = ""
     unless emails.blank?
       if emails.length < 3
         html << content_tag(:span, 
-                            ("To: " + emails.collect{ |to_e| 
+                            "#{label}" + emails.collect{ |to_e| 
                               to_e.gsub("<","&lt;").gsub(">","&gt;") 
                             }.join(", ")).html_safe, 
                             :class => "") 
       else
         html << content_tag(:span, 
-                            ("To: " + emails[0,2].collect{ |to_e| 
+                            "#{label}" + emails[0,2].collect{ |to_e| 
                               to_e.gsub("<","&lt;").gsub(">","&gt;") 
                             }.join(", ") + 
                             "<span class='toEmailMoreContainer hide'>,&nbsp;" + 
@@ -383,5 +390,4 @@ module Helpdesk::TicketsHelper
     content << "</div>" if full_pagination
     content
   end
-
 end

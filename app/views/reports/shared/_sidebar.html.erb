@@ -57,7 +57,7 @@ jQuery(document).ready(function() {
   	jQuery("#report-container #pie-charts").hide();
   	jQuery("#report-container #timeline-chart").hide();
   	jQuery("#report-container #ticket-toolbar").hide();
-    jQuery("#report-container").append("<div class='loading-box'></div>"); 
+    jQuery("#report-container").append("<div class='sloading loading-block loading-small'></div>"); 
     
      jQuery.ajax({
         url: '<%= (params[:controller].ends_with("customer_reports")) ? "/activity_reports/customer/generate" : "/activity_reports/helpdesk/generate" %>',
@@ -69,7 +69,7 @@ jQuery(document).ready(function() {
 		  	jQuery("#report-container #pie-charts").show();
 		  	jQuery("#report-container #timeline-chart").show();
 		  	jQuery("#report-container #ticket-toolbar").show();
-	  		jQuery("#report-container .loading-box").remove();
+	  		jQuery("#report-container .sloading .loading-block .loading-small").remove();
         }
       });
     return false; 

@@ -140,5 +140,40 @@ jQuery(document).ready(function() {
 			</td>
 		</tr>
 		<% end %>
+		<%if @report_data.key?("Unassigned")
+			data = @report_data["Unassigned"]
+			resolved_count = data.fetch(:tot_tkts, 0).to_i
+			otr_percentage = percentage(data.fetch(:tkt_res_on_time,0).to_i,resolved_count)
+			fcr_percentage = percentage(data.fetch(:fcr,0).to_i,resolved_count)
+			afrt = data.fetch(:average_first_response_time, 0)
+			art = data.fetch(:average_response_time, 0)
+		%>
+		<tr class="<%= cycle("odd", "even") %>">
+			<td><%=t('filter_options.unassigned')%></td>
+			<td>
+				<%= resolved_count %>
+			</td>
+			<td>
+				<%= otr_percentage %> 
+				<% count = data.fetch(:tkt_res_on_time, 0) %>
+				<% if count != 0 %>
+					(<%= count %>)
+				<% end %>
+			</td>
+			<td>
+				<%= fcr_percentage %> 
+				<% count = data.fetch(:fcr, 0) %>
+				<% if count != 0 %>
+					(<%= count %>)
+				<% end %>
+			</td>
+			<td>
+				<%= timediff_in_words(afrt) %>
+			</td>
+			<td>
+				<%= timediff_in_words(art) %>
+			</td>
+		</tr>
+		<%end%>
 	</table>	
 </div>

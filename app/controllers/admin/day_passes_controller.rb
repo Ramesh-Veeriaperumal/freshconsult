@@ -1,6 +1,5 @@
 class Admin::DayPassesController < ApplicationController
   
-  before_filter { |c| c.requires_permission :manage_account }
   before_filter :set_selected_tab
   before_filter :load_config
   before_filter :load_purchases, :only => [:index]

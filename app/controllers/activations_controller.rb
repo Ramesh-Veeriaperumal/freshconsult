@@ -1,10 +1,8 @@
 class ActivationsController < SupportController
   #before_filter :require_no_user, :only => [:new, :create] #Guess we don't really need this - Shan
 
-  before_filter :only => [:send_invite, :test] do |c| 
-    c.requires_permission :manage_users
-  end
-
+  skip_before_filter :check_privilege, :only => [:new, :create]
+  
   def send_invite
     user = current_account.all_users.find params[:id]
     user.deliver_activation_instructions!(current_portal, true) if user and user.has_email?
@@ -26,20 +24,13 @@ class ActivationsController < SupportController
       flash[:notice] = t('users.activations.code_expired')
       return redirect_to new_password_reset_path
     end
-    raise Exception if @user.active? and !@user.account_admin?
   end
 
   def create
     @user = current_account.users.find(params[:id])
  
-    raise Exception if @user.active? and !@user.account_admin?
- 
     if @user.activate!(params)
       flash[:notice] = t('users.activations.success')
-      Resque::enqueue(CRM::Totango::SendUserAction, 
-                                        { :account_id => current_account.id, 
-                                        :email => @user.email, 
-                                        :activity => totango_activity(:account_activation) }) if @user.account_admin?
       @current_user = @user
       redirect_to(root_url) if grant_day_pass
     else

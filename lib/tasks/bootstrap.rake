@@ -9,6 +9,8 @@ namespace :db do
     
     Rake::Task["db:create_trigger"].invoke #To do.. Need to make sure the db account has super privs.
     Rake::Task["db:perform_table_partition"].invoke
+
+    create_es_indices
     
     puts 'Loading data...'
     Rake::Task["db:seed_fu"].invoke
@@ -49,5 +51,15 @@ namespace :db do
     PerformTablePartition.process
   end
 
+end
+
+def create_es_indices
+  puts 'Creating Elasticsearch indices...'
+  range = Rails.env.development? ? (2..2) : (1..50)
+  range.each do |i|
+    record = ElasticsearchIndex.new(:name => "fd_index-#{i}")
+    record.id = i
+    record.save
+  end
 end
 #SAAS ends here

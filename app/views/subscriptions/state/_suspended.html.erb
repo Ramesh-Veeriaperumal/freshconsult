@@ -1,26 +1,6 @@
 <% if @subscription.card_number.present? %>
   <%= render :partial => "/subscriptions/state/active", :locals => { :subscription => @subscription, :plans => @plans } %>
 <% else %>
- <ul class="ui-form">
-  <li class="inline-field">
-    <div class="trial-info">
-      <div class="caption">
-        <%= t('current_plan') %>
-        <div class="plan-name">
-          <% if @subscription.classic? %>
-          <b class="big-text"> <%= " #{ @subscription.subscription_plan.name.split(" Classic").first }" %></b>
-          <%= content_tag(:span, "Classic", :class => "classic-account") %>
-          <% else %>
-            <b class="big-text"> <%= " #{ @subscription.subscription_plan.name }" %></b>
-          <% end %>
-        </div>
-      </div>
-      <div class="trial-message">
-        <%= t('trial_expired').html_safe %>
-      </div>
-    </div>    
-    <br /><br />
-  </li> 
-</ul>
+  <%= render :partial => "/subscriptions/state/trial", :locals => { :subscription => @subscription, :plans => @plans } %>
 <% end %>
 

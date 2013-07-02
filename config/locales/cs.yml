@@ -183,13 +183,13 @@ cs:
         without_user: "přiřazeno <strong>'Nobody'</strong>"
       conversation: 
         in_email: 
-          long: "{{user_path}} poslal {{email_response_path}} k události {{notable_path}}"
+          long: "{{user_path}} poslal {{email_response_path}} k požadavku{{notable_path}}"
           short: "{{user_path}} poslal {{email_response_path}}"
         note: 
-          long: "{{user_path}} přidal {{comment_path}} k události {{notable_path}}"
+          long: "{{user_path}}přidal {{comment_path}} k požadavku {{notable_path}}"
           short: "{{user_path}} přidal {{comment_path}}"
         out_email: 
-          long: "{{user_path}} poslal {{reply_path}} k události {{notable_path}}"
+          long: "{{user_path}} odeslal odpověď {{reply_path}} k požadavku {{notable_path}}"
           private: 
             long: "Lístek {{notable_path}} byl postoupen {{fwd_path}} na {{to_emails}} uživatelem {{user_path}}"
             short: "Uživatel {{user_path}} postoupil lístek {{fwd_path}} na {{to_emails}}"
@@ -240,7 +240,7 @@ cs:
         short: "{{user_path}} změnil zdroj na {{source_name}}"
         without_user: "zdroj aktualizován na <strong>{{source_name}}</strong>"
       status_change: 
-        long: "{{user_path}} změnil stav Události {{notable_path}} na {{status_name}}"
+        long: "{{user_path}} změnil stav požadavku {{notable_path}} na {{status_name}}"
         short: "{{user_path}} změnil stav na {{status_name}}"
         without_user: "stav aktualizován na <strong>{{status_name}}</strong>"
       ticket_merge: 
@@ -647,25 +647,39 @@ cs:
         solution: "Publikace <br /> <strong> řešení </strong>"
         ticket: "Řešení <br /><strong>požadavků</strong>"
     security: 
+      helpnote: 
+        info: "Nastavení bezpečnostních parametrů vám pomůže urychlit a řídit přístup návštevníků na váš portál podpory."
+        info1: "<b>Povolení přístupu \"Single Sign On\"</b><br />Jestliže vaši uživatelé již od vás mají přihlašovací oprávnění (např. přes Active Directory nebo vaši vlastní WEB aplikaci) můžete jim umožnit přístup na váš portál podpory s těmito oprávněními, tj. v režimu Single Sign On. Zjistěte si <a href=\"https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk\">zde</a>, jak se SSN ve FreshDesku pracovat."
+        info2: "<b>Povolení SSL zabezpečení</b><br />Můžete si zajistit bezpečnou komunikaci k vašemu portálu podpory prostřednictvím povolení SSL kódování. Freshdesk nabízí implicitní \"wildcard\" SSL certifikát pro všechny účty na doméně freshdesk.com. <b>Upozorňujeme, že není možné použít \"wildcard\" SSL pokud používáte u tohoto portálu vlastní URL. </b>Pokud máte zvolenu licenci \"Estate\", můžete si pro toto URL zažádat o uživatelský SSL certifikát."
+        title: "Bezpečnostní nastavení"
       index: 
         click_to_disable: "Kliknutím zakažte SSL"
         click_to_enable: "Kliknutím povolte SSL"
+        custom_ssl: "Uživatelské SSL"
         customer_portal_ssl_warning: "Jelikož má váš účet nakonfigurovánu vlastní adresu URL helpdesku, budete přesměrováni na "
+        default_ssl: "Implicitní SSL"
         disabled: Zakázáno
+        dns_name: "<b>Důležité:</b> Prosím upravte CNAME záznam DNS ve vašem souboru DNS Zone tak, aby propojil vaše doménové jméno na níže uvedené ELB  DNS jméno.<br /><br />ELB DNS jméno pro %{url} je"
         enable_SSL: "Povolit SSL"
         enable_SSL_anon: "SSL zajišťuje šifrování dat z/na portály FreshDesk"
         enable_sso: "Umožnit jednotné přihlášení"
         enable_sso_info: "Jednotné příhlášení Vám umožní používat Vaší vlastní aplikaci nebo centralizovaný server (jako je MS Active Directory) k ověřování agentů a zákazníků tak, že budou moct přistupovat do Freshdesku bez nutnosti zadávat odděleně uživatelské jméno a heslo. "
         enabled: Povoleno
+        helpdesk_url: "URL Helpdesku"
         multiple_product_ssl_warning: "SSL není možné použít, pokud je nakonfigurován systém více produktů."
         remote_authentication: "Vzdálené ověření"
         remote_login_url: "Adresa pro vzdálené přihlášení"
         remote_login_url_info: "Na tuto adresu bude Freshdesk přesměrovávat uživatele k ověření v případě, že se budou přihlašovat do Freshdesku."
         remote_logout_url: "Adresa pro vzdálené odhlášení"
         remote_logout_url_info: "Toto je webová adresa, která v případě, že se uživatelé odhlásí z Freshdesku, přesměruje dané uživatele na požadovanou stránku."
+        request_custom_ssl: "Chcete na svém portále používat uživatelské SSL?"
         security_title: Zabezpečení
         shared_secret: "Společné tajemství"
         shared_secret_info: "Prosím, zkopírujte si tento klíč a bezpečně uschovejte. Budete jej potřebovat k povolení Vzdáleného ověřování. Toto je společné tajemství mezi Vámi a Freshdeskem."
+        ssl_info: "Chcete-li nastavit uživatelské SSL, musíte nakonfigurovat doménu s unikátním DNS záznamem poskytovaným FreshDeskem. <br /> Vložte, prosím, URL vašeho helpdesku a potvrďte svou volbu. Certifikace trvá zpravidla 5-6 dní.<br /><br />"
+        submit_request: "Odeslat požadavek"
+        success_message: "Váš požadavek o uživatelský certifikát SSL byl přijat a bude zpracován v nejkratším možném termínu. Před schválením obdržíte potvrzující mail od našeho providera. Prosím zkontrolujte si maily."
+        thanks_message: "<span class=\\\"thanks_message\\\">Děkujeme za žádost o uživatelský  certifikát SSL.</span><br />"
     shared: 
       filter_jsinit: 
         body: Tělo
@@ -734,6 +748,90 @@ cs:
         thankyou_default: "Děkujeme za vaši zpětnou vazbu"
         thankyou_info: "Zpráva zobrazená uživateli po odeslání požadavku"
         thankyou_label: "Odeslat zprávu"
+  adv_reports: 
+    agent_at_a_glance: "Zástupci - rychlý přehled"
+    agent_comparison: "Porovnání zástupců"
+    agent_ticket_summary: "Souhrn požadavků po agentech"
+    agent_top_n_analysis: "\"Top 10\" analýza zástupců"
+    at_a_glance: "Rychlý přehled"
+    comparison: Porovnání
+    comparison_reports: 
+      avg_first_resp_time: "Průměrný čas první odpovědi"
+      avg_resolution_time: "Průměrný čas řešení"
+      avg_resp_time: "Průměrný čas odpovědi"
+      label_in_hrs: "v čase (hod.)"
+      label_in_percentage: "v %"
+      label_num_of_interactions: "Počet intrakcí na vyřešené požadavky"
+      label_num_of_tickets: "Počet požadavků"
+      select_agent_msg: "Vyberte zástupce (max. 4)"
+      select_group_msg: "Vyberte skupiny (max. 4)"
+      select_metrics_msg: "Vyberte metriky"
+      ticket_assigned: "Přiřazené požadavky"
+    customer_at_a_glance: "Zákazníci - rychlý přehled"
+    customer_top_n_analysis: "\"Top 10\" analýza zákazníků"
+    deleted_agent: "Odstranění zástupci"
+    deleted_customer: "Odstranění zákazníci"
+    deleted_group: "Odstraněné skupiny"
+    filtered_by: "Filtrováno podle"
+    glance: 
+      all_reports: "Všechny přehledy"
+      avg_agent_intr: "Průměrná interakce zástupce"
+      avg_cust_intr: "Průměrná interakce zákazníka"
+      avg_first_resp_time_in_hrs: "Průměrný čas první odpovědi (v hodinách)"
+      avg_resolution_time_in_hrs: "Průměrný čas řešení (v hodinách)"
+      avg_resp_time_in_hrs: "Průměrný čas odezvy (v hodinách)"
+      backlog_tickets: "Nevyřešené požadavky"
+      download: Stažení
+      no_customers_msg: "Nemáte žádné zákazníky"
+      no_groups_msg: "Nemáte žádné skupiny"
+      num_of_reassigns: "Počet znovupřiřazení"
+      num_of_reopens: "Počet znovuotevření"
+      print: Tisk
+      report_view: "Zobrazení přehledu"
+      select_agent_msg: "Vyberte zástupce"
+      select_customer_msg: "Vyberte zákazníka"
+      select_group_msg: "Vyberte skupinu"
+      sla_percentage: "% SLA"
+    group_at_a_glance: "Skupiny - rychlý přehled"
+    group_comparison: "Porovnání skupin"
+    group_ticket_summary: "Souhrn požadavků po skupinách"
+    group_top_n_analysis: "\"Top 10\" analýza skupin"
+    helpdesk_at_a_glance: "Helpdesk - rychlý přehled"
+    helpdesk_load_analysis: "Analýza vytížení helpdesku"
+    helpdesk_performance_analysis: "Výkonová analýza helpdesku"
+    load: 
+      avg_num_of_interactions: "Průměrný počet interakcí"
+      num_of_operations: "Počet oprací s požadavkem"
+      num_of_tickets: "Počet požadavků"
+      recived_resolved_backlog: "Požadavky přijaté vs. Vyřešené vs. Nevyřešené"
+      resp_accuracy: "Přesnost odpovědi"
+      resp_time: "Čas odpovědi"
+      tickets_received: "Přijaté požadavky"
+      tickets_reopened: "Znovuotebřené požadavky"
+      tickets_with_fcr: "Požadavky vyřešené při prvním kontaktu"
+      tickets_within_SLA: "Požadavky splněné v rámci SLA"
+      time_in_hrs: "Čas (v hod.)"
+      time_of_arrival: "Čas přijezdu"
+      tkt_assignment: "Přiřazení požadavku"
+    load_analysis: "Analýza vytížení"
+    no_data_to_display_msg: "Žádná data k zobrazení"
+    report: "Přehled "
+    reports: Reporty
+    select_an_option: "Vyberte možnost"
+    select_option_msg: "Prosím, vyberte možnost"
+    summary: Souhrn
+    tickets_backlog: "Nevyřízené požadavky"
+    tickets_resolved: "Vyřešené požadavky"
+    time_period: "Časový úsek"
+    top_n: 
+      fcr: "Vyřešeno při prvním kontaktu"
+      frustrated_customers: "Nespokojení zákazníci"
+      happy_customers: "Spokojení zákazníci"
+      sla_comp_asc: "Shoda se SLA (vzestupně)"
+      sla_comp_desc: "Shoda se SLA (sestupně)"
+      sla_violations: "Porušení SLA"
+      tickets_submitted: "Odeslaných požadavků"
+    top_n_analysis: "\"Top 10\" analýza"
   after_day: "Za 1 den"
   after_eight: "Po 8 hodinách"
   after_four: "Po 4 hodinách"
@@ -798,7 +896,7 @@ cs:
     view_user: "Prohlédnout uživatele"
   agent_adds_comment: "Agent přidal komentář k události"
   agent_assigned_info: "Tento zástupce nemá žádné otevřené ani pozastavené požadavky."
-  agent_assigned_title: "Naposledy přiřazené události (Otevřené &amp; Rozpracované)"
+  agent_assigned_title: "Nedávno přiřazené požadavky (Otevřené &amp; Pozastavené)"
   agent_closes_tkt: "Agent uzavírá událost"
   agent_deleted_message: "Toto je odstraněný zástupce"
   agent_emailnotverified: "Mail tohoto zástupce nebyl dosud ověřen!"
@@ -839,7 +937,7 @@ cs:
   assuming_identity_user_does_not_exist_msg: "Uživatel, kterého jste se snažili napodobit, neexistuje."
   at: v
   attach_file: "Přiložit soubor"
-  attach_file_local: "Přiožit soubor z vašeho počítače"
+  attach_file_local: "Přiložit soubor z vašeho počítače"
   attach_files: "Připojit přílohu"
   attachment: Příloha
   attachment_delete: "Chystáte se navždy smazat tuto přílohu. Pokračovat?"
@@ -944,6 +1042,7 @@ cs:
     updated: "Složka pro připravené odpovědi byla úspěšně upravena !!"
     viewing: "Složka:"
   captcha_verify_message: "Neplatná verifikace pomocí obrázku - zkuste to znova!"
+  card_error: "Při přidávání vaší karty nastala chyba. Prosíme, zkuste to znova."
   card_number: "Číslo platební karty"
   card_process: "Děkujeme Vám za platbu. Váš Freshdesk účet je nyní aktivován!"
   category: 
@@ -1033,7 +1132,7 @@ cs:
     info1: "Jste si jistí, že chcete smazat tento kontakt?"
     info2: "Učinit tohoto uživatele agentem"
     info3: "Druhotné informace %{nick_name}"
-    info4: "Nedávno otevřené události od %{nick_name}"
+    info4: "Nedávné požadavky od %{nick_name}"
     info5: "Uživatel do teď nevytvořil žádnou událost "
     info6: "Přidat specifické poznámky související s tímto kontaktem"
     new: "Nový kontakt"
@@ -1284,6 +1383,7 @@ cs:
   enter_payment: "Vložte fakturační údaje..."
   enter_payment_details_to_add: "Zadejte údaje o platbě, aby bylo možné přidat více zástupců"
   error_in_plan: "Chyba při změně plánu"
+  error_in_update: "Nemůžeme obnovit vaše předplatné. Pokud bude problém přetrvávat, obraťte se, prosím, na support@freshdesk.com"
   errors: 
     actions_empty: "Pole Akce nesmí být prázdné"
     conditions_empty: "Pole Podmínky nesmí být prázdné"
@@ -1349,7 +1449,7 @@ cs:
   feedbackwidget_embed_code_intro: "Prosím zkopírujte HTML kód uvedený níže a nakopírujte jej kdekoli před HTML tag &lt;/body&gt; na všech WEBových stránkách, kde má být dostupná tato FreshDesk komponenta."
   feedbackwidget_form_title: "Panel z názvu"
   feedbackwidget_formcustomize: "Úprava formuláře"
-  feedbackwidget_help_para1: "Sbírejte události a informace od zákazníků přidáním záložky s podporou na Vašich webových stránkách."
+  feedbackwidget_help_para1: "Tento doplněk pro vyvolání formuláře požadavku si může upravit dle libosti a umístit kdekoli na vašich stránkách - stačí zkopírovat HTML kód a vložit jej kam potřebujete - tak bude formulář na odeslání požadavku na podporu dostupný všude."
   feedbackwidget_help_para2: "Upravitelné záložky se otevírají do formuláře podpory "
   feedbackwidget_help_title: "Panel zpětné vazby"
   feedbackwidget_intro: "Upravte si panel Freshdesku níže a rovnou můžete sledovat zobrazení v reálné podobě."
@@ -1417,8 +1517,8 @@ cs:
       success: "%{created_count} kontaktů bylo nově importováno a %{updated_count} stávajících kontaktů bylo aktualizováno!"
     custom_fields: 
       update: 
-        failure: "Aktualizace políček v Události selhala."
-        success: "Políčka v požadované události byla aktualizována."
+        failure: "Aktualizace polí požadavku selhala."
+        success: "Pole požadavku byla úspěšně aktualizována."
     customers: 
       info_select: "Prosím, zvolte alespoň jednoho zákazníka."
     data_import: 
@@ -1532,7 +1632,7 @@ cs:
       delete_forever: 
         success: "Požadavky %{tickets} smazány."
       empty_spam: 
-        success: "Všechny události ve složce Spam byly smazány."
+        success: "Všechny požadavky ve složce Navyžádaná pošta byly smazány."
       empty_trash: 
         success: "Koš byl vysypán!"
       merge: 
@@ -1578,6 +1678,7 @@ cs:
   forum: 
     confim_msg1: "Jste si jisti, že chcete smazat toto fórum?"
     edit: "Upravit fórum"
+    forum_created: "Forum bylo vytvořeno."
     new: "Nové fórum"
     start_topic: "Založit téma"
     title: Fóra
@@ -1708,6 +1809,7 @@ cs:
       threeday: "3 dny"
       two: "12 hodin"
       twoday: "2 dny"
+    description: "Popis skupiny"
     edit: "Upravit skupinu"
     helptext: "Zástupce podpory lze organizovat do skupin jako např. \"Obchod\" nebo \"Management\". Jejich rozčleněním jim můžete snadněji přiřazovat požadavky, vytvářet specifické připravené odpovědi, nastavovat emailová upozornění, vytvářet pravidla či generovat reporty. Každý zástupce může být členem jedné i více skupin."
     info1: "Agenti v této skupině"
@@ -1717,9 +1819,13 @@ cs:
     info5: "Jste si jistí"
     info6: "Poslat email zástupci v případě přiřazení požadavku této skupině "
     info7: "když je požadavek nepřiřazen více než "
+    learn_more: "Zjistětět více"
     name: "Název skupiny"
     new: "Nová skupina"
+    round_robin_desc: "Jakmile toto zapnete (ON), požadavek přidělený této skupině bude distribuován mezi zástupce podpory v režimu cyklické obsluhy (round robin). Pokud chcete přidělovat požadavek zástupcům manuálně, nebo pomocí dispčerských pravidel, můžete toto vypnout (OFF). "
     select_agents: "Zvolit agenty"
+    select_an_agent: "Vyberte zástupce"
+    ticket_assignment: "Automatické přiřazení požadavku"
     title: Skupiny
     tour: "Pomozte mi vytvořit novou skupinu zástupců"
   half: "30 minut"
@@ -1731,13 +1837,13 @@ cs:
     help_center: "Jak vám dnes můžeme pomoci?"
     login: "přihlásit se"
     new_support_ticket: "Nový požadavek na podporu"
-    new_ticket: "Nová událost"
+    new_ticket: "Nový požadavek"
     search: Hledat
     signout: "Odhlásit se"
-    submit_a_ticket: "Odeslat událost"
+    submit_a_ticket: "Nový požadavek"
     tabs: 
       admin: Administrátor
-      checkstatus: "Zkontrolujte stav Vaši události"
+      checkstatus: "Zkontrolujte si stav vašich požadavků"
       company_tickets: "Události firem"
       customers: Zákazníci
       dashboard: Nástěnka
@@ -1746,7 +1852,9 @@ cs:
       reports: Přehledy
       social: Společenský
       solutions: Řešení
-      tickets: Události
+      tickets: Požadavky
+    user_available: "Bude vám automaticky přidělen<br>nový požadavek."
+    user_not_available: "Nový požadavek vám NEBUDE <br>automaticky přidělen."
     welcome: Vítejte
   header_logo: "Logo v záhlaví"
   helpdesk: 
@@ -1839,6 +1947,7 @@ cs:
         unhappy: Nedostatečně
     tickets: 
       add_watcher: 
+        add_agent: "Zadejte jméno zástupce"
         add_button: Přidat
         add_watcher_link: "Přidat ke hlídačům"
         all_agents_watching: "Tento požadavek sledují již všichni zástupci"
@@ -1904,7 +2013,14 @@ cs:
           private_note: "Uživatel %{user_name} přidal soukromou poznámku dne %{note_date}"
           public_note: "Uživatel %{user_name} přidal veřejnou poznámku dne %{note_date}"
           reply: "Uživatel %{user_name} odpověděl dne %{note_date}"
+        created_on_live: 
+          forward: "%{user_name} přeposlal odpověď dne %{note_date} v <abbr data-livestamp='%{timestamp}'></abbr> hodin."
+          private_note: "%{user_name} přidal soukromou poznámku dne %{note_date} v <abbr data-livestamp='%{timestamp}'></abbr> hodin."
+          public_note: "%{user_name} přidal veřejnou poznámku dne %{note_date} v <abbr data-livestamp='%{timestamp}'></abbr> hodin."
+          reply: "%{user_name} odpověděl dne %{note_date} v <abbr data-livestamp='%{timestamp}'></abbr> hodin."
+          survey: "%{user_name} ohodnotil tento požadavek dne %{note_date} v <abbr data-livestamp='%{timestamp}'></abbr> hodin."
         delete_note: "Odebrat z konverzace lístku?"
+        deleted_note: Smazáno
         edit_note: "Upravit poznámku"
         inbound_email: "Příchozí email"
         outbound_email: "Odchozí email"
@@ -1973,7 +2089,7 @@ cs:
         timesheet: "Časový list"
       views: 
         all: "Všechny lístky"
-        all_tickets: "Všechny události"
+        all_tickets: "Všechny požadavky"
         closed: "Uzavřené události"
         deleted: Koš
         due_today: "Požadavky které mají být vyřešené dnes"
@@ -2509,9 +2625,12 @@ cs:
   password: Heslo
   password_confirmation: "Potvrzení hesla:"
   password_reset_email: "E-mail pro obnovu hesla"
+  payment_failed: "Nemůžeme provést platbu vaší kreditní kartou. Pokud bude problém přetrvávat, obraťte se, prosím, na support@freshdesk.com"
   payment_info: "Údaje o platbě"
   pending: Pozastaveno
   phone: Telefon
+  plain_no: Ne
+  plain_yes: Ano
   plan_amount: "za 1 agenta / měsíc"
   plan_info_update: "Váš plán byl změněn."
   plan_is_selected: "Váš účet Free je nyní aktivní s plánem %{plan}"
@@ -2522,6 +2641,13 @@ cs:
     article: 
       see_all_articles: "Podívejte se na všechny články (%{count})"
     community_forums: "Komunitní fóra"
+    cookie: 
+      cookie_dialog_info1: "Používáme \"cookies\" aby se vám s Freshdeskem lépe pracovalo. "
+      cookie_dialog_info2: "Pokud chcete zjistit, jaké \"cookies\" používáme, kdy a proč, podívejte se sem %{privacy_link}. Pokude nemáte \"cookies\" rádi, nebo je prostě nechcete používat, můžete je klidně zakázat. Jen si uvědomte, že služby Freshdesku jsou na cookies závislé (zejména milujeme ty čokoládové :) a některé části Freshdesku bez nich nemusí správně fungovat. "
+      cookie_dialog_info3: "Pokud \"cookies\" nevypnete s ve vašem prohlížeči, budeme předpokládat, že souhlasíte s jejich používáním tak, jak je to popsané zde %{privacy_link}. "
+      cookie_policy: "Politika práce s COOKIE"
+      privacy_policy: "Zásady ochrany osobních údajů"
+      why_we_love_cookies: "Proč máme rádi COOKIES"
     folder: 
       filler_text: "Sledovat v tomto prostoru články týkající se %{folder_name}"
     header: 
@@ -2559,14 +2685,14 @@ cs:
       add_or_remove_emails: "Přidejte nebo odeberte e-maily, které je nutné zkopírovat při odesílání oznámení pro tento lístek."
       add_people: "Přidat osoby"
       add_people_title: "Přidat osoby ke konverzaci"
-      details: "Podrobnosti o lístku"
+      details: "Podrobnosti požadavku"
       export: "Exportovat požadavky"
       export_ticket_data: "Exportovat požadavky do CSV souboru"
       export_to_csv: "Export do CSV"
-      mark_closed: "Označit lístek jako uzavřený"
+      mark_closed: "Označit požadavek jako uzavřený"
       reopen_reply: "Znovu otevřít a odpovědět"
       reply_placeholder: "Klepnutím sem odpovězte na tento lístek"
-      ticket_list: "Seznam lístků"
+      ticket_list: "Seznam požadavků"
     to_post_comment: "pro odeslání komentáře"
     to_post_topic: "pro odeslání tématu"
     to_submit_ticket: "pro odeslání nového požadavku"
@@ -2619,7 +2745,7 @@ cs:
   portal_customizer_anon_for_i: "Tato vlastnost by měla být vypnuta, pokud chcete schovat stránky fóra ve veřejně přístupném zákaznickém portálu."
   portal_customizer_anon_for_t: "Aktivujte tuto funkci, pokud mají mít uživatelé možnost přihlásit se svým uživatelským jménem a heslem služby Twitter. "
   portal_customizer_anon_tickets: "Kdokoliv může vložit událost"
-  portal_customizer_anon_tickets_i: "Tuto vlastnost vypněte, pokud chcete po Vašich uživatelých, aby k založení nové události museli být přihlášeni."
+  portal_customizer_anon_tickets_i: "Vypněte tuto vlastnost v případě, že budete požadovat, aby uživatelé byli při založení nového požadavku přihlášeni."
   portal_customizer_auto_suggest_solutions: "Tuto funkci povolte, pokud chcete navrhnout existující řešení, když uživatel vytvoří nový lístek."
   portal_customizer_facebook_signin: "Umožnit uživatelům, aby se přihlásili pomocí Facebooku"
   portal_customizer_google_signin: "Povolit uživatelům přihlášení prostřednictvím Google"
@@ -2629,6 +2755,7 @@ cs:
   portal_customizer_option_auto_suggest_solutions: "Automaticky navrhovat řešení, pokud uživatel vytvoří nový lístek."
   portal_customizer_option_for_i: "Zakažte tuto možnost, pokud chcete, aby se uživatelé přihlásili, jestliže si budou chtít prohlédnout řešení"
   portal_customizer_option_forums: "Uživatelé mohou prohlížet Fórum bez přihlášení"
+  portal_customizer_option_forums_i: "Pokud chcete aby uživatel viděl fóra až po přihlášení, zakažte tuto možnost."
   portal_customizer_option_sol_i: "Zakažte tuto možnost, chcete-li, aby se uživatelé přihlásili před prohlížením řešení"
   portal_customizer_option_solutions: "Uživatelé mohou nahlížet do veřejných řešení bez nutnosti se přihlašovat"
   portal_customizer_option_tickets: "Uživatel může založit novou událost bez nutnosti přihlášení"
@@ -2656,8 +2783,8 @@ cs:
       submit_ticket: "Nový požadavek"
       ticket_list: "Požadavky uživatele"
       ticket_view: "Detail požadavku"
-      topic_list: "Seznam požadavků"
-      topic_view: "Zobrazení požadavku"
+      topic_list: "Seznam témat"
+      topic_view: "Zobrazení tématu"
       user_login: "Přihlašovací stránka"
       user_signup: "Registrace nového uživatele"
   portal_signup: "Umožnit zákazníkům přihlášení ze zákaznického portálu"
@@ -2764,6 +2891,7 @@ cs:
   reply_topic: "Odpovědět na téma"
   reported_by: "Oznámeno "
   reports: 
+    classic: Klasický
     customer_activity_title: "Sestava aktivity"
     customer_title: "Sestava aktivity zákazníků"
     customer_title_nav: "Sestava aktivity zákazníků"
@@ -2847,6 +2975,7 @@ cs:
         select_agent: "Zvolit agenta"
         select_billable: "Vybrat fakturovatelný/nefakturovatelný"
         select_customer: "Vybrat zákazníka"
+        select_group: "Vyberte skupinu"
         title: "Sestava časového listu"
         to: Komu
         view_between: "Zobrazit sestavu mezi"
@@ -2969,7 +3098,7 @@ cs:
     sla_targets: "Cíle SLA"
     sla_targets_details: "Nastavit cílovou úroveň služby pro každou prioritu požadavku"
     source_placeholder: "Vložit název zdroje"
-    tickets_with: "Události s "
+    tickets_with: "Požadavky s"
     title: "SLA politika"
     title1: "SLA politika"
   social: 
@@ -3078,6 +3207,7 @@ cs:
     status: "Stav řešení"
     title: Řešení
     title_counter_message: "Pro optimalizaci vyhledávání je pro nadpis doporučena max. délka 72 znaků."
+    title_singular: Řešení
     type: "Typ řešení"
     visibility: Viditelnost
   solution_category: 
@@ -3224,6 +3354,7 @@ cs:
     close_btn: Zavřít
     close_btn_title: "Uzavřit událost"
     closed_at: "Hodin od uzavření"
+    conv_form_status_set_as: "a nastaven stav <strong>%{status}</strong>"
     convert_ticket_title: "Převést jako lístek"
     create_ticket_title: "Vytvořit jako lístek"
     created_at: "Hodin od vytvoření"
@@ -3281,6 +3412,8 @@ cs:
     note_content: "Obsah poznámky"
     note_form: 
       add_and_resolve: "Přidat a vyřešit"
+      add_private_note: "Přidat soukromou poznámku"
+      add_public_note: "Přidat veřejnou poznámku"
       description_note: "Předměty a Popisy sloučených požadavků budou přidány k primárnímu požadavku jako poznámky"
       form_title: "Přidat poznámku"
       notify_agents: "Upozornit agenty"
@@ -3293,8 +3426,8 @@ cs:
     portal_created_on_same_user: "Vytvořeno dne <span class='emphasize'>%{date}</span>"
     previous: "Předchozí lístek"
     priority: Priorita
-    properties: "Vlastnosti události"
-    recent_tickets: "Aktuální události"
+    properties: "Vlastnosti požadavku"
+    recent_tickets: "Nedávné požadavky"
     reply_form: 
       form_title: "Odpovědět na konverzaci"
       post_to_linked_forum: "Napsat na provázané fórum"
@@ -3304,6 +3437,7 @@ cs:
       send_and_set_as: "Odeslat a nastavit jako <strong>%{status}</strong>"
       send_satisfaction_survey: "Zahrnuje průzkum spokojenosti"
     reply_to: Odpovědět
+    reported: hlášený
     reported_by: "od %{requester}"
     reported_from_source: "Hlášeno prostřednictvím %{source}"
     reported_on: "od %{username}, poslední aktualizace %{date}"
@@ -3314,6 +3448,7 @@ cs:
     resolved_at: "Hodin od vyřešení"
     restore_btn: "Obnovit tuto událost"
     restore_btn_title: "Obnovit tuto událost z koše"
+    scenarios: Scénáře
     select_to_agent: "Zvolte Agenta"
     singular: Událost
     sort_by: "Seřazeno dle"
@@ -3341,7 +3476,7 @@ cs:
       reply: Odpovědět
       reply_and_open: "Odpovědět & otevřít"
     switch_view: 
-      new_view: "Vyzkoušejte <strong>nové zobrazení lístků</strong>"
+      new_view: "Vyzkoušejte si <strong>nové zobrazení požadavků</strong>"
       revert_view: "Přepnout na klasické zobrazení"
       submit_feedback: "Odeslat názor"
       whats_new: "Co je nového"
@@ -3351,11 +3486,11 @@ cs:
       destroy_success: "Z požadavku byla odstraněna značka."
       no_match: "Nenalezeno. Prosím, vytvořte značku.."
     thanks: "Děkujeme za zpětnou vazbu"
-    ticket_list_status_agent_responded_at: "Od: %{username}, Zástupce odpověděl: před <span class='emphasize'>%{time_ago} </span>"
-    ticket_list_status_closed_at: "Od: %{username}, Uzavřeno: před <span class='emphasize'>%{time_ago} </span>"
-    ticket_list_status_created_at: "Od: %{username}, Vytvořeno: před <span class='emphasize'>%{time_ago} </span>"
-    ticket_list_status_requester_responded_at: "Od: %{username}, Odpovězeno zákazníkovi: před <span class='emphasize'>%{time_ago} </span>"
-    ticket_list_status_resolved_at: "Od: %{username}, Vyřešeno: před <span class='emphasize'>%{time_ago} </span>"
+    ticket_list_status_agent_responded_at: "Od: %{username}, Zástupce odpověděl: <span class='emphasize'>před %{time_ago}</span>"
+    ticket_list_status_closed_at: "Od: %{username}, Uzavřeno: <span class='emphasize'>před  %{time_ago}</span>"
+    ticket_list_status_created_at: "Od: %{username}, Vytvořeno: <span class='emphasize'>před %{time_ago}</span>"
+    ticket_list_status_requester_responded_at: "od: %{username}, Zákazník odpověděl: <span class='emphasize'>před %{time_ago}</span>"
+    ticket_list_status_resolved_at: "Od: %{username}, Vyřešeno: <span class='emphasize'>před %{time_ago}</span>"
     ticket_selected: "vybraný požadavek (konverzace ze sloučených požadavků bude přidána k primárnímu požadavku)"
     ticket_url: "URL události"
     ticket_user_list_status_agent_responded_at: "Zástupce odpověděl: <span class='emphasize'>před %{time_ago}</span>"
@@ -3418,7 +3553,7 @@ cs:
       choices: Volby
       customer_edit: "Zákazník může upravovat"
       customer_info1: "Pole nemůže být prázdné při online zadávání požadavku"
-      customer_mandatory: "Povinné pro zadání požadavku"
+      customer_mandatory: "Povinné pro zadání události"
       customer_visible: "Viditelné zákazníkům"
       delete_field: "Odstranit Pole"
       description: Popis
@@ -3454,13 +3589,15 @@ cs:
       paragraph: "Víceřádkový text"
       save: "Uložit Pole požadavku"
       single_line: "Jednořádkový text"
-      title: "Pole požadavku"
+      title: "Políčka události"
     no_choice_message: "Je nutné uvést aspoň jednu platnou volbu"
     saving_ticket: "Ukládání položek požadavku..."
     second_choice: "Druhá volba"
     untitled: "Bez názvu"
   ticket_future_due_by: "Má být splněno do %{time}"
+  ticket_future_due_by_live: "Mělo být splněno v <abbr data-livestamp='%{timestamp}'>%{time}</abbr>"
   ticket_past_due_by: "Mělo být splněno před %{time}"
+  ticket_past_due_by_live: "Mělo být splněno před <abbr data-livestamp='%{timestamp}'>%{time}</abbr>"
   ticket_pending_since_time: "Čekající od"
   ticket_resolved_at_time: "Vyřešeno v"
   ticket_update_multiple_button: Aktualizovat
@@ -3521,6 +3658,7 @@ cs:
       mark_this_idea_as: "Označit tento nápad jako"
   total: Celkem
   total_price: "Celková cena"
+  trial_expired: "Váš zkušební režim byl ukončen a účet byl deaktivován. Chcete-li obnovit své předplatné, obraťte se, prosím, na support@freshdesk.com."
   trial_expired_on: "Vaše zkušební verze vypršela"
   twelve: "12 hodin"
   twelve_hours: "Během 12 hodin"

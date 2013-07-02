@@ -24584,56 +24584,56 @@ Ext.define('plugin.ux.PullRefresh2', {
 });
 
 Ext.define('plugin.ux.TitleDoubleTap', {
-    extend: 'Ext.Component',
-    alias: 'plugin.titleDoubleTap',
-    config: {
-        action:'goToTop'
-    },
-    initialize: function() {
-      this.callParent();
-    },
-    init : function(list) {
-        var self = this;
-        self.list = list;
-        list.on({
-            painted : {
-                fn: function(){
-                    var titleBarId = this.list && this.getTitleBarId(this.list),
-                            listview = this.list && this.getListView(this.list);
-                    this.listview = listview;
-                    Ext.get(titleBarId).on({
-                        doubletap: {
-                            fn: function(){
-                                this[this.getAction()].apply(this,[listview])
-                            },
-                            scope:this
-                        }
-                    })
-                },
-                scope: this
-            }
-        })
-    },
+	extend: 'Ext.Component',
+	alias: 'plugin.titleDoubleTap',
+	config: {
+		action:'goToTop'
+	},
+	initialize: function() {
+	  this.callParent();
+	},
+	init : function(list) {
+		var self = this;
+		self.list = list;
+		list.on({
+			painted : {
+				fn: function(){
+					var titleBarId = this.list && this.getTitleBarId(this.list),
+							listview = this.list && this.getListView(this.list);
+					this.listview = listview;
+					Ext.get(titleBarId).on({
+						doubletap: {
+							fn: function(){
+								this[this.getAction()].apply(this,[listview])
+							},
+							scope:this
+						}
+					})
+				},
+				scope: this
+			}
+		})
+	},
 
-    getTitleBarId : function(list){
-        if(list.items && list.items.items && list.items.items[0])
-            return list.items.items[0].id;
-    },
+	getTitleBarId : function(list){
+		if(list.items && list.items.items && list.items.items[0])
+		 	return list.items.items[0].id;
+	},
 
-    getListView : function(list){
-        if(list.items && list.items.items && list.items.items[1])
-            return list.items.items[1];
-    },
+	getListView : function(list){
+		if(list.items && list.items.items && list.items.items[1])
+		 	return list.items.items[1];
+	},
 
-    goToTop : function(listview) {
-        var scroller = listview.getScrollable().getScroller();
-            scroller.scrollToTop(true);
-    },
+	goToTop : function(listview) {
+		var scroller = listview.getScrollable().getScroller();
+			scroller.scrollToTop(true);
+	},
 
-    pageUp : function(listview) {
-        var scroller = listview.getScrollable().getScroller();
-            scroller.scrollTo(0,scroller.position.y-(Ext.Viewport.windowHeight-46),true);
-    }
+	pageUp : function(listview) {
+		var scroller = listview.getScrollable().getScroller();
+			scroller.scrollTo(0,scroller.position.y-(Ext.Viewport.windowHeight-46),true);
+	}
 
 });
 
@@ -27598,102 +27598,102 @@ Ext.define('plugin.ux.Iscroll', {
     alias: 'plugin.iscroll',
     requires:'Ext.util.DelayedTask',
     config: {
-        list : null,
+    	list : null,
     },
     initialize: function() {
         this.callParent();
     },
-    init : function(list){
-        var me = this;
-        me.list = list;
-        this.list.on({
-            painted:function(){
-                this.registerIscroll();
-            },
-            scope:this
-        })
-    },
-    registerIscroll : function(){
-        this._updateIScroll();
-    },
-    getIScrollElementId : function() {
-        return this.list.bodyElement.getId();
-    },
-    _ensureIScroll: function() {
-        if (!this.iScroll) {
-            var el = this.getIScrollElementId();
-            this.iScroll = new iScroll(el);
-            this.iScrollTask = new Ext.util.DelayedTask(this._refreshIScroll, this);
-        }
-    },
-    _updateIScroll: function() {
-        this._ensureIScroll();
-        if (this.iScroll) {
-            this.iScrollTask.delay(1000);
-        }
-    },
-    _refreshIScroll: function() {
-        this.iScroll.refresh();
-        //Refresh one more time.
-        this.iScrollTask.delay(1000);
-    }
+	init : function(list){
+		var me = this;
+		me.list = list;
+		this.list.on({
+			painted:function(){
+				this.registerIscroll();
+			},
+			scope:this
+		})
+	},
+	registerIscroll : function(){
+		this._updateIScroll();
+	},
+	getIScrollElementId : function() {
+		return this.list.bodyElement.getId();
+	},
+	_ensureIScroll: function() {
+		if (!this.iScroll) {
+			var el = this.getIScrollElementId();
+			this.iScroll = new iScroll(el);
+			this.iScrollTask = new Ext.util.DelayedTask(this._refreshIScroll, this);
+		}
+	},
+	_updateIScroll: function() {
+		this._ensureIScroll();
+		if (this.iScroll) {
+			this.iScrollTask.delay(1000);
+		}
+	},
+	_refreshIScroll: function() {
+		this.iScroll.refresh();
+		//Refresh one more time.
+		this.iScrollTask.delay(1000);
+	}
 });
 // Ext.override(Ext.Panel, {
-//  afterRender: Ext.Panel.prototype.afterRender.createSequence(function() {
-//      if (this.getXType() == 'panel') {
-//          this._getIScrollElement = function() {
-//              return (this.el.child('.x-panel-body', true));
-//          }
-//      }
+// 	afterRender: Ext.Panel.prototype.afterRender.createSequence(function() {
+// 		if (this.getXType() == 'panel') {
+// 			this._getIScrollElement = function() {
+// 				return (this.el.child('.x-panel-body', true));
+// 			}
+// 		}
 
-//      //Uncomment below to use iScroll only on mobile devices but use regular scrolling on PCs.
-//      if (this.autoScroll /*&& Ext.isMobileDevice*/) {
-//          if (this._getIScrollElement) {
-//              this._updateIScroll();
-//              this.on('afterlayout', this._updateIScroll);
-//          }
-//      }
-//  }),
+// 		//Uncomment below to use iScroll only on mobile devices but use regular scrolling on PCs.
+// 		if (this.autoScroll /*&& Ext.isMobileDevice*/) {
+// 			if (this._getIScrollElement) {
+// 				this._updateIScroll();
+// 				this.on('afterlayout', this._updateIScroll);
+// 			}
+// 		}
+// 	}),
 
-//  _ensureIScroll: function() {
-//      if (!this.iScroll) {
-//          var el = this._getIScrollElement();
-//          if (el.children.length > 0) {
-//              this.iScroll = new iScroll(el);
-//              this.iScrollTask = new Ext.util.DelayedTask(this._refreshIScroll, this);
-//          }
-//      }
-//  },
+// 	_ensureIScroll: function() {
+// 		if (!this.iScroll) {
+// 			var el = this._getIScrollElement();
+// 			if (el.children.length > 0) {
+// 				this.iScroll = new iScroll(el);
+// 				this.iScrollTask = new Ext.util.DelayedTask(this._refreshIScroll, this);
+// 			}
+// 		}
+// 	},
 
-//  _updateIScroll: function() {
-//      this._ensureIScroll();
-//      if (this.iScroll) {
-//          this.iScrollTask.delay(1000);
-//      }
-//  },
+// 	_updateIScroll: function() {
+// 		this._ensureIScroll();
+// 		if (this.iScroll) {
+// 			this.iScrollTask.delay(1000);
+// 		}
+// 	},
 
-//  _refreshIScroll: function() {
-//      this.iScroll.refresh();
-//      //Refresh one more time.
-//      this.iScrollTask.delay(1000);
-//  }
+// 	_refreshIScroll: function() {
+// 		this.iScroll.refresh();
+// 		//Refresh one more time.
+// 		this.iScrollTask.delay(1000);
+// 	}
 // });
 
 // Ext.override(Ext.tree.TreePanel, {
-//  _getIScrollElement: function() {
-//      return (this.el.child('.x-panel-body', true));
-//  }
+// 	_getIScrollElement: function() {
+// 		return (this.el.child('.x-panel-body', true));
+// 	}
 // });
 
 // Ext.override(Ext.grid.GridPanel, {
-//  _getIScrollElement: function() {
-//      return (this.el.child('.x-grid3-scroller', true));
-//  },
+// 	_getIScrollElement: function() {
+// 		return (this.el.child('.x-grid3-scroller', true));
+// 	},
 
-//  afterRender: Ext.grid.GridPanel.prototype.afterRender.createSequence(function() {
-//      //TODO: need to hook into more events and to update iScroll.
-//      this.view.on('refresh', this._updateIScroll, this);
-//  })
+// 	afterRender: Ext.grid.GridPanel.prototype.afterRender.createSequence(function() {
+// 		//TODO: need to hook into more events and to update iScroll.
+// 		this.view.on('refresh', this._updateIScroll, this);
+// 	})
 // });
 /**
  * @aside video tabs-toolbars
@@ -31018,9 +31018,15 @@ Ext.define("Freshdesk.view.TicketDetails", {
                                 '<tpl if="!deleted && !spam && !FD.current_user.is_customer"><ul class="actions">',
                                         '<li><a class="automation" href="#tickets/scenarios/{display_id}">&nbsp;</a></li>',
                                         '<li><a class="chat"       href="#tickets/addNote/{display_id}">&nbsp;</a></li>',
-                                        '<li><a class="reply"      href="#tickets/reply/{display_id}">&nbsp;</a></li>',
-                                        '<li><a class="close"      href="#tickets/resolve/{display_id}">&nbsp;</a></li>',
-                                        '<li><a class="trash"      href="#tickets/delete/{display_id}">&nbsp;</a></li>',
+                                        '<tpl if="FD.current_user.can_reply_ticket">',
+                                          '<li><a class="reply"      href="#tickets/reply/{display_id}">&nbsp;</a></li>',
+                                        '</tpl>',
+                                        '<tpl if="FD.current_user.can_edit_ticket_properties">',
+                                          '<li><a class="close"      href="#tickets/resolve/{display_id}">&nbsp;</a></li>',
+                                        '</tpl>',
+                                        '<tpl if="FD.current_user.can_delete_ticket">',
+                                          '<li><a class="trash"      href="#tickets/delete/{display_id}">&nbsp;</a></li>',
+                                        '</tpl>',
                                 '</ul></tpl>',
                         '</tpl>',
                         '<tpl if="FD.current_user.is_customer">',
@@ -31114,9 +31120,15 @@ Ext.define("Freshdesk.view.TicketDetails", {
                         '<tpl if="!deleted && !spam && !FD.current_user.is_customer && notes.length &gt; 4"><div class="HDR bottom"><ul class="actions">',
                                 '<li><a class="automation" href="#tickets/scenarios/{display_id}">&nbsp;</a></li>',
                                 '<li><a class="chat"       href="#tickets/addNote/{display_id}">&nbsp;</a></li>',
-                                '<li><a class="reply"      href="#tickets/reply/{display_id}">&nbsp;</a></li>',
-                                '<li><a class="close"      href="#tickets/resolve/{display_id}">&nbsp;</a></li>',
-                                '<li><a class="trash"      href="#tickets/delete/{display_id}">&nbsp;</a></li>',
+                                '<tpl if="FD.current_user.can_reply_ticket">',
+                                  '<li><a class="reply"      href="#tickets/reply/{display_id}">&nbsp;</a></li>',
+                                '</tpl>',
+                                '<tpl if="FD.current_user.can_edit_ticket_properties">',
+                                  '<li><a class="close"      href="#tickets/resolve/{display_id}">&nbsp;</a></li>',
+                                '</tpl>',
+                                '<tpl if="FD.current_user.can_delete_ticket">',
+                                  '<li><a class="trash"      href="#tickets/delete/{display_id}">&nbsp;</a></li>',
+                                '</tpl>',
                         '</ul></tpl></div></tpl>',
                 ].join(''),{
                         truncate: function(value,length) {
@@ -31641,18 +31653,18 @@ Ext.define('Freshdesk.view.FlashMessageBox', {
         var backButton = {
             xtype:'button',
             text:'Close',
-            ui:'lightBtn back',
+			ui:'lightBtn back',
             handler:this.goBack,
-            align:'left',
+			align:'left',
             scope:this
-        };
-        var topToolbar = {
-            xtype: "titlebar",
-            docked: "top",
+		};
+		var topToolbar = {
+			xtype: "titlebar",
+			docked: "top",
             title:'Results',
             ui:'header',
-            items: [backButton]
-        };
+			items: [backButton]
+		};
 
         var details = {
             tpl : new Ext.XTemplate(['<div class="flash">',
@@ -31706,13 +31718,13 @@ Ext.define('Freshdesk.controller.Dashboard', {
             'dashboard'      : 'showItem',
             'dashboard/:name': 'showItem'
         },
-        refs:{
-            // We're going to lookup our views by xtype.
+    	refs:{
+    		// We're going to lookup our views by xtype.
             filtersListContainer: "filtersListContainer",
             contactsListContainer:"contactsListContainer",
             dashboardContainer:"dashboardContainer"
 
-        }
+    	}
     },
     showItem:function(name){
         Ext.getStore('Tickets').currentPage=1
@@ -31759,12 +31771,12 @@ Ext.define('Freshdesk.controller.Filters', {
             'filters'          : 'loadFilter',
             'filters/:type/:id': 'loadFilter'
         },
-        refs:{
-            // We're going to lookup our views by xtype.
+    	refs:{
+    		// We're going to lookup our views by xtype.
             filtersListContainer: "filtersListContainer",
             ticketsListContainer:"ticketsListContainer",
             contactsListContainer:"contactsListContainer"
-        }
+    	}
     },
     load_tickets : function(type,id){
         var ticketsListContainer = this.getTicketsListContainer(),
@@ -31799,7 +31811,7 @@ Ext.define('Freshdesk.controller.Filters', {
         id  = id || 'all_tickets';
         url = FD.current_user.is_customer ? '/support/tickets/'+type+'/'+id : '/helpdesk/tickets/'+type+'/'+id ;
         Ext.getStore("Tickets").getProxy()._url=url;
-        this.load_tickets(type,id);
+    	this.load_tickets(type,id);
     },
     launch: function () {
         this.callParent();
@@ -31833,7 +31845,7 @@ Ext.define('Freshdesk.controller.Tickets', {
             'tickets/close/:id': 'close',
             'tickets/reload/:id': 'reload'
         },
-        refs:{
+    	refs:{
             ticketDetailsContainer:"ticketDetailsContainer",
             ticketsListContainer:"ticketsListContainer",
             ticketReply:"ticketReply",
@@ -31841,7 +31853,7 @@ Ext.define('Freshdesk.controller.Tickets', {
             newTicketContainer : 'newTicketContainer',
             ticketTweetForm   : 'ticketTweetForm',
             ticketFacebookForm : 'ticketFacebookForm'
-        }
+    	}
     },
     reload : function(id){
         location.href="#tickets/show/"+id;
@@ -32010,8 +32022,8 @@ Ext.define('Freshdesk.controller.Tickets', {
                     handler:function(){
                         messageBox.hide();
                         var opts = {
-                            url: '/helpdesk/tickets/update/'+id,
-                            method:'POST',
+                            url: '/helpdesk/tickets/'+id+'/update_ticket_properties',
+                            method:'PUT',
                             params:{
                                 'helpdesk_ticket[status]' : 4
                             },
@@ -32083,7 +32095,7 @@ Ext.define('Freshdesk.controller.Tickets', {
         autoTechStore = Ext.getStore('AutoTechnician');
         //notForm.items.items[0].setTitle('Ticket : '+id);
         formObj.reset();
-        formObj.setUrl('/helpdesk/tickets/'+id+'/notes');
+        formObj.setUrl('/helpdesk/tickets/'+id+'/conversations/note');
         if(FD.current_user.is_customer){
             formObj.setUrl('/support/tickets/'+id+'/notes');  
         }else{
@@ -32154,7 +32166,7 @@ Ext.define('Freshdesk.controller.Tickets', {
 
 
         //setting the url 
-        formObj.setUrl('/helpdesk/tickets/'+id+'/notes');
+        formObj.setUrl('/helpdesk/tickets/'+id+'/conversations/reply');
     },
     getConversationContainer : function(){
         return this.getTicketDetailsContainer().items.items[1].items.items[1].items.items[0];
@@ -32206,7 +32218,7 @@ Ext.define('Freshdesk.controller.Tickets', {
             fieldSetObj.items.items[5].setValue('@'+this.ticket.requester.twitter_id).show();
 
         //setting the url 
-        formObj.setUrl('/helpdesk/tickets/'+id+'/notes');
+        formObj.setUrl('/helpdesk/tickets/'+id+'/conversations/twitter');
     },
     initFacebookForm : function(id){
         var facebookForm = this.getTicketFacebookForm(),
@@ -32237,7 +32249,7 @@ Ext.define('Freshdesk.controller.Tickets', {
             
         fieldSetObj.items.items[5].setValue('');
         //setting the url 
-        formObj.setUrl('/helpdesk/tickets/'+id+'/notes');
+        formObj.setUrl('/helpdesk/tickets/'+id+'/conversations/facebook');
     }
 
 });
@@ -32252,11 +32264,11 @@ Ext.define('Freshdesk.controller.Contacts', {
             'contacts/show/:id' : 'show',
             'contacts/new'  : 'create'
         },
-        refs:{
+    	refs:{
             contactsListContainer:"contactsListContainer",
             contactDetails:"contactDetails",
             contactsFormContainer:'contactsFormContainer'
-        }
+    	}
     },
     show: function(id){
         var contactDetails = this.getContactDetails();
@@ -32672,14 +32684,14 @@ Ext.define('Ext.field.Search', {
          * @inheritdoc
          */
         component: {
-            type: 'search'
-        },
+	        type: 'search'
+	    },
 
         /**
          * @cfg
          * @inheritdoc
          */
-        ui: 'search'
+	    ui: 'search'
     }
 });
 
@@ -33530,8 +33542,8 @@ Ext.define('Ext.field.Email', {
          * @inheritdoc
          */
         component: {
-            type: 'email'
-        },
+	        type: 'email'
+	    },
 
         /**
          * @cfg
@@ -36059,12 +36071,12 @@ Ext.define('Ext.util.Inflector', {
             woman: 'women',
             child: 'children',
             man: 'men',
-            corpus: 'corpora',
+            corpus:	'corpora',
             criterion: 'criteria',
-            curriculum: 'curricula',
+            curriculum:	'curricula',
             genus: 'genera',
-            memorandum: 'memoranda',
-            phenomenon: 'phenomena',
+            memorandum:	'memoranda',
+            phenomenon:	'phenomena',
             foot: 'feet',
             goose: 'geese',
             tooth: 'teeth',
@@ -38909,22 +38921,22 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         this.callParent(arguments);
 
         var backButton = {
-            text:'Views',
-            ui:'lightBtn back',
-            xtype:'button',
-            handler:this.backToFilters,
-            align:'left'
-        };
+        	text:'Views',
+			ui:'lightBtn back',
+			xtype:'button',
+			handler:this.backToFilters,
+			align:'left'
+		};
         
 
-        var topToolbar = {
-            xtype: "titlebar",
-            docked: "top",
+		var topToolbar = {
+			xtype: "titlebar",
+			docked: "top",
             title:'All Tickets',
             ui:'header',
-            items: [
-                backButton
-            ],
+			items: [
+				backButton
+			],
             listeners: {
                 doubletap: {
                     fn:function(){
@@ -38933,9 +38945,9 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
                     scope:this
                 }
             }
-        };
+		};
 
-        var ticketsList = {
+		var ticketsList = {
             xtype:'ticketslist',
             store: Ext.getStore('Tickets'),
             listeners:{
@@ -38979,7 +38991,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
                     }
             ]
         };
-        this.add([topToolbar,ticketsList]);
+		this.add([topToolbar,ticketsList]);
     },
     showListLoading : function(){
         this.items.items[1].setMasked({xtype:'mask',html:'<div class="x-loading-spinner" style="font-size: 180%; margin: 10px auto;"><span class="x-loading-top"></span><span class="x-loading-right"></span><span class="x-loading-bottom"></span><span class="x-loading-left"></span></div>',style:'background:rgba(255,255,255,0.1)'});
@@ -39195,7 +39207,7 @@ Ext.define('Freshdesk.view.TicketsListContainer', {
         swipeOBj.setMenuOptions(actions);
     },
     onTicketDisclose: function(list, index, target, record, evt, options){
-        setTimeout(function(){list.deselect(index);},500);
+    	setTimeout(function(){list.deselect(index);},500);
         location.href="#tickets/show/"+record.data.display_id;
     },
     backToFilters: function(){
@@ -39227,29 +39239,29 @@ Ext.define('Freshdesk.view.ContactsListContainer', {
             maxHeight:80
         };
 
-        var newButton = {
-            xtype:'button',
+		var newButton = {
+			xtype:'button',
             ui:'headerBtn',
-            iconMask:true,
-            iconCls:'add1',
-            handler:this.onNewButton,
-            align:'right',
+			iconMask:true,
+			iconCls:'add1',
+			handler:this.onNewButton,
+			align:'right',
             maxHeight:'80%'
-        };
+		};
 
         
-        var topToolbar = {
-            xtype: "titlebar",
+		var topToolbar = {
+			xtype: "titlebar",
             title: "All Contacts",
-            docked: "top",
+			docked: "top",
             ui:'header',
-            items: [
-                backButton,
-                newButton 
-            ]
-        };
+			items: [
+				backButton,
+				newButton 
+			]
+		};
 
-        var contactsList = {
+		var contactsList = {
             xtype:'contactslist',
             store: Ext.getStore('Contacts'),
             listeners:{
@@ -39268,14 +39280,14 @@ Ext.define('Freshdesk.view.ContactsListContainer', {
                     }
             ]
         };
-        this.add([topToolbar,contactsList]);
+		this.add([topToolbar,contactsList]);
     },
     showDetails: function(list, index, target, record, evt, options){
         setTimeout(function(){list.deselect(index);},500);
         location.href="#contacts/show/"+record.raw.user.id;
     },
     backToDashboard: function(){
-        location.href='#dashboard';
+    	location.href='#dashboard';
     },
     onNewButton: function(){
         location.href="#contacts/new";
@@ -39586,10 +39598,10 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
         var backButton = {
             xtype:'button',
             text:'Cancel',
-            ui:'lightBtn',
+			ui:'lightBtn',
             handler:this.backToViews,
-            align:'left'
-        };
+			align:'left'
+		};
 
         var addBtn = Ext.create('Ext.Button',{
             xtype:'button',
@@ -39601,13 +39613,13 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
             id:'NewTicket-addButton'
         });
 
-        var topToolbar = {
-            xtype: "titlebar",
-            docked: "top",
+		var topToolbar = {
+			xtype: "titlebar",
+			docked: "top",
             title: "New Ticket",
             ui:'header',
-            items: [backButton,addBtn]
-        },
+			items: [backButton,addBtn]
+		},
         ticket_fields = {
                 xtype: 'ticketform',
                 padding:0,
@@ -40716,18 +40728,18 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
         var backButton = {
             xtype:'button',
             text:'List',
-            ui:'lightBtn back',
-            handler:function(){ this.backToConversation ? me.toggleProperties() : me.backToListView()},
-            align:'left'
-        };
+			ui:'lightBtn back',
+			handler:function(){ this.backToConversation ? me.toggleProperties() : me.backToListView()},
+			align:'left'
+		};
 
-        var trashButton = {
-            iconMask:true,
-            iconCls:'trash',
+		var trashButton = {
+			iconMask:true,
+			iconCls:'trash',
             ui:'plain',
-            handler:this.onDeleteButton,
-            align:'right'
-        };
+			handler:this.onDeleteButton,
+			align:'right'
+		};
 
 
         var updateBtn = Ext.create('Ext.Button',{
@@ -40751,13 +40763,13 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
             scope:this
         });
 
-        var topToolbar = {
-            xtype: "titlebar",
-            docked: "top",
+		var topToolbar = {
+			xtype: "titlebar",
+			docked: "top",
             title: "Ticket :",
             ui:'header',
-            items: [backButton,toggleBtn,updateBtn]
-        };
+			items: [backButton,toggleBtn,updateBtn]
+		};
 
         var ticketDetails = {
             xtype:'ticketdetails',
@@ -40814,7 +40826,7 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
         formData = FD.Util.construct_ticket_form(resJson,true,formListeners),
         formObj = this.items.items[1].items.items[2].items.items[1].items.items[1];
         formObj.items.items[0].setItems(formData);
-        formObj.setUrl('/helpdesk/tickets/'+id);
+        formObj.setUrl('/helpdesk/tickets/'+id+'/update_ticket_properties');
         if(FD.current_user.is_customer) 
             formObj.setUrl('/support/tickets/'+id)
 
@@ -40850,7 +40862,9 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
         };
 
         iconBtn.hide(true);
-        updateBtn.show();
+        if(FD.current_user.can_edit_ticket_properties){
+          updateBtn.show();
+        }
         this.disableUpdateBtn();
         titleBarItems.items[0].setText('Back');
         titleBarItems.items[0].backToConversation=true;
@@ -40909,7 +40923,7 @@ Ext.define('Freshdesk.view.TicketDetailsContainer', {
         });
     },
     onDeleteButton: function(){
-        console.log('delete button');
+    	console.log('delete button');
     },
     config: {
         layout:'vbox',
@@ -43080,8 +43094,8 @@ Ext.define("Freshdesk.view.ContactForm", {
                     },
                     {
                         xtype: 'hiddenfield',
-                        name: 'user[user_role]',
-                        value: 3
+                        name: 'user[helpdesk_agent]',
+                        value: false
                     },
                     {
                         xtype: 'textfield',
@@ -47816,16 +47830,16 @@ Ext.define("Freshdesk.view.FiltersList", {
     extend: "Ext.dataview.List",
     alias: "widget.filterslist",
     config: {
-        cls:'views',
+    	cls:'views',
         grouped:true,
         disclosureProperty:'disclosure2',
         emptyText: '<div class="empty-list-text">You don\'t have any views.</div>',
         onItemDisclosure: false,
         itemTpl: ['<tpl if="count &gt; 0"><div class="list-item-title"></tpl><tpl if="count == 0"><div class="list-item-title disabled"></tpl>',
                     '<div class="name">{name}</div>',
-                    '<div class="count"><div>{count}</div></div>',
+        			'<div class="count"><div>{count}</div></div>',
                     '<div class="disclose icon-arrow-right"></div>',
-                   '</div>'].join(''),
+        		   '</div>'].join(''),
         loadingText: false
     }
 });
@@ -47853,7 +47867,7 @@ Ext.define("Freshdesk.view.TicketsList", {
                                 '&nbsp;{pretty_updated_date}</div>',
                         '</div>',
                         '<div class="disclose icon-arrow-right">&nbsp;</div>',
-            '</div></tpl>'].join(''),
+        	'</div></tpl>'].join(''),
                 {
                         time_in_words : function(item){
                             return FD.Util.humaneDate(item);
@@ -47875,9 +47889,9 @@ Ext.define("Freshdesk.view.ContactsList", {
         loadingText: false,
         itemTpl: [
                 '<div class="list-item-title">',
-                  '<b><div>{user.name}</div></b>',
-                  '<div class="info_data">{user.email}</div>',
-                '</div>'
+		  		  '<b><div>{user.name}</div></b>',
+		  		  '<div class="info_data">{user.email}</div>',
+        	  	'</div>'
                         ].join('')
 
     }
@@ -57273,3 +57287,4 @@ Ext.application({
         );
     }
 });
+

@@ -4,14 +4,6 @@ class Social::TwitterHandlesController < ApplicationController
   
   before_filter { |c| c.requires_feature :twitter }
   
-  before_filter :except => [:create_twicket,:feed, :user_following,:tweet_exists,:twitter_search] do |c| 
-    c.requires_permission :manage_users
-  end
-  
-  before_filter :only => [ :create_twicket,:feed, :user_following,:tweet_exists] do |c| 
-    c.requires_permission :manage_tickets
-  end
-  
   prepend_before_filter :load_product, :only => [ :signin, :authdone ]
   before_filter :build_item, :only => [:signin, :authdone]
   before_filter :load_item,  :only => [:tweet, :edit, :update, :destroy]       
@@ -101,10 +93,6 @@ class Social::TwitterHandlesController < ApplicationController
         redirect_to edit_social_twitter_url(handle)
       else
         twitter_handle.save
-        Resque::enqueue(CRM::Totango::SendUserAction, 
-                                        {:account_id => current_account.id, 
-                                         :email =>  current_user.email, 
-                                        :activity => totango_activity(:twitter) })
         portal_name = twitter_handle.product ? twitter_handle.product.name : current_account.portal_name
         flash[:notice] = t('twitter.success_signin', :twitter_screen_name => twitter_handle.screen_name, :helpdesk => portal_name)        
         redirect_to edit_social_twitter_url(twitter_handle)
@@ -175,7 +163,7 @@ class Social::TwitterHandlesController < ApplicationController
       user = current_account.contacts.new
       user.signup!({:user => {:twitter_id => screen_name, :name => screen_name, 
                     :active => true,
-                    :user_role => User::USER_ROLES_KEYS_BY_TOKEN[:customer]}})
+                    :helpdesk_agent => false}})
     end
     user 
   end
@@ -190,7 +178,7 @@ class Social::TwitterHandlesController < ApplicationController
     
     unless @ticket.blank?
       @note = @ticket.notes.build(
-        :body => params[:helpdesk_tickets][:description],
+        :note_body_attributes => {:body => params[:helpdesk_tickets][:ticket_body_attributes][:description]},
         :private => true ,
         :incoming => true,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],

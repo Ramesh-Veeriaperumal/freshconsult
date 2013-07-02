@@ -1,9 +1,11 @@
 <% content_for :pagetop do -%>
   <% if @ticket.deleted %>
     <div class="alert-message block-message warning">
-      <div class="alert-actions-right">
-        <%= link_to(t('ticket.restore_btn'), restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "btn small", :title => t('ticket.restore_btn_title') ) %>
-      </div>
+      <% if privilege?(:delete_ticket) %>
+        <div class="alert-actions-right">
+          <%= link_to(t('ticket.restore_btn'), restore_helpdesk_ticket_path(@ticket), :method => :put, :class => "btn small", :title => t('ticket.restore_btn_title') ) %>
+        </div>
+      <% end %>
       <p><strong><%= t('this_ticket_has_been_deleted') %></strong></p>
     </div>
   <% end %>  
@@ -71,28 +73,36 @@
           <span id="agent_viewing_message" style="color:#ffa04c; font-size:12px;" class="hide"></span>
           <span id="agent_replying_message_top" style="color:#ffa04c; font-size:12px;" class="hide"></span>
         </div>
-        <% unless @ticket.deleted %>
+        <% if !@ticket.deleted && (privilege?(:edit_ticket_properties) || privilege?(:delete_ticket)) %>
           <div class="ticket_actions">            
-            <div class="item-right-actions">
-              <ul class="nav-drop"> 
-                <li>
-                  <a href="#" class="menu-trigger nav-item-icon"><span class="item-options"></span></a>
-                  <ul class="menu-box">
-                    <li class="menu-item"> 
-                       <%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %>     
-                    </li>  
-                    <li class="menu-item">
-                      <%= link_to(t('ticket.delete_btn'), helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]}), :method => :delete, :title => t('ticket.delete_btn_title')) %>
-                    </li>
-                  </ul>
-                </li> 
-              </ul>
-            </div>
+              <div class="item-right-actions">
+                <ul class="nav-drop"> 
+                  <li>
+                    <a href="#" class="menu-trigger nav-item-icon"><span class="item-options"></span></a>
+                    <ul class="menu-box">
+                      <% if privilege?(:edit_ticket_properties) %>
+                        <li class="menu-item"> 
+                           <%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %>     
+                        </li>  
+                      <% end %>
+                      <% if privilege?(:delete_ticket) %>
+                        <li class="menu-item">
+                          <%= link_to(t('ticket.delete_btn'), helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]}), :method => :delete, :title => t('ticket.delete_btn_title')) %>
+                        </li>
+                      <% end %>
+                    </ul>
+                  </li> 
+                </ul>
+              </div>
             <div class="action_buttons clearfix">
               <%= link_to( t('print'), print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
-              <%= link_to t('ticket.merge_btn'), "/helpdesk/merge_tickets/bulk_merge?source_tickets=#{@ticket.display_id}", 
+              <% if privilege?(:merge_or_split_ticket) %>
+                <%= link_to t('ticket.merge_btn'), "/helpdesk/merge_tickets/bulk_merge?source_tickets=#{@ticket.display_id}", 
               :id => "Merge", :title => t('ticket.merge_title'), "data-ajax-dialog" => true, "data-width" => "727" %>
-              <%= link_to(t('ticket.close_btn'), "#", :title  => t('ticket.close_btn_title'), :class => "last" , :id=>"close_ticket_btn" , :"data-href" => close_helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]})) unless @ticket.closed? %> 
+              <% end %>
+              <% if privilege?(:edit_ticket_properties) %>
+                <%= link_to(t('ticket.close_btn'), "#", :title  => t('ticket.close_btn_title'), :class => "last" , :id=>"close_ticket_btn" , :"data-href" => close_helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]})) unless @ticket.closed? %> 
+              <% end %>
             </div>  
             <div class="action_icons floatr"> 
               <% if is_application_installed?("jira")  %>   
@@ -144,10 +154,14 @@
         <%end%> 
         </ul>
       <% end %>
-        <% unless @ticket.ticket_topic.nil? %>
+        <% if !@ticket.ticket_topic.nil? %>
           <div class="info-highlight">
             <%= t("helpdesk.tickets.show.linked_ticket") %>
+            <% if privilege?(:view_forums) %>
             "<%= link_to("#{truncate(h(@ticket.topic.title))}", category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
+            <% else %>
+              "<%= truncate(h(@ticket.topic.title)) %>"
+            <% end %>
           </div>
         <% end %>
       </div>

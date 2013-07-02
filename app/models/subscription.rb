@@ -26,10 +26,9 @@ class Subscription < ActiveRecord::Base
   before_save :update_amount
   
   before_update :cache_old_model
-  after_update :update_features 
+  # after_update :update_features 
 
   after_update :add_to_crm, :if => :free_customer?
-  after_update :notify_totango, :if => :free_customer?
 
   before_destroy :add_churn
 
@@ -49,7 +48,7 @@ class Subscription < ActiveRecord::Base
   validates_numericality_of :agent_limit, :if => :free?, :less_than_or_equal_to => AGENTS_FOR_FREE_PLAN, :message => I18n.t('not_eligible_for_free_plan')
 
   def self.customer_count
-   count(:conditions => [ " state != 'trial' and next_renewal_at > '#{(Time.zone.now.ago 5.days).to_s(:db)}'"])
+   count(:conditions => [ " state IN ('active','free') "])
   end
  
   def self.free_customers
@@ -65,11 +64,11 @@ class Subscription < ActiveRecord::Base
   end
 
   def self.paid_agent_count
-    sum('agent_limit - free_agents', :conditions => [ " state = 'active' and amount > 0.00 and next_renewal_at > '#{(Time.zone.now.ago 5.days).to_s(:db)}'"]).to_i
+    sum('agent_limit - free_agents', :conditions => [ " state = 'active' and amount > 0.00"]).to_i
   end
  
   def self.monthly_revenue
-    sum('amount/renewal_period', :conditions => [ " state = 'active' and amount > 0.00 and next_renewal_at > '#{(Time.zone.now.ago 5.days).to_s(:db)}'"]).to_f
+    sum('amount/renewal_period', :conditions => [ " state = 'active' and amount > 0.00"]).to_f
   end
 
   
@@ -275,11 +274,7 @@ class Subscription < ActiveRecord::Base
     end
 
     def add_to_crm
-      Resque.enqueue(CRM::AddToCRM::FreeCustomer, {:item_id => id})
-    end
-
-    def notify_totango
-      Resque.enqueue(CRM::Totango::FreeCustomer, {:account_id => account_id})
+      Resque.enqueue(CRM::AddToCRM::FreeCustomer, { :item_id => id, :account_id => account_id })
     end
 
     #Subscription Events

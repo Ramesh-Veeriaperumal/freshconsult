@@ -1,0 +1,236 @@
+<% content_for :pagefixed do %>
+<% javascript_tag do %>
+	HolidayList = $H();
+	TIME_CONTAINERS = ["time_morning", "morning_range", "time_evening", "evening_range"];
+	INVALID_HOLIDAYS = ["feb30", "feb31","apr31","jun31","sep31","nov31"]
+	BASE_YEAR = 2000
+
+	setFullWeek = function( fullweek ){ 
+		jQuery("#DAYS_LIST").toggle( (fullweek === "false") );
+	}
+
+    jQuery.validator.addMethod("time_validate", function(value, element) {
+       	if (this.optional(element)) // return true on optional element
+        	return true;
+
+        var _parent = jQuery(element).parents('.timerange').first();
+        var _cal_index = _parent.data('dayNumber');
+        _condition = compute_validity(TIME_CONTAINERS.map(function(id){
+    		return _parent.find("#"+id + '_' + _cal_index).val();
+    	}));
+
+        return _condition;
+   }, '');
+
+   jQuery.validator.addClassRules("time_validate", { time_validate: true }); 
+
+   	to_seconds = function(time, range){
+		_hrs = parseInt(time.split(":")[0]);
+		_mins = parseInt(time.split(":")[1]);
+		_offset = (range == 'pm') ? (12 * 3600) : 0;
+
+		return (( _hrs == 12 ? 0 : _hrs ) * 3600) + (_mins * 60) + _offset;
+	}
+
+	calculate_duration = function(range_array){ 
+		start = range_array[0];
+		start_range = range_array[1];
+		end = range_array[2];
+		end_range = range_array[3];
+		
+		_start = to_seconds( start, start_range )
+		_end = to_seconds( end, end_range )
+
+		_duration = (_end - _start);
+
+		_hrs = (_start == 0 && _end == 0) ? 24 : Math.floor(_duration/3600);
+		_mins = (_duration%3600)/60;
+
+		return (_hrs ? (_hrs + " hrs ") : "") + (_mins ? (_mins + " mins") : "");
+	}
+
+	duration = function(item){
+		var _parent = jQuery(item).parents('.timerange').first();
+		var _cal_index = _parent.data('dayNumber');
+
+		_time_array = TIME_CONTAINERS.map(function(id){
+    		return _parent.find("#"+id + '_' + _cal_index).val();
+    	})
+
+        _condition = compute_validity(_time_array);
+
+        jQuery(_parent).find('.outline').toggle(_condition);
+
+        _parent.find(".time_validate").data("validtime", _condition);
+
+		return _condition ?
+				calculate_duration(_time_array) :  "<a href='#' class='error'></a><%= t('business_hours.valid_time') %>"
+				
+	}
+
+	compute_validity = function(range_array){
+		var duration;
+
+		start = range_array[0];
+		start_range = range_array[1];
+		end = range_array[2];
+		end_range = range_array[3];
+
+		_morning_sec = to_seconds( start, start_range );
+		_evening_sec = to_seconds( end, end_range );
+
+		return ( _morning_sec < _evening_sec ) || (_morning_sec == 0 && _evening_sec == 0);							
+	}
+
+
+	addHolidaytoList = function(month_date, name){
+		name = trim(name);
+		month_id = month_date.replace(/\s/g, "").toLowerCase();
+		if (INVALID_HOLIDAYS.indexOf(month_id) != -1 || name == "") {
+			jQuery("#HolidayValidation").hide();
+			jQuery("#InvalidHoliday").show();
+		}else if( !HolidayList.get( month_id ) ){
+			setArray = [month_date, name];
+			HolidayList.set( month_id,  setArray);
+			jQuery("#HolidayValidation").hide();
+			jQuery("#InvalidHoliday").hide();
+			var index = findPlaceToInsert(month_date);
+			var holiday_row = jQuery("<li month_date= "+month_id+" class='row-fluid'><a href='javascript:void(0)' class='close'></a><span class='span2'>"+month_date+"</span><span class='span8 holiday-name'>" + name +"</span></li>")
+			if (index == -1) {
+				jQuery("#HolidayList li:eq(0)")
+					.before(holiday_row)
+					.show();
+			} else if (index == 0) {
+				jQuery("#HolidayList")
+					.append(holiday_row)
+					.show(); 
+			} else {
+				jQuery("#HolidayList li:eq("+index+")")
+					.after(holiday_row)
+					.show();
+			}
+			jQuery("#holiday_name").val("");
+			jQuery("#holiday_name").focus();
+		}else{
+			jQuery("#InvalidHoliday").hide();
+			jQuery("#HolidayValidation").show();
+		}
+	}
+	
+	addHoliday = function(){
+		var month = jQuery("#holiday_date_2i option:selected").text();
+		var date  = jQuery("#holiday_date_3i").val();
+		var name  = jQuery("#holiday_name").val();
+		month_date = month + " " + date;
+		addHolidaytoList(month_date, escapeHtml(name));
+	}
+
+	findPlaceToInsert = function(month_date){
+		var item_index = 0;
+		jQuery("#HolidayList li").each (function(index){
+			var holiday = jQuery(this).find('span:first').text();
+			if (Date.parse(holiday + " " + BASE_YEAR) > Date.parse(month_date + " " + BASE_YEAR)) {
+				item_index = index - 1;
+				return false;
+			}
+		});
+		return item_index;
+	}
+
+	holidayEntered = function(event) {
+		if(event.keyCode == 13){
+			addHoliday();
+			return false;
+		}
+	}
+
+	jQuery(document).ready(function(){
+		
+		
+		jQuery("#HolidayList a.close").live("click", function(){
+			holiday = jQuery(this).parent();
+			HolidayList.unset(holiday.attr("month_date"));
+			holiday.remove(); 
+			if(HolidayList.size() == 0)
+				jQuery("#HolidayList").hide();
+		});
+
+		jQuery(".evening_time, .morning_time").change(function(){
+			_parent = jQuery(this).parent();
+			_parent.removeClass('outline');
+			_parent.find("#duration").removeClass('outline');
+			value = duration(this);
+			_parent.find("#duration").html(value);
+
+		}).trigger("change");
+
+		
+		jQuery("#DAYS_LIST .checked").change(function(){
+			_day_container = jQuery(this).parents('.timerange').first();
+			_day_container.removeClass('outline');
+			_day_container.find("select").attr('disabled', !this.checked);
+			_day_container.find("#duration").toggle( this.checked );
+
+			_day_container.find(".business_days").toggleClass('active', this.checked);
+		}).trigger("change");
+
+
+
+		jQuery("#BusinessHours").validate({
+			errorPlacement: function(error, element){
+				if(element.attr("type") == "text")
+					error.insertAfter(element);
+				else
+					jQuery(element)
+						.parent()
+						.addClass('outline');
+			},
+			submitHandler: function(form) {
+		    	days_array 	   = $A();
+		    	if(!jQuery('.checked:checked').length) {
+					alert('Please select atleast one weekday');
+					return true;
+				}
+				
+				jQuery.each(jQuery("#DAYS_LIST input:checked"), function(){
+					days_array.push(this.value);
+
+					_parent = jQuery(this).parents('.timerange').first();
+					_start_val = _parent.find("#time_morning_" + _parent.data('dayNumber')).val() + " " + _parent.find( "#morning_range_" + _parent.data('dayNumber')).val();
+
+
+					_parent.find(".db_start_time_data").val( _start_val );
+					_end_val = _parent.find("#time_evening_" + _parent.data('dayNumber')).val() + " " + _parent.find('#evening_range_' + _parent.data('dayNumber')).val();
+					
+					_parent.find(".db_end_time_data").val( _end_val );
+				});
+						   
+				jQuery("#weekdays").val( days_array.toJSON() );
+
+				holidays_array = $A();
+				
+				HolidayList.each(function(pair) {
+				
+				  	holidays_array.push([pair.value[0],unescapeHtml(pair.value[1])]);
+				}); 
+				jQuery("#holiday_data").val( holidays_array.toJSON() );
+
+				form.submit();
+		    },
+		    onfocusout: false
+		});
+		
+		jQuery("#fullweek_toggle input:radio").change(function(){ 
+			setFullWeek(this.value); 
+		});	
+
+
+	});
+<% end %>
+<% end %>
+
+<% content_for :sidebar do %>
+	<%= render :partial => "helpnote" %>
+<% end %>
+
+	

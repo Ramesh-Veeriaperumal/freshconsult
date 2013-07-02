@@ -12,6 +12,8 @@ module MemcacheKeys
 
   ACCOUNT_GROUPS = "v2/ACCOUNT_GROUPS:%{account_id}"
 
+  ACCOUNT_PRODUCTS = "v1/ACCOUNT_PRODUCTS:%{account_id}"
+
   ACCOUNT_TAGS = "v1/ACCOUNT_TAGS:%{account_id}"
 
   ACCOUNT_CUSTOMERS = "v1/ACCOUNT_CUSTOMERS:%{account_id}"
@@ -23,17 +25,25 @@ module MemcacheKeys
   ACCOUNT_STATUSES = "v2/ACCOUNT_STATUSES:%{account_id}"
 
 
-  PORTAL_BY_URL = "v1/PORTAL_BY_URL:%{portal_url}"
+  PORTAL_BY_URL = "v2/PORTAL_BY_URL:%{portal_url}"
 
   ACCOUNT_BY_FULL_DOMAIN = "v2/ACCOUNT_BY_FULL_DOMAIN:%{full_domain}"
 
-  ACCOUNT_MAIN_PORTAL = "v2/ACCOUNT_MAIN_PORTAL:%{account_id}"
+  ACCOUNT_MAIN_PORTAL = "v3/ACCOUNT_MAIN_PORTAL:%{account_id}"
 
   ACCOUNT_CUSTOM_DROPDOWN_FIELDS = "v1/ACCOUNT_CUSTOM_DROPDOWN_FIELDS:%{account_id}"
 
   ACCOUNT_NESTED_FIELDS = "v1/ACCOUNT_NESTED_FIELDS:%{account_id}"
 
+  ACCOUNT_EVENT_FIELDS = "v1/ACCOUNT_EVENT_FIELDS:%{account_id}"
+
+  ACCOUNT_FLEXIFIELDS = "v1/ACCOUNT_FLEXIFIELDS:%{account_id}"
+
+  ACCOUNT_OBSERVER_RULES = "v1/ACCOUNT_OBSERVER_RULES:%{account_id}"
+
   ES_ENABLED_ACCOUNTS = "ES_ENABLED_ACCOUNTS"
+
+  ES_INDEX_NAME = "ES_INDEX_%{account_id}"
  
   # Portal customization related keys
   PORTAL_TEMPLATE = "v2/PORTAL_TEMPLATE:%{account_id}:%{portal_id}"
@@ -45,6 +55,10 @@ module MemcacheKeys
   FB_REAUTH_CHECK = "v1/FB_REAUTH_CHECK:%{account_id}"
 
   TWITTER_REAUTH_CHECK = "v1/TWITTER_REAUTH_CHECK:%{account_id}"
+
+  SHARD_BY_DOMAIN = "v1/SHARD_BY_DOMAIN:%{domain}"
+ 
+  SHARD_BY_ACCOUNT_ID = "v1/SHARD_BY_ACCOUNT_ID:%{account_id}"
   
   class << self
 
