@@ -1,8 +1,8 @@
 class Search::RemoveFromIndex
-  extend Resque::AroundPerform
   include Tire::Model::Search
 
   class Document < Search::RemoveFromIndex
+    extend Resque::AroundPerform
     @queue = 'es_index_queue'
 
     def self.perform(args)
@@ -20,7 +20,7 @@ class Search::RemoveFromIndex
       query = Tire.search do |search|
         search.query { |q| q.term :account_id, args[:account_id] }
       end
-      index = Tire.index(Account.current.search_index_name)
+      index = Tire.index(ElasticsearchIndex.find(args[:index_id]).name)
       Tire::Configuration.client.delete "#{index.url}/_query?source=#{Tire::Utils.escape(query.to_hash[:query].to_json)}"
     end
   end

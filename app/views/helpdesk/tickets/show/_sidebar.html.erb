@@ -1,5 +1,6 @@
 
 <div class="tkt-sidebar" id="ticket_details_sidebar">
+	<%= render :partial => 'helpdesk/tickets/show/status.html.erb', :locals => {:ticket => @ticket} unless @ticket.deleted or @ticket.spam %>
 	<div id="revert_details_view">
 		<strong>
 				<%= link_to t('ticket.switch_view.whats_new'), 
@@ -9,14 +10,13 @@
 						:target => "_blank", :class => 'switch', :rel => 'freshdialog' %>
 
 		</strong>
-		<%= link_to_function t('ticket.switch_view.submit_feedback'), "window.FreshWidget.show();" %>	
-		<div><%= link_to t('ticket.switch_view.revert_view'), helpdesk_ticket_path(@ticket), :id => 'switch' %></div>
+		<%= link_to t('ticket.switch_view.revert_view'), helpdesk_ticket_path(@ticket), :id => 'switch' %>
 	</div>
 		
 	<%= render :partial => "helpdesk/tickets/show/requester.html.erb" %> 
 	<% unless @ticket.deleted or @ticket.spam %> 
 		<%= render :partial => "helpdesk/tickets/show/ticket_fields.html.erb" %>
-		<% if feature?(:timesheets) %>
+		<% if feature?(:timesheets) && privilege?(:view_time_entries) %>
 		<div class="modal hide fade" role="dialog" id="timesheets_loading">
 			<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button></div>
 			<div class="modal-body"><div class="sloading loading-small loading-block"></div></div>
@@ -25,7 +25,7 @@
 			<h3>
 				<%= t('helpdesk.time_sheets.sidebar_title') %>
 				<div class="tracked_time">
-					<span class="time" id="timeentry_timer_total"><%= get_time_in_hours(@ticket.time_tracked) %></span>
+					<span class="time" id="timeentry_timer_total" data-static-total="true"><%= get_time_in_hours(@ticket.time_tracked) %></span>
 					<span class="time_unit">Hrs </span>
 				</div>
 			</h3>

@@ -60,13 +60,13 @@ class SubscriptionNotifier < ActionMailer::Base
     @content_type = "text/html"
   end
   
-   def account_deleted(account)
+  def account_deleted(account, feedback)
     setup_email(AppConfig['from_email'], "#{account.full_domain} is deleted")
-    @body = { :account => account }    
+    @body = { :account => account, :reason => feedback }    
     @content_type = "text/html"
   end
 
-  def account_admin_spam_watcher(account, deleted_users)
+  def admin_spam_watcher(account, deleted_users)
     from  AppConfig['from_email']
     recipients account.admin_email
     subject "Freshdesk :: Spam watcher"

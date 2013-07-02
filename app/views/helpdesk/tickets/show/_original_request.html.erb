@@ -1,5 +1,36 @@
 <%= link_to user_avatar(@ticket.requester), @ticket.requester, :class => 'avatar-wrap' %>
 <div class="commentbox">
+	<h2 class="subject <%= 'show_full' if @ticket.deleted or @ticket.spam or params[:format]=='widget' %>">
+		<% if @ticket.spam %>
+			<span class='label spam'>
+				<%= link_to("×", unspam_helpdesk_ticket_path(@ticket), :method => :put,
+									:class => "tooltip", "data-placement" => "below", 
+									:title => t('ticket.ham_btn_title')) unless params[:format]=='widget' %>
+				<%= t("ticket.spam") %>
+
+			</span>
+		<% end %>
+		<% if @ticket.deleted %>
+			<span class='label deleted'>
+				<%= link_to("×", restore_helpdesk_ticket_path(@ticket), :method => :put, 
+							:class => "tooltip", "data-placement" => "below", 
+							:title => t('ticket.restore_btn_title') ) unless params[:format]=='widget' 
+							%>
+				<%= t("ticket.deleted") %>
+			</span>
+			
+		<% end %>
+
+		<%
+            customer_opinion = ""                                
+            unless @ticket.survey_results.nil? || @ticket.survey_results.last.nil?
+              customer_opinion = ["<div class='customer-opinion ", @ticket.survey_results.last.get_small_img_class ,"'></div>"].join
+            end  
+	    %>				
+	    <%=customer_opinion%>									
+
+		<%= h(@ticket.subject) %>
+	</h2>
 	<div class="author-mail-detail">
 		<div>
 			<%= show_contact_hovercard(@ticket.requester) %> <%= t('ticket.reported') %> 
@@ -23,8 +54,8 @@
 			<% end %>
 		</div>
 		<div class="info"> 
-			<%= content_tag :div, multiple_emails_container(@to_emails,"To: ") unless @ticket.cc_email_hash.blank? or @to_emails.blank? %>
-			<%= content_tag :div, multiple_emails_container(@ticket.cc_email_hash[:cc_emails],"Cc: ") unless @ticket.cc_email_hash.blank? %>
+			<%= content_tag :div, multiple_emails_container(@to_emails, "To: ") unless @ticket.cc_email_hash.blank? or @to_emails.blank? %>
+			<%= content_tag :div, multiple_emails_container(@ticket.cc_email_hash[:cc_emails], "Cc: ") unless @ticket.cc_email_hash.blank? %>
       	</div> 
 	</div>
 	<div id="ticket_original_request" class="request_mail">
@@ -33,7 +64,11 @@
 	<% unless @ticket.ticket_topic.nil? %>
 	<div class="info-highlight">
 		<%= t("helpdesk.tickets.show.linked_ticket") %>
-		"<%= link_to("#{truncate(h(@ticket.topic.title))}", category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
+    <% if privilege?(:view_forums) %>
+    "<%= link_to("#{truncate(h(@ticket.topic.title))}", category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
+    <% else %>
+      "<%= truncate(h(@ticket.topic.title)) %>"
+    <% end %>
 	</div>
 	<% end %>
 

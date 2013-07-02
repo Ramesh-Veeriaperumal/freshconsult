@@ -1,5 +1,3 @@
-<%= include_cloudfront_css :pattern %>
-<%= include_cloudfront_js :pattern %>
 <% content_for :sidebar do %>
   <%= render :partial => "/integrations/widgets/contacts_show_side_bar_widget", :locals => {:user => @user}%>
 <%- end %>
@@ -7,18 +5,22 @@
 
 <div class="contact-box clearfix">
 	<% if !@user.deleted? %>
-		<div class="action_buttons">
+	<div class="action_buttons hide">
+    <% if privilege?(:manage_contacts) %>
 			<%= link_to t('contacts.edit_contact'), edit_contact_path(@user) if !@user.blocked? %>
-			<%= link_to t('assume_identity_button'), assume_identity_user_path(@user) if is_allowed_to_assume?(@user) %>
-			<%if current_user.admin? && @user.has_email? and !@user.blocked? %>
-				<a class="drop-toggle last" data-toggle="dropdown" href="#" role="button">
-					<b><%= t('contacts.info2') %></b>
-				</a>
-		    		<ul class="dropdown-menu pull-right" role="menu">
-		        			<li><%= link_to( t('contacts.convert_fulltime'), { :action => :make_agent, :id => @user.id},:method => :put)%></li>
-		        			<li><%= link_to( t('contacts.convert_occasional'), { :action => :make_occasional_agent, :id => @user.id}, :method => :put)%></li>       		
-		        	</ul>
-        	<%end%>
+    <% end %>
+    <% if is_allowed_to_assume?(@user) %>
+			<%= link_to t('assume_identity_button'), assume_identity_user_path(@user) %>
+    <% end%>
+		<%if privilege?(:manage_users) && @user.has_email? and !@user.blocked? %>
+			<a class="drop-toggle last" data-toggle="dropdown" href="#" role="button">
+				<b><%= t('contacts.info2') %></b>
+			</a>
+	    		<ul class="dropdown-menu pull-right" role="menu">
+	        	<li><%= link_to( t('contacts.convert_fulltime'), { :action => :make_agent, :id => @user.id},:method => :put)%></li>
+	          <li><%= link_to( t('contacts.convert_occasional'), { :action => :make_occasional_agent, :id => @user.id}, :method => :put)%></li>       		
+	        	</ul>
+    <%end%>
 		</div>
 	<% end %>
 		<%= user_avatar(@user, :medium, "profile_pic") %>
@@ -37,12 +39,17 @@
 			<%= content_tag(:div, "#{content_tag(:span, t('facebook_source'))}  <a target='_blank' href=http://facebook.com/#{h(@user.fb_profile_id) }>http://facebook.com/people/#{h(@user.fb_profile_id)}</a>") unless @user.fb_profile_id.blank? %>
 			<%= content_tag(:div, "#{content_tag(:span, t('account.time_zone'))}  #{h(@user.time_zone)}") %>
 		</div>
+
 		<% if @user.deleted || (!@user.active? and @user.has_email?) || @user.blocked? %>
-		<div class="info-highlight">
-			<%= content_tag(:div, "#{ t('contacts.deleted_message') } #{ link_to( t('contacts.restore'), { :action => :restore, :id => @user.id }, :method => :put ) }") if @user.deleted and !@user.spam?%>
-			<%= content_tag(:div, "#{ t('contacts.emailnotverified') }   #{ link_to( t('contacts.send_activation'), send_invite_activation_path(@user), :method => :put ) } " ) if !@user.active? and @user.has_email? and !@user.spam? and !@user.blocked?%>
-			<%= content_tag(:div, "#{ t('contacts.blocked_message') } #{ link_to( t('unblock'), { :action => :unblock, :id => @user.id }, :method => :put ) }") if @user.blocked? || @user.spam? %>
-		</div>
+  		<div class="info-highlight hide">
+        <% if privilege?(:delete_contact) %>
+  			<%= content_tag(:div, "#{ t('contacts.deleted_message') } #{ link_to( t('contacts.restore'), { :action => :restore, :id => @user.id }, :method => :put ) }") if @user.deleted and !@user.spam?%>
+        <% end %>
+        <% if privilege?(:manage_users) %>
+  			<%= content_tag(:div, "#{ t('contacts.emailnotverified') }   #{ link_to( t('contacts.send_activation'), send_invite_activation_path(@user), :method => :put ) } " ) if !@user.active? and @user.has_email? and !@user.spam? and !@user.blocked?%>
+        <% end %>
+  			<%= content_tag(:div, "#{ t('contacts.blocked_message') } #{ link_to( t('unblock'), { :action => :unblock, :id => @user.id }, :method => :put ) }") if @user.blocked? || @user.spam? %>
+  		</div>
 		<% end %>
 </div>
 
@@ -51,9 +58,11 @@
 		<% form_for @user do |f| %>
 			<%= f.label :description, t("contacts.form_placeholder.description"), :class => "overlabel" %>
 			<%= f.text_area :description, :class=> "sp_paragraph span12",:cols => 20,:rows => 10 %>
-			<div class="span12 pull-right"> 
-				<%= f.submit t('save'), :class=>"btn btn-primary pull-right"  %> &nbsp;
-			</div>
+      <% if privilege?(:manage_contacts) %>
+  			<div class="span12 pull-right"> 
+  				<%= f.submit t('save'), :class=>"btn btn-primary pull-right"  %> &nbsp;
+  			</div>
+      <% end %>
 		<% end %>	
 </div>
 <% unless @user.deleted %>
@@ -79,4 +88,17 @@
 		  	<% end %>
 		</div>
 	</div>
+<% end %>
+
+<% javascript_tag do %>
+  // need to convert this to util
+  jQuery(document).ready(function(){
+    if (jQuery.trim( jQuery('div.info-highlight').text() ).length != 0) {
+      jQuery('div.info-highlight').show();
+    }
+
+    if (jQuery.trim( jQuery('div.action_buttons').text() ).length != 0) {
+      jQuery('div.action_buttons').show();
+    }
+});
 <% end %>

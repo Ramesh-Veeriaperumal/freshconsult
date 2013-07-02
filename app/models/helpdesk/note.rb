@@ -2,49 +2,15 @@ class Helpdesk::Note < ActiveRecord::Base
 
   include ParserUtil
   include BusinessRulesObserver
+  include Va::Observer::Util
+  include Mobile::Actions::Note
 
   set_table_name "helpdesk_notes"
 
-  belongs_to_account
-
-  belongs_to :notable, :polymorphic => true
-
-  belongs_to :user
-  
-  include Mobile::Actions::Note
-
-  has_many_attachments
-
-  has_many_dropboxes
-    
-  has_one :tweet,
-    :as => :tweetable,
-    :class_name => 'Social::Tweet',
-    :dependent => :destroy
-    
-  has_one :fb_post,
-    :as => :postable,
-    :class_name => 'Social::FbPost',
-    :dependent => :destroy
-    
-  has_one :survey_remark, :foreign_key => 'note_id', :dependent => :destroy
-
-  has_one :note_body, :class_name => 'Helpdesk::NoteBody', :dependent => :destroy
-
-  has_one :schema_less_note, :class_name => 'Helpdesk::SchemaLessNote',
-          :foreign_key => 'note_id', :autosave => true, :dependent => :destroy
+  concerned_with :associations, :constants, :callbacks
 
   attr_accessor :nscname, :disable_observer, :send_survey, :quoted_text
   attr_protected :attachments, :notable_id
-  has_one :external_note, :class_name => 'Helpdesk::ExternalNote',:dependent => :destroy
-  
-  before_create :validate_schema_less_note
-  before_save :load_schema_less_note, :update_category, :load_note_body
-  after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
-  after_commit_on_create :update_ticket_states, :notify_ticket_monitor
-  after_update :update_search_index
-
-  accepts_nested_attributes_for :tweet , :fb_post, :note_body
   
   named_scope :newest_first, :order => "created_at DESC"
   named_scope :visible, :conditions => { :deleted => false } 
@@ -54,7 +20,6 @@ class Helpdesk::Note < ActiveRecord::Base
               :conditions => [" incoming = 1 and social_tweets.tweetable_type = 'Helpdesk::Note'"], 
               :joins => "INNER join social_tweets on helpdesk_notes.id = social_tweets.tweetable_id and helpdesk_notes.account_id = social_tweets.account_id", 
               :order => "created_at desc"
-  
   
   named_scope :freshest, lambda { |account|
     { :conditions => ["deleted = ? and account_id = ? ", false, account], 
@@ -85,31 +50,6 @@ class Helpdesk::Note < ActiveRecord::Base
               :joins => "INNER join social_fb_posts on helpdesk_notes.id = social_fb_posts.postable_id and helpdesk_notes.account_id = social_fb_posts.account_id", 
               :order => "created_at desc"
 
-  SOURCES = %w{email form note status meta twitter feedback facebook forward_email}
-  
-  SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.zip((0..SOURCES.size-1).to_a).flatten]
-  
-  ACTIVITIES_HASH = { Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter] => "twitter" }
-
-  TICKET_NOTE_SOURCE_MAPPING = { 
-    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email] => SOURCE_KEYS_BY_TOKEN["email"] , 
-    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:portal] => SOURCE_KEYS_BY_TOKEN["email"] ,
-    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone] => SOURCE_KEYS_BY_TOKEN["email"] , 
-    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum] => SOURCE_KEYS_BY_TOKEN["email"] , 
-    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter] => SOURCE_KEYS_BY_TOKEN["twitter"] , 
-    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook] => SOURCE_KEYS_BY_TOKEN["facebook"] , 
-    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:chat] => SOURCE_KEYS_BY_TOKEN["email"],
-    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:mobi_help] => SOURCE_KEYS_BY_TOKEN["email"]
-  }
-
-  CATEGORIES = {
-    :customer_response => 1,
-    :agent_private_response => 2,
-    :agent_public_response => 3,
-    :third_party_response => 4,
-    :meta_response => 5
-  }
-
   CATEGORIES.keys.each { |c| named_scope c.to_s.pluralize, 
     :joins => 'INNER JOIN helpdesk_schema_less_notes on helpdesk_schema_less_notes.note_id ='\
       ' helpdesk_notes.id and helpdesk_notes.account_id = helpdesk_schema_less_notes.account_id',
@@ -137,10 +77,6 @@ class Helpdesk::Note < ActiveRecord::Base
 
   def note?
   	source == SOURCE_KEYS_BY_TOKEN["note"]
-  end
-  
-  def note?
-    source == SOURCE_KEYS_BY_TOKEN["note"]
   end
   
   def tweet?
@@ -263,6 +199,11 @@ class Helpdesk::Note < ActiveRecord::Base
     end
   end
 
+  def trigger_observer model_changes
+    @model_changes = model_changes.symbolize_keys
+    filter_observer_events if user_present?
+  end
+
   def update_note_level_resp_time(ticket_state)
     if ticket_state.first_response_time.nil?
       resp_time = created_at - notable.created_at
@@ -297,57 +238,6 @@ class Helpdesk::Note < ActiveRecord::Base
 
   protected
 
-    def update_content_ids
-      header = self.header_info
-      return if attachments.empty? or header.nil? or header[:content_ids].blank?
-      
-      attachments.each do |attach| 
-        content_id = header[:content_ids][attach.content_file_name]
-        self.note_body.body_html = self.note_body.body_html.sub("cid:#{content_id}", attach.content.url) if content_id
-      end
-      
-      note_body.update_attribute(:body_html,self.note_body.body_html)
-      # For rails 2.3.8 this was the only i found with which we can update an attribute without triggering any after or before callbacks
-      #Helpdesk::Note.update_all("note_body.body_html= #{ActiveRecord::Base.connection.quote(body_html)}", ["id=? and account_id=?", id, account_id]) if body_html_changed?
-    end
-
-    
-    def update_parent #Maybe after_save?!
-      return unless human_note_for_ticket?
-      
-      if user.customer?
-        # Will re-open the ticket if it is not in open status and not feedback
-        # Will re-open when the system gets a reply from third party and the ticket is not in resolved/closed statuses.
-        unless notable.open? || feedback? || (replied_by_third_party? and !notable.active?)
-          notable.status = Helpdesk::Ticketfields::TicketStatus::OPEN unless notable.import_id
-          notification_type = EmailNotification::TICKET_REOPENED
-        end
-        e_notification = account.email_notifications.find_by_notification_type(notification_type ||= EmailNotification::REPLIED_BY_REQUESTER)
-        Helpdesk::TicketNotifier.send_later(:notify_by_email, (notification_type ||= 
-              EmailNotification::REPLIED_BY_REQUESTER), notable, self) if notable.responder && e_notification.agent_notification?
-      else    
-        e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)     
-        #notify the agents only for notes
-        if note? && !self.to_emails.blank? && !incoming
-          Helpdesk::TicketNotifier.send_later(:deliver_notify_comment, notable, self ,notable.friendly_reply_email,{:notify_emails =>self.to_emails}) unless self.to_emails.blank? 
-        end
-        #notify the customer if it is public note
-        if note? && !private && e_notification.requester_notification?
-        Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT,      
-           notable, self)
-        #handle the email conversion either fwd email or reply
-        elsif email_conversation?
-          send_reply_email
-          create_fwd_note_activity(self.to_emails) if fwd_email?
-        end
-        notable.responder ||= self.user unless private_note?
-      end
-      # syntax to move code from delayed jobs to resque.
-      #Resque::MyNotifier.deliver_reply( notable.id, self.id , {:include_cc => true})
-      notable.updated_at = created_at
-      notable.save
-    end
-
     def send_reply_email  
       add_cc_email     
       if fwd_email?
@@ -372,30 +262,7 @@ class Helpdesk::Note < ActiveRecord::Base
       end
       notable.cc_email = cc_email_hash_value    
     end
-
-    def add_activity
-      return if (!human_note_for_ticket? or zendesk_import?)
-          
-      if outbound_email?
-        unless private?
-          notable.create_activity(user, 'activities.tickets.conversation.out_email.long',
-            {'eval_args' => {'reply_path' => ['reply_path', 
-                                {'ticket_id' => notable.display_id, 'comment_id' => id}]}},
-            'activities.tickets.conversation.out_email.short')
-        end
-      elsif inbound_email?
-        notable.create_activity(user, 'activities.tickets.conversation.in_email.long', 
-          {'eval_args' => {'email_response_path' => ['email_response_path', 
-                                {'ticket_id' => notable.display_id, 'comment_id' => id}]}},
-          'activities.tickets.conversation.in_email.short')
-      else
-        notable.create_activity(user, "activities.tickets.conversation.#{ACTIVITIES_HASH.fetch(source, "note")}.long", 
-          {'eval_args' => {"#{ACTIVITIES_HASH.fetch(source, "comment")}_path" => ["#{ACTIVITIES_HASH.fetch(source, "comment")}_path", 
-                                {'ticket_id' => notable.display_id, 'comment_id' => id}]}},
-          "activities.tickets.conversation.#{ACTIVITIES_HASH.fetch(source, "note")}.short")
-      end
-    end
-
+    
     # The below 2 methods are used only for to_json 
     def user_name
       human_note_for_ticket? ? (user.name || user_info) : "-"
@@ -405,33 +272,9 @@ class Helpdesk::Note < ActiveRecord::Base
       user.get_info if user
     end
 
-    def validate_schema_less_note
-      return unless human_note_for_ticket?
-      
-      if email_conversation?
-        if schema_less_note.to_emails.blank?
-          schema_less_note.to_emails = notable.requester.email 
-          schema_less_note.from_email ||= account.primary_email_config.reply_email
-        end
-        schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
-        schema_less_note.cc_emails = fetch_valid_emails(schema_less_note.cc_emails)
-        schema_less_note.bcc_emails = fetch_valid_emails(schema_less_note.bcc_emails)
-      elsif note?
-        schema_less_note.to_emails = fetch_valid_emails(schema_less_note.to_emails)
-      end
-    end
-
-    def update_search_index
-      notable.update_es_index
-    end
-    
   private
     def human_note_for_ticket?
       (self.notable.is_a? Helpdesk::Ticket) && user && (source != SOURCE_KEYS_BY_TOKEN['meta'])
-    end
-
-    def zendesk_import?
-      Thread.current["zenimport_#{account_id}"]
     end
 
     # Replied by third pary to the forwarded email
@@ -450,45 +293,6 @@ class Helpdesk::Note < ActiveRecord::Base
           (method.to_s.include? '=') ? schema_less_note.send(method, args) : schema_less_note.send(method)
         end
       end
-    end
-
-    def load_schema_less_note
-      build_schema_less_note unless schema_less_note
-      schema_less_note
-    end
-
-    def load_note_body
-      build_note_body(:body => self.body, :body_html => self.body_html) unless note_body
-    end
-
-    def fire_create_event
-      fire_event(:create) unless disable_observer
-    end
-
-    def notify_ticket_monitor
-      notable.subscriptions.each do |subscription|
-        if subscription.user.id != user_id
-          Helpdesk::WatcherNotifier.send_later(:deliver_notify_on_reply, 
-                                                notable, subscription, self)
-        end
-      end
-    end
-
-    def update_category
-      schema_less_note.category = CATEGORIES[:meta_response]
-      return unless human_note_for_ticket?
-
-      if user.customer?
-        schema_less_note.category = replied_by_third_party? ? CATEGORIES[:third_party_response] : 
-          CATEGORIES[:customer_response]
-      else
-        schema_less_note.category = private? ? CATEGORIES[:agent_private_response] : 
-          CATEGORIES[:agent_public_response]
-      end
-    end 
-
-    def update_ticket_states
-      Resque.enqueue(Helpdesk::UpdateTicketStates, { :id => id }) unless private? || zendesk_import?
     end
 
 end

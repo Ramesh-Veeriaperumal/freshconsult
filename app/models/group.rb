@@ -1,5 +1,6 @@
 class Group < ActiveRecord::Base
   
+  belongs_to_account
   include Cache::Memcache::Group
   include Redis::RedisKeys
   include Redis::OthersRedis
@@ -18,9 +19,10 @@ class Group < ActiveRecord::Base
    has_many :tickets, :class_name => 'Helpdesk::Ticket', :dependent => :nullify
    
    belongs_to :escalate , :class_name => "User", :foreign_key => "escalate_to"
+   belongs_to :business_calendar
    
    attr_accessible :name,:description,:email_on_assign,:escalate_to,:assign_time ,:import_id, 
-                   :ticket_assign_type
+                   :ticket_assign_type, :business_calendar_id
    
    accepts_nested_attributes_for :agent_groups
    liquid_methods :name
@@ -51,9 +53,8 @@ class Group < ActiveRecord::Base
   ASSIGNTIME_KEYS_BY_TOKEN = Hash[*ASSIGNTIME.map { |i| [i[0], i[2]] }.flatten]
   
   def excluded_agents(account)      
-   cust_roles=  User::USER_ROLES_KEYS_BY_TOKEN[:customer],User::USER_ROLES_KEYS_BY_TOKEN[:client_manager]
-   return account.users.find(:all , :conditions=>['user_role not in(?) and id not in (?)', cust_roles, agents.map(&:id)]) unless agents.blank? 
-   return account.users.find(:all , :conditions=>['user_role not in(?)', cust_roles])  
+   return account.users.find(:all , :conditions=>['helpdesk_agent = true and id not in (?)',agents.map(&:id)]) unless agents.blank? 
+   return account.users.find(:all , :conditions=> { :helpdesk_agent => true })  
   end
 
   def self.ticket_assign_options
@@ -86,7 +87,7 @@ class Group < ActiveRecord::Base
     #options for user which is included within the groups as agents
     options ={:except=>[:account_id,:email_on_assign,:import_id] ,:include=>{:agents=>{:only=>[:id,:name,:email,:created_at,:updated_at,:active,:customer_id,:job_title,
                     :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
-                    :user_role,:fb_profile_id,:external_id,:language,:address] }}}
+                    :helpdesk_agent,:fb_profile_id,:external_id,:language,:address] }}}
     super options
   end
 

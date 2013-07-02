@@ -29,11 +29,15 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/logmein"
     resource :"integrations/oauth_util"
     resource :"integrations/salesforce" 
+    resource :"integrations/user_credential"
 
     resource :"helpdesk/conversation", :only => [:note]
     resource :"helpdesk/canned_response"
     resource :"helpdesk/ca_folder"
     resource :agent, :only => [:toggle_availability]
+    resource :"search/home", :only => [:index, :suggest]
+    resource :search, :only => [:index, :suggest, :content]
+    # resource :"helpdesk/common", :only => [:group_agents]
 	end
 
   reply_ticket do
@@ -43,6 +47,8 @@ Authority::Authorization::PrivilegeList.build do
     # In bulk actions you can reply even if you do not have edit_ticket_properties
     resource :"helpdesk/ticket", :only => [:update_multiple_tickets]
     resource :"helpdesk/bulk_ticket_action"
+    # Used for API
+    resource :"helpdesk/note", :only => [:create]
   end
 
   forward_ticket do
@@ -59,7 +65,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/ticket", :only => [:edit, :update, :update_ticket_properties, :assign_to_agent, :assign, :close,
                                    :close_multiple, :update_multiple_tickets, :change_due_by]
     resource :"helpdesk/bulk_ticket_action"
-    resource :"helpdesk/common", :only => [:group_agents]                                  
   end
 
   edit_conversation do
@@ -89,6 +94,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"solution/category", :only => [:index, :show]
     resource :"solution/folder", :only => [:index, :show]
     resource :"solution/article", :only => [:index, :show]
+    resource :"search/home", :only => [:solutions]
+    resource :search, :only => [:solutions]
+    resource :"helpdesk/ticket", :only => [:get_solution_detail]
   end
 
   publish_solution do
@@ -116,6 +124,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :post, :only => [:index, :show, :create, :toggle_answer, :monitored]
     # review code for monitorship?
     resource :monitorship
+    resource :"search/home", :only => [:topics]
+    resource :search, :only => [:topics]
   end
 
   # create_edit_forum_category
@@ -213,6 +223,7 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_dispatch_rules do
     resource :"admin/va_rule"
+    resource :"admin/observer_rule"
   end
 
   manage_supervisor_rules do
@@ -234,7 +245,6 @@ Authority::Authorization::PrivilegeList.build do
   # super_admin
   admin_tasks do
     resource :"admin/business_calendar"
-    resource :"admin/supervisor_rule"
     resource :"social/twitter_handle", :only => [:index, :edit, :update, :destroy, :signin, :authdone, :search]
     resource :"social/facebook_page"
     resource :"admin/survey"
@@ -252,7 +262,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/gamification"
     resource :"admin/quest"
     resource :"helpdesk/sla_policy"
-    resource :account, :only => [:update, :edit, :delete_logo, :delete_fav]
+    resource :account, :only => [:update, :edit, :delete_logo, :delete_favicon]
     resource :"admin/template"
     resource :"admin/page"
     resource :"support/preview"

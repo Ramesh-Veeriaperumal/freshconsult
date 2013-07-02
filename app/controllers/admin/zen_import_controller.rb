@@ -1,6 +1,5 @@
 class Admin::ZenImportController < Admin::AdminController
   
-before_filter { |c| c.requires_permission :manage_tickets }  
 
 before_filter :check_data_import_status, :only => :index
 

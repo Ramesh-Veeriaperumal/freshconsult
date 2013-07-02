@@ -1,0 +1,7 @@
+<%= render :partial => "business_hours" %>
+
+<h3 class="lead"><%=t('business_hours.title')%></h3>
+<% form_for :business_calenders, @business_calendar, :url => { :action => "create" }, :html => { :method => :post, :id => "BusinessHours" } do |f| %>
+	<%= render :partial => "form", :locals => { :business_calendar => @business_calendar, :f => f } %>
+<% end %>
+	

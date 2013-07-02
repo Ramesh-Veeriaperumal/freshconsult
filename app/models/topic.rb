@@ -55,7 +55,7 @@ class Topic < ActiveRecord::Base
 
   def self.visiblity_options(user)
     if user
-       if user.has_manage_forums?
+       if user.privilege?(:manage_tickets)
           {}
        else
           { :include => [:forum =>:customer_forums],
@@ -156,10 +156,6 @@ class Topic < ActiveRecord::Base
   def last_page
     [(posts_count.to_f / Post.per_page).ceil.to_i, 1].max
   end
-
-  def editable_by?(user)
-    user && (user.id == user_id || user.admin? || user.moderator_of?(forum_id))
-  end
   
   def update_cached_post_fields(post)
     # these fields are not accessible to mass assignment
@@ -223,6 +219,10 @@ class Topic < ActiveRecord::Base
 
   def to_s
     title
+  end
+
+  def topic_changes
+    @topic_changes ||= self.changes.clone
   end
 
 end

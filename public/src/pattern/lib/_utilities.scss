@@ -54,3 +54,8 @@
 }
 
 .alert-text{ color:#e84444; }
+
+// Ellipsis
+.ellipsis{
+	@include ellipsis;
+}

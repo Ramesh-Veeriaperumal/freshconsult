@@ -36,7 +36,7 @@ module Helpdesk::TicketsHelper
   
   def ticket_sidebar
     tabs = [["TicketProperties", t('ticket.properties'),         "ticket"],
-            ["RelatedSolutions", t('ticket.suggest_solutions'),  "related_solutions"],
+            ["RelatedSolutions", t('ticket.suggest_solutions'),  "related_solutions", privilege?(:view_solutions)],
             ["Scenario",         t('ticket.execute_scenario'),   "scenarios",       feature?(:scenario_automations)],
             ["RequesterInfo",    t('ticket.requestor_info'),     "requesterinfo"],
             ["Reminder",         t('to_do'),                     "todo"],
@@ -64,16 +64,23 @@ module Helpdesk::TicketsHelper
   end
     
   def ticket_tabs
-    tabs = [['Pages',     t(".conversation"), @ticket_notes.total_entries],
-            ['Timesheet', t(".timesheet"),    @ticket.time_sheets.size, 
-                                               helpdesk_ticket_helpdesk_time_sheets_path(@ticket), 
-                                               feature?(:timesheets)]]
+    tabs = [
+            ['Pages',     t(".conversation"), @ticket_notes.total_entries],
+            ['Timesheet', t(".timesheet"),    timesheets_size, 
+                helpdesk_ticket_helpdesk_time_sheets_path(@ticket), 
+                feature?(:timesheets) && privilege?(:view_time_entries)
+            ]
+           ]
     
     ul tabs.map{ |t| 
                   next if !t[4].nil? && !t[4]
                   link_to t[1] + (content_tag :span, t[2], :class => "pill #{ t[2] == 0 ? 'hide' : ''}", :id => "#{t[0]}Count"), "##{t[0]}", "data-remote-load" => t[3], :id => "#{t[0]}Tab"
                 }, { :class => "tabs ticket_tabs", "data-tabs" => "tabs" }
                 
+  end
+
+  def timesheets_size
+    @ticket.time_sheets.size
   end
   
   def top_views(selected = "new_my_open", dynamic_view = [], show_max = 1)
@@ -382,5 +389,4 @@ module Helpdesk::TicketsHelper
     content << "</div>" if full_pagination
     content
   end
-
 end

@@ -1,8 +1,9 @@
 class Billing::BillingController < ApplicationController
-
+  
+  skip_before_filter :check_privilege
   before_filter :login_from_basic_auth, :ssl_check
 
-  skip_before_filter :set_time_zone, :set_locale, :check_account_state, :ensure_proper_protocol,
+  skip_before_filter :set_current_account, :set_time_zone, :set_locale, :check_account_state, :ensure_proper_protocol,
                       :check_day_pass_usage, :redirect_to_mobile_url
 
   before_filter :ensure_right_parameters, :retrieve_account, :if => :event_monitored?
@@ -59,6 +60,7 @@ class Billing::BillingController < ApplicationController
       end
     end
 
+    #Other checks
     def ssl_check
       render :json => ArgumentError, :status => 500 if (Rails.env.production? and !request.ssl?)
     end
@@ -139,6 +141,7 @@ class Billing::BillingController < ApplicationController
     #Events
     def subscription_changed(content)
       # @account.subscription.update_attributes(@subscription_data)
+      @account.subscription.update_attributes(:next_renewal_at => next_billing(content[:subscription]))
     end
 
     def subscription_activated(content)
@@ -154,6 +157,7 @@ class Billing::BillingController < ApplicationController
     end
 
     def subscription_reactivated(content)
+      reactivate_deleted_customers
       @account.subscription.update_attributes(@subscription_data)
     end
 
@@ -172,6 +176,13 @@ class Billing::BillingController < ApplicationController
               :account => @account, :amount => -(content[:transaction][:amount]/100))
     end
 
+
+    #reactivate_deleted_customers(14 days suspension window)
+    def reactivate_deleted_customers
+      Resque.remove_delayed(Workers::ClearAccountData, 
+                                      { :account_id => @account.id })
+      customer.delete if (customer = DeletedCustomers.find_by_account_id(@account.id))
+    end
 
     #Card and Payment info
     def card_info(card)

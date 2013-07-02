@@ -1,15 +1,18 @@
 <% content_for :sidebar do %>
   <%= render :partial => "helpnote_without_tour" %>
 <% end %>
-<h3 class="title"><%=t('agent.edit')%></h3>
-<% form_for @agent, :html => { :multipart => true } do |f| %>
-	<%= f.error_messages %>
-	<%= render :partial => "agent_form", :locals => { :type => "edit" } %>
-	<div class="button-container">
-		<%= link_to(t('delete'), @agent, :confirm => "#{t('agent.info3')}?", 
-												 :method => :delete, :class => "uiButton floatl") unless (@agent.user == current_user)  %>
 
-   		<%= f.submit t('agent.update'), { :class => "uiButton" } %>
-		<%= link_to t('cancel'), {:action => 'index'}, :class => "uiButton" %>
-	</div>	  
+<% form_for @agent, :html => { :id => "agent_form", :rel => "validate", :multipart => true, 
+    "data-focus-invalid" => false,  "data-ignore" => "" } do |f| %>
+  <%= f.error_messages %>
+  <h3 class="lead">
+    <%=t('agent.edit')%>
+    <span class="pull-right">
+     <%= link_to t('cancel'), {:action => 'index'}, :class => "btn" %>
+      <%= f.submit t('save'), { :class => "btn  btn-primary", 'data-loading-text' => t('saving') } %>
+    </span>
+  </h3>
+  <div class="seperator"></div><br/>
+  <%= render :partial => "agent_form", :locals => { :type => "edit" } %>
 <%end%>
+ 

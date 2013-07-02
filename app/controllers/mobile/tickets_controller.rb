@@ -1,7 +1,7 @@
 class Mobile::TicketsController < ApplicationController  
   include Helpdesk::TicketsHelper
 
-  before_filter :require_user_login, :set_mobile, :check_permistions
+  before_filter :require_user_login, :set_mobile
   
   FILTER_NAMES = [ :new_and_my_open, :all, :monitored_by, :spam, :deleted ]
   
@@ -34,14 +34,14 @@ class Mobile::TicketsController < ApplicationController
     all_fields = current_portal.ticket_fields if current_user.agent?
     all_fields.each do |field|
       if field.visible_in_view_form? || is_new
-        field_value = (field.is_default_field?) ? @item.send(field.field_name) : @item.get_ff_value(field.name) unless @item.nil?
+        field_value = @item.send(field.field_name) unless @item.nil?
         dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
         if(field.field_type == "nested_field" && !@item.nil?)
           field_value = {}
           field.nested_levels.each do |ff|
-            field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = @item.get_ff_value(ff[:name])
+            field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = @item.send(ff[:name])
           end
-          field_value.merge!({:category_val => @item.get_ff_value(field.name)})
+          field_value.merge!({:category_val => @item.send(field.field_name)})
         end
         field[:nested_choices] = field.nested_choices
         field[:nested_levels] = field.nested_levels
@@ -79,10 +79,31 @@ class Mobile::TicketsController < ApplicationController
     end
   end
 
-  def check_permistions 
-    requires_permission :manage_tickets
-  end 
+  def customer_view_list
+    view_list = []
+    CUSTOMER_FILTER_NAMES.each { |view_name|
+      count = TicketsFilter.filter(view_name.to_sym, current_user, current_user.tickets).size
+      view_list.push( 
+        :id => view_name, 
+        :name => t("helpdesk.tickets.views.#{view_name}"), 
+        :type => :filter, 
+        :count =>  count
+      )
+    }
 
+    CUSTOMER_FILTER_NAMES.each { |view_name|
+      count = TicketsFilter.filter(view_name.to_sym, current_user, current_user.customer.tickets).size
+      view_list.push(
+        :company => current_user.customer.name, 
+        :id => view_name.to_s+' ', 
+        :name => t("helpdesk.tickets.views.#{view_name}"), 
+        :type => :filter, 
+        :count =>  count
+      )
+    } if current_user.is_client_manager
+
+    render :json => view_list.to_json
+  end
 
   def agent_view_list
     #Loading custom views

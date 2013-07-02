@@ -1,8 +1,10 @@
 en:
   meta:
    language_name: 'English'
+  confirm_delete_message: Are you sure you want to delete the %{human_name}?
   any: Any
-  or: or  
+  or: or
+  reorder_rules: Reorder Active Rules
   plain_yes: "Yes"
   plain_no: "No"
   unspam: "Unspam"
@@ -25,8 +27,12 @@ en:
   status: "Status"
   sales: "Sales"
   preview: "Preview"
+  no_agents_in_selected_group: "No agents in selected group"
   send_feedback: "Send feedback"
-  your_email: "Your Email"
+  ticket_form:
+    your_email_address: "Email"
+    your_name: "Your Name"
+    select_contacts: "Select contacts from %{contact_name}"
   captcha_verify_message: "Captcha verification failed, try again!"
   your_email: "Your email"
   please_wait: Please wait...
@@ -52,8 +58,6 @@ en:
   meta:
    language_name: 'English'
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
-  attachment_help_info: File size < 15 MB
-  signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
   attachment_help_info: "File size < 15 MB"
   feedbackwidget_offset_info: The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
   no_twitter_handle: Please configure atleast one twitter account
@@ -67,7 +71,9 @@ en:
   upgrade_trial: Upgrade your trial!
   upgrade_plan: Upgrade
   go_back: Go Back
+  go_back_small: go back
   add_note: Add Note
+  set_field_label_as: Set %{custom_field_name} as
   contact_name: Contact Name
   eight: 8 Hours
   security_code: Security code
@@ -112,7 +118,7 @@ en:
     company: Company
     photo: Photo
     title: Title
-    info1: A Profile image of the person, its best if the picture has the same length and height
+    info1: A Profile image of the person, it's best if the picture has the same length and height
     back_info: Background information
     mobile: Mobile
     twitter_id: Twitter
@@ -331,6 +337,15 @@ en:
     js_solution_txt: Create $$questvalue$$ knowledge base article in a span of $$questtime$$ and matching these conditions.
     js_forum_txt: $$questmode$$ $$questvalue$$ forum posts in a span of $$questtime$$ and matching these conditions.
     js_quest_txt: On successful completion of the quest you can unlock $$badgename$$ badge and $$questpoints$$ bonus points.
+  none: None
+  any_val:
+    any: Any
+    any_value: Any Value
+    any_feedback: Any
+    any_priority: Any Priority
+    any_status: Any Status
+    any_ticket_type: Any Type
+    any_group: Any Group
   portal_pages:
     groups:
       general: "General pages"
@@ -612,6 +627,7 @@ en:
         thankyou_info: "Message to be displayed after a user submits the ticket form"
     supervisor_rules:
       index:
+        human_name: Supervisor Rule
         title: Supervisor - Rules
       helpnote:
         tour: Help me create a new supervisor rule
@@ -624,16 +640,72 @@ en:
         title: Supervisor - New Rule
       edit:
         title: Supervisor - Edit Rule
-    shared:
+    observer_rules:
+      index:
+        human_name: Observer Rule
+        title: Observer - Rules
+      helpnote:
+        tour: Help me create a new observer rule
+        help_title: Observer
+        help_info_1: The Observer lets you trigger specific actions in your support desk as soon as a certain event occurs. For example, you could create an Observer Rule to alert the big man when a customer gives an unfavorable satisfaction rating on any ticket.
+        help_title_2a: Events
+        help_info_2a: An event may refer to any user-driven change that will trigger a specific Observer rule. 
+        help_title_2b: Event Performers
+        help_info_2b: Specifies which user's changes should trigger the rule. You can choose between the agent, the requestor (or someone outside your support team in the ticket loop), or both.
+        help_title_2c: Ticket conditions
+        help_info_2c: You can optionally filter the rule to apply to only certain tickets.
+        help_title_2d: Actions
+        help_info_2d: This is speficies what you want the rule to do.
+        help_info_3: You can use the Observer to modify fields, change status, or even send out notification alerts as soon as certain conditions are met. 
+        help_info_4: Learn more about how to use the Observer
+      new:
+        title: Observer - New Rule
+      edit:
+        title: Observer - Edit Rule
+      add_new_event: Add new event
+      events: When <b>Any</b> of these events occur
+      conditions: on tickets with these properties
+      actions: perform these actions
+      performed_by: and the events are performed by
+      agent: Agent
+      customer: Requester
+      present: Anyone
+      assigned_agent: Assigned Agent
+      assigned_group: Assigned Group
+      event_performer: Event Performing Agent
       filter_jsinit:
         insert_placeholder: Insert Placeholder
+        subject: Subject
         body: Body
         to: To
         selected: Selected
         not_selected: Not selected
+        checked: is checked
+        unchecked: is unchecked
+        deselected: Deselected
+    va_rules:
+      index:
+        human_name: Dispatch’r Rule
+    shared:
+      filter_jsinit:
+        request_type: Request Type
+        params: Params
+        url: URL
+        insert_placeholder: Insert Placeholder
+        subject: Subject
+        body: Body
+        to: To
+        selected: Selected
+        not_selected: Not selected
+        checked: checked
+        unchecked: unchecked
+        deselected: is deselected
     automations:
+      index:
+        human_name: Scenario
       edit:
         title: Edit Scenario
+      failure: You are not permitted to perform certain actions in the scenario. Please contact the administrator 
     security: 
       index: 
         shared_secret: Shared Secret
@@ -765,6 +837,75 @@ en:
         capture_dm: Convert direct messages as tickets
         screen_name: Screen Name
         default_group : Default Group 
+    roles:
+      title: Agent Roles
+      new: New Role
+      edit: Edit Role
+      default_role: Default Role
+      default_role_edit: This is a default system role. It cannot be edited or removed. You can view its permissions here, or %{go_back}.
+      role_name: Role Name
+      role_description: Description
+      scroll:
+        scroll_to : Scroll to
+        tickets: Tickets
+        solutions: Solutions
+        forums: Forums
+        customers: Customers
+        reports: Reports
+        administration: Administration
+      permissions: Permissions
+      helpcard:
+        title1: Understanding Roles
+        info1: Roles allow you to create and edit access permissions for agents. You can create new roles, specify what actions agents with these roles can perform within your help desk, and assign the role to agents.
+        info2: For example, you can create a role for your Support Co-ordinators, allowing them to update fields and assign tickets, and even add notes internally, but not reply to customers. 
+        info3: Once you create and save a new Role you will be able to assign it to agents when you create or edit their profile by clicking on the Agents icon under the admin tab.
+        title2: Admin Privileges
+        info4: You can nominate whether you want an agent to have access to settings under the Admin tab. Agents with admin access can be Operation Agents with limited access, or Super Admins with the ability to edit all configurations. You can have as many Super Admins with the ability to view and modify your billing details, or as few as one.
+        info5: Learn more about roles and privileges
+      privilege:
+        tickets: Tickets
+        manage_tickets: Manage tickets
+        reply_ticket: Send reply to a ticket
+        forward_ticket: Forward a conversation
+        edit_note_choice: Edit notes
+        edit_note: Edit everyone's notes
+        edit_note_false: Edit only their own notes
+        edit_conversation: Delete a conversation
+        merge_or_split_ticket: Merge / split a ticket
+        edit_ticket_properties: Edit ticket properties
+        view_time_entries: View or edit time entries
+        edit_time_entries: Edit everyone's time entries
+        edit_time_entries_false: Edit only their time
+        delete_ticket: Delete a ticket
+        solutions: Solutions
+        view_solutions: View solutions tab
+        publish_solution: Publish a solution
+        delete_solution: Delete a solution
+        manage_solutions: Create / Edit category or folder
+        forums: Forums
+        view_forums: View forums tab
+        manage_forums: Create / Edit category or forum
+        create_topic: Create or Edit a forum topic
+        edit_topic: Edit everyone's forum topic
+        edit_topic_false: Edit only their own forum topic
+        delete_topic: Delete a forum topic
+        customers: Customers
+        view_contacts: View customers tab
+        manage_contacts: Create or edit new contact or company
+        delete_contact: Delete contact or company
+        reports: Reports
+        view_reports: View reports tab
+        admin: Admin
+        not_administrator: Not view any Administrator options
+        operational_admin: Perform Operational Admin actions
+        manage_users: Manage Agents
+        manage_canned_responses: Manage canned responses
+        manage_dispatch_rules: Manage Dispatch'r and Observer rules
+        manage_supervisor_rules: Manage Supervisor rules   
+        manage_scenario_automation_rules: Manage Scenario automation rules
+        manage_email_settings: Manage Email Commands
+        admin_tasks: Play God with Super Admin controls
+        manage_account: Include account management 
     home:
       index: 
         group: Groups
@@ -785,6 +926,7 @@ en:
         integrations: "Integrations"
         dispatcher: Dispatch'r
         supervisor: Supervisor
+        observer: Observer
         sla: SLA Policies
         ticket-fields: Ticket Fields
         remote-authentication: Remote Authentication
@@ -792,6 +934,7 @@ en:
         email-settings: Email Setup
         everything: Everything
         helpdesk: Helpdesk
+        role: Roles
         else: else
         settings: Settings
         productivity: Productivity
@@ -906,6 +1049,16 @@ en:
         not_allowed: You don't have access to delete it!
       create: 
         success: The Agent has been created and activation instructions sent to %{email}!
+      edit:
+        not_allowed: You cannot edit this agent
+    roles:
+      create:
+        success: The role "%{name}" has been created
+      update:
+        success: The role "%{name}" has been updated
+      default_roles: You cannot modify default roles    
+      delete:
+        not_allowed: You cannot delete this role. There are other users are associated with it.
     contacts_import: 
       failure: Please try again
       no_file: Please upload a file
@@ -921,6 +1074,9 @@ en:
       regards: Regards
       freshdesk: Freshdesk Team
     business_hours: 
+      create:
+        failure: Failed to create Business Hours
+        success: Business Hours has been created successfully
       update: 
         failure: Failed to update Business Hours
         success: Business Hours has been updated successfully
@@ -930,6 +1086,7 @@ en:
         wrong_ticket_id: Please enter a valid ticket id
       reply: 
         success: The reply has been sent.
+        without_kbase: The reply has been sent. However, you are not permitted to create solutions.
       notes: 
         create: 
           invalid_email: You are not authorized to add a note
@@ -939,6 +1096,7 @@ en:
         success: All tickets in the spam folder were deleted.
       timesheet:
         timer_stopped: ticket timers has been stopped
+        create_error: You are not permitted to create timesheets for other agents.
       monitor: 
         stop: You are no longer monitoring this ticket
         start: You are now monitoring this ticket
@@ -1059,7 +1217,8 @@ en:
   open: Open
   zendesk_url: Zendesk URL
   special_beta_offer: Special offer for Beta accounts
-  click_to_select_filter: Click to Select Filter
+  click_to_select_filter: Select Condition
+  click_to_select_event: Select Event
   select_another_plan: Select another plan
   threeday: 3 Days
   resolved: Resolved
@@ -1250,15 +1409,34 @@ en:
       info1: You can completely customize your Freshdesk help desk for customers logging into your self-service portal as well as your agents. Rebrand the look and feel of your helpdesk with your logo and theme by uploading your logo and favicon, giving your help desk a name, and customizing your portal colors.
       info2: You probably want your customers and support agents to access your support portal in your own domain. You can point your support URL at yourcompany.freshdesk.com to your own domain, like support.mycompany.com.
     cancel: 
-      changeplan_instead_of_cancel: Instead of canceling your account, perhaps you'd like to just switch your plan.
-      intro: You are about to cancel your account.  This will <strong>permanently delete all your data</strong>.
-      you_must_confirm: You must confirm your cancellation
-      delete_my_account: Delete my Account
-      confirm_and_cancel_my_account: I confirm that I want to cancel my account and delete all my data...
-      goback: "&#x2190; Back to account settings"
+      cancel_account: Cancel your Freshdesk account
+      info_text: Please take a moment to tell us why you want to cancel your account. Perhaps we could still help...
+      goback: Not now
+      delete_my_account: Cancel Account
+      deleting_account: Cancelling
+      confirm_and_cancel_my_account: I confirm that I want to cancel my account and delete all my data
+      you_must_confirm: Please confirm your cancellation
+      you_must_select: Please select a reason from the list
+      tell_us_more: Tell us something
       change_your_plan: Change your plan
-      warning_message: Once you do this, you will no longer have access to your data, so be sure this is really what you want to do.
-      cancel_account: Cancel Freshdesk Account
+      warning_message: "Once you cancel your account, your customers and agents will not have access to your support portal, and your account will be temporarily suspended. We will permanently delete your data after 14 days (on <strong>%{cancel_date}</strong>). <br><br> You can restore your account during the 14 day suspension window by emailing us at support@freshdesk.com"
+      trial_warning_message: "Once you cancel your account, your customers and agents will not have access to your support portal. Be sure this is really what you want to do."
+      feedback:
+        budget: I don’t have the budget anymore
+        budget_followup: You can downgrade to a lower plan in Freshdesk without affecting your existing tickets. In fact, if the budget is really tight, you could move to the Sprout plan with 3 free agents for life. <a href="http://www.freshdesk.com/free-support-software">Learn more about the free plan</a>
+        budget_extra: Perhaps you'd like us to hold on to this account for sometime, till you get your wallet back?
+        requirement: Freshdesk does not handle some of my requirements
+        requirement_followup: We are constantly adding more features and enhancements to Freshdesk. Have you tried suggesting your feature idea in our forums? Or perhaps what you’re looking for is just a few weeks away? <a href="https://support.freshdesk.com/support/discussions/forums/6">Browse our Forum</a>
+        requirement_extra: Drop us a couple of lines on what you were looking for, and we'll try and move it up our queue real quick
+        moving: We are moving to another product
+        moving_followup: We really hate to see you go. Was it the features? The price? That bad bad marketing guy who keeps spamming you? But well, if you’ve made up your mind for someone else, we can only hope you’ll be back soon.
+        moving_extra: A line or two on what made you switch would go a long way in helping us build a better product for you
+        support: We did not receive good support
+        support_followup: We’re sorry. As a customer support company, there’s nothing more important to us than giving you a great support experience, every time. We can only request you to give us another chance to make it up to you.
+        support_extra: Give us a few more details and we'll make sure the right support rep repents. A ticket ID? Or Issue?
+        else: Anything else?
+        else_followup: A couple of lines explaining your problem would be nice..
+        test-account: We were just using this account for testing. We'll be back
     billing: 
       update_billing_info: Update billing information
       begin_subscription_info: will charge your card and begin your subscription immediately.
@@ -1279,8 +1457,12 @@ en:
       contact_phone : Phone
       invoice_email_info : Send Invoices to
       invoice_emails : Email
+      restore_account: Your account is cancelled and the data will be deleted on <strong>%{delete_at}</strong>. To restore your account, contact <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>.
   success_msg : Account settings updated successfully!
   failure_msg : Failed to update Account Settings!
+  domain_not_available_msg: The domain <strong>%{domain_name}</strong> is not available.
+  long_company_name_error: Company name shouldn't exceed 100 characters.
+  short_company_name_error: Company name should be atleast 3 characters
   
   forum_key: Forum
   topics:
@@ -1325,6 +1507,7 @@ en:
   posted_by: Posted by
   already_overdue: Overdue by %{time_words}
   automations: 
+    actions: Actions
     new: New Scenario
     title: Scenario Automations
     tour: Help me automate a common scenario
@@ -1336,8 +1519,8 @@ en:
     info5: Assign QA
     reorder: Reorder
     info6: Mark the Ticket as a Bug and assign to QA
-    info7: Actions to Perform
-    info8: Add new action
+    info7: Perform these actions
+    info8: Add another action
   category: 
     new: New Category
     edit: Edit Category
@@ -1368,17 +1551,23 @@ en:
   edit_email: Edit email
   fav_delete_msg: Are you sure you want to delete this fav icon?
   dispatch: 
+    conditions: Conditions
+    actions: Actions
     new: Dispatch'r - New Rule
     add_new_choice: Add New choice
-    act_to_perform: Actions to Perform
+    act_to_perform: Perform these actions
     edit: Dispatch'r - Edit Rule
     title: Dispatch'r
     inactive_rules: Inactive Rules
     info1: Subscription related tickets
     rule_name: Rule Name
+    description: Description
     info2: All Subscription related tickets will be assigned to Susan
     new_rule: New Rule
-    info3: When should this rule be applied
+    event_note: When <b>Any</b> of these events occur
+    condition_note: With the following conditions
+    action_note: Perform these actions
+    info3: When a ticket satisfies these condtions
     helpcard:
       tour: Help me create a new Dispatch’r rule
       info1: The Dispatch’r lets you bring your business rules into your support workflow by performing a predefined set of actions on newly created tickets. For example, you could use the Dispatch’r to automatically categorize, prioritize and assign every incoming ticket to the right agent in your team, based on the conditions you specify.
@@ -1386,8 +1575,8 @@ en:
     reorder: Reorder
     add_new_action: Add new action
     dispatch_rules: Dispatch'r - Rules
-    match_all: Match All
-    match_any: Match Any
+    match_all: Match <b>ALL</b> of the below
+    match_any: Match <b>ANY</b> of the below
     add_condition: Add new condition
     delete: "Are you sure you want to delete this rule?"
     skip_notifications: "Skip New Ticket Email Notifications"
@@ -1424,8 +1613,20 @@ en:
   import_ignore_first_row: Ignore the first row (headings)
   portal_customizer_open_sol_i: Turn this feature off, if you want to hide 'Solutions' tab in public customer portal.
   portal_customizer_option_sol_i: Disable this feature if you want users to login to view solutions
-  portal_customizer_auto_suggest_solutions: Enable this feature if you want to suggest existing solutions when user creates a new ticket.
+  portal_customizer_auto_suggest_solutions: Enable this feature if you want to suggest existing solutions when user creates a new ticket. This also applies to the search feature inside feedback widget.
   show_me_how: Show me how
+  agent_list:
+    tab:
+      active: "Full-Time"
+      occasional: "Occasional"
+      deleted: "Deleted"
+    sort:
+      sorted_by: Sorted by
+      name: "Name"
+      last_login_at: "Last logged in"
+      created_at: Created date
+      asc: Ascending
+      desc: Descending
   topic:
     ideas_stamps:
       planned: Planned
@@ -1470,6 +1671,7 @@ en:
         accepted: must be accepted
         not_a_number: is not a number
         inclusion: is not included in the list
+        user_role: A user must be associated with atleast one role
       full_messages: 
         format: "%{attribute} %{message}"
       template:
@@ -1533,6 +1735,7 @@ en:
     description: Group description
     edit: Edit Group
     title: Groups
+    business_calendar: Business Hours
     ticket_assignment: Automatic Ticket Assignment
     info1: Agents
     info2: No Agents in this group
@@ -1542,9 +1745,14 @@ en:
     info6: "Email Agent when a new ticket is assigned to this group "
     info7: "if a ticket remains un-assigned for more than "
     tour: Help me create a new agent group
-    helptext: You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, set email notifications, create business rules and generate reports at the group level. Note that the same agent can be a member of multiple groups as well. 
+    helptext: You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that the same agent can be a member of multiple groups as well
+    automatic_assignment: Once you create homogeneous agent groups, you can choose to automatically assign new tickets in this group to the next agent in Round Robin. <a href="https://support.freshdesk.com/support/solutions/articles/77157" target="_blank">Learn more</a>
+    automatic_assignment_header: Auto-ticket Assignment
+    working_hours_header: Working Hours
+    working_hours: You can assign a different set of business hours and holidays to each Group. For example, you can separate agents by shifts and assign them different business hours, or create separate groups for each time zone your agents work at
     select_agents: Select Agents
     select_an_agent: Select Agent
+    select_business_calendar: Select Business Hours
     learn_more: Learn more 
     round_robin_desc: "Once turned ON, tickets assigned to this group will be distributed among agents in round robin fashion. If you wish to manually assign tickets or dispatch them using the Dispatch'r or Supervisor automations, you can turn this OFF. "
     assigntime:
@@ -1572,10 +1780,13 @@ en:
   import_solution_article: Convert Article forum to solution
   close: Close
   agent: 
+    full_time_agent: Full-Time Agent
+    occasional_agent: Occasional Agent
     new: New Agent
     edit: Edit Agent
     showing: "Showing:"
-    agent_restored: The agent has been restored 
+    type: Agent Type
+    agent_restored: The agent has been restored
     status:
       active: Active
       deleted: Deleted
@@ -1584,6 +1795,20 @@ en:
     deleted:
       agent_deleted: The agent has been deleted
       no_agents: You dont have any deleted agents
+    trial: In trial version
+    buy: Buy more
+    available_seats: %{count} Agent seats available
+    available_seats_without_count: Agent seats available
+    no_seats: No agent seats available
+    last_logged_in: Last logged in %{time} ago.
+    never_logged_in: Never logged in
+    day_pass_used: Used %{count} day pass till date
+    day_pass_available: %{count} Day pass available
+    no_day_pass: No day pass available
+    assign_role: Associate Roles
+    cannot_edit_roles: You will only be able to view your roles and scope, not edit them.
+    assign: Assign
+    role : Agent Role
     title: Agents
     info1: This is a deleted Agent
     info2: Email has already been taken
@@ -1593,10 +1818,16 @@ en:
     info3: Are you sure you want delete
     helpcard:
       tour: Help me add new agents
-      side_title: Adding Agents and Editing Details
-      info1: The list shows all Agents added in your help desk. You can edit an existing agent’s permissions and access rights by hovering over the agent and clicking on “Edit”. You can add new agents by clicking on the “New Agent” button. 
-      info2: When you add a new agent, you will have to provide the agent’s email, set their permission levels and access (full-time or occasional). Agents will receive an email with a confirmation link to activate their account after which they can be assigned to, or respond to tickets.
-      info3: Administrators can also edit an Agent’s profile to include the agent’s title, phone, profile picture, signature etc.
+      info1: An agent in Freshdesk is anybody who needs to access, work on and resolve your support tickets. The list shows all agents currently in your helpdesk.
+      info2: Hover over an agent to edit their details, or click on Add New Agent to add a new agent.
+      info3: Agents you add will receive an email with a confirmation link to activate their account after which they can be assigned, and respond to tickets.
+      title1: Full-time vs Occasional Agents
+      info4: You can choose whether your agents will need access to your support portal full-time, or will only be logging in occasionally. Occasional agents will use up a Day Pass for each day they login to your support, and you can purchase Day Passes in bulk from the Admin tab. Note that you will only be billed monthly for the number of full-time agents you add.
+      info5: Learn more about Day Passes
+      title2: Agent Scopes and Roles
+      info6: You can choose which tickets your agents can see by modifying their Ticket Scope. You should also specify what actions this agent should be able to perform within your helpdesk by choosing a Role.
+      info7: Note that you will not be able to modify your own roles, or delete yourself.
+      info8: Learn more about Agent Roles
     make_admin: Make this agent an admin
     view_user: View User
     use_email: Use this email
@@ -1604,19 +1835,23 @@ en:
     add_signature: Add signature
     update: Update
     permissions: Permissions
+    role_and_scope: Roles and Scope
+    roles: Roles
+    roles_description: Associate one or more roles with this agent.
+    ticket_scope: Ticket Scope
     admin: Administrator
     supervisor: Supervisor
-    global: Agent (Global Access)
-    group: Agent (Group Access) 
-    individual: Agent (Restricted Access)
+    global: Global Access
+    group: Group Access
+    individual: Restricted Access
     admin_info: Can perform all Admin tasks
     supervisor_info: Can view all Tickets in the Helpdesk and access Reports (no admin privileges)
     global_info: Can view all Tickets in the Helpdesk
-    group_info: Can view Tickets in their Groups(s) and Tickets assigned to them
+    group_info: Can view Tickets in their Group(s) and Tickets assigned to them
     individual_info: Can only view Tickets assigned to them
     occasional_description: This agent will be accessing the support portal
     full_time: Full time
-    occasional: Occasionally
+    occasional: Occasional
     day_pass_expired: Your day pass has expired, please login to acquire a new day pass.
     insufficient_day_pass: Unable to allocate a day pass for you, please contact your administrator.
     password_reset_message: "Do you want to reset %{requester}'s password?"
@@ -1728,6 +1963,7 @@ en:
   add_new_forum: add a new forum
   no_forum_category: No forums in this category
   sla_policy: 
+    human_name: SLA Policy
     sla_targets: SLA Targets
     sla_targets_details: Set Service Level Targets for each ticket priority
     new: New SLA Policy
@@ -1901,7 +2137,7 @@ en:
       details: Ticket details
       add_or_remove_emails: "Add or remove emails that need to be copied when a notification for this ticket is sent."
       add_people_title: Add people to conversation
-      reopen_reply: Reopen and reply
+      reopen_reply: Reply
   feedbackwidget_form_title: Widget form title
   cancel_and_back: Cancel and go back
   due_in: Due in %{time_words}
@@ -1997,7 +2233,7 @@ en:
   sprout_details: Email Response Management, All Automations, Default SLA Policy, Knowledge Base, Self-Service Portal, Basic Reporting, Community Support.
   blossom_details: Everything in &quot;Sprout&quot; Plan plus, Twitter Support, Facebook Support, Email Support, Forums, Community, Domain Mapping &amp; Multiple Emails.
   garden_details: Everything in &quot;Blossom&quot; Plan plus, Multiple Product Support, Advanced Reporting, Community, Email &amp; Phone Support
-  estate_details: Everything in &quot;Garden&quot; Plan plus, Gamification , Agent Collision, Customer Portal Layout Customization and Enterprise Insights.
+  estate_details: Everything in &quot;Garden&quot; Plan plus, Gamification , Agent Collision, Customer Portal Layout Customization, Custom Roles and Enterprise Insights.
   zendesk_credentials: Zendesk Credentials
   how_to: Question
   customers: Customers
@@ -2010,7 +2246,7 @@ en:
   wrong_portal: 
     content_not_available: The content you are looking for is, not available in this portal.
     title: Not available!
-  click_select_action: Click to Select Action
+  click_to_select_action: Select Action
   import_articles: Solution Articles
   back: Back
   save_changes: Save Changes
@@ -2192,6 +2428,30 @@ en:
   back: Back
   question: "Question"
   feature request: "Feature Request"
+  event:
+    confirm_message: If you choose 'Any', the selected agents in the list will be discarded. Click OK to proceed.
+    received: is received.
+    updated: is updated
+    is: is 
+    added: is added.
+    sent: is sent.
+    from: From
+    to: To
+    by: By
+    type: Type
+    rating: Rating
+  observer_events:
+    priority: Priority is changed
+    type: Type is changed
+    status: Status is changed
+    group: Group is updated
+    agent: Agent is updated
+    note: Note is added
+    reply: Reply is sent
+    due_date: Due date is changed
+    ticket: Ticket is
+    customer_feedback: Customer Feedback is received
+    time_entry: Time Entry is 
   ticket:
     spam: "SPAM"
     deleted: "TRASH"
@@ -2236,8 +2496,22 @@ en:
     thanks: Thank you for submitting a feedback
     portal_created_on: "Created by <span class='emphasize'>%{username}</span> on <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Created on <span class='emphasize'>%{date}</span>"
+    due_date: Due date
+    updated: updated
+    deleted: deleted
+    marked_spam: marked as spam
+    time_entry: Time Entry
+    new_time_entry: added
+    updated_time_entry: updated
+    feedback: Customer feedback
+    ticket: Ticket
     group: Group
-    agent: Agent 
+    agent: Agent
+    reply: Reply
+    note: Note 
+    any_note: Any
+    private_note: Private
+    public_note: Public
     none: None
     myself: Myself
     spam_btn_title: Mark as spam
@@ -2249,7 +2523,7 @@ en:
     add_time: Add time
     support:
       reply: "Reply"
-      reply_and_open: "Reply & re-open"
+      reply_and_open: "Reply"
     from: "From:"
     suggested_solutions: 
       insert_url: Insert URL
@@ -2292,7 +2566,8 @@ en:
     agent_responded_at: Hours since agent responded
     first_response_due: Hours since first response due
     due_by: Hours since ticket overdue
-    inbound_count: Number of requester interactions
+    inbound_count: Requester interactions
+    outbound_count: Agent interactions
     recent_tickets: Recent tickets
     unflag_spam: Not Spam
     pick_up: Pick Up
@@ -2335,6 +2610,7 @@ en:
       user_not_following: This user is not following your twitter account
     activities: Activities
     activity_toggle: Show Activities
+    activity_timestamp: "%{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
     requestor_info: Requestor Info
     view_twitter: View on Twitter 
     reply_to: Reply
@@ -2432,7 +2708,7 @@ en:
   this_ticket_has_been_deleted: This ticket has been deleted
   state: State
   deactivate: Deactivate
-  add_tags: Add Tag(s)
+  add_tags: Add Tag
   change_to_free_info: Downgrading your plan will result in loss of functionality and data. Are you sure you want to downgrade?
   import_step1_info: Select a CSV file and click import
   tkt_assigned_to_group: Ticket assigned to Group
@@ -2478,19 +2754,33 @@ en:
   portal_customizer_open_forums: Anybody can view forums
   portal_customizer_option_forums: Users can view Forums without logging in
   business_hours: 
+    name: Name
+    name_eg: "eg: Chicago Business Hours"
+    description_eg: "eg: This Business Calendar belongs to Chicago timezone"
+    description: Description
+    new: New Business Hours
     to: to
+    time_zone: Time Zone
+    delete: Are you sure
     valid_time: Please enter a valid time
     holiday_name: Holiday name
+    import_holiday: Import Holidays
     title: Business Hours
-    info1: Setting up your business hours in Freshdesk allows you to have more control over your SLAs. For eg. if your helpdesk works between 9am to 6pm Mon-Fri and a customer sends a high priority ticket at 4pm on Tuesday, with a SLA target resolution time of 4 hours, then the ticket Due By time is set as 11am on Wednesday.You can configure your SLAs to either respect or ignore business hours
-    info2: Holidays work exactly like business hours. For eg. if your helpdesk works between 9am to 6pm Mon-Fri and a customer sends a medium priority ticket at 8pm on Friday with a SLA target resolution time of 24 hours, then the ticket Due By time is set as 9am on Tuesday.(not 8pm on Sat)
+    info1: Business Hours give you more control over SLAs in your helpdesk, and when a ticket is due. For example, if your helpdesk works between 9am to 6pm Mon-Fri and a customer logs a ticket at 7pm on Tuesday, the "Due by" timers do not start ticking till Wednesday morning at 9
+    info2: Holidays work exactly like business hours. If your helpdesk works between 9am to 6pm Mon-Fri and a customer sends a medium priority ticket at 8pm on Friday with a resolution time of 24 hours, then the ticket Due By time is set as 9am on Tuesday.(not 8pm on Sat)
+    multiple_info: You can also create multiple sets of business hours and holidays, and apply them for specific groups. If you have one support team working on PST and another on GMT, you can let each group have its own set of business hours and holidays. <a href="https://support.freshdesk.com/solution/articles/98945" target="_blank">Learn more</a>
     holiday_added: Holiday already added
-    info3: Specific Working Hours
+    invalid_holiday: Invalid holiday added
+    import_holiday_info: <b>Important:</b> Importing will only add this year's holidays to the list. The list will not be automatically updated next year.
+    info3: Select working days/hours
+    info6: 24 hrs x 7 days
     info4: Working Days for your Helpdesk
     holiday_list: Yearly Holiday List
     info5: Holidays will be ignored when calculating SLA for a ticket
     holidays: Holidays
+    multiple: Multiple Business Hours
     helpdesk_hours: Helpdesk Hours
+    select_time_zone: Select a Time Zone 
   import_org_companies: Organizations &rarr; Companies
   add: Add
   portal_customizer_title: Customize your Public Customer Portal
@@ -2501,6 +2791,7 @@ en:
   feedbackwidget_defaulttitle: Help &amp; Support
   two: 2 Hours
   set_status_as: Set Status as
+  trigger_webhook: Trigger Webhook
   selected: Selected
   connect_ticket: Link to ticket
   edit_agent: Edit Agent
@@ -2600,6 +2891,8 @@ en:
       flagged_unspam: "%{tickets} removed from the spam folder."
 
     shared:
+      addcc: "Add cc"
+      cc: "cc"
       reply_form:
         title: Reply to %{email}
         cc: Cc
@@ -2790,14 +3083,14 @@ en:
           reply: "%{user_name} replied on %{note_date}"
           forward: "%{user_name} forwarded on %{note_date}"
         created_on_live:
-          private_note: "%{user_name} added a private note <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
-          public_note: "%{user_name} added a public note <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
-          reply: "%{user_name} replied <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
-          forward: "%{user_name} forwarded <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
-          survey: "%{user_name} rated this ticket <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
+          private_note: "%{user_name} added a private note <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          public_note: "%{user_name} added a public note <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          reply: "%{user_name} replied <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          forward: "%{user_name} forwarded <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          survey: "%{user_name} rated this ticket <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         edit_note: Edit Note
         split_this_as_new_ticket: Split this as a new Ticket
-        delete_note: "Remove this from the ticket converstion?"
+        delete_note: "Remove this from the ticket conversation?"
         deleted_note: "Deleted"
         split_ticket_confirm: Split this note and create it as a new ticket?
         private_note: Private note
@@ -2878,6 +3171,7 @@ en:
     canned_responses: No canned responses available.
     products: You have not created any product yet.
   errors: 
+    events_empty: "Events can't be empty"
     conditions_empty: "Conditions can't be empty"
     actions_empty: "Actions can't be empty"
   export_data:

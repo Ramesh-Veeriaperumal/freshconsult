@@ -55,9 +55,11 @@
 						<div class="info-data">
 						  <div class="floatr">
 						    <span class="item_actions">
+                <% if privilege?(:reply_ticket) %>
 						      <a href="#" data-user="${user.screen_name}" class="button reply_button">
 						        <%= t('social.twitter_handles.index.reply') %>
 					        </a>
+                <% end %>
   						    <a href="#" data-text="${text}" data-user="${user.screen_name}" data-id="${id_str}" class="button convert_as_ticket">
   							    <%= t('social.twitter_handles.index.convert_to_ticket') %>
   						    </a>

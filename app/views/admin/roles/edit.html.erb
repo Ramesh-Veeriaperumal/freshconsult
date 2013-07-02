@@ -1,0 +1,59 @@
+<% if @role.default_role? %>
+  <div class="flash_info" rel="permanent">
+    <%= "#{t('admin.roles.default_role_edit', :go_back => link_to(t('go_back_small'), admin_roles_path ) )}" %>
+  </div> 
+<% end %>
+<% content_for :sidebar do %>
+  <%= render :partial => "helpnote_without_tour" %>
+<% end %>
+<% form_for @role, :url => admin_role_path(@role), :html => { :id => 'role_form' , :method => :put, :rel => "validate" } do |role_form| %>
+  <h3 class="lead">
+        <%= @role.default_role? ? t('admin.roles.default_role') : t('admin.roles.edit') %>
+      <% unless @role.default_role? %>
+        <div class="pull-right">
+          <%= link_to t('cancel'), admin_roles_path, :class => "btn"%>
+          <%= role_form.submit t('save'), :class => "btn btn-primary", 'data-loading-text' => t('saving') %>
+        </div>
+      <% end %>
+  </h3>
+  
+  <%= render :partial => 'form', :locals => { :role_form => role_form} %>
+<% end %>
+
+<% javascript_tag do %>
+
+  (function($) {
+    
+    /* If an element is checked, then enable all
+       its children */
+       
+    $.fn.editFormShowChildren = function(){
+      return this.each(function(){
+        if($(this).hasClass('nested'))
+          $('input.' + this.id).prop('disabled', false);
+      });
+    };
+
+    /* If radio button is not checked, then disable all its children,
+       special case for hidden fields in admin set */
+       
+    $.fn.editFormRadioSpecial = function(){
+      return this.each(function(){
+        if($(this).hasClass('nested'))
+          $('input.' + this.id).prop({'disabled': true, 'checked': false});
+      });
+    };
+
+    $(document).ready(function() {
+      $('input:checked').editFormShowChildren();
+      $('input:radio:unchecked').editFormRadioSpecial();
+      
+      <% if @role.default_role? %>
+        $('#role_form :input').prop('disabled',true)
+      <% end %>
+      
+    });
+    
+  })(jQuery);
+
+<% end %>

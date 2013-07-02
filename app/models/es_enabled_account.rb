@@ -20,6 +20,7 @@ class EsEnabledAccount < ActiveRecord::Base
     end
 
     def clear_cache
+      Resque.enqueue(Search::RemoveFromIndex::AllDocuments, { :account_id => self.account_id, :index_id => self.index_id })
       MemcacheKeys.delete_from_cache(ES_ENABLED_ACCOUNTS)
       key = ES_INDEX_NAME % { :account_id => self.account_id }
       MemcacheKeys.delete_from_cache(key)

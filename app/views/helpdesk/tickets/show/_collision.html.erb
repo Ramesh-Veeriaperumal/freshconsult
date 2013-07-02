@@ -14,26 +14,11 @@
       <div class="flip-back">0</div>
     </a>
   </div>
-  <!-- **** Agent Collision flip animation End **** -->
-   <!-- <ul>
-    <li rel="notice-popover" id="notification" data-placement="right" title="Ticket updated">
-      <a href="javascript:void(0)" class="symbols-ac-show-reply"></a>
-    </li>
-    <li rel="notice-popover" id="agents_replying" data-object="replying" data-placement="right" title="Currently replying">
-      <a href="#" class="symbols-ac-show-reply tooltip"></a>
-      <span class="pill"></span>
-    </li>
-    <li rel="notice-popover" id="agents_viewing" data-object="viewing" data-placement="right" title="Currently viewing">
-      <a href="#" class="symbols-ac-show-view tooltip">
-        <span class="pill"></span>
-      </a>
-    </li>
-   </ul> -->
 </div>
 
 <% content_for :pagefixed do %>
 <% javascript_tag do %>
-    jQuery('.fixedStrap').append(jQuery('#agent_collision_show').detach());
+    jQuery('#agent_collision_placeholder').append(jQuery('#agent_collision_show').detach());
 
     var agents = { viewing:[], replying:[] };
     var init_params = {};

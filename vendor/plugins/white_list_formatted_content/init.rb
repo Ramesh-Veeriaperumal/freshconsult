@@ -1,4 +1,5 @@
 ActiveRecord::Base.class_eval do
+
   include ActionView::Helpers::TagHelper
   include ActionView::Helpers::TextHelper
   include ActionView::Helpers::UrlHelper

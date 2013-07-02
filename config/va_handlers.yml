@@ -1,0 +1,20 @@
+va_handlers:
+    rule:
+        default: Va::Handlers::Text
+        email: Va::Handlers::Email
+        text: Va::Handlers::Text
+        text_array: Va::Handlers::TextArray
+        numeric: Va::Handlers::Numeric
+        date_time: Va::Handlers::DateTime
+        dropdown:  Va::Handlers::Text
+        checkbox: Va::Handlers::Boolean
+        object_id: Va::Handlers::ObjectId
+        nested_field: Va::Handlers::NestedField
+        allow_all: Va::Handlers::AllowAll
+
+    event:
+        default: Va::EventHandlers::Update
+        update: Va::EventHandlers::Update # [:from, :to] comparison handler
+        value: Va::EventHandlers::Value # :value comparison handler
+        change: Va::EventHandlers::Change # doesn't matter what the change is..
+        nested_field: Va::EventHandlers::NestedField # for nested_fields

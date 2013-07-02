@@ -18,9 +18,7 @@
 	<% unless page_canonical.blank? %>
 		<link rel="canonical" href="<%= page_canonical %>" />
 	<% end %>
-	<% cache(["v3","portal","fav_ico",current_portal]) do %>
-		<link rel="shortcut icon" href="<%=current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' : current_portal.fav_icon.content.url%>" />
-	<%end%>
+	<%=fav_icon_url%>
 	<%= include_cloudfront_css :common %>
 	<%= include_cloudfront_css :plugins  %>
 	<%= include_cloudfront_css :sprites  %>
@@ -36,10 +34,9 @@
 	<%= include_cloudfront_js :notifications %>
 	<%= include_cloudfront_js :redactor  %>
 
-	<% if @enable_pattern %>
-		<%= include_cloudfront_css :pattern %>
-		<%= include_cloudfront_js :pattern %>
-	<% end %>
+	<%= include_cloudfront_css :pattern, :media => "screen, print, projection"  %>
+	<%= include_cloudfront_js :pattern  %>
+	<%= include_cloudfront_css :tkt_details, :media => "screen, print, projection"  %>
 
 <script type="text/javascript">
 	PROFILE_BLANK_THUMB_PATH = '<%= image_path("fillers/profile_blank_thumb.gif") %>';

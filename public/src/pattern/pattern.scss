@@ -44,6 +44,7 @@
 @import "lib/navs";
 @import "lib/navbar";
 @import "lib/breadcrumbs";
+@import "lib/adminbreadcrumbs";
 @import "lib/pagination";
 //@import "lib/pager";
 
@@ -65,4 +66,5 @@
 
 //# !PATTERN TODO
 @import "patternhack";
-@import "lib/list-page-theme"
+@import "lib/list-page-theme";
+@import "lib/sticky-header";

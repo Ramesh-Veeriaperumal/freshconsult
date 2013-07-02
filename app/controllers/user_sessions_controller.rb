@@ -12,7 +12,8 @@ require 'openssl'
 
 include Redis::RedisKeys
 include Redis::TicketsRedis
-  
+
+  skip_before_filter :check_privilege  
   before_filter :set_mobile, :only => [:create, :destroy]
   skip_before_filter :require_user, :except => :destroy
   skip_before_filter :check_account_state
@@ -104,9 +105,9 @@ include Redis::TicketsRedis
 
   def generate_random_hash(google_viewer_id, account)
      generated_hash = Digest::MD5.hexdigest(DateTime.now.to_s + google_viewer_id)
-     KeyValuePair.delete_all(["value=? and obj_type=? and account_id=?", google_viewer_id, TOKEN_TYPE, account.id])
-     kvp = KeyValuePair.new({:key=>generated_hash, :value=>google_viewer_id, :obj_type=>TOKEN_TYPE, :account_id=>account.id})
-     kvp.save! # if it throws exception, let it propagate. Without storing this info anyway we cannot proceed. 
+     key_options = { :account_id => account.id, :token => generated_hash}
+     key_spec = Redis::KeySpec.new(AUTH_REDIRECT_GOOGLE_OPENID, key_options)
+     Redis::KeyValueStore.new(key_spec, google_viewer_id, {:group => :integration, :expire => 300}).set_key
      return generated_hash;
   end
 
@@ -167,7 +168,7 @@ include Redis::TicketsRedis
     
     @user_session = current_account.user_sessions.new(@current_user)
     if @user_session.save
-      @current_user.deliver_account_admin_activation
+      @current_user.deliver_admin_activation
       #SubscriptionNotifier.send_later(:deliver_welcome, current_account)
       flash[:notice] = t('signup_complete_activate_info')
       redirect_to admin_getting_started_index_path  
@@ -224,16 +225,18 @@ include Redis::TicketsRedis
       @current_user = @auth.user unless @auth.blank?
       @current_user = current_account.all_users.find_by_email(email) if @current_user.blank?
       unless gmail_gadget_temp_token.blank?
-        kvp = KeyValuePair.find_by_key(gmail_gadget_temp_token)
+        key_options = {:account_id => current_account.id, :token => gmail_gadget_temp_token}
+        kv_store = Redis::KeyValueStore.new(Redis::KeySpec.new(AUTH_REDIRECT_GOOGLE_OPENID, key_options))
+        kv_store.group = :integration
+        google_viewer_id = kv_store.get_key
         @gauth_error=true
-        if kvp.blank? or kvp.value.blank?
+        if google_viewer_id.blank?
           @notice = t(:'flash.gmail_gadgets.kvp_missing')
         elsif @current_user.blank?
           @notice = t(:'flash.gmail_gadgets.user_missing')
         elsif @current_user.agent.blank?
           @notice = t(:'flash.gmail_gadgets.agent_missing')
         else
-          google_viewer_id = kvp.value
           @gauth_error=false
         end
       else
@@ -260,7 +263,7 @@ include Redis::TicketsRedis
 
           if gmail_gadget_temp_token.blank?
             flash[:notice] = t(:'flash.g_app.authentication_success')        
-            if (@current_user.account_admin? && @current_user.first_login?)
+            if (@current_user.first_login? && @current_user.privilege?(:manage_account))
                redirect_to admin_getting_started_index_path
             else
               redirect_back_or_default('/')            
@@ -318,9 +321,8 @@ include Redis::TicketsRedis
       @contact = account.users.new
       @contact.name = options[:name] unless options[:name].blank? 
       @contact.email = email
-      @contact.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
+      @contact.helpdesk_agent = false
       @contact.language = current_portal.language
       return @contact
     end
-    TOKEN_TYPE = "OpenSocialFirstTimeAccessToken"
 end

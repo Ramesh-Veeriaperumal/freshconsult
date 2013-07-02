@@ -2,6 +2,20 @@
 module ParserUtil
 
 VALID_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/
+      EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+
+  def parse_email(email)
+    if email =~ /(.+) <(.+?)>/
+      name = $1
+      email = $2
+    elsif email =~ /<(.+?)>/
+      email = $1
+    else email =~ EMAIL_REGEX
+      email = $1
+    end
+
+    { :email => email, :name => name }
+  end 
 
 	def parse_email_text(email_text)
 		if email_text =~ /"?(.+?)"?\s+<(.+?)>/

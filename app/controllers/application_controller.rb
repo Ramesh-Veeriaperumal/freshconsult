@@ -7,7 +7,9 @@ class ApplicationController < ActionController::Base
 
   around_filter :select_shard
   
-  before_filter :reset_current_account, :redactor_form_builder, :redirect_to_mobile_url
+  before_filter :unset_current_account, :set_current_account
+  include Authority::Rails::ControllerHelpers
+  before_filter :redactor_form_builder, :redirect_to_mobile_url
   before_filter :check_account_state, :except => [:show,:index]
   before_filter :set_default_locale
   before_filter :set_time_zone, :check_day_pass_usage 
@@ -43,8 +45,8 @@ class ApplicationController < ActionController::Base
   end
  
   def check_account_state
-    if !current_account.active? 
-      if permission?(:manage_account)
+    unless current_account.active? 
+      if privilege?(:manage_account)
         flash[:notice] = t('suspended_plan_info')
         return redirect_to(subscription_url)
       else
@@ -55,12 +57,7 @@ class ApplicationController < ActionController::Base
   end
   
   def set_time_zone
-    begin
-      current_account.make_current
-      User.current = current_user
-      TimeZone.set_time_zone
-    rescue ActiveRecord::RecordNotFound
-    end
+    TimeZone.set_time_zone
   end
   
   def activerecord_error_list(errors)
@@ -79,8 +76,16 @@ class ApplicationController < ActionController::Base
     I18n.locale = I18n.default_locale
   end
   
-  def reset_current_account
+  def unset_current_account
     Thread.current[:account] = nil
+  end
+  
+  def set_current_account
+    begin
+      current_account.make_current
+      User.current = current_user
+    rescue ActiveRecord::RecordNotFound
+    end    
   end
 
   def render_404
@@ -92,7 +97,6 @@ class ApplicationController < ActionController::Base
   
   def record_not_found (exception)
     Rails.logger.debug "Error  =>" + exception.message
-    Rails.logger.debug "API Error on invoking: "+request.url + "\t parameters =>"+params.to_json
     respond_to do |format|
       format.html {
         unless @current_account
@@ -114,7 +118,6 @@ class ApplicationController < ActionController::Base
 
   def handle_error (error)
     Rails.logger.debug "API::Error  =>" + error.message
-    Rails.logger.debug "API Error on invoking: "+request.url + "\t parameters =>"+params.to_json
     result = {:error => error.message}
     respond_to do | format|
       format.xml  { render :xml => result.to_xml(:indent =>2,:root=>:errors)  and return }

@@ -1,6 +1,6 @@
 class SurveyResult < ActiveRecord::Base
 
-  include Gamification::GamificationUtil
+  include Va::Observer::Util
 
   belongs_to_account
     
@@ -11,8 +11,9 @@ class SurveyResult < ActiveRecord::Base
   belongs_to :customer,:class_name => 'User', :foreign_key => :customer_id
   belongs_to :group,:class_name => 'Group', :foreign_key => :group_id
 
-  after_create :update_ticket_rating, :add_support_score
-  after_commit_on_create :process_ticket_quests_on_feedback
+  after_create :update_ticket_rating
+  before_create :update_observer_events
+  after_commit_on_create :filter_observer_events, :if => :user_present?
   
   def add_feedback(feedback)
     note = surveyable.notes.build({
@@ -133,13 +134,9 @@ class SurveyResult < ActiveRecord::Base
                                                       :conditions => conditional_params,
                                                       :order => "survey_results.created_at DESC"
                                                    }}                                                   
-  private                                                   
 
-    def add_support_score
-      return unless gamification_feature?(surveyable.account)
-      SupportScore.add_happy_customer(surveyable) if happy?
-      SupportScore.add_unhappy_customer(surveyable) if unhappy?
-    end
+                                                     
+  private                                                   
 
     def update_ticket_rating
       return unless surveyable.is_a? Helpdesk::Ticket
@@ -149,9 +146,9 @@ class SurveyResult < ActiveRecord::Base
       surveyable.save
     end
     
-    def process_ticket_quests_on_feedback
-      Resque.enqueue(Gamification::Quests::ProcessTicketQuests, { :id => surveyable_id, 
-                :account_id => account_id }) if gamification_feature?(surveyable.account)
+    # VA - Observer Rule 
+    def update_observer_events
+      return unless surveyable.instance_of? Helpdesk::Ticket
+      @model_changes = { :customer_feedback => rating }
     end
-
 end

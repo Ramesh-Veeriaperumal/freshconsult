@@ -1,5 +1,5 @@
 <div class="request_panel" id="<%=cntid%>" style="display:none;" rel="emitter" data-node-name="agent_replying">
-  <% form_for note, :html => {
+  <% form_for note, :url => note_helpdesk_ticket_conversations_path(@ticket), :html => {
                       :multipart => true,  
                       :id => "HelpdeskNotes",
                       :rel => 'note_form', 
@@ -28,7 +28,7 @@
         </div>
       </li>
 
-      <li class="inline-field field">
+      <li class="inline-field field clearField message">
         <%= render :partial => 'helpdesk/tickets/show/editor_insert_buttons', :locals => { :cntid => cntid } %>
         <% f.fields_for (:note_body, Helpdesk::NoteBody.new) do |ff| %>
             <%= ff.text_area :body_html, :class => "body_html required", :id => "#{cntid}-body", :value => "<span id='caret_pos_holder' style='display:none;'>&nbsp;</span>" %>
@@ -58,14 +58,14 @@
           <%= t('cancel') %>
         </button>
       </span>
-
-      <span class="btn-group">
-        <button class="btn" rel="custom-reply-status" 
-                data-cnt-id='<%=cntid%>' data-status-val='4'>
-          <%= t('ticket.note_form.add_and_resolve') %>
-        </button>
-      </span>
-
+      <% if privilege?(:edit_ticket_properties) %>
+        <span class="btn-group">
+          <button class="btn" rel="custom-reply-status" 
+                  data-cnt-id='<%=cntid%>' data-status-val='4'>
+            <%= t('ticket.note_form.add_and_resolve') %>
+          </button>
+        </span>
+      <% end %>
       <span class="btn-group">
         <button class="btn btn-primary submit_btn" 
                 data-public-text="<%= t('ticket.note_form.add_public_note') %>" 

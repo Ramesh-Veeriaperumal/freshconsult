@@ -1,6 +1,7 @@
 class Helpdesk::CommonsController < ApplicationController
 
   before_filter :set_mobile, :only => [:group_agents]
+  skip_before_filter :check_privilege
 
   def group_agents
   	group_id = params[:id]

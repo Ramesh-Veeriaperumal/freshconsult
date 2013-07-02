@@ -1,13 +1,29 @@
-@import "../app/lib/settings";
-@import "lib/variables";
-
 body{
   font-size:13px;
 }
 
-
-small {
-  font-size: 90%;
+.lead {
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: 200;
+  line-height: 30px;
+  text-transform: capitalize;
+}
+.lead-desc{
+  margin-top:-14px;
+  display:block;
+  margin-bottom: 20px;
+}
+h5{
+  &.lead{
+    font-size:18px;
+    line-height:20px;
+  }
+}
+.lead-sub{
+  line-height: 15px;
+  font-size: 20px;
+  color:#aaa;
 }
 
 strong {
@@ -17,6 +33,10 @@ strong {
 .top-space-none{
   margin-top:0;
   padding-top:0;
+}
+/* fix for form label center alignment*/
+.control-label{
+  padding-top: 5px;
 }
 
 .muted {
@@ -37,6 +57,9 @@ strong {
     background: none;
     color: inherit;
   }
+}
+.tooltip{
+  cursor:pointer;
 }
 .table th, .table td {
       padding: 15px;
@@ -118,6 +141,19 @@ strong {
 .cust-list-avatar,.text-info{
   display:inline-block;
   vertical-align: middle;
+}
+.admin-breadcrumb{
+  margin: -14px -20px;
+  margin-bottom: 20px;
+  &.breadcum-footer{
+    margin-bottom: -14px;
+    margin-top:20px;
+  }
+}
+/* After including type.scss in pattern this class have to removed*/
+.no-results{
+ color: #ccc;
+ font-size:$baseFontSize;
 }
 
 /*  overriding buttons styles from Bootstrap v1.4 */
@@ -216,6 +252,26 @@ table.selected_to_yellow tbody tr td {
       background:#fffad8;
     }
   }
+
+  .actions {
+    float: right;
+    width: 120px;
+    text-align: right;
+    visibility: hidden;
+    @include opacity(0.3);
+    @include transition(opacity 0.2s ease-out);
+  }
+
+  td:hover {
+    .actions {
+      visibility: visible;
+      @include opacity(1);
+    }
+  }
+}
+
+body.touch .dialog-well .actions {
+  visibility: visible;
 }
 /* This class overriding app-common css. */
 
@@ -274,6 +330,15 @@ table.selected_to_yellow tbody tr td {
   border-top:0;
 }
 
+/* Roles new */
+.nested-ul{
+  .nested-ul{
+    li{
+      margin-left:20px;
+    }
+  }
+}
+
 select{
   height: 20px;
   line-height: 20px;
@@ -285,13 +350,23 @@ select{
   margin-left: 0px;
   margin-right: 0px;
 }
-
+h5{
+  &.lead{
+    font-size:18px;
+    line-height:20px;
+  }
+}
+.lead-sub{
+  line-height: 15px;
+  font-size: 20px;
+  color:#aaa;
+}
 /* have to remove after include type.scss from pattern */
 .lead {
   margin-bottom: $baseLineHeight;
   font-size: $baseFontSize * 1.5;;
   font-weight: 200;
-  line-height: $baseLineHeight * 1.5;
+  line-height: $baseLineHeight * 1.9;
 }
 .header-lead{
   margin-top: 15px;
@@ -305,13 +380,17 @@ select{
     border-top: 4px solid #c7c7c7;
   }
 }
-
+.sub-lead{
+  font-size: $baseFontSize * 1.4;
+  color:$gray;
+  font-weight: 200;
+}
 
 // Emphasis & misc
 // -------------------------
 
 small {
-  font-size: 85%; // Ex: 14px base font * 85% = about 12px
+  font-size: 90%;
 }
 strong {
   font-weight: bold;
@@ -348,17 +427,16 @@ ol.unstyled {
   list-style: none;
 }
 
+ul.disc-styled{
+  list-style: disc;
+  padding-left:15px;
+}
 ul.inline > li, ol.inline > li {
   display: inline-block;
   padding-right: 5px;
   padding-left: 5px;
 }
 
-.select2-container{
-  &[class*="span"]{
-    margin-left: 0;
-  }
-}
 .nested-input{
   border-left: 1px dotted #AFAFAF;
   padding-left: 8px;

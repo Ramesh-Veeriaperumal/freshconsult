@@ -23,14 +23,12 @@ class Post < ActiveRecord::Base
   
   has_many_attachments
 
+  delegate :update_es_index, :to => :topic, :allow_nil => true
+
   #format_attribute :body
   
   attr_protected	:topic_id , :account_id , :attachments
-  
-  def editable_by?(user)
-    user && (user.id == user_id || user.has_manage_forums? || user.moderator_of?(forum_id))
-  end
-  
+    
   def to_xml(options = {})
     options[:except] ||= []
     options[:except] << :topic_title << :forum_name

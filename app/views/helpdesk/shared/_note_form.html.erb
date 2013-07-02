@@ -1,6 +1,6 @@
 <div class="request_panel" id="<%=cntid%>" style="display:none;" rel="emitter" data-node-name="agent_replying">
   <div class="reply_box">
-  <% form_for note, :html => {:multipart => true,  :id => "HelpdeskNotes" } do |f| %>
+  <% form_for note, :url => note_helpdesk_ticket_conversations_path(@ticket), :html => {:multipart => true,  :id => "HelpdeskNotes", :method => :post } do |f| %>
     <%= f.error_messages %>
     <ul class="ui-form dont-validate">
       <li class="inline-field field">
@@ -40,7 +40,10 @@
     </ul> 
     <div class="button-container">
     	<%= submit_tag(local_assigns[:submit] || ActiveSupport::Inflector.titleize(id), :class => "uiButton special") %>
-    	<%= submit_tag(t('ticket.note_form.add_and_resolve'), :onclick => "jQuery('#note_ticket_status').val('4');" , :class => "uiButton") %> 
+      <% if privilege?(:edit_ticket_properties) %>
+        <%= hidden_field_tag :redirect_to %>
+        <%= submit_tag(t('ticket.note_form.add_and_resolve'), :onclick => "jQuery('#note_ticket_status').val('4');" , :class => "uiButton", :id => "add_resolve_btn") %> 
+      <% end %>
 			<%= button_to_function(t('cancel'), "jQuery('#cnt-note').hide().trigger('visibility');", :class => "uiButton" ) %>   
     </div>
   <% end %>
@@ -49,6 +52,9 @@
 <% content_for :pagefixed do %>
   <script src="/javascripts/helpdesk/page_switcher.js" type="text/javascript"></script>
   <% javascript_tag do %>
+  jQuery("#add_resolve_btn").bind("click",function(){
+      jQuery('[name="redirect_to"]').val("helpdesk_ticket_index");
+  });
     document.observe("dom:loaded", function(){
       new Helpdesk.PageSwitcher({
         toggleMode: true,

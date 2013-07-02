@@ -1,7 +1,7 @@
 class MonitorshipsController < ApplicationController
-  before_filter :login_required #To do Shan
-
-  cache_sweeper :monitorships_sweeper, :only => [:create, :destroy]
+  
+  skip_before_filter :check_privilege
+  before_filter :require_user #To do Shan
 
   def create
     @monitorship = Monitorship.find_or_initialize_by_user_id_and_topic_id(current_user.id, params[:topic_id])

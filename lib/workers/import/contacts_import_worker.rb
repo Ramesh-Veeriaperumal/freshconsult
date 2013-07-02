@@ -27,7 +27,7 @@ class Workers::Import::ContactsImportWorker < Struct.new(:params)
             updated+=1 if user.update_attributes(@params_hash[:user])
           else
             user = current_account.users.new
-            @params_hash[:user][:user_role] = User::USER_ROLES_KEYS_BY_TOKEN[:customer]
+            @params_hash[:user][:helpdesk_agent] = false
             created+=1 if user.signup!(@params_hash)
           end        
         end

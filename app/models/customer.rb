@@ -23,9 +23,9 @@ class Customer < ActiveRecord::Base
     { :conditions => [ "domains like ?", "%#{domain}%" ] } if domain
   }
 
-  after_commit_on_create :map_contacts_to_customers, :clear_cache, :update_es_index
-  after_commit_on_destroy :clear_cache, :remove_es_document
-  after_commit_on_update :clear_cache, :update_es_index
+  after_commit_on_create :map_contacts_to_customers, :clear_cache
+  after_commit_on_destroy :clear_cache
+  after_commit_on_update :clear_cache
   after_update :map_contacts_on_update, :if => :domains_changed?
    
   #Sphinx configuration starts
@@ -112,8 +112,8 @@ class Customer < ActiveRecord::Base
 
     def map_contacts_to_customers(domains = self.domains)
       User.update_all("customer_id = #{self.id}", 
-        ['SUBSTRING_INDEX(email, "@", -1) IN (?) and customer_id is null and user_role = ? and account_id = ?', 
-        get_domain(domains), User::USER_ROLES_KEYS_BY_TOKEN[:customer], self.account_id]) unless domains.blank?
+        ['SUBSTRING_INDEX(email, "@", -1) IN (?) and customer_id is null and helpdesk_agent = false and account_id = ?', 
+        get_domain(domains), self.account_id]) unless domains.blank?
     end
 
     def get_domain(domains)

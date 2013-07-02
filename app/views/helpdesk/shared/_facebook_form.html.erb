@@ -1,6 +1,6 @@
 <div class="request_panel" id="<%=cntid%>" style="display:none;" rel="emitter" data-node-name="agent_replying">
 <div class='reply_box'>
-  <% form_for note, :html => {:multipart => true,  :id => "HelpdeskFbComment" } do |f| %>
+    <% form_for note, :url => facebook_helpdesk_ticket_conversations_path(@ticket), :html => {:multipart => true,  :id => "HelpdeskFbComment" } do |f| %>
     <%= f.error_messages %>
     <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
 	  <%= hidden_field_tag :fb_post, "true", :id => "fb_comment" %>
@@ -25,7 +25,9 @@
 	  </li>
 	 <li class="button-container">
     	<%= submit_tag(t('ticket.facebook_form.send'), :class => "uiButton special" ) %>
-    	<%= submit_tag(t('ticket.facebook_form.send_and_resolve'), :onclick => "jQuery('#fb_ticket_status').val('4');" , :class => "uiButton") %>
+      <% if privilege?(:edit_ticket_properties) %>
+    	  <%= submit_tag(t('ticket.facebook_form.send_and_resolve'), :onclick => "jQuery('#fb_ticket_status').val('4');" , :class => "uiButton") %>
+      <% end %>
 		<%= button_to_function(t('cancel'), "jQuery('#cnt-fb-post').hide().trigger('visibility');", :class => "uiButton" ) %>
     </li>
     </ul> 

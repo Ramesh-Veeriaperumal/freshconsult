@@ -2,8 +2,7 @@ class Reports::TimesheetReportsController < ApplicationController
   
   include Reports::TimesheetReport
   
-  before_filter { |c| c.requires_permission :manage_tickets }
-  before_filter :set_selected_tab
+  before_filter :check_permission, :set_selected_tab
   before_filter :build_item ,  :only => [:index,:export_csv,:report_filter]
   before_filter :time_sheet_list, :only => [:index,:report_filter]
   before_filter :time_sheet_for_export, :only => [:export_csv]
@@ -38,6 +37,10 @@ class Reports::TimesheetReportsController < ApplicationController
      @time_sheets = current_account.time_sheets.for_customers(@customer_id).by_agent(@user_id).by_group(@group_id).created_at_inside(@start_date,@end_date).hour_billable(@billable)
   end
 
-
+  private
+  
+    def check_permission
+      access_denied unless privilege?(:view_time_entries)
+    end
 
 end
