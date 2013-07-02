@@ -101,7 +101,7 @@
           </script>
         </div>
   </li>
-  <li class="inline-field field clearField">
+  <li class="inline-field field clearField message">
     <%= render :partial => 'helpdesk/tickets/show/editor_insert_buttons', :locals => { :cntid => cntid } %>
     <% conv_item = conv_id.nil? ? @ticket : @note %>
     <% f.fields_for (:note_body, Helpdesk::NoteBody.new) do |ff| %>
