@@ -187,7 +187,12 @@ Helpkit.reports_util = {
       jQuery("#filter_name").val("")
       jQuery("#save-report").click();
     });
-    jQuery(document).on('click',"#report-dialog-select-submit",function(){
+    jQuery(document).on('click',"#report-dialog-select-submit",function(){      
+      if(jQuery("#filter_name").val() == ""){
+        jQuery("#filter-mandatory-check").removeClass('hide');
+        return false;
+      }
+      jQuery("#filter-mandatory-check").addClass('hide');
       Helpkit.reports_util.saveReportFilter();
       jQuery("#report-dialog-select-cancel").click();
     });

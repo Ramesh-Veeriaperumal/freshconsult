@@ -4035,6 +4035,7 @@ en:
     save_filter_title: "Save this report"
     delete_filter_title: "Delete this report"
     report_filter_title: "Saved Report Title"
+    report_title_mandatory: "Report title is mandatory."
     glance:
       all_reports: "All Reports"
       report_view: "Report View"
