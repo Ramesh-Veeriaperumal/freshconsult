@@ -35,8 +35,8 @@ stylesheets:
     - public/stylesheets/codemirror.css
 
   portal:
-    - public/stylesheets/redactor.css
     - public/stylesheets/portal/ie.css
+    # - public/stylesheets/redactor.css
 
   preview:
     - public/stylesheets/portal/preview.css

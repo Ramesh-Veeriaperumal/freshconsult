@@ -30,4 +30,9 @@ module Helpdesk::SlaPoliciesHelper
 	end
 	alias_method :source_list, :sources
 
+	def ticket_types
+		current_account.ticket_type_values.collect { |c| [ c.value, c.value ] }
+	end
+	alias_method :ticket_type_list, :ticket_types
+
 end
