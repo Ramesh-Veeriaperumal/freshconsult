@@ -46,6 +46,10 @@
 	.loading-block, &.loading-block{
 		@include min-height(100px);
 	}
+	.trans-bg{
+			background:#fff;
+			@include opacity(0.1);
+	}
 	&.loading-align{
 		margin-top:15px;
 		display: -webkit-box;

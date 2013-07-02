@@ -2951,6 +2951,7 @@ en:
         no_agents: No agent is watching this ticket
         ticket_watchers: Ticket Watchers
         me: Me
+        you: You
         cancel: Cancel
         view_watchers_link: View Watchers
         no_watcher_text: No agent is watching this ticket

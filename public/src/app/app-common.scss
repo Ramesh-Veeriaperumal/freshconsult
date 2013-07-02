@@ -7298,15 +7298,40 @@ div.watchers_tooltip{
     @include box-shadow(0px 0px 7px rgba(0,0,0, 0.3));
     @include border-radius(5px);
     z-index: 10000;
-
+    .watcher-close{
+    	position: absolute;
+		right: 11px;
+		border-radius: 20px;
+		background: #666;
+		width: 17px;
+		height: 15px;
+		color: #fff;
+		font-weight: bold;
+		line-height: 11px;
+		text-align: center;
+		padding-top: 2px;
+		cursor: pointer;
+    }
     .watcher_label{
         font-size: 16px;
         font-weight: 300;
     }
-
+    .add-icon-green{
+	    width: 18px;
+		height: 18px;
+		display: inline-block;
+		position: absolute;
+		margin-top: 16px;
+		z-index: 9999999;
+		margin-left: 5px;
+	}
     #watcherlist{
     	clear: both;
-    	padding-bottom: 15px;
+    	border: 1px solid #CCC;
+		border-radius: 4px;
+		padding: 1px 6px;
+		height: auto;
+		margin-top: -7px;
 
     	.agent_name{
 	    	max-width: 157px;
@@ -7328,11 +7353,9 @@ div.watchers_tooltip{
     }
 
     ul{
-    	margin-bottom: -7px;
-    	max-height: 258px;
+    	max-height: 223px;
     	overflow-x: hidden;
-    	overflow-y: auto; 
-    	padding-top: 7px;
+    	overflow-y: auto;
     }
 
     li{
@@ -7377,6 +7400,7 @@ div.watchers_tooltip{
     .watcher_text{
     	color: #888;
     	font-size:13px;
+    	margin-top: 2px;
     }
 
     .watcher_list{
@@ -7409,7 +7433,8 @@ div.watchers_tooltip{
 	.unwatch{
 		float: left;
 		margin-top: 5px;
-		margin-left: 10px;
+		margin-right: 5px;
+		cursor: pointer;
 		img{
 			height: 16px;
 			width: 16px;
@@ -7443,6 +7468,9 @@ div.watchers_tooltip{
     .watcher_input{
     	margin:10px 0;
 		width: 100%;
+    	.select2-choices{
+    		padding-left:20px;
+    	}
 	}
 
 	div.chzn-container{
@@ -7461,6 +7489,24 @@ div.watchers_tooltip{
 	.submit_watcher{
 		margin-left: 2px;
 	}
+}
+
+.watcher_highlight {
+  @include animation(watcher_blink 0.8s ease-out 1);
+}
+
+@include keyframes(watcher_blink) {
+  0% { background: rgba(#ff0,.8);}
+  100% { background: rgba(#ff0,0);}
+}
+
+.watcher_remove {
+  @include animation(watcher_rem 0.8s ease-out 1);
+}
+
+@include keyframes(watcher_rem) {
+  0% { background: rgba(#ff0000,.2);}
+  100% { background: rgba(#ff0000,0);}
 }
 
 /* Add Watcher End */

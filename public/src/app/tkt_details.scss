@@ -162,6 +162,9 @@ p strong{
 
 				span{
 					color: #666666;
+					&.watcher-close{
+					color:#fff;
+					}
 				}
 
 				.label {

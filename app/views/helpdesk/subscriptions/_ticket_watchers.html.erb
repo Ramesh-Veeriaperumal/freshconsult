@@ -1,10 +1,10 @@
 <span class="arrow-top"></span>
-
+<span class="watcher-close">x</span>
 <div class="watcher_label">
 		 <div>
 		 	<%= t('helpdesk.tickets.add_watcher.ticket_watchers') %>
-		 	<% if @ticket.subscriptions.count > 0 %>
-				&nbsp;-&nbsp;<%= @ticket.subscriptions.count %>
+      <% if @ticket.subscriptions.count > 0 %>
+				<span class="watcher_count">(<%= @ticket.subscriptions.count %>)</span>
 			<% end %>
 		 </div>
 		 <div class="watcher_text">
@@ -12,115 +12,187 @@
 		 </div>
 </div>
 
-
-<div id="watcherlist">
-	<% if @ticket.subscriptions.present? %>
-		<div class="add_watcher_text changing-link">
-			<% if @ticket.unsubscribed_agents.present? %>
-				<%= link_to_function t('helpdesk.tickets.add_watcher.add_watcher_link')%>    
-			<% else %>
-				<span title="<%=t('helpdesk.tickets.add_watcher.all_agents_watching')%>" class="link_disabled">
-					<%= t('helpdesk.tickets.add_watcher.add_watcher_link') %>
-				</span>
-			<% end %>
-		</div>
-		<div>
-			<ul>
-				<% 
-				   @subscriptions = @ticket.subscriptions.sort_by(&:created_at).reverse
-				   if @subscriptions.map(&:user_id).include? current_user.id
-				   		@subscriptions.insert(0, @subscriptions.delete_at(@subscriptions.index{ |l| l.user_id==current_user.id }))
-				   	end
-				%>
-				<% @subscriptions.each do |subscription| %>
-					<li>
-						<div class="user_image clearfix">
-							<%= user_avatar(subscription.user, :thumb, "preview_pic" , 
-							                { :width => "36px", :height => "36px" })  %>
-						</div>
-						<% if subscription.user.id == current_user.id %>
-							<div class="watcher_list">
-								<b><%= t('helpdesk.tickets.add_watcher.me') %></b>&nbsp;
-								<span class="agent_name" title="<%=current_user.name%>"> 
-									(<%= current_user.name %>)
-								</span>
-							</div>
-							<div class="unwatch" 
-							     title="<%=t('helpdesk.tickets.add_watcher.unwatch')%>" >
-								<%= link_to_remote(image_tag("/images/delete.png"), :url => unwatch_helpdesk_ticket_helpdesk_subscriptions_path(@ticket), 
-								    :method => "delete") %>
-							</div>
-						<% else %>
-							<div class="watcher_list">
-									<span class="agent_name" title="<%=subscription.user.name%>"> 
-										<%= subscription.user.name %> 
-									</span>
-							</div>
-						<% end %>
-					</li>
-				<% end %>
-			</ul>
-		</div>
-	<% else %>
-		<div class="no_watcher_text">
-			<%= t('helpdesk.tickets.add_watcher.no_watcher_text') %>
-			<% if @ticket.unsubscribed_agents.present? %>
-				<div class="add_watcher_text"><%= link_to_function t('helpdesk.tickets.add_watcher.add_watcher_link')%></div>
-			<% end %>
-		</div>
-	<% end %>
+<div id="addwatcher">
+  <div class="select_agents">
+    <span class="add-icon-green"></span>
+    <% agent_list = unsubscribed_agent_list %>
+    <%= select_tag :ids, 
+          options_for_select(agent_list.map {|k, v| [v, k.to_s]}), { 
+              :multiple => true, 
+              :class => "select2 watcher_input",
+              "data-placeholder" => t('helpdesk.tickets.add_watcher.pick_agents')
+          } %>
+  </div>
 </div>
 
 
-<div id="addwatcher" style="display:none">
-	<div class="view_watcher_text changing-link">
-		<%= link_to_function( t('helpdesk.tickets.add_watcher.view_watchers_link') ) %>
-	</div>
-	<% form_remote_tag(:url => create_watchers_helpdesk_ticket_helpdesk_subscriptions_path(@ticket), 
-					   :method => :post,
-					   :class => "add_new_watcher") do %>
-		<div class="select_agents">
-		<%= select_tag :ids, 
-						options_for_select(unsubscribed_agent_list.map {|k, v| [v, k.to_s]}), { 
-								:multiple => true, 
-								:class => "select2 watcher_input",
-								"data-placeholder" => t('helpdesk.tickets.add_watcher.pick_agents')
-						} %>
+<% if @ticket.subscriptions.present? %>
+	<% 
+    @subscriptions = @ticket.subscriptions.sort_by(&:created_at).reverse
+    if @subscriptions.map(&:user_id).include? current_user.id
+    	@subscriptions.insert(0, @subscriptions.delete_at(@subscriptions.index{ |l| l.user_id==current_user.id }))
+    end
+	%>
+  <div id="watcherlist">
+    <ul class="trans-bg">
+      <% @subscriptions.each do |subscription| %>
+        <li>
+          <div class="user_image clearfix">
+            <%= user_avatar(subscription.user, :thumb, "preview_pic" , 
+                            { :width => "36px", :height => "36px" })  %>
+          </div>
+          <% if subscription.user.id == current_user.id %>
+            <div class="unwatch" title="<%=t('helpdesk.tickets.add_watcher.unwatch')%>" >
+              <%= image_tag "/images/delete.png" %>
 						</div>
-		<div class="add_cancel_buttons">
-			<%= link_to_function(t("helpdesk.tickets.add_watcher.cancel"), 
-			                    :class => "btn cancel_watcher" ) %>
-			<%= submit_tag t('helpdesk.tickets.add_watcher.add_button'), 
-			               "data-loading-text" => "Adding...", 
-			               :class => "btn btn-primary submit_watcher", "disabled" => "disabled" %>
-		</div>
-	<% end %>
+            <div class="watcher_list">
+              <b><%= t('helpdesk.tickets.add_watcher.you') %></b>&nbsp;
+              <span class="agent_name" title="<%=current_user.name%>"> 
+                (<%= current_user.name %>)
+              </span>
+            </div>
+					<% else %>
+						<div class="watcher_list">
+							<span class="agent_name" title="<%=subscription.user.name%>"> 
+								<%= subscription.user.name %> 
+							</span>
+						</div>
+					<% end %>
+				</li>
+			<% end %>
+		</ul>
+  </div>
+<% end %>
+
+<div class="construct hide">
+  <li>
+    <div class="user_image clearfix">
+      <div class="preview_pic" size_type="thumb">
+        <img alt="" onerror="imgerror(this)" src="/images/fillers/profile_blank_thumb.gif">
+      </div>
+    </div>
+    <div class="watcher_list">
+        <span class="agent_name" title="">
+        </span>
+    </div>
+  </li>
+  <div class="unwatch" title="<%=t('helpdesk.tickets.add_watcher.unwatch')%>" >
+    <%= image_tag "/images/delete.png" %>
+  </div>
 </div>
 
+<% javascript_tag do %> 
 
+  jQuery("#addwatcher select").trigger("click");
+  jQuery(document).trigger('click');
+  jQuery("#remote_loaded_dom_elements #watcherlist").remove();
 
-<% javascript_tag do %>
-	jQuery(document).trigger('click');
-	jQuery(".submit_watcher").click(function() {
-	jQuery(this).button("loading");
-});
+  jQuery("#monitor").on('click', function(ev) {
+    hideActivePopovers(ev);
+    remove_highlight_class();
+    jQuery("#new_watcher_page").toggle();
+  });
 
-jQuery(".watcher_input").live('change',function() {
-	if(jQuery(this).val())
-		jQuery('.submit_watcher').attr('disabled', false);
-	else
-		jQuery('.submit_watcher').attr('disabled', true);
-});
+  jQuery(".watcher-close").on("click", function(){
+    jQuery(".watchers_tooltip").hide();
+    remove_highlight_class();
+  });
 
-jQuery(".add_watcher_text").click(function(){
-	if (!jQuery(".add_watcher_text").children().hasClass("link_disabled")) {
-		jQuery("#watcherlist").hide();
-		jQuery("#addwatcher").fadeIn(500);
-	}
-});
+  jQuery(document).live('click', function(e){
+    if(!jQuery(e.target).parents().hasClass("monitor_div")){
+      if(!jQuery(e.target).parents().hasClass("watchers_tooltip")){
+        jQuery("#new_watcher_page").hide();
+        remove_highlight_class();
+      }
+    }
+  });
 
-jQuery(".view_watcher_text, .cancel_watcher").click(function(){
-	jQuery("#addwatcher").hide();
-	jQuery("#watcherlist").fadeIn(500);
-});
+  function remove_highlight_class() {
+    jQuery("#watcherlist li").removeClass("watcher_highlight");
+  }
+
+  function update_watcher_count(){
+    jQuery(".watcher_count").html('('+jQuery("#watcherlist li").length+')');
+  }
+
+  jQuery(".unwatch").on('click', function(){
+      var ticket_id = <%= @ticket.display_id %>;
+      jQuery("#watcherlist").addClass("sloading");
+      jQuery.ajax({   
+          type: 'DELETE',
+          url: '/helpdesk/tickets/'+ticket_id+'/subscriptions/unwatch',
+          success: function(data){
+                    jQuery("#watcherlist").removeClass("sloading");
+                    jQuery(".construct").append(jQuery("#watcherlist .unwatch"));
+                    jQuery("#monitor a").addClass("monitor").removeClass("monitor_active");
+
+                    if(jQuery.inArray("<%= current_user.id %>", jQuery("select.watcher_input").val()) == -1){
+                      jQuery("select.watcher_input")
+                        .prepend(jQuery("<option></option>")
+                        .attr("value",<%= current_user.id %>)
+                        .text("<%=t("helpdesk.tickets.add_watcher.you")%>"));
+                      jQuery("#watcherlist li").first().remove();
+                    }else {
+                      spliced_val = jQuery("select.watcher_input").val().splice("<%= current_user.id %>");
+                      jQuery("select.watcher_input").val(spliced_val);
+                      jQuery("#watcherlist li").first().remove();
+                    }
+
+                    update_watcher_count();
+                    if(jQuery("#watcherlist li").length == 0) {
+                      jQuery(".watcher_count").remove();
+                      jQuery("#watcherlist").remove();
+                    }
+          }
+      });
+  });
+
+  jQuery(".watcher_input").on("change", add_watcher);
+
+  function add_watcher(){
+
+    var ticket_id = <%= @ticket.display_id %>;
+    var user_id = jQuery(".watcher_input").select2('data').last().id;
+    jQuery.ajax({   
+          type: 'POST',
+          url: '/helpdesk/tickets/'+ticket_id+'/subscriptions/create_watchers?user_id='+user_id,
+          error: function(data){
+                    clone.addClass("watcher_remove");
+                    clone.slideToggle();
+                    jQuery(".watcher_input").unbind('change');
+                    jQuery(".select_agents .select2-search-choice a").last().click();
+                    jQuery(".watcher_input").bind('change', add_watcher);
+                    update_watcher_count();
+                    }
+    });
+
+    var name = jQuery(".select_agents .select2-search-choice div").last().text();
+    var form_values = jQuery("#ids").val();
+    clone = jQuery(".construct li").first().clone();
+    clone.find(".agent_name").attr("title", name).text(name);
+    
+    if(!jQuery(".watcher_count").text()){
+      jQuery(".watcher_label div").first().append('<span class="watcher_count"></span>');
+      clone.insertAfter(jQuery("#addwatcher"));
+      clone.wrap('<div id="watcherlist" />').wrap('<ul class="trans-bg" />');
+    }
+    
+    if(jQuery("#watcherlist li").first().find(".watcher_list b").text() == "<%=t("helpdesk.tickets.add_watcher.you")%>" ){
+      clone.insertAfter(jQuery("#watcherlist ul li:nth-child(1)"));
+    }
+    else{
+      if(name == "<%=t("helpdesk.tickets.add_watcher.you")%>" ){
+        clone.find(".agent_name").html('<b>'+name+'</b>'+ '(' + '<%= current_user.name %>' + ')' );
+        jQuery(".construct .unwatch").first().insertBefore(jQuery(clone).find(".watcher_list"));
+        jQuery("#watcherlist ul").prepend(clone);
+        jQuery("#monitor a").addClass("monitor_active").removeClass("monitor");
+      } else{
+        jQuery("#watcherlist ul").prepend(clone);
+      }
+    }
+    update_watcher_count();
+    jQuery(".select2-search-choice").hide();
+    jQuery(".watcher_input").focus();
+    clone.addClass("watcher_highlight");
+  }
 <% end %>

@@ -76,6 +76,7 @@
 .source-phone{   	@include symbols-sprite(source-phone); }
 .source-chat{   	@include symbols-sprite(source-chat); }
 .source-forum{   	@include symbols-sprite(source-forum); }
+.add-icon-green{	@include symbols-sprite(bullet-folder1_hover); }
 
  /* %% app-common */
 .reminders, .todo{ .delete{ @include symbols-sprite(trash); } }
