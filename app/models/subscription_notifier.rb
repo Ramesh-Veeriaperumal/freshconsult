@@ -60,9 +60,9 @@ class SubscriptionNotifier < ActionMailer::Base
     @content_type = "text/html"
   end
   
-   def account_deleted(account)
+  def account_deleted(account, feedback)
     setup_email(AppConfig['from_email'], "#{account.full_domain} is deleted")
-    @body = { :account => account }    
+    @body = { :account => account, :reason => feedback }    
     @content_type = "text/html"
   end
 

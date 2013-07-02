@@ -1,7 +1,7 @@
 <% content_for :sidebar do %>
   <%= render :partial => "helpnote_without_tour" %>
 <% end %>
-<% form_for @role, :url => admin_roles_path, :html => { :id => 'new_role', :method => :post, :rel => "validate"} do |role_form| %>
+<% form_for @role, :url => admin_roles_path, :html => { :id => 'role_form', :method => :post, :rel => "validate"} do |role_form| %>
 <h3 class="lead">
       <%= t('admin.roles.new') %>
     <div class="pull-right">

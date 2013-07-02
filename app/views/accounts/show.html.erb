@@ -17,12 +17,18 @@
 	
 	<div class="sidepanel">
 		<h3 class="title"><%= current_account.name %></h3> 
-		<p>			
-			<strong><%=t('account.active_since')%></strong>
-			<br />
-			<%= formated_date(current_account.created_at) %>			
-		</p>
-		<%= link_to(t("cancel_my_account"), cancel_account_url, :class => "button") %>
+		<% unless (del_customer = DeletedCustomers.find_by_account_id(current_account.id)) %>
+			<p>			
+				<strong><%=t('account.active_since')%></strong>
+				<br />
+				<%= formated_date(current_account.created_at) %>			
+			</p>
+			<%= link_to(t("cancel_my_account"), cancel_account_url, :class => "button") %>
+		<% else %>
+			<p>
+				<%= t(".restore_account", :delete_at => 2.days.since(del_customer.created_at).strftime('%a, %b %d, %Y')) %>
+			</p>
+		<% end %>
 	</div>
 
 	<div class="sidepanel">
@@ -55,7 +61,7 @@
 		  	
 		  	<ul class="fields"> 
 		  		<li class="inline-field">
-			  		<%= content_tag(:label, "#{t('.contact_first_name')} *", :class => "caption") %>
+			  		<%= content_tag(:label, "#{t('.contact_first_name')}<span class='required_star'>*</span>", :class => "caption") %>
 			  		
 			  		<div class="contact-fields">
 							<%= text_field_tag "account_configuration[contact_info][first_name]", current_account.admin_first_name, :class => "required", :autocomplete => "off" %>
@@ -63,7 +69,8 @@
 					</li>
 
 					<li class="inline-field">
-			  		<%= content_tag(:label, "#{t('.contact_last_name')} *", :class => "caption") %>
+			  		<%= content_tag(:label, "#{t('.contact_last_name')}<span class='required_star'>*</span>", :class => "caption") %>
+			  		
 			  		
 			  		<div class="contact-fields">
 							<%= text_field_tag "account_configuration[contact_info][last_name]", current_account.admin_last_name, :class => "required", :autocomplete => "off" %>
@@ -71,7 +78,7 @@
 					</li>
 
 					<li class="inline-field">
-			  		<%= content_tag(:label, "#{t('.contact_email')} *", :class => "caption") %>
+			  		<%= content_tag(:label, "#{t('.contact_email')}<span class='required_star'>*</span>", :class => "caption") %>
 
 			  		<div class="contact-fields">
 							<%= text_field_tag "account_configuration[contact_info][email]", current_account.admin_email, :class => "email required", :autocomplete => "off" %>
@@ -93,7 +100,7 @@
 				
 			 	<ul class="fields"> 
 			 		<li class="inline-field">
-						<%= content_tag(:label, "#{t('.invoice_emails')} *", :class => "caption") %>
+						<%= content_tag(:label, "#{t('.invoice_emails')}<span class='required_star'>*</span>", :class => "caption") %>
 
 						<div class="contact-fields">
 							<%= hidden_field_tag "invoice_email_field", added_invoice_emails, :class => "required" %>

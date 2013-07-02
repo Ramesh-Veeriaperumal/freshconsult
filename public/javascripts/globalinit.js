@@ -490,7 +490,7 @@ is_touch_device = function() {
           }
         });
  
-      flash = $("div.flash_info");
+      flash = $("div.flash_info").not('[rel=permanent]');
       if(flash.get(0)){
          try{ closeableFlash(flash); } catch(e){}
       }

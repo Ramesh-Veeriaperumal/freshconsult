@@ -1,8 +1,9 @@
 <div class="row-fluid" id="company_sub_header">
-	<% if type.eql?("user") %>
+		<% cookies[:contacts_sort] = params[:state] ? params[:state] : cookies[:contacts_sort]  %>
+			<% if type.eql?("user") %>
 		<div class="span3">
 			<div class="dropdown">
-                <%=t('contacts.showing')%><a role="button" class="dropdown-toggle drop-right" id="sorting_dropdown" data-toggle="dropdown" href="#"> <b><%= params[:state].blank? ? t("contacts.status.verified") : t("contacts.status.#{params[:state]}")  %></b><b class="caret"></b></a>
+                <%=t('contacts.showing')%><a role="button" class="dropdown-toggle drop-right" id="sorting_dropdown" data-toggle="dropdown" href="#"> <b><%= cookies[:contacts_sort].blank? ? t("contacts.status.verified") : t("contacts.status.#{cookies[:contacts_sort]}")  %></b><b class="caret"></b></a>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="sorting_dropdown_list" id="sorting_dropdown_list">
                 	<li><%= link_to t("contacts.status.verified"), {:state => "verified"}, :title => t("contacts.status_title.verified") %></li>
                 	<li><%= link_to t("contacts.status.unverified"), {:state => "unverified"}, :title => t("contacts.status_title.unverified") %></li>

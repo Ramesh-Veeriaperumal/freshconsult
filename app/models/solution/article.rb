@@ -172,4 +172,8 @@ class Solution::Article < ActiveRecord::Base
     (seo_data[:meta_keywords].blank?) ? tags.join(", ") : seo_data[:meta_keywords]
   end
 
+  def article_changes
+    @article_changes ||= self.changes.clone
+  end
+
 end

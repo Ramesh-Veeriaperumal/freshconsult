@@ -1,13 +1,20 @@
+<% if @role.default_role? %>
+  <div class="flash_info" rel="permanent">
+    <%= "#{t('admin.roles.default_role_edit', :go_back => link_to(t('go_back_small'), admin_roles_path ) )}" %>
+  </div> 
+<% end %>
 <% content_for :sidebar do %>
   <%= render :partial => "helpnote_without_tour" %>
 <% end %>
-<% form_for @role, :url => admin_role_path(@role), :html => { :id => 'new_role' , :method => :put, :rel => "validate" } do |role_form| %>
+<% form_for @role, :url => admin_role_path(@role), :html => { :id => 'role_form' , :method => :put, :rel => "validate" } do |role_form| %>
   <h3 class="lead">
         <%= @role.default_role? ? t('admin.roles.default_role') : t('admin.roles.edit') %>
-      <div class="pull-right">
-        <%= link_to @role.default_role? ? t('go_back') : t('cancel'), admin_roles_path, :class => "btn"%>
-        <%= role_form.submit t('save'), :class => "btn btn-primary", 'data-loading-text' => t('saving') unless @role.default_role? %>
-      </div>
+      <% unless @role.default_role? %>
+        <div class="pull-right">
+          <%= link_to t('cancel'), admin_roles_path, :class => "btn"%>
+          <%= role_form.submit t('save'), :class => "btn btn-primary", 'data-loading-text' => t('saving') %>
+        </div>
+      <% end %>
   </h3>
   
   <%= render :partial => 'form', :locals => { :role_form => role_form} %>
@@ -42,8 +49,7 @@
       $('input:radio:unchecked').editFormRadioSpecial();
       
       <% if @role.default_role? %>
-        $('input:radio').attr("disabled", true)
-        $('input:checkbox').attr("disabled", true)
+        $('#role_form :input').prop('disabled',true)
       <% end %>
       
     });
