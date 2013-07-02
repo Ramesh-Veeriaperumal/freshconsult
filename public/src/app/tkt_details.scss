@@ -103,7 +103,7 @@ ol, ul, li{
 	}
 }
 
-h2.subject{
+.ticket_show h2.subject{
 	font-size: 20px;
 	color: #333;
 	@include text-shadow(0px 1px 0px #fff);
@@ -156,7 +156,7 @@ h2.subject{
 		}
 	}
 }
-.content{
+.ticket_show .content{
 	.controls{
 		width: 100%;
 		display: block;
@@ -2684,7 +2684,7 @@ $collision_delay: 1s;
 		margin: 30px 0px 0px -10px;
 	}
 
-	#view_tickets .assign {
+	#view_tickets .assign ul {
 		position: relative;
 	}
 }
@@ -2777,7 +2777,7 @@ $collision_delay: 1s;
 		visibility: hidden;
 	}
 
-	#adjacents, #activity_toggle {
+	#adjacents {
 		float: right;
 	}
 

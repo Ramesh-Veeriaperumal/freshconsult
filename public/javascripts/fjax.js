@@ -38,7 +38,6 @@ FreshdeskPjax.prototype = {
     },
 
     callBeforeReplace: function() {
-    	console.log('callBeforeReplace');
     	if(typeof(this._prevAfterNextPage) == 'function') this._prevAfterNextPage();
     	this._prevAfterNextPage = null;
     },
@@ -79,10 +78,8 @@ FreshdeskPjax.prototype = {
     },
 
     _removeLoading: function() {
-    	console.log('about to hide the loading bar');
       $('.top-loading-wrapper').switchClass('fadeInLeft','fadeOutRight');
       $('.top-loading-wrapper').addClass('hide','slow');
-      console.log('loading shd be hidden now');
     },
 
     _beforeSendCleanup: function() {

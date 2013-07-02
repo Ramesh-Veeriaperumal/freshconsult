@@ -947,7 +947,6 @@ refreshStatusBox = function() {
 					var fields_to_check = ['priority', 'status', 'group_id', 'ticket_type', 'product', 'source'];
 					for(i in fields_to_check) {
 						if (typeof(fields_to_check[i]) == 'string' && $('.ticket_details #helpdesk_ticket_' + fields_to_check[i]).data('updated')) {
-							console.log('Setting postProcess to true');
 							postProcess = true;	
 							break;
 						}
