@@ -226,6 +226,7 @@ function pjax(options) {
   }
 
   options.success = function(data, status, xhr) {
+    fire('pjax:beforeReplace', [xhr, options])
     var container = extractContainer(data, xhr, options)
 
     if (!container.contents) {

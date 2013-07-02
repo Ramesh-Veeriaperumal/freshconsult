@@ -4,14 +4,13 @@ class Account < ActiveRecord::Base
   include Cache::Memcache::Account
   include ErrorHandle
   
-  serialize :preferences, Hash
   serialize :sso_options, Hash
 
   concerned_with :associations, :constants, :validations, :callbacks
   
   xss_sanitize  :only => [:name,:helpdesk_name]
   
-  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences,
+  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,
                   :logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain ,
                   :language, :ssl_enabled
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
