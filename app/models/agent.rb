@@ -1,7 +1,6 @@
 class Agent < ActiveRecord::Base
   
   belongs_to_account
-  include Notifications::MessageBroker
   include Cache::Memcache::Agent
 
   belongs_to :user, :class_name =>'User', :foreign_key =>'user_id'

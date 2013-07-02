@@ -85,7 +85,6 @@
 
   jQuery("#addwatcher select").trigger("click");
   jQuery(document).trigger('click');
-  jQuery("#remote_loaded_dom_elements #watcherlist").remove();
 
   jQuery("#monitor").on('click', function(ev) {
     hideActivePopovers(ev);
@@ -162,6 +161,7 @@
                     jQuery(".watcher_input").unbind('change');
                     jQuery(".select_agents .select2-search-choice a").last().click();
                     jQuery(".watcher_input").bind('change', add_watcher);
+                    clone.remove();
                     update_watcher_count();
                     }
     });
