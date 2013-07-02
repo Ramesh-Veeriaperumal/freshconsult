@@ -2,6 +2,8 @@
 class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   layout "email_font", :except => [:reply]
+
+  include Helpdesk::TicketNotifierFormattingMethods
   
   def self.notify_by_email(notification_type, ticket, comment = nil)
     e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
@@ -34,8 +36,6 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       deliver_email_notification(params) if ticket.requester_has_email?
     end
   end
-  
-  
   
   def self.internal_receips(e_notification, ticket)
     if(e_notification.notification_type == EmailNotification::TICKET_ASSIGNED_TO_GROUP)
@@ -88,6 +88,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
  
   def reply(ticket, note , options={})
+
     options = {} unless options.is_a?(Hash) 
     
     subject       formatted_subject(ticket)
@@ -99,6 +100,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     sent_on       Time.now
     content_type  "multipart/mixed"
 
+    inline_attachments = []
+    
     part :content_type => "multipart/alternative" do |alt|
       alt.part "text/plain" do |plain|
         plain.body   render_message("reply.text.plain.erb",:ticket => ticket, :body => note.full_text, :note => note, :dropboxes=>note.dropboxes,
@@ -107,12 +110,14 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
                     )
       end
       alt.part "text/html" do |html|
-        html.body   render_message("reply.text.html.erb",:ticket => ticket, :body => note.full_text_html, :note => note, :dropboxes=>note.dropboxes,
+        html.body   render_message("reply.text.html.erb",:ticket => ticket, :body => generate_body_html(note, inline_attachments), :note => note, :dropboxes=>note.dropboxes,
                     :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]),
                     :include_quoted_text => options[:quoted_text]
                     )
       end
     end
+
+    handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
 
     note.attachments.each do |a|
       attachment  :content_type => a.content_content_type, 
@@ -120,7 +125,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
                   :filename => a.content_file_name
     end
   end
-
+  
   def forward(ticket, note, options={})
     subject       fwd_formatted_subject(ticket)
     recipients    note.to_emails
@@ -131,9 +136,14 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     sent_on       Time.now
     content_type  "multipart/mixed"
 
+    inline_attachments = []
+
     part "text/html" do |html|
-      html.body   render_message("forward",:ticket => ticket, :body => note.full_text_html,:dropboxes=>note.dropboxes)
+      html.body   render_message("forward", :ticket => ticket, :body => generate_body_html(note, inline_attachments), 
+                                                                :dropboxes=>note.dropboxes)
     end
+
+    handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
 
     note.attachments.each do |a|
       attachment  :content_type => a.content_content_type, 
@@ -149,10 +159,14 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     headers       "Reply-to" => "#{ticket.friendly_reply_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     sent_on       Time.now
     content_type  "multipart/mixed"
-    
+
+    inline_attachments = []
+
     part "text/html" do |html|
-      html.body   render_message("send_cc_email", :ticket => ticket, :body => ticket.description_html,:dropboxes=>ticket.dropboxes)
+      html.body   render_message("send_cc_email", :ticket => ticket, :body => generate_body_html(ticket.description_html, inline_attachments), :dropboxes=>ticket.dropboxes)
     end
+
+    handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
     
     ticket.attachments.each do |a|
       attachment  :content_type => a.content_content_type, 
@@ -190,24 +204,4 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     sent_on       Time.now
     content_type  "text/html"
   end
-  
-  def formatted_subject(ticket)
-    "Re: #{ticket.encode_display_id} #{ticket.subject}"
-  end
-
-  def fwd_formatted_subject(ticket)
-    "Fwd: #{ticket.encode_display_id} #{ticket.subject}"
-  end
-
-protected
-
-  def formatted_export_subject(params)
-    filter = "export_data.#{params[:ticket_state_filter]}"
-    filter = I18n.t(filter)
-    I18n.t('export_data.mail.subject',
-            :filter => filter,
-            :start_date => params[:start_date].to_date, 
-            :end_date => params[:end_date].to_date)
-  end
-  
 end

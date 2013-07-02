@@ -102,7 +102,7 @@ Authority::Authorization::PrivilegeList.build do
   publish_solution do
     resource :"solution/article", :only => [:new, :create, :edit, :update, :delete_tag, :reorder]
     resource :"solution/tag_use"
-    resource :uploaded_image, :only => [:create]
+    resource :solutions_uploaded_image, :only => [:create]
   end
 
   delete_solution do
@@ -126,6 +126,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :monitorship
     resource :"search/home", :only => [:topics]
     resource :search, :only => [:topics]
+    resource :forums_uploaded_image, :only => [:create]
   end
 
   # create_edit_forum_category
@@ -137,6 +138,7 @@ Authority::Authorization::PrivilegeList.build do
   # create_forum_topic
   create_topic do
     resource :topic, :only => [:new, :create ]
+    resource :forums_uploaded_image, :only => [:create]
   end
 
   # edit_forum_topic
