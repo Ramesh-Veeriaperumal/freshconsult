@@ -2467,12 +2467,6 @@ en:
     include_quoted_text: "Include previous replies"
     more_details: "More details..."
     reported: "reported"
-    new_ticket: New ticket
-    new_tickets: New tickets
-    ticket_updated: Ticket updated
-    tickets_updated: Tickets updated
-    reload_view: Reload View
-    ticket_updated_icon: Ticket Updated
     reported_on: "from %{username}, Last updated: on %{date}"
     scenarios: "Scenarios"
     ticket_list_status_closed_at: "From: %{username}, Closed: <span class='emphasize'>%{time_ago} ago</span>"
@@ -2616,6 +2610,7 @@ en:
       user_not_following: This user is not following your twitter account
     activities: Activities
     activity_toggle: Show Activities
+    activity_timestamp: "%{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
     requestor_info: Requestor Info
     view_twitter: View on Twitter 
     reply_to: Reply
@@ -3088,11 +3083,11 @@ en:
           reply: "%{user_name} replied on %{note_date}"
           forward: "%{user_name} forwarded on %{note_date}"
         created_on_live:
-          private_note: "%{user_name} added a private note <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
-          public_note: "%{user_name} added a public note <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
-          reply: "%{user_name} replied <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
-          forward: "%{user_name} forwarded <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
-          survey: "%{user_name} rated this ticket <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
+          private_note: "%{user_name} added a private note <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          public_note: "%{user_name} added a public note <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          reply: "%{user_name} replied <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          forward: "%{user_name} forwarded <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          survey: "%{user_name} rated this ticket <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         edit_note: Edit Note
         split_this_as_new_ticket: Split this as a new Ticket
         delete_note: "Remove this from the ticket conversation?"

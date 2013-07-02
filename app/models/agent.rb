@@ -1,7 +1,6 @@
 class Agent < ActiveRecord::Base
   
   belongs_to_account
-  include Notifications::MessageBroker
   include Cache::Memcache::Agent
 
   belongs_to :user, :class_name =>'User', :foreign_key =>'user_id'
@@ -41,15 +40,13 @@ class Agent < ActiveRecord::Base
   named_scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
   named_scope :full_time_agents, :conditions => { :occasional => false, 'users.deleted' => false}
   named_scope :occasional_agents, :conditions => { :occasional => true, 'users.deleted' => false}
+  named_scope :list , lambda {{ :include => :user , :order => :name }}
   
   PERMISSION_TOKENS_BY_KEY = Hash[*TICKET_PERMISSION.map { |i| [i[1], i[0]] }.flatten]
   PERMISSION_KEYS_BY_TOKEN = Hash[*TICKET_PERMISSION.map { |i| [i[0], i[1]] }.flatten]
   
-  named_scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
-  named_scope :list , lambda {{ :include => :user , :order => :name }}   
-
-  def self.technician_list account_id
-    agents = User.find(:all, :joins=>:agent, :conditions => {:account_id=>account_id, :deleted =>false} , :order => 'name')    
+  def self.technician_list account_id  
+    agents = User.find(:all, :joins=>:agent, :conditions => {:account_id=>account_id, :deleted =>false} , :order => 'name')  
   end
 
   def all_ticket_permission
@@ -92,7 +89,6 @@ class Agent < ActiveRecord::Base
             Group::TICKET_ASSIGN_TYPE[:round_robin]], :joins => :group) > 0
   end
 
-
   def group_ticket_permission
     ticket_permission == PERMISSION_KEYS_BY_TOKEN[:group_tickets]
   end
@@ -105,5 +101,4 @@ class Agent < ActiveRecord::Base
     return unless points?
     user.account.scoreboard_levels.next_level_for_points(points).first
   end
-
 end

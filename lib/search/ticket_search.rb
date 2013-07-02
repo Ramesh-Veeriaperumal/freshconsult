@@ -8,31 +8,16 @@ module Search::TicketSearch
       defs = []
       i = 0
       #default fields
-
       column_order.each do |name|
         cont = columns_keys_by_token[name]
-        defs.insert(i,{ get_op_list(cont).to_sym => cont  , 
-                        :condition => name , 
-                        :name => columns_option[name], 
-                        :container => cont,     
-                        :operator => get_op_list(cont), 
-                        :options => get_default_choices(name), 
-                        :value => "", 
-                        :f_type => :default, 
-                        :ff_name => "default"  })
+        defs.insert(i,{ get_op_list(cont).to_sym => cont  , :condition => name , :name => columns_option[name], :container => cont,     
+        :operator => get_op_list(cont), :options => get_default_choices(name), :value => "", :f_type => :default  })
         i = i+ 1
       end
       #Custom fields
       Account.current.custom_dropdown_fields_from_cache.each do |col|
-        defs.insert(i,{get_op_from_field(col).to_sym => get_container_from_field(col),
-                        :condition => get_id_from_field(col).to_sym ,
-                        :name => col.label , 
-                        :container => get_container_from_field(col),     
-                        :operator => get_op_from_field(col), 
-                        :options => get_custom_choices(col), 
-                        :value => "", 
-                        :ff_name => col.name  
-                      })
+        defs.insert(i,{get_op_from_field(col).to_sym => get_container_from_field(col),:condition => get_id_from_field(col).to_sym ,:name => col.label , :container => get_container_from_field(col),     
+        :operator => get_op_from_field(col), :options => get_custom_choices(col), :value => "" })
         i = i+ 1     
       end 
 
@@ -40,30 +25,13 @@ module Search::TicketSearch
         nested_fields = []
 
         col.nested_ticket_fields(:include => :flexifield_def_entry).each do |nested_col|
-          nested_fields.push({get_op_list('dropdown').to_sym => 'dropdown',
-                              :condition => get_id_from_field(nested_col).to_sym ,
-                              :name => nested_col.label , 
-                              :container => 'dropdown',     
-                              :operator => get_op_list('dropdown'), 
-                              :options => [], 
-                              :value => "" , 
-                              :field_type => "nested_field", 
-                              :ff_name => nested_col.name 
-                            })     
+          nested_fields.push({get_op_list('dropdown').to_sym => 'dropdown',:condition => get_id_from_field(nested_col).to_sym ,:name => nested_col.label , :container => 'dropdown',     
+          :operator => get_op_list('dropdown'), :options => [], :value => "" , :field_type => "nested_field"})     
         end
 
-        defs.insert(i,{get_op_from_field(col).to_sym => get_container_from_field(col),
-                        :condition => get_id_from_field(col).to_sym, 
-                        :name => col.label , 
-                        :container => get_container_from_field(col), 
-                        :operator => get_op_from_field(col), 
-                        :options => col.nested_choices, 
-                        :value => "" , 
-                        :field_type => "nested_field", 
-                        :field_id => col.id, 
-                        :nested_fields => nested_fields, 
-                        :ff_name => col.name 
-                      })
+        defs.insert(i,{get_op_from_field(col).to_sym => get_container_from_field(col),:condition => get_id_from_field(col).to_sym, 
+          :name => col.label , :container => get_container_from_field(col), :operator => get_op_from_field(col), 
+          :options => col.nested_choices, :value => "" , :field_type => "nested_field", :field_id => col.id, :nested_fields => nested_fields})
         i = i+ 1
       end
 

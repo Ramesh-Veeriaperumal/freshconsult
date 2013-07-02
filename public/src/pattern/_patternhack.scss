@@ -252,6 +252,26 @@ table.selected_to_yellow tbody tr td {
       background:#fffad8;
     }
   }
+
+  .actions {
+    float: right;
+    width: 120px;
+    text-align: right;
+    visibility: hidden;
+    @include opacity(0.3);
+    @include transition(opacity 0.2s ease-out);
+  }
+
+  td:hover {
+    .actions {
+      visibility: visible;
+      @include opacity(1);
+    }
+  }
+}
+
+body.touch .dialog-well .actions {
+  visibility: visible;
 }
 /* This class overriding app-common css. */
 

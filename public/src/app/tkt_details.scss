@@ -4,7 +4,7 @@
 /*Requester Info Tabs in Ticket Details page */
 $message_window_bg_color: #FDFDFD;
 
-.ticket_details .pagearea{
+.ticket_show .pagearea{
 	@include min-width(1100px);
 	margin: 0 auto;
 	border: none;
@@ -14,7 +14,7 @@ $message_window_bg_color: #FDFDFD;
 .ticket_details #inner {
 	z-index: 0;
 }
-.ticket_details .zeroh {
+.ticket_show .zeroh {
 	height: 0;
 }
 
@@ -22,26 +22,6 @@ ol, ul, li{
 	margin: 0px;
 }
 
-.header{
-	z-index: 1;
-}
-
-.bg{
-	background-color: #ccc;
-	border:1px solid red;
-}
-
-a:hover{
-	color: #0e5ab0;
-}
-
-p strong{
-	font-weight: bold;
-}
-
-.f-right{
-	float: right;
-}
 
 .ticket_details .clearfix:before,
 .ticket_details .clearfix:after {
@@ -49,11 +29,11 @@ p strong{
     display:table;
 }
 
-.ticket_details .clearfix:after {
+.ticket_show .clearfix:after {
     clear:both;
 }
 
-.ticket_details .clearfix {
+.ticket_show .clearfix {
     zoom:1;
     overflow: visible;
 
@@ -123,6 +103,59 @@ p strong{
 	}
 }
 
+h2.subject{
+	font-size: 20px;
+	color: #333;
+	@include text-shadow(0px 1px 0px #fff);
+	line-height: 21px;
+	font-weight: bold;
+	margin: 0 0 10px;
+
+	span{
+		color: #666666;
+	}
+
+	.label {
+		font-size: 10px;
+		color: #FFF;
+		@include text-shadow(none);
+		background: #555;
+		@include border-radius(5px);
+		display: inline-block;
+		padding: 3px 10px 0;
+		margin: 0 10px 0 0;
+		height: 18px;
+		position: relative;
+		top: -3px;
+		@include box-shadow(1px 1px 0 #FFF);
+
+		&.deleted {
+			background: #D00;
+		}
+
+		a {
+			float: right;
+			width: 7px;
+			background: #FEFEFE;
+			display: block;
+			margin: 1px 1px 0;
+			height: 19px;
+			position: relative;
+			right: -10px;
+			top: -3px;
+			@include border-radius(0 4px 4px 0);
+			padding: 0 7px 0 5px;
+			color: #333;
+			text-transform: lowercase;
+			font-size: 15px;
+			line-height: 15px;
+
+			&:hover {
+				background: #FFF9DA;
+			}
+		}
+	}
+}
 .content{
 	.controls{
 		width: 100%;
@@ -134,75 +167,6 @@ p strong{
 			padding-bottom: 10px;
 			position: relative;
 
-			h2{
-				font-size: 18px;
-				color: #333;
-				@include text-shadow(0px 1px 0px #fff);
-				line-height: 21px;
-				font-weight: bold;
-				height: 21px;
-				overflow: hidden;
-				word-break: break-all;
-				margin: 0 -10px;
-				padding: 0 10px;
-
-				&:hover {
-					@include min-height(21px);
-					background: #f7f7f7;
-					overflow: visible;
-					height: auto;
-					z-index: 13;
-					position: relative;
-					border-radius: 5px;
-				}
-
-				&.show_full {
-					overflow: visible;
-				}
-
-				span{
-					color: #666666;
-				}
-
-				.label {
-					font-size: 10px;
-					color: #FFF;
-					@include text-shadow(none);
-					background: #555;
-					@include border-radius(5px);
-					display: inline-block;
-					padding: 0 10px;
-					margin: 0 10px 0 0;
-					position: relative;
-					top: -3px;
-					@include box-shadow(1px 1px 0 #FFF);
-
-					&.deleted {
-						background: #D00;
-					}
-
-					a {
-						float: right;
-						width: 7px;
-						background: #FEFEFE;
-						display: block;
-						margin: 1px 1px 0;
-						height: 19px;
-						position: relative;
-						right: -10px;
-						@include border-radius(0 4px 4px 0);
-						padding: 0 7px 0 5px;
-						color: #333;
-						text-transform: lowercase;
-						font-size: 15px;
-						line-height: 15px;
-
-						&:hover {
-							background: #FFF9DA;
-						}
-					}
-				}
-			}
 
 			.monitor, .monitor_active {
 				background-repeat: no-repeat;
@@ -213,94 +177,88 @@ p strong{
 				display: inline-block;
 				margin-bottom:  -4px;
 			}
-
-			.source-badge-wrap{
-				position: absolute;
-				left: -30px;
-				top: -3px;
-				width: 48px;
-				height: 48px;
-				@include border-radius(42px);
-				background: #fff;
-				border: 1px solid #cfcfcf;
-				padding: 3px;
-				text-align: center;
-				display: table;
-				float: left;
-
-				.source{
-					@include border-radius(42px);
-					vertical-align: middle;
-					position: relative;
-					display: table-cell;
-					width: 46px;
-					height: 46px;
-
-					&.collision_refresh {						
-						cursor: pointer;
-						@include animation(refresh 1s linear infinite);
-						span{ display: none; }
-					}
-
-					background-color: $COL_RESOLVED_CLOSED;		//Fallback
-
-					&.priority_color_1 {
-						background-color: $COL_PRI_LOW;
-					}
-					&.priority_color_2 {
-						background-color: $COL_PRI_MEDIUM;
-					}
-					&.priority_color_3 {
-						background-color: $COL_PRI_HIGH;
-					}
-					&.priority_color_4 {
-						background-color: $COL_PRI_URGENT;
-					}
-
-					&.status_4, &.status_5, &.spam, &.deleted {
-						background-color: $COL_RESOLVED_CLOSED !important;
-					}
-
-					@include box-shadow(0 2px 6px rgba(0,0,0,0.4) inset);
-
-					span{
-						display:inline-block;
-						width: 46px;
-						height: 46px;
-					}
-				}
-
-				.source:not(.collision_refresh) {
-					background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAGElEQVQIW2NkQIA0Rig7DUjPAnHADJAgACFnAmoWZrn+AAAAAElFTkSuQmCC);
-				}
-			}
 		}
 
-		.open-box{
-			background-color: #FFF;
-			float: right;
-			width: 308px;
-			padding: 5px 0px;
-			border: solid 1px #CCC;
-			@include border-radius(4px, 4px);
-			h4{
-				font-size: 18px;
-				padding: 0 10px;
-				font-weight: 300;
-				color: #000;
-			}
+	}
+}
 
-			p{
-				font-size: 13px;
-				padding-left: 10px;
-				line-height: 16px;
-				color: #999;
-			}
-		}
+.ticket_details .open-box{
+	background-color: #fefef1;
+	padding: 5px 0px;
+	border: solid 1px #CCC;
+	margin-bottom: 20px;
+	@include border-radius(4px, 4px);
+	h4{
+		font-size: 18px;
+		padding: 0 10px;
+		font-weight: 400;
+		color: #000;
+	}
+
+	p{
+		font-size: 13px;
+		padding-left: 10px;
+		line-height: 16px;
+		color: #999;
 	}
 }
 
 
+.source-badge-wrap{
+	margin: 5px 7px 0;
+	width: 38px;
+	height: 38px;
+	@include border-radius(32px);
+	text-align: center;
+	display: table;
+	float: left;
+
+	.source{
+		@include border-radius(32px);
+		vertical-align: middle;
+		position: relative;
+		display: table-cell;
+		width: 36px;
+		height: 36px;
+
+		&.collision_refresh {						
+			cursor: pointer;
+			@include animation(refresh 1s linear infinite);
+			span{ display: none; }
+		}
+
+		background-color: $COL_RESOLVED_CLOSED;		//Fallback
+
+		&.priority_color_1 {
+			background-color: $COL_PRI_LOW;
+		}
+		&.priority_color_2 {
+			background-color: $COL_PRI_MEDIUM;
+		}
+		&.priority_color_3 {
+			background-color: $COL_PRI_HIGH;
+		}
+		&.priority_color_4 {
+			background-color: $COL_PRI_URGENT;
+		}
+
+		&.status_4, &.status_5, &.spam, &.deleted {
+			background-color: $COL_RESOLVED_CLOSED !important;
+		}
+
+		@include box-shadow(0 2px 6px rgba(0,0,0,0.4) inset);
+
+		span{
+			display:inline-block;
+			width: 34px;
+			height: 34px;
+		}
+	}
+
+	.source:not(.collision_refresh) {
+		background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAGElEQVQIW2NkQIA0Rig7DUjPAnHADJAgACFnAmoWZrn+AAAAAElFTkSuQmCC);
+	}
+}
 @include keyframes(refresh) {
 	0%, 100%{ @include box-shadow(inset 0px 0px 0px 0px rgba(255, 255, 255, 1))}
 	90%{ @include box-shadow(inset 0px 0px 16px 4px rgba(255, 255, 255, 1))}
@@ -311,7 +269,7 @@ p strong{
 	float: left;
 	position: relative;
 	margin: 10px 0 0;
-	width: 250px;
+	width: 210px;
 
 	label {
 		float: left;
@@ -321,7 +279,8 @@ p strong{
 }
 
 .ticket-actions{
-	margin: 19px 0px 0px;
+	float: right;
+	margin: 10px 0px 0px;
 	.forward, .reply{
 		float: left;
 		font-size: 12px;
@@ -357,19 +316,8 @@ p strong{
 		-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 		-moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 		box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-		display:none;
 	}
-	// Open state for the dropdown
-	// ---------------------------
-	.open {
-	  // IE7's z-index only goes to the nearest positioned ancestor, which would
-	  // make the menu appear below buttons that appeared later on the page
-	  *z-index: 1000;
 
-	  & > .dropdown-menu {
-	    display: block;
-	  }
-	}
 	.ticket-btns{
 		float: left;
 		margin-right: 6px;
@@ -419,11 +367,11 @@ p strong{
 		display: inline-block;
 		width: 18px;
 		height: 15px;
-		margin: -5px 4px -2px 0
+		margin: -5px 0 -2px;
 	}	
 }
 
-.content-wrapper{
+.ticket_show .content-wrapper{
 	width: 100%;
 	display: block;
 }
@@ -492,6 +440,8 @@ p strong{
     }
 }
 
+
+// !Pattern?
 .hidden_upload {
 	display: block;
 	width: 120px;
@@ -540,20 +490,20 @@ p strong{
 	}
 }
 
-.ticket_details #response_dialog {
+.ticket_show #response_dialog {
 	.pick-response-outer.back1{
 		width: 462px;
 	}
 }
 
-.ticket_details #response_dialog.no_recently_used{
+.ticket_show #response_dialog.no_recently_used{
 	.pick-response-outer.back1{
 		width: 640px;
 	}
 }
 
 .conversation_thread.redactor{
-	border:none;
+	border-color:#FFF;
 	margin-bottom: 30px;
 	margin-top: -30px;
 	@include box-shadow(none);
@@ -581,7 +531,8 @@ p strong{
 		display: inline-block;
 
     	.sav {
-    		background: #ededed;
+    		background: transparent;
+    		border: solid 1px #999;
     		@include border-radius(0 4px 4px 0);
     		color: #333;
     		float:left;
@@ -597,6 +548,7 @@ p strong{
     		background: #b3b3b3;
     		margin:0 1px 0 0;
     		padding: 2px 7px 2px 3px;
+    		border: solid 1px #999;
     		float:left;
     		@include border-radius(4px 0 0 4px);
     	}
@@ -649,8 +601,8 @@ p strong{
 }
 	
 .conversation_thread {
-	padding: 10px 30px 10px 10px;
-	margin-top:-20px;
+	padding: 0px 30px 15px 7px;
+	margin-top:-10px;
 	list-style: none;
      
     &.loading-center {
@@ -825,6 +777,7 @@ p strong{
 				padding: 5px 10px;
 				border: none;
 				box-shadow: none;
+				height: 280px;
 	    	}
     	}
 
@@ -1077,8 +1030,8 @@ p strong{
     	width: 150px;
     	text-align: right;
     	a {
-    		margin: 10px;
-    		padding: 5px;
+    		margin: 10px 0 10px 10px;
+			padding: 5px 0 5px 5px;
     	}
     }
 
@@ -1289,6 +1242,7 @@ p strong{
 
 .touch .commentbox .actions {
 	visibility: visible;
+	@include opacity(1);
 }
 
 .commentbox-blue {
@@ -1462,8 +1416,9 @@ p strong{
 
 	.avatar-wrap-collapse {
 		background: #1272de;
-		border-color: #FFF;
+		border:3px solid #EEE;
 		color: #FFF;
+		left: -40px;
 		@include box-shadow(-8px 0px 12px 8px white);
 		@include transition(all 0.2s linear);
 	}
@@ -1519,11 +1474,11 @@ p strong{
 		min-height: 10px;
 	}
 }
-.avatar-wrap {
-	width: 52px;
-	height: 52px;
+.ticket_show .avatar-wrap {
+	width: 44px;
+	height: 44px;
 	z-index: 100;
-	@include border-radius(42px);
+	@include border-radius(50%);
 	background: #fff;
 	position: absolute;
 	border: 1px solid #eee;
@@ -1531,21 +1486,21 @@ p strong{
 	padding: 2px;
 	text-align: center;
 	float: left;
-	left: -42px;
+	left: -35px;
 	.preview_pic {
 		display: inline-block;
 		margin: 0;
 		float:none;
 		img {
-			@include border-radius(30px);
+			@include border-radius(50%);
 			position: relative;
-			top: 2px;
-			height: 48px;
-			width: 48px;
+			top: 0px;
+			height: 44px;
+			width: 44px;
 		}
 	}
 	.avatar {
-		@include border-radius(30px);
+		@include border-radius(50%);
 		position: relative;
 		top: 2px;
 	}
@@ -1557,9 +1512,9 @@ p strong{
 .avatar-wrap-collapse{
 	border: 3px #b5b5b5 solid;
 	@include box-shadow(0px 0px 5px #ccc);
-	top: -12px;
+	top: -7px;
 	p{
-		padding-top: 13px;
+		padding-top: 9px;
 		font-size: 13px;
 		line-height: 110%;
 		.count_number{
@@ -2024,17 +1979,17 @@ p strong{
 
 			.requester-avatar-wrap{
 				border: 1px #ccc solid;
-				@include border-radius(6px);
+				@include border-radius(4px);
 				float: left;
-				width: 54px;
-				height: 54px;
+				width: 42px;
+				height: 42px;
 				display: inline-block !important;
-				padding: 4px;
+				padding: 2px;
 				text-align: center;
 				img{
-					@include border-radius(5px);
-					width: 54px;
-					height: 54px;
+					@include border-radius(3px);
+					width: 42px;
+					height: 42px;
 				}
 			}
 
@@ -2355,34 +2310,41 @@ p strong{
 
 .activity_toggle {
 	float: right;
-	width: 180px;
-	padding: 7px;
-	margin: 5px 35px 5px 15px;
+	padding: 2px 2px  2px 4px ;
+	margin: 10px 15px 0;
+
+	span {
+		display:block;
+		float: right;
+		padding: 2px;
+		@include border-radius(0 2px 2px 0);
+		text-transform:uppercase;
+		height:16px;
+		width: 25px;
+		color:#fff;
+		font-weight: bold;
+		@include text-shadow(none);
+		text-align:center;
+		background: #777;
+		border:1px solid rgba(0, 0, 0, 0.1); 
+	}
+
+	.visible {
+		display: none;
+		background-color: #40894c;
+	}
+
+	&.active span {
+		display: none;
+	}
+
+	&.active .visible {
+		display: block;
+	}
 
 	.text {
 		float: left;
-		width: 100px;
-		margin: 3px 0;
-	}
-	.toggle_button {
-		float: left;
-		margin-left: 0;
-		display: block;
-	}
-	.loading-small{
-		display:none;
-	}
-	&.loading_activities {
-
-		.loading-small  {
-			display: block;
-			margin:11px 30px 11px 0px;
-			float:right;
-		}
-
-		.toggle-button {
-			display: none;
-		}
+		margin: 3px 10px 0 3px;
 	}
 }
 
@@ -2394,10 +2356,8 @@ p strong{
 		padding: 10px 0 5px;
 	}
 	.pagi-btn{
-		border: 1px #d2d2d2 solid;
-		display: inline-block;
-		padding: 5px 15px;
-		color: #333;
+		margin-right: 0;
+		padding: 5px 10px 3px;
 		&.prev_page {
 			@include border-radius(4px 0 0 4px);
 			border-right: none;
@@ -2430,9 +2390,9 @@ p strong{
 		&.disabled {
 			color: #CCC;
 			border: 1px #f6f6f6 solid;
-
+			background: #FFF;
 			span {
-				@include opacity(0.1);
+				@include opacity(0.25);
 			}
 		}
 	}
@@ -2588,22 +2548,14 @@ p strong{
 /* Agent Collision CSS */
 
 .reply-flip, .view-flip {
-    position: absolute;
+    float: left;
     display: inline-block;
     color: #fff;
-    left: -15px;
     @include perspective(1000);
-    width: 37px;
-    height: 37px;
+    width: 29px;
+    height: 27px;
     border-radius: 50%;
 }
-.view-flip {
-    top: -14px;
-}
-.reply-flip {
-    top: 30px;
-}
-
 .reply-flip, .view-flip {
 
 	.flip-front, .flip-back{
@@ -2627,8 +2579,8 @@ p strong{
 	   @include border-radius(50%);
 	   background: #333;
 	   color: #fff;
-	   width: 37px;
-	   height: 37px;
+	   width: 29px;
+	   height: 27px;
 	   background-repeat: no-repeat;
 	}
 
@@ -2639,11 +2591,11 @@ p strong{
 		font-weight: bold;
 		vertical-align: middle;
 		text-align: center;
-		padding: 5px 0;
+		padding: 0;
 		border: solid 4px #efefef;
 		color: #fff;
-		width: 30px;
-		height: 20px;
+		width: 20px;
+		height: 19px;
 		@include rotateY(-180deg);
 		background: #f5f5f5;
 	}
@@ -2698,19 +2650,10 @@ $collision_delay: 1s;
 .dropdown.open .dropdown-toggle {
 	color: #333;
 }
-.btn-group.redactor_insert_btns {
+.redactor_insert_btns {
 	position: absolute;
 	z-index:5;
-	right: 15px;
-
-	.btn {
-		border: none;
-		background: none;
-	}
-
-	.dropdown-menu {
-		margin-left: -100px;
-	}
+	right: 10px;
 }
 
 
@@ -2783,7 +2726,7 @@ $collision_delay: 1s;
 }
 
 // !PATTERN ? Whether to move this to pattern or not?
-.ticket_details .modal .searchmoreform {
+.modal .searchmoreform {
 	position: absolute;
 	right: 20px;
 	display: block;
@@ -2803,7 +2746,7 @@ $collision_delay: 1s;
 }
 
 
-.ticket_details .customer-opinion {
+.ticket_show .customer-opinion {
 	border: none;
 	margin: 0;
 	width: 30px;
@@ -2812,4 +2755,52 @@ $collision_delay: 1s;
 	position: static;
 	display: inline-block;
 	float: none;
+
+}
+
+.ticket_details .sticky_left {
+	width: 150px;
+	display: inline-block;
+	padding-left: 5px;
+
+	.ticket-notifications {
+		position: static;
+		margin: 10px 0 0 5px;
+	}
+}
+.ticket_details .sticky_right {
+	float: right;
+	width: auto;
+
+	.status_info {
+		text-align: right;
+		visibility: hidden;
+	}
+
+	#adjacents, #activity_toggle {
+		float: right;
+	}
+
+	.btn.monitor_div {
+		padding: 3px 6px 4px;
+	}
+
+	.monitor, .monitor_active {
+		background-repeat: no-repeat;
+		@include hide-text();
+		width: 19px;
+		height: 17px;
+		display: inline-block;
+		margin-bottom:  -4px;
+	}
+
+	div.watchers_tooltip {
+		margin: 32px 0px 0px -7px;
+	}
+}
+
+#sticky_header.stuck {
+	.status_info {
+		visibility: visible;
+	}
 }

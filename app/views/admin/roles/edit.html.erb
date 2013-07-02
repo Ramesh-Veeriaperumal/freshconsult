@@ -1,12 +1,8 @@
-<%= include_cloudfront_css :pattern %>
-<%= include_cloudfront_js :pattern %>
-
 <% if @role.default_role? %>
   <div class="flash_info" rel="permanent">
     <%= "#{t('admin.roles.default_role_edit', :go_back => link_to(t('go_back_small'), admin_roles_path ) )}" %>
   </div> 
 <% end %>
-
 <% content_for :sidebar do %>
   <%= render :partial => "helpnote_without_tour" %>
 <% end %>
