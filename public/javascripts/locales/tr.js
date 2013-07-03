@@ -1,2 +1,2 @@
 var I18n = I18n || {};
-I18n.translations = {"tr":{"integrations":{"google_contacts":{"OVERWRITE_LOCAL_small":"D\u0131\u015fa aktar","sync_status":{"added":"eklendi","deleted":"silindi","modified":"de\u011fi\u015ftirildi"}},"custom_application":{"description":"A\u00e7\u0131klama"},"jira":{"form":{"jira_note":"A\u00e7\u0131klama sat\u0131r\u0131"}}}}};
+I18n.translations = {"tr":{"integrations":{"jira":{"form":{"jira_note":"A\u00e7\u0131klama sat\u0131r\u0131"}},"custom_application":{"description":"A\u00e7\u0131klama"},"google_contacts":{"sync_status":{"modified":"de\u011fi\u015ftirildi","added":"eklendi","deleted":"silindi"},"OVERWRITE_LOCAL_small":"D\u0131\u015fa aktar"}}}};

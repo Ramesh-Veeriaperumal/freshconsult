@@ -3345,6 +3345,12 @@ en:
       hide_preview: Hide Preview
       show_widget_in_ticket_view_page: Show the widget in ticket view page. 
       show_the_widget_in_contact_view_page: Show the widget in contact view page. 
+    whmcs:
+      label: "WHMCS"
+      products: "Products"
+      domains: "Domains"
+      invoices: "Invoices Due"
+      contacts: "Contact details of "
     capsule_crm:
       label: "Capsule CRM"
       helptext: "<h4>Link back from Capsule to Freshdesk</h4><p><br/>You can create a link in Capsule CRM to view the contact's tickets in Freshdesk.</p> <p>To do this Goto your <br /><b>Settings -> Custom Fields -> For People & Organization</b></p><p> Then click on \"Add new...\" and select <b>\"Generated Link\"</b></p> <p>Copy the URl exactly as shown below and paste it in Capsule CRM as the link definition<span class=\"info-code\">http://%{full_domain}/helpdesk/tickets?email={email}</span></p>"
