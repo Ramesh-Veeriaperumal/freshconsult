@@ -204,6 +204,12 @@ module SupportHelper
 		end
 	end	
 
+	def more_articles_in_folder folder
+		%( <h3 class="list-lead">
+			#{I18n.t('portal.article.more_articles', :article_name => folder['name'])}
+		</h3>)
+	end
+
 	def article_list_item article
 		output = <<HTML
 			<li>
@@ -571,7 +577,7 @@ HTML
 	end
 
 	def attach_a_file_link attach_id
-		link_to_function("Attach a <b>file</b>", "Helpdesk.Multifile.clickProxy(this)", 
+		link_to_function("#{I18n.t('portal.attach_file')}", "Helpdesk.Multifile.clickProxy(this)", 
                 "data-file-id" => "#{ attach_id }_file", :id => "#{ attach_id }_proxy_link" )
 	end
 
