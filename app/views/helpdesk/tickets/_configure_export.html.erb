@@ -29,7 +29,7 @@
 	 			  	<div class="item <%= head[:type] %>">
 		  				<label class="checkbox prime"> 
 		    				<%= check_box_tag "export_fields[#{head[:value]}]", head[:label], head[:selected] %> 
-							<%= head[:label] %>														
+							<%= head[:label].html_safe %>														
 		  				</label>
 		  				<% head[:levels].each do |level| %>
 		  					<br />

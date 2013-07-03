@@ -48,7 +48,7 @@ module ApplicationHelper
       url = current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' : 
             AWS::S3::S3Object.url_for(current_portal.fav_icon.content.path(:logo),current_portal.fav_icon.content.bucket_name,
                                           :expires_in => 30.days, :use_ssl => true)
-      "<link rel=\"shortcut icon\" href=\"#{url}\" />"
+      "<link rel=\"shortcut icon\" href=\"#{url}\" />".html_safe
     end
   end
 
@@ -805,9 +805,9 @@ module ApplicationHelper
   def check_fb_reauth_required
     fb_page = current_account.fb_reauth_check_from_cache
     if fb_page
-      return content_tag('div', "<a href='javascript:void(0)'></a>  Your Facebook channel is inaccessible. 
+      return content_tag(:div, "<a href='javascript:void(0)'></a>  Your Facebook channel is inaccessible. 
         It looks like username, password, or permission has been changed recently.Kindly 
-        <a href='/social/facebook' target='_blank'> fix </a> it.  ", :class => 
+        <a href='/social/facebook' target='_blank'> fix </a> it.  ".html_safe, :class => 
         "alert-message block-message warning full-width")
     end
     return
@@ -818,7 +818,7 @@ module ApplicationHelper
     if twt_handle
       return content_tag('div', "<a href='javascript:void(0)'></a>  Your Twitter channel is inaccessible. 
         It looks like username or password has been changed recently. Kindly 
-        <a href='/social/twitters' target='_blank'> fix </a> it.  ", :class => 
+        <a href='/social/twitters' target='_blank'> fix </a> it.  ".html_safe, :class => 
         "alert-message block-message warning full-width")
     end
     return

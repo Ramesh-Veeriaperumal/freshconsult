@@ -30,8 +30,8 @@
 		</h3>
 
 		<div class="choicelist">
-			<%= f.radio_button  :match_type, 'any', :class => "radio" %> <%= f.label :match_type_any, t('dispatch.match_any'), :class => "radiolabel" %>
-			<%= f.radio_button  :match_type, 'all', :class => "radio" %> <%= f.label :match_type_all, t('dispatch.match_all'), :class => "radiolabel" %>
+			<%= f.radio_button  :match_type, 'any', :class => "radio" %> <%= f.label :match_type_any, t('dispatch.match_any').html_safe, :class => "radiolabel" %>
+			<%= f.radio_button  :match_type, 'all', :class => "radio" %> <%= f.label :match_type_all, t('dispatch.match_all').html_safe, :class => "radiolabel" %>
 		</div>			
 		<div class="conditionset" id="filterDOM">
 		<div id="RuleList" class="rule_list"></div>

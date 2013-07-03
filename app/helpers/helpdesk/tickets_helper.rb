@@ -316,11 +316,11 @@ module Helpdesk::TicketsHelper
         html << content_tag(:span, 
                             "#{label}" + emails.collect{ |to_e| 
                               to_e.gsub("<","&lt;").gsub(">","&gt;") 
-                            }.join(", ")).html_safe, 
+                            }.join(", ").html_safe , 
                             :class => "") 
       else
         html << content_tag(:span, 
-                            "#{label}" + emails[0,2].collect{ |to_e| 
+                            ("#{label}" + emails[0,2].collect{ |to_e| 
                               to_e.gsub("<","&lt;").gsub(">","&gt;") 
                             }.join(", ") + 
                             "<span class='toEmailMoreContainer hide'>,&nbsp;" + 
@@ -328,7 +328,7 @@ module Helpdesk::TicketsHelper
                               to_e.gsub("<","&lt;").gsub(">","&gt;") 
                             }.join(", ") + 
                             " </span> <a href='javascript:showHideToEmailContainer();'  class='toEmailMoreLink'> #{emails.length-2} " + 
-                            t('ticket_cc_email_more')+"</a>").html_safe, :class => "")
+                            t('ticket_cc_email_more')+"</a>").html_safe , :class => "")
       end
     end
     html.html_safe

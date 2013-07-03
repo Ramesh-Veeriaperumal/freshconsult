@@ -323,7 +323,7 @@ var getFilterDef = function(name,quest_type){
   <% if(filter_type == "quest") %>
     var op_hash = preProcessCondition(<%= @op_types.html_safe if @op_types %>, <%= @op_list.html_safe if @op_list %>),
         game_types = ['','ticket','solution','forum'],_is_Desc_edited = false,  
-        filter_rule = new rules_filter("filter", $A([<%= @filter_defs.html_safe if @filter_defs %>]), "#filterDOM", {"operators": op_hash, "init_feed":$A(<%= @filter_input.hmtl_safe if @filter_input %>), selectListArr: game_types, delete_last: true,
+        filter_rule = new rules_filter("filter", $A([<%= @filter_defs.html_safe if @filter_defs %>]), "#filterDOM", {"operators": op_hash, "init_feed":$A(<%= @filter_input.html_safe if @filter_input %>), selectListArr: game_types, delete_last: true,
         change_filter_data : manipulateFilterData,onRuleSelect : populateQuestDes});
         jQuery("#quest_data_mode").live('change',function(){
            filter_rule.refresh_list();

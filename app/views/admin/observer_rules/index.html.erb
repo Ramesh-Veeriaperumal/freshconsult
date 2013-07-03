@@ -41,7 +41,7 @@
           <td>
             <div class="item_actions" align="right">
                 <%= link_to(t('edit'), edit_admin_observer_rule_path(va_rule), :class => "btn btn-mini") %>
-                <%= link_to "<i class='icon-trash'></i>", admin_observer_rule_path(va_rule), :confirm => t('confirm_delete_message', :human_name => t('.human_name')), :method => :delete, :class => "btn btn-mini" %>
+                <%= link_to "<i class='icon-trash'></i>".html_safe, admin_observer_rule_path(va_rule), :confirm => t('confirm_delete_message', :human_name => t('.human_name')), :method => :delete, :class => "btn btn-mini" %>
             </div>
           </td>
         </tr>
