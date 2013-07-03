@@ -10,24 +10,26 @@ class ContactImportController < ApplicationController
                     :file_field => :file, 
                     :params => [:user]
    
+  def csv
+    redirect_to contacts_url, :flash => { :notice => t(:'flash.import.already_running')} if current_account.contact_import
+  end 
   
   def create
     if fields_mapped?
-      redirect_to contacts_url, :flash => { :notice => t(:'flash.import.already_running')} if current_account.data_import
-      unless current_account.data_import
         contact_params = {:account_id => current_account.id,
                         :email => current_user.email,
                         :contacts =>{:mapped_fields => mapped_fields,
                                   :fields => params[:fields] ,
                                   :ignore_first_row => params[:ignore_first_row]}}
-
          Resque.enqueue(Workers::Import::ContactsImport ,contact_params)
-         current_account.create_data_import({:status => 1, :import_type => "ContactImport"})
-         redirect_to contacts_url, :flash =>{ :notice => t(:'flash.import.success')} 
-      end
+         current_account.create_contact_import({:status => 1})
+
+         redirect_to contacts_url, :flash =>{ :notice => t(:'flash.import.success')}
     else
       render
     end
+  rescue FasterCSV::MalformedCSVError => e
+    redirect_to csv_contact_import_path, :flash => {:error => t(:'flash.contacts_import.wrong_format')}
   rescue MapFields::InconsistentStateError
     redirect_to csv_contact_import_path, :flash => {:error => t(:'flash.contacts_import.failure')}
   rescue MapFields::MissingFileContentsError
