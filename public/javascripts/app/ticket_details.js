@@ -202,6 +202,7 @@ TICKET_DETAILS_DOMREADY = function() {
 
 activeForm = null, savingDraft = false, draftFirstFlag = 0, draftClearedFlag = TICKET_DETAILS_DATA['draft']['cleared_flag'];
 
+$('#ticket_original_request *').css({position: ''}); //Resetting the Position
 $('body').on("change.ticket_details", '#helpdesk_ticket_group_id' , function(e){
 	$('#TicketProperties .default_agent')
 		.addClass('loading-right');
@@ -656,13 +657,7 @@ refreshStatusBox = function() {
 
 	$('body').on('click.ticket_details', ".conversation_thread .request_panel form .cancel_btn", function(ev) {
 		ev.preventDefault();
-		if (ev.clientX == 0 && ev.clientY == 0) {
-			return;
-			/* Hack for Forward form.
-			Scenario: When the user presses enter key while on the To field,
-			the cancel btn is triggered.
-			Difference b/w real trigger and this is clientX/Y values */
-		}
+		
 		var btn = $(this);
 		$('#' + btn.data('cntId')).hide().trigger('visibility');
 		if (btn.data('showPseudoReply')) 
