@@ -1062,6 +1062,7 @@ en:
     contacts_import: 
       failure: Please try again
       no_file: Please upload a file
+      wrong_format: The CSV file format is not supported. Please check the CSV file format!
       success: "%{created_count} contacts has been newly imported and %{updated_count} existing contacts has been updated!"
     import:
       already_running: Currently one csv import is running. you may try later !! 
