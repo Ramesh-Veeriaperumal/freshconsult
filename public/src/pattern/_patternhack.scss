@@ -421,3 +421,23 @@ ul.inline > li, ol.inline > li {
   border-left: 1px dotted #AFAFAF;
   padding-left: 8px;
 }
+
+.widget h6{ text-transform: none; }
+.info-text{ color:#888888; }
+.list-widget{ 
+  list-style: none;
+  padding:0;
+  margin:0;
+  margin-top: 5px;
+}
+.list-widget li{
+  line-height: 1.35;
+  margin-left: 13px;
+  margin-bottom: 8px;
+  &:before{
+    content: "\2022 ";
+    color: #aaaaaa; /* or whatever color you prefer */
+    position: absolute;
+    margin-left: -13px;
+  }
+}

@@ -49,23 +49,23 @@ module Import::CustomField
         :import_id => import_id,
         :description => record.elements["description"].text
       }
-      
+
       field_prop[:choices] = record.elements.collect("custom-field-options/custom-field-option") do |op|
         [op.elements["name"].text]
       end
-      
+
       create_field field_prop, account
     end
   end
-  
+
   def create_field(field_details , account=current_account)
     ff_def_entry = FlexifieldDefEntry.new ff_meta_data(field_details,account)
     field_details.delete(:id)
     nested_fields = field_details.delete(:levels)
-    ticket_field = account.ticket_fields.build(field_details)
+    ticket_field = scoper(account).build(field_details)
     ticket_field.name = ff_def_entry.flexifield_alias
     ticket_field.flexifield_def_entry = ff_def_entry
-    
+
     @invalid_fields.push(ticket_field) and return unless ticket_field.save
     ticket_field.insert_at(field_details[:position]) unless field_details[:position].blank?
 
@@ -79,31 +79,35 @@ module Import::CustomField
     end
 
   end
-  
+
+  def scoper(account = current_account)
+    account.ticket_fields
+  end
+
   def ff_meta_data(field_details, account=current_account)
     type = field_details.delete(:type)
     ff_def = account.flexi_field_defs.first
-    ff_def_entries = ff_def.flexifield_def_entries.all(:conditions => { 
+    ff_def_entries = ff_def.flexifield_def_entries.all(:conditions => {
       :flexifield_coltype => FIELD_COLUMN_MAPPING[type][0] })
 
     used_columns = ff_def_entries.collect { |ff_entry| ff_entry.flexifield_name }
     available_columns = FIELD_COLUMN_MAPPING[type][1] - used_columns
-    
-    { 
-      :flexifield_def_id => ff_def.id, 
+
+    {
+      :flexifield_def_id => ff_def.id,
       :flexifield_name => available_columns.first,
-      :flexifield_coltype => type, 
-      :flexifield_alias => field_name(field_details[:label], account), 
+      :flexifield_coltype => type,
+      :flexifield_alias => field_name(field_details[:label], account),
       :flexifield_order => field_details[:position], #ofc. there'll be gaps.
       :import_id => field_details.delete(:import_id)
     }
   end
-  
+
   def create_nested_field(ticket_field, nested_field, account=current_account)
-      incorrect_data = (nested_field[:label].blank? || nested_field[:type].blank? || nested_field[:level].blank?)        
-      
+      incorrect_data = (nested_field[:label].blank? || nested_field[:type].blank? || nested_field[:level].blank?)
+
       @invalid_fields.push(ticket_field) and ticket_field.errors.add_to_base("Incorrect values for level 2 and level 3 for dependant field") and return false if incorrect_data
-      
+
       nested_ff_def_entry = FlexifieldDefEntry.new ff_meta_data(nested_field,account)
       nested_field.delete(:id)
       nested_field.delete(:position)
