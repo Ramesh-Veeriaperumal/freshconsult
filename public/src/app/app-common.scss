@@ -7465,62 +7465,6 @@ div.watchers_tooltip{
 
 /* Add Watcher End */
 
-/* Ticket Auto-refresh */
-
-.count-label{
-	position: relative;
-	right: 3px;
-	&:before{
-		content: attr(data-count);
-		color: transparent;
-		background: #888;
-		border-radius: 9px;
-		font-weight: bold;
-		margin-left: 20px;
-		padding: 0px 8px 2px 6px;
-		margin-top: -2px;
-		margin-right: 5px;
-		font-size: 12px;
-		position: relative;
-		bottom: 2px;
-	}
-}
-
-#index_refresh_alert{
-	background-color: #fdfdf1;
-	border-bottom: 1px solid #eee;
-	padding: 14px 0;
-	@include box-shadow(inset 0px 3px 7px rgba(100,100,100,0.1));
-	color: #666;
-	cursor: pointer;
-
-	&:hover {
-		background-color : #fcfcd1;
-		@include transition(background-color 200ms linear);
-		.reload_icon{
-			background-color: #000;
-			@include transition(background-color 400ms linear);
-		}
-	}
-
-	.reload_link{
-	    color: #06C;
-		font-weight: bold;
-		padding-right: 10px;
-		float: right;
-	}	
-}
-.ticket_highlight {
-	@include animation(ticket_blink 0.8s ease-out 1);
-}
-
-@include keyframes(ticket_blink) {
-	0% { background: rgba(#ff0,.8);}
-	100% { background: rgba(#ff0,0);}
-}
-
-/* Ticket Auto-refresh */
-
 /* Admin-canned-response-folders */
 
 .folder_list

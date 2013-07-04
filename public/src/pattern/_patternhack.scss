@@ -252,6 +252,26 @@ table.selected_to_yellow tbody tr td {
       background:#fffad8;
     }
   }
+
+  .actions {
+    float: right;
+    width: 120px;
+    text-align: right;
+    visibility: hidden;
+    @include opacity(0.3);
+    @include transition(opacity 0.2s ease-out);
+  }
+
+  td:hover {
+    .actions {
+      visibility: visible;
+      @include opacity(1);
+    }
+  }
+}
+
+body.touch .dialog-well .actions {
+  visibility: visible;
 }
 /* This class overriding app-common css. */
 
@@ -420,4 +440,23 @@ ul.inline > li, ol.inline > li {
 .nested-input{
   border-left: 1px dotted #AFAFAF;
   padding-left: 8px;
+}
+
+
+
+.antipattern {
+  .icon-detail {
+    width: auto;
+    height: auto;
+    background-image: none;
+    line-height: 130%;
+    vertical-align: middle;
+  }
+
+
+  .radio input[type="radio"], .checkbox input[type="checkbox"] {
+    margin-left: 0;
+    margin-right: 3px;
+  }
+
 }
