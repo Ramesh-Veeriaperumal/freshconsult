@@ -10,9 +10,9 @@
     <%= content_tag :div, h(@user.email), :class => "user_email" unless @user.email.blank?  %>
     <%= content_tag :div,"", :class => "clearfix" unless @user.email.blank? and @user.customer.blank?  %>
     <% is_desig_and_email_available = @user.email.blank? and @user.customer.blank? %>
-    <%=  '<div>' if is_desig_and_email_available %>
+    <%=  '<div>'.html_safe if is_desig_and_email_available %>
         <%= content_tag :div, h(@user.twitter_id), :class => "user_twitter" unless @user.twitter_id.blank?  %>
-    <%= '</div>' if is_desig_and_email_available %>
+    <%= '</div>'.html_safe if is_desig_and_email_available %>
     
     <div class="clearfix"></div>
     <%= content_tag :div, h(@user.phone), :class => "user_phone" unless @user.phone.blank?  %>

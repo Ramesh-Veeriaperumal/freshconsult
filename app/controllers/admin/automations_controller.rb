@@ -1,7 +1,7 @@
 class Admin::AutomationsController < Admin::AdminController
   include ModelControllerMethods
   include Helpdesk::ReorderUtility
-   
+  before_filter :escape_html_entities_in_json  
   before_filter :load_config, :only => [:new, :edit]
   before_filter :check_automation_feature
   
@@ -172,5 +172,10 @@ class Admin::AutomationsController < Admin::AdminController
         end
       end
       nestedfields
+    end
+
+    # For handling json escape inside hash data
+    def escape_html_entities_in_json
+      ActiveSupport::JSON::Encoding.escape_html_entities_in_json = true
     end
 end

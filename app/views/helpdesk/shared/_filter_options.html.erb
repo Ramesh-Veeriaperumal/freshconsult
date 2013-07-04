@@ -100,8 +100,7 @@
       window.localStorage['is_unsaved_view'] = false;
       window.localStorage['updated_ticket_list'] = "";
     }
-
-		jQuery("#FilterOptions input[name=data_hash]").val($A(<%= @ticket_filter.query_hash.to_json.html_safe %>).toJSON());
+		jQuery("#FilterOptions input[name=data_hash]").val($A(<%= (@ticket_filter.query_hash.to_json.sub('</','<\/')).html_safe %>).toJSON());
 
 
     getFilterData();

@@ -443,7 +443,7 @@ HTML
 
 		_field.nested_levels.each do |l|       
 		  _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = (_name +"_"+ l[:name]).gsub('[','_').gsub(']','')
-		  _category += content_tag :div, content_tag(:label, l[(!in_portal)? :label : :label_in_portal]) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
+		  _category += content_tag :div, content_tag(:label, (l[(!in_portal)? :label : :label_in_portal]).html_safe) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
 		end
 
 		_category + javascript_tag("jQuery(document).ready(function(){jQuery('##{(_name +"_"+ _fieldname).gsub('[','_').gsub(']','')}').nested_select_tag(#{_javascript_opts.to_json});})")
@@ -570,7 +570,7 @@ HTML
 	end
 
 	def attach_a_file_link attach_id
-		link_to_function("Attach a <b>file</b>", "Helpdesk.Multifile.clickProxy(this)", 
+		link_to_function("Attach a <b>file</b>".html_safe, "Helpdesk.Multifile.clickProxy(this)", 
                 "data-file-id" => "#{ attach_id }_file", :id => "#{ attach_id }_proxy_link" )
 	end
 

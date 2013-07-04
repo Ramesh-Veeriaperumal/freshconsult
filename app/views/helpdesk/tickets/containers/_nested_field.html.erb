@@ -31,7 +31,7 @@
                 :condition   => sub_category[:condition],
                 :operator    => sub_category[:operator],
                 :container   => 'nested_field' } do %>
-    <h4 class="title"><%= sub_category[:name] %></h4>
+    <h4 class="title"><%= sub_category[:name].html_safe %></h4>
     <%= select_tag sub_category[:name], "", :id => sub_category_id, 
                   :class => "dropdown nested_field select2", "data-minimum-results-for-search" => 10 %>
   <%end%>
@@ -43,7 +43,7 @@
                     :condition   => item[:condition],
                     :operator    => item[:operator],
                     :container   => 'nested_field' } do %>
-        <h4 class="title"><%= item[:name] %></h4>
+        <h4 class="title"><%= item[:name].html_safe %></h4>
         <%= select_tag item[:name], "", :id => sub_category_item_id, 
                     :class => "dropdown nested_field select2", "data-minimum-results-for-search" => 10 %>
       <% end %>
@@ -57,7 +57,7 @@
             category_val: '<%= selected_val %>'            
           },
           include_blank: "Any",
-          data_tree: <%= options.to_json %>,
+          data_tree: <%= options.to_json.html_safe %>,
           subcategory_id: '<%= sub_category_id %>',
           item_id: '<%= sub_category_item_id %>',
           change_callback: refresh_tickets

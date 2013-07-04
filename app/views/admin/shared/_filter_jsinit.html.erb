@@ -26,7 +26,7 @@
           filter.choices.each(function(arrayItem){
             choices.push({
               name: arrayItem[0],
-              value: arrayItem[1]
+              value: unescapeHtml(arrayItem[1])
             });
           });
           c_dom = FactoryUI.dropdown(choices, value, _class_name, _data_attr);
@@ -56,7 +56,7 @@
             filter.choices.each(function(arrayItem){
               choices.push({
                 name: arrayItem[0],
-                value: arrayItem[1]
+                value: unescapeHtml(arrayItem[1])
               });
             });
             control = FactoryUI.dropdown(choices, "email_to", _class_name, _data_attr);        
@@ -139,7 +139,7 @@
 <% content_for :onload_script do %>
   <% if (filter_type == "observer") %>  
     // i18n For javascript entities
-    event_lang = <%= t('event').to_json %>;
+    event_lang = <%= t('event').to_json.html_safe %>;
     event_rule = new rules_filter("event", $A(<%= @event_defs.html_safe if @event_defs %>), "#eventDOM", { "init_feed":$A(<%= @event_input.html_safe if @event_input %>)});    
     ObserverDom.init();
   <% end %>

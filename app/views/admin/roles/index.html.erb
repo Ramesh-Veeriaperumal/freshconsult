@@ -23,7 +23,7 @@
               <td>
                 <% unless role.default_role? %>
                   <%= link_to t('edit'), edit_admin_role_path(role), :class => "btn btn-mini" %>
-                  <%= link_to ("<i class='icon-trash'></i>", admin_role_path(role), :method => :delete, :confirm => "delete?", :class => "btn btn-mini")  %>
+                  <%= link_to ("<i class='icon-trash'></i>".html_safe, admin_role_path(role), :method => :delete, :confirm => "delete?", :class => "btn btn-mini")  %>
                 <% end %>
               </td>
             </tr>

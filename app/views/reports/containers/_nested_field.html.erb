@@ -31,7 +31,7 @@
                 :operator    => sub_category[:operator],
                 :"data-label"=> sub_category[:name],
                 :container   => 'nested_field' } do %>
-    <label class="control-label"><%= sub_category[:name] %></label>
+    <label class="control-label"><%= sub_category[:name].html_safe %></label>
     <%= select_tag sub_category[:name], "", :id => sub_category_id, :class => "dropdown nested_field select2" %>
   <%end%>
         
@@ -43,7 +43,7 @@
                     :operator    => item[:operator],
                     :"data-label"=> item[:name],
                     :container   => 'nested_field' } do %>
-        <label class="control-label"><%= item[:name] %></label>
+        <label class="control-label"><%= item[:name].html_safe %></label>
         <%= select_tag item[:name], "", :id => sub_category_item_id, :class => "dropdown nested_field select2"%>
       <% end %>
   <% end %>
@@ -57,7 +57,7 @@
             category_val: '<%= selected_val %>'            
           },
           default_option: "<option value='-1'>...</option>",
-          data_tree: <%= options.to_json %>,
+          data_tree: <%= options.to_json.html_safe %>,
           subcategory_id: '<%= sub_category_id %>',
           item_id: '<%= sub_category_item_id %>',
           change_callback: Helpkit.reports_util.refresh_tickets
