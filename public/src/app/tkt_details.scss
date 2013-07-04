@@ -2101,7 +2101,7 @@ ol, ul, li{
 }
 
 // Timesheet Modal CSS Overrides and new CSS
-#timeentry_add, .timeentry_edit {
+.ticket_details #timeentry_add, .ticket_details .timeentry_edit {
 	margin: 5px;
 	padding: 0;
 	clear: both;
@@ -2112,12 +2112,12 @@ ol, ul, li{
 }
 
 
-#time_integration fieldset.integration {
+.ticket_details #time_integration fieldset.integration {
 	border: none;
 	min-height: 20px;
 }
 
-#time_integration fieldset.integration .integration_container {
+.ticket_details #time_integration fieldset.integration .integration_container {
 	padding: 30px 0 10px;
 	.field, .field-35 {
 		label {

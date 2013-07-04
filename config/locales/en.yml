@@ -2049,6 +2049,7 @@ en:
     reported: reported
     said: said
     solutions_home: "Solution home"
+    attach_file: "Attach a <b>file</b>"
     header: 
       preview_message: "<b>Preview mode</b> - <a href='javascript:window.close()'>Click here</a> to go back."
     new_support_ticket: New support ticket
@@ -2082,6 +2083,8 @@ en:
     no_forums_info_2: "Why don't you start a %{start_topic_link}?"
     article:
       see_all_articles: "See all %{count} articles"
+      more_articles: "More articles in <span class='folder-name'> %{article_name} </span>"
+      modified_on: "Modified on:"
     folder:
       filler_text: "Watch this space for articles regarding %{folder_name}"
     topic:   

@@ -2544,6 +2544,7 @@ pt-BR:
   plans_billing: "Planos e Pagamentos"
   please_wait: "Por favor, aguarde..."
   portal: 
+    attach_file: "Anexar <b>arquivo</b>"
     article: 
       see_all_articles: "Ver todos os %{count} artigos"
     community_forums: "Fóruns da comunidade"

@@ -186,7 +186,7 @@
 	{% assign agent = ticket.agent %}
 	{% if agent_visible == true and agent %}
 		<div class="widget agent-details">
-			<h3 class="lead">Agent working on this ticket</h4>
+			<h3 class="lead">{% translate agent_working_on_this_ticket %}</h4>
 			{{ agent | profile_image:'user-pointer-bottom', '40px', '40px' }}
 			<div><b>{{ agent.name }}</b></div>
 			<div>{{ agent.job_title }}</div>

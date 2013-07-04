@@ -441,3 +441,22 @@ ul.inline > li, ol.inline > li {
   border-left: 1px dotted #AFAFAF;
   padding-left: 8px;
 }
+
+
+
+.antipattern {
+  .icon-detail {
+    width: auto;
+    height: auto;
+    background-image: none;
+    line-height: 130%;
+    vertical-align: middle;
+  }
+
+
+  .radio input[type="radio"], .checkbox input[type="checkbox"] {
+    margin-left: 0;
+    margin-right: 3px;
+  }
+
+}

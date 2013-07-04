@@ -116,7 +116,7 @@
 										"data-pjax" => "#body-container", "data-parallel-url" => "/helpdesk/tickets/filter_options", 
 										"data-parallel-placeholder" => '#ticket-leftFilter',
 										:rel =>'link_ticket_list' %>
-			/ <%= "#{t('ticket.singular')} ##{h(@ticket.display_id)}"%>
+			/ <%= "#{t('ticket.singular')} <span id='ticket-display-id'>##{h(@ticket.display_id)}</span>"%>
 		</div>
 		<div class="source-badge-wrap">
 			<div class='source <%= "priority_color_#{@ticket.priority} status_#{@ticket.status} " + 
