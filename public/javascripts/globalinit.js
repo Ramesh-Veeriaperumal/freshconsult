@@ -565,6 +565,9 @@ is_touch_device = function() {
 
         $(window).on('resize.freshdesk', function() {
           $('#sticky_header').width($('#Pagearea').width());
+          var to_collapse = $('#sticky_header').width() < ($('.sticky_right').outerWidth() + $('.sticky_left').outerWidth());
+          $('#sticky_header').toggleClass('collapsed', to_collapse);
+          
         }).trigger('resize');
 
       }

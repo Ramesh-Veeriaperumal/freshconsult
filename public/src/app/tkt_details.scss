@@ -635,7 +635,7 @@ ol, ul, li{
     .btn-toolbar {
     	float: right;
     	clear: right;
-    	width: 400px;
+    	width: 360px;
     	text-align: right;
 
     	> span {
@@ -707,7 +707,7 @@ ol, ul, li{
 
 	.post_in_forum {
 		float: left; 
-		width: 200px;
+		width: 240px;
 		margin: 15px 5px;
 		label {
 			display: block;
@@ -719,6 +719,10 @@ ol, ul, li{
 			[type="checkbox"] {
 				margin: 0 5px 0 0;
 			}
+		}
+
+		&.draft_saved {
+			margin-top:0;
 		}
 	}
 
@@ -1232,6 +1236,9 @@ ol, ul, li{
 
 }
 
+.ticket_details #HelpdeskReply {
+	overflow: hidden;
+}
 .activity .commentbox {
 	min-height: 30px;
 
@@ -2797,10 +2804,18 @@ $collision_delay: 1s;
 	div.watchers_tooltip {
 		margin: 32px 0px 0px -7px;
 	}
+
+	.show_on_collapse { display: none; }
+
 }
 
 #sticky_header.stuck {
 	.status_info {
 		visibility: visible;
 	}
+}
+
+#sticky_header.collapsed {
+	.show_on_collapse { display: block; }
+	.hide_on_collapse { display: none; }
 }

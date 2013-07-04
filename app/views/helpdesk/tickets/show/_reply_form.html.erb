@@ -116,28 +116,27 @@
       <div class="clearfix zeroh" ></div>
       <div class="post_in_forum">
 
-        <!-- <label>
-          <%# check_box_tag :quoted_text, "true", true %><%= t("ticket.include_quoted_text") %>
-        </label> -->
-        <% if privilege?(:view_forums) && !@ticket.ticket_topic.nil? && !(@ticket.ticket_topic.topic.locked) %>    
-          <label>
-              <%= check_box_tag :post_forums %><%= t("ticket.reply_form.post_to_linked_forum") %>
-          </label>
-        <% end %>
-        <% if @ticket.account.survey.can_send?(@ticket, Survey::SPECIFIC_EMAIL_RESPONSE)%>
-          <label>
-            <%= check_box_tag :send_survey %><%= t("ticket.reply_form.send_satisfaction_survey") %>
-          </label>
-        <% end %> 
-      </div>      
-
-      <div class="btn-toolbar">
-
         <span class="reply-draft" id="reply-draft">
           <div class="close-img" id="clear-draft"><span></span></div>
           <%= content_tag :div, "#{t("draft")} #{t("saving_draft")}", :class => "sav tooltip", "data-placement" => "below", :id => "draft-save", "title" => t("last_draft") %>
         </span>
 
+        <!-- <label>
+          <%# check_box_tag :quoted_text, "true", true %><%= t("ticket.include_quoted_text") %>
+        </label> -->
+        <%# if privilege?(:view_forums) && !@ticket.ticket_topic.nil? && !(@ticket.ticket_topic.topic.locked) %>    
+          <label>
+              <%= check_box_tag :post_forums %><%= t("ticket.reply_form.post_to_linked_forum") %>
+          </label>
+        <%# end %>
+        <%# if @ticket.account.survey.can_send?(@ticket, Survey::SPECIFIC_EMAIL_RESPONSE)%>
+          <label>
+            <%= check_box_tag :send_survey %><%= t("ticket.reply_form.send_satisfaction_survey") %>
+          </label>
+        <%# end %> 
+      </div>      
+
+      <div class="btn-toolbar">
         <span>
           <%= link_to(t('cancel'), '#', :class => "btn cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true') %>
         </span>
@@ -171,7 +170,6 @@
       </div>
 
     <% end %>
-    <div class="clearfix overflowh" ></div>
 </div>
 <% content_for :pagefixed do %>
   <% javascript_tag do %>
