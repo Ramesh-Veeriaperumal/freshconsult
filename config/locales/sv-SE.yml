@@ -2311,7 +2311,7 @@ sv-SE:
       level2: "Nivå 2"
       level3: "Nivå 3"
       nested_label: "Nästlade fältetiketter"
-      nestedfield_helptext: "Använd frihandstextfältet nedan för att lägga till eller ändra element i din rullista. Gör indrag på element genom att klicka på tabbtangenten en eller två gånger. Vi kommer att konvertera dem till rullistelement baserat på indrag. Var därför extra försiktig.<a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>Mer information</a> "
+      nestedfield_helptext: "Använd frihandstextfältet nedan för att lägga till eller ändra element i din rullista. Gör indrag på element genom att klicka på tabbtangenten en eller två gånger. Vi kommer att konvertera dem till rullistelement baserat på indrag. Var därför extra försiktig.<a target='_blank' href=%{learn_more}>Mer information</a> "
       nestedfield_helptext_preview: "Detta är \"Förhandsgranskningen\" av rullistans exempelelement. Använd frihandstextfältet i \"Ändra vy\" för att ändra element"
       sla_timer: Servicenivåtimer
       status_choices: Statusval
