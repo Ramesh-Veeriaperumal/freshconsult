@@ -3364,7 +3364,7 @@ fr:
       level2: "Niveau 2"
       level3: "Niveau 3"
       nested_label: "Libellés des champs intégrés"
-      nestedfield_helptext: "Utilisez le formulaire libre ci-dessous pour ajouter ou modifier les éléments de votre menu déroulant. Décalez les éléments en appuyant sur Tab une fois ou deux. Nous nous baserons sur ce décalage pour convertir ces éléments en menu déroulant, veuillez donc procéder avec précaution. <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>En apprendre plus</a> "
+      nestedfield_helptext: "Utilisez le formulaire libre ci-dessous pour ajouter ou modifier les éléments de votre menu déroulant. Décalez les éléments en appuyant sur Tab une fois ou deux. Nous nous baserons sur ce décalage pour convertir ces éléments en menu déroulant, veuillez donc procéder avec précaution. <a target='_blank' href=%{learn_more}>En apprendre plus</a> "
       nestedfield_helptext_preview: "Voici un \"aperçu\" des éléments du menu déroulant, veuillez utiliser le formulaire libre \"Modifier la vue\" pour modifier les éléments"
       sla_timer: "Chronomètre du CNP"
       status_choices: "Choix de statuts"
