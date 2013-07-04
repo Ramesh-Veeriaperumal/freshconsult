@@ -592,7 +592,6 @@ is_touch_device = function() {
               clkdLI = $(evnt.relatedTarget).parent();
           $('ul.header-tabs li.active').removeClass('active');
           clkdLI.addClass('active');
-          $(document).trigger('ticket_show');
           initParallelRequest($(evnt.relatedTarget))
 
           // BeforeSend

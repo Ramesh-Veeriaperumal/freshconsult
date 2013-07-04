@@ -15,17 +15,14 @@
     init_params.account_id = <%= current_account.id%>;
     init_params.ticket_channel = 'tickets:'+current_account_id+':*';
 
-    Fjax.beforeNextPage = function() {
-      try {
-        socket.socket.disconnect();
-      } catch(err) {
-        console.log('Unable to disconnect the socket connection');
-      }
-    }
-    
     jQuery(document).ready(function() {
 
       socket = io.connect('<%= nodejs_url("collision") %>',{'force new connection':true});
+
+      jQuery(document).unbind('disconnectNode');
+      jQuery(document).bind('disconnectNode', function(ev){
+        socket.socket.disconnect();
+      });
 
       socket.on('connect', function(){
         socket.emit('index_init', init_params);
