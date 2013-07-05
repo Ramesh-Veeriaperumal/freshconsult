@@ -137,7 +137,7 @@ class Helpdesk::TicketsController < ApplicationController
 
             json << sep + tic.to_json({
               :except => [ :description_html, :description ],
-              :methods => [ :ticket_sla_status, :status_name, :priority_name, :source_name, :requester_name,
+              :methods => [ :ticket_subject_style,:ticket_sla_status, :status_name, :priority_name, :source_name, :requester_name,
                             :responder_name, :need_attention, :pretty_updated_date ]
             }, false)[19..-2]; sep=","
           }

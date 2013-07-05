@@ -231,6 +231,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
  
   named_scope :latest_tickets, lambda {|updated_at| {:conditions => ["helpdesk_tickets.updated_at > ?", updated_at]}}
 
+  named_scope :leave_old_tickets, lambda {|ids|   {:conditions => ["helpdesk_tickets.id not in (?) ", ids ]  }}
+  
+  
+  named_scope :next_set_tickets, lambda {|updated_at|   {
+    :conditions => ["helpdesk_tickets.due_by <= ? ", updated_at],
+    :order => 'due_by DESC',
+    #:limit => row_limits
+    }}
+
   named_scope :with_tag_names, lambda { |tag_names| {
             :joins => :tags,
             :select => "helpdesk_tickets.id", 
@@ -272,6 +281,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     def ticket_sla_status
         closed_status = Helpdesk::TicketStatus.onhold_and_closed_statuses(account)
         sla_status(self,closed_status);
+    end
+    def ticket_subject_style
+        closed_status = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(account)
+        subject_style(self,closed_status)
     end
  
   def agent_permission_condition user
