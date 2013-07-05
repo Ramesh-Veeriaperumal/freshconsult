@@ -250,7 +250,8 @@ FreshbooksWidget.prototype = {
 		return true;
 	},
 
-	logTimeEntry:function() {
+	logTimeEntry:function(integratable_id) {
+		if(integratable_id) this.freshdeskWidget.local_integratable_id = integratable_id;
 		if (freshbooksBundle.remote_integratable_id) {
 			this.updateTimeEntry();
 		} else {
@@ -285,7 +286,8 @@ FreshbooksWidget.prototype = {
 	},
 
 	handleTimeEntrySuccess:function(resData) {
-		resXml = resData.responseXML
+		resXml = resData.responseXML;
+		if(!resXml) return;
 		if (this.isRespSuccessful(resXml)) {
 			var responses = XmlUtil.extractEntities(resXml,"response");
 			if (responses.length > 0) {
@@ -378,6 +380,7 @@ FreshbooksWidget.prototype = {
 				method: "post",
 				on_success: function(evt){
 					this.handleTimeEntrySuccess(evt);
+					this.resetIntegratedResourceIds();
 					if(resultCallback) resultCallback(evt);
 				}.bind(this)
 			});
@@ -403,6 +406,7 @@ FreshbooksWidget.prototype = {
 					method: "post",
 					on_success: function(evt){
 						this.handleTimeEntrySuccess(evt);
+						this.resetIntegratedResourceIds();
 						if(resultCallback) resultCallback(evt);
 					}.bind(this)
 				});

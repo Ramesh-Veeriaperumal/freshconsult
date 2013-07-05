@@ -502,6 +502,14 @@ class User < ActiveRecord::Base
     Resque.enqueue(Search::IndexUpdate::UserTickets, { :current_account_id => account_id, :user_id => id })
   end
 
+  def make_current
+    User.current = self
+  end
+
+  def self.reset_current_user
+    User.current = nil
+  end
+
   protected
 
   def set_contact_name 
