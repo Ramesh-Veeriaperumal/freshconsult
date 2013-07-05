@@ -2,6 +2,7 @@ class Helpdesk::TicketsExport
   extend Resque::AroundPerform
   include Helpdesk::Ticketfields::TicketStatus
   @queue = 'ticketsExportQueue'
+  BOM = "\377\376" #Byte Order Mark
 
   def self.perform(export_params)
 
@@ -51,12 +52,13 @@ class Helpdesk::TicketsExport
             csv_data = []
             headers.each do |val|
               data = record.send(val)
-              csv_data << ((data.blank? || (data.is_a? Integer)) ? data : (CGI::unescapeHTML(data.to_s)))
+              csv_data << ((data.blank? || (data.is_a? Integer)) ? data : (CGI::unescapeHTML(data.to_s))).to_s.gsub(/\s+/, " ")
             end
             csv << csv_data
           end
         end
       end
+      csv_string = BOM + Iconv.conv("utf-16le", "utf-8", csv_string)
       Rails.logger.info "<--- Triggering export tickets csv mail. User Email Id: #{User.current.email} --->"
       Rails.logger.info "<--- Params #{export_params[:ticket_state_filter]}, #{export_params[:start_date]}, #{export_params[:end_date]} --->"
       Helpdesk::TicketNotifier.deliver_export(export_params, csv_string, User.current)
