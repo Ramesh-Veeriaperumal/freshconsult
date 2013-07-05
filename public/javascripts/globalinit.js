@@ -564,9 +564,24 @@ is_touch_device = function() {
         the_window.on('scroll.freshdesk', handleScroll);
 
         $(window).on('resize.freshdesk', function() {
-          $('#sticky_header').width($('#Pagearea').width());
-          var to_collapse = $('#sticky_header').width() < ($('.sticky_right').outerWidth() + $('.sticky_left').outerWidth());
-          $('#sticky_header').toggleClass('collapsed', to_collapse);
+
+          sticky_header.width($('#Pagearea').width());
+          var to_collapse = false, extra_buffer = 20;
+
+          var width_elements_visible = $('.sticky_right').outerWidth() + $('.sticky_left').outerWidth() + extra_buffer;
+
+          if(sticky_header.hasClass('collapsed')) {
+            var hidden_elements_width = 0;
+            sticky_header.find('.hide_on_collapse').each(function() {
+              hidden_elements_width += $(this).outerWidth();
+            });
+            if(sticky_header.width() < (width_elements_visible + hidden_elements_width)) {
+              to_collapse = true;
+            }
+          } else {
+            to_collapse = sticky_header.width() < width_elements_visible;
+          }
+          sticky_header.toggleClass('collapsed', to_collapse);
           
         }).trigger('resize');
 
