@@ -305,26 +305,25 @@ is_touch_device = function() {
         });
       });
 
-      // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
-      var validateOptions = {
-         onkeyup: false,
-         focusCleanup: true,
-         focusInvalid: false,
-         ignore:"select.nested_field:empty, .portal_url:not(:visible)"
-      };
+      $.validator.setDefaults({ 
+        onkeyup: false,
+        focusCleanup: true,
+        focusInvalid: false,
+        ignore:"select.nested_field:empty, .portal_url:not(:visible)" 
+      });
       
       $("ul.ui-form, .cnt").livequery(function(ev){
-        $(this).not(".dont-validate").parents('form:first').validate(validateOptions);
+        $(this).not(".dont-validate").parents('form:first').validate();
       })
       $("div.ui-form").livequery(function(ev){
-        $(this).not(".dont-validate").find('form:first').validate(validateOptions); 
+        $(this).not(".dont-validate").find('form:first').validate(); 
       })
       // $("form.uniForm").validate(validateOptions);
       $("form.ui-form").livequery(function(ev){
-        $(this).not(".dont-validate").validate(validateOptions);
+        $(this).not(".dont-validate").validate();
       })
       // $("form[rel=validate]").validate(validateOptions);
-
+      var validateOptions = {}
       validateOptions['submitHandler'] = function(form, btn) {
                                           // Setting the submit button to a loading state
                                           $(btn).button("loading")

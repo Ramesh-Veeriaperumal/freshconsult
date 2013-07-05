@@ -808,7 +808,7 @@ refreshStatusBox = function() {
 					if (_form.attr('rel') == 'note_form')  {
 						$('#toggle-note-visibility .toggle-button').addClass('active');
 						var submit_btn = _form.find('.submit_btn');
-						submit_btn.text(submit_btn.data('defaultText'));
+						submit_btn.find('[rel=text]').text(submit_btn.data('defaultText'));
 					}
 
 					//Enabling original attachments
@@ -877,6 +877,7 @@ refreshStatusBox = function() {
 	//Toggling Note visiblity
 	$('body').on('change.ticket_details', '#toggle-note-visibility input[type=checkbox]', function(ev){
 		var submit_btn = $(this).parents('form').find('.submit_btn');
+		console.log(submit_btn.find('[rel=text]')
 		if($(this).is(':checked')) {
 			submit_btn.find('[rel=text]').text(submit_btn.data('defaultText'));
 		} else {
@@ -1004,8 +1005,6 @@ refreshStatusBox = function() {
 		$.scrollTo('[rel=activity_container] .conversation:last', { offset: $('#sticky_header').outerHeight() });
 		$('#scroll-to-top').show();
 	}
-
-
 
 	// MOVE TO !PATTERN
 	$('body').on('change.pattern', '.selected_to_yellow [type=radio], .selected_to_yellow [type=checkbox]', function(ev) {
