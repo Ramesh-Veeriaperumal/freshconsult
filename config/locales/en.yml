@@ -2605,6 +2605,7 @@ en:
       description_note: "The Subject and Description of the merged tickets will be added as notes in the primary ticket"
       form_title: Add a Note
       add_and_resolve: Add and Resolve
+      add_and_set_as: "Add and set as <strong>%{status}</strong>"
       add_public_note: Add Public Note
       add_private_note: Add Private Note
       notify_agents: Notify Agents

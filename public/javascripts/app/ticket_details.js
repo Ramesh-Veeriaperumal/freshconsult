@@ -878,9 +878,9 @@ refreshStatusBox = function() {
 	$('body').on('change.ticket_details', '#toggle-note-visibility input[type=checkbox]', function(ev){
 		var submit_btn = $(this).parents('form').find('.submit_btn');
 		if($(this).is(':checked')) {
-			submit_btn.text(submit_btn.data('defaultText'));
+			submit_btn.find('[rel=text]').text(submit_btn.data('defaultText'));
 		} else {
-			submit_btn.text(submit_btn.data('publicText'));
+			submit_btn.find('[rel=text]').text(submit_btn.data('publicText'));
 		}
 	});
 
