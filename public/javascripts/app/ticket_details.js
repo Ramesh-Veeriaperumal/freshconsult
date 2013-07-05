@@ -306,7 +306,7 @@ var updatePagination = function() {
 
 			TICKET_DETAILS_DATA['first_activity'] = null;
 			TICKET_DETAILS_DATA['first_note_id'] = null;
-			$('#show_more').removeClass('sloading loading-small').addClass('hide');
+			$('#show_more').removeClass('loading').addClass('hide');
 			$('[rel=activity_container]').prepend(response);
 			
 		});
