@@ -117,6 +117,12 @@ class Solution::Folder < ActiveRecord::Base
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
   end
 
+  def as_json(options={})
+    options[:except] = [:account_id,:import_id]
+      json_str = super options
+      json_str
+  end
+
   def to_liquid
     @solution_folder_drop ||= Solution::FolderDrop.new self
   end
