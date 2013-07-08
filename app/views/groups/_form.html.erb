@@ -181,21 +181,6 @@ jQuery('#business_calendar').select2({
 
 jQuery("#business_calendar").select2("val",'<%=@group.business_calendar && @group.business_calendar.id%>');
 
-%>
-
-
-jQuery('#business_calendar').select2({
-	multiple: false,
-	minimumResultsForSearch: 1000, //Keep high search value to shut off search box. Couldnt find a better way.
-	data: [<%=calendar.join(",")%>],
-	initSelection : function (element, callback) {
-		var data = {id: '<%=@group.business_calendar && @group.business_calendar.id%>', text: '<%=@group.business_calendar && @group.business_calendar.name%>'};
-        callback(data);
-    }
-});
-
-jQuery("#business_calendar").select2("val",'<%=@group.business_calendar && @group.business_calendar.id%>');
-
 <% end %>
 
 });
