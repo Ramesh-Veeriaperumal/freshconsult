@@ -2,7 +2,7 @@
 	<div class="banner-wrapper">
 		<div class="banner-title">
 			{{ portal | logo }}
-			<h1 class="ellipsis heading">{{ portal.name }}</h1>
+			<h1 class="ellipsis heading">{{ portal.name | h}}</h1>
 		</div>
 		<nav class="banner-nav">
 			{{ portal | welcome_navigation }}
