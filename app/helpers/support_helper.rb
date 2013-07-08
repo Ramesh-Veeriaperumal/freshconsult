@@ -542,8 +542,8 @@ HTML
 
 	def portal_javascript_object
 		{ :language => @portal['language'],
-		  :name => @portal['name'],
-		  :contact_info => @portal['contact_info'],
+		  :name => h(@portal['name']),
+		  :contact_info => h(@portal['contact_info']),
 		  :current_page => @portal['page'],
 		  :current_tab => @portal['current_tab'] }.to_json
 	end
