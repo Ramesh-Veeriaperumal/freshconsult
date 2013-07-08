@@ -877,7 +877,6 @@ refreshStatusBox = function() {
 	//Toggling Note visiblity
 	$('body').on('change.ticket_details', '#toggle-note-visibility input[type=checkbox]', function(ev){
 		var submit_btn = $(this).parents('form').find('.submit_btn');
-		console.log(submit_btn.find('[rel=text]')
 		if($(this).is(':checked')) {
 			submit_btn.find('[rel=text]').text(submit_btn.data('defaultText'));
 		} else {
