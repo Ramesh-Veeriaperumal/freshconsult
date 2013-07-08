@@ -1,9 +1,6 @@
 <% content_for :sidebar do %>
   <%= render :partial => "helpnote" %>
 <% end %>
-<%= include_cloudfront_css :pattern %>
-<%= include_cloudfront_js :pattern %>
-
 <div class="list-page group-management">
   <div class="list-page-header row-fluid"> 
   	<h3 class="lead span6"><%=t('group.title')%></h3>

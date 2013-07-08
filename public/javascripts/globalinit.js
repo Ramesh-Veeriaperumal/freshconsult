@@ -2,7 +2,7 @@
  * @author venom
  */
 var $J = jQuery.noConflict();
-
+window.pjaxBeforeSend = null, window.pjaxUnload = null, window.pjaxPrevUnload = null, window.pjaxBodyClass = null, window.pjaxPrevBodyClass = null;
 is_touch_device = function() {
   return !!('ontouchstart' in window) // works on most browsers 
       || !!('onmsgesturechange' in window); // works on ie10
@@ -20,7 +20,6 @@ is_touch_device = function() {
     var hideWatcherTimer;
     var insideCalendar = false;
     var closeCalendar = false;
-
 
     if (is_touch_device()) {
       $('html').addClass('touch');
@@ -190,7 +189,10 @@ is_touch_device = function() {
 
       }).live('mouseleave',function(ev) {
           clearTimeout($(this).data('timeoutDelayShow'));
-          hidePopoverTimer = setTimeout(function() { widgetPopup.popover('hide'); hoverPopup = false;},1000);
+          hidePopoverTimer = setTimeout(function() { 
+            if(widgetPopup) widgetPopup.popover('hide'); 
+            hoverPopup = false;
+          },1000);
       });
 
     $("a[rel=widget-popover]").live("click", function(e){
@@ -303,26 +305,25 @@ is_touch_device = function() {
         });
       });
 
-      // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
-      var validateOptions = {
-         onkeyup: false,
-         focusCleanup: true,
-         focusInvalid: false,
-         ignore:"select.nested_field:empty, .portal_url:not(:visible)"
-      };
+      $.validator.setDefaults({ 
+        onkeyup: false,
+        focusCleanup: true,
+        focusInvalid: false,
+        ignore:"select.nested_field:empty, .portal_url:not(:visible)" 
+      });
       
       $("ul.ui-form, .cnt").livequery(function(ev){
-        $(this).not(".dont-validate").parents('form:first').validate(validateOptions);
+        $(this).not(".dont-validate").parents('form:first').validate();
       })
       $("div.ui-form").livequery(function(ev){
-        $(this).not(".dont-validate").find('form:first').validate(validateOptions); 
+        $(this).not(".dont-validate").find('form:first').validate(); 
       })
       // $("form.uniForm").validate(validateOptions);
       $("form.ui-form").livequery(function(ev){
-        $(this).not(".dont-validate").validate(validateOptions);
+        $(this).not(".dont-validate").validate();
       })
       // $("form[rel=validate]").validate(validateOptions);
-
+      var validateOptions = {}
       validateOptions['submitHandler'] = function(form, btn) {
                                           // Setting the submit button to a loading state
                                           $(btn).button("loading")
@@ -488,7 +489,7 @@ is_touch_device = function() {
           }
         });
  
-      flash = $("div.flash_info");
+      flash = $("div.flash_info").not('[rel=permanent]');
       if(flash.get(0)){
          try{ closeableFlash(flash); } catch(e){}
       }
@@ -496,6 +497,101 @@ is_touch_device = function() {
       if(jQuery.browser.opera){
         jQuery('.top-loading-strip').switchClass('top-loading-strip', 'top-loading-strip-opera');  
       }
+
+      $('body').on('click.freshdesk', '#scroll-to-top', function(ev) {
+        $.scrollTo('body');
+      })
+
+      $('#Activity .activity > a').livequery(function() {
+        $(this).attr('data-pjax', '#body-container')
+      })
+
+      // Sticky Header
+      var the_window = $(window),
+          hasScrolled = false;
+      the_window.on('scroll.freshdesk', function() { hasScrolled = true; });
+      var handleScroll = function() {
+        if (the_window.scrollTop() > REAL_TOP) {
+          if (!fixedStrap.hasClass('at_the_top')) {
+
+            at_the_top.addClass('at_the_top');
+            forFixed.show();
+            at_the_top.css({top: -outerHeight}).animate({ top: 0}, 300, 'easeOutExpo');
+            firstchild.addClass('firstchild');
+          }
+
+        } else {
+          at_the_top.removeClass('at_the_top').css({top: ''});
+          forFixed.hide();
+          firstchild.removeClass('firstchild');
+        }
+
+        hasScrolled = false;
+      };
+
+      var setupScroll = function() {
+        if(!$('#sticky_header').length) return;
+
+        var the_window = $(window),
+            sticky_header = $('#sticky_header');
+
+        var hasScrolled = false,
+            REAL_TOP = sticky_header.offset().top;
+
+
+        var handleScroll = function() {
+          if(the_window.scrollTop() > REAL_TOP) {
+            if(!sticky_header.hasClass('stuck')) {
+              sticky_header.addClass('stuck');
+              sticky_header.wrap('<div id="sticky_wrap" />');
+              $('#sticky_wrap').height(sticky_header.outerHeight());
+              
+              $('#scroll-to-top').addClass('visible');
+            }
+
+          } else {
+            if(sticky_header.hasClass('stuck')) {
+              sticky_header.removeClass('stuck');
+              sticky_header.unwrap();
+              
+              $('#scroll-to-top').removeClass('visible');
+            }
+          }
+
+          hasScrolled = false;
+        }
+        the_window.on('scroll.freshdesk', handleScroll);
+
+        $(window).on('resize.freshdesk', function() {
+
+          sticky_header.width($('#Pagearea').width());
+          var to_collapse = false, extra_buffer = 20;
+
+          var width_elements_visible = $('.sticky_right').outerWidth() + $('.sticky_left').outerWidth() + extra_buffer;
+
+          if(sticky_header.hasClass('collapsed')) {
+            var hidden_elements_width = 0;
+            sticky_header.find('.hide_on_collapse').each(function() {
+              hidden_elements_width += $(this).outerWidth();
+            });
+            if(sticky_header.width() < (width_elements_visible + hidden_elements_width)) {
+              to_collapse = true;
+            }
+          } else {
+            to_collapse = sticky_header.width() < width_elements_visible;
+          }
+          sticky_header.toggleClass('collapsed', to_collapse);
+          
+        }).trigger('resize');
+
+      }
+
+      var destroyScroll = function() {
+        $(window).off('scroll.freshdesk');
+        $(window).off('resize.freshdesk');
+      }
+
+      setupScroll();
 
       //Not using pjax for IE10- Temporary fix for IE pjax load issue
       //in dashboard and tickets filter. Remove the condition once we get permanent fix
@@ -509,52 +605,36 @@ is_touch_device = function() {
           jQuery(document).data("requestDone",false);
           jQuery(document).data("parallelData",undefined);
           start_time = new Date();
-          jQuery('#cf_cache').remove();
-          jQuery('#response_dialog').remove();
-          jQuery('.ui-dialog').remove();
-          jQuery('#bulkcontent').remove();
           var bHeight = $('#body-container').height(),
               clkdLI = $(evnt.relatedTarget).parent();
           $('ul.header-tabs li.active').removeClass('active');
           clkdLI.addClass('active');
-          jQuery('.top-loading-wrapper').switchClass('fadeOutRight','fadeInLeft',100,'easeInBounce',function(){
-            jQuery('.top-loading-wrapper').removeClass('hide');
-          });
-          $(document).trigger('ticket_list');
-          $(document).trigger('ticket_show');
           initParallelRequest($(evnt.relatedTarget))
 
-          // hideActivePopovers();
-
-          //Removing Event handlers created by New Ticket Details page:
-          if (jQuery('body').is('.ticket_details')) {
-            jQuery('body *').off('click.ticket_details');
-            jQuery('body *').off('change.ticket_details');
-            jQuery('body *').off('mouseover.ticket_details');
-            jQuery('body *').off('mouseout.ticket_details');
-            jQuery('body *').off('mouseenter.ticket_details');
-            jQuery('body *').off('mouseleave.ticket_details');
-            jQuery('body *').off('change.ticket_details');
-            jQuery(window).off('unload.ticket_details');
-            jQuery(window).off('scroll.ticket_details');
-          }
-
-          return true;
+          // BeforeSend
+          return Fjax.callBeforeSend();
+      }).bind('pjax:beforeReplace',function(evnt,xhr,settings){
+        Fjax.callBeforeReplace();
       }).bind('pjax:end',function(evnt,xhr,settings){
+        
+        //AfterReceive
+        Fjax.callAfterReceive();
 
-        jQuery('.popover').remove();
-        jQuery('.top-loading-wrapper').switchClass('fadeInLeft','fadeOutRight');
-        jQuery('.top-loading-wrapper').addClass('hide','slow');
+        destroyScroll();
+        if(typeof(window.pjaxPrevUnload) == 'function') window.pjaxPrevUnload();
+        window.pjaxPrevUnload = null;
+        
         end_time = new Date();
         setTimeout(function() {
           $('#benchmarkresult').html('Finally This page took ::: <b>'+(end_time-start_time)/1000+' s</b> to load.') 
         },10);
-        jQuery(window).unbind('.pageless');
+        Fjax.callAtEnd();
         var options = jQuery(document).data();
         jQuery(document).data("requestDone",true);
         if(options.parallelData && $(evnt.relatedTarget).data()){
           $($(evnt.relatedTarget).data().parallelPlaceholder).html(options.parallelData) 
         }
+        setupScroll();
         return true;
       })
     }

@@ -1,7 +1,7 @@
 # encoding: utf-8
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
-  include SavageBeast::ApplicationHelper
+  include ForumHelperMethods
   include Juixe::Acts::Voteable
   include ActionView::Helpers::TextHelper
   include Gamification::GamificationUtil
@@ -44,9 +44,9 @@ module ApplicationHelper
   end
 
   def fav_icon_url
-    MemcacheKeys.fetch(["v4","portal","fav_ico",current_portal]) do
+    MemcacheKeys.fetch(["v5","portal","fav_ico",current_portal]) do
       url = current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' : 
-            AWS::S3::S3Object.url_for(current_portal.fav_icon.content.path(:logo),current_portal.fav_icon.content.bucket_name,
+            AWS::S3::S3Object.url_for(current_portal.fav_icon.content.path,current_portal.fav_icon.content.bucket_name,
                                           :expires_in => 30.days, :use_ssl => true)
       "<link rel=\"shortcut icon\" href=\"#{url}\" />"
     end
@@ -736,16 +736,6 @@ module ApplicationHelper
 
   def es_enabled?
     current_account.es_enabled?
-  end
-  
-  def truncate_filename filename
-    extension = filename.include?('.') ? filename.split('.').last : nil
-    extension = nil if filename.gsub('.','') == extension
-    simple_name = extension ? filename[0..-(extension.to_s.length + 2)] : filename
-    if filename.length > 20
-      return simple_name[0,15] + "..." + simple_name[-2..-1] + (extension ? ".#{extension}" : "")
-    end
-    filename
   end
 
   def assumed_identity_message

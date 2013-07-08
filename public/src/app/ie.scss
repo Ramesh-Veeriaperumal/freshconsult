@@ -240,6 +240,9 @@ html.ie6, html.ie7, html.ie8{  height:100%; overflow-y:scroll; }
 		div { display: none;}
 	}
 
+	.ticket_details .conversation_thread .post_in_forum.draft_saved {
+		margin: 10px 5px;
+	}
 	.ticket_details .clearfix .overflowh {
     	overflow: visible;
     }

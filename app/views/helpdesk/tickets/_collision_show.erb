@@ -62,8 +62,9 @@
     jQuery(document).ready(function() {   
      
       socket = io.connect('<%= nodejs_url("collision") %>');
-      
-      jQuery(document).bind('ticket_show', function(ev){
+
+      jQuery(document).unbind('disconnectNode');
+      jQuery(document).bind('disconnectNode', function(ev){
         socket.socket.disconnect();
       });
 

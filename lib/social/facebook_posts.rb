@@ -136,15 +136,19 @@ class Social::FacebookPosts
                         :created_at => Time.zone.parse(comment[:created_time]),
                         :fb_post_attributes => {:post_id => comment[:id], :facebook_page_id =>@fb_page.id ,:account_id => @account.id}
                                   )
-      if @note.save
-        
-      else
-        puts "error while saving the note #{@note.errors.to_json}"
-      end
-      
+
+        begin
+          user.make_current
+          if @note.save
+            
+          else
+            puts "error while saving the note #{@note.errors.to_json}"
+          end
+        rescue
+          User.reset_current_user
+        end
+      end    
     end
-    
-   end
  end 
 
   def truncate_subject(subject , count)
@@ -181,8 +185,13 @@ class Social::FacebookPosts
                         :fb_post_attributes => {:post_id => comment[:id], :facebook_page_id =>@fb_page.id,
                                                 :account_id => @account.id}
                         )
-          unless @note.save
-            puts "error while saving the note :: #{@note.errors.to_json}"
+          begin
+            user.make_current
+            unless @note.save
+              puts "error while saving the note :: #{@note.errors.to_json}"
+            end
+          rescue
+            User.reset_current_user
           end
         end
       end
