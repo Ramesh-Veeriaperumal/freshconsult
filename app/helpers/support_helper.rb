@@ -424,7 +424,8 @@ HTML
 	      when "hidden" then
 			hidden_field(object_name , field_name , :value => field_value)
 	      when "checkbox" then
-			check_box(object_name, field_name, :checked => field_value )
+	      	( element_class.include?("required") ? check_box_tag(%{#{object_name}[#{field_name}]}, field_value, false, { :class => element_class } ) :
+                                                   check_box(object_name, field_name, { :class => element_class, :checked => field_value }) )
 	      when "html_paragraph" then
 	      	_output = []
 	      	form_builder.fields_for(:ticket_body, @ticket.ticket_body) do |ff|
