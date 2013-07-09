@@ -1236,8 +1236,10 @@ ol, ul, li{
 
 }
 
-.ticket_details #HelpdeskReply {
-	overflow: hidden;
+.ticket_details {
+	#HelpdeskReply, #HelpdeskTweets, #HelpdeskFbComment {
+		overflow: hidden;
+	}
 }
 .activity .commentbox {
 	min-height: 30px;

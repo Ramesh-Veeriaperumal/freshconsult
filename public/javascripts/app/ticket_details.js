@@ -1045,7 +1045,7 @@ refreshStatusBox = function() {
 
 		if (messages.length > 0) {
 			var msg = '';
-			messages.forEach(function(str) {
+			$.each(messages,function(str) {
 				msg += str + "\n";
 			});
 
