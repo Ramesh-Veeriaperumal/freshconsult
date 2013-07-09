@@ -10,7 +10,7 @@ module FormBuilders
         :autoresize => false,
         :tabindex => 2,
         :convertDivs => false,
-        :imageUpload => "/uploaded_images",
+        :imageUpload => "/forums_uploaded_images",
         :allowedTags => ["a", "div", "b", "i", "iframe", "br", "p", "img", "strong", "em"],
         :buttons => ['bold','italic','underline', 'deleted','|','unorderedlist', 'orderedlist',  
                       '|','fontcolor', 'backcolor', '|' ,'link','image', 'video']
@@ -20,8 +20,8 @@ module FormBuilders
         :autoresize => false,
         :tabindex => 2,
         :convertDivs => false,
-        :imageUpload => "/uploaded_images",
-        :imageGetJson => "/uploaded_images"
+        :imageUpload => "/solutions_uploaded_images",
+        :imageGetJson => "/solutions_uploaded_images"
       }
 
       REDACTOR_TICKET_EDITOR = {
@@ -29,8 +29,9 @@ module FormBuilders
         :autoresize => false,
         :tabindex => 2,
         :convertDivs => false,
+        :imageUpload => "/tickets_uploaded_images",
         :buttons => ['bold','italic','underline','|','unorderedlist', 'orderedlist',  
-                      '|','fontcolor', 'backcolor', '|' ,'link']
+                      '|','fontcolor', 'backcolor', '|' ,'link', 'image']
       }
 
       REDACTOR_DEFAULT_EDITOR = {

@@ -48,4 +48,11 @@ module Reports::HelpdeskReportControllerMethods
     return " #{condition_key} in (#{values})"
   end
 
+  def report_filter_data_hash(report_type_id)
+    r_f = current_account.report_filters.by_report_type report_type_id
+    r_f.inject({}) do |r, h|
+      r[h[:id]] = {:name => h[:filter_name], :data => h[:data_hash]}
+      r
+    end
+  end
 end

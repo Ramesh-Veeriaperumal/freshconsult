@@ -69,14 +69,35 @@ module Cache::Memcache::Account
   def custom_dropdown_fields_from_cache
     key = ACCOUNT_CUSTOM_DROPDOWN_FIELDS % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
-      ticket_fields.custom_dropdown_fields.find(:all, :include => :flexifield_def_entry )
+      ticket_fields.custom_dropdown_fields(:include => {:flexifield_def_entry => {:include => :flexifield_picklist_vals } } ).find(:all)
     end
   end
 
   def nested_fields_from_cache
     key = ACCOUNT_NESTED_FIELDS % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
-      ticket_fields.nested_fields.find(:all, :include => [:nested_ticket_fields, :flexifield_def_entry] )
+      ticket_fields.nested_fields(:include => {:flexifield_def_entry => {:include => :flexifield_picklist_vals } } ).find(:all)
+    end
+  end
+
+  def event_flexifields_with_ticket_fields_from_cache
+    key = ACCOUNT_EVENT_FIELDS % { :account_id => self.id }
+    MemcacheKeys.fetch(key) do
+      flexifield_def_entries.event_fields.find(:all, :include => :ticket_field)
+    end
+  end
+
+  def flexifields_with_ticket_fields_from_cache
+    key = ACCOUNT_FLEXIFIELDS % { :account_id => self.id }
+    MemcacheKeys.fetch(key) do
+      flexifield_def_entries.find(:all, :include => :ticket_field)
+    end
+  end
+
+  def observer_rules_from_cache
+    key = ACCOUNT_OBSERVER_RULES % { :account_id => self.id }
+    MemcacheKeys.fetch(key) do
+      observer_rules.find(:all)
     end
   end
 

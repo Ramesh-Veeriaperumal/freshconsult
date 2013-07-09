@@ -1,7 +1,3 @@
-<div class="report-page" id="report-page">
-  <div class="report-content-wrapper">
-    <!--report header-->
-    <%= render :partial => "reports/shared/report_view_header", :locals => {} %>
 
     <div class="row-fluid">
       <div class="span12">
@@ -30,11 +26,14 @@
         <div id="tickets_by_arrival_bar_chart" class="single-stacked-bar" style="height:400px;"><div class="noinfo"><%=t('adv_reports.no_data_to_display_msg')%></div></div>
       </div>
     </div>
-  </div>
-</div>
+  
 <script type="text/javascript">
 var data_obj = <%=@data_obj.to_json%>
-jQuery('#sliding').slide();
+//need to check for better approach
+if(_slide_init == false){
+  jQuery('#sliding').slide();
+  _slide_init = true;
+}
 jQuery(document).ready(function() {
   var analysis_1_lineChart = new lineChart(
       {renderTo: 'received_resolved_backlog_line_chart',

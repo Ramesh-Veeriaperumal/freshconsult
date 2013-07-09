@@ -28,12 +28,24 @@
    height:16px;   
 }
 
+.sort_handle{
+	position:relative;
+	float:left;
+	left: 18px;
+	top: 10px;
+	width:10px;
+	height:10px;
+	cursor:move;
+	background-repeat: no-repeat;
+	@include border-radius(none);
+}
+
 /* %% inside */ 
 .symbols-article-list{ 	@include symbols-sprite(article-list); }
 .quoted_button{ 		@include symbols-sprite(quote_button); /* %% inside */ }
 .private-icon{ 			@include symbols-sprite(private-lock-grey); /* %% inside */ }
 .setting_bottom{ 		@include symbols-sprite(setting); }
-
+.sort_handle{  		@include symbols-sprite(sort_handle); }
 /* %% app-bootstrap */ 
 .searchicon{ 				 	@include symbols-sprite(search); }
 .clock{ 						@include symbols-sprite(clock-inactive); }
@@ -64,6 +76,7 @@
 .source-phone{   	@include symbols-sprite(source-phone); }
 .source-chat{   	@include symbols-sprite(source-chat); }
 .source-forum{   	@include symbols-sprite(source-forum); }
+.add-icon-green{	@include symbols-sprite(bullet-folder1_hover); }
 
  /* %% app-common */
 .reminders, .todo{ .delete{ @include symbols-sprite(trash); } }
@@ -79,24 +92,6 @@
 .ticksymbol{ @include symbols-sprite(selected); }
 .fd-menu, .fd-ajaxmenu, #tickets-expanded .fd-menu, #tickets-expanded .fd-ajaxmenu{ 	
 	a:hover, a.selected{ @include symbols-sprite(selected-negtive); }
-}
-
-#index_refresh_alert .reload_icon{	
-	background-color: #888;
-	/*background: #888 url(/images/ac-refresh-details.png) no-repeat center;*/
-	width: 24px;
-	height: 20px;
-	float: right;
-	padding: 6px 7px 2px 10px;
-	margin: -6px 15px 0px 0px;
-	border-radius: 5px;
-	&:before{
-		content:" ";
-		display:inline-block;
-		@include symbols-sprite(ac-refresh-details);
-		width: 19px;
-		height: 16px;
-	}
 }
 
 #resp-icon{ 

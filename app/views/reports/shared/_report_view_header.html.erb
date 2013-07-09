@@ -21,21 +21,43 @@
   </div>
   <!--filter data code-->
   <div class="row-fluid" >
-    <div class="report-filter span12">
-      <% unless defined?(is_pdf) %>
-        <div class="vertical-alignment report-filter-slide-btn">
-            <a class="btn btn-primary" href="#report-filter-edit" data-parent="#report-page" id="sliding">Edit</a>
+    <div class="report-filter span12" id="report-filter-details">
+         <% unless defined?(is_pdf) %>
+          <div class="vertical-alignment report-filter-slide-btn">
+              <a class="btn btn-primary" href="#report-filter-edit" data-parent="#report-page" id="sliding">Edit</a>
+          </div>
+        <%end%>
+        <div class="filter-container">
+          <ul class="inline" id="filter_container">
+            <li>Filtered by:</li>
+            <%@filter_data.each do |obj|%>
+              <li><%=obj["name"]%> : <strong><%=obj["value"]%></strong></li>
+            <%end%>
+            <li>Time Period: <strong><%=@report_date%></strong></li>
+          </ul>
         </div>
-      <%end%>
-      <div id="report-filter-details" class="report-filter-details">
-        <ul class="inline" id="filter_container">
-          <li>Filtered by:</li>
-          <%@filter_data.each do |obj|%>
-            <li><%=obj["name"]%> : <strong><%=obj["value"]%></strong></li>
-          <%end%>
-          <li>Time Period: <strong><%=@report_date%></strong></li>
-        </ul>
-      </div>
+        <% unless defined?(is_pdf) %>     
+        <div class="report_filters">
+          <a href="javascript:void(0);" class="drop-right nav-trigger unsaved span9" id="active_filter" menuid="#leftViewMenu"><%=t('adv_reports.unsaved_report_filter')%></a>
+          <a href="javascript:void(0);" class="hide delete-filter span3" id="delete-filter-link"><i class="icon-trash" title="<%=t('adv_reports.delete_filter_title')%>"></i></a>
+          <a href="javascript:void(0);" class="delete-filter span3" id="save-filter-link"><i class="reports-icon-save" title="<%=t('adv_reports.save_filter_title')%>"></i></a>
+          <ul class="fd-menu saved-reports-menu" data-report-type="<%=report_type_id%>" id="leftViewMenu" style="display:none;">
+            <% li_class = @report_filter_data.empty? ? '' : 'hide'%>
+            <li id="no-report-data" class="<%=li_class%>">---<%=t('adv_reports.saved_report_filters')%>---</li>
+            <% @report_filter_data.each do |key, r_f_obj| %>
+              <li data-id="<%=key%>" class="filter-event"><%=r_f_obj[:name]%></li>
+            <%end%>
+          </ul>
+        </div> 
+      <%end%> 
     </div>
   </div>
+</div>
+<!-- select model for agent start-->
+<a href="#report-dialog-select" class="hide" title="<%=t('adv_reports.save_filter_title')%>" rel="freshdialog"
+data-backdrop="static" data-show-close="false" id="save-report" data-width="500"></a>
+<div id="report-dialog-select" class="hide row-fluid">
+   <p class="hide" id="filter-mandatory-check"><%=t('adv_reports.report_title_mandatory')%></p>
+  <label class="title"><%=t('adv_reports.report_filter_title')%></label>
+  <input class="required text" id="filter_name" name="filter_name" autofocus size="30" type="text" value="">
 </div>

@@ -46,6 +46,10 @@
           jQuery('#contact_role').prop("disabled", true);
       }
   }).trigger("keydown");
+	jQuery("#user_tags").select2({
+	  	tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',')) %>".split(","),
+	  	tokenSeparators: [',']
+	}); 
 <% end %>
 
  	 <% if @existing_user %>
@@ -72,17 +76,9 @@
 			<%= label(:user, :job_title, t('user.title')) %>
 			<%= text_field(:user, :job_title, :class => "text" ) %>
 		</li>
-		<% 
-			tag_csv = @user.tags.collect{|tg| tg.name+", "}
-			if tag_csv.blank?
-				tag_csv=""
-			else
-				tag_csv[-1] = tag_csv[-1][0..-3]
-			end 
-		%>
 		<li>
 			<%= label(:user, :tags, t('tag.title')) %>
-			<%= text_field :user, :tags, :value => tag_csv, :class => "text" %>
+			<%= text_field :user, :tags, :value => @user.tags.collect{|tag| tag.name}.join(','), :class => "select2 row-fluid"%>
 		</li>
 
 		<li>

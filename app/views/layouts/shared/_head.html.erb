@@ -39,6 +39,18 @@
 		<%= include_cloudfront_js :pattern %>
 	<% end %>
 
+	<script type="text/javascript">
+	  I18n.defaultLocale = "<%= I18n.default_locale %>";
+	  I18n.locale = "<%= I18n.locale %>";
+	  I18n.fallbacks = true;
+	</script>
+	<%= include_cloudfront_js I18n.locale.to_s.gsub(/\-/i, '_').to_sym %>
+	<% unless I18n.locale == I18n.default_locale %>
+		<script type="text/javascript"> var locale_translations = I18n.translations[I18n.locale]; </script>
+		<%= include_cloudfront_js I18n.default_locale.to_s.gsub(/\-/i, '_').to_sym %>
+		<script type="text/javascript"> I18n.translations[I18n.locale] = locale_translations; </script>
+	<% end %>
+
 <script type="text/javascript">
 	PROFILE_BLANK_THUMB_PATH = '<%= image_path("fillers/profile_blank_thumb.gif") %>';
 	PROFILE_BLANK_MEDIUM_PATH = '<%= image_path("fillers/profile_blank_medium.gif") %>';

@@ -18,18 +18,27 @@
 	</div>
 </div>
 <div class="row-fluid">
-	<div id="ticket-list-body-content"></div>
+  <div class="report-page" id="report-page">
+    <div class="report-content-wrapper">
+      <!--report header-->
+      <%= render :partial => "reports/shared/report_view_header", :locals => {:report_type_id => @report_type} %>
+  	  <div id="ticket-list-body-content"></div>
+    </div>
+  </div>
 	<div class="report-left-filter hide" id="report-filter-edit">
-		<div class="left-filter">    
+		<div class="left-filter ">    
 		  <!-- <div> <a href="#" data-dismiss="slider">close</a> </div> -->
 		  <%= render :partial => "reports/shared/filter_options", :locals => {:neglect_fields => [:responder_id,:group_id,:customer_id], :current_page => 'analysis_report', :action_url => reports_analysis_reports_url}%>
 		</div>
 	</div>
 </div>
 <script type="text/javascript">
+var _slide_init = false;
 jQuery(document).ready(function(){
 	jQuery("#submit").click(function(){
-    jQuery('#sliding').click();
+    if(jQuery("#report-filter-edit").css('visibility') == 'visible'){
+      jQuery('#sliding').click();
+    }
     jQuery("#loading-box").removeClass('hide');
     jQuery('#ticket-list-body-content').html("");
     jQuery.ajax({
@@ -38,8 +47,10 @@ jQuery(document).ready(function(){
       dataType: "html",
       data: jQuery(".serialize").serializeArray(),
       success: function(data){
+        Helpkit.reports_util.set_filter_data();
       	jQuery("#loading-box").addClass('hide');
         jQuery('#ticket-list-body-content').html(data);
+        
       },
       error: function(data){
         jQuery('#ticket-list-body-content').html(data.statusText);
@@ -47,6 +58,10 @@ jQuery(document).ready(function(){
     }); 
   });
   jQuery("#submit").click();
+
+  /**save report filters code**/
+  Helpkit.report_filter_data = <%=@report_filter_data.to_json%>;
+  Helpkit.reports_util.bindEventsForReportFilter();
 });
 </script>
 <script type="text/javascript" src="/javascripts/report/date.js"></script>

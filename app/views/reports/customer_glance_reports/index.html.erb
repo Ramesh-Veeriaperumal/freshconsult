@@ -22,7 +22,7 @@
 	</div>
 </div>
 <div class="row-fluid">
-	<%= render :partial => "reports/helpdesk_glance_reports/glance_container", :locals => {:report_for=> 'customer'} %>
+	<%= render :partial => "reports/helpdesk_glance_reports/glance_container", :locals => {:report_for=> 'customer',:report_type_id =>  @report_type} %>
 	<div class="report-left-filter" id="report-filter-edit">
 		<div class="left-filter">    
 		  <!-- <div> <a href="#" data-dismiss="slider">close</a> </div> -->
@@ -39,6 +39,10 @@ jQuery(document).ready(function(){
 		date_range: jQuery("#date_range").val(),
 		_url:'<%=reports_customer_glance_reports_url%>'
 	});
+
+	/**save report filters code**/
+	Helpkit.report_filter_data = <%=@report_filter_data.to_json%>;
+	Helpkit.reports_util.bindEventsForReportFilter();
 });
 
 </script>

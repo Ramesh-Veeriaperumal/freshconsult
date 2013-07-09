@@ -1,5 +1,6 @@
 var Helpkit = Helpkit || { };
 
+var ajaxRepContainer = {};
 //all the utils related to reports are defined here.
 Helpkit.reports_util = {
   query_hash : $A(),
@@ -89,25 +90,158 @@ Helpkit.reports_util = {
     args.dataType = args.dataType? args.dataType: "json";
     args.data = args.data;
     args.success = args.success? args.success: function(){};
-    jQuery.ajax( args );
+    args.beforeSend = function(){
+      if(ajaxRepContainer[args.ajaxType]){
+        ajaxRepContainer[args.ajaxType].abort();
+      }
+    };
+    var _request = jQuery.ajax( args );
+    if(args.ajaxType){
+      ajaxRepContainer[args.ajaxType] = _request;
+    }    
+  },
+  updateReportFilters: function(id){
+    Helpkit.reports_util.clearSelect2Filters();
+    // added below condition to handle the nested field population.
+    var _r_f_data = Helpkit.report_filter_data[id]['data']['data_hash'];
+    for(var i =0,_r_f_length = _r_f_data.length; i < _r_f_length; i++){
+      var _select_Elm = jQuery("div[condition='"+_r_f_data[i]['condition']+"'] > select");
+      _select_Elm.select2('val',_r_f_data[i]['value'].split(','));
+      _select_Elm.trigger('change');
+    }
+
+    // add reports by filter data if it exists
+    if(Helpkit.report_filter_data[id]['data']['reports_by']){
+      jQuery("#reports").select2('val',Helpkit.report_filter_data[id]['data']['reports_by']);
+      jQuery("#reports").trigger('change')
+    }
+    //add the comparison fieds 
+    if(Helpkit.report_filter_data[id]['data']['comparison_selected']){
+      jQuery("#comparison_select").select2('val',Helpkit.report_filter_data[id]['data']['comparison_selected'].split(','));
+      jQuery("#comparison_select").trigger('change')
+    }
+    jQuery("#submit").click();
+  },
+  clearSelect2Filters: function(){
+    jQuery("select[class*='select2']").each(function(){jQuery(this).select2('data',null);})
+  },
+  saveReportFilter: function(){
+    var data = jQuery(".serialize").serializeArray();
+    data.push({name : 'filter_name' , value: jQuery("#filter_name").val()});
+    data.push({name : 'report_type', value: jQuery("#leftViewMenu").attr("data-report-type")});
+    var args ={
+      ajaxType: 'report_filter_create',
+      type: "POST",
+      url: "/reports/report_filter/create",
+      dataType: "json",
+      data: data,
+      success: function(data){
+        jQuery("<li/>",{
+          'data-id': data['id'],
+          'class': 'filter-event',
+          text: data['filter_name']
+        }).appendTo("#leftViewMenu");
+
+        Helpkit.report_filter_data[data['id']] = {'data': data['data']};
+        jQuery("#active_filter").text(data['filter_name']);
+        jQuery("#delete-filter-link").removeClass('hide').attr('data-id',data['id']);
+        jQuery("#save-filter-link").addClass('hide');
+        jQuery("#no-report-data").addClass('hide');
+      },
+      error: function(data){
+        jQuery('#metric_container').html(data.statusText);
+        jQuery("#loading-box").addClass('hide');
+      }
+    };
+    Helpkit.reports_util.makeAjaxRequest(args);
+  },
+  deleteReportFilter: function(id){
+    var args ={
+      ajaxType: 'report_filter_delete',
+      type: "POST",
+      url: "/reports/report_filter/destroy/"+id,
+      dataType: "json",
+      success: function(data){
+        jQuery("li[data-id='"+id+"']").remove();
+        if(jQuery("#leftViewMenu li").length <= 1){
+          jQuery("#no-report-data").removeClass('hide');
+        }
+      },
+      error: function(data){
+        jQuery('#metric_container').html(data.statusText);
+        jQuery("#loading-box").addClass('hide');
+      }
+    };
+    Helpkit.reports_util.makeAjaxRequest(args);
+  },
+  bindEventsForReportFilter: function(){
+    /** event binds related to saved report starts here**/
+    jQuery(document).on('click','.filter-event',function(){
+      var _id = jQuery(this).attr('data-id');
+      Helpkit.reports_util.updateReportFilters(_id);
+      jQuery("#active_filter").text(jQuery(this).text());
+      jQuery("#delete-filter-link").removeClass('hide').attr('data-id',_id);
+      jQuery("#save-filter-link").addClass('hide');
+    });
+    jQuery(document).on('click',"#save-filter-link",function(){
+      jQuery("#filter_name").val("")
+      jQuery("#save-report").click();
+    });
+    jQuery(document).on('click',"#report-dialog-select-submit",function(){      
+      if(jQuery("#filter_name").val() == ""){
+        jQuery("#filter-mandatory-check").removeClass('hide');
+        return false;
+      }
+      jQuery("#filter-mandatory-check").addClass('hide');
+      Helpkit.reports_util.saveReportFilter();
+      jQuery("#report-dialog-select-cancel").click();
+    });
+    jQuery(document).on('click',"#delete-filter-link",function(){
+      Helpkit.reports_util.deleteReportFilter(jQuery(this).attr('data-id'));
+      jQuery("#active_filter").text("Unsaved Report");
+      jQuery("#save-filter-link").removeClass('hide');
+      jQuery("#delete-filter-link").addClass('hide');
+    });
+    /** event binds related to saved report ends here**/
+  },
+  set_filter_data: function(){
+    filter_obj = eval(jQuery("input[name='selected_filter_data']").val());
+    var filter_html = "<li>Filtered by:</li>";
+    jQuery.each(filter_obj,function(index,value){
+      filter_html += "<li>"+value['name']+" : <strong>"+value['value']+"</strong></li>";
+    });
+    filter_html += "<li>Time Period : <strong>"+jQuery("#date_range").val()+"</strong></li>";
+    jQuery("#filter_container").html(filter_html);
+  },
+  resizeContainer: function(){
+    var _filter_height = jQuery('#report-filter-edit').outerHeight(true);
+    var _container_height = jQuery('#report-page').outerHeight(true);
+    if((_filter_height) > _container_height)  {
+      jQuery('#report-page').height(_filter_height+30);
+    }
+    else{
+      jQuery('#report-page').height(jQuery('#report-page').children().outerHeight(true));
+    }
   }
 };
 
 //all glance reports related scripts.
 Helpkit.GlanceReport = (function(){
    var _FD = {
-		_const:{
+    _const:{
       'chart_containers':['metric_container','source_container','pie_chart_container','nested_fields_container'],
       'default_charts': ['source','ticket_type','priority'],
       'date_field': 'date_range',
       'filter_container': 'filter_container',
-      'reports_for_id_selector': {'agent':'Agent','helpdesk':'helpdesk','group':'Group','customer':'Customer'}
-		},
+      'reports_for_id_selector': {'agent':'responder_id','helpdesk':'helpdesk','group':'group_id','customer':'customer_id'}
+    },
     bindEvents: function(){
       jQuery("#submit").on('click',function(){
         jQuery("#loading-box").removeClass('hide');
         _FD.flush_containers();
-        jQuery('#sliding').click();
+        if(jQuery("#report-filter-edit").css('visibility') == 'visible'){
+          jQuery('#sliding').click();
+        }
         jQuery("#report_header_date").text(jQuery("#"+_FD._const['date_field']).val());
         _FD.set_filter_data();
         _FD.populate_metric();
@@ -115,6 +249,11 @@ Helpkit.GlanceReport = (function(){
       });
 
       jQuery("#dialog-select-submit").live('click',function(event){
+        if(jQuery("#select_saved_report").val()){
+          jQuery("#leftViewMenu > li[data-id='"+jQuery("#select_saved_report").val()+"']").click();
+          jQuery("#dialog-select").modal("hide");
+          return;
+        }
         if(jQuery("#select_option_div").val() === null || jQuery("#select_option_div").val() === ""){
           jQuery("#mandatory-check").removeClass("hide");
           event.stopPropagation();
@@ -128,7 +267,6 @@ Helpkit.GlanceReport = (function(){
         jQuery("#FilterOptions input[name=selected_filter_data]").val(_this.select_hash.toJSON()).trigger("change");
         jQuery("#FilterOptions input[name=data_hash]").val(_this.query_hash.toJSON()).trigger("change");
         jQuery("#loading-box").removeClass('hide');
-        jQuery('#sliding').click();
         jQuery("#submit").click();
         jQuery("#dialog-select").modal("hide");
       });
@@ -136,13 +274,7 @@ Helpkit.GlanceReport = (function(){
     },
     set_filter_data: function(){
       _FD.set_report_title();
-      filter_obj = eval(jQuery("input[name='selected_filter_data']").val());
-      var filter_html = "<li>Filtered by:</li>";
-      jQuery.each(filter_obj,function(index,value){
-        filter_html += "<li>"+value['name']+" : <strong>"+value['value']+"</strong></li>";
-      });
-      filter_html += "<li>Time Period : <strong>"+jQuery("#"+_FD._const['date_field']).val()+"</strong></li>";
-      jQuery("#"+_FD._const['filter_container']).html(filter_html);
+      Helpkit.reports_util.set_filter_data();
     },
     flush_containers: function(){
       jQuery.each(_FD._const['chart_containers'], function(index, value) {
@@ -161,6 +293,7 @@ Helpkit.GlanceReport = (function(){
     populate_metric: function(){
       data = jQuery(".serialize").serializeArray();
       var args ={
+        ajaxType: 'fetch_metrics',
         type: "POST",
         url: _FD._url+"/fetch_metrics",
         dataType: "html",
@@ -172,7 +305,9 @@ Helpkit.GlanceReport = (function(){
           jQuery("#sla_gauge_container .highcharts-container,#fcr_gauge_container .highcharts-container").css({ left: '-30px' });
         },
         error: function(data){
-          jQuery('#metric_container').html(data.statusText);
+          if(data.statusText != 'abort'){
+            jQuery('#metric_container').html(data.statusText);
+          }
           jQuery("#loading-box").addClass('hide');
         }
       };
@@ -192,6 +327,7 @@ Helpkit.GlanceReport = (function(){
       data = jQuery(".serialize").serializeArray();
       data.push({'name':'reports_by','value':val});
       var args ={
+        ajaxType: val,
         type: "POST",
         url: _FD._url+"/fetch_activity_ajax",
         dataType: "html",
@@ -202,7 +338,7 @@ Helpkit.GlanceReport = (function(){
           jQuery("#report-page").height('auto');
         },
         error: function(data){
-          if(data.statusText != 'error')
+          if(data.statusText != 'error' && data.statusText != 'abort')
             jQuery("#noticeajax").text(data.statusText).show();
         }
       };
@@ -211,7 +347,7 @@ Helpkit.GlanceReport = (function(){
    };
 
    return {
-   		init: function(opts){
+      init: function(opts){
         _FD.report_type = opts['report_type'];
         _FD._url = opts['_url'];
         _FD.report_title = opts['title'];
@@ -223,7 +359,7 @@ Helpkit.GlanceReport = (function(){
         }
 
         jQuery('#sliding').slide();
-   			_FD.bindEvents();
+        _FD.bindEvents();
         _FD.set_filter_data();
         if(_FD.report_type === 'helpdesk'){
           _FD.flush_containers();
@@ -234,7 +370,7 @@ Helpkit.GlanceReport = (function(){
           jQuery('#select-opt').click();
         }
         jQuery("#report_header_date").text(opts['date_range']);
-   		}
+      }
    };
     
 })();
@@ -258,20 +394,16 @@ Helpkit.AnalysisReport = (function(){
       jQuery("#submit").on('click',function(){
         jQuery("#loading-box").removeClass('hide');
         _FD.flush_containers();
-        jQuery('#sliding').click();
+        if(jQuery("#report-filter-edit").css('visibility') == 'visible'){
+          jQuery('#sliding').click();
+        }
         jQuery("#report_header_date").text(jQuery("#"+_FD._const['date_field']).val());
         _FD.set_filter_data();
         _FD.populate_charts();
       });
     },
     set_filter_data: function(){
-      filter_obj = eval(jQuery("input[name='selected_filter_data']").val());
-      var filter_html = "<li>Filtered by:</li>";
-      jQuery.each(filter_obj,function(index,value){
-        filter_html += "<li>"+value['name']+" : <strong>"+value['value']+"</strong></li>";
-      });
-      filter_html += "<li>Time Period : <strong>"+jQuery("#"+_FD._const['date_field']).val()+"</strong></li>";
-      jQuery("#"+_FD._const['filter_container']).html(filter_html);
+      Helpkit.reports_util.set_filter_data();
     },
     flush_containers: function(type){
       jQuery.each(_FD.get_container(), function(index, value) {
@@ -287,6 +419,7 @@ Helpkit.AnalysisReport = (function(){
       data = jQuery(".serialize").serializeArray();
       data.push({'name':'reports_by','value':val});
       var args ={
+        ajaxType: val,
         type: "POST",
         url: _FD._url,
         dataType: "json",
@@ -305,7 +438,9 @@ Helpkit.AnalysisReport = (function(){
         },
         error: function(data){
           var chart_id = val+'_line_chart';
-          jQuery("#"+chart_id).text(data.statusText);
+          if(data.statusText != 'abort'){
+            jQuery("#"+chart_id).text(data.statusText);
+          }          
           jQuery("#"+chart_id).removeClass('sloading loading-small loading-block');
         }
       };
@@ -362,14 +497,20 @@ Helpkit.ComparisonReport = (function(){
 
       jQuery("#submit").click(function(){
         if(_FD.validateSelectedComparison("members_select","comparison_select","noticeajax")){
-          jQuery('#sliding').click();
+          if(jQuery("#report-filter-edit").css('visibility') == 'visible'){
+            jQuery('#sliding').click();
+          }
           jQuery("#loading-box").removeClass('hide');
-          jQuery('#report-filter-edit').hide();
           _FD.populate_charts();
         }
       });
 
       jQuery("#dialog-select-submit").live('click',function(event){
+        if(jQuery("#select_saved_report").val()){
+          jQuery("#leftViewMenu > li[data-id='"+jQuery("#select_saved_report").val()+"']").click();
+          jQuery("#dialog-select").modal("hide");
+          return;
+        }
         if(!_FD.validateSelectedComparison("agent_select_option","metric_select_option","mandatory-check")){
           event.stopPropagation();
           return;
@@ -393,13 +534,7 @@ Helpkit.ComparisonReport = (function(){
       });
     },
     set_filter_data: function(){
-      filter_obj = eval(jQuery("input[name='selected_filter_data']").val());
-      var filter_html = "<li>Filtered by:</li>";
-      jQuery.each(filter_obj,function(index,value){
-        filter_html += "<li>"+value['name']+" : <strong>"+value['value']+"</strong></li>";
-      });
-      filter_html += "<li>Time Period : <strong>"+jQuery("#"+_FD._const['date_field']).val()+"</strong></li>";
-      jQuery("#"+_FD._const['filter_container']).html(filter_html);
+      Helpkit.reports_util.set_filter_data();
     },
     create_hidden_ele: function(){
       jQuery("<input/>", {
@@ -415,17 +550,27 @@ Helpkit.ComparisonReport = (function(){
     populate_charts: function(){
       data = jQuery(".serialize").serializeArray();
       var args ={
+        ajaxType: 'comparision_report',
         type: "POST",
         url: _FD._url+"/generate",
         dataType: "html",
         data: data,
         success: function(data){
           jQuery('#ticket-list-body-content').html(data);
+          _FD.set_filter_data();
           jQuery("#loading-box").addClass('hide');
+          //need to check for better approach 
+          // The var _slide_init is defined in each comparision report index page
+          if(_slide_init == false){
+            jQuery('#sliding').slide();
+            _slide_init = true;
+          }
         },
         error: function(data){
-          jQuery('#ticket-list-body-content').text(data.statusText);
-          jQuery("#loading-box").removeClass('hide');
+          if(data.statusText != 'abort'){
+            jQuery('#ticket-list-body-content').text(data.statusText);
+            jQuery("#loading-box").removeClass('hide');
+          }
         }
       };
       Helpkit.reports_util.makeAjaxRequest(args);
@@ -440,7 +585,7 @@ Helpkit.ComparisonReport = (function(){
         _FD.bindEvents();
         jQuery('#agent_select_option').select2({maximumSelectionSize:4});
         jQuery('#select-opt').trigger("click");
-        jQuery('#sliding').slide();
+        Helpkit.reports_util.set_filter_data();
       }
    };  
 })();

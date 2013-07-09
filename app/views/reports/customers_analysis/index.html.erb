@@ -43,6 +43,10 @@ jQuery(document).ready(function(){
 		date_range: jQuery("#date_range").val(),
 		_url: '<%=reports_customers_analysis_reports_url%>/fetch_chart_data'
 	});
+
+	/**save report filters code**/
+	Helpkit.report_filter_data = <%=@report_filter_data.to_json%>;
+	Helpkit.reports_util.bindEventsForReportFilter();
 });
 
 </script>

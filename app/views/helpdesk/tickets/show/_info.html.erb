@@ -49,7 +49,8 @@
 								<% unless @ticket.deleted or @ticket.spam %>
 									<div class="watchers_tooltip hide" id="new_watcher_page"
 										rel="remote-load" 
-										data-url= "<%=helpdesk_ticket_helpdesk_subscriptions_path(@ticket)%>" >
+										data-url= "<%=helpdesk_ticket_helpdesk_subscriptions_path(@ticket)%>"
+										data-load-unique="true" >
 										<span class="arrow-right"></span>
 									</div>
 									<% unless params[:format]=='widget' %>

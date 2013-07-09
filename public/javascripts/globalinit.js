@@ -17,7 +17,6 @@ is_touch_device = function() {
     var widgetPopup = null;
     var hoverPopup =  false;
     var hidePopoverTimer;
-    var hideWatcherTimer;
     var insideCalendar = false;
     var closeCalendar = false;
 
@@ -63,7 +62,6 @@ is_touch_device = function() {
     };
 
     hideActivePopovers = function (ev) {
-      $("#new_watcher_page").hide();
       $('[rel=widget-popover],[rel=contact-hover],[rel=hover-popover]').each(function(){
         if (ev.target != $(this).get(0))
           $(this).popover('hide');
@@ -202,29 +200,6 @@ is_touch_device = function() {
         widgetPopup = $(this).popover('show');
       });
 
-    // - Add Watchers
-    $("#monitor").live('mouseenter',function(ev) {
-        var element = $(this);
-        // Introducing a slight delay so that the popover does not show up
-        // when just passing thru this element.
-        var timeoutDelayShow = setTimeout(function(){
-          clearTimeout(hidePopoverTimer);
-          hideActivePopovers(ev);
-          $("#new_watcher_page").show();
-        }, 500);
-        element.data('timeoutDelayShow', timeoutDelayShow);
-      }).live('mouseleave',function(ev) {
-          clearTimeout($(this).data('timeoutDelayShow'));
-          hidePopoverTimer = setTimeout(function() { $("#new_watcher_page").hide(); },1000);
-      });    
-
-    $("#new_watcher_page, .select2-results").live('mouseenter',function(ev) {
-      clearTimeout(hideWatcherTimer);
-      clearTimeout(hidePopoverTimer);
-    }).live('mouseleave',function(ev) {
-        hideWatcherTimer = setTimeout(function() { $("#new_watcher_page").hide(); },1000);
-    });
-
     $("body").on('input propertychange', 'textarea[maxlength]', function() {  
         var maxLength = $(this).attr('maxlength');  
         if ($(this).val().length > maxLength) {  
@@ -328,7 +303,7 @@ is_touch_device = function() {
                                           $(btn).button("loading")
 
                                           // IF the form has an attribute called data-remote then it will be submitted via ajax
-                                          if($(form).data("remote"))
+                                          if($(form).data("remote")){
                                               $(form).ajaxSubmit({
                                                 dataType: 'script',
                                                 success: function(response, status){
@@ -339,8 +314,12 @@ is_touch_device = function() {
                                                   $("#"+$(form).data("update")).html(response)
                                                 }
                                               })
-                                          // For all other form it will be a direct page submission         
-                                          else form.submit()
+                                          // For all other form it will be a direct page submission
+                                          }else{
+                                            setTimeout(function(){ 
+                                              form.submit()
+                                            }, 50)
+                                          } 
                                         }
       // Form validation any form append to the dom will be tested via live query and then be validated via jquery
       $("form[rel=validate]").livequery(function(ev){
@@ -484,7 +463,7 @@ is_touch_device = function() {
           }
         });
  
-      flash = $("div.flash_info");
+      flash = $("div.flash_info").not('[rel=permanent]');
       if(flash.get(0)){
          try{ closeableFlash(flash); } catch(e){}
       }

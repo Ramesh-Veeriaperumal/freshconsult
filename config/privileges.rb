@@ -102,7 +102,7 @@ Authority::Authorization::PrivilegeList.build do
   publish_solution do
     resource :"solution/article", :only => [:new, :create, :edit, :update, :delete_tag, :reorder]
     resource :"solution/tag_use"
-    resource :uploaded_image, :only => [:create]
+    resource :solutions_uploaded_image, :only => [:create]
   end
 
   delete_solution do
@@ -126,6 +126,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :monitorship
     resource :"search/home", :only => [:topics]
     resource :search, :only => [:topics]
+    resource :forums_uploaded_image, :only => [:create]
   end
 
   # create_edit_forum_category
@@ -137,6 +138,7 @@ Authority::Authorization::PrivilegeList.build do
   # create_forum_topic
   create_topic do
     resource :topic, :only => [:new, :create ]
+    resource :forums_uploaded_image, :only => [:create]
   end
 
   # edit_forum_topic
@@ -197,6 +199,7 @@ Authority::Authorization::PrivilegeList.build do
       resource :"reports/helpdesk_report"
       resource :"reports/survey_report"
    	resource :"reports/timesheet_report"
+    resource :"reports/report_filter"
 	end
 
   # ************** ADMIN **************************
@@ -223,6 +226,7 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_dispatch_rules do
     resource :"admin/va_rule"
+    resource :"admin/observer_rule"
   end
 
   manage_supervisor_rules do
@@ -244,7 +248,6 @@ Authority::Authorization::PrivilegeList.build do
   # super_admin
   admin_tasks do
     resource :"admin/business_calendar"
-    resource :"admin/supervisor_rule"
     resource :"social/twitter_handle", :only => [:index, :edit, :update, :destroy, :signin, :authdone, :search]
     resource :"social/facebook_page"
     resource :"admin/survey"
@@ -262,7 +265,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/gamification"
     resource :"admin/quest"
     resource :"helpdesk/sla_policy"
-    resource :account, :only => [:update, :edit, :delete_logo, :delete_fav]
+    resource :account, :only => [:update, :edit, :delete_logo, :delete_favicon]
     resource :"admin/template"
     resource :"admin/page"
     resource :"support/preview"

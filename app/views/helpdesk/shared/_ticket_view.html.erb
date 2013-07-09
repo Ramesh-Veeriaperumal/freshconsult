@@ -11,19 +11,7 @@
 <div id="ticket-list-body"><div id="ticket-list-body-content">
 	<div id="ticket-toolbar" class="toolbar">
 	  <%= render :partial => "/helpdesk/shared/ticket_toolbar" , :inline => true %>
-	</div>	
-	<div id="index_refresh_alert" class="hide">
-		<span id="new_ticket_message" class="count-label hide" 
-			data-text-one="<%= t('ticket.new_ticket') %>"
-			data-text-other="<%= t('ticket.new_tickets') %>"></span>
-		<span id="update_message" class="count-label hide"
-			data-text-one="<%= t('ticket.ticket_updated') %>"
-			data-text-other="<%= t('ticket.tickets_updated') %>"></span>
-
-		<span class="reload_icon"></span>
-		<span class="reload_link" ><%=t('ticket.reload_view')%></span>
 	</div>
-
 	<form action id="tickets-expanded" method="post">
 		<div style="margin:0;padding:0;display:inline">
 			<input name="_method" type="hidden" value="put">

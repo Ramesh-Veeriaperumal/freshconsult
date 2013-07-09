@@ -31,17 +31,21 @@
 
 jQuery(document).ready(function(){
 	var _groups = <%=@show_options[Reports::Constants::DEFAULT_COLUMNS_ORDER.index(:group_id)][:options].to_json%>
-		if(_groups.length ==0){
-			jQuery("#noticeajax").text("You don't have any groups.").show();
-			jQuery("#loading-box").addClass('hide');
-			jQuery('#sliding').slide();
-		}
-		Helpkit.AnalysisReport.init({
-			report_type: 'Group',
-			title:"<%=t('adv_reports.group_top_n_analysis')%>",
-			date_range: jQuery("#date_range").val(),
-			_url: '<%=reports_group_analysis_reports_url%>/fetch_chart_data'
-		});
+	if(_groups.length ==0){
+		jQuery("#noticeajax").text("You don't have any groups.").show();
+		jQuery("#loading-box").addClass('hide');
+		jQuery('#sliding').slide();
+	}
+	Helpkit.AnalysisReport.init({
+		report_type: 'Group',
+		title:"<%=t('adv_reports.group_top_n_analysis')%>",
+		date_range: jQuery("#date_range").val(),
+		_url: '<%=reports_group_analysis_reports_url%>/fetch_chart_data'
+	});
+
+	/**save report filters code**/
+	Helpkit.report_filter_data = <%=@report_filter_data.to_json%>;
+	Helpkit.reports_util.bindEventsForReportFilter();
 });
 
 </script>

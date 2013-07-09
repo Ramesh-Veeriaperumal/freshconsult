@@ -7,13 +7,18 @@ class Reports::HelpdeskLoadAnalysisController < ApplicationController
   before_filter { |c| c.requires_feature :enterprise_reporting }
   before_filter :parse_wf_params,:set_selected_tab, :set_time_range,
                 :only => [:generate,:generate_pdf,:send_report_email]
-  before_filter :filter_data,:set_selected_tab, :only => [:index]
+  before_filter :filter_data,:set_selected_tab,:saved_reports, :only => [:index]
 
   def index
+    @report_title = t('adv_reports.helpdesk_load_analysis')
+  end
+
+  def saved_reports
+    @report_filter_data = report_filter_data_hash REPORT_TYPE_BY_KEY[:helpdesk_load_analysis]
+    @report_type = REPORT_TYPE_BY_KEY[:helpdesk_load_analysis]
   end
 
   def generate
-    @report_title = "Helpdesk Load Analysis"
     @data_obj = analysis_report_data @sql_condition.join(" AND ")
     @solution_artical_link = %(https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85340-how-to-read-helpdesk-load-analysis-report)
     render :partial => "/reports/helpdesk_load_analysis/load_analysis"

@@ -11,7 +11,7 @@ class Support::Discussions::TopicsController < SupportController
   # @WBH@ TODO: This uses the caches_formatted_page method.  In the main Beast project, this is implemented via a Config/Initializer file.  Not
   # sure what analogous place to put it in this plugin.  It don't work in the init.rb  
   #caches_formatted_page :rss, :show
-  cache_sweeper :posts_sweeper, :only => [:create, :update, :destroy]
+  # cache_sweeper :posts_sweeper, :only => [:create, :update, :destroy]
 
   def check_user_permission
     if (current_user.id != @topic.user_id)
@@ -216,7 +216,7 @@ class Support::Discussions::TopicsController < SupportController
     end
     
     def load_topic
-      @topic = scoper.find_by_id(params[:id])
+      @topic = scoper.find(params[:id])
       @forum = @topic.forum
       @forum_category = @forum.forum_category
 

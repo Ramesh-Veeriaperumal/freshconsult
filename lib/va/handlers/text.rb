@@ -1,16 +1,20 @@
 class Va::Handlers::Text < Va::RuleHandler
 
   private
-    def is(evaluate_on_value, field_value=nil)
-      if field_value.nil?
-        evaluate_on_value && evaluate_on_value.casecmp(value) == 0
-      else
-        evaluate_on_value && evaluate_on_value.casecmp(field_value.to_s) == 0
-      end
+    def query_value
+      value.empty? ? nil : value
     end
 
-    def is_not(evaluate_on_value, field_value=nil)
-      !is(evaluate_on_value, field_value)
+    def is(evaluate_on_value)
+      evaluate_on_value.to_s.casecmp(value) == 0
+    end
+
+    def is_not(evaluate_on_value)
+      !is(evaluate_on_value)
+    end
+
+    def in(evaluate_on_value)
+      value.include?(evaluate_on_value)
     end
 
     def contains(evaluate_on_value)
@@ -28,21 +32,17 @@ class Va::Handlers::Text < Va::RuleHandler
     def ends_with(evaluate_on_value)
       evaluate_on_value && evaluate_on_value.downcase.ends_with?(value.downcase)
     end
-    
-    def filter_query_is(field_key=nil,field_value=nil)
-      if field_key.nil?
-        [ "#{condition.db_column} = ?", value ]
-      else
-        "flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} = #{field_value.to_s}"
-      end
+
+    def filter_query_is
+      construct_query (query_value ? '=' : 'is')
     end
     
-    def filter_query_is_not(field_key=nil,field_values=nil)
-      if field_key.nil?
-        [ "#{condition.db_column} != ?", value ]
-      else
-        "flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} != #{field_value.to_s}"
-      end
+    def filter_query_is_not
+      construct_query (query_value ? '!=' : 'is not')
+    end
+
+    def construct_query(query_operator)
+      [ "#{condition.db_column} #{query_operator} ?", query_value ]
     end
     
     def filter_query_contains

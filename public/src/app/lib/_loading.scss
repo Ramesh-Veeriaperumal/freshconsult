@@ -41,10 +41,33 @@
   background-position:center center;
   height:100px;
 }
+.redactor-loading-bg{
+	@include border-radius(3px);
+	border:2px solid #eee;
+	border-right:25px solid #eee;
+	padding:2px 12px;
+	width:0px;
+	height:17px;
+	background:#fff;
+	position:relative;
+	left:0;
+	display: block;
+	background:url(/images/cdn-ignored/sprites/symbols/redactor-loading.png) no-repeat left;
+	cursor:none;
+	.sloading{
+		position: relative;
+		left: 15px;
+		top: -11px;
+	}
+}
 .sloading{
 	// Loader spin style sheet
 	.loading-block, &.loading-block{
 		@include min-height(100px);
+	}
+	.trans-bg{
+		background:#fff;
+		@include opacity(0.1);
 	}
 	&.loading-align{
 		margin-top:15px;
@@ -67,6 +90,13 @@
 		box-orient: horizontal;
 		box-pack: center;
 		box-align: center;
+	}
+	&.loading-with-text{
+		margin-top:0;
+		span{
+			color:#777;
+			font-weight: normal;
+		}
 	}
 	&.inner-form-hide{
 		@include min-height(100px);

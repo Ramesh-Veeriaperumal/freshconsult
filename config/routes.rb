@@ -13,7 +13,11 @@
   map.calender '/oauth2callback', :controller => 'authorizations', :action => 'create', :provider => 'google_oauth2'
   map.failure '/auth/failure', :controller => 'authorizations', :action => 'failure'
   
-  map.resources :uploaded_images, :controller => 'uploaded_images'
+  map.resources :solutions_uploaded_images, :controller => 'solutions_uploaded_images', :only => [ :index, :create ] 
+
+  map.resources :forums_uploaded_images, :controller => 'forums_uploaded_images', :only => :create
+
+  map.resources :tickets_uploaded_images, :controller => 'tickets_uploaded_images', :only => :create
   
   map.resources :contact_import , :collection => {:csv => :get, :google => :get}
 
@@ -29,12 +33,7 @@
   
   map.resources :profiles , :member => { :change_password => :post }, :collection => {:reset_api_key => :post}
   
-  map.resources :agents, :member => { :delete_avatar => :delete , 
-                                      :restore => :put, 
-                                      :convert_to_user => :get, 
-                                      :reset_password=> :put }, 
-                          :collection => { :create_multiple_items => :put, 
-                                           :info_for_node => :get} do |agent|
+  map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put, :convert_to_user => :get, :reset_password=> :put }, :collection => {:create_multiple_items => :put} do |agent|
       agent.resources :time_sheets, :controller=>'helpdesk/time_sheets'
   end
 
@@ -91,15 +90,17 @@
     admin.resources :home, :only => :index
     admin.resources :day_passes, :only => [:index, :update], :member => { :buy_now => :put, :toggle_auto_recharge => :put }
     admin.resources :widget_config, :only => :index
-    admin.resources :automations, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
-    admin.resources :va_rules, :member => { :deactivate => :put, :activate => :put }, :collections => { :reorder => :put }
-    admin.resources :supervisor_rules, :member => { :deactivate => :put, :activate => :put }, 
-      :collections => { :reorder => :put }
+    admin.resources :automations, :collection => { :reorder => :put }
+    admin.resources :va_rules, :member => { :activate_deactivate => :put }, :collection => { :reorder => :put }
+    admin.resources :supervisor_rules, :member => { :activate_deactivate => :put }, 
+      :collection => { :reorder => :put }
+    admin.resources :observer_rules, :member => { :activate_deactivate => :put }, 
+      :collection => { :reorder => :put }
     admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get, :test_email => :put}
     admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications
     admin.resources :getting_started, :collection => {:rebrand => :put}
-    admin.resources :business_calender, :member => { :update => :put }
+    admin.resources :business_calendars
     admin.resources :security, :member => { :update => :put }, :collection => { :request_custom_ssl => :post }
     admin.resources :data_export, :collection => {:export => :any }    
     admin.resources :portal, :only => [ :index, :update ]
@@ -159,6 +160,7 @@
     report.resources :customers_analysis_reports, :controller => 'customers_analysis', 
       :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
       :fetch_chart_data => :post}
+    report.resources :report_filter
   end
   
   map.resources :reports
@@ -193,7 +195,7 @@
     subdom.root :controller => 'subscription_admin/subscriptions', :action => 'index'
     subdom.with_options(:namespace => 'subscription_admin/', :name_prefix => 'admin_', :path_prefix => nil) do |admin|
       admin.resources :subscriptions, :member => { :charge => :post, :extend_trial => :post, :add_day_passes => :post }, :collection => {:customers => :get, :deleted_customers => :get, :customers_csv => :get}
-      admin.resources :accounts, :collection => {:agents => :get, :helpdesk_urls => :get, :tickets => :get, :renewal_csv => :get}
+      admin.resources :accounts, :collection => {:agents => :get, :tickets => :get, :renewal_csv => :get}
       admin.resources :subscription_plans, :as => 'plans'
       # admin.resources :subscription_discounts, :as => 'discounts'
       admin.resources :subscription_affiliates, :as => 'affiliates', :collection => {:add_affiliate_transaction => :post}
@@ -382,6 +384,25 @@
     end     
     solution.resources :articles, :only => :show         
   end
+
+  # Savage Beast route config entries starts from here
+  map.resources :posts, :name_prefix => 'all_', :collection => { :search => :get }
+  map.resources :forums, :topics, :posts, :monitorship
+
+  %w(forum).each do |attr|
+    map.resources :posts, :name_prefix => "#{attr}_", :path_prefix => "/#{attr.pluralize}/:#{attr}_id"
+  end
+
+  map.resources :categories, :collection => {:reorder => :put}, :controller=>'forum_categories'  do |forum_c|
+  forum_c.resources :forums, :collection => {:reorder => :put} do |forum|
+    forum.resources :topics, :member => { :users_voted => :get, :update_stamp => :put,:remove_stamp => :put, :update_lock => :put }
+    forum.resources :topics do |topic|
+      topic.resources :posts, :member => { :toggle_answer => :put } 
+      topic.resource :monitorship, :controller => :monitorships
+      end
+    end
+  end
+  # Savage Beast route config entries ends from here
 
   # Removing the home as it is redundant route to home - by venom  
   # map.resources :home, :only => :index 
