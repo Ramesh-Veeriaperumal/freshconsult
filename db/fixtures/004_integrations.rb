@@ -473,7 +473,7 @@ if Integrations::Application.count == 0
           application_id: {{application.id}},
           oauth_token:"{{installed_app.user_access_token}}",
           ticket_id: parseInt('{{ticket.id}}'),
-          ticket_subject: "{{ticket.subject | encode_html}}",
+          ticket_subject: "{{ticket.subject | encode_html | stip_newlines}}",
           events_list: [{{installed_app.events_list}}],
           oauth_url: "{{installed_app.oauth_url}}"
         };
