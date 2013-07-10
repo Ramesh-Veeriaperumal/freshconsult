@@ -28,7 +28,7 @@ class Helpdesk::MergeTicketsController < ApplicationController
 		items = []
 		if params[:search_method] == 'with_subject' && current_account.es_enabled?
       		options = { :load => { :include => 'requester' }, :size => 1000, :preference => :_primary_first }
-      		es_items = Tire.search [current_account.search_index_name], options do |search|
+      		es_items = Tire.search Search::EsIndexDefinition.searchable_aliases([Helpdesk::Ticket], current_account.id), options do |search|
         		search.query do |query|
           			query.filtered do |f|
             			if SearchUtil.es_exact_match?(params[:search_string])
@@ -36,7 +36,6 @@ class Helpdesk::MergeTicketsController < ApplicationController
             			else
               				f.query { |q| q.string SearchUtil.es_filter_key(params[:search_string]), :fields => ['subject'], :analyzer => "include_stop" }
             			end
-            			f.filter :terms, :_type => ['helpdesk/ticket']
             			f.filter :term, { :deleted => false }
             			f.filter :term, { :spam => false }
             			f.filter :term, { :account_id => current_account.id }

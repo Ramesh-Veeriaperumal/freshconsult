@@ -34,8 +34,8 @@
 	big{ font-size: inherit; }
 }
 
-.article-list li, .topic-list li, .ticket-list li, 
-li.article-item, li.topic-item, li.ticket-item {
+.article-list li, .topic-list li, .ticket-list li,
+li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	list-style: none;	
 	position: relative;
 	padding-left: 30px;
@@ -49,13 +49,13 @@ li.article-item, li.topic-item, li.ticket-item {
 .article-list li, .topic-list li, .ticket-list li{	
 	margin-bottom: 6px;
 }
-li.article-item, li.topic-item, li.ticket-item {
+li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	padding-right: 10px;
 }
 .article-list, .topic-list{ margin-bottom: 20px; }
 .article-list li, li.article-item{ &:before{ @extend .icon-article-list; } }
 .topic-list li, li.topic-item{ &:before{ @extend .icon-topic-list; } }
-.ticket-list li, li.ticket-item{ &:before{ @extend .icon-article-list; } }
+.ticket-list li, li.ticket-item, li.note-item{ &:before{ @extend .icon-article-list; } }
 
 .start-topic{
 	float:right;

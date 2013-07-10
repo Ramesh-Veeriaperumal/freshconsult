@@ -33,4 +33,8 @@ class Support::SolutionsController < SupportController
 		end
 
 
+		def load_customer_categories	
+		    @categories=@current_portal.solution_categories.customer_categories.all(:include=>:public_folders)
+	 	end
+
 end

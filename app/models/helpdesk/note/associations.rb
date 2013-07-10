@@ -30,6 +30,7 @@ class Helpdesk::Note < ActiveRecord::Base
   has_one :external_note, :class_name => 'Helpdesk::ExternalNote',:dependent => :destroy
 
   delegate :update_es_index, :to => :notable, :allow_nil => true
+  delegate :deleted, :company_id, :responder_id, :group_id, :spam, :requester_id, :to => :notable, :allow_nil => true, :prefix => true
 
   accepts_nested_attributes_for :tweet , :fb_post, :note_body
 

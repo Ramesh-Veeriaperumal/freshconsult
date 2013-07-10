@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130614064141) do
+ActiveRecord::Schema.define(:version => 20130627125059) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -313,14 +313,6 @@ ActiveRecord::Schema.define(:version => 20130614064141) do
   add_index "domain_mappings", ["account_id", "portal_id"], :name => "index_domain_mappings_on_account_id_and_portal_id", :unique => true
   add_index "domain_mappings", ["domain"], :name => "index_domain_mappings_on_domain", :unique => true
 
-  create_table "elasticsearch_indices", :force => true do |t|
-    t.string   "name",       :null => false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "elasticsearch_indices", ["name"], :name => "index_elasticsearch_indices_on_name", :unique => true
-
   create_table "email_configs", :force => true do |t|
     t.integer  "account_id",      :limit => 8
     t.string   "to_email"
@@ -369,7 +361,6 @@ ActiveRecord::Schema.define(:version => 20130614064141) do
     t.boolean  "imported",                :default => true
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "index_id",   :limit => 8
   end
 
   add_index "es_enabled_accounts", ["account_id"], :name => "index_es_enabled_accounts_on_account_id"
