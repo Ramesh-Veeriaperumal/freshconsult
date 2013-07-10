@@ -36,12 +36,12 @@ module HasDescriptionBody
         end
 
         def description_with_#{model_body}
-          #{model_body} ? #{model_body}.description : read_attribute(:description)
+          #{model_body}.description
         end
         alias_method_chain :description, '#{model_body}'.to_sym
 
         def description_html_with_#{model_body}
-          #{model_body} ? #{model_body}.description_html : read_attribute(:description_html)
+          #{model_body}.description_html
         end
         alias_method_chain :description_html, '#{model_body}'.to_sym
 
