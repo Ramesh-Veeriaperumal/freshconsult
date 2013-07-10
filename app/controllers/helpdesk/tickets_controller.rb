@@ -338,7 +338,7 @@ class Helpdesk::TicketsController < ApplicationController
       }
       format.js
       format.mobile {
-		response = "{#{@item.to_mob_json[1..-2]},#{current_user.to_mob_json[1..-2]}}"
+		response = "{#{@item.to_mob_json[1..-2]},#{current_user.to_mob_json[1..-2]},#{{:subscription => !@subscription.nil?}.to_json[1..-2]}}"
         render :json => response
       }
     end
