@@ -26,19 +26,12 @@ module MapFields
       end
 
       file_field = params[options[:file_field]]
-      
       file_name = "csv_#{Account.current.id}/#{Time.now.to_i}/#{file_field.original_filename}"
       
-      AWS::S3::Base.establish_connection!(
-          :access_key_id     => s3_credentials[:access_key_id],
-          :secret_access_key => s3_credentials[:secret_access_key]
-      )
-      
-      AWS::S3::S3Object.store(
+      AwsWrapper::S3Object.store(
             file_name,
             file_field,
-            s3_credentials[:bucket],
-            :access => :private, 
+            S3_CONFIG[:bucket],
             :content_type => file_field.content_type
      )
      session[:map_fields][:file] = file_name
@@ -51,9 +44,9 @@ module MapFields
         if expected_fields.respond_to?(:call)
           expected_fields = expected_fields.call(params)
         end
-        csv_file = AWS::S3::S3Object.find(session[:map_fields][:file], s3_credentials[:bucket])
+        csv_file = AwsWrapper::S3Object.find(session[:map_fields][:file], S3_CONFIG[:bucket])
         @mapped_fields = []
-        CSVBridge.parse(csv_file.value) do |row|
+        CSVBridge.parse(csv_file.read) do |row|
            @mapped_fields << row
         end
       end
@@ -62,8 +55,8 @@ module MapFields
     unless @map_fields_error
       @rows = []
       begin
-        csv_file = AWS::S3::S3Object.find(session[:map_fields][:file], s3_credentials[:bucket])
-        CSVBridge.parse(csv_file.value) do |row|
+        csv_file = AwsWrapper::S3Object.find(session[:map_fields][:file], S3_CONFIG[:bucket])
+        CSVBridge.parse(csv_file.read) do |row|
            @rows << row
            break if @rows.size == 1
         end
@@ -86,14 +79,6 @@ module MapFields
     @mapped_fields
   end
   
-  def s3_credentials
-    @s3_credentials ||= find_credentials
-  end
-
-  def find_credentials 
-    creds = YAML::load(ERB.new(File.read("#{RAILS_ROOT}/config/s3.yml")).result)
-    (creds[Rails.env] || creds).symbolize_keys
-  end
 
   def fields_mapped?
     raise @map_fields_error if @map_fields_error
@@ -107,7 +92,7 @@ module MapFields
   def map_fields_cleanup
     if @mapped_fields
       if session[:map_fields][:file]
-        AWS::S3::S3Object.delete(session[:map_fields][:file], s3_credentials[:bucket])
+        AwsWrapper::S3Object.delete(session[:map_fields][:file], S3_CONFIG[:bucket])
       end
       session[:map_fields] = nil
       @mapped_fields = nil

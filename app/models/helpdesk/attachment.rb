@@ -20,7 +20,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
    has_attached_file :content, 
     :storage => :s3,
     :s3_credentials => "#{RAILS_ROOT}/config/s3.yml",
-    :path => "/data/helpdesk/attachments/#{Rails.env}/:id/:style/:filename",
+    :path => "data/helpdesk/attachments/#{Rails.env}/:id/:style/:filename",
     :url => ":s3_alias_url",
     :s3_host_alias => S3_CONFIG[:bucket],
     :whiny => false,
@@ -65,8 +65,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
   
   def authenticated_s3_get_url(options={})
-    options.reverse_merge! :expires_in => 5.minutes,:s3_host_alias => "cdn.freshdesk.com", :use_ssl => true
-    AWS::S3::S3Object.url_for content.path, content.bucket_name , options
+    options.reverse_merge! :expires_in => 5.minutes,:s3_host_alias => "cdn.freshdesk.com", :secure => true
+    AwsWrapper::S3Object.url_for content.path, content.bucket_name , options
   end
  
   def image?
@@ -88,14 +88,14 @@ class Helpdesk::Attachment < ActiveRecord::Base
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:description,:content_updated_at,:attachable_id,:attachable_type]) do |xml|
-         xml.tag!("attachment_url",AWS::S3::S3Object.url_for(content.path,content.bucket_name,:expires_in => 5.days).gsub( "#{AWS::S3::DEFAULT_HOST}/", '' ))
+         xml.tag!("attachment_url",AwsWrapper::S3Object.url_for(content.path,content.bucket_name,:expires_in => 5.days).gsub( "#{AWS::S3::DEFAULT_HOST}/", '' ))
      end
    end
 
   def expiring_url(style = "original",expiry = 300)
-    AWS::S3::S3Object.url_for(content.path(style.to_sym),content.bucket_name,
+    AwsWrapper::S3Object.url_for(content.path(style.to_sym),content.bucket_name,
                                           :expires_in => expiry.to_i.seconds,
-                                          :use_ssl => true)
+                                          :secure => true)
   end
 
   def to_liquid

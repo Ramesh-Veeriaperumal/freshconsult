@@ -1,4 +1,3 @@
-require "aws/s3"
 module Workers
 	module LoadDataToRedshift
 		@queue = "load_reports_data_to_redshift"
@@ -19,10 +18,9 @@ module Workers
 					hour = hour - 1
 				end
 				@s3_folder = %(#{$st_env_name}/#{date}_#{hour})
-
-				bucket = AWS::S3::Bucket.find(S3_CONFIG[:reports_bucket])
-				files_arr = bucket.objects({:prefix=>@s3_folder}).clone
-				return if files_arr.empty?
+				bucket = AWS::S3::Bucket.new(S3_CONFIG[:reports_bucket])
+				files_arr = bucket.objects.with_prefix(@s3_folder)
+				return if files_arr.count == 0
 
 				query = %(COPY #{REPORTS_TABLE}(#{REDSHIFT_COLUMNS.join(", ")})
 						from 's3://#{S3_CONFIG[:reports_bucket]}/#{@s3_folder}/redshift_' 
@@ -32,7 +30,8 @@ module Workers
 				vacuum_query = %(VACUUM SORT ONLY #{REPORTS_TABLE}) # sort only vacuum query to sort the newly added rows
 				execute_redshift_query(vacuum_query).clear
 				# delete the uploaded files
-				files_arr.each {|obj| obj.delete}
+				files_arr.delete_all
+				# files_arr.each {|obj| obj.delete}
 			end
 
 		end

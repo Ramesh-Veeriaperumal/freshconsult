@@ -54,7 +54,7 @@ module Reports
 
       	utc_time = Time.now.utc
       	s3_folder = regenerate ? temp_file : %(#{utc_time.strftime('%Y_%m_%d')}_#{utc_time.hour})
-      	AWS::S3::S3Object.store("#{$st_env_name}/#{s3_folder}/redshift_#{temp_file}.csv", File.read(csv_file_path), S3_CONFIG[:reports_bucket])
+      	AwsWrapper::S3Object.store("#{$st_env_name}/#{s3_folder}/redshift_#{temp_file}.csv", File.read(csv_file_path), S3_CONFIG[:reports_bucket])
       	
 				File.delete(csv_file_path)
 			end
