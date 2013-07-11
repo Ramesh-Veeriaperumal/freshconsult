@@ -5,46 +5,15 @@ module UploadedImagesControllerMethods
   end
 
   def create    
-    @image = current_account.attachments.new
-    @image.description = "public"
-    @image.content = params[:image][:uploaded_data]
-    @image.attachable_type = "#{cname} Upload"
+    @image = current_account.attachments.build({
+      :description => "public",
+      :content => params[:image][:uploaded_data],
+      :attachable_type => "#{cname} Upload"
+    })
 
-    respond_to do |format|
-      if @image.image?
-        if @image.save
-          format.html { render :json => { :filelink => @image.content.url, :fileid => @image.id } }
-          format.json { render :json => { :filelink => @image.content.url } }
-          format.xml  
-          format.js do
-            responds_to_parent do
-              render :update do |page|
-                page << "ImageDialog.ts_insert_image('#{@image.content.url}', '#{@image.content_file_name}');"
-              end
-            end
-          end
-        else
-          format.html
-          format.xml  
-          format.js do
-            responds_to_parent do
-              render :update do |page|
-                page.alert('sorry, error uploading image')
-              end
-            end
-          end
-        end
-      else
-        format.html { render :json => {}}  
-        format.xml
-        format.json { render :json => {}}  
-        format.js do
-          responds_to_parent do
-            render :update do |page|
-              page.alert('sorry, please provide a valid image file')
-            end
-          end
-        end
+    respond_to do |format| 
+      format.html do
+        render :json => (@image.save) ?  success_response : error_response 
       end
     end
   end
@@ -53,5 +22,13 @@ module UploadedImagesControllerMethods
 
     def check_anonymous_user
       access_denied unless logged_in?
+    end
+
+    def success_response
+      { :filelink => @image.content.url, :fileid => @image.id }
+    end
+
+    def error_response
+     { :error => @image.errors.blank? ? [] : @image.errors.full_messages.to_sentence }
     end
 end

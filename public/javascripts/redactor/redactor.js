@@ -95,9 +95,9 @@ var RLANG = {
 	confirm_remove_format_for_entire_content: 'Converting the entire content to plain text will remove formatting and inserted items. Are you sure you want to continue?'
 };
 
+var uploaded_img_placeholder = (FILLER_IMAGES || {}).imageLoading || "/images/fillers/image_upload_placeholder.gif";
 
 (function($){
-
 
 // Plugin
 jQuery.fn.redactor = function(option)
@@ -2855,6 +2855,7 @@ Redactor.prototype = {
 							url: this.opts.imageUpload,
 							uploadFields: this.opts.uploadFields,
 							success: $.proxy(this.imageUploadCallback, this),
+							error: $.proxy(this.imageUploadCallback, this),
 							ondropCallback: $.proxy(this.insertLoadingAtCaret, this)
 						});
 					}
@@ -2927,9 +2928,12 @@ Redactor.prototype = {
 			var html = '', data = '';
 			if (link !== true)
 			{
-				data = $.parseJSON(json);
-				if(data.filelink != undefined)
+				if(json.isJSON())
+					data = $.parseJSON(json);
+				if(data.filelink != undefined){
 					html = '<p><img src="' + data.filelink + '" class= "inline-image" data-id = "' + data.fileid + '" height/></p>';
+					this.$editor.find('img.image-loader').replaceWith($(html))
+				}
 				else {
 					alert(RLANG.invalid_image_file);
 					this.$editor.find('img.image-loader').remove()
@@ -2939,10 +2943,9 @@ Redactor.prototype = {
 			else
 			{
 				html = json;
+				this.modalClose();
+				this.execCommand('inserthtml', html);
 			}
-			
-			var imageNode = $(html)
-			this.$editor.find('img.image-loader').replaceWith(imageNode)
 	
 			// upload image callback
 			if (link !== true && typeof this.opts.imageUploadCallback === 'function') 
@@ -3416,7 +3419,7 @@ Redactor.prototype = {
 	},
 	insertLoadingAtCaret: function(){
 		this.modalClose();	
-		var loadingNode = $('<img src="/images/cdn-ignored/sprites/symbols/preloader.gif" class="image-loader">');
+		var loadingNode = $('<img src="' + uploaded_img_placeholder + '" class="image-loader">');
 		this.insertNodeAtCaret(loadingNode.get(0));
 	},
 	uploadLoaded : function()
@@ -3678,26 +3681,14 @@ $.fn.execCommand = function(cmd, param)
 				// drag leave
 				this.dropareabox.bind('dragleave', $.proxy(function() { return this.ondragleave(); }, this));
 		
-				var uploadProgress = $.proxy(function(e) 
-				{ 
-					if(this.opts.ondropCallback){
-						this.opts.ondropCallback()
-					}
-				}, this);
-		
-				var xhr = jQuery.ajaxSettings.xhr();
-				
-				if (xhr.upload)
-				{
-					xhr.upload.addEventListener('progress', uploadProgress, false);
-				}
-				
-				var provider = function () { return xhr; };
-		
 				// drop
 				this.dropareabox.get(0).ondrop = $.proxy(function(event)
 				{
 					event.preventDefault();
+
+					if(this.opts.ondropCallback){
+						this.opts.ondropCallback()
+					}
 					
 					this.dropareabox.removeClass('hover').addClass('drop');
 					
@@ -3727,7 +3718,6 @@ $.fn.execCommand = function(cmd, param)
 						dataType: 'html',
 						url: this.opts.url,
 						data: fd,
-						xhr: provider,
 						cache: false,
 						contentType: false,
 						processData: false,
@@ -3744,6 +3734,13 @@ $.fn.execCommand = function(cmd, param)
 								this.dropareabox.html(data);
 							}
 							
+						}, this),
+						error: $.proxy(function(data)
+						{
+							if (this.opts.error !== false)
+							{
+								this.opts.error(data);
+							}
 						}, this)
 					});
 
