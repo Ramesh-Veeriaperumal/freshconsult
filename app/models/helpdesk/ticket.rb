@@ -224,25 +224,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
      }
   end
 
-  def description
-    description
-  end
- 
-  def description_html
-    description_html
-  end
- 
-  def description_with_ticket_body
-    ticket_body ? ticket_body.description : read_attribute(:description)
-  end
-  alias_method_chain :description, :ticket_body
-
-
-  def description_html_with_ticket_body
-    ticket_body ? ticket_body.description_html : read_attribute(:description_html)
-  end
-  alias_method_chain :description_html, :ticket_body
-  
   def to_param 
     display_id ? display_id.to_s : nil
   end 

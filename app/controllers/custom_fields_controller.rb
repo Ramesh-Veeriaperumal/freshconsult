@@ -22,7 +22,11 @@ class CustomFieldsController < Admin::AdminController
 
     err_str = ""
     @invalid_fields.each do |tf|
-      tf.errors.each { |attr,msg| err_str << " #{tf.label} : #{msg} <br />"  }
+        tf.errors.each do |attr,msg|
+          if(!err_str.include? "#{tf.label} : #{msg}")
+            err_str << " #{tf.label} : #{msg} <br />"
+          end  
+        end  
     end
     flash_message(err_str)
     redirect_to :action => :index
