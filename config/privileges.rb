@@ -248,6 +248,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/supervisor_rule"
     resource :"social/twitter_handle", :only => [:index, :edit, :update, :destroy, :signin, :authdone, :search]
     resource :"social/facebook_page"
+    resource :"social/facebook_tab"
     resource :"admin/survey"
     resource :group
     resource :ticket_field

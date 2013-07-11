@@ -141,7 +141,7 @@ class AuthorizationsController < ApplicationController
   def create_for_facebook(params)
     Account.reset_current_account
     portal_id = request.env["omniauth.origin"] unless request.env["omniauth.origin"].blank?
-    state = "/#{params[:state]}" if params[:state]
+    state = "/facebook" if params[:state]
     portal = Portal.find_by_id(portal_id)
     user_account = portal.account
     portal_url = portal.host

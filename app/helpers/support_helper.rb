@@ -101,13 +101,32 @@ module SupportHelper
 
 	# Portal header
 	def facebook_header portal
-		%( 	<header class="banner">
+		output = []
+		output << %( 	
+			<header class="banner">
 				<div class="banner-wrapper">
 					<div class="banner-title">
 						#{ logo portal }
 						<h1 class="ellipsis heading">#{ portal['name'] }</h1>
 					</div>
 				</div>
+				<div class="page-tabs dropdown">
+					<a role="button" class="dropdown-toggle drop-down mobile-icon-nav-menu" 
+							data-toggle="dropdown" id="welcome-menu" href="#"></a>
+					<ul class="dropdown-menu pull-right clear-text" role="menu" 
+							aria-labelledby="welcome-menu_list" id="welcome-menu_list">
+			)
+
+		portal['tabs'].each do |tab|
+			active_class = (tab['tab_type'] == portal['current_tab']) ? "active" : ""
+			output << %( <li class="#{active_class}"><a href="#{tab['url']}">#{tab['label']}</a></li>) if(tab['url'])
+		end
+
+		user_class = portal['user'] ? "" : "no_user_ticket"
+
+		output << %(</ul></div>
+			<a href="#{ new_support_ticket_path }" class="facebook-button new_button #{user_class}" id="new_support_ticket">
+				New support Ticket</a>
 			</header>
 			<section>	
 					<div class="hc-search-c">
@@ -121,6 +140,8 @@ module SupportHelper
 						</form>
 					</div>
 			</section> )
+
+		output.join("").html_safe
 	end
 
 	# User image page

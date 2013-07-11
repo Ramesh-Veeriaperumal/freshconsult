@@ -1,4 +1,5 @@
 class CreateMonthlyStatsTables < ActiveRecord::Migration
+  shard :none
   def self.up
   	for m in 1..12
   		table = 'ticket_stats_2013_'+m.to_s

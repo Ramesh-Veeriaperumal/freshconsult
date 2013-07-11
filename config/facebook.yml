@@ -1,24 +1,19 @@
 defaults: &defaults
 
- # app_id: 128260310615386
- # secret_key: ab8eb7b00386bf05035b0c62031d43f3
- app_id: 	183781041774128
- secret_key: 9f8e205b4eb674f66bbcde8373b8aa45
- callback_url: http://login.freshpo.com/social/facebook/authdone 
+ app_id: 128260310615386
+ secret_key: ab8eb7b00386bf05035b0c62031d43f3
+ callback_url: http://login.freshpo.com/social/facebook
 
 
 development:
- app_id: 	183781041774128
- secret_key: 9f8e205b4eb674f66bbcde8373b8aa45
- callback_url: http://localhost:3000/social/facebook/authdone  
- #  app_id: 282574098423372
- #  secret_key: f7f90af5765bf0b51f8346f97faac898
- #  callback_url: http://localhost.local:3000/social/facebook/authdone  
+  app_id: 282574098423372
+  secret_key: f7f90af5765bf0b51f8346f97faac898
+  callback_url: http://localhost.local:3000/social/facebook
 
 staging:
  app_id: 177912822282439
  secret_key: 81297d69e2deaf8152a7b0b96508c161
- callback_url: http://login.freshpo.com/social/facebook/authdone 
+ callback_url: http://login.freshpo.com/social/facebook
 
 slave:
  <<: *defaults
@@ -28,4 +23,4 @@ test:
 production:
  app_id: 128260310615386
  secret_key: ab8eb7b00386bf05035b0c62031d43f3
- callback_url: http://login.freshdesk.com/social/facebook/authdone
+ callback_url: http://login.freshdesk.com/social/facebook

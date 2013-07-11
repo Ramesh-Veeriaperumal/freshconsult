@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130613193138) do
+ActiveRecord::Schema.define(:version => 20130702071336) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -380,6 +380,11 @@ ActiveRecord::Schema.define(:version => 20130613193138) do
   end
 
   add_index "es_enabled_accounts", ["account_id"], :name => "index_es_enabled_accounts_on_account_id"
+
+  create_table "facebook_page_mappings", :primary_key => "facebook_page_id", :force => true do |t|
+    t.integer "account_id", :limit => 8, :null => false
+  end
+
 
   create_table "features", :force => true do |t|
     t.string   "type",                    :null => false
@@ -1315,7 +1320,9 @@ ActiveRecord::Schema.define(:version => 20130613193138) do
     t.text     "last_error"
   end
 
-  add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_account_page_id", :unique => true
+  add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_pages_on_account_id"
+  add_index "social_facebook_pages", ["page_id"], :name => "index_page_id", :unique => true
+
   add_index "social_facebook_pages", ["product_id"], :name => "index_product_id"
 
   create_table "social_fb_posts", :force => true do |t|

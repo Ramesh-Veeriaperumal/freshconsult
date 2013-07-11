@@ -59,6 +59,7 @@ class Solution::Article < ActiveRecord::Base
   validates_numericality_of :user_id
  
   named_scope :visible, :conditions => ['status = ?',STATUS_KEYS_BY_TOKEN[:published]] 
+  named_scope :newest, lambda {|num| {:limit => num, :order => 'updated_at DESC'}}
  
   named_scope :by_user, lambda { |user|
       { :conditions => ["user_id = ?", user.id ] }

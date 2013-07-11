@@ -23,6 +23,7 @@ $white:                 #fff !default;
 // Accent colors
 // -------------------------
 $blue:                  #049cdb !default;
+$fb-color:							#1272de !default;
 $blueDark:              #0064cd !default;
 $green:                 #006063 !default;
 $red:                   #9d261d !default;
@@ -80,7 +81,7 @@ $break-large:		75em 16; // Applying styles for Large desktops and above
 
 // Links
 // -------------------------
-$linkColor:             $blue !default; //#08c
+$linkColor:             $fb-color !default; //#08c
 $linkColorHover:        darken($linkColor, 15%) !default;
 
 // -------------------------
@@ -90,6 +91,8 @@ $serifFontFamily:       Georgia, "Times New Roman", Times, serif !default;
 $monoFontFamily:        Menlo, Monaco, Consolas, "Courier New", monospace !default;
 
 $baseFontSize:          12px !default;
+$fontLeadSize:					14px !default;
+$fontHelpSize:					10px !default;
 $baseFontSizeForMobile: 11px !default;
 $baseFontFamily:        $sansFontFamily !default;
 $baseLineHeight:        $baseFontSize * 1.5625 !default;

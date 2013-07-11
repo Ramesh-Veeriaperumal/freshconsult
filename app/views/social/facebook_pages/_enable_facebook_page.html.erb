@@ -1,27 +1,28 @@
-<%if @fb_pages.size > 0%>
+<div id="got_pages">
+<%if @new_fb_pages.size > 0%>
 <% form_for :facebook_page, :url => { :controller=>"social/facebook_pages", :action=>"enable_pages"}, :html => { :multipart => true , :method => :put } do |f| %>
 <div class="list-page facebook-list">
   <div class="list-page-header row-fluid"> 
   	<div class="span6">
-	  	<h3 class="lead">
-	  		Associate "Facebook" pages
-	  	</h3>
 	  	<p class="muted"><%=t('.associate')%></p>
 	  </div>
-  	<span class="span6"><%= submit_tag t("save"), :class => "btn btn-primary pull-right" %></span>
   </div>
   <div class="list-page-body"> 
       <table class="table table-striped">
-      	<% @fb_pages.each do |fb_page| %>
+      	<% @new_fb_pages.each do |fb_page| %>
+        <% source = fb_page.delete(:source) %>
         <tr>
-          <td>
+          <td class="fb_list_pic">
              <div class="preview_pic">
 	    		<%= image_tag (fb_page[:page_img_url]) %>
 	    	</div>
           </td>
-          <td>
-          	<%= check_box( "enable", "pages", { :multiple => true, :checked => true }, fb_page.to_json , nil) %>
-			<%= fb_page[:page_name] %>
+          <td class="fb_page_info">
+          	<%= check_box( "enable", "pages", { :multiple => true, :checked => true }, fb_page.to_json , nil) if fb_page[:page_id]%>
+			    <b><%= fb_page[:page_name] %></b>
+					<% if source %>
+						<p class="muted"> <%= t('facebook_tab.page_added', {:source => source}) %> </p>
+					<% end %>
           </td>
         </tr>
         <% end %>
@@ -36,3 +37,4 @@
 	</p>
  </div>
 <% end %>
+</div>

@@ -67,7 +67,7 @@ class Admin::GettingStartedController < Admin::AdminController
     
     def fb_client   
       @fb_client = FBClient.new @fb_item, {  :current_account => current_account,
-                                          :callback_url => authdone_social_facebook_url }
+                                          :callback_url => social_facebook_index_url }
     end
     
     def build_fb_item

@@ -181,12 +181,12 @@
                 :member     =>  { :search => :any, :edit => :any }
 
     social.resources :facebook, :controller => 'facebook_pages', 
-                :collection =>  { :signin => :any ,:authdone => :any , :event_listener =>:any , :enable_pages =>:any },
-                :member     =>  { :edit => :any, :configure_page_tab => :any, :remove_page_tab => :any }
+                :collection =>  { :signin => :any , :event_listener =>:any , :enable_pages =>:any },
+                :member     =>  { :edit => :any } do |fb|
+                  fb.resources :tabs, :controller => 'facebook_tabs',
+                            :collection => { :configure => :any, :remove => :any }
+                end
   end
-
-  map.resources :facebook_tab, :controller => 'social/facebook_tab', 
-                :collection => { :home => :any }
   
   #SAAS copy starts here
   map.with_options(:conditions => {:subdomain => AppConfig['admin_subdomain']}) do |subdom|
@@ -460,6 +460,8 @@
     support.customer_survey '/surveys/:survey_code/:rating/new', :controller => 'surveys', :action => 'new'
     support.survey_feedback '/surveys/:survey_code/:rating', :controller => 'surveys', :action => 'create', 
       :conditions => { :method => :post }
+
+    support.facebook_tab_home '/facebook_tab/redirect', :controller => 'facebook_tabs', :action => :redirect
 
   end
   

@@ -4114,4 +4114,16 @@ en:
   facebook_tab:
     remove_tab: "Remove Tab"
     tab_not_removed: "Could not remove tab"
-    tab_removed: "Page Tab removed"    
+    tab_removed: "Page tab removed"
+    page_added: "This page has already been added to {{source}}. Please remove it and then try to add"
+    add_tab: "Add page tab"
+    tab_name: "Tab name : "
+    tab_url: "Tab image url : "
+    page_added_model: "Page has been already added"
+    portal:
+      your_tickets: "Your Tickets"
+      view_all: "View all"
+      recent_articles: "Recent Articles"
+      published: "Published in "
+      start_topic: "Start a new topic"
+      recent_topics: "Recent Topics"

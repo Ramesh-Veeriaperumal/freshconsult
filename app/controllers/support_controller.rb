@@ -80,11 +80,6 @@ class SupportController < ApplicationController
       # !!! Dirty hack Pointing the http_referer to support home if it is in preview mode
       request.env["HTTP_REFERER"] = support_home_url if @preview
     end
-
-    def facebook_keys
-      config = File.join(Rails.root, 'config', 'facebook.yml')
-      @tokens = (YAML::load_file config)[Rails.env]
-    end
     
     # Flash message for the page   
     # The helper method can be found in SupportHelper class      
@@ -123,7 +118,7 @@ class SupportController < ApplicationController
     end
 
     def current_tab token    
-      if [ :portal_home ].include?(token)
+      if [ :portal_home, :facebook_home ].include?(token)
         @current_tab ||= "home"
       elsif [ :discussions_home, :topic_list, :topic_view, :new_topic ].include?(token)
         @current_tab ||= "forums"

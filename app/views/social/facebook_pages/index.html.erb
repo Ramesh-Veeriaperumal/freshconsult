@@ -1,12 +1,21 @@
 <%= include_stylesheets :pattern %>
 <%= include_javascripts :pattern %>
+<% content_for :onload_script do %>
+if(jQuery('#got_pages').length){
+  jQuery('#new_page_dialog').trigger('click');
+}
+<% end %>
 <% content_for :sidebar do -%><%-end %>
 <% unless @fb_pages.empty? %>
 <div class="list-page facebook-list">
   <div class="list-page-header row-fluid"> 
     <h3 class="lead span6"><%= t('.title') %></h3>
     <span class="span6">
-      <%= link_to t('facebook.add_page'),  @fb_client.authorize_url(session[:state]) , :class => "btn btn-primary pull-right special medium" %> 
+      <% if @new_fb_pages %>
+      <%= link_to t('facebook.add_page'), "#pages_dialog", :id => "new_page_dialog", :class => "btn btn-primary pull-right special medium", :rel => "freshdialog", "data-width" => "600px", "data-submit-label" => "Associate", :title => "Associate Facebook Page" %>
+      <% else %>
+      <%= link_to t('facebook.add_page'), @fb_client.authorize_url(session[:state]), :class => "btn btn-primary pull-right special medium" %>
+      <% end %>
     </span>
   </div>
   <div class="list-page-body"> 
@@ -41,3 +50,8 @@
 <% else %>
   <%= render :partial => "engage_info" %>
 <% end %>
+<div id="pages_dialog" class="hide">
+  <% if @new_fb_pages %>
+    <%= render :partial => 'enable_facebook_page'%>
+  <% end %>
+</div>

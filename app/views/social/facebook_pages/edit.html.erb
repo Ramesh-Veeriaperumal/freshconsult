@@ -10,10 +10,10 @@
         if(tab_data){
           jQuery('#configure_page_tab').show();
         }else{
-        	jQuery('#configure_page_tab').show().addClass('loading-center')
-          jQuery.get("<%=configure_page_tab_social_facebook_path%>", function(data){
+        	jQuery('#configure_page_tab').show().addClass('sloading loading-align')
+          jQuery.get("<%=configure_social_facebook_tabs_path(@item)%>", function(data){
           tab_data = data;
-          jQuery('#configure_page_tab').removeClass('loading-center').html(data);
+          jQuery('#configure_page_tab').removeClass('sloading loading-align').html(data);
           });
         }
       }

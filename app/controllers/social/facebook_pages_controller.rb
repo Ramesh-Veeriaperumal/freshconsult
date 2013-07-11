@@ -4,19 +4,18 @@ class Social::FacebookPagesController < Admin::AdminController
   before_filter { |c| c.requires_feature :facebook }
   
   before_filter :set_session_state , :only =>[:index , :edit]
-  before_filter :fb_client , :only => [:authdone, :index,:edit]
-  before_filter :build_item, :only => [:authdone]
-  before_filter :load_item,  :only => [:edit, :update, :destroy, :configure_page_tab, :remove_page_tab]  
+  before_filter :fb_client , :only => [:index,:edit]
+  before_filter :load_item,  :only => [:edit, :update, :destroy]  
+  before_filter :handle_tab, :only => :update, :if => :tab_edited?
   
   def index
     @fb_pages = scoper 
-  end
-
-  def authdone
-    begin      
-      @fb_pages = @fb_client.auth(params[:code])
-    rescue
-      flash[:error] = t('facebook.not_authorized')
+    if params[:code]
+      begin
+        @new_fb_pages = @fb_client.auth(params[:code])
+      rescue
+        flash[:error] = t('facebook.not_authorized')
+      end
     end
   end
  
@@ -25,20 +24,6 @@ class Social::FacebookPagesController < Admin::AdminController
     pages = pages.reject(&:blank?)   
     add_to_db pages
     redirect_to :action => :index
-  end
-
-  def configure_page_tab
-    @page_tab = fb_client.get_page_tab.first
-    render :partial => "configure_page_tab"
-  end
-
-  def remove_page_tab
-    if fb_client.remove_page_tab
-      flash[:success] = t('facebook_tab.tab_removed')
-    else
-      flash[:error] = t('facebook_tab.tab_not_removed')
-    end
-    redirect_to social_facebook_path(@item)
   end
   
   def add_to_db fb_pages
@@ -72,8 +57,6 @@ class Social::FacebookPagesController < Admin::AdminController
 
   def update
     if @item.update_attributes(params[:social_facebook_page])  
-      add_tab if params[:add_tab]  
-      fb_client.update_page_tab(params[:custom_name], params[:custom_image_url])
       flash[:notice] = I18n.t(:'flash.facebook.updated')
     else
       update_error
@@ -82,16 +65,20 @@ class Social::FacebookPagesController < Admin::AdminController
   end
   
   protected  
-   def scoper
+    def scoper
       current_account.facebook_pages
     end
   
-   def fb_client   
+    def fb_client   
      @fb_client = FBClient.new @item ,{   :current_account => current_account,
                                           :callback_url => fb_call_back_url}
     end
+
+    def fb_page_tab
+      FBPageTab.new @item
+    end
     
-   def build_item
+    def build_item
       @item = scoper.build
     end
   
@@ -99,8 +86,13 @@ class Social::FacebookPagesController < Admin::AdminController
       @item = current_account.facebook_pages.find(params[:id]) 
     end
 
-    def add_tab
-      page = fb_client.add_page_tab(params[:custom_name], params[:custom_image_url])
+    def handle_tab
+      fb_page_tab.add if params[:add_tab]
+      fb_page_tab.update(params[:custom_name], params[:custom_image_url])
+    end
+
+    def tab_edited?
+      params[:edit_tab]
     end
 
     def human_name
@@ -117,7 +109,7 @@ class Social::FacebookPagesController < Admin::AdminController
     end
     
     def fb_call_back_url
-     url_for(:host => current_account.full_domain, :action => 'authdone')
+     url_for(:host => current_account.full_domain, :action => 'index')
     end
 
     def set_session_state

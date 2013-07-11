@@ -15,6 +15,7 @@ body, .heading {
     @include border-radius(0);
     border-bottom:10px solid $tab_color;
 }
+
 h2 {
     font-size:14px;
 }
@@ -128,7 +129,6 @@ h3.heading{
     text-align: center;
     overflow: visible;
     display: inline-block;
-    @include border-radius(2px);
     padding: 0.3em 0.6em 0.375em;
     border-color: #29447E #29447E #1A356E;
     color:$white;
@@ -143,8 +143,14 @@ h3.heading{
         background-color: #5872a7;
     }
 }
+
+.new_button{
+    margin-top: 1%;
+    float: right;
+}
+
 .list-lead {
-    font-size:$baseFontSize;
+    font-size:$fontLeadSize;
     color:$grayLight;
     a:hover {
         text-decoration:none;
@@ -154,11 +160,17 @@ h3.heading{
     width:100%;
     padding-left:30px;
     .help-text {
+        font-size: $fontHelpSize;
+        a{
+            color: #666666;
+        }
         div {
             display: inline-block;
+            font-size: $fontHelpSize;
         }
     }
 }
+
 #ticket-list {
     .lead {
         @extend .span12;
@@ -180,7 +192,7 @@ h3.heading{
         font-size:14px;
     }
     .c-link {
-        font-size: 1.06em;
+        font-size: $baseFontSize;
     }
     .c-all {
         padding: 8px 5px 8px 20px;
@@ -196,6 +208,9 @@ h3.heading{
             border:0;
             &:hover {
                 background: transparent;
+            }
+            .help-text{
+                font-size: $fontHelpSize;
             }
         }
     }
@@ -269,6 +284,7 @@ h3.heading{
 		margin-top:10px;
 	}
 }
+
 .p-content, .comment-by-agent .p-content{
 	margin-top: -50px;
 	margin-left: 54px;
@@ -351,5 +367,44 @@ h3.heading{
             box-shadow: none;
             font-size: 12px;
         }
+    }
+}
+
+div.page-tabs{
+    background-color: #637BAD;
+    line-height: 20px;
+    width: 24px;
+    min-height: 28px;
+    border-radius: none;
+    @include border-bottom-radius(0);
+    margin: 7px 0 0 15px;
+    color: #333333;
+    text-shadow: none;
+    float: right;
+}
+
+.dropdown-menu.pull-right.clear-text{
+    min-width: 100px;
+    right: -10px;
+    margin-top: 8px;
+    a{
+        padding: 3px 20px;
+        &:hover{
+            color: white;
+            background-color: #637BAD;
+        }
+    }
+}
+
+.page-tabs{
+    .dropdown-menu.clear-text:before{
+        @include triangle(up, white, 6px);
+        height: 0;
+        width: 0;
+        position: absolute;
+        z-index: 2;
+        content: "";
+        top: -6px;
+        right: 14px;
     }
 }

@@ -1,32 +1,72 @@
 <div class="index-page">
+	{% if portal.has_user_signed_in %}
 	<section class="content" >
 		<div class="span9">
 			<h2 class="heading">
-				<a href="/support/tickets"><span class="book-icon"></span>Your Tickets</a>
+				<a href="/facebook/support/tickets"><span class="book-icon"></span>{% translate facebook_tab.portal.your_tickets %}</a>
 			</h2>
 		</div>
 		<span class="span3 omega">
-			<a href="/support/tickets" class="btn pull-right">View all</a>
+			<a href="/facebook/support/tickets" class="btn pull-right">{% translate facebook_tab.portal.view_all %}</a>
 	  </span>
 	  	<div class="span12 c-list">
 		{% for ticket in portal.user.recent_tickets %}
 			{{ ticket | default_ticket_list_item }}
 		{% endfor %}
 	    </div>
-	  	<div class="span12">
-	      <a href="/support/tickets" class="c-all"><span> >> </span>See all Tickets</a>
-		</div>
 	</section>
+	{% endif %}
 	{% if portal.has_solutions %}
 	<section class="content" id="solutions-index-home">
 		<div class="span9">
 			<h2 class="heading">
-				<a href="/support/solutions"><span class="book-icon"></span>{% translate portal.knowledge_base %}</a>
+				<a href="/facebook/support/solutions"><span class="book-icon"></span>{% translate portal.knowledge_base %}</a>
 			</h2>
 		</div>
 		<span class="span3 omega">
-			<a href="/support/solutions" class="btn pull-right">View all</a>
+			<a href="/facebook/support/solutions" class="btn pull-right">{% translate facebook_tab.portal.view_all %}</a>
 		</span>
+		<div class="span12">
+		{% if portal.solution_categories.size > 5 %}
+			{% for category in portal.solution_categories %}
+				{% if category.folders_count > 0 %}
+					<div class="cs-g-c">
+						{% for folder in category.folders %}
+							<section class="cs-g article-list">
+								<div class="list-lead">{{ category.name | h}}</div>
+								<div class="list-lead">
+									{{ folder | link_to_folder_with_count }}
+								</div>
+								{{ folder | article_list:1 }}
+							</section>
+						{% endfor %}
+				{% else %}
+					{{ portal | filler_for_solutions }}
+					</div>
+				{% endif %}
+			{% endfor %}
+		{% else %}
+		<div class="cs-g-c">
+			<section class="index-cs-g topic-list">
+			{% if portal.recent_articles %}
+				<div class="list-lead">{% translate facebook_tab.portal.recent_articles %}</div>
+				<ul>
+				{% for article in portal.recent_articles %}
+					<li class="cs-g-3">
+						<div class="ellipsis">
+							<a href="{{article.url}}">{{article.title | h}}</a>
+						</div>
+						<div class="help-text">
+							{% translate facebook_tab.portal.published %} <a href="{{article.category.url}}">{{article.category.name | h}}</a>
+						</div>
+					</li>
+				{% endfor %}
+				</ul>
+			{% endif %}
+			</section>
+		</div>
+		{% endif %}
+	</div>	
 	</section>
 	{% endif %}
 
@@ -34,22 +74,40 @@
 	<section class="content" id="solutions-index-home">
 		<div class="span8">
 			<h2 class="heading">
-				<a href="support/discussions"><div class="badge-announcement">{% translate portal.community_forums %}</div></a>
+				<a href="/facebook/support/discussions"><div class="badge-announcement">{% translate portal.community_forums %}</div></a>
 			</h2>
 		</div>
 		<div class="span4 omega">
 			<span class="pull-right">
-				<a href="/discussions/topics/new" title="Start a new topic" class=" btn btn-primary">Start a new topic</a>
-				<a href="support/discussions" class="btn">View all</a>
+			{% if portal.has_user_signed_in %}
+				<a href="/discussions/topics/new" title="Start a new topic" class="btn btn-primary" id="start_topic">{% translate facebook_tab.portal.start_topic %}</a>
+			{% else %}
+				<a href="/discussions/topics/new" title="Start a new topic" class="btn btn-primary solution_c" id="start_topic">{% translate facebook_tab.portal.start_topic %}</a>
+			{% endif %}
+				<a href="/facebook/support/discussions" class="btn">{% translate facebook_tab.portal.view_all %}</a>
 			</span>
 		</div>
-		{% if portal.recent_popular_topics != empty %}
-			<div class="span12">
-				<div class="cs-g-c">
-					<section class="index-cs-g topic-list">
-						<div class="list-lead">{% translate portal.popular_topics %}</div>
-						<ul>
-						{% for topic in portal.recent_popular_topics %}
+		<div class="span12">
+			<div class="cs-g-c">
+				<section class="index-cs-g topic-list">
+				{% if portal.recent_popular_topics %}
+					<div class="list-lead">{% translate portal.popular_topics %}</div>
+					<ul>
+					{% for topic in portal.recent_popular_topics %}
+						<li class="cs-g-3">
+							<div class="ellipsis">
+								<a href="{{topic.url}}">{{topic.title | h}}</a>
+							</div>
+							<div class="help-text">
+								{{ topic | topic_info }}
+							</div>
+						</li>
+					{% endfor %}
+					</ul>
+				{% elsif portal.recent_portal_topics %}
+					<div class="list-lead">{% translate facebook_tab.portal.recent_topics %}</div>
+					<ul>
+						{% for topic in portal.recent_portal_topics %}
 							<li class="cs-g-3">
 								<div class="ellipsis">
 									<a href="{{topic.url}}">{{topic.title | h}}</a>
@@ -59,11 +117,13 @@
 								</div>
 							</li>
 						{% endfor %}
-						</ul>
-					</section>
-				</div>
-			</div>
-		{% endif %}
+					</ul>
+				{% else %}
+					{{ portal | filler_for_forums }}
+				{% endif %}
+		</section>
+		</div>
+	</div>
 	</section>
 	{% endif %}
 </div>

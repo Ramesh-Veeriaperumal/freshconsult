@@ -121,8 +121,12 @@ class PortalDrop < BaseDrop
     @forums ||= (forum_categories.map{ |c| c.forums.visible(portal_user) }.reject(&:blank?) || []).flatten
   end
 
+  def recent_portal_topics
+    @recent_portal_topics ||= @source.recent_portal_topics(portal_user).presence
+  end
+
   def recent_popular_topics
-    @recent_popular_topics ||= source.recent_popular_topics(portal_user, 30.days.ago)
+    @recent_popular_topics ||= @source.recent_popular_topics(portal_user, 30.days.ago).presence
   end
 
   def topics_count
@@ -140,6 +144,10 @@ class PortalDrop < BaseDrop
   
   def folders
     @folders ||= (solution_categories.map { |c| c.folders.visible(portal_user) }.reject(&:blank?) || []).flatten
+  end
+
+  def recent_articles
+    @recent_articles ||= source.recent_articles
   end
 
   # !MODEL-ENHANCEMENT Need to make published articles for a 

@@ -5,18 +5,15 @@ class FBClient
    DEFAULT_PAGE_IMG_URL = "http://profile.ak.fbcdn.net/static-ak/rsrc.php/v1/yG/r/2lIfT16jRCO.jpg"
 
   def initialize(fb_page  , options = {} )
-    @config = File.join(Rails.root, 'config', 'facebook.yml')
-    @tokens = (YAML::load_file @config)[Rails.env]
+
     @callback_url = URI.encode("#{options[:callback_url]}")
-    #@callback_url =  URI.encode(@tokens['callback_url'])
-    RAILS_DEFAULT_LOGGER.debug "app id::#{@tokens['app_id']} and secret: #{@tokens['secret_key']} and call_back_url: #{@callback_url}" 
-    @oauth = Koala::Facebook::OAuth.new(@tokens['app_id'], @tokens['secret_key'], @callback_url)
+    @oauth = Koala::Facebook::OAuth.new(FacebookConfig::APP_ID, FacebookConfig::SECRET_KEY, @callback_url)
     @fb_page = fb_page
   end
   
   def authorize_url(state)
     permissions = "manage_pages,offline_access,read_stream,publish_stream,manage_notifications,read_mailbox,read_page_mailboxes"
-    url = "https://www.facebook.com/dialog/oauth?client_id=#{@tokens['app_id']}&redirect_uri=#{@callback_url}&state=#{state}&scope=#{permissions}"
+    url = "https://www.facebook.com/dialog/oauth?client_id=#{FacebookConfig::APP_ID}&redirect_uri=#{@callback_url}&state=#{state}&scope=#{permissions}"
     return url
   end
   
@@ -31,49 +28,28 @@ class FBClient
     pages.each do |page|
       page.symbolize_keys!
       page_id = page[:id]
-      page_info = @graph.get_object(page_id)
+      page_source = FacebookPageMapping.find_by_facebook_page_id(page[:id])
+      if page_source
+        source_account = page_source.shard.domains.main_portal.first
+        if source_account
+          source_string = "#{source_account.domain}"
+          page_id = nil
+        end
+      end
+      page_info = @graph.get_object(page[:id])  
+      page_picture = @graph.get_picture(page[:id],{:type => "small"})
       page_info.symbolize_keys!
       fb_pages << {:profile_id => profile_id , :access_token =>oauth_access_token, :page_id=> page_id,:page_name => page_info[:name], 
-                   :page_token => page[:access_token],:page_img_url => page_info[:picture] || DEFAULT_PAGE_IMG_URL, :page_link => page_info[:link] , :fetch_since => 0,
-                   :reauth_required => false , :last_error => nil} unless page[:access_token].blank?
+                   :page_token => page[:access_token],:page_img_url => page_picture || DEFAULT_PAGE_IMG_URL, :page_link => page_info[:link] , :fetch_since => 0,
+                   :reauth_required => false , :source => source_string, :last_error => nil} unless page[:access_token].blank?
     
     end
     fb_pages
   end
-
-  def add_page_tab name, image_url = nil
-    @page = get_profile
-    @page.put_connections("me", "tabs", {:access_token => @fb_page.access_token, :app_id => @tokens['app_id']})
-    update_page_tab(name, image_url)
-  end
-
-  def get_page_tab
-    @page = get_profile
-    @page.get_connections("me", "tabs/#{@tokens['app_id']}", {:access_token => @fb_page.access_token})
-  end
-
-  def update_page_tab name, image_url = nil
-    @page = get_profile
-    @page.put_connections("me", "tabs/app_#{@tokens['app_id']}", {:access_token => @fb_page.access_token, :custom_name => name, :custom_image_url => image_url})
-  end
-
-  def remove_page_tab
-    @page = get_profile
-    @page.delete_connections("me", "tabs/app_#{@tokens['app_id']}", {:access_token => @fb_page.access_token})
-  end
-  
-  def get_profile
-    @graph = Koala::Facebook::GraphAPI.new(@fb_page.page_token)
-  end
   
   def subscribe(call_back_url)
     verify_token = "freshdesktoken"
-    @updates = Koala::Facebook::RealtimeUpdates.new(:app_id => @tokens['app_id'], :secret => @tokens['secret_key'])
+    @updates = Koala::Facebook::RealtimeUpdates.new(:app_id => FacebookConfig::APP_ID, :secret => FacebookConfig::SECRET_KEY)
     @updates.subscribe("user", "feed", call_back_url, verify_token) 
   end
-  
-  
-  
-  
-  
 end

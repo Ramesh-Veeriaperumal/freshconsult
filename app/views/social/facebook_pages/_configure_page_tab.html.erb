@@ -1,12 +1,13 @@
- <% if @page_tab.nil? %>
- <label class="checkbox">
-    <%= check_box_tag "add_tab" %><p>Add Page tab<p>
-  </label>
-  <% end %>
-  <div id="page_tab_options">
-    <label class="caption">Tab Name : </label>
-    <%= text_field_tag "custom_name", @page_tab ? @page_tab["name"] : "", :class => "fields required" %>
-    <label class="caption">Tab Image Url : </label>
-    <%= text_field_tag "custom_image_url", @page_tab ? @page_tab["image_url"] : "", :class => "fields" %>
-  </div>
-  <%= link_to(t('facebook_tab.remove_tab'), remove_page_tab_social_facebook_path(@item.id), :class => "btn", :id => "cancel_tab") if @page_tab %>
+<% if @page_tab.nil? %>
+<label class="checkbox">
+  <%= check_box_tag "add_tab" %><p><%= t('facebook_tab.add_tab') %><p>
+</label>
+<% end %>
+<div id="page_tab_options">
+  <%= hidden_field_tag "edit_tab", 1 %>
+  <label class="caption"><%= t('facebook_tab.tab_name') %></label>
+  <%= text_field_tag "custom_name", @page_tab ? @page_tab["name"] : "", :class => "fields required" %>
+  <label class="caption"><%= t('facebook_tab.tab_url') %></label>
+  <%= text_field_tag "custom_image_url", @page_tab ? @page_tab["image_url"] : "", :class => "fields" %>
+</div>
+<%= link_to(t('facebook_tab.remove_tab'), remove_social_facebook_tabs_path(@item), :class => "btn", :id => "cancel_tab") if @page_tab %>

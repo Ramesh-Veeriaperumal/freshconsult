@@ -68,6 +68,16 @@ class Portal < ActiveRecord::Base
         forum_category ? forum_category.portal_topics.visible(user).popular(days_before).limit(10) : []
   end
 
+  def recent_articles
+    main_portal ? account.published_articles.newest(10) : 
+        (solution_category ? solution_category.published_articles.newest(10) : [])
+  end
+
+  def recent_portal_topics user
+    main_portal ? account.portal_topics.visible(user).newest(10) : 
+        (forum_category ? forum_category.portal_topics.visible(user).newest(10) : [])
+  end
+
   #Yeah.. It is ugly.
   def ticket_fields(additional_scope = :all)
     filter_fields account.ticket_fields.send(additional_scope)
