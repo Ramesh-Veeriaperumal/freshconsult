@@ -3,6 +3,7 @@ class Helpdesk::Note < ActiveRecord::Base
   include ParserUtil
   include BusinessRulesObserver
   include Va::Observer::Util
+  include Search::ElasticSearchIndex
   include Mobile::Actions::Note
 
   set_table_name "helpdesk_notes"
@@ -200,7 +201,7 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def trigger_observer model_changes
-    @model_changes = model_changes.symbolize_keys
+    @model_changes = model_changes.symbolize_keys unless model_changes.nil?
     filter_observer_events if user_present?
   end
 
@@ -234,6 +235,17 @@ class Helpdesk::Note < ActiveRecord::Base
   def liquidize_body
     attachments.empty? ? body_html : 
       "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
+  end
+
+  def to_indexed_json
+    to_json({
+            :root => "helpdesk/note",
+            :methods => [ :notable_company_id, :notable_responder_id, :notable_group_id, :notable_deleted, :notable_spam, :notable_requester_id ],
+            :only => [ :notable_id, :deleted, :private, :body, :account_id ], 
+            :include => { 
+                          :attachments => { :only => [:content_file_name] }
+                        }
+            })
   end
 
   protected
@@ -294,5 +306,4 @@ class Helpdesk::Note < ActiveRecord::Base
         end
       end
     end
-
 end

@@ -202,6 +202,7 @@ TICKET_DETAILS_DOMREADY = function() {
 
 activeForm = null, savingDraft = false, draftFirstFlag = 0, draftClearedFlag = TICKET_DETAILS_DATA['draft']['cleared_flag'];
 
+$('#ticket_original_request *').css({position: ''}); //Resetting the Position
 $('body').on("change.ticket_details", '#helpdesk_ticket_group_id' , function(e){
 	$('#TicketProperties .default_agent')
 		.addClass('loading-right');
@@ -305,7 +306,7 @@ var updatePagination = function() {
 
 			TICKET_DETAILS_DATA['first_activity'] = null;
 			TICKET_DETAILS_DATA['first_note_id'] = null;
-			$('#show_more').removeClass('sloading loading-small').addClass('hide');
+			$('#show_more').removeClass('loading').addClass('hide');
 			$('[rel=activity_container]').prepend(response);
 			
 		});
@@ -656,13 +657,7 @@ refreshStatusBox = function() {
 
 	$('body').on('click.ticket_details', ".conversation_thread .request_panel form .cancel_btn", function(ev) {
 		ev.preventDefault();
-		if (ev.clientX == 0 && ev.clientY == 0) {
-			return;
-			/* Hack for Forward form.
-			Scenario: When the user presses enter key while on the To field,
-			the cancel btn is triggered.
-			Difference b/w real trigger and this is clientX/Y values */
-		}
+		
 		var btn = $(this);
 		$('#' + btn.data('cntId')).hide().trigger('visibility');
 		if (btn.data('showPseudoReply')) 
@@ -813,7 +808,7 @@ refreshStatusBox = function() {
 					if (_form.attr('rel') == 'note_form')  {
 						$('#toggle-note-visibility .toggle-button').addClass('active');
 						var submit_btn = _form.find('.submit_btn');
-						submit_btn.text(submit_btn.data('defaultText'));
+						submit_btn.find('[rel=text]').text(submit_btn.data('defaultText'));
 					}
 
 					//Enabling original attachments
@@ -883,9 +878,9 @@ refreshStatusBox = function() {
 	$('body').on('change.ticket_details', '#toggle-note-visibility input[type=checkbox]', function(ev){
 		var submit_btn = $(this).parents('form').find('.submit_btn');
 		if($(this).is(':checked')) {
-			submit_btn.text(submit_btn.data('defaultText'));
+			submit_btn.find('[rel=text]').text(submit_btn.data('defaultText'));
 		} else {
-			submit_btn.text(submit_btn.data('publicText'));
+			submit_btn.find('[rel=text]').text(submit_btn.data('publicText'));
 		}
 	});
 
@@ -947,7 +942,6 @@ refreshStatusBox = function() {
 					var fields_to_check = ['priority', 'status', 'group_id', 'ticket_type', 'product', 'source'];
 					for(i in fields_to_check) {
 						if (typeof(fields_to_check[i]) == 'string' && $('.ticket_details #helpdesk_ticket_' + fields_to_check[i]).data('updated')) {
-							console.log('Setting postProcess to true');
 							postProcess = true;	
 							break;
 						}
@@ -1011,6 +1005,25 @@ refreshStatusBox = function() {
 		$('#scroll-to-top').show();
 	}
 
+	// MOVE TO !PATTERN
+	$('body').on('change.pattern', '.selected_to_yellow [type=radio], .selected_to_yellow [type=checkbox]', function(ev) {
+		$(this).parents('.selected_to_yellow').find('.stripe-select').removeClass('stripe-select');
+		$(this).parents('td').first().toggleClass('stripe-select', $(this).prop('checked'));
+	});
+
+	$("body").on('change.ticket_details', '#helpdesk_ticket_status', function(e){
+		var required_closure_elements = $(".required_closure");
+		if($('#helpdesk_ticket_status option:selected').val() === "5"){
+			required_closure_elements.addClass('required').siblings('label').append('<span class="required_star">*</span>');
+		}
+		else{
+			required_closure_elements.removeClass('required');
+			required_closure_elements.siblings('label.error').remove();
+			required_closure_elements.siblings('label').find('.required_star').remove();
+		}
+	});
+
+
 	//Hack for those who visit upon hitting the back button
 	$('#activity_toggle').removeClass('active');
 	jQuery('#activity_toggle').prop('checked', false);
@@ -1032,7 +1045,7 @@ refreshStatusBox = function() {
 
 		if (messages.length > 0) {
 			var msg = '';
-			messages.forEach(function(str) {
+			$.each(messages,function(str) {
 				msg += str + "\n";
 			});
 
@@ -1066,12 +1079,5 @@ TICKET_DETAILS_CLEANUP = function() {
     jQuery('body').removeClass('ticket_details');
 
 };
-
-
-// MOVE TO !PATTERN
-$('body').on('change.pattern', '.selected_to_yellow [type=radio], .selected_to_yellow [type=checkbox]', function(ev) {
-	$(this).parents('.selected_to_yellow').find('.stripe-select').removeClass('stripe-select');
-	$(this).parents('td').first().toggleClass('stripe-select', $(this).prop('checked'));
-});
 
 })(jQuery);

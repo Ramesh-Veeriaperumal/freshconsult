@@ -1,44 +1,39 @@
-class ElasticsearchIndex < ActiveRecord::Base
+class Search::EsIndexDefinition
+	class << self
+		include ErrorHandle
 
-  include Tire::Model::Search if ES_ENABLED
-  include MemcacheKeys
-  include ErrorHandle
-
-  has_many :es_enabled_accounts, :class_name => 'EsEnabledAccount', :foreign_key => "index_id"
-
-  after_commit_on_create :create_search_index
-
-  def self.es_id_for(account_id)
-    search_shard_delta = 0
-    search_shard = (account_id % 50) + 1 + search_shard_delta
-    es_index = find_by_id(search_shard)
-    es_index.id
+  # These are table names of the searchable models.
+  # Incase we want to add any new model the table name should be added here
+  def models
+    [:customers, :users, :helpdesk_tickets, :solution_articles, :topics, :helpdesk_notes]
   end
 
-  def create_search_index
-    sandbox(0) {
-      Tire.index(self.name) do
-        create(
-          :settings => {
-            :analysis => {
-              :filter => {
-                :word_filter  => {
-                       "type" => "word_delimiter",
-                       "split_on_numerics" => false,
-                       "generate_word_parts" => false,
-                       "generate_number_parts" => false,
-                       "split_on_case_change" => false,
-                       "preserve_original" => true
-                }
-              },
-              :analyzer => {
-                :default => { :type => "custom", :tokenizer => "whitespace", :filter => [ "word_filter", "lowercase" ] },
-                :include_stop => { :type => "custom", :tokenizer => "whitespace", :filter => [ "word_filter", "lowercase", "stop" ] }
+  def index_hash(pre_fix = "fd_es_index_1")
+    Hash[*models.map { |i| [i,"#{i}_#{pre_fix}"] }.flatten]
+  end
+
+	def create_es_index(index_name = "fd_es_index_1")
+    index_hash(index_name).each do |key, value|
+      create_model_index(value,key)
+    end
+	end
+
+	def customers
+    	{
+        	:customer => {
+              :properties => {
+                  :name => { :type => :string, :boost => 10, :store => 'yes' },
+                  :description => { :type => :string, :boost => 3 },
+                  :note => { :type => :string, :boost => 4 },
+                  :account_id => { :type => :long, :include_in_all => false }
               }
             }
-          },
-          :mappings => {
-            :user => {
+  		}
+	end
+
+	def users
+    	{
+        	:user => {
               :properties => {
                   :name => { :type => :string, :boost => 10, :store => 'yes' },
                   :email => { :type => :string, :boost => 50 },
@@ -56,18 +51,15 @@ class ElasticsearchIndex < ActiveRecord::Base
                   :account_id => { :type => :long, :include_in_all => false },
                   :deleted => { :type => :boolean, :include_in_all => false }
               }
-            },
-            :customer => {
+            }
+  		}
+	end
+
+	def helpdesk_tickets
+    	{
+        	:"helpdesk/ticket" => {
               :properties => {
-                  :name => { :type => :string, :boost => 10, :store => 'yes' },
-                  :description => { :type => :string, :boost => 3 },
-                  :note => { :type => :string, :boost => 4 },
-                  :account_id => { :type => :long, :include_in_all => false }
-              }
-            },
-            :"helpdesk/ticket" => {
-              :properties => {
-                :display_id => { :type => :long, :store => 'yes' },
+                :display_id => { :type => :long },
                 :subject => { :type => :string, :boost => 10, :store => 'yes' },
                 :description => { :type => :string, :boost => 5, :store => 'yes' },
                 :account_id => { :type => :long, :include_in_all => false },
@@ -82,21 +74,44 @@ class ElasticsearchIndex < ActiveRecord::Base
                                     :content_file_name => { :type => :string } 
                                   }
                                 },
-                :es_notes => { :type => "object", 
-                               :properties => {
-                                 :body => { :type => :string },
-                                 :private => { :type => :boolean, :include_in_all => false },
-                                 :attachments => { :type => :string }
-                               }
-                             },
                 :es_from => { :type => :string },
                 :to_emails => { :type => :string },
                 :es_cc_emails => { :type => :string },
                 :es_fwd_emails => { :type => :string },
                 :company_id => { :type => :long, :null_value => 0, :include_in_all => false }
               }
-            },
-            :"solution/article" => {
+            }
+  		}
+	end
+
+  def helpdesk_notes
+      {
+          :"helpdesk/note" => {
+              :properties => {
+                :body => { :type => :string, :boost => 5, :store => 'yes' },
+                :account_id => { :type => :long, :include_in_all => false },
+                :notable_id => { :type => :long, :include_in_all => false },
+                :notable_requester_id => { :type => :long, :include_in_all => false },
+                :notable_responder_id => { :type => :long, :null_value => 0, :include_in_all => false },
+                :notable_group_id => { :type => :long, :null_value => 0, :include_in_all => false },
+                :notable_spam => { :type => :boolean, :include_in_all => false },
+                :deleted => { :type => :boolean, :include_in_all => false },
+                :private => { :type => :boolean, :include_in_all => false },
+                :notable_deleted => { :type => :boolean, :include_in_all => false },
+                :attachments => { :type => "object", 
+                                  :properties => {
+                                    :content_file_name => { :type => :string } 
+                                  }
+                                },
+                :notable_company_id => { :type => :long, :null_value => 0, :include_in_all => false }
+              }
+            }
+      }
+  end
+
+	def solution_articles
+    	{
+        	:"solution/article" => {
               :properties => {
                 :title => { :type => :string, :boost => 10, :store => 'yes' },
                 :desc_un_html => { :type => :string, :boost => 6, :store => 'yes' },
@@ -125,8 +140,13 @@ class ElasticsearchIndex < ActiveRecord::Base
                                   }
                                 }
               }
-            },
-            :topic => {
+            }
+  		}
+	end
+
+	def topics
+    	{
+        	:topic => {
               :properties => {
                   :title => { :type => :string, :boost => 10, :store => 'yes' },
                   :user_id => { :type => :long, :include_in_all => false },
@@ -154,9 +174,97 @@ class ElasticsearchIndex < ActiveRecord::Base
                             }
               }
             }
-          }
+  		}
+	end
+
+  def create_model_index(index_name,model_mapping)
+  	sandbox(0) {
+      Tire.index(index_name) do
+        create(
+          :settings => {
+            :number_of_shards => 15,
+            :number_of_replicas => 1,
+            :analysis => {
+              :filter => {
+                :word_filter  => {
+                       "type" => "word_delimiter",
+                       "split_on_numerics" => false,
+                       "generate_word_parts" => false,
+                       "generate_number_parts" => false,
+                       "split_on_case_change" => false,
+                       "preserve_original" => true
+                }
+              },
+              :analyzer => {
+                :default => { :type => "custom", :tokenizer => "whitespace", :filter => [ "word_filter", "lowercase" ] },
+                :include_stop => { :type => "custom", :tokenizer => "whitespace", :filter => [ "word_filter", "lowercase", "stop" ] }
+              }
+            }
+          },
+          :mappings =>  Search::EsIndexDefinition.send(model_mapping.to_sym) 
         )
+  	end
+  }
+  end
+
+  def latest_index_prefix
+    "fd_es_index_1"
+  end
+
+  # Will return an array of alias names for the classes provided
+  # parameters: search_in (Array of class objects not just names) and account_id
+  def searchable_aliases(search_in, account_id)
+    res_aliases = []
+    search_in.each do |klass|
+      res_aliases << "#{klass.table_name}_#{account_id}"
+    end
+    res_aliases
+  end
+  
+  def create_aliases(account_id)
+    sandbox(0) {
+      index_hash.each do |model, index_name|
+        a = Tire::Alias.new
+        a.name("#{model}_#{account_id}")
+        a.index(index_name)
+        a.filter(:term, :account_id => account_id)
+        a.routing(account_id.to_s)
+        a = a.save
+        response  = JSON.parse(a.body)
+        NewRelic::Agent.notice_error(response["error"])  unless response["ok"]
       end
     }
   end
+
+  def remove_aliases(account_id)
+    sandbox(0) {
+      index_hash.each do |model, index_name|
+        a = Tire::Alias.find("#{model}_#{account_id}")
+        es_indices = a.indices
+        es_indices.each do |index_name|
+          a.indices.delete index_name
+        end
+        a = a.save
+        response  = JSON.parse(a.body)
+        NewRelic::Agent.notice_error(response["error"])  unless response["ok"]
+      end
+    }
+  end
+
+  def rebalance_aliases(account_id,new_index_prefix,old_index_prefix = "fd_es_index_1")
+    sandbox(0) {
+      old_index_hash = index_hash(old_index_prefix)
+      index_hash(new_index_prefix).each do |model, index_name|
+        a = Tire::Alias.find("#{model}_#{account_id}")
+        a.indices.add index_name
+        a.indices.delete old_index_hash[model]
+        a.routing(account_id.to_s)
+        a = a.save
+        response  = JSON.parse(a.body)
+        NewRelic::Agent.notice_error(response["error"])  unless response["ok"]
+      end
+    }
+  end
+
+end
 end

@@ -103,7 +103,7 @@ ol, ul, li{
 	}
 }
 
-h2.subject{
+.ticket_show h2.subject{
 	font-size: 20px;
 	color: #333;
 	@include text-shadow(0px 1px 0px #fff);
@@ -156,7 +156,7 @@ h2.subject{
 		}
 	}
 }
-.content{
+.ticket_show .content{
 	.controls{
 		width: 100%;
 		display: block;
@@ -708,7 +708,7 @@ h2.subject{
 	.post_in_forum {
 		float: left; 
 		width: 200px;
-		margin: 15px 5px;
+		margin: 15px 5px 0;
 		label {
 			display: block;
 			margin-right: 25px;
@@ -719,6 +719,10 @@ h2.subject{
 			[type="checkbox"] {
 				margin: 0 5px 0 0;
 			}
+		}
+
+		&.draft_saved {
+			margin-top:0;
 		}
 	}
 
@@ -1232,6 +1236,11 @@ h2.subject{
 
 }
 
+.ticket_details {
+	#HelpdeskReply, #HelpdeskTweets, #HelpdeskFbComment {
+		overflow: hidden;
+	}
+}
 .activity .commentbox {
 	min-height: 30px;
 
@@ -2101,7 +2110,7 @@ h2.subject{
 }
 
 // Timesheet Modal CSS Overrides and new CSS
-#timeentry_add, .timeentry_edit {
+.ticket_details #timeentry_add, .ticket_details .timeentry_edit {
 	margin: 5px;
 	padding: 0;
 	clear: both;
@@ -2112,12 +2121,12 @@ h2.subject{
 }
 
 
-#time_integration fieldset.integration {
+.ticket_details #time_integration fieldset.integration {
 	border: none;
 	min-height: 20px;
 }
 
-#time_integration fieldset.integration .integration_container {
+.ticket_details #time_integration fieldset.integration .integration_container {
 	padding: 30px 0 10px;
 	.field, .field-35 {
 		label {
@@ -2684,7 +2693,7 @@ $collision_delay: 1s;
 		margin: 30px 0px 0px -10px;
 	}
 
-	#view_tickets .assign {
+	#view_tickets .assign ul {
 		position: relative;
 	}
 }
@@ -2777,7 +2786,7 @@ $collision_delay: 1s;
 		visibility: hidden;
 	}
 
-	#adjacents, #activity_toggle {
+	#adjacents {
 		float: right;
 	}
 
@@ -2797,10 +2806,18 @@ $collision_delay: 1s;
 	div.watchers_tooltip {
 		margin: 32px 0px 0px -7px;
 	}
+
+	.show_on_collapse { display: none; }
+
 }
 
 #sticky_header.stuck {
 	.status_info {
 		visibility: visible;
 	}
+}
+
+#sticky_header.collapsed {
+	.show_on_collapse { display: block; }
+	.hide_on_collapse { display: none; }
 }

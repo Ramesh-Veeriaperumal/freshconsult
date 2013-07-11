@@ -21,6 +21,20 @@
         <% end %>
       </li>
     <% end %>
+
+    <% unless @searched_notes.nil? %>
+      <li class="ticket_icon"> 
+        <strong class="title">Notes</strong>
+        <% @searched_notes.each do |note| %>
+          <div class="group">
+            <span class="icon"></span>
+            <%= link_to("#{note.notable.subject} (##{note.notable.display_id})", note.notable, :class => "big") %>
+            <span class="light"><%= "Requested by, <b>#{note.notable.requester}</b>" %> </span>
+            <p><%= note.body %></p>
+          </div>
+        <% end %>
+      </li>
+    <% end %>
     
     <% unless @searched_users.nil? %>
       <li> 

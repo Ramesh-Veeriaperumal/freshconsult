@@ -38,7 +38,6 @@ FreshdeskPjax.prototype = {
     },
 
     callBeforeReplace: function() {
-    	console.log('callBeforeReplace');
     	if(typeof(this._prevAfterNextPage) == 'function') this._prevAfterNextPage();
     	this._prevAfterNextPage = null;
     },
@@ -79,10 +78,8 @@ FreshdeskPjax.prototype = {
     },
 
     _removeLoading: function() {
-    	console.log('about to hide the loading bar');
       $('.top-loading-wrapper').switchClass('fadeInLeft','fadeOutRight');
       $('.top-loading-wrapper').addClass('hide','slow');
-      console.log('loading shd be hidden now');
     },
 
     _beforeSendCleanup: function() {
@@ -90,12 +87,25 @@ FreshdeskPjax.prototype = {
 			$('#response_dialog').remove();
 			$('.ui-dialog').remove();
 			$('#bulkcontent').remove();
+
+      this._disconnectNode();
+
     },
 
     _afterReceiveCleanup: function() {
 			$('.popover').remove();
 			$('.modal').remove();
 			$('.twipsy').remove();
+    },
+
+    _disconnectNode: function() {
+      try {
+        jQuery(document).trigger('disconnectNode');
+      } catch(err) {
+        console.log('Unable to disconnect the socket connection');
+        console.log('Error:');
+        console.log(err);
+      }
     }
 }
 }(window.jQuery);

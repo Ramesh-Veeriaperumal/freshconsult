@@ -175,7 +175,7 @@ en:
       level1: "Level 1"
       level2: "Level 2"
       level3: "Level 3"
-      nestedfield_helptext: "Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>Learn more</a> "
+      nestedfield_helptext: "Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a target='_blank' href=%{learn_more}>Learn more</a> "
       dropdown_items_edit: "Dropdown items - edit view"
       dropdown_items_preview: "Dropdown items - Preview"
       status_choices: "Status choices"
@@ -2049,6 +2049,7 @@ en:
     reported: reported
     said: said
     solutions_home: "Solution home"
+    attach_file: "Attach a <b>file</b>"
     header: 
       preview_message: "<b>Preview mode</b> - <a href='javascript:window.close()'>Click here</a> to go back."
     new_support_ticket: New support ticket
@@ -2082,6 +2083,8 @@ en:
     no_forums_info_2: "Why don't you start a %{start_topic_link}?"
     article:
       see_all_articles: "See all %{count} articles"
+      more_articles: "More articles in <span class='folder-name'> %{article_name} </span>"
+      modified_on: "Modified on:"
     folder:
       filler_text: "Watch this space for articles regarding %{folder_name}"
     topic:   
@@ -2602,6 +2605,7 @@ en:
       description_note: "The Subject and Description of the merged tickets will be added as notes in the primary ticket"
       form_title: Add a Note
       add_and_resolve: Add and Resolve
+      add_and_set_as: "Add and set as <strong>%{status}</strong>"
       add_public_note: Add Public Note
       add_private_note: Add Private Note
       notify_agents: Notify Agents

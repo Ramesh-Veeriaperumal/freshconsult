@@ -196,8 +196,8 @@ class AccountsController < ApplicationController
   
   def cancel
     if request.post? and !params[:confirm].blank?
-      # response = Billing::Subscription.new.cancel_subscription(current_account)
-      perform_account_cancel(params[:account_feedback]) #if response
+      response = Billing::Subscription.new.cancel_subscription(current_account)
+      perform_account_cancel(params[:account_feedback]) if response
     end
   end
   

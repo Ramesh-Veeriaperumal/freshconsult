@@ -150,13 +150,19 @@
 		// Form validation any form append to the dom will be tested via live query and then be validated via jquery
 		$("form[rel=validate]").livequery(function(ev){
 			$(this).validate({
+				errorPlacement: function(error, element) {
+		          if (element.prop("type") == "checkbox")
+		            error.insertAfter(element.parent());
+		          else
+		            error.insertAfter(element);
+		        },
 				highlight: function(element, errorClass) {
 					// Applying bootstraps error class on the container of the error element
-					$(element).parent().parent().addClass(errorClass+"-group")
+					$(element).parents('div.control-group').addClass(errorClass+"-group")
 				},
 				unhighlight: function(element, errorClass) {
 					// Removed bootstraps error class from the container of the error element
-					$(element).parent().parent().removeClass(errorClass+"-group")
+					$(element).parents('div.control-group').removeClass(errorClass+"-group")
 				},
 				onkeyup: false,
          		focusCleanup: true,

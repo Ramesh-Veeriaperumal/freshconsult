@@ -116,8 +116,13 @@
       <div class="clearfix zeroh" ></div>
       <div class="post_in_forum">
 
+        <span class="reply-draft" id="reply-draft">
+          <div class="close-img" id="clear-draft"><span></span></div>
+          <%= content_tag :div, "#{t("draft")} #{t("saving_draft")}", :class => "sav tooltip", "data-placement" => "below", :id => "draft-save", "title" => t("last_draft") %>
+        </span>
+
         <!-- <label>
-          <%# check_box_tag :quoted_text, "true", true %><%= t("ticket.include_quoted_text") %>
+          <%# check_box_tag :quoted_text, "true", true %><%# t("ticket.include_quoted_text") %>
         </label> -->
         <% if privilege?(:view_forums) && !@ticket.ticket_topic.nil? && !(@ticket.ticket_topic.topic.locked) %>    
           <label>
@@ -132,17 +137,11 @@
       </div>      
 
       <div class="btn-toolbar">
-
-        <span class="reply-draft" id="reply-draft">
-          <div class="close-img" id="clear-draft"><span></span></div>
-          <%= content_tag :div, "#{t("draft")} #{t("saving_draft")}", :class => "sav tooltip", "data-placement" => "below", :id => "draft-save", "title" => t("last_draft") %>
-        </span>
-
         <span>
           <%= link_to(t('cancel'), '#', :class => "btn cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true') %>
         </span>
 
-        <span class="btn-group dropup">
+        <span class="btn-group  <% if privilege?(:edit_ticket_properties) %>dropup<%end%>">
           <a class="btn btn-primary submit_btn">
             <%= t('ticket.reply_form.send') %>
             <% if privilege?(:edit_ticket_properties) %>
@@ -171,7 +170,6 @@
       </div>
 
     <% end %>
-    <div class="clearfix overflowh" ></div>
 </div>
 <% content_for :pagefixed do %>
   <% javascript_tag do %>

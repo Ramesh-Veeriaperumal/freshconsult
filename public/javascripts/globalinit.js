@@ -305,26 +305,25 @@ is_touch_device = function() {
         });
       });
 
-      // - jQuery Validation for forms with class .ui-form ( ...An optional dont-validate written for the form element will make the selectors ignore those form alone )
-      var validateOptions = {
-         onkeyup: false,
-         focusCleanup: true,
-         focusInvalid: false,
-         ignore:"select.nested_field:empty, .portal_url:not(:visible)"
-      };
+      $.validator.setDefaults({ 
+        onkeyup: false,
+        focusCleanup: true,
+        focusInvalid: false,
+        ignore:"select.nested_field:empty, .portal_url:not(:visible)" 
+      });
       
       $("ul.ui-form, .cnt").livequery(function(ev){
-        $(this).not(".dont-validate").parents('form:first').validate(validateOptions);
+        $(this).not(".dont-validate").parents('form:first').validate();
       })
       $("div.ui-form").livequery(function(ev){
-        $(this).not(".dont-validate").find('form:first').validate(validateOptions); 
+        $(this).not(".dont-validate").find('form:first').validate(); 
       })
       // $("form.uniForm").validate(validateOptions);
       $("form.ui-form").livequery(function(ev){
-        $(this).not(".dont-validate").validate(validateOptions);
+        $(this).not(".dont-validate").validate();
       })
       // $("form[rel=validate]").validate(validateOptions);
-
+      var validateOptions = {}
       validateOptions['submitHandler'] = function(form, btn) {
                                           // Setting the submit button to a loading state
                                           $(btn).button("loading")
@@ -564,7 +563,25 @@ is_touch_device = function() {
         the_window.on('scroll.freshdesk', handleScroll);
 
         $(window).on('resize.freshdesk', function() {
-          $('#sticky_header').width($('#Pagearea').width());
+
+          sticky_header.width($('#Pagearea').width());
+          var to_collapse = false, extra_buffer = 20;
+
+          var width_elements_visible = $('.sticky_right').outerWidth() + $('.sticky_left').outerWidth() + extra_buffer;
+
+          if(sticky_header.hasClass('collapsed')) {
+            var hidden_elements_width = 0;
+            sticky_header.find('.hide_on_collapse').each(function() {
+              hidden_elements_width += $(this).outerWidth();
+            });
+            if(sticky_header.width() < (width_elements_visible + hidden_elements_width)) {
+              to_collapse = true;
+            }
+          } else {
+            to_collapse = sticky_header.width() < width_elements_visible;
+          }
+          sticky_header.toggleClass('collapsed', to_collapse);
+          
         }).trigger('resize');
 
       }
@@ -592,8 +609,6 @@ is_touch_device = function() {
               clkdLI = $(evnt.relatedTarget).parent();
           $('ul.header-tabs li.active').removeClass('active');
           clkdLI.addClass('active');
-          $(document).trigger('ticket_list');
-          $(document).trigger('ticket_show');
           initParallelRequest($(evnt.relatedTarget))
 
           // BeforeSend

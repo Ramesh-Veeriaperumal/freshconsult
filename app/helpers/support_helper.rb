@@ -121,12 +121,10 @@ module SupportHelper
 	end
 
 	def portal_fav_ico
-    fav_icon_content = MemcacheKeys.fetch(["v4","portal","fav_ico",current_portal]) do
-    	url = current_portal.fav_icon.nil? ? '/images/favicon.ico' : 
-    		AWS::S3::S3Object.url_for(current_portal.fav_icon.content.path, current_portal.fav_icon.content.bucket_name,:use_ssl => true, :expires_in => 30.days)
+		fav_icon_content = MemcacheKeys.fetch(["v5","portal","fav_ico",current_portal]) do
+			url = current_portal.fav_icon.nil? ? '/images/favicon.ico' : current_portal.fav_icon.content.url
 			"<link rel='shortcut icon' href='#{url}' />"
-    end
-
+		end
 		fav_icon_content
 	end
 
@@ -203,6 +201,12 @@ module SupportHelper
 			output.join("")
 		end
 	end	
+
+	def more_articles_in_folder folder
+		%( <h3 class="list-lead">
+			#{I18n.t('portal.article.more_articles', :article_name => folder['name'])}
+		</h3>)
+	end
 
 	def article_list_item article
 		output = <<HTML
@@ -418,7 +422,8 @@ HTML
 	      when "hidden" then
 			hidden_field(object_name , field_name , :value => field_value)
 	      when "checkbox" then
-			check_box(object_name, field_name, :checked => field_value )
+	      	( element_class.include?("required") ? check_box_tag(%{#{object_name}[#{field_name}]}, field_value, false, { :class => element_class } ) :
+                                                   check_box(object_name, field_name, { :class => element_class, :checked => field_value }) )
 	      when "html_paragraph" then
 	      	_output = []
 	      	form_builder.fields_for(:ticket_body, @ticket.ticket_body) do |ff|
@@ -536,8 +541,8 @@ HTML
 
 	def portal_javascript_object
 		{ :language => @portal['language'],
-		  :name => @portal['name'],
-		  :contact_info => @portal['contact_info'],
+		  :name => h(@portal['name']),
+		  :contact_info => h(@portal['contact_info']),
 		  :current_page => @portal['page'],
 		  :current_tab => @portal['current_tab'] }.to_json
 	end
@@ -571,7 +576,7 @@ HTML
 	end
 
 	def attach_a_file_link attach_id
-		link_to_function("Attach a <b>file</b>", "Helpdesk.Multifile.clickProxy(this)", 
+		link_to_function("#{I18n.t('portal.attach_file')}", "Helpdesk.Multifile.clickProxy(this)", 
                 "data-file-id" => "#{ attach_id }_file", :id => "#{ attach_id }_proxy_link" )
 	end
 
