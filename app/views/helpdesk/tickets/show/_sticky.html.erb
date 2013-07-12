@@ -37,16 +37,18 @@
 				
 				<li class="ticket-btns">
 					<div class="btn-group">
-						<% if (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present?) %>
+						<% if privilege?(:reply_ticket)  && (@ticket.is_twitter? or @ticket.is_facebook? or @item.from_email.present?) %>
 					  	<a class="btn" rel="note-button" data-note-type="reply" id="ReplyButton">
 					  		<span class="reply-inner"></span>
 				    		<%= t('ticket.reply_to')  %>
 				    	</a>
 						<% end %>
+						<% if privilege?(:forward_ticket) %>
 					  	<a href="#" id="FwdButton" class="btn" rel="note-button" data-note-type="fwd" >
 					  		<span class="forward-inner"></span>
 				    		<%= t('fwd_to') %>
 				    	</a>
+				    	<% end %>
 					  	<a href="#"  rel="note-button" class="btn" data-note-type="note" >
 					  		<span class="note-inner"></span>
 							<%= t('ticket.add_note') %>
