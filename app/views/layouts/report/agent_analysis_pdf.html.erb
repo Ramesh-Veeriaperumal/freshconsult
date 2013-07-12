@@ -1,66 +1,35 @@
 <%= render :partial => "layouts/report/pdf_files", :locals => {} %>
+<% obj_array_size = @data_obj.length 
+   counter = 0
+%>
 <div class="report-page" id="report-page">
   <div class="report-content-wrapper">
     <!--report header-->
     <%= render :partial => "reports/shared/report_view_header", :locals => {:is_pdf =>true} %>
+    <% @data_obj.each do |key,data| %>
+    <%if counter % 2 == 0%>
+    <div class="row-fluid">
+    <%end%>
+      <div class="span6 single-line-bar">
+        <h3 class="header-lead"><span><%=data['title']%></span></h3>
+        <div id="<%=key%>_bar_chart" class="graph-container"><div class="noinfo">No data to display!</div></div>
+      </div>
+    <%if counter % 2 != 0 || ((obj_array_size-1) == counter)%>
+    </div>
+    <%end
+    counter+=1
+    %>
+    <script type="text/javascript">
+    var <%=key%> = <%=data.to_json%>;
+    jQuery(document).ready(function() {
+      var <%=key%>_barChart = new bar_chart(
+          {renderTo: '<%=key%>_bar_chart',chartData:<%=data[:chartData].to_json%>,
+            xaxis_arr: <%=data[:xaxis_arr].to_json%>,title:'<%=data[:title]%>',isPDF:true}
+        );
+      <%=key%>_barChart.barGraph();
+    });
+    </script>
 
-    <div class="row-fluid">
-      <div class="span6 single-line-bar">
-        <h3 class="header-lead"><span>Tickets Resolved</span></h3>
-        <div id="resolved_ticket_line_chart" class="graph-container"><div class="noinfo">No data to display!</div></div>
-      </div>
-      <div class="span6 single-line-bar">
-        <h3 class="header-lead"><span>Ticket Backlog</span></h3>
-        <div id="backlog_ticket_line_chart" class="graph-container"><div class="noinfo">No data to display!</div></div>
-      </div>
-    </div>
-    <div class="row-fluid">
-      <div class="span6 single-line-bar">
-        <h3 class="header-lead"><span>SLA Compliance (Descending)</span></h3>
-        <div id="SLA_DESC_ticket_line_chart" class="graph-container"><div class="noinfo">No data to display!</div></div>
-      </div>
-      <div class="span6 single-line-bar">
-        <h3 class="header-lead"><span>SLA Compliance (Ascending)</span></h3>
-        <div id="SLA_ASC_ticket_line_chart" class="graph-container"><div class="noinfo">No data to display!</div></div>
-      </div>
-    </div>
-    <div class="row-fluid">
-      <div class="span6 single-line-bar">
-        <h3 class="header-lead"><span>First Contact Resolution</span></h3>
-        <div id="FCR_ticket_line_chart" class="graph-container"><div class="noinfo">No data to display!</div></div>
-      </div>
-
-    </div>
+    <%end%>
   </div>
 </div>
-<script type="text/javascript">
-var data_obj = <%=@data_obj.to_json%>
-jQuery(document).ready(function() {
-  var analysis_1_barChart = new bar_chart(
-      {renderTo: 'resolved_ticket_line_chart',chartData:data_obj['resolved_tickets']['chartData'],
-        xaxis_arr: data_obj['resolved_tickets']['xaxis_arr'],title:data_obj['resolved_tickets']['title'],isPDF:true}
-    );
-  analysis_1_barChart.barGraph();
-  var analysis_2_barChart = new bar_chart(
-      {renderTo: 'backlog_ticket_line_chart',chartData:data_obj['backlog_tickets']['chartData'],
-        xaxis_arr: data_obj['backlog_tickets']['xaxis_arr'],title:data_obj['backlog_tickets']['title'],isPDF:true}
-    );
-  analysis_2_barChart.barGraph();
-  var analysis_3_barChart = new bar_chart(
-      {renderTo: 'FCR_ticket_line_chart',chartData:data_obj['FCR_tickets']['chartData'],
-        xaxis_arr: data_obj['FCR_tickets']['xaxis_arr'], yAxis_label: 'Percentage %',title:data_obj['FCR_tickets']['title'],isPDF:true}
-    );
-  analysis_3_barChart.barGraph();
-  var analysis_4_barChart = new bar_chart(
-      {renderTo: 'SLA_DESC_ticket_line_chart',chartData:data_obj['SLA_DESC_tickets']['chartData'],
-        xaxis_arr: data_obj['SLA_DESC_tickets']['xaxis_arr'], yAxis_label: 'Percentage %',title:data_obj['SLA_DESC_tickets']['title'],isPDF:true}
-    );
-  analysis_4_barChart.barGraph();
-  var analysis_5_barChart = new bar_chart(
-      {renderTo: 'SLA_ASC_ticket_line_chart',chartData:data_obj['SLA_ASC_tickets']['chartData'],
-        xaxis_arr: data_obj['SLA_ASC_tickets']['xaxis_arr'], yAxis_label: 'Percentage %',title:data_obj['SLA_ASC_tickets']['title'],isPDF:true}
-    );
-  analysis_5_barChart.barGraph();
-
-});
-</script>

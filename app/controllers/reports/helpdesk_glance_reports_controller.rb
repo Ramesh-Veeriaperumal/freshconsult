@@ -62,6 +62,6 @@ class Reports::HelpdeskGlanceReportsController < ApplicationController
   end
 
   def pass_solution_artical_link
-      @solution_artical_link = %(https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85335-how-to-read-helpdesk-at-a-glance-report)
+      @solution_artical_link = REPORT_ARTICAL_LINKS[:helpdesk_glance_report]
   end
 end

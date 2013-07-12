@@ -55,4 +55,12 @@ module Reports::HelpdeskReportControllerMethods
       r
     end
   end
+
+  def fetch_metric_obj
+    metrics_arr = params[:metric_selected].split(",")
+    @metrics_data = metrics_arr.inject([]) do |r, key|
+      r << Reports::Constants::AJAX_TOP_N_ANALYSIS_COLUMNS[key]
+      r
+    end
+  end
 end

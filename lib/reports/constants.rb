@@ -93,16 +93,28 @@ module Reports
     }
    
     TOP_N_ANALYSIS_COLUMNS = [
-      {:id => 'resolved_tickets' ,:label_name => 'Tickets Resolved',:calculate_percent =>false, 
+      {:id => 'resolved_tickets' ,:label_name => I18n.t('adv_reports.tickets_resolved'),:calculate_percent =>false, 
        :order => 'DESC', :count_column => 'resolved_tickets', :selet_columns => 'resolved_tickets',:is_rating=>false},
-      {:id => 'backlog_tickets' ,:label_name => 'Tickets Backlog',:calculate_percent =>false, 
+      {:id => 'backlog_tickets' ,:label_name => I18n.t('adv_reports.tickets_backlog'),:calculate_percent =>false, 
        :order => 'DESC', :count_column => 'backlog_tickets',:selet_columns => 'backlog_tickets',:is_rating=>false},
-      {:id => 'FCR_tickets' ,:label_name => 'First Call Resolution',:calculate_percent =>true, 
+      {:id => 'FCR_tickets' ,:label_name => I18n.t('reports.summary.fcr'),:calculate_percent =>true, 
        :order => 'DESC', :count_column => 'fcr_tickets',:selet_columns => 'fcr_tickets_percentage',:is_rating=>false},
-      {:id => 'SLA_DESC_tickets' ,:label_name => 'SLA Compliance(Descending)',:calculate_percent =>true, 
+      {:id => 'SLA_DESC_tickets' ,:label_name => I18n.t('reports.summary.sla_compliance'),:calculate_percent =>true, 
        :order => 'DESC', :count_column => 'sla_tickets',:selet_columns => 'sla_tickets_percentage',:is_rating=>false},
-      {:id => 'SLA_ASC_tickets' ,:label_name => 'SLA Compliance(Ascending)',:calculate_percent =>true, 
-       :order => 'ASC', :count_column => 'sla_tickets', :selet_columns => 'sla_tickets_percentage',:is_rating=>false}
+      {:id => 'avg_response_time' ,:label_name => I18n.t('adv_reports.comparison_reports.avg_resp_time'),:is_time_column => true,
+       :order => 'DESC', :count_column => 'avgresponsetime',:selet_columns => 'avg_response_time_per_ticket'},
+      {:id => 'avg_first_response_time' ,:label_name => I18n.t('adv_reports.comparison_reports.avg_first_resp_time'), :is_time_column=> true,
+       :order => 'DESC', :count_column => 'avgfirstresptime',:selet_columns => 'avg_first_resp_time_per_ticket'},
+      {:id => 'avg_resolution_time' ,:label_name => I18n.t('adv_reports.comparison_reports.avg_resolution_time'), :is_time_column=>true,
+       :order => 'DESC', :count_column => 'avgresolutiontime',:selet_columns => 'avg_resolution_time_per_ticket'},
+      {:id => 'avg_agent_interactions' ,:label_name => I18n.t('adv_reports.glance.avg_agent_intr'),
+       :order => 'DESC', :count_column => 'avgagentinteractions',:selet_columns => 'avg_agent_interactions_per_ticket'},
+      {:id => 'assigned_tickets' ,:label_name => I18n.t('adv_reports.glance.ticket_assigned'), 
+       :order => 'DESC', :count_column => 'assigned_tickets',:selet_columns => 'assigned_tickets'},
+      {:id => 'num_of_reopens' ,:label_name => I18n.t('adv_reports.glance.num_of_reopens'), 
+       :order => 'DESC', :count_column => 'num_of_reopens',:selet_columns => 'num_of_reopens'},
+      {:id => 'happy_customers' ,:label_name => I18n.t('adv_reports.top_n.happy_customers'),:calculate_percent =>true, 
+       :order => 'DESC', :count_column => 'happy_customers',:selet_columns => 'happy_customers',:is_rating=>true}
     ]
     
     AJAX_TOP_N_ANALYSIS_COLUMNS = TOP_N_ANALYSIS_COLUMNS.inject({}) do |r, h| 
@@ -111,18 +123,28 @@ module Reports
     end
 
     CUSTOMERS_TOP_N_ANALYSIS_COLUMNS = [
-      {:id => 'resolved_tickets' ,:label_name => 'Tickets Resolved',:calculate_percent =>false, 
+      {:id => 'resolved_tickets' ,:label_name => I18n.t('adv_reports.tickets_resolved'),:calculate_percent =>false, 
        :order => 'DESC', :count_column => 'resolved_tickets',:selet_columns => 'resolved_tickets',:is_rating=>false},
-      {:id => 'backlog_tickets' ,:label_name => 'Tickets Backlog',:calculate_percent =>false, 
+      {:id => 'backlog_tickets' ,:label_name => I18n.t('adv_reports.tickets_backlog'),:calculate_percent =>false, 
        :order => 'DESC', :count_column => 'backlog_tickets',:selet_columns => 'backlog_tickets',:is_rating=>false},
-       {:id => 'received_tickets' ,:label_name => 'Tickets Submitted',:calculate_percent =>false, 
+      {:id => 'received_tickets' ,:label_name => I18n.t('adv_reports.top_n.tickets_submitted'),:calculate_percent =>false, 
        :order => 'DESC', :count_column => 'received_tickets',:selet_columns => 'received_tickets',:is_rating=>false},
-      {:id => 'SLA_tickets' ,:label_name => 'SLA Violation',:calculate_percent =>true, 
+      {:id => 'SLA_tickets' ,:label_name => I18n.t('adv_reports.top_n.sla_violations'),:calculate_percent =>true, 
        :order => 'DESC', :count_column => 'sla_tickets',:selet_columns => 'sla_violation_tickets',:is_rating=>false},
-      {:id => 'happy_customers' ,:label_name => 'Happy Customers',:calculate_percent =>true, 
+      {:id => 'happy_customers' ,:label_name => I18n.t('adv_reports.top_n.happy_customers'),:calculate_percent =>true, 
        :order => 'DESC', :count_column => 'happy_customers',:selet_columns => 'happy_customers',:is_rating=>true},
-      {:id => 'frustrated_customers' ,:label_name => 'Frustrated Customers',:calculate_percent =>true, 
-       :order => 'DESC', :count_column => 'frustrated_customers',:selet_columns => 'frustrated_customers',:is_rating=>true}
+      {:id => 'frustrated_customers' ,:label_name => I18n.t('adv_reports.top_n.frustrated_customers'),:calculate_percent =>true, 
+       :order => 'DESC', :count_column => 'frustrated_customers',:selet_columns => 'frustrated_customers',:is_rating=>true},
+      {:id => 'avg_response_time' ,:label_name => I18n.t('adv_reports.comparison_reports.avg_resp_time'), :is_time_column=>true,
+       :order => 'DESC', :count_column => 'avgresponsetime',:selet_columns => 'avg_response_time_per_ticket'},
+      {:id => 'FCR_tickets' ,:label_name => I18n.t('reports.summary.fcr'),:calculate_percent =>true, 
+       :order => 'DESC', :count_column => 'fcr_tickets',:selet_columns => 'fcr_tickets_percentage',:is_rating=>false},
+      {:id => 'avg_first_response_time' ,:label_name => I18n.t('adv_reports.comparison_reports.avg_first_resp_time'),:is_time_column=>true, 
+       :order => 'DESC', :count_column => 'avgfirstresptime',:selet_columns => 'avg_first_resp_time_per_ticket'},
+      {:id => 'avg_resolution_time' ,:label_name => I18n.t('adv_reports.comparison_reports.avg_resolution_time'), :is_time_column=>true,
+       :order => 'DESC', :count_column => 'avgresolutiontime',:selet_columns => 'avg_resolution_time_per_ticket'},
+      {:id => 'avg_customer_interactions' ,:label_name => I18n.t('adv_reports.glance.avg_cust_intr'), 
+       :order => 'DESC', :count_column => 'avgcustomerinteractions',:selet_columns => 'avg_customer_interactions_per_ticket'}
     ]
 
     AJAX_CUSTOMERS_TOP_N_ANALYSIS_COLUMNS = CUSTOMERS_TOP_N_ANALYSIS_COLUMNS.inject({}) do |r, h| 
@@ -153,6 +175,18 @@ module Reports
     ]
     
     REPORT_TYPE_BY_KEY = Hash[*REPORT_TYPE.map { |i| [i[0], i[1]] }.flatten]
+
+    REPORT_ARTICAL_LINKS ={
+      :agent_top_n_analysis         => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85344-how-to-read-agent-top-n-analysis',
+      :customer_top_n_analysis      => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85346-how-to-read-customer-top-n-analysis',
+      :group_top_n_analysis         => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85345-how-to-read-group-top-n-analysis',
+      :helpdesk_glance_report       => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85335-how-to-read-helpdesk-at-a-glance-report',
+      :customer_glance_report       => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85336-how-to-read-customer-at-a-glance-report',
+      :agent_glance_report          => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85337-how-to-read-agent-at-a-glance-report',
+      :group_glance_report          => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85338-how-to-read-group-at-a-glance-report',
+      :helpdesk_peformance_analysis => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85343-how-to-read-helpdesk-performance-analysis-report',
+      :helpdesk_load_analysis       => 'https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85340-how-to-read-helpdesk-load-analysis-report'    
+    }
 
 	end
 end

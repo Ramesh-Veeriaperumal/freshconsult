@@ -1,0 +1,16 @@
+<!-- select model for agent start-->
+<a href="#dialog-select" class="hide" data-backdrop="static" 
+    data-show-close="false" title="<%=dialogTitle%>" rel="freshdialog" id="select-opt" data-width="500"></a>
+<div id="dialog-select">
+  <%unless @report_filter_data.blank?%>
+    <div class="row-fluid" style="padding-bottom:25px; border-bottom: 1px solid #ccc; margin-bottom: 25px;">
+      <label  class="title">Jump to a Saved report</label>
+      <%= select_tag 'select_saved_report', options_for_select(@report_filter_data.map {|k, v| [v[:name], k.to_s]}), { :multiple => false, :class => "select2 filter_item span9",:size => 5,:placeholder => "Jump to a Saved report"}%>
+    </div>
+  <%end%>
+  <p class="hide alert-text" id="mandatory-check"></p>
+  <div class="row-fluid">
+    <label  class="title"><%=t('adv_reports.comparison_reports.select_metrics_msg')%></label>
+    <%= select_tag 'metric_select_option', options_for_select(@selectable_metrics.map {|k, v| [v[:label_name], k.to_s]}), { :multiple => true, :class => "select2 filter_item span9",:size => 5,:placeholder => "#{t('adv_reports.select_an_option')}"}%>
+  </div>
+</div>

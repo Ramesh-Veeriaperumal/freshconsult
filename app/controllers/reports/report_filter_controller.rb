@@ -42,5 +42,6 @@ class Reports::ReportFilterController < ApplicationController
 
       @data_map[:reports_by] = params[:reports] unless params[:reports].blank?
       @data_map[:comparison_selected] = (params[:comparison_selected]) unless params[:comparison_selected].blank?
+      @data_map[:metric_selected] = (params[:metric_selected]) unless params[:metric_selected].blank?
     end
 end

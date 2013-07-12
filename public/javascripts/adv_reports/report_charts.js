@@ -61,9 +61,9 @@ adv_grid_report.prototype = {
   },
   barGraph_tooltip_formatter : function(){
     if(this.point.tool_tip_label){
-      return '<p>' + this.point.name  + '<strong> : ' +this.point.y+ '% </strong> ('+this.point.count+' tickets)</p>';
+      return '<p>' + this.point.name  + '<strong> : ' +this.point.y+ '</strong> ('+this.point.tool_tip_label+')</p>';
     } else{
-      return '<p>' + this.point.name  + '<strong> : ' +this.point.y+ ' Tickets</strong></p>';
+      return '<p>' + this.point.name  + '<strong> : ' +this.point.y+ ' Ticket(s)</strong></p>';
     }
   },
   xAxisGraph_tooltip_formatter : function(){

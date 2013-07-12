@@ -5,13 +5,9 @@ class Reports::RedshiftQueries < Reports::Queries
 
 	def report_metrics
 		%( #{select_received_tickets}, #{select_resolved_tickets}, #{select_backlog_tickets},
-    NVL((SUM(avg_resp_time_by_bhrs)::float/NULLIF(SUM(resolved_tickets),0)),0) as avgresponsetime,
-    NVL((SUM(resolution_time_by_bhrs)::float/NULLIF(SUM(resolved_tickets),0)),0) as avgresolutiontime,
-    NVL(SUM(customer_interactions)::float/NULLIF(SUM(resolved_tickets),0),0) as avgcustomerinteractions,
-    NVL(SUM(agent_interactions)::float/NULLIF(SUM(resolved_tickets),0),0) as avgagentinteractions,
-    NVL((SUM(first_resp_time_by_bhrs)::float/NULLIF(SUM(first_responded_tickets),0)),0) as avgfirstresptime,
-    NVL(SUM(num_of_reopens),0) as num_of_reopens,
-    NVL(SUM(assigned_tickets),0) as assigned_tickets,
+    #{select_avg_response_time_per_ticket}, #{select_avg_resolution_time_per_ticket},
+    #{select_avg_customer_interactions_per_ticket}, #{select_avg_agent_interactions_per_ticket},
+    #{select_avg_first_resp_time_per_ticket}, #{select_num_of_reopens}, #{select_assigned_tickets},
     NVL(SUM(num_of_reassigns),0) as num_of_reassigns, NVL(SUM(fcr_tickets),0) as fcr_tickets,
     NVL(SUM(sla_tickets),0) as sla_tickets)
 	end
@@ -100,7 +96,27 @@ class Reports::RedshiftQueries < Reports::Queries
     (CASE WHEN report_table.created_at = '#{@end_time}' THEN unhappy_rated_tickets ELSE 0 END)))
 	end
 
-	def conditions
+	def select_avg_response_time_per_ticket
+		%(NVL((SUM(avg_resp_time_by_bhrs)::float/NULLIF(SUM(resolved_tickets),0)),0) as avgresponsetime)
+	end
+
+	def select_avg_resolution_time_per_ticket
+		%( NVL((SUM(resolution_time_by_bhrs)::float/NULLIF(SUM(resolved_tickets),0)),0) as avgresolutiontime)
+	end
+
+	def select_avg_customer_interactions_per_ticket
+		%( NVL(SUM(customer_interactions)::float/NULLIF(SUM(resolved_tickets),0),0) as avgcustomerinteractions )
+	end
+
+	def select_avg_agent_interactions_per_ticket
+		%(NVL(SUM(agent_interactions)::float/NULLIF(SUM(resolved_tickets),0),0) as avgagentinteractions)
+	end
+
+	def select_avg_first_resp_time_per_ticket
+		%(NVL((SUM(first_resp_time_by_bhrs)::float/NULLIF(SUM(first_responded_tickets),0)),0) as avgfirstresptime)
+	end
+ 
+  def conditions
   	%(report_table.account_id = #{Account.current.id} AND report_table.created_at >= '#{@start_time}' AND 
   		report_table.created_at <= '#{@end_time}')
 	end
