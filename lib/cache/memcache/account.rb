@@ -69,14 +69,14 @@ module Cache::Memcache::Account
   def custom_dropdown_fields_from_cache
     key = ACCOUNT_CUSTOM_DROPDOWN_FIELDS % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
-      ticket_fields.custom_dropdown_fields(:include => {:flexifield_def_entry => {:include => :flexifield_picklist_vals } } ).find(:all)
+      ticket_fields.custom_dropdown_fields.find(:all, :include => :flexifield_def_entry )
     end
   end
 
   def nested_fields_from_cache
     key = ACCOUNT_NESTED_FIELDS % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
-      ticket_fields.nested_fields(:include => {:flexifield_def_entry => {:include => :flexifield_picklist_vals } } ).find(:all)
+      ticket_fields.nested_fields.find(:all, :include => [:nested_ticket_fields, :flexifield_def_entry] )
     end
   end
 
