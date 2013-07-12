@@ -28,6 +28,14 @@
 	<%= include_cloudfront_css :ie_hacks %>
 	
 	<%= render :partial => "shared/theme.css"  %>
+
+	<script type="text/javascript">
+		PROFILE_BLANK_THUMB_PATH = '<%= image_path("fillers/profile_blank_thumb.gif") %>';
+		PROFILE_BLANK_MEDIUM_PATH = '<%= image_path("fillers/profile_blank_medium.gif") %>';
+		FILLER_IMAGES = {
+			imageLoading : '<%= image_path("fillers/image_upload_placeholder.gif") %>'
+		}
+	</script>
 	<%= include_cloudfront_js :defaults  %>
 	<%= include_cloudfront_js :frameworks %>
 	<%= include_cloudfront_js :workspace %>
