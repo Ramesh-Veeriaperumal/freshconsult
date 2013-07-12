@@ -6,6 +6,7 @@ class Helpdesk::Note < ActiveRecord::Base
   after_commit_on_create :update_ticket_states, :notify_ticket_monitor
   after_commit_on_create :update_es_index, :if => :human_note_for_ticket?
   after_commit_on_update :update_es_index, :if => :human_note_for_ticket?
+  after_commit_on_destroy :remove_es_document
 
   protected
 

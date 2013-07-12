@@ -10,10 +10,10 @@
 		<i class="icon-page-{{ forum.type_name }}"></i>
 	</i>
 	<div class="list-lead">
-		{{ forum.name }} <span class="item-count">{{ forum.topics_count }}</span>
+		{{ forum.name|h}} <span class="item-count">{{ forum.topics_count }}</span>
 	</div>
-	<p class="intro ellipsis" title="{{forum.description}}">
-		{{ forum.description }}
+	<p class="intro ellipsis" title="{{forum.description|h}}">
+		{{ forum.description|h}}
 	</p>
 	
 	{{ forum | default_topic_filters }}

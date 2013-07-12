@@ -1,6 +1,6 @@
 class EsIndexObserver < ActiveRecord::Observer
 
-	observe Helpdesk::Ticket, Helpdesk::Note, User, Customer, Solution::Article, Topic, Post
+	observe Helpdesk::Ticket, User, Customer, Solution::Article, Topic, Post
 
 	def after_commit_on_create(model)
 		model.update_es_index
@@ -12,7 +12,7 @@ class EsIndexObserver < ActiveRecord::Observer
 	end
 
 	def after_commit_on_destroy(model)
-		model.update_es_index if [:User,:Post,:"Helpdesk::Note"].include? model.class.name.to_sym
+		model.update_es_index if [:User,:Post].include? model.class.name.to_sym
 		model.remove_es_document if [
 			:"Helpdesk::Ticket",:Customer,:"Solution::Article",:Topic].include? model.class.name.to_sym
 	end
