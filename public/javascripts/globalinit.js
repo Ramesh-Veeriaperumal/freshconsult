@@ -364,6 +364,35 @@ is_touch_device = function() {
       }
     });
 
+    $('#helpdesk_ticket_status').live('change', function(){
+      var required_closure_elements = $(".required_closure");
+      if(required_closure_elements.length == 0)
+        return
+      var ticket_status = $('#helpdesk_ticket_status option:selected').val();
+      if(ticket_status === "5" || ticket_status === "4" ){
+        required_closure_elements.each(function(){
+          element = $(this)
+          if(element.prop("type") == "checkbox")
+            element.prev().remove()
+          element.siblings('label').find('.required_star').remove();
+          element.addClass('required').siblings('label').append('<span class="required_star">*</span>');
+        })
+      }
+      else{
+        required_closure_elements.each(function(){
+          element = $(this)
+          element.removeClass('required');
+          element.siblings('label.error').remove();
+          element.siblings('label').find('.required_star').remove();
+          if(element.prop("type") == "checkbox" && element.prev().attr('name') != element.attr('name')){
+            var hidden_checkbox_input = FactoryUI.hidden(element.attr('name'), "0")
+            element.before(hidden_checkbox_input)
+            element.parent().siblings('label.error').remove()
+          }
+        })
+      }
+    });
+
     $("input[rel=companion]")
       .live({ 
         "keyup": function(ev){

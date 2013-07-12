@@ -1011,19 +1011,6 @@ refreshStatusBox = function() {
 		$(this).parents('td').first().toggleClass('stripe-select', $(this).prop('checked'));
 	});
 
-	$("body").on('change.ticket_details', '#helpdesk_ticket_status', function(e){
-		var required_closure_elements = $(".required_closure");
-		if($('#helpdesk_ticket_status option:selected').val() === "5"){
-			required_closure_elements.addClass('required').siblings('label').append('<span class="required_star">*</span>');
-		}
-		else{
-			required_closure_elements.removeClass('required');
-			required_closure_elements.siblings('label.error').remove();
-			required_closure_elements.siblings('label').find('.required_star').remove();
-		}
-	});
-
-
 	//Hack for those who visit upon hitting the back button
 	$('#activity_toggle').removeClass('active');
 	jQuery('#activity_toggle').prop('checked', false);
