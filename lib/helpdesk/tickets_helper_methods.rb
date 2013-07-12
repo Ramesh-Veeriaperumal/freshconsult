@@ -14,7 +14,7 @@ module Helpdesk::TicketsHelperMethods
     if( ticket.active? )
       unless (onhold_and_closed_statuses.include?(ticket.ticket_status.status_id) or ticket.ticket_status.deleted?)
         if(Time.now > ticket.due_by )
-          t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
+          I18n.t('already_overdue',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
         else
           I18n.t('due_in',:time_words => distance_of_time_in_words(Time.now, ticket.due_by))
         end
