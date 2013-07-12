@@ -109,7 +109,7 @@ module Reports
        :order => 'DESC', :count_column => 'avgresolutiontime',:selet_columns => 'avg_resolution_time_per_ticket'},
       {:id => 'avg_agent_interactions' ,:label_name => I18n.t('adv_reports.glance.avg_agent_intr'),
        :order => 'DESC', :count_column => 'avgagentinteractions',:selet_columns => 'avg_agent_interactions_per_ticket'},
-      {:id => 'assigned_tickets' ,:label_name => I18n.t('adv_reports.glance.ticket_assigned'), 
+      {:id => 'assigned_tickets' ,:label_name => I18n.t('adv_reports.comparison_reports.ticket_assigned'), 
        :order => 'DESC', :count_column => 'assigned_tickets',:selet_columns => 'assigned_tickets'},
       {:id => 'num_of_reopens' ,:label_name => I18n.t('adv_reports.glance.num_of_reopens'), 
        :order => 'DESC', :count_column => 'num_of_reopens',:selet_columns => 'num_of_reopens'},
