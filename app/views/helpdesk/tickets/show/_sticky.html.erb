@@ -55,18 +55,23 @@
 						</a>
 					</div>
 				</li>
+				<% if privilege?(:edit_ticket_properties) %>
 				<li class="ticket-btns hide_on_collapse">
 					<%= link_to(t('ticket.close_btn'), "#", 
 							:title  => t('ticket.close_btn_title'), 
 							:class => "btn" , :id=>"close_ticket_btn" , 
 							"data-href" => close_helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]})) unless @ticket.closed? %>
 				</li>
+				<% end %>
+				<% if privilege?(:merge_or_split_ticket) %>
 				<li class="ticket-btns hide_on_collapse">
 					<%= link_to t('ticket.merge_btn'), "/helpdesk/merge_tickets/bulk_merge?source_tickets=#{@ticket.display_id}", 
 							:id => "ticket_merge_btn", :title => t('ticket.merge_title'), :class => 'btn',
 							"data-ajax-dialog" => true, "data-width" => "727"
 					%>
 				</li>
+
+				<% end %>
 				<li class="ticket-btns hide_on_collapse">
 					<%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/component/#{@ticket.id}?component=scenarios", 
 					  				:rel => 'freshdialog', "data-target" => "#execute_scenario", :class => 'btn',
@@ -82,31 +87,37 @@
 					  </a>
 
 					  <ul class="dropdown-menu" id="reply_options" role="menu" aria-labelledby="dLabel">
+					  	<% if privilege?(:edit_ticket_properties) %>
 					  	<li class="show_on_collapse">
 					  	<%= link_to(t('ticket.close_btn'), "#", 
 							:title  => t('ticket.close_btn_title'), :id=>"close_ticket_btn" , 
 							"data-href" => close_helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]})) unless @ticket.closed? %>
 						</li>
+						<% end %>
+						<% if privilege?(:merge_or_split_ticket) %>
 						<li class="show_on_collapse">
 							<%= link_to t('ticket.merge_btn'), "/helpdesk/merge_tickets/bulk_merge?source_tickets=#{@ticket.display_id}", 
 							:id => "ticket_merge_btn", :title => t('ticket.merge_title'), 
 							"data-ajax-dialog" => true, "data-width" => "727"
 							%>
 						</li>
+						<% end %>
 
 						<li class="show_on_collapse">
 							<%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/component/#{@ticket.id}?component=scenarios", 
 					  				:rel => 'freshdialog', "data-target" => "#execute_scenario", "data-template-footer" => "",
 					  				:title => t('ticket.execute_scenario') ) %>
 						</li>
-					  	<% if feature?(:timesheets) %>
+					  	<% if feature?(:timesheets) && privilege?(:view_time_entries) %>
 					  	<li>
 					  		<a rel="triggerAddTimer" href="#"><%= t('ticket.add_time') %></a>
 					  	</li>
 					  	<% end %>
+					  	<% if privilege?(:edit_ticket_properties) %>
 					  	<li>
 					  		<%= link_to(t('ticket.edit_btn'), edit_helpdesk_ticket_path(@ticket)  ) %>
 					  	</li>
+					  	<% end %>
 					  	
 					  	<li>
 					  		<%= link_to( "Print", print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
@@ -115,12 +126,13 @@
 					  	<li id="spamicon">
 					  		<%= render :partial => "spam.html.erb", :locals => { :ticket => @ticket, :page => params[:page] } %>
 					  	</li>
-
+					  	<% if privilege?(:delete_ticket) %>
 					  	<li>
 					  		<%= link_to(t('ticket.delete_btn'), 
 					  					helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]}), 
 					  					:method => :delete, :title => t('ticket.delete_btn_title')) %>
 		  				</li>
+		  				<% end %>
 					  </ul>
 					</div>
 				</li>
