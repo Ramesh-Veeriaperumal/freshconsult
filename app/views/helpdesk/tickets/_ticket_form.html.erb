@@ -36,13 +36,3 @@ jQuery('#helpdesk_ticket_ticket_body_attributes_description_html').redactor({ au
       });
     });
 <%- end %>
-<% javascript_tag do %>
-  jQuery("#NewTicket").validate({
-    errorPlacement: function(error, element) {
-      if (element.prop("type") == "checkbox")
-        error.insertAfter(element.parent());
-      else
-        error.insertAfter(element);
-    }
-  });
-<% end %>
