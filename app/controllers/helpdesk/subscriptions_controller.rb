@@ -3,7 +3,7 @@ class Helpdesk::SubscriptionsController < ApplicationController
   include ActionView::Helpers::TextHelper
 
   before_filter :load_parent_ticket , :except => :unwatch_multiple
-
+  before_filter :set_mobile, :only => [:create_watchers, :unwatch]
   def index
     @ticket = @parent
     render :partial => "helpdesk/subscriptions/ticket_watchers"
@@ -25,8 +25,12 @@ class Helpdesk::SubscriptionsController < ApplicationController
         end
       end
     end
-
-    render :partial => "helpdesk/subscriptions/update_watcher_script"
+    respond_to do |format|
+        format.html{render :partial => "helpdesk/subscriptions/update_watcher_script"}
+        format.mobile {
+        puts "DEBUG :: respond.mobile inside mobile format ..."
+        render :json => { :success => true }.to_json }
+    end	
   end
 
   def unwatch
@@ -35,6 +39,7 @@ class Helpdesk::SubscriptionsController < ApplicationController
     subscription.destroy if subscription
     respond_to do |format|
         format.js { render :partial => "update_watcher_script" }
+		format.mobile { render :json => { :success => true }.to_json }
         format.html {
                       flash[:notice] = t(:'flash.tickets.unwatch.unsubscribe_success') 
                       redirect_to helpdesk_ticket_path(@ticket)
