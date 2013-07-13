@@ -28,7 +28,7 @@ class AgentObserver < ActiveRecord::Observer
     def update_agents_level(agent)
       return unless agent.points_changed?
 
-      level = agent.user.account.scoreboard_levels.level_for_score(points).first
+      level = agent.user.account.scoreboard_levels.level_for_score(agent.points).first
       if level and !(agent.scoreboard_level_id.eql? level.id)
         agent.level = level
       end
