@@ -80,13 +80,12 @@ jQuery('#del').live('click', function(ev)
 		width : 510
 	});
 	jQuery('#confirm-delete').bind('click', function(){
-		console.log(jQuery('#del').attr('href'));
-		console.log(jQuery('#del').data("method"));
 		jQuery('#confirm-delete').attr('disabled','disabled').text("Deleting...");
 		jQuery.ajax({
 			type: 'POST',
+			dataType: 'script',
+			data:{"_method" : "delete"},
 			url: jQuery('#del').attr('href'),
-			data: { "_method" : jQuery('#del').data("method")  },
 			success: function(data){window.location = '/admin/canned_responses/folders/';}
 		});
 	});

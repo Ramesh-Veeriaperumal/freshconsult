@@ -39,7 +39,7 @@ class CRM::AddToCRM
     @queue = QUEUE
 
     def self.perform(account_id)
-      CRM::Salesforce.new.update_deleted_account_to_crm(account_id)
+      CRM::Salesforce.new.update_deleted_account_to_crm(account_id) if Rails.env.production?
     end
   end
 

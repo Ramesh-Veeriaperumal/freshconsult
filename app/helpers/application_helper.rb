@@ -1,7 +1,7 @@
 # encoding: utf-8
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
-  include SavageBeast::ApplicationHelper
+  include ForumHelperMethods
   include Juixe::Acts::Voteable
   include ActionView::Helpers::TextHelper
   include Gamification::GamificationUtil
@@ -626,7 +626,9 @@ module ApplicationHelper
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
-        element = content_tag(:div, (check_box(object_name, field_name, :class => element_class, :checked => field_value ) + label))
+        checkbox_element = ( required ? ( check_box_tag(%{#{object_name}[#{field_name}]}, 1, !field_value.blank?, { :class => element_class } )) :
+                                                                   ( check_box(object_name, field_name, :class => element_class, :checked => field_value ) ) )
+        element = content_tag(:div, (checkbox_element + label))
       when "html_paragraph" then
         form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
             element = label + builder.text_area(field_name, :class => element_class, :value => field_value )
@@ -734,16 +736,6 @@ module ApplicationHelper
 
   def es_enabled?
     current_account.es_enabled?
-  end
-  
-  def truncate_filename filename
-    extension = filename.include?('.') ? filename.split('.').last : nil
-    extension = nil if filename.gsub('.','') == extension
-    simple_name = extension ? filename[0..-(extension.to_s.length + 2)] : filename
-    if filename.length > 20
-      return simple_name[0,15] + "..." + simple_name[-2..-1] + (extension ? ".#{extension}" : "")
-    end
-    filename
   end
 
   def assumed_identity_message

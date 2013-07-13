@@ -13,9 +13,6 @@ class PostsController < ApplicationController
 	# @WBH@ TODO: This uses the caches_formatted_page method.  In the main Beast project, this is implemented via a Config/Initializer file.  Not
 	# sure what analogous place to put it in this plugin.  It don't work in the init.rb
   #caches_formatted_page :rss, :index, :monitored
-  cache_sweeper :posts_sweeper, :only => [:create, :update, :destroy]
-  
-  
   
   def index
 #    conditions = []

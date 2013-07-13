@@ -16,6 +16,16 @@
         <% end %>
       </li>
     <% end %>
+
+    <% unless @searched_notes.blank? %>
+      <li class="ticket_icon">
+        <h4>Notes</h4>
+        <% @searched_notes.each do |note| %>
+          <span class="icon"></span>
+          <%= link_to("#{note.notable.subject} (##{note.notable.display_id})", note.notable) %>
+        <% end %>
+      </li>
+    <% end %>
     
     <% unless @searched_users.blank? %>
       <li class="contact_icon"> 

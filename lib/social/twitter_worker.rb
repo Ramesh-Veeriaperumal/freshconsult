@@ -3,7 +3,20 @@ class Social::TwitterWorker
   @queue = 'TwitterWorker'
 
 
+  class PremiumTwitterWorker
+    extend Resque::AroundPerform
+    @queue = 'premium_twitter_worker'
+
+    def self.perform(args)
+      Social::TwitterWorker.run
+    end
+  end
+
   def self.perform(args)
+    run
+  end
+
+  def self.run
     account = Account.current
     return if account.twitter_handles.empty? 
     twitter_handles = account.twitter_handles.active   

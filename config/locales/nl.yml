@@ -3444,7 +3444,7 @@ nl:
       level2: "Niveau 2"
       level3: "Niveau 3"
       nested_label: "Geneste veldlabels"
-      nestedfield_helptext: "Gebruik het onderstaand vrije tekstveld om onderdelen toe te voegen of aan te passen voor de keuzelijst. Gebruik de tabtoets om maximaal twee subniveaus aan te brengen. <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>Leer meer</a> "
+      nestedfield_helptext: "Gebruik het onderstaand vrije tekstveld om onderdelen toe te voegen of aan te passen voor de keuzelijst. Gebruik de tabtoets om maximaal twee subniveaus aan te brengen. <a target='_blank' href=%{learn_more}>Leer meer</a> "
       nestedfield_helptext_preview: "Dit is het \"Voorbeeld\" van voorbeeld keuzelijst-item, gebruik het vrije tekstveld in \"Bewerk weergave\" om items te bewerken"
       sla_timer: "SLA tijdklok"
       status_choices: "Status keuzes"

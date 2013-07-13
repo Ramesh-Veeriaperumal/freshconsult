@@ -1,10 +1,7 @@
 class TopicObserver < ActiveRecord::Observer
 
-	include Gamification::GamificationUtil
   include ActionController::UrlWriter
   
-	TOPIC_UPDATE_ATTRIBUTES = ["forum_id", "user_votes"]
-
 	def before_create(topic)
 		set_default_replied_at_and_sticky(topic)
 	end
@@ -14,30 +11,12 @@ class TopicObserver < ActiveRecord::Observer
 	end
 
 	def before_save(topic)
-		topic_changes(topic)
+		topic.topic_changes
 	end
 
 	def before_destroy(topic)
-    topic_changes(topic)
     update_post_user_counts(topic)
 	end
-
-	def after_commit(topic)
-		changed_topic_attributes = @topic_changes.keys & TOPIC_UPDATE_ATTRIBUTES
-		add_resque_job(topic) if gamification_feature?(topic.account) && changed_topic_attributes.any?
-	end
-
-  def after_commit_on_create(topic)
-    topic.update_es_index
-  end
-
-  def after_commit_on_update(topic)
-    topic.update_es_index
-  end
-
-  def after_commit_on_destroy(topic)
-    topic.remove_es_document
-  end
 
 	def after_save(topic)
 		update_forum_counter_cache(topic)
@@ -50,12 +29,6 @@ class TopicObserver < ActiveRecord::Observer
 	def after_destroy(topic)
 		update_forum_counter_cache(topic)
     create_activity(topic, 'delete_topic')
-	end
-
-	def add_resque_job(topic)
-		return if topic.user.customer?
-		Resque.enqueue(Gamification::Quests::ProcessTopicQuests, { :id => topic.id, 
-						:account_id => topic.account_id })
 	end
 
 private
@@ -93,10 +66,6 @@ private
 
   def update_post_user_counts(topic)
       @voices = topic.voices.to_a
-  end
-
-  def topic_changes(topic)
-  	@topic_changes = topic.changes.clone
   end
 
   def create_activity(topic, type)

@@ -1,42 +1,146 @@
 <% content_for :sidebar do -%><%- end %>
-<h3 class="title"><%= @page_title = t(".cancel_account") %></h3>
-<p class="intro"><%= t(".intro") %></p>
 
-<% form_tag :action => 'cancel' do %>
-<ul id="CancelFormBox" class="ui-form dont-validate">
-	<li>
-		<div class="info-highlight">
-			<div><%= t(".warning_message") %></div>
-		  <div><%= t(".changeplan_instead_of_cancel") %> <a href="/subscription/plan"><%= t(".change_your_plan")%> </a> </div>
+<h3 class="lead"><%= @page_title = t(".cancel_account") %></h3>
+
+<label><%= t(".info_text") %></label>
+
+<% form_tag ({ :action => 'cancel' }, { :id => 'cancel-form', :class => "cancel-form"} ) do %>
+
+	<div id="feedback-section" class="cancel-form dont-validate form-bordered">
+			<ul id = "account-feedback" class = "cancel-field" >	
+				<li> 
+					<label class="radio label-choice">
+						<%= radio_button_tag(:account_feedback, "Budget Issue. ", false, :class => "cancel-reason") %>
+						<%= t(".feedback.budget") %>
+					</label>
+					<%= content_tag( :div, t(".feedback.budget_followup"), :class => "reason-followup" ) %>
+					<%= text_area_tag 'feedback-text', nil, :class => "reason-followup", :placeholder => t(".feedback.budget_extra") %>
+				</li>
+				
+				<li>
+					<label class="radio label-choice">
+						<%= radio_button_tag(:account_feedback, "Missing Feature. ", false, :class => "cancel-reason" ) %>
+						<%= t(".feedback.requirement") %>
+					</label>
+					<%= content_tag(:div, t(".feedback.requirement_followup"), :class => "reason-followup" ) %>
+					<%= text_area_tag 'feedback-text', nil, :class => "reason-followup", :placeholder => t(".feedback.requirement_extra") %>
+				</li>
+				
+				<li>
+					<label class="radio label-choice">
+						<%= radio_button_tag( :account_feedback, "Different Product. ", false, :class => "cancel-reason" ) %>
+						<%= t(".feedback.moving") %>
+					</label>
+					<%= content_tag( :div, t(".feedback.moving_followup"), :class => "reason-followup" ) %>
+					<%= text_area_tag 'feedback-text', nil, :class => "reason-followup", :placeholder => t(".feedback.moving_extra") %>
+				</li>	
+
+				<li>
+					<label class="radio label-choice">
+						<%= radio_button_tag( :account_feedback, "Bad Support. ", false, :class => "cancel-reason" ) %>
+						<%= t(".feedback.support") %>
+					</label>
+					<%= content_tag( :div, t(".feedback.support_followup"), :class => "reason-followup" ) %>
+					<%= text_area_tag 'feedback-text', nil, :class => "reason-followup", :placeholder => t(".feedback.support_extra") %>
+				</li>			
+
+				<li>
+					<label class="radio label-choice">
+						<%= radio_button_tag(:account_feedback, "Test account. Please ignore. ", false, :class => "cancel-reason" ) %>
+						<%= t(".feedback.test-account") %>
+					</label>
+				</li>
+
+				<li>
+					<label class="radio label-choice">
+						<%= radio_button_tag( :account_feedback, "", false, :class => "cancel-reason", :id => "account_feedback_else" ) %>
+						<%= t(".feedback.else") %>
+					</label>
+					<%= text_area_tag 'user_feedback', "", :class => "reason-followup", :placeholder => t(".feedback.else_followup"), :id => "user_feedback" %>
+				</li>			
+			</ul>
 		</div>
-		<label>
-			<input type="checkbox" name="confirm" class="checkbox" id="confirm_agree" value="1" />
-			<%= t(".confirm_and_cancel_my_account") %>
-		</label> 
-	</li>
-</ul>
+
+		<div id="confirm-section" class="confirm-section">
+			<label class="checkbox label-choice">
+				<input type="checkbox" name="confirm" class="checkbox cancel-checkbox" id="confirm_agree" value="1" />
+				<%= t(".confirm_and_cancel_my_account") %>
+			</label>
+
+			<div id="confirm-followup" class="hide reason-followup"> 
+				<%= t(".trial_warning_message") %><br>
+			</div>
+		</div>
+
 	<div class="button-container">
-		<%= link_to t(".goback"), '/account', :class => "uiButton floatl" %>
-  	<%= submit_tag  t('.delete_my_account'), :class => "uiButton" %>
+		<%= link_to t(".goback"), '/account', :class => "btn" %>
+  	<%= submit_tag  t('.delete_my_account'), :class => "btn btn-primary", :id => "delete_account", "data-loading-text" => t('.deleting_account') %>
   </div>
+
 <% end %>
+
 <% content_for :pagefixed do %>
 	<% javascript_tag do %>
-		jQuery(document).ready(function(){
-			jQuery("#CancelFormBox").parent()
-				.validate({
-					errorPlacement: function(error, element) {
-				     if (element.prop("name") == "confirm")
-								error.insertAfter(element.parent());
-				   }
-				});
-			jQuery("#confirm_agree")
-				.rules("add", {
-			 		required: true,
-					messages: {
-					   required: "<%= t('.you_must_confirm') %>",
-					 }
-				});			
+		
+		// Validation 
+		jQuery(document).ready(function()
+		{
+			jQuery("#cancel-form").validate(
+			{
+				errorPlacement: function(error, element) 
+				{
+		     	if (element.prop("name") == "confirm")
+						error.insertAfter(element.parent());
+					else
+						error.insertAfter(element.parents("#feedback-section"));
+			  }
+			});
+			  
+			jQuery(".cancel-reason").rules("add", 
+			{ 
+				required: true,	
+				messages: { required: "<%= t('.you_must_select') %>" } 
+			});					
+			
+			jQuery("#confirm_agree").rules("add", 
+			{
+				required: true,	
+				messages: { required: "<%= t('.you_must_confirm') %>" } 
+			});			
 		});
+
+		// Event Handlers 
+		jQuery('body').on('click.cancel_account', '.cancel-reason', function() 
+		{ 
+			jQuery(this).parents('li').addClass('expanded').siblings().removeClass('expanded');
+			jQuery(this).parents('li').find('textarea').focus();
+		});
+
+		jQuery('body').on('click.cancel_account', '#confirm_agree', function()
+		{
+
+			jQuery('#confirm-section').toggleClass('show-confirm-followup');
+		}); 
+
+		// Text feedback handlers
+		jQuery('#cancel-form').on('submit', function(){
+			radio_checked = jQuery('input[name=account_feedback]:checked')
+			user_feedback = radio_checked.parents('li').find('textarea').val()
+			
+			if(user_feedback)
+				radio_checked.val(radio_checked.val() + user_feedback)
+			else
+				radio_checked.val(radio_checked.val())
+
+
+			jQuery("#user_feedback").rules("add", 
+			{ 
+				required: jQuery('#account_feedback_else').prop('checked'),	
+				messages: { required: "<%= t('.tell_us_more') %>" } 
+			});
+
+			if (jQuery(this).valid()) jQuery('#delete_account').button('loading');
+		})
+
 	<% end %>
 <% end %>

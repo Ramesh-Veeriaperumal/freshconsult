@@ -58,6 +58,10 @@ class Forum::ForumDrop < BaseDrop
     @topics ||= filter_topics
   end 
 
+  def popular_topics
+    @popular_topics ||= filter_topics(:popular)
+  end
+
   # Topics will be filtered based on stamp_type type
   # !PORTALCSS TODO need to make this as dynamic so that methods can be fetched directly from Topic::IDEAS_STAMPS
   def planned_topics
