@@ -241,7 +241,7 @@ class Account < ActiveRecord::Base
 
   before_destroy :update_crm
 
-  after_commit_on_create :add_to_billing, :enable_elastic_search
+  after_commit_on_create :add_to_billing #, :enable_elastic_search
 
   after_commit_on_update :clear_cache
   after_commit_on_destroy :clear_cache, :delete_reports_archived_data
