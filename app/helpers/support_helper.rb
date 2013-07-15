@@ -121,12 +121,10 @@ module SupportHelper
 	end
 
 	def portal_fav_ico
-    fav_icon_content = MemcacheKeys.fetch(["v4","portal","fav_ico",current_portal]) do
-    	url = current_portal.fav_icon.nil? ? '/images/favicon.ico' : 
-    		AWS::S3::S3Object.url_for(current_portal.fav_icon.content.path, current_portal.fav_icon.content.bucket_name,:use_ssl => true, :expires_in => 30.days)
+		fav_icon_content = MemcacheKeys.fetch(["v5","portal","fav_ico",current_portal]) do
+			url = current_portal.fav_icon.nil? ? '/images/favicon.ico' : current_portal.fav_icon.content.url
 			"<link rel='shortcut icon' href='#{url}' />"
-    end
-
+		end
 		fav_icon_content
 	end
 
@@ -375,8 +373,9 @@ HTML
 	def ticket_field_container form_builder,object_name, field, field_value = ""
 		case field.dom_type
 			when "checkbox" then
+				required = (field[:required_in_portal] && field[:editable_in_portal])
 				%(  <div class="controls"> 
-						<label class="checkbox">
+						<label class="checkbox #{required ? 'required' : '' }">
 							#{ ticket_form_element form_builder,:helpdesk_ticket, field, field_value } #{ field[:label_in_portal] }
 						</label>
 					</div> )
@@ -424,7 +423,7 @@ HTML
 	      when "hidden" then
 			hidden_field(object_name , field_name , :value => field_value)
 	      when "checkbox" then
-	      	( element_class.include?("required") ? check_box_tag(%{#{object_name}[#{field_name}]}, field_value, false, { :class => element_class } ) :
+	      	( required ? check_box_tag(%{#{object_name}[#{field_name}]}, 1, !field_value.blank?, { :class => element_class } ) :
                                                    check_box(object_name, field_name, { :class => element_class, :checked => field_value }) )
 	      when "html_paragraph" then
 	      	_output = []

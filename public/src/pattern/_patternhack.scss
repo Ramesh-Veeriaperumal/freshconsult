@@ -270,8 +270,9 @@ table.selected_to_yellow tbody tr td {
   }
 }
 
-body.touch .dialog-well .actions {
+html.touch .dialog-well .actions {
   visibility: visible;
+  @include opacity(1);
 }
 /* This class overriding app-common css. */
 

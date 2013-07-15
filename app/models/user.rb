@@ -438,6 +438,10 @@ class User < ActiveRecord::Base
     User.current = self
   end
 
+  def self.reset_current_user
+    User.current = nil
+  end
+
   private
     def name_part(part)
       parsed_name[part].blank? ? name : parsed_name[part]

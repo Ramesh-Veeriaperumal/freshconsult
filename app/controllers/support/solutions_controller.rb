@@ -32,5 +32,4 @@ class Support::SolutionsController < SupportController
 			@categories=@current_portal.solution_categories.customer_categories.all(:include=>:public_folders)
 		end
 
-
 end

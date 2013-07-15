@@ -60,7 +60,7 @@
 	</div>	
 </section>
 
-{% if article.folder.articles_count > 0 %}
+{% if article.folder.articles_count > 1 %}
 <section class="sidebar content rounded-6">	
 	<div class="cs-g-c">
 		<section class="article-list">

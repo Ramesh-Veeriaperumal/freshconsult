@@ -626,8 +626,8 @@ module ApplicationHelper
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
-        checkbox_element = ( element_class.include?("required") ? check_box_tag(%{#{object_name}[#{field_name}]}, field_value, false, { :class => element_class } ) :
-                                                                   check_box(object_name, field_name, :class => element_class, :checked => field_value ) )
+        checkbox_element = ( required ? ( check_box_tag(%{#{object_name}[#{field_name}]}, 1, !field_value.blank?, { :class => element_class } )) :
+                                                                   ( check_box(object_name, field_name, :class => element_class, :checked => field_value ) ) )
         element = content_tag(:div, (checkbox_element + label))
       when "html_paragraph" then
         form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
