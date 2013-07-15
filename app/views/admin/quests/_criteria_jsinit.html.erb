@@ -33,23 +33,16 @@
           if(base.questinput && base.questinput.length > 0) {
               base.processInputFeeds();
           }
-          
-          //$("#show-new-badge").hide()
-
-          $("#showbadges").live('click', function(ev) {
-            $("#select-badge").dialog({  modal:true, width:'600px', height:'auto', position:'top',
-            title: "Select a badge", resizable: false, draggable: false});
-          });
-
-          $("#select-badge .gamesettings-badges").live('click', function(ev) {
+         
+          $("#select-badge .badge-set").live('click', function(ev) {
             $("#selected-badge").parent().show();
             var badge_class = "gamesettings-badges " + $(this).data('class');
             $("#selected-badge").html("<div class='"+badge_class+"' />");
-            $("#select-badge").dialog('close');
+            $("#select-badge").modal('hide');
             $("#selected-badge-name").html($(this).data('name'));
             $("#quest_badge_id").val($(this).data('badgeId'));
             $("#showbadges").html("Change");
-          });
+          });    
 
           $('#formQuestNew').submit(function(e) {
             var questObj = {};
