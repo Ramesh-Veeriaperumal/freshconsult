@@ -46,7 +46,8 @@
 						</div>
 						<strong id="selected-badge-name"><%= @badge_class[:name] if @badge_class%></strong>
 					</div>
-					<a href="javascript:void(0)" id="showbadges">
+					<a href="#select-badge" data-template-footer="" 
+						id="showbadges" rel="freshdialog" title="Select a badge">
 						<%= (!@badge_class) ? t('admin.quests.quest_form.pick_badge') : t('admin.quests.quest_form.change') %>
 					</a>
 				</div>
@@ -56,19 +57,20 @@
 				</div>
 			</div>
 		</div>
-		<div id="select-badge" class="badgelist hide badges_items">
-			<span class="seperator"></span>
-			<div class="row">
-				<% @available_badges.each do | badges | %>
-					<div class="span2 badge-set">
-						<%= content_tag :div, "", 
-									:class => "gamesettings-badges center-align #{badges[:classname]}", 
-									"data-class" => badges[:classname],
-									"data-name" => badges[:name],
-									"data-badge-id" => badges[:id] %>
-						<p class="aligncenter"><strong><%= badges[:name] %></strong></p>
-					</div>
-				<% end %>
+		<div id="select-badge" class="hide">
+			<div class="badgelist badges_items">
+				<div class="row">
+					<% @available_badges.each do | badges | %>
+						<% content_tag :div, 
+								"data-class" => badges[:classname],
+								"data-name" => badges[:name],
+								"data-badge-id" => badges[:id], :class => "span2 badge-set" do %>
+							<%= content_tag :div, "", 
+										:class => "gamesettings-badges center-align #{badges[:classname]}" %>
+							<p class="aligncenter"><strong><%= badges[:name] %></strong></p>
+						<% end %>
+					<% end %>
+				</div>
 			</div>
 		</div>
 	</div>

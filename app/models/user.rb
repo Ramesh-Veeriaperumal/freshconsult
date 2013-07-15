@@ -119,8 +119,8 @@ class User < ActiveRecord::Base
   end
   
   def client_manager=(checked)
-    if customer? && checked == "true"
-      self.privileges = Role.privileges_mask([:client_manager])
+    if customer?
+      self.privileges = (checked == "true") ? Role.privileges_mask([:client_manager]) : "0"
     end
   end
 
