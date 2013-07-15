@@ -2,6 +2,8 @@
 #Well, it is not a sexy name, but everything else is taken by business_time plugin.
 
 class BusinessCalendar < ActiveRecord::Base
+
+  include MemcacheKeys
   serialize :business_time_data
   serialize :holiday_data
   
@@ -10,6 +12,7 @@ class BusinessCalendar < ActiveRecord::Base
   #can revisit this data model later...
   belongs_to :account
   before_create :set_default_version, :valid_working_hours?
+  after_commit_on_update :clear_cache
   attr_accessible :holiday_data,:business_time_data,:version,:is_default,:name,:description,:time_zone
   validates_presence_of :time_zone, :name
 
@@ -87,10 +90,18 @@ class BusinessCalendar < ActiveRecord::Base
     if Account.current.features?(:multiple_business_hours) && group && group.business_calendar
       group.business_calendar
     elsif Account.current 
-      Account.current.business_calendar.default.first
+      key = DEFAULT_BUSINESS_CALENDAR % {:account_id => Account.current.id}
+      MemcacheKeys.fetch(key) do
+        Account.current.business_calendar.default.first
+      end
     else
       BusinessTime::Config
     end
+  end
+
+  def clear_cache
+    key = DEFAULT_BUSINESS_CALENDAR % {:account_id => Account.current.id}
+    MemcacheKeys.delete_from_cache key if self.is_default
   end
 
   def business_hour_data

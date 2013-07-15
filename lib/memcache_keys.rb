@@ -57,6 +57,8 @@ module MemcacheKeys
   SHARD_BY_DOMAIN = "v1/SHARD_BY_DOMAIN:%{domain}"
  
   SHARD_BY_ACCOUNT_ID = "v1/SHARD_BY_ACCOUNT_ID:%{account_id}"
+
+  DEFAULT_BUSINESS_CALENDAR = "v1/DEFAULT_BUSINESS_CALENDAR:%{account_id}"
   
   class << self
 
