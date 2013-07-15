@@ -9,7 +9,9 @@ class HomeController < ApplicationController
     if (current_user && privilege?(:manage_tickets))
       redirect_to helpdesk_dashboard_path and return
     else
+      flash.keep(:notice)
       redirect_to support_home_path and return
+
     end   
     # redirect_to login_path and return unless (allowed_in_portal?(:open_solutions) || allowed_in_portal?(:open_forums))
     
