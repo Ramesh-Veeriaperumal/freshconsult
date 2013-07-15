@@ -4,4 +4,3 @@ page << "jQuery('#timeentry_#{@time_entry.id}').fadeOut(500, function(){
 			jQuery('#timesheetlist .time-tracked-details:not(.time_running) .toggle_timer').hide();
 			jQuery('#timesheetlist .time-tracked-details:last .toggle_timer').show();
 		});"
-@time_entry.destroy

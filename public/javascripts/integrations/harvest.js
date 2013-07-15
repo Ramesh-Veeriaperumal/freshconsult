@@ -158,7 +158,9 @@ HarvestWidget.prototype= {
 		}
 	},
 
-	logTimeEntry:function() {
+	logTimeEntry:function(integratable_id) {
+		if(integratable_id)
+			this.freshdeskWidget.local_integratable_id = integratable_id;
 		if (harvestBundle.remote_integratable_id) {
 			this.updateTimeEntry();
 		} else {
@@ -174,6 +176,7 @@ HarvestWidget.prototype= {
 				"request[task_id]": $("harvest-timeentry-tasks").value,
 				"request[notes]": $("harvest-timeentry-notes").value,
 				"request[hours]": $("harvest-timeentry-hours").value,
+				"request[spent_at]": new Date(jQuery('#executed_at_new').val()).toString("ddd, dd MMM yyyy"),
 				rest_url: "daily/add",
 				content_type: "application/xml",
 				method: "post",
@@ -192,12 +195,13 @@ HarvestWidget.prototype= {
 	}, 
 
 	handleTimeEntrySuccess:function(resData) {
-		resXml = resData.responseXML
+		resXml = resData.responseXML;
+		if(!resXml) return;
 		var dayEntries = XmlUtil.extractEntities(resXml,"day_entry");
 		if(dayEntries.length>0){
 			this.freshdeskWidget.remote_integratable_id = XmlUtil.getNodeValueStr(dayEntries[0],"id");
 			this.resetTimeEntryForm();
-		}
+		}	
 	},
 
 	retrieveTimeEntry:function(resultCallback){
@@ -212,15 +216,16 @@ HarvestWidget.prototype= {
 	},
  
 	resetIntegratedResourceIds: function(integrated_resource_id, remote_integratable_id, local_integratable_id, is_delete_request) {
-		harvestBundle.integrated_resource_id = integrated_resource_id
-		harvestBundle.remote_integratable_id = remote_integratable_id
-		this.freshdeskWidget.local_integratable_id = local_integratable_id
-		this.freshdeskWidget.remote_integratable_id = remote_integratable_id
-		if (!is_delete_request)
+		harvestBundle.integrated_resource_id = integrated_resource_id;
+		harvestBundle.remote_integratable_id = remote_integratable_id;
+		this.freshdeskWidget.local_integratable_id = local_integratable_id;
+		this.freshdeskWidget.remote_integratable_id = remote_integratable_id;
+		if (!is_delete_request){
 			if (harvestBundle.remote_integratable_id)
 				this.retrieveTimeEntry();
 			else
 				this.resetTimeEntryForm();
+		}
 	},
 
 	resetTimeEntryForm: function(){
@@ -267,6 +272,7 @@ HarvestWidget.prototype= {
 				method: "post",
 				on_success: function(evt){
 					harvestWidget.handleTimeEntrySuccess(evt);
+					this.resetIntegratedResourceIds();
 					if(resultCallback) resultCallback(evt);
 				}.bind(this),
 				on_failure: harvestWidget.processFailure
@@ -289,6 +295,7 @@ HarvestWidget.prototype= {
 					content_type: "application/xml",
 					method: "post",
 					on_success: function(evt){
+						this.resetIntegratedResourceIds();
 						harvestWidget.handleTimeEntrySuccess(evt);
 						if(resultCallback) resultCallback(evt);
 					}.bind(this),

@@ -3442,7 +3442,7 @@ es:
       level2: "Nivel 2"
       level3: "Nivel 3"
       nested_label: "Etiquetas de campos anidados"
-      nestedfield_helptext: "utilice el siguiente formulario de area de texto libre para agregar o editar elementos al menu desplegable, ordena los elementos presionado en tabulador una o dos veces. convertiremos estos elementos como base del menu desplegable, por favor tenga mucho cuidado. <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'> aprender mas</a>"
+      nestedfield_helptext: "utilice el siguiente formulario de area de texto libre para agregar o editar elementos al menu desplegable, ordena los elementos presionado en tabulador una o dos veces. convertiremos estos elementos como base del menu desplegable, por favor tenga mucho cuidado. <a target='_blank' href=%{learn_more}> aprender mas</a>"
       nestedfield_helptext_preview: "esta es la \"vista previa\" del elemento desplegable a mostrar, use de forma libre el area de texto para \"editar vistas\" y asi editar los elementos"
       sla_timer: "contador de SLA"
       status_choices: "Opciones de Estado"

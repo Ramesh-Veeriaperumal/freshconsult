@@ -3574,7 +3574,7 @@ cs:
       level2: "Úroveň 2"
       level3: "Úroveň 3"
       nested_label: "Popisky vnořeného pole"
-      nestedfield_helptext: "V textové oblasti s volným tvarem můžete přidat nebo upravit položky pro svůj rozevírací seznam. Položky odsaďte jedním či dvojím stiskem tabulátorové klávesy. Přeměníme je na položky rozevíracího seznamu podle odsazení. Věnujte tomu prosím proto zvýšenou péči. <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>Zjistěte více</a> "
+      nestedfield_helptext: "V textové oblasti s volným tvarem můžete přidat nebo upravit položky pro svůj rozevírací seznam. Položky odsaďte jedním či dvojím stiskem tabulátorové klávesy. Přeměníme je na položky rozevíracího seznamu podle odsazení. Věnujte tomu prosím proto zvýšenou péči. <a target='_blank' href=%{learn_more}>Zjistěte více</a> "
       nestedfield_helptext_preview: "Toto je náhled příkladu položek rozevíracího seznamu. Položky můžete upravit v textové oblasti s volným tvarem v rámci položky „Upravit pohled“."
       sla_timer: "Počítadlo SLA"
       status_choices: "Volby stavu"

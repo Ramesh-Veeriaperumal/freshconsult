@@ -55,11 +55,6 @@ end
 
 def create_es_indices
   puts 'Creating Elasticsearch indices...'
-  range = Rails.env.development? ? (2..2) : (1..50)
-  range.each do |i|
-    record = ElasticsearchIndex.new(:name => "fd_index-#{i}")
-    record.id = i
-    record.save
-  end
+  Search::EsIndexDefinition.create_es_index
 end
 #SAAS ends here

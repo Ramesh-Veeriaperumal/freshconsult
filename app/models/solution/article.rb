@@ -102,11 +102,10 @@ class Solution::Article < ActiveRecord::Base
       if ticket.account.es_enabled?
         begin
           options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }
-          item = Tire.search [ticket.account.search_index_name], options do |search|
+          item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], ticket.account.id), options do |search|
             search.query do |query|
               query.filtered do |f|
                 f.query { |q| q.string SearchUtil.es_filter_key(search_by), :fields => ['title', 'desc_un_html'], :analyzer => "include_stop" }
-                f.filter :terms, :_type => ['solution/article']
                 f.filter :term, { :account_id => ticket.account_id }
               end
             end
@@ -171,6 +170,10 @@ class Solution::Article < ActiveRecord::Base
 
   def article_keywords
     (seo_data[:meta_keywords].blank?) ? tags.join(", ") : seo_data[:meta_keywords]
+  end
+
+  def article_changes
+    @article_changes ||= self.changes.clone
   end
 
 end

@@ -10,7 +10,7 @@
 						<p class="text-info"><strong><%= link_to(h(agent.user.display_name), agent_path(agent), :class => "item_info") %> </strong><br/><small class="muted"><%= h agent.user.job_title %></small></p>
 					</td>
 					<td>
-						<p><%= h(agent.user.email) %><br/><%= h(agent.user.phone) %></p>
+						<p class="ellipsis"><%= h(agent.user.email) %><br/><%= h(agent.user.phone) %></p>
 					</td>
 					<td>
 						<p <%= last_login_tooltip(agent) %>>

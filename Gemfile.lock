@@ -200,7 +200,6 @@ GEM
     mysql (2.8.1)
     mysql (2.8.1-x86-mingw32)
       multi_json (~> 1.0)
-    net-dns (0.6.1)
     newrelic_rpm (3.5.3.25)
     nokogiri (1.4.4)
     nokogiri (1.4.4-x86-mingw32)
@@ -266,6 +265,10 @@ GEM
       redis-namespace (~> 1.0)
       sinatra (>= 0.9.2)
       vegas (~> 0.1.2)
+    resque-scheduler (2.0.1)
+      redis (>= 2.0.1)
+      resque (>= 1.20.0)
+      rufus-scheduler
     resque-status (0.4.1)
       resque (~> 1.19)
     rest-client (1.6.7)
@@ -293,6 +296,8 @@ GEM
     ruby-openid-apps-discovery (1.2.0)
       ruby-openid (>= 2.1.7)
     rubyzip (0.9.4)
+    rufus-scheduler (2.0.19)
+      tzinfo (>= 0.3.23)
     sanitize (2.0.3)
       nokogiri (>= 1.4.4, < 1.6)
     sass (3.2.1)
@@ -399,7 +404,6 @@ DEPENDENCIES
   mocha (~> 0.13.3)
   mongrel (>= 1.2.0.pre2)
   mysql (= 2.8.1)
-  net-dns (= 0.6.1)
   newrelic_rpm (= 3.5.3.25)
   nori (= 1.1.4)
   oily_png
@@ -421,6 +425,7 @@ DEPENDENCIES
   rake (= 0.8.7)
   redis (= 2.2.2)
   resque (= 1.22.0)
+  resque-scheduler
   resque-status (= 0.4.1)
   rforce
   riddle (= 1.2.2)

@@ -3431,7 +3431,7 @@ it:
       level2: "Livello 2"
       level3: "Livello 3"
       nested_label: "Etichette campo nidificato"
-      nestedfield_helptext: "Utilizzare l'area di testo a formato libero presente di seguito per aggiungere o modificare elementi dell'elenco a discesca. È possibile inserire un rientro premendo il pulsante tab una o due volte. Attenzione: gli elementi saranno inseriti nell'elenco a discesa a seconda del rientro inserito. <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>Per saperne di più</a> "
+      nestedfield_helptext: "Utilizzare l'area di testo a formato libero presente di seguito per aggiungere o modificare elementi dell'elenco a discesca. È possibile inserire un rientro premendo il pulsante tab una o due volte. Attenzione: gli elementi saranno inseriti nell'elenco a discesa a seconda del rientro inserito. <a target='_blank' href=%{learn_more}>Per saperne di più</a> "
       nestedfield_helptext_preview: "Questa è l'anteprima degli elementi del menù a tendina. Utilizzare l'area di testo a formato libero in \"Modifica visualizzazione\" per modificare gli elementi"
       sla_timer: "Timer SLA"
       status_choices: "Scelta stati"

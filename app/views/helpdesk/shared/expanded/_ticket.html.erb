@@ -12,7 +12,11 @@
 	</span>
 	<div class="ticket_subject">
 		<h3 class="ticket-description-tip <%= ticket_style %>_ticket" data-tip-url="<%= latest_note_helpdesk_ticket_url(ticket) %>">
-			<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "ticket_id"), ticket ) %>
+			<% if @new_show_page %>
+				<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "ticket_id"), ticket, "data-pjax" => "#body-container" ) %>
+			<% else %>
+				<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "ticket_id"), ticket ) %>
+			<% end #!V2 %>	
 			<%if feature?(:agent_collision) %>
 				<div class="index-collision">
 					<div rel="view_collision" id="tickets:<%=current_account.id%>:viewers:<%=ticket.id%>"

@@ -102,4 +102,8 @@
 		jQuery("#end_date").val((date_today.getMonth()+1) + '/' + date_today.getDate() + '/' + date_today.getFullYear());		
 		
 	});
+	jQuery("#start_date, #end_date").bind('keypress keyup keydown', function(ev) {
+   	ev.preventDefault();
+   	return false;
+  });
 <% end %>

@@ -1,255 +1,20 @@
 class Account < ActiveRecord::Base
-  require 'net/dns/resolver'
-  require 'net/http' 
-  require 'uri' 
 
   include Mobile::Actions::Account
   include Cache::Memcache::Account
   include ErrorHandle
   
-  #rebranding starts
-  serialize :preferences, Hash
   serialize :sso_options, Hash
+
+  concerned_with :associations, :constants, :validations, :callbacks
   
-  
-  has_many :tickets, :class_name => 'Helpdesk::Ticket', :dependent => :delete_all
-  has_many :ticket_bodies, :class_name => 'Helpdesk::TicketBody', :dependent => :delete_all
-  has_many :notes, :class_name => 'Helpdesk::Note', :dependent => :delete_all
-  has_many :note_bodies, :class_name => 'Helpdesk::NoteBody', :dependent => :delete_all
-  has_many :external_notes, :class_name => 'Helpdesk::ExternalNote', :dependent => :delete_all
-  has_many :activities, :class_name => 'Helpdesk::Activity', :dependent => :delete_all
-  has_many :flexifields, :dependent => :delete_all
-  has_many :ticket_states, :class_name =>'Helpdesk::TicketState', :dependent => :delete_all
-  has_many :schema_less_tickets, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :delete_all
-  has_many :schema_less_notes, :class_name => 'Helpdesk::SchemaLessNote', :dependent => :delete_all
-  
-  has_many :all_email_configs, :class_name => 'EmailConfig', :order => "name"
-  has_many :email_configs, :conditions => { :active => true }
-  has_many :global_email_configs, :class_name => 'EmailConfig', :conditions => {:product_id => nil}, :order => "primary_role desc"
-  has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true, :product_id => nil }
-  has_many :products, :order => "name"
-  has_many :roles, :dependent => :delete_all, :order => "default_role desc"
-  has_many :portals
-  has_one  :main_portal, :class_name => 'Portal', :conditions => { :main_portal => true}
-
-  accepts_nested_attributes_for :primary_email_config
-  accepts_nested_attributes_for :main_portal
-
-
-  has_many :survey_results
-  has_many :survey_remarks
-
-  has_one  :subscription_plan, :through => :subscription
-
-  has_one :conversion_metric
-
-  accepts_nested_attributes_for :conversion_metric
- 
-  has_many :features
-  has_many :flexi_field_defs, :class_name => 'FlexifieldDef'
-  has_many :flexifield_def_entries
-  
-  has_one :data_export
-  
-  has_one :account_additional_settings
-
-  has_one :account_configuration
-  validates_associated :account_configuration, :on => :create
-  
-  delegate :contact_info, :admin_first_name, :admin_last_name, :admin_email, :admin_phone, 
-            :invoice_emails, :to => "account_configuration"
-
-  has_one :logo,
-    :as => :attachable,
-    :class_name => 'Helpdesk::Attachment',
-    :conditions => ['description = ?', 'logo' ]
-  
-  has_one :fav_icon,
-    :as => :attachable,
-    :class_name => 'Helpdesk::Attachment',
-    :conditions => ['description = ?', 'fav_icon' ]
-    
-  #rebranding ends 
-
-  RESERVED_DOMAINS = %W(  blog help chat smtp mail www ftp imap pop faq docs doc wiki team people india us talk 
-                          upload download info lounge community forums ticket tickets tour about pricing bugs in out 
-                          logs projects itil marketing partner store channel reseller resellers online 
-                          contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab 
-                          productdemo resources static static0 static1 static2 static3 static4 static5 
-                          static6 static7 static8 static9 static10 )
-
-  #
-  # Tell authlogic that we'll be scoping users by account
-  #
-  authenticates_many :user_sessions
-  
-  has_many :attachments, :class_name => 'Helpdesk::Attachment'
-
-  has_many :dropboxes,  :class_name=> 'Helpdesk::Dropbox'
-  
-  has_many :users, :conditions =>{:deleted =>false}, :order => :name
-  has_many :all_users , :class_name => 'User'
-  
-  has_many :technicians, :class_name => "User", :conditions => { :helpdesk_agent => true, :deleted => false }, :order => "name desc"
-  
-  has_one :subscription
-  has_many :subscription_payments
-  has_many :solution_categories, :class_name =>'Solution::Category',:include =>:folders,:order => "position"
-  has_many :portal_solution_categories, :class_name =>'Solution::Category', :order => "position"
-  has_many :solution_articles, :class_name =>'Solution::Article'
-  
-  has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
-  has_many :user_credentials, :class_name => 'Integrations::UserCredential', :dependent => :destroy
-  has_many :customers
-  has_many :contacts, :class_name => 'User' , :conditions => { :helpdesk_agent => false , :deleted =>false }
-  has_many :agents, :through =>:users , :conditions =>{:users=>{:deleted => false}}, :order => "users.name"
-  has_many :full_time_agents, :through =>:users, :conditions => { :occasional => false, 
-      :users=> { :deleted => false } }
-  has_many :all_contacts , :class_name => 'User', :conditions => { :helpdesk_agent => false }
-  has_many :all_agents, :class_name => 'Agent', :through =>:all_users  , :source =>:agent
-  has_many :sla_policies , :class_name => 'Helpdesk::SlaPolicy' 
-  has_one  :default_sla ,  :class_name => 'Helpdesk::SlaPolicy' , :conditions => { :is_default => true }
-
-  #Scoping restriction for other models starts here
-  has_many :account_va_rules, :class_name => 'VARule'
-  
-  has_many :va_rules, :class_name => 'VARule', :conditions => { 
-    :rule_type => VAConfig::BUSINESS_RULE, :active => true }, :order => "position"
-  has_many :all_va_rules, :class_name => 'VARule', :conditions => {
-    :rule_type => VAConfig::BUSINESS_RULE }, :order => "position"
-    
-  has_many :supervisor_rules, :class_name => 'VARule', :conditions => { 
-    :rule_type => VAConfig::SUPERVISOR_RULE, :active => true }, :order => "position"
-  has_many :all_supervisor_rules, :class_name => 'VARule', :conditions => {
-    :rule_type => VAConfig::SUPERVISOR_RULE }, :order => "position"
-
-  has_many :observer_rules, :class_name => 'VARule', :conditions => { 
-    :rule_type => VAConfig::OBSERVER_RULE, :active => true }, :order => "position"
-  has_many :all_observer_rules, :class_name => 'VARule', :conditions => {
-    :rule_type => VAConfig::OBSERVER_RULE }, :order => "position"
-  
-  has_many :scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
-  has_many :all_scn_automations, :class_name => 'VARule', :conditions => {:rule_type => VAConfig::SCENARIO_AUTOMATION, :active => true}, :order => "position"
-  
-  has_many :email_notifications
-  has_many :groups
-  has_many :agent_groups
-  has_many :forum_categories, :order => "position"
-  
-  has_many :business_calendar 
-
-  has_many :forums, :through => :forum_categories    
-  has_many :portal_forums, :through => :forum_categories, 
-    :conditions =>{:forum_visibility => Forum::VISIBILITY_KEYS_BY_TOKEN[:anyone]}, :order => "position"     
-  has_many :portal_topics, :through => :forums# , :order => 'replied_at desc', :limit => 5
-  
-  has_many :user_forums, :through => :forum_categories, :conditions =>['forum_visibility != ?', Forum::VISIBILITY_KEYS_BY_TOKEN[:agents]] 
-  has_many :user_topics, :through => :user_forums#, :order => 'replied_at desc', :limit => 5
-
-  has_many :topics
-  has_many :posts
-
-  has_many :folders, :class_name =>'Solution::Folder', :through => :solution_categories  
-  has_many :public_folders, :through => :solution_categories
-  has_many :published_articles, :through => :public_folders, 
-              :conditions => [" solution_folders.visibility = ? ", Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]]
-   
-  has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', 
-    :include => [:picklist_values, :flexifield_def_entry], :order => "position"
-
-  has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
-  
-  has_many :canned_response_folders, :class_name =>'Admin::CannedResponses::Folder', :order => 'is_default desc'
-
-  has_many :canned_responses , :class_name =>'Admin::CannedResponses::Response' , :order => 'title' 
-  
-  has_many :user_accesses , :class_name =>'Admin::UserAccess' 
-
-  has_many :facebook_pages, :class_name =>'Social::FacebookPage' 
-  
-  has_many :facebook_posts, :class_name =>'Social::FbPost' 
-  
-  has_many :ticket_filters , :class_name =>'Helpdesk::Filters::CustomTicketFilter' 
-
-  #has_many :report_filters, :class_name=>'Reports::Filters::ReportsFilter'
-  
-  has_many :twitter_handles, :class_name =>'Social::TwitterHandle' 
-  has_many :tweets, :class_name =>'Social::Tweet'  
-  
-  has_one :survey
-  has_many :survey_handles, :through => :survey
-
-  has_many :scoreboard_ratings
-  has_many :scoreboard_levels
-
-  has_many :quests, :class_name => 'Quest', :conditions => { :active => true }, 
-    :order => "quests.created_at desc, quests.id desc"
-  has_many :all_quests, :class_name => 'Quest', :order => "quests.created_at desc, quests.id desc"
-
-
-  has_one :day_pass_config
-  has_many :day_pass_usages
-  has_many :day_pass_purchases, :order => "created_at desc"
-  
-  has_one :data_import,:class_name => 'Admin::DataImport' 
-
-  
-  has_many :tags, :class_name =>'Helpdesk::Tag'
-  
-  has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :through =>:tickets , :conditions =>['helpdesk_tickets.deleted =?', false]
-  
-  has_many :support_scores, :class_name => 'SupportScore', :dependent => :delete_all
-
-  has_one  :es_enabled_account, :class_name => 'EsEnabledAccount', :dependent => :destroy
-
-  delegate :bcc_email, :ticket_id_delimiter, :email_cmds_delimeter, :pass_through_enabled, :to => :account_additional_settings
-
-  has_many :subscription_events 
   xss_sanitize  :only => [:name,:helpdesk_name]
-  #Scope restriction ends
   
-  validates_format_of :domain, :with => /(?=.*?[A-Za-z])[a-zA-Z0-9]*\Z/
-  validates_exclusion_of :domain, :in => RESERVED_DOMAINS, :message => "The domain <strong>{{value}}</strong> is not available."
-  validates_length_of :helpdesk_url, :maximum=>255, :allow_blank => true
-  validate :valid_domain?
-  validate :valid_helpdesk_url? 
-  validate :valid_sso_options?
-  validate_on_create :valid_plan?
-  validate_on_create :valid_payment_info?
-  validate_on_create :valid_subscription?
-  validates_uniqueness_of :google_domain ,:allow_blank => true, :allow_nil => true
-  
-  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,:preferences,
+  attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,
                   :logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain ,
                   :language, :ssl_enabled
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
   
-  validates_numericality_of :ticket_display_id,
-                            :less_than => 1000000,
-                            :message => "Value must be less than six digits"
-                            
-
-  before_create :set_default_values
-  before_create :set_shard_mapping
-
-  before_update :check_default_values, :update_users_time_zone
-  after_create :populate_features
-
-  after_create :change_shard_status
-  after_update :change_shard_mapping
-
-  after_update :update_users_language
-
-  before_destroy :update_crm
-
-  after_commit_on_create :add_to_billing, :enable_elastic_search
-
-  after_commit_on_update :clear_cache
-  after_commit_on_destroy :clear_cache, :delete_reports_archived_data
-  before_update :backup_changes
-  before_destroy :backup_changes
-  before_destroy :make_shard_mapping_inactive
-  after_destroy :remove_shard_mapping
 
   named_scope :active_accounts,
               :conditions => [" subscriptions.state != 'suspended' "], 
@@ -270,84 +35,36 @@ class Account < ActiveRecord::Base
       self.subscription.send(name) && self.subscription.send(name) <= meth.call(self)
     end
   end
-  
-  PLANS_AND_FEATURES = {
-    :basic => { :features => [ :twitter, :custom_domain, :multiple_emails ] },
-    
-    :pro => {
-      :features => [ :scenario_automations, :customer_slas, :business_hours, :forums, 
-        :surveys, :scoreboard, :facebook, :timesheets, :css_customization, :advanced_reporting ],
-      :inherits => [ :basic ]
-    },
-    
-    :premium => {
-      :features => [ :multi_product, :multi_timezone , :multi_language, :enterprise_reporting],
-      :inherits => [ :pro ] #To make the hierarchy easier
-    },
-    
-    :sprout => {
-      :features => [ :scenario_automations, :business_hours ]
-    },
-    
-    :blossom => {
-      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, 
-        :custom_domain, :multiple_emails, :advanced_reporting],
-      :inherits => [ :sprout ]
-    },
-    
-    :garden => {
-      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :css_customization, :advanced_reporting, :multiple_business_hours ],
-      :inherits => [ :blossom ]
-    },
 
-    :estate => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles, :multiple_business_hours ],
-      :inherits => [ :garden ]
-    },
-
-    :sprout_classic => {
-      :features => [ :scenario_automations, :business_hours, :custom_domain, :multiple_emails ]
-    },
-    
-    :blossom_classic => {
-      :features => [ :twitter, :facebook, :forums, :surveys , :scoreboard, :timesheets, :advanced_reporting ],
-      :inherits => [ :sprout_classic ]
-    },
-    
-    :garden_classic => {
-      :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language, 
-        :css_customization, :advanced_reporting ],
-      :inherits => [ :blossom_classic ]
-    },
-
-    :estate_classic => {
-      :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles, :multiple_business_hours ],
-      :inherits => [ :garden_classic ]
-    }
-
-  }
-  
-
-  has_many :portal_templates,  :class_name=> 'Portal::Template'
-  has_many :portal_pages,  :class_name=> 'Portal::Page'
-
-# Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
-    
-  SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
-    :anonymous_tickets =>true, :survey_links => true, :gamification_enable => true, :google_signin => true,
-    :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
-    :personalized_email_replies => false}
-    
-  
   has_features do
     PLANS_AND_FEATURES.each_pair do |k, v|
       feature k, :requires => ( v[:inherits] || [] )
       v[:features].each { |f_n| feature f_n, :requires => [] } unless v[:features].nil?
       SELECTABLE_FEATURES.keys.each { |f_n| feature f_n }
     end
+  end
+
+  class << self # class methods
+
+    def reset_current_account
+      Thread.current[:account] = nil
+    end
+
+    def actual_customer_count
+      Account.count('id',:distinct => true,:joins => :subscription_payments)
+    end
+
+    def current
+      Thread.current[:account]
+    end
+
+    def fetch_all_active_accounts
+      results = Sharding.run_on_all_shards do
+        Account.find(:all,:joins => :subscription, :conditions => "subscriptions.next_renewal_at > now()")
+      end
+    end
+
+    protected :fetch_all_active_accounts
   end
   
   def installed_apps_hash
@@ -356,14 +73,6 @@ class Account < ActiveRecord::Base
      result[installed_app.application.name.to_sym] = installed_app
      result
    end
-  end
-
-  def self.reset_current_account
-    Thread.current[:account] = nil
-  end
-  
-  def self.actual_customer_count
-    Account.count('id',:distinct => true,:joins => :subscription_payments)
   end
   
   def can_add_agents?(agent_count)
@@ -380,27 +89,10 @@ class Account < ActiveRecord::Base
     return 0
   end
   
-  def check_default_values
-    dis_max_id = get_max_display_id
-    if self.ticket_display_id.blank? or (self.ticket_display_id < dis_max_id)
-       self.ticket_display_id = dis_max_id
-    end
-  end
-  
   def account_managers
     technicians.select do |user|
       user.privilege?(:manage_account)
     end
-  end
-  
-  def update_users_time_zone #Ideally this should be called in after_update
-    if time_zone_changed? && !features.multi_timezone?
-      all_users.update_all(:time_zone => time_zone)
-    end
-  end
-  
-  def update_users_language
-    all_users.update_all(:language => main_portal.language) if !features.multi_language? and main_portal
   end
   
   def needs_payment_info?
@@ -491,20 +183,11 @@ class Account < ActiveRecord::Base
    end
   
   #Sentient things start here, can move to lib some time later - Shan
-  def self.current
-    Thread.current[:account]
-  end
-  
   def make_current
     Thread.current[:account] = self
   end
   #Sentient ends here
-  
-  def populate_features
-    add_features_of subscription.subscription_plan.name.downcase.to_sym
-    SELECTABLE_FEATURES.each { |key,value| features.send(key).create  if value}
-  end
-  
+
   def add_features_of(s_plan)
     p_features = PLANS_AND_FEATURES[s_plan]
     unless p_features.nil?
@@ -549,16 +232,6 @@ class Account < ActiveRecord::Base
     pass_through_enabled
   end
 
-  def enable_elastic_search
-    es_index_id = ElasticsearchIndex.es_id_for(self.id)
-    self.create_es_enabled_account(:account_id => self.id, :index_id => es_index_id)
-  end
-
-  def search_index_name
-    key = MemcacheKeys::ES_INDEX_NAME % { :account_id => self.id }
-    MemcacheKeys.fetch(key) { ElasticsearchIndex.find(self.es_enabled_account.index_id).name }
-  end
-
   def es_enabled?
     es_status = MemcacheKeys.fetch(MemcacheKeys::ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
     es_status.key?(self.id) ? es_status[self.id] : false
@@ -566,21 +239,6 @@ class Account < ActiveRecord::Base
   
   protected
   
-    def valid_domain?
-      conditions = new_record? ? ['full_domain = ?', self.full_domain] : ['full_domain = ? and id <> ?', self.full_domain, self.id]
-      self.errors.add(:domain, 'is not available') if self.full_domain.blank? || self.class.count(:conditions => conditions) > 0
-    end
-    
-    def valid_sso_options?
-      if self.sso_enabled?
-        if self.sso_options[:login_url].blank?  
-          self.errors.add(:sso_options, ', Please provide a valid login url') 
-        #else
-          #self.errors.add(:sso_options, ', Please provide a valid login url') if !external_url_is_valid?(self.sso_options[:login_url])
-        end
-      end
-    end
-    
     def external_url_is_valid?(url) 
       uri = URI.parse(url) 
       response = Net::HTTP.start(uri.host, uri.port) {|http| http.head(uri.path)} 
@@ -593,59 +251,6 @@ class Account < ActiveRecord::Base
       false
     end 
     
-    def valid_helpdesk_url?
-      return true if (helpdesk_url.blank? || helpdesk_url == full_domain)
-
-      errors.add_to_base(<<-eos
-                          Host verification failed, please configure a CNAME record in your DNS server 
-                          for '#{helpdesk_url}' and alias it to '#{full_domain}'
-                        eos
-                        ) unless (cname == full_domain)
-    end
-    
-    def cname
-      begin
-        Net::DNS::Resolver.new.query(helpdesk_url).each_cname do |cn| 
-          return cn.sub(/\.?$/, '') if cn.include?(full_domain)
-        end
-      rescue Exception => e
-        Rails.logger.debug "Host name verification failed #{e.message}"
-      end
-    end
-    
-    def valid_payment_info?
-      if needs_payment_info?
-        unless @creditcard && @creditcard.valid?
-          errors.add_to_base("Invalid payment information")
-        end
-        
-        unless @address && @address.valid?
-          errors.add_to_base("Invalid address")
-        end
-      end
-    end
-    
-    def valid_plan?
-      errors.add_to_base("Invalid plan selected.") unless @plan
-    end
-    
-    def valid_subscription?
-      return if errors.any? # Don't bother with a subscription if there are errors already
-      self.build_subscription(:plan => @plan, :next_renewal_at => @plan_start, :creditcard => @creditcard, :address => @address, :affiliate => @affiliate)
-      if !subscription.valid?
-        errors.add_to_base("Error with payment: #{subscription.errors.full_messages.to_sentence}")
-        return false
-      end
-    end
-    
-    def set_default_values
-      self.time_zone = Time.zone.name if time_zone.nil? #by Shan temp.. to_s is kinda hack.
-      self.helpdesk_name = name if helpdesk_name.nil?
-      self.preferences = HashWithIndifferentAccess.new({:bg_color => "#efefef",:header_color => "#252525", :tab_color => "#006063"})
-      self.shared_secret = generate_secret_token
-      self.sso_options = set_sso_options_hash
-    end
-    
     def generate_secret_token
       Digest::MD5.hexdigest(Helpdesk::SHARED_SECRET + self.full_domain + Time.now.to_f.to_s).downcase
     end
@@ -656,63 +261,6 @@ class Account < ActiveRecord::Base
 
     def subscription_next_renewal_at
       subscription.next_renewal_at
-    end
-
-    def backup_changes
-      @old_object = Account.find(id)
-      @all_changes = self.changes.clone
-      @all_changes.symbolize_keys!
-    end
-
-     def self.fetch_all_active_accounts
-      results = Sharding.run_on_all_shards do
-        Account.find(:all,:joins => :subscription, :conditions => "subscriptions.next_renewal_at > now()")
-      end
-    end
-
-  private 
-
-    def add_to_billing
-      Resque.enqueue(Billing::AddToBilling, { :account_id => id })
-    end
-
-    def update_crm
-      Resque.enqueue(CRM::AddToCRM::DeletedCustomer, id)
-    end
-
-    def set_shard_mapping
-      shard_mapping = ShardMapping.new({:shard_name => ShardMapping.latest_shard, :status => ShardMapping::STATUS_CODE[:not_found]})
-      shard_mapping.domains.build({:domain => full_domain})  
-      shard_mapping.save                             
-      self.id = shard_mapping.id
-    end
-
-    def change_shard_mapping
-      if full_domain_changed?
-        domain_mapping = DomainMapping.find_by_account_id_and_domain(id,@old_object.full_domain)
-        domain_mapping.update_attribute(:domain,full_domain)
-      end
-    end
-
-    def change_shard_status
-      shard_mapping = ShardMapping.find_by_account_id(id)
-      shard_mapping.status = ShardMapping::STATUS_CODE[:ok]
-      shard_mapping.save
-    end
-
-    def remove_shard_mapping
-      shard_mapping = ShardMapping.find_by_account_id(id)
-      shard_mapping.destroy
-    end
-
-    def make_shard_mapping_inactive
-      shard_mapping = ShardMapping.find_by_account_id(id)
-      shard_mapping.status = ShardMapping::STATUS_CODE[:not_found]
-      shard_mapping.save
-    end
-
-    def delete_reports_archived_data
-      Resque.enqueue(Workers::DeleteArchivedData, {:account_id => id})
     end
 
 end

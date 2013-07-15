@@ -2544,6 +2544,7 @@ pt-BR:
   plans_billing: "Planos e Pagamentos"
   please_wait: "Por favor, aguarde..."
   portal: 
+    attach_file: "Anexar <b>arquivo</b>"
     article: 
       see_all_articles: "Ver todos os %{count} artigos"
     community_forums: "Fóruns da comunidade"
@@ -3469,7 +3470,7 @@ pt-BR:
       level3: "Nível 3"
       nested_label: "Títulos dos campos identados"
       nestedfield_helptext: "Utilize o campo abaixo para adicionar ou editar os itens para sua lista (dropdown). Faça identação dos itens pressionando TAB uma ou duas vezes. Converteremos para um item da lista (dropdown) baseado nesta identação. Faça com cuidado.\n\
-          <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>Saiba mais</a> "
+          <a target='_blank' href=%{learn_more}>Saiba mais</a> "
       nestedfield_helptext_preview: "Esta é a \"Visualização\" de como ficará a lista (dropdown). Utilize a caixa de texto no Modo Edição para editar os itens"
       sla_timer: "Tempo do SLA"
       status_choices: "Opções de status"

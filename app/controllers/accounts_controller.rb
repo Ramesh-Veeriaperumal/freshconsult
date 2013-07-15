@@ -1,7 +1,6 @@
 class AccountsController < ApplicationController
 
   include ModelControllerMethods
-  include FreshdeskCore::Model
   
   layout :choose_layout 
   
@@ -198,15 +197,10 @@ class AccountsController < ApplicationController
   def cancel
     if request.post? and !params[:confirm].blank?
       response = Billing::Subscription.new.cancel_subscription(current_account)
-      if response
-        SubscriptionNotifier.deliver_account_deleted(current_account) if Rails.env.production?
-        create_deleted_customers_info
-        perform_destroy(current_account)
-        redirect_to "http://www.freshdesk.com"
-      end
+      perform_account_cancel(params[:account_feedback]) if response
     end
   end
-    
+  
   def thanks
     redirect_to :action => "plans" and return unless flash[:domain]
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
@@ -387,24 +381,6 @@ class AccountsController < ApplicationController
       @current_user = account.all_users.find_by_email(email) if @current_user.blank?    
     end
 
-    def create_deleted_customers_info
-      sub = current_account.subscription
-      if sub.active?
-        DeletedCustomers.create(
-          :full_domain => "#{current_account.name}(#{current_account.full_domain})",
-          :account_id => current_account.id,
-          :admin_name => current_account.admin_first_name,
-          :admin_email => current_account.admin_email,
-          :account_info => {:plan => sub.subscription_plan_id,
-                            :discount => sub.subscription_discount_id,
-                            :agents_count => current_account.agents.count,
-                            :tickets_count => current_account.tickets.count,
-                            :user_count => current_account.contacts.count,
-                            :account_created_on => current_account.created_at}
-        )
-      end
-    end
-    
     def build_signup_param
       params[:signup] = {}
       
@@ -420,6 +396,62 @@ class AccountsController < ApplicationController
     end
 
     def add_to_crm
-      Resque.enqueue(Marketo::AddLead, { :account_id => @signup.account.id, :cookie => ThirdCRM.fetch_cookie_info(request.cookies) })
-    end   
+      Resque.enqueue(Marketo::AddLead, { :account_id => @signup.account.id, 
+                            :cookie => ThirdCRM.fetch_cookie_info(request.cookies) })
+    end  
+
+    def perform_account_cancel(feedback)
+      update_crm
+      deliver_mail(feedback)
+      create_deleted_customers_info
+
+      current_account.subscription.active? ? schedule_cleanup : clear_account_data
+      redirect_to "http://www.freshdesk.com"
+    end
+
+    def update_crm
+      Resque.enqueue(CRM::AddToCRM::DeletedCustomer, current_account.id)
+    end      
+
+    def deliver_mail(feedback)
+      SubscriptionNotifier.deliver_account_deleted(current_account, 
+                                  feedback) if Rails.env.production?
+    end
+    
+    def create_deleted_customers_info
+      DeletedCustomers.create(customer_details) if current_account.subscription.active?
+    end     
+
+    def schedule_cleanup
+      current_account.subscription.update_attributes(:state => "suspended")
+
+      Resque.enqueue_at(2.days.from_now, Workers::ClearAccountData, 
+                                    { :account_id => current_account.id })
+    end
+
+    def clear_account_data
+      Resque.enqueue(Workers::ClearAccountData, { :account_id => current_account.id })
+    end
+
+    def customer_details
+      {
+        :full_domain => "#{current_account.name}(#{current_account.full_domain})",
+        :account_id => current_account.id,
+        :admin_name => current_account.admin_first_name,
+        :admin_email => current_account.admin_email,
+        :status => FreshdeskCore::Model::STATUS[:scheduled],
+        :account_info => account_info
+      }
+    end
+
+    def account_info
+      { 
+        :plan => current_account.subscription.subscription_plan_id,
+        :agents_count => current_account.agents.count,
+        :tickets_count => current_account.tickets.count,
+        :user_count => current_account.contacts.count,
+        :account_created_on => current_account.created_at 
+      }
+    end            
+
 end

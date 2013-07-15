@@ -192,8 +192,8 @@
   map.with_options(:conditions => {:subdomain => AppConfig['admin_subdomain']}) do |subdom|
     subdom.root :controller => 'subscription_admin/subscriptions', :action => 'index'
     subdom.with_options(:namespace => 'subscription_admin/', :name_prefix => 'admin_', :path_prefix => nil) do |admin|
-      admin.resources :subscriptions, :member => { :charge => :post, :extend_trial => :post, :add_day_passes => :post }, :collection => {:customers => :get, :customers_csv => :get}
-      admin.resources :accounts, :collection => {:agents => :get, :helpdesk_urls => :get, :tickets => :get, :renewal_csv => :get}
+      admin.resources :subscriptions, :member => { :charge => :post, :extend_trial => :post, :add_day_passes => :post }, :collection => {:customers => :get, :deleted_customers => :get, :customers_csv => :get}
+      admin.resources :accounts, :collection => {:agents => :get, :tickets => :get, :renewal_csv => :get}
       admin.resources :subscription_plans, :as => 'plans'
       # admin.resources :subscription_discounts, :as => 'discounts'
       admin.resources :subscription_affiliates, :as => 'affiliates', :collection => {:add_affiliate_transaction => :post}
@@ -382,6 +382,25 @@
     end     
     solution.resources :articles, :only => :show         
   end
+
+  # Savage Beast route config entries starts from here
+  map.resources :posts, :name_prefix => 'all_', :collection => { :search => :get }
+  map.resources :forums, :topics, :posts, :monitorship
+
+  %w(forum).each do |attr|
+    map.resources :posts, :name_prefix => "#{attr}_", :path_prefix => "/#{attr.pluralize}/:#{attr}_id"
+  end
+
+  map.resources :categories, :collection => {:reorder => :put}, :controller=>'forum_categories'  do |forum_c|
+  forum_c.resources :forums, :collection => {:reorder => :put} do |forum|
+    forum.resources :topics, :member => { :users_voted => :get, :update_stamp => :put,:remove_stamp => :put, :update_lock => :put }
+    forum.resources :topics do |topic|
+      topic.resources :posts, :member => { :toggle_answer => :put } 
+      topic.resource :monitorship, :controller => :monitorships
+      end
+    end
+  end
+  # Savage Beast route config entries ends from here
 
   # Removing the home as it is redundant route to home - by venom  
   # map.resources :home, :only => :index 

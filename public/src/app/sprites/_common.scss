@@ -5,6 +5,7 @@ $admin-icon-layout:horizontal;
 
 @import "application-logo/*.png";
 $application-logo-layout:vertical;
+$application-logo-sprite-dimensions:true;
 @include all-application-logo-sprites;
 
 /*Report tab icons */
@@ -30,3 +31,4 @@ $ticket-view-layout:smart;
 
 /* !IMPORTANT ALL GAMIFICATION RELATED STYLES WILL BE UNDER "app/gamification.scss" 
 * These sprites are moved there so that they can be imported only if the feature is enabled */
+
