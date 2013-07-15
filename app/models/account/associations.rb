@@ -128,7 +128,8 @@ class Account < ActiveRecord::Base
 
   has_many :folders, :class_name =>'Solution::Folder', :through => :solution_categories  
   has_many :public_folders, :through => :solution_categories
-  has_many :published_articles, :through => :public_folders
+  has_many :published_articles, :through => :public_folders,
+              :conditions => [" solution_folders.visibility = ? ", Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]]
    
   has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', 
     :include => [:picklist_values, :flexifield_def_entry], :order => "position"
