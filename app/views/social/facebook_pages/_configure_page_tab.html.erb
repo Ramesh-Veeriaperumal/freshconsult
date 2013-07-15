@@ -1,10 +1,7 @@
 <% if @page_tab.nil? %>
-<label class="checkbox">
-  <%= check_box_tag "add_tab" %><p><%= t('facebook_tab.add_tab') %><p>
-</label>
+  <%= hidden_field_tag "add_tab", "1" %><p>
 <% end %>
 <div id="page_tab_options">
-  <%= hidden_field_tag "edit_tab", 1 %>
   <label class="caption"><%= t('facebook_tab.tab_name') %></label>
   <%= text_field_tag "custom_name", @page_tab ? @page_tab["name"] : "", :class => "fields required" %>
   <label class="caption"><%= t('facebook_tab.tab_url') %></label>

@@ -92,7 +92,7 @@ class Social::FacebookPagesController < Admin::AdminController
     end
 
     def tab_edited?
-      params[:edit_tab]
+      params[:custom_name]
     end
 
     def human_name
