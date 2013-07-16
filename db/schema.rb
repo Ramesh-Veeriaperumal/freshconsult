@@ -11,7 +11,6 @@
 
 ActiveRecord::Schema.define(:version => 20130627125059) do
 
-
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8

@@ -355,7 +355,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
                      (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email) }))
   end
 
-
   def ticket_id_delimiter
     delimiter = account.ticket_id_delimiter
     delimiter = delimiter.blank? ? '#' : delimiter
@@ -654,7 +653,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     @custom_field = nil
     flexifield.set_ff_value ff_alias, ff_value
   end
-
   # flexifield - custom_field syncing code ends here
 
   private
