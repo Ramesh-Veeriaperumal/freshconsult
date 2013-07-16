@@ -34,6 +34,11 @@ strong {
   margin-top:0;
   padding-top:0;
 }
+.row-fluid [class*="span"] {
+  &.clear-left-margin{
+    margin-left: 0;
+  }
+}
 /* fix for form label center alignment*/
 .control-label{
   padding-top: 5px;
@@ -568,7 +573,6 @@ ul.inline > li, ol.inline > li {
   ::-webkit-input-placeholder {
     color: #999999;
   }
-
   .row-fluid {
     width: 100%;
     *zoom: 1;
