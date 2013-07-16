@@ -598,8 +598,7 @@ is_touch_device = function() {
         the_window.on('scroll.freshdesk', handleScroll);
 
         $(window).on('resize.freshdesk', function() {
-
-          sticky_header.width($('#Pagearea').width());
+          sticky_header.width($('#Pagearea').width()-1);
           var to_collapse = false, extra_buffer = 20;
 
           var width_elements_visible = $('.sticky_right').outerWidth() + $('.sticky_left').outerWidth() + extra_buffer;
