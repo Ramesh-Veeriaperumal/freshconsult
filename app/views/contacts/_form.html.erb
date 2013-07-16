@@ -32,6 +32,16 @@
       .appendTo(ul);
   };
 
+  jQuery("#contact_submit").bind("click",
+  function(ev){
+  var company_name=jQuery('#contact_customer').val().trim();
+  if(company_name=='')
+  {
+  jQuery('#contact_role').removeAttr('checked');
+   }
+  return true;
+});
+
 
   jQuery("#contact_customer").bind("keydown",
   function(ev) {
