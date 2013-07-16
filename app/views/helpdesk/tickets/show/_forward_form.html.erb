@@ -101,7 +101,7 @@
           </script>
         </div>
   </li>
-  <li class="inline-field field clearField">
+  <li class="inline-field field clearField message">
     <%= render :partial => 'helpdesk/tickets/show/editor_insert_buttons', :locals => { :cntid => cntid } %>
     <% conv_item = conv_id.nil? ? @ticket : @note %>
     <% f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
@@ -127,15 +127,15 @@
 <div class="btn-toolbar">
 
   <span>
-    <button class="btn cancel_btn" data-show-pseudo-reply="<%=conv_id.nil?.to_s %>" data-cnt-id="<%=cntid%>">
+    <a class="btn cancel_btn" data-show-pseudo-reply="<%=conv_id.nil?.to_s %>" data-cnt-id="<%=cntid%>">
       <%= t('cancel') %>
-    </button>
+    </a>
   </span>
 
   <span>
-    <button class="btn btn-primary submit_btn">
+    <a class="btn btn-primary submit_btn">
       <%= t('forward') %>
-    </button>
+    </a>
   </span>
 
 </div>

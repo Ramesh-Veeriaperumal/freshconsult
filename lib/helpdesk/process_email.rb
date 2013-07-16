@@ -416,7 +416,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
        "<blockquote class='freshdesk_quote'>" + old_msg + "</blockquote>" +
        "</div>"
       end 
-      {:body => original_msg,:full_text => full_text}
+      {:body => full_text,:full_text => full_text}  #temp fix made for showing quoted text in incoming conversations
     end
 
     def get_envelope_to

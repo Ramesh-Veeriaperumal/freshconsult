@@ -14,11 +14,13 @@
     init_params.agent = current_user;
     init_params.account_id = <%= current_account.id%>;
     init_params.ticket_channel = 'tickets:'+current_account_id+':*';
-    
+
     jQuery(document).ready(function() {
 
       socket = io.connect('<%= nodejs_url("collision") %>',{'force new connection':true});
-      jQuery(document).bind('ticket_list', function(ev){
+
+      jQuery(document).unbind('disconnectNode');
+      jQuery(document).bind('disconnectNode', function(ev){
         socket.socket.disconnect();
       });
 

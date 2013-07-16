@@ -209,7 +209,7 @@ blockquote {
   padding: 0 0 0 15px;
   margin: 0 0 $baseLineHeight;
   border-left: 5px solid $grayLighter;
-  p {
+  /*p {
     margin-bottom: 0;
     @include font-shorthand(16px,300,$baseLineHeight * 1.25);
   }
@@ -233,7 +233,7 @@ blockquote {
     small {
       text-align: right;
     }
-  }
+  }*/
 }
 
 // Quotes

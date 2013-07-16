@@ -116,7 +116,7 @@
 		if(window['portal-search-boxes'].get().size() > 0){
 			window['portal-search-cache'] = {}
 			window['portal-search-boxes'].autocomplete({
-	        	minLength: 3,
+	        	minLength: 2,
 	        	source: function( request, response ) {
 	                var term = request.term.trim(),
 	                	$element = this.element,

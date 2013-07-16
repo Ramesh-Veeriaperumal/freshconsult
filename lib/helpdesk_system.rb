@@ -1,6 +1,7 @@
 module HelpdeskSystem
 
  def access_denied  
+    store_location unless current_user
     respond_to do |format|
       format.html { 
         flash[:notice] = current_user ? I18n.t(:'flash.general.access_denied') : 

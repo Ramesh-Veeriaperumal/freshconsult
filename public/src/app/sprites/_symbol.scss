@@ -114,35 +114,36 @@
 .sla_policy_form .delete, .sla_policy_form .delete_conditions{ @include symbols-sprite(delete);  }
 
 /* %% tkt_details  */
-.content .controls{
+// Fix!!! - Remove content controls
+.content .controls, .ticket_details .sticky_right {
 	.monitor{ @include symbols-sprite(tkt-not-monitoring); }
 	.monitor_active{ @include symbols-sprite(tkt-monitoring); }
-	.source-badge-wrap .source{ 
-		&.collision_refresh{ 
-			@include symbols-sprite(collision_refresh);
-			&.status_4, &.status_5 {
-				@include symbols-sprite(collision_refresh_closed);		
-			}
+}
+.source-badge-wrap .source{ 
+	&.collision_refresh{ 
+		@include symbols-sprite(collision_refresh);
+		&.status_4, &.status_5 {
+			@include symbols-sprite(collision_refresh_closed);		
 		}
+	}
 
-		span{
-			// Email
-			&.source_1 { @include symbols-sprite(source-badge-email); }
-			// Portal
-			&.source_2 { @include symbols-sprite(source-badge-portal); }
-			// Phone
-			&.source_3 { @include symbols-sprite(source-badge-phone); }
-			// Forum
-			&.source_4 { @include symbols-sprite(source-badge-forum); }
-			// Twitter
-			&.source_5 { @include symbols-sprite(source-badge-twitter); }
-			// Facebook
-			&.source_6 { @include symbols-sprite(source-badge-facebook); }
-			// Chat
-			&.source_7 { @include symbols-sprite(source-badge-chat); }
-			// Mobihelp
-			&.source_8 { @include symbols-sprite(source-badge-mobihelp); }
-		}
+	span{
+		// Email
+		&.source_1 { @include symbols-sprite(source-badge-email); }
+		// Portal
+		&.source_2 { @include symbols-sprite(source-badge-portal); }
+		// Phone
+		&.source_3 { @include symbols-sprite(source-badge-phone); }
+		// Forum
+		&.source_4 { @include symbols-sprite(source-badge-forum); }
+		// Twitter
+		&.source_5 { @include symbols-sprite(source-badge-twitter); }
+		// Facebook
+		&.source_6 { @include symbols-sprite(source-badge-facebook); }
+		// Chat
+		&.source_7 { @include symbols-sprite(source-badge-chat); }
+		// Mobihelp
+		&.source_8 { @include symbols-sprite(source-badge-mobihelp); }
 	}
 }
 
@@ -150,6 +151,9 @@
 	.note-visible i { @include symbols-sprite(note-visible); }
 	.note-hidden i { @include symbols-sprite(note-hidden); }
 }
+
+.request_panel .insert_ca_response { @include symbols-sprite(insert_ca_response); }
+.request_panel .insert_solution { @include symbols-sprite(insert_solution); }
 
 .open_in_new{ @include symbols-sprite(open_in_new); background-repeat: no-repeat; background-color: transparent; }
 
@@ -176,3 +180,6 @@ a.new_ticket span{ @include symbols-sprite(add); }
 
 .symbol-done-tick{ @include symbols-sprite(done-tick); }
 .ui-solution-suggest:after{ @include symbols-sprite(new-solution-arrow); }
+
+
+#scroll-to-top { @include symbols-sprite(scroll-to-top); }

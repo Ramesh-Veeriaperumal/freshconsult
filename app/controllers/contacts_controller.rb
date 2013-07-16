@@ -271,10 +271,13 @@ protected
     end
 
     def fetch_contacts
+       unless cookies[:contacts_sort]
+          cookies[:contacts_sort] = 'verified'
+       end
        connection_to_be_used =  params[:format].eql?("xml") ? "run_on_slave" : "run_on_master"  
        begin
          @contacts =   Sharding.send(connection_to_be_used.to_sym) do
-          scoper.filter(params[:letter], params[:page], params.fetch(:state, "verified"))
+          scoper.filter(params[:letter], params[:page],params.fetch(:state , cookies[:contacts_sort]))
         end
       rescue Exception => e
         @contacts = {:error => get_formatted_message(e)}

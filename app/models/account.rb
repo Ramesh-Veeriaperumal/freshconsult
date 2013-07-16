@@ -15,6 +15,7 @@ class Account < ActiveRecord::Base
                   :language, :ssl_enabled
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
   
+
   named_scope :active_accounts,
               :conditions => [" subscriptions.state != 'suspended' "], 
               :joins => [:subscription]
@@ -229,11 +230,6 @@ class Account < ActiveRecord::Base
 
   def pass_through_enabled?
     pass_through_enabled
-  end
-
-  def search_index_name
-    key = MemcacheKeys::ES_INDEX_NAME % { :account_id => self.id }
-    MemcacheKeys.fetch(key) { ElasticsearchIndex.find(self.es_enabled_account.index_id).name }
   end
 
   def es_enabled?

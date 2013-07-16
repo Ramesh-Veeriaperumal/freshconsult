@@ -31,8 +31,7 @@ class Account < ActiveRecord::Base
   end
 
   def enable_elastic_search
-    es_index_id = ElasticsearchIndex.es_id_for(self.id)
-    self.create_es_enabled_account(:account_id => self.id, :index_id => es_index_id)
+    self.create_es_enabled_account(:account_id => self.id)
   end
 
   def populate_features

@@ -7491,6 +7491,7 @@ div.watchers_tooltip{
 	}
 }
 
+
 .watcher_highlight {
   @include animation(watcher_blink 0.8s ease-out 1);
 }
@@ -7508,6 +7509,7 @@ div.watchers_tooltip{
   0% { background: rgba(#ff0000,.2);}
   100% { background: rgba(#ff0000,0);}
 }
+
 
 /* Add Watcher End */
 
