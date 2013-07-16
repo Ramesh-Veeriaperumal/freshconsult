@@ -5,7 +5,7 @@
 			<%= f.text_field :title, :class => "text required", :autofocus => true %>
 		</li>
 		<li>
-			<%= f.rich_editor  :description, 'editor-type' => :solution, :height => "350px"  %>		
+			<%= f.rich_editor  :description, 'editor-type' => :solution, :height => "350px", :class => "required"  %>		
 		</li>
 		<li>
 			<%= render :partial => "/solution/shared/attachment_form" %>

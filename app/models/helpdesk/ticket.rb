@@ -282,6 +282,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     (fb_post) and (fb_post.facebook_page) and (fb_post.post?)
   end
   
+  def mobihelp?
+    source == SOURCE_KEYS_BY_TOKEN[:mobi_help]
+  end
+
   def priority=(val)
     self[:priority] = PRIORITY_KEYS_BY_TOKEN[val] || val
   end

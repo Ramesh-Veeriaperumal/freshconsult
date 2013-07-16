@@ -119,6 +119,7 @@ jQuery.fn.redactor = function(option)
 var Redactor = function(element, options)
 {
 	// Element
+	this.redactor_copy_content;
 	this.$el = $(element);
 	
 	// Lang
@@ -670,7 +671,7 @@ Redactor.prototype = {
 
 		// paste
 		if (this.isMobile(true) === false)
-		{
+		{	this.cleanStyleAttr();	
 			this.$editor.bind('paste', $.proxy(function(e)
 			{ 
 				this.setBuffer();
@@ -686,6 +687,10 @@ Redactor.prototype = {
 	
 				var frag = this.extractContent();
 				
+				if(this.browser('opera') === true)
+				{
+					this.$editor.append("<span></span>");
+				}
 				setTimeout($.proxy(function()
 				{				
 					var pastedFrag = this.extractContent();
@@ -2384,6 +2389,27 @@ Redactor.prototype = {
 	
 		return html;
 	},
+	cleanStyleAttr: function() {
+
+				  this.$editor.on("DOMNodeInserted", $.proxy(function(e) {
+				   	
+				   	if($(e.target).attr("style"))
+				   	{
+						var styleparts = $(e.target).attr("style").split(";");
+						for (var i=0;i<styleparts.length;i++) {
+						  if(styleparts[i]) {
+							  var subParts = styleparts[i].split(':');
+							  this.compareParentStyles($(e.target), subParts[0]);
+						  }
+						}	
+					}	
+					if($(e.target).attr("style") && $(e.target).attr("style").length==0)
+					{
+						$(e.target).removeAttr("style");
+					}		   	
+
+				  }, this));
+	},
 	
 	// BUTTONS MANIPULATIONS
 	getBtn: function(key)
@@ -2989,7 +3015,7 @@ Redactor.prototype = {
 			{					
 				if (sel && sel.anchorNode && sel.anchorNode.parentNode.tagName === 'A')
 				{
-					url = sel.anchorNode.parentNode.href;
+					url = $(sel.anchorNode.parentNode).attr('href');
 					text = sel.anchorNode.parentNode.text;
 					target = sel.anchorNode.parentNode.target;
 					
@@ -3452,6 +3478,23 @@ Redactor.prototype = {
 	},
 	
 	// UTILITY
+	browser: function(browser)
+		{
+			var ua = navigator.userAgent.toLowerCase();
+			var match = /(chrome)[ \/]([\w.]+)/.exec(ua) || /(webkit)[ \/]([\w.]+)/.exec(ua) || /(opera)(?:.*version|)[ \/]([\w.]+)/.exec(ua) || /(msie) ([\w.]+)/.exec(ua) || ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec(ua) || [];
+
+			if (browser == 'version')
+			{
+				return match[2];
+			}
+
+			if (browser == 'webkit')
+			{
+				return (match[1] == 'chrome' || match[1] == 'webkit');
+			}
+
+			return match[1] == browser;
+		},
 	oldIE: function()
 	{
 		if ($.browser.msie && parseInt($.browser.version, 10) < 9)
@@ -3547,9 +3590,7 @@ Redactor.prototype = {
 		$.each(this.$editor.find('span'), function() {
 			var _span = this;
 			$.each(_redactor.opts.span_cleanup_properties, function(i, css_property) {
-				if($(_span).css(css_property) == $(_span).parent().css(css_property)) {
-					$(_span).css(css_property,'');
-				}
+				_redactor.compareParentStyles(_span, css_property);
 			});
 
 			if($(this).css('background-color') == $(this).parent().css('background-color') || 
@@ -3562,6 +3603,12 @@ Redactor.prototype = {
 	},
 	inputEventAvailable: function() {
 		return ($.browser.webkit || $.browser.mozilla);
+	},
+	compareParentStyles: function(element, css_property) {
+		css_property = $.trim(css_property);
+		if($.trim($(element).css(css_property)) == $.trim($(element).parent().css(css_property))) {
+			$(element).css(css_property,'');
+		}
 	}
 	
 };
