@@ -50,6 +50,9 @@ class SupportController < ApplicationController
 
       # Setting up current_tab based on the page type obtained
       current_tab page_token
+
+      # Determine facebook
+      @facebook_portal = facebook?
       
       @skip_liquid_compile = false
       

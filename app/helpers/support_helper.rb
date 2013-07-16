@@ -356,10 +356,14 @@ HTML
 	def post_topic_in_portal portal, post_topic = false
 		output = []
 		output << %(<section class="lead">)
-		output << %(<a href="#{portal['login_url']}">#{I18n.t('portal.login')}</a>)
-		output << I18n.t('portal.or_signup', :signup => 
-				"<a href=\"#{portal['signup_url'] }\">#{I18n.t('portal.signup')}</a>") if 
-					portal['can_signup_feature']
+		if @facebook_portal
+			output << %(<a href="" class="solution_c">#{I18n.t('portal.login')}</a>)
+		else
+			output << %(<a href="#{portal['login_url']}">#{I18n.t('portal.login')}</a>)
+			output << I18n.t('portal.or_signup', :signup => 
+					"<a href=\"#{portal['signup_url'] }\">#{I18n.t('portal.signup')}</a>") if 
+						portal['can_signup_feature']
+		end
 		if post_topic
 			output << I18n.t("portal.to_post_topic")
 		else
