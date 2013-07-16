@@ -16,12 +16,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_create :refresh_display_id, :create_meta_note
 
-  after_commit_on_create :create_initial_activity,  :update_content_ids, :pass_thro_biz_rules, :publish_new_ticket_properties
+  after_commit_on_create :create_initial_activity,  :update_content_ids, :pass_thro_biz_rules
   after_commit_on_update :filter_observer_events, :if => :user_present?
   after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity, 
-  :stop_timesheet_timers, :fire_update_event, :regenerate_reports_data
-  after_commit_on_update :publish_updated_ticket_properties, :if => :model_changes?
-  after_commit_on_update :publish_to_update_channel, :if => :model_changes?
+  :stop_timesheet_timers, :fire_update_event, :publish_to_update_channel, :regenerate_reports_data
 
   def set_default_values
     self.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(account).key?(self.status) or ticket_status.try(:deleted?))
@@ -201,41 +199,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Time.zone = User.current.time_zone  
   end
 
-  def publish_new_ticket_properties
-     publish_ticket_properties("new")
-  end
-
-  def publish_updated_ticket_properties
-    publish_ticket_properties("update")
-  end
-
-  def publish_ticket_properties(type)
-    user_id = User.current ? User.current.id : ""
-    ticket_responder_id = responder_id ? responder_id : -1
-    message = { 
-                "ticket_id" => display_id, 
-                "user_id" => user_id,
-                "type" => type,
-                "responder_id" => ticket_responder_id,
-                "group_id" => group_id,
-                "status" => status,
-                "priority" => priority,
-                "ticket_type" => ticket_type,
-                "source" => source,
-                "requester_id" => requester_id,
-                "due_by" => (due_by - Time.zone.now).div(3600),
-                "created_at" => "#{created_at}" 
-              }
-    custom_field_hash = custom_field
-    message.merge!(custom_field_hash) unless custom_field_hash.blank?
-    publish_to_tickets_channel("index_page:#{self.account.id}:#{self.id}", message.to_json)
-  end
-  
 private
-
-  def model_changes?
-    @model_changes.present?
-  end
 
   def update_ticket_related_changes
     @model_changes = self.changes.clone
