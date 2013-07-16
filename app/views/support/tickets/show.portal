@@ -1,6 +1,6 @@
 <section class="main content rounded-6 min-height-on-desktop">
 	<div class="breadcrumb">
-		<a href="/">{% translate header.tabs.home %}</a>
+		<a href="{{ portal.home_url }}">{% translate header.tabs.home %}</a>
 		<a href="{{ portal.tickets_home_url }}">{% translate portal.tickets.ticket_list %}</a>
 	</div>
 	

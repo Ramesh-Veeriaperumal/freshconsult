@@ -43,6 +43,10 @@ class PortalDrop < BaseDrop
   def can_submit_ticket_without_login
     allowed_in_portal? :anonymous_tickets
   end
+
+  def home_url
+    @home_url ||= support_home_path
+  end
   
   def signup_url
     @signup_url ||= support_signup_path(url_options)
