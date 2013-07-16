@@ -356,7 +356,7 @@ HTML
 	def post_topic_in_portal portal, post_topic = false
 		output = []
 		output << %(<section class="lead">)
-		if @facebook_portal
+		if portal['facebook_portal']
 			output << %(<a href="" class="solution_c">#{I18n.t('portal.login')}</a>)
 		else
 			output << %(<a href="#{portal['login_url']}">#{I18n.t('portal.login')}</a>)

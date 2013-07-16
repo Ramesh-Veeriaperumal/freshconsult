@@ -97,6 +97,10 @@ class PortalDrop < BaseDrop
     @current_tab ||= @current_tab
   end
 
+  def facebook_portal
+    @facebook_portal ||= @facebook_portal
+  end
+
   def current_page
     @current_page ||= @current_page
   end
