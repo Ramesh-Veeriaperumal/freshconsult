@@ -3445,7 +3445,7 @@ sl:
       level2: "Nivo 2"
       level3: "Nivo 3"
       nested_label: "Oznake polj"
-      nestedfield_helptext: "Uporabite spodnjo tekstovno polje za dodajanje ali urejanje možnosti v vašem spustnem seznamu. Zamik možnosti izvedete tako, da 2x kliknete tipko Tab. Ker se menijska struktura izdela na podlagi zamikov bodite pozorni pri uporabi. <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'> Več o tem.</a>"
+      nestedfield_helptext: "Uporabite spodnjo tekstovno polje za dodajanje ali urejanje možnosti v vašem spustnem seznamu. Zamik možnosti izvedete tako, da 2x kliknete tipko Tab. Ker se menijska struktura izdela na podlagi zamikov bodite pozorni pri uporabi. <a target='_blank' href=%{learn_more}> Več o tem.</a>"
       nestedfield_helptext_preview: "To je \"Predogled\" spustnega menija možnosti, uporabite prosto oblikovanje področja teksta  v \"Uredi pogled\" za urejanje možnosti"
       sla_timer: "SLA merilnik"
       status_choices: "Izbira statusov"

@@ -1,9 +1,7 @@
 <% content_for :layoutType do -%>reports_page<%- end %>
 <link href="/stylesheets/ui.daterangepicker.css" media="screen" rel="stylesheet" type="text/css">
 
-<%= include_cloudfront_css :pattern %>
 <%= include_cloudfront_css :reports %>
-<%= include_cloudfront_js :pattern  %>
 <%= include_cloudfront_js :reports  %>
 <div id="loading-box"> 
 	<div id="loading-box"> <div class="loading reports-loading">Generating Report...</div> </div>

@@ -14,11 +14,6 @@ class SubscriptionAdmin::AccountsController < ApplicationController
     @accounts = @accounts.paginate( :page => params[:page], :per_page => 30)
   end
   
-  def helpdesk_urls
-    @accounts = Account.all(:conditions => ["helpdesk_url is not null and helpdesk_url != ?",""])
-    @accounts = @accounts.paginate( :page => params[:page], :per_page => 30)
-  end
-  
   def tickets
     @accounts = Account.find(:all, :include => :tickets).sort_by { |u| -u.tickets.size }   
     @accounts = @accounts.paginate( :page => params[:page], :per_page => 30)

@@ -6,8 +6,21 @@ class Social::FacebookWorker
 
   ERROR_MESSAGES = {:access_token_error => "access token", :permission_error => "manage_pages", 
                     :mailbox_error => "read_page_mailboxes" }
+
+  class PremiumFacebookWorker
+    extend Resque::AroundPerform
+    @queue = 'premium_facebook_worker'
+
+    def self.perform(args)
+     Social::FacebookWorker.run
+    end
+  end
   
   def self.perform(args)
+    run
+  end
+
+  def self.run
     account = Account.current
     return if account.facebook_pages.empty? 
     facebook_pages = account.facebook_pages.find(:all, :conditions => ["enable_page = 1"])    

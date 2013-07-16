@@ -71,6 +71,7 @@ en:
   upgrade_trial: Upgrade your trial!
   upgrade_plan: Upgrade
   go_back: Go Back
+  go_back_small: go back
   add_note: Add Note
   set_field_label_as: Set %{custom_field_name} as
   contact_name: Contact Name
@@ -174,7 +175,7 @@ en:
       level1: "Level 1"
       level2: "Level 2"
       level3: "Level 3"
-      nestedfield_helptext: "Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>Learn more</a> "
+      nestedfield_helptext: "Use the below free form textarea to add or edit items for your dropdown, Indent items by pressing the tab key once or twice. we will convert it to dropdown items based on the indentation, please take extra care. <a target='_blank' href=%{learn_more}>Learn more</a> "
       dropdown_items_edit: "Dropdown items - edit view"
       dropdown_items_preview: "Dropdown items - Preview"
       status_choices: "Status choices"
@@ -841,6 +842,7 @@ en:
       new: New Role
       edit: Edit Role
       default_role: Default Role
+      default_role_edit: This is a default system role. It cannot be edited or removed. You can view its permissions here, or %{go_back}.
       role_name: Role Name
       role_description: Description
       scroll:
@@ -1407,15 +1409,34 @@ en:
       info1: You can completely customize your Freshdesk help desk for customers logging into your self-service portal as well as your agents. Rebrand the look and feel of your helpdesk with your logo and theme by uploading your logo and favicon, giving your help desk a name, and customizing your portal colors.
       info2: You probably want your customers and support agents to access your support portal in your own domain. You can point your support URL at yourcompany.freshdesk.com to your own domain, like support.mycompany.com.
     cancel: 
-      changeplan_instead_of_cancel: Instead of canceling your account, perhaps you'd like to just switch your plan.
-      intro: You are about to cancel your account.  This will <strong>permanently delete all your data</strong>.
-      you_must_confirm: You must confirm your cancellation
-      delete_my_account: Delete my Account
-      confirm_and_cancel_my_account: I confirm that I want to cancel my account and delete all my data...
-      goback: "&#x2190; Back to account settings"
+      cancel_account: Cancel your Freshdesk account
+      info_text: Please take a moment to tell us why you want to cancel your account. Perhaps we could still help...
+      goback: Not now
+      delete_my_account: Cancel Account
+      deleting_account: Cancelling
+      confirm_and_cancel_my_account: I confirm that I want to cancel my account and delete all my data
+      you_must_confirm: Please confirm your cancellation
+      you_must_select: Please select a reason from the list
+      tell_us_more: Tell us something
       change_your_plan: Change your plan
-      warning_message: Once you do this, you will no longer have access to your data, so be sure this is really what you want to do.
-      cancel_account: Cancel Freshdesk Account
+      warning_message: "Once you cancel your account, your customers and agents will not have access to your support portal, and your account will be temporarily suspended. We will permanently delete your data after 14 days (on <strong>%{cancel_date}</strong>). <br><br> You can restore your account during the 14 day suspension window by emailing us at support@freshdesk.com"
+      trial_warning_message: "Once you cancel your account, your customers and agents will not have access to your support portal. Be sure this is really what you want to do."
+      feedback:
+        budget: I don’t have the budget anymore
+        budget_followup: You can downgrade to a lower plan in Freshdesk without affecting your existing tickets. In fact, if the budget is really tight, you could move to the Sprout plan with 3 free agents for life. <a href="http://www.freshdesk.com/free-support-software">Learn more about the free plan</a>
+        budget_extra: Perhaps you'd like us to hold on to this account for sometime, till you get your wallet back?
+        requirement: Freshdesk does not handle some of my requirements
+        requirement_followup: We are constantly adding more features and enhancements to Freshdesk. Have you tried suggesting your feature idea in our forums? Or perhaps what you’re looking for is just a few weeks away? <a href="https://support.freshdesk.com/support/discussions/forums/6">Browse our Forum</a>
+        requirement_extra: Drop us a couple of lines on what you were looking for, and we'll try and move it up our queue real quick
+        moving: We are moving to another product
+        moving_followup: We really hate to see you go. Was it the features? The price? That bad bad marketing guy who keeps spamming you? But well, if you’ve made up your mind for someone else, we can only hope you’ll be back soon.
+        moving_extra: A line or two on what made you switch would go a long way in helping us build a better product for you
+        support: We did not receive good support
+        support_followup: We’re sorry. As a customer support company, there’s nothing more important to us than giving you a great support experience, every time. We can only request you to give us another chance to make it up to you.
+        support_extra: Give us a few more details and we'll make sure the right support rep repents. A ticket ID? Or Issue?
+        else: Anything else?
+        else_followup: A couple of lines explaining your problem would be nice..
+        test-account: We were just using this account for testing. We'll be back
     billing: 
       update_billing_info: Update billing information
       begin_subscription_info: will charge your card and begin your subscription immediately.
@@ -1436,8 +1457,12 @@ en:
       contact_phone : Phone
       invoice_email_info : Send Invoices to
       invoice_emails : Email
+      restore_account: Your account is cancelled and the data will be deleted on <strong>%{delete_at}</strong>. To restore your account, contact <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>.
   success_msg : Account settings updated successfully!
   failure_msg : Failed to update Account Settings!
+  domain_not_available_msg: The domain <strong>%{domain_name}</strong> is not available.
+  long_company_name_error: Company name shouldn't exceed 100 characters.
+  short_company_name_error: Company name should be atleast 3 characters
   
   forum_key: Forum
   topics:
@@ -2024,6 +2049,7 @@ en:
     reported: reported
     said: said
     solutions_home: "Solution home"
+    attach_file: "Attach a <b>file</b>"
     header: 
       preview_message: "<b>Preview mode</b> - <a href='javascript:window.close()'>Click here</a> to go back."
     new_support_ticket: New support ticket
@@ -2057,6 +2083,8 @@ en:
     no_forums_info_2: "Why don't you start a %{start_topic_link}?"
     article:
       see_all_articles: "See all %{count} articles"
+      more_articles: "More articles in <span class='folder-name'> %{article_name} </span>"
+      modified_on: "Modified on:"
     folder:
       filler_text: "Watch this space for articles regarding %{folder_name}"
     topic:   
@@ -2577,6 +2605,7 @@ en:
       description_note: "The Subject and Description of the merged tickets will be added as notes in the primary ticket"
       form_title: Add a Note
       add_and_resolve: Add and Resolve
+      add_and_set_as: "Add and set as <strong>%{status}</strong>"
       add_public_note: Add Public Note
       add_private_note: Add Private Note
       notify_agents: Notify Agents
@@ -2585,6 +2614,7 @@ en:
       user_not_following: This user is not following your twitter account
     activities: Activities
     activity_toggle: Show Activities
+    activity_timestamp: "%{user_name} updated <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
     requestor_info: Requestor Info
     view_twitter: View on Twitter 
     reply_to: Reply
@@ -2745,7 +2775,7 @@ en:
     multiple_info: You can also create multiple sets of business hours and holidays, and apply them for specific groups. If you have one support team working on PST and another on GMT, you can let each group have its own set of business hours and holidays. <a href="https://support.freshdesk.com/solution/articles/98945" target="_blank">Learn more</a>
     holiday_added: Holiday already added
     invalid_holiday: Invalid holiday added
-    import_holiday_info: <b>Important:</b> Importing will only import current year's holiday. we will not be updating the holiday list every year.
+    import_holiday_info: <b>Important:</b> Importing will only add this year's holidays to the list. The list will not be automatically updated next year.
     info3: Select working days/hours
     info6: 24 hrs x 7 days
     info4: Working Days for your Helpdesk
@@ -3057,11 +3087,11 @@ en:
           reply: "%{user_name} replied on %{note_date}"
           forward: "%{user_name} forwarded on %{note_date}"
         created_on_live:
-          private_note: "%{user_name} added a private note <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
-          public_note: "%{user_name} added a public note <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
-          reply: "%{user_name} replied <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
-          forward: "%{user_name} forwarded <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
-          survey: "%{user_name} rated this ticket <abbr data-livestamp='%{timestamp}'></abbr> on %{note_date}"
+          private_note: "%{user_name} added a private note <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          public_note: "%{user_name} added a public note <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          reply: "%{user_name} replied <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          forward: "%{user_name} forwarded <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
+          survey: "%{user_name} rated this ticket <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         edit_note: Edit Note
         split_this_as_new_ticket: Split this as a new Ticket
         delete_note: "Remove this from the ticket conversation?"

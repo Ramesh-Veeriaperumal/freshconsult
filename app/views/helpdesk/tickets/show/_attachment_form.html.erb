@@ -60,7 +60,7 @@
 
                           var inputElement = jQuery(inp).data('holder');
 
-                          jQuery('#'+inputElement).val(unescape(files[0].link))
+                          jQuery('#'+inputElement).val(decodeURIComponent(files[0].link));
 
                           Helpdesk.Multifile.addFileToList(jQuery('#'+inputElement));
                           newInput = Helpdesk.Multifile.duplicateInput(jQuery('#'+inputElement));

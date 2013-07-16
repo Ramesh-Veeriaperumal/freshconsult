@@ -84,4 +84,8 @@
 		})
 
 	}(window.jQuery)
+	jQuery("#start_date, #end_date").bind('keypress keyup keydown', function(ev) {
+   	ev.preventDefault();
+   	return false;
+  });
 </script>

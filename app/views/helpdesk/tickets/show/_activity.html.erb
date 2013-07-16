@@ -15,7 +15,7 @@ note = activity[:is_note] ? @prefetched_notes[activity[:stack].first.note_id] : 
 			<%= t('activities.tag.' + activity[:important][:type], {:value => activity[:important][:value]} ) %>
 		</div>
 		<div class="author-mail-detail">
-			<%= t("helpdesk.tickets.note.posted_on", :user_name => link_to_user(activity[:user], :class => "user_name" ), :note_date => formated_date(activity[:time]) ) %>
+			<%= t("ticket.activity_timestamp", :user_name => link_to_user(activity[:user], :class => "user_name" ),:timestamp => activity[:time].to_i, :note_date => formated_date(activity[:time]) ) %>
 		</div>
 		<div class="details">
 			<% 	stack = activity[:stack].map{ |act| 

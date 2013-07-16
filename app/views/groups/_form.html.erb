@@ -1,6 +1,3 @@
- <%= include_cloudfront_css :pattern %>
-<%= include_cloudfront_js :pattern %>
-
  <h3 class="lead"><%=title%></h3> <br/>
 	<% form_for(@group, :html => {:id => "group_form"}) do |f|  %>
 	  <%= f.error_messages %>
@@ -146,7 +143,7 @@ jQuery('#escalate_to').select2({
 	multiple: false,
 	data: [<%=technicians.join(",")%>],
 	initSelection : function (element, callback) {
-        var data = {id: '<%=@group.escalate_to%>', text: '<%=@group.escalate && @group.escalate.name%>'};
+        var data = {id: "<%=@group.escalate_to%>", text: "<%=@group.escalate && @group.escalate.name%>"};
         callback(data);
     }
 });
@@ -177,12 +174,12 @@ jQuery('#business_calendar').select2({
 	minimumResultsForSearch: 1000, //Keep high search value to shut off search box. Couldnt find a better way.
 	data: [<%=calendar.join(",")%>],
 	initSelection : function (element, callback) {
-		var data = {id: '<%=@group.business_calendar && @group.business_calendar.id%>', text: '<%=@group.business_calendar && @group.business_calendar.name%>'};
+		var data = {id: "<%=@group.business_calendar && @group.business_calendar.id%>", text: "<%=@group.business_calendar && @group.business_calendar.name%>"};
         callback(data);
     }
 });
 
-jQuery("#business_calendar").select2("val",'<%=@group.business_calendar && @group.business_calendar.id%>');
+jQuery("#business_calendar").select2("val","<%=@group.business_calendar && @group.business_calendar.id%>");
 
 <% end %>
 
