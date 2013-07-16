@@ -567,8 +567,13 @@ function extractContainer(data, xhr, options) {
 
   // Attempt to parse response html into elements
   if (/<html/i.test(data)) {
-    var $head = $(data.match(/<head[^>]*>([\s\S.]*)<\/head>/i)[0])
-    var $body = $(data.match(/<body[^>]*>([\s\S.]*)<\/body>/i)[0])
+    try {
+      var $head = $(data.match(/<head[^>]*>([\s\S.]*)<\/head>/i)[0])
+      var $body = $(data.match(/<body[^>]*>([\s\S.]*)<\/body>/i)[0])  
+    } catch(e) {
+      var $head = $body = $(data)  
+    }
+    
   } else {
     var $head = $body = $(data)
   }
