@@ -88,17 +88,4 @@
     </div>
   <% end %>
   <div class="clearfix overflowh" ></div>
-</div> 
-<% content_for :pagefixed do %>
-  <script src="/javascripts/helpdesk/page_switcher.js" type="text/javascript"></script>
-  <% javascript_tag do %>
-    document.observe("dom:loaded", function(){
-      new Helpdesk.PageSwitcher({
-        toggleMode: true,
-        pages: ['attachment-options-note']
-      });
-			jQuery("#HelpdeskNotes").validate();	  
-			jQuery("#cnt-note-body").val("");
-    });
-  <% end %>
-<% end %>
+</div>
