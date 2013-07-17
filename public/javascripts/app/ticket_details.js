@@ -561,8 +561,7 @@ refreshStatusBox = function() {
 		$.ajax({   
 			type: 'POST',
 			url: '/social/twitters/user_following?twitter_handle='+twitter_handle+'&req_twt_id='+req_twt_id,
-			contentType: 'application/text', 
-			async: false, 
+			contentType: 'application/text',
 			success: function(data){ 
 				if (data.user_follows == true)
 				{
