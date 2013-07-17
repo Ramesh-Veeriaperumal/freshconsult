@@ -5,7 +5,6 @@ class FBClient
    DEFAULT_PAGE_IMG_URL = "http://profile.ak.fbcdn.net/static-ak/rsrc.php/v1/yG/r/2lIfT16jRCO.jpg"
 
   def initialize(fb_page  , options = {} )
-
     @callback_url = URI.encode("#{options[:callback_url]}")
     @oauth = Koala::Facebook::OAuth.new(FacebookConfig::APP_ID, FacebookConfig::SECRET_KEY, @callback_url)
     @fb_page = fb_page
@@ -28,12 +27,14 @@ class FBClient
     pages.each do |page|
       page.symbolize_keys!
       page_id = page[:id]
-      page_source = FacebookPageMapping.find_by_facebook_page_id(page[:id])
-      if page_source
-        source_account = page_source.shard.domains.main_portal.first
-        if source_account
-          source_string = "#{source_account.domain}"
-          page_id = nil
+      unless Account.current.facebook_pages.find_by_page_id(page[:id])
+        page_source = FacebookPageMapping.find_by_facebook_page_id(page[:id])
+        if page_source
+          source_account = page_source.shard.domains.main_portal.first
+          if source_account
+            source_string = "#{source_account.domain}"
+            page_id = nil
+          end
         end
       end
       page_info = @graph.get_object(page[:id])  

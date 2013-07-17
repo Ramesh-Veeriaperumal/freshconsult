@@ -48,7 +48,7 @@
 		{% else %}
 		<div class="cs-g-c">
 			<section class="index-cs-g topic-list">
-			{% if portal.recent_articles %}
+			{% if portal.recent_articles.size > 0 %}
 				<div class="list-lead">{% translate facebook_tab.portal.recent_articles %}</div>
 				<ul>
 				{% for article in portal.recent_articles %}
