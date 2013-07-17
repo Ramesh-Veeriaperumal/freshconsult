@@ -9,6 +9,7 @@ class Helpdesk::CannedResponsesController < ApplicationController
  
   def show
     render_parsed_content if ticket_present?
+    @attachments = @ca_resp.attachments_sharable
     render :partial => '/helpdesk/tickets/components/insert_canned_response.rjs'
   end
 

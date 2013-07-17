@@ -76,12 +76,12 @@ minimizable ||= false
 					<%= note.body_html %>
 				</div>
 			</div>
-			<% unless note.attachments.empty? and note.dropboxes.empty? %>
+			<% unless note.all_attachments.empty? and note.dropboxes.empty? %>
 				<span class="seperator"></span>
 				<div class="attachments-wrap clearfix">
-					<h5><strong><%= pluralize(note.attachments.size + note.dropboxes.size, t('attachment'), t('attachments'))%></strong></h5>
+					<h5><strong><%= pluralize(note.all_attachments.size + note.dropboxes.size, t('attachment'), t('attachments'))%></strong></h5>
 					<ul class="attachment_list">
-					    <%= render :partial => '/helpdesk/tickets/show/attachment.html', :collection => note.attachments, :locals => {:show_delete => true, :url => [@item] } %>
+                      <%= render :partial => '/helpdesk/tickets/show/attachment.html', :collection => note.all_attachments, :locals => {:show_delete => true, :url => [@item] } %>
 
 					    <%note.dropboxes.each do |dropbox| %> 
 							<%= render :partial => '/helpdesk/tickets/show/dropbox.html',:locals => {:dropbox=>dropbox, :show_delete => true, :url => [@item] } %>

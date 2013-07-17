@@ -102,7 +102,13 @@
           <% unless local_assigns[:no_attachments] %>
           <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
           <% end %>    
-      </li> 
+      </li>
+
+      <li class="inline-field field continous">
+        <div id="admin_canned_responses_response-attachments">
+        </div>
+      </li>
+
     </ul>
     
       <!-- reply will be always public -->
