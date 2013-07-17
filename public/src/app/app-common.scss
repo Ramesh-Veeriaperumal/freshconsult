@@ -3584,8 +3584,8 @@ div.addReminder{
 		text-align:center; 
 		img{
 		   max-width:130px;
-		   width: 90px;
-		   height:90px;
+		   min-width: 90px;
+		   max-height: 160px;
 		}
 	}
 	.info-highlight{
