@@ -2,6 +2,8 @@
 
   map.connect '/images/helpdesk/attachments/:id/:style.:format', :controller => '/helpdesk/attachments', :action => 'show', :conditions => { :method => :get }
   
+  map.connect '/facebook/helpdesk/attachments/:id', :controller => '/helpdesk/attachments', :action => 'show', :conditions => { :method => :get } #need to check with shan
+  
   map.connect "/javascripts/:action.:format", :controller => 'javascripts'
   
   # Routing for Asset management Jammit
