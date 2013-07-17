@@ -1,6 +1,7 @@
 class AgentObserver < ActiveRecord::Observer
 
   include Notifications::MessageBroker
+  include MemcacheKeys
 
   def before_create(agent)
     set_default_values(agent)
