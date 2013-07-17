@@ -29,10 +29,9 @@ module Workers
 						credentials 'aws_access_key_id=#{S3_CONFIG[:access_key_id]};aws_secret_access_key=#{S3_CONFIG[:secret_access_key]}' 
 						delimiter '|' IGNOREHEADER 1 ROUNDEC REMOVEQUOTES MAXERROR 100;)
 				execute_redshift_query(query).clear
-				# commented -- as its taking minutes to complete.
 				# vacuum_query = %(VACUUM SORT ONLY #{REPORTS_TABLE}) # sort only vacuum query to sort the newly added rows
 				# execute_redshift_query(vacuum_query).clear
-				# # delete the uploaded files
+				# delete the uploaded files
 				files_arr.each {|obj| obj.delete}
 			end
 

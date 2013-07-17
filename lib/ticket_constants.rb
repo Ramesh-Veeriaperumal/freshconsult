@@ -75,8 +75,8 @@ module TicketConstants
   DEFAULT_COLUMNS_KEYS_BY_TOKEN = Hash[*DEFAULT_COLUMNS.map { |i| [i[0], i[2]] }.flatten]
   
   DUE_BY_TYPES = [
-    [ :all_due,         'all_due',               1 ], # If modified, _auto_refresh.html.erb has to be modified.
-    [ :due_today,       'due_today',             2 ], # By Shridar.
+    [ :all_due,         'all_due',               1 ], 
+    [ :due_today,       'due_today',             2 ], 
     [ :due_tomo,        'due_tomo',              3 ], 
     [ :due_next_eight,  'due_next_eight',        4 ]
   ]
@@ -100,8 +100,8 @@ module TicketConstants
   
 
   CREATED_WITHIN_VALUES = [
-    [ :any_time,         'any_time',        "any_time"], # If modified, _auto_refresh.html.erb has to be modified.
-    [ :five_minutes,     'five_minutes',            5 ], # By Shridar.
+    [ :any_time,         'any_time',        "any_time"],
+    [ :five_minutes,     'five_minutes',            5 ],
     [ :ten_minutes,      'fifteen_minutes',        15 ],
     [ :thirty_minutes,   'thirty_minutes',         30 ],
     [ :one_hour,         'one_hour',               60 ],

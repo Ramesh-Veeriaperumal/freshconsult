@@ -15,8 +15,7 @@ class Workers::ClearAccountData
 			begin
 				perform_destroy(account)
 			rescue Exception => error
-				# NewRelic::Agent.notice_error(error)				
-				puts error
+				NewRelic::Agent.notice_error(error)				
 				return update_status(deleted_customer, STATUS[:failed])
 			end
 

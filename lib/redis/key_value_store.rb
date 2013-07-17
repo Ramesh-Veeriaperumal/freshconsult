@@ -12,7 +12,6 @@ class Redis::KeyValueStore
             }.freeze
 
   def initialize(key_spec, value = nil, options={})
-    @key_spec = key_spec #To be removed
     @key = key_spec.to_s
     @value = value
     @expire = options[:expire] || 86400
@@ -22,15 +21,14 @@ class Redis::KeyValueStore
 
   def get_key
     newrelic_begin_rescue {
-      value = redis_client.get(key)
-      value.blank? ? get_from_kvp_table : value #To be removed in next deployment
+      redis_client.get(key)
     }
   end
 
   def set_key
     newrelic_begin_rescue do
       redis_client.set(key, value)
-      redis_client.expire(key,expires) if expires
+      redis_client.expire(key,expire) if expire
     end
   end
 
@@ -49,27 +47,5 @@ class Redis::KeyValueStore
 
   private
 
-    attr_accessor :redis_client, :key_spec
-
-    #to be removed, also the key_spec from accessor
-    def get_from_kvp_table
-      Rails.logger.info "Redis::KeyValueStore: value not found, trying in KeyValuePair table : #{key_spec} :: #{key_spec.options_hash}"
-      if !key_spec.kind_of?(Redis::KeySpec) || key_spec.options_hash.blank?
-        return
-      end
-  
-      table_key = nil
-      if key_spec.options_hash.key? :token
-        table_key = key_spec.options_hash[:token]
-      elsif !key_spec.options_hash[:provider].blank?
-        provider = key_spec.options_hash[:provider]
-        if provider == 'facebook'
-          table_key = key_spec.options_hash[:user_id]
-        else
-          table_key = "#{provider}_oauth_config"
-        end
-      end
-      kvp = KeyValuePair.find_by_account_id_and_key(key_spec.options_hash[:account_id], table_key) unless table_key.blank?
-      kvp.blank? ? nil : kvp.delete.value
-    end
+    attr_accessor :redis_client
 end

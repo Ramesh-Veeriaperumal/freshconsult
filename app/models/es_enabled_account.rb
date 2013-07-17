@@ -3,10 +3,9 @@ class EsEnabledAccount < ActiveRecord::Base
   include MemcacheKeys
 
   belongs_to :account
-  belongs_to :elasticsearch_index, :class_name => "ElasticsearchIndex"
   validates_presence_of :account_id
 
-  after_commit_on_create :set_cache
+  after_commit_on_create :set_cache, :create_aliases
   after_commit_on_update :set_cache
   after_commit_on_destroy :clear_cache
 
@@ -20,9 +19,11 @@ class EsEnabledAccount < ActiveRecord::Base
     end
 
     def clear_cache
-      Resque.enqueue(Search::RemoveFromIndex::AllDocuments, { :account_id => self.account_id, :index_id => self.index_id })
+      Resque.enqueue(Search::RemoveFromIndex::AllDocuments, { :account_id => self.account_id })
       MemcacheKeys.delete_from_cache(ES_ENABLED_ACCOUNTS)
-      key = ES_INDEX_NAME % { :account_id => self.account_id }
-      MemcacheKeys.delete_from_cache(key)
+    end
+
+    def create_aliases
+      Search::EsIndexDefinition.create_aliases(self.account_id)
     end
 end

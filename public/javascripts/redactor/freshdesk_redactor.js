@@ -40,7 +40,7 @@
 	        case 'signature':
 	         	jQuery('#'+element_id).redactor({ focus: false,convertDivs: false,  autoresize:false, buttons:['bold','italic','underline','|','image',  '|','fontcolor', 'backcolor', '|' ,'link']});	
 	        default:
-	    	 	jQuery('#'+element_id).redactor({ focus: true,convertDivs: false,  autoresize:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link']});
+	    	 	jQuery('#'+element_id).redactor({ convertDivs: false,  autoresize:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link']});
 	     	}
  	}
 

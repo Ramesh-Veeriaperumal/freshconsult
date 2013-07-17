@@ -42,10 +42,9 @@
 	<%= include_cloudfront_js :notifications %>
 	<%= include_cloudfront_js :redactor  %>
 
-	<% if @enable_pattern %>
-		<%= include_cloudfront_css :pattern %>
-		<%= include_cloudfront_js :pattern %>
-	<% end %>
+	<%= include_cloudfront_css :pattern, :media => "screen, print, projection"  %>
+	<%= include_cloudfront_js :pattern  %>
+	<%= include_cloudfront_css :tkt_details, :media => "screen, print, projection"  %>
 
 	<script type="text/javascript">
 	  I18n.defaultLocale = "<%= I18n.default_locale %>";

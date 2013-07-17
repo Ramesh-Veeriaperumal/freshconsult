@@ -9,7 +9,7 @@
 		<% 
 		 	filename = dropbox.url.split('/')[-1]
 		%>
-		<%= link_to truncate_filename(h(filename)), dropbox.url, :popup => true, :title => h(filename) %>
+		<%= link_to h(truncate(filename,15)), dropbox.url, :popup => true, :title => h(filename) %>
 		<span>(<%=h("dropbox link")%>)</span>
 	</div>
 </li>			
