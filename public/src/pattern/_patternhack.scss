@@ -56,13 +56,6 @@ strong {
 .topbar .dropdown-menu a, .dropdown-menu a {
   @include text-shadow(0 0 0 #fff);
   }
-.cust_list_table{
-  .open .menu, .dropdown.open .menu, .open .dropdown-toggle, .dropdown.open .dropdown-toggle{
-    border: 0 solid transparent;
-    background: none;
-    color: inherit;
-  }
-}
 .tooltip{
   cursor:pointer;
 }

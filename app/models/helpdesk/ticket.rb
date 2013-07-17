@@ -517,9 +517,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     if deep
       self[:notes] = self.notes
       options[:include] = [:attachments]
-      options[:except] = [:account_id,:import_id]
-      options[:methods].push(:custom_field)
     end
+    options[:except] = [:account_id,:import_id]
+    options[:methods].push(:custom_field)
     json_str = super options
     json_str.sub("\"ticket\"","\"helpdesk_ticket\"")
   end

@@ -40,7 +40,7 @@ cs:
     rebrand: "Změňte vzhled vašeho helpdesku"
     save: "Uložit změny"
     time_zone: "Časová zóna"
-  account_admin: "Účet správce"
+  account_admin: "Účet administrátora"
   account_admin_updated: "Účet administrátora by aktualizován!"
   accounts: 
     billing: 
@@ -49,7 +49,7 @@ cs:
       billing: Vyúčtování
       save_billing_information: "Uložit fakturační údaje"
       save_billing_information_info: "uloží Vaše \"Plán & Vyúčtování\" informace. Vaši kartu nabijeme a můžete začít používat Vaše předplatné a to v momentě, kdy Vaše zkušební doba vyprší."
-      update_billing_info: "Upravit informace ve vyúčtování"
+      update_billing_info: "Upravit účtovací údaje"
     cancel: 
       cancel_account: "Zrušit Freshdesk účet"
       change_your_plan: "Změnit licenci"
@@ -58,7 +58,7 @@ cs:
       delete_my_account: "Smazat můj účet"
       goback: "&#x2190; Zpět do nastavení účtu"
       intro: "Hodláte zrušit Váš účet. to ale <strong>natrvalo smaže všechna Vaše data</strong>."
-      warning_message: "Jak jednou provedete tuto akci, již nebudete mít přístup k Vašim datům, tudíž se opravdu přesvědčte, co chcete vlastně provést."
+      warning_message: "Jakmile provedete tuto akci, nebudete již mít přístup ke svým datům, takže se ujistěte, že je to opravdu to, co chcete udělat."
       you_must_confirm: "Musíte potvrdit Vaši žádost o zrušení"
     helpcard: 
       info1: "Můžete kompletně upravit vzhled vašeho helpdesku pro vaše zástupce i zákazníky. Změňte jeho vzhled pomocí vašeho loga, ikony adresního řádku, barevného schematu a názvu."
@@ -106,6 +106,7 @@ cs:
         record_invalid: "Potvrzování selhalo: %{errors}"
         too_long: "je příliš dlouhé (maximální počet znaků je %{count})"
         too_short: "je příliš krátké (minimum znaků je %{count})"
+        user_role: "Uživateli musí být přidělena nejméně jedna role"
         wrong_length: "je špatná délka (mělo by obsahovat %{count} znaků)"
       template: 
         body: "V následujících polích byl zjištěny problémy:"
@@ -284,23 +285,18 @@ cs:
     automations: 
       edit: 
         title: "Upravit scénář"
+      failure: "Nemáte oprávnění k provedené tohoto scénáře. Kontaktujte, prosím, administrátora"
+      index: 
+        human_name: Scénář
     ca_response: 
       delete_confirm: "Jste si jisti, že chcete smazat tuto připravenou odpověď?"
     canned_responses: 
-      edit: 
-        title: "Upravit připravenou odpověď"
       folders: 
         helpnote: 
           info1: "Připravená odpověď je šablona, kterou je možné použít pro rychlou reakci při odpovědi na požadavek."
           info2: "V připravené odpovědi můžete použít zástupné znaky pro vytvoření proměnného obsahu (např. jméno žadatele, ID požadavku, URL adresa, ...)"
           title: "Připravená odpověď"
           tour: "Pomozte mi vytvořit připravenou odpověď"
-      form: 
-        all_agents: "Všichni agenti"
-        available_for: "Dostupné pro "
-        groups: "Agenti ve skupině"
-        me_only: "Pouze já"
-        response_name: "Nadpis odpovědi"
       helpnote: 
         info1: "Připravená odpověď je šablona, kterou je možné použít pro rychlou reakci při odpovědi na požadavek."
         info2: "V připravené odpovědi můžete použít zástupné znaky pro vytvoření proměnného obsahu (např. jméno žadatele, ID požadavku, URL adresa, ...)"
@@ -309,9 +305,6 @@ cs:
       index: 
         new: "Přidat připravenou odpověď"
         title: "Připravené odpovědi"
-      new: 
-        delete_confirm: "Opravdu chcete smazat tuto předem připravenou odpověď?      "
-        title: "Přidat připravenou odpověď"
       responses: 
         edit: 
           title: "Upravit připravenou odpověď"
@@ -404,18 +397,14 @@ cs:
         agent_invite_field_placeholder: "Zadat e-maily členů vašeho týmu"
         agent_invite_multi_info: "Pomocí čárky ( , ) zadejte více e-mailů."
         agent_limit_reached: "Přesáhli jste maximální počet zástupců."
-        agent_send_invite_label: "Odeslat pozvání zástupcům"
+        agent_send_invite_label: "Pošlete pozvánky agentům"
         agent_sub_title: "Pozvěte na Freshdesk svůj tým"
         agent_title: "Cítíte se osamělí?"
         agent_title_info: "Přidejte emaily členů svého týmu a pozvěte je doFreshDesku. Vícenásobné adrfesy oddělujte středníkem."
-        agents_sub_title: "Pozvěte své zástupce helpdesku "
         agents_subtitle: "Pozvěte svůj tým aby se podílel na té zábavě :-)"
-        agents_title: Zástupci
         agents_title_1: "Přidání<br> zástupců"
-        agents_title_info: "Pozvěte své zástupce k použití aplikace Freshdesk, každou e-mailovou adresu oddělte čárkou"
         back_link: Zpět
         config-support-email-address: "Nastavte vaší emailovou adresu podpory"
-        congrats: "Gratulujeme! Váš „čerstvý“ helpdesk je připraven."
         congratulations: "Gratulujeme! Váš FreshDesk je připraven!"
         email_config_field_title: "E-mailová adresa vaší podpory"
         email_config_sub_title: "Nechte Freshdesk zpracovávat vaše e-maily podpory!"
@@ -425,12 +414,10 @@ cs:
         email_sent_success: "E-mail byl úspěšně odeslán."
         emails_invalid: "Jeden nebo více vašich e-mailů je neplatných."
         footer_msg: "<strong>Poznámka:<strong>Tato nastavení můžete kdykoli změnit na <a href='/admin/home' target='_blank' style='text-decoration:none; color:#1272DE'>záložce Admin</a>"
-        helpdesk_preview: "Náhled helpdesku"
         helpdesk_preview_text: Náhled
         implement_changes: "Implementuji změny..."
         info: "Budete muset v mailové schránce podpory vytvořit jednoduché pravidlo na přeposílání emalu na tuto adresu."
         info2: "Nejste s tím spokojeni? Vložte nový email a klikněte na \"Uložit\""
-        next_alt_link: "Přejít na helpdesk"
         next_alt_text: "Skočit přímo tam!"
         next_link: Další
         next_please_wait: "Čekejte prosím…"
@@ -443,74 +430,56 @@ cs:
         rebrand_color_tabs: Záložky
         rebrand_company_field_placeholder: "Zadejte název vaší společnosti"
         rebrand_company_label: "Název společnosti"
-        rebrand_header: "Logo a název vašeho helpdesku"
         rebrand_header_empty: "Je vyžadován kód barvy hlavičky."
         rebrand_header_invalid: "Kód barvy hlavičky je neplatný."
         rebrand_paint_title: "Vybarvěte váš helpdesk"
-        rebrand_sub_title: "Logo &amp; barvy"
         rebrand_submit_label: "Změnit vzhled"
         rebrand_subtitle: "Změňte vzhled pomocí vlastního loga a barev!"
         rebrand_tab_empty: "Je vyžadován kód barvy záložky."
         rebrand_tab_invalid: "Kód barvy karty je neplatný."
         rebrand_title: "Logo <br>&amp; barvy"
         rebranding_header: "Zvolte pro váš helpdesk nějaké prima jméno :-)"
-        save: Změnit
         save-and-next: "Uložit a přejít na další"
         save_text: Uožit
         send_invite: "Poslat pozvánku"
         send_test_mail_info2: "<a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>Zde je uvedeno</a>, jak to udělat."
         send_verification_email: "Odeslat ověřovací e-mail"
         sending_test_mail_progress: "Odesílám testovací email, prosím čekejte..."
-        skip_link: "Přeskočit a přejít k helpdesku"
         skip_text: "Ne děkuji, vemte mne na můj helpdesk."
         social_add_account: "Přidat účet"
         social_facebook: Facebook
         social_facebook_add: "Přidat stránku"
-        social_info: "Přeneste svůj Help Desk na Facebook, Twitter, do svých komunit – prostě kamkoli jde váš zákazník"
         social_info_text: "Přidejte sem své účty z Twitteru a Facebooku a budete moci sledovat své sociální interakce a přenášet na FreshDesk zprávy ze zdi, tweety, DMka a zprávy."
-        social_sub_title: "Sociální síť"
         social_subtitle: "Zapojte podporu do sociálních sítí!"
-        social_title: "Sociální síť"
         social_title_1: "Zapojte <br>se do sociálních sítí"
         social_twitter: Twitter
         social_twitter_add: "Přidat účet"
         sub_title: "Zde najdete spoustu věcí, které Vám pomohou začít"
         successfully_sent: "Úspěšně odesláno."
         successfully_updated: "Úspěšně aktualizováno."
-        support_email_sub_msg: "Aby helpdesk řádně fungoval, je nutné uvést e-mail podpory."
-        support_email_sub_title: "Sdělte nám svůj e-mail podpory."
         support_email_submsg: "Toto bude také implicitní adresa \"odpovědět komu\" když budete odpovídat <br>dotazy z FreshDesku."
         support_email_subtitle: "Přidejte primární emailovou adresu podpory"
         support_email_title: "E-mail<br> podpory"
         title: "Super! Vypadá to, že Váš helpdesk může začít fungovat na plno..."
         title1: "A nyní dejte tyto emaily na FreshDesk"
         title_message: "Nastartujte vaši podporu ve čtyřech krocíh..."
-        title_msg: "Než začnete, vyplňte několik údajů. (volitelné)"
         updating: Aktualizování...
         validating: Ověřuji...
       send_mail_content: 
         button_again_title: "…nebo odešlete znovu zkušební e-mail"
         button_sending: Odesílání…
         button_title: "Odeslat zkušební e-mail"
-        info: "Musíte předat dál kopii svých e-mailů podpory na níže uvedenou e-mailovou adresu:"
-        note: "<strong>Poznámka:</strong> Aby aplikace FreshDesk udělala z příchozích e-mailů požadavky, musíte nakonfigurovat pravidlo pro přeposlání e-mailu na svém poštovním serveru."
-        send_test_mail_confirm_no: "Ne, nevidím žádný požadavek."
+        send_test_mail_confirm_no: "Ne, nevidím žádný lístek."
         send_test_mail_confirm_yes: "Ano, dostal jsem jej."
         send_test_mail_info1: "Ujistěte se, že jste nastavili své e-maily pro přesměrování na <b> %{to_email} </b>."
-        send_test_mail_info2: "(Jak na to)"
         send_test_mail_info3: "Pokud si myslíte, že je zatím vše v pořádku, zkuste poslat zkušební e-mail. <br>%{send_test_mail_link}"
         send_test_mail_link_title: "odesílání testovacího e-mailu"
-        send_test_mail_response1: "Odeslali jsme Vám testovací email na <b><span id=reply_email_1>%{reply_email}</span></b>. Pokud všechno proběhlo v pořádku, můžete vidět  <a href=\"/helpdesk/tickets\" target=\"_blank\">novou událost</a> v zobrazení událostí."
         send_test_mail_response_1: "Právě jsme poslali tetsovací email na <b><span id=reply_email_1>%{reply_email}</span></b>. Pokud je vše v pořádku, měli byste na helpdesku najít nový požadavek. <a href=\"/helpdesk/tickets\" target=\"_blank\">Zkuste se podívat, zda tam opravdu je</a>."
         send_test_mail_response_no1: "Je tu zřejmě problém ->"
         send_test_mail_response_no2: "Zjistit jak"
-        send_test_mail_response_no3: "<strong>Pravděpodobně došlo k problému!</strong><br>Pokud neobdržíte e-mail do své schránky, počkejte několik minut, pokud problém přetrvá, <a href=\"https://support.freshdesk.com/\" target=\"_blank\">sdělte nám to</a>."
         send_test_mail_response_no_3: "<strong>Průšvih! Vypadá to na nějaký problém! </strong><br>Zkontrolujte pravidla doručování a ověřte si, že je vše OK. Jestliže neobdržíte testovací požadavek do několika minut, <a href=\"https://support.freshdesk.com/\" target=\"_blank\"> obraťte se na nás</a>."
-        send_test_mail_response_yes: "Blahopřejeme!!! Úspěšně jste připojili svůj e-mail podpory k portálu helpdesku. Přejeme mnoho úspěchů!!!"
         send_test_mail_yes_response: "Dobrá práce! Právě jste úspěšně nastavili email podpory v systému FreshDesk. Přejeme úspěšné podporování!"
-        test_info1: "Pokud si myslíte, že je zatím vše v pořádku, zkuste poslat zkušební e-mail."
         test_info_1: "Myslíte, že vše dosud vypadá v pořádku? Zkuste poslat testovací email."
-        title: "Váš předávaný e-mail:"
     home: 
       index: 
         account: Účet
@@ -518,7 +487,7 @@ cs:
         agent: Zástupci
         billing: "Plány a fakturace"
         business-hours: "Pracovní doba"
-        canned-response: "Připravená odpověď"
+        canned-response: "Předpřipravená odpověď"
         customer: Zákazník
         customer-portal: "Zákaznický portál"
         day_pass: "Denní propustky"
@@ -529,17 +498,19 @@ cs:
         email_commands_setting: "Emailové příkazy"
         everything: Vše
         facebook-setting: Facebook
-        feedback: "Panel zpětné vazby"
+        feedback: "Formulář FreshDesk"
         gamification-settings: "Nastavení Arcade"
         group: Skupiny
         helpdesk: Helpdesk
         import: "Importovat data ze Zendesku"
-        integrations: Integrace
+        integrations: Propojení
         multi-product: "Více produktů"
+        observer: Pozorovatel
         portal: Portál
         productivity: Produktivita
         rebranding: "Změna vzhledu helpdesku"
         remote-authentication: "Vzdálené ověření"
+        role: Role
         scenario: "Automatizace scénářů"
         security: Zabezpečení
         settings: Nastavení
@@ -550,6 +521,49 @@ cs:
         ticket-fields: "Políčka události"
         title: Admin
         twitter-setting: Twitter
+    observer_rules: 
+      actions: "provést tyto akce"
+      add_new_event: "Přidat novou událost"
+      agent: Zástupce
+      assigned_agent: "Přidělený zástupce"
+      assigned_group: "Přidělená skupina"
+      conditions: "na požadavcích s těmito vlastnostmi"
+      customer: Žadatel
+      edit: 
+        title: "Pozorovatel - změna pravidla"
+      event_performer: "Zástupce provádějící událost"
+      events: "Když nastane <b>kterákoli</b> z těchto událostí"
+      filter_jsinit: 
+        body: Tělo
+        checked: zaškrtnuto
+        deselected: "Výběr zrušen"
+        insert_placeholder: "Vložit zástupnou značku"
+        not_selected: Nevybráno
+        selected: Vybráno
+        subject: Předmět
+        to: Komu
+        unchecked: nezaškrtnuto
+      helpnote: 
+        help_info_1: "Pozorovatel vám umožní zachytit a reagovat na události v helpdesku jakmile nastanou. Příkladem pravidla Pozorovatele může být přivolání silného muže v okamžiku, kdy uživatel ohodnotí negativně vaši práci na požadavku :-)"
+        help_info_2a: "Událost, která vyvolá pravidlo Pozorovatele, může být spojena s jakoukoli změnou vyvolanou uživatelem."
+        help_info_2b: "Specifikuje, jaká uživatelská akce má vyvolat pravidlo. Můžete volit zástupce, žadatele (kohokoli mimo tým podpory) případně oba."
+        help_info_2c: "Pravidla můžete podle potřeby filtrovat tak, aby platila pouze pro určené požadavky."
+        help_info_2d: "Zde určíte, co má pravidlo dělat."
+        help_info_3: "Pozorovatel může měnit hodnoty políček požadavku nebo jeho stav, případně vám může poslat upozornění přesně v tom okamžiku, kdy jsou splněny příslušné podmínky."
+        help_info_4: "Zjistěte si více o tom, jak používat Pozorovatele"
+        help_title: Pozorovatel
+        help_title_2a: Události
+        help_title_2b: "Vykonavatel události"
+        help_title_2c: "Podmínky požadavku"
+        help_title_2d: Akce
+        tour: "Pomozte mi vytvořit nové pravidlo pozorovatele"
+      index: 
+        human_name: "Pravidlo Pozorovatele"
+        title: "Pozorovatel - pravidla"
+      new: 
+        title: "Pozorovatel - nové pravidlo"
+      performed_by: "a tyto události byly způsobeny"
+      present: Kdokoli
     portal_settings: 
       simple: 
         baseFont: "Základní font"
@@ -582,10 +596,8 @@ cs:
         product_name: "Název produktu"
         product_support_emails: "E-maily produktové podpory"
       helpnote: 
-        content: "Systém více produktů vám umožňuje poskytovat specifickou podporu pro každy produkt nebo značku."
         content1: "Můžete podporovat své různé produkty na různých portálech z jednoho účtu FreshDesk. Nakonfigurujte e-maily podpory pro každý produkt zvlášť a automaticky je směrujte na příslušné skupiny zástupců."
         content2: "Když nakonfigurujete zvláštní portál pro každý produkt, můžete zároveň poskytovat jedinečnou sadu řešení a fór pro každý z nich."
-        heading: "Více produktů"
         heading1: "Více produktů"
         heading2: "Nakonfigurujte různé portály pro každý produkt"
         tour: "Pomozte mi spustit systém více produktů"
@@ -645,7 +657,75 @@ cs:
         reward: Odměna
         save: "Uložit výzvu"
         solution: "Publikace <br /> <strong> řešení </strong>"
-        ticket: "Řešení <br /><strong>požadavků</strong>"
+        ticket: "Řešení <br /> <strong> lístků </strong>"
+    roles: 
+      default_role: "Implicitní role"
+      edit: "Upravit roli"
+      helpcard: 
+        info1: "Role vám umožní vytvářet a měnit oprávnění a přidělovat je vašim zástupcům. Každá role určuje, jaké akce může ve vašem helpdesku provádět zástupce, který tuto roli zastává."
+        info2: "Například můžete nadefinovat roli Koordinátora, která umožňuje zástupci, který ji obdrží, měnit pole požadavku a přidělovat jej jiným zástupcům, přidávat interní poznámky ale nikoli komunikovat se zákazníky."
+        info3: "Jakmile máte roli vytvořenu, můžete ji přidělovat v sekci Zástupci jak novým, tak stávajícím zástupcům."
+        info4: "Můžete určovat, zda zástupce bude mít přístup do nastavení v sekci Admin. Tito zástupci pak mohou být Operačními zástupci s omezeným přístupem,nebo Super admini s možností editovat všechna nastavení helpdesku; těchto Super adminů můžete mít libovolný počet."
+        info5: "Zde se můžete dozvědět více o rolích a právech"
+        title1: "Porozumění rolím"
+        title2: "Administrátorská práva"
+      new: "Nová role"
+      permissions: Oprávnění
+      privilege: 
+        admin: Admin
+        admin_tasks: "Hrát si na boha s plným Super Admin řízením"
+        create_topic: "Vytvořit nebo upravit téma"
+        customers: Zákazníci
+        delete_contact: "Smazat kontakt nebo firmu"
+        delete_solution: "Smazat řešení"
+        delete_ticket: "Smazat požadavek"
+        delete_topic: "Smazat téma"
+        edit_conversation: "Vymazat konverzaci"
+        edit_note: "Upravit poznámky kohokoli"
+        edit_note_choice: "Upravit poznámky"
+        edit_note_false: "Upravit pouze své poznámky"
+        edit_ticket_properties: "Upravit vlastnosti požadavku"
+        edit_time_entries: "Upravit záznamy o práci u kohokoli"
+        edit_time_entries_false: "Upravit pouze jejich záznam"
+        edit_topic: "Upravit jakékoli téma"
+        edit_topic_false: "Upravit pouze jejich vlastní téma"
+        forums: Fóra
+        forward_ticket: "Přeposlat konverzaci"
+        manage_account: "Včetně správy účtů"
+        manage_canned_responses: "Spravovat připravené odpovědi"
+        manage_contacts: "Vytvořit nebo upravit nový kontakt nebo firmu"
+        manage_dispatch_rules: "Spravovat Dispečerská nebo Pozorovatelská pravidla"
+        manage_email_settings: "Spravovat emailové příkazy"
+        manage_forums: "Vytvořit / upravit kategorii nebo fórum"
+        manage_scenario_automation_rules: "Spravovat pravidla automatických scénářů"
+        manage_solutions: "Vytvořit / upravit kategorii nebo složku"
+        manage_supervisor_rules: "Spravovat pravidla Supervisora"
+        manage_tickets: "Spravovat požadavky"
+        manage_users: "Spravovat zástupce"
+        merge_or_split_ticket: "Spojit / rozdělit požadavek"
+        not_administrator: "Nezobrazovat žádné volby Administrátora"
+        operational_admin: "Vykonat akce operačního Administrátora"
+        publish_solution: "Publikovat řešení"
+        reply_ticket: "Odeslat odpověď na požadavek"
+        reports: "Výstupní sestavy"
+        solutions: Řešení
+        tickets: Požadavky
+        view_contacts: "Zobrazit záložku Zákazníci"
+        view_forums: "Zobrazit záložku fór"
+        view_reports: "Zobrazit záložku s výstupními sestavami"
+        view_solutions: "Zobrazit záložku řešení"
+        view_time_entries: "Zobrazit nebo upravit záznamy o práci"
+      role_description: Popis
+      role_name: "Jméno role"
+      scroll: 
+        administration: Správa
+        customers: Zákazníci
+        forums: Fóra
+        reports: "Výstupní sestavy"
+        scroll_to: "Nalistovat k"
+        solutions: Řešení
+        tickets: Požadavky
+      title: "Role zástupce"
     security: 
       helpnote: 
         info: "Nastavení bezpečnostních parametrů vám pomůže urychlit a řídit přístup návštevníků na váš portál podpory."
@@ -653,14 +733,14 @@ cs:
         info2: "<b>Povolení SSL zabezpečení</b><br />Můžete si zajistit bezpečnou komunikaci k vašemu portálu podpory prostřednictvím povolení SSL kódování. Freshdesk nabízí implicitní \"wildcard\" SSL certifikát pro všechny účty na doméně freshdesk.com. <b>Upozorňujeme, že není možné použít \"wildcard\" SSL pokud používáte u tohoto portálu vlastní URL. </b>Pokud máte zvolenu licenci \"Estate\", můžete si pro toto URL zažádat o uživatelský SSL certifikát."
         title: "Bezpečnostní nastavení"
       index: 
-        click_to_disable: "Kliknutím zakažte SSL"
+        click_to_disable: "Kliknutím vypněte SSL"
         click_to_enable: "Kliknutím povolte SSL"
         custom_ssl: "Uživatelské SSL"
         customer_portal_ssl_warning: "Jelikož má váš účet nakonfigurovánu vlastní adresu URL helpdesku, budete přesměrováni na "
         default_ssl: "Implicitní SSL"
         disabled: Zakázáno
         dns_name: "<b>Důležité:</b> Prosím upravte CNAME záznam DNS ve vašem souboru DNS Zone tak, aby propojil vaše doménové jméno na níže uvedené ELB  DNS jméno.<br /><br />ELB DNS jméno pro %{url} je"
-        enable_SSL: "Povolit SSL"
+        enable_SSL: "Aktivovat SSL"
         enable_SSL_anon: "SSL zajišťuje šifrování dat z/na portály FreshDesk"
         enable_sso: "Umožnit jednotné přihlášení"
         enable_sso_info: "Jednotné příhlášení Vám umožní používat Vaší vlastní aplikaci nebo centralizovaný server (jako je MS Active Directory) k ověřování agentů a zákazníků tak, že budou moct přistupovat do Freshdesku bez nutnosti zadávat odděleně uživatelské jméno a heslo. "
@@ -683,13 +763,20 @@ cs:
     shared: 
       filter_jsinit: 
         body: Tělo
+        checked: Zaškrtnuto
+        deselected: "výběr byl zrušen"
         insert_placeholder: "Vložit zástupnou značku"
         not_selected: Nevybráno
+        params: Parametry
+        request_type: "Typ požadavku"
         selected: Vybráno
+        subject: Předmět
         to: Komu
+        unchecked: Odškrtnuto
+        url: URL
     supervisor_rules: 
       edit: 
-        title: "Supervizor - upravit pravidlo"
+        title: "Vedoucí - Upravit pravidlo"
       helpnote: 
         help_info_1: "Supervizor provádí akce nad požadavky v závislosti na jejich stavu a na čase. Použijte jej pro periodické kontroly posledních požadavků a provádění akcí jako je poslání upomínky zákazníkovi při čekání na jeho reakci, nebo eskalaci požadavku, který je v prodlení s řešením na odpovědnou osobu."
         help_info_2: "Supervizor bude spouštěn každou hodinu a zpracuje požadavky aktualizované během posledních 30 dnů. Tato pravidla jsou spouštěna sekvenčně, takže jejich pořadí je významné - akce jednoho pravidla mohou ovlivnit podmínky následujícího."
@@ -698,11 +785,7 @@ cs:
         help_title: Supervizor
         tour: "Pomozte mi s vytvořením pravidla Supervizora"
       index: 
-        help_info_1: "Použijte Supervizora k pravidelné kontrole požadavků a provádění akcí jako jsou posílání upomínek zákazníkům, eskalace  požadavku, znovupřidělení požadavku apod."
-        help_info_2: "Např. pokud požadavek čeká na reakci zákazníka déle než 24 hodin, pošle se mu mailem upomínka, nebo pokud je více než 48 hodin požadavek vyřešen, uzavře se."
-        help_info_3: "Pravidlo Supervizora bude spouštěno každou hodinu a zpracuje požadavky aktualizované během posledních 30 dnů."
-        help_info_4: "Pravidla Supervizora jsou zpracovávána sekvenčně, takže jejich pořadí je významné. Každé pravidlo může spustit akce, která pak následně aktivují další pravidla."
-        help_title: Supervizor
+        human_name: "Pravidlo Supervizora"
         title: "Pravidla Supervizora"
       new: 
         title: "Supervizor - nové pravidlo"
@@ -720,15 +803,15 @@ cs:
         link_text_input: "Sdělte nám prosím, jak jste byli spokojeni s podporou."
         link_text_label: "Text odkazu na dotazník spokojenosti"
         send_while_option1: "Všechny e-maily odeslané zákazníkovi."
-        send_while_option2: "E-maily odeslané po vyřešení požadavku."
+        send_while_option2: "E-maily odeslané po vyřešení lístku."
         send_while_option3: "E-maily odeslané po uzavření požadavku."
         send_while_option4: "Umožněte zástupcům, aby přidali odkazy na dotazník do konkrétních e-mailů."
         send_while_title: "Vyberte, které e-maily mají mít odkaz na dotazník spokojenosti"
       successfully_updated: "Nastavení přehledu byla úspěšně aktualizována."
     twitters: 
       change: 
-        capture_dm: "Převést přímo poslané zprávy na požadavky"
-        capture_mention: "Převést obecné připomínky na požadavky"
+        capture_dm: "Převést zprávy poslané na přímo na události"
+        capture_mention: "Převést veřejné názory na událost       "
         default_group: "Implicitní skupina"
         edit_twitter: "Upravit Twitter"
         screen_name: "Název obrazovky"
@@ -743,10 +826,13 @@ cs:
         name: "Hledat jméno"
         screen_name: "Účet Twitteru"
         search_key: "Vyhledávací dotaz"
+    va_rules: 
+      index: 
+        human_name: "Pravidlo Dispečera"
     widget_config: 
       index: 
         thankyou_default: "Děkujeme za vaši zpětnou vazbu"
-        thankyou_info: "Zpráva zobrazená uživateli po odeslání požadavku"
+        thankyou_info: "Zpráva zobrazená uživateli po odeslání formuláře události"
         thankyou_label: "Odeslat zprávu"
   adv_reports: 
     agent_at_a_glance: "Zástupci - rychlý přehled"
@@ -799,6 +885,57 @@ cs:
     helpdesk_at_a_glance: "Helpdesk - rychlý přehled"
     helpdesk_load_analysis: "Analýza vytížení helpdesku"
     helpdesk_performance_analysis: "Výkonová analýza helpdesku"
+    helptext: 
+      glance: 
+        agent_avg_agent_inter: "Průměrný počet odpovědí na požadavky daného zástupce na konci každého dne"
+        agent_avg_cust_inter: "Průměrný počet zákaznických odpovědí na požadavky řešené daným zástupcem na konci každého dne"
+        agent_avg_first_resp_time: "Průměrný čas první odpovědi u požadavků řešených daným zástupcem"
+        agent_avg_resol_time: "Průměrný čas na vyřešení požadavku daným zástupcem"
+        agent_avg_resp_time: "Průměrný čas odpovědi na požadavek daného zástupce"
+        agent_backlog_tickets: "Celkový počet požadavků přidělených danému zástupci a nevyřešených na konci každého dne zvoleného období"
+        agent_fcr: "Procento požadavků přidělených danému zástupci vyřešených v rámci první odpovědi"
+        agent_reassigns: "Počet případů, kdy byl jednou přidělený požadavek danému zástupci  znovu přidělen jinému zástupci"
+        agent_recieved_tickets: "Celkvý počet požadavků přijatých zástupcem ve zvoleném období"
+        agent_reopens: "Počet případů, kdy byl vyřešený nebo uzavřený požadavek daného zástupce znovu otevřen"
+        agent_resolved_tickets: "Celkový počet požadavků vyřešených daným zástupcem ve zvoleném období"
+        agent_sla: "Procento požadavků přidělených danému zástupci vyřešených v souladu s politikou SLA"
+        customer_avg_agent_inter: "Průměrný počet odpovědí od zástupce na požadavky daného zákazníka na konci každého dne"
+        customer_avg_cust_inter: "Průměrný počet odpovědí na požadavky daného zákazníka na konci každého dne"
+        customer_avg_first_resp_time: "Průměrný čas první odpovědi u požadavků daného zákazníka"
+        customer_avg_resol_time: "Průměrný čas na vyřešení požadavku daného zákazníka"
+        customer_avg_resp_time: "Průměrný čas odpovědi na požadavek od daného zákazníka"
+        customer_backlog_tickets: "Celkový počet požadavků od daného zákazníka nevyřešených požadavků na konci každého dne zvoleného období"
+        customer_fcr: "Procento požadavků daného zákazníka vyřešených v rámci první odpovědi"
+        customer_reassigns: "Počet případů, kdy byl jednou přidělený požadavek daného zákazníka znovu přidělen jinému zástupci"
+        customer_recieved_tickets: "Celkový počet požadavků přijatých od zákazníka ve zvoleném období"
+        customer_reopens: "Počet případů, kdy byl vyřešený nebo uzavřený požadavek znovu otevřen daným zákazníkem"
+        customer_resolved_tickets: "Celkový počet požadavků od daného zákazníka vyřešených ve zvoleném období"
+        customer_sla: "Procento požadavků daného zákazníka vyřešených v souladu s politikou SLA"
+        group_avg_agent_inter: "Průměrný počet odpovědí na požadavky dané skupiny na konci každého dne"
+        group_avg_cust_inter: "Průměrný počet zákaznických odpovědí na požadavky řešené danou  skupinou na konci každého dne"
+        group_avg_first_resp_time: "Průměrný čas první odpovědi u požadavků řešených danou skupinou"
+        group_avg_resol_time: "Průměrný čas na vyřešení požadavku danou skupinou"
+        group_avg_resp_time: "Průměrný čas odpovědi na požadavek dané skupiny"
+        group_backlog_tickets: "Celkový počet požadavků přidělených dané skupině a nevyřešených na konci každého dne zvoleného období"
+        group_fcr: "Procento požadavků přidělených dané skupině vyřešených v rámci první odpovědi"
+        group_reassigns: "Počet případů, kdy byl jednou přidělený požadavek zástupci v dané skupině znovu přidělen jinému zástupci"
+        group_recieved_tickets: "Celkový počet požadavků přijatých skupinou ve zvoleném období"
+        group_reopens: "Počet případů, kdy byl vyřešený nebo uzavřený požadavek dané skupiny znovu otevřen"
+        group_resolved_tickets: "Celkový počet požadavků vyřešených danou skupinou ve zvoleném období"
+        group_sla: "Procento požadavků přidělených dané skupině vyřešených v souladu s politikou SLA"
+        helpdesk_avg_agent_inter: "Průměrný počet odpovědí na požadavky od zástupce na konci každého dne napříč celým helpdeskem"
+        helpdesk_avg_cust_inter: "Průměrný počet zákaznických odpovědí na požadavky na konci každého dne napříč celým helpdeskem"
+        helpdesk_avg_first_resp_time: "Průměrný čas první odpovědi u všech požadavků napříč celým helpdeskem"
+        helpdesk_avg_resol_time: "Průměrný čas na vyřešení požadavku napříč celým helpdeskem"
+        helpdesk_avg_resp_time: "Průměrný čas odpovědi na požadavek napříč helpdeskem"
+        helpdesk_backlog_tickets: "Celkový počet požadavků nevyřešených požadavků na konci každého dne zvoleného období"
+        helpdesk_fcr: "Celkové procento požadavků vyřešených v rámci první odpovědi"
+        helpdesk_reassigns: "Celkový počet případů, kdy byl jednou přidělený požadavek znovu přidělen jinému zástupci"
+        helpdesk_recieved_tickets: "Celkový počet požadavků přijatých na váš helpdesk ve zvoleném období"
+        helpdesk_reopens: "Počet případů, kdy byl vyřešený nebo uzavřený požadavek znovu otevřen"
+        helpdesk_resolved_tickets: "Celkový počet požadavků vyřešených vaší podporou ve zvoleném období"
+        helpdesk_sla: "Procento požadavků vyřešených v souladu s politikou SLA"
+        how_to_read: "Jak číst tuto Výstupní sestavu"
     load: 
       avg_num_of_interactions: "Průměrný počet interakcí"
       num_of_operations: "Počet oprací s požadavkem"
@@ -851,13 +988,22 @@ cs:
     admin: Správce
     admin_info: "Může vykonávat všechny činnosti správy"
     agent_restored: "Zástupce byl obnoven"
+    assign: Přiřadit
+    assign_role: "Přiřazené role"
+    available_seats: "%{count} zástupců je možné obsadit"
+    available_seats_without_count: "Počet volných zástupců"
+    buy: "Kupte si další"
+    cannot_edit_roles: "Máte povoleno své role a oblast působnosti pouze prohlížet."
     contact_exists: "Žadatel s e-mailem '%{existing_email}' již existuje, %{use_email}"
+    day_pass_available: "%{count} volných denních propustek"
     day_pass_expired: "Vše denní propustka vypršela, přihlášením získáte novou denní propustku."
+    day_pass_used: "Dosud použito %{count} denních propustek"
     deleted: 
       agent_deleted: "Zástupce byl vymazán"
       no_agents: "Nemáte žádné smazané zástupce"
     edit: "Upravit agenta"
     full_time: Celodenně
+    full_time_agent: "Zástupce na plný úvazek"
     global: "Agent (globální přístup)"
     global_info: "Může si zobrazovat všechny lístky v helpdesku"
     group: "Agent (skupinový přístup) "
@@ -866,7 +1012,13 @@ cs:
       info1: "Tento seznam ukazuje všechny zástupce podpory přidané do vašeho helpdesku. Kliknutím na tlačítko \"Editovat\" můžete editovat jejich oprávnění a přístupová práva a klinutím na tlačítko \"Nový zástupce\" můžete přidat další."
       info2: "Když přidávate nového zástupce podpory, musíte zadat jeho email a  nastavit jeho oprávnění a přístuú (celodenní/občasný). Zástupce pak obdrží mail s odkazem na helpdesk k aktivaci svého účtu. Po aktivaci mu již mohou být přidělovány poždavky."
       info3: "Administrátor může také editovat profil zástupce - jeho pracovní pozici, telefon, fotku, podpis apod."
-      side_title: "Přidání zástupce a jeho editace"
+      info4: "Můžete si vybrat, zda vaši zástupci budou pracovat na Portálu podpory na plný úvazek nebo jen příležitostně. Příležitostní zástupci budou pro každé přihlášení používat denní propustky, jejichž \"balíčky\" si můžete koupit na záložce Administrátora. Zástupci na plný úvazek budou fakturováni měsíčně."
+      info5: "Zjistěte si více o denních propustkách"
+      info6: "Jaké požadavky vaši zástupci uvidí určíte pomocí Oblasti požadavků. Také si zde můžete zvolit roli agenta, tj. jaké akce může zástupce vykonávat v rámci helpdesku."
+      info7: "Vlastní roli nemůžete měnit a ani se sami nemůže smazat."
+      info8: "Zjistěte si více o rolích zástupců"
+      title1: "Zástupce na plný úvazek vs. příležitostný"
+      title2: "Oblasti působnosti a role agenta"
       tour: "Pomozte mi přidat nového zástupce podpory"
     individual: "Agent (omezený přístup)"
     individual_info: "Mohou si zobrazovat pouze jim přiřazené lístky"
@@ -875,14 +1027,23 @@ cs:
     info3: "Jste si jistí, že chcete smazat"
     info4: "Převést na osobu zákazníka"
     insufficient_day_pass: "Nebylo možné přiřadit vám denní propustku, kontaktujte prosím svého správce."
+    last_logged_in: "Poslední přihlášení před %{time}."
     make_admin: "Učinit tohoto agenta administrátorem"
+    never_logged_in: "Dosud nepříhlášen."
     new: "Nový agent"
+    no_day_pass: "Nemáte žádné denní propustky"
+    no_seats: "Žádní volní zástupci"
     occasional: Občas
+    occasional_agent: "Příležitostný zástupce"
     occasional_description: "Tento agent bude přistupovat k portálu podpory"
     password_reset_message: "Chcete obnovit heslo žadatele %{requester}?"
     password_reset_note: "Poznámka: Obnovení e-mailu s pokyny bude odesláno žadateli %{requester}"
     permissions: Povolení
     restore: obnovit
+    role: "Role zástupce"
+    role_and_scope: "Role a oblast"
+    roles: Role
+    roles_description: "Přidělte jednu či více rolí tomuto zástupci."
     showing: "Zobrazeni:"
     signature: Podpis
     status: 
@@ -890,23 +1051,38 @@ cs:
       deleted: Smazaní
     supervisor: Vedoucí
     supervisor_info: "Může si zobrazovat všechny lístky v helpdesku a přistupovat k sestavám (bez správcovských oprávnění)"
+    ticket_scope: "Oblast požadavku"
     title: Agenti
+    trial: "V testovací verzi"
+    type: "Typ zástupce"
     update: Aktualizovat
     use_email: "Použít tento e-mail"
     view_user: "Prohlédnout uživatele"
-  agent_adds_comment: "Agent přidal komentář k události"
-  agent_assigned_info: "Tento zástupce nemá žádné otevřené ani pozastavené požadavky."
+  agent_adds_comment: "Agent přidává komentář k události"
+  agent_assigned_info: "Žádné otevřené ani rozpacované události pro tohoto agenta"
   agent_assigned_title: "Nedávno přiřazené požadavky (Otevřené &amp; Pozastavené)"
   agent_closes_tkt: "Agent uzavírá událost"
   agent_deleted_message: "Toto je odstraněný zástupce"
-  agent_emailnotverified: "Mail tohoto zástupce nebyl dosud ověřen!"
+  agent_emailnotverified: "Email nebyl ověřen pro tohoto agenta!"
   agent_info_title: "Podrobnosti o agentovi"
+  agent_list: 
+    sort: 
+      asc: Vzestupně
+      created_at: "Vytvořeno dne"
+      desc: Sestupně
+      last_login_at: "Naposled přihlášen v"
+      name: Jméno
+      sorted_by: "Setříděno dle"
+    tab: 
+      active: "Na Plný úvazek"
+      deleted: Smazané
+      occasional: Občasný
   agent_solves_tkt: "Agent vyřešil událost"
   agent_working_on_this_ticket: "Agent na této události pracuje"
   agents: Agenti
   align_to: "Přiřadit k"
   all_due: All
-  already_overdue: "Nesplněné už od %{time_words}"
+  already_overdue: "Řešení promeškáno o %{time_words}"
   always: Vždy
   amount: Množství
   amount_for_annual: "$%{amount} ročně"
@@ -914,6 +1090,14 @@ cs:
   answered: Zodpovězeno
   any: Cokoli
   any_time: "Jakýkoli čas"
+  any_val: 
+    any: Cokoli
+    any_feedback: Cokoli
+    any_group: "Jakákoli skupina"
+    any_priority: "Jakákoli priorita"
+    any_status: "Jakýkoli stav"
+    any_ticket_type: "Jakýkoli typ"
+    any_value: "Jakákoli hodnota"
   application: 
     click_to_disable: "Kliknutím doplněk vypněte"
     click_to_enable: "Kliknutím zapněte doplněk    "
@@ -938,7 +1122,7 @@ cs:
   at: v
   attach_file: "Přiložit soubor"
   attach_file_local: "Přiložit soubor z vašeho počítače"
-  attach_files: "Připojit přílohu"
+  attach_files: "Připojit soubory"
   attachment: Příloha
   attachment_delete: "Chystáte se navždy smazat tuto přílohu. Pokračovat?"
   attachment_help_info: "Velikost příloh(y) může být až 15 MB"
@@ -946,9 +1130,9 @@ cs:
   auto_suggest_solutions: 
     info: "<b>Na vaši otázku již možná máme odpověď.</b><br/>Podívejte se, zda vám některá vyhovuje."
   automations: 
+    actions: Akce
     available_placeholders: "Zástupné značky"
     helptext: "Automatický scénář vám umožní libovolně upravit požadavek jedním kliknutím. Můžete např. vytvořit scénář \"Označit požadavek jako hlášení chyby\": přiřadit k řešení týmu QA, nastavit typ na Chyba a poslat mail na manažera produktu."
-    info1: "Každý helpdesk má soubor společně odkazujících scénářů - např. Předej na Level 2, Přiřaď ke skupině, Přepošli na obchodní oddělení apod. Tyto scénáře obvyle zahrnují i více aktualizací pro konkrétní Událost"
     info2: "Například před přiřazením události do skupiny QA budete třeba chtít nastavit typ události jako Bug (Chyba), přiřaďte ji do QA skupiny a napište QA správci o tomto bugu."
     info3: "Automatizace scénáře Vám umožňuje zautomatizovat uvedené operace pomocí jediného kliku."
     info4: "Zvolte si ze zástupných značek níže, které se mají přiložit k emialu a oni dostanou příslušná konvertovaná data"
@@ -988,16 +1172,30 @@ cs:
   bottom: Dole
   bulk_actions: "Hromadné akce"
   business_hours: 
+    delete: "Jste si jisti"
+    description: Popis
+    description_eg: "např. tento Pracovní kalendář je pro časovou zónu \"Praha\""
     helpdesk_hours: "Pracovní doba"
     holiday_added: "Dovolená byla přidána"
     holiday_list: "Roční seznam volna"
     holiday_name: "Název volna"
     holidays: Volno
+    import_holiday: "Načíst svátky"
+    import_holiday_info: "<b>Důležité:</b>Importované svátky platí pouze pro aktuální rok a nejsou automaticky prodlužovány do dalších let."
     info1: "Nastavení pracovních hodin v aplikaci Freshdesk vám dovoluje lépe řídit svá SLA. Když kupříkladu váš helpdesk pracuje mezi 9. a 18. hodinou od pondělí do pátku a zákazník odešle lístek s vysokou důležitostí v 16 hodin v úterý, přičemž cílová doba vyřešení SLA je 4 hodiny, pak se čas vyřízení lístku nastaví na 11 hodin ve středu. SLA můžete nakonfigurovat tak, že bude nebo nebude přeskakovat dobu volna"
     info2: "Volno funguje úplně stejně jako pracovní hodiny. Když kupříkladu váš helpdesk pracuje mezi 9. a 18. hodinou od pondělí do pátku a zákazník odešle lístek se střední důležitostí ve 20 hodin v pátek, přičemž cílová doba vyřešení SLA je 24 hodin, pak se čas vyřízení lístku nastaví na 9 hodin v úterý (nikoli 20 hodin v sobotu)"
     info3: "Specifická pracovní doba"
     info4: "Pracovní dny vašeho helpdesku"
     info5: "Dovolená bude ignorována, v případě, že počítáte s SLA pro tuto událost"
+    info6: "24 hodin x 7 dní"
+    invalid_holiday: "Svátek zadán s chybou"
+    multiple: "Vácenásobná Pracovní doba"
+    multiple_info: "Můžete vytvořit více sad s Pracovní dobou a Svátky a přiřadit je různým skupinám - např. pokud máte jeden tým podpory pracující v časové zóně PST a druhý v GMT.<a href=\"https://support.freshdesk.com/solution/articles/98945\" target=\"_blank\">Naučte se více</a>"
+    name: Jméno
+    name_eg: "např. Pracovní doba v Praze"
+    new: "Nová Pracovní doba"
+    select_time_zone: "Zvolte Časovou zónu"
+    time_zone: "Časová zóna"
     title: "Pracovní doba"
     to: do
     valid_time: "Vložte, prosím, korektní čas"
@@ -1067,8 +1265,9 @@ cs:
   choose_plan_trial: "Ppoznámka: zkušební doba končí a chystáme se váš účet deaktivovat.<br /> Pokud chcete FreshDesk používat i nadále, zvolte si některou licenci dole."
   clear: Vymazat
   clear_draft_text: "Smazat uložený koncept?"
-  click_select_action: "Klikněte pro výběr akce"
   click_to_change_sort_order: "Klikněte pro změnu řazení položek"
+  click_to_select_action: "Zvolte akci"
+  click_to_select_event: "Zvolte událost"
   click_to_select_filter: "Klikněte pro výběr filtru"
   close: Zavřít
   close_this_ticket: "Uzavřít tento požadavek"
@@ -1099,13 +1298,11 @@ cs:
     title2: společnost?
   company_name: "Název společnosti"
   confirm: Potvrdit
+  confirm_delete_message: "Jste si jistí, že chcete smazat %{human_name}?"
   connect_ticket: "Odkaz na událost"
   contact_name: "Jméno kontaktu"
   contacts: 
     activation: "Poslat aktivaci"
-    active: 
-      no_contacts: "Nemáte žádný kontakt přidaný v seznamu."
-      no_contacts_with_letter: "Nemáte žádné aktivní kontakty s počátečním písmenem '%{alphabet}'"
     add_new_requester: "Přidat nového žadatele"
     add_new_user: "Přidat nového uživatele"
     blocked_message: "Toto je blokovaný kontakt."
@@ -1129,12 +1326,12 @@ cs:
     import_google: "Import z Google"
     import_google_no: Číslo
     import_google_yes: Ano
-    info1: "Jste si jistí, že chcete smazat tento kontakt?"
-    info2: "Učinit tohoto uživatele agentem"
+    info1: "Jste si jisti, že chcete smazat tento kontakt?"
+    info2: "Převést osobu zákazníka na zástupce podpory"
     info3: "Druhotné informace %{nick_name}"
     info4: "Nedávné požadavky od %{nick_name}"
-    info5: "Uživatel do teď nevytvořil žádnou událost "
-    info6: "Přidat specifické poznámky související s tímto kontaktem"
+    info5: "Uživatel až doposud nevytvořit žádný lístek"
+    info6: "Přidat konkrétní poznámky k tomuto kontaktu"
     new: "Nový kontakt"
     no_contacts: "Žádné osoby zákazníka"
     quick_contact: "Rychlý kontakt"
@@ -1148,7 +1345,6 @@ cs:
     showing: Zobrazování
     spam_message: "Toto je nevyžádaný kontakt."
     status: 
-      active: Aktivní
       all: Všichni
       blocked: Blokováno
       deleted: Odstraněno
@@ -1202,6 +1398,7 @@ cs:
     weeks: Týdny
     year: Rok
     years: Roky
+  date_invalid: "Datum zadán s chybou"
   date_title: Datum
   day: "1 den"
   days: dní
@@ -1210,7 +1407,7 @@ cs:
   default_category_description: "Všechny e-maily posílané %{full_domain} se zde uloží jako koncepty"
   default_folder: Koncepty
   default_folder_description: "Všechny e-maily posílané %{full_domain} se zde uloží jako koncepty"
-  default_reply_template: "Šablona odpovědi zástupce"
+  default_reply_template: "Šablona odpovědi agenta"
   delete: Smazat
   delete_confirm_scenario: "Jste si jisti, že chcete smazat tento scénář?"
   delete_reminder: "Smazat toto To-Do?"
@@ -1221,22 +1418,26 @@ cs:
   dislikes: "Nelíbí se"
   dispatch: 
     act_to_perform: "Operace k provedení"
+    action_note: "Provést tyto akce"
+    actions: Akce
     add_condition: "Přidat novou podmínku"
     add_new_action: "Přidat novou akci"
     add_new_choice: "Přidat novou volbu"
+    condition_note: "S následujícími podmínkami"
+    conditions: Podmínky
     delete: "Jste si jistí, že chcete smazat toto pravidlo?"
+    description: Popis
     dispatch_rules: "Dispečer - Pravidla"
     edit: "Dispečer - Upravit pravidlo"
+    event_note: "Když nastane <b>jakákoli</b> z těchto událostí"
     helpcard: 
       info1: "Dispečer umožňuje převést vaše interní procesy do automatizovaných postupů podpory aplikováním předdefinovaných sad akcí na nově vytvořených pořadavcích v závislosti na daných podmínkách. Můžete například použít dispečera na automatické zařazování do kategorií, přidělování priorit nebo přiřazování nových požadavků příslušným zástupcům vašeho týmu."
       info2: "Pamatujte, že pořadí dispečerských pravidel je významné. Dispečer provede pro každý nový požadavek pouze první pravidlo odpovídající svými podmínkami a pak s prováděním skončí. Pořadí pravidel je možné kdykoli změnit."
       tour: "Pomozte mi vytvořit dipečerské pravidlo"
     inactive_rules: "Neaktivní pravidla"
     info1: "Podpis související s událostmi"
-    info2: "Všechny podpisy související s událostmi budou přiřazeny Susan"
+    info2: "Všechny požadavky související se subscription budou přiřazeny Susan"
     info3: "Kde by toto pravidlo mělo být použito"
-    info4: "Dispečer provede automatickou kontrolu nově vytvořených Událostí založených na základě definovaných pravidel a akcí"
-    info5: "Pamatujte, pořadí pravidel je velmi důležité. Dispečer pro každou příchozí Událost spustí první proveditelné pravidlo a zastaví se"
     match_all: "Souhlasí všechno"
     match_any: "Souhlasí kterýkoliv"
     new: "Dispečer - Nové pravidlo"
@@ -1257,6 +1458,7 @@ cs:
   dropbox_attach_from: "Přiložit ze služby Dropbox"
   dropbox_attach_label: "Přiložit z"
   dropbox_choose_file: "Vybrat soubor"
+  dropbox_plaintext: "Dropbox Prílohy"
   due_in: "Splnit do %{time_words}"
   due_next_eight: "Dalších 8 hodin"
   due_today: Dnes
@@ -1325,13 +1527,12 @@ cs:
     info13: "Emailová adresa Vaší podpory je"
     info14: "Jakýkoliv email zaslaný na tuto adresu bude převeden na událost"
     info15: "Tyto e-maily musíte poslat na"
-    info16: "Události budou přiřazeny k"
+    info16: "Lístky budou přiřazeny k"
     info17: "Tato e-mailová adresa se automaticky vloží do pole BCC veškeré komunikace o lístcích"
     info18: "Automatická adresa BCC vkládaná do odpovědí na lístky "
     info2: "Své e-maily podpory musíte přeposlat na svou jedinečnou e-mailovou adresu"
     info3: "Freshdesk stáhne tyto emailové zprávy a převede je na Události"
     info4: "<strong>POZNÁMKA:</strong> Máte-li více e-mailových adres pro podporu různých produktů, <a href='{{products_path}}'>můžete je přidat sem</a>."
-    info5: "E-mailové odpovědi z aplikace Freshdesk automaticky použijí vaše původní identifikátory e-mailu podpory jako poštovní adresu odesílatele"
     info7: "Toto je také Vaše odpovědní emailová adresa, např. support@yourcompany.com"
     info8: "Přeposílat Vaše emaily na "
     info9: "Přiřadit skupině"
@@ -1387,12 +1588,25 @@ cs:
   errors: 
     actions_empty: "Pole Akce nesmí být prázdné"
     conditions_empty: "Pole Podmínky nesmí být prázdné"
+    events_empty: "Musí být zvolena nějaká událost"
   errors_in_payment: "Chyby vzniklé při vaší platbě:"
   errors_in_payment_info: "Ve Vašich platebních údajích se vyskytla chyba:"
-  errors_in_plan_change: "Chyby vzniklé na základě Vašich úprav:"
+  errors_in_plan_change: "Chyby vzniklé při změně:"
   errors_in_your_address: "Chyby ve vámi zadané adrese:"
   estate_brief: "Podpora na úrovni podniku"
   estate_details: "Vše v &quot;Garden&quot; Plan plus, gamifikace."
+  event: 
+    added: "byla přidána."
+    by: Kým
+    confirm_message: "Pokud vyberete \"Jakýkoli\", pak bude vybraný zástupce vyřazený ze seznamu. Klikněte na OK, pokud souhlasíte."
+    from: Od
+    is: je
+    rating: Hodnocení
+    received: "byla přijata."
+    sent: "byla odeslána."
+    to: Komu
+    type: Typ
+    updated: "byla aktualizována"
   example: příklad
   expires: Vyprší
   export: Export
@@ -1420,7 +1634,7 @@ cs:
     twenty_four: "Ze včerejška"
   export_data_successfull: "Údaje o helpdesku budou brzy odeslány na váš e-mail!"
   export_to_CSV: "Exportovat do CSV"
-  f_request: "Požadavek na doplnění funkce"
+  f_request: "Specifický požadavek (doplnění)"
   facebook: 
     add_page: "Přidat stránku na Facebooku"
     deleted: "Stránka Facebooku %{facebook_page} byla odstraněna."
@@ -1449,15 +1663,15 @@ cs:
   feedbackwidget_embed_code_intro: "Prosím zkopírujte HTML kód uvedený níže a nakopírujte jej kdekoli před HTML tag &lt;/body&gt; na všech WEBových stránkách, kde má být dostupná tato FreshDesk komponenta."
   feedbackwidget_form_title: "Panel z názvu"
   feedbackwidget_formcustomize: "Úprava formuláře"
-  feedbackwidget_help_para1: "Tento doplněk pro vyvolání formuláře požadavku si může upravit dle libosti a umístit kdekoli na vašich stránkách - stačí zkopírovat HTML kód a vložit jej kam potřebujete - tak bude formulář na odeslání požadavku na podporu dostupný všude."
+  feedbackwidget_help_para1: "Sbírejte události a informace od zákazníků přidáním záložky s podporou na Vašich webových stránkách."
   feedbackwidget_help_para2: "Upravitelné záložky se otevírají do formuláře podpory "
-  feedbackwidget_help_title: "Panel zpětné vazby"
+  feedbackwidget_help_title: "Formulář FreshDesk"
   feedbackwidget_intro: "Upravte si panel Freshdesku níže a rovnou můžete sledovat zobrazení v reálné podobě."
   feedbackwidget_offset_info: "Offset bude vzdálenost widget tlačítka (obrazových bodů), od levé nebo horní části obrazovky k vyrovnání, které si vyberete."
   feedbackwidget_offset_label: "S posunem"
   feedbackwidget_position: Pozice
   feedbackwidget_text: Text
-  feedbackwidget_title: "Nastavení panelu"
+  feedbackwidget_title: "Nastavení Formuláře"
   fifteen_minutes: "Během 15 minut"
   filter_options: 
     created_at: Vytvořeno
@@ -1466,6 +1680,7 @@ cs:
     group_id: Skupiny
     mygroups: "Moje skupiny"
     priority: Priorita
+    products: Produkty
     requester: Žadatelé
     responder_id: Zástupci
     source: Zdroj
@@ -1486,20 +1701,25 @@ cs:
         success: "Účet zástupce byl vytvořen a pokyny k jeho aktivaci byly zaslány na adresu %{email}."
       delete: 
         not_allowed: "Nemáte oprávnění mazat zástupce!"
+      edit: 
+        not_allowed: "Nemůžete upravovat tohoto zástupce"
       to_contact: "Zástupce podpory byl úspěšně změněn na osobu zákazníka"
     application: 
       already: "Doplněk je již instalován."
       install: 
-        error: "Chyba při aktivaci doplňku."
+        error: "Chyba pro aktivování doplňku."
         success: "Doplněk byl úspěšně aktivován!"
       not_installed: "Tento doplněk ještě není instalován."
       uninstall: 
-        error: "Chyba při zakazování doplňku."
+        error: "Chyba pro zakazování doplňku."
         success: "Doplněk byl úspěšně zakázán!"
       update: 
-        error: "Chyba při konfiguraci doplňku."
+        error: "Chyba v konfiguraci integrace."
         success: "Doplněk byl úspěšně aktualizován!"
     business_hours: 
+      create: 
+        failure: "Nelze vytvořit Pracovní dobu"
+        success: "Pracovní doba byla úspěšně vytvořena"
       update: 
         failure: "Aktualizace dat Pracovní doby selhala"
         success: "Pracovní doba byla úspěšně aktualizována"
@@ -1517,7 +1737,7 @@ cs:
       success: "%{created_count} kontaktů bylo nově importováno a %{updated_count} stávajících kontaktů bylo aktualizováno!"
     custom_fields: 
       update: 
-        failure: "Aktualizace polí požadavku selhala."
+        failure: "Aktualizace políček v Události selhala."
         success: "Pole požadavku byla úspěšně aktualizována."
     customers: 
       info_select: "Prosím, zvolte alespoň jednoho zákazníka."
@@ -1545,7 +1765,7 @@ cs:
     facebook: 
       updated: "Nastavení Facebook byla aktualizována "
     filter: 
-      delete_success: "Pohled byl úspěšně odstraněn!"
+      delete_success: "Zobrazení bylo úspěšně odstraněno!"
       save_success: "Pohled byl úspěšně uložen!"
     forum: 
       page_not_found: "Toto fórum nebylo nalezeno. Buď bylo smazáno, nebo jste se přepsali v adrese."
@@ -1557,7 +1777,7 @@ cs:
       no_subdomain: "Takováto subdoména bohužel neexistuje. Prosím, zkuste to znovu."
       user_deleted: "Uživatel byl odstraněn!"
     general: 
-      access_denied: "Nemáte oprávnění pro přístup na tuto stránku."
+      access_denied: "Nemáte oprávnění přístupu k této stránce!"
       activation: 
         failure: "%{human_name} nemůže být aktivován."
         success: "%{human_name} byl aktivován."
@@ -1587,6 +1807,16 @@ cs:
       unknown_error: "Neznámá chyba serveru. Kontaktujte prosím podporu."
       user_missing: "Váš e-mail ve Freshdesku neexistuje.  Přidejte agenta se svým e-mailem a zkuste to znovu."
       viewer_id_not_sent_by_gmail: "Nesprávný požadavek Gmail.  Zkuste to prosím po opětném přihlášení."
+    import: 
+      already_running: "Import \"csv\" souboru již probíhá - zkuste to později."
+      details: "Váš \"csv\" soubor byl úspěšně zpracován. Výsledek si můžete zkontrolovat v sekci %{customer} -> %{users}. "
+      failure: "Zkuste to, prosím, později"
+      freshdesk: "FreshDesk tým"
+      help_desk: "Neváhejte nás, prosím, kontaktovat pokud budete potřebovat cokoli dalšího."
+      no_file: "Prosím nahrajte soubor"
+      regards: "S pozdravem"
+      success: "Import \"csv\" byl zahájen a o jeho dokončení budete informování emailem. Doba importu závisí na velikosti souboru a může trvat až několik minut"
+      thank_user: "Děkujeme za odeslání požadavku na import."
     login: 
       failed: "Přihlášení se nezdařilo!"
       sso: 
@@ -1621,9 +1851,17 @@ cs:
         success: "Heslo bylo úspěšně změněno. Prosím, zkuste se znovu přihlásit."
       update: 
         success: "Váš profil byl aktualizován."
+    roles: 
+      create: 
+        success: "Byla vytvořena role \"%{name}\""
+      default_roles: "Nemůžete měnit implicitní roli"
+      delete: 
+        not_allowed: "Nemůžete smazat tuto roli - zastává ji nejméně jeden uživatel."
+      update: 
+        success: "Role \"%{name}\" byla upravena"
     solutions: 
       remove_tag: 
-        success: "Z řešení byla odstraněna značka."
+        success: "Štítek z tohoto řešení byl odstraněn"
     sso: 
       update: 
         success: "Podrobnosti o Vašem účtu byly aktualizovány."
@@ -1634,22 +1872,24 @@ cs:
       empty_spam: 
         success: "Všechny požadavky ve složce Navyžádaná pošta byly smazány."
       empty_trash: 
-        success: "Koš byl vysypán!"
+        success: "Všechny události ve složce Koš byly smazané."
       merge: 
         success: "Požadavky byly úspěšně sloučeny."
         wrong_ticket_id: "Prosím, zadejte platné ID požadavku."
       monitor: 
         start: "Aktivovali jste sledování tohoto požadavku."
-        stop: "Zrušili jste sledování tohoto požadavku."
+        stop: "Nadále již nesledujete tuto událost"
       notes: 
         create: 
-          failure: "Při přidávání poznámky k požadavku se vyskytl problém. Prosím, zkuste to znovu."
+          failure: "Vyskytl se problém při přidání poznámky k této události. Prosím, zkuste to znovu."
           invalid_email: "Nemáte oprávnění k přidání poznámky."
           success: "K vašemu požadavku byla přidána poznámka."
       reply: 
         success: "Odpověď byla zaslána."
+        without_kbase: "Odpověď byla odeslána, ale vy namáte právo vytvářet řešení."
       timesheet: 
-        timer_stopped: "časovače požadavku byly zastaveny"
+        create_error: "Nemáte právo vytvářet záznamy o práci pro jiné zástupce."
+        timer_stopped: "časovače událostí byly zastaveny"
       unwatch: 
         failure: "Zrušení sledování požadavku nebylo úspěšné."
         success: "Požadavky %{tickets} byly odstraněny ze seznamu ke sledování."
@@ -1706,10 +1946,7 @@ cs:
       answer: Odpověď
       delete_comment: "Smazat komentář"
       delete_comment_confirm: "Smazat tento komentář? Jste si jisti?"
-      delete_post: "Odstranit příspěvek"
-      delete_post_confirm: "Odstranit tento příspěvek?  Jste si jisti?"
       edit_comment: "Upravit komentář"
-      edit_post: "Upravit příspěvek"
       mark_answer: "Označit jako odpověď"
       post_accepted_as_a_good_answer: "Tento příspěvek je přijat jako dobrá odpověď na dané téma"
       posted_on: "%{user_name} dne %{post_date}"
@@ -1809,6 +2046,9 @@ cs:
       threeday: "3 dny"
       two: "12 hodin"
       twoday: "2 dny"
+    automatic_assignment: "Po vytvoření skupin zástupců jim můžete nechat automaticky přiřazovat nové požadavky v režimucyklické obsluhy (round robin). <a href=\"https://support.freshdesk.com/support/solutions/articles/77157\" target=\"_blank\">Naučte se více zde</a>"
+    automatic_assignment_header: "Automatické přidělování požadavků"
+    business_calendar: "Pracovní doba"
     description: "Popis skupiny"
     edit: "Upravit skupinu"
     helptext: "Zástupce podpory lze organizovat do skupin jako např. \"Obchod\" nebo \"Management\". Jejich rozčleněním jim můžete snadněji přiřazovat požadavky, vytvářet specifické připravené odpovědi, nastavovat emailová upozornění, vytvářet pravidla či generovat reporty. Každý zástupce může být členem jedné i více skupin."
@@ -1825,9 +2065,12 @@ cs:
     round_robin_desc: "Jakmile toto zapnete (ON), požadavek přidělený této skupině bude distribuován mezi zástupce podpory v režimu cyklické obsluhy (round robin). Pokud chcete přidělovat požadavek zástupcům manuálně, nebo pomocí dispčerských pravidel, můžete toto vypnout (OFF). "
     select_agents: "Zvolit agenty"
     select_an_agent: "Vyberte zástupce"
+    select_business_calendar: "Zvolte pracovní dobu"
     ticket_assignment: "Automatické přiřazení požadavku"
     title: Skupiny
     tour: "Pomozte mi vytvořit novou skupinu zástupců"
+    working_hours: "Ke každé skupině můžete nadefinovat různou pravcovní dobu a svátky např. z důvodů různých časových zón, nebo podle různých směn."
+    working_hours_header: "Pracovní doba"
   half: "30 minut"
   header: 
     assumed_text: "Prohlížíte si jako"
@@ -1840,7 +2083,7 @@ cs:
     new_ticket: "Nový požadavek"
     search: Hledat
     signout: "Odhlásit se"
-    submit_a_ticket: "Nový požadavek"
+    submit_a_ticket: "Odeslat událost"
     tabs: 
       admin: Administrátor
       checkstatus: "Zkontrolujte si stav vašich požadavků"
@@ -1915,6 +2158,8 @@ cs:
       name: 
         info: "Toto bude název helpdesku, který bude zobrazen v jeho hlavičce a v e-mailových oznámeních."
     shared: 
+      addcc: "Přidat \"kopii\" (cc)"
+      cc: "kopie (cc)"
       facebook_form: 
         title: "Odpověď pro %{user}"
       forward_form: 
@@ -2202,15 +2447,15 @@ cs:
   immediately: Neprodleně
   import: Importovat
   import_added_newly: "Nově přidáno"
-  import_articles: "Články k řešení"
+  import_articles: "Články řešení"
   import_data: "Datum importované"
-  import_example_title: "Následující je příklad CSV souboru"
+  import_example_title: "Následuje příklad CSV souboru"
   import_forum: Fóra
   import_groups: Skupiny
   import_ignore_first_row: "Ignorovat první řádek (záhlaví)"
   import_note_info: "Pole mohou být ve vašem souboru CSV v libovolném pořadí. Zajistěte ovšem, aby první řádek obsahoval hlavičkové údaje (např. name, email atd.). Jediným vyžadovaným polem je email."
   import_org_companies: "Organizace &rarr; Společnosti"
-  import_solution_article: "Zařadit článek z fóra jako řešení "
+  import_solution_article: "Zařadit článek z fóra jako řešení"
   import_solution_article_info: "Poznámka: Neukládáme komentáře k fórům"
   import_step1_info: "Zvolte požadovaný CSV soubor a klikněte na Importovat"
   import_step2_info: "Srovnat CSV pole s poli v databázi a naimportovat."
@@ -2588,6 +2833,7 @@ cs:
   next_charge_amount: "%{type} náklady:"
   next_charge_date: "Vaše další platba bude zpracována:"
   next_level_info: "\"+%{points} a stanete se %{name}"
+  no_agents_in_selected_group: "Ve zvolené skupině není žádný agent"
   no_anonymous_tickets: "Pro odeslání požadavku se <a href={{signup}}><b>zregistrujte</b></a> jako nový uživatel nebo se <a href={{login}}><b>přihlašte</b></a>."
   no_badge_achieved_label: "Ještě jste nezískali žádné odznaky."
   no_change: "Beze změny"
@@ -2602,7 +2848,8 @@ cs:
   no_tags: "Značky nenalezeny."
   no_topics_text: "Žádná témata v tomto fóru"
   no_twitter_handle: "Nakonfigurujte prosím alespoň jeden účet Twitter"
-  non_covered_feature_error: "Váše současná licence neumožňuje ovládat tuto funkci"
+  non_covered_feature_error: "Vaše současná licence neobsahuje tuto funkci."
+  none: Nic
   not_eligible_for_free_plan: "Nezpůsobilý k volbě plánu Free"
   not_eligible_for_sprout_plan: "Není vhodné vybrat licenci Sprout"
   not_given: Neuvedeno.
@@ -2610,6 +2857,18 @@ cs:
   note: "Poznámka:"
   notified_to: "Oznámeno komu"
   number_of_attachments: přílohy
+  observer_events: 
+    agent: "Zástupce byl aktualizován"
+    customer_feedback: "Byla přijata odpověď od zákazníka"
+    due_date: "Termín splnění byl změněn"
+    group: "Skupina byla aktualizována"
+    note: "Poznámka byla přidána"
+    priority: "Priorita byla změněna"
+    reply: "Odpověď byla odeslána"
+    status: "Stav byl změněn"
+    ticket: "Požadavek je"
+    time_entry: "Záznam o práci je"
+    type: "Typ byl změněn"
   of: z
   ok: OK
   on_hold: Pozastaveno
@@ -2624,7 +2883,7 @@ cs:
   paid_with: Placeno
   password: Heslo
   password_confirmation: "Potvrzení hesla:"
-  password_reset_email: "E-mail pro obnovu hesla"
+  password_reset_email: "E-mail resetování hesla"
   payment_failed: "Nemůžeme provést platbu vaší kreditní kartou. Pokud bude problém přetrvávat, obraťte se, prosím, na support@freshdesk.com"
   payment_info: "Údaje o platbě"
   pending: Pozastaveno
@@ -2632,7 +2891,7 @@ cs:
   plain_no: Ne
   plain_yes: Ano
   plan_amount: "za 1 agenta / měsíc"
-  plan_info_update: "Váš plán byl změněn."
+  plan_info_update: "Vaše licence byla změněna"
   plan_is_selected: "Váš účet Free je nyní aktivní s plánem %{plan}"
   plans_and_pricing: "Licence & ceny"
   plans_billing: "Verze programu a Vyúčtování"
@@ -2640,6 +2899,7 @@ cs:
   portal: 
     article: 
       see_all_articles: "Podívejte se na všechny články (%{count})"
+    attach_file: "Přiložit <b>soubor</b>"
     community_forums: "Komunitní fóra"
     cookie: 
       cookie_dialog_info1: "Používáme \"cookies\" aby se vám s Freshdeskem lépe pracovalo. "
@@ -2662,7 +2922,7 @@ cs:
     no_articles_info_2: "Prosím, zkuste to později. "
     no_forums_info_1: "Zatím zde není žádné téma"
     no_forums_info_2: "Proč nezačnete zde %{start_topic_link}?"
-    no_topics_in_this_view: "~ V tomto pohledu není žádný požadavek ~"
+    no_topics_in_this_view: "~ V tomto pohledu není žádné téma ~"
     or_signup: "%{signup} pro účet"
     popular_topics: "Oblíbená témata"
     reported: ohlášeno
@@ -2788,7 +3048,7 @@ cs:
       user_login: "Přihlašovací stránka"
       user_signup: "Registrace nového uživatele"
   portal_signup: "Umožnit zákazníkům přihlášení ze zákaznického portálu"
-  portal_signup_anon: "Povolte tuto možnost, pokud chcete, aby se uživatelé mohli přihlásit a vytvořit si jejich vlastní uživatelské účty . To umožní uživatelům se přihlásit a podílet se na diskuzích na fŕech, hlasovat o nápadech atd."
+  portal_signup_anon: "Povolte tuto možnost, pokud chcete, aby se uživatelé mohli přihlásit a vytvořit si jejich vlastní uživatelské účty . To umožní uživatelům se přihlásit a podílet se na diskuzích na fórech, hlasovat o nápadech atd."
   portalcss: 
     color_and_font_header: "Barva &amp; font"
     cosmetic: 
@@ -2833,6 +3093,7 @@ cs:
   preview: Náhled
   previous: Předchozí
   print: Tisk
+  private: Soukromé
   pro_brief: "Pro větší tým"
   pro_details: "Vše jako v &quot;Základní&quot; licenci + navíc: Automatizace scénářů, Zákazníkem specifikovaná SLA pravidla, Pracovní doba, Fóra, Komunitní a emailová podpora."
   problem: Problém
@@ -2874,7 +3135,7 @@ cs:
     solution_folder: Složka
     solution_likes: "Počet To se mi líbí"
     solution_mand: "Doplňte prosím počet řešení."
-    ticket_mand: "Doplňte, prosím, počet vyřešených požadavků."
+    ticket_mand: "Doplňte prosím počet vyřešených lístků."
     ? "true"
     : "1"
   recent_activities: "Poslední aktivity"
@@ -2884,11 +3145,11 @@ cs:
   register: Registrovat
   remove: Odstranit
   reorder: "Změnit pořadí"
+  reorder_rules: "Uspořádat aktivní pravidla"
   replied_to: "Odpovězeno komu"
   replies: odpovědi
   reply: odpovědět
   reply_comment: "Přidat komentář"
-  reply_topic: "Odpovědět na téma"
   reported_by: "Oznámeno "
   reports: 
     classic: Klasický
@@ -2984,7 +3245,7 @@ cs:
   reset: Resetovat
   reset_my_password: "Obnovit moje heslo"
   reset_password_title: "Obnovit heslo"
-  resolution_time_sla: "Rozlišení času porušení SLA pravidel"
+  resolution_time_sla: "Nesplnění SLA času na vyřešení"
   resolved: Vyřešené
   resolved_late: "Vyřešeno pozdě"
   resolved_on_time: "Vyřešeno včas"
@@ -3021,6 +3282,7 @@ cs:
   send_email_to_group: "Zaslat email všem ve skupině"
   send_email_to_requester: "Poslat email žadateli"
   send_feedback: "Odeslat zpětnou vazbu"
+  set_field_label_as: "Nastavit %{custom_field_name} jako"
   set_password: "Nastavte si Vaše heslo"
   set_priority_as: "Nastavit prioritu na"
   set_status_as: "Nastavit stav jako"
@@ -3060,46 +3322,33 @@ cs:
     edit: "Upravit SLA politiku"
     escalate: "Co se stane, když dojde k porušení této smlouvy o úrovni služeb?"
     escalate_after: Eskalovat
-    escalate_to: "Eskalovat na"
     escalation_email: "Eskalační email"
-    escalation_resolution: "Nastavit hierarchii eskalace, když není lístek <b>vyřešen</b> včas"
     escalation_resolution_text: "Nastavit hierarchii eskalace, pokud není lístek <b>vyřešen</b> včas"
-    escalation_response: "Nastavit pravidla eskalace, když nedojde k <b>reakci</b> na lístek včas"
     escalation_response_text: "Nastavit pravidlo eskalace, pokud není na lístek <b>reagováno</b> včas"
     group_id_placeholder: "Vložit název skupiny"
     helpcard: 
-      info1: "Dohoda o úrovni služeb (SLA politika) definuje výkonnostní standardy vašeho týmu podpory. Můžete nastavit SLA politiku jako čas, do kdy musí zástupce odpovědět na požadavek, resp. vyřešit jej a to v závislosti na prioritě. Pro každé pravidlo SLA (dané priority) můžete zvolit, zda je čas měřen v rámci kalenářní či pracovní doby. Také můžete zvolit automatickou eskalaci (odeslání mailu) pro případ, kdy zástupce dané časy nedodrží. "
-      info2: "Vaše politiky SLA budou Freshdeskem použity ke stanovení \"času vyřízení\" všech požadavků. Můžete mít jednu společnou politiku SLA pro všechny  zákazníky, nebo více politik pro speciální zákazníky, např. takové, kteří si předplatí \"Prémiovou podporu\"."
-      info3: "<p>Můžete mít implicitní SLA politiku pro všechny zákazníky, nebo více SLA politik pro různé zákazníky - např. standardní a Prémiové.</p><p>Když přidáte SLA politiku (krom té implicitní), budete muset určit podmínky, za kterých bude ta která politika uplatněna.</p>"
       info_1: "<p>Smlouva o úrovni služeb (Service level agreement – SLA) vám umožňuje nastavit standardy výkonu pro váš tým podpory. Můžete nastavit zásady SLA pro čas, v rámci kterého by zástupci měli reagovat, a pro řešení lístků na základě jejich priorit. Můžete si vybrat, zda se každé pravidlo SLA vypočte na základě kalendářních hodin nebo vašich pracovních hodin.</p> <p>Vaše zásady SLA budou použity v aplikaci Freshdesk k určení doby položky „Splnit do“ pro každý lístek.</p>"
-      info_2: "<p>Můžete mít více zásad smlouvy o úrovni služeb (Service level agreement – SLA) spouštěných podle konkrétních podmínek, například podle zákazníka, který vyžádal lístek, skupiny, ke které je lístek přiřazen, jeho zdroje nebo podle produktu.</p><p>Můžete mít například sadu speciálních zásad SLA pro lístky přicházející z Twitteru a lístky přiřazené k týmu prodeje. Nebo mít speciální zásadu pro zákazníky, kteří mají prioritně přihlášeny odběry. Pokud podporujete více značek nebo produktů, můžete mít také různý pracovní postup SLA pro každý produkt.</p> <p><strong>Pořadí vašich pravidel SLA je důležité.</strong> První pravidlo SLA, které odpovídá všem podmínkám pro lístek, bude použito pro lístek, takže řaďte svá důležitá pravidla co nejvýše.</p>"
       info_3: "<p>Volitelně můžete nastavit hierarchie eskalace pro každou zásadu, abyste upozornili konkrétní zástupce, pokud dojde k porušení pravidla smlouvy o úrovni služeb.</p>"
       sla_info_2: "<p>Můžete mít více zásad smlouvy o úrovni služeb (Service level agreement – SLA) spouštěných konkrétními podmínkami, například zákazníkem, který si lístek vyžádal, skupinou, ke které je lístek přiřazen, jeho zdrojem nebo produktem.</p><p>Můžete například nastavit zvláštní zásadu SLA pro lístky přicházející z Twitteru a lístky přiřazené týmu prodeje. Nebo mít zvláštní zásadu pro zákazníky, kteří mají přihlášeny prioritní odběry. Pokud podporujete více značek nebo produktů, můžete mít různé pracovní postupy SLA pro každý produkt.</p> <p><strong>Pořadí vašich zásad SLA je důležité.</strong> První zásada SLA, která odpovídá všem podmínkám lístku, bude použita pro lístek. Takže svá důležitá pravidla řaďte co nejvýše.</p>"
       title: "SLA politika"
-      title1: "Uplatnění eskalačního pravidla"
-      title2: "Použití vícenásobné politiky SLA"
       title_1: "Použití více zásad SLA"
       title_2: "Vynucení pravidel eskalace"
       tour: "Pomozte mi vytvořit SLA politiku"
-    info1: "  Zásada SLA je sada cílových časů odpovědi a vyřízení podle priority lístku. V tomto oboru se úrovně služeb většinou stanovují podle priority. Vaše zásada SLA by měla být co nejjednodušší, např. “lístky s vysokou prioritou je nutné vyřešit za 2 hodiny” atd."
-    info2: "Freshdesk používá zásadu SLA ke stanovení &quot;času vyřízení&quot; lístků. Můžete mít výchozí zásadu SLA pro všechny své zákazníky, máte-li ovšem speciálního zákazníka, který vyžaduje rychlejší reakci a kratší časy vyřízení, můžete pro něj vždy vytvořit speciální zásadu SLA."
+    human_name: "Politika SLA"
     info3: "Zásada SLA pracuje ve spojení s provozními hodinami"
     new: "Nová SLA politika"
     op_hrs: "Pracovní hodiny"
     override: Anulovat
     product_id_placeholder: "Vložit název produktu"
-    resolution_escalation: "Eskalační pravidlo pro případ, že na požadavek neni <b>vyřešen</b> včas"
     resolution_time: "Čas vyřešení"
     resolve_within: "Vyřešeno v průběhu"
     respond_within: "Odpovězeno v průběhu"
-    response_escalation: "Eskalační pravidlo pro případ, že na požadavek neni <b>odpovězeno</b> včas"
     response_time: "Doba na odpovězení"
     select_policy: "Zvolit politiku"
     sla_targets: "Cíle SLA"
     sla_targets_details: "Nastavit cílovou úroveň služby pro každou prioritu požadavku"
     source_placeholder: "Vložit název zdroje"
     tickets_with: "Požadavky s"
-    title: "SLA politika"
     title1: "SLA politika"
   social: 
     facebook_pages: 
@@ -3189,9 +3438,9 @@ cs:
       new: 
         new_folder: "Nová složka"
     info1: "Řešení v aplikaci Freshdesk jsou Vaší znalostní databází"
-    info10: "Soukromé (viditelné pouze pro Agenty)"
+    info10: "Soukromé (viditelné pouze pro zástupce)"
     info2: "Řešení mohou být <b>Veřejné</b> nebo <b>Soukromé</b>. Veřejná řešení jsou viditelná v Samoobslužném portálu a zároveň se zobrazí ve výsledcích při hledání"
-    info3: "Soukromá řešení jsou řešení viditelné pouze pro agenty, která jsou používána ke sdílení vědomostí"
+    info3: "Soukromá řešení jsou viditelná pouze pro zástupce a jsou určena pro interní sdílení znalostí."
     info4: "Řešení má 3 hierarchicky sestavené úrovně - <b>Kategorie --> Složka --> Článek</b>"
     info5: "Řešení mohou být dvou typů - <b>Dočasná</b> nebo<b>Trvalá</b>"
     info6: "Řešení může mít status <b>Návrh</b>, pokud na něm zrovna pracujete, pak může být změněn na status <b>Uveřejněný</b> jakmile je dokončeno a revidováno."
@@ -3213,7 +3462,7 @@ cs:
   solution_category: 
     edit: "Upravit kategorii řešení"
     info1: "Jste si jistí, že chcete smazat tuto kategorii?"
-    info2: "Žádné složky v této kategorii"
+    info2: "V této kategorii nejsou žádné složky"
     name: "Název kategorie"
     new: "Nová kategorie řešení"
     save_and_create: "Uložit a založit další"
@@ -3341,6 +3590,7 @@ cs:
     agent: Zástupce
     agent_notify: "přidal poznámku, na kterou se máte podívat"
     agent_responded_at: "Hodin od odpovědi agenta"
+    any_note: Jakýkoli
     assign_to_agent: "Přiřadit agentovi"
     assigned_agent: Zástupce
     assigned_at: "Hodin od přiřazení"
@@ -3370,7 +3620,8 @@ cs:
     delete_forever: "Nevratně smazat"
     deleted: KOŠ
     due_by: "Hodin od termínu splnění"
-    due_by_time: "Splněno dle času"
+    due_by_time: "Termín řešení"
+    due_date: "Termín splnění"
     edit: "Upravit událost"
     edit_btn: Upravit
     edit_note: "<b>Upravit poznámku</b>"
@@ -3381,6 +3632,7 @@ cs:
     facebook_form: 
       send: Odeslat
       send_and_resolve: "Odeslat a označit jako Vyřešeno"
+    feedback: "Odpověď zákazníka"
     first_assigned_at: "Hodin od prvního přiřazení"
     first_response_due: "Hodin od první odpovědi"
     flag_spam: "Označit spam"
@@ -3397,6 +3649,7 @@ cs:
         add_new: "Propojit problém"
         existing: "Zobrazit problém"
         tooltip: "Zobrazit přiřazený problém JIRA"
+    marked_spam: "označen jako spam"
     merge_btn: Sloučit
     merge_ticket_list_status_agent_responded_at: "Od: %{username}<br /> Zástupce odpověděl před: <span class='emphasize'>%{time_ago}</span>"
     merge_ticket_list_status_closed_at: "Od: %{username}<br /> Uzavřeno před: <span class='emphasize'>%{time_ago}</span>"
@@ -3407,8 +3660,10 @@ cs:
     monitor_btn_title: "Sledovat tuto událost"
     more_details: "Více podrobností…"
     myself: Já
+    new_time_entry: přidán
     next: "Další  lístek"
     none: Žádný
+    note: Poznámka
     note_content: "Obsah poznámky"
     note_form: 
       add_and_resolve: "Přidat a vyřešit"
@@ -3420,20 +3675,24 @@ cs:
       private_note: "Toto je soukromá poznámka. Žadateli se nezobrazí."
     note_saved: Neuloženo
     opened_at: "Hodin od znovuotevření"
-    pending_since: "Hodin od pozastavení"
+    outbound_count: "Interakce zástupců"
+    pending_since: "Hodin od doby, kdy se začalo na události pracovat"
     pick_up: Převzít
     portal_created_on: "Vytvořil uživatel <span class='emphasize'>%{username}</span> dne <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Vytvořeno dne <span class='emphasize'>%{date}</span>"
     previous: "Předchozí lístek"
     priority: Priorita
+    private_note: Soukromá
     properties: "Vlastnosti požadavku"
+    public_note: Veřejná
     recent_tickets: "Nedávné požadavky"
+    reply: Odpověď
     reply_form: 
       form_title: "Odpovědět na konverzaci"
-      post_to_linked_forum: "Napsat na provázané fórum"
+      post_to_linked_forum: "Poslat na související téma"
       reply_email_id: "Zaslat odpověď z následujícího email id"
       send: Odeslat
-      send_and_resolve: "Odeslat a vyřešit"
+      send_and_resolve: "Odeslat a označit jako Vyřešeno"
       send_and_set_as: "Odeslat a nastavit jako <strong>%{status}</strong>"
       send_satisfaction_survey: "Zahrnuje průzkum spokojenosti"
     reply_to: Odpovědět
@@ -3468,7 +3727,7 @@ cs:
       insert_content: "Vložte obsah"
       insert_content_tip: "Vložit článek k tomuto řešení do odpovědi nebo poznámky"
       insert_url: "Vložte URL odkaz"
-      insert_url_tip: "Umístěte odkaz tohoto řešení do Vaši odpovědi nebo poznámky"
+      insert_url_tip: "Vložit odkaz na toto řešení do vaší odpovědi nebo poznámky"
       link: Odkaz
       no_result: "Žádné řešení nebylo nalezeno"
       title: "Navrhovaná řešení"
@@ -3476,7 +3735,7 @@ cs:
       reply: Odpovědět
       reply_and_open: "Odpovědět & otevřít"
     switch_view: 
-      new_view: "Vyzkoušejte si <strong>nové zobrazení požadavků</strong>"
+      new_view: "Vyzkoušejte <strong>nové zobrazení lístků</strong>"
       revert_view: "Přepnout na klasické zobrazení"
       submit_feedback: "Odeslat názor"
       whats_new: "Co je nového"
@@ -3486,6 +3745,7 @@ cs:
       destroy_success: "Z požadavku byla odstraněna značka."
       no_match: "Nenalezeno. Prosím, vytvořte značku.."
     thanks: "Děkujeme za zpětnou vazbu"
+    ticket: Požadavek
     ticket_list_status_agent_responded_at: "Od: %{username}, Zástupce odpověděl: <span class='emphasize'>před %{time_ago}</span>"
     ticket_list_status_closed_at: "Od: %{username}, Uzavřeno: <span class='emphasize'>před  %{time_ago}</span>"
     ticket_list_status_created_at: "Od: %{username}, Vytvořeno: <span class='emphasize'>před %{time_ago}</span>"
@@ -3499,6 +3759,7 @@ cs:
     ticket_user_list_status_requester_responded_at: "Zákazník odpověděl: <span class='emphasize'>před %{time_ago}</span>"
     ticket_user_list_status_resolved_at: "Vyřešeno: <span class='emphasize'>před %{time_ago}</span>"
     tickets_selected: "vybrané požadavky (konverzace ze sloučených požadavků bude přidána k primárnímu požadavku)"
+    time_entry: "Záznam o práci"
     to_do: "Události k vyřízení"
     tweet_form: 
       tweet_and_resolve: "Tweet a vyřešit"
@@ -3509,6 +3770,8 @@ cs:
     unflag_spam: "Není spam"
     unwatch: "Zrušit sledování"
     update_done: Hotovo
+    updated: aktualizován
+    updated_time_entry: aktualizován
     updating: "Probíhá aktualizace"
     verify_human: "K ověření, zda-li jste \"živý\" uživatel, prosím, opište náhodně poskládaná písmenka."
     view_twitter: "Prohlédout na Twitteru"
@@ -3594,6 +3857,10 @@ cs:
     saving_ticket: "Ukládání položek požadavku..."
     second_choice: "Druhá volba"
     untitled: "Bez názvu"
+  ticket_form: 
+    select_contacts: "Zvolte kontakt z %{contact_name}"
+    your_email_address: Email
+    your_name: "Vaše jméno"
   ticket_future_due_by: "Má být splněno do %{time}"
   ticket_future_due_by_live: "Mělo být splněno v <abbr data-livestamp='%{timestamp}'>%{time}</abbr>"
   ticket_past_due_by: "Mělo být splněno před %{time}"
@@ -3624,7 +3891,7 @@ cs:
   title: Titul
   tkt_assigned_to_agent: "Událost přiřazena agentovi"
   tkt_assigned_to_group: "Událost přiřazena do skupiny"
-  tkt_unattended_in_grp: "Událost bez dozoru ve skupině"
+  tkt_unattended_in_grp: "Požadavek nepřiřazený do skupiny"
   to: komu
   to_do: Úkoly
   to_email: "Do emailu"
@@ -3639,16 +3906,15 @@ cs:
       deferred: Odloženo
       implemented: Implementováno
       inprogress: "V řešení"
-      nottaken: Nepřebrán
+      nottaken: Nepřijato
       planned: Plánováno
     locked: Zamknuto
     msg1: "Komentáře jsou pro toto téma uzavřeny"
     name: "Název tématu"
     new: "Nové téma"
-    open: "Znovu otevřít toto téma"
+    open: "Znovu otevřít tuto diskuzi"
     post: "Napsat Téma"
     post_comment: Odeslat
-    reply: "Opovědět na toto téma"
     sticky: Lípka
     update_comment: "Aktualizovat komentář"
   topics: 
@@ -3660,6 +3926,7 @@ cs:
   total_price: "Celková cena"
   trial_expired: "Váš zkušební režim byl ukončen a účet byl deaktivován. Chcete-li obnovit své předplatné, obraťte se, prosím, na support@freshdesk.com."
   trial_expired_on: "Vaše zkušební verze vypršela"
+  trigger_webhook: "Spouštěč Webhook"
   twelve: "12 hodin"
   twelve_hours: "Během 12 hodin"
   twentyfour_hours: "Během 24 hodin"

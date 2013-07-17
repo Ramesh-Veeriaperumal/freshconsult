@@ -1,4 +1,3 @@
-<div style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif">
 <%=t('helpdesk.tickets.add_watcher.mail.hi') %> <%=@subscription.user.name%>,<br /><br />
 <%= t('helpdesk.tickets.add_watcher.mail.status_change',
                  :agent_name => @agent_name, :status => @status) %>
@@ -28,4 +27,3 @@
                                                                 :host => @ticket.account.host)%>"> 
     <%=t('helpdesk.tickets.add_watcher.mail.stop_emails') %>
 </a> <br /> <br />
-</div>
