@@ -132,7 +132,7 @@
                         .attr("value",<%= current_user.id %>)
                         .text("<%=t("helpdesk.tickets.add_watcher.you")%>"));
                     } else {
-                      selected_ids = selected_ids.splice("<%= current_user.id %>");
+                      selected_ids.splice(selected_ids.indexOf("<%= current_user.id %>"), 1);
                     }
 
                     jQuery("select.watcher_input").val(selected_ids);
