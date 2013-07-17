@@ -1,5 +1,7 @@
 # encoding: utf-8
 module Mobile::MobileHelperMethods
+  
+  include Helpdesk::TicketsHelper
 
   MOBILE_URL = "/mobile/"
 
@@ -91,11 +93,7 @@ module Mobile::MobileHelperMethods
     end
 
     def top_view
-
       dynamic_views = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
-
-
-
       default_views = [
         { :id => "new_my_open",  :name => t("helpdesk.tickets.views.new_my_open"),     :default => true },
         { :id => "all_tickets",  :name => t("helpdesk.tickets.views.all_tickets"),     :default => true },
@@ -103,21 +101,22 @@ module Mobile::MobileHelperMethods
         { :id => "spam"   ,      :name => t("helpdesk.tickets.views.spam"),            :default => true },
         { :id => "deleted",      :name => t("helpdesk.tickets.views.deleted"),         :default => true }
       ]
-
-      default_view=""
-      sep=""
-      quots="\"";
-      default_views.each { |view|    default_view << sep + "{name:"+quots+view[:name]+quots + ",id:"+quots+view[:id].to_s+quots +",type:default}" ; sep=",";}
-
-      dynamic_view=""
-      sep=""
-      dynamic_views.each { |view|    dynamic_view << sep + "{ name:"+quots+view[:name]+quots + ",id:"+quots+view[:id].to_s+quots +",type:dynamic}" ; sep=",";}
-
-      top_view=default_view+","+dynamic_view;
-
-      whole_array = "["
-      whole_array <<  top_view;
-      whole_array << "]"
-
+      top_views_array = [].concat(default_views).concat(dynamic_views)
+      top_views_array.to_json;
     end
+    
+    def get_summary_count
+      summary_count_array = [
+        { :value => filter_count(:overdue),  :name => t("helpdesk.tickets.views.overdue")},
+        { :value => filter_count(:open),     :name => t("helpdesk.tickets.views.open")},
+        { :value => filter_count(:on_hold),     :name => t("helpdesk.tickets.views.on_hold")},
+        { :value => filter_count(:due_today),     :name => t("helpdesk.tickets.views.due_today")},
+        { :value => filter_count(:new),     :name => t("helpdesk.tickets.views.unassigned")}
+      ]
+      summary_count_array.to_json;
+    end
+    
+    
+    
+    
 end

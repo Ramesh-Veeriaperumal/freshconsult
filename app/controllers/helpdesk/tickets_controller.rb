@@ -130,22 +130,25 @@ class Helpdesk::TicketsController < ApplicationController
         unless @response_errors.nil?
           render :json => {:errors => @response_errors}.to_json
         else
-          json = "["; sep=""
+          json = "{ticket:["; sep=""
           @items.each { |tic| 
             #Removing the root node, so that it conforms to JSON REST API standards
             # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
 
             json << sep + tic.to_json({
               :except => [ :description_html, :description ],
-              :methods => [ :ticket_subject_style,:ticket_sla_status, :status_name, :priority_name, :source_name, :requester_name,
+              :methods => [ :summary_count,:ticket_subject_style,:ticket_sla_status, :status_name, :priority_name, :source_name, :requester_name,
                             :responder_name, :need_attention, :pretty_updated_date ]
             }, false)[19..-2]; sep=","
           }
-          render :json => json + "]"
+          json << "],summary:"
+          json << ""+get_summary_count
+          render :json => json + "}"
         end
       end
     end
   end
+  
 
   def get_top_view
     puts "coming to top_view tickets"
@@ -163,12 +166,7 @@ class Helpdesk::TicketsController < ApplicationController
     updated_time=DateTime.strptime(params[:latest_updated_at],'%s')
     tkt =  tkt.latest_tickets(updated_time).leave_old_tickets(params[:ids])
 
-    p "total count of tickets ***************************** #{tkt.count}"
-    p " #{params.inspect}"
-
     @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-
-
 
     respond_to do |format|
       format.mobile do

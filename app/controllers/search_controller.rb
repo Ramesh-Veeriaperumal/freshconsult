@@ -6,11 +6,20 @@ class SearchController < ApplicationController
 
   before_filter :forums_allowed_in_portal?, :only => :topics
   before_filter :solutions_allowed_in_portal?, :only => :solutions
+  before_filter :set_mobile, :only => [:index]
   
   #by Shan
   #To do.. some smart meta-programming
   def index 
-    search 
+    respond_to do |format| 
+      format.html  do
+        search 
+      end
+      format.mobile do 
+        search
+        render :json => @items.to_json
+      end
+    end
   end
   
   def suggest
@@ -163,7 +172,7 @@ class SearchController < ApplicationController
       
       @search_key = params[:search_key]
       @total_results = @items.size
-
+      
     end
     
     def page_limit
