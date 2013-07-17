@@ -332,6 +332,13 @@ refreshStatusBox = function() {
 	});
 }
 
+var scrollToError = function(){
+	var errorLabel = $("label[class='error'][style!='display: none;']");
+	var elem = errorLabel.parent().children().first();
+	$.scrollTo(elem);
+}
+
+
 // For Setting Due-by Time
 
 
@@ -884,12 +891,17 @@ refreshStatusBox = function() {
 	});
 
 	$('body').on('click.ticket_details', '#close_ticket_btn', function(ev){
-		ev.preventDefault();
-		var form = $("<form>")
-			.attr("method", "post")
-			.attr("action", $(this).attr('data-href') +"?disable_notification=" + ev.shiftKey )
-			.appendTo(document.body);
-		form.submit();
+		
+		changeStatusTo(5);
+		if($('#custom_ticket_form').valid())
+		{
+			var action_attr = $('#custom_ticket_form').attr("action");
+			$('#custom_ticket_form').attr("action", action_attr +"?disable_notification=" + ev.shiftKey + "&redirect=true" );
+			$('#custom_ticket_form').submit();
+		}
+		else
+			scrollToError();
+
 		return false;
 	});
 
@@ -910,7 +922,12 @@ refreshStatusBox = function() {
       jQuery('body').click();
 
       changeStatusTo(jQuery(this).data('statusVal'));
-      $(this).parents('form').trigger('submit');
+
+      if($('#custom_ticket_form').valid())
+      	$(this).parents('form').trigger('submit');
+      else
+      	scrollToError();
+
     });
 
     $('body').on('submit.ticket_details', '#custom_ticket_form', function(ev) {
@@ -950,6 +967,12 @@ refreshStatusBox = function() {
 						$(this).data('updated', false);
 					});
 
+					if(response.redirect)
+					{
+						$('[rel=link_ticket_list]').click();
+					}
+
+
 					if(postProcess) {
 						$('.ticket_details .source-badge-wrap .source')
 								.attr('class','')
@@ -969,6 +992,8 @@ refreshStatusBox = function() {
 					submit.text(submit.data('default-text')).prop('disabled',false);
 				}
 			});
+		} else {
+			scrollToError();
 		}
 			
 	});
