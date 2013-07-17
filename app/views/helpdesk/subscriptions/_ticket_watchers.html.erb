@@ -1,15 +1,15 @@
 <span class="arrow-top"></span>
 <span class="watcher-close">x</span>
 <div class="watcher_label">
-		 <div>
-		 	<%= t('helpdesk.tickets.add_watcher.ticket_watchers') %>
+     <div>
+      <%= t('helpdesk.tickets.add_watcher.ticket_watchers') %>
       <% if @ticket.subscriptions.count > 0 %>
-				<span class="watcher_count">(<%= @ticket.subscriptions.count %>)</span>
-			<% end %>
-		 </div>
-		 <div class="watcher_text">
-				  <%= t('helpdesk.tickets.add_watcher.watcher_text') %>
-		 </div>
+        <span class="watcher_count">(<%= @ticket.subscriptions.count %>)</span>
+      <% end %>
+     </div>
+     <div class="watcher_text">
+          <%= t('helpdesk.tickets.add_watcher.watcher_text') %>
+     </div>
 </div>
 
 <div id="addwatcher">
@@ -27,12 +27,12 @@
 
 
 <% if @ticket.subscriptions.present? %>
-	<% 
+  <% 
     @subscriptions = @ticket.subscriptions.sort_by(&:created_at).reverse
     if @subscriptions.map(&:user_id).include? current_user.id
-    	@subscriptions.insert(0, @subscriptions.delete_at(@subscriptions.index{ |l| l.user_id==current_user.id }))
+      @subscriptions.insert(0, @subscriptions.delete_at(@subscriptions.index{ |l| l.user_id==current_user.id }))
     end
-	%>
+  %>
   <div id="watcherlist">
     <ul class="trans-bg">
       <% @subscriptions.each do |subscription| %>
@@ -44,23 +44,23 @@
           <% if subscription.user.id == current_user.id %>
             <div class="unwatch" title="<%=t('helpdesk.tickets.add_watcher.unwatch')%>" >
               <%= image_tag "/images/delete.png" %>
-						</div>
+            </div>
             <div class="watcher_list">
               <b><%= t('helpdesk.tickets.add_watcher.you') %></b>&nbsp;
               <span class="agent_name" title="<%=current_user.name%>"> 
                 (<%= current_user.name %>)
               </span>
             </div>
-					<% else %>
-						<div class="watcher_list">
-							<span class="agent_name" title="<%=subscription.user.name%>"> 
-								<%= subscription.user.name %> 
-							</span>
-						</div>
-					<% end %>
-				</li>
-			<% end %>
-		</ul>
+          <% else %>
+            <div class="watcher_list">
+              <span class="agent_name" title="<%=subscription.user.name%>"> 
+                <%= subscription.user.name %> 
+              </span>
+            </div>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
   </div>
 <% end %>
 
@@ -116,6 +116,7 @@
 
   jQuery(".unwatch").on('click', function(){
       var ticket_id = <%= @ticket.display_id %>;
+      var selected_ids = jQuery("select.watcher_input").val();
       jQuery("#watcherlist").addClass("sloading");
       jQuery.ajax({   
           type: 'DELETE',
@@ -130,13 +131,12 @@
                         .prepend(jQuery("<option></option>")
                         .attr("value",<%= current_user.id %>)
                         .text("<%=t("helpdesk.tickets.add_watcher.you")%>"));
-                      jQuery("#watcherlist li").first().remove();
-                    }else {
-                      spliced_val = jQuery("select.watcher_input").val().splice("<%= current_user.id %>");
-                      jQuery("select.watcher_input").val(spliced_val);
-                      jQuery("#watcherlist li").first().remove();
+                    } else {
+                      selected_ids = selected_ids.splice("<%= current_user.id %>");
                     }
 
+                    jQuery("select.watcher_input").val(selected_ids);
+                    jQuery("#watcherlist li").first().remove();
                     update_watcher_count();
                     if(jQuery("#watcherlist li").length == 0) {
                       jQuery(".watcher_count").remove();
@@ -161,7 +161,7 @@
                     jQuery(".watcher_input").unbind('change');
                     jQuery(".select_agents .select2-search-choice a").last().click();
                     jQuery(".watcher_input").bind('change', add_watcher);
-                    clone.remove();
+                    setTimeout("clone.remove()",2000);
                     update_watcher_count();
                     }
     });
