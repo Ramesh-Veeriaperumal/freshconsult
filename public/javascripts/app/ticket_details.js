@@ -312,6 +312,14 @@ var updatePagination = function() {
 		});
 	});
 }
+    $(".removeFile").live("click", function() {
+        $(this).parent().remove();
+        if ($("#admin_canned_responses_response-attachments").children().length==0)
+        {
+            $("#admin_canned_responses_response-attachments").removeClass("attachments");
+        }
+    });
+
 
 // ----- END FOR REVERSE PAGINATION ------ //
 

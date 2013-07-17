@@ -110,7 +110,7 @@
         <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
         <li class="inline-field field">
             <div class="attachment-options fields" id="attachment-options-forward-<%=cntid%>">
-              <% attachments = conv_item.attachments %>
+              <% attachments = conv_item.class.name=="Helpdesk::Note" ? conv_item.all_attachments : conv_item.attachments  %>
               <% if(attachments.length > 0) %>
                 Attachments
                 <div class="attachments">

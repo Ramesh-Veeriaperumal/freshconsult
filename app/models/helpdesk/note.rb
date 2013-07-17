@@ -12,13 +12,21 @@ class Helpdesk::Note < ActiveRecord::Base
 
   attr_accessor :nscname, :disable_observer, :send_survey, :quoted_text
   attr_protected :attachments, :notable_id
-  
+
+  has_many :shared_attachments,
+           :as => :shared_attachable,
+           :class_name => 'Helpdesk::SharedAttachment',
+           :dependent => :destroy
+
+  has_many :attachments_sharable, :through => :shared_attachments, :source => :attachment
+
   named_scope :newest_first, :order => "created_at DESC"
   named_scope :visible, :conditions => { :deleted => false } 
   named_scope :public, :conditions => { :private => false } 
   
   named_scope :latest_twitter_comment,
-              :conditions => [" incoming = 1 and social_tweets.tweetable_type = 'Helpdesk::Note'"], 
+              :conditions => [" incoming = 1 and social_tweets.tweetable_type =
+ 'Helpdesk::Note'"],
               :joins => "INNER join social_tweets on helpdesk_notes.id = social_tweets.tweetable_id and helpdesk_notes.account_id = social_tweets.account_id", 
               :order => "created_at desc"
   
@@ -67,7 +75,14 @@ class Helpdesk::Note < ActiveRecord::Base
   validates_presence_of  :source, :notable_id
   validates_numericality_of :source
   validates_inclusion_of :source, :in => 0..SOURCES.size-1
-  
+
+  def all_attachments
+    shared_attachments=self.attachments_sharable
+    individual_attachments = self.attachments
+    shared_attachments+individual_attachments
+  end
+
+
   def status?
     source == SOURCE_KEYS_BY_TOKEN["status"]
   end

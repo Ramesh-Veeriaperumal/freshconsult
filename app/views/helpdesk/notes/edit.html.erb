@@ -29,11 +29,11 @@
 
 
   <div class="attachment-list-container">
-    <%= content_tag('h5', 'Attachments') unless @item.attachments.empty? %>
+    <%= content_tag('h5', 'Attachments') unless @item.all_attachments.empty? %>
     <table class="attachment-list">
       <%= render(
         :partial => '/helpdesk/shared/attachment', 
-        :collection => @item.attachments,
+        :collection => @item.all_attachments,
         :locals => {:show_delete => true, :url => [@item] }) %>
     </table>
   </div>

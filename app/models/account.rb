@@ -3,6 +3,8 @@ class Account < ActiveRecord::Base
   include Mobile::Actions::Account
   include Cache::Memcache::Account
   include ErrorHandle
+
+  has_many_attachments
   
   serialize :sso_options, Hash
 

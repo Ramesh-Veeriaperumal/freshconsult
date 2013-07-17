@@ -4,6 +4,16 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
   
   belongs_to_account
  
+
+  has_many :shared_attachments,
+             :as => :shared_attachable,
+             :class_name => 'Helpdesk::SharedAttachment',
+             :dependent => :destroy
+
+  has_many :attachments_sharable, :through => :shared_attachments, :source => :attachment
+
+  #has_many :attachments_, :class_name => 'Helpdesk::Attachment', :through => :shared_attachments
+
   belongs_to :folder, :class_name => "Admin::CannedResponses::Folder"
 
   attr_accessible :title, :content, :visibility, :content_html, :folder_id

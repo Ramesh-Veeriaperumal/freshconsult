@@ -50,6 +50,20 @@ function toggleGroup(access_id)
 			</label>
    		<%= f.text_area :content_html, :class => "ca_content_body", :id => 'ca-content' %>		
 	</li>
+
+  <li>
+    <%= render "attachment_form" %>
+
+  </li>
+
+
+  <ul>
+    <% shared_attachments=@item.shared_attachments.map{|a|a.attachment} %>
+    <%= render :partial => 'attachment', :collection => shared_attachments  %>
+  </ul>
+
+
+
 	<li class="folder-pane">
     	<%= label_tag(:new_folder_id, t('canned_folders.folder'), :class => "caption") %>
     	<%= select_tag(:new_folder_id, options_from_collection_for_select(@ca_res_folders, 'id', 'name', 

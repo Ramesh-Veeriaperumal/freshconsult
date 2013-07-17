@@ -150,7 +150,7 @@ module Helpdesk::TicketActions
   end
   ## Need to test in engineyard--also need to test zendesk import
   def move_attachments   
-    @note.attachments.each do |attachment|      
+    @note.all_attachments.each do |attachment|
       url = attachment.authenticated_s3_get_url
       io = open(url) #Duplicate code from helpdesk_controller_methods. Refactor it!
       if io

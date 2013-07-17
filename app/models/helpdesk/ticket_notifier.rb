@@ -119,7 +119,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
     handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
 
-    note.attachments.each do |a|
+    note.all_attachments.each do |a|
       attachment  :content_type => a.content_content_type, 
                   :body => File.read(a.content.to_file.path), 
                   :filename => a.content_file_name
@@ -145,7 +145,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
     handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
 
-    note.attachments.each do |a|
+    note.all_attachments.each do |a|
       attachment  :content_type => a.content_content_type, 
                   :body => File.read(a.content.to_file.path), 
                   :filename => a.content_file_name

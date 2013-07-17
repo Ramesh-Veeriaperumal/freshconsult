@@ -76,11 +76,11 @@
 				<%= notes %>
 			</div>
 		</div>
-	    <% unless note.attachments.empty? %>
+	    <% unless note.all_attachments.empty? %>
 			<span class="seperator"></span>
-			<h4 class="lowercase"><%= pluralize(note.attachments.size, t('attachment'), t('attachments'))%></h4>
+			<h4 class="lowercase"><%= pluralize(note.all_attachments.size, t('attachment'), t('attachments'))%></h4>
 			<ul class="attachment_list">
-			    <%= render :partial => '/helpdesk/shared/attachment.html', :collection => note.attachments, :locals => {:show_delete => true, :url => [@item] } %>
+			    <%= render :partial => '/helpdesk/shared/attachment.html', :collection => note.all_attachments, :locals => {:show_delete => true, :url => [@item] } %>
 			</ul>
 		<% end %>
 		<% unless note.dropboxes.empty? %>

@@ -1,5 +1,11 @@
 if @a_template
 	page << "insertIntoConversation(\"#{escape_javascript(@a_template)}\")"
+  if !@attachments.empty?
+    page << 'jQuery("#admin_canned_responses_response-attachments").addClass("attachments");'
+    @attachments.each do |a|
+    page << "jQuery('#admin_canned_responses_response-attachments').append('<div class=\"item\" >#{escape_javascript(a.content_file_name)} - <a href=\"javascript:void(0)\" class=\"removeFile\" >remove</a> <input type=\"hidden\" value=#{escape_javascript(a.id.to_s)} name=\"shared_attachments[]\" class=\"ca\" >  </div>');"
+    end
+  end
 else
 	page << 'var msg_body_id =  "reply-multiple-cnt-reply-multiple"'
 	page << 'jQuery("#"+msg_body_id+"-body").getEditor().focus();'
