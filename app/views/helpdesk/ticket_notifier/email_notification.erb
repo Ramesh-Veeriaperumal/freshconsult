@@ -1,5 +1,3 @@
-<div style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif">
-
 <%= @body %>
 
 <%=render :partial => 'dropbox_template',:locals => {:dropboxes => @dropboxes} %>
@@ -7,4 +5,3 @@
 <%=render :partial => "satisfaction_survey", :locals => {:ticket => @ticket, :survey_handle => @survey_handle}%>
 <br/>
 <%= render :partial => '/shared/free_plan_message' %>
-</div>
