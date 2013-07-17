@@ -6,9 +6,9 @@
 		<ul class="search-results-list">
 			{% for result in search.results %}
 			<li class="{{ result.type | downcase }}-item">				
-				<a href="{{result.url}}">{{ result.title }}</a>
-				<span class="label label-small label-light">{{ result.group }}</span>
-				<div>{{ result.desc }}</div>
+				<a href="{{result.url}}">{{ result.title | h}}</a>
+				<span class="label label-small label-light">{{ result.group | h}}</span>
+				<div>{{ result.desc | h }}</div>
 				<p class="help-text">
 					{{ result.source.created_on | short_day_with_time }}
 				</p>

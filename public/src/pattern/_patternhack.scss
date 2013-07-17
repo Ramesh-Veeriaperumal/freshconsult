@@ -34,6 +34,11 @@ strong {
   margin-top:0;
   padding-top:0;
 }
+.row-fluid [class*="span"] {
+  &.clear-left-margin{
+    margin-left: 0;
+  }
+}
 /* fix for form label center alignment*/
 .control-label{
   padding-top: 5px;
@@ -51,13 +56,6 @@ strong {
 .topbar .dropdown-menu a, .dropdown-menu a {
   @include text-shadow(0 0 0 #fff);
   }
-.cust_list_table{
-  .open .menu, .dropdown.open .menu, .open .dropdown-toggle, .dropdown.open .dropdown-toggle{
-    border: 0 solid transparent;
-    background: none;
-    color: inherit;
-  }
-}
 .tooltip{
   cursor:pointer;
 }
@@ -568,7 +566,6 @@ ul.inline > li, ol.inline > li {
   ::-webkit-input-placeholder {
     color: #999999;
   }
-
   .row-fluid {
     width: 100%;
     *zoom: 1;

@@ -1741,7 +1741,7 @@ en:
     info2: No Agents in this group
     info3: Send an Escalation email to
     info4: if a ticket remains un-assigned for more than
-    info5: Are you sure
+    info5: Are you sure you want to delete this group?      Deleting a group will not delete the Agents in it.
     info6: "Email Agent when a new ticket is assigned to this group "
     info7: "if a ticket remains un-assigned for more than "
     tour: Help me create a new agent group
@@ -2765,7 +2765,7 @@ en:
     new: New Business Hours
     to: to
     time_zone: Time Zone
-    delete: Are you sure
+    delete: Are you sure you want to delete?
     valid_time: Please enter a valid time
     holiday_name: Holiday name
     import_holiday: Import Holidays
