@@ -2592,6 +2592,7 @@ en:
     reported_by: from %{requester}
     close_btn: Close
     close_btn_title: Close this ticket
+    close_without_notification: Shift + Close to skip notification mail
     tags: 
       no_match: No matches. Press enter to create tag.
       create_success: The tag was added
