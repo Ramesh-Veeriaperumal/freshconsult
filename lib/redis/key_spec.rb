@@ -1,9 +1,7 @@
 class Redis::KeySpec
-  attr_reader :options_hash # options need to be removed from attr_reader in next deployment
   
   def initialize(key_or_template, options_hash = {})
     @key = key_or_template
-    @options_hash = options_hash # To be removed in next deployment
     if options_hash.is_a?(Hash) && !options_hash.empty?
       if key_or_template.blank?
         @key = options_hash.sort_by(&:to_s).map{|k,v| "#{k}:#{v}"}.join(':')
