@@ -4150,6 +4150,10 @@ en:
     tab_name: "Tab name : "
     tab_url: "Tab image url : "
     page_added_model: "Page has been already added"
+    no_ssl: "Please configure your ssl settings in <a href='/admin/security'>Security settings</a> in order to add a page tab"
+    image_upload_failed: "Unable to update custom image in page tab"
+    image_instructions: "The target image must be of dimensions 111x74. (images of any dimensions can be updated through facebook directly)"
+    configure_tab: "Configure page tab"
     portal:
       your_tickets: "Your Tickets"
       view_all: "View all"

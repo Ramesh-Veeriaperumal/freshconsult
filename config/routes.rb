@@ -2,8 +2,6 @@
 
   map.connect '/images/helpdesk/attachments/:id/:style.:format', :controller => '/helpdesk/attachments', :action => 'show', :conditions => { :method => :get }
   
-  map.connect '/facebook/helpdesk/attachments/:id', :controller => '/helpdesk/attachments', :action => 'show', :conditions => { :method => :get } #need to check with shan
-  
   map.connect "/javascripts/:action.:format", :controller => 'javascripts'
   
   # Routing for Asset management Jammit
@@ -359,6 +357,9 @@
     helpdesk.resources :articles, :collection => { :autocomplete => :get }
 
     helpdesk.resources :attachments
+    helpdesk.with_options :path_prefix => "facebook/helpdesk" do |fb_helpdesk|
+      fb_helpdesk.resources :attachments, :only => [:show, :destroy]
+    end
 
     helpdesk.resources :dropboxes
     

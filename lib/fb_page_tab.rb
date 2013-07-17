@@ -34,10 +34,14 @@ class FBPageTab
   end
 
   def update name, image_url
-    graph.put_connections("me", "tabs/app_#{FacebookConfig::APP_ID}", 
+    begin
+      graph.put_connections("me", "tabs/app_#{FacebookConfig::APP_ID}", 
                           { :access_token => self.fb_page.page_token, 
                             :custom_name => name,
                             :custom_image_url => image_url} )
+    rescue
+      return false
+    end
   end
 
   def remove

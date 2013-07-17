@@ -1,5 +1,5 @@
 <div class="index-page">
-	{% if portal.has_user_signed_in %}
+	{% if portal.has_user_signed_in and portal.user.recent_tickets.size > 0 %}
 	<section class="content" >
 		<div class="span9">
 			<h2 class="heading">
@@ -80,9 +80,9 @@
 		<div class="span4 omega">
 			<span class="pull-right">
 			{% if portal.has_user_signed_in %}
-				<a href="/discussions/topics/new" title="Start a new topic" class="btn btn-primary" id="start_topic">{% translate facebook_tab.portal.start_topic %}</a>
+				<a href="{{portal.new_topic_url}}" title="Start a new topic" class="btn btn-primary" id="start_topic">{% translate facebook_tab.portal.start_topic %}</a>
 			{% else %}
-				<a href="/discussions/topics/new" title="Start a new topic" class="btn btn-primary solution_c" id="start_topic">{% translate facebook_tab.portal.start_topic %}</a>
+				<a href="{{portal.new_topic_url}}" title="Start a new topic" class="btn btn-primary solution_c" id="start_topic">{% translate facebook_tab.portal.start_topic %}</a>
 			{% endif %}
 				<a href="/facebook/support/discussions" class="btn">{% translate facebook_tab.portal.view_all %}</a>
 			</span>

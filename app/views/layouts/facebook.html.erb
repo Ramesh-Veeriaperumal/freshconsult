@@ -5,18 +5,6 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-		<% javascript_tag do %>
-		if(supports_html5_storage)
-		{
-			if(localStorage["fb_redirect"])
-			{
-				url = localStorage["fb_redirect"];
-				localStorage.removeItem("fb_redirect");
-				window.location = url;
-			}
-		}
-		<% end %>
-
 		<title><%= page_title %></title>
 		<meta name="description" content="<%= page_description %>">
 		<meta name="author" content="">
@@ -52,6 +40,18 @@
 
 		<!-- Access variables for portal -->
 		<%= portal_access_varibles %>
+		
+		<% javascript_tag do %>
+		if(Modernizr.localstorage)
+		{
+			if(localStorage["fb_redirect"])
+			{
+				url = localStorage["fb_redirect"];
+				localStorage.removeItem("fb_redirect");
+				window.location = url;
+			}
+		}
+		<% end %>
 	</head>
 	<body>
 		<script src="https://connect.facebook.net/en_US/all.js"></script>
@@ -75,7 +75,7 @@
 
         jQuery('body').on('click', '.no_user_ticket, .solution_c', function(ev){
         	ev.preventDefault();
-        	if(supports_html5_storage)
+        	if(Modernizr.localstorage)
         	{
         		localStorage["fb_redirect"] = jQuery(this).attr('href');
         	}

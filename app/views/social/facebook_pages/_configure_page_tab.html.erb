@@ -6,5 +6,6 @@
   <%= text_field_tag "custom_name", @page_tab ? @page_tab["name"] : "", :class => "fields required" %>
   <label class="caption"><%= t('facebook_tab.tab_url') %></label>
   <%= text_field_tag "custom_image_url", @page_tab ? @page_tab["image_url"] : "", :class => "fields" %>
+  <div class="info-data"><%= t('facebook_tab.image_instructions') %>
 </div>
 <%= link_to(t('facebook_tab.remove_tab'), remove_social_facebook_tabs_path(@item), :class => "btn", :id => "cancel_tab") if @page_tab %>

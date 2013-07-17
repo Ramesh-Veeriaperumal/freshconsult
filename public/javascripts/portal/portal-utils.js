@@ -17,14 +17,6 @@ function log() {
   }
 }
 
-supports_html5_storage = function() {
-  try {
-    return 'localStorage' in window && window['localStorage'] !== null;
-  } catch (e) {
-    return false;
-  }
-}
-
 // Additional util methods for support helpdesk
 // Extending the string protoype to check if the entered string is a valid email or not
 String.prototype.isValidEmail = function(){
