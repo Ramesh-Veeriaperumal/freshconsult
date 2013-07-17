@@ -95,7 +95,7 @@ var RLANG = {
 	confirm_remove_format_for_entire_content: 'Converting the entire content to plain text will remove formatting and inserted items. Are you sure you want to continue?'
 };
 
-var uploaded_img_placeholder = (FILLER_IMAGES || {}).imageLoading || "/images/fillers/image_upload_placeholder.gif";
+var uploaded_img_placeholder = (typeof(FILLER_IMAGES) === "undefined") ? "/images/fillers/image_upload_placeholder.gif" : FILLER_IMAGES.imageLoading;
 
 (function($){
 
@@ -2920,8 +2920,7 @@ Redactor.prototype = {
 		this._imageSet(data);
 	},
 	_imageSet: function(json, link)
-	{
-		this.restoreSelection();		
+	{		
 		var validupload = true;
 		if (json !== false)
 		{
@@ -2931,7 +2930,7 @@ Redactor.prototype = {
 				if(json.isJSON())
 					data = $.parseJSON(json);
 				if(data.filelink != undefined){
-					html = '<p><img src="' + data.filelink + '" class= "inline-image" data-id = "' + data.fileid + '" height/></p>';
+					html = '<p><img src="' + data.filelink + '" class= "inline-image" data-id = "' + data.fileid + '" /></p>';
 					this.$editor.find('img.image-loader').replaceWith($(html))
 				}
 				else {
@@ -2944,6 +2943,7 @@ Redactor.prototype = {
 			{
 				html = json;
 				this.modalClose();
+				this.restoreSelection();
 				this.execCommand('inserthtml', html);
 			}
 	
@@ -3419,7 +3419,9 @@ Redactor.prototype = {
 	},
 	insertLoadingAtCaret: function(){
 		this.modalClose();	
-		var loadingNode = $('<img src="' + uploaded_img_placeholder + '" class="image-loader">');
+		this.$editor.focus();
+		this.restoreSelection();
+		var loadingNode = $('<img src="' + uploaded_img_placeholder + '" class="image-loader" style="cursor:default;">');
 		this.insertNodeAtCaret(loadingNode.get(0));
 	},
 	uploadLoaded : function()

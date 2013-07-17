@@ -13,7 +13,7 @@ module UploadedImagesControllerMethods
 
     respond_to do |format| 
       format.html do
-        render :json => (@image.save) ?  success_response : error_response 
+        render :json => (@image.image? && @image.save) ?  success_response : error_response 
       end
     end
   end
