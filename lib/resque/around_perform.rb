@@ -1,5 +1,9 @@
 module Resque::AroundPerform
 
+  def before_enqueue_job_watcher(*args)
+    args[0][:enqueued_at] = Time.now if args[0].is_a?(Hash)
+  end
+
  def before_enqueue_add_account_and_user(*args)
   if args[0].is_a?(Hash)
     args[0][:account_id] = Account.current.id if Account.current  
@@ -13,12 +17,15 @@ end
 
  def around_perform_with_shard(*args)
   params_hash = args[0].is_a?(Hash) ? args[0].symbolize_keys! : args[1].symbolize_keys!
+  job_waiting_time = Time.now - Time.parse(params_hash[:enqueued_at] || Time.now)
+  
   account_id = (params_hash[:account_id]) || (params_hash[:current_account_id])
   Sharding.select_shard_of(account_id) do
     account = Account.find_by_id(account_id)
     account.make_current if account
     time_spent = Benchmark.realtime {yield}
-    Monitoring::RecordMetrics.performance_data({:class_name => self.name, :time_spent => time_spent, :account_id => account_id })  
+    Monitoring::RecordMetrics.performance_data({:class_name => self.name, :time_spent => time_spent, :account_id => account_id, 
+      :job_waiting_time => job_waiting_time})  
   end
  end
 end
