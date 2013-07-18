@@ -1193,10 +1193,10 @@ Redactor.prototype = {
 	{
 		var fontstyle = $(parent).css(css_property) || this.$editor.css(css_property);
 		fontstyle = fontstyle.split(",")[0];
-		if (css_property == 'font-size')
-			element = $('[rel=' + this.opts.fontsize_levels_reverse[fontstyle] + '].redactor_font_link');
+		if(css_property == 'font-size')
+			element = $('[rel="' + this.opts.fontsize_levels_reverse[fontstyle] + '"].redactor_font_link');
 		else
-			element = $('[rel=' + fontstyle + '].redactor_font_link');
+			element = $('[rel="' + fontstyle + '"].redactor_font_link');
 		if(element.length) {
 			element.html("<span class='icon ticksymbol'></span>" + element.html());
 		}
@@ -3550,6 +3550,14 @@ Redactor.prototype = {
 				'font-size': _redactor.opts.fontsize_levels[$(this).attr('size')],
 				'color': $(this).attr('color')
 			});	
+			if(css_property=='font-family')
+			{
+				span.attr('rel', 'temp_redactor_font_family');
+			}
+			else if(css_property=='font-size')
+			{
+				span.attr('rel', 'temp_redactor_font_size');
+			}
 			return $(span);	
 		});
 		this.cleanUpRedundant();
@@ -3573,6 +3581,20 @@ Redactor.prototype = {
 			// So font-weight is set here
 			$(this).css('font-weight', 'normal');
 			$(this).removeAttr('rel')
+		});
+
+		// Remove the font-size of child span elements
+		$.each(this.$editor.find('span'),function(){
+			if($(this).attr('rel') == 'temp_redactor_font_size')
+			{
+				$(this).find('span').css('font-size','');
+				$(this).removeAttr("rel");
+			}
+			else if($(this).attr('rel') == 'temp_redactor_font_family')
+			{
+				$(this).find('span').css('font-family','');
+				$(this).removeAttr("rel");
+			}
 		});
 
 		// Check if current span and parent span enclose same text

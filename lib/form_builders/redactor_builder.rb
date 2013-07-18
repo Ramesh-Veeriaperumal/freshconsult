@@ -11,7 +11,7 @@ module FormBuilders
         :tabindex => 2,
         :convertDivs => false,
         :imageUpload => "/uploaded_images",
-        :allowedTags => ["a", "div", "b", "i", "iframe", "br", "p", "img", "strong", "em"],
+        :allowedTags => ["a", "div", "b", "i", "iframe", "br", "p", "img", "strong", "em" , "u"],
         :buttons => ['bold','italic','underline', 'deleted','|','unorderedlist', 'orderedlist',  
                       '|','fontcolor', 'backcolor', '|' ,'link','image', 'video']
       }
