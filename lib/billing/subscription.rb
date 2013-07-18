@@ -98,6 +98,11 @@ class Billing::Subscription
   def retrieve_subscription(account_id)
     ChargeBee::Subscription.retrieve(account_id)
   end
+
+  def retrieve_payments(account_id)
+    ChargeBee::Invoice.invoices_for_subscription(account_id)
+  end
+
   
   private
 

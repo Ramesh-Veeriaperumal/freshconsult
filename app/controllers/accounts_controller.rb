@@ -43,7 +43,7 @@ class AccountsController < ApplicationController
    @signup = Signup.new(params[:signup])
    
    if @signup.save
-      add_to_crm
+      add_to_crm if !params['partner']
       render :json => { :success => true, 
       :url => signup_complete_url(:token => @signup.account.agents.first.user.perishable_token, :host => @signup.account.full_domain) }, 
       :callback => params[:callback]

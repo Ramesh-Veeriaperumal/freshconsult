@@ -8,7 +8,7 @@ class Account < ActiveRecord::Base
   after_update :change_shard_mapping, :update_users_language
   after_destroy :remove_shard_mapping
 
-  after_commit_on_create :add_to_billing, :enable_elastic_search
+  after_commit_on_create :add_to_billing, :enable_elastic_search, :ensure_reseller
   after_commit_on_update :clear_cache
   after_commit_on_destroy :clear_cache, :delete_reports_archived_data
 
@@ -97,6 +97,10 @@ class Account < ActiveRecord::Base
 
     def delete_reports_archived_data
       Resque.enqueue(Workers::DeleteArchivedData, {:account_id => id})
+    end
+
+    def ensure_reseller
+      Resque.enqueue(Subscription::EnsureReseller, {:account_id => id})
     end
 
 end

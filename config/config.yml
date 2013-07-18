@@ -77,6 +77,8 @@ chargebee:
     site: "freshdesk"
     api_key: "0jYcdSmNzhSfiBdPue1cudI0JOOaFtHMSf"
 
+partner:
+  secret_key: "D7D5892B53FBB8DC4DB53D1DA6156"
 
 integrations_url:
     development: "http://localhost:3000"
