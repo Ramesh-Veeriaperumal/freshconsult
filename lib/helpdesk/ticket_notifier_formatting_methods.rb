@@ -17,20 +17,20 @@ module Helpdesk::TicketNotifierFormattingMethods
             :end_date => params[:end_date].to_date)
   end
 
-  def generate_body_html(note, inline_attachments)
-    html_part = Nokogiri::HTML(note.full_text_html)
+  def generate_body_html(html, inline_attachments, account)
+    html_part = Nokogiri::HTML(html)
     if html_part.at_css('img.inline-image')
-      build_body_html_with_inline_attachments(html_part, inline_attachments, note.account)
+      build_body_html_with_inline_attachments(html_part, inline_attachments, account)
     else
-      note.full_text_html
+      html
     end
   end
 
-  def build_body_html_with_inline_attachments(html_part, inline_attachments, note_account)
+  def build_body_html_with_inline_attachments(html_part, inline_attachments, account)
     TMail::HeaderField::FNAME_TO_CLASS.delete 'content-id'
     html_part.xpath('//img[@class="inline-image"]').each do |inline|
       cid = ActiveSupport::SecureRandom.hex(8)
-      inline_attachment = note_account.attachments.find(inline['data-id'])
+      inline_attachment = account.attachments.find(inline['data-id'])
       inline_attachments.push({ :cid => cid, :attachment => inline_attachment})
       inline.set_attribute('src', "cid:#{cid}")
       inline.set_attribute('height', inline['data-height']) unless inline['data-height'].blank?
