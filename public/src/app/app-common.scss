@@ -10166,3 +10166,56 @@ div.gcal-confirm-modal-content{ width: 100%; }
 }
 
 .tweet-table .search-grey-box{ margin-top: 0; }
+
+//Free Trial Notification
+.trial_expiry {
+	@include border-radius(5px);
+	padding-top:12px;
+	p{
+		
+		color: #777;
+		margin:5px 0 20px;
+	}
+	.trial-background {
+		margin: 11px -13px -12px;
+		padding: 10px 20px 10px 12px;
+		border-radius: 0 0 5px 5px;
+
+		a
+		{
+			color: #FFF;
+			font-weight: bold;
+			font-size: 1.1em;
+			@include text-shadow(-1px -1px 0px #000);
+			.arrow-right{
+				border-left-color:#fff;
+				font-size:8px;
+				float: right;
+				margin-top: 3px;
+				margin-right: -8px
+			}
+		}
+	}
+}
+.more_than_ten{
+	h3
+	{
+		color: #337035;
+	}
+	background-color: #F7FFEB;
+	.trial-background {
+		background: #337035;
+	}
+}
+
+.less_than_ten{
+	h3
+	{
+		color: #790711;
+		padding-right: 50px;
+	}
+	background-color: #FFF2F3;
+	.trial-background {
+		background: #790711;
+	}
+}

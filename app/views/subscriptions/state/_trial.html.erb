@@ -12,14 +12,9 @@
           <% end %>
         </div>
       </div>
-      <% unless subscription.finished_trial? %>
-        <div class="trial-message">
-          <%= t('your_trial_account') %> 
-          <%= "#{t('will_expire_in')} #{pluralize(subscription.trial_days, t('day'), t('days'))}" %>.
-        </div>
-      <% else %>
-        <%= "#{t('trial_expired_on')} #{subscription.next_renewal_at.to_s(:long_day)} " %>.
-      <% end %>
+<% trial_days = current_account.subscription.trial_days %>
+<%= trial_days > 0? t('trial_expires_in', :no_of_days => pluralize(trial_days, t('trial_day'), t('days')) )  :  
+  t('trial_expired_on', :next_renewal_at => current_account.subscription.next_renewal_at.to_s(:long_day) ) %>
       <div class = "choose-plan">
         <%= t('choose_plan_trial') %>
       </div>

@@ -1,6 +1,9 @@
 <% @page_title = "Dashboard" %>
 
 <% content_for :sidebar do %>
+  <% if current_account.subscription.trial? %>
+    <%= render :partial => '/subscriptions/state/trial_expiry_notifier' %>
+  <% end %>
   <div id="reminders" class="reminders sidepanel">    
   	<h3 class="title"><%= t(".todo_title") %></h3>
     <%= render :partial => '/helpdesk/reminders/reminders', 
