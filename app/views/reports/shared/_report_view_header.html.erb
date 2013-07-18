@@ -38,14 +38,14 @@
         </div>
         <% unless defined?(is_pdf) %>     
         <div class="report_filters">
-          <a href="javascript:void(0);" class="drop-right nav-trigger unsaved span9" id="active_filter" menuid="#leftViewMenu"><%=t('adv_reports.unsaved_report_filter')%></a>
-          <a href="javascript:void(0);" class="hide delete-filter span3" id="delete-filter-link"><i class="icon-trash" title="<%=t('adv_reports.delete_filter_title')%>"></i></a>
-          <a href="javascript:void(0);" class="delete-filter span3" id="save-filter-link"><i class="reports-icon-save" title="<%=t('adv_reports.save_filter_title')%>"></i></a>
+          <a href="javascript:void(0);" class="drop-right nav-trigger unsaved span10" id="active_filter" menuid="#leftViewMenu"><%=t('adv_reports.unsaved_report_filter')%></a>
+          <a href="javascript:void(0);" class="hide delete-filter span2 pull-right" id="delete-filter-link"><i class="icon-trash tooltip" title="<%=t('adv_reports.delete_filter_title')%>"></i></a>
+          <a href="javascript:void(0);" class="delete-filter span2 pull-right" id="save-filter-link"><i class="reports-icon-save tooltip" title="<%=t('adv_reports.save_filter_title')%>"></i></a>
           <ul class="fd-menu saved-reports-menu" data-report-type="<%=report_type_id%>" id="leftViewMenu" style="display:none;">
             <% li_class = @report_filter_data.empty? ? '' : 'hide'%>
-            <li id="no-report-data" class="<%=li_class%>">---<%=t('adv_reports.saved_report_filters')%>---</li>
+            <li id="no-report-data" class="<%=li_class%>"><%=t('adv_reports.saved_report_filters')%></li>
             <% @report_filter_data.each do |key, r_f_obj| %>
-              <li data-id="<%=key%>" class="filter-event"><%=r_f_obj[:name]%></li>
+              <li data-id="<%=key%>" class="filter-event ellipsis"><%=r_f_obj[:name]%></li>
             <%end%>
           </ul>
         </div> 

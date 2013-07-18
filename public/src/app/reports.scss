@@ -426,7 +426,14 @@ $single_stackbar_chart_height: 120px;
 				visibility: visible;
 				float: left;
 				text-align: left;
-				top: 38px;
+				top: 40px;
+				@include border-top-left-radius(0);
+				@include border-top-right-radius(0);
+				@include box-shadow(0px 3px 8px rgba(0, 0, 0, 0.2));
+				min-width: 236px;
+				.selected-filter{
+					font-weight:bold;
+				}
 				li{
 					float: left;
 					clear: both;
