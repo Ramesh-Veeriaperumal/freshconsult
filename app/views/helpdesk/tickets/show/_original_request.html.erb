@@ -43,7 +43,7 @@
 			%> 
 
 			<%= content_tag :span, t("helpdesk.tickets.show.meta"), 
-							:title => "#{humanized_meta.browser} #{humanized_meta.version} / #{humanized_meta.os}", 
+					 	    :title => @ticket.mobihelp? ? "#{metainfo.body[1..-4].gsub('"',' ').gsub(",",", ")}" : "#{humanized_meta.browser} #{humanized_meta.version} / #{humanized_meta.os}", 
 							:class => "meta_icon tooltip" unless(metainfo.blank?) %>
 			<% if @ticket.requester && @ticket.is_twitter? && @ticket.tweet.is_mention? %>
 			<div class="ticket-details-twitter">

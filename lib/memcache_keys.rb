@@ -41,6 +41,12 @@ module MemcacheKeys
 
   ACCOUNT_OBSERVER_RULES = "v1/ACCOUNT_OBSERVER_RULES:%{account_id}"
 
+  ACCOUNT_EVENT_FIELDS = "v1/ACCOUNT_EVENT_FIELDS:%{account_id}"
+
+  ACCOUNT_FLEXIFIELDS = "v1/ACCOUNT_FLEXIFIELDS:%{account_id}"
+
+  ACCOUNT_OBSERVER_RULES = "v1/ACCOUNT_OBSERVER_RULES:%{account_id}"
+
   ES_ENABLED_ACCOUNTS = "ES_ENABLED_ACCOUNTS"
 
   # Portal customization related keys
@@ -59,6 +65,8 @@ module MemcacheKeys
   SHARD_BY_ACCOUNT_ID = "v1/SHARD_BY_ACCOUNT_ID:%{account_id}"
 
   AUTO_REFRESH_AGENT_DETAILS = "AGENT_DETAILS:%{account_id}:%{user_id}"
+  
+  DEFAULT_BUSINESS_CALENDAR = "v1/DEFAULT_BUSINESS_CALENDAR:%{account_id}"
   
   class << self
 

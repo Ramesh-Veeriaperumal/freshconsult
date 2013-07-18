@@ -15,7 +15,6 @@ class Account < ActiveRecord::Base
                   :language, :ssl_enabled
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
   
-
   named_scope :active_accounts,
               :conditions => [" subscriptions.state != 'suspended' "], 
               :joins => [:subscription]

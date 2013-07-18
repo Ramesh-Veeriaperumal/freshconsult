@@ -9,7 +9,6 @@
               success: function(data) {
                   response(jQuery.map(data.results,
                   function(item) {
-                      //console.log(item.value);
                       return {
                           label: item.value,
                           value: item.value
@@ -19,7 +18,7 @@
           });
       },
       select: function(event, ui) {
-
+      			jQuery("#user_address").focus();
           },
       open: function() {
           jQuery(this).removeClass('ui-corner-all');
@@ -32,10 +31,19 @@
       .appendTo(ul);
   };
 
+  jQuery("#contact_submit").bind("click",
+  function(ev){
+  	var company_name=jQuery('#contact_customer').val().trim();
+  	if(company_name=='')
+ 	  {
+  		jQuery('#contact_role').removeAttr('checked');
+   	}
+  	return true;
+	});
 
-  jQuery("#contact_customer").bind("keydown",
+  jQuery("#contact_customer").bind("keyup",
   function(ev) {
-      var company = this.value;
+      var company = this.value.trim();
       if (company != null && company != "")
       {
           jQuery('#contact_role').removeAttr("disabled");
@@ -45,11 +53,17 @@
           jQuery('#contact_role').removeAttr('checked');
           jQuery('#contact_role').prop("disabled", true);
       }
-  }).trigger("keydown");
+  });
 	jQuery("#user_tags").select2({
 	  	tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',')) %>".split(","),
 	  	tokenSeparators: [',']
 	}); 
+  }); 
+
+  jQuery(".ui-menu-item").live("click",function(ev){
+  	jQuery("#user_address").focus();
+	});
+
 <% end %>
 
  	 <% if @existing_user %>

@@ -8289,66 +8289,6 @@ height: auto;
 .table-striped tbody tr.diffColor td{ 
 	background-color: #fefdee !important; 
 }
-.cust_list_table{
-     margin:0 auto;
-     .cust_list_table_header{
-     	margin-bottom:20px;
-     }
-}
-.cust_list_table_body{
-    border:1px solid #f1f1f1; /* depands upon bootstrap table variable $tableBorder  */
-    background:#f6f6f6;
-    padding:8px 0 8px 0;
-    @include border-radius(5px);
-    @include box-shadow(0px 0px 8px rgba(200, 200, 200, 0.3));
-    table{
-        background:#fff;
-    	  margin:0;
-        table-layout:fixed;
-    }
-    .pagination{
-    	background:#f6f6f6;
-        border-top:1px solid #f1f1f1;     /* depands upon bootstrap table variable $tableBorder  */ 
-        margin:0px;  
-        padding:10px; 
-        padding-bottom:0;
-        line-height:0;    
-    }
-    .cust-list-avatar 
-    {
-    	div.preview_pic{
-    	border: 2px solid #CCC;
-  		@include border-radius(100%);
-  		width: 30px;
-  		height: 30px;
-		}
-    	img{
-	        width:30px;
-	        height:30px;  
-			    @include border-radius(100%);     
-    	}
-    }
-    .btn-mini{
-        background-image:none;
-        background-color:#fdfdfd; 
-        &:hover{
-          background-color:#f1f1f1;  
-        }        
-    }
-	table{
-		border-bottom: 1px solid #f1f1f1; /* depands upon bootstrap table variable $tableBorder  */
-	    tr td
-	    {
-	    	width:23%; 
-	    	vertical-align: middle;
-		    &:last-child{
-		        width:31%;
-		        text-align:right;
-		        padding-right:10px;
-		    }
-		}
-	}
-}
 
 .agent-list-page {
   &.deleted-list{
@@ -8683,12 +8623,6 @@ height: auto;
 
 .header_buttons{
 	padding-top: 5px;
-}
-
-#company_sub_header{
-	font-size: 12px;
-	margin-top: 8px;
-	margin-bottom: 8px;
 }
 
 .margin-bottom{ margin-bottom:10px; }

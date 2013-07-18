@@ -5,7 +5,6 @@
 .redactor_box {
 	position: relative;
 	border: 1px solid #c6c6c6;	
-	line-height: 1.4em;
 	border-radius: 5px 5px 3px 3px;
 }
 .redactor_box, .redactor_box textarea {
@@ -32,19 +31,13 @@ body .redactor_air {
 	outline: none;	
 	border: none;
 	width: 100%;
-	white-space: normal;	
+	white-space: normal;
+	
 }
 
 .redactor_editor {
 	@include text-formatting;
-	span, b, u, i, strong, em, strike, font, a, code, del, s, blockquote,
-	mark, cite, dl, dt, dd, pre, td, th, 
-	abbr, acronym, address, dfn, kbd, ins, q, samp, tt, details,
-	output, section, summary, time { 
-		font-size: 13px;
-		line-height: 18px;
-		margin:0;
-	}           
+	           
 }
 .redactor_editor, .redactor_editor:focus {
 	position: relative;

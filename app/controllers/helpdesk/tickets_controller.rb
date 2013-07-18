@@ -296,6 +296,11 @@ class Helpdesk::TicketsController < ApplicationController
     old_item = @item.clone
     if @item.update_attributes(params[nscname])
       update_tags unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
+
+      if(params[:redirect] && params[:redirect].to_bool)
+        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice')
+      end
+
       respond_to do |format|
         format.html { 
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
@@ -308,7 +313,7 @@ class Helpdesk::TicketsController < ApplicationController
           render :xml => @item.to_xml({:basic => true})
         }
         format.json { 
-          render :json => request.xhr? ? { :success => true }.to_json  : @item.to_json({:basic => true}) 
+            render :json => request.xhr? ? { :success => true, :redirect => (params[:redirect] && params[:redirect].to_bool) }.to_json  : @item.to_json({:basic => true}) 
         }
         format.mobile { 
           render :json => { :success => true, :item => @item }.to_json 

@@ -1,8 +1,8 @@
 <% content_for :sidebar do %>
 	<%= render :partial => "helpnote_without_tour" %>
 <% end %>
-<div id="cust-list" class="cust_list_table">
-	<div class="cust_list_table_header"	>
+<div id="cust-list" class="list-page">
+	<div class="list-page-header"	>
 		<div class="row-fluid">
 			<div class="span6"><h3 class="title"><%=t('sla_policy.title1')%></h3></div>
 			 <div class="span6 pull-right pagination-right header_buttons align-right" >
@@ -19,7 +19,7 @@
 		:reorder_id => "sla_policies_reorder_button", :list_id => "sla_policies_list", 
 		:disabled => :is_default} %>
 	</div>
-	<div class="cust_list_table_body sla-index" id="sla_policies_list">
+	<div class="list-page-body sla-index" id="sla_policies_list">
 		<table class="table table-striped">
 			<% (@sla_policies.active + @sla_policies.inactive).each do |policy| %>
 				<tr id=<%= dom_id(policy) %>>

@@ -165,7 +165,6 @@ class Account < ActiveRecord::Base
   has_many :day_pass_usages
   has_many :day_pass_purchases, :order => "created_at desc"
   
-  
   has_one :zendesk_import, :class_name => 'Admin::DataImport' , :conditions => {:source => Admin::DataImport::IMPORT_TYPE[:zendesk]}
  
   has_one :contact_import, :class_name => 'Admin::DataImport' , :conditions => {:source => Admin::DataImport::IMPORT_TYPE[:contact]} 

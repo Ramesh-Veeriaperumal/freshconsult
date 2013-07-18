@@ -1,6 +1,6 @@
 <% @page_title = t('.title') %>
-<div class="cust_list_table" id="multi-product-index">
-	<div class="cust_list_table_header">
+<div class="list-page" id="multi-product-index">
+	<div class="list-page-header">
 		<div class="row-fluid">
 			<div class="span6">			
 				<%= content_tag :h3, @page_title, :class => "title" %>
@@ -11,7 +11,7 @@
 		</div>
 	</div>
 
-	<div class="cust_list_table_body" id="multi-product-list">
+	<div class="list-page-body" id="multi-product-list">
 		<table class="table table-striped">
 			<%= each_or_message("product", @products, t("no_message.products")) %>
 		</table>
