@@ -1,8 +1,6 @@
 # encoding: utf-8
 class  Helpdesk::TicketNotifier < ActionMailer::Base
 
-  layout "email_font", :except => [:reply]
-
   include Helpdesk::TicketNotifierFormattingMethods
   
   def self.notify_by_email(notification_type, ticket, comment = nil)
@@ -59,10 +57,17 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     sent_on       Time.now
     content_type  "multipart/mixed"
     
-    part "text/html" do |html|
-      html.body   render_message("email_notification",:ticket => params[:ticket], :body => params[:email_body], :dropboxes=>params[:dropboxes],
-                  :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
-                  params[:notification_type]))
+    part :content_type => "multipart/alternative" do |alt|
+      alt.part "text/plain" do |plain|
+        plain.body  render_message("email_notification.text.plain.erb",:ticket => params[:ticket], :body => params[:email_body], :dropboxes=>params[:dropboxes],
+                    :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
+                    params[:notification_type]))
+      end
+      alt.part "text/html" do |html|
+        html.body   render_message("email_notification.text.html.erb",:ticket => params[:ticket], :body => params[:email_body], :dropboxes=>params[:dropboxes],
+                    :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
+                    params[:notification_type]))
+      end
     end
 
     params[:attachments].each do |a|
@@ -139,10 +144,15 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
     inline_attachments = []
 
-    part "text/html" do |html|
-      html.body   render_message("forward", :ticket => ticket, 
-                                  :body => generate_body_html(note.full_text_html, inline_attachments, note.account), 
-                                  :dropboxes=>note.dropboxes)
+    part :content_type => "multipart/alternative" do |alt|
+      alt.part "text/plain" do |plain|
+        plain.body   render_message("forward.text.plain.erb",:ticket => ticket, :body => note.full_text, :dropboxes=>note.dropboxes)
+      end
+      alt.part "text/html" do |html|
+        html.body   render_message("forward.text.html.erb",:ticket => ticket, 
+                                    :body => generate_body_html(note.full_text_html, inline_attachments, note.account), 
+                                    :dropboxes=>note.dropboxes)
+      end
     end
 
     handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
@@ -164,10 +174,15 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
     inline_attachments = []
 
-    part "text/html" do |html|
-      html.body   render_message("send_cc_email", :ticket => ticket, 
-                                  :body => generate_body_html(ticket.description_html, inline_attachments, ticket.account), 
-                                  :dropboxes=>ticket.dropboxes)
+    part :content_type => "multipart/alternative" do |alt|
+      alt.part "text/plain" do |plain|
+        plain.body  render_message("send_cc_email.text.plain.erb", :ticket => ticket, :body => ticket.description,:dropboxes=>ticket.dropboxes)
+      end
+      alt.part "text/html" do |html|
+        html.body   render_message("send_cc_email.text.html.erb",:ticket => ticket, 
+                                    :body => generate_body_html(ticket.description_html, inline_attachments, ticket.account), 
+                                    :dropboxes=>ticket.dropboxes)
+      end
     end
 
     handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
@@ -182,21 +197,38 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   def notify_comment(ticket, note , reply_email, options={})
     subject       formatted_subject(ticket)
     recipients    options[:notify_emails]     
-    body          :ticket => ticket, :note => note , :ticket_url => helpdesk_ticket_url(ticket,:host => ticket.account.host)          
     from          reply_email
     headers       "Reply-to" => "#{reply_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     sent_on       Time.now
-    content_type  "text/html"
+    content_type  "multipart/mixed"
+
+    part :content_type => "multipart/alternative" do |alt|
+      alt.part "text/plain" do |plain|
+        plain.body  render_message("notify_comment.text.plain.erb", :ticket => ticket, :note => note , :ticket_url => helpdesk_ticket_url(ticket,:host => ticket.account.host))
+      end
+      alt.part "text/html" do |html|
+        html.body  render_message("notify_comment.text.html.erb", :ticket => ticket, :note => note , :ticket_url => helpdesk_ticket_url(ticket,:host => ticket.account.host))
+      end
+    end
+
   end
   
   def email_to_requester(ticket, content, sub=nil)
     subject       (sub.blank? ? formatted_subject(ticket) : sub)
     recipients    ticket.requester.email
     from          ticket.friendly_reply_email
-    body          content
     headers       "Reply-to" => "#{ticket.friendly_reply_email}", "Auto-Submitted" => "auto-replied", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     sent_on       Time.now
-    content_type  "text/html"
+    content_type  "multipart/mixed"
+
+    part :content_type => "multipart/alternative" do |alt|
+      alt.part "text/plain" do |plain|
+        plain.body  Helpdesk::HTMLSanitizer.plain(content)
+      end
+      alt.part "text/html" do |html|
+        html.body content
+      end
+    end
   end
   
   def internal_email(ticket, receips, content, sub=nil)
@@ -206,6 +238,15 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     body          content
     headers       "Reply-to" => "#{ticket.friendly_reply_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     sent_on       Time.now
-    content_type  "text/html"
+    content_type  "multipart/mixed"
+    
+    part :content_type => "multipart/alternative" do |alt|
+      alt.part "text/plain" do |plain|
+        plain.body  Helpdesk::HTMLSanitizer.plain(content)
+      end
+      alt.part "text/html" do |html|
+        html.body content
+      end
+    end
   end
 end
