@@ -69,8 +69,8 @@ module TicketsFilter
 
   SEARCH_FIELD_OPTIONS = SEARCH_FIELDS.map { |i| [i[1], i[0]] }
 
-  DEFAULT_SORT        = :due_by
-  DEFAULT_SORT_ORDER  = :asc
+  DEFAULT_SORT        = :created_at
+  DEFAULT_SORT_ORDER  = :desc
   DEFAULT_PORTAL_SORT = :created_at
   DEFAULT_PORTAL_SORT_ORDER = :desc
 

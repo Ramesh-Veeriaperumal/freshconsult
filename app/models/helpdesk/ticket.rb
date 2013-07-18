@@ -263,6 +263,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     (fb_post) and (fb_post.facebook_page) and (fb_post.post?)
   end
   
+  def mobihelp?
+    source == SOURCE_KEYS_BY_TOKEN[:mobi_help]
+  end
+
   def priority=(val)
     self[:priority] = PRIORITY_KEYS_BY_TOKEN[val] || val
   end
@@ -494,9 +498,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     if deep
       self[:notes] = self.notes
       options[:include] = [:attachments]
-      options[:except] = [:account_id,:import_id]
-      options[:methods].push(:custom_field)
     end
+    options[:except] = [:account_id,:import_id]
+    options[:methods].push(:custom_field)
     json_str = super options
     json_str.sub("\"ticket\"","\"helpdesk_ticket\"")
   end

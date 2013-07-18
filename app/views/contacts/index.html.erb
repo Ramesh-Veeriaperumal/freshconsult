@@ -1,4 +1,4 @@
-<div class="cust_list_table" id="contacts-page">
+<div class="list-page" id="contacts-page">
 	<% content_for :sidebar do %>
   	<% if privilege?(:manage_contacts) %>
     	<div class="sidepanel">
@@ -36,7 +36,7 @@
 	            	<%= render(:partial => '/shared/company_sub_header', :locals => {:type => "user"}) %>
 	            	<% form_tag "", { :id => "contacts-expanded", :method => :put } do %>
 		        		<% if @contacts.present? %>
-					        <div class="cust_list_table_body">
+					        <div class="list-page-body">
 					        	<!-- Add content here for top of the table-->
 					        	<%= render(:partial => '/shared/customers_toolbar', :locals => {:type => "user", :path => contacts_path}) %>
 					        		<table class="table table-striped" id = "contacts-table">
