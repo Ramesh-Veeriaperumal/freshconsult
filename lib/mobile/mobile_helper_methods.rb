@@ -6,7 +6,7 @@ module Mobile::MobileHelperMethods
   MOBILE_URL = "/mobile/"
 
   MOBILE_VIEWS = { :tickets => { 
-                      :shows => "#{MOBILE_URL}#tickets/show/{{params.id}}"
+                      :show => "#{MOBILE_URL}#tickets/show/{{params.id}}"
                     },
                    :dashboard => {
                       :index  => MOBILE_URL
@@ -40,6 +40,10 @@ module Mobile::MobileHelperMethods
       mobile_agent? && allowed_domain? &&  !classic_view? 
     end
 
+    def is_native_mobile?
+		!request.env["HTTP_USER_AGENT"][/Native/].nil?
+	end
+
     def set_mobile      
       Rails.logger.debug "mobile ::: #{mobile?} :: #{request.headers['HTTP_ACCEPT']}"
       if mobile?
@@ -48,8 +52,9 @@ module Mobile::MobileHelperMethods
     end
 
     def set_native_mobile
-        params[:format] = "nmobile" if !request.env["HTTP_USER_AGENT"][/Native/].nil?
+	    params[:format] = "nmobile" if !request.env["HTTP_USER_AGENT"][/Native/].nil?
     end
+
     def require_user_login
      render :json => { :status_code=>302, :Location=>login_url }, :status => 302 unless current_user
     end
@@ -64,8 +69,8 @@ module Mobile::MobileHelperMethods
     end
 
     def redirect_to_mobile_url
-      if (!current_user.nil? && current_user.respond_to?('agent?')&& 
-        current_user.agent? && mobile? and !"mobile".eql?(params[:format]) and 
+      if (!current_user.nil? && current_user.respond_to?('agent?')&& !is_native_mobile? && 
+        current_user.agent? && mobile? and !"mobile".eql?(params[:format]) and
         mobile_view?)
          redirect_to mobile_url
       end

@@ -12,7 +12,8 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::Activities
   include Helpdesk::ToggleEmailNotification
   include Helpdesk::ShowVersion
-  
+
+  before_filter :redirect_to_mobile_url  
   skip_before_filter :check_privilege, :only => :show
   before_filter :portal_check, :only => :show
 
@@ -56,7 +57,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_reply_to_all_emails, :only => [:show, :reply_to_conv]
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
-  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails]
+  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index]
   
  
   def user_ticket
@@ -125,8 +126,25 @@ class Helpdesk::TicketsController < ApplicationController
           render :json => json + "]"
         end
       end
-      
-      format.mobile do 
+	  format.mobile do 
+        unless @response_errors.nil?
+          render :json => {:errors => @response_errors}.to_json
+        else
+          json = "["; sep=""
+          @items.each { |tic| 
+            #Removing the root node, so that it conforms to JSON REST API standards
+            # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
+
+            json << sep + tic.to_json({
+              :except => [ :description_html, :description ],
+              :methods => [ :status_name, :priority_name, :source_name, :requester_name,
+                            :responder_name, :need_attention, :pretty_updated_date ]
+            }, false)[19..-2]; sep=","
+          }
+          render :json => json + "]"
+        end
+      end	   
+      format.nmobile do 
         unless @response_errors.nil?
           render :json => {:errors => @response_errors}.to_json
         else
