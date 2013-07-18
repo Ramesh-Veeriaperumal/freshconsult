@@ -104,14 +104,15 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     
     part :content_type => "multipart/alternative" do |alt|
       alt.part "text/plain" do |plain|
-        plain.body   render_message("reply.text.plain.erb",:ticket => ticket, :body => note.full_text, :note => note, :dropboxes=>note.dropboxes,
-                    :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]),
+        plain.body   render_message("reply.text.plain.erb",:ticket => ticket, :body => note.full_text, :note => note, 
+                    :dropboxes=>note.dropboxes, :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]),
                     :include_quoted_text => options[:quoted_text]
                     )
       end
       alt.part "text/html" do |html|
-        html.body   render_message("reply.text.html.erb",:ticket => ticket, :body => generate_body_html(note, inline_attachments), :note => note, :dropboxes=>note.dropboxes,
-                    :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]),
+        html.body   render_message("reply.text.html.erb", :ticket => ticket, 
+                    :body => generate_body_html(note.full_text_html, inline_attachments, note.account), :note => note, 
+                    :dropboxes=>note.dropboxes, :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]),
                     :include_quoted_text => options[:quoted_text]
                     )
       end
@@ -139,8 +140,9 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     inline_attachments = []
 
     part "text/html" do |html|
-      html.body   render_message("forward", :ticket => ticket, :body => generate_body_html(note, inline_attachments), 
-                                                                :dropboxes=>note.dropboxes)
+      html.body   render_message("forward", :ticket => ticket, 
+                                  :body => generate_body_html(note.full_text_html, inline_attachments, note.account), 
+                                  :dropboxes=>note.dropboxes)
     end
 
     handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
@@ -163,7 +165,9 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     inline_attachments = []
 
     part "text/html" do |html|
-      html.body   render_message("send_cc_email", :ticket => ticket, :body => generate_body_html(ticket.description_html, inline_attachments), :dropboxes=>ticket.dropboxes)
+      html.body   render_message("send_cc_email", :ticket => ticket, 
+                                  :body => generate_body_html(ticket.description_html, inline_attachments, ticket.account), 
+                                  :dropboxes=>ticket.dropboxes)
     end
 
     handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
