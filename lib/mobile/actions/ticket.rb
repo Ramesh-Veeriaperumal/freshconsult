@@ -38,7 +38,7 @@ module Mobile::Actions::Ticket
      }
   }
 
-  def to_mob_json(only_public_notes=false)
+  def to_mob_json(only_public_notes=false, include_notes=true)
 
     json_inlcude = {
       :responder => {
@@ -62,8 +62,9 @@ module Mobile::Actions::Ticket
     }
     if only_public_notes
      json_inlcude[:public_notes] = NOTES_OPTION 
-    else 
+    else if include_notes
      json_inlcude[:notes] = NOTES_OPTION
+	 end
     end
     options = {
       :only => [ :id, :display_id, :subject, :description, :description_html, 
@@ -71,7 +72,7 @@ module Mobile::Actions::Ticket
       :methods => [ :status_name, :priority_name, :requester_name, :responder_name, 
                     :source_name, :is_closed, :to_cc_emails,:conversation_count, 
                     :selected_reply_email, :from_email, :is_twitter, :is_facebook, 
-                    :fetch_twitter_handle, :is_fb_message, :formatted_created_at, :ticket_notes],
+                    :fetch_twitter_handle, :is_fb_message, :formatted_created_at],
       :include => json_inlcude
     }
     to_json(options,false) 

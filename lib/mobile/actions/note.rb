@@ -11,4 +11,20 @@ module Mobile::Actions::Note
     format = format.gsub(/.\b[%Yy]/, "") if (created_at.year == Time.now.year)
     created_at.strftime(format)
   end
+
+  def to_mob_json
+    json_include = {
+      :user => {
+        :only => [ :name, :email, :id ],
+        :methods => [ :avatar_url ]
+      },
+      :attachments => {
+        :only => [ :content_file_name, :id, :content_content_type, :content_file_size ]
+      }
+    }
+    options = {
+      :include => json_include
+    }
+    to_json(options)
+  end
 end

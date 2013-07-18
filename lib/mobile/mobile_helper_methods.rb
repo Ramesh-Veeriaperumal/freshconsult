@@ -16,7 +16,7 @@ module Mobile::MobileHelperMethods
   DOMAINS =  [ :localhost, :"192.168.1.28", :"siva.freshbugs.com", :"freshvikram.freshbugs.com", :"m.freshbugs.com" ]
   
   def self.included(base)
-    base.send :helper_method, :set_mobile, :mobile?, :allowed_domain?, :mobile_agent?
+    base.send :helper_method, :set_mobile, :mobile?, :allowed_domain?, :mobile_agent?, :set_native_mobile
   end
 
   private
@@ -47,6 +47,9 @@ module Mobile::MobileHelperMethods
       end
     end
 
+    def set_native_mobile
+        params[:format] = "nmobile" if !request.env["HTTP_USER_AGENT"][/Native/].nil?
+    end
     def require_user_login
      render :json => { :status_code=>302, :Location=>login_url }, :status => 302 unless current_user
     end

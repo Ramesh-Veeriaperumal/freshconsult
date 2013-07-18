@@ -56,7 +56,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_reply_to_all_emails, :only => [:show, :reply_to_conv]
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
-
+  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails]
   
  
   def user_ticket
@@ -318,8 +318,6 @@ class Helpdesk::TicketsController < ApplicationController
      
     respond_to do |format|
       format.html  {
-		puts "DEBUG item :: #{@item.inspect}"
-		puts "DEBUG ticket :: #{@ticket.inspect}"
         if @new_show_page
           @ticket_notes.reverse!
           @ticket_notes_total = @ticket.conversation_count
@@ -331,14 +329,18 @@ class Helpdesk::TicketsController < ApplicationController
       format.xml  { 
         render :xml => @item.to_xml  
       }
-      format.json {
-        render :json => @item.to_json
-      }
+	  format.json {
+		render :json => @item.to_json
+	  }
       format.js
-      format.mobile {
-		response = "{#{@item.to_mob_json[1..-2]},#{current_user.to_mob_json[1..-2]},#{{:subscription => !@subscription.nil?}.to_json[1..-2]}}"
+      format.nmobile {
+		response = "{#{@item.to_mob_json(false,false)[1..-2]},#{current_user.to_mob_json[1..-2]},#{{:subscription => !@subscription.nil?}.to_json[1..-2]}" 
+		response = response + ",#{@ticket_notes[0].to_mob_json[1..-2]}}" unless @ticket_notes[0].nil?
         render :json => response
       }
+      format.mobile {
+		 render :json => @item.to_mob_json
+	  }
     end
   end
   
@@ -833,7 +835,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def load_reply_to_all_emails
-    default_notes_count = @new_show_page ? 3 : 5
+    default_notes_count = "nmobile".eql?(params[:format])?1:@new_show_page ? 3 : 5
     @ticket_notes = @ticket.conversation(nil,default_notes_count,[:survey_remark, :user, :attachments, :schema_less_note, :dropboxes])
     reply_to_all_emails
   end
