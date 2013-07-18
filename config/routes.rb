@@ -165,7 +165,7 @@
     report.resources :customers_analysis_reports, :controller => 'customers_analysis', 
       :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
       :fetch_chart_data => :post}
-    report.resources :report_filter, :controller => 'report_filter'
+    report.resources :report_filters, :controller => 'report_filters'
   end
   
   map.resources :reports

@@ -137,7 +137,7 @@ Helpkit.reports_util = {
     var args ={
       ajaxType: 'report_filter_create',
       type: "POST",
-      url: "/reports/report_filter/create",
+      url: "/reports/report_filters/create",
       dataType: "json",
       data: data,
       success: function(data){
@@ -164,7 +164,7 @@ Helpkit.reports_util = {
     var args ={
       ajaxType: 'report_filter_delete',
       type: "POST",
-      url: "/reports/report_filter/destroy/"+id,
+      url: "/reports/report_filters/destroy/"+id,
       dataType: "json",
       success: function(data){
         jQuery("li[data-id='"+id+"']").remove();
