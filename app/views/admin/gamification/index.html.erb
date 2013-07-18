@@ -41,7 +41,7 @@
 			<a href="http://www.youtube.com/watch?v=bi6Md5K2nsY" target="_blank"><%= t('admin.gamification.index.video') %>
 			</a>
 			<br />
-			<a href="javascript: jQuery('#gamification_enable').trigger('click'); " class="uiButton special floatr">
+			<a id="enable-gamification-button" class="uiButton special floatr">
 				<%= t('admin.gamification.index.enable_arcade') %>
 			</a>
 		</p>
@@ -58,6 +58,9 @@
 		jQuery("#gamification-help .active").removeClass("active");
 		jQuery('#'+this.id+'-help').addClass('active');
 	});
+	jQuery('#enable-gamification-button').bind("click", function(){
+	jQuery('#gamification_enable').trigger('click');
+});
 <% end %>
 
 <% content_for :sidebar do %>

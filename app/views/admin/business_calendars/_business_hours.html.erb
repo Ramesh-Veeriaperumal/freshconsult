@@ -95,7 +95,7 @@
 			jQuery("#HolidayValidation").hide();
 			jQuery("#InvalidHoliday").hide();
 			var index = findPlaceToInsert(month_date);
-			var holiday_row = jQuery("<li month_date= "+month_id+" class='row-fluid'><a href='javascript:void(0)' class='close'></a><span class='span2'>"+month_date+"</span><span class='span8 holiday-name'>" + name +"</span></li>")
+			var holiday_row = jQuery("<li month_date= "+month_id+" class='row-fluid'><a href='javascript:void(0)' class='close'></a><span class='span2 month-spacing'>"+month_date+"</span><span class='span8 holiday-name clear-left-margin'>" + name +"</span></li>")
 			if (index == -1) {
 				jQuery("#HolidayList li:eq(0)")
 					.before(holiday_row)

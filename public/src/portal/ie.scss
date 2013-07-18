@@ -1,2 +1,7 @@
 .ie .portal-attach .attach-file{ display:block !important; }
 .ie .portal-attach .attach-proxy{ display:none !important; }
+.ie6, .ie7, .ie8, .ie9, .ie10 {
+	div.custom-file-upload input[type='file']{
+		font-size: 121px;
+	}
+}

@@ -28,17 +28,9 @@ class Support::SolutionsController < SupportController
 
 			(raise ActiveRecord::RecordNotFound and return) if @category.nil?
 		end
+		
 		def load_customer_categories
 			@categories=@current_portal.solution_categories.customer_categories.all(:include=>:public_folders)
 		end
-
-
-		def load_customer_categories	
-		    @categories=@current_portal.solution_categories.customer_categories.all(:include=>:public_folders)
-	 	end
-
-		def load_customer_categories	
-		    @categories=@current_portal.solution_categories.customer_categories.all(:include=>:public_folders)
-	 	end
 
 end

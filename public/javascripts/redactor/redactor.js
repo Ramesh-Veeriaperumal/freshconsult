@@ -114,11 +114,11 @@ jQuery.fn.redactor = function(option)
 	});
 };
 
-
 // Initialization
 var Redactor = function(element, options)
 {
 	// Element
+	this.redactor_copy_content;
 	this.$el = $(element);
 	
 	// Lang
@@ -152,6 +152,9 @@ var Redactor = function(element, options)
 		
 		imageUpload: false, // url
 		imageUploadCallback: false, // function
+
+		imageLoadingCallback: false, // function - hook to add function that can be executed while uploading image
+		imageLoadedCallback: false, // function - hook to add function that can be executed after uploading image
 		
 		fileUpload: false, // url
 		fileUploadCallback: false, // function
@@ -241,10 +244,10 @@ var Redactor = function(element, options)
 				'<option value="right">' + RLANG.right + '</option>' +
 			'</select>' +
 			'<div id="redactor_modal_footer">' +
-				'<a href="javascript:void(null);" class="uiButton" id="redactor_image_delete_btn" style="color: #000;">' + RLANG._delete + '</a>' +
+				'<a href="javascript:void(null);" class="btn" id="redactor_image_delete_btn" style="color: #000;">' + RLANG._delete + '</a>' +
 				'<span class="redactor_btns_box">' +
-					'<a href="javascript:void(null);" class="uiButton" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
-					'<input type="button" class="uiButton" name="save" id="redactorSaveBtn" value="' + RLANG.save + '" />' +
+					'<a href="javascript:void(null);" class="btn" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
+					'<input type="button" class="btn btn-primary" name="save" id="redactorSaveBtn" value="' + RLANG.save + '" />' +
 				'</span>' +
 			'</div>',
 
@@ -274,7 +277,7 @@ var Redactor = function(element, options)
 			'</div>' +
 			'<div id="redactor_modal_footer">' +
 				'<span class="redactor_btns_box">' +
-					'<input type="button" class="btn btn-primary" name="' + RLANG.cancel + '" id="redactor_btn_modal_close" value="' + RLANG.cancel + '" />' +
+					'<input type="button" class="btn" name="' + RLANG.cancel + '" id="redactor_btn_modal_close" value="' + RLANG.cancel + '" />' +
 					'<input type="button" class="btn btn-primary" name="upload" id="redactor_upload_btn" value="' + RLANG.insert + '" />' +
 				'</span>' +
 			'</div>',
@@ -303,8 +306,8 @@ var Redactor = function(element, options)
 			'</form>' +
 			'<div id="redactor_modal_footer">' +
 				'<span class="redactor_btns_box">' +
-					'<a href="javascript:void(null);" class="uiButton" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
-					'<input type="button" class="uiButton" id="redactor_insert_link_btn" value="' + RLANG.insert + '" />' +
+					'<a href="javascript:void(null);" class="btn" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
+					'<input type="button" class="btn btn-primary" id="redactor_insert_link_btn" value="' + RLANG.insert + '" />' +
 				'</span>' +
 			'</div>',
 		modal_video: String() + 
@@ -671,7 +674,7 @@ Redactor.prototype = {
 
 		// paste
 		if (this.isMobile(true) === false)
-		{
+		{	this.cleanStyleAttr();	
 			this.$editor.bind('paste', $.proxy(function(e)
 			{ 
 				this.setBuffer();
@@ -687,6 +690,10 @@ Redactor.prototype = {
 	
 				var frag = this.extractContent();
 				
+				if(this.browser('opera') === true)
+				{
+					this.$editor.append("<span></span>");
+				}
 				setTimeout($.proxy(function()
 				{				
 					var pastedFrag = this.extractContent();
@@ -1189,10 +1196,10 @@ Redactor.prototype = {
 	{
 		var fontstyle = $(parent).css(css_property) || this.$editor.css(css_property);
 		fontstyle = fontstyle.split(",")[0];
-		if (css_property == 'font-size')
-			element = $('[rel=' + this.opts.fontsize_levels_reverse[fontstyle] + '].redactor_font_link');
+		if(css_property == 'font-size')
+			element = $('[rel="' + this.opts.fontsize_levels_reverse[fontstyle] + '"].redactor_font_link');
 		else
-			element = $('[rel=' + fontstyle + '].redactor_font_link');
+			element = $('[rel="' + fontstyle + '"].redactor_font_link');
 		if(element.length) {
 			element.html("<span class='icon ticksymbol'></span>" + element.html());
 		}
@@ -2385,6 +2392,27 @@ Redactor.prototype = {
 	
 		return html;
 	},
+	cleanStyleAttr: function() {
+
+				  this.$editor.on("DOMNodeInserted", $.proxy(function(e) {
+				   	
+				   	if($(e.target).attr("style"))
+				   	{
+						var styleparts = $(e.target).attr("style").split(";");
+						for (var i=0;i<styleparts.length;i++) {
+						  if(styleparts[i]) {
+							  var subParts = styleparts[i].split(':');
+							  this.compareParentStyles($(e.target), subParts[0]);
+						  }
+						}	
+					}	
+					if($(e.target).attr("style") && $(e.target).attr("style").length==0)
+					{
+						$(e.target).removeAttr("style");
+					}		   	
+
+				  }, this));
+	},
 	
 	// BUTTONS MANIPULATIONS
 	getBtn: function(key)
@@ -2932,10 +2960,22 @@ Redactor.prototype = {
 				if(data.filelink != undefined){
 					html = '<p><img src="' + data.filelink + '" class= "inline-image" data-id = "' + data.fileid + '" /></p>';
 					this.$editor.find('img.image-loader').replaceWith($(html))
+					if (typeof this.opts.imageLoadedCallback === 'function'){
+						this.opts.imageLoadedCallback(this);
+					}
+					else {
+						this.enableFormAfterLoadingImage();
+					}
 				}
 				else {
 					alert(RLANG.invalid_image_file);
 					this.$editor.find('img.image-loader').remove()
+					if (typeof this.opts.imageLoadedCallback === 'function'){
+						this.opts.imageLoadedCallback(this);
+					}
+					else {
+						this.enableFormAfterLoadingImage();
+					}
 					validupload = false;
 				}
 			}
@@ -2995,7 +3035,7 @@ Redactor.prototype = {
 			{					
 				if (sel && sel.anchorNode && sel.anchorNode.parentNode.tagName === 'A')
 				{
-					url = sel.anchorNode.parentNode.href;
+					url = $(sel.anchorNode.parentNode).attr('href');
 					text = sel.anchorNode.parentNode.text;
 					target = sel.anchorNode.parentNode.target;
 					
@@ -3423,6 +3463,21 @@ Redactor.prototype = {
 		this.restoreSelection();
 		var loadingNode = $('<img src="' + uploaded_img_placeholder + '" class="image-loader" style="cursor:default;">');
 		this.insertNodeAtCaret(loadingNode.get(0));
+		if (typeof this.opts.imageLoadingCallback === 'function'){
+			this.opts.imageLoadingCallback(this);
+		}
+		else{
+			this.disableFormWhileLoadingImage();
+		} 
+	},
+	disableFormWhileLoadingImage: function(){
+		this.$editor.parents('form')
+		.find('input[type="submit"]:not(:disabled), input[type="button"]:not(:disabled), button:not(:disabled)')
+		.addClass('load-disable')
+		.prop("disabled", true);
+	},
+	enableFormAfterLoadingImage: function(){
+		this.$editor.parents('form').find('.load-disable').prop("disabled", false);
 	},
 	uploadLoaded : function()
 	{
@@ -3465,6 +3520,23 @@ Redactor.prototype = {
 	},
 	
 	// UTILITY
+	browser: function(browser)
+		{
+			var ua = navigator.userAgent.toLowerCase();
+			var match = /(chrome)[ \/]([\w.]+)/.exec(ua) || /(webkit)[ \/]([\w.]+)/.exec(ua) || /(opera)(?:.*version|)[ \/]([\w.]+)/.exec(ua) || /(msie) ([\w.]+)/.exec(ua) || ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec(ua) || [];
+
+			if (browser == 'version')
+			{
+				return match[2];
+			}
+
+			if (browser == 'webkit')
+			{
+				return (match[1] == 'chrome' || match[1] == 'webkit');
+			}
+
+			return match[1] == browser;
+		},
 	oldIE: function()
 	{
 		if ($.browser.msie && parseInt($.browser.version, 10) < 9)
@@ -3520,6 +3592,14 @@ Redactor.prototype = {
 				'font-size': _redactor.opts.fontsize_levels[$(this).attr('size')],
 				'color': $(this).attr('color')
 			});	
+			if(css_property=='font-family')
+			{
+				span.attr('rel', 'temp_redactor_font_family');
+			}
+			else if(css_property=='font-size')
+			{
+				span.attr('rel', 'temp_redactor_font_size');
+			}
 			return $(span);	
 		});
 		this.cleanUpRedundant();
@@ -3545,6 +3625,20 @@ Redactor.prototype = {
 			$(this).removeAttr('rel')
 		});
 
+		// Remove the font-size of child span elements
+		$.each(this.$editor.find('span'),function(){
+			if($(this).attr('rel') == 'temp_redactor_font_size')
+			{
+				$(this).find('span').css('font-size','');
+				$(this).removeAttr("rel");
+			}
+			else if($(this).attr('rel') == 'temp_redactor_font_family')
+			{
+				$(this).find('span').css('font-family','');
+				$(this).removeAttr("rel");
+			}
+		});
+
 		// Check if current span and parent span enclose same text
 		// If so the styles are concatenated 
 		// Style of child is retained in case of conflict
@@ -3560,9 +3654,7 @@ Redactor.prototype = {
 		$.each(this.$editor.find('span'), function() {
 			var _span = this;
 			$.each(_redactor.opts.span_cleanup_properties, function(i, css_property) {
-				if($(_span).css(css_property) == $(_span).parent().css(css_property)) {
-					$(_span).css(css_property,'');
-				}
+				_redactor.compareParentStyles(_span, css_property);
 			});
 
 			if($(this).css('background-color') == $(this).parent().css('background-color') || 
@@ -3575,6 +3667,12 @@ Redactor.prototype = {
 	},
 	inputEventAvailable: function() {
 		return ($.browser.webkit || $.browser.mozilla);
+	},
+	compareParentStyles: function(element, css_property) {
+		css_property = $.trim(css_property);
+		if($.trim($(element).css(css_property)) == $.trim($(element).parent().css(css_property))) {
+			$(element).css(css_property,'');
+		}
 	}
 	
 };

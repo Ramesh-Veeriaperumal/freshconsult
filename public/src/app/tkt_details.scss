@@ -2442,6 +2442,7 @@ ol, ul, li{
 	}
 	.pagi-btn{
 		margin-right: 0;
+		@include border-radius(0px);
 		padding: 5px 10px 3px;
 		&.prev_page {
 			@include border-radius(4px 0 0 4px);
@@ -2474,8 +2475,7 @@ ol, ul, li{
 
 		&.disabled {
 			color: #CCC;
-			border: 1px #f6f6f6 solid;
-			background: #FFF;
+			background: #FAFAFA;
 			span {
 				@include opacity(0.25);
 			}
