@@ -19,7 +19,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   around_filter :run_on_slave, :only => :user_ticket
 
-  before_filter :set_mobile, :only => [:get_top_view,:recent_tickets,:old_tickets, :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties]
+  before_filter :set_mobile, :only => [:get_top_view,:recent_tickets,:old_tickets, :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties , :unspam , :destroy , :pick_tickets , :close_multiple , :restore , :close]
   before_filter :set_show_version
   before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index, :filter_options, :old_tickets,:recent_tickets]
   before_filter :clear_filter, :only => :index
@@ -352,8 +352,9 @@ class Helpdesk::TicketsController < ApplicationController
 	  }
       format.js
       format.nmobile {
-		response = "{#{@item.to_mob_json(false,false)[1..-2]},#{current_user.to_mob_json[1..-2]},#{{:subscription => !@subscription.nil?}.to_json[1..-2]}" 
-		response = response + ",#{@ticket_notes[0].to_mob_json[1..-2]}}" unless @ticket_notes[0].nil?
+        response = "{#{@item.to_mob_json(false,false)[1..-2]},#{current_user.to_json(:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket])[1..-2]},#{{:subscription => !@subscription.nil?}.to_json[1..-2]}"
+        response << ",#{@ticket_notes[0].to_mob_json[1..-2]}" unless @ticket_notes[0].nil?
+        response << "}";
         render :json => response
       }
       format.mobile {
@@ -486,6 +487,8 @@ class Helpdesk::TicketsController < ApplicationController
           redirect_to :back
         }
         format.xml {  render :xml =>@items.to_xml({:basic=>true}) }
+        format.mobile { render :json => { :success => true , :success_message => t("helpdesk.flash.tickets_closed", 
+                                          :tickets => get_updated_ticket_count )}.to_json }
         format.json {  render :json =>@items.to_json({:basic=>true}) }
 
     end
@@ -498,6 +501,8 @@ class Helpdesk::TicketsController < ApplicationController
     respond_to do |format|
       format.html{ redirect_to :back }
       format.xml { render :xml => @items.to_xml({:basic=>true}) }
+      format.mobile { render :json => { :success => true , :success_message => t("helpdesk.flash.assigned_to_you", 
+                                        :tickets => get_updated_ticket_count )}.to_json }
       format.json { render :json=>@items.to_json({:basic=>true}) }
     end
   end
@@ -528,13 +533,13 @@ class Helpdesk::TicketsController < ApplicationController
           redirect_to :back
         }
         format.xml { render :xml => @item, :status=>:success }
+        format.mobile {
+          render :json => {:success => true, :id => @item.id, :actions_executed => Va::Action.activities, :rule_name => va_rule.name , :success_message => t("activities.tag.execute_scenario", :rule_name => va_rule.name) }.to_json 
+        }
         format.json { render :json => @item, :status=>:success }  
         format.js { 
           flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/execute_scenario_notice', 
                                         :locals => { :actions_executed => Va::Action.activities, :rule_name => va_rule.name })
-        }
-        format.mobile {
-          render :json => {:success => true, :id => @item.id, :actions_executed => Va::Action.activities, :rule_name => va_rule.name }.to_json 
         }
       end
     end
@@ -571,7 +576,9 @@ class Helpdesk::TicketsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to redirect_url  }
       format.js
-      format.mobile {  render :json => { :success => true }.to_json }
+      format.mobile {  render :json => { :success => true , :success_message => t("helpdesk.flash.flagged_spam", 
+                      :tickets => get_updated_ticket_count,
+                      :undo => "") }.to_json }
     end
   end
 
@@ -589,7 +596,8 @@ class Helpdesk::TicketsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to (@items.size == 1) ? helpdesk_ticket_path(@items.first) : :back }
       format.js
-	  format.mobile {  render :json => { :success => true }.to_json }
+	  format.mobile {  render :json => { :success => true , :success_message => t("helpdesk.flash.flagged_unspam", 
+                     :tickets => get_updated_ticket_count) }.to_json }
     end
   end
 
@@ -711,10 +719,12 @@ class Helpdesk::TicketsController < ApplicationController
     status_id = CLOSED
     #@old_timer_count = @item.time_sheets.timer_active.size - will enable this later..not a good solution
     if @item.update_attributes(:status => status_id)
-      flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice')
       respond_to do |format|
-        format.html { redirect_to redirect_url  }
-          format.mobile {  render :json => { :success => true }.to_json }
+        format.html { 
+          flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice')
+          redirect_to redirect_url  
+        }
+          format.mobile {  render :json => { :success => true , :success_message => t("helpdesk.tickets.close_notice.ticket_has_been_cloased") }.to_json }
        end
     else
       flash[:error] = t("helpdesk.flash.closing_the_ticket_failed")
