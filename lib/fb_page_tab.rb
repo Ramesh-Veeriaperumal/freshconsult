@@ -33,12 +33,11 @@ class FBPageTab
                           { :access_token => self.fb_page.page_token})
   end
 
-  def update name, image_url
+  def update name
     begin
       graph.put_connections("me", "tabs/app_#{FacebookConfig::APP_ID}", 
                           { :access_token => self.fb_page.page_token, 
-                            :custom_name => name,
-                            :custom_image_url => image_url} )
+                            :custom_name => name} )
     rescue
       return false
     end

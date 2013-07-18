@@ -3232,7 +3232,7 @@ en:
       engage_info:
         title: Add your Facebook pages
         engage_customers: Engage your customers, directly on Facebook
-        associate_account: Associate a Facebook page to <b> %{account_name} </b> and respond to your customers from within freshdesk when they comment or post to your wall.
+        associate_account: Associate a Facebook page with <b> %{account_name} </b> and respond to customer comments and wall posts directly from Freshdesk. You can also add your solutions and community forums within your Facebook page.
         add_facebook: Add Facebook Page
       form:
         visitor_posts: Import <strong>"Visitor posts"</strong> as ticket
@@ -4150,10 +4150,11 @@ en:
     tab_name: "Tab name : "
     tab_url: "Tab image url : "
     page_added_model: "Page has been already added"
-    no_ssl: "Please configure your ssl settings in <a href='/admin/security'>Security settings</a> in order to add a page tab"
+    no_ssl: "You need to enable SSL encryption from the <a href='/admin/security'>Security settings</a> page in order to add a page tab"
     image_upload_failed: "Unable to update custom image in page tab"
     image_instructions: "The target image must be of dimensions 111x74. (images of any dimensions can be updated through facebook directly)"
-    configure_tab: "Configure page tab"
+    configure_tab: "Configure Facebook Page Tab"
+    config_info: "Once you enable your Facebook page tab, your customers will be able to directly access your solutions, forums and self-service from within Freshdesk"
     portal:
       your_tickets: "Your Tickets"
       view_all: "View all"

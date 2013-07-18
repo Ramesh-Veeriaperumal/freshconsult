@@ -88,9 +88,10 @@ class Social::FacebookPagesController < Admin::AdminController
 
     def handle_tab
       fb_page_tab.add if params[:add_tab]
-      unless fb_page_tab.update(params[:custom_name], params[:custom_image_url])
-        flash[:error] = I18n.t('facebook_tab.image_upload_failed')
-      end
+      # unless fb_page_tab.update(params[:custom_name], params[:custom_image_url])
+      #   flash[:error] = I18n.t('facebook_tab.image_upload_failed')
+      # end
+      fb_page_tab.update(params[:custom_name])
     end
 
     def tab_edited?

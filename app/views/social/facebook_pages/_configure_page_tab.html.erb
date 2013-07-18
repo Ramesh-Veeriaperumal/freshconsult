@@ -1,11 +1,15 @@
-<% if @page_tab.nil? %>
-  <%= hidden_field_tag "add_tab", "1" %><p>
+<% if current_account.ssl_enabled? %>
+	<% if @page_tab.nil? %>
+	  <%= hidden_field_tag "add_tab", "1" %><p>
+	<% end %>
+	<div id="page_tab_options">
+	  <label class="caption"><%= t('facebook_tab.tab_name') %></label>
+	  <%= text_field_tag "custom_name", @page_tab ? @page_tab["name"] : "", :class => "fields required" %>
+<!-- 	  <label class="caption"><%= t('facebook_tab.tab_url') %></label>
+	  <%= text_field_tag "custom_image_url", @page_tab ? @page_tab["image_url"] : "", :class => "fields" %>
+	  <div class="info-data"><%= t('facebook_tab.image_instructions') %> -->
+	</div>
+	<%= link_to(t('facebook_tab.remove_tab'), remove_social_facebook_tabs_path(@item), :id => "cancel_tab") if @page_tab %>
+<% else %>
+	<div class="info-data"><%= t('facebook_tab.no_ssl') %></div>
 <% end %>
-<div id="page_tab_options">
-  <label class="caption"><%= t('facebook_tab.tab_name') %></label>
-  <%= text_field_tag "custom_name", @page_tab ? @page_tab["name"] : "", :class => "fields required" %>
-  <label class="caption"><%= t('facebook_tab.tab_url') %></label>
-  <%= text_field_tag "custom_image_url", @page_tab ? @page_tab["image_url"] : "", :class => "fields" %>
-  <div class="info-data"><%= t('facebook_tab.image_instructions') %>
-</div>
-<%= link_to(t('facebook_tab.remove_tab'), remove_social_facebook_tabs_path(@item), :class => "btn", :id => "cancel_tab") if @page_tab %>

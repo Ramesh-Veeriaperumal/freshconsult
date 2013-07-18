@@ -53,12 +53,9 @@
       <% end %>
       <!-- add page tab -->
       <span class="seperator"></span>
-      <% if current_account.ssl_enabled? %>
       <a href="#" id="page_tab_edit"><%= t('facebook_tab.configure_tab') %></a>
+      <div class="info-data"><%= t('facebook_tab.config_info') %></div>
       <div id="configure_page_tab" class="hide"></div>
-      <% else %>
-      <div class="info-data"><%= t('facebook_tab.no_ssl') %></div>
-      <% end %>
     </div>
   </li>
 </ul>
