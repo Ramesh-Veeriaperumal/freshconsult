@@ -1,3 +1,0 @@
-translations:
-- file: 'public/javascripts/locales/%{locale}.js'
-  only: ['integrations.*']
