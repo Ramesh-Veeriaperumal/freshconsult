@@ -2881,7 +2881,8 @@ Redactor.prototype = {
 						$('#redactor_file').dragupload(
 						{
 							url: this.opts.imageUpload,
-							uploadFields: this.opts.uploadFields,
+							//uploadFields: this.opts.uploadFields,
+							uploadFields: { "_uniquekey" : $.proxy(function(){ return this.uniqueKey }, this) },
 							success: $.proxy(this.imageUploadCallback, this),
 							error: $.proxy(this.imageUploadCallback, this),
 							ondropCallback: $.proxy(this.insertLoadingAtCaret, this)
@@ -2959,12 +2960,14 @@ Redactor.prototype = {
 					data = $.parseJSON(json);
 				if(data.filelink != undefined){
 					html = '<p><img src="' + data.filelink + '" class= "inline-image" data-id = "' + data.fileid + '" /></p>';
-					this.$editor.find('img.image-loader').replaceWith($(html))
-					if (typeof this.opts.imageLoadedCallback === 'function'){
-						this.opts.imageLoadedCallback(this);
-					}
-					else {
-						this.enableFormAfterLoadingImage();
+					this.$editor.find("#uploading_images_"+data.uniquekey).replaceWith($(html))
+					if(this.$editor.find("img.image-loader").length == 0){
+						if (typeof this.opts.imageLoadedCallback === 'function'){
+							this.opts.imageLoadedCallback(this);
+						}
+						else {
+							this.enableFormAfterLoadingImage();
+						}
 					}
 				}
 				else {
@@ -3405,13 +3408,17 @@ Redactor.prototype = {
 		{
 			this.uploadOptions.start();
 		}
-	
-		$('#' + this.id).load($.proxy(this.uploadLoaded, this));
+		
+		var _self = this;
+
+		$('#' + this.id).load(function() { _self.uploadLoaded.call(_self, this); 
+		});
 	
 		return this.id;
 	},
 	uploadForm : function(f, name)
 	{
+		this.insertLoadingAtCaret();
 		if (this.uploadOptions.input)
 		{
 			var formId = 'redactorUploadForm' + this.id;
@@ -3436,9 +3443,11 @@ Redactor.prototype = {
 			
 			var oldElement = this.uploadOptions.input;
 			var newElement = $(oldElement).clone();
+			var uniqueKeyElement = $('<input type="hidden" name="_uniquekey" value="' + this.uniqueKey + '">');
 			$(oldElement).attr('id', fileId);
 			$(oldElement).before(newElement);
 			$(oldElement).appendTo(this.form);
+			uniqueKeyElement.appendTo(this.form);
 			$(this.form).css('position', 'absolute');
 			$(this.form).css('top', '-2000px');
 			$(this.form).css('left', '-2000px');
@@ -3455,13 +3464,13 @@ Redactor.prototype = {
 	
 			this.element.submit();
 		}
-		this.insertLoadingAtCaret();
 	},
 	insertLoadingAtCaret: function(){
 		this.modalClose();	
 		this.$editor.focus();
 		this.restoreSelection();
-		var loadingNode = $('<img src="' + uploaded_img_placeholder + '" class="image-loader" style="cursor:default;">');
+		this.uniqueKey = new Date().getTime();
+		var loadingNode = $('<img src="' + uploaded_img_placeholder + '" class="image-loader" id="uploading_images_'+this.uniqueKey+'" style="cursor:default;">');
 		this.insertNodeAtCaret(loadingNode.get(0));
 		if (typeof this.opts.imageLoadingCallback === 'function'){
 			this.opts.imageLoadingCallback(this);
@@ -3479,23 +3488,9 @@ Redactor.prototype = {
 	enableFormAfterLoadingImage: function(){
 		this.$editor.parents('form').find('.load-disable').prop("disabled", false);
 	},
-	uploadLoaded : function()
+	uploadLoaded : function(i)
 	{
-		var i = $('#' + this.id);
-		var d;
-		
-		if (i.contentDocument)
-		{
-			d = i.contentDocument;
-		}
-		else if (i.contentWindow)
-		{
-			d = i.contentWindow.document;
-		}
-		else
-		{
-			d = window.frames[this.id].document;
-		}
+		var d = $(i).contents().find('body').get(0);
 		
 		// Success
 		if (this.uploadOptions.success)
@@ -3503,13 +3498,20 @@ Redactor.prototype = {
 			if (typeof d !== 'undefined')
 			{
 				// Remove bizarre <pre> tag wrappers around our json data:				
-				var rawString = d.body.innerHTML;
+				var rawString = d.innerHTML;
 				var jsonString = rawString.match(/\{.*\}/)[0];
 				this.uploadOptions.success(jsonString);
 			}
 			else
 			{
 				alert('Upload failed!');
+				this.$editor.find('img.image-loader').remove()
+				if (typeof this.opts.imageLoadedCallback === 'function'){
+					this.opts.imageLoadedCallback(this);
+				}
+				else {
+					this.enableFormAfterLoadingImage();
+				}
 				this.uploadOptions.success(false);
 			}
 		}
@@ -3800,7 +3802,10 @@ $.fn.execCommand = function(cmd, param)
 					{
 						$.each(this.opts.uploadFields, $.proxy(function(k,v)
 						{					
-							if (v.indexOf('#') === 0)
+							if (typeof v === 'function') {
+								v = v();
+							}
+							else if (v.indexOf('#') === 0)
 							{
 								v = $(v).val();
 							}
@@ -3812,7 +3817,6 @@ $.fn.execCommand = function(cmd, param)
 					
 					// append file data
 					fd.append('image[uploaded_data]', file);
-					
 
 					$.ajax({
 						dataType: 'html',
