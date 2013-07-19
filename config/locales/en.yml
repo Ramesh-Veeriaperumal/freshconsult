@@ -4053,7 +4053,7 @@ en:
     deleted_group: "Deleted Group"
     deleted_customer: "Deleted Customer"
     unsaved_report_filter: "Unsaved Report"
-    saved_report_filters: "There are no Saved report(s)"
+    saved_report_filters: "No saved report."
     save_filter_title: "Save this report"
     delete_filter_title: "Delete this report"
     report_filter_title: "Saved Report Title"
