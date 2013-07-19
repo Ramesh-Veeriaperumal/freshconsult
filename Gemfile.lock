@@ -165,9 +165,7 @@ GEM
     httpclient (2.2.4)
     httpi (0.9.7)
       rack
-    i18n (0.6.4)
-    i18n-js (2.1.2)
-      i18n
+    i18n (0.4.2)
     insensitive_hash (0.2.3)
     jammit (0.6.5)
       yui-compressor (>= 0.9.3)
@@ -390,8 +388,7 @@ DEPENDENCIES
   google-api-client (~> 0.6.3)
   http_accept_language (= 1.0.1)
   httparty (= 0.10.0)
-  i18n (= 0.6.4)
-  i18n-js (= 2.1.2)
+  i18n (= 0.4.2)
   insensitive_hash (= 0.2.3)
   jammit (= 0.6.5)
   jira4r (= 0.3.0)
