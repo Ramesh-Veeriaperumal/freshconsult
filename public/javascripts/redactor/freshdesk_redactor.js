@@ -37,6 +37,11 @@
 	         		focus: true, convertDivs: false, observeImages:true, autoresize:false, imageUpload:"/tickets_uploaded_images", 
 	         		buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link', 'image']});
 	         	break;
+	        case 'cnt-note':
+	         	jQuery('#'+element_id).redactor({ 
+	         		focus: true, convertDivs: false, observeImages:true, autoresize:false, imageUpload:"/tickets_uploaded_images", 
+	         		buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link', 'image']});
+	         	break;
 	        case 'signature':
 	         	jQuery('#'+element_id).redactor({ focus: false,convertDivs: false,  autoresize:false, buttons:['bold','italic','underline','|','image',  '|','fontcolor', 'backcolor', '|' ,'link']});	
 	        default:
