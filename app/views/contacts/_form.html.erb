@@ -58,7 +58,6 @@
 	  	tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',')) %>".split(","),
 	  	tokenSeparators: [',']
 	}); 
-  }); 
 
   jQuery(".ui-menu-item").live("click",function(ev){
   	jQuery("#user_address").focus();

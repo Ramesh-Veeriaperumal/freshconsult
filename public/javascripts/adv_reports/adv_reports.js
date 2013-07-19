@@ -433,11 +433,13 @@ Helpkit.AnalysisReport = (function(){
         var _this_JQObj= jQuery(this)
         report_for = _this_JQObj.attr("data-report-for");
         if(_this_JQObj.hasClass('DESC')){
-          _this_JQObj.removeClass('DESC').addClass('ASC').html('&#8593');
+          //_this_JQObj.removeClass('DESC').addClass('ASC').html('&#8593');
+          _this_JQObj.removeClass('DESC').removeClass('reports-icon-topN').addClass('ASC').addClass('reports-icon-bottomN');
           _FD.update_data_by_order(report_for,"ASC");
         }
         else{
-          _this_JQObj.removeClass('ASC').addClass('DESC').html('&#8595');
+          //_this_JQObj.removeClass('ASC').addClass('DESC').html('&#8595');
+          _this_JQObj.removeClass('ASC').removeClass('reports-icon-bottomN').addClass('DESC').addClass('reports-icon-topN');
           _FD.update_data_by_order(report_for,"DESC");
         }
       });
