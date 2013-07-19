@@ -57,6 +57,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     sent_on       Time.now
     content_type  "multipart/mixed"
     
+<<<<<<< Updated upstream
     part :content_type => "multipart/alternative" do |alt|
       alt.part "text/plain" do |plain|
         plain.body  render_message("email_notification.text.plain.erb",:ticket => params[:ticket], :body => params[:email_body], :dropboxes=>params[:dropboxes],
@@ -68,6 +69,14 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
                     :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
                     params[:notification_type]))
       end
+=======
+    part "text/html" do |html|
+      html.body   render_message("email_notification",
+                    :ticket => params[:ticket], :body => params[:email_body], :dropboxes=>params[:dropboxes],
+                    :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
+                                      params[:notification_type]),
+                    :surveymonkey_survey =>  Integrations::SurveyMonkey.survey_for_notification(params[:notification_type], params[:ticket]))                  
+>>>>>>> Stashed changes
     end
 
     params[:attachments].each do |a|
@@ -109,6 +118,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     
     part :content_type => "multipart/alternative" do |alt|
       alt.part "text/plain" do |plain|
+<<<<<<< Updated upstream
         plain.body   render_message("reply.text.plain.erb",:ticket => ticket, :body => note.full_text, :note => note, 
                     :dropboxes=>note.dropboxes, :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]),
                     :include_quoted_text => options[:quoted_text]
@@ -119,6 +129,19 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
                     :body => generate_body_html(note.full_text_html, inline_attachments, note.account), :note => note, 
                     :dropboxes=>note.dropboxes, :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]),
                     :include_quoted_text => options[:quoted_text]
+=======
+        plain.body   render_message("reply.text.plain.erb",:ticket => ticket, :body => note.full_text, :note => note, :dropboxes=>note.dropboxes,
+                    :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]),
+                    :include_quoted_text => options[:quoted_text],
+                    :surveymonkey_survey =>  Integrations::SurveyMonkey.survey(options[:include_surveymonkey_link], ticket, note.user)
+                    )
+      end
+      alt.part "text/html" do |html|
+        html.body   render_message("reply.text.html.erb",:ticket => ticket, :body => generate_body_html(note, inline_attachments), :note => note, :dropboxes=>note.dropboxes,
+                    :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]),
+                    :include_quoted_text => options[:quoted_text],
+                    :surveymonkey_survey =>  Integrations::SurveyMonkey.survey(options[:include_surveymonkey_link], ticket, note.user)
+>>>>>>> Stashed changes
                     )
       end
     end

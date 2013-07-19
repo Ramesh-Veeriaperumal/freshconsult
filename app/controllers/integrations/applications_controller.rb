@@ -26,6 +26,10 @@ class Integrations::ApplicationsController < Admin::AdminController
 		    installed_application = Integrations::Application.install_or_update(app_name, current_account.id, config_hash)
 		    flash[:notice] = t(:'flash.application.install.success') if installed_application
 		    kv_store.remove_key
+        if(installed_application.application.options[:configurable])
+          redirect_to edit_integrations_installed_application_path(installed_application)
+          return
+        end
 	    end	
   	rescue Exception => msg
   		puts "Something went wrong while configuring an installed application ( #{msg})"
