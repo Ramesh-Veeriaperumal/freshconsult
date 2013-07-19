@@ -1233,7 +1233,7 @@ en:
       assigned_to_nobody: "Agent Unassigned"
       reassigned: "Agent Reassigned"
       assigned: "Agent Assigned"
-      priority_change: "{{value}}"
+      priority_change: "%{value}"
       new_ticket: "New Ticket"
       conversation:
         out_email: 
@@ -1249,7 +1249,7 @@ en:
       execute_scenario: "Scenario Executed"
       ticket_merge: "Ticket Merged"
       ticket_split: "Ticket Splitted"
-      status_change: "{{value}}"
+      status_change: "%{value}"
       deleted: "Ticket Deleted"
       restored: "Ticket Restored"
       product_change: "Product Updated"
