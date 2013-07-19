@@ -42,7 +42,7 @@
 
       // console.log("PARAMS::::" + _params);
       params = JSON.parse(_params);
-      console.log("PARAMS::::" + JSON.stringify(params));
+      // console.log("PARAMS::::" + JSON.stringify(params));
 
       if(jQuery("[data-ticket="+params.ticket_id+"]").length != 0){
         show_refresh_alert(params.ticket_id, params.type);
