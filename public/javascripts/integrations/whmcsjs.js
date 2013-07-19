@@ -199,7 +199,7 @@ Freshdesk.WhmcsWidget= Class.create(Freshdesk.Widget, {
             data = this.products;
             if(data.length>0){
                 
-                crmResults ='<div><h6>'+I18n.t('integrations.whmcs.products')+'</h6>';
+                crmResults ='<div><h6>Products</h6>';
                 if(data.length>=5){
                     crmResults+= '<a href="#" onclick="jQuery(this).hide();jQuery(\'#products_all_data\').removeClass(\'hide\');return false;" class="pull-right">View all</a>'
                 }
@@ -226,7 +226,7 @@ Freshdesk.WhmcsWidget= Class.create(Freshdesk.Widget, {
 
             if(data.length>0){
 
-                crmResults ='<div><h6>'+I18n.t('integrations.whmcs.domains')+'</h6>';
+                crmResults ='<div><h6>Domains</h6>';
                  if(data.length>=5){
                     crmResults+= '<a href="#" onclick="jQuery(this).hide();jQuery(\"#domains_all_data\").removeClass(\"hide\");return false;" class="pull-right">View all</a>';
                 }
@@ -248,7 +248,7 @@ Freshdesk.WhmcsWidget= Class.create(Freshdesk.Widget, {
         }
         else{
                 if(data.length>0){
-                    crmResults ='<div><h6>'+I18n.t('integrations.whmcs.invoices')+'</h6>';
+                    crmResults ='<div><h6>Invoices Due</h6>';
                     if(data.length>=5){
                         crmResults+= '<a href="#" onclick="jQuery(this).hide();jQuery(\"#domains_all_data\").removeClass(\"hide\");return false;" class="pull-right">View all</a>';
                     }
@@ -278,7 +278,7 @@ Freshdesk.WhmcsWidget= Class.create(Freshdesk.Widget, {
             var crmResults="";
             if(data.length>0){
                 
-                crmResults ='<div><h6>'+I18n.t('integrations.whmcs.products')+'</h6>';
+                crmResults ='<div><h6>Products</h6>';
                 if(data.length>=5){
                     crmResults+= '<a href="#" onclick="jQuery(this).hide();jQuery(\'#products_all_data\').removeClass(\'hide\');return false;" class="pull-right">View all</a>'
                 }
@@ -303,7 +303,7 @@ Freshdesk.WhmcsWidget= Class.create(Freshdesk.Widget, {
     },
     WHMCS_CONTACT:'<div id="whmcs-widget">'+
     '<div>'+
-        '<h6>'+I18n.t('integrations.whmcs.contacts')+'<a href="<%=sso_url%>" target="_blank"><%=name%></a> </h6><div></div>',
+        '<h6>Contact details of <a href="<%=sso_url%>" target="_blank"><%=name%></a> </h6><div></div>',
     CONTACT_NA:
     '<div id="whmcs-widget">'+
             '<div class="name"  id="contact-na">Cannot find requester in <%=app_name%></div>'+
