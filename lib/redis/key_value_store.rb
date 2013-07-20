@@ -30,7 +30,7 @@ class Redis::KeyValueStore
   def set_key
     newrelic_begin_rescue do
       redis_client.set(key, value)
-      redis_client.expire(key,expires) if expires
+      redis_client.expire(key,expire) if expire
     end
   end
 
