@@ -41,7 +41,7 @@ Freshdesk.WhmcsWidget= Class.create(Freshdesk.Widget, {
                 }
                 var cPhone = (phone) ? phone : "N/A";
                 var cAddress = (address) ? address : "N/A";
-                contacts.push({sso_url: sso_url,name: fullName, email: email, company: company,domain: domain, company_url: null, phone: cPhone, address: cAddress});
+                contacts.push({sso_url: sso_url,name: fullName, email: email, company: company,domain: domainname, company_url: null, phone: cPhone, address: cAddress});
 
         return contacts;
     },
