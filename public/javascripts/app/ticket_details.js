@@ -936,6 +936,8 @@ refreshStatusBox = function() {
       else
       	scrollToError();
 
+  	$('#custom_ticket_form').submit();
+
     });
 
     $('body').on('submit.ticket_details', '#custom_ticket_form', function(ev) {
