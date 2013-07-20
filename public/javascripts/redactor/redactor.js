@@ -146,6 +146,12 @@ var Redactor = function(element, options)
 		mobile: true,
 		air: false,
 		wym: false,
+
+		convertLinks: true,
+		convertDivs: true,
+
+		autosave:false,
+		
 		interval: 60, // seconds
 
 		imageGetJson: false, // url (ex. /folder/images.json ) or false
