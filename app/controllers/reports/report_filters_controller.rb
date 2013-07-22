@@ -1,4 +1,4 @@
-class Reports::ReportFilterController < ApplicationController
+class Reports::ReportFiltersController < ApplicationController
   
   include ReadsToSlave
 

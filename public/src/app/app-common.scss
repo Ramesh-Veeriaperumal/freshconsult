@@ -7513,6 +7513,62 @@ div.watchers_tooltip{
 
 /* Add Watcher End */
 
+/* Ticket Auto-refresh */
+
+.count-label{
+	position: relative;
+	right: 3px;
+	&:before{
+		content: attr(data-count);
+		color: transparent;
+		background: #888;
+		border-radius: 9px;
+		font-weight: bold;
+		margin-left: 20px;
+		padding: 0px 8px 2px 6px;
+		margin-top: -2px;
+		margin-right: 5px;
+		font-size: 12px;
+		position: relative;
+		bottom: 2px;
+	}
+}
+
+#index_refresh_alert{
+	background-color: #fdfdf1;
+	border-bottom: 1px solid #eee;
+	padding: 14px 0;
+	@include box-shadow(inset 0px 3px 7px rgba(100,100,100,0.1));
+	color: #666;
+	cursor: pointer;
+
+	&:hover {
+		background-color : #fcfcd1;
+		@include transition(background-color 200ms linear);
+		.reload_icon{
+			background-color: #000;
+			@include transition(background-color 400ms linear);
+		}
+	}
+
+	.reload_link{
+	    color: #06C;
+		font-weight: bold;
+		padding-right: 10px;
+		float: right;
+	}	
+}
+.ticket_highlight {
+	@include animation(ticket_blink 0.8s ease-out 1);
+}
+
+@include keyframes(ticket_blink) {
+	0% { background: rgba(#ff0,.8);}
+	100% { background: rgba(#ff0,0);}
+}
+
+/* Ticket Auto-refresh */
+
 /* Admin-canned-response-folders */
 
 .folder_list
@@ -8233,66 +8289,6 @@ height: auto;
 .table-striped tbody tr.diffColor td{ 
 	background-color: #fefdee !important; 
 }
-.cust_list_table{
-     margin:0 auto;
-     .cust_list_table_header{
-     	margin-bottom:20px;
-     }
-}
-.cust_list_table_body{
-    border:1px solid #f1f1f1; /* depands upon bootstrap table variable $tableBorder  */
-    background:#f6f6f6;
-    padding:8px 0 8px 0;
-    @include border-radius(5px);
-    @include box-shadow(0px 0px 8px rgba(200, 200, 200, 0.3));
-    table{
-        background:#fff;
-    	  margin:0;
-        table-layout:fixed;
-    }
-    .pagination{
-    	background:#f6f6f6;
-        border-top:1px solid #f1f1f1;     /* depands upon bootstrap table variable $tableBorder  */ 
-        margin:0px;  
-        padding:10px; 
-        padding-bottom:0;
-        line-height:0;    
-    }
-    .cust-list-avatar 
-    {
-    	div.preview_pic{
-    	border: 2px solid #CCC;
-  		@include border-radius(100%);
-  		width: 30px;
-  		height: 30px;
-		}
-    	img{
-	        width:30px;
-	        height:30px;  
-			    @include border-radius(100%);     
-    	}
-    }
-    .btn-mini{
-        background-image:none;
-        background-color:#fdfdfd; 
-        &:hover{
-          background-color:#f1f1f1;  
-        }        
-    }
-	table{
-		border-bottom: 1px solid #f1f1f1; /* depands upon bootstrap table variable $tableBorder  */
-	    tr td
-	    {
-	    	width:23%; 
-	    	vertical-align: middle;
-		    &:last-child{
-		        width:31%;
-		        text-align:right;
-		        padding-right:10px;
-		    }
-		}
-	}
-}
 
 .agent-list-page {
   &.deleted-list{
@@ -8627,12 +8623,6 @@ height: auto;
 
 .header_buttons{
 	padding-top: 5px;
-}
-
-#company_sub_header{
-	font-size: 12px;
-	margin-top: 8px;
-	margin-bottom: 8px;
 }
 
 .margin-bottom{ margin-bottom:10px; }

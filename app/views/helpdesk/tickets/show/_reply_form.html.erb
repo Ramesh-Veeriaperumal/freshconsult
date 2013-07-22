@@ -142,14 +142,15 @@
         </span>
 
         <span class="btn-group  <% if privilege?(:edit_ticket_properties) %>dropup<%end%>">
-          <a class="btn btn-primary submit_btn">
+          <button class="btn btn-primary submit_btn">
             <%= t('ticket.reply_form.send') %>
-            <% if privilege?(:edit_ticket_properties) %>
-              <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
-                <span class="caret"></span>
-              </a>
-            <% end %>
-          </a>
+          
+          <% if privilege?(:edit_ticket_properties) %>
+            <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+              <span class="caret"></span>
+            </button>
+          <% end %>
+          </button>
           <% if privilege?(:edit_ticket_properties) %>
           <ul class="dropdown-menu custom_statuses pull-right">
             <%

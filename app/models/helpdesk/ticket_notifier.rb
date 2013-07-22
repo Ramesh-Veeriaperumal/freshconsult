@@ -144,6 +144,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
     inline_attachments = []
 
+
     part :content_type => "multipart/alternative" do |alt|
       alt.part "text/plain" do |plain|
         plain.body   render_message("forward.text.plain.erb",:ticket => ticket, :body => note.full_text, :dropboxes=>note.dropboxes)

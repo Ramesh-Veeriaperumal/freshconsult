@@ -59,8 +59,9 @@
 				<% if privilege?(:edit_ticket_properties) %>
 				<li class="ticket-btns hide_on_collapse">
 					<%= link_to(t('ticket.close_btn'), "#", 
-							:title  => t('ticket.close_btn_title'), 
-							:class => "btn" , :id=>"close_ticket_btn" , 
+							:title  => t('ticket.close_without_notification'), 
+							:class => "btn tooltip" , :id=>"close_ticket_btn" , 
+							"data-placement" => "below",
 							"data-href" => close_helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]})) unless @ticket.closed? %>
 				</li>
 				<% end %>

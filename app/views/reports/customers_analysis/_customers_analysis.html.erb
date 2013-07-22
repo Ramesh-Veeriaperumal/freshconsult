@@ -6,7 +6,7 @@ metric_data = @data_obj[metric_type]
   <h3 class="header-lead">
     <span><%=metric_data[:title]%></span>
     <a class="report-help-icon tooltip" title='<%=t("adv_reports.helptext.glance.how_to_read")%>' href="<%=@solution_artical_link%>" target="_blank">?</a>
-    <i class="sort DESC" data-report-for="<%=metric_type%>" style="float:right;font-weight:bold;cursor:pointer;">&#8595</i>
+    <i class="sort DESC reports-icon-topN pull-right tooltip" title="Toggle between Top-N and Bottom-N" data-report-for="<%=metric_type%>"></i>
   </h3>
   <div id="<%=metric_type%>_line_chart" class="graph-container"><div class="loading-center"></div></div>
 </div>
