@@ -60,12 +60,8 @@ $badges-a-layout:smart;
 	@include inline-block;
 }
 
-#select-badge{
-	max-height:340px; 
-	overflow:auto;	
-	.gamesettings-badges{
-		margin: 0 auto;
-	}
+#select-badge .gamesettings-badges{
+	margin: 0 auto;
 } 
 
 .badges {

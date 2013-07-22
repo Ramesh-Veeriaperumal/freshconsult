@@ -42,11 +42,10 @@
     <li class="non-arrow pull-right">
       <%= role_form.submit t('save'), :class => "btn btn-primary", 'data-loading-text' => t('saving')%>
     </li>
-  <% end %>
-  <li class="non-arrow pull-right">
-    <%= link_to @role.default_role? ? t('go_back') : t('cancel'), admin_roles_path, :class => "btn"%>
-  </li>
-		
+    <li class="non-arrow pull-right">
+      <%= link_to t('cancel'), admin_roles_path, :class => "btn"%>
+    </li>
+  <% end %>    
 </ul>
 
 <% javascript_tag do %>
@@ -103,7 +102,7 @@
         });
     };
 
-    $('#new_role').submit( function(ev) {
+    $('#role_form').submit( function(ev) {
 
       /* If none of the children of operational admin is checked
          then disable operational admin */
@@ -122,7 +121,7 @@
           type: 'hidden',
           name: 'role[privilege_list][]',
           value: $(this).val()
-        }).appendTo('#new_role');
+        }).appendTo('#role_form');
         $(this).removeAttr('name');
       });
       

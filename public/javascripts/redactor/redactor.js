@@ -80,7 +80,7 @@ var RLANG = {
 	choose: 'Select Existing',
 	choose_text: 'Showing recent 20 images',
 	or_choose: 'Or choose',
-	drop_file_here: 'Drag and Drop Image file here to upload',
+	drop_file_here: '...or Drop a file from your computer here',
 	align_left:	'Align Left (' + ctrlkeyname + shiftkeyname + 'L)',	
 	align_center: 'Align Center (' + ctrlkeyname + shiftkeyname + 'E)',
 	align_right: 'Align Right (' + ctrlkeyname + shiftkeyname + 'R)',
@@ -91,13 +91,13 @@ var RLANG = {
 	anchor: 'Anchor',
 	link_new_tab: 'Open link in new tab',
 	removeFormat: 'Remove formatting (' + ctrlkeyname + '\\)',
-	invalid_image_file: 'Please upload a valid image file',
+	invalid_image_file: 'Error occurred while uploading',
 	confirm_remove_format_for_entire_content: 'Converting the entire content to plain text will remove formatting and inserted items. Are you sure you want to continue?'
 };
 
+var uploaded_img_placeholder = (typeof(FILLER_IMAGES) === "undefined") ? "/images/fillers/image_upload_placeholder.gif" : FILLER_IMAGES.imageLoading;
 
 (function($){
-
 
 // Plugin
 jQuery.fn.redactor = function(option)
@@ -114,11 +114,11 @@ jQuery.fn.redactor = function(option)
 	});
 };
 
-
 // Initialization
 var Redactor = function(element, options)
 {
 	// Element
+	this.redactor_copy_content;
 	this.$el = $(element);
 	
 	// Lang
@@ -146,16 +146,21 @@ var Redactor = function(element, options)
 		mobile: true,
 		air: false,
 		wym: false,
+
 		convertLinks: true,
 		convertDivs: true,
 
-		autosave: false, // false or url
+		autosave:false,
+		
 		interval: 60, // seconds
 
 		imageGetJson: false, // url (ex. /folder/images.json ) or false
 		
 		imageUpload: false, // url
 		imageUploadCallback: false, // function
+
+		imageLoadingCallback: false, // function - hook to add function that can be executed while uploading image
+		imageLoadedCallback: false, // function - hook to add function that can be executed after uploading image
 		
 		fileUpload: false, // url
 		fileUploadCallback: false, // function
@@ -245,10 +250,10 @@ var Redactor = function(element, options)
 				'<option value="right">' + RLANG.right + '</option>' +
 			'</select>' +
 			'<div id="redactor_modal_footer">' +
-				'<a href="javascript:void(null);" class="uiButton" id="redactor_image_delete_btn" style="color: #000;">' + RLANG._delete + '</a>' +
+				'<a href="javascript:void(null);" class="btn" id="redactor_image_delete_btn" style="color: #000;">' + RLANG._delete + '</a>' +
 				'<span class="redactor_btns_box">' +
-					'<a href="javascript:void(null);" class="uiButton" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
-					'<input type="button" class="uiButton" name="save" id="redactorSaveBtn" value="' + RLANG.save + '" />' +
+					'<a href="javascript:void(null);" class="btn" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
+					'<input type="button" class="btn btn-primary" name="save" id="redactorSaveBtn" value="' + RLANG.save + '" />' +
 				'</span>' +
 			'</div>',
 
@@ -261,7 +266,12 @@ var Redactor = function(element, options)
 			'</div>' +
 			'<form id="redactorInsertImageForm" method="post" action="" enctype="multipart/form-data">' +
 				'<div id="redactor_tab1" class="redactor_tab">' +
-					'<input type="file" id="redactor_file" name="image[uploaded_data]" accept="image/*" />' +
+					'<div class="custom-file-upload">' +
+						'<div class="file-upload">' +
+							'<span class="file-upload-text">Select a file to upload</span>'+
+						'</div>' +
+						'<input type="file" id="redactor_file" name="image[uploaded_data]" accept="image/*" />' +
+					'</div>'+
 				'</div>' +
 				'<div id="redactor_tab2" class="redactor_tab" style="display: none;">' +
 					'<div id="redactor_image_box"></div>' +
@@ -273,8 +283,8 @@ var Redactor = function(element, options)
 			'</div>' +
 			'<div id="redactor_modal_footer">' +
 				'<span class="redactor_btns_box">' +
-					'<a href="javascript:void(null);" class="uiButton" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
-					'<input type="button" class="uiButton" name="upload" id="redactor_upload_btn" value="' + RLANG.insert + '" />' +
+					'<input type="button" class="btn" name="' + RLANG.cancel + '" id="redactor_btn_modal_close" value="' + RLANG.cancel + '" />' +
+					'<input type="button" class="btn btn-primary" name="upload" id="redactor_upload_btn" value="' + RLANG.insert + '" />' +
 				'</span>' +
 			'</div>',
 
@@ -302,8 +312,8 @@ var Redactor = function(element, options)
 			'</form>' +
 			'<div id="redactor_modal_footer">' +
 				'<span class="redactor_btns_box">' +
-					'<a href="javascript:void(null);" class="uiButton" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
-					'<input type="button" class="uiButton" id="redactor_insert_link_btn" value="' + RLANG.insert + '" />' +
+					'<a href="javascript:void(null);" class="btn" id="redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
+					'<input type="button" class="btn btn-primary" id="redactor_insert_link_btn" value="' + RLANG.insert + '" />' +
 				'</span>' +
 			'</div>',
 		modal_video: String() + 
@@ -670,7 +680,7 @@ Redactor.prototype = {
 
 		// paste
 		if (this.isMobile(true) === false)
-		{
+		{	this.cleanStyleAttr();	
 			this.$editor.bind('paste', $.proxy(function(e)
 			{ 
 				this.setBuffer();
@@ -686,6 +696,10 @@ Redactor.prototype = {
 	
 				var frag = this.extractContent();
 				
+				if(this.browser('opera') === true)
+				{
+					this.$editor.append("<span></span>");
+				}
 				setTimeout($.proxy(function()
 				{				
 					var pastedFrag = this.extractContent();
@@ -1188,10 +1202,10 @@ Redactor.prototype = {
 	{
 		var fontstyle = $(parent).css(css_property) || this.$editor.css(css_property);
 		fontstyle = fontstyle.split(",")[0];
-		if (css_property == 'font-size')
-			element = $('[rel=' + this.opts.fontsize_levels_reverse[fontstyle] + '].redactor_font_link');
+		if(css_property == 'font-size')
+			element = $('[rel="' + this.opts.fontsize_levels_reverse[fontstyle] + '"].redactor_font_link');
 		else
-			element = $('[rel=' + fontstyle + '].redactor_font_link');
+			element = $('[rel="' + fontstyle + '"].redactor_font_link');
 		if(element.length) {
 			element.html("<span class='icon ticksymbol'></span>" + element.html());
 		}
@@ -2384,6 +2398,27 @@ Redactor.prototype = {
 	
 		return html;
 	},
+	cleanStyleAttr: function() {
+
+				  this.$editor.on("DOMNodeInserted", $.proxy(function(e) {
+				   	
+				   	if($(e.target).attr("style"))
+				   	{
+						var styleparts = $(e.target).attr("style").split(";");
+						for (var i=0;i<styleparts.length;i++) {
+						  if(styleparts[i]) {
+							  var subParts = styleparts[i].split(':');
+							  this.compareParentStyles($(e.target), subParts[0]);
+						  }
+						}	
+					}	
+					if($(e.target).attr("style") && $(e.target).attr("style").length==0)
+					{
+						$(e.target).removeAttr("style");
+					}		   	
+
+				  }, this));
+	},
 	
 	// BUTTONS MANIPULATIONS
 	getBtn: function(key)
@@ -2469,6 +2504,7 @@ Redactor.prototype = {
 				if (new_h > min_h)
 				{
 					$(resize).height(new_h);
+					$(resize).attr('data-height', new_h)
 				}
 				
 				start_x = Math.round(e.pageX - $(this).eq(0).offset().left);
@@ -2851,12 +2887,14 @@ Redactor.prototype = {
 						$('#redactor_file').dragupload(
 						{
 							url: this.opts.imageUpload,
-							uploadFields: this.opts.uploadFields,
-							success: $.proxy(this.imageUploadCallback, this)
+							//uploadFields: this.opts.uploadFields,
+							uploadFields: { "_uniquekey" : $.proxy(function(){ return this.uniqueKey }, this) },
+							success: $.proxy(this.imageUploadCallback, this),
+							error: $.proxy(this.imageUploadCallback, this),
+							ondropCallback: $.proxy(this.insertLoadingAtCaret, this)
 						});
 					}
 				}
-
 				// ajax upload
 				this.uploadInit('redactor_file', { auto: true, url: this.opts.imageUpload, success: $.proxy(this.imageUploadCallback, this)  });
 			}
@@ -2913,33 +2951,51 @@ Redactor.prototype = {
 		}
 	},
 	imageUploadCallback: function(data)
-	{        
+	{   
 		this._imageSet(data);
 	},
 	_imageSet: function(json, link)
-	{
-		this.restoreSelection();		
+	{		
 		var validupload = true;
 		if (json !== false)
 		{
 			var html = '', data = '';
 			if (link !== true)
 			{
-				data = $.parseJSON(json);
-				if(data.filelink != undefined)		
-					html = '<p><img src="' + data.filelink + '" /></p>';
+				if(json.isJSON())
+					data = $.parseJSON(json);
+				if(data.filelink != undefined){
+					html = '<p><img src="' + data.filelink + '" class= "inline-image" data-id = "' + data.fileid + '" /></p>';
+					this.$editor.find("#uploading_images_"+data.uniquekey).replaceWith($(html))
+					if(this.$editor.find("img.image-loader").length == 0){
+						if (typeof this.opts.imageLoadedCallback === 'function'){
+							this.opts.imageLoadedCallback(this);
+						}
+						else {
+							this.enableFormAfterLoadingImage();
+						}
+					}
+				}
 				else {
 					alert(RLANG.invalid_image_file);
+					this.$editor.find('img.image-loader').remove()
+					if (typeof this.opts.imageLoadedCallback === 'function'){
+						this.opts.imageLoadedCallback(this);
+					}
+					else {
+						this.enableFormAfterLoadingImage();
+					}
 					validupload = false;
 				}
 			}
 			else
 			{
 				html = json;
+				this.modalClose();
+				this.restoreSelection();
+				this.execCommand('inserthtml', html);
 			}
-			
-			this.execCommand('inserthtml', html);
-		
+	
 			// upload image callback
 			if (link !== true && typeof this.opts.imageUploadCallback === 'function') 
 			{
@@ -2947,7 +3003,6 @@ Redactor.prototype = {
 			}
 		}
 		if (validupload) {
-			this.modalClose();
 			this.observeImages();
 		}
 	},
@@ -2989,7 +3044,7 @@ Redactor.prototype = {
 			{					
 				if (sel && sel.anchorNode && sel.anchorNode.parentNode.tagName === 'A')
 				{
-					url = sel.anchorNode.parentNode.href;
+					url = $(sel.anchorNode.parentNode).attr('href');
 					text = sel.anchorNode.parentNode.text;
 					target = sel.anchorNode.parentNode.target;
 					
@@ -3359,13 +3414,17 @@ Redactor.prototype = {
 		{
 			this.uploadOptions.start();
 		}
-	
-		$('#' + this.id).load($.proxy(this.uploadLoaded, this));
+		
+		var _self = this;
+
+		$('#' + this.id).load(function() { _self.uploadLoaded.call(_self, this); 
+		});
 	
 		return this.id;
 	},
 	uploadForm : function(f, name)
 	{
+		this.insertLoadingAtCaret();
 		if (this.uploadOptions.input)
 		{
 			var formId = 'redactorUploadForm' + this.id;
@@ -3390,9 +3449,11 @@ Redactor.prototype = {
 			
 			var oldElement = this.uploadOptions.input;
 			var newElement = $(oldElement).clone();
+			var uniqueKeyElement = $('<input type="hidden" name="_uniquekey" value="' + this.uniqueKey + '">');
 			$(oldElement).attr('id', fileId);
 			$(oldElement).before(newElement);
 			$(oldElement).appendTo(this.form);
+			uniqueKeyElement.appendTo(this.form);
 			$(this.form).css('position', 'absolute');
 			$(this.form).css('top', '-2000px');
 			$(this.form).css('left', '-2000px');
@@ -3409,25 +3470,33 @@ Redactor.prototype = {
 	
 			this.element.submit();
 		}
-	
 	},
-	uploadLoaded : function()
+	insertLoadingAtCaret: function(){
+		this.modalClose();	
+		this.$editor.focus();
+		this.restoreSelection();
+		this.uniqueKey = new Date().getTime();
+		var loadingNode = $('<img src="' + uploaded_img_placeholder + '" class="image-loader" id="uploading_images_'+this.uniqueKey+'" style="cursor:default;">');
+		this.insertNodeAtCaret(loadingNode.get(0));
+		if (typeof this.opts.imageLoadingCallback === 'function'){
+			this.opts.imageLoadingCallback(this);
+		}
+		else{
+			this.disableFormWhileLoadingImage();
+		} 
+	},
+	disableFormWhileLoadingImage: function(){
+		this.$editor.parents('form')
+		.find('input[type="submit"]:not(:disabled), input[type="button"]:not(:disabled), button:not(:disabled)')
+		.addClass('load-disable')
+		.prop("disabled", true);
+	},
+	enableFormAfterLoadingImage: function(){
+		this.$editor.parents('form').find('.load-disable').prop("disabled", false);
+	},
+	uploadLoaded : function(i)
 	{
-		var i = $('#' + this.id);
-		var d;
-		
-		if (i.contentDocument)
-		{
-			d = i.contentDocument;
-		}
-		else if (i.contentWindow)
-		{
-			d = i.contentWindow.document;
-		}
-		else
-		{
-			d = window.frames[this.id].document;
-		}
+		var d = $(i).contents().find('body').get(0);
 		
 		// Success
 		if (this.uploadOptions.success)
@@ -3435,13 +3504,20 @@ Redactor.prototype = {
 			if (typeof d !== 'undefined')
 			{
 				// Remove bizarre <pre> tag wrappers around our json data:				
-				var rawString = d.body.innerHTML;
+				var rawString = d.innerHTML;
 				var jsonString = rawString.match(/\{.*\}/)[0];
 				this.uploadOptions.success(jsonString);
 			}
 			else
 			{
 				alert('Upload failed!');
+				this.$editor.find('img.image-loader').remove()
+				if (typeof this.opts.imageLoadedCallback === 'function'){
+					this.opts.imageLoadedCallback(this);
+				}
+				else {
+					this.enableFormAfterLoadingImage();
+				}
 				this.uploadOptions.success(false);
 			}
 		}
@@ -3452,6 +3528,23 @@ Redactor.prototype = {
 	},
 	
 	// UTILITY
+	browser: function(browser)
+		{
+			var ua = navigator.userAgent.toLowerCase();
+			var match = /(chrome)[ \/]([\w.]+)/.exec(ua) || /(webkit)[ \/]([\w.]+)/.exec(ua) || /(opera)(?:.*version|)[ \/]([\w.]+)/.exec(ua) || /(msie) ([\w.]+)/.exec(ua) || ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec(ua) || [];
+
+			if (browser == 'version')
+			{
+				return match[2];
+			}
+
+			if (browser == 'webkit')
+			{
+				return (match[1] == 'chrome' || match[1] == 'webkit');
+			}
+
+			return match[1] == browser;
+		},
 	oldIE: function()
 	{
 		if ($.browser.msie && parseInt($.browser.version, 10) < 9)
@@ -3507,6 +3600,14 @@ Redactor.prototype = {
 				'font-size': _redactor.opts.fontsize_levels[$(this).attr('size')],
 				'color': $(this).attr('color')
 			});	
+			if(css_property=='font-family')
+			{
+				span.attr('rel', 'temp_redactor_font_family');
+			}
+			else if(css_property=='font-size')
+			{
+				span.attr('rel', 'temp_redactor_font_size');
+			}
 			return $(span);	
 		});
 		this.cleanUpRedundant();
@@ -3532,6 +3633,20 @@ Redactor.prototype = {
 			$(this).removeAttr('rel')
 		});
 
+		// Remove the font-size of child span elements
+		$.each(this.$editor.find('span'),function(){
+			if($(this).attr('rel') == 'temp_redactor_font_size')
+			{
+				$(this).find('span').css('font-size','');
+				$(this).removeAttr("rel");
+			}
+			else if($(this).attr('rel') == 'temp_redactor_font_family')
+			{
+				$(this).find('span').css('font-family','');
+				$(this).removeAttr("rel");
+			}
+		});
+
 		// Check if current span and parent span enclose same text
 		// If so the styles are concatenated 
 		// Style of child is retained in case of conflict
@@ -3547,9 +3662,7 @@ Redactor.prototype = {
 		$.each(this.$editor.find('span'), function() {
 			var _span = this;
 			$.each(_redactor.opts.span_cleanup_properties, function(i, css_property) {
-				if($(_span).css(css_property) == $(_span).parent().css(css_property)) {
-					$(_span).css(css_property,'');
-				}
+				_redactor.compareParentStyles(_span, css_property);
 			});
 
 			if($(this).css('background-color') == $(this).parent().css('background-color') || 
@@ -3562,6 +3675,12 @@ Redactor.prototype = {
 	},
 	inputEventAvailable: function() {
 		return ($.browser.webkit || $.browser.mozilla);
+	},
+	compareParentStyles: function(element, css_property) {
+		css_property = $.trim(css_property);
+		if($.trim($(element).css(css_property)) == $.trim($(element).parent().css(css_property))) {
+			$(element).css(css_property,'');
+		}
 	}
 	
 };
@@ -3606,7 +3725,7 @@ $.fn.destroyEditor = function()
 
 $.fn.setFocus = function()
 {
-	this.data('redactor').focus();
+	this.data('redactor').$editor.focus();
 };
 
 $.fn.execCommand = function(cmd, param)
@@ -3658,13 +3777,11 @@ $.fn.execCommand = function(cmd, param)
 			if (!$.browser.msie) 
 			{	
 				this.droparea = $('<div class="redactor_droparea"></div>');
-				this.dropareabox = $('<div class="redactor_dropareabox">' + this.opts.text + '</div>');	
-				this.dropalternative = $('<div class="redactor_dropalternative">' + this.opts.atext + '</div>');
+				this.dropareabox = $('<div class="redactor_dropareabox">' + this.opts.text + '</div>');
 				
 				this.droparea.append(this.dropareabox);
 				
-				this.$el.before(this.droparea);
-				this.$el.before(this.dropalternative);
+				this.$el.parent().after(this.droparea);
 
 				// drag over
 				this.dropareabox.bind('dragover', $.proxy(function() { return this.ondrag(); }, this));
@@ -3672,26 +3789,14 @@ $.fn.execCommand = function(cmd, param)
 				// drag leave
 				this.dropareabox.bind('dragleave', $.proxy(function() { return this.ondragleave(); }, this));
 		
-				var uploadProgress = $.proxy(function(e) 
-				{ 
-					var percent = parseInt(e.loaded / e.total * 100, 10);
-					this.dropareabox.text('Loading ' + percent + '%');
-					
-				}, this);
-		
-				var xhr = jQuery.ajaxSettings.xhr();
-				
-				if (xhr.upload)
-				{
-					xhr.upload.addEventListener('progress', uploadProgress, false);
-				}
-				
-				var provider = function () { return xhr; };
-		
 				// drop
 				this.dropareabox.get(0).ondrop = $.proxy(function(event)
 				{
 					event.preventDefault();
+
+					if(this.opts.ondropCallback){
+						this.opts.ondropCallback()
+					}
 					
 					this.dropareabox.removeClass('hover').addClass('drop');
 					
@@ -3703,7 +3808,10 @@ $.fn.execCommand = function(cmd, param)
 					{
 						$.each(this.opts.uploadFields, $.proxy(function(k,v)
 						{					
-							if (v.indexOf('#') === 0)
+							if (typeof v === 'function') {
+								v = v();
+							}
+							else if (v.indexOf('#') === 0)
 							{
 								v = $(v).val();
 							}
@@ -3715,13 +3823,11 @@ $.fn.execCommand = function(cmd, param)
 					
 					// append file data
 					fd.append('image[uploaded_data]', file);
-					
 
 					$.ajax({
 						dataType: 'html',
 						url: this.opts.url,
 						data: fd,
-						xhr: provider,
 						cache: false,
 						contentType: false,
 						processData: false,
@@ -3738,6 +3844,13 @@ $.fn.execCommand = function(cmd, param)
 								this.dropareabox.html(data);
 							}
 							
+						}, this),
+						error: $.proxy(function(data)
+						{
+							if (this.opts.error !== false)
+							{
+								this.opts.error(data);
+							}
 						}, this)
 					});
 

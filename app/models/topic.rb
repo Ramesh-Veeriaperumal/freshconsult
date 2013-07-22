@@ -221,4 +221,8 @@ class Topic < ActiveRecord::Base
     title
   end
 
+  def topic_changes
+    @topic_changes ||= self.changes.clone
+  end
+
 end

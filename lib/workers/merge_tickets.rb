@@ -31,9 +31,5 @@ class Workers::MergeTickets
       :to_emails => pvt_note ? [] : source_ticket.requester.email.to_a,
       :cc_emails => pvt_note ? [] : source_ticket.cc_email_hash && source_ticket.cc_email_hash[:cc_emails]
     )
-    if !source_note.private
-      Helpdesk::TicketNotifier.send_later(:deliver_reply, source_ticket, source_note , 
-                                                                        {:include_cc => true})
-    end
   end
 end

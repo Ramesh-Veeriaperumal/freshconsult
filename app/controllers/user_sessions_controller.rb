@@ -103,6 +103,18 @@ include Redis::TicketsRedis
     Rails.logger.debug "result json #{json.inspect}"
     render :json => json
   end
+
+  def generate_random_hash(google_viewer_id, account)
+     generated_hash = Digest::MD5.hexdigest(DateTime.now.to_s + google_viewer_id)
+     key_options = { :account_id => account.id, :token => generated_hash}
+     key_spec = Redis::KeySpec.new(AUTH_REDIRECT_GOOGLE_OPENID, key_options)
+     Redis::KeyValueStore.new(key_spec, google_viewer_id, {:group => :integration, :expire => 300}).set_key
+     return generated_hash;
+  end
+
+  def gen_hash_from_params_hash
+    Digest::MD5.hexdigest(params[:name]+params[:email]+current_account.shared_secret)
+  end
   
   def show
     redirect_to :action => :new
@@ -203,9 +215,10 @@ include Redis::TicketsRedis
       @current_user = @auth.user unless @auth.blank?
       @current_user = current_account.all_users.find_by_email(email) if @current_user.blank?
       unless gmail_gadget_temp_token.blank?
-        key_options = { :account_id => current_account.id, :token => gmail_gadget_temp_token}
-        kv_store = Redis::KeyValueStore.new Redis::KeySpec.new(RedisKeys::AUTH_REDIRECT_GOOGLE_OPENID, key_options)
-        google_viewer_id = kv_store.get
+        key_options = {:account_id => current_account.id, :token => gmail_gadget_temp_token}
+        kv_store = Redis::KeyValueStore.new(Redis::KeySpec.new(AUTH_REDIRECT_GOOGLE_OPENID, key_options))
+        kv_store.group = :integration
+        google_viewer_id = kv_store.get_key
         @gauth_error=true
         if google_viewer_id.blank?
           @notice = t(:'flash.gmail_gadgets.kvp_missing')
@@ -325,5 +338,4 @@ include Redis::TicketsRedis
       @contact.language = current_portal.language
       return @contact
     end
-    TOKEN_TYPE = "OpenSocialFirstTimeAccessToken"
 end

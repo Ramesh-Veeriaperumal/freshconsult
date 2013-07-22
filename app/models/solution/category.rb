@@ -33,6 +33,12 @@ class Solution::Category < ActiveRecord::Base
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:include => options[:include],:except => [:account_id,:import_id]) 
   end
+  
+  def as_json(options={})
+    options[:except] = [:account_id,:import_id]
+    json_str = super options
+    json_str
+  end
 
   def self.folder_names(account)
     account.solution_categories.map { |category| 

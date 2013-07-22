@@ -3,9 +3,13 @@ class Integrations::UserCredentialsController < ApplicationController
   
   def oauth_install
     begin
-      app_config = KeyValuePair.find_by_account_id_and_key(current_account.id, "#{params['id']}_oauth_config")
+      key_options = { :account_id => current_account.id, :provider => params['id']}
+      key_spec = Redis::KeySpec.new(Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options)
+      kv_store = Redis::KeyValueStore.new(key_spec)
+      kv_store.group = :integration
+      app_config = kv_store.get_key
       unless app_config.blank?
-        config_hash = JSON.parse(app_config.value)
+        config_hash = JSON.parse(app_config)
         app_name = config_hash["app_name"]
         config_hash.delete("app_name")	    
         
@@ -19,7 +23,7 @@ class Integrations::UserCredentialsController < ApplicationController
         Integrations::UserCredential.add_or_update(installed_application, current_user.id, config_hash)	    
         flash[:notice] = t(:'flash.application.install.success') if installed_application and 
                           request.cookies.fetch('return_uri', '').blank?
-        app_config.delete
+  	    kv_store.remove_key
       end	
     rescue Exception => msg
       puts "Something went wrong while configuring an installed application ( #{msg})"

@@ -118,6 +118,14 @@ $.validator.addMethod("at_least_one_item", function(value, element, options) {
 $.validator.addClassRules("at_least_one_item", { at_least_one_item: true});
 
 // Time validator
+
+$.validator.addMethod("hhmm_time_duration",function(value){
+     return (/(^[0-9]*$)|(^[0-9]*:([0-5][0-9]{0,1}|[0-9])$)|(^[0-9]*\.{1}[0-9]+$)/).test(value);}, 
+     "Please enter a valid time")
+$.validator.addClassRules("hhmm_time_duration", {
+     hhmm_time_duration: true
+  });
+
 $.validator.addMethod("time_12", function(value, element){
   if( ! /^[0-9]{1,2}:[0-9]{1,2} [ap]m$/i.test(value) ) return false;  
   var t = value.split(' ');

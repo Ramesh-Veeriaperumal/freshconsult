@@ -30,7 +30,9 @@ class Support::SearchController < SupportController
   end
 
   def tickets
-    search_portal([Helpdesk::Ticket])
+    klasses = [Helpdesk::Ticket]
+    klasses << Helpdesk::Note if current_account.es_enabled?
+    search_portal(klasses)
     @current_filter = :tickets
     render_search
   end
@@ -63,6 +65,7 @@ class Support::SearchController < SupportController
       to_ret << Solution::Article if(allowed_in_portal?(:open_solutions))
       to_ret << Topic if(feature?(:forums) && allowed_in_portal?(:open_forums))
       to_ret << Helpdesk::Ticket if(current_user)
+      to_ret << Helpdesk::Note if(current_user) && current_account.es_enabled?
 
       to_ret
     end
@@ -108,8 +111,8 @@ class Support::SearchController < SupportController
             end
           end
         else
-          es_classes = f_classes.map { |es_class| es_class = es_class.document_type }
-          return es_search_portal(es_classes)
+          # es_classes = f_classes.map { |es_class| es_class = es_class.document_type }
+          return es_search_portal(f_classes)
         end
 
       rescue Exception => e
@@ -124,7 +127,7 @@ class Support::SearchController < SupportController
     def es_search_portal(search_in)
       begin
         options = { :load => true, :page => (params[:page] || 1), :size => (params[:max_matches] || 20), :preference => :_primary_first }
-        @es_items = Tire.search [current_account.search_index_name], options do |search|
+        @es_items = Tire.search Search::EsIndexDefinition.searchable_aliases(search_in, current_account.id), options do |search|
           search.query do |query|
             query.filtered do |f|
               if SearchUtil.es_exact_match?(params[:term])
@@ -132,7 +135,6 @@ class Support::SearchController < SupportController
               else
                 f.query { |q| q.string SearchUtil.es_filter_key(params[:term]), :analyzer => "include_stop" }
               end
-              f.filter :terms, :_type => search_in
               f.filter :term, { :account_id => current_account.id }
               f.filter :or, { :not => { :exists => { :field => :status } } },
                             { :not => { :term => { :status => SearchUtil::DEFAULT_SEARCH_VALUE } } }
@@ -147,8 +149,14 @@ class Support::SearchController < SupportController
                               { :term => { :deleted => false } }
                 f.filter :or, { :not => { :exists => { :field => :spam } } },
                               { :term => { :spam => false } }
-                # f.filter :or, { :not => { :exists => { :field => 'es_notes.private' } } },
-                #               { :term => { 'es_notes.private' => false } }
+                f.filter :or, { :not => { :exists => { :field => 'private' } } },
+                              { :term => { 'private' => false } }
+                f.filter :or, { :not => { :exists => { :field => :notable_deleted } } },
+                              { :term => { :notable_deleted => false } }
+                f.filter :or, { :not => { :exists => { :field => :notable_spam } } },
+                              { :term => { :notable_spam => false } }
+                f.filter :or, { :not => { :exists => { :field => :notable_requester_id } } },
+                              { :term => { :notable_requester_id => current_user.id } }
                 if current_user.has_company?
                   f.filter :or, { :not => { :exists => { :field => 'forum.customer_forums.customer_id' } } },
                                 { :term => { 'forum.customer_forums.customer_id' => current_user.customer_id } }
@@ -164,11 +172,11 @@ class Support::SearchController < SupportController
                 end
               end
               unless main_portal?
-                if search_in.include?('solution/article')
+                if search_in.include?(Solution::Article)
                   f.filter :or, { :not => { :exists => { :field => 'folder.category_id' } } },
                                 { :term => { 'folder.category_id' => current_portal.solution_category_id || 0 } }
                 end
-                if search_in.include?('topic')
+                if search_in.include?(Topic)
                   f.filter :or, { :not => { :exists => { :field => 'forum.forum_category_id' } } },
                                 { :term => { 'forum.forum_category_id' => current_portal.forum_category_id || 0 } }
                 end
@@ -285,6 +293,8 @@ class Support::SearchController < SupportController
           topic_result(item)
         when 'Helpdesk::Ticket'
           ticket_result(item)
+        when 'Helpdesk::Note'
+          note_result(item)
       end
     end
 
@@ -310,6 +320,14 @@ class Support::SearchController < SupportController
         'desc' => truncate(ticket.description.html_safe, :length => truncate_length),
         'type' => "TICKET", 
         'url' => support_ticket_path(ticket) }
+    end
+
+    def note_result note
+      { 'title' => note.notable.subject.html_safe, 
+        'group' => "Note", 
+        'desc' => truncate(note.body.html_safe, :length => truncate_length),
+        'type' => "NOTE", 
+        'url' => support_ticket_path(note.notable) }
     end
 
     def truncate_length

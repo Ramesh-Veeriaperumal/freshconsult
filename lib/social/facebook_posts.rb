@@ -136,15 +136,19 @@ class Social::FacebookPosts
                         :created_at => Time.zone.parse(comment[:created_time]),
                         :fb_post_attributes => {:post_id => comment[:id], :facebook_page_id =>@fb_page.id ,:account_id => @account.id}
                                   )
-      if @note.save
-        
-      else
-        puts "error while saving the note #{@note.errors.to_json}"
-      end
-      
+
+        begin
+          user.make_current
+          if @note.save
+            
+          else
+            puts "error while saving the note #{@note.errors.to_json}"
+          end
+        rescue
+          User.reset_current_user
+        end
+      end    
     end
-    
-   end
  end 
 
   def truncate_subject(subject , count)
@@ -154,8 +158,8 @@ class Social::FacebookPosts
     
   def get_comment_updates(fetch_since)
     @fb_page.fb_posts.find_in_batches(:batch_size => 500,
-                :conditions => [ "social_fb_posts.postable_type = ? and created_at > ?", 
-                  'Helpdesk::Ticket', (Time.now - 7.days).to_s(:db)]) do |retrieved_posts|    
+                :conditions => [ "social_fb_posts.postable_type = ? and social_fb_posts.msg_type = ? and created_at > ?", 
+                  'Helpdesk::Ticket','post',(Time.now - 7.days).to_s(:db)]) do |retrieved_posts|    
 
       retrieved_posts_id = retrieved_posts.map { |post|  "'#{post.post_id}'" }.join(',') 
       
@@ -181,8 +185,13 @@ class Social::FacebookPosts
                         :fb_post_attributes => {:post_id => comment[:id], :facebook_page_id =>@fb_page.id,
                                                 :account_id => @account.id}
                         )
-          unless @note.save
-            puts "error while saving the note :: #{@note.errors.to_json}"
+          begin
+            user.make_current
+            unless @note.save
+              puts "error while saving the note :: #{@note.errors.to_json}"
+            end
+          rescue
+            User.reset_current_user
           end
         end
       end

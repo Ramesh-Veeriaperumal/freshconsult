@@ -26,7 +26,7 @@
 
 			<li class="app-<%= application.system_app? ? "native" : "custom" %>">
 				<div class="application">
-				<div class="logo application-logo-<%= application.system_app? ? application.name : "custom_app" %>"></div>
+				<span class="logo application-logo-<%= application.system_app? ? application.name : "custom_app" %>"></span>
 		  		<div class="actions"> 
 		  			<% i_app_index=@installed_applications.index { |i_app| true if(i_app.application == application) }
 

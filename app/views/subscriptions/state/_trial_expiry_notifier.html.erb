@@ -1,0 +1,16 @@
+<% trial_days = current_account.subscription.trial_days %>
+<div class="side-panel trial_expiry <%= trial_days > 10 ? 'more_than_ten' : 'less_than_ten' %>">  
+<h3 class="sub-lead">
+<%= trial_days > 0? t('trial_expires_in', :no_of_days => pluralize(trial_days, t('trial_day'), t('days')) )  :  
+	t('trial_expired_on', :next_renewal_at => current_account.subscription.next_renewal_at.to_s(:long_day) ) %>
+</h3>
+<p><%= t('trail_expiry_notification') %></p>
+
+<% if current_user.privilege?(:manage_account) and trial_days %>
+  <p><%= t('hard_pressed_for_time') %><br/>
+  	<b><a onclick="window.open(this.href);return false;" href="http://resources.freshdesk.com/DemoRequest.html"  target="_blank"><%= t('schedule_a_complimentary_session') %></a></b></p>
+  <div class="trial-background">
+  	<%= link_to("#{t('choose_a_plan')} <b class='arrow-right'></b>", subscription_url) %>
+  </div>
+<% end %>
+</div>

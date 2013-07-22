@@ -9,7 +9,7 @@
 	</b>
 
 	<h2 class="heading">{{ article.title | h}}</h2>
-	<p>Modified on: {{ article.modified_on | short_day_with_time }}</p>
+	<p>{% translate portal.article.modified_on %} {{ article.modified_on | short_day_with_time }}</p>
 
 	<hr />
 	{% comment %}
@@ -60,14 +60,11 @@
 	</div>	
 </section>
 
-{% if article.folder.articles_count > 0 %}
+{% if article.folder.articles_count > 1 %}
 <section class="sidebar content rounded-6">	
 	<div class="cs-g-c">
 		<section class="article-list">
-			<h3 class="list-lead">
-				More articles in
-				<span class="folder-name">{{ article.folder.name | h}}</span>
-			</h3>
+			{{ article.folder | more_articles_in_folder }}
 			{{ article.folder | article_list: 10, article }}
 		</section>
 	</div>

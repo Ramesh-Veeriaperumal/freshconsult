@@ -3219,7 +3219,7 @@ es-LA:
       level2: "Nivel 2"
       level3: "nivel 3"
       nested_label: "etiquetas de campo anidadas"
-      nestedfield_helptext: "Utilice el siguiente formulario de texto area libre de añadir o editar los elementos de su menú desplegable, ordene los elementos pulsando la tecla de tabulación una vez o dos veces. lo vamos a convertir a los elementos desplegables sobre la base de la muesca, por favor, tenga mucho cuidado<a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>aprender mas</a>"
+      nestedfield_helptext: "Utilice el siguiente formulario de texto area libre de añadir o editar los elementos de su menú desplegable, ordene los elementos pulsando la tecla de tabulación una vez o dos veces. lo vamos a convertir a los elementos desplegables sobre la base de la muesca, por favor, tenga mucho cuidado <a target='_blank' href=%{learn_more}>aprender mas</a>"
       nestedfield_helptext_preview: "esta es la vista previa de muestra para los elementos desplegables, usa la forma libre del texto en \"editar vista\" para editar estos element"
       sla_timer: "Tiempo SLA"
       status_choices: "selecciona estado"

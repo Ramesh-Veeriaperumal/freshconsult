@@ -56,7 +56,8 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   end
   
   def deleted_customers
-    @deleted_customers = DeletedCustomers.all
+    @deleted_customers = DeletedCustomers.all(:conditions =>  ['status not in (?)', [0]], 
+                                              :order => "created_at DESC")
     @deleted_customers = @deleted_customers.paginate( :page => params[:page], :per_page => 30)
   end
 

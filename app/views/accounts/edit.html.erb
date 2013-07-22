@@ -1,5 +1,3 @@
-<%= include_cloudfront_css :pattern %>
-<%= include_cloudfront_js :pattern %>
 <% content_for :sidebar do %>
 <%= render :partial => "helpnote" %>
 <% end %>
@@ -28,7 +26,7 @@
 									:html => { :multipart => true ,
 											   :method => :put, 
 											   "data-rebrand-form" => true, 
-											   :id => "edit_form", :class => "form-horizontal"  } do |f| %>
+											   :id => "edit_form", :class => "form-horizontal", :rel=> "validate"  } do |f| %>
 
 	<%= link_to "Customize portal >", admin_portal_template_path( @account.main_portal ), 
 					:rel => "customize-portal", :class => "btn btn-bold pull-right" %>
@@ -43,7 +41,7 @@
 						<div class="control-group">
 							<%= portal.label :name, t('account.helpdesk_name'), :class => "control-label" %>
 							<div class="controls">				    
-								<%= portal.text_field :name, :class => "text auto", :size => "50" %>
+								<%= portal.text_field :name, :class => "text required auto", :size => "50" %>
 								<span class="help-block">
 									<%= t(:'helpdesk.rebranding.name.info') %>
 								</span>
@@ -89,7 +87,7 @@
 						<div class="control-group">
 							<%= f.label :ticket_display_id, "#{t('next')} Ticket ID #", :class => "control-label" %>
 							<div class="controls">		    	
-								<%= f.text_field :ticket_display_id, :value => @account.get_max_display_id, :class => "text auto", :size => "15" %>
+								<%= f.text_field :ticket_display_id, :value => @account.get_max_display_id, :class => "text number auto", :size => "15" %>
 								<div class="help-block"><%=t('account.info4')%></div>
 					  		</div>
 						</div>

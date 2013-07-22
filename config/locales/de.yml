@@ -3303,7 +3303,7 @@ de:
       level2: "Level 2"
       level3: "Level 3"
       nested_label: "Eingerückte Feld-Labels"
-      nestedfield_helptext: "Verwenden Sie den nachstehenden leeren Formulartextbereich, um Elemente für Ihre Dropdown-Liste hinzuzufügen oder zu bearbeiten, und rücken Sie Elemente ein, indem Sie die Tabulator-Taste ein- oder zweimal drücken. Je nach Einrückung konvertieren wir es zu den Dropdown-Elementen. Geben Sie daher besondere Obacht. <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>Mehr erfahren</a> "
+      nestedfield_helptext: "Verwenden Sie den nachstehenden leeren Formulartextbereich, um Elemente für Ihre Dropdown-Liste hinzuzufügen oder zu bearbeiten, und rücken Sie Elemente ein, indem Sie die Tabulator-Taste ein- oder zweimal drücken. Je nach Einrückung konvertieren wir es zu den Dropdown-Elementen. Geben Sie daher besondere Obacht. <a target='_blank' href=%{learn_more}>Mehr erfahren</a> "
       nestedfield_helptext_preview: "Hier finden Sie die „Vorschau“ für ein Beispiel an Dropdown-Elementen. Verwenden Sie den leeren Formulartextbereich in der Ansicht „Bearbeiten“, um Elemente zu bearbeiten."
       sla_timer: SLA-Timer
       status_choices: Status-Optionen

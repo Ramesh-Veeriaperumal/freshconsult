@@ -1,8 +1,6 @@
 <% content_for :sidebar do %>
   <%= render :partial => "helpnote_without_tour" %>
 <% end %>
-<%= include_cloudfront_css :pattern %>
-<%= include_cloudfront_js :pattern %>
 <% form_for @agent, :html => { :id => "agent_form", :rel => "validate", :multipart => true, 
     "data-focus-invalid" => false,  "data-ignore" => "" } do |f| %>
 	<%= f.error_messages %>

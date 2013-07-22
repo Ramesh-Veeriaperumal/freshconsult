@@ -1,13 +1,14 @@
 require 'csv'
 module ExportCsvUtil
 
+  BOM = "\377\376" #Byte Order Mark
   def set_date_filter
    if !(params[:date_filter].to_i == TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter])
     params[:start_date] = params[:date_filter].to_i.days.ago.beginning_of_day.to_s(:db)
     params[:end_date] = Time.now.end_of_day.to_s(:db)
   else
-    params[:start_date] = Date.parse(params[:start_date]).beginning_of_day.to_s(:db)
-    params[:end_date] = Date.parse(params[:end_date]).end_of_day.to_s(:db)
+    params[:start_date] = Time.zone.parse(params[:start_date]).to_s(:db)
+    params[:end_date] = Time.zone.parse(params[:end_date]).end_of_day.to_s(:db)
    end
   end
 
@@ -78,7 +79,7 @@ module ExportCsvUtil
   def export_data(items, csv_hash, is_portal=false)
     csv_string = ""
     unless csv_hash.blank?
-      csv_string = CSVBridge.generate do |csv|
+      csv_string = CSVBridge.generate(:col_sep => "\t") do |csv|
         headers = csv_hash.keys.sort
         if is_portal
           vfs = visible_fields
@@ -98,6 +99,7 @@ module ExportCsvUtil
         end
       end
     end
+    csv_string = BOM + Iconv.conv("utf-16le", "utf-8", csv_string)
     send_data csv_string, 
             :type => 'text/csv; charset=utf-8; header=present', 
             :disposition => "attachment; filename=tickets.csv"

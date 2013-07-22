@@ -1,5 +1,4 @@
 <% content_for :sidebar do -%><%= render :partial => 'helpnote' %><%- end %>
-<%= include_cloudfront_css :pattern %>
 
 <div class="floatr" pjax-container>
 	<%= link_to t('canned_folders.new_response'), 
@@ -38,7 +37,6 @@
 	<span id="edit-ca-folder" class="hide"><b> &middot; &nbsp;</b><%= t('canned_folders.edit') %>&nbsp;</span>
 	<%= link_to(' <b>&middot;</b> &nbsp;'+t('canned_folders.delete'), 
 		admin_canned_responses_folder_path(@ca_res_folder), 
-		"data-method" => :delete, 
 		:id => "del",
 		:class => "hide") %>
 	</div></div>

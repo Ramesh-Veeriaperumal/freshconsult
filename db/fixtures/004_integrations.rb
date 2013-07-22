@@ -10,6 +10,7 @@ if Integrations::Application.count == 0
     :domain => { :type => :text, :required => true, :label => "integrations.capsule.form.domain", :info => "integrations.capsule.form.domain_info", :rel => "ghostwriter", :autofill_text => ".capsulecrm.com", :validator_type => "domain_validator" }, 
     :api_key => { :type => :text, :required => true, :label => "integrations.capsule.form.api_key", :info => "integrations.capsule.form.api_key_info" }, 
     :bcc_drop_box_mail => { :type => :multiemail, :required => false, :label => "integrations.capsule.form.bcc_drop_box_mail", :info => "integrations.capsule.form.bcc_drop_box_mail_info" }}
+    s.application_type = "capsule_crm"
   end
   
   Integrations::Widget.seed(:application_id, :name) do |s|
@@ -34,6 +35,7 @@ if Integrations::Application.count == 0
         :freshbooks_note => { :type => :text, :required => false, :label => "integrations.freshbooks.form.freshbooks_note", 
                             :info => "integrations.freshbooks.form.freshbooks_note_info", :default_value => 'Freshdesk Ticket # {{ticket.id}}' }
     }
+    s.application_type = "freshbooks"
   end
   
   Integrations::Widget.seed(:application_id, :name) do |s|
@@ -63,6 +65,7 @@ if Integrations::Application.count == 0
         :domain => { :type => :text, :required => true, :label => "integrations.harvest.form.domain", :info => "integrations.harvest.form.domain_info", :rel=> "ghostwriter", :autofill_text => ".harvestapp.com", :validator_type => "domain_validator" }, 
         :harvest_note => { :type => :text, :required => false, :label => "integrations.harvest.form.harvest_note", 
                             :info => "integrations.harvest.form.harvest_note_info", :default_value => 'Freshdesk Ticket # {{ticket.id}}' }}
+    s.application_type = "harvest"
   end
   
   Integrations::Widget.seed(:application_id, :name) do |s|
@@ -93,6 +96,7 @@ if Integrations::Application.count == 0
                       :required => false, :label => "integrations.google_contacts.form.account_settings", 
                       :info => "integrations.google_contacts.form.account_settings_info" }
                  }
+    s.application_type = "google_contacts"
   end
 
   # Populate JIRA
@@ -110,6 +114,7 @@ if Integrations::Application.count == 0
                   :username => { :type => :text, :required => true, :label => "integrations.jira.form.username" },
                   :password => { :type => :password, :label => "integrations.jira.form.password" } 
                 }
+    s.application_type = "jira"            
   end
 
   Integrations::Widget.seed(:application_id, :name) do |s|
@@ -141,6 +146,7 @@ if Integrations::Application.count == 0
                       :required => false, :label => "integrations.google_analytics.form.google_analytics_settings", 
                       :info => "integrations.google_analytics.form.google_analytics_settings_info" }
                 }
+    s.application_type = "google_analytics"            
   end
 
   #Sugar CRM
@@ -156,7 +162,7 @@ if Integrations::Application.count == 0
         :username => { :type => :text, :required => true, :label => "integrations.sugarcrm.form.username" },
         :password => { :type => :password, :label => "integrations.sugarcrm.form.password", :encryption_type => "md5" }
     }
-    
+    s.application_type = "sugarcrm"
   end
 
   Integrations::Widget.seed(:application_id, :name) do |s|
@@ -188,6 +194,7 @@ if Integrations::Application.count == 0
                   :workflow_max_note => { :type => :text, :required => false, :label => "integrations.workflow_max.form.workflow_max_note", 
                                       :info => "integrations.workflow_max.form.workflow_max_note_info", :default_value => 'Freshdesk Ticket # {{ticket.id}}' }
                 }
+    s.application_type = "workflow_max"            
   end
 
   Integrations::Widget.seed(:application_id, :name) do |s|
@@ -211,6 +218,7 @@ if Integrations::Application.count == 0
     s.description = "integrations.salesforce.desc" 
     s.listing_order = 9
     s.options = {:direct_install => true, :oauth_url => "/auth/salesforce?origin={{account_id}}"}
+    s.application_type = "salesforce"
   end
 
   Integrations::Widget.seed(:application_id, :name) do |s|
@@ -241,6 +249,7 @@ if Integrations::Application.count == 0
       :company_id => { :type => :text, :required => true, :label => "integrations.logmein.form.company_id", :info => "integrations.logmein.form.logmein_company_info" },
       :password => { :type => :password, :label => "integrations.logmein.form.password", :info => "integrations.logmein.form.logmein_sso_pwd_info" }
     }
+    s.application_type = "logmein"
   end
 
   Integrations::Widget.seed(:application_id, :name) do |s|
@@ -291,6 +300,7 @@ if Integrations::Application.count == 0
                                     :clazz => 'Integrations::BatchbookVersionDetector'
                           }
       }
+      s.application_type = "batchbook"
   end
 
   Integrations::Widget.seed(:application_id, :name) do |s|
@@ -319,6 +329,7 @@ if Integrations::Application.count == 0
     s.description = "integrations.mailchimp.desc" 
     s.listing_order = 13
     s.options = {:direct_install => true, :oauth_url => "/auth/mailchimp?origin={{account_id}}"}
+    s.application_type = "mailchimp"
   end
 
   Integrations::Widget.seed(:application_id, :name) do |s|
@@ -349,6 +360,7 @@ if Integrations::Application.count == 0
         :api_key => { :type => :text, :required => true, :label => "integrations.campaignmonitor.form.api_key", :info => "integrations.campaignmonitor.form.api_key_info" },
         :client_id => { :type => :text, :required => true, :label => "integrations.campaignmonitor.form.client_id", :info => "integrations.campaignmonitor.form.client_id_info" }
     }
+    s.application_type = "campaignmonitor"
   end
 
   Integrations::Widget.seed(:application_id, :name) do |s|
@@ -380,6 +392,7 @@ if Integrations::Application.count == 0
         :username => { :type => :text, :required => true, :label => "integrations.icontact.form.username" },
         :password => { :type => :password, :label => "integrations.icontact.form.api_password" }
     }
+    s.application_type = "icontact"
   end
 
   Integrations::Widget.seed(:application_id, :name) do |s|
@@ -406,6 +419,7 @@ if Integrations::Application.count == 0
     s.description = "integrations.constantcontact.desc" 
     s.listing_order = 16
     s.options = {:direct_install => true, :oauth_url => "/auth/constantcontact?origin={{account_id}}"}
+    s.application_type = "constantcontact"
   end
 
   Integrations::Widget.seed(:application_id, :name) do |s|
@@ -439,6 +453,7 @@ if Integrations::Application.count == 0
       }
     }
     s.listing_order = 17
+    s.application_type = "google_calendar"
   end
 
   Integrations::Widget.seed(:application_id, :name) do |s|
@@ -473,7 +488,7 @@ if Integrations::Application.count == 0
           application_id: {{application.id}},
           oauth_token:"{{installed_app.user_access_token}}",
           ticket_id: parseInt('{{ticket.id}}'),
-          ticket_subject: "{{ticket.subject | encode_html}}",
+          ticket_subject: "{{ticket.subject | encode_html | stip_newlines}}",
           events_list: [{{installed_app.events_list}}],
           oauth_url: "{{installed_app.oauth_url}}"
         };

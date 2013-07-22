@@ -1,51 +1,48 @@
-<div class="report-page" id="report-page">
-  <div class="report-content-wrapper">
-    <!--report header-->
-    <%= render :partial => "reports/shared/report_view_header", :locals => {} %>
-
-    <div class="row-fluid">
-      <div class="span12">
-        <h3 class="header-lead">
-          <span><%=t('adv_reports.load.resp_accuracy')%></span>
-          <a class="report-help-icon tooltip" title='<%=t("adv_reports.helptext.glance.how_to_read")%>' href="<%=@solution_artical_link%>" target="_blank">?</a>
-        </h3>
-        <div id="response_accuracy_line_chart" class="single-stacked-bar" style="height:250px;"><div class="noinfo"><%=t('adv_reports.no_data_to_display_msg')%></div></div>
-      </div>
-    </div>
-    <div class="row-fluid">
-      <div class="span12">
-        <h3 class="header-lead">
-          <span><%=t('adv_reports.load.resp_time')%></span>
-          <a class="report-help-icon tooltip" title='<%=t("adv_reports.helptext.glance.how_to_read")%>' href="<%=@solution_artical_link%>" target="_blank">?</a>
-        </h3>
-        <div id="response_time_line_chart" class="single-stacked-bar" style="height:250px;"><div class="noinfo"><%=t('adv_reports.no_data_to_display_msg')%></div></div>
-      </div>
-    </div>
-    <div class="row-fluid">
-      <div class="span12">
-        <h3 class="header-lead">
-          <span><%=t('adv_reports.glance.avg_cust_intr')%> vs <%=t('adv_reports.glance.avg_agent_intr')%></span>
-          <a class="report-help-icon tooltip" title='<%=t("adv_reports.helptext.glance.how_to_read")%>' href="<%=@solution_artical_link%>" target="_blank">?</a>
-        </h3>
-        <div id="interactions_line_chart" class="single-stacked-bar" style="height:250px;"><div class="noinfo"><%=t('adv_reports.no_data_to_display_msg')%></div></div>
-      </div>
-    </div>
-    <div class="row-fluid">
-      <div class="span12">
-        <h3 class="header-lead">
-          <span><%=t('adv_reports.load.tkt_assignment')%></span>
-          <a class="report-help-icon tooltip" title='<%=t("adv_reports.helptext.glance.how_to_read")%>' href="<%=@solution_artical_link%>" target="_blank">?</a>
-        </h3>
-        <div id="assignments_line_chart" class="single-stacked-bar" style="height:250px;"><div class="noinfo"><%=t('adv_reports.no_data_to_display_msg')%></div></div>
-      </div>
-    </div>
+<div class="row-fluid">
+  <div class="span12">
+    <h3 class="header-lead">
+      <span><%=t('adv_reports.load.resp_accuracy')%></span>
+      <a class="report-help-icon tooltip" title='<%=t("adv_reports.helptext.glance.how_to_read")%>' href="<%=@solution_artical_link%>" target="_blank">?</a>
+    </h3>
+    <div id="response_accuracy_line_chart" class="single-stacked-bar" style="height:250px;"><div class="noinfo"><%=t('adv_reports.no_data_to_display_msg')%></div></div>
   </div>
 </div>
-
+<div class="row-fluid">
+  <div class="span12">
+    <h3 class="header-lead">
+      <span><%=t('adv_reports.load.resp_time')%></span>
+      <a class="report-help-icon tooltip" title='<%=t("adv_reports.helptext.glance.how_to_read")%>' href="<%=@solution_artical_link%>" target="_blank">?</a>
+    </h3>
+    <div id="response_time_line_chart" class="single-stacked-bar" style="height:250px;"><div class="noinfo"><%=t('adv_reports.no_data_to_display_msg')%></div></div>
+  </div>
+</div>
+<div class="row-fluid">
+  <div class="span12">
+    <h3 class="header-lead">
+      <span><%=t('adv_reports.glance.avg_cust_intr')%> vs <%=t('adv_reports.glance.avg_agent_intr')%></span>
+      <a class="report-help-icon tooltip" title='<%=t("adv_reports.helptext.glance.how_to_read")%>' href="<%=@solution_artical_link%>" target="_blank">?</a>
+    </h3>
+    <div id="interactions_line_chart" class="single-stacked-bar" style="height:250px;"><div class="noinfo"><%=t('adv_reports.no_data_to_display_msg')%></div></div>
+  </div>
+</div>
+<div class="row-fluid">
+  <div class="span12">
+    <h3 class="header-lead">
+      <span><%=t('adv_reports.load.tkt_assignment')%></span>
+      <a class="report-help-icon tooltip" title='<%=t("adv_reports.helptext.glance.how_to_read")%>' href="<%=@solution_artical_link%>" target="_blank">?</a>
+    </h3>
+    <div id="assignments_line_chart" class="single-stacked-bar" style="height:250px;"><div class="noinfo"><%=t('adv_reports.no_data_to_display_msg')%></div></div>
+  </div>
+</div>
+  
 <script type="text/javascript">
 var data_obj = <%=@data_obj.to_json%>
-jQuery(document).ready(function() {
+//need to check for better approach
+if(_slide_init == false){
   jQuery('#sliding').slide();
+  _slide_init = true;
+}
+jQuery(document).ready(function() {
   var analysis_1_lineChart = new lineChart(
       {renderTo: 'response_accuracy_line_chart',
        chartData:[data_obj['resolved_tickets'],data_obj['fcr_tickets'],data_obj['sla_tickets'],data_obj['num_of_reopens']],

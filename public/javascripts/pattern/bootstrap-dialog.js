@@ -84,7 +84,7 @@
 			e && e.preventDefault()
          var form = this.$dynamicTarget.find('form:first')       
 
-         if(form.get(0)){
+         if(form.get(0) && form.valid()){
            if(this.options.submitLoading != "") this.$submitBtn.button('loading');
              form.submit();
          }
