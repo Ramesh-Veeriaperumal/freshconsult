@@ -198,6 +198,14 @@ getCannedResponse = function(ticket_id, ca_resp_id, element) {
 	return true;
 }
 
+
+showHideToEmailContainer = function(){
+	$(".toEmailMoreContainer").toggle();
+	if($(".toEmailMoreContainer").css("display") == "inline"){
+		$(".toEmailMoreLink").text('');
+	}
+}
+
 TICKET_DETAILS_DOMREADY = function() {
 
 activeForm = null, savingDraft = false, draftFirstFlag = 0, draftClearedFlag = TICKET_DETAILS_DATA['draft']['cleared_flag'];
