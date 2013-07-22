@@ -40,12 +40,12 @@
     <label class="caption"><%= t(".top_level_forum") %></label>
     <div class="fields">
       <%= portal.collection_select :forum_category_id, @forums_categories, :id, :name, 
-          { :include_blank =>  t(".select_forum_category")} %>
-      <%= content_tag(:div, t('.top_level_forum_info'), :class => "info-data") %>
+          { :include_blank =>  t(".select_forum_category").html_safe} %>
+      <%= content_tag(:div, t('.top_level_forum_info').html_safe, :class => "info-data") %>
     </div>
     
 
-    <label class="caption"><%= t(".top_level_solution") %></label>
+    <label class="caption"><%= t(".top_level_solution").html_safe %></label>
     <div class="fields">
       <%= portal.collection_select :solution_category_id, @solution_categories.reject(&:is_default?), 
           :id, :name, {:include_blank => t(".select_solution_category")} %>

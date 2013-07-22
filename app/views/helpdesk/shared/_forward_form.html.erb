@@ -67,7 +67,7 @@
         </li>
         <li class="inline-field field hide" id="fwd-cc-form-container-<%=cntid%>" style='display:none'>
             <label class="caption">
-                <%= t(".cc") %>:
+                <%= t(".cc").html_safe %>:
             </label>
             <div class="fields" id="fwd_cc_emails_id" rel="fwd_cc_div" data-button="#add_fwd_cc_btn" data-parent="#fwd-cc-form-container"> 
                 
@@ -79,7 +79,7 @@
         </li>
         <li class="inline-field field" id="fwd-bcc-form-container-<%=cntid%>" style='display:<%= bcc_drop_box_email.blank? ? "none": "block" %>;'>
           <label class="caption">
-            <%= t(".bcc") %>:
+            <%= t(".bcc").html_safe %>:
           </label>
 
           <div class="fields">
@@ -92,7 +92,7 @@
         </li>
         <li class="inline-field field">
             <label class="caption">
-                <%= t("message") %>:
+                <%= t("message").html_safe %>:
             </label>
             <div class="fields">
               <% conv_item = conv_id.nil? ? @ticket : @note %>

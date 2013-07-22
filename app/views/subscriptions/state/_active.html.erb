@@ -2,7 +2,7 @@
   <li class="inline-field">
     <div class="current-plan">
         <div class="caption">
-          <%= t('current_plan') %>
+          <%= t('current_plan').html_safe %>
           <div class="plan-name">
             <% if @subscription.classic? %>
             <b class="big-text"> <%= " #{ @subscription.subscription_plan.name.split(" Classic").first }" %></b>

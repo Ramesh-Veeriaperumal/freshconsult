@@ -36,7 +36,7 @@
 <script type="text/javascript">
 
 jQuery(document).ready(function(){
-	var _groups = <%=@show_options[Reports::Constants::DEFAULT_COLUMNS_ORDER.index(:group_id)][:options].to_json%>
+	var _groups = <%=@show_options[Reports::Constants::DEFAULT_COLUMNS_ORDER.index(:group_id)][:options].to_json.html_safe%>
 	if(_groups.length ==0){
 		jQuery("#noticeajax").text("You don't have any groups.").show();
 		jQuery("#loading-box").addClass('hide');

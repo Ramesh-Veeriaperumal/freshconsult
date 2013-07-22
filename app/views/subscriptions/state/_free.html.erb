@@ -3,7 +3,7 @@
     <div class="free-plan">
       <div class="current-plan">
         <div class="caption">
-          <%= t('current_free_plan') %>
+          <%= t('current_free_plan').html_safe %>
           <div class="plan-name">
             <b class="big-text"> <%= " #{ @subscription.subscription_plan.name }" %></b>
           </div>

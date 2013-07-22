@@ -93,7 +93,7 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
       </form>
     </ul>
 <% javascript_tag do %>
-var custom_fields = <%= @show_fields.to_json%>;
+var custom_fields = <%= @show_fields.to_json.html_safe%>;
 custom_fields['ticket_type'] = 'Type';
 custom_fields['source'] = 'Source';
 custom_fields['priority'] = 'Priority';

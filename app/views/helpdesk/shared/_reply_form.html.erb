@@ -30,7 +30,7 @@
         </li>
         <li class="inline-field field hide" id="cc-form-container-<%=cntid%>">
             <label class="caption">
-                <%= t(".cc") %>:
+                <%= t(".cc").html_safe %>:
             </label>
       <div class="fields" id="reply_cc_emails_id" rel="cc_div" data-button="#add_cc_btn_<%=cntid%>" data-parent="#cc-form-container-<%=cntid%>">
         <input type="text" id="cc_emails_<%=cntid%>" name="helpdesk_note[cc_emails]" />
@@ -59,7 +59,7 @@
     <% end %>
         <li class="inline-field field" id="bcc-form-container-<%=cntid%>" style='display:<%= bcc_drop_box_email.blank? ? "none": "block" %>;'>
           <label class="caption">
-            <%= t(".bcc") %>:
+            <%= t(".bcc").html_safe %>:
           </label>
 
           <div class="fields">
@@ -71,7 +71,7 @@
         </li>
         <li class="inline-field field">
             <label class="caption">
-                <%= t("message") %>:
+                <%= t("message").html_safe %>:
             </label>
             <div class="fields">
               <% conv_item = conv_id.nil? ? @ticket : @note %>

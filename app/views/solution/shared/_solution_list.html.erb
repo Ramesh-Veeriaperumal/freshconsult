@@ -35,15 +35,10 @@
 	</ol>
 <% else %>
 	<div class="big-info">
-<<<<<<< HEAD
 		<div class="no-info-text"><%= t('solution.info7').html_safe %> </div>  
-		<%= link_to t('solution.add').html_safe, new_solution_category_folder_article_path(category, folder), :class => "uiButton special large" %>
-=======
-		<div class="no-info-text"><%= t('solution.info7') %> </div>  
     <% if privilege?(:publish_solution) %>
-		  <%= link_to t('solution.add'), new_solution_category_folder_article_path(category, folder), :class => "uiButton special large" %>
+		  <%= link_to t('solution.add').html_safe, new_solution_category_folder_article_path(category, folder), :class => "uiButton special large" %>
     <% end %>
->>>>>>> master
 	</div>
 <% end %>
 
