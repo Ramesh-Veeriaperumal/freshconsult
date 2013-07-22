@@ -24,6 +24,16 @@ module ApplicationHelper
         <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{ 
           current_portal.language }">#{h[2] ? '<!--' : ''}<![endif]--> ) }
   end
+
+  def trial_expiry_title(trial_days)
+      if trial_days == 0
+      t('trial_one_more_day')
+    elsif trial_days > 0
+      t('trial_will_expire_in', :no_of_days => pluralize(trial_days, t('trial_day'), t('days')) )
+    else trial_days < 0
+      t('trial_expired_on' )
+    end
+  end
   
   def format_float_value(val)
     if !(val.is_a? Fixnum)
