@@ -13,6 +13,7 @@ class BusinessCalendar < ActiveRecord::Base
   belongs_to :account
   before_create :set_default_version, :valid_working_hours?
   after_commit_on_update :clear_cache
+  
   attr_accessible :holiday_data,:business_time_data,:version,:is_default,:name,:description,:time_zone
   validates_presence_of :time_zone, :name
 

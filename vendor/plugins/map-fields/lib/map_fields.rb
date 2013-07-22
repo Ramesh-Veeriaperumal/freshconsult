@@ -53,8 +53,12 @@ module MapFields
         end
         csv_file = AWS::S3::S3Object.find(session[:map_fields][:file], s3_credentials[:bucket])
         @mapped_fields = []
-        CSVBridge.parse(csv_file.value) do |row|
-           @mapped_fields << row
+        begin
+          CSVBridge.parse(csv_file.value) do |row|
+             @mapped_fields << row
+          end
+        rescue CSVBridge::MalformedCSVError => e
+          @map_fields_error = e
         end
       end
     end

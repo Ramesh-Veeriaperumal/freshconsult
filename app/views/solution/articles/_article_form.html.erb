@@ -22,7 +22,7 @@
 		<% fields_for :tags  do |tag| %>
 		<li>
 			<%= tag.label(:name, t('tag.title')) %>
-			<%= tag.text_field :name , :value => @article.tags.collect{|tg| tg.name+","}, :class => "text" %>
+			<%= tag.text_field :name , :value => @article.tags.collect{|tag| tag.name}.join(','), :class => "select2 row-fluid"%>
 		</li>
 		<%end%>
 		<li class="dropdown">
@@ -85,32 +85,6 @@
 	<% javascript_tag do %>
 		(function($) {
 			$(document).ready(function() {
-				// function cloneText(source, destination, multiline) {
-				// 	if (typeof(multiline) == "undefined")
-				// 		$("#" + destination).val($(source).val()).keyup();
-				// 	else{
-				// 		var div = document.createElement("div");
-				// 		//Redactor hack for new line
-				// 		div.innerHTML = $(source).val().replace(/\<\/(p|div|h[1-6]|li)\>/g, "\n");
-				// 		text = $.trim(($(div).text()).replace(/\n+/g, " "));
-				// 		text = (text.length > 150) ? (text.substring(0,147) + '...') : text;
-				// 		$("#" + destination).val(text).keyup();
-				// 	}
-				// }
-				// $('[rel=cloneSource]').each(function(i,node) {
-				// 	if ($("#" + $(node).data("destination")).val() == ""){
-				// 		cloneText(this, $(node).data("destination"), $(node).data("multiline"));
-				// 		$(node).live("keyup", function() {
-				// 			cloneText(this, $(this).data('destination'), $(node).data("multiline"))
-				// 		});
-				// 	}
-				// 	$("#" + $(node).data("destination")).live("change", function() {
-				// 		$(node).unbind("keyup");
-				// 	});
-				// });
-				// $('#solution_article_description').getEditor().bind("keyup", function() {
-				// 	$('#solution_article_description').keyup();
-				// });
 				$('#solution-seo-show').bind("click", function(){
 					if($('#solution-seo').is(":visible")) {
 						$('#show-hide-button').addClass("arrow-right");
@@ -130,6 +104,10 @@
 					$('#solution_article_seo_data_meta_description').val(
 					$('#solution_article_seo_data_meta_description').val().replace(/\n+/g, " ").trim());
 				});
+				$("#tags_name").select2({  
+				  tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',')) %>".split(","),
+				  tokenSeparators: [',']
+				}); 
 			});
 		})(jQuery)
 	<% end %>

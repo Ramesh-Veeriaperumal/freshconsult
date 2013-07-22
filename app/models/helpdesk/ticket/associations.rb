@@ -8,7 +8,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   has_many_dropboxes
 
-  has_one :ticket_body, :class_name => 'Helpdesk::TicketBody', :dependent => :destroy
+  has_description_body :table_name => 'helpdesk_ticket_bodies'
 
 	has_one :schema_less_ticket, :class_name => 'Helpdesk::SchemaLessTicket', :dependent => :destroy
 
@@ -72,6 +72,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :dependent => :destroy,
     :order => "executed_at"
 
-  accepts_nested_attributes_for :tweet, :fb_post, :ticket_body
+  accepts_nested_attributes_for :tweet, :fb_post
 
 end
