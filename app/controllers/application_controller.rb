@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   
   before_filter :unset_current_account, :set_current_account
   include Authority::Rails::ControllerHelpers
-  before_filter :redactor_form_builder, :redirect_to_mobile_url
+  before_filter :redactor_form_builder
   before_filter :check_account_state, :except => [:show,:index]
   before_filter :set_default_locale
   before_filter :set_time_zone, :check_day_pass_usage 

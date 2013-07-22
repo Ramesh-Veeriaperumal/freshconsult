@@ -5,6 +5,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
 
   before_filter { |c| c.requires_feature :timesheets }
   before_filter :set_show_version
+  before_filter :set_mobile , :only => [:create , :destroy]
   before_filter :load_time_entry, :only => [ :show,:edit, :update, :destroy, :toggle_timer ] 
   before_filter :load_ticket, :only => [:new, :create, :index, :edit, :update, :toggle_timer] 
   before_filter :create_permission, :only => :create 
@@ -70,7 +71,8 @@ class Helpdesk::TimeSheetsController < ApplicationController
     
     @time_entry = scoper.new(time_entry)    #throws unknown attribute error
     if @time_entry.save!
-      respond_to_format @time_entry
+      @mobile_response = {:success => true , :success_message => "Time entry has been created for this ticket"} 
+      respond_to_format(@time_entry, @mobile_response)
     end
   end
    
@@ -116,7 +118,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
 
   def destroy
     @time_entry.destroy
-    respond_to_format @time_entry
+    respond_to_format @time_entry , {:success => true , :success_message => "Time entry has been deleted"}
   end
 
 private
@@ -181,10 +183,13 @@ private
     return (time_entry.time_spent + running_time)
   end
 
-  def respond_to_format result
+  def respond_to_format result,mobile_response
     respond_to do |format|
       format.js
       format.html
+      format.mobile do
+        render :json => mobile_response.to_json and return
+      end
       format.xml do 
         render :xml => result.to_xml and return 
       end

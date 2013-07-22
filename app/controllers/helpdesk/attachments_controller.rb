@@ -17,6 +17,9 @@ class Helpdesk::AttachmentsController < ApplicationController
       format.xml  do
         render :xml => @attachment.to_xml
       end
+      format.json do
+        render :json => { "url" => redir_url}.to_json
+      end
     end
   end
   

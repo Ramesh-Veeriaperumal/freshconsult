@@ -274,10 +274,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
   end
  
-  # 2 newly added method - ajs
-    def ticket_notes
-        notes.visible.all(:limit=>1, :order=>"created_at DESC")
-    end
+  # 1 newly added method - ajs
     def ticket_sla_status
         closed_status = Helpdesk::TicketStatus.onhold_and_closed_statuses(account)
         sla_status(self,closed_status);
@@ -537,7 +534,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def conversation_before(before_id)
-    return notes.visible.exclude_source('meta').before(before_id) #ajs - removed newest_first.
+    return notes.visible.exclude_source('meta').newest_first.before(before_id)
   end
 
   def conversation_count(page = nil, no_of_records = 5)

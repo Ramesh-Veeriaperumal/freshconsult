@@ -32,7 +32,7 @@ module HelpdeskControllerMethods
       format.widget {render :action=>:create_ticket_status, :layout => "widgets/contacts"}
       format.js
       format.mobile {
-        render :json => {:success => true,:item => @item}.to_json
+        render :json => {:success => true,:item => @item , :success_message => "Ticket has been created"}.to_json
       }
       format.json { 
         render :json => @item.to_json(options)
@@ -83,6 +83,9 @@ module HelpdeskControllerMethods
         process_destroy_message  
         redirect_to after_destroy_url
       end
+      expects.mobile{
+        render :json => {:success => true  , :success_message => "#{h(@items.length)} tickets were deleted" }.to_json
+      }
       expects.json  { render :json => :deleted}
       expects.js { 
         process_destroy_message
@@ -106,6 +109,7 @@ module HelpdeskControllerMethods
           :partial => '/helpdesk/shared/flash/restore_notice', :contacts => @items)
         redirect_to after_restore_url 
       }
+      result.mobile { render :json => { :success => true , :success_message => "#{h(@items.length)} tickets were restored" }.to_json}
       result.xml {  render :xml => @items.to_xml(options) }
       result.json {  render :json => @items.to_json(options) }
     end

@@ -4,6 +4,7 @@ class ContactsController < ApplicationController
    include HelpdeskControllerMethods
    include ExportCsvUtil
 
+   before_filter :redirect_to_mobile_url
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
    before_filter :set_selected_tab
    before_filter :check_agent_limit, :only =>  :make_agent

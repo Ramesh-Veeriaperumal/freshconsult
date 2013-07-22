@@ -7,6 +7,17 @@ class Admin::AutomationsController < Admin::AdminController
   
   def index
     @va_rules = all_scoper
+    respond_to do |format|
+      format.html do
+        @va_rules
+      end
+      format.json do
+        render :json => @va_rules.to_json
+      end
+      format.mobile do
+        render @va_rules.to_json
+      end
+    end
   end
   
   def new
