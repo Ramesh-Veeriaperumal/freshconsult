@@ -62,12 +62,12 @@
           status     : true,
           cookie     : true,
           xfbml      : true,
-          oauth			 : true
+          oauth		 : true
         });
 
         FB.Event.subscribe('auth.login', function(response) {
           if (response.authResponse) {
-          window.location = window.location
+          	window.location = "/facebook/sso/facebook"
         	}
         });
 

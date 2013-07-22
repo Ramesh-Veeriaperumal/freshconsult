@@ -8,7 +8,7 @@
       </div>
     </label>
     <div class="fields">
-      <%= content_tag(:h2, @item.page_name, :class => "title") %> <br />
+      <%= content_tag(:h3, @item.page_name, :class => "lead") %> <br />
       <label class="checkbox">
         <%= check_box "social_facebook_page", :import_visitor_posts, { :checked => facebook_page.import_visitor_posts } %> 	
         <%=t('.visitor_posts')%>
@@ -52,10 +52,7 @@
     	  </div>	 
       <% end %>
       <!-- add page tab -->
-      <span class="seperator"></span>
-      <a href="#" id="page_tab_edit"><%= t('facebook_tab.configure_tab') %></a>
-      <div class="info-data"><%= t('facebook_tab.config_info') %></div>
-      <div id="configure_page_tab" class="hide"></div>
+      <%= render :partial => 'configure_page_tab' %>
     </div>
   </li>
 </ul>

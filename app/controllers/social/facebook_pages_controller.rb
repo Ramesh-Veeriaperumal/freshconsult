@@ -6,6 +6,7 @@ class Social::FacebookPagesController < Admin::AdminController
   before_filter :set_session_state , :only =>[:index , :edit]
   before_filter :fb_client , :only => [:index,:edit]
   before_filter :load_item,  :only => [:edit, :update, :destroy]  
+  before_filter :load_tab, :only => :edit
   before_filter :handle_tab, :only => :update, :if => :tab_edited?
   
   def index
@@ -86,11 +87,12 @@ class Social::FacebookPagesController < Admin::AdminController
       @item = current_account.facebook_pages.find(params[:id]) 
     end
 
+    def load_tab
+      @fb_tab = fb_page_tab.get.first if @item.reauth_required?
+    end
+
     def handle_tab
       fb_page_tab.add if params[:add_tab]
-      # unless fb_page_tab.update(params[:custom_name], params[:custom_image_url])
-      #   flash[:error] = I18n.t('facebook_tab.image_upload_failed')
-      # end
       fb_page_tab.update(params[:custom_name])
     end
 

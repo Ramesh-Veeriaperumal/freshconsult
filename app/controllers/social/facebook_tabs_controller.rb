@@ -2,11 +2,6 @@ class Social::FacebookTabsController < ApplicationController
 
   before_filter :load_page
 
-  def configure
-    @page_tab = fb_page_tab.get.first
-    render :partial => "social/facebook_pages/configure_page_tab"
-  end
-
   def remove
     if fb_page_tab.remove
       flash[:success] = t('facebook_tab.tab_removed')

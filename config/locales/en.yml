@@ -4142,19 +4142,21 @@ en:
         group_fcr: The percentage of tickets assigned to this group that were resolved within the first response
   date_invalid: Invalid date  
   facebook_tab:
-    remove_tab: "Remove Tab"
+    remove_tab: "Remove page Tab"
     tab_not_removed: "Could not remove tab"
     tab_removed: "Page tab removed"
     page_added: "This page has already been added to {{source}}. Please remove it and then try to add"
     add_tab: "Add page tab"
-    tab_name: "Tab name : "
+    tab_name: "Tab name "
     tab_url: "Tab image url : "
     page_added_model: "Page has been already added"
-    no_ssl: "You need to enable SSL encryption from the <a href='/admin/security'>Security settings</a> page in order to add a page tab"
+    no_ssl: "<b>Facebook page tab requires a Secure Connection.</b><br />You need to enable SSL encryption from <a href='/admin/security'>Security settings</a>"
     image_upload_failed: "Unable to update custom image in page tab"
     image_instructions: "The target image must be of dimensions 111x74. (images of any dimensions can be updated through facebook directly)"
-    configure_tab: "Configure Facebook Page Tab"
+    configure_tab: "Create your Facebook page tab"
     config_info: "Once you enable your Facebook page tab, your customers will be able to directly access your solutions, forums and self-service from within Freshdesk"
+    got_it: "Ok got it."
+    reauth: "Please reauthorize with Facebook to access your page tab"
     portal:
       your_tickets: "Your Tickets"
       view_all: "View all"

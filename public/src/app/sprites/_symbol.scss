@@ -153,6 +153,7 @@
 
 .request_panel .insert_ca_response { @include symbols-sprite(insert_ca_response); }
 .request_panel .insert_solution { @include symbols-sprite(insert_solution); }
+span.fb_add { @include symbols-sprite(add); }
 
 .open_in_new{ @include symbols-sprite(open_in_new); background-repeat: no-repeat; background-color: transparent; }
 

@@ -1,15 +1,37 @@
-<% if current_account.ssl_enabled? %>
-	<% if @page_tab.nil? %>
-	  <%= hidden_field_tag "add_tab", "1" %><p>
-	<% end %>
-	<div id="page_tab_options">
-	  <label class="caption"><%= t('facebook_tab.tab_name') %></label>
-	  <%= text_field_tag "custom_name", @page_tab ? @page_tab["name"] : "", :class => "fields required" %>
-<!-- 	  <label class="caption"><%= t('facebook_tab.tab_url') %></label>
-	  <%= text_field_tag "custom_image_url", @page_tab ? @page_tab["image_url"] : "", :class => "fields" %>
-	  <div class="info-data"><%= t('facebook_tab.image_instructions') %> -->
-	</div>
-	<%= link_to(t('facebook_tab.remove_tab'), remove_social_facebook_tabs_path(@item), :id => "cancel_tab") if @page_tab %>
-<% else %>
-	<div class="info-data"><%= t('facebook_tab.no_ssl') %></div>
-<% end %>
+  <span class="seperator"></span>
+  <h3 class="sub-lead">Facebook Page Tab</h3>
+  <div class="info-data"><%= t('facebook_tab.config_info') %></div>
+  <div class="fb_tab_container">
+  <% if @item.reauth_required? %>
+    <div class="fb_info_text"><%= t('facebook_tab.reauth') %></div>
+  <% else %>
+    <% if @fb_tab %>
+      <%= content_tag(:div, t('facebook_tab.no_ssl'), :class=>"fb_info_text") unless current_account.ssl_enabled? %>
+      <div id="after_config" class="row-fluid">
+        <label class="control-label span2"><%= t('facebook_tab.tab_name') %></label>
+        <div class="fb_field span9">
+          <%= text_field_tag "custom_name", @fb_tab["name"], :class => "required auto fb_changed", :disabled => !current_account.ssl_enabled?, :size => "40" %>
+        </div>
+        <%= link_to t('facebook_tab.remove_tab'), remove_social_facebook_tabs_path(@item), :class=>"remove_fb" %>
+      </div>
+    <% else %>
+      <div class="configure">
+        <a href="#" id="tab_config"><span class="fb_add"></span><b><%= t('facebook_tab.configure_tab') %></b></a>
+        <div class="fb_tab_pic"></div>
+      </div>
+      <div id="after_config" class="row-fluid hide">
+        <% if current_account.ssl_enabled? %>
+          <%= hidden_field_tag "add_tab", "1" %>
+          <label class="control-label span2"><%= t('facebook_tab.tab_name') %></label>
+          <div class="fb_field span9">
+            <%= text_field_tag "custom_name", "", :class => "required auto fb_changed", :size => "40" %>
+            <a class="cancel_fb no_tab" href="#"><%= t('cancel') %></a>
+          </div>
+        <% else %>
+          <div class="fb_info_text"><%= t('facebook_tab.no_ssl') %></div>
+          <a class="pull-right cancel_fb" href="#"><%= t('facebook_tab.got_it') %></a>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+  </div>
