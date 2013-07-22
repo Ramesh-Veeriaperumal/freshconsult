@@ -10,7 +10,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   concerned_with :associations, :constants, :callbacks
 
-  attr_accessor :nscname, :disable_observer, :send_survey, :include_surveymonkey_link, :quoted_text
+  attr_accessor :nscname, :disable_observer, :send_survey, :quoted_text
   attr_protected :attachments, :notable_id
   
   named_scope :newest_first, :order => "created_at DESC"
@@ -257,8 +257,7 @@ class Helpdesk::Note < ActiveRecord::Base
       elsif self.to_emails.present? or self.cc_emails.present? or self.bcc_emails.present? and !self.private
         Helpdesk::TicketNotifier.send_later(:deliver_reply, notable, self, {:include_cc => self.cc_emails.present? , 
                 :send_survey => ((!self.send_survey.blank? && self.send_survey.to_i == 1) ? true : false),
-                :quoted_text => self.quoted_text,
-                :include_surveymonkey_link => (self.include_surveymonkey_link.present? && self.include_surveymonkey_link.to_i==1)})
+                :quoted_text => self.quoted_text})
       end
     end
 

@@ -45,13 +45,11 @@
 					  		<% end %>
 					  	<% end %>
 		  	    		
-					  <% else
-						if (application[:options][:direct_install].blank? or application[:options][:configurable]) and
-							application[:options][:no_settings].blank?  %>
+					  <%else
+						if application[:options][:direct_install].blank? &&  application[:options][:no_settings].blank?%>
 			  	    		<%= link_to "Edit", 
 			  	    				edit_integrations_installed_application_path(@installed_applications[i_app_index]), 
 			  	    				:class => "btn tooltip", :title => t("application.configure_addon") %>		
-
 			  	    	<% end %>
 			  	    	<%= link_to t('application.enabled') + "<span></span>", uninstall_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "uiButton special iphone-active custom-tip-bottom", :confirm => t("application.confirm_disable"), :title => t("application.click_to_disable") %>	
 					  <%end%>

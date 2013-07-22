@@ -7,7 +7,6 @@ NimbleWidget.prototype= {
     nimbleBundle.app_name = "Nimble";
     nimbleBundle.integratable_type = "crm";
     nimbleBundle.auth_type = "OAuth";
-    nimbleBundle.url_auth = true;
     nimbleBundle.url_token_key = "access_token"
     nimbleBundle.domain = "https://api.nimble.com"
     this.nimbleBundle = nimbleBundle;

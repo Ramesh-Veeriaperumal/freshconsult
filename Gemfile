@@ -26,7 +26,6 @@ gem "omniauth-facebook"
 gem "omniauth-salesforce"
 gem "omniauth-mailchimp", "~> 1.0.3"
 gem "omniauth-constantcontact2", "~> 1.0.4"
-gem "omniauth-surveymonkey", "0.0.0"
 gem "nori", "1.1.4"
 gem "google-api-client", "~> 0.6.3"
 

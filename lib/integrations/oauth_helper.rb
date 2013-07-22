@@ -4,7 +4,7 @@ module Integrations::OauthHelper
       oauth_s = Integrations::OauthHelper.get_oauth_keys(provider, app_name)
       oauth_options = Integrations::OauthHelper.get_oauth_options(provider) || {}
       client = OAuth2::Client.new oauth_s["consumer_token"], oauth_s["consumer_secret"], oauth_options
-      token_hash = { :refresh_token => refresh_token, :client_options => oauth_options, :header_format => header_format(app_name)}
+      token_hash = { :refresh_token => refresh_token, :client_options => oauth_options, :header_format => 'OAuth %s'}
       access_token = OAuth2::AccessToken.from_hash(client, token_hash)
       access_token.refresh! 
     end
@@ -61,10 +61,5 @@ module Integrations::OauthHelper
         end
         key_hash[provider] 
       end
-    end
-
-    def header_format(app_name)
-      return 'Bearer %s' if app_name=='surveymonkey'
-      'OAuth %s'
     end
 end

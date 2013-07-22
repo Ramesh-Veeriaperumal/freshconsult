@@ -17,8 +17,7 @@ module Integrations::Constants
     :campaignmonitor => "CampaignMonitor",
     :nimble => "nimble",
     :zohocrm => "zohocrm",
-    :google_calendar => "google_calendar",
-    :surveymonkey => "surveymonkey"
+    :google_calendar => "google_calendar"
   }
 
   APP_CATEGORY_ID_TO_NAME = {

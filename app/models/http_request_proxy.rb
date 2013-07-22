@@ -1,8 +1,5 @@
 class HttpRequestProxy
 
-  include Integrations::OauthHelper
-  include HttpProxyMethods
-
   def fetch(params, request)
     unless(request.blank?)
       method = request.env["REQUEST_METHOD"].downcase
@@ -43,9 +40,6 @@ class HttpRequestProxy
         domain = http_s+"://"+ domain
       end
       rest_url = rest_url ? "/" + rest_url : ""
-      user_current = User.current
-      rest_url = replace_placeholders(domain, rest_url,
-        user_current) if user_current and user_current.agent? and params[:use_placeholders]
       remote_url = domain + rest_url
       remote_url = Liquid::Template.parse(remote_url).render("password"=>params[:password])
 

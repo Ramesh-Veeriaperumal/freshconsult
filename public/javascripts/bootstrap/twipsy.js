@@ -110,9 +110,6 @@
           case 'topRight':
             tp = {top: pos.top - (pos.height + 10), left: pos.left + pos.width + this.options.offset}
             break
-          case 'belowLeft':
-            tp = {top: pos.top + pos.height + this.options.offset, left: pos.left + pos.width - actualWidth  + this.options.offset}
-            break
         }
 
         $tip
