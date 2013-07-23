@@ -103,8 +103,7 @@ class Admin::BusinessCalendarsController <  Admin::AdminController
       if params[:time_zone].blank?
         @time_zone = current_account.time_zone
       else
-        zone = ActiveSupport::TimeZone.all[params[:time_zone].to_i]
-        @time_zone = zone.name if zone
+        @time_zone = params[:time_zone].to_s.split(' ',2)[1]
       end
       
       @name = params[:business_calenders]["name"] if params[:business_calenders]
