@@ -1,6 +1,6 @@
 Hi,
 
-<%=@note.user.name%>&nbsp;<%= t('ticket.agent_notify') %>  
+<%=@note.user.name%> <%= t('ticket.agent_notify') %>  
 
 <%= t('ticket.ticket_url') %>:  
 
@@ -9,7 +9,7 @@ Hi,
 <%= t('ticket.subject') %>:
 
 
-<%="##{@ticket.display_id}"%>&nbsp;<%= h(@ticket.subject) %>
+<%="##{@ticket.display_id}"%> <%= h(@ticket.subject) %>
 
 
 <%= t('ticket.requester') %> : <%=h(@ticket.requester.name)%><%=" < #{@ticket.requester.email} >"%>
