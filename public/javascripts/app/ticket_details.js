@@ -198,6 +198,14 @@ getCannedResponse = function(ticket_id, ca_resp_id, element) {
 	return true;
 }
 
+
+showHideToEmailContainer = function(){
+	$(".toEmailMoreContainer").toggle();
+	if($(".toEmailMoreContainer").css("display") == "inline"){
+		$(".toEmailMoreLink").text('');
+	}
+}
+
 TICKET_DETAILS_DOMREADY = function() {
 
 activeForm = null, savingDraft = false, draftFirstFlag = 0, draftClearedFlag = TICKET_DETAILS_DATA['draft']['cleared_flag'];
@@ -336,16 +344,6 @@ var scrollToError = function(){
 	var errorLabel = $("label[class='error'][style!='display: none;']");
 	var elem = errorLabel.parent().children().first();
 	$.scrollTo(elem);
-}
-
-refreshStatusBox = function() {
-	$.ajax({
-		url: TICKET_DETAILS_DATA['status_refresh_url'],
-		success: function(response) {
-			$('#due-by-element-parent').replaceWith(response)
-			$('#due-by-element-parent').show('highlight',3000);
-		}
-	});
 }
 
 // For Setting Due-by Time
@@ -1008,6 +1006,7 @@ refreshStatusBox = function() {
 			
 	});
 
+	MergeTicketsInitializer();
 
 	// Scripts for ToDo List
 	$('body').on('keydown.ticket_details', '.addReminder textarea', function(ev) {
@@ -1098,6 +1097,8 @@ TICKET_DETAILS_CLEANUP = function() {
     				.off('submit.ticket_details')
     jQuery(window).off('unload.ticket_details');
     jQuery('body').removeClass('ticket_details');
+
+    MergeTicketsDestructor();
 
 };
 

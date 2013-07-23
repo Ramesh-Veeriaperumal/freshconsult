@@ -2780,6 +2780,7 @@ en:
     new: New Business Hours
     to: to
     time_zone: Time Zone
+    change_time_zone: You can change your default time zone under <a href='/account/edit' >Helpdesk Rebranding</a>
     delete: Are you sure you want to delete?
     valid_time: Please enter a valid time
     holiday_name: Holiday name

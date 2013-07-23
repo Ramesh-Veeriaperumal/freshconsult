@@ -3801,60 +3801,65 @@ $.fn.execCommand = function(cmd, param)
 					this.dropareabox.removeClass('hover').addClass('drop');
 					
 					var file = event.dataTransfer.files[0];
-					var fd = new FormData();
 
-					// append hidden fields
-					if (this.opts.uploadFields !== false && typeof this.opts.uploadFields === 'object')
-					{
-						$.each(this.opts.uploadFields, $.proxy(function(k,v)
-						{					
-							if (typeof v === 'function') {
-								v = v();
-							}
-							else if (v.indexOf('#') === 0)
-							{
-								v = $(v).val();
-							}
-							
-							fd.append(k, v);
-					
-						}, this));
-					}	
-					
-					// append file data
-					fd.append('image[uploaded_data]', file);
+					if(file !== undefined){
 
-					$.ajax({
-						dataType: 'html',
-						url: this.opts.url,
-						data: fd,
-						cache: false,
-						contentType: false,
-						processData: false,
-						type: 'POST',
-						success: $.proxy(function(data)
+						var fd = new FormData();
+
+						// append hidden fields
+						if (this.opts.uploadFields !== false && typeof this.opts.uploadFields === 'object')
 						{
-							if (this.opts.success !== false)
-							{
-								this.opts.success(data);
-							}
-							
-							if (this.opts.preview === true)
-							{
-								this.dropareabox.html(data);
-							}
-							
-						}, this),
-						error: $.proxy(function(data)
-						{
-							if (this.opts.error !== false)
-							{
-								this.opts.error(data);
-							}
-						}, this)
-					});
+							$.each(this.opts.uploadFields, $.proxy(function(k,v)
+							{					
+								if (typeof v === 'function') {
+									v = v();
+								}
+								else if (v.indexOf('#') === 0)
+								{
+									v = $(v).val();
+								}
+								
+								fd.append(k, v);
+						
+							}, this));
+						}	
+						
+						// append file data
+						fd.append('image[uploaded_data]', file);
 
-
+						$.ajax({
+							dataType: 'html',
+							url: this.opts.url,
+							data: fd,
+							cache: false,
+							contentType: false,
+							processData: false,
+							type: 'POST',
+							success: $.proxy(function(data)
+							{
+								if (this.opts.success !== false)
+								{
+									this.opts.success(data);
+								}
+								
+								if (this.opts.preview === true)
+								{
+									this.dropareabox.html(data);
+								}
+								
+							}, this),
+							error: $.proxy(function(data)
+							{
+								if (this.opts.error !== false)
+								{
+									this.opts.error(data);
+								}
+							}, this)
+						});
+					}
+					else{
+						this.opts.error('{"invalidFile": true}')
+					}
 				}, this);
 			}
 		},

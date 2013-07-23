@@ -282,3 +282,7 @@ javascripts:
     - public/javascripts/highcharts-more.js
     - public/javascripts/adv_reports/report_charts.js
     - public/javascripts/adv_reports/adv_reports.js
+
+  merge:
+    - public/javascripts/app/merge.js
+    - public/javascripts/app/merge_tickets.js
