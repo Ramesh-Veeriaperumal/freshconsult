@@ -176,9 +176,9 @@ class AuthorizationsController < ApplicationController
 
   def show_deleted_message
     if params[:state]
-      render :text => t(:'flash.g_app.user_deleted')
+      render :text => t(:'flash.g_app.page_unavailable')
     else
-      flash[:notice] = t(:'flash.g_app.user_deleted')
+      flash[:notice] = t(:'flash.g_app.page_unavailable')
       redirect_to login_url
     end
   end
@@ -204,6 +204,7 @@ class AuthorizationsController < ApplicationController
       @current_user = @new_auth.user
     end
     create_session unless @omniauth['provider'] == "facebook"
+    return true
   end
   
   def create_from_hash(hash, account)

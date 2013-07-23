@@ -69,6 +69,15 @@
           if (response.authResponse) {
           	window.location = "/facebook/sso/facebook"
         	}
+          else{
+          	if(Modernizr.localstorage)
+        	{
+          		if(localStorage["fb_redirect"])
+				{
+					localStorage.removeItem("fb_redirect");
+        		}
+        	}
+        	}
         });
 
         FB.Canvas.setAutoGrow();
