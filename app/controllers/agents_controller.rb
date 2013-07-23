@@ -212,7 +212,9 @@ class AgentsController < ApplicationController
       MemcacheKeys.cache(key, agent_detail.to_json, 86400*15, true)
       render :json => agent_detail
     else 
-      render :nothing => true
+      render :json => {
+        :error => "Access denied!"
+      }
     end
   end
 
