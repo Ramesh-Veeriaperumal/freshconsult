@@ -59,7 +59,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     
     part :content_type => "multipart/alternative" do |alt|
       alt.part "text/plain" do |plain|
-        plain.body  render_message("email_notification.text.plain.erb",:ticket => params[:ticket], :body => params[:email_body], :dropboxes=>params[:dropboxes],
+        plain.body  render_message("email_notification.text.plain.erb",:ticket => params[:ticket], :body => Helpdesk::HTMLSanitizer.plain(params[:email_body]), :dropboxes=>params[:dropboxes],
                     :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
                     params[:notification_type]))
       end
