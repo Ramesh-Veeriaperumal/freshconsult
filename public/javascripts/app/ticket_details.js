@@ -1016,6 +1016,7 @@ refreshStatusBox = function() {
 			
 	});
 
+	MergeTicketsInitializer();
 
 	// Scripts for ToDo List
 	$('body').on('keydown.ticket_details', '.addReminder textarea', function(ev) {
@@ -1106,6 +1107,8 @@ TICKET_DETAILS_CLEANUP = function() {
     				.off('submit.ticket_details')
     jQuery(window).off('unload.ticket_details');
     jQuery('body').removeClass('ticket_details');
+
+    MergeTicketsDestructor();
 
 };
 
