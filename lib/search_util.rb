@@ -46,6 +46,15 @@ module SearchUtil
     query
   end
 
+  def self.highlight_results(result, hit)
+    unless result.blank?
+      hit['highlight'].keys.each do |i|
+        result.send("highlight_#{i}=", hit['highlight'][i].to_s)
+      end
+    end
+    result
+  end
+
   private
 
   	def contact_solution_visibility

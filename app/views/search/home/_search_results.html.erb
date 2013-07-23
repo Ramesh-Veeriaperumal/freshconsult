@@ -14,9 +14,9 @@
         <% @searched_tickets.each do |ticket| %>
           <div class="group">
             <span class="icon"></span>
-            <%= link_to("#{ticket.subject} (##{ticket.display_id})", ticket, :class => "big") %>
+            <%= link_to("#{ticket.es_highlight('subject')} (##{ticket.display_id})", ticket, :class => "big") %>
             <span class="light"><%= "Requested by, <b>#{ticket.requester}</b>" %> </span>
-            <p><%= ticket.description %></p>
+            <p><%= ticket.es_highlight('description') %></p>
           </div>
         <% end %>
       </li>
@@ -46,7 +46,7 @@
             <% if user.customer? %>
               <% if user.customer %>
                 <span class="light"><%= user.job_title.blank? ? "#{user.customer.name}" : 
-                      "#{user.job_title} at #{user.customer.name}" %></span> 
+                      "#{user.es_highlight('job_title')} at #{user.customer.name}" %></span> 
               <% end %>
             <% else %>
               <span class="light"><%= user.privilege?(:view_admin) ? "Administrator" : "Agent" %></span>
@@ -63,7 +63,7 @@
         <% @searched_companies.each do |company| %>
           <div class="group">
             <span class="icon"></span>
-            <%= link_to(company.name, company, :class => "big") %>
+            <%= link_to(company.es_highlight('name'), company, :class => "big") %>
           </div>
         <% end %>
       </li>
@@ -75,8 +75,8 @@
         <% @searched_articles.each do |article| %>
           <div class="group">
             <span class="icon"></span>
-            <%= link_to(article.title, article, :class => "big") %>
-            <p><%= article.desc_un_html  %></p>
+            <%= link_to(article.es_highlight('title'), article, :class => "big") %>
+            <p><%= article.es_highlight('desc_un_html') %></p>
           </div>
         <% end %>
       </li>
@@ -88,7 +88,7 @@
         <% @searched_topics.each do |topic| %>
           <div class="group">
             <span class="icon"></span>
-            <%= link_to(topic.title, category_forum_topic_path(topic.forum.forum_category, topic.forum, topic), :class => "big") %>
+            <%= link_to(topic.es_highlight('title'), category_forum_topic_path(topic.forum.forum_category, topic.forum, topic), :class => "big") %>
             <p><%= truncate(topic.posts.first.body.gsub(/<\/?[^>]*>/, ""), :length => 300)  %></p>
           </div>
         <% end %>

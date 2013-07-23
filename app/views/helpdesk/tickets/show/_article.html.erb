@@ -12,7 +12,7 @@
 	<%= content_tag :span, "", :class => 'private-icon' unless article.folder.visible?(current_user) %>
 	
 	<% if es_enabled? then %>
-		<%= article.title %>
+		<%= article.es_highlight('title') %>
 	<% else %>
 		<%= article.excerpts.title %>
 	<% end %>

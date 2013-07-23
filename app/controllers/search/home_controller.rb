@@ -78,7 +78,7 @@ class Search::HomeController < ApplicationController
 
     @search_results.each_with_hit do |result,hit|
       results[result.class.name] ||= []
-      result = highlight_results(result, hit) unless hit['highlight'].blank?
+      result = SearchUtil.highlight_results(result, hit) unless hit['highlight'].blank?
       results[result.class.name] << result
     end
     
@@ -94,15 +94,6 @@ class Search::HomeController < ApplicationController
 
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
-  end
-
-  def highlight_results(result, hit)
-    unless result.blank?
-      hit['highlight'].keys.each do |i|
-        result[i] = hit['highlight'][i].to_s
-      end
-    end
-    result
   end
 
   def post_process item

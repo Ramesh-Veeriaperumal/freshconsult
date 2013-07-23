@@ -273,15 +273,7 @@ class Support::SearchController < SupportController
 
     def pre_process_results
       @items.each_with_hit do |result,hit|
-        highlight_results(result, hit) unless hit['highlight'].blank?
-      end
-    end
-
-    def highlight_results(result, hit)
-      unless result.blank?
-        hit['highlight'].keys.each do |i|
-          result[i] = hit['highlight'][i].to_s
-        end
+        SearchUtil.highlight_results(result, hit) unless hit['highlight'].blank?
       end
     end
 
@@ -299,15 +291,15 @@ class Support::SearchController < SupportController
     end
 
     def solution_result article
-      { 'title' => article.title.html_safe, 
+      { 'title' => article.es_highlight('title').html_safe, 
         'group' => article.folder.name, 
-        'desc' => article.desc_un_html.html_safe,
+        'desc' => article.es_highlight('desc_un_html').html_safe,
         'type' => "ARTICLE",
         'url' => support_solutions_article_path(article) }
     end
 
     def topic_result topic
-      { 'title' => topic.title.html_safe, 
+      { 'title' => topic.es_highlight('title').html_safe, 
         'group' => topic.forum.name, 
         'desc' => truncate(topic.posts.first.body.html_safe, :length => truncate_length),
         'type' => "TOPIC", 
@@ -315,9 +307,9 @@ class Support::SearchController < SupportController
     end
 
     def ticket_result ticket
-      { 'title' => ticket.subject.html_safe, 
+      { 'title' => ticket.es_highlight('subject').html_safe, 
         'group' => "Ticket", 
-        'desc' => truncate(ticket.description.html_safe, :length => truncate_length),
+        'desc' => truncate(ticket.es_highlight('description').html_safe, :length => truncate_length),
         'type' => "TICKET", 
         'url' => support_ticket_path(ticket) }
     end
