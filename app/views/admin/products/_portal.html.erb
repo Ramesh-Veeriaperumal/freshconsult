@@ -18,7 +18,7 @@
     <div class="fields">
 	    <%= portal.text_field :portal_url, :class => "portal_url url_without_protocol auto required", :id => "PortalUrl",
         :"data-domain" => Helpdesk::HOST[Rails.env.to_sym], :size => "50" %>
-	    <%= content_tag(:div, t('.cname_configure_info', :full_domain => current_account.full_domain), :class => "info-data") %>
+	    <%= content_tag(:div, t('.cname_configure_info', :full_domain => current_account.full_domain).html_safe, :class => "info-data") %>
     </div>
 
     <%= content_tag(:label, t('.portal_name'), :class => "caption") %>

@@ -68,7 +68,7 @@
     <input rel="toggle" type="checkbox" id="Personalize_email" name="stop_sla_timer" data-checked-label="<%= t('email_configs.Personalized_email_replies_yes') %>" data-unchecked-label="<%= t('email_configs.Personalized_email_replies_no') %>" <%if current_account.features?(:personalized_email_replies)%>checked="true"<%end%>/>
 
     </div>
-    <div style="padding:10px;padding-right:200px;" class="floatl intro"><%= t('email_configs.Personalized_email_replies_info',:current_user_name => current_user.name, :current_account_domain => current_account.default_email )%>
+    <div style="padding:10px;padding-right:200px;" class="floatl intro"><%= t('email_configs.Personalized_email_replies_info',:current_user_name => current_user.name, :current_account_domain => current_account.default_email ).html_safe%>
     </div> 
   </li>
 </ul>
