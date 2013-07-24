@@ -4150,6 +4150,7 @@ en:
     add_tab: "Add page tab"
     tab_name: "Tab name "
     tab_url: "Tab image url : "
+    page_tab_head: "Facebook Page Tab"
     page_added_model: "Page has been already added"
     no_ssl: "<b>Facebook page tab requires a Secure Connection.</b><br />You need to enable SSL encryption from <a href='/admin/security'>Security settings</a>"
     image_upload_failed: "Unable to update custom image in page tab"

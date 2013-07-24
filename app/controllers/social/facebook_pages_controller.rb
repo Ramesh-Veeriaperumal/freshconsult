@@ -88,7 +88,7 @@ class Social::FacebookPagesController < Admin::AdminController
     end
 
     def load_tab
-      @fb_tab = fb_page_tab.get.first if @item.reauth_required?
+      @fb_tab = fb_page_tab.get.first unless @item.reauth_required?
     end
 
     def handle_tab
