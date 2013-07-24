@@ -56,6 +56,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     headers       "Reply-to" => "#{params[:ticket].friendly_reply_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     sent_on       Time.now
     content_type  "multipart/mixed"
+
+    inline_attachments = []
     
     part :content_type => "multipart/alternative" do |alt|
       alt.part "text/plain" do |plain|
@@ -65,12 +67,15 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
                     :surveymonkey_survey =>  Integrations::SurveyMonkey.survey_for_notification(params[:notification_type], params[:ticket]))
       end
       alt.part "text/html" do |html|
-        html.body   render_message("email_notification.text.html.erb",:ticket => params[:ticket], :body => params[:email_body], :dropboxes=>params[:dropboxes],
+        html.body   render_message("email_notification.text.html.erb",:ticket => params[:ticket], 
+                    :body => generate_body_html(params[:email_body], inline_attachments, params[:ticket].account), :dropboxes=>params[:dropboxes],
                     :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
                     params[:notification_type]),
                     :surveymonkey_survey =>  Integrations::SurveyMonkey.survey_for_notification(params[:notification_type], params[:ticket]))
       end
     end
+
+    handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
 
     params[:attachments].each do |a|
       attachment  :content_type => a.content_content_type,
@@ -200,6 +205,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
   
   def notify_comment(ticket, note , reply_email, options={})
+    inline_attachments = []
+
     subject       formatted_subject(ticket)
     recipients    options[:notify_emails]     
     from          reply_email
@@ -212,10 +219,13 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
         plain.body  render_message("notify_comment.text.plain.erb", :ticket => ticket, :note => note , :ticket_url => helpdesk_ticket_url(ticket,:host => ticket.account.host))
       end
       alt.part "text/html" do |html|
-        html.body  render_message("notify_comment.text.html.erb", :ticket => ticket, :note => note , :ticket_url => helpdesk_ticket_url(ticket,:host => ticket.account.host))
+        html.body  render_message("notify_comment.text.html.erb", :ticket => ticket, :note => note, 
+                                      :body_html => generate_body_html(note.body_html, inline_attachments, note.account), 
+                                      :ticket_url => helpdesk_ticket_url(ticket,:host => ticket.account.host))
       end
     end
 
+    handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
   end
   
   def email_to_requester(ticket, content, sub=nil)

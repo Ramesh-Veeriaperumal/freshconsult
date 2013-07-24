@@ -67,9 +67,12 @@ en:
   signup_title: "Sign up to %{current_portal}"
   signup_up_with_us: "Sign up with us"
   signup_help_information: "Once you sign up, you will have complete access to our solutions and FAQs, ask questions and learn from our user community. You can also raise support issues and track their status."
-  trial_expired_on: "Your trial expired on %{next_renewal_at}"
-  trial_expires_in: "Your trial will expire in <b>%{no_of_days}</b> ..."
-  trail_expiry_notification: "You can upgrade to a paid account or use Freshdesk for free by selecting a plan at any time."
+  trial_expired_on: "<b>Urgent! Your trial has expired!</b>"
+  trial_will_expire_in: "Your trial will expire in <b>%{no_of_days}</b>"
+  trial_one_more_day: "You just have 1 more day in your trial"
+  trail_expiry_during_trial: "Upgrade to a paid account or use Freshdesk for free by selecting a plan at any time."
+  trail_expiry_one_more_day: "Select a paid or free plan immediately to enjoy uninterrupted access to Freshdesk"
+  trail_expiry_after_trial: "Your trial will self-destruct in <b>%{no_of_days}</b>. Choose a plan to continue using Freshdesk"
   hard_pressed_for_time: Hard pressed for time? Get advice, tips and best practices from a Freshdesk expert.
   schedule_a_complimentary_session: Schedule a complimentary session
   choose_a_plan: "Choose a plan"
@@ -1212,7 +1215,7 @@ en:
   undelete: Restore
   import_zendesk_title: Import from zendesk
   closed: Closed
-  suspended_plan_info: Your account is now suspended. Please choose a plan to continue using Freshdesk
+  suspended_plan_info: Your account has been suspended. Please select a plan to continue using Freshdesk
   plan_info_update: Your plan has been changed.
   note: "Note: "
   warning: WARNING
