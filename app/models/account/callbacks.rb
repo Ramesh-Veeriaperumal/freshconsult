@@ -100,6 +100,7 @@ class Account < ActiveRecord::Base
     end
 
     def update_default_business_hours_time_zone
+      return if self.business_calendar.default.first.nil?
       if time_zone_changed?
         default_business_calender = self.business_calendar.default.first
         default_business_calender.time_zone = self.time_zone
