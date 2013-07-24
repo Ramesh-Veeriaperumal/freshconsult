@@ -6,7 +6,7 @@ class Social::FacebookPagesController < Admin::AdminController
   before_filter :set_session_state , :only =>[:index , :edit]
   before_filter :fb_client , :only => [:index,:edit]
   before_filter :load_item,  :only => [:edit, :update, :destroy]  
-  before_filter :load_tab, :only => :edit
+  before_filter :load_tab, :only => [:edit, :destroy]
   before_filter :handle_tab, :only => :update, :if => :tab_edited?
   
   def index
@@ -51,6 +51,7 @@ class Social::FacebookPagesController < Admin::AdminController
   end
 
   def destroy
+    fb_page_tab.remove if @fb_tab
     @item.destroy   
     flash[:notice] = t('facebook.deleted', :facebook_page => @item.page_name)
     redirect_to :action => :index 
