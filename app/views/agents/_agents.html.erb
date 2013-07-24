@@ -31,7 +31,7 @@
             <% else %>
               <% if can_edit?(agent) %>
                   <%= link_to t('edit'), edit_agent_path(agent), :class => "btn btn-mini" %>
-    						  <%= link_to ("<i class='icon-trash'></i>", agent, :confirm => "#{t('agent.info3')}?", 
+    						  <%= link_to ("<i class='icon-trash'></i>".html_safe, agent, :confirm => "#{t('agent.info3')}?", 
     												 :method => :delete, :class => "btn btn-mini") if(current_user != agent.user)%>
               <% end %>
             <% end %>

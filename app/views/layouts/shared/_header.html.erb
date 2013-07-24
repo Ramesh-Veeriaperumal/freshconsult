@@ -126,7 +126,7 @@
 
 		jQuery('#assumed_select_id').select2({
 		multiple: false,
-		data: [<%=assume_agent.join(",")%>]
+		data: [<%=assume_agent.join(",").html_safe%>]
 		
 	});
 

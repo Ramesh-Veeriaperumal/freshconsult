@@ -64,10 +64,10 @@ module AgentsHelper
     
     [:active, :occasional, :deleted].map do |tab|  
       content_tag(:li, :class => "#{(state == tab.to_s) ? 'active' : '' }") do
-        link_to(t("agent_list.tab.#{tab}") + agent_count(tab),
+        link_to((t("agent_list.tab.#{tab}") + agent_count(tab)).html_safe,
           "/agents/filter/#{tab}") 
-      end
-    end
+      end.to_s.html_safe
+    end.to_s.html_safe
     
   end
   
