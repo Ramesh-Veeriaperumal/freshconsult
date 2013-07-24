@@ -20,6 +20,8 @@ class HttpRequestProxyController < ApplicationController
           config = File.join(Rails.root, 'config', 'integrations_config.yml')
           key_hash = (YAML::load_file config)["icontact"]
           params[:custom_auth_header] = {"API-Version" => "2.0", "API-AppId" => key_hash["app_id"] , "API-Username" => installed_app.configs_username, "API-Password" => installed_app.configsdecrypt_password}
+        elsif params[:app_name] == "surveymonkey" and params[:domain]=='api.surveymonkey.net'
+          params[:custom_auth_header] = {"Authorization" => "Bearer #{installed_app.configs[:inputs]['oauth_token']}"}
         else
           params[:password] = installed_app.configsdecrypt_password
         end

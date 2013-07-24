@@ -25,6 +25,7 @@ class Helpdesk::ConversationsController < ApplicationController
   def reply
     build_attachments @item, :helpdesk_note
     @item.send_survey = params[:send_survey]
+    @item.include_surveymonkey_link = params[:include_surveymonkey_link]
     if @item.save
       add_forum_post if params[:post_forums]
       begin

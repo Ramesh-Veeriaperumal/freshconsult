@@ -61,12 +61,14 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       alt.part "text/plain" do |plain|
         plain.body  render_message("email_notification.text.plain.erb",:ticket => params[:ticket], :body => Helpdesk::HTMLSanitizer.plain(params[:email_body]), :dropboxes=>params[:dropboxes],
                     :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
-                    params[:notification_type]))
+                    params[:notification_type]),
+                    :surveymonkey_survey =>  Integrations::SurveyMonkey.survey_for_notification(params[:notification_type], params[:ticket]))
       end
       alt.part "text/html" do |html|
         html.body   render_message("email_notification.text.html.erb",:ticket => params[:ticket], :body => params[:email_body], :dropboxes=>params[:dropboxes],
                     :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
-                    params[:notification_type]))
+                    params[:notification_type]),
+                    :surveymonkey_survey =>  Integrations::SurveyMonkey.survey_for_notification(params[:notification_type], params[:ticket]))
       end
     end
 
@@ -111,14 +113,16 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       alt.part "text/plain" do |plain|
         plain.body   render_message("reply.text.plain.erb",:ticket => ticket, :body => note.full_text, :note => note, 
                     :dropboxes=>note.dropboxes, :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]),
-                    :include_quoted_text => options[:quoted_text]
+                    :include_quoted_text => options[:quoted_text],
+                    :surveymonkey_survey =>  Integrations::SurveyMonkey.survey(options[:include_surveymonkey_link], ticket, note.user)
                     )
       end
       alt.part "text/html" do |html|
         html.body   render_message("reply.text.html.erb", :ticket => ticket, 
                     :body => generate_body_html(note.full_text_html, inline_attachments, note.account), :note => note, 
                     :dropboxes=>note.dropboxes, :survey_handle => SurveyHandle.create_handle(ticket, note, options[:send_survey]),
-                    :include_quoted_text => options[:quoted_text]
+                    :include_quoted_text => options[:quoted_text],
+                    :surveymonkey_survey =>  Integrations::SurveyMonkey.survey(options[:include_surveymonkey_link], ticket, note.user)
                     )
       end
     end

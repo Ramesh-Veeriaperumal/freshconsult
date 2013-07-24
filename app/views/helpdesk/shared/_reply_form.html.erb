@@ -102,13 +102,51 @@
         <li class="inline-field field">
           <div class="attachment-options fields" id="attachment-options-reply">
             <div class="floatr fields">
+              <% show_satisfaction_survey_checkbox = @ticket.account.survey.can_send?(@ticket,
+                                                      Survey::SPECIFIC_EMAIL_RESPONSE) 
+                 show_surveymonkey_checkbox = Integrations::SurveyMonkey.show_surveymonkey_checkbox? @ticket.account
+              %>
+              
+              <% if show_satisfaction_survey_checkbox and show_surveymonkey_checkbox %>
+                <div class="btn-group survey-button floatr">
+                   <a rel="click-popover-below-left" class="btn dropdown-toggle" data-widget-container="survey-checkbox-container">
+                    <%= t("integrations.surveymonkey.include_survey") %>&nbsp;<span class="caret"></span>
+                  </a>
+                  <div class="survey-dropdown hide" id="survey-checkbox-container">
+                      <label class="checkbox">
+                        <input type="checkbox" name="send_survey" survey-checkbox="true">
+                        <%= t("ticket.reply_form.send_satisfaction_survey") %>
+                      </label>
+                      <label class="checkbox">
+                        <input type="checkbox" name="include_surveymonkey_link" survey-checkbox="true">
+                        <%= t("integrations.surveymonkey.include_surveymonkey_link") %>
+                      </label>
+                  </div>
+                </div>
+                <input type="hidden" id="send_survey" name="send_survey" value="false"> 
+                <input type="hidden" id="include_surveymonkey_link" name="include_surveymonkey_link" value="false"> 
+                <script type="text/javascript">
+                  jQuery(document).ready(function(){
+                    jQuery("body div.popover input[survey-checkbox=true]").live('click', function(){
+                      jQuery('#' + jQuery(this).attr('name')).val(jQuery(this)[0].checked?1:0);
+                    });
+                  });
+                </script>
+              <% elsif show_satisfaction_survey_checkbox %>
+                <div class="floatr fields survey_check">
+                  <%= check_box_tag :send_survey %>
+                  <%= t("ticket.reply_form.send_satisfaction_survey") %>
+                </div>
+              <% elsif show_surveymonkey_checkbox %>
+                <div class="floatr fields survey_check">
+                  <%= check_box_tag :include_surveymonkey_link %>
+                  <%= t("integrations.surveymonkey.include_surveymonkey_link") %>
+                </div>
+              <% end %>
               <div class="reply-draft" id="reply-draft">
                 <%= content_tag :div, t("saving_draft"), :class => "sav tooltip", "data-placement" => "below", :id => "draft-save", "title" => t("last_draft") %>
                 <div class="close-img" title="Clear saved draft" id="clear-draft"><span></span></div>
               </div>
-              <%if @ticket.account.survey.can_send?(@ticket, Survey::SPECIFIC_EMAIL_RESPONSE)%>
-                <div class="floatr survey_check"><%= check_box_tag :send_survey %><%= t("ticket.reply_form.send_satisfaction_survey") %></div>
-              <%end%>
             </div>
             <% unless local_assigns[:no_attachments] %>
             <%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>

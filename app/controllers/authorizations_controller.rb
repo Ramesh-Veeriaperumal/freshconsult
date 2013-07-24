@@ -86,11 +86,16 @@ class AuthorizationsController < ApplicationController
       app_name = origin['app_name'][0].to_s
       Rails.logger.debug "origin: #{origin.inspect}"
     else
-      portal_id = origin
+      portal_id = origin.to_i
       app_name = Integrations::Constants::APP_NAMES[provider.to_sym]
     end
 
-    access_token = get_oauth2_access_token(provider, @omniauth.credentials.refresh_token, app_name)
+    if(@omniauth.credentials.refresh_token)
+      access_token = get_oauth2_access_token(provider, @omniauth.credentials.refresh_token, app_name)
+    else
+      access_token = @omniauth.credentials
+    end
+    
 
     portal = Portal.find_by_id(portal_id)
     account = portal.account
@@ -239,6 +244,6 @@ class AuthorizationsController < ApplicationController
     redirect_to root_url
   end
 
-  OAUTH2_PROVIDERS = ["salesforce", "nimble", "google_oauth2"]
+  OAUTH2_PROVIDERS = ["salesforce", "nimble", "google_oauth2", "surveymonkey"]
   EMAIL_MARKETING_PROVIDERS = ["mailchimp", "constantcontact"]
 end
