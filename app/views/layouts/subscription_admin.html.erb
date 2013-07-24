@@ -37,8 +37,8 @@
 
 
 										    ].map do |s| 
-										      content_tag(:li, link_to(s[2], s[0]), :class => ((@selected_tab == s[1]) ? "active" : ""))
-										    end
+										      content_tag(:li, link_to(s[2], s[0]).html_safe, :class => ((@selected_tab == s[1]) ? "active" : ""))
+										    end.to_s.html_safe
 									%>          
 		            </ul> 
 								<% form_tag "/", :method => 'get', :class => "navbar-search pull-right" do %>
