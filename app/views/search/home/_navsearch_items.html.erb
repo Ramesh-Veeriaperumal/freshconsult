@@ -12,7 +12,7 @@
         <h4>Tickets</h4>
         <% @searched_tickets.each do |ticket| %>
           <span class="icon"></span>
-          <%= link_to("#{ticket.subject} (##{ticket.display_id})", ticket) %>
+          <%= link_to("#{ticket.es_highlight('subject')} (##{ticket.display_id})", ticket) %>
         <% end %>
       </li>
     <% end %>
@@ -32,7 +32,7 @@
         <h4>People</h4>
         <% @searched_users.each do |user| %> 
           <span class="icon"></span>
-          <%= link_to "#{user.name} - #{user.email}", user %>
+          <%= link_to "#{user.es_highlight('name')} - #{user.email}", user %>
         <% end %>
       </li>
     <% end %>
@@ -42,7 +42,7 @@
         <h4>Companies</h4>
         <% @searched_companies.each do |company| %>
           <span class="icon"></span>
-          <%= link_to(company.name, company) %>
+          <%= link_to(company.es_highlight('name'), company) %>
         <% end %>
       </li>
     <% end %>
@@ -52,7 +52,7 @@
         <h4>Solutions</h4>
         <% @searched_articles.each do |article| %>
           <span class="icon"></span>
-          <%= link_to(article.title, article) %>
+          <%= link_to(article.es_highlight('title'), article) %>
         <% end %>
       </li>
     <% end %>
@@ -62,7 +62,7 @@
         <h4>Forums</h4>
         <% @searched_topics.each do |topic| %>
           <span class="icon"></span>
-          <%= link_to(topic.title, category_forum_topic_path(topic.forum.forum_category, topic.forum, topic)) %>
+          <%= link_to(topic.es_highlight('title'), category_forum_topic_path(topic.forum.forum_category, topic.forum, topic)) %>
         <% end %>
       </li>
     <% end %>
