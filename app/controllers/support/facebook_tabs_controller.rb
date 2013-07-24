@@ -44,9 +44,7 @@ class Support::FacebookTabsController < SupportController
   	def portal_for_page
       fb_page = Social::FacebookPage.find_by_page_id_and_account_id(@page_info[:page_id], @account_id)
       if fb_page
-        portal = Portal.find_by_account_id_and_product_id(fb_page.account_id, 
-                                      fb_page.product_id) if fb_page.product_id
-        portal_url = (portal) ? portal.portal_url : fb_page.account.full_domain
+        portal_url = fb_page.account.full_domain
         "#{request.scheme}://#{portal_url}"
       end
     end
