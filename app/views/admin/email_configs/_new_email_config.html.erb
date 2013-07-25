@@ -1,31 +1,31 @@
 <% form_for :email_config, @email_config, :url => admin_email_configs_path, :html => { :method => :post } do |f| %>
 <%= f.error_messages %>
-<h3 class="title"><%=t('email_configs.title')%></h3>
+<h3 class="title"><%=t('email_configs.title').html_safe%></h3>
 <ul class="ui-form">
 	<li>
-			<label><%=t('email_configs.name')%></label>
+			<label><%=t('email_configs.name').html_safe%></label>
 			<div class="info-data"><%= t('email_configs.name_info_msg') %> </div>
 			<%= f.text_field :name, :class => "text" %>
 	</li>
 	<li>	
-			<label><%=t('email_configs.reply_email') + " *"%></label>
-			<div class="info-data"><%= t('email_configs.info7') %> </div>
+			<label><%=t('email_configs.reply_email').html_safe + " *"%></label>
+			<div class="info-data"><%= t('email_configs.info7').html_safe %> </div>
 			<%= f.text_field :reply_email, :class => "required email text", :id => "reply_to_id" %>
 	</li>
 	<li>	
-			<label><%=t('email_configs.info8')%></label>
+			<label><%=t('email_configs.info8').html_safe%></label>
 			<%= content_tag(:div, @email_config.to_email, :id => "div_reply_email", :class =>"highlight-textbox-info" )  %>
 			<%= f.hidden_field :to_email, :id => "hidden_reply_to" %>
 	</li>
 	<li>
-			<label><%=t('email_configs.info9')%></label>
-			<div class="info-data"><%=t('email_configs.info10')%> </div>
+			<label><%=t('email_configs.info9').html_safe%></label>
+			<div class="info-data"><%=t('email_configs.info10').html_safe%> </div>
 			<%= collection_select(:email_config, :group_id, @groups, :id, :name, options = {:include_blank => "..."}) %>
 	</li> 
 	<% if feature?(:multi_product) && !@products.empty? %> 
 		<li>
-			<label><%=t('email_configs.assign_to_product_msg')%></label>
-			<div class="info-data"><p><%=t('email_configs.assign_to_product_info', :products_path => new_admin_product_path)%></p></div> 
+			<label><%=t('email_configs.assign_to_product_msg').html_safe%></label>
+			<div class="info-data"><p><%=t('email_configs.assign_to_product_info', :products_path => new_admin_product_path).html_safe%></p></div> 
 			<%= collection_select(:email_config, :product_id, @products, :id, :name, options = {:include_blank => "..." }) %>
 		</li> 
 	<% end %>	
