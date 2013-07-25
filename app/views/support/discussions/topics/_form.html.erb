@@ -6,79 +6,77 @@
 						:method => @topic.new_record? ? :post : :put,
 						:html => { :multipart => true, :rel => "validate", :class => "form-portal" } do |form| -%>
 	<%= form.error_messages %>					
-	<fieldset>
-		<div class="control-group">
-			<label class="control-label required" for="topic_title">
-				<%= t('portal.topic.topic_title') %>
-			</label>
-			<div class="controls">
-				<%= form.text_field :title, :class => "required text span12", :tabindex => 10 %>
-			</div>
-		</div> 	
-		<div class="control-group">
-			<label class="control-label required" for="topic_body">
-				<%= t('message') %>
-			</label>
-			<div class="controls">
-				<%= form.rich_editor :body_html, :value => !@topic.new_record? ? @topic.posts.first.body_html : "", 
-					:rows => 12, "editor-type" => :forum, :class => "required" %>
+	<div class="control-group">
+		<label class="control-label required" for="topic_title">
+			<%= t('portal.topic.topic_title') %>
+		</label>
+		<div class="controls">
+			<%= form.text_field :title, :class => "required text span12", :tabindex => 10 %>
+		</div>
+	</div> 	
+	<div class="control-group">
+		<label class="control-label required description-label" for="topic_body">
+			<%= t('message') %>
+		</label>
+		<div class="controls">
+			<%= form.rich_editor :body_html, :value => !@topic.new_record? ? @topic.posts.first.body_html : "", 
+				:rows => 12, "editor-type" => :forum, :class => "required" %>
+		</div>
+	</div>	
+	<div class="control-group">
+		<label class="control-label required">
+			<%= t('portal.topic.post_topic') %>
+		</label>
+		<div class="controls">
+			<%= form.select :forum_id, grouped_options_for_select(forum_options), 
+				{ :include_blank => t("portal.topic.default_select_option") },
+				{ :class => "required custom-select", 
+				  :disabled => !@topic.new_record? } %>
+			<% javascript_tag do %>
+				jQuery("#topic_forum_id").val(<%= params[:forum_id] %>)
+			<% end %>
+		</div>
+	</div>
+	<div class="control-group">
+		<div class="controls">
+			<% if ["new"].include? params[:action] %>
+				<label class="checkbox" id="monitor-topic-lable">
+					<%= check_box_tag 'monitor', '', true, :class => "checkbox" %> 
+					<%= t('portal.topic.monitor_topic') %>
+				</label>
+			<%end%>
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label"><%= t('attach_files') %></label>	
+		<% attach_id = attach_id || "post" %>
+		<div class="controls">
+			<input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="post[attachments][][resource]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
+			<div class="attachments" id="<%=attach_id%>-container" style="display:none">
+			  <div id="<%=attach_id%>-attachments"></div>
 			</div>
 		</div>	
-		<div class="control-group">
-			<label class="control-label required">
-				<%= t('portal.topic.post_topic') %>
-			</label>
-			<div class="controls">
-				<%= form.select :forum_id, grouped_options_for_select(forum_options), 
-					{ :include_blank => t("portal.topic.default_select_option") },
-					{ :class => "required custom-select", 
-					  :disabled => !@topic.new_record? } %>
-				<% javascript_tag do %>
-					jQuery("#topic_forum_id").val(<%= params[:forum_id] %>)
-				<% end %>
-			</div>
-		</div>
-		<div class="control-group">
-			<div class="controls">
-				<% if ["new"].include? params[:action] %>
-					<label class="checkbox" id="monitor-topic-lable">
-						<%= check_box_tag 'monitor', '', true, :class => "checkbox" %> 
-						<%= t('portal.topic.monitor_topic') %>
-					</label>
-				<%end%>
-			</div>
-		</div>
-		<div class="control-group">
-			<label class="control-label"><%= t('attach_files') %></label>	
-			<% attach_id = attach_id || "post" %>
-			<div class="controls">
-				<input type="file" id="<%=attach_id%>_file" name="emptyfile" nameWhenFilled="post[attachments][][resource]" fileContainer="<%=attach_id%>-container" fileList="<%=attach_id%>-attachments" sendFocusTo="<%=attach_id%>-body" />
-				<div class="attachments" id="<%=attach_id%>-container" style="display:none">
-				  <div id="<%=attach_id%>-attachments"></div>
-				</div>
-			</div>	
-						
-			<script id="file-list-template" type="text/x-jquery-tmpl">			
-			  <div class="item">
-			  	<span>
-			  		${name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="${inputId}"><%= t('remove') %></a>
-				</span>
-			  </div>
-			</script>
-		</div>
-		
-		<% unless @topic.new_record? %>
-		<div class="attachment-list-container">
-		    <%= content_tag('h5', t('attachments')) unless @topic.posts.first.attachments.empty? %>
-		    <table class="attachment-list">
-		      <%= render(
-		        :partial => '/helpdesk/shared/attachment', 
-		        :collection => @topic.posts.first.attachments,
-		        :locals => {:show_delete => true, :url => [@topic.posts.first] }) %>
-		    </table>
+					
+		<script id="file-list-template" type="text/x-jquery-tmpl">			
+		  <div class="item">
+		  	<span>
+		  		${name} - <a href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;", inputId="${inputId}"><%= t('remove') %></a>
+			</span>
 		  </div>
-		<%end%>
-	</fieldset>
+		</script>
+	</div>
+	<% unless @topic.new_record? %>
+	<div class="attachment-list-container">
+	    <%= content_tag('h5', t('attachments')) unless @topic.posts.first.attachments.empty? %>
+	    <table class="attachment-list">
+	      <%= render(
+	        :partial => '/helpdesk/shared/attachment', 
+	        :collection => @topic.posts.first.attachments,
+	        :locals => {:show_delete => true, :url => [@topic.posts.first] }) %>
+	    </table>
+	  </div>
+	<%end%>
+	
 	<div class="form-actions">
 		<input type="submit" class="btn btn-primary" value=<%= t('save') %> />
 		<a href="javascript:history.back()" class="btn"><%= t('cancel') %></a>
