@@ -85,10 +85,12 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
 
   def export(params, string_csv, recipient)
-    subject       formatted_export_subject(params)
+    subject       formatted_export_subject(params).to_s + " -- " + Account.current.full_domain.to_s
     recipients    recipient.email
     body          :user => recipient
     from          AppConfig['from_email']
+    #bcc - Temporary fix for reports. Need to remove when ticket export is fully done.
+    bcc           "reports@freshdesk.com"
     sent_on       Time.now
     content_type  "multipart/alternative"
 
