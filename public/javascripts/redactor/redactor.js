@@ -2967,6 +2967,7 @@ Redactor.prototype = {
 				if(data.filelink != undefined){
 					html = '<p><img src="' + data.filelink + '" class= "inline-image" data-id = "' + data.fileid + '" /></p>';
 					this.$editor.find("#uploading_images_"+data.uniquekey).replaceWith($(html))
+					this.syncCode();
 					if(this.$editor.find("img.image-loader").length == 0){
 						if (typeof this.opts.imageLoadedCallback === 'function'){
 							this.opts.imageLoadedCallback(this);
