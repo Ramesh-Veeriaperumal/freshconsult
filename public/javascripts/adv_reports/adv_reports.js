@@ -187,8 +187,8 @@ Helpkit.reports_util = {
 
       Helpkit.reports_util.updateReportFilters(_id);
       jQuery("#active_filter").text(_jq_this.text());
-      jQuery(".selected-filter").removeClass('selected-filter');
-      _jq_this.addClass('selected-filter');
+      jQuery(".ticksymbol").removeClass('ticksymbol');
+      _jq_this.addClass('ticksymbol');
       jQuery("#delete-filter-link").removeClass('hide').attr('data-id',_id);
       jQuery("#save-filter-link").addClass('hide');
     });
