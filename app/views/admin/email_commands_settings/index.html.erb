@@ -46,7 +46,7 @@
 <% end %>
 
 <% javascript_tag do%>
-		email_content_commands = '<%= @email_content_commands%>';
+		email_content_commands = '<%= @email_content_commands.html_safe %>';
 		content_prefix = 'Hi,\n\n';
 		content_suffix = '\n\nYour issue is resolved now.\n\nThanks,\nAgent Name.\n'; 
 		(function($){
