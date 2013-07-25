@@ -1,7 +1,7 @@
 <% content_for :sidebar do %> 
 	<%= render :partial => "helpnote" %>	
 <% end %>
-<div class="flash_info notice" id="notice_id" style="display: none; "><%=t('email_configs.Personalized_email_replies_message') %><a class="close" href="#"></a></div>
+<div class="flash_info notice" id="notice_id" style="display: none; "><%=t('email_configs.Personalized_email_replies_message').html_safe %><a class="close" href="#"></a></div>
 <div id="emailconfig-list" class="email-settings-header">
   <% if feature?(:multiple_emails) %>
     <%= link_to t('email_configs.new_support_email'), new_admin_email_config_path, :class => "floatr uiButton"%>

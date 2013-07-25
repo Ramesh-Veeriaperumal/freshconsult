@@ -91,7 +91,7 @@ module ApplicationHelper
   end
   
   def show_admin_flash
-    [:notice, :warning, :error].collect {|type| content_tag('div', "<a class='close' data-dismiss='alert'>×</a>" + flash[type], :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }.to_s.html_safe  
+    [:notice, :warning, :error].collect {|type| content_tag('div', ("<a class='close' data-dismiss='alert'>×</a>" + flash[type]).html_safe, :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }.to_s.html_safe  
   end   
 
   def show_announcements                                                    
