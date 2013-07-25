@@ -902,9 +902,7 @@ var scrollToError = function(){
 		if($('#custom_ticket_form').valid())
 		{
 			var action_attr = $('#custom_ticket_form').attr("action");
-			$('#custom_ticket_form').attr("action", action_attr +"?redirect=true" );
-			if(ev.shiftKey)
-				$('#disable_email_field').val("true");
+			$('#custom_ticket_form').attr("action", action_attr +"?disable_notification=" + ev.shiftKey + "&redirect=true" );
 			$('#custom_ticket_form').submit();
 		}
 		else
@@ -936,7 +934,6 @@ var scrollToError = function(){
       else
       	scrollToError();
 
-    $('#disable_email_field').val("true");
   	$('#custom_ticket_form').submit();
 
     });
