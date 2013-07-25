@@ -41,7 +41,7 @@
 		</li> 
 	<% end %>	
 </ul>
-
+<hr>
 <div class="button-container pull-right">
 <%= link_to(t('remove'), admin_email_config_path(@email_config), :method => 'delete', :confirm => t('email_configs.remove_msg'), :class => "btn floatl" ) unless @email_config.primary_role %>	
 	<%= link_to(t('cancel'), admin_email_configs_path, :class => "btn", :id => "email-form-cancel" )  %>
