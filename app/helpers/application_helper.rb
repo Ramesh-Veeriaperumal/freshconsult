@@ -537,7 +537,7 @@ module ApplicationHelper
     replace_objs = replace_objs.merge({"current_user"=>current_user})
     # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
     replace_objs = replace_objs.merge({installed_app.application.name.to_s => installed_app, 'installed_app' => (InstalledAppDrop.new installed_app), "application" => installed_app.application, 'portal_id' => current_portal.id}) unless installed_app.blank?# Application name based liquid obj values.
-    Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter])  # replace the liquid objs with real values.
+    Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter]).html_safe  # replace the liquid objs with real values.
   end
 
   def construct_ui_element(object_name, field_name, field, field_value = "", installed_app=nil, form=nil)
