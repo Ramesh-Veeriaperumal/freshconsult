@@ -7655,7 +7655,6 @@ div.watchers_tooltip{
 	font-size: 15px;
 	}
 }
-
 #folders { 
 	width: 100px;
 }
@@ -7670,6 +7669,15 @@ div.watchers_tooltip{
 
 #new_canned_response_folder .uiButton[disabled]{
 	color: #333 !important;
+}
+
+#ca_new_menu{
+	li.active{
+		a{
+			color: #333;
+			background: none;
+		}
+	}
 }
 
 #create-folder{
@@ -7812,7 +7820,10 @@ div.watchers_tooltip{
 	margin-top: 13px;
 }
 
-#can-menu .ticksymbol{ padding-right: 23px; }
+#ca_new_menu .ticksymbol{ 
+	padding-right: 19px;
+	margin-left: -18px;
+}
 
 p.imp{
 	color: white;
