@@ -4,63 +4,64 @@
 <div class="flash_info notice" id="notice_id" style="display: none; "><%=t('email_configs.Personalized_email_replies_message') %><a class="close" href="#"></a></div>
 <div id="emailconfig-list" class="email-settings-header">
   <% if feature?(:multiple_emails) %>
-    <%= link_to t('email_configs.new_support_email'), new_admin_email_config_path, :class => "floatr uiButton"%>
+    <%= link_to t('email_configs.new_support_email'), new_admin_email_config_path, :class => "pull-right btn"%>
   <% else %>
-    <%= link_to t('email_configs.new_support_email'), "javascript:;", :class => "floatr button locked tooltip", "data-placement" => 'below', :title => t('non_covered_feature_error') %>
+    <%= link_to t('email_configs.new_support_email'), "javascript:;", :class => "pull-right btn locked tooltip", "data-placement" => 'below', :title => t('non_covered_feature_error') %>
     <% options =  ( current_user.privilege?(:manage_account) ) ? {:tag => :a, :href => subscription_url } : {:tag => :p} %>
     <%= content_tag(options[:tag], t('subscription.upgrade.message'), :href => options[:href], :class => "upgrade-message" ) %>
   <% end %>
-  <h3 class="title"><%=t('email_configs.title')%></h3>
-  <div class="intro"><%=t('email_configs.info11')%></div>
+  <h3 class="lead"><%=t('email_configs.title')%></h3>
+  <div class="lead-desc"><%=t('email_configs.info11')%></div>
 </div>
-<div class="floatr email-settings-bcc">
+<div class="pull-right email-settings-bcc">
   <%= content_tag :label, "#{I18n.t('email_configs.bcc_text')}: #{truncate(current_account.bcc_email, 20, '...')}", :class=> 'floatl', :title => current_account.bcc_email unless current_account.bcc_email.blank?%>
   <%= link_to( (current_account.bcc_email.blank? ? t('email_configs.add_bcc_text') : t('email_configs.edit')) , { :controller => 'admin/account_additional_settings', :action => "assign_bcc_email" }, :class => "dialog2", :title => t('email_configs.set_bcc_email_text'), "data-width" => "400" ) %>
   <%= content_tag :span, "", :class => "tool-tip", :title=> t('email_configs.info17')%>
 </div>
-<div>
+<div class="list-page">
   <h4 class="product-title"><%=t('email_configs.global_support_emails')%></h4>
-  <table class="email-config-styled-table">
-    <thead>
-      <tr>
-        <td class="edit">&nbsp;</td>
-        <td class="primaryRole">&nbsp;</td>
-        <td class="supportMail"><%=t('email_configs.support_email')%></td>
-        <td class="to-email"><%=t('email_configs.forwarding_email')%></td>
-        <td><%=t('email_configs.group')%></td>
-      </tr>
-    </thead>
-    <tbody>
-      <% @global_email_configs.each do |email_config| %>
-        <%= render(:partial => "email_config", :object =>  email_config) %>      
-      <% end %>
-    </tbody>
-  </table>
-  <% if feature?(:multi_product) %>
-    <% @products.each do |product| %>
-      <h4 class="product-title"><%= product.name %></h4> 
-      <table class="email-config-styled-table">
-        <thead>
-          <tr>
-            <td class="edit">&nbsp;</td>
-            <td class="primaryRole">&nbsp;</td>
-            <td class="supportMail"><%=t('email_configs.support_email')%></td>
-            <td class="to-email"><%=t('email_configs.forwarding_email')%></td>
-            <td><%=t('email_configs.group')%></td>
-          </tr>
-        </thead>
-        <tbody>
-          <% product.email_configs.each do |email_config| %>
-            <%= render(:partial => "email_config", :object =>  email_config) %>      
-          <% end %>
-        </tbody>
-      </table>
-   <% end %>
-  <% end %>
+  <div class="list-page-body">
+    <table class="table table-striped email-config-styled-table">
+      <!--<thead>
+        <tr>
+          <td class="edit">&nbsp;</td>
+          <td class="primaryRole">&nbsp;</td>
+          <td class="supportMail"><%#=t('email_configs.support_email')%></td>
+          <td class="to-email"><%#=t('email_configs.forwarding_email')%></td>
+          <td><%#=t('email_configs.group')%></td>
+        </tr>
+      </thead>-->
+        <% @global_email_configs.each do |email_config| %>
+          <%= render(:partial => "email_config", :object =>  email_config) %>      
+        <% end %>
+    </table>
+    <% if feature?(:multi_product) %>
+      <% @products.each do |product| %>
+        </div>
+        <br/>
+        <h4 class="product-title"><%= product.name %></h4> 
+        <div class="list-page-body"> 
+        <table class="table table-striped email-config-styled-table">
+         <!-- <thead>
+            <tr>
+              <td class="edit">&nbsp;</td>
+              <td class="primaryRole">&nbsp;</td>
+              <td class="supportMail"><%#=t('email_configs.support_email')%></td>
+              <td class="to-email"><%#=t('email_configs.forwarding_email')%></td>
+              <td><%#=t('email_configs.group')%></td>
+            </tr>
+          </thead> -->
+            <% product.email_configs.each do |email_config| %>
+              <%= render(:partial => "email_config", :object =>  email_config) %>      
+            <% end %>
+        </table>
+     <% end %>
+    <% end %>
+  </div>
 </div>
 <div style="overflow:hidden">
 <ul> 
-  <li style="border-top:1px solid #ECECEC; padding-bottom:5px;">
+  <li style="padding-bottom:5px;">
   <li>
     <div style="margin:5px 5px 0;font-weight:bold;font-size:14px;color:#555;" class="floatl"><%= t('email_configs.Personalized_email_replies') %></div>    
     <div id="survey_link_con" class="floatr" style="padding-top:5px;"> 

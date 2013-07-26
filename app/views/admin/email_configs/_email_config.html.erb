@@ -1,7 +1,4 @@
-<tr class="<%= cycle('odd', 'even') %>">
-  <td class="edit">
-    <%= link_to t('email_configs.edit'), edit_admin_email_config_path(email_config) %>
-  </td>
+<tr>
   <td class="primaryRole">
     <% portal_name = email_config.product ? email_config.product.name : current_account.portal_name%>
     <% if email_config.primary_role? %>
@@ -10,21 +7,28 @@
       <%= link_to "", "/admin/email_configs/make_primary/#{email_config.id}", :confirm => t('email_configs.mark_as_primary_msg'), :title => t('email_configs.secondary_supp_email_tool_tip'), :class => "tooltip secondary" %> 
     <% end %>
   </td>
-  <td class="supportMail">
+
+  <td class="support-email">
     <% if email_config.active? %>
-      <%= content_tag(:span, h("#{email_config.name}"), :class => "bold")%><br>
-      <%= content_tag(:div, h("#{email_config.reply_email}"), :class => "wrap" ) %>
+      <%= content_tag(:div, h("#{email_config.name}"), :class => "bold")%>
+      <%= content_tag(:div, h("#{email_config.reply_email}"), :class => "wrap ellipsis" ) %>
     <% else %>
-      <%= content_tag :span, "", :title => t('email_configs.unverified_info1'), :class => "tooltip warning_icon"%>
-      <div class="not-verified">
-        <%= content_tag(:span, h("#{email_config.name}"), :class => "bold") unless email_config.name.blank?%><br>
-        <%= content_tag(:div, h("#{email_config.reply_email}"), :class => "reply_email wrap") %>
-        <div class="verify-button">
-          <%= link_to( t("email_configs.send_verification_email"), deliver_verification_admin_email_config_path(email_config) )  unless email_config.active?  %>
-        </div>
+      <%#= content_tag :span, "", :title => t('email_configs.unverified_info1'), :class => "tooltip warning_icon"%>
+      <%= content_tag(:div, h("#{email_config.name}"), :class => "bold") unless email_config.name.blank?%>
       <div>
+        <del><%= content_tag(:div, h("#{email_config.reply_email}"), :class => "reply_email wrap ellipsis") %></del>
+        <span class="alert-text">Unverified - </span>
+        <div class="verify-button">
+          <%= link_to( t("email_configs.send_verification_email"), deliver_verification_admin_email_config_path(email_config), :class => 'btn btn-mini' ) unless email_config.active? %>
+        </div>
+      </div>
     <% end %>
   </td>
-  <td class="to-email"><%= content_tag :div, h(email_config.to_email), :class => "wrap" %> </td>
-  <td><%= content_tag :span, h(email_config.group ? email_config.group.name : "-") %> </td>
+
+  <td><div class="muted">Forwarded to: </div><%= content_tag :span, h(email_config.to_email), :class => "wrap ellipses" %> </td>
+  <td><div class="muted">Group: </div><%= content_tag :span, h(email_config.group ? email_config.group.name : "-"), :class => "ellipses" %> </td>
+   <td class="text-right">
+    <%= link_to t('email_configs.edit'), edit_admin_email_config_path(email_config) , :class => 'btn btn-mini'%>
+    <a href="#" class="btn btn-mini"><i class="icon-trash"></i></a>
+  </td>
 </tr>

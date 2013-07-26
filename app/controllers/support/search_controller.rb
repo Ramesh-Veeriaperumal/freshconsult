@@ -140,7 +140,7 @@ class Support::SearchController < SupportController
                             { :not => { :term => { :status => SearchUtil::DEFAULT_SEARCH_VALUE } } }
 
               f.filter :or, { :not => { :exists => { :field => 'folder.visibility' } } },
-                            { :terms => { 'folder.visibility' => visibility_opts(Solution::Folder::VISIBILITY_KEYS_BY_TOKEN) } }
+                            { :terms => { 'folder.visibility' => visibility_opts(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN) } }
               f.filter :or, { :not => { :exists => { :field => 'forum.forum_visibility' } } },
                             { :terms => { 'forum.forum_visibility' => visibility_opts(Forum::VISIBILITY_KEYS_BY_TOKEN) } }
 
@@ -184,7 +184,7 @@ class Support::SearchController < SupportController
             end
           end
           search.from options[:size].to_i * (options[:page].to_i-1)
-          search.highlight :desc_un_html, :title, :description, :subject, :options => { :tag => '<span class="match">', :fragment_size => 200, :number_of_fragments => 4 }
+          search.highlight :desc_un_html, :title, :description, :subject, :options => { :tag => '<span class="match">', :fragment_size => 200, :number_of_fragments => 4, :encoder => 'html' }
         end
 
         @items = @es_items.results
@@ -315,7 +315,7 @@ class Support::SearchController < SupportController
     end
 
     def note_result note
-      { 'title' => note.notable.subject.html_safe, 
+      { 'title' => h(note.notable.subject.html_safe), 
         'group' => "Note", 
         'desc' => truncate(note.body.html_safe, :length => truncate_length),
         'type' => "NOTE", 
