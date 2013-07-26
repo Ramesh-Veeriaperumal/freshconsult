@@ -184,7 +184,7 @@ class Support::SearchController < SupportController
             end
           end
           search.from options[:size].to_i * (options[:page].to_i-1)
-          search.highlight :desc_un_html, :title, :description, :subject, :options => { :tag => '<span class="match">', :fragment_size => 200, :number_of_fragments => 4 }
+          search.highlight :desc_un_html, :title, :description, :subject, :options => { :tag => '<span class="match">', :fragment_size => 200, :number_of_fragments => 4, :encoder => 'html' }
         end
 
         @items = @es_items.results
@@ -315,7 +315,7 @@ class Support::SearchController < SupportController
     end
 
     def note_result note
-      { 'title' => note.notable.subject.html_safe, 
+      { 'title' => h(note.notable.subject.html_safe), 
         'group' => "Note", 
         'desc' => truncate(note.body.html_safe, :length => truncate_length),
         'type' => "NOTE", 
