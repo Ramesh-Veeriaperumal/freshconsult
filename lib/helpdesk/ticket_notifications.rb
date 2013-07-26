@@ -22,9 +22,7 @@ module Helpdesk::TicketNotifications
   def notify_on_update
     return if spam? || deleted?
     notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if (@model_changes.key?(:group_id) && group)
-    if (@model_changes.key?(:responder_id) && responder && responder != User.current)
-      notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT)
-    end
+    notify_by_email(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if send_agent_assigned_notification?
     
     if @model_changes.key?(:status)
       if (status == RESOLVED)

@@ -27,11 +27,17 @@ class Public::NotesController < ApplicationController
         }.merge(params[:helpdesk_note]))
 
     build_attachments
-    if @note.save
-      update_cc_list if (current_user || @requester).privilege?(:client_manager)
-      flash[:notice] = t(:'flash.tickets.notes.create.success')
-    else
-      flash[:error] = t(:'flash.tickets.notes.create.failure')
+    begin
+      user = current_user || @requester
+      user.make_current
+      if @note.save
+        update_cc_list if (current_user || @requester).privilege?(:client_manager)
+        flash[:notice] = t(:'flash.tickets.notes.create.success')
+      else
+        flash[:error] = t(:'flash.tickets.notes.create.failure')
+      end
+    ensure
+      User.reset_current_user
     end
     respond_to do |format|
       format.html{

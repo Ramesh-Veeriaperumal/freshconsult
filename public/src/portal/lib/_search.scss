@@ -6,7 +6,7 @@
 
 ul.ui-autocomplete{ 
 	margin: 0;
-	li.article-item, li.topic-item, li.ticket-item {
+	li.article-item, li.topic-item, li.ticket-item, li.note-item {
 		padding-left: 35px;
 		&:before{ left: 10px; }
 	}

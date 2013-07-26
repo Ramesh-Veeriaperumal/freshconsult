@@ -52,6 +52,8 @@ class Solution::Article < ActiveRecord::Base
     }
   end
 
+  attr_accessor :highlight_title, :highlight_desc_un_html
+
   attr_protected :account_id ,:attachments
   
   validates_presence_of :title, :description, :user_id , :account_id
@@ -101,11 +103,10 @@ class Solution::Article < ActiveRecord::Base
       if ticket.account.es_enabled?
         begin
           options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }
-          item = Tire.search [ticket.account.search_index_name], options do |search|
+          item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], ticket.account.id), options do |search|
             search.query do |query|
               query.filtered do |f|
                 f.query { |q| q.string SearchUtil.es_filter_key(search_by), :fields => ['title', 'desc_un_html'], :analyzer => "include_stop" }
-                f.filter :terms, :_type => ['solution/article']
                 f.filter :term, { :account_id => ticket.account_id }
               end
             end
@@ -114,11 +115,7 @@ class Solution::Article < ActiveRecord::Base
           end
 
           item.results.each_with_hit do |result,hit|
-            unless result.blank?
-              hit['highlight'].keys.each do |i|
-                result[i] = hit['highlight'][i].to_s
-              end
-            end
+            SearchUtil.highlight_results(result, hit) unless hit['highlight'].blank?
           end
           item.results
         rescue Exception => e

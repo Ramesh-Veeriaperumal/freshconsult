@@ -1,9 +1,6 @@
 <% content_for :sidebar do %>
   <%= render :partial => "helpnote" %>
 <% end %>
-<%= include_cloudfront_css :pattern %>
-<%= include_cloudfront_js :pattern %>
-
 <div class="list-page group-management">
   <div class="list-page-header row-fluid"> 
   	<h3 class="lead span6"><%=t('group.title')%></h3>
@@ -19,7 +16,7 @@
           </td>
           <td class="text-right">
           	<%= link_to t('edit'), edit_group_path(group), :class => "btn btn-mini" %>
-          	<%= link_to "<i class='icon-trash'></i>", group, :confirm => "#{t('group.info5')}?", :method => :delete, :class => "btn btn-mini"%>
+          	<%= link_to "<i class='icon-trash'></i>", group, :confirm => "#{t('group.info5')}", :method => :delete, :class => "btn btn-mini"%>
           </td>
         </tr>
         <% end %>

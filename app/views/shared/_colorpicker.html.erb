@@ -6,6 +6,9 @@
 	  
 	  if(value != '' && value[0] != '#')
 		element.value = '#' + value;
+
+	 if (value.length==4 && value[0]=='#')
+	 	element.value= value + value[1] + value[2] + value[3];
 		
 	  return colorValid; 
 	}, "Please enter a valid color value");

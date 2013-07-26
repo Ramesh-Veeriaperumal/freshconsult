@@ -6851,7 +6851,7 @@ margin:10px;
 /* SURVEY REPORT RELATED STYLES ENDS */
 
 .email-settings-header{
-	padding-bottom: 30px;
+	padding-bottom: 10px;
 	.action_buttons{
 		margin-top: 6px;
 		padding: 5px;
@@ -6905,14 +6905,6 @@ margin:10px;
 
 /* SURVEY REPORT RELATED STYLES ENDS */
 
-.email-settings-header{
-	padding-bottom: 30px;
-	.action_buttons{
-		margin-top: 6px;
-		padding: 5px;
-	}
-}
-
 .email-settings-bcc{
 	position: relative;
 	label{
@@ -6934,122 +6926,51 @@ margin:10px;
 		right: 0px;
 	}
 }
-
-.email-config-styled-table{
-	width:100%;
-	border:1px solid #ECECEC;
-	margin-bottom: 20px;
-	thead{
-		tr{
-			height: 34px;
-			td{
-				color:#222;
-				@include background-image(linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(18,18,18,0.05) 100%));
-				font-weight: 600;
-				font-size: 13px;
-			}
+.list-page .list-page-body .email-config-styled-table{
+	table-layout:fixed;
+	tr td{
+		vertical-align: top;
+		width:28%;
+		&:first-child{
+			width:3%;
 		}
-	}
-	tr{
-		border-bottom:1px solid #ECECEC;
-		td{
-			vertical-align: middle;
-			padding: 10px 4px;
+		&:last-child{
+			width:13%;
 		}
-	}
-	tbody{
-		tr{
-			&.even{
-				>td{
-					background-color: #F9F9F9
-				}
-			}
-			td{
-				height: auto;
-				color: #666;
-
-				&.edit{
-					width: 5%;
-					text-align: center;
-					font-size: 13px;
+	    &.primaryRole{
+	    	padding-top: 16px;
+	    	.primary, .secondary{
+	    		display: block;
+	    	}
+	    	.primary:before{
+	    		content: url(/images/star_on.png) "";
+	    	}
+	    	.secondary:before{
+	    		content: url(/images/star_off.png) "";
+	    	}
+	    	.secondary:hover{
+	    		display: block;
+		    	&::before{
+			    	content: url(/images/star_hover.png) "";
 		    	}
-			    &.primaryRole{
-			    	width: 3%;
-			    	.primary, .secondary{
-			    		display: block;
-			    	}
-			    	.primary:before{
-			    		content: url(/images/star_on.png) "";
-			    	}
-			    	.secondary:before{
-			    		content: url(/images/star_off.png) "";
-			    	}
-			    	.secondary:hover{
-			    		display: block;
-				    	&::before{
-					    	content: url(/images/star_hover.png) "";
-				    	}
-			    	}
-			    }
-
-			    &.supportMail{
-			    	width: 200px;
-					span{
-						&.bold{
-							color: $default_txt_color;
-							font-weight: bold;
-							font-size: 13px;
-						}
-					}
-					span{
-						&.warning_icon{
-							display: inline-block;
-							float: left;
-							padding-top: 12px;
-							&:before{
-			    				content: url(/images/img_icon_warning.png) "";
-				    		}
-						}
-					}
-					div{
-						&.reply_email{
-							text-decoration: line-through;
-						}
-						&.wrap{
-							width: 180px;
-						}
-					}
-					.not-verified{
-						margin-left: 30px;
-					}
-					.verify-button{
-						padding-top: 8px;
-						a{
-							padding: 3px 6px;
-							font-size:11px;
-							text-align: center;
-							text-decoration: none;
-							background-color:#f8f8f8;
-							border: 1px solid #919191;
-							@include link-colors(#3f3f3f, #666666, #3f3f3f, #3f3f3f);
-							@include border-radius(8px);
-							cursor: pointer;
-						}
-					}
-				}
-				&.to-email{
-					width: 285px;
-					div{
-						&.wrap{
-							width: 250px;
-						}
-					}
-				}
-			}
+	    	}
+	    }
+	    &.support-email{
+	    	>div{
+	    		&:first-child{
+	    			margin-top:0;
+	    		}
+	    		margin-top: 3px;
+	    		&.bold{
+	    			font-weight: bold;
+	    		}
+	    	}
+	    }
+		.verify-button{
+			display: inline-block;
 		}
 	}
 }
-
 .product-title {
 	font-size: 1.1em;
 	font-weight: bold;
@@ -7491,6 +7412,7 @@ div.watchers_tooltip{
 	}
 }
 
+
 .watcher_highlight {
   @include animation(watcher_blink 0.8s ease-out 1);
 }
@@ -7509,7 +7431,64 @@ div.watchers_tooltip{
   100% { background: rgba(#ff0000,0);}
 }
 
+
 /* Add Watcher End */
+
+/* Ticket Auto-refresh */
+
+.count-label{
+	position: relative;
+	right: 3px;
+	&:before{
+		content: attr(data-count);
+		color: transparent;
+		background: #888;
+		border-radius: 9px;
+		font-weight: bold;
+		margin-left: 20px;
+		padding: 0px 8px 2px 6px;
+		margin-top: -2px;
+		margin-right: 5px;
+		font-size: 12px;
+		position: relative;
+		bottom: 2px;
+	}
+}
+
+#index_refresh_alert{
+	background-color: #fdfdf1;
+	border-bottom: 1px solid #eee;
+	padding: 14px 0;
+	@include box-shadow(inset 0px 3px 7px rgba(100,100,100,0.1));
+	color: #666;
+	cursor: pointer;
+
+	&:hover {
+		background-color : #fcfcd1;
+		@include transition(background-color 200ms linear);
+		.reload_icon{
+			background-color: #000;
+			@include transition(background-color 400ms linear);
+		}
+	}
+
+	.reload_link{
+	    color: #06C;
+		font-weight: bold;
+		padding-right: 10px;
+		float: right;
+	}	
+}
+.ticket_highlight {
+	@include animation(ticket_blink 0.8s ease-out 1);
+}
+
+@include keyframes(ticket_blink) {
+	0% { background: rgba(#ff0,.8);}
+	100% { background: rgba(#ff0,0);}
+}
+
+/* Ticket Auto-refresh */
 
 /* Admin-canned-response-folders */
 
@@ -7597,7 +7576,6 @@ div.watchers_tooltip{
 	font-size: 15px;
 	}
 }
-
 #folders { 
 	width: 100px;
 }
@@ -7612,6 +7590,15 @@ div.watchers_tooltip{
 
 #new_canned_response_folder .uiButton[disabled]{
 	color: #333 !important;
+}
+
+#ca_new_menu{
+	li.active{
+		a{
+			color: #333;
+			background: none;
+		}
+	}
 }
 
 #create-folder{
@@ -7754,7 +7741,10 @@ div.watchers_tooltip{
 	margin-top: 13px;
 }
 
-#can-menu .ticksymbol{ padding-right: 23px; }
+#ca_new_menu .ticksymbol{ 
+	padding-right: 19px;
+	margin-left: -18px;
+}
 
 p.imp{
 	color: white;
@@ -8231,66 +8221,6 @@ height: auto;
 .table-striped tbody tr.diffColor td{ 
 	background-color: #fefdee !important; 
 }
-.cust_list_table{
-     margin:0 auto;
-     .cust_list_table_header{
-     	margin-bottom:20px;
-     }
-}
-.cust_list_table_body{
-    border:1px solid #f1f1f1; /* depands upon bootstrap table variable $tableBorder  */
-    background:#f6f6f6;
-    padding:8px 0 8px 0;
-    @include border-radius(5px);
-    @include box-shadow(0px 0px 8px rgba(200, 200, 200, 0.3));
-    table{
-        background:#fff;
-    	  margin:0;
-        table-layout:fixed;
-    }
-    .pagination{
-    	background:#f6f6f6;
-        border-top:1px solid #f1f1f1;     /* depands upon bootstrap table variable $tableBorder  */ 
-        margin:0px;  
-        padding:10px; 
-        padding-bottom:0;
-        line-height:0;    
-    }
-    .cust-list-avatar 
-    {
-    	div.preview_pic{
-    	border: 2px solid #CCC;
-  		@include border-radius(100%);
-  		width: 30px;
-  		height: 30px;
-		}
-    	img{
-	        width:30px;
-	        height:30px;  
-			    @include border-radius(100%);     
-    	}
-    }
-    .btn-mini{
-        background-image:none;
-        background-color:#fdfdfd; 
-        &:hover{
-          background-color:#f1f1f1;  
-        }        
-    }
-	table{
-		border-bottom: 1px solid #f1f1f1; /* depands upon bootstrap table variable $tableBorder  */
-	    tr td
-	    {
-	    	width:23%; 
-	    	vertical-align: middle;
-		    &:last-child{
-		        width:31%;
-		        text-align:right;
-		        padding-right:10px;
-		    }
-		}
-	}
-}
 
 .agent-list-page {
   &.deleted-list{
@@ -8625,12 +8555,6 @@ height: auto;
 
 .header_buttons{
 	padding-top: 5px;
-}
-
-#company_sub_header{
-	font-size: 12px;
-	margin-top: 8px;
-	margin-bottom: 8px;
 }
 
 .margin-bottom{ margin-bottom:10px; }
@@ -10164,3 +10088,58 @@ div.gcal-confirm-modal-content{ width: 100%; }
 }
 
 .tweet-table .search-grey-box{ margin-top: 0; }
+
+//Free Trial Notification
+.trial_expiry {
+	@include border-radius(5px);
+	padding-top:12px;
+	p{
+		
+		color: #777;
+		margin:5px 0 20px;
+	}
+	.trial-background {
+		margin: 11px -13px -12px;
+		padding: 10px 20px 10px 12px;
+		border-radius: 0 0 5px 5px;
+		cursor:pointer;
+
+		a
+		{
+			color: #FFF;
+			font-weight: bold;
+			font-size: 1.1em;
+			@include text-shadow(-1px -1px 0px #000);
+			display: block;
+			height: 100%;
+			.arrow-right{
+				border-left-color:#fff;
+				font-size:8px;
+				float: right;
+				margin-top: 3px;
+				margin-right: -8px
+			}
+		}
+	}
+}
+.more_than_ten{
+	h3
+	{
+		color: #337035;
+	}
+	background-color: #F7FFEB;
+	.trial-background {
+		background: #337035;
+	}
+}
+
+.less_than_ten{
+	h3
+	{
+		color: #790711;
+	}
+	background-color: #FFF2F3;
+	.trial-background {
+		background: #790711;
+	}
+}

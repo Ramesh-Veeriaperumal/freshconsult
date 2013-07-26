@@ -120,6 +120,11 @@ Helpkit.reports_util = {
       jQuery("#comparison_select").select2('val',Helpkit.report_filter_data[id]['data']['comparison_selected'].split(','));
       jQuery("#comparison_select").trigger('change')
     }
+    //add the comparison fieds 
+    if(Helpkit.report_filter_data[id]['data']['metric_selected']){
+      jQuery("#metric_select").select2('val',Helpkit.report_filter_data[id]['data']['metric_selected'].split(','));
+      jQuery("#metric_select").trigger('change')
+    }
     jQuery("#submit").click();
   },
   clearSelect2Filters: function(){
@@ -132,7 +137,7 @@ Helpkit.reports_util = {
     var args ={
       ajaxType: 'report_filter_create',
       type: "POST",
-      url: "/reports/report_filter/create",
+      url: "/reports/report_filters/create",
       dataType: "json",
       data: data,
       success: function(data){
@@ -159,7 +164,7 @@ Helpkit.reports_util = {
     var args ={
       ajaxType: 'report_filter_delete',
       type: "POST",
-      url: "/reports/report_filter/destroy/"+id,
+      url: "/reports/report_filters/destroy/"+id,
       dataType: "json",
       success: function(data){
         jQuery("li[data-id='"+id+"']").remove();
@@ -177,9 +182,13 @@ Helpkit.reports_util = {
   bindEventsForReportFilter: function(){
     /** event binds related to saved report starts here**/
     jQuery(document).on('click','.filter-event',function(){
-      var _id = jQuery(this).attr('data-id');
+      var _id      = jQuery(this).attr('data-id'),
+          _jq_this = jQuery(this);
+
       Helpkit.reports_util.updateReportFilters(_id);
-      jQuery("#active_filter").text(jQuery(this).text());
+      jQuery("#active_filter").text(_jq_this.text());
+      jQuery(".ticksymbol").removeClass('ticksymbol');
+      _jq_this.addClass('ticksymbol');
       jQuery("#delete-filter-link").removeClass('hide').attr('data-id',_id);
       jQuery("#save-filter-link").addClass('hide');
     });
@@ -197,10 +206,12 @@ Helpkit.reports_util = {
       jQuery("#report-dialog-select-cancel").click();
     });
     jQuery(document).on('click',"#delete-filter-link",function(){
-      Helpkit.reports_util.deleteReportFilter(jQuery(this).attr('data-id'));
-      jQuery("#active_filter").text("Unsaved Report");
-      jQuery("#save-filter-link").removeClass('hide');
-      jQuery("#delete-filter-link").addClass('hide');
+      if(window.confirm('Are you sure you want to delete this saved report ?')){
+        Helpkit.reports_util.deleteReportFilter(jQuery(this).attr('data-id'));
+        jQuery("#active_filter").text("Unsaved Report");
+        jQuery("#save-filter-link").removeClass('hide');
+        jQuery("#delete-filter-link").addClass('hide');
+      }
     });
     /** event binds related to saved report ends here**/
   },
@@ -379,18 +390,16 @@ Helpkit.GlanceReport = (function(){
 Helpkit.AnalysisReport = (function(){
    var _FD = {
     _const:{
-      'agent_group_containers':['resolved_tickets','backlog_tickets','SLA_DESC_tickets','SLA_ASC_tickets',
-                          'FCR_tickets'],
-      'customer_chart_containers':['resolved_tickets','backlog_tickets','received_tickets',
-                                   'SLA_tickets','happy_customers','frustrated_customers'],
       'date_field': 'date_range',
       'filter_container': 'filter_container'
     },
     get_container: function(){
-      var type = _FD.report_type;
-      return type === 'customer' ? _FD._const['customer_chart_containers'] : _FD._const['agent_group_containers'];
+      return jQuery("#metric_select").val();
     },
     bindEvents: function(){
+      jQuery('#metric_select').bind('change',function(event){
+        jQuery('input[name='+jQuery(this).attr("id")+'ed]').val(jQuery(this).val());
+      });
       jQuery("#submit").on('click',function(){
         jQuery("#loading-box").removeClass('hide');
         _FD.flush_containers();
@@ -401,14 +410,56 @@ Helpkit.AnalysisReport = (function(){
         _FD.set_filter_data();
         _FD.populate_charts();
       });
+
+      jQuery("#dialog-select-submit").live('click',function(event){
+        if(jQuery("#select_saved_report").val()){
+          jQuery("#leftViewMenu > li[data-id='"+jQuery("#select_saved_report").val()+"']").click();
+          jQuery("#dialog-select").modal("hide");
+          return;
+        }
+
+        jQuery('#metric_select').select2('val',jQuery('#metric_select_option').val());
+        jQuery("#metric_select").trigger('change');
+        Helpkit.reports_util.getFilterData();
+        Helpkit.reports_util.getFilterDisplayData();
+        jQuery("#FilterOptions input[name=selected_filter_data]").val(Helpkit.reports_util.select_hash.toJSON()).trigger("change");
+        jQuery("#FilterOptions input[name=data_hash]").val(Helpkit.reports_util.query_hash.toJSON()).trigger("change");
+        jQuery("#loading-box").removeClass('hide');
+        jQuery("#submit").click();
+        jQuery("#dialog-select").modal("hide");
+      });
+
+      jQuery(".sort").live('click',function(){
+        var _this_JQObj= jQuery(this)
+        report_for = _this_JQObj.attr("data-report-for");
+        if(_this_JQObj.hasClass('DESC')){
+          //_this_JQObj.removeClass('DESC').addClass('ASC').html('&#8593');
+          _this_JQObj.removeClass('DESC').removeClass('reports-icon-topN').addClass('ASC').addClass('reports-icon-bottomN');
+          _FD.update_data_by_order(report_for,"ASC");
+        }
+        else{
+          //_this_JQObj.removeClass('ASC').addClass('DESC').html('&#8595');
+          _this_JQObj.removeClass('ASC').removeClass('reports-icon-bottomN').addClass('DESC').addClass('reports-icon-topN');
+          _FD.update_data_by_order(report_for,"DESC");
+        }
+      });
+
+      jQuery('#dialog-select-cancel').live('click',function(event){
+        window.location.replace('/reports');
+        event.stopPropagation();
+      });
     },
     set_filter_data: function(){
       Helpkit.reports_util.set_filter_data();
     },
     flush_containers: function(type){
-      jQuery.each(_FD.get_container(), function(index, value) {
-        jQuery('#'+value+"_line_chart").html("");
-      });
+      jQuery("#graphs_container").html("");
+    },
+    create_hidden_ele: function(){
+      jQuery("<input/>", {
+        name: 'metric_selected',
+        type: 'hidden'
+      }).addClass('serialize').appendTo("#FilterOptions");
     },
     populate_charts: function(){
       jQuery.each(_FD.get_container(), function(index, value) {
@@ -418,6 +469,31 @@ Helpkit.AnalysisReport = (function(){
     fetch_chart_data: function(val){
       data = jQuery(".serialize").serializeArray();
       data.push({'name':'reports_by','value':val});
+      var args ={
+        ajaxType: val,
+        type: "POST",
+        url: _FD._url,
+        dataType: "html",
+        data: data,
+        success: function(data){
+          jQuery("#graphs_container").append(data)
+          jQuery("#loading-box").addClass('hide');
+          jQuery("#report-page").height('auto');
+        },
+        error: function(data){
+          var chart_id = val+'_line_chart';
+          if(data.statusText != 'abort'){
+            jQuery("#"+chart_id).text(data.statusText);
+          } 
+        }
+      };
+      Helpkit.reports_util.makeAjaxRequest(args);
+    },
+    update_data_by_order: function(val,order){
+      jQuery("#"+val+"_line_chart").addClass('sloading loading-small').html("");
+      var data = jQuery(".serialize").serializeArray();
+      data.push({'name' :'reports_by','value':val});
+      data.push({'name' :'order','value':order});
       var args ={
         ajaxType: val,
         type: "POST",
@@ -432,7 +508,7 @@ Helpkit.AnalysisReport = (function(){
                 yAxis_label:data[val]['yAxisLabel']
               });
           analysis_1_barChart.barGraph();
-          jQuery("#"+chart_id).removeClass('sloading loading-small loading-block');
+          jQuery("#"+chart_id).removeClass('sloading loading-small');
           jQuery("#loading-box").addClass('hide');
           jQuery("#report-page").height('auto');
         },
@@ -441,7 +517,7 @@ Helpkit.AnalysisReport = (function(){
           if(data.statusText != 'abort'){
             jQuery("#"+chart_id).text(data.statusText);
           }          
-          jQuery("#"+chart_id).removeClass('sloading loading-small loading-block');
+          jQuery("#"+chart_id).removeClass('sloading loading-small');
         }
       };
       Helpkit.reports_util.makeAjaxRequest(args);
@@ -454,11 +530,12 @@ Helpkit.AnalysisReport = (function(){
         _FD._url = opts['_url'];
         jQuery("#loading-box").removeClass('hide');
         jQuery('#sliding').slide();
+        _FD.create_hidden_ele();
         _FD.bindEvents();
         _FD.set_filter_data();
-        _FD.populate_charts();
         jQuery("#report_header_title").text(opts['title']);
         jQuery("#report_header_date").text(opts['date_range']);
+        jQuery('#select-opt').click();
       }
    };
     

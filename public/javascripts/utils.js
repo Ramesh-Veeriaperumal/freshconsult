@@ -55,11 +55,14 @@ function plural( count, text1, text2 ){
 }
 
 function totalTime(listClass, updateId){
+ updateElement = jQuery(updateId);
+ if(updateElement.data('staticTotal')) return false;
+
  total_hours = $$(listClass)
                 .collect(function(t){ return jQuery(t).data('runningTime'); })
                 .inject(0, function(acc, n) { return parseFloat(acc) + parseFloat(n); });
  
- jQuery(updateId).html(time_in_hhmm(total_hours));    
+ updateElement.html(time_in_hhmm(total_hours));    
 }
 
 function time_in_hhmm(seconds) {
@@ -874,7 +877,7 @@ jQuery.scrollTo = function(element, options) {
   var opts = jQuery.extend({}, defaults, options || {});
   var el = jQuery(element);
   if(el.length > 0)
-    jQuery('body').animate({
+    jQuery('body, html').animate({
       scrollTop: el.offset().top - opts.offset
     }, opts.speed);
 };

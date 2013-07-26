@@ -67,7 +67,7 @@ class Reports::CustomerGlanceReportsController < ApplicationController
   end
 
   def pass_solution_artical_link
-      @solution_artical_link = %(https://support.freshdesk.com/solution/categories/45929/folders/145570/articles/85336-how-to-read-customer-at-a-glance-report)
+      @solution_artical_link = REPORT_ARTICAL_LINKS[:customer_glance_report]
   end
 
   protected

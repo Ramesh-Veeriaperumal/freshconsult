@@ -11,12 +11,12 @@ class Search::HomeController < ApplicationController
   end
 
   def solutions
-    search ['solution/article']
+    search [Solution::Article]
     post_process 'solutions'
   end
 
   def topics
-    search ['topic']
+    search [Topic]
     post_process 'topics'
   end
 
@@ -28,7 +28,7 @@ class Search::HomeController < ApplicationController
         @total_results = 0
         if privilege?(:manage_tickets)
           options = { :load => true, :page => (params[:page] || 1), :size => 10, :preference => :_primary_first }
-          @items = Tire.search [current_account.search_index_name], options do |search|
+          @items = Tire.search Search::EsIndexDefinition.searchable_aliases(search_in, current_account.id), options do |search|
             search.query do |query|
               query.filtered do |f|
                 if SearchUtil.es_exact_match?(params[:search_key])
@@ -43,20 +43,23 @@ class Search::HomeController < ApplicationController
                 f.filter :term, { :account_id => current_account.id }
                 if current_user.restricted?
                   user_groups = current_user.group_ticket_permission ? current_user.agent_groups.map(&:group_id) : []
-                  f.filter :not, { :terms => { :_type => ['user', 'customer'] } }
                   f.filter :or, { :not => { :exists => { :field => :responder_id } } },
                                 { :term => { :responder_id => current_user.id } },
                                 { :terms => { :group_id => user_groups } }
+                else
+                  f.filter :or, { :not => { :exists => { :field => :notable_deleted } } },
+                                { :term => { :notable_deleted => false } }
+                  f.filter :or, { :not => { :exists => { :field => :notable_spam } } },
+                                { :term => { :notable_spam => false } }
                 end
                 unless search_in.blank?
-                  f.filter :terms, :_type => search_in
-                  f.filter :term,  { 'folder.category_id' => params[:category_id] } if params[:category_id] && search_in.include?('solution/article')
-                  f.filter :term,  { 'forum.forum_category_id' => params[:category_id] } if params[:category_id] && search_in.include?('topic')
+                  f.filter :term,  { 'folder.category_id' => params[:category_id] } if params[:category_id] && search_in.include?(Solution::Article)
+                  f.filter :term,  { 'forum.forum_category_id' => params[:category_id] } if params[:category_id] && search_in.include?(Topic)
                 end
               end
             end
             search.from options[:size].to_i * (options[:page].to_i-1)
-            search.highlight :desc_un_html, :title, :description, :subject, :display_id, :job_title, :name, :options => { :tag => '<strong>', :fragment_size => 200, :number_of_fragments => 4 }
+            search.highlight :desc_un_html, :title, :description, :subject, :job_title, :name, :options => { :tag => '<strong>', :fragment_size => 200, :number_of_fragments => 4 }
           end
         end
         process_results
@@ -75,7 +78,7 @@ class Search::HomeController < ApplicationController
 
     @search_results.each_with_hit do |result,hit|
       results[result.class.name] ||= []
-      result = highlight_results(result, hit) unless hit['highlight'].blank?
+      result = SearchUtil.highlight_results(result, hit) unless hit['highlight'].blank?
       results[result.class.name] << result
     end
     
@@ -84,21 +87,13 @@ class Search::HomeController < ApplicationController
     @searched_users     = results['User']
     @searched_companies = results['Customer']
     @searched_topics    = results['Topic']
+    @searched_notes     = results['Helpdesk::Note']
     
     @search_key = params[:search_key].gsub(/\\/,'')
     @total_results = @items.results.size
 
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
-  end
-
-  def highlight_results(result, hit)
-    unless result.blank?
-      hit['highlight'].keys.each do |i|
-        result[i] = hit['highlight'][i].to_s
-      end
-    end
-    result
   end
 
   def post_process item
@@ -117,6 +112,7 @@ class Search::HomeController < ApplicationController
   
     def searchable_classes
       to_ret = [ Helpdesk::Ticket ]
+      to_ret << Helpdesk::Note unless current_user.restricted?
       to_ret << Solution::Article if privilege?(:view_solutions)
       to_ret << Topic             if privilege?(:view_forums)
       
@@ -124,8 +120,8 @@ class Search::HomeController < ApplicationController
         to_ret << User
         to_ret << Customer
       end
-      
-      to_ret.map { |to_ret| to_ret = to_ret.document_type }
+      to_ret
+      # to_ret.map { |to_ret| to_ret = to_ret.document_type }
     end
 
 end

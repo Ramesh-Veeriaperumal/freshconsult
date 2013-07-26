@@ -3441,7 +3441,7 @@ pl:
       level2: "Poziom 2"
       level3: "Poziom 3"
       nested_label: "Etykiety pól zagnieżdżonych"
-      nestedfield_helptext: "Użyj poniższego pola aby dodać lub edytować pozycje dla listy rozwijanej, Dodaj wcięcie wciskając tab raz lub dwa razy . Skonkwertujemy to na wcięcia na rozwijanej liście. <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>Dowiedz się więcej</a>"
+      nestedfield_helptext: "Użyj poniższego pola aby dodać lub edytować pozycje dla listy rozwijanej, Dodaj wcięcie wciskając tab raz lub dwa razy . Skonkwertujemy to na wcięcia na rozwijanej liście. <a target='_blank' href=%{learn_more}>Dowiedz się więcej</a>"
       nestedfield_helptext_preview: "To jest podgląd przykładowej listy rozwijanej, użyj pola tekstowego w widoku edycji aby edytować wpisy"
       sla_timer: "Miernik SLA (Gwarancji jakości wykonywanych usług)"
       status_choices: "Dostępne statusy"

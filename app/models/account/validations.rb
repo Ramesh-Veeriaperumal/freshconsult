@@ -2,7 +2,8 @@ class Account < ActiveRecord::Base
 
 	validates_associated :account_configuration, :on => :create
 	validates_format_of :domain, :with => /(?=.*?[A-Za-z])[a-zA-Z0-9]*\Z/
-  validates_exclusion_of :domain, :in => RESERVED_DOMAINS, :message => "The domain <strong>{{value}}</strong> is not available."
+  validates_exclusion_of :domain, :in => RESERVED_DOMAINS, :message => I18n.t('domain_not_available_msg', :domain_name => "%{value}")
+  validates_length_of :name, :in => 3..100, :too_long => I18n.t('long_company_name_error'), :too_short => I18n.t('short_company_name_error')
   validate :valid_domain?, :valid_sso_options?
   validate_on_create :valid_plan?, :valid_payment_info?, :valid_subscription?
   validates_uniqueness_of :google_domain ,:allow_blank => true, :allow_nil => true

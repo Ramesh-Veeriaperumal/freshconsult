@@ -789,6 +789,10 @@ li.nested_field{
 				position:relative;
 				margin: 5px 0;
 				padding-left:25px;
+				.month-spacing{
+					padding-left: 10px;
+					margin-left: -2px;
+				}
 				.close{
 					position:absolute;
 					background:image-url("btn_close_icon.png") no-repeat;
@@ -2598,6 +2602,10 @@ input[type="text"].number{
 				font-size : 13px;
 			}
 
+			label{
+				padding: 0 0 6px 0;
+			}
+			
 			label.error{
 				border-radius: 4px;
 				margin: 2px 250px 0px 1px;

@@ -35,8 +35,7 @@ stylesheets:
     - public/stylesheets/codemirror.css
 
   portal:
-    - public/stylesheets/portal/ie.css
-    # - public/stylesheets/redactor.css
+    - public/stylesheets/portal/portal_utils.css
 
   preview:
     - public/stylesheets/portal/preview.css
@@ -95,7 +94,6 @@ javascripts:
     - public/javascripts/effects.js
     - public/javascripts/dragdrop.js
     - public/javascripts/controls.js
-    - public/javascripts/i18n.js
 
   frameworks:
     - public/javascripts/jquery-1.7.1.min.js
@@ -129,6 +127,7 @@ javascripts:
     - public/javascripts/AsyncJSLoader.js
     - public/javascripts/lib/detectmobilebrowsers.js
     - public/javascripts/frameworks/plugins/jquery-ui-timepicker-addon.js
+    - public/javascripts/app/ticket_details.js
 
   # Code editor for portal cms
   codemirror:
@@ -153,6 +152,7 @@ javascripts:
     - public/javascripts/factory_ui.js
     - public/javascripts/lib/json2.js
     - public/javascripts/custom_validators.js
+    - public/javascripts/fjax.js
     - public/javascripts/globalinit.js
     - public/javascripts/application.js
     - public/javascripts/navsearch.js
@@ -282,43 +282,3 @@ javascripts:
     - public/javascripts/highcharts-more.js
     - public/javascripts/adv_reports/report_charts.js
     - public/javascripts/adv_reports/adv_reports.js
-  cs:
-    - public/javascripts/locales/cs.js
-  da:
-    - public/javascripts/locales/da.js
-  de:
-    - public/javascripts/locales/de.js
-  en:
-    - public/javascripts/locales/en.js
-  es_LA:
-    - public/javascripts/locales/es-LA.js
-  es:
-    - public/javascripts/locales/es.js
-  fi:
-    - public/javascripts/locales/fi.js
-  fr:
-    - public/javascripts/locales/fr.js
-  it:
-    - public/javascripts/locales/it.js
-  ja:
-    - public/javascripts/locales/ja.js
-  nb_NO:
-    - public/javascripts/locales/nb-NO.js
-  nl:
-    - public/javascripts/locales/nl.js
-  pl:
-    - public/javascripts/locales/pl.js
-  pt_BR:
-    - public/javascripts/locales/pt-BR.js
-  pt_PT:
-    - public/javascripts/locales/pt-PT.js
-  ru_RU:
-    - public/javascripts/locales/ru-RU.js
-  sl:
-    - public/javascripts/locales/sl.js
-  sv_SE:
-    - public/javascripts/locales/sv-SE.js
-  tr:
-    - public/javascripts/locales/tr.js
-  zh_CN:
-    - public/javascripts/locales/zh-CN.js

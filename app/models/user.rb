@@ -50,7 +50,7 @@ class User < ActiveRecord::Base
   validates_presence_of :email, :unless => :customer?
   validate :has_role?, :unless => :customer?
 
-  attr_accessor :import
+  attr_accessor :import, :highlight_name, :highlight_job_title
   
   attr_accessible :name, :email, :password, :password_confirmation, :second_email, :job_title, :phone, :mobile, 
                   :twitter_id, :description, :time_zone, :avatar_attributes, :customer_id, :import_id,
@@ -111,12 +111,16 @@ class User < ActiveRecord::Base
       User.update_all ['posts_count = ?', Post.count(:id, :conditions => {:user_id => id})],   ['id = ?', id]
     end
 
+    def reset_current_user
+      User.current = nil
+    end
+
     protected :find_by_email_or_name, :find_by_an_unique_id
   end
   
   def client_manager=(checked)
-    if customer? && checked == "true"
-      self.privileges = Role.privileges_mask([:client_manager])
+    if customer?
+      self.privileges = (checked == "true") ? Role.privileges_mask([:client_manager]) : "0"
     end
   end
 
@@ -428,6 +432,14 @@ class User < ActiveRecord::Base
 
   def moderator_of?(forum)
     moderatorships.count(:all, :conditions => ['forum_id = ?', (forum.is_a?(Forum) ? forum.id : forum)]) == 1
+  end
+
+  def make_current
+    User.current = self
+  end
+
+  def self.reset_current_user
+    User.current = nil
   end
 
   private

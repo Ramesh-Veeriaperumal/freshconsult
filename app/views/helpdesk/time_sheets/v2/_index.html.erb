@@ -8,6 +8,7 @@
 		 ><%= t('ticket.add_time') %></a>
 </div>
 <% javascript_tag do -%>
+   jQuery('#timeentry_timer_total').data('staticTotal', false);
    totalTime("#timesheetlist .time", "#timeentry_timer_total");
    jQuery('#timesheetlist .time-tracked-details:last .toggle_timer').show();
 <% end %>

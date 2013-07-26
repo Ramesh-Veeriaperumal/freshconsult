@@ -231,11 +231,6 @@ class Account < ActiveRecord::Base
     pass_through_enabled
   end
 
-  def search_index_name
-    key = MemcacheKeys::ES_INDEX_NAME % { :account_id => self.id }
-    MemcacheKeys.fetch(key) { ElasticsearchIndex.find(self.es_enabled_account.index_id).name }
-  end
-
   def es_enabled?
     es_status = MemcacheKeys.fetch(MemcacheKeys::ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
     es_status.key?(self.id) ? es_status[self.id] : false

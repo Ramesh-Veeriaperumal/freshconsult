@@ -28,6 +28,14 @@ window.FactoryUI = {
 				.addClass(className)
 				.val(value);
 	},
+	hidden:function(_name, _value){
+		var name  = _name || "",
+			value = _value || "";
+		
+		return jQuery("<input type='hidden' />")
+					.prop({ "name" : name, "value" : value });
+
+	},
 	// Template json for choices 
 	// ['choice1', 'choice2'...]
 	dropdown: function(choices, _name, _className, _dataAttr){

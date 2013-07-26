@@ -32,7 +32,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
-    :requester_name, :meta_data, :disable_observer
+    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description
 
   attr_protected :attachments #by Shan - need to check..
 
@@ -263,6 +263,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     (fb_post) and (fb_post.facebook_page) and (fb_post.post?)
   end
   
+  def mobihelp?
+    source == SOURCE_KEYS_BY_TOKEN[:mobi_help]
+  end
+
   def priority=(val)
     self[:priority] = PRIORITY_KEYS_BY_TOKEN[val] || val
   end
@@ -354,7 +358,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     (cc_email_hash) and  ((cc_email_hash[:cc_emails].any? {|email| email.include?(from_email) }) or 
                      (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email) }))
   end
-  
+
   def ticket_id_delimiter
     delimiter = account.ticket_id_delimiter
     delimiter = delimiter.blank? ? '#' : delimiter
@@ -494,9 +498,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     if deep
       self[:notes] = self.notes
       options[:include] = [:attachments]
-      options[:except] = [:account_id,:import_id]
-      options[:methods].push(:custom_field)
     end
+    options[:except] = [:account_id,:import_id]
+    options[:methods].push(:custom_field)
     json_str = super options
     json_str.sub("\"ticket\"","\"helpdesk_ticket\"")
   end
@@ -610,9 +614,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def to_indexed_json
     to_json({
             :root => "helpdesk/ticket",
-            :methods => [:es_notes, :company_id, :es_from, :to_emails, :es_cc_emails, :es_fwd_emails],
-            :only => [ :display_id, :subject, :description, :account_id, :responder_id, :group_id, 
-              :requester_id, :status, :spam, :deleted ], 
+            :methods => [ :company_id, :es_from, :to_emails, :es_cc_emails, :es_fwd_emails],
+            :only => [ :display_id, :subject, :description, :account_id, :responder_id, :group_id, :requester_id, :status, :spam, :deleted ], 
             :include => { :flexifield => { :only => es_flexifield_columns },
                           :attachments => { :only => [:content_file_name] }
                         }
@@ -654,12 +657,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
     @custom_field = nil
     flexifield.set_ff_value ff_alias, ff_value
   end
-
   # flexifield - custom_field syncing code ends here
 
   private
 
     def sphinx_data_changed?
       description_html_changed? || requester_id_changed? || responder_id_changed? || group_id_changed? || deleted_changed?
+    end
+
+    def send_agent_assigned_notification?
+      doer_id = Thread.current[:observer_doer_id]
+      @model_changes.symbolize_keys[:responder_id] && responder && responder_id != doer_id && responder != User.current
     end
 end

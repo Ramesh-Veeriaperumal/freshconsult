@@ -2,7 +2,6 @@
  <%= render :partial => "helpnote_without_tour" %>
 <% end %>
 
-<%= include_cloudfront_css :pattern %>
 <h3 class="lead"><%=t('.title')%></h3> 
 <% form_for :va_rule, @va_rule, :url => admin_automation_path, :html => { :method => :put , :id => "Automations" } do |f| %>
 	<%= render :partial => "form", :locals => { :f => f } %>

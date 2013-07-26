@@ -82,6 +82,7 @@ class VARule < ActiveRecord::Base
   end
 
   def event_matches? current_events, evaluate_on
+    Rails.logger.debug "INSIDE event_matches? WITH evaluate_on : #{evaluate_on.inspect}, va_rule #{self}"
     events.any? do  |e|
       e.event_matches? current_events, evaluate_on
     end

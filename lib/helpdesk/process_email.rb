@@ -169,7 +169,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       unless params[:cc].nil?
         cc_array = params[:cc].split(',').collect! {|n| (parse_email n)[:email]}
       end
-      return cc_array.uniq
+      return cc_array.compact.map{|i| i.downcase}.uniq
     end
 
     def parse_to_emails
@@ -416,7 +416,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
        "<blockquote class='freshdesk_quote'>" + old_msg + "</blockquote>" +
        "</div>"
       end 
-      {:body => original_msg,:full_text => full_text}
+      {:body => full_text,:full_text => full_text}  #temp fix made for showing quoted text in incoming conversations
     end
 
     def get_envelope_to

@@ -16,6 +16,7 @@
 <% end %>
 <% javascript_tag do %>
   jQuery('#save_and_close').bind('click', function(){
-    jQuery('.required_closure').addClass('required')
+    jQuery('#helpdesk_ticket_status').val('5')
+    jQuery('#helpdesk_ticket_status').trigger('change')
   })
 <% end %>

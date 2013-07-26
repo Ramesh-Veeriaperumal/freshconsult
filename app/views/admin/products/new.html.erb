@@ -1,8 +1,6 @@
 <% content_for :sidebar do -%>
   <%= render :partial => "helpnote_without_tour" %>
 <%-end %>
-<%= include_cloudfront_css :pattern %>
-<%= include_cloudfront_js :pattern %>
 <% @page_title = t('.title') %>
 <%= content_tag :h3, @page_title, :class => "title" %>
 <% form_for :product, @product, :url => admin_products_path, :html => { :multipart => true, :rel => "validate", :method => :post, :id => "ProductForm", "data-rebrand-form" => true } do |f| %>

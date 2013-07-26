@@ -6,6 +6,7 @@ $report-number-color:#333;
 $report-number-positive-color:#006063;
 $report-number-negative-color:#990000;
 
+
 $tickets_summary_bg : #F6F6F6;
 $tickets_summary_bottom_border : #eeeeee;
 $title_color: #666;
@@ -390,6 +391,12 @@ $single_stackbar_chart_height: 120px;
 			margin-left: 5px;
 		}
 	}
+	.report-inner-heading{
+		width:91%;
+		h1{
+			margin-bottom: 0;
+		}
+	}
 	.report-filter{
 		position:relative;
 		background-color: #f8f8f8;
@@ -426,13 +433,21 @@ $single_stackbar_chart_height: 120px;
 				visibility: visible;
 				float: left;
 				text-align: left;
-				top: 38px;
+				top: 40px;
+				@include border-top-left-radius(0);
+				@include border-top-right-radius(0);
+				@include box-shadow(0px 3px 8px rgba(0, 0, 0, 0.2));
+				min-width: 236px;
+				.ticksymbol{
+					font-weight:bold;
+				}
 				li{
 					float: left;
 					clear: both;
-					width: 92%;
-					padding: 2px 4%;
+					width: 84%;
+					padding: 0px 8%;
 					cursor: pointer;
+					margin: 2px 0;
 					&:hover{
 						background-color: #efefef;
 					}
@@ -899,4 +914,31 @@ $animation_timing: .1s;
 }
 .reports-icon-save, .icon-trash{
 	margin-left: 10px;
+}
+.row-fluid .span6 {
+	width: 45.93617%;
+}
+#graphs_container [class*="span"] { margin-left: 2.12766%; *margin-left: 2.07447%; }
+
+.reports-icon-topN, .reports-icon-bottomN {
+	height: 21px;
+	width: 35px;
+	cursor:pointer;
+}
+.reports-icon-topN{
+	background-position: 0 -1696px;
+}
+.reports-icon-bottomN{
+	background-position: 0 -1673px;
+}
+.sort {
+	position: relative;
+	padding: 0px 2px 0px 0px;
+	background-color: #f8f8f8;
+	border: 1px solid #efefef;
+	margin-right: 1px;
+	&:hover {
+		background-color: #eee;
+		border: 1px solid #ccc;
+	}
 }

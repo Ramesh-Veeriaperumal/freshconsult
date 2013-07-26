@@ -33,8 +33,8 @@ module SearchUtil
 
   def self.es_filter_key(query)
     query.strip!
-    query.gsub!(/([\(\)\[\]\{\}\?\\\"!\^\+\-\*:~])/,'\\\\\1')
-    query = "*#{query}*"
+    query.gsub!(/([\(\)\[\]\{\}\?\\\"!\^\+\-\*\/:~])/,'\\\\\1')
+    query = "#{query}*"
   end
 
   def self.es_exact_match?(query)
@@ -44,6 +44,15 @@ module SearchUtil
   def self.es_filter_exact(query)
     query = "#{query.gsub(/^<|>$/,'').strip}" unless query.blank?
     query
+  end
+
+  def self.highlight_results(result, hit)
+    unless result.blank?
+      hit['highlight'].keys.each do |i|
+        result.send("highlight_#{i}=", hit['highlight'][i].to_s)
+      end
+    end
+    result
   end
 
   private
