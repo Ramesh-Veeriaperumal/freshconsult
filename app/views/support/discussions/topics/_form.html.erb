@@ -39,16 +39,6 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<div class="controls">
-				<% if ["new"].include? params[:action] %>
-					<label class="checkbox" id="monitor-topic-lable">
-						<%= check_box_tag 'monitor', '', true, :class => "checkbox" %> 
-						<%= t('portal.topic.monitor_topic') %>
-					</label>
-				<%end%>
-			</div>
-		</div>
-		<div class="control-group">
 			<label class="control-label"><%= t('attach_files') %></label>	
 			<% attach_id = attach_id || "post" %>
 			<div class="controls">

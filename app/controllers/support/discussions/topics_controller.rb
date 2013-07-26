@@ -86,7 +86,6 @@ class Support::Discussions::TopicsController < SupportController
     end
     
     if topic_saved && post_saved
-      @topic.monitorships.create(:user_id => current_user.id, :active => true) if params[:monitor] 
       respond_to do |format| 
         format.html { redirect_to support_discussions_topic_path(:id => @topic) }
         format.xml  { render :xml => @topic }
