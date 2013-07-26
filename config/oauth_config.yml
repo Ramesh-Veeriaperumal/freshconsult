@@ -94,8 +94,8 @@ staging:
   consumer_token: 086decd7b63c4293c766674099b84061
   consumer_secret: 27b2144bd5c63ee7
  surveymonkey:
-  consumer_token: freshdesk
-  consumer_secret: d499g57y8synva8crhycgmfx
+  consumer_token: kaushiksv
+  consumer_secret: cjw2pjzf2s9fbvkz8863wwmt
   options:
     scope: read write sign
 

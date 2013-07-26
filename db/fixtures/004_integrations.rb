@@ -506,19 +506,27 @@ if Integrations::Application.count == 0
     s.listing_order = 21
     s.options = {
         :keys_order => [:settings], 
-        :settings => { 
-                        :partial => 'integrations/surveymonkey/edit',
-                        :type => :custom,
-                        :required => false,
-                        :label => 'integrations.surveymonkey.form.survey_settings',
-                        :info => 'integrations.surveymonkey.form.survey_settings_info'
-                      },
-        :configurable => true,
         :direct_install => true,
-        :oauth_url => '/auth/surveymonkey?origin={{portal_id}}',
+        :settings => { 
+          :partial => 'integrations/surveymonkey/edit',
+          :type => :custom,
+          :required => false,
+          :label => 'integrations.surveymonkey.form.survey_settings',
+          :info => 'integrations.surveymonkey.form.survey_settings_info'
+        },
+        :configurable => true,
+        :oauth_url => "/auth/surveymonkey?origin={{portal_id}}",
         :before_save => {
           :clazz => 'Integrations::SurveyMonkey',
           :method => 'sanitize_survey_text'
+        },
+        :after_save => {
+          :clazz => 'Integrations::SurveyMonkey',
+          :method => 'delete_cached_status'
+        },
+        :after_destroy => {
+          :clazz => 'Integrations::SurveyMonkey',
+          :method => 'delete_cached_status'
         }
     }
 
