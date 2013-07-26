@@ -36,7 +36,7 @@ class Helpdesk::TicketsExport
                      helpdesk_ticket_states.ticket_id = helpdesk_tickets.id AND 
                      helpdesk_tickets.account_id = helpdesk_ticket_states.account_id))
       csv_hash = export_params[:export_fields]
-      headers = csv_hash.values.sort.collect {|value| csv_hash.index(value)}
+      headers = csv_hash.keys.sort
       select = "helpdesk_tickets.* "
       select = "DISTINCT(helpdesk_tickets.id) as 'unique_id' , #{select}" if sql_conditions[0].include?("helpdesk_tags.name")
       csv_string = CSVBridge.generate(:col_sep => "\t") do |csv|
