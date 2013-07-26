@@ -12,6 +12,7 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::Activities
   include Helpdesk::ToggleEmailNotification
   include Helpdesk::ShowVersion
+  include ApplicationHelper
 
   before_filter :redirect_to_mobile_url  
   skip_before_filter :check_privilege, :only => :show
@@ -19,7 +20,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   around_filter :run_on_slave, :only => :user_ticket
 
-  before_filter :set_mobile, :only => [:get_top_view,:recent_tickets,:old_tickets, :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties , :unspam , :destroy , :pick_tickets , :close_multiple , :restore , :close]
+  before_filter :set_mobile, :only => [:recent_tickets,:old_tickets, :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties , :unspam , :destroy , :pick_tickets , :close_multiple , :restore , :close]
   before_filter :set_show_version
   before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index, :filter_options, :old_tickets,:recent_tickets]
   before_filter :clear_filter, :only => :index
@@ -159,25 +160,17 @@ class Helpdesk::TicketsController < ApplicationController
                             :responder_name, :need_attention, :pretty_updated_date ]
             }, false)[19..-2]; sep=","
           }
-          json << "],summary:"
-          json << ""+get_summary_count
+          json << "]"
+          json <<  ",summary:"
+          json << get_summary_count
+          json << ",top_view:"
+          json << top_view
           render :json => json + "}"
         end
       end
     end
   end
   
-
-  def get_top_view
-    puts "coming to top_view tickets"
-    respond_to do |format|
-      format.mobile do
-        json = ""
-        json << top_view
-        render :json => json
-      end
-    end
-  end
 
   def recent_tickets
     tkt = current_account.tickets.permissible(current_user)
@@ -352,7 +345,11 @@ class Helpdesk::TicketsController < ApplicationController
 	  }
       format.js
       format.nmobile {
-        response = "{#{@item.to_mob_json(false,false)[1..-2]},#{current_user.to_json(:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket])[1..-2]},#{{:subscription => !@subscription.nil?}.to_json[1..-2]}"
+        
+        @last_fwd =  bind_last_conv(@ticket, @signature, true)
+        @last_reply = bind_last_reply(@ticket, @signature, false, true)
+        #puts " signature #{@last_reply}"
+        response = "{#{@item.to_mob_json(false,false)[1..-2]},#{current_user.to_json(:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket])[1..-2]},#{{:subscription => !@subscription.nil?}.to_json[1..-2]},#{{:last_reply => @last_reply}.to_json[1..-2]}"
         response << ",#{@ticket_notes[0].to_mob_json[1..-2]}" unless @ticket_notes[0].nil?
         response << "}";
         render :json => response
