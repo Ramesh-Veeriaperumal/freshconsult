@@ -3,7 +3,7 @@
 <% javascript_tag do %>
 
 jQuery(document).ready(function(){
-	invokeRedactor('ca-content');
+	invokeRedactor('ca-content', 'cnt-reply');
   if ('<%=@ca_response.accessible.visibility%>' == '<%=Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]%>')
 	{
 		jQuery('#accessible_group').show();	

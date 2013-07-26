@@ -13,7 +13,11 @@
   map.calender '/oauth2callback', :controller => 'authorizations', :action => 'create', :provider => 'google_oauth2'
   map.failure '/auth/failure', :controller => 'authorizations', :action => 'failure'
   
-  map.resources :uploaded_images, :controller => 'uploaded_images'
+  map.resources :solutions_uploaded_images, :controller => 'solutions_uploaded_images', :only => [ :index, :create ] 
+
+  map.resources :forums_uploaded_images, :controller => 'forums_uploaded_images', :only => :create
+
+  map.resources :tickets_uploaded_images, :controller => 'tickets_uploaded_images', :only => :create
   
   map.resources :contact_import , :collection => {:csv => :get, :google => :get}
 
@@ -29,7 +33,12 @@
   
   map.resources :profiles , :member => { :change_password => :post }, :collection => {:reset_api_key => :post}
   
-  map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put, :convert_to_user => :get, :reset_password=> :put }, :collection => {:create_multiple_items => :put} do |agent|
+  map.resources :agents, :member => { :delete_avatar => :delete , 
+                                      :restore => :put, 
+                                      :convert_to_user => :get, 
+                                      :reset_password=> :put }, 
+                          :collection => { :create_multiple_items => :put, 
+                                           :info_for_node => :get} do |agent|
       agent.resources :time_sheets, :controller=>'helpdesk/time_sheets'
   end
 
@@ -156,6 +165,8 @@
     report.resources :customers_analysis_reports, :controller => 'customers_analysis', 
       :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
       :fetch_chart_data => :post}
+    report.resources :report_filters, :controller => 'report_filters',
+      :collection => {:create => :post,:destroy => :post}
   end
   
   map.resources :reports

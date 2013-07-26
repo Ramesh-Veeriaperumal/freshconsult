@@ -154,7 +154,7 @@
 
 <% unless conv_id.nil? %>
   <% javascript_tag do %>
-    invokeRedactor('<%= "#{cntid}-body" %>');
+    invokeRedactor('<%= "#{cntid}-body" %>', 'cnt-reply');
   <% end %>
 <% end %>
 

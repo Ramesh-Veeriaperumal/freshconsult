@@ -50,7 +50,7 @@
 }
 
 /* Source sprites for tickets list view */
-$sources: portal, email, facebook, twitter, phone, chat, forum, mobihelp;
+$sources: portal, email, facebook, twitter, phone, chat, forum, mobihelp, auto-refresh;
 #tickets-expanded .status-source {	
 	@each $source in $sources{
 		&.source-detailed-#{$source}{

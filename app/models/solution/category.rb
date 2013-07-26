@@ -40,18 +40,6 @@ class Solution::Category < ActiveRecord::Base
     json_str
   end
 
-  def as_json(options={})
-    options[:except] = [:account_id,:import_id]
-      json_str = super options
-      json_str
-  end
-
-  def as_json(options={})
-    options[:except] = [:account_id,:import_id]
-      json_str = super options
-      json_str
-  end
-
   def self.folder_names(account)
     account.solution_categories.map { |category| 
       [ category.name, category.folders.map {|folder| [folder.id, folder.name] } ]

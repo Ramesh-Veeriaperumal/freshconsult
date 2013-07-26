@@ -1,5 +1,5 @@
-<div class="cust_list_table agent-roles-list">
-  <div class="cust_list_table_header">
+<div class="list-page agent-roles-list">
+  <div class="list-page-header">
     <div class="row-fluid">
     		<div class="span6"><h3 class="lead"><%= t('admin.roles.title')%></h3></div>
     		<div class="span6 pull-right pagination-right">
@@ -7,7 +7,7 @@
         </div>
     </div>
   </div>
-  <div class="cust_list_table_body">
+  <div class="list-page-body">
     <% unless @roles.blank? %>
       <table class="table table-striped">
           <% @roles.each do |role|%>

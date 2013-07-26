@@ -82,4 +82,5 @@ class User < ActiveRecord::Base
   has_many :monitorships
   has_many :monitored_topics, :through => :monitorships, :conditions => ["#{Monitorship.table_name}.active = ?", true], :order => "#{Topic.table_name}.replied_at desc", :source => :topic
 
+  has_many :report_filters, :class_name => 'Helpdesk::ReportFilter'
 end
