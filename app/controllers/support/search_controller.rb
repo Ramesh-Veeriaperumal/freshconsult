@@ -138,7 +138,7 @@ class Support::SearchController < SupportController
                             { :not => { :term => { :status => SearchUtil::DEFAULT_SEARCH_VALUE } } }
 
               f.filter :or, { :not => { :exists => { :field => 'folder.visibility' } } },
-                            { :terms => { 'folder.visibility' => visibility_opts(Solution::Folder::VISIBILITY_KEYS_BY_TOKEN) } }
+                            { :terms => { 'folder.visibility' => visibility_opts(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN) } }
               f.filter :or, { :not => { :exists => { :field => 'forum.forum_visibility' } } },
                             { :terms => { 'forum.forum_visibility' => visibility_opts(Forum::VISIBILITY_KEYS_BY_TOKEN) } }
 

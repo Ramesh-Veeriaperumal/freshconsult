@@ -22,7 +22,7 @@ Solution::Folder.seed_many(:category_id, :name, [
       :account_id => account.id,
       :category_id => (f[2] == :default) ? default_category.id : category.id,
       :name => f[0],
-      :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[f[1]],
+      :visibility => Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[f[1]],
       :description => f[3] || 'Default solution folder, feel free to edit or delete it.',
       :is_default => (f[2] == :default)
     }

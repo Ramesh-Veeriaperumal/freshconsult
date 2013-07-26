@@ -1,5 +1,6 @@
-require 'solution/article'
 class Solution::Folder < ActiveRecord::Base
+
+  include Solution::Constants
   
   attr_protected :category_id, :account_id
   validates_presence_of :name
@@ -25,17 +26,6 @@ class Solution::Folder < ActiveRecord::Base
   named_scope :alphabetical, :order => 'name ASC'
 
   attr_protected :account_id
-  
-  VISIBILITY = [
-  [ :anyone,       I18n.t("solutions.visibility.all"),          1 ], 
-  [ :logged_users, I18n.t("solutions.visibility.logged_in_users"), 2 ],
-  [ :agents,       I18n.t("solutions.visibility.agents"),          3 ],
-  [ :company_users ,I18n.t("solutions.visibility.select_company") , 4]
-  ]
-  
-  VISIBILITY_OPTIONS = VISIBILITY.map { |i| [i[1], i[2]] }
-  VISIBILITY_NAMES_BY_KEY = Hash[*VISIBILITY.map { |i| [i[2], i[1]] }.flatten] 
-  VISIBILITY_KEYS_BY_TOKEN = Hash[*VISIBILITY.map { |i| [i[0], i[2]] }.flatten] 
   
   validates_inclusion_of :visibility, :in => VISIBILITY_KEYS_BY_TOKEN.values.min..VISIBILITY_KEYS_BY_TOKEN.values.max
 
