@@ -11,7 +11,7 @@ class Helpdesk::ConversationsController < ApplicationController
   include Conversations::Facebook
   include Helpdesk::Activities
   
-  before_filter :build_note_body_attributes, :build_conversation
+  before_filter :build_note_body_attributes, :build_conversation, :sanitize_conversation
   before_filter :validate_fwd_to_email, :only => [:forward]
   before_filter :check_for_kbase_email, :set_quoted_text, :only => [:reply]
   before_filter :set_default_source, :set_mobile, :prepare_mobile_note,
@@ -191,5 +191,11 @@ class Helpdesk::ConversationsController < ApplicationController
           activity_records = @parent.activities.activity_since(params[:since_id])
           @activities = stacked_activities(activity_records.reverse)
         end
+      end
+
+      def sanitize_conversation
+        Rails.logger.debug "::::::sanitize conversation start"
+        @item.note_body.create_content
+        Rails.logger.debug "::::::sanitize conversation end"
       end
 end
