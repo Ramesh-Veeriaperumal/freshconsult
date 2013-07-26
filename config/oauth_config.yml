@@ -9,7 +9,7 @@ oauth_options:
     authorize_uri: https://login.mailchimp.com/oauth2/authorize
     access_token_uri: https://login.mailchimp.com/oauth2/token
   nimble:
-    token_method: :get
+    token_method: :post
     site: "https://api.nimble.com"
   google_oauth2:
     site: https://accounts.google.com
