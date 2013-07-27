@@ -17,7 +17,7 @@ end
 
  def around_perform_with_shard(*args)
   params_hash = args[0].is_a?(Hash) ? args[0].symbolize_keys! : args[1].symbolize_keys!
-  job_waiting_time = Time.now - Time.parse(params_hash[:enqueued_at] || Time.now)
+  job_waiting_time = Time.now - Time.parse(params_hash[:enqueued_at] || Time.now.to_s)
   
   account_id = (params_hash[:account_id]) || (params_hash[:current_account_id])
   Sharding.select_shard_of(account_id) do
