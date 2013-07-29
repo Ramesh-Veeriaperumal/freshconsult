@@ -100,8 +100,9 @@
 		<% unless current_user %>
 		<div id="auth_fb_btn"></div>
 		<% end %>
-
+		<div class="fb-container">
 		<%= @page_yield %>
+		</div>
 				
 		<%= render :partial => "layouts/shared/scripts" %> 
 

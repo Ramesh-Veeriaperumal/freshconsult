@@ -19,7 +19,7 @@ class Support::FacebookTabsController < SupportController
       end
     end
   end
-
+  
   def select_facebook_shard(&block)
     Sharding.select_shard_of(@account_id) do 
       yield 

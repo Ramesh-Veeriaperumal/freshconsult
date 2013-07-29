@@ -51,7 +51,7 @@ $tab_hover_text_color: 		if(lightness($tab_hover_color) > 50, black, white) !def
 $footer_color: 				#777777 !default;
 $footer_text_color: 		if(lightness($footer_color) > 50, black, white) !default;
 
-$help_center_color: 		#EDEFF4 !default;
+$help_center_color: 		#eeeeee !default;
 $help_center_text_color: 	if(lightness($help_center_color) > 50, black, white) !default;
 $help_center_icons_bg: 		if(lightness($help_center_color) > 50, darken($help_center_color, 8%), lighten($help_center_color, 8%)) !default;
 
@@ -90,9 +90,9 @@ $sansFontFamily:        $baseFont, Helvetica, Arial, sans-serif !default;
 $serifFontFamily:       Georgia, "Times New Roman", Times, serif !default;
 $monoFontFamily:        Menlo, Monaco, Consolas, "Courier New", monospace !default;
 
-$baseFontSize:          12px !default;
+$baseFontSize:          14px !default;
 $fontLeadSize:					14px !default;
-$fontHelpSize:					10px !default;
+$fontHelpSize:					12px !default;
 $baseFontSizeForMobile: 11px !default;
 $baseFontFamily:        $sansFontFamily !default;
 $baseLineHeight:        $baseFontSize * 1.5625 !default;

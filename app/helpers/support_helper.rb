@@ -110,26 +110,25 @@ module SupportHelper
 						<h1 class="ellipsis heading">#{ portal['name'] }</h1>
 					</div>
 				</div>
-				<div class="page-tabs dropdown">
-					<a role="button" class="dropdown-toggle drop-down mobile-icon-nav-menu" 
-							data-toggle="dropdown" id="welcome-menu" href="#"></a>
-					<ul class="dropdown-menu pull-right clear-text" role="menu" 
-							aria-labelledby="welcome-menu_list" id="welcome-menu_list">
-			)
-
+			</header>
+			<nav class="page-tabs" >
+				<div class="nav-link" id="header-tabs">
+			)		
 		portal['tabs'].each do |tab|
 			active_class = (tab['tab_type'] == portal['current_tab']) ? "active" : ""
-			output << %( <li class="#{active_class}"><a href="#{tab['url']}">#{tab['label']}</a></li>) if(tab['url'])
+			output << %( <a href="#{tab['url']}" class="#{active_class}"> #{tab['label']}</a>) if(tab['url'])
 		end
-
 		user_class = portal['user'] ? "" : "no_user_ticket"
-
-		output << %(</ul></div>
-			<a href="#{ new_support_ticket_path }" class="facebook-button new_button #{user_class}" id="new_support_ticket">
-				New support Ticket</a>
-			</header>
+		output << %(
+				</div>
+			</nav>
+			)
+		output << %(
+			<!-- <a href="#{ new_support_ticket_path }" class="facebook-button new_button #{user_class}" id="new_support_ticket">
+				New support Ticket</a> -->
 			<section>	
 					<div class="hc-search-c">
+						<h2 class="">#{ I18n.t('header.help_center') }</h2>
 						<form class="hc-search-form" autocomplete="off" action="#{ tab_based_search_url }" id="hc-search-form">
 							<div class="hc-search-input">
 								<input placeholder="#{ I18n.t('portal.search.placeholder') }" type="text" 

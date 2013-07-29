@@ -1,21 +1,31 @@
 $headingColor: #1272de;
  // Facebook pages theme styles 
+ @import url(http://fonts.googleapis.com/css?family=Roboto:400,500,700,300);
 body {
     background:$white;
-    font-size:12px;
+    font-size:$baseFontSize;
+    padding:20px; //have to remove after finish everything
 }
 body, .heading {
-    font-family:'lucida grande', Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-family:'Roboto', sans-serif,'lucida grande', Helvetica Neue, Helvetica;
 }
 //Header 
 .banner {
     @include box-shadow(none);
     @include clearfix;
     border: 0;
-    @include border-radius(0);
-    border-bottom:10px solid $tab_color;
 }
-
+.fb-container{
+    border:1px solid $help_center_color;
+    @include border-radius(5px);
+    display: inline-block;
+    width: 100%;
+    padding:5px 10px;
+}
+hr.content-divider{
+    margin-left: 0;
+    margin-right: 0;
+}
 h2 {
     font-size:14px;
 }
@@ -70,9 +80,19 @@ h3.heading{
 
 //Search 
 .hc-search-c {
-    padding: 8px;
+    padding: 0;
+    margin: 20px 0;
+    border-top: 1px solid #FFF;
+    border-radius: 5px;
+    border: 1px solid $grayLighter;
     background: $help_center_color;
-    border-top: 1px solid $white;
+    h2{
+        padding: 8px;
+        padding-left:15px;
+        text-shadow: 1px 1px 1px #FFF;
+        font-size: 20px;
+        font-weight: 400;
+    }
     .hc-search-input {
         width:100%;
     }
@@ -80,17 +100,21 @@ h3.heading{
         position: absolute;
         left: 0;
         width: 28px;
-        top:6px;
-        margin-left: 8px;
+        top: 10px;
+        margin-left: 14px;
     }
     .hc-search-button {
         display:none;
     }
     input.special {
-        @include border-radius(0);
-        border-color:#c3c3c3;
+        @include border-radius(5px);
+        border:0;
         @include box-shadow(rgba(#c3c3c3, 0.2) 0 3px 10px inset);
-        padding-left: 30px;
+        padding: 20px;
+        padding-left: 40px;
+        @include border-top-left-radius(0);
+        @include border-top-right-radius(0);
+        border-top: 1px solid $grayLighter;
     }
 }
 .book-icon {
@@ -106,16 +130,6 @@ h3.heading{
         vertical-align: text-top;
     }
 }
-.view-all {
-    border:1px solid $help_center_color;
-    @include border-radius(5px);
-    padding: 6px 0.6em;
-    margin-top:3px;
-    &:hover {
-        text-decoration:none;
-        @include box-shadow(0px 1px 3px rgba(#000, 0.1));
-    }
-}
 .btn {
     border-radius: 2px;
     border: 1px solid #999;
@@ -129,10 +143,12 @@ h3.heading{
     text-align: center;
     overflow: visible;
     display: inline-block;
-    padding: 0.3em 0.6em 0.375em;
+    padding: 0.2em 0.6em 0.175em;
     border-color: #29447E #29447E #1A356E;
+    text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.65);
     color:$white;
     background-color: #637bad;
+    @include border-radius(3px);
     // Old browsers @include filter-gradient(#637bad, #5872a7, vertical);
     // IE6-9 @include background-image(linear-gradient(top, #637bad 0%, #5872a7 100%));
     @include box-shadow(0 1px 0 rgba(0, 0, 0, 0.1), inset 0 1px 0 #8A9CC2);
@@ -151,14 +167,14 @@ h3.heading{
 
 .list-lead {
     font-size:$fontLeadSize;
-    color:$grayLight;
+    font-weight: 500;
     a:hover {
         text-decoration:none;
     }
 }
 .index-cs-g {
     width:100%;
-    padding-left:30px;
+    padding-left:10px;
     .help-text {
         font-size: $fontHelpSize;
         a{
@@ -170,7 +186,9 @@ h3.heading{
         }
     }
 }
-
+.text-center{
+    text-align:center;
+}
 #ticket-list {
     .lead {
         @extend .span12;
@@ -181,15 +199,104 @@ h3.heading{
 .page-stamp {
     display:none;
 }
+/* Index Page stylesheet */
 .index-page {
+    display: table;
+    padding-top: 25px;
     .content, .content-form, .content-light {
-        border-top:$content-border;
+        border:$content-border;
+        @include border-radius(5px);
+        min-height: 450px;
+        vertical-align: top;
+        padding:0;
+        @extend .span12;
+        &:last-child{
+            @extend .omega;
+        }
+    }
+    &.without-solutions-or-forum{
+        .content, .content-form, .content-light {
+            @extend .span6;
+        }
+    } 
+    &.with-solutions-forums{
+        .content, .content-form, .content-light {
+            @extend .span4;
+        }
+    }
+    .content-header{
+        background: #EEE;
+        padding: 30px 30px 10px;
+        position: relative;
+        border-bottom:1px solid $grayLighter;
+        margin-bottom: 10px;
+        .content-icon{
+            display: block;
+            border: 1px solid #DCDCDC;
+            border-radius: 100%;
+            padding: 8px 7px;
+            border: 1px solid $grayLighter;
+            border-radius: 100%;
+            box-shadow: 0 0 0px 4px #FFF;
+            background: #FFF;
+            margin: -82px auto 10px;
+            width: 60px;
+            height: 60px;
+        }
+        .fb-ticket-icon{
+            @extend .icon-fb-tickets;
+        }
+        .fb-solutions-icon{
+             @extend .icon-fb-book;
+        }
+        .fb-forum-icon{
+             @extend .icon-fb-forum;
+        }
+    }
+    .solutions, .forums, .ticket{
+        .ellipsis{white-space: normal;}
+    }
+    .solutions{
+        .cs-g-3{
+            padding-left: 35px;
+            margin-right: 0;
+            &:before{
+                @extend .icon-article-dark;
+            }
+        }    
     }
     .cs-g-3{
         width:100%;
+        margin-bottom: 15px;
     }
     h2{
-        font-size:14px;
+        font-size: 20px;
+        text-align: center;
+        text-shadow: 1px 1px 0px #FFF;
+        font-weight: 400;
+        margin-top: 20px;
+        margin-bottom: 0;
+        a{
+            color:$textColor;
+            :hover{
+                text-decoration:none;
+            }
+        }
+    }
+    .forums{
+        .cs-g-3{
+            &:after, &:before{
+                display:none;
+            }
+        }
+        .topic-list li{
+            padding-left: 0;
+        }
+        .cs-g-c{
+            .nav-pills{
+                margin-bottom: 0;
+            }
+        }
     }
     .c-link {
         font-size: $baseFontSize;
@@ -198,7 +305,8 @@ h3.heading{
         padding: 8px 5px 8px 20px;
         font-weight:bold;
         span {
-            color: #CCC;
+            color: $grayLighter
+            ;
             font-weight: normal;
         }
     }
@@ -218,10 +326,17 @@ h3.heading{
         float: none;
         margin-top: 0;
     }
+    .c-ticket-row,.tickets-header {
+        padding-left:20px;
+        .status-source{
+            display: none;
+        }
+    }
     .ticket-brief {
         padding-top:0;
     }
 }
+/* Index Page stylesheet */
 .post-title{
     font-size: 18px;
     margin-top:20px;
@@ -308,6 +423,7 @@ h3.heading{
 .user-name, .p-info{
 	display:inline-block;
 }
+
 //Facebook Comment 
 .user-pic-thumb {
     @include border-radius(0);
@@ -323,7 +439,6 @@ h3.heading{
         font-size:inherit;
     }
 }
-
 #reply-to-post {
     background: $facebook-background;
     &.user-comment {
@@ -367,44 +482,5 @@ h3.heading{
             box-shadow: none;
             font-size: 12px;
         }
-    }
-}
-
-div.page-tabs{
-    background-color: #637BAD;
-    line-height: 20px;
-    width: 24px;
-    min-height: 28px;
-    border-radius: none;
-    @include border-bottom-radius(0);
-    margin: 7px 0 0 15px;
-    color: #333333;
-    text-shadow: none;
-    float: right;
-}
-
-.dropdown-menu.pull-right.clear-text{
-    min-width: 100px;
-    right: -10px;
-    margin-top: 8px;
-    a{
-        padding: 3px 20px;
-        &:hover{
-            color: white;
-            background-color: #637BAD;
-        }
-    }
-}
-
-.page-tabs{
-    .dropdown-menu.clear-text:before{
-        @include triangle(up, white, 6px);
-        height: 0;
-        width: 0;
-        position: absolute;
-        z-index: 2;
-        content: "";
-        top: -6px;
-        right: 14px;
     }
 }
