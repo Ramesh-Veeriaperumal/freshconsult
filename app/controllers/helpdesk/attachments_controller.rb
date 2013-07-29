@@ -9,7 +9,7 @@ class Helpdesk::AttachmentsController < ApplicationController
   def show
     style = params[:style] || "original"
     redir_url = AwsWrapper::S3Object.url_for(@attachment.content.path(style.to_sym),@attachment.content.bucket_name,
-                                          :expires_in => 300.seconds, :secure => true)
+                                          :expires => 300.seconds, :secure => true)
     respond_to do |format|
       format.html do
         redirect_to redir_url

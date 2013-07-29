@@ -65,7 +65,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
   
   def authenticated_s3_get_url(options={})
-    options.reverse_merge! :expires_in => 5.minutes,:s3_host_alias => "cdn.freshdesk.com", :secure => true
+    options.reverse_merge! :expires => 5.minutes,:s3_host_alias => "cdn.freshdesk.com", :secure => true
     AwsWrapper::S3Object.url_for content.path, content.bucket_name , options
   end
  
@@ -88,13 +88,13 @@ class Helpdesk::Attachment < ActiveRecord::Base
       xml = options[:builder] ||= Builder::XmlMarkup.new(:indent => options[:indent])
       xml.instruct! unless options[:skip_instruct]
       super(:builder => xml, :skip_instruct => true,:except => [:account_id,:description,:content_updated_at,:attachable_id,:attachable_type]) do |xml|
-         xml.tag!("attachment_url",AwsWrapper::S3Object.url_for(content.path,content.bucket_name,:expires_in => 5.days).gsub( "#{AWS::S3::DEFAULT_HOST}/", '' ))
+         xml.tag!("attachment_url",AwsWrapper::S3Object.url_for(content.path,content.bucket_name,:expires => 5.days).gsub( "#{AWS::S3::DEFAULT_HOST}/", '' ))
      end
    end
 
   def expiring_url(style = "original",expiry = 300)
     AwsWrapper::S3Object.url_for(content.path(style.to_sym),content.bucket_name,
-                                          :expires_in => expiry.to_i.seconds,
+                                          :expires => expiry.to_i.seconds,
                                           :secure => true)
   end
 
