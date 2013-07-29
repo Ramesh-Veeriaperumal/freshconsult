@@ -553,7 +553,7 @@ en:
             social_add_account: Add Account
             config-support-email-address: "Configure your support email address"
             save-and-next: "Save and Go to next"
-            send_verification_email: Send verification email
+            send_verification_email: Send verification
             send_invite: Send Invite
             title: Cool! Looks like your help desk is ready to roll...
             title1: "Now let's get those emails into Freshdesk"
@@ -757,6 +757,7 @@ en:
         content2: If you choose to configure a separate branded portal for each product, you can provide a unique set of Knowledge Base articles and Forums for each brand.
       new: 
         title: New Product
+        saving: Saving...
       portal: 
         select_forum_category: Select a forum category...
         portal_rebranding: Portal rebranding
@@ -772,29 +773,43 @@ en:
         portal_name: Portal name
         portal_language: Portal Language
         portal_language_info: This will be the default language when customers visits your portal
+        portal_customization: Portal customization
+        customize_portal: Customize portal >
+        save_and_customize: Save & Customize portal >
+        save_and_continue: You have unsaved changes in your form. Do you want to save and continue?
+        helpdesk_phone: Helpdesk Phone
+        ago: ago
+        last_published: Your portal was last published
+        contact_us: Contact us 
+        logo_and_favicon: Logo & favicon
       edit: 
         title: Edit Product
+        updating: Updating...
       form: 
-        configure_seperate_portal: Configure a separate portal for this product
+        configure_seperate_portal: Enable Customer Portal
         enable_product_portal: Enable Product Portal
-        enter_support_email_id: Your support email
+        enter_support_email_id: Support email
+        confirm_delete: Do you want to delete the support email?
+        email_address_present: Reply email is already used
         configure_email: Configure Email
         product_support_emails: Product Support Emails
         product_name: Product name
-        product_desc: Product description
-        forwarding_email_info: "Your forwarding email address:"
+        product_desc: Description
+        forwarding_email_info: Forwarding email
+        please_wait: Please wait...
       product:
         edit_twitter_account: "Edit Twitter Account @%{screen_name}"
         edit_facebook_page: "Edit Facebook page %{page_name}"
         customize_portal: "Customize portal"
         enable_portal: "Enable Portal"
-        email_not_verified: Email not verified
+        email_not_verified: Unverified 
+        view_portal: View Portal
         delete: Are you sure you want to delete this Product?
       index: 
         enable_portal: Enable Products
         title: Products        
         add_product: New product
-      primary_product_support_email: Primary Product Support Email
+      primary_product_support_email: Primary support email
       add_another_email: Add Another Email
       primary_email_required: Atleast one primary email has to be present
       assign_product: "Assign Product"
@@ -2358,7 +2373,7 @@ en:
     add_supp_emails: Additional support email(s)
     info12: Add Another Email address
     info2: You must forward your support emails to your unique email address
-    send_verification_email: Send verification
+    send_verification_email: Send activation
     unverified: Email un-verified
     info13: Your support email address is
     info3: Freshdesk will fetch those emails and convert them as tickets
@@ -2367,7 +2382,7 @@ en:
     info4: <strong>NOTE:</strong> If you have multiple email addresses to support multiple products, <a href='{{products_path}}'>you can add them here</a>.
     spf_info: Reply emails from Freshdesk will automatically use your respective support email IDs as the From email address. Creating an <a target="_blank" title="Learn more about creating SPF records" href="{{solution_url}}">SPF record</a> in your DNS zone file will ensure proper delivery of emails.
     reply_email: Your support email
-    unverified_info1: An email with the verification link has been sent to this email. Only after verification this support email will become active.
+    unverified_info1:  Please activate this email by clicking on the verification link in your inbox.  
     inactive_info2: Until then, the default email "%{default_email}" will be used as the reply-to email.
     info15: You must forward these emails to
     helpcard:

@@ -265,6 +265,11 @@ is_touch_device = function() {
       // Any object with class custom-tip will be given a different tool tip
       $(".tooltip").twipsy({ live: true });
 
+      $(".full-width-tooltip").twipsy({ 
+        live: true,
+        template: '<div class="twipsy-arrow"></div><div class="twipsy-inner big"></div>'
+      });
+
       $(".form-tooltip").twipsy({ 
         live: true,
         trigger: 'focus',
