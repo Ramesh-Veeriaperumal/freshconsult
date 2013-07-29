@@ -9,7 +9,7 @@ class Customer < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :account_id , :case_sensitive => false
   attr_accessible :name,:description,:note,:domains ,:sla_policy_id, :import_id
   
-  belongs_to :account
+  belongs_to_account
   
   has_many :users , :class_name =>'User' ,:conditions =>{:deleted =>false} , :dependent => :nullify , :order => :name
   

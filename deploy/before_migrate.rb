@@ -4,3 +4,4 @@ run "ln -nfs #{shared_path}/config/memcached.yml #{release_path}/config/memcache
 run "ln -nfs #{shared_path}/config/database_cluster.yml  #{release_path}/config/database.yml"
 run "ln -nfs #{shared_path}/config/elasticsearch.yml  #{release_path}/config/elasticsearch.yml"
 run "ln -nfs #{shared_path}/config/redshift.yml  #{release_path}/config/redshift.yml"
+run "ln -nfs #{shared_path}/config/node_js.yml  #{release_path}/config/node_js.yml"

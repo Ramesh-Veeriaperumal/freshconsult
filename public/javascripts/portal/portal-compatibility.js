@@ -7,34 +7,25 @@ jQuery.noConflict()
  
 !function( $ ) {
 
+	// Placeholder polyfill settings
+	Modernizr.load({
+	    test: Modernizr.input.placeholder,
+	    nope: [
+	            '/polyfills/placeholder/jquery.placeholder.js'
+	          ],
+	    complete : function () {
+	    	if(!Modernizr.input.placeholder){
+			    // Run this after everything in this group has downloaded
+		      	// and executed, as well everything in all previous groups
+		      	$('input[placeholder], textarea[placeholder]').placeholder();
+		    }
+	    }
+
+	});
+
 	$(function () {
 
-		"use strict"
-
-		if(!Modernizr.input.placeholder){
-			$('[placeholder]').focus(function() {
-			  var input = $(this)
-			  if(input.val() == input.attr('placeholder')) {
-				input.val('')
-				input.removeClass('placeholder')
-			  }
-			}).blur(function() {
-			  var input = $(this);
-			  if (input.val() == '' || input.val() == input.attr('placeholder')) {
-				input.addClass('placeholder')
-				input.val(input.attr('placeholder'))
-			  }
-			}).blur()
-
-			$('[placeholder]').parents('form').submit(function() {
-			  $(this).find('[placeholder]').each(function() {
-				var input = $(this)
-				if (input.val() == input.attr('placeholder')) {
-				  input.val('')
-				}
-			  })
-			})
-		}
+		"use strict"	
 		
 	})
 

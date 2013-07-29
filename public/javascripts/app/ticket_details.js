@@ -198,6 +198,14 @@ getCannedResponse = function(ticket_id, ca_resp_id, element) {
 	return true;
 }
 
+
+showHideToEmailContainer = function(){
+	$(".toEmailMoreContainer").toggle();
+	if($(".toEmailMoreContainer").css("display") == "inline"){
+		$(".toEmailMoreLink").text('');
+	}
+}
+
 TICKET_DETAILS_DOMREADY = function() {
 
 activeForm = null, savingDraft = false, draftFirstFlag = 0, draftClearedFlag = TICKET_DETAILS_DATA['draft']['cleared_flag'];
@@ -330,6 +338,12 @@ refreshStatusBox = function() {
 			$('#due-by-element-parent').show('highlight',3000);
 		}
 	});
+}
+
+var scrollToError = function(){
+	var errorLabel = $("label[class='error'][style!='display: none;']");
+	var elem = errorLabel.parent().children().first();
+	$.scrollTo(elem);
 }
 
 // For Setting Due-by Time
@@ -561,8 +575,7 @@ refreshStatusBox = function() {
 		$.ajax({   
 			type: 'POST',
 			url: '/social/twitters/user_following?twitter_handle='+twitter_handle+'&req_twt_id='+req_twt_id,
-			contentType: 'application/text', 
-			async: false, 
+			contentType: 'application/text',
 			success: function(data){ 
 				if (data.user_follows == true)
 				{
@@ -885,12 +898,16 @@ refreshStatusBox = function() {
 	});
 
 	$('body').on('click.ticket_details', '#close_ticket_btn', function(ev){
-		ev.preventDefault();
-		var form = $("<form>")
-			.attr("method", "post")
-			.attr("action", $(this).attr('data-href') +"?disable_notification=" + ev.shiftKey )
-			.appendTo(document.body);
-		form.submit();
+		changeStatusTo(5);
+		if($('#custom_ticket_form').valid())
+		{
+			var action_attr = $('#custom_ticket_form').attr("action");
+			$('#custom_ticket_form').attr("action", action_attr +"?disable_notification=" + ev.shiftKey + "&redirect=true" );
+			$('#custom_ticket_form').submit();
+		}
+		else
+			scrollToError();
+
 		return false;
 	});
 
@@ -911,7 +928,14 @@ refreshStatusBox = function() {
       jQuery('body').click();
 
       changeStatusTo(jQuery(this).data('statusVal'));
-      $(this).parents('form').trigger('submit');
+
+      if($('#custom_ticket_form').valid())
+      	$(this).parents('form').trigger('submit');
+      else
+      	scrollToError();
+
+  	$('#custom_ticket_form').submit();
+
     });
 
     $('body').on('submit.ticket_details', '#custom_ticket_form', function(ev) {
@@ -951,6 +975,12 @@ refreshStatusBox = function() {
 						$(this).data('updated', false);
 					});
 
+					if(response.redirect)
+					{
+						$('[rel=link_ticket_list]').click();
+					}
+
+
 					if(postProcess) {
 						$('.ticket_details .source-badge-wrap .source')
 								.attr('class','')
@@ -970,10 +1000,13 @@ refreshStatusBox = function() {
 					submit.text(submit.data('default-text')).prop('disabled',false);
 				}
 			});
+		} else {
+			scrollToError();
 		}
 			
 	});
 
+	MergeTicketsInitializer();
 
 	// Scripts for ToDo List
 	$('body').on('keydown.ticket_details', '.addReminder textarea', function(ev) {
@@ -1064,6 +1097,8 @@ TICKET_DETAILS_CLEANUP = function() {
     				.off('submit.ticket_details')
     jQuery(window).off('unload.ticket_details');
     jQuery('body').removeClass('ticket_details');
+
+    MergeTicketsDestructor();
 
 };
 

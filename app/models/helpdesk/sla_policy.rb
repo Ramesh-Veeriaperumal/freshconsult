@@ -19,7 +19,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
   has_many :sla_details , :class_name => "Helpdesk::SlaDetail", :foreign_key => "sla_policy_id", 
     :dependent => :destroy 
   
-  attr_accessible :name,:description, :is_default, :conditions, :escalations, :active
+  attr_accessible :name,:description, :is_default, :conditions, :escalations, :active, :datatype
   
   accepts_nested_attributes_for :sla_details
 
@@ -30,6 +30,8 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
   named_scope :inactive, :conditions => {:active => false }
 
   default_scope :order => "is_default, position"
+  
+  attr_accessor :datatype
 
   ESCALATION_LEVELS = [
     [ :level_1,   1 ], 
@@ -171,8 +173,13 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
 
     def standardize_conditions
       conditions.each_pair do |k, v|
-        v.blank? ? (conditions.delete k) : (conditions[k] = v.map(&:to_i))
+        v.blank? ? (conditions.delete k) : standardize_cond_values(k, v)
       end
+    end
+
+    def standardize_cond_values(k, v)
+      return if (datatype || {})[k] == "text" 
+      conditions[k] = v.map(&:to_i)
     end
 
     def validate_conditions?

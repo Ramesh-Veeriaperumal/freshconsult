@@ -9,4 +9,5 @@ class Admin::DataImport < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
     
+  IMPORT_TYPE = {:zendesk => 1 , :contact => 2}
 end

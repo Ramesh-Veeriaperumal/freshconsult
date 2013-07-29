@@ -12,7 +12,7 @@ note = activity[:is_note] ? @prefetched_notes[activity[:stack].first.note_id] : 
 	<% end %>
 	<div class="commentbox <%= (activity[:user].blank? or activity[:user].agent?) ? 'commentbox-gray' : 'commentbox-requester' %>">
 		<div class="tag">
-			<%= t('activities.tag.' + activity[:important][:type], {:value => activity[:important][:value]} ) %>
+			<%= t('activities.tag.' + activity[:important][:type], :value => activity[:important][:value] ) %>
 		</div>
 		<div class="author-mail-detail">
 			<%= t("ticket.activity_timestamp", :user_name => link_to_user(activity[:user], :class => "user_name" ),:timestamp => activity[:time].to_i, :note_date => formated_date(activity[:time]) ) %>
