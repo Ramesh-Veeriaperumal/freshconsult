@@ -1017,6 +1017,14 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
   border-right: 5px solid transparent;
   border-bottom: 5px solid #000000;
 }
+.twipsy.belowLeft .twipsy-arrow {
+  top: 0;
+  left: 90%;
+  margin-left: -5px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid #000000;
+}
 .twipsy.right .twipsy-arrow {
   top: 50%;
   left: 0;
@@ -1081,6 +1089,14 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
   border-right: 5px solid transparent;
   border-bottom: 5px solid #000000;
 }
+.popover.belowLeft .arrow {
+  top: 0;
+  left: 90%;
+  margin-left: -5px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid #000000;
+}
 .popover.left .arrow {
   top: 50%;
   right: 0;
@@ -1099,7 +1115,7 @@ button.btn::-moz-focus-inner, input[type=submit].btn::-moz-focus-inner {
   background: rgba(0, 0, 0, 0.8);
   padding: 3px;
   overflow: hidden;
-  @include min-width(280px);
+  @include min-width(230px);
 	@include border-radius(6px);
 	@include box-shadow(0 3px 7px rgba(0, 0, 0, 0.4));
 }

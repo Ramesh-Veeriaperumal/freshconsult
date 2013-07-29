@@ -7,10 +7,10 @@
   var current_account_id = "<%=current_account.id%>";
   var current_user_id = "<%=current_user.id%>";
   var current_domain = "<%=current_account.full_domain%>";
-  var request_type = "<%= request.ssl? %>"==true ? "https://" : "http://";
+  var request_type = <%= current_account.ssl_enabled? %> ? "https://" : "http://";
 
   auto_refresh_init_params.user_id = current_user_id;
-  auto_refresh_init_params.ticket_channel = 'index_page:'+current_account_id+'*';
+  auto_refresh_init_params.ticket_channel = 'index_page:'+current_account_id+':*';
   auto_refresh_init_params.account_id = current_account_id;
   auto_refresh_init_params.domain_name = request_type+current_domain;
 

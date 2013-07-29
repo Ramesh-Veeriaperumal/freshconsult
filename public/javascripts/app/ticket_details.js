@@ -346,16 +346,6 @@ var scrollToError = function(){
 	$.scrollTo(elem);
 }
 
-refreshStatusBox = function() {
-	$.ajax({
-		url: TICKET_DETAILS_DATA['status_refresh_url'],
-		success: function(response) {
-			$('#due-by-element-parent').replaceWith(response)
-			$('#due-by-element-parent').show('highlight',3000);
-		}
-	});
-}
-
 // For Setting Due-by Time
 
 

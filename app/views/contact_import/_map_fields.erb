@@ -1,11 +1,11 @@
 <% javascript_tag do %>
 	jQuery(document).ready(function(){
-		jQuery.validator.addMethod("required_value_6", function(value, element) {
-		  return (element.value != 6);  
+		jQuery.validator.addMethod("required_blank_label", function(value, element) {
+		  	return(jQuery(element).find(":selected").text().trim() != "");  
 		}, "Email is a required field for importing to contacts");
 		
-		jQuery.validator.addClassRules("required_value_6", {
-		  required_value_6: true
+		jQuery.validator.addClassRules("required_blank_label", {
+		  required_blank_label: true
 		});
 	});
 <% end %>
@@ -24,7 +24,10 @@
 		      	<% @fields.each do |k,v| -%>
 		        <tr>
 		        	<td width="30%"><%= k %></td>
-					<td><%= select_tag "fields[#{v}]", options_for_select(to_hash(@rows.first)),  :class => ((k == "Email")?"required_value_6":"") %></td>
+					<td>
+						<%= select_tag "fields[#{v}]", options_for_select(to_hash(@rows.first)), 
+											{ :class => ((k == "Email") ? "required_blank_label" : "") } %>
+					</td>
 		        </tr>
 				 <% end -%>
 		      </thead>

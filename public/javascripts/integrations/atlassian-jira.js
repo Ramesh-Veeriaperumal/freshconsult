@@ -103,6 +103,7 @@ JiraWidget.prototype = {
 				application_id: jiraBundle.application_id,
 				username: jiraBundle.username,
 				use_server_password: true,
+				auth_type: 'NoAuth',
 				login_html: null,
 				application_html: function() {
 					if(jiraBundle.remote_integratable_id) {
