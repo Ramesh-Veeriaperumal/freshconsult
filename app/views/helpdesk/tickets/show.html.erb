@@ -87,6 +87,7 @@
 <% content_for :pagefixed do %> 
   <%= pageless(@ticket_notes.total_pages, helpdesk_ticket_helpdesk_notes_path(@ticket)) %>  
 	<% javascript_tag do %>
+		MergeTicketsInitializer();
 		var activeForm = null;
 		swapEmailNote = function(formid, link){  
 				jQuery("#PagesTab").click();
@@ -212,6 +213,10 @@
   			jQuery(".toEmailMoreLink").text('');
   		}
   	}
+
+  	Fjax.afterNextPage = function() {
+        MergeTicketsDestructor();
+    }
 	<% end %>
 <% end %>
 

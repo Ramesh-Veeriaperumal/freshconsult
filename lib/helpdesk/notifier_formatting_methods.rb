@@ -1,4 +1,4 @@
-module Helpdesk::TicketNotifierFormattingMethods
+module Helpdesk::NotifierFormattingMethods
 
   def formatted_subject(ticket)
     "Re: #{ticket.encode_display_id} #{ticket.subject}"

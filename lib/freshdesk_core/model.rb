@@ -17,7 +17,6 @@ module FreshdeskCore::Model
                         "email_configs", 
                         "email_notification_agents",    
                         "email_notifications", 
-                        "es_enabled_accounts",          
                         "features", 
 
                         "forums",

@@ -10,7 +10,7 @@ class Customer < ActiveRecord::Base
   attr_accessible :name,:description,:note,:domains ,:sla_policy_id, :import_id
   attr_accessor :highlight_name
   
-  belongs_to :account
+  belongs_to_account
   
   has_many :users , :class_name =>'User' ,:conditions =>{:deleted =>false} , :dependent => :nullify , :order => :name
   

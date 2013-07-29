@@ -503,7 +503,7 @@ en:
         link_text_label: Satisfaction survey link text
         link_text_input: Please let us know your opinion on our support experience.
         link_text_info: This text appears below your signature at the bottom of the email sent to the customer
-        send_while_option1: All email sent to customer.
+        send_while_option1: All replies sent to customer.
         send_while_option2: Emails sent after a ticket is "Resolved".
         send_while_option3: Emails sent after a ticket is "Closed".
         send_while_option4: Allow agents to add survey links to specific emails.
@@ -2783,6 +2783,7 @@ en:
     new: New Business Hours
     to: to
     time_zone: Time Zone
+    change_time_zone: You can change your default time zone under <a href='/account/edit' >Helpdesk Rebranding</a>
     delete: Are you sure you want to delete?
     valid_time: Please enter a valid time
     holiday_name: Holiday name
@@ -3594,6 +3595,27 @@ en:
           auto_detect: "Detect Automaticaly"
         version_info: "Version field lets you choose between <i>Batchbook Classic</i> and <i>Batchbook New</i>."
         widget_title: "Widget Title"
+    surveymonkey:
+      enable_integration_text: "Click on the Enable button to connect with your Surveymonkey account and configure the integration."
+      include_survey: "Include Survey"
+      include_surveymonkey_link: "Include SurveyMonkey link"
+      label: "SurveyMonkey"
+      helptext: "<h4>SurveyMonkey Integration</h4><p>This integration lets you link a custom survey of your choice from your SurveyMonkey account to ticket replies in Freshdesk. It can be used to replace the default Satisfaction Survey in your helpdesk or be used along with it.</p><p>Once you have linked your SurveyMonkey account, you can pick out the survey and <a href='http://help.surveymonkey.com/articles/en_US/kb/How-do-I-send-my-survey-to-respondents-or-get-responses-to-my-survey' target='_blank'>the collector</a> you want to use by using the drop down boxes. </p><p>You also get to decide when you want survey links to be included with replies. For example, it can be configured to append surveys automatically when ticket gets closed or resolved, or set to manual, so that agents get to choose themselves with each ticket. </p>"
+      desc: "Integrate Freshdesk with SurveyMonkey and let your agents link any of your customized surveys to their messages when they are replying to tickets."
+      form:
+        survey_settings: ""
+        survey_settings_info: ""
+      edit_helptext: ""
+      edit_form:
+        title: "Configure SurveyMonkey"
+        survey: "Survey"
+        select: "Select"
+        collector: "Collector"
+        send_while_title: "Choose which emails have the survey link"
+        survey_link_text:
+          label: "Survey Link Text"
+          description: "This text appears below your signature at the bottom of the email sent to the customer, along with the survey link."
+          default_content: "Please take this survey to help us serve you better. It won't take more than 2 mins."
     highrise:
       label: "Highrise"
       helptext: "<h4>Highrise Integration</h4><p><br>Enter your domain and API key to display contact information from Highrise in Freshdesk. The widget will show up in the Contacts and Tickets pages once you are done. <br><br>The Name, Title, Company Name, Contact Address, Phone Number &amp; Mobile Number fields from Highrise CRM will be gathered and displayed.<br><br>Search through contacts on Highrise using the email address. Multiple search results will be displayed as a list.</p>"

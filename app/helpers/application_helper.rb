@@ -422,6 +422,9 @@ module ApplicationHelper
       ['{{ticket.product_description}}', 'Product description', 'Product specific description in multiple product/brand environments.']
     ]
     place_holders << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey', 'Includes satisfaction survey.'] if current_account.features?(:surveys, :survey_links)
+    place_holders << ['{{ticket.surveymonkey_survey}}', 'Surveymonkey survey',
+                      'Includes text/link to survey in Surveymonkey'
+                      ] if Integrations::SurveyMonkey.placeholder_allowed?(current_account)
     current_account.ticket_fields.custom_fields.each { |custom_field|
       name = custom_field.name[0..custom_field.name.rindex('_')-1]
       place_holders << ["{{ticket.#{name}}}", custom_field.label, "#{custom_field.label} (Custom Field)"] unless name == "type"
