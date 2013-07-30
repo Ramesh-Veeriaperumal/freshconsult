@@ -78,7 +78,7 @@ h3.heading{
     border:1px solid $help_center_color;
     @include border-radius(5px);
     padding: 10px 15px;
-    min-height: 720px !important;
+    min-height: 200px !important;
 }
 
 //Search 
@@ -209,7 +209,7 @@ h3.heading{
     .content, .content-form, .content-light {
         border:$content-border;
         @include border-radius(5px);
-        min-height: 450px;
+        min-height: 900px !important;
         vertical-align: top;
         padding:0;
         @extend .span12;
@@ -345,9 +345,6 @@ h3.heading{
             .list-lead{
                 font-size:20px;
                 font-weight:400;
-            }
-            .cs-g-3{
-                width: 45%;
             }
         }
 }
