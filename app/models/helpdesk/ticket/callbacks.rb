@@ -20,8 +20,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit_on_update :filter_observer_events, :if => :user_present?
   after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity, 
   :stop_timesheet_timers, :fire_update_event, :regenerate_reports_data
-  after_commit_on_update :publish_updated_ticket_properties, :if => :model_changes?
-  after_commit_on_update :publish_to_update_channel, :if => :model_changes?
+  after_commit_on_update :publish_updated_ticket_properties, :if => :model_changes? && :auto_refresh_allowed?
+  after_commit_on_update :publish_to_update_channel, :if => :model_changes? && :auto_refresh_allowed?
 
   def set_default_values
     self.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(account).key?(self.status) or ticket_status.try(:deleted?))
@@ -235,6 +235,10 @@ private
 
   def model_changes?
     @model_changes.present?
+  end
+
+  def auto_refresh_allowed?
+    account.features?(:auto_refresh)
   end
 
   def update_ticket_related_changes
