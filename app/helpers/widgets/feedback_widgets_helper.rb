@@ -6,6 +6,6 @@ module Widgets::FeedbackWidgetsHelper
 
 
     def js_options 
-    	{ :formTitle => params[:formTitle] || t('feedbackwidget_defaulttitle') }
+    	{ :formTitle => (params[:formTitle] || t('feedbackwidget_defaulttitle')).html_safe }
     end
 end
