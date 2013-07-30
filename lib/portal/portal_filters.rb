@@ -22,7 +22,7 @@ module Portal::PortalFilters
 
 		output << %(#{I18n.t('ticket.assigned_agent')}: <span class='emphasize'> #{ticket.agent.name}</span>) unless ticket.agent.blank?
 		
-		output.join(" ")
+		output.join(" ").html_safe
 	end
 
 	# Pageination filter for generating the pagination links
@@ -125,6 +125,6 @@ module Portal::PortalFilters
 		unless ticket['freshness'] == :new
 			_output << %( "#{I18n.t('ticket.assigned_agent')}: <span class='emphasize'> #{ ticket['agent']['name'] } </span>" )
 		end
-		_output.join(" ")
+		_output.join(" ").html_safe
 	end
 end
