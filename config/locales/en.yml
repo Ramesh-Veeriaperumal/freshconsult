@@ -1184,6 +1184,7 @@ en:
         expected_params: "Expected params are name, email and hash which are not present "
       success: Login successful!
       failed: Login was unsuccessful!
+      deleted_user: We are sorry. The login was unsuccessful because your account has been deleted. Please contact your account administrator to regain access.
     email_notifications: 
       update: 
         success: Email notifications have been updated.
