@@ -611,6 +611,7 @@ module ApplicationHelper
       when "requester" then
         element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => requester_autocomplete_helpdesk_authorizations_path, :object_name => object_name }))  
         element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
+        element+= label_tag("", "#{add_requester_field}",:class => 'hidden') if is_edit
         unless is_edit or params[:format] == 'widget'
           element = add_cc_field_tag element, field  
         end
