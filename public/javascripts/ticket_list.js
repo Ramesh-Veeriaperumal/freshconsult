@@ -10,7 +10,7 @@ ticksymbol = "<span class='icon ticksymbol'></span>";
 priority_ids = {1: "low", 2:"medium", 3:"high", 4:"urgent"}
 
 TicketListEvents = function() {
-
+MergeTicketsInitializer();
 jQuery('body').append('<div id="agent_collision_container" class="hide"></div>');
 
 // ---- EXTRACTED FROM /helpdesk/shared/_tickets.html.erb ----

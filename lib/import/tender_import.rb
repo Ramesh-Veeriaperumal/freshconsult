@@ -108,7 +108,7 @@ def get_folder article_file , import_id
   folder_name = File.split(File.dirname(article_file))[1]
   folder = category.folders.find(:first, :conditions =>['name=? or import_id=?',folder_name, import_id])
   unless folder
-      folder_hash = {:name => folder_name , :import_id => import_id, :visibility => Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone] }
+      folder_hash = {:name => folder_name , :import_id => import_id, :visibility => Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone] }
       folder = category.folders.create(folder_hash)
   else
      folder.update_attribute(:import_id , import_id )

@@ -6,6 +6,7 @@ iContactWidget.prototype= {
 		icontactBundle.integratable_type = "email_marketing";
 		icontactBundle.domain = icontactBundle.api_url;
 		icontactBundle.use_server_password = "true";
+		icontactBundle.auth_type = "NoAuth";
 		icontactBundle.ssl_enabled = "true";
 		icontactBundle.requests = {getUserInfo: this.getUserInfo(), getCampaigns: this.getCampaigns(), getAllLists: this.getAllLists()};
 		this.freshdeskWidget = new Freshdesk.EmailMarketingWidget(icontactBundle, this);

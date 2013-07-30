@@ -26,7 +26,7 @@
 	<div class="report-left-filter hide" id="report-filter-edit">
 		<div class="left-filter">    
 		  <!-- <div> <a href="#" data-dismiss="slider">close</a> </div> -->
-		  <%= render :partial => "reports/shared/filter_options", :locals => {:neglect_fields => [:responder_id,:group_id,:customer_id],:current_page => 'analysis_report', :action_url => reports_performance_analysis_reports_url}%>
+		  <%= render :partial => "reports/shared/filter_options", :locals => {:neglect_fields => [:responder_id,:customer_id],:current_page => 'analysis_report', :group_select_type => 'multi_select', :action_url => reports_performance_analysis_reports_url}%>
 		</div>
 	</div>
 </div>

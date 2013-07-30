@@ -14,6 +14,12 @@ body{
   display:block;
   margin-bottom: 20px;
 }
+del{
+  color:rgba(#000, 0.3);
+  div,span,label{
+    color:$textColor;
+  }
+}
 h5{
   &.lead{
     font-size:18px;
@@ -651,3 +657,4 @@ ul.inline > li, ol.inline > li {
     margin-left: 0px;
   }
 }
+
