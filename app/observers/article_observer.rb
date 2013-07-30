@@ -1,5 +1,3 @@
-require "solution/article"
-
 class ArticleObserver < ActiveRecord::Observer
 
 	observe Solution::Article
@@ -43,6 +41,6 @@ private
 
 	def set_un_html_content(article)
 		article.desc_un_html = Helpdesk::HTMLSanitizer.plain(article.description) unless article.description.empty?
-    end
+  end
 
 end

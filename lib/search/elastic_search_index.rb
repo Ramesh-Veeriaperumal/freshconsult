@@ -22,6 +22,10 @@ module Search::ElasticSearchIndex
       def search_alias_name
         "#{self.class.table_name}_#{self.account_id}"
       end
+
+      def es_highlight(item)
+        self.send("highlight_#{item}") || h(self.send("#{item}"))
+      end
       
     end
   end
