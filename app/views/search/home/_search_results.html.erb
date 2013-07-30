@@ -28,9 +28,9 @@
         <% @searched_notes.each do |note| %>
           <div class="group">
             <span class="icon"></span>
-            <%= link_to("#{note.notable.subject} (##{note.notable.display_id})", note.notable, :class => "big") %>
+            <%= link_to("#{h(note.notable.subject)} (##{note.notable.display_id})", note.notable, :class => "big") %>
             <span class="light"><%= "Requested by, <b>#{note.notable.requester}</b>" %> </span>
-            <p><%= note.body %></p>
+            <p><%= h(note.body) %></p>
           </div>
         <% end %>
       </li>

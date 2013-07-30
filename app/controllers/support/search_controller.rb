@@ -301,7 +301,7 @@ class Support::SearchController < SupportController
     def topic_result topic
       { 'title' => topic.es_highlight('title').html_safe, 
         'group' => topic.forum.name, 
-        'desc' => truncate(topic.posts.first.body.html_safe, :length => truncate_length),
+        'desc' => truncate(h(topic.posts.first.body), :length => truncate_length),
         'type' => "TOPIC", 
         'url' => support_discussions_topic_path(topic) }
     end
@@ -315,9 +315,9 @@ class Support::SearchController < SupportController
     end
 
     def note_result note
-      { 'title' => h(note.notable.subject.html_safe), 
+      { 'title' => h(note.notable.subject), 
         'group' => "Note", 
-        'desc' => truncate(note.body.html_safe, :length => truncate_length),
+        'desc' => truncate(h(note.body), :length => truncate_length),
         'type' => "NOTE", 
         'url' => support_ticket_path(note.notable) }
     end
