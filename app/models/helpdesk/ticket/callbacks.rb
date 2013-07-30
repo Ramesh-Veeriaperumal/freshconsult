@@ -21,7 +21,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity, 
   :stop_timesheet_timers, :fire_update_event, :regenerate_reports_data
   after_commit_on_create :publish_new_ticket_properties, :if => :auto_refresh_allowed?
-  after_commit_on_update :publish_updated_ticket_properties, :if => :model_changes? && :auto_refresh_allowed?
+  after_commit_on_update :publish_updated_ticket_properties, :if => :model_changes?
   after_commit_on_update :publish_to_update_channel, :if => :model_changes?
 
   def set_default_values
@@ -207,6 +207,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def publish_updated_ticket_properties
+    return unless auto_refresh_allowed?
     publish_ticket_properties("update")
   end
 
