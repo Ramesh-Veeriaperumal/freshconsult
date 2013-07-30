@@ -101,6 +101,6 @@ class CustomFieldsController < Admin::AdminController
 
   def calculate_string_fields_count field_data_group
     field_data_group["dropdown"].length + field_data_group["text"].length + 
-                          field_data_group["dropdown"].map{|x| x["levels"]}.flatten.compact.length
+              (field_data_group["dropdown"] || []).map{|x| x["levels"]}.flatten.compact.length
   end
 end
