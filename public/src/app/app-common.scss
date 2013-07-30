@@ -220,7 +220,7 @@ ul.activityfeed li{
 	.infoblock{ display: inline-block; }
 }
 
-.popover.topRight, {
+.popover.topRight, .popover.belowLeft {
 	.inner.hover_card {
 		background: #AAA;
 		padding:1px;
@@ -243,6 +243,25 @@ ul.activityfeed li{
 			border-right: 14px solid white;
 			z-index: 2000;
 
+		}
+	}
+	.arrow.dbl_up{
+		border-left: 8px solid transparent;
+		border-right: 8px solid transparent;
+		border-bottom: 8px solid #AAA;
+		top: -2px;
+		&:after {
+			content: " ";
+			display: block;
+			position: absolute;
+			width: 0;
+			height: 0;
+			margin-left: -8px;
+			border-left: 8px solid transparent;
+			border-right: 8px solid transparent;
+			border-bottom: 8px solid white;
+			z-index: 2000;
+			top: 2px;
 		}
 	}
 }
@@ -3831,37 +3850,184 @@ div.addReminder{
    }
 }
 
-#multi-product-list{
-	.portal-text{ width:30%; }
-	.channel{ width:27%; vertical-align: top; }
-	.channel-text{
-		position: relative;
-	   	padding-left:20px;
-	   	padding-bottom: 8px;
-	   	
-	   	.not-verified{ margin-top:-3px; font-size: 11px; }
-		.inactive_email{ margin:0px; }	
 
-	   	span.icon{
-			position:absolute;
-			left:0; 
-			top:0;
-			width:14px;
-			height:14px;
-	    }
+.product-page{
+	[class^="product-"], [class*="product-"]{
+		display: inline-block;
+		width: 15px;
+		height: 16px;
+		line-height: 14px;
+		vertical-align: text-top;
+		margin-top: -2px;
 	}
-	.image_logo{
-		@include border-radius(5px);
-		border:1px solid #dbdbdb;
-		max-height:40px;
-		max-width:90px;
+	.product-email-icon
+	{
+		margin-top: 2px;
+	}
+	.product-email{
+		vertical-align: top;
+	}
+	.channel-text{
+		display: inline-block;
+		width:300px;
+	}
+	.un-verified-product{
+		text-decoration: line-through;
+	}
+	.block-display{
+		display: inline-block;
+		width:250px;
+	}
+	.list-page-body .table{
+		table-layout:fixed;
+		tr td{
+			width:30.3%;
+			&:first-child{
+				width:9%;
+			}
+			.portal-logo-wrap{
+				height:50px;
+				width:50px;
+				overflow: hidden;
+				border: 1px solid #aaa;
+				@include border-radius(5px);
+				vertical-align: middle;
+			}
+		}
+		h4 { font-weight: bold; }
+	}
+}
+
+.portal-page-form{
+	.control-label{
+		font-weight: bold;
+	}
+	.plus{
+    	border-radius: 100%;
+	    background: green;
+	    text-align: center;
+	    color: #fff;
+	    margin: 0px;
+	    font-weight: bold;
+	    width: 18px;
+	    height: 19px;
+	    display: inline-block;
+	}
+	.product-radio{
+		margin-bottom: 6px;
+	}
+
+	.multi-product-add.ui-form .add-email{
+		.plus{
+			cursor: pointer;
+		}
+		margin-left: 190px;
+		font-weight: bold;
+		a{
+			padding-left: 5px;
+			cursor: pointer;
+		}
+	}
+	.multi-product-add.ui-form .configure-email-form {
+		margin-bottom: 0px;
+		background-color: white;
+	}
+	.portal-favicon, .portal-logo{
+		float:none;
+	}
+	.portal-favicon{
+		height:16px;
+	}
+	.overlabel{
+		margin-left: 5px;
+	}
+	.rebranding-header{
+		margin-left: -20px;	
+	}
+	.control-group{
+		.configure-email-form{
+			width:73%;
+			padding: 0;
+			border:0;
+		}
+	}
+	.multi-product-add {
+		background-color: white;
+		border:0;
+		width:100%;
+	}
+	.product-email-configuration{
+		margin-bottom: 0;
+		border-right: 0;
+		.un-verified-product{
+			text-decoration: line-through;
+		} 
+		.unverified_info{
+			margin-top: 5px;
+			margin-bottom: 7px;
+		}
+		.support_emails_row{
+			margin-top: 5px;
+		}
+		.set_primary{
+			input{
+				margin-top: -3px;
+			}
+		}
+		.deleteChoiceProduct{
+			position: absolute;
+			width: 30px;
+			background: #f2f2f2;
+			left: 0px;
+			top: 0;
+			height: 98%;
+			margin-top: 1px;
+			div{
+				border-radius: 100%;
+			    background: #e67c7c;
+			    text-align: center;
+			    color: #fff;
+			    margin: 6px;
+			    font-weight: bold;
+			    width: 17px;
+			    height:17px;
+			    font-size: 12px;
+				letter-spacing: -2px;
+				margin-top: 10px;
+			}
+			p{
+				font-size: 20px;
+				font-weight: bold;
+			}
+		}
+		.disabled{
+			div{
+				background: #ccc;
+			}
+		}
+		
+		.template-container{
+			width: 98%;
+			height:100%;
+			border: 1px solid #ccc;
+			border-right: 0;
+			border-left:0px;
+			padding: 5px 0 5px 50px;
+			padding-bottom: 5px;
+		}	
+		div.text{
+			width: 300px;
+		}	
+		label.product-radio-label{
+			display: inline-block;
+		}
 	}
 }
 
 .deactivated{
    li{
 	   background:#f8f8f8;
-	   padding-bottom:0px;
+	   padding-bottom:0;
 	   a.item_info{
 		   @include link-colors(#666666, #3e71a4, #666666, #666666, #3e71a4);
 		   font-size:1.16em;
@@ -3898,7 +4064,7 @@ div.addReminder{
 		text-decoration:none;
 		border-left:1px solid #d6d6d6;
 		border-right:1px solid #ebebeb;
-		padding:0px 10px;
+		padding:0 10px;
 		margin:0px;
 		float:left;
 	}
@@ -3968,7 +4134,7 @@ div.addReminder{
 		color:#ffffff;
 		text-shadow: -1px -1px 0 rgba(0,0,0,0.25);
 		text-decoration:none;
-		border-right-width:0px;  
+		border-right-width:0;  
 		position:relative;
 	} 
 	.stamp.stamp_type_1{
@@ -7298,15 +7464,40 @@ div.watchers_tooltip{
     @include box-shadow(0px 0px 7px rgba(0,0,0, 0.3));
     @include border-radius(5px);
     z-index: 10000;
-
+    .watcher-close{
+    	position: absolute;
+		right: 11px;
+		border-radius: 20px;
+		background: #666;
+		width: 17px;
+		height: 15px;
+		color: #fff;
+		font-weight: bold;
+		line-height: 11px;
+		text-align: center;
+		padding-top: 2px;
+		cursor: pointer;
+    }
     .watcher_label{
         font-size: 16px;
         font-weight: 300;
     }
-
+    .add-icon-green{
+	    width: 18px;
+		height: 18px;
+		display: inline-block;
+		position: absolute;
+		margin-top: 16px;
+		z-index: 9999999;
+		margin-left: 5px;
+	}
     #watcherlist{
     	clear: both;
-    	padding-bottom: 15px;
+    	border: 1px solid #CCC;
+		border-radius: 4px;
+		padding: 1px 6px;
+		height: auto;
+		margin-top: -7px;
 
     	.agent_name{
 	    	max-width: 157px;
@@ -7328,11 +7519,9 @@ div.watchers_tooltip{
     }
 
     ul{
-    	margin-bottom: -7px;
-    	max-height: 258px;
+    	max-height: 223px;
     	overflow-x: hidden;
-    	overflow-y: auto; 
-    	padding-top: 7px;
+    	overflow-y: auto;
     }
 
     li{
@@ -7377,6 +7566,7 @@ div.watchers_tooltip{
     .watcher_text{
     	color: #888;
     	font-size:13px;
+    	margin-top: 2px;
     }
 
     .watcher_list{
@@ -7409,7 +7599,8 @@ div.watchers_tooltip{
 	.unwatch{
 		float: left;
 		margin-top: 5px;
-		margin-left: 10px;
+		margin-right: 5px;
+		cursor: pointer;
 		img{
 			height: 16px;
 			width: 16px;
@@ -7443,6 +7634,9 @@ div.watchers_tooltip{
     .watcher_input{
     	margin:10px 0;
 		width: 100%;
+    	.select2-choices{
+    		padding-left:20px;
+    	}
 	}
 
 	div.chzn-container{
@@ -7463,7 +7657,83 @@ div.watchers_tooltip{
 	}
 }
 
+
+.watcher_highlight {
+  @include animation(watcher_blink 0.8s ease-out 1);
+}
+
+@include keyframes(watcher_blink) {
+  0% { background: rgba(#ff0,.8);}
+  100% { background: rgba(#ff0,0);}
+}
+
+.watcher_remove {
+  @include animation(watcher_rem 0.8s ease-out 1);
+}
+
+@include keyframes(watcher_rem) {
+  0% { background: rgba(#ff0000,.2);}
+  100% { background: rgba(#ff0000,0);}
+}
+
+
 /* Add Watcher End */
+
+/* Ticket Auto-refresh */
+
+.count-label{
+	position: relative;
+	right: 3px;
+	&:before{
+		content: attr(data-count);
+		color: transparent;
+		background: #888;
+		border-radius: 9px;
+		font-weight: bold;
+		margin-left: 20px;
+		padding: 0px 8px 2px 6px;
+		margin-top: -2px;
+		margin-right: 5px;
+		font-size: 12px;
+		position: relative;
+		bottom: 2px;
+	}
+}
+
+#index_refresh_alert{
+	background-color: #fdfdf1;
+	border-bottom: 1px solid #eee;
+	padding: 14px 0;
+	@include box-shadow(inset 0px 3px 7px rgba(100,100,100,0.1));
+	color: #666;
+	cursor: pointer;
+
+	&:hover {
+		background-color : #fcfcd1;
+		@include transition(background-color 200ms linear);
+		.reload_icon{
+			background-color: #000;
+			@include transition(background-color 400ms linear);
+		}
+	}
+
+	.reload_link{
+	    color: #06C;
+		font-weight: bold;
+		padding-right: 10px;
+		float: right;
+	}	
+}
+.ticket_highlight {
+	@include animation(ticket_blink 0.8s ease-out 1);
+}
+
+@include keyframes(ticket_blink) {
+	0% { background: rgba(#ff0,.8);}
+	100% { background: rgba(#ff0,0);}
+}
+
+/* Ticket Auto-refresh */
 
 /* Admin-canned-response-folders */
 
@@ -8185,6 +8455,7 @@ height: auto;
 .table-striped tbody tr.diffColor td{ 
 	background-color: #fefdee !important; 
 }
+
 .agent-list-page {
   &.deleted-list{
     tr td
@@ -9915,6 +10186,13 @@ div.gcal-confirm-modal-content{ width: 100%; }
 	}	
 }
 
+/* Business Calenders edit */
+.business_hours_form{
+	.muted{
+		padding-top: 5px;
+		padding-right: 5px;
+	}
+}
 
 /* Gamification */
 .gamecriteria{
@@ -10051,3 +10329,91 @@ div.gcal-confirm-modal-content{ width: 100%; }
 }
 
 .tweet-table .search-grey-box{ margin-top: 0; }
+
+//Free Trial Notification
+.trial_expiry {
+	@include border-radius(5px);
+	padding-top:12px;
+	p{
+		
+		color: #777;
+		margin:5px 0 10px 0px;
+	}
+	.trial-background {
+		margin: 11px -13px -12px;
+		padding: 10px 20px 10px 12px;
+		border-radius: 0 0 5px 5px;
+		cursor:pointer;
+
+		a
+		{
+			color: #FFF;
+			font-weight: bold;
+			font-size: 1.1em;
+			@include text-shadow(-1px -1px 0px #000);
+			display: block;
+			height: 100%;
+			.arrow-right{
+				border-left-color:#fff;
+				font-size:8px;
+				float: right;
+				margin-top: 3px;
+				margin-right: -8px
+			}
+		}
+	}
+}
+.more_than_ten{
+	h3
+	{
+		color: #337035;
+	}
+	background-color: #F7FFEB;
+	.trial-background {
+		background: #337035;
+	}
+}
+
+.less_than_ten{
+	h3
+	{
+		color: #790711;
+	}
+	background-color: #FFF2F3;
+	.trial-background {
+		background: #790711;
+	}
+}
+
+// Surveymonkey Styles Begin
+.survey-button{
+	.btn{
+		border:0;
+		background:none;
+		box-shadow:none;	
+	}
+}
+.survey-dropdown{
+	label{
+		margin-bottom:0;
+		padding-bottom:0;
+	}
+}
+#survey-list-wrapper {min-height: 28px;}
+#collector-list-wrapper {min-height: 28px;}
+#survey-fields-container{ margin-top: -6px;}
+#survey-fields-container select{  margin-top: 5px;}
+div#survey-collector-dropdowns { min-height: 62px;}
+div#survey-fields-container > div.survey-text-container{ margin-top: 25px;}
+.black_and_bold{ font-weight: bold; color: black}
+.send_while_container{ margin-top: 20px;}
+.send_while{ margin-bottom: 5px; font-weight: bold; color: black;}
+#s2id_survey_list{ width: 230px;}
+#s2id_collector_list{ width: 130px;}
+#survey_text{ height: 60px;}
+label.checkbox-label span{ position: relative; top: 2px; }
+
+label.last-label{ margin-bottom: 0px; }
+
+// Surveymonkey Styles End 
+

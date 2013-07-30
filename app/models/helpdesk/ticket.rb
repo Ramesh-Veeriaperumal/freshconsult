@@ -224,25 +224,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
      }
   end
 
-  def description
-    description
-  end
- 
-  def description_html
-    description_html
-  end
- 
-  def description_with_ticket_body
-    ticket_body ? ticket_body.description : read_attribute(:description)
-  end
-  alias_method_chain :description, :ticket_body
-
-
-  def description_html_with_ticket_body
-    ticket_body ? ticket_body.description_html : read_attribute(:description_html)
-  end
-  alias_method_chain :description_html, :ticket_body
-  
   def to_param 
     display_id ? display_id.to_s : nil
   end 
@@ -517,9 +498,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     if deep
       self[:notes] = self.notes
       options[:include] = [:attachments]
-      options[:except] = [:account_id,:import_id]
-      options[:methods].push(:custom_field)
     end
+    options[:except] = [:account_id,:import_id]
+    options[:methods].push(:custom_field)
     json_str = super options
     json_str.sub("\"ticket\"","\"helpdesk_ticket\"")
   end

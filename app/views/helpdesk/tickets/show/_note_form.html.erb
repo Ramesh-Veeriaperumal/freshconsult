@@ -59,16 +59,16 @@
         </button>
       </span>
       <span class="btn-group <% if privilege?(:edit_ticket_properties) %>dropup<%end%>">
-        <a class="btn btn-primary submit_btn"
+        <button class="btn btn-primary submit_btn"
             data-public-text="<%= t('ticket.note_form.add_public_note') %>" 
-            data-default-text="<%= t('ticket.note_form.add_private_note') %>">
+            data-default-text="<%= t('ticket.note_form.add_private_note') %>" >
           <span rel="text"><%= t('ticket.note_form.add_private_note') %></span>
           <% if privilege?(:edit_ticket_properties) %>
-            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
               <span class="caret"></span>
-            </a>
+            </button>
           <% end %>
-        </a>
+        </button>
         <% if privilege?(:edit_ticket_properties) %>
         <ul class="dropdown-menu custom_statuses pull-right">
           <%

@@ -22,8 +22,7 @@
 			'position':'relative', 
 			'width': org_width+parent_width, 
 			'min-height': parent_height,
-			'height':'auto !important', 
-   			'height': parent_height
+			'height':'auto !important'
 		})
 
 		$this.live("click", function(ev){
@@ -38,7 +37,7 @@
 
       	$slider.change(function(){
       		if($slider.height() > $parent.height()){
-      			$parent.height($slider.height())
+      			$parent.css({'min-height' :$slider.height()})
       		}
       	})
 

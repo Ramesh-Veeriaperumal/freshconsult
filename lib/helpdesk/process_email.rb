@@ -169,7 +169,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       unless params[:cc].nil?
         cc_array = params[:cc].split(',').collect! {|n| (parse_email n)[:email]}
       end
-      return cc_array.uniq
+      return cc_array.compact.map{|i| i.downcase}.uniq
     end
 
     def parse_to_emails

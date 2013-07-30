@@ -11,22 +11,20 @@ class Helpdesk::SubscriptionsController < ApplicationController
 
   def create_watchers
     @ticket = @parent
-    agent_ids = current_account.agents.find(:all, 
-                                          :conditions => {:user_id => params[:ids]}).map(&:user_id)
-    if agent_ids.present?
-      @subscriptions = @ticket.subscriptions.create(agent_ids.collect { |u_id| {:user_id => u_id} })
-
-      @subscriptions.each do |subscription|
+    if current_account.agents.find_by_user_id(params[:user_id])
+      subscription = @ticket.subscriptions.build(:user_id => params[:user_id])
+      if subscription.save
         if current_user.id != subscription.user_id
           Helpdesk::WatcherNotifier.send_later(:deliver_notify_new_watcher, 
                                                @ticket, 
                                                subscription, 
                                                "#{current_user.name}")
         end
+        render :nothing => true
+      else
+        render :json => { :success => false } 
       end
     end
-
-    render :partial => "helpdesk/subscriptions/update_watcher_script"
   end
 
   def unwatch
@@ -34,7 +32,7 @@ class Helpdesk::SubscriptionsController < ApplicationController
     subscription = @ticket.subscriptions.find_by_user_id(current_user.id)
     subscription.destroy if subscription
     respond_to do |format|
-        format.js { render :partial => "update_watcher_script" }
+        format.js { render :nothing => true }
         format.html {
                       flash[:notice] = t(:'flash.tickets.unwatch.unsubscribe_success') 
                       redirect_to helpdesk_ticket_path(@ticket)

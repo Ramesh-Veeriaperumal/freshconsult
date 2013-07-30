@@ -82,7 +82,7 @@ integrations_url:
     development: "http://localhost:3000"
     production: "https://login.freshdesk.com"
     #staging: "https://login.freshbugs.com"
-    #staging: "https://login.freshitil.com"
+    # staging: "https://login.freshitil.com"
     staging: "https://login.freshpo.com"
 
 
@@ -101,3 +101,6 @@ admin_subdomain: admin
 partner_subdomain: partner
 
 billing_subdomain: billing
+
+# Show Trial Expiry notifier only if the trail days is less than 100 (dashboard/index.html)
+show_trail_notifier_in_days: 100
