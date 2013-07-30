@@ -37,6 +37,11 @@ module AuthenticationSystem
       end
     end
 
+    def allowed_to_assume_with_api?(user)
+      return false if !user.api_assumable?
+      privilege?(:manage_users)
+    end
+
     def current_user_session
       return @current_user_session if defined?(@current_user_session)
       assume_agent_email = handle_api_key(request, params)
@@ -79,7 +84,8 @@ module AuthenticationSystem
           puts "assume_agent : #{assume_agent.inspect}"
           if assume_agent.blank?
             error_code = "assuming_identity_user_does_not_exist"
-          elsif assume_identity_for_user(assume_agent)
+          elsif allowed_to_assume_with_api?(assume_agent)
+            session[:assumed_user] = assume_agent.id
             return true
           else
             error_code = "assuming_identity_not_allowed"
