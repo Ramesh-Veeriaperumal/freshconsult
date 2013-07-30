@@ -15,13 +15,6 @@ body, .heading {
     @include clearfix;
     border: 0;
 }
-.fb-container{
-    border:1px solid $help_center_color;
-    @include border-radius(5px);
-    display: inline-block;
-    width: 100%;
-    padding:5px 10px;
-}
 hr.content-divider{
     margin-left: 0;
     margin-right: 0;
@@ -30,10 +23,20 @@ h2 {
     font-size:14px;
 }
 [id*="article-show"]{
+    > p{
+        color:#888;
+        margin-top: -5px;
+    }
+    p{
+        margin-bottom: 15px;
+    }
+    > hr{
+        border:0;
+    }
     .page-stamp{
         display:block;
         left:0;
-        margin-left: 5px;
+        margin-left: 15px;
        @extend .icon-article; 
        &:after{
         border:0;
@@ -46,7 +49,7 @@ h2 {
         font-size:18px;
         color:inherit;
     }
-    >p, .article-body, h2.heading{
+    >p, h2.heading{
         padding-left: 50px;
     }
 }
@@ -54,7 +57,6 @@ h2 {
 h2.heading{
     font-size: 18px;
     color: inherit;
-    margin-bottom: 20px;
 }
 h2.post-title{
     margin-bottom:0;
@@ -73,9 +75,10 @@ h3.heading{
 
 //Header End 
 .content, .content-form, .content-light {
-    padding:5px;
-    border-radius:0;
-    border:0;
+    border:1px solid $help_center_color;
+    @include border-radius(5px);
+    padding: 10px 15px;
+    min-height: 200px !important;
 }
 
 //Search 
@@ -337,6 +340,20 @@ h3.heading{
     }
 }
 /* Index Page stylesheet */
+.sidebar{
+    .topic-list{ 
+            .list-lead{
+                font-size:20px;
+                font-weight:400;
+            }
+            .cs-g-3{
+                width: 45%;
+            }
+        }
+}
+.heading{
+    margin-bottom: 0;
+}
 .post-title{
     font-size: 18px;
     margin-top:20px;
@@ -352,7 +369,7 @@ h3.heading{
         box-shadow: none;
         font-size: inherit;
         color: #3b5998;
-        font-weight: bold;
+        font-weight: 400;
         text-align: left;
         padding: 2px 30px 10px 0;
         &:last-child{
