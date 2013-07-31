@@ -82,6 +82,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
   
   def index
+    @is_auto_refresh_feature = current_account.features?(:auto_refresh)
     #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
     params[:html_format] = request.format.html?
     cookies.delete(:ticket_list_updated) 
