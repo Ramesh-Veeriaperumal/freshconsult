@@ -28,12 +28,12 @@
 		<div class="request_details">   
   		<div class="breadcrumbs">
   			<%= link_to(t('forum.title'), categories_path) %> &rarr;
-  			<%= link_to( "#{h(@forum_category.name)}", category_path(@forum_category)) %> &rarr;
-  			<%= link_to( "#{h(@forum.name)}", category_forum_path(@forum_category, @forum)) %> 
+  			<%= link_to( "#{(@forum_category.name)}", category_path(@forum_category)) %> &rarr;
+  			<%= link_to( "#{(@forum.name)}", category_forum_path(@forum_category, @forum)) %> 
   		</div>
 	    	<div class="requestCnt request-cnt-first">  
 			  <h3 class="forum-title">
-			    <%= h @topic.title  %>
+			    <%= @topic.title  %>
 			  </h3>
 				<% first_post = @topic.posts.first %>
 				<div class="description">
