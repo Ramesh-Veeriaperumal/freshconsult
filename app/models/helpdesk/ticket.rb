@@ -22,6 +22,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Redis::OthersRedis
   include Reports::TicketStats
   include Helpdesk::TicketsHelperMethods
+  include ActionView::Helpers::TranslationHelper
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 

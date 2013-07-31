@@ -165,6 +165,9 @@ class Helpdesk::TicketsController < ApplicationController
           json << get_summary_count
           json << ",top_view:"
           json << top_view
+		  json << ", can_delete_ticket:" 
+		  json << "#{current_user.can_delete_ticket}"
+			puts "DEBUG :: index json is :: #{json}"
           render :json => json + "}"
         end
       end
