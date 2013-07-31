@@ -4,38 +4,48 @@
 {% assign class = "without-solutions-or-forum" %}
 {% endif %} 
 <div class="index-page {{ class }} ">
-	{% if portal.has_user_signed_in and portal.user.recent_tickets.size > 0 %}
+
 	<section class="content ticket" >
 		<div class="content-header">
 			<h2 class="heading">
+				{% if portal.has_user_signed_in %}
 				<a href="/facebook/support/tickets">
 					<span class="content-icon">
 						<img src="/images/spacer.gif" class="fb-ticket-icon" />
 					</span>
-					{% translate facebook_tab.portal.your_tickets %}
+					{% translate facebook_tab.portal.customer_support %}
 				</a>
+				{% else %}
+				<a>
+					<span class="content-icon">
+						<img src="/images/spacer.gif" class="fb-ticket-icon" />
+					</span>
+					{% translate facebook_tab.portal.customer_support %}
+				</a>
+				{% endif %}
 			</h2>
 		</div>
 	  	<div class="span12 c-list">
 	  	<div class="tickets-header">
-		  	<strong>
-		  			Having Problems with our Service/ Product?
-			</strong>
-			<p>Create a new ticket, our customer support will help you at the earliest.</p>
-		  	{% if portal.has_user_signed_in %}
-				<a href="{{portal.new_topic_url}}" title="Start a new topic" class="btn btn-primary" id="start_topic">{% translate facebook_tab.portal.start_topic %}</a>
+		  	{% translate facebook_tab.portal.ticket_text %}
+		</div>
+		<div class="text-center">
+			{% if portal.has_user_signed_in %}
+		  		<a href="{{ portal.new_ticket_url }}" class="btn btn-primary" id="new_support_ticket">{% translate facebook_tab.portal.new_ticket %}</a>
 			{% else %}
-				<a href="{{portal.new_topic_url}}" title="Start a new topic" class="btn btn-primary solution_c" id="start_topic">{% translate facebook_tab.portal.start_topic %}</a>
+				<a href="{{ portal.new_ticket_url }}" class="btn btn-primary no_user_ticket" id="new_support_ticket">{% translate facebook_tab.portal.new_ticket %}</a>
 			{% endif %}
 			<br/>
-			<div class="list-lead">Recent Tickets</div>
 		</div>
-		{% for ticket in portal.user.recent_tickets %}
-			{{ ticket | default_ticket_list_item }}
-		{% endfor %}
+		{% if portal.has_user_signed_in and portal.user.recent_tickets.size > 0 %}
+			<div class="list-lead tickets-header">{% translate facebook_tab.portal.recent_tickets %}</div>
+			{% for ticket in portal.user.recent_tickets limit:6 %}
+				{{ ticket | default_ticket_list_item }}
+			{% endfor %}
+		{% endif %}
 	    </div>
 	</section>
-	{% endif %}
+
 	{% if portal.has_solutions %}
 	<section class="content solutions" id="solutions-index-home">
 		<div class="content-header">
@@ -49,8 +59,11 @@
 			</h2>
 		</div>
 		<div class="span12">
+		<div class="tickets-header">
+		  	{% translate facebook_tab.portal.solution_text %}
+		</div>
 		<div class="text-center">
-			<a href="#" class="btn btn-primary">Browse Articles</a>
+			<a href="/facebook/support/solutions" class="btn btn-primary">Browse Articles</a>
 		</div>
 		{% if portal.solution_categories.size > 5 %}
 			{% for category in portal.solution_categories %}
@@ -76,7 +89,7 @@
 			{% if portal.recent_articles.size > 0 %}
 				<div class="list-lead">{% translate facebook_tab.portal.recent_articles %}</div>
 				<ul>
-				{% for article in portal.recent_articles %}
+				{% for article in portal.recent_articles limit:6 %}
 					<li class="cs-g-3">
 						<div class="ellipsis">
 							<a href="{{article.url}}">{{article.title | h}}</a>
@@ -107,36 +120,34 @@
 				</a>
 			</h2>
 		</div>
-		<!-- <div class="span4 omega">
-			<span class="pull-right">
-			{% if portal.has_user_signed_in %}
-				<a href="{{portal.new_topic_url}}" title="Start a new topic" class="btn btn-primary" id="start_topic">{% translate facebook_tab.portal.start_topic %}</a>
-			{% else %}
-				<a href="{{portal.new_topic_url}}" title="Start a new topic" class="btn btn-primary solution_c" id="start_topic">{% translate facebook_tab.portal.start_topic %}</a>
-			{% endif %}
-				<a href="/facebook/support/discussions" class="btn">{% translate facebook_tab.portal.view_all %}</a>
-			</span>
-		</div> -->
 		<div class="span12 forums">
+			<div class="tickets-header">
+		  		{% translate facebook_tab.portal.forum_text %}
+			</div>
 			<div class="text-center">
-				<a href="#" class="btn btn-primary">Start Topic</a>
-				<a href="#" class="btn btn-primary">Browse Topics</a>
+				{% if portal.has_user_signed_in %}
+					<a href="{{portal.new_topic_url}}" title="Start a new topic" class="btn btn-primary" id="start_topic">{% translate facebook_tab.portal.start_topic %}</a>
+				{% else %}
+					<a href="{{portal.new_topic_url}}" title="Start a new topic" class="btn btn-primary solution_c" id="start_topic">{% translate facebook_tab.portal.start_topic %}</a>
+				{% endif %}
+				<a href="/facebook/support/discussions" class="btn btn-primary">{% translate facebook_tab.portal.browse_topics %}</a>
 			</div>
 			<div class="cs-g-c">
 				<ul class="nav nav-pills">
-	              <li><a href="#recenttopics" data-toggle="tab"  class="list-lead">{% translate facebook_tab.portal.recent_topics %}</a></li>
-	              <li><a href="#populartopics" data-toggle="tab"  class="list-lead">Popular Topics</a></li>
+				{% if portal.recent_portal_topics.size > 0 %}
+	              <li class="active"><a href="#recenttopics" data-toggle="tab"  class="list-lead">{% translate facebook_tab.portal.recent_topics %}</a></li>
+	            {% endif %}
+	            {% if portal.recent_popular_topics.size > 0 %}
+	              <li><a href="#populartopics" data-toggle="tab"  class="list-lead">{% translate facebook_tab.portal.popular_topics %}</a></li>
+	            {% endif %}
 	            </ul>
 	            <div class="tab-content">
 		            <section id="populartopics" class="index-cs-g topic-list tab-pane">
-		            	Popular Topics
-		            </section>
-					<section class="index-cs-g topic-list tab-pane active" id="recenttopics">
-					{% if portal.recent_popular_topics %}
-						<div class="list-lead">{% translate portal.popular_topics %}</div>
+		            	{% if portal.recent_popular_topics %}
 						<ul>
-						{% for topic in portal.recent_popular_topics %}
+						{% for topic in portal.recent_popular_topics limit:6 %}
 							<li class="cs-g-3">
+								{{ topic.user | profile_image }}
 								<div class="ellipsis">
 									<a href="{{topic.url}}">{{topic.title | h}}</a>
 								</div>
@@ -146,10 +157,14 @@
 							</li>
 						{% endfor %}
 						</ul>
-					{% elsif portal.recent_portal_topics %}
+						{% endif %}
+		            </section>
+					<section class="index-cs-g topic-list tab-pane active" id="recenttopics">
+					{% if portal.recent_portal_topics %}
 						<ul>
-							{% for topic in portal.recent_portal_topics %}
+							{% for topic in portal.recent_portal_topics limit:6 %}
 								<li class="cs-g-3">
+									{{ topic.user | profile_image }}
 									<div class="ellipsis">
 										<a href="{{topic.url}}">{{topic.title | h}}</a>
 									</div>

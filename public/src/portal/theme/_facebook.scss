@@ -447,10 +447,15 @@ h3.heading{
     margin-top: 5px;
     border:0;
     padding:0;
-    img {
-        @include border-radius(0);
-    }
+
+    img { @include border-radius(0); }
 }
+
+.topic-list .user-pic-thumb img{
+    width:30px;
+    height:30px;
+}
+
 .user-comment {
     .lead-small{
         font-size:inherit;

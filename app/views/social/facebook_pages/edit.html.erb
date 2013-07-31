@@ -3,8 +3,7 @@
 
     jQuery('#tab_config').on('click', function(ev){
       ev.preventDefault();
-      jQuery('.fb_changed').removeAttr('disabled');
-
+      jQuery('.fb_changed').removeAttr('disabled').data("updated", true);
       jQuery('.configure').fadeOut(200, function() {
         jQuery('#after_config').fadeIn('fast');
       });
@@ -13,7 +12,7 @@
 
     jQuery('.cancel_fb').on('click', function(ev){
       ev.preventDefault();
-
+      jQuery('.fb_changed').removeData('updated');
       jQuery('#after_config').fadeOut(200, function() {
         jQuery('.configure').fadeIn('fast');
       });

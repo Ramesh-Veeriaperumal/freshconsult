@@ -89,12 +89,12 @@ class Social::FacebookPagesController < Admin::AdminController
     end
 
     def load_tab
-      @fb_tab = fb_page_tab.get.first unless @item.reauth_required?
+      @fb_tab = fb_page_tab.get unless @item.reauth_required?
     end
 
     def handle_tab
       fb_page_tab.add if params[:add_tab]
-      fb_page_tab.update(params[:custom_name])
+      flash[:error] = t('facebook_tab.no_contact') unless fb_page_tab.update(params[:custom_name])
     end
 
     def tab_edited?

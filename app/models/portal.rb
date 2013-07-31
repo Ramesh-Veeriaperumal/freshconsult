@@ -74,8 +74,8 @@ class Portal < ActiveRecord::Base
   end
 
   def recent_portal_topics user
-    main_portal ? account.portal_topics.visible(user).newest(10) : 
-        (forum_category ? forum_category.portal_topics.visible(user).newest(10) : [])
+    main_portal ? account.portal_topics.visible(user).newest(6) : 
+        (forum_category ? forum_category.portal_topics.visible(user).newest(6) : [])
   end
 
   #Yeah.. It is ugly.

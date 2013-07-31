@@ -66,7 +66,7 @@
         });
 
         FB.Event.subscribe('auth.login', function(response) {
-          if (response.authResponse) {
+          if (response.status === "connected") {
           	window.location = "/facebook/sso/facebook"
         	}
           else{
@@ -80,7 +80,7 @@
         	}
         });
 
-        FB.Canvas.setAutoGrow();
+        FB.Canvas.setAutoGrow(7);
 
         jQuery('body').on('click', '.no_user_ticket, .solution_c', function(ev){
         	ev.preventDefault();
@@ -90,6 +90,11 @@
         	}
         	FB.login(function(response){}, {scope: 'user_likes, email'});
         });
+
+        FB.Canvas.setDoneLoading( function(response) {
+    		FB.Canvas.setSize({height: jQuery('html').height()});
+    		FB.Canvas.scrollTo(0,0);
+		});
 
     </script>
 		<%= assumed_identity_message %>
