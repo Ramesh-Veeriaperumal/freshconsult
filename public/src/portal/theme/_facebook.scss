@@ -4,7 +4,6 @@ $headingColor: #1272de;
 body {
     background:$white;
     font-size:$baseFontSize;
-    padding:20px; //have to remove after finish everything
 }
 body, .heading {
     font-family:'Roboto', sans-serif,'lucida grande', Helvetica Neue, Helvetica;
@@ -143,6 +142,7 @@ h3.heading{
     white-space: nowrap;
     cursor: pointer;
     text-decoration: none;
+    font-size:12px;
     text-align: center;
     overflow: visible;
     display: inline-block;
@@ -331,6 +331,13 @@ h3.heading{
     }
     .c-ticket-row,.tickets-header {
         padding-left:20px;
+        margin-bottom: 20px;
+        .text-center{
+            margin-top:20px;
+        }
+        .btn.btn-primary{
+            text-transform:uppercase;
+        }
         .status-source{
             display: none;
         }

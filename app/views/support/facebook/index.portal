@@ -28,14 +28,14 @@
 	  	<div class="span12 c-list">
 	  	<div class="tickets-header">
 		  	{% translate facebook_tab.portal.ticket_text %}
-		</div>
-		<div class="text-center">
-			{% if portal.has_user_signed_in %}
-		  		<a href="{{ portal.new_ticket_url }}" class="btn btn-primary" id="new_support_ticket">{% translate facebook_tab.portal.new_ticket %}</a>
-			{% else %}
-				<a href="{{ portal.new_ticket_url }}" class="btn btn-primary no_user_ticket" id="new_support_ticket">{% translate facebook_tab.portal.new_ticket %}</a>
-			{% endif %}
-			<br/>
+		  	<div class="text-center">
+				{% if portal.has_user_signed_in %}
+			  		<a href="{{ portal.new_ticket_url }}" class="btn btn-primary" id="new_support_ticket">{% translate facebook_tab.portal.new_ticket %}</a>
+				{% else %}
+					<a href="{{ portal.new_ticket_url }}" class="btn btn-primary no_user_ticket" id="new_support_ticket">{% translate facebook_tab.portal.new_ticket %}</a>
+				{% endif %}
+				<br/>
+			</div>
 		</div>
 		{% if portal.has_user_signed_in and portal.user.recent_tickets.size > 0 %}
 			<div class="list-lead tickets-header">{% translate facebook_tab.portal.recent_tickets %}</div>
@@ -61,9 +61,9 @@
 		<div class="span12">
 		<div class="tickets-header">
 		  	{% translate facebook_tab.portal.solution_text %}
-		</div>
-		<div class="text-center">
-			<a href="/facebook/support/solutions" class="btn btn-primary">Browse Articles</a>
+		  	<div class="text-center">
+				<a href="/facebook/support/solutions" class="btn btn-primary">Browse Articles</a>
+			</div>
 		</div>
 		{% if portal.solution_categories.size > 5 %}
 			{% for category in portal.solution_categories %}
@@ -123,14 +123,14 @@
 		<div class="span12 forums">
 			<div class="tickets-header">
 		  		{% translate facebook_tab.portal.forum_text %}
-			</div>
-			<div class="text-center">
-				{% if portal.has_user_signed_in %}
-					<a href="{{portal.new_topic_url}}" title="Start a new topic" class="btn btn-primary" id="start_topic">{% translate facebook_tab.portal.start_topic %}</a>
-				{% else %}
-					<a href="{{portal.new_topic_url}}" title="Start a new topic" class="btn btn-primary solution_c" id="start_topic">{% translate facebook_tab.portal.start_topic %}</a>
-				{% endif %}
-				<a href="/facebook/support/discussions" class="btn btn-primary">{% translate facebook_tab.portal.browse_topics %}</a>
+		  		<div class="text-center">
+					{% if portal.has_user_signed_in %}
+						<a href="{{portal.new_topic_url}}" title="Start a new topic" class="btn btn-primary" id="start_topic">{% translate facebook_tab.portal.start_topic %}</a>
+					{% else %}
+						<a href="{{portal.new_topic_url}}" title="Start a new topic" class="btn btn-primary solution_c" id="start_topic">{% translate facebook_tab.portal.start_topic %}</a>
+					{% endif %}
+					<a href="/facebook/support/discussions" class="btn btn-primary">{% translate facebook_tab.portal.browse_topics %}</a>
+				</div>
 			</div>
 			<div class="cs-g-c">
 				<ul class="nav nav-pills">
