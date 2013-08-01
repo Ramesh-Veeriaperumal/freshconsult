@@ -31,14 +31,16 @@
 		  	<div class="text-center">
 				<a href="{{ portal.new_ticket_url }}" class="btn btn-primary {% if !portal.has_user_signed_in %} no_user_ticket {% endif %}" id="new_support_ticket">{% translate facebook_tab.portal.new_ticket %}</a>
 				<br/>
+				</div>
 			</div>
-		</div>
-		{% if portal.has_user_signed_in and portal.user.recent_tickets.size > 0 %}
-			<div class="list-lead tickets-header">{% translate facebook_tab.portal.recent_tickets %}</div>
-			{% for ticket in portal.user.recent_tickets limit:6 %}
-				{{ ticket | default_ticket_list_item }}
-			{% endfor %}
-		{% endif %}
+			<div class="index-cs-g ">
+			{% if portal.has_user_signed_in and portal.user.recent_tickets.size > 0 %}
+					<div class="list-lead">{% translate facebook_tab.portal.recent_tickets %}</div>
+					{% for ticket in portal.user.recent_tickets limit:6 %}
+						{{ ticket | default_ticket_list_item }}
+					{% endfor %}
+				{% endif %}
+			</div>
 	    </div>
 	</section>
 

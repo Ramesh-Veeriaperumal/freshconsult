@@ -5,7 +5,7 @@ body {
     background:$white;
     font-size:$baseFontSize;
 }
-body, .heading {
+body, .heading,input, button, select, textarea {
     font-family:'Roboto', sans-serif,'lucida grande', Helvetica Neue, Helvetica;
 }
 //Header 
@@ -13,6 +13,12 @@ body, .heading {
     @include box-shadow(none);
     @include clearfix;
     border: 0;
+    .banner-title{
+        h1.heading{
+            font-size: 20px;
+            font-weight: 400;
+        }
+    }
 }
 hr.content-divider{
     margin-left: 0;
@@ -28,9 +34,6 @@ h2 {
     }
     p{
         margin-bottom: 15px;
-    }
-    > hr{
-        border:0;
     }
     .page-stamp{
         display:block;
@@ -50,6 +53,10 @@ h2 {
     }
     >p, h2.heading{
         padding-left: 50px;
+    }
+
+    .article-vote{
+        padding-left: 0
     }
 }
 
@@ -71,6 +78,9 @@ h3.heading{
         color:$linkColor;
     }
 }
+.article-body{
+    margin-bottom:80px;
+}
 
 //Header End 
 .content, .content-form, .content-light {
@@ -79,18 +89,21 @@ h3.heading{
     padding: 10px 15px;
     min-height: 200px !important;
 }
+.breadcrumb{
+    margin-bottom:15px;
+}
 
 //Search 
 .hc-search-c {
     padding: 0;
-    margin: 20px 0;
+    margin: 10px 0 20px;
     border-top: 1px solid #FFF;
     border-radius: 5px;
     border: 1px solid $grayLighter;
     background: $help_center_color;
     h2{
-        padding: 8px;
-        padding-left:15px;
+        padding: 4px;
+        padding-left:12px;
         text-shadow: 1px 1px 1px #FFF;
         font-size: 20px;
         font-weight: 400;
@@ -102,7 +115,7 @@ h3.heading{
         position: absolute;
         left: 0;
         width: 28px;
-        top: 10px;
+        top: 13px;
         margin-left: 14px;
     }
     .hc-search-button {
@@ -110,6 +123,7 @@ h3.heading{
     }
     input.special {
         @include border-radius(5px);
+        font-weight:300;
         border:0;
         @include box-shadow(rgba(#c3c3c3, 0.2) 0 3px 10px inset);
         padding: 20px;
@@ -142,13 +156,13 @@ h3.heading{
     white-space: nowrap;
     cursor: pointer;
     text-decoration: none;
-    font-size:12px;
+    font-size:11px;
     text-align: center;
     overflow: visible;
     display: inline-block;
-    padding: 0.2em 0.6em 0.175em;
+    padding: 0.2em 12px 0.175em;;
     border-color: #29447E #29447E #1A356E;
-    text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.65);
+    text-shadow: none;
     color:$white;
     background-color: #637bad;
     @include border-radius(3px);
@@ -177,7 +191,7 @@ h3.heading{
 }
 .index-cs-g {
     width:100%;
-    padding-left:10px;
+    padding:0 15px;
     .help-text {
         font-size: $fontHelpSize;
         a{
@@ -209,7 +223,7 @@ h3.heading{
     .content, .content-form, .content-light {
         border:$content-border;
         @include border-radius(5px);
-        min-height: 900px !important;
+        min-height: 800px !important;
         vertical-align: top;
         padding:0;
         @extend .span12;
@@ -233,6 +247,14 @@ h3.heading{
         position: relative;
         border-bottom:1px solid $grayLighter;
         margin-bottom: 10px;
+        &:hover{
+            background: darken(#EEE, 10%);
+        }
+        .heading{
+            a:hover{
+                text-decoration: none
+            }
+        }
         .content-icon{
             display: block;
             border: 1px solid #DCDCDC;
@@ -240,7 +262,7 @@ h3.heading{
             padding: 8px 7px;
             border: 1px solid $grayLighter;
             border-radius: 100%;
-            box-shadow: 0 0 0px 4px #FFF;
+            box-shadow: 0 0 0px 4px #FFF, 0px 2px 0px 4px #DCDCDC;
             background: #FFF;
             margin: -82px auto 10px;
             width: 60px;
@@ -300,6 +322,28 @@ h3.heading{
                 margin-bottom: 0;
             }
         }
+        .nav-pills{
+            a{
+                color:#1272de;
+                &:hover{
+                    text-decoration: underline;
+                    box-shadow: none;
+                    background-color: transparent;
+                }
+            }
+        }
+        .nav-pills > .active > a{
+            box-shadow: none;
+            border:0;
+            background-color: transparent;
+            color:inherit;
+            text-decoration: none;
+            &:hover{
+                text-decoration: underline;
+                box-shadow: none;
+                background-color: transparent;
+            }
+        }
     }
     .c-link {
         font-size: $baseFontSize;
@@ -317,6 +361,9 @@ h3.heading{
         border:0;
         .c-row {
             border:0;
+            padding-left: 0;
+            padding-top:0;
+            margin-bottom: 10px;
             &:hover {
                 background: transparent;
             }
@@ -328,12 +375,19 @@ h3.heading{
     .c-ticket-row .label {
         float: none;
         margin-top: 0;
+        text-shadow: none;
+        font-size: 10px;
+        padding: 0px 8px;
     }
     .c-ticket-row,.tickets-header {
-        padding-left:20px;
+        padding-left:15px;
         margin-bottom: 20px;
+        p{
+            font-weight: 300;
+        }
         .text-center{
             margin-top:20px;
+            padding-right: 15px;
         }
         .btn.btn-primary{
             text-transform:uppercase;
@@ -344,14 +398,18 @@ h3.heading{
     }
     .ticket-brief {
         padding-top:0;
+        .c-link{
+            font-weight: inherit;
+        }
     }
 }
 /* Index Page stylesheet */
 .sidebar{
-    .topic-list{ 
+    .topic-list, .article-list{ 
             .list-lead{
                 font-size:20px;
                 font-weight:400;
+                color: inherit;
             }
         }
 }
@@ -420,8 +478,7 @@ h3.heading{
 		margin-top:10px;
 	}
 }
-
-.p-content, .comment-by-agent .p-content{
+.p-content, .user-comment   .p-content{
 	margin-top: -50px;
 	margin-left: 54px;
 	padding-top: 32px;
@@ -440,6 +497,12 @@ h3.heading{
 			padding-right: 20px;
 		}
 	}
+}
+.comment-by-agent {
+    .p-content{
+    border-color: #fdfdea;
+    background: #fdfdea;
+    }
 }
 .user-name, .p-info{
 	display:inline-block;

@@ -134,7 +134,7 @@ module SupportHelper
 								<input placeholder="#{ I18n.t('portal.search.placeholder') }" type="text" 
 									name="term" class="special" value="#{ h(params[:term]) }" 
 						            rel="page-search" data-max-matches="10">
-						        <span class="search-icon mobile-icon-search"></span>
+						        <span class="search-icon icon-search-dark"></span>
 							</div>
 						</form>
 					</div>
