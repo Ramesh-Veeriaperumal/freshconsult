@@ -157,7 +157,6 @@
 	margin-top: 5px;
 	margin-left: 5px;
 	font-size: 12px;
-	color: #c4c4c4;
 	a{ text-decoration: underline; }
 	a:hover{ text-decoration: none; }
 	a, a:hover{ color: inherit;  }
@@ -176,7 +175,29 @@
 .screenshot-wrap{
 	position: relative;
 }
+.panel-info .lead, .copyright{
+	color:#000;
+	@include opacity(0.30);
+}
 
+.embedded-body {
+	max-height: 90%;
+}
+
+.embedded-panel { 
+	background-color: transparent;
+	box-shadow: none;
+}
+
+.embedded-footer { 
+	background-color: transparent;
+	box-shadow: none;
+	border-top: 0;
+}
+
+.embedded-search-input {
+	margin-top: 50px;
+}
 // IE hacks
 
 .ie .portal-attach .attach-file{ display:block !important; }

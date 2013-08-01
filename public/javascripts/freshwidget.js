@@ -14,7 +14,8 @@
 			offset:     	"35%",
 			url:			   "http://support.freshdesk.com",
 			assetUrl: 		"https://s3.amazonaws.com/assets.freshdesk.com/widget",
-			queryString:   ""
+			queryString:   "",
+			widgetType: 	"popup"
 		},
 		iframeLoaded, widgetHeadHTML, widgetBodyHTML, iframe, button, closeButton, overlay, dialog
 		container = null;
@@ -100,7 +101,7 @@
 	 }
 	 	 
 	 function createButton(){
-	 	if (button == null) {
+	 	if (button == null && options.widgetType == "popup") {
 			class_name = locationClass[options.alignment] || "left";
 			button = document.createElement('div');
 			button.setAttribute('id', 'freshwidget-button');

@@ -26,6 +26,7 @@
 			})
 		})
 
+		
 		$ticket_desc.redactor({
 			convertDivs: false, 
 			autoresize:false, 
@@ -37,8 +38,12 @@
 			    }, 0);
 			}
 		});
+		
+		var $placeholder_proxy = $ticket_desc.data("placeholder-proxy")
 
-		$ticket_desc.data("placeholder-proxy").toggle(!jQuery(".redactor_editor").text());
+		if($placeholder_proxy != undefined)
+			$placeholder_proxy.toggle(!jQuery(".redactor_editor").text());
+		
 		
 		setTimeout(function() {
 	 		jQuery("#fd_feedback_widget").validate({
