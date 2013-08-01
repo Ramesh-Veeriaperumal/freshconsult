@@ -19,7 +19,7 @@
     <% product.email_configs.each do | email_config| %>
       <% if email_config.primary_role  %>
 			  <div class="channel-text" >
-          <span class='product-email product-email-logo-icon' ></span>
+          <span class='product-email product-email-logo' ></span>
           <% 
             extra_classes = 'block-display ';
             extra_classes << 'full-width-tooltip ellipsis ' if email_config.reply_email.length > 25

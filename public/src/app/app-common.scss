@@ -3860,7 +3860,7 @@ div.addReminder{
 		vertical-align: text-top;
 		margin-top: -2px;
 	}
-	.product-email-logo-icon
+	.product-email-logo
 	{
 		margin-top: 2px;
 	}
@@ -3917,7 +3917,7 @@ div.addReminder{
 	    display: inline-block;
 	}
 	.product-radio{
-		margin-bottom: 6px;
+		vertical-align: top;	
 	}
 
 	.multi-product-add.ui-form .add-email{
@@ -4023,7 +4023,7 @@ div.addReminder{
 		}	
 		label.product-radio-label{
 			display: inline-block;
-			width:90%;
+			width:75%;
 		}
 	}
 }
