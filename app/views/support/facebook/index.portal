@@ -29,11 +29,7 @@
 	  	<div class="tickets-header">
 		  	{% translate facebook_tab.portal.ticket_text %}
 		  	<div class="text-center">
-				{% if portal.has_user_signed_in %}
-			  		<a href="{{ portal.new_ticket_url }}" class="btn btn-primary" id="new_support_ticket">{% translate facebook_tab.portal.new_ticket %}</a>
-				{% else %}
-					<a href="{{ portal.new_ticket_url }}" class="btn btn-primary no_user_ticket" id="new_support_ticket">{% translate facebook_tab.portal.new_ticket %}</a>
-				{% endif %}
+				<a href="{{ portal.new_ticket_url }}" class="btn btn-primary {% if !portal.has_user_signed_in %} no_user_ticket {% endif %}" id="new_support_ticket">{% translate facebook_tab.portal.new_ticket %}</a>
 				<br/>
 			</div>
 		</div>
@@ -62,7 +58,7 @@
 		<div class="tickets-header">
 		  	{% translate facebook_tab.portal.solution_text %}
 		  	<div class="text-center">
-				<a href="/facebook/support/solutions" class="btn btn-primary">Browse Articles</a>
+				<a href="/facebook/support/solutions" class="btn btn-primary">{% translate facebook_tab.portal.browse_articles %}</a>
 			</div>
 		</div>
 		{% if portal.solution_categories.size > 5 %}
@@ -95,7 +91,7 @@
 							<a href="{{article.url}}">{{article.title | h}}</a>
 						</div>
 						<div class="help-text">
-							{% translate facebook_tab.portal.published %} <a href="{{article.category.url}}">{{article.category.name | h}}</a>
+							in <a href="{{article.category.url}}">{{article.category.name | h}}</a>
 						</div>
 					</li>
 				{% endfor %}
@@ -124,11 +120,7 @@
 			<div class="tickets-header">
 		  		{% translate facebook_tab.portal.forum_text %}
 		  		<div class="text-center">
-					{% if portal.has_user_signed_in %}
-						<a href="{{portal.new_topic_url}}" title="Start a new topic" class="btn btn-primary" id="start_topic">{% translate facebook_tab.portal.start_topic %}</a>
-					{% else %}
-						<a href="{{portal.new_topic_url}}" title="Start a new topic" class="btn btn-primary solution_c" id="start_topic">{% translate facebook_tab.portal.start_topic %}</a>
-					{% endif %}
+					<a href="{{portal.new_topic_url}}" title="Start a new topic" class="btn btn-primary {% if !portal.has_user_signed_in %} solution_c {% endif %}" id="start_topic">{% translate facebook_tab.portal.start_topic %}</a>
 					<a href="/facebook/support/discussions" class="btn btn-primary">{% translate facebook_tab.portal.browse_topics %}</a>
 				</div>
 			</div>
@@ -152,7 +144,7 @@
 									<a href="{{topic.url}}">{{topic.title | h}}</a>
 								</div>
 								<div class="help-text">
-									{{ topic | topic_info }}
+									{{ topic | fb_topic_info }}
 								</div>
 							</li>
 						{% endfor %}
@@ -169,7 +161,7 @@
 										<a href="{{topic.url}}">{{topic.title | h}}</a>
 									</div>
 									<div class="help-text">
-										{{ topic | topic_info }}
+										{{ topic | fb_topic_info }}
 									</div>
 								</li>
 							{% endfor %}

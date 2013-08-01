@@ -315,6 +315,10 @@ HTML
 		output.join(", ")
 	end
 
+	def fb_topic_info topic
+		%(#{bold h(topic.user.name)}, <br>#{time_ago topic.created_on}.)
+	end
+
 	def topic_info_with_votes topic
 		output = []
 		output << topic_brief(topic)
@@ -599,9 +603,9 @@ HTML
 		label_class_name = ticket['active?'] ? "label-status-pending" : "label-status-closed"
 
 		unless ticket['requester'] or User.current.eql?(ticket['requester'])
-			time_ago_text = I18n.t('ticket.portal_created_on', { :username => h(ticket['requester']['name']), :date => formated_date(ticket['created_on']) })
+			time_ago_text = I18n.t('ticket.fb_portal_created_on', { :username => h(ticket['requester']['name']), :date => time_ago(ticket['created_on']) })
 		else
-			time_ago_text = I18n.t('ticket.portal_created_on_same_user', { :date => formated_date(ticket['created_on']) })
+			time_ago_text = I18n.t('ticket.fb_portal_created_on_same_user', { :date => time_ago(ticket['created_on']) })
 		end
 		unless ticket['freshness'] == "new"
 			unique_agent = "#{I18n.t("ticket.assigned_agent")} : <span class='emphasize'> #{ h(ticket['agent']) }</span>"
