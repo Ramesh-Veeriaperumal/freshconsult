@@ -26,23 +26,25 @@
 			</h2>
 		</div>
 	  	<div class="span12 c-list">
-	  	<div class="tickets-header">
-		  	{% translate facebook_tab.portal.ticket_text %}
-		  	<div class="text-center">
-				{% if portal.has_user_signed_in %}
-			  		<a href="{{ portal.new_ticket_url }}" class="btn btn-primary" id="new_support_ticket">{% translate facebook_tab.portal.new_ticket %}</a>
-				{% else %}
-					<a href="{{ portal.new_ticket_url }}" class="btn btn-primary no_user_ticket" id="new_support_ticket">{% translate facebook_tab.portal.new_ticket %}</a>
-				{% endif %}
-				<br/>
+		  	<div class="tickets-header">
+			  	{% translate facebook_tab.portal.ticket_text %}
+			  	<div class="text-center">
+					{% if portal.has_user_signed_in %}
+				  		<a href="{{ portal.new_ticket_url }}" class="btn btn-primary" id="new_support_ticket">{% translate facebook_tab.portal.new_ticket %}</a>
+					{% else %}
+						<a href="{{ portal.new_ticket_url }}" class="btn btn-primary no_user_ticket" id="new_support_ticket">{% translate facebook_tab.portal.new_ticket %}</a>
+					{% endif %}
+					<br/>
+				</div>
 			</div>
-		</div>
-		{% if portal.has_user_signed_in and portal.user.recent_tickets.size > 0 %}
-			<div class="list-lead tickets-header">{% translate facebook_tab.portal.recent_tickets %}</div>
-			{% for ticket in portal.user.recent_tickets limit:6 %}
-				{{ ticket | default_ticket_list_item }}
-			{% endfor %}
-		{% endif %}
+			<div class="index-cs-g ">
+			{% if portal.has_user_signed_in and portal.user.recent_tickets.size > 0 %}
+					<div class="list-lead">{% translate facebook_tab.portal.recent_tickets %}</div>
+					{% for ticket in portal.user.recent_tickets limit:6 %}
+						{{ ticket | default_ticket_list_item }}
+					{% endfor %}
+				{% endif %}
+			</div>
 	    </div>
 	</section>
 
@@ -150,9 +152,9 @@
 								{{ topic.user | profile_image }}
 								<div class="ellipsis">
 									<a href="{{topic.url}}">{{topic.title | h}}</a>
-								</div>
-								<div class="help-text">
-									{{ topic | topic_info }}
+									<div class="help-text">
+										{{ topic | topic_info }}
+									</div>
 								</div>
 							</li>
 						{% endfor %}
@@ -167,9 +169,9 @@
 									{{ topic.user | profile_image }}
 									<div class="ellipsis">
 										<a href="{{topic.url}}">{{topic.title | h}}</a>
-									</div>
-									<div class="help-text">
-										{{ topic | topic_info }}
+										<div class="help-text">
+											{{ topic | topic_info }}
+										</div>
 									</div>
 								</li>
 							{% endfor %}
