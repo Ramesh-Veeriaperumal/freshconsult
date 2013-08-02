@@ -566,11 +566,13 @@ function extractContainer(data, xhr, options) {
   obj.url = stripPjaxParam(xhr.getResponseHeader('X-PJAX-URL') || options.requestUrl)
 
   // Attempt to parse response html into elements
-  if (/<html/i.test(data)) {
-    var $head = $(data.match(/<head[^>]*>([\s\S.]*)<\/head>/i)[0])
-    var $body = $(data.match(/<body[^>]*>([\s\S.]*)<\/body>/i)[0])
+  var $data = $(data)
+  if ($data.is('html')) {
+      var $head = $data.find('head').first();
+      var $body = $data.find('body').first();
+    
   } else {
-    var $head = $body = $(data)
+    var $head = $body = $data
   }
 
   // If response data is empty, return fast
@@ -600,6 +602,9 @@ function extractContainer(data, xhr, options) {
     }
 
   } else if (!/<html/i.test(data)) {
+    obj.contents = $body
+  } else if (! $data.is('html')) {
+    //If none of top level tags are HTML, continue
     obj.contents = $body
   }
 

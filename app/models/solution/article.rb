@@ -52,6 +52,8 @@ class Solution::Article < ActiveRecord::Base
     }
   end
 
+  attr_accessor :highlight_title, :highlight_desc_un_html
+
   attr_protected :account_id ,:attachments
   
   validates_presence_of :title, :description, :user_id , :account_id
@@ -113,11 +115,7 @@ class Solution::Article < ActiveRecord::Base
           end
 
           item.results.each_with_hit do |result,hit|
-            unless result.blank?
-              hit['highlight'].keys.each do |i|
-                result[i] = hit['highlight'][i].to_s
-              end
-            end
+            SearchUtil.highlight_results(result, hit) unless hit['highlight'].blank?
           end
           item.results
         rescue Exception => e

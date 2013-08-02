@@ -1,6 +1,7 @@
 class AgentObserver < ActiveRecord::Observer
 
   include Notifications::MessageBroker
+  include MemcacheKeys
 
   def before_create(agent)
     set_default_values(agent)
@@ -16,6 +17,10 @@ class AgentObserver < ActiveRecord::Observer
 
   def after_save(agent)
     update_agent_levelup(agent)
+  end
+
+  def after_commit_on_update(agent)
+    clear_cache(agent)
   end
 
   protected
@@ -48,5 +53,14 @@ class AgentObserver < ActiveRecord::Observer
       if agent.level and ((agent.points ? agent.points : 0) < new_point)
         SupportScore.add_agent_levelup_score(agent.user, new_point)
       end 
+    end
+
+    def auto_refresh_key(agent)
+      AUTO_REFRESH_AGENT_DETAILS % { :account_id => agent.account_id, :user_id => agent.user_id }
+    end
+
+    def clear_cache(agent)
+      key = auto_refresh_key(agent)
+      MemcacheKeys.delete_from_cache key
     end
 end

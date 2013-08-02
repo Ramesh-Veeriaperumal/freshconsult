@@ -134,16 +134,14 @@
   </span>
 
   <span>
-    <a class="btn btn-primary submit_btn">
-      <%= t('forward') %>
-    </a>
+    <button class="btn btn-primary submit_btn"><%= t('forward') %></button>
   </span>
 
 </div>
 <div class="clearfix overflowh"></div>
 <% if conv_id.present? %>
 <script type="text/javascript">
-  invokeRedactor('<%= "#{cntid}-body" %>');
+  invokeRedactor('<%= "#{cntid}-body" %>', 'cnt-fwd');
 </script>
 <% end %>
 

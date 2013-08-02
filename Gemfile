@@ -7,8 +7,7 @@ gem "rails","2.3.18"
 
 gem "json", "~> 1.5.5"
 gem "mysql", "2.8.1"
-gem "i18n", "0.6.4"
-gem "i18n-js", "2.1.2"
+gem "i18n", "0.4.2"
 
 gem "RedCloth", "4.2.9"
 gem "authlogic", "2.1.6"
@@ -27,6 +26,7 @@ gem "omniauth-facebook"
 gem "omniauth-salesforce"
 gem "omniauth-mailchimp", "~> 1.0.3"
 gem "omniauth-constantcontact2", "~> 1.0.4"
+gem "omniauth-surveymonkey", "0.0.0"
 gem "nori", "1.1.4"
 gem "google-api-client", "~> 0.6.3"
 

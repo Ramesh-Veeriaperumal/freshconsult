@@ -1,5 +1,5 @@
 	<% if agents.present? %>
-  <div class="cust_list_table_body">
+  <div class="list-page-body">
 		<table class="table table-striped agent-list-page <%= 'deleted-list' if(params[:state] == "deleted") %> ">
 			<% agents.each do |agent| %>
 				<tr>

@@ -86,7 +86,6 @@ class Support::Discussions::TopicsController < SupportController
     end
     
     if topic_saved && post_saved
-      @topic.monitorships.create(:user_id => current_user.id, :active => true) if params[:monitor] 
       respond_to do |format| 
         format.html { redirect_to support_discussions_topic_path(:id => @topic) }
         format.xml  { render :xml => @topic }
@@ -136,8 +135,12 @@ class Support::Discussions::TopicsController < SupportController
   end
 
   def toggle_monitor
-    @monitorship = Monitorship.find_or_initialize_by_user_id_and_topic_id(current_user.id, params[:id])    
-    @monitorship.update_attribute(:active, !@monitorship.active)
+    @monitorship = Monitorship.find_or_initialize_by_user_id_and_topic_id(current_user.id, params[:id])
+    if @monitorship.new_record?
+      @monitorship.save
+    else
+      @monitorship.update_attribute(:active, !@monitorship.active)
+    end
     
     render :nothing => true
   end 

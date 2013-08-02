@@ -137,7 +137,7 @@ Helpkit.reports_util = {
     var args ={
       ajaxType: 'report_filter_create',
       type: "POST",
-      url: "/reports/report_filter/create",
+      url: "/reports/report_filters/create",
       dataType: "json",
       data: data,
       success: function(data){
@@ -164,7 +164,7 @@ Helpkit.reports_util = {
     var args ={
       ajaxType: 'report_filter_delete',
       type: "POST",
-      url: "/reports/report_filter/destroy/"+id,
+      url: "/reports/report_filters/destroy/"+id,
       dataType: "json",
       success: function(data){
         jQuery("li[data-id='"+id+"']").remove();
@@ -182,9 +182,13 @@ Helpkit.reports_util = {
   bindEventsForReportFilter: function(){
     /** event binds related to saved report starts here**/
     jQuery(document).on('click','.filter-event',function(){
-      var _id = jQuery(this).attr('data-id');
+      var _id      = jQuery(this).attr('data-id'),
+          _jq_this = jQuery(this);
+
       Helpkit.reports_util.updateReportFilters(_id);
-      jQuery("#active_filter").text(jQuery(this).text());
+      jQuery("#active_filter").text(_jq_this.text());
+      jQuery(".ticksymbol").removeClass('ticksymbol');
+      _jq_this.addClass('ticksymbol');
       jQuery("#delete-filter-link").removeClass('hide').attr('data-id',_id);
       jQuery("#save-filter-link").addClass('hide');
     });
@@ -202,10 +206,12 @@ Helpkit.reports_util = {
       jQuery("#report-dialog-select-cancel").click();
     });
     jQuery(document).on('click',"#delete-filter-link",function(){
-      Helpkit.reports_util.deleteReportFilter(jQuery(this).attr('data-id'));
-      jQuery("#active_filter").text("Unsaved Report");
-      jQuery("#save-filter-link").removeClass('hide');
-      jQuery("#delete-filter-link").addClass('hide');
+      if(window.confirm('Are you sure you want to delete this saved report ?')){
+        Helpkit.reports_util.deleteReportFilter(jQuery(this).attr('data-id'));
+        jQuery("#active_filter").text("Unsaved Report");
+        jQuery("#save-filter-link").removeClass('hide');
+        jQuery("#delete-filter-link").addClass('hide');
+      }
     });
     /** event binds related to saved report ends here**/
   },
@@ -427,11 +433,13 @@ Helpkit.AnalysisReport = (function(){
         var _this_JQObj= jQuery(this)
         report_for = _this_JQObj.attr("data-report-for");
         if(_this_JQObj.hasClass('DESC')){
-          _this_JQObj.removeClass('DESC').addClass('ASC').html('&#8593');
+          //_this_JQObj.removeClass('DESC').addClass('ASC').html('&#8593');
+          _this_JQObj.removeClass('DESC').removeClass('reports-icon-topN').addClass('ASC').addClass('reports-icon-bottomN');
           _FD.update_data_by_order(report_for,"ASC");
         }
         else{
-          _this_JQObj.removeClass('ASC').addClass('DESC').html('&#8595');
+          //_this_JQObj.removeClass('ASC').addClass('DESC').html('&#8595');
+          _this_JQObj.removeClass('ASC').removeClass('reports-icon-bottomN').addClass('DESC').addClass('reports-icon-topN');
           _FD.update_data_by_order(report_for,"DESC");
         }
       });

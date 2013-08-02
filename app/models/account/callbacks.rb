@@ -5,10 +5,10 @@ class Account < ActiveRecord::Base
   before_destroy :update_crm, :backup_changes, :make_shard_mapping_inactive
 
   after_create :populate_features, :change_shard_status
-  after_update :change_shard_mapping, :update_users_language
+  after_update :change_shard_mapping, :update_users_language, :update_default_business_hours_time_zone
   after_destroy :remove_shard_mapping
 
-  after_commit_on_create :add_to_billing, :enable_elastic_search
+  after_commit_on_create :add_to_billing#, :enable_elastic_search
   after_commit_on_update :clear_cache
   after_commit_on_destroy :clear_cache, :delete_reports_archived_data
 
@@ -97,6 +97,15 @@ class Account < ActiveRecord::Base
 
     def delete_reports_archived_data
       Resque.enqueue(Workers::DeleteArchivedData, {:account_id => id})
+    end
+
+    def update_default_business_hours_time_zone
+      return if self.business_calendar.default.first.nil?
+      if time_zone_changed?
+        default_business_calender = self.business_calendar.default.first
+        default_business_calender.time_zone = self.time_zone
+        default_business_calender.save
+      end
     end
 
 end

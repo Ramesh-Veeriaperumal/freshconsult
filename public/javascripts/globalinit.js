@@ -87,6 +87,22 @@ is_touch_device = function() {
         }
       });
     
+    $("a[rel=click-popover-below-left]").livequery(function(){
+      $(this).popover({ 
+        delayOut: 300,
+        trigger: 'manual',
+        offset: 5,
+        html: true,
+        reloadContent: false,
+        placement: 'belowLeft',
+        // template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
+        template: '<div class="dbl_up arrow"></div><div class="hover_card inner"><div class="content"><p></p></div></div>',
+        content: function(){
+          return $("#" + $(this).attr("data-widget-container")).html();
+        }
+      });
+    });
+
     $("a[rel=widget-popover]")
       .popover({ 
         delayOut: 300,
@@ -193,7 +209,7 @@ is_touch_device = function() {
           },1000);
       });
 
-    $("a[rel=widget-popover]").live("click", function(e){
+    $("a[rel=widget-popover], a[rel=click-popover-below-left]").live("click", function(e){
         e.preventDefault();
         e.stopPropagation(); 
         clearTimeout(hidePopoverTimer);
@@ -574,7 +590,8 @@ is_touch_device = function() {
 
         $(window).on('resize.freshdesk', function() {
 
-          sticky_header.width($('#Pagearea').width());
+          sticky_header.width($('#Pagearea').width()-1);
+          
           var to_collapse = false, extra_buffer = 20;
 
           var width_elements_visible = $('.sticky_right').outerWidth() + $('.sticky_left').outerWidth() + extra_buffer;

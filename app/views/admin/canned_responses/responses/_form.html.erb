@@ -38,65 +38,63 @@ function toggleGroup(access_id)
 
 
 <%= f.error_messages :object_name => 'canned_response_response' %>
-<ul class="ui-form">
+<ul>
 	<li>
-    		<%= f.label(:title, t('.response_name')) %>
-    		<%= f.text_field :title, :class => "text required", "minlength" => "3" %>
+		<%= f.label(:title, t('.response_name')) %>
+		<%= f.text_field :title, :class => "text required", "minlength" => "3" %>
 	</li>
 	<li>
-			<label for="ca-content">
-				<%= t('message') %>
-				<a class='l_placeholder slim-button' href='javascript:void(0)'><%= t('canned_folders.insert_placeholder') %>&raquo;</a>
-			</label>
+		<label for="ca-content">
+			<%= t('message') %>
+			<a class='l_placeholder slim-button pull-right' href='javascript:void(0)'><%= t('canned_folders.insert_placeholder') %>&raquo;</a>
+		</label>
    		<%= f.text_area :content_html, :class => "ca_content_body", :id => 'ca-content' %>		
 	</li>
-
-  <li>
-    <%= render "attachment_form" %>
-
-  </li>
-
-
-  <ul>
-    <% shared_attachments=@item.shared_attachments.map{|a|a.attachment} %>
-    <%= render :partial => 'attachment', :collection => shared_attachments  %>
-  </ul>
-
-
-
-	<li class="folder-pane">
-    	<%= label_tag(:new_folder_id, t('canned_folders.folder'), :class => "caption") %>
-    	<%= select_tag(:new_folder_id, options_from_collection_for_select(@ca_res_folders, 'id', 'name', 
-    		@folder.id)) %>	
+	<li><%= render "attachment_form" %></li>
+	<li>
+		<ul>
+			<%= render :partial => 'attachment', :collection => @item.attachments_sharable  %>
+		</ul>
 	</li>
-	<li class="inline-field">
-	<% f.fields_for :visibility do |access| %>
-			
-			<label class="caption"><%=t('.available_for')%>:</label>
-			<div class="fields inline-radio">
-				<div class="inline-radio">
+
+	<li class="folder-pane form-horizontal">
+		<div class="control-group">
+              <%= label_tag(:new_folder_id, t('canned_folders.folder'), :class => "control-label") %>
+              <div class="controls">
+                <%= select_tag(:new_folder_id, options_from_collection_for_select(@ca_res_folders, 'id', 'name', 
+    			@folder.id), :class => 'select2') %>	
+              </div>
+    	</div>
+	</li>
+	<li class="inline-field  form-horizontal">
+		<div class="control-group">
+		<% f.fields_for :visibility do |access| %>	
+			<label class="control-label"><%=t('.available_for')%>:</label>
+			<div class="controls">
+				<label class="radio">
 					<%= access.radio_button  :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me], {:onclick =>"toggleGroup(this.value)", :class => "radio", :checked => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]== @ca_response.accessible.visibility } %> 
 					<%= t('.me_only') %>
 					<%= access.hidden_field :user_id, :value =>current_user.id %>	
-				</div>
-				<div class="inline-radio">
+				</label>
+				<label class="radio">
 					<%= access.radio_button  :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents], {:onclick =>"toggleGroup(this.value)",:class => "radio" ,:checked => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]== @ca_response.accessible.visibility } %> 
 					<%= t('.all_agents') %>
-				</div>
-				<div class="inline-radio">
+				</label>
+				<label class="radio">
 					<%= access.radio_button  :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents],{:onclick =>"toggleGroup(this.value)" , :class => "radio" , :checked => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]== @ca_response.accessible.visibility} %> 
 					<%= t('.groups') %>
 					<div style="display:none;" class="tabbed" id="accessible_group">
 			        <%= access.collection_select :group_id, Group.find_all_by_account_id(current_account.id , :order=>'name') , :id, :name, {:class =>"dropdown", :selected => @ca_response.accessible.group_id} %>
-			    </div>
-				</div>
+			        </div>
+			    </label>
 			</div>
-	<%end%>
+		<%end%>
+		</div>
 	</li>
 </ul>
 <div class="button-container">
-	<%= f.submit t('save'), :class => "uiButton" %>	      	
-	<%= link_to(t('cancel'), :back , :class => "uiButton" ) %>
+	<%= f.submit t('save'), :class => "btn btn-primary" %>	      	
+	<%= link_to(t('cancel'), :back , :class => "btn" ) %>
 </div>
 
 <% content_for :pagefixed do %>

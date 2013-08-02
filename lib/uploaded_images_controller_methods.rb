@@ -13,7 +13,7 @@ module UploadedImagesControllerMethods
 
     respond_to do |format| 
       format.html do
-        render :json => (@image.save) ?  success_response : error_response 
+        render :json => (@image.image? && @image.save) ?  success_response : error_response 
       end
     end
   end
@@ -25,10 +25,10 @@ module UploadedImagesControllerMethods
     end
 
     def success_response
-      { :filelink => @image.content.url, :fileid => @image.id }
+      { :filelink => @image.content.url, :fileid => @image.id, :uniquekey => params["_uniquekey"] }
     end
 
     def error_response
-     { :error => @image.errors.blank? ? [] : @image.errors.full_messages.to_sentence }
+     { :error => @image.errors.blank? ? [] : @image.errors.full_messages.to_sentence, :uniquekey => params["_uniquekey"] }
     end
 end

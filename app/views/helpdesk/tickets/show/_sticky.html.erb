@@ -21,7 +21,8 @@
 				<li class="ticket-btns">
 					<div class="watchers_tooltip hide" id="new_watcher_page"
 						rel="remote-load" 
-						data-url= "<%=helpdesk_ticket_helpdesk_subscriptions_path(@ticket)%>" >
+						data-url= "<%=helpdesk_ticket_helpdesk_subscriptions_path(@ticket)%>"
+						data-load-unique="true" >
 						<span class="arrow-top"></span>
 					</div>
 					<% unless params[:format]=='widget' %>
@@ -58,8 +59,9 @@
 				<% if privilege?(:edit_ticket_properties) %>
 				<li class="ticket-btns hide_on_collapse">
 					<%= link_to(t('ticket.close_btn'), "#", 
-							:title  => t('ticket.close_btn_title'), 
-							:class => "btn" , :id=>"close_ticket_btn" , 
+							:title  => t('ticket.close_without_notification'), 
+							:class => "btn tooltip" , :id=>"close_ticket_btn" , 
+							"data-placement" => "below",
 							"data-href" => close_helpdesk_ticket_path({:id => @ticket.display_id, :page => params[:page]})) unless @ticket.closed? %>
 				</li>
 				<% end %>
