@@ -19,15 +19,6 @@ class Admin::DataImportMailer < ActionMailer::Base
     body          (options)
     content_type  "text/html"
   end 
-
-  def import_format_error_email(options={}) 
-    recipients    options[:email]
-    from          "support@freshdesk.com"
-    subject       "Data Import for #{options[:domain]}"
-    sent_on       Time.now
-    body          (options)
-    content_type  "text/html"
-  end 
   
   def google_contacts_import_email(options)
     @last_stats = options[:status]

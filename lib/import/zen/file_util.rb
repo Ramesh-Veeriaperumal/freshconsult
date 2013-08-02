@@ -33,7 +33,6 @@ def extract_zendesk_zip
     rescue => e
       puts "Error in extract_zendesk_zip"
       NewRelic::Agent.notice_error(e)
-      raise e
     ensure
       file.close
       file.unlink
@@ -84,15 +83,6 @@ def handle_error
      delete_zip_file
      email_params = {:email => params[:email], :domain => params[:domain]}
      Admin::DataImportMailer.deliver_import_error_email(email_params)
-     FileUtils.remove_dir(@out_dir,true)  
-     @current_account.zendesk_import.destroy   
-end
-
-def handle_format_error
-     enable_notification(@current_account)
-     delete_zip_file
-     email_params = {:email => params[:email], :domain => params[:domain]}
-     Admin::DataImportMailer.deliver_import_format_error_email(email_params)
      FileUtils.remove_dir(@out_dir,true)  
      @current_account.zendesk_import.destroy   
 end
