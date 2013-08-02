@@ -33,8 +33,6 @@ class Import::Zen::Start < Struct.new(:params)
       puts "Error while importing data ::#{e.message}\n#{e.backtrace.join("\n")}"
       handle_error
       return true   
-    ensure
-      @current_account.zendesk_import.destroy 
     end
   end
    
@@ -49,10 +47,10 @@ class Import::Zen::Start < Struct.new(:params)
  end
  
 def read_data(obj_node)
-  file_path = File.join(@base_dir , OBJECT_FILE_MAP[obj_node.to_sym])
-  begin
+    file_path = File.join(@base_dir , OBJECT_FILE_MAP[obj_node.to_sym])
     reader = Nokogiri::XML::Reader(File.open(file_path))
     while reader.read
+     begin
        if reader.node_type == Nokogiri::XML::Reader::TYPE_ELEMENT and reader.name == obj_node
           if obj_node.eql?("ticket")
               Resque.enqueue( Import::Zen::ZendeskTicketImport , { :ticket_xml => reader.outer_xml, 
@@ -61,14 +59,10 @@ def read_data(obj_node)
             send("save_#{obj_node}" , reader.outer_xml)
           end
        end
-    end
-  rescue Errno::ENOENT
-    handle_format_error
-    exit
-  rescue => err
-    NewRelic::Agent.notice_error(err)
-    puts "Error while reading ::#{err.message}\n#{err.backtrace.join("\n")}"
-  end
+     rescue => err
+       puts "Error while reading ::#{err.message}\n#{err.backtrace.join("\n")}"
+     end
+   end
 end
 
 private
