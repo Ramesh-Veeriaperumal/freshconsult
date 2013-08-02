@@ -145,7 +145,7 @@
 								<div class="ellipsis">
 									<a href="{{topic.url}}">{{topic.title | h}}</a>
 								</div>
-								<div class="help-text">
+								<div class="help-text topic-help">
 									{{ topic | fb_topic_info }}
 								</div>
 							</li>
@@ -162,7 +162,7 @@
 									<div class="ellipsis">
 										<a href="{{topic.url}}">{{topic.title | h}}</a>
 									</div>
-									<div class="help-text">
+									<div class="help-text topic-help">
 										{{ topic | fb_topic_info }}
 									</div>
 								</li>
