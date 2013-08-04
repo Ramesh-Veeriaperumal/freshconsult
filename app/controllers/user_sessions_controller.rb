@@ -37,7 +37,7 @@ include Redis::TicketsRedis
     if params[:hash] == gen_hash_from_params_hash
       @current_user = current_account.all_users.find_by_email(params[:email])
       
-      if @current_user.deleted?
+      if @current_user && @current_user.deleted?
         flash[:notice] = t(:'flash.login.deleted_user')
         redirect_to login_normal_url and return
       end

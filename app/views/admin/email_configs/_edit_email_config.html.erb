@@ -1,40 +1,51 @@
 <% form_for :email_config, @email_config, :url => admin_email_config_path, :html => { :method => :put } do |f| %>
 <%= f.error_messages %>
-<h3 class="title"><%=t('email_configs.title')%></h3>
-<ul class="ui-form">
-	<li>
-			<label><%=t('email_configs.name')%></label>
-			<div class="info-data"><%= t('email_configs.name_info_msg') %> </div>
-			<%= f.text_field :name, :class => "text" %>
+<h3 class="lead"><%=t('email_configs.title')%></h3>
+<ul class="unstyled form-horizontal row-fluid">
+	<li class="control-group">
+			<label class="control-label" ><%=t('email_configs.name')%></label>
+			<div class="controls">
+				<%= f.text_field :name, :class => "text span8" %>
+				<div class="muted"><%= t('email_configs.name_info_msg') %> </div>
+			</div>
 	</li>
-	<li>	
-			<label><%=t('email_configs.reply_email') + " *"%></label>
-			<div class="info-data"><%= t('email_configs.info7') %> </div>
-			<%= f.text_field :reply_email, :class => "required email text", :id => "reply_to_id" %>
+	<li class="control-group">	
+			<label class="control-label" ><%=t('email_configs.reply_email') + " *"%></label>
+			<div class="controls">
+				<%= f.text_field :reply_email, :class => "required email text span8", :id => "reply_to_id" %>
+				<div class="muted"><%= t('email_configs.info7') %> </div>
+			</div>
 	</li>
-	<li>	
-			<label><%=t('email_configs.info8')%></label>
-			<%= content_tag(:div, @email_config.to_email, :id => "div_reply_email", :class =>"highlight-textbox-info" )  %>
-			<%= f.hidden_field :to_email, :id => "hidden_reply_to" %>
+	<li class="control-group">	
+			<label class="control-label" ><%=t('email_configs.info8')%></label>
+			<div class="controls">
+				<%= f.hidden_field :to_email, :id => "hidden_reply_to" %>
+				<%= content_tag(:div, @email_config.to_email, :id => "div_reply_email", :class =>"highlight-textbox-info muted span8  clear-left-margin" )  %>
+			</div>
 	</li>
-	<li>
-			<label><%=t('email_configs.info9')%></label>
-			<div class="info-data"><%=t('email_configs.info10')%> </div>
-			<%= collection_select(:email_config, :group_id, @groups, :id, :name, options = {:include_blank => "..."}) %>
+	<li class="control-group">
+			<label class="control-label" ><%=t('email_configs.info9')%></label>
+			<div class="controls">
+				<%= collection_select(:email_config, :group_id, @groups, :id, :name, options = {:include_blank => "..."},:class =>"select2")
+				 %>
+				<div class="muted"><%=t('email_configs.info10')%> </div>
+			</div>
 	</li> 
 	<% if feature?(:multi_product)  && !@products.empty?  && !@email_config.primary_role %> 
-		<li>
-			<label><%=t('email_configs.assign_to_product_msg')%></label>
-			<div class="info-data"><p><%=t('email_configs.assign_to_product_info', :products_path => admin_products_path)%></p></div> 
-			<%= collection_select(:email_config, :product_id, @products, :id, :name, options = {:include_blank => "..."}) %>
+		<li class="control-group">
+			<label class="control-label" ><%=t('email_configs.assign_to_product_msg')%></label>
+			<div class="controls">
+				<%= collection_select(:email_config, :product_id, @products, :id, :name, options = {:include_blank => "..."},:class =>"select2") %>
+				<div class="muted"><%=t('email_configs.assign_to_product_info', :products_path => admin_products_path)%></div> 
+			</div>
 		</li> 
 	<% end %>	
 </ul>
-
-<div class="button-container">
-<%= link_to(t('remove'), admin_email_config_path(@email_config), :method => 'delete', :confirm => t('email_configs.remove_msg'), :class => "uiButton floatl" ) unless @email_config.primary_role %>	
-	<%= f.submit t('save'), :class => "uiButton"  %>
-	<%= link_to(t('cancel'), admin_email_configs_path, :class => "uiButton", :id => "email-form-cancel" )  %>
+<hr>
+<div class="button-container pull-right">
+<%= link_to(t('remove'), admin_email_config_path(@email_config), :method => 'delete', :confirm => t('email_configs.remove_msg'), :class => "btn floatl" ) unless @email_config.primary_role %>	
+	<%= link_to(t('cancel'), admin_email_configs_path, :class => "btn", :id => "email-form-cancel" )  %>
+	<%= f.submit t('save'), :class => "btn btn-primary"  %>
 </div> 
 <% end %>
 

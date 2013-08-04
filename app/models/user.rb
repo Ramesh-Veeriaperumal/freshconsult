@@ -50,7 +50,7 @@ class User < ActiveRecord::Base
   validates_presence_of :email, :unless => :customer?
   validate :has_role?, :unless => :customer?
 
-  attr_accessor :import
+  attr_accessor :import, :highlight_name, :highlight_job_title
   
   attr_accessible :name, :email, :password, :password_confirmation, :second_email, :job_title, :phone, :mobile, 
                   :twitter_id, :description, :time_zone, :avatar_attributes, :customer_id, :import_id,

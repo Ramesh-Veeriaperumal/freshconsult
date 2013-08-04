@@ -1,7 +1,7 @@
 
 ticksymbol = "<span class='ticksymbol'></span>";
 
-jQuery("#menu-block").text(jQuery("#folder1").text());
+jQuery(".ca_text").text(jQuery("#folder1").text());
 
 jQuery("#new_resp").bind('click', function(ev){
 	ev.preventDefault();
@@ -128,12 +128,11 @@ var makeFolderActive = function(folder_id) {
 		jQuery('#edit-ca-folder, #del').show();
 	jQuery('#move, #admin_canned_response_submit').attr('disabled', 'disabled');
 	jQuery('#folder_edit_form').attr('action', url);
-	jQuery('#can-menu').toggle();
 	jQuery(".catch").css("font-weight","normal").find('.ticksymbol').remove();
 	jQuery('.catch').removeClass('selected-folder');
 	jQuery('[data-folder='+folder_id+']').css("font-weight","bold").prepend(ticksymbol).addClass('selected-folder');
 	var tes = jQuery('[data-folder='+folder_id+']').text();
-	jQuery("#menu-block").text(tes);
+	jQuery(".ca_text").text(tes);	
 	jQuery('#admin_canned_responses_folder_name').val(jQuery('[data-folder='+folder_id+']').data('name'));
 	if(jQuery('#responses-select-all').prop("checked"))
 		jQuery('#responses-select-all').click();
@@ -151,6 +150,5 @@ jQuery('#folder_edit_form').bind('keyup', function(){
 });
 
 
-makeFolderActive(folder_id);
 
-jQuery('#can-menu').hide();
+makeFolderActive(folder_id);

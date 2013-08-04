@@ -1,7 +1,7 @@
 .list-page{
     margin:0 auto;
     .list-page-header{
-        margin-bottom: 20px;
+        margin-bottom: 10px;
     }
     .list-page-subheader{
         font-size: 12px;
@@ -31,6 +31,20 @@
             background:#fff;
             margin:0;
             border-bottom: 1px solid $tableBorder;
+            thead{
+                tr{
+                    td{
+                        padding-top: 5px;
+                        font-weight: bold;
+                        background:#f6f6f6;
+                    }
+                    &:hover{
+                        td{
+                            background-color: #f6f6f6;
+                        }
+                    }
+                }
+            }
             tr{
                 &:hover{
                     td{
@@ -91,5 +105,14 @@
                     @include border-radius(100%);     
             }
         }  
+    }
+}
+
+.canned-response-page{
+    .list-page-body .list-page-table-header{
+        padding-left: 21px;
+        input[type="checkbox"]{
+            margin-right: 16px;
+        }
     }
 }
