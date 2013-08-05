@@ -13,7 +13,16 @@ class Admin::EmailConfigsController < Admin::AdminController
     @products = current_account.products
     @account_additional_settings = current_account.account_additional_settings
   end
-  
+
+  def existing_email
+    email_config = current_account.all_email_configs.find_by_reply_email(params[:email_address]) 
+    if email_config.nil?
+      render :json => { :success => true, :message => "" }
+    else
+      render :json => { :success => false, :message => t('admin.products.form.email_address_present') }
+    end
+  end
+
   def new
     @products = current_account.products
     @groups = current_account.groups

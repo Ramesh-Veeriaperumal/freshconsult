@@ -34,7 +34,8 @@
 		PROFILE_BLANK_MEDIUM_PATH = '<%= image_path("fillers/profile_blank_medium.gif") %>';
 		FILLER_IMAGES = {
 			imageLoading : '<%= image_path("fillers/image_upload_placeholder.gif") %>'
-		}
+		};
+		cloudfront_version = "<%= CLOUDFRONT_VERSION %>";
 	</script>
 	<%= include_cloudfront_js :defaults  %>
 	<%= include_cloudfront_js :frameworks %>

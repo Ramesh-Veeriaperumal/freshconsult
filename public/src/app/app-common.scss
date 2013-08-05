@@ -3850,37 +3850,188 @@ div.addReminder{
    }
 }
 
-#multi-product-list{
-	.portal-text{ width:30%; }
-	.channel{ width:27%; vertical-align: top; }
-	.channel-text{
-		position: relative;
-	   	padding-left:20px;
-	   	padding-bottom: 8px;
-	   	
-	   	.not-verified{ margin-top:-3px; font-size: 11px; }
-		.inactive_email{ margin:0px; }	
 
-	   	span.icon{
-			position:absolute;
-			left:0; 
-			top:0;
-			width:14px;
-			height:14px;
-	    }
+.product-page{
+	[class^="product-"], [class*="product-"]{
+		display: inline-block;
+		width: 15px;
+		height: 16px;
+		line-height: 14px;
+		vertical-align: text-top;
+		margin-top: -2px;
 	}
-	.image_logo{
-		@include border-radius(5px);
-		border:1px solid #dbdbdb;
-		max-height:40px;
-		max-width:90px;
+	.product-email-logo
+	{
+		margin-top: 2px;
+	}
+	.product-email{
+		vertical-align: top;
+	}
+	.channel-text{
+		display: inline-block;
+		width:300px;
+		div{
+			width: 90%;
+		}
+	}
+	.un-verified-product{
+		text-decoration: line-through;
+	}
+	.block-display{
+		display: inline-block;
+		width:250px;
+	}
+	.list-page-body .table{
+		table-layout:fixed;
+		tr td{
+			width:30.3%;
+			&:first-child{
+				width:9%;
+			}
+			.portal-logo-wrap{
+				height:50px;
+				width:50px;
+				overflow: hidden;
+				border: 1px solid #aaa;
+				@include border-radius(5px);
+				vertical-align: middle;
+			}
+		}
+		h4 { font-weight: bold; }
+	}
+}
+
+.portal-page-form{
+	.control-label{
+		font-weight: bold;
+	}
+	.plus{
+    	border-radius: 100%;
+	    background: green;
+	    text-align: center;
+	    color: #fff;
+	    margin: 0px;
+	    font-weight: bold;
+	    width: 18px;
+	    height: 19px;
+	    display: inline-block;
+	}
+	.product-radio{
+		vertical-align: top;	
+	}
+
+	.multi-product-add.ui-form .add-email{
+		.plus{
+			cursor: pointer;
+		}
+		margin-left: 190px;
+		font-weight: bold;
+		a{
+			padding-left: 5px;
+			cursor: pointer;
+		}
+	}
+	.multi-product-add.ui-form .configure-email-form {
+		margin-bottom: 0px;
+		background-color: white;
+	}
+	.portal-favicon, .portal-logo{
+		float:none;
+	}
+	.portal-favicon{
+		height:16px;
+	}
+	.overlabel{
+		margin-left: 5px;
+	}
+	.rebranding-header{
+		margin-left: -20px;	
+	}
+	.control-group{
+		.configure-email-form{
+			width:73%;
+			padding: 0;
+			border:0;
+		}
+	}
+	.multi-product-add {
+		background-color: white;
+		border:0;
+		width:100%;
+	}
+	.product-email-configuration{
+		margin-bottom: 0;
+		border-right: 0;
+		.un-verified-product{
+			text-decoration: line-through;
+		} 
+		.unverified_info{
+			margin-top: 5px;
+			margin-bottom: 7px;
+		}
+		.support_emails_row{
+			margin-top: 5px;
+		}
+		.set_primary{
+			input{
+				margin-top: -3px;
+			}
+		}
+		.deleteChoiceProduct{
+			position: absolute;
+			width: 30px;
+			background: #f2f2f2;
+			left: 0px;
+			top: 0;
+			height: 98%;
+			margin-top: 1px;
+			div{
+				border-radius: 100%;
+			    background: #e67c7c;
+			    text-align: center;
+			    color: #fff;
+			    margin: 6px;
+			    font-weight: bold;
+			    width: 17px;
+			    height:17px;
+			    font-size: 12px;
+				letter-spacing: -2px;
+				margin-top: 10px;
+			}
+			p{
+				font-size: 20px;
+				font-weight: bold;
+			}
+		}
+		.disabled{
+			div{
+				background: #ccc;
+			}
+		}
+		
+		.template-container{
+			width: 98%;
+			height:100%;
+			border: 1px solid #ccc;
+			border-right: 0;
+			border-left:0px;
+			padding: 5px 0 5px 50px;
+			padding-bottom: 5px;
+		}	
+		div.text{
+			width: 300px;
+		}	
+		label.product-radio-label{
+			display: inline-block;
+			width:75%;
+		}
 	}
 }
 
 .deactivated{
    li{
 	   background:#f8f8f8;
-	   padding-bottom:0px;
+	   padding-bottom:0;
 	   a.item_info{
 		   @include link-colors(#666666, #3e71a4, #666666, #666666, #3e71a4);
 		   font-size:1.16em;
@@ -3917,7 +4068,7 @@ div.addReminder{
 		text-decoration:none;
 		border-left:1px solid #d6d6d6;
 		border-right:1px solid #ebebeb;
-		padding:0px 10px;
+		padding:0 10px;
 		margin:0px;
 		float:left;
 	}
@@ -3987,7 +4138,7 @@ div.addReminder{
 		color:#ffffff;
 		text-shadow: -1px -1px 0 rgba(0,0,0,0.25);
 		text-decoration:none;
-		border-right-width:0px;  
+		border-right-width:0;  
 		position:relative;
 	} 
 	.stamp.stamp_type_1{
@@ -10122,7 +10273,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 	p{
 		
 		color: #777;
-		margin:5px 0 20px;
+		margin:5px 0 10px 0px;
 	}
 	.trial-background {
 		margin: 11px -13px -12px;
