@@ -24,7 +24,7 @@
 		<%
             customer_opinion = ""                                
             unless @ticket.survey_results.nil? || @ticket.survey_results.last.nil?
-              customer_opinion = ["<div class='customer-opinion ", @ticket.survey_results.last.get_small_img_class ,"'></div>"].join
+              customer_opinion = ["<div class='customer-opinion ", @ticket.survey_results.last.get_small_img_class ,"'></div>"].join.html_safe
             end  
 	    %>				
 	    <%=customer_opinion%>									
