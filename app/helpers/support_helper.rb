@@ -316,7 +316,7 @@ HTML
 	end
 
 	def fb_topic_info topic
-		%(#{bold h(topic.user.name)}, <br>#{time_ago topic.created_on}.)
+		%(#{h(topic.user.name)}, <br>#{time_ago topic.created_on}.)
 	end
 
 	def topic_info_with_votes topic

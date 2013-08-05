@@ -11,6 +11,7 @@ class PortalDrop < BaseDrop
   def context=(current_context)
     @current_tab = current_context['current_tab']
     @current_page = current_context['current_page_token']
+    @facebook_portal = current_context['facebook_portal']
     @context = current_context
     
     super

@@ -144,9 +144,9 @@
 								{{ topic.user | profile_image }}
 								<div class="ellipsis">
 									<a href="{{topic.url}}">{{topic.title | h}}</a>
-								</div>
-								<div class="help-text topic-help">
-									{{ topic | fb_topic_info }}
+									<div class="help-text">
+										{{ topic | fb_topic_info }}
+									</div>
 								</div>
 							</li>
 						{% endfor %}
@@ -161,9 +161,9 @@
 									{{ topic.user | profile_image }}
 									<div class="ellipsis">
 										<a href="{{topic.url}}">{{topic.title | h}}</a>
-									</div>
-									<div class="help-text topic-help">
-										{{ topic | fb_topic_info }}
+										<div class="help-text">
+											{{ topic | fb_topic_info }}
+										</div>
 									</div>
 								</li>
 							{% endfor %}

@@ -5,7 +5,7 @@ body {
     background:$white;
     font-size:$baseFontSize;
 }
-body, .heading,input, button, select, textarea {
+body, .heading,input, button, select, textarea,.ui-widget  {
     font-family:'Roboto', sans-serif,'lucida grande', Helvetica Neue, Helvetica;
 }
 //Header 
@@ -28,12 +28,10 @@ h2 {
     font-size:14px;
 }
 [id*="article-show"]{
-    > p{
-        color:#888;
+    p:first-child{
         margin-top: -5px;
-    }
-    p{
         margin-bottom: 15px;
+        @extend .help-text;
     }
     .page-stamp{
         display:block;
@@ -68,14 +66,21 @@ h2.post-title{
     margin-bottom:0;
 }
 h3.heading{
-    font-size: 14px;
+    font-size: 16px;
     color:inherit;
     font-weight: bold;
+    line-height: 25px;
 }
 .article-list{
     .list-lead{
         font-weight: bold;
         color:$linkColor;
+    }
+
+    li{
+        &:before{
+            @extend .icon-article-small
+        }
     }
 }
 .article-body{
@@ -182,9 +187,17 @@ h3.heading{
     float: right;
 }
 
+.index_new_ticket{
+    text-transform:uppercase;
+    margin-left: 15px;
+}
+
 .list-lead {
     font-size:$fontLeadSize;
     font-weight: 500;
+    a{
+        color:$textColor;
+    }
     a:hover {
         text-decoration:none;
     }
@@ -201,9 +214,6 @@ h3.heading{
             display: inline-block;
             font-size: $fontHelpSize;
         }
-    }
-    .topic-help{
-        padding-left: 37px;
     }
 }
 .text-center{
@@ -419,6 +429,7 @@ h3.heading{
             }
         }
 }
+
 .heading{
     margin-bottom: 0;
 }
@@ -578,4 +589,14 @@ h3.heading{
             font-size: 12px;
         }
     }
+}
+
+//Search
+ul.ui-autocomplete {
+    margin-top: -6px;
+    margin-left: -1px;
+    box-shadow: none;
+    background:#fff;
+    font-weight: 300;
+    font-size:16px;
 }
