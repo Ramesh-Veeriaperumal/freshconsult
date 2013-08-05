@@ -35,8 +35,7 @@ stylesheets:
     - public/stylesheets/codemirror.css
 
   portal:
-    - public/stylesheets/redactor.css
-    - public/stylesheets/portal/ie.css
+    - public/stylesheets/portal/portal_utils.css
 
   preview:
     - public/stylesheets/portal/preview.css
@@ -287,3 +286,7 @@ javascripts:
     - public/javascripts/highcharts-more.js
     - public/javascripts/adv_reports/report_charts.js
     - public/javascripts/adv_reports/adv_reports.js
+
+  merge:
+    - public/javascripts/app/merge.js
+    - public/javascripts/app/merge_tickets.js

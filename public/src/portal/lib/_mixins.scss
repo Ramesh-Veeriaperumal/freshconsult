@@ -85,6 +85,9 @@
 // Placeholder text
 // -------------------------
 @mixin placeholder($color: $placeholderText) {
+  .placeholder{  
+    color: $color;
+  }
   input:-moz-placeholder {
     color: $color;
   }

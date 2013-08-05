@@ -10,7 +10,7 @@
 		</li>  
 		<li class="companies_select">
     	<%= f.label :visibility, t('.visible_to') %>
-    	<%= f.select :visibility, Solution::Folder::VISIBILITY_OPTIONS, :class => "select" %>
+    	<%= f.select :visibility, Solution::Constants::VISIBILITY_OPTIONS, :class => "select" %>
     
     	<% f.fields_for :customer_folders_attributes do |cust| %>
 	    	<span id="company_folders">

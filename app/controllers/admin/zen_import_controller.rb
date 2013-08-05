@@ -1,7 +1,7 @@
 class Admin::ZenImportController < Admin::AdminController
   
 
-before_filter :check_data_import_status, :only => :index
+before_filter :check_zendesk_import_status, :only => :index
 
   def index  
     
@@ -9,7 +9,7 @@ before_filter :check_data_import_status, :only => :index
   
   def import_data
     
-    @item = current_account.build_data_import({:status=>true , :import_type =>'Zendesk'})   
+    @item = current_account.build_zendesk_import({:status=>true })   
     if @item.save
        @item.attachments.create(:content => params[:zendesk][:file], :description => 'zen data', :account_id => @item.account_id)
        handle_zen_import
@@ -39,8 +39,8 @@ before_filter :check_data_import_status, :only => :index
   
   protected
   
-  def check_data_import_status
-   @import_status = current_account.data_import
+  def check_zendesk_import_status
+   @import_status = current_account.zendesk_import
    if  @import_status && @import_status.status
      flash[:notice] = t(:'flash.data_import.zendesk.running') 
      redirect_to  admin_home_index_url

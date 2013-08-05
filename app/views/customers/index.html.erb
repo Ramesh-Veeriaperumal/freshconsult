@@ -15,12 +15,12 @@
 		</div>
 		<% end %>
 	<%end%> 
-	<div id="cust-list" class="cust_list_table">
+	<div id="cust-list" class="list-page">
 		<%= render(:partial => '/shared/companyheader', :locals => {:type => "company", :path => customers_path}) %>
 		<%= render(:partial => '/shared/company_sub_header', :locals => {:type => "company", :path => customers_path})%>
 		<% form_tag "", { :id => "contacts-expanded", :method => :put } do %>
 			<% if @customers.length > 0 %>
-				<div class="cust_list_table_body">
+				<div class="list-page-body">
 					<%= render(:partial => '/shared/customers_toolbar', :locals => {:type => "company", :path => "customers"}) %>
 					<table class="table table-striped" id="companies" >
 						<% @customers.each do |customer| %>
@@ -49,7 +49,7 @@
                     <% end %>
                     <% if privilege?(:delete_contact) %>
 								    	<%= link_to "<i class='icon-trash'></i>", {:controller => "customers", :action => "destroy", :id => customer}, :confirm =>  
-								    		"#{t('company.info11')} #{h(customer.name)}?\n#{t('company.info10')}", 
+								    		"#{t('company.info11')} #{customer.name}?\n#{t('company.info10')}", 
 								    		:method => 'delete', :class => "btn btn-mini" %>
                     <% end %>
 									</div> 

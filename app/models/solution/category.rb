@@ -1,9 +1,11 @@
-require RAILS_ROOT+'/app/models/solution/folder.rb'
+# require RAILS_ROOT+'/app/models/solution/folder.rb'
 #In the gamification environment, Solution::Folder::VISIBILITY_KEYS_BY_TOKEN was not
 #accessible. It may be due to some screw up with the order of class loading.
 #So, temporarily put the 'require' here. Shan
 
 class Solution::Category < ActiveRecord::Base
+
+  include Solution::Constants
 
   set_table_name "solution_categories"
   
@@ -14,12 +16,12 @@ class Solution::Category < ActiveRecord::Base
 
   has_many :folders, :class_name =>'Solution::Folder' , :dependent => :destroy, :order => "position"
   has_many :public_folders, :class_name =>'Solution::Folder' ,  :order => "position", 
-          :conditions => [" solution_folders.visibility = ? ",Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]]
+          :conditions => [" solution_folders.visibility = ? ",VISIBILITY_KEYS_BY_TOKEN[:anyone]]
   has_many :published_articles, :through => :public_folders
 
   has_many :user_folders, :class_name =>'Solution::Folder' , :order => "position", 
           :conditions => [" solution_folders.visibility in (?,?) ",
-          Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone],Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:logged_users]]
+          VISIBILITY_KEYS_BY_TOKEN[:anyone],VISIBILITY_KEYS_BY_TOKEN[:logged_users]]
    
   acts_as_list :scope => :account
 
@@ -38,18 +40,6 @@ class Solution::Category < ActiveRecord::Base
     options[:except] = [:account_id,:import_id]
     json_str = super options
     json_str
-  end
-
-  def as_json(options={})
-    options[:except] = [:account_id,:import_id]
-      json_str = super options
-      json_str
-  end
-
-  def as_json(options={})
-    options[:except] = [:account_id,:import_id]
-      json_str = super options
-      json_str
   end
 
   def self.folder_names(account)

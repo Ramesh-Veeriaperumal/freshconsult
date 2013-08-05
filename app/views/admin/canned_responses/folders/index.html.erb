@@ -1,73 +1,89 @@
 <% content_for :sidebar do -%><%= render :partial => 'helpnote' %><%- end %>
 
-<div class="floatr" pjax-container>
-	<%= link_to t('canned_folders.new_response'), 
-			new_admin_canned_responses_folder_response_path(@ca_res_folder), 
-			:id => "new_resp", :class => "uiButton"  %>
-</div>
-<div id="can-res-full">
-<h3 class="title"><%= t('canned_folders.responses') %></h3>
-<div id="folder-list" class="p-control">
-	<div id="folders-panel">
-	<p><%= t('canned_folders.viewing') %></p>
-	<div id="menu-block" class="nav-trigger drop-right can-res-menu" menuid="#can-menu"></div>
-	<div id="editing" class="hide">
-	<div id="edit_form" class="center">
-		<div class="dialog-special">
-		<% form_for(@ca_res_folder, :html => {:id => "folder_edit_form"}) do |f| %>
-			<%= f.error_messages :object_name => 'canned_response_folder' %>
-			<%= f.text_field :name, :class => "text required" %>
+<div class="canned-response-page list-page"  id="can-res-full">
+	<div class="list-page-header">
+    	<div class="row-fluid">
+    		<div class="span6"><h3 class="lead"><%= t('canned_folders.responses') %></h3></div>
+    		<div class="span6 pull-right pagination-right ">
+          		<b><%= link_to t('canned_folders.new_response'), 
+				new_admin_canned_responses_folder_response_path(@ca_res_folder), 
+				:id => "new_resp", :class => "btn btn-primary"  %></b> 
+         	</div>
+    	</div>
+    </div>
+    <div id="folder-list">
+		<div id="folders-panel" >
+			<div class="dropdown">
+				<%= t('canned_folders.viewing') %>
+				<a class="dropdown-toggle drop-right" data-toggle="dropdown" id="CaLabel" href="#"><b class='ca_text'>loading...</b><b class="caret"></b></a>
+				<ul class="dropdown-menu" role="menu" id="ca_new_menu" aria-labelledby="CaLabel">
+					<% @ca_res_folders.each do |folds| %>
+					<li>
+						<a id="folder<%= folds.id %>" href= "<%= admin_canned_responses_folders_path %>/<%= folds.id %>" data-folder="<%= folds.id %>" data-pjax="#responses"
+						data-name="<%= folds.name %>"
+						class="catch js-pjax <%= "default-folder" unless !folds.is_default %>"><%= folds.name %> (<%= current_account.canned_responses.count(:conditions => {:folder_id => folds.id}) %>)</a>
+					</li>
+					<% end %>
+				</ul>
+				<div id="folder-controls">
+				<%= link_to( t('canned_folders.create')+ "&nbsp;", "/admin/canned_responses/folders/new", "data-ajax-dialog" => true, "data-width" => "500", :id => "create-folder", :title => "Create new Folder" ) %>
+				<span id="edit-ca-folder" class="hide"><b> &middot; &nbsp;</b><%= t('canned_folders.edit') %>&nbsp;</span>
+				<%= link_to(' <b>&middot;</b> &nbsp;'+t('canned_folders.delete'), 
+					admin_canned_responses_folder_path(@ca_res_folder), 
+					:id => "del",
+					:class => "hide") %>
+			</div>
+			</div>
+			<!-- <div id="menu-block" class="nav-trigger drop-right can-res-menu" menuid="#can-menu"></div> -->
+			<div id="editing" class="hide">
+				<div id="edit_form" class="center">
+					<% form_for(@ca_res_folder, :html => {:id => "folder_edit_form"}) do |f| %>
+					<div class="dialog-special">
+						<%= f.error_messages :object_name => 'canned_response_folder' %>
+						<%= f.text_field :name, :class => "text required" %>
+					</div>
+					<div class="button-container">
+						<%= submit_tag t('save'), :class => "uiButton", :id => "save_edit" %>
+						<%= link_to t('cancel'), '#', :class => "uiButton", :id => "edit-cancel" %>
+					</div>
+					<% end %>
+				</div>
+			</div>
 		</div>
-		<div class="button-container">
-			<%= submit_tag t('save'), :class => "uiButton", :id => "save_edit" %>
-			<%= link_to t('cancel'), '#', :class => "uiButton", :id => "edit-cancel" %>
+		<div id="folder-drop-list">
+			<ul id="drop-list"></ul>
 		</div>
-		<% end %>
-	</div>
-</div>
-<div id="can-menu" class="fd-ajaxmenu">
-	<% @ca_res_folders.each do |folds| %>
-	<a id="folder<%= folds.id %>" href= "<%= admin_canned_responses_folders_path %>/<%= folds.id %>" data-folder="<%= folds.id %>" data-pjax="#responses"
-		data-name="<%= folds.name %>"
-		class="catch js-pjax <%= "default-folder" unless !folds.is_default %>"><%= folds.name %> (<%= current_account.canned_responses.count(:conditions => {:folder_id => folds.id}) %>)</a>
-	<% end %>
-</div>
-<div id="folder-controls">
-	<%= link_to( t('canned_folders.create')+ "&nbsp;", "/admin/canned_responses/folders/new", "data-ajax-dialog" => true, "data-width" => "500", :id => "create-folder", :title => "Create new Folder" ) %>
-	<span id="edit-ca-folder" class="hide"><b> &middot; &nbsp;</b><%= t('canned_folders.edit') %>&nbsp;</span>
-	<%= link_to(' <b>&middot;</b> &nbsp;'+t('canned_folders.delete'), 
-		admin_canned_responses_folder_path(@ca_res_folder), 
-		:id => "del",
-		:class => "hide") %>
-	</div></div>
-	<div id="folder-drop-list">
-	<ul id="drop-list"></ul>
-	</div>
-<% remote_form_for :admin_canned_response, 
-					:url => delete_multiple_admin_canned_responses_folder_responses_path(:ids), 
-					:html => {:method => :delete, :id => "ca_res_form"} do |f|%>
-<div class="response-list">
-	<div id="list-table" class="list-toolbar"><input type="checkbox" id="responses-select-all" class="adjust-margin" />
-	<%= f.submit t('canned_folders.del') , :class => "button", :disabled => "disabled",
-	:onclick => "return confirm(t('canned_folders.delete_canned_response'))" %>
-	<button id="move" class="button", disabled="disabled"><%= t('canned_folders.move') %></button>
-</div>
-<div id="responses" class="load"><%= render :partial => 'show' %></div></div>
-<div id="moves" class="hide">
-	<%= render :partial => 'move', :locals => {:f => f} %>
-</div>
+		<% remote_form_for :admin_canned_response, 
+				:url => delete_multiple_admin_canned_responses_folder_responses_path(:ids), 
+				:html => {:method => :delete, :id => "ca_res_form"} do |f|%>
+			<div class="response-list list-page-body">
 
-<div id="folder-delete" class="hide">
-	<div class="dialog-special">
-		<p class="imp"> <%= t('canned_folders.important') %> </p> <p><%= t('canned_folders.delete_folder_warning') %><br /><br /> 
-		<%= t('canned_folders.delete_folder') %></p>
+				<div class="list-page-table-header">
+					<input type="checkbox" id="responses-select-all" class="adjust-margin" />
+					<%= f.submit t('canned_folders.del') , :class => "btn", :disabled => "disabled",
+					:onclick => "return confirm(t('canned_folders.delete_canned_response'))" %>
+					<button id="move" class="btn", disabled="disabled"><%= t('canned_folders.move') %></button>
+				</div>
+				<div id="responses" class="load"><%= render :partial => 'show' %></div>
+			</div>
+
+			<div id="moves" class="hide">
+				<%= render :partial => 'move', :locals => {:f => f} %>
+			</div>
+		<% end %>
+		<div id="folder-delete" class="hide">
+			<div class="dialog-special">
+				<p class="imp"> <%= t('canned_folders.important') %> </p> 
+				<p><%= t('canned_folders.delete_folder_warning') %><br /><br /> 
+				<%= t('canned_folders.delete_folder') %></p>
+			</div>
+			<div class="button-container">
+				<button id="delete-cancel" class="uiButton"> <%= t('cancel') %> </button>
+				<button id="confirm-delete" class="uiButton"> <%= t('delete') %> </button>
+			</div>
+		</div>
 	</div>
-		<div class="button-container">
-		<button id="delete-cancel" class="uiButton"> <%= t('cancel') %> </button>
-		<button id="confirm-delete" class="uiButton"> <%= t('delete') %> </button></div>
 </div>
-</div></div>
-<% end %>
 
 <% javascript_tag do -%>
 	var folder_id = <%= @ca_res_folder.id %>;

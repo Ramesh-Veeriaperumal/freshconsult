@@ -4,7 +4,7 @@ module Import::Zen::FileUtil
 def extract_zendesk_zip    
     puts "extract_zen_zip :: curr time:: #{Time.now}"  
     begin
-      file=  @current_account.data_import.attachments.first.content.to_file    
+      file=  @current_account.zendesk_import.attachments.first.content.to_file    
       @upload_file_name = file.original_filename
       zip_file_name = "#{RAILS_ROOT}/public/files/#{@upload_file_name}"
       File.open(zip_file_name , "wb") do |f|
@@ -84,7 +84,7 @@ def handle_error
      email_params = {:email => params[:email], :domain => params[:domain]}
      Admin::DataImportMailer.deliver_import_error_email(email_params)
      FileUtils.remove_dir(@out_dir,true)  
-     @current_account.data_import.destroy   
+     @current_account.zendesk_import.destroy   
 end
  
 def send_success_email (email,domain)
@@ -96,7 +96,7 @@ end
    
 def delete_import_files base_dir
     FileUtils.remove_dir(base_dir,true)  
-    @current_account.data_import.destroy
+    @current_account.zendesk_import.destroy
 end
   
 end

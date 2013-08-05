@@ -1,6 +1,5 @@
 var Freshdesk = {}
-jsLoadPath = document.getElementsByTagName("script")
-timeStamp = jsLoadPath[jsLoadPath.length-1].src.split('?')[1]
+timeStamp = cloudfront_version;
 Freshdesk.Widget=Class.create();
 Freshdesk.Widget.prototype={
 	initialize:function(widgetOptions){
@@ -86,14 +85,16 @@ Freshdesk.Widget.prototype={
 			reqData.use_server_password = this.options.use_server_password;
 			reqData.app_name = this.options.app_name.toLowerCase().replace(' ', '_');
 		}
-		else if(this.options.auth_type == 'OAuth'){
-			if(this.options.url_token_key) {
+		if(this.options.auth_type == 'OAuth'){
+			if(this.options.url_auth) {
 				if (reqData.resource == null) reqData.resource = reqData.rest_url;
-				merge_sym = (reqData.resource.indexOf('?') == -1) ? '?' : '&'
-				reqData.rest_url = reqData.resource + merge_sym + this.options.url_token_key + '=' + this.options.oauth_token;
-			} else
-				
-				reqHeader.Authorization = "OAuth " + this.options.oauth_token;
+				merge_sym = (reqData.resource.indexOf('?') == -1) ? '?' : '&';
+				reqData.rest_url = reqData.resource + merge_sym + this.options.url_token_key + '=' + (this.options.password || this.options.oauth_token);
+			}
+			if(this.options.header_auth || !this.options.url_auth){
+				reqHeader.Authorization = (this.options.useBearer?"Bearer ":"OAuth ") + 
+										  (this.options.oauth_token || this.options.password);
+			}
 		}
 		else if(this.options.auth_type == 'NoAuth'){}
 		else if(this.options.auth_type == 'UAuth'){

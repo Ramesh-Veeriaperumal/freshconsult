@@ -1,5 +1,3 @@
-require "solution/article"
-
 class ArticleObserver < ActiveRecord::Observer
 
 	observe Solution::Article
@@ -27,7 +25,7 @@ private
         :user => article.user,
         :activity_data => {}
       )
-  end
+  	end
 
 	def remove_tag response, tag
 	    doc = Nokogiri::HTML.parse(response)

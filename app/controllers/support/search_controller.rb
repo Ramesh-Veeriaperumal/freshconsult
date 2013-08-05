@@ -140,7 +140,7 @@ class Support::SearchController < SupportController
                             { :not => { :term => { :status => SearchUtil::DEFAULT_SEARCH_VALUE } } }
 
               f.filter :or, { :not => { :exists => { :field => 'folder.visibility' } } },
-                            { :terms => { 'folder.visibility' => visibility_opts(Solution::Folder::VISIBILITY_KEYS_BY_TOKEN) } }
+                            { :terms => { 'folder.visibility' => visibility_opts(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN) } }
               f.filter :or, { :not => { :exists => { :field => 'forum.forum_visibility' } } },
                             { :terms => { 'forum.forum_visibility' => visibility_opts(Forum::VISIBILITY_KEYS_BY_TOKEN) } }
 
@@ -184,7 +184,7 @@ class Support::SearchController < SupportController
             end
           end
           search.from options[:size].to_i * (options[:page].to_i-1)
-          search.highlight :desc_un_html, :title, :description, :subject, :options => { :tag => '<span class="match">', :fragment_size => 200, :number_of_fragments => 4 }
+          search.highlight :desc_un_html, :title, :description, :subject, :options => { :tag => '<span class="match">', :fragment_size => 200, :number_of_fragments => 4, :encoder => 'html' }
         end
 
         @items = @es_items.results
@@ -273,15 +273,7 @@ class Support::SearchController < SupportController
 
     def pre_process_results
       @items.each_with_hit do |result,hit|
-        highlight_results(result, hit) unless hit['highlight'].blank?
-      end
-    end
-
-    def highlight_results(result, hit)
-      unless result.blank?
-        hit['highlight'].keys.each do |i|
-          result[i] = hit['highlight'][i].to_s
-        end
+        SearchUtil.highlight_results(result, hit) unless hit['highlight'].blank?
       end
     end
 
@@ -299,33 +291,33 @@ class Support::SearchController < SupportController
     end
 
     def solution_result article
-      { 'title' => article.title.html_safe, 
+      { 'title' => article.es_highlight('title').html_safe, 
         'group' => article.folder.name, 
-        'desc' => article.desc_un_html.html_safe,
+        'desc' => article.es_highlight('desc_un_html').html_safe,
         'type' => "ARTICLE",
         'url' => support_solutions_article_path(article) }
     end
 
     def topic_result topic
-      { 'title' => topic.title.html_safe, 
+      { 'title' => topic.es_highlight('title').html_safe, 
         'group' => topic.forum.name, 
-        'desc' => truncate(topic.posts.first.body.html_safe, :length => truncate_length),
+        'desc' => truncate(h(topic.posts.first.body), :length => truncate_length),
         'type' => "TOPIC", 
         'url' => support_discussions_topic_path(topic) }
     end
 
     def ticket_result ticket
-      { 'title' => ticket.subject.html_safe, 
+      { 'title' => ticket.es_highlight('subject').html_safe, 
         'group' => "Ticket", 
-        'desc' => truncate(ticket.description.html_safe, :length => truncate_length),
+        'desc' => truncate(ticket.es_highlight('description').html_safe, :length => truncate_length),
         'type' => "TICKET", 
         'url' => support_ticket_path(ticket) }
     end
 
     def note_result note
-      { 'title' => note.notable.subject.html_safe, 
+      { 'title' => h(note.notable.subject), 
         'group' => "Note", 
-        'desc' => truncate(note.body.html_safe, :length => truncate_length),
+        'desc' => truncate(h(note.body), :length => truncate_length),
         'type' => "NOTE", 
         'url' => support_ticket_path(note.notable) }
     end

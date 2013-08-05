@@ -77,7 +77,7 @@ module SupportHelper
 							</a>
 						</div> )
 		output << %( <div> <a href="#" class="mobile-icon-nav-contact contact-info ellipsis">
-						<span>#{ portal['contact_info'] }</span>
+						<span>#{ h(portal['contact_info']) }</span>
 					 </a> </div> ) if portal['contact_info']
 
 		output << %(</nav>)

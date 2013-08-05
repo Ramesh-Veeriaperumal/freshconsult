@@ -24,6 +24,16 @@ module ApplicationHelper
         <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{ 
           current_portal.language }">#{h[2] ? '<!--' : ''}<![endif]--> ) }
   end
+
+  def trial_expiry_title(trial_days)
+      if trial_days == 0
+      t('trial_one_more_day')
+    elsif trial_days > 0
+      t('trial_will_expire_in', :no_of_days => pluralize(trial_days, t('trial_day'), t('days')) )
+    else trial_days < 0
+      t('trial_expired_on' )
+    end
+  end
   
   def format_float_value(val)
     if !(val.is_a? Fixnum)
@@ -412,6 +422,9 @@ module ApplicationHelper
       ['{{ticket.product_description}}', 'Product description', 'Product specific description in multiple product/brand environments.']
     ]
     place_holders << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey', 'Includes satisfaction survey.'] if current_account.features?(:surveys, :survey_links)
+    place_holders << ['{{ticket.surveymonkey_survey}}', 'Surveymonkey survey',
+                      'Includes text/link to survey in Surveymonkey'
+                      ] if Integrations::SurveyMonkey.placeholder_allowed?(current_account)
     current_account.ticket_fields.custom_fields.each { |custom_field|
       name = custom_field.name[0..custom_field.name.rindex('_')-1]
       place_holders << ["{{ticket.#{name}}}", custom_field.label, "#{custom_field.label} (Custom Field)"] unless name == "type"
@@ -598,6 +611,7 @@ module ApplicationHelper
       when "requester" then
         element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => requester_autocomplete_helpdesk_authorizations_path, :object_name => object_name }))  
         element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
+        element+= label_tag("", "#{add_requester_field}",:class => 'hidden') if is_edit
         unless is_edit or params[:format] == 'widget'
           element = add_cc_field_tag element, field  
         end

@@ -32,7 +32,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
-    :requester_name, :meta_data, :disable_observer
+    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description
 
   attr_protected :attachments #by Shan - need to check..
 
@@ -224,25 +224,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
      }
   end
 
-  def description
-    description
-  end
- 
-  def description_html
-    description_html
-  end
- 
-  def description_with_ticket_body
-    ticket_body ? ticket_body.description : read_attribute(:description)
-  end
-  alias_method_chain :description, :ticket_body
-
-
-  def description_html_with_ticket_body
-    ticket_body ? ticket_body.description_html : read_attribute(:description_html)
-  end
-  alias_method_chain :description_html, :ticket_body
-  
   def to_param 
     display_id ? display_id.to_s : nil
   end 
@@ -282,6 +263,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     (fb_post) and (fb_post.facebook_page) and (fb_post.post?)
   end
   
+  def mobihelp?
+    source == SOURCE_KEYS_BY_TOKEN[:mobi_help]
+  end
+
   def priority=(val)
     self[:priority] = PRIORITY_KEYS_BY_TOKEN[val] || val
   end
@@ -373,7 +358,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     (cc_email_hash) and  ((cc_email_hash[:cc_emails].any? {|email| email.include?(from_email) }) or 
                      (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email) }))
   end
-
 
   def ticket_id_delimiter
     delimiter = account.ticket_id_delimiter
@@ -514,9 +498,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     if deep
       self[:notes] = self.notes
       options[:include] = [:attachments]
-      options[:except] = [:account_id,:import_id]
-      options[:methods].push(:custom_field)
     end
+    options[:except] = [:account_id,:import_id]
+    options[:methods].push(:custom_field)
     json_str = super options
     json_str.sub("\"ticket\"","\"helpdesk_ticket\"")
   end

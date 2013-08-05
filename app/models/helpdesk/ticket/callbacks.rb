@@ -19,7 +19,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit_on_create :create_initial_activity,  :update_content_ids, :pass_thro_biz_rules
   after_commit_on_update :filter_observer_events, :if => :user_present?
   after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity, 
-  :stop_timesheet_timers, :fire_update_event, :publish_to_update_channel, :regenerate_reports_data
+  :stop_timesheet_timers, :fire_update_event, :regenerate_reports_data
+  after_commit_on_create :publish_new_ticket_properties, :if => :auto_refresh_allowed?
+  after_commit_on_update :publish_updated_ticket_properties, :if => :model_changes?
+  after_commit_on_update :publish_to_update_channel, :if => :model_changes?
 
   def set_default_values
     self.status = OPEN unless (Helpdesk::TicketStatus.status_names_by_key(account).key?(self.status) or ticket_status.try(:deleted?))
@@ -155,7 +158,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def changed_condition?
-    group_id_changed? || source_changed? || has_product_changed?
+    group_id_changed? || source_changed? || has_product_changed? || ticket_type_changed?
   end
 
   def has_product_changed?
@@ -177,7 +180,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
       set_user_time_zone if User.current
       RAILS_DEFAULT_LOGGER.debug "sla_detail_id :: #{sla_detail.id} :: due_by::#{self.due_by} and fr_due:: #{self.frDueBy} " 
-    elsif priority_changed? || changed_condition? || status_changed? || group_id_changed? || ticket_status_changed
+    elsif priority_changed? || changed_condition? || status_changed? || ticket_status_changed
 
       set_time_zone
       sla_detail = self.sla_policy.sla_details.find(:first, :conditions => {:priority => priority})
@@ -199,7 +202,46 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Time.zone = User.current.time_zone  
   end
 
+  def publish_new_ticket_properties
+     publish_ticket_properties("new")
+  end
+
+  def publish_updated_ticket_properties
+    return unless auto_refresh_allowed?
+    publish_ticket_properties("update")
+  end
+
+  def publish_ticket_properties(type)
+    user_id = User.current ? User.current.id : ""
+    ticket_responder_id = responder_id ? responder_id : -1
+    message = { 
+                "ticket_id" => display_id, 
+                "user_id" => user_id,
+                "type" => type,
+                "responder_id" => ticket_responder_id,
+                "group_id" => group_id,
+                "status" => status,
+                "priority" => priority,
+                "ticket_type" => ticket_type,
+                "source" => source,
+                "requester_id" => requester_id,
+                "due_by" => (due_by - Time.zone.now).div(3600),
+                "created_at" => "#{created_at}" 
+              }
+    custom_field_hash = custom_field
+    message.merge!(custom_field_hash) unless custom_field_hash.blank?
+    publish_to_tickets_channel("index_page:#{self.account.id}:#{self.id}", message.to_json)
+  end
+  
 private
+
+  def model_changes?
+    @model_changes.present?
+  end
+
+  def auto_refresh_allowed?
+    account.features?(:auto_refresh)
+  end
 
   def update_ticket_related_changes
     @model_changes = self.changes.clone

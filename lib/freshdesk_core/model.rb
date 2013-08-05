@@ -17,7 +17,6 @@ module FreshdeskCore::Model
                         "email_configs", 
                         "email_notification_agents",    
                         "email_notifications", 
-                        "es_enabled_accounts",          
                         "features", 
 
                         "forums",
@@ -103,7 +102,8 @@ module FreshdeskCore::Model
                         
                         "votes", 
                         "va_rules", 
-                        "wf_filters" 
+                        "wf_filters",
+                        "report_filters"
                     ]
 
   STATUS = {

@@ -31,7 +31,7 @@ class Workers::Import::ContactsImportWorker < Struct.new(:params)
             created+=1 if user.signup!(@params_hash)
           end        
         end
-      current_account.data_import && current_account.data_import.destroy
+      current_account.contact_import && current_account.contact_import.destroy
       enable_user_activation(current_account)
       UserNotifier.send_later(:deliver_notify_contacts_import, current_user) 
 	end
