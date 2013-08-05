@@ -166,9 +166,10 @@ swapEmailNote = function(formid, link){
 	}
 }
 
-insertIntoConversation = function(value){
+insertIntoConversation = function(value, element_id){
 	tweet_area = $('#cnt-tweet');
-	element_id = $('#canned_response_show').data('editorId');
+	canned_response_element = $('#canned_response_show').data('editorId');
+	element_id = element_id || canned_response_element;
 
 	if(tweet_area.css("display") == 'block'){
 		get_short_url(value, function(bitly){
@@ -182,8 +183,8 @@ insertIntoConversation = function(value){
 	$('#canned_responses').modal('hide');
 
 	if($("#" + element_id)){
-			$("#"+element_id).getEditor().focus();
-			$("#"+element_id).insertHtml(value);
+		$("#"+element_id).getEditor().focus();
+		$("#"+element_id).insertHtml(value);
 	}    
 	return;
 }

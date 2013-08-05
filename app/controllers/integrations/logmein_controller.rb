@@ -3,6 +3,9 @@ class Integrations::LogmeinController < ApplicationController
   include Redis::RedisKeys
   include Redis::IntegrationsRedis
   include Integrations::AppsUtil
+
+  skip_before_filter :check_privilege
+
   def rescue_session
     tracking = params['Tracking0']
     unless tracking.blank?
