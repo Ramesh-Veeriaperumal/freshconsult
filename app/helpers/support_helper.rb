@@ -125,7 +125,7 @@ module SupportHelper
 			url = current_portal.fav_icon.nil? ? '/images/favicon.ico' : current_portal.fav_icon.content.url
 			"<link rel='shortcut icon' href='#{url}' />"
 		end
-		fav_icon_content.html_safe
+		fav_icon_content.to_s.html_safe
 	end
 
 	# Default search filters for portal
