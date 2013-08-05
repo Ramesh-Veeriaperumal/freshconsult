@@ -851,6 +851,15 @@ ActiveRecord::Schema.define(:version => 20130720072935) do
   add_index "helpdesk_schema_less_tickets", ["string_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_02", :length => {"account_id"=>nil, "string_tc02"=>"10"}
   add_index "helpdesk_schema_less_tickets", ["ticket_id", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_account_id_ticket_id", :unique => true
 
+  create_table "helpdesk_shared_attachments", :force => true do |t|
+    t.string   "shared_attachable_type"
+    t.integer  "shared_attachable_id",   :limit => 8
+    t.integer  "attachment_id",          :limit => 8
+    t.integer  "account_id",             :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "helpdesk_subscriptions", :force => true do |t|
     t.integer  "user_id",    :limit => 8
     t.integer  "ticket_id",  :limit => 8

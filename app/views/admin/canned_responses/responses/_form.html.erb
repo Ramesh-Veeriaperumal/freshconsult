@@ -40,34 +40,24 @@ function toggleGroup(access_id)
 <%= f.error_messages :object_name => 'canned_response_response' %>
 <ul>
 	<li>
-    		<%= f.label(:title, t('.response_name')) %>
-    		<%= f.text_field :title, :class => "text required", "minlength" => "3" %>
+		<%= f.label(:title, t('.response_name')) %>
+		<%= f.text_field :title, :class => "text required", "minlength" => "3" %>
 	</li>
 	<li>
-			<label for="ca-content">
-				<%= t('message') %>
-				<a class='l_placeholder slim-button pull-right' href='javascript:void(0)'><%= t('canned_folders.insert_placeholder') %>&raquo;</a>
-			</label>
+		<label for="ca-content">
+			<%= t('message') %>
+			<a class='l_placeholder slim-button pull-right' href='javascript:void(0)'><%= t('canned_folders.insert_placeholder') %>&raquo;</a>
+		</label>
    		<%= f.text_area :content_html, :class => "ca_content_body", :id => 'ca-content' %>		
 	</li>
+	<li><%= render "attachment_form" %></li>
+	<li>
+		<ul>
+			<%= render :partial => 'attachment', :collection => @item.attachments_sharable  %>
+		</ul>
+	</li>
 
-	<br/>
-
-    <li>
-    <%= render "attachment_form" %>
-
-    </li>
-
-    <li>
-    <ul>
-    <% shared_attachments=@item.shared_attachments.map{|a|a.attachment} %>
-    <%= render :partial => 'attachment', :collection => shared_attachments  %>
-    </ul>
-    </li>
-
-
-
-    <li class="folder-pane form-horizontal">
+	<li class="folder-pane form-horizontal">
 		<div class="control-group">
               <%= label_tag(:new_folder_id, t('canned_folders.folder'), :class => "control-label") %>
               <div class="controls">
@@ -75,9 +65,7 @@ function toggleGroup(access_id)
     			@folder.id), :class => 'select2') %>	
               </div>
     	</div>
-
 	</li>
-
 	<li class="inline-field  form-horizontal">
 		<div class="control-group">
 		<% f.fields_for :visibility do |access| %>	
