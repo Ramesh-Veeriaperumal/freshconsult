@@ -419,6 +419,10 @@ h3.heading{
         padding-top:0;
         .c-link{
             font-weight: inherit;
+            font-size: $baseFontSize;
+        }
+        .help-text{
+            font-size: 12px;
         }
     }
 }
@@ -609,4 +613,16 @@ ul.ui-autocomplete {
 
 .ui-helper-hidden-accessible{
     display: none;
+}
+
+/* tickets changes */
+
+.ticket-brief {
+    .c-link{
+        font-weight: inherit;
+        font-size: $baseFontSize;
+    }
+    .help-text{
+        font-size: $fontHelpSize;
+    }
 }
