@@ -29,7 +29,7 @@
 	  	<div class="tickets-header">
 		  	{% translate facebook_tab.portal.ticket_text %}
 		  	<div class="text-center">
-				<a href="{{ portal.new_ticket_url }}" class="btn btn-primary {% if !portal.has_user_signed_in %} no_user_ticket {% endif %}" id="new_support_ticket">{% translate facebook_tab.portal.new_ticket %}</a>
+				<a href="{{ portal.new_ticket_url }}" class="btn btn-primary {% unless portal.has_user_signed_in %} no_user_ticket {% endunless %}" id="new_support_ticket">{% translate facebook_tab.portal.new_ticket %}</a>
 				<br/>
 				</div>
 			</div>
@@ -122,7 +122,7 @@
 			<div class="tickets-header">
 		  		{% translate facebook_tab.portal.forum_text %}
 		  		<div class="text-center">
-					<a href="{{portal.new_topic_url}}" title="Start a new topic" class="btn btn-primary {% if !portal.has_user_signed_in %} solution_c {% endif %}" id="start_topic">{% translate facebook_tab.portal.start_topic %}</a>
+					<a href="{{portal.new_topic_url}}" title="Start a new topic" class="btn btn-primary {% unless portal.has_user_signed_in %} solution_c {% endunless %}" id="start_topic">{% translate facebook_tab.portal.start_topic %}</a>
 					<a href="/facebook/support/discussions" class="btn btn-primary">{% translate facebook_tab.portal.browse_topics %}</a>
 				</div>
 			</div>
