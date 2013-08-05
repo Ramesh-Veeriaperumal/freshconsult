@@ -7,23 +7,21 @@
 
 	<section class="content ticket" >
 		<div class="content-header">
-			<h2 class="heading">
-				{% if portal.has_user_signed_in %}
-				<a href="/facebook/support/tickets">
-					<span class="content-icon">
-						<img src="/images/spacer.gif" class="fb-ticket-icon" />
-					</span>
-					{% translate facebook_tab.portal.customer_support %}
-				</a>
-				{% else %}
-				<a>
-					<span class="content-icon">
-						<img src="/images/spacer.gif" class="fb-ticket-icon" />
-					</span>
-					{% translate facebook_tab.portal.customer_support %}
-				</a>
-				{% endif %}
-			</h2>
+			{% if portal.has_user_signed_in %}
+			<a href="/facebook/support/tickets">
+				<span class="content-icon">
+					<img src="/images/spacer.gif" class="fb-ticket-icon" />
+				</span>
+				<h2 class="heading">{% translate facebook_tab.portal.customer_support %}</h2>
+			</a>
+			{% else %}
+			<a>
+				<span class="content-icon">
+					<img src="/images/spacer.gif" class="fb-ticket-icon" />
+				</span>
+				<h2 class="heading">{% translate facebook_tab.portal.customer_support %}</h2>
+			</a>
+			{% endif %}
 		</div>
 	  	<div class="span12 c-list">
 	  	<div class="tickets-header">
@@ -47,14 +45,12 @@
 	{% if portal.has_solutions %}
 	<section class="content solutions" id="solutions-index-home">
 		<div class="content-header">
-			<h2 class="heading">
-				<a href="/facebook/support/solutions">
-					<span class="content-icon">
-						<img src="/images/spacer.gif" class="fb-solutions-icon" />
-					</span>
-					{% translate portal.knowledge_base %}
-				</a>
-			</h2>
+			<a href="/facebook/support/solutions">
+				<span class="content-icon">
+					<img src="/images/spacer.gif" class="fb-solutions-icon" />
+				</span>
+				<h2 class="heading">{% translate portal.knowledge_base %}</h2>
+			</a>
 		</div>
 		<div class="span12">
 		<div class="tickets-header">
@@ -90,7 +86,7 @@
 				{% for article in portal.recent_articles limit:6 %}
 					<li class="cs-g-3">
 						<div class="ellipsis">
-							<a href="{{article.url}}">{{article.title | h}}</a>
+							<a href="{{article.url}}">{{article.title | h | truncate:55}}</a>
 						</div>
 						<div class="help-text">
 							in <a href="{{article.category.url}}">{{article.category.name | h}}</a>
@@ -109,14 +105,12 @@
 	{% if portal.has_forums %}
 	<section class="content" id="solutions-index-home">
 		<div class="content-header">
-			<h2 class="heading">
-				<a href="/facebook/support/discussions">
-					<span class="content-icon">
-						<img src="/images/spacer.gif" class="fb-forum-icon" />
-					</span>
-					{% translate portal.community_forums %}
-				</a>
-			</h2>
+			<a href="/facebook/support/discussions">
+				<span class="content-icon">
+					<img src="/images/spacer.gif" class="fb-forum-icon" />
+				</span>
+				<h2 class="heading">{% translate portal.community_forums %}</h2>
+			</a>
 		</div>
 		<div class="span12 forums">
 			<div class="tickets-header">
@@ -143,7 +137,7 @@
 							<li class="cs-g-3">
 								{{ topic.user | profile_image }}
 								<div class="ellipsis">
-									<a href="{{topic.url}}">{{topic.title | h}}</a>
+									<a href="{{topic.url}}" title="{{topic.title | h}}">{{topic.title | h | truncate:55}}</a>
 									<div class="help-text">
 										{{ topic | fb_topic_info }}
 									</div>
@@ -160,7 +154,7 @@
 								<li class="cs-g-3">
 									{{ topic.user | profile_image }}
 									<div class="ellipsis">
-										<a href="{{topic.url}}">{{topic.title | h}}</a>
+										<a href="{{topic.url}}" title="{{topic.title | h}}">{{topic.title | h | truncate:55}}</a>
 										<div class="help-text">
 											{{ topic | fb_topic_info }}
 										</div>

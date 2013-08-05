@@ -37,7 +37,7 @@ h2 {
         display:block;
         left:0;
         margin-left: 15px;
-       @extend .icon-article; 
+       @extend .icon-article-dark; 
        &:after{
         border:0;
        }
@@ -256,17 +256,23 @@ h3.heading{
     }
     .content-header{
         background: #EEE;
-        padding: 30px 30px 10px;
         position: relative;
         border-bottom:1px solid $grayLighter;
         margin-bottom: 10px;
         &:hover{
             background: darken(#EEE, 10%);
         }
-        .heading{
-            a:hover{
-                text-decoration: none
+        a{
+            display: block;
+            padding: 30px 30px 10px;
+            color:$textColor;
+            &:hover{
+                text-decoration: none;
             }
+            h2{
+                margin-top:12px;
+            }
+
         }
         .content-icon{
             display: block;
@@ -277,7 +283,7 @@ h3.heading{
             border-radius: 100%;
             box-shadow: 0 0 0px 4px #FFF, 0px 2px 0px 4px #DCDCDC;
             background: #FFF;
-            margin: -82px auto 10px;
+            margin: -65px auto 0;
             width: 60px;
             height: 60px;
         }
