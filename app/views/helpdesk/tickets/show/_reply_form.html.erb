@@ -98,6 +98,10 @@
             <%= ff.text_area :full_text_html, :id => "#{cntid}-body-fulltext", :value => "", :style => "display:none;" %>
         <% end %>
       </li>
+      <li class="inline-field field continous file_size_alert hide" id="file_size_alert_<%= cntid %>">
+        <span class="alert-text"><%= t('helpdesk.tickets.show.reply_form.not_sent') %></span>
+        <%= t('helpdesk.tickets.note.attachment_size.exceed') %>
+      </li>
       <li class="inline-field field attachment-options continous" id="attachment-options-reply">
           <% unless local_assigns[:no_attachments] %>
           <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
@@ -217,7 +221,7 @@
           jQuery('[name="helpdesk_note[cc_emails][]"]').val('');
       if(!jQuery('#include_bcc').is(':checked'))
           jQuery('[name="helpdesk_note[bcc_emails][]"]').val('');
-        <%= remote_function :url => clear_draft_helpdesk_ticket_path, :method => :delete, :type => :synchronous %>
+        
         isDirty = false;
       })
       .validate();  

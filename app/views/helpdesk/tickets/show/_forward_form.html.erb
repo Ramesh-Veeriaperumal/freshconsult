@@ -110,6 +110,10 @@
                                   :style => "display:none;"%>
     <% end %>
   </li>
+  <li class="inline-field field continous file_size_alert hide" id="file_size_alert_<%= cntid %>">
+    <span class="alert-text"><%= t('helpdesk.tickets.show.forward_form.not_sent') %></span>
+    <%= t('helpdesk.tickets.note.attachment_size.exceed') %>
+  </li>
   <li class="inline-field field attachment-options continous" id="attachment-options-reply">
       <% unless local_assigns[:no_attachments] %>
       <% attachments = {:regular => conv_item.attachments, :dropbox => conv_item.dropboxes } %>

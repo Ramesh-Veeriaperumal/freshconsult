@@ -48,6 +48,11 @@ stopDraftSaving = function() {
 	clearInterval(draftInterval);
 }
 
+var _clearDraftDom = function() {
+	$(".ticket_show #reply-draft").hide();
+	$(".ticket_show #reply-draft").parent().removeClass('draft_saved');
+	draftClearedFlag = true;
+}
 clearSavedDraft = function(){
 	$.ajax({
 		url: TICKET_DETAILS_DATA['draft']['clear_path'],
@@ -56,9 +61,12 @@ clearSavedDraft = function(){
 	TICKET_DETAILS_DATA['draft']['clearingDraft'] = true;
 	$('#cnt-reply-body').setCode(TICKET_DETAILS_DATA['draft']['default_reply']);
 	TICKET_DETAILS_DATA['draft']['hasChanged'] = false;
-	$(".ticket_show #reply-draft").hide();
-	$(".ticket_show #reply-draft").parent().removeClass('draft_saved');
-	draftClearedFlag = true;
+	_clearDraftDom();
+}
+
+remove_file_size_alert = function(element){
+	var _form = $(element).parents('form');
+	$('#file_size_alert_' + _form.data('cntId')).hide();
 }
 
 // ----- END OF DRAFT JS ---- //
@@ -670,8 +678,8 @@ var scrollToError = function(){
 
 	$('body').on('click.ticket_details', ".conversation_thread .request_panel form .cancel_btn", function(ev) {
 		ev.preventDefault();
-		
 		var btn = $(this);
+		remove_file_size_alert(btn)
 		$('#' + btn.data('cntId')).hide().trigger('visibility');
 		if (btn.data('showPseudoReply')) 
 			$('#TicketPseudoReply').show();
@@ -776,18 +784,19 @@ var scrollToError = function(){
 					seperateQuoteText(_form);					
 
 				},
-				success: function(response) {
-							
-					var statusChangeField = jQuery('#reply_ticket_status_' + _form.data('cntId'));
-					if(statusChangeField.length) {
-						if(statusChangeField.val() != '') {
-							refreshStatusBox();
-							if(statusChangeField.val() == '4' || statusChangeField.val() == '5') {
-								$('[rel=link_ticket_list]').click();
+				success: function(response, statusCode, xhr) {
+
+					if($.trim(response).length){
+						var statusChangeField = jQuery('#reply_ticket_status_' + _form.data('cntId'));
+						if(statusChangeField.length) {
+							if(statusChangeField.val() != '') {
+								refreshStatusBox();
+								if(statusChangeField.val() == '4' || statusChangeField.val() == '5') {
+									$('[rel=link_ticket_list]').click();
+								}
+								statusChangeField.val('')
 							}
-							statusChangeField.val('')
 						}
-					}
 
 					if (_form.data('panel')) {
 						$('#' + _form.data('panel')).unblock();
@@ -795,9 +804,6 @@ var scrollToError = function(){
 						$('#' + _form.data('panel')).trigger('visibility');
 					}
 
-					if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
-						stopDraftSaving();
-					}	
 
 					if (_form.attr('rel') == 'edit_note_form')  {
 						
@@ -831,7 +837,7 @@ var scrollToError = function(){
 					try {
 						if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
 							stopDraftSaving();
-							clearSavedDraft();
+							_clearDraftDom();
 						}	
 					} catch(e) {}
 					// The above block has been added so that Redactor errors do not restrict further flow.
@@ -842,6 +848,18 @@ var scrollToError = function(){
 					_form.find('input[type=submit]').prop('disabled', false);
 					if (_form.data('showPseudoReply')) {
 						$('#TicketPseudoReply').show();
+						}
+					} else {
+						_form.find('input[type=submit]').prop('disabled', false);
+
+						if (_form.data('panel')) {
+							$('#' + _form.data('panel')).unblock();
+						}
+						$('#file_size_alert_' + _form.data('cntId')).show();
+
+						if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
+							triggerDraftSaving();
+						}
 					}
 
 				},

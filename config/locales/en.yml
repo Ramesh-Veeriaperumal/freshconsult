@@ -3049,6 +3049,7 @@ en:
           bcc: Bcc
           addbcc: Add Bcc
           removebcc: Remove Bcc
+          not_sent: Reply was not sent! 
         forward_form:
           cc: Cc
           addcc: Add Cc
@@ -3056,6 +3057,7 @@ en:
           bcc: Bcc
           addbcc: Add Bcc
           removebcc: Remove Bcc
+          not_sent:  Reply was not forwarded!
         tweet_form:
           title: "Reply to %{user}"
         facebook_form:
@@ -3144,8 +3146,9 @@ en:
         public_note_tip: Visible to the customer
         inbound_email: Incoming email
         outbound_email: Outbound email
+        not_added: Note has not been added! 
         attachment_size: 
-           exceed: Oops! Your attachment exceeds 15 MB. Please attach a smaller file.
+           exceed: Your attachments exceed 15 MB. Please make changes before you proceed.
     merge:
       merge:
         merge_into: Merge into?
