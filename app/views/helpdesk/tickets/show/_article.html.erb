@@ -12,9 +12,9 @@
 	<%= content_tag :span, "", :class => 'private-icon' unless article.folder.visible?(current_user) %>
 	
 	<% if es_enabled? then %>
-		<%= article.title %>
+		<%= article.title.html_safe %>
 	<% else %>
-		<%= article.excerpts.title %>
+		<%= article.excerpts.title.html_safe %>
 	<% end %>
 	<%= link_to "", article_url, :target => "blank", :title => truncate ( article.desc_un_html, 100), :class => "open_in_new" %> 
 </td></tr>
