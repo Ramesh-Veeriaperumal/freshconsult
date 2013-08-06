@@ -12,7 +12,7 @@
   	 
 	 <%= content_tag(:label, t('feedbackwidget_button_text'), :class => "control-label" ) %>
 	 <div class="controls">
-	 	<input type="text" class="text" size="18" name="buttonText" value="" placeholder= "<%=t('.feedbackwidget_button_text_placeholder')%>" />
+	 	<input type="text" class="text span8" size="18" name="buttonText" value="" placeholder= "<%=t('.feedbackwidget_button_text_placeholder')%>" />
 	 </div>
   </div>
   <div class="control-group">
@@ -26,7 +26,7 @@
   <div class="control-group">
 	<%= content_tag(:label, t('feedbackwidget_image_button'), :class => "control-label" ) %>
 	<div class="controls">
-		<input type="text" class="textInput" name="backgroundImage" id="backgroundImage" value="" size="35" />
+		<input type="text" class="textInput span8" name="backgroundImage" id="backgroundImage" value="" size="35" />
 		<%= content_tag(:div, content_tag(:b, t('note')) + t('feedbackwidget_custom_image_info') ,:class => "info-data")  %> 
 	</div>
   </div>

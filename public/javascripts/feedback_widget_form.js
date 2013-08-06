@@ -17,7 +17,6 @@
 			$item.data("placeholder-proxy").attr("for", $item.attr("id"))
 			$item.data("placeholder-proxy").toggle(!$item.val());
 
-			// console.log($item.parents(".control-group").find(".control-label").html())
 			$item.on("keydown paste change", function(ev){
 				var $item = jQuery(this);
 				setTimeout(function() {

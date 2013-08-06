@@ -1,6 +1,8 @@
 <% @ticket ||= current_account.tickets.new %>
 <div class="modal-header">
+	<div class="modal-header-bg">
 	<%= content_tag(:h3, widget_option(:formTitle), :class => "ellipsis", :title => widget_option(:formTitle)) %>
+	</div>
 </div>
 <% widget_type = widget_option(:widgetType) %>
 <input type="hidden" name="widgetType" id="widgetType" value= "<%= widget_type %>" />
@@ -186,7 +188,7 @@
 		var embeddedWidget = jQuery("#widgetType").val();
 		if(embeddedWidget == "embedded") {
 			jQuery("#feedback-widget-container").removeClass("modal modal-widget");
-
+			jQuery(".feedback-wrapper").addClass("embedded-wrapper");
 			jQuery(".modal-body").addClass("embedded-body");
 			jQuery(".modal-panel").addClass("embedded-panel");
 			jQuery(".modal-footer").addClass("embedded-footer");

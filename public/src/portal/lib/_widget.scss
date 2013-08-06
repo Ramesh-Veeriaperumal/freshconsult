@@ -1,7 +1,50 @@
+html,.modal-widget{
+	height: 98%;
+}
+body, .feedback-wrapper{
+	height:100%;
+	background:transparent;
+}
+.feedback-wrapper{
+	.modal-widget.modal-panel-active{
+		.modal-header{
+			height: 40px;
+			position: absolute;
+			top:0;
+			@include border-top-left-radius(6px);
+			background:#fff;
+			padding: 0;
+			width: 58%;
+			.modal-header-bg{
+				background: url('data:"image/png";base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAABJCAYAAAAE/rd/AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALlJREFUeNrs1scOwjAQRdGYEEJvEb03If7//xhWCOlJlu0rlvb6eJK7GjszK2JOq4g9gYkPhS868Zn66d8vCLzTmJvCK4250JizwhONOSo80Jg9jdkp3NKYjcI1jVnRmKXCBY1pFDY0Zk5jZgqnNGaicExjRjRmqHBAY/oKezSmS2NqhTWN6SisaExFY9oKSxpTKgxusC94h1afb5JedAqdL0Wh+S6GIix5X0dD9/enQoYZZpgGPwIMAFIqi/g47osYAAAAAElFTkSuQmCC');
+				background-repeat: repeat-x;
+				padding: 9px 40px 0 15px;
+				@media (min-width: 45em) {
+					padding: 9px 15px 0 15px;
+				}
+			}
+		}
+		.modal-body{
+			height: 100%;
+			max-height: 100%;
+			padding-top: 45px;
+			padding-bottom: 45px;
+		}
+		.modal-footer{
+			position: absolute;
+			bottom: 0;
+			height:50px;
+			padding: 6px 15px 6px;
+			background:#fff;
+			border-right: 1px solid #ddd;
+			border-radius: 0;
+			border-bottom-left-radius: 6px;
+		}
+	}
+}
 .feedback-wrapper{ margin-left: 20px; margin-right: 20px; }
 .modal-widget{
 	width: 100%;
-	height: 530px;
 	// Reseting existing widget modal dialog
 	position: relative;
 	@include box-shadow(0 5px 10px rgba(0, 0, 0, 0.4), white 0 0 1px inset);
@@ -11,8 +54,6 @@
 	.modal-footer{ background: transparent; }
 	.modal-body{ 
 		overflow-x:hidden; 
-		height: 430px;
-		max-height: 430px;
 		padding-top: 8px;
 	}	
 }
@@ -179,22 +220,19 @@
 	color:#000;
 	@include opacity(0.30);
 }
-
 .embedded-body {
 	max-height: 90%;
 }
-
-.embedded-panel { 
-	background-color: transparent;
-	box-shadow: none;
-}
-
 .embedded-footer { 
-	background-color: transparent;
-	box-shadow: none;
 	border-top: 0;
 }
-
+.embedded-wrapper{
+	margin:0;
+	.embedded-panel, .embedded-footer{
+		background-color: transparent;
+		box-shadow: none;
+	}
+}
 .embedded-search-input {
 	margin-top: 50px;
 }
