@@ -7,7 +7,7 @@ class Helpdesk::DashboardController < ApplicationController
   before_filter :check_account_state, :only => [:index]
   
   before_filter :set_mobile, :only => [:index]
-  
+  before_filter :redirect_to_mobile_url, :only=>[:index]  
   prepend_before_filter :silence_logging, :only => :latest_activities
   after_filter   :revoke_logging, :only => :latest_activities
   

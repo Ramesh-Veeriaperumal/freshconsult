@@ -16,6 +16,7 @@ class Helpdesk::ConversationsController < ApplicationController
   before_filter :check_for_kbase_email, :set_quoted_text, :only => [:reply]
   before_filter :set_default_source, :set_mobile, :prepare_mobile_note,
     :fetch_item_attachments
+  before_filter :set_native_mobile, :only=>[:process_and_redirect]
   before_filter :set_ticket_status, :except => :forward
 
   TICKET_REDIRECT_MAPPINGS = {
@@ -151,6 +152,9 @@ class Helpdesk::ConversationsController < ApplicationController
         }
         format.mobile {
           render :json => {:success => true,:item => @item}.to_json
+        }
+        format.nmobile {
+            render :json => {:server_response => true}.to_json
         }
       end
       
