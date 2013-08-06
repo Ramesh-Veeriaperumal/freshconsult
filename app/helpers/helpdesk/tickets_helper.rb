@@ -269,12 +269,12 @@ module Helpdesk::TicketsHelper
       end 
     end
 
-    return default_reply.html_safe unless quoted or forward
+    return default_reply unless quoted or forward
     
     content = default_reply+"<div class='freshdesk_quote'><blockquote class='freshdesk_quote'>On "+formated_date(last_conv.created_at)+
               "<span class='separator' /> , "+ last_reply_by +" wrote:"+
               last_reply_content.to_s+"</blockquote></div>"
-    return content.html_safe
+    return content
   end
 
   def bind_last_reply (item, signature, forward = false, quoted = false)
