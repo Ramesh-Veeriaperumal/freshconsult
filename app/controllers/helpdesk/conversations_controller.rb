@@ -15,8 +15,7 @@ class Helpdesk::ConversationsController < ApplicationController
   before_filter :validate_fwd_to_email, :only => [:forward]
   before_filter :check_for_kbase_email, :set_quoted_text, :only => [:reply]
   before_filter :set_default_source, :set_mobile, :prepare_mobile_note,
-    :fetch_item_attachments
-  before_filter :set_native_mobile, :only=>[:process_and_redirect]
+    :fetch_item_attachments, :set_native_mobile
   before_filter :set_ticket_status, :except => :forward
 
   TICKET_REDIRECT_MAPPINGS = {
@@ -141,8 +140,8 @@ class Helpdesk::ConversationsController < ApplicationController
       options = {}
       options.merge!({:human=>true}) if(!params[:human].blank? && params[:human].to_s.eql?("true"))  #to avoid unneccesary queries to users
       url_redirect = params[:redirect_to].present? ? TICKET_REDIRECT_MAPPINGS[params[:redirect_to]] : item_url
-
-      respond_to do |format|
+      
+	  respond_to do |format|
         format.html { redirect_to url_redirect }
         format.xml  { render :xml => @item.to_xml(options), :status => :created, :location => url_for(@item) }
         format.json { render :json => @item.to_json(options) }
