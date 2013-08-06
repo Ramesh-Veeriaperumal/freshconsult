@@ -160,6 +160,13 @@
 	   	button = null;
 	   }
 	 }
+
+	 function destroyContainer(){
+	 	if (container != null) {
+	 		document.body.removeChild(container);
+	 		container = null;
+	 	}
+	 }
 	 
 	 function createContainer(){
 	 	if (container == null) {
@@ -261,7 +268,9 @@
 	 function updateWidget(params){
 	 	extend(params);
 		destroyButton();
-		createButton();
+		destroyContainer();
+		createButton();		
+		createContainer();
 	 }
 	 
 	 // Defining Public methods				  
