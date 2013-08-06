@@ -112,7 +112,7 @@ class Solution::Article < ActiveRecord::Base
               end
             end
             search.from options[:size].to_i * (options[:page].to_i-1)
-            search.highlight :desc_un_html, :title, :options => { :tag => '<strong>', :fragment_size => 50, :number_of_fragments => 4 }
+            search.highlight :desc_un_html, :title, :options => { :tag => '<strong>', :fragment_size => 50, :number_of_fragments => 4, :encoder => 'html' }
           end
 
           item.results.each_with_hit do |result,hit|
