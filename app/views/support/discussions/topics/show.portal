@@ -157,7 +157,7 @@
 	<div class="cs-g-c">
 		<section class="topic-list">
 			<div class="list-lead">
-			 	{% translate portal.topic.more_topic %} {{ forum.name | h}}
+			 	{% translate portal.topic.more_topic %} <span class="folder-name">{{ forum.name | h}}</span>
 			</div>
 			<ul>
 				{% assign topic_count = 10 %}

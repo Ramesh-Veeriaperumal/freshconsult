@@ -1,8 +1,10 @@
-<%=@user.name%> also commented on <%= @post.topic.title %>
-
-
-<%=@user.name%> wrote the following
-
-
-<%= @post.body %>
+New Reply has been added to "<%= @post.topic.title %>" by <%= @user.name %>
+ 
+<%= @post.body_html %>
+ 
+ 
+visit this link to view all discussions on this topic
+<%= support_discussions_topic_url(@post.topic.id) %>
+ 
+You received this email because you are following this Forum topic. To stop following it, click on the Forum topic and click "Unfollow"
 

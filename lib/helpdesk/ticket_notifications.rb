@@ -8,7 +8,8 @@ module Helpdesk::TicketNotifications
 		include Helpdesk::Ticketfields::TicketStatus
 		
 		def autoreply     
-      return if spam? || deleted? || self.skip_notification?
+      #dont send email if user creates ticket by "save and close"
+      return if spam? || deleted? || self.skip_notification? || !closed_at.nil? 
       notify_by_email(EmailNotification::NEW_TICKET)
       notify_by_email_without_delay(EmailNotification::TICKET_ASSIGNED_TO_GROUP) if group_id and !group_id_changed?
       notify_by_email_without_delay(EmailNotification::TICKET_ASSIGNED_TO_AGENT) if responder_id and !responder_id_changed?

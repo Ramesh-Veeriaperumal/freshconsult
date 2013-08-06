@@ -10,7 +10,11 @@
        		<%=t('.associate_account', :account_name => current_account.name)%>
 
         </p>
-        <a href="<%= @fb_client.authorize_url(session[:state]) %>" class="uiButton special medium"><%=t('.add_facebook')%></a>
+        <% if @new_fb_pages %>
+          <%= link_to t('facebook.add_page'), "#pages_dialog", :id => "new_page_dialog", :class => "uiButton special medium", :rel => "freshdialog", "data-width" => "600px", "data-submit-label" => "Associate", :title => "Associate Facebook Page" %>
+        <% else %>
+          <a href="<%= @fb_client.authorize_url(session[:state]) %>" class="uiButton special medium"><%=t('.add_facebook')%></a>
+        <% end %>
       </div>
     </div>
   </li>

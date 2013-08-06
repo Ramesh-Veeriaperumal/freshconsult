@@ -10266,6 +10266,58 @@ div.gcal-confirm-modal-content{ width: 100%; }
 
 .tweet-table .search-grey-box{ margin-top: 0; }
 
+//facebook-page-tab
+
+#configure_page_tab{ min-height: 50px; }
+
+.fb_tab_pic{
+	background: url("/images/helpimages/fb-tab.png") no-repeat;
+	height: 192px;
+	margin-left: 20px;
+}
+
+.fb_info_text{
+		background-color: #fffcdb;
+		padding: 15px;
+		margin-top: 5px;
+		line-height: 17px;
+		border: 1px solid #eeeeee;
+		@include border-radius(4px);
+}
+
+.fb_add{
+	height: 17px;
+	width: 17px;
+	display: inline-block;
+	vertical-align: text-top;
+	margin-right: 4px;
+}
+
+#tab_config{
+	line-height: 17px;
+}
+
+#after_config{
+	.control-label, .fb_field{
+		margin: 5px 0 0 0;
+		.no_tab{
+			margin-left: 10px;
+		}
+
+		label{
+			margin-top: 5px;
+		}
+	}
+}
+
+.remove_fb{
+	margin-left: 15%;
+}
+
+.fb_tab_container{
+	margin-top: 10px;
+}
+
 //Free Trial Notification
 .trial_expiry {
 	@include border-radius(5px);
@@ -10352,4 +10404,3 @@ label.checkbox-label span{ position: relative; top: 2px; }
 label.last-label{ margin-bottom: 0px; }
 
 // Surveymonkey Styles End 
-

@@ -11,6 +11,8 @@ class DomainMapping < ActiveRecord::Base
 
 	belongs_to :shard, :class_name => 'ShardMapping',:foreign_key => :account_id
 
+	named_scope :main_portal, :conditions => ['portal_id IS NULL']
+
 	def act_as_directory
   end
 

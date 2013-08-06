@@ -1,9 +1,39 @@
 <% content_for :sidebar do -%><%- end %>
-<h3 class="title">Facebook settings</h3>
-<% form_for :facebook_page, :url => social_facebook_path(@item), :html => { :method => :put } do |f| %>
+<% content_for :onload_script do %> 
+
+    jQuery('#tab_config').on('click', function(ev){
+      ev.preventDefault();
+      jQuery('.fb_changed').removeAttr('disabled').data("updated", true);
+      jQuery('.configure').fadeOut(200, function() {
+        jQuery('#after_config').fadeIn('fast');
+      });
+
+    });
+
+    jQuery('.cancel_fb').on('click', function(ev){
+      ev.preventDefault();
+      jQuery('.fb_changed').removeData('updated');
+      jQuery('#after_config').fadeOut(200, function() {
+        jQuery('.configure').fadeIn('fast');
+      });
+
+      jQuery('.fb_changed').prop('disabled', true);
+    });
+
+    jQuery('#after_config').on('input', function(ev){
+      jQuery('.fb_changed').data("updated", true);
+    });
+
+    jQuery("#fb_form").on('submit', function(ev){
+      jQuery('.fb_changed').prop('disabled', !jQuery('.fb_changed').data("updated"));
+    });
+<% end %>
+<h2 class="lead">Facebook settings</h2>
+<% form_for :facebook_page, :url => social_facebook_path(@item), :html => { :method => :put, :id => "fb_form" } do |f| %>
 	<%= render :partial => 'form', :locals => { :facebook_page => @item } %>
 	<div class="button-container">
-    <%= link_to(t('remove'), social_facebook_path(@item), :method => 'delete', :confirm => t('social.facebook_pages.index.remove_facebook_page'), :class => "uiButton floatl" ) %>
-    <%= submit_tag t('update'), :class => "uiButton"  %>
+    <%= link_to(t('remove'), social_facebook_path(@item), :method => 'delete', :confirm => t('social.facebook_pages.index.remove_facebook_page'), :class => "btn floatl" ) %>
+    <%= link_to(t('cancel'), :back, :class => "btn") %>
+    <%= submit_tag t('update'), :class => "btn btn-primary"  %>
   </div>
 <% end %>

@@ -6,6 +6,9 @@
         title="{% translate portal.tickets.export_ticket_data %}">
       {% translate portal.tickets.export %}
     </a>
+    {% if portal.facebook_portal %}
+    <a href="{{ portal.new_ticket_url }}" class="btn btn-primary index_new_ticket" id="new_support_ticket">{% translate facebook_tab.portal.new_ticket %}</a>
+    {% endif %}
   </div>
   <div id="ticket-filter-container">
     {% snippet ticket_filters %}

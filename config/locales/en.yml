@@ -1045,6 +1045,7 @@ en:
       authentication_failed: Authentication Failed
       authentication_success: Authentication successfully completed
       no_subdomain: There is no subdomain like this. Please try again.
+      page_unavailable: We are sorry. This page is currently unavailable to you. Please contact the administrator for more information. 
     profile: 
       api_key:
         reset_success: "API Key has been reset successfully." 
@@ -2537,6 +2538,8 @@ en:
     thanks: Thank you for submitting a feedback
     portal_created_on: "Created by <span class='emphasize'>%{username}</span> on <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Created on <span class='emphasize'>%{date}</span>"
+    fb_portal_created_on: "Created by <span class='emphasize'>%{username}</span> <span class='emphasize'>%{date}</span>"
+    fb_portal_created_on_same_user: "Created <span class='emphasize'>%{date}</span>"
     due_date: Due date
     updated: updated
     deleted: deleted
@@ -3273,7 +3276,7 @@ en:
       engage_info:
         title: Add your Facebook pages
         engage_customers: Engage your customers, directly on Facebook
-        associate_account: Associate a Facebook page to <b> %{account_name} </b> and respond to your customers from within freshdesk when they comment or post to your wall.
+        associate_account: Associate a Facebook page with <b> %{account_name} </b> and respond to customer comments and wall posts directly from Freshdesk. You can also add your solutions and community forums within your Facebook page.
         add_facebook: Add Facebook Page
       form:
         visitor_posts: Import <strong>"Visitor posts"</strong> as ticket
@@ -4214,4 +4217,38 @@ en:
         customer_fcr: The percentage of tickets raised by this customer that were resolved within the first response
         agent_fcr: The percentage of tickets assigned to this agent that were resolved within the first response
         group_fcr: The percentage of tickets assigned to this group that were resolved within the first response
-  date_invalid: Invalid date      
+  date_invalid: Invalid date  
+  facebook_tab:
+    remove_tab: "Remove page Tab"
+    tab_not_removed: "Could not remove tab"
+    tab_removed: "Page tab removed"
+    page_added: "This page has already been added to {{source}}. Please remove it and then try to add"
+    add_tab: "Add page tab"
+    tab_name: "Tab name "
+    tab_url: "Tab image url : "
+    page_tab_head: "Facebook Page Tab"
+    page_added_model: "Page has been already added"
+    no_ssl: "<b>Facebook page tab requires a Secure Connection.</b><br />You need to enable SSL encryption from <a href='/admin/security'>Security settings</a>"
+    image_upload_failed: "Unable to update custom image in page tab"
+    image_instructions: "The target image must be of dimensions 111x74. (images of any dimensions can be updated through facebook directly)"
+    configure_tab: "Create your Facebook page tab"
+    config_info: "Once you enable your Facebook page tab, your customers will be able to directly access your solutions, forums and self-service from within Facebook"
+    got_it: "Ok got it."
+    reauth: "Please reauthorize with Facebook to access your page tab"
+    no_contact: "Unable to contact Facebook Servers for page tabs at this time"
+    portal:
+      your_tickets: "Your Tickets"
+      view_all: "View all"
+      recent_articles: "Recent Articles"
+      published: "Published in "
+      start_topic: "Start Topic"
+      recent_topics: "Recent Topics"
+      popular_topics: "Popular Topics"
+      recent_tickets: "Recent Tickets"
+      customer_support: "Customer Support"
+      new_ticket: "New Support Ticket"
+      ticket_text: "<strong>Need help? Get in touch with us</strong><p>Submit a new ticket and we'll get back to you as soon as we can</p>"
+      solution_text: "<strong>Looking for answers? Here you go</strong><p>Explore How-To's and learn best practices from our knowledge base. </p>"
+      forum_text: "<strong>Got ideas? We'd love to hear them</strong><p>Join our community and share your thoughts and ideas with everyone.</p>"
+      browse_topics: "Browse Topics"
+      browse_articles: "Browse Articles"
