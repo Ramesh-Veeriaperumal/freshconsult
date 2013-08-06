@@ -78,7 +78,7 @@ class Helpdesk::MergeTicketsController < ApplicationController
 			end
 		end
 		r = {:results => items.map{|i| {
-				:display_id => i.display_id, :subject => i.subject, :title => h(i.subject),
+				:display_id => i.display_id, :subject => h(i.subject), :title => h(i.subject),
 				:searchKey => 
 					(params[:key] == 'requester') ? i[:requester_name] : ( i.send(params[:key]).to_s if SEARCH_KEYS.include?(params[:key]) ),  
 			 	:info => t("ticket.merge_ticket_list_status_created_at", 
