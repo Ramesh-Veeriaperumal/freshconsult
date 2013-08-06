@@ -96,7 +96,7 @@ jQuery('.contactdiv').live("click",function(){
     var title =  replace_element.attr('title');
     var ticket_id = element.find("#merge-ticket").data("id")
     var replace_html = "<a class='item_info' target='_blank' title='"+title+"' href='/helpdesk/tickets/"+ticket_id+"'>"
-                                                                                      +replace_element.text()+"</a>"
+                                                                                      +replace_element.html()+"</a>"
     replace_element.replaceWith(replace_html);
     enable_continue();
     change_ticket_count();
