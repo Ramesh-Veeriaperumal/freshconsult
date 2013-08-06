@@ -35,9 +35,9 @@
       </div>
     </div>
     <div class="search-content">
-      <%= select_tag "search-type", ("<option value='display_id'>"+t('ticket.id')+"</option>
+      <%= select_tag "search-type", "<option value='display_id'>"+t('ticket.id')+"</option>
                                     <option value='subject'>"+t('ticket.subject')+"</option>
-          <option selected='selected' value='requester'>"+t('ticket.requester')+"</option>").html_safe %>
+          <option selected='selected' value='requester'>"+t('ticket.requester')+"</option>".html_safe %>
       <% search_text = [
         ['display_id', 'select-id', t("ticket.id_placeholder"), 'hide' ],
         ['requester', 'select-requester', t("ticket.requester_placeholder")],

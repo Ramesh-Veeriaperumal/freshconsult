@@ -10,7 +10,7 @@
           <span>
             <%= t("ticket.merge_ticket_list_status_"+@target_ticket.ticket_states.current_state, 
             :username => "<span class = 'muted'>#{h(@target_ticket.requester.display_name)}</span>", 
-            :time_ago => time_ago_in_words(@target_ticket.ticket_states.send(@target_ticket.ticket_states.current_state))).html_safe %>
+            :time_ago => time_ago_in_words(@target_ticket.ticket_states.send(@target_ticket.ticket_states.current_state))) %>
           </span>
         </div>
       </div>
@@ -32,7 +32,7 @@
               <span>
                 <%= t("ticket.merge_ticket_list_status_"+source.ticket_states.current_state, 
                 :username => "<span class = 'muted'>#{h(source.requester.display_name)}</span>",
-                :time_ago => time_ago_in_words(source.ticket_states.send(source.ticket_states.current_state))).html_safe %>
+                :time_ago => time_ago_in_words(source.ticket_states.send(source.ticket_states.current_state))) %>
               </span>
             </div>
           </div>
@@ -45,7 +45,7 @@
     <div class="source-target-note">
       <div class="content-note content">
         <span class="arrow-left merge-left"></span>
-        <span class="default-note-text"><%= t("ticket.default_note_text").html_safe %></span>
+        <span class="default-note-text"><%= t("ticket.default_note_text") %></span>
         <div class="note-button-container-test">
             <a id="edit-target"><%= t("email_configs.edit") %></a>
             <div class= "ok-cancel hide">
@@ -74,7 +74,7 @@
     <div class="source-target-note source-note">
       <div class="content-note content">
         <span class="arrow-left merge-left"></span>
-        <span class="default-note-text"><%= t("ticket.default_note_text").html_safe %></span>
+        <span class="default-note-text"><%= t("ticket.default_note_text") %></span>
         <div class="note-button-container-test">
             <a id="edit-source"><%= t("email_configs.edit") %></a>
             <div class= "ok-cancel hide">
@@ -120,7 +120,7 @@
     jQuery(this).hide();
     parent_object.find('.ok-cancel').show();
     label = parent_object.find('.default-note-text').html();
-    parent_object.find('.default-note-text').html('<%= t("ticket.edit_note").html_safe %>');
+    parent_object.find('.default-note-text').html('<%= t("ticket.edit_note") %>');
     value = parent_object.find('.redactor_editor').html();
     if(jQuery(this).attr("id") == "edit-target")
       jQuery('.source-note').hide();
@@ -135,7 +135,7 @@
       jQuery('.source-note').show();
     }, 500);
     if(jQuery(this).hasClass("ok"))
-      note_label = ((parent_object.find('.redactor_editor').html() != value ) ? '<%= t("ticket.note_saved").html_safe %>' : label)
+      note_label = ((parent_object.find('.redactor_editor').html() != value ) ? '<%= t("ticket.note_saved") %>' : label)
     else
     { 
       parent_object.find('.redactor_editor').html(value);
