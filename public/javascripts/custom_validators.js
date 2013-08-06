@@ -200,5 +200,10 @@ $.validator.addMethod("remotevalidate", function(value, element, param) {
 $.validator.addClassRules("remote-data", { remotevalidate: true });
 
 
-})(jQuery);
+$.validator.addMethod("trim_spaces", function(value, element){
+  element.value = trim(element.value)
+  return true;
+}, "Auto trim of leading & trailing whitespace");
+$.validator.addClassRules("trim_spaces", { trim_spaces: true });
 
+})(jQuery);
