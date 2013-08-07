@@ -67,6 +67,7 @@ SurveyMonkey.prototype = {
 				// Fetch collector
 			});
 			jQuery("#survey-list-wrapper").removeClass("sloading loading-small loading-left")
+			if(has_only_one_survey) sm.ignore_change_event = false;
 			jQuery("#survey_list").html(ihtml).trigger("change").prev().show();
 		}
 	},
