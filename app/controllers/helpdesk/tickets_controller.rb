@@ -20,7 +20,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   around_filter :run_on_slave, :only => :user_ticket
 
-  before_filter :set_mobile, :only => [:recent_tickets,:old_tickets, :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties , :unspam , :destroy , :pick_tickets , :close_multiple , :restore , :close]
+  before_filter :set_mobile, :only => [ :index, :show,:update, :create, :execute_scenario, :assign, :spam , :update_ticket_properties , :unspam , :destroy , :pick_tickets , :close_multiple , :restore , :close]
   before_filter :set_show_version
   before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index, :filter_options, :old_tickets,:recent_tickets]
   before_filter :clear_filter, :only => :index
@@ -58,7 +58,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_reply_to_all_emails, :only => [:show, :reply_to_conv]
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
-  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index]
+  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets]
   
  
   def user_ticket
@@ -178,13 +178,11 @@ class Helpdesk::TicketsController < ApplicationController
   def recent_tickets
     tkt = current_account.tickets.permissible(current_user)
     updated_time=DateTime.strptime(params[:latest_updated_at],'%s')
-    tkt =  tkt.latest_tickets(updated_time).leave_old_tickets(params[:ids])
-
+    tkt =  tkt.latest_tickets(updated_time)
     @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-
     respond_to do |format|
-      format.mobile do
-        json = "["; sep=""
+      format.nmobile do
+        json = "{ticket:["; sep=""
         @items.each { |tic|
           #Removing the root node, so that it conforms to JSON REST API standards
           # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
@@ -195,23 +193,18 @@ class Helpdesk::TicketsController < ApplicationController
           }, false)[19..-2]; sep=","
         }
           json << "]"
-          render :json => json
+          render :json => json + "}"
       end
     end
   end
 
   def old_tickets
     tkt = current_account.tickets.permissible(current_user)
-    updated_time=DateTime.strptime(params[:least_updated_at],'%s')
-    tkt =  tkt.next_set_tickets(updated_time).leave_old_tickets(params[:ids])
     @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-
     respond_to do |format|
-      format.mobile do
-        json = "["; sep=""
+      format.nmobile do
+        json = "{ticket:["; sep=""
         @items.each { |tic|
-
-          puts "whatisthis #{tic}"
           #Removing the root node, so that it conforms to JSON REST API standards
           # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
           json << sep + tic.to_json({
@@ -221,36 +214,11 @@ class Helpdesk::TicketsController < ApplicationController
           }, false)[19..-2]; sep=","
         }
           json << "]"
-          render :json => json
+          render :json => json + "}"
       end
     end
   end
 
-  def old_tickets
-    tkt = current_account.tickets.permissible(current_user)
-    updated_time=DateTime.strptime(params[:least_updated_at],'%s')
-    tkt =  tkt.next_set_tickets(updated_time).leave_old_tickets(params[:ids])
-    @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-
-    respond_to do |format|
-      format.mobile do
-        json = "["; sep=""
-        @items.each { |tic|
-
-          puts "whatisthis #{tic}"
-          #Removing the root node, so that it conforms to JSON REST API standards
-          # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
-          json << sep + tic.to_json({
-            :except => [ :description_html,:description ],
-            :methods => [ :ticket_subject_style,:ticket_sla_status, :status_name, :priority_name, :source_name, :requester_name,
-                          :responder_name, :need_attention, :pretty_updated_date,:formatted_created_at ]
-          }, false)[19..-2]; sep=","
-        }
-          json << "]"
-          render :json => json
-      end
-    end
-  end
   
   def filter_options
     @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}

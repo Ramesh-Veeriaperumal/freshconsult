@@ -156,7 +156,6 @@ class SearchController < ApplicationController
     end
 
     def process_results
-      
       results = Hash.new
       @items.each do |i|
         results[i.class.name] ||= []
