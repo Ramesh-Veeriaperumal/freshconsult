@@ -581,7 +581,7 @@ module ApplicationHelper
       when "html_paragraph" then
         element = label + text_area(object_name, field_name, :value => field_value)
     end
-    element
+    element.html_safe
   end
 
   def construct_ticket_element(form_builder,object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)

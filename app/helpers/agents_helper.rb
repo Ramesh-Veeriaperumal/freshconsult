@@ -35,9 +35,9 @@ module AgentsHelper
 
   def fetch_upgrade_error_msg
     if privilege?(:manage_account)
-      t('maximum_agents_admin_msg')
+      t('maximum_agents_admin_msg').html_safe
     else
-      t('maximum_agents_msg')
+      t('maximum_agents_msg').html_safe
      end
   end
   
@@ -74,9 +74,9 @@ module AgentsHelper
   def agent_count(state)
     unless(:deleted.eql?(state))
       scoper = :occasional.eql?(state) ? "occasional_agents" : "full_time_agents"
-      "<span class='agent-list-count'>" +
+      ("<span class='agent-list-count'>" +
         current_account.all_agents.send(scoper).size.to_s +
-      "</span>"
+      "</span>").html_safe
     else
       ""
     end
