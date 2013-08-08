@@ -42,6 +42,7 @@ HTML
       [ [t(".helpdesk"),t(".productivity")], [ 
           ['/admin/va_rules',             'dispatcher',              privilege?(:manage_dispatch_rules) ],
           ['/admin/supervisor_rules',     'supervisor',              privilege?(:manage_supervisor_rules) ],
+          ['/admin/observer_rules',       'observer',                privilege?(:manage_dispatch_rules) ],
           ['/admin/automations',          'scenario',                feature?(:scenario_automations) && privilege?(:manage_scenario_automation_rules) ],
           ['/admin/email_commands_settings', 'email_commands_setting', privilege?(:manage_email_settings) ], 
           ['/integrations/applications',  'integrations',            privilege?(:admin_tasks) ],

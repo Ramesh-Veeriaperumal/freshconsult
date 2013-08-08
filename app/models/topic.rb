@@ -107,7 +107,7 @@ class Topic < ActiveRecord::Base
   
   attr_protected :forum_id , :account_id
   # to help with the create form
-  attr_accessor :body_html
+  attr_accessor :body_html, :highlight_title
   
   IDEAS_STAMPS = [
     [ :planned,      I18n.t("topic.ideas_stamps.planned"),       1 ], 
@@ -219,6 +219,10 @@ class Topic < ActiveRecord::Base
 
   def to_s
     title
+  end
+
+  def topic_changes
+    @topic_changes ||= self.changes.clone
   end
 
 end

@@ -27,7 +27,7 @@ class EmailNotification < ActiveRecord::Base
   REPLIED_BY_REQUESTER = 6
   TICKET_RESOLVED = 7
   TICKET_CLOSED = 8
-  TICKET_REOPENED = 9
+  # TICKET_REOPENED = 9
   
   #2nd batch
   USER_ACTIVATION = 10
@@ -46,7 +46,7 @@ class EmailNotification < ActiveRecord::Base
     REPLIED_BY_REQUESTER          => "New Reply Received - {{ticket.encoded_id}} {{ticket.subject}}",
     TICKET_RESOLVED               => "Ticket Resolved - {{ticket.encoded_id}} {{ticket.subject}}",
     TICKET_CLOSED                 => "Ticket Closed - {{ticket.encoded_id}} {{ticket.subject}}",
-    TICKET_REOPENED               => "Ticket re-opened - {{ticket.encoded_id}} {{ticket.subject}}",
+    # TICKET_REOPENED               => "Ticket re-opened - {{ticket.encoded_id}} {{ticket.subject}}",
     TICKET_UNATTENDED_IN_GROUP    => "Unattended Ticket - {{ticket.encoded_id}} {{ticket.subject}}",
     FIRST_RESPONSE_SLA_VIOLATION  => "Response time SLA violated - {{ticket.encoded_id}} {{ticket.subject}}",
     RESOLUTION_TIME_SLA_VIOLATION => "Resolution time SLA violated - {{ticket.encoded_id}} {{ticket.subject}}"
@@ -60,7 +60,7 @@ class EmailNotification < ActiveRecord::Base
                            TICKET_CLOSED => {:requester_notification => false},
                            COMMENTED_BY_AGENT =>{:requester_notification => false},
                            TICKET_RESOLVED =>{:requester_notification => false},
-                           TICKET_REOPENED =>{:agent_notification => false},
+                           # TICKET_REOPENED =>{:agent_notification => false},
                            REPLIED_BY_REQUESTER =>{:agent_notification =>false},
                            USER_ACTIVATION => {:requester_notification => false}
                            

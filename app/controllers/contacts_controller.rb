@@ -67,7 +67,7 @@ class ContactsController < ApplicationController
             render :json => @user.to_json({:except=>[:account_id] ,:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
 :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
         }
-        format.widget { render :action => :show}
+        format.widget { render :action => :show, :layout => "widgets/contacts"}
         format.js
       end
     else
@@ -271,10 +271,13 @@ protected
     end
 
     def fetch_contacts
+       unless cookies[:contacts_sort]
+          cookies[:contacts_sort] = 'verified'
+       end
        connection_to_be_used =  params[:format].eql?("xml") ? "run_on_slave" : "run_on_master"  
        begin
          @contacts =   Sharding.send(connection_to_be_used.to_sym) do
-          scoper.filter(params[:letter], params[:page], params.fetch(:state, "verified"))
+          scoper.filter(params[:letter], params[:page],params.fetch(:state , cookies[:contacts_sort]))
         end
       rescue Exception => e
         @contacts = {:error => get_formatted_message(e)}

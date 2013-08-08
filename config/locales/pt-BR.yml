@@ -291,20 +291,12 @@ pt-BR:
     ca_response: 
       delete_confirm: "Tem certeza que deseja excluir esta resposta pronta?"
     canned_responses: 
-      edit: 
-        title: "Editar resposta padronizada"
       folders: 
         helpnote: 
           info1: "Respostas prontas são modelos pré-definidos que podem ser usados para enviar respostas rápidas aos bilhetes."
           info2: "Você pode usar espaços reservados em suas respostas prontas para preencher o conteúdo dinâmico com o nome do solicitante, identificação e URL do bilhete dentro da resposta."
           title: "Respostas prontas"
           tour: "Ajude-me a usar respostas prontas"
-      form: 
-        all_agents: "Todos os agentes"
-        available_for: "Disponível para"
-        groups: "Agentes no grupo"
-        me_only: "Somente eu"
-        response_name: "Título da resposta"
       helpnote: 
         info1: "Respostas prontas são modelos pré-definidos que podem ser usados para enviar respostas rápidas aos bilhetes."
         info2: "Você pode usar espaços reservados em suas respostas prontas para preencher o conteúdo dinâmico com o nome do solicitante, identificação e URL do bilhete dentro da resposta. "
@@ -313,9 +305,6 @@ pt-BR:
       index: 
         new: "Adicionar resposta padronizada"
         title: "Respostas padronizadas"
-      new: 
-        delete_confirm: "Tem certeza de que deseja excluir esta resposta padronizada?"
-        title: "Adicionar resposta padronizada"
       responses: 
         edit: 
           title: "Edite as respostas prontas"
@@ -412,14 +401,10 @@ pt-BR:
         agent_sub_title: "Convide sua equipe para o Freshdesk"
         agent_title: "Sentindo-se sozinho?"
         agent_title_info: "Adicionar os e-mails dos membros de sua equipe para convidá-los para o Freshdesk. Separe os e-mails por vírgula."
-        agents_sub_title: "Convide seus agentes de atendimento"
         agents_subtitle: "Convide seu time para se juntar a diversão"
-        agents_title: Operadores
         agents_title_1: "Adicionando<br> Agentes"
-        agents_title_info: "Convide seus agentes a usar o FreshDesk, separe cada endereço  de e-mail com uma vírgula"
         back_link: Voltar
         config-support-email-address: "Configure seu endereço de email de suporte"
-        congrats: "Parabéns! Seu helpdesk está pronto."
         congratulations: "Parabéns! Seu Freshdesk está pronto!"
         email_config_field_title: "Seu endereço de email de suporte"
         email_config_sub_title: "Permita que o Freshdesk lide com seus emails de suporte!"
@@ -429,12 +414,10 @@ pt-BR:
         email_sent_success: "Email enviado com êxito."
         emails_invalid: "Um ou mais critérios de seus emails é inválido."
         footer_msg: "<strong>Nota:<strong> Você pode mudar estas configurações a qualquer momento indo para <a href='/admin/home' target='_blank' style='text-decoration:none; color:#1272DE'> na guia Administrador </a>"
-        helpdesk_preview: "Visão Geral"
         helpdesk_preview_text: Visualizar
         implement_changes: "Implementando as alterações..."
         info: "Você precisará criar uma regra simples em sua caixa de e-mail de suporte para enviar e-mails para este endereço."
         info2: "Não está satisfeito com isso? Digite um novo email e clique em \"Salvar\""
-        next_alt_link: "Voltar ao Suporte"
         next_alt_text: "Venha para cá!"
         next_link: Próximo
         next_please_wait: "Por favor, aguarde..."
@@ -447,74 +430,56 @@ pt-BR:
         rebrand_color_tabs: Guias
         rebrand_company_field_placeholder: "Digite o nome da empresa"
         rebrand_company_label: "Nome da empresa"
-        rebrand_header: "Seu nome de atendimento e Logo"
         rebrand_header_empty: "O código da cor do cabeçalho é necessário."
         rebrand_header_invalid: "O código da cor do cabeçalho é inválido."
         rebrand_paint_title: "Pinte seu Helpdesk"
-        rebrand_sub_title: "Logo &amp; cores"
         rebrand_submit_label: Personalize
         rebrand_subtitle: "Customize com sua logo e cores!"
         rebrand_tab_empty: "O código da cor da guia é necessário."
         rebrand_tab_invalid: "O código da cor da guia é inválido."
         rebrand_title: "Logomarca<br> & Cores"
         rebranding_header: "Coloque um nome charmoso para o seu helpdesk"
-        save: Alterar
         save-and-next: "Salvar e Ir para o próximo"
         save_text: Salvar
         send_invite: "Enviar convite"
         send_test_mail_info2: "Aqui está <a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>como você pode fazer</a>."
         send_verification_email: "Enviar verificação por e-mail"
         sending_test_mail_progress: "Enviando email de teste, favor aguardar..."
-        skip_link: "Ignorar e ir para seu atendimento"
         skip_text: "Não obrigado, quero ir direto para o helpdesk."
         social_add_account: "Adicionar Conta"
         social_facebook: Facebook
         social_facebook_add: "Adicionar Página"
-        social_info: "Leve o seu Help Desk para o Facebook, Twitter, suas comunidades e praticamente todos os lugares que seus Clientes vão"
         social_info_text: "Adicionar suas ontas do Facebook e do Twitter para começar a monitorar todas as suas interações sociais, e traga as publicações do mural, os tweets, DMs e mensagens para o Freshdesk."
-        social_sub_title: "Comece a oferecer suporte aos clientes no twitter e no facebook"
         social_subtitle: "Torne seu atendimento ao cliente social!"
-        social_title: "Go Social?"
         social_title_1: "Começando<br> o Social"
         social_twitter: Twitter
         social_twitter_add: "Adicionar Conta"
         sub_title: "Aqui há várias coisas para ajudá-lo a começar"
         successfully_sent: "Enviado com sucesso."
         successfully_updated: "Atualizado com sucesso"
-        support_email_sub_msg: "Seu e-mail de suporte é necessário para que o helpdesk funcione adequadamente."
-        support_email_sub_title: "Informe seu email de suporte."
         support_email_submsg: "Este também será o endereço de resposta padrão quando você responder a pesquisas <br> do Freshdesk."
         support_email_subtitle: "Adicionar seu endereço de e-mail de suporte principal"
         support_email_title: "Suporte<br> e-mail"
         title: "Legal! Parece que sua assistência técnica está pronta para atender..."
         title1: "Agora vamos colocar aqueles emails no Freshdesk"
         title_message: "Inicie o atendimento a seus clientes em apenas 4 passos..."
-        title_msg: "Preencha apenas alguns dados para iniciar. (opcional)"
         updating: Atualizando...
         validating: Validando...
       send_mail_content: 
         button_again_title: "...ou Envie um e-mail de teste novamente"
         button_sending: Enviando...
         button_title: "Enviar um email de teste"
-        info: "Você precisa redirecionar uma cópia dos seus e-mails de suporte para o endereço de e-mail informado abaixo:"
-        note: "<strong>Nota:</strong> Para o FreshDesk a converter e-mails recebidos para bilhetes você deve configurar uma regra de encaminhamento no servidor de correio."
         send_test_mail_confirm_no: "Não, não consigo ver nenhum ticket."
         send_test_mail_confirm_yes: "Sim, consegui."
         send_test_mail_info1: "Certifique-se de ter configurado seus emails para encaminhar para <b> %{to_email} </b>."
-        send_test_mail_info2: "(Learn How)"
         send_test_mail_info3: "Se você acha que está tudo certo até agora, tente enviar um e-mail de teste.<br>%{send_test_mail_link}"
         send_test_mail_link_title: "sending a test email"
-        send_test_mail_response1: "Enviamos um email de teste para  <b><span id=reply_email_1>%%{reply_email}</span></b>. Se correr tudo bem, você verá o <a href=\"/helpdesk/tickets\" target=\"_blank\">novo ticket</a> na exibição dos tickets."
         send_test_mail_response_1: "Enviamos um e-mail teste para <b><span id=reply_email_1>%{reply_email}</span></b>. Se tudo correu bem, você verá um novo ticket em seu help desk. <a href=\"/helpdesk/tickets\" target=\"_blank\">Verifique se há </a>. "
         send_test_mail_response_no1: "Parece haver um problema ->"
         send_test_mail_response_no2: "Saiba mais"
-        send_test_mail_response_no3: "</strong> Que chato! Parece ser um problema lá!<strong><br>Se você não recebeu o e-mail em sua caixa de entrada, aguarde alguns minutos. Se o problema persistir, <a href=\"https://support.freshdesk.com/\" target=\"_blank\"> deixe-nos saber </a>."
         send_test_mail_response_no_3: "<strong>Que chato! Parece que há um problema!</strong><br>Verifique sua regra de encaminhamento para certificar-se que tudo está ok. Se você não receber um ticket de teste dentro de alguns minutos, <a href=\"https://support.freshdesk.com/\" target=\"_blank\">entre em contato conosco</a>."
-        send_test_mail_response_yes: "Parabéns! Você conectou com sucesso seu email de suporte com seu portal de assistência técnica. Feliz suporte!"
         send_test_mail_yes_response: "Bom trabalho! Você configurou com sucesso seu e-mail de suporte para trabalhar com Freshdesk. Bom Suporte!"
-        test_info1: "Se você acha que tudo está caminhando bem até o momento, envie um email de teste"
         test_info_1: "Acho que tudo parece ok até agora? Tente enviar um e-mail de teste."
-        title: "Seu e-mail de redirecionamento:"
     home: 
       index: 
         account: Conta
@@ -586,10 +551,8 @@ pt-BR:
         product_name: "Nome do Produto"
         product_support_emails: "E-mails de suporte do produto"
       helpnote: 
-        content: "Variados produtos permitem que você ofereça o suporte especializado para o produto ou marca."
         content1: "Você pode apoiar vários produtos com diferentes portais de marca com uma única conta FreshDesk. Configure e-mails de suporte separados para cada produto e coloque-os automaticamente em um grupo específico."
         content2: "Se você optar por configurar um portal independente de marca para produto, você pode fornecer um conjunto único de artigos do Knowledge Base (Base de Conhecimento) e fóruns para cada marca."
-        heading: "Multíplos Produtos"
         heading1: "Vários produtos"
         heading2: "Configurando um portal separado para cada produto"
         tour: "Ajude-me a apoiar múltiplos produtos"
@@ -688,11 +651,6 @@ pt-BR:
         help_title: Supervisor
         tour: "Ajude-me a criar uma nova regra ao supervisor"
       index: 
-        help_info_1: "Use o supervisor para verificar periodicamente os tickets recentes e realizar determinadas atividades baseadas no tempo, como por exemplo: lembretes para clientes, escalar tickets ou reatribuir tickets, etc."
-        help_info_2: "Por exemplo - Se um ticket estiver aguardando a resposta de um cliente há mais de 24 horas, envie um email de lembrete para o cliente ou feche automaticamente o ticket que está com status \"Resolvido\" há mais de 48 horas."
-        help_info_3: "O Supervisor será executado a cada 1 hora e processará os tickets que foram atualizados nos últimos 30 dias."
-        help_info_4: "As regras do supervisor são processadas sequencialmente, portanto, a ordem das regras é importante. Uma regra pode causar determinadas ações que acionam regras subsequentes."
-        help_title: Supervisor
         title: "Supervisor - Regras"
       new: 
         title: "Supervisor - Nova Regra"
@@ -774,7 +732,6 @@ pt-BR:
       info1: "A lista mostra todos os Agentes adicionados no seu help desk. Você pode editar permissões e direitos de acesso de um agente existente passando o mouse sobre o agente e clicando em \"Editar\". Você pode adicionar novos agentes, clicando no botão \"Novo Agente\"."
       info2: "Quando adicionar um novo agente, você terá que fornecer o e-mail do agente, definir seus níveis de permissão e de acesso (tempo integral ou ocasional). O agente receberá um e-mail com um link de confirmação para ativar sua conta, após o qual pode ser atribuído, ou respondido aos tickets."
       info3: "Administradores também podem editar o perfil de um agente para incluir o cargo do agente, telefone, foto do perfil, assinatura, etc."
-      side_title: "Adicionando Agentes e Editando Detalhes"
       tour: "Ajude-me a adicionar novos agentes"
     individual: "Agente (Acesso restrito)"
     individual_info: "Só podem visualizar os tickets atribuídos a eles"
@@ -856,7 +813,6 @@ pt-BR:
   automations: 
     available_placeholders: Marcadores
     helptext: "Cenários Automatizados permitem realizar muitas atualizações para o bilhete com um único clique. Vão ajudá-los a lidar com cenários recorrentes. Você poderia criar um cenário para 'Marcar um bilhete como um erro', 'Atribuir para a equipe de QA' e enviar um e-mail para o gerente de produto para que você possa processar erros dos clientes"
-    info1: "Cada helpdesk possui um conjunto de cenários comuns recorrentes - Ex: Escale para o Nível 2, encaminhe para as Perguntas e Respostas , encaminhe para o departamento de vendas etc. Esses cenários geralmente realizam várias atualizações no ticket"
     info2: "Por exemplo, antes de atribuir um ticket para as Perguntas e Respostas, você precisa definir o tipo como Erro/Bug, atribuir pra o grupo Perguntas e Respostas e enviar um email para o gerente do setor sobre esse novo Erro/Bug."
     info3: "A Automação de Cenários permite automatizar estas ações com um unico click"
     info4: "Selecione os espaços reservados abaixo para adicionar o conteúdo do email para então serem convertidos adequadamente"
@@ -974,7 +930,6 @@ pt-BR:
   choose_plan_trial: "Nota: Sua conta será desativada após o período de avaliação. <br /> Para continuar usando o Freshdesk, por favor, escolha um plano abaixo."
   clear: Limpar
   clear_draft_text: "Apagar o rascunho salvo?"
-  click_select_action: "Clique para selecionar a ação"
   click_to_change_sort_order: "Clique para alterar a ordem de classificação"
   click_to_select_filter: "Clique para selecionar um filtro"
   close: Fechar
@@ -1006,13 +961,11 @@ pt-BR:
     title2: empresa?
   company_name: "Nome da Empresa"
   confirm: Confirme
+  confirm_delete_message: "Você tem certeza que deseja excluir %{human_name}?"
   connect_ticket: "Vincular a ticket"
   contact_name: "Nome de contato"
   contacts: 
     activation: "Envio Ativado"
-    active: 
-      no_contacts: "Você não tem nenhum contato adicionado a lista."
-      no_contacts_with_letter: "Você não tem nenhum contato ativo com a letra '%{alphabet}'"
     add_new_requester: "Adicionar Novo Solicitante"
     add_new_user: "Incluir um novo usuário"
     blocked_message: "Este é um contato bloqueado."
@@ -1055,7 +1008,6 @@ pt-BR:
     showing: "Exibindo:"
     spam_message: "Este é um contato spam."
     status: 
-      active: Ativo
       all: Todos
       blocked: Bloqueado
       deleted: Removido
@@ -1142,8 +1094,6 @@ pt-BR:
     info1: "Inscrição para tickets relacionados"
     info2: "Todas as inscrições de tickets relacionados serão atribuídas para Jefferson"
     info3: "Quando essa regra deve ser aplicada"
-    info4: "Dispatch'r vai automaticamente enviar um novo ticket com base nas regras e ações definidas"
-    info5: "Lembre-se, a ordem das regras são importantes.Para cada Ticket novo, Dispatch'r vai executar a primeira regra aplicável e parar"
     match_all: "Combinar todas"
     match_any: "Combinar qualquer"
     new: "Dispatch'r - Nova Regra"
@@ -1167,6 +1117,7 @@ pt-BR:
   dropbox_attach_from: "Anexar do Dropbox"
   dropbox_attach_label: "Anexar de"
   dropbox_choose_file: "Selecione um arquivo"
+  dropbox_plaintext: "Anexos do Dropbox"
   due_in: "Vencimento em %{time_words}"
   due_next_eight: "Próximas 8 horas"
   due_today: Hoje
@@ -1241,7 +1192,6 @@ pt-BR:
     info2: "Você deve encaminhar seus emails de suporte para um unico endereço de email"
     info3: "O Freshdesk vai capturar os emails e converte-los em Tickets"
     info4: "<strong>Obs:</strong> Se você tiver vários endereços de email para operar múltiplos produtos/serviços, <a href='{{products_path}}'>poderá adicioná-los aqui</a>."
-    info5: "Respondendo os emails do Freshdesk, automaticamente estará usando a conta original de email como Remetente"
     info7: "Esse também é o seu email para respostas (Por exemplo: suporte@freshdesk.com.br)"
     info8: "Encaminhe seus emails para"
     info9: "Atribuir para o grupo"
@@ -1375,6 +1325,7 @@ pt-BR:
     group_id: Grupos
     mygroups: "Meus Grupos"
     priority: Prioridade
+    products: Produtos
     requester: Solicitantes
     responder_id: Agentes
     source: Fontes
@@ -1614,10 +1565,7 @@ pt-BR:
       answer: Resposta
       delete_comment: "Excluir comentário"
       delete_comment_confirm: "Excluir este comentário? Está certo disso?"
-      delete_post: "Excluir postagem"
-      delete_post_confirm: "Excluir esta postagem?  Tem certeza?"
       edit_comment: "Editar Comentário"
-      edit_post: "Editar postagem"
       mark_answer: "Marque este post como a resposta"
       post_accepted_as_a_good_answer: "Esta postagem foi aceita como uma boa resposta a este tópico"
       posted_on: "%{user_name} em %{post_date}"
@@ -1706,6 +1654,7 @@ pt-BR:
   garden_details: "Todas as funcionalidades do Plano &quot;Blossom&quot; mais: Suporte a múltiplos produtos, Relatórios Avançados, Acesso à Comunidade, Suporte por Email e Telefone"
   go_back: Voltar
   go_back_admin: "Voltar para a Administração"
+  go_back_small: voltar
   greater_than: "Maior que"
   group: 
     assigntime: 
@@ -2497,6 +2446,7 @@ pt-BR:
   next_charge_amount: "%{type} custa:"
   next_charge_date: "Próxima Renovação"
   next_level_info: "+%{points} para virar%{name}"
+  no_agents_in_selected_group: "Não existem agentes no grupo selecionado"
   no_anonymous_tickets: "Para enviar um ticket, <a href={{signup}}><b>Cadastre-se</b></a> como um novo usuário ou <a href={{login}}><b>Faça o Login</b></a>."
   no_badge_achieved_label: "Nenhum level alcançado ainda."
   no_change: "Nenhuma alteração"
@@ -2537,6 +2487,8 @@ pt-BR:
   payment_info: "Informações de pagamento"
   pending: Pendente
   phone: Telefone
+  plain_no: Não
+  plain_yes: Sim
   plan_amount: "por agente/mês"
   plan_info_update: "Seu plano foi alterado"
   plan_is_selected: "Seu conta agora está ativa com o plano %{plan}"
@@ -2544,9 +2496,14 @@ pt-BR:
   plans_billing: "Planos e Pagamentos"
   please_wait: "Por favor, aguarde..."
   portal: 
+    attach_file: "Anexar <b>arquivo</b>"
     article: 
+      modified_on: "Modificado em"
+      more_articles: "Mais artigos em <span class='folder-name'>%{article_name}</span>"
       see_all_articles: "Ver todos os %{count} artigos"
     community_forums: "Fóruns da comunidade"
+    cookie: 
+      cookie_policy: "Política de Privacidade"
     folder: 
       filler_text: "Acompanhar este espaço para artigos relacionados à(ao) %{folder_name}"
     header: 
@@ -2579,7 +2536,7 @@ pt-BR:
     showing_recently_popular_topics: "Exibindo tópicos populares mais recentes"
     signup: Registrar
     solutions_home: "Página inicial de soluções"
-    submit_new_ticket: "ou Envie um novo ticket"
+    submit_new_ticket: "ou então"
     tickets: 
       add_or_remove_emails: "Adicionar ou remover e-mails que precisem ser copiados quando uma notificação for enviada para este ticket."
       add_people: "Adicionar pessoas"
@@ -2786,7 +2743,6 @@ pt-BR:
   replies: respostas
   reply: responder
   reply_comment: "Adicionar Comentário"
-  reply_topic: "Responder o Tópico"
   reported_by: "Reportado por "
   reports: 
     customer_activity_title: "Relatórios de atividades"
@@ -2956,50 +2912,34 @@ pt-BR:
     edit: "Editar a Política de SLA"
     escalate: "O que acontece quando este SLA for violado?"
     escalate_after: Escalar
-    escalate_to: "Escalado para"
     escalation_email: "E-mail de escalação"
-    escalation_resolution: "Definir Hierarquia de Escalação quando um ticket não for <b>resolvido</b> em tempo hábil"
     escalation_resolution_text: "Definir a Hierarquia de Escalação quando um ticket não for <b>resolvido</b> em tempo"
-    escalation_response: "Definir Regras de Escalação quando um ticket não for <b>respondido</b> em tempo hábil"
     escalation_response_text: "Definir Regra de Escalação quando um ticket não for <b>respondido</b> em tempo"
     group_id_placeholder: "Digite os Nomes dos Grupos"
     helpcard: 
-      info1: "<p>Uma política de acordo de nível de serviço (SLA) permite definir padrões de desempenho para sua equipe de suporte. Você pode definir políticas de SLA para o tempo em que os agentes devem responder e resolver os tickets com base nas prioridades dos tickets. Você pode escolher se quer que cada regra de SLA seja calculada sobre as horas do calendário ou sobre as horas de trabalho.</p> <p>Suas Políticas de SLA serão usadas no Freshdesk para determinar o vencimento de cada ticket.</p>"
-      info2: "<p>Você pode, opcionalmente, definir hierarquias de escalação para cada política para notificar agentes específicos quando uma regra de SLA for violada.</p>"
-      info3: "<p>Você pode ter uma política de SLA padrão para todos os clientes, ou pode ter múltiplas políticas de SLA para diferentes níveis de clientes, como para aqueles que assinaram seu pacote de Suporte Premium.</p><p>Quando você adicionar Políticas de SLA adicionais (outras que não a política padrão), você terá que especificar as condições as quais esta política será aplicada.</p>"
       info_1: "<p>Uma política de acordo de nível de serviço (SLA) permite definir padrões de desempenho para sua equipe de suporte. Você pode definir políticas de SLA para o tempo em que os agentes devem responder e resolver tickets com base nas prioridades dos tickets. Você pode escolher se quer que cada regra de SLA seja calculada sobre as horas do calendário ou sobre as horas de trabalho.</p> <p> Suas Políticas de SLA será usadas no Freshdesk para determinar o vencimento da cada ticket.</p>"
-      info_2: |-
-          <p>Você pode ter múltiplas políticas SLA, desencadeadas por condições específicas como o cliente que solicitou o ticket, o grupo para o qual este está designado, sua fonte e/ou produto.</p><p>Por exemplo, você pode ter definido uma política de SLA específica para os tickets vindos do Twitter e designado para a equipe de Vendas. Ou pode ter uma política especial para clientes que têm assinatura prioritária com você. Se você está oferecendo suporte à várias marcas ou produtos, você também pode ter um fluxo de SLA para cada produto.</p>
-          <p><strong>A ordem de suas regras de SLA é importante.</strong>A primeira regra de SLA que corresponde a todas as condições para um ticket será aplicada a ele. Desta forma, lembre-se de manter suas regras importantes próximas à parte superior</p>
       info_3: "<p>Você pode, opcionalmente, definir hierarquias de escalação para cada política para notificar agentes específicos quando uma regras de SLA for violada.</p>"
       sla_info_2: |-
           <p>Você pode ter múltiplas políticas de SLA, desencadeadas por condições específicas como o cliente que solicitou o ticket, o grupo para o qual este está designado, sua fonte e/ou produto.</p><p>Por exemplo, você pode ter definido uma política de SLA específica para os tickets vindos do Twitter e atribuídos à equipe de Vendas. Ou pode ter uma política especial para clientes que têm assinaturas prioritárias com você. Se você está oferecendo suporte à várias marcas ou produtos, você também pode ter um fluxo de SLA para cada produto.</p>
           <p><strong>A ordem de suas políticas de SLA é importante.</strong> A primeira Política de SLA que corresponde a todas as condições para um ticket será aplicada a ele. Desta forma, lembre-se de manter suas regras importantes próximas à parte superior</p>
       title: "Política de SLA"
-      title1: "Aplicando Regras de Escalação"
-      title2: "Utilizando Múltiplas Políticas de SLA"
       title_1: "Utilizando Múltiplas Políticas de SLA"
       title_2: "Aplicando Regras de Escalação"
       tour: "Me ajude a criar uma política de SLA"
-    info1: "Política de SLA é um conjunto de tempos de resposta e solução com base na prioridade do ticket. É uma prática recomendada pelas indústrias para definir níveis de serviço com base na prioridade. Sua política de SLA pode ser tão simples como dizer \"tickets com alta prioridade devem ser resolvidos em 2 horas\" etc."
-    info2: "O Freshdesk usa a política de SLA para determinar o “Vencimento” dos tickets. Você pode ter uma política de SLA padrão para todos os seus clientes, mas caso tenha um cliente com um tempo diferente para a solução, você pode criar uma politica de SLA específica para este cliente."
     info3: "A Política de SLA funciona de acordo com o horário de trabalho da empresa."
     new: "Nova Política de SLA"
     op_hrs: "Hrs Operacionais"
     override: Substituir
     product_id_placeholder: "Digitar os nomes dos Produtos"
-    resolution_escalation: "Regras de escalação quando um ticket não for <b>resolvido</b> em tempo hábil"
     resolution_time: "Tempo de resolução"
     resolve_within: "Resolver em"
     respond_within: "Responder em"
-    response_escalation: "Regras de escalação quando um ticket não for <b>respondido</b> em tempo hábil"
     response_time: "Tempo de resposta"
     select_policy: "Selecione a Política"
     sla_targets: Metas
     sla_targets_details: "Defina os Alvos de Nível de Serviço para cada prioridade de ticket"
     source_placeholder: "Digite os nomes das Fontes"
     tickets_with: "Tickets com"
-    title: "Política de SLA"
     title1: "Políticas de SLA"
   social: 
     facebook_pages: 
@@ -3468,8 +3408,7 @@ pt-BR:
       level2: "Nível 2"
       level3: "Nível 3"
       nested_label: "Títulos dos campos identados"
-      nestedfield_helptext: "Utilize o campo abaixo para adicionar ou editar os itens para sua lista (dropdown). Faça identação dos itens pressionando TAB uma ou duas vezes. Converteremos para um item da lista (dropdown) baseado nesta identação. Faça com cuidado.\n\
-          <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>Saiba mais</a> "
+      nestedfield_helptext: "Utilize o campo abaixo para adicionar ou editar os itens para sua lista (dropdown). Faça identação dos itens pressionando TAB uma ou duas vezes. Converteremos para um item da lista (dropdown) baseado nesta identação. Faça com cuidado.<a target='_blank' href=%{learn_more}> Saiba mais</a> "
       nestedfield_helptext_preview: "Esta é a \"Visualização\" de como ficará a lista (dropdown). Utilize a caixa de texto no Modo Edição para editar os itens"
       sla_timer: "Tempo do SLA"
       status_choices: "Opções de status"
@@ -3489,6 +3428,9 @@ pt-BR:
     saving_ticket: "Salvando campos do ticket..."
     second_choice: "Segunda Opção"
     untitled: "Sem título"
+  ticket_form: 
+    your_email_address: email
+    your_name: "Seu Nome"
   ticket_future_due_by: "Vence em %{time}"
   ticket_past_due_by: "Venceu %{time} atrás"
   ticket_pending_since_time: "Pendente desde"
@@ -3541,7 +3483,6 @@ pt-BR:
     open: Reabrir
     post: "Postar no tópico"
     post_comment: Post
-    reply: "Responder esse tópico"
     sticky: "Tópico Fixo"
     update_comment: "Atualizar comentário"
   topics: 

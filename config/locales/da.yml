@@ -2331,7 +2331,7 @@ da:
       level2: "Niveau 2"
       level3: "Niveau 3"
       nested_label: "Indlejrede feltetiketter"
-      nestedfield_helptext: "Brug det nedenstående fritekstområde, til at tilføje eller redigere elementer til din dropdown, indryk elementer ved at trykke på tabulatortasten én eller to gange. Vi vil konvertere dem til dropdown elementer baseret på indrykning, så vær ekstra forsigtig. <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>Lær mere</a> "
+      nestedfield_helptext: "Brug det nedenstående fritekstområde, til at tilføje eller redigere elementer til din dropdown, indryk elementer ved at trykke på tabulatortasten én eller to gange. Vi vil konvertere dem til dropdown elementer baseret på indrykning, så vær ekstra forsigtig. <a target='_blank' href=%{learn_more}>Lær mere</a> "
       nestedfield_helptext_preview: "Dette er et \"Eksempel\" af prøve dropdown emner, brug fritekst området i \"Rediger visning\" til at redigere emnerne"
       sla_timer: "SLA timer"
       status_choices: "Valg for status"

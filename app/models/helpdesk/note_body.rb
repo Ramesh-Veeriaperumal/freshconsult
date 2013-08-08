@@ -12,7 +12,7 @@ class Helpdesk::NoteBody < ActiveRecord::Base
 	def load_full_text	
 		self.full_text ||= body unless body.blank? 
 		self.full_text_html ||= body_html unless body_html.blank?
-		if self.note && self.note.note? # for updating full_text contents if body_html is edited
+		if self.note && self.note.note? && !self.note.incoming  # for updating full_text content if body_html is edited
 			self.full_text = body unless body.blank?
 			self.full_text_html = body_html unless body_html.blank?
 		end

@@ -74,6 +74,8 @@ namespace :freshdesk_tire do
         klasses = ENV['CLASS'].split(';')
         klasses.each do |klass|
           ENV['CLASS'] = klass
+          index_alias = Search::EsIndexDefinition.searchable_aliases(Array(klass.partition('.').first.constantize), account.id).to_s
+          ENV['INDEX'] = index_alias
           Rake::Task["tire:import"].execute("CLASS='#{ENV['CLASS']}' INDEX=#{ENV['INDEX']}")
         end
       end
@@ -109,10 +111,9 @@ def init_es_indexing(es_account_ids)
     account.make_current
     if account.es_enabled_account.nil?
       account.enable_elastic_search
-      ENV['INDEX'] = account.search_index_name
       ENV['CLASS'] = import_classes(account_id, klasses)
       ENV['ACCOUNT_ID'] = account_id.to_s
-      Rake::Task["freshdesk_tire:multi_class_import"].execute("CLASS='#{ENV['CLASS']}' INDEX=#{ENV['INDEX']} ACCOUNT_ID=#{ENV['ACCOUNT_ID']}")
+      Rake::Task["freshdesk_tire:multi_class_import"].execute("CLASS='#{ENV['CLASS']}' ACCOUNT_ID=#{ENV['ACCOUNT_ID']}")
     else
       puts '='*100, ' '*10+"Index already exists for Account ID: #{account_id}. Please use reindex task for Account ID: #{account_id}", '='*100, ""
       existing_accounts.push(account_id)
@@ -131,12 +132,12 @@ def init_partial_reindex(es_account_ids)
     account = Account.find_by_id(account_id)
     next if account.nil?
     account.make_current
-    ENV['INDICES'] = account.search_index_name
     ENV['ACCOUNT_ID'] = account_id.to_s
     unless account.es_enabled_account.nil?
       if account.es_enabled?
         Search::RemoveFromIndex::AllDocuments.perform({ :account_id => account.id })
-        account.es_enabled_account.destroy
+        MemcacheKeys.delete_from_cache(ES_ENABLED_ACCOUNTS)
+        account.es_enabled_account.delete
         ENV['CLASS'] = ''
         Rake::Task["freshdesk_tire:create_index"].execute("ACCOUNT_ID=#{ENV['ACCOUNT_ID']}")
       else
@@ -150,7 +151,7 @@ def init_partial_reindex(es_account_ids)
 end
 
 def import_classes(id, klasses)
-  import_classes = klasses.blank? ? ['User', 'Helpdesk::Ticket', 'Solution::Article', 'Topic', 'Customer'] : klasses.split(',')
+  import_classes = klasses.blank? ? ['User', 'Helpdesk::Ticket', 'Solution::Article', 'Topic', 'Customer', 'Helpdesk::Note'] : klasses.split(',')
   import_classes.collect!{ |item| "#{item}#{import_condition(id, item)}" }.join(';')
 end
 
@@ -160,6 +161,8 @@ def import_condition(id, item)
     when "Helpdesk::Ticket" then
       condition = ".scoped(:conditions => ['account_id=? and updated_at<? and deleted=? and spam=?', #{id}, Time.now.utc, false, false])"
     when "User" then
+      condition = ".scoped(:conditions => ['account_id=? and updated_at<? and deleted=?', #{id}, Time.now.utc, false])"
+    when "Helpdesk::Note" then
       condition = ".scoped(:conditions => ['account_id=? and updated_at<? and deleted=?', #{id}, Time.now.utc, false])"
   end
   condition

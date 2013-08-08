@@ -8,8 +8,9 @@ class Customer < ActiveRecord::Base
   validates_presence_of :name,:account
   validates_uniqueness_of :name, :scope => :account_id , :case_sensitive => false
   attr_accessible :name,:description,:note,:domains ,:sla_policy_id, :import_id
+  attr_accessor :highlight_name
   
-  belongs_to :account
+  belongs_to_account
   
   has_many :users , :class_name =>'User' ,:conditions =>{:deleted =>false} , :dependent => :nullify , :order => :name
   
@@ -23,9 +24,9 @@ class Customer < ActiveRecord::Base
     { :conditions => [ "domains like ?", "%#{domain}%" ] } if domain
   }
 
-  after_commit_on_create :map_contacts_to_customers, :clear_cache, :update_es_index
-  after_commit_on_destroy :clear_cache, :remove_es_document
-  after_commit_on_update :clear_cache, :update_es_index
+  after_commit_on_create :map_contacts_to_customers, :clear_cache
+  after_commit_on_destroy :clear_cache
+  after_commit_on_update :clear_cache
   after_update :map_contacts_on_update, :if => :domains_changed?
    
   #Sphinx configuration starts

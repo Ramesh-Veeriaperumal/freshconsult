@@ -11,16 +11,21 @@ class Helpdesk::ConversationsController < ApplicationController
   include Conversations::Facebook
   include Helpdesk::Activities
   
-  before_filter :build_note_body_attributes, :build_conversation
+  before_filter :build_note_body_attributes, :build_conversation, :sanitize_conversation
   before_filter :validate_fwd_to_email, :only => [:forward]
   before_filter :check_for_kbase_email, :set_quoted_text, :only => [:reply]
   before_filter :set_default_source, :set_mobile, :prepare_mobile_note,
     :fetch_item_attachments
   before_filter :set_ticket_status, :except => :forward
+
+  TICKET_REDIRECT_MAPPINGS = {
+    "helpdesk_ticket_index" => "/helpdesk/tickets"
+  }
     
   def reply
     build_attachments @item, :helpdesk_note
     @item.send_survey = params[:send_survey]
+    @item.include_surveymonkey_link = params[:include_surveymonkey_link]
     if @item.save
       add_forum_post if params[:post_forums]
       begin
@@ -28,6 +33,7 @@ class Helpdesk::ConversationsController < ApplicationController
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end
+      flash[:notice] = t(:'flash.tickets.reply.success')
       process_and_redirect
     else
       create_error
@@ -38,7 +44,7 @@ class Helpdesk::ConversationsController < ApplicationController
     build_attachments @item, :helpdesk_note
     if @item.save
       add_forum_post if params[:post_forums]
-      @item.create_fwd_note_activity(params[:helpdesk_note][:to_emails])
+      flash[:notice] = t(:'fwd_success_msg')
       process_and_redirect
     else
       create_error
@@ -133,9 +139,10 @@ class Helpdesk::ConversationsController < ApplicationController
       Thread.current[:notifications] = current_account.email_notifications
       options = {}
       options.merge!({:human=>true}) if(!params[:human].blank? && params[:human].to_s.eql?("true"))  #to avoid unneccesary queries to users
-      
+      url_redirect = params[:redirect_to].present? ? TICKET_REDIRECT_MAPPINGS[params[:redirect_to]] : item_url
+
       respond_to do |format|
-        format.html { redirect_to params[:redirect_to].present? ? params[:redirect_to] : item_url }
+        format.html { redirect_to url_redirect }
         format.xml  { render :xml => @item.to_xml(options), :status => :created, :location => url_for(@item) }
         format.json { render :json => @item.to_json(options) }
         format.js { 
@@ -184,5 +191,12 @@ class Helpdesk::ConversationsController < ApplicationController
           activity_records = @parent.activities.activity_since(params[:since_id])
           @activities = stacked_activities(activity_records.reverse)
         end
+      end
+
+      def sanitize_conversation
+        Rails.logger.debug "::::::sanitize conversation start"
+        @item.note_body.load_full_text
+        @item.note_body.create_content
+        Rails.logger.debug "::::::sanitize conversation end"
       end
 end

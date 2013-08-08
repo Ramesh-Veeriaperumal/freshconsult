@@ -9,10 +9,6 @@ class Widgets::FeedbackWidgetsController < SupportController
 
     @ticket_fields = current_portal.customer_editable_ticket_fields
     @ticket_fields_def_pos = ["default_requester", "default_subject", "default_description"]
-
-    @js_options = {
-      :formTitle => params[:formTitle] || t('feedbackwidget_defaulttitle')
-    }
        
     # @ticket_fields_def_pos.reverse.each_with_index do |tf_field, new_pos|
     #   old_pos = @ticket_fields.map(&:field_type).index(tf_field)

@@ -3,7 +3,7 @@
  */
 
 function postProcessCondition(filter, id){
-	if (filter && filter.domtype === 'autocompelete'){
+	if(filter && filter.domtype === 'autocompelete'){
 		new bsn.AutoSuggest(id, {
 			script: filter.data_url+"?",
 			varname: "v",
@@ -17,9 +17,9 @@ function postProcessCondition(filter, id){
 			delay:200
 		});
 		Form.Element.activate(id);
-		jQuery("#"+id).trigger("blur");
+		jQuery("#"+id).trigger("blur");		
 	}
-}
+};
 
 var preProcessCondition = function(types, list){
 	types = $H(types);
@@ -34,10 +34,41 @@ var preProcessCondition = function(types, list){
 	return types;
 };
 
+function getFilterInOptgroupFormat(filter){
+	var _filter_group = [], _filter_children = []
+	jQuery.each(filter, function(i, item){
+		if(i == 0){
+			_filter_group.push([item.name, item.value])
+			return
+		}
+		if(item.name == -1 || i == filter.length){
+			_filter_group.push(["------------------", _filter_children])
+			_filter_children = []
+		}else{
+			_filter_children.push([item.name, item.value])
+		} 
+	});
+	_filter_group.push(["------------------", _filter_children]);
+	return _filter_group;
+};
+
+function disableOtherSelectValue(item, container){
+	var $this = jQuery(item.element[0]).parent(),
+			target_name = { from : 'to', to : 'from' }[$this.prop('name')],
+			target = $this.siblings('select[name="'+target_name+'"]').find("option:selected")
+			target_value = target.val();
+			target_text = target.text();
+			
+	if(target_text == item.text && target_value != '--') jQuery(container).hide()
+
+	return item.text
+};
+
+
 // Base rule function for managing multiple rule based UI components
 // used in Virtual Agents [filters and actions], Senario automation
 
-rules_filter = function(_name, filter_data, parentDom, options){
+rules_filter = function(_name, filter_data, parentDom, options){ 
 	var setting = {
 			init_feed	       : [],
 			add_dom		       : ".addchoice",
@@ -51,7 +82,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			change_filter_data : function(_filter_data){return _filter_data}
 		};
 	if ( options ) jQuery.extend( setting, options );
-	
+
 	// Setting initial data elements	
 	var hg_data			= $H(),
 		operator_types	= setting.operators,
@@ -86,8 +117,8 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				var inner = jQuery("<div class='controls' />");
 				var outer = jQuery("<fieldset />")
 								.append("<input type=\"hidden\" name=\""+name+"\" value=\"start\" />")
-								.append("<span class='sort_handle'></span>")
 								.append("<img class=\"delete\" src=\"/images/delete.png\" />")
+								.append("<span class='sort_handle'></span>")
 								.append(inner)
 								.append("<input type=\"hidden\" name=\""+name+"\" value=\"end\" />");
 				jQuery.data(outer, "inner", inner);
@@ -99,16 +130,15 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				// Adding a new Filter DOM element to the Filter Container
 				var r_dom = domUtil.getContainer(name);
 				var filterList = [];
-				if(setting.delete_last) {
+				if(setting.delete_last){
 					var selected_quest = jQuery("input[name=quest[category]]:checked").val();
 					//var criteria_list = quest_criteria_types[selected_quest];
 					filterList = setting.change_filter_data(filter_data[0][setting.selectListArr[selected_quest]]);
 				} else {
 					filterList = filter_data;
 				}
-
 				jQuery.data(r_dom, "inner")
-					  .append(FactoryUI.dropdown(filterList, "name", "ruCls_"+name))
+					  .append(FactoryUI.optgroup(getFilterInOptgroupFormat(filterList), "name", "ruCls_"+name+' select2', {'minimumResultsForSearch':'10'}).data('dropdownCssClass', "align_options"))
 					  .append("<div />");
 
 				list_C = jQuery(parentDom).find(setting.rule_dom);
@@ -119,36 +149,58 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			},
 		// Used to Edit pre-population
       feed_data:
+
          function(dataFeed){	
             dataFeed.each(function(rule){            	
-              try{
+             try{
                   var r_dom	= domUtil.getContainer(name);
-                  var inner	= jQuery("<div />");
+                  var inner	= jQuery("<div class = 'dependent' />");
                   var data_id = rule.name + itemManager.get();
 
                   if(rule.operator){	
                   	try{
                      	opType = hg_data.get(rule.name).operatortype;
-                     	inner.append(FactoryUI.dropdown(operator_types.get(opType), "operator").val(rule.operator));
+                     	inner.append(FactoryUI.dropdown(operator_types.get(opType), "operator", 'operator select2', {'minimumResultsForSearch':'10'}).val(rule.operator));
                     }catch(e){}
                   }	
-                  if(rule.name == "set_nested_fields")
+                  if(rule.name == "set_nested_fields"){
                   	rule.name = rule.category_name;
+                  }
 
+                  if(name == "event"){
+	                  switch (hg_data.get(rule.name).type)
+	                  {
+	                 	case 1:
+	                  	if(hg_data.get(rule.name).valuelabel)
+                  			inner.append(FactoryUI.label(hg_data.get(rule.name).valuelabel, 'fromto_text'));	
 
-                  inner.append(conditional_dom(hg_data.get(rule.name), data_id, name, rule));
+	                  	inner.append(conditional_dom(hg_data.get(rule.name), data_id, name, rule, "value", 'select2 test_value_field ', {'minimumResultsForSearch':'10'}));
+	                  	break;
+	                  case 2:
+	                  	from_select = conditional_dom(hg_data.get(rule.name), data_id, name, rule, "from", 'select2 test_from_field', {'minimumResultsForSearch':'10', 'formatResult':disableOtherSelectValue});
+	                  	to_select = conditional_dom(hg_data.get(rule.name), data_id, name, rule, "to", 'select2 test_to_field', {'minimumResultsForSearch':'10', 'formatResult':disableOtherSelectValue});
+	                  	
+	                  	inner.append(FactoryUI.label(event_lang['from'], 'fromto_text'))
+	                  				.append(from_select)
+                  					.append(FactoryUI.label(event_lang['to'], 'fromto_text'))
+                  					.append(to_select);
+		                  break;
+	                 	}
+                	}else{
+                		dom = conditional_dom(hg_data.get(rule.name), data_id, name, rule, "value", 'select2', {'minimumResultsForSearch':'10'});
+                  	inner.append(dom);
+                	}
 
 					var filterList = [];
-					if(setting.delete_last) {
+					if(setting.delete_last){
 						var selected_quest = jQuery("input[name=quest[category]]:checked").val();
 						//var criteria_list = quest_criteria_types[selected_quest];
 						filterList = setting.change_filter_data(filter_data[0][setting.selectListArr[selected_quest]]);
 					} else {
 						filterList = filter_data;
 					}
-
                   jQuery.data(r_dom, "inner")
-                     .append(FactoryUI.dropdown(filterList, "name", "ruCls_"+name).val(rule.name))
+                     .append(FactoryUI.optgroup(getFilterInOptgroupFormat(filterList), "name", "ruCls_"+name+' select2', {'minimumResultsForSearch':'10'}).val(rule.name).data('dropdownCssClass', "align_options"))
                      .append(inner);	
 
                   list_C = jQuery(parentDom).find(setting.rule_dom);
@@ -161,7 +213,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 
         populateEmpty: 
         	function(){
-				jQuery(parentDom).find(setting.empty_dom).toggle(this.dom_size <= 1);
+				jQuery(parentDom).find(setting.empty_dom).toggle(this.dom_size < 1);
 		},
 
 		refresh_list:
@@ -185,17 +237,17 @@ rules_filter = function(_name, filter_data, parentDom, options){
 						if(!serialHash.get(name)) 
 							serialHash.set(name, $A());	
 							
-						if (item.value == 'start') {
+						if(item.value == 'start'){
 							tempConstruct = $H();
 							flag = true;
 						}
-						else if (item.value == 'end') {
+						else if (item.value == 'end'){
 						   if(tempConstruct.size())
 							   serialHash.get(name).push(tempConstruct.toObject());
 
 							flag = false;
 						}
-						else if(item.value != -1) { 
+						else if(item.value != -1){ 
 							tempConstruct.set(item.name, item.value);
 						}
 					}
@@ -216,7 +268,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			},
 		init: 
 			function(){
-
+				
 				filter_data.each(function(item){
 					if(item.value != undefined){
 						item.value = unescapeHtml(item.value)
@@ -248,11 +300,11 @@ rules_filter = function(_name, filter_data, parentDom, options){
 		get_size: (domUtil.dom_size - 1),
 		refresh_list: domUtil.refresh_list
 	};	 
-	
-	// Applying Events and on Window ready initialization	
+
+	// Applying Events, filters and actions on Window ready initialization	
 	// Init Constructor
 	function init(){			 
-			hidden_ = jQuery('<input type="hidden" name="'+name+'_data" value="" />')
+			hidden_ = jQuery('<input type="hidden" name="'+name+'_data' +'" value="" />')
 							.prependTo(parentDom);	
 
 			jQuery(parentDom)
@@ -260,35 +312,60 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				.sortable({ items: "fieldset", containment: "parent", tolerance: "pointer", handle:"span.sort_handle"});
 
 			jQuery(parentDom).parents('form:first').submit(function(e){
-			   domUtil.get_filter_list('json', this);
-			   //return false;
+			  domUtil.get_filter_list('json', this);
+			   // return false;
 			});
 
 			jQuery('.l_placeholder').live("click", function(ev){
+				ev.preventDefault()				
 				active_email_body = jQuery(this).prev();
 				jQuery('#place-dialog').slideDown();
 			});
 
 			// Binding Events to Containers
 			// Filter on change action 
+			
 			jQuery(parentDom+' .'+"ruCls_"+name)
 				.live("change", 
 						function(){ 
-							var rule_drop = jQuery(this).next().empty();
+							var rule_drop = jQuery(this).next().empty().addClass('dependent');
 
 							if(this.value !== -1){
 								var hg_item = hg_data.get(this.value);
 								var data_id = hg_item.name + itemManager.get();
 
-								if(hg_item.operatortype) {
-									rule_drop.append(FactoryUI.dropdown(operator_types.get(hg_item.operatortype), "operator"));
+								if(hg_item.operatortype){
+									rule_drop.append(FactoryUI.dropdown(operator_types.get(hg_item.operatortype), "operator", 'operator select2', {'minimumResultsForSearch':'10'}));
 								}
 
-								rule_drop.append(conditional_dom(hg_item, data_id, name));
+								if( name == "event"){
+                  switch (hg_item.type)
+                  {
+                 	case 1:
+                  	if(hg_item.valuelabel)
+              				rule_drop.append(FactoryUI.label(hg_item.valuelabel, 'fromto_text'));
+
+                  	rule_drop.append(conditional_dom(hg_item, data_id, name, {value:'--'}, "value", 'select2 test_value_field ', {'minimumResultsForSearch':'10'}));
+                  	break;
+                  case 2:
+                  	from_select = conditional_dom(hg_item, data_id, name, {from:'--'}, "from", 'select2 test_from_field', {'minimumResultsForSearch':'10', 'formatResult':disableOtherSelectValue});
+                  	to_select = conditional_dom(hg_item, data_id, name, {to:'--'}, "to", 'select2 test_to_field', {'minimumResultsForSearch':'10', 'formatResult':disableOtherSelectValue});
+
+                  	rule_drop.append(FactoryUI.label(event_lang['from'], 'fromto_text'))
+                							.append(from_select)
+                  						.append(FactoryUI.label(event_lang['to'], 'fromto_text'))
+                  						.append(to_select);
+                  	break;
+                 	}
+                }else{
+                	dom = conditional_dom(hg_item, data_id, name, null, "value", 'select2', {'minimumResultsForSearch':'10'} )
+                  rule_drop.append(dom);
+                }
 								postProcessCondition(hg_item, data_id);
 							}
 						});
-				
+
+			
 			jQuery(parentDom).find('select, :text')
 				.live("change",function(){
 					var formObj = jQuery(parentDom).parents('form:first');
@@ -319,3 +396,4 @@ rules_filter = function(_name, filter_data, parentDom, options){
 
 		return pub_Methods;
 	};
+

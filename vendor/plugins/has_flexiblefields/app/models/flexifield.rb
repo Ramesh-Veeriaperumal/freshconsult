@@ -7,6 +7,7 @@ class Flexifield < ActiveRecord::Base
 
   belongs_to :flexifield_set, :polymorphic => true
   belongs_to :flexifield_def, :include => 'flexifield_def_entries'
+
   # xss_terminate
   
   delegate :to_ff_alias, :to_ff_field, :ff_aliases, :ff_fields, :to => :flexifield_def
@@ -24,8 +25,9 @@ class Flexifield < ActiveRecord::Base
   end
   
   def ff_def= ff_def_id
-    write_attribute :flexifield_def_id, ff_def_id
-    save
+    self.flexifield_def_id = ff_def_id
+    # write_attribute :flexifield_def_id, ff_def_id
+    # save
   end
   
   def get_ff_value ff_alias
@@ -38,7 +40,6 @@ class Flexifield < ActiveRecord::Base
   end
   
   def set_ff_value ff_alias, ff_value
-  
     ff_field = to_ff_field ff_alias    
     if ff_field       
       ff_value = nil if ff_value.blank?
@@ -55,8 +56,14 @@ class Flexifield < ActiveRecord::Base
     args_hash.each do |ffalias, ffvalue|
       set_ff_value ffalias, ffvalue
     end
-    save
+    # save
   end
 
+  def retrieve_ff_values
+    ff_aliases.inject({}) do  |ff_values, ff_alias| 
+      ff_values[ff_alias] = (get_ff_value ff_alias)
+      ff_values
+    end || {}
+  end
 
 end

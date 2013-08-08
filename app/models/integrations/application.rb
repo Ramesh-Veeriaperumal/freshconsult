@@ -23,6 +23,13 @@ class Integrations::Application < ActiveRecord::Base
     JSON.parse(self.to_json)["application"]
   end
 
+  def oauth_url(account_id)
+    AppConfig['integrations_url'][Rails.env] + 
+      Liquid::Template.parse(options[:oauth_url]).render({ 
+        "portal_id" => account_id, "account_id" => account_id  
+      })
+  end
+
   def widget
     if self.account_id == 0
       Integrations::NativeWidget.find_by(:application_type,self.application_type) #+ self.widgets_data
@@ -54,6 +61,7 @@ class Integrations::Application < ActiveRecord::Base
     end
     installed_application.configs = {:inputs => params}
     installed_application.save!
+    installed_application
   end
 
   def self.create_and_install(application_params, widget_script, display_in_pages, account)

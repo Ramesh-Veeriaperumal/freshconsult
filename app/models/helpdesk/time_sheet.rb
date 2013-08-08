@@ -1,4 +1,7 @@
 class Helpdesk::TimeSheet < ActiveRecord::Base
+
+  include Va::Observer::Util
+
   set_table_name "helpdesk_time_sheets"
   
   belongs_to :workable, :polymorphic => true
@@ -10,12 +13,13 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   before_validation :set_default_values 
 
   after_create :create_new_activity
-  after_update :update_timer_activity , :if  => :timer_running_changed?
-  
+  after_update :update_timer_activity , :if => :timer_running_changed?
+  before_save :update_observer_events
+  after_commit :filter_observer_events, :if => :user_present?
+
   has_many :integrated_resources, 
     :class_name => 'Integrations::IntegratedResource',
-    :as => 'local_integratable',
-    :dependent => :destroy
+    :as => 'local_integratable'
     
   named_scope :timer_active , :conditions =>["timer_running=?" , true]
 
@@ -164,7 +168,6 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
    end
 
   def update_timer_activity
-     
       if timer_running
          workable.create_activity(User.current, 
           "activities.#{workable_name}.timesheet.timer_started.long", 
@@ -199,9 +202,27 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   def set_default_values
     self.executed_at ||= self.created_at
   end
- 
+
+  # VA - Observer Rule 
+
+  def update_observer_events
+    return unless workable.instance_of? Helpdesk::Ticket
+    unless time_spent_change.nil?      
+      from, to = time_spent_change
+      if from == nil
+        unless to == 0
+          @model_changes = {:time_sheet_action => :added} 
+        end
+      elsif from == 0
+        @model_changes = {:time_sheet_action => :added}
+      else
+        @model_changes = {:time_sheet_action => :updated}
+      end 
+    end
+  end
+
   def workable_name
-    workable_type.split("::").second.downcase.pluralize
+   workable_type.split("::").second.downcase.pluralize
   end
   
 end

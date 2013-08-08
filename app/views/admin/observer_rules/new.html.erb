@@ -1,0 +1,8 @@
+<% content_for :sidebar do %>
+  <%= render :partial => "helpnote_without_tour"%>
+<% end %>
+
+<h3 class="lead"><%=t('.title')%></h3> 
+<% form_for :va_rule, @va_rule, :url => admin_observer_rules_path, :html => { :method => :post , :id => "ObserverForm" } do |f| %>
+	<%= render :partial => "rule_form", :locals => { :f => f } %>
+<% end %>

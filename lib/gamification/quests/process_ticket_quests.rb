@@ -16,7 +16,6 @@ module Gamification
 				return unless ticket.responder
 
 				ticket.responder.available_quests.ticket_quests.each do |quest|
-					ticket.load_flexifield if quest.has_custom_field_filters?(ticket)
 					is_a_match = quest.matches(ticket)
 				
 					if is_a_match and evaluate_query(quest,ticket)

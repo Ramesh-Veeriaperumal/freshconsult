@@ -2,6 +2,8 @@
 
 	$(function () {
 
+		if(jQuery.browser.msie) jQuery("#feedback-widget-container").addClass("ie")
+
 		$("select").select2();
 
 		var $ticket_desc = $("#helpdesk_ticket_ticket_body_attributes_description_html"),

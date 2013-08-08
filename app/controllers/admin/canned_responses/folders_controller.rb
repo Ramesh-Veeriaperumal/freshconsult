@@ -84,10 +84,16 @@ class Admin::CannedResponses::FoldersController < Admin::AdminController
   end
 
   def destroy 
-  	@ca_res_folder.destroy
+  	flash[:notice] = t('canned_folders.deleted') if @ca_res_folder.destroy
+
   	respond_to do |format|
-    		format.html { redirect_to(admin_canned_responses_folders_path ,
+        format.html { redirect_to(admin_canned_responses_folders_path ,
                       :notice => t('canned_folders.deleted')) }
+        format.js { 
+          render :update do |page| 
+            page.redirect_to admin_canned_responses_folders_path
+          end
+        }
     		format.xml  { head :ok }
   	end
   end

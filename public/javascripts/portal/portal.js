@@ -5,6 +5,8 @@
 
 !function( $ ) {
 
+	if($.browser.msie) $("body").addClass("ie")
+
 	$(function () {
 
 		"use strict"
@@ -148,13 +150,19 @@
 		// Form validation any form append to the dom will be tested via live query and then be validated via jquery
 		$("form[rel=validate]").livequery(function(ev){
 			$(this).validate({
+				errorPlacement: function(error, element) {
+		          if (element.prop("type") == "checkbox")
+		            error.insertAfter(element.parent());
+		          else
+		            error.insertAfter(element);
+		        },
 				highlight: function(element, errorClass) {
 					// Applying bootstraps error class on the container of the error element
-					$(element).parent().parent().addClass(errorClass+"-group")
+					$(element).parents('div.control-group').addClass(errorClass+"-group")
 				},
 				unhighlight: function(element, errorClass) {
 					// Removed bootstraps error class from the container of the error element
-					$(element).parent().parent().removeClass(errorClass+"-group")
+					$(element).parents('div.control-group').removeClass(errorClass+"-group")
 				},
 				onkeyup: false,
          		focusCleanup: true,
@@ -166,18 +174,20 @@
 					$(btn).button("loading")
 
 					// IF the form has an attribute called data-remote then it will be submitted via ajax
-					if($(form).data("remote"))
-			  	   	$(form).ajaxSubmit({
-			  	   		success: function(response, status){
-			  	   			// Resetting the submit button to its default state
-			  				$(btn).button("reset")
+					if($(form).data("remote")){
+				  	   	$(form).ajaxSubmit({
+				  	   		success: function(response, status){
+				  	   			// Resetting the submit button to its default state
+				  				$(btn).button("reset")
 
-			  				// If the form has an attribute called update it will used to update the response obtained
-			  	   			$("#"+$(form).data("update")).html(response)
-			  	   		}
-			  	   	})
-					// For all other form it will be a direct page submission			  	
-				  	else form.submit()
+				  				// If the form has an attribute called update it will used to update the response obtained
+				  	   			$("#"+$(form).data("update")).html(response)
+				  	   		}
+				  	   	})
+			  	    }else{
+			  	    	// For all other form it will be a direct page submission			  	
+			  	    	form.submit()
+			  	    }
 				}
 			})
 		})

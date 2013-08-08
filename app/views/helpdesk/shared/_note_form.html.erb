@@ -53,7 +53,7 @@
   <script src="/javascripts/helpdesk/page_switcher.js" type="text/javascript"></script>
   <% javascript_tag do %>
   jQuery("#add_resolve_btn").bind("click",function(){
-      jQuery('[name="redirect_to"]').val("/helpdesk/tickets");
+      jQuery('[name="redirect_to"]').val("helpdesk_ticket_index");
   });
     document.observe("dom:loaded", function(){
       new Helpdesk.PageSwitcher({

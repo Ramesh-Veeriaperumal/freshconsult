@@ -65,8 +65,13 @@
               }
           });
       <% end %>
+
       if( !isMobile.any() ){
-        invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html');
+        <% if logged_in? %>
+          invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html', 'cnt-reply');
+        <% else %>
+          invokeRedactor('helpdesk_ticket_ticket_body_attributes_description_html');
+        <% end %>
       }
     }); 
   })(jQuery);

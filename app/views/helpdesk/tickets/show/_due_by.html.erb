@@ -9,3 +9,6 @@
 	<%= t('change') %>
 </a>
 <% end %>
+<% javascript_tag do %>
+jQuery('.ticket_details .status_info').html("<%= escape_javascript(render :partial => '/helpdesk/tickets/show/sticky_status.html.erb') %>");
+<% end %>

@@ -1,6 +1,15 @@
 class Va::Handlers::Boolean < Va::RuleHandler
 
   private
+
+    def boolean_value
+      value.to_bool
+    end
+
+    def is(evaluate_on_value)
+      boolean_value == evaluate_on_value
+    end
+
     def selected(evaluate_on_value)
       evaluate_on_value
     end

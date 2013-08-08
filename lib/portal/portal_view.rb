@@ -9,9 +9,6 @@ class PortalView
                           ignore_missing_templates flash _params logger before_filter_chain_aborted headers )
   PROTECTED_INSTANCE_VARIABLES = %w( @_request @controller @_first_render @_memoized__pick_template @view_paths 
                                      @helpers @assigns_added @template @_render_stack @template_format @assigns )
-
-  #List of variables that will be ignored before pushing to liquid
-  PROTECTED_APP_VARIABLES = %w{ dynamic_template }
   
   def self.call(template)
     "PortalView.new(self).render(template, local_assigns)"
@@ -53,7 +50,7 @@ class PortalView
     # Mergin all local assigns to be passed into the liquid ref.
     # Removing dynamic template information, 
     # to avoid re-rendering of base information in view if it is used within the template
-    assigns.merge!(local_assigns.stringify_keys) - PROTECTED_APP_VARIABLES
+    assigns.merge!(local_assigns.stringify_keys).delete("dynamic_template")
 
     controller = @view.controller
     filters = if controller.respond_to?(:liquid_filters, true)

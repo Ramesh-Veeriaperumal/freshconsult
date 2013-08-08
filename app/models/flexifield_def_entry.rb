@@ -1,18 +1,25 @@
 # encoding: utf-8
 class FlexifieldDefEntry < ActiveRecord::Base
-  
+
+  include Cache::Memcache::FlexifieldDefEntry
+
   belongs_to_account
   belongs_to :flexifield_def
 
-  has_one :ticket_field, :class_name => 'Helpdesk::TicketField'
   has_many :flexifield_picklist_vals, :dependent => :destroy
   has_one :ticket_field, :class_name => 'Helpdesk::TicketField', :dependent => :destroy
   validates_presence_of :flexifield_name, :flexifield_alias, :flexifield_order
 
   named_scope :drop_down_fields, :conditions => {:flexifield_coltype => 'dropdown' }
+
+  named_scope :event_fields, 
+              :conditions => [ "flexifield_coltype = 'dropdown' or flexifield_coltype = 'checkbox'" ]  
   
   before_save :ensure_alias_is_one_word
   before_create :set_account_id
+
+  after_commit_on_create :clear_cache
+  after_commit_on_destroy :clear_cache
   
   ViewColumn = Struct.new(:object,:content) do
     def viewname
@@ -54,7 +61,7 @@ class FlexifieldDefEntry < ActiveRecord::Base
   end
   
   def self.ticket_db_column(alias_name)
-    ff_entry = Account.current.flexi_field_defs.first.flexifield_def_entries.find_by_flexifield_alias(alias_name)
+    ff_entry = Account.current.flexifield_def_entries.find_by_flexifield_alias(alias_name)
     raise ActiveRecord::RecordNotFound unless ff_entry
     ff_entry.flexifield_name
   end

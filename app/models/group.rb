@@ -1,5 +1,6 @@
 class Group < ActiveRecord::Base
   
+  belongs_to_account
   include Cache::Memcache::Group
   include Redis::RedisKeys
   include Redis::OthersRedis
@@ -18,9 +19,10 @@ class Group < ActiveRecord::Base
    has_many :tickets, :class_name => 'Helpdesk::Ticket', :dependent => :nullify
    
    belongs_to :escalate , :class_name => "User", :foreign_key => "escalate_to"
+   belongs_to :business_calendar
    
    attr_accessible :name,:description,:email_on_assign,:escalate_to,:assign_time ,:import_id, 
-                   :ticket_assign_type
+                   :ticket_assign_type, :business_calendar_id
    
    accepts_nested_attributes_for :agent_groups
    liquid_methods :name

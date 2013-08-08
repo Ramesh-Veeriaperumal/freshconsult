@@ -12,7 +12,7 @@ class FlexifieldDef < ActiveRecord::Base
   
   validates_presence_of :name
   
-  #after_update :save_entries
+  # after_update :save_entries
 
   def to_ff_field ff_alias
     idx = nil

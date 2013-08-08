@@ -1,3 +1,11 @@
+<%= render :partial => "layouts/shared/head" %>
+<style>
+body{
+ margin: 20;
+}
+</style>
+
+
 <% form_tag '/email', :multipart => true, :id => "EmailTicketForm" do -%>
 
   <label for="from">From email</label>

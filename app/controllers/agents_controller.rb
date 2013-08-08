@@ -8,6 +8,7 @@ class AgentsController < ApplicationController
   include MemcacheKeys
 
   skip_before_filter :check_account_state, :only => :destroy
+  skip_before_filter :check_privilege, :only => [:info_for_node]
   
   before_filter :load_object, :only => [:update, :destroy, :restore, :edit, :reset_password, 
     :convert_to_contact ]
@@ -184,13 +185,14 @@ class AgentsController < ApplicationController
     )   
     flash[:notice] = render_to_string(:partial => '/agents/flash/restore_notice')
    else
+    logger.info "Errors in agent restore :: #{@agent.user.errors.full_messages}" 
     flash[:notice] = t(:'flash.general.restore.failure', :human_name => 'Agent')
    end 
    redirect_to :back  
  end
 
   def reset_password
-    if agent.user.active?
+    if @agent.user.active?
       @agent.user.reset_agent_password(current_portal)
       flash[:notice] = t(:'flash.password_resets.email.reset', :requester => h(@agent.user.email))      
       redirect_to :back
@@ -199,7 +201,7 @@ class AgentsController < ApplicationController
 
   def info_for_node
     key = %{#{NodeConfig["secret_key"]}#{current_account.id}#{params[:user_id]}}
-    hash = Digest::SHA512.hexdigest(key)
+    hash = Digest::MD5.hexdigest(key)
     
     if hash == params[:hash]
       agent = current_account.agents.find_by_user_id(params[:user_id])
@@ -210,7 +212,9 @@ class AgentsController < ApplicationController
       MemcacheKeys.cache(key, agent_detail.to_json, 86400*15, true)
       render :json => agent_detail
     else 
-      render :nothing => true
+      render :json => {
+        :error => "Access denied!"
+      }
     end
   end
 

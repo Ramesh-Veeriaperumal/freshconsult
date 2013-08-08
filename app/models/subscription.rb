@@ -30,8 +30,6 @@ class Subscription < ActiveRecord::Base
 
   after_update :add_to_crm, :if => :free_customer?
 
-  before_destroy :add_churn
-
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
   
@@ -275,16 +273,6 @@ class Subscription < ActiveRecord::Base
 
     def add_to_crm
       Resque.enqueue(CRM::AddToCRM::FreeCustomer, { :item_id => id, :account_id => account_id })
-    end
-
-    #Subscription Events
-    def subscription_info(subscription)
-      subscription_attributes = SUBSCRIPTION_ATTRIBUTES.inject({}) { |h, (k, v)| h[k] = subscription.send(v); h }
-      subscription_attributes.merge!( :next_renewal_at => subscription.next_renewal_at.to_s(:db) )
-    end
-
-    def add_churn
-      Resque.enqueue(Subscription::Events::AddDeletedEvent, {:account_id => account_id, :subscription_hash =>  subscription_info(self)}) if active?
     end
 
  end

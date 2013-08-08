@@ -1,24 +1,27 @@
 <% period = { 1 => "Monthly", 3 => "Quarterly", 6 => "Half Yearly", 12 => "Annual" } %>
-<p>
+
+<div>
 	Contact Email : <%= @subscription.admin_email %><br>
 	Account ID : <%= @subscription.account_id %><br>
 	Domain : <%= @subscription.account.full_domain %><br>
-</p>
+</div><br />
 
 <div>
 	Previously,
-	<div style="margin-left:8px;">
-		Plan : <%= SubscriptionPlan.find(@old_subscription[:subscription_plan_id]).name %><br> 
-		Billing Period : <%= period[@old_subscription[:renewal_period]] %><br> 
-		Agents : <%= @old_subscription[:agent_limit]%> <%= "(#{pluralize(@old_subscription[:free_agents], 'free agent')})" if @old_subscription[:free_agents] > 0 %><br>
-		Revenue : <b>$<%= @old_subscription[:amount] %></b>
-	</div><br>
+		<ul>
+			<li>Plan : <%= SubscriptionPlan.find(@old_subscription[:subscription_plan_id]).name %></li>
+			<li>Billing Period : <%= period[@old_subscription[:renewal_period]] %></li>
+			<li>Agents : <%= @old_subscription[:agent_limit]%> <%= "(#{pluralize(@old_subscription[:free_agents], 'free agent')})" if @old_subscription[:free_agents] > 0 %></li>
+			<li>Revenue : <b>$<%= @old_subscription[:amount] %></b></li>
+		<ul>
+</div><br />
 
+<div>
 	Now,
-	<div style="margin-left:8px;">
-		Plan : <%= @subscription.subscription_plan.name %><br> 
-		Billing Period : <%= period[@subscription.renewal_period] %><br>
-		Agents : <%= @subscription.agent_limit %> <%= "(#{pluralize(@subscription.free_agents, 'free agent')})" if @subscription.free_agents > 0 %><br>
-		Revenue : <b>$<%= @subscription.amount %></b>
-	</div>
+		<ul>
+			<li>Plan : <%= @subscription.subscription_plan.name %></li>
+			<li>Billing Period : <%= period[@subscription.renewal_period] %></li>
+			<li>Agents : <%= @subscription.agent_limit %> <%= "(#{pluralize(@subscription.free_agents, 'free agent')})" if @subscription.free_agents > 0 %></li>
+			<li>Revenue : <b>$<%= @subscription.amount %></li>
+		</ul>
 </div>

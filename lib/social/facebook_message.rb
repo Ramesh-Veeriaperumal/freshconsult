@@ -44,8 +44,13 @@ def add_message_as_note thread, ticket
                         :fb_post_attributes => {:post_id => message[:id], :facebook_page_id =>@fb_page.id ,:account_id => @account.id , 
                                                 :msg_type =>'dm' ,:thread_id => thread_id}
                                   )
-      unless @note.save
-        puts "error while saving the note #{@note.errors.to_json}"
+      begin
+        user.make_current
+        unless @note.save
+          puts "error while saving the note #{@note.errors.to_json}"
+        end
+      ensure
+        User.reset_current_user
       end
     end
 end

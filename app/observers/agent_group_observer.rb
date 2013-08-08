@@ -15,7 +15,6 @@ class AgentGroupObserver < ActiveRecord::Observer
   def after_destroy(agent_group)
     clear_cache(agent_group)
   end
-  
 
   private
 

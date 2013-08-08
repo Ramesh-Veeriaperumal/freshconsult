@@ -1,7 +1,7 @@
 <% unless(items.size <= 1) -%>
 	<% container_id = container_id || "sortable" %>
 	<div class="sortable hide" id="<%= container_id %>">
-		<h4 class="title"><%= "Reorder" %></h4>
+		<h4 class="title"><%= t('reorder_rules') %></h4>
 		<% form_for :reorder, items, :url => action_url, :html => { :method => :put } do |f| %>
 		  <input name="reorderlist" type="hidden" value="" />
 		  <ul class="sort-list" rel="sortlist">

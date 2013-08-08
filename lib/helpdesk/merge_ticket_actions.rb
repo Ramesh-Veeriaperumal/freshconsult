@@ -125,9 +125,6 @@ module Helpdesk::MergeTicketActions
 				:to_emails => target_pvt_note ? [] : @target_ticket.requester.email.lines.to_a,
 				:cc_emails => target_pvt_note ? [] : @target_ticket.cc_email_hash && @target_ticket.cc_email_hash[:cc_emails]
 			)
-			if !@target_note.private
-  			Helpdesk::TicketNotifier.send_later(:deliver_reply, @target_ticket, @target_note, {:include_cc => true})
-			end
 		end
 
 		# Moving requesters part removed from the feature for now!

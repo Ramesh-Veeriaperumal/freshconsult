@@ -124,6 +124,10 @@ class Helpdesk::TicketDrop < BaseDrop
 		Survey.satisfaction_survey_html(@source)
 	end
 
+	def surveymonkey_survey
+		Integrations::SurveyMonkey.survey_html(@source)
+	end
+
 	def in_user_time_zone(time)
 		portal_user_or_account = (portal_user || portal_account)
 		portal_user_or_account.blank? ? time : time.in_time_zone(portal_user_or_account.time_zone)
@@ -142,7 +146,7 @@ class Helpdesk::TicketDrop < BaseDrop
 	end
 
 	def freshness
-		@source.freshness
+		@source.freshness.to_s
 	end
 
 	def close_ticket_url
@@ -153,8 +157,12 @@ class Helpdesk::TicketDrop < BaseDrop
 		@source.closed?
 	end
 
+	def active?
+		@source.active?
+	end
+
 	def before_method(method)
-		custom_fields = @source.load_flexifield
+		custom_fields = @source.custom_field
 		if custom_fields["#{method}_#{@source.account_id}"]
 			custom_fields["#{method}_#{@source.account_id}"]
 		else

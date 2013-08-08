@@ -1,5 +1,0 @@
-page.replace_html :monitor, :partial => "/helpdesk/subscriptions/monitor"
-
-page.replace_html :new_watcher_page, :partial => "helpdesk/subscriptions/ticket_watchers"
-
-page.show :new_watcher_page

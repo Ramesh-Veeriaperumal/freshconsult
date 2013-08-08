@@ -14,6 +14,7 @@
 		height: 430px;
 		max-height: 430px;
 		padding-top: 8px;
+		padding-bottom: 50px;
 	}	
 }
 .modal-panel{ 
@@ -176,3 +177,8 @@
 .screenshot-wrap{
 	position: relative;
 }
+
+// IE hacks
+
+.ie .portal-attach .attach-file{ display:block !important; }
+.ie .portal-attach .attach-proxy{ display:none !important; }

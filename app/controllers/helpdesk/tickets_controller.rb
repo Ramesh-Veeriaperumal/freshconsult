@@ -20,7 +20,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :set_mobile, :only => [:index, :show,:update, :create, :execute_scenario, :assign, :spam, :update_ticket_properties ]
   before_filter :set_show_version
-  before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index, :filter_options]
+  before_filter :load_cached_ticket_filters, :load_ticket_filter, :check_autorefresh_feature , :only => [:index, :filter_options]
   before_filter :clear_filter, :only => :index
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :cache_filter_params, :only => [:custom_search]
@@ -45,7 +45,6 @@ class Helpdesk::TicketsController < ApplicationController
   alias :build_ticket :build_item
   before_filter :build_ticket_body_attributes, :build_ticket, :only => [:create]
 
-  before_filter :load_flexifield ,    :only => [:execute_scenario]
   before_filter :set_date_filter ,    :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
   before_filter :check_ticket_status, :only => [:update, :update_ticket_properties]
@@ -297,6 +296,11 @@ class Helpdesk::TicketsController < ApplicationController
     old_item = @item.clone
     if @item.update_attributes(params[nscname])
       update_tags unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
+
+      if(params[:redirect] && params[:redirect].to_bool)
+        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice')
+      end
+
       respond_to do |format|
         format.html { 
           flash[:notice] = t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
@@ -309,7 +313,7 @@ class Helpdesk::TicketsController < ApplicationController
           render :xml => @item.to_xml({:basic => true})
         }
         format.json { 
-          render :json => request.xhr? ? { :success => true }.to_json  : @item.to_json({:basic => true}) 
+            render :json => request.xhr? ? { :success => true, :redirect => (params[:redirect] && params[:redirect].to_bool) }.to_json  : @item.to_json({:basic => true}) 
         }
         format.mobile { 
           render :json => { :success => true, :item => @item }.to_json 
@@ -404,8 +408,7 @@ class Helpdesk::TicketsController < ApplicationController
              :rule_name => I18n.t("admin.automations.failure") }.to_json 
         }
       end
-    else  
-      update_custom_field @item    
+    else
       @item.save
       @item.create_activity(current_user, 'activities.tickets.execute_scenario.long', 
         { 'scenario_name' => va_rule.name }, 'activities.tickets.execute_scenario.short')
@@ -700,28 +703,6 @@ class Helpdesk::TicketsController < ApplicationController
       end
     end
 
-    def load_flexifield   
-      flexi_arr = Hash.new
-      @item.ff_aliases.each do |label|    
-        value = @item.get_ff_value(label.to_sym())    
-        flexi_arr[label] = value    
-        @item.write_attribute label, value
-      end  
-      @item.custom_field = flexi_arr  
-    end
-
-    def update_custom_field  evaluate_on
-      flexi_field = evaluate_on.custom_field      
-      evaluate_on.custom_field.each do |key,value|    
-        flexi_field[key] = evaluate_on.read_attribute(key)      
-      end     
-      ff_def_id = FlexifieldDef.find_by_account_id(evaluate_on.account_id).id    
-      evaluate_on.ff_def = ff_def_id       
-      unless flexi_field.nil?     
-        evaluate_on.assign_ff_values flexi_field    
-      end
-    end
-
     def choose_layout 
       layout_name = request.headers['X-PJAX'] ? 'maincontent' : 'application'
       case action_name
@@ -815,6 +796,10 @@ class Helpdesk::TicketsController < ApplicationController
           @response_errors = {:no_company => true}
         end
       end
+    end
+
+    def check_autorefresh_feature
+      @is_auto_refresh_feature = current_account.features?(:auto_refresh)
     end
 
     def get_cached_filters

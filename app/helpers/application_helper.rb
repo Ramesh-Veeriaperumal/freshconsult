@@ -1,7 +1,7 @@
 # encoding: utf-8
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
-  include SavageBeast::ApplicationHelper
+  include ForumHelperMethods
   include Juixe::Acts::Voteable
   include ActionView::Helpers::TextHelper
   include Gamification::GamificationUtil
@@ -24,6 +24,16 @@ module ApplicationHelper
         <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{ 
           current_portal.language }">#{h[2] ? '<!--' : ''}<![endif]--> ) }
   end
+
+  def trial_expiry_title(trial_days)
+      if trial_days == 0
+      t('trial_one_more_day')
+    elsif trial_days > 0
+      t('trial_will_expire_in', :no_of_days => pluralize(trial_days, t('trial_day'), t('days')) )
+    else trial_days < 0
+      t('trial_expired_on' )
+    end
+  end
   
   def format_float_value(val)
     if !(val.is_a? Fixnum)
@@ -44,9 +54,9 @@ module ApplicationHelper
   end
 
   def fav_icon_url
-    MemcacheKeys.fetch(["v4","portal","fav_ico",current_portal]) do
+    MemcacheKeys.fetch(["v5","portal","fav_ico",current_portal]) do
       url = current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' : 
-            AWS::S3::S3Object.url_for(current_portal.fav_icon.content.path(:logo),current_portal.fav_icon.content.bucket_name,
+            AWS::S3::S3Object.url_for(current_portal.fav_icon.content.path,current_portal.fav_icon.content.bucket_name,
                                           :expires_in => 30.days, :use_ssl => true)
       "<link rel=\"shortcut icon\" href=\"#{url}\" />"
     end
@@ -412,6 +422,9 @@ module ApplicationHelper
       ['{{ticket.product_description}}', 'Product description', 'Product specific description in multiple product/brand environments.']
     ]
     place_holders << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey', 'Includes satisfaction survey.'] if current_account.features?(:surveys, :survey_links)
+    place_holders << ['{{ticket.surveymonkey_survey}}', 'Surveymonkey survey',
+                      'Includes text/link to survey in Surveymonkey'
+                      ] if Integrations::SurveyMonkey.placeholder_allowed?(current_account)
     current_account.ticket_fields.custom_fields.each { |custom_field|
       name = custom_field.name[0..custom_field.name.rindex('_')-1]
       place_holders << ["{{ticket.#{name}}}", custom_field.label, "#{custom_field.label} (Custom Field)"] unless name == "type"
@@ -598,6 +611,7 @@ module ApplicationHelper
       when "requester" then
         element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => requester_autocomplete_helpdesk_authorizations_path, :object_name => object_name }))  
         element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
+        element+= label_tag("", "#{add_requester_field}",:class => 'hidden') if is_edit
         unless is_edit or params[:format] == 'widget'
           element = add_cc_field_tag element, field  
         end
@@ -626,7 +640,9 @@ module ApplicationHelper
       when "hidden" then
         element = hidden_field(object_name , field_name , :value => field_value)
       when "checkbox" then
-        element = content_tag(:div, (check_box(object_name, field_name, :class => element_class, :checked => field_value ) + label))
+        checkbox_element = ( required ? ( check_box_tag(%{#{object_name}[#{field_name}]}, 1, !field_value.blank?, { :class => element_class } )) :
+                                                                   ( check_box(object_name, field_name, :class => element_class, :checked => field_value ) ) )
+        element = content_tag(:div, (checkbox_element + label))
       when "html_paragraph" then
         form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
             element = label + builder.text_area(field_name, :class => element_class, :value => field_value )
@@ -734,16 +750,6 @@ module ApplicationHelper
 
   def es_enabled?
     current_account.es_enabled?
-  end
-  
-  def truncate_filename filename
-    extension = filename.include?('.') ? filename.split('.').last : nil
-    extension = nil if filename.gsub('.','') == extension
-    simple_name = extension ? filename[0..-(extension.to_s.length + 2)] : filename
-    if filename.length > 20
-      return simple_name[0,15] + "..." + simple_name[-2..-1] + (extension ? ".#{extension}" : "")
-    end
-    filename
   end
 
   def assumed_identity_message

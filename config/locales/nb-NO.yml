@@ -3119,7 +3119,7 @@ nb-NO:
       level2: "Nivå 2"
       level3: "Nivå 3"
       nested_label: "Etikett sammenhengende felt"
-      nestedfield_helptext: "Bruk fritekst skjemaet nedenfor til å legge til eller endre valg i nedtrekksmenyen, for innrykk bruk tab-tasten en til to ganger. Vi vil konvertere skjemaet til valg i nedtrekksmenyen basert på innrykkene i teksten. <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'> Lær mer</a> "
+      nestedfield_helptext: "Bruk fritekst skjemaet nedenfor til å legge til eller endre valg i nedtrekksmenyen, for innrykk bruk tab-tasten en til to ganger. Vi vil konvertere skjemaet til valg i nedtrekksmenyen basert på innrykkene i teksten. <a target='_blank' href=%{learn_more}> Lær mer</a> "
       nestedfield_helptext_preview: "Dette er \"forhåndsvisning\" av prøver av nedtrekkselementer, bruk det åpne tekstfeltet i \"Redigerinsvisningen\" for å redigere elementene."
       sla_timer: "SLA tidsur"
       status_choices: Statusvalg

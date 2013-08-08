@@ -1,8 +1,8 @@
-package_assets:         on      # (on, off, always)
+package_assets:         on          # (on, off, always)
 embed_assets:           off         # (on, off, datauri)
 compress_assets:        on          # (on, off)
 package_path:           packages    # (defaults to assets)
-javascript_compressor:  uglifier    # (yui, closure)
+javascript_compressor:  yui         # (yui, closure)
 allow_debugging:        on
 
 stylesheets:
@@ -35,7 +35,7 @@ stylesheets:
     - public/stylesheets/codemirror.css
 
   portal:
-    - public/stylesheets/redactor.css
+    - public/stylesheets/portal/portal_utils.css
 
   preview:
     - public/stylesheets/portal/preview.css
@@ -85,8 +85,12 @@ stylesheets:
   getting_started:
     - public/stylesheets/app/getting_started.css
 
+  facebook:
+    - public/stylesheets/portal/facebook.css
+
   rating:
     - public/stylesheets/portal/rating.css
+
 
 javascripts:
   defaults:
@@ -127,6 +131,7 @@ javascripts:
     - public/javascripts/AsyncJSLoader.js
     - public/javascripts/lib/detectmobilebrowsers.js
     - public/javascripts/frameworks/plugins/jquery-ui-timepicker-addon.js
+    - public/javascripts/app/ticket_details.js
 
   # Code editor for portal cms
   codemirror:
@@ -151,6 +156,7 @@ javascripts:
     - public/javascripts/factory_ui.js
     - public/javascripts/lib/json2.js
     - public/javascripts/custom_validators.js
+    - public/javascripts/fjax.js
     - public/javascripts/globalinit.js
     - public/javascripts/application.js
     - public/javascripts/navsearch.js
@@ -234,6 +240,9 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.itoggle.js
 
+  observer_event:
+    - public/javascripts/observer_events.js 
+
   conditional:
     - public/javascripts/autosuggest.js    
     - public/javascripts/frameworks/plugins/jquery.nestedselect.js
@@ -277,3 +286,7 @@ javascripts:
     - public/javascripts/highcharts-more.js
     - public/javascripts/adv_reports/report_charts.js
     - public/javascripts/adv_reports/adv_reports.js
+
+  merge:
+    - public/javascripts/app/merge.js
+    - public/javascripts/app/merge_tickets.js
