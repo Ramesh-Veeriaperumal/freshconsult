@@ -8,7 +8,7 @@ class Support::TicketsController < SupportController
   before_filter :only => [:new, :create] do |c| 
     c.check_portal_scope :anonymous_tickets
   end
-  before_filter :check_user_permission, :only => [:show]
+  before_filter :check_user_permission, :only => [:show], :if => :not_facebook?
   before_filter :require_user_login, :only => [:show, :index, :filter, :close, :update, :add_people]
   before_filter :load_item, :only =>[:show, :update, :close, :add_people]
 
@@ -153,5 +153,8 @@ class Support::TicketsController < SupportController
       end
     end
 
+    def not_facebook?
+      params[:portal_type] != "facebook"
+    end
   
 end

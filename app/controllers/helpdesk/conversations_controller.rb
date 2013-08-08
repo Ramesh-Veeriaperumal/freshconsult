@@ -195,6 +195,7 @@ class Helpdesk::ConversationsController < ApplicationController
 
       def sanitize_conversation
         Rails.logger.debug "::::::sanitize conversation start"
+        @item.note_body.load_full_text
         @item.note_body.create_content
         Rails.logger.debug "::::::sanitize conversation end"
       end
