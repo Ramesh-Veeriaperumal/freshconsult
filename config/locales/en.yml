@@ -2174,6 +2174,7 @@ en:
       add_or_remove_emails: "Add or remove emails that need to be copied when a notification for this ticket is sent."
       add_people_title: Add people to conversation
       reopen_reply: Reply
+      related_articles: "Related articles..."
   feedbackwidget_form_title: Widget form title
   cancel_and_back: Cancel and go back
   due_in: Due in %{time_words}

@@ -2546,6 +2546,7 @@ pt-BR:
       export_ticket_data: "Exportar dados do ticket para CSV"
       export_to_csv: "Exportar para CSV"
       mark_closed: "Marcar ticket como concluído"
+      related_articles: "Artigos Relacionados..."
       reopen_reply: "Reabrir e responder"
       reply_placeholder: "Clique aqui para responder a este ticket"
       ticket_list: "Lista de tickets"
