@@ -18,7 +18,7 @@ class Admin::CannedResponses::ResponsesController < Admin::AdminController
 		  format.html
 		  format.xml  { render :xml => @ca_response }
 		end
-	end
+  end
 
 	def edit
 		@ca_response = scoper.find(params[:id]) 
@@ -71,7 +71,13 @@ class Admin::CannedResponses::ResponsesController < Admin::AdminController
 		@items.each do |item|
 			item.destroy
 		end
-	end
+  end
+
+  def delete_shared_attachments
+    shared_attachment=Helpdesk::SharedAttachment.find_by_shared_attachable_id(params[:id], :conditions=>["attachment_id=?",params[:attachment_id]])
+    shared_attachment.destroy
+    render :json => {:status => 200}
+  end
 
 	def update_folder
 		@resp_folder = current_account.canned_response_folders.find(params[:move_folder_id])

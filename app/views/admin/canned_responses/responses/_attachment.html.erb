@@ -1,30 +1,45 @@
-<% unless attachment.new_record? %>
-    <li>
-      <div class="preview_img">
-        <% if attachment.image? %>
-            <%= image_tag(attachment.expiring_url(:thumb), :class => "image")  %>
-        <% else %>
-            <%
-               extname = attachment.content_file_name.split('.')[-1]
-               extname = (["pdf", "doc", "chm", "mov", "avi", "swf", "wmv", "xls", "zip", "txt", "log", "exe"].include?(extname)) ? extname : "def"
-            %>
+<li id="helpdesk_attachment_<%= attachment.id.to_s %>" class="attachments-wrap">
+  <%= link_to_remote("",
+                     :url => helpdesk_attachment_path(attachment), :method => 'delete',
+                     :html => { :class =>"attachment-close" },
+                     :confirm => "You're about to permanently delete this attachment. Continue?")  if local_assigns[:show_delete] %>
+  <%
+     extname = attachment.content_file_name.split('.')[-1] || ""
+     extname = extname.downcase
+     # Converting 4 letter into 3 letter extensions
+     letter4 = {"jpeg" => "jpg"}
+     extname = letter4[extname] if letter4[extname].present?
 
-            <%= image_tag("/images/filetype/file_extension_#{extname}.png") %>
-        <% end %>
-      </div>
-      <div class="name">
-        <%= link_to truncate(h(attachment.content_file_name), { :length => 23 }), attachment, :popup => true if current_user %>
-        <%= link_to truncate(h(attachment.content_file_name), { :length => 23 }),
-                    helpdesk_attachment_path(attachment, :access_token => params[:id]), :popup => true unless current_user %>
-      </div>
+     extname = (["asf", "ai", "apk", "bmp", "avi", "cdr", "chm", "csv",
+                 "dmg", "dwg", "eps", "exe", "fla", "flv", "gz","htm",
+                 "iso", "jar", "jpg", "js", "key", "m4a", "mdb", "mid",
+                 "mov", "mp3", "mp4", "mpg", "msi", "otf", "pdf", "php",
+                 "png", "ppt", "pptx", "html", "ps", "psd", "pub", "rar",
+                 "rb", "rtf", "sql", "svg", "swf", "tex", "tga", "tif", "ttf", "txt",
+                 "vcf", "wav", "wma", "wmv", "xls", "xml", "doc",
+                 "zip", "log" ].include?(extname)) ? extname : "def"
+  %>
+  <div class="attachment-type file-types-<%= extname %>">
+    <%= link_to h(truncate(attachment.content_file_name,15)), attachment, :popup => true, :title => h(attachment.content_file_name), :class => "tooltip" %>
+    <span>&nbsp;&nbsp;(<%= number_to_human_size attachment.content_file_size %>)</span>
+    <span>- <a href="javascript:void(0)" class="remove_attachment" id="<%= attachment.id.to_s %>">remove</a></span>
+  </div>
+</li>
+<br/>
 
-      <div class="size">
-        (<%= number_to_human_size attachment.content_file_size %>)
-        <% if local_assigns[:show_delete] %>
-				<span class="delete">
-					<%= link_to image_tag("btn_close_icon.png"), helpdesk_attachment_path(attachment), :method => 'delete', :confirm => "You're about to permanently delete this attachment. Continue?", :class => "delete" %>
-				</span>
-        <% end %>
-      </div>
-    </li>
-<% end %>
+<script>
+
+    jQuery(document).ready(function(){
+        jQuery(".remove_attachment").on("click", function(event){
+            id=jQuery(this).attr("id");
+            jQuery.ajax({
+                url: "/admin/canned_responses/folders/<%= @item.folder_id.to_s %>/responses/<%= @item.id.to_s %>/delete_shared_attachments?attachment_id="+id,
+                success: function(){
+                    jQuery("#helpdesk_attachment_"+id).remove();
+                }
+
+            });
+        });
+    });
+
+</script>

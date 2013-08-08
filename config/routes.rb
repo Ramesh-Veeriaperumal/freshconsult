@@ -111,7 +111,7 @@
     admin.resources :portal, :only => [ :index, :update ]
     admin.namespace :canned_responses do |ca_response|
       ca_response.resources :folders do |folder|
-        folder.resources :responses, :collection => { :delete_multiple => :delete, :update_folder => :put }
+        folder.resources :responses, :collection => { :delete_multiple => :delete, :update_folder => :put }, :member=> { :delete_shared_attachments => :any  }
       end
     end
     admin.resources :products, :member => { :delete_logo => :delete, :delete_favicon => :delete }
