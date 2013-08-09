@@ -47,6 +47,14 @@ class FBClient
     end
     fb_pages
   end
+
+  def get_page
+    @graph = Koala::Facebook::GraphAPI.new(@fb_page.page_token)
+  end
+  
+  def get_profile
+    @graph = Koala::Facebook::GraphAPI.new(@fb_page.access_token)
+  end
   
   def subscribe(call_back_url)
     verify_token = "freshdesktoken"
