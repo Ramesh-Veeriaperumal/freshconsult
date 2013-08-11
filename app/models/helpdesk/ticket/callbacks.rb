@@ -88,7 +88,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def pass_thro_biz_rules
-     send_later(:delayed_rule_check) unless import_id
+     send_later(:delayed_rule_check) unless import_id || freshdesk_webhook?
   end
   
   def delayed_rule_check

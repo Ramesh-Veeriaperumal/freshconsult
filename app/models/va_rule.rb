@@ -2,6 +2,8 @@ class VARule < ActiveRecord::Base
 
   include Cache::Memcache::VARule
 
+  TICKET_CREATED_EVENT = { :ticket_action => :created }
+
   serialize :filter_data
   serialize :action_data
   
@@ -9,9 +11,11 @@ class VARule < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => [:account_id, :rule_type]
   validate :has_events?, :has_conditions?, :has_actions?
   
+  before_save :set_encrypted_password
   after_commit :clear_observer_rules_cache, :if => :observer_rule?
 
   attr_writer :conditions, :actions, :events, :performer
+  attr_accessor :triggered_event
 
   belongs_to :account
   
@@ -83,9 +87,13 @@ class VARule < ActiveRecord::Base
 
   def event_matches? current_events, evaluate_on
     Rails.logger.debug "INSIDE event_matches? WITH evaluate_on : #{evaluate_on.inspect}, va_rule #{self}"
-    events.any? do  |e|
-      e.event_matches? current_events, evaluate_on
+    events.each do  |e|
+      if e.event_matches?(current_events, evaluate_on)
+        @triggered_event = {e.name => current_events[e.name]}
+        return true
+      end
     end
+    return false
   end
   
   def pass_through(evaluate_on, actions=nil, doer=nil)
@@ -114,7 +122,8 @@ class VARule < ActiveRecord::Base
   def trigger_actions(evaluate_on, doer=nil)
     Va::Action.initialize_activities
     return false unless check_user_privilege
-    actions.each { |a| a.trigger(evaluate_on, doer) }
+    @triggered_event ||= TICKET_CREATED_EVENT
+    actions.each { |a| a.trigger(evaluate_on, doer, triggered_event) }
   end
   
   def filter_query
@@ -152,6 +161,60 @@ class VARule < ActiveRecord::Base
     all_joins
   end
 
+  def hide_password!
+    return if supervisor_rule? || automation_rule?
+
+    action_data.each do |action_data|
+      action_data.symbolize_keys!
+      if action_data[:name] == 'trigger_webhook' 
+        action_data[:password] = '' and return
+      end
+    end
+  end
+
+  def set_encrypted_password
+    return if supervisor_rule? || automation_rule?
+    from_action_data, to_action_data = action_data_change
+    webhook_action = nil
+    
+    to_action_data.each do |action_data|
+      if action_data[:name] == 'trigger_webhook'
+        return if action_data[:need_authentication].blank? || action_data[:api_key].present?
+        if action_data[:password].blank? 
+          webhook_action = action_data
+        else
+          action_data[:password] = encrypt(action_data[:password])
+        end
+        break
+      end
+    end
+
+    unless (new_record? || webhook_action.nil?)
+      from_action_data.each do |action_data|
+        if action_data[:name] == 'trigger_webhook' 
+          webhook_action[:password] = action_data[:password]
+          return true
+        end
+      end
+    end
+  end
+
+  def observer_rule?
+    rule_type == VAConfig::OBSERVER_RULE
+  end
+
+  def supervisor_rule?
+    rule_type == VAConfig::SUPERVISOR_RULE
+  end
+
+  def dispatchr_rule?
+    rule_type == VAConfig::BUSINESS_RULE
+  end
+
+  def automation_rule?
+    rule_type == VAConfig::SCENARIO_AUTOMATION
+  end
+
   private
     def has_events?
       return unless observer_rule?
@@ -159,7 +222,7 @@ class VARule < ActiveRecord::Base
     end
     
     def has_conditions?
-      return unless(rule_type == VAConfig::SUPERVISOR_RULE)
+      return unless supervisor_rule?
       errors.add_to_base(I18n.t("errors.conditions_empty")) if(filter_data.blank?)
     end
     
@@ -171,12 +234,13 @@ class VARule < ActiveRecord::Base
       observer_rule? ? filter_data[:conditions] : filter_data
     end
 
-    def observer_rule?
-      rule_type == VAConfig::OBSERVER_RULE
-    end
-  
+    def encrypt data
+      public_key = OpenSSL::PKey::RSA.new(File.read("config/cert/public.pem"))
+      Base64.encode64(public_key.public_encrypt(data))
+    end  
+
     def check_user_privilege
-      return true unless rule_type == VAConfig::SCENARIO_AUTOMATION
+      return true unless automation_rule?
       
       actions.each do |action|
         if Va::Action::ACTION_PRIVILEGE.key?(action.action_key.to_sym)

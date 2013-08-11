@@ -45,7 +45,7 @@ function getFilterInOptgroupFormat(filter){
 			_filter_group.push(["------------------", _filter_children])
 			_filter_children = []
 		}else{
-			_filter_children.push([item.name, item.value])
+			_filter_children.push([item.name, item.value, item['unique_action']])
 		} 
 	});
 	_filter_group.push(["------------------", _filter_children]);
@@ -64,6 +64,24 @@ function disableOtherSelectValue(item, container){
 	return item.text
 };
 
+var selectedOptionList = $H();
+
+function disableSingleSelectOnly(item, container){
+	if(selectedOptionList.get(item.id)){
+		jQuery(container).hide()
+	}
+	return item.text
+}
+
+function removeIfConditionMatches(elementVal, checkValue, 
+															DOMToBeRemovedIfTrue, DOMToBeRemovedIfFalse){
+	if(elementVal==checkValue){
+		DOMToBeRemovedIfTrue.remove();
+	}else{
+		if(DOMToBeRemovedIfFalse)
+			DOMToBeRemovedIfFalse.remove();
+	}
+};
 
 // Base rule function for managing multiple rule based UI components
 // used in Virtual Agents [filters and actions], Senario automation
@@ -137,8 +155,15 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				} else {
 					filterList = filter_data;
 				}
+
+				$filter_select_list = FactoryUI.optgroup(getFilterInOptgroupFormat(filterList), "name", "ruCls_"+name+' select2', 
+					  										{'minimumResultsForSearch':'10'}).data('dropdownCssClass', "align_options")
+				if(parentDom=='#actionDOM')
+					jQuery($filter_select_list).data('formatResult', disableSingleSelectOnly);
+
+
 				jQuery.data(r_dom, "inner")
-					  .append(FactoryUI.optgroup(getFilterInOptgroupFormat(filterList), "name", "ruCls_"+name+' select2', {'minimumResultsForSearch':'10'}).data('dropdownCssClass', "align_options"))
+					  .append($filter_select_list)
 					  .append("<div />");
 
 				list_C = jQuery(parentDom).find(setting.rule_dom);
@@ -198,9 +223,21 @@ rules_filter = function(_name, filter_data, parentDom, options){
 						filterList = setting.change_filter_data(filter_data[0][setting.selectListArr[selected_quest]]);
 					} else {
 						filterList = filter_data;
-					}
+					}				
+									$filter_list_select = FactoryUI.optgroup(getFilterInOptgroupFormat(filterList), "name", "ruCls_"+name+' select2', 
+                     											{'minimumResultsForSearch':'10'})
+																					.val(rule.name).data('dropdownCssClass', "align_options");
+									if(parentDom=='#actionDOM')
+										jQuery($filter_select_list).data('formatResult', disableSingleSelectOnly);
+
+
+									if($filter_list_select.find(":selected").data("unique_action") == true) {
+											selectedOptionList.set(rule.name, true)
+											$filter_list_select.data("prevValue", rule.name);
+									}
+
                   jQuery.data(r_dom, "inner")
-                     .append(FactoryUI.optgroup(getFilterInOptgroupFormat(filterList), "name", "ruCls_"+name+' select2', {'minimumResultsForSearch':'10'}).val(rule.name).data('dropdownCssClass', "align_options"))
+                     .append($filter_list_select)
                      .append(inner);	
 
                   list_C = jQuery(parentDom).find(setting.rule_dom);
@@ -209,7 +246,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
              }catch(e){}
             });
 			this.dom_size = dataFeed.size()+1;
-         },
+    },
 
         populateEmpty: 
         	function(){
@@ -242,13 +279,32 @@ rules_filter = function(_name, filter_data, parentDom, options){
 							flag = true;
 						}
 						else if (item.value == 'end'){
-						   if(tempConstruct.size())
-							   serialHash.get(name).push(tempConstruct.toObject());
+						  if(tempConstruct.size())
+							  serialHash.get(name).push(tempConstruct.toObject());
 
 							flag = false;
 						}
 						else if(item.value != -1){ 
-							tempConstruct.set(item.name, item.value);
+							split_words = item.name.match(/(.*)\[(.*)\]/m)
+
+							if(split_words!=null){
+								hash_name = split_words[1]
+								hash_key = split_words[2]
+								currentHash = tempConstruct.get(hash_name) || {}
+								currentHash[hash_key] = item.value
+								tempConstruct.set(hash_name, currentHash)
+							}else if(item.name!='name' //Hack for set_nested_fields
+								&& tempConstruct.get(item.name)){
+               	group_item = tempConstruct.get(item.name)
+	              if(group_item instanceof Array)
+	                group_item.push(item.value)
+	              else
+	                group_item = [group_item, item.value]
+	              
+	              tempConstruct.set(item.name, group_item);
+         			}else{
+                tempConstruct.set(item.name, item.value);
+         			}
 						}
 					}
 				});
@@ -312,14 +368,23 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				.sortable({ items: "fieldset", containment: "parent", tolerance: "pointer", handle:"span.sort_handle"});
 
 			jQuery(parentDom).parents('form:first').submit(function(e){
+				if(parentDom=='#actionDOM'){
+					removeIfConditionMatches(jQuery("input[name=need_authentication]:checked").val(), undefined, jQuery(".credentials"));
+					removeIfConditionMatches(jQuery("input[name='content_layout']:checked=true").val(), 1, jQuery(".edit2"), jQuery(".edit1"));
+					removeIfConditionMatches(jQuery("select[name=request_type]").val(), 1, jQuery('.request_content'));
+					removeIfConditionMatches(jQuery("select[name=request_type]").val(), 5, jQuery('.request_content'));
+					removeIfConditionMatches(jQuery(".api_webhook").attr("style"), "display: none;", jQuery('.api_webhook'), jQuery('.user_pass_webhook'));
+				}
 			  domUtil.get_filter_list('json', this);
 			   // return false;
 			});
 
 			jQuery('.l_placeholder').live("click", function(ev){
-				ev.preventDefault()				
-				active_email_body = jQuery(this).prev();
+				ev.preventDefault()
+				// active_email_body = jQuery(this).prev();
+
 				jQuery('#place-dialog').slideDown();
+
 			});
 
 			// Binding Events to Containers
@@ -328,7 +393,8 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			jQuery(parentDom+' .'+"ruCls_"+name)
 				.live("change", 
 						function(){ 
-							var rule_drop = jQuery(this).next().empty().addClass('dependent');
+							var rule_drop = jQuery(this).next().empty().addClass('dependent'),
+									$this = jQuery(this);
 
 							if(this.value !== -1){
 								var hg_item = hg_data.get(this.value);
@@ -337,6 +403,11 @@ rules_filter = function(_name, filter_data, parentDom, options){
 								if(hg_item.operatortype){
 									rule_drop.append(FactoryUI.dropdown(operator_types.get(hg_item.operatortype), "operator", 'operator select2', {'minimumResultsForSearch':'10'}));
 								}
+
+								if($this.find(":selected").data("unique_action") == true) selectedOptionList.set($this.val(), true)
+								if($this.data("prevValue") != $this.val()) selectedOptionList.set($this.data("prevValue"), false)
+								
+								$this.data("prevValue", $this.val());
 
 								if( name == "event"){
                   switch (hg_item.type)
@@ -358,13 +429,63 @@ rules_filter = function(_name, filter_data, parentDom, options){
                   	break;
                  	}
                 }else{
-                	dom = conditional_dom(hg_item, data_id, name, null, "value", 'select2', {'minimumResultsForSearch':'10'} )
+                	dom = conditional_dom(hg_item, data_id, name, null, "value", 'select2', {'minimumResultsForSearch':'10'} );
                   rule_drop.append(dom);
                 }
 								postProcessCondition(hg_item, data_id);
 							}
 						});
 
+			jQuery(parentDom).find('.webhook select[name=request_type]')
+				.live("change", function(){
+					var request_content = jQuery(this).parent().parent().find('.request_content');
+					if(jQuery(this).val()==1 || jQuery(this).val()==5)
+						request_content.slideUp('slow');
+					else
+						request_content.slideDown('slow');
+				});
+
+			jQuery(parentDom).find('.webhook input[name=need_authentication]')
+				.live("change", function(){	jQuery(this).parent().parent().parent().find('.credentials').slideToggle();	});
+
+			jQuery(parentDom).find('.webhook .credentials_toggle')
+				.live("click", function(){
+					current_credential = jQuery(this).parent();
+					current_credential.hide();
+					current_credential.siblings().show();
+				});
+
+			jQuery(parentDom).find('.webhook input[name=content_layout]')
+				.live("change", function(){
+					divs = jQuery(this).parent().parent().find('.edit1,.edit2')
+					divs[1].toggle();
+					divs[0].toggle();
+				});
+
+			jQuery(parentDom).find('.webhook .params_div .checkbox').live("change", function() {
+				if(this.checked) {
+			  	jQuery(this).parent().addClass('highlighted');
+				}else{
+					jQuery(this).parent().removeClass('highlighted');
+				}
+			});
+
+			jQuery(parentDom).find('.webhook input[name=content_type]').live("change", function(){
+				advanced_rb = jQuery(this).parent().parent().parent().find('input[name=content_layout][value=2]').first();
+				if(jQuery(this).val()==3){
+					advanced_rb.attr("disabled", true);
+					jQuery('label[for='+advanced_rb.attr("id")+']').addClass('muted');
+					jQuery(this).parent().parent().parent().find('input[name=content_layout][value=1]').click();
+				}else{
+					advanced_rb.enable();
+					jQuery('label[for='+advanced_rb.attr("id")+']').removeClass('muted');
+				}
+			});
+
+			jQuery(parentDom).find('.webhook a[href=#change_password]').live("click", function(){
+				jQuery(this).hide();
+				jQuery(this).parent().find('.password').show();
+			});
 			
 			jQuery(parentDom).find('select, :text')
 				.live("change",function(){
@@ -383,6 +504,8 @@ rules_filter = function(_name, filter_data, parentDom, options){
 				.live("click", 
 						function(){
 							filter = jQuery(this).parent();
+
+							selectedOptionList.set(filter.find("select.ruCls_filter, select.ruCls_action, select.ruCls_event").val(), false)
 							if(setting.delete_last || (filter.parent().children().size() != 1)){
 								filter.remove();
 								domUtil.dom_size--;

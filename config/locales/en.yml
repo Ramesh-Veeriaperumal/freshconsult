@@ -696,9 +696,23 @@ en:
         human_name: Dispatch’r Rule
     shared:
       filter_jsinit:
+        change_password: Change Password
         request_type: Request Type
-        params: Params
-        url: URL
+        content_type: Encoding
+        params: Content
+        url: Callback URL
+        url_req_auth: Requires Authentication
+        simple_layout: Simple
+        advanced_layout: Advanced
+        webhook_usecase: Example Webhooks
+        simple_webhook_tip: Select any of the ticket properties from the list above to be sent with the request. In case you would like to write your own API requests, please use the Advanced option.
+        advanced_webhook_tip: This section lets you write custom API requests. Click on the Insert Placeholders button to include ticket details such as Requester Name, Priority, Ticket Status etc. with your request.
+        how_to_use_webhook: How to use Webhooks >
+        api_key?: I have API key?
+        user_pass?: I have Username & Password?
+        username: Username
+        api_key: API Key
+        password: Password
         insert_placeholder: Insert Placeholder
         subject: Subject
         body: Body
@@ -2488,6 +2502,8 @@ en:
     ticket: Ticket is
     customer_feedback: Customer Feedback is received
     time_entry: Time Entry is 
+  observer_actions:
+    skip_agent_assigned_email_notification: Skip Agent Assigned Email Notification
   ticket:
     spam: "SPAM"
     deleted: "TRASH"
