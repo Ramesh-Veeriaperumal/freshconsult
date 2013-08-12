@@ -32,14 +32,14 @@ window.xhrPool = [];
     else
     {
       var original_complete = options.complete || function(){};
-      options.complete = function(xhr)
+      options.complete = function(xhr,status)
       {
         var index = window.xhrPool.indexOf(xhr)
         if(index> -1)
         {
           window.xhrPool.splice(index,1);
         }
-        original_complete();
+        original_complete(xhr,status);
       }
       var xhr = $.oldajax(options);
       window.xhrPool.push(xhr);

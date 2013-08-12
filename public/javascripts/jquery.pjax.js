@@ -287,6 +287,7 @@ function pjax(options) {
   // behavior.
   if (!pjax.state) {
     pjax.state = {
+      body_class: $('body').attr('class'),
       id: uniqueId(),
       url: window.location.href,
       title: document.title,
@@ -677,6 +678,7 @@ function cachePush(id, value) {
 //
 // Returns nothing.
 function cachePop(direction, id, value) {
+  value.find('.select2-container').remove()
   var pushStack, popStack , style_list;
  
   cacheMapping[id] = value
