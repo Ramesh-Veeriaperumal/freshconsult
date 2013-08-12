@@ -1,5 +1,5 @@
 <% content_for :sidebar do -%><%-end%>
-<%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "automation"} %>
+<%= render :partial => "admin/shared/filter_jsinit", :locals => { :filter_type => "automation", :placeholders => nil } %>
 
 <%= f.error_messages :object_name => 'scenario' %>
 <ul class="ui-form observer no-background">
@@ -44,6 +44,6 @@
 </div>
 
 <% content_for :pagefixed do %>
-	<%= render :partial => "/shared/placeholder_help" %>
+	<%= render :partial => "/shared/placeholder_help", :locals => { :placeholders => ticket_placeholders+survey_placeholders }  %>
 <% end %>
 

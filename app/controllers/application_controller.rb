@@ -14,6 +14,7 @@ class ApplicationController < ActionController::Base
   before_filter :set_default_locale
   before_filter :set_time_zone, :check_day_pass_usage 
   before_filter :set_locale, :force_utf8_params
+  before_filter :persist_user_agent
 
   rescue_from ActionController::RoutingError, :with => :render_404
   rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
@@ -129,6 +130,10 @@ class ApplicationController < ActionController::Base
     Sharding.select_shard_of(request.host) do 
         yield 
     end
+  end
+
+  def persist_user_agent
+    Thread.current[:http_user_agent] = request.env['HTTP_USER_AGENT']
   end
 
   protected

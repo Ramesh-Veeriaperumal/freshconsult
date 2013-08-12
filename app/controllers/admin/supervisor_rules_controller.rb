@@ -1,35 +1,5 @@
 class Admin::SupervisorRulesController < Admin::VaRulesController
   
-  STATE_FILTERS = [
-    { :name => -1, :value => "-----------------------" },
-    { :name => "created_at", :value => I18n.t('ticket.created_at'), :domtype => "number",
-      :operatortype => "hours" },
-    { :name => "pending_since", :value => I18n.t('ticket.pending_since'), :domtype => "number",
-      :operatortype => "hours" },
-    { :name => "resolved_at", :value => I18n.t('ticket.resolved_at'), :domtype => "number",
-      :operatortype => "hours" },
-    { :name => "closed_at", :value => I18n.t('ticket.closed_at'), :domtype => "number",
-      :operatortype => "hours" },
-    { :name => "opened_at", :value => I18n.t('ticket.opened_at'), :domtype => "number",
-      :operatortype => "hours" },
-    { :name => "first_assigned_at", :value => I18n.t('ticket.first_assigned_at'), 
-      :domtype => "number", :operatortype => "hours" },
-    { :name => "assigned_at", :value => I18n.t('ticket.assigned_at'), :domtype => "number",
-      :operatortype => "hours" },
-    { :name => "requester_responded_at", :value => I18n.t('ticket.requester_responded_at'), 
-      :domtype => "number", :operatortype => "hours" },
-    { :name => "agent_responded_at", :value => I18n.t('ticket.agent_responded_at'), 
-      :domtype => "number", :operatortype => "hours" },
-    { :name => "first_response_time", :value => I18n.t('ticket.first_response_due'), 
-      :domtype => "number", :operatortype => "hours" },
-    { :name => "due_by", :value => I18n.t('ticket.due_by'), :domtype => "number",
-      :operatortype => "hours" },
-    { :name => "inbound_count", :value => I18n.t('ticket.inbound_count'), :domtype => "number",
-      :operatortype => "hours" },
-    { :name => "outbound_count", :value => I18n.t('ticket.outbound_count'), :domtype => "number",
-      :operatortype => "hours" },
-  ]
-  
   protected
   
     def scoper
@@ -43,26 +13,5 @@ class Admin::SupervisorRulesController < Admin::VaRulesController
     def human_name
       "Supervisor rule"
     end
-    
-    def additional_filters
-      STATE_FILTERS
-    end
 
-    def remove_description_filter filter_hash
-      filter_hash.delete_if {|option| option[:name].to_s.include?('description')}
-      filter_hash
-    end
-
-    def additional_actions
-      if current_account.features?(:multi_product)
-        { 9 => { :name => "product_id", :value => t('admin.products.assign_product'),
-                :domtype => 'dropdown', :choices => [['', t('none')]]+@products } }
-      else
-        {}
-      end
-    end
-
-    def business_hours_filter(filter_hash)
-      []
-    end
 end
