@@ -47,7 +47,7 @@
 	          <%= link_to(t('cancel'), '#', :class => "btn cancel_btn", "data-show-pseudo-reply" => 'true',"data-cnt-id" => cntid , "data-clear-draft" => 'true') %>
 	        </span>
 
-	        <span class="btn-group">
+	        <span class="btn-group <% if privilege?(:edit_ticket_properties) %>dropup<%end%>">
 	          <a class="btn btn-primary submit_btn">
 	            <%= t('ticket.reply_form.send') %>
               <% if privilege?(:edit_ticket_properties) %>
@@ -57,7 +57,7 @@
               <% end %>
 	          </a>
             <% if privilege?(:edit_ticket_properties) %>
-  	          <ul class="dropdown-menu custom_statuses">
+  	          <ul class="dropdown-menu custom_statuses pull-right">
   	            <%
   	            ticket_statuses = current_account.ticket_status_values.reject{|status| status.status_id == 2 }
   	            %>
@@ -72,7 +72,6 @@
             <% end %>
 	        </span>
 		</div>
-		<div class="clearfix" ></div>
 	<% end %>
 </div> 	
 

@@ -77,10 +77,70 @@ module SupportHelper
 							</a>
 						</div> )
 		output << %( <div> <a href="#" class="mobile-icon-nav-contact contact-info ellipsis">
-						<span>#{ portal['contact_info'] }</span>
+						<span>#{ h(portal['contact_info']) }</span>
 					 </a> </div> ) if portal['contact_info']
 
 		output << %(</nav>)
+	end
+
+	# Portal tab navigation
+	def portal_navigation portal
+		output = []
+		output << %( <nav class="page-tabs"> )		
+		if(portal['tabs'].present?)
+			output << %(<div class="nav-link" id="header-tabs">)
+			portal['tabs'].each do |tab|
+				active_class = (tab['tab_type'] == portal['current_tab']) ? "active" : ""
+				output << %( <a href="#{tab['url']}" class="#{active_class}">#{tab['label']}</a>) if(tab['url'])
+			end
+			output << %(</div>)
+		end
+		output << %(</nav>)
+		output.join("").html_safe
+	end
+
+	# Portal header
+	def facebook_header portal
+		output = []
+		output << %( 	
+			<header class="banner">
+				<div class="banner-wrapper">
+					<div class="banner-title">
+						#{ logo portal }
+						<h1 class="ellipsis heading">#{ portal['name'] }</h1>
+					</div>
+				</div>
+			</header>
+			<nav class="page-tabs" >
+				<div class="nav-link" id="header-tabs">
+			)		
+		portal['tabs'].each do |tab|
+			active_class = (tab['tab_type'] == portal['current_tab']) ? "active" : ""
+			output << %( <a href="#{tab['url']}" class="#{active_class}"> #{tab['label']}</a>) if(tab['url'])
+		end
+		user_class = portal['user'] ? "" : "no_user_ticket"
+		output << %(
+				</div>
+			</nav>
+			)
+		output << %(
+			<!-- <a href="#{ new_support_ticket_path }" class="facebook-button new_button #{user_class}" id="new_support_ticket">
+				New support Ticket</a> -->
+			<section>	
+					<div class="hc-search-c">
+						<h2 class="">#{ I18n.t('header.help_center') }</h2>
+						<form class="hc-search-form" autocomplete="off" action="#{ tab_based_search_url }" id="hc-search-form">
+							<div class="hc-search-input">
+								<input placeholder="#{ I18n.t('portal.search.placeholder') }" type="text" 
+									name="term" class="special" value="#{ h(params[:term]) }" 
+						            rel="page-search" data-max-matches="10">
+						        <span class="search-icon icon-search-dark"></span>
+							</div>
+						</form>
+					</div>
+			</section> )
+
+		output.join("").html_safe
 	end
 
 	# User image page
@@ -121,12 +181,10 @@ module SupportHelper
 	end
 
 	def portal_fav_ico
-    fav_icon_content = MemcacheKeys.fetch(["v4","portal","fav_ico",current_portal]) do
-    	url = current_portal.fav_icon.nil? ? '/images/favicon.ico' : 
-    		AWS::S3::S3Object.url_for(current_portal.fav_icon.content.path, current_portal.fav_icon.content.bucket_name,:use_ssl => true, :expires_in => 30.days)
+		fav_icon_content = MemcacheKeys.fetch(["v5","portal","fav_ico",current_portal]) do
+			url = current_portal.fav_icon.nil? ? '/images/favicon.ico' : current_portal.fav_icon.content.url
 			"<link rel='shortcut icon' href='#{url}' />"
-    end
-
+		end
 		fav_icon_content
 	end
 
@@ -204,6 +262,12 @@ module SupportHelper
 		end
 	end	
 
+	def more_articles_in_folder folder
+		%( <h3 class="list-lead">
+			#{I18n.t('portal.article.more_articles', :article_name => folder['name'])}
+		</h3>)
+	end
+
 	def article_list_item article
 		output = <<HTML
 			<li>
@@ -251,6 +315,10 @@ HTML
 		output.join(", ")
 	end
 
+	def fb_topic_info topic
+		%(#{h(topic.user.name)}, <br>#{time_ago topic.created_on}.)
+	end
+
 	def topic_info_with_votes topic
 		output = []
 		output << topic_brief(topic)
@@ -291,10 +359,14 @@ HTML
 	def post_topic_in_portal portal, post_topic = false
 		output = []
 		output << %(<section class="lead">)
-		output << %(<a href="#{portal['login_url']}">#{I18n.t('portal.login')}</a>)
-		output << I18n.t('portal.or_signup', :signup => 
-				"<a href=\"#{portal['signup_url'] }\">#{I18n.t('portal.signup')}</a>") if 
-					portal['can_signup_feature']
+		if portal['facebook_portal']
+			output << %(<a href="" class="solution_c">#{I18n.t('portal.login')}</a>)
+		else
+			output << %(<a href="#{portal['login_url']}">#{I18n.t('portal.login')}</a>)
+			output << I18n.t('portal.or_signup', :signup => 
+					"<a href=\"#{portal['signup_url'] }\">#{I18n.t('portal.signup')}</a>") if 
+						portal['can_signup_feature']
+		end
 		if post_topic
 			output << I18n.t("portal.to_post_topic")
 		else
@@ -369,8 +441,9 @@ HTML
 	def ticket_field_container form_builder,object_name, field, field_value = ""
 		case field.dom_type
 			when "checkbox" then
+				required = (field[:required_in_portal] && field[:editable_in_portal])
 				%(  <div class="controls"> 
-						<label class="checkbox">
+						<label class="checkbox #{required ? 'required' : '' }">
 							#{ ticket_form_element form_builder,:helpdesk_ticket, field, field_value } #{ field[:label_in_portal] }
 						</label>
 					</div> )
@@ -418,7 +491,8 @@ HTML
 	      when "hidden" then
 			hidden_field(object_name , field_name , :value => field_value)
 	      when "checkbox" then
-			check_box(object_name, field_name, :checked => field_value )
+	      	( required ? check_box_tag(%{#{object_name}[#{field_name}]}, 1, !field_value.blank?, { :class => element_class } ) :
+                                                   check_box(object_name, field_name, { :class => element_class, :checked => field_value }) )
 	      when "html_paragraph" then
 	      	_output = []
 	      	form_builder.fields_for(:ticket_body, @ticket.ticket_body) do |ff|
@@ -525,6 +599,37 @@ HTML
 		return form_value
 	end
 
+	def default_ticket_list_item ticket
+		label_class_name = ticket['active?'] ? "label-status-pending" : "label-status-closed"
+
+		unless ticket['requester'] or User.current.eql?(ticket['requester'])
+			time_ago_text = I18n.t('ticket.fb_portal_created_on', { :username => h(ticket['requester']['name']), :date => time_ago(ticket['created_on']) })
+		else
+			time_ago_text = I18n.t('ticket.fb_portal_created_on_same_user', { :date => time_ago(ticket['created_on']) })
+		end
+		unless ticket['freshness'] == "new"
+			unique_agent = "#{I18n.t("ticket.assigned_agent")} : <span class='emphasize'> #{ h(ticket['agent']) }</span>"
+		end
+
+		%( <div class="c-row c-ticket-row">
+			<span class="status-source sources-detailed-#{ ticket['source_name'].downcase }"> </span>
+			<span class="#{label_class_name} label label-small"> 
+				#{ ticket['status'] }
+			</span>
+			<div class="ticket-brief">
+				<div class="ellipsis">
+					<a href="#{ ticket['portal_url'] }" class="c-link" title="#{ h(ticket.description_text) }">
+						#{ ticket['subject'] } ##{ ticket['id'] }
+					</a>
+				</div>
+				<div class="help-text">
+					#{ time_ago_text }
+					#{ unique_agent }
+				</div>
+			</div>
+		</div> )
+	end
+
 	# Portal placeholders to access dynamic data inside javascripts
 	def portal_access_varibles
 		output = []
@@ -536,10 +641,10 @@ HTML
 
 	def portal_javascript_object
 		{ :language => @portal['language'],
-		  :name => @portal['name'],
-		  :contact_info => @portal['contact_info'],
+		  :name => h(@portal['name']),
+		  :contact_info => h(@portal['contact_info']),
 		  :current_page => @portal['page'],
-		  :current_tab => @portal['current_tab'] }.to_json
+		  :current_tab => @current_tab }.to_json
 	end
 
 	def theme_url
@@ -571,7 +676,7 @@ HTML
 	end
 
 	def attach_a_file_link attach_id
-		link_to_function("Attach a <b>file</b>", "Helpdesk.Multifile.clickProxy(this)", 
+		link_to_function("#{I18n.t('portal.attach_file')}", "Helpdesk.Multifile.clickProxy(this)", 
                 "data-file-id" => "#{ attach_id }_file", :id => "#{ attach_id }_proxy_link" )
 	end
 

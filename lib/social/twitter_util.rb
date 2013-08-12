@@ -43,10 +43,16 @@ def add_tweet_as_ticket twt , twt_handle , twt_type
         :tweet_attributes => {:tweet_id => twt.id,
                               :tweet_type => twt_type.to_s, :twitter_handle_id => twt_handle.id}
        )
-      if note.save
-        puts "This note has been added"
-      else
-        puts "error while saving the ticket:: #{note.errors.to_json}"
+
+      begin
+        @user.make_current
+        if note.save
+          puts "This note has been added"
+        else
+          puts "error while saving the ticket:: #{note.errors.to_json}"
+        end
+      ensure
+        User.reset_current_user
       end
   end
   

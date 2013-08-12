@@ -1,46 +1,18 @@
-require "solution/article"
-
 class ArticleObserver < ActiveRecord::Observer
 
 	observe Solution::Article
-	include Gamification::GamificationUtil
 	require 'nokogiri'
 
-	SOLUTION_UPDATE_ATTRIBUTES = ["folder_id", "status", "thumbs_up"]
 
 	def before_save(article)
 		remove_script_tags(article)
 		set_un_html_content(article)
-		article_changes(article)
+		article.article_changes
 		article.seo_data ||= {}
 	end
 
 	def after_create(article) 
 		create_activity(article)
-	end
-
-	def after_commit(article)
-		return unless gamification_feature?(article.account)
-		changed_filter_attributes = @article_changes.keys & SOLUTION_UPDATE_ATTRIBUTES
-		add_resque_job(article) if changed_filter_attributes.any?
-	end
-
-	def after_commit_on_create(article)
-		article.update_es_index
-	end
-
-	def after_commit_on_update(article)
-		article.update_es_index
-	end
-
-	def after_commit_on_destroy(article)
-		article.remove_es_document
-	end
-
-	def add_resque_job(article)
-		return unless article.published?
-		Resque.enqueue(Gamification::Quests::ProcessSolutionQuests, { :id => article.id, 
-			:account_id => article.account_id })
 	end
 
 private
@@ -53,7 +25,7 @@ private
         :user => article.user,
         :activity_data => {}
       )
-  end
+  	end
 
 	def remove_tag response, tag
 	    doc = Nokogiri::HTML.parse(response)
@@ -70,9 +42,5 @@ private
 	def set_un_html_content(article)
 		article.desc_un_html = Helpdesk::HTMLSanitizer.plain(article.description) unless article.description.empty?
     end
-
-  def article_changes(article)
-  	@article_changes = article.changes.clone
-  end
 
 end

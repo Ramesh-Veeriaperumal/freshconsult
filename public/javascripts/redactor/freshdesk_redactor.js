@@ -6,8 +6,8 @@
     			break;
 	    	case 'cnt-reply':
 	         	jQuery('#'+element_id).redactor({
-					focus: true, convertDivs: false, autoresize:false, 
-					buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link'],
+					focus: true, convertDivs: false, autoresize:false, observeImages:true, imageUpload:"/tickets_uploaded_images",
+					buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link', 'image'],
 					execCommandCallback: function(obj, command) { 
 						if (typeof(TICKET_DETAILS_DATA) != 'undefined') {
 							if (typeof(TICKET_DETAILS_DATA['draft']['clearingDraft']) == 'undefined' || !TICKET_DETAILS_DATA['draft']['clearingDraft']) {
@@ -32,12 +32,20 @@
 						}
 					} 
 				});
+	    	case 'cnt-fwd':
+	         	jQuery('#'+element_id).redactor({ 
+	         		focus: true, convertDivs: false, observeImages:true, autoresize:false, imageUpload:"/tickets_uploaded_images", 
+	         		buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link', 'image']});
+	         	break;
+	        case 'cnt-note':
+	         	jQuery('#'+element_id).redactor({ 
+	         		focus: true, convertDivs: false, observeImages:true, autoresize:false, imageUpload:"/tickets_uploaded_images", 
+	         		buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link', 'image']});
 	         	break;
 	        case 'signature':
 	         	jQuery('#'+element_id).redactor({ focus: false,convertDivs: false,  autoresize:false, buttons:['bold','italic','underline','|','image',  '|','fontcolor', 'backcolor', '|' ,'link']});	
 	        default:
-	    	 	jQuery('#'+element_id).redactor({ focus: true,convertDivs: false,  autoresize:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link']});
+	    	 	jQuery('#'+element_id).redactor({ convertDivs: false,  autoresize:false, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link']});
 	     	}
  	}
-
 

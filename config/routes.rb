@@ -13,7 +13,11 @@
   map.calender '/oauth2callback', :controller => 'authorizations', :action => 'create', :provider => 'google_oauth2'
   map.failure '/auth/failure', :controller => 'authorizations', :action => 'failure'
   
-  map.resources :uploaded_images, :controller => 'uploaded_images'
+  map.resources :solutions_uploaded_images, :controller => 'solutions_uploaded_images', :only => [ :index, :create ] 
+
+  map.resources :forums_uploaded_images, :controller => 'forums_uploaded_images', :only => :create
+
+  map.resources :tickets_uploaded_images, :controller => 'tickets_uploaded_images', :only => :create
   
   map.resources :contact_import , :collection => {:csv => :get, :google => :get}
 
@@ -29,7 +33,12 @@
   
   map.resources :profiles , :member => { :change_password => :post }, :collection => {:reset_api_key => :post}
   
-  map.resources :agents, :member => { :delete_avatar => :delete , :restore => :put, :convert_to_user => :get, :reset_password=> :put }, :collection => {:create_multiple_items => :put} do |agent|
+  map.resources :agents, :member => { :delete_avatar => :delete , 
+                                      :restore => :put, 
+                                      :convert_to_user => :get, 
+                                      :reset_password=> :put }, 
+                          :collection => { :create_multiple_items => :put, 
+                                           :info_for_node => :get} do |agent|
       agent.resources :time_sheets, :controller=>'helpdesk/time_sheets'
   end
 
@@ -92,7 +101,7 @@
       :collection => { :reorder => :put }
     admin.resources :observer_rules, :member => { :activate_deactivate => :put }, 
       :collection => { :reorder => :put }
-    admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get, :test_email => :put}
+    admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get, :test_email => :put} , :collection => { :existing_email => :get }
     admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications
     admin.resources :getting_started, :collection => {:rebrand => :put}
@@ -156,6 +165,8 @@
     report.resources :customers_analysis_reports, :controller => 'customers_analysis', 
       :collection => {:generate => :post,:generate_pdf => :post,:send_report_email => :post,
       :fetch_chart_data => :post}
+    report.resources :report_filters, :controller => 'report_filters',
+      :collection => {:create => :post,:destroy => :post}
   end
   
   map.resources :reports
@@ -181,16 +192,19 @@
                 :member     =>  { :search => :any, :edit => :any }
 
     social.resources :facebook, :controller => 'facebook_pages', 
-                :collection =>  { :signin => :any ,:authdone => :any , :event_listener =>:any , :enable_pages =>:any },
-                :member     =>  { :edit => :any }
+                :collection =>  { :signin => :any , :event_listener =>:any , :enable_pages =>:any },
+                :member     =>  { :edit => :any } do |fb|
+                  fb.resources :tabs, :controller => 'facebook_tabs',
+                            :collection => { :configure => :any, :remove => :any }
+                end
   end
   
   #SAAS copy starts here
   map.with_options(:conditions => {:subdomain => AppConfig['admin_subdomain']}) do |subdom|
     subdom.root :controller => 'subscription_admin/subscriptions', :action => 'index'
     subdom.with_options(:namespace => 'subscription_admin/', :name_prefix => 'admin_', :path_prefix => nil) do |admin|
-      admin.resources :subscriptions, :member => { :charge => :post, :extend_trial => :post, :add_day_passes => :post }, :collection => {:customers => :get, :customers_csv => :get}
-      admin.resources :accounts, :collection => {:agents => :get, :helpdesk_urls => :get, :tickets => :get, :renewal_csv => :get}
+      admin.resources :subscriptions, :member => { :charge => :post, :extend_trial => :post, :add_day_passes => :post }, :collection => {:customers => :get, :deleted_customers => :get, :customers_csv => :get}
+      admin.resources :accounts, :collection => {:agents => :get, :tickets => :get, :renewal_csv => :get}
       admin.resources :subscription_plans, :as => 'plans'
       # admin.resources :subscription_discounts, :as => 'discounts'
       admin.resources :subscription_affiliates, :as => 'affiliates', :collection => {:add_affiliate_transaction => :post}
@@ -357,6 +371,9 @@
     helpdesk.resources :articles, :collection => { :autocomplete => :get }
 
     helpdesk.resources :attachments
+    helpdesk.with_options :path_prefix => "facebook/helpdesk" do |fb_helpdesk|
+      fb_helpdesk.resources :attachments, :only => [:show, :destroy]
+    end
 
     helpdesk.resources :dropboxes
     
@@ -383,9 +400,29 @@
     solution.resources :articles, :only => :show         
   end
 
+  # Savage Beast route config entries starts from here
+  map.resources :posts, :name_prefix => 'all_', :collection => { :search => :get }
+  map.resources :forums, :topics, :posts, :monitorship
+
+  %w(forum).each do |attr|
+    map.resources :posts, :name_prefix => "#{attr}_", :path_prefix => "/#{attr.pluralize}/:#{attr}_id"
+  end
+
+  map.resources :categories, :collection => {:reorder => :put}, :controller=>'forum_categories'  do |forum_c|
+  forum_c.resources :forums, :collection => {:reorder => :put} do |forum|
+    forum.resources :topics, :member => { :users_voted => :get, :update_stamp => :put,:remove_stamp => :put, :update_lock => :put }
+    forum.resources :topics do |topic|
+      topic.resources :posts, :member => { :toggle_answer => :put } 
+      topic.resource :monitorship, :controller => :monitorships
+      end
+    end
+  end
+  # Savage Beast route config entries ends from here
+
   # Removing the home as it is redundant route to home - by venom  
   # map.resources :home, :only => :index 
 
+  map.filter 'facebook'
   # Theme for the support portal
   map.connect "/theme/:id.:format", :controller => 'theme', :action => :index
 
@@ -459,6 +496,8 @@
     support.customer_survey '/surveys/:survey_code/:rating/new', :controller => 'surveys', :action => 'new'
     support.survey_feedback '/surveys/:survey_code/:rating', :controller => 'surveys', :action => 'create', 
       :conditions => { :method => :post }
+
+    support.facebook_tab_home '/facebook_tab/redirect', :controller => 'facebook_tabs', :action => :redirect
 
   end
   

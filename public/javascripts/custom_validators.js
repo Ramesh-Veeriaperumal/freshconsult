@@ -118,6 +118,14 @@ $.validator.addMethod("at_least_one_item", function(value, element, options) {
 $.validator.addClassRules("at_least_one_item", { at_least_one_item: true});
 
 // Time validator
+
+$.validator.addMethod("hhmm_time_duration",function(value){
+     return (/(^[0-9]*$)|(^[0-9]*:([0-5][0-9]{0,1}|[0-9])$)|(^[0-9]*\.{1}[0-9]+$)/).test(value);}, 
+     "Please enter a valid time")
+$.validator.addClassRules("hhmm_time_duration", {
+     hhmm_time_duration: true
+  });
+
 $.validator.addMethod("time_12", function(value, element){
   if( ! /^[0-9]{1,2}:[0-9]{1,2} [ap]m$/i.test(value) ) return false;  
   var t = value.split(' ');
@@ -130,4 +138,67 @@ $.validator.addMethod("time_12", function(value, element){
 }, 'Invalid time.');
 $.validator.addClassRules("time-12", { time_12: true });
 
+// Ajax remote validation with class rules
+$.validator.addMethod("remotevalidate", function(value, element, param) {
+      if ( this.optional(element) )
+        return "dependency-mismatch";
+
+      var $element = $(element),
+          previous = this.previousValue(element);
+      if (!this.settings.messages[element.name] )
+        this.settings.messages[element.name] = {};
+      
+      previous.originalMessage = this.settings.messages[element.name].remotevalidate;
+      this.settings.messages[element.name].remotevalidate = previous.message;
+
+      param = typeof param == "string" && {url:param} || param;
+
+      var url = $element.data("validateUrl") || param,
+          d_name = $element.data("validateName") || element.name;
+
+      if ( this.pending[element.name] ) {
+        return "pending";
+      }
+      if ( previous.old === value ) {
+        return previous.valid;
+      }
+
+      previous.old = value;
+      var validator = this;
+      this.startRequest(element);
+      var data = {};
+      data[d_name] = value;
+      
+      $.ajax($.extend(true, {
+        url: url,
+        mode: "abort",
+        port: "validate" + element.name,
+        dataType: "json",
+        data: data,
+        success: function(response) {
+          validator.settings.messages[element.name].remotevalidate = previous.originalMessage;
+          var valid = response["success"] === true;
+          if ( valid ) {
+            var submitted = validator.formSubmitted;
+            validator.prepareElement(element);
+            validator.formSubmitted = submitted;
+            validator.successList.push(element);
+            validator.showErrors();
+          } else {
+            var errors = {};
+            var message = response["message"] || validator.defaultMessage( element, "remote" );
+            errors[element.name] = previous.message = message;
+            validator.showErrors(errors);
+          }
+          previous.valid = valid;
+          validator.stopRequest(element, valid);
+        }
+      }, param));
+      return "pending";
+}, "Remote validation failed");
+
+$.validator.addClassRules("remote-data", { remotevalidate: true });
+
+
 })(jQuery);
+

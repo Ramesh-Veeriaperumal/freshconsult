@@ -1,14 +1,10 @@
-<!-- INCLUDING PATTERN CSS -->
-<%= include_cloudfront_css :pattern, :media => "screen, print, projection"  %>
-<%= include_cloudfront_js :redactor  %>
-<%= include_cloudfront_js :pattern  %>
-<%= include_cloudfront_css :tkt_details, :media => "screen, print, projection"  %>
 <%= include_cloudfront_css :tkt_details_print, :media => "print"  %>
 <%= render :partial => "helpdesk/tickets/show/scriptvars.html.erb" %>
+<%= render :partial => "helpdesk/tickets/show/sticky.html.erb" %>
 <div class="tkt-wrapper ticket_show" data-showing='notes'>
 	<div class="tkt-wrapper-inner clearfix">
 
-		<%= render :partial => "helpdesk/tickets/show/info.html.erb" %>
+		<%# render :partial => "helpdesk/tickets/show/info.html.erb" %>
 		<div id="forFixed" class="conversation_thread"></div>
 		<div id="tkt-inner" class="scollable_content">
 
@@ -41,17 +37,17 @@
 	</div>
 </div>
 
+<%= render :partial => "helpdesk/tickets/show/due_date.html.erb" %>
+<%= render :partial => "helpdesk/tickets/show/collision", :locals => { :ticket => @ticket } if feature?(:agent_collision) %>
 <script type="text/javascript">
+Fjax.bodyClass = 'ticket_details';
+TICKET_DETAILS_DOMREADY();
+Fjax.afterNextPage = TICKET_DETAILS_CLEANUP;
 <% if @ticket.is_twitter? %>
 jQuery(document).ready(function(){
 	jQuery('#twitter_handle').change();
 });
 <% end %>
-</script>
-<%= render :partial => "helpdesk/tickets/show/due_date.html.erb" %>
-<%= render :partial => "helpdesk/tickets/show/collision", :locals => { :ticket => @ticket } if feature?(:agent_collision) %>
-<%= include_cloudfront_js :ticket_details  %>
-<script type="text/javascript">
 <% unless @draft.nil? %>
 	swapEmailNote('cnt-reply', null);
 	TICKET_DETAILS_DATA['draft']['hasChanged'] = false;
@@ -74,25 +70,3 @@ jQuery(document).ready(function(){
 	<%= render :partial=> 'helpdesk/tickets/show/whats_new.html.erb' %>
 </div>
 </div>
-
-
-<script type="text/javascript" src="https://s3.amazonaws.com/assets.freshdesk.com/widget/freshwidget.js"></script>
-<style type="text/css" media="screen, projection">
-@import url(https://s3.amazonaws.com/assets.freshdesk.com/widget/freshwidget.css);
-
-.ticket_details #freshwidget-button {
-	display: none !important;
-}
-</style> 
-<script type="text/javascript">
-FreshWidget.init("", {"queryString": "", "buttonText": "Support", "buttonColor": "#ffffff", "buttonBg": "#006063", "alignment": "4", "offset": "235px", "url": "https://support.freshdesk.com", "assetUrl": "https://s3.amazonaws.com/assets.freshdesk.com/widget"} );
-
-	var removeWidgetButton = setInterval(function() {
-		if (window.FreshWidget && jQuery('.ticket_details #freshwidget-button').length) {
-			//Which means FreshWidget is loaded.
-			//Now remove the widget button.
-			jQuery('.ticket_details #freshwidget-button').remove();
-			clearInterval(removeWidgetButton);
-		}
-	}, 1000);
-</script>

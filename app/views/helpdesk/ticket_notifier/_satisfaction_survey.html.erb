@@ -1,3 +1,4 @@
+<% require 'sanitize' %>
 <% if survey_handle %>
 <span style="font-family: Arial, sans-serif; color: #333; font-size: 16px;font-weight:bold;"><%= survey_handle.survey.link_text %></span><br/>
   <table cellspacing="5" cellpadding="0">
@@ -17,4 +18,12 @@
           </tr>
         </tbody>
    </table>
+<% end %>
+<% if surveymonkey_survey %>
+  <p>
+    <%= "<br>------------------------<br>" unless in_placeholder %>
+    <%= Sanitize.clean(surveymonkey_survey[:text]) %>
+    <br>
+    <%= "<a href=\"#{surveymonkey_survey[:link]}\">#{surveymonkey_survey[:link]}</a>" %>
+  </p>
 <% end %>

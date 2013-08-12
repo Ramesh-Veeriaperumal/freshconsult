@@ -7,7 +7,7 @@ class Search::UpdateSearchIndex
     args.symbolize_keys!
     @update_item = args[:klass_name].constantize.find_by_id(args[:id])
     unless @update_item.blank?
-      @update_item.class.index_name @update_item.account.search_index_name
+      @update_item.class.index_name @update_item.search_alias_name
       @update_item.tire.update_index_es
     end
   end

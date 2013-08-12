@@ -12,7 +12,7 @@
 		        <%= image_tag (@account.main_portal.logo.nil? ? "/images/logo.png?722013" : @account.main_portal.logo.content.url(:logo)) %>
 
 		        <% end %>
-		        <%= link_to(@account.main_portal.name, "/home", :class => "logo_text") %>
+		        <%= link_to(h(@account.main_portal.name), "/home", :class => "logo_text") %>
 	    	</div>
     	</div>
 	</div>

@@ -1,7 +1,7 @@
 class Search::IndexUpdate
 
   extend Resque::AroundPerform
-  include Tire::Model::Search
+  include Tire::Model::Search if ES_ENABLED
 
   class UserTickets < Search::IndexUpdate
     @queue = 'es_index_queue'

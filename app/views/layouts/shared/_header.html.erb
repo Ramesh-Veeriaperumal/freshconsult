@@ -5,7 +5,7 @@
 	<% link_to (portal_pref(current_portal, :logo_link).empty?) ? "/home" : portal_pref(current_portal, :logo_link), :class => "logo" do %>
 		<%=logo_url%>
 	<% end %>      
-	<%= link_to(current_portal.name, "/home", :class => "logo_text") %>
+	<%= link_to(h(current_portal.name), "/home", :class => "logo_text") %>
 	<%= link_to_function("Switch to mobile version", 
 											 "jQuery.cookie('classic_view','false',{path:'/'});location.href='/';", 
 											 :class => 'mobile_switchBtn') if mobile_agent? && allowed_domain? %>

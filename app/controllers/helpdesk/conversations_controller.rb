@@ -11,7 +11,7 @@ class Helpdesk::ConversationsController < ApplicationController
   include Conversations::Facebook
   include Helpdesk::Activities
   
-  before_filter :build_note_body_attributes, :build_conversation
+  before_filter :build_note_body_attributes, :build_conversation, :sanitize_conversation
   before_filter :validate_fwd_to_email, :only => [:forward]
   before_filter :check_for_kbase_email, :set_quoted_text, :only => [:reply]
   before_filter :set_default_source, :set_mobile, :prepare_mobile_note,
@@ -25,6 +25,7 @@ class Helpdesk::ConversationsController < ApplicationController
   def reply
     build_attachments @item, :helpdesk_note
     @item.send_survey = params[:send_survey]
+    @item.include_surveymonkey_link = params[:include_surveymonkey_link]
     if @item.save
       add_forum_post if params[:post_forums]
       begin
@@ -43,7 +44,6 @@ class Helpdesk::ConversationsController < ApplicationController
     build_attachments @item, :helpdesk_note
     if @item.save
       add_forum_post if params[:post_forums]
-      @item.create_fwd_note_activity(params[:helpdesk_note][:to_emails])
       flash[:notice] = t(:'fwd_success_msg')
       process_and_redirect
     else
@@ -194,5 +194,12 @@ class Helpdesk::ConversationsController < ApplicationController
           activity_records = @parent.activities.activity_since(params[:since_id])
           @activities = stacked_activities(activity_records.reverse)
         end
+      end
+
+      def sanitize_conversation
+        Rails.logger.debug "::::::sanitize conversation start"
+        @item.note_body.load_full_text
+        @item.note_body.create_content
+        Rails.logger.debug "::::::sanitize conversation end"
       end
 end

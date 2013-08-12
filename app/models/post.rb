@@ -23,9 +23,12 @@ class Post < ActiveRecord::Base
   
   has_many_attachments
 
+  delegate :update_es_index, :to => :topic, :allow_nil => true
+
   #format_attribute :body
   
   attr_protected	:topic_id , :account_id , :attachments
+  after_save  :monitor_topic
     
   def to_xml(options = {})
     options[:except] ||= []
@@ -46,6 +49,11 @@ class Post < ActiveRecord::Base
 
   def to_s
     topic.title
+  end
+
+  def monitor_topic
+    monitorship = topic.monitorships.find_by_user_id(user.id)
+    topic.monitorships.create(:user_id => user.id, :active => true) unless monitorship
   end
 
   # Added for portal customisation drop

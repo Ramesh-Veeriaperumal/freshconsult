@@ -5,6 +5,8 @@ require 'resque/server'
 # require 'resque/job_with_status'
 require 'resque/failure/multiple'
 require 'resque/failure/redis'
+require 'resque_scheduler'
+require 'resque_scheduler/server'
 
 Dir[File.join(Rails.root, 'app', 'jobs', '*.rb')].each { |file| require file }
 

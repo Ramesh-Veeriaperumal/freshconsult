@@ -4,7 +4,7 @@
                    :before => 'if (jQuery("#timeentry_apps_add .app-logo input[type=checkbox]").filter(":checked").parentsUntil("#time_integration").filter(".still_loading").length) return false;',
                    :html => { 
                         :id => "add_new_time_entry", 
-                        :class => "timesheet_form",
+                        :class => "timesheet_form ui-form",
                         "data-modal-id" => "new_timeentry"
                     } do |f| %>
     <%= hidden_field(:time_entry, :workable_id , { :value => @ticket.id }  )%>

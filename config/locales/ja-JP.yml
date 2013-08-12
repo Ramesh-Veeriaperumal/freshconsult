@@ -2352,7 +2352,7 @@ ja-JP:
       level2: レベル２
       level3: レベル３
       nested_label: 入り子のフィールドラベル
-      nestedfield_helptext: "ドロップダウンリストに含むアイテムを追加・編集するには、以下のフリーフォーム・テキストエリアを使用し、アイテムを字下げするためにはTabキーを１回または２回押してください。字下げに応じてドロップダウンが変換されるので、注意してください。 <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>詳細</a> "
+      nestedfield_helptext: "ドロップダウンリストに含むアイテムを追加・編集するには、以下のフリーフォーム・テキストエリアを使用し、アイテムを字下げするためにはTabキーを１回または２回押してください。字下げに応じてドロップダウンが変換されるので、注意してください。 <a target='_blank' href=%{learn_more}>詳細</a> "
       nestedfield_helptext_preview: ドロップダウンリストに含まれるアイテムの「プレビュー」です。アイテムを編集する場合は、「表示の編集」内のフリーフォーム・テキストエリアを使用してください。
       sla_timer: SLAタイマー
       status_choices: ステータスの選択肢

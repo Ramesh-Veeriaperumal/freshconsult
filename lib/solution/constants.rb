@@ -30,4 +30,18 @@ module Solution::Constants
 
  SORT_FIELD_OPTIONS = SORT_FIELDS.map { |i| [i[1], i[0]] }    
  SORT_SQL_BY_KEY = Hash[*SORT_FIELDS.map { |i| [i[0], i[2]] }.flatten]
+
+ # Solution folder visiblity constants moved to here
+
+ VISIBILITY = [
+  [ :anyone,       I18n.t("solutions.visibility.all"),          1 ], 
+  [ :logged_users, I18n.t("solutions.visibility.logged_in_users"), 2 ],
+  [ :agents,       I18n.t("solutions.visibility.agents"),          3 ],
+  [ :company_users ,I18n.t("solutions.visibility.select_company") , 4]
+  ]
+  
+  VISIBILITY_OPTIONS = VISIBILITY.map { |i| [i[1], i[2]] }
+  VISIBILITY_NAMES_BY_KEY = Hash[*VISIBILITY.map { |i| [i[2], i[1]] }.flatten] 
+  VISIBILITY_KEYS_BY_TOKEN = Hash[*VISIBILITY.map { |i| [i[0], i[2]] }.flatten] 
+
 end

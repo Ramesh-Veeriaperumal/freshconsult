@@ -14,8 +14,6 @@ class ForumsController < ApplicationController
   before_filter :find_or_initialize_forum, :except => :index
   before_filter :set_selected_tab
 
-  cache_sweeper :posts_sweeper, :only => [:create, :update, :destroy]
-
   def index
    redirect_to categories_url
   end

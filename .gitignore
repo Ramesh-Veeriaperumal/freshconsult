@@ -18,6 +18,7 @@ config/slave.sphinx.conf
 config/database.yml
 config/sphinx.yml
 config/redis.yml
+config/elasticsearch.yml
 .sass-cache/
 public/stylesheets/*
 public/images/sprites/

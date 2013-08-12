@@ -8,6 +8,7 @@ ticket = Helpdesk::Ticket.seed(:account_id, :subject) do |s|
   s.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:portal]
   s.priority = TicketConstants::PRIORITY_KEYS_BY_TOKEN[:low]
   s.ticket_type = "Question"
+  s.cc_email = {:cc_emails => [], :fwd_emails => []}
 end
 
 Helpdesk::TicketBody.seed(:account_id, :ticket_id) do |s|

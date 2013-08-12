@@ -26,6 +26,7 @@ gem "omniauth-facebook"
 gem "omniauth-salesforce"
 gem "omniauth-mailchimp", "~> 1.0.3"
 gem "omniauth-constantcontact2", "~> 1.0.4"
+gem "omniauth-surveymonkey", "0.0.0"
 gem "nori", "1.1.4"
 gem "google-api-client", "~> 0.6.3"
 
@@ -45,14 +46,9 @@ gem "http_accept_language", "1.0.1"
 gem "riddle", "1.2.2"
 gem "thinking-sphinx", "1.4.3", :require => "thinking_sphinx"
 gem "delayed_job", "1.8.4"
-#gem "ts-delayed-delta", "1.1.0", :require => "thinking_sphinx/deltas/delayed_delta"
-
-gem "net-dns", "0.6.1"
-
 
 gem "jammit", "0.6.5"
 gem "yui-compressor", :git => "git://github.com/freshdesk/ruby-yui-compressor.git"
-# gem "zendesk-features", :require => "features"
 
 gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
@@ -71,6 +67,7 @@ gem "SystemTimer", "1.2.3", :platforms => :ruby_18
 gem "redis","2.2.2"
 gem "resque","1.22.0"
 gem "resque-status", "0.4.1"
+gem 'resque-scheduler', :require => 'resque_scheduler'
 
 gem 'marketo', :git => "git://github.com/freshdesk/Marketo.git"
 gem 'rforce'
@@ -95,6 +92,7 @@ gem 'clockwork', '0.4.1'
 gem "wkhtmltopdf-binary", "~> 0.9.9.1"
 gem "wicked_pdf", "~> 0.9.2"
 gem "pg"
+gem "routing-filter", "~> 0.3.1"
 
 gem "cloudfront_asset_host", :git => "git://github.com/freshdesk/cloudfront_asset_host.git"
 

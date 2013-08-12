@@ -36,7 +36,7 @@ class Portal < ActiveRecord::Base
               :foreign_key => 'solution_category_id'
   belongs_to :forum_category
 
-  APP_CACHE_VERSION = "FD25"
+  APP_CACHE_VERSION = "FD30"
     
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
@@ -66,6 +66,16 @@ class Portal < ActiveRecord::Base
   def recent_popular_topics( user, days_before = (DateTime.now - 30.days) )
     main_portal ? account.portal_topics.visible(user).popular(days_before).limit(10) :
         forum_category ? forum_category.portal_topics.visible(user).popular(days_before).limit(10) : []
+  end
+
+  def recent_articles
+    main_portal ? account.published_articles.newest(10) : 
+        (solution_category ? solution_category.published_articles.newest(10) : [])
+  end
+
+  def recent_portal_topics user
+    main_portal ? account.portal_topics.visible(user).newest(6) : 
+        (forum_category ? forum_category.portal_topics.visible(user).newest(6) : [])
   end
 
   #Yeah.. It is ugly.

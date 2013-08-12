@@ -4,7 +4,7 @@
     <!-- Support info to show in the marketplace & control panel -->
     <Support>
         <!-- URL for application setup as an optional redirect during the install -->
-        <Link rel="setup" href="https://signup.freshdesk.com/account/signup_google?domain=${DOMAIN_NAME}"/>
+        <Link rel="setup" href="https://login.freshdesk.com/account/signup_google?domain=${DOMAIN_NAME}"/>
         
         <!-- URL for application configuration, accessed from the app settings page in the control panel -->
         <Link rel="manage" href="https://login.freshdesk.com/openid/google?domain=${DOMAIN_NAME}"/>

@@ -7,7 +7,7 @@
 	<dt><%= form.label :hhmm, t('.hours')%>: </dt>
 	<dd class="hours">
 		<%= form.text_field(:hhmm, { 
-				:size => 6, :class => "auto number", :autocomplete => "off", :placeholder => "HH:MM"
+				:size => 6, :class => "auto hhmm_time_duration", :autocomplete => "off", :placeholder => "HH:MM"
 				} ) %>
 		<label class="billing_hours floatr">
 			<%= form.check_box(:billable, {:checked => (type == :new) ? true : form.object.billable}) %>

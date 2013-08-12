@@ -22,19 +22,19 @@ module SearchUtil
   def solution_visibility
   	if current_user
   		if current_user.agent?
-  			Solution::Folder::VISIBILITY_NAMES_BY_KEY.keys
+  			Solution::Constants::VISIBILITY_NAMES_BY_KEY.keys
   		else
   			contact_solution_visibility
   		end
   	else
-  		[ Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone] ]
+  		[ Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone] ]
   	end
   end
 
   def self.es_filter_key(query)
     query.strip!
-    query.gsub!(/([\(\)\[\]\{\}\?\\\"!\^\+\-\*:~])/,'\\\\\1')
-    query = "*#{query}*"
+    query.gsub!(/([\(\)\[\]\{\}\?\\\"!\^\+\-\*\/:~])/,'\\\\\1')
+    query = "#{query}*"
   end
 
   def self.es_exact_match?(query)
@@ -46,12 +46,21 @@ module SearchUtil
     query
   end
 
+  def self.highlight_results(result, hit)
+    unless result.blank?
+      hit['highlight'].keys.each do |i|
+        result.send("highlight_#{i}=", hit['highlight'][i].to_s)
+      end
+    end
+    result
+  end
+
   private
 
   	def contact_solution_visibility
-  	  to_ret = [ Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone], 
-  	  	Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:logged_users] ]
-    	to_ret.push(Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:company_users]) if current_user.has_company?
+  	  to_ret = [ Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone], 
+  	  	Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:logged_users] ]
+    	to_ret.push(Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:company_users]) if current_user.has_company?
 
     	to_ret
   	end

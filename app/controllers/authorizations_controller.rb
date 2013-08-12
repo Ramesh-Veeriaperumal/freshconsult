@@ -86,11 +86,16 @@ class AuthorizationsController < ApplicationController
       app_name = origin['app_name'][0].to_s
       Rails.logger.debug "origin: #{origin.inspect}"
     else
-      portal_id = origin
+      portal_id = origin.to_i
       app_name = Integrations::Constants::APP_NAMES[provider.to_sym]
     end
 
-    access_token = get_oauth2_access_token(provider, @omniauth.credentials.refresh_token, app_name)
+    if(@omniauth.credentials.refresh_token)
+      access_token = get_oauth2_access_token(provider, @omniauth.credentials.refresh_token, app_name)
+    else
+      access_token = @omniauth.credentials
+    end
+    
 
     portal = Portal.find_by_id(portal_id)
     account = portal.account
@@ -105,18 +110,17 @@ class AuthorizationsController < ApplicationController
     config_params['instance_url'] = "#{access_token.params['instance_url']}" if provider=='salesforce'
     config_params = config_params.to_json
     Rails.logger.debug "config_params: #{config_params}"
-    # KeyValuePair is used to store oauth2 configurations since we redirect from login.freshdesk.com to the
-    # user's account and install the application from inside the user's account.
-   
-    key_value_pair = KeyValuePair.find_by_account_id_and_key(account.id, "#{app_name}_oauth_config")
-    key_value_pair.delete unless key_value_pair.blank?
-    create_key_value_pair("#{app_name}_oauth_config", config_params, account.id) 
+    #Redis::KeyValueStore is used to store oauth2 configurations since we redirect from login.freshdesk.com to the
+    #user's account and install the application from inside the user's account.
+    key_options = { :account_id => account.id, :provider => app_name}
+    key_spec = Redis::KeySpec.new(Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options)
+    Redis::KeyValueStore.new(key_spec, config_params, {:group => :integration, :expire => 300}).set_key
     port = (Rails.env.development? ? ":#{request.port}" : '')
     controller = ( Integrations::Application.find_by_name(app_name).user_specific_auth? ? 'integrations/user_credentials' : 'integrations/applications' )
     redirect_url = protocol +  domain + port + "/#{controller}/oauth_install/#{app_name}"
     redirect_to redirect_url
   end
- 
+
     def create_for_email_marketing_oauth(provider, params)
     config_params = {}
     Account.reset_current_account
@@ -129,10 +133,11 @@ class AuthorizationsController < ApplicationController
     config_params["constantcontact"] = "{'app_name':'#{provider}', 'oauth_token':'#{@omniauth.credentials.token}', 'uid':'#{@omniauth.uid}'}" if provider == "constantcontact"
     config_params = config_params[provider].gsub("'","\"")
 
-    key_value_pair = KeyValuePair.find_by_account_id_and_key(account.id, provider+'_oauth_config')
-    key_value_pair.delete unless key_value_pair.blank?
-    #KeyValuePair is used to store salesforce/nimble configurations since we redirect from login.freshdesk.com to the user's account and install the application from inside the user's account.
-    create_key_value_pair(provider+"_oauth_config", config_params, account.id) 
+    #Redis::KeyValueStore is used to store salesforce/nimble configurations since we redirect from login.freshdesk.com to the 
+    #user's account and install the application from inside the user's account.
+    key_options = { :account_id => account.id, :provider => provider}
+    key_spec = Redis::KeySpec.new(Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options)
+    Redis::KeyValueStore.new(key_spec, config_params, {:group => :integration, :expire => 300}).set_key
     redirect_url = protocol +  domain + "/integrations/applications/oauth_install/"+provider
      
     redirect_to redirect_url
@@ -141,6 +146,7 @@ class AuthorizationsController < ApplicationController
   def create_for_facebook(params)
     Account.reset_current_account
     portal_id = request.env["omniauth.origin"] unless request.env["omniauth.origin"].blank?
+    state = "/facebook" if params[:state]
     portal = Portal.find_by_id(portal_id)
     user_account = portal.account
     portal_url = portal.host
@@ -152,22 +158,15 @@ class AuthorizationsController < ApplicationController
       @auth = Authorization.find_from_hash(@omniauth,user_account.id)
       fb_profile_id = @omniauth['info']['nickname']
       @current_user = user_account.all_users.find_by_fb_profile_id(fb_profile_id) if @current_user.blank?
-      create_for_sso(@omniauth, user_account)
-      curr_time = ((DateTime.now.to_f * 1000).to_i).to_s
-      random_hash = Digest::MD5.hexdigest(curr_time)
-      key_value_pair = KeyValuePair.find_by_account_id_and_key(user_account.id, @current_user.id)
-      key_value_pair.delete unless key_value_pair.blank?
-      create_key_value_pair(@current_user.id, curr_time, user_account.id)
-      redirect_to portal_url + "/sso/login?provider=facebook&uid=#{@omniauth['uid']}&s=#{random_hash}" 
+      if create_for_sso(@omniauth, user_account)
+        curr_time = ((DateTime.now.to_f * 1000).to_i).to_s
+        random_hash = Digest::MD5.hexdigest(curr_time)
+        key_options = { :account_id => user_account.id, :user_id => @current_user.id, :provider => @omniauth['provider']}
+        key_spec = Redis::KeySpec.new(Redis::RedisKeys::SSO_AUTH_REDIRECT_OAUTH, key_options)
+        Redis::KeyValueStore.new(key_spec, curr_time, {:group => :integration, :expire => 300}).set_key
+        redirect_to portal_url + "#{state}/sso/login?provider=facebook&uid=#{@omniauth['uid']}&s=#{random_hash}" 
+      end
     end
-  end
-
-  def create_key_value_pair(key, value, account_id)
-      app_config = KeyValuePair.new
-      app_config.key = key
-      app_config.value = value
-      app_config.account_id = account_id
-      app_config.save!  
   end
 
   def create_session
@@ -181,8 +180,12 @@ class AuthorizationsController < ApplicationController
   end
 
   def show_deleted_message
-    flash[:notice] = t(:'flash.g_app.user_deleted')
-    redirect_to login_url
+    if params[:state]
+      render :text => t(:'flash.g_app.page_unavailable')
+    else
+      flash[:notice] = t(:'flash.g_app.page_unavailable')
+      redirect_to login_url
+    end
   end
   
   def make_usr_active
@@ -193,7 +196,10 @@ class AuthorizationsController < ApplicationController
   def create_for_sso(hash, user_account = nil)
     account = (user_account.blank?) ? current_account : user_account
     if !@current_user.blank? and !@auth.blank?
-      return show_deleted_message if @current_user.deleted?
+      if @current_user.deleted?
+        show_deleted_message
+        return false
+      end
       make_usr_active
     elsif !@current_user.blank?
       @current_user.authorizations.create(:provider => hash['provider'], :uid => hash['uid'], :account_id => account.id) #Add an auth to existing user  
@@ -203,6 +209,7 @@ class AuthorizationsController < ApplicationController
       @current_user = @new_auth.user
     end
     create_session unless @omniauth['provider'] == "facebook"
+    return true
   end
   
   def create_from_hash(hash, account)
@@ -247,6 +254,6 @@ class AuthorizationsController < ApplicationController
     redirect_to root_url
   end
 
-  OAUTH2_PROVIDERS = ["salesforce", "nimble", "google_oauth2"]
+  OAUTH2_PROVIDERS = ["salesforce", "nimble", "google_oauth2", "surveymonkey"]
   EMAIL_MARKETING_PROVIDERS = ["mailchimp", "constantcontact"]
 end

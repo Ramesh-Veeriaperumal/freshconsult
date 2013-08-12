@@ -27,6 +27,31 @@ ActiveRecord::Base.class_eval do
     [self.class.name.downcase.pluralize.dasherize, id] * '-'
   end
 
+  def create_content
+    list = self.class.send(:class_variable_get,'@@unhtmlable_attributes')
+    Rails.logger.debug ":::::create_content"
+    list.each do |body|
+      if send(:read_attribute,body).blank? && !send(:read_attribute , "#{body}_html").blank?
+        Rails.logger.debug ":::::Its still comming inside"
+        self.send(:write_attribute , body, Helpdesk::HTMLSanitizer.plain(send(:read_attribute,"#{body}_html")))
+      elsif send(:read_attribute , "#{body}_html").blank? && !send(:read_attribute,body).blank?
+        Rails.logger.debug ":::::Its still comming inside 2"
+        self.send(:write_attribute , "#{body}_html",  body_html_with_formatting(CGI.escapeHTML(send(:read_attribute,body))))
+      elsif send(:read_attribute,body).blank? && send(:read_attribute , "#{body}_html").blank?
+        Rails.logger.debug ":::::Its still comming inside 3"
+        self.send(:write_attribute , "#{body}_html", I18n.t('not_given'))
+        self.send(:write_attribute , body,I18n.t('not_given'))
+      end
+      text = Nokogiri::HTML(send(:read_attribute,"#{body}_html"))
+      unless text.at_css("body").blank?
+        text.xpath("//del").each { |div|  div.name= "span";}
+        text.xpath("//p").each { |div|  div.name= "div";}
+        self.send(:write_attribute , "#{body}_html", Rinku.auto_link(text.at_css("body").inner_html, :urls))
+      end
+    end
+  end
+
+
   protected
     def format_content
       format_list = self.class.send(:class_variable_get, '@@unhtmlable_attributes')
@@ -43,25 +68,7 @@ ActiveRecord::Base.class_eval do
       white_list(textilized.to_html)
     end
     
-    def create_content
-      list = self.class.send(:class_variable_get,'@@unhtmlable_attributes')
-      list.each do |body|
-        if send(:read_attribute,body).blank? && !send(:read_attribute , "#{body}_html").blank?
-          self.send(:write_attribute , body, Helpdesk::HTMLSanitizer.plain(send(:read_attribute,"#{body}_html")))
-        elsif send(:read_attribute , "#{body}_html").blank? && !send(:read_attribute,body).blank?
-          self.send(:write_attribute , "#{body}_html",  body_html_with_formatting(CGI.escapeHTML(send(:read_attribute,body))))
-        elsif send(:read_attribute,body).blank? && send(:read_attribute , "#{body}_html").blank?
-          self.send(:write_attribute , "#{body}_html", I18n.t('not_given'))
-          self.send(:write_attribute , body,I18n.t('not_given'))
-        end
-        text = Nokogiri::HTML(send(:read_attribute,"#{body}_html"))
-        unless text.at_css("body").blank?
-          text.xpath("//del").each { |div|  div.name= "span";}
-          text.xpath("//p").each { |div|  div.name= "div";}
-          self.send(:write_attribute , "#{body}_html", Rinku.auto_link(text.at_css("body").inner_html, :urls))
-        end
-      end
-    end
+    
     
     def update_content # To do :: need to use changed_body_html?
       list = self.class.send(:class_variable_get,'@@unhtmlable_attributes')

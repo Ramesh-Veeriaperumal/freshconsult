@@ -141,7 +141,8 @@ WorkflowMaxWidget.prototype = {
 		return true;
 	},
 
-	logTimeEntry:function() {
+	logTimeEntry:function(integratable_id) {
+		if(integratable_id) this.freshdeskWidget.local_integratable_id = integratable_id;
 		if (workflowMaxBundle.remote_integratable_id) {
 			this.updateTimeEntry();
 		} else {
@@ -178,7 +179,8 @@ WorkflowMaxWidget.prototype = {
 	},
 
 	handleTimeEntrySuccess:function(resData) {
-		resXml = resData.responseXML
+		resXml = resData.responseXML;
+		if(!resXml) return;
 		if (this.isRespSuccessful(resXml)) {
 			var responses = XmlUtil.extractEntities(resXml,"Response");
 			if (responses.length > 0) {
@@ -274,6 +276,7 @@ WorkflowMaxWidget.prototype = {
 				rest_url: "time.api/update"+this.auth_keys,
 				on_success: function(evt){
 					this.handleTimeEntrySuccess(evt);
+					this.resetIntegratedResourceIds();
 					if(resultCallback) resultCallback(evt);
 				}.bind(this)
 			});
@@ -302,6 +305,7 @@ WorkflowMaxWidget.prototype = {
 					rest_url: "time.api/update"+this.auth_keys,
 					on_success: function(evt){
 						this.handleTimeEntrySuccess(evt);
+						this.resetIntegratedResourceIds();
 						if(resultCallback) resultCallback(evt);
 					}.bind(this)
 				});

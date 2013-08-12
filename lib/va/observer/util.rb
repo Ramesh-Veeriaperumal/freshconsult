@@ -5,7 +5,9 @@ module Va::Observer::Util
 	private
 
 		def user_present?
-			@model_changes && (User.current || self.class == SurveyResult) && !zendesk_import?
+			observer_condition = @model_changes && (User.current || self.class == SurveyResult) && !zendesk_import?
+			Rails.logger.debug "INSIDE user_present? for object: #{self.inspect} observer_condition: #{observer_condition}"
+			return observer_condition
 		end
 
 	  def zendesk_import?

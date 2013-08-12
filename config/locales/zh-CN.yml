@@ -2364,7 +2364,7 @@ zh-CN:
       level2: 第二级
       level3: 第三级
       nested_label: 预设好的栏位标签
-      nestedfield_helptext: "用以下自由文字空间来添加或编辑您的下拉选项, 点击选项键一次或两次来缩进选项.  我们会依照缩进来转换到下拉选项,请特别注意.  <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>Learn more</a>"
+      nestedfield_helptext: "用以下自由文字空间来添加或编辑您的下拉选项, 点击选项键一次或两次来缩进选项.  我们会依照缩进来转换到下拉选项,请特别注意.  <a target='_blank' href=%{learn_more}>Learn more</a>"
       nestedfield_helptext_preview: 这是样品下拉列表中的项目“预览”，使用自由文本区域中的“编辑视图”來编辑项目
       sla_timer: "SLA 计时器"
       status_choices: 状态的选择项目

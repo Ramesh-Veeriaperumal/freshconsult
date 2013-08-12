@@ -11,6 +11,7 @@ class PortalDrop < BaseDrop
   def context=(current_context)
     @current_tab = current_context['current_tab']
     @current_page = current_context['current_page_token']
+    @facebook_portal = current_context['facebook_portal']
     @context = current_context
     
     super
@@ -18,10 +19,8 @@ class PortalDrop < BaseDrop
 
   # Portal branding related information
   def logo_url
-    @logo_url ||= MemcacheKeys.fetch(["v3","portal","logo_href",source]) do
-      source.logo.present? ? 
-        AWS::S3::S3Object.url_for(source.logo.content.path(:logo), source.logo.content.bucket_name,:use_ssl => true, :expires_in => 30.days) : 
-        "/images/logo.png"
+    @logo_url ||= MemcacheKeys.fetch(["v4","portal","logo_href",source]) do
+      source.logo.present? ? source.logo.content.url(:logo) : "/images/logo.png"
     end
   end
 
@@ -44,6 +43,10 @@ class PortalDrop < BaseDrop
 
   def can_submit_ticket_without_login
     allowed_in_portal? :anonymous_tickets
+  end
+
+  def home_url
+    @home_url ||= support_home_path
   end
   
   def signup_url
@@ -99,6 +102,10 @@ class PortalDrop < BaseDrop
     @current_tab ||= @current_tab
   end
 
+  def facebook_portal
+    @facebook_portal ||= @facebook_portal
+  end
+
   def current_page
     @current_page ||= @current_page
   end
@@ -121,8 +128,12 @@ class PortalDrop < BaseDrop
     @forums ||= (forum_categories.map{ |c| c.forums.visible(portal_user) }.reject(&:blank?) || []).flatten
   end
 
+  def recent_portal_topics
+    @recent_portal_topics ||= @source.recent_portal_topics(portal_user).presence
+  end
+
   def recent_popular_topics
-    @recent_popular_topics ||= source.recent_popular_topics(portal_user, 30.days.ago)
+    @recent_popular_topics ||= @source.recent_popular_topics(portal_user, 30.days.ago).presence
   end
 
   def topics_count
@@ -140,6 +151,10 @@ class PortalDrop < BaseDrop
   
   def folders
     @folders ||= (solution_categories.map { |c| c.folders.visible(portal_user) }.reject(&:blank?) || []).flatten
+  end
+
+  def recent_articles
+    @recent_articles ||= source.recent_articles
   end
 
   # !MODEL-ENHANCEMENT Need to make published articles for a 

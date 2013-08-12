@@ -69,6 +69,7 @@ class Helpdesk::NotesController < ApplicationController
   def create
     build_attachments @item, :helpdesk_note
     @item.send_survey = params[:send_survey]
+    @item.send_survey = params[:include_surveymonkey_link]
     
     unless params[:ticket_status].blank?
       @item.notable.status = params[:ticket_status]
@@ -77,6 +78,8 @@ class Helpdesk::NotesController < ApplicationController
     end
 
     @item.quoted_text = params[:quoted_text].present? && params[:quoted_text] == 'true'
+    @item.include_surveymonkey_link = params[:include_surveymonkey_link]
+
     if @item.save
       if params[:post_forums]
         @topic = Topic.find_by_id_and_account_id(@parent.ticket_topic.topic_id,current_account.id)

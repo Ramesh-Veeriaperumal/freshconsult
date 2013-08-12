@@ -3344,7 +3344,7 @@ fi:
       level2: "Taso 2"
       level3: "Taso 3"
       nested_label: "Sisäkkäisten kenttien tiedot"
-      nestedfield_helptext: "Lisätäksesi tai muokataksesi pudotusvalikkosi kohteita, käytä alla olevaa vapaamuotoista tekstialuetta. Sisennä kohtia painamalla sarkainta yksi tai kaksi kertaa.  Muutamme pudotusvalikon kohtia sisennyksen pohjalta, joten olethan huolellinen. <a target='_blank' href='https://support.freshdesk.com/solution/categories/4/folders/8/articles/12639-using-nested-fields-in-the-new-ticket-form'>Opettele lisää</a> "
+      nestedfield_helptext: "Lisätäksesi tai muokataksesi pudotusvalikkosi kohteita, käytä alla olevaa vapaamuotoista tekstialuetta. Sisennä kohtia painamalla sarkainta yksi tai kaksi kertaa.  Muutamme pudotusvalikon kohtia sisennyksen pohjalta, joten olethan huolellinen. <a target='_blank' href=%{learn_more}>Opettele lisää</a> "
       nestedfield_helptext_preview: "Tämä on pudotusvalikon kohteiden \"Esikatselu\". Jos haluat muokata kohteita, käytä vapaamuotoista tekstialuetta kohdassa \"Muokkaa näkymää\""
       sla_timer: SLA-ajastin
       status_choices: "Tilan vaihtoehdot"
