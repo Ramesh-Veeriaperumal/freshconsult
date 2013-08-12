@@ -228,7 +228,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
                      											{'minimumResultsForSearch':'10'})
 																					.val(rule.name).data('dropdownCssClass', "align_options");
 									if(parentDom=='#actionDOM')
-										jQuery($filter_select_list).data('formatResult', disableSingleSelectOnly);
+										jQuery($filter_list_select).data('formatResult', disableSingleSelectOnly);
 
 
 									if($filter_list_select.find(":selected").data("unique_action") == true) {

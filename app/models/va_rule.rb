@@ -162,7 +162,7 @@ class VARule < ActiveRecord::Base
   end
 
   def hide_password!
-    return if supervisor_rule? || automation_rule?
+    return unless dispatchr_rule? || observer_rule?
 
     action_data.each do |action_data|
       action_data.symbolize_keys!
@@ -173,11 +173,12 @@ class VARule < ActiveRecord::Base
   end
 
   def set_encrypted_password
-    return if supervisor_rule? || automation_rule?
+    return unless dispatchr_rule? || observer_rule?
     from_action_data, to_action_data = action_data_change
     webhook_action = nil
     
     to_action_data.each do |action_data|
+      action_data.symbolize_keys!
       if action_data[:name] == 'trigger_webhook'
         return if action_data[:need_authentication].blank? || action_data[:api_key].present?
         if action_data[:password].blank? 
@@ -191,7 +192,8 @@ class VARule < ActiveRecord::Base
 
     unless (new_record? || webhook_action.nil?)
       from_action_data.each do |action_data|
-        if action_data[:name] == 'trigger_webhook' 
+        action_data.symbolize_keys!
+        if action_data[:name] == 'trigger_webhook'
           webhook_action[:password] = action_data[:password]
           return true
         end

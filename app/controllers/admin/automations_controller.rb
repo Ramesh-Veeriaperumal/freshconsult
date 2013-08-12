@@ -82,8 +82,7 @@ class Admin::AutomationsController < Admin::AdminController
 
     def set_nested_fields_data(data)
       data.each do |f|        
-        f.symbolize_keys!
-        f[:nested_rules] = (ActiveSupport::JSON.decode f[:nested_rules]).map{ |a| a.symbolize_keys! } if (f[:nested_rules])
+        f['nested_rules'] = (ActiveSupport::JSON.decode f['nested_rules']).map{ |a| a.symbolize_keys! } if (f['nested_rules'])
       end
     end
 
