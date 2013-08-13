@@ -48,19 +48,19 @@
 	<div class="modal-panel" id="feedback-suggest">
 		<form class="hc-search-form" autocomplete="off" action="<%= solutions_support_search_path %>" id="hc-search-form">
 			<div class="hc-search-input">
-				<input placeholder="Search" type="text" id="fs-input"
+				<input placeholder="<%=t('.feedback_widgets_search')%>" type="text" id="fs-input"
 					name="term" class="span12 special" value="" 
 		            rel="page-search" data-max-matches="10">
 			</div>
 		</form>
 		<div id="panel-content" class="panel-content hide">
-			<h4 id="ws-results-title">Search results</h4>
+			<h4 id="ws-results-title"><%=t('.feedback_widgets_search_results')%></h4>
 			<ul class="unstyled" id="ws-results"></ul>	
 		</div>
 		<div id="panel-info" class="panel-info">
-			<h2 class="lead">Search our <br />
-				Knowledge base </h2>
-			<%= link_to "or Browse help articles", support_solutions_path, 
+			<h2 class="lead"><%=t('.feedback_widgets_search_our')%><br />
+				<%=t('.feedback_widgets_knowledge_base')%></h2>
+			<%= link_to t('.feedback_widgets_help_articles'), support_solutions_path, 
 					{ :target => "_blank", :class => "link-pointer" } %>
 		</div>
 	</div>
