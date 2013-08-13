@@ -86,6 +86,9 @@ module HelpdeskControllerMethods
       expects.mobile{
         render :json => {:success => true  , :success_message => "#{h(@items.length)} tickets were deleted" }.to_json
       }
+      expects.nmobile{
+        render :json => {:success => true  , :success_message => "#{h(@items.length)} notes were deleted" }.to_json
+      }
       expects.json  { render :json => :deleted}
       expects.js { 
         process_destroy_message
@@ -110,6 +113,7 @@ module HelpdeskControllerMethods
         redirect_to after_restore_url 
       }
       result.mobile { render :json => { :success => true , :success_message => "#{h(@items.length)} tickets were restored" }.to_json}
+      result.nmobile { render :json => { :success => true , :success_message => "#{h(@items.length)} notes were restored" }.to_json}
       result.xml {  render :xml => @items.to_xml(options) }
       result.json {  render :json => @items.to_json(options) }
     end

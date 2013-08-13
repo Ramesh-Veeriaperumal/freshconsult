@@ -20,6 +20,9 @@ module Mobile::Actions::Note
       },
       :attachments => {
         :only => [ :content_file_name, :id, :content_content_type, :content_file_size ]
+      },
+      :schema_less_note => {
+        :only => [:from_email , :to_emails , :cc_emails , :bcc_emails]
       }
     }
     options = {

@@ -10,7 +10,7 @@ class ContactsController < ApplicationController
    before_filter :check_agent_limit, :only =>  :make_agent
    before_filter :load_item, :only => [:edit, :update, :make_agent,:make_occasional_agent]
    skip_before_filter :build_item , :only => [:new, :create]
-   before_filter :set_mobile , :only => [:show,:index]
+   before_filter :set_mobile , :only => [:show,:index,:create]
    before_filter :fetch_contacts, :only => [:index]
    before_filter :set_native_mobile, :only => [:show, :index]
   
@@ -69,6 +69,8 @@ class ContactsController < ApplicationController
       respond_to do |format|
         format.html { redirect_to contacts_url }
         format.xml  { render :xml => @user, :status => :created, :location => contacts_url(@user) }
+        format.mobile { render :json => { :success => true , :success_message => t("flash.contacts.create.success") 
+                                        }.to_json }
         format.json {
             render :json => @user.to_json({:except=>[:account_id] ,:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
 :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
