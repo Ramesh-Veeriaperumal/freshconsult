@@ -39,10 +39,15 @@ class ContactsController < ApplicationController
       format.atom do
         @contacts = @contacts.newest(20)
       end
-      format.nmobile do 
-        render :json => @contacts.to_json({:except=>[:account_id] ,:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
-                    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
-                    :helpdesk_agent,:fb_profile_id,:external_id,:language,:address,:customer_id] })
+      format.nmobile do
+        response="[";sep=""
+        @contacts.each { |user|
+          response << sep+"{#{user.to_mob_json()[1..-2]}}"
+          sep << ","
+        }
+        response << "]"
+        render :json => response
+        
       end
     end    
   end
