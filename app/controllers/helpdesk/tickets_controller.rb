@@ -389,7 +389,7 @@ class Helpdesk::TicketsController < ApplicationController
           redirect_to item_url 
         }
         format.mobile { 
-          render :json => { :success => true, :item => @item }.to_json 
+          render :json => { :success => true , :success_message => t(:'flash.general.update.success', :human_name => cname.humanize.downcase), :item => @item }.to_json 
         }
         format.xml { 
           render :xml => @item.to_xml({:basic => true})
