@@ -22,5 +22,9 @@ module AwsWrapper
     def self.delete(file,bucket)
       find(file,bucket).delete
     end
+
+    def self.find_with_prefix(bucket,prefix)
+      AWS::S3::Bucket.new(bucket).objects.with_prefix(prefix)
+    end
   end
 end

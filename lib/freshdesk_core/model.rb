@@ -165,7 +165,7 @@ module FreshdeskCore::Model
       account.attachments.find_in_batches do |attachments|
         attachments.each do |attachment|
           prefix = "data/helpdesk/attachments/#{Rails.env}/#{attachment.id}/"
-          objects = AWS::S3::Bucket.objects(S3_CONFIG[:bucket], :prefix => prefix)
+          objects = AwsWrapper::S3Object.find_with_prefix(S3_CONFIG[:bucket],prefix)
           
           objects.each do |object| 
             object.delete if object.key.include?(attachment.content_file_name)
