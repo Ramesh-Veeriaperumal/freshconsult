@@ -912,16 +912,9 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def check_ticket_status
-    respond_to do |format|
-      format.html{
-        if params["helpdesk_ticket"]["status"].blank?
-          flash[:error] = t("change_deleted_status_msg")
-          redirect_to item_url
-        end
-      }
-      format.any(:xml, :json){
-        params["helpdesk_ticket"]["status"] ||= @item.status
-      }
+    if params["helpdesk_ticket"]["status"].blank?
+      flash[:error] = t("change_deleted_status_msg")
+      redirect_to item_url
     end
   end
 
