@@ -127,7 +127,7 @@
 
 	  		var searchString = this.value.replace(/^\s+|\s+$/g, "");
 
-	  		if(searchString != '' && searchString.length > 2){
+	  		if(searchString != '' && searchString.length > 2 && jQuery("#fs-input").is(":empty")){
 	  			jQuery("#fs-input").val(this.value);
 	  			searchKnowledgeBase(this.value);	
 	  		}

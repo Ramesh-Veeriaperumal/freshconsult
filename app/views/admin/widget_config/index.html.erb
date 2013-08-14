@@ -60,6 +60,10 @@
 			var widgetUrl = "";
 			var websiteUrl = "";
 
+			$("#assetUrl").val(wgu.http);
+			$("#widget_url").val(wgu.http);
+			$("#url").val(wgu.http.sub('/widget',''));
+
 			$.each(WidgetFormArray, function(index, item){
 				$item = $activeForm.find('[name=' + item['name'] + ']');
 				if(item['value'] != ''){
@@ -80,6 +84,10 @@
 							WidgetFormHash.set(item['name'], item['value']);
 						break;
 						case "httpsHttp":
+							$("#assetUrl").val(wgu.https);
+							$("#widget_url").val(wgu.https);
+							$("#url").val(wgu.https.sub('/widget',''));
+							break;
 						case "widget_url":
 						break;
 						case "offset":
@@ -119,6 +127,7 @@
 		
 		function constructCode(data){
 			var widget_url = $("#widget_url").val();
+			var url = $("#url").val();
 			widget_code_text = '<'+'script type="text/javascript" src="'+widget_url+'/freshwidget.js"></'+'script>\n'+
 						'<'+'style type="text/css" media="screen, projection">\n' +
   						'\t@import url('+widget_url+'/freshwidget.css); \n'+
@@ -137,7 +146,7 @@
 						'<'+'style type="text/css" media="screen, projection">\n' +
   						'\t@import url('+widget_url+'/freshwidget.css); \n'+
 						'</'+'style> \n' +
-						'<'+'iframe class="freshwidget-embedded-form" id="freshwidget-embedded-form" src="'+widget_url+'s/feedback_widget/new?' + objJsonData.queryString + '" scrolling="no" height="' + objJsonData.formHeight +'" width="100%" frameborder="0" >\n'+
+						'<'+'iframe class="freshwidget-embedded-form" id="freshwidget-embedded-form" src="'+url+'/widgets/feedback_widget/new?' + objJsonData.queryString + '" scrolling="no" height="' + objJsonData.formHeight +'" width="100%" frameborder="0" >\n'+
 						'<'+'/iframe>';
 
 			
@@ -160,18 +169,6 @@
 	    	$('#TabColor').bind('colorpicked', changeCode);
 				changeCode();
 
-			$("#httpsHttp").bind("change", function(){
-		      if(this.checked){
-		        $("#assetUrl").val(wgu.https);
-				$("#widget_url").val(wgu.https);
-				$("#url").val(wgu.https.sub('/widget',''));
-		      }
-		      else{
-		       	$("#assetUrl").val(wgu.http);
-				$("#widget_url").val(wgu.http);
-				$("#url").val(wgu.http.sub('/widget',''));
-		      }
-		    });
 		     $('#select_id').select2({
 		        minimumResultsForSearch : 1000 //Keep high search value to shut off search box. Couldnt find a better way.
 		    });
