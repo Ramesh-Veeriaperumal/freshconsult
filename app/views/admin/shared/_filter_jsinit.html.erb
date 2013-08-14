@@ -191,7 +191,7 @@
                         .append(simple_edit)
                         .append(FactoryUI.label("<%= t('.simple_webhook_tip') %>", 'tip'));
 
-          var placeholder2 = jQuery("<span class='placeholder_div'> <a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a> </span>")
+          var placeholder2 = jQuery("<span class='placeholder_div body_div'> <a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a> </span>")
           var advanced_edit = jQuery("<div class='row-fluid'/>")
                                 .append(FactoryUI.paragraph("", "params", ((initFeed['content_layout']==2) ? initFeed['params'] :''), 'params').data("ignorePlaceholders", 'ticket_satisfaction_survey,ticket_suverymonkey_survey'));
           var advanced = jQuery('<div class="edit2 span10"/>')

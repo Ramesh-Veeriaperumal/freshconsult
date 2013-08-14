@@ -93,6 +93,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def delayed_rule_check
    begin
+    set_account_time_zone
     evaluate_on = check_rules     
     assign_tickets_to_agents unless spam? || deleted?
     autoreply
