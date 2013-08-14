@@ -8,7 +8,8 @@
 
 	<tr class="odd">
 		<% @headers.each do |item| %> 
-			 <% content = item.eql?(:group_by_day_criteria) ?  formated_date(time_entry.executed_at, "%A, %e %b %Y")  : time_entry.send(item) %>
+			 <% content = formated_date(time_entry.executed_at, "%A, %e %b %Y") if item.eql?(:group_by_day_criteria) 
+			 	content ||= time_entry.send( item.eql?(:hours) ? :hhmm : item ) %>
 			 <%= content_tag :td, h(content), :class => item %>
 		<% end %>
 	</tr>
