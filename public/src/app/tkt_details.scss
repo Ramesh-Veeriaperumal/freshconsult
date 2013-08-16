@@ -2897,3 +2897,10 @@ $collision_delay: 1s;
 	.show_on_collapse { display: block; }
 	.hide_on_collapse { display: none; }
 }
+
+.conversation_thread .ui-form li.file_size_alert{
+	background-color: #f9fad7;
+	.alert-text{
+		font-weight: bold;
+	}
+}

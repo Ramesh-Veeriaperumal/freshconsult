@@ -31,7 +31,7 @@ SurveyMonkey.prototype = {
 					sm.ignore_change_event = true;
 					sm.load_survey_list(resData, survey_id);
 					sm.ignore_change_event = false;
-					if(survey_id){
+					if(survey_id || sm.surveys.length==1){
 						collector_id = Number(jQuery('#configured_collector_id').val()) ;
 						sm.update_collectors_list( collector_id )
 					}

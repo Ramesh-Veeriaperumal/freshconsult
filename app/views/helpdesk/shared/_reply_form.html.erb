@@ -186,7 +186,7 @@
       body_text.find('div.freshdesk_quote').remove();
       jQuery('#<%=cntid%>-body').val(body_text.html());
 
-        <%= remote_function :url => clear_draft_helpdesk_ticket_path, :method => :delete, :type => :synchronous %>
+        
         isDirty = false;
       })
       .validate();  

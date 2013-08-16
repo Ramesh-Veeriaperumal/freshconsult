@@ -20,8 +20,14 @@
 				checked_items.size() + " <%= t('company.title1')%>" + "\n" + "<%= t('company.info10')%>"
 		}
 
-		if (confirm(confirm_text))
-			validate_then_submit('<%= path %>/destroy', 'delete')
+		var is_user = <%= type.eql?('user') %>
+		if (confirm(confirm_text)) {
+			if (is_user) {
+				validate_then_submit('<%= path %>/destroy', 'delete')
+			} else {
+				validate_then_submit('/<%= path %>/destroy', 'delete')
+			}
+		}
 	}
 
 	validate_then_submit = function(url, method, params){
