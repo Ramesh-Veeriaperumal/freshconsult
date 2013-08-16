@@ -358,8 +358,8 @@
     helpdesk.filter_view_custom    '/tickets/view/:filter_key', :controller => 'tickets', :action => 'index'
     helpdesk.requester_filter      '/tickets/filter/requester/:requester_id', :controller => 'tickets', :action => 'index'
 
-    helpdesk.filter_recent_tickets '/tickets/filter/mobi/recent_tickets', :controller => 'tickets', :action => 'recent_tickets'
-    helpdesk.filter_old_tickets    '/tickets/filter/mobi/old_tickets', :controller => 'tickets', :action => 'old_tickets'
+    helpdesk.filter_recent_tickets '/tickets/filter/recent_tickets', :controller => 'tickets', :action => 'recent_tickets'
+    helpdesk.filter_old_tickets    '/tickets/filter/old_tickets', :controller => 'tickets', :action => 'old_tickets'
 
     #helpdesk.filter_issues '/issues/filter/*filters', :controller => 'issues', :action => 'index'
 

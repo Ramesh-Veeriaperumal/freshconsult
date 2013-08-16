@@ -42,8 +42,8 @@ class ContactsController < ApplicationController
       format.nmobile do
         response="[";sep=""
         @contacts.each { |user|
-          response << sep+"{#{user.to_mob_json()[1..-2]}}"
-          sep << ","
+          response << sep+"#{user.to_mob_json_contacts()}"
+          sep = ","
         }
         response << "]"
         render :json => response

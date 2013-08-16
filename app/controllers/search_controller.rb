@@ -6,36 +6,38 @@ class SearchController < ApplicationController
 
   before_filter :forums_allowed_in_portal?, :only => :topics
   before_filter :solutions_allowed_in_portal?, :only => :solutions
-  before_filter :set_native_mobile, :only => [:index]
+  before_filter :set_mobile, :only => [:index]
   
   #by Shan
   #To do.. some smart meta-programming
-  def index
-		search 
+  def index 
+    search
     respond_to do |format| 
-      format.html  do
-      end
-      format.nmobile do 
+      format.mobile do 
         json="["
         sep=""
         @items.each { |tic|
             if(tic.instance_of?(Helpdesk::Ticket))
-              
-              json << sep + tic.to_json({
-                :except => [ :description_html ],
-                :methods => [ :summary_count,:ticket_subject_style,:ticket_sla_status, :status_name, :priority_name, :source_name, :requester_name,
-                          :responder_name, :need_attention, :pretty_updated_date ]
-                            }, false); sep=","
+                json << sep+"#{tic.to_mob_json_search()}"
+                sep = ","
             elsif(tic.instance_of?(User))
-              json << sep + tic.to_json({}); sep=","
+              json << sep+"#{tic.to_mob_json_contacts()}"
+              sep = ","
+            elsif(tic.instance_of?(Solution::Article))
+              json << sep + tic.to_json({
+                :only => [:id,:description,:desc_un_html,:title ]
+              }); sep=","
+            elsif(tic.instance_of?(Topic)) 
+              json << sep + tic.to_json({
+                :methods => [:stamp_name,:topic_desc],
+                :only => [ :title ]
+              }); sep=","
             else
               json << sep + tic.to_json({});sep=","
             end
         }
           json << "]"
           render :json => json
-        
-        #render :json => @items.to_json
       end
     end
   end
@@ -217,7 +219,7 @@ class SearchController < ApplicationController
           searchable << Customer
         end
       end
-      format.nmobile do 
+      format.mobile do 
         if(params[:search_class].to_s.eql?("ticket"))
           searchable = [ Helpdesk::Ticket ]
         elsif (params[:search_class].to_s.eql?("solutions"))

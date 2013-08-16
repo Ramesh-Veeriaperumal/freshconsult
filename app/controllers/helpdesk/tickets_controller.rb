@@ -153,12 +153,8 @@ class Helpdesk::TicketsController < ApplicationController
           @items.each { |tic| 
             #Removing the root node, so that it conforms to JSON REST API standards
             # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
-
-            json << sep + tic.to_json({
-              :except => [ :description_html, :description ],
-              :methods => [ :summary_count,:ticket_subject_style,:ticket_sla_status, :status_name, :priority_name, :source_name, :requester_name,
-                            :responder_name, :need_attention, :pretty_updated_date ]
-            }, false)[19..-2]; sep=","
+            json << sep+"#{tic.to_mob_json_index()[19..-2]}"
+            sep = ","
           }
           json << "]"
           json <<  ",summary:"
@@ -186,11 +182,9 @@ class Helpdesk::TicketsController < ApplicationController
         @items.each { |tic|
           #Removing the root node, so that it conforms to JSON REST API standards
           # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
-          json << sep + tic.to_json({
-            :except => [ :description_html,:description ],
-            :methods => [ :ticket_subject_style,:ticket_sla_status, :status_name, :priority_name, :source_name, :requester_name,
-                          :responder_name, :need_attention, :pretty_updated_date,:formatted_created_at ]
-          }, false)[19..-2]; sep=","
+          json << sep+"#{tic.to_mob_json_index()[19..-2]}"
+          sep = ","
+          
         }
           json << "]"
           render :json => json + "}"
@@ -207,11 +201,9 @@ class Helpdesk::TicketsController < ApplicationController
         @items.each { |tic|
           #Removing the root node, so that it conforms to JSON REST API standards
           # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
-          json << sep + tic.to_json({
-            :except => [ :description_html,:description ],
-            :methods => [ :ticket_subject_style,:ticket_sla_status, :status_name, :priority_name, :source_name, :requester_name,
-                          :responder_name, :need_attention, :pretty_updated_date,:formatted_created_at ]
-          }, false)[19..-2]; sep=","
+          json << sep+"#{tic.to_mob_json_index()[19..-2]}"
+          sep = ","
+          
         }
           json << "]"
           render :json => json + "}"

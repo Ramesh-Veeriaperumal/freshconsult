@@ -445,6 +445,14 @@ class User < ActiveRecord::Base
   def self.reset_current_user
     User.current = nil
   end
+  
+  def user_time_zone
+    self.time_zone
+  end
+  
+  def user_tag
+    self.tags
+  end
 
   private
     def name_part(part)
