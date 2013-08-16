@@ -1094,7 +1094,7 @@ es-LA:
   draft: "Borrador:"
   dropbox_attach_label: "adjuntar desde"
   dropbox_choose_file: "selecciona un archivo"
-  due_in: "Demorado %{time_words}"
+  due_in: "Plazo de Entrega %{time_words}"
   due_next_eight: "Próximas 8 horas"
   due_today: Hoy
   due_tomo: Ma&ntilde;ana
