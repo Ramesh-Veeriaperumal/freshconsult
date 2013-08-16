@@ -548,7 +548,7 @@ a.addchoice:hover{
 				font-size:10pt;
 			}
 			textarea.paragraph{
-				width:521px;
+				width:74%;
 				min-height: 130px;
 			}
 			
@@ -556,16 +556,50 @@ a.addchoice:hover{
 				width:520px;
 				.paragraph{ width:98%; }
 			}
+			input[type='radio']{ margin-top: 8px;}
+			.radiolabel{margin-right: 10px;}
 			.webhook{
-				margin: 10px 0;
-				margin-left: -150px;
-				margin-top: 50px;
-				.select2-container{top:-6px;}
-				.url{ width:520px; }
-				.params{ width:520px; height:130px; }
+				margin: 20px 0 10px 0px;
+				.credentials{padding-left: 15.2%; box-sizing: border-box; -moz-box-sizing: border-box;}
+				>div{
+					margin: 2px 0;
+					label{margin-top: 7px;}
+					.required_label{margin-left: 0}
+					.using_webhooks{font-weight: 600; float:right; margin-top: 8px; margin-right: 9%;}
+					.url_req_auth{width: 50%; font-size: 13px; margin-left: 15.4%;}
+					.change_password{margin-top: 7px; margin-left: 15px;}
+					.checkbox_label{height:25px; min-height:0; margin:0; padding-top: 8px;}
+					.content_label{margin-top:33px; margin-left: 0;}
+					input[type="text"], input[type="password"]{width:41.6%;}
+					input[type="text"].api_key{width:87%;}
+					.select2-container{left:1px;}	
+					.required_star{top: 15px; margin: 0;}
+					textarea.uri{width: 57%; padding-right: 17.3%; margin-left: 0.8%;}
+					.credentials_toggle{float:right; margin-right:10%; margin-top:-25px; display:inline-block;}
+					.username{height:18px;}
+					.params_div{
+						width: 90.5%; height: 158px; border-color: lightgray;
+						background-color: white; overflow-y: auto; border-radius: 3px;
+						border-width: 1px; border-style: solid;
+						margin-left: 3.5px; margin-top: 1.5px;
+						.highlighted{background-color: rgba(#ff0,0.3);}
+						.checkbox{margin-left: 8px;}
+						}
+					.params{width:69%; min-height:146px; padding-right: 20.3%;}
+					.tip{width: 92%; color: grey;}
+					.placeholder_div{position: relative; width: 75%;}
+					.body_div{width:90%;}
+					.l_placeholder{position: absolute; right:0px; margin-top: 12px; float:right;}
+				}
 			}
+
+			.dependent{
+				float:none;
+			}
+
 			.s_email{
 				margin: 20px 0 10px 0px;
+				width: 100%;
 				.select2-container{left:1px;}
 				label{margin-top: 7px;}
 				label.error{ width:100%; }
@@ -2774,5 +2808,6 @@ label.label-choice{ cursor: pointer; }
 	label{ font-weight: bold; }
 	.reason-followup{ display: block; }
 }	
+
 
 /* end */

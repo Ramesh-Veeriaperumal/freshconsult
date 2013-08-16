@@ -1,13 +1,6 @@
 class Admin::ObserverRulesController < Admin::SupervisorRulesController
 
   NESTED_EVENTS_SEPERATION = ['nested_rules', 'from_nested_rules', 'to_nested_rules']
-  OBSERVER_FILTERS = [
-    { :name => -1, :value => "-----------------------" },
-    { :name => "inbound_count", :value => I18n.t('ticket.inbound_count'), :domtype => "number",
-    :operatortype => "hours" },
-    { :name => "outbound_count", :value => I18n.t('ticket.outbound_count'), :domtype => "number",
-    :operatortype => "hours" }
-  ]
 
 	protected
 
@@ -64,11 +57,12 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
           :choices => @ticket_actions, :type => 1 },
         { :name => 'customer_feedback', :value => t('observer_events.customer_feedback'), :domtype => 'dropdown',
           :choices =>[ ['--', t('any_val.any_feedback')] ]+Survey.survey_names(current_account), :type => 1,
-          :valuelabel => t('event.rating') },
+          :valuelabel => t('event.rating'), :condition => survey_featured_account? },
         { :name => 'time_sheet_action', :value => t('observer_events.time_entry'), :domtype => 'dropdown',
           :choices => @time_sheet_actions, :type => 1 },
       ]
 
+      event_hash = event_hash.select{ |event| event.fetch(:condition, true) }
       add_custom_events event_hash
       @event_defs = ActiveSupport::JSON.encode event_hash
     end
@@ -143,8 +137,4 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
       end
     end
 
-    def additional_filters
-      OBSERVER_FILTERS
-    end
-    
 end
