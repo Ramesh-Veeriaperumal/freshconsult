@@ -6,17 +6,16 @@ class SearchController < ApplicationController
 
   before_filter :forums_allowed_in_portal?, :only => :topics
   before_filter :solutions_allowed_in_portal?, :only => :solutions
-  before_filter :set_mobile, :only => [:index]
+  before_filter :set_native_mobile, :only => [:index]
   
   #by Shan
   #To do.. some smart meta-programming
-  def index 
+  def index
+		search 
     respond_to do |format| 
       format.html  do
-        search 
       end
-      format.mobile do 
-        search
+      format.nmobile do 
         json="["
         sep=""
         @items.each { |tic|
@@ -218,7 +217,7 @@ class SearchController < ApplicationController
           searchable << Customer
         end
       end
-      format.mobile do 
+      format.nmobile do 
         if(params[:search_class].to_s.eql?("ticket"))
           searchable = [ Helpdesk::Ticket ]
         elsif (params[:search_class].to_s.eql?("solutions"))
