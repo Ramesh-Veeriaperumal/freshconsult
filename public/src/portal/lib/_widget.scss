@@ -38,9 +38,12 @@
 	z-index: 9;
 	@include box-shadow(-1px 0 0 #e8e8e8);
 }
-.hc-search-input{ margin: 8px; }
+.hc-search-input{ 
+	margin: 8px 8px 5px; 
+	&:before{margin-top:8px;}
+}
 #feedback-suggest input.special{
-	padding:10px 15px 10px 35px;
+	padding:8px 15px 6px 35px;
 	border-color: $inputBorder;
 }
 .modal-panel{ display:none; }	
