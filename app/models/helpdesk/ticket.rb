@@ -36,6 +36,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   attr_protected :attachments #by Shan - need to check..
 
+  attr_protected :account_id,:display_id #to avoid update of these properties via api.
+
   named_scope :created_at_inside, lambda { |start, stop|
           { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }
         }
