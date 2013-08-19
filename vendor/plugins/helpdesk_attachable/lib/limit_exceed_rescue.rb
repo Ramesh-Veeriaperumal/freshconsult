@@ -17,6 +17,10 @@ module LimitExceedRescue
 	        render :json => {:errors =>{:error =>t('helpdesk.tickets.note.attachment_size.exceed')} }.to_json, 
 	        :status => :not_found
 	      end
+
+	      format.js {
+	      	head :not_acceptable
+	      }
 	    end
 		end
   end
