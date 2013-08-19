@@ -47,23 +47,15 @@ class Helpdesk::NotesController < ApplicationController
 		format.json do
 			render :json => @notes.to_json(options)
 		end
-        format.nmobile do
-    	  json_include = {
-	      	:user => {
-          	  :only => [ :name, :email, :id ],
-      	  	  :methods => [ :avatar_url ]
-      	    },
-      	    :attachments => {
-        	  :only => [ :content_file_name, :id ]
-          	},
-            :schema_less_note => {
-              :only => [:from_email , :to_emails , :bcc_emails , :cc_emails]
-            }
-          }
-          options = {
-      	    :include => json_include
-    	  }
-          render :json => @notes.to_json(options)
+    format.nmobile do
+        response = "["
+        sep = ""
+        @notes.each do |note|
+          response << sep + "#{note.to_mob_json}"
+          sep = ","
+        end
+        response << "]"
+        render :json => response
         end
       end
     end    
