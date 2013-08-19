@@ -29,7 +29,7 @@
 			</div>
 			
 			<div class="special-notice">
-				<%=t('integrations.google_contacts.sync_group_info', :group_name => @google_account.sync_group_name)%>
+				<%=t('integrations.google_contacts.sync_group_info', :group_name => h(@google_account.sync_group_name)).html_safe%>
 			</div>
 
 			<div class="fields">
