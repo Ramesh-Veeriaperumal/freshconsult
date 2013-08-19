@@ -52,7 +52,7 @@
     	  </div>	 
       <% end %>
       <!-- add page tab -->
-      <%= render :partial => 'configure_page_tab' %>
+      <%= render :partial => 'configure_page_tab' if current_account.features?(:facebook_page_tab) %>
     </div>
   </li>
 </ul>
