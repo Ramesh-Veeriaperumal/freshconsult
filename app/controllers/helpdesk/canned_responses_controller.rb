@@ -1,6 +1,7 @@
 class Helpdesk::CannedResponsesController < ApplicationController
   
   before_filter :load_canned_response, :set_mobile, :only => :show
+  before_filter :set_native_mobile,:only => :show
   before_filter :load_ticket , :if => :ticket_present?
 
   def index
@@ -9,7 +10,10 @@ class Helpdesk::CannedResponsesController < ApplicationController
  
   def show
     render_parsed_content if ticket_present?
-    render :partial => '/helpdesk/tickets/components/insert_canned_response.rjs'
+    respond_to do |format|
+      format.html{ render :partial => '/helpdesk/tickets/components/insert_canned_response.rjs'}
+      format.nmobile{ render :json => @a_template }
+    end
   end
 
   def recent
@@ -44,16 +48,9 @@ class Helpdesk::CannedResponsesController < ApplicationController
     end
     
     def render_parsed_content
-      content    = @ca_resp.content_html 
-      content    = mobile_content(content) if mobile?
+      content    = mobile? ? @ca_resp.content : @ca_resp.content_html 
       @a_template = Liquid::Template.parse(content).render('ticket' => @ticket, 
                                 'helpdesk_name' => @ticket.account.portal_name)    
-    end
-
-    def mobile_content content
-      parser = HTMLToTextileParser.new
-      parser.feed content
-      content = parser.to_textile
     end
 
     def load_ticket
