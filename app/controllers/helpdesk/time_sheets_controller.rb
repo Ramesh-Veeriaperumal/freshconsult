@@ -5,7 +5,7 @@ class Helpdesk::TimeSheetsController < ApplicationController
 
   before_filter { |c| c.requires_feature :timesheets }
   before_filter :set_show_version
-  before_filter :set_mobile , :only => [:create , :destroy]
+  before_filter :set_native_mobile , :only => [:create , :destroy]
   before_filter :load_time_entry, :only => [ :show,:edit, :update, :destroy, :toggle_timer ] 
   before_filter :load_ticket, :only => [:new, :create, :index, :edit, :update, :toggle_timer] 
   before_filter :create_permission, :only => :create 
@@ -187,7 +187,7 @@ private
     respond_to do |format|
       format.js
       format.html
-      format.mobile do
+      format.nmobile do
         render :json => mobile_response.to_json and return
       end
       format.xml do 

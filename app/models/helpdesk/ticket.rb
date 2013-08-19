@@ -162,7 +162,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   end
  
-  # 1 newly added method - ajs
     def ticket_sla_status
         closed_status = Helpdesk::TicketStatus.onhold_and_closed_statuses(account)
         sla_status(self,closed_status);

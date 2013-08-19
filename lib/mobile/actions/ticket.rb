@@ -77,6 +77,23 @@ module Mobile::Actions::Ticket
     }
     to_json(options,false) 
   end
+  
+	def to_mob_json_index
+    options = { 
+      :except => [ :description_html, :description ],
+      :methods => [ :summary_count,:ticket_subject_style,:ticket_sla_status, :status_name, :priority_name, :source_name, :requester_name,
+                    :responder_name, :need_attention, :pretty_updated_date ]
+    }
+    to_json options
+  end
+  
+	def to_mob_json_search
+    options = { 
+      :only => [ :id,:display_id,:subject,:description,:priority],
+      :methods => [ :summary_count,:ticket_subject_style,:ticket_sla_status, :status_name, :requester_name ]
+    }
+    to_json options
+  end
 
   def formatted_created_at(format = "%B %e %Y @ %I:%M %p")
     format = format.gsub(/.\b[%Yy]/, "") if (created_at.year == Time.now.year)

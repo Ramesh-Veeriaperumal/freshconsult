@@ -10,7 +10,7 @@ class ContactsController < ApplicationController
    before_filter :check_agent_limit, :only =>  :make_agent
    before_filter :load_item, :only => [:edit, :update, :make_agent,:make_occasional_agent]
    skip_before_filter :build_item , :only => [:new, :create]
-   before_filter :set_mobile , :only => [:show,:index,:create]
+   before_filter :set_mobile , :only => [:show]
    before_filter :fetch_contacts, :only => [:index]
    before_filter :set_native_mobile, :only => [:show, :index]
   
@@ -39,10 +39,15 @@ class ContactsController < ApplicationController
       format.atom do
         @contacts = @contacts.newest(20)
       end
-      format.nmobile do 
-        render :json => @contacts.to_json({:except=>[:account_id] ,:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
-                    :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
-                    :helpdesk_agent,:fb_profile_id,:external_id,:language,:address,:customer_id] })
+      format.nmobile do
+        response="[";sep=""
+        @contacts.each { |user|
+          response << sep+"#{user.to_mob_json_contacts()}"
+          sep = ","
+        }
+        response << "]"
+        render :json => response
+        
       end
     end    
   end
@@ -146,7 +151,7 @@ class ContactsController < ApplicationController
                     :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
                     :fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
                   }
-      format.mobile { render :json => @user.to_mob_json }
+      format.nmobile { render :json => @user.to_mob_json }
     end
   end
   

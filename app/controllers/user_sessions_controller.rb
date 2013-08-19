@@ -162,7 +162,14 @@ include Redis::TicketsRedis
       return redirect_to current_account.sso_options[:logout_url]
     end
     
-    redirect_to root_url
+    respond_to do |format|
+        format.html  {
+          redirect_to root_url
+        }
+        format.mobile{
+          render :json => {:logout => 'success'}.to_json
+        }
+      end
   end
   
   def signup_complete

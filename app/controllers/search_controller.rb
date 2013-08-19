@@ -11,13 +11,33 @@ class SearchController < ApplicationController
   #by Shan
   #To do.. some smart meta-programming
   def index 
+    search
     respond_to do |format| 
-      format.html  do
-        search 
-      end
       format.mobile do 
-        search
-        render :json => @items.to_json
+        json="["
+        sep=""
+        @items.each { |tic|
+            if(tic.instance_of?(Helpdesk::Ticket))
+                json << sep+"#{tic.to_mob_json_search()}"
+                sep = ","
+            elsif(tic.instance_of?(User))
+              json << sep+"#{tic.to_mob_json_contacts()}"
+              sep = ","
+            elsif(tic.instance_of?(Solution::Article))
+              json << sep + tic.to_json({
+                :only => [:id,:description,:desc_un_html,:title ]
+              }); sep=","
+            elsif(tic.instance_of?(Topic)) 
+              json << sep + tic.to_json({
+                :methods => [:stamp_name,:topic_desc],
+                :only => [ :title ]
+              }); sep=","
+            else
+              json << sep + tic.to_json({});sep=","
+            end
+        }
+          json << "]"
+          render :json => json
       end
     end
   end
@@ -161,7 +181,6 @@ class SearchController < ApplicationController
         results[i.class.name] ||= []
         results[i.class.name] << i
       end
-
       
       @searched_tickets   = results['Helpdesk::Ticket']
       @searched_articles  = results['Solution::Article']
@@ -188,16 +207,41 @@ class SearchController < ApplicationController
 
   private
   
-  def searchable_classes    
-    searchable = [ Helpdesk::Ticket ]
-    searchable << Solution::Article if privilege?(:view_solutions)
-    searchable << Topic             if privilege?(:view_forums)
-    
-    if privilege?(:view_contacts)
-      searchable << User
-      searchable << Customer
+  def searchable_classes   
+    searchable ="" 
+    respond_to do |format| 
+      format.html  do
+        searchable = [ Helpdesk::Ticket ]
+        searchable << Solution::Article if privilege?(:view_solutions)
+        searchable << Topic             if privilege?(:view_forums)
+        if privilege?(:view_contacts)
+          searchable << User
+          searchable << Customer
+        end
+      end
+      format.mobile do 
+        if(params[:search_class].to_s.eql?("ticket"))
+          searchable = [ Helpdesk::Ticket ]
+        elsif (params[:search_class].to_s.eql?("solutions"))
+          searchable = [ Solution::Article ] if privilege?(:view_solutions)
+        elsif (params[:search_class].to_s.eql?("forums"))
+          searchable = [ Topic ] if privilege?(:view_forums)
+        elsif (params[:search_class].to_s.eql?("customer"))
+          if privilege?(:view_contacts)
+            searchable = [Customer] 
+            searchable << User
+          end
+        else
+          searchable = [ Helpdesk::Ticket ]
+          searchable << Solution::Article if privilege?(:view_solutions)
+          searchable << Topic             if privilege?(:view_forums)
+          if privilege?(:view_contacts)
+            searchable << User
+            searchable << Customer
+          end
+        end
+      end
     end
-    
     searchable
   end 
   

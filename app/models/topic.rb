@@ -224,5 +224,9 @@ class Topic < ActiveRecord::Base
   def topic_changes
     @topic_changes ||= self.changes.clone
   end
+  
+  def topic_desc
+    truncate(self.posts.first.body.gsub(/<\/?[^>]*>/, ""), 300)
+  end
 
 end
