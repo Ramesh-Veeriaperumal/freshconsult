@@ -5,7 +5,7 @@ if is_application_installed?(Integrations::Constants::APP_NAMES[crm_app])  %>
 		<%
 		 @liquid_objects = {"requester" => user}
 		 widget_code = get_app_widget_script(Integrations::Constants::APP_NAMES[crm_app], "#{crm_app}_widget", @liquid_objects) %>
-		<%= Liquid::Template.parse(widget_code).render("ticket" => @ticket) %>
+		<%= Liquid::Template.parse(widget_code).render("ticket" => @ticket).html_safe %>
 </div>
 <% end 
 }%> 

@@ -173,12 +173,12 @@ module ApplicationHelper
         when "text" then
           content_tag :div, value
         when "facebook" then
-          auto_link("http://facebook.com/#{value}")
+          auto_link("http://facebook.com/#{value}").html_safe
         when "twitter" then
           value = value.gsub('@','')
           link_to("@#{value}" , "http://twitter.com/#{value}")
         when "link" then
-          auto_link(value)
+          auto_link(value).html_safe
       end
     end
   end
