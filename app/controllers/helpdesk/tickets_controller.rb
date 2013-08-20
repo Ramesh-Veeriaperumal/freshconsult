@@ -161,9 +161,10 @@ class Helpdesk::TicketsController < ApplicationController
           json << get_summary_count
           json << ",top_view:"
           json << top_view
-		  json << ", can_delete_ticket:" 
-		  json << "#{current_user.can_delete_ticket}"
-			puts "DEBUG :: index json is :: #{json}"
+		      json << ", can_delete_ticket:" 
+		      json << "#{current_user.can_delete_ticket}"
+          json << ", agent_portal_name:"
+          json << "\"#{current_account.portal_name.to_s}\""
           render :json => json + "}"
         end
       end
@@ -308,7 +309,6 @@ class Helpdesk::TicketsController < ApplicationController
 	  }
       format.js
       format.nmobile {
-        
         @last_fwd =  bind_last_conv(@ticket, @signature, true)
         @last_reply = bind_last_reply(@ticket, @signature, false, true)
         #puts " signature #{@last_reply}"
