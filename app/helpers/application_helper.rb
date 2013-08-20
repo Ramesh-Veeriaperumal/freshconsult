@@ -388,7 +388,7 @@ module ApplicationHelper
   end
   
    def timesheet_path(args_hash, link_display = 'time entry')
-    link_to(link_display, "#{helpdesk_ticket_path args_hash['ticket_id']}#timeentry_#{args_hash['timesheet_id']}")
+    link_display
   end
   #Liquid ends here..
   
