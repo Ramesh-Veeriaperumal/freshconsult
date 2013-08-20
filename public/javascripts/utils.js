@@ -888,7 +888,7 @@ function unescapeHtml(escapedStr) {
 jQuery.scrollTo = function(element, options) {
   var defaults = {
     speed: 500,
-    offset: 0
+    offset: jQuery('#sticky_header').outerHeight()
   };
   var opts = jQuery.extend({}, defaults, options || {});
   var el = jQuery(element);
