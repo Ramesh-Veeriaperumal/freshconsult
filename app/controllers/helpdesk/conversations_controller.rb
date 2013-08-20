@@ -207,7 +207,7 @@ class Helpdesk::ConversationsController < ApplicationController
         remove_tickets_redis_key(HELPDESK_REPLY_DRAFTS % { 
                                     :account_id => current_account.id, 
                                     :user_id => current_user.id, 
-                                    :ticket_id => params[:ticket_id]
+                                    :ticket_id => @item.notable_id
                                 })
       end
 end
