@@ -1,0 +1,98 @@
+<% content_for :sidebar do -%>
+  <div class="sidepanel helpcard">
+      <%=t("integrations.salesforce.helptext")%>
+  </div>
+<%- end %>
+
+	<h3 class="lead"><%=t("integrations.salesforce.form.salesforce_settings")%></h3>
+
+  <%form_tag ("/integrations/applications/oauth_install/salesforce?install=true", :method=> "post")  do %>
+   <% default_fields = ["Name","Address"]%>
+    <ul class="ui-form">
+    <li class="inline-field">
+      <label class="caption">
+        <div class="logo application-logo-salesforce"></div>
+        <div class="logo info-data">
+          <%=t('integrations.salesforce.desc')%>
+        </div>
+      </label>
+      <div class="salesforce-wrapper">
+        <div class="contact-fields"> 
+          <h3 class="leftselect2"><%=t("integrations.salesforce.form.contact")%></h3>
+      		<div id='sfcontacts'>
+      			<span>
+      				<div id="contactslist">
+      	  			<ul>
+                  <%selected_fields = default_fields.collect{|x| x} %>
+                  <%unless @installed_app.blank? %>
+                    <%selected_fields.push(@installed_app.configs_contact_fields.split(",").collect!{ |x| next if  default_fields.include?(x);
+                       x
+                      })%>
+
+                  <%end%>
+                </ul>
+    	  			</div>
+              <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
+              <%data =selected_fields.join(",")%>
+
+      			  <%= select_tag :contacts, 
+                			options_for_select(@salesforce_config['contact_fields'].collect{|field|
+                        field
+                      },data.split(",")), { :multiple => true, :class => "select2-fields int-select","data-placeholder" => " "} %> <!-- space in placeholder to add an empty option -->
+          	</span>
+      		</div>
+        </div>
+        <div class="lead-fields">
+          <h3><%=t("integrations.salesforce.form.lead")%></h3>   
+      		<div id="sfleads">
+      			<span>
+      			<div id="leadslist">
+      	  				<ul>
+                  <%selected_lead_fields = default_fields %>
+                  <%unless @installed_app.blank? %>
+                  <%selected_lead_fields.push(@installed_app.configs_lead_fields.split(",").collect!{ |x| next if default_fields.include?(x);
+                   x
+                   })%>
+                  <%end%>
+                  </ul>
+      	  	</div>
+            <%data =selected_lead_fields.join(",")%>
+      			<%= select_tag :leads, 
+                			options_for_select(@salesforce_config['lead_fields'].collect{|field| [field]},data.split(",")),{:multiple=>true, :class=>"select2-fields int-select","data-placeholder" => " "} %><!-- space in placeholder to add an empty option -->
+                </span>
+      	  </div>
+        </div>
+      </div>
+    </li>
+    </ul>
+    <div class="button-container">
+      <%= link_to t('back'), {:controller => 'applications', :action => 'index'}, :class => "btn" %>
+      <%= submit_tag t('update'), :class => "btn btn-primary" %>
+    </div>
+
+  <%end%>
+
+
+
+<script type="text/javascript">
+
+  jQuery("#contacts").select2({maximumSelectionSize: 10})
+
+  jQuery("#leads").select2({maximumSelectionSize: 10})
+
+  //setting the Name as default field(can't be removed.)
+  jQuery("#sfcontacts ul .select2-search-choice div").each(function(index,element){
+    value = jQuery(element).text();
+    if(value =="Name"){
+      jQuery(element).next("a").remove();
+    }
+  });
+
+jQuery("#sfleads ul .select2-search-choice div").each(function(index,element){
+    value = jQuery(element).text();
+    if(value =="Name"){
+      jQuery(element).next("a").remove();
+    }
+  });
+
+</script>
