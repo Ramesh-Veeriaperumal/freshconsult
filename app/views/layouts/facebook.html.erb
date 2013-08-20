@@ -96,6 +96,14 @@
     		FB.Canvas.scrollTo(0,0);
 		});
 
+		var external_link_regex = new RegExp('/' + window.location.host + '/facebook/support');
+		jQuery("body").on('click', "a[href^=http]",function() {
+			if(!external_link_regex.test(this.href)) 
+			{
+				this.target = '_blank';
+			}
+		});
+
     </script>
 		<%= assumed_identity_message %>
 
