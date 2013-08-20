@@ -836,5 +836,15 @@ module ApplicationHelper
       link_to_user(note.user, :class => "user_name", "data-placement" => "topRight")
     end
   end
+
+  def will_paginate(collection_or_options = nil, options = {})
+    if collection_or_options.is_a? Hash
+      options, collection_or_options = collection_or_options, nil
+    end
+    unless options[:renderer]
+      options = options.merge :renderer => DefaultPaginationRenderer
+    end
+    super *[collection_or_options, options].compact
+  end
   
 end

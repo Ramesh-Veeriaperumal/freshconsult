@@ -31,7 +31,7 @@ module Portal::PortalFilters
 	    if paginate['parts'].size > 0
 		    html << %(<div class="pagination"><ul>)
 		    if paginate['previous']
-		    	html << %(<li class="prev">#{link_to(previous_label, paginate['previous']['url'])}</li>)
+		    	html << %(<li class="prev">#{link_to(previous_label.html_safe, paginate['previous']['url'])}</li>)
 		    else
 		    	html << %(<li class="prev disabled"><a>#{previous_label}</a></li>)
 		    end
@@ -47,14 +47,14 @@ module Portal::PortalFilters
 		    end
 
 		    if paginate['next']
-		    	html << %(<li class="next">#{link_to(next_label, paginate['next']['url'])}</li>)
+		    	html << %(<li class="next">#{link_to(next_label.html_safe, paginate['next']['url'])}</li>)
 		    else
 		    	html << %(<li class="next disabled"><a>#{next_label}</a></li>)
 		   	end
 
 		    html << %(</ul></div>)
 		end		
-	    html.join(' ')
+	    html.join(' ').html_safe
 	end
 
 	def windowed_links
