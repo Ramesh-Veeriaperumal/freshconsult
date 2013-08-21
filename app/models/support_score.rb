@@ -40,9 +40,8 @@ class SupportScore < ActiveRecord::Base
   named_scope :group_score,
   { 
     :select => ["support_scores.*, SUM(support_scores.score) as tot_score, MAX(support_scores.created_at) as recent_created_at"],
-    :conditions => ["group_id is not null and groups.id is not null"],
-    :joins => "INNER JOIN groups ON groups.id = support_scores.group_id and 
-      groups.account_id = support_scores.account_id",
+    :conditions => ["group_id is not null"],
+    :include => [ :group ],
     :group => "group_id",
     :order => "tot_score desc, recent_created_at"
   }
@@ -51,9 +50,6 @@ class SupportScore < ActiveRecord::Base
   { 
     :select => ["support_scores.*, SUM(support_scores.score) as tot_score, MAX(support_scores.created_at) as recent_created_at"],
     :include => { :user => [ :avatar ] },
-    :joins => "INNER JOIN users ON users.id = support_scores.user_id and 
-      users.account_id = support_scores.account_id and users.deleted = false",
-    :conditions => ["user_id is not null and users.id is not null"],
     :group => "user_id",
     :order => "tot_score desc, recent_created_at"
   }

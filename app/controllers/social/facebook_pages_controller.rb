@@ -4,19 +4,19 @@ class Social::FacebookPagesController < Admin::AdminController
   before_filter { |c| c.requires_feature :facebook }
   
   before_filter :set_session_state , :only =>[:index , :edit]
-  before_filter :fb_client , :only => [:index,:edit]
+  before_filter :fb_client , :only => [:authdone, :index,:edit]
+  before_filter :build_item, :only => [:authdone]
   before_filter :load_item,  :only => [:edit, :update, :destroy]  
-  before_filter :load_tab, :only => [:edit, :destroy]
-  before_filter :handle_tab, :only => :update, :if => :tab_edited?
   
   def index
     @fb_pages = scoper 
-    if params[:code]
-      begin
-        @new_fb_pages = @fb_client.auth(params[:code])
-      rescue
-        flash[:error] = t('facebook.not_authorized')
-      end
+  end
+
+  def authdone
+    begin      
+      @fb_pages = @fb_client.auth(params[:code])
+    rescue
+      flash[:error] = t('facebook.not_authorized')
     end
   end
  
@@ -51,14 +51,13 @@ class Social::FacebookPagesController < Admin::AdminController
   end
 
   def destroy
-    fb_page_tab.remove if @fb_tab
     @item.destroy   
     flash[:notice] = t('facebook.deleted', :facebook_page => @item.page_name)
     redirect_to :action => :index 
   end
 
-  def update
-    if @item.update_attributes(params[:social_facebook_page])  
+  def update    
+    if @item.update_attributes(params[:social_facebook_page])    
       flash[:notice] = I18n.t(:'flash.facebook.updated')
     else
       update_error
@@ -67,20 +66,16 @@ class Social::FacebookPagesController < Admin::AdminController
   end
   
   protected  
-    def scoper
+   def scoper
       current_account.facebook_pages
     end
   
-    def fb_client   
+   def fb_client   
      @fb_client = FBClient.new @item ,{   :current_account => current_account,
                                           :callback_url => fb_call_back_url}
     end
-
-    def fb_page_tab
-      FBPageTab.new @item
-    end
     
-    def build_item
+   def build_item
       @item = scoper.build
     end
   
@@ -88,38 +83,27 @@ class Social::FacebookPagesController < Admin::AdminController
       @item = current_account.facebook_pages.find(params[:id]) 
     end
 
-    def load_tab
-      @fb_tab = fb_page_tab.get unless @item.reauth_required?
-    end
-
-    def handle_tab
-      fb_page_tab.add if params[:add_tab]
-      flash[:error] = t('facebook_tab.no_contact') unless fb_page_tab.update(params[:custom_name])
-    end
-
-    def tab_edited?
-      params[:custom_name]
-    end
-
     def human_name
       'Facebook'
-    end
+   end
   
-    def redirect_url
-        edit_social_facebook_url(@item)
-    end
-    
-    def fetch_fb_wall_posts fb_page 
-      fb_posts = Social::FacebookPosts.new(fb_page)
-      fb_posts.fetch    
-    end
-    
-    def fb_call_back_url
-     url_for(:host => current_account.full_domain, :action => 'index')
-    end
+  def redirect_url
+      edit_social_facebook_url(@item)
+  end
+  
+  def fetch_fb_wall_posts fb_page 
+    fb_posts = Social::FacebookPosts.new(fb_page)
+    fb_posts.fetch    
+  end
+  
+  def fb_call_back_url
+   url_for(:host => current_account.full_domain, :action => 'authdone')
+  end
 
-    def set_session_state
-      session[:state] = Digest::MD5.hexdigest(Helpdesk::SECRET_3+ Time.now.to_f.to_s)
-    end  
+  def set_session_state
+    session[:state] = Digest::MD5.hexdigest(Helpdesk::SECRET_3+ Time.now.to_f.to_s)
+  end
+  
+  
 
 end

@@ -53,7 +53,6 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     subject       params[:subject]
     recipients    params[:receips]
     from          params[:ticket].friendly_reply_email
-    bcc           account_bcc_email(params[:ticket])
     headers       "Reply-to" => "#{params[:ticket].friendly_reply_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     sent_on       Time.now
     content_type  "multipart/mixed"
@@ -275,11 +274,4 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
     handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
   end
-
-  private
-
-    def account_bcc_email(ticket)
-      ticket.account.bcc_email unless ticket.account.bcc_email.blank?
-    end
-
 end

@@ -123,11 +123,6 @@
 	  	});
 
 	  	jQuery("#fs-input").live("keydown change paste", function(ev){
-	  		if(ev.keyCode == 13)
-	  		{
-	  			ev.preventDefault();
-	  			return false;
-	  		}
 			var $this = jQuery(this);
 			clearTimeout(suggestDelay);
 		    suggestDelay = setTimeout(function() {

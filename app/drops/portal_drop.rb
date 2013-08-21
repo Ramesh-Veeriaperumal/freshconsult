@@ -11,7 +11,6 @@ class PortalDrop < BaseDrop
   def context=(current_context)
     @current_tab = current_context['current_tab']
     @current_page = current_context['current_page_token']
-    @facebook_portal = current_context['facebook_portal']
     @context = current_context
     
     super
@@ -43,10 +42,6 @@ class PortalDrop < BaseDrop
 
   def can_submit_ticket_without_login
     allowed_in_portal? :anonymous_tickets
-  end
-
-  def home_url
-    @home_url ||= support_home_path
   end
   
   def signup_url
@@ -102,10 +97,6 @@ class PortalDrop < BaseDrop
     @current_tab ||= @current_tab
   end
 
-  def facebook_portal
-    @facebook_portal ||= @facebook_portal
-  end
-
   def current_page
     @current_page ||= @current_page
   end
@@ -128,12 +119,8 @@ class PortalDrop < BaseDrop
     @forums ||= (forum_categories.map{ |c| c.forums.visible(portal_user) }.reject(&:blank?) || []).flatten
   end
 
-  def recent_portal_topics
-    @recent_portal_topics ||= @source.recent_portal_topics(portal_user).presence
-  end
-
   def recent_popular_topics
-    @recent_popular_topics ||= @source.recent_popular_topics(portal_user, 30.days.ago).presence
+    @recent_popular_topics ||= source.recent_popular_topics(portal_user, 30.days.ago)
   end
 
   def topics_count
@@ -151,10 +138,6 @@ class PortalDrop < BaseDrop
   
   def folders
     @folders ||= (solution_categories.map { |c| c.folders.visible(portal_user) }.reject(&:blank?) || []).flatten
-  end
-
-  def recent_articles
-    @recent_articles ||= source.recent_articles
   end
 
   # !MODEL-ENHANCEMENT Need to make published articles for a 

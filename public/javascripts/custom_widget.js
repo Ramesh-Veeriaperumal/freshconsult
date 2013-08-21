@@ -1,5 +1,6 @@
 var Freshdesk = {}
-timeStamp = cloudfront_version;
+jsLoadPath = document.getElementsByTagName("script")
+timeStamp = jsLoadPath[jsLoadPath.length-1].src.split('?')[1]
 Freshdesk.Widget=Class.create();
 Freshdesk.Widget.prototype={
 	initialize:function(widgetOptions){

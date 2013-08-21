@@ -25,7 +25,7 @@ private
         :user => article.user,
         :activity_data => {}
       )
-  	end
+  end
 
 	def remove_tag response, tag
 	    doc = Nokogiri::HTML.parse(response)
@@ -41,6 +41,6 @@ private
 
 	def set_un_html_content(article)
 		article.desc_un_html = Helpdesk::HTMLSanitizer.plain(article.description) unless article.description.empty?
-    end
+  end
 
 end

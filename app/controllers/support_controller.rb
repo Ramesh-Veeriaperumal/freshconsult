@@ -1,7 +1,5 @@
 class SupportController < ApplicationController
-
   skip_before_filter :check_privilege
-  layout :resolve_layout
   before_filter :portal_context, :page_message
   include Redis::RedisKeys
   include Redis::PortalRedis
@@ -11,7 +9,6 @@ class SupportController < ApplicationController
     controller_name = controller.controller_name
     controller.cache_enabled? && 
     !controller_name.eql?('search') &&
-    !controller_name.eql?('login') &&
     !controller_name.eql?('feedback_widgets') &&
     (controller_name.eql?("theme") || !controller.send(:current_user)) && 
     controller.send('flash').keys.blank?
@@ -46,24 +43,20 @@ class SupportController < ApplicationController
 
 
     def set_portal_page page_token
+      @skip_liquid_compile = false
+
       # Name of the page to be used to render the static or dynamic page
       @current_page_token = page_token.to_s
+
+      # Setting up page layout variable
+      process_page_liquid page_token
 
       # Setting up current_tab based on the page type obtained
       current_tab page_token
 
-      # Determine facebook
-      @facebook_portal = facebook?
-      
-      @skip_liquid_compile = false
-      
-      # Setting up page layout variable
-      process_page_liquid page_token
-
       # Setting dynamic header, footer, layout and misc. information
       process_template_liquid
-
-      @skip_liquid_compile = true # if active_layout.present?      
+      @skip_liquid_compile = true if active_layout.present?
     end
 
     def preview?
@@ -73,7 +66,6 @@ class SupportController < ApplicationController
         !get_portal_redis_key(is_preview).blank? && !current_user.blank? && current_user.agent?
       end
     end
-
   private
 
     def portal_context
@@ -84,6 +76,7 @@ class SupportController < ApplicationController
       # !!! Dirty hack Pointing the http_referer to support home if it is in preview mode
       request.env["HTTP_REFERER"] = support_home_url if @preview
     end
+
     
     # Flash message for the page   
     # The helper method can be found in SupportHelper class      
@@ -106,8 +99,7 @@ class SupportController < ApplicationController
       dynamic_template = page_data(page_token) if feature?(:layout_customization)
       _content = render_to_string :file => partial,
                   :locals => { :dynamic_template => dynamic_template } if dynamic_template.nil? || !dynamic_template.blank?
-
-      @page_yield = @content_for_layout = _content
+      @content_for_layout = _content
     end
 
     def page_data(page_token)
@@ -122,7 +114,7 @@ class SupportController < ApplicationController
     end
 
     def current_tab token    
-      if [ :portal_home, :facebook_home ].include?(token)
+      if [ :portal_home ].include?(token)
         @current_tab ||= "home"
       elsif [ :discussions_home, :topic_list, :topic_view, :new_topic ].include?(token)
         @current_tab ||= "forums"
@@ -149,12 +141,5 @@ class SupportController < ApplicationController
       data = @portal_template.get_draft[sym] if preview? && @portal_template.get_draft
       data
     end
-
-    def resolve_layout
-      facebook? ? "facebook" : "support"
-    end
-
-    def facebook?
-      params[:portal_type] == "facebook"
-    end
+    
 end

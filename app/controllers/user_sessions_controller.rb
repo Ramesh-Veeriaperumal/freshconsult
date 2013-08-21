@@ -35,13 +35,7 @@ include Redis::TicketsRedis
  
   def sso_login
     if params[:hash] == gen_hash_from_params_hash
-      @current_user = current_account.all_users.find_by_email(params[:email])
-      
-      if @current_user && @current_user.deleted?
-        flash[:notice] = t(:'flash.login.deleted_user')
-        redirect_to login_normal_url and return
-      end
-      
+      @current_user = current_account.users.find_by_email(params[:email])  
       if !@current_user
         @current_user = create_user(params[:email],current_account,nil,{:name => params[:name]})
         @current_user.active = true

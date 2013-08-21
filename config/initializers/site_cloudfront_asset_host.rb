@@ -1,6 +1,5 @@
-CLOUDFRONT_VERSION = "development"
 unless Rails.env.development?
-  CLOUDFRONT_VERSION = git_version = $redis_portal.get("cloudfront_version")
+  git_version = $redis_portal.get("cloudfront_version")
   Jammit.instance_variable_set(:@package_path, "packages/#{git_version}")
 end
 

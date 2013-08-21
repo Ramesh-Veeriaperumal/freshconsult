@@ -48,10 +48,7 @@ class Portal::Page < ActiveRecord::Base
 
 		# Password reset with perishable token
 		[:password_reset,       16,  "password_resets/edit.portal"],
-		[:activation_form,      17,  "activations/new.portal"],
-
-
-		[:facebook_home,      101,  "support/facebook/index.portal", "support_home_path"]
+		[:activation_form,      17,  "activations/new.portal"]
 		
 	]
 
@@ -65,8 +62,7 @@ class Portal::Page < ActiveRecord::Base
 
 	# Restricted pages from editing
 	# Hiding customization for profile_edit, ticket_list, ticket_view and password_reset
-	RESTRICTED_PAGES = [:profile_edit, :ticket_list, :ticket_view, :password_reset, :activation_form,
-											:facebook_home]
+	RESTRICTED_PAGES = [:profile_edit, :ticket_list, :ticket_view, :password_reset, :activation_form]
 	
 	# Helper constants for access of PAGE_TYPES
 	PAGE_TYPE_OPTIONS      	= PAGE_TYPES.collect { |i| [i[0], i[1]] }	

@@ -11,126 +11,109 @@
     });
   }); 
 <% end %>
-<div class="row-fluid">
-  <h4 class="heading caption lead"><%= t('.portal_settings') %></h4>
-  <div class ="products-portal-region">
+<div class="portal-settings">
+  <h4 class="heading caption tabbed"><%= t('.portal_settings') %></h4>
+  <div class="fields">
+    <%= content_tag(:label, t('.portal_url') + "*", :class => "caption") %>
     <div class="fields">
-      <div class="control-group">
-        <%= content_tag(:label, t('.portal_name'), :class => "control-label") %>
-        <div class="controls">
-          <%= portal.text_field :name, :class => "text auto", :size => "50" %>
-          <%= content_tag(:div, t('.portal_name_info'), :class => "info-data") %>
-        </div>
+	    <%= portal.text_field :portal_url, :class => "portal_url url_without_protocol auto required", :id => "PortalUrl",
+        :"data-domain" => Helpdesk::HOST[Rails.env.to_sym], :size => "50" %>
+	    <%= content_tag(:div, t('.cname_configure_info', :full_domain => current_account.full_domain), :class => "info-data") %>
+    </div>
+
+    <%= content_tag(:label, t('.portal_name'), :class => "caption") %>
+    <div class="fields">
+  	  <%= portal.text_field :name, :class => "text auto", :size => "50" %>
+      <%= content_tag(:div, t('.portal_name_info'), :class => "info-data") %>
+    </div>
+  	
+  	<!-- locale starts here-->
+  	<% if feature?(:multi_language) %>
+  	  <%= content_tag(:label, t('.portal_language'), :class => "caption") %>
+      <div class="fields">
+  		  <%= portal.select :language, I18n.available_locales_with_name , {:selected =>  (!@product.portal.blank?) ? @product.portal.language.to_sym() : current_portal.language.to_sym() }%>
+  		  <%= content_tag(:div, t('.portal_language_info'), :class => "info-data") %>
       </div>
-      <div class="control-group">
-        <%= content_tag(:label, t('.portal_url') + "<span class='required_star'>*</span>", :class => "control-label") %>
-        <div class="controls">
-  	     <%= portal.text_field :portal_url, :class => "portal_url url_without_protocol auto required", :id => "PortalUrl",
-          :"data-domain" => Helpdesk::HOST[Rails.env.to_sym], :size => "50" %>
-  	      <span class="portal_url_if_long">
-            <%= content_tag(:div, t('.cname_configure_info', 
-                            :full_domain => current_account.full_domain), :class => "info-data") %>
-          </span>
-        </div> 
+  	<% end %>
+  	<!-- locale ends here -->
+
+    <label class="caption"><%= t(".top_level_forum") %></label>
+    <div class="fields">
+      <%= portal.collection_select :forum_category_id, @forums_categories, :id, :name, 
+          { :include_blank =>  t(".select_forum_category")} %>
+      <%= content_tag(:div, t('.top_level_forum_info'), :class => "info-data") %>
+    </div>
+    
+
+    <label class="caption"><%= t(".top_level_solution") %></label>
+    <div class="fields">
+      <%= portal.collection_select :solution_category_id, @solution_categories.reject(&:is_default?), 
+          :id, :name, {:include_blank => t(".select_solution_category")} %>
+      <%= content_tag(:div, t('.top_level_solution_info'), :class => "info-data") %>
+    </div>
+  </div>
+
+  <span class="seperator"></span>
+  <h4 class="heading caption tabbed"><%= t('.portal_rebranding') %></h4>
+  <div class="fields">
+    <label class="caption">Logo & favicon</label>
+    <div class="fields">
+      <div class="row-fluid">
+        <div class="span8">
+          <%= render :partial => "/shared/logo_image", :locals => { :item => @product.portal, :field_name => "product[portal_attributes]" } %>
+        </div>
+        <div class="span4">
+          <%= render :partial => "/shared/fav_image", :locals => { :item => @product.portal, :field_name => "product[portal_attributes]" } %>
+        </div>    
       </div>
-      <div class="control-group">
-    	<% if feature?(:multi_language) %>
-    	  <%= content_tag(:label, t('.portal_language'), :class => "control-label") %>
-          <div class="controls">
-            <%= portal.select :language, I18n.available_locales_with_name , 
-                              {:selected =>  (!@product.portal.blank?) ? @product.portal.language.to_sym() : current_portal.language.to_sym() } ,
-                               :class => "select2"%>
-    		    <%= content_tag(:div, t('.portal_language_info'), :class => "info-data") %>
-          </div>
-        </div>
-    	<% end %>
-      <div class="control-group">
-       <label class="control-label"><%= t(".top_level_forum") %></label>
-        <div class="controls">
-          <%= portal.collection_select :forum_category_id, @forums_categories, :id, :name, 
-                        { :include_blank =>  t(".select_forum_category")}, :class => "select2" %>
-          <%= content_tag(:div, t('.top_level_forum_info'), :class => "info-data") %>
-        </div>
-      </div>
-      
-      <div class="control-group">
-        <label class="control-label"><%= t(".top_level_solution") %></label>
-        <div class="controls">
-          <%= portal.collection_select :solution_category_id, @solution_categories.reject(&:is_default?), 
-                    :id, :name, {:include_blank => t(".select_solution_category")} , :class => "select2"%>
-          <%= content_tag(:div, t('.top_level_solution_info'), :class => "info-data") %>
-        </div>
+      <div><b><%= t("linkback_overlabel") %></b></div>
+      <label class="overlabel" for="link_back_text">
+        http://<%= @product.portal.portal_url.presence %>
+      </label>
+      <input name="product[portal_attributes][preferences][logo_link]" id="link_back_text" value="<%=(@product.portal[:preferences]||{}).fetch(:logo_link, '')%>" class="text url auto" size="50" />
+      <div class="info-data"> <%= t("linkback_info") %> </div>
+    </div>
+    <div class="inline-field">
+      <label class="caption">Helpdesk Phone</label>
+      <div class="fields">
+        <label class="overlabel" for="contact_info_text">Contact us @ 888 888 888</label>
+        <input name="product[portal_attributes][preferences][contact_info]" id="contact_info_text" 
+          value="<%=portal_pref(@product.portal, :contact_info) %>" class="text auto" size="50" />
       </div>
     </div>
-    <div class="fields">
-      <span class="seperator"></span>
-      <h4 class="heading caption tabbed lead rebranding-header"><%= t('.portal_rebranding') %></h4>
-      <div class="control-group">
-        <label class="control-label"><%= t(".logo_and_favicon") %></label>
-        <div class="controls">
-          <div class="row-fluid">
-            <div class="span8">
-              <%= render :partial => "/shared/logo_image", 
-                          :locals => { :item => @product.portal, :field_name => "product[portal_attributes]"} %>
-            </div>
-            <div class="span4">
-              <%= render :partial => "/shared/fav_image", 
-                        :locals => { :item => @product.portal, :field_name => "product[portal_attributes]"} %>
-            </div>    
-          </div>
-        </div>
-      </div>
-      <div class="control-group">
-        <div class="control-label"><%= t("linkback_overlabel") %></div>     
-        <div class="controls">
-          <label class="overlabel" for="link_back_text">
-            http://<%= @product.portal.portal_url.presence %>
-            </label>
-          <input name="product[portal_attributes][preferences][logo_link]" id="link_back_text" value="<%=(@product.portal[:preferences]||{}).fetch(:logo_link, '')%>" class="text url auto" size="50" />
-          <div class="info-data"> <%= t("linkback_info") %> </div>
-        </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label"><%= t(".helpdesk_phone") %></label>
-        <div class="controls">
-          <label class="overlabel" for="contact_info_text"><%= t(".contact_us") %> @ 888 888 888</label>
-          <input name="product[portal_attributes][preferences][contact_info]" id="contact_info_text" 
-              value="<%=portal_pref(@product.portal, :contact_info) %>" class="text auto" size="50" />
-        </div>
-      </div>
 
-      <% portal.fields_for :preferences do |p| %>
-        <input type="hidden" name="product[portal_attributes][preferences][header_color]" 
-          value="<%= portal_pref(current_account.main_portal, :header_color) %>" />
-        <input type="hidden" name="product[portal_attributes][preferences][tab_color]"
-          value="<%= portal_pref(current_account.main_portal, :tab_color) %>" /> 
-        <input type="hidden" name="product[portal_attributes][preferences][bg_color]" 
-          value="<%= portal_pref(current_account.main_portal, :bg_color) %>" />
-      <% end %>
-        
-      <div class="control-group">
-        <label class="control-label"><%=t('.portal_customization')%></label>
-        <div class="controls">
+    <br />
+
+    <% portal.fields_for :preferences do |p| %>
+      <input type="hidden" name="product[portal_attributes][preferences][header_color]" 
+        value="<%= portal_pref(current_account.main_portal, :header_color) %>" />
+      <input type="hidden" name="product[portal_attributes][preferences][tab_color]"
+        value="<%= portal_pref(current_account.main_portal, :tab_color) %>" /> 
+      <input type="hidden" name="product[portal_attributes][preferences][bg_color]" 
+        value="<%= portal_pref(current_account.main_portal, :bg_color) %>" />
+    <% end %>
+    
+      <div class="inline-field">
+        <label class="caption">Portal customization</label>
+        <div class="fields">
           <% if @product.portal.template.present? %>
-            <%= link_to t('.customize_portal'), admin_portal_template_path(@product.portal.id), 
+            <%= link_to "Customize portal >", admin_portal_template_path(@product.portal.id), 
               :class => "btn btn-bold", :rel => "customize-portal" %> 
           <% else %>  
-            <%= submit_tag t('.save_and_customize'), :rel => "customize-portal", :class => "btn btn-bold" %> 
+            <%= submit_tag "Save & Customize portal >", :rel => "customize-portal", :class => "btn btn-bold" %> 
           <% end %>
           <% if @product.portal.template.present? %>
             <p class="info-data">            
-              <%= t(".last_published")%>
+              Your portal was last published
                 <%= distance_of_time_in_words_to_now(@product.portal.template.updated_at) %>
-                <%= t(".ago") %>
+                ago
               <br />            
             </p>
           <% end %>
         </div>
       </div>
-    </div>
   </div>
 </div>
-
 
 <% content_for :onload_script do %>
   jQuery("[data-rebrand-form]").live("change", function(ev){
@@ -142,7 +125,7 @@
     if(form.data('formChanged') && form.valid()){
       <% if @product.portal.template.present? %>
         ev.preventDefault()
-        if(confirm("<%= t('.save_and_customize') %>")){
+        if(confirm("You have unsaved changes in your form. Do you want to save and continue?")){
           setPostParam(form, "customize_portal", true)
           form.submit()
         }

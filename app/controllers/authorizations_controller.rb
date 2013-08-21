@@ -146,7 +146,6 @@ class AuthorizationsController < ApplicationController
   def create_for_facebook(params)
     Account.reset_current_account
     portal_id = request.env["omniauth.origin"] unless request.env["omniauth.origin"].blank?
-    state = "/facebook" if params[:state]
     portal = Portal.find_by_id(portal_id)
     user_account = portal.account
     portal_url = portal.host
@@ -158,14 +157,13 @@ class AuthorizationsController < ApplicationController
       @auth = Authorization.find_from_hash(@omniauth,user_account.id)
       fb_profile_id = @omniauth['info']['nickname']
       @current_user = user_account.all_users.find_by_fb_profile_id(fb_profile_id) if @current_user.blank?
-      if create_for_sso(@omniauth, user_account)
-        curr_time = ((DateTime.now.to_f * 1000).to_i).to_s
-        random_hash = Digest::MD5.hexdigest(curr_time)
-        key_options = { :account_id => user_account.id, :user_id => @current_user.id, :provider => @omniauth['provider']}
-        key_spec = Redis::KeySpec.new(Redis::RedisKeys::SSO_AUTH_REDIRECT_OAUTH, key_options)
-        Redis::KeyValueStore.new(key_spec, curr_time, {:group => :integration, :expire => 300}).set_key
-        redirect_to portal_url + "#{state}/sso/login?provider=facebook&uid=#{@omniauth['uid']}&s=#{random_hash}" 
-      end
+      create_for_sso(@omniauth, user_account)
+      curr_time = ((DateTime.now.to_f * 1000).to_i).to_s
+      random_hash = Digest::MD5.hexdigest(curr_time)
+      key_options = { :account_id => user_account.id, :user_id => @current_user.id, :provider => @omniauth['provider']}
+      key_spec = Redis::KeySpec.new(Redis::RedisKeys::SSO_AUTH_REDIRECT_OAUTH, key_options)
+      Redis::KeyValueStore.new(key_spec, curr_time, {:group => :integration, :expire => 300}).set_key
+      redirect_to portal_url + "/sso/login?provider=facebook&uid=#{@omniauth['uid']}&s=#{random_hash}" 
     end
   end
 
@@ -180,12 +178,8 @@ class AuthorizationsController < ApplicationController
   end
 
   def show_deleted_message
-    if params[:state]
-      render :text => t(:'flash.g_app.page_unavailable')
-    else
-      flash[:notice] = t(:'flash.g_app.page_unavailable')
-      redirect_to login_url
-    end
+    flash[:notice] = t(:'flash.g_app.user_deleted')
+    redirect_to login_url
   end
   
   def make_usr_active
@@ -196,10 +190,7 @@ class AuthorizationsController < ApplicationController
   def create_for_sso(hash, user_account = nil)
     account = (user_account.blank?) ? current_account : user_account
     if !@current_user.blank? and !@auth.blank?
-      if @current_user.deleted?
-        show_deleted_message
-        return false
-      end
+      return show_deleted_message if @current_user.deleted?
       make_usr_active
     elsif !@current_user.blank?
       @current_user.authorizations.create(:provider => hash['provider'], :uid => hash['uid'], :account_id => account.id) #Add an auth to existing user  
@@ -209,7 +200,6 @@ class AuthorizationsController < ApplicationController
       @current_user = @new_auth.user
     end
     create_session unless @omniauth['provider'] == "facebook"
-    return true
   end
   
   def create_from_hash(hash, account)

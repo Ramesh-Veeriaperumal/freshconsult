@@ -17,8 +17,7 @@ class SsoController < ApplicationController
         if(random_hash == params['s'] and curr_time <= expiry)
           user_session = curr_user.account.user_sessions.new(curr_user) 
           kv_store.remove_key
-          facebook_redirect = '/facebook/support/home' if params[:portal_type] == 'facebook'
-          redirect_back_or_default(facebook_redirect || '/') if user_session.save
+          redirect_back_or_default('/') if user_session.save
           return
         end 
       end
@@ -28,7 +27,7 @@ class SsoController < ApplicationController
   end
 
   def facebook
-    redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/facebook?origin=#{current_portal.id}&state=#{params[:portal_type]}"
+    redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/facebook?origin=#{current_portal.id}"
   end
 
   TIMEOUT = 60000

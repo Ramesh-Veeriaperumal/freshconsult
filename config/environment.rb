@@ -11,7 +11,6 @@
 require File.join(File.dirname(__FILE__), 'boot')
 require 'rack/throttle'
 require 'gapps_openid'
-require "#{RAILS_ROOT}/lib/facebook_routing.rb"
 
 Rails::Initializer.run do |config|
 
