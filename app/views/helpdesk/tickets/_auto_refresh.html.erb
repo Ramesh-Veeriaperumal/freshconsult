@@ -21,6 +21,10 @@
     getFilterData();
   });
 
+  jQuery(".filter_item").bind("change", function(){
+    slide_up();
+  });
+
   jQuery("#SortMenu, .prev_page, .next_page, .toolbar_pagination_full").live("click", function(){
     slide_up();
   });

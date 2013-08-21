@@ -42,7 +42,16 @@ body, .feedback-wrapper{
 		}
 	}
 }
-.feedback-wrapper{ margin-left: 20px; margin-right: 20px; }
+.feedback-wrapper{ 
+  margin-left: 20px; margin-right: 20px; 
+  .modal-widget .modal-body{ 
+    .redactor_editor, .redactor_editor:focus{
+        min-height: 100px; 
+        height:auto !important; 
+        height: 100px;
+       }
+  }
+}
 .modal-widget{
 	width: 100%;
 	// Reseting existing widget modal dialog
@@ -55,6 +64,9 @@ body, .feedback-wrapper{
 	.modal-body{ 
 		overflow-x:hidden; 
 		padding-top: 8px;
+		padding-bottom: 50px;
+
+	
 	}	
 }
 .modal-panel{ 
@@ -67,9 +79,12 @@ body, .feedback-wrapper{
 	z-index: 9;
 	@include box-shadow(-1px 0 0 #e8e8e8);
 }
-.hc-search-input{ margin: 8px; }
+.hc-search-input{ 
+  margin: 8px 8px 5px; 
+  &:before{margin-top:8px;}
+}
 #feedback-suggest input.special{
-	padding:10px 15px 10px 35px;
+	padding:8px 15px 6px 35px;
 	border-color: $inputBorder;
 }
 .modal-panel{ display:none; }	

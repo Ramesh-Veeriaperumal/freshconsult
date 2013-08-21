@@ -94,7 +94,7 @@ FreshdeskPjax.prototype = {
 
     _afterReceiveCleanup: function() {
 			$('.popover').remove();
-			$('.modal').remove();
+			$('.modal, .modal-backdrop').remove();
 			$('.twipsy').remove();
     },
 

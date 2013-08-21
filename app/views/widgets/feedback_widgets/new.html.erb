@@ -93,7 +93,7 @@
 		    	jQuery("#fs-input").val("");
 		    }
 		    else {
-		    	jQuery("#ws-results").html("No results for " + term)
+		    	jQuery("#ws-results").html("No results for " + h(term))
 		    	jQuery("#panel-content").show()
 		    }	    
 
@@ -127,8 +127,9 @@
 
 	  		var searchString = this.value.replace(/^\s+|\s+$/g, "");
 
-	  		if(searchString != '' && searchString.length > 2 && jQuery("#fs-input").is(":empty")){
+	  		if(searchString != '' && searchString.length > 2){
 	  			jQuery("#fs-input").val(this.value);
+	  			jQuery("#panel-content").hide();
 	  			searchKnowledgeBase(this.value);	
 	  		}
 	  	});

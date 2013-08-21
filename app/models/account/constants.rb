@@ -39,7 +39,7 @@ class Account < ActiveRecord::Base
 
     :estate => {
       :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles, :multiple_business_hours ],
+        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab ],
       :inherits => [ :garden ]
     },
 
@@ -60,7 +60,7 @@ class Account < ActiveRecord::Base
 
     :estate_classic => {
       :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles, :multiple_business_hours ],
+        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab ],
       :inherits => [ :garden_classic ]
     }
 
@@ -71,6 +71,6 @@ class Account < ActiveRecord::Base
   SELECTABLE_FEATURES = {:open_forums => true, :open_solutions => true, :auto_suggest_solutions => true,
     :anonymous_tickets =>true, :survey_links => true, :gamification_enable => true, :google_signin => true,
     :twitter_signin => true, :facebook_signin => true, :signup_link => true, :captcha => false , :portal_cc => false, 
-    :personalized_email_replies => false}
+    :personalized_email_replies => false, :auto_refresh => false}
 
 end

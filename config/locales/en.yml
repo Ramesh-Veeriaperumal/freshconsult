@@ -555,7 +555,7 @@ en:
             social_add_account: Add Account
             config-support-email-address: "Configure your support email address"
             save-and-next: "Save and Go to next"
-            send_verification_email: Send verification email
+            send_verification_email: Send verification
             send_invite: Send Invite
             title: Cool! Looks like your help desk is ready to roll...
             title1: "Now let's get those emails into Freshdesk"
@@ -782,6 +782,7 @@ en:
         content2: If you choose to configure a separate branded portal for each product, you can provide a unique set of Knowledge Base articles and Forums for each brand.
       new: 
         title: New Product
+        saving: Saving...
       portal: 
         select_forum_category: Select a forum category...
         portal_rebranding: Portal rebranding
@@ -797,29 +798,43 @@ en:
         portal_name: Portal name
         portal_language: Portal Language
         portal_language_info: This will be the default language when customers visits your portal
+        portal_customization: Portal customization
+        customize_portal: Customize portal >
+        save_and_customize: Save & Customize portal >
+        save_and_continue: You have unsaved changes in your form. Do you want to save and continue?
+        helpdesk_phone: Helpdesk Phone
+        ago: ago
+        last_published: Your portal was last published
+        contact_us: Contact us 
+        logo_and_favicon: Logo & favicon
       edit: 
         title: Edit Product
+        updating: Updating...
       form: 
-        configure_seperate_portal: Configure a separate portal for this product
+        configure_seperate_portal: Enable Customer Portal
         enable_product_portal: Enable Product Portal
-        enter_support_email_id: Your support email
+        enter_support_email_id: Support email
+        confirm_delete: Do you want to delete the support email?
+        email_address_present: Reply email is already used
         configure_email: Configure Email
         product_support_emails: Product Support Emails
         product_name: Product name
-        product_desc: Product description
-        forwarding_email_info: "Your forwarding email address:"
+        product_desc: Description
+        forwarding_email_info: Forwarding email
+        please_wait: Please wait...
       product:
         edit_twitter_account: "Edit Twitter Account @%{screen_name}"
         edit_facebook_page: "Edit Facebook page %{page_name}"
         customize_portal: "Customize portal"
         enable_portal: "Enable Portal"
-        email_not_verified: Email not verified
+        email_not_verified: Unverified 
+        view_portal: View Portal
         delete: Are you sure you want to delete this Product?
       index: 
         enable_portal: Enable Products
         title: Products        
         add_product: New product
-      primary_product_support_email: Primary Product Support Email
+      primary_product_support_email: Primary support email
       add_another_email: Add Another Email
       primary_email_required: Atleast one primary email has to be present
       assign_product: "Assign Product"
@@ -1054,6 +1069,7 @@ en:
       authentication_failed: Authentication Failed
       authentication_success: Authentication successfully completed
       no_subdomain: There is no subdomain like this. Please try again.
+      page_unavailable: We are sorry. This page is currently unavailable to you. Please contact the administrator for more information. 
     profile: 
       api_key:
         reset_success: "API Key has been reset successfully." 
@@ -1146,6 +1162,11 @@ en:
       update: 
         failure: Ticket fields update failed.
         success: Ticket fields successfully updated.
+      failure:
+        string: You have exceeded the maximum limit for this type of field.
+        text: You are not allowed to create more than 10 paragraph fields.
+        number: You are not allowed to more than 10 number fields.
+        boolean: You are not allowed to create more than 10 checkbox fields.
     email_settings: 
       send_activation: 
         success: 'Verification email has been sent to %{reply_email}!'
@@ -1188,6 +1209,7 @@ en:
         expected_params: "Expected params are name, email and hash which are not present "
       success: Login successful!
       failed: Login was unsuccessful!
+      deleted_user: We are sorry. The login was unsuccessful because your account has been deleted. Please contact your account administrator to regain access.
     email_notifications: 
       update: 
         success: Email notifications have been updated.
@@ -2174,7 +2196,9 @@ en:
       add_or_remove_emails: "Add or remove emails that need to be copied when a notification for this ticket is sent."
       add_people_title: Add people to conversation
       reopen_reply: Reply
+      related_articles: "Related articles..."
   feedbackwidget_form_heading: Form Heading
+  feedbackwidget_form_title: Widget form title
   cancel_and_back: Cancel and go back
   due_in: Due in %{time_words}
   first_name: First Name
@@ -2378,7 +2402,7 @@ en:
     add_supp_emails: Additional support email(s)
     info12: Add Another Email address
     info2: You must forward your support emails to your unique email address
-    send_verification_email: Send verification
+    send_verification_email: Send activation
     unverified: Email un-verified
     info13: Your support email address is
     info3: Freshdesk will fetch those emails and convert them as tickets
@@ -2387,7 +2411,7 @@ en:
     info4: <strong>NOTE:</strong> If you have multiple email addresses to support multiple products, <a href='{{products_path}}'>you can add them here</a>.
     spf_info: Reply emails from Freshdesk will automatically use your respective support email IDs as the From email address. Creating an <a target="_blank" title="Learn more about creating SPF records" href="{{solution_url}}">SPF record</a> in your DNS zone file will ensure proper delivery of emails.
     reply_email: Your support email
-    unverified_info1: An email with the verification link has been sent to this email. Only after verification this support email will become active.
+    unverified_info1:  Please activate this email by clicking on the verification link in your inbox.  
     inactive_info2: Until then, the default email "%{default_email}" will be used as the reply-to email.
     info15: You must forward these emails to
     helpcard:
@@ -2536,6 +2560,8 @@ en:
     thanks: Thank you for submitting a feedback
     portal_created_on: "Created by <span class='emphasize'>%{username}</span> on <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Created on <span class='emphasize'>%{date}</span>"
+    fb_portal_created_on: "Created by <span class='emphasize'>%{username}</span> <span class='emphasize'>%{date}</span>"
+    fb_portal_created_on_same_user: "Created <span class='emphasize'>%{date}</span>"
     due_date: Due date
     updated: updated
     deleted: deleted
@@ -3047,6 +3073,7 @@ en:
           bcc: Bcc
           addbcc: Add Bcc
           removebcc: Remove Bcc
+          not_sent: Reply was not sent! 
         forward_form:
           cc: Cc
           addcc: Add Cc
@@ -3054,6 +3081,7 @@ en:
           bcc: Bcc
           addbcc: Add Bcc
           removebcc: Remove Bcc
+          not_sent:  Reply was not forwarded!
         tweet_form:
           title: "Reply to %{user}"
         facebook_form:
@@ -3142,8 +3170,9 @@ en:
         public_note_tip: Visible to the customer
         inbound_email: Incoming email
         outbound_email: Outbound email
+        not_added: Note has not been added! 
         attachment_size: 
-           exceed: Oops! Your attachment exceeds 15 MB. Please attach a smaller file.
+           exceed: Your attachments exceed 15 MB. Please make changes before you proceed.
     merge:
       merge:
         merge_into: Merge into?
@@ -3271,7 +3300,7 @@ en:
       engage_info:
         title: Add your Facebook pages
         engage_customers: Engage your customers, directly on Facebook
-        associate_account: Associate a Facebook page to <b> %{account_name} </b> and respond to your customers from within freshdesk when they comment or post to your wall.
+        associate_account: Associate a Facebook page with <b> %{account_name} </b> and respond to customer comments and wall posts directly from Freshdesk. You can also add your solutions and community forums within your Facebook page.
         add_facebook: Add Facebook Page
       form:
         visitor_posts: Import <strong>"Visitor posts"</strong> as ticket
@@ -4219,4 +4248,38 @@ en:
         customer_fcr: The percentage of tickets raised by this customer that were resolved within the first response
         agent_fcr: The percentage of tickets assigned to this agent that were resolved within the first response
         group_fcr: The percentage of tickets assigned to this group that were resolved within the first response
-  date_invalid: Invalid date     
+  date_invalid: Invalid date  
+  facebook_tab:
+    remove_tab: "Remove page Tab"
+    tab_not_removed: "Could not remove tab"
+    tab_removed: "Page tab removed"
+    page_added: "This page has already been added to {{source}}. Please remove it and then try to add"
+    add_tab: "Add page tab"
+    tab_name: "Tab name "
+    tab_url: "Tab image url : "
+    page_tab_head: "Facebook Page Tab"
+    page_added_model: "Page has been already added"
+    no_ssl: "<b>Facebook page tab requires a Secure Connection.</b><br />You need to enable SSL encryption from <a href='/admin/security'>Security settings</a>"
+    image_upload_failed: "Unable to update custom image in page tab"
+    image_instructions: "The target image must be of dimensions 111x74. (images of any dimensions can be updated through facebook directly)"
+    configure_tab: "Create your Facebook page tab"
+    config_info: "Once you enable your Facebook page tab, your customers will be able to directly access your solutions, forums and self-service from within Facebook"
+    got_it: "Ok got it."
+    reauth: "Please reauthorize with Facebook to access your page tab"
+    no_contact: "Unable to contact Facebook Servers for page tabs at this time"
+    portal:
+      your_tickets: "Your Tickets"
+      view_all: "View all"
+      recent_articles: "Recent Articles"
+      published: "Published in "
+      start_topic: "Start Topic"
+      recent_topics: "Recent Topics"
+      popular_topics: "Popular Topics"
+      recent_tickets: "Recent Tickets"
+      customer_support: "Customer Support"
+      new_ticket: "New Support Ticket"
+      ticket_text: "<strong>Need help? Get in touch with us</strong><p>Submit a new ticket and we'll get back to you as soon as we can</p>"
+      solution_text: "<strong>Looking for answers? Here you go</strong><p>Explore How-To's and learn best practices from our knowledge base. </p>"
+      forum_text: "<strong>Got ideas? We'd love to hear them</strong><p>Join our community and share your thoughts and ideas with everyone.</p>"
+      browse_topics: "Browse Topics"
+      browse_articles: "Browse Articles"

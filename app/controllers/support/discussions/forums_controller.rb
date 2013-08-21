@@ -4,6 +4,7 @@ class Support::Discussions::ForumsController < SupportController
  	before_filter :load_forum, :only => :show
 
 	def show
+		@page_title = @forum.name
 	    set_portal_page :topic_list
 	end
 

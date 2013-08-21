@@ -62,7 +62,7 @@
 
 			$("#assetUrl").val(wgu.http);
 			$("#widget_url").val(wgu.http);
-			$("#url").val(wgu.http.sub('/widget',''));
+			
 
 			$.each(WidgetFormArray, function(index, item){
 				$item = $activeForm.find('[name=' + item['name'] + ']');
@@ -86,7 +86,7 @@
 						case "httpsHttp":
 							$("#assetUrl").val(wgu.https);
 							$("#widget_url").val(wgu.https);
-							$("#url").val(wgu.https.sub('/widget',''));
+							
 							break;
 						case "widget_url":
 						break;

@@ -1,7 +1,7 @@
 <% @page_title = "Dashboard" %>
 
 <% content_for :sidebar do %>
-  <% if current_account.subscription.trial? %>
+  <% if current_account.subscription.trial? && current_account.subscription.trial_days < AppConfig['show_trail_notifier_in_days'] %>
     <%= render :partial => '/subscriptions/state/trial_expiry_notifier' %>
   <% end %>
   <div id="reminders" class="reminders sidepanel">    

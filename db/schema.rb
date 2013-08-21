@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130720072935) do
+ActiveRecord::Schema.define(:version => 20130819081958) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -97,6 +97,7 @@ ActiveRecord::Schema.define(:version => 20130720072935) do
     t.integer  "account_id",  :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "source"
   end
 
   add_index "admin_data_imports", ["account_id", "created_at"], :name => "index_data_imports_on_account_id_and_created_at"
@@ -364,6 +365,11 @@ ActiveRecord::Schema.define(:version => 20130720072935) do
   end
 
   add_index "es_enabled_accounts", ["account_id"], :name => "index_es_enabled_accounts_on_account_id"
+
+  create_table "facebook_page_mappings", :primary_key => "facebook_page_id", :force => true do |t|
+    t.integer "account_id", :limit => 8, :null => false
+  end
+
 
   create_table "features", :force => true do |t|
     t.string   "type",                    :null => false
@@ -949,7 +955,7 @@ ActiveRecord::Schema.define(:version => 20130720072935) do
     t.datetime "sla_timer_stopped_at"
     t.integer  "outbound_count",                         :default => 0
     t.float    "avg_response_time"
-    t.integer  "first_resp_time_by_bhrs"
+    t.integer  "first_response_time_by_bhrs"
     t.integer  "resolution_time_by_bhrs"
     t.float    "avg_response_time_by_bhrs"
   end
@@ -1031,7 +1037,9 @@ ActiveRecord::Schema.define(:version => 20130720072935) do
   end
 
   add_index "helpdesk_time_sheets", ["account_id", "workable_type", "workable_id"], :name => "index_helpdesk_sheets_on_workable_account"
+  add_index "helpdesk_time_sheets", ["account_id"], :name => "index_time_sheets_on_account_id_and_ticket_id"
   add_index "helpdesk_time_sheets", ["user_id"], :name => "index_time_sheets_on_user_id"
+  add_index "helpdesk_time_sheets", ["workable_type", "workable_id"], :name => "index_helpdesk_sheets_on_workable"
 
   create_table "installed_applications", :force => true do |t|
     t.integer  "application_id"
@@ -1102,6 +1110,8 @@ ActiveRecord::Schema.define(:version => 20130720072935) do
     t.datetime "updated_at"
   end
 
+  add_index "portal_pages", ["account_id", "template_id", "page_type"], :name => "index_portals_on_account_id_and_template_id_page_type"
+
   create_table "portal_templates", :force => true do |t|
     t.integer  "account_id",  :limit => 8,        :null => false
     t.integer  "portal_id",   :limit => 8,        :null => false
@@ -1113,6 +1123,8 @@ ActiveRecord::Schema.define(:version => 20130720072935) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "portal_templates", ["account_id", "portal_id"], :name => "index_portals_on_account_id_and_portal_id"
 
   create_table "portals", :force => true do |t|
     t.string   "name"
@@ -1191,7 +1203,6 @@ ActiveRecord::Schema.define(:version => 20130720072935) do
 
   add_index "report_filters", ["account_id", "report_type"], :name => "index_report_filters_account_id_and_report_type"
 
-  
   create_table "roles", :force => true do |t|
     t.string   "name"
     t.string   "privileges"
@@ -1280,7 +1291,9 @@ ActiveRecord::Schema.define(:version => 20130720072935) do
     t.text     "last_error"
   end
 
-  add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_account_page_id", :unique => true
+  add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_pages_on_account_id"
+  add_index "social_facebook_pages", ["page_id"], :name => "index_page_id", :unique => true
+
   add_index "social_facebook_pages", ["product_id"], :name => "index_product_id"
 
   create_table "social_fb_posts", :force => true do |t|
@@ -1325,7 +1338,7 @@ ActiveRecord::Schema.define(:version => 20130720072935) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "dm_thread_time",                         :default => 0
-    t.integer  "state"
+    t.integer  "state",                                  :default => 1
     t.text     "last_error"
   end
 
@@ -1877,6 +1890,7 @@ ActiveRecord::Schema.define(:version => 20130720072935) do
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
   add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"external_id"=>"20", "account_id"=>nil}
   add_index "users", ["account_id", "import_id"], :name => "index_users_on_account_id_and_import_id", :unique => true
+  add_index "users", ["customer_id", "account_id"], :name => "index_users_on_customer_id_and_account_id"
   add_index "users", ["id"], :name => "users_id"
   add_index "users", ["perishable_token", "account_id"], :name => "index_users_on_perishable_token_and_account_id"
   add_index "users", ["persistence_token", "account_id"], :name => "index_users_on_persistence_token_and_account_id"

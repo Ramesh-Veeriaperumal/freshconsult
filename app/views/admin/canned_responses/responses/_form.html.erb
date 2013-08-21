@@ -70,10 +70,14 @@ function toggleGroup(access_id)
 					<%= t('.me_only') %>
 					<%= access.hidden_field :user_id, :value =>current_user.id %>	
 				</label>
+			</div>
+			<div class="controls">
 				<label class="radio">
 					<%= access.radio_button  :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents], {:onclick =>"toggleGroup(this.value)",:class => "radio" ,:checked => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]== @ca_response.accessible.visibility } %> 
 					<%= t('.all_agents') %>
 				</label>
+			</div>
+			<div class="controls">
 				<label class="radio">
 					<%= access.radio_button  :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents],{:onclick =>"toggleGroup(this.value)" , :class => "radio" , :checked => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:group_agents]== @ca_response.accessible.visibility} %> 
 					<%= t('.groups') %>

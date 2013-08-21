@@ -83,6 +83,66 @@ module SupportHelper
 		output << %(</nav>)
 	end
 
+	# Portal tab navigation
+	def portal_navigation portal
+		output = []
+		output << %( <nav class="page-tabs"> )		
+		if(portal['tabs'].present?)
+			output << %(<div class="nav-link" id="header-tabs">)
+			portal['tabs'].each do |tab|
+				active_class = (tab['tab_type'] == portal['current_tab']) ? "active" : ""
+				output << %( <a href="#{tab['url']}" class="#{active_class}">#{tab['label']}</a>) if(tab['url'])
+			end
+			output << %(</div>)
+		end
+		output << %(</nav>)
+		output.join("").html_safe
+	end
+
+	# Portal header
+	def facebook_header portal
+		output = []
+		output << %( 	
+			<header class="banner">
+				<div class="banner-wrapper">
+					<div class="banner-title">
+						#{ logo portal }
+						<h1 class="ellipsis heading">#{ portal['name'] }</h1>
+					</div>
+				</div>
+			</header>
+			<nav class="page-tabs" >
+				<div class="nav-link" id="header-tabs">
+			)		
+		portal['tabs'].each do |tab|
+			active_class = (tab['tab_type'] == portal['current_tab']) ? "active" : ""
+			output << %( <a href="#{tab['url']}" class="#{active_class}"> #{tab['label']}</a>) if(tab['url'])
+		end
+		user_class = portal['user'] ? "" : "no_user_ticket"
+		output << %(
+				</div>
+			</nav>
+			)
+		output << %(
+			<!-- <a href="#{ new_support_ticket_path }" class="facebook-button new_button #{user_class}" id="new_support_ticket">
+				New support Ticket</a> -->
+			<section>	
+					<div class="hc-search-c">
+						<h2 class="">#{ I18n.t('header.help_center') }</h2>
+						<form class="hc-search-form" autocomplete="off" action="#{ tab_based_search_url }" id="hc-search-form">
+							<div class="hc-search-input">
+								<input placeholder="#{ I18n.t('portal.search.placeholder') }" type="text" 
+									name="term" class="special" value="#{ h(params[:term]) }" 
+						            rel="page-search" data-max-matches="10">
+						        <span class="search-icon icon-search-dark"></span>
+							</div>
+						</form>
+					</div>
+			</section> )
+
+		output.join("").html_safe
+	end
+
 	# User image page
 	def profile_image user, more_classes = "", width = "50px", height = "50px" 
 		output = []
@@ -255,6 +315,10 @@ HTML
 		output.join(", ")
 	end
 
+	def fb_topic_info topic
+		%(#{h(topic.user.name)}, <br>#{time_ago topic.created_on}.)
+	end
+
 	def topic_info_with_votes topic
 		output = []
 		output << topic_brief(topic)
@@ -295,10 +359,14 @@ HTML
 	def post_topic_in_portal portal, post_topic = false
 		output = []
 		output << %(<section class="lead">)
-		output << %(<a href="#{portal['login_url']}">#{I18n.t('portal.login')}</a>)
-		output << I18n.t('portal.or_signup', :signup => 
-				"<a href=\"#{portal['signup_url'] }\">#{I18n.t('portal.signup')}</a>") if 
-					portal['can_signup_feature']
+		if portal['facebook_portal']
+			output << %(<a href="" class="solution_c">#{I18n.t('portal.login')}</a>)
+		else
+			output << %(<a href="#{portal['login_url']}">#{I18n.t('portal.login')}</a>)
+			output << I18n.t('portal.or_signup', :signup => 
+					"<a href=\"#{portal['signup_url'] }\">#{I18n.t('portal.signup')}</a>") if 
+						portal['can_signup_feature']
+		end
 		if post_topic
 			output << I18n.t("portal.to_post_topic")
 		else
@@ -531,6 +599,37 @@ HTML
 		return form_value
 	end
 
+	def default_ticket_list_item ticket
+		label_class_name = ticket['active?'] ? "label-status-pending" : "label-status-closed"
+
+		unless ticket['requester'] or User.current.eql?(ticket['requester'])
+			time_ago_text = I18n.t('ticket.fb_portal_created_on', { :username => h(ticket['requester']['name']), :date => time_ago(ticket['created_on']) })
+		else
+			time_ago_text = I18n.t('ticket.fb_portal_created_on_same_user', { :date => time_ago(ticket['created_on']) })
+		end
+		unless ticket['freshness'] == "new"
+			unique_agent = "#{I18n.t("ticket.assigned_agent")} : <span class='emphasize'> #{ h(ticket['agent']) }</span>"
+		end
+
+		%( <div class="c-row c-ticket-row">
+			<span class="status-source sources-detailed-#{ ticket['source_name'].downcase }"> </span>
+			<span class="#{label_class_name} label label-small"> 
+				#{ ticket['status'] }
+			</span>
+			<div class="ticket-brief">
+				<div class="ellipsis">
+					<a href="#{ ticket['portal_url'] }" class="c-link" title="#{ h(ticket.description_text) }">
+						#{ ticket['subject'] } ##{ ticket['id'] }
+					</a>
+				</div>
+				<div class="help-text">
+					#{ time_ago_text }
+					#{ unique_agent }
+				</div>
+			</div>
+		</div> )
+	end
+
 	# Portal placeholders to access dynamic data inside javascripts
 	def portal_access_varibles
 		output = []
@@ -545,7 +644,7 @@ HTML
 		  :name => h(@portal['name']),
 		  :contact_info => h(@portal['contact_info']),
 		  :current_page => @portal['page'],
-		  :current_tab => @portal['current_tab'] }.to_json
+		  :current_tab => @current_tab }.to_json
 	end
 
 	def theme_url
