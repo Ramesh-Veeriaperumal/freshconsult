@@ -11,7 +11,7 @@ LogMeInWidget.prototype= {
 		'<span class="active_header">Last generated session</span>'+
 		'<div class="active_session_pin">'+ 
 		'<div class="pincode">Pincode : #{pincode}</div>'+
-		'<div class="pintime">Generated #{pintime}</div></div>'+
+		'<div class="pintime">Generated <abbr data-livestamp=#{livestamp}>#{pintime}</abbr></div></div>'+
 		'<div class="resend"><a href="#" id="logmein_copy_to_tkt">Resend Instructions</a></div>'+
 		'</div></div>'
 	),
@@ -82,15 +82,8 @@ LogMeInWidget.prototype= {
 		if(response.indexOf('OK') >= 0){
 			//logmeinWidget.techlink = response.substr(3);
 			logmeinWidget.techlink = response.split("OK:")[1];
-			this.renderTechConsole(logmeinWidget.techlink, logmeinBundle.pincode, logmeinBundle.pinTime);
+			this.renderTechConsole(logmeinWidget.techlink);
 			jQuery("#logmein_widget").removeClass('loading-fb');
-			if(logmeinBundle.pincode != ""){
-				jQuery('.session_pin').removeClass("hide");
-				jQuery("#logmein_copy_to_tkt").click(function(ev) { 
-					ev.preventDefault();
-					logmeinWidget.copyPincode(logmeinBundle.pincode);
-				});
-			}
 		}
 		else 
 			this.handleError(response);
@@ -103,11 +96,12 @@ LogMeInWidget.prototype= {
 			jQuery('#pinsubmit').removeAttr('disabled');
 			pincode = response.responseText.split("PINCODE:")[1].slice(0,-1);
 			logmeinBundle.pincode = pincode;
-			logmeinBundle.pinTime = "";
+			logmeinBundle.pinTime = new Date().toString();
 			if(pincode != ""){
 				this.copyPincode(pincode);	
+				this.renderTechConsole(logmeinWidget.techlink);
 			}
-			logmein_session = {"agent_id": logmeinBundle.agentId, "md5secret": logmeinBundle.secret,  "pincode": pincode, "pintime": new Date().toString()}
+			logmein_session = {"agent_id": logmeinBundle.agentId, "md5secret": logmeinBundle.secret,  "pincode": pincode, "pintime": logmeinBundle.pinTime};
 			this.update_pincode({"ticket_id":logmeinBundle.ticketId, "account_id":logmeinBundle.accountId, "logmein_session": JSON.stringify(logmein_session)});
 		}
 		else 
@@ -163,9 +157,24 @@ LogMeInWidget.prototype= {
 	},
 
 	renderTechConsole:function(techConsoleLink){
-		this.freshdeskWidget.options.application_html = function(){ return logmeinWidget.TechConsole.evaluate({techTicket: techConsoleLink, pincode: logmeinBundle.pincode, pintime: logmeinWidget.freshdeskWidget.prettyDate(logmeinBundle.pinTime)}) } 
+		var livestamp_time = new Date(logmeinBundle.pinTime).getTime()/1000;
+		this.freshdeskWidget.options.application_html = function(){ 
+			return logmeinWidget.TechConsole.evaluate({
+				techTicket: techConsoleLink, 
+				pincode: logmeinBundle.pincode, 
+				livestamp: livestamp_time,
+				pintime: logmeinBundle.pinTime
+			});
+		}; 
 		this.freshdeskWidget.options.init_requests = null;
 		this.freshdeskWidget.display();
+		if(logmeinBundle.pincode != ""){
+			jQuery('.session_pin').removeClass("hide");
+			jQuery("#logmein_copy_to_tkt").click(function(ev) { 
+				ev.preventDefault();
+				logmeinWidget.copyPincode(logmeinBundle.pincode);
+			});
+		}
 	},
 
 	handleError:function(response){

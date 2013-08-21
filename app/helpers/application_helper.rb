@@ -47,8 +47,8 @@ module ApplicationHelper
     MemcacheKeys.fetch(["v4","portal","logo",current_portal],30.days.to_i) do
       image_tag(
         current_portal.logo.nil? ? "/images/logo.png?721013" : 
-        AWS::S3::S3Object.url_for(current_portal.logo.content.path(:logo),current_portal.logo.content.bucket_name,
-                                          :expires_in => 30.days, :use_ssl => true)
+        AwsWrapper::S3Object.url_for(current_portal.logo.content.path(:logo),current_portal.logo.content.bucket_name,
+                                          :expires => 30.days, :secure => true)
       )
     end
   end
@@ -56,8 +56,8 @@ module ApplicationHelper
   def fav_icon_url
     MemcacheKeys.fetch(["v5","portal","fav_ico",current_portal]) do
       url = current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' : 
-            AWS::S3::S3Object.url_for(current_portal.fav_icon.content.path,current_portal.fav_icon.content.bucket_name,
-                                          :expires_in => 30.days, :use_ssl => true)
+            AwsWrapper::S3Object.url_for(current_portal.fav_icon.content.path,current_portal.fav_icon.content.bucket_name,
+                                          :expires => 30.days, :secure => true)
       "<link rel=\"shortcut icon\" href=\"#{url}\" />"
     end
   end
@@ -611,6 +611,7 @@ module ApplicationHelper
       when "requester" then
         element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => requester_autocomplete_helpdesk_authorizations_path, :object_name => object_name }))  
         element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
+        element+= label_tag("", "#{add_requester_field}",:class => 'hidden') if is_edit
         unless is_edit or params[:format] == 'widget'
           element = add_cc_field_tag element, field  
         end

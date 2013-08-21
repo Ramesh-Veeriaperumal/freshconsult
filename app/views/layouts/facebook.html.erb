@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<%= open_html_tag %>
+	<head>
+		<script src='http://connect.facebook.net/en_US/all.js'></script>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<title><%= page_title %></title>
+		<meta name="description" content="<%= page_description %>">
+		<meta name="author" content="">
+		<meta name="keywords" content="<%= page_keywords %>">
+		
+	    <link rel="apple-touch-icon" href="/images/touch/touch-icon-iphone.png" />
+		<link rel="apple-touch-icon" sizes="72x72" href="/images/touch/touch-icon-ipad.png" />
+		<link rel="apple-touch-icon" sizes="114x114" href="/images/touch/touch-icon-iphone-retina.png" />
+		<link rel="apple-touch-icon" sizes="144x144" href="/images/touch/touch-icon-ipad-retina.png" />
+
+		<meta name="viewport" content="width=device-width,user-scalable=no" />
+		<meta name="viewport" content="initial-scale = 1.0">
+		<% unless page_canonical.blank? %>
+			<link rel="canonical" href="<%= page_canonical %>" />
+		<% end %>
+
+		<%= portal_fav_ico %>
+
+		<!-- Base stylesheet -->
+		<%= include_cloudfront_css :portal %>
+		<%= include_cloudfront_css :facebook %>
+
+		<!-- Theme stylesheet -->
+		<!-- <link href="<%=theme_url%>" media="screen" rel="stylesheet" type="text/css"> -->
+
+		<!-- Google font url if present -->
+		<%= portal_fonts %>
+
+		<!-- Including default portal based script framework at the top -->
+		<%= include_cloudfront_js :portal_head %>
+
+		<%= render :partial => "layouts/support/google_analytics_integration" %>
+
+		<!-- Access variables for portal -->
+		<%= portal_access_varibles %>
+		
+		<% javascript_tag do %>
+		if(Modernizr.localstorage)
+		{
+			if(localStorage["fb_redirect"])
+			{
+				url = localStorage["fb_redirect"];
+				localStorage.removeItem("fb_redirect");
+				window.location = url;
+			}
+		}
+		<% end %>
+	</head>
+	<body>
+		<script src="https://connect.facebook.net/en_US/all.js"></script>
+		<div id="fb-root"></div>
+    <script type="text/javascript">
+        FB.init({
+          appId      : "<%= FacebookConfig::APP_ID %>",
+          status     : true,
+          cookie     : true,
+          xfbml      : true,
+          oauth		 : true
+        });
+
+        FB.Event.subscribe('auth.login', function(response) {
+          if (response.status === "connected") {
+          	window.location = "/facebook/sso/facebook"
+        	}
+          else{
+          	if(Modernizr.localstorage)
+        	{
+          		if(localStorage["fb_redirect"])
+				{
+					localStorage.removeItem("fb_redirect");
+        		}
+        	}
+        	}
+        });
+
+        FB.Canvas.setAutoGrow(7);
+
+        jQuery('body').on('click', '.no_user_ticket, .solution_c', function(ev){
+        	ev.preventDefault();
+        	if(Modernizr.localstorage)
+        	{
+        		localStorage["fb_redirect"] = jQuery(this).attr('href');
+        	}
+        	FB.login(function(response){}, {scope: 'user_likes, email'});
+        });
+
+        FB.Canvas.setDoneLoading( function(response) {
+    		FB.Canvas.setSize({height: jQuery('html').height()});
+    		FB.Canvas.scrollTo(0,0);
+		});
+
+		var external_link_regex = new RegExp('/' + window.location.host + '/facebook/support');
+		jQuery("body").on('click', "a[href^=http]",function() {
+			if(!external_link_regex.test(this.href)) 
+			{
+				this.target = '_blank';
+			}
+		});
+
+    </script>
+		<%= assumed_identity_message %>
+
+		<%= facebook_header current_portal.to_liquid %>
+		<%#= portal_navigation current_portal.to_liquid %>
+
+		<% unless current_user %>
+		<div id="auth_fb_btn"></div>
+		<% end %>
+		<%= @page_yield %>
+				
+		<%= render :partial => "layouts/shared/scripts" %> 
+
+		<!-- Including default portal based script at the bottom -->
+		<%= include_cloudfront_js :portal_bottom %>
+		<%= include_cloudfront_js :redactor %>
+
+		<%= cookie_law %>
+	</body>
+</html>

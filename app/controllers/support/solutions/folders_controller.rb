@@ -2,6 +2,7 @@ class Support::Solutions::FoldersController < SupportController
 	before_filter :scoper, :check_folder_permission
 	
 	def show
+		@page_title = @folder.name
 		respond_to do |format|
 	    	format.html { 
 				@page_canonical = support_solutions_folder_url(@folder)
