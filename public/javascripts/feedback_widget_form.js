@@ -115,12 +115,13 @@
 		});
 
 		jQuery('#takescreen-btn a').bind("click", function(ev){
+			console.log("Image loaded");
 			ev.preventDefault();
 
 			screenshot_flag=0;
 			jQuery('#takescreen-btn').hide();
 			jQuery('#screenshot-wrap').show();
-
+			
 			if(!jQuery.browser.msie && !jQuery.browser.opera)
 				jQuery('.flash').show();
 		});
@@ -161,6 +162,7 @@ function loadCanvas(dataURL) {
     };
     imageObj.src = dataURL;
     img_data = dataURL;
+	console.log("Screenshot");
     // onchecked();
 }
 
