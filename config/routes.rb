@@ -322,6 +322,7 @@
                                     :merge_with_this_request => :post, :print => :any, :latest_note => :get,  :activities => :get, 
                                     :clear_draft => :delete, :save_draft => :post, :update_ticket_properties => :put } do |ticket|
                                       
+      ticket.resources :surveys, :collection =>{:results=>:get, :rate=>:post}
       ticket.resources :conversations, :collection => {:reply => :post, :forward => :post, :note => :post,
                                        :twitter => :post, :facebook => :post}
 
