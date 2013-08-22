@@ -1029,15 +1029,6 @@ var scrollToError = function(){
 		return false;
 	});
 
-    $(".removeFile").live("click", function() {
-        $(this).parent().remove();
-        if ($("#admin_canned_responses_response-attachments").children().length==0)
-        {
-            $("#admin_canned_responses_response-attachments").removeClass("attachments");
-        }
-    });
-
-
     $('body').on('change.ticket_details', '#custom_ticket_form', function(ev) {
 		
 		if (!dontAjaxUpdate) 
