@@ -8,7 +8,7 @@ class Solution::Article < ActiveRecord::Base
 
   belongs_to :folder, :class_name => 'Solution::Folder'
   belongs_to :user, :class_name => 'User'
-  belongs_to :account
+  belongs_to_account
   
   has_many_attachments
   

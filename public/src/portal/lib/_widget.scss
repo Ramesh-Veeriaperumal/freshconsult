@@ -1,16 +1,70 @@
-.feedback-wrapper{ 
-	margin-left: 20px; margin-right: 20px; 
-	.modal-widget .modal-body{ 
-		.redactor_editor, .redactor_editor:focus{
-	    	min-height: 100px; 
-	    	height:auto !important; 
-	    	height: 100px;
-	   	}
+html,.modal-widget{
+	height: 98%;
+}
+body, .feedback-wrapper{
+	height:100%;
+	background:transparent;
+}
+.feedback-wrapper{
+	.modal-widget{
+		&.modal-panel-active{
+			.modal-header{
+				width:58%;
+			}
+			.modal-footer{
+				width:60%;
+			}
+		}
+		.modal-header{
+			height: 40px;
+			position: absolute;
+			top:0;
+			@include border-top-left-radius(6px);
+			background:#fff;
+			padding: 0;
+			.modal-header-bg{
+				background: url('data:"image/png";base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAABJCAYAAAAE/rd/AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALlJREFUeNrs1scOwjAQRdGYEEJvEb03If7//xhWCOlJlu0rlvb6eJK7GjszK2JOq4g9gYkPhS868Zn66d8vCLzTmJvCK4250JizwhONOSo80Jg9jdkp3NKYjcI1jVnRmKXCBY1pFDY0Zk5jZgqnNGaicExjRjRmqHBAY/oKezSmS2NqhTWN6SisaExFY9oKSxpTKgxusC94h1afb5JedAqdL0Wh+S6GIix5X0dD9/enQoYZZpgGPwIMAFIqi/g47osYAAAAAElFTkSuQmCC');
+				background-repeat: repeat-x;
+				padding: 9px 40px 0 15px;
+				@media (min-width: 45em) {
+					padding: 9px 15px 0 15px;
+				}
+			}
+		}
+		.modal-body{
+			height: 100%;
+			max-height: 100%;
+			padding-top: 45px;
+			.extra-space{
+				display: block;
+				height:50px;
+			}
+		}
+		.modal-footer{
+			width:100%;
+			position: absolute;
+			bottom: 0;
+			height:50px;
+			padding: 6px 15px 6px;
+			background:#fff;
+			border-right: 1px solid #ddd;
+			border-radius: 0;
+			border-bottom-left-radius: 6px;
+		}
 	}
+}
+.feedback-wrapper{ 
+  margin-left: 20px; margin-right: 20px; 
+  .modal-widget .modal-body{ 
+    .redactor_editor, .redactor_editor:focus{
+        min-height: 100px; 
+        height:auto !important; 
+        height: 100px;
+       }
+  }
 }
 .modal-widget{
 	width: 100%;
-	height: 530px;
 	// Reseting existing widget modal dialog
 	position: relative;
 	@include box-shadow(0 5px 10px rgba(0, 0, 0, 0.4), white 0 0 1px inset);
@@ -20,8 +74,6 @@
 	.modal-footer{ background: transparent; }
 	.modal-body{ 
 		overflow-x:hidden; 
-		height: 430px;
-		max-height: 430px;
 		padding-top: 8px;
 		padding-bottom: 50px;
 
@@ -39,8 +91,8 @@
 	@include box-shadow(-1px 0 0 #e8e8e8);
 }
 .hc-search-input{ 
-	margin: 8px 8px 5px; 
-	&:before{margin-top:8px;}
+  margin: 8px 8px 5px; 
+  &:before{margin-top:8px;}
 }
 #feedback-suggest input.special{
 	padding:8px 15px 6px 35px;
@@ -172,7 +224,6 @@
 	margin-top: 5px;
 	margin-left: 5px;
 	font-size: 12px;
-	color: #c4c4c4;
 	a{ text-decoration: underline; }
 	a:hover{ text-decoration: none; }
 	a, a:hover{ color: inherit;  }
@@ -191,8 +242,68 @@
 .screenshot-wrap{
 	position: relative;
 }
-
+.panel-info .lead, .copyright{
+	color:#000;
+	@include opacity(0.30);
+}
+.embedded-body {
+	max-height: 90%;
+}
+.embedded-footer { 
+	border-top: 0;
+}
+.embedded-wrapper{
+	margin:0;
+	.embedded-panel, .embedded-footer{
+		background-color: transparent;
+		box-shadow: none;
+	}
+}
+.embedded-search-input {
+	margin-top: 50px;
+}
 // IE hacks
 
 .ie .portal-attach .attach-file{ display:block !important; }
 .ie .portal-attach .attach-proxy{ display:none !important; }
+.ie8{
+	overflow: hidden !important; 
+}
+.ie7{
+	position: relative;
+	overflow: hidden;
+	overflow-y: hidden !important; 
+	.feedback-wrapper{
+		overflow: hidden;
+		#feedback-suggest input.special{
+			padding:8px 0;
+		}
+		.modal-widget{
+			.modal-body{
+				padding: 45px 0 0;
+				.form-placeholder {
+					.email, .text{
+						padding-left:0;
+					}
+				}
+				.extra-space{
+					height:100px;
+				}
+				form{
+					width:92%;
+					margin:0 auto;
+					padding:0 15px;
+				}
+			}
+			.modal-footer{
+				width:58%;
+				margin:0 auto;
+				padding: 0;
+				border-right:0;
+				input[type="submit"].btn{
+					margin:10px 15px;
+				}
+			}
+		}
+	}
+}

@@ -157,6 +157,8 @@ h3.heading{
 }
 .btn {
     border-radius: 2px;
+    font-size:12px;
+    padding: 0.2em 12px 0.175em;
     border: 1px solid #999;
     border-bottom-color: #888;
     -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, .1);
@@ -165,11 +167,10 @@ h3.heading{
     white-space: nowrap;
     cursor: pointer;
     text-decoration: none;
-    font-size:11px;
     text-align: center;
     overflow: visible;
     display: inline-block;
-    padding: 0.2em 12px 0.175em;;
+    padding: 0.2em 12px 0.175em;
     border-color: #29447E #29447E #1A356E;
     text-shadow: none;
     color:$white;
