@@ -1,16 +1,15 @@
 <% @page_title = t('.title') %>
-<div class="list-page" id="multi-product-index">
-	<div class="list-page-header">
+<div class="list-page product-page" id="multi-product-index">
+	<div class="list-page-subheader">
 		<div class="row-fluid">
 			<div class="span6">			
-				<%= content_tag :h3, @page_title, :class => "title" %>
+				<%= content_tag :h3, @page_title, :class => "lead" %>
 			</div>
-			<div class="span6 pull-right align-right">
-				<%= link_to(t('.add_product'), new_admin_product_path, :class => "btn") %>
+			<div class="span6 pull-right">
+				<%= link_to(t('.add_product'), new_admin_product_path, :class => "btn btn-primary pull-right") %>
 			</div>
 		</div>
 	</div>
-
 	<div class="list-page-body" id="multi-product-list">
 		<table class="table table-striped">
 			<%= each_or_message("product", @products, t("no_message.products")) %>

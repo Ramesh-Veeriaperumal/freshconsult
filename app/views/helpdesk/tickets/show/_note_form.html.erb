@@ -34,7 +34,10 @@
             <%= ff.text_area :body_html, :class => "body_html required", :id => "#{cntid}-body" %>
         <% end %>
       </li>
-
+      <li class="inline-field field continous file_size_alert hide" id="file_size_alert_<%= cntid %>">
+        <span class="alert-text"><%= t('helpdesk.tickets.note.not_added') %></span>
+        <%= t('helpdesk.tickets.note.attachment_size.exceed') %>
+      </li>
       <li class="inline-field field attachment-options continous" id="attachment-options-note">
           <% unless local_assigns[:no_attachments] %>
           <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>

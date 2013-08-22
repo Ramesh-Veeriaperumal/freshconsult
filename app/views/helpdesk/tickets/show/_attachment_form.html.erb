@@ -38,6 +38,9 @@
 
         <% end %>
 
+        <div class="shared_attachment_list">
+        </div>
+
       </div>
 
       <div class="hidden_upload custom_tip_bottom" title='<%=t('attachment_help_info')%>' class='custom-tip-top'>
@@ -81,7 +84,9 @@
  %>
 <script id="file-list-template" type="text/x-jquery-tmpl">
 <div class="item">
-  <a class="attachment-close"  href="javascript:void(0)" onclick="Helpdesk.Multifile.remove(this); return false;" inputId="${inputId}"></a>
+  <a class="attachment-close"  href="javascript:void(0)" 
+            onclick="remove_file_size_alert(this); Helpdesk.Multifile.remove(this); return false;" 
+            inputId="${inputId}"></a>
   <div class="attachment-type file-types-def">
     <a href="javascript:void(0)">${name}</a>
   </div>

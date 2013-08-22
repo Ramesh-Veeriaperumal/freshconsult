@@ -3603,8 +3603,8 @@ div.addReminder{
 		text-align:center; 
 		img{
 		   max-width:130px;
-		   width: 90px;
-		   height:90px;
+		   min-width: 90px;
+		   max-height: 160px;
 		}
 	}
 	.info-highlight{
@@ -3850,37 +3850,188 @@ div.addReminder{
    }
 }
 
-#multi-product-list{
-	.portal-text{ width:30%; }
-	.channel{ width:27%; vertical-align: top; }
-	.channel-text{
-		position: relative;
-	   	padding-left:20px;
-	   	padding-bottom: 8px;
-	   	
-	   	.not-verified{ margin-top:-3px; font-size: 11px; }
-		.inactive_email{ margin:0px; }	
 
-	   	span.icon{
-			position:absolute;
-			left:0; 
-			top:0;
-			width:14px;
-			height:14px;
-	    }
+.product-page{
+	[class^="product-"], [class*="product-"]{
+		display: inline-block;
+		width: 15px;
+		height: 16px;
+		line-height: 14px;
+		vertical-align: text-top;
+		margin-top: -2px;
 	}
-	.image_logo{
-		@include border-radius(5px);
-		border:1px solid #dbdbdb;
-		max-height:40px;
-		max-width:90px;
+	.product-email-logo
+	{
+		margin-top: 2px;
+	}
+	.product-email{
+		vertical-align: top;
+	}
+	.channel-text{
+		display: inline-block;
+		width:300px;
+		div{
+			width: 90%;
+		}
+	}
+	.un-verified-product{
+		text-decoration: line-through;
+	}
+	.block-display{
+		display: inline-block;
+		width:250px;
+	}
+	.list-page-body .table{
+		table-layout:fixed;
+		tr td{
+			width:30.3%;
+			&:first-child{
+				width:9%;
+			}
+			.portal-logo-wrap{
+				height:50px;
+				width:50px;
+				overflow: hidden;
+				border: 1px solid #aaa;
+				@include border-radius(5px);
+				vertical-align: middle;
+			}
+		}
+		h4 { font-weight: bold; }
+	}
+}
+
+.portal-page-form{
+	.control-label{
+		font-weight: bold;
+	}
+	.plus{
+    	border-radius: 100%;
+	    background: green;
+	    text-align: center;
+	    color: #fff;
+	    margin: 0px;
+	    font-weight: bold;
+	    width: 18px;
+	    height: 19px;
+	    display: inline-block;
+	}
+	.product-radio{
+		vertical-align: top;	
+	}
+
+	.multi-product-add.ui-form .add-email{
+		.plus{
+			cursor: pointer;
+		}
+		margin-left: 190px;
+		font-weight: bold;
+		a{
+			padding-left: 5px;
+			cursor: pointer;
+		}
+	}
+	.multi-product-add.ui-form .configure-email-form {
+		margin-bottom: 0px;
+		background-color: white;
+	}
+	.portal-favicon, .portal-logo{
+		float:none;
+	}
+	.portal-favicon{
+		height:16px;
+	}
+	.overlabel{
+		margin-left: 5px;
+	}
+	.rebranding-header{
+		margin-left: -20px;	
+	}
+	.control-group{
+		.configure-email-form{
+			width:73%;
+			padding: 0;
+			border:0;
+		}
+	}
+	.multi-product-add {
+		background-color: white;
+		border:0;
+		width:100%;
+	}
+	.product-email-configuration{
+		margin-bottom: 0;
+		border-right: 0;
+		.un-verified-product{
+			text-decoration: line-through;
+		} 
+		.unverified_info{
+			margin-top: 5px;
+			margin-bottom: 7px;
+		}
+		.support_emails_row{
+			margin-top: 5px;
+		}
+		.set_primary{
+			input{
+				margin-top: -3px;
+			}
+		}
+		.deleteChoiceProduct{
+			position: absolute;
+			width: 30px;
+			background: #f2f2f2;
+			left: 0px;
+			top: 0;
+			height: 98%;
+			margin-top: 1px;
+			div{
+				border-radius: 100%;
+			    background: #e67c7c;
+			    text-align: center;
+			    color: #fff;
+			    margin: 6px;
+			    font-weight: bold;
+			    width: 17px;
+			    height:17px;
+			    font-size: 12px;
+				letter-spacing: -2px;
+				margin-top: 10px;
+			}
+			p{
+				font-size: 20px;
+				font-weight: bold;
+			}
+		}
+		.disabled{
+			div{
+				background: #ccc;
+			}
+		}
+		
+		.template-container{
+			width: 98%;
+			height:100%;
+			border: 1px solid #ccc;
+			border-right: 0;
+			border-left:0px;
+			padding: 5px 0 5px 50px;
+			padding-bottom: 5px;
+		}	
+		div.text{
+			width: 300px;
+		}	
+		label.product-radio-label{
+			display: inline-block;
+			width:75%;
+		}
 	}
 }
 
 .deactivated{
    li{
 	   background:#f8f8f8;
-	   padding-bottom:0px;
+	   padding-bottom:0;
 	   a.item_info{
 		   @include link-colors(#666666, #3e71a4, #666666, #666666, #3e71a4);
 		   font-size:1.16em;
@@ -3917,7 +4068,7 @@ div.addReminder{
 		text-decoration:none;
 		border-left:1px solid #d6d6d6;
 		border-right:1px solid #ebebeb;
-		padding:0px 10px;
+		padding:0 10px;
 		margin:0px;
 		float:left;
 	}
@@ -3987,7 +4138,7 @@ div.addReminder{
 		color:#ffffff;
 		text-shadow: -1px -1px 0 rgba(0,0,0,0.25);
 		text-decoration:none;
-		border-right-width:0px;  
+		border-right-width:0;  
 		position:relative;
 	} 
 	.stamp.stamp_type_1{
@@ -5368,7 +5519,85 @@ a.close{
 		}
 	}
 }
+.select2-fields{
+	width: 95%;
+}
+.salesforce-wrapper{
+	float: right;
+	width: 75%;
+	.select2-choices{
+		background:none;
+		@include border-radius(5px);
+		border: 1px solid #c9c9c9;
+		background: #fff;
+		.select2-search-field{
+			padding: 4px;
+		}
+		.select2-search-choice-close{
+			background:none;
+			float: right;
+			&:after{
+				content: "--";
+				background:#d30000;
+				@include border-radius(100%);
+				color: #fff;
+				position: absolute;
+				bottom: 6px;
+				right: 16px;
+				padding: 2px 7px 4px 5px;
+				font-size: 16px;
+				font-weight: bold;
+				line-height: 14px;
+				@include box-shadow(1px 1px 1px rgba(0,0,0,0.2));
+				letter-spacing: -3px;
 
+			}
+		}
+		.select2-search-choice{
+		    border: 0;
+		    background: 0;
+		    padding: 10px;
+		    border-bottom:1px solid rgba(#ccc, 0.3);
+		    margin:0;
+		}
+	}
+	.int-select{
+		border:0;
+		@include border-radius(0);
+		width:99.8%;
+		&:after{
+			content: "+";
+			background:green;
+			@include border-radius(100%);
+			color: #fff;
+			position: absolute;
+			bottom: 8px;
+			right: 7px;
+			padding: 1px 5px 4px 5px;
+			font-size: 16px;
+			font-weight: bold;
+			line-height: 14px;
+			@include box-shadow(1px 1px 1px rgba(0, 0, 0, 0.2));
+			font-weight: bold;
+
+		}
+	}
+	.contact-fields, .lead-fields{
+		display:inline-block;
+		width:100%;
+		width:46%;
+		margin:5px 1%;
+		h3{
+			font-size: 1.2em;
+			margin-bottom: 5px;
+			font-weight: 200;
+		}
+	}
+	.lead-fields{
+		float:right;
+	}
+
+}
 .list-noinfo{
 	padding:60px 0; 
 	font-size:1.4em;
@@ -10115,6 +10344,58 @@ div.gcal-confirm-modal-content{ width: 100%; }
 
 .tweet-table .search-grey-box{ margin-top: 0; }
 
+//facebook-page-tab
+
+#configure_page_tab{ min-height: 50px; }
+
+.fb_tab_pic{
+	background: url("/images/helpimages/fb-tab.png") no-repeat;
+	height: 192px;
+	margin-left: 20px;
+}
+
+.fb_info_text{
+		background-color: #fffcdb;
+		padding: 15px;
+		margin-top: 5px;
+		line-height: 17px;
+		border: 1px solid #eeeeee;
+		@include border-radius(4px);
+}
+
+.fb_add{
+	height: 17px;
+	width: 17px;
+	display: inline-block;
+	vertical-align: text-top;
+	margin-right: 4px;
+}
+
+#tab_config{
+	line-height: 17px;
+}
+
+#after_config{
+	.control-label, .fb_field{
+		margin: 5px 0 0 0;
+		.no_tab{
+			margin-left: 10px;
+		}
+
+		label{
+			margin-top: 5px;
+		}
+	}
+}
+
+.remove_fb{
+	margin-left: 15%;
+}
+
+.fb_tab_container{
+	margin-top: 10px;
+}
+
 //Free Trial Notification
 .trial_expiry {
 	@include border-radius(5px);
@@ -10122,7 +10403,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 	p{
 		
 		color: #777;
-		margin:5px 0 20px;
+		margin:5px 0 10px 0px;
 	}
 	.trial-background {
 		margin: 11px -13px -12px;
@@ -10202,3 +10483,56 @@ label.last-label{ margin-bottom: 0px; }
 
 // Surveymonkey Styles End 
 
+//Salesforce 
+
+.salesforce_widget_bg{
+	ul{
+		list-style:disc inside;
+		margin-left:1px;
+		margin-top:5px;
+		color:#ccc;
+		li{
+			padding:5px 0 0;
+			color:inherit;
+		}
+	}
+
+	.sales-title{
+		font-weight: bold;
+		color: inherit;
+	}
+	.search-back{
+		display: inline-block;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		padding: 0px 5px;
+		margin-right: 10px;
+		.arrow-left{
+			font-size: 6px;
+			margin-top: -2px;
+			margin-left: -2px;
+		}
+		&.hide{
+			display: none;
+		}
+	}
+}
+.salesforce-widget{
+	clear: both;
+	div{
+		clear: both;
+		display: block;
+		span{
+			float: left;
+			width:49%;
+			margin-right:1%;
+			font-weight: 500;
+		}
+		label{
+			float: left;
+			width:50%;
+			font-weight: 400;
+		}
+	}
+	&:last-child{margin-bottom:5px;};
+}

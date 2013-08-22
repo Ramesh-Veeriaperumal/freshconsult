@@ -85,6 +85,9 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     sprintf( "%0.02f", seconds/3600)
   end
 
+  def billable_type
+    billable ? I18n.t('helpdesk.time_sheets.billable') : I18n.t('helpdesk.time_sheets.non_billable')
+  end
 
   def hhmm 
     seconds = time_spent

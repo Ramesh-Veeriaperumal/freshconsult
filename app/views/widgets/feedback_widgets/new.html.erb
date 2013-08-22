@@ -84,7 +84,7 @@
 					.append("<li><a href='/support/search/solutions?term="+term+"' target='_blank'>Show all results</a></li>")
 				
 		    }else{
-		    	jQuery("#ws-results").html("No results for " + term)
+		    	jQuery("#ws-results").html("No results for " + h(term))
 		    }	    
 
 		    jQuery("#panel-content").show()
@@ -123,6 +123,11 @@
 	  	});
 
 	  	jQuery("#fs-input").live("keydown change paste", function(ev){
+	  		if(ev.keyCode == 13)
+	  		{
+	  			ev.preventDefault();
+	  			return false;
+	  		}
 			var $this = jQuery(this);
 			clearTimeout(suggestDelay);
 		    suggestDelay = setTimeout(function() {

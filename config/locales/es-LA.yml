@@ -1094,7 +1094,7 @@ es-LA:
   draft: "Borrador:"
   dropbox_attach_label: "adjuntar desde"
   dropbox_choose_file: "selecciona un archivo"
-  due_in: "Demorado %{time_words}"
+  due_in: "Plazo de Entrega %{time_words}"
   due_next_eight: "Próximas 8 horas"
   due_today: Hoy
   due_tomo: Ma&ntilde;ana
@@ -2372,7 +2372,7 @@ es-LA:
     community_forums: "Foros de la comunidad"
     header: 
       preview_message: "<b>Modo de Vista previa</b>-<a href='javascript:window.close()'>Click Aqui</a>para volver atras"
-    knowledge_base: "Base de Conocimiento compatirdo"
+    knowledge_base: "Base de Conocimiento Compartido"
     login: "Iniciar Sesion"
     no_articles_info_1: "Lo sentimos, no tenemos publicado ningun articulo"
     no_articles_info_2: "Por favor revisa nuevamente mas tarde"

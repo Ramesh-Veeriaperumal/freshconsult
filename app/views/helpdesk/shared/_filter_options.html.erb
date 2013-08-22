@@ -19,7 +19,8 @@
         value = jQuery(this).children('select').val();
       }
       else if(container == "requester"){
-        value = jQuery('#requester_filter').val().toString() || '';
+        requester_val = jQuery('#requester_filter').val();
+        value = requester_val ? requester_val.split(",") : '';
       }
       else if(container == "single_select"){
         if(jQuery('#created_at option:selected').val() != "any_time")
@@ -34,15 +35,19 @@
           condition : this.getAttribute("condition"), 
           operator  : this.getAttribute("operator"),
           ff_name   : this.getAttribute("ff_name"),
-          value     : value.toString()
+          value     : getValue(value, this)
         });
       }
     });
     jQuery("#FilterOptions input[name=page]").val(1);
   }
 
+  function getValue(value, element){
+    return ((( element.getAttribute("operator") == 'is_in' ) && 
+      ( element.getAttribute("container") != 'nested_field' )) ? value : value.toString())
+  }
+
   function refresh_tickets(){
-    slide_up(); // Fn in _auto_refresh.html.erb
     jQuery("#save_filter").show();
     jQuery("#delete_filter").hide();
     if (!jQuery("#active_filter").hasClass('unsaved')) {
@@ -165,11 +170,13 @@
           jQuery('#export_tickets').show();
         } 
         // For highlighting updated and new tickets
-        jQuery(updated_tickets.join(',')).addClass('ticket_highlight');
-        updated_tickets = [];
-        new_ticket_ids = [];
-        updated_ticket_ids = [];
-        jQuery("#update_message, #new_ticket_message").hide();
+        if (<%= @is_auto_refresh_feature %>){
+          jQuery(updated_tickets.join(',')).addClass('ticket_highlight');
+          updated_tickets = [];
+          new_ticket_ids = [];
+          updated_ticket_ids = [];
+          jQuery("#update_message, #new_ticket_message").hide();
+        }
       }
     }); 
   });
