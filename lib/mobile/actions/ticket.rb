@@ -80,8 +80,8 @@ module Mobile::Actions::Ticket
   
 	def to_mob_json_index
     options = { 
-      :except => [ :description_html, :description ],
-      :methods => [ :summary_count,:ticket_subject_style,:ticket_sla_status, :status_name, :priority_name, :source_name, :requester_name,
+      :only => [ :id, :display_id, :subject, :priority, :status, :updated_at],
+      :methods => [ :ticket_subject_style,:ticket_sla_status, :status_name, :priority_name, :source_name, :requester_name,
                     :responder_name, :need_attention, :pretty_updated_date ]
     }
     to_json options
