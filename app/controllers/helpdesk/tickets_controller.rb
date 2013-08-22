@@ -13,6 +13,7 @@ class Helpdesk::TicketsController < ApplicationController
   include Helpdesk::ToggleEmailNotification
   include Helpdesk::ShowVersion
   include ApplicationHelper
+  include Mobile::Controllers::Ticket
 
   before_filter :redirect_to_mobile_url  
   skip_before_filter :check_privilege, :only => :show
@@ -309,10 +310,8 @@ class Helpdesk::TicketsController < ApplicationController
 	  }
       format.js
       format.nmobile {
-        @last_fwd =  bind_last_conv(@ticket, @signature, true)
-        @last_reply = bind_last_reply(@ticket, @signature, false, true)
-        #puts " signature #{@last_reply}"
-        response = "{#{@item.to_mob_json(false,false)[1..-2]},#{current_user.to_json(:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket])[1..-2]},#{{:subscription => !@subscription.nil?}.to_json[1..-2]},#{{:last_reply => @last_reply}.to_json[1..-2]}"
+        last_reply = bind_last_reply(@ticket, @signature, false, true)
+        response = "{#{@item.to_mob_json(false,false)[1..-2]},#{current_user.to_json(:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket])[1..-2]},#{{:subscription => !@subscription.nil?}.to_json[1..-2]},#{{:last_reply => @last_reply}.to_json[1..-2]},#{{:ticket_properties => ticket_props}.to_json[1..-2]}"
         response << ",#{@ticket_notes[0].to_mob_json[1..-2]}" unless @ticket_notes[0].nil?
         response << "}";
         render :json => response
