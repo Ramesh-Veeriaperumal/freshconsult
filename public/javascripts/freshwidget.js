@@ -12,13 +12,14 @@
 			backgroundImage: null, 
 			alignment:  	"left", 
 			offset:     	"35%",
-			url:			   "http://support.freshdesk.com",
+			url:			"http://support.freshdesk.com",
 			assetUrl: 		"https://s3.amazonaws.com/assets.freshdesk.com/widget",
-			queryString:   ""
+			queryString:    "",
+			formHeight: 	"500px",
+			widgetType: 	"popup"
 		},
 		iframeLoaded, widgetHeadHTML, widgetBodyHTML, iframe, button, closeButton, overlay, dialog
 		container = null;
-	
 	 // Utility methods for FreshWidget	
 	 function catchException(fn) {
 		try {
@@ -33,7 +34,7 @@
 	 // Checking browser support for IE
 	 var Browser = {
 		Version: function() {
-			var version = 999; // we assume a sane browser
+			var version = 999; // we assume a same browser
 			// bah, IE again, lets downgrade version number
 			if (navigator.appVersion.indexOf("MSIE") != -1)				
 				version = parseFloat(navigator.appVersion.split("MSIE")[1]);
@@ -100,7 +101,7 @@
 	 }
 	 	 
 	 function createButton(){
-	 	if (button == null) {
+	 	if (button == null && options.widgetType == "popup") {
 			class_name = locationClass[options.alignment] || "left";
 			button = document.createElement('div');
 			button.setAttribute('id', 'freshwidget-button');
@@ -159,6 +160,13 @@
 	   	button = null;
 	   }
 	 }
+
+	 function destroyContainer(){
+	 	if (container != null) {
+	 		document.body.removeChild(container);
+	 		container = null;
+	 	}
+	 }
 	 
 	 function createContainer(){
 	 	if (container == null) {
@@ -172,7 +180,7 @@
 						'<div class="freshwidget-dialog" id="freshwidget-dialog">' +
 						' <img id="freshwidget-close" class="widget-close" src="'+options.assetUrl+'/widget_close.png?ver='+ version +'" />' +
 						' <div class="frame-container">' +
-						' 	<iframe id="freshwidget-frame" src="about:blank" frameborder="0" scrolling="auto" allowTransparency="true"/>' +
+						' 	<iframe id="freshwidget-frame" src="about:blank" frameborder="0" scrolling="auto" allowTransparency="true" style="height: '+options.formHeight+'"/>' +
 						' </div>'
 						'</div>';
 			
@@ -222,7 +230,7 @@
 							 	document.getElementById('freshwidget-frame').contentWindow.postMessage(message, "*");
 							 	clearInterval(sendMessage);
 						 	}else {
-						 		console.log('waiting for iframe to load');
+						 		//console.log('waiting for iframe to load');
 						 	}	
 						 }, 500);
 				    }
@@ -260,7 +268,9 @@
 	 function updateWidget(params){
 	 	extend(params);
 		destroyButton();
-		createButton();
+		destroyContainer();
+		createButton();		
+		createContainer();
 	 }
 	 
 	 // Defining Public methods				  

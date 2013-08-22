@@ -59,7 +59,7 @@ en:
    language_name: 'English'
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
   attachment_help_info: "File size < 15 MB"
-  feedbackwidget_offset_info: The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
+  feedbackwidget_offset_info: Choose widget position on your browser. The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
   no_twitter_handle: Please configure atleast one twitter account
   reset_my_password: Reset my password 
   assign: Assign
@@ -248,7 +248,7 @@ en:
     tickets:    
       ticket_survey:
         title: "Customer survey"
-        rating_sub_title: "Your have rated us"
+        rating_sub_title: "You have rated us"
         survey_title: Please take a minute to rate our support
         feedback_title: Describe your support experience (optional)
         rated_on: on %{rated_on}
@@ -267,6 +267,8 @@ en:
         sign_in_using_google: Sign in using your Google account
         help: Help
     shared:
+      attachment_form:
+        feedback_widgets_screenshot: Take Screenshot
       survey_form:
         survey_title: Please take a minute to rate our support
         feedback_title: Also your good words and specific critique can help us better our support in the future
@@ -630,9 +632,32 @@ en:
         helptext: "Your day passes will Auto-recharge once the number of available day passes comes down to 2."
     widget_config:
       index:
-        thankyou_label: "Submit message"
+        feedbackwidget_embedded_tab: Embedded Widget 
+        feedbackwidget_popup_tab: Pop up Widget
+        
+      popup_embedded_widget:  
+        feedbackwidget_popup: "popup"
+        feedbackwidget_embedded: "embedded"
+        feedbackwidget_button_text_placeholder: Support
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
+        feedbackwidget_button_customization: Button customization
+        feedbackwidget_form_customization: Form customization
+        feedbackwidget_embedded_code: Embedded Widget code
+        feedbackwidget_popup_code: Popup Widget code
+        feedbackwidget_widget_code: Widget code
+        feedbackwidget_embedded_form_code: Embedded form code
+        feedbackwidget_form_submit_message: "Form Submit Message"
+        feedbackwidget_form_height: "Form height"
+        feedbackwidget_form_height_message: "If you see scroll bars in your widget, adjust the widget height."
+        feedbackwidget_px: "px"
         thankyou_default: "Thank you for your feedback"
         thankyou_info: "Message to be displayed after a user submits the ticket form"
+        feedbackwidget_users_can: "Users can:"
+        feedbackwidget_attach_a_file: Attach a file
+        feedbackwidget_screenshot: Take Screenshot
+        feedbackwidget_search_area: Search Articles
+        feedbackwidget_use_https: Use https
     supervisor_rules:
       index:
         human_name: Supervisor Rule
@@ -1001,7 +1026,6 @@ en:
   default_reply_template: Agent Reply Template
   import_user_org: Users &amp; Organizations
   to_do: To Do
-  feedbackwidget_formcustomize: Form customization
   does_not_contain: Does not contain
   flash:
     gmail_gadgets:
@@ -1255,7 +1279,7 @@ en:
   resolved: Resolved
   logo_delete_msg: Are you sure you want to delete this logo?
   from_email: From Email
-  feedbackwidget_custom_image: Custom image URL
+  feedbackwidget_image_button: Image button URL
   activities: 
     action_verb: 'updated'
     tag:
@@ -1422,7 +1446,7 @@ en:
   during: during
   less_than: Less than
   greater_than: Greater than
-  feedbackwidget_bgcolor: Background Color
+  feedbackwidget_background: Background
   day: 1 Day
   trial_day: Day
   current_plan: Current Plan
@@ -1513,7 +1537,6 @@ en:
   at: at
   add_a_topic: Start a Topic
   bottom: Bottom
-  align_to: Align to
   feedbackwidget_help_title: Feedback widget
   name: Name
   import_user_org_text: All the Users &amp; Organizations in your Zendesk account will be imported into your current Freshdesk account as "Contacts & Companies"
@@ -1532,7 +1555,7 @@ en:
   set_type_as: Set Type as
   change_my_plan: Choose this plan...
   add_new_email: Add new email
-  feedbackwidget_title: Widget Settings
+  feedbackwidget_title: Feedback widget
   errors_in_your_address: "Errors encountered with your address:"
   set_priority_as: Set Priority as
   sign_in_info: You will be signing in with
@@ -1561,7 +1584,6 @@ en:
   edit_forum_category: Edit Forum Category
   agent_assigned_title: Recently assigned tickets (Open &amp; Pending)
   send_email_to_requester: Send Email to Requester
-  feedbackwidget_btcustomize: Button customization
   solution_category: 
     name: Category name
     new: New solution category
@@ -1760,7 +1782,7 @@ en:
     after_ten_minutes: After 10 Minutes
     after_fifteen_minutes: After 15 Minutes
   between_range: Between Range
-  back_to_admin: Back to Admin
+  go_back: Go back
   group: 
     new: New Group
     name: Group Name
@@ -2057,7 +2079,7 @@ en:
     info1: "You can change your subscription details anytime. Your card will be charged pro-rata from the date of the subscription change to the next billing date."
     info2: "Downgrading from a higher plan to a lower plan will result in loss of configuration data for features that are only available in the higher plan."
   activate: Activate
-  feedbackwidget_text: Text
+  feedbackwidget_button_text: Button text
   billed_amount_per_month: You will be billed $%{amount} %{period}
   billed_amount_annually: You will be billed $%{amount} annually
   import_zendesk_summary: Import from zendesk summary
@@ -2175,6 +2197,7 @@ en:
       add_people_title: Add people to conversation
       reopen_reply: Reply
       related_articles: "Related articles..."
+  feedbackwidget_form_heading: Form Heading
   feedbackwidget_form_title: Widget form title
   cancel_and_back: Cancel and go back
   due_in: Due in %{time_words}
@@ -2278,7 +2301,6 @@ en:
     active:
       no_companies: You don't have any company added to the list.
       no_companies_with_letter: You don't have any companies with the letter '%{alphabet}'
-  feedbackwidget_embed_code: Widget embed code
   billing_info_update: Your billing information has been updated.
   wrong_portal: 
     content_not_available: The content you are looking for is, not available in this portal.
@@ -2297,7 +2319,6 @@ en:
   is_expiring_today: is expiring today
   feedbackwidget_help_para1: The feedback widget lets you embed a ticket form directly into your website or product. You can customize the look and feel, and placement of the widget on your website. Once done, copy-paste the generated embed code in your website or app, to start using the Feedback Widget.
   low: Low
-  feedbackwidget_defaultbutton: Support
   agents: Agents
   header: 
     welcome: Welcome
@@ -2742,7 +2763,6 @@ en:
   import_zendesk_summary_info: Zendesk data has been successfully imported.
   one: 1 Hour
   no_topics_text: No topics in this forum
-  feedbackwidget_offset_label: With an offset of
   send_email_to_group: Send Email to Group
   activate_account: Activate your account
   enter_message: Enter your message here
@@ -3348,7 +3368,7 @@ en:
       no_tickets_in_view: You don't have any tickets in %{view_name}.
       no_tickets_for_user: There are no open tickets for %{user_name} to view.
       no_tickets_subtext: "View %{view_1} or %{view_2}"
-      no_tickets_subtext_single: "View %{view_1}"
+      no_tickets_subtext_single: "View %{view_1}" 
   conversation: Conversation
   save_this_view: "Save"
   save_this_view_tooltip: "Save View"
@@ -3737,6 +3757,13 @@ en:
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
+    feedback_widgets:
+      new:
+        feedback_widgets_search: "Search"
+        feedback_widgets_search_results: "Search results"
+        feedback_widgets_search_our: "Search our "
+        feedback_widgets_knowledge_base: "Knowledge base "
+        feedback_widgets_help_articles: "or Browse help articles"
   reorder: "Reorder"
   reports:
       no_data: No data to display!

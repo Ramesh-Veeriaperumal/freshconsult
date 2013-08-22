@@ -10404,3 +10404,15 @@ label.checkbox-label span{ position: relative; top: 2px; }
 label.last-label{ margin-bottom: 0px; }
 
 // Surveymonkey Styles End 
+
+.widget_options {
+	margin-top: 8px;
+	div{
+		border-left: 1px solid #E4E4E4;
+		padding: 5px 10px;
+	}
+}
+
+.code_area_highlight {
+	background-color: #E4E4E4;
+}

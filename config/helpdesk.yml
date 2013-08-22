@@ -9,10 +9,18 @@ HOST:
     staging:        "freshpo.com"
 
 ASSET_URL: 
-    development:    "http://localhost:3000/widget"
-    test:           "http://localhost:3000/widget"
-    production:     "http://assets.freshdesk.com/widget"
-    staging:        "http://assets.freshpo.com/widget"
+    development:    
+      http:      "http://localhost:3000/widget"
+      https:      "https://localhost:3000/widget"
+    test:           
+      http:      "http://localhost:3000/widget"
+      https:      "https://localhost:3000/widget"
+    production:     
+      http:         "http://assets.freshdesk.com/widget"
+      https:        "https://s3.amazonaws.com/assets.freshdesk.com/widget"
+    staging:
+      http:      "http://assets.freshpo.com/widget"
+      https:      "https://assets.freshpo.com/widget"
 
 # This is the title staff members will see when they are using the helpdesk application
 STAFF_FACING_TITLE: FreshDesk
