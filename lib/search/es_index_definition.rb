@@ -179,6 +179,7 @@ class Search::EsIndexDefinition
 
   def create_model_index(index_name,model_mapping)
   	sandbox(0) {
+      Search::EsIndexDefinition.es_cluster_by_prefix(index_name)
       Tire.index(index_name) do
         create(
           :settings => {
@@ -223,7 +224,8 @@ class Search::EsIndexDefinition
   
   def create_aliases(account_id)
     sandbox(0) {
-      index_hash.each do |model, index_name|
+      pre_fix = Search::EsIndexDefinition.es_cluster(account_id)
+      index_hash(pre_fix).each do |model, index_name|
         a = Tire::Alias.new
         a.name("#{model}_#{account_id}")
         a.index(index_name)
@@ -238,7 +240,8 @@ class Search::EsIndexDefinition
 
   def remove_aliases(account_id)
     sandbox(0) {
-      index_hash.each do |model, index_name|
+      pre_fix = Search::EsIndexDefinition.es_cluster(account_id)
+      index_hash(pre_fix).each do |model, index_name|
         a = Tire::Alias.find("#{model}_#{account_id}")
         es_indices = a.indices
         es_indices.each do |index_name|
@@ -253,6 +256,7 @@ class Search::EsIndexDefinition
 
   def rebalance_aliases(account_id,new_index_prefix,old_index_prefix = "fd_es_index_1")
     sandbox(0) {
+      Search::EsIndexDefinition.es_cluster(account_id)
       old_index_hash = index_hash(old_index_prefix)
       index_hash(new_index_prefix).each do |model, index_name|
         a = Tire::Alias.find("#{model}_#{account_id}")
@@ -264,6 +268,26 @@ class Search::EsIndexDefinition
         NewRelic::Agent.notice_error(response["error"])  unless response["ok"]
       end
     }
+  end
+
+  def es_cluster(account_id)
+    Es_urls = ["localhost:9200","localhost:9201"] if Rails.env.development? && ES_ENABLED
+    if (account_id <= 200)
+      Tire.configure { url Es_urls[0] }
+      "fd_es_index_1"
+    elsif (account_id > 200)
+      Tire.configure { url Es_urls[1] }
+      "fd_es_index_2"
+    end
+  end
+
+  def es_cluster_by_prefix(index_prefix)
+    Es_urls = ["localhost:9200","localhost:9201"] if Rails.env.development? && ES_ENABLED
+    if index_prefix.include?("fd_es_index_1")
+      Tire.configure { url Es_urls[0] }
+    elsif index_prefix.include?("fd_es_index_2")
+      Tire.configure { url Es_urls[1] }
+    end
   end
 
 end

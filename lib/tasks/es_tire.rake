@@ -73,6 +73,7 @@ namespace :freshdesk_tire do
       Sharding.run_on_slave do
         klasses = ENV['CLASS'].split(';')
         klasses.each do |klass|
+          Search::EsIndexDefinition.es_cluster(account.id)
           ENV['CLASS'] = klass
           index_alias = Search::EsIndexDefinition.searchable_aliases(Array(klass.partition('.').first.constantize), account.id).to_s
           ENV['INDEX'] = index_alias
@@ -163,7 +164,7 @@ def import_condition(id, item)
     when "User" then
       condition = ".scoped(:conditions => ['account_id=? and updated_at<? and deleted=?', #{id}, Time.now.utc, false])"
     when "Helpdesk::Note" then
-      condition = ".scoped(:conditions => ['account_id=? and updated_at<? and deleted=?', #{id}, Time.now.utc, false])"
+      condition = ".scoped(:conditions => ['account_id=? and updated_at<? and notable_type=? and deleted=?', #{id}, Time.now.utc, 'Helpdesk::Ticket', false])"
   end
   condition
 end
