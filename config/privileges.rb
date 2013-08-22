@@ -36,6 +36,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :agent, :only => [:toggle_availability]
     resource :"search/home", :only => [:index, :suggest]
     resource :search, :only => [:index, :suggest, :content]
+    resource :"helpdesk/survey"
     # resource :"helpdesk/common", :only => [:group_agents]
 	end
 
