@@ -27,14 +27,14 @@ end
 %>
 
 <div class="form-buttons">
-  <%= link_to "< Go back", (@portal.main_portal? ? edit_account_path : admin_products_path), :class => "btn" %>
+  <%= link_to "&lt; "+t("go_back"), (@portal.main_portal? ? edit_account_path : admin_products_path), :class => "btn" %>
 
   <a href="#reset-dialog" role="button" class="btn" 
     data-toggle="modal" rel="reset-btn" id="soft_reset_button"
       data-reset-url="<%= reset_url %>" 
       data-reset-disabled="<%= btn_disabled %>"
       data-reset-tab="<%= active_tab.to_s %>">
-    Reset
+    <%= t('reset') %>
   </a>
 
   <%#= reset_btn %>

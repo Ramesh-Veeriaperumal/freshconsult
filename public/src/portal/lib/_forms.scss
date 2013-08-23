@@ -271,7 +271,7 @@ textarea[class*="span"],
 // GRID SIZING FOR INPUTS
 // ----------------------
 
-@include grid-input($column-width, $gutter-width);
+// @include grid-input($column-width, $gutter-width);
 
 
 
@@ -656,10 +656,14 @@ label.required:after{
   }
 }
 
+#errorExplanation, .errorExplanation{
+  h2, p{ display: none; }
+  ul{ margin-bottom: 0; }
+}
+
 // Horizontal-specific styles
 // --------------------------
-@include at-breakpoint($break-desktop){
-
+/*@include at-breakpoint($break-desktop){*/
   .form-portal {
     // Increase spacing between groups
     .control-group {
@@ -697,12 +701,19 @@ label.required:after{
 
   // Reset appearance properties for textual inputs and textarea
   // Declare width for legacy (can't be on input[type=*] selectors or it's too specific)
-  input, textarea {
-    width: 210px;
-  }
-}
+  input, textarea { width: 210px; }
+/*}*/
 
-#errorExplanation, .errorExplanation{
-  h2, p{ display: none; }
-  ul{ margin-bottom: 0; }
+@if $nonResponsive == false {
+  @include at-breakpoint($media-mobile){
+    .form-portal {
+      .form-actions { padding-left: 0; }
+      .control-label { 
+        float: none;
+        width: auto;
+        padding-top: 0; 
+      }
+      .controls { margin-left: 0; }
+    }
+  }
 }

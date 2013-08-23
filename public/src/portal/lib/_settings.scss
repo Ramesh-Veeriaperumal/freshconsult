@@ -1,3 +1,4 @@
+
 @import "susy";
 @import "compass";
 
@@ -6,8 +7,8 @@
 
 // Application mode is either debug if its in developement mode
 $app-debug-mode: 		false !default; 
-$mobile-responsive: 	true !default; 
-$page-pattern: 			true !default;
+$nonResponsive: 		false !default;
+$pagePattern: 			true !default;
 
 // Grays
 // -------------------------
@@ -61,21 +62,26 @@ $page-form-background: 		rgba(#f4f4f4, 0.9) !default;
 // GRID SYSTEM FOR SUSY
 // --------------------------------------------------
 
-$total-columns: 4;
+$total-columns: 12;
 $column-width: 60px;
 $gutter-width: 10px;
 $grid-padding: 10px;
 
-$container-style: magic;
+@if $nonResponsive == false{
+	$container-style: magic;
+}@else{
+	$container-style: static;
+}
 
 $default-container-width: 1140px !default;
 $container-width: $default-container-width;
 
 
-$media-mobile: 		0 45em; // Applying styles only for mobile
-$break-tablet:		45em 12; // Applying styles for Tablets to Medium & Large desktops 
-$break-desktop:		60em 12; // Applying styles for Medium & Large desktops 
-$break-large:		75em 16; // Applying styles for Large desktops and above
+$media-mobile: 			0 45em 4; 		// Applying styles only for mobile
+$media-mobile-tablet: 	0 60em 12; 		// Applying styles for mobile and tablet
+$break-tablet:			45em 12; 		// Applying styles for Tablets to Medium & Large desktops 
+$break-desktop:			60em 12; 		// Applying styles for Medium & Large desktops 
+$break-large:			75em 16; 		// Applying styles for Large desktops and above
 
 // Links
 // -------------------------
