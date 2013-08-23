@@ -78,6 +78,7 @@
   <div class="control-group">
   	<span><%= content_tag(:label, t(".feedbackwidget_users_can"), :class => "control-label" ) %></span>
   	<div class="controls widget_options">
+  		<% if widget_type == "popup" %>
   		<div class="row-fluid">
   			<span class="span3"><%= t(".feedbackwidget_screenshot") %></span>
   			<span class="span9">
@@ -86,6 +87,9 @@
   					data-checked-label="Yes" data-unchecked-label="No" checked="checked" >
   			</span>  			
 	  	</div>
+	  	<% else %>
+	  		<input type="hidden" name="screenshot" id="screenshot" value="no" rel='pseudo' />
+	  	<% end %>
 	  	<div class="row-fluid">
   			<span class="span3"><%= t(".feedbackwidget_attach_a_file") %></span>
   			<span class="span9">
