@@ -36,8 +36,10 @@
 			   <%= link_to(t('contacts.restore'), {:controller => "contacts", :action => "restore", :id => contact, :redirect_back => true} , :method => 'put', :class => "btn btn-mini") if contact.deleted? and !contact.spam? and !contact.blocked? %>
       <% end %>
       <% if privilege?(:manage_users) %>
-			  <%= link_to(t('contacts.send_activation'), send_invite_activation_path(contact), "data-method" => 'put', 	:class => "btn send-activation btn-mini", 
+			  <%= link_to(t('contacts.send_activation'), '', "data-method" => 'put', 	:class => "btn send-activation btn-mini", 
 					"data-loading-text" => t('admin.getting_started.index.next_please_wait'), 
+					"data-url" => send_invite_activation_path(contact),
+					"data-remote" => 'true',
 					"data-complete-text" => "<i class='icon-ok'></i><b class='sent-text'>#{t('users.activations.sent')}</b>") if !contact.active? and !contact.deleted and !contact.spam? and !contact.blocked? and !contact.email.blank? %>
       <% end %>
       <% if privilege?(:manage_contacts) %>
