@@ -272,6 +272,12 @@
 		createButton();		
 		createContainer();
 	 }
+
+	 function destroyWidget(){
+	 	destroyButton();
+		destroyContainer();
+		delete window.FreshWidget;
+	 }
 	 
 	 // Defining Public methods				  
      var FreshWidget = {
@@ -289,7 +295,10 @@
 					  }, 
 	     update 		: function(params){
 						catchException(function(){ return updateWidget(params); });
-					  }
+					  },
+	    destroy  	: function(){
+	    				catchException(function(){ return destroyWidget(); });
+	    			}
 	 }; 
 	 	 
 	 if(!window.FreshWidget){window.FreshWidget=FreshWidget;}
