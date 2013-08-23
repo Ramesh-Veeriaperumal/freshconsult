@@ -59,7 +59,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :load_reply_to_all_emails, :only => [:show, :reply_to_conv]
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
-  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets]
+  before_filter :set_native_mobile, :only => [:show, :load_reply_to_all_emails, :index,:recent_tickets,:old_tickets , :delete_forever]
   
  
   def user_ticket
@@ -573,7 +573,11 @@ class Helpdesk::TicketsController < ApplicationController
     Resque.enqueue(Workers::ClearTrash,{:account_id => current_account.id} )
     flash[:notice] = render_to_string(
         :inline => t("flash.tickets.delete_forever.success", :tickets => get_updated_ticket_count ))
-    redirect_to :back
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.nmobile { render :json => {:success => true , :success_message => render_to_string(
+        :inline => t("flash.tickets.delete_forever.success", :tickets => get_updated_ticket_count ))}}
+    end
   end
 
   def empty_trash
