@@ -43,6 +43,11 @@ class TicketFieldsController < CustomFieldsController
       @invalid_fields.push(ticket_field) and return unless nested_ticket_field.update_attributes(nested_field)
     end
 
+    def delete_nested_field(ticket_field,nested_field)
+      nested_ticket_field = ticket_field.nested_ticket_fields.find(nested_field[:id])
+      nested_ticket_field.destroy if nested_ticket_field
+    end
+
     def get_choices(field)
       case field.field_type
         when "nested_field" then
