@@ -19,8 +19,7 @@
         value = jQuery(this).children('select').val();
       }
       else if(container == "requester"){
-        requester_val = jQuery('#requester_filter').val();
-        value = requester_val ? requester_val.split(",") : '';
+        value = jQuery('#requester_filter').val().toString() || '';
       }
       else if(container == "single_select"){
         if(jQuery('#created_at option:selected').val() != "any_time")
@@ -35,16 +34,11 @@
           condition : this.getAttribute("condition"), 
           operator  : this.getAttribute("operator"),
           ff_name   : this.getAttribute("ff_name"),
-          value     : getValue(value, this)
+          value     : value.toString()
         });
       }
     });
     jQuery("#FilterOptions input[name=page]").val(1);
-  }
-
-  function getValue(value, element){
-    return ((( element.getAttribute("operator") == 'is_in' ) && 
-      ( element.getAttribute("container") != 'nested_field' )) ? value : value.toString())
   }
 
   function refresh_tickets(){
