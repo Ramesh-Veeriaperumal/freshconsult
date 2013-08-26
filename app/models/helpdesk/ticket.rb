@@ -554,6 +554,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
       twt_handles.first.id unless twt_handles.blank?
     end
   end
+
+  def portal
+    (self.product && self.product.portal) || account.main_portal
+  end
   
   def portal_host
     (self.product && !self.product.portal_url.blank?) ? self.product.portal_url : account.host

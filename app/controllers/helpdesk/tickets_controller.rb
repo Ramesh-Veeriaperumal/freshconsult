@@ -298,7 +298,7 @@ class Helpdesk::TicketsController < ApplicationController
       update_tags unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
 
       if(params[:redirect] && params[:redirect].to_bool)
-        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice')
+        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice.html.erb')
       end
 
       respond_to do |format|

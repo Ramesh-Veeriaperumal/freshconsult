@@ -88,7 +88,7 @@
         	{
         		localStorage["fb_redirect"] = jQuery(this).attr('href');
         	}
-        	FB.login(function(response){}, {scope: 'user_likes, email'});
+        	FB.login(function(response){}, {scope: "<%= FacebookConfig::USER_PERMISSIONS.join(',') %>"});
         });
 
         FB.Canvas.setDoneLoading( function(response) {

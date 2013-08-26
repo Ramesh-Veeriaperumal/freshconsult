@@ -16,9 +16,16 @@ class FBPageTab
     @oauth ||= Koala::Facebook::OAuth.new(FacebookConfig::APP_ID, FacebookConfig::SECRET_KEY)
   end
 
+  def has_permissions? token
+    fb_user = Koala::Facebook::GraphAPI.new(token)
+    permissions = fb_user.get_connections('me','permissions').first
+    (FacebookConfig::USER_PERMISSIONS - permissions.keys).empty?
+  end
+
   def read_facebook signed_request
     return_value = fb_sandbox({}) {
       facebook_data = oauth.parse_signed_request(signed_request)
+      facebook_data["oauth_token"] = nil unless facebook_data["oauth_token"] and has_permissions?(facebook_data["oauth_token"])
       page = facebook_data["page"]["id"] if facebook_data["page"]
       { 
         :page_id => facebook_data["page"]["id"], 

@@ -442,6 +442,9 @@ module ApplicationHelper
   # Avatar helper for user profile image
   # :medium and :small size of the original image will be saved as an attachment to the user 
   def user_avatar( user, profile_size = :thumb, profile_class = "preview_pic" ,options = {})
+    #Hack. prod issue. ticket: 55851. Until we find root cause. It was not rendering view at all.
+    #Remove once found the cause. 
+    user = User.new if user.nil?
     img_tag_options = { :onerror => "imgerror(this)", :alt => "" }
     if options.include?(:width)  
       img_tag_options[:width] = options.fetch(:width)

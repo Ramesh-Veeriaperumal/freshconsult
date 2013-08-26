@@ -1,12 +1,15 @@
 <% @ticket ||= current_account.tickets.new %>
-<% @widget_form ||= widget_option(:enable_screenshot) || true %>
-
 <div class="modal-header">
+	<div class="modal-header-bg">
 	<%= content_tag(:h3, widget_option(:formTitle), :class => "ellipsis", :title => widget_option(:formTitle)) %>
+	</div>
 </div>
+<% widget_type = widget_option(:widgetType) %>
+<input type="hidden" name="widgetType" id="widgetType" value= "<%= widget_type %>" />
+<%= hidden_field_tag "searchInputFrom" %>
 <div class="modal-body">
 <% form_for :helpdesk_ticket, @ticket, 
-		:url => widgets_feedback_widget_path(:submit_message => params[:submitThanks]), 
+		:url => widgets_feedback_widget_path(:submit_message => params[:submitThanks], :widgetType => widget_type), 
 		:html => { :method => :post, :multipart => true, :class => "form form-widget", :id => "fd_feedback_widget" } do |f| %>
   	<%= f.error_messages %>  	
   	<div class="form-placeholder">
@@ -28,6 +31,9 @@
     		</div>
 		<% end %>
 	</div>
+	<% if widget_type="popup" %>
+		<div class="extra-space"></div>
+	<% end %>
 </div>
 <div class="modal-footer">
 	<div class="copyright">
@@ -41,24 +47,23 @@
 	<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
 </div>
 <% end %>
-
-<% if feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
+<% if widget_option(:searchArea) && feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
 	<div class="modal-panel" id="feedback-suggest">
 		<form class="hc-search-form" autocomplete="off" action="<%= solutions_support_search_path %>" id="hc-search-form">
 			<div class="hc-search-input">
-				<input placeholder="Search" type="text" id="fs-input"
+				<input placeholder="<%=t('.feedback_widgets_search')%>" type="text" id="fs-input"
 					name="term" class="span12 special" value="" 
 		            rel="page-search" data-max-matches="10">
 			</div>
 		</form>
 		<div id="panel-content" class="panel-content hide">
-			<h4 id="ws-results-title">Search results</h4>
+			<h4 id="ws-results-title"><%=t('.feedback_widgets_search_results')%></h4>
 			<ul class="unstyled" id="ws-results"></ul>	
 		</div>
 		<div id="panel-info" class="panel-info">
-			<h2 class="lead">Search our <br />
-				Knowledge base </h2>
-			<%= link_to "or Browse help articles", support_solutions_path, 
+			<h2 class="lead"><%=t('.feedback_widgets_search_our')%><br />
+				<%=t('.feedback_widgets_knowledge_base')%></h2>
+			<%= link_to t('.feedback_widgets_help_articles'), support_solutions_path, 
 					{ :target => "_blank", :class => "link-pointer" } %>
 		</div>
 	</div>
@@ -78,16 +83,23 @@
 		jQuery("#feedback-widget-container").addClass("modal-panel-active");
 
 		var suggestResponse = function(data, term){		
+			var searchInputFrom = jQuery("#searchInputFrom").val();
+
 		    if(data.length > 0){	    	
 				jQuery("#ws-results")
 					.html(jQuery.tmpl(jQuery("#ws-tmpl").template(), data))
 					.append("<li><a href='/support/search/solutions?term="+term+"' target='_blank'>Show all results</a></li>")
+				jQuery("#panel-content").show()
 				
-		    }else{
+		    }else if(searchInputFrom == "Subject") {
+		    	jQuery("#panel-info").show();
+		    	jQuery("#fs-input").val("");
+		    }
+		    else {
 		    	jQuery("#ws-results").html("No results for " + h(term))
+		    	jQuery("#panel-content").show()
 		    }	    
 
-		    jQuery("#panel-content").show()
 		    jQuery("#fs-input").removeClass("loading-right");
 		}
 
@@ -113,40 +125,52 @@
 		}
 
 	  	jQuery("#helpdesk_ticket_subject").live("blur paste", function(ev){
+	  		jQuery("#searchInputFrom").val("Subject");
 	  		if(!suggestForSubject) return
 
 	  		var searchString = this.value.replace(/^\s+|\s+$/g, "");
 
 	  		if(searchString != '' && searchString.length > 2){
-	  			jQuery("#fs-input").val(this.value).trigger("change")	
+	  			jQuery("#fs-input").val(this.value);
+	  			jQuery("#panel-content").hide();
+	  			searchKnowledgeBase(this.value);	
 	  		}
 	  	});
 
 	  	jQuery("#fs-input").live("keydown change paste", function(ev){
-	  		if(ev.keyCode == 13)
-	  		{
-	  			ev.preventDefault();
-	  			return false;
-	  		}
+	  		jQuery("#searchInputFrom").val("Search");
+
 			var $this = jQuery(this);
 			clearTimeout(suggestDelay);
 		    suggestDelay = setTimeout(function() {
 		    	suggestForSubject = false
+		    		
+		    	searchKnowledgeBase($this.val());
 		    	
-		    	var searchString = $this.val().replace(/^\s+|\s+$/g, "");
+		    }, 500)	
 
-				if(searchString != '' && searchString.length > 2){
-					$this.addClass("loading-right");
-					jQuery("#panel-info").hide();
-					callbackToSolutionSearch(searchString);
-				}else{
-					$this.removeClass("loading-right");
-					jQuery("#ws-results").empty();
-					jQuery("#panel-content").hide()
-					jQuery("#panel-info").show();
-				}
-		    }, 500)		
+		    if(ev.keyCode == 13){
+	   			ev.preventDefault();
+	   			return false;
+	   		}
+			
 	  	});
+
+	  	function searchKnowledgeBase(searchInput)
+	  	{
+	  		var searchString = searchInput.replace(/^\s+|\s+$/g, "");
+
+			if(searchString != '' && searchString.length > 2){
+				jQuery("#fs-input").addClass("loading-right");
+				jQuery("#panel-info").hide();
+				callbackToSolutionSearch(searchString);
+			}else{
+				jQuery("#fs-input").removeClass("loading-right");
+				jQuery("#ws-results").empty();
+				jQuery("#panel-content").hide()
+				jQuery("#panel-info").show();
+			}
+	  	}
 	</script>
 <% end %>
 
@@ -162,5 +186,18 @@
 		}else{
 			jQuery(this).parent().removeClass("modal-scroll");
 		}
+	});
+
+	jQuery(document).ready(function () {
+		var embeddedWidget = jQuery("#widgetType").val();
+		if(embeddedWidget == "embedded") {
+			jQuery("#feedback-widget-container").removeClass("modal modal-widget");
+			jQuery(".feedback-wrapper").addClass("embedded-wrapper");
+			jQuery(".modal-body").addClass("embedded-body");
+			jQuery(".modal-panel").addClass("embedded-panel");
+			jQuery(".modal-footer").addClass("embedded-footer");
+			jQuery(".hc-search-input").addClass("embedded-search-input");
+		}
+
 	});
 </script>

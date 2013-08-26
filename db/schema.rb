@@ -955,7 +955,7 @@ ActiveRecord::Schema.define(:version => 20130820103150) do
     t.datetime "sla_timer_stopped_at"
     t.integer  "outbound_count",                         :default => 0
     t.float    "avg_response_time"
-    t.integer  "first_response_time_by_bhrs"
+    t.integer  "first_resp_time_by_bhrs"
     t.integer  "resolution_time_by_bhrs"
     t.float    "avg_response_time_by_bhrs"
   end
