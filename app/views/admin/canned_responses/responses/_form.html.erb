@@ -50,11 +50,15 @@ function toggleGroup(access_id)
 		</label>
    		<%= f.text_area :content_html, :class => "ca_content_body", :id => 'ca-content' %>		
 	</li>
-	<li><%= render "attachment_form" %></li>
 	<li>
+      <div class="control-group"><%= render "attachment_form" %></div>
+    </li>
+	<li>
+        <div class="control-group">
 		<ul>
 			<%= render :partial => 'attachment', :collection => @item.attachments_sharable  %>
 		</ul>
+        </div>
 	</li>
 
 	<li class="folder-pane form-horizontal">

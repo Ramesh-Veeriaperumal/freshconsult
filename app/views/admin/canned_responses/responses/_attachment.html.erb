@@ -22,24 +22,19 @@
   <div class="attachment-type file-types-<%= extname %>">
     <%= link_to h(truncate(attachment.content_file_name,15)), attachment, :popup => true, :title => h(attachment.content_file_name), :class => "tooltip" %>
     <span>&nbsp;&nbsp;(<%= number_to_human_size attachment.content_file_size %>)</span>
-    <span>- <a href="javascript:void(0)" class="remove_attachment" id="<%= attachment.id.to_s %>">remove</a></span>
+    <span>- <a href="javascript:void(0)" class="remove_attachment remove_shared_attachment" id="<%= attachment.id.to_s %>" >remove</a>
+    </span>
   </div>
 </li>
 <br/>
-
 <script>
 
     jQuery(document).ready(function(){
-        jQuery(".remove_attachment").on("click", function(event){
-            id=jQuery(this).attr("id");
-            jQuery.ajax({
-                url: "/admin/canned_responses/folders/<%= @item.folder_id.to_s %>/responses/<%= @item.id.to_s %>/delete_shared_attachments?attachment_id="+id,
-                success: function(){
-                    jQuery("#helpdesk_attachment_"+id).remove();
-                }
-
-            });
-        });
+        jQuery(".remove_shared_attachment").on("click", function(){
+               id=jQuery(this).attr("id");
+               jQuery(this).parent().append('<input type="hidden" value="'+id+'" name="remove_attachments[]">');
+               jQuery("#helpdesk_attachment_"+id).addClass("hide");
+             });
     });
 
 </script>

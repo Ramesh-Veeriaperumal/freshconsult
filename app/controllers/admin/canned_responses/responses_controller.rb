@@ -52,6 +52,7 @@ class Admin::CannedResponses::ResponsesController < Admin::AdminController
 	def update
 		@ca_response = scoper.find(params[:id]) 
     build_attachments @ca_response, :admin_canned_responses_response
+    delete_shared_attachments params[:id]
 		params[nscname].merge!("folder_id"=>params[:new_folder_id])
 		respond_to do |format|     
 			if @ca_response.update_attributes(params[nscname])           
@@ -73,10 +74,11 @@ class Admin::CannedResponses::ResponsesController < Admin::AdminController
 		end
   end
 
-  def delete_shared_attachments
-    shared_attachment=Helpdesk::SharedAttachment.find_by_shared_attachable_id(params[:id], :conditions=>["attachment_id=?",params[:attachment_id]])
+  def delete_shared_attachments(ca_response)
+    (params[:remove_attachments].uniq || []).each do |a|
+    shared_attachment=Helpdesk::SharedAttachment.find_by_shared_attachable_id(ca_response, :conditions=>["attachment_id=?",a])
     shared_attachment.destroy
-    render :json => {:status => 200}
+    end
   end
 
 	def update_folder
