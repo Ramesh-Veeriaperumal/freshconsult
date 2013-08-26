@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130820103150) do
+ActiveRecord::Schema.define(:version => 20130826072656) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -115,6 +115,17 @@ ActiveRecord::Schema.define(:version => 20130820103150) do
 
   add_index "admin_user_accesses", ["account_id", "accessible_type", "accessible_id"], :name => "index_admin_user_accesses_on_account_id_and_acc_type_and_acc_id"
   add_index "admin_user_accesses", ["user_id"], :name => "index_admin_user_accesses_on_user_id"
+
+  create_table "affiliate_discount_mappings", :id => false, :force => true do |t|
+    t.integer "subscription_affiliate_id", :limit => 8
+    t.integer "affiliate_discount_id",     :limit => 8
+  end
+
+  create_table "affiliate_discounts", :force => true do |t|
+    t.string  "code"
+    t.string  "description"
+    t.integer "discount_type"
+  end
 
   create_table "agent_groups", :force => true do |t|
     t.integer  "user_id",    :limit => 8
