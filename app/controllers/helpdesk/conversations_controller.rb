@@ -10,6 +10,8 @@ class Helpdesk::ConversationsController < ApplicationController
   include Conversations::Twitter
   include Conversations::Facebook
   include Helpdesk::Activities
+  include Redis::RedisKeys
+  include Redis::TicketsRedis
   
   before_filter :build_note_body_attributes, :build_conversation, :sanitize_conversation
   before_filter :validate_fwd_to_email, :only => [:forward]
@@ -27,6 +29,7 @@ class Helpdesk::ConversationsController < ApplicationController
     @item.send_survey = params[:send_survey]
     @item.include_surveymonkey_link = params[:include_surveymonkey_link]
     if @item.save
+      clear_saved_draft
       add_forum_post if params[:post_forums]
       begin
         create_article if @publish_solution
@@ -201,5 +204,13 @@ class Helpdesk::ConversationsController < ApplicationController
         @item.note_body.load_full_text
         @item.note_body.create_content
         Rails.logger.debug "::::::sanitize conversation end"
+      end
+
+      def clear_saved_draft
+        remove_tickets_redis_key(HELPDESK_REPLY_DRAFTS % { 
+                                    :account_id => current_account.id, 
+                                    :user_id => current_user.id, 
+                                    :ticket_id => @item.notable_id
+                                })
       end
 end

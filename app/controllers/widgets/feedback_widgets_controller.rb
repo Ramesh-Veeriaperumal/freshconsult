@@ -5,7 +5,7 @@ class Widgets::FeedbackWidgetsController < SupportController
   include SupportTicketControllerMethods 
 
   def new
-    @enable_pattern = true    
+    @widget_form = true
 
     @ticket_fields = current_portal.customer_editable_ticket_fields
     @ticket_fields_def_pos = ["default_requester", "default_subject", "default_description"]

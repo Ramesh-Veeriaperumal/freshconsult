@@ -47,7 +47,7 @@
                 if(data.length > 0){
                   jQuery("#new-ticket-search")
                     .html(search_items)
-                    .prepend("<h4>Related articles...</h4>")
+                    .prepend("<h4><%= I18n.t('portal.tickets.related_articles') %></h4>")
                     .show()
                 }
                 jQuery("#helpdesk_ticket_subject").removeClass("sloading loading-small loading-right");

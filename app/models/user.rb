@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
      [ :supervisor,    "Supervisor"    , 6 ]
     ]
 
-  EMAIL_REGEX = /(\A[-A-Z0-9.'’_%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
+  EMAIL_REGEX = /(\A[-A-Z0-9.'’_&%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
 
   concerned_with :associations, :callbacks
 

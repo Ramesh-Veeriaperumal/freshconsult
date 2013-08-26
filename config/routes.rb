@@ -207,10 +207,12 @@
       admin.resources :accounts, :collection => {:agents => :get, :tickets => :get, :renewal_csv => :get}
       admin.resources :subscription_plans, :as => 'plans'
       # admin.resources :subscription_discounts, :as => 'discounts'
-      admin.resources :subscription_affiliates, :as => 'affiliates', :collection => {:add_affiliate_transaction => :post}
+      admin.resources :subscription_affiliates, :as => 'affiliates', :collection => { :add_affiliate_transaction => :post },
+                                                :member => { :add_subscription => :post }
       admin.resources :subscription_payments, :as => 'payments'
       admin.resources :subscription_announcements, :as => 'announcements'
       admin.resources :conversion_metrics, :as => 'metrics'
+      admin.resources :account_tools, :as => 'tools', :collection =>{:regenerate_reports_data => :post}
       admin.namespace :resque do |resque|
         resque.home '', :controller => 'home', :action => 'index'
         resque.failed_show '/failed/:queue_name/show', :controller => 'failed', :action => 'show'
@@ -322,6 +324,7 @@
                                     :merge_with_this_request => :post, :print => :any, :latest_note => :get,  :activities => :get, 
                                     :clear_draft => :delete, :save_draft => :post, :update_ticket_properties => :put } do |ticket|
                                       
+      ticket.resources :surveys, :collection =>{:results=>:get, :rate=>:post}
       ticket.resources :conversations, :collection => {:reply => :post, :forward => :post, :note => :post,
                                        :twitter => :post, :facebook => :post}
 

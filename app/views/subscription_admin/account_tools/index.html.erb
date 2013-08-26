@@ -1,0 +1,68 @@
+
+<div class="page-header"> 
+  <div class="row">
+    <div class="span4">
+      <h3>Regenerate Reports Data</h3>
+      <div id="message" class="hide">Please fill data Properly.</div>
+      <div id="processing" class="hide">  
+        <div class="msg" style="color:#e9e9e9;font-size:2em">
+          <img src="/images/animated/ajax-loader.gif" alt="loading more results" style="margin:10px auto">Processing...
+        </div>
+      </div>
+      <div class="well form-inline" style="display:inline-block">
+        <div class="span3" style="padding-top:5px;">
+          <label class="control-label">Account ID :</label>
+          <input type="text" name="account_id" id="account_id"/>
+        </div>
+        <div class="span3" style="padding-top:5px;">
+          <label class="control-label">From Date :</label>
+          <input type="text" name="start_date" id="start_date" class="pointer" readonly placeholder="yyyy-mm-dd" />
+        </div>
+        <div class="span3" style="padding-top:5px;">
+          <label class="control-label">Till Date :</label>
+          <input type="text" name="end_date" id="end_date" class="pointer" readonly placeholder="yyyy-mm-dd" />
+        </div>
+        <div class="span3" style="padding-top:5px;">
+         <input type="submit" id="generate_report" value="Generate" class="btn" />
+        </div>
+      </div>
+    </div>
+  </div>                                                                        
+</div>
+<script src="/javascripts/jquery-1.7.1.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+  var max_date = new Date(),
+      min_date = new Date(),
+      url      = '/tools/regenerate_reports_data',
+      success_message   = 'Added the dates sucessfully. Loading data to redshift will happen at account midnight.',
+      mandatory_message = 'Please fill data Properly.';
+  max_date.setDate(max_date.getDate() - 2);
+  min_date.setDate(min_date.getDate() - 62);
+  jQuery("#start_date").datepicker({ dateFormat: "yy-mm-dd",maxDate: max_date, minDate: min_date });
+  jQuery("#end_date").datepicker({ dateFormat: "yy-mm-dd",maxDate: max_date, minDate: min_date });
+
+  jQuery("#generate_report").click(function(){
+    var start_date = jQuery("#start_date").val(),
+        end_date   = jQuery("#end_date").val(),
+        account_id = jQuery("#account_id").val();
+
+    if(start_date != '' && end_date != '' && account_id != '' 
+      && (new Date(end_date).getTime() >= new Date(start_date).getTime()) ){
+      jQuery("#processing").show();
+      jQuery.post(url,{
+        'account_id' : account_id,
+        'start_date' : start_date,
+        'end_date'   : end_date
+      },function(data){
+        jQuery("#processing").hide();
+        jQuery('#message').text(success_message).show().delay(5000).fadeOut();
+      },
+      'text');
+    }
+    else{
+      jQuery('#message').text(mandatory_message).show().delay(5000).fadeOut();
+    }
+  });
+});
+</script>

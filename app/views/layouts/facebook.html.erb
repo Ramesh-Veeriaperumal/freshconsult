@@ -88,12 +88,20 @@
         	{
         		localStorage["fb_redirect"] = jQuery(this).attr('href');
         	}
-        	FB.login(function(response){}, {scope: 'user_likes, email'});
+        	FB.login(function(response){}, {scope: "<%= FacebookConfig::USER_PERMISSIONS.join(',') %>"});
         });
 
         FB.Canvas.setDoneLoading( function(response) {
     		FB.Canvas.setSize({height: jQuery('html').height()});
     		FB.Canvas.scrollTo(0,0);
+		});
+
+		var external_link_regex = new RegExp('/' + window.location.host + '/facebook/support');
+		jQuery("body").on('click', "a[href^=http]",function() {
+			if(!external_link_regex.test(this.href)) 
+			{
+				this.target = '_blank';
+			}
 		});
 
     </script>

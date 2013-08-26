@@ -288,16 +288,14 @@ window.xhrPool = [];
       });
 
       // !PULP to be moved into the pulp framework as a sperate util or plugin function
-      $("[rel=remote]").livequery(function(){
-        $(this).bind("afterShow", function(ev){
-          var _self = $(this);
+      $('body').on('afterShow', '[rel=remote]', function(ev) {
+        var _self = $(this);
           if(_self.data('remoteUrl')) {
             _self.append("<div class='sloading loading-small loading-block'></div>");
             _self.load(_self.data('remoteUrl'), function(){
                 _self.data('remoteUrl', false);
             });
           }
-        });
       });
       
       // Any object with class custom-tip will be given a different tool tip

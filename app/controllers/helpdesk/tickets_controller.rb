@@ -371,7 +371,7 @@ class Helpdesk::TicketsController < ApplicationController
       update_tags unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
 
       if(params[:redirect] && params[:redirect].to_bool)
-        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice')
+        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice.html.erb')
       end
 
       respond_to do |format|
@@ -1005,9 +1005,16 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def check_ticket_status
-    if params["helpdesk_ticket"]["status"].blank?
-      flash[:error] = t("change_deleted_status_msg")
-      redirect_to item_url
+    respond_to do |format|
+      format.html{
+        if params["helpdesk_ticket"]["status"].blank?
+          flash[:error] = t("change_deleted_status_msg")
+          redirect_to item_url
+        end
+      }
+      format.any(:xml, :json){
+        params["helpdesk_ticket"]["status"] ||= @item.status
+      }
     end
   end
 

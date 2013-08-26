@@ -1,8 +1,8 @@
 # encoding: utf-8
 module ParserUtil
 
-VALID_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/
-      EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
+VALID_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/
+      EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b)/
 
   def parse_email(email)
     if email =~ /(.+) <(.+?)>/
@@ -42,7 +42,7 @@ VALID_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/
       next if address.blank?
       address = address.gsub('"','').gsub("'",'')
 
-      matches = address.strip.scan(/(\w[^<\>]*)<(\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,10}\b)\>\z|\A<!--?((\b[A-Z0-9._%+-]+)@[A-Z0-9.-]+\.[A-Z]{2,10}\b)-->?\z/i)
+      matches = address.strip.scan(/(\w[^<\>]*)<(\b[A-Z0-9._&%+-]+@[A-Z0-9.-]+\.[A-Z]{2,10}\b)\>\z|\A<!--?((\b[A-Z0-9._&%+-]+)@[A-Z0-9.-]+\.[A-Z]{2,10}\b)-->?\z/i)
       
       if matches[0] && matches[0][1]
         email = matches[0][1]
@@ -52,7 +52,7 @@ VALID_EMAIL_REGEX = /\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}\b/
         name = matches [0][3]
       else
         # Validating plain email addresses,
-        simple_email_regex = /\b[-a-zA-Z0-9.'’_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}\b/
+        simple_email_regex = /\b[-a-zA-Z0-9.'’&_%+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,10}\b/
         simple_email  = address.scan(simple_email_regex)
         if simple_email
           email = simple_email[0]

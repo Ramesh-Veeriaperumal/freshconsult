@@ -1,0 +1,147 @@
+<% widget_type = selected_widget_type %>
+<% form_for "widget_config", "widget_config", :html => {:class => "form-horizontal", :rel => "validate",
+		:name => "widget_config_#{widget_type}", :id => "WidgetConfig#{widget_type}" } do |f| %>
+
+<div class="row-fluid">
+<input type="hidden" name="widgetType" id="widgetType" value="<%= widget_type %>" />
+<% if widget_type == "popup" %>
+
+<%= content_tag(:h3, t('.feedbackwidget_button_customization'), :class => "rebrand-head-text top-space-none" ) %> 
+
+  <div class="control-group">
+  	 
+	 <%= content_tag(:label, t('feedbackwidget_button_text'), :class => "control-label" ) %>
+	 <div class="controls">
+	 	<input type="text" class="text span8" size="18" name="buttonText" value="" placeholder= "<%=t('.feedbackwidget_button_text_placeholder')%>" />
+	 </div>
+  </div>
+  <div class="control-group">
+  	<%= content_tag(:label, t('feedbackwidget_background'), :class => "control-label" ) %>
+	<div class="controls">
+		<div class="color">
+			<input type="color" maxlength="7" id="TabColor" class="color_field required" name="buttonBg"  data-hex="true" value="<%= tab_color %>" />
+		</div>
+	</div>
+  </div>
+  <div class="control-group">
+	<%= content_tag(:label, t('feedbackwidget_image_button'), :class => "control-label" ) %>
+	<div class="controls">
+		<input type="text" class="textInput span8" name="backgroundImage" id="backgroundImage" value="" size="35" />
+		<%= content_tag(:div, content_tag(:b, t('note')) + t('feedbackwidget_custom_image_info') ,:class => "info-data")  %> 
+	</div>
+  </div>
+  <div class="control-group">
+  	 <%= content_tag(:label, t('feedbackwidget_position'), :class => "control-label" ) %> 
+	 <div class="controls">
+			<div class="span3">
+				<select name="alignment" class="select2 span12" id="select_id">
+					<option value="4" selected="selected"><%=t('left')%></option>
+					<option value="2"><%=t('right')%></option>
+					<option value="1"><%=t('top')%></option>
+					<option value="3"><%=t('bottom')%></option>
+				</select>
+			</div>
+			<div class="input-prepend span1">
+			  <span class="add-on">Offset:</span>
+			  <input class="number" id="offset" type="text" name="offset" value=""  placeholder= "<%=t('.feedbackwidget_offset_placeholder')%>" size="4">
+			  <span class="add-on-outer"><%= t(".feedbackwidget_px") %></span>
+			</div>
+			<p class="info-data span12 clear-left-margin"><%= t('feedbackwidget_offset_info') %></p>
+	</div>
+  </div>
+
+<% end %>
+  
+<%= content_tag(:h3, t('.feedbackwidget_form_customization'), :class => "rebrand-head-text top-space-none" ) %>
+
+  <div class="control-group">
+		<%= content_tag(:label, t('feedbackwidget_form_heading'), :class => "control-label" ) %>
+		<div class="controls">
+		 	<input type="text" class="text" size="35" name="formTitle" id="formTitle" value="" placeholder= "<%= t('feedbackwidget_defaulttitle') %>"/>
+		</div>
+  </div>	
+  <div class="control-group">
+		<%= content_tag(:label, t(".feedbackwidget_form_submit_message"), :class => "control-label" ) %>
+		<div class="controls">
+		 	<textarea class="paragraph auto-height" rows="2" name="submitThanks" id="submitThanks" value="" placeholder= "<%= t('.thankyou_default') %>"></textarea>
+			<div class="info-data"> <%= t(".thankyou_info") %> </div>
+		</div>
+  </div>
+  <div class="control-group">
+		<%= content_tag(:label, t('.feedbackwidget_form_height'), :class => "control-label" ) %>
+		<div class="controls">
+		 	<input type="text" class="text span2 number" size="4" name="formHeight" id="formHeight" value="" placeholder= "<%= t('.feedbackwidget_height_placeholder') %>"/>
+		 	<span class="add-on-outer"><%= t(".feedbackwidget_px") %></span>
+		 	<div class="info-data"> <%= t(".feedbackwidget_form_height_message") %> </div>
+		</div>
+  </div>
+  <div class="control-group">
+  	<span><%= content_tag(:label, t(".feedbackwidget_users_can"), :class => "control-label" ) %></span>
+  	<div class="controls widget_options">
+  		<% if widget_type == "popup" %>
+  		<div class="row-fluid">
+  			<span class="span3"><%= t(".feedbackwidget_screenshot") %></span>
+  			<span class="span9">
+  				<input type="hidden" name="screenshot" id="screenshot" value="" rel='pseudo' value='' />
+  				<input type="checkbox" rel="toggle" type="checkbox" class="pseudoCheckbox" 
+  					data-checked-label="Yes" data-unchecked-label="No" checked="checked" >
+  			</span>  			
+	  	</div>
+	  	<% else %>
+	  		<input type="hidden" name="screenshot" id="screenshot" value="no" rel='pseudo' />
+	  	<% end %>
+	  	<div class="row-fluid">
+  			<span class="span3"><%= t(".feedbackwidget_attach_a_file") %></span>
+  			<span class="span9">
+  				<input type="hidden" name="attachFile" id="attachFile" value="" rel='pseudo' value='' />
+  				<input type="checkbox" rel="toggle" type="checkbox" class="pseudoCheckbox" 
+  					data-checked-label="Yes" data-unchecked-label="No" checked="checked" >
+  			</span>
+	  	</div>
+	  	<div class="row-fluid">
+  			<span class="span3"><%= t(".feedbackwidget_search_area") %></span>
+  			<span class="span9">
+	  			<input type="hidden" name="searchArea" id="searchArea" rel='pseudo' value='' />
+	  			<input type="checkbox" rel="toggle" type="checkbox" class="pseudoCheckbox" 
+	  					data-checked-label="Yes" data-unchecked-label="No" checked="checked" >
+	  		</span>
+  		</div>
+    </div>
+  </div>
+<br/>
+
+
+<ul class="ui-form">
+  <li class="code-view">
+  		<% if widget_type == "popup" %>
+		 	<%= content_tag(:h3, t('.feedbackwidget_popup_code'), :class => "title span9", :id => "feedbackwidget_popup_code") %>
+	 	<% else %>
+		 	<%= content_tag(:h3, t('.feedbackwidget_embedded_code'), :class => "title span9", :id => "feedbackwidget_embedded_code" ) %>
+	 	<% end %>
+
+	 	<div class="pull-right">
+		 	<span><%= t(".feedbackwidget_use_https") %></span>
+		 	<input type="checkbox" rel="toggle" type="checkbox" name="httpsHttp" id="httpsHttp" data-checked-label="Yes" data-unchecked-label="No" />
+		 </div>
+
+		
+		<p class="intro span12 clear-left-margin"><%= t('feedbackwidget_embed_code_intro') %></p>
+		
+		<% if widget_type == "popup" %>
+		<div class="tab-pane active">
+			<textarea id="popupCode" class="codetextarea"></textarea>	
+        </div>
+        <% else %>
+        <div class="tab-pane">
+        	<textarea id="embeddedCode" class="codetextarea"></textarea>	
+        </div> 
+        <% end %>
+  </li>
+  
+ </ul>
+ <input type="hidden" name="url" id="url" value='<%= current_account.full_url %>' />
+ <input type="hidden" name="assetUrl" id="assetUrl" value='' />
+ <input type="hidden" id="widget_url" value='' />
+</div>
+
+<% end %>

@@ -12,3 +12,6 @@ Clockwork.every(1.hour, "ArchiveData_By_TimeZone", :at => "**:05", :tz => 'UTC')
 Clockwork.every(1.hour, "Load_ArchiveData_To_Redshift", :at => "**:35", :tz => 'UTC') { 
 	utc_time = Time.zone.now.utc
 	Resque.enqueue(Workers::LoadDataToRedshift, {:date => utc_time.strftime('%Y_%m_%d'), :hour => utc_time.hour.to_s}) }
+
+Clockwork.every(1.day, "Run_Redshift_Table_Vacuum", :at => "sunday 15:00", :tz => 'UTC') { 
+		Resque.enqueue(Workers::RunRedshiftTableVacuum,{}) }

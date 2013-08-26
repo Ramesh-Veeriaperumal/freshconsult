@@ -15,7 +15,11 @@
 		
 	<%= render :partial => "helpdesk/tickets/show/requester.html.erb" %> 
 	<% unless @ticket.deleted or @ticket.spam %> 
-		<%= render :partial => "helpdesk/tickets/show/ticket_fields.html.erb" %>
+		<div class="widget" id='TicketProperties'>
+			<h3 class="title"><%=t('ticket.properties')%></h3>
+			<div class="content" rel="remote" data-remote-url="/helpdesk/tickets/component/<%= @ticket.id %>?component=ticket_fields"></div>
+		</div>
+
 		<% if feature?(:timesheets) && privilege?(:view_time_entries) %>
 		<div class="modal hide fade" role="dialog" id="timesheets_loading">
 			<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button></div>

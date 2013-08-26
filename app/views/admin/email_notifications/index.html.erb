@@ -31,7 +31,7 @@
 				editorName=template_name.substring(0,index);
 				lang = "<%=current_account.language%>";
 				invokeRedactor(editorName+"_"+hideData);
-				active_email_body=jQuery("#"+editorName+"_"+hideData);
+				active_email_body=null;
 					
 			}
 		});
@@ -95,16 +95,15 @@
 
 		jQuery('.link_placeholder').live("click", function(ev){
 		    ev.preventDefault();
-				active_email_body=jQuery("#"+editorName+"_"+hideData);
 				jQuery("#"+editorName+"_"+hideData).live("click",function(){
 			});
 				jQuery('#place-dialog').slideDown();	
 
 		});
-
-		jQuery('input[type="text"]').live('blur',function(){
-						active_email_body = jQuery("#"+editorName+"_"+hideData);
-		});		
+       jQuery('.redactor_editor').live('click', function(){
+					active_email_body = jQuery("#"+editorName+"_"+hideData);	
+		});	
+		
 			
 	});
 <% end %>

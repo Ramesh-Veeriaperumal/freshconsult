@@ -25,7 +25,7 @@ module Workers
 				# the normal archiving, then data duplication can happen after the normal archiving data loaded into redshift.
 				# This case can happen during 1 month data migration into redshift
 				if num_of_deleted_rows == 0
-					AWS::S3::S3Object.delete($st_env_name+'/'+@s3_folder+'/redshift_'+@s3_folder+'.csv', S3_CONFIG[:reports_bucket])
+					AwsWrapper::S3Object.delete($st_env_name+'/'+@s3_folder+'/redshift_'+@s3_folder+'.csv', S3_CONFIG[:reports_bucket])
 					remove_reports_member REPORT_STATS_REGENERATE_KEY % {:account_id => id}, date
 					next
 				end
@@ -50,7 +50,7 @@ module Workers
 					delimiter '|' IGNOREHEADER 1 ROUNDEC REMOVEQUOTES MAXERROR 100;)	
 			execute_redshift_query(query).clear
 			# deleting file from s3
-			AWS::S3::S3Object.delete($st_env_name+'/'+@s3_folder+'/redshift_'+@s3_folder+'.csv', S3_CONFIG[:reports_bucket])
+			AwsWrapper::S3Object.delete($st_env_name+'/'+@s3_folder+'/redshift_'+@s3_folder+'.csv', S3_CONFIG[:reports_bucket])
 		end
 
 

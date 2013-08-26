@@ -17,7 +17,6 @@
 			$item.data("placeholder-proxy").attr("for", $item.attr("id"))
 			$item.data("placeholder-proxy").toggle(!$item.val());
 
-			// console.log($item.parents(".control-group").find(".control-label").html())
 			$item.on("keydown paste change", function(ev){
 				var $item = jQuery(this);
 				setTimeout(function() {
@@ -26,6 +25,7 @@
 			})
 		})
 
+		
 		$ticket_desc.redactor({
 			convertDivs: false, 
 			autoresize:false, 
@@ -37,8 +37,12 @@
 			    }, 0);
 			}
 		});
+		
+		var $placeholder_proxy = $ticket_desc.data("placeholder-proxy")
 
-		$ticket_desc.data("placeholder-proxy").toggle(!jQuery(".redactor_editor").text());
+		if($placeholder_proxy != undefined)
+			$placeholder_proxy.toggle(!jQuery(".redactor_editor").text());
+		
 		
 		setTimeout(function() {
 	 		jQuery("#fd_feedback_widget").validate({
@@ -111,12 +115,13 @@
 		});
 
 		jQuery('#takescreen-btn a').bind("click", function(ev){
+			console.log("Image loaded");
 			ev.preventDefault();
 
 			screenshot_flag=0;
 			jQuery('#takescreen-btn').hide();
 			jQuery('#screenshot-wrap').show();
-
+			
 			if(!jQuery.browser.msie && !jQuery.browser.opera)
 				jQuery('.flash').show();
 		});
@@ -157,6 +162,7 @@ function loadCanvas(dataURL) {
     };
     imageObj.src = dataURL;
     img_data = dataURL;
+	console.log("Screenshot");
     // onchecked();
 }
 
