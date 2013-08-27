@@ -1,0 +1,13 @@
+defaults: &defaults
+  :hosts:
+    - localhost:9200
+    - localhost:9201
+
+development:
+  <<: *defaults
+
+slave:
+  <<: *defaults
+
+test:
+  <<: *defaults
