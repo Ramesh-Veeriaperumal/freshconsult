@@ -919,7 +919,7 @@ class Helpdesk::TicketsController < ApplicationController
           redirect_to item_url
         end
       }
-      format.any(:xml, :json){
+      format.any(:xml, :mobile, :json){
         params["helpdesk_ticket"]["status"] ||= @item.status
       }
     end
