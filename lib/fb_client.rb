@@ -56,6 +56,17 @@ class FBClient
     @graph = Koala::Facebook::GraphAPI.new(@fb_page.access_token)
   end
   
+  def subscribe_for_page
+    begin
+      realtime_subscription = get_page.put_object(@fb_page.page_id,"tabs",:app_id => FacebookConfig::APP_ID)
+      @fb_page.update_attribute(:realtime_subscription,true) if(realtime_subscription)   
+      puts "#{@fb_page.page_id} has been enabled for realtime subscription"
+    rescue Exception => e
+      @fb_page.update_attribute(:realtime_subscription,false)
+      NewRelic::Agent.notice_error(e,{:description => "Error while subscribing for #{@fb_page.page_id} this is due to Access token expiry"})
+    end
+  end
+
   def subscribe(call_back_url)
     verify_token = "freshdesktoken"
     @updates = Koala::Facebook::RealtimeUpdates.new(:app_id => FacebookConfig::APP_ID, :secret => FacebookConfig::SECRET_KEY)
