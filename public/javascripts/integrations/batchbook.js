@@ -179,7 +179,7 @@ BatchbookWidget.prototype= {
 				country = address.country;
 				postal_code = address.postal_code;
 				street_1 = (street_1 && street_1.length) ? street_1 : null;
-				street_2 = (street_2 && street_2.length) ? street_1 : null;
+				street_2 = (street_2 && street_2.length) ? street_2 : null;
 				street = (isValidStreet(street_1) ? (street_1 + ", " ) : "") + (isValidStreet(street_2) ? street_2 : "") ;
 				if(typeof(street)!='string' || street.length==0)
 					street = null;

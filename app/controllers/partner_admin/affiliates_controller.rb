@@ -38,7 +38,7 @@ class PartnerAdmin::AffiliatesController < ApplicationController
     end
 
   def ensure_right_affiliate
-   unless SubscriptionAffiliate.check_affiliate_in_metrics?(@account,params[:userID])   
+   unless SubscriptionAffiliate.subscription_from_shareasale?(@account,params[:userID])   
     return render :xml => ActiveRecord::RecordNotFound, :status => 404 
    end
   end

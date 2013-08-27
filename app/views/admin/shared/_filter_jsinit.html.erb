@@ -76,12 +76,14 @@
           var subject = jQuery('<div class="subject_div row-fluid" />')
                   .append("<label class='span2'><%= t('.subject') %></label>")
                   .append(jQuery('<div class="sub_placeholder"/>')
-                  .append(FactoryUI.text("", "email_subject", initFeed["email_subject"]))
+                  .append(FactoryUI.text("", "email_subject", initFeed["email_subject"]).data(
+                  "ignorePlaceholders", 'triggered_event'))
                   .append(placeholder1))
         
           var body  = jQuery('<div class="body_div row-fluid" />')
                   .append("<label class='span2'><%= t('.body') %></label>")
-                  .append(FactoryUI.paragraph("", "email_body", initFeed["email_body"]))
+                  .append(FactoryUI.paragraph("", "email_body", initFeed["email_body"]).data(
+                  "ignorePlaceholders", 'triggered_event'))
 
           c_dom = jQuery("<div class='s_email row-fluid' />")
                 .append(to)
@@ -149,7 +151,7 @@
 
           var placeholder1 = jQuery("<span class='placeholder_div'> <a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a> </span>")
           var uri_textarea = FactoryUI.paragraph("", "url", initFeed['url'], "text uri required")
-                                .data("ignorePlaceholders", 'ticket_satisfaction_survey');
+                                .data("ignorePlaceholders", 'ticket_satisfaction_survey,ticket_suverymonkey_survey');
 
           setTimeout(function(ev){
             uri_textarea.autosize();
@@ -191,7 +193,7 @@
                         .append(simple_edit)
                         .append(FactoryUI.label("<%= t('.simple_webhook_tip') %>", 'tip'));
 
-          var placeholder2 = jQuery("<span class='placeholder_div'> <a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a> </span>")
+          var placeholder2 = jQuery("<span class='placeholder_div body_div'> <a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a> </span>")
           var advanced_edit = jQuery("<div class='row-fluid'/>")
                                 .append(FactoryUI.paragraph("", "params", ((initFeed['content_layout']==2) ? initFeed['params'] :''), 'params').data("ignorePlaceholders", 'ticket_satisfaction_survey,ticket_suverymonkey_survey'));
           var advanced = jQuery('<div class="edit2 span10"/>')

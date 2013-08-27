@@ -3,4 +3,22 @@
 	<center><%= params[:submit_message] || t("ticket.thanks") %></center>
 </h3>
 <br /><br />
+<center><%= link_to t('go_back'), :back %></center>
+<input type="hidden" name="widgetType" id="widgetTypeThanks" value= "<%= params[:widgetType]%>" />
+
 		
+<script type="text/javascript">
+	
+	jQuery(document).ready(function () {
+		var embeddedWidget = jQuery("#widgetTypeThanks").val();
+		if(embeddedWidget == "embedded") {
+			jQuery("#feedback-widget-container").removeClass("modal modal-widget");
+
+			jQuery(".modal-body").addClass("embedded-body");
+			jQuery(".modal-panel").addClass("embedded-panel");
+			jQuery(".modal-footer").addClass("embedded-footer");
+			jQuery(".hc-search-input").addClass("embedded-search-input");
+		}
+
+	});
+</script>

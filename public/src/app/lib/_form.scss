@@ -560,7 +560,7 @@ a.addchoice:hover{
 			.radiolabel{margin-right: 10px;}
 			.webhook{
 				margin: 20px 0 10px 0px;
-				.credentials{padding-left: 15.2%; box-sizing: border-box;}
+				.credentials{padding-left: 15.2%; box-sizing: border-box; -moz-box-sizing: border-box;}
 				>div{
 					margin: 2px 0;
 					label{margin-top: 7px;}
@@ -587,8 +587,9 @@ a.addchoice:hover{
 						}
 					.params{width:69%; min-height:146px; padding-right: 20.3%;}
 					.tip{width: 92%; color: grey;}
-					.placeholder_div{position: absolute; width: 70%;}
-					.l_placeholder{position: absolute; right:0px; margin-top: 8px; float:right;}
+					.placeholder_div{position: relative; width: 75%;}
+					.body_div{width:90%;}
+					.l_placeholder{position: absolute; right:0px; margin-top: 12px; float:right;}
 				}
 			}
 
@@ -1311,10 +1312,10 @@ input.search{
 	textarea{
 		border:1px dotted #afafaf;
 		display:block;
-		background:#ffffff;
+		background:#fefef0;
 		font-size:12px;
 		color:#333333;
-		height:160px;
+		height:180px;
 		font-family: "courier";
 	}
 }

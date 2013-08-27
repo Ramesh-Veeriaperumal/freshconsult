@@ -1,5 +1,6 @@
 class Social::FacebookTabsController < ApplicationController
 
+  before_filter { |c| c.requires_feature :facebook_page_tab }
   before_filter :load_page
 
   def remove

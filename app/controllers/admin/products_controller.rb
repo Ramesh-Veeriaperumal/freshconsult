@@ -85,7 +85,7 @@ class Admin::ProductsController < Admin::AdminController
       portal = current_account.portals.find(params[:id])
       portal.send(icon_type).destroy
       portal.touch
-      redirect_to :action => 'edit'
+      redirect_to :back
       # render :text => "success"
     end
 

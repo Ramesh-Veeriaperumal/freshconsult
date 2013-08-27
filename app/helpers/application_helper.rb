@@ -47,8 +47,8 @@ module ApplicationHelper
     MemcacheKeys.fetch(["v4","portal","logo",current_portal],30.days.to_i) do
       image_tag(
         current_portal.logo.nil? ? "/images/logo.png?721013" : 
-        AWS::S3::S3Object.url_for(current_portal.logo.content.path(:logo),current_portal.logo.content.bucket_name,
-                                          :expires_in => 30.days, :use_ssl => true)
+        AwsWrapper::S3Object.url_for(current_portal.logo.content.path(:logo),current_portal.logo.content.bucket_name,
+                                          :expires => 30.days, :secure => true)
       )
     end
   end
@@ -56,8 +56,8 @@ module ApplicationHelper
   def fav_icon_url
     MemcacheKeys.fetch(["v5","portal","fav_ico",current_portal]) do
       url = current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' : 
-            AWS::S3::S3Object.url_for(current_portal.fav_icon.content.path,current_portal.fav_icon.content.bucket_name,
-                                          :expires_in => 30.days, :use_ssl => true)
+            AwsWrapper::S3Object.url_for(current_portal.fav_icon.content.path,current_portal.fav_icon.content.bucket_name,
+                                          :expires => 30.days, :secure => true)
       "<link rel=\"shortcut icon\" href=\"#{url}\" />"
     end
   end
@@ -388,7 +388,7 @@ module ApplicationHelper
   end
   
    def timesheet_path(args_hash, link_display = 'time entry')
-    link_to(link_display, "#{helpdesk_ticket_path args_hash['ticket_id']}#timeentry_#{args_hash['timesheet_id']}")
+    link_display
   end
   #Liquid ends here..
   
@@ -442,6 +442,9 @@ module ApplicationHelper
   # Avatar helper for user profile image
   # :medium and :small size of the original image will be saved as an attachment to the user 
   def user_avatar( user, profile_size = :thumb, profile_class = "preview_pic" ,options = {})
+    #Hack. prod issue. ticket: 55851. Until we find root cause. It was not rendering view at all.
+    #Remove once found the cause. 
+    user = User.new if user.nil?
     img_tag_options = { :onerror => "imgerror(this)", :alt => "" }
     if options.include?(:width)  
       img_tag_options[:width] = options.fetch(:width)

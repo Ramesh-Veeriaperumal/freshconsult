@@ -52,6 +52,11 @@
 			  	    				edit_integrations_installed_application_path(@installed_applications[i_app_index]), 
 			  	    				:class => "btn tooltip", :title => t("application.configure_addon") %>		
 
+			  	    	<%elsif application[:options][:pre_install]%>
+ 
+			  	    			<% auth_url = AppConfig['integrations_url'][Rails.env] + Liquid::Template.parse(application[:options][:oauth_url]).render("account_id" => current_portal.id, "portal_id" => current_portal.id)%>
+						  		 <%= link_to "Edit", auth_url , :class => "btn tooltip", :title => t("application.configure_addon") %>	
+ 
 			  	    	<% end %>
 			  	    	<%= link_to t('application.enabled') + "<span></span>", uninstall_integrations_installed_application_path(@installed_applications[i_app_index]), :class => "uiButton special iphone-active custom-tip-bottom", :confirm => t("application.confirm_disable"), :title => t("application.click_to_disable") %>	
 					  <%end%>

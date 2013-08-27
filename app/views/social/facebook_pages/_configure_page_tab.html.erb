@@ -1,3 +1,32 @@
+  <% content_for :onload_script do %> 
+
+    jQuery('#tab_config').on('click', function(ev){
+      ev.preventDefault();
+      jQuery('.fb_changed').removeAttr('disabled').data("updated", true);
+      jQuery('.configure').fadeOut(200, function() {
+        jQuery('#after_config').fadeIn('fast');
+      });
+
+    });
+
+    jQuery('.cancel_fb').on('click', function(ev){
+      ev.preventDefault();
+      jQuery('.fb_changed').removeData('updated');
+      jQuery('#after_config').fadeOut(200, function() {
+        jQuery('.configure').fadeIn('fast');
+      });
+
+      jQuery('.fb_changed').prop('disabled', true);
+    });
+
+    jQuery('#after_config').on('input', function(ev){
+      jQuery('.fb_changed').data("updated", true);
+    });
+
+    jQuery("#fb_form").on('submit', function(ev){
+      jQuery('.fb_changed').prop('disabled', !jQuery('.fb_changed').data("updated"));
+    });
+  <% end %>
   <span class="seperator"></span>
   <h3 class="sub-lead"><%= t('facebook_tab.page_tab_head') %></h3>
   <div class="info-data"><%= t('facebook_tab.config_info') %></div>

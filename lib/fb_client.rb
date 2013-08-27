@@ -11,7 +11,7 @@ class FBClient
   end
   
   def authorize_url(state)
-    permissions = "manage_pages,offline_access,read_stream,publish_stream,manage_notifications,read_mailbox,read_page_mailboxes"
+    permissions = "manage_pages,offline_access,email,read_stream,publish_stream,manage_notifications,read_mailbox,read_page_mailboxes"
     url = "https://www.facebook.com/dialog/oauth?client_id=#{FacebookConfig::APP_ID}&redirect_uri=#{@callback_url}&state=#{state}&scope=#{permissions}"
     return url
   end
@@ -46,6 +46,14 @@ class FBClient
     
     end
     fb_pages
+  end
+
+  def get_page
+    @graph = Koala::Facebook::GraphAPI.new(@fb_page.page_token)
+  end
+  
+  def get_profile
+    @graph = Koala::Facebook::GraphAPI.new(@fb_page.access_token)
   end
   
   def subscribe(call_back_url)

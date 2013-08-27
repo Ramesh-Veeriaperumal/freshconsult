@@ -681,6 +681,11 @@ HTML
                 "data-file-id" => "#{ attach_id }_file", :id => "#{ attach_id }_proxy_link" )
 	end
 
+	# A fallback for portal... as attachment & screenshot is being used in both feedback widget & portal 
+	def widget_option type
+		true
+	end
+
 	private
 
 		def portal_preferences
