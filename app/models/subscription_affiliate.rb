@@ -1,58 +1,135 @@
 class SubscriptionAffiliate < ActiveRecord::Base
+
   has_many :subscriptions
   has_many :subscription_payments
-  
-  COMMISSION = 0.20
-  AFILIATE_SOWFTWARE = "ShareASale"
-  
+  has_and_belongs_to_many :discounts,
+    :class_name => 'AffiliateDiscount',
+    :join_table => 'affiliate_discount_mappings'
+
   validates_presence_of :token
   validates_uniqueness_of :token
   validates_numericality_of :rate, :greater_than_or_equal_to => 0,
     :less_than_or_equal_to => 1
-    
-  def self.merchant_id
-    40631
-  end
-  
-  def self.affiliate_param
-    "SSAID"
-  end
 
-  def self.check_affiliate_in_metrics?(account,shareasale_affiliate_id)
-    metrics = account.conversion_metric
-    if !metrics.nil? and 
-      (metrics.first_referrer.include?(affiliate_param) || 
-       metrics.referrer.include?(affiliate_param))
-      uri = metrics.referrer.include?(affiliate_param) ? metrics.referrer : metrics.first_referrer
-      env = Rack::MockRequest.env_for(uri)
-      req = Rack::Request.new(env)
-      params = req.params
-      affiliate_id = params.fetch(affiliate_param)
+  before_save :set_discounts
+  attr_accessor :affiliate_discount_ids
+
+  AFFILIATES = { 
+    :shareasale => {
+      :name => "Share A Sale",
+      :affiliate_param => "SSAID",
+      :commission => 0.20, 
+      :merchant_id => 40631
+    },
+    
+    :grasshopper => {
+      :name => "Grasshopper",
+      :affiliate_param => "grasshopper",
+      :token => "grasshopper"
+    },
+    
+    :huddlebuy => {
+      :name => "Huddle Buy",
+      :affiliate_param => "huddlebuy.co.uk/goldcard",
+      :token => "huddlebuy"
+    }
+  }
+  
+  AFFILIATE_PARAMS = AFFILIATES.collect { |affiliate, details| details[:affiliate_param] }
+
+
+  class << self
+
+    AFFILIATES.each_pair do |affiliate, details|
+      define_method "#{affiliate}_subscription?" do |affiliate_param|
+        affiliate_param == details[:affiliate_param]
+      end
     end
-    affiliate_id and (affiliate_id.eql?(shareasale_affiliate_id))
+
+    def affiliate_subscription?(account)
+      has_affiliate_param?(account.conversion_metric) if account.conversion_metric
+    end
+    
+    #shareasale
+    def subscription_from_shareasale?(account, shareasale_affiliate_id)
+      data = fetch_data_from_metrics(account.conversion_metric)
+      if (data[:affiliate_param] and shareasale_subscription?(data[:affiliate_param]))
+        params = Rack::Request.new(Rack::MockRequest.env_for(data[:uri])).params
+        affiliate_id = params.fetch(data[:affiliate_param])
+      end
+
+      affiliate_id and (affiliate_id.eql?(shareasale_affiliate_id))
+    end
+
+    #other affiliates
+    def fetch_affiliate(account)
+      data = fetch_data_from_metrics(account.conversion_metric)
+      affiliate_param = data[:affiliate_param]
+
+      case 
+        when grasshopper_subscription?(affiliate_param)
+          find_by_token(AFFILIATES[:grasshopper][:token])
+        when huddlebuy_subscription?(affiliate_param)
+          find_by_token(AFFILIATES[:huddlebuy][:token])
+        else
+          nil
+      end
+    end
+
+    def add_affiliate(account, affiliate_token)
+      begin
+        affiliate = find_by_token(affiliate_token)
+        if affiliate.blank? and subscription_from_shareasale?(account, affiliate_token)
+          affiliate = create_shareasale_affiliate(affiliate_token) 
+        end
+        account.subscription.affiliate = affiliate
+        account.subscription.save!
+      rescue Exception => e
+        NewRelic::Agent.notice_error(e)
+        # FreshdeskErrorsMailer.deliver_error_email(nil, nil, e,
+        #   { :subject => "Error attaching affiliate to the subscription" })
+      end
+    end
+    
+    # private
+      def has_affiliate_param?(metrics)
+        (affiliate_param(metrics.referrer).present? || 
+            affiliate_param(metrics.first_referrer).present?)
+      end
+
+      def affiliate_param(url)
+        AFFILIATE_PARAMS.select { |param| url.include?(param) }.to_s unless url.blank?
+      end
+
+      def fetch_data_from_metrics(metrics)
+        if !metrics.blank? and has_affiliate_param?(metrics)
+          uri = !affiliate_param(metrics.referrer).blank? ? 
+                        metrics.referrer : metrics.first_referrer
+          affiliate_param = affiliate_param(uri)
+        end
+
+        { :uri => uri, :affiliate_param => affiliate_param }
+      end
+
+      def create_shareasale_affiliate(affiliate_id) 
+        create( :name => AFFILIATES[:shareasale][:name],
+                :rate => AFFILIATES[:shareasale][:commission],
+                :token => affiliate_id )
+      end      
+  end  
+
+  def set_discounts
+    if self.affiliate_discount_ids
+      self.affiliate_discount_ids.collect{ |id| id unless id.eql?("---")}.compact
+      self.discounts = AffiliateDiscount.find_all_by_id(self.affiliate_discount_ids)
+    end
   end
-  
-  def self.add_affiliate(account,affiliate_id)
-    begin
-    unless affiliate_id.nil?
-      affiliate = find_by_token(affiliate_id)
-      affiliate = create({:name => AFILIATE_SOWFTWARE,
-                          :rate => COMMISSION,
-                          :token => affiliate_id}) unless affiliate
-      account.subscription.affiliate = affiliate  
-      account.subscription.save unless account.subscription.active?
-    end
-    rescue Exception => e
-      NewRelic::Agent.notice_error(e)
-      FreshdeskErrorsMailer.deliver_error_email(nil,nil,e,{:subject => "Error creating subscription affiliate"})
-    end
-  end
-  
-  
-  
+    
   # Return the fees owed to an affiliate for a particular time
   # period. The period defaults to the previous month.
   def fees(period = (Time.now.beginning_of_month - 1).beginning_of_month .. (Time.now.beginning_of_month - 1).end_of_month)
     subscription_payments.all(:conditions => ["created_at > '#{1.year.ago}'"]).collect(&:affiliate_amount).sum    
   end
+
 end
+

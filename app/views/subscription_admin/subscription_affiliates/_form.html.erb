@@ -10,5 +10,13 @@
   <%= form.text_field :token %>
   <%= form.label :rate %>
   <%= form.text_field :rate %>
+  
+  <%= form.label :affiliate_discount_ids, "Free Agent Coupons" %>
+  <%= select_tag "subscription_affiliate[affiliate_discount_ids][]", options_for_select(@free_agent_coupons.collect{ |d| ["#{d.description}", d.id] }.insert(0,"--")) %> 
+
+  <%= form.label :affiliate_discount_ids, "Percentage coupons" %>  
+  <%= select_tag "subscription_affiliate[affiliate_discount_ids][]", options_for_select(@percentage_coupons.collect{ |d| ["#{d.description}", d.id] }.insert(0, "--")) %> 
+  
 </fieldset>
 <%= submit_tag %>
+
