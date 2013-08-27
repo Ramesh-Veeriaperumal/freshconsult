@@ -88,8 +88,8 @@ SalesforceWidget.prototype= {
 				if(this.salesforceBundle.leadFields!=undefined){
 					leadfields = this.salesforceBundle.leadFields.split(",");
 					for (var i=0;i<leadfields.length;i++){
-						if(contactfields[i]=="Address"){
-							sfcontact[contactfields[i]]=this.salesforceWidget.getAddress(contact.Street,contact.State,contact.City,contact.Country);
+						if(leadfields[i]=="Address"){
+							sfcontact[leadfields[i]]=this.salesforceWidget.getAddress(contact.Street,contact.State,contact.City,contact.Country);
 						}
 						else{
 							sfcontact[leadfields[i]] = contact[leadfields[i]]
