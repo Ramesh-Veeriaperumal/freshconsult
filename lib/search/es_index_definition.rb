@@ -271,7 +271,6 @@ class Search::EsIndexDefinition
   end
 
   def es_cluster(account_id)
-    Es_urls = ["localhost:9200","localhost:9201"] if Rails.env.development? && ES_ENABLED
     if (account_id <= 200)
       Tire.configure { url Es_urls[0] }
       "fd_es_index_1"
@@ -282,7 +281,6 @@ class Search::EsIndexDefinition
   end
 
   def es_cluster_by_prefix(index_prefix)
-    Es_urls = ["localhost:9200","localhost:9201"] if Rails.env.development? && ES_ENABLED
     if index_prefix.include?("fd_es_index_1")
       Tire.configure { url Es_urls[0] }
     elsif index_prefix.include?("fd_es_index_2")
