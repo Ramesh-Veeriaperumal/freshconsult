@@ -838,7 +838,7 @@ pl:
   assuming_identity_not_allowed_msg: "Nie masz wystarczających uprawnień na dostęp do tej strony."
   assuming_identity_user_does_not_exist_msg: "Użytkownik którego tożsamość próbowałeś użyć nie istnieje"
   at: o
-  attach_file: "Dodaj plik"
+  attach_file: "Załącz plik"
   attach_file_local: "Dołącz plik z komputera"
   attach_files: "Dołącz pliki"
   attachment: Załącznik
@@ -2522,8 +2522,16 @@ pl:
   please_wait: "Proszę czekać..."
   portal: 
     article: 
+      more_articles: "Więcej artykułów w <span class='folder-name'>%{article_name}</span>"
       see_all_articles: "Zobacz wszystkie (%{count}) artykuły"
     community_forums: Forum
+    cookie: 
+      cookie_dialog_info1: "Korzystamy z cookies, aby zapewnić Ci lepsze doświadczenie z korzystania z Freszdesk."
+      cookie_dialog_info2: "Możesz dowiedzieć się więcej na temat jakich rodzajów plików cookies używamy, dlaczego ich używamy i jak ich używamy ze strony %{privacy_link}. Jeżeli nienawidzisz ciasteczka albo jesteś po prostu na diecie, możesz je wyłączyć zupełnie. Pamiętaj tylko, że Freshdesk naprawdę uwielbia ciasteczka (szczególnie te z kawałami czekolady) i niektóre elementy Freshdesku mogą nie działać prawidłowo z wyłączonymi plikami cookies."
+      cookie_dialog_info3: "Zakładamy także, że zgadzasz się ze sposobem w jaki korzystamy z plików cookies i z tym jak jest to zapisane w naszej %{privacy_link}, jeżeli nie wyłączasz ich zupełnie w swojej przeglądarce."
+      cookie_policy: "Polityka cookies"
+      privacy_policy: "Polityka Prywatności"
+      why_we_love_cookies: "Dlaczego kochamy Cookies"
     folder: 
       filler_text: "Śledź tę stronę w celu uzyskania dalszych artykułów dotyczących %{folder_name}"
     header: 

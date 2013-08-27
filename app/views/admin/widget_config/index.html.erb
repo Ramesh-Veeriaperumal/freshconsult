@@ -7,82 +7,34 @@
 <%= render :partial => "helpnote" %>
 <%- end %>
 
-<%= content_tag( :h3, t("feedbackwidget_title"), :class => "title") %>
+	 	<a href="/admin/home" class="btn pull-right"><%= t('go_back') %></a>
+
+<%= content_tag( :h2, t("feedbackwidget_title"), :class => "title") %>
 <%= content_tag( :div, t("feedbackwidget_intro"), :class => "intro") %>
 
-<% form_for "widget_config", "widget_config", :html => { :name => "widget_config", :id => "WidgetConfig" } do |f| %>
-	<ul class="ui-form">	
-	  <li class="inline-field">
-	  	 <%= content_tag(:h3, t('feedbackwidget_btcustomize'), :class => "title" ) %> 
-		 <%= content_tag(:label, t('feedbackwidget_text'), :class => "caption" ) %>
-		 <div class="fields">
-		 	<input type="text" class="text" size="18" name="buttonText" value="<%=t('feedbackwidget_defaultbutton')%>" />
-		 </div>
-	  </li>
-	  <li class="inline-field">
-	  	<%= content_tag(:label, t('feedbackwidget_bgcolor'), :class => "caption" ) %>
-		<div class="fields">
-			<div class="color">
-				<input type="color" maxlength="7" id="TabColor" class="color_field required" name="buttonBg"  data-hex="true" value="<%= $tab_color %>" />
-			</div>
-		</div>
-	  </li>
-	  <li class="inline-field">
-		<%= content_tag(:label, t('feedbackwidget_custom_image'), :class => "caption" ) %>
-		<div class="fields">
-			<input type="text" class="textInput" name="backgroundImage" value=""  size="35" />
-			<%= content_tag(:div, content_tag(:b, t('note')) + t('feedbackwidget_custom_image_info').html_safe ,:class => "info-data")  %> 
-		</div>
-	  </li>
-	  <li class="inline-field">
-	  	 <%= content_tag(:label, t('feedbackwidget_position'), :class => "caption" ) %> 
-		 <div class="fields">
-				<label>
-					<%= t('align_to') %>
-					<select name="alignment">
-						<option value="4" selected="selected"><%=t('left')%></option>
-						<option value="2"><%=t('right')%></option>
-						<option value="1"><%=t('top')%></option>
-						<option value="3"><%=t('bottom')%></option>
-					</select>
-				</label>
-				<label> 
-					<%= t('feedbackwidget_offset_label') %>
-					<input type="text" class="text" name="offset" value="235px" size="4" />
-					<div class="info-data"><%= t('feedbackwidget_offset_info').html_safe %></div>
-				</label> 
-		</div>
-	  </li>
-	  <li class="inline-field">
-			<%= content_tag(:h3, t('feedbackwidget_formcustomize').html_safe, :class => "title" ) %> 
-			<%= content_tag(:label, t('feedbackwidget_form_title').html_safe, :class => "caption" ) %>
-			<div class="fields">
-				<label class="overlabel" for="FormTitle"><%= t('feedbackwidget_defaulttitle').html_safe %></label>
-			 	<input type="text" class="text" size="35" name="formTitle" id="FormTitle" value="" />
-			</div>
-	  </li>	
-	  <li class="inline-field">
-			<%= content_tag(:label, t(".thankyou_label").html_safe, :class => "caption" ) %>
-			<div class="fields">
-				<label class="overlabel" for="submitThanks"><%= t('.thankyou_default').html_safe %></label>
-			 	<textarea class="paragraph auto-height" rows="2" name="submitThanks" id="submitThanks"></textarea>
-				<div class="info-data"> <%= t(".thankyou_info").html_safe %> </div>
-			</div>
-		</li>
-	  <li class="code-view">
-		 	<%= content_tag(:h3, t('feedbackwidget_embed_code').html_safe, :class => "title" ) %>
-			<%= content_tag(:div, t('feedbackwidget_embed_code_intro').html_safe, :class => "intro") %>
-			<textarea id="EmbedCode"></textarea>	 
-	  </li>
-	   <li>
-	 	<a href="/admin/home" class="uiButton"><%= t('back_to_admin') %></a>
-	   </li>
-	 </ul>
-	 <input type="hidden" name="url" value='<%= current_account.full_url %>' />
-	 <input type="hidden" name="assetUrl" value='<%= widget_asset_url %>' />
-<% end %>
+<div>
+	<ul data-tabs="tabs" class="tabs" id="fw-tabs">
+	    <li class="active">      
+	      <a href="#popup" data-toggle="tab" id="popup-tab"><%= t(".feedbackwidget_popup_tab").html_safe %></a>
+	    </li>
+	    <li class="">
+	      <a href="#embedded" id="embedded-tab"><%= t(".feedbackwidget_embedded_tab").html_safe %></a>
+	    </li>
+	</ul>
+</div>
 
-<script src="/widget/freshwidget.js?v=2.1" type="text/javascript"></script>
+<div class="tab-content" id="fw-tab-content">
+  <div class="tab-pane active" id="popup">
+    <%= render :partial => "popup_embedded_widget", :locals => {:selected_widget_type => "popup", :tab_color => $tab_color} %>
+  </div>
+  <div class="tab-pane" id="embedded">		
+    <%= render :partial => "popup_embedded_widget", :locals => {:selected_widget_type => "embedded", :tab_color => $tab_color} %>
+  </div>
+</div>
+<script src="/javascripts/freshwidget.js?v=2.1" type="text/javascript"></script>
+<script type="text/javascript">
+ wgu = <%= widget_asset_url.to_json.html_safe %>;
+</script>
 <% javascript_tag do %>
 	FreshWidget.init("", {
 		"buttonText": "Support", 
@@ -90,54 +42,146 @@
 		"backgroundImage": "", 
 		"alignment": "4", 
 		"offset": "30%",
-		"assetUrl": "<%= widget_asset_url %>"
+		"assetUrl": wgu.http
 	});
 	(function($){
-		WidgetFormHash  = $H(); 
+		var WidgetFormHash = $H(); 
+
+		$("#fw-tabs a").on("change", function(ev){			
+			$("#fw-tab-content form:visible").trigger("change");
+		})
+
 		function changeCode(){
-			WidgetFormArray = $("#WidgetConfig").serializeArray();
+			var $activeForm = $("#fw-tab-content form:visible");
+
+			if(!$activeForm.valid()) return;
+			WidgetFormArray = $activeForm.serializeArray();
 			WidgetFormHash.set("queryString", "");
+			var widgetUrl = "";
+			var websiteUrl = "";
+
+			$("#assetUrl").val(wgu.http);
+			$("#widget_url").val(wgu.http);
+			
+
 			$.each(WidgetFormArray, function(index, item){
+				$item = $activeForm.find('[name=' + item['name'] + ']');
 				if(item['value'] != ''){
 					switch (item['name']){
 					 	case "authenticity_token":
 					 	break;
 						case "submitThanks":
-							WidgetFormHash.set("queryString", WidgetFormHash.get("queryString") + "&" + 
-								$("#submitThanks").serialize());
-						break;
 						case "formTitle":
+						case "attachFile":
+						case "screenshot":
+						case "searchArea":
 							WidgetFormHash.set("queryString", WidgetFormHash.get("queryString") + "&" + 
-								$("#FormTitle").serialize());
+								$item.serialize());
+						break;
+						case "widgetType":
+							WidgetFormHash.set("queryString", WidgetFormHash.get("queryString") + "&" + 
+								$item.serialize());
+							WidgetFormHash.set(item['name'], item['value']);
+						break;
+						case "httpsHttp":
+							$("#assetUrl").val(wgu.https);
+							$("#widget_url").val(wgu.https);
+							
+							break;
+						case "assetUrl":
+						case "widget_url":
+						break;
+						case "offset":
+						case "formHeight":
+							WidgetFormHash.set(item['name'], item['value'] + 'px');
 						break;
 						case "buttonBg":
 							WidgetFormHash.set("buttonColor", 
-								$.fn.mColorPicker.textColor($("#TabColor").css("border-right-color")));
+								$.fn.mColorPicker.textColor($item.css("border-right-color")));
 					 	default:
 							WidgetFormHash.set(item['name'], item['value']);
 						break;
 					}
+				}else{
+					switch(item['name']){
+						case "buttonText":
+							WidgetFormHash.set(item['name'], $item.attr('placeholder'));
+						break;
+						case "formHeight":
+						case "offset":
+							WidgetFormHash.set(item['name'], $item.attr('placeholder') + 'px');
+						break;
+						case "backgroundImage":
+							WidgetFormHash.set(item['name'], "");
+						break;
+					}
 				}
+
 			});
+			
 			constructCode(WidgetFormHash);
 			FreshWidget.update(WidgetFormHash.toObject());
+
+			//Update widget with the latest config changes
+			jQuery('#freshwidget-frame').attr('src', '/widgets/feedback_widget/new?' + WidgetFormHash.get("queryString").sub('embedded','popup'));
 		}
 		
 		function constructCode(data){
-			code_text = '<'+'script type="text/javascript" src="<%= widget_asset_url %>/freshwidget.js"></'+'script>\n'+
+			var widget_url = $("#widget_url").val();
+			var url = $("#url").val();
+			widget_code_text = '<'+'script type="text/javascript" src="'+widget_url+'/freshwidget.js"></'+'script>\n'+
 						'<'+'style type="text/css" media="screen, projection">\n' +
-  						'\t@import url(<%= widget_asset_url %>/freshwidget.css); \n'+
+  						'\t@import url('+widget_url+'/freshwidget.css); \n'+
 						'</'+'style> \n' +
 						'<'+'script type="text/javascript">\n'+
 						'\tFreshWidget.init("", ' + data.toJSON() + ' );\n' +
 						'<'+'/script>';
-			$("#EmbedCode").val(code_text);
+						
+			$("#popupCode").val(widget_code_text);
+
+			var jsonData = data.toJSON();
+			var objJsonData = jQuery.parseJSON(jsonData);
+
+			var heightForm = $('');
+			embed_code_text = '<'+'script type="text/javascript" src="'+widget_url+'/freshwidget.js"></'+'script>\n'+
+						'<'+'style type="text/css" media="screen, projection">\n' +
+  						'\t@import url('+widget_url+'/freshwidget.css); \n'+
+						'</'+'style> \n' +
+						'<'+'iframe class="freshwidget-embedded-form" id="freshwidget-embedded-form" src="'+url+'/widgets/feedback_widget/new?' + objJsonData.queryString + '" scrolling="no" height="' + objJsonData.formHeight +'" width="100%" frameborder="0" >\n'+
+						'<'+'/iframe>';
+
+			
+			$("#embeddedCode").val(embed_code_text);
+
+			var buttonTextFocus = $('[name="buttonText"]').is( ":focus" );
+			var buttonColorFocus = $("#TabColor").is( ":focus" );
+			if( !buttonTextFocus && !buttonColorFocus)
+			{
+				$(".ui-form").effect( "highlight", {color:"#E4E4E4"});
+			}
+
 		}	
 		
 		$(document).ready(function () {
-			$("#WidgetConfig").change(changeCode);
+			$("#assetUrl").val(wgu.http);
+			$("#widget_url").val(wgu.http);
+			$("#fw-tab-content form").change(changeCode);
+			$("#fw-tab-content form:visible").find('[name="buttonText"]').keyup(changeCode);
 	    	$('#TabColor').bind('colorpicked', changeCode);
 				changeCode();
+
+		     $('#select_id').select2({
+		        minimumResultsForSearch : 1000 //Keep high search value to shut off search box. Couldnt find a better way.
+		    });
+
+		    $('.pseudoCheckbox').bind('change', function(ev) {
+		    	$(this).siblings('[rel=pseudo]').val(this.checked ? '' : 'no');
+			});
+
 	  	});
+
+	  	Fjax.afterNextPage = function(){
+	  		FreshWidget.destroy();
+	  	}
 	})(jQuery)
 <% end %>

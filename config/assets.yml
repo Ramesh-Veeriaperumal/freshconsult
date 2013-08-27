@@ -85,8 +85,12 @@ stylesheets:
   getting_started:
     - public/stylesheets/app/getting_started.css
 
+  facebook:
+    - public/stylesheets/portal/facebook.css
+
   rating:
     - public/stylesheets/portal/rating.css
+
 
 javascripts:
   defaults:
@@ -282,3 +286,7 @@ javascripts:
     - public/javascripts/highcharts-more.js
     - public/javascripts/adv_reports/report_charts.js
     - public/javascripts/adv_reports/adv_reports.js
+
+  merge:
+    - public/javascripts/app/merge.js
+    - public/javascripts/app/merge_tickets.js

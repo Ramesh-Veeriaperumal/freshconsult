@@ -70,7 +70,6 @@ class TopicsController < ApplicationController
       @post.account_id = current_account.id
       # only save topic if post is valid so in the view topic will be a new record if there was an error
       @topic.body_html = @post.body_html # incase save fails and we go back to the form
-      @topic.monitorships.build(:user_id => current_user.id,:active => true) if params[:monitor] 
       build_attachments  
       topic_saved = @topic.save if @post.valid?
       post_saved = @post.save 

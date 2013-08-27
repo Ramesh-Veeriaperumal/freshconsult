@@ -101,7 +101,7 @@
       :collection => { :reorder => :put }
     admin.resources :observer_rules, :member => { :activate_deactivate => :put }, 
       :collection => { :reorder => :put }
-    admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get, :test_email => :put}
+    admin.resources :email_configs, :member => { :make_primary => :put, :deliver_verification => :get, :test_email => :put} , :collection => { :existing_email => :get }
     admin.register_email '/register_email/:activation_code', :controller => 'email_configs', :action => 'register_email'
     admin.resources :email_notifications
     admin.resources :getting_started, :collection => {:rebrand => :put}
@@ -192,8 +192,11 @@
                 :member     =>  { :search => :any, :edit => :any }
 
     social.resources :facebook, :controller => 'facebook_pages', 
-                :collection =>  { :signin => :any ,:authdone => :any , :event_listener =>:any , :enable_pages =>:any },
-                :member     =>  { :edit => :any }
+                :collection =>  { :signin => :any , :event_listener =>:any , :enable_pages =>:any },
+                :member     =>  { :edit => :any } do |fb|
+                  fb.resources :tabs, :controller => 'facebook_tabs',
+                            :collection => { :configure => :any, :remove => :any }
+                end
   end
   
   #SAAS copy starts here
@@ -319,6 +322,7 @@
                                     :merge_with_this_request => :post, :print => :any, :latest_note => :get,  :activities => :get, 
                                     :clear_draft => :delete, :save_draft => :post, :update_ticket_properties => :put } do |ticket|
                                       
+      ticket.resources :surveys, :collection =>{:results=>:get, :rate=>:post}
       ticket.resources :conversations, :collection => {:reply => :post, :forward => :post, :note => :post,
                                        :twitter => :post, :facebook => :post}
 
@@ -365,6 +369,9 @@
     helpdesk.resources :articles, :collection => { :autocomplete => :get }
 
     helpdesk.resources :attachments
+    helpdesk.with_options :path_prefix => "facebook/helpdesk" do |fb_helpdesk|
+      fb_helpdesk.resources :attachments, :only => [:show, :destroy]
+    end
 
     helpdesk.resources :dropboxes
     
@@ -413,6 +420,7 @@
   # Removing the home as it is redundant route to home - by venom  
   # map.resources :home, :only => :index 
 
+  map.filter 'facebook'
   # Theme for the support portal
   map.connect "/theme/:id.:format", :controller => 'theme', :action => :index
 
@@ -486,6 +494,8 @@
     support.customer_survey '/surveys/:survey_code/:rating/new', :controller => 'surveys', :action => 'new'
     support.survey_feedback '/surveys/:survey_code/:rating', :controller => 'surveys', :action => 'create', 
       :conditions => { :method => :post }
+
+    support.facebook_tab_home '/facebook_tab/redirect', :controller => 'facebook_tabs', :action => :redirect
 
   end
   

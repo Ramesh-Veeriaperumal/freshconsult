@@ -136,6 +136,13 @@ class SurveyResult < ActiveRecord::Base
                                                    }}                                                   
 
                                                      
+                  
+  def as_json(options={})
+    options[:except] = [:account_id]
+    json_str = super options
+    json_str
+  end
+
   private                                                   
 
     def update_ticket_rating

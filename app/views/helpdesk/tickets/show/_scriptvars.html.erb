@@ -1,14 +1,14 @@
 <script type="text/javascript">
 var tag_list = "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',')) %>"; 
 TICKET_DETAILS_DATA = {
-	displayId			: "<%= escape_javascript(h(@ticket.display_id)) %>",
+	displayId			: "<%= @ticket.display_id %>",
 	ticket_path 		: "<%= helpdesk_ticket_path(@ticket) %>",
 	total_notes			: "<%= @ticket_notes_total %>",
 	notes_per_page		: 50,
-	notes_pagination_url: "/helpdesk/tickets/<%= escape_javascript(h(@ticket.display_id)) %>/notes?v=2&",
+	notes_pagination_url: "/helpdesk/tickets/<%= @ticket.display_id %>/notes?v=2&",
 	status_refresh_url	: "<%= status_helpdesk_ticket_path(@ticket)%>",
 	last_note_id		: <%= @ticket_notes.present? ? @ticket_notes.last.id : -1 %>,
-	activities_pagination_url: "/helpdesk/tickets/activities/<%= escape_javascript(h(@ticket.display_id)) %>?",
+	activities_pagination_url: "/helpdesk/tickets/activities/<%= @ticket.display_id %>?",
 	last_activity		: -1,
 	loaded_activities	: 0,
 	scroll_to_last		: <%= (@ticket.responder_id == current_user.id).to_s %>,
@@ -23,7 +23,11 @@ TICKET_DETAILS_DATA = {
 							clear_path		: '<%=clear_draft_helpdesk_ticket_path%>',
 							cleared_flag	: <%= @draft.blank?.to_s %>,
 							hasChanged		: false,
-							default_reply	: "<%= escape_javascript(bind_last_conv(@ticket, @signature, false, true)).html_safe %>"
+							default_reply 	: ''
 						}
 };
+</script>
+<textarea id="ticket_draft_default_reply" class="hide"><%= bind_last_conv(@ticket, @signature, false, true) %></textarea>
+<script type="text/javascript">
+TICKET_DETAILS_DATA['draft']['default_reply'] = document.getElementById('ticket_draft_default_reply').value;
 </script>

@@ -14,6 +14,12 @@ body{
   display:block;
   margin-bottom: 20px;
 }
+del{
+  color:rgba(#000, 0.3);
+  div,span,label{
+    color:$textColor;
+  }
+}
 h5{
   &.lead{
     font-size:18px;
@@ -339,11 +345,17 @@ html.touch .dialog-well .actions {
 }
 
 select{
-  height: 20px;
+  height:20px;
   line-height: 20px;
-  padding:1px;
+  padding: 0;
+  padding-left:2px;
 }
-
+textarea,input[type="text"],input[type="password"],input[type="datetime"],
+input[type="datetime-local"],input[type="date"],input[type="month"],input[type="time"],
+input[type="week"],input[type="number"],input[type="email"],input[type="url"],input[type="search"],
+input[type="tel"],input[type="color"],.uneditable-input {
+  padding: 4px 0px 4px 5px;
+}
 /* Fix for tickets show page data-tabs */
 .ticket_tabs{
   margin-left: 0px;
@@ -649,5 +661,11 @@ ul.inline > li, ol.inline > li {
   .checkbox input[type="checkbox"] {
     float: left;
     margin-left: 0px;
+  }
+}
+.input-prepend{
+  .add-on-outer{
+    font-size:13px;
+    margin-left: 2px;
   }
 }

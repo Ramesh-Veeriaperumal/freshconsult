@@ -26,7 +26,6 @@ Authority::Authorization::PrivilegeList.build do
 
     resource :"integrations/integrated_resource"
     resource :"integrations/jira_issue"
-    resource :"integrations/logmein"
     resource :"integrations/oauth_util"
     resource :"integrations/salesforce" 
     resource :"integrations/user_credential"
@@ -37,6 +36,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :agent, :only => [:toggle_availability]
     resource :"search/home", :only => [:index, :suggest]
     resource :search, :only => [:index, :suggest, :content]
+    resource :"helpdesk/survey"
     # resource :"helpdesk/common", :only => [:group_agents]
 	end
 
@@ -250,6 +250,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/business_calendar"
     resource :"social/twitter_handle", :only => [:index, :edit, :update, :destroy, :signin, :authdone, :search]
     resource :"social/facebook_page"
+    resource :"social/facebook_tab"
     resource :"admin/survey"
     resource :group
     resource :ticket_field

@@ -12,9 +12,8 @@
           <% end %>
         </div>
       </div>
-<% trial_days = current_account.subscription.trial_days %>
-<%= trial_days > 0? t('trial_expires_in', :no_of_days => pluralize(trial_days, t('trial_day'), t('days')) ).html_safe  :  
-  t('trial_expired_on', :next_renewal_at => current_account.subscription.next_renewal_at.to_s(:long_day) ).html_safe %>
+      <% trial_days = current_account.subscription.trial_days %>
+      <%= trial_expiry_title(trial_days) %>
       <div class = "choose-plan">
         <%= t('choose_plan_trial').html_safe %>
       </div>

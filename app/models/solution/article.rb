@@ -8,7 +8,7 @@ class Solution::Article < ActiveRecord::Base
 
   belongs_to :folder, :class_name => 'Solution::Folder'
   belongs_to :user, :class_name => 'User'
-  belongs_to :account
+  belongs_to_account
   
   has_many_attachments
   
@@ -52,6 +52,8 @@ class Solution::Article < ActiveRecord::Base
     }
   end
 
+  attr_accessor :highlight_title, :highlight_desc_un_html
+
   attr_protected :account_id ,:attachments
   
   validates_presence_of :title, :description, :user_id , :account_id
@@ -59,6 +61,7 @@ class Solution::Article < ActiveRecord::Base
   validates_numericality_of :user_id
  
   named_scope :visible, :conditions => ['status = ?',STATUS_KEYS_BY_TOKEN[:published]] 
+  named_scope :newest, lambda {|num| {:limit => num, :order => 'updated_at DESC'}}
  
   named_scope :by_user, lambda { |user|
       { :conditions => ["user_id = ?", user.id ] }
@@ -109,15 +112,11 @@ class Solution::Article < ActiveRecord::Base
               end
             end
             search.from options[:size].to_i * (options[:page].to_i-1)
-            search.highlight :desc_un_html, :title, :options => { :tag => '<strong>', :fragment_size => 50, :number_of_fragments => 4 }
+            search.highlight :desc_un_html, :title, :options => { :tag => '<strong>', :fragment_size => 50, :number_of_fragments => 4, :encoder => 'html' }
           end
 
           item.results.each_with_hit do |result,hit|
-            unless result.blank?
-              hit['highlight'].keys.each do |i|
-                result[i] = hit['highlight'][i].to_s
-              end
-            end
+            SearchUtil.highlight_results(result, hit) unless hit['highlight'].blank?
           end
           item.results
         rescue Exception => e

@@ -1,0 +1,16 @@
+<div style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif">
+
+New Reply has been added to "<%= @post.topic.title %>" by <%= @user.name %>
+<br>
+<br>
+
+<%= @body_html.html_safe %>
+<br>
+
+<%= link_to "View all discussions on this topic", support_discussions_topic_url(@post.topic.id, :host => @user.account.full_domain) %>
+<br>
+<br>
+
+You received this email because you are following this Forum topic. To stop following it, click on the Forum topic and click "Unfollow"
+
+</div>

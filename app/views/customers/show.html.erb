@@ -83,7 +83,7 @@
 		<%= "#{t('company.info7')}" %>
 	<% else %> 
 		<ul class="history-list">
-			<% @customer.tickets.visible.first(5).each do |ticket| %>		
+			<% @customer.tickets.visible.newest(5).each do |ticket| %>		
 				<%= render :partial => "/contact_shared/ticket", :object => ticket %> 
 			<% end %>	
 		</ul>	

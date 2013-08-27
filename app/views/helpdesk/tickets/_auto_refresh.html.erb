@@ -10,7 +10,7 @@
   var request_type = <%= current_account.ssl_enabled? %> ? "https://" : "http://";
 
   auto_refresh_init_params.user_id = current_user_id;
-  auto_refresh_init_params.ticket_channel = 'index_page:'+current_account_id+'*';
+  auto_refresh_init_params.ticket_channel = 'index_page:'+current_account_id+':*';
   auto_refresh_init_params.account_id = current_account_id;
   auto_refresh_init_params.domain_name = request_type+current_domain;
 
@@ -19,6 +19,10 @@
     slide_up();
     jQuery("#FilterOptions").trigger("change");
     getFilterData();
+  });
+
+  jQuery(".filter_item").bind("change", function(){
+    slide_up();
   });
 
   jQuery("#SortMenu, .prev_page, .next_page, .toolbar_pagination_full").live("click", function(){

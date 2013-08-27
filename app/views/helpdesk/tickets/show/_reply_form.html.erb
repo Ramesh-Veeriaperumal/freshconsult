@@ -98,6 +98,10 @@
             <%= ff.text_area :full_text_html, :id => "#{cntid}-body-fulltext", :value => "", :style => "display:none;" %>
         <% end %>
       </li>
+      <li class="inline-field field continous file_size_alert hide" id="file_size_alert_<%= cntid %>">
+        <span class="alert-text"><%= t('helpdesk.tickets.show.reply_form.not_sent') %></span>
+        <%= t('helpdesk.tickets.note.attachment_size.exceed') %>
+      </li>
       <li class="inline-field field attachment-options continous" id="attachment-options-reply">
           <% unless local_assigns[:no_attachments] %>
           <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
@@ -129,11 +133,47 @@
               <%= check_box_tag :post_forums %><%= t("ticket.reply_form.post_to_linked_forum") %>
           </label>
         <% end %>
-        <% if @ticket.account.survey.can_send?(@ticket, Survey::SPECIFIC_EMAIL_RESPONSE)%>
+        <% show_satisfaction_survey_checkbox = @ticket.account.survey.can_send?(@ticket,
+                                        Survey::SPECIFIC_EMAIL_RESPONSE) 
+           show_surveymonkey_checkbox = Integrations::SurveyMonkey.show_surveymonkey_checkbox? @ticket.account
+        %>
+
+        <% if show_satisfaction_survey_checkbox and !show_surveymonkey_checkbox%>
           <label>
             <%= check_box_tag :send_survey %><%= t("ticket.reply_form.send_satisfaction_survey") %>
           </label>
-        <% end %> 
+        <% elsif !show_satisfaction_survey_checkbox and show_surveymonkey_checkbox %> 
+          <label>
+            <%= check_box_tag :include_surveymonkey_link %><%= t("integrations.surveymonkey.include_surveymonkey_link") %>
+          </label>
+        <% elsif show_satisfaction_survey_checkbox and show_surveymonkey_checkbox %>
+          <div class="btn-group survey-button">
+             <a rel="click-popover-below-left" class="btn dropdown-toggle" data-widget-container="survey-checkbox-container">
+              <%= t("integrations.surveymonkey.include_survey") %>&nbsp;<span class="caret"></span>
+            </a>
+            <div class="hide" id="survey-checkbox-container">
+              <div class="survey-dropdown ">
+                <label class="checkbox">
+                  <input type="checkbox" name="send_survey" survey-checkbox="true">
+                  <%= t("ticket.reply_form.send_satisfaction_survey") %>
+                </label>
+                <label class="checkbox">
+                  <input type="checkbox" name="include_surveymonkey_link" survey-checkbox="true">
+                  <%= t("integrations.surveymonkey.include_surveymonkey_link") %>
+                </label>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" id="send_survey" name="send_survey" value="false"> 
+          <input type="hidden" id="include_surveymonkey_link" name="include_surveymonkey_link" value="false"> 
+          <script type="text/javascript">
+            jQuery(document).ready(function(){
+              jQuery("body div.popover input[survey-checkbox=true]").live('click', function(){
+                jQuery('#' + jQuery(this).attr('name')).val(jQuery(this)[0].checked?1:0);
+              });
+            });
+          </script>
+        <% end %>
       </div>      
 
       <div class="btn-toolbar">
@@ -181,8 +221,7 @@
           jQuery('[name="helpdesk_note[cc_emails][]"]').val('');
       if(!jQuery('#include_bcc').is(':checked'))
           jQuery('[name="helpdesk_note[bcc_emails][]"]').val('');
-        <%= (remote_function :url => clear_draft_helpdesk_ticket_path, :method => :delete, :type => :synchronous).html_safe %>
-        isDirty = false;
+          isDirty = false;
       })
       .validate();  
 

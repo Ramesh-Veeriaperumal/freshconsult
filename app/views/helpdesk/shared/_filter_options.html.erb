@@ -42,7 +42,6 @@
   }
 
   function refresh_tickets(){
-    slide_up(); // Fn in _auto_refresh.html.erb
     jQuery("#save_filter").show();
     jQuery("#delete_filter").hide();
     if (!jQuery("#active_filter").hasClass('unsaved')) {
@@ -164,11 +163,13 @@
           jQuery('#export_tickets').show();
         } 
         // For highlighting updated and new tickets
-        jQuery(updated_tickets.join(',')).addClass('ticket_highlight');
-        updated_tickets = [];
-        new_ticket_ids = [];
-        updated_ticket_ids = [];
-        jQuery("#update_message, #new_ticket_message").hide();
+        if (<%= @is_auto_refresh_feature %>){
+          jQuery(updated_tickets.join(',')).addClass('ticket_highlight');
+          updated_tickets = [];
+          new_ticket_ids = [];
+          updated_ticket_ids = [];
+          jQuery("#update_message, #new_ticket_message").hide();
+        }
       }
     }); 
   });

@@ -499,4 +499,37 @@ if Integrations::Application.count == 0
     s.application_id = googlecalendar_app.id
   end
 
+  surveymonkey_app = Integrations::Application.seed(:name) do |s|
+    s.name = "surveymonkey"
+    s.display_name = "integrations.surveymonkey.label"
+    s.description = "integrations.surveymonkey.desc" 
+    s.listing_order = 21
+    s.options = {
+        :keys_order => [:settings], 
+        :direct_install => true,
+        :settings => { 
+          :partial => 'integrations/surveymonkey/edit',
+          :type => :custom,
+          :required => false,
+          :label => 'integrations.surveymonkey.form.survey_settings',
+          :info => 'integrations.surveymonkey.form.survey_settings_info'
+        },
+        :configurable => true,
+        :oauth_url => "/auth/surveymonkey?origin={{portal_id}}",
+        :before_save => {
+          :clazz => 'Integrations::SurveyMonkey',
+          :method => 'sanitize_survey_text'
+        },
+        :after_save => {
+          :clazz => 'Integrations::SurveyMonkey',
+          :method => 'delete_cached_status'
+        },
+        :after_destroy => {
+          :clazz => 'Integrations::SurveyMonkey',
+          :method => 'delete_cached_status'
+        }
+    }
+
+  end
+
 end

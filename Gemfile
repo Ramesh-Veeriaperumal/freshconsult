@@ -26,6 +26,7 @@ gem "omniauth-facebook"
 gem "omniauth-salesforce"
 gem "omniauth-mailchimp", "~> 1.0.3"
 gem "omniauth-constantcontact2", "~> 1.0.4"
+gem "omniauth-surveymonkey", "0.0.0"
 gem "nori", "1.1.4"
 gem "google-api-client", "~> 0.6.3"
 
@@ -34,7 +35,6 @@ gem "jira4r", "0.3.0"
 gem "ruby-openid", :git => "git://github.com/freshdesk/ruby-openid.git", :require => "openid"
 gem "ruby-openid-apps-discovery", "1.2.0"
 
-gem "aws-s3", "0.6.2", :require => "aws/s3"
 gem "arel", "2.0.7"
 gem "map-fields", "1.0.0", :require => "map_fields"
 
@@ -91,10 +91,16 @@ gem 'clockwork', '0.4.1'
 gem "wkhtmltopdf-binary", "~> 0.9.9.1"
 gem "wicked_pdf", "~> 0.9.2"
 gem "pg"
+gem "routing-filter", "~> 0.3.1"
 
 gem "cloudfront_asset_host", :git => "git://github.com/freshdesk/cloudfront_asset_host.git"
+
 gem "erubis", "2.7.0"
 gem "rails_xss", "0.4.0"
+
+gem "paperclip", "~> 2.8.0"
+gem "aws-sdk", "~> 1.11.3"
+gem "xml-simple", "~> 1.1.2"
 
 group :production,:test,:staging do
  gem 'tire', :git => "git://github.com/freshdesk/tire.git"

@@ -26,7 +26,7 @@
           <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/multiple/spam', 'put');" type="button" value="<%=t('ticket.flag_spam')%>" disabled="disabled">
 
           <% if privilege?(:edit_ticket_properties) %>
-            <input class="button" onclick="helpdesk_submit('/helpdesk/tickets/multiple/close_multiple', 'put' , [{name: 'disable_notification' , value: event.shiftKey}]);" type="button" value="<%=t('close')%>" disabled="disabled">
+            <input class="button tooltip" title="<%= t('ticket.close_without_notification') %>" onclick="helpdesk_submit('/helpdesk/tickets/multiple/close_multiple', 'put' , [{name: 'disable_notification' , value: event.shiftKey}]);" type="button" value="<%=t('close')%>" disabled="disabled">
         
             <button class="button dialog2" data-url="/helpdesk/tickets/assign_to_agent" data-width="360" title="<%=t('ticket.assign_to_agent')%>" disabled="disabled"><%=t('ticket.assign_to_agent')%></button>
           <% end %>

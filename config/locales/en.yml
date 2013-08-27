@@ -59,7 +59,7 @@ en:
    language_name: 'English'
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
   attachment_help_info: "File size < 15 MB"
-  feedbackwidget_offset_info: The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
+  feedbackwidget_offset_info: Choose widget position on your browser. The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
   no_twitter_handle: Please configure atleast one twitter account
   reset_my_password: Reset my password 
   assign: Assign
@@ -67,9 +67,12 @@ en:
   signup_title: "Sign up to %{current_portal}"
   signup_up_with_us: "Sign up with us"
   signup_help_information: "Once you sign up, you will have complete access to our solutions and FAQs, ask questions and learn from our user community. You can also raise support issues and track their status."
-  trial_expired_on: "Your trial expired on %{next_renewal_at}"
-  trial_expires_in: "Your trial will expire in <b>%{no_of_days}</b> ..."
-  trail_expiry_notification: "You can upgrade to a paid account or use Freshdesk for free by selecting a plan at any time."
+  trial_expired_on: "<b>Urgent! Your trial has expired!</b>"
+  trial_will_expire_in: "Your trial will expire in <b>%{no_of_days}</b>"
+  trial_one_more_day: "You just have 1 more day in your trial"
+  trail_expiry_during_trial: "Upgrade to a paid account or use Freshdesk for free by selecting a plan at any time."
+  trail_expiry_one_more_day: "Select a paid or free plan immediately to enjoy uninterrupted access to Freshdesk"
+  trail_expiry_after_trial: "Your trial will self-destruct in <b>%{no_of_days}</b>. Choose a plan to continue using Freshdesk"
   hard_pressed_for_time: Hard pressed for time? Get advice, tips and best practices from a Freshdesk expert.
   schedule_a_complimentary_session: Schedule a complimentary session
   choose_a_plan: "Choose a plan"
@@ -245,7 +248,7 @@ en:
     tickets:    
       ticket_survey:
         title: "Customer survey"
-        rating_sub_title: "Your have rated us"
+        rating_sub_title: "You have rated us"
         survey_title: Please take a minute to rate our support
         feedback_title: Describe your support experience (optional)
         rated_on: on %{rated_on}
@@ -264,6 +267,8 @@ en:
         sign_in_using_google: Sign in using your Google account
         help: Help
     shared:
+      attachment_form:
+        feedback_widgets_screenshot: Take Screenshot
       survey_form:
         survey_title: Please take a minute to rate our support
         feedback_title: Also your good words and specific critique can help us better our support in the future
@@ -500,7 +505,7 @@ en:
         link_text_label: Satisfaction survey link text
         link_text_input: Please let us know your opinion on our support experience.
         link_text_info: This text appears below your signature at the bottom of the email sent to the customer
-        send_while_option1: All email sent to customer.
+        send_while_option1: All replies sent to customer.
         send_while_option2: Emails sent after a ticket is "Resolved".
         send_while_option3: Emails sent after a ticket is "Closed".
         send_while_option4: Allow agents to add survey links to specific emails.
@@ -550,7 +555,7 @@ en:
             social_add_account: Add Account
             config-support-email-address: "Configure your support email address"
             save-and-next: "Save and Go to next"
-            send_verification_email: Send verification email
+            send_verification_email: Send verification
             send_invite: Send Invite
             title: Cool! Looks like your help desk is ready to roll...
             title1: "Now let's get those emails into Freshdesk"
@@ -627,9 +632,32 @@ en:
         helptext: "Your day passes will Auto-recharge once the number of available day passes comes down to 2."
     widget_config:
       index:
-        thankyou_label: "Submit message"
+        feedbackwidget_embedded_tab: Embedded Widget 
+        feedbackwidget_popup_tab: Pop up Widget
+        
+      popup_embedded_widget:  
+        feedbackwidget_popup: "popup"
+        feedbackwidget_embedded: "embedded"
+        feedbackwidget_button_text_placeholder: Support
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
+        feedbackwidget_button_customization: Button customization
+        feedbackwidget_form_customization: Form customization
+        feedbackwidget_embedded_code: Embedded Widget code
+        feedbackwidget_popup_code: Popup Widget code
+        feedbackwidget_widget_code: Widget code
+        feedbackwidget_embedded_form_code: Embedded form code
+        feedbackwidget_form_submit_message: "Form Submit Message"
+        feedbackwidget_form_height: "Form height"
+        feedbackwidget_form_height_message: "If you see scroll bars in your widget, adjust the widget height."
+        feedbackwidget_px: "px"
         thankyou_default: "Thank you for your feedback"
         thankyou_info: "Message to be displayed after a user submits the ticket form"
+        feedbackwidget_users_can: "Users can:"
+        feedbackwidget_attach_a_file: Attach a file
+        feedbackwidget_screenshot: Take Screenshot
+        feedbackwidget_search_area: Search Articles
+        feedbackwidget_use_https: Use https
     supervisor_rules:
       index:
         human_name: Supervisor Rule
@@ -754,6 +782,7 @@ en:
         content2: If you choose to configure a separate branded portal for each product, you can provide a unique set of Knowledge Base articles and Forums for each brand.
       new: 
         title: New Product
+        saving: Saving...
       portal: 
         select_forum_category: Select a forum category...
         portal_rebranding: Portal rebranding
@@ -769,29 +798,43 @@ en:
         portal_name: Portal name
         portal_language: Portal Language
         portal_language_info: This will be the default language when customers visits your portal
+        portal_customization: Portal customization
+        customize_portal: Customize portal >
+        save_and_customize: Save & Customize portal >
+        save_and_continue: You have unsaved changes in your form. Do you want to save and continue?
+        helpdesk_phone: Helpdesk Phone
+        ago: ago
+        last_published: Your portal was last published
+        contact_us: Contact us 
+        logo_and_favicon: Logo & favicon
       edit: 
         title: Edit Product
+        updating: Updating...
       form: 
-        configure_seperate_portal: Configure a separate portal for this product
+        configure_seperate_portal: Enable Customer Portal
         enable_product_portal: Enable Product Portal
-        enter_support_email_id: Your support email
+        enter_support_email_id: Support email
+        confirm_delete: Do you want to delete the support email?
+        email_address_present: Reply email is already used
         configure_email: Configure Email
         product_support_emails: Product Support Emails
         product_name: Product name
-        product_desc: Product description
-        forwarding_email_info: "Your forwarding email address:"
+        product_desc: Description
+        forwarding_email_info: Forwarding email
+        please_wait: Please wait...
       product:
         edit_twitter_account: "Edit Twitter Account @%{screen_name}"
         edit_facebook_page: "Edit Facebook page %{page_name}"
         customize_portal: "Customize portal"
         enable_portal: "Enable Portal"
-        email_not_verified: Email not verified
+        email_not_verified: Unverified 
+        view_portal: View Portal
         delete: Are you sure you want to delete this Product?
       index: 
         enable_portal: Enable Products
         title: Products        
         add_product: New product
-      primary_product_support_email: Primary Product Support Email
+      primary_product_support_email: Primary support email
       add_another_email: Add Another Email
       primary_email_required: Atleast one primary email has to be present
       assign_product: "Assign Product"
@@ -983,7 +1026,6 @@ en:
   default_reply_template: Agent Reply Template
   import_user_org: Users &amp; Organizations
   to_do: To Do
-  feedbackwidget_formcustomize: Form customization
   does_not_contain: Does not contain
   flash:
     gmail_gadgets:
@@ -1027,6 +1069,7 @@ en:
       authentication_failed: Authentication Failed
       authentication_success: Authentication successfully completed
       no_subdomain: There is no subdomain like this. Please try again.
+      page_unavailable: We are sorry. This page is currently unavailable to you. Please contact the administrator for more information. 
     profile: 
       api_key:
         reset_success: "API Key has been reset successfully." 
@@ -1119,6 +1162,11 @@ en:
       update: 
         failure: Ticket fields update failed.
         success: Ticket fields successfully updated.
+      failure:
+        string: You have exceeded the maximum limit for this type of field.
+        text: You are not allowed to create more than 10 paragraph fields.
+        number: You are not allowed to more than 10 number fields.
+        boolean: You are not allowed to create more than 10 checkbox fields.
     email_settings: 
       send_activation: 
         success: 'Verification email has been sent to %{reply_email}!'
@@ -1161,6 +1209,7 @@ en:
         expected_params: "Expected params are name, email and hash which are not present "
       success: Login successful!
       failed: Login was unsuccessful!
+      deleted_user: We are sorry. The login was unsuccessful because your account has been deleted. Please contact your account administrator to regain access.
     email_notifications: 
       update: 
         success: Email notifications have been updated.
@@ -1212,7 +1261,7 @@ en:
   undelete: Restore
   import_zendesk_title: Import from zendesk
   closed: Closed
-  suspended_plan_info: Your account is now suspended. Please choose a plan to continue using Freshdesk
+  suspended_plan_info: Your account has been suspended. Please select a plan to continue using Freshdesk
   plan_info_update: Your plan has been changed.
   note: "Note: "
   warning: WARNING
@@ -1230,7 +1279,7 @@ en:
   resolved: Resolved
   logo_delete_msg: Are you sure you want to delete this logo?
   from_email: From Email
-  feedbackwidget_custom_image: Custom image URL
+  feedbackwidget_image_button: Image button URL
   activities: 
     action_verb: 'updated'
     tag:
@@ -1397,7 +1446,7 @@ en:
   during: during
   less_than: Less than
   greater_than: Greater than
-  feedbackwidget_bgcolor: Background Color
+  feedbackwidget_background: Background
   day: 1 Day
   trial_day: Day
   current_plan: Current Plan
@@ -1488,7 +1537,6 @@ en:
   at: at
   add_a_topic: Start a Topic
   bottom: Bottom
-  align_to: Align to
   feedbackwidget_help_title: Feedback widget
   name: Name
   import_user_org_text: All the Users &amp; Organizations in your Zendesk account will be imported into your current Freshdesk account as "Contacts & Companies"
@@ -1507,7 +1555,7 @@ en:
   set_type_as: Set Type as
   change_my_plan: Choose this plan...
   add_new_email: Add new email
-  feedbackwidget_title: Widget Settings
+  feedbackwidget_title: Feedback widget
   errors_in_your_address: "Errors encountered with your address:"
   set_priority_as: Set Priority as
   sign_in_info: You will be signing in with
@@ -1536,7 +1584,6 @@ en:
   edit_forum_category: Edit Forum Category
   agent_assigned_title: Recently assigned tickets (Open &amp; Pending)
   send_email_to_requester: Send Email to Requester
-  feedbackwidget_btcustomize: Button customization
   solution_category: 
     name: Category name
     new: New solution category
@@ -1735,7 +1782,7 @@ en:
     after_ten_minutes: After 10 Minutes
     after_fifteen_minutes: After 15 Minutes
   between_range: Between Range
-  back_to_admin: Back to Admin
+  go_back: Go back
   group: 
     new: New Group
     name: Group Name
@@ -2032,7 +2079,7 @@ en:
     info1: "You can change your subscription details anytime. Your card will be charged pro-rata from the date of the subscription change to the next billing date."
     info2: "Downgrading from a higher plan to a lower plan will result in loss of configuration data for features that are only available in the higher plan."
   activate: Activate
-  feedbackwidget_text: Text
+  feedbackwidget_button_text: Button text
   billed_amount_per_month: You will be billed $%{amount} %{period}
   billed_amount_annually: You will be billed $%{amount} annually
   import_zendesk_summary: Import from zendesk summary
@@ -2149,6 +2196,8 @@ en:
       add_or_remove_emails: "Add or remove emails that need to be copied when a notification for this ticket is sent."
       add_people_title: Add people to conversation
       reopen_reply: Reply
+      related_articles: "Related articles..."
+  feedbackwidget_form_heading: Form Heading
   feedbackwidget_form_title: Widget form title
   cancel_and_back: Cancel and go back
   due_in: Due in %{time_words}
@@ -2252,7 +2301,6 @@ en:
     active:
       no_companies: You don't have any company added to the list.
       no_companies_with_letter: You don't have any companies with the letter '%{alphabet}'
-  feedbackwidget_embed_code: Widget embed code
   billing_info_update: Your billing information has been updated.
   wrong_portal: 
     content_not_available: The content you are looking for is, not available in this portal.
@@ -2271,7 +2319,6 @@ en:
   is_expiring_today: is expiring today
   feedbackwidget_help_para1: The feedback widget lets you embed a ticket form directly into your website or product. You can customize the look and feel, and placement of the widget on your website. Once done, copy-paste the generated embed code in your website or app, to start using the Feedback Widget.
   low: Low
-  feedbackwidget_defaultbutton: Support
   agents: Agents
   header: 
     welcome: Welcome
@@ -2355,7 +2402,7 @@ en:
     add_supp_emails: Additional support email(s)
     info12: Add Another Email address
     info2: You must forward your support emails to your unique email address
-    send_verification_email: Send verification
+    send_verification_email: Send activation
     unverified: Email un-verified
     info13: Your support email address is
     info3: Freshdesk will fetch those emails and convert them as tickets
@@ -2364,7 +2411,7 @@ en:
     info4: <strong>NOTE:</strong> If you have multiple email addresses to support multiple products, <a href='{{products_path}}'>you can add them here</a>.
     spf_info: Reply emails from Freshdesk will automatically use your respective support email IDs as the From email address. Creating an <a target="_blank" title="Learn more about creating SPF records" href="{{solution_url}}">SPF record</a> in your DNS zone file will ensure proper delivery of emails.
     reply_email: Your support email
-    unverified_info1: An email with the verification link has been sent to this email. Only after verification this support email will become active.
+    unverified_info1:  Please activate this email by clicking on the verification link in your inbox.  
     inactive_info2: Until then, the default email "%{default_email}" will be used as the reply-to email.
     info15: You must forward these emails to
     helpcard:
@@ -2513,6 +2560,8 @@ en:
     thanks: Thank you for submitting a feedback
     portal_created_on: "Created by <span class='emphasize'>%{username}</span> on <span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Created on <span class='emphasize'>%{date}</span>"
+    fb_portal_created_on: "Created by <span class='emphasize'>%{username}</span> <span class='emphasize'>%{date}</span>"
+    fb_portal_created_on_same_user: "Created <span class='emphasize'>%{date}</span>"
     due_date: Due date
     updated: updated
     deleted: deleted
@@ -2714,7 +2763,6 @@ en:
   import_zendesk_summary_info: Zendesk data has been successfully imported.
   one: 1 Hour
   no_topics_text: No topics in this forum
-  feedbackwidget_offset_label: With an offset of
   send_email_to_group: Send Email to Group
   activate_account: Activate your account
   enter_message: Enter your message here
@@ -2780,6 +2828,7 @@ en:
     new: New Business Hours
     to: to
     time_zone: Time Zone
+    change_time_zone: You can change your default time zone under <a href='/account/edit' >Helpdesk Rebranding</a>
     delete: Are you sure you want to delete?
     valid_time: Please enter a valid time
     holiday_name: Holiday name
@@ -3024,6 +3073,7 @@ en:
           bcc: Bcc
           addbcc: Add Bcc
           removebcc: Remove Bcc
+          not_sent: Reply was not sent! 
         forward_form:
           cc: Cc
           addcc: Add Cc
@@ -3031,6 +3081,7 @@ en:
           bcc: Bcc
           addbcc: Add Bcc
           removebcc: Remove Bcc
+          not_sent:  Reply was not forwarded!
         tweet_form:
           title: "Reply to %{user}"
         facebook_form:
@@ -3119,8 +3170,9 @@ en:
         public_note_tip: Visible to the customer
         inbound_email: Incoming email
         outbound_email: Outbound email
+        not_added: Note has not been added! 
         attachment_size: 
-           exceed: Oops! Your attachment exceeds 15 MB. Please attach a smaller file.
+           exceed: Your attachments exceed 15 MB. Please make changes before you proceed.
     merge:
       merge:
         merge_into: Merge into?
@@ -3248,7 +3300,7 @@ en:
       engage_info:
         title: Add your Facebook pages
         engage_customers: Engage your customers, directly on Facebook
-        associate_account: Associate a Facebook page to <b> %{account_name} </b> and respond to your customers from within freshdesk when they comment or post to your wall.
+        associate_account: Associate a Facebook page with <b> %{account_name} </b> and respond to customer comments and wall posts directly from Freshdesk. You can also add your solutions and community forums within your Facebook page.
         add_facebook: Add Facebook Page
       form:
         visitor_posts: Import <strong>"Visitor posts"</strong> as ticket
@@ -3316,7 +3368,7 @@ en:
       no_tickets_in_view: You don't have any tickets in %{view_name}.
       no_tickets_for_user: There are no open tickets for %{user_name} to view.
       no_tickets_subtext: "View %{view_1} or %{view_2}"
-      no_tickets_subtext_single: "View %{view_1}"
+      no_tickets_subtext_single: "View %{view_1}" 
   conversation: Conversation
   save_this_view: "Save"
   save_this_view_tooltip: "Save View"
@@ -3591,6 +3643,27 @@ en:
           auto_detect: "Detect Automaticaly"
         version_info: "Version field lets you choose between <i>Batchbook Classic</i> and <i>Batchbook New</i>."
         widget_title: "Widget Title"
+    surveymonkey:
+      enable_integration_text: "Click on the Enable button to connect with your Surveymonkey account and configure the integration."
+      include_survey: "Include Survey"
+      include_surveymonkey_link: "Include SurveyMonkey link"
+      label: "SurveyMonkey"
+      helptext: "<h4>SurveyMonkey Integration</h4><p>This integration lets you link a custom survey of your choice from your SurveyMonkey account to ticket replies in Freshdesk. It can be used to replace the default Satisfaction Survey in your helpdesk or be used along with it.</p><p>Once you have linked your SurveyMonkey account, you can pick out the survey and <a href='http://help.surveymonkey.com/articles/en_US/kb/How-do-I-send-my-survey-to-respondents-or-get-responses-to-my-survey' target='_blank'>the collector</a> you want to use by using the drop down boxes. </p><p>You also get to decide when you want survey links to be included with replies. For example, it can be configured to append surveys automatically when ticket gets closed or resolved, or set to manual, so that agents get to choose themselves with each ticket. </p>"
+      desc: "Integrate Freshdesk with SurveyMonkey and let your agents link any of your customized surveys to their messages when they are replying to tickets."
+      form:
+        survey_settings: ""
+        survey_settings_info: ""
+      edit_helptext: ""
+      edit_form:
+        title: "Configure SurveyMonkey"
+        survey: "Survey"
+        select: "Select"
+        collector: "Collector"
+        send_while_title: "Choose which emails have the survey link"
+        survey_link_text:
+          label: "Survey Link Text"
+          description: "This text appears below your signature at the bottom of the email sent to the customer, along with the survey link."
+          default_content: "Please take this survey to help us serve you better. It won't take more than 2 mins."
     highrise:
       label: "Highrise"
       helptext: "<h4>Highrise Integration</h4><p><br>Enter your domain and API key to display contact information from Highrise in Freshdesk. The widget will show up in the Contacts and Tickets pages once you are done. <br><br>The Name, Title, Company Name, Contact Address, Phone Number &amp; Mobile Number fields from Highrise CRM will be gathered and displayed.<br><br>Search through contacts on Highrise using the email address. Multiple search results will be displayed as a list.</p>"
@@ -3684,6 +3757,13 @@ en:
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
+    feedback_widgets:
+      new:
+        feedback_widgets_search: "Search"
+        feedback_widgets_search_results: "Search results"
+        feedback_widgets_search_our: "Search our "
+        feedback_widgets_knowledge_base: "Knowledge base "
+        feedback_widgets_help_articles: "or Browse help articles"
   reorder: "Reorder"
   reports:
       no_data: No data to display!
@@ -4168,4 +4248,38 @@ en:
         customer_fcr: The percentage of tickets raised by this customer that were resolved within the first response
         agent_fcr: The percentage of tickets assigned to this agent that were resolved within the first response
         group_fcr: The percentage of tickets assigned to this group that were resolved within the first response
-  date_invalid: Invalid date      
+  date_invalid: Invalid date  
+  facebook_tab:
+    remove_tab: "Remove page Tab"
+    tab_not_removed: "Could not remove tab"
+    tab_removed: "Page tab removed"
+    page_added: "This page has already been added to {{source}}. Please remove it and then try to add"
+    add_tab: "Add page tab"
+    tab_name: "Tab name "
+    tab_url: "Tab image url : "
+    page_tab_head: "Facebook Page Tab"
+    page_added_model: "Page has been already added"
+    no_ssl: "<b>Facebook page tab requires a Secure Connection.</b><br />You need to enable SSL encryption from <a href='/admin/security'>Security settings</a>"
+    image_upload_failed: "Unable to update custom image in page tab"
+    image_instructions: "The target image must be of dimensions 111x74. (images of any dimensions can be updated through facebook directly)"
+    configure_tab: "Create your Facebook page tab"
+    config_info: "Once you enable your Facebook page tab, your customers will be able to directly access your solutions, forums and self-service from within Facebook"
+    got_it: "Ok got it."
+    reauth: "Please reauthorize with Facebook to access your page tab"
+    no_contact: "Unable to contact Facebook Servers for page tabs at this time"
+    portal:
+      your_tickets: "Your Tickets"
+      view_all: "View all"
+      recent_articles: "Recent Articles"
+      published: "Published in "
+      start_topic: "Start Topic"
+      recent_topics: "Recent Topics"
+      popular_topics: "Popular Topics"
+      recent_tickets: "Recent Tickets"
+      customer_support: "Customer Support"
+      new_ticket: "New Support Ticket"
+      ticket_text: "<strong>Need help? Get in touch with us</strong><p>Submit a new ticket and we'll get back to you as soon as we can</p>"
+      solution_text: "<strong>Looking for answers? Here you go</strong><p>Explore How-To's and learn best practices from our knowledge base. </p>"
+      forum_text: "<strong>Got ideas? We'd love to hear them</strong><p>Join our community and share your thoughts and ideas with everyone.</p>"
+      browse_topics: "Browse Topics"
+      browse_articles: "Browse Articles"

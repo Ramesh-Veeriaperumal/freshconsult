@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
      [ :supervisor,    "Supervisor"    , 6 ]
     ]
 
-  EMAIL_REGEX = /(\A[-A-Z0-9.'’_%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
+  EMAIL_REGEX = /(\A[-A-Z0-9.'’_&%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
 
   concerned_with :associations, :callbacks
 
@@ -50,7 +50,7 @@ class User < ActiveRecord::Base
   validates_presence_of :email, :unless => :customer?
   validate :has_role?, :unless => :customer?
 
-  attr_accessor :import
+  attr_accessor :import, :highlight_name, :highlight_job_title
   
   attr_accessible :name, :email, :password, :password_confirmation, :second_email, :job_title, :phone, :mobile, 
                   :twitter_id, :description, :time_zone, :avatar_attributes, :customer_id, :import_id,
@@ -289,6 +289,10 @@ class User < ActiveRecord::Base
     # => User is not deleted
     # => And the user does not have any admin privileges (He is an agent)
     !((user == self) or user.deleted? or user.privilege?(:view_admin))
+  end
+
+  def api_assumable?
+    !deleted? && privilege?(:manage_tickets)
   end
   
   def first_login?

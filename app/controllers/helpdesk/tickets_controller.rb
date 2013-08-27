@@ -20,7 +20,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :set_mobile, :only => [:index, :show,:update, :create, :execute_scenario, :assign, :spam, :update_ticket_properties ]
   before_filter :set_show_version
-  before_filter :load_cached_ticket_filters, :load_ticket_filter , :only => [:index, :filter_options]
+  before_filter :load_cached_ticket_filters, :load_ticket_filter, :check_autorefresh_feature , :only => [:index, :filter_options]
   before_filter :clear_filter, :only => :index
   before_filter :add_requester_filter , :only => [:index, :user_tickets]
   before_filter :cache_filter_params, :only => [:custom_search]
@@ -298,7 +298,7 @@ class Helpdesk::TicketsController < ApplicationController
       update_tags unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
 
       if(params[:redirect] && params[:redirect].to_bool)
-        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice')
+        flash[:notice] = render_to_string(:partial => '/helpdesk/tickets/close_notice.html.erb')
       end
 
       respond_to do |format|
@@ -798,6 +798,10 @@ class Helpdesk::TicketsController < ApplicationController
       end
     end
 
+    def check_autorefresh_feature
+      @is_auto_refresh_feature = current_account.features?(:auto_refresh)
+    end
+
     def get_cached_filters
       tries = 3
       count = 0
@@ -908,9 +912,16 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def check_ticket_status
-    if params["helpdesk_ticket"]["status"].blank?
-      flash[:error] = t("change_deleted_status_msg")
-      redirect_to item_url
+    respond_to do |format|
+      format.html{
+        if params["helpdesk_ticket"]["status"].blank?
+          flash[:error] = t("change_deleted_status_msg")
+          redirect_to item_url
+        end
+      }
+      format.any(:xml, :json){
+        params["helpdesk_ticket"]["status"] ||= @item.status
+      }
     end
   end
 

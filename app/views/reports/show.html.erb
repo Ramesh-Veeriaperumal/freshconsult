@@ -98,7 +98,11 @@ jQuery(document).ready(function() {
 			<% case @current_report[:name] 
 					when "responder" %>
 						<td>
-							<%= obj.user.name_details %>
+							<% if obj.user.twitter_id.blank? %>
+								<%= obj.user.name %>
+							<% else %>
+								<%= obj.user.name_details %>
+							<% end %>	
 						</td>
 						<% data = @report_data.fetch(obj.user_id, {}) %>
 			<%	when "group" %>

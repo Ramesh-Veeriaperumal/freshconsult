@@ -23,11 +23,15 @@
    </table>
    <% javascript_tag do%>
    	 try{
-   	   total_hours = $$("strong.group_time")
+   	   total_mins = $$("strong.group_time")
 	 					.collect(function(t){ return t.innerHTML })
-						.inject(0, function(acc, n){ return parseFloat(acc) + parseFloat(n); });
-						
-	   $("totaltime").innerHTML = sprintf( "%0.02f", total_hours);
+						.inject(0, function(acc, n){
+							hm = n.split(':');
+							return parseInt(acc) + hm[0]*60 + parseInt(hm[1]);
+						});
+		hours = parseInt(total_mins/60);
+		mins = total_mins%60;						
+	   $("totaltime").innerHTML = sprintf( "%f:%02f", hours, mins);
 	  }catch(e){}	 
    <% end %>	
 </div>

@@ -24,6 +24,16 @@ module ApplicationHelper
         <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{ 
           current_portal.language }">#{h[2] ? '<!--' : ''}<![endif]--> ) }.to_s.html_safe
   end
+
+  def trial_expiry_title(trial_days)
+    if trial_days == 0
+      t('trial_one_more_day').html_safe
+    elsif trial_days > 0
+      t('trial_will_expire_in', :no_of_days => pluralize(trial_days, t('trial_day'), t('days')) ).html_safe
+    else trial_days < 0
+      t('trial_expired_on' ).html_safe
+    end
+  end
   
   def format_float_value(val)
     if !(val.is_a? Fixnum)
@@ -37,8 +47,8 @@ module ApplicationHelper
     MemcacheKeys.fetch(["v4","portal","logo",current_portal],30.days.to_i) do
       image_tag(
         current_portal.logo.nil? ? "/images/logo.png?721013" : 
-        AWS::S3::S3Object.url_for(current_portal.logo.content.path(:logo),current_portal.logo.content.bucket_name,
-                                          :expires_in => 30.days, :use_ssl => true)
+        AwsWrapper::S3Object.url_for(current_portal.logo.content.path(:logo),current_portal.logo.content.bucket_name,
+                                          :expires => 30.days, :secure => true)
       )
     end
   end
@@ -46,8 +56,8 @@ module ApplicationHelper
   def fav_icon_url
     MemcacheKeys.fetch(["v5","portal","fav_ico",current_portal]) do
       url = current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' : 
-            AWS::S3::S3Object.url_for(current_portal.fav_icon.content.path,current_portal.fav_icon.content.bucket_name,
-                                          :expires_in => 30.days, :use_ssl => true)
+            AwsWrapper::S3Object.url_for(current_portal.fav_icon.content.path,current_portal.fav_icon.content.bucket_name,
+                                          :expires => 30.days, :secure => true)
       "<link rel=\"shortcut icon\" href=\"#{url}\" />".html_safe
     end
   end
@@ -412,6 +422,9 @@ module ApplicationHelper
       ['{{ticket.product_description}}', 'Product description', 'Product specific description in multiple product/brand environments.']
     ]
     place_holders << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey', 'Includes satisfaction survey.'] if current_account.features?(:surveys, :survey_links)
+    place_holders << ['{{ticket.surveymonkey_survey}}', 'Surveymonkey survey',
+                      'Includes text/link to survey in Surveymonkey'
+                      ] if Integrations::SurveyMonkey.placeholder_allowed?(current_account)
     current_account.ticket_fields.custom_fields.each { |custom_field|
       name = custom_field.name[0..custom_field.name.rindex('_')-1]
       place_holders << ["{{ticket.#{name}}}", custom_field.label, "#{custom_field.label} (Custom Field)"] unless name == "type"
@@ -422,6 +435,9 @@ module ApplicationHelper
   # Avatar helper for user profile image
   # :medium and :small size of the original image will be saved as an attachment to the user 
   def user_avatar( user, profile_size = :thumb, profile_class = "preview_pic" ,options = {})
+    #Hack. prod issue. ticket: 55851. Until we find root cause. It was not rendering view at all.
+    #Remove once found the cause. 
+    user = User.new if user.nil?
     img_tag_options = { :onerror => "imgerror(this)", :alt => "" }
     if options.include?(:width)  
       img_tag_options[:width] = options.fetch(:width)
@@ -598,6 +614,7 @@ module ApplicationHelper
       when "requester" then
         element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => requester_autocomplete_helpdesk_authorizations_path, :object_name => object_name }))  
         element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
+        element+= label_tag("", "#{add_requester_field}",:class => 'hidden') if is_edit
         unless is_edit or params[:format] == 'widget'
           element = add_cc_field_tag element, field  
         end

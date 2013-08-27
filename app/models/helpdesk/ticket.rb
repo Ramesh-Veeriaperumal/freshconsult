@@ -32,9 +32,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   #by Shan temp
   attr_accessor :email, :name, :custom_field ,:customizer, :nscname, :twitter_id, :external_id, 
-    :requester_name, :meta_data, :disable_observer
+    :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description
 
   attr_protected :attachments #by Shan - need to check..
+
+  attr_protected :account_id,:display_id #to avoid update of these properties via api.
 
   named_scope :created_at_inside, lambda { |start, stop|
           { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }
@@ -551,6 +553,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
       twt_handles = self.product ? self.product.twitter_handles : account.twitter_handles
       twt_handles.first.id unless twt_handles.blank?
     end
+  end
+
+  def portal
+    (self.product && self.product.portal) || account.main_portal
   end
   
   def portal_host

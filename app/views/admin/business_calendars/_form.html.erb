@@ -1,4 +1,4 @@
-<div class="row-fluid business_hours">
+<div class="row-fluid business_hours business_hours_form">
 	<ul class="unstyled">
 		<li class="row-fluid">
 			<div class="span3">
@@ -149,38 +149,42 @@
 jQuery(document).ready(function() {
 	<%
 		time_zone_data = []
-		i=0
-		selected_zone_id = ''
-		selected_zone_name = @business_calendar.time_zone || current_account.time_zone
-			ActiveSupport::TimeZone.all.each do |req|
-				if req.name == selected_zone_name
-					selected_zone_id = i
-					selected_zone_name = escape_javascript(req.to_s)
-				end
+		if @business_calendar.is_default
+			selected_zone_name = current_account.time_zone
+		else
+			selected_zone_name = @business_calendar.time_zone || current_account.time_zone
+		end
 
-				time_zone_data << "{id: '#{i}',
-	                  value: '#{escape_javascript(req.to_s)}',
-	                  text: '#{escape_javascript(req.to_s)}'}"
-	            i = i + 1
+		ActiveSupport::TimeZone.all.each do |req|
+			if req.name == selected_zone_name
+				selected_zone_name = escape_javascript(req.to_s)					
 			end
+
+			time_zone_data << "{id: '#{escape_javascript(req.to_s)}',
+                  value: '#{escape_javascript(req.to_s)}',
+                  text: '#{escape_javascript(req.to_s)}'}"
+		end
 	%>
 
 	jQuery('#time_zone').select2({
 	multiple: false,
 	data: [<%=time_zone_data.join(",").html_safe%>],
 	initSelection : function (element, callback) {
-        var data = {id: '<%=selected_zone_id%>', text: '<%=selected_zone_name%>'};
+        var data = {id: "<%=selected_zone_name%>", text: '<%=selected_zone_name%>'};
         callback(data);
     }
 });
 
+jQuery("#time_zone").select2("val",[]);
+
 <% if @business_calendar.is_default? %>
-  	jQuery("#time_zone").select2("disable", "");
+  	jQuery("#time_zone").prev().attr("style","display: none;");
+  	var time_zone_element = "<p><b>" + jQuery("#time_zone").parent().find("span").text() + "</b></p>";
+  	time_zone_element += "<p class='muted'> <%= t('business_hours.change_time_zone') %></p>";
+  	jQuery("#time_zone").parent().append(time_zone_element);
 <% else %>
  	jQuery("#time_zone").select2("enable", "");
 <% end %>
-
-jQuery("#time_zone").select2("val",[]);
 
 });
 
