@@ -58,6 +58,16 @@ namespace :facebook do
     end
   end
 
+  #intial task to subscribe all the users with realtime
+  task :subscribe => :environment do 
+    Sharding.execute_on_all_shards do
+      Account.active_accounts.each do |account|
+        account.facebook_pages.each do |fb_page|
+          fb_page.register_stream_subscription
+        end
+      end
+    end
+  end
 
   def queue_empty?(queue_name)
     queue_length = Resque.redis.llen "queue:#{queue_name}"

@@ -10,9 +10,9 @@ if(jQuery('#got_pages').length){
     <h3 class="lead span6"><%= t('.title') %></h3>
     <span class="span6">
       <% if @new_fb_pages %>
-      <%= link_to t('facebook.add_page'), "#pages_dialog", :id => "new_page_dialog", :class => "btn btn-primary pull-right special medium", :rel => "freshdialog", "data-width" => "600px", "data-submit-label" => "Associate", :title => "Associate Facebook Page" %>
+      <%= link_to t('facebook.add_page').html_safe, "#pages_dialog", :id => "new_page_dialog", :class => "btn btn-primary pull-right special medium", :rel => "freshdialog", "data-width" => "600px", "data-submit-label" => "Associate", :title => "Associate Facebook Page" %>
       <% else %>
-      <%= link_to t('facebook.add_page'), @fb_client.authorize_url(session[:state]), :class => "btn btn-primary pull-right special medium" %>
+      <%= link_to t('facebook.add_page').html_safe, @fb_client.authorize_url(session[:state]), :class => "btn btn-primary pull-right special medium" %>
       <% end %>
     </span>
   </div>
@@ -28,16 +28,16 @@ if(jQuery('#got_pages').length){
           <td>
             <%= link_to "#{page.page_name}", edit_social_facebook_url(page), :class => "item_info" %> 
             <%if page.reauth_required %>
-              <span class="label label-important align-fix"> <%=t(".reauth_required")%></span>
+              <span class="label label-important align-fix"> <%=t(".reauth_required").html_safe%></span>
             <%end%>
             <div class="muted">
               <%= link_to "View on facebook", page.page_link, { :target => "_blank", :class =>"muted" } %>        
             </div>  
           </td>
           <td class="text-right">
-            <%= link_to (t(".reauthorize"),  @fb_client.authorize_url(session[:state]), :class => "btn btn-mini") if page.reauth_required %>
+            <%= link_to (t(".reauthorize").html_safe,  @fb_client.authorize_url(session[:state]), :class => "btn btn-mini") if page.reauth_required %>
             <%= link_to t("edit"),  edit_social_facebook_url(page), :class => "btn btn-mini" %>
-            <%= link_to("<i class='icon-trash'></i>", social_facebook_path(page), :method => 'delete', :confirm => "Are you sure you want to remove this facebook page?", :class => "btn btn-mini" ) %> 
+            <%= link_to("<i class='icon-trash'></i>".html_safe, social_facebook_path(page), :method => 'delete', :confirm => "Are you sure you want to remove this facebook page?", :class => "btn btn-mini" ) %> 
           </td>
         </tr>
         <% end %>

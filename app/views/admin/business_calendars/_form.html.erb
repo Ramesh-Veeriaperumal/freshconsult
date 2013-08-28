@@ -140,7 +140,7 @@
 	</ul>
 </div>
 	<div class="button-container">
-		<%= link_to "#{t('account.cancel')}", "/admin/business_calendars", :class => "btn floatl" %>
+		<%= link_to "#{t('account.cancel')}".html_safe, "/admin/business_calendars", :class => "btn floatl" %>
 		<%= f.submit t('save'), :class => "btn btn-primary" %>
 	</div>
 
@@ -168,7 +168,7 @@ jQuery(document).ready(function() {
 
 	jQuery('#time_zone').select2({
 	multiple: false,
-	data: [<%=time_zone_data.join(",")%>],
+	data: [<%=time_zone_data.join(",").html_safe%>],
 	initSelection : function (element, callback) {
         var data = {id: "<%=selected_zone_name%>", text: '<%=selected_zone_name%>'};
         callback(data);

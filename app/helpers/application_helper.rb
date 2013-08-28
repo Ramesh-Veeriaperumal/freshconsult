@@ -22,16 +22,16 @@ module ApplicationHelper
 
     html_conditions.map { |h| %( 
         <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{ 
-          current_portal.language }">#{h[2] ? '<!--' : ''}<![endif]--> ) }
+          current_portal.language }">#{h[2] ? '<!--' : ''}<![endif]--> ) }.to_s.html_safe
   end
 
   def trial_expiry_title(trial_days)
-      if trial_days == 0
-      t('trial_one_more_day')
+    if trial_days == 0
+      t('trial_one_more_day').html_safe
     elsif trial_days > 0
-      t('trial_will_expire_in', :no_of_days => pluralize(trial_days, t('trial_day'), t('days')) )
+      t('trial_will_expire_in', :no_of_days => pluralize(trial_days, t('trial_day'), t('days')) ).html_safe
     else trial_days < 0
-      t('trial_expired_on' )
+      t('trial_expired_on' ).html_safe
     end
   end
   
@@ -58,7 +58,7 @@ module ApplicationHelper
       url = current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' : 
             AwsWrapper::S3Object.url_for(current_portal.fav_icon.content.path,current_portal.fav_icon.content.bucket_name,
                                           :expires => 30.days, :secure => true)
-      "<link rel=\"shortcut icon\" href=\"#{url}\" />"
+      "<link rel=\"shortcut icon\" href=\"#{url}\" />".html_safe
     end
   end
 
@@ -97,11 +97,11 @@ module ApplicationHelper
   end
   
   def show_flash
-    @show_flash = [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }
+    @show_flash = [:notice, :warning, :error].collect {|type| content_tag('div', flash[type], :id => type, :class => "flash_info #{type}") if flash[type] }.to_s.html_safe
   end
   
   def show_admin_flash
-    [:notice, :warning, :error].collect {|type| content_tag('div', "<a class='close' data-dismiss='alert'>×</a>" + flash[type], :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }  
+    [:notice, :warning, :error].collect {|type| content_tag('div', ("<a class='close' data-dismiss='alert'>×</a>" + flash[type]).html_safe, :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }.to_s.html_safe  
   end   
 
   def show_announcements                                                    
@@ -113,7 +113,7 @@ module ApplicationHelper
 
   def page_title    
     portal_name = " : #{h(current_portal.portal_name)}" if current_portal.portal_name.present?
-    "#{(@page_title || t('helpdesk_title'))}#{portal_name}"
+    "#{(@page_title || t('helpdesk_title'))}#{portal_name}".html_safe
   end 
   
   def page_description
@@ -133,7 +133,7 @@ module ApplicationHelper
     if tab_name.eql?(:tickets)
       options.merge!({:"data-parallel-url" => "/helpdesk/tickets/filter_options", :"data-parallel-placeholder" => "#ticket-leftFilter"})
     end
-    content_tag('li', content_tag('span') + link_to(strip_tags(title), url, options ), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
+    content_tag('li', content_tag('span') + link_to(strip_tags(title), url, options), :class => ( cls ? "active": "" ), :"data-tab-name" => tab_name )
   end
   
   def show_ajax_flash(page)
@@ -156,7 +156,7 @@ module ApplicationHelper
   
 
   def each_or_message(partial, collection, message, locals = {})
-    render(:partial => partial, :collection => collection, :locals => locals) || content_tag(:div, message, :class => "list-noinfo")
+    render(:partial => partial, :collection => collection, :locals => locals) || content_tag(:div, message.html_safe, :class => "list-noinfo")
   end
   
   def each_or_new(partial_item, collection, partial_form, partial_form_locals = {})
@@ -169,7 +169,7 @@ module ApplicationHelper
     button_text = (obj) ? text_on : text_off
     button_title = (obj) ? tip_off : tip_on
     button_class = (obj) ? "iphone-active" : "iphone-inactive"
-    link_to "<strong> #{ button_text } </strong><span></span>", toggle_url, { :class => 
+    link_to "<strong> #{ button_text } </strong><span></span>".html_safe, toggle_url, { :class => 
       "uiButton special #{button_class} custom-tip-top", :title => button_title, :method => 'put' }
   end
   
@@ -183,12 +183,12 @@ module ApplicationHelper
         when "text" then
           content_tag :div, value
         when "facebook" then
-          auto_link("http://facebook.com/#{value}")
+          auto_link("http://facebook.com/#{value}").html_safe
         when "twitter" then
           value = value.gsub('@','')
           link_to("@#{value}" , "http://twitter.com/#{value}")
         when "link" then
-          auto_link(value)
+          auto_link(value).html_safe
       end
     end
   end
@@ -263,9 +263,9 @@ module ApplicationHelper
     navigation = tabs.map do |s| 
       next unless s[2]
       active = (params[:controller] == s[0]) || (s[1] == @selected_tab || "/#{params[:controller]}" == s[0]) #selected_tab hack by Shan  !history_active &&
-      tab( s[3] || t("header.tabs.#{s[1].to_s}") , {:controller => s[0], :action => :index}, active && :active, s[1] ) 
+      tab(s[3] || t("header.tabs.#{s[1].to_s}") , {:controller => s[0], :action => :index}, active && :active, s[1] ).html_safe
     end
-    navigation
+    navigation.to_s.html_safe
   end          
 
   def subscription_tabs
@@ -293,7 +293,7 @@ module ApplicationHelper
     if elements.empty?
       "" 
     else
-      lis = elements.map { |x| content_tag("li", x, :class => ("active first" if (elements[activeitem] == x)))  }
+      lis = elements.map { |x| content_tag("li", x.html_safe, :class => ("active first" if (elements[activeitem] == x)))  }.to_s.html_safe
       content_tag(type, lis, options)
     end
   end
@@ -553,7 +553,7 @@ module ApplicationHelper
     replace_objs = replace_objs.merge({"current_user"=>current_user})
     # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
     replace_objs = replace_objs.merge({installed_app.application.name.to_s => installed_app, 'installed_app' => (InstalledAppDrop.new installed_app), "application" => installed_app.application, 'portal_id' => current_portal.id}) unless installed_app.blank?# Application name based liquid obj values.
-    Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter])  # replace the liquid objs with real values.
+    Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter]).html_safe  # replace the liquid objs with real values.
   end
 
   def construct_ui_element(object_name, field_name, field, field_value = "", installed_app=nil, form=nil)
@@ -597,18 +597,18 @@ module ApplicationHelper
       when "html_paragraph" then
         element = label + text_area(object_name, field_name, :value => field_value)
     end
-    element
+    element.html_safe
   end
 
   def construct_ticket_element(form_builder,object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false)
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required) ? 'required' : '' } #{ dom_type }"
     element_class  += " required_closure" if (field.required_for_closure && !field.required)
-    field_label    += '<span class="required_star">*</span>' if required
-    field_label    += "#{add_requester_field}" if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
-    field_name      = (field_name.blank?) ? field.field_name : field_name
-    object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }"
-    label = label_tag object_name+"_"+field.field_name, field_label
+    field_label    += '<span class="required_star">*</span>'.html_safe if required
+    field_label    += "#{add_requester_field}".html_safe if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
+    field_name      = (field_name.blank?) ? field.field_name.html_safe : field_name.html_safe
+    object_name     = "#{object_name.to_s}#{ ( !field.is_default_field? ) ? '[custom_field]' : '' }".html_safe
+    label = label_tag object_name+"_"+field.field_name, field_label.html_safe
     choices = field.choices
     case dom_type
       when "requester" then
@@ -645,13 +645,13 @@ module ApplicationHelper
       when "checkbox" then
         checkbox_element = ( required ? ( check_box_tag(%{#{object_name}[#{field_name}]}, 1, !field_value.blank?, { :class => element_class } )) :
                                                                    ( check_box(object_name, field_name, :class => element_class, :checked => field_value ) ) )
-        element = content_tag(:div, (checkbox_element + label))
+        element = content_tag(:div, (checkbox_element + label).html_safe)
       when "html_paragraph" then
         form_builder.fields_for(:ticket_body, @ticket.ticket_body ) do |builder|
             element = label + builder.text_area(field_name, :class => element_class, :value => field_value )
         end
     end
-    content_tag :li, element, :class => " #{ dom_type } #{ field.field_type } field"
+    content_tag :li, element.html_safe, :class => " #{ dom_type } #{ field.field_type } field"
   end
 
   def add_cc_field_tag element , field    
@@ -683,13 +683,11 @@ module ApplicationHelper
       :initValues => _field_values,
       :disable_children => false
     }.merge!(_opt)
-
     _field.nested_levels.each do |l|       
       _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = (_name +"_"+ l[:name]).gsub('[','_').gsub(']','')
-      _category += content_tag :div, content_tag(:label, l[(!in_portal)? :label : :label_in_portal]) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
+      _category += content_tag :div, content_tag(:label, (l[(!in_portal)? :label : :label_in_portal]).html_safe) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
     end
-    
-    _category + javascript_tag("jQuery('##{(_name +"_"+ _fieldname).gsub('[','_').gsub(']','')}').nested_select_tag(#{_javascript_opts.to_json});")
+    (_category + javascript_tag("jQuery('##{(_name +"_"+ _fieldname).gsub('[','_').gsub(']','')}').nested_select_tag(#{_javascript_opts.to_json});")).html_safe
 
   end
   
@@ -763,7 +761,7 @@ module ApplicationHelper
       _output << link_to(t('revert_identity_link_msg'), revert_identity_users_path, :class => "link")
       _output << %( </div> )
     end
-    _output.join("")
+    _output.join("").html_safe
   end
 
   def get_logo
@@ -814,9 +812,9 @@ module ApplicationHelper
   def check_fb_reauth_required
     fb_page = current_account.fb_reauth_check_from_cache
     if fb_page
-      return content_tag('div', "<a href='javascript:void(0)'></a>  Your Facebook channel is inaccessible. 
+      return content_tag(:div, "<a href='javascript:void(0)'></a>  Your Facebook channel is inaccessible. 
         It looks like username, password, or permission has been changed recently.Kindly 
-        <a href='/social/facebook' target='_blank'> fix </a> it.  ", :class => 
+        <a href='/social/facebook' target='_blank'> fix </a> it.  ".html_safe, :class => 
         "alert-message block-message warning full-width")
     end
     return
@@ -827,7 +825,7 @@ module ApplicationHelper
     if twt_handle
       return content_tag('div', "<a href='javascript:void(0)'></a>  Your Twitter channel is inaccessible. 
         It looks like username or password has been changed recently. Kindly 
-        <a href='/social/twitters' target='_blank'> fix </a> it.  ", :class => 
+        <a href='/social/twitters' target='_blank'> fix </a> it.  ".html_safe, :class => 
         "alert-message block-message warning full-width")
     end
     return
@@ -836,9 +834,9 @@ module ApplicationHelper
   # This helper is for the partial expanded/_ticket.html.erb
   def requester(ticket)
     if privilege?(:view_contacts)
-      "<a class = 'user_name' href='/users/#{ticket.requester.id}'><span class='emphasize'>#{h(ticket.requester.display_name)}</span></a>"
+      "<a class = 'user_name' href='/users/#{ticket.requester.id}'><span class='emphasize'>#{h(ticket.requester.display_name)}</span></a>".html_safe
     else
-      "<span class = 'user_name emphasize'>#{h(ticket.requester.display_name)}</span>"
+      "<span class = 'user_name emphasize'>#{h(ticket.requester.display_name)}</span>".html_safe
     end
   end
   
@@ -854,6 +852,16 @@ module ApplicationHelper
     else
       link_to_user(note.user, :class => "user_name", "data-placement" => "topRight")
     end
+  end
+
+  def will_paginate(collection_or_options = nil, options = {})
+    if collection_or_options.is_a? Hash
+      options, collection_or_options = collection_or_options, nil
+    end
+    unless options[:renderer]
+      options = options.merge :renderer => DefaultPaginationRenderer
+    end
+    super *[collection_or_options, options].compact
   end
   
 end

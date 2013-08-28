@@ -98,6 +98,10 @@ class Billing::Subscription
   def retrieve_subscription(account_id)
     ChargeBee::Subscription.retrieve(account_id)
   end
+
+  def add_discount(account, discount_code)
+    ChargeBee::Subscription.update(account.id, :coupon => discount_code)
+  end
   
   private
 

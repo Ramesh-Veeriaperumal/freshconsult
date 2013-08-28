@@ -2,6 +2,6 @@
    <%= h user.job_title %>
 <% end %>
 <% unless user.customer.blank? %>
-	<%= "<br >" unless user.job_title.blank? %>
+	<%= "<br >".html_safe unless user.job_title.blank? %>
 	<%= link_to(h(user.customer.name), user.customer)  %>
 <% end %>

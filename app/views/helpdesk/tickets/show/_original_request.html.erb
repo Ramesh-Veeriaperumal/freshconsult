@@ -24,7 +24,7 @@
 		<%
             customer_opinion = ""                                
             unless @ticket.survey_results.nil? || @ticket.survey_results.last.nil?
-              customer_opinion = ["<div class='customer-opinion ", @ticket.survey_results.last.get_small_img_class ,"'></div>"].join
+              customer_opinion = ["<div class='customer-opinion ", @ticket.survey_results.last.get_small_img_class ,"'></div>"].join.html_safe
             end  
 	    %>				
 	    <%=customer_opinion%>									
@@ -33,7 +33,7 @@
 	</h2>
 	<div class="author-mail-detail">
 		<div>
-			<%= show_contact_hovercard(@ticket.requester) %> <%= t('ticket.reported') %> 
+			<%= show_contact_hovercard(@ticket.requester).html_safe %> <%= t('ticket.reported') %> 
 			<abbr data-livestamp="<%= @ticket.created_at.to_i %>"></abbr> 
 			(<%= formated_date(@ticket.created_at) %>)
 			via <%= @ticket.source_name %>
@@ -59,15 +59,15 @@
       	</div> 
 	</div>
 	<div id="ticket_original_request" class="request_mail">
-    	<%= @ticket.description_html %>
+    	<%= @ticket.description_html.html_safe %>
 	</div>
 	<% unless @ticket.ticket_topic.nil? %>
 	<div class="info-highlight">
 		<%= t("helpdesk.tickets.show.linked_ticket") %>
     <% if privilege?(:view_forums) %>
-    "<%= link_to("#{truncate(h(@ticket.topic.title))}", category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
+    "<%= link_to("#{truncate(@ticket.topic.title)}", category_forum_topic_path(@ticket.topic.forum.forum_category.id, @ticket.topic.forum.id, @ticket.topic.id), :class => "link_to") %>"
     <% else %>
-      "<%= truncate(h(@ticket.topic.title)) %>"
+      "<%= truncate(@ticket.topic.title)%>"
     <% end %>
 	</div>
 	<% end %>

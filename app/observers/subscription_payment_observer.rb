@@ -42,7 +42,7 @@ class SubscriptionPaymentObserver < ActiveRecord::Observer
     end
 
     def update_affiliate(payment)
-      send_later(:make_api_call, payment) 
+      make_api_call(payment) 
     end
 
     def make_api_call(payment)
@@ -52,7 +52,7 @@ class SubscriptionPaymentObserver < ActiveRecord::Observer
               :amount => payment.amount,
               :tracking => payment.id,
               :transtype => "sale",
-              :merchantID => SubscriptionAffiliate.merchant_id,
+              :merchantID => SubscriptionAffiliate::AFFILLIATES[:sharasale][:merchant_id],
               :userID => payment.affiliate.token })
         end
       rescue Exception => e

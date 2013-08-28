@@ -3,7 +3,7 @@ class  Reports::PdfSender < ActionMailer::Base
   def send_report_pdf(subject,body,recipents,pdf,filename)
     subject       subject
     recipients    recipents
-    body          body
+    body          body.html_safe
     from          AppConfig['from_email']
     sent_on       Time.now
     content_type  "multipart/mixed"

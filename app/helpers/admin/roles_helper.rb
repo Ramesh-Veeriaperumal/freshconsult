@@ -129,9 +129,9 @@ module Admin::RolesHelper
     ROLE_SECTIONS.each do |section|
       
      form +=  content_tag( :div, {:class => "row-fluid margin-bottom", :id => section[:id] }) do
-        content_tag( :div, content_tag( :p, t('admin.roles.privilege.'+ section[:id]), :class => "lead-sub"), :class => "span2") +
+        content_tag( :div, content_tag( :p, t('admin.roles.privilege.'+ section[:id]).html_safe, :class => "lead-sub"), :class => "span2") +
         content_tag( :div, :class => "span10 role-section") do
-          value = label(:agent, :signature_html, "<b>Agent can</b>") 
+          value = label(:agent, :signature_html, "<b>Agent can</b>".html_safe) 
           if section[:children]
             value += process_children(section[:children], section[:id], false)
           end
@@ -140,7 +140,7 @@ module Admin::RolesHelper
       end
       
     end
-    form
+    form.html_safe
   end
   
   
@@ -160,10 +160,10 @@ module Admin::RolesHelper
             if child[:children]
               element += process_children(child[:children], child[:id], true) 
             end
-            element
-        end # li
-      end # map
-    end #ul
+            element.html_safe
+        end.to_s.html_safe # li
+      end.to_s.html_safe # map
+    end.to_s.html_safe #ul
   end
   
   private
@@ -175,7 +175,7 @@ module Admin::RolesHelper
       html = eval "#{element[:dom_type]}_tag('#{name}', '#{privilege}',
       #{@role.abilities.include?(privilege.to_sym)}, { :class => '#{parent} #{element[:class]}',
       :id => '#{element[:id]}', :disabled => #{disabled}})" 
-      html += t('admin.roles.privilege.'+ element[:id])
+      html = (html + t('admin.roles.privilege.'+ element[:id])).html_safe
     end
     
     def build_hidden(element, parent, disabled)

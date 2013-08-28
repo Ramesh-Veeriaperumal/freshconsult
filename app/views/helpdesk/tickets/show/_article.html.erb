@@ -2,19 +2,19 @@
 <% article_url = support_solutions_article_url(article) %> 
 <tr><td>
 	<div class="actions-menu">
-		<%= t('ticket.insert') %>:
+		<%= t('ticket.insert').html_safe %>:
 		<% if article.folder.visible?(current_user) && article.published? %>
-			<%= link_to_function t('ticket.suggested_solutions.link'), "respondWithSol('url', '#{article.id}', '#{article_url}')", :class => "btn btn-mini" %>
+			<%= link_to_function t('ticket.suggested_solutions.link').html_safe, "respondWithSol('url', '#{article.id}', '#{article_url}')", :class => "btn btn-mini" %>
 		<%end%>
-		<%= link_to_function t('ticket.suggested_solutions.content'), "respondWithSol('content', '#{article.id}', '#{article_url}')", :class => "btn btn-mini" %>
+		<%= link_to_function t('ticket.suggested_solutions.content').html_safe, "respondWithSol('content', '#{article.id}', '#{article_url}')", :class => "btn btn-mini" %>
 	</div>
 
 	<%= content_tag :span, "", :class => 'private-icon' unless article.folder.visible?(current_user) %>
 	
 	<% if es_enabled? then %>
-		<%= article.es_highlight('title') %>
+		<%= article.es_highlight('title').html_safe %>
 	<% else %>
-		<%= article.excerpts.title %>
+		<%= article.excerpts.title.html_safe %>
 	<% end %>
 	<%= link_to "", article_url, :target => "blank", :title => truncate ( article.desc_un_html, 100), :class => "open_in_new" %> 
 </td></tr>

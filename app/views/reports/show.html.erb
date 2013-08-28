@@ -7,7 +7,7 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
 <%= include_cloudfront_css :reports, :media => "screen, print, projection"  %>
 <%= include_cloudfront_css :report_print, :media => "print, projection" %>
 <span class="floatr">
-	<%= link_to("&larr; #{t('reports.summary_report.back_to_reports')}", reports_url, :class => "slim-button") %>
+	<%= link_to("&larr; #{t('reports.summary_report.back_to_reports')}".html_safe, reports_url, :class => "slim-button") %>
 </span>
 <h3 class="title">
 	<%= @current_report[:label] %>
@@ -33,7 +33,7 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
 </div>
 
 <div class="sidepanel helpcard">
-	<p>	<%= t('reports.summary_report.helptext') %> </p>
+	<p>	<%= t('reports.summary_report.helptext_html').html_safe %> </p>
 </div>
 
 

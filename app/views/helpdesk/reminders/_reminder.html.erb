@@ -14,6 +14,6 @@
                         :method => 'delete',                        
                         #:confirm => t("delete_reminder"),
                         :html => { :class => 'delete' } ) %>
-		<%= content_tag("label", text, :class=>"reminder #{ r.deleted ? "checked" : "unchecked" }") %>
+		<%= content_tag("label", text.html_safe, :class=>"reminder #{ r.deleted ? "checked" : "unchecked" }") %>
 </li>
 
