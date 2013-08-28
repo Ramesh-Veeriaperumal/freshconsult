@@ -25,7 +25,7 @@ class Helpdesk::AttachmentsController < ApplicationController
   end 
 
   def load_item
-    @item = scoper.find(params[:id])
+    @attachment = @item = scoper.find(params[:id])
 
     @item || raise(ActiveRecord::RecordNotFound)
   end

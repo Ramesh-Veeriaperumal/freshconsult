@@ -99,7 +99,7 @@ class UsersController < ApplicationController
     end
 
     def load_item
-      @item = scoper.find(params[:id])
+      @user = @item = scoper.find(params[:id])
 
       @item || raise(ActiveRecord::RecordNotFound)
     end
