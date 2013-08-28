@@ -113,7 +113,7 @@ module ApplicationHelper
 
   def page_title    
     portal_name = " : #{h(current_portal.portal_name)}" if current_portal.portal_name.present?
-    "#{(@page_title || t('helpdesk_title'))}#{portal_name}"
+    "#{(@page_title || t('helpdesk_title'))}#{portal_name}".html_safe
   end 
   
   def page_description

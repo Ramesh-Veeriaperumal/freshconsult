@@ -52,7 +52,7 @@ module SupportHelper
 			output << %(&nbsp;<b><a href="#{ portal['signup_url'] }">#{ t('signup') }</a></b>) if portal['can_signup_feature']
 		end
 
-		output.join(" ")
+		output.join(" ").html_safe
 	end
 
 	# Helpcenter search, ticket creation buttons
@@ -81,6 +81,7 @@ module SupportHelper
 					 </a> </div> ) if portal['contact_info']
 
 		output << %(</nav>)
+		output.join(" ").html_safe
 	end
 
 	# Portal tab navigation
@@ -107,7 +108,7 @@ module SupportHelper
 				<div class="banner-wrapper">
 					<div class="banner-title">
 						#{ logo portal }
-						<h1 class="ellipsis heading">#{ portal['name'] }</h1>
+						<h1 class="ellipsis heading">#{ h(portal['name'])}</h1>
 					</div>
 				</div>
 			</header>
@@ -116,7 +117,7 @@ module SupportHelper
 			)		
 		portal['tabs'].each do |tab|
 			active_class = (tab['tab_type'] == portal['current_tab']) ? "active" : ""
-			output << %( <a href="#{tab['url']}" class="#{active_class}"> #{tab['label']}</a>) if(tab['url'])
+			output << %( <a href="#{tab['url']}" class="#{active_class}"> #{h(tab['label'])}</a>) if(tab['url'])
 		end
 		user_class = portal['user'] ? "" : "no_user_ticket"
 		output << %(
@@ -151,7 +152,7 @@ module SupportHelper
 		output << %(			data-src="#{user['profile_url']}" rel="lazyloadimage" ) if user['profile_url']
 		output << %(			width="#{width}" height="#{height}" />
 						</div> )
-		output.join("")
+		output.join("").html_safe
 	end
 
 	# No content information for forums
@@ -177,7 +178,7 @@ module SupportHelper
 		# Showing the customer uploaded logo or default logo within an image tag
 		_output << %(<img src='#{portal['logo_url']}' class='portal-logo' />)
 		_output << %(</a>)
-		_output.to_s
+		_output.to_s.html_safe
 	end
 
 	def portal_fav_ico
