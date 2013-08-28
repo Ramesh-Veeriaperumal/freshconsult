@@ -1,6 +1,6 @@
 <% content_for :sidebar do -%><%- end %> 
 
-<%= content_tag( :h3,  t('import_zendesk_title'), :class => "title" ) %>
+<%= content_tag( :h3,  t('import_zendesk_title').html_safe, :class => "title" ) %>
 
 <%= render :partial => "form"%>
 

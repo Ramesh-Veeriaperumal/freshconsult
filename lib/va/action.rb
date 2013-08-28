@@ -73,7 +73,7 @@ class Va::Action
   end
   
   def add_activity(log_mesg)
-    Thread.current[:scenario_action_log] << log_mesg
+    Thread.current[:scenario_action_log] << log_mesg.html_safe
   end
   
   def self.activities
@@ -226,7 +226,7 @@ class Va::Action
 
     def substitute_placeholders act_on, content_key     
       content = act_hash[content_key].to_s
-      content = RedCloth.new(content).to_html unless content_key == :email_subject
+      content = RedCloth.new(h(content)).to_html unless content_key == :email_subject
       Liquid::Template.parse(content).render(
                 'ticket' => act_on, 'helpdesk_name' => act_on.account.portal_name, 'comment' => act_on.notes.last)
     end

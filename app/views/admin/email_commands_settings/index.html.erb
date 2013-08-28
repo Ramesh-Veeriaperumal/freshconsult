@@ -21,13 +21,13 @@
 	<label>Preview</label>
 		<ul class="ui-form">
 			<li class = "inline-field">
-				<label class="caption"><%= t('email_command_preview_to_email')%></>:</label>
+				<label class="caption"><%= t('email_command_preview_to_email').html_safe%></>:</label>
 				<div class="fields">
 					<input type="text" class = "text" value="<%= t('email_command_preview_to_email_value')%>" disabled="true"></input>
 				</div>
 			</li>
 			<li class = "inline-field">
-				<label class="caption"><%= t('email_command_preview_subject')%>:</label>
+				<label class="caption"><%= t('email_command_preview_subject').html_safe%>:</label>
 				<div class="fields">
 					<input type="text" class = "text" value = "<%= t('email_command_preview_subject_value')%>"  disabled="true"></input>
 				</div>
@@ -40,13 +40,13 @@
 		</ul>
 	</div>	
 	<div class="button-container">
-		<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", :class => "uiButton floatl" %>
+		<%= link_to "&larr; #{t('account.cancel')}".html_safe, "/admin/home", :class => "uiButton floatl" %>
 		<%= f.submit t('save'), :class => "uiButton" %>
 	</div>
 <% end %>
 
 <% javascript_tag do%>
-		email_content_commands = '<%= @email_content_commands%>';
+		email_content_commands = '<%= @email_content_commands.html_safe %>';
 		content_prefix = 'Hi,\n\n';
 		content_suffix = '\n\nYour issue is resolved now.\n\nThanks,\nAgent Name.\n'; 
 		(function($){

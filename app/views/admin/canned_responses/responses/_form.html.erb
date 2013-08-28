@@ -60,10 +60,11 @@ function toggleGroup(access_id)
               </div>
     	</div>
 	</li>
+
 	<li class="inline-field  form-horizontal">
 		<div class="control-group">
 		<% f.fields_for :visibility do |access| %>	
-			<label class="control-label"><%=t('.available_for')%>:</label>
+			<label class="control-label"><%=t('.available_for').html_safe%>:</label>
 			<div class="controls">
 				<label class="radio">
 					<%= access.radio_button  :visibility, Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me], {:onclick =>"toggleGroup(this.value)", :class => "radio", :checked => Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]== @ca_response.accessible.visibility } %> 

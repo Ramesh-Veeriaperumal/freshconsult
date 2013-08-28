@@ -1,10 +1,10 @@
 <div class="floatr">
   <% if privilege?(:publish_solution) %>
   	<%= link_to t('reorder'),'#', :id=>"article_reorder_button", :class => "button" unless(folder.articles.size <= 1)%>
-  	<%= link_to t('solution.add') + "<span class='symbols-add'></span>", new_solution_category_folder_article_path(category , folder), :class => "icon-detail button" %>
+	<%= link_to (t('solution.add') + "<span class='symbols-add'></span>").html_safe, new_solution_category_folder_article_path(category , folder), :class => "icon-detail button" %>
   <% end %>
   <% if privilege?(:manage_solutions) %>
-  	<%= link_to t('edit'), edit_solution_category_folder_path(category, folder), :class => "button" unless category.is_default?%>
+  	<%= link_to t('edit').html_safe, edit_solution_category_folder_path(category, folder), :class => "button" unless category.is_default?%>
   <% end %>
 </div>
 
@@ -13,7 +13,7 @@
 	<%= h(folder.description) %>	
 </p> 
 <div class="intro">
-	<%=t('solution.folders.folder_form.visible_to')%>:
+	<%=t('solution.folders.folder_form.visible_to').html_safe%>:
 	<% if folder.has_company_visiblity?%>
 	  <% folder.customer_folders.each do |cust|%>
 		  <span class="label notice"><%=cust.customer.name%></span>
@@ -35,9 +35,9 @@
 	</ol>
 <% else %>
 	<div class="big-info">
-		<div class="no-info-text"><%= t('solution.info7') %> </div>  
+		<div class="no-info-text"><%= t('solution.info7').html_safe %> </div>  
     <% if privilege?(:publish_solution) %>
-		  <%= link_to t('solution.add'), new_solution_category_folder_article_path(category, folder), :class => "uiButton special large" %>
+		  <%= link_to t('solution.add').html_safe, new_solution_category_folder_article_path(category, folder), :class => "uiButton special large" %>
     <% end %>
 	</div>
 <% end %>

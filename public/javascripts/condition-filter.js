@@ -56,12 +56,12 @@ function disableOtherSelectValue(item, container){
 	var $this = jQuery(item.element[0]).parent(),
 			target_name = { from : 'to', to : 'from' }[$this.prop('name')],
 			target = $this.siblings('select[name="'+target_name+'"]').find("option:selected")
-			target_value = target.val();
+			target_value = target.val(),
 			target_text = target.text();
 			
 	if(target_text == item.text && target_value != '--') jQuery(container).hide()
 
-	return item.text
+	return escapeHtml(item.text)
 };
 
 
@@ -268,7 +268,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
 			},
 		init: 
 			function(){
-				
+				// console.log(filter_data)
 				filter_data.each(function(item){
 					if(item.value != undefined){
 						item.value = unescapeHtml(item.value)
@@ -348,6 +348,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
                   	rule_drop.append(conditional_dom(hg_item, data_id, name, {value:'--'}, "value", 'select2 test_value_field ', {'minimumResultsForSearch':'10'}));
                   	break;
                   case 2:
+                  	// console.log(hg_item)
                   	from_select = conditional_dom(hg_item, data_id, name, {from:'--'}, "from", 'select2 test_from_field', {'minimumResultsForSearch':'10', 'formatResult':disableOtherSelectValue});
                   	to_select = conditional_dom(hg_item, data_id, name, {to:'--'}, "to", 'select2 test_to_field', {'minimumResultsForSearch':'10', 'formatResult':disableOtherSelectValue});
 

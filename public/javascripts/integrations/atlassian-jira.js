@@ -258,7 +258,7 @@ JiraWidget.prototype = {
 			type:'hidden',
 			id: 'fields[summary]',
 			name: 'fields[summary]',
-			value: escapeHtml(jiraBundle.ticketSubject).replace(/"/g, "&quot;")}).appendTo('#jira-add-form');
+			value: jiraBundle.ticketSubject.replace(/"/g, "&quot;")}).appendTo('#jira-add-form');
 		}
 	},
 	jiraCreateIssueSuccess: function(evt) {
@@ -689,7 +689,7 @@ JiraWidget.prototype = {
 		else{	
 		jiraWidget.fieldContainer += '<label>'+fieldData["name"]+'</label>';
 		if(fieldData["name"] == "Summary")
-			jiraWidget.fieldContainer += '<input type="text" name="fields['+fieldKey+']" id="fields['+ fieldKey+']	" value="'+escapeHtml(jiraBundle.ticketSubject).replace(/"/g, "&quot;")+'"/>';
+			jiraWidget.fieldContainer += '<input type="text" name="fields['+fieldKey+']" id="fields['+ fieldKey+']	" value="'+jiraBundle.ticketSubject.replace(/"/g, "&quot;")+'"/>';
 		else
 			jiraWidget.fieldContainer += '<input type="text" name="fields['+fieldKey+']" id="fields['+ fieldKey+']	"/>';
 		}

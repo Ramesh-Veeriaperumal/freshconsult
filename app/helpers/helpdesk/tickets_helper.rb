@@ -14,7 +14,7 @@ module Helpdesk::TicketsHelper
     unless(view[:id] == -1)
       parallel_url = "/helpdesk/tickets/filter_options"
       query_str = view[:default] ? "?filter_name=#{view[:id]}" : "?filter_key=#{view[:id]}"
-      link_to( (content_tag(:span, "", :class => "icon ticksymbol") if selected).to_s + strip_tags(view[:name]), 
+      link_to( ((content_tag(:span, "", :class => "icon ticksymbol") if selected).to_s + strip_tags(view[:name])).html_safe, 
         (view[:default] ? helpdesk_filter_view_default_path(view[:id]) : helpdesk_filter_view_custom_path(view[:id])) , 
         :class => ( selected ? "active #{cls}": "#{cls}"), :rel => (view[:default] ? "default_filter" : "" ), 
         :"data-pjax" => "#body-container", :"data-parallel-url" => "#{parallel_url}#{query_str}", 
@@ -30,18 +30,19 @@ module Helpdesk::TicketsHelper
     unless viewlist.empty?
       more_menu_drop = 
         content_tag(:div, (link_to strip_tags(selected_item), "/helpdesk/tickets", { :class => "drop-right nav-trigger #{extra_class}", :menuid => "##{menuid}", :id => "active_filter" } ), :class => "link-item" ) +
-        content_tag(:div, viewlist.map { |s| view_menu_links(s, "", (s[:name].to_s == selected_item.to_s)) }, :class => "fd-menu", :id => menuid)
+        content_tag(:div, viewlist.map { |s| view_menu_links(s, "", (s[:name].to_s == selected_item.to_s)) }.to_s.html_safe, :class => "fd-menu", :id => menuid)
     end
+    more_menu_drop.html_safe
   end
   
   def ticket_sidebar
-    tabs = [["TicketProperties", t('ticket.properties'),         "ticket"],
-            ["RelatedSolutions", t('ticket.suggest_solutions'),  "related_solutions", privilege?(:view_solutions)],
-            ["Scenario",         t('ticket.execute_scenario'),   "scenarios",       feature?(:scenario_automations)],
-            ["RequesterInfo",    t('ticket.requestor_info'),     "requesterinfo"],
-            ["Reminder",         t('to_do'),                     "todo"],
-            ["Tags",             t('tag.title'),                 "tags"],
-            ["Activity",         t('ticket.activities'),         "activity"]]
+    tabs = [["TicketProperties", t('ticket.properties').html_safe,         "ticket"],
+            ["RelatedSolutions", t('ticket.suggest_solutions').html_safe,  "related_solutions", privilege?(:view_solutions)],
+            ["Scenario",         t('ticket.execute_scenario').html_safe,   "scenarios",       feature?(:scenario_automations)],
+            ["RequesterInfo",    t('ticket.requestor_info').html_safe,     "requesterinfo"],
+            ["Reminder",         t('to_do').html_safe,                     "todo"],
+            ["Tags",             t('tag.title').html_safe,                 "tags"],
+            ["Activity",         t('ticket.activities').html_safe,         "activity"]]
         
     icons = ul tabs.map{ |t| 
                 next if !t[3].nil? && !t[3]
@@ -52,21 +53,21 @@ module Helpdesk::TicketsHelper
                                                                 :id => @ticket.id }) unless (tabs.first == t) )
                }, { :class => "rtPanel", "data-tabs" => "tabs" }
                
-    panels = content_tag :div, tabs.map{ |t| 
+    panels = content_tag :div, tabs.collect{ |t| 
       if(tabs.first == t)
         content_tag :div, content_tag(:div, "") ,{:class => "rtDetails tab-pane active #{t[2]}", :id => t[0], :rel => "remote", :"data-remote-url" => "/helpdesk/tickets/component/#{@ticket.id}?component=ticket"}
       else
         content_tag :div, content_tag(:div, "", :class => "loading-block sloading loading-small "), :class => "rtDetails tab-pane #{t[2]}", :id => t[0]
       end
-    }, :class => "tab-content"
+    }.to_s.html_safe, :class => "tab-content"
                
-    icons + panels
+    (icons + panels).html_safe
   end
     
   def ticket_tabs
     tabs = [
-            ['Pages',     t(".conversation"), @ticket_notes.total_entries],
-            ['Timesheet', t(".timesheet"),    timesheets_size, 
+            ['Pages',     t(".conversation").html_safe, @ticket_notes.total_entries],
+            ['Timesheet', t(".timesheet").html_safe,    timesheets_size, 
                 helpdesk_ticket_helpdesk_time_sheets_path(@ticket), 
                 feature?(:timesheets) && privilege?(:view_time_entries)
             ]
@@ -89,11 +90,11 @@ module Helpdesk::TicketsHelper
     end
     
     default_views = [
-      { :id => "new_my_open",  :name => t("helpdesk.tickets.views.new_my_open"),     :default => true },
-      { :id => "all_tickets",  :name => t("helpdesk.tickets.views.all_tickets"),     :default => true },      
-      { :id => "monitored_by", :name => t("helpdesk.tickets.views.monitored_by"),    :default => true },
-      { :id => "spam"   ,      :name => t("helpdesk.tickets.views.spam"),            :default => true },
-      { :id => "deleted",      :name => t("helpdesk.tickets.views.deleted"),         :default => true }
+      { :id => "new_my_open",  :name => t("helpdesk.tickets.views.new_my_open").html_safe,     :default => true },
+      { :id => "all_tickets",  :name => t("helpdesk.tickets.views.all_tickets").html_safe,     :default => true },      
+      { :id => "monitored_by", :name => t("helpdesk.tickets.views.monitored_by").html_safe,    :default => true },
+      { :id => "spam"   ,      :name => t("helpdesk.tickets.views.spam").html_safe,            :default => true },
+      { :id => "deleted",      :name => t("helpdesk.tickets.views.deleted").html_safe,         :default => true }
     ]
     top_views_array = [].concat(dynamic_view).concat(default_views)
     top_index = top_views_array.index{|v| v[:id] == selected} || 0
@@ -239,12 +240,12 @@ module Helpdesk::TicketsHelper
     last_conv = (item.is_a? Helpdesk::Note) ? item : 
                 ((!forward && (last_visible_note = ticket.notes.visible.public.last)) ? last_visible_note : item)
     if (last_conv.is_a? Helpdesk::Ticket)
-      last_reply_by = (h(last_conv.requester.name) || '')+"&lt;"+(last_conv.requester.email || '')+"&gt;"
+      last_reply_by = (h(last_conv.requester.name) || '')+"<"+(last_conv.requester.email || '')+">"
       last_reply_time = last_conv.created_at
       last_reply_content = last_conv.description_html
     else
-      last_reply_by = (h(last_conv.user.name) || '')+"&lt;"+(last_conv.user.email || '')+"&gt;" 
-      last_reply_by  = (h(ticket.reply_name) || '')+"&lt;"+(ticket.reply_email || '')+"&gt;" unless last_conv.user.customer?       
+      last_reply_by = (h(last_conv.user.name) || '')+"<"+(last_conv.user.email || '')+">" 
+      last_reply_by  = (h(ticket.reply_name) || '')+"<"+(ticket.reply_email || '')+">" unless last_conv.user.customer?       
       last_reply_time = last_conv.created_at
       last_reply_content = last_conv.full_text_html
       unless last_reply_content.blank?
@@ -313,24 +314,18 @@ module Helpdesk::TicketsHelper
     unless emails.blank?
       if emails.length < 3
         html << content_tag(:span, 
-                            "#{label}" + emails.collect{ |to_e| 
-                              to_e.gsub("<","&lt;").gsub(">","&gt;") 
-                            }.join(", "), 
+                            "#{label}" + emails.join(", ").html_safe , 
                             :class => "") 
       else
         html << content_tag(:span, 
-                            "#{label}" + emails[0,2].collect{ |to_e| 
-                              to_e.gsub("<","&lt;").gsub(">","&gt;") 
-                            }.join(", ") + 
+                            ("#{label}" + emails[0,2].join(", ").html_safe + 
                             "<span class='toEmailMoreContainer hide'>,&nbsp;" + 
-                            emails[2,emails.length].collect{ |to_e| 
-                              to_e.gsub("<","&lt;").gsub(">","&gt;") 
-                            }.join(", ") + 
+                            emails[2,emails.length].join(", ").html_safe + 
                             " </span> <a href='javascript:showHideToEmailContainer();'  class='toEmailMoreLink'> #{emails.length-2} " + 
-                            t('ticket_cc_email_more')+"</a>", :class => "")
+                            t('ticket_cc_email_more')+"</a>").html_safe , :class => "")
       end
     end
-    html
+    html.html_safe
   end
   
   def visible_page_numbers(options,current_page,total_pages)

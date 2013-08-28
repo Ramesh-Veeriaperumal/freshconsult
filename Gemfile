@@ -94,6 +94,10 @@ gem "pg"
 gem "routing-filter", "~> 0.3.1"
 
 gem "cloudfront_asset_host", :git => "git://github.com/freshdesk/cloudfront_asset_host.git"
+
+gem "erubis", "2.7.0"
+gem "rails_xss", "0.4.0"
+
 gem "paperclip", "~> 2.8.0"
 gem "aws-sdk", "~> 1.11.3"
 gem "xml-simple", "~> 1.1.2"
