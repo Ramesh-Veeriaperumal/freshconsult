@@ -54,7 +54,7 @@ Ext.define('Freshdesk.view.NewTicketContainer', {
                 },
                 failure:function(form,response){
                     Ext.Viewport.setMasked(false);
-                    var errorHtml='Please correct the bellow errors.<br/>';
+                    var errorHtml='Please correct the below errors.<br/>';
                     for(var index in response.errors){
                         var error = response.errors[index],eNo= +index+1;
                         if(error[0] === "requester_id") {
