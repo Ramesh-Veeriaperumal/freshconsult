@@ -34,7 +34,7 @@
           condition : this.getAttribute("condition"), 
           operator  : this.getAttribute("operator"),
           ff_name   : this.getAttribute("ff_name"),
-          value     : value.toString()
+          value     : (container != "nested_field") ? escapeHtml(value.toString()) : value.toString()
         });
       }
     });
@@ -163,7 +163,9 @@
           jQuery('#export_tickets').show();
         } 
         // For highlighting updated and new tickets
-        if (<%= @is_auto_refresh_feature %>){
+        if(!updated_tickets) var updated_tickets = [];
+
+        if (<%= @is_auto_refresh_feature %>){          
           jQuery(updated_tickets.join(',')).addClass('ticket_highlight');
           updated_tickets = [];
           new_ticket_ids = [];
