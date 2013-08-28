@@ -27,6 +27,7 @@ class Search::HomeController < ApplicationController
       begin
         @total_results = 0
         if privilege?(:manage_tickets)
+          Search::EsIndexDefinition.es_cluster(current_account.id)
           options = { :load => true, :page => (params[:page] || 1), :size => 10, :preference => :_primary_first }
           @items = Tire.search Search::EsIndexDefinition.searchable_aliases(search_in, current_account.id), options do |search|
             search.query do |query|
