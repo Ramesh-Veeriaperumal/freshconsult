@@ -3123,7 +3123,7 @@ Redactor.prototype = {
 			text = escapeHtml($('#redactor_link_anchor_text').val());
 		}			
 
-		this._insertLink('<a href="' + link + '" target="' + target + '">' +  text + '</a>', $.trim(text), link, target);
+		this._insertLink('<a href="' + link.replace(/"/g, '&quot;') + '" target="' + target + '">' +  text + '</a>', $.trim(text), link, target);
 
 	},
 	_insertLink: function(a, text, link, target)
