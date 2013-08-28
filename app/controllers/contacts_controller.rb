@@ -248,9 +248,9 @@ protected
   end
 
   def load_item
-    @user = scoper.find(params[:id])
+    @user = @item = scoper.find(params[:id])
 
-    @user || raise(ActiveRecord::RecordNotFound)
+    @item || raise(ActiveRecord::RecordNotFound)
   end
    
   def set_selected_tab
