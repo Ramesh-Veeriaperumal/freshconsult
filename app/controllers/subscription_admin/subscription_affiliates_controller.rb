@@ -4,7 +4,7 @@ class SubscriptionAdmin::SubscriptionAffiliatesController < ApplicationControlle
   include AdminControllerMethods
   
   before_filter :set_selected_tab  
-  before_filter :load_discounts, :only => [ :new, :edit ]
+  before_filter :load_discounts, :only => [ :new, :update ]
 
   def add_subscription
     @subscription_affiliate = SubscriptionAffiliate.find(params[:id])
