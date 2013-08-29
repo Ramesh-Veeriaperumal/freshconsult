@@ -49,7 +49,7 @@
 		      </div>
 		    </div>   
 		<div class="container main-body">  
-			<%= [:notice, :warning, :error].collect {|type| content_tag('div', "<a class='close' data-dismiss='alert'>×</a>" + flash[type], :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }   %>
+			<%= [:notice, :warning, :error].collect {|type| content_tag('div', ("<a class='close' data-dismiss='alert'>×</a>" + flash[type]).html_safe, :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }.join.html_safe %>
 			<%= yield %>
 		</div>
 		<%= include_cloudfront_js :subscription%>    
