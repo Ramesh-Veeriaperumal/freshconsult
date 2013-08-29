@@ -57,7 +57,7 @@
           <textarea id="target-note-body" class="target-source-text" name="target[note]">
             <%= t("helpdesk.merge.bulk_merge.target_note_description1", :count => @source_tickets.length) %>
             
-            <%= @source_tickets.map{ |t| link_to t.display_id, "/helpdesk/tickets/#{t.display_id}", 
+            <%= @source_tickets.map{ |t| link_to t.display_id, "http://#{t.portal.host}/helpdesk/tickets/#{t.display_id}", 
               :target => '_blank'}.to_sentence %>
 
             <%= t("helpdesk.merge.bulk_merge.target_note_description2", :count => @source_tickets.length, :ticket_id => 
@@ -84,7 +84,8 @@
         </div>
         <div id="target-note-content" class="hide">
           <textarea id="source-note-body" class="target-source-text" name="source[note]">
-            <%= t("helpdesk.merge.confirm_merge.source_merge_description", :ticket_id => @target_ticket.display_id) %>
+            <%= t("helpdesk.merge.confirm_merge.source_merge_description", :ticket_id => @target_ticket.display_id, 
+            :full_domain => @target_ticket.portal.host) %>
           </textarea>
           <div class="private-note">
             <input id="source_private" checked="checked" name="source[is_private]" value="true" type="checkbox"> 
