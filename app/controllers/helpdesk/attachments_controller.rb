@@ -23,6 +23,12 @@ class Helpdesk::AttachmentsController < ApplicationController
   def scoper
     current_account.attachments
   end 
+
+  def load_item
+    @attachment = @item = scoper.find(params[:id])
+
+    @item || raise(ActiveRecord::RecordNotFound)
+  end
   
   
 
