@@ -44,7 +44,7 @@
 </div>
 <div class="confirm-dialog-calculate" style="display:none;">
   <div class="downgrade-message">
-  	<%= t('downgrade_confirm', :from => current_subscription.subscription_plan.name , :to => @subscription.subscription_plan.name) %>
+  	<%= t('downgrade_confirm', :from => current_subscription.subscription_plan.name , :to => @subscription.subscription_plan.name).html_safe %>
   </div>
   <div class="downgrade-actions">
   	<%= link_to( t('cancel'), 'javascript:;', :class => "uiButton", :id => 'confirm-cancel'  ) %>
