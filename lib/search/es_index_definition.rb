@@ -271,10 +271,10 @@ class Search::EsIndexDefinition
   end
 
   def es_cluster(account_id)
-    if (account_id <= 55000)
+    if (account_id <= 200)
       Tire.configure { url Es_urls[0] }
       "fd_es_index_1"
-    elsif (account_id > 55000)
+    elsif (account_id > 200)
       Tire.configure { url Es_urls[1] }
       "fd_es_index_2"
     end
