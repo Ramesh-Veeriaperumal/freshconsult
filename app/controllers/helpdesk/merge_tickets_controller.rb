@@ -27,6 +27,7 @@ class Helpdesk::MergeTicketsController < ApplicationController
 	def merge_search
 		items = []
 		if params[:search_method] == 'with_subject' && current_account.es_enabled?
+			Search::EsIndexDefinition.es_cluster(current_account.id)
       		options = { :load => { :include => 'requester' }, :size => 1000, :preference => :_primary_first }
       		es_items = Tire.search Search::EsIndexDefinition.searchable_aliases([Helpdesk::Ticket], current_account.id), options do |search|
         		search.query do |query|

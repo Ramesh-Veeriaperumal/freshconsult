@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">                       
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">     
-  	<title><% @page_title.html_safe %></title>
+  	<title><% @page_title.to_s.html_safe %></title>
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
@@ -49,7 +49,7 @@
 		      </div>
 		    </div>   
 		<div class="container main-body">  
-			<%= [:notice, :warning, :error].collect {|type| content_tag('div', "<a class='close' data-dismiss='alert'>×</a>" + flash[type], :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }   %>
+			<%= [:notice, :warning, :error].collect {|type| content_tag('div', ("<a class='close' data-dismiss='alert'>×</a>" + flash[type]).html_safe, :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }.join.html_safe %>
 			<%= yield %>
 		</div>
 		<%= include_cloudfront_js :subscription%>    

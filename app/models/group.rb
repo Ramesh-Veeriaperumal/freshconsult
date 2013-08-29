@@ -130,7 +130,7 @@ class Group < ActiveRecord::Base
   end
 
   def round_robin_eligible?
-    ticket_assign_type == TICKET_ASSIGN_TYPE[:round_robin]
+    self.account.features?(:round_robin) && (ticket_assign_type == TICKET_ASSIGN_TYPE[:round_robin])
   end
   
 end

@@ -293,7 +293,7 @@ module ApplicationHelper
     if elements.empty?
       "" 
     else
-      lis = elements.map { |x| content_tag("li", x.html_safe, :class => ("active first" if (elements[activeitem] == x)))  }.to_s.html_safe
+      lis = elements.map { |x| content_tag("li", x.to_s.html_safe, :class => ("active first" if (elements[activeitem] == x)))  }.to_s.html_safe
       content_tag(type, lis, options)
     end
   end

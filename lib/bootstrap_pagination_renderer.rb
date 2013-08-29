@@ -7,11 +7,11 @@ class BootstrapPaginationRenderer < WillPaginate::LinkRenderer
   def to_html
     links = @options[:page_links] ? windowed_links : []
 
-    links.unshift(page_link_or_span(@collection.previous_page.html_safe, 'previous', @options[:previous_label].html_safe))
-    links.push(page_link_or_span(@collection.next_page.html_safe, 'next', @options[:next_label].html_safe))
+    links.unshift(page_link_or_span(@collection.previous_page.to_s.html_safe, 'previous', @options[:previous_label].to_s.html_safe))
+    links.push(page_link_or_span(@collection.next_page.to_s.html_safe, 'next', @options[:next_label].to_s.html_safe))
 
-    html = @template.content_tag(:ul, links.join(@options[:separator]).html_safe)
-    (@options[:container] ? @template.content_tag(:div, html, html_attributes) : html).html_safe
+    html = @template.content_tag(:ul, links.join(@options[:separator]).to_s.html_safe)
+    (@options[:container] ? @template.content_tag(:div, html, html_attributes) : html).to_s.html_safe
   end
 
 protected
