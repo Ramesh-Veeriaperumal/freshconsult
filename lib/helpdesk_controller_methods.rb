@@ -32,7 +32,7 @@ module HelpdeskControllerMethods
       format.widget {render :action=>:create_ticket_status, :layout => "widgets/contacts"}
       format.js
       format.mobile {
-        render :json => {:success => true,:item => @item , :success_message => "Ticket has been created"}.to_json
+        render :json => {:success => true,:item => @item , :success_message => I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)}.to_json
       }
       format.json { 
         render :json => @item.to_json(options)

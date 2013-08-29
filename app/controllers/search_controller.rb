@@ -6,40 +6,12 @@ class SearchController < ApplicationController
 
   before_filter :forums_allowed_in_portal?, :only => :topics
   before_filter :solutions_allowed_in_portal?, :only => :solutions
-  before_filter :set_mobile, :only => [:index]
+  
   
   #by Shan
   #To do.. some smart meta-programming
   def index 
     search
-    respond_to do |format| 
-      format.mobile do 
-        json="["
-        sep=""
-        @items.each { |tic|
-            if(tic.instance_of?(Helpdesk::Ticket))
-                json << sep+"#{tic.to_mob_json_search()}"
-                sep = ","
-            elsif(tic.instance_of?(User))
-              json << sep+"#{tic.to_mob_json_contacts()}"
-              sep = ","
-            elsif(tic.instance_of?(Solution::Article))
-              json << sep + tic.to_json({
-                :only => [:id,:description,:desc_un_html,:title ]
-              }); sep=","
-            elsif(tic.instance_of?(Topic)) 
-              json << sep + tic.to_json({
-                :methods => [:stamp_name,:topic_desc],
-                :only => [ :title ]
-              }); sep=","
-            else
-              json << sep + tic.to_json({});sep=","
-            end
-        }
-          json << "]"
-          render :json => json
-      end
-    end
   end
   
   def suggest

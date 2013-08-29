@@ -2,7 +2,7 @@ class Topic < ActiveRecord::Base
   include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
   include ActionController::UrlWriter
-
+  include Mobile::Actions::Topic
   acts_as_voteable 
   validates_presence_of :forum, :user, :title
 

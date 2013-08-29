@@ -154,7 +154,7 @@ class Helpdesk::TicketsController < ApplicationController
           @items.each { |tic| 
             #Removing the root node, so that it conforms to JSON REST API standards
             # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
-            json << sep+"#{tic.to_mob_json_index()[19..-2]}"
+            json << sep+"#{tic.to_mob_json_index[19..-2]}"
             sep = ","
           }
           json << "]"

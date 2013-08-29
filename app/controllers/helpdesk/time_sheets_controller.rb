@@ -71,8 +71,8 @@ class Helpdesk::TimeSheetsController < ApplicationController
     
     @time_entry = scoper.new(time_entry)    #throws unknown attribute error
     if @time_entry.save!
-      @mobile_response = {:success => true , :success_message => "Time entry has been created for this ticket"} 
-      respond_to_format(@time_entry, @mobile_response)
+      nmobile_response = {:success => true} 
+      respond_to_format(@time_entry, nmobile_response)
     end
   end
    
@@ -118,7 +118,8 @@ class Helpdesk::TimeSheetsController < ApplicationController
 
   def destroy
     @time_entry.destroy
-    respond_to_format @time_entry , {:success => true , :success_message => "Time entry has been deleted"}
+    mobile_response = {:success => true}
+    respond_to_format @time_entry , mobile_response
   end
 
 private
@@ -183,7 +184,7 @@ private
     return (time_entry.time_spent + running_time)
   end
 
-  def respond_to_format result,mobile_response
+  def respond_to_format result,mobile_response = nil
     respond_to do |format|
       format.js
       format.html

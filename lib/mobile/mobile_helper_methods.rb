@@ -52,6 +52,7 @@ module Mobile::MobileHelperMethods
     end
 
     def set_native_mobile
+      Rails.logger.debug "nmobile ::: #{is_native_mobile?} :: #{request.headers['HTTP_ACCEPT']}"
 	    params[:format] = "nmobile" if !request.env["HTTP_USER_AGENT"][/Native/].nil?
     end
 
@@ -99,32 +100,4 @@ module Mobile::MobileHelperMethods
         populate_private
       end 
     end
-
-    def top_view
-      dynamic_views = scoper_user_filters.map { |i| {:id => i[:id], :name => i[:name], :default => false} }
-      default_views = [
-        { :id => "new_my_open",  :name => t("helpdesk.tickets.views.new_my_open"),     :default => true },
-        { :id => "all_tickets",  :name => t("helpdesk.tickets.views.all_tickets"),     :default => true },
-        { :id => "monitored_by", :name => t("helpdesk.tickets.views.monitored_by"),    :default => true },
-        { :id => "spam"   ,      :name => t("helpdesk.tickets.views.spam"),            :default => true },
-        { :id => "deleted",      :name => t("helpdesk.tickets.views.deleted"),         :default => true }
-      ]
-      top_views_array = [].concat(default_views).concat(dynamic_views)
-      top_views_array.to_json;
-    end
-    
-    def get_summary_count
-      summary_count_array = [
-        { :value => filter_count(:overdue),  :name => t("helpdesk.dashboard.summary.overdue")},
-        { :value => filter_count(:open),     :name => t("helpdesk.dashboard.summary.open")},
-        { :value => filter_count(:on_hold),     :name => t("helpdesk.dashboard.summary.on_hold")},
-        { :value => filter_count(:due_today),     :name => t("helpdesk.dashboard.summary.due_today")},
-        { :value => filter_count(:new),     :name => t("helpdesk.dashboard.summary.unassigned")}
-      ]
-      summary_count_array.to_json;
-    end
-    
-    
-    
-    
 end

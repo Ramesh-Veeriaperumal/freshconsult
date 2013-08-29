@@ -3,7 +3,6 @@ class Support::LoginController < SupportController
 	include Redis::RedisKeys
 	include Redis::TicketsRedis
 	
-	before_filter :set_native_mobile
 	skip_before_filter :check_account_state
 	
 	def new
@@ -24,31 +23,13 @@ class Support::LoginController < SupportController
 			#Hack ends here
 
 			remove_old_filters if @current_user.agent?
-			respond_to do |format|
-				format.html  {
-					redirect_back_or_default('/') if grant_day_pass
-				}
-				format.nmobile{
-					render :json => {:login => 'success'}.to_json
-				}
-			end
+
+			redirect_back_or_default('/') if grant_day_pass 
 			#Unable to put 'grant_day_pass' in after_filter due to double render
 		else
 			note_failed_login
-            respond_to do |format|
-                format.html  {
-		            set_portal_page :user_login
-        		    render :action => :new
-                }
-                format.nmobile{
-					json = "{'login':'failed',"
-					@user_session.errors.each_error do |attr,error|
-						json << "'attr' : '#{attr}', 'message' : '#{error.message}'}"
-						break # even if password & email passed here is incorrect, only email is validated first. so this array will always have one element. This break will ensure that if in case...
-					end
-                    render :json => json
-                }
-            end
+			set_portal_page :user_login
+			render :action => :new
 		end
 	end
 
