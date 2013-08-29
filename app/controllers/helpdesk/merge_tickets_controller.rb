@@ -72,7 +72,11 @@ class Helpdesk::MergeTicketsController < ApplicationController
                                       :sphinx_select => select_str,
                                       :star => true,
                                       :order => :status,
-                                      :limit => 1000
+                                      :limit => 1000,
+                                      :excerpt_options => {
+                                                           :before_match => '',
+                                                           :after_match => ''
+                                                           }
 			else
       			scope = current_account.tickets.permissible(current_user)
 				items = scope.send( params[:search_method], params[:search_string] ) if SEARCH_METHODS.include?(params[:search_method])

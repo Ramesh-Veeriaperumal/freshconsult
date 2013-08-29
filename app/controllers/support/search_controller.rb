@@ -83,7 +83,11 @@ class Support::SearchController < SupportController
                                         :max_matches => params[:max_matches],
                                         :match_mode => :any,
                                         :sphinx_select => sphinx_select,
-                                        :page => params[:page], :per_page => 20)
+                                        :page => params[:page], :per_page => 20,
+                                        :excerpt_options => {
+                                                            :before_match => '',
+                                                            :after_match => ''
+                                                            })
           else
             f_classes.each do |f_class|            
               s_options = with_options
@@ -101,7 +105,11 @@ class Support::SearchController < SupportController
                                       :match_mode => :any,
                                       :max_matches => params[:max_matches],
                                       :sphinx_select => sphinx_select,
-                                      :page => params[:page], :per_page => 10)
+                                      :page => params[:page], :per_page => 10,
+                                      :excerpt_options => {
+                                                            :before_match => '',
+                                                            :after_match => ''
+                                                          })
               
               @items.concat(class_search)
 

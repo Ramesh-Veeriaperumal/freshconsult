@@ -126,7 +126,13 @@ class Solution::Article < ActiveRecord::Base
         end
     else
       ThinkingSphinx.search(search_by, :with => { :account_id => ticket.account.id },
-       :classes => [ Solution::Article ], :match_mode => :any, :per_page => 10 )
+       :classes => [ Solution::Article ], 
+       :match_mode => :any, 
+       :per_page => 10,
+       :excerpt_options => {
+                            :before_match => '',
+                            :after_match => ''
+                            } )
     end
   end
   
