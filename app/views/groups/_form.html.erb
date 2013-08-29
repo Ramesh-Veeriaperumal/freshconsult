@@ -120,6 +120,7 @@ jQuery("#agent_list").select2("val",[]);
 
 <%
 	technicians = []
+	technicians[0]="{id: '',value: '"+t('none')+"',text: '"+t('none')+"' }"
 	account_id =  @group.account_id
 	if account_id.nil?
 		account_id = current_account.id
