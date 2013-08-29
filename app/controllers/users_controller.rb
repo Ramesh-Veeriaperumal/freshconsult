@@ -97,6 +97,12 @@ class UsersController < ApplicationController
     def scoper
       current_account.all_users
     end
+
+    def load_item
+      @user = @item = scoper.find(params[:id])
+
+      @item || raise(ActiveRecord::RecordNotFound)
+    end
     
 
     def set_selected_tab
