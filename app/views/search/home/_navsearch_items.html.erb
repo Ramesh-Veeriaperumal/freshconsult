@@ -26,16 +26,6 @@
         <% end %>
       </li>
     <% end %>
-
-    <% unless @searched_notes.blank? %>
-      <li class="ticket_icon">
-        <h4>Notes</h4>
-        <% @searched_notes.each do |note| %>
-          <span class="icon"></span>
-          <%= link_to("#{note.notable.subject} (##{note.notable.display_id})", note.notable) %>
-        <% end %>
-      </li>
-    <% end %>
     
     <% unless @searched_users.blank? %>
       <li class="contact_icon"> 
@@ -79,7 +69,7 @@
     
     <% if @total_results == 10 %>
       <li>
-        <%= link_to("See more results for \"#{@search_key}\"  &raquo;", "/search?search_key=#{@search_key}") %>
+        <%= link_to("See more results for \"#{h(@search_key)}\"  &raquo;".html_safe, "/search?search_key=#{@search_key}") %>
       </li>
     <% end %>
     

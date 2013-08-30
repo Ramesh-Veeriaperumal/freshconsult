@@ -15,7 +15,7 @@
           <div class="group">
             <span class="icon"></span>
             <%= link_to("#{ticket.es_highlight('subject')} (##{ticket.display_id})".html_safe, ticket, :class => "big") %>
-            <span class="light"><%= "Requested by, <b>#{ticket.requester}</b>".html_safe %> </span>
+            <span class="light"><%= "Requested by, <b>#{h(ticket.requester)}</b>".html_safe %> </span>
             <p><%= ticket.es_highlight('description').html_safe %></p>
           </div>
         <% end %>
@@ -29,7 +29,7 @@
           <div class="group">
             <span class="icon"></span>
             <%= link_to("#{h(note.notable.subject)} (##{note.notable.display_id})", note.notable, :class => "big") %>
-            <span class="light"><%= "Requested by, <b>#{note.notable.requester}</b>" %> </span>
+            <span class="light"><%= "Requested by, <b>#{h(note.notable.requester)}</b>".html_safe %> </span>
             <p><%= h(note.body) %></p>
           </div>
         <% end %>

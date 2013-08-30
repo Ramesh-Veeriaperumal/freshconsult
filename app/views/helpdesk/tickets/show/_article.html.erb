@@ -14,7 +14,7 @@
 	<% if es_enabled? then %>
 		<%= article.es_highlight('title').html_safe %>
 	<% else %>
-		<%= article.excerpts.title.html_safe %>
+		<%= article.excerpts.title %>
 	<% end %>
 	<%= link_to "", article_url, :target => "blank", :title => truncate ( article.desc_un_html, 100), :class => "open_in_new" %> 
 </td></tr>
