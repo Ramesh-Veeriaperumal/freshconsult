@@ -164,15 +164,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   end
  
-    def ticket_sla_status
-        closed_status = Helpdesk::TicketStatus.onhold_and_closed_statuses(account)
-        sla_status(self,closed_status);
-    end
-    def ticket_subject_style
-        closed_status = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(account)
-        subject_style(self,closed_status)
-    end
- 
   def agent_permission_condition user
      permissions = {:all_tickets => "" , 
                    :group_tickets => " AND (group_id in (

@@ -103,4 +103,14 @@ module Mobile::Actions::Ticket
   def pretty_updated_date
     distance_of_time_in_words_to_now(updated_at) + " ago"
   end
+
+  def ticket_sla_status
+    closed_status = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(account)
+    sla_status(self,closed_status);
+  end
+  
+  def ticket_subject_style
+    closed_status = Helpdesk::TicketStatus.onhold_and_closed_statuses_from_cache(account)
+    subject_style(self,closed_status)
+  end
 end

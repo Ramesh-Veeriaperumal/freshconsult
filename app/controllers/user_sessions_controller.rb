@@ -153,11 +153,11 @@ include Redis::TicketsRedis
       #Unable to put 'grant_day_pass' in after_filter due to double render
     else
       note_failed_login
-      if mobile?
-        flash[:error] = I18n.t("mobile.home.sign_in_error")
-        redirect_to root_url
-      else
         respond_to do |format|
+          # format.mobile{
+          #   flash[:error] = I18n.t("mobile.home.sign_in_error")
+          #   redirect_to root_url
+          # }
           format.html{
             redirect_to support_login_path
           }
@@ -170,7 +170,7 @@ include Redis::TicketsRedis
               render :json => json
           } 
         end
-      end
+      
     end
   end
   
