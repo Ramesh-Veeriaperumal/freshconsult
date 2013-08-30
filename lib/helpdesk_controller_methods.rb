@@ -210,6 +210,12 @@ protected
   end
 
   def build_attachments item, model_name
+    if item.respond_to?(:dropboxes) #handle dropbox
+      (params[:dropbox_url] || []).each do |urls|
+        decoded_url =  URI.unescape(urls)
+        item.dropboxes.build(:url => decoded_url)
+      end
+    end
     build_shared_attachments item
     return unless item.respond_to?(:attachments)
     (params[model_name][:attachments] || []).each do |a|

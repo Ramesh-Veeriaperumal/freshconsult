@@ -75,9 +75,11 @@ class Admin::CannedResponses::ResponsesController < Admin::AdminController
   end
 
   def delete_shared_attachments(ca_response)
+    if !params[:remove_attachments].nil?
     (params[:remove_attachments].uniq || []).each do |a|
     shared_attachment=Helpdesk::SharedAttachment.find_by_shared_attachable_id(ca_response, :conditions=>["attachment_id=?",a])
     shared_attachment.destroy
+    end
     end
   end
 
