@@ -108,7 +108,7 @@
     <div>
       <% f.fields_for :preferences do |ff| %>
         <%= ff.check_box :nonResponsive, { :rel => "toggle", 
-              :checked => !portal_simple.preferences['nonResponsive'] }, false, true %>
+              :checked => (portal_simple.preferences['nonResponsive'] != true) }, false, true %>
       <% end %>
       &nbsp; Tablet and mobile friendly portal
     </div>    

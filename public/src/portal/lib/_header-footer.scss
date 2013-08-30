@@ -31,9 +31,7 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 .banner-nav{
 	font-size: 0.929em;
 	line-height: 1.3em;
-	.welcome{ 
-		display: inline-block;
-	}
+	.welcome{ display: inline-block; }
 	a{ color: inherit; }
 }
 

@@ -12,7 +12,7 @@ module Portal::PortalFilters
 	end
 	
 	# Ticket info for list view
-	def default_info(ticket)
+	def default_info ticket
 		output = []
 		unless ticket.requester.nil? or User.current.eql?(ticket.requester)
 			output << %(#{I18n.t('ticket.portal_created_on', { :username => h(ticket.requester.name), :date => ticket.created_on })})

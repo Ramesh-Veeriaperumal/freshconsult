@@ -8,15 +8,17 @@
 		<meta name="description" content="<%= page_description %>">
 		<meta name="author" content="">
 		<meta name="keywords" content="<%= page_keywords %>">
-		
-		<% if current_portal.preferences["nonResponsive"].present? %>
+
+		<% if(current_portal.template.preferences["nonResponsive"] != "true") %>
 		    <link rel="apple-touch-icon" href="/images/touch/touch-icon-iphone.png" />
 			<link rel="apple-touch-icon" sizes="72x72" href="/images/touch/touch-icon-ipad.png" />
 			<link rel="apple-touch-icon" sizes="114x114" href="/images/touch/touch-icon-iphone-retina.png" />
 			<link rel="apple-touch-icon" sizes="144x144" href="/images/touch/touch-icon-ipad-retina.png" />		
-			<meta name="viewport" content="width=device-width, user-scalable=no" />
-			<meta name="viewport" content="initial-scale = 1.0">
+			<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0" />
+		<% else %>
+			<meta name="viewport" content="initial-scale=0" />
 		<% end %>
+
 
 		<% unless page_canonical.blank? %>
 			<link rel="canonical" href="<%= page_canonical %>" />
@@ -43,7 +45,7 @@
 	</head>
 	<body>
 		<%= assumed_identity_message %>
-		
+
 		<%= @layout %>
 				
 		<%= render :partial => "layouts/shared/scripts" %> 	

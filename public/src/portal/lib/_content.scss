@@ -19,6 +19,7 @@
 	h3{
 		border-top:6px solid $inputFocusRingColor;
 		@include inline-block;
+		min-width: 30%;
 	}
 }
 
@@ -30,7 +31,7 @@
 	}	
 }
 
-.article-body{	
+.article-body{
 	@include text-formatting;
 	big{ font-size: inherit; }
 }
@@ -83,6 +84,10 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	color: $helpTextColor;	
 	font-weight: 200;
 	line-height: $baseLineHeight / 1.1;
+}
+
+.article-body, .help-text, .p-info, .info-text, .list-noinfo, .description-text{
+	max-height: 999999px; // Hack to make fonts not zoom out in android
 }
 
 .item-count{ 
@@ -380,10 +385,7 @@ hr.content-divider{
 		#topic-toolbar .btn{ min-width: 30%; }
 		.cs-s{
 			margin:0.5em 0;
-			h3{
-				border-top-width:4px;
-				@include inline-block;
-			}
+			h3{ border-top-width:4px; }
 		}
 		.content, .content-form, .content-light{ 
 			margin-top: 0; 

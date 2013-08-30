@@ -62,7 +62,7 @@ function layoutResize(layoutClass1, layoutClass2){
     if(!mainbar) $j(sidebar).removeClass("sidebar")
 
     // Setting equal height for main & sidebar if both are present
-    if(!isMobile.any() && (mainbar || sidebar)){
+    if(mainbar || sidebar){
         $j(layoutClass1 + ", " + layoutClass2)
             .css("minHeight", Math.max($j(mainbar).outerHeight(true), $j(sidebar).outerHeight(true)))
 
