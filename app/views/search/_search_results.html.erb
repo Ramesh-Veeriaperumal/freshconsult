@@ -15,7 +15,7 @@
 					<div class="group">
 						<span class="icon"></span>
 						<%= link_to(Helpdesk::Ticket.search_display(ticket), ticket, :class => "big") %>
-						<span class="light"><%= "Requested by, <b>#{ticket.requester}</b>".html_safe %> </span>
+						<span class="light"><%= "Requested by, <b>#{h(ticket.requester)}</b>".html_safe %> </span>
 						<p><%= ticket.description %></p>
 					</div>
 				<% end %>

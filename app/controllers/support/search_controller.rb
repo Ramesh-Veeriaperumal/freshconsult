@@ -301,7 +301,7 @@ class Support::SearchController < SupportController
 
     def solution_result article
       { 'title' => article.es_highlight('title').html_safe, 
-        'group' => article.folder.name, 
+        'group' => h(article.folder.name), 
         'desc' => article.es_highlight('desc_un_html').html_safe,
         'type' => "ARTICLE",
         'url' => support_solutions_article_path(article) }
@@ -309,7 +309,7 @@ class Support::SearchController < SupportController
 
     def topic_result topic
       { 'title' => topic.es_highlight('title').html_safe, 
-        'group' => topic.forum.name, 
+        'group' => h(topic.forum.name), 
         'desc' => truncate(h(topic.posts.first.body), :length => truncate_length),
         'type' => "TOPIC", 
         'url' => support_discussions_topic_path(topic) }
