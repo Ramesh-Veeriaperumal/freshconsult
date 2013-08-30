@@ -35,7 +35,7 @@
 		  					<br />
 			  				<label class="checkbox level"> 
 			    				<%= check_box_tag "export_fields[#{level[:name]}]", level[:label], false  %> 
-								<%= level[:label] %>
+								<%= level[:label].html_safe %>
 			  				</label>
 			  			<% end %>
 	  			    </div>	
