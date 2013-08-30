@@ -210,17 +210,26 @@ protected
   end
 
   def build_attachments item, model_name
-    if item.respond_to?(:dropboxes) #handle dropbox 
-      (params[:dropbox_url] || []).each do |urls|
-        decoded_url =  URI.unescape(urls)
-        item.dropboxes.build(:url => decoded_url)
-      end
-    end
-    return unless item.respond_to?(:attachments) 
+    build_shared_attachments item
+    return unless item.respond_to?(:attachments)
     (params[model_name][:attachments] || []).each do |a|
       item.attachments.build(:content => a[:resource], :description => a[:description], :account_id => item.account_id)
     end
   end
+
+  def build_shared_attachments item
+      (params[:shared_attachments] || []).each do |r|
+        a=Helpdesk::Attachment.find(r)
+        item.shared_attachments.build(:account_id => item.account_id,:attachment=>a )
+      end
+
+      if !params[:admin_canned_responses_response].nil?
+      (params[:admin_canned_responses_response][:attachments]).each do |a|
+        attachment_created=item.account.attachments.create(:content => a[:resource], :description => a[:description],:attachable_type=>"Account", :attachable_id=>current_account.id)
+        item.shared_attachments.build(:attachment=>attachment_created )
+      end
+      end
+ end
 
   def item_url 
     @item
