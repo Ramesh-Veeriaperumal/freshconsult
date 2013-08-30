@@ -95,8 +95,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
    begin
     set_account_time_zone
     evaluate_on = check_rules     
+    autoreply 
     assign_tickets_to_agents unless spam? || deleted?
-    autoreply
    rescue Exception => e #better to write some rescue code 
     NewRelic::Agent.notice_error(e)
    end
