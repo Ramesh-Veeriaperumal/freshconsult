@@ -98,6 +98,12 @@ var RLANG = {
 var uploaded_img_placeholder = (typeof(FILLER_IMAGES) === "undefined") ? "/images/fillers/image_upload_placeholder.gif" : FILLER_IMAGES.imageLoading;
 
 (function($){
+	
+var escapeHtml = function(str) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+};
 
 // Plugin
 jQuery.fn.redactor = function(option)
