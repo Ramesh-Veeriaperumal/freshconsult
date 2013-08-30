@@ -121,9 +121,15 @@ class SubscriptionAffiliate < ActiveRecord::Base
   def set_discounts
     if self.affiliate_discount_ids
       self.affiliate_discount_ids.collect{ |id| id unless id.eql?("---")}.compact
-      self.discounts = AffiliateDiscount.find_all_by_id(self.affiliate_discount_ids)
+      self.discounts = AffiliateDiscount.retrieve_discounts(self.affiliate_discount_ids)
     end
   end
+
+  def fetch_discount(discount_type)
+    discount = AffiliateDiscount.retrieve_discount_with_type(self, discount_type)
+    discount.id if discount
+  end
+
     
   # Return the fees owed to an affiliate for a particular time
   # period. The period defaults to the previous month.

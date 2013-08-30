@@ -5,6 +5,7 @@ class SubscriptionAdmin::SubscriptionAffiliatesController < ApplicationControlle
   
   before_filter :set_selected_tab  
   before_filter :load_discounts, :only => [ :new, :create, :edit, :update ]
+  
 
   def add_subscription
     @subscription_affiliate = SubscriptionAffiliate.find(params[:id])
@@ -34,7 +35,12 @@ class SubscriptionAdmin::SubscriptionAffiliatesController < ApplicationControlle
     def attach_affiliate(account)
       SubscriptionAffiliate.add_affiliate(account, @subscription_affiliate.token)
       @subscription_affiliate.discounts.each do |discount|
-        Billing::Subscription.new.add_discount(account, discount.code)
+        begin
+          Billing::Subscription.new.add_discount(account, discount.code)
+        rescue
+          flash[:error] = 'There was an error applying discounts in ChargeBee.'          
+        end
       end
+
     end
 end
