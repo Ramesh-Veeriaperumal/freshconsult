@@ -300,7 +300,7 @@ include Redis::TicketsRedis
     def generate_random_hash(google_viewer_id, account)
        generated_hash = Digest::MD5.hexdigest(DateTime.now.to_s + google_viewer_id)
        key_options = { :account_id => account.id, :token => generated_hash}
-       key_spec = Redis::KeySpec.new(RedisKeys::AUTH_REDIRECT_GOOGLE_OPENID, key_options)
+       key_spec = Redis::KeySpec.new(Redis::RedisKeys::AUTH_REDIRECT_GOOGLE_OPENID, key_options)
        Redis::KeyValueStore.new(key_spec, google_viewer_id, 300).save
        return generated_hash;
     end
