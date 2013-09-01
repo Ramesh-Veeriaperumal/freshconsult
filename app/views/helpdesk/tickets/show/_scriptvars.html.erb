@@ -1,5 +1,5 @@
 <script type="text/javascript">
-var tag_list = "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',')) %>"; 
+var tag_list = "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>"; 
 TICKET_DETAILS_DATA = {
 	displayId			: "<%= @ticket.display_id %>",
 	ticket_path 		: "<%= helpdesk_ticket_path(@ticket) %>",
