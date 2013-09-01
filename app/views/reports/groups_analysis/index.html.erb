@@ -50,7 +50,7 @@ jQuery(document).ready(function(){
 	});
 
 	/**save report filters code**/
-	Helpkit.report_filter_data = <%=@report_filter_data.to_json%>;
+	Helpkit.report_filter_data = <%=@report_filter_data.to_json.html_safe%>;
 	Helpkit.reports_util.bindEventsForReportFilter();
 });
 

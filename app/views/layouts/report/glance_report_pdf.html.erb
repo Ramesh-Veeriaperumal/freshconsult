@@ -143,7 +143,7 @@
 		        jQuery(document).ready(function() {
 		          <%unless pie_chart.empty?%>
 		          var ticketByType<%=label%> = new pieChart({renderTo:'<%=label%>_freshdesk_chart'
-		                                                      ,chartData:<%=pie_chart.to_json%>
+		                                                      ,chartData:<%=pie_chart.to_json.html_safe%>
 		                                                      ,isPDF:true});
 		          ticketByType<%=label%>.pieChartGraph();
 		          <%end%>
@@ -168,9 +168,9 @@
 		      jQuery(document).ready(function() {
 		      <%unless pare_to_chart[:chartData].empty?%>
 		        var ticketByType<%=label%> = new pare_to_chart({renderTo:'<%=label%>_freshdesk_chart'
-		                                                    ,chartData:<%=pare_to_chart[:chartData].to_json%>
-		                                                    ,xaxis_arr:<%=pare_to_chart[:xaxis_arr].to_json%>
-		                                                    ,column_width:<%=pare_to_chart[:column_width].to_json%>
+		                                                    ,chartData:<%=pare_to_chart[:chartData].to_json.html_safe%>
+		                                                    ,xaxis_arr:<%=pare_to_chart[:xaxis_arr].to_json.html_safe%>
+		                                                    ,column_width:<%=pare_to_chart[:column_width].to_json.html_safe%>
 		                                                    ,isPDF:true});
 		        ticketByType<%=label%>.pareToGraph();
 		        <%end%>
@@ -182,8 +182,8 @@
 		</div>
 	</div>
 	<script type="text/javascript">
-	var data_json = <%= @activity_data_hash.to_json%>;
-	var custom_fields = JSON.parse(<%=@custom_fields.to_json%>);
+	var data_json = <%= @activity_data_hash.to_json.html_safe%>;
+	var custom_fields = JSON.parse(<%=@custom_fields.to_json.html_safe%>);
 	jQuery(document).ready(function() {
 	  var singleStakedBar = new single_stacked_bar_chart(
 	        {renderTo: 'source_freshdesk_single_stacked_bar_chart',chartData:data_json["source"],isPDF:true}

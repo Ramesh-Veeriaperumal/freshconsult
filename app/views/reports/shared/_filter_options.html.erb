@@ -11,11 +11,11 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
       <li>
       <form id="FilterOptions" method="post" action='<%=action_url%>/generate_pdf' target="_blank">
       <input type="hidden" name="data_hash" class="serialize" value="" />
-      <input type="hidden" name="ticket_nested_fields" class="serialize" value='<%=@ticket_nested_fields.to_json%>' />
+      <input type="hidden" name="ticket_nested_fields" class="serialize" value='<%=@ticket_nested_fields.to_json.html_safe%>' />
       <input type="hidden" name="agent_select_field" class="serialize" value=''/>
       <input type="hidden" name="group_select_field" class="serialize" value=''/>
       <input type="hidden" name="customer_select_field" class="serialize" value=''/>
-      <input type="hidden" name="custom_fields" class="serialize" value='<%=@show_fields.to_json%>' />
+      <input type="hidden" name="custom_fields" class="serialize" value='<%=@show_fields.to_json.html_safe%>' />
       <input type="hidden" name="selected_filter_data" class="serialize" value=''/>
       <li class="row-fluid ff_item">
         <div>

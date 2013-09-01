@@ -14,8 +14,8 @@ metric_data = @data_obj[metric_type]
 jQuery(document).ready(function(){
   var chart_id = '<%=metric_type%>_line_chart',
       analysis_1_barChart = new bar_chart(
-      {renderTo: chart_id,chartData:<%=metric_data[:chartData].to_json%>,
-        xaxis_arr: <%=metric_data[:xaxis_arr].to_json%>,title:'',
+      {renderTo: chart_id,chartData:<%=metric_data[:chartData].to_json.html_safe%>,
+        xaxis_arr: <%=metric_data[:xaxis_arr].to_json.html_safe%>,title:'',
         yAxis_label:'<%=metric_data[:yAxisLabel]%>'
       });
   analysis_1_barChart.barGraph();

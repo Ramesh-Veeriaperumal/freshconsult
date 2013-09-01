@@ -51,7 +51,7 @@
 							tag_to_acc_map[s_tag].push(g_account.email)
 						end
 					}%>
-					<%=javascript_tag "var tag_to_acc_map = #{tag_to_acc_map.to_json}" %>
+					<%=javascript_tag "var tag_to_acc_map = #{tag_to_acc_map.to_json.html_safe}" %>
 				</label>
 			</div>
 		</li>
