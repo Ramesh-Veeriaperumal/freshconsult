@@ -6,6 +6,8 @@ class SubscriptionAdmin::SubscriptionAffiliatesController < ApplicationControlle
   before_filter :set_selected_tab  
   before_filter :load_discounts, :only => [ :new, :create, :edit, :update ]
   
+  skip_filter :run_on_slave, :only => [ :create, :update, :add_subscription ]
+
 
   def add_subscription
     @subscription_affiliate = SubscriptionAffiliate.find(params[:id])
