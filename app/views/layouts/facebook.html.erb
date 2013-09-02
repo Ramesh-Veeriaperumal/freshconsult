@@ -41,17 +41,13 @@
 		<!-- Access variables for portal -->
 		<%= portal_access_varibles %>
 		
-		<% javascript_tag do %>
-		if(Modernizr.localstorage)
-		{
-			if(localStorage["fb_redirect"])
-			{
-				url = localStorage["fb_redirect"];
-				localStorage.removeItem("fb_redirect");
-				window.location = url;
-			}
+		<script type="text/javascript">
+		if(Modernizr.localstorage && localStorage["fb_redirect"]){
+			var url = localStorage["fb_redirect"];
+			localStorage.removeItem("fb_redirect");
+			window.location = url;
 		}
-		<% end %>
+		</script>
 	</head>
 	<body>
 		<script src="https://connect.facebook.net/en_US/all.js"></script>
@@ -65,21 +61,6 @@
           oauth		 : true
         });
 
-        FB.Event.subscribe('auth.login', function(response) {
-          if (response.status === "connected") {
-          	window.location = "/facebook/sso/facebook"
-        	}
-          else{
-          	if(Modernizr.localstorage)
-        	{
-          		if(localStorage["fb_redirect"])
-				{
-					localStorage.removeItem("fb_redirect");
-        		}
-        	}
-        	}
-        });
-
         FB.Canvas.setAutoGrow(7);
 
         jQuery('body').on('click', '.no_user_ticket, .solution_c', function(ev){
@@ -88,7 +69,16 @@
         	{
         		localStorage["fb_redirect"] = jQuery(this).attr('href');
         	}
-        	FB.login(function(response){}, {scope: "<%= FacebookConfig::USER_PERMISSIONS.join(',') %>"});
+        	FB.login(function(response){
+    			if(response.status === "connected"){
+    				window.location = "/facebook/sso/facebook"
+    			}
+    			else{
+          			if(Modernizr.localstorage && localStorage["fb_redirect"]) {
+						localStorage.removeItem("fb_redirect");
+    				}
+    			}}, {scope: "<%= FacebookConfig::USER_PERMISSIONS.join(',') %>"}
+        	);
         });
 
         FB.Canvas.setDoneLoading( function(response) {

@@ -18,8 +18,13 @@
 	    	</div>
           </td>
           <td class="fb_page_info">
-          	<%= check_box( "enable", "pages", { :multiple => true, :checked => true }, fb_page.to_json.html_safe , nil) if fb_page[:page_id]%>
-			    <b><%= fb_page[:page_name] %></b>
+          	<%= check_box( "enable", "pages", { 
+                            :multiple => true, :checked => true, 
+                            :id => "enable_page_#{fb_page[:page_id]}" 
+                            }, fb_page.to_json.html_safe , nil) if fb_page[:page_id]%>
+            <label for="enable_page_<%=fb_page[:page_id] %>">
+              <b><%= fb_page[:page_name] %></b>
+            </label>
 					<% if source %>
 						<p class="muted"> <%= t('facebook_tab.page_added', {:source => source}) %> </p>
 					<% end %>
@@ -38,3 +43,13 @@
  </div>
 <% end %>
 </div>
+<% javascript_tag do %>
+jQuery(".fb_page_info input[type=checkbox]").change(function(){
+  if(jQuery('.fb_page_info input[type=checkbox]:checked').length){
+    jQuery('#pages_dialog-submit').removeAttr('disabled');
+  }
+  else{
+    jQuery('#pages_dialog-submit').attr('disabled', 'true');
+  }
+});
+<% end %>

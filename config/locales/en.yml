@@ -2170,6 +2170,7 @@ en:
       started: started a topic
       more_topic: More topics in
       last_reply: Last Reply
+      fb_reply_info: "<a href='%{reply_url}'> Last Reply </a> by %{user_name}<br>%{created_on}"
     topic_vote:
       you: 
         one: "You"
