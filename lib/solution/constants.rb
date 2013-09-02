@@ -1,8 +1,8 @@
 module Solution::Constants
 	
 	STATUSES = [
-    [ :draft,     I18n.t("solutions.status.draft"),        1 ], 
-    [ :published, I18n.t("solutions.status.published"),    2 ]
+    [ :draft,     "solutions.status.draft",        1 ], 
+    [ :published, "solutions.status.published",    2 ]
   ]
 
   STATUS_OPTIONS = STATUSES.map { |i| [i[1], i[2]] }
@@ -10,8 +10,8 @@ module Solution::Constants
   STATUS_KEYS_BY_TOKEN = Hash[*STATUSES.map { |i| [i[0], i[2]] }.flatten]
   
   TYPES = [
-    [ :permanent,  I18n.t("solutions.types.permanent"),   1 ],
-    [ :workaround, I18n.t("solutions.types.workaround"),  2 ]
+    [ :permanent,  "solutions.types.permanent",   1 ],
+    [ :workaround, "solutions.types.workaround",  2 ]
   ]
 
   TYPE_OPTIONS = TYPES.map { |i| [i[1], i[2]] }

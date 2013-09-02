@@ -814,14 +814,14 @@ en:
         portal_language: Portal Language
         portal_language_info: This will be the default language when customers visits your portal
         portal_customization: Portal customization
-        customize_portal: Customize portal >
-        save_and_customize: Save & Customize portal >
+        customize_portal: "Customize portal >"
+        save_and_customize: "Save & Customize portal >"
         save_and_continue: You have unsaved changes in your form. Do you want to save and continue?
         helpdesk_phone: Helpdesk Phone
         ago: ago
         last_published: Your portal was last published
         contact_us: Contact us 
-        logo_and_favicon: Logo & favicon
+        logo_and_favicon: "Logo & favicon"
       edit: 
         title: Edit Product
         updating: Updating...
@@ -1866,13 +1866,13 @@ en:
       no_agents: You dont have any deleted agents
     trial: In trial version
     buy: Buy more
-    available_seats: %{count} Agent seats available
+    available_seats: "%{count} Agent seats available"
     available_seats_without_count: Agent seats available
     no_seats: No agent seats available
     last_logged_in: Last logged in %{time} ago.
     never_logged_in: Never logged in
     day_pass_used: Used %{count} day pass till date
-    day_pass_available: %{count} Day pass available
+    day_pass_available: "%{count} Day pass available"
     no_day_pass: No day pass available
     assign_role: Associate Roles
     cannot_edit_roles: You will only be able to view your roles and scope, not edit them.
@@ -2838,6 +2838,13 @@ en:
     rebrand: Rebrand your Helpdesk
     helpdesk_url: Helpdesk/Portal URL
     language: Language
+    settings: "Settings"
+    logo_and_colors: "Logo and colors"
+    logo_and_favicon: "Logo & favicon"
+    change_logo: "Change logo"
+    change_favicon: "Change favicon"
+    use_default: "Use default"
+    last_published: "Portal was last published %{last_published} ago"
   lead: Lead
   comments: Comments
   forum_confirm_msg1: Are you sure you want to delete this category?

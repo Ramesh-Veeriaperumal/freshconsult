@@ -181,4 +181,12 @@ class Solution::Article < ActiveRecord::Base
     @article_changes ||= self.changes.clone
   end
 
+  def self.article_type_option
+    TYPES.map { |i| [I18n.t(i[1]), i[2]] }
+  end
+
+  def self.article_status_option
+    STATUSES.map { |i| [I18n.t(i[1]), i[2]] }
+  end
+
 end

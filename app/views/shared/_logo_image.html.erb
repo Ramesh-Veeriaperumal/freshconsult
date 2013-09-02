@@ -5,11 +5,11 @@
   <% end %>
 </div>
 <div class="logo-actions">
-	<%= link_to_function("Change logo", "jQuery('#portal-logo').click();") %>
+	<%= link_to_function(t("account.change_logo"), "jQuery('#portal-logo').click();") %>
 	<% if item.logo.present? %>
 		<br />
 		<% default_logo_url = item.main_portal? ? delete_logo_account_path : delete_logo_admin_product_path(item) %>
-		<%= link_to("Use default", default_logo_url,
+		<%= link_to(t("account.use_default"), default_logo_url,
 				:confirm => t('logo_delete_msg'), :method => 'delete') %>
     <% end %>
 </div>

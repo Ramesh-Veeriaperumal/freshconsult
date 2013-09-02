@@ -2891,7 +2891,7 @@ pt-BR:
   signup_title: "Inscreva-se para %{current_portal}"
   signup_up_with_us: "Registre-se conosco"
   since: Desde
-  since_last_time: "desde a última %{time_words}"
+  since_last_time: "há %{time_words}"
   since_time: "Desde %{time_words}"
   six_months: "Últimos 6 meses"
   sixmonth: "6 Meses"
