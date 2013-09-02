@@ -10,7 +10,7 @@ minimizable ||= false
 
 <li id="<%= note_view_id %>" class="conversation <%= 'minimized minimizable' if minimizable %>">
 	<% if note.user %>
-	<div class="avatar-wrap" name="note<%= note.id %>"><%= user_avatar(note.user) %></div>
+	<div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user) %></div>
 	<% end %>
 	<div class="commentbox 
 					<%= (note.user.blank? or note.user.agent?) ? 'commentbox-gray' : 'commentbox-requester' %> 
@@ -80,12 +80,12 @@ minimizable ||= false
 					<%= note.body_html.html_safe %>
 				</div>
 			</div>
-			<% unless note.attachments.empty? and note.dropboxes.empty? %>
+			<% unless note.all_attachments.empty? and note.dropboxes.empty? %>
 				<span class="seperator"></span>
 				<div class="attachments-wrap clearfix">
-					<h5><strong><%= pluralize(note.attachments.size + note.dropboxes.size, t('attachment'), t('attachments'))%></strong></h5>
+					<h5><strong><%= pluralize(note.all_attachments.size + note.dropboxes.size, t('attachment'), t('attachments'))%></strong></h5>
 					<ul class="attachment_list">
-					    <%= render :partial => '/helpdesk/tickets/show/attachment.html', :collection => note.attachments, :locals => {:show_delete => true, :url => [@item] } %>
+                      <%= render :partial => '/helpdesk/tickets/show/attachment.html', :collection => note.all_attachments, :locals => {:show_delete => true, :url => [@item] } %>
 
 					    <%note.dropboxes.each do |dropbox| %> 
 							<%= render :partial => '/helpdesk/tickets/show/dropbox.html',:locals => {:dropbox=>dropbox, :show_delete => true, :url => [@item] } %>

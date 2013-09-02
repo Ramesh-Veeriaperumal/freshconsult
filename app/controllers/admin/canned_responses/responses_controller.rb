@@ -18,7 +18,7 @@ class Admin::CannedResponses::ResponsesController < Admin::AdminController
 		  format.html
 		  format.xml  { render :xml => @ca_response }
 		end
-	end
+  end
 
 	def edit
 		@ca_response = scoper.find(params[:id]) 
@@ -32,7 +32,8 @@ class Admin::CannedResponses::ResponsesController < Admin::AdminController
 		@folder = @ca_res_folders.select{|x| x.id == params[:new_folder_id].to_i}.first
 		params[nscname].merge!("folder_id"=>params[:new_folder_id])
 		@ca_response = scoper.build(params[nscname])
-		respond_to do |format|
+    build_attachments @ca_response, :admin_canned_responses_response
+    respond_to do |format|
 		  if @ca_response.save        
 		    format.html {redirect_to(admin_canned_responses_folder_path(@folder), 
 		      :notice => t('canned_folders.created')) }        
@@ -50,7 +51,9 @@ class Admin::CannedResponses::ResponsesController < Admin::AdminController
 
 	def update
 		@ca_response = scoper.find(params[:id]) 
-		params[nscname].merge!("folder_id"=>params[:new_folder_id])   
+    build_attachments @ca_response, :admin_canned_responses_response
+    delete_shared_attachments params[:id]
+		params[nscname].merge!("folder_id"=>params[:new_folder_id])
 		respond_to do |format|     
 			if @ca_response.update_attributes(params[nscname])           
 			  format.html {redirect_to(admin_canned_responses_folder_path(@ca_response.folder_id), 
@@ -69,7 +72,16 @@ class Admin::CannedResponses::ResponsesController < Admin::AdminController
 		@items.each do |item|
 			item.destroy
 		end
-	end
+  end
+
+  def delete_shared_attachments(ca_response)
+    if !params[:remove_attachments].nil?
+    (params[:remove_attachments].uniq || []).each do |a|
+    shared_attachment=Helpdesk::SharedAttachment.find_by_shared_attachable_id(ca_response, :conditions=>["attachment_id=?",a])
+    shared_attachment.destroy
+    end
+    end
+  end
 
 	def update_folder
 		@resp_folder = current_account.canned_response_folders.find(params[:move_folder_id])

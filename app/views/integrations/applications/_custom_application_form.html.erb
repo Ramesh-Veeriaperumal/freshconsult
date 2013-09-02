@@ -64,7 +64,7 @@
   </ul>
 <%#<div id="capsule_widget" domain="freshdeskdemo.capsulecrm.com" title="Custom CRM App"><div class="content"></div></div><script type="text/javascript">CustomWidget.include_js("/javascripts/capsule_crm.js");capsuleBundle={ t:"b43cff831b56cec58fa8cd95c21b47f5", reqId:"{{requester.id}}", reqName:"{{requester.name | escape_html}}", reqOrg:"{{requester.company_name}}", reqPhone:"{{requester.phone}}", reqEmail:"{{requester.email}}"}; </script>%>
 <% content_for :pagefixed do %>
-  <%= render :partial => "/shared/placeholder_help" %>
+  <%= render :partial => "/shared/placeholder_help", :locals => { :placeholders => ticket_placeholders+survey_placeholders }  %>
 <% end %>
 <% javascript_tag do %>
   jQuery('.preview_link').bind("click", function(ev){

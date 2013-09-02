@@ -388,50 +388,57 @@ module ApplicationHelper
   end
   
    def timesheet_path(args_hash, link_display = 'time entry')
-    link_to(link_display, "#{helpdesk_ticket_path args_hash['ticket_id']}#timeentry_#{args_hash['timesheet_id']}")
+    link_display
   end
   #Liquid ends here..
   
   #Ticket place-holders, which will be used in email and comment contents.
   def ticket_placeholders #To do.. i18n
     place_holders = [
-      ['{{ticket.id}}',           'Ticket ID' ,       'Unique ticket ID.'],
-      ['{{ticket.subject}}',          'Subject',          'Ticket subject.'],
-      ['{{ticket.description}}',      'Description',        'Ticket description.'],
-      ['{{ticket.url}}',          'Ticket URL' ,            'Full URL path to ticket.'],
-      ['{{ticket.public_url}}',          'Public Ticket URL' ,            'URL for accessing the tickets without login'],
-      ['{{ticket.portal_url}}', 'Product specific ticket URL',  'Full URL path to ticket in product portal. Will be useful in multiple product/brand environments.'],
-      ['{{ticket.status}}',         'Status' ,          'Ticket status.'],
-      ['{{ticket.priority}}',         'Priority',         'Ticket priority.'],
-      ['{{ticket.source}}',         'Source',           'The source channel of the ticket.'],
-      ['{{ticket.ticket_type}}',      'Ticket type',        'Ticket type.'],
-      ['{{ticket.tags}}',           'Tags',           'Ticket tags.'],
-      ['{{ticket.due_by_time}}',      'Due by time',        'Ticket due by time.'],
-      ['{{ticket.requester.name}}',     'Requester name',       'Name of the requester who raised the ticket.'],
-      ['{{ticket.requester.firstname}}' , 'Requester first name', 'First name of the requester who raised the ticket'],
-      ['{{ticket.requester.lastname}}' , 'Requester last name', 'Last name of the requester who raised the ticket'],
-      ['{{ticket.requester.email}}',    'Requester email',      "Requester's email."],
-      ['{{ticket.requester.company_name}}', 'Requester company name',   "Requester's company name."], #??? should it be requester.company.name?!
-      ['{{ticket.requester.phone}}', 'Requester phone number',   "Requester's phone number."],
-      ['{{ticket.group.name}}',       'Group name',       'Ticket group.'],
-      ['{{ticket.agent.name}}',       'Agent name',       'Name of the agent who is currently working on the ticket.'],
-      ['{{ticket.agent.email}}',      'Agent email',        "Agent's email."],
-      ['{{ticket.latest_public_comment}}',  'Last public comment',  'Latest public comment for this ticket.'],
-      ['{{helpdesk_name}}', 'Helpdesk name', 'Your main helpdesk portal name.'],
-      ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.'],
-      ['{{ticket.product_description}}', 'Product description', 'Product specific description in multiple product/brand environments.']
+      ['{{ticket.id}}',           'Ticket ID' ,       'Unique ticket ID.',        'ticket_id'],
+      ['{{ticket.subject}}',          'Subject',          'Ticket subject.',        'ticket_subject'],
+      ['{{ticket.description}}',      'Description',        'Ticket description.',         'ticket_description'],
+      ['{{ticket.url}}',          'Ticket URL' ,            'Full URL path to ticket.',         'ticket_url'],
+      ['{{ticket.public_url}}',          'Public Ticket URL' ,            'URL for accessing the tickets without login',          'ticket_public_url'],
+      ['{{ticket.portal_url}}', 'Product specific ticket URL',  'Full URL path to ticket in product portal. Will be useful in multiple product/brand environments.',          'ticket_portal_url'],
+      ['{{ticket.status}}',         'Status' ,          'Ticket status.',         'ticket_status'],
+      ['{{ticket.priority}}',         'Priority',         'Ticket priority.',        'ticket_priority'],
+      ['{{ticket.source}}',         'Source',           'The source channel of the ticket.',        'ticket_source'],
+      ['{{ticket.ticket_type}}',      'Ticket type',        'Ticket type.',         'ticket_type'],
+      ['{{ticket.tags}}',           'Tags',           'Ticket tags.',         'ticket_tags'],
+      ['{{ticket.due_by_time}}',      'Due by time',        'Ticket due by time.',          'ticket_due_by_time'],
+      ['{{ticket.requester.name}}',     'Requester name',       'Name of the requester who raised the ticket.',         'ticket_requester_name'],
+      ['{{ticket.requester.firstname}}' , 'Requester first name', 'First name of the requester who raised the ticket',          'ticket_requester_firstname'],
+      ['{{ticket.requester.lastname}}' , 'Requester last name', 'Last name of the requester who raised the ticket',           'ticket_requester_lastname'],
+      ['{{ticket.requester.email}}',    'Requester email',      "Requester's email.",         'ticket_requester_email'],
+      ['{{ticket.requester.company_name}}', 'Requester company name',   "Requester's company name.",          'ticket_requester_company_name'], #??? should it be requester.company.name?!
+      ['{{ticket.requester.phone}}', 'Requester phone number',   "Requester's phone number.",       'ticket_requester_phone'],
+      ['{{ticket.group.name}}',       'Group name',       'Ticket group.',          'ticket_group_name'],
+      ['{{ticket.agent.name}}',       'Agent name',       'Name of the agent who is currently working on the ticket.',        'ticket_agent_name'],
+      ['{{ticket.agent.email}}',      'Agent email',        "Agent's email.",         'ticket_agent_email'],
+      ['{{ticket.latest_public_comment}}',  'Last public comment',  'Latest public comment for this ticket.',         'ticket_latest_public_comment'],
+      ['{{helpdesk_name}}', 'Helpdesk name', 'Your main helpdesk portal name.',         'helpdesk_name'],
+      ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.',        'ticket_portal_name'],
+      ['{{ticket.product_description}}', 'Product description', 'Product specific description in multiple product/brand environments.',         'ticket_product_description']
     ]
-    place_holders << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey', 'Includes satisfaction survey.'] if current_account.features?(:surveys, :survey_links)
-    place_holders << ['{{ticket.surveymonkey_survey}}', 'Surveymonkey survey',
-                      'Includes text/link to survey in Surveymonkey'
-                      ] if Integrations::SurveyMonkey.placeholder_allowed?(current_account)
     current_account.ticket_fields.custom_fields.each { |custom_field|
       name = custom_field.name[0..custom_field.name.rindex('_')-1]
-      place_holders << ["{{ticket.#{name}}}", custom_field.label, "#{custom_field.label} (Custom Field)"] unless name == "type"
+      place_holders << ["{{ticket.#{name}}}", custom_field.label, "#{custom_field.label} (Custom Field)", "ticket_#{name}"] unless name == "type"
     }
     place_holders
   end
-  
+
+  def survey_placeholders
+    place_holders = []
+    place_holders << ['{{ticket.satisfaction_survey}}', 'Satisfaction survey',
+                      'Includes satisfaction survey.', 'ticket_satisfaction_survey'
+                      ] if current_account.features?(:surveys, :survey_links)
+    place_holders << ['{{ticket.surveymonkey_survey}}', 'Surveymonkey survey',
+                      'Includes text/link to survey in Surveymonkey', 'ticket_suverymonkey_survey'
+                      ] if Integrations::SurveyMonkey.placeholder_allowed?(current_account)
+    place_holders
+  end
+
   # Avatar helper for user profile image
   # :medium and :small size of the original image will be saved as an attachment to the user 
   def user_avatar( user, profile_size = :thumb, profile_class = "preview_pic" ,options = {})
@@ -614,7 +621,7 @@ module ApplicationHelper
       when "requester" then
         element = label + content_tag(:div, render(:partial => "/shared/autocomplete_email.html", :locals => { :object_name => object_name, :field => field, :url => requester_autocomplete_helpdesk_authorizations_path, :object_name => object_name }))  
         element+= hidden_field(object_name, :requester_id, :value => @item.requester_id)
-        element+= label_tag("", "#{add_requester_field}",:class => 'hidden') if is_edit
+        element+= label_tag("", "#{add_requester_field}".html_safe,:class => 'hidden') if is_edit
         unless is_edit or params[:format] == 'widget'
           element = add_cc_field_tag element, field  
         end

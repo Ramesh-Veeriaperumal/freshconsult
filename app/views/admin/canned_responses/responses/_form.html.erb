@@ -40,17 +40,27 @@ function toggleGroup(access_id)
 <%= f.error_messages :object_name => 'canned_response_response' %>
 <ul>
 	<li>
-    		<%= f.label(:title, t('.response_name')) %>
-    		<%= f.text_field :title, :class => "text required", "minlength" => "3" %>
+		<%= f.label(:title, t('.response_name')) %>
+		<%= f.text_field :title, :class => "text required", "minlength" => "3" %>
 	</li>
 	<li>
-			<label for="ca-content">
-				<%= t('message') %>
-				<a class='l_placeholder slim-button pull-right' href='javascript:void(0)'><%= t('canned_folders.insert_placeholder') %>&raquo;</a>
-			</label>
+		<label for="ca-content">
+			<%= t('message') %>
+			<a class='l_placeholder slim-button pull-right' href='javascript:void(0)'><%= t('canned_folders.insert_placeholder') %>&raquo;</a>
+		</label>
    		<%= f.text_area :content_html, :class => "ca_content_body", :id => 'ca-content' %>		
 	</li>
-	<br/>
+	<li>
+      <div class="control-group"><%= render "attachment_form" %></div>
+    </li>
+	<li>
+        <div class="control-group">
+		<ul>
+			<%= render :partial => 'attachment', :collection => @item.attachments_sharable  %>
+		</ul>
+        </div>
+	</li>
+
 	<li class="folder-pane form-horizontal">
 		<div class="control-group">
               <%= label_tag(:new_folder_id, t('canned_folders.folder'), :class => "control-label") %>

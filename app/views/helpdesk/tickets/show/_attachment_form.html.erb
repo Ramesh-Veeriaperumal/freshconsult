@@ -6,10 +6,10 @@
 <div class="attachments-wrap">
   <div id="<%=attach_id%>-container" class="attachments-container">
     <% total_attachments = original_attachments[:regular].size + original_attachments[:dropbox].size if original_attachments.present? %>
-    <label><i><%= total_attachments || 0 %></i> <%= t('attachments')%>: </label>
+    <label><i class="a-count"><%= total_attachments || 0 %></i> <%= t('attachments')%>: </label>
     <div class="attachment_contents">
 
-      <div class="attachment_list" id="<%=attach_id%>-attachments">
+      <div class="attachment_list shared_attachment_list" id="<%=attach_id%>-attachments">
         <% if original_attachments.present? %>
 
           <% original_attachments[:regular].each do |attachment| %>
@@ -37,6 +37,7 @@
           <% end %>
 
         <% end %>
+
 
       </div>
 

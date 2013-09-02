@@ -19,8 +19,6 @@ class Integrations::JiraIssue
     res_data = make_rest_call(http_parameter)
     project_issue_hash[:res_projects] = res_data[:json_data] unless (res_data[:exception])
     http_parameter = construct_params_for_http(:issuetypes)
-    res_data = make_rest_call(http_parameter)
-    project_issue_hash[:res_issues] = res_data[:json_data] unless (res_data[:exception])
     return project_issue_hash
   end
 

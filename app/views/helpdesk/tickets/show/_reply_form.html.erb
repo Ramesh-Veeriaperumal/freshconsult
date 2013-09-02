@@ -106,7 +106,8 @@
           <% unless local_assigns[:no_attachments] %>
           <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
           <% end %>    
-      </li> 
+      </li>
+
     </ul>
     
       <!-- reply will be always public -->

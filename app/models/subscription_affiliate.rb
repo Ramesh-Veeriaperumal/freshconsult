@@ -37,7 +37,7 @@ class SubscriptionAffiliate < ActiveRecord::Base
   
   AFFILIATE_PARAMS = AFFILIATES.collect { |affiliate, details| details[:affiliate_param] }
 
-
+  
   class << self
 
     AFFILIATES.each_pair do |affiliate, details|
@@ -129,8 +129,8 @@ class SubscriptionAffiliate < ActiveRecord::Base
     discount = AffiliateDiscount.retrieve_discount_with_type(self, discount_type)
     discount.id if discount
   end
+  
 
-    
   # Return the fees owed to an affiliate for a particular time
   # period. The period defaults to the previous month.
   def fees(period = (Time.now.beginning_of_month - 1).beginning_of_month .. (Time.now.beginning_of_month - 1).end_of_month)

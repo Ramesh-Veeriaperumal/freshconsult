@@ -1,5 +1,6 @@
 module Va
   module Constants
+    
     OPERATOR_TYPES = {
       :email       => [ "is", "is_not", "contains", "does_not_contain" ],
       :text        => [ "is", "is_not", "contains", "does_not_contain", "starts_with", "ends_with" ],

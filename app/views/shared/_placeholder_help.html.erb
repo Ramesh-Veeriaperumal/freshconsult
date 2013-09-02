@@ -1,9 +1,18 @@
-<% javascript_tag do %>	
-	jQuery(document).ready(function(){
-		var active_email_body = null;
+<% javascript_tag do %>		
+	var active_email_body = null;
+	function ignorePlaceholders(){	
+		var iphs = jQuery(active_email_body).data("ignorePlaceholders") || "";
+		
+		jQuery("#placeholder-list-1 dt").show();
+	 	iphs.split(",").each(function(item){
+	 		jQuery("#placeholder-btn-" + item).hide()
+	 	})
+	}
 
-		jQuery("input[name$=_subject_template], textarea, input[name=email_subject]" ).live("focus", function(){
+	jQuery(document).ready(function(){
+		jQuery("input[name$=_subject_template], input[name=email_subject], textarea[name=email_body], textarea[name=url], textarea[name=params] " ).live("focus", function(){
 			active_email_body = this;
+			ignorePlaceholders();
 		});
 		
 		jQuery("#placeholder-list-1 a").click(function(ev){  
@@ -18,15 +27,14 @@
 		jQuery('#place-dialog').draggable();
 	});
 <% end %>
-
 <div class="placeholder-info" id="place-dialog" style="display:none;">		
 	<a href="javascript:void(0)" id="placeholder_close" class="close"></a>
   	<h3 class="title"><%=t('automations.available_placeholders')%></h3>
 	<div class="intro"><%=t('automations.info4')%>.</div>
 	<div id="placeholder-list-1" class="placeholder-list">
 		<dl>
-			<% ticket_placeholders.each do |ph| %>
-				<dt><a class="uiButton small tooltip" href="javascript:void(0)" data-placeholder="<%= ph[0] %>" title="<%= ph[2] %>"><%= ph[1] %></a></dt> 
+			<% placeholders.each do |ph| %>	
+				<dt id="placeholder-btn-<%= ph[3] %>"><a class="uiButton small tooltip" href="javascript:void(0)" data-placeholder="<%= ph[0] %>" title="<%= ph[2] %>"><%= ph[1] %></a></dt> 
 			<% end %>
 		</dl>	
 	</div> 

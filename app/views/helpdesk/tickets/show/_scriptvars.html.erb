@@ -22,8 +22,7 @@ TICKET_DETAILS_DATA = {
 							clear_text		: "<%= t('clear_draft_text') %>",
 							clear_path		: '<%=clear_draft_helpdesk_ticket_path%>',
 							cleared_flag	: <%= @draft.blank?.to_s %>,
-							hasChanged		: false,
-							default_reply 	: ''
+							hasChanged		: false
 						}
 };
 </script>
