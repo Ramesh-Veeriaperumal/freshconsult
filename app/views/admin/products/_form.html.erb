@@ -90,7 +90,7 @@
   <div class="inline-field">
     <div class="fields">
       <div class="control-group">
-        <%= content_tag(:label, "#{t('admin.products.form.product_name')} <span class='required_star'>*</span>", 
+        <%= content_tag(:label, "#{t('admin.products.form.product_name')} <span class='required_star'>*</span>".html_safe, 
                         :class => "control-label") %>
         <div class="controls">
           <%= form.text_field :name, :class => "required text" %>
@@ -132,13 +132,13 @@
         <div class="add-email">  
           <div>
             <div class="add-email-icon plus addchoiceproduct" >+</div>
-            <a class="addchoiceproduct"><%= t('admin.products.add_another_email') %></a>
+            <a class="addchoiceproduct"><%= t('admin.products.add_another_email').html_safe %></a>
           </div>
         </div>
       </div>
       <div class="configure-portal control-group">
         <label class="control-label">
-          <%= t("admin.products.form.configure_seperate_portal") %> 
+          <%= t("admin.products.form.configure_seperate_portal").html_safe %> 
         </label>
         <%= form.check_box :enable_portal, 
                   {:class => "checkbox controls", :rel => "toggle", :id => "EnablePortal"   }%>

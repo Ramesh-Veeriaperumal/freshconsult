@@ -98,6 +98,12 @@ var RLANG = {
 var uploaded_img_placeholder = (typeof(FILLER_IMAGES) === "undefined") ? "/images/fillers/image_upload_placeholder.gif" : FILLER_IMAGES.imageLoading;
 
 (function($){
+	
+var escapeHtml = function(str) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+};
 
 // Plugin
 jQuery.fn.redactor = function(option)
@@ -3106,7 +3112,7 @@ Redactor.prototype = {
 		if (tab_selected === '1') // url
 		{
 			link = $('#redactor_link_url').val();
-			text = $('#redactor_link_url_text').val();
+			text = escapeHtml($('#redactor_link_url_text').val());
 			if ($('#redactor_link_blank').attr('checked'))
 			{
 				target = '_blank';
@@ -3115,15 +3121,15 @@ Redactor.prototype = {
 		else if (tab_selected === '2') // mailto
 		{
 			link = 'mailto:' + $('#redactor_link_mailto').val();
-			text = $('#redactor_link_mailto_text').val();
+			text = escapeHtml($('#redactor_link_mailto_text').val());
 		}
 		else if (tab_selected === '3') // anchor
 		{
 			link = '#' + $('#redactor_link_anchor').val();
-			text = $('#redactor_link_anchor_text').val();
+			text = escapeHtml($('#redactor_link_anchor_text').val());
 		}			
 
-		this._insertLink('<a href="' + link + '" target="' + target + '">' +  text + '</a>', $.trim(text), link, target);
+		this._insertLink('<a href="' + link.replace(/"/g, '&quot;') + '" target="' + target + '">' +  text + '</a>', $.trim(text), link, target);
 
 	},
 	_insertLink: function(a, text, link, target)

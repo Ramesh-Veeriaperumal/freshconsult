@@ -28,7 +28,7 @@
     </div>
   
 <script type="text/javascript">
-var data_obj = <%=@data_obj.to_json%>
+var data_obj = <%=@data_obj.to_json.html_safe%>
 //need to check for better approach
 if(_slide_init == false){
   jQuery('#sliding').slide();
@@ -50,8 +50,8 @@ jQuery(document).ready(function() {
   analysis_2_lineChart.lineChartGraph();
   var analysis_3_barChart = new xaxis_bar_chart(
       {renderTo: 'tickets_by_arrival_bar_chart',
-       chartData:[<%=@data_obj.fetch('tickets_by_arrival')['received'].to_json%>,
-                  <%=@data_obj.fetch('tickets_by_arrival')['resolved'].to_json%>],
+       chartData:[<%=@data_obj.fetch('tickets_by_arrival')['received'].to_json.html_safe%>,
+                  <%=@data_obj.fetch('tickets_by_arrival')['resolved'].to_json.html_safe%>],
        yAxis_label:'<%=t("adv_reports.load.num_of_tickets")%>',
        xAxisLabel:['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23'],
        toolTipLabel: '<%=t("adv_reports.tickets")%>',

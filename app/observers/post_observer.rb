@@ -61,7 +61,7 @@ class PostObserver < ActiveRecord::Observer
 												 :topic_id => post.topic_id,
 												 :path_generator => 'category_forum_topic_path'
 												},
-								 :title => post.to_s
+								 :title => h(post.to_s)
 								} 
 		)
 	end

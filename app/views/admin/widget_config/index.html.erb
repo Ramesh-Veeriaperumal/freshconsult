@@ -15,10 +15,10 @@
 <div>
 	<ul data-tabs="tabs" class="tabs" id="fw-tabs">
 	    <li class="active">      
-	      <a href="#popup" data-toggle="tab" id="popup-tab"><%= t(".feedbackwidget_popup_tab") %></a>
+	      <a href="#popup" data-toggle="tab" id="popup-tab"><%= t(".feedbackwidget_popup_tab").html_safe %></a>
 	    </li>
 	    <li class="">
-	      <a href="#embedded" id="embedded-tab"><%= t(".feedbackwidget_embedded_tab") %></a>
+	      <a href="#embedded" id="embedded-tab"><%= t(".feedbackwidget_embedded_tab").html_safe %></a>
 	    </li>
 	</ul>
 </div>
@@ -33,7 +33,7 @@
 </div>
 <script src="/javascripts/freshwidget.js?v=2.1" type="text/javascript"></script>
 <script type="text/javascript">
- wgu = <%= widget_asset_url.to_json %>;
+ wgu = <%= widget_asset_url.to_json.html_safe %>;
 </script>
 <% javascript_tag do %>
 	FreshWidget.init("", {

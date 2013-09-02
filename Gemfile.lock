@@ -134,6 +134,7 @@ GEM
     debugger-linecache (1.2.0)
     debugger-ruby_core_source (1.2.0)
     delayed_job (1.8.4)
+    erubis (2.7.0)
     extlib (0.9.16)
     factory_girl (1.2.3)
     faraday (0.8.7)
@@ -265,6 +266,7 @@ GEM
       activeresource (= 2.3.18)
       activesupport (= 2.3.18)
       rake (>= 0.8.3)
+    rails_xss (0.4.0)
     rake (0.8.7)
     redis (2.2.2)
     redis-namespace (1.1.0)
@@ -393,6 +395,7 @@ DEPENDENCIES
   deadlock_retry!
   debugger
   delayed_job (= 1.8.4)
+  erubis (= 2.7.0)
   factory_girl (= 1.2.3)
   forgery (= 0.5.0)
   freshdesk_authority!
@@ -433,6 +436,7 @@ DEPENDENCIES
   rack (~> 1.1.6)
   rack-throttle (~> 0.3.0)
   rails (= 2.3.18)
+  rails_xss (= 0.4.0)
   rake (= 0.8.7)
   redis (= 2.2.2)
   resque (= 1.22.0)

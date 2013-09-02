@@ -19,7 +19,7 @@ if(@activity_data_hash['chart_id'] == 'pie_chart_container')
   jQuery(document).ready(function() {
     <%unless @activity_data_hash['data'].empty?%>
     var ticketByType<%=label%> = new pieChart({renderTo:'<%=label%>_freshdesk_chart'
-                                                ,chartData:<%=@activity_data_hash['data'].to_json%>});
+                                                ,chartData:<%=@activity_data_hash['data'].to_json.html_safe%>});
     ticketByType<%=label%>.pieChartGraph();
     <%end%>
     jQuery('#<%=label%>_title').find("span").text(jQuery('#<%=label%>_title').find("span").text()+ custom_fields['<%=label%>']);
@@ -40,9 +40,9 @@ if(@activity_data_hash['chart_id'] == 'pie_chart_container')
   jQuery(document).ready(function() {
   <%unless @activity_data_hash['data'][:chartData].empty?%>
     var ticketByType<%=label%> = new pare_to_chart({renderTo:'<%=label%>_freshdesk_chart'
-                                                ,chartData:<%=@activity_data_hash['data'][:chartData].to_json%>
-                                                ,xaxis_arr:<%=@activity_data_hash['data'][:xaxis_arr].to_json%>
-                                                ,column_width:<%=@activity_data_hash['data'][:column_width].to_json%>});
+                                                ,chartData:<%=@activity_data_hash['data'][:chartData].to_json.html_safe%>
+                                                ,xaxis_arr:<%=@activity_data_hash['data'][:xaxis_arr].to_json.html_safe%>
+                                                ,column_width:<%=@activity_data_hash['data'][:column_width].to_json.html_safe%>});
     ticketByType<%=label%>.pareToGraph();
     <%end%>
     jQuery('#<%=label%>_title').find("span").text(jQuery('#<%=label%>_title').find("span").text()+ custom_fields['<%=label%>']);
@@ -58,8 +58,8 @@ if(@activity_data_hash['chart_id'] == 'pie_chart_container')
 </div>
 <script type="text/javascript">
   var singleStakedBar = new single_stacked_bar_chart(
-        {renderTo: 'source_freshdesk_single_stacked_bar_chart',chartData:<%=@activity_data_hash['data'].to_json%>}
+        {renderTo: 'source_freshdesk_single_stacked_bar_chart',chartData:<%=@activity_data_hash['data'].to_json.html_safe%>}
       );
-  if(<%=@activity_data_hash['data'].to_json%>.length > 0) singleStakedBar.single_stacked_bar_chart_Graph();
+  if(<%=@activity_data_hash['data'].to_json.html_safe%>.length > 0) singleStakedBar.single_stacked_bar_chart_Graph();
 </script>
 <%end%>

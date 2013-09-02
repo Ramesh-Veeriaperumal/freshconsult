@@ -60,7 +60,7 @@
 		</li>
 	</ul>
 	<div class="button-container">
-		<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", { :class => "btn floatl" } %>
+		<%= link_to "&larr; #{t('account.cancel')}".html_safe, "/admin/home", { :class => "btn floatl" } %>
 		<%= f.submit t('save'), { :class => "btn btn-primary" } %>
 	</div>
 <% end %>

@@ -103,6 +103,7 @@ class Solution::Article < ActiveRecord::Base
     return [] if search_by.blank? || (search_by = search_by.gsub(/[\^\$]/, '')).blank?
       if ticket.account.es_enabled?
         begin
+          Search::EsIndexDefinition.es_cluster(ticket.account.id)
           options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }
           item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], ticket.account.id), options do |search|
             search.query do |query|
@@ -125,7 +126,13 @@ class Solution::Article < ActiveRecord::Base
         end
     else
       ThinkingSphinx.search(search_by, :with => { :account_id => ticket.account.id },
-       :classes => [ Solution::Article ], :match_mode => :any, :per_page => 10 )
+       :classes => [ Solution::Article ], 
+       :match_mode => :any, 
+       :per_page => 10,
+       :excerpt_options => {
+                            :before_match => '',
+                            :after_match => ''
+                            } )
     end
   end
   

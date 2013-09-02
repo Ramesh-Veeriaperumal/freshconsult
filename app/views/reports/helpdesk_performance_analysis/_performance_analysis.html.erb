@@ -36,7 +36,7 @@
 </div>
   
 <script type="text/javascript">
-var data_obj = <%=@data_obj.to_json%>
+var data_obj = <%=@data_obj.to_json.html_safe%>
 //need to check for better approach
 if(_slide_init == false){
   jQuery('#sliding').slide();

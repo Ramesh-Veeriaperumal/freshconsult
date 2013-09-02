@@ -18,7 +18,7 @@
 	    	</div>
           </td>
           <td class="fb_page_info">
-          	<%= check_box( "enable", "pages", { :multiple => true, :checked => true }, fb_page.to_json , nil) if fb_page[:page_id]%>
+          	<%= check_box( "enable", "pages", { :multiple => true, :checked => true }, fb_page.to_json.html_safe , nil) if fb_page[:page_id]%>
 			    <b><%= fb_page[:page_name] %></b>
 					<% if source %>
 						<p class="muted"> <%= t('facebook_tab.page_added', {:source => source}) %> </p>

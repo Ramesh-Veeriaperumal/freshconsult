@@ -36,3 +36,4 @@ end
 
 FileUtils.cp('config/sphinx_development.yml', 'config/sphinx.yml')
 FileUtils.cp('config/redis_development.yml', 'config/redis.yml')
+FileUtils.cp('config/elasticsearch_development.yml', 'config/elasticsearch.yml')

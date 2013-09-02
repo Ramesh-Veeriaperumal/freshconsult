@@ -457,7 +457,7 @@ class Helpdesk::TicketsController < ApplicationController
       :locals => { :req_list => req_list.uniq } )
       
     notice_msg =  msg1
-    notice_msg << " <br />#{t("block_users")} #{link}" unless req_list.blank?
+    notice_msg << " <br />#{t("block_users")} #{link}".html_safe unless req_list.blank?
     
     flash[:notice] =  notice_msg 
     respond_to do |format|
@@ -919,7 +919,7 @@ class Helpdesk::TicketsController < ApplicationController
           redirect_to item_url
         end
       }
-      format.any(:xml, :json){
+      format.any(:xml, :mobile, :json){
         params["helpdesk_ticket"]["status"] ||= @item.status
       }
     end

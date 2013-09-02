@@ -1309,6 +1309,7 @@ ActiveRecord::Schema.define(:version => 20130826072656) do
     t.boolean  "import_dms",                        :default => true
     t.boolean  "reauth_required",                   :default => false
     t.text     "last_error"
+    t.boolean  "realtime_subscription",              :default => false,             :null => false
   end
 
   add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_pages_on_account_id"

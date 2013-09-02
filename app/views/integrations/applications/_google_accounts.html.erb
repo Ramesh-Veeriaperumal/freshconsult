@@ -1,7 +1,7 @@
 <%google_accs = Integrations::GoogleAccount.find_all_installed_google_accounts(current_account)%>
 <%if google_accs.blank?
 	action_name = params[:action] == "edit" ? t("integrations.google_contacts.add_more") : t("application.enable")%>
-	<%=t("integrations.google_contacts.form.account_not_configured", :action => action_name)%>
+	<%=t("integrations.google_contacts.form.account_not_configured", :action => action_name).html_safe%>
 	<div class="center"><%= link_to(t("integrations.google_contacts.add_more"), "/auth/google?iapp_id="+params[:id], :class => "uiButton special") if params[:action] == "edit" %></div><br/>
 <%else
 	google_acc = google_accs[0]
@@ -9,9 +9,9 @@
 	<div class="google_accounts">
 		<table borer="0">
 			<tr class="headings">
-				<th><%= t('integrations.google_contacts.account')%></th>
-				<th><%= t('integrations.google_contacts.tag_label')%></th>
-				<th><%= t('integrations.google_contacts.last_sync_time')%></th>
+				<th><%= t('integrations.google_contacts.account').html_safe%></th>
+				<th><%= t('integrations.google_contacts.tag_label').html_safe%></th>
+				<th><%= t('integrations.google_contacts.last_sync_time').html_safe%></th>
 				<th></th>
 			</tr>
 	
@@ -25,12 +25,12 @@
 					</td>
 					<td>
 			        	<%if !google_acc.last_sync_status.blank? and google_acc.last_sync_status[:status] == :progress%>
-			        		<%=t("integrations.google_contacts.syncing_in_progress")%>
+			        		<%=t("integrations.google_contacts.syncing_in_progress").html_safe%>
 			        	<%elsif google_acc.last_sync_time.year == 1970%>
 			        		<%if !google_acc.last_sync_status.blank? and google_acc.last_sync_status[:status] == :success%>
-					        	<%=t("integrations.google_contacts.import_complete")%>
+					        	<%=t("integrations.google_contacts.import_complete").html_safe%>
 							<%end%>
-				        	<%=t("integrations.google_contacts.not_yet_synced")%>
+				        	<%=t("integrations.google_contacts.not_yet_synced").html_safe%>
 						<%else%>
 			        		<%=formated_date(google_acc.last_sync_time)%>
 						<%end%>
@@ -43,7 +43,7 @@
 			<%}%>
 		</table>
 		<div class="buttons">
-			<%= link_to(t("integrations.google_contacts.add_more"), "/auth/google?iapp_id="+params[:id], :class => "uiButton special") if params[:action] == "edit" %>
+			<%= link_to(t("integrations.google_contacts.add_more").html_safe, "/auth/google?iapp_id="+params[:id], :class => "uiButton special") if params[:action] == "edit" %>
 		</div>
 	</div>
 <%end%>

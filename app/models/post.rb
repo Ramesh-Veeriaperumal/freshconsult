@@ -24,7 +24,7 @@ class Post < ActiveRecord::Base
   has_many_attachments
 
   delegate :update_es_index, :to => :topic, :allow_nil => true
-
+  xss_sanitize :only => [:body_html],  :html_sanitize => [:body_html]  
   #format_attribute :body
   
   attr_protected	:topic_id , :account_id , :attachments
