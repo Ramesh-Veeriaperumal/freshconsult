@@ -380,6 +380,7 @@ en:
       submit_ticket: "New ticket"
       ticket_list: "User tickets"
       ticket_view: "Ticket details"
+      my_topics: "My Topics"
   admin:
     portal_settings:
       simple:
@@ -2128,7 +2129,9 @@ en:
       placeholder: "Enter your search term here..."
       results_for: Search results for
     popular_topics: "Popular topics"
+    my_topics: "My Topics"
     showing_recently_popular_topics: "Showing recently popular topics"
+    showing_my_topics: "Showing topics that you currently follow"
     community_forums: "Community forums"
     knowledge_base: "Knowledge base"
     showing_recent_updates: "Showing recent updates"
@@ -2152,10 +2155,14 @@ en:
       comments_closed: "Comments to this discussion are now closed!"
       start_new_topic: "Start a new topic"
       see_all_topics: "See all %{count} topics"
+      all_topics: "See all topics"
       comment_placeholder: Click here to add a comment
       started: started a topic
       more_topic: More topics in
       last_reply: Last Reply
+      my_topic_reply: "Last Reply by <b>%{post_name}</b>, %{created_on}"
+      topic_brief: "Posted by <b>%{user_name}</b>, %{created_on}"
+      last_post_brief: "<a href='%{last_post_url}'>%{link_label}</a> by %{user_name} %{created_on}"
     topic_vote:
       you: 
         one: "You"

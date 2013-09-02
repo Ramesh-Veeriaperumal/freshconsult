@@ -78,6 +78,16 @@ class Portal < ActiveRecord::Base
         (forum_category ? forum_category.portal_topics.visible(user).newest(6) : [])
   end
 
+  def my_topics(user, per_page, page)
+    main_portal ? user.monitored_topics.filter(per_page, page) :
+       forum_category ?  user.monitored_topics.find_by_forum_category_id(forum_category.id).filter(per_page, page) : []
+  end
+
+  def my_topics_count(user)
+    main_portal ? user.monitored_topics.count :
+       forum_category ?  user.monitored_topics.find_by_forum_category_id(forum_category.id).count : 0
+  end
+
   #Yeah.. It is ugly.
   def ticket_fields(additional_scope = :all)
     filter_fields account.ticket_fields.send(additional_scope)
