@@ -42,17 +42,18 @@ class SubscriptionPaymentObserver < ActiveRecord::Observer
     end
 
     def update_affiliate(payment)
-      send_later(:make_api_call, payment) 
+      make_api_call(payment) 
     end
 
     def make_api_call(payment)
       begin
+        subscription = payment.subscription
         if subscription.subscription_payments.first.created_at > 1.year.ago
           response = HTTParty.get('https://shareasale.com/q.cfm', :query => {
               :amount => payment.amount,
               :tracking => payment.id,
               :transtype => "sale",
-              :merchantID => SubscriptionAffiliate.merchant_id,
+              :merchantID => SubscriptionAffiliate::AFFILLIATES[:sharasale][:merchant_id],
               :userID => payment.affiliate.token })
         end
       rescue Exception => e

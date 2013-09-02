@@ -7,7 +7,7 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
 <%= include_cloudfront_css :reports, :media => "screen, print, projection"  %>
 <%= include_cloudfront_css :report_print, :media => "print, projection" %>
 <span class="floatr">
-	<%= link_to("&larr; #{t('reports.summary_report.back_to_reports')}", reports_url, :class => "slim-button") %>
+	<%= link_to("&larr; #{t('reports.summary_report.back_to_reports')}".html_safe, reports_url, :class => "slim-button") %>
 </span>
 <h3 class="title">
 	<%= @current_report[:label] %>
@@ -33,7 +33,7 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
 </div>
 
 <div class="sidepanel helpcard">
-	<p>	<%= t('reports.summary_report.helptext') %> </p>
+	<p>	<%= t('reports.summary_report.helptext').html_safe %> </p>
 </div>
 
 
@@ -73,23 +73,23 @@ jQuery(document).ready(function() {
 				</th>
 
 				<th>
-					<%= t('reports.summary_report.tickets_resolved') %>
+					<%= t('reports.summary_report.tickets_resolved').html_safe %>
 				</th>
 
 				<th>
-					<%= t('reports.summary_report.on_time_resolution') %>
+					<%= t('reports.summary_report.on_time_resolution').html_safe %>
 				</th>
 
 				<th>
-					<%= t('reports.summary_report.fcr_count') %>
+					<%= t('reports.summary_report.fcr_count').html_safe %>
 				</th>
 
 				<th>
-					<%= t('reports.summary_report.avg_1st_response_time') %>
+					<%= t('reports.summary_report.avg_1st_response_time').html_safe %>
 				</th>
 
 				<th>
-					<%= t('reports.summary_report.avg_response_time') %>
+					<%= t('reports.summary_report.avg_response_time').html_safe %>
 				</th>
 			</tr>
 		</thead>

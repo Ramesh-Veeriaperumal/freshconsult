@@ -6,7 +6,7 @@
     <div class="content clearfix scrollbar">
     <% helpdesk_submit_options = []%>
   	<% current_portal.ticket_fields.each  do |field| %>
-  		<% if field.visible_in_view_form? %>
+      <% if field.visible_in_view_form? %>
         <%
           dom_type = (field.field_type == "nested_field") ? "nested_field" : field.dom_type  
         %>
@@ -16,15 +16,15 @@
   			    
             checkbox = check_box_tag object_name+"_"+field.field_name+"_label", "", false,
                           :class => "update-check-for-fields"
-            label = label_tag(object_name+"_"+field.field_name+"_label", checkbox + field.label,:rel => "inputcheckbox")
+            label = label_tag(object_name+"_"+field.field_name+"_label", (checkbox + field.label.html_safe),:rel => "inputcheckbox")
             
             if field.field_type == "nested_field"
               element = label + nested_field_tag(object_name, field.field_name, field, {:include_blank => t('select'), :selected => {}},{:class => dom_type, :rel => "inputselectbox"}, {}, false)
             else
-              element = label + select(object_name,field.field_name, field.choices, {:include_blank => t('select'), :selected => t('select')},{:class => dom_type, :rel => "inputselectbox"})   
+              element = label + select(object_name,field.field_name, field.html_unescaped_choices, {:include_blank => t('select'), :selected => t('select')},{:class => dom_type, :rel => "inputselectbox"})   
             end
           %>  
-  			  <%= content_tag :div, element, :class => "field-item #{cycle('clear', '', '') }" %>
+  			  <%= content_tag :div, element.html_safe, :class => "field-item #{cycle('clear', '', '') }" %>
         <%end%>
   		<%end%>
 	   <%end%>
@@ -72,7 +72,7 @@
     if( !($('addbulkreply') && $('addbulkreply').checked) ||
       jQuery("#reply-multiple-cnt-reply-multiple-body").valid())
     {
-      <%= "reply_multiple_submit('#{update_multiple_helpdesk_bulk_ticket_actions_path}', 'put', jQuery('#update-fields .update-check-for-fields:checked').parent().parent().find('select').get() )" %>
+      <%= "reply_multiple_submit('#{update_multiple_helpdesk_bulk_ticket_actions_path}', 'put', jQuery('#update-fields .update-check-for-fields:checked').parent().parent().find('select').get() )".html_safe %>
       jQuery("#ticket_update_multiple_button, #ticket_cancel_multiple_button").attr('disabled','disabled');
       jQuery('#loader').addClass("sloading loading-small loading-align");
     }

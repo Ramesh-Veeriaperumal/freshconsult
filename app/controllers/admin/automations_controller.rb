@@ -1,7 +1,7 @@
 class Admin::AutomationsController < Admin::AdminController
   include ModelControllerMethods
   include Helpdesk::ReorderUtility
-   
+  before_filter :escape_html_entities_in_json  
   before_filter :load_config, :only => [:new, :edit]
   before_filter :check_automation_feature
   
@@ -82,7 +82,7 @@ class Admin::AutomationsController < Admin::AdminController
 
     def set_nested_fields_data(data)
       data.each do |f|        
-        f["nested_rules"] = (ActiveSupport::JSON.decode f["nested_rules"]).map{ |a| a.symbolize_keys! } if (f["nested_rules"])
+        f['nested_rules'] = (ActiveSupport::JSON.decode f['nested_rules']).map{ |a| a.symbolize_keys! } if (f['nested_rules'])
       end
     end
 
@@ -105,18 +105,28 @@ class Admin::AutomationsController < Admin::AdminController
       action_hash = [
         { :name => -1, :value => t('click_to_select_action') },
         { :name => "priority", :value => t('set_priority_as'), :domtype => "dropdown", 
-          :choices => TicketConstants.priority_list.sort },
+          :choices => TicketConstants.priority_list.sort, :unique_action => true },
         { :name => "ticket_type", :value => t('set_type_as'), :domtype => "dropdown", 
-          :choices => current_account.ticket_type_values.collect { |c| [ c.value, c.value ] } },
+          :choices => current_account.ticket_type_values.collect { |c| [ c.value, c.value ] }, 
+          :unique_action => true },
         { :name => "status", :value => t('set_status_as'), :domtype => "dropdown", 
-          :choices => Helpdesk::TicketStatus.status_names(current_account)},
+          :choices => Helpdesk::TicketStatus.status_names(current_account), 
+          :unique_action => true },
         { :name => -1, :value => "-----------------------" },
+        { :name => "add_comment", :value => t('add_note'), :domtype => 'comment', 
+          :condition => automations_controller? },
         { :name => "add_tag", :value => t('add_tags'), :domtype => 'text' },
+        { :name => "trigger_webhook", :value => t('trigger_webhook'), :domtype => 'webhook', 
+          :unique_action => true, 
+          :condition => (va_rules_controller? || observer_rules_controller?) },
         { :name => -1, :value => "-----------------------" },
         { :name => "responder_id", :value => t('ticket.assign_to_agent'), 
-          :domtype => 'dropdown', :choices => @agents[1..-1] },
+          :domtype => 'dropdown', :choices => @agents[1..-1], :unique_action => true  },
         { :name => "group_id", :value => t('email_configs.info9'), :domtype => 'dropdown', 
-          :choices => @groups[1..-1] },
+          :choices => @groups[1..-1], :unique_action => true  },
+        { :name => "product_id", :value => t('admin.products.assign_product'),
+          :domtype => 'dropdown', :choices => [['', t('none')]]+@products, 
+          :condition => multi_product_account? },
         { :name => -1, :value => "-----------------------" },
         { :name => "send_email_to_group", :value => t('send_email_to_group'), 
           :domtype => 'email_select', :choices => @groups-[@groups[1]] },
@@ -126,21 +136,40 @@ class Admin::AutomationsController < Admin::AdminController
         { :name => "send_email_to_requester", :value => t('send_email_to_requester'), 
           :domtype => 'email' },
         { :name => -1, :value => "-----------------------" },
-        { :name => "delete_ticket", :value => t('delete_the_ticket')},
-        { :name => "mark_as_spam", :value => t('mark_as_spam')},
+        { :name => "delete_ticket", :value => t('delete_the_ticket'), :unique_action => true },
+        { :name => "mark_as_spam", :value => t('mark_as_spam'), :unique_action => true },
+        { :name => "skip_notification", :value => t('dispatch.skip_notifications'), 
+          :condition => va_rules_controller? },
         { :name => -1, :value => "-----------------------" }
       ]
-                        
-      additional_actions.each { |index, value| action_hash.insert(index, value) }
+      
+      action_hash = action_hash.select{ |action| action.fetch(:condition, true) }
       add_custom_actions action_hash
       @action_defs = ActiveSupport::JSON.encode action_hash
     end
-    
-    def additional_actions
-      actions = {5 => {:name => "add_comment"  , :value => t('add_note')      , :domtype => 'comment'}}
-      actions[10] = { :name => "product_id", :value => t('admin.products.assign_product'),
-          :domtype => 'dropdown', :choices => [['', t('none')]]+@products } if current_account.features?(:multi_product)
-      actions
+
+    def automations_controller?
+      controller_name == "automations"
+    end
+
+    def va_rules_controller?
+      controller_name == "va_rules"
+    end
+
+    def supervisor_rules_controller?
+      controller_name == "supervisor_rules"
+    end
+
+    def observer_rules_controller?
+      controller_name == "observer_rules"
+    end
+
+    def multi_product_account?
+      current_account.features?(:multi_product)
+    end
+
+    def survey_featured_account?
+      current_account.features?(:surveys, :survey_links)
     end
     
     def add_custom_actions action_hash
@@ -155,7 +184,8 @@ class Admin::AutomationsController < Admin::AdminController
            :choices => (field.field_type == "nested_field") ? (field.nested_choices_with_special_case special_case) : special_case+field.picklist_values.collect { |c| [c.value, c.value ] },
            :action => "set_custom_field", 
            :handler => field.flexifield_def_entry.flexifield_coltype,
-           :nested_fields => nested_fields(field)
+           :nested_fields => nested_fields(field), 
+           :unique_action => true
            })
        end
     end
@@ -172,5 +202,10 @@ class Admin::AutomationsController < Admin::AdminController
         end
       end
       nestedfields
+    end
+
+    # For handling json escape inside hash data
+    def escape_html_entities_in_json
+      ActiveSupport::JSON::Encoding.escape_html_entities_in_json = true
     end
 end

@@ -8,7 +8,7 @@
 	<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame 
 	     Remove this if you use the .htaccess -->
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">  
-  <title><%= page_title %></title>
+  <title><%= page_title.html_safe %></title>
 	<meta name="description" content="<%= page_description %>">
 	<meta name="author" content="">                            
 	<meta name="keywords" content="<%= page_keywords %>">
@@ -18,7 +18,7 @@
 	<% unless page_canonical.blank? %>
 		<link rel="canonical" href="<%= page_canonical %>" />
 	<% end %>
-	<%=fav_icon_url%>
+	<%=fav_icon_url.html_safe%>
 	<%= include_cloudfront_css :common %>
 	<%= include_cloudfront_css :plugins  %>
 	<%= include_cloudfront_css :sprites  %>
@@ -50,6 +50,9 @@
 	<script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
 
 	<%= include_cloudfront_js :custom_widget %>
+	<script type="text/javascript">
+		Fjax.pjax_parallel_request = null;
+	</script>
 
 	<%= yield :head %>
 </head>

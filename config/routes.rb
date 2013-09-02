@@ -111,7 +111,7 @@
     admin.resources :portal, :only => [ :index, :update ]
     admin.namespace :canned_responses do |ca_response|
       ca_response.resources :folders do |folder|
-        folder.resources :responses, :collection => { :delete_multiple => :delete, :update_folder => :put }
+        folder.resources :responses, :collection => { :delete_multiple => :delete, :update_folder => :put }, :member=> { :delete_shared_attachments => :any  }
       end
     end
     admin.resources :products, :member => { :delete_logo => :delete, :delete_favicon => :delete }
@@ -207,10 +207,12 @@
       admin.resources :accounts, :collection => {:agents => :get, :tickets => :get, :renewal_csv => :get}
       admin.resources :subscription_plans, :as => 'plans'
       # admin.resources :subscription_discounts, :as => 'discounts'
-      admin.resources :subscription_affiliates, :as => 'affiliates', :collection => {:add_affiliate_transaction => :post}
+      admin.resources :subscription_affiliates, :as => 'affiliates', :collection => { :add_affiliate_transaction => :post },
+                                                :member => { :add_subscription => :post }
       admin.resources :subscription_payments, :as => 'payments'
       admin.resources :subscription_announcements, :as => 'announcements'
       admin.resources :conversion_metrics, :as => 'metrics'
+      admin.resources :account_tools, :as => 'tools', :collection =>{:regenerate_reports_data => :post}
       admin.namespace :resque do |resque|
         resque.home '', :controller => 'home', :action => 'index'
         resque.failed_show '/failed/:queue_name/show', :controller => 'failed', :action => 'show'

@@ -13,7 +13,7 @@
 		end
 	%> 	
 	<div id="vote-toolbar">
-		<%= (t_likes > 0 || current_user && current_user.id != @topic.user_id) ? '<hr />' : '' %>
+		<%= (t_likes > 0 || current_user && current_user.id != @topic.user_id) ? '<hr />'.html_safe : '' %>
 		<% if(t_likes > 0) %>		
 			<span class="lead-small" id="topic-voted-information">
 				<%= t_prefix %> 

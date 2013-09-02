@@ -1,6 +1,6 @@
 <% content_for :sidebar do -%>
   <div class="sidepanel helpcard">
-    <%= t("integrations."+@installing_application.name+".helptext", :full_domain => current_account.full_domain) %>
+    <%= t("integrations."+@installing_application.name+".helptext", :full_domain => current_account.full_domain).html_safe %>
   </div>
 <%- end %>
 
@@ -22,7 +22,7 @@
 				<li class="field <%=input_value[:css_class]%>">
 					<%= construct_ui_element :configs, input_key.to_s, input_value, field_value, @installed_application, form%>
 					<%# Move the below line into construct_ui_element method.%>
-					<%= content_tag(:div, t(input_value[:info]), :class => "info-data") unless input_value[:info].blank? %>
+					<%= content_tag(:div, t(input_value[:info]).html_safe, :class => "info-data") unless input_value[:info].blank? %>
 					<span class="seperator"></span>
 				</li>
 			 <% end %>

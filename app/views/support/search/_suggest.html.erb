@@ -1,6 +1,6 @@
 <div class="results">
 	<% unless @total_results.blank? %>
-		<%= link_to("See more results for \"#{@search_key}\"", 
+		<%= link_to("See more results for \"#{h(@search_key)}\"".html_safe, 
 			"/support/search?search_key=#{@search_key}", 
 			:class => "see-more pull-right") if @total_results > 5 %>
 		<div class="lead-small">

@@ -88,15 +88,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def pass_thro_biz_rules
-     send_later(:delayed_rule_check) unless import_id
+     send_later(:delayed_rule_check) unless import_id || freshdesk_webhook?
   end
   
   def delayed_rule_check
    begin
     set_account_time_zone
     evaluate_on = check_rules     
+    autoreply 
     assign_tickets_to_agents unless spam? || deleted?
-    autoreply
    rescue Exception => e #better to write some rescue code 
     NewRelic::Agent.notice_error(e)
    end

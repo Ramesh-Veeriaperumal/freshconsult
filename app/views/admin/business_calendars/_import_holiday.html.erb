@@ -4,7 +4,7 @@
 		<div class="row-fluid">
 			<%= select "import_holiday", "import_holiday",GoogleClient::calendars, 
 													{}, { :class => "select2 span12", :id => "import_holiday" } %>
-			<p><%= t('business_hours.import_holiday_info') %>	</p>
+			<p><%= t('business_hours.import_holiday_info').html_safe %>	</p>
 		</div>
 	<% end %>
 </div>

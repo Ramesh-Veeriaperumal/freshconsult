@@ -26,7 +26,7 @@
           filter.choices.each(function(arrayItem){
             choices.push({
               name: arrayItem[0],
-              value: arrayItem[1]
+              value: unescapeHtml(arrayItem[1])
             });
           });
           c_dom = FactoryUI.dropdown(choices, value, _class_name, _data_attr);
@@ -56,7 +56,7 @@
             filter.choices.each(function(arrayItem){
               choices.push({
                 name: arrayItem[0],
-                value: arrayItem[1]
+                value: unescapeHtml(arrayItem[1])
               });
             });
             control = FactoryUI.dropdown(choices, "email_to", _class_name, _data_attr);        
@@ -71,17 +71,19 @@
                       .append(control);
           }
 
-          var placeholder = jQuery("<a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a>")
+          var placeholder1 = jQuery("<a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a>")
 
           var subject = jQuery('<div class="subject_div row-fluid" />')
                   .append("<label class='span2'><%= t('.subject') %></label>")
                   .append(jQuery('<div class="sub_placeholder"/>')
-                  .append(FactoryUI.text("", "email_subject", initFeed["email_subject"]))
-                  .append(placeholder))
+                  .append(FactoryUI.text("", "email_subject", initFeed["email_subject"]).data(
+                  "ignorePlaceholders", 'triggered_event'))
+                  .append(placeholder1))
         
           var body  = jQuery('<div class="body_div row-fluid" />')
                   .append("<label class='span2'><%= t('.body') %></label>")
-                  .append(FactoryUI.paragraph("", "email_body", initFeed["email_body"]))
+                  .append(FactoryUI.paragraph("", "email_body", initFeed["email_body"]).data(
+                  "ignorePlaceholders", 'triggered_event'))
 
           c_dom = jQuery("<div class='s_email row-fluid' />")
                 .append(to)
@@ -127,26 +129,132 @@
           if(!filter.tree) filter.tree = new NestedField(filter.choices);
           c_dom = jQuery("<div />").addClass(_class_name).nestedselect(filter.tree, _opts, value, _data_attr);
         break;
+        case 'webhook':
+          var method_choices = [  { name: '1', value: 'GET'},
+                                  { name: '2', value: 'POST'},
+                                  { name: '3', value: 'PUT'},
+                                  { name: '4', value: 'PATCH'},
+                                  { name: '5', value: 'DELETE'} ]
+          var content_type_choices = [  { name: '2', value: 'JSON'},
+                                        { name: '1', value: 'XML'},
+                                        { name: '3', value: 'X-FORM-URLENCODED'} 
+                                      ]   
+          var content_layout_choices = [  { name: '1', value: "<%= t('.simple_layout') %>" },
+                                          { name: '2', value: "<%= t('.advanced_layout') %>" } ]
+
+          var method_dropdown = FactoryUI.dropdown(method_choices, "request_type", _class_name, _data_attr);
+          jQuery(method_dropdown).val(initFeed['request_type']);
+          var method = jQuery('<div class="row-fluid"/>')
+                        .append('<label class="span2"><%= t(".request_type") %></label>')
+                        .append(method_dropdown)
+                        .append(FactoryUI.link('<%= t('.how_to_use_webhook').html_safe %>', 'javascript:void(0)', 'using_webhooks'));
+
+          var placeholder1 = jQuery("<span class='placeholder_div'> <a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a> </span>")
+          var uri_textarea = FactoryUI.paragraph("", "url", initFeed['url'], "text uri required")
+                                .data("ignorePlaceholders", 'ticket_satisfaction_survey,ticket_suverymonkey_survey');
+
+          setTimeout(function(ev){
+            uri_textarea.autosize();
+          }, 500);
+
+          var url = jQuery('<div class="row-fluid"/>').append(jQuery('<span class="span2"/>')
+                      .append(FactoryUI.label('<%= t(".url") %>', 'required_label')).append('<b class="required_star">*</b>'))
+                      .append(placeholder1)
+                      .append(uri_textarea)  
+                      // No URL validation - for allowing placeholder in URL
+                      .append(FactoryUI.checkbox("<%= t('.url_req_auth') %>","need_authentication",initFeed['need_authentication'],"url_req_auth"));
+          var username_password = jQuery('<div class="row-fluid user_pass_webhook"/>')
+                          .append(FactoryUI.link("<%= t('.api_key?').html_safe %>", '#api_key', 'credentials_toggle'))
+                          .append(FactoryUI.text("<%= t('.username') %>", "username", initFeed['username'], 'username'));
+          var password = FactoryUI.password("<%= t('.password') %>", "password", '', 'text password')
+          username_password.append(password);
+          if(initFeed['need_authentication'] && initFeed['username']){
+            username_password.append(FactoryUI.link("<%= t('.change_password') %>", '#change_password', 'change_password'));
+            password.hide();
+          }
+          var api_key = jQuery('<div class="row-fluid api_webhook"/>')
+                    .append(FactoryUI.link("<%= t('.user_pass?').html_safe %>", '#user_pass', 'credentials_toggle'))
+                    .append(FactoryUI.text("<%= t('.api_key') %> ", "api_key", initFeed['api_key'], 'api_key text'));
+          var credentials = jQuery('<div class="row-fluid credentials"/>')
+                          .append(username_password)
+                          .append(api_key);
+            
+          var content_layout_radiobuttons = FactoryUI.radiobutton(content_layout_choices, "", 
+                                                      "content_layout", initFeed['content_layout']);
+
+          var simple_edit = jQuery('<div class="params_div"/>');
+          <% placeholders.each do |ph| %>
+            checkbox_value = (initFeed['params'] && initFeed['params']['<%= ph[3] %>']!=undefined) ? "true" : "false"
+            checkbox_div_class = (checkbox_value == "true") ? " row-fluid highlighted" : " row-fluid"
+
+            simple_edit.append(FactoryUI.checkbox("<span><%= ph[1] %></span><span class='muted'>&nbsp&nbsp<%= ph[0] %></span>", "params[<%= ph[3] %>]", checkbox_value, "checkbox_label ", "<%= ph[0] %>", "checkbox", checkbox_div_class));
+          <% end %>
+          var simple = jQuery('<div class="edit1 span10"/>')
+                        .append(simple_edit)
+                        .append(FactoryUI.label("<%= t('.simple_webhook_tip') %>", 'tip'));
+
+          var placeholder2 = jQuery("<span class='placeholder_div body_div'> <a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a> </span>")
+          var advanced_edit = jQuery("<div class='row-fluid'/>")
+                                .append(FactoryUI.paragraph("", "params", ((initFeed['content_layout']==2) ? initFeed['params'] :''), 'params').data("ignorePlaceholders", 'ticket_satisfaction_survey,ticket_suverymonkey_survey'));
+          var advanced = jQuery('<div class="edit2 span10"/>')
+                          .append(placeholder2)
+                          .append(advanced_edit)
+                          .append(FactoryUI.label("<%= t('.advanced_webhook_tip') %>", 'tip'))
+                          .append('<strong><a href="#webhook_usecase" data-height="600" data-template-footer="" data-width="600" rel="freshdialog" target="_blank" title="Webhook Example Usecases"><%= t('.webhook_usecase') %></a></strong>');
+          
+          var content_type_radiobuttons = FactoryUI.radiobutton(content_type_choices, "", "content_type", initFeed['content_type']);
+          
+          var params = jQuery('<div class="row-fluid request_content"/>')
+                        .append(jQuery('<div class="row-fluid"/>')
+                        .append('<label class="span2 content_type_label"><%= t(".content_type") %></label>')
+                        .append(content_type_radiobuttons))
+                        .append('<label class="span2 content_label"><%= t(".params") %></label>')
+                        .append(content_layout_radiobuttons)
+                        .append(simple)
+                        .append(advanced);
+
+          if(initFeed['content_type']==3)
+          { 
+            advanced_rb = jQuery(content_layout_radiobuttons).find('input[name=content_layout][value="2"]').first();
+            advanced_rb.attr("disabled", true); 
+            jQuery(content_layout_radiobuttons).find('label[for='+advanced_rb.attr("id")+']').addClass('muted'); 
+          }
+          if(initFeed['request_type']==1 || initFeed['request_type']==5 || !initFeed['request_type'])
+          { params.hide(); }
+          if(!initFeed['need_authentication'])
+          { credentials.hide(); }
+          if(initFeed['api_key']){ 
+            api_key.show(); username_password.hide(); 
+          }else{
+            api_key.hide(); username_password.show();
+          }
+          show_layout = initFeed['content_layout'] || 1;
+          (show_layout == 1) ? advanced.hide() : simple.hide();
+
+          c_dom = jQuery('<div class="webhook"/>').append(method).append(url).append(credentials)
+                    .append(params);
+        break;
         default:
         c_dom = "";
       }     
       return c_dom;
     }
     var active_email_body = null;
-  <% end %>
+
+   <% end %>
 <% end %>
 
 <% content_for :onload_script do %>
   <% if (filter_type == "observer") %>  
     // i18n For javascript entities
-    event_lang = <%= t('event').to_json %>;
-    event_rule = new rules_filter("event", $A(<%= @event_defs %>), "#eventDOM", { "init_feed":$A(<%= @event_input %>)});    
+    event_lang = <%= t('event').to_json.html_safe %>;
+    event_rule = new rules_filter("event", $A(<%= @event_defs.html_safe if @event_defs %>), "#eventDOM", { "init_feed":$A(<%= @event_input.html_safe if @event_input %>)});    
     ObserverDom.init();
   <% end %>
   <% if (filter_type == "va_rule" || filter_type == "observer") %>
-    var op_hash = preProcessCondition(<%= @op_types %>, <%= @op_list %>);
-    filter_rule = new rules_filter("filter", $A(<%= @filter_defs %>), "#filterDOM", {"operators": op_hash, 
-     "init_feed":$A(<%= @filter_input %>)});
+    var op_hash = preProcessCondition(<%= @op_types.html_safe if @op_types %>, <%= @op_list.html_safe if @op_list %>);
+    filter_rule = new rules_filter("filter", $A(<%= @filter_defs.html_safe if @filter_defs %>), "#filterDOM", {"operators": op_hash, 
+     "init_feed":$A(<%= @filter_input.html_safe if @filter_input %>)});
   <% end %>   
-  action_rule = new rules_filter("action", $A(<%= @action_defs %>), "#actionDOM", {"init_feed":$A(<%= @action_input %>)});  
+  action_rule = new rules_filter("action", $A(<%= @action_defs.html_safe if @action_defs %>), "#actionDOM", {"init_feed":$A(<%= @action_input.html_safe if @action_input %>)});
 <% end %>

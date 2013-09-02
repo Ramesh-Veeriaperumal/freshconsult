@@ -7,7 +7,7 @@
       <div class="content">
         <h2 class="title"><%=t('.engage_customers')%></h2>
         <p class="info-data">
-        	<%=t('.associate_account', :product_name => (product ? product.name : current_account.portal_name))%>
+        	<%=t('.associate_account', :product_name => (product ? product.name : current_account.portal_name)).html_safe%>
 		    </p>
         <a href="<%= @auth_redirect_url %>" class="uiButton special large"><%=t('.add_twitter')%></a>
       </div>

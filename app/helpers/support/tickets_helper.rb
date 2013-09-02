@@ -6,7 +6,7 @@ module Support::TicketsHelper
                             "data-loading-box" => "#ticket-list" }  
 
   def current_filter
-    @current_filter ||= set_cookie :wf_filter, "all"
+    @current_filter ||= set_cookie :wf_filter, "open_or_pending"
   end
 
   def current_wf_order 

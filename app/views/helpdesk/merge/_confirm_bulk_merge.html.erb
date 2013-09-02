@@ -10,7 +10,7 @@
           <span>
             <%= t("ticket.merge_ticket_list_status_"+@target_ticket.ticket_states.current_state, 
             :username => "<span class = 'muted'>#{h(@target_ticket.requester.display_name)}</span>", 
-            :time_ago => time_ago_in_words(@target_ticket.ticket_states.send(@target_ticket.ticket_states.current_state))) %>
+            :time_ago => time_ago_in_words(@target_ticket.ticket_states.send(@target_ticket.ticket_states.current_state))).html_safe %>
           </span>
         </div>
       </div>
@@ -32,7 +32,7 @@
               <span>
                 <%= t("ticket.merge_ticket_list_status_"+source.ticket_states.current_state, 
                 :username => "<span class = 'muted'>#{h(source.requester.display_name)}</span>",
-                :time_ago => time_ago_in_words(source.ticket_states.send(source.ticket_states.current_state))) %>
+                :time_ago => time_ago_in_words(source.ticket_states.send(source.ticket_states.current_state))).html_safe %>
               </span>
             </div>
           </div>
@@ -45,7 +45,7 @@
     <div class="source-target-note">
       <div class="content-note content">
         <span class="arrow-left merge-left"></span>
-        <span class="default-note-text"><%= t("ticket.default_note_text") %></span>
+        <span class="default-note-text"><%= t("ticket.default_note_text").html_safe %></span>
         <div class="note-button-container-test">
             <a id="edit-target"><%= t("email_configs.edit") %></a>
             <div class= "ok-cancel hide">
@@ -57,7 +57,7 @@
           <textarea id="target-note-body" class="target-source-text" name="target[note]">
             <%= t("helpdesk.merge.bulk_merge.target_note_description1", :count => @source_tickets.length) %>
             
-            <%= @source_tickets.map{ |t| link_to t.display_id, "/helpdesk/tickets/#{t.display_id}", 
+            <%= @source_tickets.map{ |t| link_to t.display_id, "http://#{t.portal.host}/helpdesk/tickets/#{t.display_id}", 
               :target => '_blank'}.to_sentence %>
 
             <%= t("helpdesk.merge.bulk_merge.target_note_description2", :count => @source_tickets.length, :ticket_id => 
@@ -74,7 +74,7 @@
     <div class="source-target-note source-note">
       <div class="content-note content">
         <span class="arrow-left merge-left"></span>
-        <span class="default-note-text"><%= t("ticket.default_note_text") %></span>
+        <span class="default-note-text"><%= t("ticket.default_note_text").html_safe %></span>
         <div class="note-button-container-test">
             <a id="edit-source"><%= t("email_configs.edit") %></a>
             <div class= "ok-cancel hide">
@@ -84,7 +84,8 @@
         </div>
         <div id="target-note-content" class="hide">
           <textarea id="source-note-body" class="target-source-text" name="source[note]">
-            <%= t("helpdesk.merge.confirm_merge.source_merge_description", :ticket_id => @target_ticket.display_id) %>
+            <%= t("helpdesk.merge.confirm_merge.source_merge_description", :ticket_id => @target_ticket.display_id, 
+            :full_domain => @target_ticket.portal.host) %>
           </textarea>
           <div class="private-note">
             <input id="source_private" checked="checked" name="source[is_private]" value="true" type="checkbox"> 
@@ -120,7 +121,7 @@
     jQuery(this).hide();
     parent_object.find('.ok-cancel').show();
     label = parent_object.find('.default-note-text').html();
-    parent_object.find('.default-note-text').html('<%= t("ticket.edit_note") %>');
+    parent_object.find('.default-note-text').html('<%= t("ticket.edit_note").html_safe %>');
     value = parent_object.find('.redactor_editor').html();
     if(jQuery(this).attr("id") == "edit-target")
       jQuery('.source-note').hide();
@@ -135,7 +136,7 @@
       jQuery('.source-note').show();
     }, 500);
     if(jQuery(this).hasClass("ok"))
-      note_label = ((parent_object.find('.redactor_editor').html() != value ) ? '<%= t("ticket.note_saved") %>' : label)
+      note_label = ((parent_object.find('.redactor_editor').html() != value ) ? '<%= t("ticket.note_saved").html_safe %>' : label)
     else
     { 
       parent_object.find('.redactor_editor').html(value);

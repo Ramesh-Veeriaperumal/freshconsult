@@ -721,9 +721,23 @@ en:
         human_name: Dispatch’r Rule
     shared:
       filter_jsinit:
+        change_password: Change Password
         request_type: Request Type
-        params: Params
-        url: URL
+        content_type: Encoding
+        params: Content
+        url: Callback URL
+        url_req_auth: Requires Authentication
+        simple_layout: Simple
+        advanced_layout: Advanced
+        webhook_usecase: Example Webhooks
+        simple_webhook_tip: Select any of the ticket properties from the list above to be sent with the request. In case you would like to write your own API requests, please use the Advanced option.
+        advanced_webhook_tip: This section lets you write custom API requests. Click on the Insert Placeholders button to include ticket details such as Requester Name, Priority, Ticket Status etc. with your request.
+        how_to_use_webhook: How to use Webhooks >
+        api_key?: I have API key?
+        user_pass?: I have Username & Password?
+        username: Username
+        api_key: API Key
+        password: Password
         insert_placeholder: Insert Placeholder
         subject: Subject
         body: Body
@@ -1390,9 +1404,9 @@ en:
         without_user: assigned to <strong>{{responder_path}}</strong>
         long: "{{user_path}} assigned the ticket {{notable_path}} to {{responder_path}}"
       execute_scenario: 
-        short: "{{user_path}} executed the scenario '{{scenario_name}}"
-        without_user: "executed the scenario <strong>{{scenario_name}}</strong>"
-        long: "{{user_path}} executed the scenario '{{scenario_name}}' on {{notable_path}}"
+        short: "{{user_path}} executed the scenario '{{scenario_name | h}}"
+        without_user: "executed the scenario <strong>{{scenario_name | h}}</strong>"
+        long: "{{user_path}} executed the scenario '{{scenario_name | h}}' on {{notable_path}}"
       ticket_merge: 
         short: "{{user_path}} has merged the ticket {{notable_path}} to {{merge_ticket_path}} "
         long: "{{user_path}} has merged the ticket  {{notable_path}} to {{merge_ticket_path}}"
@@ -2511,6 +2525,8 @@ en:
     ticket: Ticket is
     customer_feedback: Customer Feedback is received
     time_entry: Time Entry is 
+  observer_actions:
+    skip_agent_assigned_email_notification: Skip Agent Assigned Email Notification
   ticket:
     spam: "SPAM"
     deleted: "TRASH"
@@ -3181,7 +3197,7 @@ en:
         enter_ticket_id: Enter a ticket id #
         merge: Merge
       confirm_merge:
-        source_merge_description: "This ticket is closed and merged into ticket <a href='/helpdesk/tickets/%{ticket_id}' target='_blank' class='merge_links'>%{ticket_id}</a>."
+        source_merge_description: "This ticket is closed and merged into ticket <a href='http://%{full_domain}/helpdesk/tickets/%{ticket_id}' target='_blank' class='merge_links'>%{ticket_id}</a>."
         source_ticket_close_info: This ticket will be closed with the following note
         target_ticket_updated_info: This ticket will be updated with the following note and all conversations will be moved
         will_be_merged_into: Will be merged into...
@@ -3194,7 +3210,7 @@ en:
         primary_ticket: "This is your primary ticket"
         remove: "Remove this ticket"
         target_merge_description:  "Ticket {{ticket.id}} {{ticket.subject}} is merged with this request"
-        target_merge_description1: "Merged from ticket <a href='/helpdesk/tickets/%{ticket_id}' target='_blank'>%{ticket_id}</a>"
+        target_merge_description1: "Merged from ticket <a href='http://%{full_domain}/helpdesk/tickets/%{ticket_id}' target='_blank'>%{ticket_id}</a>"
         target_note_description1: 
           one: "Ticket with id"
           other: "Tickets with ids"
@@ -3581,9 +3597,15 @@ en:
     salesforce:
       label: "Salesforce"
       desc: "You can view contact information from Salesforce crm in Freshdesk."
+      helptext: "<h4>Salesforce Integration</h4><p><br/>Select the list of fields need to be displayed in the saleforce widget. You can select to a max of 10 fields.</p><p><strong>Note:</strong><br/>Name is the default field and cannot be removed.</p>"
+      add_fields:
+        remove: "Remove"
       form:
         salesforce_settings_info: ""
         salesforce_settings: "Salesforce Settings"
+        select: "Select an option"
+        contact: "Contact Fields"
+        lead: "Lead Fields"
     nimble:
       label: "Nimble"
       desc: "You can view contact information from Nimble crm in Freshdesk."

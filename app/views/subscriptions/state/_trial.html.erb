@@ -2,7 +2,7 @@
   <li class="inline-field">
     <div class="trial-info">
       <div class="caption">
-        <%= t('current_plan') %>
+        <%= t('current_plan').html_safe %>
         <div class="plan-name">
           <% if @subscription.classic? %>
           <b class="big-text"> <%= " #{ @subscription.subscription_plan.name.split(" Classic").first }" %></b>
@@ -15,7 +15,7 @@
       <% trial_days = current_account.subscription.trial_days %>
       <%= trial_expiry_title(trial_days) %>
       <div class = "choose-plan">
-        <%= t('choose_plan_trial') %>
+        <%= t('choose_plan_trial').html_safe %>
       </div>
     </div>    
     <br /><br />

@@ -135,19 +135,61 @@ JiraWidget.prototype = {
 
 	},
 
+	getProjectBy: function(key, value){
+		if(!this.projects) return null;
+		for(i=0; i<this.projects.length; i++)
+			if(this.projects[i][key] == value)
+				return this.projects[i];
+		return null;
+	},
+
 	loadProject: function(resData) {
-		this.projectData = resData;
+		this.projects = resData.responseJSON.res_projects;
 		this.handleLoadProject(resData);
-		this.loadIssueTypes(resData);
+		selectedProject = this.getProjectBy('id', jQuery('#jira-projects').val());
+		if(selectedProject)
+			this.projectChanged(selectedProject.id);
 	},
 
 	projectChanged: function(project_id) {
 		Cookie.update("jira_project_id", project_id);
-		jiraWidget.getCustomFieldDetails();
+		selectedProject = jiraWidget.getProjectBy('id', project_id);
+		if(selectedProject.issueTypes){
+			jiraWidget.handleLoadIssueTypes(selectedProject.issueTypes);
+			this.last_requested_project_id = null;
+			jiraWidget.getCustomFieldDetails();
+			jQuery('#fields').show();
+		} else {
+			UIUtil.showLoading('jira', 'issue-types', '');
+			jQuery('#fields').hide();
+			jQuery('#jira-submit').attr("disabled",true);
+			if(jiraWidget.last_requested_project_id != selectedProject.id){
+				jiraWidget.last_requested_project_id = selectedProject.id;
+				jiraWidget.freshdeskWidget.request({
+					rest_url: 'rest/api/2/project/' + selectedProject.key,
+					content_type: "application/json",
+					on_success: function(response){
+						resJSON = response.responseJSON;
+						jQuery.extend(selectedProject, true, resJSON);
+						if(resJSON.id == this.last_requested_project_id){
+							this.last_requested_project_id = null;
+							this.handleLoadIssueTypes(resJSON.issueTypes);
+							jQuery('#fields').show();
+							this.getCustomFieldDetails();
+						}
+					}.bind(this),
+					on_failure: function(){
+						if(jiraWidget.last_requested_project_id == selectedProject.id)
+							jiraWidget.last_requested_project_id = null;
+						jiraWidget.processFailure();
+					}
+				});
+			}
+		}
 	},
 
 	handleLoadProject: function(resData) {
-		selectedProjectNode = UIUtil.constructDropDown(this.projectData.responseJSON["res_projects"], "json", "jira-projects", null, "id", ["name"], null, Cookie.retrieve("jira_project_id") || "");
+		selectedProjectNode = UIUtil.constructDropDown(this.projects, "json", "jira-projects", null, "id", ["name"], null, Cookie.retrieve("jira_project_id") || "");
 		UIUtil.hideLoading('jira', 'projects', '');
 	},
 
@@ -165,15 +207,25 @@ JiraWidget.prototype = {
 
 	getCustomFieldDetails:function()
 	{
-		jQuery('#jira-submit').attr("disabled",true);
-		jQuery("#fields").html("<div class='loading-fb' id='jira-field-spinner'> </div>");
+		var project_id, type_id;
 		project_id = jQuery('#jira-projects').val();
 		type_id = jQuery('#jira-issue-types').val();
+		if(	this.last_request_for_fields && this.last_request_for_fields.project_id == project_id &&
+			this.last_request_for_fields.type_id==type_id) 		return;
+		this.last_request_for_fields = {'project_id': project_id, 'type_id': type_id};
+		jQuery('#jira-submit').attr("disabled",true);
+		jQuery("#fields").html("<div class='loading-fb' id='jira-field-spinner'> </div>");
 		init_reqs = [{
 			rest_url : "rest/api/latest/issue/createmeta?expand=projects.issuetypes.fields&projectIds="+project_id+"&issuetypeIds="+type_id,
 			method: "get",
 			content_type: "application/json",
-			on_success:jiraWidget.constructFieldsDynamically.bind(this),
+			on_success: function(evt){
+				if(this.last_request_for_fields && this.last_request_for_fields.project_id == project_id &&
+																	this.last_request_for_fields.type_id==type_id){ 		
+					jiraWidget.constructFieldsDynamically(evt);
+					jiraWidget.last_request_for_fields = null;
+				}
+			}.bind(this),
 			on_failure:jiraWidget.processFailureCustomFields.bind(this)
 		}];
 		jiraWidget.freshdeskWidget.options.init_requests = init_reqs;
@@ -197,8 +249,8 @@ JiraWidget.prototype = {
 		jiraWidget.processJiraFields();
 	},
 
-	handleLoadIssueTypes: function(resData) {
-		issueData = this.projectData.responseJSON["res_issues"];
+	handleLoadIssueTypes: function(issueTypes) {
+		issueData = issueTypes;
 		actualData =[]
 		jQuery.each(issueData,function(key,value){
 			if(!value["subtask"])
@@ -258,7 +310,7 @@ JiraWidget.prototype = {
 			type:'hidden',
 			id: 'fields[summary]',
 			name: 'fields[summary]',
-			value: escapeHtml(jiraBundle.ticketSubject).replace(/"/g, "&quot;")}).appendTo('#jira-add-form');
+			value: jiraBundle.ticketSubject.replace(/"/g, "&quot;")}).appendTo('#jira-add-form');
 		}
 	},
 	jiraCreateIssueSuccess: function(evt) {
@@ -689,7 +741,7 @@ JiraWidget.prototype = {
 		else{	
 		jiraWidget.fieldContainer += '<label>'+fieldData["name"]+'</label>';
 		if(fieldData["name"] == "Summary")
-			jiraWidget.fieldContainer += '<input type="text" name="fields['+fieldKey+']" id="fields['+ fieldKey+']	" value="'+escapeHtml(jiraBundle.ticketSubject).replace(/"/g, "&quot;")+'"/>';
+			jiraWidget.fieldContainer += '<input type="text" name="fields['+fieldKey+']" id="fields['+ fieldKey+']	" value="'+jiraBundle.ticketSubject.replace(/"/g, "&quot;")+'"/>';
 		else
 			jiraWidget.fieldContainer += '<input type="text" name="fields['+fieldKey+']" id="fields['+ fieldKey+']	"/>';
 		}

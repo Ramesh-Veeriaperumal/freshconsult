@@ -22,7 +22,7 @@ module Helpdesk::NotifierFormattingMethods
     if html_part.at_css('img.inline-image')
       build_body_html_with_inline_attachments(html_part, inline_attachments, account)
     else
-      html
+      html.html_safe
     end
   end
 
@@ -35,7 +35,7 @@ module Helpdesk::NotifierFormattingMethods
       inline.set_attribute('src', "cid:#{cid}")
       inline.set_attribute('height', inline['data-height']) unless inline['data-height'].blank?
     end
-    return html_part.at_css("body").inner_html
+    return html_part.at_css("body").inner_html.html_safe
   end
 
   def handle_inline_attachments(inline_attachments)

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130819081958) do
+ActiveRecord::Schema.define(:version => 20130826072656) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -115,6 +115,17 @@ ActiveRecord::Schema.define(:version => 20130819081958) do
 
   add_index "admin_user_accesses", ["account_id", "accessible_type", "accessible_id"], :name => "index_admin_user_accesses_on_account_id_and_acc_type_and_acc_id"
   add_index "admin_user_accesses", ["user_id"], :name => "index_admin_user_accesses_on_user_id"
+
+  create_table "affiliate_discount_mappings", :id => false, :force => true do |t|
+    t.integer "subscription_affiliate_id", :limit => 8
+    t.integer "affiliate_discount_id",     :limit => 8
+  end
+
+  create_table "affiliate_discounts", :force => true do |t|
+    t.string  "code"
+    t.string  "description"
+    t.integer "discount_type"
+  end
 
   create_table "agent_groups", :force => true do |t|
     t.integer  "user_id",    :limit => 8
@@ -857,6 +868,15 @@ ActiveRecord::Schema.define(:version => 20130819081958) do
   add_index "helpdesk_schema_less_tickets", ["string_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_02", :length => {"account_id"=>nil, "string_tc02"=>"10"}
   add_index "helpdesk_schema_less_tickets", ["ticket_id", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_account_id_ticket_id", :unique => true
 
+  create_table "helpdesk_shared_attachments", :force => true do |t|
+    t.string   "shared_attachable_type"
+    t.integer  "shared_attachable_id",   :limit => 8
+    t.integer  "attachment_id",          :limit => 8
+    t.integer  "account_id",             :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "helpdesk_subscriptions", :force => true do |t|
     t.integer  "user_id",    :limit => 8
     t.integer  "ticket_id",  :limit => 8
@@ -1289,6 +1309,7 @@ ActiveRecord::Schema.define(:version => 20130819081958) do
     t.boolean  "import_dms",                        :default => true
     t.boolean  "reauth_required",                   :default => false
     t.text     "last_error"
+    t.boolean  "realtime_subscription",              :default => false,             :null => false
   end
 
   add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_pages_on_account_id"
