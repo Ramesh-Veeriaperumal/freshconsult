@@ -460,7 +460,10 @@
         :action => :show
       discussion.resources :forums, :only => :show
       discussion.resources :topics, :except => :index, :member => { :like => :put, 
-          :unlike => :put, :toggle_monitor => :put,:monitor => :put, :check_monitor => :get, :users_voted => :get } do |topic|
+          :unlike => :put, :toggle_monitor => :put,:monitor => :put, :check_monitor => :get, :users_voted => :get }, 
+          :collection => {:my_topics => :get} do |topic|
+        discussion.connect "/topics/my_topics/page/:page", :controller => :topics, 
+          :action => :my_topics
         discussion.connect "/topics/:id/page/:page", :controller => :topics, 
           :action => :show
         topic.resources :posts, :except => [:index, :new, :show], 

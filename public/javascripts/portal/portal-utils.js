@@ -53,7 +53,12 @@ var isMobile = {
 function layoutResize(layoutClass1, layoutClass2){
     "use strict"
     var mainbar = $j(layoutClass1).get(0),
-        sidebar = $j(layoutClass2).get(0)
+        sidebar = $j(layoutClass2)
+
+    // Remove sidebar if empty
+    if (!sidebar.html().trim()) sidebar.remove()
+
+    sidebar = $j(layoutClass2).get(0)
 
     // If no sidebar is present make the main content to stretch to full-width
     if(!sidebar) $j(mainbar).removeClass("main")

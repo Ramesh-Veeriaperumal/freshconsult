@@ -183,6 +183,10 @@ class Support::Discussions::TopicsController < SupportController
      render :partial => "topic_vote", :object => @topic
   end  
 
+  def my_topics
+    set_portal_page :my_topics
+  end
+
   def update_lock
     @topic.locked = !@topic.locked
     @topic.save!

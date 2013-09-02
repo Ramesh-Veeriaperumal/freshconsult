@@ -53,7 +53,7 @@ class SubscriptionPaymentObserver < ActiveRecord::Observer
               :amount => payment.amount,
               :tracking => payment.id,
               :transtype => "sale",
-              :merchantID => SubscriptionAffiliate::AFFILLIATES[:sharasale][:merchant_id],
+              :merchantID => SubscriptionAffiliate::AFFILIATES[:shareasale][:merchant_id],
               :userID => payment.affiliate.token })
         end
       rescue Exception => e
