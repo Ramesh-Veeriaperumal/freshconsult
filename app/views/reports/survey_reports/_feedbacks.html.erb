@@ -20,7 +20,7 @@
 			<%
 				feedback = ""
 
-				feedback = h(remark.survey_remark.feedback.body)+"<br>" unless remark.survey_remark.nil?
+				feedback = ""+h(remark.survey_remark.feedback.body)+"<br>" unless remark.survey_remark.nil?
 			%>
 			<p class="box-content">
 				<%=feedback.html_safe%>
