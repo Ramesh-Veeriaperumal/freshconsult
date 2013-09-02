@@ -13,7 +13,7 @@ date_range = params[:date_range].blank? ? "#{(Time.zone.now.ago 30.day).strftime
             <p class="topic-head"><%=name%></p>
         </li>
         <li class="first active report-grid">
-            <% link_title = "<span class='tab-text top-p'>All ("+content[:total].to_s+")</span>".html_safe %>
+            <% link_title = ("<span class='tab-text top-p'>All ("+content[:total].to_s+")</span>").html_safe %>
             <%= link_to_remote link_title,{:url => {:action =>'refresh_details', :entity_id =>params[:entity_id], :category=>params[:category], 
                      :date_range => date_range},:update => "report_feedback",:loading => "jQuery('#report_feedback').html('<div class=\"sloading loading-block loading-small\"></div>');"}, {:class => "all_link",:id=>"PagesTab",:href=>"#Pages"}  %>            
         </li>
