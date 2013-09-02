@@ -15,7 +15,9 @@ FreshdeskPjax.prototype = {
 
     constructor: FreshdeskPjax,
 
-    callBeforeSend: function() {
+    callBeforeSend: function(evnt,xhr,settings,options) {
+
+      this._beforeSendExtras(evnt,xhr,settings,options);
 
     	if(this._triggerUnload() === false) return false;
     	this._beforeSendCleanup();
@@ -38,6 +40,7 @@ FreshdeskPjax.prototype = {
     },
 
     callBeforeReplace: function() {
+      $.xhrPool_Abort();
     	if(typeof(this._prevAfterNextPage) == 'function') this._prevAfterNextPage();
     	this._prevAfterNextPage = null;
     },
@@ -76,6 +79,33 @@ FreshdeskPjax.prototype = {
       $('.top-loading-wrapper').addClass('hide','slow');
     },
 
+    _beforeSendExtras: function(evnt,xhr,settings,options) {
+      var start_time = new Date();
+      var bHeight = $('#body-container').height(),
+          clkdLI = $(evnt.relatedTarget).parent();
+      $('ul.header-tabs li.active').removeClass('active');
+      clkdLI.addClass('active');
+      this._initParallelRequest($(evnt.relatedTarget),options.data)
+    },
+
+    callAfterRecieve: function(evnt,xhr,settings) {
+      Fjax.callAfterReceive();
+      destroyScroll();
+      if(typeof(window.pjaxPrevUnload) == 'function') window.pjaxPrevUnload();
+      window.pjaxPrevUnload = null;
+      Fjax.callAtEnd();
+      var options = jQuery(document).data();
+      jQuery(document).data("requestDone",true);
+      if(options.parallelData && $(evnt.relatedTarget).data()){
+        $($(evnt.relatedTarget).data().parallelPlaceholder).html(options.parallelData) 
+      }
+      else if(options.parallelData && settings.data)
+      {
+        $(settings.data.parallelPlaceholder).html(options.parallelData);
+      }
+      setupScroll();
+    },
+
     _beforeSendCleanup: function() {
 			$('#cf_cache').remove();
 			$('#response_dialog').remove();
@@ -105,6 +135,32 @@ FreshdeskPjax.prototype = {
     {
       window.history.state.body_class = $('body').attr('class');
       window.history.replaceState(window.history.state);
+    },
+
+    _initParallelRequest: function(target,data){
+
+      jQuery(document).data("requestDone",false);
+      jQuery(document).data("parallelData",undefined);
+      
+      if((!target.data('parallelUrl')) && (!data)){
+        return;
+      }
+      var options ;
+      if(target.data('parallelUrl')) {
+        options = target.data();  
+      } else {
+      options = data;
+      }
+
+      jQuery.get(options.parallelUrl, function(data){
+        if(jQuery(document).data("requestDone")){
+          console.log("parent request done ")
+          jQuery(options.parallelPlaceholder).html(data)
+        }
+        else{
+          jQuery(document).data("parallelData",data);
+        }
+      })
     }
 }
 
@@ -196,7 +252,6 @@ var destroyScroll = function() {
   $(window).off('resize.freshdesk');
 }
 
-
 setupScroll();
 
 //Not using pjax for IE10- Temporary fix for IE pjax load issue
@@ -207,44 +262,17 @@ if (!$.browser.msie) {
       push : true,
       maxCacheLength: 0,
       replace: false
-    }).bind('pjax:beforeSend',function(evnt,xhr,settings){
-      $.xhrPool_Abort(); 
-      jQuery(document).data("requestDone",false);
-      jQuery(document).data("parallelData",undefined);
-      var start_time = new Date();
-      var bHeight = $('#body-container').height(),
-          clkdLI = $(evnt.relatedTarget).parent();
-      $('ul.header-tabs li.active').removeClass('active');
-      clkdLI.addClass('active');
-      initParallelRequest($(evnt.relatedTarget))
-
+    }).bind('pjax:beforeSend',function(evnt,xhr,settings,options){
       // BeforeSend
-      return Fjax.callBeforeSend();
+      return Fjax.callBeforeSend(evnt,xhr,settings,options);
   }).bind('pjax:beforeReplace',function(evnt,xhr,settings){
     Fjax.callBeforeReplace();
   }).bind('pjax:end',function(evnt,xhr,settings){
     //AfterReceive
-    Fjax.callAfterReceive();
-
-    destroyScroll();
-    if(typeof(window.pjaxPrevUnload) == 'function') window.pjaxPrevUnload();
-    window.pjaxPrevUnload = null;
-    
-    /*var end_time = new Date();
-    setTimeout(function() {
-      $('#benchmarkresult').html('Finally This page took ::: <b>'+(end_time-start_time)/1000+' s</b> to load.') 
-    },10);*/
-    Fjax.callAtEnd();
-    var options = jQuery(document).data();
-    jQuery(document).data("requestDone",true);
-    if(options.parallelData && $(evnt.relatedTarget).data()){
-      $($(evnt.relatedTarget).data().parallelPlaceholder).html(options.parallelData) 
-    }
-    setupScroll();
+    Fjax.callAfterRecieve(evnt,xhr,settings);
     return true;
   }).bind('pjax:success',function(evnt,xhr,settings){
-     window.history.state.body_class = $('body').attr('class');
-     window.history.replaceState(window.history.state,'title');
+     Fjax.success();
    });
 
 }

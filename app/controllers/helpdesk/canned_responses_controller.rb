@@ -10,6 +10,7 @@ class Helpdesk::CannedResponsesController < ApplicationController
  
   def show
     render_parsed_content if ticket_present?
+    @attachments = @ca_resp.attachments_sharable	
     respond_to do |format|
       format.html{ render :partial => '/helpdesk/tickets/components/insert_canned_response.rjs'}
       format.nmobile{ render :json => @a_template }

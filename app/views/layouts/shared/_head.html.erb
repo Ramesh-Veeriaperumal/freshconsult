@@ -50,6 +50,9 @@
 	<script type="text/javascript" src="/javascripts/redactor/langs/<%=current_account.language%>.js"></script>
 
 	<%= include_cloudfront_js :custom_widget %>
+	<script type="text/javascript">
+		Fjax.pjax_parallel_request = null;
+	</script>
 
 	<%= yield :head %>
 </head>
