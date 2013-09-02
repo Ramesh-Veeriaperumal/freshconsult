@@ -147,7 +147,7 @@
           var method = jQuery('<div class="row-fluid"/>')
                         .append('<label class="span2"><%= t(".request_type") %></label>')
                         .append(method_dropdown)
-                        .append(FactoryUI.link('<%= t('.how_to_use_webhook') %>', 'javascript:void(0)', 'using_webhooks'));
+                        .append(FactoryUI.link('<%= t('.how_to_use_webhook').html_safe %>', 'javascript:void(0)', 'using_webhooks'));
 
           var placeholder1 = jQuery("<span class='placeholder_div'> <a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a> </span>")
           var uri_textarea = FactoryUI.paragraph("", "url", initFeed['url'], "text uri required")
@@ -164,7 +164,7 @@
                       // No URL validation - for allowing placeholder in URL
                       .append(FactoryUI.checkbox("<%= t('.url_req_auth') %>","need_authentication",initFeed['need_authentication'],"url_req_auth"));
           var username_password = jQuery('<div class="row-fluid user_pass_webhook"/>')
-                          .append(FactoryUI.link("<%= t('.api_key?') %>", '#api_key', 'credentials_toggle'))
+                          .append(FactoryUI.link("<%= t('.api_key?').html_safe %>", '#api_key', 'credentials_toggle'))
                           .append(FactoryUI.text("<%= t('.username') %>", "username", initFeed['username'], 'username'));
           var password = FactoryUI.password("<%= t('.password') %>", "password", '', 'text password')
           username_password.append(password);
@@ -173,7 +173,7 @@
             password.hide();
           }
           var api_key = jQuery('<div class="row-fluid api_webhook"/>')
-                    .append(FactoryUI.link("<%= t('.user_pass?') %>", '#user_pass', 'credentials_toggle'))
+                    .append(FactoryUI.link("<%= t('.user_pass?').html_safe %>", '#user_pass', 'credentials_toggle'))
                     .append(FactoryUI.text("<%= t('.api_key') %> ", "api_key", initFeed['api_key'], 'api_key text'));
           var credentials = jQuery('<div class="row-fluid credentials"/>')
                           .append(username_password)
