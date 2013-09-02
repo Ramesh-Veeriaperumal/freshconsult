@@ -316,7 +316,17 @@ HTML
 	end
 
 	def fb_topic_info topic
-		%(#{h(topic.user.name)}, <br>#{time_ago topic.created_on}.)
+		if topic.has_comments
+			post = topic.last_post.to_liquid
+			%(#{I18n.t('portal.topic.fb_reply_info', 
+				:reply_url => topic.last_post_url, 
+				:user_name => h(post.user.name), 
+				:created_on => time_ago(post.created_on)
+				}
+			)
+		else
+			%(#{h(topic.user.name)}, <br>#{time_ago topic.created_on}.)
+		end
 	end
 
 	def topic_info_with_votes topic

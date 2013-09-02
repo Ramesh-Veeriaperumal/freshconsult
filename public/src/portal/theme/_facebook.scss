@@ -334,6 +334,21 @@ h3.heading{
     }
     .forums{
         .cs-g-3{
+            .help-text{
+                a{
+                    color: #999999;
+                    text-decoration: none;
+                }
+                &:hover{
+                    a{
+                        color: #1272de;
+                        &:hover{
+                            text-decoration: underline;
+                            color: #0c4e97;
+                        }
+                    }
+                }
+            }
             &:after, &:before{
                 display:none;
             }
