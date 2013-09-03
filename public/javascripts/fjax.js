@@ -134,7 +134,7 @@ FreshdeskPjax.prototype = {
     success : function()
     {
       window.history.state.body_class = $('body').attr('class');
-      window.history.replaceState(window.history.state);
+      window.history.replaceState(window.history.state,'for_pjax');
     },
 
     _initParallelRequest: function(target,data){
