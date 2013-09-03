@@ -31,11 +31,7 @@
 
 // Base modal
 .modal {
-  position: absolute;
-  top:   10px;
-  left:  10px;
-  right: 10px;
-  width: auto;
+  position: fixed;  
   margin: 0;  
   z-index: $zindexModal;
   background-color: $white;
@@ -97,18 +93,9 @@
   }
 }
 
-@include at-breakpoint($media-mobile){
-  /* Resetting width and margin so it will be calculated during the dialog wapper */
-  .modal { 
-    width:auto !important; 
-    margin-left: 0 !important;
-  }
-}
-
 @include at-breakpoint($break-tablet){
   // Modals
-  .modal {
-    position: fixed;
+  .modal {    
     top: 10%;
     left: 50%;
 
@@ -151,5 +138,27 @@
     width: 710px; margin: -250px 0 0 -355px; 
     top: 50%;
     &.fade.in { top: 50%; }
+  }
+}
+
+@if $nonResponsive == false {
+  @include at-breakpoint($media-mobile){
+    .modal { 
+      position: fixed; 
+      top:   10px;
+      left:  10px;
+      bottom: 10px;
+      right: 10px;
+      width: auto;
+    }
+    .modal-body{
+      padding-top: 0;
+      padding-bottom: 0;
+      max-height: none;
+    }
+    .modal-header h3 {
+      min-height: 45px;
+      line-height: 2.1;
+    }
   }
 }
