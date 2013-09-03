@@ -34,6 +34,7 @@
 .article-body{
 	@include text-formatting;
 	big{ font-size: inherit; }
+	table{ @extend .table; }
 }
 
 .article-list li, .topic-list li, .ticket-list li,
@@ -109,7 +110,7 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 }
 
 /* A small colen is added in front of the 
-   up-vote button if its next to the atleast 1 user is voted label */
+   up-vote button if its next to atleast one user voted label */
 #topic-vote-up-button:nth-child(3){
 	margin-left: 10px;
 	position: relative;
@@ -185,22 +186,8 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
   	&:hover{ background-color:rgba(#f1efec, 0.3); }
 }
 
-.c-user-thumb{
-	padding-left: 60px; 	
-  	.user-pic-thumb {
-  		padding: 2px; 
-		margin-left: -53px;
-  		img{ width: 35px; height: 35px; }
-  	}
-}
-
-.uv-user-thumb{
-	padding-left: 45px;
-  	.user-pic-thumb {
-		margin-left: -40px;
-  		img{ width: 30px; height: 30px; }
-  	}
-}
+.c-user-thumb{ padding-left: 60px; } 
+.uv-user-thumb{ padding-left: 45px; } 
 
 .c-link{ 
 	font-size: 1.16em; 
