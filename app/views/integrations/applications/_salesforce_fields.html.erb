@@ -33,7 +33,7 @@
                 </ul>
     	  			</div>
               <!--select_tag input for selected fields is considering it as string if we directly pass the array object. Hence this workaround to convert it at runtime -->
-              <%data =selected_fields.join(",")%>
+              <%data =selected_fields.join(",").html_safe%>
 
       			  <%= select_tag :contacts, 
                 			options_for_select(@salesforce_config['contact_fields'].collect{|field|
@@ -56,7 +56,7 @@
                   <%end%>
                   </ul>
       	  	</div>
-            <%data =selected_lead_fields.join(",")%>
+            <%data =selected_lead_fields.join(",").html_safe%>
       			<%= select_tag :leads, 
                 			options_for_select(@salesforce_config['lead_fields'].collect{|field| [field]},data.split(",")),{:multiple=>true, :class=>"select2-fields int-select","data-placeholder" => " "} %><!-- space in placeholder to add an empty option -->
                 </span>
