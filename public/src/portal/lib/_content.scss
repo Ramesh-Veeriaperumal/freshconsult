@@ -391,6 +391,13 @@ hr.content-divider{
 	
 }
 
+.help-text{
+	.my_topics_right{
+		border-left: 1px dotted #999;
+		padding-left: 10px;
+	}
+}
+
 @include at-breakpoint($media-mobile){
 	.toolbar-actions{ margin-top: 15px; margin-bottom: 15px; }
 	#topic-toolbar .btn{ min-width: 30%; }

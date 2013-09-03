@@ -21,7 +21,6 @@
 	{% paginate forum.topics by 10 %}
 		<div class="c-list topic-list" id="forum-topic-list">					
 			{% for topic in paginate.collection %}
-				{% assign last_post_user = topic.last_post.user %}
 				<div class="c-row c-user-thumb {% if topic.sticky? %} c-topic-sticky {% endif %}">
 					{{ topic.user | profile_image }}
 					{{ topic | topic_labels }}

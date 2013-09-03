@@ -31,11 +31,11 @@
 		</li>			
 		<li class="dropdown">
 			<%= f.label :art_type, t('solution.type') %>
-			<%= f.select :art_type, Solution::Article::TYPE_OPTIONS, :class => "select" %>
+			<%= f.select :art_type, Solution::Article.article_type_option, :class => "select" %>
 		</li>	
 		<li class="dropdown">
 			<%= f.label :status, t('solution.status') %>
-			<%= f.select :status, Solution::Article::STATUS_OPTIONS, :class => "select" %>
+			<%= f.select :status, Solution::Article.article_status_option, :class => "select" %>
 		</li>
 		<li id="solution-seo-container">
 			<div id="solution-seo-show" class="solution-seo-title">
