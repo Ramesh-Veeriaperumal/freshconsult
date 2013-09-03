@@ -41,7 +41,8 @@ class Portal::Template < ActiveRecord::Base
       :headingsColor => "#333333",
       :linkColor => "#049cdb", 
       :linkColorHover => "#036690",
-      :inputFocusRingColor => "#f4af1a"
+      :inputFocusRingColor => "#f4af1a",
+      :nonResponsive => false
     }.merge(self.get_portal_pref)
   end
 

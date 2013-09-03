@@ -669,7 +669,8 @@ HTML
 		  :name => h(@portal['name']),
 		  :contact_info => h(@portal['contact_info']),
 		  :current_page => @portal['page'],
-		  :current_tab => @current_tab }.to_json
+		  :current_tab => @current_tab,
+		  :preferences => portal_preferences }.to_json
 	end
 
 	def theme_url

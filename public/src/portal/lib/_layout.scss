@@ -1,63 +1,63 @@
 // Container
 @include border-box-sizing;
 
-@include at-breakpoint($media-mobile){
-  @include layout(6) {
-    .mobile-span1{ @include span-columns(1); }
-    .mobile-span2{ @include span-columns(2); }
-    .mobile-span3{ @include span-columns(3); }
-    .mobile-span4{ @include span-columns(4); }
-    .mobile-span5{ @include span-columns(5); }
-    .mobile-span6{ @include span-columns(6); }
-    .mobile-span7{ @include span-columns(7); }
-    .mobile-omega{ @include omega; }
-  }
+.page{
+  @include container($total-columns);
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
-@include at-breakpoint($break-tablet){
-  /*.page{ @include susy-grid-background; }  */
-  .page{
-    @include container($total-columns);
-    margin-top: 10px;
-    margin-bottom: 10px;  
-    /*@include susy-grid-background;*/
-  }
-  
-  @include layout(4) {
-    /*.content{ @include susy-grid-background; }*/
-    .cs-g{  @include span-columns(2); }
-    .cs-g:nth-child(even){ @include span-columns(2 omega); clear:right; }
+.main{ @include span-columns(8); }
+.sidebar{ @include span-columns(4 omega); }
+
+// Generic Grid classes
+.row-fluid{ @include pie-clearfix; }
+.span1{ @include span-columns(1); }
+.span2{ @include span-columns(2); }
+.span3{ @include span-columns(3); }
+.span4{ @include span-columns(4); }
+.span5{ @include span-columns(5); }
+.span6{ @include span-columns(6); }
+.span7{ @include span-columns(7); }
+.span8{ @include span-columns(8); }
+.span9{ @include span-columns(9); }
+.span10{ @include span-columns(10); }
+.span11{ @include span-columns(11); }
+.span12{ @include span-columns(12); }
+.omega{ @include omega; }
+
+@if $nonResponsive == false {
+  @include at-breakpoint($media-mobile-tablet){
+    .main, .sidebar { @include reset-columns; display: block; }
   }
 
-  @include layout(3) {
-    .cs-g-3{  @include span-columns(1); }
-    .cs-g-3:nth-child(3n+3){ @include span-columns(1 omega); }
-    .cs-g-3:nth-child(3n+1){ clear:left; }
+  @include at-breakpoint($media-mobile){
+    .span1, .span2, .span3, .span4, 
+    .span5, .span6, .span7, .span8,
+    .span9, .span10, .span11, .span12 { 
+      @include reset-columns; display: block; 
+    }
+    .page{ padding: 0; }
   }
 
-  // Generic Grid classes
-  .row-fluid{ @include pie-clearfix; }
-  .span1{ @include span-columns(1); }
-  .span2{ @include span-columns(2); }
-  .span3{ @include span-columns(3); }
-  .span4{ @include span-columns(4); }
-  .span5{ @include span-columns(5); }
-  .span6{ @include span-columns(6); }
-  .span7{ @include span-columns(7); }
-  .span8{ @include span-columns(8); }
-  .span9{ @include span-columns(9); }
-  .span10{ @include span-columns(10); }
-  .span11{ @include span-columns(11); }
-  .span12{ @include span-columns(12); }
-  .omega{ @include omega; }
-}
+  @include at-breakpoint($break-tablet){
+    @include layout(4) {
+      .cs-g{ @include span-columns(2); }
+      .cs-g:nth-child(even){ @include span-columns(2 omega); clear:right; }
+    }
 
-@include at-breakpoint($break-desktop){
-  .main{ @include span-columns(8); }
-  .sidebar{ 
-    @include span-columns(4 omega); 
-    .cs-g{  @include reset-columns; }
-    .cs-g-3{  @include reset-columns; }
+    @include layout(3) {
+      .cs-g-3{  @include span-columns(1); }
+      .cs-g-3:nth-child(3n+3){ @include span-columns(1 omega); }
+      .cs-g-3:nth-child(3n+1){ clear:left; }
+    }
   }
-  .min-height-on-desktop{ @include min-height(630px); }
+
+  @include at-breakpoint($break-desktop){
+    .min-height-on-desktop{ @include min-height(630px); }
+    .sidebar{
+      .cs-g{  @include reset-columns; }
+      .cs-g-3{  @include reset-columns; }
+    }
+  }
 }

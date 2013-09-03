@@ -34,7 +34,7 @@ stylesheets:
   codemirror:
     - public/stylesheets/codemirror.css
 
-  portal:
+  portal_utils:
     - public/stylesheets/portal/portal_utils.css
 
   preview:

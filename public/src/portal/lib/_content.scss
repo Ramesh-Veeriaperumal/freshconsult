@@ -3,7 +3,8 @@
 .content, .content-form, .content-light{
 	border: $content-border;
 	@include pie-clearfix;
-	padding: $content-padding-mobile;
+	padding: $content-padding; 
+	margin-top: 10px;
 	@include box-shadow(rgba(255, 255, 255, 0.7) 0 1px inset);
 	position: relative;
 }
@@ -18,6 +19,7 @@
 	h3{
 		border-top:6px solid $inputFocusRingColor;
 		@include inline-block;
+		min-width: 30%;
 	}
 }
 
@@ -29,9 +31,10 @@
 	}	
 }
 
-.article-body{	
+.article-body{
 	@include text-formatting;
 	big{ font-size: inherit; }
+	table{ @extend .table; }
 }
 
 .article-list li, .topic-list li, .ticket-list li,
@@ -84,6 +87,10 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	line-height: $baseLineHeight / 1.1;
 }
 
+.article-body, .help-text, .p-info, .info-text, .list-noinfo, .description-text{
+	max-height: 999999px; // Hack to make fonts not zoom out in android
+}
+
 .item-count{ 
 	color: lighten($helpTextColor, 10%);
 	&:before{ content: "("; }
@@ -103,7 +110,7 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 }
 
 /* A small colen is added in front of the 
-   up-vote button if its next to the atleast 1 user is voted label */
+   up-vote button if its next to atleast one user voted label */
 #topic-vote-up-button:nth-child(3){
 	margin-left: 10px;
 	position: relative;
@@ -122,9 +129,10 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 .user-comment{
 	margin:5px 0 20px;
 	.user-pic-thumb{
-		clear: right; 
+		clear: none;
+		margin: 0;
 		z-index: 3;
-	}
+	}	
 }
 
 .user-info{
@@ -178,21 +186,8 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
   	&:hover{ background-color:rgba(#f1efec, 0.3); }
 }
 
-.c-user-thumb, .uv-user-thumb{
-	padding-left: 55px;
-  	.user-pic-thumb {
-		margin-left: -53px;
-  		img{ width: 35px; height: 35px; }
-  	}
-}
-
-.uv-user-thumb{
-	padding-left: 45px;
-  	.user-pic-thumb {
-		margin-left: -40px;
-  		img{ width: 30px; height: 30px; }
-  	}
-}
+.c-user-thumb{ padding-left: 60px; } 
+.uv-user-thumb{ padding-left: 45px; } 
 
 .c-link{ 
 	font-size: 1.16em; 
@@ -313,6 +308,8 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 hr.content-divider{
 	margin-top: 30px;
 	margin-bottom: 20px;
+	margin-left: -$content-padding-side;
+	margin-right: -$content-padding-side; 
 	border-bottom-color:#f6f6f6;
 }
 
@@ -325,39 +322,6 @@ hr.content-divider{
 
 /* Topic label styles in forum list view */
 .topic-list .topic-labels .label{ @extend .label-small; }
-
-/* Media styles for tablet and above */
-@include at-breakpoint($break-tablet){
-	.content, .content-form, .content-light{ 
-		padding: $content-padding; 
-		margin-top: 10px; 
-	}
-
-	.user-comment .user-pic-thumb{
-		clear: none;
-		margin: 0;
-	}
-
-	.c-user-thumb{ 
-		padding-left: 60px; 
-		.user-pic-thumb{ padding: 2px; }
-	}
-
-	hr.content-divider{ 
-		margin-left: -$content-padding-side;
-		margin-right: -$content-padding-side; 
-	}
-
-	.toolbar-actions{
-		float: right;
-		margin-bottom: -50px;
-		margin-top: 15px;
-	}
-
-	.topic-list .topic-labels{
-		float: right;
-	}
-}
 
 .avatar-span{ margin-bottom: 15px; }
 .attach-wrapper, .attachments-list-form{ margin-top: 5px; }
@@ -381,33 +345,52 @@ hr.content-divider{
 	}
 }
 
+.toolbar-actions{
+	float: right;
+	margin-bottom: -50px;
+	margin-top: 15px;
+}
+
+.topic-list .topic-labels{ float: right; }
+
 @include at-breakpoint($break-desktop){
 	.sidebar .community-sidebar{
 		.cs-s{ border-top:0; margin: 0; }
 		h3.heading{ display: none; }
 		.topic-list:nth-child(n+3) ul{ display: none; }
 		.start-topic{ margin-top: 0; float: none; }
-	} 
-	
-}
-
-.help-text{
-	.my_topics_right{
-		border-left: 1px dotted #999;
-		padding-left: 10px;
 	}
 }
 
-@include at-breakpoint($media-mobile){
-	.toolbar-actions{ margin-top: 15px; margin-bottom: 15px; }
-	#topic-toolbar .btn{ min-width: 30%; }
+.help-text .my_topics_right{
+	border-left: 1px dotted #999;
+	padding-left: 10px;
+}
 
-	.cs-s{
-		border-top:1px solid $orange;
-		margin:0.5em 0;
-		h3{
-			border-top:4px solid $orange;
-			@include inline-block;
+@if $nonResponsive == false {
+	@include at-breakpoint($media-mobile){
+		
+		.toolbar-actions{ margin-top: 15px; margin-bottom: 15px; }
+	
+		.toolbar-actions, .topic-list .topic-labels{ float: none; }
+
+		#topic-toolbar .btn{ min-width: 30%; }
+		.cs-s{
+			margin:0.5em 0;
+			h3{ border-top-width:4px; }
 		}
+		.content, .content-form, .content-light{ 
+			margin-top: 0; 
+			padding: $content-padding-mobile;
+		}
+		.user-comment .user-pic-thumb{
+			clear: right;
+		}
+		.c-user-thumb{ padding-left: 55px; }
+		hr.content-divider{ 
+			margin-left: 0;
+			margin-right: 0;
+		}
+
 	}
 }
