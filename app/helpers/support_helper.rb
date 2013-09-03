@@ -323,7 +323,7 @@ HTML
 				:reply_url => topic.last_post_url, 
 				:user_name => h(post.user.name), 
 				:created_on => time_ago(post.created_on)
-				}
+				)}
 			)
 		else
 			%(#{h(topic.user.name)}, <br>#{time_ago topic.created_on}.)
