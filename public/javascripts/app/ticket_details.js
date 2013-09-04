@@ -745,13 +745,8 @@ var scrollToError = function(){
 				if(propertiesForm.valid()) {
 
 					if($.browser.msie) {
-						stopDraftSaving();
+						handleIEReply(_form);
 						submitTicketProperties();
-						$.ajax({
-							url: TICKET_DETAILS_DATA['draft']['clear_path'],
-							type: 'delete'
-						});
-						seperateQuoteText(_form);
 						return true;
 					}
 					ev.preventDefault();
@@ -766,6 +761,10 @@ var scrollToError = function(){
 					scrollToError();
 				}
 			} else {
+				if($.browser.msie) {
+					handleIEReply(_form);
+					return true;
+				}
 				ev.preventDefault();
 				submitNewConversation(_form, ev);
 			}
@@ -787,6 +786,13 @@ var scrollToError = function(){
 		}
 			
 	});
+
+	var handleIEReply = function(_form) {
+		if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
+			stopDraftSaving();
+			seperateQuoteText(_form);
+		}
+	}
 
 
 
@@ -825,8 +831,10 @@ var scrollToError = function(){
 				var input_since = $('<input type="hidden" rel="ajax_params" name="since_id" value="' + (showing_notes ? TICKET_DETAILS_DATA['last_note_id'] : TICKET_DETAILS_DATA['last_activity'] ) + '" />');
 				_form.append(input_since);
 				
-				seperateQuoteText(_form);	
-				if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') stopDraftSaving();			
+				if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
+					seperateQuoteText(_form);	
+					stopDraftSaving();				
+				}
 
 			},
 			success: function(response, statusCode, xhr) {
@@ -1086,7 +1094,7 @@ var scrollToError = function(){
 	$.getScript("/helpdesk/tickets/prevnext/" + TICKET_DETAILS_DATA['displayId']);
 
 	$('#twitter_handle').change();
-	setTimeout(function() { $('#TicketProperties .content').trigger('afterShow'); } , 100 );
+	setTimeout(function() { $('#TicketProperties .content').trigger('afterShow'); } , 250 );
 
 	// MOVE TO !PATTERN
 	$('body').on('change.pattern', '.selected_to_yellow [type=radio], .selected_to_yellow [type=checkbox]', function(ev) {
