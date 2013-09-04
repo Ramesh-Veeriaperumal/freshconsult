@@ -383,6 +383,10 @@ en:
       my_topics: "My Topics"
   admin:
     portal_settings:
+      flash:
+        portal_published_success: "Portal changes published successfully."
+        portal_reset_success: "Portal changes reseted successfully."
+        portal_saved_success: "Portal template saved successfully."
       simple:
         header_color: "Header"
         bg_color: "Body"
@@ -4083,7 +4087,9 @@ en:
       subheader_link_color: Link color
       subheader_form_elements: Form elements
       css_subheader: Custom stylesheet
-      css_help_message: Add or overwrite freshdesk default styles with your own custom css.  
+      css_help_message: Add or overwrite default theme styles with your own custom css.  
+      css_responsive: Responsive Styles
+      css_responsive_help: "Will make the default theme Tablet and Mobile friendly. You can choose to turn off this setting if you wish to make the portal look the same in Mobile, Tablet and Desktop."
   any_time: Any Time
   five_minutes: Within 5 minutes
   fifteen_minutes: Within 15 minutes

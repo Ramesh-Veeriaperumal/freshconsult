@@ -174,9 +174,9 @@ module SupportHelper
 	# Logo for the portal
 	def logo portal
 		_output = []
-		_output << %(<a href='#{portal['linkback_url']}'>)
+		_output << %(<a href='#{portal['linkback_url']}' class='portal-logo'>)
 		# Showing the customer uploaded logo or default logo within an image tag
-		_output << %(<img src='#{portal['logo_url']}' class='portal-logo' />)
+		_output << %(<span class="portal-img"><i></i><img src='#{portal['logo_url']}' /></span>)
 		_output << %(</a>)
 		_output.to_s.html_safe
 	end
