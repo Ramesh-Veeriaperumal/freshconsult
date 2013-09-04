@@ -16,9 +16,9 @@
   		<%
   			availabilty_tooltip = ""
   			if current_user.available?
-  				availabilty_tooltip = t('header.user_available')
+  				availabilty_tooltip = t('header.user_available').html_safe
   			else
-  				availabilty_tooltip = t('header.user_not_available')
+  				availabilty_tooltip = t('header.user_not_available').html_safe
   			end
   		%>
 	  		<a href="#" id="availabilty-toggle" class="tooltip" data-placement="below"  
