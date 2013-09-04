@@ -47,6 +47,7 @@ class SubscriptionPaymentObserver < ActiveRecord::Observer
 
     def make_api_call(payment)
       begin
+        subscription = payment.subscription
         if subscription.subscription_payments.first.created_at > 1.year.ago
           response = HTTParty.get('https://shareasale.com/q.cfm', :query => {
               :amount => payment.amount,

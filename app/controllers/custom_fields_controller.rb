@@ -37,7 +37,7 @@ class CustomFieldsController < Admin::AdminController
           end  
         end  
     end
-    flash_message(err_str)
+    flash_message(err_str.to_s.html_safe)
     redirect_to :action => :index
   end
 

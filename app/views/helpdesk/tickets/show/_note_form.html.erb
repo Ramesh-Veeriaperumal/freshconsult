@@ -81,7 +81,7 @@
           <li>
             <a href="#" rel="custom-reply-status" data-status-name='<%= status.name %>' data-cnt-id='<%=cntid%>' data-status-val='<%= status.status_id %>' >
               <%= t('ticket.note_form.add_and_set_as', 
-                    { :status => (status.is_default ? t(status.name.downcase) : status.name) }) %>
+                    { :status => (status.is_default ? t(status.name.downcase) : status.name) }).html_safe %>
               </a>
             </li>
             <% end %>

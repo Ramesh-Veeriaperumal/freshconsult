@@ -15,8 +15,9 @@ class Helpdesk::Attachment < ActiveRecord::Base
   belongs_to_account
 
   belongs_to :attachable, :polymorphic => true
-  
-  
+
+  has_many :shared_attachments, :class_name => 'Helpdesk::SharedAttachment'
+
    has_attached_file :content, 
     :storage => :s3,
     :s3_credentials => "#{RAILS_ROOT}/config/s3.yml",
@@ -114,8 +115,11 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def set_account_id
-    self.account_id = attachable.account_id if attachable
+    if attachable and self.attachable.class.name=="Account"
+      self.account_id = self.attachable_id
+    elsif attachable
+      self.account_id = attachable.account_id
+    end
   end
-  
 
 end

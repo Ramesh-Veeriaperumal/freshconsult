@@ -13,8 +13,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
              :notification_type => notification_type,
              :receips => i_receips,
              :email_body => a_template.render('ticket' => ticket, 
-                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment),
-             :subject => a_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)
+                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe,
+             :subject => a_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe
           }) unless i_receips.nil?
     end
     
@@ -25,8 +25,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
              :notification_type => notification_type,
              :receips => ticket.requester.email,
              :email_body => r_template.render('ticket' => ticket, 
-                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment),
-             :subject => r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name)}
+                'helpdesk_name' => ticket.account.portal_name, 'comment' => comment).html_safe,
+             :subject => r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.portal_name).html_safe}
       if(notification_type == EmailNotification::NEW_TICKET and ticket.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone])
         params[:attachments] = ticket.attachments
         params[:dropboxes] = ticket.dropboxes
@@ -137,7 +137,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
     handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
 
-    note.attachments.each do |a|
+    note.all_attachments.each do |a|
       attachment  :content_type => a.content_content_type, 
                   :body => File.read(a.content.to_file.path), 
                   :filename => a.content_file_name
@@ -170,7 +170,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
     handle_inline_attachments(inline_attachments) unless inline_attachments.blank?
 
-    note.attachments.each do |a|
+    note.all_attachments.each do |a|
       attachment  :content_type => a.content_content_type, 
                   :body => File.read(a.content.to_file.path), 
                   :filename => a.content_file_name

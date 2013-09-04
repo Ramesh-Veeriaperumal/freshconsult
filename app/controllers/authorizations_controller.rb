@@ -90,10 +90,10 @@ class AuthorizationsController < ApplicationController
       app_name = Integrations::Constants::APP_NAMES[provider.to_sym]
     end
 
-    if(@omniauth.credentials.refresh_token)
-      access_token = get_oauth2_access_token(provider, @omniauth.credentials.refresh_token, app_name)
-    else
+    if provider  == 'surveymonkey'
       access_token = @omniauth.credentials
+    else
+      access_token = get_oauth2_access_token(provider, @omniauth.credentials.refresh_token, app_name)
     end
     
 

@@ -23,13 +23,13 @@
         </div>
       </div>
       <div class="control-group">
-        <%= content_tag(:label, t('.portal_url') + "<span class='required_star'>*</span>", :class => "control-label") %>
+        <%= content_tag(:label, (t('.portal_url') + "<span class='required_star'>*</span>").html_safe, :class => "control-label") %>
         <div class="controls">
   	     <%= portal.text_field :portal_url, :class => "portal_url url_without_protocol auto required", :id => "PortalUrl",
           :"data-domain" => Helpdesk::HOST[Rails.env.to_sym], :size => "50" %>
   	      <span class="portal_url_if_long">
             <%= content_tag(:div, t('.cname_configure_info', 
-                            :full_domain => current_account.full_domain), :class => "info-data") %>
+                            :full_domain => current_account.full_domain).html_safe, :class => "info-data") %>
           </span>
         </div> 
       </div>
@@ -54,11 +54,11 @@
       </div>
       
       <div class="control-group">
-        <label class="control-label"><%= t(".top_level_solution") %></label>
+        <label class="control-label"><%= t(".top_level_solution").html_safe %></label>
         <div class="controls">
           <%= portal.collection_select :solution_category_id, @solution_categories.reject(&:is_default?), 
-                    :id, :name, {:include_blank => t(".select_solution_category")} , :class => "select2"%>
-          <%= content_tag(:div, t('.top_level_solution_info'), :class => "info-data") %>
+                    :id, :name, {:include_blank => t(".select_solution_category").html_safe} , :class => "select2"%>
+          <%= content_tag(:div, t('.top_level_solution_info').html_safe, :class => "info-data") %>
         </div>
       </div>
     </div>

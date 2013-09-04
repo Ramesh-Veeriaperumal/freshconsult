@@ -1,23 +1,23 @@
 <div class="tab-content" id="gamification-help">
 	<div class="sidepanel helpcard tab-pane active" id="points-tab-help">
-		<h4><%= t('.why_game') %> </h4>
-		<p> <%= t('.why_game_info1') %> </p>
-		<p> <%= t('.why_game_info2') %> </p>
-		<h4><%= t("admin.gamification.gamification_settings.title_trophies") %></h4>
-		<p> <%= t('.trophies_info1') %> </p>
+		<h4><%= t('.why_game').html_safe %> </h4>
+		<p> <%= t('.why_game_info1').html_safe %> </p>
+		<p> <%= t('.why_game_info2').html_safe %> </p>
+		<h4><%= t("admin.gamification.gamification_settings.title_trophies").html_safe %></h4>
+		<p> <%= t('.trophies_info1').html_safe %> </p>
 		
 		<% [:mvp, :love, :sharpshooter, :speed].each do |leaders| %>
 			<div class="lbr-trophy trophy trophy-<%= leaders %>"></div>
-			<h4 class="title"><%= t("gamification.leaderboard.#{leaders}_trophie_label") %></h4>
+			<h4 class="title"><%= t("gamification.leaderboard.#{leaders}_trophie_label").html_safe %></h4>
 			<p class="intro">
-				<%= t("gamification.leaderboard.#{leaders}_trophie_info") %>
+				<%= t("gamification.leaderboard.#{leaders}_trophie_info").html_safe %>
 			</p>
 		<% end %>
 	</div>
 
 	<div class="sidepanel helpcard tab-pane" id="quests-tab-help">
-		<h4><%= t('.quest') %> </h4>
-		<p> <%= t('.quest_info1') %> </p>
-		<p> <%= t('.quest_info2') %> </p>
+		<h4><%= t('.quest').html_safe %> </h4>
+		<p> <%= t('.quest_info1').html_safe %> </p>
+		<p> <%= t('.quest_info2').html_safe %> </p>
 	</div>
 </div>

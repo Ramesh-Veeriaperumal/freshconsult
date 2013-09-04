@@ -6,17 +6,17 @@
 <input type="hidden" name="widgetType" id="widgetType" value="<%= widget_type %>" />
 <% if widget_type == "popup" %>
 
-<%= content_tag(:h3, t('.feedbackwidget_button_customization'), :class => "rebrand-head-text top-space-none" ) %> 
+<%= content_tag(:h3, t('.feedbackwidget_button_customization').html_safe, :class => "rebrand-head-text top-space-none" ) %> 
 
   <div class="control-group">
   	 
-	 <%= content_tag(:label, t('feedbackwidget_button_text'), :class => "control-label" ) %>
+	 <%= content_tag(:label, t('feedbackwidget_button_text').html_safe, :class => "control-label" ) %>
 	 <div class="controls">
-	 	<input type="text" class="text span8" size="18" name="buttonText" value="" placeholder= "<%=t('.feedbackwidget_button_text_placeholder')%>" />
+	 	<input type="text" class="text span8" size="18" name="buttonText" value="" placeholder= "<%=t('.feedbackwidget_button_text_placeholder').html_safe%>" />
 	 </div>
   </div>
   <div class="control-group">
-  	<%= content_tag(:label, t('feedbackwidget_background'), :class => "control-label" ) %>
+  	<%= content_tag(:label, t('feedbackwidget_background').html_safe, :class => "control-label" ) %>
 	<div class="controls">
 		<div class="color">
 			<input type="color" maxlength="7" id="TabColor" class="color_field required" name="buttonBg"  data-hex="true" value="<%= tab_color %>" />
@@ -24,14 +24,14 @@
 	</div>
   </div>
   <div class="control-group">
-	<%= content_tag(:label, t('feedbackwidget_image_button'), :class => "control-label" ) %>
+	<%= content_tag(:label, t('feedbackwidget_image_button').html_safe, :class => "control-label" ) %>
 	<div class="controls">
 		<input type="text" class="textInput span8" name="backgroundImage" id="backgroundImage" value="" size="35" />
-		<%= content_tag(:div, content_tag(:b, t('note')) + t('feedbackwidget_custom_image_info') ,:class => "info-data")  %> 
+		<%= content_tag(:div, content_tag(:b, (t('note')) + t('feedbackwidget_custom_image_info')).html_safe ,:class => "info-data")  %> 
 	</div>
   </div>
   <div class="control-group">
-  	 <%= content_tag(:label, t('feedbackwidget_position'), :class => "control-label" ) %> 
+  	 <%= content_tag(:label, t('feedbackwidget_position').html_safe, :class => "control-label" ) %> 
 	 <div class="controls">
 			<div class="span3">
 				<select name="alignment" class="select2 span12" id="select_id">
@@ -43,10 +43,10 @@
 			</div>
 			<div class="input-prepend span1">
 			  <span class="add-on">Offset:</span>
-			  <input class="number" id="offset" type="text" name="offset" value=""  placeholder= "<%=t('.feedbackwidget_offset_placeholder')%>" size="4">
-			  <span class="add-on-outer"><%= t(".feedbackwidget_px") %></span>
+			  <input class="number" id="offset" type="text" name="offset" value=""  placeholder= "<%=t('.feedbackwidget_offset_placeholder').html_safe%>" size="4">
+			  <span class="add-on-outer"><%= t(".feedbackwidget_px").html_safe %></span>
 			</div>
-			<p class="info-data span12 clear-left-margin"><%= t('feedbackwidget_offset_info') %></p>
+			<p class="info-data span12 clear-left-margin"><%= t('feedbackwidget_offset_info').html_safe %></p>
 	</div>
   </div>
 
@@ -57,7 +57,7 @@
   <div class="control-group">
 		<%= content_tag(:label, t('feedbackwidget_form_heading'), :class => "control-label" ) %>
 		<div class="controls">
-		 	<input type="text" class="text" size="35" name="formTitle" id="formTitle" value="" placeholder= "<%= t('feedbackwidget_defaulttitle') %>"/>
+		 	<input type="text" class="text" size="35" name="formTitle" id="formTitle" value="" placeholder= "<%= t('feedbackwidget_defaulttitle').html_safe %>"/>
 		</div>
   </div>	
   <div class="control-group">
@@ -125,7 +125,7 @@
 		 </div>
 
 		
-		<p class="intro span12 clear-left-margin"><%= t('feedbackwidget_embed_code_intro') %></p>
+		<p class="intro span12 clear-left-margin"><%= t('feedbackwidget_embed_code_intro').html_safe %></p>
 		
 		<% if widget_type == "popup" %>
 		<div class="tab-pane active">

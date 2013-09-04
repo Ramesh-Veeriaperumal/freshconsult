@@ -55,7 +55,7 @@
 					<div class="extra_tabbed">
 						<%= link_to_function t(".request_custom_ssl"), :id => "custom_ssl_link" %>
 						<div class="custom_ssl_form hide">
-							<p class="muted"><%= t(".ssl_info") %> </p>
+							<p class="muted"><%= t(".ssl_info").html_safe %> </p>
 							<div class="row-fluid">
 								<label class="span2 helpdesk_url">
 									<%= t(".helpdesk_url") %>
@@ -94,7 +94,7 @@
 		</span>
 	</ul>
 	<div class="button-container">
-		<%= link_to "#{t('cancel')}", "/admin/home", :class => "btn" %>
+		<%= link_to "#{t('cancel')}".html_safe, "/admin/home", :class => "btn" %>
 		<%= f.submit t('save'), :class => "btn btn-primary" %>
 	</div>	
 <% end %>

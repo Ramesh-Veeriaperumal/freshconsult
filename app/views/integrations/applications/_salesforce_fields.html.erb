@@ -76,9 +76,9 @@
 
 <script type="text/javascript">
 
-  jQuery("#contacts").select2({maximumSelectionSize: 10})
+  jQuery("#contacts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
 
-  jQuery("#leads").select2({maximumSelectionSize: 10})
+  jQuery("#leads").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
 
   //setting the Name as default field(can't be removed.)
   jQuery("#sfcontacts ul .select2-search-choice div").each(function(index,element){

@@ -765,6 +765,9 @@ var scrollToError = function(){
 					ev.preventDefault();
 					scrollToError();
 				}
+			} else {
+				ev.preventDefault();
+				submitNewConversation(_form, ev);
 			}
 			
 		} else {

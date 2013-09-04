@@ -8,7 +8,7 @@ module FormBuilders
 
     def code_editor(method, options = {})     
       options[:id] = field_id( method, options[:index] )  
-      code_editor_tag(field_name(method), @object.send(method), options)
+      code_editor_tag(field_name(method), @object.send(method), options).html_safe
     end
 
     def code_editor_tag(name, content = nil, options = {})      
@@ -26,7 +26,7 @@ module FormBuilders
       output << %( jQuery("##{id}").codemirror(#{_javascript_options.to_json}) )
       output << %( </script> )
 
-      output.join(' ')
+      output.join(' ').html_safe
     end
 
     def field_name(label, index = nil)

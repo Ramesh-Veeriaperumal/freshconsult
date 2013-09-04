@@ -17,9 +17,9 @@ module Helpdesk::TimeSheetsHelper
       widget_code_with_ticket_id = Liquid::Template.parse(widget_code).render(liquid_values, :filters => [Integrations::FDTextFilter])
       unless get_app_details(app[0]).blank?
          content_tag :fieldset, :class => "integration still_loading #{app[0]}_timetracking_widget" do
-           "<script type=\"text/javascript\">#{app[0]}inline=true;</script>"+
+           ("<script type=\"text/javascript\">#{app[0]}inline=true;</script>"+
             '<div class="integration_container">' + widget_code_with_ticket_id + '</div>' +
-           content_tag(:span, check_box_tag("#{app[0]}-timeentry-enabled", "1", :checked => 'checked'), :class => "app-logo application-logo-#{app[0]}-small")      
+           content_tag(:span, check_box_tag("#{app[0]}-timeentry-enabled", "1", :checked => 'checked'), :class => "app-logo application-logo-#{app[0]}-small") ).html_safe     
            #Liquid::Template.parse(widget_include).render("ticket" => @ticket)
          end
       end

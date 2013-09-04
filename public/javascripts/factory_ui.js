@@ -91,7 +91,7 @@ window.FactoryUI = {
 				var _optgroup = jQuery("<optgroup label='"+item[0]+"' />");
 				item[1].each(function(option){
 					jQuery( "<option />" )
-						.text( unescapeHtml(option[1]) )
+						.text( (option[1]) )
 						.data( "unique_action", option[2] || false )
 						.appendTo(_optgroup)
 						.get(0).value = option[0];
@@ -99,7 +99,7 @@ window.FactoryUI = {
 				_optgroup.appendTo(select);
 			}else{
 				jQuery( "<option />" )
-						.text( unescapeHtml(item[1]) )						
+						.text( (item[1]) )						
 						.appendTo( select )
 						.get(0).value = item[0];
 			}

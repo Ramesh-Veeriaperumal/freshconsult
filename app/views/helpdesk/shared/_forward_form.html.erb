@@ -67,7 +67,7 @@
         </li>
         <li class="inline-field field hide" id="fwd-cc-form-container-<%=cntid%>" style='display:none'>
             <label class="caption">
-                <%= t(".cc") %>:
+                <%= t(".cc").html_safe %>:
             </label>
             <div class="fields" id="fwd_cc_emails_id" rel="fwd_cc_div" data-button="#add_fwd_cc_btn" data-parent="#fwd-cc-form-container"> 
                 
@@ -79,20 +79,20 @@
         </li>
         <li class="inline-field field" id="fwd-bcc-form-container-<%=cntid%>" style='display:<%= bcc_drop_box_email.blank? ? "none": "block" %>;'>
           <label class="caption">
-            <%= t(".bcc") %>:
+            <%= t(".bcc").html_safe %>:
           </label>
 
           <div class="fields">
             
             <input type="text" id="bcc_emails_<%=cntid%>" name="helpdesk_note[bcc_emails]" />
             <% javascript_tag do -%>
-              new Autocompleter.MultiValue("bcc_emails_<%=cntid%>", cachedLookup, $A(<%= bcc_drop_box_email.to_json unless bcc_drop_box_email.blank? %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
+              new Autocompleter.MultiValue("bcc_emails_<%=cntid%>", cachedLookup, $A(<%= bcc_drop_box_email.to_json.html_safe unless bcc_drop_box_email.blank? %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
             <% end %>
           </div>
         </li>
         <li class="inline-field field">
             <label class="caption">
-                <%= t("message") %>:
+                <%= t("message").html_safe %>:
             </label>
             <div class="fields">
               <% conv_item = conv_id.nil? ? @ticket : @note %>
@@ -110,7 +110,7 @@
         <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
         <li class="inline-field field">
             <div class="attachment-options fields" id="attachment-options-forward-<%=cntid%>">
-              <% attachments = conv_item.attachments %>
+              <% attachments = conv_item.class.name=="Helpdesk::Note" ? conv_item.all_attachments : conv_item.attachments  %>
               <% if(attachments.length > 0) %>
                 Attachments
                 <div class="attachments">

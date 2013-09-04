@@ -22,7 +22,6 @@ window.xhrPool = [];
       window.xhrPool = [];
     }
   }
-
   $.ajax = function(options)
   {
     if(options.persist)
@@ -267,9 +266,7 @@ window.xhrPool = [];
       // - Custom select boxs will use a plugin called chosen to render with custom CSS and interactions
       $("select.customSelect").livequery(function(){ $(this).chosen(); });
       $("select.select2").livequery(function(){ 
-        if(!$(this).data('select2')){
           $(this).select2($(this).data());   
-        }
       });
 
       // - Quote Text in the document as they are being loaded
@@ -586,22 +583,4 @@ function closeableFlash(flash){
       if(flash.css("display") != 'none')
          flash.hide('blind', {}, 500);
     }, 20000);
-}
-
-function initParallelRequest(target){
-  if(!target.data('parallelUrl')){
-    return;
-  }
-  var options = target.data();
-  jQuery.get(options.parallelUrl,
-    function(data){
-      if(jQuery(document).data("requestDone")){
-        console.log("parent request done")
-        jQuery(options.parallelPlaceholder).html(data)
-      }
-      else{
-        console.log("parallel request done")
-        jQuery(document).data("parallelData",data);
-      }
-  })
 }
