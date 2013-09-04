@@ -825,7 +825,8 @@ var scrollToError = function(){
 				var input_since = $('<input type="hidden" rel="ajax_params" name="since_id" value="' + (showing_notes ? TICKET_DETAILS_DATA['last_note_id'] : TICKET_DETAILS_DATA['last_activity'] ) + '" />');
 				_form.append(input_since);
 				
-				seperateQuoteText(_form);					
+				seperateQuoteText(_form);	
+				if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') stopDraftSaving();			
 
 			},
 			success: function(response, statusCode, xhr) {
