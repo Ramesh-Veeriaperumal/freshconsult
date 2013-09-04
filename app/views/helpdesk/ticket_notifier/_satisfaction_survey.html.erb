@@ -21,9 +21,9 @@
 <% end %>
 <% if surveymonkey_survey %>
   <p>
-    <%= "<br>------------------------<br>" unless in_placeholder %>
-    <%= Sanitize.clean(surveymonkey_survey[:text]) %>
+    <%= "<br>------------------------<br>".html_safe unless in_placeholder %>
+    <%= Sanitize.clean(surveymonkey_survey[:text]).html_safe %>
     <br>
-    <%= "<a href=\"#{surveymonkey_survey[:link]}\">#{surveymonkey_survey[:link]}</a>" %>
+    <%= "<a href=\"#{surveymonkey_survey[:link]}\">#{h(surveymonkey_survey[:link])}</a>".html_safe %>
   </p>
 <% end %>

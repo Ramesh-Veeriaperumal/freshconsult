@@ -37,8 +37,8 @@
 													</div>
 													<%= content_tag(:h2, t('total_price') + " : $0") %>
 													<% downgrade_confirm = ( (plan.id < current_account.subscription.subscription_plan_id) or current_account.subscription.classic? ) ? true : false %>
-													<%= link_to(t('select_plan'), "javascript:confirm(#{downgrade_confirm}, true)", :class => "uiButton confirm-change", "data-to" => plan.name) %>
-													<div class="confirm-text" style="display:none;"><%= t('downgrade_confirm', :from => current_account.subscription.subscription_plan.name, :to => plan.name) %></div>
+													<%= link_to(t('select_plan'), "javascript:confirm(#{downgrade_confirm}, true)".html_safe, :class => "uiButton confirm-change", "data-to" => plan.name) %>
+													<div class="confirm-text" style="display:none;"><%= t('downgrade_confirm', :from => current_account.subscription.subscription_plan.name, :to => plan.name).html_safe %></div>
 												</div>
 											<% end %>
 											<button data-plan="<%= plan.name %>" data-plan-cost="<%= plan.amount.to_i %>" data-plan-id="<%= plan.id %>" class="plan-button" id='<%= "#{ plan.name }_button" %>' data-current-plan=false data-free-plan='<%= subscribe_direct_flag %>'><%=t('choose_plan')%></button>
