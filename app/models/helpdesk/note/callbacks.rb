@@ -141,7 +141,7 @@ class Helpdesk::Note < ActiveRecord::Base
 		
     # VA - Observer Rule 
     def update_observer_events
-      return if user.nil? || feedback? || !(notable.instance_of? Helpdesk::Ticket)
+      return if user.nil? || meta? || feedback? || !(notable.instance_of? Helpdesk::Ticket)
       if user && user.customer? || !note?
         @model_changes = {:reply_sent => :sent}
       else

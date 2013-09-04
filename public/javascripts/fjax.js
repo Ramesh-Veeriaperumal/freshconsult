@@ -39,7 +39,8 @@ FreshdeskPjax.prototype = {
     	return true;
     },
 
-    callBeforeReplace: function() {
+    callBeforeReplace: function(settings) {
+      $(settings.target).data('twipsy','');
       $.xhrPool_Abort();
     	if(typeof(this._prevAfterNextPage) == 'function') this._prevAfterNextPage();
     	this._prevAfterNextPage = null;
@@ -251,8 +252,10 @@ var destroyScroll = function() {
   $(window).off('scroll.freshdesk');
   $(window).off('resize.freshdesk');
 }
+$('body').ready(function(){
+    setupScroll();
+});
 
-setupScroll();
 
 //Not using pjax for IE10- Temporary fix for IE pjax load issue
 //in dashboard and tickets filter. Remove the condition once we get permanent fix
@@ -266,7 +269,7 @@ if (!$.browser.msie) {
       // BeforeSend
       return Fjax.callBeforeSend(evnt,xhr,settings,options);
   }).bind('pjax:beforeReplace',function(evnt,xhr,settings){
-    Fjax.callBeforeReplace();
+    Fjax.callBeforeReplace(settings);
   }).bind('pjax:end',function(evnt,xhr,settings){
     //AfterReceive
     Fjax.callAfterRecieve(evnt,xhr,settings);

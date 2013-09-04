@@ -13,7 +13,7 @@
 						<%= radio_button_tag(:account_feedback, "Budget Issue. ", false, :class => "cancel-reason") %>
 						<%= t(".feedback.budget") %>
 					</label>
-					<%= content_tag( :div, t(".feedback.budget_followup"), :class => "reason-followup" ) %>
+					<%= content_tag( :div, t(".feedback.budget_followup").html_safe, :class => "reason-followup" ) %>
 					<%= text_area_tag 'feedback-text', nil, :class => "reason-followup", :placeholder => t(".feedback.budget_extra") %>
 				</li>
 				
@@ -22,7 +22,7 @@
 						<%= radio_button_tag(:account_feedback, "Missing Feature. ", false, :class => "cancel-reason" ) %>
 						<%= t(".feedback.requirement") %>
 					</label>
-					<%= content_tag(:div, t(".feedback.requirement_followup"), :class => "reason-followup" ) %>
+					<%= content_tag(:div, t(".feedback.requirement_followup").html_safe, :class => "reason-followup" ) %>
 					<%= text_area_tag 'feedback-text', nil, :class => "reason-followup", :placeholder => t(".feedback.requirement_extra") %>
 				</li>
 				
