@@ -16,6 +16,7 @@
 			assetUrl: 		"https://s3.amazonaws.com/assets.freshdesk.com/widget",
 			queryString:    "",
 			formHeight: 	"500px",
+			responsive: 	"", 
 			widgetType: 	"popup"
 		},
 		iframeLoaded, widgetHeadHTML, widgetBodyHTML, iframe, button, closeButton, overlay, dialog
@@ -30,7 +31,6 @@
 			}
 		}
 	 }
-
 	 // Checking browser support for IE
 	 var Browser = {
 		Version: function() {
@@ -167,7 +167,6 @@
 	 		container = null;
 	 	}
 	 }
-	 
 	 function createContainer(){
 	 	if (container == null) {
 			container = document.createElement('div');
@@ -175,10 +174,10 @@
 			container.id = "FreshWidget";
 			container.style.display = 'none';
 			document.body.insertBefore(container, document.body.childNodes[0]);
-			
 			container.innerHTML = '<div class="widget-ovelay" id="freshwidget-overlay">&nbsp;</div>' +
 						'<div class="freshwidget-dialog" id="freshwidget-dialog">' +
 						' <img id="freshwidget-close" class="widget-close" src="'+options.assetUrl+'/widget_close.png?ver='+ version +'" />' +
+						'<div class="mobile-widget-close" id="mobile-widget-close"></div>'+
 						' <div class="frame-container">' +
 						' 	<iframe id="freshwidget-frame" src="about:blank" frameborder="0" scrolling="auto" allowTransparency="true" style="height: '+options.formHeight+'"/>' +
 						' </div>'
@@ -187,6 +186,7 @@
 			container 	= document.getElementById('FreshWidget');
 			closeButton = document.getElementById('freshwidget-close');
 			closeButton	= useFilterforIE(closeButton);
+			mobileCloseButton = document.getElementById('mobile-widget-close');
 			dialog      = document.getElementById('freshwidget-dialog');
 			iframe	    = document.getElementById("freshwidget-frame");
 			overlay     = document.getElementById('freshwidget-overlay'); 
@@ -195,6 +195,7 @@
 			loadingIframe();
 			
 			bind(closeButton, 'click', function(){ window.FreshWidget.close(); });
+			bind(mobileCloseButton, 'click', function(){ window.FreshWidget.close(); });
 			bind(overlay, 	  'click', function(){ window.FreshWidget.close(); });
 
 			bind(iframe, 'load', function() {
@@ -217,6 +218,9 @@
 	 	scroll(0,0);
 	 	container.style.display = 'block';	 	
 
+		if(!options.responsive){
+			document.body.style.overflow='hidden'
+		}
 	 	if(Browser.Version() > 8){
 	        html2canvas( [ document.body ], {
 					ignoreIds: "FreshWidget|freshwidget-button",
@@ -243,6 +247,9 @@
 	 
 	 function close(){
 	 	container.style.display = 'none';
+		if(!options.responsive){
+			document.body.style.overflow='auto'
+		}
 	 	widgetFormUrl();
 	 }
 	 
@@ -287,7 +294,7 @@
 		iframe 		: function(){
 						return iframe;
 					  }, 
-	     update 		: function(params){
+	    update 		: function(params){
 						catchException(function(){ return updateWidget(params); });
 					  }
 	 }; 

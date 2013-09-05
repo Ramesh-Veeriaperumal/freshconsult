@@ -12,6 +12,7 @@ module Widgets::FeedbackWidgetsHelper
     		:attachFile => params[:attachFile].blank?,
     		:searchArea => params[:searchArea].blank?,
             :formHeight => params[:formHeight],
+            :responsive => params[:responsive],
             :widgetType => params[:widgetType]
     	}
     end

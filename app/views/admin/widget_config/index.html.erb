@@ -62,7 +62,7 @@
 
 			$("#assetUrl").val(wgu.http);
 			$("#widget_url").val(wgu.http);
-			
+
 
 			$.each(WidgetFormArray, function(index, item){
 				$item = $activeForm.find('[name=' + item['name'] + ']');
@@ -79,6 +79,7 @@
 								$item.serialize());
 						break;
 						case "widgetType":
+						case "responsive":
 							WidgetFormHash.set("queryString", WidgetFormHash.get("queryString") + "&" + 
 								$item.serialize());
 							WidgetFormHash.set(item['name'], item['value']);

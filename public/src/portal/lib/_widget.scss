@@ -1,3 +1,4 @@
+/* Widget modal reset */
 html,.modal-widget{
 	height: 98%;
 }
@@ -6,64 +7,16 @@ body, .feedback-wrapper{
 	background:transparent;
 }
 .feedback-wrapper{
-	.modal-widget{
-		&.modal-panel-active{
-			.modal-header{
-				width:58%;
-			}
-			.modal-footer{
-				width:60%;
-			}
-		}
-		.modal-header{
-			height: 40px;
-			position: absolute;
-			top:0;
-			@include border-top-left-radius(6px);
-			background:#fff;
-			padding: 0;
-			.modal-header-bg{
-				background: url('data:"image/png";base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAABJCAYAAAAE/rd/AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALlJREFUeNrs1scOwjAQRdGYEEJvEb03If7//xhWCOlJlu0rlvb6eJK7GjszK2JOq4g9gYkPhS868Zn66d8vCLzTmJvCK4250JizwhONOSo80Jg9jdkp3NKYjcI1jVnRmKXCBY1pFDY0Zk5jZgqnNGaicExjRjRmqHBAY/oKezSmS2NqhTWN6SisaExFY9oKSxpTKgxusC94h1afb5JedAqdL0Wh+S6GIix5X0dD9/enQoYZZpgGPwIMAFIqi/g47osYAAAAAElFTkSuQmCC');
-				background-repeat: repeat-x;
-				padding: 9px 40px 0 15px;
-				@media (min-width: 45em) {
-					padding: 9px 15px 0 15px;
-				}
-			}
-		}
-		.modal-body{
-			height: 100%;
-			max-height: 100%;
-			padding-top: 45px;
-			.extra-space{
-				display: block;
-				height:50px;
-			}
-		}
-		.modal-footer{
-			width:100%;
-			position: absolute;
-			bottom: 0;
-			height:50px;
-			padding: 6px 15px 6px;
-			background:#fff;
-			border-right: 1px solid #ddd;
-			border-radius: 0;
-			border-bottom-left-radius: 6px;
-		}
+	margin-left: 20px; 
+	margin-right: 20px; 
+	&.embedded-wrapper{
+		margin:0;
+		overflow-y: scroll;
 	}
 }
-.feedback-wrapper{ 
-  margin-left: 20px; margin-right: 20px; 
-  .modal-widget .modal-body{ 
-    .redactor_editor, .redactor_editor:focus{
-        min-height: 100px; 
-        height:auto !important; 
-        height: 100px;
-       }
-  }
-}
+/* Widget styles with/without Search Form */
 .modal-widget{
+	overflow: hidden;
 	width: 100%;
 	// Reseting existing widget modal dialog
 	position: relative;
@@ -71,16 +24,121 @@ body, .feedback-wrapper{
 	left: 0;
 	top: 0;
 	margin: 0;
-	.modal-footer{ background: transparent; }
-	.modal-body{ 
+	.modal-header{
+		width:98%;
+		height: 40px;
+		position: absolute;
+		top:0;
+		@include border-top-left-radius(6px);
+		background:#fff;
+		padding: 0;
+	}
+	.modal-header-bg{
+		background: url('data:"image/png";base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAABJCAYAAAAE/rd/AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALlJREFUeNrs1scOwjAQRdGYEEJvEb03If7//xhWCOlJlu0rlvb6eJK7GjszK2JOq4g9gYkPhS868Zn66d8vCLzTmJvCK4250JizwhONOSo80Jg9jdkp3NKYjcI1jVnRmKXCBY1pFDY0Zk5jZgqnNGaicExjRjRmqHBAY/oKezSmS2NqhTWN6SisaExFY9oKSxpTKgxusC94h1afb5JedAqdL0Wh+S6GIix5X0dD9/enQoYZZpgGPwIMAFIqi/g47osYAAAAAElFTkSuQmCC');
+		background-repeat: repeat-x;
+		padding: 9px 40px 0 15px;
+		@media (min-width: 45em) {
+			padding: 9px 15px 0 15px;
+		}
+	}
+	.modal-footer{
+		background: transparent;
+		width:100%;
+		position: absolute;
+		bottom: 0;
+		height:50px;
+		padding: 5px 15px 4px;
+		background:#fff;
+		border-right: 1px solid #e8e8e8;
+		border-radius: 0;
+		border-bottom-left-radius: 6px;
+	}
+	.modal-body{
 		overflow-x:hidden; 
 		padding-top: 8px;
-		padding-bottom: 50px;
+		height: 100%;
+		max-height: 100%;
+		padding-top: 45px;
+		.extra-space{
+			display: block;
+			height:50px;
+		}
+		.redactor_editor, .redactor_editor:focus{
+			min-height: 100px; 
+			height:auto !important; 
+			height: 100px;
+		}
+	}
+	/* Widget Styles without Search Form */
+	&.modal-panel-active{
+		.modal-header{
+			width:58%;
+		}
+		 .modal-body, .modal-footer{
+			width: 60%;
+			z-index: 10;
+		}
+		.modal-body{ @include border-right-radius(0); }
+		.modal-panel{ width: 40%; display: block; }	
+		&.modal-scroll .modal-header{
+			width:60%;
+			border-right: 1px solid #e8e8e8;
+		}
+	}
+	&.modal-scroll .modal-header{  
+		position: absolute;
+		z-index:11; /* for box shadow */
+		width:100%;
+		&:after{
+			content:" ";
+			position: absolute;
+			border-top:1px solid #ddd;
+			top: 100%;
+			left: 0;
+			width: 100%;
+			height: 5px;
+			@include background-image(linear-gradient(to bottom, rgba(0,0,0,0.1) 0,rgba(0,0,0,0) 100%));
+		}		
+	}
+}
+.mobile-search-icon{
+	display: none;
+}
+/* Embedded Widget styles */
+.embedded-wrapper{
+	#feedback-suggest input.special {
+		padding:4px 15px 4px 35px;
+		margin-top: 4px;
+		border-color: $inputBorder;
+		@include border-radius(3px);
+	}
+	.embedded-body {
+		max-height: 90%;
+	}
+	.embedded-footer { 
+		padding-top:0;
+		border-top: 0; background:none;
+	}
+	.embedded-panel{
+		background-color:transparent;
+		box-shadow: none
+	}
+	.embedded-panel, .embedded-footer{
+		background-color: transparent;
+		box-shadow: none;
+	}
+	.embedded-search-input {
+		margin-top: 50px;
+	} 
+} 
 
-	
-	}	
+//Search Panel Style
+.hc-search-input{ 
+  margin: 8px 8px 5px; 
+  &:before{margin-top:8px;}
 }
 .modal-panel{ 
+	display:none;
 	background-color: #f9f9f9; 
 	position: absolute; 
 	height: 100%; 
@@ -90,37 +148,17 @@ body, .feedback-wrapper{
 	z-index: 9;
 	@include box-shadow(-1px 0 0 #e8e8e8);
 }
-.hc-search-input{ 
-  margin: 8px 8px 5px; 
-  &:before{margin-top:8px;}
-}
-#feedback-suggest input.special{
-	padding:8px 15px 6px 35px;
-	border-color: $inputBorder;
-}
-.modal-panel{ display:none; }	
-.modal-panel-active{	
-	.modal-header, .modal-body, .modal-footer{
-		width: 60%;
-		position: relative;
-		z-index: 10;
-	}
-	.modal-body{ @include border-right-radius(0); }
-	.modal-panel{ width: 40%; display: block; }	
-}
-.modal-scroll .modal-header{  
-	position: relative;
-	z-index: 11;
-	&:after{
-		content:" ";
-		position: absolute;
-		border-top:1px solid #ddd;
-		top: 100%;
-		left: 0;
-		width: 100%;
-		height: 5px;
-		@include background-image(linear-gradient(to bottom, rgba(0,0,0,0.1) 0,rgba(0,0,0,0) 100%));
-	}		
+.panel-info {
+	text-align: center;
+ 	padding-top: 1.5em;
+	.lead{
+		font-size: 28px;
+		line-height: 1.4;
+		color: #cccccc;
+		font-weight: 100;
+		letter-spacing: 0.04em;
+		margin-bottom: 6px;
+	}	
 }
 .panel-content{ 
 	padding:0 1em; 
@@ -130,7 +168,13 @@ body, .feedback-wrapper{
 		overflow: hidden;
 	}
 }
-.panel-info{ padding-top: 1.5em }
+
+
+//Form Controls Style
+#feedback-suggest input.special{
+	padding:8px 15px 6px 35px;
+	border-color: $inputBorder;
+}
 
 .form-widget{
 	.select2-container{ width:100%; }
@@ -168,19 +212,6 @@ body, .feedback-wrapper{
 		margin-bottom: 0;
 	}
 }
-
-.panel-info {
-	text-align: center;
-	.lead{
-		font-size: 28px;
-		line-height: 1.4;
-		color: #cccccc;
-		font-weight: 100;
-		letter-spacing: 0.04em;
-		margin-bottom: 6px;
-	}	
-}
-
 .form-portal {
 	// Increase spacing between groups
 	.control-group {
@@ -246,29 +277,12 @@ body, .feedback-wrapper{
 	color:#000;
 	@include opacity(0.30);
 }
-.embedded-body {
-	max-height: 90%;
-}
-.embedded-footer { 
-	border-top: 0;
-}
-.embedded-wrapper{
-	margin:0;
-	.embedded-panel, .embedded-footer{
-		background-color: transparent;
-		box-shadow: none;
-	}
-}
-.embedded-search-input {
-	margin-top: 50px;
-}
+
 // IE hacks
 
 .ie .portal-attach .attach-file{ display:block !important; }
 .ie .portal-attach .attach-proxy{ display:none !important; }
-.ie8{
-	overflow: hidden !important; 
-}
+.ie8{	overflow: hidden !important; }
 .ie7{
 	position: relative;
 	overflow: hidden;

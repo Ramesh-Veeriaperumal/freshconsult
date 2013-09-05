@@ -1,9 +1,16 @@
 <% @ticket ||= current_account.tickets.new %>
+<% responsive = widget_option(:responsive) %>
+
+<% if(responsive != "no") %>
+	<link href="/stylesheets/portal/lib/responsive-widget.css" media="screen" rel="stylesheet" type="text/css">
+<% end %>
+
 <div class="modal-header">
 	<div class="modal-header-bg">
 	<%= content_tag(:h3, widget_option(:formTitle), :class => "ellipsis", :title => widget_option(:formTitle)) %>
 	</div>
 </div>
+
 <% widget_type = widget_option(:widgetType) %>
 <input type="hidden" name="widgetType" id="widgetType" value= "<%= widget_type %>" />
 <%= hidden_field_tag "searchInputFrom" %>
@@ -30,10 +37,10 @@
     			<%= ticket_field_container f, :helpdesk_ticket, field %>
     		</div>
 		<% end %>
+		<% if widget_type="popup" %>
+			<div class="extra-space"></div>
+		<% end %>
 	</div>
-	<% if widget_type="popup" %>
-		<div class="extra-space"></div>
-	<% end %>
 </div>
 <div class="modal-footer">
 	<div class="copyright">
@@ -48,6 +55,26 @@
 </div>
 <% end %>
 <% if widget_option(:searchArea) && feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
+	<% if(responsive != "no") %>
+		<a class="mobile-search-icon" id="mobile-search-icon" href="#">
+			<span class="mobile-counter">4</span>
+			<span class="wicon-mobile-search"></span>
+		</a>
+		<input type="hidden" name="responsive" id="responsive" value= "<%= responsive %>" />
+		<script type='text/javascript'>		
+			jQuery(document).ready(function () {
+				var responsiveWidget = jQuery("#responsive").val();
+				if(responsiveWidget != "no") {
+					jQuery('.mobile-search-icon').click(function(ev) {
+						ev.preventDefault()
+						jQuery('.modal-body').toggleClass('modal-body-hide');
+						jQuery('.modal-panel').toggleClass('modal-panel-show');
+						jQuery('#helpdesk_ticket_submit').toggle();
+					});
+				}
+			});
+		</script>
+	<% end %>
 	<div class="modal-panel" id="feedback-suggest">
 		<form class="hc-search-form" autocomplete="off" action="<%= solutions_support_search_path %>" id="hc-search-form">
 			<div class="hc-search-input">
@@ -189,6 +216,7 @@
 	});
 
 	jQuery(document).ready(function () {
+
 		var embeddedWidget = jQuery("#widgetType").val();
 		if(embeddedWidget == "embedded") {
 			jQuery("#feedback-widget-container").removeClass("modal modal-widget");

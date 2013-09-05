@@ -110,14 +110,25 @@
 <ul class="ui-form">
   <li class="code-view">
   		<% if widget_type == "popup" %>
-		 	<%= content_tag(:h3, t('.feedbackwidget_popup_code'), :class => "title span9", :id => "feedbackwidget_popup_code") %>
+		 	<%= content_tag(:h3, t('.feedbackwidget_popup_code'), :class => "title span6", :id => "feedbackwidget_popup_code") %>
 	 	<% else %>
-		 	<%= content_tag(:h3, t('.feedbackwidget_embedded_code'), :class => "title span9", :id => "feedbackwidget_embedded_code" ) %>
+		 	<%= content_tag(:h3, t('.feedbackwidget_embedded_code'), :class => "title span6", :id => "feedbackwidget_embedded_code" ) %>
 	 	<% end %>
 
-	 	<div class="pull-right">
-		 	<span><%= t(".feedbackwidget_use_https") %></span>
-		 	<input type="checkbox" rel="toggle" type="checkbox" name="httpsHttp" id="httpsHttp" data-checked-label="Yes" data-unchecked-label="No" />
+	 	<div class="pull-right row-fluid span6">
+	 	<% if widget_type == "popup" %>
+	 		<div class="span6 align-right">
+		 		<span>Mobile View</span>
+		 		<input type="hidden" name="responsive" rel="pseudo" value="" />
+			 	<input type="checkbox" rel="toggle" type="checkbox" class="pseudoCheckbox" data-checked-label="Yes" data-unchecked-label="No" checked="checked"/>
+			</div>
+			<div class="span6 align-right">
+		<% else %>
+			<div class="span12 align-right">
+		<% end %>
+			 	<span><%= t(".feedbackwidget_use_https") %></span>
+			 	<input type="checkbox" rel="toggle" type="checkbox" name="httpsHttp" id="httpsHttp" data-checked-label="Yes" data-unchecked-label="No" />
+			 </div>
 		 </div>
 
 		
