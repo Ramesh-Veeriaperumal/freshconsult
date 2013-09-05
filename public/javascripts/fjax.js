@@ -143,14 +143,14 @@ FreshdeskPjax.prototype = {
       jQuery(document).data("requestDone",false);
       jQuery(document).data("parallelData",undefined);
       
-      if((!target.data('parallelUrl')) && (!data)){
+      if((!target.data('parallelUrl')) || (!data)){
         return;
       }
       var options ;
       if(target.data('parallelUrl')) {
         options = target.data();  
       } else {
-      options = data;
+        options = data;
       }
 
       jQuery.get(options.parallelUrl, function(data){
