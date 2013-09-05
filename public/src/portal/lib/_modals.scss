@@ -147,14 +147,13 @@
       position: fixed; 
       top:   10px;
       left:  10px;
-      bottom: 10px;
       right: 10px;
       width: auto;
     }
     .modal-body{
       padding-top: 0;
       padding-bottom: 0;
-      max-height: none;
+      max-height: 325px;
     }
     .modal-header h3 {
       min-height: 45px;

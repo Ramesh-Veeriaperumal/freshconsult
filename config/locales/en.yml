@@ -4088,8 +4088,8 @@ en:
       subheader_form_elements: Form elements
       css_subheader: Custom stylesheet
       css_help_message: Add or overwrite default theme styles with your own custom css.  
-      css_responsive: Responsive Styles
-      css_responsive_help: "Will make the default theme Tablet and Mobile friendly. You can choose to turn off this setting if you wish to make the portal look the same in Mobile, Tablet and Desktop."
+      css_responsive: Include mobile friendly stylesheet
+      css_responsive_help: "This will make your default theme mobile friendly and will optimize it for phones and tablets. You can choose to turn this setting off in case you wish to have a consistent non-responsive theme across all devices."
   any_time: Any Time
   five_minutes: Within 5 minutes
   fifteen_minutes: Within 15 minutes
