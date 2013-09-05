@@ -24,9 +24,9 @@
 			<% (@sla_policies.active + @sla_policies.inactive).each do |policy| %>
 				<tr id=<%= dom_id(policy) %>>
 					<% unless policy.is_default %>
-						<td <%= "class='sla_policy_disabled custom-tip' data-tip-classes = 'sla-policy-index-tooltip' title='#{t('sla_policy.disabled_old_policy')}'" if policy.conditions.blank? %>>
+						<td <%= raw "class='sla_policy_disabled custom-tip' data-tip-classes = 'sla-policy-index-tooltip' title='#{t('sla_policy.disabled_old_policy')}'" if policy.conditions.blank? %>>
 					<% else %>
-						<td <%= "class='sla_policy_disabled custom-tip' data-tip-classes = 'sla-policy-index-tooltip' title='#{t('sla_policy.default_policy')}'" if policy.conditions.blank? %>>
+						<td <%= raw "class='sla_policy_disabled custom-tip' data-tip-classes = 'sla-policy-index-tooltip' title='#{t('sla_policy.default_policy')}'" if policy.conditions.blank? %>>
 					<% end %>
 						<% form_for policy, :url => activate_helpdesk_sla_policy_path(policy) do |f| %>
 							<%= f.check_box :active, { :class => 'activate'}, true, false %>
