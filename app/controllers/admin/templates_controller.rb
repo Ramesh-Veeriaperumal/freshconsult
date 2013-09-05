@@ -20,13 +20,13 @@ class Admin::TemplatesController < Admin::AdminController
 
   def publish
     @portal_template.publish!
-    flash[:notice] = t("admin.portal_settings.portal_published_success")
+    flash[:notice] = t("admin.portal_settings.flash.portal_published_success")
     redirect_to admin_portal_template_path( @portal ) and return
   end
 
   def restore_default
     @portal_template.reset_to_default
-    flash[:notice] = t("admin.portal_settings.portal_reset_success")
+    flash[:notice] = t("admin.portal_settings.flash.portal_reset_success")
     redirect_to admin_portal_template_path( @portal ) and return
   end
 
@@ -40,9 +40,9 @@ class Admin::TemplatesController < Admin::AdminController
 
     if params[:publish_button]
       @portal_template.publish!
-      flash[:notice] = t("admin.portal_settings.portal_published_success")
+      flash[:notice] = t("admin.portal_settings.flash.portal_published_success")
     else
-      flash[:notice] = t("admin.portal_settings.portal_saved_success") unless params[:preview_button]
+      flash[:notice] = t("admin.portal_settings.flash.portal_saved_success") unless params[:preview_button]
     end
 
     respond_to do |format|
@@ -62,7 +62,7 @@ class Admin::TemplatesController < Admin::AdminController
   def soft_reset
     properties = params[:portal_template]
     @portal_template.soft_reset!(properties)
-    flash[:notice] = t("admin.portal_settings.portal_reset_success")
+    flash[:notice] = t("admin.portal_settings.flash.portal_reset_success")
     redirect_to "#{admin_portal_template_path( @portal )}##{properties[0]}"
   end                                                          
  
