@@ -1404,9 +1404,9 @@ en:
         without_user: assigned to <strong>{{responder_path}}</strong>
         long: "{{user_path}} assigned the ticket {{notable_path}} to {{responder_path}}"
       execute_scenario: 
-        short: "{{user_path}} executed the scenario '{{scenario_name}}"
-        without_user: "executed the scenario <strong>{{scenario_name}}</strong>"
-        long: "{{user_path}} executed the scenario '{{scenario_name}}' on {{notable_path}}"
+        short: "{{user_path}} executed the scenario '{{scenario_name | h}}"
+        without_user: "executed the scenario <strong>{{scenario_name | h}}</strong>"
+        long: "{{user_path}} executed the scenario '{{scenario_name | h}}' on {{notable_path}}"
       ticket_merge: 
         short: "{{user_path}} has merged the ticket {{notable_path}} to {{merge_ticket_path}} "
         long: "{{user_path}} has merged the ticket  {{notable_path}} to {{merge_ticket_path}}"
@@ -3196,7 +3196,7 @@ en:
         enter_ticket_id: Enter a ticket id #
         merge: Merge
       confirm_merge:
-        source_merge_description: "This ticket is closed and merged into ticket <a href='/helpdesk/tickets/%{ticket_id}' target='_blank' class='merge_links'>%{ticket_id}</a>."
+        source_merge_description: "This ticket is closed and merged into ticket <a href='http://%{full_domain}/helpdesk/tickets/%{ticket_id}' target='_blank' class='merge_links'>%{ticket_id}</a>."
         source_ticket_close_info: This ticket will be closed with the following note
         target_ticket_updated_info: This ticket will be updated with the following note and all conversations will be moved
         will_be_merged_into: Will be merged into...
@@ -3209,7 +3209,7 @@ en:
         primary_ticket: "This is your primary ticket"
         remove: "Remove this ticket"
         target_merge_description:  "Ticket {{ticket.id}} {{ticket.subject}} is merged with this request"
-        target_merge_description1: "Merged from ticket <a href='/helpdesk/tickets/%{ticket_id}' target='_blank'>%{ticket_id}</a>"
+        target_merge_description1: "Merged from ticket <a href='http://%{full_domain}/helpdesk/tickets/%{ticket_id}' target='_blank'>%{ticket_id}</a>"
         target_note_description1: 
           one: "Ticket with id"
           other: "Tickets with ids"

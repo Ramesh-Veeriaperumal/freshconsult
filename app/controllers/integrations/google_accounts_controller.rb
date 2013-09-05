@@ -7,7 +7,7 @@ class Integrations::GoogleAccountsController < Admin::AdminController
     Rails.logger.debug "Integrations::GoogleAccountsController.edit #{params.inspect}"
     @google_account = Integrations::GoogleAccount.find(:first, :conditions => ["id=? and account_id=?", params[:id], current_account])
     if(@google_account.blank?)
-      flash[:error] = t('integrations.google_contacts.account_not_configured')
+      flash[:error] = t('integrations.google_contacts.account_not_configured').html_safe
     else
       @google_groups = @google_account.fetch_all_google_groups
       @omniauth_origin = "edit_app"

@@ -534,7 +534,7 @@ class Helpdesk::TicketsController < ApplicationController
       :locals => { :req_list => req_list.uniq } )
       
     notice_msg =  msg1
-    notice_msg << " <br />#{t("block_users")} #{link}" unless req_list.blank?
+    notice_msg << " <br />#{t("block_users")} #{link}".html_safe unless req_list.blank?
     
     flash[:notice] =  notice_msg 
     respond_to do |format|
@@ -672,7 +672,8 @@ class Helpdesk::TicketsController < ApplicationController
     cc_emails = fetch_valid_emails(params[:cc_emails])
     @item.cc_email = {:cc_emails => cc_emails, :fwd_emails => []} 
     @item.status = CLOSED if save_and_close?
-    
+    @item.display_id = params[:helpdesk_ticket][:display_id]
+
     build_attachments @item, :helpdesk_ticket
 
     if @item.save
@@ -1012,7 +1013,7 @@ class Helpdesk::TicketsController < ApplicationController
           redirect_to item_url
         end
       }
-      format.any(:xml, :json){
+      format.any(:xml, :mobile, :json){
         params["helpdesk_ticket"]["status"] ||= @item.status
       }
     end

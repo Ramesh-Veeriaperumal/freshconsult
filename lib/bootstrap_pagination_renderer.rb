@@ -7,11 +7,11 @@ class BootstrapPaginationRenderer < WillPaginate::LinkRenderer
   def to_html
     links = @options[:page_links] ? windowed_links : []
 
-    links.unshift(page_link_or_span(@collection.previous_page, 'previous', @options[:previous_label]))
-    links.push(page_link_or_span(@collection.next_page, 'next', @options[:next_label]))
+    links.unshift(page_link_or_span(@collection.previous_page.to_s.html_safe, 'previous', @options[:previous_label].to_s.html_safe))
+    links.push(page_link_or_span(@collection.next_page.to_s.html_safe, 'next', @options[:next_label].to_s.html_safe))
 
-    html = @template.content_tag(:ul, links.join(@options[:separator]))
-    @options[:container] ? @template.content_tag(:div, html, html_attributes) : html
+    html = @template.content_tag(:ul, links.join(@options[:separator]).to_s.html_safe)
+    (@options[:container] ? @template.content_tag(:div, html, html_attributes) : html).to_s.html_safe
   end
 
 protected
@@ -40,11 +40,11 @@ protected
   end
 
   def page_link(page, text, attributes = {})
-    @template.content_tag(:li, @template.link_to(text, url_for(page)), attributes)
+    @template.content_tag(:li, (@template.link_to(text.html_safe, url_for(page))).html_safe, attributes)
   end
 
   def page_disabled_link(page, text, attributes = {})
-    @template.content_tag(:li, @template.link_to(text, ""), attributes)
+    @template.content_tag(:li, (@template.link_to(text.html_safe, "")).html_safe, attributes)
   end
 
 end

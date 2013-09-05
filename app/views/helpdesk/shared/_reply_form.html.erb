@@ -30,12 +30,12 @@
         </li>
         <li class="inline-field field hide" id="cc-form-container-<%=cntid%>">
             <label class="caption">
-                <%= t(".cc") %>:
+                <%= t(".cc").html_safe %>:
             </label>
       <div class="fields" id="reply_cc_emails_id" rel="cc_div" data-button="#add_cc_btn_<%=cntid%>" data-parent="#cc-form-container-<%=cntid%>">
         <input type="text" id="cc_emails_<%=cntid%>" name="helpdesk_note[cc_emails]" />
           <% javascript_tag do %>
-            new Autocompleter.MultiValue("cc_emails_<%=cntid%>", cachedLookup, $A(<%= @to_cc_emails.map{|item|[item, item]}.to_json %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
+            new Autocompleter.MultiValue("cc_emails_<%=cntid%>", cachedLookup, $A(<%= @to_cc_emails.map{|item|[item, item]}.to_json.html_safe %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
           <% end %>
       </div>
     </li>
@@ -59,19 +59,19 @@
     <% end %>
         <li class="inline-field field" id="bcc-form-container-<%=cntid%>" style='display:<%= bcc_drop_box_email.blank? ? "none": "block" %>;'>
           <label class="caption">
-            <%= t(".bcc") %>:
+            <%= t(".bcc").html_safe %>:
           </label>
 
           <div class="fields">
             <input type="text" id="bcc_emails_<%=cntid%>" name="helpdesk_note[bcc_emails]" />
             <% javascript_tag do %>
-              new Autocompleter.MultiValue("bcc_emails_<%=cntid%>", cachedLookup, $A(<%= bcc_drop_box_email.to_json unless bcc_drop_box_email.blank? %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
+              new Autocompleter.MultiValue("bcc_emails_<%=cntid%>", cachedLookup, $A(<%= bcc_drop_box_email.to_json.html_safe unless bcc_drop_box_email.blank? %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
             <% end %>
           </div>
         </li>
         <li class="inline-field field">
             <label class="caption">
-                <%= t("message") %>:
+                <%= t("message").html_safe %>:
             </label>
             <div class="fields">
               <% conv_item = conv_id.nil? ? @ticket : @note %>
@@ -180,14 +180,10 @@
           jQuery('[name="helpdesk_note[cc_emails][]"]').val('');
       if(!jQuery('#include_bcc').is(':checked'))
           jQuery('[name="helpdesk_note[bcc_emails][]"]').val('');
-
-
       jQuery('#<%=cntid%>-body-fulltext').val(body_text.html());
       body_text.find('div.freshdesk_quote').remove();
       jQuery('#<%=cntid%>-body').val(body_text.html());
-
-        
-        isDirty = false;
+      isDirty = false;
       })
       .validate();  
 

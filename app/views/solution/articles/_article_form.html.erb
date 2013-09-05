@@ -105,7 +105,7 @@
 					$('#solution_article_seo_data_meta_description').val().replace(/\n+/g, " ").trim());
 				});
 				$("#tags_name").select2({  
-				  tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',')) %>".split(","),
+				  tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>".split(","),
 				  tokenSeparators: [',']
 				}); 
 			});

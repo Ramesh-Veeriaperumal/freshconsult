@@ -31,7 +31,7 @@
   </div>
 </div>
 <script type="text/javascript">
-var data_obj = <%=@data_obj.to_json%>
+var data_obj = <%=@data_obj.to_json.html_safe%>
 jQuery(document).ready(function() {
   var analysis_1_lineChart = new lineChart(
       {renderTo: 'response_accuracy_line_chart',chartData:[data_obj['resolved_tickets'],data_obj['fcr_tickets'],data_obj['sla_tickets'],data_obj['num_of_reopens']],isPDF:true}

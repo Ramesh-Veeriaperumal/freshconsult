@@ -12,17 +12,7 @@
         <h4>Tickets</h4>
         <% @searched_tickets.each do |ticket| %>
           <span class="icon"></span>
-          <%= link_to("#{ticket.es_highlight('subject')} (##{ticket.display_id})", ticket) %>
-        <% end %>
-      </li>
-    <% end %>
-
-    <% unless @searched_notes.blank? %>
-      <li class="ticket_icon">
-        <h4>Notes</h4>
-        <% @searched_notes.each do |note| %>
-          <span class="icon"></span>
-          <%= link_to("#{note.notable.subject} (##{note.notable.display_id})", note.notable) %>
+          <%= link_to("#{ticket.es_highlight('subject')} (##{ticket.display_id})".html_safe, ticket) %>
         <% end %>
       </li>
     <% end %>
@@ -42,7 +32,7 @@
         <h4>People</h4>
         <% @searched_users.each do |user| %> 
           <span class="icon"></span>
-          <%= link_to "#{user.es_highlight('name')} - #{user.email}", user %>
+          <%= link_to "#{user.es_highlight('name')} - #{user.email}".html_safe, user %>
         <% end %>
       </li>
     <% end %>
@@ -52,7 +42,7 @@
         <h4>Companies</h4>
         <% @searched_companies.each do |company| %>
           <span class="icon"></span>
-          <%= link_to(company.es_highlight('name'), company) %>
+          <%= link_to(company.es_highlight('name').html_safe, company) %>
         <% end %>
       </li>
     <% end %>
@@ -62,7 +52,7 @@
         <h4>Solutions</h4>
         <% @searched_articles.each do |article| %>
           <span class="icon"></span>
-          <%= link_to(article.es_highlight('title'), article) %>
+          <%= link_to(article.es_highlight('title').html_safe, article) %>
         <% end %>
       </li>
     <% end %>
@@ -72,14 +62,14 @@
         <h4>Forums</h4>
         <% @searched_topics.each do |topic| %>
           <span class="icon"></span>
-          <%= link_to(topic.es_highlight('title'), category_forum_topic_path(topic.forum.forum_category, topic.forum, topic)) %>
+          <%= link_to(topic.es_highlight('title').html_safe, category_forum_topic_path(topic.forum.forum_category, topic.forum, topic)) %>
         <% end %>
       </li>
     <% end %>
     
     <% if @total_results == 10 %>
       <li>
-        <%= link_to("See more results for \"#{@search_key}\"  &raquo;", "/search?search_key=#{@search_key}") %>
+        <%= link_to("See more results for \"#{h(@search_key)}\"  &raquo;".html_safe, "/search?search_key=#{@search_key}") %>
       </li>
     <% end %>
     

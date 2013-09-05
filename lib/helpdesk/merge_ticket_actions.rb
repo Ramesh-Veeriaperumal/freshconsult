@@ -46,9 +46,10 @@ module Helpdesk::MergeTicketActions
 		end
 
     def build_source_description_body_html source_ticket
-      %{#{I18n.t('helpdesk.merge.bulk_merge.target_merge_description1', :ticket_id => source_ticket.display_id)}<br/><br/>
-      <b>#{I18n.t('Subject')}:</b> #{source_ticket.subject}<br/><br/>
-      <b>#{I18n.t('description')}:</b><br/>#{source_ticket.description_html}}
+      %{#{I18n.t('helpdesk.merge.bulk_merge.target_merge_description1', :ticket_id => source_ticket.display_id, 
+																						      	:full_domain => source_ticket.portal.host)}<br/><br/>
+	    <b>#{I18n.t('Subject')}:</b> #{source_ticket.subject}<br/><br/>
+	    <b>#{I18n.t('description')}:</b><br/>#{source_ticket.description_html}}
     end
 
 		def add_source_attachments_to_source_description( source_ticket , source_description_note )

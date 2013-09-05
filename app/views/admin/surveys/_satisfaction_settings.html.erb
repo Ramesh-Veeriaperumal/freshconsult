@@ -4,9 +4,9 @@
 		<div style="margin:5px 5px 0;font-weight:bold;font-size:14px;color:#555;" class="floatl"><%= t('.enable_label') %></div>		
 		<div id="survey_link_con" class="floatr">				
 		<%if @account.features?(:survey_links)%>
-		   <%= link_to_function "<strong> #{t('application.enabled')} </strong><span></span>", "toggle_status()",  :id => "survey_status_link", :class => "uiButton special iphone-active" %>
+		   <%= link_to_function "<strong> #{t('application.enabled')} </strong><span></span>".html_safe, "toggle_status()",  :id => "survey_status_link", :class => "uiButton special iphone-active" %>
 		<%else%>
-		   <%= link_to_function "<strong> #{t('application.disabled')} </strong><span></span>", "toggle_status()",  :id => "survey_status_link", :class => "uiButton special iphone-inactive" %>
+		   <%= link_to_function "<strong> #{t('application.disabled')} </strong><span></span>".html_safe, "toggle_status()",  :id => "survey_status_link", :class => "uiButton special iphone-inactive" %>
 		<%end%>
 		</div>		
 	</li>

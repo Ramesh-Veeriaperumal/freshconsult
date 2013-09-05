@@ -1,5 +1,5 @@
 <div class="wrapper">
-	<title><%= page_title %></title>
+	<title><%= page_title.html_safe %></title>
 	<% 
 	body_class= yield :layoutType 
 	body_class = "single #{body_class}" unless @content_for_sidebar 

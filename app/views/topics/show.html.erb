@@ -19,7 +19,7 @@
 			    </div>
 			<% end %>
 			<div>
-				<%= link_to(t('connect_ticket') + " &raquo;", new_helpdesk_ticket_path(:topic_id => @topic.id), :class => "uiButton full-width") if @topic.ticket_topic.nil?  %>
+				<%= link_to((t('connect_ticket') + " &raquo;").html_safe, new_helpdesk_ticket_path(:topic_id => @topic.id), :class => "uiButton full-width") if @topic.ticket_topic.nil?  %>
 				<%= link_to(h(@topic.ticket.subject), helpdesk_ticket_path(@topic.ticket)) unless @topic.ticket_topic.nil? %>
 			</div> 
 		</div>
@@ -28,12 +28,12 @@
 		<div class="request_details">   
   		<div class="breadcrumbs">
   			<%= link_to(t('forum.title'), categories_path) %> &rarr;
-  			<%= link_to( "#{h(@forum_category.name)}", category_path(@forum_category)) %> &rarr;
-  			<%= link_to( "#{h(@forum.name)}", category_forum_path(@forum_category, @forum)) %> 
+  			<%= link_to( "#{(@forum_category.name)}", category_path(@forum_category)) %> &rarr;
+  			<%= link_to( "#{(@forum.name)}", category_forum_path(@forum_category, @forum)) %> 
   		</div>
 	    	<div class="requestCnt request-cnt-first">  
 			  <h3 class="forum-title">
-			    <%= h @topic.title  %>
+			    <%= @topic.title  %>
 			  </h3>
 				<% first_post = @topic.posts.first %>
 				<div class="description">
@@ -83,7 +83,7 @@
 		      <div class="request-wrapper">    	 
 					  <div class="details min_height">    
 					    <span class="seperator"></span>
-						  <%= first_post.body_html %>     
+						  <%= first_post.body_html.html_safe %>     
 							<span class="seperator"></span>  
 						</div>
 					<% unless first_post.attachments.empty? %>

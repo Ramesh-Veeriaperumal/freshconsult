@@ -60,17 +60,17 @@
 
 				<!-- Navigation Controls-->
 				<div id="nav-controls" class="navigation">
-					<a href="javascript:void(0);" class="circle active" data-translate="0" data-translate-arrow="0" id="slide1-1"><span><%=t('.support_email_title')%></span></a>
-					<a href="javascript:void(0);" class="circle" data-translate="-960px" data-translate-arrow="108px" id="slide1-2"><span><%=t('.agents_title_1')%></span></a>
+					<a href="javascript:void(0);" class="circle active" data-translate="0" data-translate-arrow="0" id="slide1-1"><span><%=t('.support_email_title').html_safe%></span></a>
+					<a href="javascript:void(0);" class="circle" data-translate="-960px" data-translate-arrow="108px" id="slide1-2"><span><%=t('.agents_title_1').html_safe%></span></a>
 					
-					<a href="javascript:void(0);" class="circle" data-translate="-1920px" data-translate-arrow="213px" id="slide1-3"><span><%=t('.rebrand_title')%></span></a>
+					<a href="javascript:void(0);" class="circle" data-translate="-1920px" data-translate-arrow="213px" id="slide1-3"><span><%=t('.rebrand_title').html_safe%></span></a>
 
-					<a href="javascript:void(0);" class="circle" data-translate="-2880px" data-translate-arrow="320px" id="slide1-4"><span><%=t('.social_title_1')%></span></a>
+					<a href="javascript:void(0);" class="circle" data-translate="-2880px" data-translate-arrow="320px" id="slide1-4"><span><%=t('.social_title_1').html_safe%></span></a>
 				</div>
 
 			</div>
 			<div class="header-right">
-				<a href="javascript:goto_helpdesk();" class="skip-link"><%=t('.skip_text')%></a>
+				<a href="javascript:goto_helpdesk();" class="skip-link"><%=t('.skip_text').html_safe%></a>
 				<div class="controls">
 					<a href="#" class="simple inactive" id="back"> 
 						<span class="back"></span>
@@ -117,14 +117,14 @@
 									</div>
 
 								</div>
-								<div class="forward-textbox-note"><%=t('.info2')%></div>
+								<div class="forward-textbox-note"><%=t('.info2').html_safe%></div>
 						</div>
 
 						<div class="slide-right-panel panel-divider-right">			
 							<h4><%=t('.title1')%></h4>
 			                <div class="textbox-note"><%=t('.info')%></div>
 			                <div id="div_reply_email" class="forward-mail textbox-radius"><%=@email_config.to_email%></div>
-			                <div class="forward-textbox-note"><%=t('.send_test_mail_info2')%></div>
+			                <div class="forward-textbox-note"><%=t('.send_test_mail_info2').html_safe%></div>
 				        </div>
 					</div>
 
@@ -233,7 +233,7 @@
 
 		<!--note-->
 		<div class="note">
-			<%= t('.footer_msg') %>
+			<%= t('.footer_msg').html_safe %>
 		</div>
 
   

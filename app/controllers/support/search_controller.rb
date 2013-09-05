@@ -83,7 +83,11 @@ class Support::SearchController < SupportController
                                         :max_matches => params[:max_matches],
                                         :match_mode => :any,
                                         :sphinx_select => sphinx_select,
-                                        :page => params[:page], :per_page => 20)
+                                        :page => params[:page], :per_page => 20,
+                                        :excerpt_options => {
+                                                            :before_match => '',
+                                                            :after_match => ''
+                                                            })
           else
             f_classes.each do |f_class|            
               s_options = with_options
@@ -101,7 +105,11 @@ class Support::SearchController < SupportController
                                       :match_mode => :any,
                                       :max_matches => params[:max_matches],
                                       :sphinx_select => sphinx_select,
-                                      :page => params[:page], :per_page => 10)
+                                      :page => params[:page], :per_page => 10,
+                                      :excerpt_options => {
+                                                            :before_match => '',
+                                                            :after_match => ''
+                                                          })
               
               @items.concat(class_search)
 
@@ -126,6 +134,7 @@ class Support::SearchController < SupportController
 
     def es_search_portal(search_in)
       begin
+        Search::EsIndexDefinition.es_cluster(current_account.id)
         options = { :load => true, :page => (params[:page] || 1), :size => (params[:max_matches] || 20), :preference => :_primary_first }
         @es_items = Tire.search Search::EsIndexDefinition.searchable_aliases(search_in, current_account.id), options do |search|
           search.query do |query|
@@ -292,7 +301,7 @@ class Support::SearchController < SupportController
 
     def solution_result article
       { 'title' => article.es_highlight('title').html_safe, 
-        'group' => article.folder.name, 
+        'group' => h(article.folder.name), 
         'desc' => article.es_highlight('desc_un_html').html_safe,
         'type' => "ARTICLE",
         'url' => support_solutions_article_path(article) }
@@ -300,7 +309,7 @@ class Support::SearchController < SupportController
 
     def topic_result topic
       { 'title' => topic.es_highlight('title').html_safe, 
-        'group' => topic.forum.name, 
+        'group' => h(topic.forum.name), 
         'desc' => truncate(h(topic.posts.first.body), :length => truncate_length),
         'type' => "TOPIC", 
         'url' => support_discussions_topic_path(topic) }

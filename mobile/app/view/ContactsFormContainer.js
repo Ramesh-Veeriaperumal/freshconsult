@@ -26,7 +26,7 @@ Ext.define('Freshdesk.view.ContactsFormContainer', {
                         me.onSaveSuccess(response);
                     },
                     failure:function(form,response){
-                        var errorHtml='Please correct the bellow errors.<br/>';
+                        var errorHtml='Please correct the below errors.<br/>';
                         for(var index in response.errors){
                             var error = response.errors[index],eNo= +index+1;
                             errorHtml = errorHtml+'<br/> '+eNo+'.'+error[0]+' '+error[1]

@@ -6,5 +6,5 @@
 %>
 <div id="time_integration">
 	<%= "Also update on..." %>
-	<%= renderTimesheetIntegratedApps(@liquid_values) %>
+	<%= (renderTimesheetIntegratedApps(@liquid_values)).to_s.html_safe %>
 </div>

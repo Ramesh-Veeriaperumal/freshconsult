@@ -3,7 +3,7 @@
 		<% if @total_results == 0 %>
 			<li class="ticket_icon"> 
 				<div class="group">
-					<p><strong><%= t('search.no_results_msg') %></strong></p>
+					<p><strong><%= t('search.no_results_msg').html_safe %></strong></p>
 				</div>
 			</li>
 		<% end %>
@@ -15,7 +15,7 @@
 					<div class="group">
 						<span class="icon"></span>
 						<%= link_to(Helpdesk::Ticket.search_display(ticket), ticket, :class => "big") %>
-						<span class="light"><%= "Requested by, <b>#{ticket.requester}</b>" %> </span>
+						<span class="light"><%= "Requested by, <b>#{h(ticket.requester)}</b>".html_safe %> </span>
 						<p><%= ticket.description %></p>
 					</div>
 				<% end %>
