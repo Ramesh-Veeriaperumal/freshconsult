@@ -20,25 +20,29 @@ class Admin::TemplatesController < Admin::AdminController
 
   def publish
     @portal_template.publish!
-    flash[:notice] = "Portal changes published successfully."
+    flash[:notice] = t("admin.portal_settings.portal_published_success")
     redirect_to admin_portal_template_path( @portal ) and return
   end
 
   def restore_default
     @portal_template.reset_to_default
-    flash[:notice] = "Portal changes reseted successfully."
+    flash[:notice] = t("admin.portal_settings.portal_reset_success")
     redirect_to admin_portal_template_path( @portal ) and return
   end
 
   def update
+    # Merging preferences as it may be used in multiple forms
+    params[:portal_template][:preferences] = @portal_template.preferences.merge(params[:portal_template][:preferences])
+
     @portal_template.attributes = params[:portal_template]
+
     @portal_template.draft!
 
     if params[:publish_button]
       @portal_template.publish!
-      flash[:notice] = "Portal changes published successfully."
+      flash[:notice] = t("admin.portal_settings.portal_published_success")
     else
-      flash[:notice] = "Portal template saved successfully." unless params[:preview_button]
+      flash[:notice] = t("admin.portal_settings.portal_saved_success") unless params[:preview_button]
     end
 
     respond_to do |format|
@@ -58,7 +62,7 @@ class Admin::TemplatesController < Admin::AdminController
   def soft_reset
     properties = params[:portal_template]
     @portal_template.soft_reset!(properties)
-    flash[:notice] = "Portal template reseted successfully."
+    flash[:notice] = t("admin.portal_settings.portal_reset_success")
     redirect_to "#{admin_portal_template_path( @portal )}##{properties[0]}"
   end                                                          
  

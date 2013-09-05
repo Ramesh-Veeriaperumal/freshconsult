@@ -64,9 +64,17 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 	display: inline;
 	float: left;
 	margin: -3px 10px 0 -5px;
-	height: 50px;
 	text-align:center;
 	width: auto;
+}
+
+.portal-img {
+    display: table-cell;
+    vertical-align: middle;
+    height: 50px;
+}
+.portal-img * {
+    vertical-align: middle;
 }
 
 .footer{
@@ -105,12 +113,25 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 
 @if $nonResponsive == false {
     @include at-breakpoint($media-mobile){
-		// Banner and Tab styles
+        .portal-img { 
+            display: block;
+            height: auto;
+        }
+		// Banner and Tab styles        
         .banner{
         	@include border-top-radius(0);        	
             border:0;
             box-shadow:none;
 			text-align:center;
+            display: table;
+            width: 100%;
+            
+            .banner-wrapper{
+                height: 143px; 
+                display: table-cell;
+                vertical-align: middle; 
+            }
+
             .banner-title, .banner-nav{ 
             	@include reset-columns; 
             	text-align:center;
@@ -180,7 +201,7 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
             float:none;
             margin: 0 auto; 
             text-align:center;
-            margin-bottom:5px;
+            margin-bottom:10px;
         }
 
         .footer{ 
