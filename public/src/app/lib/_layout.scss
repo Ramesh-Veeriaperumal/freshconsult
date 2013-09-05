@@ -179,17 +179,23 @@ div.bg_pulp{
 	text-decoration:none;
 	a{ text-decoration:none; }
 	.logo, .logo_text{ float:left; position:relative; z-index:5; }
-	.logo{
-		margin:0px 0px 0px 2px;
-	}
+	.logo-image{ height: 50px; }
 	.logo_text{
-	   font-size:1.6em;
-	   border-left:1px solid rgba(#ffffff, 0.3);
-     color:#ffffff;
-     padding:0px 0 0px 12px;
-     margin-left:10px;
-     margin-top:13px;
+	   	font-size:1.6em;
+	   	border-left:1px solid rgba(#ffffff, 0.3);
+     	color:#ffffff;
+     	padding:0px 0 0px 12px;
+     	margin-left:10px;
+     	margin-top:13px;
    }
+}
+
+.vertical-align {
+    display: table-cell;
+    vertical-align: middle;
+}
+.vertical-align * {
+    vertical-align: middle;
 }
 
 .header_links{

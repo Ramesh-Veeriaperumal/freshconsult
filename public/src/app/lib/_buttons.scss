@@ -424,18 +424,17 @@ div.action_buttons:hover{
   color:#fff;
   text-align:center;
   overflow:hidden;
+  line-height: 0;
   background: #9d9d9d;
   border:1px solid rgba(0, 0, 0, 0.1); 
-  @include background(linear-gradient(top, #777, lighten(#777, 10%)));
-  @include box-shadow(rgba(0, 0, 0, 1) 0 1px 1px inset, rgba(0, 0, 0, 0.5) 0 1px 3px inset);
+  @include background(linear-gradient(top, #777, lighten(#777, 10%)));  
   @include border-radius(14px);
   @include text-shadow(-1px -1px 0 #666);
   @include inline-block;
   font-family:inherit;
-  -webkit-mask-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,1)));
-  .toggle-container, .toggle-handle{
-    position:absolute; top:0;
-  }  
+  /*-webkit-mask-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,1)), to(rgba(0,0,0,1)));*/
+  
+  .toggle-container, .toggle-handle{ position:absolute; top:0; }  
 
   &, .on-label{
     @include box-shadow(rgba(0, 0, 0, 0.2) 0 1px 2px inset, rgba(0, 0, 0, 0.3) 0 1px 0 inset, rgba(0, 0, 0, 0.2) 0 1px 3px inset);
@@ -448,7 +447,7 @@ div.action_buttons:hover{
     @include clearfix;
     @include border-radius(18px);
     @include transition-property(left);
-    /*@include transition-duration(0.1s);    */
+    @include transition-duration(0.26s);    
   }  
   .toggle-handle{    
     left:50%;    
@@ -463,13 +462,14 @@ div.action_buttons:hover{
       @include background(linear-gradient(top, #d9d9d9, #ffffff));
       @include border-radius(12px);
       @include box-shadow(#f2f2f2 0 0 0 1px inset);
-      /*@include transition-property(margin);
-      @include transition-duration(0.2s);*/
+      @include transition-property(margin);
+      @include transition-duration(0.2s);
     }
   }   
   &:hover{
     color:#fff;
     border-color:darken(#738076, 20%);
+    @include box-shadow(rgba(0, 0, 0, 0.2) 0 1px 2px inset, rgba(0, 0, 0, 0.3) 0 1px 0 inset, rgba(0, 0, 0, 0.2) 0 1px 3px inset, rgba(0, 0, 0, 0.3) 0 0 3px);
   } 
   &.active{        
     .toggle-container{ left:0; }

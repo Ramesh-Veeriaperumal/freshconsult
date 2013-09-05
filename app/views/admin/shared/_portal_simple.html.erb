@@ -103,16 +103,7 @@
       </div>
     <% end %>
     </div>
-
-    <h3 class="title">Mobile settings</h3>
-    <div>
-      <% f.fields_for :preferences do |ff| %>
-        <%= ff.check_box :nonResponsive, { :rel => "toggle", 
-              :checked => (portal_simple.preferences['nonResponsive'] != "true") }, false, true %>
-      <% end %>
-      &nbsp; Tablet and mobile friendly portal
-    </div>    
-
+    
     <hr />
     <div id="preferences_btns">
       <%= render :partial => "/admin/shared/customization_buttons", 
