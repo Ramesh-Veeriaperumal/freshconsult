@@ -350,7 +350,7 @@ refreshStatusBox = function() {
 var scrollToError = function(){
 	var errorLabel = $("label[class='error'][style!='display: none;']");
 	var elem = errorLabel.parent().children().first();
-	$.scrollTo(elem);
+	setTimeout(function() { $.scrollTo(elem); }, 100 );
 }
 
 // For Setting Due-by Time
@@ -750,7 +750,7 @@ var scrollToError = function(){
 						return true;
 					}
 					ev.preventDefault();
-
+					blockConversationForm(_form);
 					if(propertiesForm.data('updated')) {
 		      			submitTicketProperties(function() {
 		      				submitNewConversation(_form, ev);
@@ -766,7 +766,8 @@ var scrollToError = function(){
 					return true;
 				}
 				ev.preventDefault();
-				submitNewConversation(_form, ev);
+				blockConversationForm(_form);
+				submitNewConversation(_form, ev, afterTktPropertiesUpdate);
 			}
 			
 		} else {
@@ -794,15 +795,8 @@ var scrollToError = function(){
 		}
 	}
 
-
-
-	var submitNewConversation = function(_form, ev, callback) {
-		
-		//Blocking the Form:
-		callback = callback || function(){};
-
-		if (_form.data('panel'))
-		{	
+	var blockConversationForm = function(_form) {
+		if (_form.data('panel')) {
 			$('#' + _form.data('panel')).block({
 				message: " <h1>...</h1> ",
 				css: {
@@ -818,6 +812,11 @@ var scrollToError = function(){
 				}
 			});
 		}
+	}
+
+	var submitNewConversation = function(_form, ev, callback) {
+		
+		callback = callback || function(){};
 
 		_form.ajaxSubmit({
 			dataType: 'script',
@@ -953,46 +952,52 @@ var scrollToError = function(){
 					submit.button('reset').removeClass('done');
 				}, 2000);
 
-				var postProcess = false;
-				//Priority, Status, Group, Type, Product
-				var fields_to_check = ['priority', 'status', 'group_id', 'ticket_type', 'product', 'source'];
-				for(i in fields_to_check) {
-					if (typeof(fields_to_check[i]) == 'string' && $('.ticket_details #helpdesk_ticket_' + fields_to_check[i]).data('updated')) {
-						postProcess = true;	
-						break;
-					}
-				}
-
-				tkt_form.find('input, select, textarea').each(function() {
-					$(this).data('updated', false);
-				});
+				callback();
 
 				if(response.redirect)
 				{
 					$('[rel=link_ticket_list]').click();
+				} else {
+					afterTktPropertiesUpdate();
 				}
 
-
-				if(postProcess) {
-					$('.ticket_details .source-badge-wrap .source')
-							.attr('class','')
-							.addClass('source ')
-							.addClass('priority_color_' + $('.ticket_details #helpdesk_ticket_priority').val())
-							.addClass('status_' + $('.ticket_details #helpdesk_ticket_status').val());
-
-					$('.ticket_details .source-badge-wrap .source span')
-							.attr('class','')
-							.addClass('source_' + $('.ticket_details #helpdesk_ticket_source').val());
-					refreshStatusBox();
-				}
-
-				callback();
+				
 
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				submit.text(submit.data('default-text')).prop('disabled',false);
 			}
 		});
+	}
+
+	var afterTktPropertiesUpdate = function() {
+		var postProcess = false,
+			tkt_form = $('#custom_ticket_form');
+		//Priority, Status, Group, Type, Product
+		var fields_to_check = ['priority', 'status', 'group_id', 'ticket_type', 'product', 'source'];
+		for(i in fields_to_check) {
+			if (typeof(fields_to_check[i]) == 'string' && $('.ticket_details #helpdesk_ticket_' + fields_to_check[i]).data('updated')) {
+				postProcess = true;	
+				break;
+			}
+		}
+		tkt_form.find('input, select, textarea').each(function() {
+			$(this).data('updated', false);
+		});
+
+
+		if(postProcess) {
+			$('.ticket_details .source-badge-wrap .source')
+					.attr('class','')
+					.addClass('source ')
+					.addClass('priority_color_' + $('.ticket_details #helpdesk_ticket_priority').val())
+					.addClass('status_' + $('.ticket_details #helpdesk_ticket_status').val());
+
+			$('.ticket_details .source-badge-wrap .source span')
+					.attr('class','')
+					.addClass('source_' + $('.ticket_details #helpdesk_ticket_source').val());
+			refreshStatusBox();
+		}
 	}
 
 	$('body').on('click.ticket_details', '[rel=TicketReplyPlaceholder]', function(ev) {
