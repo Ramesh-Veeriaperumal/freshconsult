@@ -570,29 +570,7 @@ window.xhrPool = [];
         $(this).attr('data-pjax', '#body-container')
       })
     
-       // Sticky Header
-    var the_window = $(window),
-        hasScrolled = false;
-    the_window.on('scroll.freshdesk', function() { hasScrolled = true; });
-    var handleScroll = function() {
-      if (the_window.scrollTop() > REAL_TOP) {
-        if (!fixedStrap.hasClass('at_the_top')) {
-    
-          at_the_top.addClass('at_the_top');
-          forFixed.show();
-          at_the_top.css({top: -outerHeight}).animate({ top: 0}, 300, 'easeOutExpo');
-          firstchild.addClass('firstchild');
-        }
-    
-      } else {
-        at_the_top.removeClass('at_the_top').css({top: ''});
-        forFixed.hide();
-        firstchild.removeClass('firstchild');
-      }
-    
-      hasScrolled = false;
-    };
-    
+     // Sticky Header
     
     window.setupScroll = function() {
       if(!$('#sticky_header').length) return;
@@ -608,7 +586,7 @@ window.xhrPool = [];
         if(the_window.scrollTop() > REAL_TOP) {
           if(!sticky_header.hasClass('stuck')) {
             sticky_header.addClass('stuck');
-            sticky_header.wrap('<div id="sticky_wrap" />');
+            sticky_header.wrap('<div id="sticky_wrap" ><div class="fixed_wrap" ><div class="wrapper">');
             $('#sticky_wrap').height(sticky_header.outerHeight());
             
             $('#scroll-to-top').addClass('visible');
@@ -617,7 +595,7 @@ window.xhrPool = [];
         } else {
           if(sticky_header.hasClass('stuck')) {
             sticky_header.removeClass('stuck');
-            sticky_header.unwrap();
+            sticky_header.unwrap().unwrap().unwrap();
             
             $('#scroll-to-top').removeClass('visible');
           }
@@ -628,8 +606,6 @@ window.xhrPool = [];
       the_window.on('scroll.freshdesk', handleScroll);
     
       $(window).on('resize.freshdesk', function() {
-    
-        sticky_header.width($('#Pagearea').width());
         var to_collapse = false, extra_buffer = 20;
     
         var width_elements_visible = $('.sticky_right').outerWidth() + $('.sticky_left').outerWidth() + extra_buffer;
@@ -651,7 +627,6 @@ window.xhrPool = [];
     
     };
     
-    
     window.destroyScroll = function() {
       $(window).off('scroll.freshdesk');
       $(window).off('resize.freshdesk');
@@ -660,9 +635,6 @@ window.xhrPool = [];
     setupScroll();
       
    });
-    
-
-        
  
 })(jQuery);
  
