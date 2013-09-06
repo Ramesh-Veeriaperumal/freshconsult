@@ -21,7 +21,7 @@
 </section>
 
 <section class="sidebar content rounded-6">
-	{% if portal.recent_popular_topics != empty %}
+	{% if portal.recent_popular_topics.size > 0 %}
 		<section class="cs-g-c topic-list">
 			<div class="list-lead">{% translate portal.popular_topics %}</div>
 			<p class="intro">{% translate portal.showing_recently_popular_topics %}</p>

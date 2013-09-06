@@ -121,13 +121,6 @@
 
         .min-height-on-desktop{ @include min-height(auto); }
 
-        
-        /* Resetting width and margin so it will be calculated during the dialog wapper */
-        .modal { 
-            width:auto !important; 
-            margin-left: 0 !important;
-        }
-
         // jQuery ui-datepicker
         /* Overriding position parameters to handle mobile sizing */    
         .ui-datepicker.ui-widget-content{
