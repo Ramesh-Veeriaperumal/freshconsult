@@ -41,13 +41,14 @@
   width: 710px; 
   margin: -250px 0 0 -355px;
   top: 52%;
+  left: 50%;
   @include border-radius(6px);
   @include box-shadow(0 10px 40px rgba(0,0,0,0.5), $white 0 0 1px inset);
   @include background-clip(padding-box);
 
   &.fade {
     @include transition(#{opacity .3s linear, top .3s ease-out});
-    top: -25%;
+    top: 52%%;
   }
   &.fade.in { top: 50%; }
 }
@@ -55,11 +56,6 @@
 .modal-header {
   padding: 9px 40px 0 15px;  
   h3{ font-weight: 300; }
-  .close {
-    position: absolute;
-    right: 20px;
-    top: 15px;
-  }
 }
 
 .modal-title{ font-weight: 300; }
@@ -97,47 +93,49 @@
   }
 }
 
-@include at-breakpoint($break-tablet){
-  // Modals
-  .modal {    
-    top: 10%;
-    left: 50%;
-
-    &.fade.in { top: 10%; }
+.modal-header{ padding: 9px 15px 0 15px; }
+.modal-header .close {
+  position: absolute;
+  height: 28px;
+  width: 28px;
+  border: none;
+  padding: 8px;
+  text-align:center;
+  left:-28px;
+  top:15px;
+  @include background-image(linear-gradient(#4f4f4f, #646464));
+  @include border-radius(5px 0 0 5px);
+  @include box-shadow(1px 1px 0 rgba(0, 0, 0, 0.4) inset);
+  @include hide-text();
+  &:focus, &:hover {
+    @include background-image(linear-gradient(#646464, #4b4b4b));
+    left: -30px;
+    width: 30px;
   }
-  .modal-header{ padding: 9px 15px 0 15px; }
-  .modal-header .close {
-    height: 28px;
-    width: 28px;
-    border: none;
-    padding: 8px;
-    text-align:center;
-    left:-28px;
-    top:15px;
-    @include background-image(linear-gradient(#4f4f4f, #646464));
-    @include border-radius(5px 0 0 5px);
-    @include box-shadow(1px 1px 0 rgba(0, 0, 0, 0.4) inset);
-    @include hide-text();
-    &:focus, &:hover {
-      @include background-image(linear-gradient(#646464, #4b4b4b));
-      left: -30px;
-      width: 30px;
-    }
-    &:before {
-      content: "x";
-      text-indent: 100%;
-      white-space: nowrap;
-      overflow: hidden;
-      background-image: inline-image("portal/dialog/icon-close.gif");
-      background-repeat: no-repeat;
-      display:inline-block;
-      width:11px;
-      height:11px;
-    }
+  &:before {
+    content: "x";
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    background-image: inline-image("portal/dialog/icon-close.gif");
+    background-repeat: no-repeat;
+    display:inline-block;
+    width:11px;
+    height:11px;
   }
 }
 
 @if $nonResponsive == false {
+  @include at-breakpoint($media-mobile-tablet){
+    // Modals
+    .modal {    
+      top: 12%;
+      margin-top: 0;
+
+      &.fade.in { top: 10%; }
+    }    
+  }
+
   @include at-breakpoint($media-mobile){
     .modal { 
       position: absolute; 
@@ -161,6 +159,21 @@
     .modal-header h3 {
       min-height: 45px;
       line-height: 2.1;
+    }
+    .modal-header .close {
+      &, &:focus, &:hover {        
+        right: 20px;
+        top: 13px;
+        left: auto;
+        background: none;
+        @include box-shadow(none);
+        width: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        color: inherit;
+        padding: 0;
+      }
+      &:before{ content:none; }
     }
   }
 }
