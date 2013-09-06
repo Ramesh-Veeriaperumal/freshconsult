@@ -17,6 +17,7 @@ FreshdeskPjax.prototype = {
 
     callBeforeSend: function(evnt,xhr,settings,options) {
 
+      $.xhrPool_Abort();
       this._beforeSendExtras(evnt,xhr,settings,options);
 
     	if(this._triggerUnload() === false) return false;
@@ -27,10 +28,8 @@ FreshdeskPjax.prototype = {
 	    }
 	    this.beforeNextPage = null;
 
-
 	    if(typeof(this.afterNextPage) == 'function') this._prevAfterNextPage = this.afterNextPage;
 	    this.afterNextPage = null;
-
 
 	    if(this.bodyClass) this._prevBodyClass = this.bodyClass;
 	    this.bodyClass = null;
@@ -41,7 +40,6 @@ FreshdeskPjax.prototype = {
 
     callBeforeReplace: function(settings) {
       $(settings.target).data('twipsy','');
-      $.xhrPool_Abort();
     	if(typeof(this._prevAfterNextPage) == 'function') this._prevAfterNextPage();
     	this._prevAfterNextPage = null;
     },
