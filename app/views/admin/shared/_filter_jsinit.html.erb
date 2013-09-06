@@ -147,7 +147,7 @@
           var method = jQuery('<div class="row-fluid"/>')
                         .append('<label class="span2"><%= t(".request_type") %></label>')
                         .append(method_dropdown)
-                        .append(FactoryUI.link('<%= t('.how_to_use_webhook').html_safe %>', 'javascript:void(0)', 'using_webhooks'));
+                        .append(FactoryUI.link('<%= t('.how_to_use_webhook').html_safe %>', 'https://support.freshdesk.com/solution/articles/132589-using-webhooks-in-observer', 'using_webhooks'));
 
           var placeholder1 = jQuery("<span class='placeholder_div'> <a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a> </span>")
           var uri_textarea = FactoryUI.paragraph("", "url", initFeed['url'], "text uri required")
@@ -200,7 +200,7 @@
                           .append(placeholder2)
                           .append(advanced_edit)
                           .append(FactoryUI.label("<%= t('.advanced_webhook_tip') %>", 'tip'))
-                          .append('<strong><a href="#webhook_usecase" data-height="600" data-template-footer="" data-width="600" rel="freshdialog" target="_blank" title="Webhook Example Usecases"><%= t('.webhook_usecase') %></a></strong>');
+                          .append('<strong><a href="#webhook_usecase" class="usecases" data-height="600" data-template-footer="" data-width="800" rel="freshdialog" target="_blank" title="<%= t('.webhook_usecase_tooltip')%>"><%= t('.webhook_usecase') %></a></strong>');
           
           var content_type_radiobuttons = FactoryUI.radiobutton(content_type_choices, "", "content_type", initFeed['content_type']);
           
