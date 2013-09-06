@@ -48,7 +48,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
    end
 
    def public_permissions?
-    description and (description == "logo" || description == "fav_icon" || description == "public")
+    description and (description == "logo" || description == "fav_icon" || description == "public" || description == "content_id")
    end
   
    def set_content_type
