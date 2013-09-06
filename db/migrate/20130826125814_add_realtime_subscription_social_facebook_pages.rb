@@ -1,10 +1,14 @@
 class AddRealtimeSubscriptionSocialFacebookPages < ActiveRecord::Migration
   shard :none
   def self.up
-  	execute("alter table social_facebook_pages add column realtime_subscription tinyint(1) not null default 0")
+    Lhm.change_table :social_facebook_pages,:atomic_switch => true do |m|
+      m.ddl("alter table %s add column realtime_subscription tinyint(1) not null default 0" % m.name)
+    end
   end
 
   def self.down
-  	execute("alter table social_facebook_pages drop realtime_subscription")
+  	Lhm.change_table :social_facebook_pages,:atomic_switch => true do |m|
+      m.ddl("alter table %s drop realtime_subscription" % m.name)
+    end
   end
 end
