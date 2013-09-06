@@ -789,9 +789,9 @@ var scrollToError = function(){
 	});
 
 	var handleIEReply = function(_form) {
+		seperateQuoteText(_form);
 		if (_form.data('cntId') && _form.data('cntId') == 'cnt-reply') {
 			stopDraftSaving();
-			seperateQuoteText(_form);
 		}
 	}
 
