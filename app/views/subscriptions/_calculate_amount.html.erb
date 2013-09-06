@@ -35,7 +35,7 @@
 		<% submit_text = ((@subscription.state == 'trial' and !(@subscription.non_free_agents <= @subscription.free_agents)) ? t('enter_payment') : t('change_my_plan')) %>
 		<input type="submit" class="uiButton billing-cancel" value="Cancel"/>
 		<% if downgrade_confirm %>
-			<%= link_to(submit_text, "javascript:confirm(#{downgrade_confirm}, false)", :class => "uiButton billing-submit") %>		
+			<%= link_to(submit_text, "javascript:confirm(#{downgrade_confirm}, false)".html_safe, :class => "uiButton billing-submit") %>		
 		<% else %>
 			<%= submit_tag(submit_text, :class => "uiButton billing-submit", :id => "commit", :name => "commit") %>
 		<% end %>

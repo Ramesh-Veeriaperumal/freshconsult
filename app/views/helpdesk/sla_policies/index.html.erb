@@ -5,15 +5,14 @@
 	<div class="list-page-header"	>
 		<div class="row-fluid">
 			<div class="span6"><h3 class="title"><%=t('sla_policy.title1')%></h3></div>
-			 <div class="span6 pull-right pagination-right header_buttons align-right" >
+			<div class="span6 pull-right pagination-right header_buttons align-right" >
 				<%= link_to t('reorder'),'#', :id => "sla_policies_reorder_button", :class => "btn" unless(@sla_policies.active.size <= 2)%>
 				<%= (link_to t('sla_policy.new'), new_helpdesk_sla_policy_path, :class => "btn btn-primary") if feature?(:customer_slas) %>
-	        </div>
-	        </div>
-		</div>
+	    </div>
+	  </div>
 	</div>
 	<div>
-	<%= render :partial => "/shared/reorder_list", :locals => { 
+		<%= render :partial => "/shared/reorder_list", :locals => { 
 		:items => @sla_policies.active.rule_based + @sla_policies.default,  
 		:action_url => reorder_helpdesk_sla_policies_path, 
 		:title => :name, :container_id => "sla_policies_sort", 
@@ -25,9 +24,9 @@
 			<% (@sla_policies.active + @sla_policies.inactive).each do |policy| %>
 				<tr id=<%= dom_id(policy) %>>
 					<% unless policy.is_default %>
-						<td <%= "class='sla_policy_disabled custom-tip' data-tip-classes = 'sla-policy-index-tooltip' title='#{t('sla_policy.disabled_old_policy')}'" if policy.conditions.blank? %>>
+						<td <%= "class='sla_policy_disabled custom-tip' data-tip-classes = 'sla-policy-index-tooltip' title='#{t('sla_policy.disabled_old_policy')}'".html_safe if policy.conditions.blank? %>>
 					<% else %>
-						<td <%= "class='sla_policy_disabled custom-tip' data-tip-classes = 'sla-policy-index-tooltip' title='#{t('sla_policy.default_policy')}'" if policy.conditions.blank? %>>
+						<td <%= "class='sla_policy_disabled custom-tip' data-tip-classes = 'sla-policy-index-tooltip' title='#{t('sla_policy.default_policy')}'".html_safe if policy.conditions.blank? %>>
 					<% end %>
 						<% form_for policy, :url => activate_helpdesk_sla_policy_path(policy) do |f| %>
 							<%= f.check_box :active, { :class => 'activate'}, true, false %>

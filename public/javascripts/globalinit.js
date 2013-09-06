@@ -569,7 +569,71 @@ window.xhrPool = [];
       $('#Activity .activity > a').livequery(function() {
         $(this).attr('data-pjax', '#body-container')
       })
-
+    
+     // Sticky Header
+    
+    window.setupScroll = function() {
+      if(!$('#sticky_header').length) return;
+    
+      var the_window = $(window),
+          sticky_header = $('#sticky_header');
+    
+      var hasScrolled = false,
+          REAL_TOP = sticky_header.offset().top;
+    
+    
+      var handleScroll = function() {
+        if(the_window.scrollTop() > REAL_TOP) {
+          if(!sticky_header.hasClass('stuck')) {
+            sticky_header.addClass('stuck');
+            sticky_header.wrap('<div id="sticky_wrap" ><div class="fixed_wrap" ><div class="wrapper">');
+            $('#sticky_wrap').height(sticky_header.outerHeight());
+            
+            $('#scroll-to-top').addClass('visible');
+          }
+    
+        } else {
+          if(sticky_header.hasClass('stuck')) {
+            sticky_header.removeClass('stuck');
+            sticky_header.unwrap().unwrap().unwrap();
+            
+            $('#scroll-to-top').removeClass('visible');
+          }
+        }
+    
+        hasScrolled = false;
+      }
+      the_window.on('scroll.freshdesk', handleScroll);
+    
+      $(window).on('resize.freshdesk', function() {
+        var to_collapse = false, extra_buffer = 20;
+    
+        var width_elements_visible = $('.sticky_right').outerWidth() + $('.sticky_left').outerWidth() + extra_buffer;
+    
+        if(sticky_header.hasClass('collapsed')) {
+          var hidden_elements_width = 0;
+          sticky_header.find('.hide_on_collapse').each(function() {
+            hidden_elements_width += $(this).outerWidth();
+          });
+          if(sticky_header.width() < (width_elements_visible + hidden_elements_width)) {
+            to_collapse = true;
+          }
+        } else {
+          to_collapse = sticky_header.width() < width_elements_visible;
+        }
+        sticky_header.toggleClass('collapsed', to_collapse);
+        
+      }).trigger('resize');
+    
+    };
+    
+    window.destroyScroll = function() {
+      $(window).off('scroll.freshdesk');
+      $(window).off('resize.freshdesk');
+    }
+    
+    setupScroll();
+      
    });
  
 })(jQuery);

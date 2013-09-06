@@ -40,7 +40,7 @@
 		.btn-signup, .btn-newticket, .btn-login{ width: 100%; }
 		.btn-login{ float: none; margin-top: 4px; margin-bottom: 4px; }
 		.login-form{ max-width: none; }
-		.alt-login-button{ border-left: 0; padding-left: 0; }
+		.alt-login-button{ border-left: 0; padding-left: 0; @include box-shadow(none); }
 		.login-form, .alt-login-button{ width:auto; float: none; }
 	}
 }
