@@ -32,7 +32,9 @@ class Admin::TemplatesController < Admin::AdminController
 
   def update
     # Merging preferences as it may be used in multiple forms
-    params[:portal_template][:preferences] = @portal_template.preferences.merge(params[:portal_template][:preferences])
+    if params[:portal_template][:preferences].present?
+      params[:portal_template][:preferences] = @portal_template.preferences.merge(params[:portal_template][:preferences])
+    end
 
     @portal_template.attributes = params[:portal_template]
 
