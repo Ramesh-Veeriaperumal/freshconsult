@@ -708,7 +708,7 @@ label.required:after{
     }
     // Setting max input view for mobile devices
     input, textarea {
-      & { width: 100%; }
+      & { width: 100%; max-width: 100%; }
       @for $i from 1 through 12 {
         &.span#{$i}{ width: 100%; }
       }      
