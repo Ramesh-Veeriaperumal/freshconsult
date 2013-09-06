@@ -387,6 +387,8 @@ en:
         portal_published_success: "Portal changes published successfully."
         portal_reset_success: "Portal changes reseted successfully."
         portal_saved_success: "Portal template saved successfully."
+        portal_page_saved: "Page saved successfully."
+        portal_page_reset: "Page reseted successfully."
       simple:
         header_color: "Header"
         bg_color: "Body"
