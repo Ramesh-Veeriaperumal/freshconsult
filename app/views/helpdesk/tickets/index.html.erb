@@ -15,9 +15,6 @@
   });
   jQuery.getScript('/helpdesk/tickets/full_paginate');
 <% end %>
-<% content_for :onload_script do %>
-  Fjax.pjax_parallel_request = {parallelUrl: "/helpdesk/tickets/filter_options", parallelPlaceholder: "#ticket-leftFilter", pjax: "#body-container"};
-<% end %>
 
 <% content_for :pagefixed do %>
   <%= render :partial => "collision_index" if feature?(:agent_collision) %>
