@@ -55,7 +55,7 @@ SalesforceWidget.prototype= {
 		return { rest_url: "services/data/v20.0/search?q="+sosl };
 	},
 	removeDuplicate: function(data_arr){
-		var data_hash={};
+		var data_hash={"Id":"Id"};//Id added by default for url construction.
 		for(var i=0;i<data_arr.length;i++){
 			data_hash[data_arr[i]]=data_arr[i];
 		}
@@ -70,6 +70,7 @@ SalesforceWidget.prototype= {
 		resJson.each(function(contact) {
 			var cLink = this.salesforceBundle.domain +"/"+contact.Id;
 			var sfcontact ={};
+			sfcontact['url'] = cLink;//This sets the url to salesforce on name
 			sfcontact['type'] = contact.attributes.type;
 			if(contact.attributes.type == "Contact"){
 				if(this.salesforceBundle.contactFields!=undefined){
