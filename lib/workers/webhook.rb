@@ -2,7 +2,7 @@ class Workers::Webhook
   extend Resque::AroundPerform
   extend Va::Webhook::ThrottlerUtil
 
-  RETRY_DELAY = 30.minutes.to_i
+  RETRY_DELAY = 5.seconds.to_i
   RETRY_LIMIT = 48
   SUCCESS     = 200..299
   REDIRECTION = 300..399
