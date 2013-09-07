@@ -927,20 +927,15 @@ Freshdesk.CRMWidget = Class.create(Freshdesk.Widget, {
 		if(resJson == null)
 			resJson = JSON.parse(response.responseText);
 		if(this.contacts = this.contacts.concat(this.options.integratable_impl.parse_contact(resJson, response))) {
-			if(!this.options.handleRender){
-				if ( this.contacts.length > 0) {
-					if(this.contacts.length == 1){
-						this.renderContactWidget(this.contacts[0]);
-						jQuery('#search-back').hide();
-					} else {
-						this.renderSearchResults();
-					}
+			if ( this.contacts.length > 0) {
+				if(this.contacts.length == 1){
+					this.renderContactWidget(this.contacts[0]);
+					jQuery('#search-back').hide();
+				} else {
+					this.renderSearchResults();
+				}
 			} else {
 				this.renderContactNa();
-			}
-			}
-		else{
-				this.options.integratable_impl.handleRender(this.contacts,this);
 			}
 		}
 		jQuery("#"+this.options.widget_name).removeClass('loading-fb');

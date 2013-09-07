@@ -3625,15 +3625,9 @@ en:
     salesforce:
       label: "Salesforce"
       desc: "You can view contact information from Salesforce crm in Freshdesk."
-      helptext: "<h4>Salesforce Integration</h4><p><br/>Select the list of fields need to be displayed in the saleforce widget. You can select to a max of 10 fields.</p><p><strong>Note:</strong><br/>Name is the default field and cannot be removed.</p>"
-      add_fields:
-        remove: "Remove"
       form:
         salesforce_settings_info: ""
         salesforce_settings: "Salesforce Settings"
-        select: "Select an option"
-        contact: "Contact Fields"
-        lead: "Lead Fields"
     nimble:
       label: "Nimble"
       desc: "You can view contact information from Nimble crm in Freshdesk."
