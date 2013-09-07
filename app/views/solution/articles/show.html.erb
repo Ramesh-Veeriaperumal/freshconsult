@@ -19,7 +19,7 @@
 		
 		<%= content_tag(:span, t('private'), :class => "label tooltip", 
 					:title => "This artical is visible only to Agents") if(!@article.folder.visible?(current_user)) %>
-		<span class="label"><%= @article.type_name %></span>
+		<span class="label"><%= t(@article.type_name) %></span>
 	</div> 
 	 
 	
