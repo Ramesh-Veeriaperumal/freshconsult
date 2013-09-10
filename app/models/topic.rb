@@ -37,6 +37,13 @@ class Topic < ActiveRecord::Base
 
   named_scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
 
+  named_scope :find_by_forum_category_id, lambda { |forum_category_id|
+    { :joins => %(INNER JOIN forums ON forums.id = topics.forum_id AND 
+        forums.account_id = topics.account_id),
+      :conditions => ["forums.forum_category_id = ?", forum_category_id],
+    }
+  }
+
   # Popular topics in forums
   # Filtered based on last replied and user_votes
   # !FORUM ENHANCE Removing hits from orderby of popular as it will return all time

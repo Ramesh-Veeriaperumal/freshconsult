@@ -321,6 +321,28 @@ if Integrations::Application.count == 0
     s.application_id = batchbook_app.id
   end
 
+  # Highrise CRM
+  highrise_app = Integrations::Application.seed(:name) do |s|
+    s.name = 'highrise'
+    s.display_name = "integrations.highrise.label"  
+    s.description = "integrations.highrise.desc"
+    s.listing_order = 12
+    s.options = {
+        :keys_order => [:domain, :api_key], 
+        :domain => {  :type => :text,
+                :required => true,
+                :label => "integrations.highrise.form.domain",
+                :info => "integrations.highrise.form.domain_info",
+                #:validator_type => "url_validator",
+                :rel => "ghostwriter",
+                :autofill_text => ".highrisehq.com",
+                :validator_type => "domain_validator"
+              }, 
+        :api_key => { :type => :text, :required => true, :label => "integrations.highrise.form.api_key" },
+    }
+    s.application_type = 'highrise'
+  end
+
   #MailChimp
 
   mailchimp_app = Integrations::Application.seed(:name) do |s|
@@ -438,6 +460,29 @@ if Integrations::Application.count == 0
     s.options =  {"display_in_pages" => ["contacts_show_page_side_bar"], "clazz" => "hide"}
   end
 
+  # Nimble CRM
+  nimble_app =  Integrations::Application.seed(:name) do |s|
+    s.name = 'nimble'
+    s.display_name = "integrations.nimble.label"
+    s.description = "integrations.nimble.desc"
+    s.listing_order = 17
+    s.options = {:direct_install => true, :oauth_url => "/auth/nimble?origin={{account_id}}"}
+    s.application_type = 'nimble'
+  end
+
+  # Zoho CRM
+  zoho_app =  Integrations::Application.seed(:name) do |s|
+    s.name = 'zohocrm'
+    s.display_name = "integrations.zohocrm.label"  
+    s.description = "integrations.zohocrm.desc"
+    s.listing_order = 18
+    s.options = {
+        :keys_order => [:api_key], 
+        :api_key => { :type => :text, :required => true, :label => "integrations.zohocrm.form.api_key", :info => "integrations.zohocrm.form.api_key_info"}
+    }
+    s.application_type = 'zohocrm'
+  end
+
   # Google Calendar
   googlecalendar_app = Integrations::Application.seed(:name) do |s|
     s.name = "google_calendar"
@@ -497,6 +542,16 @@ if Integrations::Application.count == 0
     )
     s.options = {'display_in_pages' => ["helpdesk_tickets_show_page_side_bar"]}
     s.application_id = googlecalendar_app.id
+  end
+
+  # Dropbox
+  dropbox_app = Integrations::Application.seed(:name) do |s|
+    s.name = 'dropbox'
+    s.display_name = "integrations.dropbox.label"
+    s.description = "integrations.dropbox.desc"
+    s.listing_order = 19
+    s.options = {:app_key=>{:required=>:true,:type=>:text,:label=>"integrations.dropbox.form.app_key",:info=>"integrations.dropbox.form.app_key_info"},:keys_order=>[:app_key]}
+    s.application_type = 'dropbox'
   end
 
   surveymonkey_app = Integrations::Application.seed(:name) do |s|

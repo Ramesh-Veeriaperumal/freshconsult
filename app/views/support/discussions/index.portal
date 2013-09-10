@@ -20,8 +20,8 @@
 	{% endfor %}
 </section>
 
-{% if portal.recent_popular_topics != empty %}
-	<section class="sidebar content rounded-6">
+<section class="sidebar content rounded-6">
+	{% if portal.recent_popular_topics.size > 0 %}
 		<section class="cs-g-c topic-list">
 			<div class="list-lead">{% translate portal.popular_topics %}</div>
 			<p class="intro">{% translate portal.showing_recently_popular_topics %}</p>
@@ -38,5 +38,35 @@
 			{% endfor %}
 			</ul>
 		</section>
-	</section>
-{% endif %}
+	{% endif %}
+
+	{% if portal.my_topics.size > 0 %}
+		<section class="cs-g-c topic-list">
+			<div class="list-lead">{% translate portal.my_topics %}</div>
+			<p class="intro">{% translate portal.showing_my_topics %}</p>
+			<ul>
+			{% for topic in portal.my_topics limit:5 %}
+				<li class="cs-g-3">
+					<div class="ellipsis">
+						<a href="{{topic.last_post_url}}">{{topic.title | h}}</a>
+					</div>
+					<div class="help-text">
+						{{ topic | my_topic_info }}
+						{% if topic.last_post.present? %}
+							<div class="my_topics_right">
+								{{ topic.last_post.body | h || truncate:60 }}
+								{% if topic.last_post.body.size > 60 %}
+									<a href="{{ topic.last_post_url }}">{% translate more %}</a>
+								{% endif %}
+							</div>
+						{% endif %}
+					</div>
+				</li>
+			{% endfor %}
+			</ul>
+			{% if portal.my_topics_count > 5 %}
+				<a href="{{portal.my_topics_url}}" class="see-more">{% translate portal.topic.all_topics %}</a>
+			{% endif %}
+		</section>
+	{% endif %}
+</section>

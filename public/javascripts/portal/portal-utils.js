@@ -53,18 +53,26 @@ var isMobile = {
 function layoutResize(layoutClass1, layoutClass2){
     "use strict"
     var mainbar = $j(layoutClass1).get(0),
-        sidebar = $j(layoutClass2).get(0)
+        sidebar = $j(layoutClass2)
 
+    // Remove sidebar if empty
+    if (!$j.trim(sidebar.html())) sidebar.remove()
+
+    sidebar = $j(layoutClass2).get(0)
+    
     // If no sidebar is present make the main content to stretch to full-width
-    if(!sidebar) $j(mainbar).removeClass("main")
+    if (!sidebar) {
+        $j(mainbar).removeClass("main")
+    }
 
     // If no mainbar is present make the sidebar content to stretch to full-width
-    if(!mainbar) $j(sidebar).removeClass("sidebar")
+    if (!mainbar) { 
+        $j(sidebar).removeClass("sidebar")
+    }
 
     // Setting equal height for main & sidebar if both are present
-    if(!isMobile.any() && (mainbar || sidebar)){
+    if (mainbar || sidebar) {
         $j(layoutClass1 + ", " + layoutClass2)
             .css("minHeight", Math.max($j(mainbar).outerHeight(true), $j(sidebar).outerHeight(true)))
-
     }
 }

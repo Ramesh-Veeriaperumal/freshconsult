@@ -566,11 +566,12 @@ a.addchoice:hover{
 					label{margin-top: 7px;}
 					.required_label{margin-left: 0}
 					.using_webhooks{font-weight: 600; float:right; margin-top: 8px; margin-right: 9%;}
+					.usecases{margin:0}
 					.url_req_auth{width: 50%; font-size: 13px; margin-left: 15.4%;}
 					.change_password{margin-top: 7px; margin-left: 15px;}
 					.checkbox_label{height:25px; min-height:0; margin:0; padding-top: 8px;}
 					.content_label{margin-top:33px; margin-left: 0;}
-					input[type="text"], input[type="password"]{width:41.6%;}
+					input[type="text"], input[type="password"]{width:42.3%;}
 					input[type="text"].api_key{width:87%;}
 					.select2-container{left:1px;}	
 					.required_star{top: 15px; margin: 0;}
@@ -669,14 +670,8 @@ li.nested_field{
 	margin-right:10px;
 }
 
-.portal-logo{
-	height: 50px;
-	width: auto;
-}
-
-.logo-actions a{ 
-	line-height: 22px;
-}
+.portal-logo{ width: auto; }
+.logo-actions a{ line-height: 22px; }
 
 .ui-form .inline-field{
 	/*border-bottom:1px dotted #cfcfcf;*/

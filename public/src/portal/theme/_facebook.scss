@@ -1,12 +1,6 @@
-$headingColor: #1272de;
- // Facebook pages theme styles 
- @import url(http://fonts.googleapis.com/css?family=Roboto:400,500,700,300);
 body {
     background:$white;
     font-size:$baseFontSize;
-}
-body, .heading,input, button, select, textarea,.ui-widget  {
-    font-family:'Roboto', sans-serif,'lucida grande', Helvetica Neue, Helvetica;
 }
 //Header 
 .banner {
@@ -333,6 +327,21 @@ h3.heading{
     }
     .forums{
         .cs-g-3{
+            .help-text{
+                a{
+                    color: #999999;
+                    text-decoration: none;
+                }
+                &:hover{
+                    a{
+                        color: #1272de;
+                        &:hover{
+                            text-decoration: underline;
+                            color: #0c4e97;
+                        }
+                    }
+                }
+            }
             &:after, &:before{
                 display:none;
             }
@@ -510,7 +519,7 @@ h3.heading{
 		margin-top:10px;
 	}
 }
-.p-content, .user-comment   .p-content{
+.p-content, .user-comment .p-content{
 	margin-top: -50px;
 	margin-left: 54px;
 	padding-top: 32px;

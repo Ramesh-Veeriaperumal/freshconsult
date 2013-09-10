@@ -10,3 +10,5 @@
 
 	{% snippet new_topic_form %}
 </section>
+
+<section class="sidebar hide"><br /></section>

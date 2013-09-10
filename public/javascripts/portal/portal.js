@@ -38,7 +38,7 @@
 				$(this).button("loading")
 
 				// A data-loading-box will show a loading box in the specified container
-				$(_o_data.loadingBox||"").html("<div class='loading-box'></div>")
+				$(_o_data.loadingBox||"").html("<div class='loading loading-box'></div>")
 
 				$.ajax({
 					type: _o_data.type || 'POST',

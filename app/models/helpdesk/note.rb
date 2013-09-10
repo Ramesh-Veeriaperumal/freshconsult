@@ -103,6 +103,10 @@ class Helpdesk::Note < ActiveRecord::Base
     source == SOURCE_KEYS_BY_TOKEN["feedback"]    
   end
 
+  def meta?
+    source == SOURCE_KEYS_BY_TOKEN["meta"]
+  end
+
   def private_note?
     source == SOURCE_KEYS_BY_TOKEN["note"] && private
   end
@@ -248,8 +252,8 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def liquidize_body
-    attachments.empty? ? body_html : 
-      "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
+    all_attachments.empty? ? body_html : 
+      "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(all_attachments)}\n"
   end
 
   def to_indexed_json

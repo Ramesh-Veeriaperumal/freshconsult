@@ -155,9 +155,8 @@
 
 			var buttonTextFocus = $('[name="buttonText"]').is( ":focus" );
 			var buttonColorFocus = $("#TabColor").is( ":focus" );
-			if( !buttonTextFocus && !buttonColorFocus)
-			{
-				$(".ui-form").effect( "highlight", {color:"#E4E4E4"});
+			if( !buttonTextFocus && !buttonColorFocus){
+				$("#popupCode").effect( "highlight", { color:"#F8F8C3" }, 600);
 			}
 
 		}	
