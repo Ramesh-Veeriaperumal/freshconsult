@@ -55,11 +55,11 @@ class Signup < ActivePresenter::Base
       user.roles = [account.roles.first]
       user.active = true  
       user.account = account
-      user.build_user_email
-      user.user_email.account = account
       user.helpdesk_agent = true
       user.build_agent()
       user.agent.account = account
+      user.build_user_email
+      user.user_email.account = account
     end
     
     def build_subscription
