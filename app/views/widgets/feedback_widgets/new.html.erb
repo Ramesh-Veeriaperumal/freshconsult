@@ -57,7 +57,7 @@
 <% if widget_option(:searchArea) && feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
 	<% if(responsive != "no") %>
 		<a class="mobile-search-icon" id="mobile-search-icon" href="#">
-			<span class="mobile-counter">4</span>
+			<span id="mobile-counter"></span>
 			<span class="wicon-mobile-search"></span>
 		</a>
 		<input type="hidden" name="responsive" id="responsive" value= "<%= responsive %>" />
@@ -112,9 +112,19 @@
 		var suggestResponse = function(data, term){		
 			var searchInputFrom = jQuery("#searchInputFrom").val();
 
-		    if(data.length > 0){	    	
+			jQuery("#mobile-counter").removeClass("mobile-counter")
+			jQuery("#mobile-counter").text("")  
+
+		    if(data.item.length > 0){	
+		    	if(data.count < 100){
+			    	jQuery("#mobile-counter").text(data.count)  
+		    	}
+		    	else{
+		    		jQuery("#mobile-counter").text("99+")  
+		    	} 
+		    	jQuery("#mobile-counter").addClass("mobile-counter")
 				jQuery("#ws-results")
-					.html(jQuery.tmpl(jQuery("#ws-tmpl").template(), data))
+					.html(jQuery.tmpl(jQuery("#ws-tmpl").template(), data.item))
 					.append("<li><a href='/support/search/solutions?term="+term+"' target='_blank'>Show all results</a></li>")
 				jQuery("#panel-content").show()
 				
@@ -134,7 +144,7 @@
 			var term = string.trim(),
 		        cache = window['suggest-cache'],
 		        suggest_url = "/support/search/solutions.json",
-		        request = { max_matches:5, term:term };
+		        request = { max_matches:5, term:term, need_count:'true' };
 
 		    if(suggestQuery) suggestQuery.abort();
 
@@ -196,6 +206,11 @@
 				jQuery("#ws-results").empty();
 				jQuery("#panel-content").hide()
 				jQuery("#panel-info").show();
+
+				suggestForSubject = true;
+
+				jQuery("#mobile-counter").removeClass("mobile-counter")
+				jQuery("#mobile-counter").text("")  
 			}
 	  	}
 	</script>
