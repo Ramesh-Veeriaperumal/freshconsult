@@ -15,7 +15,7 @@ class CreateUserEmails < ActiveRecord::Migration
     KEY `index_user_emails_on_user_id_and_account_id` (`user_id`, `account_id`),
     KEY `user_emails_email` (`email`),
     KEY `user_emails_id` (`id`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci
     PARTITION BY HASH(account_id)
     PARTITIONS 128;")
   end
