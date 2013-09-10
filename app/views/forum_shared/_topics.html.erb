@@ -22,9 +22,9 @@
 				
 					<div class="info_data"> 
 						<% if topic.posts_count > 1 %>
-							<%= t("topics.last_reply", :post_time => time_ago_in_words(last_post.created_at), :user_link => link_to_user(last_post.user) ) %>
+							<%= t("topics.last_reply", :post_time => time_ago_in_words(last_post.created_at), :user_link => link_to_user(last_post.user) ).html_safe %>
 						<% else %>
-							<%= t("topics.posted_at", :post_time => time_ago_in_words(topic.created_at)) %>
+							<%= t("topics.posted_at", :post_time => time_ago_in_words(topic.created_at)).html_safe %>
 						<% end %> 
 						-  
 						<% 

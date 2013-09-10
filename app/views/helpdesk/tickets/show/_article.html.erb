@@ -1,5 +1,5 @@
 <% unless article.nil? %>
-<% article_url = support_solutions_article_url(article) %> 
+<% article_url = support_solutions_article_url(article, :host => @ticket.solution_article_host(article)) %> 
 <tr><td>
 	<div class="actions-menu">
 		<%= t('ticket.insert').html_safe %>:

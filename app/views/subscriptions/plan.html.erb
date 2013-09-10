@@ -16,7 +16,7 @@
   <div class="errorExplanation">
     <%= content_tag( :h2, t("errors_in_plan_change") ) %>
     <ul>
-      <%= @subscription.errors.full_messages.map {|m| content_tag('li', m)} %>
+      <%= @subscription.errors.full_messages.map{|m| content_tag('li', m.html_safe)}.join("").html_safe %>
     </ul>
   </div>
 <% end %>
@@ -25,7 +25,7 @@
 <%= render :partial => "select_plans", :locals => { :plans => @plans, :subscription => @subscription, :show_all => true } %>
 
 <div class="button-container">
-	<%= link_to( t('back_plans_billing'), subscription_url, :class => "uiButton floatl" ) %>
+	<%= link_to( t('back_plans_billing').html_safe, subscription_url, :class => "uiButton floatl" ) %>
 </div>
 
 

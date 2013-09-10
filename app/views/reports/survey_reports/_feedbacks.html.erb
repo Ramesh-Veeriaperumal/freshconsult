@@ -20,10 +20,10 @@
 			<%
 				feedback = ""
 
-				feedback = remark.survey_remark.feedback.body+"<br>" unless remark.survey_remark.nil?
+				feedback = ""+h(remark.survey_remark.feedback.body)+"<br>" unless remark.survey_remark.nil?
 			%>
 			<p class="box-content">
-				<%=feedback%>
+				<%=feedback.html_safe%>
 				<a href="<%=helpdesk_tickets_url%>/<%=remark.surveyable.display_id%>">
 					<span class="bottom-ticket-title"><%=t('.in_response_to')%>:</span> <%=remark.surveyable.subject%> (#<%=remark.surveyable.display_id%>)
 				</a>

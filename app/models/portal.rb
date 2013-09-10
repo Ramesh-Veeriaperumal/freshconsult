@@ -36,7 +36,7 @@ class Portal < ActiveRecord::Base
               :foreign_key => 'solution_category_id'
   belongs_to :forum_category
 
-  APP_CACHE_VERSION = "FD30"
+  APP_CACHE_VERSION = "FD37"
     
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
@@ -76,6 +76,16 @@ class Portal < ActiveRecord::Base
   def recent_portal_topics user
     main_portal ? account.portal_topics.visible(user).newest(6) : 
         (forum_category ? forum_category.portal_topics.visible(user).newest(6) : [])
+  end
+
+  def my_topics(user, per_page, page)
+    main_portal ? user.monitored_topics.filter(per_page, page) :
+       forum_category ?  user.monitored_topics.find_by_forum_category_id(forum_category.id).filter(per_page, page) : []
+  end
+
+  def my_topics_count(user)
+    main_portal ? user.monitored_topics.count :
+       forum_category ?  user.monitored_topics.find_by_forum_category_id(forum_category.id).count : 0
   end
 
   #Yeah.. It is ugly.

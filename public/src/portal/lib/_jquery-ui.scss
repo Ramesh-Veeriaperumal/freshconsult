@@ -168,26 +168,3 @@
 .ui-datepicker .ui-datepicker-next{ 
 	@include border-radius(6px); 
 }
-
-/* Overriding position parameters to handle mobile sizing */
-@include at-breakpoint($media-mobile){
-	.ui-datepicker.ui-widget-content{
-		width: auto !important;
-		left: 25px !important;
-		right: 25px !important;
-	}
-}
-
-/* with multiple calendars the calenders will be responsive */
-@include at-breakpoint($break-tablet){
-	.ui-datepicker.ui-datepicker-multi { width:auto; }
-	.ui-datepicker-multi .ui-datepicker-group { float:left; }
-	.ui-datepicker-multi .ui-datepicker-group table { width:95%; margin:0 auto .4em; }
-	.ui-datepicker-multi-2 .ui-datepicker-group { width:50%; }
-	.ui-datepicker-multi-3 .ui-datepicker-group { width:33.3%; }
-	.ui-datepicker-multi-4 .ui-datepicker-group { width:25%; }
-	.ui-datepicker-multi .ui-datepicker-group-last .ui-datepicker-header { border-left-width:0; }
-	.ui-datepicker-multi .ui-datepicker-group-middle .ui-datepicker-header { border-left-width:0; }
-	.ui-datepicker-multi .ui-datepicker-buttonpane { clear:left; }
-	.ui-datepicker-row-break { clear:both; width:100%; font-size:0em; }
-}

@@ -7,10 +7,11 @@ class SearchController < ApplicationController
   before_filter :forums_allowed_in_portal?, :only => :topics
   before_filter :solutions_allowed_in_portal?, :only => :solutions
   
+  
   #by Shan
   #To do.. some smart meta-programming
   def index 
-    search 
+    search
   end
   
   def suggest
@@ -163,13 +164,11 @@ class SearchController < ApplicationController
     end
 
     def process_results
-      
       results = Hash.new
       @items.each do |i|
         results[i.class.name] ||= []
         results[i.class.name] << i
       end
-
       
       @searched_tickets   = results['Helpdesk::Ticket']
       @searched_articles  = results['Solution::Article']
@@ -179,7 +178,7 @@ class SearchController < ApplicationController
       
       @search_key = params[:search_key]
       @total_results = @items.size
-
+      
     end
     
     def page_limit
@@ -196,16 +195,41 @@ class SearchController < ApplicationController
 
   private
   
-  def searchable_classes    
-    searchable = [ Helpdesk::Ticket ]
-    searchable << Solution::Article if privilege?(:view_solutions)
-    searchable << Topic             if privilege?(:view_forums)
-    
-    if privilege?(:view_contacts)
-      searchable << User
-      searchable << Customer
+  def searchable_classes   
+    searchable ="" 
+    respond_to do |format| 
+      format.html  do
+        searchable = [ Helpdesk::Ticket ]
+        searchable << Solution::Article if privilege?(:view_solutions)
+        searchable << Topic             if privilege?(:view_forums)
+        if privilege?(:view_contacts)
+          searchable << User
+          searchable << Customer
+        end
+      end
+      format.mobile do 
+        if(params[:search_class].to_s.eql?("ticket"))
+          searchable = [ Helpdesk::Ticket ]
+        elsif (params[:search_class].to_s.eql?("solutions"))
+          searchable = [ Solution::Article ] if privilege?(:view_solutions)
+        elsif (params[:search_class].to_s.eql?("forums"))
+          searchable = [ Topic ] if privilege?(:view_forums)
+        elsif (params[:search_class].to_s.eql?("customer"))
+          if privilege?(:view_contacts)
+            searchable = [Customer] 
+            searchable << User
+          end
+        else
+          searchable = [ Helpdesk::Ticket ]
+          searchable << Solution::Article if privilege?(:view_solutions)
+          searchable << Topic             if privilege?(:view_forums)
+          if privilege?(:view_contacts)
+            searchable << User
+            searchable << Customer
+          end
+        end
+      end
     end
-    
     searchable
   end 
   

@@ -3,6 +3,7 @@ class Customer < ActiveRecord::Base
   
   include Cache::Memcache::Customer
   include Search::ElasticSearchIndex
+  include Mobile::Actions::Customer
   serialize :domains
     
   validates_presence_of :name,:account

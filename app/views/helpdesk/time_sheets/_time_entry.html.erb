@@ -24,7 +24,7 @@
     	<div class="timespent">
         <% if privilege?(:edit_time_entries, time_entry) %>
       		<div class="timer_box">
-      		  <%= link_to_remote "<span class=\"timer\"></span>", 
+      		  <%= link_to_remote "<span class=\"timer\"></span>".html_safe, 
       		                    { :url => toggle_timer_helpdesk_time_sheet_path(time_entry),
                                 :method => :put },
                               { :class => "clock tooltip", 
@@ -39,17 +39,17 @@
                         "data-timer-running" => time_entry.timer_running,
                         :id => "timeentry_timer_#{time_entry.id}" %>
 
-        <%= content_tag(:div, "Timer started <br />@ #{formated_date(time_entry.start_time, "%I:%M %p")}", :class => "started_time") if time_entry.timer_running %>
+        <%= content_tag(:div, "Timer started <br />@ #{formated_date(time_entry.start_time, "%I:%M %p")}".html_safe, :class => "started_time") if time_entry.timer_running %>
               		
     	</div>
     	<% content_tag :div, :class => "note" do
     	    concat content_tag(:span, "", :class => "billable tooltip", :title => "Billable time entry") if time_entry.billable
           if privilege?(:edit_time_entries, time_entry)
-            concat link_to_remote( RedCloth.new(time_entry.note.blank? ? "_add note_" : h(time_entry.note)).to_html, 
+            concat link_to_remote( RedCloth.new(time_entry.note.blank? ? "_add note_" : h(time_entry.note)).to_html.html_safe, 
                                { :url => edit_helpdesk_time_sheet_path(time_entry), 
                                  :method => :get } )
           else
-            concat h(time_entry.note)
+            concat h(time_entry.note).html_safe
           end
          end	%>
   </div>

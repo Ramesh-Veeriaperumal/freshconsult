@@ -4,6 +4,7 @@ class ContactsController < ApplicationController
    include HelpdeskControllerMethods
    include ExportCsvUtil
 
+   before_filter :redirect_to_mobile_url
    before_filter :check_demo_site, :only => [:destroy,:update,:create]
    before_filter :set_selected_tab
    before_filter :check_agent_limit, :only =>  :make_agent
@@ -11,6 +12,7 @@ class ContactsController < ApplicationController
    skip_before_filter :build_item , :only => [:new, :create]
    before_filter :set_mobile , :only => :show
    before_filter :fetch_contacts, :only => [:index]
+   before_filter :set_native_mobile, :only => [:show, :index, :create]
   
    
    def check_demo_site
@@ -21,7 +23,6 @@ class ContactsController < ApplicationController
   end
   
   def index
-    
     respond_to do |format|
       format.html do
         @tags = current_account.tags.with_taggable_type(User.to_s)
@@ -37,6 +38,16 @@ class ContactsController < ApplicationController
       end
       format.atom do
         @contacts = @contacts.newest(20)
+      end
+      format.nmobile do
+        response="[";sep=""
+        @contacts.each { |user|
+          response << sep+"#{user.to_mob_json_search}"
+          sep = ","
+        }
+        response << "]"
+        render :json => response
+        
       end
     end    
   end
@@ -63,6 +74,8 @@ class ContactsController < ApplicationController
       respond_to do |format|
         format.html { redirect_to contacts_url }
         format.xml  { render :xml => @user, :status => :created, :location => contacts_url(@user) }
+        format.nmobile { render :json => { :success => true , :success_message => t("flash.contacts.create.success") 
+                                        }.to_json }
         format.json {
             render :json => @user.to_json({:except=>[:account_id] ,:only=>[:id,:name,:email,:created_at,:updated_at,:active,:job_title,
 :phone,:mobile,:twitter_id,:description,:time_zone,:deleted,:fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
@@ -138,7 +151,7 @@ class ContactsController < ApplicationController
                     :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
                     :fb_profile_id,:external_id,:language,:address,:customer_id] })#avoiding the secured attributes like tokens
                   }
-      format.mobile { render :json => @user.to_mob_json }
+      format.nmobile { render :json => @user.to_mob_json }
     end
   end
   

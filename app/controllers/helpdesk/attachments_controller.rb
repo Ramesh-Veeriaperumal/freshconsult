@@ -5,7 +5,7 @@ class Helpdesk::AttachmentsController < ApplicationController
   skip_before_filter :check_privilege
   before_filter :check_download_permission, :only => [:show]  
   before_filter :check_destroy_permission, :only => [:destroy]
-
+  before_filter :set_native_mobile, :only => [:show]
   def show
     style = params[:style] || "original"
     redir_url = AwsWrapper::S3Object.url_for(@attachment.content.path(style.to_sym),@attachment.content.bucket_name,
@@ -16,6 +16,9 @@ class Helpdesk::AttachmentsController < ApplicationController
       end
       format.xml  do
         render :xml => @attachment.to_xml
+      end
+      format.nmobile do
+        render :json => { "url" => redir_url}.to_json
       end
     end
   end

@@ -21,6 +21,7 @@ class Product < ActiveRecord::Base
   accepts_nested_attributes_for :email_configs, :allow_destroy => true 
 
   delegate :portal_url, :to => :portal, :allow_nil => true 
+  delegate :solution_category_id, :to => :portal, :allow_nil => true
   delegate :name, :to => :portal, :prefix => true, :allow_nil => true 
 
   def enable_portal=(p_str)

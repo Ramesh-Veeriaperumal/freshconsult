@@ -15,9 +15,7 @@ FreshdeskPjax.prototype = {
 
     constructor: FreshdeskPjax,
 
-    callBeforeSend: function(evnt,xhr,settings,options) {
-
-      this._beforeSendExtras(evnt,xhr,settings,options);
+    callBeforeSend: function() {
 
     	if(this._triggerUnload() === false) return false;
     	this._beforeSendCleanup();
@@ -40,7 +38,6 @@ FreshdeskPjax.prototype = {
     },
 
     callBeforeReplace: function() {
-      $.xhrPool_Abort();
     	if(typeof(this._prevAfterNextPage) == 'function') this._prevAfterNextPage();
     	this._prevAfterNextPage = null;
     },
@@ -48,6 +45,11 @@ FreshdeskPjax.prototype = {
     callAfterReceive: function() {
     	this._removeLoading();
     	this._afterReceiveCleanup();
+
+    	var body = $(body);
+    	if(this._prevBodyClass != this.bodyClass)
+    		body.removeClass(this._prevBodyClass).addClass(this.bodyClass);
+    	this._prevBodyClass = null;
     },
 
     callAtEnd: function() {
@@ -55,6 +57,7 @@ FreshdeskPjax.prototype = {
       if(typeof(this.end) == 'function') this.end();
       this.end = null;
 
+      $('body').addClass(this.bodyClass); //Failover
     },
 
     _setLoading: function() {
@@ -77,33 +80,6 @@ FreshdeskPjax.prototype = {
     _removeLoading: function() {
       $('.top-loading-wrapper').switchClass('fadeInLeft','fadeOutRight');
       $('.top-loading-wrapper').addClass('hide','slow');
-    },
-
-    _beforeSendExtras: function(evnt,xhr,settings,options) {
-      var start_time = new Date();
-      var bHeight = $('#body-container').height(),
-          clkdLI = $(evnt.relatedTarget).parent();
-      $('ul.header-tabs li.active').removeClass('active');
-      clkdLI.addClass('active');
-      this._initParallelRequest($(evnt.relatedTarget),options.data)
-    },
-
-    callAfterRecieve: function(evnt,xhr,settings) {
-      Fjax.callAfterReceive();
-      destroyScroll();
-      if(typeof(window.pjaxPrevUnload) == 'function') window.pjaxPrevUnload();
-      window.pjaxPrevUnload = null;
-      Fjax.callAtEnd();
-      var options = jQuery(document).data();
-      jQuery(document).data("requestDone",true);
-      if(options.parallelData && $(evnt.relatedTarget).data()){
-        $($(evnt.relatedTarget).data().parallelPlaceholder).html(options.parallelData) 
-      }
-      else if(options.parallelData && settings.data)
-      {
-        $(settings.data.parallelPlaceholder).html(options.parallelData);
-      }
-      setupScroll();
     },
 
     _beforeSendCleanup: function() {
@@ -130,151 +106,7 @@ FreshdeskPjax.prototype = {
         console.log('Error:');
         console.log(err);
       }
-    },
-    success : function()
-    {
-      window.history.state.body_class = $('body').attr('class');
-      window.history.replaceState(window.history.state);
-    },
-
-    _initParallelRequest: function(target,data){
-
-      jQuery(document).data("requestDone",false);
-      jQuery(document).data("parallelData",undefined);
-      
-      if((!target.data('parallelUrl')) && (!data)){
-        return;
-      }
-      var options ;
-      if(target.data('parallelUrl')) {
-        options = target.data();  
-      } else {
-      options = data;
-      }
-
-      jQuery.get(options.parallelUrl, function(data){
-        if(jQuery(document).data("requestDone")){
-          console.log("parent request done ")
-          jQuery(options.parallelPlaceholder).html(data)
-        }
-        else{
-          jQuery(document).data("parallelData",data);
-        }
-      })
     }
-}
-
-
-// Sticky Header
-var the_window = $(window),
-    hasScrolled = false;
-the_window.on('scroll.freshdesk', function() { hasScrolled = true; });
-var handleScroll = function() {
-  if (the_window.scrollTop() > REAL_TOP) {
-    if (!fixedStrap.hasClass('at_the_top')) {
-
-      at_the_top.addClass('at_the_top');
-      forFixed.show();
-      at_the_top.css({top: -outerHeight}).animate({ top: 0}, 300, 'easeOutExpo');
-      firstchild.addClass('firstchild');
-    }
-
-  } else {
-    at_the_top.removeClass('at_the_top').css({top: ''});
-    forFixed.hide();
-    firstchild.removeClass('firstchild');
-  }
-
-  hasScrolled = false;
-};
-
-
-var setupScroll = function() {
-  if(!$('#sticky_header').length) return;
-
-  var the_window = $(window),
-      sticky_header = $('#sticky_header');
-
-  var hasScrolled = false,
-      REAL_TOP = sticky_header.offset().top;
-
-
-  var handleScroll = function() {
-    if(the_window.scrollTop() > REAL_TOP) {
-      if(!sticky_header.hasClass('stuck')) {
-        sticky_header.addClass('stuck');
-        sticky_header.wrap('<div id="sticky_wrap" />');
-        $('#sticky_wrap').height(sticky_header.outerHeight());
-        
-        $('#scroll-to-top').addClass('visible');
-      }
-
-    } else {
-      if(sticky_header.hasClass('stuck')) {
-        sticky_header.removeClass('stuck');
-        sticky_header.unwrap();
-        
-        $('#scroll-to-top').removeClass('visible');
-      }
-    }
-
-    hasScrolled = false;
-  }
-  the_window.on('scroll.freshdesk', handleScroll);
-
-  $(window).on('resize.freshdesk', function() {
-
-    sticky_header.width($('#Pagearea').width());
-    var to_collapse = false, extra_buffer = 20;
-
-    var width_elements_visible = $('.sticky_right').outerWidth() + $('.sticky_left').outerWidth() + extra_buffer;
-
-    if(sticky_header.hasClass('collapsed')) {
-      var hidden_elements_width = 0;
-      sticky_header.find('.hide_on_collapse').each(function() {
-        hidden_elements_width += $(this).outerWidth();
-      });
-      if(sticky_header.width() < (width_elements_visible + hidden_elements_width)) {
-        to_collapse = true;
-      }
-    } else {
-      to_collapse = sticky_header.width() < width_elements_visible;
-    }
-    sticky_header.toggleClass('collapsed', to_collapse);
-    
-  }).trigger('resize');
-
-};
-
-
-var destroyScroll = function() {
-  $(window).off('scroll.freshdesk');
-  $(window).off('resize.freshdesk');
-}
-
-setupScroll();
-
-//Not using pjax for IE10- Temporary fix for IE pjax load issue
-//in dashboard and tickets filter. Remove the condition once we get permanent fix
-if (!$.browser.msie) {
-  $(document).pjax('a[data-pjax]',{
-      timeout: -1,
-      push : true,
-      maxCacheLength: 0,
-      replace: false
-    }).bind('pjax:beforeSend',function(evnt,xhr,settings,options){
-      // BeforeSend
-      return Fjax.callBeforeSend(evnt,xhr,settings,options);
-  }).bind('pjax:beforeReplace',function(evnt,xhr,settings){
-    Fjax.callBeforeReplace();
-  }).bind('pjax:end',function(evnt,xhr,settings){
-    //AfterReceive
-    Fjax.callAfterRecieve(evnt,xhr,settings);
-    return true;
-  }).bind('pjax:success',function(evnt,xhr,settings){
-     Fjax.success();
-   });
-
 }
 }(window.jQuery);
 Fjax = new FreshdeskPjax();

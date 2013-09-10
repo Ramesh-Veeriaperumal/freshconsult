@@ -174,9 +174,9 @@ module SupportHelper
 	# Logo for the portal
 	def logo portal
 		_output = []
-		_output << %(<a href='#{portal['linkback_url']}'>)
+		_output << %(<a href='#{portal['linkback_url']}' class='portal-logo'>)
 		# Showing the customer uploaded logo or default logo within an image tag
-		_output << %(<img src='#{portal['logo_url']}' class='portal-logo' />)
+		_output << %(<span class="portal-img"><i></i><img src='#{portal['logo_url']}' /></span>)
 		_output << %(</a>)
 		_output.to_s.html_safe
 	end
@@ -317,7 +317,26 @@ HTML
 	end
 
 	def fb_topic_info topic
-		%(#{h(topic.user.name)}, <br>#{time_ago topic.created_on}.)
+		if topic.has_comments
+			post = topic.last_post.to_liquid
+			%(#{I18n.t('portal.topic.fb_reply_info', 
+				:reply_url => topic.last_post_url, 
+				:user_name => h(post.user.name), 
+				:created_on => time_ago(post.created_on)
+				)}
+			)
+		else
+			%(#{h(topic.user.name)}, <br>#{time_ago topic.created_on}.)
+		end
+	end
+
+	def my_topic_info topic
+		if topic.has_comments
+			post = topic.last_post.to_liquid
+			"#{I18n.t('portal.topic.my_topic_reply', :post_name => h(post.user.name), :created_on => time_ago(post.created_on))}"
+		else
+			topic_brief(topic)
+		end
 	end
 
 	def topic_info_with_votes topic
@@ -331,13 +350,17 @@ HTML
 	def last_post_brief topic, link_label = t('portal.topic.last_reply')
 		if topic.last_post.present?
 			post = topic.last_post.to_liquid
-			%(<a href="#{topic.last_post_url}"> #{h(link_label)} </a> #{t('by')}
-				#{h(post.user.name)} #{time_ago post.created_on})
+			%(#{I18n.t('portal.topic.last_post_brief', 
+					:last_post_url => topic.last_post_url, 
+					:link_label => h(link_label), 
+					:user_name => h(post.user.name), 
+					:created_on => time_ago(post.created_on))
+				})
 		end
 	end
 		
 	def topic_brief topic
-		%(#{t('posted_by')} #{bold h(topic.user.name)}, #{time_ago topic.created_on})
+		%(#{I18n.t('portal.topic.topic_brief', :user_name => h(topic.user.name), :created_on => time_ago(topic.created_on))})
 	end
 
 	def topic_votes topic
@@ -646,7 +669,8 @@ HTML
 		  :name => h(@portal['name']),
 		  :contact_info => h(@portal['contact_info']),
 		  :current_page => @portal['page'],
-		  :current_tab => @current_tab }.to_json
+		  :current_tab => @current_tab,
+		  :preferences => portal_preferences }.to_json
 	end
 
 	def theme_url

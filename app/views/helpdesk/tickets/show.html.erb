@@ -189,6 +189,7 @@
   			jQuery.ajax({	type: 'POST',
   						url: '/helpdesk/canned_responses/show/'+ticket_id+'?ca_resp_id='+ca_resp_id,
   						contentType: 'application/text',
+  						dataType: 'script',
   						async: true,
 						success: function(data){	
   									jQuery(element).removeClass("response-loading");

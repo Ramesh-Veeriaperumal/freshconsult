@@ -287,7 +287,7 @@ class User < ActiveRecord::Base
   def is_client_manager?
     self.privilege?(:client_manager)
   end
-  
+
   def can_assume?(user)
     # => Not himself
     # => User is not deleted
@@ -448,6 +448,14 @@ class User < ActiveRecord::Base
 
   def self.reset_current_user
     User.current = nil
+  end
+  
+  def user_time_zone
+    self.time_zone
+  end
+  
+  def user_tag
+    self.tags
   end
 
   private
