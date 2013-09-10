@@ -447,8 +447,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def liquidize_comment(comm)
     if comm
       c_descr = "#{comm.user ? comm.user.name : 'System'} : #{comm.body_html}"
-      unless comm.attachments.empty?
-        c_descr = "#{c_descr}\n\nAttachments :\n#{liquidize_attachments(comm.attachments)}\n"
+      all_attachments = comm.all_attachments
+      unless all_attachments.empty?
+        c_descr = "#{c_descr}\n\nAttachments :\n#{liquidize_attachments(all_attachments)}\n"
       end
       c_descr
     end

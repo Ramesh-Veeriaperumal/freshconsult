@@ -252,8 +252,8 @@ class Helpdesk::Note < ActiveRecord::Base
   end
 
   def liquidize_body
-    attachments.empty? ? body_html : 
-      "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(attachments)}\n"
+    all_attachments.empty? ? body_html : 
+      "#{body_html}\n\nAttachments :\n#{notable.liquidize_attachments(all_attachments)}\n"
   end
 
   def to_indexed_json

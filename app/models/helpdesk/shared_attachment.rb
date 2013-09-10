@@ -6,6 +6,8 @@ class Helpdesk::SharedAttachment < ActiveRecord::Base
 
   attr_protected  :account_id
 
+  belongs_to_account
+
   before_save :set_account_id
 
   def set_account_id
