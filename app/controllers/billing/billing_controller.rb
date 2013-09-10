@@ -82,8 +82,7 @@ class Billing::BillingController < ApplicationController
     end 
 
     def ensure_right_parameters
-      if ((params[:event_type].blank?) 
-          or (params[:content].blank?) or params[:content][:customer].blank?)
+      if ((params[:event_type].blank?) or (params[:content].blank?) or params[:content][:customer].blank?)
         return render :json => ArgumentError, :status => 500
       end
     end
