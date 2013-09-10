@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130826072656) do
+ActiveRecord::Schema.define(:version => 20130907062420) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -877,6 +877,7 @@ ActiveRecord::Schema.define(:version => 20130826072656) do
     t.datetime "updated_at"
   end
 
+  add_index "helpdesk_shared_attachments", ["account_id", "shared_attachable_id", "shared_attachable_type"], :name => "index_helpdesk_shared_attachments_on_attachable_id", :length => {"shared_attachable_id"=>nil, "shared_attachable_type"=>"15", "account_id"=>nil}
   create_table "helpdesk_subscriptions", :force => true do |t|
     t.integer  "user_id",    :limit => 8
     t.integer  "ticket_id",  :limit => 8

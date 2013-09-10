@@ -10,6 +10,8 @@ class Helpdesk::SharedAttachment < ActiveRecord::Base
 
   before_save :set_account_id
 
+  belongs_to_account
+
   def set_account_id
     self.account_id = shared_attachable.account_id if shared_attachable
   end
