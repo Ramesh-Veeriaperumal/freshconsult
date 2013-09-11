@@ -28,15 +28,8 @@
 		              	  [
 										      [customers_admin_subscriptions_path(), :customers, "Customers" ],
 										      [admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
-										      [admin_subscription_payments_path, :payments, "Payments" ],
 										      [admin_subscription_announcements_path, :announcements, "Announcements" ],
-										      [admin_subscription_plans_path, :plans, "Plans" ],      
-											  [admin_conversion_metrics_path, :metrics, "Metrics" ],
-											  # [admin_analytics_path, :analytics, "Analytics" ]
-											  [admin_subscription_events_path, :events, "Events"],
-											  [admin_account_tools_path, :tools, "Tools"]
-
-
+											  [admin_subscription_events_path, :events, "Events"]
 										    ].map do |s| 
 										      content_tag(:li, link_to(s[2], s[0]).html_safe, :class => ((@selected_tab == s[1]) ? "active" : ""))
 										    end.to_s.html_safe

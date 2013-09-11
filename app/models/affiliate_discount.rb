@@ -1,5 +1,5 @@
 class AffiliateDiscount < ActiveRecord::Base
-
+    not_sharded
 	has_and_belongs_to_many :affiliates, 
 		:class_name => 'SubscriptionAffiliate', 
 		:join_table => 'affiliate_discount_mappings'

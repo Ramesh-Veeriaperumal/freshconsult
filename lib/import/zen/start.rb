@@ -57,6 +57,10 @@ def read_data(obj_node)
           if obj_node.eql?("ticket")
               Resque.enqueue( Import::Zen::ZendeskTicketImport , { :ticket_xml => reader.outer_xml, 
                                                                    :account_id => @current_account.id})
+          elsif obj_node.eql?("user")
+              Resque.enqueue( Import::Zen::ZendeskUserImport , { :user_xml => reader.outer_xml, 
+                                                                   :account_id => @current_account.id})
+            
           else
             send("save_#{obj_node}" , reader.outer_xml)
           end

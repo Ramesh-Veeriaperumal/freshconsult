@@ -3,6 +3,8 @@ class Workers::MergeTickets
   @queue = 'merge_ticket_worker'
 
   def self.perform(args)
+    user = User.find_by_account_id_and_id(args[:account_id], args[:current_user_id])
+    user.make_current
     source_tickets = Helpdesk::Ticket.find(:all, :conditions => { :display_id => args[:source_ticket_ids], 
                                                                   :account_id => args[:account_id] })
     source_tickets.each do |source_ticket|
@@ -10,12 +12,6 @@ class Workers::MergeTickets
                                                                                 args[:account_id] ] )
       add_note_to_source_ticket(source_ticket, args[:source_note_private], args[:source_note])
     end
-  end
-
-  def self.before_perform_set_current_user(*args)
-    params_hash = args[0].symbolize_keys!
-    user = User.find_by_account_id_and_id(params_hash[:account_id], params_hash[:current_user_id])
-    user.make_current
   end
 
   def self.add_note_to_source_ticket(source_ticket, source_note_private, source_info_note)
