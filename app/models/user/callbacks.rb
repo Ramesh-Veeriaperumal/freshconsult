@@ -76,7 +76,7 @@ class User < ActiveRecord::Base
 
   def update_user_email
     # for user email delta
-    create_user_email({:email => email, :primary_role => true, :verified => active})
+    create_user_email({:email => email, :primary_role => true, :verified => active}) unless user_email
   end
 
   def change_user_email
