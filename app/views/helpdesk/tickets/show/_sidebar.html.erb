@@ -17,7 +17,7 @@
 	<% unless @ticket.deleted or @ticket.spam %> 
 		<div class="widget" id='TicketProperties'>
 			<h3 class="title"><%=t('ticket.properties')%></h3>
-			<div class="content" rel="remote" data-remote-url="/helpdesk/tickets/component/<%= @ticket.id %>?component=ticket_fields"></div>
+			<div class="content" data-remote-url="/helpdesk/tickets/component/<%= @ticket.id %>?component=ticket_fields"></div>
 		</div>
 
 		<% if feature?(:timesheets) && privilege?(:view_time_entries) %>
