@@ -361,6 +361,9 @@
     helpdesk.filter_view_custom    '/tickets/view/:filter_key', :controller => 'tickets', :action => 'index'
     helpdesk.requester_filter      '/tickets/filter/requester/:requester_id', :controller => 'tickets', :action => 'index'
 
+    helpdesk.filter_recent_tickets '/tickets/filter/recent_tickets', :controller => 'tickets', :action => 'recent_tickets'
+    helpdesk.filter_old_tickets    '/tickets/filter/old_tickets', :controller => 'tickets', :action => 'old_tickets'
+
     #helpdesk.filter_issues '/issues/filter/*filters', :controller => 'issues', :action => 'index'
 
     helpdesk.formatted_dashboard '/dashboard.:format', :controller => 'dashboard', :action => 'index'
@@ -516,6 +519,7 @@
 
   map.namespace :mobile do |mobile|
     mobile.resources :tickets, :collection =>{:view_list => :get, :get_portal => :get, :get_suggested_solutions => :get, :ticket_properties => :get}
+    mobile.resources :search,  :collection =>{:search_result => :get}
   end
   
   map.root :controller => "home"

@@ -16,6 +16,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Redis::ReportsRedis
   include Redis::OthersRedis
   include Reports::TicketStats
+  include Helpdesk::TicketsHelperMethods
+  include ActionView::Helpers::TranslationHelper
   include Helpdesk::TicketActivities, Helpdesk::TicketElasticSearchMethods, Helpdesk::TicketCustomFields,
     Helpdesk::TicketNotifications
 
@@ -161,7 +163,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
   end
-  
+ 
   def agent_permission_condition user
      permissions = {:all_tickets => "" , 
                    :group_tickets => " AND (group_id in (

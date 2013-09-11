@@ -18,7 +18,7 @@ class Helpdesk::NotesController < ApplicationController
   before_filter :fetch_item_attachments, :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
   before_filter :set_mobile, :prepare_mobile_note, :only => [:create]
   before_filter :set_show_version
-
+  before_filter :set_native_mobile, :only=>[:index , :destroy , :restore]
   def index
 
     if params[:since_id].present?
@@ -44,8 +44,18 @@ class Helpdesk::NotesController < ApplicationController
         format.xml do
          render :xml => @notes.to_xml(options) 
         end
-        format.json do
-          render :json => @notes.to_json(options)
+		format.json do
+			render :json => @notes.to_json(options)
+		end
+    format.nmobile do
+        response = "["
+        sep = ""
+        @notes.each do |note|
+          response << sep + "#{note.to_mob_json}"
+          sep = ","
+        end
+        response << "]"
+        render :json => response
         end
       end
     end    

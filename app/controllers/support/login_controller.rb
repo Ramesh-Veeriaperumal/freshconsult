@@ -2,7 +2,7 @@ class Support::LoginController < SupportController
 
 	include Redis::RedisKeys
 	include Redis::TicketsRedis
-
+	
 	skip_before_filter :check_account_state
 	
 	def new

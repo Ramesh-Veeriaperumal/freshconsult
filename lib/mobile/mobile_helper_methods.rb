@@ -1,5 +1,7 @@
 # encoding: utf-8
 module Mobile::MobileHelperMethods
+  
+  include Helpdesk::TicketsHelper
 
   MOBILE_URL = "/mobile/"
 
@@ -14,7 +16,7 @@ module Mobile::MobileHelperMethods
   DOMAINS =  [ :localhost, :"192.168.1.28", :"siva.freshbugs.com", :"freshvikram.freshbugs.com", :"m.freshbugs.com" ]
   
   def self.included(base)
-    base.send :helper_method, :set_mobile, :mobile?, :allowed_domain?, :mobile_agent?
+    base.send :helper_method, :set_mobile, :mobile?, :allowed_domain?, :mobile_agent?, :set_native_mobile
   end
 
   private
@@ -38,11 +40,20 @@ module Mobile::MobileHelperMethods
       mobile_agent? && allowed_domain? &&  !classic_view? 
     end
 
+    def is_native_mobile?
+		!request.env["HTTP_USER_AGENT"][/Native/].nil?
+	end
+
     def set_mobile      
       Rails.logger.debug "mobile ::: #{mobile?} :: #{request.headers['HTTP_ACCEPT']}"
       if mobile?
         params[:format] = "mobile" if request.headers['HTTP_ACCEPT'] && request.headers['HTTP_ACCEPT'].eql?("application/json")
       end
+    end
+
+    def set_native_mobile
+      Rails.logger.debug "nmobile ::: #{is_native_mobile?} :: #{request.headers['HTTP_ACCEPT']}"
+	    params[:format] = "nmobile" if !request.env["HTTP_USER_AGENT"][/Native/].nil?
     end
 
     def require_user_login
@@ -59,8 +70,8 @@ module Mobile::MobileHelperMethods
     end
 
     def redirect_to_mobile_url
-      if (!current_user.nil? && current_user.respond_to?('agent?')&& 
-        current_user.agent? && mobile? and !"mobile".eql?(params[:format]) and 
+      if (!current_user.nil? && current_user.respond_to?('agent?')&& !is_native_mobile? && 
+        current_user.agent? && mobile? and !"mobile".eql?(params[:format]) and
         mobile_view?)
          redirect_to mobile_url
       end
