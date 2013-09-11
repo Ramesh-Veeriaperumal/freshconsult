@@ -15,6 +15,7 @@ unless Account.current
     )
     signup.save
     signup.account.make_current
+    $redis_others.sadd('user_email_migrated', signup.account.id)
   else
     Account.first.make_current
   end
