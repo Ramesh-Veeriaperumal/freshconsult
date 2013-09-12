@@ -1542,6 +1542,9 @@ ActiveRecord::Schema.define(:version => 20130907062420) do
   end
 
   add_index "support_scores", ["id"], :name => "support_scores_id"
+  add_index "support_scores", ["account_id", "user_id","created_at"], :name => "index_support_scores_on_account_id_and_user_id_and_created_at"
+  add_index "support_scores", ["account_id", "scorable_id","scorable_type"], :name => "index_support_scores_on_account_id_scorable_id_scorable_type", :length => {"scorable_type"=>"10", "account_id"=>nil, "scorable_id" => nil}
+  add_index "support_scores", ["account_id", "group_id","created_at"], :name => "index_support_scores_on_account_id_and_group_id_and_created_at"
 
   create_table "survey_handles", :id => false, :force => true do |t|
     t.integer  "id",               :limit => 8,                    :null => false
@@ -1905,12 +1908,18 @@ ActiveRecord::Schema.define(:version => 20130907062420) do
     t.text     "text_uc01"
     t.boolean  "helpdesk_agent",                   :default => false
     t.string   "privileges",                       :default => "0"
+    t.string   "string_uc02"
+    t.string   "string_uc03"
+    t.string   "string_uc04"
+    t.string   "string_uc05"
+    t.string   "string_uc06"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
   add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"external_id"=>"20", "account_id"=>nil}
   add_index "users", ["account_id", "import_id"], :name => "index_users_on_account_id_and_import_id", :unique => true
   add_index "users", ["customer_id", "account_id"], :name => "index_users_on_customer_id_and_account_id"
+  add_index "users", ["email"], :name => "index_users_on_email"
   add_index "users", ["id"], :name => "users_id"
   add_index "users", ["perishable_token", "account_id"], :name => "index_users_on_perishable_token_and_account_id"
   add_index "users", ["persistence_token", "account_id"], :name => "index_users_on_persistence_token_and_account_id"
