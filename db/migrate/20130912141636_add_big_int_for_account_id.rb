@@ -13,6 +13,7 @@ class AddBigIntForAccountId < ActiveRecord::Migration
 	execute("alter table subscription_events MODIFY subscription_plan_id bigint(20) unsigned, MODIFY subscription_affiliate_id bigint(20) unsigned")
 	execute("alter table wf_filters MODIFY user_id bigint(20) unsigned, MODIFY account_id bigint(20) unsigned")
 	execute("alter table widgets MODIFY application_id bigint(20) unsigned")
+	execute("alter table applications MODIFY account_id bigint(20) unsigned")
   end
 
   def self.down

@@ -166,7 +166,7 @@ ActiveRecord::Schema.define(:version => 20130912141636) do
     t.string  "description"
     t.integer "listing_order"
     t.text    "options"
-    t.integer "account_id",       :default => 0
+    t.integer "account_id", :limit => 8, :default => 0
     t.string  "application_type", :default => "freshplug", :null => false
   end
 
