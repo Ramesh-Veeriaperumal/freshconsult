@@ -20,7 +20,7 @@
     counter+=1
     %>
     <script type="text/javascript">
-    var <%=key%> = <%=data.to_json%>;
+    var <%=key%> = <%=data.to_json.html_safe%>;
     jQuery(document).ready(function() {
       var <%=key%>_barChart = new bar_chart(
           {renderTo: '<%=key%>_bar_chart',chartData:<%=data[:chartData].to_json.html_safe%>,
