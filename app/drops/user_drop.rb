@@ -19,6 +19,10 @@ class UserDrop < BaseDrop
 		@source.id
 	end
 
+	def address
+		@source.address.gsub(/\n/, '<br/>')
+	end
+
 	def company_name		
 		@company_name ||= @source.customer.name if @source.customer
 	end
