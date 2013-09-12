@@ -65,10 +65,12 @@
 			jQuery(document).ready(function () {
 				var responsiveWidget = jQuery("#responsive").val();
 				if(responsiveWidget != "no") {
-					jQuery('.mobile-search-icon').click(function(ev) {
+					jQuery("#helpdesk_ticket_subject").after("<a href='#' id='subject-mobile-counter'></a>")
+					jQuery('.mobile-search-icon,#subject-mobile-counter').click(function(ev) {
 						ev.preventDefault()
 						jQuery('.modal-body').toggleClass('modal-body-hide');
 						jQuery('.modal-panel').toggleClass('modal-panel-show');
+						jQuery('.mobile-search-icon').toggleClass('mobile-search-icon-selected');
 						jQuery('#helpdesk_ticket_submit').toggle();
 					});
 				}
@@ -113,16 +115,21 @@
 			var searchInputFrom = jQuery("#searchInputFrom").val();
 
 			jQuery("#mobile-counter").removeClass("mobile-counter")
-			jQuery("#mobile-counter").text("")  
+			jQuery("#mobile-counter").text("") 
+			jQuery("#subject-mobile-counter").removeClass("subject-mobile-counter")
+			jQuery("#subject-mobile-counter").text("")  
 
 		    if(data.item.length > 0){	
 		    	if(data.count < 100){
 			    	jQuery("#mobile-counter").text(data.count)  
+			    	jQuery("#subject-mobile-counter").text(data.count + " matching articles found") 
 		    	}
 		    	else{
 		    		jQuery("#mobile-counter").text("99+")  
+		    		jQuery("#subject-mobile-counter").text("99+ matching articles found") 
 		    	} 
 		    	jQuery("#mobile-counter").addClass("mobile-counter")
+		    	jQuery("#subject-mobile-counter").addClass("subject-mobile-counter")
 				jQuery("#ws-results")
 					.html(jQuery.tmpl(jQuery("#ws-tmpl").template(), data.item))
 					.append("<li><a href='/support/search/solutions?term="+term+"' target='_blank'>Show all results</a></li>")
@@ -211,6 +218,8 @@
 
 				jQuery("#mobile-counter").removeClass("mobile-counter")
 				jQuery("#mobile-counter").text("")  
+				jQuery("#subject-mobile-counter").removeClass("subject-mobile-counter")
+				jQuery("#subject-mobile-counter").text("") 
 			}
 	  	}
 	</script>

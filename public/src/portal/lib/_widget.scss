@@ -11,10 +11,12 @@ body, .feedback-wrapper{
 	margin-right: 20px; 
 	&.embedded-wrapper{
 		margin:0;
-		overflow-y: scroll;
 	}
 }
 /* Widget styles with/without Search Form */
+.subject-mobile-counter{
+	display: none;
+}
 .modal-widget{
 	overflow: hidden;
 	width: 100%;
@@ -70,21 +72,6 @@ body, .feedback-wrapper{
 		}
 	}
 	/* Widget Styles without Search Form */
-	&.modal-panel-active{
-		.modal-header{
-			width:58%;
-		}
-		 .modal-body, .modal-footer{
-			width: 60%;
-			z-index: 10;
-		}
-		.modal-body{ @include border-right-radius(0); }
-		.modal-panel{ width: 40%; display: block; }	
-		&.modal-scroll .modal-header{
-			width:60%;
-			border-right: 1px solid #e8e8e8;
-		}
-	}
 	&.modal-scroll .modal-header{  
 		position: absolute;
 		z-index:11; /* for box shadow */
@@ -99,6 +86,21 @@ body, .feedback-wrapper{
 			height: 5px;
 			@include background-image(linear-gradient(to bottom, rgba(0,0,0,0.1) 0,rgba(0,0,0,0) 100%));
 		}		
+	}
+}
+.modal-panel-active{
+	.modal-header{
+		width:58%;
+	}
+	 .modal-body, .modal-footer{
+		width: 60%;
+		z-index: 10;
+	}
+	.modal-body{ @include border-right-radius(0); }
+	.modal-panel{ width: 40%; display: block; }	
+	&.modal-scroll .modal-header{
+		width:60%;
+		border-right: 1px solid #e8e8e8;
 	}
 }
 .mobile-search-icon{

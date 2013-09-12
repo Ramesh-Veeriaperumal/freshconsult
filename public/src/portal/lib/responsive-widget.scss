@@ -26,8 +26,25 @@ $animation-type: ease-in;
 		text-align: center;
 		padding: 15px;
 		text-decoration: none;
+		@include transition(all 1s);
 		&:hover{
 			text-decoration:none;
+		}
+		&.mobile-search-icon-selected{
+			background:#ccc;
+			@include box-shadow(inset 0px 0px 20px #888);
+		}
+	}
+	.subject-mobile-counter{
+		display: block;
+		border: 1px solid #CCC;
+		margin-bottom: 10px;
+		padding: 5px 10px;
+		@include border-radius($inputBorderRadius);
+		background: #FAFAFA;
+		text-decoration: none;
+		&:hover {
+		  text-decoration: none;
 		}
 	}
 	.mobile-counter{
@@ -71,6 +88,14 @@ $animation-type: ease-in;
 						@include transform(translate3d(-98%, 0, 0));
 						@include box-shadow(0px 2px 7px rgb(221, 221, 221));
 						overflow: hidden;
+					}
+					.form-portal {
+						.control-label{
+							width:100%;
+						}
+						.controls{
+							margin-left: 0;
+						}
 					}
 				}
 				.modal-header,.modal-footer{
@@ -120,6 +145,12 @@ $animation-type: ease-in;
 
 					@include transition(transform $animation-speed $animation-type);
 					@include transform(translate3d(100%, 0, 0));
+					#ws-results-title{
+						display: none;
+					}
+					.panel-content{
+						margin-top:10px;
+					}
 				}
 				.modal-panel-show{
 					@include transition(transform $animation-speed $animation-type);

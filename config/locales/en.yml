@@ -658,6 +658,7 @@ en:
         feedbackwidget_screenshot: Take Screenshot
         feedbackwidget_search_area: Search Articles
         feedbackwidget_use_https: Use https
+        feedbackwidget_mobile_view: Mobile View
     supervisor_rules:
       index:
         human_name: Supervisor Rule
