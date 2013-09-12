@@ -1,10 +1,14 @@
 class SubscriptionAffiliate < ActiveRecord::Base
-
+  not_sharded
+  
   has_many :subscriptions
   has_many :subscription_payments
-  has_and_belongs_to_many :discounts,
+
+  has_many :affiliate_discount_mappings
+  has_many :discounts, 
     :class_name => 'AffiliateDiscount',
-    :join_table => 'affiliate_discount_mappings'
+    :through => :affiliate_discount_mappings,
+    :source => :affiliate_discount
 
   validates_presence_of :token
   validates_uniqueness_of :token
@@ -86,12 +90,12 @@ class SubscriptionAffiliate < ActiveRecord::Base
         account.subscription.save!
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
-        # FreshdeskErrorsMailer.deliver_error_email(nil, nil, e,
-        #   { :subject => "Error attaching affiliate to the subscription" })
+        FreshdeskErrorsMailer.deliver_error_email(nil, nil, e,
+          { :subject => "Error attaching affiliate to the subscription" })
       end
     end
     
-    # private
+    private
       def has_affiliate_param?(metrics)
         (affiliate_param(metrics.referrer).present? || 
             affiliate_param(metrics.first_referrer).present?)
