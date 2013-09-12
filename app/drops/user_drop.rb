@@ -20,7 +20,7 @@ class UserDrop < BaseDrop
 	end
 
 	def address
-		@source.address.gsub(/\n/, '<br/>')
+		@source.address.nil? ? '' : @source.address.gsub(/\n/, '<br/>')
 	end
 
 	def company_name		
