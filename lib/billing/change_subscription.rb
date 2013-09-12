@@ -15,7 +15,7 @@ class Billing::ChangeSubscription
 	  	plan = SubscriptionPlan.find_by_name(Billing::Subscription.helpkit_plan[plan_code])	  	
 	  	return if subscription.subscription_plan_id == plan.id
 	  	
-	  	old_subscription = subscription
+	  	old_subscription = subscription.clone
 	  	subscription.update_attributes(plan_info(plan))
 	  	SAAS::SubscriptionActions.new.change_plan(subscription.account, old_subscription)      
 	  end
