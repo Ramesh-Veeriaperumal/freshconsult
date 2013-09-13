@@ -9,6 +9,7 @@ module Helpdesk::TicketsHelper
   include Helpdesk::NoteActions
   include Integrations::AppsUtil
   include Helpdesk::TicketsHelperMethods
+  include MetaHelperMethods
 
   def view_menu_links( view, cls = "", selected = false )
     unless(view[:id] == -1)

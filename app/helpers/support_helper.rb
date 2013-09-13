@@ -462,6 +462,26 @@ HTML
 		content_tag :div, _text.join(" ").html_safe, :class => "alert alert-ticket-status"
 	end
 
+	def widget_prefilled_value field
+		return if params[:helpdesk_ticket].blank?
+
+		if field.is_default_field?
+			return URI.unescape(params[:helpdesk_ticket][field.name] || "")
+
+		elsif params[:helpdesk_ticket][:custom_field].present?
+			return nested_field_prefilled_value(field) if field.field_type == 'nested_field'
+			return URI.unescape(params[:helpdesk_ticket][:custom_field][field.name] || "")
+		end
+	end
+
+	def nested_field_prefilled_value field
+		form_value = {}
+		field.nested_levels.each do |ff|
+			form_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = URI.unescape(params[:helpdesk_ticket][:custom_field][ff[:name]] || "")
+		end
+		form_value.merge!({:category_val => URI.unescape(params[:helpdesk_ticket][:custom_field][field.name] || "") })
+	end
+
 	def ticket_field_container form_builder,object_name, field, field_value = ""
 		case field.dom_type
 			when "checkbox" then
@@ -497,7 +517,7 @@ HTML
 	      when "requester" then
 	      	render(:partial => "/support/shared/requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts })
 	      when "widget_requester" then
-	      	render(:partial => "/support/shared/widget_requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts })
+	      	render(:partial => "/support/shared/widget_requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts, :value => field_value })
 	      when "text", "number" then
 			text_field(object_name, field_name, { :class => element_class + " span12", :value => field_value }.merge(html_opts))
 	      when "paragraph" then
@@ -546,7 +566,7 @@ HTML
 		  _category += content_tag :div, content_tag(:label, (l[(!in_portal)? :label : :label_in_portal]).html_safe) + select(_name, l[:name], [], _opt, _htmlopts), :class => "level_#{l[:level]}"
 		end
 
-		_category + javascript_tag("jQuery(document).ready(function(){jQuery('##{(_name +"_"+ _fieldname).gsub('[','_').gsub(']','')}').nested_select_tag(#{_javascript_opts.to_json});})")
+		_category + javascript_tag("jQuery('##{(_name +"_"+ _fieldname).gsub('[','_').gsub(']','')}').nested_select_tag(#{_javascript_opts.to_json});")
 	end
 
 	# NON-FILTER HELPERS

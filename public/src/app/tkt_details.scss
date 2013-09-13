@@ -2904,3 +2904,20 @@ $collision_delay: 1s;
 		font-weight: bold;
 	}
 }
+
+.meta-info {
+	div {clear: both;}
+	
+	span {
+		display: inline-block;
+		position: absolute;
+		height: 24px;
+		width: 24px;
+		@include hide-text();
+	}
+
+	label {
+		display: block;
+		padding: 5px 0 10px 30px;
+	}
+}

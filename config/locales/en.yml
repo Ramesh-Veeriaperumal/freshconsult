@@ -3809,6 +3809,8 @@ en:
         feedback_widgets_search_our: "Search our "
         feedback_widgets_knowledge_base: "Knowledge base "
         feedback_widgets_help_articles: "or Browse help articles"
+        show_all_results: "Show all results"
+        no_results_for: "No results for %{term}"
   reorder: "Reorder"
   reports:
       no_data: No data to display!

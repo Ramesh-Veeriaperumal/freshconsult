@@ -19,7 +19,7 @@
 	  			<% field = @ticket_fields.delete_at(old_pos) %>
 	  			<% field['dom_type'] = field.dom_type == "requester" ? "widget_requester" : field.dom_type %>
 	  			<div class="control-group <%= field.field_type %>">
-	  				<%= ticket_field_container f, :helpdesk_ticket, field %>
+	  				<%= ticket_field_container f, :helpdesk_ticket, field, widget_prefilled_value(field) %>
 	  			</div>
 			<% end %>
 	  	<% end %>
@@ -27,11 +27,11 @@
   	<div class="form-portal">
 		<% @ticket_fields.each do |field| %>
 			<div class="control-group <%= field.field_type %>">
-    			<%= ticket_field_container f, :helpdesk_ticket, field %>
+    			<%= ticket_field_container f, :helpdesk_ticket, field, widget_prefilled_value(field) %>
     		</div>
 		<% end %>
 	</div>
-	<% if widget_type="popup" %>
+	<% if widget_type == "popup" %>
 		<div class="extra-space"></div>
 	<% end %>
 </div>
@@ -45,6 +45,7 @@
 	<%= f.submit t('ticket.submit_ticket'), :class => "btn btn-primary" %>
 	<%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
 	<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
+	<%= hidden_field_tag "meta[referrer]", request.referrer %>
 </div>
 <% end %>
 <% if widget_option(:searchArea) && feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
@@ -88,7 +89,7 @@
 		    if(data.length > 0){	    	
 				jQuery("#ws-results")
 					.html(jQuery.tmpl(jQuery("#ws-tmpl").template(), data))
-					.append("<li><a href='/support/search/solutions?term="+term+"' target='_blank'>Show all results</a></li>")
+					.append("<li><a href='/support/search/solutions?term="+term+"' target='_blank'><%= t('.show_all_results') %></a></li>")
 				jQuery("#panel-content").show()
 				
 		    }else if(searchInputFrom == "Subject") {
