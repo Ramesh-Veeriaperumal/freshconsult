@@ -1,6 +1,5 @@
 class SubscriptionAdmin::SubscriptionEventsController < ApplicationController
 
-  include ModelControllerMethods
   include AdminControllerMethods
   include Subscription::Events::ControllerMethods
   include Subscription::Events::Constants

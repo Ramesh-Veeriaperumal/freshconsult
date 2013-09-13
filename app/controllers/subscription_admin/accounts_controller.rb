@@ -1,11 +1,8 @@
 class SubscriptionAdmin::AccountsController < ApplicationController
-  include ModelControllerMethods
+ 
   include AdminControllerMethods
-  include ReadsToSlave
   
-  skip_before_filter :check_account_state
-  around_filter :select_shard, :only => [:show,:add_day_passes]
-  skip_filter :run_on_slave, :only => [:add_day_passes]
+  around_filter :select_account_shard, :only => [:show]
 
 
   def show
@@ -13,6 +10,7 @@ class SubscriptionAdmin::AccountsController < ApplicationController
   end
   
   def add_day_passes
+   Sharding.select_shard_of(params[:id]) do 
     @account = Account.find(params[:id])
     if request.post? and !params[:passes_count].blank?
       day_pass_config = @account.day_pass_config
@@ -22,9 +20,10 @@ class SubscriptionAdmin::AccountsController < ApplicationController
       Rails.logger.info "ADDED #{passes_count} DAY PASSES FOR ACCOUNT ##{@subscription.account_id}-#{@subscription.account}"
     end
     render :action => 'show'
+   end
   end
 
-  def select_shard
+  def select_account_shard
     Sharding.select_shard_of(params[:id]) do 
       Sharding.run_on_slave do
         yield 
