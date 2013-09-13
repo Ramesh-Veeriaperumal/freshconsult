@@ -1853,6 +1853,23 @@ ActiveRecord::Schema.define(:version => 20130907062420) do
   add_index "topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"
   add_index "topics", ["forum_id"], :name => "index_topics_on_forum_id"
 
+  create_table "user_emails", :id => false, :force => true do |t|
+    t.integer  "id",               :limit => 8,                    :null => false
+    t.integer  "user_id",          :limit => 8,                    :null => false
+    t.string   "email"
+    t.integer  "account_id",       :limit => 8,                    :null => false
+    t.string   "perishable_token"
+    t.boolean  "verified",                      :default => false
+    t.boolean  "primary_role",                  :default => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "user_emails", ["account_id", "email"], :name => "index_user_emails_on_account_id_and_email", :unique => true
+  add_index "user_emails", ["email"], :name => "user_emails_email"
+  add_index "user_emails", ["id"], :name => "user_emails_id"
+  add_index "user_emails", ["user_id", "account_id"], :name => "index_user_emails_on_user_id_and_account_id"
+
   create_table "user_roles", :id => false, :force => true do |t|
     t.integer "user_id",    :limit => 8
     t.integer "role_id",    :limit => 8
@@ -1907,11 +1924,17 @@ ActiveRecord::Schema.define(:version => 20130907062420) do
     t.text     "text_uc01"
     t.boolean  "helpdesk_agent",                   :default => false
     t.string   "privileges",                       :default => "0"
+    t.string   "string_uc02"
+    t.string   "string_uc03"
+    t.string   "string_uc04"
+    t.string   "string_uc05"
+    t.string   "string_uc06"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
   add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"external_id"=>"20", "account_id"=>nil}
   add_index "users", ["account_id", "import_id"], :name => "index_users_on_account_id_and_import_id", :unique => true
+  add_index "users", ["account_id", "name"], :name => "index_users_on_account_id_and_name"
   add_index "users", ["customer_id", "account_id"], :name => "index_users_on_customer_id_and_account_id"
   add_index "users", ["id"], :name => "users_id"
   add_index "users", ["perishable_token", "account_id"], :name => "index_users_on_perishable_token_and_account_id"

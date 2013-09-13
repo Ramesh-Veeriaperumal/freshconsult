@@ -6,7 +6,7 @@ class Signup < ActivePresenter::Base
   before_validation :build_primary_email, :build_portal, :build_roles, :build_admin,
     :build_subscription, :build_account_configuration, :set_time_zone
 
-  after_save :make_user_current, :populate_seed_data
+  after_save :make_user_current, :add_user_email_migrated, :populate_seed_data
 
   def locale=(language)
     @locale = (language.blank? ? I18n.default_locale : language).to_s
@@ -58,6 +58,8 @@ class Signup < ActivePresenter::Base
       user.helpdesk_agent = true
       user.build_agent()
       user.agent.account = account
+      user.build_user_email({:email => user.email, :primary_role => true, :verified => user.active})
+      user.user_email.account = account
     end
     
     def build_subscription
@@ -98,6 +100,11 @@ class Signup < ActivePresenter::Base
 
     def make_user_current
       User.current = user
+    end
+
+    def add_user_email_migrated
+      $redis_others.sadd('user_email_migrated', account.id)
+      true
     end
 
     def populate_seed_data
