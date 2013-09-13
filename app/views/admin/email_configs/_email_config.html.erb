@@ -29,6 +29,6 @@
   <td><div class="muted">Group: </div><%= content_tag :span, h(email_config.group ? email_config.group.name : "-"), :class => "ellipses" %> </td>
    <td class="text-right">
     <%= link_to t('email_configs.edit'), edit_admin_email_config_path(email_config) , :class => 'btn btn-mini'%>
-    <a href="#" class="btn btn-mini"><i class="icon-trash"></i></a>
+    <%= link_to "<i class='icon-trash'></i>".html_safe, admin_email_config_path(email_config), :confirm => "#{t('email_configs.delete_confirm')}", :method => :delete, :class => "btn btn-mini"%>
   </td>
 </tr>
