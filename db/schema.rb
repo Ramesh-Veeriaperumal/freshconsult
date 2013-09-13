@@ -1925,6 +1925,10 @@ ActiveRecord::Schema.define(:version => 20130907062420) do
     t.boolean  "helpdesk_agent",                   :default => false
     t.string   "privileges",                       :default => "0"
     t.string   "string_uc02"
+    t.string   "string_uc03"
+    t.string   "string_uc04"
+    t.string   "string_uc05"
+    t.string   "string_uc06"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
