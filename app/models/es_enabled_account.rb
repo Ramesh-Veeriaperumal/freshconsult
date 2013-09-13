@@ -10,7 +10,11 @@ class EsEnabledAccount < ActiveRecord::Base
   after_commit_on_destroy :clear_cache
 
   def self.all_es_indices
-    all.inject({}) { |result, es_ea| result[es_ea.account_id] = es_ea.imported; result }
+    enabled_accounts = []
+    enabled_accounts = Sharding.run_on_all_shards do
+      all.inject({}) { |result, es_ea| result[es_ea.account_id] = es_ea.imported; result }
+    end
+    enabled_accounts.reduce({},:merge)
   end
 
   private
