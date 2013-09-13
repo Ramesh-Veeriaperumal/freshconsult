@@ -44,7 +44,7 @@ class Admin::EmailConfigsController < Admin::AdminController
   def make_primary 
     @email_config = scoper.find(params[:id])
     if @email_config && @email_config.update_attributes(:primary_role => true)
-        flash[:notice] = t(:'flash.email_settings.make_primary.success', :reply_email => @email_config.reply_email)
+        flash[:notice] = t(:'flash.email_settings.make_primary.success', :reply_email => @email_config.reply_email).html_safe
     end
     redirect_back_or_default redirect_url
   end
