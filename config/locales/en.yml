@@ -2422,6 +2422,7 @@ en:
   errors_in_payment: "Errors encountered with your payment:"
   email_configs:
     delete_confirm: Are you sure you want to delete this config? 
+    delete_primary_email : Cannot delete a primary email.
     title: Email Settings
     email: E-mail 
     name: Name
