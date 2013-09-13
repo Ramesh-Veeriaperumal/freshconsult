@@ -5,7 +5,7 @@ class Reports::ReportFiltersController < ApplicationController
   before_filter { |c| c.requires_feature :advanced_reporting }
   before_filter :set_data_map, :only => [:create]
   before_filter :load_report_filter , :only => [:destroy]
-  skip_before_filter :run_on_slave , :only =>[:create,:destroy]
+  skip_filter :run_on_slave , :only =>[:create,:destroy]
 
   def create
     @report_filter = current_user.report_filters.build(
