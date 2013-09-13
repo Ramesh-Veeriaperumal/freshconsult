@@ -1098,7 +1098,6 @@ var scrollToError = function(){
 	$.getScript("/helpdesk/tickets/prevnext/" + TICKET_DETAILS_DATA['displayId']);
 
 	$('#twitter_handle').change();
-	setTimeout(function() { $('#TicketProperties .content').trigger('afterShow'); } , 250 );
 
 	// MOVE TO !PATTERN
 	$('body').on('change.pattern', '.selected_to_yellow [type=radio], .selected_to_yellow [type=checkbox]', function(ev) {
@@ -1155,6 +1154,14 @@ var scrollToError = function(){
 	}
 
 	setTimeout(findWhereToScroll, 200);
+
+	(function(){
+		var tkt_prop = $('#TicketProperties .content');
+		tkt_prop.append("<div class='sloading loading-small loading-block'></div>");
+        tkt_prop.load(tkt_prop.data('remoteUrl'), function(){
+            tkt_prop.data('remoteUrl', false);
+        });	
+	})()
 
 };
 
