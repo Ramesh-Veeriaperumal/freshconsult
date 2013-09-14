@@ -53,7 +53,7 @@ module Mobile::MobileHelperMethods
 
     def set_native_mobile
       Rails.logger.debug "nmobile ::: #{is_native_mobile?} :: #{request.headers['HTTP_ACCEPT']}"
-	    params[:format] = "nmobile" if !request.env["HTTP_USER_AGENT"][/Native/].nil?
+	    params[:format] = "nmobile" if is_native_mobile?
     end
 
     def require_user_login
