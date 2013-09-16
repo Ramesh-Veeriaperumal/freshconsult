@@ -30,7 +30,7 @@ module Delayed
         account =~ AR_STRING_FORMAT
         account_id = $2
        end
-       Sharding.select_latest_shard do
+       Sharding.select_shard_of(account_id) do
         load(account).send(:make_current) if account
         load(object).send(method, *args.map{|a| load(a)})
       end

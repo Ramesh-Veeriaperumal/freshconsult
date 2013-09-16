@@ -1,8 +1,11 @@
 class AffiliateDiscount < ActiveRecord::Base
+	not_sharded
 
-	has_and_belongs_to_many :affiliates, 
-		:class_name => 'SubscriptionAffiliate', 
-		:join_table => 'affiliate_discount_mappings'
+	has_many :affiliate_discount_mappings
+	has_many :affiliates,
+		:class_name => "SubscriptionAffiliate",
+		:through => :affiliate_discount_mappings,
+		:foreign_key => 'subscription_affiliate_id'
 
 	validates_uniqueness_of :code
 

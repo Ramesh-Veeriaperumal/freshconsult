@@ -413,6 +413,7 @@ module ApplicationHelper
       ['{{ticket.requester.email}}',    'Requester email',      "Requester's email.",         'ticket_requester_email'],
       ['{{ticket.requester.company_name}}', 'Requester company name',   "Requester's company name.",          'ticket_requester_company_name'], #??? should it be requester.company.name?!
       ['{{ticket.requester.phone}}', 'Requester phone number',   "Requester's phone number.",       'ticket_requester_phone'],
+      ['{{ticket.requester.address}}', 'Requester address',   "Requester's Address.",       'ticket_requester_address'],
       ['{{ticket.group.name}}',       'Group name',       'Ticket group.',          'ticket_group_name'],
       ['{{ticket.agent.name}}',       'Agent name',       'Name of the agent who is currently working on the ticket.',        'ticket_agent_name'],
       ['{{ticket.agent.email}}',      'Agent email',        "Agent's email.",         'ticket_agent_email'],

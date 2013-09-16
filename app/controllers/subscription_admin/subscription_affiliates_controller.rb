@@ -13,8 +13,9 @@ class SubscriptionAdmin::SubscriptionAffiliatesController < ApplicationControlle
     @subscription_affiliate = SubscriptionAffiliate.find(params[:id])
     
     if request.post? and !params[:domain].blank?
-      account = Account.find_by_full_domain(params[:domain])
-      if account and attach_affiliate(account)
+      domain = DomainMapping.find_by_domain(params[:domain])
+     
+      if domain and attach_affiliate(domain)
         flash[:notice] = 'Subscription added to affiliate.'
       else
         flash[:error] = 'There is no account with the specified domain.'
@@ -34,15 +35,18 @@ class SubscriptionAdmin::SubscriptionAffiliatesController < ApplicationControlle
       @percentage_coupons = AffiliateDiscount.percentage_coupons
     end
 
-    def attach_affiliate(account)
-      SubscriptionAffiliate.add_affiliate(account, @subscription_affiliate.token)
-      @subscription_affiliate.discounts.each do |discount|
-        begin
-          Billing::Subscription.new.add_discount(account, discount.code)
-        rescue
-          flash[:error] = 'There was an error applying discounts in ChargeBee.'          
+    def attach_affiliate(domain)
+      account_id = domain.account_id
+      Sharding.select_shard_of(account_id) do
+         account = Account.find(account_id)
+        SubscriptionAffiliate.add_affiliate(account, @subscription_affiliate.token)
+          @subscription_affiliate.discounts.each do |discount|
+          begin
+            Billing::Subscription.new.add_discount(account, discount.code)
+          rescue
+            flash[:error] = 'There was an error applying discounts in ChargeBee.'          
+          end
         end
       end
-
     end
 end

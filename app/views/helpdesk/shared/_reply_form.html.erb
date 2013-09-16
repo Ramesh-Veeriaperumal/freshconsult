@@ -166,6 +166,7 @@
     <% end %>
 </div>
 </div>
+<textarea id="default_reply_text" class="hide"><%= bind_last_conv(@ticket, @signature, false, true) %></textarea>
 <% content_for :pagefixed do %>
   <% javascript_tag do %>
 

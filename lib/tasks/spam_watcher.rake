@@ -1,7 +1,8 @@
 SPAM_TICKETS_THRESHOLD = 50 #Allowed number of tickets in 30 minutes window..
 SPAM_CONVERSATIONS_THRESHOLD = 50
 
-LIMITS = {:shard_1 => {:tickets_limit => 13832938, :notes_limit => 12301435} } 
+LIMITS = {:shard_1 => {:tickets_limit => 13832938, :notes_limit => 12301435},
+          :shard_2 => {:tickets_limit => 0, :notes_limit => 0} } 
 
 namespace :spam_watcher do
   desc 'Check for abnormal activities and email us, if needed'
@@ -12,8 +13,8 @@ namespace :spam_watcher do
      shard_sym = shard_name.to_sym
      puts "shard_name is #{shard_name}"
      Sharding.run_on_shard(shard_name.to_sym) {
-      check_for_spam('helpdesk_tickets', 'requester_id', LIMITS[shard_sym][:tickets_limit], SPAM_TICKETS_THRESHOLD)
-      check_for_spam('helpdesk_notes', 'user_id', LIMITS[shard_sym][:notes_limit], SPAM_CONVERSATIONS_THRESHOLD)
+      check_for_spam('helpdesk_tickets', 'requester_id', LIMITS[shard_sym][:tickets_limit], SPAM_TICKETS_THRESHOLD,shard_name)
+      check_for_spam('helpdesk_notes', 'user_id', LIMITS[shard_sym][:notes_limit], SPAM_CONVERSATIONS_THRESHOLD,shard_name)
      }
     end
     puts "Check for abnormal activities end at  #{Time.now}"
@@ -37,7 +38,7 @@ def execute_sql_on_slave(query_str)
  end
 end
 
-def check_for_spam(table,column_name, id_limit, threshold)
+def check_for_spam(table,column_name, id_limit, threshold,shard_name)
     current_time = Time.zone.now #Should it be Time.now?!?!
     query_str = <<-eos
       select #{column_name},count(*) as total, account_id from #{table} where created_at 
@@ -80,10 +81,12 @@ def check_for_spam(table,column_name, id_limit, threshold)
     # ActiveRecord::Base.connection.execute("update users set blocked = 1,blocked_at = '#{current_time.to_s(:db)}', deleted=0 where id IN (#{blocked_users*","}) ") unless blocked_users.blank?
     # ActiveRecord::Base.connection.execute("update users set deleted = 1,deleted_at = '#{current_time.to_s(:db)}' where id IN (#{deleted_users*","}) ") unless deleted_users.blank?
     deliver_spam_alert(table, query_str, {:actual_requesters => user_ids, 
-      :deleted_users => deleted_users, :blocked_users => blocked_users, :ignore_list => ignore_list}) unless user_ids.empty?
+      :deleted_users => deleted_users, :blocked_users => blocked_users, :ignore_list => ignore_list,:shard_name => shard_name}) unless user_ids.empty?
 
     account_ids.keys.each do |account_id|
-      account = Account.find(account_id)    
+      Account.reset_current_account
+      account = Account.find(account_id)  
+      account.make_current    
       puts "::::account->#{account}"
       $redis_others.sadd("SPAM_CLEARABLE_ACCOUNTS",account.id)
       puts "deleted_users 1::::::::->#{deleted_users}"
@@ -107,7 +110,8 @@ def deliver_spam_alert(table, query_str,additional_info)
         :actual_requesters  => additional_info[:actual_requesters].inspect,
         :deleted_users_in_this_run  => additional_info[:deleted_users].inspect,
         :blocked_users_in_this_run  => additional_info[:blocked_users].inspect,
-        :ignore_list => additional_info[:ignore_list].inspect
+        :ignore_list => additional_info[:ignore_list].inspect,
+        :shard_name  => additional_info[:shard_name]
       },
       :query => query_str
     }

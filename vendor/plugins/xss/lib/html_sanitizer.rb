@@ -12,7 +12,9 @@ module HtmlSanitizer
         :html_sanitize => (options[:html_sanitize] || []),
         :full_sanitizer => (options[:full_sanitizer] || [])
       }
-      sanitize_field_data if self.table_exists?
+      Sharding.run_on_slave do
+        sanitize_field_data if self.table_exists?
+      end
     end
 
     def sanitize_field_data

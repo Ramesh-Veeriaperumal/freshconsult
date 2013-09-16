@@ -1,59 +1,25 @@
 class SubscriptionAdmin::SubscriptionsController < ApplicationController
   
-  DUMMY_ACCOUNTS = 2
-  DUMMY_MONEY = 137.0
-  DUMMY_AGENTS = 5      
+  
   
   include ModelControllerMethods
   include AdminControllerMethods 
 
-  skip_filter :run_on_slave, :only => [:update,:add_day_passes]
   
   before_filter :set_selected_tab, :only => [ :customers ]
   
   def index
-    @stats = SubscriptionPayment.stats if params[:page].blank?
-    @day_pass_stats = SubscriptionPayment.day_pass_stats if params[:page].blank?
-    @customer_count = Subscription.customer_count - DUMMY_ACCOUNTS
-    @free_customers = Subscription.free_customers
-    @monthly_revenue = Subscription.monthly_revenue - DUMMY_MONEY
+    @customer_count = cumilative_count { Subscription.customer_count }
+    @free_customers = cumilative_count { Subscription.free_customers }
+    @monthly_revenue = cumilative_count { Subscription.monthly_revenue }
     @cmrr = @monthly_revenue/(@customer_count - @free_customers)
-    @customer_agent_count = Subscription.paid_agent_count - DUMMY_AGENTS
+    @customer_agent_count = cumilative_count { Subscription.paid_agent_count }
     @subscriptions = search(params[:search])
-    @subscriptions = @subscriptions.paginate( :page => params[:page], :per_page => 30)
   end
+
   
-  def extend_trial
-    @subscription = Subscription.find(params[:id])
-    if request.post? and !params[:trial_days].blank?
-      @subscription.update_attributes(:next_renewal_at => @subscription.next_renewal_at.advance(:days => params[:trial_days].to_i))
-    end
-    render :action => 'show'
-  end
   
-  def add_day_passes
-    @subscription = Subscription.find(params[:id])
-    if request.post? and !params[:passes_count].blank?
-      day_pass_config = @subscription.account.day_pass_config
-      passes_count = params[:passes_count].to_i
-      raise "Maximum 30 Day passes can be extended at a time." if passes_count > 30
-      day_pass_config.update_attributes(:available_passes => (day_pass_config.available_passes +  passes_count))
-      Rails.logger.info "ADDED #{passes_count} DAY PASSES FOR ACCOUNT ##{@subscription.account_id}-#{@subscription.account}"
-    end
-    render :action => 'show'
-  end
   
-  def charge
-    if request.post? && !params[:amount].blank?
-      load_object
-      if @subscription.misc_charge(params[:amount].to_f)
-        flash[:notice] = 'The card has been charged.'
-        redirect_to :action => "show"
-      else
-        render :action => 'show'
-      end
-    end
-  end
   
   def deleted_customers
     @deleted_customers = DeletedCustomers.all(:conditions =>  ['status not in (?)', [0]], 
@@ -62,14 +28,14 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   end
 
   def fetch_deleted_customers
-    @deleted_paid_customers = DeletedCustomers.count(:id,:distinct => true,
+    @deleted_paid_customers = merge_array_of_hashes(Sharding.run_on_all_slaves { DeletedCustomers.count(:id,:distinct => true,
                            :group => "DATE_FORMAT(deleted_customers.created_at, '%b, %Y')", 
                            :order => "deleted_customers.created_at desc", 
-                           :joins => " INNER JOIN subscription_payments ON deleted_customers.account_id = subscription_payments.account_id")
+                           :joins => " INNER JOIN subscription_payments ON deleted_customers.account_id = subscription_payments.account_id") })
    
-    @deleted_total_customers = DeletedCustomers.count(:id,:distinct => true,
+    @deleted_total_customers = merge_array_of_hashes(Sharding.run_on_all_slaves { DeletedCustomers.count(:id,:distinct => true,
                            :group => "DATE_FORMAT(created_at, '%b, %Y')", 
-                           :order => "created_at desc")
+                           :order => "created_at desc")})
 
   end
   
@@ -82,27 +48,31 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
   end
    
    def fetch_signups_per_day
-     @signups_per_day = Account.count(:group => "DATE_FORMAT(created_at, '%d %M, %Y')",:conditions => {:created_at => (30.days.ago..Time.now.end_of_day)}, :order => "created_at desc")
+     @signups_per_day = merge_array_of_hashes(Sharding.run_on_all_slaves { Account.count(:group => "DATE_FORMAT(created_at, '%d %M, %Y')",
+      :conditions => {:created_at => (30.days.ago..Time.now.end_of_day)}, :order => "created_at desc")})
    end
    
    def fetch_signups_per_month
-     @signups_by_month = Account.count(:group => "DATE_FORMAT(created_at, '%b, %Y')", :order => "created_at desc")
+     @signups_by_month = merge_array_of_hashes(Sharding.run_on_all_slaves {  Account.count(:group => "DATE_FORMAT(created_at, '%b, %Y')", 
+                                       :order => "created_at desc") })
    end
   
   def fetch_customers_per_month
     @customers_by_month = {}
+    Sharding.run_on_all_slaves do
     SubscriptionPayment.minimum(:created_at,:group => :account_id, :order => "created_at desc").each do |account_id,date|
       count = @customers_by_month.fetch(date.strftime("%b, %Y"),0)
       @customers_by_month.store(date.strftime("%b, %Y"),count+1)
+    end
     end
    @customers_by_month =  @customers_by_month.sort { |k,v| Time.parse(k[0]).to_i <=> Time.parse(v[0]).to_i }
  end
    
    def converted_customers_per_month
-    @conv_customers_by_month = Account.count(:id,:distinct => true,
-                                                 :joins => :subscription_payments,
-                                                 :group => "DATE_FORMAT(accounts.created_at,'%b %Y')")
-    
+    results = Sharding.run_on_all_slaves {  Account.count(:id,:distinct => true,:joins => :subscription_payments,
+                                                 :group => "DATE_FORMAT(accounts.created_at,'%b %Y')") }
+
+    @conv_customers_by_month = merge_array_of_hashes(results)
     @conv_customers_by_month =  @conv_customers_by_month.sort { |k,v| Time.parse(k[0]).to_i <=> Time.parse(v[0]).to_i }
   end
   
@@ -131,19 +101,24 @@ class SubscriptionAdmin::SubscriptionsController < ApplicationController
             :type => 'text/csv; charset=utf-8; header=present', 
             :disposition => "attachment; filename=customers.csv" 
   end
+
+  
   
   protected
 
 
   
    def search(search)
-    if search
-      Subscription.find(:all,:include => :account,
-       :joins => "INNER JOIN accounts on accounts.id = subscriptions.account_id ",
-       :conditions => ['full_domain LIKE ?', "%#{search}%"])
-    else
-      Subscription.find(:all,:include => :account, :order => 'created_at desc')
-    end
+    results = nil
+    results = Sharding.run_on_all_slaves do
+      unless search.blank?
+        Subscription.find(:all,:include => :account,
+          :joins => "INNER JOIN accounts on accounts.id = subscriptions.account_id ",
+          :conditions => ['full_domain LIKE ?', "%#{search}%"],
+          :limit => 30)
+      end
+     end
+    results
   end
     
     def redirect_url
