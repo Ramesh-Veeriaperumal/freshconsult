@@ -10,6 +10,7 @@ class Solution::Article < ActiveRecord::Base
   belongs_to :user, :class_name => 'User'
   belongs_to_account
   
+  xss_sanitize :only => [:description],  :html_sanitize => [:description]
   has_many_attachments
   
   has_many :activities,
