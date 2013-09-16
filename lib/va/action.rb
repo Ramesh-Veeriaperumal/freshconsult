@@ -147,6 +147,7 @@ class Va::Action
 
     def send_email_to_requester(act_on)
       if act_on.requester_has_email?
+        act_on.account.make_current
         Helpdesk::TicketNotifier.send_later(:deliver_email_to_requester, 
                 act_on, substitute_placeholders_for_requester(act_on, :email_body),
                         substitute_placeholders_for_requester(act_on, :email_subject)) 
@@ -216,6 +217,7 @@ class Va::Action
     end
 
     def send_internal_email act_on, receipients
+      act_on.account.make_current
       Helpdesk::TicketNotifier.send_later(:deliver_internal_email,
         act_on, receipients, substitute_placeholders(act_on, :email_body),
           substitute_placeholders(act_on, :email_subject))
