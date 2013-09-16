@@ -8,7 +8,7 @@ class SubscriptionAdmin::CustomSslController < ApplicationController
 
 	def index
 		@portals = Sharding.run_on_all_slaves { Portal.find(:all, :conditions => ["elb_dns_name is not null"]) }
-		@portals = @portals.paginate( :page => params[:page], :per_page => 30)
+		@portals = @portals.paginate( :page => params[:page], :per_page => 25)
 	end
 
 	def enable_custom_ssl
