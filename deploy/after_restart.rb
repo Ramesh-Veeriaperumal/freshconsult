@@ -10,7 +10,7 @@ def all_instances_of(engine)
 end
 
 #To restart delayed_job workers..
-on_utilities("freshdesk_utility") do
+on_utilities(all_instances_of("freshdesk_utility")) do
   run "sudo monit -g dj_helpkit restart all"
 end
 
