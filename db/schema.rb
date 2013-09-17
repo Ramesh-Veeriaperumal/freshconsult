@@ -1359,6 +1359,9 @@ ActiveRecord::Schema.define(:version => 20130912141636) do
     t.integer  "dm_thread_time",                         :default => 0
     t.integer  "state",                                  :default => 1
     t.text     "last_error"
+    t.text     "rule_value"
+    t.text     "rule_tag"
+    t.integer  "gnip_rule_state",                        :default => 0
   end
 
   add_index "social_twitter_handles", ["account_id", "twitter_user_id"], :name => "social_twitter_handle_product_id", :unique => true

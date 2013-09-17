@@ -1,0 +1,26 @@
+common: &common
+  user_name: abishek@freshdesk.com
+  password: opmanager2013
+
+development:
+  <<: *common
+  rules_url: https://api.gnip.com:443/accounts/Freshdesk/publishers/twitter/streams/track/dev/rules.json
+  replay_rules_url: https://api.gnip.com:443/accounts/Freshdesk/publishers/twitter/replay/track/prod/rules.json
+  stream_url: https://stream.gnip.com:443/accounts/Freshdesk/publishers/twitter/streams/track/dev.json
+  replay_stream_url: https://stream.gnip.com:443/accounts/Freshdesk/publishers/twitter/replay/track/prod.json
+
+
+staging:
+  <<: *common
+  rules_url: https://api.gnip.com:443/accounts/Freshdesk/publishers/twitter/streams/track/dev/rules.json
+  replay_rules_url: https://api.gnip.com:443/accounts/Freshdesk/publishers/twitter/replay/track/prod/rules.json
+  stream_url: https://stream.gnip.com:443/accounts/Freshdesk/publishers/twitter/streams/track/dev.json
+  replay_stream_url: https://stream.gnip.com:443/accounts/Freshdesk/publishers/twitter/replay/track/prod.json
+
+
+production:
+  <<: *common
+  rules_url: https://api.gnip.com:443/accounts/Freshdesk/publishers/twitter/streams/track/prod/rules.json
+  replay_rules_url: https://api.gnip.com:443/accounts/Freshdesk/publishers/twitter/replay/track/prod/rules.json
+  stream_url: https://stream.gnip.com:443/accounts/Freshdesk/publishers/twitter/streams/track/prod.json
+  replay_stream_url: https://stream.gnip.com:443/accounts/Freshdesk/publishers/twitter/replay/track/prod.json
