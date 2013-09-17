@@ -5,7 +5,7 @@
 	<%= include_cloudfront_js :survey  %>
 </head>
 <body>	
-	<div class="top-strip" style="background-color:<%=@account.main_portal.preferences[:header_color]%>">
+	<div class="top-strip">
 		<div class="wrapper">
 			<div class="brand">
 		    	<% link_to (portal_pref(@account.main_portal, :logo_link).empty?) ? "/home" : portal_pref(@account.main_portal, :logo_link), :class => "logo" do %>
@@ -61,4 +61,13 @@
 	</div>	
 	<script> $("#survey_form").validate(); </script>
 </body>
+<% cache ["v1","survey",@survey_handle.portal] do %>
+<% 
+	cssText = render(:partial=>"rating_text")
+	engine = Sass::Engine.new(cssText , :syntax => :scss, :cache => true, :style => :compressed)
+%>
+<style>
+	<%= engine.render %>
+</style>
+<% end %>
 </html>
