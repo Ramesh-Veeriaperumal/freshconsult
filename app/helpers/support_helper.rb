@@ -463,8 +463,10 @@ HTML
 	end
 
 	def widget_prefilled_value field
-		return if params[:helpdesk_ticket].blank?
+		format_prefilled_value(field, prefilled_value(field)) unless params[:helpdesk_ticket].blank?
+	end
 
+	def prefilled_value field
 		if field.is_default_field?
 			return URI.unescape(params[:helpdesk_ticket][field.name] || "")
 
@@ -472,6 +474,12 @@ HTML
 			return nested_field_prefilled_value(field) if field.field_type == 'nested_field'
 			return URI.unescape(params[:helpdesk_ticket][:custom_field][field.name] || "")
 		end
+	end
+
+	def format_prefilled_value field, value
+		return value.to_i if ['priority', 'status', 'group', 'agent'].include?(field.name)
+		return (value.to_i == 1 || value.to_s == 'true') if (field.dom_type || field['dom_type']) == 'checkbox'
+		value
 	end
 
 	def nested_field_prefilled_value field

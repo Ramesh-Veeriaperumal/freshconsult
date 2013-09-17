@@ -126,6 +126,7 @@ GEM
       sass (~> 3.1)
     compass-rails (1.0.3)
       compass (>= 0.12.2, < 0.14)
+    curb (0.8.4)
     daemons (1.0.10)
     debugger (1.5.0)
       columnize (>= 0.3.1)
@@ -144,6 +145,9 @@ GEM
     forgery (0.5.0)
     fssm (0.2.9)
     gem_plugin (0.2.3)
+    gnip-rule (0.4.0)
+      json (~> 1.7.7)
+      rest-client (~> 1.6.7)
     google-api-client (0.6.4)
       addressable (>= 2.3.2)
       autoparse (>= 0.3.3)
@@ -173,7 +177,7 @@ GEM
       yui-compressor (>= 0.9.3)
     jira4r (0.3.0)
       soap4r
-    json (1.5.5)
+    json (1.7.7)
     json_pure (1.7.7)
     jwt (0.1.6)
       multi_json (>= 1.0)
@@ -392,6 +396,7 @@ DEPENDENCIES
   clockwork (= 0.4.1)
   cloudfront_asset_host!
   compass-rails
+  curb (~> 0.8.4)
   deadlock_retry!
   debugger
   delayed_job (= 1.8.4)
@@ -399,6 +404,7 @@ DEPENDENCIES
   factory_girl (= 1.2.3)
   forgery (= 0.5.0)
   freshdesk_authority!
+  gnip-rule (~> 0.4.0)
   google-api-client (~> 0.6.3)
   http_accept_language (= 1.0.1)
   httparty (= 0.10.0)
@@ -406,7 +412,7 @@ DEPENDENCIES
   insensitive_hash (= 0.2.3)
   jammit (= 0.6.5)
   jira4r (= 0.3.0)
-  json (~> 1.5.5)
+  json (~> 1.7.7)
   koala (~> 1.0.0)
   lhm!
   lockfile (= 1.4.3)
