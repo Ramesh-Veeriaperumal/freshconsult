@@ -439,7 +439,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       cc_emails_val =  parse_cc_email
       cc_emails_val.delete(ticket.account.kbase_email)
       cc_emails_val.delete_if{|email| (email == ticket.requester.email)}
-      cc_email_hash_value[:cc_emails] = cc_emails_val | cc_email_hash_value[:cc_emails]
+      cc_email_hash_value[:cc_emails] = cc_emails_val | cc_email_hash_value[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}
       cc_email_hash_value
     end
 
