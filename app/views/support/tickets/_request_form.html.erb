@@ -31,6 +31,7 @@
 <% javascript_tag do %>
   (function($){
     jQuery(document).ready(function(){      
+      jQuery('#meta_referrer').val(document.referrer);
       <% if feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
         callbackToSolutionSearch = function(string){
           jQuery.ajax({ url: "/support/search/solutions?max_matches=4&term="+string, 
