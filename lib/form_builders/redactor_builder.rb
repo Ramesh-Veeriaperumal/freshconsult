@@ -11,7 +11,7 @@ module FormBuilders
         :tabindex => 2,
         :convertDivs => false,
         :imageUpload => "/forums_uploaded_images",
-        :allowedTags => ["a", "div", "b", "i", "iframe", "br", "p", "img", "strong", "em" , "u"],
+        :allowedTags => ["a", "div", "b", "i", "iframe", "br", "p", "img", "strong", "em" , "u", "span"],
         :buttons => ['bold','italic','underline', 'deleted','|','unorderedlist', 'orderedlist',  
                       '|','fontcolor', 'backcolor', '|' ,'link','image', 'video']
       }
@@ -45,7 +45,7 @@ module FormBuilders
 
       def rich_editor(method, options = {})
         options[:id] = options[:id] || field_id( method, options[:index] )  
-        rich_editor_tag(field_name(method), @object.send(method), options)
+        rich_editor_tag(field_name(method), @object.send(method), options).html_safe
       end
 
       def rich_editor_tag(name, content = nil, options = {})

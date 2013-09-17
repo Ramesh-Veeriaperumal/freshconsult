@@ -20,7 +20,8 @@ class Workers::Webhook
           Rails.logger.debug "Redirected : Won't be re-enqueued and pursued"
         else 
           if args[:retry_count] < RETRY_LIMIT
-            args = { :params => args[:params], :retry_count => args[:retry_count]+1 }
+            args = {  :params => args[:params], :auth_header => args[:auth_header], 
+                      :retry_count => args[:retry_count]+1 }
             throttler_args = {  :worker => Workers::Webhook.to_s, :args => args, :key => key, 
                                 :expire_after => THROTTLE_EVERY,   :limit => THROTTLE_LIMIT, 
                                 :retry_after => RETRY_DELAY }

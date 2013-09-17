@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130729064319) do
+ActiveRecord::Schema.define(:version => 20130912141636) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -104,7 +104,7 @@ ActiveRecord::Schema.define(:version => 20130729064319) do
 
   create_table "admin_user_accesses", :force => true do |t|
     t.string   "accessible_type"
-    t.integer  "accessible_id"
+    t.integer  "accessible_id",   :limit => 8
     t.integer  "user_id",         :limit => 8
     t.integer  "visibility",      :limit => 8
     t.integer  "group_id",        :limit => 8
@@ -115,6 +115,17 @@ ActiveRecord::Schema.define(:version => 20130729064319) do
 
   add_index "admin_user_accesses", ["account_id", "accessible_type", "accessible_id"], :name => "index_admin_user_accesses_on_account_id_and_acc_type_and_acc_id"
   add_index "admin_user_accesses", ["user_id"], :name => "index_admin_user_accesses_on_user_id"
+
+  create_table "affiliate_discount_mappings", :id => false, :force => true do |t|
+    t.integer "subscription_affiliate_id", :limit => 8
+    t.integer "affiliate_discount_id",     :limit => 8
+  end
+
+  create_table "affiliate_discounts", :force => true do |t|
+    t.string  "code"
+    t.string  "description"
+    t.integer "discount_type"
+  end
 
   create_table "agent_groups", :force => true do |t|
     t.integer  "user_id",    :limit => 8
@@ -155,15 +166,15 @@ ActiveRecord::Schema.define(:version => 20130729064319) do
     t.string  "description"
     t.integer "listing_order"
     t.text    "options"
-    t.integer "account_id",       :default => 0
+    t.integer "account_id", :limit => 8, :default => 0
     t.string  "application_type", :default => "freshplug", :null => false
   end
 
   create_table "authorizations", :force => true do |t|
     t.string   "provider"
     t.string   "uid"
-    t.integer  "user_id"
-    t.integer  "account_id"
+    t.integer  "user_id",    :limit => 8
+    t.integer  "account_id", :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -243,7 +254,7 @@ ActiveRecord::Schema.define(:version => 20130729064319) do
   add_index "customers", ["account_id", "name"], :name => "index_customers_on_account_id_and_name", :unique => true
 
   create_table "data_exports", :force => true do |t|
-    t.integer  "account_id"
+    t.integer  "account_id", :limit => 8
     t.boolean  "status"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -296,13 +307,13 @@ ActiveRecord::Schema.define(:version => 20130729064319) do
 
   create_table "deleted_customers", :force => true do |t|
     t.string   "full_domain"
-    t.integer  "account_id"
+    t.integer  "account_id",   :limit => 8
     t.string   "admin_name"
     t.string   "admin_email"
     t.text     "account_info"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "status",       :default => 0
+    t.integer  "status",                    :default => 0
   end
 
   create_table "domain_mappings", :force => true do |t|
@@ -369,7 +380,6 @@ ActiveRecord::Schema.define(:version => 20130729064319) do
   create_table "facebook_page_mappings", :primary_key => "facebook_page_id", :force => true do |t|
     t.integer "account_id", :limit => 8, :null => false
   end
-
 
   create_table "features", :force => true do |t|
     t.string   "type",                    :null => false
@@ -564,7 +574,7 @@ ActiveRecord::Schema.define(:version => 20130729064319) do
     t.datetime "updated_at"
     t.integer  "import_id",            :limit => 8
     t.integer  "ticket_assign_type",                :default => 0
-    t.integer  "business_calendar_id"
+    t.integer  "business_calendar_id", :limit => 8
   end
 
   add_index "groups", ["account_id", "name"], :name => "index_groups_on_account_id", :unique => true
@@ -618,7 +628,7 @@ ActiveRecord::Schema.define(:version => 20130729064319) do
     t.integer  "account_id",     :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "droppable_id"
+    t.integer  "droppable_id",   :limit => 8
     t.string   "droppable_type"
   end
 
@@ -857,6 +867,17 @@ ActiveRecord::Schema.define(:version => 20130729064319) do
   add_index "helpdesk_schema_less_tickets", ["string_tc02", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_ticket_id_and_string_02", :length => {"account_id"=>nil, "string_tc02"=>"10"}
   add_index "helpdesk_schema_less_tickets", ["ticket_id", "account_id"], :name => "index_helpdesk_schema_less_tickets_on_account_id_ticket_id", :unique => true
 
+  create_table "helpdesk_shared_attachments", :force => true do |t|
+    t.string   "shared_attachable_type"
+    t.integer  "shared_attachable_id",   :limit => 8
+    t.integer  "attachment_id",          :limit => 8
+    t.integer  "account_id",             :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "helpdesk_shared_attachments", ["account_id", "shared_attachable_id", "shared_attachable_type"], :name => "index_helpdesk_shared_attachments_on_attachable_id", :length => {"shared_attachable_id"=>nil, "shared_attachable_type"=>"15", "account_id"=>nil}
+
   create_table "helpdesk_subscriptions", :force => true do |t|
     t.integer  "user_id",    :limit => 8
     t.integer  "ticket_id",  :limit => 8
@@ -955,7 +976,7 @@ ActiveRecord::Schema.define(:version => 20130729064319) do
     t.datetime "sla_timer_stopped_at"
     t.integer  "outbound_count",                         :default => 0
     t.float    "avg_response_time"
-    t.integer  "first_response_time_by_bhrs"
+    t.integer  "first_resp_time_by_bhrs"
     t.integer  "resolution_time_by_bhrs"
     t.float    "avg_response_time_by_bhrs"
   end
@@ -1037,12 +1058,10 @@ ActiveRecord::Schema.define(:version => 20130729064319) do
   end
 
   add_index "helpdesk_time_sheets", ["account_id", "workable_type", "workable_id"], :name => "index_helpdesk_sheets_on_workable_account"
-  add_index "helpdesk_time_sheets", ["account_id"], :name => "index_time_sheets_on_account_id_and_ticket_id"
   add_index "helpdesk_time_sheets", ["user_id"], :name => "index_time_sheets_on_user_id"
-  add_index "helpdesk_time_sheets", ["workable_type", "workable_id"], :name => "index_helpdesk_sheets_on_workable"
 
   create_table "installed_applications", :force => true do |t|
-    t.integer  "application_id"
+    t.integer  "application_id", :limit => 8
     t.integer  "account_id",     :limit => 8
     t.text     "configs"
     t.datetime "created_at"
@@ -1289,11 +1308,11 @@ ActiveRecord::Schema.define(:version => 20130729064319) do
     t.boolean  "import_dms",                        :default => true
     t.boolean  "reauth_required",                   :default => false
     t.text     "last_error"
+    t.boolean  "realtime_subscription",              :default => false,             :null => false
   end
 
   add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_pages_on_account_id"
   add_index "social_facebook_pages", ["page_id"], :name => "index_page_id", :unique => true
-
   add_index "social_facebook_pages", ["product_id"], :name => "index_product_id"
 
   create_table "social_fb_posts", :force => true do |t|
@@ -1316,7 +1335,7 @@ ActiveRecord::Schema.define(:version => 20130729064319) do
     t.string   "tweetable_type"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "account_id"
+    t.integer  "account_id",        :limit => 8
     t.string   "tweet_type",                     :default => "mention"
     t.integer  "twitter_handle_id", :limit => 8
   end
@@ -1333,7 +1352,7 @@ ActiveRecord::Schema.define(:version => 20130729064319) do
     t.integer  "product_id",                :limit => 8
     t.integer  "last_dm_id",                :limit => 8
     t.integer  "last_mention_id",           :limit => 8
-    t.integer  "account_id"
+    t.integer  "account_id",                :limit => 8
     t.text     "search_keys"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1446,11 +1465,11 @@ ActiveRecord::Schema.define(:version => 20130729064319) do
     t.text     "info"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "subscription_plan_id"
+    t.integer  "subscription_plan_id",      :limit => 8
     t.integer  "renewal_period"
     t.integer  "total_agents"
     t.integer  "free_agents"
-    t.integer  "subscription_affiliate_id"
+    t.integer  "subscription_affiliate_id", :limit => 8
     t.integer  "subscription_discount_id"
     t.boolean  "revenue_type"
     t.decimal  "cmrr",                                   :precision => 10, :scale => 2
@@ -1521,6 +1540,9 @@ ActiveRecord::Schema.define(:version => 20130729064319) do
     t.datetime "updated_at"
   end
 
+  add_index "support_scores", ["account_id", "group_id", "created_at"], :name => "index_support_scores_on_account_id_and_group_id_and_created_at"
+  add_index "support_scores", ["account_id", "scorable_id", "scorable_type"], :name => "index_support_scores_on_account_id_scorable_id_scorable_type", :length => {"scorable_type"=>"10", "scorable_id"=>nil, "account_id"=>nil}
+  add_index "support_scores", ["account_id", "user_id", "created_at"], :name => "index_support_scores_on_account_id_and_user_id_and_created_at"
   add_index "support_scores", ["id"], :name => "support_scores_id"
 
   create_table "survey_handles", :id => false, :force => true do |t|
@@ -1831,6 +1853,23 @@ ActiveRecord::Schema.define(:version => 20130729064319) do
   add_index "topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"
   add_index "topics", ["forum_id"], :name => "index_topics_on_forum_id"
 
+  create_table "user_emails", :id => false, :force => true do |t|
+    t.integer  "id",               :limit => 8,                    :null => false
+    t.integer  "user_id",          :limit => 8,                    :null => false
+    t.string   "email"
+    t.integer  "account_id",       :limit => 8,                    :null => false
+    t.string   "perishable_token"
+    t.boolean  "verified",                      :default => false
+    t.boolean  "primary_role",                  :default => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "user_emails", ["account_id", "email"], :name => "index_user_emails_on_account_id_and_email", :unique => true
+  add_index "user_emails", ["email"], :name => "user_emails_email"
+  add_index "user_emails", ["id"], :name => "user_emails_id"
+  add_index "user_emails", ["user_id", "account_id"], :name => "index_user_emails_on_user_id_and_account_id"
+
   create_table "user_roles", :id => false, :force => true do |t|
     t.integer "user_id",    :limit => 8
     t.integer "role_id",    :limit => 8
@@ -1885,12 +1924,19 @@ ActiveRecord::Schema.define(:version => 20130729064319) do
     t.text     "text_uc01"
     t.boolean  "helpdesk_agent",                   :default => false
     t.string   "privileges",                       :default => "0"
+    t.string   "string_uc02"
+    t.string   "string_uc03"
+    t.string   "string_uc04"
+    t.string   "string_uc05"
+    t.string   "string_uc06"
   end
 
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
   add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"external_id"=>"20", "account_id"=>nil}
   add_index "users", ["account_id", "import_id"], :name => "index_users_on_account_id_and_import_id", :unique => true
+  add_index "users", ["account_id", "name"], :name => "index_users_on_account_id_and_name"
   add_index "users", ["customer_id", "account_id"], :name => "index_users_on_customer_id_and_account_id"
+  add_index "users", ["email"], :name => "index_users_on_email"
   add_index "users", ["id"], :name => "users_id"
   add_index "users", ["perishable_token", "account_id"], :name => "index_users_on_perishable_token_and_account_id"
   add_index "users", ["persistence_token", "account_id"], :name => "index_users_on_persistence_token_and_account_id"
@@ -1927,11 +1973,11 @@ ActiveRecord::Schema.define(:version => 20130729064319) do
     t.string   "type"
     t.string   "name"
     t.text     "data"
-    t.integer  "user_id"
+    t.integer  "user_id",          :limit => 8
     t.string   "model_class_name"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "account_id"
+    t.integer  "account_id",       :limit => 8
   end
 
   add_index "wf_filters", ["user_id"], :name => "index_wf_filters_on_user_id"
@@ -1940,7 +1986,7 @@ ActiveRecord::Schema.define(:version => 20130729064319) do
     t.string  "name"
     t.string  "description"
     t.text    "script"
-    t.integer "application_id"
+    t.integer "application_id", :limit => 8
     t.text    "options"
   end
 

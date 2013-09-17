@@ -2,7 +2,7 @@ class Topic < ActiveRecord::Base
   include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
   include ActionController::UrlWriter
-
+  include Mobile::Actions::Topic
   acts_as_voteable 
   validates_presence_of :forum, :user, :title
 
@@ -36,6 +36,13 @@ class Topic < ActiveRecord::Base
   named_scope :visible, lambda {|user| visiblity_options(user) }
 
   named_scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
+
+  named_scope :find_by_forum_category_id, lambda { |forum_category_id|
+    { :joins => %(INNER JOIN forums ON forums.id = topics.forum_id AND 
+        forums.account_id = topics.account_id),
+      :conditions => ["forums.forum_category_id = ?", forum_category_id],
+    }
+  }
 
   # Popular topics in forums
   # Filtered based on last replied and user_votes
@@ -223,6 +230,10 @@ class Topic < ActiveRecord::Base
 
   def topic_changes
     @topic_changes ||= self.changes.clone
+  end
+  
+  def topic_desc
+    truncate(self.posts.first.body.gsub(/<\/?[^>]*>/, ""), 300)
   end
 
 end

@@ -14,11 +14,11 @@ include Redis::RedisKeys
 include Redis::TicketsRedis
 
   skip_before_filter :check_privilege  
-  before_filter :set_mobile, :only => [:create, :destroy]
   skip_before_filter :require_user, :except => :destroy
   skip_before_filter :check_account_state
   before_filter :check_sso_params, :only => :sso_login
   skip_before_filter :check_day_pass_usage
+  before_filter :set_native_mobile, :only => [:create, :destroy]
   
   def new
     # Login normal supersets all login access (can be used by agents)
@@ -133,18 +133,44 @@ include Redis::TicketsRedis
       @current_user = @user_session.record
       #Hack ends here
       
-      remove_old_filters if @current_user.agent?
-
-      redirect_back_or_default('/') if grant_day_pass
+      
+      if grant_day_pass 
+        respond_to do |format|
+          format.html {
+            remove_old_filters if @current_user.agent? # Temporary
+            redirect_back_or_default('/')
+          }
+          format.nmobile {
+            if @current_user.customer? 
+              @current_user_session.destroy 
+              render :json => {:login => 'customer'}.to_json
+            else
+              render :json => {:login => 'success'}.to_json
+            end
+          }
+        end
+      end
       #Unable to put 'grant_day_pass' in after_filter due to double render
     else
       note_failed_login
-      if mobile?
-        flash[:error] = I18n.t("mobile.home.sign_in_error")
-        redirect_to root_url
-      else 
-        redirect_to support_login_path
-      end
+        respond_to do |format|
+          # format.mobile{
+          #   flash[:error] = I18n.t("mobile.home.sign_in_error")
+          #   redirect_to root_url
+          # }
+          format.html{
+            redirect_to support_login_path
+          }
+          format.nmobile{
+              json = "{'login':'failed',"
+              @user_session.errors.each_error do |attr,error|
+                json << "'attr' : '#{attr}', 'message' : '#{error.message}'}"
+                break # even if password & email passed here is incorrect, only email is validated first. so this array will always have one element. This break will ensure that if in case...
+              end
+              render :json => json
+          } 
+        end
+      
     end
   end
   
@@ -162,7 +188,14 @@ include Redis::TicketsRedis
       return redirect_to current_account.sso_options[:logout_url]
     end
     
-    redirect_to root_url
+    respond_to do |format|
+        format.html  {
+          redirect_to root_url
+        }
+        format.nmobile{
+          render :json => {:logout => 'success'}.to_json
+        }
+      end
   end
   
   def signup_complete

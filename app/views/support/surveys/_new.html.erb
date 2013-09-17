@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<%= fav_icon_url.html_safe %>
 	<%= include_cloudfront_css :rating %>
 	<%= include_cloudfront_js :survey  %>
 </head>
@@ -8,11 +9,12 @@
 	<div class="top-strip">
 		<div class="wrapper">
 			<div class="brand">
-		    	<% link_to (portal_pref(@account.main_portal, :logo_link).empty?) ? "/home" : portal_pref(@account.main_portal, :logo_link), :class => "logo" do %>
-		        <%= image_tag (@account.main_portal.logo.nil? ? "/images/logo.png?722013" : @account.main_portal.logo.content.url(:logo)) %>
+		    	<% link_to (portal_pref(@survey_handle.portal, :logo_link).empty?) ? 
+			    	"/home" : portal_pref(@survey_handle.portal, :logo_link), :class => "logo" do %>
+		        <%= image_tag (@survey_handle.portal.logo.nil? ? "/images/logo.png?722013" : @survey_handle.portal.logo.content.url(:logo)) %>
 
 		        <% end %>
-		        <%= link_to(h(@account.main_portal.name), "/home", :class => "logo_text") %>
+		        <%= link_to(h(@survey_handle.portal.name), "/home", :class => "logo_text") %>
 	    	</div>
     	</div>
 	</div>

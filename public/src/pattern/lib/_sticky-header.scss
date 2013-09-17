@@ -1,42 +1,55 @@
-@media (min-width: $blueprint-liquid-container-min-width) {
-	#sticky_header {
-		border-bottom: solid 1px #DADADA;
-		margin: -14px -20px 10px;
-		padding: 10px 20px;
-		background: #FFF;
-		border-radius: 5px 5px 0 0;
-	}
-	#sticky_header.stuck {
-		position: fixed;
-		border-radius: 0;
-		top: 0;
-		z-index: 99;
-		margin-top:0;
-		box-shadow:0 2px 4px rgba(63, 63, 63, 0.1);
-	}
+#sticky_header {
+	border-bottom: solid 1px #DADADA;
+	margin: -14px -20px 10px;
+	padding: 10px 20px;
+	background: #FFF;
+	border-radius: 5px 5px 0 0;
+}
+#sticky_header.stuck {
+	border-radius: 0;
+	margin:0px 11px 0 1px;
+	box-shadow:0 2px 4px rgba(63, 63, 63, 0.1);
+}
 
-	#scroll-to-top {
-		height: 37px;
-		width: 37px;
-		position: fixed;
-		right: 20px;
-		bottom: -40px;
-		opacity: 0.2;
-		@include border-radius(50%);
-		border: solid 1px #bbb;
-		cursor: pointer;
-		@include transition(all 0.2s ease-out);
+#scroll-to-top {
+	height: 37px;
+	width: 37px;
+	position: fixed;
+	right: 20px;
+	bottom: -40px;
+	opacity: 0.2;
+	@include border-radius(50%);
+	border: solid 1px #bbb;
+	cursor: pointer;
+	@include transition(all 0.2s ease-out);
 
-		&.visible {
-			display: block;
-			opacity: 0.6;
-			bottom: 50px;
-			
-			&:hover {
-				opacity: 1;
-			}
-
+	&.visible {
+		display: block;
+		opacity: 0.6;
+		bottom: 50px;
+		
+		&:hover {
+			opacity: 1;
 		}
+
+	}
+}
+.fixed_wrap {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 99;
+}
+
+@media (max-width: $blueprint-liquid-container-min-width) {
+	.fixed_wrap  {
+		position: static;
 	}
 
+	#sticky_header.stuck {
+		border-radius: 5px 5px 0 0;
+		margin: -14px -20px 10px;
+		box-shadow:none;
+	}
 }

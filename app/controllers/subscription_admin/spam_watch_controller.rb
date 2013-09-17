@@ -1,6 +1,8 @@
 class SubscriptionAdmin::SpamWatchController < ApplicationController
 
   include AdminControllerMethods
+  include ReadsToSlave
+  around_filter :select_shard
   skip_filter :run_on_slave, :only => [:block_user,:spam_user]
 
   
@@ -69,5 +71,11 @@ class SubscriptionAdmin::SpamWatchController < ApplicationController
 
     def load_user
       @user = User.find(params[:user_id])
+    end
+
+    def select_shard(&block)
+      Sharding.run_on_shard(params[:shard_name]) do 
+        yield 
+      end
     end
 end

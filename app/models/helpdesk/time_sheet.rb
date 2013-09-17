@@ -50,7 +50,9 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
       
   named_scope :for_contacts, lambda{|contact_email|
       {
-        :include =>{:workable =>:requester},
+        :select => "DISTINCT `helpdesk_time_sheets`.*" ,
+        :joins => ["INNER JOIN `helpdesk_tickets` ON `helpdesk_time_sheets`.workable_id = `helpdesk_tickets`.id AND `helpdesk_time_sheets`.workable_type = 'Helpdesk::Ticket'" , 
+                "INNER JOIN `users` ON `helpdesk_tickets`.requester_id = `users`.id"],
         :conditions =>{:users => {:email => contact_email}},
       } unless contact_email.blank?
   }

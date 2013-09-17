@@ -2,7 +2,7 @@ class Support::LoginController < SupportController
 
 	include Redis::RedisKeys
 	include Redis::TicketsRedis
-
+	
 	skip_before_filter :check_account_state
 	
 	def new
@@ -35,7 +35,8 @@ class Support::LoginController < SupportController
 
 	private
 		def note_failed_login
-	      logger.warn "Failed login for '#{params[:user_session][:email]}' from #{request.remote_ip} at #{Time.now.utc}"
+			user_info = params[:user_session][:email] if params[:user_session]
+			logger.warn "Failed login for '#{user_info.to_s}' from #{request.remote_ip} at #{Time.now.utc}"
 	    end
 
 	    def remove_old_filters

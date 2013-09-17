@@ -111,7 +111,7 @@
     admin.resources :portal, :only => [ :index, :update ]
     admin.namespace :canned_responses do |ca_response|
       ca_response.resources :folders do |folder|
-        folder.resources :responses, :collection => { :delete_multiple => :delete, :update_folder => :put }
+        folder.resources :responses, :collection => { :delete_multiple => :delete, :update_folder => :put }, :member=> { :delete_shared_attachments => :any  }
       end
     end
     admin.resources :products, :member => { :delete_logo => :delete, :delete_favicon => :delete }
@@ -207,10 +207,12 @@
       admin.resources :accounts, :collection => {:agents => :get, :tickets => :get, :renewal_csv => :get}
       admin.resources :subscription_plans, :as => 'plans'
       # admin.resources :subscription_discounts, :as => 'discounts'
-      admin.resources :subscription_affiliates, :as => 'affiliates', :collection => {:add_affiliate_transaction => :post}
+      admin.resources :subscription_affiliates, :as => 'affiliates', :collection => { :add_affiliate_transaction => :post },
+                                                :member => { :add_subscription => :post }
       admin.resources :subscription_payments, :as => 'payments'
       admin.resources :subscription_announcements, :as => 'announcements'
       admin.resources :conversion_metrics, :as => 'metrics'
+      admin.resources :account_tools, :as => 'tools', :collection =>{:regenerate_reports_data => :post}
       admin.namespace :resque do |resque|
         resque.home '', :controller => 'home', :action => 'index'
         resque.failed_show '/failed/:queue_name/show', :controller => 'failed', :action => 'show'
@@ -218,9 +220,9 @@
       end
       # admin.resources :analytics 
       admin.resources :spam_watch, :only => :index
-      admin.spam_details '/spam_watch/:user_id/:type', :controller => :spam_watch, :action => :spam_details
-      admin.spam_user '/spam_user/:user_id', :controller => :spam_watch, :action => :spam_user
-      admin.block_user '/block_user/:user_id', :controller => :spam_watch, :action => :block_user
+      admin.spam_details ':shard_name/spam_watch/:user_id/:type', :controller => :spam_watch, :action => :spam_details
+      admin.spam_user ':shard_name/spam_user/:user_id', :controller => :spam_watch, :action => :spam_user
+      admin.block_user ':shard_name/block_user/:user_id', :controller => :spam_watch, :action => :block_user
       admin.resources :subscription_events, :as => 'events', :collection => { :export_to_csv => :get }
       admin.resources :custom_ssl, :as => 'customssl', :collection => { :enable_custom_ssl => :post }
     end
@@ -322,6 +324,7 @@
                                     :merge_with_this_request => :post, :print => :any, :latest_note => :get,  :activities => :get, 
                                     :clear_draft => :delete, :save_draft => :post, :update_ticket_properties => :put } do |ticket|
                                       
+      ticket.resources :surveys, :collection =>{:results=>:get, :rate=>:post}
       ticket.resources :conversations, :collection => {:reply => :post, :forward => :post, :note => :post,
                                        :twitter => :post, :facebook => :post}
 
@@ -357,6 +360,9 @@
     helpdesk.filter_view_default   '/tickets/filter/:filter_name', :controller => 'tickets', :action => 'index'
     helpdesk.filter_view_custom    '/tickets/view/:filter_key', :controller => 'tickets', :action => 'index'
     helpdesk.requester_filter      '/tickets/filter/requester/:requester_id', :controller => 'tickets', :action => 'index'
+
+    helpdesk.filter_recent_tickets '/tickets/filter/recent_tickets', :controller => 'tickets', :action => 'recent_tickets'
+    helpdesk.filter_old_tickets    '/tickets/filter/old_tickets', :controller => 'tickets', :action => 'old_tickets'
 
     #helpdesk.filter_issues '/issues/filter/*filters', :controller => 'issues', :action => 'index'
 
@@ -457,7 +463,10 @@
         :action => :show
       discussion.resources :forums, :only => :show
       discussion.resources :topics, :except => :index, :member => { :like => :put, 
-          :unlike => :put, :toggle_monitor => :put,:monitor => :put, :check_monitor => :get, :users_voted => :get } do |topic|
+          :unlike => :put, :toggle_monitor => :put,:monitor => :put, :check_monitor => :get, :users_voted => :get }, 
+          :collection => {:my_topics => :get} do |topic|
+        discussion.connect "/topics/my_topics/page/:page", :controller => :topics, 
+          :action => :my_topics
         discussion.connect "/topics/:id/page/:page", :controller => :topics, 
           :action => :show
         topic.resources :posts, :except => [:index, :new, :show], 
@@ -510,6 +519,7 @@
 
   map.namespace :mobile do |mobile|
     mobile.resources :tickets, :collection =>{:view_list => :get, :get_portal => :get, :get_suggested_solutions => :get, :ticket_properties => :get}
+    mobile.resources :search,  :collection =>{:search_result => :get}
   end
   
   map.root :controller => "home"

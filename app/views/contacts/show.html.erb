@@ -30,33 +30,33 @@
 		<div id="email_mark" class="hide"></div>
 		<%= render :partial => "helpdesk/integrations/email_marketing_container" , :locals => {:contact => @user} %>
 		<div class="user-info">
-			<%= content_tag(:div, "#{content_tag(:span, t('user.email'))}  #{h(@user.email)}") unless @user.email.blank? %>
-			<%= content_tag(:div, "#{content_tag(:span, t('user.secondary'))}  #{h(@user.second_email)}") unless @user.second_email.blank? %>
-			<%= content_tag(:div, "#{content_tag(:span, t('user.phone_no'))}  #{h(@user.phone)}") unless @user.phone.blank? %>
-			<%= content_tag(:div, "#{content_tag(:span, t('user.mobile'))}  #{h(@user.mobile)}") unless @user.mobile.blank? %>
-			<%= content_tag(:div, "#{content_tag(:span, t('user.address'))}  <div>#{h(@user.address)}</div>") unless @user.address.blank? %>
-			<%= content_tag(:div, "#{content_tag(:span, t('user.twitter_id'))}  #{h(@user.twitter_id)}") unless @user.twitter_id.blank? %>
-			<%= content_tag(:div, "#{content_tag(:span, t('facebook_source'))}  <a target='_blank' href=http://facebook.com/#{h(@user.fb_profile_id) }>http://facebook.com/people/#{h(@user.fb_profile_id)}</a>") unless @user.fb_profile_id.blank? %>
-			<%= content_tag(:div, "#{content_tag(:span, t('account.time_zone'))}  #{h(@user.time_zone)}") %>
+			<%= content_tag(:div, "#{content_tag(:span, t('user.email'))}  #{h(@user.email)}".html_safe) unless @user.email.blank? %>
+			<%= content_tag(:div, "#{content_tag(:span, t('user.secondary'))}  #{h(@user.second_email)}".html_safe) unless @user.second_email.blank? %>
+			<%= content_tag(:div, "#{content_tag(:span, t('user.phone_no'))}  #{h(@user.phone)}".html_safe) unless @user.phone.blank? %>
+			<%= content_tag(:div, "#{content_tag(:span, t('user.mobile'))}  #{h(@user.mobile)}".html_safe) unless @user.mobile.blank? %>
+			<%= content_tag(:div, "#{content_tag(:span, t('user.address'))}  <div>#{h(@user.address)}</div>".html_safe) unless @user.address.blank? %>
+			<%= content_tag(:div, "#{content_tag(:span, t('user.twitter_id'))}  #{h(@user.twitter_id)}".html_safe) unless @user.twitter_id.blank? %>
+			<%= content_tag(:div, "#{content_tag(:span, t('facebook_source'))}  <a target='_blank' href=http://facebook.com/#{h(@user.fb_profile_id) }>http://facebook.com/people/#{h(@user.fb_profile_id)}</a>".html_safe) unless @user.fb_profile_id.blank? %>
+			<%= content_tag(:div, "#{content_tag(:span, t('account.time_zone'))}  #{h(@user.time_zone)}".html_safe) %>
 		</div>
 
 		<% if @user.deleted || (!@user.active? and @user.has_email?) || @user.blocked? %>
   		<div class="info-highlight hide">
         <% if privilege?(:delete_contact) %>
-  			<%= content_tag(:div, "#{ t('contacts.deleted_message') } #{ link_to( t('contacts.restore'), { :action => :restore, :id => @user.id }, :method => :put ) }") if @user.deleted and !@user.spam?%>
+  			<%= content_tag(:div, "#{ t('contacts.deleted_message') } #{ link_to( t('contacts.restore'), { :action => :restore, :id => @user.id }, :method => :put ) }".html_safe) if @user.deleted and !@user.spam?%>
         <% end %>
         <% if privilege?(:manage_users) %>
-  			<%= content_tag(:div, "#{ t('contacts.emailnotverified') }   #{ link_to( t('contacts.send_activation'), send_invite_activation_path(@user), :method => :put ) } " ) if !@user.active? and @user.has_email? and !@user.spam? and !@user.blocked?%>
+  			<%= content_tag(:div, "#{ t('contacts.emailnotverified') }   #{ link_to( t('contacts.send_activation'), send_invite_activation_path(@user), :method => :put ) } ".html_safe ) if !@user.active? and @user.has_email? and !@user.spam? and !@user.blocked?%>
         <% end %>
-  			<%= content_tag(:div, "#{ t('contacts.blocked_message') } #{ link_to( t('unblock'), { :action => :unblock, :id => @user.id }, :method => :put ) }") if @user.blocked? || @user.spam? %>
+  			<%= content_tag(:div, "#{ t('contacts.blocked_message') } #{ link_to( t('unblock'), { :action => :unblock, :id => @user.id }, :method => :put ) }".html_safe) if @user.blocked? || @user.spam? %>
   		</div>
 		<% end %>
 </div>
 
 <div class="row-fluid">
-	<h4 class="title"><%=t('contacts.info3',:nick_name => h(@user.display_name))%></h4>
+	<h4 class="title"><%=t('contacts.info3',:nick_name => h(@user.display_name)).html_safe%></h4>
 		<% form_for @user do |f| %>
-			<%= f.label :description, t("contacts.form_placeholder.description"), :class => "overlabel" %>
+			<%= f.label :description, t("contacts.form_placeholder.description").html_safe, :class => "overlabel" %>
 			<%= f.text_area :description, :class=> "sp_paragraph span12",:cols => 20,:rows => 10 %>
       <% if privilege?(:manage_contacts) %>
   			<div class="span12 pull-right"> 
@@ -68,7 +68,7 @@
 <% unless @user.deleted %>
 	<div id="tickets-expanded" class="contact_tickets row-fluid">
 		<div class="detailed_view">
-			<h4 class="title"><%=t('contacts.info4',:nick_name => h(@user.display_name))%></h4>
+			<h4 class="title"><%=t('contacts.info4',:nick_name => h(@user.display_name)).html_safe%></h4>
 			<span class="seperator"></span>
 			<% if @user_tickets.blank? %>
 				<%= "#{t('contacts.info5')}" %>
@@ -82,7 +82,7 @@
 			  	</table>
 			  	<% if @user.tickets.visible.size > 5 %>
 				  	<div class="more_results">
-				  		<%= link_to t('contacts.show_more',:nick_name => h(@user.display_name)), helpdesk_requester_filter_path(:requester_id => @user.id) , :id => "show_more" %>
+				  		<%= link_to t('contacts.show_more',:nick_name => h(@user.display_name)).html_safe, helpdesk_requester_filter_path(:requester_id => @user.id) , :id => "show_more" %>
 				  	</div>
 			  	<% end %>
 		  	<% end %>

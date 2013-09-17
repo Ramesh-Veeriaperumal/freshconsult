@@ -26,7 +26,7 @@
           filter.choices.each(function(arrayItem){
             choices.push({
               name: arrayItem[0],
-              value: arrayItem[1]
+              value: unescapeHtml(arrayItem[1])
             });
           });
           c_dom = FactoryUI.dropdown(choices, value, _class_name, _data_attr);
@@ -56,7 +56,7 @@
             filter.choices.each(function(arrayItem){
               choices.push({
                 name: arrayItem[0],
-                value: arrayItem[1]
+                value: unescapeHtml(arrayItem[1])
               });
             });
             control = FactoryUI.dropdown(choices, "email_to", _class_name, _data_attr);        
@@ -76,12 +76,14 @@
           var subject = jQuery('<div class="subject_div row-fluid" />')
                   .append("<label class='span2'><%= t('.subject') %></label>")
                   .append(jQuery('<div class="sub_placeholder"/>')
-                  .append(FactoryUI.text("", "email_subject", initFeed["email_subject"]))
+                  .append(FactoryUI.text("", "email_subject", initFeed["email_subject"]).data(
+                  "ignorePlaceholders", 'triggered_event'))
                   .append(placeholder1))
         
           var body  = jQuery('<div class="body_div row-fluid" />')
                   .append("<label class='span2'><%= t('.body') %></label>")
-                  .append(FactoryUI.paragraph("", "email_body", initFeed["email_body"]))
+                  .append(FactoryUI.paragraph("", "email_body", initFeed["email_body"]).data(
+                  "ignorePlaceholders", 'triggered_event'))
 
           c_dom = jQuery("<div class='s_email row-fluid' />")
                 .append(to)
@@ -145,11 +147,11 @@
           var method = jQuery('<div class="row-fluid"/>')
                         .append('<label class="span2"><%= t(".request_type") %></label>')
                         .append(method_dropdown)
-                        .append(FactoryUI.link('<%= t('.how_to_use_webhook') %>', 'javascript:void(0)', 'using_webhooks'));
+                        .append(FactoryUI.link('<%= t('.how_to_use_webhook').html_safe %>', 'https://support.freshdesk.com/solution/articles/132589-using-webhooks-in-observer', 'using_webhooks'));
 
           var placeholder1 = jQuery("<span class='placeholder_div'> <a class='l_placeholder btn btn-mini'><%= t('.insert_placeholder') %> &raquo;</a> </span>")
           var uri_textarea = FactoryUI.paragraph("", "url", initFeed['url'], "text uri required")
-                                .data("ignorePlaceholders", 'ticket_satisfaction_survey');
+                                .data("ignorePlaceholders", 'ticket_satisfaction_survey,ticket_suverymonkey_survey');
 
           setTimeout(function(ev){
             uri_textarea.autosize();
@@ -162,7 +164,7 @@
                       // No URL validation - for allowing placeholder in URL
                       .append(FactoryUI.checkbox("<%= t('.url_req_auth') %>","need_authentication",initFeed['need_authentication'],"url_req_auth"));
           var username_password = jQuery('<div class="row-fluid user_pass_webhook"/>')
-                          .append(FactoryUI.link("<%= t('.api_key?') %>", '#api_key', 'credentials_toggle'))
+                          .append(FactoryUI.link("<%= t('.api_key?').html_safe %>", '#api_key', 'credentials_toggle'))
                           .append(FactoryUI.text("<%= t('.username') %>", "username", initFeed['username'], 'username'));
           var password = FactoryUI.password("<%= t('.password') %>", "password", '', 'text password')
           username_password.append(password);
@@ -171,7 +173,7 @@
             password.hide();
           }
           var api_key = jQuery('<div class="row-fluid api_webhook"/>')
-                    .append(FactoryUI.link("<%= t('.user_pass?') %>", '#user_pass', 'credentials_toggle'))
+                    .append(FactoryUI.link("<%= t('.user_pass?').html_safe %>", '#user_pass', 'credentials_toggle'))
                     .append(FactoryUI.text("<%= t('.api_key') %> ", "api_key", initFeed['api_key'], 'api_key text'));
           var credentials = jQuery('<div class="row-fluid credentials"/>')
                           .append(username_password)
@@ -198,7 +200,7 @@
                           .append(placeholder2)
                           .append(advanced_edit)
                           .append(FactoryUI.label("<%= t('.advanced_webhook_tip') %>", 'tip'))
-                          .append('<strong><a href="#webhook_usecase" data-height="600" data-template-footer="" data-width="600" rel="freshdialog" target="_blank" title="Webhook Example Usecases"><%= t('.webhook_usecase') %></a></strong>');
+                          .append('<strong><a href="#webhook_usecase" class="usecases" data-height="600" data-template-footer="" data-width="800" rel="freshdialog" target="_blank" title="<%= t('.webhook_usecase_tooltip')%>"><%= t('.webhook_usecase') %></a></strong>');
           
           var content_type_radiobuttons = FactoryUI.radiobutton(content_type_choices, "", "content_type", initFeed['content_type']);
           
@@ -245,14 +247,14 @@
 <% content_for :onload_script do %>
   <% if (filter_type == "observer") %>  
     // i18n For javascript entities
-    event_lang = <%= t('event').to_json %>;
-    event_rule = new rules_filter("event", $A(<%= @event_defs %>), "#eventDOM", { "init_feed":$A(<%= @event_input %>)});    
+    event_lang = <%= t('event').to_json.html_safe %>;
+    event_rule = new rules_filter("event", $A(<%= @event_defs.html_safe if @event_defs %>), "#eventDOM", { "init_feed":$A(<%= @event_input.html_safe if @event_input %>)});    
     ObserverDom.init();
   <% end %>
   <% if (filter_type == "va_rule" || filter_type == "observer") %>
-    var op_hash = preProcessCondition(<%= @op_types %>, <%= @op_list %>);
-    filter_rule = new rules_filter("filter", $A(<%= @filter_defs %>), "#filterDOM", {"operators": op_hash, 
-     "init_feed":$A(<%= @filter_input %>)});
+    var op_hash = preProcessCondition(<%= @op_types.html_safe if @op_types %>, <%= @op_list.html_safe if @op_list %>);
+    filter_rule = new rules_filter("filter", $A(<%= @filter_defs.html_safe if @filter_defs %>), "#filterDOM", {"operators": op_hash, 
+     "init_feed":$A(<%= @filter_input.html_safe if @filter_input %>)});
   <% end %>   
-  action_rule = new rules_filter("action", $A(<%= @action_defs %>), "#actionDOM", {"init_feed":$A(<%= @action_input %>)});  
+  action_rule = new rules_filter("action", $A(<%= @action_defs.html_safe if @action_defs %>), "#actionDOM", {"init_feed":$A(<%= @action_input.html_safe if @action_input %>)});
 <% end %>

@@ -38,7 +38,7 @@
 				$(this).button("loading")
 
 				// A data-loading-box will show a loading box in the specified container
-				$(_o_data.loadingBox||"").html("<div class='loading-box'></div>")
+				$(_o_data.loadingBox||"").html("<div class='loading loading-box'></div>")
 
 				$.ajax({
 					type: _o_data.type || 'POST',
@@ -194,18 +194,6 @@
 		
 		$("img[rel=lazyloadimage]").jail({
 			// placeholder : '/images/animated/ajax-loader.gif',
-		})
-
-	
-		// Live query utility
-		$("[data-livequery]").livequery(function(ev){
-			switch($(this).data("livequery")){
-				// Adds custom-select class that will in-turn call another live query 
-				// that will init select2 plugin for all the select boxes in the form
-				case "selectboxes":
-					$(this).find("select").addClass("custom-select")
-				break
-			}
 		})
 
 	})

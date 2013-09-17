@@ -31,11 +31,11 @@
 		</li>			
 		<li class="dropdown">
 			<%= f.label :art_type, t('solution.type') %>
-			<%= f.select :art_type, Solution::Article::TYPE_OPTIONS, :class => "select" %>
+			<%= f.select :art_type, Solution::Article.article_type_option, :class => "select" %>
 		</li>	
 		<li class="dropdown">
 			<%= f.label :status, t('solution.status') %>
-			<%= f.select :status, Solution::Article::STATUS_OPTIONS, :class => "select" %>
+			<%= f.select :status, Solution::Article.article_status_option, :class => "select" %>
 		</li>
 		<li id="solution-seo-container">
 			<div id="solution-seo-show" class="solution-seo-title">
@@ -105,7 +105,7 @@
 					$('#solution_article_seo_data_meta_description').val().replace(/\n+/g, " ").trim());
 				});
 				$("#tags_name").select2({  
-				  tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',')) %>".split(","),
+				  tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>".split(","),
 				  tokenSeparators: [',']
 				}); 
 			});

@@ -1,6 +1,6 @@
 class Support::FacebookTabsController < SupportController
 
-  skip_before_filter :portal_context, :page_message
+  skip_before_filter :portal_context, :page_message, :ensure_proper_protocol
   skip_filter :select_shard
   skip_before_filter :verify_authenticity_token, :check_account_state
   skip_before_filter :unset_current_account, :set_current_account, :redirect_to_mobile_url
@@ -8,7 +8,7 @@ class Support::FacebookTabsController < SupportController
   around_filter :select_facebook_shard, :if => [:process_signed_request, :map_facebook_page]
 
   def redirect
-    portal_url = portal_for_page if @page_info
+    portal_url = portal_for_page if @page_info && facebook_page_tab?
     unless portal_url
       render :file => "#{Rails.root}/public/facebook-404.html"
     else
@@ -47,5 +47,9 @@ class Support::FacebookTabsController < SupportController
         portal_url = fb_page.account.full_domain
         "#{request.scheme}://#{portal_url}"
       end
+    end
+
+    def facebook_page_tab?
+      Account.find(@account_id).features?(:facebook_page_tab)
     end
 end

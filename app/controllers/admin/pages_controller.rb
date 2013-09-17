@@ -12,13 +12,15 @@ class Admin::PagesController < Admin::AdminController
   layout false
 
   def update
-    @portal_page.attributes= params[:portal_page]
-    @portal_template.cache_page(@portal_page_label, @portal_page)    
+    @portal_page.attributes = params[:portal_page]
+
+    @portal_template.cache_page(@portal_page_label, @portal_page)
+
     if params[:publish_button]
       @portal_template.publish!
-      flash[:notice] = "Portal changes published successfully."
+      flash[:notice] = t("admin.portal_settings.flash.portal_published_success")
     else
-      flash[:notice] = "Page saved successfully." unless params[:preview_button]
+      flash[:notice] = t("admin.portal_settings.flash.portal_page_saved") unless params[:preview_button]
     end
     get_raw_page
     respond_to do |format|
@@ -31,7 +33,7 @@ class Admin::PagesController < Admin::AdminController
   def soft_reset
     build_or_find
     @portal_template.clear_page_cache!(@portal_page_label)
-    flash[:notice] = "Page reseted successfully."
+    flash[:notice] = t("admin.portal_settings.flash.portal_page_reset")
     redirect_to "#{admin_portal_template_path( @portal )}#header#pages"
   end
 
@@ -51,7 +53,7 @@ class Admin::PagesController < Admin::AdminController
         flash[:warning] = t('flash.general.access_denied')
         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
       end
-      @portal_template = scoper.fetch_template
+      @portal_template = scoper.fetch_template.get_draft || scoper.fetch_template
       @portal_page = @portal_template.page_from_cache(@portal_page_label) ||
                       @portal_template.fetch_page_by_type(page_type) || 
                       @portal_template.pages.new( :page_type => page_type )

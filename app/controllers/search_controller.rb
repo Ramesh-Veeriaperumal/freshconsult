@@ -7,10 +7,11 @@ class SearchController < ApplicationController
   before_filter :forums_allowed_in_portal?, :only => :topics
   before_filter :solutions_allowed_in_portal?, :only => :solutions
   
+  
   #by Shan
   #To do.. some smart meta-programming
   def index 
-    search 
+    search
   end
   
   def suggest
@@ -75,7 +76,11 @@ class SearchController < ApplicationController
                                         :sphinx_select => content_select(f_classes),
                                         :match_mode => :any,
                                         :max_matches => (4 if @widget_solutions),
-                                        :classes => f_classes, :per_page => 10
+                                        :classes => f_classes, :per_page => 10,
+                                        :excerpt_options => {
+                                                            :before_match => '',
+                                                            :after_match => ''
+                                                            }
         else
           search_portal_content(f_classes, s_options)
         end
@@ -108,7 +113,11 @@ class SearchController < ApplicationController
                                                :classes => [ Solution::Article ],
                                                :sphinx_select => content_select(f_classes),
                                                :max_matches => (4 if @widget_solutions),
-                                               :per_page => page_limit)
+                                               :per_page => page_limit,
+                                               :excerpt_options => {
+                                                :before_match => '',
+                                                :after_match => ''
+                                                })
       end
       
       if f_classes.include?(Topic) && current_portal.forum_category_id
@@ -116,7 +125,11 @@ class SearchController < ApplicationController
         @items.concat(ThinkingSphinx.search params[:search_key],
                         :sphinx_select => content_select(f_classes),
                         :classes => [ Topic ],
-                        :with => s_options, :per_page => 10)
+                        :with => s_options, :per_page => 10,
+                        :excerpt_options => {
+                                            :before_match => '',
+                                            :after_match => ''
+                                            })
       end
 
     end
@@ -126,7 +139,11 @@ class SearchController < ApplicationController
         
         if privilege?(:manage_tickets)
           unless current_account.es_enabled?
-            @items = ThinkingSphinx.search filter_key(params[:search_key]), 
+            @items = ThinkingSphinx.search filter_key(params[:search_key]),
+                                                                :excerpt_options => {
+                                                                  :before_match => '',
+                                                                  :after_match => ''
+                                                                  },
                                                                 :with => search_with, 
                                                                 :classes => searchable_classes,
                                                                 :sphinx_select => sphinx_select,
@@ -147,13 +164,11 @@ class SearchController < ApplicationController
     end
 
     def process_results
-      
       results = Hash.new
       @items.each do |i|
         results[i.class.name] ||= []
         results[i.class.name] << i
       end
-
       
       @searched_tickets   = results['Helpdesk::Ticket']
       @searched_articles  = results['Solution::Article']
@@ -163,7 +178,7 @@ class SearchController < ApplicationController
       
       @search_key = params[:search_key]
       @total_results = @items.size
-
+      
     end
     
     def page_limit
@@ -180,16 +195,41 @@ class SearchController < ApplicationController
 
   private
   
-  def searchable_classes    
-    searchable = [ Helpdesk::Ticket ]
-    searchable << Solution::Article if privilege?(:view_solutions)
-    searchable << Topic             if privilege?(:view_forums)
-    
-    if privilege?(:view_contacts)
-      searchable << User
-      searchable << Customer
+  def searchable_classes   
+    searchable ="" 
+    respond_to do |format| 
+      format.html  do
+        searchable = [ Helpdesk::Ticket ]
+        searchable << Solution::Article if privilege?(:view_solutions)
+        searchable << Topic             if privilege?(:view_forums)
+        if privilege?(:view_contacts)
+          searchable << User
+          searchable << Customer
+        end
+      end
+      format.mobile do 
+        if(params[:search_class].to_s.eql?("ticket"))
+          searchable = [ Helpdesk::Ticket ]
+        elsif (params[:search_class].to_s.eql?("solutions"))
+          searchable = [ Solution::Article ] if privilege?(:view_solutions)
+        elsif (params[:search_class].to_s.eql?("forums"))
+          searchable = [ Topic ] if privilege?(:view_forums)
+        elsif (params[:search_class].to_s.eql?("customer"))
+          if privilege?(:view_contacts)
+            searchable = [Customer] 
+            searchable << User
+          end
+        else
+          searchable = [ Helpdesk::Ticket ]
+          searchable << Solution::Article if privilege?(:view_solutions)
+          searchable << Topic             if privilege?(:view_forums)
+          if privilege?(:view_contacts)
+            searchable << User
+            searchable << Customer
+          end
+        end
+      end
     end
-    
     searchable
   end 
   
@@ -263,7 +303,11 @@ class SearchController < ApplicationController
                                       :without => without_options,
                                       :classes=>classes,
                                       :sphinx_select=>sphinx_select,
-                                      :page => params[:page], :per_page => 10
+                                      :page => params[:page], :per_page => 10,
+                                      :excerpt_options => {
+                                                          :before_match => '',
+                                                          :after_match => ''
+                                                          }
    end
 
   def filter_key(query)

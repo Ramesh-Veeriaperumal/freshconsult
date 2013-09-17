@@ -37,7 +37,7 @@ jQuery(document).ready(function() {
     multiple: true,
     allowClear: true,
     maximumSelectionSize: 3,
-    data: [<%=hash_val.join(",")%>],
+    data: [<%=hash_val.join(",").html_safe%>],
     ajax: { 
         url: '<%= url %>',
         dataType: 'json',
@@ -56,7 +56,7 @@ jQuery(document).ready(function() {
         }
     },
     initSelection : function (element, callback) {
-      callback( [<%=hash_val.join(",")%>] );
+      callback( [<%=hash_val.join(",").html_safe%>] );
     },
     specialFormatting: true,
     formatResult: select2_requester_results,

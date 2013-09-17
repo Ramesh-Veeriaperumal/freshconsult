@@ -113,7 +113,7 @@ $.validator.addClassRules("require_from_group" ,{require_from_group: [1, ".user_
 // To check if atleast one role is present
 $.validator.addMethod("at_least_one_item", function(value, element, options) {
   return($($(element).data("selector")).size() != 0)
-}, jQuery.format("At least one role is requied for the agent"));
+}, jQuery.format("At least one role is required for the agent"));
 
 $.validator.addClassRules("at_least_one_item", { at_least_one_item: true});
 
@@ -200,5 +200,10 @@ $.validator.addMethod("remotevalidate", function(value, element, param) {
 $.validator.addClassRules("remote-data", { remotevalidate: true });
 
 
-})(jQuery);
+$.validator.addMethod("trim_spaces", function(value, element){
+  element.value = trim(element.value)
+  return true;
+}, "Auto trim of leading & trailing whitespace");
+$.validator.addClassRules("trim_spaces", { trim_spaces: true });
 
+})(jQuery);

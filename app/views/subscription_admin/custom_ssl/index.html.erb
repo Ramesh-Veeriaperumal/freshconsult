@@ -34,6 +34,10 @@
 					</tr>
 				<% end %>
 			</table>
+			<%= will_paginate @portals, :renderer => BootstrapPaginationRenderer, 
+							        				:previous_label => "<b class='arrow-left'></b>",
+							        				:next_label => "<b class='arrow-right'></b>",
+							        				:class => "pagination pagination-centered" %>
 		</div>
 	<% end %>
 </div>

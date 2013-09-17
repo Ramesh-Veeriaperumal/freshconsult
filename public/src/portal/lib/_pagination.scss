@@ -49,24 +49,9 @@
 }
 
 // Hiding other links from mobile
-.pagination a {
-  display: none;
-}
-
-.pagination li:first-child a, .pagination li:last-child a, .pagination .active a {
-  display: block;
-}
-
-// Centered
-/*.pagination-centered {
-  text-align: center;
-}
-.pagination-right {
-  text-align: right;
-}*/
-
-/* Media styles for tablet and above */
-
-@include at-breakpoint($break-tablet){
-  .pagination a { display: block; }
+@include at-breakpoint($media-mobile){
+  .pagination a { display: none; }
+  .pagination li:first-child a, .pagination li:last-child a, .pagination .active a {
+    display: block;
+  }
 }

@@ -1,6 +1,6 @@
 <div class="row-fluid">
 	<%= text_field object_name, :email,
-			:value => "", :class => "span12 email required",
+			:value => value, :class => "span12 email required",
 			"data-check-email-path" => check_email_support_tickets_path,
 			:placeholder => t("ticket_form.your_email_address"), 
 			"data-remote" => "true", 

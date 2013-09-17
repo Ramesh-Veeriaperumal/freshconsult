@@ -41,7 +41,7 @@
     </div>
   </div> 
 	<div class="button-container" id="button_panel">
-		<%= link_to "&larr; #{ t('cancel_and_back') }", "/admin/home", :class => "uiButton floatl" %>
+		<%= link_to "&larr; #{ t('cancel_and_back') }".html_safe, "/admin/home", :class => "uiButton floatl" %>
 		<%= submit_tag t(".save"), :class => "uiButton special", :id => "SaveForm", "data-commit" => t('ticket_fields.saving_ticket') %>
 	</div>
 <%end%>
@@ -51,7 +51,7 @@
 <% content_for :pagefixed do %>
   <% javascript_tag do %>
     // Localizing ticket fields js elements
-    tf_settings = <%= @ticket_field_json.to_json %>;
+    tf_settings = <%= @ticket_field_json.to_json.html_safe %>;
     tf_lang = {
       untitled:           '<%= t("ticket_fields.untitled") %>',
       first_choice:       '<%= t("ticket_fields.first_choice") %>',

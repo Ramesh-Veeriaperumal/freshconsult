@@ -20,8 +20,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit_on_update :filter_observer_events, :if => :user_present?
   after_commit_on_update :update_ticket_states, :notify_on_update, :update_activity, 
   :stop_timesheet_timers, :fire_update_event, :regenerate_reports_data
-  after_commit_on_create :publish_new_ticket_properties, :if => :auto_refresh_allowed?
-  after_commit_on_update :publish_updated_ticket_properties, :if => :model_changes?
+  # after_commit_on_create :publish_new_ticket_properties, :if => :auto_refresh_allowed?
+  # after_commit_on_update :publish_updated_ticket_properties, :if => :model_changes?
   after_commit_on_update :publish_to_update_channel, :if => :model_changes?
 
   def set_default_values
@@ -88,15 +88,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def pass_thro_biz_rules
-     send_later(:delayed_rule_check) unless import_id || freshdesk_webhook?
+     send_later(:delayed_rule_check) unless import_id
   end
   
   def delayed_rule_check
    begin
     set_account_time_zone
-    evaluate_on = check_rules     
+    evaluate_on = check_rules unless freshdesk_webhook?
+    autoreply 
     assign_tickets_to_agents unless spam? || deleted?
-    autoreply
    rescue Exception => e #better to write some rescue code 
     NewRelic::Agent.notice_error(e)
    end

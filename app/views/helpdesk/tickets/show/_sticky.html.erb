@@ -145,11 +145,11 @@
 
 	<div class="sticky_left">
 		<div>
-			<%= link_to t('header.tabs.tickets'), helpdesk_tickets_path, 
+			<%= link_to t('header.tabs.tickets').html_safe, helpdesk_tickets_path, 
 										"data-pjax" => "#body-container", "data-parallel-url" => "/helpdesk/tickets/filter_options", 
 										"data-parallel-placeholder" => '#ticket-leftFilter',
 										:rel =>'link_ticket_list' %>
-			/ <%= "#{t('ticket.singular')} <span id='ticket-display-id'>##{h(@ticket.display_id)}</span>"%>
+			/ <%= "#{t('ticket.singular')} <span id='ticket-display-id'>##{h(@ticket.display_id)}</span>".html_safe%>
 		</div>
 		<div class="source-badge-wrap">
 			<div class='source <%= "priority_color_#{@ticket.priority} status_#{@ticket.status} " + 

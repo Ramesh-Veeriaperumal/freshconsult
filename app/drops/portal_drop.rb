@@ -61,6 +61,10 @@ class PortalDrop < BaseDrop
     @new_ticket_url ||= new_support_ticket_path(url_options)
   end
 
+  def my_topics_url
+    @my_topics_url ||= my_topics_support_discussions_topics_path
+  end
+
   def new_topic_url    
     _opts = url_options.merge({ :forum_id => @context['forum'].id }) if @context['forum'].present?
     @new_topic_url ||= new_support_discussions_topic_path( _opts )
@@ -134,6 +138,14 @@ class PortalDrop < BaseDrop
 
   def recent_popular_topics
     @recent_popular_topics ||= @source.recent_popular_topics(portal_user, 30.days.ago).presence
+  end
+
+  def my_topics
+    @my_topics ||= source.my_topics(portal_user, @per_page, @page) if portal_user
+  end
+
+  def my_topics_count
+    @my_topics_count ||= source.my_topics_count(portal_user) if portal_user
   end
 
   def topics_count

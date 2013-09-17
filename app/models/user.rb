@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
      [ :supervisor,    "Supervisor"    , 6 ]
     ]
 
-  EMAIL_REGEX = /(\A[-A-Z0-9.'’_%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
+  EMAIL_REGEX = /(\A[-A-Z0-9.'’_&%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,4}|museum|travel)\z)/i
 
   concerned_with :associations, :callbacks
 
@@ -133,6 +133,10 @@ class User < ActiveRecord::Base
   def add_tag(tag)
     # Tag the users if he is not already tagged
     self.tags.push tag unless tag.blank? or self.tagged?(tag.id)
+  end
+
+  def parent_id
+    string_uc02.to_i
   end
 
   def update_tag_names(csv_tag_names)
@@ -283,7 +287,7 @@ class User < ActiveRecord::Base
   def is_client_manager?
     self.privilege?(:client_manager)
   end
-  
+
   def can_assume?(user)
     # => Not himself
     # => User is not deleted
@@ -445,6 +449,14 @@ class User < ActiveRecord::Base
   def self.reset_current_user
     User.current = nil
   end
+  
+  def user_time_zone
+    self.time_zone
+  end
+  
+  def user_tag
+    self.tags
+  end
 
   private
     def name_part(part)
@@ -488,5 +500,10 @@ class User < ActiveRecord::Base
     def has_role?
       self.errors.add(:base, I18n.t("activerecord.errors.messages.user_role")) if
         ((@role_change_flag or new_record?) && self.roles.blank?)
+    end
+
+    def user_emails_migrated?
+      # for user email delta
+      self.account.user_emails_migrated?
     end
 end

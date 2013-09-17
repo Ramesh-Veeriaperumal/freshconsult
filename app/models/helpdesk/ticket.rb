@@ -16,6 +16,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Redis::ReportsRedis
   include Redis::OthersRedis
   include Reports::TicketStats
+  include Helpdesk::TicketsHelperMethods
+  include ActionView::Helpers::TranslationHelper
   include Helpdesk::TicketActivities, Helpdesk::TicketElasticSearchMethods, Helpdesk::TicketCustomFields,
     Helpdesk::TicketNotifications
 
@@ -36,7 +38,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   attr_protected :attachments #by Shan - need to check..
 
-  attr_protected :requester_id,:created_at,:updated_at,:account_id,:display_id,:email #to avoid update of these properties via api.
+  attr_protected :account_id,:display_id #to avoid update of these properties via api.
 
   named_scope :created_at_inside, lambda { |start, stop|
           { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }
@@ -161,7 +163,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
   end
-  
+ 
   def agent_permission_condition user
      permissions = {:all_tickets => "" , 
                    :group_tickets => " AND (group_id in (
@@ -447,8 +449,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def liquidize_comment(comm)
     if comm
       c_descr = "#{comm.user ? comm.user.name : 'System'} : #{comm.body_html}"
-      unless comm.attachments.empty?
-        c_descr = "#{c_descr}\n\nAttachments :\n#{liquidize_attachments(comm.attachments)}\n"
+      all_attachments = comm.all_attachments
+      unless all_attachments.empty?
+        c_descr = "#{c_descr}\n\nAttachments :\n#{liquidize_attachments(all_attachments)}\n"
       end
       c_descr
     end
@@ -554,9 +557,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
       twt_handles.first.id unless twt_handles.blank?
     end
   end
+
+  def portal
+    (self.product && self.product.portal) || account.main_portal
+  end
   
   def portal_host
     (self.product && !self.product.portal_url.blank?) ? self.product.portal_url : account.host
+  end
+
+  def solution_article_host article
+    (self.product && !self.product.portal_url.blank? && (self.product.solution_category_id == article.folder.category_id)) ? self.product.portal_url : account.host
   end
   
   def portal_name

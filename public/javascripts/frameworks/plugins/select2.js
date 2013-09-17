@@ -1831,7 +1831,7 @@
             this.search.bind("keydown", this.bind(function (e) {
                 if (!this.enabled) return;
 
-                if (e.which === KEY.BACKSPACE && this.search.val() === "") {
+                if (this.opts.removeOptionOnBackspace && (e.which === KEY.BACKSPACE && this.search.val() === "")) {
                     this.close();
 
                     var choices,
@@ -2395,7 +2395,9 @@
             }
             return markup;
         },
-        blurOnChange: false
+        blurOnChange: false,
+        // Custom event added for freshdesk to halt backspace removal of options
+        removeOptionOnBackspace: true
     };
 
     // exports

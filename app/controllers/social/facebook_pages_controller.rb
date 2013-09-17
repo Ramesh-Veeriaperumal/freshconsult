@@ -6,8 +6,8 @@ class Social::FacebookPagesController < Admin::AdminController
   before_filter :set_session_state , :only =>[:index , :edit]
   before_filter :fb_client , :only => [:index,:edit]
   before_filter :load_item,  :only => [:edit, :update, :destroy]  
-  before_filter :load_tab, :only => [:edit, :destroy]
-  before_filter :handle_tab, :only => :update, :if => :tab_edited?
+  before_filter :load_tab, :only => [:edit, :destroy], :if => :facebook_page_tab?
+  before_filter :handle_tab, :only => :update, :if => [:tab_edited?, :facebook_page_tab?]
   
   def index
     @fb_pages = scoper 
@@ -99,6 +99,10 @@ class Social::FacebookPagesController < Admin::AdminController
 
     def tab_edited?
       params[:custom_name]
+    end
+
+    def facebook_page_tab?
+      current_account.features?(:facebook_page_tab)
     end
 
     def human_name

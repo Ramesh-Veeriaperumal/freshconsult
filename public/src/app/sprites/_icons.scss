@@ -42,3 +42,14 @@
 .solution-list li:before{
 	@include icons-sprite(article-list);
 }
+
+.meta-os { @include icons-sprite('os-generic'); }
+@each $os in mac, windows, android, linux {
+  .meta-os.os-#{$os} { @include icons-sprite('os-#{$os}'); }
+}
+.meta-browser { @include icons-sprite('browser-generic'); }
+@each $browser in chrome, firefox, internet-explorer, opera, safari {
+  .meta-browser.browser-#{$browser} { @include icons-sprite('browser-#{$browser}'); }
+}
+
+.meta-referrer { @include icons-sprite(meta-referrer); }

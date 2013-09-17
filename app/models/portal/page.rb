@@ -39,6 +39,8 @@ class Portal::Page < ActiveRecord::Base
 			"support_discussions_topic_path", "portal_topics"],
 		[:new_topic,          	12,  "support/discussions/topics/new.portal", 
 			"new_support_discussions_topic_path"],
+		[:my_topics, 		19, "support/discussions/topics/my_topics.portal",
+			"my_topics_support_discussions_topics_path"],
 		
 		# Ticket pages
 		[:submit_ticket,      	13,  "support/tickets/new.portal", "new_support_ticket_path"],
@@ -59,7 +61,7 @@ class Portal::Page < ActiveRecord::Base
 	PAGE_GROUPS = [
 		{ :general 		=> [:portal_home, :user_signup, :user_login, :search] },
 		{ :solutions 	=> [:solution_home, :article_list, :article_view, :solution_category] }, 
-		{ :discussions 	=> [:discussions_home, :topic_list, :topic_view, :new_topic] },
+		{ :discussions 	=> [:discussions_home, :topic_list, :my_topics, :topic_view, :new_topic] },
 		{ :tickets 		=> [:submit_ticket] }
 	]
 

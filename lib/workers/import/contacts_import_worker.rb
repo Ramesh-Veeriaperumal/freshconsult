@@ -19,7 +19,7 @@ class Workers::Import::ContactsImportWorker < Struct.new(:params)
                                 :customer_id => nil
                                  }
                       }
-          company_name = @params_hash[:user][:company]
+          company_name = @params_hash[:user][:company].to_s.strip
           @params_hash[:user][:customer_id]= current_account.customers.find_or_create_by_name(company_name).id unless company_name.nil?
           user = current_account.users.find_by_email(@params_hash[:user][:email])   
           unless user.nil?

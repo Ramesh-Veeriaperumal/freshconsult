@@ -28,6 +28,22 @@ function catchException(fn, message) {
 }
 
 
+function show_growl_flash(text, type, options) {
+  if(['notice', 'warning', 'error'].indexOf(type) == -1) {
+    type = 'notice';
+  }
+  var defaults = {
+    text:         text,
+    fade:         true,
+    speed:        'fast',
+    position:     'top-right',
+    class_name:   'flash-' + type
+  };
+
+  options = jQuery.extend({}, defaults, options);
+  jQuery.gritter.add(options);
+}
+
 
 function freshdate(str) {
   var month_names = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -872,7 +888,7 @@ function unescapeHtml(escapedStr) {
 jQuery.scrollTo = function(element, options) {
   var defaults = {
     speed: 500,
-    offset: 0
+    offset: jQuery('#sticky_header').outerHeight()
   };
   var opts = jQuery.extend({}, defaults, options || {});
   var el = jQuery(element);

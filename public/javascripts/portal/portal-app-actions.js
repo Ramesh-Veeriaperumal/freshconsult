@@ -5,7 +5,9 @@
  
 !function( $ ) {
 
-	layoutResize(".main", ".sidebar")
+	if ((portal['preferences']['nonResponsive'] == "true") || Modernizr.mq('only screen and (min-width: 980px)')) {
+		layoutResize(".main", ".sidebar")
+	}
 
 	$(function () {
 
@@ -154,20 +156,16 @@
 			})
     	}
 
-        //mobile search box focus style
-		$(".help-center input[rel='page-search']").focus(function () {
-			$(".hc-search").addClass("onfocus-mobile")
-			$(".hc-search-button").addClass("onfocus-mobile-button")
-			if (Modernizr.mq('only screen and (max-width: 768px)')) {
+        // mobile search box focus style
+        if (Modernizr.mq('only screen and (max-width: 768px)')) {
+			$(".help-center input[rel='page-search']").focus(function () {
+				$(".hc-search").addClass("onfocus-mobile")
 				$(".hc-nav").hide('fast')
-			}
-		}).blur(function(){
-	    	$(".hc-search").removeClass("onfocus-mobile")
-	    	$(".hc-search-button").removeClass("onfocus-mobile-button")
-	    	if (Modernizr.mq('only screen and (max-width: 768px)')) {
-				$(".hc-nav").show()
-			}
-		})
+			}).blur(function(){
+		    	$(".hc-search").removeClass("onfocus-mobile")
+		    	$(".hc-nav").show()
+			})
+		}
 
 
 		// Recapcha fix for multiple forms

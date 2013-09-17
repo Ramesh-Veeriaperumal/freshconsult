@@ -16,17 +16,17 @@ Authority::Authorization::PrivilegeList.build do
                       :get_ca_response_content, :merge_with_this_request, :print, :latest_note,
                       :clear_draft, :save_draft, :prevnext, :component, :custom_search, :configure_export,
                       :quick_assign, :canned_reponse, :full_paginate, :custom_view_save,
-                      :filter_options, :activities, :status]
+                      :filter_options, :activities, :status, :get_top_view, :recent_tickets, :old_tickets]
     resource :"helpdesk/subscription"
  		resource :"helpdesk/tag_use"
     resource :"helpdesk/tag"
     resource :"mobile/ticket"
+    resource :"mobile/search"
     resource :"social/twitter_handle",
        :only => [:create_twicket, :feed, :user_following, :tweet_exists, :send_tweet, :twitter_search]
 
     resource :"integrations/integrated_resource"
     resource :"integrations/jira_issue"
-    resource :"integrations/logmein"
     resource :"integrations/oauth_util"
     resource :"integrations/salesforce" 
     resource :"integrations/user_credential"
@@ -37,6 +37,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :agent, :only => [:toggle_availability]
     resource :"search/home", :only => [:index, :suggest]
     resource :search, :only => [:index, :suggest, :content]
+    resource :"helpdesk/survey"
     # resource :"helpdesk/common", :only => [:group_agents]
 	end
 

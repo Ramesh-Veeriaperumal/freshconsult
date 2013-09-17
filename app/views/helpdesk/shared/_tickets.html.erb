@@ -27,14 +27,14 @@
                               :view_2 => link_to(t("helpdesk.tickets.views.all_tickets"), helpdesk_filter_view_default_path('all_tickets'), :"data-pjax" => "#body-container",
                                 :"data-parallel-url" => "/helpdesk/tickets/filter_options?filter_name=all_tickets", 
                                 :"data-parallel-placeholder" => "#ticket-leftFilter")
-                          ) %></span>
+                          ).html_safe %></span>
     <% else %>
       <span class="small"><%= t('wf.messages.no_tickets_subtext_single', 
                                 :view_1 => link_to(t("helpdesk.tickets.views.all_tickets"), helpdesk_filter_view_default_path('all_tickets',
                                   :"data-pjax" => "#body-container",
                                   :"data-parallel-url" => "/helpdesk/tickets/filter_options?filter_name=all_tickets", 
                                   :"data-parallel-placeholder" => "#ticket-leftFilter"))
-                          ) %></span>
+                          ).html_safe %></span>
     <% end %>
 	</div>
 <% end %>

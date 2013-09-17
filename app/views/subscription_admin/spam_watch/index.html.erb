@@ -71,12 +71,12 @@
 					<b>Whitelisted</b>
 				<%else %>
 					<%if !@user.spam?%>
-						<a class="btn" style="width: 20%;display: inline-block;margin-left: 1px;" href="/spam_user/<%=@user.id%>">Spam</a> 
+						<a class="btn" style="width: 20%;display: inline-block;margin-left: 1px;" href="/<%=params[:shard_name]%>/spam_user/<%=@user.id%>">Spam</a> 
 					<% else%>
 						<b>Deleted</b>
 					<%end
 					if !@user.blocked?%>
-						<a class="btn" style="width: 20%;display: inline-block;margin-left: 50px;" href="/block_user/<%=@user.id%>">Block</a>
+						<a class="btn" style="width: 20%;display: inline-block;margin-left: 50px;" href="/<%=params[:shard_name]%>/block_user/<%=@user.id%>">Block</a>
 					<%else%>
 						<b>Blocked</b>
 					<%end%>

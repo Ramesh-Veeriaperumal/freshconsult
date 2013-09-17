@@ -8,8 +8,9 @@ class Solution::Article < ActiveRecord::Base
 
   belongs_to :folder, :class_name => 'Solution::Folder'
   belongs_to :user, :class_name => 'User'
-  belongs_to :account
+  belongs_to_account
   
+  xss_sanitize :only => [:description],  :html_sanitize => [:description]
   has_many_attachments
   
   has_many :activities,
@@ -103,6 +104,7 @@ class Solution::Article < ActiveRecord::Base
     return [] if search_by.blank? || (search_by = search_by.gsub(/[\^\$]/, '')).blank?
       if ticket.account.es_enabled?
         begin
+          Search::EsIndexDefinition.es_cluster(ticket.account.id)
           options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }
           item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], ticket.account.id), options do |search|
             search.query do |query|
@@ -112,7 +114,7 @@ class Solution::Article < ActiveRecord::Base
               end
             end
             search.from options[:size].to_i * (options[:page].to_i-1)
-            search.highlight :desc_un_html, :title, :options => { :tag => '<strong>', :fragment_size => 50, :number_of_fragments => 4 }
+            search.highlight :desc_un_html, :title, :options => { :tag => '<strong>', :fragment_size => 50, :number_of_fragments => 4, :encoder => 'html' }
           end
 
           item.results.each_with_hit do |result,hit|
@@ -125,7 +127,13 @@ class Solution::Article < ActiveRecord::Base
         end
     else
       ThinkingSphinx.search(search_by, :with => { :account_id => ticket.account.id },
-       :classes => [ Solution::Article ], :match_mode => :any, :per_page => 10 )
+       :classes => [ Solution::Article ], 
+       :match_mode => :any, 
+       :per_page => 10,
+       :excerpt_options => {
+                            :before_match => '',
+                            :after_match => ''
+                            } )
     end
   end
   
@@ -172,6 +180,14 @@ class Solution::Article < ActiveRecord::Base
 
   def article_changes
     @article_changes ||= self.changes.clone
+  end
+
+  def self.article_type_option
+    TYPES.map { |i| [I18n.t(i[1]), i[2]] }
+  end
+
+  def self.article_status_option
+    STATUSES.map { |i| [I18n.t(i[1]), i[2]] }
   end
 
 end

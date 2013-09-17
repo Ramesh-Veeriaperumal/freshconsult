@@ -2546,6 +2546,7 @@ pt-BR:
       export_ticket_data: "Exportar dados do ticket para CSV"
       export_to_csv: "Exportar para CSV"
       mark_closed: "Marcar ticket como concluído"
+      related_articles: "Artigos Relacionados..."
       reopen_reply: "Reabrir e responder"
       reply_placeholder: "Clique aqui para responder a este ticket"
       ticket_list: "Lista de tickets"
@@ -2890,7 +2891,7 @@ pt-BR:
   signup_title: "Inscreva-se para %{current_portal}"
   signup_up_with_us: "Registre-se conosco"
   since: Desde
-  since_last_time: "desde a última %{time_words}"
+  since_last_time: "há %{time_words}"
   since_time: "Desde %{time_words}"
   six_months: "Últimos 6 meses"
   sixmonth: "6 Meses"

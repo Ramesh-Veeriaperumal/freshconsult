@@ -1,7 +1,7 @@
 <p>
   The rate is a percentage, so 0.1 is a 10% affiliate fee.
 </p>
-
+<%  %>
 <%= form.error_messages %>
 <fieldset>
   <%= form.label :name %>
@@ -10,5 +10,12 @@
   <%= form.text_field :token %>
   <%= form.label :rate %>
   <%= form.text_field :rate %>
+  
+  <%= form.label :affiliate_discount_ids, "Free Agent Coupons" %>
+  <%= select_tag "subscription_affiliate[affiliate_discount_ids][]", options_for_select(@free_agent_coupons.collect{ |d| ["#{d.description}", d.id] }.insert(0,"--"), @subscription_affiliate.fetch_discount(:free_agent) ) %> 
+
+  <%= form.label :affiliate_discount_ids, "Percentage coupons" %>  
+  <%= select_tag "subscription_affiliate[affiliate_discount_ids][]", options_for_select(@percentage_coupons.collect{ |d| ["#{d.description}", d.id] }.insert(0, "--"), @subscription_affiliate.fetch_discount(:percentage)) %>  
 </fieldset>
 <%= submit_tag %>
+

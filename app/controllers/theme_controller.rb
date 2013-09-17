@@ -8,7 +8,7 @@ class ThemeController < SupportController
 								tab_color tab_hover_color
 								btn_background btn_primary_background 
 								baseFont baseFontFamily textColor headingsFont headingsFontFamily headingsColor
-								linkColor linkColorHover inputFocusRingColor)
+								linkColor linkColorHover inputFocusRingColor nonResponsive )
 
 	def index		
 		_options = Compass.configuration.to_sass_engine_options.merge(:syntax => :scss, :always_update => true, :style => :compressed)
@@ -25,7 +25,7 @@ class ThemeController < SupportController
 
 	private
 
-		def theme_colors
+		def theme_colors			
 			@theme_colors = color_preferences.map{ |k, p| (p.present? && ALLOWED_THEME_OPTIONS.include?(k.to_s)) ? "$#{k}:#{p};" : "" }.join("")
 		end
 

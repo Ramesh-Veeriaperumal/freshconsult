@@ -117,6 +117,7 @@ module FreshdeskCore::Model
     add_churn(account) unless account.subscription_payments.blank?
     delete_jira_webhooks(account)
     clear_attachments(account)
+    $redis_others.srem('user_email_migrated', account.id) #for contact merge delta
     
     delete_data_from_tables(account.id)
     account.destroy
@@ -165,7 +166,7 @@ module FreshdeskCore::Model
       account.attachments.find_in_batches do |attachments|
         attachments.each do |attachment|
           prefix = "data/helpdesk/attachments/#{Rails.env}/#{attachment.id}/"
-          objects = AWS::S3::Bucket.objects(S3_CONFIG[:bucket], :prefix => prefix)
+          objects = AwsWrapper::S3Object.find_with_prefix(S3_CONFIG[:bucket],prefix)
           
           objects.each do |object| 
             object.delete if object.key.include?(attachment.content_file_name)

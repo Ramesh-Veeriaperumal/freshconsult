@@ -3,17 +3,17 @@
 	<div class="info-highlight"><%=t('export_data.info')%></div>
 	<ul class="ui-form configure_export">
 		<li class="inline-field">
-			<strong class="caption"><%=t('export_data.filter_label_agent')%> </strong>
+			<strong class="caption"><%=t('export_data.filter_label_agent').html_safe%> </strong>
 			<div>
 				<%= select_tag "ticket_state_filter", options_for_select(TicketConstants::STATES_HASH.map {|k,v| [v,k]}, [:created_at]), {:class => "dropdown"} %>
 				<%= select_tag "date_filter", options_for_select(TicketConstants::CREATED_BY_OPTIONS), :class => "dropdown" %>
 	 			<div id="datepicker" style="display:none;">
 					<span class="seperator"></span>
-					<label class="caption"><%=t('export_data.from')%></label>
+					<label class="caption"><%=t('export_data.from').html_safe%></label>
 					<div class="fields">						
 						<input type="text" id="start_date" date="" name="start_date" class="text auto" size="15" />
 					</div>
-					<label class="caption"><%=t('export_data.to')%></label>
+					<label class="caption"><%=t('export_data.to').html_safe%></label>
 					<div class="fields">
 						<input type="text" id="end_date" date="" class="text auto" name="end_date" size="15" />		
 					</div>
@@ -29,13 +29,13 @@
 	 			  	<div class="item <%= head[:type] %>">
 		  				<label class="checkbox prime"> 
 		    				<%= check_box_tag "export_fields[#{head[:value]}]", head[:label], head[:selected] %> 
-							<%= head[:label] %>														
+							<%= head[:label].html_safe %>														
 		  				</label>
 		  				<% head[:levels].each do |level| %>
 		  					<br />
 			  				<label class="checkbox level"> 
 			    				<%= check_box_tag "export_fields[#{level[:name]}]", level[:label], false  %> 
-								<%= level[:label] %>
+								<%= level[:label].html_safe %>
 			  				</label>
 			  			<% end %>
 	  			    </div>	

@@ -8,8 +8,8 @@
 	  </div>
 		<h3 class="title">
 		 	<%= link_to(t('forum.title'), categories_path) %> &rarr;
-			<%= link_to( "#{h(@forum_category.name)}", category_path(@forum_category)) %> &rarr;
-			<%= h @forum.name %> 
+			<%= link_to( "#{(@forum_category.name)}", category_path(@forum_category)) %> &rarr;
+			<%= @forum.name %> 
 		</h3>	 
 	</div>
 	

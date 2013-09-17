@@ -76,7 +76,7 @@ class Va::Action
   end
   
   def add_activity(log_mesg)
-    Thread.current[:scenario_action_log] << log_mesg
+    Thread.current[:scenario_action_log] << log_mesg.html_safe
   end
   
   def self.activities

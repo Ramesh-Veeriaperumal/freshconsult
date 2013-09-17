@@ -66,13 +66,14 @@ namespace :freshdesk_tire do
   end
 
   task :multi_class_import => :environment do
-    account = Account.find_by_id(ENV['ACCOUNT_ID'])
-    Sharding.select_shard_of(account.id) do
+    Sharding.select_shard_of(ENV['ACCOUNT_ID']) do
+      account = Account.find_by_id(ENV['ACCOUNT_ID'])
       account.make_current
       account.es_enabled_account.update_attribute(:imported, false)
       Sharding.run_on_slave do
         klasses = ENV['CLASS'].split(';')
         klasses.each do |klass|
+          Search::EsIndexDefinition.es_cluster(account.id)
           ENV['CLASS'] = klass
           index_alias = Search::EsIndexDefinition.searchable_aliases(Array(klass.partition('.').first.constantize), account.id).to_s
           ENV['INDEX'] = index_alias
@@ -106,6 +107,7 @@ def init_es_indexing(es_account_ids)
   klasses = ENV['CLASS']
   existing_accounts = Array.new
   es_account_ids.each do |account_id|
+    Sharding.select_shard_of(account_id) do
     account = Account.find_by_id(account_id)
     next if account.nil?
     account.make_current
@@ -119,6 +121,7 @@ def init_es_indexing(es_account_ids)
       existing_accounts.push(account_id)
     end
     Account.reset_current_account
+   end
   end
   puts '='*100, ' '*10+"Index already exists for following accounts: #{existing_accounts.inspect}. You can use reindex task to index the same", '='*100, "" unless existing_accounts.blank?
 end
@@ -129,6 +132,7 @@ def init_partial_reindex(es_account_ids)
     exit(1)
   end
   es_account_ids.each do |account_id|
+    Sharding.select_shard_of(account_id) do
     account = Account.find_by_id(account_id)
     next if account.nil?
     account.make_current
@@ -148,6 +152,7 @@ def init_partial_reindex(es_account_ids)
     end
     Account.reset_current_account
   end
+  end
 end
 
 def import_classes(id, klasses)
@@ -163,7 +168,7 @@ def import_condition(id, item)
     when "User" then
       condition = ".scoped(:conditions => ['account_id=? and updated_at<? and deleted=?', #{id}, Time.now.utc, false])"
     when "Helpdesk::Note" then
-      condition = ".scoped(:conditions => ['account_id=? and updated_at<? and deleted=?', #{id}, Time.now.utc, false])"
+      condition = ".scoped(:conditions => ['account_id=? and updated_at<? and notable_type=? and deleted=?', #{id}, Time.now.utc, 'Helpdesk::Ticket', false])"
   end
   condition
 end

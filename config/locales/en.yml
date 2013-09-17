@@ -59,7 +59,7 @@ en:
    language_name: 'English'
   signup_complete_activate_info: Welcome! We have sent you an email with a link where you can set your password and activate your account.
   attachment_help_info: "File size < 15 MB"
-  feedbackwidget_offset_info: The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
+  feedbackwidget_offset_info: Choose widget position on your browser. The offset will be the distance of the widget button (pixels) from the left or top of the screen based on the alignment you choose.
   no_twitter_handle: Please configure atleast one twitter account
   reset_my_password: Reset my password 
   assign: Assign
@@ -248,7 +248,7 @@ en:
     tickets:    
       ticket_survey:
         title: "Customer survey"
-        rating_sub_title: "Your have rated us"
+        rating_sub_title: "You have rated us"
         survey_title: Please take a minute to rate our support
         feedback_title: Describe your support experience (optional)
         rated_on: on %{rated_on}
@@ -267,6 +267,8 @@ en:
         sign_in_using_google: Sign in using your Google account
         help: Help
     shared:
+      attachment_form:
+        feedback_widgets_screenshot: Take Screenshot
       survey_form:
         survey_title: Please take a minute to rate our support
         feedback_title: Also your good words and specific critique can help us better our support in the future
@@ -378,8 +380,15 @@ en:
       submit_ticket: "New ticket"
       ticket_list: "User tickets"
       ticket_view: "Ticket details"
+      my_topics: "My Topics"
   admin:
     portal_settings:
+      flash:
+        portal_published_success: "Portal changes published successfully."
+        portal_reset_success: "Portal changes reseted successfully."
+        portal_saved_success: "Portal template saved successfully."
+        portal_page_saved: "Page saved successfully."
+        portal_page_reset: "Page reseted successfully."
       simple:
         header_color: "Header"
         bg_color: "Body"
@@ -630,9 +639,32 @@ en:
         helptext: "Your day passes will Auto-recharge once the number of available day passes comes down to 2."
     widget_config:
       index:
-        thankyou_label: "Submit message"
+        feedbackwidget_embedded_tab: Embedded Widget 
+        feedbackwidget_popup_tab: Pop up Widget
+        
+      popup_embedded_widget:  
+        feedbackwidget_popup: "popup"
+        feedbackwidget_embedded: "embedded"
+        feedbackwidget_button_text_placeholder: Support
+        feedbackwidget_height_placeholder: "500"
+        feedbackwidget_offset_placeholder: "235"
+        feedbackwidget_button_customization: Button customization
+        feedbackwidget_form_customization: Form customization
+        feedbackwidget_embedded_code: Embedded Widget code
+        feedbackwidget_popup_code: Popup Widget code
+        feedbackwidget_widget_code: Widget code
+        feedbackwidget_embedded_form_code: Embedded form code
+        feedbackwidget_form_submit_message: "Form Submit Message"
+        feedbackwidget_form_height: "Form height"
+        feedbackwidget_form_height_message: "If you see scroll bars in your widget, adjust the widget height."
+        feedbackwidget_px: "px"
         thankyou_default: "Thank you for your feedback"
         thankyou_info: "Message to be displayed after a user submits the ticket form"
+        feedbackwidget_users_can: "Users can:"
+        feedbackwidget_attach_a_file: Attach a file
+        feedbackwidget_screenshot: Take Screenshot
+        feedbackwidget_search_area: Search Articles
+        feedbackwidget_use_https: Use https
     supervisor_rules:
       index:
         human_name: Supervisor Rule
@@ -694,6 +726,13 @@ en:
     va_rules:
       index:
         human_name: Dispatch’r Rule
+    webhook:
+      jira_hook_title: JIRA Issue Creation
+      jira_hook_description: You could use a webhook to automatically create issues inside your JIRA account when a ticket is raised in Freshdesk.
+      jira_hook_alt: JIRA Issue Creation Post Request
+      hipchat_hook_title: HipChat Notification
+      hipchat_hook_description: You could send out a message to a HipChat Room whenever a requester sends a reply to a ticket in Freshdesk.
+      hipchat_hook_alt: Hipchat Pinging GET Request
     shared:
       filter_jsinit:
         change_password: Change Password
@@ -704,7 +743,8 @@ en:
         url_req_auth: Requires Authentication
         simple_layout: Simple
         advanced_layout: Advanced
-        webhook_usecase: Example Webhooks
+        webhook_usecase: Webhook Usecases
+        webhook_usecase_tooltip: Check out a few examples of how you can use webhooks with the Observer 
         simple_webhook_tip: Select any of the ticket properties from the list above to be sent with the request. In case you would like to write your own API requests, please use the Advanced option.
         advanced_webhook_tip: This section lets you write custom API requests. Click on the Insert Placeholders button to include ticket details such as Requester Name, Priority, Ticket Status etc. with your request.
         how_to_use_webhook: How to use Webhooks >
@@ -788,14 +828,14 @@ en:
         portal_language: Portal Language
         portal_language_info: This will be the default language when customers visits your portal
         portal_customization: Portal customization
-        customize_portal: Customize portal >
-        save_and_customize: Save & Customize portal >
+        customize_portal: "Customize portal >"
+        save_and_customize: "Save & Customize portal >"
         save_and_continue: You have unsaved changes in your form. Do you want to save and continue?
         helpdesk_phone: Helpdesk Phone
         ago: ago
         last_published: Your portal was last published
         contact_us: Contact us 
-        logo_and_favicon: Logo & favicon
+        logo_and_favicon: "Logo & favicon"
       edit: 
         title: Edit Product
         updating: Updating...
@@ -1015,7 +1055,6 @@ en:
   default_reply_template: Agent Reply Template
   import_user_org: Users &amp; Organizations
   to_do: To Do
-  feedbackwidget_formcustomize: Form customization
   does_not_contain: Does not contain
   flash:
     gmail_gadgets:
@@ -1269,7 +1308,7 @@ en:
   resolved: Resolved
   logo_delete_msg: Are you sure you want to delete this logo?
   from_email: From Email
-  feedbackwidget_custom_image: Custom image URL
+  feedbackwidget_image_button: Image button URL
   activities: 
     action_verb: 'updated'
     tag:
@@ -1380,9 +1419,9 @@ en:
         without_user: assigned to <strong>{{responder_path}}</strong>
         long: "{{user_path}} assigned the ticket {{notable_path}} to {{responder_path}}"
       execute_scenario: 
-        short: "{{user_path}} executed the scenario '{{scenario_name}}"
-        without_user: "executed the scenario <strong>{{scenario_name}}</strong>"
-        long: "{{user_path}} executed the scenario '{{scenario_name}}' on {{notable_path}}"
+        short: "{{user_path}} executed the scenario '{{scenario_name | h}}"
+        without_user: "executed the scenario <strong>{{scenario_name | h}}</strong>"
+        long: "{{user_path}} executed the scenario '{{scenario_name | h}}' on {{notable_path}}"
       ticket_merge: 
         short: "{{user_path}} has merged the ticket {{notable_path}} to {{merge_ticket_path}} "
         long: "{{user_path}} has merged the ticket  {{notable_path}} to {{merge_ticket_path}}"
@@ -1436,7 +1475,7 @@ en:
   during: during
   less_than: Less than
   greater_than: Greater than
-  feedbackwidget_bgcolor: Background Color
+  feedbackwidget_background: Background
   day: 1 Day
   trial_day: Day
   current_plan: Current Plan
@@ -1527,7 +1566,6 @@ en:
   at: at
   add_a_topic: Start a Topic
   bottom: Bottom
-  align_to: Align to
   feedbackwidget_help_title: Feedback widget
   name: Name
   import_user_org_text: All the Users &amp; Organizations in your Zendesk account will be imported into your current Freshdesk account as "Contacts & Companies"
@@ -1546,7 +1584,7 @@ en:
   set_type_as: Set Type as
   change_my_plan: Choose this plan...
   add_new_email: Add new email
-  feedbackwidget_title: Widget Settings
+  feedbackwidget_title: Feedback widget
   errors_in_your_address: "Errors encountered with your address:"
   set_priority_as: Set Priority as
   sign_in_info: You will be signing in with
@@ -1575,7 +1613,6 @@ en:
   edit_forum_category: Edit Forum Category
   agent_assigned_title: Recently assigned tickets (Open &amp; Pending)
   send_email_to_requester: Send Email to Requester
-  feedbackwidget_btcustomize: Button customization
   solution_category: 
     name: Category name
     new: New solution category
@@ -1774,7 +1811,7 @@ en:
     after_ten_minutes: After 10 Minutes
     after_fifteen_minutes: After 15 Minutes
   between_range: Between Range
-  back_to_admin: Back to Admin
+  go_back: Go back
   group: 
     new: New Group
     name: Group Name
@@ -1843,13 +1880,13 @@ en:
       no_agents: You dont have any deleted agents
     trial: In trial version
     buy: Buy more
-    available_seats: %{count} Agent seats available
+    available_seats: "%{count} Agent seats available"
     available_seats_without_count: Agent seats available
     no_seats: No agent seats available
     last_logged_in: Last logged in %{time} ago.
     never_logged_in: Never logged in
     day_pass_used: Used %{count} day pass till date
-    day_pass_available: %{count} Day pass available
+    day_pass_available: "%{count} Day pass available"
     no_day_pass: No day pass available
     assign_role: Associate Roles
     cannot_edit_roles: You will only be able to view your roles and scope, not edit them.
@@ -2071,7 +2108,7 @@ en:
     info1: "You can change your subscription details anytime. Your card will be charged pro-rata from the date of the subscription change to the next billing date."
     info2: "Downgrading from a higher plan to a lower plan will result in loss of configuration data for features that are only available in the higher plan."
   activate: Activate
-  feedbackwidget_text: Text
+  feedbackwidget_button_text: Button text
   billed_amount_per_month: You will be billed $%{amount} %{period}
   billed_amount_annually: You will be billed $%{amount} annually
   import_zendesk_summary: Import from zendesk summary
@@ -2120,7 +2157,9 @@ en:
       placeholder: "Enter your search term here..."
       results_for: Search results for
     popular_topics: "Popular topics"
+    my_topics: "My Topics"
     showing_recently_popular_topics: "Showing recently popular topics"
+    showing_my_topics: "Showing topics that you currently follow"
     community_forums: "Community forums"
     knowledge_base: "Knowledge base"
     showing_recent_updates: "Showing recent updates"
@@ -2144,10 +2183,15 @@ en:
       comments_closed: "Comments to this discussion are now closed!"
       start_new_topic: "Start a new topic"
       see_all_topics: "See all %{count} topics"
+      all_topics: "See all topics"
       comment_placeholder: Click here to add a comment
       started: started a topic
       more_topic: More topics in
       last_reply: Last Reply
+      fb_reply_info: "<a href='%{reply_url}'> Last Reply </a> by %{user_name}<br>%{created_on}"
+      my_topic_reply: "Last Reply by <b>%{post_name}</b>, %{created_on}"
+      topic_brief: "Posted by <b>%{user_name}</b>, %{created_on}"
+      last_post_brief: "<a href='%{last_post_url}'>%{link_label}</a> by %{user_name} %{created_on}"
     topic_vote:
       you: 
         one: "You"
@@ -2188,6 +2232,8 @@ en:
       add_or_remove_emails: "Add or remove emails that need to be copied when a notification for this ticket is sent."
       add_people_title: Add people to conversation
       reopen_reply: Reply
+      related_articles: "Related articles..."
+  feedbackwidget_form_heading: Form Heading
   feedbackwidget_form_title: Widget form title
   cancel_and_back: Cancel and go back
   due_in: Due in %{time_words}
@@ -2291,7 +2337,6 @@ en:
     active:
       no_companies: You don't have any company added to the list.
       no_companies_with_letter: You don't have any companies with the letter '%{alphabet}'
-  feedbackwidget_embed_code: Widget embed code
   billing_info_update: Your billing information has been updated.
   wrong_portal: 
     content_not_available: The content you are looking for is, not available in this portal.
@@ -2310,7 +2355,6 @@ en:
   is_expiring_today: is expiring today
   feedbackwidget_help_para1: The feedback widget lets you embed a ticket form directly into your website or product. You can customize the look and feel, and placement of the widget on your website. Once done, copy-paste the generated embed code in your website or app, to start using the Feedback Widget.
   low: Low
-  feedbackwidget_defaultbutton: Support
   agents: Agents
   header: 
     welcome: Welcome
@@ -2377,6 +2421,8 @@ en:
   downgrade_confirm: "<span class=\"label label-important\">Important</span>&nbsp;&nbsp;You are currently downgrading from <b>{{from}}</b> plan to the <b>{{to}}</b> plan. Please note that all data and configurations associated with features available in {{from}} plan will be lost permanently.<br /><br /> To see the full list of plans and features, please visit <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Plans and Pricing</a>. <br />Still not sure? <a href = \"mailto:support@freshdesk.com\" >Let us help you decide</a>"
   errors_in_payment: "Errors encountered with your payment:"
   email_configs:
+    delete_confirm: Are you sure you want to delete this config? 
+    delete_primary_email : Cannot delete a primary email.
     title: Email Settings
     email: E-mail 
     name: Name
@@ -2757,7 +2803,6 @@ en:
   import_zendesk_summary_info: Zendesk data has been successfully imported.
   one: 1 Hour
   no_topics_text: No topics in this forum
-  feedbackwidget_offset_label: With an offset of
   send_email_to_group: Send Email to Group
   activate_account: Activate your account
   enter_message: Enter your message here
@@ -2809,6 +2854,13 @@ en:
     rebrand: Rebrand your Helpdesk
     helpdesk_url: Helpdesk/Portal URL
     language: Language
+    settings: "Settings"
+    logo_and_colors: "Logo and colors"
+    logo_and_favicon: "Logo & favicon"
+    change_logo: "Change logo"
+    change_favicon: "Change favicon"
+    use_default: "Use default"
+    last_published: "Portal was last published %{last_published} ago"
   lead: Lead
   comments: Comments
   forum_confirm_msg1: Are you sure you want to delete this category?
@@ -3068,6 +3120,7 @@ en:
           bcc: Bcc
           addbcc: Add Bcc
           removebcc: Remove Bcc
+          not_sent: Reply was not sent! 
         forward_form:
           cc: Cc
           addcc: Add Cc
@@ -3075,6 +3128,7 @@ en:
           bcc: Bcc
           addbcc: Add Bcc
           removebcc: Remove Bcc
+          not_sent:  Reply was not forwarded!
         tweet_form:
           title: "Reply to %{user}"
         facebook_form:
@@ -3163,8 +3217,9 @@ en:
         public_note_tip: Visible to the customer
         inbound_email: Incoming email
         outbound_email: Outbound email
+        not_added: Note has not been added! 
         attachment_size: 
-           exceed: Oops! Your attachment exceeds 15 MB. Please attach a smaller file.
+           exceed: Your attachments exceed 15 MB. Please make changes before you proceed.
     merge:
       merge:
         merge_into: Merge into?
@@ -3172,7 +3227,7 @@ en:
         enter_ticket_id: Enter a ticket id #
         merge: Merge
       confirm_merge:
-        source_merge_description: "This ticket is closed and merged into ticket <a href='/helpdesk/tickets/%{ticket_id}' target='_blank' class='merge_links'>%{ticket_id}</a>."
+        source_merge_description: "This ticket is closed and merged into ticket <a href='http://%{full_domain}/helpdesk/tickets/%{ticket_id}' target='_blank' class='merge_links'>%{ticket_id}</a>."
         source_ticket_close_info: This ticket will be closed with the following note
         target_ticket_updated_info: This ticket will be updated with the following note and all conversations will be moved
         will_be_merged_into: Will be merged into...
@@ -3185,7 +3240,7 @@ en:
         primary_ticket: "This is your primary ticket"
         remove: "Remove this ticket"
         target_merge_description:  "Ticket {{ticket.id}} {{ticket.subject}} is merged with this request"
-        target_merge_description1: "Merged from ticket <a href='/helpdesk/tickets/%{ticket_id}' target='_blank'>%{ticket_id}</a>"
+        target_merge_description1: "Merged from ticket <a href='http://%{full_domain}/helpdesk/tickets/%{ticket_id}' target='_blank'>%{ticket_id}</a>"
         target_note_description1: 
           one: "Ticket with id"
           other: "Tickets with ids"
@@ -3360,7 +3415,7 @@ en:
       no_tickets_in_view: You don't have any tickets in %{view_name}.
       no_tickets_for_user: There are no open tickets for %{user_name} to view.
       no_tickets_subtext: "View %{view_1} or %{view_2}"
-      no_tickets_subtext_single: "View %{view_1}"
+      no_tickets_subtext_single: "View %{view_1}" 
   conversation: Conversation
   save_this_view: "Save"
   save_this_view_tooltip: "Save View"
@@ -3749,6 +3804,15 @@ en:
   widgets:
     contact_widget:
       description: "Display a contact or option to add the contact into capsule."
+    feedback_widgets:
+      new:
+        feedback_widgets_search: "Search"
+        feedback_widgets_search_results: "Search results"
+        feedback_widgets_search_our: "Search our "
+        feedback_widgets_knowledge_base: "Knowledge base "
+        feedback_widgets_help_articles: "or Browse help articles"
+        show_all_results: "Show all results"
+        no_results_for: "No results for %{term}"
   reorder: "Reorder"
   reports:
       no_data: No data to display!
@@ -4031,7 +4095,9 @@ en:
       subheader_link_color: Link color
       subheader_form_elements: Form elements
       css_subheader: Custom stylesheet
-      css_help_message: Add or overwrite freshdesk default styles with your own custom css.  
+      css_help_message: Add or overwrite default theme styles with your own custom css.  
+      css_responsive: Include mobile friendly stylesheet
+      css_responsive_help: "This will make your default theme mobile friendly and will optimize it for phones and tablets. You can choose to turn this setting off in case you wish to have a consistent non-responsive theme across all devices."
   any_time: Any Time
   five_minutes: Within 5 minutes
   fifteen_minutes: Within 15 minutes

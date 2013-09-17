@@ -3,6 +3,8 @@ class Account < ActiveRecord::Base
   include Mobile::Actions::Account
   include Cache::Memcache::Account
   include ErrorHandle
+
+  has_many_attachments
   
   serialize :sso_options, Hash
 
@@ -234,6 +236,10 @@ class Account < ActiveRecord::Base
   def es_enabled?
     es_status = MemcacheKeys.fetch(MemcacheKeys::ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
     es_status.key?(self.id) ? es_status[self.id] : false
+  end
+
+  def user_emails_migrated?
+    $redis_others.sismember('user_email_migrated', self.id)
   end
   
   protected

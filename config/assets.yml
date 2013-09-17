@@ -34,7 +34,7 @@ stylesheets:
   codemirror:
     - public/stylesheets/codemirror.css
 
-  portal:
+  portal_utils:
     - public/stylesheets/portal/portal_utils.css
 
   preview:
@@ -72,6 +72,7 @@ stylesheets:
 
   subscription:
     - public/stylesheets/subscription/subscription.css
+    - public/stylesheets/plugins.css
 
   reports:
     - public/stylesheets/app/reports.css
@@ -239,6 +240,8 @@ javascripts:
     - public/javascripts/bootstrap.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.itoggle.js
+    - public/javascripts/frameworks/plugins/jquery.ui.js
+    - public/javascripts/frameworks/plugins/jquery-ui-timepicker-addon.js
 
   observer_event:
     - public/javascripts/observer_events.js 

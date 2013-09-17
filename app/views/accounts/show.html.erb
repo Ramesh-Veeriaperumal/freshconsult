@@ -34,7 +34,7 @@
 	<div class="sidepanel">
 		<h3 class="title"><%= t(".export_data") %></h3> 
 		<p><%= t('.export_data_text') %></p>
-		<%= link_to "#{t('.export_now')} &rsaquo;", export_admin_data_export_url, :class => "button" %>
+		<%= link_to "#{t('.export_now')} &rsaquo;".html_safe, export_admin_data_export_url, :class => "button" %>
 	</div>
 
 <%- end %>
@@ -60,19 +60,19 @@
 		  	<br/>
 		  	<ul class="fields form-horizontal unstyled row-fluid"> 
 		  		<li class="control-group">
-			  		<%= content_tag(:label, "#{t('.contact_first_name')}<span class='required_star'>*</span>", :class => "control-label") %>
+			  		<%= content_tag(:label, "#{t('.contact_first_name')}<span class='required_star'>*</span>".html_safe, :class => "control-label") %>
 			  		<div class="controls">
 						<%= text_field_tag "account_configuration[contact_info][first_name]", current_account.admin_first_name, :class => "required span5", :autocomplete => "off" %>
 					</div>
 				</li>
 				<li class="control-group">
-			  		<%= content_tag(:label, "#{t('.contact_last_name')}<span class='required_star'>*</span>", :class => "control-label") %>
+			  		<%= content_tag(:label, "#{t('.contact_last_name')}<span class='required_star'>*</span>".html_safe, :class => "control-label") %>
 			  		<div class="controls">
 						<%= text_field_tag "account_configuration[contact_info][last_name]", current_account.admin_last_name, :class => "required span5", :autocomplete => "off" %>
 					</div>
 				</li>
 				<li class="control-group">
-		  			<%= content_tag(:label, "#{t('.contact_email')}<span class='required_star'>*</span>", :class => "control-label") %>
+		  			<%= content_tag(:label, "#{t('.contact_email')}<span class='required_star'>*</span>".html_safe, :class => "control-label") %>
 		  			<div class="controls">
 						<%= text_field_tag "account_configuration[contact_info][email]", current_account.admin_email, :class => "email required span5", :autocomplete => "off" %>
 					</div>
@@ -89,7 +89,7 @@
 					<h3 class="rebrand-head-text top-space-none"><%= t('.invoice_email_info') %></h3>
 				</li>
 				<li class="control-group">
-					<%= content_tag(:label, "#{t('.invoice_emails')}<span class='required_star'>*</span>", :class => "control-label") %>
+					<%= content_tag(:label, "#{t('.invoice_emails')}<span class='required_star'>*</span>".html_safe, :class => "control-label") %>
 					<div class="controls">
 						<%= hidden_field_tag "invoice_email_field", added_invoice_emails, :class => "required span5 clear-left-margin" %>
 					</div>
@@ -98,8 +98,8 @@
 	  	</li>
 	</ul>
 	<div class="row-fluid pagination-right">
-		<%= link_to "#{t('account.cancel')}", "/admin/home", :class => "btn" %>
-		<%= f.submit "#{t('update')}", :id => "account_form_submit", :class => "btn btn-primary"  %>
+		<%= link_to "#{t('account.cancel')}".html_safe, "/admin/home", :class => "btn" %>
+		<%= f.submit "#{t('update')}".html_safe, :id => "account_form_submit", :class => "btn btn-primary"  %>
 	</div>
 	<% end %>
 </div>
@@ -127,12 +127,12 @@
 
 
   	jQuery("#invoice_email_field").select2({
-  			data: [ <%= admin_choice.join(",")  %> ],
+  			data: [ <%= admin_choice.join(",").html_safe  %> ],
   			multiple: true,
   			maximumSelectionSize: 1,
 
   			initSelection : function (element, callback) {
-    			callback( [<%= added_invoice_emails.join(",") if added_invoice_emails %>] );
+    			callback( [<%= added_invoice_emails.join(",").html_safe if added_invoice_emails %>] );
   			},
 
   			specialFormatting: true,
