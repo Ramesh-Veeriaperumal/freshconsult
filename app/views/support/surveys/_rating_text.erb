@@ -1,0 +1,13 @@
+<% unless @survey_handle.portal.preferences.nil? %>
+ 	$background: 	<%= @survey_handle.portal.preferences[:bg_color] %>;
+	$header_color: 	<%= @survey_handle.portal.preferences[:header_color] %>;
+	
+	$bg_ctxt_color:	    if(lightness($background) > 50, black, white) !default;
+	$header_ctxt_color: if(lightness($header_color) > 50, black, white) !default;
+	
+	body { background: $background; }
+
+	.top-strip { background-color: $header_color; }
+	.brand .logo_text { color: $header_ctxt_color; }
+	.brand .logo_text { border-color:rgba($header_ctxt_color, 0.3); }
+<% end %>

@@ -1,0 +1,22 @@
+<div>Hi,</div>
+
+<div>
+	<p>We just received a request to locate any Freshdesk accounts associated with this email address.</p>
+	<p>Here is a list of accounts where you are an agent. You can click on any of the links below to access your support portal</p>
+</div>
+
+<ul>
+	<% @helpdesk_urls.each do |helpdesk_url| %>
+		<li><%= "#{helpdesk_url}" %></li>
+	<% end %>
+</ul>
+
+<div>
+	<p>In case you have forgotten the login credentials for your account, you can click on the forgot password link to reset your password. </p>
+</div>
+
+<div>
+Regards,<br>
+Freshdesk Team
+</div>
+

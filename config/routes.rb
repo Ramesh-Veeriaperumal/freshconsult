@@ -257,6 +257,8 @@
   map.forgot_password '/account/forgot', :controller => 'user_sessions', :action => 'forgot'
   map.reset_password '/account/reset/:token', :controller => 'user_sessions', :action => 'reset'
   
+  map.search_domain '/search_user_domain', :controller => 'domain_search', :action => 'locate_domain'
+  
   map.resources :search, :only => :index, :member => { :suggest => :get }
   
   #SAAS copy ends here
