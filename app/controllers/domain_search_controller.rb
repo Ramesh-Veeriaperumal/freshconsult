@@ -10,9 +10,9 @@ class DomainSearchController < ApplicationController
         urls = agents.collect{ |agent| agent.account.host }
         UserNotifier.deliver_helpdesk_url_reminder(params[:user_email], urls)
       end
+      
+      render :json => { :available => agents.present? }, :callback => params[:callback]
     end
-
-    render :json => { :available => agents.present? }, :callback => params[:callback]
   end
 
 end
