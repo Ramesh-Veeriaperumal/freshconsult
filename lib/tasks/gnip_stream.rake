@@ -22,8 +22,7 @@ namespace :gnip_stream do
     Sharding.execute_on_all_shards do
       Account.active_accounts.each do |account|
         next if account.twitter_handles.empty?
-        twitter_handles = account.twitter_handles.active
-        twitter_handles.each do |twt_handle|
+        account.twitter_handles.each do |twt_handle|
           if twt_handle.capture_mention_as_ticket
             unless twt_handle.rule_value.nil?
               db_array << {:rule_value => twt_handle.rule_value, 
