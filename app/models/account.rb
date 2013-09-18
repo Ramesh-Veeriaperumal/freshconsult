@@ -241,6 +241,10 @@ class Account < ActiveRecord::Base
   def user_emails_migrated?
     $redis_others.sismember('user_email_migrated', self.id)
   end
+
+  def google_account?
+    !google_domain.blank?
+  end
   
   protected
   

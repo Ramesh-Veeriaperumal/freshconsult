@@ -67,8 +67,13 @@ class Account < ActiveRecord::Base
     def set_shard_mapping
       shard_mapping = ShardMapping.new({:shard_name => ShardMapping.latest_shard, :status => ShardMapping::STATUS_CODE[:not_found]})
       shard_mapping.domains.build({:domain => full_domain})  
+      populate_google_domain(shard_mapping) if google_account?
       shard_mapping.save                             
       self.id = shard_mapping.id
+    end
+
+    def populate_google_domain(shard_mapping)
+      shard_mapping.build_google_domain({:domain => google_domain})
     end
 
     def change_shard_mapping

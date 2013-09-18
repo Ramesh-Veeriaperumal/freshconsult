@@ -16,7 +16,7 @@ class AccountsController < ApplicationController
   skip_before_filter :check_day_pass_usage, :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show]
   skip_filter :select_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
   
-  around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
+  around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,:associate_google_account]
    
   before_filter :build_user, :only => [ :new, :create ]
   before_filter :build_metrics, :only => [ :create ]
@@ -107,14 +107,16 @@ class AccountsController < ApplicationController
   def associate_google_account
     @google_domain = params[:account][:google_domain]
     @call_back_url = params[:call_back]
-    @account = get_account_for_sub_domain
-    if @account.blank?      
-      set_account_values
+    @full_domain = get_full_domain_for_google
+    if @full_domain.blank?      
+      #set_account_values
       flash.now[:error] = t(:'flash.g_app.no_subdomain')
       render :signup_google and return
     end
-    open_id_user = verify_open_id_user @account
-    unless open_id_user.blank?
+    Sharding.select_shard_of(@full_domain) do
+      @account = Account.find_by_full_domain(@full_domain)
+      open_id_user = verify_open_id_user @account
+      unless open_id_user.blank?
         if open_id_user.privilege?(:manage_account)
          if @account.update_attribute(:google_domain,@google_domain)     
             @rediret_url = @call_back_url+"&EXTERNAL_CONFIG=true" unless @call_back_url.blank?
@@ -125,8 +127,9 @@ class AccountsController < ApplicationController
          flash.now[:error] = t(:'flash.general.insufficient_privilege.admin')
          render :associate_google         
        end
-    else      
-      render :associate_google
+      else      
+        render :associate_google
+      end
     end
   end
   
@@ -366,6 +369,12 @@ class AccountsController < ApplicationController
       @sub_domain = params[:account][:sub_domain]
       @full_domain = @sub_domain+"."+base_domain
       @account =  Account.find_by_full_domain(@full_domain)    
+    end
+
+    def get_full_domain_for_google
+      base_domain = AppConfig['base_domain'][RAILS_ENV]    
+      @sub_domain = params[:account][:sub_domain]
+      @full_domain = @sub_domain+"."+base_domain
     end
 
     def select_latest_shard(&block)
