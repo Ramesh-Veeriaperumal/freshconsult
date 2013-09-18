@@ -2,6 +2,8 @@ class Support::LoginController < SupportController
 
 	include Redis::RedisKeys
 	include Redis::TicketsRedis
+
+	SUB_DOMAIN = "freshdesk.com"
 	
 	skip_before_filter :check_account_state
 	after_filter :set_domain_cookie, :only => :create
@@ -50,7 +52,7 @@ class Support::LoginController < SupportController
 
     def set_domain_cookie
     	if @current_user and @current_user.helpdesk_agent? and current_portal
-     		cookies[:helpdesk_url] = current_portal.host
+     		cookies[:helpdesk_url] = { :value => current_portal.host, :domain => SUB_DOMAIN }
      	end
     end      
 end

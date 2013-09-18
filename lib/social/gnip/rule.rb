@@ -168,11 +168,13 @@ class Social::Gnip::Rule
       end
       unless ((gnip_array - db_array) + (db_array - gnip_array)).blank?
         error_params = {
-          :rules_in_gnip_and_not_in_db => (gnip_array-db_array).inspect,
+          :rules_in_gnip_and_not_in_db => (gnip_array - db_array).inspect,
           :rules_in_db_and_not_in_gnip => (db_array - gnip_array).inspect
         }
         puts "Mismatch of rules in #{stream} :::: #{error_params}"
         NewRelic::Agent.notice_error("Mismatch of rules in #{stream}", :custom_params => error_params)
+      else
+        puts "No mismatch in #{stream}"
       end
     rescue => e
       puts "Exception in checking for mismatch #{e.to_s} #{e.backtrace.join("\n")} "
