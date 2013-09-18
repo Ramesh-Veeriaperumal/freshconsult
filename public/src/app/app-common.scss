@@ -200,70 +200,61 @@ ul.activityfeed li{
 		text-decoration:none;
 	}
 }
-
 .user_name{ font-weight:bold; color:#527eaa; }
 .ticket_title{ font-weight:bold; color:#527eaa; }
-.popover.topRight { margin-left: -3px;}
 .contact_hover{
-	@include clearfix;
-	.user_name{ font-weight:bold; font-size:1.25em; color:#527eaa; display: inline-block; }
-	.user_desig, .user_email { margin-top:3px;}
-	.user_phone, .user_mobile, .user_fb, .user_twitter{
-		padding: 1px 20px;
-		margin: 5px 5px 0 0;
-		height: 14px;
-		display: inline-block;
-		background-color: #ffffff;
-	}
-	.user_mobile{ margin-left:10px; }
-	.user_fb, .user_twitter{ padding: 0 20px; height:11px; }
-	.infoblock{ display: inline-block; }
-}
-
-.popover.topRight, .popover.belowLeft {
-	.inner.hover_card {
-		background: #AAA;
-		padding:1px;
-	}
-	.arrow.dbl_left {
-		border-top: 8px solid transparent;
-		border-bottom: 8px solid transparent;
-		border-right: 8px solid #AAA;
-		left:-2px;
-		&:after {
-			content:" ";
-			display:block;
-			position: absolute;
-			width:0; height:0;
-			top: 0px;
-			left: 2px;
-			margin-top: -14px;
-			border-top: 14px solid transparent;
-			border-bottom: 14px solid transparent;
-			border-right: 14px solid white;
-			z-index: 2000;
-
+	.contact-append{
+		margin-bottom: 5px;
+		font-size:0;
+		.add-on, .input-box{
+			font-size: 13px;
+			height:16px;
+			display: inline-block;
 		}
+  		.add-on{
+  			background-color: #EEE;
+  			border:1px solid #eee;
+  			text-align: center;
+  			width:auto;
+  			min-width:16px;
+  			@include border-radius(50px 0 0 50px);
+  			margin-right: 1px;
+			padding: 3px 10px 3px 15px;
+  		} 
+  		.input-box{
+  			min-width:25px;
+  			@include border-radius(0 50px 50px 0);
+  			padding:3px 15px 3px 10px;
+  			background-color: #FCFCFC;
+			border: 1px solid #f1f1f1;
+  		}
+  	}
+  	.product-email-logo, .product-call{
+	  	display: inline-block;
+		width: 16px;
+		height: 10px;
+		position: relative;
+		top: 1px;
 	}
-	.arrow.dbl_up{
-		border-left: 8px solid transparent;
-		border-right: 8px solid transparent;
-		border-bottom: 8px solid #AAA;
-		top: -2px;
-		&:after {
-			content: " ";
-			display: block;
-			position: absolute;
-			width: 0;
-			height: 0;
-			margin-left: -8px;
-			border-left: 8px solid transparent;
-			border-right: 8px solid transparent;
-			border-bottom: 8px solid white;
-			z-index: 2000;
-			top: 2px;
-		}
+	.product-call{
+		height: 13px;
+		margin-top: -1px;
+		top: 3px;
 	}
+  .user_name{ font-size:1.25em; display: inline-block; font-weight: 400}
+  .user_desig{
+  	margin-bottom:10px;
+  }
+  .user_phone, .user_mobile, .user_fb, .user_twitter{
+    padding: 1px 20px;
+    margin: 5px 5px 0 0;
+    height: 14px;
+    display: inline-block;
+    background-color: #ffffff;
+  }
+  .user_mobile{ margin-left:10px; }
+  .user_fb, .user_twitter{ padding: 0 20px; height:11px; }
+  .infoblock{ display: inline-block;  }
 }
 
 .pageSeperator{
