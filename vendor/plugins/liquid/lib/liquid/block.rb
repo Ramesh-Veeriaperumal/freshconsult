@@ -102,8 +102,12 @@ module Liquid
             context.push_interrupt(token.interrupt)
             break
           end
-
-          output << (token.respond_to?(:render) ? token.render(context) : token)
+          
+          token = token.force_encoding('utf-8') if token.respond_to?(:force_encoding)
+          compiled_token = (token.respond_to?(:render) ? token.render(context) : token)
+          compiled_token = compiled_token.force_encoding('utf-8') if compiled_token.respond_to?(:force_encoding)
+          output << compiled_token
+          
         rescue ::StandardError => e
           output << (context.handle_error(e))
         end

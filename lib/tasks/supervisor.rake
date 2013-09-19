@@ -1,17 +1,29 @@
+SUPERVISOR_TAKS = {
+                   
+                   "trial" => {:account_method => "trial_accounts", :queue_name => "trial_supervisor_worker",
+                   :class_name => "Workers::Supervisor::TrialAccounts"},
+                   
+                   "paid" => {:account_method => "paid_accounts", :queue_name => "supervisor_worker",
+                   :class_name => "Workers::Supervisor"},
+                   
+                   "free" => {:account_method => "free_accounts", :queue_name => "free_supervisor_worker",
+                   :class_name => "Workers::Supervisor::FreeAccounts"}
+                  
+                  }
+
 namespace :supervisor do
   desc 'Execute Supervisor Rules...'
+  
   task :run => :environment do
-    queue_name = "supervisor_worker"
-    if supervisor_should_run?(queue_name)
-      Monitoring::RecordMetrics.register({:task_name => "Supervisor"})
-      Sharding.execute_on_all_shards do
-        Account.active_accounts.non_premium_accounts.each do |account| 
-          if account.supervisor_rules.count > 0 
-            Resque.enqueue(Workers::Supervisor, {:account_id => account.id })
-          end
-        end
-      end
-    end
+    execute_supevisor("paid")
+  end
+
+  task :trial => :environment do
+   execute_supevisor("trial")
+  end
+
+  task :free => :environment do
+   execute_supevisor("free")
   end
 
   task :premium => :environment do
@@ -27,6 +39,19 @@ namespace :supervisor do
         end
     end
   end
+end
+
+def execute_supevisor(task_name)
+  if supervisor_should_run?(SUPERVISOR_TAKS[task_name][:queue_name])
+      Monitoring::RecordMetrics.register({:task_name => "#{task_name} Supervisor"})
+      Sharding.execute_on_all_shards do
+        Account.send(SUPERVISOR_TAKS[task_name][:account_method]).non_premium_accounts.each do |account| 
+          if account.supervisor_rules.count > 0 
+            Resque.enqueue(SUPERVISOR_TAKS[task_name][:class_name].constantize, {:account_id => account.id })
+          end
+        end
+      end
+    end
 end
 
 def supervisor_should_run?(queue_name)
