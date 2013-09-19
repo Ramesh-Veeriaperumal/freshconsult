@@ -21,6 +21,18 @@ class Account < ActiveRecord::Base
               :conditions => [" subscriptions.state != 'suspended' "], 
               :joins => [:subscription]
 
+  named_scope :trial_accounts,
+              :conditions => [" subscriptions.state = 'trial' "], 
+              :joins => [:subscription]
+
+  named_scope :free_accounts,
+              :conditions => [" subscriptions.state IN ('free','active') and subscriptions.amount = 0 "], 
+              :joins => [:subscription]
+
+  named_scope :paid_accounts,
+              :conditions => [" subscriptions.state = 'active' and subscriptions.amount > 0 "], 
+              :joins => [:subscription]
+
   named_scope :premium_accounts, {:conditions => {:premium => true}}
               
   named_scope :non_premium_accounts, {:conditions => {:premium => false}}

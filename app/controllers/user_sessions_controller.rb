@@ -19,6 +19,9 @@ include Redis::TicketsRedis
   before_filter :check_sso_params, :only => :sso_login
   skip_before_filter :check_day_pass_usage
   before_filter :set_native_mobile, :only => [:create, :destroy]
+  skip_filter :select_shard, :only => [:openid_google,:opensocial_google]
+  skip_before_filter :set_current_account, :only => [:openid_google,:opensocial_google] 
+  skip_before_filter :set_locale, :only => [:openid_google,:opensocial_google] 
   
   def new
     # Login normal supersets all login access (can be used by agents)
@@ -248,11 +251,14 @@ include Redis::TicketsRedis
   
   def find_account_by_google_domain(google_domain_name)
     unless google_domain_name.blank?
-      account_id = GoogleDomain.find_by_domain(google_domain_name)
-      if account_id.blank?
+      account_id = nil
+      gm = GoogleDomain.find_by_domain(google_domain_name)
+      if gm.blank?
         full_domain  = "#{google_domain_name.split('.').first}.#{AppConfig['base_domain'][RAILS_ENV]}"
         sm = ShardMapping.fetch_by_domain(full_domain)
         account_id = sm.account_id if sm
+      else
+        account_id = gm.account_id
       end
       account_id
     end
