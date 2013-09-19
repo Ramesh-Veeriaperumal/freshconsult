@@ -127,6 +127,13 @@ function(Backbone, _, model, client,chatView){
 				 			'font-family:Roboto;'+
 				 			'cursor:pointer;'+
 				 		'}'+
+				 		'#fc_chat_title{'+
+                           'float: left;'+
+                           'width: 200px;'+
+                           'overflow: hidden;'+
+                           'text-overflow: ellipsis;'+
+                           'white-space: nowrap;'+
+                        '}'+
 				 		'#fc_chat_symbol{'+
 				 			'opacity: 0.5;'+
 				 			'float:right;'+

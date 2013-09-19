@@ -2,7 +2,7 @@
     comm_url = ChatConfig['communication_url'][Rails.env]
     chat_debug = ChatConfig['chat_debug'][Rails.env]
 %>
-<div id="chat_layout"></div>
+<div id="freshchat_layout"></div>
   <!-- Chat related contents starts -->
 <%= include_cloudfront_css :chat %>
 <script src='<%=comm_url%>/socket.io/socket.io.js'></script>
