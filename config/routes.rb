@@ -1,5 +1,7 @@
  ActionController::Routing::Routes.draw do |map|
 
+  map.connect '/visitor/load/:id.:format', :controller => 'chats', :action => 'load', :conditions => { :method => :get }
+
   map.connect '/images/helpdesk/attachments/:id/:style.:format', :controller => '/helpdesk/attachments', :action => 'show', :conditions => { :method => :get }
   
   map.connect "/javascripts/:action.:format", :controller => 'javascripts'
@@ -95,6 +97,7 @@
     admin.resources :home, :only => :index
     admin.resources :day_passes, :only => [:index, :update], :member => { :buy_now => :put, :toggle_auto_recharge => :put }
     admin.resources :widget_config, :only => :index
+    admin.resources :chat_setting
     admin.resources :automations, :collection => { :reorder => :put }
     admin.resources :va_rules, :member => { :activate_deactivate => :put }, :collection => { :reorder => :put }
     admin.resources :supervisor_rules, :member => { :activate_deactivate => :put }, 
@@ -348,6 +351,7 @@
       :groups => :get }, :only => [ :mini_list, :agents, :groups ]
     helpdesk.resources :quests, :only => [ :active, :index, :unachieved ], 
       :collection => { :active => :get, :unachieved => :get }
+    
 
     helpdesk.resources :notes
     helpdesk.resources :bulk_ticket_actions , :collection => {:update_multiple => :put }
@@ -370,6 +374,8 @@
 
     helpdesk.formatted_dashboard '/dashboard.:format', :controller => 'dashboard', :action => 'index'
     helpdesk.dashboard '', :controller => 'dashboard', :action => 'index'
+    helpdesk.visitor '/visitor/:filter', :controller => 'visitor', :action => 'index'
+    helpdesk.chat_archive '/chat/:filter', :controller => 'visitor', :action => 'index'
 
 #   helpdesk.resources :dashboard, :collection => {:index => :get, :tickets_count => :get}
 
@@ -534,5 +540,9 @@
   # consider removing the them or commenting them out if you're using named routes and resources.
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
-  
+
+  map.connect '/all_agents.:format', :controller => 'agents', :action => 'list'
+  map.connect '/chat/create_ticket', :controller => 'chats', :action => 'create_ticket', :method => :post
+  map.connect '/chat/add_note', :controller => 'chats', :action => 'add_note', :method => :post
+
 end

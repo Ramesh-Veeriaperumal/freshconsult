@@ -1,0 +1,270 @@
+<% @page_title = t('chatwidget_title') %>
+<%= include_cloudfront_css :pattern %>
+<%= include_cloudfront_js :pattern %>
+<%= include_cloudfront_css :chat %>
+<%= include_cloudfront_js :behaviour %>
+<%= render :partial => "shared/colorpicker" %>
+<% content_for :sidebar do -%>
+<%= render :partial => "helpnote" %>
+<%- end %>
+<div class="chat-header">
+	<%= content_tag(:h3, t('chatwidget_title'), :class => "title" ) %> 
+</div>
+<div class="tabbable">
+  <div class="tab-content">
+    <div class="tab-pane active" id="tab1">
+
+      <div class="chat-window-left ui-form clearfix">
+		<ul class="ui-form">	
+			<li class="inline-field">
+				<%= content_tag(:h3, t('freshchat.install_freshchat'), :class => "title" ) %> 
+			</li>
+			<li class="code-view">
+				<textarea id="EmbedCode" onclick="javascript:this.select()" readonly><script src="http://<%=current_account.full_domain%>/visitor/load/<%= @chat.display_id%>.js"></script></textarea>
+				<div class="intro"><%=t('freshchat.install_msg')%> <a href="https://support.freshdesk.com/support/solutions" target="_blank"><%=t('freshchat.setup_link')%></a></div>
+			</li>
+		</ul>
+
+		<div class="ui-form">
+			<ul>
+				<li>
+					<%= content_tag(:h3, t('freshchat.custom_chat_window'), :class => "title" ) %> 
+				</li>
+			</ul>
+
+			<% chat_color = (@chat.preferences != nil)? @chat.preferences['window_color'] : "#777777"; %>
+
+			<div class="span5 marLeftNone">
+				<ul>
+			      	<li class="inline-field window-bgcolor">
+				  	<%= content_tag(:label, t('freshchat.chatbox_bgcolor'), :class => "caption" ) %>
+					<div class="fields">
+						<div class="color">
+							<input type="color" maxlength="7" class="color_field required" id="window_color" name=""  data-hex="true" value="<%=chat_color%>" />
+							<label id="window_color_error" generated="true" class="error" style="display:none;"><%=t('freshchat.valid_code')%></label>
+						</div>
+					</div>
+				  	</li>
+			  	</ul>
+
+				<ul class="window-position chat-top-space">
+					<li class="inline-field">
+					  	 <label class="caption"><%=t('freshchat.window_position')%></label> 
+						 <div class="fields">
+								<label>
+									<select name="alignment" class="valid" id="window_position"></select>
+								</label>
+						 </div>
+				  	</li>
+				</ul>
+
+				<ul class="window-position chat-top-space">
+					<li class="inline-field">
+					  	 <label class="caption"><%=t('freshchat.window_offset')%></label> 
+						 <div class="fields">
+								<label>
+									<input type="text" placeholder="10" id="window_offset" value="<%=(@chat.preferences != nil)? @chat.preferences['window_offset'] : "10"%>"><span class="sublabel">px</span>
+								</label>
+								<label id="window_offset_error_msg" class="error" style="display:none;"><%=t('freshchat.window_offset_error_msg')%></label>
+						 </div>
+				  	</li>
+				</ul>
+			</div>
+			<div class="span4 pull-right">
+				<div id="chat_layout" class="pull-right">
+				  <div id="fc-header" class="chat_fc_header" style="background-color:<%=chat_color%>">
+				    <%=t('freshchat.chat_with_us')%>
+				    <span id="symbol">
+				      <i class="icon-caret-down"></i>
+				    </span>
+				  </div>
+				  <div id="chat-container" style="display: block;background-color:<%=chat_color%>">
+				    <div id="chatwindow">
+				      <div id="messagewindow" style="border: 1px <%=chat_color%> solid;">
+				        <p class="self clearfix">
+				         <img src="/images/fillers/profile_blank_thumb.gif" alt="">
+				          <span class="msg-block">
+				            <b><%=t('freshchat.me')%></b>
+				            <span class="time">17:15</span>
+				            <span class="msg"><%=t('freshchat.hai')%></span>
+				          </span>
+				        </p>
+				      </div>
+				      <textarea placeholder="Your message" id="inputcontainer" disabled></textarea>
+				    </div>
+				  </div>
+			    </div>
+			</div>
+		</div>
+
+      </div>
+
+      <div class="tab-pane" id="tab2">
+    	<div class="chat-window-left clearfix">
+    		<form id="chat_setting_form" class="chat_setting_form">
+				<ul class="ui-form">	
+				  <li class="inline-field">
+				  	 <h3 class="title"><%=t('freshchat.online')%></h3> 
+					 <label class="caption"><%=t('freshchat.chat_title')%> (<%=t('freshchat.minimized')%>)</label>
+					 <div class="fields">
+					 	<input type="text" class="text" size="18" id="minimized_title" value="<%=(@chat.minimized_title != nil)? @chat.minimized_title : t('freshchat.minimized_title')%>" placeholder="<%=t('freshchat.minimized_title')%>">
+					 	<div class="info-data"><%=t('freshchat.chatmin_tip')%></div> 
+					 </div>
+				  </li>
+
+				  <li class="inline-field">
+					 <label class="caption"><%=t('freshchat.chat_title')%> (<%=t('freshchat.maximized')%>)</label>
+					 <div class="fields">
+					 	<input type="text" class="text" size="18" id="maximized_title" value="<%=(@chat.maximized_title != nil)? @chat.maximized_title : t('freshchat.maximized_title')%>" placeholder="<%=t('freshchat.maximized_title')%>">
+					 	<div class="info-data"><%=t('freshchat.chatmax_tip')%></div>
+					 </div>
+				  </li>
+
+				  <li class="inline-field">
+					<label class="caption"><%=t('freshchat.welcome')%></label>
+					<div class="fields">
+						<input type="text" class="text" id="welcome_message" size="18" value="<%=(@chat.welcome_message != nil)? @chat.welcome_message : t('freshchat.welcome_message')%>" placeholder="<%=t('freshchat.welcome_message')%>" >
+						<div class="info-data"><%=t('freshchat.welcome_tip')%></div> 
+					</div>
+				  </li>
+
+				  <li class="inline-field">
+					<label class="caption"><%=t('freshchat.thank_title')%></label>
+					<div class="fields">
+						<input type="text" class="text" id="thank_message" size="18" value="<%=(@chat.thank_message != nil)? @chat.thank_message : t('freshchat.thank_message')%>" placeholder="<%=t('freshchat.thank_message')%>" >
+						<div class="info-data"><%=t('freshchat.thank_tip')%></div> 
+					</div>
+				  </li>
+
+				  <li class="inline-field">
+					 <label class="caption"><%=t('freshchat.wait_title')%></label>
+					 <div class="fields">
+					 	<input type="text" class="text" size="18" id="wait_message" value="<%=(@chat.wait_message != nil)? @chat.wait_message : t('freshchat.wait_message')%>" placeholder="<%=t('freshchat.wait_message')%>">
+					 	<div class="info-data"><%=t('freshchat.wait_tip')%></div>
+					 </div>
+				  </li>
+
+				  <li class="inline-field">
+					<label class="caption"><%=t('freshchat.is_typing_header')%></label>
+					<div class="fields">
+						<input type="text" class="text" id="typing_message" size="18" value="<%=(@chat.typing_message != nil)? @chat.typing_message : t('freshchat.typing_message')%>" placeholder="<%=t('freshchat.typing_message')%>" >
+						<div class="info-data"><%=t('freshchat.is_typing_tip')%></div> 
+					</div>
+				  </li>
+
+				  <li class="inline-field">
+				  	<h3 class="title"><%=t('freshchat.prechat_title')%></h3> 
+					 <div class="fields marginleftnone">
+					 	<div class="ff_item">
+							  <label class="item-large"> 
+							    <input id="prechat_form" class="filter_item" type="checkbox" value=""> 
+							    <span><%=t('freshchat.prechat_desc')%></span>
+							  </label>
+						 </div>
+					 </div>
+				  </li>
+
+				  <li class="inline-field prechat_form">
+					 <label class="caption"><%=t('freshchat.prechat_msg')%></label>
+					 <div class="fields marginleftnone">
+					 	<input type="text" class="text" size="18" id="prechat_message" value="<%=(@chat.prechat_message != nil)? @chat.prechat_message : t('freshchat.prechat_message')%>" placeholder="<%=t('freshchat.prechat_message')%>">
+					 	<div class="info-data"><%=t('freshchat.welcome_tip')%></div>
+					 </div>
+				  </li>
+
+				  <li class="inline-field prechat_form">
+					 <label class="caption"><%=t('freshchat.name')%></label>
+					 <div class="fields">
+					 	<div class="ff_item">
+							  <label class="item"> 
+							    <input class="filter_item" type="checkbox" checked disabled value=""> 
+							    <span><%=t('freshchat.show')%></span>
+							  </label>
+							  <label class="item"> 
+							    <input class="filter_item" type="checkbox" checked disabled value=""> 
+							    <span><%=t('freshchat.required')%></span>
+							  </label>
+						 </div>
+					 </div>
+				  </li>
+
+				  <li class="inline-field prechat_form">
+					 <label class="caption"><%=t('freshchat.mail')%></label>
+					 <div class="fields">
+					 	<div class="ff_item">
+							  <label class="item"> 
+							    <input class="filter_item" id="prechat_mail" type="checkbox" value="<%=ChatSetting::CHAT_CONSTANTS_BY_KEY[:SHOW]%>">
+							    <span><%=t('freshchat.show')%></span>
+							  </label>
+							  <label class="item"> 
+							    <input class="filter_item" id="prechat_mail_req" type="checkbox" value="<%=ChatSetting::CHAT_CONSTANTS_BY_KEY[:REQUIRED]%>"> 
+							    <span><%=t('freshchat.required')%></span>
+							  </label>
+						 </div>
+					 </div>
+				  </li>
+
+				  <li class="inline-field prechat_form">
+					 <label class="caption"><%=t('freshchat.phone')%></label>
+					 <div class="fields">
+					 	<div class="ff_item">
+							  <label class="item"> 
+							    <input class="filter_item" id="prechat_phone" type="checkbox" value="<%=ChatSetting::CHAT_CONSTANTS_BY_KEY[:SHOW]%>">
+							    <span><%=t('freshchat.show')%></span>
+							  </label>
+							  <label class="item">
+							    <input class="filter_item" id="prechat_phone_req" type="checkbox" value="<%=ChatSetting::CHAT_CONSTANTS_BY_KEY[:REQUIRED]%>"> 
+							    <span><%=t('freshchat.required')%></span>
+							  </label>
+						 </div>
+					 </div>
+				  </li>
+
+				  <li class="inline-field">
+				  	<h3 class="title"><%=t('freshchat.proactive_title')%></h3>
+					 <div class="fields marginleftnone">
+					 	<div class="ff_item">
+							  <label class="item-large"> 
+							    <input class="filter_item" id="proactive_chat" type="checkbox" value="">
+							    <span><%=t('freshchat.enable_proactive')%></span>
+							    <div class="info-data"><%=t('freshchat.proactive_note')%></div>
+							  </label>
+							   <span class="proactive_chat">
+							   	<%=t('freshchat.proactive_time')%> <span><select id="proactive_time"></select></span> <%=t('freshchat.proactive_time_end')%>
+							   </span>
+
+						 </div>
+					 </div>
+				  </li>
+				</ul>
+			</form>
+    	</div>
+    	 <div class="button-container">
+    	 	<input class="uiButton special pull-right" id="chat_setting_save" name="commit" type="submit" value="<%=t('freshchat.save')%>">
+			<a href="/admin/home" class="uiButton floatl pull-right"><%=t('freshchat.cancel')%></a>
+			
+		</div>
+    </div>
+    </div>
+   </div>
+</div>
+<% javascript_tag do %>
+(function($){
+	behaviour.initialize({position:'<%=(@chat.preferences != nil)? @chat.preferences['window_position'] : "Bottom Right"%>',prechat:'<%= @chat.prechat_form%>',phone:'<%= @chat.prechat_phone%>',mail:'<%= @chat.prechat_mail%>',proactive:'<%= @chat.proactive_chat%>',proactive_time:'<%= @chat.proactive_time%>',max_title:'<%= @chat.maximized_title%>'});
+
+	$(document).ready(function (){
+		$('#window_color').bind('change', function (){
+          	behaviour.validateColor($(this).val());
+        });
+		$('#window_color').bind('colorpicked', function (){
+			behaviour.validateColor($(this).val());
+        });
+		$( "#window_offset" ).keyup(function() {
+			behaviour.validateOffset($(this).val());
+		});
+		$( "#maximized_title" ).keyup(function() {
+			$("#fc-header").text($( "#maximized_title" ).val());
+		});
+	});
+})(jQuery)
+<%end%>

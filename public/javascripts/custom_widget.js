@@ -1175,7 +1175,6 @@ var CustomWidget =  {
 	}
 };
 CustomWidget.include_js("/javascripts/base64.js");
-CustomWidget.include_js("/javascripts/frameworks/underscore-min.js");
 CustomWidget.include_js("/javascripts/strftime-min.js");
 
 var XmlUtil = {

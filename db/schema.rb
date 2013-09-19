@@ -204,6 +204,26 @@ ActiveRecord::Schema.define(:version => 20130918125805) do
 
   add_index "ca_folders", ["account_id"], :name => "Index_ca_folders_on_account_id"
 
+  create_table "chat_settings", :force => true do |t|
+    t.integer  "account_id",      :limit => 8
+    t.text     "display_id"
+    t.text     "preferences"
+    t.string   "minimized_title"
+    t.string   "maximized_title"
+    t.string   "welcome_message"
+    t.string   "thank_message"
+    t.string   "wait_message"
+    t.string   "typing_message"
+    t.integer  "prechat_form"
+    t.string   "prechat_message"
+    t.integer  "prechat_phone"
+    t.integer  "prechat_mail"
+    t.integer  "proactive_chat"
+    t.integer  "proactive_time"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "conversion_metrics", :force => true do |t|
     t.integer  "account_id",        :limit => 8
     t.string   "referrer"

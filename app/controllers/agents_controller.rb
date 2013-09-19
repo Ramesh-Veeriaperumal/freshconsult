@@ -20,6 +20,16 @@ class AgentsController < ApplicationController
   before_filter :check_agent_limit, :only =>  :restore
   before_filter :set_selected_tab
   
+  def list
+    respond_to do |format|
+        agents = Array.new
+        current_account.all_agents.each do |agent|
+          agents.push agent.user
+        end
+        format.json {render :json => agents.to_json({:only=>[:id,:name,:email,:deleted]})}
+    end
+  end
+
   def load_object
     @agent = scoper.find(params[:id])
     @scoreboard_levels = current_account.scoreboard_levels.level_up_for @agent.level

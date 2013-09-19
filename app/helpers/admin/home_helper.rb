@@ -54,6 +54,7 @@ HTML
           ['/admin/security',             'security',                privilege?(:admin_tasks) ],
           ['/admin/portal',               'customer-portal',         privilege?(:admin_tasks) ],
           ['/admin/widget_config',        'feedback',                privilege?(:admin_tasks) ],
+          ['/admin/chat_setting',          'freshchat' ,              current_account.features?(:chat) && privilege?(:admin_tasks) ],
       ], "CustomerPortal"],
       
       [ [t(".account")], [

@@ -3153,8 +3153,8 @@ pl:
       inline_help: "Podaj ID Śledzenia dla"
       domain: Domena
       form: 
-        google_analytics_settings_info: "&quot;&quot;"
-        google_analytics_settings: "&quot;&quot;"
+        google_analytics_settings_info: ""
+        google_analytics_settings: ""
         tracking_id: "ID Śledzenia dla "
         tracking_id_example: "Np.: UA-123456-1"
         copy_settings: "Używaj powyższego ID śledzenia dla wszystkich portali"

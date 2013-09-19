@@ -2,8 +2,7 @@
 MissingSourceFile::REGEXPS << [/^cannot load such file -- (.+)$/i, 1]
 
 
- Encoding.default_external = Encoding::UTF_8 if RUBY_VERSION > "1.9"
- Encoding.default_internal = Encoding::UTF_8 if RUBY_VERSION > "1.9"
+ 
 
 # TZInfo needs to be patched.  In particular, you'll need to re-implement the datetime_new! method:
 require 'tzinfo'
@@ -51,20 +50,6 @@ module TZInfo
   end
 end
 
-# Finally, we have this innocuous looking patch.  Without it, queries like this: current_account.tickets.recent.count
-# would instantiate AR objects all (!!) tickets in the account, not merely return a count of the recent ones.
-# See https://rails.lighthouseapp.com/projects/8994/tickets/5410-multiple-database-queries-when-chaining-named-scopes-with-rails-238-and-ruby-192
-# (The patch in that lighthouse bug was not, in fact, merged in).
-module ActiveRecord
-  module Associations
-    class AssociationProxy   
-      def respond_to_missing?(meth, incl_priv)
-        false
-      end
-    end
-  end
-end
-
 
 #IN Ruby 1.9.0 Array.to_s or Hash.to_s allias methods for inspect where as in 1.8.7 to_s is uses join.
 class Array
@@ -97,11 +82,6 @@ end
 
 
 
-
-
-
-
-
 # Drop this file in config/initializers to run your Rails project on Ruby 1.9.
 # This is three separate monkey patches -- see comments in code below for the source of each. 
 # None of them are original to me, I just put them in one file for easily dropping into my Rails projects.
@@ -114,36 +94,11 @@ end
 # encoding: utf-8
  
 if RUBY_VERSION > "1.9"
+
+  Encoding.default_external = Encoding::UTF_8
+  Encoding.default_internal = Encoding::UTF_8
  
-  # Force MySQL results to UTF-8.
-  #
-  # Source: http://gnuu.org/2009/11/06/ruby19-rails-mysql-utf8/
-  require 'mysql'
- 
-  class Mysql::Result
-    def encode(value, encoding = "utf-8")
-      String === value ? value.force_encoding(encoding) : value
-    end
- 
-    def each_utf8(&block)
-      each_orig do |row|
-        yield row.map {|col| encode(col) }
-      end
-    end
-    alias each_orig each
-    alias each each_utf8
- 
-    def each_hash_utf8(&block)
-      each_hash_orig do |row|
-        row.each {|k, v| row[k] = encode(v) }
-        yield(row)
-      end
-    end
-    alias each_hash_orig each_hash
-    alias each_hash each_hash_utf8
-  end
- 
- 
+
   # Serialized columns in AR don't support UTF-8 well, so set the encoding on those as well.
   class ActiveRecord::Base
     def unserialize_attribute_with_utf8(attr_name)
@@ -207,18 +162,40 @@ if RUBY_VERSION > "1.9"
   #
   module ActionView
     module Renderable #:nodoc:
+
+      def render(view, local_assigns = {})
+        compile(local_assigns)
+
+        view.force_encoding(Encoding::UTF_8) if view.respond_to?(:force_encoding)
+
+        view.with_template self do
+          view.send(:_evaluate_assigns_and_ivars)
+          view.send(:_set_controller_content_type, mime_type) if respond_to?(:mime_type)
+
+          view.send(method_name(local_assigns), local_assigns) do |*names|
+            ivar = :@_proc_for_layout
+            if !view.instance_variable_defined?(:"@content_for_#{names.first}") && view.instance_variable_defined?(ivar) && (proc = view.instance_variable_get(ivar))
+              view.capture(*names, &proc)
+            elsif view.instance_variable_defined?(ivar = :"@content_for_#{names.first || :layout}")
+              view.instance_variable_get(ivar)
+            end
+          end
+        end
+      end
+
       private
         def compile!(render_symbol, local_assigns)
           locals_code = local_assigns.keys.map { |key| "#{key} = local_assigns[:#{key}];" }.join
  
           source = <<-end_src
+            # encoding: utf-8
             def #{render_symbol}(local_assigns)
               old_output_buffer = output_buffer;#{locals_code};#{compiled_source}
             ensure
               self.output_buffer = old_output_buffer
             end
           end_src
-          source.force_encoding(Encoding::UTF_8) if source.respond_to?(:force_encoding)
+          source.force_encoding(Encoding::UTF_8) if RUBY_VERSION >= '1.9.3'
  
           begin
             ActionView::Base::CompiledTemplates.module_eval(source, filename, 0)
@@ -236,11 +213,9 @@ if RUBY_VERSION > "1.9"
         end
     end
   end
-end
 
-require 'date'
+  require 'date'
 
-if RUBY_VERSION >= '1.9'
   # Modify parsing methods to handle american date format correctly.
   class << Date
     # American date format detected by the library.
@@ -286,17 +261,41 @@ if RUBY_VERSION >= '1.9'
     end
   end
 
-  if RUBY_VERSION >= '1.9.3'
-    # Modify parsing methods to handle american date format correctly.
-    class << DateTime
-      # Alias for stdlib Date.parse
-      alias parse_without_american_date parse
+  # Modify parsing methods to handle american date format correctly.
+  class << DateTime
+    # Alias for stdlib Date.parse
+    alias parse_without_american_date parse
 
-      # Transform american dates into ISO dates before parsing.
-      def parse(string, comp=true)
-        parse_without_american_date(convert_american_to_iso(string), comp)
-      end
+    # Transform american dates into ISO dates before parsing.
+    def parse(string, comp=true)
+      parse_without_american_date(convert_american_to_iso(string), comp)
     end
   end
+
+  class Mysql2::Result
+    def fetch_hash
+      each(:as => :hash).first
+    end
+  end
+
+  #memcache marshel load monkey patch...
+  module Marshal
+    class << self
+      def load_with_utf8_enforcement(object, other_proc=nil)
+        @utf8_proc ||= Proc.new do |o|
+          begin  
+            o.force_encoding("UTF-8") if o.is_a?(String) && o.respond_to?(:force_encoding)
+          rescue
+            Rails.logger.debug ":::: encoding error in Marshal load patch...."
+          end
+          other_proc.call(o) if other_proc
+          o
+        end
+        load_without_utf8_enforcement(object, @utf8_proc)
+      end
+      alias_method_chain :load, :utf8_enforcement
+    end
+  end
+
 end
 

@@ -1,3 +1,4 @@
+# encoding: utf-8
 class UserEmail < ActiveRecord::Base
 
   # include Users::Activator

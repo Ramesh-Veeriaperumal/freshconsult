@@ -11,7 +11,7 @@ namespace :twitter do
         Sharding.execute_on_all_shards do
     	   Account.active_accounts.each do |account|  
             next if check_if_premium?(account) || account.twitter_handles.empty?  
-       		Resque.enqueue( Social::TwitterWorker ,{:account_id => account.id } )
+       		Resque.enqueue(Social::TwitterWorker ,{:account_id => account.id } )
     	   end
         end
     else
