@@ -234,8 +234,9 @@ class Account < ActiveRecord::Base
   end
 
   def es_enabled?
-    es_status = MemcacheKeys.fetch(MemcacheKeys::ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
-    es_status.key?(self.id) ? es_status[self.id] : false
+    return true
+    # es_status = MemcacheKeys.fetch(MemcacheKeys::ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
+    # es_status.key?(self.id) ? es_status[self.id] : false
   end
 
   def user_emails_migrated?
