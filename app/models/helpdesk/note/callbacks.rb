@@ -1,6 +1,7 @@
 class Helpdesk::Note < ActiveRecord::Base
 
 	before_create :validate_schema_less_note, :update_observer_events
+  before_save :add_inline_images_to_attachments, :if => :contains_inline_image?
   before_save :load_schema_less_note, :update_category, :load_note_body
   after_create :update_content_ids, :update_parent, :add_activity, :fire_create_event               
   after_commit_on_create :update_ticket_states, :notify_ticket_monitor
@@ -32,7 +33,7 @@ class Helpdesk::Note < ActiveRecord::Base
       
       attachments.each do |attach| 
         content_id = header[:content_ids][attach.content_file_name]
-        self.note_body.body_html = self.note_body.body_html.sub("cid:#{content_id}", attach.content.url) if content_id
+        self.note_body.body_html = self.note_body.body_html.sub("cid:#{content_id}", helpdesk_attachment_path(attach)) if content_id
       end
       
       note_body.update_attribute(:body_html,self.note_body.body_html)
@@ -116,6 +117,18 @@ class Helpdesk::Note < ActiveRecord::Base
           CATEGORIES[:agent_public_response]
       end
     end 
+
+    def contains_inline_image?
+      @html_part = Nokogiri::HTML(self.body_html)
+      @html_part.at_css('img.inline-image')
+    end
+
+    def add_inline_images_to_attachments
+      @html_part.xpath('//img[@class="inline-image"]').each do |inline|
+        image = account.attachments.find(inline['data-id'])
+        self.attachments << image unless image.attachable_id      
+      end
+    end
 
     def load_note_body
       build_note_body(:body => self.body, :body_html => self.body_html) unless note_body
