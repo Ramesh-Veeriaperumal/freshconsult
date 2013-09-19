@@ -1048,7 +1048,7 @@ $popover-radius: 3px;
     overflow: hidden;
     @include min-width(230px);
     @include border-radius($popover-radius);
-    @include box-shadow(0 3px 7px rgba(0, 0, 0, 0.4));
+    @include box-shadow( 0 3px 50px -13px  rgba(0, 0, 0, 0.4));
   }
   .title {
     background-color: #f5f5f5;
@@ -1075,11 +1075,7 @@ $popover-radius: 3px;
 }
 
 .fade {
-  -webkit-transition: opacity 0.15s linear;
-  -moz-transition: opacity 0.15s linear;
-  -ms-transition: opacity 0.15s linear;
-  -o-transition: opacity 0.15s linear;
-  transition: opacity 0.15s linear;
+  @include transition(opacity 0.15s linear);
   opacity: 0;
 }
 .fade.in {
