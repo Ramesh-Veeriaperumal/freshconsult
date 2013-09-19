@@ -657,3 +657,17 @@ ul.inline > li, ol.inline > li {
     margin-left: 0px;
   }
 }
+
+
+
+.circle-profile{
+  .preview_pic, &.preview_pic{
+    border:0;
+    padding: 0;
+    img{
+      @include border-radius(100%);
+      border: 1px solid #CCC;
+      padding: 2px;
+    }
+  }
+}
