@@ -4418,7 +4418,7 @@ en:
     update_error_msg: "Error while updating chat settings."
     recent_messages: "Recent Messages"
     agents: "Agents"
-    convert_to_ticket: "Convert To ticket"
+    convert_to_ticket: "Convert to Ticket"
     create_ticket_tip: "Save chat transcript and details to a ticket.All Chat transcript will be saved in chat history."
     tkt_success_note_error: "Ticket has been created and error while adding note!"
     note_success: "New note has been added to the ticket"

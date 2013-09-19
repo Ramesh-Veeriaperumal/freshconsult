@@ -4,7 +4,7 @@ define([
 	var $ = jQuery;
 	var _view = null;
 	var LayoutView = Backbone.View.extend({	 	
-		el: "#layout",
+		el: "#chat_layout",
 		render:function(){
 			$(this.el).append(_.template(layoutTemplate));
 		}
