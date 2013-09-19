@@ -14,7 +14,7 @@ class DomainSearchController < ApplicationController
       end
     end
         
-    UserNotifier.deliver_helpdesk_url_reminder(params[:user_email], urls)
+    UserNotifier.deliver_helpdesk_url_reminder(params[:user_email], urls) if agents.present?
     render :json => { :available => agents.present? }, :callback => params[:callback]
   end
 
