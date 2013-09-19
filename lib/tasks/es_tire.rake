@@ -138,9 +138,9 @@ def init_partial_reindex(es_account_ids)
     account.make_current
     ENV['ACCOUNT_ID'] = account_id.to_s
     unless account.es_enabled_account.nil?
-      if account.es_enabled?
+      if account.es_enabled_account.imported
         Search::RemoveFromIndex::AllDocuments.perform({ :account_id => account.id })
-        MemcacheKeys.delete_from_cache(ES_ENABLED_ACCOUNTS)
+        # MemcacheKeys.delete_from_cache(ES_ENABLED_ACCOUNTS)
         account.es_enabled_account.delete
         ENV['CLASS'] = ''
         Rake::Task["freshdesk_tire:create_index"].execute("ACCOUNT_ID=#{ENV['ACCOUNT_ID']}")

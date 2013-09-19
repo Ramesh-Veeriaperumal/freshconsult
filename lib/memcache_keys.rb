@@ -47,7 +47,7 @@ module MemcacheKeys
 
   ACCOUNT_OBSERVER_RULES = "v1/ACCOUNT_OBSERVER_RULES:%{account_id}"
 
-  ES_ENABLED_ACCOUNTS = "ES_ENABLED_ACCOUNTS"
+  # ES_ENABLED_ACCOUNTS = "ES_ENABLED_ACCOUNTS"
 
   # Portal customization related keys
   PORTAL_TEMPLATE = "v2/PORTAL_TEMPLATE:%{account_id}:%{portal_id}"
