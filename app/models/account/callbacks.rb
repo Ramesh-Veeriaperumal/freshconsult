@@ -5,7 +5,7 @@ class Account < ActiveRecord::Base
   before_destroy :update_crm, :backup_changes, :make_shard_mapping_inactive
 
   after_create :populate_features, :change_shard_status
-  after_update :change_shard_mapping, :update_users_language, :update_default_business_hours_time_zone
+  after_update :change_shard_mapping, :update_users_language, :update_default_business_hours_time_zone,:update_google_domain
   after_destroy :remove_shard_mapping
 
   after_commit_on_create :add_to_billing, :add_affiliate_subscription, :enable_elastic_search
@@ -80,6 +80,13 @@ class Account < ActiveRecord::Base
       if full_domain_changed?
         domain_mapping = DomainMapping.find_by_account_id_and_domain(id,@old_object.full_domain)
         domain_mapping.update_attribute(:domain,full_domain)
+      end
+    end
+
+    def update_google_domain
+      if google_domain_changed? and !google_domain.blank?
+        gd = GoogleDomain.find_by_account_id(id)
+        gd.nil? ? GoogleDomain.create({:account_id => id,:domain => google_domain}) : gd.update_attribute(:domain,google_domain)
       end
     end
 
