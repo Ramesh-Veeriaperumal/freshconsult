@@ -10,7 +10,7 @@ namespace :facebook do
       Sharding.execute_on_all_shards do
         Account.active_accounts.each do |account|
           next if check_if_premium?(account) || account.facebook_pages.empty?
-          Resque.enqueue( Social::FacebookWorker ,{:account_id => account.id} )           
+          Resque.enqueue(Social::FacebookWorker ,{:account_id => account.id} )           
         end
       end
     else

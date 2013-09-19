@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'csv'
 module ExportCsvUtil
 
@@ -99,7 +100,11 @@ module ExportCsvUtil
         end
       end
     end
-    csv_string = BOM + Iconv.conv("utf-16le", "utf-8", csv_string)
+    bom = BOM
+    bom = RubyBridge.convert_string_encoding("utf-16le", "ASCII-8BIT", bom) if csv_string.respond_to?(:force_encoding)
+    csv_string = bom + RubyBridge.convert_string_encoding("utf-16le", "utf-8", csv_string)
+    csv_string = RubyBridge.force_binary_encoding(csv_string)
+    
     send_data csv_string, 
             :type => 'text/csv; charset=utf-8; header=present', 
             :disposition => "attachment; filename=tickets.csv"

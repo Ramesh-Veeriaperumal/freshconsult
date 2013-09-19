@@ -18,7 +18,7 @@
 				Message:
 			</label>
 	    <div class="fields">
-	    	<% f.fields_for (:note_body, Helpdesk::NoteBody.new) do |ff| %>
+	    	<% f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
             <%= ff.text_area :body ,  { :class => 'required tweet auto-height', :id => "#{id}-#{cntid}-body", :value =>default_twitter_body_val(@ticket), :rows => "3" } %>
           	<% end %>
       	<%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["twitter"]%>  
