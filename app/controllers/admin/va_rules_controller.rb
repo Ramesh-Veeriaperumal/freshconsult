@@ -15,6 +15,16 @@ class Admin::VaRulesController < Admin::AutomationsController
     flash[:notice] = t("flash.general.#{type}.success", :human_name => human_name)
     redirect_to :action => 'index'
   end
+
+  def toggle_cascade
+    if feature?(:cascade_dispatchr)
+      current_account.features.cascade_dispatchr.destroy
+    else
+      current_account.features.cascade_dispatchr.create
+    end
+    current_account.reload
+    render :nothing => true
+  end
  
   protected
     def scoper

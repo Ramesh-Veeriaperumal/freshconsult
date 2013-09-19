@@ -121,6 +121,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     evaluate_on = self
     account.va_rules.each do |vr|
       evaluate_on = vr.pass_through(self)
+      next if account.features?(:cascade_dispatchr)
       return evaluate_on unless evaluate_on.nil?
     end
     return evaluate_on
