@@ -1,0 +1,7 @@
+<%if(userAgent){%>
+<%if(!chat.closed){%>
+	<a href="#" id="transfer-<%= chat.id %>"><%=i18n.transfer_to_agent%></a>
+<%}%>
+<a href="#" id="block-<%= chat.id %>"><%if(chat.visitor && chat.visitor.blocked){%><%=i18n.unblock%> <%}else{%><%=i18n.block%><%}%> <%= i18n.visitor%></a>
+<%}%>
+<a href="#" id="tag-<%= chat.id %>"><%=i18n.tag_msg%></a>

@@ -1000,6 +1000,7 @@ en:
         import: Import data from Zendesk
         agent: Agents
         feedback: Feedback widget
+        freshchat: FreshChat
         integrations: "Integrations"
         dispatcher: Dispatch'r
         supervisor: Supervisor
@@ -1584,6 +1585,7 @@ en:
   set_type_as: Set Type as
   change_my_plan: Choose this plan...
   add_new_email: Add new email
+  chatwidget_title: Chat Settings
   feedbackwidget_title: Feedback widget
   errors_in_your_address: "Errors encountered with your address:"
   set_priority_as: Set Priority as
@@ -1613,6 +1615,8 @@ en:
   edit_forum_category: Edit Forum Category
   agent_assigned_title: Recently assigned tickets (Open &amp; Pending)
   send_email_to_requester: Send Email to Requester
+  feedbackwidget_btcustomize: Button customization
+  chatwidget_agentsonline: When agents are online
   solution_category: 
     name: Category name
     new: New solution category
@@ -2295,6 +2299,7 @@ en:
     meta_keywords_message: Seperate keywords with comma
   import_updated: Updated
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
+  chatwidget_intro: Customize your freshchat widget below and see a realtime preview.
   save: Save
   import_added_newly: Added Newly
   select_a_plan_gain_access: Select a plan from below to regain access to your account.
@@ -2354,6 +2359,11 @@ en:
   favicon: Favicon
   is_expiring_today: is expiring today
   feedbackwidget_help_para1: The feedback widget lets you embed a ticket form directly into your website or product. You can customize the look and feel, and placement of the widget on your website. Once done, copy-paste the generated embed code in your website or app, to start using the Feedback Widget.
+  chatwidget_help_content: 
+    title: FreshChat
+    info1: FreshChat lets you view and chat with users on your wesbite, online software, or support portal directly from within Freshdesk. You can customize the look, feel and default messages that users should see when you chat with them, and even proactively initiate chat sessions when visitors spend more time on your site.
+    info2: Each chat session will also capture meta information about where visitors are chatting with you from, their device, and their support history with you. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript. 
+    info3: <a href="https://support.freshdesk.com/support/solutions" target="_blank" >Learn more about using FreshChat inside Freshdesk</a>
   low: Low
   agents: Agents
   header: 
@@ -4299,6 +4309,148 @@ en:
         customer_fcr: The percentage of tickets raised by this customer that were resolved within the first response
         agent_fcr: The percentage of tickets assigned to this agent that were resolved within the first response
         group_fcr: The percentage of tickets assigned to this group that were resolved within the first response
+  freshchat:
+    title: "FreshChat"
+    widget: "Widget"
+    messages: "Messages"
+    online: "When agents are online"
+    chat_title: "Chat Title"
+    minimized: "Minimized"
+    maximized: "Maximized"
+    chatmin_tip: "Text will appear when chat window is minimized"
+    chatmax_tip: "Text will appear when chat window is maximized"
+    welcome: "Welcome Message"
+    welcome_tip: "Text will appear at the top of chat window"
+    thank_title: "Thank You Message"
+    thank_tip: "Text will appear in chat window when agent closes the chat"
+    wait_title: "Wait/on hold Message"
+    wait_tip: "Text will appear in chat window when visitor waits"
+    is_typing_header: "Is Typing..."
+    is_typing_tip: "This text appears when visitor/agents starts typing"
+    prechat_title: "Pre-Chat Form"
+    prechat_desc: "All visitors needs to fill a pre-chat form"
+    prechat_msg: "Pre-Chat Message"
+    proactive_title: "Proactive chat"
+    minimized_title: "Chat Now!"
+    maximized_title: "Welcome to FreshChat"
+    welcome_message: "Hi! How can we help you today?"
+    thank_message: "Agent has left the chat. If you have any more questions, ping us!"
+    wait_message: "We are sorry our agents are unable to get to you right now, but we would still love to hear from you!"
+    typing_message: "is typing..."
+    prechat_message: "Hello, great to see you! Please fill out the below details before we can begin your chat!"
+    showform: "Show Pre-chat form"
+    enable_proactive: "Enable proactive chat"
+    proactive_note: "Note: Pre-chat form will not be shown for Proactive chats"
+    proactive_time: "If the visitor spends more than"
+    proactive_time_end: "seconds on current page"
+    show: "Show"
+    required: "Required field"
+    name: "Name"
+    phone: "Phone Number"
+    mail: "Email"
+    cancel: "Cancel"
+    save: "Save"
+    chat_with_us: "Chat with us"
+    me: "Me"
+    hai: "Hai"
+    window_position: "Window Position"
+    window_offset: "Window Offset"
+    align_to: "Align to"
+    bottom_left: "Bottom Left"
+    bottom_right: "Bottom Right"
+    install_msg: "Copy & paste this code above the last </body> tag on your site."
+    setup_link: "How-to set up chat"
+    install_freshchat: "Install freshchat on your website"
+    custom_chat_window: "Customize your chat window"
+    text_placeholder: "Your Message"
+    chatbox_bgcolor: "Window Color"
+    in_conversation: "In-conversation"
+    available_agents: "Available Agents"
+    visitors_online: "Visitors Online"
+    returning_visitors: "Returning Visitors"
+    website_visitors_msg: "See all Website Visitors"
+    message_archives: "Chat Message archives"
+    see_all: "See all"
+    says: "says"
+    tag_msg: "Tag this Conversation"
+    transfer_to_agent: "Transfer to agent"
+    block: "Block"
+    unblock: "Unblock"
+    visitor: "Visitor"
+    transfer_agent: "Transfer Chat"
+    agent_transfer_msg: "Pick an agent to transfer"
+    search_agent: "Search agent"
+    transfer: "Transfer"
+    block_visitor: "Block Visitor"
+    visitor_block_msg: "Are you sure you want to add this visitor to Block list?"
+    visitor_details: "Visitor Details"
+    enter_tags: "Enter the tags"
+    chat_with: "Chat with"
+    ticket_success_msg: "New ticket has been created and conversation added as a note"
+    ticket_error_msg: "Error while creating ticket"
+    website_visitors: "Website Visitors"
+    connection_error_msg: "Can\'t connect to chat server. Retrying..."
+    connection_success_msg: "Connection established"
+    filter_by: "Filter by"
+    keyword: "Keyword"
+    visitor_location: "Visitor Location"
+    between: "Between"
+    tags: "Tags"
+    agent: "Agent"
+    back: "Back"
+    continue_chat: "Continue Chat"
+    select_location:  "Select Location"
+    valid_code: "Please enter a valid color value"
+    ticket_desc: "Ticket created via Freshchat. Conversation was between "
+    transcript_added_msg: " Transcript added as a note."
+    and: "and"
+    on_: "on"
+    visitor_disconnect_msg: "Visitor has left the chat"
+    last_message: "Last Message..."
+    chat_recent_empty_tip: "You didn\'t chat with anyone recently"
+    add_agent_to_chat: "No agents available"
+    url_error_msg: "No such url exists"
+    accept: "Accept"
+    ignore: "Ignore"
+    transfer_msg: "made a chat transfer request"
+    unauthorized_attempt_msg: "Unauthorized Attempt - logout"
+    update_success_msg: "Chat settings has been successfully updated"
+    update_error_msg: "Error while updating chat settings."
+    recent_messages: "Recent Messages"
+    agents: "Agents"
+    convert_to_ticket: "Convert To ticket"
+    create_ticket_tip: "Save chat transcript and details to a ticket.All Chat transcript will be saved in chat history."
+    tkt_success_note_error: "Ticket has been created and error while adding note!"
+    note_success: "New note has been added to the ticket"
+    note_error: "Error while adding note!"
+    error: Error 
+    existing_tkt_option_tip: "Save to an <b>existing</b> ticket"
+    select_ticket: "Select Ticket"
+    do_not_convert_tkt: "Do not convert to ticket"
+    go_back: "Go Back"
+    id: "Id"
+    subject: "Subject"
+    requested_by: "Requested By"
+    find_by_id: "Find tickets by their Id"
+    find_by_requester: "Find tickets by requester"
+    find_by_subject: "Find tickets by their subject"
+    info_msg: "Creating chat..."
+    join_chat: "Joining chat..."
+    chatting_with: "Chatting with"
+    returning_visitor: "Returning Visitor"
+    new_visitor: "New Visitor"
+    unknown: "Unknown"
+    no_visitors: "No visitors on your site"
+    no_conversation: "No visitors in conversation"
+    no_return_visitors: "No return visitors"
+    tag_placeholder: "Enter the tags"
+    no_visitors_msg: "No visitors on your site..."
+    options: "Options"
+    edit_visitor_details: "Edit Visitor Details"
+    new_ticket_tip: "Save as a <b>new</b> ticket"
+    install_tip: <a href='/admin/chat_setting' id='visitor-list-install'>Install the script</a> on your site to see your visitors
+    window_offset_error_msg: "Please enter a valid offset value(< 500px)."
+    nochat: "No chat available"
   date_invalid: Invalid date  
   facebook_tab:
     remove_tab: "Remove page Tab"

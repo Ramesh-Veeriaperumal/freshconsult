@@ -506,8 +506,8 @@ Autocompleter.PanedSearch = Class.create({
   initialize: function(element, dataFetcher, resultTemplate, resultPane, values, options) {
     this.options = options || { };
     this.resultTemplate = resultTemplate;
-    var outputElement = $(element);
-    var result = $(resultPane);
+    var outputElement = $(element) || $$(element)[0];
+    var result = $(resultPane) || $$(resultPane)[0];
     this.result = result;
     this.name = outputElement.name;
     this.dataFetcher = dataFetcher;

@@ -1,0 +1,83 @@
+<%if @chat && @chat.account.features?(:chat)%>
+
+(function(){
+
+  window.session = {
+      options: { gapi_location: true },
+      // Async API (use with location)
+      start: function(session){ // also can use as a global          
+          window.session = session;
+      }
+  };
+
+  if(typeof jQuery=="undefined"){
+    var jQueryJS = document.createElement('script');
+    jQueryJS.src =  "<%=@app_url%>/javascripts/frameworks/jquery.js";
+    document.body.appendChild(jQueryJS);
+  }
+
+  var sessionJS = document.createElement('script');
+  sessionJS.src =  "<%=@app_url%>/javascripts/frameworks/session.js";
+  document.body.appendChild(sessionJS);
+  sessionJS.onload = function(){
+    var socketJS = document.createElement('script');
+    socketJS.src = "<%=@comm_url%>/socket.io/socket.io.js?chatid=1";
+    document.body.appendChild(socketJS);
+    socketJS.onload=function(){
+      var requireJS = document.createElement('script');
+      requireJS.src = "<%=@app_url%>/javascripts/chat/lib/require/require.js";
+      document.body.appendChild(requireJS);
+
+      requireJS.onload=function(){
+        var main = document.createElement('script');
+        main.src = "<%=@app_url%>/javascripts/chat/customer.js";
+        document.body.appendChild(main);
+      }
+    }
+  }  
+
+  window.FRESH_CHAT_ID = "<%=@chat.display_id%>";
+  window.FRESH_CHAT_SESSION = "<%=@chat.visitor_session%>";
+
+  window.FRESH_CHAT_SETTING = {"prechat_form":"<%=@chat.prechat_form%>", "prechat_phone":"<%=@chat.prechat_phone%>",
+                               "prechat_mail":"<%=@chat.prechat_mail%>", "proactive_chat":"<%=@chat.proactive_chat%>"};
+  window.FRESH_CHAT_SETTING.minimized_title = "<%=(@chat.minimized_title.blank?) ? I18n.t('freshchat.minimized_title') : @chat.minimized_title%>"
+  window.FRESH_CHAT_SETTING.maximized_title = "<%=(@chat.maximized_title.blank?) ? I18n.t('freshchat.maximized_title') : @chat.maximized_title%>"
+  window.FRESH_CHAT_SETTING.welcome_message = "<%=(@chat.welcome_message.blank?) ? I18n.t('freshchat.welcome_message') : @chat.welcome_message %>";
+  window.FRESH_CHAT_SETTING.thank_message = "<%=(@chat.thank_message.blank?) ? I18n.t('freshchat.thank_message') : @chat.thank_message%>";
+  window.FRESH_CHAT_SETTING.wait_message = "<%=(@chat.wait_message.blank?) ? I18n.t('freshchat.wait_message') : @chat.wait_message %>";
+  window.FRESH_CHAT_SETTING.typing_message = "<%=(@chat.typing_message.blank? ) ? I18n.t('freshchat.typing_message') : @chat.typing_message %>";
+  window.FRESH_CHAT_SETTING.prechat_message = "<%=(@chat.prechat_message.blank?) ? I18n.t('freshchat.prechat_message') : @chat.prechat_message %>";
+  window.FRESH_CHAT_SETTING.proactive_time = "<%=(@chat.proactive_time.blank?) ?  0 : @chat.proactive_time%>";
+  window.FRESH_CHAT_SETTING.text_placeholder = "<%=t('freshchat.text_placeholder')%>";
+  window.FRESH_CHAT_SETTING.name_placeholder = "<%=t('freshchat.name')%>";
+  window.FRESH_CHAT_SETTING.mail_placeholder = "<%=t('freshchat.mail')%>";
+  window.FRESH_CHAT_SETTING.phone_placeholder = "<%=t('freshchat.phone')%>";
+  window.NODE_URL = "<%=@comm_url%>";
+  window.WEB_ROOT = "<%=@app_url%>";
+  window.CHAT_DEBUG = "<%=@chat_debug%>";
+  window.userId = "<%=@visitor_id%>"
+
+  <%
+  color = "#777777";
+  position = "right:10px;"
+  if @chat.preferences != nil
+    color = @chat.preferences['window_color']
+    if @chat.preferences['window_position'] == "Bottom Left"
+      position = "left:"+@chat.preferences['window_offset']+"px"
+    else
+      position = "right:"+@chat.preferences['window_offset']+"px"
+    end
+  end
+%>
+var css = '#fc_chat_layout{<%=position%>}#fc_chat_header,#fc_chat_container{background-color:<%=color%>}#fc_chat_container{border:1px solid <%=color%>}}',
+  head = document.getElementsByTagName('head')[0],
+  style = document.createElement('style');
+
+style.type = 'text/css';
+style.appendChild(document.createTextNode(css));
+head.appendChild(style);
+})()
+<%else%>
+  console.log("<%=t('freshchat.url_error_msg')%>");
+<%end%>

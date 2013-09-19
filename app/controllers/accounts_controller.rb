@@ -32,7 +32,7 @@ class AccountsController < ApplicationController
   end   
    
   def edit
-  end
+  end  
   
   def check_domain
     puts "#{params[:domain]}"

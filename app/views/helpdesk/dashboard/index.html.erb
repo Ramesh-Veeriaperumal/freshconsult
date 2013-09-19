@@ -1,5 +1,5 @@
+<%= include_cloudfront_css :chat %>
 <% @page_title = "Dashboard" %>
-
 <% content_for :sidebar do %>
   <% if current_account.subscription.trial? && current_account.subscription.trial_days < AppConfig['show_trail_notifier_in_days'] %>
     <%= render :partial => '/subscriptions/state/trial_expiry_notifier' %>
@@ -8,6 +8,13 @@
   	<h3 class="title"><%= t(".todo_title") %></h3>
     <%= render :partial => '/helpdesk/reminders/reminders', 
                :locals  => { :reminders => current_user.reminders, :form_controller => Helpdesk::Reminder.new(), :show_info => true } %> 
+  </div>
+
+  <div class="side-panel" id="chat-dashboard" style="display:none">
+    <div class="sloading loading-small loading-block"></div>
+    <script>
+          if(window.dashboardView){dashboardView.render(true);}
+    </script>
   </div>
   
   <% if gamification_feature?(current_account) %>

@@ -7,7 +7,7 @@
  * http://www.gnu.org/licenses/gpl.html
  *
  */
-jQuery.cookie = function (key, value, options) {
+(jQuery || $).cookie = function (key, value, options) {
 
     // key and at least value given, set cookie...
     if (arguments.length > 1 && String(value) !== "[object Object]") {
