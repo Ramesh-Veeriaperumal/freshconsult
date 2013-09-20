@@ -86,7 +86,14 @@ class Account < ActiveRecord::Base
     def update_google_domain
       if google_domain_changed? and !google_domain.blank?
         gd = GoogleDomain.find_by_account_id(id)
-        gd.nil? ? GoogleDomain.create({:account_id => id,:domain => google_domain}) : gd.update_attribute(:domain,google_domain)
+        if gd.nil?  
+          gd = GoogleDomain.new
+          gd.account_id = id
+          gd.domain = google_domain
+          gd.save
+        else
+          gd.update_attribute(:domain,google_domain)
+        end
       end
     end
 

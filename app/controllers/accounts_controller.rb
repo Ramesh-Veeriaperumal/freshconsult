@@ -16,7 +16,7 @@ class AccountsController < ApplicationController
   skip_before_filter :check_day_pass_usage, :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show]
   skip_filter :select_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo]
   
-  around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,:associate_google_account]
+  around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,:associate_google_account,:associate_local_to_google]
    
   before_filter :build_user, :only => [ :new, :create ]
   before_filter :build_metrics, :only => [ :create ]
@@ -137,7 +137,9 @@ class AccountsController < ApplicationController
   def associate_local_to_google
     @google_domain = params[:account][:google_domain]
     @call_back_url = params[:call_back]    
-    @account = get_account_for_sub_domain    
+    @full_domain = get_full_domain_for_google  
+    Sharding.select_shard_of(@full_domain) do
+    @account = Account.find_by_full_domain(@full_domain)
     @check_session = @account.user_sessions.new(params[:user_session])
     if @check_session.save
        logger.debug "The session is :: #{@check_session.user}"
@@ -157,6 +159,7 @@ class AccountsController < ApplicationController
       flash[:notice] = t(:'flash.login.verify_credentials')
       render :associate_google
     end 
+   end
   end
   
   def create    

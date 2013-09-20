@@ -76,7 +76,7 @@ function(UserView,ChatView,PageView,notifierView,recentView,flashView,userCollec
               if(CHAT_DEBUG==4){
                 console.log('***','on', onArg);
               }
-              if(onArg[0]=="chat created" || onArg[0]=="joined chat"){
+              if(onArg[0]=="chat created" || onArg[0]=="joined chat" || onArg[0]=="visitor picked"){
                 flashView.removeFlash(connectionObject);
               }
               $emit.apply(chat_socket, arguments);
