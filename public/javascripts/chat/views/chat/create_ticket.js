@@ -15,7 +15,7 @@ define([
             return (hours + ':' + minutes+am_pm);
         },
 
-        request:function(url,params) {
+        request:function(url,params,chat) {
           var that = this;
             $.ajax({
                   type: "POST",
@@ -23,11 +23,13 @@ define([
                   dataType: 'json',
                   data: params,
                   success: function(response){
+                    that.closeChatWindow(chat);
                     if(response.message){
                       that.notice(response.message);
                     }
                   },
                   error: function(response){
+                    that.closeChatWindow(chat);
                     if(response.message){
                       that.notice(response.message);
                     }
@@ -74,14 +76,24 @@ define([
               if(chat.existing_tkt_id){
                 params = {"ticket_id":chat.existing_tkt_id,"note":note};
                 url ="/chat/add_note";
-                that.request(url,params);
+                that.request(url,params,chat);
               }
               else{
                 params = {"ticket":ticket,"note":note};
                 url ="/chat/create_ticket";
-                that.request(url,params);
+                that.request(url,params,chat);
               }
-            }
+          },
+
+          closeChatWindow:function(chat){
+              $("#ticket_options,#ticket_search_view").fadeOut('fast',function(){
+                $("#chat_ticket_options").remove();
+              });
+              var triggerObj = $('li.ui-state-active').find('a:last-child');
+              triggerObj.trigger('click');
+              window.chatCollection.remove(chat);
+              localStore.remove("chat",chat.id);
+          }
   });
         return  (new TicketView());
 });

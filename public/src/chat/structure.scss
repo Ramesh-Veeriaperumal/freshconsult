@@ -2317,8 +2317,9 @@ div.color{
 #chat_ticket_options{
     .ui-widget-overlay{
         height: 2810px; 
-        z-index: 1001;
+        z-index: 999999;
         background-repeat: repeat;
+        overflow: hidden;
     }
 }
 

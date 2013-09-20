@@ -10,8 +10,9 @@ define([
   'views/url_parser',
   'views/chat/action_menu',
   'views/notifier',
-  'views/visitor_details'
-], function(tabView,chatTemplate,messageTemplate,infoTemplate,headerTemplate,visitorView,ChatCollection,urlParser,actionMenu,notifierView,visitorDetails){
+  'views/visitor_details',
+  'views/chat/ticket_options'
+], function(tabView,chatTemplate,messageTemplate,infoTemplate,headerTemplate,visitorView,ChatCollection,urlParser,actionMenu,notifierView,visitorDetails,ticketOptions){
 	var $ = jQuery;
 	var ChatView = Backbone.View.extend({
 		render:function(chat,msg){
@@ -176,11 +177,13 @@ define([
 			}(chat.id));
 		},
 		close:function(chat){
-			var triggerObj = $('li.ui-state-active').find('a:last-child');
-			triggerObj.trigger('click');
-			window.chatCollection.remove(chat);
-			localStore.remove("chat",chat.id);
 			if(!chat.closed && chat.ptype!="agent"){chat_socket.emit('chat close',{chat:chat.id});}
+			else{
+				var triggerObj = $('li.ui-state-active').find('a:last-child');
+                triggerObj.trigger('click');
+                window.chatCollection.remove(chat);
+                localStore.remove("chat",chat.id);
+			}
 		},
 		typingStatus:function(chat,data){
 			$("#status-"+chat.id).html(data.name+" "+(IS_TYPING ?  IS_TYPING : i18n.typing_message)).show();

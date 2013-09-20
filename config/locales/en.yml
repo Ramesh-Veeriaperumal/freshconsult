@@ -4451,6 +4451,8 @@ en:
     install_tip: <a href='/admin/chat_setting' id='visitor-list-install'>Install the script</a> on your site to see your visitors
     window_offset_error_msg: "Please enter a valid offset value(< 500px)."
     nochat: "No chat available"
+    adding_note: "Adding Note..."
+    creating_ticket: "Creating Ticket..."
   date_invalid: Invalid date  
   facebook_tab:
     remove_tab: "Remove page Tab"
