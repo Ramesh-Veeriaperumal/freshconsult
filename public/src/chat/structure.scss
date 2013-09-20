@@ -1599,7 +1599,7 @@ li.ui-state-disabled{
     height: 60px;
     text-decoration: none;
 }
-#freshchat_layout, #visitor_results{
+#freshchat_layout, #visitor_results, #chat_notifier_container, .visitor-details{
     [class^="icon-"], [class*=" icon-"]{
         background-image: none;
     }
