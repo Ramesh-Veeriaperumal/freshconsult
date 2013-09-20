@@ -62,6 +62,7 @@ define([
 				$(".fc_pre-form").hide();
 				$("#fc_chat_window").show();
 			}
+			$("#fc_chat_inputcontainer").focus();
 		},
 		parseURL:function(msg){
 			var linkRegExp  = /((href|src)=["'])?(((https?:\/\/[^(www\.)])|(https?:\/\/www\.))([a-z0-9](([a-z0-9_\-\.]*)(\.[a-z]{2,3}(\.[a-z]{2}){0,2}([^( <)]*)))))/gi;

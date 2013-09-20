@@ -70,6 +70,7 @@ function(Backbone, _, model, client,chatView){
 						msg:FRESH_CHAT_SETTING.welcome_message,
 						type:"welcome"
 					});
+					$("#fc_chat_inputcontainer").focus();
 				}, (proactive_time*1000));
 			}
 		},
@@ -397,6 +398,11 @@ function(Backbone, _, model, client,chatView){
 					if($(this).is(':visible')){
 						$("#fc_chat_symbol").html("&#9660;");
 						$("#fc_chat_title").html(FRESH_CHAT_SETTING.maximized_title);
+						if($(".fc_pre-form").is(":visible")){
+							$("#fc_chat_name").focus();
+						}else{
+							$("#fc_chat_inputcontainer").focus();
+						}
 					}else{
 						$("#fc_chat_symbol").html("&#9650;");
 						$("#fc_chat_title").html(FRESH_CHAT_SETTING.minimized_title);
