@@ -1599,9 +1599,10 @@ li.ui-state-disabled{
     height: 60px;
     text-decoration: none;
 }
-
-[class^="icon-"], [class*=" icon-"]{
-    background-image: none;
+#freshchat_layout, #visitor_results{
+    [class^="icon-"], [class*=" icon-"]{
+        background-image: none;
+    }
 }
 
 .close-btn{
