@@ -4421,7 +4421,7 @@ en:
     convert_to_ticket: "Convert to Ticket"
     create_ticket_tip: "Save chat transcript and details to a ticket.All Chat transcript will be saved in chat history."
     tkt_success_note_error: "Ticket has been created and error while adding note!"
-    note_success: "New note has been added to the ticket"
+    note_success: "New note has been added to the ticket #%{display_id}"
     note_error: "Error while adding note!"
     error: Error 
     existing_tkt_option_tip: "Save to an <b>existing</b> ticket"
