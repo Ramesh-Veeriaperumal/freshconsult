@@ -50,7 +50,7 @@ class ChatsController < ApplicationController
     
     if create_note
       @status = "success"
-      @message =  t('freshchat.note_success')+" #"+@note.notable_id.to_s
+      @message =  t('freshchat.note_success')+" #"+current_account.tickets.find_by_id(@note.notable_id).display_id.to_s
       render_result  
      else
       @status = "unprocessable_entity"
