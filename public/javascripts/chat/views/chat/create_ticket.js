@@ -89,7 +89,7 @@ define([
               $("#ticket_options,#ticket_search_view").fadeOut('fast',function(){
                 $("#chat_ticket_options").remove();
               });
-              var triggerObj = $('li.ui-state-active').find('a:last-child');
+              var triggerObj = $('#tabs-group li.ui-state-active').find('a:last-child');
               triggerObj.trigger('click');
               window.chatCollection.remove(chat);
               localStore.remove("chat",chat.id);

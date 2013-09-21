@@ -205,6 +205,9 @@ function(UserView,ChatView,PageView,notifierView,recentView,flashView,userCollec
             if(chat.messages.length > 0){
               ticketView.render(chat);
             }
+            else{
+              ChatView.closeWindow(chat);
+            }
           });
 
           chat_socket.on('reconnect',function(){

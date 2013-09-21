@@ -179,12 +179,15 @@ define([
 		close:function(chat){
 			if(!chat.closed && chat.ptype!="agent"){chat_socket.emit('chat close',{chat:chat.id});}
 			else{
-				var triggerObj = $('li.ui-state-active').find('a:last-child');
-                triggerObj.trigger('click');
-                window.chatCollection.remove(chat);
-                localStore.remove("chat",chat.id);
+				this.closeWindow(chat);
 			}
 		},
+		closeWindow:function(chat){
+           var triggerObj = $('#tabs-group li.ui-state-active').find('a:last-child');
+           triggerObj.trigger('click');
+           window.chatCollection.remove(chat);
+           localStore.remove("chat",chat.id);
+        }, 
 		typingStatus:function(chat,data){
 			$("#status-"+chat.id).html(data.name+" "+(IS_TYPING ?  IS_TYPING : i18n.typing_message)).show();
 		},
