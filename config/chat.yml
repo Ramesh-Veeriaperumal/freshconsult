@@ -1,6 +1,6 @@
 communication_url:
     development: "http://localhost:4000"
-    production: "http://localhost:4000"
+    production: "https://chat.freshdesk.com:443"
     staging: "https://chat.freshmarketr.com:443"
 
 secret_key:
