@@ -1,10 +1,6 @@
 .chat-top-space{
 	margin-top: 15px;
 }
-.ui-form{
-	background-color: transparent;
-	border: none;
-}
 .chat-header{
 	padding: 10px 0px;
 	display: inline-block;
@@ -20,6 +16,12 @@
 .menu-box-left{
 	position: relative;
 	right: 0px;
+}
+#chat_settings_tab1{
+    .ui-form{
+        background-color: transparent;
+        border: none;
+    }
 }
 .chat-window-left{
 	width: 100%;

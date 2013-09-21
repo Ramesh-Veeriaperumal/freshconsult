@@ -7,7 +7,7 @@ define([
         render:function(chat) {
             	 var that = this;
                require(['text!templates/chat/close/ticket_search_list.html'],function(template){
-                  $('body').append(_.template(searchTemplate));
+                  $('body').append(_.template(searchTemplate,{visitor_name:chat.visitor.name}));
                    var search_container = $('.' + 'chat_tkt_search_container' || "search_container")
                                            .freshTicketSearch({ className: 'chat_tkt_search_container',
                                                                 template:  new Template(template)
