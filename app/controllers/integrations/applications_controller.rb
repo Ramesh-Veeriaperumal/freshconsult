@@ -14,14 +14,27 @@ class Integrations::ApplicationsController < Admin::AdminController
     kv_store = Redis::KeyValueStore.new(Redis::KeySpec.new(Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options))
     kv_store.group = :integration
     app_config = kv_store.get_key
+    if app_config.blank?
+      @installed_app = Integrations::InstalledApplication.with_name(params['id']).first
+      app_config = @installed_app.configs[:inputs].to_json if @installed_app.application.options[:pre_install]
+    end
   	begin
   		unless app_config.blank?
   		  config_hash = JSON.parse(app_config)
   			app_name = config_hash["app_name"]
   			config_hash.delete("app_name")	    
         if params['id'] == 'salesforce' 
-          config_hash['contact_fields'] = fetch_sf_contact_fields(config_hash['oauth_token'], config_hash['instance_url']) 
-          config_hash['lead_fields'] = fetch_sf_lead_fields(config_hash['oauth_token'], config_hash['instance_url']) 
+          
+          if params[:install].blank?
+            @salesforce_config=Hash.new
+            
+            @salesforce_config['contact_fields'] = fetch_sf_contact_fields(config_hash['oauth_token'], config_hash['instance_url']) 
+            @salesforce_config['lead_fields'] = fetch_sf_lead_fields(config_hash['oauth_token'], config_hash['instance_url']) 
+            render :partial => "integrations/applications/salesforce_fields",:layout=>"application" and return
+          else
+            config_hash['contact_fields'] = params[:contacts].join(",") unless params[:contacts].nil?
+            config_hash['lead_fields'] = params[:leads].join(",") unless params[:leads].nil?
+          end
         end
 		    installed_application = Integrations::Application.install_or_update(app_name, current_account.id, config_hash)
 		    flash[:notice] = t(:'flash.application.install.success') if installed_application
