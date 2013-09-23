@@ -19,10 +19,13 @@ module ApplicationHelper
                         ["IE 9", "ie9"],
                         ["IE 10", "ie10"],
                         ["(gt IE 10)|!(IE)", "", true]]
-
-    html_conditions.map { |h| %( 
+    language = current_portal.language
+    language = language.force_encoding('utf-8') if language.respond_to?(:force_encoding)
+    html_conditions.map { |h|
+      %( 
         <!--[if #{h[0]}]>#{h[2] ? '<!-->' : ''}<html class="no-js #{h[1]}" lang="#{ 
-          current_portal.language }">#{h[2] ? '<!--' : ''}<![endif]--> ) }.to_s.html_safe
+          language }">#{h[2] ? '<!--' : ''}<![endif]-->)
+    }.to_s.html_safe
   end
 
   def trial_expiry_title(trial_days)

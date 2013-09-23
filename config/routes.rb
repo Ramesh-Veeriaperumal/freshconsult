@@ -1,5 +1,7 @@
  ActionController::Routing::Routes.draw do |map|
 
+  map.connect '/visitor/load/:id.:format', :controller => 'chats', :action => 'load', :conditions => { :method => :get }
+
   map.connect '/images/helpdesk/attachments/:id/:style.:format', :controller => '/helpdesk/attachments', :action => 'show', :conditions => { :method => :get }
   
   map.connect "/javascripts/:action.:format", :controller => 'javascripts'
@@ -95,6 +97,7 @@
     admin.resources :home, :only => :index
     admin.resources :day_passes, :only => [:index, :update], :member => { :buy_now => :put, :toggle_auto_recharge => :put }
     admin.resources :widget_config, :only => :index
+    admin.resources :chat_setting
     admin.resources :automations, :collection => { :reorder => :put }
     admin.resources :va_rules, :member => { :activate_deactivate => :put }, :collection => { :reorder => :put }
     admin.resources :supervisor_rules, :member => { :activate_deactivate => :put }, 
@@ -203,8 +206,8 @@
   map.with_options(:conditions => {:subdomain => AppConfig['admin_subdomain']}) do |subdom|
     subdom.root :controller => 'subscription_admin/subscriptions', :action => 'index'
     subdom.with_options(:namespace => 'subscription_admin/', :name_prefix => 'admin_', :path_prefix => nil) do |admin|
-      admin.resources :subscriptions, :member => { :charge => :post, :extend_trial => :post, :add_day_passes => :post }, :collection => {:customers => :get, :deleted_customers => :get, :customers_csv => :get}
-      admin.resources :accounts, :collection => {:agents => :get, :tickets => :get, :renewal_csv => :get}
+      admin.resources :subscriptions, :collection => {:customers => :get, :deleted_customers => :get, :customers_csv => :get}
+      admin.resources :accounts,:member => {:add_day_passes => :post}, :collection => {:agents => :get, :tickets => :get, :renewal_csv => :get }
       admin.resources :subscription_plans, :as => 'plans'
       # admin.resources :subscription_discounts, :as => 'discounts'
       admin.resources :subscription_affiliates, :as => 'affiliates', :collection => { :add_affiliate_transaction => :post },
@@ -256,6 +259,8 @@
   
   map.forgot_password '/account/forgot', :controller => 'user_sessions', :action => 'forgot'
   map.reset_password '/account/reset/:token', :controller => 'user_sessions', :action => 'reset'
+  
+  map.search_domain '/search_user_domain', :controller => 'domain_search', :action => 'locate_domain'
   
   map.resources :search, :only => :index, :member => { :suggest => :get }
   
@@ -346,6 +351,7 @@
       :groups => :get }, :only => [ :mini_list, :agents, :groups ]
     helpdesk.resources :quests, :only => [ :active, :index, :unachieved ], 
       :collection => { :active => :get, :unachieved => :get }
+    
 
     helpdesk.resources :notes
     helpdesk.resources :bulk_ticket_actions , :collection => {:update_multiple => :put }
@@ -368,6 +374,8 @@
 
     helpdesk.formatted_dashboard '/dashboard.:format', :controller => 'dashboard', :action => 'index'
     helpdesk.dashboard '', :controller => 'dashboard', :action => 'index'
+    helpdesk.visitor '/visitor/:filter', :controller => 'visitor', :action => 'index'
+    helpdesk.chat_archive '/chat/:filter', :controller => 'visitor', :action => 'index'
 
 #   helpdesk.resources :dashboard, :collection => {:index => :get, :tickets_count => :get}
 
@@ -532,5 +540,9 @@
   # consider removing the them or commenting them out if you're using named routes and resources.
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
-  
+
+  map.connect '/all_agents.:format', :controller => 'agents', :action => 'list'
+  map.connect '/chat/create_ticket', :controller => 'chats', :action => 'create_ticket', :method => :post
+  map.connect '/chat/add_note', :controller => 'chats', :action => 'add_note', :method => :post
+
 end

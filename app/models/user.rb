@@ -135,6 +135,10 @@ class User < ActiveRecord::Base
     self.tags.push tag unless tag.blank? or self.tagged?(tag.id)
   end
 
+  def parent_id
+    string_uc02.to_i
+  end
+
   def update_tag_names(csv_tag_names)
     unless csv_tag_names.nil? # Check only nil so that empty string will remove all the tags.
       updated_tag_names = csv_tag_names.split(",")
@@ -496,5 +500,10 @@ class User < ActiveRecord::Base
     def has_role?
       self.errors.add(:base, I18n.t("activerecord.errors.messages.user_role")) if
         ((@role_change_flag or new_record?) && self.roles.blank?)
+    end
+
+    def user_emails_migrated?
+      # for user email delta
+      self.account.user_emails_migrated?
     end
 end

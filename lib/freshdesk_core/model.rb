@@ -117,6 +117,7 @@ module FreshdeskCore::Model
     add_churn(account) unless account.subscription_payments.blank?
     delete_jira_webhooks(account)
     clear_attachments(account)
+    $redis_others.srem('user_email_migrated', account.id) #for contact merge delta
     
     delete_data_from_tables(account.id)
     account.destroy

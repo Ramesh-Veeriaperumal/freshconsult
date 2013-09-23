@@ -1,0 +1,1 @@
+ChatConfig = YAML.load_file(File.join(RAILS_ROOT, 'config', 'chat.yml'))

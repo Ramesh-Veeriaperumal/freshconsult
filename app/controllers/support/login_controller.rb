@@ -2,8 +2,11 @@ class Support::LoginController < SupportController
 
 	include Redis::RedisKeys
 	include Redis::TicketsRedis
+
+	SUB_DOMAIN = "freshdesk.com"
 	
 	skip_before_filter :check_account_state
+	after_filter :set_domain_cookie, :only => :create
 	
 	def new
 		if current_account.sso_enabled? and check_request_referrer 
@@ -46,4 +49,11 @@ class Support::LoginController < SupportController
       def check_request_referrer
         request.referrer ? (URI(request.referrer).path != "/login/normal") : true
       end
+
+    def set_domain_cookie
+    	if @current_user and @current_user.helpdesk_agent? and current_portal
+     		cookies[:helpdesk_url] = { :value => current_portal.host, :domain => SUB_DOMAIN }
+     	end
+    end      
 end
+

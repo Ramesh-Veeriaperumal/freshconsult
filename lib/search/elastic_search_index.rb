@@ -15,8 +15,9 @@ module Search::ElasticSearchIndex
       end
 
       def es_available?
-          es_enable_status = MemcacheKeys.fetch(MemcacheKeys::ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
-          es_enable_status.key?(self.account_id)
+        return true
+        # es_enable_status = MemcacheKeys.fetch(MemcacheKeys::ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
+        # es_enable_status.key?(self.account_id)
       end
 
       def search_alias_name

@@ -2,9 +2,10 @@
 #   gem install sqlite3-ruby (not necessary on OS X Leopard)
 
 development:
-  adapter: mysql
+  adapter: <%= RUBY_VERSION > "1.9" ? "mysql2" : "mysql" %>
   encoding: utf8
   database: helpkit1
+  pool_adapter: <%= RUBY_VERSION > "1.9" ? "mysql2" : "mysql" %>
   pool: 5
   host: 127.0.0.1
   username: root

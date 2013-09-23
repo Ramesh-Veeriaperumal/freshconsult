@@ -1,0 +1,28 @@
+<ul id="settings-filter">
+	<li id="">Installation</li>
+	<li><a href="javascript:void(0);" id="look-n-feel">Look n Feel</a></li>
+	<li><a href="javascript:void(0);" id="behaviour_text">Behavior &amp; Text</a></li>
+	<li><a href="javascript:void(0);" id="greeter">Greeter</a></li>
+	<li><a href="javascript:void(0);">Rules</a></li>
+	<li><a href="javascript:void(0);" id="canned_reply">Canned reply</a></li>
+	<li><a href="javascript:void(0);" id="agents">Agents</a></li>
+	<li><a href="javascript:void(0);" id="groups">Groups</a></li>
+</ul>
+
+<div id="right_settings">
+	<div class="title-breadcrumb">
+		<ul>
+			<li class="title-active">Settings</li>
+			<li class="icon-arrow-right-2"></li>
+			<li>Installation</li>
+		</ul>
+	</div>
+	<div id="copy-to-clip">
+		
+		<div id="copy-action">
+			<a id="select-all" onclick="javascript:$('.copytext').select();">Select all</a>
+			<a class="clear"></a>
+		</div>
+		<textarea class="copytext" id="copy-text"  onclick="javascript:$(this).select();">&lt;script src="<%=web_root%>/visitor/load/<%=site_id%>.js"&gt;&lt;/script&gt;</textarea>
+	</div>
+</div>

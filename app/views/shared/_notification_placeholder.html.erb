@@ -38,7 +38,7 @@
 	<div class="intro"><%=t('automations.info4')%>.</div>
 	<div id="placeholder-list-1" class="placeholder-list">
 		<dl>
-			<% ticket_placeholders.each do |ph| %>
+			<% (ticket_placeholders+survey_placeholders).each do |ph| %>
 				<dt><a class="uiButton small tooltip" href="javascript:void(0)" data-placeholder="<%= ph[0] %>" title="<%= ph[2] %>"><%= ph[1] %></a></dt> 
 			<% end %>
 		</dl>	

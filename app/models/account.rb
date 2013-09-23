@@ -21,6 +21,18 @@ class Account < ActiveRecord::Base
               :conditions => [" subscriptions.state != 'suspended' "], 
               :joins => [:subscription]
 
+  named_scope :trial_accounts,
+              :conditions => [" subscriptions.state = 'trial' "], 
+              :joins => [:subscription]
+
+  named_scope :free_accounts,
+              :conditions => [" subscriptions.state IN ('free','active') and subscriptions.amount = 0 "], 
+              :joins => [:subscription]
+
+  named_scope :paid_accounts,
+              :conditions => [" subscriptions.state = 'active' and subscriptions.amount > 0 "], 
+              :joins => [:subscription]
+
   named_scope :premium_accounts, {:conditions => {:premium => true}}
               
   named_scope :non_premium_accounts, {:conditions => {:premium => false}}
@@ -234,8 +246,17 @@ class Account < ActiveRecord::Base
   end
 
   def es_enabled?
-    es_status = MemcacheKeys.fetch(MemcacheKeys::ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
-    es_status.key?(self.id) ? es_status[self.id] : false
+    return true
+    # es_status = MemcacheKeys.fetch(MemcacheKeys::ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
+    # es_status.key?(self.id) ? es_status[self.id] : false
+  end
+
+  def user_emails_migrated?
+    $redis_others.sismember('user_email_migrated', self.id)
+  end
+
+  def google_account?
+    !google_domain.blank?
   end
   
   protected

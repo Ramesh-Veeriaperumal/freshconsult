@@ -5,11 +5,11 @@
 			<div class="dropdown">
                 <%=t('contacts.showing')%><a role="button" class="dropdown-toggle drop-right" id="sorting_dropdown" data-toggle="dropdown" href="#"> <b><%= cookies[:contacts_sort].blank? ? t("contacts.status.verified") : t("contacts.status.#{cookies[:contacts_sort]}")  %></b><b class="caret"></b></a>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="sorting_dropdown_list" id="sorting_dropdown_list">
-                	<li><%= link_to t("contacts.status.verified"), {:state => "verified"}, :title => t("contacts.status_title.verified") %></li>
-                	<li><%= link_to t("contacts.status.unverified"), {:state => "unverified"}, :title => t("contacts.status_title.unverified") %></li>
-                	<li><%= link_to t("contacts.status.all"), {:state => "all"}, :title => t("contacts.status_title.all") %></li>
-                	<li><%= link_to t("contacts.status.deleted"), {:state => "deleted"}, :title => t("contacts.status_title.deleted") %></li>
-                	<li><%= link_to t("contacts.status.blocked"), {:state => "blocked"}, :title => t("contacts.status_title.deleted") %></li>
+                	<li><%= link_to t("contacts.status.verified"), {:state => "verified", :letter => params[:letter]}, :title => t("contacts.status_title.verified") %></li>
+                	<li><%= link_to t("contacts.status.unverified"), {:state => "unverified", :letter => params[:letter]}, :title => t("contacts.status_title.unverified") %></li>
+                	<li><%= link_to t("contacts.status.all"), {:state => "all", :letter => params[:letter]}, :title => t("contacts.status_title.all") %></li>
+                	<li><%= link_to t("contacts.status.deleted"), {:state => "deleted", :letter => params[:letter]}, :title => t("contacts.status_title.deleted") %></li>
+                	<li><%= link_to t("contacts.status.blocked"), {:state => "blocked", :letter => params[:letter]}, :title => t("contacts.status_title.deleted") %></li>
                 </ul>
 			</div> 
 	    </div>

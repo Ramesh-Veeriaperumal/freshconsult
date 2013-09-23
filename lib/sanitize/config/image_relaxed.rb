@@ -27,7 +27,7 @@ class Sanitize
         a abbr acronym address b bdo blockquote br caption cite code col colgroup dd del details dfn dl div
         dt em figcaption figure h1 h2 h3 h4 h5 h6 hgroup hr i img ins kbd li mark
         ol p pre q rp rt ruby s samp section summary small strike strong sub sup table tbody td
-        tfoot th thead time tr tt u ul var wbr span
+        tfoot th thead time tr tt u ul var wbr span iframe
       ],
       :remove_contents => [ 'style','title','script'],
       :attributes => {
@@ -46,7 +46,8 @@ class Sanitize
         'th'         => ['abbr', 'axis', 'colspan', 'rowspan', 'scope', 'width'],
         'time'       => ['datetime', 'pubdate'],
         'ul'         => ['type'],
-        'div'        => ['class']
+        'div'        => ['class'],
+        'iframe'     => ['src', 'width', 'height', 'frameborder', 'allowfullscreen']
       },
 
       :protocols => {
@@ -55,7 +56,8 @@ class Sanitize
         'del'        => {'cite' => ['http', 'https', :relative]},
         'img'        => {'src'  => ['http', 'https', :relative,'cid']},
         'ins'        => {'cite' => ['http', 'https', :relative]},
-        'q'          => {'cite' => ['http', 'https', :relative]}
+        'q'          => {'cite' => ['http', 'https', :relative]},
+        'iframe'     => {'src'  => ['http', 'https', :relative]}
       }
     }
   end

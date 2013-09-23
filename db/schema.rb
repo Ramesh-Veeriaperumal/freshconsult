@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130912141636) do
+ActiveRecord::Schema.define(:version => 20130918125805) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -203,6 +203,26 @@ ActiveRecord::Schema.define(:version => 20130912141636) do
   end
 
   add_index "ca_folders", ["account_id"], :name => "Index_ca_folders_on_account_id"
+
+  create_table "chat_settings", :force => true do |t|
+    t.integer  "account_id",      :limit => 8
+    t.text     "display_id"
+    t.text     "preferences"
+    t.string   "minimized_title"
+    t.string   "maximized_title"
+    t.string   "welcome_message"
+    t.string   "thank_message"
+    t.string   "wait_message"
+    t.string   "typing_message"
+    t.integer  "prechat_form"
+    t.string   "prechat_message"
+    t.integer  "prechat_phone"
+    t.integer  "prechat_mail"
+    t.integer  "proactive_chat"
+    t.integer  "proactive_time"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "conversion_metrics", :force => true do |t|
     t.integer  "account_id",        :limit => 8
@@ -562,6 +582,12 @@ ActiveRecord::Schema.define(:version => 20130912141636) do
     t.integer "google_account_id", :limit => 8
     t.integer "account_id",        :limit => 8
   end
+
+  create_table "google_domains", :primary_key => "account_id", :force => true do |t|
+    t.string "domain", :null => false
+  end
+
+  add_index "google_domains", ["domain"], :name => "index_google_domains_on_domain", :unique => true
 
   create_table "groups", :force => true do |t|
     t.string   "name"
@@ -1359,6 +1385,9 @@ ActiveRecord::Schema.define(:version => 20130912141636) do
     t.integer  "dm_thread_time",                         :default => 0
     t.integer  "state",                                  :default => 1
     t.text     "last_error"
+    t.text     "rule_value"
+    t.text     "rule_tag"
+    t.integer  "gnip_rule_state",                        :default => 0
   end
 
   add_index "social_twitter_handles", ["account_id", "twitter_user_id"], :name => "social_twitter_handle_product_id", :unique => true
@@ -1853,6 +1882,23 @@ ActiveRecord::Schema.define(:version => 20130912141636) do
   add_index "topics", ["forum_id", "sticky", "replied_at"], :name => "index_topics_on_sticky_and_replied_at"
   add_index "topics", ["forum_id"], :name => "index_topics_on_forum_id"
 
+  create_table "user_emails", :id => false, :force => true do |t|
+    t.integer  "id",               :limit => 8,                    :null => false
+    t.integer  "user_id",          :limit => 8,                    :null => false
+    t.string   "email"
+    t.integer  "account_id",       :limit => 8,                    :null => false
+    t.string   "perishable_token"
+    t.boolean  "verified",                      :default => false
+    t.boolean  "primary_role",                  :default => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "user_emails", ["account_id", "email"], :name => "index_user_emails_on_account_id_and_email", :unique => true
+  add_index "user_emails", ["email"], :name => "user_emails_email"
+  add_index "user_emails", ["id"], :name => "user_emails_id"
+  add_index "user_emails", ["user_id", "account_id"], :name => "index_user_emails_on_user_id_and_account_id"
+
   create_table "user_roles", :id => false, :force => true do |t|
     t.integer "user_id",    :limit => 8
     t.integer "role_id",    :limit => 8
@@ -1917,6 +1963,7 @@ ActiveRecord::Schema.define(:version => 20130912141636) do
   add_index "users", ["account_id", "email"], :name => "index_users_on_account_id_and_email", :unique => true
   add_index "users", ["account_id", "external_id"], :name => "index_users_on_account_id_and_external_id", :unique => true, :length => {"external_id"=>"20", "account_id"=>nil}
   add_index "users", ["account_id", "import_id"], :name => "index_users_on_account_id_and_import_id", :unique => true
+  add_index "users", ["account_id", "name"], :name => "index_users_on_account_id_and_name"
   add_index "users", ["customer_id", "account_id"], :name => "index_users_on_customer_id_and_account_id"
   add_index "users", ["email"], :name => "index_users_on_email"
   add_index "users", ["id"], :name => "users_id"
