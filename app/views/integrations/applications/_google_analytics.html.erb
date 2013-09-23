@@ -6,7 +6,7 @@
 		portal_name = "#{portal.portal_name.presence} <i>#{portal.host}</i>" %>
 	<div class="fields">
 		<label for="configs_<%=portal.id%>_account_number">
-			<%= t('integrations.google_analytics.form.tracking_id') + portal_name %>
+			<%= (t('integrations.google_analytics.form.tracking_id') + portal_name).html_safe %>
 		</label>
 		<% if portal == portals.first %>
 		<label for="configs_<%=portal.id%>_account_number" class="overlabel"><%= t('integrations.google_analytics.form.tracking_id_example') %></label>

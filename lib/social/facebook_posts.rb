@@ -35,7 +35,7 @@ class Social::FacebookPosts
      end
   end
   
-  def add_wall_post_as_ticket (feed)
+  def add_wall_post_as_ticket(feed)
     
      group_id = @fb_page.product.primary_email_config.group_id unless @fb_page.product.blank?
      puts "add_wall_post_as_ticket ::post_id::  #{feed[:post_id]} :time: #{feed[:created_time]}"

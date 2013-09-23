@@ -12,7 +12,7 @@
      
   <% if feature?(:captcha) && !logged_in? %>
     <div class="control-group">
-        <%= content_tag ( :label, t('ticket.verify_human'), :class => "control-label" ) %>
+        <%= content_tag( :label, t('ticket.verify_human'), :class => "control-label" ) %>
         <div class="controls recaptcha-control">
           <%= recaptcha_tags :display => { :theme => "white" }, :ssl => current_account.ssl_enabled? %>
         </div>
@@ -31,6 +31,7 @@
 <% javascript_tag do %>
   (function($){
     jQuery(document).ready(function(){      
+      jQuery('#meta_referrer').val(document.referrer);
       <% if feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
         callbackToSolutionSearch = function(string){
           jQuery.ajax({ url: "/support/search/solutions?max_matches=4&term="+string, 

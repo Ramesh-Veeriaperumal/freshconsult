@@ -2,9 +2,9 @@
 <%
   @debuging =  RAILS_ENV.eql?("development") && params.has_key?("debug")
 %>
-  <%= open_html_tag %>
+  <%= open_html_tag %>      
 	<%= render :partial => "layouts/shared/head" %>
-	<body class="<% unless @content_for_sidebar %>single<% end %> <%= yield :layoutType %>">
+	<body class="<% unless @content_for_sidebar %>single<% end %> <%= yield :layoutType %>">            
 		<div id="wrap">
 			<%= render(:partial => '/layouts/shared/header') %>
 			<%if @debug%>
@@ -13,11 +13,12 @@
   		</script>
   		<%end%>  		
   		<div class="content" id="body-container">
-  		  <%= render :partial => "layouts/tour_my_app" %>
+  		  <%= render :partial => "layouts/tour_my_app" %>        
         <%= render :file => "layouts/maincontent" %>
 		  </div>
   		<%= render :partial => "layouts/shared/footer" %> 
       <%= render :partial => "layouts/shared/scripts" %> 
-    </div>		 
+    </div>        
+      <%= render :partial => "layouts/chat"%>
   </body>
 </html>

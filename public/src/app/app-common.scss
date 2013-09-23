@@ -5017,6 +5017,7 @@ a.close{
 			display:none;
       	}
 	   	.ff_item{
+	   		@include pie-clearfix;
 			margin:0 6px 0 0;
 			padding:4px 2px 10px;
 		}
@@ -10168,7 +10169,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 .error-text{ color: #D00; }
 
 #footer {
-	margin: 10px auto 40px;
+	margin: 20px auto 30px;
 	clear: both;
 }
 

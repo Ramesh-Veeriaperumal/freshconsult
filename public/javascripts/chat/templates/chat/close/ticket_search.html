@@ -1,0 +1,31 @@
+<div id="ticket_search_view" class="chat_tkt_search_container ">
+	<div class="ticket_search_details">
+		<h3 class="grey"><%=i18n.convert_to_ticket%> (<%=i18n.chat_with%> <%=visitor_name%>)</h3>
+		<h4><a href="#"  id="go_back" class="go_back"> &#9664; <%=i18n.go_back%></a></h4>
+    <div class="search-content">
+			 <select id="search-type" class="search-type"> 
+			          <option value='display_id'><%=i18n.id%></option>
+                <option value='subject'><%=i18n.subject%></option>
+         		    <option selected='selected' value='requester'><%=i18n.requested_by%></option>
+        </select>
+           <div class="searchticket display_id hide">
+            <div>
+              <input type="text" id='select-id'  name='select-id' class="search_input select-id"  
+                                                placeholder='<%=i18n.find_by_id%>' /></div>
+          </div>
+
+          <div class="searchticket requester">
+              <input type="text" id='select-requester'  name='select-requester' class="search_input select-requester" 
+                                                placeholder='<%=i18n.find_by_requester%>' />
+          </div>
+
+         <div class="searchticket subject hide">
+             <input type="text" id='select-subject'  name='select-subject' class="search_input select-subject"  
+                                                placeholder='<%=i18n.find_by_subject%>' />
+        </div>
+      <div  class="display_id_results ticket_search_results hide"></div>
+      <div  class="requester_results ticket_search_results "></div>
+      <div class="subject_results ticket_search_results hide"></div>
+	</div>
+</div>
+</div>

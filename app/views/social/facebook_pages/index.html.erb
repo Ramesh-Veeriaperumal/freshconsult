@@ -35,7 +35,7 @@ if(jQuery('#got_pages').length){
             </div>  
           </td>
           <td class="text-right">
-            <%= link_to (t(".reauthorize").html_safe,  @fb_client.authorize_url(session[:state]), :class => "btn btn-mini") if page.reauth_required %>
+            <%= link_to(t(".reauthorize").html_safe,  @fb_client.authorize_url(session[:state]), :class => "btn btn-mini") if page.reauth_required %>
             <%= link_to t("edit"),  edit_social_facebook_url(page), :class => "btn btn-mini" %>
             <%= link_to("<i class='icon-trash'></i>".html_safe, social_facebook_path(page), :method => 'delete', :confirm => "Are you sure you want to remove this facebook page?", :class => "btn btn-mini" ) %> 
           </td>

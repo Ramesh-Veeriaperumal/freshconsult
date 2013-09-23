@@ -1,0 +1,33 @@
+<div id="visitor">
+	<div class="closeDialog">x</div>
+	<div class="visitor-details">
+		<h3><%=i18n.visitor_details%></h3>
+		<div class="visitor-info">
+			<div class="heading visitorname"><i class="icon-user"></i></div>			
+			<div class="user-input"><input type="text" id="visitorname" /></div>
+			<div class="heading fc-contact"><i class="icon-mobile"></i></div>
+			<div class="user-input"><input type="text" id="contact" /></div>
+			<div class="heading email"><i class="icon-mail"></i></div>
+			<div class="user-input"><input type="text" id="email" /></div>
+			<div class="heading tag"><i class="icon-tags"></i></div>
+			<div class="user-input"><input type="text" id="tag" /></div>
+			<div class="clear">
+		</div>
+		<%if(userAgent){%>
+		<div class="visitor-loc">
+			<div class="loc icon-<%=userAgent.family.toLowerCase()%>"> <%=userAgent.family%> <%=userAgent.major%>.<%=userAgent.minor%>.<%=userAgent.patch%></div>
+			<div class="loc icon-<%=userAgent.os.family.toLowerCase()%>"> <%=userAgent.os.family%> <%=userAgent.os.major%>.<%=userAgent.os.minor%>.<%=userAgent.os.patch%></div>
+			<%if(chat.location){%>
+				<div class="loc geo"><i class="icon-location"></i><%=chat.location%></div>
+			<%}else{%>
+				<div class="loc geo"><i class="icon-location"></i>Unknown</div>
+			<%}%>
+			<div class="loc page"><i class="icon-eye"></i><a href="<%=userAgent.page%>" title="<%=userAgent.page%>" alt="<%=userAgent.page%>" target="_blank"><%=userAgent.page%></a></div>
+		</div>
+		<%}%>
+		<div class="visitor-actions"> 
+			<input type="button" value="<%=i18n.cancel%>" class="cancelBtn btn btn-secondary" />
+			<input type="button" value="<%=i18n.save%>" class="saveBtn btn btn-primary" />
+		</div>
+	</div>
+</div>

@@ -1,4 +1,3 @@
-
 <% cache("#{get_memcache_key}", :expires_in => 1.hour) do %>
 
 	<% unless load_available_quests.empty? %>
@@ -25,3 +24,5 @@
 		<script type="text/javascript">$('quests-section-container').hide()</script>
 	<% end %>
 <% end %>
+
+

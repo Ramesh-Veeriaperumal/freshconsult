@@ -137,9 +137,7 @@ sk:
       ticket_type: Typ
       created_at: Vytvoril
     saving_ticket: "Ukladanie položiek požadavky..."
-    untitled: |-
-        
-        Bez názvu
+    untitled: Bez názvu
     first_choice: "Prvá Voľba"
     second_choice: "Druhá Voľba"
     confirm_delete: "Chcete určite odstrániť toto pole?"

@@ -8,6 +8,7 @@ module Delayed
     def initialize(object, method, args, account=Account.current)
       raise NoMethodError, "undefined method `#{method}' for #{self.inspect}" unless object.respond_to?(method)
 
+      Rails.logger.debug "$$$$$$$$ Method -- #{method.to_sym} ------------- account #{Account.current}" 
       self.object = dump(object)
       self.args   = args.map { |a| dump(a) }
       self.method = method.to_sym
