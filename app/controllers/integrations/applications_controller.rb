@@ -2,6 +2,8 @@ class Integrations::ApplicationsController < Admin::AdminController
 
   include Integrations::AppsUtil
   include Integrations::SalesforceUtil
+  include Integrations::OauthHelper
+  
   before_filter :load_object, :only => [:show, :edit, :update, :destroy]
 
   def index
