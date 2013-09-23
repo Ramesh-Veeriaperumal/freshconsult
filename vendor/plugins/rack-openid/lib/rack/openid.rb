@@ -93,6 +93,7 @@ module Rack #:nodoc:
     def call(env)
       if RAILS_ENV == "production" or RAILS_ENV == "staging"
         env["SERVER_PORT"] = 80 
+        env["rack.url_scheme"] = env["HTTP_X_FORWARDED_PROTO"] if env["HTTP_X_FORWARDED_PROTO"]
         env["SERVER_PORT"] = 443 if fd_ssl?(env)
       end
       req = Rack::Request.new(env)
