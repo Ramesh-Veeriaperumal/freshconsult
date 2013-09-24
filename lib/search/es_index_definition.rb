@@ -225,16 +225,17 @@ class Search::EsIndexDefinition
   def create_aliases(account_id)
     sandbox(0) {
       pre_fix = Search::EsIndexDefinition.es_cluster(account_id)
+      actions = []
       index_hash(pre_fix).each do |model, index_name|
-        a = Tire::Alias.new
-        a.name("#{model}_#{account_id}")
-        a.index(index_name)
-        a.filter(:term, :account_id => account_id)
-        a.routing(account_id.to_s)
-        a = a.save
-        response  = JSON.parse(a.body)
-        NewRelic::Agent.notice_error(response["error"])  unless response["ok"]
+        operation = { :index => index_name, :alias => "#{model}_#{account_id}" }
+        operation.update( { :routing => account_id.to_s } )
+        operation.update( { :filter  => { :term => { :account_id => account_id } } } )
+        actions.push( { :add => operation } )
       end
+      add_actions = { :actions => actions }
+      response = Tire::Configuration.client.post "#{Tire::Configuration.url}/_aliases", add_actions.to_json
+      result = JSON.parse(response.body)
+      result["ok"] || NewRelic::Agent.notice_error(result["error"])
     }
   end
 

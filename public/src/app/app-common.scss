@@ -210,10 +210,11 @@ ul.activityfeed li{
 	.contact-append{
 		margin-bottom: 5px;
 		font-size:0;
-		.add-on, .input-box{
+		.add-on, .hover-contact-box{
 			font-size: 12px;
 			display: inline-block;
   			border:1px solid #f9f9f9;
+  			vertical-align: top;
 		}
   		.add-on{
   			background-color: #f9f9f9;
@@ -224,7 +225,7 @@ ul.activityfeed li{
   			margin-right: 1px;
 			padding: 2px 5px 2px 8px;
   		} 
-  		.input-box{
+  		.hover-contact-box{
   			@include min-width(25px);
   			max-width:175px;
   			@extend .ellipsis;
@@ -233,7 +234,7 @@ ul.activityfeed li{
   		}
   		&:hover{
   			cursor: pointer;
-  			.add-on,.input-box{
+  			.add-on,.hover-contact-box{
   				border:1px solid #e1e1e1;
   				color:#333;
   			}

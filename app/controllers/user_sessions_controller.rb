@@ -152,7 +152,7 @@ include Redis::TicketsRedis
               @current_user_session.destroy 
               render :json => {:login => 'customer'}.to_json
             else
-              render :json => {:login => 'success'}.to_json
+              render :json => {:login => 'success' , :auth_token => @current_user.single_access_token}.to_json
             end
           }
         end
