@@ -4173,6 +4173,7 @@ en:
   plans_and_pricing: "Plans & Pricing"
   number_of_attachments: " attachments"
   activation_link: Successfully registered activation link has been sent to %{email}
+  activation_link_no_email: Successfully registered
   not_given: "Not given."
   adv_reports:
     at_a_glance: "At-a-glance"
