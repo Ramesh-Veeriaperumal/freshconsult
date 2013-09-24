@@ -88,10 +88,10 @@ class Helpdesk::TicketsController < ApplicationController
     #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
     params[:html_format] = request.format.html?
     cookies.delete(:ticket_list_updated) 
-    tkt = current_account.tickets.permissible(current_user)
-    @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
-    respond_to do |format|      
+    respond_to do |format|  
+      tkt = current_account.tickets.permissible(current_user)    
       format.html  do
+        @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
         #moving this condition inside to redirect to first page in case of close/resolve of only ticket in current page.
         #For api calls(json/xml), the redirection is ignored, to use as indication of last page.
         if @items.empty? && !params[:page].nil? && params[:page] != '1'
@@ -112,10 +112,12 @@ class Helpdesk::TicketsController < ApplicationController
       end
       
       format.xml do
+        @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
         render :xml => @response_errors.nil? ? @items.to_xml({:shallow => true}) : @response_errors.to_xml(:root => 'errors')
       end
 
       format.json do
+        @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
         unless @response_errors.nil?
           render :json => {:errors => @response_errors}.to_json
         else
@@ -128,7 +130,8 @@ class Helpdesk::TicketsController < ApplicationController
           render :json => json + "]"
         end
       end
-	  format.mobile do 
+	    format.mobile do 
+        @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
         unless @response_errors.nil?
           render :json => {:errors => @response_errors}.to_json
         else
@@ -147,6 +150,11 @@ class Helpdesk::TicketsController < ApplicationController
         end
       end	   
       format.nmobile do 
+        if(params[:fetch_mode].to_s.eql?("recent"))
+          updated_time = DateTime.strptime(params[:latest_updated_at],'%s')
+          tkt = tkt.latest_tickets(updated_time)
+        end      
+        @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
         unless @response_errors.nil?
           render :json => {:errors => @response_errors}.to_json
         else
@@ -171,48 +179,6 @@ class Helpdesk::TicketsController < ApplicationController
       end
     end
   end
-  
-
-  def recent_tickets
-    tkt = current_account.tickets.permissible(current_user)
-    updated_time=DateTime.strptime(params[:latest_updated_at],'%s')
-    tkt =  tkt.latest_tickets(updated_time)
-    @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-    respond_to do |format|
-      format.nmobile do
-        json = "{ticket:["; sep=""
-        @items.each { |tic|
-          #Removing the root node, so that it conforms to JSON REST API standards
-          # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
-          json << sep+"#{tic.to_mob_json_index()[19..-2]}"
-          sep = ","
-          
-        }
-          json << "]"
-          render :json => json + "}"
-      end
-    end
-  end
-
-  def old_tickets
-    tkt = current_account.tickets.permissible(current_user)
-    @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter')
-    respond_to do |format|
-      format.nmobile do
-        json = "{ticket:["; sep=""
-        @items.each { |tic|
-          #Removing the root node, so that it conforms to JSON REST API standards
-          # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
-          json << sep+"#{tic.to_mob_json_index()[19..-2]}"
-          sep = ","
-          
-        }
-          json << "]"
-          render :json => json + "}"
-      end
-    end
-  end
-
   
   def filter_options
     @current_options = @ticket_filter.query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
@@ -311,7 +277,8 @@ class Helpdesk::TicketsController < ApplicationController
       format.js
       format.nmobile {
         last_reply = bind_last_reply(@ticket, @signature, false, true)
-        response = "{#{@item.to_mob_json(false,false)[1..-2]},#{current_user.to_json(:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket])[1..-2]},#{{:subscription => !@subscription.nil?}.to_json[1..-2]},#{{:last_reply => @last_reply}.to_json[1..-2]},#{{:ticket_properties => ticket_props}.to_json[1..-2]}"
+        last_forward = bind_last_conv(@ticket, @signature, true)
+        response = "{#{@item.to_mob_json(false,false)[1..-2]},#{current_user.to_json(:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket])[1..-2]},#{{:subscription => !@subscription.nil?}.to_json[1..-2]},#{{:last_reply => last_reply}.to_json[1..-2]},#{{:last_forward => last_forward}.to_json[1..-2]},#{{:ticket_properties => ticket_props}.to_json[1..-2]}"
         response << ",#{@ticket_notes[0].to_mob_json[1..-2]}" unless @ticket_notes[0].nil?
         response << "}";
         render :json => response
