@@ -7,7 +7,7 @@
 	<h3 class="lead"><%=t("integrations.salesforce.form.salesforce_settings")%></h3>
 
   <%form_tag ("/integrations/applications/oauth_install/salesforce?install=true", :method=> "post")  do %>
-   <% default_fields = ["Name","Address"]%>
+   <% default_fields = ["Name"]%>
     <ul class="ui-form">
     <li class="inline-field">
       <label class="caption">
