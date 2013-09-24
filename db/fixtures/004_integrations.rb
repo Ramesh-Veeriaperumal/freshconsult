@@ -217,7 +217,7 @@ if Integrations::Application.count == 0
     s.display_name = "integrations.salesforce.label"
     s.description = "integrations.salesforce.desc" 
     s.listing_order = 9
-    s.options = {:direct_install => true, :oauth_url => "/auth/salesforce?origin={{account_id}}"}
+    s.options = {:direct_install => true, :oauth_url => "/auth/salesforce?origin=a_{{account_id}}"}
     s.application_type = "salesforce"
   end
 
@@ -350,7 +350,7 @@ if Integrations::Application.count == 0
     s.display_name = "integrations.mailchimp.label"
     s.description = "integrations.mailchimp.desc" 
     s.listing_order = 13
-    s.options = {:direct_install => true, :oauth_url => "/auth/mailchimp?origin={{account_id}}"}
+    s.options = {:direct_install => true, :oauth_url => "/auth/mailchimp?origin=a_{{account_id}}"}
     s.application_type = "mailchimp"
   end
 
@@ -440,7 +440,7 @@ if Integrations::Application.count == 0
     s.display_name = "integrations.constantcontact.label"
     s.description = "integrations.constantcontact.desc" 
     s.listing_order = 16
-    s.options = {:direct_install => true, :oauth_url => "/auth/constantcontact?origin={{account_id}}"}
+    s.options = {:direct_install => true, :oauth_url => "/auth/constantcontact?origin=a_{{account_id}}"}
     s.application_type = "constantcontact"
   end
 
@@ -466,7 +466,7 @@ if Integrations::Application.count == 0
     s.display_name = "integrations.nimble.label"
     s.description = "integrations.nimble.desc"
     s.listing_order = 17
-    s.options = {:direct_install => true, :oauth_url => "/auth/nimble?origin={{account_id}}"}
+    s.options = {:direct_install => true, :oauth_url => "/auth/nimble?origin=a_{{account_id}}"}
     s.application_type = 'nimble'
   end
 
@@ -490,7 +490,7 @@ if Integrations::Application.count == 0
     s.description = "integrations.google_calendar.desc"
     s.options = {
       :direct_install => true,
-      :oauth_url => "/auth/google_oauth2?origin=pid%3D{{portal_id}}%26app_name%3Dgoogle_calendar",
+      :oauth_url => "/auth/google_oauth2?origin=a_pid%3D{{account_id}}%26app_name%3Dgoogle_calendar",
       :user_specific_auth => true,
       :auth_config => {
         :clazz => 'Integrations::GoogleCalendarEmailFinder',
@@ -570,7 +570,7 @@ if Integrations::Application.count == 0
           :info => 'integrations.surveymonkey.form.survey_settings_info'
         },
         :configurable => true,
-        :oauth_url => "/auth/surveymonkey?origin={{portal_id}}",
+        :oauth_url => "/auth/surveymonkey?origin=a_{{account_id}}",
         :before_save => {
           :clazz => 'Integrations::SurveyMonkey',
           :method => 'sanitize_survey_text'
