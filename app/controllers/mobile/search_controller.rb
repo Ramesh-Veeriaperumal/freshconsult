@@ -1,13 +1,13 @@
 # encoding: utf-8
-class Mobile::SearchController < SearchController
-  before_filter :set_mobile , :only => :search_result
-	def search_result
-		search  
+class Mobile::SearchController < Search::HomeController
+  before_filter :set_native_mobile , :only => :search_result
+  def search_result
+    search(searchable_classes)
     respond_to do |format|
-      format.mobile {
+      format.nmobile {
             json="[" 
             sep=""
-            @items.each { |item|
+            @search_results.each { |item|
               json << sep+"#{item.to_mob_json_search}"
               sep = ","
             }
