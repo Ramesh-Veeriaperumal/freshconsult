@@ -121,6 +121,9 @@ SalesforceWidget.prototype= {
 		}
 		for(var i=0;i<fields.length;i++){
 			var value = eval_params[fields[i]];
+			if(i==4){
+				contactTemplate+='<span class="hide" id="'+eval_params.type+'_all_data">';
+   			}
 			if(fields[i]=="Name"){
 				continue;
 			}
@@ -131,9 +134,6 @@ SalesforceWidget.prototype= {
 			if(value==null || value == undefined){
 				value ="N/A";
 			}
-			if(i==4){
-				contactTemplate+='<span class="hide" id="'+eval_params.type+'_all_data">';
-   			}
    			contactTemplate+= '<div class="salesforce-widget">' +
 		    			'<div class="clearfix">' +
 					    '<span>'+fields[i]+':</span>' +
