@@ -121,22 +121,26 @@ SalesforceWidget.prototype= {
 		}
 		for(var i=0;i<fields.length;i++){
 			var value = eval_params[fields[i]];
-			if(fields[i]=="Name"){
-				continue;
-			}
-			if(value==null || value == undefined){
-				value ="N/A";
-			}
 			if(i==4){
 				contactTemplate+='<span class="hide" id="'+eval_params.type+'_all_data">';
    			}
+			if(fields[i]=="Name"){
+				continue;
+			}
+			field_name =fields[i].split('__');//for custom fields to get the label
+   		if(field_name[1] !=undefined){
+   				fields[i] = field_name[1];
+   			}
+			if(value==null || value == undefined){
+				value ="N/A";
+			}
    			contactTemplate+= '<div class="salesforce-widget">' +
 		    			'<div class="clearfix">' +
 					    '<span>'+fields[i]+':</span>' +
 				    	'<label id="contact-'+fields[i]+'">'+value+'</label>' +
 			    		'</div></div>';	
 		}
-	    if(fields.length>3){
+	    if(fields.length>=5){
 	    	contactTemplate+='<div id="less_'+eval_params.type+'_button" class="external_link"><a href="#" onclick="jQuery(this).parent().hide();jQuery(\'#more_'+eval_params.type+'_button\').show();jQuery(\'#'+eval_params.type+'_all_data\').addClass(\'hide\');return false;">less</a></div>';
 	        contactTemplate+= '</span><div id="more_'+eval_params.type+'_button" class="external_link"><a href="#" onclick="jQuery(this).parent().hide();jQuery(\'#less_'+eval_params.type+'_button\').show();jQuery(\'#'+eval_params.type+'_all_data\').removeClass(\'hide\');return false;" >more</a></div>';
 	    }

@@ -8,6 +8,7 @@ class PortalObserver < ActiveRecord::Observer
 
     def before_destroy(portal)
       backup_changes(portal)
+      notify_custom_ssl_removal(portal)
     end
 
     def after_create(portal)
@@ -31,9 +32,9 @@ class PortalObserver < ActiveRecord::Observer
       clear_portal_cache
     end
 
- private
+  private
 
-   def create_template(portal)
+    def create_template(portal)
       portal.build_template()
       portal.template.save()
     end
@@ -44,8 +45,16 @@ class PortalObserver < ActiveRecord::Observer
       @all_changes.symbolize_keys!
     end
 
+    def notify_custom_ssl_removal(portal)
+      if portal.elb_dns_name
+        FreshdeskErrorsMailer.deliver_error_email( nil, 
+                                              { "domain_name" => portal.portal_url }, 
+                                              nil, 
+                                              { :subject => "Custom SSL to be removed for ##{portal.account_id}" })
+      end
+    end
 	
-	def create_shard_mapping(portal)
+    def create_shard_mapping(portal)
       unless portal.portal_url.blank?
         create_domain_mapping(portal)
       end

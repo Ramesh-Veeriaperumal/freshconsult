@@ -18,21 +18,21 @@ class Integrations::ApplicationsController < Admin::AdminController
     app_config = kv_store.get_key
     if app_config.blank?
       Rails.logger.debug "Refresh Access token as this is Edit ::#{params['id']}"
-      installed_app = Integrations::InstalledApplication.find(:first, :include=>:application, :conditions => ["#{Integrations::Application.table_name}.name = ? and  #{Integrations::InstalledApplication.table_name}.account_id = ?",params['id'],current_account])
+      @installed_app = Integrations::InstalledApplication.find(:first, :include=>:application, :conditions => ["#{Integrations::Application.table_name}.name = ? and  #{Integrations::InstalledApplication.table_name}.account_id = ?",params['id'],current_account])
        #added for edit option as there won't be any redis store while editing.
-      access_token = get_oauth2_access_token(installed_app.application.oauth_provider, installed_app.configs[:inputs]['refresh_token'],params['id']) 
+      access_token = get_oauth2_access_token(@installed_app.application.oauth_provider, @installed_app.configs[:inputs]['refresh_token'],params['id']) 
       oauth_token= access_token.token
-      installed_app[:configs][:inputs]['oauth_token'] = access_token.token
-      installed_app.save #updating the installed app with new token
-      app_config = installed_app.configs[:inputs].to_json if installed_app.application.options[:pre_install]
+      @installed_app[:configs][:inputs]['oauth_token'] = access_token.token
+      @installed_app.save #updating the installed app with new token
+      app_config = @installed_app.configs[:inputs].to_json if @installed_app.application.options[:pre_install]
     end
   	begin
   		unless app_config.blank?
   		  config_hash = JSON.parse(app_config)
   			app_name = config_hash["app_name"]
   			config_hash.delete("app_name")	    
+        app_name = params['id'] if app_name.blank?
         if params['id'] == 'salesforce' 
-          app_name = installed_app.application.name if app_name.blank?
           if params[:install].blank?
             @salesforce_config=Hash.new
             @salesforce_config['contact_fields'] = fetch_sf_contact_fields(config_hash['oauth_token'], config_hash['instance_url']) 
