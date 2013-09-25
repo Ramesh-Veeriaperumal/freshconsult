@@ -113,7 +113,7 @@ def init_es_indexing(es_account_ids)
     account.make_current
     if account.es_enabled_account.nil?
       # account.enable_elastic_search
-      Search::CreateAlias.perform({ :account_id => account.id })
+      Search::CreateAlias.perform({ :account_id => account.id, :sign_up => false })
       ENV['CLASS'] = import_classes(account_id, klasses)
       ENV['ACCOUNT_ID'] = account_id.to_s
       Rake::Task["freshdesk_tire:multi_class_import"].execute("CLASS='#{ENV['CLASS']}' ACCOUNT_ID=#{ENV['ACCOUNT_ID']}")

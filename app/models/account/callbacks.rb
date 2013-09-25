@@ -31,7 +31,7 @@ class Account < ActiveRecord::Base
   end
 
   def enable_elastic_search
-    Resque.enqueue(Search::CreateAlias, { :account_id => self.id })
+    Resque.enqueue(Search::CreateAlias, { :account_id => self.id, :sign_up => true })
   end
 
   def populate_features
