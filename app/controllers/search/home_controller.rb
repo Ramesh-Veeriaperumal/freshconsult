@@ -113,14 +113,7 @@ class Search::HomeController < ApplicationController
       to_ret = "" 
       respond_to do |format|
         format.html do
-          to_ret = [ Helpdesk::Ticket ]
-          to_ret << Helpdesk::Note unless current_user.restricted?
-          to_ret << Solution::Article if privilege?(:view_solutions)
-          to_ret << Topic             if privilege?(:view_forums)
-          if privilege?(:view_contacts)
-             to_ret << User
-             to_ret << Customer
-          end
+           to_ret = all_classes
         end
         format.nmobile do 
           if(params[:search_class].to_s.eql?("ticket"))
@@ -135,18 +128,24 @@ class Search::HomeController < ApplicationController
               to_ret << User
             end
           else
-              to_ret = [ Helpdesk::Ticket ]
-              to_ret << Solution::Article if privilege?(:view_solutions)
-              to_ret << Topic             if privilege?(:view_forums)
-              if privilege?(:view_contacts)
-                to_ret << User
-                to_ret << Customer
-              end
+            to_ret = all_classes
            end
         end
       end
       to_ret
       # to_ret.map { |to_ret| to_ret = to_ret.document_type }
+    end
+
+    def all_classes
+          classes = [ Helpdesk::Ticket ]
+          classes << Helpdesk::Note unless current_user.restricted? or is_native_mobile?
+          classes << Solution::Article if privilege?(:view_solutions) 
+          classes << Topic             if privilege?(:view_forums)
+          if privilege?(:view_contacts)
+             classes << User
+             classes << Customer
+          end
+        classes
     end
 
 end

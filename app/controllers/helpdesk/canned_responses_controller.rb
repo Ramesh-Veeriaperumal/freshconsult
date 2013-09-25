@@ -1,11 +1,14 @@
 class Helpdesk::CannedResponsesController < ApplicationController
   
   before_filter :load_canned_response, :set_mobile, :only => :show
-  before_filter :set_native_mobile,:only => :show
+  before_filter :set_native_mobile,:only => [:show,:index]
   before_filter :load_ticket , :if => :ticket_present?
 
   def index
-    render :partial => "helpdesk/tickets/components/canned_responses"
+    respond_to do |format|
+      format.html { render :partial => "helpdesk/tickets/components/canned_responses"}
+      format.nmobile { render :json => current_account.canned_responses.to_json}
+    end
   end
  
   def show
