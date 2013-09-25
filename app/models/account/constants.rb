@@ -39,7 +39,7 @@ class Account < ActiveRecord::Base
 
     :estate => {
       :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab ],
+        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :whitelisted_ips ],
       :inherits => [ :garden ]
     },
 
@@ -60,7 +60,7 @@ class Account < ActiveRecord::Base
 
     :estate_classic => {
       :features => [ :gamification, :agent_collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab ],
+        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :whitelisted_ips ],
       :inherits => [ :garden_classic ]
     }
 

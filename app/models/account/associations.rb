@@ -19,9 +19,11 @@ class Account < ActiveRecord::Base
   has_many :roles, :dependent => :delete_all, :order => "default_role desc"
   has_many :portals
   has_one  :main_portal, :class_name => 'Portal', :conditions => { :main_portal => true}
+  has_one  :whitelisted_ip
 
   accepts_nested_attributes_for :primary_email_config
   accepts_nested_attributes_for :main_portal
+  accepts_nested_attributes_for :whitelisted_ip
 
 
   has_many :survey_results

@@ -51,6 +51,15 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) { self.tags.all }
   end
 
+  def feature_from_cache
+    key = FEATURES_LIST % { :account_id => self.id }
+    MemcacheKeys.fetch(key) { self.features }
+  end
+
+  def features_included?(*feature_names)
+    feature_names.all? { |feature_name| feature_from_cache.send("#{feature_name}?") }
+  end
+
   def customers_from_cache
     key = customers_memcache_key
     MemcacheKeys.fetch(key) { self.customers.all }
@@ -120,6 +129,11 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) do
       observer_rules.find(:all)
     end
+  end
+
+  def whitelisted_ip_from_cache
+    key = WHITELISTED_IP_FIELDS % { :account_id => self.id }
+    MemcacheKeys.fetch(key) { self.whitelisted_ip }
   end
 
   def event_flexifields_with_ticket_fields_from_cache
