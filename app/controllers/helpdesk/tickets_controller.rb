@@ -88,10 +88,10 @@ class Helpdesk::TicketsController < ApplicationController
     #For removing the cookie that maintains the latest custom_search response to be shown while hitting back button
     params[:html_format] = request.format.html?
     cookies.delete(:ticket_list_updated) 
+    tkt = current_account.tickets.permissible(current_user)  
+    @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') unless is_native_mobile?  
     respond_to do |format|  
-      tkt = current_account.tickets.permissible(current_user)    
       format.html  do
-        @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
         #moving this condition inside to redirect to first page in case of close/resolve of only ticket in current page.
         #For api calls(json/xml), the redirection is ignored, to use as indication of last page.
         if @items.empty? && !params[:page].nil? && params[:page] != '1'
@@ -112,12 +112,10 @@ class Helpdesk::TicketsController < ApplicationController
       end
       
       format.xml do
-        @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
         render :xml => @response_errors.nil? ? @items.to_xml({:shallow => true}) : @response_errors.to_xml(:root => 'errors')
       end
 
       format.json do
-        @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
         unless @response_errors.nil?
           render :json => {:errors => @response_errors}.to_json
         else
@@ -131,7 +129,6 @@ class Helpdesk::TicketsController < ApplicationController
         end
       end
 	    format.mobile do 
-        @items = tkt.filter(:params => params, :filter => 'Helpdesk::Filters::CustomTicketFilter') 
         unless @response_errors.nil?
           render :json => {:errors => @response_errors}.to_json
         else
