@@ -9,6 +9,12 @@ class AuthorizationsController < ApplicationController
   include HTTParty
 
   skip_before_filter :check_privilege
+  # skip_before_filter :verify_authenticity_token
+  skip_before_filter :unset_current_account, :set_current_account, :redirect_to_mobile_url, :if => :origin_required?
+  skip_before_filter :check_account_state, :only => [:create]
+
+  skip_before_filter :set_time_zone, :check_day_pass_usage, :if => :origin_required?
+  skip_before_filter :set_locale, :if => :origin_required?
   before_filter :require_user, :only => [:destroy]
   before_filter :load_authorization, :only => [:create]
   prepend_before_filter :load_oauth_info, :only => [:create, :failure]
