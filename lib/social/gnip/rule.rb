@@ -3,6 +3,8 @@ class Social::Gnip::Rule
   include Social::Gnip::RuleHelper
   include Social::Gnip::DbUtil
   
+  attr_accessor :replay
+  
   def initialize(twt_handle, options = {})
     @account = options[:account] || twt_handle.account
     @subscribe = options[:subscribe]
