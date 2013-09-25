@@ -10,7 +10,8 @@ module HelpdeskSystem
         redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless request.headers['X-PJAX']
         render :text => "abort" if request.headers['X-PJAX']
       }
-      format.json { render :json => { :access_denied => true } }
+      format.json { 
+        render :json => current_user ? {:access_denied => true} : {:require_login => true}}
       format.js { 
         render :update do |page| 
           page.redirect_to :url => send(Helpdesk::ACCESS_DENIED_ROUTE)
