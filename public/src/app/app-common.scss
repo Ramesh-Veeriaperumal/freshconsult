@@ -200,6 +200,16 @@ ul.activityfeed li{
 		text-decoration:none;
 	}
 }
+.circle-profile{
+	.preview_pic{
+		border:0;
+		img{
+			border-radius: 50%;
+			border: 1px solid #f2f2f2;
+			padding: 2px;
+		}
+	}
+}
 .user_name{ font-weight:bold; color:#527eaa; }
 .ticket_title{ font-weight:bold; color:#527eaa; }
 .contact_hover{
