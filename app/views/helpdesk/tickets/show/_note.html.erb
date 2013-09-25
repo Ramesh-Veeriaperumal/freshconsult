@@ -99,18 +99,37 @@ minimizable ||= false
 
     <% if privilege?(:manage_tickets) and feature?(:gamification)  %>
 	<textarea id="<%= "agent-hovercard_#{note.id}" %>" style="display:none;">
-		<div class="contact_hover" style="min-height:50px;">	
+		<div class="contact_hover circle-profile">
 		  <%= user_avatar(note.user) if note.user.agent? %>
-		  <%= content_tag :div, link_to(h(note.user), note.user), :class => "user_name" %>
-		  <% if feature?(:gamification) %>
-		  		<% if note.user.agent? %>
-		  			<strong><%= content_tag :div, h(note.user.agent.level.name) unless note.user.agent.level.blank? %></strong>
-		  		<% end %>
-		  <% end %>
-          <%= content_tag :div, h(note.user.email), :class => "user_email" unless note.user.email.blank?  %>
-          <div class="clearfix"></div>
-          <%= content_tag :div, h(note.user.phone), :class => "user_phone" unless note.user.phone.blank?  %>
-          <%= content_tag :div, h(note.user.mobile), :class => "user_mobile" unless note.user.mobile.blank?  %>
+		  <div class="infoblock muted">
+			  	<%= content_tag :div, link_to(h(note.user), note.user), :class => "user_name" %>
+				<% if feature?(:gamification) %>
+						<% if note.user.agent? %>
+							<div class="user_desig">
+								<strong><%= content_tag :div, h(note.user.agent.level.name) unless note.user.agent.level.blank? %></strong>
+							</div>
+						<% end %>
+				<% end %>
+			  	<% unless note.user.email.blank?  %>
+			      <div class="contact-append">
+			        <span class="add-on"><i class="product-email-logo"></i></span>
+			        <%= content_tag :div, h(note.user.email), :class => "hover-contact-box ellipsis" %>
+			      </div>
+			    <% end %>
+			    <% unless note.user.phone.blank? %>
+			      <div class="contact-append">
+			        <span class="add-on"><i class="product-call"></i></span>
+			        <%= content_tag :div, h(note.user.phone),:class => "hover-contact-box" %>
+			      </div>
+			    <% else %>
+			      <% unless note.user.mobile.blank? %>
+			        <div class="contact-append">
+			          <span class="add-on"><i class="product-call"></i></span>
+			          <%= content_tag :div, h(note.user.mobile), :class => "hover-contact-box" %>
+			        </div>
+			      <% end %>
+			    <% end %>
+	        </div>
 		</div>
 	</textarea>
 	<% end %>
