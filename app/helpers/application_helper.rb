@@ -283,14 +283,6 @@ module ApplicationHelper
       content_tag(:li, link_to(s[2], s[0]), :class => ((@selected_tab == s[1]) ? "active" : ""))
     end
   end
-
-  def show_contact_hovercard(user, options=nil)
-    if privilege?(:view_contacts)
-      link_to(h(user), user, :class => "username", "data-placement" => "topRight", :rel => "contact-hover", "data-contact-id" => user.id, "data-contact-url" => hover_card_contact_path(user)) unless user.blank?
-    else
-      link_to(h(user), "javascript:void(0)", :class => "username") unless user.blank?
-    end
-  end
   
   def html_list(type, elements, options = {}, activeitem = 0)
     if elements.empty?
@@ -487,8 +479,17 @@ module ApplicationHelper
   
   # User details page link should be shown only to agents and admin
   def link_to_user(user, options = {})
+    return if user.blank?
+
     if privilege?(:view_contacts)
-      link_to(h(user.display_name), user, options)
+      default_opts = { :class => "username",
+                       :rel => "contact-hover", 
+                       "data-contact-id" => user.id, 
+                       "data-placement" => "topRight", 
+                       "data-contact-url" => hover_card_contact_path(user)  }
+
+      link_to(h(user), user, default_opts.merge(options))
+      # link_to(h(user.display_name), user, options)
     else 
       content_tag(:strong, h(user.display_name), options)
     end
@@ -857,15 +858,6 @@ module ApplicationHelper
     privilege?(:edit_ticket_properties) ? 'quick-action dynamic-menu' : ''
   end
   
-  def note_responder(note)
-    if privilege?(:view_contacts)
-      link_to_user(note.user, :class => "user_name", "data-placement" => "topRight",
-        :rel => "hover-popover", "data-widget-container" => "agent-hovercard_#{note.id}" )
-    else
-      link_to_user(note.user, :class => "user_name", "data-placement" => "topRight")
-    end
-  end
-
   def will_paginate(collection_or_options = nil, options = {})
     if collection_or_options.is_a? Hash
       options, collection_or_options = collection_or_options, nil
