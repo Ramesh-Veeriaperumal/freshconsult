@@ -1,4 +1,5 @@
 @import "cdn-ignored/sprites/symbols/*.png";
+@include all-symbols-sprites;
 
 /* %% more styles set for this class in some other file */
 
@@ -7,6 +8,10 @@
 	width: 20px; height: 20px;	
 	/* Hack to be removed later */
 	margin-top: -2px;
+}
+.symbols-issue{
+	@include inline-block;
+	width: 20px; height: 16px;	
 }
 .private-icon{	
 	width:16px;
