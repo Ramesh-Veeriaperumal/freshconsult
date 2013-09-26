@@ -2529,6 +2529,7 @@ en:
     add_page: Add Facebook Page
     deleted: The facebook page %{facebook_page} has been removed.
     not_authorized: You were not authorized by Facebook
+    realtime: "<b>Realtime stream feed fetching app is stopped</b> due to some changes on this Facebook account <a href='%{realtime_url}' > Re-authorize and Enable </a> "
   logo: Logo
   ok: Ok
   back: Back
@@ -4474,10 +4475,14 @@ en:
     no_ssl: "<b>Facebook page tab requires a Secure Connection.</b><br />You need to enable SSL encryption from <a href='/admin/security'>Security settings</a>"
     image_upload_failed: "Unable to update custom image in page tab"
     image_instructions: "The target image must be of dimensions 111x74. (images of any dimensions can be updated through facebook directly)"
+    configure_tab_auth: "<a href='%{page_tab_url}'> Create your Facebook page tab</a>"
     configure_tab: "Create your Facebook page tab"
     config_info: "Once you enable your Facebook page tab, your customers will be able to directly access your solutions, forums and self-service from within Facebook"
     got_it: "Ok got it."
-    reauth: "Please reauthorize with Facebook to access your page tab"
+    reauth: "Please <a href='%{page_tab_url}' > reauthorize </a> with Facebook to access your page tab"
+    auth: "Please <a href='%{page_tab_url}' > authorize </a> with Facebook to access your page tab"
+    page_tab_auth: "<b>We had made some of changes to page tab</b>, due to which your Facebook page tab is disabled. <br/> <a href='%{page_tab_url}' >Re-authorize and Enable > </a> "
+    page_tab_info: "Please Reauthorize your Facebook page tab"
     no_contact: "Unable to contact Facebook Servers for page tabs at this time"
     portal:
       your_tickets: "Your Tickets"

@@ -200,6 +200,16 @@ ul.activityfeed li{
 		text-decoration:none;
 	}
 }
+.circle-profile{
+	.preview_pic{
+		border:0;
+		img{
+			border-radius: 50%;
+			border: 1px solid #f2f2f2;
+			padding: 2px;
+		}
+	}
+}
 .user_name{ font-weight:bold; color:#527eaa; }
 .ticket_title{ font-weight:bold; color:#527eaa; }
 .contact_hover{
@@ -224,6 +234,9 @@ ul.activityfeed li{
   			@include border-radius(50px 0 0 50px);
   			margin-right: 1px;
 			padding: 2px 5px 2px 8px;
+			&.recent-tickets{
+				@include border-radius(50px);
+			}
   		} 
   		.hover-contact-box{
   			@include min-width(25px);
@@ -247,6 +260,14 @@ ul.activityfeed li{
 		height: 10px;
 		position: relative;
 		top: 1px;
+	}
+	.product-twitter{
+		display: inline-block;
+		width: 13px;
+		height: 13px;
+		margin-top: -5px;
+		position: relative;
+		top: 2px;
 	}
 	.product-call{
 		height: 13px;

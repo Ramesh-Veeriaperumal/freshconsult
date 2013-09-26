@@ -40,6 +40,10 @@ class Social::FacebookPage < ActiveRecord::Base
     (import_company_posts || import_visitor_posts)
   end
 
+  def existing_page_tab_user?
+    self.page_token_tab ? self.page_token_tab.empty? : false
+  end
+
   private
 
     def create_mapping

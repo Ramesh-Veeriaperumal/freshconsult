@@ -2,17 +2,13 @@
 class Admin::CannedResponses::FoldersController < Admin::AdminController
 
   before_filter :load_object, :only => [:update, :edit, :show, :destroy]
-  before_filter :set_native_mobile, :only => :index
   before_filter :check_default, :only => [:edit, :destroy, :update]
 
   def index
     @ca_res_folders = scoper.all
     @ca_res_folder = @ca_res_folders.first
     @ca_responses = @ca_res_folder.canned_responses
-    respond_to do |format|
-      format.html{ render :index }
-      format.nmobile{ render :json => @ca_responses }
-    end
+     render :index
   end
 
   def show

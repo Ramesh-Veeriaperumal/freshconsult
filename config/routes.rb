@@ -195,7 +195,7 @@
                 :member     =>  { :search => :any, :edit => :any }
 
     social.resources :facebook, :controller => 'facebook_pages', 
-                :collection =>  { :signin => :any , :event_listener =>:any , :enable_pages =>:any },
+                :collection =>  { :signin => :any , :event_listener =>:any , :enable_pages =>:any, :update_page_token => :any },
                 :member     =>  { :edit => :any } do |fb|
                   fb.resources :tabs, :controller => 'facebook_tabs',
                             :collection => { :configure => :any, :remove => :any }
@@ -508,7 +508,8 @@
     support.survey_feedback '/surveys/:survey_code/:rating', :controller => 'surveys', :action => 'create', 
       :conditions => { :method => :post }
 
-    support.facebook_tab_home '/facebook_tab/redirect', :controller => 'facebook_tabs', :action => :redirect
+    support.facebook_tab_home "/facebook_tab/redirect/:app_id", :controller => 'facebook_tabs', 
+      :action => :redirect, :app_id => nil
 
   end
   
@@ -525,7 +526,7 @@
   map.namespace :mobile do |mobile|
     mobile.resources :tickets, :collection =>{:view_list => :get, :get_portal => :get, :get_suggested_solutions => :get, :ticket_properties => :get}
     mobile.resources :search,  :collection =>{:search_result => :get}
-    mobile.resources :automations,  :collection =>{:index => :get}
+    mobile.resources :automations, :only =>:index
   end
   
   map.root :controller => "home"
