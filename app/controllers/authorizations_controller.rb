@@ -9,15 +9,10 @@ class AuthorizationsController < ApplicationController
   include HTTParty
 
   skip_before_filter :check_privilege
-  # skip_before_filter :verify_authenticity_token
-  skip_before_filter :unset_current_account, :set_current_account, :redirect_to_mobile_url, :if => :origin_required?
-  skip_before_filter :check_account_state, :only => [:create]
-
-  skip_before_filter :set_time_zone, :check_day_pass_usage, :if => :origin_required?
-  skip_before_filter :set_locale, :if => :origin_required?
   before_filter :require_user, :only => [:destroy]
+  before_filter :load_oauth_info, :only => [:create, :failure]
+  before_filter :switch_shard
   before_filter :load_authorization, :only => [:create]
-  prepend_before_filter :load_oauth_info, :only => [:create, :failure]
 
   def create
     Rails.logger.debug "@omniauth "+@omniauth.inspect
@@ -57,15 +52,6 @@ class AuthorizationsController < ApplicationController
     @authorization.destroy
     redirect_to root_url
   end
-
-  def select_shard(&block)
-    Rails.logger.debug "In select_shard:\n@account_id: #{@account_id.inspect}\nrequest.host: #{request.host}\n"
-    raise ActionController::RoutingError, "Not Found" if @account_id.nil? and request.host.eql?(AppConfig['integrations_url'][Rails.env])
-    Sharding.select_shard_of(@account_id || request.host) do
-      yield
-    end
-  end
-
 
   private
     def load_oauth_info
@@ -114,6 +100,14 @@ class AuthorizationsController < ApplicationController
           end
         end
       #fix ends
+    end
+
+    def switch_shard
+      user_account_id = origin_required? ? @account_id : current_account.id
+      raise ActionController::RoutingError, "Not Found" if user_account_id.nil?
+      Sharding.select_shard_of (user_account_id) do
+        dummy = 0
+      end
     end
 
     def load_authorization
