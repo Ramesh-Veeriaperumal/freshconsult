@@ -90,12 +90,11 @@ class Helpdesk::AttachmentsController < ApplicationController
         return @attachment.attachable.folder.visible?(current_user) 
       elsif ['Post'].include? @attachment.attachable_type      
         return @attachment.attachable.forum.visible?(current_user)     
-      elsif ['Account', 'Portal'].include? @attachment.attachable_type
+      elsif ['Account', 'Portal', 'Tickets Image Upload'].include? @attachment.attachable_type
         return  true     
       elsif ['DataExport'].include? @attachment.attachable_type
         return true if privilege?(:manage_account)
-      end         
-
+      end   
     end
   
 end

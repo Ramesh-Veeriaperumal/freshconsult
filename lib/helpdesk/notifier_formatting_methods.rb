@@ -45,7 +45,7 @@ module Helpdesk::NotifierFormattingMethods
       attachment  :content_type => inline_attachment[:attachment].content_content_type, 
               :headers => { 'Content-ID' => "<#{inline_attachment[:cid]}>",
                             'Content-Disposition' => "inline; filename=\"#{inline_attachment[:attachment].content_file_name}\"",
-                            'X-Attachment-Id' => inline_attachment[:cid] },
+                            'X-Attachment-Id' => inline_attachment[:attachment].id },
                   :body => File.read(inline_attachment[:attachment].content.to_file.path), 
                   :filename => inline_attachment[:attachment].content_file_name
     end   
