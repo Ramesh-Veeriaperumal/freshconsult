@@ -147,6 +147,10 @@ function(UserView,ChatView,PageView,notifierView,recentView,flashView,userCollec
             resultsView.render(msgs);
           });
 
+          chat_socket.on('search paginate',function(msgs){
+            resultsView.update(msgs);
+          });
+
           chat_socket.on('chat transcript',function(msgs){
             listView.render(msgs);
           });          
@@ -175,14 +179,14 @@ function(UserView,ChatView,PageView,notifierView,recentView,flashView,userCollec
              if(chat){chat.onTyping(data);}
           });
           
-          chat_socket.on('get status',function(data){             
-            ChatView.agentStatus(data);
+          chat_socket.on('get status',function(data){                         
+            UserView.updateStatus(data);
             notifierView.reOpen();
             visitorView.fetch();
           });
 
-          chat_socket.on('status',function(data){             
-            ChatView.agentStatus(data);
+          chat_socket.on('status',function(data){
+            UserView.updateStatus(data);
           });
 
           chat_socket.on('transfer request',function(data){

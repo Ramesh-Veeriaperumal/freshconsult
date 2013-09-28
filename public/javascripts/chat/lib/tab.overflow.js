@@ -144,6 +144,10 @@
       }else{
         $("#tabs").jtabs('select', relNo-1);
       }
+
+      if($("#msg-box-"+chatid).is(":visible")){
+        $("#msg-box-"+chatid).focus();
+      }
       $('li.ui-state-active').find('a:first-child').removeClass("blink_background");
     },
 
