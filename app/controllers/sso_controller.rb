@@ -28,7 +28,7 @@ class SsoController < ApplicationController
   end
 
   def facebook
-    redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/facebook?origin=a_#{current_account.id}&state=#{params[:portal_type]}"
+    redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/facebook?origin=#{current_portal.id}&state=#{params[:portal_type]}"
   end
 
   TIMEOUT = 60000

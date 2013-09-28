@@ -23,9 +23,11 @@ class Integrations::Application < ActiveRecord::Base
     JSON.parse(self.to_json)["application"]
   end
 
-  def oauth_url(acc_portal_id)
+  def oauth_url(account_id)
     AppConfig['integrations_url'][Rails.env] + 
-      Liquid::Template.parse(options[:oauth_url]).render({  'account_id' => acc_portal_id, 'portal_id'  => acc_portal_id})
+      Liquid::Template.parse(options[:oauth_url]).render({ 
+        "portal_id" => account_id, "account_id" => account_id  
+      })
   end
 
   def widget
