@@ -20,17 +20,14 @@
 		<span><%=i18n.tags%></span>
 		<input id="filterTag" type="text" placeholder="<%=i18n.tags%>">
 		<span><%=i18n.agent%></span>
-		<select id="agentList"></select>
-		<span class="pull-right"><input id="startFilter" type="submit" class="btn btn-primary" value="Filter"></span>
+		<select id="agentList" class="select2"></select>
+		<div class="pull-right"><input id="startFilter" type="submit" class="btn btn-primary" value="Filter"></div>
 	</div>
 
 	<div class="contentCol hasRightCol borderleftnull">
 		<div id="search_results_list" class="search_results_list"><div class="sloading loading-small loading-block"></div></div>
 		<div id="search_results_expand" style="display:none" class="search_results_list">
-			<div id="search_chat_hdr" class="search-results-btns clearfix">
-				<span class="btn"><i class="icon-caret-left"></i> <%=i18n.back%></span>
-				<span class="btn"><%=i18n.continue_chat%> <i class="icon-caret-right"></i></span>
-			</div>
+				<span id="search_chat_hdr"> &lt; <%=i18n.back%></span>
 			<div id="search_chat_list"></div>
 		</div>
 	</div>

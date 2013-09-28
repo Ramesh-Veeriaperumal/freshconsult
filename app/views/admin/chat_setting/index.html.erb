@@ -20,7 +20,7 @@
 				<%= content_tag(:h3, t('freshchat.install_freshchat'), :class => "title" ) %> 
 			</li>
 			<li class="code-view">
-				<textarea id="EmbedCode" onclick="javascript:this.select()" readonly><script src="http://<%=current_account.full_domain%>/visitor/load/<%= @chat.display_id%>.js"></script></textarea>
+				<textarea id="EmbedCode" onclick="javascript:this.select()" readonly><script src="//<%=current_account.full_domain%>/visitor/load/<%= @chat.display_id%>.js"></script></textarea>
 				<div class="intro"><%=t('freshchat.install_msg')%> <a href="https://support.freshdesk.com/support/solutions" target="_blank"><%=t('freshchat.setup_link')%></a></div>
 			</li>
 		</ul>
@@ -63,7 +63,7 @@
 					  	 <label class="caption"><%=t('freshchat.window_offset')%></label> 
 						 <div class="fields">
 								<label>
-									<input type="text" placeholder="10" id="window_offset" value="<%=(@chat.preferences != nil)? @chat.preferences['window_offset'] : "10"%>"><span class="sublabel">px</span>
+									<input type="text" placeholder="10" id="window_offset" value="<%=(@chat.preferences != nil)? @chat.preferences['window_offset'] : "40"%>"><span class="sublabel">px</span>
 								</label>
 								<label id="window_offset_error_msg" class="error" style="display:none;"><%=t('freshchat.window_offset_error_msg')%></label>
 						 </div>
@@ -224,13 +224,14 @@
 				  	<h3 class="title"><%=t('freshchat.proactive_title')%></h3>
 					 <div class="fields marginleftnone">
 					 	<div class="ff_item">
+							  <div class="fc_title_info"><%=t('freshchat.procative_info')%></div>
 							  <label class="item-large"> 
 							    <input class="filter_item" id="proactive_chat" type="checkbox" value="">
 							    <span><%=t('freshchat.enable_proactive')%></span>
-							    <div class="info-data"><%=t('freshchat.proactive_note')%></div>
 							  </label>
 							   <span class="proactive_chat">
-							   	<%=t('freshchat.proactive_time')%> <span><select id="proactive_time"></select></span> <%=t('freshchat.proactive_time_end')%>
+								<%=t('freshchat.proactive_time',:seconds => "<select id='proactive_time'></select>").html_safe%>
+								<div class="info-data"><%=t('freshchat.proactive_note')%></div>
 							   </span>
 
 						 </div>

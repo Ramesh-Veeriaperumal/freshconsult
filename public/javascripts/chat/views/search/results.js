@@ -11,118 +11,110 @@ define([
 		total:0,
 		nextPage:2,
 		type:'',
+		count:0,
 		render:function(data){
 			if($("body").hasClass("ticket_list")){
 				$("body").removeClass("ticket_list");
 			}
+			$("#search_results_expand").hide();
+			$("#search_results_list").show();	 		
 			$('#search_results_list').html('');
-	 		this.add(data.results, data.msg);
-			this.paginate(data);
+			this.count = data.count;
+	 		this.add(data.results, data.msg, "start");
+			this.paginate(data,1);
 		},
-		dateConversion:function(dat){
-			var second=1000, minute=second*60, hour=minute*60, days=hour*24;
-			var today = new Date();
-			var date = new Date(dat);
-
-			var day = $.datepicker.formatDate('MM dd, yy', date);
-			var timeDiff = Math.abs(today.getTime() - date.getTime());
-			var diffDays = Math.ceil(timeDiff / days);
-
-			if(diffDays == 1){
-				var day = "";
-				var hrs = Math.floor(timeDiff / hour);
-				var mins = Math.floor(timeDiff / minute);
-				if(hrs > 0){
-					day = hrs + " hours ";
-				}
-				if(mins % 60 > 0){
-					day += (mins % 60) + " minutes";	
-				}else{
-					day += "now";
-				}
-			}
-			return day;
-		},
-		add:function(results,msgObj){
-			var data="",id="",cnt=0;
-			var rlen=results.length;
-			if(rlen==0){
+		add:function(results, msgObj, type){
+			var data="", id="", cnt=0, rlen=results.length;
+			if(rlen == 0 && type == "start"){
 				$("#search_results_list").html('<div class="emptymsg">'+i18n.nochat+'</div>');
 			}
 			for(var r=0; r<rlen; r++){
 				cnt = 0;
 				id = results[r].id;
-				var resDiv = $('<div>');
-				resDiv.addClass("rsltgrp");
 				data = msgObj[id];
-				var content = "";
-				for(var k in data){
-					if(data.hasOwnProperty(k)){
-						if(cnt==2){
-							break;
-						}
-						var time = new Date(data[k].time);
-						var photo = data[k].photo;
-						if(!photo){
-							photo = "../../images/fillers/profile_blank_thumb.gif";
-						}
-						content += _.template(messageTemplate, {msg:data[k].msg, name:data[k].name, date:$.datepicker.formatDate("D, M dd 'at '",time)+time.toString("hh:mm tt"), photo:photo});
-						cnt++;
-					}
-				}
+				if(data){
+					var resDiv = $('<div>');
+					resDiv.addClass("rsltgrp");
 
-				var day = this.dateConversion(results[r].updatedAt);
-				var resObj = {agt:userCollection.get(results[r].userId).get('name'), par:results[r].title, loc:results[r].location, time:day, cont:content};
-				$('#search_results_list').append(resDiv.html(_.template(resultTemplate,{obj:resObj})));
-				resDiv.on('click',function(id){
-					return function(){
-						chat_socket.emit('chat transcript',{
-							id: id
-						});
+					var content = "";
+					for(var k in data){
+						if(data.hasOwnProperty(k)){
+							if(cnt == 2){
+								break;
+							}
+							var photo = data[k].photo;
+							if(!photo){
+								photo = "../../images/fillers/profile_blank_thumb.gif";
+							}
+							content += _.template(messageTemplate, {msg:data[k].msg, name:data[k].name, photo:photo});
+							cnt++;
+						}
 					}
-				}(id));
+
+					var title = "";
+					if(results[r].location){
+						title = i18n.chat_with_loc;
+						title = title.replace('$1',results[r].title).replace('$2',userCollection.get(results[r].userId).get('name')).replace('$3',results[r].location);
+					}else{
+						title = i18n.chat_with_noloc;
+						title = title.replace('$1',results[r].title).replace('$2',userCollection.get(results[r].userId).get('name'));
+					}
+
+					var resObj = {title:title, time:new Date(results[r].updatedAt), cont:content};
+					$('#search_results_list').append(resDiv.html(_.template(resultTemplate,{obj:resObj})));
+					resDiv.on('click',function(id){
+						return function(){
+							chat_socket.emit('chat transcript',{
+								id: id
+							});
+						}
+					}(id));
+				}
 			}
 		},
-	 	paginate:function(data){
+	 	paginate:function(data, page){
 	 		var that = this;
 	 		that.type = data.type;
+			that.page = page;
+			that.total = Math.ceil(that.count/that.limit);
 
-			if(data.count<=that.limit){$(window).unbind('scroll');return;}
-			that.page=1;
-			that.total = Math.ceil(data.count/that.limit);
-			if(that.page<that.total){that.nextPage=that.page+1;}
-
-			$(window).scroll(function(){
-				if($('#search_results_list').length==0 || !$('#search_results_list').is(":visible")){return;}
-				if ( document.documentElement.clientHeight + $(document).scrollTop() >= document.body.offsetHeight ){
-					if(that.page==that.total){
-			    		$(window).unbind('scroll');
-			    		return;
-			    	}
-
-			    	chat_socket.once('search paginate',function(data){
-			    		that.type = data.type;
-						that.page = data.page;
-				 		if(that.nextPage<=that.total){that.nextPage=that.nextPage+1;}				 			
-						that.add(data.results, data.msg);
-					});
-
-			    	var qry = {key:$("#search_input").val(), page:that.nextPage, limit:that.limit, type: that.type};
-			    	if(that.type == 'advance'){
-			    		var dat = $('#date-range-field span').text().split('-'),
-	 						frm = $.trim(dat[0]),
-	 						to = $.trim(dat[1]);
-                  		qry['loc'] = $('#filterLoc').val();
-                  		qry['frm'] = frm;
-                  		qry['to'] = to;
-                  		qry['tag'] = $('#filterTag').val();
-                  		qry['agent'] = $("#agentList").val();
-			    	}
-					chat_socket.emit('search request',
-				 		qry
-				 	);
-			 	}
-			});			
+			if(that.page<that.total){
+				that.nextPage = that.page+1;
+				var moreDiv = $('<div>');
+				moreDiv.attr("id","search_results_more");
+				moreDiv.addClass("chat_loadmore btn btn-secondary");
+				$('#search_results_list').append(moreDiv.html(i18n.chat_loadmore));
+				moreDiv.unbind('click').on('click',function(data){
+					return function(){
+						that.load(data);
+					}
+				}(data));
+			}
+		},
+		update:function(data){
+			$('#search_results_more').remove();
+			this.type = data.type;
+			if(this.nextPage <= this.total){this.nextPage = this.nextPage+1;}
+			this.add(data.results, data.msg, 'page');
+			this.paginate(data, data.page);
+		},
+		load:function(data){
+			var that = this;
+			var qry = {page:that.nextPage, limit:that.limit, type: that.type};
+			if(that.type == 'advance'){
+				var dat = $('#date-range-field span').text().split('-'),
+					frm = $.trim(dat[0]),
+					to = $.trim(dat[1]);
+				qry['key'] = $("#search_input").val();
+				qry['loc'] = $('#filterLoc').val();
+				qry['frm'] = frm;
+				qry['to'] = to;
+				qry['tag'] = $('#filterTag').val();
+				qry['agent'] = $("#agentList").val();
+				chat_socket.emit('search filter', qry);
+			}else{
+				chat_socket.emit('search request', qry);
+			}
 		}
 	});	
 

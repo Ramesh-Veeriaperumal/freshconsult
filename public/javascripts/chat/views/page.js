@@ -25,22 +25,23 @@ define([
         preferFlash: false,
         onready: function() {
           soundManager.createSound({
-            id: 'new_visitor',
-            url: '/sound/good-morning.mp3'
+            id: 'alert',
+            url: '/sound/alert.mp3'
           });
           soundManager.createSound({
             id: 'new_msg',
             url: '/sound/salient.mp3'
-          });
-          soundManager.createSound({
-            id: 'transfer',
-            url: '/sound/your-turn.mp3'
-          });
+          });          
         },
-        ontimeout: function() {
+        ontimeout: function() {           
           // Hrmm, SM2 could not start. Missing SWF? Flash blocked? Show an error, etc.?
         }
-      });
+      });    
+      window.startMusic = function(id){
+        if(window.playSound){
+          soundManager.play(id);
+        }
+      }  
   }
   var init = function(){
       window.dashboardView = dashboardView;

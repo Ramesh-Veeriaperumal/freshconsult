@@ -22,13 +22,27 @@ define([
 					$('#visitor').remove();
 				});	
 				$('.saveBtn').on('click', function(){
+					var phone = $("#contact").val();
+					var isPhone = phone.match(/^[0-9\s(-)+]*$/);
+					if(!isPhone){
+						alert("Please provide valid Phone number");
+						return false;
+					}
+
+					var mail = $("#email").val();
+					var regex = /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+					if(!regex.test(mail)){
+						alert("Please provide valid mail id");
+						return false;
+					}
+
 					var details = {
 							chatId: chat.id,
 							userName: chat.visitor.userName,
-							name:$("#visitorname").val(),
-							phone:$("#contact").val(),
-							email:$("#email").val(),
-							tag:$("#tag").val()
+							name: $("#visitorname").val(),
+							phone: phone,
+							email: mail,
+							tag: $("#tag").val()
 					};
 					chat_socket.emit("visitor details",details);					
 					chat_socket.once("visitor details",function(data){
