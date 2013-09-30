@@ -666,6 +666,7 @@ en:
         feedbackwidget_search_area: Search Articles
         feedbackwidget_use_https: Use https
     supervisor_rules:
+      info_help: For <b>each tickets</b> updated within 30 days, Execute all matching rules.
       index:
         human_name: Supervisor Rule
         title: Supervisor - Rules
@@ -681,6 +682,7 @@ en:
       edit:
         title: Supervisor - Edit Rule
     observer_rules:
+      info_help: For any event performed in a ticket, The Observer rules lets you trigger specific actions.
       index:
         human_name: Observer Rule
         title: Observer - Rules
@@ -1641,6 +1643,9 @@ en:
     conditions: Conditions
     actions: Actions
     new: Dispatch'r - New Rule
+    cascade_text: For each incoming ticket, Execute
+    cascade: all matching rules
+    no_cascade: first matching rule 
     add_new_choice: Add New choice
     act_to_perform: Perform these actions
     edit: Dispatch'r - Edit Rule
