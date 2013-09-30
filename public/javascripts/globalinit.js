@@ -81,7 +81,7 @@ is_touch_device = function() {
         offset: 5,
         html: true,
         reloadContent: false,
-        template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
+        template: '<div class="arrow"></div><div class="inner"><div class="content"><div></div></div></div>',
         content: function(){
           return $("#" + $(this).attr("data-widget-container")).html();
         }
@@ -95,8 +95,7 @@ is_touch_device = function() {
         html: true,
         reloadContent: false,
         placement: 'belowLeft',
-        // template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
-        template: '<div class="dbl_up arrow"></div><div class="hover_card inner"><div class="content"><p></p></div></div>',
+        template: '<div class="dbl_up arrow"></div><div class="hover_card inner"><div class="content"><div></div></div></div>',
         content: function(){
           return $("#" + $(this).attr("data-widget-container")).html();
         }
@@ -110,7 +109,7 @@ is_touch_device = function() {
         offset: 5,
         html: true,
         reloadContent: false,
-        template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
+        template: '<div class="arrow"></div><div class="inner"><div class="content"><div></div></div></div>',
         content: function(){
           return $("#" + $(this).attr("data-widget-container")).val();
         }
@@ -123,7 +122,7 @@ is_touch_device = function() {
         offset: 5,
         html: true,
         reloadContent: false,
-        template: '<div class="dbl_left arrow"></div><div class="hover_card inner"><div class="content"><p></p></div></div>',
+        template: '<div class="dbl_left arrow"></div><div class="hover_card inner"><div class="content"><div></div></div></div>',
         content: function(){
           var container_id = "user-info-div-"+$(this).data('contactId');
           return jQuery("#"+container_id).html() || "<div class='sloading loading-small loading-block' id='"+container_id+"' rel='remote-load' data-url='"+$(this).data('contactUrl')+"'></div>";
@@ -138,7 +137,7 @@ is_touch_device = function() {
          offset: 5,
          html: true,
          reloadContent: false,
-         template: '<div class="dbl_left arrow"></div><div class="hover_card inner"><div class="content"><p></p></div></div>',
+         template: '<div class="dbl_left arrow"></div><div class="hover_card inner"><div class="content"><div></div></div></div>',
          content: function(){
            return $(this).data("content") || $("#" + $(this).attr("data-widget-container")).val();
          }

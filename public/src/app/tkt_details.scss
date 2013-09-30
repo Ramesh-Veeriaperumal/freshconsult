@@ -2910,7 +2910,7 @@ $collision_delay: 1s;
 }
 
 .meta-info {
-	div {clear: both;}
+	div {clear: both; overflow: hidden; width: 100%;}
 	
 	span {
 		display: inline-block;

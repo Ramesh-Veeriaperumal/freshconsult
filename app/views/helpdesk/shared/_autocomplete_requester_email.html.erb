@@ -32,7 +32,7 @@ jQuery(document).ready(function() {
   }
   
   jQuery("#requester_filter").select2({
-    placeholder: "Enter Requesters name or email",
+    placeholder: "<%= t('tickets_filter.requester_name_or_email') %>",
     minimumInputLength: 2,
     multiple: true,
     allowClear: true,
