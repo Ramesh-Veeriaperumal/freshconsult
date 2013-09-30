@@ -4355,8 +4355,8 @@ en:
     showform: "Show Pre-chat form"
     enable_proactive: "Enable proactive chat"
     proactive_note: "Note: Pre-chat form will not be shown for Proactive chats"
-    proactive_time: "If the visitor spends more than"
-    proactive_time_end: "seconds on current page"
+    proactive_time: "Automatically greet visitor when they spend more than %{seconds} seconds on same page"
+    procative_info: "Greet visitors proactively based on time spend on a page"
     show: "Show"
     required: "Required field"
     name: "Name"
@@ -4412,7 +4412,6 @@ en:
     tags: "Tags"
     agent: "Agent"
     back: "Back"
-    continue_chat: "Continue Chat"
     select_location:  "Select Location"
     valid_code: "Please enter a valid color value"
     ticket_desc: "Ticket created via Freshchat. Conversation was between "
@@ -4467,6 +4466,9 @@ en:
     nochat: "No chat available"
     adding_note: "Adding Note..."
     creating_ticket: "Creating Ticket..."
+    chat_with_loc: "Chat with <b>$1</b> from $3 and <b>$2</b>"
+    chat_with_noloc: "Chat with <b>$1</b> and <b>$2</b>"
+    chat_loadmore: "Load More..."
   date_invalid: Invalid date  
   facebook_tab:
     remove_tab: "Remove page Tab"

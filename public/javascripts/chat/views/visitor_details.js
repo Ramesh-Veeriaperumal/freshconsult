@@ -22,19 +22,24 @@ define([
 					$('#visitor').remove();
 				});	
 				$('.saveBtn').on('click', function(){
-					var phone = $("#contact").val();
-					var isPhone = phone.match(/^[0-9\s(-)+]*$/);
-					if(!isPhone){
-						alert("Please provide valid Phone number");
-						return false;
+					$("#contact, #email").next().removeClass("icon-warning");
+					var phone = $.trim($("#contact").val());
+					if(phone!=""){
+						var isPhone = phone.match(/^[0-9\s(-)+]*$/);
+						if(!isPhone){
+							$("#contact").next().addClass("icon-warning").attr("title","Please provide valid Phone number");
+							return false;
+						}
 					}
 
-					var mail = $("#email").val();
-					var regex = /^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-					if(!regex.test(mail)){
-						alert("Please provide valid mail id");
-						return false;
-					}
+					var mail = $.trim($("#email").val());
+					if(mail!=""){
+						var ismail = mail.match(/^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/);
+						if(!ismail){
+							$("#email").next().addClass("icon-warning").attr("title","Please provide valid mail id");
+							return false;
+						}
+					}					
 
 					var details = {
 							chatId: chat.id,

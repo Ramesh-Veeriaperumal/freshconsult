@@ -3,15 +3,23 @@
 	<div class="visitor-details">
 		<h3><%=i18n.visitor_details%></h3>
 		<div class="visitor-info">
-			<div class="heading visitorname"><i class="icon-user"></i></div>			
-			<div class="user-input"><input type="text" id="visitorname" /></div>
-			<div class="heading fc-contact"><i class="icon-mobile"></i></div>
-			<div class="user-input"><input type="text" id="contact" /></div>
-			<div class="heading email"><i class="icon-mail"></i></div>
-			<div class="user-input"><input type="text" id="email" /></div>
-			<div class="heading tag"><i class="icon-tags"></i></div>
-			<div class="user-input"><input type="text" id="tag" /></div>
-			<div class="clear">
+			<div class="visitor-info-input-wrap">
+				<div class="heading visitorname"><i class="icon-user"></i></div>
+				<div class="user-input"><input type="text" id="visitorname"/></div>
+			</div>
+			<div class="visitor-info-input-wrap">
+				<div class="heading fc-contact"><i class="icon-mobile"></i></div>
+				<div class="user-input"><input type="text" id="contact"/><i></i></div>
+			</div>
+			<div class="visitor-info-input-wrap">
+				<div class="heading email"><i class="icon-mail"></i></div>
+				<div class="user-input"><input type="text" id="email"/><i></i></div>
+			</div>
+			<div class="visitor-info-input-wrap">
+				<div class="heading tag"><i class="icon-tags"></i></div>
+				<div class="user-input"><input type="text" id="tag"/></div>
+			</div>
+			<div class="clear"></div>
 		</div>
 		<%if(userAgent){%>
 		<div class="visitor-loc">
