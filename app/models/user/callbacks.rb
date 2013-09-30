@@ -1,6 +1,7 @@
 class User < ActiveRecord::Base
 
-	before_create :set_time_zone , :set_company_name , :set_language
+	before_validation :downcase_email
+  before_create :set_time_zone , :set_company_name , :set_language
   before_save :set_customer_privilege, :if => :customer?
   before_create :populate_privileges, :if => :helpdesk_agent?
   before_update :populate_privileges, :if => :roles_changed?
@@ -18,6 +19,10 @@ class User < ActiveRecord::Base
   
   before_update :bakcup_user_changes, :clear_redis_for_agent
   after_commit_on_update :update_search_index, :if => :customer_id_updated?
+
+  def downcase_email
+    self.email = email.downcase if email
+  end
 
   def set_time_zone
     self.time_zone = account.time_zone if time_zone.nil? #by Shan temp
