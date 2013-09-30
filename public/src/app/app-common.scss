@@ -240,11 +240,15 @@ ul.activityfeed li{
   		} 
   		.hover-contact-box{
   			@include min-width(25px);
+  			color:inherit;
   			max-width:175px;
   			@extend .ellipsis;
   			@include border-radius(0 50px 50px 0);
   			padding:2px 10px 2px 5px;
   		}
+  		.recent-tickets{
+  			padding: 2px 15px;
+		}
   		&:hover{
   			cursor: pointer;
   			.add-on,.hover-contact-box{
@@ -272,7 +276,8 @@ ul.activityfeed li{
 	.product-call{
 		height: 13px;
 		margin-top: -2px;
-		top: 3px;
+		top: 2px;
+		left:2px;
 	}
   .user_name{ font-size:1.25em; display: inline-block; font-weight: 200}
   .user_desig{

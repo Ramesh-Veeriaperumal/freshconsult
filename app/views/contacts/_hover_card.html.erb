@@ -12,20 +12,20 @@
     <% unless @user.email.blank? %>
       <div class="contact-append">
         <span class="add-on"><i class="product-email-logo"></i></span>
-        <%= content_tag :div, h(@user.email), :class => "hover-contact-box ellipsis" %>
+        <%= content_tag :a, h(@user.email), :class => "hover-contact-box ellipsis lowercase" %>
       </div>
     <% end %>
 
     <% unless @user.phone.blank? %>
       <div class="contact-append">
         <span class="add-on"><i class="product-call"></i></span>
-        <%= content_tag :div, h(@user.phone),:class => "hover-contact-box" %>
+        <%= content_tag :a, h(@user.phone),:class => "hover-contact-box", :tel => "h(@user.phone)"%>
       </div>
     <% else %>
       <% unless @user.mobile.blank? %>
         <div class="contact-append">
           <span class="add-on"><i class="product-call"></i></span>
-          <%= content_tag :div, h(@user.mobile), :class => "hover-contact-box" %>
+          <%= content_tag :a, h(@user.mobile), :class => "hover-contact-box", :tel => "h(@user.mobile)" %>
         </div>
       <% end %>
     <% end %>
@@ -33,15 +33,16 @@
       <% unless @user.twitter_id.blank? %>
         <div class="contact-append">
           <span class="add-on"><i class="product-twitter"></i></span>
-          <%= content_tag :div, h(@user.twitter_id), :class => "hover-contact-box" %>
+          <%= content_tag :a, h(@user.twitter_id), :class => "hover-contact-box" %>
         </div>
       <% end %>
     <% end %>
-
-    <div class="contact-append">
-          <span class="add-on recent-tickets">
-              <%= link_to t('ticket.recent_tickets',:nick_name => h(@user.display_name)).html_safe, helpdesk_requester_filter_path(:requester_id => @user.id) , :id => "show_more" if @user.agent? %>
-          </span>
-    </div>
+    <% unless @user.agent? %>
+      <div class="contact-append">
+            <span class="add-on recent-tickets">
+                <%= link_to t('ticket.recent_tickets',:nick_name => h(@user.display_name)).html_safe, helpdesk_requester_filter_path(:requester_id => @user.id) %>
+            </span>
+      </div>
+    <% end %>
   </div>
 </div>
