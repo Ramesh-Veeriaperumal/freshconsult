@@ -61,12 +61,12 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     inline_attachments = []
     
     part :content_type => "multipart/alternative" do |alt|
-      alt.part "text/plain" do |plain|
-        plain.body  render_message("email_notification.text.plain.erb",:ticket => params[:ticket], :body => Helpdesk::HTMLSanitizer.plain(params[:email_body]), :dropboxes=>params[:dropboxes],
-                    :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
-                    params[:notification_type]),
-                    :surveymonkey_survey =>  Integrations::SurveyMonkey.survey_for_notification(params[:notification_type], params[:ticket]))
-      end
+      # alt.part "text/plain" do |plain|
+      #   plain.body  render_message("email_notification.text.plain.erb",:ticket => params[:ticket], :body => Helpdesk::HTMLSanitizer.plain(params[:email_body]), :dropboxes=>params[:dropboxes],
+      #               :survey_handle => SurveyHandle.create_handle_for_notification(params[:ticket], 
+      #               params[:notification_type]),
+      #               :surveymonkey_survey =>  Integrations::SurveyMonkey.survey_for_notification(params[:notification_type], params[:ticket]))
+      # end
       alt.part "text/html" do |html|
         html.body   render_message("email_notification.text.html.erb",:ticket => params[:ticket], 
                     :body => generate_body_html(params[:email_body], inline_attachments, params[:ticket].account), :dropboxes=>params[:dropboxes],
