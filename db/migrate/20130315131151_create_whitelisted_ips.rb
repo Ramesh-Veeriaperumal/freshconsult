@@ -1,4 +1,5 @@
 class CreateWhitelistedIps < ActiveRecord::Migration
+  shard :none
   def self.up
   	create_table :whitelisted_ips do |t|
   		t.column :account_id, "bigint unsigned"
