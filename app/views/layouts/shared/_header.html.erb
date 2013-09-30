@@ -156,12 +156,12 @@
 	                      {
 	                        jQuery('#available_icon').removeClass('header-icons-autoAssign-on').addClass('header-icons-autoAssign-off')
 	                        jQuery('#availabilty-toggle')
-	                        	.attr('title',"<%= t('header.user_not_available') %>")
+	                        	.attr('title',"<%= t('header.user_not_available').html_safe %>")
 	                      }
 	                      else{
 	                        jQuery('#available_icon').removeClass('header-icons-autoAssign-off').addClass('header-icons-autoAssign-on')
 	                        jQuery('#availabilty-toggle')
-	                        	.attr('title',"<%= t('header.user_available') %>")
+	                        	.attr('title',"<%= t('header.user_available').html_safe %>")
 	                      }
 
 
