@@ -129,7 +129,7 @@ module ApplicationHelper
   end
 
   def tab(title, url, cls = false, tab_name="")
-    options = {:"data-pjax" => "#body-container"}
+    options = current_user && current_user.agent? ? {:"data-pjax" => "#body-container"} : {}
     if tab_name.eql?(:tickets)
       options.merge!({:"data-parallel-url" => "/helpdesk/tickets/filter_options", :"data-parallel-placeholder" => "#ticket-leftFilter"})
     end
