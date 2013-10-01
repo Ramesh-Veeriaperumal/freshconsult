@@ -182,11 +182,14 @@ module SupportHelper
 	end
 
 	def portal_fav_ico
-		fav_icon_content = MemcacheKeys.fetch(["v5","portal","fav_ico",current_portal]) do
-			url = current_portal.fav_icon.nil? ? '/images/favicon.ico' : current_portal.fav_icon.content.url
-			"<link rel='shortcut icon' href='#{url}' />"
-		end
-		fav_icon_content.to_s.html_safe
+		fav_icon = MemcacheKeys.fetch(["v6","portal","fav_ico",current_portal],30.days.to_i) do
+     			current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' : 
+            		AwsWrapper::S3Object.url_for(current_portal.fav_icon.content.path,
+            			current_portal.fav_icon.content.bucket_name,
+                        :expires => 30.days.to_i, 
+                        :secure => true)
+            end
+		"<link rel='shortcut icon' href='#{fav_icon}' />".html_safe
 	end
 
 	# Default search filters for portal

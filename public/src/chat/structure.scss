@@ -27,7 +27,7 @@
 
 #container{
     min-width: 1140px;
-}
+}   
 
 #search {
     float: left;
@@ -1186,25 +1186,9 @@ li.ui-state-active {
     .heading{
         width: 40px;
         height: 35px;
-        border:1px solid;
+        border:1px solid #ccc;
         float: left;
     }
-}
-
-.user-input{
-    height: 33px;
-    width: 83%;
-    padding-top: 2px;
-    border:1px solid;
-    float: left;
-}
-.user-input input[type="text"]{
-    width: 94%;
-}
-
-.user-input input{
-    border: none !important;
-    box-shadow: 0 0 0 #FFF;
 }
 
 .visitor-loc{
@@ -1645,6 +1629,30 @@ li.ui-state-disabled{
 #freshchat_layout, #visitor_results, #chat_notifier_container, .visitor-details{
     [class^="icon-"], [class*=" icon-"]{
         background-image: none;
+    }
+}
+.visitor-details{
+    .visitor-info-input-wrap{
+        .user-input{
+                position: relative;
+                height: 33px;
+                width: 218px;
+                padding-top: 2px;
+                border:1px solid #ccc;
+                float: left;
+            input{
+                padding: 7px 25px 8px 5px;
+                width: 188px;
+                border: none !important;
+                box-shadow: 0 0 0 #FFF;
+            }
+        }
+    }
+    .icon-warning{
+        position: absolute;
+        left: 200px;
+        color: #e9573f;
+        top: 9px;
     }
 }
 
@@ -2406,4 +2414,50 @@ div.color{
 .chat_setting_form input[type="checkbox"]{
     position: relative;
     top: -2px;
+}
+.rsltname_expanded{
+    font-size: 14px;
+    p{
+        padding-left: 17px;
+        width: 92%;
+        float: left;
+    }
+    i{
+        font-size: 22px;
+        position: relative;
+        top: -4px;
+        float: left;
+    }
+}
+#search_results_grp{
+    .rsltdate{
+        padding-left: 29px;
+        padding-top: 5px;
+    }
+}
+.fc_guest_expanded, .fc_self_expanded{
+    .rsltdata{
+        width: 95%;
+        padding-left: 9px;
+    }
+    .rslttime{
+        visibility: hidden;
+        float: right;
+    }
+    &:hover{
+        .rslttime{
+            visibility: visible;
+        }
+        
+    }
+}
+
+.fc_guest_expanded{
+    background-color: #fefef0;
+    .rsltset{
+        background-color: transparent;
+    }
+}
+.fc_self_expanded{
+    background-color: #fff;
 }
