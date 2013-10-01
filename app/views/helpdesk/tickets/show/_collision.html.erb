@@ -83,9 +83,16 @@
 
       socket.on('connect', function() {
           
-          socket.emit('set_params', init_params);      
-          socket.emit('get_exiting_viewers');
-          socket.emit('get_exiting_replying');
+          socket.emit('set_params', init_params);  
+          socket.on('ready', function(){    
+            socket.emit('get_exiting_viewers', init_params.account_id);
+            socket.emit('get_exiting_replying', init_params.account_id);
+
+            jQuery('div[rel=emitter]').bind("visibility", function(ev){
+              // Emitting a node message when agent is replying, forwarding or adding a note inside the ticket details page
+              socket.emit((jQuery(this).data("nodeName") + ((jQuery(this).css("display") == "block") ? "" : "_stopped")), init_params.account_id )
+            });   
+          });     
 
           <% unless @draft.nil? %>
             jQuery('#cnt-reply').trigger("visibility");
@@ -127,11 +134,6 @@
  
       //jQuery('.conversation_thread div[rel=emitter]').watch("display,visibility", function() { showStatus("changed...") });
 
-      jQuery('div[rel=emitter]').bind("visibility", function(ev){
-        // Emitting a node message when agent is replying, forwarding or adding a note inside the ticket details page
-        socket.emit(jQuery(this).data("nodeName") + ((jQuery(this).css("display") == "block") ? "" : "_stopped") )
-      });        
-      
       jQuery("[rel=notice-popover]")      
           .popover({
             html: true,           

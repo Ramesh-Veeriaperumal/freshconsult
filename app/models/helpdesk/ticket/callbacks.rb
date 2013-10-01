@@ -352,7 +352,10 @@ private
   def publish_to_update_channel
     return unless account.features?(:agent_collision)
     agent_name = User.current ? User.current.name : ""
-    message = HELPDESK_TICKET_UPDATED_NODE_MSG % {:ticket_id => self.id, :agent_name => agent_name, :type => "updated"}
+    message = HELPDESK_TICKET_UPDATED_NODE_MSG % {:account_id => self.account_id, 
+                                                  :ticket_id => self.id, 
+                                                  :agent_name => agent_name, 
+                                                  :type => "updated"}
     publish_to_tickets_channel("tickets:#{self.account.id}:#{self.id}", message)
   end
 

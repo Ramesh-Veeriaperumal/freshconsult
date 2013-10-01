@@ -25,7 +25,9 @@
 
       socket.on('connect', function(){
         socket.emit('index_init', init_params);
-        handle_agent_collision();
+        socket.on('index_ready', function(){
+          handle_agent_collision();
+        })
       });
 
       socket.on('set_viewers_in_index',function set_viewers_in_index(_viewers) {
