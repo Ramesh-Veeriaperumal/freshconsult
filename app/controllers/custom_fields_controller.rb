@@ -4,13 +4,17 @@ class CustomFieldsController < Admin::AdminController
 
   before_filter :check_ticket_field_count, :only => [ :update ]
   
-  MAX_ALLOWED_COUNT = { 
-    :string => 30,
-    :text => 10,
-    :number => 10,
-    :date => 10,
-    :boolean => 10
-  }
+  MAX_ALLOWED_COUNT = { "shard_1" => {:string => 30,
+                                      :text => 10,
+                                      :number => 10,
+                                      :date => 10,
+                                      :boolean => 10},
+                        "other_shards" => {:string => 60,
+                                      :text => 20,
+                                      :number => 20,
+                                      :date => 10,
+                                      :boolean => 20}
+                      }
 
   def update #To Do - Sending proper status messages to UI.
 
@@ -84,7 +88,7 @@ class CustomFieldsController < Admin::AdminController
                               }
     error_str = ""
     field_data_count_by_type.keys.each do |key|
-      if field_data_count_by_type[key] > MAX_ALLOWED_COUNT[key]
+      if field_data_count_by_type[key] > MAX_ALLOWED_COUNT[shard_name][key]
         error_str << I18n.t("flash.custom_fields.failure.#{key}")+'<br />'
       end
     end
@@ -102,5 +106,9 @@ class CustomFieldsController < Admin::AdminController
   def calculate_string_fields_count field_data_group
     field_data_group["dropdown"].length + field_data_group["text"].length + 
               (field_data_group["dropdown"] || []).map{|x| x["levels"]}.flatten.compact.length
+  end
+
+  def shard_name
+    (Sharding.shard_name == "shard_1") ? "shard_1" : "other_shards"
   end
 end

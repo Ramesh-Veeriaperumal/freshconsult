@@ -28,6 +28,10 @@ class Sharding
     ActiveRecord::Base.shard_names
   end
 
+  def shard_name
+    ActiveRecord::Base.current_shard_selection.shard
+  end
+
   def run_on_all_shards(&block)
     results = ActiveRecord::Base.on_all_shards(&block)
     results.flatten
