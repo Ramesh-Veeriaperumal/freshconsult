@@ -218,7 +218,7 @@
 			<% end %>
 			
       <% if @whitelisted_ips.ip_ranges.present? %>
-        _data = <%= @whitelisted_ips.ip_ranges.to_json %>
+        _data = <%= @whitelisted_ips.ip_ranges.to_json.html_safe %>
         _data.each(function(item){
           $.tmpl( _ip_template, item ).appendTo( "#security-ip-range-container" );
         });
