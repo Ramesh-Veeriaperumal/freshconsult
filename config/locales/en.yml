@@ -1244,6 +1244,7 @@ en:
       update: 
         success: Email notifications have been updated.
     general: 
+      limit_exceeded: You've exceeded the limit for performing this action. Please try again.
       access_denied: You are not allowed to access this page!
       need_login: You must be logged in to access this page
       insufficient_privilege: 
@@ -2101,6 +2102,7 @@ en:
   subscription: 
     error: 
       lesser_agents: Your freshdesk account currently has %{agent_count} agents, you cannot subscribe to a lesser number of agents. Please delete some agents and try again.
+      card_update_limit_exceeded: You've exceeded the hourly limit for updating your credit card. Please try again later.
     upgrade:
       message: Upgrade your account to unlock this feature.
       cname: Want to use your own domain here? Please upgrade your account.
