@@ -12,6 +12,7 @@
     </div>
   </div>
 
+ <% if current_account.features?(:cascade_dispatchr) %>
   <div class="row-fluid list-page-subheader">
     <span class="vertical-alignment">
       <img alt="" src="/images/down-arrow-automation.png">
@@ -24,6 +25,7 @@
       <% end %>
       <span id="cascade_loader" class="vertical-alignment loading-tiny loading-left"></span>
   </div>
+  <% end %>
 
   <div>
   <%= render :partial => "/shared/reorder_list", :locals => { 
