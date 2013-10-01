@@ -10582,3 +10582,32 @@ label.last-label{ margin-bottom: 0px; }
 .code_area_highlight {
 	background-color: #E4E4E4;
 }
+
+// File upload design
+.thumb-file-upload {
+  position: relative;
+  display:inline-block;
+  text-align: left;
+  cursor:pointer;
+  vertical-align:top;
+  >div{
+  	margin:0 5px 18px 0;
+  }
+  input[type='file']{
+  	position:absolute;
+  	top:0;
+    z-index: 999999;
+    width:100%;
+    min-height:30px;
+    @include opacity(0);
+    cursor: pointer;
+    cursor: hand;
+    &::-webkit-file-upload-button { cursor:pointer; }
+  }
+  .file-upload-wrap{
+    .file-upload-text{
+      position: relative;
+      color: #0066cc;
+    }
+  }
+}

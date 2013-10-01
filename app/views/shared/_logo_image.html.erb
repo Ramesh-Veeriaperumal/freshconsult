@@ -1,15 +1,16 @@
 <%= image_tag logo_url %>
-<div style="display:none;">
-  <% fields_for "#{field_name}[logo_attributes]", item.logo do |logo_form| %>
-    <%= logo_form.file_field :content, :class => "fileAdminUpload", :id => "portal-logo" %>
-  <% end %>
-</div>
-<div class="logo-actions">
-	<%= link_to_function(t("account.change_logo"), "jQuery('#portal-logo').click();") %>
-	<% if item.logo.present? %>
-		<br />
-		<% default_logo_url = item.main_portal? ? delete_logo_account_path : delete_logo_admin_product_path(item) %>
-		<%= link_to(t("account.use_default"), default_logo_url,
-				:confirm => t('logo_delete_msg'), :method => 'delete') %>
-    <% end %>
-</div>
+	<div class="thumb-file-upload">
+		<% fields_for "#{field_name}[logo_attributes]", item.logo do |logo_form| %>
+			<div class="file-upload-wrap">
+				<span class="file-upload-text"><%= t("account.change_logo") %></span>
+			</div>
+			<%= logo_form.file_field :content, :class => "fileAdminUpload", :id => "portal-logo" %>
+		<% end %>
+		<div>
+			<% if item.logo.present? %>
+				<% default_logo_url = item.main_portal? ? delete_logo_account_path : delete_logo_admin_product_path(item) %>
+				<%= link_to(t("account.use_default"), default_logo_url,
+					:confirm => t('logo_delete_msg'), :method => 'delete') %>
+			<% end %>
+		</div>
+	</div>
