@@ -415,8 +415,7 @@ module ApplicationHelper
       ['{{ticket.latest_public_comment}}',  'Last public comment',  'Latest public comment for this ticket.',         'ticket_latest_public_comment'],
       ['{{helpdesk_name}}', 'Helpdesk name', 'Your main helpdesk portal name.',         'helpdesk_name'],
       ['{{ticket.portal_name}}', 'Product portal name', 'Product specific portal name in multiple product/brand environments.',        'ticket_portal_name'],
-      ['{{ticket.product_description}}', 'Product description', 'Product specific description in multiple product/brand environments.',         'ticket_product_description'],
-      ['{{ticket.total_time_spent}}', 'Cumulative Time Spent', 'Total number of hours spent on the ticket.',         'ticket_total_time_spent']
+      ['{{ticket.product_description}}', 'Product description', 'Product specific description in multiple product/brand environments.',         'ticket_product_description']
     ]
     current_account.ticket_fields.custom_fields.each { |custom_field|
       name = custom_field.name[0..custom_field.name.rindex('_')-1]
