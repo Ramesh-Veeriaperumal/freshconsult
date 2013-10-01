@@ -6,7 +6,7 @@ module UploadedImagesControllerMethods
 
   def create    
     @image = current_account.attachments.build({
-      :description => public_image? ? "public" : nil,
+      :description => "public",
       :content => params[:image][:uploaded_data],
       :attachable_type => "#{cname} Upload"
     })
@@ -25,18 +25,10 @@ module UploadedImagesControllerMethods
     end
 
     def success_response
-      { :filelink => get_image_url, :fileid => @image.id, :uniquekey => params["_uniquekey"] }
+      { :filelink => @image.content.url, :fileid => @image.id, :uniquekey => params["_uniquekey"] }
     end
 
     def error_response
      { :error => @image.errors.blank? ? [] : @image.errors.full_messages.to_sentence, :uniquekey => params["_uniquekey"] }
-    end
-
-    def public_image?
-      cname != "Tickets Image"
-    end
-
-    def get_image_url
-      public_image? ? @image.content.url : helpdesk_attachment_path(@image)
     end
 end
