@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130918125805) do
+ActiveRecord::Schema.define(:version => 20131001080752) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -493,16 +493,16 @@ ActiveRecord::Schema.define(:version => 20130918125805) do
     t.text     "ff_text08"
     t.text     "ff_text09"
     t.text     "ff_text10"
-    t.integer  "ff_int01"
-    t.integer  "ff_int02"
-    t.integer  "ff_int03"
-    t.integer  "ff_int04"
-    t.integer  "ff_int05"
-    t.integer  "ff_int06"
-    t.integer  "ff_int07"
-    t.integer  "ff_int08"
-    t.integer  "ff_int09"
-    t.integer  "ff_int10"
+    t.integer  "ff_int01",            :limit => 8
+    t.integer  "ff_int02",            :limit => 8
+    t.integer  "ff_int03",            :limit => 8
+    t.integer  "ff_int04",            :limit => 8
+    t.integer  "ff_int05",            :limit => 8
+    t.integer  "ff_int06",            :limit => 8
+    t.integer  "ff_int07",            :limit => 8
+    t.integer  "ff_int08",            :limit => 8
+    t.integer  "ff_int09",            :limit => 8
+    t.integer  "ff_int10",            :limit => 8
     t.datetime "ff_date01"
     t.datetime "ff_date02"
     t.datetime "ff_date03"
@@ -524,6 +524,66 @@ ActiveRecord::Schema.define(:version => 20130918125805) do
     t.boolean  "ff_boolean09"
     t.boolean  "ff_boolean10"
     t.integer  "account_id",          :limit => 8
+    t.string   "ffs_31"
+    t.string   "ffs_32"
+    t.string   "ffs_33"
+    t.string   "ffs_34"
+    t.string   "ffs_35"
+    t.string   "ffs_36"
+    t.string   "ffs_37"
+    t.string   "ffs_38"
+    t.string   "ffs_39"
+    t.string   "ffs_40"
+    t.string   "ffs_41"
+    t.string   "ffs_42"
+    t.string   "ffs_43"
+    t.string   "ffs_44"
+    t.string   "ffs_45"
+    t.string   "ffs_46"
+    t.string   "ffs_47"
+    t.string   "ffs_48"
+    t.string   "ffs_49"
+    t.string   "ffs_50"
+    t.string   "ffs_51"
+    t.string   "ffs_52"
+    t.string   "ffs_53"
+    t.string   "ffs_54"
+    t.string   "ffs_55"
+    t.string   "ffs_56"
+    t.string   "ffs_57"
+    t.string   "ffs_58"
+    t.string   "ffs_59"
+    t.string   "ffs_60"
+    t.text     "ff_text11"
+    t.text     "ff_text12"
+    t.text     "ff_text13"
+    t.text     "ff_text14"
+    t.text     "ff_text15"
+    t.text     "ff_text16"
+    t.text     "ff_text17"
+    t.text     "ff_text18"
+    t.text     "ff_text19"
+    t.text     "ff_text20"
+    t.boolean  "ff_boolean11"
+    t.boolean  "ff_boolean12"
+    t.boolean  "ff_boolean13"
+    t.boolean  "ff_boolean14"
+    t.boolean  "ff_boolean15"
+    t.boolean  "ff_boolean16"
+    t.boolean  "ff_boolean17"
+    t.boolean  "ff_boolean18"
+    t.boolean  "ff_boolean19"
+    t.boolean  "ff_boolean20"
+    t.integer  "ff_int11",            :limit => 8
+    t.integer  "ff_int12",            :limit => 8
+    t.integer  "ff_int13",            :limit => 8
+    t.integer  "ff_int14",            :limit => 8
+    t.integer  "ff_int15",            :limit => 8
+    t.integer  "ff_int16",            :limit => 8
+    t.integer  "ff_int17",            :limit => 8
+    t.integer  "ff_int18",            :limit => 8
+    t.integer  "ff_int19",            :limit => 8
+    t.integer  "ff_int20",            :limit => 8
   end
 
   add_index "flexifields", ["account_id", "flexifield_set_id"], :name => "index_flexifields_on_flexifield_def_id_and_flexifield_set_id"
