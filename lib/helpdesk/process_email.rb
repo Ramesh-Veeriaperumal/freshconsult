@@ -296,7 +296,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       begin
         ticket.cc_email = ticket_cc_emails_hash(ticket)
         if (user.agent? && !user.deleted?)
-          ticket.responder ||= user
           process_email_commands(ticket, user, ticket.email_config, note) if 
             user.privilege?(:edit_ticket_properties)
           email_cmds_regex = get_email_cmd_regex(ticket.account)
