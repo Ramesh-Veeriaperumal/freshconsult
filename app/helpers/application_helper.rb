@@ -57,7 +57,7 @@ module ApplicationHelper
   def fav_icon_url
     MemcacheKeys.fetch(["v5","portal","fav_ico",current_portal]) do
       current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' : 
-            AwsWrapper::S3Object.url_for(current_portal.fav_icon.content.path,current_portal.fav_icon.content.bucket_name,
+            AwsWrapper::S3Object.url_for(current_portal.fav_icon.content.path(:fav_icon),current_portal.fav_icon.content.bucket_name,
                                           :expires => 30.days, :secure => true)
     end
   end
