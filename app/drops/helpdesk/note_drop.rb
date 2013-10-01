@@ -9,7 +9,7 @@ class Helpdesk::NoteDrop < BaseDrop
 	end
 
 	def id
-		@source.display_id
+		source.id
 	end
 
 	def user

@@ -5,21 +5,34 @@
 <div id="freshchat_layout"></div>
   <!-- Chat related contents starts -->
 <%= include_cloudfront_css :chat %>
-<script src='<%=comm_url%>/socket.io/socket.io.js'></script>
 <script src="/javascripts/sound/soundmanager2-jsmin.js"></script>
 <script language="javascript">
 (function($){
     $(document).ready(function(){
-        var requireJS = document.createElement('script');
-        requireJS.src = "/javascripts/chat/lib/require/require.js";
-        document.body.appendChild(requireJS);
-
-        requireJS.onload=function(){
-            var main = document.createElement('script');
-            main.src = "/javascripts/chat/main.js";
-            document.body.appendChild(main);
+        window.playSound = !($.cookie('fd::'+SITE_ID));
+        if(window.playSound){
+            $.cookie('fd::'+SITE_ID,true);
+            $(window).unload(function(){
+                jQuery.cookie('fd::'+SITE_ID,null);
+            });
         }
-    });
+        var socketJS = document.createElement('script');
+        socketJS.src = "<%=comm_url%>/socket.io/socket.io.js";
+        document.body.appendChild(socketJS);
+
+        socketJS.onload=function(){
+            var requireJS = document.createElement('script');
+            requireJS.src = "/javascripts/chat/lib/require/require.js";
+            document.body.appendChild(requireJS);
+
+            requireJS.onload=function(){
+                var main = document.createElement('script');
+                main.src = "/javascripts/chat/main.js";
+                document.body.appendChild(main);
+            }
+        }
+        
+    });    
 })(jQuery);
 
 var CS_URL = "<%=comm_url%>";
@@ -71,7 +84,6 @@ var i18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
             tags: '<%= t("freshchat.tags") %>',
             agent: '<%= t("freshchat.agent") %>',
             back: '<%= t("freshchat.back") %>',
-            continue_chat: '<%= t("freshchat.continue_chat") %>',
             select_location: '<%= t("freshchat.select_location") %>',
             visitors_online: '<%= t("freshchat.visitors_online") %>',
             ticket_desc: '<%= t("freshchat.ticket_desc") %>',
@@ -122,7 +134,10 @@ var i18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
             install_tip: "<%= t('freshchat.install_tip').html_safe %>",
             nochat: "<%= t('freshchat.nochat') %>",
             adding_note: "<%= t('freshchat.adding_note') %>",
-            creating_ticket: "<%= t('freshchat.creating_ticket') %>"
+            creating_ticket: "<%= t('freshchat.creating_ticket') %>",
+            chat_with_loc: "<%= t('freshchat.chat_with_loc').html_safe %>",
+            chat_with_noloc: "<%= t('freshchat.chat_with_noloc').html_safe %>",
+            chat_loadmore: "<%= t('freshchat.chat_loadmore') %>"
         }
 </script>
     <!-- Chat related contents ends -->

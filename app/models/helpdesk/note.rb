@@ -1,6 +1,5 @@
 class Helpdesk::Note < ActiveRecord::Base
 
-  include ActionController::UrlWriter
   include ParserUtil
   include BusinessRulesObserver
   include Va::Observer::Util

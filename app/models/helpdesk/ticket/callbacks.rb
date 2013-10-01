@@ -14,8 +14,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :update_dueby, :unless => :manual_sla?
 
-  before_save :add_inline_images_to_attachments, :if => :contains_inline_image?
-
   after_create :refresh_display_id, :create_meta_note
 
   after_commit_on_create :create_initial_activity,  :update_content_ids, :pass_thro_biz_rules
@@ -303,7 +301,7 @@ private
     description_updated = false
     attachments.each do |attach| 
       content_id = header[:content_ids][attach.content_file_name]
-      self.ticket_body.description_html = self.ticket_body.description_html.sub("cid:#{content_id}", helpdesk_attachment_path(attach)) if content_id
+      self.ticket_body.description_html = self.ticket_body.description_html.sub("cid:#{content_id}", attach.content.url) if content_id
       description_updated = true
     end
 
@@ -389,15 +387,4 @@ private
     @custom_field = nil
   end
 
-  def contains_inline_image?
-    @html_part = Nokogiri::HTML(self.ticket_body.description_html)
-    @html_part.at_css('img.inline-image')
-  end
-
-  def add_inline_images_to_attachments
-    @html_part.xpath('//img[@class="inline-image"]').each do |inline|
-      image = account.attachments.find(inline['data-id'])
-      self.attachments << image unless image.attachable_id      
-    end
-  end
 end
