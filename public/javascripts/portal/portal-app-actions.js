@@ -185,8 +185,20 @@
 	    	})
 	    }
 
-	    
 
+	    // Page specific script invocations
+	    switch(portal['current_page_name']){
+	    	case 'ticket_view':
+			    // Tickets quoted text auto adjust
+			    $.each($('.p-desc'), function(i, item){
+			    	$(item).find(".freshdesk_quote").first().before("<span class='btn btn-quoted'></span>")
+				})
+
+				$("body").delegate(".btn-quoted", "click.show.quoted_text", function(){
+					$(this).parent().find(".freshdesk_quote").toggle();
+				})
+			break;
+	    }	    
 	})
 
 }(window.jQuery);

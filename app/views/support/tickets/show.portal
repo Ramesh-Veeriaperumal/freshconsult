@@ -39,7 +39,9 @@
 				</div>
 			</div>
 			<div class="p-content">
-				<div class="p-desc">{{ ticket.description_html }}</div>
+				<div class="p-desc">
+					{{ ticket.description_html }}
+				</div>
 				{% if ticket.attachments.size > 0 %}
 				<hr />
 				<div class="cs-g-c attachments" id="ticket-{{ticket.id}}-attachments">
@@ -93,7 +95,7 @@
 		<section id="ticket-comments">
 			{% for comment in ticket.public_comments %}
 				<section class="user-comment {% if comment.user.is_agent %} comment-by-agent {% endif %}" 
-						 id="ticket-note-{{comment.id}}">
+						 id="ticket-note-{{ comment.id }}">
 
 					<div class="user-info">
 						{{ comment.user | profile_image:'user-pointer-bottom', '40px', '40px' }}
@@ -102,7 +104,7 @@
 							<div class="p-info">{% translate portal.said %} {{ comment.created_on | time_ago }}</div>
 						</div>
 					</div>
-
+					
 					<div class="p-content">						
 						<div class="p-desc">
 							{{ comment.description }}

@@ -696,7 +696,7 @@ HTML
 		{ :language => @portal['language'],
 		  :name => h(@portal['name']),
 		  :contact_info => h(@portal['contact_info']),
-		  :current_page => @portal['page'],
+		  :current_page_name => @current_page_token,
 		  :current_tab => @current_tab,
 		  :preferences => portal_preferences }.to_json
 	end
