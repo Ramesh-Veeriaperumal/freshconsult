@@ -641,6 +641,7 @@ li.ui-state-active {
     border-radius: 0 5px 5px 5px;
     display: none;
     padding: 10px 0 0 10px;
+    z-index: 10;
 }
 
 /* Remove default border from the custom widget since we're adding our own.  TBD: rework the dropdown calendar to use the default borders */
@@ -2373,6 +2374,7 @@ div.color{
 }
 .fc_self_expanded{
     background-color: #fff;
+}
 
 .chat_tkt_details{
     .rsltmsg_wrap{
