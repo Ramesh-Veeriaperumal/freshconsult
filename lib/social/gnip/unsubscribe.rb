@@ -10,7 +10,7 @@ class Social::Gnip::Unsubscribe
 		gnip_streams = rule.streams
 		gnip_streams.each do |stream|
 			rule.set_stream(stream)
-			rule.remove(args)
+			rule.remove(args) if Rails.env.production? || !rule.replay
 		end
 	end
 end

@@ -34,7 +34,12 @@
         document.body.appendChild(main);
       }
     }
-  }  
+  }
+  var link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.type = 'text/css';
+  link.href = '<%=@app_url%>/stylesheets/chat/visitor.css';
+  document.head.appendChild(link);
 
   window.FRESH_CHAT_ID = "<%=@chat.display_id%>";
   window.FRESH_CHAT_SESSION = "<%=@chat.visitor_session%>";
@@ -60,7 +65,7 @@
 
   <%
   color = "#777777";
-  position = "right:10px;"
+  position = "right:40px;"
   if @chat.preferences != nil
     color = @chat.preferences['window_color']
     if @chat.preferences['window_position'] == "Bottom Left"

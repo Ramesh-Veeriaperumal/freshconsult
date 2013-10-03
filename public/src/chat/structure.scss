@@ -1,4 +1,3 @@
-
 .space_top{
     margin-top: 20px;
 }
@@ -28,7 +27,7 @@
 
 #container{
     min-width: 1140px;
-}
+}   
 
 #search {
     float: left;
@@ -128,7 +127,7 @@
 
 #sidebar{
     position: fixed;
-    z-index: 999999;
+    z-index: 1;
 }
 
 .sidebar_tabs_container {
@@ -146,22 +145,21 @@
     height: 39px;
     z-index: 999999;
     color: #fff;
-
+    .icon-user, .icon-headphones{
+        font-size: 18px;
+        position: relative;
+        top: 2px;
+    }
     .icon-headphones{
         top: 3px;
         color: #fff;
-    }
-    .icon-user, .icon-headphones{
-        font-size: 19px;
-        position: relative;
-        top: 2px;
+        font-size: 18px;
     }
     [class^="icon-"], [class*=" icon-"]{
         width: auto;
     }
 
 }
-
 
 .top-border {
     width: 100%;
@@ -186,6 +184,12 @@
     }
 
 }
+#agent-list{
+    .contact-list{
+        width: 214px;
+    }
+
+}
 
 #visitor-list{
     left: 56px;
@@ -207,10 +211,16 @@
 
 .sneakpeak ul li {
     padding: 10px 12px;
+    cursor: pointer;
     border-bottom: 1px #F9F9F9 solid;
     &:last-child{
         border-bottom: none;
+        border-radius: 0px 0px 5px 5px;
     }
+    &:first-child{
+        border-radius: 5px 5px 0px 0px;
+    }
+
 }
 
 .sneakpeak ul li a, .sneakpeak ul li a span {
@@ -228,7 +238,7 @@
     width: 25px;
     height: 25px;
     vertical-align: middle;
-    margin-right: 10px;
+    margin-right: -10px;
 }
 
 #tabs-group {
@@ -646,6 +656,13 @@ li.ui-state-active {
     left: 0;
     padding: 20px;
     width: 180px;
+    .select2{
+        width: 184px;
+        clear: both;
+    }
+    input[type="submit"]{
+        margin-top: 10px;
+    }
 }
 
 #search_filter h1{
@@ -685,14 +702,19 @@ li.ui-state-active {
 
 #search_results_expand{
     margin:0;
-    overflow: auto;
     width: 98%;
     border-radius: 5px;
+    position: relative;
+    .rslthdr_inner{
+        background-color: #f8f8f8;
+    }
 }
 
 #search_results_expand span{
-    float: left;
-    margin-left: 10px;
+    position: absolute;
+    top: -22px;
+    cursor: pointer;
+    color: #1272DE;
 }
 
 #msgCount{
@@ -706,7 +728,6 @@ li.ui-state-active {
 }
 
 .rslthdr{
-    border-bottom: 1px solid;
     cursor: pointer;
 }
 
@@ -717,41 +738,43 @@ li.ui-state-active {
 
 .rsltavatar{
     float: left;
-    width: 35px;
+    width: 26px;
     border-radius: 4px;
     height: 31px;
     img{
         border-radius: 4px;
-        width: 31px;
+        width: 26px;
     }
 }
 
 .rsltname{
-    font-size: 12px;
+    font-size: 14px;
+    color: #1272de;
     display: block;
-    background-color: #eee;
     width: 98%;
     padding: 1%;
-    color: #666;
     word-break: break-word;
     .rslttime{
         font-size: 12px;
     }
+    .icon-comments{
+        font-size: 20px;
+        line-height: 14px;
+        margin-right: 10px;
+    }
 }
 
 .rsltuser, .rsltagent{
-    font-size: 13px;
-    font-weight: 600;
-    display: inline-block;
-
+  font-size: 12px;
+  font-weight: 600;
+  color: #999;
+  display: inline-block;
 }
 
 .rsltmsg{
     width: 98%;
-    padding: 5px 1%;
+    padding: 0px 0px 9px 37px;
     display: block;
-    background: #fff;
-    border-top: 1px #f1f1f1 solid;
     .rslttime{
         display: none;
     }
@@ -771,11 +794,11 @@ li.ui-state-active {
 .rsltsum{
     font-size: 12px;
     clear: both;
-    color: #444;
+    color: #888;
     width: 550px;
     white-space: nowrap;
     overflow: hidden;
-    padding-top: 7px;
+    padding-top: 2px;
     -webkit-text-overflow: ellipsis;
     -ms-text-overflow: ellipsis;
     text-overflow: ellipsis;
@@ -950,11 +973,11 @@ li.ui-state-active {
 }
 
 .recent{
-    padding: 0px 5px;
+    padding: 0px 0px 0px 4px;
     height:26px;
     float: left;
     text-align: center;
-    border-radius: 6px;
+    border-radius: 4px;
     margin: 6px 0 5px 10px;
     cursor: pointer;
     font-size: 25px;
@@ -964,6 +987,11 @@ li.ui-state-active {
     &#bar_recent_list{
         margin-left: 5px;
     }
+}
+.icon-reorder{
+    font-size: 21px;
+    line-height: 26px !important;
+    padding: 0px 5px;
 }
 
 #recent_container{
@@ -975,6 +1003,13 @@ li.ui-state-active {
     border: 1px solid;
     width: 300px;
     z-index: 1000000;
+    border-radius: 6px !important;
+    &:first-child{
+        border-radius: 6px 6px 0px 0px;
+    }
+    &:last-child{
+        border-radius: 0px 0px 6px 6px;
+    }
 }
 
 .recent_chats{
@@ -1017,14 +1052,20 @@ li.ui-state-active {
     border-radius: 5px;
 }
 
-#search_results_list{
+.search_results_list{
     width: 98%;
     background-color: #f3f3f3 !important;
     border-radius: 5px;
     min-height: 550px;
     float: left;
-    padding: 10px 1px;
+    padding: 0px 1px;
     margin-bottom: 30px;
+    &:first-child{
+        border-radius: 5px 5px 0px 0px;
+    }
+    &:last-child{
+        border-radius: 0px 0px 5px 5px;
+    }
 }
 
 .minimize, .chat_close{
@@ -1145,25 +1186,9 @@ li.ui-state-active {
     .heading{
         width: 40px;
         height: 35px;
-        border:1px solid;
+        border:1px solid #ccc;
         float: left;
     }
-}
-
-.user-input{
-    height: 33px;
-    width: 83%;
-    padding-top: 2px;
-    border:1px solid;
-    float: left;
-}
-.user-input input[type="text"]{
-    width: 94%;
-}
-
-.user-input input{
-    border: none !important;
-    box-shadow: 0 0 0 #FFF;
 }
 
 .visitor-loc{
@@ -1263,7 +1288,7 @@ li.ui-state-active {
     margin-top: 0;
     margin-bottom: 20px;
     width: 98%;
-    padding: 10px 0 60px;
+    padding: 0px 0 60px;
     min-height: 550px;
     border-radius: 5px;
 }
@@ -1520,40 +1545,40 @@ li.ui-state-disabled{
     margin-top: 25px;
 }
 
-#logo{
+/*#logo{
     height: 38px;
     margin: 20px auto 15px !important;
     padding: 0 !important;
     width: 150px !important;
-}
+}*/
 
-.left-panel, .header_container-left{
+/*.left-panel, .header_container-left{
     width: 200px;
     float: left;
 }
-
-.right-panel, .header_container-right{
+*/
+/*.right-panel, .header_container-right{
     margin-left: 200px;
-}
+}*/
 
-.left-panel{
+/*.left-panel{
     min-height: 400px;
-}
+}*/
 
-.right-panel{
+/*.right-panel{
     border-left: 1px #eaeaea solid;
     min-height: 550px;
     margin-bottom: 50px;
-}
+}*/
 
-.left-panel, .right-panel{
+/*.left-panel, .right-panel{
     padding-top: 62px;
-}
+}*/
 
-.navbar .nav{
+/*.navbar .nav{
   float: right;
 }
-
+*/
 #settings-filter{
     width: 200px;
     position: fixed;
@@ -1600,9 +1625,34 @@ li.ui-state-disabled{
     height: 60px;
     text-decoration: none;
 }
+
 #freshchat_layout, #visitor_results, #chat_notifier_container, .visitor-details{
     [class^="icon-"], [class*=" icon-"]{
         background-image: none;
+    }
+}
+.visitor-details{
+    .visitor-info-input-wrap{
+        .user-input{
+                position: relative;
+                height: 33px;
+                width: 218px;
+                padding-top: 2px;
+                border:1px solid #ccc;
+                float: left;
+            input{
+                padding: 7px 25px 8px 5px;
+                width: 188px;
+                border: none !important;
+                box-shadow: 0 0 0 #FFF;
+            }
+        }
+    }
+    .icon-warning{
+        position: absolute;
+        left: 200px;
+        color: #e9573f;
+        top: 9px;
     }
 }
 
@@ -2028,6 +2078,7 @@ div.file_upload input {
     font-size: 11px;
     border-radius: 20px;
     height: 11px;
+    left: -4px;
     position: relative;
     top: -7px;
     color: #333;
@@ -2153,7 +2204,7 @@ div.color{
     position: relative;
     bottom: -4px;
     z-index: 999999;
-    padding: 8px 0px;
+    padding: 0px 0px;
     display: none;
 }
 .chat_recent_empty{
@@ -2318,9 +2369,8 @@ div.color{
 #chat_ticket_options{
     .ui-widget-overlay{
         height: 2810px; 
-        z-index: 999999;
+        z-index: 1001;
         background-repeat: repeat;
-        overflow: hidden;
     }
 }
 
@@ -2344,4 +2394,70 @@ div.color{
 }
 .brand{
     z-index: 0;
+}
+.chat_loadmore{
+    padding: 10px;
+    border-radius: 0px;
+    border: none;
+    text-align: center;
+    color: #4D769F;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    display: block;
+    margin-right: 0px !important;
+}
+.fc_title_info{
+    position: relative;
+    top: -10px;
+}
+.chat_setting_form input[type="checkbox"]{
+    position: relative;
+    top: -2px;
+}
+.rsltname_expanded{
+    font-size: 14px;
+    p{
+        padding-left: 17px;
+        width: 92%;
+        float: left;
+    }
+    i{
+        font-size: 22px;
+        position: relative;
+        top: -4px;
+        float: left;
+    }
+}
+#search_results_grp{
+    .rsltdate{
+        padding-left: 29px;
+        padding-top: 5px;
+    }
+}
+.fc_guest_expanded, .fc_self_expanded{
+    .rsltdata{
+        width: 95%;
+        padding-left: 9px;
+    }
+    .rslttime{
+        visibility: hidden;
+        float: right;
+    }
+    &:hover{
+        .rslttime{
+            visibility: visible;
+        }
+        
+    }
+}
+
+.fc_guest_expanded{
+    background-color: #fefef0;
+    .rsltset{
+        background-color: transparent;
+    }
+}
+.fc_self_expanded{
+    background-color: #fff;
 }

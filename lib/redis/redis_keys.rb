@@ -29,6 +29,7 @@ module Redis::RedisKeys
 	ENTERPRISE_REPORTS_ENABLED = "ENTERPRISE_REPORTS_ENABLED"
 	
 	CUSTOM_SSL = "CUSTOM_SSL:%{account_id}"
+	SUBSCRIPTIONS_BILLING = "SUBSCRIPTIONS_BILLING:%{account_id}" 
 
 	def newrelic_begin_rescue
 	    begin

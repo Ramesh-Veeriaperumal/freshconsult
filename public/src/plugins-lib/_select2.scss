@@ -469,6 +469,15 @@ disabled look for already selected choices in the results dropdown
 
 .select2-offscreen { position: absolute; left: -10000px; margin-top:-15px/* Fix for scroll bar in modal dialogue box */;}
 
+
+.select2-flat{
+ .select2-choice{
+  background: none;
+  font-weight:bold;
+ } 
+ 
+}
+
 /* Retina-ize icons */
 
 @media only screen and (-webkit-min-device-pixel-ratio: 1.5) {

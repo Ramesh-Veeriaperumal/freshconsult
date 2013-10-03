@@ -39,7 +39,17 @@ define([
 						msg:data.msg
 					});
 				}
+				var mail = $.cookie('fc_vmail');
+				if(mail == null){
+					mail = "";
+				}
+				var phone = $.cookie('fc_vphone');
+				if(phone == null){
+					phone = "";
+				}
 				data.name = userName;
+				data.mail = mail;
+				data.phone = phone;
 				chat_socket.emit("visitor ping",data);
 			}
 		},
@@ -109,7 +119,7 @@ define([
 			}
 			msg.msg = this.parseURL(msg.msg);
 			var html = '<p class="'+msg.class+' clearfix"><img src="'+photo+'" alt="" />'
-						+'<span class="fc_msg-block"><b>'+name+'</b> <span class="fc_time">'+hours+':'+minutes+'</span>'
+						+'<span class="fc_msg-block"><span class="fc_time">'+hours+':'+minutes+'</span><b>'+name+'</b>' 
 						+'<span class="fc_msg '+noname+'">'+msg.msg+'</span></span></p>';
 			return html;
 		},
@@ -162,10 +172,11 @@ define([
 			this.clearTypingStatus();
 		},
 		typingStatus:function(data){
-			$("#fc_status").html(data.name+" "+FRESH_CHAT_SETTING.typing_message).show();
+			var inner = $("#fc_chat_messagewindow");
+			inner.append("<div id='fc_status' class='fc_chat-status'><img src='"+WEB_ROOT+"/users/"+data.userId+"/profile_image'/> "+FRESH_CHAT_SETTING.typing_message+"</div>").scrollTop(inner.get(0).scrollHeight);
 		},
 		clearTypingStatus:function(){
-			$("#fc_status").html("").hide();
+			$("#fc_status").remove();
 		}
 	});
   return new ChatView();

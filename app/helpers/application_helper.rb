@@ -48,20 +48,17 @@ module ApplicationHelper
 
   def logo_url
     MemcacheKeys.fetch(["v4","portal","logo",current_portal],30.days.to_i) do
-      image_tag(
         current_portal.logo.nil? ? "/images/logo.png?721013" : 
         AwsWrapper::S3Object.url_for(current_portal.logo.content.path(:logo),current_portal.logo.content.bucket_name,
                                           :expires => 30.days, :secure => true)
-      )
     end
   end
 
   def fav_icon_url
     MemcacheKeys.fetch(["v5","portal","fav_ico",current_portal]) do
-      url = current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' : 
-            AwsWrapper::S3Object.url_for(current_portal.fav_icon.content.path,current_portal.fav_icon.content.bucket_name,
+      current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' : 
+            AwsWrapper::S3Object.url_for(current_portal.fav_icon.content.path(:fav_icon),current_portal.fav_icon.content.bucket_name,
                                           :expires => 30.days, :secure => true)
-      "<link rel=\"shortcut icon\" href=\"#{url}\" />".html_safe
     end
   end
 
@@ -132,7 +129,7 @@ module ApplicationHelper
   end
 
   def tab(title, url, cls = false, tab_name="")
-    options = {:"data-pjax" => "#body-container"}
+    options = current_user && current_user.agent? ? {:"data-pjax" => "#body-container"} : {}
     if tab_name.eql?(:tickets)
       options.merge!({:"data-parallel-url" => "/helpdesk/tickets/filter_options", :"data-parallel-placeholder" => "#ticket-leftFilter"})
     end
@@ -281,14 +278,6 @@ module ApplicationHelper
 
     navigation = tabs.map do |s| 
       content_tag(:li, link_to(s[2], s[0]), :class => ((@selected_tab == s[1]) ? "active" : ""))
-    end
-  end
-
-  def show_contact_hovercard(user, options=nil)
-    if privilege?(:view_contacts)
-      link_to(h(user), user, :class => "username", "data-placement" => "topRight", :rel => "contact-hover", "data-contact-id" => user.id, "data-contact-url" => hover_card_contact_path(user)) unless user.blank?
-    else
-      link_to(h(user), "javascript:void(0)", :class => "username") unless user.blank?
     end
   end
   
@@ -486,8 +475,17 @@ module ApplicationHelper
   
   # User details page link should be shown only to agents and admin
   def link_to_user(user, options = {})
+    return if user.blank?
+
     if privilege?(:view_contacts)
-      link_to(h(user.display_name), user, options)
+      default_opts = { :class => "username",
+                       :rel => "contact-hover", 
+                       "data-contact-id" => user.id, 
+                       "data-placement" => "topRight", 
+                       "data-contact-url" => hover_card_contact_path(user)  }
+
+      link_to(h(user), user, default_opts.merge(options))
+      # link_to(h(user.display_name), user, options)
     else 
       content_tag(:strong, h(user.display_name), options)
     end
@@ -856,15 +854,6 @@ module ApplicationHelper
     privilege?(:edit_ticket_properties) ? 'quick-action dynamic-menu' : ''
   end
   
-  def note_responder(note)
-    if privilege?(:view_contacts)
-      link_to_user(note.user, :class => "user_name", "data-placement" => "topRight",
-        :rel => "hover-popover", "data-widget-container" => "agent-hovercard_#{note.id}" )
-    else
-      link_to_user(note.user, :class => "user_name", "data-placement" => "topRight")
-    end
-  end
-
   def will_paginate(collection_or_options = nil, options = {})
     if collection_or_options.is_a? Hash
       options, collection_or_options = collection_or_options, nil

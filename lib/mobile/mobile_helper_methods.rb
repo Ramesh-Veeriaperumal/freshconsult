@@ -41,9 +41,8 @@ module Mobile::MobileHelperMethods
     end
 
     def is_native_mobile?
-	  Rails.logger.debug "nmobile ::: #{request.env["HTTP_USER_AGENT"]}"
-      request.env["HTTP_USER_AGENT"] && !request.env["HTTP_USER_AGENT"][/Native/].nil?
-	end
+      @native_mobile_agent ||= request.env["HTTP_USER_AGENT"] && !request.env["HTTP_USER_AGENT"][/Native/].nil?
+    end
 
     def set_mobile      
       Rails.logger.debug "mobile ::: #{mobile?} :: #{request.headers['HTTP_ACCEPT']}"
@@ -54,7 +53,7 @@ module Mobile::MobileHelperMethods
 
     def set_native_mobile
       Rails.logger.debug "nmobile ::: #{is_native_mobile?} :: #{request.headers['HTTP_ACCEPT']}"
-	    params[:format] = "nmobile" if is_native_mobile?
+      params[:format] = "nmobile" if is_native_mobile?
     end
 
     def require_user_login

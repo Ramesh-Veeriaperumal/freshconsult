@@ -141,7 +141,7 @@
 
 		initializeRequester: function (requester_name) {
 			var $container = this.$element;
-			$('#select-requester').val(requester_name).keyup();
+			$('.'+this.search_container_class+' .select-requester').val(requester_name).keyup();
 			this.results[ '.' + this.search_container_class + ' .select-requester'].onSearchFieldKeyDown(42);
 		}
 	};

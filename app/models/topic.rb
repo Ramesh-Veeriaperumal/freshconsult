@@ -22,7 +22,7 @@ class Topic < ActiveRecord::Base
   # as a result no callbacks will be triggered and so User.posts_count will not be updated
   has_one  :recent_post, :order => "#{Post.table_name}.created_at DESC", :class_name => 'Post'
   
-  has_one :ticket_topic,:dependent => :destroy
+  has_one :ticket_topic, :dependent => :destroy
   has_one :ticket,:through => :ticket_topic
   
   has_many :voices, :through => :posts, :source => :user, :uniq => true
@@ -31,7 +31,7 @@ class Topic < ActiveRecord::Base
     :class_name => 'Helpdesk::Activity', 
     :as => 'notable'
 
-  named_scope :newest, lambda { |num| { :limit => num, :order => 'replied_at DESC' } }
+  named_scope :newest, :order => 'replied_at DESC'
 
   named_scope :visible, lambda {|user| visiblity_options(user) }
 
@@ -49,7 +49,7 @@ class Topic < ActiveRecord::Base
   # !FORUM ENHANCE Removing hits from orderby of popular as it will return all time
   # It would be better if it can be tracked month wise
   # Generally with days before DateTime.now - 30.days
-  named_scope :popular, lambda{ |days_before| 
+  named_scope :popular, lambda { |days_before| 
     { :conditions => ["replied_at >= ?", days_before], 
       :order => 'hits DESC, user_votes DESC, replied_at DESC', 
       :include => :last_post } 

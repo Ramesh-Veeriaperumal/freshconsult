@@ -12,6 +12,21 @@
     </div>
   </div>
 
+ <% if current_account.features?(:cascade_dispatchr) %>
+  <div class="row-fluid list-page-subheader">
+    <span class="vertical-alignment">
+      <img alt="" src="/images/down-arrow-automation.png">
+    </span>
+    <span class="vertical-alignment"><%= t('dispatch.cascade_text') %> &nbsp;</span>
+      <% form_for :cascade_dispatcher, @va_rules, :url => { :controller => "va_rules", :action => "toggle_cascade" }, :html => { :id => "dispatcher_cascade" , :class => "vertical-alignment"} do |f| %>
+
+        <%= select "cascade_dispatchr", "cascade", VARule.cascade_dispatchr_option, 
+                         {:selected => current_account.features?(:cascade_dispatchr) ? 1 : 0 }, { :class => "select2 select2-flat span12", :id => "cascade_dispatchr" } %>
+      <% end %>
+      <span id="cascade_loader" class="vertical-alignment loading-tiny loading-left"></span>
+  </div>
+  <% end %>
+
   <div>
   <%= render :partial => "/shared/reorder_list", :locals => { 
       :items => @va_rules.active,  
@@ -59,3 +74,31 @@
     });
   })(jQuery)
 <% end %>
+
+<script type="text/javascript">
+jQuery(document).ready(function() {
+  selected_dispatchr_method = 
+  jQuery('#cascade_dispatchr').select2({
+    minimumResultsForSearch: 1000
+  });
+});
+
+jQuery('#cascade_dispatchr').change(function() {
+    var cascade_value = jQuery('#cascade_dispatchr').attr('value');
+
+    new Ajax.Request('/admin/va_rules/toggle_cascade', 
+                     { parameters: {cascade_dispatcher: cascade_value},
+                        onLoading: function() {
+                          jQuery("#cascade_loader").addClass('sloading');
+                        },
+                        onSuccess: function(response) {
+                          jQuery("#cascade_loader").removeClass('sloading');
+                          //nothing doing here.
+                          }
+
+                       });
+    return false;
+  });
+</script>
+
+

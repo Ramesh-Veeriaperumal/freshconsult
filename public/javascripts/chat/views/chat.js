@@ -115,6 +115,7 @@ define([
 				that.header(chat);
 				chat.transcript();
 				that._listeners(chat);
+				$("#msg-box-"+chat.id).focus();
 			});
 		},
 		isIgnoreKey:function(keyCode){
@@ -138,7 +139,7 @@ define([
 		update:function(msg){
 			window.chatCollection.updateMessage(msg);
 			if(CURRENT_USER.id != msg.userId){
-				soundManager.play('new_msg');
+				window.startMusic('new_msg');
 				notifierView.scroll(msg);
 				if($("#tabs-chat-"+msg.chatId).hasClass("ui-tabs-hide")){
 					this.blink(msg.chatId);
@@ -177,7 +178,9 @@ define([
 			}(chat.id));
 		},
 		close:function(chat){
-			if(!chat.closed && chat.ptype!="agent"){chat_socket.emit('chat close',{chat:chat.id});}
+			if(!chat.closed && chat.ptype!="agent"){
+				chat_socket.emit('chat close',{chat:chat.id});
+			}
 			else{
 				this.closeWindow(chat);
 			}
@@ -187,7 +190,7 @@ define([
            triggerObj.trigger('click');
            window.chatCollection.remove(chat);
            localStore.remove("chat",chat.id);
-        }, 
+        },
 		typingStatus:function(chat,data){
 			$("#status-"+chat.id).html(data.name+" "+(IS_TYPING ?  IS_TYPING : i18n.typing_message)).show();
 		},
@@ -243,41 +246,16 @@ define([
 			}
 		},
 		agentStatus:function(data){
-			var that = this;
-			var status = "offline";
-			var users = data.users;
-			if(data.status == 1){status = "online";}
-			for(var m = 0; m < users.length; m++){
-				var user = userCollection.get(users[m].userId);								
-				if(user){
-					if(user.get('id')!=CURRENT_USER.id){
-						user.once({'change:status' : function(){
-							var count=userCollection.onlineAgents();
-					 		$("#online_agent_count,#bar_agents_count").html(count);
-						}});						
-						user.set('status',parseInt(data.status));
-						var statusObj = $("#"+users[m].userId+"_status");
-						statusObj.removeClass(statusObj.className);
-						statusObj.addClass("status "+status);						
-						if(window.chatCollection){
-							_.each(chatCollection.models, function(chat) {
-								if((users[m].userId == chat.participants[0].userId) || (users[m].userId==chat.userId)){
-									that.changeStatus(chat.id,status);
-								}
-							});
-						}
-					}					
-				}
-			}
+			// Move everything to users view			
+			require(['views/users'],function(userView){
+				userView.updateStatus(data);				
+			});
+
 		},
 		changeStatus:function(chatId,status){
-			var statusObj=$('#tabs-group a[href*="'+chatId+'"]').parent().find('span:nth-child(2)')
-			$('#tabs-group a[href*="'+chatId+'"]').parent().find('span:nth-child(2)')
-				.removeClass(statusObj.className)
-				.addClass(status);
-			if(status=='offline'){
-				$('#transfer-'+chatId).hide();
-			}
+			require(['views/users'],function(userView){
+				userView.changeStatus(chatId,status);
+			});
 		},
 		escapeHtml:function(string) {
 			var entityMap = {

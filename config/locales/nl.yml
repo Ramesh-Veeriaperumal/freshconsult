@@ -247,7 +247,7 @@ nl:
     login: 
       form: 
         email: E-mail
-        password: Wachtword
+        password: Wachtwoord
         remember: "Onthoud mij op deze computer"
         login: Inloggen
         forgot: "Wachtwoord vergeten?"

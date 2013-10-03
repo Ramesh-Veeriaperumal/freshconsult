@@ -20,6 +20,12 @@
       :title => :name, :container_id => "va_rules_sort", 
       :reorder_id => "va_rules_reorder_button", :list_id => "va_rules_list"} %>
   </div>
+  <div class="row-fluid list-page-subheader">
+    <span class="vertical-alignment">
+      <img alt="" src="/images/down-arrow-automation.png">
+    </span>
+    <span class="vertical-alignment"><%= t('admin.supervisor_rules.info_help').html_safe %></span>
+  </div>
 
   <div class="list-page-body va_rule-index" id="va_rules_list">
     <table class="table table-striped">

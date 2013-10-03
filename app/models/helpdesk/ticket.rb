@@ -142,10 +142,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def agent_permission user
       permissions = {:all_tickets => [] , 
-                   :group_tickets => ["group_id in (?) OR responder_id=?", 
-                    user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id] , 
-                   :assigned_tickets =>["responder_id=?", user.id] }
-                  
+                   :group_tickets => ["group_id in (?) OR responder_id=? OR requester_id=?", 
+                    user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id, user.id] , 
+                   :assigned_tickets =>["responder_id=?", user.id]}
+                   
       return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
     end
 
@@ -359,8 +359,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def included_in_cc?(from_email)
-    (cc_email_hash) and  ((cc_email_hash[:cc_emails].any? {|email| email.include?(from_email) }) or 
-                     (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email) }))
+    (cc_email_hash) and  ((cc_email_hash[:cc_emails].any? {|email| email.include?(from_email.downcase) }) or 
+                     (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email.downcase) }))
   end
 
   def ticket_id_delimiter

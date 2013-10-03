@@ -296,7 +296,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       begin
         ticket.cc_email = ticket_cc_emails_hash(ticket)
         if (user.agent? && !user.deleted?)
-          ticket.responder ||= user
           process_email_commands(ticket, user, ticket.email_config, note) if 
             user.privilege?(:edit_ticket_properties)
           email_cmds_regex = get_email_cmd_regex(ticket.account)
@@ -439,7 +438,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       cc_emails_val =  parse_cc_email
       cc_emails_val.delete(ticket.account.kbase_email)
       cc_emails_val.delete_if{|email| (email == ticket.requester.email)}
-      cc_email_hash_value[:cc_emails] = cc_emails_val | cc_email_hash_value[:cc_emails]
+      cc_email_hash_value[:cc_emails] = cc_emails_val | cc_email_hash_value[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}
       cc_email_hash_value
     end
 

@@ -2,18 +2,32 @@ class FBPageTab
 
   require 'koala'
 
-  attr_accessor :fb_page
+  attr_accessor :fb_page, :app_id
 
-  def initialize page = nil
+  def initialize page = nil, app_id = nil
     self.fb_page = page
+    self.app_id = app_id
   end
 
   def graph
-    @graph ||= Koala::Facebook::GraphAPI.new(self.fb_page.page_token) if fb_page
+    if fb_page
+      page_token = fb_page.page_token
+      #Condition for Handling newly registered users for facebook tab
+      #Condition for Handling converted users from old to new facebook tab app
+      #remove this code after migration
+      page_token = fb_page.page_token_tab if fb_page.page_token_tab && !fb_page.page_token_tab.empty?
+      @graph ||= Koala::Facebook::GraphAPI.new(page_token)
+    end
   end
 
   def oauth
-    @oauth ||= Koala::Facebook::OAuth.new(FacebookConfig::APP_ID, FacebookConfig::SECRET_KEY)
+    #if app_id is present then it means the request is coming from new app
+    #remove this code after migration
+    unless app_id
+      @oauth ||= Koala::Facebook::OAuth.new(FacebookConfig::APP_ID, FacebookConfig::SECRET_KEY)
+    else
+      @oauth ||= Koala::Facebook::OAuth.new(FacebookConfig::PAGE_TAB_APP_ID,FacebookConfig::PAGE_TAB_SECRET_KEY)
+    end
   end
 
   def has_permissions? token
@@ -38,35 +52,46 @@ class FBPageTab
   def add
     return_value = fb_sandbox(false) {
       graph.put_connections("me", "tabs", 
-                            { :access_token => self.fb_page.page_token,
-                              :app_id => FacebookConfig::APP_ID
+                            { :access_token => self.fb_page.page_token_tab,
+                              :app_id => FacebookConfig::PAGE_TAB_APP_ID
                             })
     }
     return_value
   end
 
-  def get
-    return_value = fb_sandbox([]) {
-      graph.get_connections("me", "tabs/#{FacebookConfig::APP_ID}", 
-                            { :access_token => self.fb_page.page_token}).first
+  def get(fb_app_id = nil)
+    page_token = self.fb_page.page_token
+    unless fb_app_id
+      fb_app_id = FacebookConfig::PAGE_TAB_APP_ID
+      page_token = self.fb_page.page_token_tab
+    end
+    return_value = fb_sandbox() {
+      page_tab_name = graph.get_connections("me", "tabs/#{fb_app_id}", 
+                            { :access_token => page_token})
+      page_tab_name.blank? ? [] : page_tab_name.first 
     }
     return_value
   end
 
   def update name
     return_value = fb_sandbox(false) {
-      graph.put_connections("me", "tabs/app_#{FacebookConfig::APP_ID}", 
-                            { :access_token => self.fb_page.page_token, 
+      graph.put_connections("me", "tabs/app_#{FacebookConfig::PAGE_TAB_APP_ID}", 
+                            { :access_token => self.fb_page.page_token_tab, 
                               :custom_name => name
                             })
     }
     return_value
   end
 
-  def remove
+  def remove(fb_app_id = nil)
+    page_token = self.fb_page.page_token
+    unless fb_app_id
+      fb_app_id = FacebookConfig::PAGE_TAB_APP_ID
+      page_token = self.fb_page.page_token_tab
+    end
     return_value = fb_sandbox(false) {
-      graph.delete_connections("me", "tabs/app_#{FacebookConfig::APP_ID}", 
-                                { :access_token => self.fb_page.page_token})
+      graph.delete_connections("me", "tabs/app_#{fb_app_id}", 
+                                { :access_token => page_token})
     }
     return_value
   end
@@ -76,37 +101,11 @@ class FBPageTab
     def fb_sandbox(return_value = nil)
       begin
         return_value = yield
-      rescue Koala::Facebook::APIError => e
-        if e.fb_error_type == 4 #error code 4 is for api limit reached
-          fb_page.attributes = {:last_error => e.to_s}
-          fb_page.save
-          Rails.logger.debug "API Limit reached - #{e.to_s}"
-          new_relic_error_notice(e)
-        else
-          attributes_on_error(e)
-          fb_page.save
-          Rails.logger.debug "APIError while processing facebook - #{e.to_s}"
-          new_relic_error_notice(e)
-        end
       rescue Exception => e
         Rails.logger.debug "Error while processing facebook - #{e.to_s}"
         NewRelic::Agent.notice_error(e)
       end
       return return_value
-    end
-
-    def any_error e
-      Social::FacebookWorker::ERROR_MESSAGES.any? {|k,v| e.include?(v)}
-    end
-
-    def token_or_permission_error e
-      e.include?(Social::FacebookWorker::ERROR_MESSAGES[:access_token_error]) ||
-        e.include?(Social::FacebookWorker::ERROR_MESSAGES[:permission_error])
-    end
-
-    def attributes_on_error e
-      fb_page.attributes = {:reauth_required => true, :last_error => e.to_s} if any_error(e.to_s)
-      fb_page.attributes = {:enable_page => false} if token_or_permission_error(e.to_s)
     end
 
     def new_relic_error_notice e

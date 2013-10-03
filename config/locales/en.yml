@@ -666,6 +666,7 @@ en:
         feedbackwidget_search_area: Search Articles
         feedbackwidget_use_https: Use https
     supervisor_rules:
+      info_help: For <b>each tickets</b> updated within 30 days, Execute all matching rules.
       index:
         human_name: Supervisor Rule
         title: Supervisor - Rules
@@ -681,6 +682,7 @@ en:
       edit:
         title: Supervisor - Edit Rule
     observer_rules:
+      info_help: For any event performed in a ticket, The Observer rules lets you trigger specific actions.
       index:
         human_name: Observer Rule
         title: Observer - Rules
@@ -1244,6 +1246,7 @@ en:
       update: 
         success: Email notifications have been updated.
     general: 
+      limit_exceeded: You've exceeded the limit for performing this action. Please try again.
       access_denied: You are not allowed to access this page!
       need_login: You must be logged in to access this page
       insufficient_privilege: 
@@ -1641,6 +1644,9 @@ en:
     conditions: Conditions
     actions: Actions
     new: Dispatch'r - New Rule
+    cascade_text: For each incoming ticket, Execute
+    cascade: all matching rules
+    no_cascade: first matching rule 
     add_new_choice: Add New choice
     act_to_perform: Perform these actions
     edit: Dispatch'r - Edit Rule
@@ -2101,6 +2107,7 @@ en:
   subscription: 
     error: 
       lesser_agents: Your freshdesk account currently has %{agent_count} agents, you cannot subscribe to a lesser number of agents. Please delete some agents and try again.
+      card_update_limit_exceeded: You've exceeded the hourly limit for updating your credit card. Please try again later.
     upgrade:
       message: Upgrade your account to unlock this feature.
       cname: Want to use your own domain here? Please upgrade your account.
@@ -2529,6 +2536,7 @@ en:
     add_page: Add Facebook Page
     deleted: The facebook page %{facebook_page} has been removed.
     not_authorized: You were not authorized by Facebook
+    realtime: "<b>Realtime stream feed fetching app is stopped</b> due to some changes on this Facebook account <a href='%{realtime_url}' > Re-authorize and Enable </a> "
   logo: Logo
   ok: Ok
   back: Back
@@ -3265,6 +3273,7 @@ en:
   tickets_filter:
     title: "Filter Tickets"
     unsaved_view: "Untitled View"
+    requester_name_or_email: "Name or Email"
     raised_by: "Tickets created by"
     everyone_in_company: "Everyone in %{company_name}"
     sort_fields:
@@ -3637,9 +3646,15 @@ en:
     salesforce:
       label: "Salesforce"
       desc: "You can view contact information from Salesforce crm in Freshdesk."
+      helptext: "<h4>Salesforce Integration</h4><p><br/>Select the list of fields need to be displayed in the saleforce widget. You can select to a max of 10 fields.</p><p><strong>Note:</strong><br/>Name is the default field and cannot be removed.</p>"
+      add_fields:
+        remove: "Remove"
       form:
         salesforce_settings_info: ""
         salesforce_settings: "Salesforce Settings"
+        select: "Select an option"
+        contact: "Contact Fields"
+        lead: "Lead Fields"
     nimble:
       label: "Nimble"
       desc: "You can view contact information from Nimble crm in Freshdesk."
@@ -4167,6 +4182,7 @@ en:
   plans_and_pricing: "Plans & Pricing"
   number_of_attachments: " attachments"
   activation_link: Successfully registered activation link has been sent to %{email}
+  activation_link_no_email: Successfully registered
   not_given: "Not given."
   adv_reports:
     at_a_glance: "At-a-glance"
@@ -4341,8 +4357,8 @@ en:
     showform: "Show Pre-chat form"
     enable_proactive: "Enable proactive chat"
     proactive_note: "Note: Pre-chat form will not be shown for Proactive chats"
-    proactive_time: "If the visitor spends more than"
-    proactive_time_end: "seconds on current page"
+    proactive_time: "Automatically greet visitor when they spend more than %{seconds} seconds on same page"
+    procative_info: "Greet visitors proactively based on time spend on a page"
     show: "Show"
     required: "Required field"
     name: "Name"
@@ -4398,7 +4414,6 @@ en:
     tags: "Tags"
     agent: "Agent"
     back: "Back"
-    continue_chat: "Continue Chat"
     select_location:  "Select Location"
     valid_code: "Please enter a valid color value"
     ticket_desc: "Ticket created via Freshchat. Conversation was between "
@@ -4421,7 +4436,7 @@ en:
     convert_to_ticket: "Convert to Ticket"
     create_ticket_tip: "Save chat transcript and details to a ticket.All Chat transcript will be saved in chat history."
     tkt_success_note_error: "Ticket has been created and error while adding note!"
-    note_success: "New note has been added to the ticket"
+    note_success: "New note has been added to the ticket #%{display_id}"
     note_error: "Error while adding note!"
     error: Error 
     existing_tkt_option_tip: "Save to an <b>existing</b> ticket"
@@ -4453,6 +4468,9 @@ en:
     nochat: "No chat available"
     adding_note: "Adding Note..."
     creating_ticket: "Creating Ticket..."
+    chat_with_loc: "Chat with <b>$1</b> from $3 and <b>$2</b>"
+    chat_with_noloc: "Chat with <b>$1</b> and <b>$2</b>"
+    chat_loadmore: "Load More..."
   date_invalid: Invalid date  
   facebook_tab:
     remove_tab: "Remove page Tab"
@@ -4467,10 +4485,14 @@ en:
     no_ssl: "<b>Facebook page tab requires a Secure Connection.</b><br />You need to enable SSL encryption from <a href='/admin/security'>Security settings</a>"
     image_upload_failed: "Unable to update custom image in page tab"
     image_instructions: "The target image must be of dimensions 111x74. (images of any dimensions can be updated through facebook directly)"
+    configure_tab_auth: "<a href='%{page_tab_url}'> Create your Facebook page tab</a>"
     configure_tab: "Create your Facebook page tab"
     config_info: "Once you enable your Facebook page tab, your customers will be able to directly access your solutions, forums and self-service from within Facebook"
     got_it: "Ok got it."
-    reauth: "Please reauthorize with Facebook to access your page tab"
+    reauth: "Please <a href='%{page_tab_url}' > reauthorize </a> with Facebook to access your page tab"
+    auth: "Please <a href='%{page_tab_url}' > authorize </a> with Facebook to access your page tab"
+    page_tab_auth: "<b>We had made some of changes to page tab</b>, due to which your Facebook page tab is disabled. <br/> <a href='%{page_tab_url}' >Re-authorize and Enable > </a> "
+    page_tab_info: "Please Reauthorize your Facebook page tab"
     no_contact: "Unable to contact Facebook Servers for page tabs at this time"
     portal:
       your_tickets: "Your Tickets"

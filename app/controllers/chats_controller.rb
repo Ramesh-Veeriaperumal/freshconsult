@@ -6,7 +6,7 @@ class ChatsController < ApplicationController
   def load
 
     @chat = ChatSetting.find_by_display_id(params[:id])
-    @app_url = "http://#{@chat.account.full_domain}"
+    @app_url = "//#{@chat.account.full_domain}"
     @comm_url = ChatConfig['communication_url'][Rails.env]
     @chat_debug = ChatConfig['chat_debug'][Rails.env]
     @visitor_id = "visitor#{(Time.now.to_f * 1000.0).to_i}"
@@ -50,7 +50,7 @@ class ChatsController < ApplicationController
     
     if create_note
       @status = "success"
-      @message =  t('freshchat.note_success')+" #"+@note.notable_id.to_s
+       @message =  t('freshchat.note_success',:display_id => @note.notable.display_id.to_s)
       render_result  
      else
       @status = "unprocessable_entity"

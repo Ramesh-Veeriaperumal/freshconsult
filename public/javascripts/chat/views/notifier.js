@@ -35,7 +35,7 @@ define([
 			 		localStore.remove('visitor',visitor.userId);
 					that.remove(notifier);
 				});
-				soundManager.play('new_visitor');
+				window.startMusic('alert');
 			}
 		},
 		transfer:function(data){
@@ -60,7 +60,7 @@ define([
 				that.remove(notifier);
 				clearTimeout(that.transferTimer);
 			},120000);
-			soundManager.play('transfer');
+			window.startMusic('alert');
 		},
 		notifier:function(notifierId,data,type){
 			if(data.city=='' && data.country==''){

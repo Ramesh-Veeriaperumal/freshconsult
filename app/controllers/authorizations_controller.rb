@@ -149,6 +149,7 @@ class AuthorizationsController < ApplicationController
     state = "/facebook" if params[:state]
     portal = Portal.find_by_id(portal_id)
     user_account = portal.account
+    user_account.make_current
     portal_url = portal.host
     protocol = (portal.ssl_enabled?) ? "https://" : "http://"
     portal_url = protocol + portal_url

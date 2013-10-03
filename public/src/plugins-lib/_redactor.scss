@@ -521,6 +521,7 @@ div.custom-file-upload {
     height:55px;
     @include opacity(0);
     cursor: pointer;
+    &::-webkit-file-upload-button { cursor:pointer; }
   }
   .file-upload{
     position: absolute;
