@@ -55,7 +55,7 @@ var i18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
             cancel:'<%= t("freshchat.cancel") %>',
             enter_tags:'<%= t("freshchat.enter_tags") %>',
             chat_with: '<%= t("freshchat.chat_with") %>',
-            ticket_success_msg: '<%= t("freshchat.ticket_success_msg") %>',
+            ticket_success_msg: '<%= t("freshchat.ticket_success_msg").html_safe %>',
             ticket_error_msg: '<%= t("freshchat.ticket_error_msg") %>',
             in_conversation:'<%= t("freshchat.in_conversation") %>',
             available_agents:'<%= t("freshchat.available_agents") %>',
@@ -125,7 +125,15 @@ var i18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
             creating_ticket: "<%= t('freshchat.creating_ticket') %>",
             chat_with_loc: "<%= t('freshchat.chat_with_loc').html_safe %>",
             chat_with_noloc: "<%= t('freshchat.chat_with_noloc').html_safe %>",
-            chat_loadmore: "<%= t('freshchat.chat_loadmore') %>"
+            chat_loadmore: "<%= t('freshchat.chat_loadmore') %>",
+            ticket_subject: "<%= t('freshchat.ticket_subject').html_safe %>",
+            ticket_description: "<%= t('freshchat.ticket_description').html_safe %>",
+            ticket_title: "<%= t('freshchat.ticket_title') %>",
+            requester_name: "<%= t('freshchat.requester_name') %>",
+            requester_email: "<%= t('freshchat.requester_email') %>",
+            note_success: "<%= t('freshchat.note_success').html_safe %>",
+            note_error: "<%= t('freshchat.note_error') %>",
+            view_details: "<%= t('freshchat.view_details') %>"
         }
 </script>
     <!-- Chat related contents ends -->
