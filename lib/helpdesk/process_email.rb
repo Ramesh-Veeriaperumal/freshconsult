@@ -224,7 +224,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end
-      message_key = message_id
+      message_key = zendesk_email || message_id
       begin
         build_attachments(ticket, ticket)
         (ticket.header_info ||= {}).merge!(:message_ids => [message_key]) unless message_key.nil?
