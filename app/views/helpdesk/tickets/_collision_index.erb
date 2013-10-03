@@ -9,6 +9,7 @@
     var init_params = {};
     var current_user = "<%= escape_javascript(current_user.name) %>";
     var current_account_id = "<%=current_account.id%>";
+    var agent_names = <%= raw current_account.agent_names_from_cache.to_json %>;
 
     init_params.agent = current_user;
     init_params.account_id = <%= current_account.id%>;
@@ -39,6 +40,7 @@
         for (var key in viewers) {
           if (viewers.hasOwnProperty(key)) {  
             if($(key)){
+              viewers[key] = filter_agents(viewers[key]);
               agents_viewing[key] = viewers[key].without(current_user);
               update_viewing_notification_ui(key);
             }  
@@ -55,6 +57,7 @@
         for (var key in replying) {
           if (replying.hasOwnProperty(key)) {  
             if($(key)){
+              replying[key] = filter_agents(replying[key]);
               agents_replying[key] = replying[key].without(current_user);
               update_replying_notification_ui(key);
             }  
@@ -65,41 +68,56 @@
       socket.on('message', function(_params){
         params = JSON.parse(_params);
 
-        var viewer_key = 'tickets:'+current_account_id+':viewers:'+params.ticket_id;
-        var replying_key = 'tickets:'+current_account_id+':replying:'+params.ticket_id;
-        
-        if($(viewer_key)){
-          if(agents_viewing[viewer_key] == undefined)
-            agents_viewing[viewer_key] = $A();
-
-          if(agents_replying[replying_key] == undefined){
-            agents_replying[replying_key] = $A();
-          }
+        if(check_agent(params.agent)){
+          var viewer_key = 'tickets:'+current_account_id+':viewers:'+params.ticket_id;
+          var replying_key = 'tickets:'+current_account_id+':replying:'+params.ticket_id;
           
-          switch(params.type){
-            case "connected":
-              agents_viewing[viewer_key].push(params.agent);
-              agents_replying[replying_key] = agents_replying[replying_key].without(params.agent);
-              break;
-            case "disconnected":
-              agents_viewing[viewer_key] = agents_viewing[viewer_key].without(params.agent);
-              agents_replying[replying_key] = agents_replying[replying_key].without(params.agent);
-              break;
-            case "agent_replying":
-              agents_replying[replying_key].push(params.agent);
-              agents_viewing[viewer_key] = agents_viewing[viewer_key].without(params.agent);
-              break;
-            case "agent_replying_stopped":
-              agents_viewing[viewer_key].push(params.agent);
-              agents_replying[replying_key] = agents_replying[replying_key].without(params.agent);
-              break;
+          if($(viewer_key)){
+            if(agents_viewing[viewer_key] == undefined)
+              agents_viewing[viewer_key] = $A();
+
+            if(agents_replying[replying_key] == undefined){
+              agents_replying[replying_key] = $A();
+            }
+            
+            switch(params.type){
+              case "connected":
+                agents_viewing[viewer_key].push(params.agent);
+                agents_replying[replying_key] = agents_replying[replying_key].without(params.agent);
+                break;
+              case "disconnected":
+                agents_viewing[viewer_key] = agents_viewing[viewer_key].without(params.agent);
+                agents_replying[replying_key] = agents_replying[replying_key].without(params.agent);
+                break;
+              case "agent_replying":
+                agents_replying[replying_key].push(params.agent);
+                agents_viewing[viewer_key] = agents_viewing[viewer_key].without(params.agent);
+                break;
+              case "agent_replying_stopped":
+                agents_viewing[viewer_key].push(params.agent);
+                agents_replying[replying_key] = agents_replying[replying_key].without(params.agent);
+                break;
+            }
+            update_viewing_notification_ui(viewer_key);
+            update_replying_notification_ui(replying_key);
           }
-          update_viewing_notification_ui(viewer_key);
-          update_replying_notification_ui(replying_key);
         }
       });
 
     });  
+
+    function check_agent(agent){
+      return jQuery.inArray(agent, agent_names) != -1
+    }
+
+    function filter_agents(agents) {
+      agents.each(function(item){
+        if(!check_agent(item)){
+          agents = agents.without(item);
+        }
+      });
+      return agents;
+    }
 
     function update_viewing_notification_ui(key){
       agents_viewing[key] = agents_viewing[key].uniq();
