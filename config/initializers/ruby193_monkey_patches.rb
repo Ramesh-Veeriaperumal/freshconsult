@@ -155,7 +155,7 @@ if RUBY_VERSION > "1.9"
               upload
             else
               h = {}
-              value.each { |k, v| h[k] = normalize_parameters(v) }
+              value.each { |k, v| h[normalize_parameters(k.dup)] = normalize_parameters(v) }
               h.with_indifferent_access
             end
           when Array
