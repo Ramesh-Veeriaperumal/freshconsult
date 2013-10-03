@@ -16,24 +16,12 @@
                 jQuery.cookie('fd::'+SITE_ID,null);
             });
         }
-        var socketJS = document.createElement('script');
-        socketJS.src = "<%=comm_url%>/socket.io/socket.io.js";
-        document.body.appendChild(socketJS);
-
-        socketJS.onload=function(){
-            var requireJS = document.createElement('script');
-            requireJS.src = "/javascripts/chat/lib/require/require.js";
-            document.body.appendChild(requireJS);
-
-            requireJS.onload=function(){
-                var main = document.createElement('script');
-                main.src = "/javascripts/chat/main.js";
-                document.body.appendChild(main);
-            }
-        }
-        
+        $.getScript("<%=comm_url%>/socket.io/socket.io.js",function(){
+            $.getScript("<%=comm_url%>/js/chat.js");
+        });        
     });    
 })(jQuery);
+
 
 var CS_URL = "<%=comm_url%>";
 var WEB_ROOT = "http://<%=current_account.full_domain%>";
