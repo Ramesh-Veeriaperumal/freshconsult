@@ -4495,7 +4495,7 @@ en:
     got_it: "Ok got it."
     reauth: "Please <a href='%{page_tab_url}' > reauthorize </a> with Facebook to access your page tab"
     auth: "Please <a href='%{page_tab_url}' > authorize </a> with Facebook to access your page tab"
-    page_tab_auth: "<b>We had made some of changes to page tab</b>, due to which your Facebook page tab is disabled. <br/> <a href='%{page_tab_url}' >Re-authorize and Enable > </a> "
+    page_tab_auth: "Due to some recent changes to our Facebook Page Tab, we require reauthorization of the application. <b>Please note that the application in your facebook page will be disabled if not reauthorized by 12th October</b> <br/> <a href='%{page_tab_url}' >Re-authorize and Enable > </a> "
     page_tab_info: "Please Reauthorize your Facebook page tab"
     no_contact: "Unable to contact Facebook Servers for page tabs at this time"
     portal:
