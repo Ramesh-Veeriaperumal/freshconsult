@@ -1196,9 +1196,9 @@ en:
         success: Ticket fields successfully updated.
       failure:
         string: You have exceeded the maximum limit for this type of field.
-        text: You are not allowed to create more than %{count} paragraph fields.
-        number: You are not allowed to create more than %{count} number fields.
-        boolean: You are not allowed to create more than %{count} checkbox fields.
+        text: You are not allowed to create more than 10 paragraph fields.
+        number: You are not allowed to more than 10 number fields.
+        boolean: You are not allowed to create more than 10 checkbox fields.
     email_settings: 
       send_activation: 
         success: 'Verification email has been sent to %{reply_email}!'
