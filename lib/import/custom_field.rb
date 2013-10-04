@@ -9,11 +9,11 @@ module Import::CustomField
     'FieldTextarea' => 'paragraph'
   }
   
-  CHARACTER_FIELDS = (1..60).collect { |n| "ffs_#{"%02d" % n}" }
-  NUMBER_FIELDS = (1..20).collect { |n| "ff_int#{"%02d" % n}" }
+  CHARACTER_FIELDS = (1..30).collect { |n| "ffs_#{"%02d" % n}" }
+  NUMBER_FIELDS = (1..10).collect { |n| "ff_int#{"%02d" % n}" }
   DATE_FIELDS = (1..10).collect { |n| "ff_date#{"%02d" % n}" }
-  CHECKBOX_FIELDS = (1..20).collect { |n| "ff_boolean#{"%02d" % n}" }
-  TEXT_FIELDS = (1..20).collect { |n| "ff_text#{"%02d" % n}" }
+  CHECKBOX_FIELDS = (1..10).collect { |n| "ff_boolean#{"%02d" % n}" }
+  TEXT_FIELDS = (1..10).collect { |n| "ff_text#{"%02d" % n}" }
 
   FIELD_COLUMN_MAPPING = {
     "text"      => [["text" , "dropdown"], CHARACTER_FIELDS],
