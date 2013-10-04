@@ -137,7 +137,7 @@ SalesforceWidget.prototype= {
    			contactTemplate+= '<div class="salesforce-widget">' +
 		    			'<div class="clearfix">' +
 					    '<span>'+fields[i]+':</span>' +
-				    	'<label id="contact-'+fields[i]+'">'+value+'</label>' +
+				    	'<label id="contact-'+fields[i]+'" class="ellipsis tooltip" title="'+value+'">'+value+'</label>' +
 			    		'</div></div>';	
 		}
 	    if(fields.length>=5){
