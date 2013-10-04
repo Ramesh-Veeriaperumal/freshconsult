@@ -1196,9 +1196,9 @@ en:
         success: Ticket fields successfully updated.
       failure:
         string: You have exceeded the maximum limit for this type of field.
-        text: You are not allowed to create more than 10 paragraph fields.
-        number: You are not allowed to more than 10 number fields.
-        boolean: You are not allowed to create more than 10 checkbox fields.
+        text: You are not allowed to create more than %{count} paragraph fields.
+        number: You are not allowed to create more than %{count} number fields.
+        boolean: You are not allowed to create more than %{count} checkbox fields.
     email_settings: 
       send_activation: 
         success: 'Verification email has been sent to %{reply_email}!'
@@ -4402,7 +4402,7 @@ en:
     visitor_details: "Visitor Details"
     enter_tags: "Enter the tags"
     chat_with: "Chat with"
-    ticket_success_msg: "New ticket has been created and conversation added as a note"
+    ticket_success_msg: "New ticket has been created."
     ticket_error_msg: "Error while creating ticket"
     website_visitors: "Website Visitors"
     connection_error_msg: "Can\'t connect to chat server. Retrying..."
@@ -4416,8 +4416,6 @@ en:
     back: "Back"
     select_location:  "Select Location"
     valid_code: "Please enter a valid color value"
-    ticket_desc: "Ticket created via Freshchat. Conversation was between "
-    transcript_added_msg: " Transcript added as a note."
     and: "and"
     on_: "on"
     visitor_disconnect_msg: "Visitor has left the chat"
@@ -4436,7 +4434,7 @@ en:
     convert_to_ticket: "Convert to Ticket"
     create_ticket_tip: "Save chat transcript and details to a ticket.All Chat transcript will be saved in chat history."
     tkt_success_note_error: "Ticket has been created and error while adding note!"
-    note_success: "New note has been added to the ticket #%{display_id}"
+    note_success: "New note has been added to the ticket"
     note_error: "Error while adding note!"
     error: Error 
     existing_tkt_option_tip: "Save to an <b>existing</b> ticket"
@@ -4471,6 +4469,12 @@ en:
     chat_with_loc: "Chat with <b>$1</b> from $3 and <b>$2</b>"
     chat_with_noloc: "Chat with <b>$1</b> and <b>$2</b>"
     chat_loadmore: "Load More..."
+    ticket_subject: "Chat with $1 on $2"
+    ticket_description: "Chat transcript created via Freshchat. Conversation was between <b>$1</b>$2and <b>$3</b>."
+    ticket_title: "Ticket Title"
+    requester_name: "Requester Name"
+    requester_email: "Requester E-mail"
+    view_details: "View details"
   date_invalid: Invalid date  
   facebook_tab:
     remove_tab: "Remove page Tab"

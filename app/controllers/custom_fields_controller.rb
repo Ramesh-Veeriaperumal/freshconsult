@@ -89,11 +89,12 @@ class CustomFieldsController < Admin::AdminController
     error_str = ""
     field_data_count_by_type.keys.each do |key|
       if field_data_count_by_type[key] > MAX_ALLOWED_COUNT[shard_name][key]
-        error_str << I18n.t("flash.custom_fields.failure.#{key}")+'<br />'
+        error_str << I18n.t("flash.custom_fields.failure.#{key}", 
+                              :count => MAX_ALLOWED_COUNT[shard_name][key]) + '<br/>'
       end
     end
     unless error_str.blank?
-      flash[:error] = error_str 
+      flash[:error] = error_str.html_safe
       redirect_to :back and return
     end
   end
