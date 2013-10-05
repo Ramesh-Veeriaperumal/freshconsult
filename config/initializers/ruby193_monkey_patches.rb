@@ -134,6 +134,20 @@ if RUBY_VERSION > "1.9"
     alias_method_chain :unserialize_attribute, :utf8
   end
 
+  #https://developer.uservoice.com/blog/2012/03/04/how-to-upgrade-a-rails-2-3-app-to-ruby-1-9-3/
+  module ActionController
+    module Flash
+      class FlashHash
+        def [](k)
+          v = super
+          v.is_a?(String) ? v.force_encoding("UTF-8") : v
+        end
+      end
+    end
+  end
+
+  # class ActionController::InvalidByteSequenceErrorFromParams < Encoding::InvalidByteSequenceError; end
+  
   #
   # Source: https://rails.lighthouseapp.com/projects/8994/tickets/2188-i18n-fails-with-multibyte-strings-in-ruby-19-similar-to-2038
   # (fix_params.rb)
@@ -150,7 +164,7 @@ if RUBY_VERSION > "1.9"
             if value.has_key?(:tempfile)
               upload = value[:tempfile]
               upload.extend(UploadedFile)
-              upload.original_path = value[:filename]
+              upload.original_path = normalize_parameters(value[:filename])
               upload.content_type = value[:type]
               upload
             else

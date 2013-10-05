@@ -17,7 +17,7 @@ else
     
     #Script for populate requestor
     page << "jQuery('#populate_requestor_button').click(function(){
-                jQuery('#helpdesk_ticket_email').val('#{escape_javascript(@existing_user.name_details_es)}');
+                jQuery('#helpdesk_ticket_email').val('#{escape_javascript(@existing_user.name_details)}');
                 jQuery('#helpdesk_ticket_requester_id').val('#{@existing_user.id}');
                 jQuery('#helpdesk_ticket_email').data('requesterCheck',true);
                 active_dialog.dialog('close'); 
