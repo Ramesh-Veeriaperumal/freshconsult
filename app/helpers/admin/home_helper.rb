@@ -32,6 +32,7 @@ HTML
           ['/helpdesk/sla_policies',      'sla',                     privilege?(:admin_tasks) ],  
           ['/admin/business_calendars',   'business-hours',          feature?(:business_hours) && privilege?(:admin_tasks) ],
           ['/admin/products',             'multi-product',           feature?(:multi_product) && privilege?(:admin_tasks) ],
+          ['/admin/chat_setting',          'freshchat' ,              current_account.features?(:chat) && privilege?(:admin_tasks) ],
           ['/social/twitters',            'twitter-setting',         feature?(:twitter) && privilege?(:admin_tasks) ],
           ['/social/facebook',            'facebook-setting',        current_account.features?(:facebook) && privilege?(:admin_tasks) ],
           ['/admin/roles',                'role',                    feature?(:custom_roles) && privilege?(:admin_tasks) ],
@@ -54,7 +55,6 @@ HTML
           ['/admin/security',             'security',                privilege?(:admin_tasks) ],
           ['/admin/portal',               'customer-portal',         privilege?(:admin_tasks) ],
           ['/admin/widget_config',        'feedback',                privilege?(:admin_tasks) ],
-          ['/admin/chat_setting',          'freshchat' ,              current_account.features?(:chat) && privilege?(:admin_tasks) ],
       ], "CustomerPortal"],
       
       [ [t(".account")], [

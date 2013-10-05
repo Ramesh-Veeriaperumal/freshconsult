@@ -104,6 +104,9 @@
           case 'left':
             tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left - actualWidth - this.options.offset}
             break
+          case 'topLeft':
+            tp = {top: pos.top - (pos.height + 10), left: pos.left - actualWidth - this.options.offset}
+            break
           case 'right':
             tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left + pos.width + this.options.offset}
             break

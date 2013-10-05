@@ -57,7 +57,7 @@
 	<h4 class="title"><%=t('contacts.info3',:nick_name => h(@user.display_name)).html_safe%></h4>
 		<% form_for @user do |f| %>
 			<%= f.label :description, t("contacts.form_placeholder.description").html_safe, :class => "overlabel" %>
-			<%= f.text_area :description, :class=> "sp_paragraph span12",:cols => 20,:rows => 10 %>
+			<%= f.text_area :description, :class=> "sp_paragraph span12",:cols => 20,:rows => 5 %>
       <% if privilege?(:manage_contacts) %>
   			<div class="span12 pull-right"> 
   				<%= f.submit t('save'), :class=>"btn btn-primary pull-right"  %> &nbsp;

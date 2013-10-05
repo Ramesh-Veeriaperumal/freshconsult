@@ -36,7 +36,7 @@ class Portal < ActiveRecord::Base
               :foreign_key => 'solution_category_id'
   belongs_to :forum_category
 
-  APP_CACHE_VERSION = "FD38"
+  APP_CACHE_VERSION = "FD39"
     
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
@@ -74,8 +74,8 @@ class Portal < ActiveRecord::Base
   end
 
   def recent_portal_topics user
-    main_portal ? account.portal_topics.visible(user).newest(6) : 
-        (forum_category ? forum_category.portal_topics.visible(user).newest(6) : [])
+    main_portal ? account.portal_topics.visible(user).newest.limit(6) : 
+        (forum_category ? forum_category.portal_topics.visible(user).newest.limit(6) : [])
   end
 
   def my_topics(user, per_page, page)

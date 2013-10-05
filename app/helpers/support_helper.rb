@@ -182,11 +182,14 @@ module SupportHelper
 	end
 
 	def portal_fav_ico
-		fav_icon_content = MemcacheKeys.fetch(["v5","portal","fav_ico",current_portal]) do
-			url = current_portal.fav_icon.nil? ? '/images/favicon.ico' : current_portal.fav_icon.content.url
-			"<link rel='shortcut icon' href='#{url}' />"
-		end
-		fav_icon_content.to_s.html_safe
+		fav_icon = MemcacheKeys.fetch(["v6","portal","fav_ico",current_portal],30.days.to_i) do
+     			current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' : 
+            		AwsWrapper::S3Object.url_for(current_portal.fav_icon.content.path,
+            			current_portal.fav_icon.content.bucket_name,
+                        :expires => 30.days.to_i, 
+                        :secure => true)
+            end
+		"<link rel='shortcut icon' href='#{fav_icon}' />".html_safe
 	end
 
 	# Default search filters for portal
@@ -696,7 +699,7 @@ HTML
 		{ :language => @portal['language'],
 		  :name => h(@portal['name']),
 		  :contact_info => h(@portal['contact_info']),
-		  :current_page => @portal['page'],
+		  :current_page_name => @current_page_token,
 		  :current_tab => @current_tab,
 		  :preferences => portal_preferences }.to_json
 	end
@@ -718,6 +721,12 @@ HTML
 				data-width="450px" title="#{ I18n.t('portal.cookie.why_we_love_cookies') }" data-template-footer="">
 				#{ I18n.t('portal.cookie.cookie_policy') }
 			</a>).html_safe
+	end
+
+	def link_to_privacy_policy portal
+		%(	<a href="http://freshdesk.com/privacy" target="_blank">
+				#{ I18n.t('portal.cookie.privacy_policy') }
+			</a>) if(!portal.paid_account && ["user_signup", "user_login"].include?(portal['current_page']))
 	end
 
 	def cookie_law

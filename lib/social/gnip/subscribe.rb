@@ -11,7 +11,7 @@ class Social::Gnip::Subscribe
 		gnip_streams = rule.streams
 		gnip_streams.each do |stream|
 			rule.set_stream(stream)
-			rule.add
+			rule.add if Rails.env.production? || !rule.replay
 		end
 	end
 end

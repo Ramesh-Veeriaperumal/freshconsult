@@ -32,6 +32,11 @@ function(ChatView){
 		},
 		map:function(chat){
 			this.associatedchat = chat;
+		},
+		displayName:function(){
+			var name = this.get('username');
+			var maxLength = 20;
+			return (name.length>maxLength ? name.substr(0,maxLength)+'&hellip;' : name);
 		}
 	});
 

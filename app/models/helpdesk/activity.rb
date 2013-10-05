@@ -47,8 +47,8 @@ class Helpdesk::Activity < ActiveRecord::Base
   def self.agent_permission user
     
     permissions = { :all_tickets => [] , 
-                    :group_tickets => ["(helpdesk_activities.notable_type !=?)   OR (helpdesk_tickets.group_id in (?) OR helpdesk_tickets.responder_id=?)",
-                                       'Helpdesk::Ticket' , user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id] , 
+                    :group_tickets => ["(helpdesk_activities.notable_type !=?)   OR (helpdesk_tickets.group_id in (?) OR helpdesk_tickets.responder_id=? OR helpdesk_tickets.requester_id=?)",
+                                       'Helpdesk::Ticket' , user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id, user.id] , 
                     :assigned_tickets =>["(helpdesk_activities.notable_type !=?)   OR (helpdesk_tickets.responder_id=?)" ,'Helpdesk::Ticket', user.id] 
                   }
                   

@@ -18,7 +18,7 @@
 	<% unless page_canonical.blank? %>
 		<link rel="canonical" href="<%= page_canonical %>" />
 	<% end %>
-	<%=fav_icon_url.html_safe%>
+	<link rel="canonical shortcut icon" href="<%= fav_icon_url %>" />
 	<%= include_cloudfront_css :common %>
 	<%= include_cloudfront_css :plugins  %>
 	<%= include_cloudfront_css :sprites  %>

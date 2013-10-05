@@ -5,7 +5,7 @@ module RestrictControllerAction
 	INIT_VALUE = 1
 	PERFORM_LIMIT = 5
 	PERFORM_EXPIRY = 3600 #1 hour
-	
+
 	def self.included(controller)
 		controller.extend(ClassMethods)
 		controller.before_filter(:restrict)
@@ -62,7 +62,6 @@ module RestrictControllerAction
 		def restrict
 			return unless restrict_perform?
 			return if key.blank?
-			
 			case 
 			when never_performed?
 				set_others_redis_key(key, INIT_VALUE, perform_expiry)

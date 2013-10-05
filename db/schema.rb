@@ -1335,6 +1335,7 @@ ActiveRecord::Schema.define(:version => 20130918125805) do
     t.boolean  "reauth_required",                   :default => false
     t.text     "last_error"
     t.boolean  "realtime_subscription",              :default => false,             :null => false
+    t.string   "page_token_tab"
   end
 
   add_index "social_facebook_pages", ["account_id", "page_id"], :name => "index_pages_on_account_id"

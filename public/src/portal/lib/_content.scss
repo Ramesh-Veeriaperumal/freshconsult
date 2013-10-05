@@ -165,6 +165,13 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	word-wrap: break-word; 
 }
 
+.freshdesk_quote{ display: none; }
+
+.freshdesk_quote blockquote{ 
+	border-left-width:1px;
+	border-left-style:dotted;
+}
+
 .comment-by-agent .p-content{
 	background-color:$comments-agent-background;
 	border-color:$comments-agent-border-color;
@@ -365,6 +372,13 @@ hr.content-divider{
 .help-text .my_topics_right{
 	border-left: 1px dotted #999;
 	padding-left: 10px;
+}
+
+/* Recapcha hack fixes */
+.recaptcha_only_if_privacy{
+	float: none !important;
+	margin-top: -9px !important;
+	display: block;
 }
 
 @if $nonResponsive == false {

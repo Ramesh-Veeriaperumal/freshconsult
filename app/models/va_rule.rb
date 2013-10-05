@@ -3,6 +3,10 @@ class VARule < ActiveRecord::Base
   include Cache::Memcache::VARule
 
   TICKET_CREATED_EVENT = { :ticket_action => :created }
+  CASCADE_DISPATCHR_DATA  = [
+    [ :first, "dispatch.no_cascade",    0 ],
+    [ :all,   "dispatch.cascade",        1 ] 
+  ]
 
   serialize :filter_data
   serialize :action_data
@@ -215,6 +219,10 @@ class VARule < ActiveRecord::Base
 
   def automation_rule?
     rule_type == VAConfig::SCENARIO_AUTOMATION
+  end
+
+  def self.cascade_dispatchr_option
+    CASCADE_DISPATCHR_DATA.map { |i| [I18n.t(i[1]), i[2]] }
   end
 
   private

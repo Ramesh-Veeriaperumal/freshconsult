@@ -30,24 +30,13 @@ module MetaHelperMethods
           :class => 'hide', :id => 'ticket_meta_info')
   end
 
-  def user_agent_element(user_agent)
-    %( <div>
-          <span class="meta-browser browser-#{user_agent_browser(user_agent)}">Browser</span>
-          <label>#{user_agent.browser} #{user_agent.version}
-        </div>
-        <div>
-          <span class="meta-os os-#{user_agent_os(user_agent)}">OS</span>
-          <label>#{user_agent.os} </label>
-        </div>
-      )
-  end
-
   def user_agent_browser(user_agent)
     return "" if user_agent.browser.blank?
     %( <div>
           <span class="meta-browser browser-#{browser_shorthand(user_agent.browser)}">Browser</span>
-          <label>#{user_agent.browser} #{user_agent.version}
+          <label>#{user_agent.browser} #{user_agent.version}</label>
         </div>
+        <div class="clearfix"></div>
     )
   end
 
@@ -63,6 +52,7 @@ module MetaHelperMethods
           <span class="meta-os os-#{os_shorthand(user_agent.os)}">OS</span>
           <label>#{user_agent.os} </label>
         </div>
+        <div class="clearfix"></div>
       )
   end
 
@@ -82,6 +72,7 @@ module MetaHelperMethods
           </a>
         </label>
       </div>
+      <div class="clearfix"></div>
     )
   end
 

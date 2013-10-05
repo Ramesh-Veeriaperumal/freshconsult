@@ -89,20 +89,15 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
 }
 
 .footer-links{
+    a{ @include opacity(0.6); }
+    a:hover{ @include opacity(1); }
 	a:before{ 
-		content: "";
+		content: "-";
 		position: absolute;
-		border: 3px solid fade-out(#fff, 0.6);
 		margin-left: -15px;
-    	margin-top: 10px;
 	}
 	a:first-child:before{ content: none; }
 	a:last-child{ margin-right: 0; }
-}
-
-.cookie-link{ 
-	float:right; @include opacity(0.6);
-	&:hover{ @include opacity(1); }
 }
 
 .copyright{
