@@ -31,9 +31,11 @@ class Social::FacebookPagesController < Admin::AdminController
   end
 
   def enable_pages
-    pages = params[:enable][:pages]
-    pages = pages.reject(&:blank?)   
-    add_to_db pages
+    if params[:enable] && params[:enable][:pages]
+      pages = params[:enable][:pages]
+      pages = pages.reject(&:blank?)   
+      add_to_db pages
+    end
     redirect_to :action => :index
   end
   

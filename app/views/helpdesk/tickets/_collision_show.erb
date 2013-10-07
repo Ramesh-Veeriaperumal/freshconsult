@@ -21,6 +21,8 @@
     var agents = { viewing:[], replying:[] };
     var init_params = {};
     var current_user = "<%= escape_javascript(current_user.name) %>";
+    var agent_names = <%= raw current_account.agent_names_from_cache.to_json %>;
+
     init_params.agent = current_user;
     init_params.account_id = <%= current_account.id%>;
     init_params.ticket_id = <%= @ticket.id %>;  
@@ -30,9 +32,14 @@
         window.location = '<%= helpdesk_ticket_path(ticket.display_id) %>';
       }
     })
+
+    function check_agent(agent){
+      return jQuery.inArray(agent, agent_names) != -1
+    }
     
     function update_viewing(_agents) {
       //console.log("Agents Viewing The Ticket : " + _agents);
+      console.log(_agents)
       agents.viewing = _agents.without(current_user);
       if(agents.viewing.size()) update_notification_ui();
     }
@@ -74,12 +81,12 @@
           
           socket.emit('set_params', init_params);
           socket.on('ready', function(){
-            socket.emit('get_exiting_viewers');
-            socket.emit('get_exiting_replying');
+            socket.emit('get_exiting_viewers', init_params.account_id);
+            socket.emit('get_exiting_replying', init_params.account_id);
 
             jQuery('div[rel=emitter]').bind("visibility", function(ev){
               // Emitting a node message when agent is replying, forwarding or adding a note inside the ticket details page
-              socket.emit(jQuery(this).data("nodeName") + ((jQuery(this).css("display") == "block") ? "" : "_stopped") )
+              socket.emit(jQuery(this).data("nodeName") + ((jQuery(this).css("display") == "block") ? "" : "_stopped"), init_params.account_id)
             });        
 
             <% unless @draft.nil? %>

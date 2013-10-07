@@ -10,31 +10,27 @@
       }
   };
 
+  var loadVisitorChat = function(){
+    var socketJS = document.createElement('script');
+    socketJS.src =  "<%=@comm_url%>/socket.io/socket.io.js";
+    document.body.appendChild(socketJS);
+    socketJS.onload = function(){
+      var visitorJS = document.createElement('script');
+      visitorJS.src =  "<%=@comm_url%>/js/visitor.js";
+      document.body.appendChild(visitorJS);
+    }
+  }
+
   if(typeof jQuery=="undefined"){
     var jQueryJS = document.createElement('script');
     jQueryJS.src =  "<%=@app_url%>/javascripts/frameworks/jquery.js";
     document.body.appendChild(jQueryJS);
+    jQueryJS.onload = loadVisitorChat;
+  }    
+  else{
+    loadVisitorChat();
   }
-
-  var sessionJS = document.createElement('script');
-  sessionJS.src =  "<%=@app_url%>/javascripts/frameworks/session.js";
-  document.body.appendChild(sessionJS);
-  sessionJS.onload = function(){
-    var socketJS = document.createElement('script');
-    socketJS.src = "<%=@comm_url%>/socket.io/socket.io.js?chatid=1";
-    document.body.appendChild(socketJS);
-    socketJS.onload=function(){
-      var requireJS = document.createElement('script');
-      requireJS.src = "<%=@app_url%>/javascripts/chat/lib/require/require.js";
-      document.body.appendChild(requireJS);
-
-      requireJS.onload=function(){
-        var main = document.createElement('script');
-        main.src = "<%=@app_url%>/javascripts/chat/customer.js";
-        document.body.appendChild(main);
-      }
-    }
-  }
+  
   var link = document.createElement('link');
   link.rel = 'stylesheet';
   link.type = 'text/css';

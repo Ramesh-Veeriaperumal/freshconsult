@@ -1,6 +1,8 @@
-{% unless portal.current_page == "user_login" %}
 <footer class="footer rounded-6">
-	{{ portal | link_to_cookie_law }}
+	<nav class="footer-links pull-right">
+		{{ portal | link_to_privacy_policy }}
+		{{ portal | link_to_cookie_law }}
+	</nav>
 	{% if portal.tabs.size > 0 %}
 		<nav class="footer-links">
 			{% for tab in portal.tabs %}
@@ -9,5 +11,4 @@
 		</nav>
 	{% endif %}
 </footer>
-{% endunless %}
 {{ portal | portal_copyright }}

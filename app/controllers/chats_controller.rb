@@ -19,44 +19,24 @@ class ChatsController < ApplicationController
 
   def create_ticket
 
-      @ticket = Helpdesk::Ticket.create({
+    @ticket = current_account.tickets.build(
                   :source => TicketConstants::SOURCE_KEYS_BY_TOKEN[:chat],
-                  :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
-                  :type   => TicketConstants::TYPE_NAMES_BY_SYMBOL[:lead],
                   :email  => params[:ticket][:email],
-                  :description_html => params[:ticket][:content],
-                  :subject  => params[:ticket][:subject]
-      })
+                  :subject  => params[:ticket][:subject],
+                  :requester_name => params[:ticket][:name],
+                  :ticket_body_attributes => { :description_html => params[:ticket][:content] }
+              ) 
 
-      if @ticket.save
-          if create_note
-            @status = "success"
-            @message = t('freshchat.ticket_success_msg')
-            render_result
-          else
-            @status = "unprocessable_entity"
-            @message = t('freshchat.tkt_success_note_error')
-            render_result
-          end
-      else
-        @status = "unprocessable_entity"
-        @message = t('freshchat.ticket_error_msg')
-        render_result
-      end
+    status = @ticket.save
+
+    render :json => { :ticket_id=> @ticket.display_id , :status => status }
 
   end  
 
   def add_note 
     
-    if create_note
-      @status = "success"
-       @message =  t('freshchat.note_success',:display_id => @note.notable.display_id.to_s)
-      render_result  
-     else
-      @status = "unprocessable_entity"
-      @message = t('freshchat.note_error')
-      render_result
-     end
+    status = create_note
+    render :json => { :ticket_id=> @note.notable.display_id , :status => status }
 
   end
 
@@ -65,23 +45,16 @@ class ChatsController < ApplicationController
   def load_ticket
     @ticket = current_account.tickets.find_by_display_id(params[:ticket_id])
   end
-
+  
   def create_note 
-     @note =  @ticket.notes.create({
-                  :private =>false,
-                  :user_id =>current_user.id,
-                  :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
-                  :account_id => @ticket.account.id,
-                  :body_html => params[:note]})
-     @note.save
-  end
-
-  def render_result
-     respond_to do |format|
-            format.json{
-               render :json => {:message=> @message, :status => @status}
-            }
-      end
+    @note = @ticket.notes.build(
+                :private => false,
+                :user_id => current_user.id,
+                :account_id => current_account.id,
+                :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+                :note_body_attributes => { :body_html => params[:note] }
+            )
+    @note.save
   end
 
 end

@@ -1246,6 +1246,7 @@ en:
       update: 
         success: Email notifications have been updated.
     general: 
+      limit_exceeded: You've exceeded the limit for performing this action. Please try again.
       access_denied: You are not allowed to access this page!
       need_login: You must be logged in to access this page
       insufficient_privilege: 
@@ -2106,6 +2107,7 @@ en:
   subscription: 
     error: 
       lesser_agents: Your freshdesk account currently has %{agent_count} agents, you cannot subscribe to a lesser number of agents. Please delete some agents and try again.
+      card_update_limit_exceeded: You've exceeded the hourly limit for updating your credit card. Please try again later.
     upgrade:
       message: Upgrade your account to unlock this feature.
       cname: Want to use your own domain here? Please upgrade your account.
@@ -4400,7 +4402,7 @@ en:
     visitor_details: "Visitor Details"
     enter_tags: "Enter the tags"
     chat_with: "Chat with"
-    ticket_success_msg: "New ticket has been created and conversation added as a note"
+    ticket_success_msg: "New ticket has been created."
     ticket_error_msg: "Error while creating ticket"
     website_visitors: "Website Visitors"
     connection_error_msg: "Can\'t connect to chat server. Retrying..."
@@ -4414,8 +4416,6 @@ en:
     back: "Back"
     select_location:  "Select Location"
     valid_code: "Please enter a valid color value"
-    ticket_desc: "Ticket created via Freshchat. Conversation was between "
-    transcript_added_msg: " Transcript added as a note."
     and: "and"
     on_: "on"
     visitor_disconnect_msg: "Visitor has left the chat"
@@ -4434,7 +4434,7 @@ en:
     convert_to_ticket: "Convert to Ticket"
     create_ticket_tip: "Save chat transcript and details to a ticket.All Chat transcript will be saved in chat history."
     tkt_success_note_error: "Ticket has been created and error while adding note!"
-    note_success: "New note has been added to the ticket #%{display_id}"
+    note_success: "New note has been added to the ticket"
     note_error: "Error while adding note!"
     error: Error 
     existing_tkt_option_tip: "Save to an <b>existing</b> ticket"
@@ -4469,6 +4469,12 @@ en:
     chat_with_loc: "Chat with <b>$1</b> from $3 and <b>$2</b>"
     chat_with_noloc: "Chat with <b>$1</b> and <b>$2</b>"
     chat_loadmore: "Load More..."
+    ticket_subject: "Chat with $1 on $2"
+    ticket_description: "Chat transcript created via Freshchat. Conversation was between <b>$1</b>$2and <b>$3</b>."
+    ticket_title: "Ticket Title"
+    requester_name: "Requester Name"
+    requester_email: "Requester E-mail"
+    view_details: "View details"
   date_invalid: Invalid date  
   facebook_tab:
     remove_tab: "Remove page Tab"
@@ -4489,7 +4495,7 @@ en:
     got_it: "Ok got it."
     reauth: "Please <a href='%{page_tab_url}' > reauthorize </a> with Facebook to access your page tab"
     auth: "Please <a href='%{page_tab_url}' > authorize </a> with Facebook to access your page tab"
-    page_tab_auth: "<b>We had made some of changes to page tab</b>, due to which your Facebook page tab is disabled. <br/> <a href='%{page_tab_url}' >Re-authorize and Enable > </a> "
+    page_tab_auth: "Due to some recent changes to our Facebook Page Tab, we require reauthorization of the application. <b>Please note that the application in your facebook page will be disabled if not reauthorized by 12th October</b> <br/> <a href='%{page_tab_url}' >Re-authorize and Enable > </a> "
     page_tab_info: "Please Reauthorize your Facebook page tab"
     no_contact: "Unable to contact Facebook Servers for page tabs at this time"
     portal:

@@ -374,6 +374,13 @@ hr.content-divider{
 	padding-left: 10px;
 }
 
+/* Recapcha hack fixes */
+.recaptcha_only_if_privacy{
+	float: none !important;
+	margin-top: -9px !important;
+	display: block;
+}
+
 @if $nonResponsive == false {
 	@include at-breakpoint($media-mobile){
 		
