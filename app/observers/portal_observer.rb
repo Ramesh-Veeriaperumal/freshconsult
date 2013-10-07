@@ -8,7 +8,6 @@ class PortalObserver < ActiveRecord::Observer
 
     def before_destroy(portal)
       backup_changes(portal)
-      notify_custom_ssl_removal(portal)
     end
 
     def after_create(portal)
@@ -19,9 +18,10 @@ class PortalObserver < ActiveRecord::Observer
     def after_update(portal)
       update_shard_mapping(portal)
     end
-  	 
-  	def after_destroy(portal)
-  	  remove_domain_mapping(portal)
+     
+    def after_destroy(portal)
+      remove_domain_mapping(portal)
+      notify_custom_ssl_removal(portal)
   	end
 
     def after_commit_on_update(portal)

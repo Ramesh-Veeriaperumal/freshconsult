@@ -641,6 +641,7 @@ li.ui-state-active {
     border-radius: 0 5px 5px 5px;
     display: none;
     padding: 10px 0 0 10px;
+    z-index: 10;
 }
 
 /* Remove default border from the custom widget since we're adding our own.  TBD: rework the dropdown calendar to use the default borders */
@@ -803,6 +804,12 @@ li.ui-state-active {
     -ms-text-overflow: ellipsis;
     text-overflow: ellipsis;
 }
+.tkt_rsltsum{
+    font-size: 12px;
+    clear: both;
+    color: #444;
+    width: 550px;
+}
 
 .rslttime{
     float: right;
@@ -818,7 +825,7 @@ li.ui-state-active {
     width: 70%;
     float: left;
     padding-left: 10px;
-}
+}   
 
 .rsltmsg_time{
     float: right;
@@ -1099,7 +1106,7 @@ li.ui-state-active {
     line-height: 63px;
 }
 
-#visitor, #transfer-agent, .block-visitor, #tag-this, #ticket_options, #ticket_search_view{
+#visitor, #transfer-agent, .block-visitor, #tag-this{
     position: fixed;
     top:15%;
     z-index: 10000000;
@@ -1126,7 +1133,7 @@ li.ui-state-active {
     right: 0;
 }
 
-.chat_ticket_options, .chat_tkt_search_container{
+.chat_ticket_options, .chat_ticket_search_container{
     .ticket_search_details{
         width: 480px;
         h3{
@@ -2255,85 +2262,6 @@ div.color{
     padding-top: 1px;
 }
 
-.chat_ticket_options , .chat_tkt_search_container{
-    width: 480px !important;
-    background-color: #fff;
-    box-shadow: 0px 0px 26px #333;
-    padding: 20px;
-     border-radius: 6px;
-    .visitor-details{
-        padding: 0px;
-        border: none;
-        border-radius: 4px;
-    }
-    h4{
-        margin: 15px 0px; 
-    }
-    .new_tkt, .existing_tkt, .no_tkt{
-        display: block;
-        width: 100%;
-        text-align: left;
-        font-size: 15px;
-        font-weight: normal;
-        padding: 10px 0px;
-        text-indent: 19px;
-    }
-    .existing_tkt, .no_tkt{
-        border: 1px #cccccc solid;
-        border-radius: 4px;
-        margin-top: 4px;
-        color: #666;
-        width: 480px;
-    }
-    .existing_tkt{
-        a{
-           padding-right: 12px; 
-           float: right;
-        }
-    }
-    .no_tkt{
-        margin-top: 12px;
-    }
-     #existing_tkt_link{
-            position: absolute;
-            float: right;
-            left: 400px;
-            top: 158px;
-    }
-    .search-content{
-        width: 480px !important;
-        background-color: #f1f1f1;
-        margin-bottom: 10px;
-        float: left;
-        padding: 11px 0px 0px 0px;
-        border: 1px rgb(204, 204, 204) solid;
-        border-radius: 6px;
-        .autocompletepane{
-            clear: both;
-            border: 1px #eaeaea solid;
-            border-bottom: none;
-            max-height: 200px;
-            overflow-y: scroll;
-            overflow-x: hidden;
-            background-color: #fff;
-        }
-        .typed{
-            right: 11px !important;
-            top: 35px !important;
-        }
-        
-        #search-type{
-            width: auto;
-            height: 26px;
-            float: left;
-            margin-left: 9px;
-        }
-        .display_id, .subject{
-            display: none;
-        }
-    }
-}
-
 .chat-icon-alarm{
     width: 42px;
     height: 42px;
@@ -2364,20 +2292,6 @@ div.color{
         }
       }
     }
-}
-
-#chat_ticket_options{
-    .ui-widget-overlay{
-        height: 2810px; 
-        z-index: 1001;
-        background-repeat: repeat;
-    }
-}
-
-.existing_tkt_subject{
-    font-size: 12px;
-    font-style: italic;
-    padding-top: 2px;
 }
 
 .return_select_tkt{
@@ -2460,4 +2374,24 @@ div.color{
 }
 .fc_self_expanded{
     background-color: #fff;
+}
+
+.chat_tkt_details{
+    .rsltmsg_wrap{
+        width: 90%;
+        font-size: 10px;
+        color: #555;
+    }
+    .time{
+        font-size: 10px !important;
+    }
+}
+.conversation_wrap{
+    margin-top: 10px;
+   .rsltmsg{
+       width: 99%;
+       padding-left: 1%;
+       padding-top: 4px;
+       border-top: 1px #eee solid;
+   }
 }
