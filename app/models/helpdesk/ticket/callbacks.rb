@@ -264,7 +264,7 @@ private
     unless email.blank?
       name_email = parse_email email  #changed parse_email to return a hash
       self.email = name_email[:email]
-      self.name = name_email[:name]
+      self.name ||= name_email[:name]
       @requester_name ||= self.name # for MobiHelp
     end
 
