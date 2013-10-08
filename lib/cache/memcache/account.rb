@@ -101,6 +101,13 @@ module Cache::Memcache::Account
     end
   end
 
+  def agent_names_from_cache
+    key = ACCOUNT_AGENT_NAMES % { :account_id => self.id }
+    MemcacheKeys.fetch(key) do
+      users.find(:all, :conditions => { :helpdesk_agent => 1 }).map(&:name)
+    end
+  end
+
   private
     def ticket_types_memcache_key
       ACCOUNT_TICKET_TYPES % { :account_id => self.id }
