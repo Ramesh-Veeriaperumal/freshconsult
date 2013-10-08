@@ -76,7 +76,6 @@ jQuery(document).ready(function(){
 			} 
 			
 			$J("#header_search").bind("keyup", function(e){
-				es_enabled = jQuery(e.target).data('esEnabled');
 				 switch (e.keyCode) {
 				 	case 40:
 					case 38:
@@ -86,7 +85,7 @@ jQuery(document).ready(function(){
 					break;
 					default:
 						searchString = this.value.replace(/^\s+|\s+$/g, "");
-						search_url = es_enabled ? "/search/home/suggest?search_key=" : "/search/suggest?search_key=";
+						search_url = "/search/home/suggest?search_key=";
 						if(searchString != '' && searchString.length > 1 && currentString != searchString){
 							delay(function(){
 						      callbackToSearch(searchString, search_url);

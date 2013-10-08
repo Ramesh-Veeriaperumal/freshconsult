@@ -171,29 +171,6 @@ class User < ActiveRecord::Base
     return false
   end
 
-  #Sphinx configuration starts
-  define_index do
-    indexes :name, :sortable => true
-    indexes :email, :sortable => true
-    indexes :description
-    indexes :job_title
-    indexes customer.name, :as => :company
-    
-    has account_id, deleted
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :responder_id, :type => :integer
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :group_id, :type => :integer
-
-    #set_property :delta => :delayed
-    set_property :field_weights => {
-      :name         => 10,
-      :email        => 10,
-      :company      => 5,
-      :job_title    => 4,
-      :description  => 3
-    }
-  end
-  #Sphinx configuration ends here..
-
   def signup!(params , portal=nil)   
     self.email = (params[:user][:email]).strip if params[:user][:email]
     self.name = params[:user][:name]
