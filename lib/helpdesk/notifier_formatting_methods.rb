@@ -26,6 +26,17 @@ module Helpdesk::NotifierFormattingMethods
     end
   end
 
+  def ticket_based_friendly_email(ticket)
+    reply_email = ticket.friendly_reply_email
+    reply_email.match(%r((.*)? <(.*)>)) ? "#{$1} <#{modified_reply_email($2, ticket)}>" : modified_reply_email(reply_email, ticket) 
+    #regex here matches name <email>
+  end
+
+  def modified_reply_email(email, ticket)
+    email.sub(%r((.*)(@.*))){"#{$1}+TKT#{ticket.display_id}#{$2}"} 
+    #regex to substitute something@something.com to something+TKT123@something.com
+  end
+
   def build_body_html_with_inline_attachments(html_part, inline_attachments, account)
     TMail::HeaderField::FNAME_TO_CLASS.delete 'content-id'
     html_part.xpath('//img[@class="inline-image"]').each do |inline|
