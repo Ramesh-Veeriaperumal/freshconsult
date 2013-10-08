@@ -17,22 +17,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   belongs_to :responder, :class_name => 'User', :conditions => 'users.helpdesk_agent = true'
 
   belongs_to :requester, :class_name => 'User'
-  
-  belongs_to :sphinx_requester,
-    :class_name => 'User',
-    :foreign_key => 'requester_id',
-    :conditions => 'helpdesk_tickets.account_id = users.account_id'
 
   has_many :notes,  :class_name => 'Helpdesk::Note', :as => 'notable', :dependent => :destroy
 
   has_many :public_notes,
     :class_name => 'Helpdesk::Note',
     :as => 'notable', :conditions => {:private =>  false, :deleted => false}
-    
-  has_many :sphinx_notes, 
-    :class_name => 'Helpdesk::Note',
-    :conditions => 'helpdesk_tickets.account_id = helpdesk_notes.account_id',
-    :as => 'notable'
     
   has_many :activities, :class_name => 'Helpdesk::Activity', :as => 'notable', :dependent => :destroy
 
