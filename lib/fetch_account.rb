@@ -3,8 +3,7 @@ module FetchAccount
   protected
   
     def current_account(req = nil)
-      return Account.first if Rails.env.development?
-      Sharding.selec_shard_of(req) do
+      Sharding.select_shard_of(req) do
         @current_portal = Portal.fetch_by_url(req)
         return @current_portal.account if @current_portal
       
@@ -13,7 +12,7 @@ module FetchAccount
         (raise ActiveRecord::RecordNotFound and return) unless account
       
         @current_portal = account.main_portal_from_cache
-        return account 
+        account 
       end
     end
 end
