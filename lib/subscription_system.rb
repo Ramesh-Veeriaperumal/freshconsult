@@ -1,7 +1,5 @@
 module SubscriptionSystem
 
-  include FetchAccount
-
   # Set up some stuff for ApplicationController
   def self.included(base)
     #base.send :before_filter, :login_required
@@ -22,6 +20,10 @@ module SubscriptionSystem
   
   protected
     
+    def current_account
+     @current_account ||= retrieve_current_account
+    end
+
     def current_portal
       current_account
       @current_portal
@@ -53,4 +55,17 @@ module SubscriptionSystem
       end
     end
 
+  private
+    def retrieve_current_account
+      @current_portal = Portal.fetch_by_url request.host 
+      return @current_portal.account if @current_portal
+       
+      account = Account.fetch_by_full_domain(request.host) ||
+                  (Rails.env.development? ? Account.first : nil)
+      (raise ActiveRecord::RecordNotFound and return) unless account
+      
+      @current_portal = account.main_portal_from_cache
+      account
+    end
+      
 end
