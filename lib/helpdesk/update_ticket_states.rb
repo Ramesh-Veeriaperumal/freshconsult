@@ -15,7 +15,7 @@ module Helpdesk
 				puts e.inspect, args.inspect
 				NewRelic::Agent.notice_error(e, {:args => args})
 			ensure
-				note.trigger_observer(args[:model_changes])
+				note.trigger_observer(args[:model_changes]) unless args[:freshdesk_webhook]
 			end
 		end
 

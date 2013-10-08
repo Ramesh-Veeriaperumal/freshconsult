@@ -127,7 +127,8 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def update_ticket_states
       Resque.enqueue(Helpdesk::UpdateTicketStates, 
-            { :id => id, :model_changes => @model_changes }) unless zendesk_import?
+            { :id => id, :model_changes => @model_changes,
+              :freshdesk_webhook => freshdesk_webhook? }) unless zendesk_import?
     end
 
     def notify_ticket_monitor
