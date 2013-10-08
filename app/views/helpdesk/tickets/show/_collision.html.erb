@@ -23,6 +23,8 @@
     var agents = { viewing:[], replying:[] };
     var init_params = {};
     var current_user = "<%= escape_javascript(current_user.name) %>";
+    var agent_names = <%= raw current_account.agent_names_from_cache.to_json %>;
+
     init_params.agent = current_user;
     init_params.account_id = <%= current_account.id%>;
     init_params.ticket_id = <%= @ticket.id %>;  
@@ -32,13 +34,28 @@
         window.location = '<%= helpdesk_ticket_path(ticket.display_id) %>';
       }
     })
+
+    function check_agent(agent){
+      return jQuery.inArray(agent, agent_names) != -1
+    }
+
+    function filter_agents(agents) {
+      agents.each(function(item){
+        if(!check_agent(item)){
+          agents = agents.without(item);
+        }
+      });
+      return agents;
+    }
     
     function update_viewing(_agents) {
+      _agents = filter_agents(_agents);
       agents.viewing = _agents.without(current_user);
       if(agents.viewing.size()) update_notification_ui();
     }
 
-    function update_replying(_agents) {   
+    function update_replying(_agents) {  
+      _agents = filter_agents(_agents);
       agents.replying = _agents.without(current_user);
       agents.replying.each(function(item){
         agents.viewing = agents.viewing.without(item);             
@@ -83,9 +100,16 @@
 
       socket.on('connect', function() {
           
-          socket.emit('set_params', init_params);      
-          socket.emit('get_exiting_viewers');
-          socket.emit('get_exiting_replying');
+          socket.emit('set_params', init_params);  
+          socket.on('ready', function(){    
+            socket.emit('get_exiting_viewers', init_params.account_id);
+            socket.emit('get_exiting_replying', init_params.account_id);
+
+            jQuery('div[rel=emitter]').bind("visibility", function(ev){
+              // Emitting a node message when agent is replying, forwarding or adding a note inside the ticket details page
+              socket.emit((jQuery(this).data("nodeName") + ((jQuery(this).css("display") == "block") ? "" : "_stopped")), init_params.account_id )
+            });   
+          });     
 
           <% unless @draft.nil? %>
             jQuery('#cnt-reply').trigger("visibility");
@@ -99,27 +123,29 @@
       socket.on('message', function(_params){
         params = JSON.parse(_params);
 
-        switch(params.type){
-          case "connected":
-            agents.viewing.push(params.agent);
-          break;
-          case "disconnected":
-            agents.replying = agents.replying.without(params.agent);  
-            agents.viewing = agents.viewing.without(params.agent);
-          break;
-          case "agent_replying":   
-            agents.viewing = agents.viewing.without(params.agent); 
-            agents.replying.push(params.agent);
-          break;
-          case "agent_replying_stopped":
-            agents.viewing.push(params.agent);                
-            agents.replying = agents.replying.without(params.agent);
-          break;
-          case "updated":  
-            update_reload();
-          break;
-        }                      
-        update_notification_ui();
+        if(check_agent(params.agent)){
+          switch(params.type){
+            case "connected":
+              agents.viewing.push(params.agent);
+            break;
+            case "disconnected":
+              agents.replying = agents.replying.without(params.agent);  
+              agents.viewing = agents.viewing.without(params.agent);
+            break;
+            case "agent_replying":   
+              agents.viewing = agents.viewing.without(params.agent); 
+              agents.replying.push(params.agent);
+            break;
+            case "agent_replying_stopped":
+              agents.viewing.push(params.agent);                
+              agents.replying = agents.replying.without(params.agent);
+            break;
+            case "updated":  
+              update_reload();
+            break;
+          }                      
+          update_notification_ui();
+        }
       });
     
       socket.on('recieve_existing_viewers', update_viewing); 
@@ -127,11 +153,6 @@
  
       //jQuery('.conversation_thread div[rel=emitter]').watch("display,visibility", function() { showStatus("changed...") });
 
-      jQuery('div[rel=emitter]').bind("visibility", function(ev){
-        // Emitting a node message when agent is replying, forwarding or adding a note inside the ticket details page
-        socket.emit(jQuery(this).data("nodeName") + ((jQuery(this).css("display") == "block") ? "" : "_stopped") )
-      });        
-      
       jQuery("[rel=notice-popover]")      
           .popover({
             html: true,           

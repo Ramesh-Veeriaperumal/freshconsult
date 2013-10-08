@@ -62,7 +62,6 @@ module RestrictControllerAction
 		def restrict
 			return unless restrict_perform?
 			return if key.blank?
-
 			case 
 			when never_performed?
 				set_others_redis_key(key, INIT_VALUE, perform_expiry)

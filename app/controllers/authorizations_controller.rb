@@ -9,22 +9,14 @@ class AuthorizationsController < ApplicationController
   include HTTParty
 
   skip_before_filter :check_privilege
+  skip_before_filter :set_current_account, :redactor_form_builder, :check_account_state, :set_time_zone,
+                    :check_day_pass_usage, :set_locale, :only => [:create, :failure]
   before_filter :require_user, :only => [:destroy]
-  before_filter :fetch_request_details,:only => :create
-
-  def fetch_request_details
-    @omniauth = request.env['omniauth.auth'] 
-    @auth = Authorization.find_from_hash(@omniauth,current_account.id) unless @omniauth['provider'] == "facebook"
-    provider_name = @omniauth['provider']
-
-    if provider_name == :open_id or provider_name == :twitter or provider_name == :facebook
-      provider_name = provider_name == :open_id ? :google : provider_name
-      requires_feature("#{provider_name}_signin")
-    end
-  end
+  before_filter :load_authorization, :only => [:create]
 
   def create
     Rails.logger.debug "@omniauth "+@omniauth.inspect
+    failure if @omniauth.blank?
     @omniauth_origin = session["omniauth.origin"]
     if @omniauth['provider'] == :open_id
       @current_user = current_account.all_users.find_by_email(@omniauth['info']['email'])  unless  current_account.blank?
@@ -42,6 +34,55 @@ class AuthorizationsController < ApplicationController
     elsif EMAIL_MARKETING_PROVIDERS.include?(@omniauth['provider'])
       create_for_email_marketing_oauth(@omniauth['provider'], params)
     end
+  end
+
+  def select_shard(&block)
+    load_origin_info if ['create', 'failure'].include?(params[:action])
+    raise ActionController::RoutingError, "Not Found" if @account_id.nil? and origin_required?
+    Sharding.select_shard_of(@account_id || request.host) do
+      yield
+    end
+  end
+
+  def load_origin_info
+    origin = request.env["omniauth.origin"].present? ? request.env["omniauth.origin"] : params[:origin]
+    @omniauth = request.env['omniauth.auth'] 
+    @provider = (@omniauth and @omniauth['provider']) ? @omniauth['provider'] : params[:provider]
+
+    raise ActionController::RoutingError, "Not Found" if origin.blank? and origin_required?
+    
+    if /^\d+$/.match(origin)        # Fallback         
+      origin = origin.to_i if origin_required?
+      @app_name = Integrations::Constants::APP_NAMES[@provider.to_sym] unless @provider.blank?
+      portal = Portal.find(origin.to_i)
+      @account_id = portal.account_id if portal
+    else
+      origin = CGI.parse(origin)
+      @app_name = origin['app_name'][0].to_s if origin.has_key?('app_name')
+      @app_name ||= Integrations::Constants::APP_NAMES[@provider.to_sym] unless @provider.blank?
+      if origin.has_key?('id') 
+        origin = origin['id'][0].to_i
+        @account_id = origin.to_i
+      elsif origin.has_key?('pid') # Fallback
+        origin = origin['pid'][0].to_i
+        portal = Portal.find(origin.to_i)
+        @account_id = portal.account_id if portal
+      end
+    end
+  end
+
+  def load_authorization
+    @auth = Authorization.find_from_hash(@omniauth,current_account.id) unless @provider == "facebook"
+    if (@provider == :open_id or @provider == :twitter or @provider == :facebook)
+      @provider = (@provider == :open_id ? :google : @provider)
+      requires_feature("#{@provider}_signin")
+    end
+  end
+
+  def origin_required?
+    request.host == AppConfig['integrations_url'][Rails.env].gsub(/https?:\/\//i, '') or
+     (Rails.env.development? and
+      request.host == AppConfig['integrations_url'][Rails.env].gsub(/https?:\/\//i, '').gsub(/:3000/i,''))
   end
 
   def create_for_google(params)
@@ -78,81 +119,54 @@ class AuthorizationsController < ApplicationController
   end
 
   def create_for_oauth2(provider, params)
-    Account.reset_current_account
-    origin = request.env["omniauth.origin"] unless request.env["omniauth.origin"].blank?
-    if provider == 'google_oauth2'
-      origin = CGI.parse(origin)
-      portal_id = origin['pid'][0].to_i
-      app_name = origin['app_name'][0].to_s
-      Rails.logger.debug "origin: #{origin.inspect}"
-    else
-      portal_id = origin.to_i
-      app_name = Integrations::Constants::APP_NAMES[provider.to_sym]
-    end
 
     if provider  == 'surveymonkey'
       access_token = @omniauth.credentials
     else
-      access_token = get_oauth2_access_token(provider, @omniauth.credentials.refresh_token, app_name)
+      access_token = get_oauth2_access_token(provider, @omniauth.credentials.refresh_token, @app_name)
     end
     
-
-    portal = Portal.find_by_id(portal_id)
-    account = portal.account
-    domain = portal.host
-    protocol = (portal.ssl_enabled?) ? "https://" : "http://"
-
     config_params = { 
-      'app_name' => "#{app_name}",
+      'app_name' => "#{@app_name}",
       'refresh_token' => "#{@omniauth.credentials.refresh_token}",
       'oauth_token' => "#{access_token.token}"
     }
     config_params['instance_url'] = "#{access_token.params['instance_url']}" if provider=='salesforce'
     config_params = config_params.to_json
-    Rails.logger.debug "config_params: #{config_params}"
+
     #Redis::KeyValueStore is used to store oauth2 configurations since we redirect from login.freshdesk.com to the
     #user's account and install the application from inside the user's account.
-    key_options = { :account_id => account.id, :provider => app_name}
+    key_options = { :account_id => @account_id, :provider => @app_name}
     key_spec = Redis::KeySpec.new(Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options)
     Redis::KeyValueStore.new(key_spec, config_params, {:group => :integration, :expire => 300}).set_key
     port = (Rails.env.development? ? ":#{request.port}" : '')
-    controller = ( Integrations::Application.find_by_name(app_name).user_specific_auth? ? 'integrations/user_credentials' : 'integrations/applications' )
-    redirect_url = protocol +  domain + port + "/#{controller}/oauth_install/#{app_name}"
+    controller = ( Integrations::Application.find_by_name(@app_name).user_specific_auth? ? 'integrations/user_credentials' : 'integrations/applications' )
+    redirect_url = portal_url + port + "/#{controller}/oauth_install/#{@app_name}"
     redirect_to redirect_url
   end
 
     def create_for_email_marketing_oauth(provider, params)
     config_params = {}
-    Account.reset_current_account
-    portal_id = request.env["omniauth.origin"] unless request.env["omniauth.origin"].blank?
-    portal = Portal.find_by_id(portal_id)
-    account = portal.account
-    domain = portal.host
-    protocol = (portal.ssl_enabled?) ? "https://" : "http://"
+    
     config_params["mailchimp"] = "{'app_name':'#{provider}', 'api_endpoint':'#{@omniauth.extra.metadata.api_endpoint}', 'oauth_token':'#{@omniauth.credentials.token}'}" if provider == "mailchimp"
     config_params["constantcontact"] = "{'app_name':'#{provider}', 'oauth_token':'#{@omniauth.credentials.token}', 'uid':'#{@omniauth.uid}'}" if provider == "constantcontact"
     config_params = config_params[provider].gsub("'","\"")
 
     #Redis::KeyValueStore is used to store salesforce/nimble configurations since we redirect from login.freshdesk.com to the 
     #user's account and install the application from inside the user's account.
-    key_options = { :account_id => account.id, :provider => provider}
+    key_options = { :account_id => @account_id, :provider => provider}
     key_spec = Redis::KeySpec.new(Redis::RedisKeys::APPS_AUTH_REDIRECT_OAUTH, key_options)
     Redis::KeyValueStore.new(key_spec, config_params, {:group => :integration, :expire => 300}).set_key
-    redirect_url = protocol +  domain + "/integrations/applications/oauth_install/"+provider
+    port = (Rails.env.development? ? ":#{request.port}" : '')
+    redirect_url = portal_url + port + "/integrations/applications/oauth_install/"+provider
      
     redirect_to redirect_url
   end
 
   def create_for_facebook(params)
-    Account.reset_current_account
-    portal_id = request.env["omniauth.origin"] unless request.env["omniauth.origin"].blank?
     state = "/facebook" if params[:state]
-    portal = Portal.find_by_id(portal_id)
-    user_account = portal.account
+    user_account = Account.find @account_id
     user_account.make_current
-    portal_url = portal.host
-    protocol = (portal.ssl_enabled?) ? "https://" : "http://"
-    portal_url = protocol + portal_url
     fb_email = @omniauth['info']['email']
     unless user_account.blank?
       @current_user = user_account.all_users.find_by_email(fb_email) unless fb_email.blank?
@@ -165,7 +179,8 @@ class AuthorizationsController < ApplicationController
         key_options = { :account_id => user_account.id, :user_id => @current_user.id, :provider => @omniauth['provider']}
         key_spec = Redis::KeySpec.new(Redis::RedisKeys::SSO_AUTH_REDIRECT_OAUTH, key_options)
         Redis::KeyValueStore.new(key_spec, curr_time, {:group => :integration, :expire => 300}).set_key
-        redirect_to portal_url + "#{state}/sso/login?provider=facebook&uid=#{@omniauth['uid']}&s=#{random_hash}" 
+        port = (Rails.env.development? ? ":#{request.port}" : '')
+        redirect_to portal_url(user_account) + "#{port}#{state}/sso/login?provider=facebook&uid=#{@omniauth['uid']}&s=#{random_hash}" 
       end
     end
   end
@@ -227,26 +242,23 @@ class AuthorizationsController < ApplicationController
     user.reset_persistence_token! 
     Authorization.create(:user_id => user.id, :uid => hash['uid'], :provider => hash['provider'],:account_id => account.id)
   end
-  
-  def failure
-    origin = params[:origin]
-    portal = Portal.find_by_id(origin) unless origin.blank?
-    unless portal
-      origin = CGI.parse(origin) if origin
-      portal_id = origin['pid'][0].to_i if origin
-      Rails.logger.debug "origin: #{origin.inspect}"  
-      portal = Portal.find_by_id(portal_id) if portal_id
-    end
 
+  def failure
     port = (Rails.env.development? ? ":#{request.port}" : '')
-    flash[:notice] = t(:'flash.g_app.authentication_failed')
-    unless portal.blank?
-      domain = portal.host
-      protocol = (portal.ssl_enabled?) ? "https://" : "http://"
-      redirect_to protocol+domain+port
-    else
-      redirect_to root_url
+    path = ''
+    if @app_name 
+      app = Integrations::Application.find_by_name(@app_name)
+      path = '/integrations/applications' if (app and !app.options[:user_specific_auth]) 
     end
+    flash[:notice] = t(:'flash.g_app.authentication_failed')
+    redirect_to portal_url+port+path
+  end
+
+  def portal_url account=nil
+      account ||= Account.find(@account_id || DomainMapping.find_by_domain(request.host).account_id)
+      portal = account.main_portal
+      protocol  = portal.ssl_enabled? ? 'https://' : 'http://'
+      return (protocol + portal.host)
   end
   
   def destroy

@@ -3,7 +3,7 @@ class Helpdesk::NestedTicketField < ActiveRecord::Base
   set_table_name "helpdesk_nested_ticket_fields"
   attr_protected  :account_id
 
-  belongs_to :account
+  belongs_to_account
   belongs_to :ticket_field
   belongs_to :flexifield_def_entry, :dependent => :destroy
 
