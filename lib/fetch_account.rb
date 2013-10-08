@@ -3,6 +3,10 @@ module FetchAccount
   protected
   
     def current_account(req = nil)
+     @current_account ||= retrieve_current_account(req)
+    end
+
+    def retrieve_current_account(req)
       Sharding.select_shard_of(req) do
         @current_portal = Portal.fetch_by_url(req)
         return @current_portal.account if @current_portal
