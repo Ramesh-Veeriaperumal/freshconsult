@@ -26,6 +26,10 @@ module Helpdesk::NotifierFormattingMethods
     end
   end
 
+  def generate_email_references(ticket)
+    references = (ticket.header_info && ticket.header_info[:message_ids]) ? "<#{ticket.header_info[:message_ids].join(">,<")}>" : ""
+  end
+
   def build_body_html_with_inline_attachments(html_part, inline_attachments, account)
     TMail::HeaderField::FNAME_TO_CLASS.delete 'content-id'
     html_part.xpath('//img[@class="inline-image"]').each do |inline|

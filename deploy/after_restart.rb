@@ -1,6 +1,6 @@
 def all_instances_of(engine)
   utility_instances = []
-  node['utility_instances'].each do |utility|
+  config.node['utility_instances'].each do |utility|
     if utility['name'].include?(engine)
       utility_instances << utility['name']
     end
