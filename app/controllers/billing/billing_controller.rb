@@ -159,7 +159,7 @@ class Billing::BillingController < ApplicationController
 
     def subscription_reactivated(content)
       deleted_customer = DeletedCustomers.find_by_account_id(@account.id)
-      reactivate_deleted_customers(deleted_customer) if deleted_customer
+      deleted_customer.reactivate_deleted_customers if deleted_customer
       
       @account.subscription.update_attributes(@subscription_data)
     end
@@ -179,13 +179,6 @@ class Billing::BillingController < ApplicationController
               :account => @account, :amount => -(content[:transaction][:amount]/100))
     end
 
-
-    #reactivate_deleted_customers(14 days suspension window)
-    def reactivate_deleted_customers(customer)
-      Resque.remove_delayed(Workers::ClearAccountData, 
-                                      { :account_id => @account.id })
-      customer.delete if customer
-    end
 
     #Card and Payment info
     def card_info(card)

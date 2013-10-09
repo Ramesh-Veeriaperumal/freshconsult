@@ -18,6 +18,7 @@ class ThirdCRM
   end
 
   def add_signup_data(account, options = {})
+    @signup_id = options[:signup_id]
     add_lead_to_crm(lead_info(account), options[:marketo_cookie])
   end
 
@@ -57,7 +58,8 @@ class ThirdCRM
       {
         :Country => metrics.country,
         :Signup_source__c => metrics.landing_url ? tld(metrics.landing_url) : DEFAULT_DOMAIN,
-        :Signup_Referrer => metrics.landing_url
+        :Signup_Referrer => metrics.landing_url,
+        :signup_ID => @signup_id
       }
     end
 
@@ -71,13 +73,13 @@ class ThirdCRM
                   :Freshdesk_Account_Id__c => :id, :Freshdesk_Domain_Name__c => :full_domain }       
 
     TOP_LEVEL_DOMAINS = {
-      ".com.br" => "freshdesk_brazil",
-      ".de" => "freshdesk_germany",
-      ".es" => "freshdesk_spain",
-      ".fr" => "freshdesk_france",
-      ".it" => "freshdesk_italy",
-      ".nl" => "freshdesk_netherlands",
-      ".co.za" => "freshdesk_southafrica"
+      "freshdesk.com.br" => "freshdesk_brazil",
+      "freshdesk.de" => "freshdesk_germany",
+      "freshdesk.es" => "freshdesk_spain",
+      "freshdesk.fr" => "freshdesk_france",
+      "freshdesk.it" => "freshdesk_italy",
+      "freshdesk.nl" => "freshdesk_netherlands",
+      "freshdesk.co.za" => "freshdesk_southafrica"
     }
 
 

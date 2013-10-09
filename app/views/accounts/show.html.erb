@@ -26,7 +26,7 @@
 			<%= link_to(t("cancel_my_account"), cancel_account_url, :class => "button") %>
 		<% else %>
 			<p>
-				<%= t(".restore_account", :delete_at => 2.days.since(del_customer.created_at).strftime('%a, %b %d, %Y')) %>
+				<%= t(".restore_account", :delete_at => 14.days.since(del_customer.created_at).strftime('%a, %b %d, %Y')).html_safe %>
 			</p>
 		<% end %>
 	</div>
