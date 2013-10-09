@@ -4,12 +4,15 @@ class Reports::RedshiftQueries < Reports::Queries
 	include Reports::Redshift
 
 	def report_metrics
-		%( #{select_received_tickets}, #{select_resolved_tickets}, #{select_backlog_tickets},
-    #{select_avg_response_time_per_ticket}, #{select_avg_resolution_time_per_ticket},
-    #{select_avg_customer_interactions_per_ticket}, #{select_avg_agent_interactions_per_ticket},
-    #{select_avg_first_resp_time_per_ticket}, #{select_num_of_reopens}, #{select_assigned_tickets},
-    NVL(SUM(num_of_reassigns),0) as num_of_reassigns, NVL(SUM(fcr_tickets),0) as fcr_tickets,
-    NVL(SUM(sla_tickets),0) as sla_tickets)
+		%( #{summary_report_metrics}, #{select_received_tickets}, #{select_backlog_tickets}, 
+			#{select_avg_resolution_time_per_ticket},#{select_avg_customer_interactions_per_ticket}, 
+			#{select_avg_agent_interactions_per_ticket}, #{select_num_of_reopens}, #{select_assigned_tickets}, 
+      NVL(SUM(num_of_reassigns),0) as num_of_reassigns, #{select_first_resp_tickets})
+	end
+
+	def summary_report_metrics
+		%( #{select_resolved_tickets}, #{select_sla_tickets}, #{select_fcr_tickets},
+			#{select_avg_response_time_per_ticket}, #{select_avg_first_resp_time_per_ticket})
 	end
 
 	def select_received_tickets
