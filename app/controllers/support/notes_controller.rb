@@ -23,7 +23,7 @@ class Support::NotesController < ApplicationController
       }.merge(params[:helpdesk_note]))
     
     build_attachments
-    if @note.save
+    if @note.save_note
       update_cc_list if privilege?(:client_manager)
       flash[:notice] = t(:'flash.tickets.notes.create.success')
     else

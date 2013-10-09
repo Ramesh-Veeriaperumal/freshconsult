@@ -27,7 +27,7 @@ class ChatsController < ApplicationController
                   :ticket_body_attributes => { :description_html => params[:ticket][:content] }
               ) 
 
-    status = @ticket.save
+    status = @ticket.save_ticket
 
     render :json => { :ticket_id=> @ticket.display_id , :status => status }
 
@@ -54,7 +54,7 @@ class ChatsController < ApplicationController
                 :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
                 :note_body_attributes => { :body_html => params[:note] }
             )
-    @note.save
+    @note.save_note
   end
 
 end

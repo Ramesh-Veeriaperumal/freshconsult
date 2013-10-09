@@ -46,7 +46,7 @@ def add_message_as_note thread, ticket
                                   )
       begin
         user.make_current
-        unless @note.save
+        unless @note.save_note
           puts "error while saving the note #{@note.errors.to_json}"
         end
       ensure
@@ -76,7 +76,7 @@ def add_message_as_ticket thread
                                       :description_html => message[:message]})
                     
                                    
-   if @ticket.save
+   if @ticket.save_ticket
       if messages.size > 1
          add_message_as_note thread , @ticket
       end
