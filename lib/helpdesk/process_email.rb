@@ -153,12 +153,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
     
     def parse_from_email
-      f_email = separate_identifier(parse_email(params[:from]))
+      f_email = parse_email(params[:from])
+      separate_identifier(f_email)
       return f_email unless(f_email[:email].blank? || f_email[:email] =~ /(noreply)|(no-reply)/i)
       
       headers = params[:headers]
       if(!headers.nil? && headers =~ /Reply-[tT]o: (.+)$/)
-        rt_email = separate_identifier(parse_email($1))
+        rt_email = parse_email($1)
+        separate_identifier(rt_email)
         return rt_email unless rt_email[:email].blank?
       end
       
@@ -270,7 +272,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def separate_identifier(to_email)
-      if to_email[:email].match(%r((.*)\+TKT(\d+)(?=@.*))) #regex to match +TKT<numeric identifier> till the last @ in the email
+      if to_email[:email].match(%r((.*)\+TKT(\d+)(?=(@.*)))) #regex to match +TKT<numeric identifier> till the last @ in the email
         to_email[:email] = "#{$1}#{$3}"
         to_email[:display_id] = "#{$2}"
       end
