@@ -88,13 +88,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def pass_thro_biz_rules
-     send_later(:delayed_rule_check) unless import_id
+     send_later(:delayed_rule_check, freshdesk_webhook?) unless import_id
   end
   
-  def delayed_rule_check
+  def delayed_rule_check freshdesk_webhook
    begin
     set_account_time_zone
-    evaluate_on = check_rules unless freshdesk_webhook?
+    evaluate_on = check_rules unless freshdesk_webhook
     autoreply 
     assign_tickets_to_agents unless spam? || deleted?
    rescue Exception => e #better to write some rescue code 
@@ -264,7 +264,7 @@ private
     unless email.blank?
       name_email = parse_email email  #changed parse_email to return a hash
       self.email = name_email[:email]
-      self.name = name_email[:name]
+      self.name ||= name_email[:name]
       @requester_name ||= self.name # for MobiHelp
     end
 

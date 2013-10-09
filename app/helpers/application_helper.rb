@@ -758,10 +758,6 @@ module ApplicationHelper
     "#{request.protocol}#{request.host}:#{nodejs_port}/#{namespace}"
   end  
 
-  def es_enabled?
-    current_account.es_enabled?
-  end
-
   def assumed_identity_message
     _output = []
     if current_user && is_assumed_user?

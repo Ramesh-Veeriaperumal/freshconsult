@@ -185,49 +185,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
                   
      return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
   end
-  
-  #Sphinx configuration starts
-  define_index 'without_description' do
-    
-    indexes :display_id, :sortable => true
-    indexes :subject, :sortable => true
-    
-    has account_id, deleted, responder_id, group_id, requester_id, status
-    has sphinx_requester.customer_id, :as => :customer_id
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :visibility, :type => :integer
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_ids, :type => :integer
-
-    where "helpdesk_tickets.spam=0 and helpdesk_tickets.deleted = 0"
-
-    #set_property :delta => Sphinx::TicketDelta
-
-    set_property :field_weights => {
-      :display_id   => 10,
-      :subject      => 10
-     }
-  end
-
-  define_index 'with_description' do
-    
-    indexes :display_id, :sortable => true
-    indexes :subject, :sortable => true
-    indexes description
-    
-    has account_id, deleted, responder_id, group_id, requester_id, status
-    has sphinx_requester.customer_id, :as => :customer_id
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :visibility, :type => :integer
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_ids, :type => :integer
-
-    where "helpdesk_tickets.spam=0 and helpdesk_tickets.deleted = 0 and helpdesk_tickets.id > 5000000"
-
-    #set_property :delta => Sphinx::TicketDelta
-
-    set_property :field_weights => {
-      :display_id   => 10,
-      :subject      => 10,
-      :description  => 5
-     }
-  end
 
   def to_param 
     display_id ? display_id.to_s : nil

@@ -76,30 +76,6 @@ class Topic < ActiveRecord::Base
       } 
     end
   end
-  
-  #Sphinx configuration starts
-  define_index do
-    indexes :title, :sortable => true
-    indexes posts.body, :as => :comment
-
-    has account_id, user_id
-    has forum.forum_category_id, :as => :category_id
-    has forum.forum_visibility, :as => :visibility
-    has '0', :as => :deleted, :type => :boolean
-    has '2' , :as => :status , :type => :integer
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :responder_id, :type => :integer
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :group_id, :type => :integer
-    has forum.customer_forums(:customer_id), :as => :customer_ids
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :requester_id, :type => :integer
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_id, :type => :integer
-
-    #set_property :delta => :delayed
-    set_property :field_weights => {
-      :title    => 10,
-      :comment  => 4
-    }
-  end
-  #Sphinx configuration ends here..
 
   named_scope :for_forum, lambda { |forum|
     { :conditions => ["forum_id = ? ", forum] 

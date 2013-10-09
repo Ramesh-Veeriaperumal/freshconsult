@@ -31,7 +31,7 @@ class Support::SearchController < SupportController
 
   def tickets
     klasses = [Helpdesk::Ticket]
-    klasses << Helpdesk::Note if current_account.es_enabled?
+    klasses << Helpdesk::Note
     search_portal(klasses)
     @current_filter = :tickets
     render_search
@@ -65,7 +65,7 @@ class Support::SearchController < SupportController
       to_ret << Solution::Article if(allowed_in_portal?(:open_solutions))
       to_ret << Topic if(feature?(:forums) && allowed_in_portal?(:open_forums))
       to_ret << Helpdesk::Ticket if(current_user)
-      to_ret << Helpdesk::Note if(current_user) && current_account.es_enabled?
+      to_ret << Helpdesk::Note if(current_user)
 
       to_ret
     end
@@ -73,56 +73,7 @@ class Support::SearchController < SupportController
     def search_portal(f_classes)
       @items, @def_search_val = [], SearchUtil::DEFAULT_SEARCH_VALUE
       begin
-        unless current_account.es_enabled?
-          if main_portal?
-              @items = ThinkingSphinx.search(filter_key(params[:term]),
-                                        :with => with_options, 
-                                        :without => without_options,
-                                        :include => [ :folder, :forum ],
-                                        :classes => f_classes,
-                                        :max_matches => params[:max_matches],
-                                        :match_mode => :any,
-                                        :sphinx_select => sphinx_select,
-                                        :page => params[:page], :per_page => 20,
-                                        :excerpt_options => {
-                                                            :before_match => '',
-                                                            :after_match => ''
-                                                            })
-          else
-            f_classes.each do |f_class|            
-              s_options = with_options
-
-              if(f_class == Solution::Article)
-                s_options[:category_id] = current_portal.solution_category_id
-              elsif(f_class == Topic)
-                s_options[:category_id] = current_portal.forum_category_id
-              end
-
-              class_search = ThinkingSphinx.search(filter_key(params[:term]), 
-                                      :with => s_options, 
-                                      :classes => [ f_class ],
-                                      :without => without_options,                                
-                                      :match_mode => :any,
-                                      :max_matches => params[:max_matches],
-                                      :sphinx_select => sphinx_select,
-                                      :page => params[:page], :per_page => 10,
-                                      :excerpt_options => {
-                                                            :before_match => '',
-                                                            :after_match => ''
-                                                          })
-              
-              @items.concat(class_search)
-
-              @longest_collection = class_search if 
-                (!@longest_collection || (class_search.total_pages > @longest_collection.total_pages))
-
-            end
-          end
-        else
-          # es_classes = f_classes.map { |es_class| es_class = es_class.document_type }
-          return es_search_portal(f_classes)
-        end
-
+        return es_search_portal(f_classes)
       rescue Exception => e
         @search_results = []
         NewRelic::Agent.notice_error(e)
@@ -251,14 +202,6 @@ class Support::SearchController < SupportController
       { :status => @def_search_val }
     end
 
-    def sphinx_select
-      visiblity_class = Forum::VISIBILITY_KEYS_BY_TOKEN      
-      %{*, IF( IN(customer_ids, #{current_user.customer_id}) \
-                 OR IN(visibility, #{ visiblity_class[:anyone] }, #{ visiblity_class[:logged_users] }), \
-                 #{ @def_search_val },0) AS company } if 
-          current_user && current_user.has_company?
-    end
-
     def visibility_opts visiblity_class
         visiblity = [ @def_search_val ]
         if current_user
@@ -270,7 +213,7 @@ class Support::SearchController < SupportController
 
     def process_results
       @search_results = []
-      pre_process_results if current_account.es_enabled?
+      pre_process_results
       @items.each do |item|
         next if item.nil?
         result = item_based_selection(item)
