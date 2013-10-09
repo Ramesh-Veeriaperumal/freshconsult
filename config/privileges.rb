@@ -39,7 +39,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/ca_folder"
     resource :agent, :only => [:toggle_availability, :list]
     resource :"search/home", :only => [:index, :suggest]
-    resource :search, :only => [:index, :suggest, :content]
     resource :"chat", :only => [:create_ticket, :add_note]
     resource :"helpdesk/survey"
     # resource :"helpdesk/common", :only => [:group_agents]
@@ -100,7 +99,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"solution/folder", :only => [:index, :show]
     resource :"solution/article", :only => [:index, :show]
     resource :"search/home", :only => [:solutions]
-    resource :search, :only => [:solutions]
     resource :"helpdesk/ticket", :only => [:get_solution_detail]
   end
 
@@ -130,7 +128,6 @@ Authority::Authorization::PrivilegeList.build do
     # review code for monitorship?
     resource :monitorship
     resource :"search/home", :only => [:topics]
-    resource :search, :only => [:topics]
     resource :forums_uploaded_image, :only => [:create]
   end
 

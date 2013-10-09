@@ -1,5 +1,3 @@
-run "ln -nfs #{config.shared_path}/config/sphinx #{config.release_path}/config/sphinx"
-run "ln -nfs #{config.shared_path}/config/sphinx.yml #{config.release_path}/config/sphinx.yml"
 run "ln -nfs #{config.shared_path}/config/memcached.yml #{config.release_path}/config/memcached.yml"
 run "ln -nfs #{config.shared_path}/config/database_cluster.yml  #{config.release_path}/config/database.yml"
 run "ln -nfs #{config.shared_path}/config/elasticsearch.yml  #{config.release_path}/config/elasticsearch.yml"
