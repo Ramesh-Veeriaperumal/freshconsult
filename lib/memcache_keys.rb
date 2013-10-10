@@ -67,6 +67,8 @@ module MemcacheKeys
   DEFAULT_BUSINESS_CALENDAR = "v1/DEFAULT_BUSINESS_CALENDAR:%{account_id}"
 
   ACCOUNT_AGENT_NAMES = "AGENT_NAMES:%{account_id}"
+
+  GLOBAL_BLACKLISTED_IPS = "v1/GLOBAL_BLACKLISTED_IPS"
   
   class << self
 
