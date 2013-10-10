@@ -10,6 +10,7 @@ class Middleware::TrustedIp
     account_id =  Rails.env.development? ? Account.first.id : shard.account_id
     Sharding.select_shard_of(account_id) do
       @current_account = Account.find(account_id)
+      Thread.current[:account] = @current_account
       unless env['rack.session']['user_credentials_id'].nil?
         if trusted_ips_enabled?
           unless valid_ip(env['REMOTE_ADDR'], env['rack.session']['user_credentials_id'])
@@ -21,6 +22,8 @@ class Middleware::TrustedIp
       end
     end
     @status, @headers, @response = @app.call(env)
+    ensure
+      Thread.current[:account] = nil
   end
 
   def trusted_ips_enabled?
