@@ -10,6 +10,7 @@ class GlobalBlacklistedIp < ActiveRecord::Base
 	validate :valid_ips?
 
   def valid_ips?
+  	return if ip_list.nil?
 		unless ip_list.all? { |ip| valid_ipv4_address?(ip) || valid_ipv6_address?(ip) }
 			errors.add_to_base("Invalid IPAddress")
 		end

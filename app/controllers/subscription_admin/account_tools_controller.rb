@@ -8,7 +8,7 @@ class SubscriptionAdmin::AccountToolsController < ApplicationController
   before_filter :set_selected_tab , :load_global_blacklisted_ips 
 
   def index
-    @blacklisted_ip_pagination = ip_list.paginate( :page => params[:page], :per_page => 5) if blacklisted_ips.ip_list
+    @blacklisted_ip_pagination = blacklisted_ips.ip_list.paginate( :page => params[:page], :per_page => 5) if blacklisted_ips.ip_list
   end
 
   def regenerate_reports_data

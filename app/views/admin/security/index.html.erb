@@ -104,6 +104,7 @@
 				<% f.fields_for :whitelisted_ip_attributes, @whitelisted_ips do |p| %>
 				<%#= p.error_messages %>
 				<%= p.hidden_field :id unless @whitelisted_ips.new_record? %>
+				<%= content_tag( :div, t('.current_ip_info', :current_ip => request.remote_addr ), :class => "info-data" ) %>
 				<br/><div class="row-fluid">
 					<div class="span2">
 							<label><%= t(".applies_to") %> :</label>
