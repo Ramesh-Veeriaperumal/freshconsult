@@ -799,6 +799,18 @@ en:
         default_ssl: Default SSL
         custom_ssl: Custom SSL
         dns_name: <b>Important:</b> Please update the CNAME DNS record in your DNS Zone file to point your domain name to the below ELB DNS name. <br /> <br />The ELB DNS name for %{url} is
+        whitelisted_ips_enabled: Trusted IP Address
+        whitelisted_ips_enabled_info: Restrict your support portal to only trusted locations and networks by defining a range of allowed IP addresses.
+        applies_to: Applies to
+        only_agents: Agents
+        agents_customers: Agents and Customers
+        ip_range: "IP Ranges :"
+        add_new: Add  New
+        start_ip: Start IP
+        end_ip: End IP
+        valid_ip_address: Enter valid IP Address
+        invalid_ip_range: Invalid IP Range
+        current_ip_not_in_range: Your current IP is not in the list of Ranges
       helpnote:
         title: Security Settings
         info: Configuring security options help you streamline and control the accessibility of visitors to your support portal.
