@@ -16,6 +16,7 @@ require "#{RAILS_ROOT}/lib/facebook_routing.rb"
 Rails::Initializer.run do |config|
 
   config.middleware.use "Middleware::ApiThrottler", :max =>  1000
+  config.middleware.use "Middleware::TrustedIp"
   # Settings in config/environments/* take precedence over those specified here.
   # Application configuration should go into files in config/initializers
   # -- all .rb files in that directory are automatically loaded.

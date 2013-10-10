@@ -87,12 +87,71 @@
 							<%= t(".dns_name", :url => @portal.portal_url).html_safe %>
 							<br/>
 							<span class="elb_name"> <%= @portal.elb_dns_name %> </span>
-						</span>
+						</div>
 					</div>
 				<% end %>
 			<% end %>
 		</span>
+
+		<% if current_account.features_included?(:whitelisted_ips) %>
+		<li class="inline-field">
+		  <%= check_box('account[whitelisted_ip_attributes]', 'enabled', options = { :checked => @whitelisted_ips.enabled}, checked_value = "1", unchecked_value = "0") %> 
+		  <span class="enable_heading">
+		  	<%=t(".whitelisted_ips_enabled")%>
+		  </span>
+		  <%= content_tag( :div, t(".whitelisted_ips_enabled_info"), :class => "info-data extra_tabbed" ) %>
+			<div class="info-data extra_tabbed"  id="ip-form" style="display:<%= feature?(:whitelisted_ips) ? "block": "none" %>;">	
+				<% f.fields_for :whitelisted_ip_attributes, @whitelisted_ips do |p| %>
+				<%#= p.error_messages %>
+				<%= p.hidden_field :id unless @whitelisted_ips.new_record? %>
+				<br/><div class="row-fluid">
+					<div class="span2">
+							<label><%= t(".applies_to") %> :</label>
+					</div>
+					<div class="span10">
+						<label class="radio-label">
+							<input type="radio" name="account[whitelisted_ip_attributes][applies_only_to_agents]" id= "agents" value= "1" checked> 
+							<%= t(".only_agents") %>
+						</label>
+						<label class="radio-label">
+							<input type="radio" name="account[whitelisted_ip_attributes][applies_only_to_agents]" id= "both" value= "0" > 
+							<%= t(".agents_customers") %>	
+						</label>
+					</div>
+				</div>
+				<br/>
+				<div class="row-fluid">
+					<div class="span2"><%= p.label :ip_range, t('.ip_range') %></div>
+					<div class="span10">
+						<div id="security-ip-range-container"></div>
+					</div>
+				</div>
+				<div class="row-fluid">
+					<div class="span2"></div>
+					<div class="span10">
+						<a href="#" id="ip-range-btn">
+         				<span class=""><img alt="Add New" class="add pull-left" src="/images/add.png" /> </span>
+         				<span class="span8 app-omega">&nbsp&nbsp<%= t('.add_new') %></span>
+    				</a>
+    			</div>
+				</div>
+				<% end %>
+			</div>
+		</li>	
+		<% end %>
 	</ul>
+
+	<script id="security-ip-range-template" type="text/x-jquery-tmpl">
+		<div class="row-fluid">
+			<a href="#" class="delete-row">
+ 				<img src="/images/delete.png"/>
+			</a>
+			<input type="text" name="account[whitelisted_ip_attributes][ip_ranges][][start_ip]" value="${start_ip}" placeholder= "<%= t('.start_ip') %>" class="span4 required"/>
+				&nbsp&nbsp-&nbsp&nbsp
+			<input type="text" name="account[whitelisted_ip_attributes][ip_ranges][][end_ip]" value="${end_ip}" placeholder= "<%= t('.end_ip') %>" class="span4 required"/>
+		</div>
+	</script>
+
 	<div class="button-container">
 		<%= link_to "#{t('cancel')}".html_safe, "/admin/home", :class => "btn" %>
 		<%= f.submit t('save'), :class => "btn btn-primary" %>
@@ -104,10 +163,7 @@
 
 		$('.custom_ssl_form, input').keypress(function(event) { return event.keyCode != 13; });
 
-		$("#account_sso_enabled, #account_ssl_enabled").itoggle({
-			checkedLabel: 'On',
-			uncheckedLabel: 'Off'
-		});
+		$("#account_sso_enabled, #account_ssl_enabled, #account_whitelisted_ip_attributes_enabled").itoggle();
 
 		$("#account_sso_enabled").bind("change", function(e){
 			$('#sso-form').slideToggle(this.checked);
@@ -120,6 +176,10 @@
 
 		$("#custom_ssl_link").click(function() {
 			$(".custom_ssl_form").slideToggle();
+		});
+
+		$("#account_whitelisted_ip_attributes_enabled").bind("change", function(e){
+			$('#ip-form').slideToggle(this.checked);
 		});
 
 		$(".submit_request").click(function(){
@@ -136,5 +196,63 @@
 	            });
 			}
 		});
+
+		<% if current_account.features_included?(:whitelisted_ips) %>
+			
+
+			_ip_template = $("#security-ip-range-template").template();
+    
+    	$("#ip-range-btn").bind("click", function(ev){
+      	ev.preventDefault();
+				$.tmpl( _ip_template, { start_ip : "", end_ip : "" } ).appendTo( "#security-ip-range-container" );  
+  		})
+
+    	$(".delete-row").live("click", function(ev){
+    		ev.preventDefault();
+    		if($(this).parent().parent().children().size() > 1)
+    			$(this).parent().remove()
+    	})
+
+			<% unless @whitelisted_ips.enabled.present? %>
+				$("#ip-form").hide();
+			<% end %>
+			
+      <% if @whitelisted_ips.ip_ranges.present? %>
+        _data = <%= @whitelisted_ips.ip_ranges.to_json.html_safe %>
+        _data.each(function(item){
+          $.tmpl( _ip_template, item ).appendTo( "#security-ip-range-container" );
+        });
+
+        <%= @whitelisted_ips.applies_only_to_agents %> ? $("#agents").attr("checked","checked") : $("#both").attr("checked","checked")
+        <%= @whitelisted_ips.enabled %> ? $("#ip-form").show() : $("#ip-form").hide()
+    	<% else %>
+    		$.tmpl( _ip_template, { start_ip : "<%= request.remote_addr %>", end_ip : "<%= request.remote_addr %>" } )
+    			.appendTo( "#security-ip-range-container" );
+    	<% end %>
+
+    	$('#sso_form').submit(function(){
+    		$('input[name="account[whitelisted_ip_attributes][ip_ranges][][start_ip]"]').each(function(){
+    			start_ip = $(this);
+    			end_ip = $(this).siblings('input[name="account[whitelisted_ip_attributes][ip_ranges][][end_ip]"]');
+    			if((start_ip.val() == "") && (end_ip.val() == ""))
+    			{
+    				$(this).siblings('.delete-row').trigger('click');
+    			}
+
+    			if((start_ip.val() != "") && (end_ip.val() == ""))
+    			{
+    				end_ip.val(start_ip.val());
+    			}
+
+    			if((start_ip.val() == "") && (end_ip.val() != ""))
+    			{
+    				start_ip.val(end_ip.val());
+    			}
+
+    		});
+    	})
+    	
+		<% end %>
+
 	})(jQuery)
 <% end %>
