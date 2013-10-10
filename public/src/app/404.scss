@@ -47,27 +47,3 @@ a:hover{ color: darken(#336699, 10%); }
 	margin:0px;
 	text-align:center;
 } 
-
-.unauthorized{
-	margin: 50px auto;
-	padding: 18px 20px 30px 20px;
-	text-align: center;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	-ms-border-radius: 10px;
-	-o-border-radius: 10px;
-	border-radius: 10px;
-}
-
-.unauthorized h2{
-	font-size: 3em;
-	font-weight: 300;	
-}
-
-.unauthorized p{
-	font-size: 20px;
-	line-height: 1.5em;
-	margin: 0px;
-	text-align: center;
-	font-weight: 300;
-}

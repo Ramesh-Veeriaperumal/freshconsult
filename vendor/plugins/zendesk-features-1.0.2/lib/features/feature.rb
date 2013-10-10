@@ -12,17 +12,13 @@ module Features
   #   account.features.wiffle.create
   #
   class Feature < ActiveRecord::Base
-    
-    include MemcacheKeys
-
     abstract_class = true
   
     LIST = []
   
     after_create :reset_owner_association
     after_destroy :reset_owner_association
-    before_destroy :destroy_dependant_features, :clear_features_from_cache
-    before_create :clear_features_from_cache
+    before_destroy :destroy_dependant_features
   
     def available?
       feature_owner_instance.features.available?(to_sym)
@@ -128,11 +124,6 @@ module Features
     
     def self.feature_owner_key
       "#{feature_owner}_id".to_sym
-    end
-
-    def clear_features_from_cache
-      key = FEATURES_LIST % { :account_id => self.account_id }
-      MemcacheKeys.delete_from_cache key
     end
   end
 

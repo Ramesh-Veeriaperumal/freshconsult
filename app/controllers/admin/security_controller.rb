@@ -2,8 +2,6 @@ class Admin::SecurityController <  Admin::AdminController
 
   include Redis::RedisKeys
   include Redis::OthersRedis
-
-  before_filter :load_whitelisted_ips, :only => :index
   
   def index
    @account = current_account  
@@ -15,16 +13,7 @@ class Admin::SecurityController <  Admin::AdminController
    @account = current_account  
    @account.sso_enabled = params[:account][:sso_enabled]
    @account.ssl_enabled = params[:account][:ssl_enabled]
-   @account.whitelisted_ip.enabled = params[:account][:whitelisted_ip_attributes][:enabled] unless 
-   						@account.whitelisted_ip.nil?
-   						
-   if current_account.features_included?(:whitelisted_ips) && (@account.whitelisted_ip ? 
-   						@account.whitelisted_ip.enabled : params[:account][:whitelisted_ip_attributes][:enabled])
-   		@account.whitelisted_ip_attributes = params[:account][:whitelisted_ip_attributes]
-			@whitelisted_ips = @account.whitelisted_ip
-			@whitelisted_ips.load_ip_info(request.remote_addr)
-   end
-
+   
    if params[:ssl_type].present?
     current_account.main_portal.update_attributes( :ssl_enabled => params[:ssl_type] )
    end
@@ -56,10 +45,4 @@ class Admin::SecurityController <  Admin::AdminController
                                                            Account ID ##{current_account.id}" })
    render :json => { :success => true }
  end 
-
- def load_whitelisted_ips
-		if current_account.features_included?(:whitelisted_ips)
-			@whitelisted_ips = current_account.whitelisted_ip_from_cache || current_account.build_whitelisted_ip
-		end
- end
 end
