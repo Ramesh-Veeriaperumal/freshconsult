@@ -1450,7 +1450,7 @@ pt-BR:
     cancel: 
       cancel_account: "Cancelar minha conta Freshdesk"
       info_text: "Por favor, pare um pouco para nos contar o motivo pelo qual você deseja cancelar sua conta. Talvez ainda possamos lhe ajudar."
-      goback: "&#x2190; Voltar às configurações da conta"
+      goback: "Voltar às configurações da conta"
       delete_my_account: "Excluir minha conta"
       deleting_account: Cancelando
       confirm_and_cancel_my_account: "Confirmo que desejo cancelar minha conta e excluir todos os meus dados..."
