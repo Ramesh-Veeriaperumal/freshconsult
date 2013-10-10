@@ -32,6 +32,7 @@ gem "omniauth-constantcontact2", "~> 1.0.4"
 gem "omniauth-surveymonkey", "0.0.0"
 gem "nori", "1.1.4"
 gem "google-api-client", "~> 0.6.3"
+gem "ipaddress", "0.8.0"
 
 gem "soap4r-ruby1.9", "~> 2.0.5", :platforms => :ruby_19
 gem "jira4r", "0.3.0"
