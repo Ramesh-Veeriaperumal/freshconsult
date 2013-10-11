@@ -103,7 +103,8 @@ module FreshdeskCore::Model
                         "votes", 
                         "va_rules", 
                         "wf_filters",
-                        "report_filters"
+                        "report_filters",
+                        "whitelisted_ips"
                     ]
 
   STATUS = {

@@ -10,7 +10,7 @@ class Middleware::TrustedIp
     @status, @headers, @response = @app.call(env)
     return [@status, @headers, @response] if SKIPPED_SUBDOMAINS.include?(env["HTTP_HOST"].split(".")[0])
     shard = ShardMapping.lookup_with_domain(env["HTTP_HOST"])
-    raise DomainNotReady unless shard || !Rails.env.production?
+    return [@status, @headers, @response] if shard.nil? && !Rails.env.development?
     account_id =  Rails.env.development? ? Account.first.id : shard.account_id
     Sharding.select_shard_of(account_id) do
       @current_account = Account.find(account_id)
