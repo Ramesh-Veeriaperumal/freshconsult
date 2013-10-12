@@ -1,5 +1,5 @@
 # source :gemcutter
-source 'https://rubygems.org'
+source 'http://rubygems.org'
 
 gem "rake", "0.8.7"
 gem "rack", "~> 1.1.6"
