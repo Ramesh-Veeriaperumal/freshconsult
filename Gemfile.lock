@@ -54,13 +54,19 @@ GIT
       rake
       rest-client (~> 1.6)
 
+GIT
+  remote: git@github.com:mperham/memcache-client.git
+  revision: a014dc272d7cb79306961c0806e2da09acb6d002
+  specs:
+    memcache-client (1.8.5)
+
 PATH
   remote: vendor/gems/freshdesk_authority-0.1
   specs:
     freshdesk_authority (0.1)
 
 GEM
-  remote: https://rubygems.org/
+  remote: http://rubygems.org/
   specs:
     POpen4 (0.1.4)
       Platform (>= 0.4.0)
@@ -191,7 +197,6 @@ GEM
     lockfile (1.4.3)
     map-fields (1.0.0)
       fastercsv (>= 1.2.3)
-    memcache-client (1.8.5)
     metaclass (0.0.1)
     mime-types (1.16)
     mocha (0.13.3)
@@ -414,7 +419,7 @@ DEPENDENCIES
   lockfile (= 1.4.3)
   map-fields (= 1.0.0)
   marketo!
-  memcache-client (= 1.8.5)
+  memcache-client (= 1.8.5)!
   mocha (~> 0.13.3)
   mongrel (>= 1.2.0.pre2)
   mysql (= 2.8.1)
