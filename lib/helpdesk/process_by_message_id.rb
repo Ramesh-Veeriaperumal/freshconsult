@@ -17,6 +17,10 @@ module Helpdesk::ProcessByMessageId
     end
   end
 
+  def zendesk_email
+    (message_id =~ /@zendesk.com/ and in_reply_to =~ /@zendesk.com/) ? in_reply_to : nil
+  end
+
   private
 
     def parent_ticket from_email, account

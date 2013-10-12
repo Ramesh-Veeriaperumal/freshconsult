@@ -2012,6 +2012,15 @@ ActiveRecord::Schema.define(:version => 20130918125805) do
 
   add_index "wf_filters", ["user_id"], :name => "index_wf_filters_on_user_id"
 
+  create_table "whitelisted_ips", :force => true do |t|
+    t.integer  "account_id",             :limit => 8
+    t.boolean  "enabled"
+    t.text     "ip_ranges"
+    t.boolean  "applies_only_to_agents"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "widgets", :force => true do |t|
     t.string  "name"
     t.string  "description"

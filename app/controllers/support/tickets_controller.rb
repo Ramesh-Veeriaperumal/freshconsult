@@ -21,6 +21,8 @@ class Support::TicketsController < SupportController
     @agent_visible = @visible_ticket_fields.any? { |tf| tf[:field_type] == "default_agent" }
     # @editable_ticket_fields = current_portal.ticket_fields(:customer_editable).reject{ |f| !f.visible_in_view_form? }
 
+    @page_title = "[##{@ticket.display_id}] #{@ticket.subject}"
+
     set_portal_page :ticket_view
   end
   
@@ -46,8 +48,8 @@ class Support::TicketsController < SupportController
   end
 
   def filter    
-    @page_title = TicketsFilter::CUSTOMER_SELECTOR_NAMES[current_filter.to_sym]
     build_tickets
+    @page_title = TicketsFilter::CUSTOMER_SELECTOR_NAMES[current_filter.to_sym]
     set_portal_page :ticket_list
     respond_to do |format|
       format.html { render :partial => "ticket_list" }

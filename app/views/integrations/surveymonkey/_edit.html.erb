@@ -79,7 +79,7 @@
 	<script type="text/javascript">
 		jQuery("#InstallApplication input[type=\"submit\"]").click(function(e){
 			e.preventDefault();
-			window.location.href = "<%=app.oauth_url(current_account.id)%>";
+			window.location.href = "<%=app.oauth_url({:account_id => current_account.id, :portal_id => current_portal.id})%>";
 		});			
 	</script>
 

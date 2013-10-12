@@ -38,8 +38,9 @@
 <div class="modal-footer">
 	<div class="copyright">
 		<% unless(current_account.subscription.paid_account?) %>
-			<%= link_to(t('footer.helpdesk_software'), "http://www.freshdesk.com", :target => "_blank") %>
-			<%= t('footer.by_freshdesk') %>
+			<%= link_to(t('footer.helpdesk_software'), "http://www.freshdesk.com", :target => "_blank") %> 
+			<%= t('footer.by_freshdesk') %> &nbsp;&nbsp; | &nbsp;&nbsp;
+			<%= link_to(t('portal.cookie.privacy_policy'), "http://www.freshdesk.com/privacy", :target => "_blank") %> 
 		<% end %>
 	</div>
 	<%= f.submit t('ticket.submit_ticket'), :class => "btn btn-primary" %>

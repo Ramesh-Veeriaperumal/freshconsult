@@ -369,7 +369,7 @@ class User < ActiveRecord::Base
   end
   
   def has_ticket_permission? ticket
-    (can_view_all_tickets?) or (ticket.responder == self ) or (ticket.requester == self) or (group_ticket_permission && (ticket.group_id && (agent_groups.collect{|ag| ag.group_id}.insert(0,0)).include?( ticket.group_id))) 
+    (can_view_all_tickets?) or (ticket.responder == self ) or (ticket.requester_id == self.id) or (group_ticket_permission && (ticket.group_id && (agent_groups.collect{|ag| ag.group_id}.insert(0,0)).include?( ticket.group_id))) 
   end
   
   def restricted?
