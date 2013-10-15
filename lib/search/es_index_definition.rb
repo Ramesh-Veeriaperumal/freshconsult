@@ -1,4 +1,7 @@
 class Search::EsIndexDefinition
+
+  CLUSTER_ARR = [DEFAULT_CLUSTER = "fd_es_index_1", "fd_es_index_2"]
+
 	class << self
 		include ErrorHandle
 
@@ -8,11 +11,11 @@ class Search::EsIndexDefinition
     [:customers, :users, :helpdesk_tickets, :solution_articles, :topics, :helpdesk_notes]
   end
 
-  def index_hash(pre_fix = "fd_es_index_1")
+  def index_hash(pre_fix = DEFAULT_CLUSTER)
     Hash[*models.map { |i| [i,"#{i}_#{pre_fix}"] }.flatten]
   end
 
-	def create_es_index(index_name = "fd_es_index_1")
+	def create_es_index(index_name = DEFAULT_CLUSTER)
     index_hash(index_name).each do |key, value|
       create_model_index(value,key)
     end
@@ -208,10 +211,6 @@ class Search::EsIndexDefinition
   }
   end
 
-  def latest_index_prefix
-    "fd_es_index_1"
-  end
-
   # Will return an array of alias names for the classes provided
   # parameters: search_in (Array of class objects not just names) and account_id
   def searchable_aliases(search_in, account_id)
@@ -255,7 +254,7 @@ class Search::EsIndexDefinition
     }
   end
 
-  def rebalance_aliases(account_id,new_index_prefix,old_index_prefix = "fd_es_index_1")
+  def rebalance_aliases(account_id,new_index_prefix,old_index_prefix = DEFAULT_CLUSTER)
     sandbox(0) {
       Search::EsIndexDefinition.es_cluster(account_id)
       old_index_hash = index_hash(old_index_prefix)
@@ -272,20 +271,14 @@ class Search::EsIndexDefinition
   end
 
   def es_cluster(account_id)
-    if (account_id <= 55000)
-      Tire.configure { url Es_urls[0] }
-      "fd_es_index_1"
-    elsif (account_id > 55000)
-      Tire.configure { url Es_urls[1] }
-      "fd_es_index_2"
-    end
+    index = (account_id <= 55000) ? 0 : 1
+    Tire.configure { url Es_urls[index] }
+    CLUSTER_ARR[index]
   end
 
   def es_cluster_by_prefix(index_prefix)
-    if index_prefix.include?("fd_es_index_1")
-      Tire.configure { url Es_urls[0] }
-    elsif index_prefix.include?("fd_es_index_2")
-      Tire.configure { url Es_urls[1] }
+    CLUSTER_ARR.each_with_index do |prefix,i|
+      return Tire.configure { url Es_urls[i] } if index_prefix.include? prefix
     end
   end
 
