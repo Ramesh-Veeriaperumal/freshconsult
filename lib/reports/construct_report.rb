@@ -2,7 +2,6 @@ module Reports::ConstructReport
   
   def build_tkts_hash(val,params)
     @val = val
-    date_condition
     merge_hash(fetch_tkts_and_data_from_redshift)
   end
 
