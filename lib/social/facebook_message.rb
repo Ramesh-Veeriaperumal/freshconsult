@@ -73,7 +73,7 @@ def add_message_as_ticket thread
           :fb_post_attributes => {:post_id => message[:id], :facebook_page_id =>@fb_page.id ,:account_id => @account.id ,
                                   :msg_type =>'dm' ,:thread_id =>thread[:id]},
           :ticket_body_attributes => {:description => message[:message], 
-                                      :description_html => message[:message]})
+                                      :description_html => CGI.escapeHTML(message[:message])})
                     
                                    
    if @ticket.save_ticket
