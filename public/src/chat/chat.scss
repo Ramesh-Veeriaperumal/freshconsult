@@ -271,13 +271,14 @@ li.chat-link-large{
                 padding: 4px 12px 5px;
                 .fc_convert_tkt_list{
                     float: left;
-                    width: 326px;
+                    width: 300px;
                 }
                 button{
                     display: none;
                     float: right;
                     position: relative;
                     top: -5px;
+                    margin-right: 0px !important;
                 }
                 &:hover{
                     border: none;
@@ -296,9 +297,10 @@ li.chat-link-large{
                 }
             }
             .fc_merge_element{
-                display: inline-block;
+                display: block;
                 -webkit-word-break: break-all;
                 word-break: break-all;
+
             }
         }
         .typed{
@@ -337,7 +339,7 @@ li.chat-link-large{
                 -ms-text-overflow: ellipsis;
                     text-overflow: ellipsis;
             display: inline-block;
-            width: 322px;
+            width: 300px;
         }
     }
 

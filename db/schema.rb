@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130918125805) do
+ActiveRecord::Schema.define(:version => 20131014120021) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -2011,6 +2011,21 @@ ActiveRecord::Schema.define(:version => 20130918125805) do
   end
 
   add_index "wf_filters", ["user_id"], :name => "index_wf_filters_on_user_id"
+
+  create_table "whitelisted_ips", :force => true do |t|
+    t.integer  "account_id",             :limit => 8
+    t.boolean  "enabled"
+    t.text     "ip_ranges"
+    t.boolean  "applies_only_to_agents"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "global_blacklisted_ips", :force => true do |t|
+    t.text     "ip_list"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "widgets", :force => true do |t|
     t.string  "name"

@@ -71,7 +71,7 @@ def save_ticket ticket_xml
   begin
    display_id_exist = @current_account.tickets.find_by_display_id(@nice_display_id)   
    @ticket.display_id = @nice_display_id   unless display_id_exist
-   @ticket.save!
+   @ticket.save_ticket!
   rescue ActiveRecord::StatementInvalid => error
     @save_retry_count =  (@save_retry_count || 5)
     retry if( (@save_retry_count -= 1) > 0 )
@@ -122,7 +122,7 @@ def ticket_post_process ticket_prop , ticket
                                                                         :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] , :created_at =>comment.created_at.to_datetime()})
     note_props = note_props.to_hash.tap{|hs| hs.delete(:body)}
     @note = ticket.notes.build(note_props)
-    @note.save
+    @note.save_note
     #set ticket_states at note level
     tkt_state = ticket.ticket_states
     if user.customer?

@@ -53,7 +53,7 @@ class Social::FacebookPosts
           :ticket_body_attributes => {:description => feed[:message], 
                                       :description_html =>get_html_content(feed[:post_id]) }) 
       
-       if @ticket.save
+       if @ticket.save_ticket
         if feed[:comments]["count"] > 0
            puts"ticket is saved and it has more comments :: #{feed[:comments]["count"]}"
            add_comment_as_note feed
@@ -139,7 +139,7 @@ class Social::FacebookPosts
 
         begin
           user.make_current
-          if @note.save
+          if @note.save_note
             
           else
             puts "error while saving the note #{@note.errors.to_json}"
@@ -187,7 +187,7 @@ class Social::FacebookPosts
                         )
           begin
             user.make_current
-            unless @note.save
+            unless @note.save_note
               puts "error while saving the note :: #{@note.errors.to_json}"
             end
           rescue

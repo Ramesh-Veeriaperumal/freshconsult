@@ -54,6 +54,10 @@ module MemcacheKeys
 
   TWITTER_REAUTH_CHECK = "v1/TWITTER_REAUTH_CHECK:%{account_id}"
 
+  WHITELISTED_IP_FIELDS = "v1/WHITELISTED_IP_FIELDS:%{account_id}"
+
+  FEATURES_LIST = "v1/FEATURES_LIST:%{account_id}"
+  
   SHARD_BY_DOMAIN = "v1/SHARD_BY_DOMAIN:%{domain}"
  
   SHARD_BY_ACCOUNT_ID = "v1/SHARD_BY_ACCOUNT_ID:%{account_id}"
@@ -63,6 +67,8 @@ module MemcacheKeys
   DEFAULT_BUSINESS_CALENDAR = "v1/DEFAULT_BUSINESS_CALENDAR:%{account_id}"
 
   ACCOUNT_AGENT_NAMES = "AGENT_NAMES:%{account_id}"
+
+  GLOBAL_BLACKLISTED_IPS = "v1/GLOBAL_BLACKLISTED_IPS"
   
   class << self
 

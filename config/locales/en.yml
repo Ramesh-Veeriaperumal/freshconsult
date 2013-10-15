@@ -799,6 +799,19 @@ en:
         default_ssl: Default SSL
         custom_ssl: Custom SSL
         dns_name: <b>Important:</b> Please update the CNAME DNS record in your DNS Zone file to point your domain name to the below ELB DNS name. <br /> <br />The ELB DNS name for %{url} is
+        whitelisted_ips_enabled: Trusted IP Address
+        whitelisted_ips_enabled_info: Restrict your support portal to only trusted locations and networks by defining a range of allowed IP addresses.
+        current_ip_info: Your current IP is %{current_ip}
+        applies_to: Applies to
+        only_agents: Agents
+        agents_customers: Agents and Customers
+        ip_range: "IP Ranges :"
+        add_new: Add  New
+        start_ip: Start IP
+        end_ip: End IP
+        valid_ip_address: Enter valid IP Address
+        invalid_ip_range: Invalid IP Range
+        current_ip_not_in_range: Your current IP is not in the list of Ranges
       helpnote:
         title: Security Settings
         info: Configuring security options help you streamline and control the accessibility of visitors to your support portal.
@@ -1002,7 +1015,7 @@ en:
         import: Import data from Zendesk
         agent: Agents
         feedback: Feedback widget
-        freshchat: FreshChat
+        freshchat: Freshchat
         integrations: "Integrations"
         dispatcher: Dispatch'r
         supervisor: Supervisor
@@ -1197,7 +1210,7 @@ en:
       failure:
         string: You have exceeded the maximum limit for this type of field.
         text: You are not allowed to create more than 10 paragraph fields.
-        number: You are not allowed to more than 10 number fields.
+        number: You are not allowed to create more than 10 number fields.
         boolean: You are not allowed to create more than 10 checkbox fields.
     email_settings: 
       send_activation: 
@@ -2306,7 +2319,7 @@ en:
     meta_keywords_message: Seperate keywords with comma
   import_updated: Updated
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
-  chatwidget_intro: Customize your freshchat widget below and see a realtime preview.
+  chatwidget_intro: Customize your Freshchat widget below and see a realtime preview.
   save: Save
   import_added_newly: Added Newly
   select_a_plan_gain_access: Select a plan from below to regain access to your account.
@@ -2367,10 +2380,10 @@ en:
   is_expiring_today: is expiring today
   feedbackwidget_help_para1: The feedback widget lets you embed a ticket form directly into your website or product. You can customize the look and feel, and placement of the widget on your website. Once done, copy-paste the generated embed code in your website or app, to start using the Feedback Widget.
   chatwidget_help_content: 
-    title: FreshChat
-    info1: FreshChat lets you view and chat with users on your wesbite, online software, or support portal directly from within Freshdesk. You can customize the look, feel and default messages that users should see when you chat with them, and even proactively initiate chat sessions when visitors spend more time on your site.
+    title: Freshchat
+    info1: Freshchat lets you view and chat with users on your wesbite, online software, or support portal directly from within Freshdesk. You can customize the look, feel and default messages that users should see when you chat with them, and even proactively initiate chat sessions when visitors spend more time on your site.
     info2: Each chat session will also capture meta information about where visitors are chatting with you from, their device, and their support history with you. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript. 
-    info3: <a href="https://support.freshdesk.com/support/solutions" target="_blank" >Learn more about using FreshChat inside Freshdesk</a>
+    info3: <a href="https://support.freshdesk.com/support/solutions" target="_blank" >Learn more about using Freshchat inside Freshdesk</a>
   low: Low
   agents: Agents
   header: 
@@ -4326,7 +4339,7 @@ en:
         agent_fcr: The percentage of tickets assigned to this agent that were resolved within the first response
         group_fcr: The percentage of tickets assigned to this group that were resolved within the first response
   freshchat:
-    title: "FreshChat"
+    title: "Freshchat"
     widget: "Widget"
     messages: "Messages"
     online: "When agents are online"
@@ -4348,7 +4361,7 @@ en:
     prechat_msg: "Pre-Chat Message"
     proactive_title: "Proactive chat"
     minimized_title: "Chat Now!"
-    maximized_title: "Welcome to FreshChat"
+    maximized_title: "Welcome to Freshchat"
     welcome_message: "Hi! How can we help you today?"
     thank_message: "Agent has left the chat. If you have any more questions, ping us!"
     wait_message: "We are sorry our agents are unable to get to you right now, but we would still love to hear from you!"
@@ -4376,7 +4389,7 @@ en:
     bottom_right: "Bottom Right"
     install_msg: "Copy & paste this code above the last </body> tag on your site."
     setup_link: "How-to set up chat"
-    install_freshchat: "Install freshchat on your website"
+    install_freshchat: "Install Freshchat on your website"
     custom_chat_window: "Customize your chat window"
     text_placeholder: "Your Message"
     chatbox_bgcolor: "Window Color"
@@ -4475,6 +4488,8 @@ en:
     requester_name: "Requester Name"
     requester_email: "Requester E-mail"
     view_details: "View details"
+    saving: "Saving..."
+    start_chat: "Start chat"
   date_invalid: Invalid date  
   facebook_tab:
     remove_tab: "Remove page Tab"

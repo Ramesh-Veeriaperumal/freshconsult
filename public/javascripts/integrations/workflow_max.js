@@ -258,26 +258,31 @@ WorkflowMaxWidget.prototype = {
 			/*var body = this.UPDATE_TIMEENTRY_ONLY_HOURS_REQ.evaluate({
 				time_entry_id: remote_integratable_id,
 			});*/
-			var body = this.UPDATE_TIMEENTRY_REQ.evaluate({
-					time_entry_id: remote_integratable_id,
-					staff_id: $("workflow-max-timeentry-staff").value,
-					job_id: $("workflow-max-timeentry-jobs").value,
-					task_id: $("workflow-max-timeentry-tasks").value,
-					notes: $("workflow-max-timeentry-notes").value,
-					hours: Math.ceil((hours*60))+"",
-					date: this.executed_date.toString("yyyyMMdd")
-				});
-
-
 			this.freshdeskWidget.request({
-				body: body,
 				content_type: "application/xml",
-				method: "put",
-				rest_url: "time.api/update"+this.auth_keys,
-				on_success: function(evt){
-					this.handleTimeEntrySuccess(evt);
-					this.resetIntegratedResourceIds();
-					if(resultCallback) resultCallback(evt);
+				rest_url: "time.api/get/" + remote_integratable_id + this.auth_keys,
+				on_success: function(response){
+					var resXml = response.responseXML;
+					var body = this.UPDATE_TIMEENTRY_REQ.evaluate({
+						time_entry_id: remote_integratable_id,
+						staff_id: this.get_time_entry_prop_value(resXml, ['Staff', 'ID']),
+						job_id: this.get_time_entry_prop_value(resXml, ['Job', 'ID']),
+						task_id: this.get_time_entry_prop_value(resXml, ['Task', 'ID']),
+						notes: this.get_time_entry_prop_value(resXml, 'Note'),
+						hours: Math.ceil((hours*60))+"",
+						date: Date.parse(this.get_time_entry_prop_value(resXml, 'Date')).toString('yyyyMMdd')
+					});
+					this.freshdeskWidget.request({
+						body: body,
+						content_type: "application/xml",
+						method: "put",
+						rest_url: "time.api/update"+this.auth_keys,
+						on_success: function(evt){
+							this.handleTimeEntrySuccess(evt);
+							this.resetIntegratedResourceIds();
+							if(resultCallback) resultCallback(evt);
+						}.bind(this)
+					});
 				}.bind(this)
 			});
 		}

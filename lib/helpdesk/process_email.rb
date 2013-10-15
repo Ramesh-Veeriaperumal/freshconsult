@@ -200,7 +200,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :account_id => account.id,
         :subject => params[:subject],
         :ticket_body_attributes => {:description => params[:text], 
-                          :description_html => params[:html]},
+                          :description_html => Helpdesk::HTMLSanitizer.clean(params[:html])},
         :requester => user,
         :to_email => to_email[:email],
         :to_emails => parse_to_emails,
@@ -228,7 +228,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       begin
         build_attachments(ticket, ticket)
         (ticket.header_info ||= {}).merge!(:message_ids => [message_key]) unless message_key.nil?
-        ticket.save!
+        ticket.save_ticket!
       rescue ActiveRecord::RecordInvalid => e
         FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
       end
@@ -310,7 +310,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       build_attachments(ticket, note)
       # ticket.save
       note.notable = ticket
-      note.save
+      note.save_note
     end
     
     def can_be_added_to_ticket?(ticket,user)

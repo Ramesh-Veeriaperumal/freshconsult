@@ -1043,7 +1043,6 @@ $popover-radius: 3px;
   }
   .inner {
     background: $popover-stroke;
-    background: rgba($popover-stroke, 0.8);
     padding: 4px 1px 1px;
     overflow: hidden;
     @include min-width(230px);

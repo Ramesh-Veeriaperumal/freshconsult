@@ -422,7 +422,7 @@ def handle_ticket_import base_dir
         :note_body_attributes => {:body =>note_body}        
         })
          @note.created_at = note_created_time.to_datetime()
-         if @note.save
+         if @note.save_note
            puts "successfully saved"
          else
             puts "failed to save the note :: #{@note.errors.inspect}"
