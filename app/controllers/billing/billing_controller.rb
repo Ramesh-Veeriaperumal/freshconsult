@@ -159,7 +159,7 @@ class Billing::BillingController < ApplicationController
 
     def subscription_reactivated(content)
       deleted_customer = DeletedCustomers.find_by_account_id(@account.id)
-      deleted_customer.reactivate_deleted_customers if deleted_customer
+      deleted_customer.reactivate if deleted_customer
       
       @account.subscription.update_attributes(@subscription_data)
     end
