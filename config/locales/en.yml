@@ -2324,6 +2324,17 @@ en:
   import_added_newly: Added Newly
   select_a_plan_gain_access: Select a plan from below to regain access to your account.
   import_warning_info: If we encounter an already existing contact's email during import, then the other details of the contact will be updated.
+  contact_import:
+    name: Name
+    job_title: Job Title
+    company: Company
+    work_phone: Work Phone
+    email: Email
+    twitter_id: Twitter Id
+    mobile_phone: Mobile Phone
+    address: Address
+    background_info: Background Information
+    tags: Tags
   import_example_title: Following is the example of a CSV file
   change_my_password: Change My Password
   answered: Answered
