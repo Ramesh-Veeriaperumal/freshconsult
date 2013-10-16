@@ -217,24 +217,6 @@ module ApplicationHelper
     output.html_safe
   end
 
-  def dropdown_menu(list, options = {})
-    return if list.blank?
-    output = ""
-    output << %(<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">)
-    
-    list.each do |item|
-      unless item.blank?
-        if item[0] == :divider
-          output << %(<li class="divider"></li>)
-        else
-          output << %(<li class="#{item[2] ? "active" : ""}">#{ link_to item[0], item[1], options, "tabindex" => "-1" }</li>)
-        end
-      end
-    end
-    output << %(</ul>)
-    output.html_safe
-  end
-
   def navigation_tabs
     tabs = [
       ['/home',               :home,        !privilege?(:manage_tickets) ],
