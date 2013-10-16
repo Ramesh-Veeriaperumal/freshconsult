@@ -9042,14 +9042,6 @@ height: auto;
 
 #selected-contacts{ min-height: 50px; }
 
-.select2{
-	width: 332px;
-	
-	li {
-		width: auto !important;	
-	}
-}
-
 #cont-chosen{
 	height: 65px;
 	&:hover{ cursor: pointer; }
@@ -10136,6 +10128,13 @@ div.gcal-confirm-modal-content{ width: 100%; }
 
 /* Virtual Agent */
 .ui-form.observer{	
+	.select2{
+		width: 332px;
+		li {
+			width: auto !important;	
+		}
+	}
+
 	.doer{
 		background-color: #f7f7f7;
 		border:1px solid #cac6c6;
