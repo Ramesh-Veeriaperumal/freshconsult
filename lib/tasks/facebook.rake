@@ -1,7 +1,7 @@
 namespace :facebook do
   desc 'Check for New facebook feeds..'
 
-  PREMIUM_ACC_IDS = {:staging => [390], :production => [18685]}
+  PREMIUM_ACC_IDS = {:staging => [390], :production => [18685,39190]}
 
   task :fetch => :environment do 
     queue_name = "FacebookWorker"

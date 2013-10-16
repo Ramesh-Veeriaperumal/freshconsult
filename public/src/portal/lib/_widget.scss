@@ -51,6 +51,9 @@ body, .feedback-wrapper{
 			border-right: 1px solid #ddd;
 			border-radius: 0;
 			border-bottom-left-radius: 6px;
+			.btn{
+				margin-top: 3px;
+			}
 		}
 	}
 }
@@ -222,12 +225,14 @@ body, .feedback-wrapper{
 
 .copyright{
 	float: left;
-	margin-top: 5px;
-	margin-left: 5px;
+	text-align: left;
 	font-size: 12px;
 	a{ text-decoration: underline; }
 	a:hover{ text-decoration: none; }
 	a, a:hover{ color: inherit;  }
+	.fw-privacy-policy{
+		font-size: 90%;
+	}
 }
 
 .screenshot-remove{

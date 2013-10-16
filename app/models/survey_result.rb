@@ -25,7 +25,7 @@ class SurveyResult < ActiveRecord::Base
     })
     
     note.account_id = account_id
-    note.save
+    note.save_note
     
     create_survey_remark({
       :account_id => account_id,

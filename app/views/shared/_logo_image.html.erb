@@ -1,4 +1,4 @@
-<%= image_tag logo_url %>
+<%= image_tag logo_url(item) %>
 	<div class="thumb-file-upload">
 		<% fields_for "#{field_name}[logo_attributes]", item.logo do |logo_form| %>
 			<div class="file-upload-wrap">

@@ -58,7 +58,12 @@ class Helpdesk::TicketsExport
           end
         end
       end
-      csv_string = BOM + RubyBridge.convert_string_encoding("utf-16le", "utf-8", csv_string)
+      # csv_string = BOM + RubyBridge.convert_string_encoding("utf-16le", "utf-8", csv_string)
+      bom = BOM
+      bom = RubyBridge.convert_string_encoding("utf-16le", "ASCII-8BIT", bom) if csv_string.respond_to?(:force_encoding)
+      csv_string = bom + RubyBridge.convert_string_encoding("utf-16le", "utf-8", csv_string)
+      csv_string = RubyBridge.force_binary_encoding(csv_string)
+
       Rails.logger.info "<--- Triggering export tickets csv mail. User Email Id: #{User.current.email} --->"
       Rails.logger.info "<--- Params #{export_params[:ticket_state_filter]}, #{export_params[:start_date]}, #{export_params[:end_date]} --->"
       Helpdesk::TicketNotifier.deliver_export(export_params, csv_string, User.current)

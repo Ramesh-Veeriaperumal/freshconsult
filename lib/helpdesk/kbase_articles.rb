@@ -18,8 +18,14 @@ class Helpdesk::KbaseArticles
     article_params[:attachments].each_pair do |key,value|
       content_id = content_ids[key]
       description = "content_id" unless content_id.nil?
-      created_attachment = article.attachments.create(:content => value, :account_id => account.id, :description => description)
+      created_attachment = article.attachments.build(:content => value, :account_id => account.id, :description => description)
+      if article_params[:attachment_info] && article_params[:attachment_info][key] && article_params[:attachment_info][key]["filename"]
+        attachment_name = article_params[:attachment_info][key]["filename"]
+        created_attachment.content.instance_write(:file_name, attachment_name)
+        created_attachment.content_file_name = attachment_name
+      end
       temp_body_html = temp_body_html.sub!("cid:#{content_id}",created_attachment.content.url)  unless content_id.nil?
+      created_attachment.save
     end
 
     unless content_ids.blank?

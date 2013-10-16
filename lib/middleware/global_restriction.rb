@@ -1,6 +1,6 @@
 class Middleware::GlobalRestriction
 
-  include Cache::Memcache::GlobalBlacklistedIp
+  include Cache::Memcache::GlobalBlacklistIp
 
   def initialize(app)
     @app = app

@@ -215,9 +215,8 @@ class Social::TwitterHandlesController < ApplicationController
     else
       @item = create_note_from_tweet(in_reply_to_status_id)
     end
-    @saved = false
-    if @item.save
-      @saved = true
+    @saved = @item.instance_of?(Helpdesk::Note) ? @item.save_note : @item.save_ticket
+    if @saved
       flash.now[:notice] = t('twitter.ticket_save')
     else
       flash.now[:notice] = t('twitter.tkt_err_save')

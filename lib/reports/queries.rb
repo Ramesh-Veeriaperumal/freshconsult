@@ -8,10 +8,10 @@ class Reports::Queries
 
 		def stats_query(options = {})
 	    query = %( select #{options[:select_cols]} from #{options[:table]} #{options[:joins]} )
-	    query += %( where #{options[:conditions]} ) #unless options[:conditions].blank?
-	    query += %( group by #{options[:group_by]} ) if options[:group_by]
-	    query += %( order by #{options[:order_by]} ) if options[:order_by]
-	    query += %( limit #{options[:limit]} ) if options[:limit]
+	    query << %( where #{options[:conditions]} ) #unless options[:conditions].blank?
+	    query << %( group by #{options[:group_by]} ) if options[:group_by]
+	    query << %( order by #{options[:order_by]} ) if options[:order_by]
+	    query << %( limit #{options[:limit]} ) if options[:limit]
 	    query
 	  end
 

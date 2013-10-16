@@ -1,4 +1,4 @@
-module Cache::Memcache::GlobalBlacklistedIp
+module Cache::Memcache::GlobalBlacklistIp
 	
 	include MemcacheKeys
 

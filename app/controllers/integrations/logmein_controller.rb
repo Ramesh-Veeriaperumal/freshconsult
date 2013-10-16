@@ -38,7 +38,7 @@ class Integrations::LogmeinController < ApplicationController
                 :account_id => acc_ticket["account_id"],
                 :user_id => acc_ticket["agent_id"] 
                )
-               note.save!
+               note.save_note!
             end     
             remove_integ_redis_key(redis_key) 
         end 
