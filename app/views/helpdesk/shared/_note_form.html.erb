@@ -44,7 +44,7 @@
         <%= hidden_field_tag :redirect_to %>
         <%= submit_tag(t('ticket.note_form.add_and_resolve'), :onclick => "jQuery('#note_ticket_status').val('4');" , :class => "uiButton", :id => "add_resolve_btn") %> 
       <% end %>
-			<%= button_to_function(t('cancel'), "jQuery('#cnt-note').hide().trigger('visibility');", :class => "uiButton" ) %>   
+			<%= button_to_function(t('cancel'), "jQuery('#cnt-note').hide().trigger('visibility');", :class => "uiButton cancel" ) %>
     </div>
   <% end %>
 </div>
