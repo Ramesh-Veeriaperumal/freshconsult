@@ -69,6 +69,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     article_params[:account] = account.id
     article_params[:content_ids] = params["content-ids"].nil? ? {} : get_content_ids
 
+    article_params[:attachment_info] = JSON.parse(params["attachment-info"]) if params["attachment-info"]
     attachments = {}
     
     Integer(params[:attachments]).times do |i|
