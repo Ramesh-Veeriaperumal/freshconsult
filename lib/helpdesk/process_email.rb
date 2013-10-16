@@ -30,12 +30,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       end
 
       if (to_email[:email] != kbase_email) || (get_envelope_to.size > 1)
-        separate_identifier(to_email)
         email_config = account.email_configs.find_by_to_email(to_email[:email])
         return if email_config && (from_email[:email] == email_config.reply_email)
         user = get_user(account, from_email, email_config)
         if !user.blocked?
-          ticket = fetch_ticket(account, from_email, to_email, user)
+          ticket = fetch_ticket(account, from_email, user)
           if ticket
             return if(from_email[:email] == ticket.reply_email) #Premature handling for email looping..
             add_email_to_ticket(ticket, from_email, user)
@@ -154,13 +153,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     
     def parse_from_email
       f_email = parse_email(params[:from])
-      separate_identifier(f_email)
       return f_email unless(f_email[:email].blank? || f_email[:email] =~ /(noreply)|(no-reply)/i)
       
       headers = params[:headers]
       if(!headers.nil? && headers =~ /Reply-[tT]o: (.+)$/)
         rt_email = parse_email($1)
-        separate_identifier(rt_email)
         return rt_email unless rt_email[:email].blank?
       end
       
@@ -180,17 +177,14 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       parsed_to_emails = []
       (to_emails || []).each do |email|
         parsed_email = parse_email_text(email)
-        separate_identifier(parsed_email)
         parsed_to_emails.push("#{parsed_email[:name]} <#{parsed_email[:email].strip}>") if !parsed_email.blank? && !parsed_email[:email].blank?
       end
       parsed_to_emails
     end
 
-    def fetch_ticket(account, from_email, to_email, user)
+    def fetch_ticket(account, from_email, user)
       display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
       ticket = account.tickets.find_by_display_id(display_id) if display_id
-      return ticket if can_be_added_to_ticket?(ticket, user)
-      ticket = ticket_from_email_id(to_email, account)
       return ticket if can_be_added_to_ticket?(ticket, user)
       ticket = ticket_from_headers(from_email, account)
       return ticket if can_be_added_to_ticket?(ticket, user)
@@ -265,17 +259,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
     def check_support_emails_from(account, ticket, user)
       ticket.skip_notification = true if user && account.support_emails.any? {|email| email.casecmp(user.email) == 0}
-    end
-
-    def ticket_from_email_id(to_email, account)
-      return account.tickets.find_by_display_id(to_email[:display_id].to_i) if to_email[:display_id]
-    end
-
-    def separate_identifier(to_email)
-      if to_email[:email].match(%r((.*)\+TKT(\d+)(?=(@.*)))) #regex to match +TKT<numeric identifier> till the last @ in the email
-        to_email[:email] = "#{$1}#{$3}"
-        to_email[:display_id] = "#{$2}"
-      end
     end
 
     def add_email_to_ticket(ticket, from_email, user)
