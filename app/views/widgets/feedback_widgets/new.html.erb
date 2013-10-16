@@ -36,17 +36,25 @@
 	<% end %>
 </div>
 <div class="modal-footer">
-	<div class="copyright">
-		<% unless(current_account.subscription.paid_account?) %>
-			<%= link_to(t('footer.helpdesk_software'), "http://www.freshdesk.com", :target => "_blank") %> 
-			<%= t('footer.by_freshdesk') %> &nbsp;&nbsp; | &nbsp;&nbsp;
-			<%= link_to(t('portal.cookie.privacy_policy'), "http://www.freshdesk.com/privacy", :target => "_blank") %> 
-		<% end %>
+	<div class="row-fluid">
+		<div class="span10">
+			<div class="copyright">
+				<% unless(current_account.subscription.paid_account?) %>
+					<%= link_to(t('footer.helpdesk_software'), "http://www.freshdesk.com", :target => "_blank") %> 
+					<%= t('footer.by_freshdesk') %>
+					<div class="fw-privacy-policy">
+						<%= link_to(t('portal.cookie.privacy_policy'), "http://www.freshdesk.com/privacy", :target => "_blank") %> 
+					</div>
+				<% end %>
+			</div>
+		</div>
+		<div class="span2 omega">
+			<%= f.submit t('ticket.submit_ticket'), :class => "btn btn-primary" %>
+			<%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
+			<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
+			<%= hidden_field_tag "meta[referrer]", request.referrer %>
+		</div>
 	</div>
-	<%= f.submit t('ticket.submit_ticket'), :class => "btn btn-primary" %>
-	<%# Any fields named like meta[fieldname] will be saved by the helpdesk as metadata %>
-	<%= hidden_field_tag "meta[user_agent]", request.env["HTTP_USER_AGENT"] %>
-	<%= hidden_field_tag "meta[referrer]", request.referrer %>
 </div>
 <% end %>
 <% if widget_option(:searchArea) && feature?(:auto_suggest_solutions) && allowed_in_portal?(:open_solutions) %>
