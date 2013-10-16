@@ -200,6 +200,8 @@
                   fb.resources :tabs, :controller => 'facebook_tabs',
                             :collection => { :configure => :any, :remove => :any }
                 end
+    social.resources :gnip, :controller => 'gnip_twitter',
+                :collection => {:reconnect => :post}
   end
   
   #SAAS copy starts here

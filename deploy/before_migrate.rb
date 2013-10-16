@@ -3,3 +3,4 @@ run "ln -nfs #{config.shared_path}/config/database_cluster.yml  #{config.release
 run "ln -nfs #{config.shared_path}/config/elasticsearch.yml  #{config.release_path}/config/elasticsearch.yml"
 run "ln -nfs #{config.shared_path}/config/redshift.yml  #{config.release_path}/config/redshift.yml"
 run "ln -nfs #{config.shared_path}/config/node_js.yml  #{config.release_path}/config/node_js.yml"
+run "ln -nfs #{config.shared_path}/config/gnip.yml  #{config.release_path}/config/gnip.yml"

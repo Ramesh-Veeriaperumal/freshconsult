@@ -29,6 +29,7 @@ class Subscription < ActiveRecord::Base
   # after_update :update_features 
 
   after_update :add_to_crm, :if => :free_customer?
+  after_commit_on_update :update_gnip_subscription
 
   attr_accessor :creditcard, :address, :billing_cycle
   attr_reader :response
@@ -154,6 +155,17 @@ class Subscription < ActiveRecord::Base
     self.renewal_period = 1
     self.day_pass_amount = subscription_plan.day_pass_amount
     self.next_renewal_at = Time.now.advance(:months => 1)
+  end
+
+  def update_gnip_subscription
+    return unless account.features?(:twitter)
+    account.twitter_handles.capture_mentions.each do |twt_handle|
+      if @old_subscription.state != "suspended" and state == "suspended"
+        twt_handle.unsubscribe_from_gnip
+      elsif @old_subscription.state == "suspended" and state != "suspended"
+        twt_handle.subscribe_to_gnip
+      end
+    end
   end
 
   protected

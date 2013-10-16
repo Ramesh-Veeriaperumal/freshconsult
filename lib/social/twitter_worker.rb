@@ -22,10 +22,8 @@ class Social::TwitterWorker
     twitter_handles = account.twitter_handles.active   
     twitter_handles.each do |twt_handle|
       @twt_handle = twt_handle 
-      if twt_handle.capture_dm_as_ticket
-        fetch_direct_msgs twt_handle
-      end
-      if twt_handle.capture_mention_as_ticket
+      fetch_direct_msgs twt_handle  if twt_handle.capture_dm_as_ticket
+      if twt_handle.capture_mention_as_ticket && !realtime_enabled?(account)
         fetch_twt_mentions twt_handle
       end
     end
@@ -36,15 +34,6 @@ class Social::TwitterWorker
       Timeout.timeout(60) do
         twt_msg = Social::TwitterMessage.new(twt_handle)
         twt_msg.process
-      end
-    end
-  end
-
-  def self.fetch_twt_mentions twt_handle
-    sandbox do
-      Timeout.timeout(60) do
-        twt_mention = Social::TwitterMention.new(twt_handle)
-        twt_mention.process
       end
     end
   end
@@ -77,5 +66,10 @@ class Social::TwitterWorker
       return return_value   
   end
    
+   private
+   
+      def self.realtime_enabled?(account)
+        account.subscription.trial?
+      end
 
 end

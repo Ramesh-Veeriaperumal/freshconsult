@@ -425,7 +425,7 @@ module ApplicationHelper
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)
     end 
-    avatar_content = MemcacheKeys.fetch(["v4","avatar",profile_size,user],30.days.to_i) do
+    avatar_content = MemcacheKeys.fetch(["v5","avatar",profile_size,user],30.days.to_i) do
       content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size), img_tag_options ), :class => profile_class, :size_type => profile_size )
     end
     avatar_content
@@ -435,11 +435,8 @@ module ApplicationHelper
     user_avatar(user,:thumb,"preview_pic",{:expiry => expiry, :width => 36, :height => 36})
   end
   
-  def is_user_social( user, profile_size )
-    if user.twitter_id
-      profile_size = (profile_size == :medium) ? "original" : "normal"
-      twitter_avatar(user.twitter_id, profile_size) 
-    elsif user.fb_profile_id
+  def is_user_social( user, profile_size ) 
+    if user.fb_profile_id
       profile_size = (profile_size == :medium) ? "large" : "square"
       facebook_avatar(user.fb_profile_id, profile_size)
     else
@@ -447,8 +444,8 @@ module ApplicationHelper
     end
   end   
   
-  def twitter_avatar( screen_name, profile_size = "normal" )
-    "https://api.twitter.com/1/users/profile_image?screen_name=#{screen_name}&size=#{profile_size}"
+  def twitter_avatar(handle, profile_size = "thumb")
+    handle.avatar ? handle.avatar.expiring_url : "/images/fillers/profile_blank_#{profile_size}.gif"
   end
   
   def facebook_avatar( facebook_id, profile_size = "square")
