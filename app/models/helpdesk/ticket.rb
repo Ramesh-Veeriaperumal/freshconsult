@@ -415,6 +415,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def latest_public_comment
     notes.visible.public.newest_first.first
   end
+
+  def latest_private_comment
+    notes.visible.private.newest_first.first
+  end
   
   def liquidize_comment(comm)
     if comm
