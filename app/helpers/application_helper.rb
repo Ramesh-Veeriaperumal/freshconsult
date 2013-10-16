@@ -46,18 +46,18 @@ module ApplicationHelper
     end
   end
 
-  def logo_url
-    MemcacheKeys.fetch(["v6","portal","logo",current_portal],30.days.to_i) do
-        current_portal.logo.nil? ? "/images/logo.png?721013" : 
-        AwsWrapper::S3Object.url_for(current_portal.logo.content.path(:logo),current_portal.logo.content.bucket_name,
+  def logo_url(portal = current_portal)
+    MemcacheKeys.fetch(["v6","portal","logo",portal],30.days.to_i) do
+        portal.logo.nil? ? "/images/logo.png?721013" : 
+        AwsWrapper::S3Object.url_for(portal.logo.content.path(:logo),portal.logo.content.bucket_name,
                                           :expires => 30.days, :secure => true)
     end
   end
 
-  def fav_icon_url
-    MemcacheKeys.fetch(["v6","portal","fav_ico",current_portal]) do
-      current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' : 
-            AwsWrapper::S3Object.url_for(current_portal.fav_icon.content.path(:fav_icon),current_portal.fav_icon.content.bucket_name,
+  def fav_icon_url(portal = current_portal)
+    MemcacheKeys.fetch(["v6","portal","fav_ico",portal]) do
+      portal.fav_icon.nil? ? '/images/favicon.ico?123456' : 
+            AwsWrapper::S3Object.url_for(portal.fav_icon.content.path(:fav_icon),portal.fav_icon.content.bucket_name,
                                           :expires => 30.days, :secure => true)
     end
   end
@@ -739,10 +739,6 @@ module ApplicationHelper
     nodejs_port = Rails.env.development? ? 5000 : (request.ssl? ? 2050 : 1050)      
     "#{request.protocol}#{request.host}:#{nodejs_port}/#{namespace}"
   end  
-
-  def es_enabled?
-    current_account.es_enabled?
-  end
 
   def assumed_identity_message
     _output = []

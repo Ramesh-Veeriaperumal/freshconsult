@@ -294,7 +294,7 @@ class Helpdesk::TicketsController < ApplicationController
   def update
     old_item = @item.clone
     #old_timer_count = @item.time_sheets.timer_active.size -  we will enable this later
-    if @item.update_attributes(params[nscname])
+    if @item.update_ticket_attributes(params[nscname])
 
       update_tags unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
       respond_to do |format|
@@ -331,7 +331,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def update_ticket_properties
     old_item = @item.clone
-    if @item.update_attributes(params[nscname])
+    if @item.update_ticket_attributes(params[nscname])
       update_tags unless params[:helpdesk].blank? or params[:helpdesk][:tags].nil?
 
       if(params[:redirect] && params[:redirect].to_bool)
@@ -640,7 +640,7 @@ class Helpdesk::TicketsController < ApplicationController
 
     build_attachments @item, :helpdesk_ticket
 
-    if @item.save
+    if @item.save_ticket
       post_persist
       notify_cc_people cc_emails unless cc_emails.blank? 
     else

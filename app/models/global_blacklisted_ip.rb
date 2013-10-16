@@ -2,7 +2,7 @@ class GlobalBlacklistedIp < ActiveRecord::Base
 
 	not_sharded
 
-	include Cache::Memcache::GlobalBlacklistedIp
+	include Cache::Memcache::GlobalBlacklistIp
 
 	serialize :ip_list, Array
 	attr_accessible :ip_list

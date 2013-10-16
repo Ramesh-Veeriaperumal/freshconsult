@@ -69,7 +69,7 @@ module Reports
       "6" => ["Central America","Central Time (US & Canada)","Guadalajara","Mexico City","Monterrey",
                "Saskatchewan","America/Chicago"],
       "7" => ["Arizona","Chihuahua","Mazatlan","Mountain Time (US & Canada)"],
-      "8" => ["Pacific Time (US & Canada)","Tijuana"],
+      "8" => ["Pacific Time (US & Canada)","Tijuana", "America/Los_Angeles"],
       "9" => ["Alaska"],
       "10" => ["Hawaii"],
       "11" => ["International Date Line West","Midway Island","Samoa","Nuku'alofa"],

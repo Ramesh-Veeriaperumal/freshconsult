@@ -17,9 +17,6 @@ module HasDescriptionBody
      		
      		belongs_to_account
      		belongs_to '#{model_name}'.to_sym, :class_name => #{name}, :foreign_key => '#{model_name}_id'
-     		
-     		unhtml_it :description
-				xss_sanitize :only => [:description_html],  :html_sanitize => [:description_html]
 
 				attr_protected :account_id
 			end

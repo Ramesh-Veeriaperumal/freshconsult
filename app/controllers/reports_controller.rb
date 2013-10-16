@@ -5,7 +5,8 @@ class ReportsController < ApplicationController
   before_filter :report_list,:set_selected_tab, :only => [ :index, :show ]
 
   include Reports::ConstructReport
-  include Reports::ActivityReport
+  include Reports::ReportTimes
+  # include Reports::ActivityReport
   
   def show
     if params[:id]

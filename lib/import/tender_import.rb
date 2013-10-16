@@ -63,7 +63,7 @@ def save_ticket ticket_file
   ticket_hash.store(:display_id , ticket[:number]) unless display_id_exist
    
   ticket = @current_account.tickets.new(ticket_hash)
-  if ticket.save
+  if ticket.save_ticket
     comments.delete_at(0) unless comments.blank?
     comments.each do |comment|
       comment.symbolize_keys!
@@ -80,7 +80,7 @@ def create_notes_for_ticket ticket,comment
                                 :user => user,   :account_id =>@current_account && @current_account.id,
                                 :note_body_attributes => {:body =>comment[:body] , :body_html => comment[:formatted_body]}   , :created_at => comment[:created_at].to_datetime()      
                               })
-    unless @note.save
+    unless @note.save_note
       puts "unable to save note: #{@note.errors.inspect}"
     end
 end

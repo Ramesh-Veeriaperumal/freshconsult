@@ -11,9 +11,9 @@ def add_tweet_as_ticket twt , twt_handle , twt_type
       :created_at => Time.zone.at(twt.created_at),
       :tweet_attributes => {:tweet_id => twt.id,  
                             :tweet_type => twt_type.to_s, :twitter_handle_id => twt_handle.id},
-      :ticket_body_attributes => { :description => twt.text } )
+      :ticket_body_attributes => { :description_html => twt.text } )
       
-      if ticket.save
+      if ticket.save_ticket
         puts "This ticket has been saved"
       else
         puts "error while saving the ticket:: #{ticket.errors.to_json}"
@@ -34,7 +34,7 @@ def add_tweet_as_ticket twt , twt_handle , twt_type
   def add_tweet_as_note twt,twt_handle, twt_type , ticket
     
       note = ticket.notes.build(
-        :note_body_attributes => {:body => twt.text},
+        :note_body_attributes => {:body_html => twt.text},
         :incoming => true,
         :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter],
         :account_id => twt_handle.account_id,
@@ -46,7 +46,7 @@ def add_tweet_as_ticket twt , twt_handle , twt_type
 
       begin
         @user.make_current
-        if note.save
+        if note.save_note
           puts "This note has been added"
         else
           puts "error while saving the ticket:: #{note.errors.to_json}"

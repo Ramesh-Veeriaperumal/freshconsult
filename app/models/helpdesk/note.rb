@@ -5,6 +5,7 @@ class Helpdesk::Note < ActiveRecord::Base
   include Va::Observer::Util
   include Search::ElasticSearchIndex
   include Mobile::Actions::Note
+  include Helpdesk::Services::Note
 
   set_table_name "helpdesk_notes"
 
