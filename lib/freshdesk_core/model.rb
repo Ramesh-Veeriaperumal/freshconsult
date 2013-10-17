@@ -77,7 +77,6 @@ module FreshdeskCore::Model
 
                         "social_facebook_pages", 
                           "social_fb_posts",
-                          "facebook_page_mappings",
 
                         "social_twitter_handles",
                           "social_tweets", 
