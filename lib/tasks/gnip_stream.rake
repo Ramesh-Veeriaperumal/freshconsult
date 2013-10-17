@@ -50,26 +50,20 @@ namespace :gnip_stream do
   
   desc "Start listening to the replay stream"
   task :replay => :environment do
-    begin  
-      disconnect_list = Social::Gnip::Constants::GNIP_DISCONNECT_LIST
-      $redis_others.lrange(disconnect_list, 0, -1).each do |disconnected_period|
-        period = JSON.parse(disconnected_period)
-        if period[0] && period[1]
-          end_time = DateTime.strptime(period[1], '%Y%m%d%H%M')
-          time_difference = Date.day_fraction_to_time(DateTime.now.utc - end_time)
-          difference_in_seconds = (time_difference[0]*60 + time_difference[1]) * 60
-          if difference_in_seconds > Social::Gnip::Constants::TIME[:replay_stream_wait_time]
-            args = {:start_time => period[0], :end_time => period[1]}
-            puts "Gonna initialize ReplayStreamWorker #{Time.zone.now}"
-            Resque.enqueue(Social::Gnip::ReplayStreamWorker, args)
-            $redis_others.lrem(disconnect_list, 1, disconnected_period)
-          end
+    disconnect_list = Social::Gnip::Constants::GNIP_DISCONNECT_LIST
+    $redis_others.lrange(disconnect_list, 0, -1).each do |disconnected_period|
+      period = JSON.parse(disconnected_period)
+      if period[0] && period[1]
+        end_time = DateTime.strptime(period[1], '%Y%m%d%H%M')
+        time_difference = Date.day_fraction_to_time(DateTime.now.utc - end_time)
+        difference_in_seconds = (time_difference[0]*60 + time_difference[1]) * 60
+        if difference_in_seconds > Social::Gnip::Constants::TIME[:replay_stream_wait_time]
+          args = {:start_time => period[0], :end_time => period[1]}
+          puts "Gonna initialize ReplayStreamWorker #{Time.zone.now}"
+          Resque.enqueue(Social::Gnip::ReplayStreamWorker, args)
+          $redis_others.lrem(disconnect_list, 1, disconnected_period)
         end
       end
-    rescue Redis::BaseConnectionError => e
-      puts "Redis connection error  #{e.backtrace.join("\n")} #{e.to_s}"
-      NewRelic::Agent.notice_error(e.to_s,:custom_params => 
-                                    {:description => "Redis connection Error"})
     end
   end
 
