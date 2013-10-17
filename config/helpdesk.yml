@@ -1,6 +1,7 @@
     # The root url of your site. This is necessary because email processing takes place
 # outside of the normal HTTP request/response cycle, and we need to generate links
 # to pages within the site.
+APP_NAME: Freshdesk
 
 HOST: 
     development:    "localhost:3000"
@@ -72,6 +73,11 @@ EMAIL:
 
     # This will be the reply_to address in all outgoing email
     from: support@freshdesk.com
+
+    staging_support_email: vijay@freshdesk.com
+    default_requester_email: rachel@freshdesk.com
+    production_dev_ops_email: dev-ops@freshdesk.com
+    sample_email: sample@freshdesk.com
 
     # This is the subject line for all replies
     reply_subject: "Your support request"

@@ -16,10 +16,10 @@ class EmailConfigNotifier < ActionMailer::Base
   def test_email(email_config)
     subject       "Wohoo.. Your Freshdesk Test Mail"
     body          :email_config => email_config
-    from          "Freshdesk Test <rachel@freshdesk.com>"
+    from          "#{AppConfig['app_name']} Test <#{Helpdesk::EMAIL[:default_requester_email]}>"
     recipients    email_config.reply_email
     sent_on       Time.now
-    headers       "Reply-to" => "rachel@freshdesk.com", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    headers       "Reply-to" => "#{Helpdesk::EMAIL[:default_requester_email]}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     content_type  "text/html"
   end  
 end
