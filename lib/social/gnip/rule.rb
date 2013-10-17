@@ -185,6 +185,7 @@ class Social::Gnip::Rule
         }
         puts "Mismatch of rules in #{stream} :::: #{error_params}"
         NewRelic::Agent.notice_error("Mismatch of rules in #{stream}", :custom_params => error_params)
+        error_params.merge!(:env => stream)
         SocialErrorsMailer.deliver_mismatch_in_rules(error_params)
       end
     rescue => e
