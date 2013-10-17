@@ -7,6 +7,7 @@ class Middleware::TrustedIp
   end
 
   def call(env)
+    env['CLIENT_IP'] ||= Rack::Request.new(env).ip()
     @status, @headers, @response = @app.call(env)
     return [@status, @headers, @response] if SKIPPED_SUBDOMAINS.include?(env["HTTP_HOST"].split(".")[0])
     shard = ShardMapping.lookup_with_domain(env["HTTP_HOST"])
@@ -17,7 +18,7 @@ class Middleware::TrustedIp
       Thread.current[:account] = @current_account
       unless env['rack.session']['user_credentials_id'].nil?
         if trusted_ips_enabled?
-          unless valid_ip(env['REMOTE_ADDR'], env['rack.session']['user_credentials_id'])
+          unless valid_ip(env['CLIENT_IP'], env['rack.session']['user_credentials_id'])
             @status, @headers, @response = [302, {"Location" => "/unauthorized.html"}, 
                                         'Your IPAddress is bocked by the administrator']
             return [@status, @headers, @response]

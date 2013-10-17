@@ -27,6 +27,7 @@ Redis.class_eval {add_method_tracer :hget}
 Redis.class_eval {add_method_tracer :exists}
 Redis.class_eval {add_method_tracer :ttl}
 Redis.class_eval {add_method_tracer :lpop}
+Redis.class_eval {add_method_tracer :lrem}
 Redis::Client.class_eval {add_method_tracer :read}
 Redis::Client.class_eval {add_method_tracer :process}
 Redis::Client.class_eval {add_method_tracer :connect}

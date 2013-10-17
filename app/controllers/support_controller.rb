@@ -90,11 +90,12 @@ class SupportController < ApplicationController
     def page_message
       output = []
       [:notice, :warning, :error].collect do |type| 
-        if flash[type]          
+        if flash[type]
           output << %( <div id="#{type}" class="alert alert-page alert-#{type}"> )
           output << %( <button type="button" class="close" data-dismiss="alert">&times;</button> )
           output << flash[type]
-          output << %( </div> )          
+          output << %( </div> )
+          flash[type] = nil
         end
       end
       @page_message ||= output.join(" ")

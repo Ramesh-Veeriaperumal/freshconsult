@@ -592,6 +592,7 @@ var scrollToError = function(){
 				else
 				{
 					$('#tweet_type_selector').hide();
+					$('#tweet_type').val(':mention');
 					$('#not_following_message').show();
 				}
 			}
