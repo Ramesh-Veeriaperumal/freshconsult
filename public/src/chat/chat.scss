@@ -5,6 +5,9 @@
 	padding: 10px 0px;
 	display: inline-block;
 	width: 100%;
+    .title{
+        font-size: 18px;
+    }
 }
 
 .nav-tabs{
@@ -17,14 +20,36 @@
 	position: relative;
 	right: 0px;
 }
-#chat_settings_tab1{
+#chat_settings_tab{
     .ui-form{
         background-color: transparent;
         border: none;
+        position:inherit;
+        li h3{
+            padding-bottom: 10px;
+            color: #111;
+        }
+    }
+    .code-view{
+        padding: 8px 20px;
+        width: 80%;
+        textarea{
+            background-color: #fffff3;
+            cursor: default;
+            height: 200px;
+            padding: 10px 5px;
+        }
+    }
+    .ui-form li{
+        padding: 8px 0 8px 0;
+        width: 99%;
+    }
+    .tab-pane.active{
+        display: inline-block;
     }
 }
 .chat-window-left{
-	width: 100%;
+    width: 100%;
     .window-position{
         input{
             width: 30px !important;
@@ -34,21 +59,6 @@
             position: relative;
             top: -5px;
         }
-    }
-    .code-view{
-        padding: 8px 20px;
-        width: 80%;
-        textarea{
-            background-color: #fffff3;
-            cursor: default;
-            height: 40px;
-            padding: 10px 0px;
-            text-indent: 10px;
-        }
-    }
-    .ui-form li{
-        padding: 8px 0 8px 0;
-        width: 99%;
     }
     .span5.marLeftNone{
         margin-left: 0px !important;
@@ -239,7 +249,7 @@ li.chat-link-large{
 
 .chat_setting_form{
     .ui-form li h3{
-        padding-bottom: 10px;
+        padding-bottom: 40px;
         margin-top: 20px;
     }
     input[type="text"]{
