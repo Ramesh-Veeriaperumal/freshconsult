@@ -8,8 +8,8 @@ class Account < ActiveRecord::Base
   validate_on_create :valid_plan?, :valid_payment_info?, :valid_subscription?
   validates_uniqueness_of :google_domain ,:allow_blank => true, :allow_nil => true
   validates_numericality_of :ticket_display_id,
-                            :less_than => 1000000,
-                            :message => "Value must be less than six digits"
+                            :less_than => 10000000,
+                            :message => "Value must be less than seven digits"
 
   protected
 

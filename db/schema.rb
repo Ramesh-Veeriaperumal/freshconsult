@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130918125805) do
+ActiveRecord::Schema.define(:version => 20131016122421) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1367,6 +1367,7 @@ ActiveRecord::Schema.define(:version => 20130918125805) do
     t.integer  "twitter_handle_id", :limit => 8
   end
 
+  add_index "social_tweets", ["account_id", "tweet_id"], :name => "index_social_tweets_on_tweet_id"
   add_index "social_tweets", ["account_id", "tweetable_id", "tweetable_type"], :name => "index_social_tweets_account_id_tweetable_id_tweetable_type", :length => {"tweetable_type"=>"15", "tweetable_id"=>nil, "account_id"=>nil}
 
   create_table "social_twitter_handles", :force => true do |t|
@@ -2011,6 +2012,21 @@ ActiveRecord::Schema.define(:version => 20130918125805) do
   end
 
   add_index "wf_filters", ["user_id"], :name => "index_wf_filters_on_user_id"
+
+  create_table "whitelisted_ips", :force => true do |t|
+    t.integer  "account_id",             :limit => 8
+    t.boolean  "enabled"
+    t.text     "ip_ranges"
+    t.boolean  "applies_only_to_agents"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "global_blacklisted_ips", :force => true do |t|
+    t.text     "ip_list"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "widgets", :force => true do |t|
     t.string  "name"

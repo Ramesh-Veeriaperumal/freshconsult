@@ -1,10 +1,10 @@
 <%= content_tag( :h3, t("profile.edit"), :class => "title" ) %>
-<% form_for @profile , :url => {:action=> "update" ,:controller => 'profiles'} , :html => { :multipart => true } do |f| %>
+<% form_for @profile , :url => { :action=> "update", :controller => 'profiles'} , :html => { :multipart => true } do |f| %>
 	<%= f.error_messages %>
 	<%= render :partial => "form" %>
 	<div class="button-container">
-   		<%= f.submit t('save_changes'), { :class => "uiButton" } %>
-		<%= link_to t('cancel'), root_path, :class => "uiButton" %>
+   		<%= f.submit t('save_changes'), { :class => "btn" } %>
+		<%= link_to t('cancel'), root_path, :class => "btn" %>
 	</div>	  
 <%end%>
 
@@ -29,21 +29,21 @@
 				</li>
   			</ul>
 			<div class="button-container">
-  				<%= submit_tag t("profile.change_password"), :class => "uiButton" %>
+  				<%= submit_tag t("profile.change_password"), :class => "btn" %>
 			</div>
 		<% end %>
 	</div>	
-	<%unless current_user.customer?%>
+	<% unless current_user.customer? %>
 	  <div class="sidepanel">
 		<%= content_tag( :h3, t("profile.api_key.title"), :class => "title" ) %>
 		<% form_tag :action => :reset_api_key, :controller => 'profiles', :method => :put do |f| %>
 			<ul class="ui-form">
-					<label class="center" for="api_key"><%=@profile.user.single_access_token%></label>
+				<label class="center" for="api_key"><%=@profile.user.single_access_token%></label>
 			</ul> 
 			<div class="button-container">
-  				<%= submit_tag t("profile.api_key.reset"), :class => "uiButton", :confirm => t("profile.api_key.reset_warning") %>
+  				<%= submit_tag t("profile.api_key.reset"), :class => "btn", :confirm => t("profile.api_key.reset_warning") %>
 			</div>
 		<% end %>
 	  </div>	
-	<%end%>
+	<% end %>
 <% end%>

@@ -34,6 +34,5 @@ end
 # File.copy('config/sphinx_development.yml', 'config/sphinx.yml', true)
 # File.copy('config/redis_development.yml', 'config/redis.yml', true)
 
-FileUtils.cp('config/sphinx_development.yml', 'config/sphinx.yml')
 FileUtils.cp('config/redis_development.yml', 'config/redis.yml')
 FileUtils.cp('config/elasticsearch_development.yml', 'config/elasticsearch.yml')

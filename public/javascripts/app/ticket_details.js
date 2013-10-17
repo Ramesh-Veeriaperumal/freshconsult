@@ -592,6 +592,7 @@ var scrollToError = function(){
 				else
 				{
 					$('#tweet_type_selector').hide();
+					$('#tweet_type').val(':mention');
 					$('#not_following_message').show();
 				}
 			}
@@ -855,8 +856,6 @@ var scrollToError = function(){
 					}
 
 					if (_form.attr('rel') == 'edit_note_form')  {
-						
-						$('#note_details_' + _form.data('cntId')).html($(response).find("body-html").text());
 						$('#note_details_' + _form.data('cntId')).show();
 					}
 

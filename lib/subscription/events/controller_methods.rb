@@ -4,12 +4,12 @@ module Subscription::Events::ControllerMethods
   def export_to_csv
     csv_string = CSVBridge.generate do |csv|
       csv << csv_columns
-
       params[:data].each do |event_id|
-        event = SubscriptionEvent.find(event_id)
-        
-        csv << account_details(event).concat(subscription_info(event))
-      end  
+        Sharding.run_on_all_slaves do
+          event = SubscriptionEvent.find_by_id(event_id)
+          csv << account_details(event).concat(subscription_info(event)) unless event.blank?
+        end
+      end
     end
         
     send_data csv_string, 

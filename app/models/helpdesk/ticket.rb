@@ -20,6 +20,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include ActionView::Helpers::TranslationHelper
   include Helpdesk::TicketActivities, Helpdesk::TicketElasticSearchMethods, Helpdesk::TicketCustomFields,
     Helpdesk::TicketNotifications
+  include Helpdesk::Services::Ticket
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
@@ -117,6 +118,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
             :conditions => ["helpdesk_tags.name in (?)",tag_names] } 
   }            
 
+  
+  named_scope :twitter_dm_tickets,
+              :joins => "INNER JOIN social_tweets on helpdesk_tickets.id = social_tweets.tweetable_id and 
+                  helpdesk_tickets.account_id = social_tweets.account_id",
+              :conditions => ["social_tweets.tweetable_type = ? and social_tweets.tweet_type = ? ",
+                      'Helpdesk::Ticket','dm']
+              
   named_scope :spam_created_in, lambda { |user| { :conditions => [ 
     "helpdesk_tickets.created_at > ? and helpdesk_tickets.spam = true and requester_id = ?", user.deleted_at, user.id ] } }
 
@@ -183,49 +191,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
                    \"value\": \"#{user.id}\"}]"}
                   
      return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
-  end
-  
-  #Sphinx configuration starts
-  define_index 'without_description' do
-    
-    indexes :display_id, :sortable => true
-    indexes :subject, :sortable => true
-    
-    has account_id, deleted, responder_id, group_id, requester_id, status
-    has sphinx_requester.customer_id, :as => :customer_id
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :visibility, :type => :integer
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_ids, :type => :integer
-
-    where "helpdesk_tickets.spam=0 and helpdesk_tickets.deleted = 0"
-
-    #set_property :delta => Sphinx::TicketDelta
-
-    set_property :field_weights => {
-      :display_id   => 10,
-      :subject      => 10
-     }
-  end
-
-  define_index 'with_description' do
-    
-    indexes :display_id, :sortable => true
-    indexes :subject, :sortable => true
-    indexes description
-    
-    has account_id, deleted, responder_id, group_id, requester_id, status
-    has sphinx_requester.customer_id, :as => :customer_id
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :visibility, :type => :integer
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_ids, :type => :integer
-
-    where "helpdesk_tickets.spam=0 and helpdesk_tickets.deleted = 0 and helpdesk_tickets.id > 5000000"
-
-    #set_property :delta => Sphinx::TicketDelta
-
-    set_property :field_weights => {
-      :display_id   => 10,
-      :subject      => 10,
-      :description  => 5
-     }
   end
 
   def to_param 
@@ -431,6 +396,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
   
+  def description_html=(value)
+    warn "[DEPRECATION] This method will be removed soon, please use ticket_body.description_html."
+    write_attribute(:description_html,value)
+  end
+  
   def description_with_attachments
     attachments.empty? ? description_html : 
         "#{description_html}\n\nTicket attachments :\n#{liquidize_attachments(attachments)}\n"
@@ -444,6 +414,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def latest_public_comment
     notes.visible.public.newest_first.first
+  end
+
+  def latest_private_comment
+    notes.visible.private.newest_first.first
   end
   
   def liquidize_comment(comm)

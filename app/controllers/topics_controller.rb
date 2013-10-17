@@ -66,7 +66,10 @@ class TopicsController < ApplicationController
       assign_protected
       @post       = @topic.posts.build(post_param)
       @post.topic = @topic
-      @post.user  = current_user
+      if privilege?(:view_admin)
+        @post.user = (topic_param[:import_id].blank? || params[:email].blank?) ? current_user : current_account.all_users.find_by_email(params[:email]) 
+      end
+      @post.user  ||= current_user
       @post.account_id = current_account.id
       # only save topic if post is valid so in the view topic will be a new record if there was an error
       @topic.body_html = @post.body_html # incase save fails and we go back to the form
@@ -185,7 +188,12 @@ class TopicsController < ApplicationController
   protected
 
     def assign_protected
-      @topic.user     = current_user if @topic.new_record?
+      if @topic.new_record?
+        if privilege?(:view_admin) 
+          @topic.user = (topic_param[:import_id].blank? || params[:email].blank?) ? current_user : current_account.all_users.find_by_email(params[:email])
+        end
+        @topic.user ||= current_user
+      end
       @topic.account_id = current_account.id
       # admins and moderators can sticky and lock topics
       return unless privilege?(:view_admin) or current_user.moderator_of?(@topic.forum)

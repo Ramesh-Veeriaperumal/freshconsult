@@ -54,7 +54,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     recipients    params[:receips]
     from          params[:ticket].friendly_reply_email
     bcc           account_bcc_email(params[:ticket])
-    headers       "Reply-to" => "#{params[:ticket].friendly_reply_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    headers       "Reply-to" => "#{params[:ticket].friendly_reply_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply", "References" => generate_email_references(params[:ticket])
     sent_on       Time.now
     content_type  "multipart/mixed"
 
@@ -111,7 +111,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     cc            note.cc_emails unless options[:include_cc].blank?
     bcc           note.bcc_emails
     from          note.from_email
-    headers       "Reply-to" => "#{note.from_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    headers       "Reply-to" => "#{note.from_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply", "References" => generate_email_references(ticket)
     sent_on       Time.now
     content_type  "multipart/mixed"
 
@@ -150,7 +150,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     cc            note.cc_emails
     bcc           note.bcc_emails
     from          note.from_email
-    headers       "Reply-to" => "#{note.from_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    headers       "Reply-to" => "#{note.from_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply", "References" => generate_email_references(ticket)
     sent_on       Time.now
     content_type  "multipart/mixed"
 
@@ -181,7 +181,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     subject       formatted_subject(ticket)
     recipients    options[:cc_emails] unless options[:cc_emails].blank?
     from          ticket.friendly_reply_email
-    headers       "Reply-to" => "#{ticket.friendly_reply_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    headers       "Reply-to" => "#{ticket.friendly_reply_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply", "References" => generate_email_references(ticket)
     sent_on       Time.now
     content_type  "multipart/mixed"
 
@@ -213,7 +213,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     subject       formatted_subject(ticket)
     recipients    options[:notify_emails]     
     from          reply_email
-    headers       "Reply-to" => "#{reply_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    headers       "Reply-to" => "#{reply_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply", "References" => generate_email_references(ticket)
     sent_on       Time.now
     content_type  "multipart/mixed"
 
@@ -235,7 +235,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     subject       (sub.blank? ? formatted_subject(ticket) : sub)
     recipients    ticket.requester.email
     from          ticket.friendly_reply_email
-    headers       "Reply-to" => "#{ticket.friendly_reply_email}", "Auto-Submitted" => "auto-replied", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    headers       "Reply-to" => "#{ticket.friendly_reply_email}", "Auto-Submitted" => "auto-replied", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply", "References" => generate_email_references(ticket)
     sent_on       Time.now
     content_type  "multipart/mixed"
 
@@ -258,7 +258,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
     recipients    receips
     from          ticket.friendly_reply_email
     body          content
-    headers       "Reply-to" => "#{ticket.friendly_reply_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    headers       "Reply-to" => "#{ticket.friendly_reply_email}", "Auto-Submitted" => "auto-generated", "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply", "References" => generate_email_references(ticket)
     sent_on       Time.now
     content_type  "multipart/mixed"
 

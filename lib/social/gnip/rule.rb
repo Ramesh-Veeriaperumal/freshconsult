@@ -128,6 +128,11 @@ class Social::Gnip::Rule
       :account_id => @account.id,
       :twitter_handle_id => @twitter_handle.id
     }
+    params = {
+      :handle => @twitter_handle,
+      :action => RULE_ACTION[:add],
+      :rule_value => matching_rule.value,
+    }
     twitter_handle_ids = Social::Gnip::RuleTag.handle_ids(matching_rule.tag)
     unless twitter_handle_ids.include?(@twitter_handle.id.to_s)
       remove_response = remove_helper(matching_rule.value, matching_rule.tag)
@@ -140,13 +145,10 @@ class Social::Gnip::Rule
           unless @replay
             bulk_update_twitter_handles(matching_rule.tag, RULE_ACTION[:update][:success], new_rule_tag) 
           end
-          params = {
-            :handle => @twitter_handle,
-            :action => RULE_ACTION[:add],
-            :response => add_response,
-            :rule_value => matching_rule.value,
-            :rule_tag => new_rule_tag
-          }
+          params = params.merge({
+                :response => add_response,
+                :rule_tag => new_rule_tag
+          })
           update_db(params)
           puts "Rule successfully updated in  #{@stream_name}" 
         else
@@ -156,27 +158,34 @@ class Social::Gnip::Rule
       else
         requeue(args)
       end
+    else
+      unless db_sanity
+        params = params.merge({
+            :rule_tag => matching_rule.tag,
+            :response => true
+        })
+        update_db(params)
+      end
     end
   end
   
 
   #Used for maintenanace. Checks the sanity of the DB data with rules present in Gnip and vice-versa
-  def self.mismatch(db_array, rule_url, stream)
+  def self.mismatch(db_set, rule_url, stream)
     begin
       rules_list = rule_url.list()
-      gnip_array = rules_list.inject([]) do |arr,rule|
-        arr << {:rule_value => rule.value, :rule_tag => rule.tag}
-        arr
+      gnip_set = rules_list.inject(Set.new) do |set,rule|
+        set << {:rule_value => rule.value, :rule_tag => rule.tag}
+        set
       end
-      unless ((gnip_array - db_array) + (db_array - gnip_array)).blank?
+      unless ((gnip_set - db_set) + (db_set - gnip_set)).blank?
         error_params = {
-          :rules_in_gnip_and_not_in_db => (gnip_array - db_array).inspect,
-          :rules_in_db_and_not_in_gnip => (db_array - gnip_array).inspect
+          :rules_in_gnip_and_not_in_db => (gnip_set - db_set).inspect,
+          :rules_in_db_and_not_in_gnip => (db_set - gnip_set).inspect
         }
         puts "Mismatch of rules in #{stream} :::: #{error_params}"
         NewRelic::Agent.notice_error("Mismatch of rules in #{stream}", :custom_params => error_params)
-      else
-        puts "No mismatch in #{stream}"
+        SocialErrorsMailer.deliver_mismatch_in_rules(error_params)
       end
     rescue => e
       puts "Exception in checking for mismatch #{e.to_s} #{e.backtrace.join("\n")} "
@@ -198,7 +207,7 @@ class Social::Gnip::Rule
       rules_list = @rule_url.list
       rules_list.each do |rule|
         rule_val = rule.value
-        return rule if rule_val.downcase.strip().eql?(rule_value.downcase.strip())
+        return rule if equality?(rule_val,rule_value)
       end
     rescue => e
       puts "Exception in matching_rule #{e} in #{@stream_name}"
@@ -211,6 +220,14 @@ class Social::Gnip::Rule
           :description => "Exception in matching_rule in #{@stream_name} " })
     end
     return nil
+  end
+  
+  def db_sanity(matching_rule)
+    equality?(@twitter_handle.rule_value,matching_rule.value) && equality?(@twitter_handle.rule_tag,matching_rule.tag)
+  end
+  
+  def equality?(*args)
+    args.first.downcase.strip().eql?(args.second.downcase.strip())
   end
   
 end

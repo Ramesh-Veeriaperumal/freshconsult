@@ -14,7 +14,8 @@ class Account < ActiveRecord::Base
   
   attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,
                   :logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain ,
-                  :language, :ssl_enabled
+                  :language, :ssl_enabled, :whitelisted_ip_attributes
+
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
   
   named_scope :active_accounts,
@@ -243,12 +244,6 @@ class Account < ActiveRecord::Base
 
   def pass_through_enabled?
     pass_through_enabled
-  end
-
-  def es_enabled?
-    return true
-    # es_status = MemcacheKeys.fetch(MemcacheKeys::ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
-    # es_status.key?(self.id) ? es_status[self.id] : false
   end
 
   def user_emails_migrated?

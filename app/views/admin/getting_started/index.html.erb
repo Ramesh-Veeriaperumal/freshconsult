@@ -102,7 +102,7 @@
 
 						<div class="slide-left-panel panel-divider-left">
 								<h4><%=t('.support_email_subtitle')%></h4>
-								<div class="textbox-note"><%=t('.support_email_submsg')%></div>
+								<div class="textbox-note"><%=t('.support_email_submsg').html_safe%></div>
 								<div class="email-textbox">
 									<input type="text" name="email_config[reply_email]" class ="required textbox-radius" id="reply_to_id" style="width: 80%" onclick="javascript:jQuery(this).removeClass('gs_error_highlight');" value="<%=@email_config[:reply_email]%>" data-shift-tab-ignore="true">
 									<%= f.hidden_field :to_email, :id => "hidden_reply_to" %>

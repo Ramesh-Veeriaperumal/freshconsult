@@ -22,7 +22,7 @@ class InstalledAppDrop < BaseDrop
 		AppConfig['integrations_url'][Rails.env] + 
 		Liquid::Template.parse(@source.application.options[:oauth_url]).render({
 			"portal_id" => @context['portal_id'],
-			"account_id" => @context['portal_id'] # Just for Salesforce
+			"account_id" => @context['account_id']
 		})
 	end
 

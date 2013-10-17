@@ -200,6 +200,8 @@
                   fb.resources :tabs, :controller => 'facebook_tabs',
                             :collection => { :configure => :any, :remove => :any }
                 end
+    social.resources :gnip, :controller => 'gnip_twitter',
+                :collection => {:reconnect => :post}
   end
   
   #SAAS copy starts here
@@ -215,7 +217,7 @@
       admin.resources :subscription_payments, :as => 'payments'
       admin.resources :subscription_announcements, :as => 'announcements'
       admin.resources :conversion_metrics, :as => 'metrics'
-      admin.resources :account_tools, :as => 'tools', :collection =>{:regenerate_reports_data => :post}
+      admin.resources :account_tools, :as => 'tools', :collection =>{:regenerate_reports_data => :post, :update_global_blacklist_ips => :put }
       admin.namespace :resque do |resque|
         resque.home '', :controller => 'home', :action => 'index'
         resque.failed_show '/failed/:queue_name/show', :controller => 'failed', :action => 'show'
@@ -261,9 +263,7 @@
   map.reset_password '/account/reset/:token', :controller => 'user_sessions', :action => 'reset'
   
   map.search_domain '/search_user_domain', :controller => 'domain_search', :action => 'locate_domain'
-  
-  map.resources :search, :only => :index, :member => { :suggest => :get }
-  
+    
   #SAAS copy ends here
 
 

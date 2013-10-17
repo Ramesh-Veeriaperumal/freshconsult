@@ -46,18 +46,18 @@ module ApplicationHelper
     end
   end
 
-  def logo_url
-    MemcacheKeys.fetch(["v6","portal","logo",current_portal],30.days.to_i) do
-        current_portal.logo.nil? ? "/images/logo.png?721013" : 
-        AwsWrapper::S3Object.url_for(current_portal.logo.content.path(:logo),current_portal.logo.content.bucket_name,
+  def logo_url(portal = current_portal)
+    MemcacheKeys.fetch(["v6","portal","logo",portal],30.days.to_i) do
+        portal.logo.nil? ? "/images/logo.png?721013" : 
+        AwsWrapper::S3Object.url_for(portal.logo.content.path(:logo),portal.logo.content.bucket_name,
                                           :expires => 30.days, :secure => true)
     end
   end
 
-  def fav_icon_url
-    MemcacheKeys.fetch(["v6","portal","fav_ico",current_portal]) do
-      current_portal.fav_icon.nil? ? '/images/favicon.ico?123456' : 
-            AwsWrapper::S3Object.url_for(current_portal.fav_icon.content.path(:fav_icon),current_portal.fav_icon.content.bucket_name,
+  def fav_icon_url(portal = current_portal)
+    MemcacheKeys.fetch(["v6","portal","fav_ico",portal]) do
+      portal.fav_icon.nil? ? '/images/favicon.ico?123456' : 
+            AwsWrapper::S3Object.url_for(portal.fav_icon.content.path(:fav_icon),portal.fav_icon.content.bucket_name,
                                           :expires => 30.days, :secure => true)
     end
   end
@@ -197,24 +197,6 @@ module ApplicationHelper
     text << "<span class='icon ticksymbol'></span>" if is_active
     class_name = is_active ? "active" : ""
     link_to(text, url, :class => class_name, :tabindex => "-1")
-  end
-
-  def dropdown_menu(list, options = {})
-    return if list.blank?
-    output = ""
-    output << %(<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">)
-    
-    list.each do |item|
-      unless item.blank?
-        if item[0] == :divider
-          output << %(<li class="divider"></li>)
-        else
-          output << %(<li class="#{item[2] ? "active" : ""}">#{ link_to item[0], item[1], options, "tabindex" => "-1" }</li>)
-        end
-      end
-    end
-    output << %(</ul>)
-    output.html_safe
   end
 
   def dropdown_menu(list, options = {})
@@ -443,7 +425,7 @@ module ApplicationHelper
       img_tag_options[:width] = options.fetch(:width)
       img_tag_options[:height] = options.fetch(:height)
     end 
-    avatar_content = MemcacheKeys.fetch(["v4","avatar",profile_size,user],30.days.to_i) do
+    avatar_content = MemcacheKeys.fetch(["v5","avatar",profile_size,user],30.days.to_i) do
       content_tag( :div, (image_tag (user.avatar) ? user.avatar.expiring_url(profile_size,30.days.to_i) : is_user_social(user, profile_size), img_tag_options ), :class => profile_class, :size_type => profile_size )
     end
     avatar_content
@@ -453,11 +435,8 @@ module ApplicationHelper
     user_avatar(user,:thumb,"preview_pic",{:expiry => expiry, :width => 36, :height => 36})
   end
   
-  def is_user_social( user, profile_size )
-    if user.twitter_id
-      profile_size = (profile_size == :medium) ? "original" : "normal"
-      twitter_avatar(user.twitter_id, profile_size) 
-    elsif user.fb_profile_id
+  def is_user_social( user, profile_size ) 
+    if user.fb_profile_id
       profile_size = (profile_size == :medium) ? "large" : "square"
       facebook_avatar(user.fb_profile_id, profile_size)
     else
@@ -465,8 +444,8 @@ module ApplicationHelper
     end
   end   
   
-  def twitter_avatar( screen_name, profile_size = "normal" )
-    "https://api.twitter.com/1/users/profile_image?screen_name=#{screen_name}&size=#{profile_size}"
+  def twitter_avatar(handle, profile_size = "thumb")
+    handle.avatar ? handle.avatar.expiring_url : "/images/fillers/profile_blank_#{profile_size}.gif"
   end
   
   def facebook_avatar( facebook_id, profile_size = "square")
@@ -561,7 +540,7 @@ module ApplicationHelper
     replace_objs = liquid_objs || {}
     replace_objs = replace_objs.merge({"current_user"=>current_user})
     # replace_objs will contain all the necessary liquid parameter's real values that needs to be replaced.
-    replace_objs = replace_objs.merge({installed_app.application.name.to_s => installed_app, 'installed_app' => (InstalledAppDrop.new installed_app), "application" => installed_app.application, 'portal_id' => current_portal.id}) unless installed_app.blank?# Application name based liquid obj values.
+    replace_objs = replace_objs.merge({installed_app.application.name.to_s => installed_app, 'installed_app' => (InstalledAppDrop.new installed_app), "application" => installed_app.application, 'account_id' => current_account.id, 'portal_id' => current_portal.id}) unless installed_app.blank?# Application name based liquid obj values.
     Liquid::Template.parse(widget.script).render(replace_objs, :filters => [Integrations::FDTextFilter]).html_safe  # replace the liquid objs with real values.
   end
 
@@ -757,10 +736,6 @@ module ApplicationHelper
     nodejs_port = Rails.env.development? ? 5000 : (request.ssl? ? 2050 : 1050)      
     "#{request.protocol}#{request.host}:#{nodejs_port}/#{namespace}"
   end  
-
-  def es_enabled?
-    current_account.es_enabled?
-  end
 
   def assumed_identity_message
     _output = []

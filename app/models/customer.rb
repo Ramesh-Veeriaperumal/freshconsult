@@ -29,25 +29,6 @@ class Customer < ActiveRecord::Base
   after_commit_on_destroy :clear_cache
   after_commit_on_update :clear_cache
   after_update :map_contacts_on_update, :if => :domains_changed?
-   
-  #Sphinx configuration starts
-  define_index do
-    indexes :name, :sortable => true
-    indexes :description
-    indexes :note
-    
-    has account_id
-    has '0', :as => :deleted, :type => :boolean
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :responder_id, :type => :integer
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :group_id, :type => :integer
-    #set_property :delta => :delayed
-    set_property :field_weights => {
-      :name         => 10,
-      :note         => 4,
-      :description  => 3
-    }
-  end
-  #Sphinx configuration ends here..
   
   before_create :check_sla_policy
   before_update :check_sla_policy
@@ -114,7 +95,7 @@ class Customer < ActiveRecord::Base
 
     def map_contacts_to_customers(domains = self.domains)
       User.update_all("customer_id = #{self.id}", 
-        ['SUBSTRING_INDEX(email, "@", -1) IN (?) and customer_id is null and helpdesk_agent = false and account_id = ?', 
+        ['SUBSTRING_INDEX(email, "@", -1) IN (?) and customer_id is null and account_id = ?', 
         get_domain(domains), self.account_id]) unless domains.blank?
     end
 

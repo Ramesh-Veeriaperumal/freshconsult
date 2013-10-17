@@ -19,14 +19,14 @@ module SupportHelper
 					  # "Helvetica Neue" => "Helvetica+Neue:regular,italic,700,700italic" 
 					}
 
-    def time_ago date_time 
+    def time_ago(date_time)
 		%( <span class='timeago' data-timeago='#{date_time}' data-livestamp='#{date_time}'> 
 			#{distance_of_time_in_words_to_now date_time} #{I18n.t('date.ago')} 
-		   </span> ).html_safe
+		   </span> ).html_safe unless date_time.nil?
 	end
 
-	def short_day_with_time date_time
-		date_time.to_s(:short_day_with_time)
+	def short_day_with_time(date_time)
+		date_time.to_s(:short_day_with_time) unless date_time.nil?
 	end
 
 	# Top page login, signup and user welcome information
@@ -726,7 +726,7 @@ HTML
 	def link_to_privacy_policy portal
 		%(	<a href="http://freshdesk.com/privacy" target="_blank">
 				#{ I18n.t('portal.cookie.privacy_policy') }
-			</a>) if(!portal.paid_account && ["user_signup", "user_login"].include?(portal['current_page']))
+			</a>) if(!portal.paid_account && ["user_signup", "user_login", "submit_ticket", "profile_edit"].include?(portal['current_page']))
 	end
 
 	def cookie_law

@@ -89,7 +89,8 @@ class Social::TwitterHandlesController < ApplicationController
                               :last_dm_id => nil, :last_mention_id => nil,
                               :state => Social::TwitterHandle::TWITTER_STATE_KEYS_BY_TOKEN[:active], 
                               :last_error => nil }
-        handle.save                                 
+        handle.save 
+        handle.construct_avatar unless handle.avatar                                
         redirect_to edit_social_twitter_url(handle)
       else
         twitter_handle.save
@@ -152,12 +153,13 @@ class Social::TwitterHandlesController < ApplicationController
   end
   
   def create_ticket_from_tweet
+    user = get_twitter_user(params[:helpdesk_tickets][:twitter_id],params[:profile_image][:url])
     @ticket = current_account.tickets.build(params[:helpdesk_tickets])
     @ticket.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter]
     @ticket
   end
   
-  def get_twitter_user(screen_name)
+  def get_twitter_user(screen_name, profile_image_url)
     user = current_account.all_users.find_by_twitter_id(screen_name)
     unless user
       user = current_account.contacts.new
@@ -165,12 +167,18 @@ class Social::TwitterHandlesController < ApplicationController
                     :active => true,
                     :helpdesk_agent => false}})
     end
-    user 
+    if user.avatar.nil? && !profile_image_url.nil?
+      args = {:account_id => current_account.id,
+              :twitter_user_id => user.id,
+              :prof_img_url => profile_image_url}
+      Resque.enqueue(Social::UploadAvatarWorker, args)
+    end
+    user
   end
   
   def create_note_from_tweet(in_reply_to_status_id)
     tweet = current_account.tweets.find_by_tweet_id(in_reply_to_status_id)
-    user = get_twitter_user(params[:helpdesk_tickets][:twitter_id])
+    user = get_twitter_user(params[:helpdesk_tickets][:twitter_id],params[:profile_image][:url])
     
     unless tweet.nil?  
       @ticket = tweet.get_ticket
@@ -215,9 +223,8 @@ class Social::TwitterHandlesController < ApplicationController
     else
       @item = create_note_from_tweet(in_reply_to_status_id)
     end
-    @saved = false
-    if @item.save
-      @saved = true
+    @saved = @item.instance_of?(Helpdesk::Note) ? @item.save_note : @item.save_ticket
+    if @saved
       flash.now[:notice] = t('twitter.ticket_save')
     else
       flash.now[:notice] = t('twitter.tkt_err_save')
@@ -230,7 +237,7 @@ class Social::TwitterHandlesController < ApplicationController
     unless reply_twitter.nil?
       @wrapper = TwitterWrapper.new reply_twitter
       twitter  = @wrapper.get_twitter
-      twitter.update(params[:tweet][:body])
+      twitter.update(params[:tweet][:body].strip)
       flash.now[:notice] = "Successfully sent a tweet"
     end
     respond_to do |format|

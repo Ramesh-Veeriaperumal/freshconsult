@@ -31,6 +31,20 @@ namespace :twitter do
       puts "Premium Twitter Worker is already running . skipping at #{Time.zone.now}" 
     end
   end
+  
+  task :bootstrap_avatar => :environment do
+    Sharding.execute_on_all_shards do
+      Social::TwitterHandle.find_in_batches(:batch_size => 500, 
+        :joins => %(
+          INNER JOIN `subscriptions` ON subscriptions.account_id = social_twitter_handles.account_id),
+        :conditions => " subscriptions.state != 'suspended' "
+      ) do |twitter_block|
+        twitter_block.each do |handle|        
+          handle.construct_avatar unless handle.avatar && handle.reauth_required?
+        end
+      end
+    end
+  end
 
  def queue_empty?(queue_name)
     queue_length = Resque.redis.llen "queue:#{queue_name}"

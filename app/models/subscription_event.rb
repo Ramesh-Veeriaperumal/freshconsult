@@ -64,7 +64,11 @@ class SubscriptionEvent < ActiveRecord::Base
 
     def create_new_record(account, attributes)
       account.subscription_events.create(attributes)
-    end 
+    end
+    
+    def deleted_event(account_id)
+      find_by_account_id_and_code(account_id, CODES[:deleted])
+    end
     
   end
 end

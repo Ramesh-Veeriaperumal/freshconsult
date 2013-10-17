@@ -1,11 +1,11 @@
 class ProfilesController < ApplicationController
   
    before_filter :require_user 
+   before_filter :load_user, :only => [:edit, :change_password]
    skip_before_filter :check_privilege
    include ModelControllerMethods  
 
-  def edit       
-    @profile = current_user.customer? ? current_user : current_user.agent    
+  def edit    
     respond_to do |format|
       format.html # edit.html.erb
       format.xml  { render :xml => @profile }
@@ -15,7 +15,7 @@ class ProfilesController < ApplicationController
   def create
   end
 
-  def update    
+  def update 
      if current_user.customer?
        update_contact
      else
@@ -41,7 +41,6 @@ def destroy
 end
 
 def update_contact
-  
     company_name = params[:user][:customer]
     unless company_name.blank? 
      company = current_account.customers.find_or_create_by_name(company_name) 
@@ -58,7 +57,6 @@ def update_contact
 end
 
 def update_agent
-  
   @profile = current_user.agent
     respond_to do |format|      
       if @profile.update_attributes(params[:agent])            
@@ -75,7 +73,6 @@ def update_agent
 end
   
 def change_password    
-    
     @check_session = current_account.user_sessions.new(:email => current_user.email, :password => params[:user][:current_password], :remember_me => false)
     if @check_session.save      
       reset_password 
@@ -85,9 +82,12 @@ def change_password
       redirect_to new_user_session_url      
     else     
       flash[:notice] = t(:'flash.profile.change_password.failure')
-      redirect_to edit_support_profile_path
-    end
-      
+      if current_user.customer?
+        redirect_to edit_support_profile_path 
+      else
+        render :action => :edit
+      end
+    end      
 end
 
 def reset_password
@@ -97,6 +97,12 @@ def reset_password
     @user.active = true #by Shan need to revisit..
     @user.save
 end
+
+private
+
+  def load_user
+    @profile = current_user.customer? ? current_user : current_user.agent    
+  end
 
 protected
 

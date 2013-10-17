@@ -50,6 +50,8 @@
 		<%= include_cloudfront_js :subscription%>    
 		<% javascript_tag do %>
 			jQuery.noConflict();
+
+			jQuery("select.select2").livequery(function(){ jQuery(this).select2(jQuery(this).data()); });
 		<% end %>
 		<%= yield :pagefixed %>
 	</body>

@@ -18,7 +18,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
       params[nscname].each do |key, value|
         ticket.send("#{key}=", value) if !value.blank? and ticket.respond_to?("#{key}=")
       end
-      ticket.save
+      ticket.save_ticket
       if privilege?(:reply_ticket)
         begin
           reply_multiple reply_content, ticket
@@ -45,7 +45,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
       build_note_params ticket, reply_content
       note = ticket.notes.build(params[:helpdesk_note])
       build_attachments note, :helpdesk_note
-      send("#{note.source_name}_reply", ticket, note) if note.save
+      send("#{note.source_name}_reply", ticket, note) if note.save_note
     end
 
     def build_note_params ticket, reply_content

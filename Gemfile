@@ -1,5 +1,5 @@
 # source :gemcutter
-source 'https://rubygems.org'
+source 'http://rubygems.org'
 
 gem "rake", "0.8.7"
 gem "rack", "~> 1.1.6"
@@ -32,6 +32,7 @@ gem "omniauth-constantcontact2", "~> 1.0.4"
 gem "omniauth-surveymonkey", "0.0.0"
 gem "nori", "1.1.4"
 gem "google-api-client", "~> 0.6.3"
+gem "ipaddress", "0.8.0"
 
 gem "soap4r-ruby1.9", "~> 2.0.5", :platforms => :ruby_19
 gem "jira4r", "0.3.0"
@@ -46,7 +47,6 @@ gem "rubyzip", "0.9.4" , :require => "zip/zip"
 gem "http_accept_language", "1.0.1"
 
 gem "riddle", "1.2.2"
-gem "thinking-sphinx", "1.4.3", :require => "thinking_sphinx"
 gem "delayed_job", "1.8.4"
 
 gem "jammit", "0.6.5"
@@ -80,7 +80,7 @@ gem 'after_commit', "1.0.11"
 
 gem 'chargebee', "~> 1.1.7"
 
-gem 'memcache-client', '1.8.5'
+gem 'memcache-client', '1.8.5', :git => "git://github.com/mperham/memcache-client.git"
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
 gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
 gem "rinku", :git => "git://github.com/freshdesk/rinku.git"

@@ -29,12 +29,51 @@
     </div>
   </div>                                                                        
 </div>
+<% if @blacklisted_ips.ip_list %>
+<div class="row-fluid">
+  <div class="span4">
+    <table class="table table-striped table-bordered">
+      <tr>
+        <th>BlackListed IP's</th>
+      </tr>
+      <% @blacklisted_ip_pagination.each do |ip| %>
+        <tr>
+          <td><%= ip %></td>
+        </tr>
+      <% end %>
+    </table>
+    <%= will_paginate @blacklisted_ip_pagination, :renderer => BootstrapPaginationRenderer, 
+                              :previous_label => "<b class='arrow-left'></b>",
+                              :next_label => "<b class='arrow-right'></b>",
+                              :class => "pagination pagination-centered" %>
+  </div>
+<% end %>
+  <div class="span4">
+    <label><b>Add an IP to Block</b></label>
+    <input type="text" id="blacklist_ip" placeholder="Enter IP to Block">
+    <input type="submit" id="add_ip" value="Block" class="btn" style="margin-bottom: 10px">
+  </div>
+<% if @blacklisted_ips.ip_list %>
+  <div class="span4">
+    <label><b>Remove an IP from the List</b></label>
+    <%= select_tag "remove_blacklist_ip", options_for_select(@blacklisted_ips.ip_list.map {|v| [v, v.to_s]}), { :class => "select2", :style => "width: 220px" } %>
+    <input type="submit" id="remove_ip" value="Remove" class="btn">
+  </div>
+  <div>
+<% end %>
+    <% form_for :blacklist_ip, @blacklisted_ips, :url => update_global_blacklist_ips_admin_account_tools_path, :html => {:method => 'put', :id => 'update_ip_list'}  do |f| %>
+      <%= f.error_messages %>
+    <% end %>
+  </div>
+</div>
+
 <script src="/javascripts/jquery-1.7.1.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
   var max_date = new Date(),
       min_date = new Date(),
       url      = '/tools/regenerate_reports_data',
+      blacklist_ip_url = '/tools/update_global_blacklist_ips',
       success_message   = 'Added the dates sucessfully. Loading data to redshift will happen at account midnight.',
       mandatory_message = 'Please fill data Properly.';
   max_date.setDate(max_date.getDate() - 2);
@@ -64,5 +103,29 @@ $(document).ready(function(){
       jQuery('#message').text(mandatory_message).show().delay(5000).fadeOut();
     }
   });
+
+  jQuery('#add_ip').click(function () {
+    ip_array = <%= raw @blacklisted_ips.ip_list.to_json %> || [];
+    ip_array.push(jQuery('#blacklist_ip').val());
+    add_ip_value(ip_array)
+    jQuery('#update_ip_list').submit();
+  });
+
+  jQuery('#remove_ip').click(function () {
+    ip_array = <%= raw @blacklisted_ips.ip_list.to_json %> || [];
+    selected_ip = jQuery('#remove_blacklist_ip').val();
+    ip_array = jQuery.grep(ip_array, function(value) {
+      return value != selected_ip;
+    });
+    add_ip_value(ip_array)
+    jQuery('#update_ip_list').submit();
+  });
+
+  function add_ip_value(ip_array){
+    ip_array.map(function(ip){
+      var hidden_field = jQuery('<input name="ip_list[]" type="hidden" value="'+ip+'">');
+      hidden_field.appendTo('#update_ip_list');
+    });
+  }
 });
 </script>

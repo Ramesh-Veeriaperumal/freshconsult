@@ -2,7 +2,7 @@
   <li class="inline-field">
     <label class="caption">
       <div class="preview_pic">
-        <%= image_tag(twitter_avatar(twitter_handle.screen_name)) %>
+        <%= image_tag(twitter_avatar(twitter_handle)) %>
         <span class="tweet_pic"></span>
       </div>
       <%= content_tag(:h4, "@#{twitter_handle.screen_name}", :class => "title") %>
