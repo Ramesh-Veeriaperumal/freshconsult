@@ -211,6 +211,7 @@ class AuthorizationsController < ApplicationController
 
   def create_for_sso(hash, user_account = nil)
     account = (user_account.blank?) ? current_account : user_account
+    account.make_current
     if !@current_user.blank? and !@auth.blank?
       if @current_user.deleted?
         show_deleted_message
