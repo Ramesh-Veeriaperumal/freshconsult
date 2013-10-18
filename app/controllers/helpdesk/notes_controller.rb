@@ -18,7 +18,7 @@ class Helpdesk::NotesController < ApplicationController
   before_filter :fetch_item_attachments, :validate_fwd_to_email, :check_for_kbase_email, :set_default_source, :only =>[:create]
   before_filter :set_mobile, :prepare_mobile_note, :only => [:create]
   before_filter :set_show_version
-
+  before_filter :set_native_mobile, :only=>[:index , :destroy , :restore]
   def index
 
     if params[:since_id].present?
@@ -44,8 +44,18 @@ class Helpdesk::NotesController < ApplicationController
         format.xml do
          render :xml => @notes.to_xml(options) 
         end
-        format.json do
-          render :json => @notes.to_json(options)
+		format.json do
+			render :json => @notes.to_json(options)
+		end
+    format.nmobile do
+        response = "["
+        sep = ""
+        @notes.each do |note|
+          response << sep + "#{note.to_mob_json}"
+          sep = ","
+        end
+        response << "]"
+        render :json => response
         end
       end
     end    
@@ -65,7 +75,7 @@ class Helpdesk::NotesController < ApplicationController
     @item.quoted_text = params[:quoted_text].present? && params[:quoted_text] == 'true'
     @item.include_surveymonkey_link = params[:include_surveymonkey_link]
 
-    if @item.save
+    if @item.save_note
       if params[:post_forums]
         @topic = Topic.find_by_id_and_account_id(@parent.ticket_topic.topic_id,current_account.id)
         if !@topic.locked?
@@ -100,6 +110,15 @@ class Helpdesk::NotesController < ApplicationController
     @item.build_note_body(:body_html => @item.body_html,
         :body => @item.body) unless @item.note_body
     render :partial => "edit_note"
+  end
+
+  def update
+    if @item.update_note_attributes(params[nscname])
+      post_persist
+      flash[:notice] = I18n.t(:'flash.general.update.success', :human_name => cname.humanize.downcase)
+    else
+      edit_error
+    end
   end
 
   protected

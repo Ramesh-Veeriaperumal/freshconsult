@@ -18,6 +18,8 @@
       left: 'auto',         // center horizontally
     }, $spin_small = {
         lines: 8, length: 3, width: 2, radius: 4
+    }, $spin_tiny = {
+        lines: 7, length: 3, width: 2, radius: 3
     }, $spin_left = {
         left:0,
     }, $spin_right = {
@@ -34,6 +36,8 @@
       
         if($(this).hasClass("loading-small")){
         $.extend(opts, $spin_small);}
+        if($(this).hasClass("loading-tiny")){
+        $.extend(opts, $spin_tiny);}
         if($(this).hasClass("loading-with-text")){
           if(!$(this).hasClass("loading-align"))
             $(this).addClass('loading-align')

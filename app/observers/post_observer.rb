@@ -30,7 +30,7 @@ class PostObserver < ActiveRecord::Observer
   def send_monitorship_emails(post)
     post.topic.monitorships.active_monitors.each do |monitorship|
       monitorship_email = monitorship.user.email
-      PostMailer.deliver_monitor_email!(monitorship_email,post,post.user) unless monitorship_email.blank?
+      PostMailer.deliver_monitor_email!(monitorship_email,post,post.user) unless monitorship_email.blank? or (post.user_id == monitorship.user_id)
     end
   end
 
@@ -61,7 +61,7 @@ class PostObserver < ActiveRecord::Observer
 												 :topic_id => post.topic_id,
 												 :path_generator => 'category_forum_topic_path'
 												},
-								 :title => post.to_s
+								 :title => h(post.to_s)
 								} 
 		)
 	end

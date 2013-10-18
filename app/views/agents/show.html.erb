@@ -67,22 +67,22 @@
 		<% end %> 
 		<div class="user-info">
 			<%= content_tag(:h4, t('agent_info_title'), :class => "title") %>
-			<%= content_tag(:div, "#{content_tag(:span, t('user.email'))}  #{h(@user.email)}") unless @user.email.blank? %> 
-			<%= content_tag(:div, "#{content_tag(:span, t('user.phone_no'))}  #{h(@user.phone)}") unless @user.phone.blank? %>
-			<%= content_tag(:div, "#{content_tag(:span, t('user.mobile'))}  #{h(@user.mobile)}") unless @user.mobile.blank? %> 
-			<%= content_tag(:div, "#{content_tag(:span, t('account.time_zone'))}  #{h(@user.time_zone)}") %>
+			<%= content_tag(:div, "#{content_tag(:span, t('user.email'))}  #{h(@user.email)}".html_safe) unless @user.email.blank? %> 
+			<%= content_tag(:div, "#{content_tag(:span, t('user.phone_no'))}  #{h(@user.phone)}".html_safe) unless @user.phone.blank? %>
+			<%= content_tag(:div, "#{content_tag(:span, t('user.mobile'))}  #{h(@user.mobile)}".html_safe) unless @user.mobile.blank? %> 
+			<%= content_tag(:div, "#{content_tag(:span, t('account.time_zone'))}  #{h(@user.time_zone)}".html_safe) %>
 		</div>
 		<% if ((@user.deleted || !@user.active?) && privilege?(:manage_users)) %>
 		<div class="info-highlight">
-			<%= content_tag(:div, "#{ t('agent_deleted_message') } #{ link_to( t('contacts.restore'), { :action => :restore, :id => @agent.id }, :method => :put ) }") if @user.deleted %>
-			<%= content_tag(:div, "#{ t('agent_emailnotverified') } #{ link_to( 'Send activation email', send_invite_activation_path(@user), :method => :put ) } " ) if !@user.deleted && !@user.active? %>
+			<%= content_tag(:div, "#{ t('agent_deleted_message') } #{ link_to( t('contacts.restore'), { :action => :restore, :id => @agent.id }, :method => :put ) }".html_safe) if @user.deleted %>
+			<%= content_tag(:div, "#{ t('agent_emailnotverified') } #{ link_to( 'Send activation email', send_invite_activation_path(@user), :method => :put ) } ".html_safe ) if !@user.deleted && !@user.active? %>
 		</div>
 		<% end %>
 </div> 
 <div class="contact-box-additional">
-	<%= content_tag(:h3, t('agent_assigned_title'), :class => "title") %>
+	<%= content_tag(:h3, t('agent_assigned_title').html_safe, :class => "title") %>
 	<% if @recent_unresolved_tickets.empty? %>
-		<%= "#{t('agent_assigned_info')}" %>
+		<%= "#{t('agent_assigned_info')}".html_safe %>
 	<% else %>  
 		<%= render :partial => "tickets", :object => @recent_unresolved_tickets %> 
 	<% end %>

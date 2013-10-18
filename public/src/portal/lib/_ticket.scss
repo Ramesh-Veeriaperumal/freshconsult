@@ -2,11 +2,16 @@
 	margin-top:3px;
 	left:-2px;
 }
+
 .c-ticket-row{ 
-	padding-left:30px; 
+	padding: 8px 5px 8px 45px;
 	.status-source{ 
 		float:left;
 		margin-left:-45px;
+	}
+	.label{ 
+		float:right;
+		margin-top:6px; 
 	}
 }
 .ticket-toolbar{ 
@@ -29,7 +34,6 @@
 	margin-bottom: 0;
 	line-height: 28px;
 	font-weight: bold;
-
 }
 
 #ticket-sidebar-details label.checkbox{
@@ -41,26 +45,27 @@
 .agent-details{
 	border-bottom: $content-border;
 	background-color: #fafafa;	
-	margin-top: -$content-padding-mobile;
-	margin-left: -$content-padding-mobile;
-	margin-right: -$content-padding-mobile;
-	padding: $content-padding-mobile;
+	padding: $content-padding;
+	margin-top: -$content-padding-top;
+	margin-left: -$content-padding-side;
+	margin-right: -$content-padding-side;
+	@include border-top-radius($content-border-radius);
 	.lead{ margin-bottom: 10px; }
 }
 
+.ticket-brief{ padding-top: 7px; }
 
-/* Media styles for tablet and above */
-@include at-breakpoint($break-tablet){	
-	.c-ticket-row{ 
-		padding: 8px 5px 8px 45px; 
-		.label{ float:right; margin-top:6px; }
-	}
-	.ticket-brief{ padding-top: 7px; }	
-	.agent-details{
-		@include border-top-radius($content-border-radius);
-		padding: $content-padding;
-		margin-top: -$content-padding-top;
-		margin-left: -$content-padding-side;
-		margin-right: -$content-padding-side;
+// Ticket list & detail styles
+@if $nonResponsive == false {
+	@include at-breakpoint($media-mobile){
+		.c-ticket-row .label{ float:none; }
+		.agent-details{
+			padding: $content-padding-mobile;
+			margin-top: -$content-padding-mobile;
+			margin-left: -$content-padding-mobile;
+			margin-right: -$content-padding-mobile;
+			@include border-top-radius(none);
+		}
+		.ticket-brief{ padding-top: 5px; }
 	}
 }

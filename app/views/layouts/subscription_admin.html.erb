@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">                       
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">     
-  	<title><% @page_title %></title>
+  	<title><% @page_title.to_s.html_safe %></title>
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
@@ -28,17 +28,12 @@
 		              	  [
 										      [customers_admin_subscriptions_path(), :customers, "Customers" ],
 										      [admin_subscription_affiliates_path, :affiliates, "Affiliates" ],
-										      [admin_subscription_payments_path, :payments, "Payments" ],
 										      [admin_subscription_announcements_path, :announcements, "Announcements" ],
-										      [admin_subscription_plans_path, :plans, "Plans" ],      
-											  [admin_conversion_metrics_path, :metrics, "Metrics" ],
-											  # [admin_analytics_path, :analytics, "Analytics" ]
-											  [admin_subscription_events_path, :events, "Events"]
-
-
+											  [admin_subscription_events_path, :events, "Events"],
+											  [admin_account_tools_path, :tools, "Tools"]
 										    ].map do |s| 
-										      content_tag(:li, link_to(s[2], s[0]), :class => ((@selected_tab == s[1]) ? "active" : ""))
-										    end
+										      content_tag(:li, link_to(s[2], s[0]).html_safe, :class => ((@selected_tab == s[1]) ? "active" : ""))
+										    end.to_s.html_safe
 									%>          
 		            </ul> 
 								<% form_tag "/", :method => 'get', :class => "navbar-search pull-right" do %>
@@ -49,12 +44,14 @@
 		      </div>
 		    </div>   
 		<div class="container main-body">  
-			<%= [:notice, :warning, :error].collect {|type| content_tag('div', "<a class='close' data-dismiss='alert'>×</a>" + flash[type], :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }   %>
+			<%= [:notice, :warning, :error].collect {|type| content_tag('div', ("<a class='close' data-dismiss='alert'>×</a>" + flash[type]).html_safe, :id => type, :class => "alert alert-block alert-#{type}") if flash[type] }.join.html_safe %>
 			<%= yield %>
 		</div>
 		<%= include_cloudfront_js :subscription%>    
 		<% javascript_tag do %>
 			jQuery.noConflict();
+
+			jQuery("select.select2").livequery(function(){ jQuery(this).select2(jQuery(this).data()); });
 		<% end %>
 		<%= yield :pagefixed %>
 	</body>

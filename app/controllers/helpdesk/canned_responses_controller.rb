@@ -1,15 +1,26 @@
 class Helpdesk::CannedResponsesController < ApplicationController
-  
+
+  include Helpdesk::ShowVersion
+
   before_filter :load_canned_response, :set_mobile, :only => :show
+  before_filter :set_native_mobile,:only => [:show,:index]
   before_filter :load_ticket , :if => :ticket_present?
+  before_filter :set_show_version, :only => :show
 
   def index
-    render :partial => "helpdesk/tickets/components/canned_responses"
+    respond_to do |format|
+      format.html { render :partial => "helpdesk/tickets/components/canned_responses"}
+      format.nmobile { render :json => current_account.canned_responses.to_json}
+    end
   end
  
   def show
     render_parsed_content if ticket_present?
-    render :partial => '/helpdesk/tickets/components/insert_canned_response.rjs'
+    @attachments = @ca_resp.attachments_sharable	
+    respond_to do |format|
+      format.html{ render :partial => '/helpdesk/tickets/components/insert_canned_response.rjs'}
+      format.nmobile{ render :json => @a_template }
+    end
   end
 
   def recent
@@ -44,16 +55,9 @@ class Helpdesk::CannedResponsesController < ApplicationController
     end
     
     def render_parsed_content
-      content    = @ca_resp.content_html 
-      content    = mobile_content(content) if mobile?
+      content    = mobile? ? @ca_resp.content : @ca_resp.content_html 
       @a_template = Liquid::Template.parse(content).render('ticket' => @ticket, 
                                 'helpdesk_name' => @ticket.account.portal_name)    
-    end
-
-    def mobile_content content
-      parser = HTMLToTextileParser.new
-      parser.feed content
-      content = parser.to_textile
     end
 
     def load_ticket

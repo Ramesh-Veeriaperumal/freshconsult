@@ -88,13 +88,13 @@ module Delayed
 
     # Try to run one job. Returns true/false (work done/work failed) or nil if job can't be locked.
     def run_with_lock(max_run_time, worker_name)
-      RAILS_DEFAULT_LOGGER.info "* [JOB] aquiring lock on #{name}"
+      RAILS_DEFAULT_LOGGER.info "* [JOB] aquiring lock on #{name} -- #{worker_name}"
       unless lock_exclusively!(max_run_time, worker_name)
         # We did not get the lock, some other worker process must have
         RAILS_DEFAULT_LOGGER.warn "* [JOB] failed to aquire exclusive lock for #{name}"
         return nil # no work done
       end
-
+      RAILS_DEFAULT_LOGGER.info "* [JOB] aquired lock on #{name} -worker_name- #{worker_name}  -payload- #{payload_object}"
       begin
         runtime =  Benchmark.realtime do
           invoke_job # TODO: raise error if takes longer than max_run_time

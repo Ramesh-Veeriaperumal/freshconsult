@@ -1,23 +1,131 @@
-<h1><%= @page_title = 'View Account' %></h1>
-<table id="account">
-  <tr>
-    <th>Name</th>
-    <td><%= h(@account.name) %></td>
-  </tr>
-  <tr>
-    <th>Domain</th>
-    <td><%= @account.full_domain %></td>
-  </tr>
-  <tr>
-    <th>Next renewal</th>
-    <td><%= @account.subscription.next_renewal_at.to_s(:short_day) %></td>
-  </tr>
-  <tr>
-    <th>Plan</th>
-    <td><%= link_to(@account.subscription.subscription_plan, [:admin, @account.subscription.subscription_plan]) %></td>
-  </tr>
-  <tr>
-    <th>Lifetime Revenue</th>
-    <td><%= link_to(number_to_currency(@account.subscription_payments.sum(:amount)), [:admin, @account.subscription]) %></td>
-  </tr>
-</table>
+<div class="page-header">
+  <h2><%= @page_title = @account %></h2>                                                                         
+</div>
+<div class="row">     
+  <div class="span4">
+    <h3>Summary</h3>
+    <table id="subscription" class="table table-bordered">
+      <tr>
+        <th>Account ID</th>
+        <td><%= h(@account.id) %></td>
+      </tr>           
+      <tr>
+        <th>Name</th>
+        <td><%= h(@account) %></td>
+      </tr>           
+      <tr>
+        <th>Contact information</th>
+        <td><%= @account.admin_email %> <%= @account.admin_phone %> </td>
+      </tr>
+      <tr>
+        <th>Non-Active Agents</th>
+        <% @account.technicians.active(false).each do |agent| %>
+          <td> <%= agent.email %> </td>
+        <% end %>
+      </tr>
+      <tr>
+        <th>Monthly Revenue</th>
+        <td><%= number_to_currency(@account.subscription.amount) %></td>
+      </tr>
+      <tr>
+        <th>Lifetime Revenue</th>
+        <td><%= number_to_currency(@account.subscription_payments.sum(:amount)) %></td>
+      </tr>
+      <tr>
+        <th>Created</th>
+        <td><%= @account.created_at.to_s(:short_day) %></td>
+      </tr>
+      <tr>
+        <th>Next Renewal</th>
+        <td><%= @account.subscription.next_renewal_at.to_s(:short_day) %></td>
+      </tr>       
+      <tr>
+        <th>Plan</th>
+        <td><%= @account.subscription.subscription_plan %></td>
+      </tr>
+      <tr>
+        <th>Remaining Day Passes</th>
+        <td><%= @account.day_pass_config.available_passes %></td>
+      </tr>
+      <tr>
+        <th>State</th>
+        <td><%= @account.subscription.state %></td>
+      </tr>
+      <tr>
+        <th>Agents</th>
+        <td>Subscribed - <%=@account.subscription.agent_limit%>  Free - <%= @account.subscription.free_agents %>  Full time - <%= @account.full_time_agents.count %> Total - <%= @account.agents.count %> Ocassional - <%=@account.agents.count - (@account.full_time_agents.count ||= 0)%></td>
+      </tr>
+      <tr>
+        <th>Tickets</th>
+        <td><%= @account.tickets.count %></td>
+      </tr>
+      <tr>
+        <th>Multi product</th>
+        <td><%= @account.portals.count > 1 %></td>
+      </tr>
+      <tr>
+        <th>Social</th>
+        <td>Twitter - <%= !@account.twitter_handles.blank? %> Facebook - <%= !@account.facebook_pages.blank?%></td>
+      </tr>
+      <tr>
+        <th>Email Configured</th>
+        <td><%= (@account.all_email_configs.collect {|ec| "#{ec.name} - #{ec.reply_email} - #{ec.active}"}).join("<br>") %></td>
+      </tr>
+      <tr>
+        <th>Portals</th>
+        <td><%= (@account.portals.collect {|por| "#{por.name} - #{por.portal_url} - #{por.language}"}).join("<br>") %></td>
+      </tr>
+      <tr>
+        <th>Security</th>
+        <td>SSO - <%= @account.sso_enabled? %>  https - <%= @account.ssl_enabled? %>   Custom SSL - <%= @account.main_portal.ssl_enabled %> </td>
+      </tr>
+    </table>   
+  </div> 
+  <div class="span4">
+  <table id="sample-tickets" class="table table-bordered">
+    <tr><th>Sample tickets</th></tr>
+    <% @account.tickets.find(:all,:order => 'created_at desc',:limit => 5).each do |tkt| %>
+      <tr>
+      <td><%=tkt.subject%></td>
+      </tr>
+    <%end%>
+    
+    
+    <table> 
+  </div>        
+
+  <div class="span4">
+    <h3>Agents</h3>
+    <table class="table">
+      <tr>
+        <th>Email</th>
+        <th>Verified</th>
+      </tr>
+      <% @account.agents.each do |agent| %>
+        <tr>
+          <td><%= agent.user.email %></td>
+          <td><%= agent.user.active %></td>
+        </tr>
+      <% end %>     
+    </table>
+
+    <b>Invoices are sent to</b>
+      <table class="table">
+        <% @account.invoice_emails.each do |email| %>
+          <tr><td><%= email %></td></tr>
+        <% end %>
+      </table>
+  </div>  
+
+  <div class="span4">
+
+    <h3>Add Day Passes</h3>
+
+    <% form_tag({:action => 'add_day_passes'}, :id => 'trial_form', :class => "well form-inline") do %>
+      <input type="text" name="passes_count" id="passes_count" placeholder="No. of day passes" />
+      <input type="submit" value="Add Passes" class="btn" />
+    <% end %>
+  </div>    
+  
+</div>
+

@@ -127,7 +127,8 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def update_ticket_states
       Resque.enqueue(Helpdesk::UpdateTicketStates, 
-            { :id => id, :model_changes => @model_changes }) unless zendesk_import?
+            { :id => id, :model_changes => @model_changes,
+              :freshdesk_webhook => freshdesk_webhook? }) unless zendesk_import?
     end
 
     def notify_ticket_monitor
@@ -141,7 +142,7 @@ class Helpdesk::Note < ActiveRecord::Base
 		
     # VA - Observer Rule 
     def update_observer_events
-      return if user.nil? || feedback? || !(notable.instance_of? Helpdesk::Ticket)
+      return if user.nil? || meta? || feedback? || !(notable.instance_of? Helpdesk::Ticket)
       if user && user.customer? || !note?
         @model_changes = {:reply_sent => :sent}
       else

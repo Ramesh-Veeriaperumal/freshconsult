@@ -69,6 +69,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     article_params[:account] = account.id
     article_params[:content_ids] = params["content-ids"].nil? ? {} : get_content_ids
 
+    article_params[:attachment_info] = JSON.parse(params["attachment-info"]) if params["attachment-info"]
     attachments = {}
     
     Integer(params[:attachments]).times do |i|
@@ -200,7 +201,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         :account_id => account.id,
         :subject => params[:subject],
         :ticket_body_attributes => {:description => params[:text], 
-                          :description_html => params[:html]},
+                          :description_html => Helpdesk::HTMLSanitizer.clean(params[:html])},
         :requester => user,
         :to_email => to_email[:email],
         :to_emails => parse_to_emails,
@@ -224,11 +225,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end
-      message_key = message_id
+      message_key = zendesk_email || message_id
       begin
         build_attachments(ticket, ticket)
         (ticket.header_info ||= {}).merge!(:message_ids => [message_key]) unless message_key.nil?
-        ticket.save!
+        ticket.save_ticket!
       rescue ActiveRecord::RecordInvalid => e
         FreshdeskErrorsMailer.deliver_error_email(ticket,params,e)
       end
@@ -296,7 +297,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       begin
         ticket.cc_email = ticket_cc_emails_hash(ticket)
         if (user.agent? && !user.deleted?)
-          ticket.responder ||= user
           process_email_commands(ticket, user, ticket.email_config, note) if 
             user.privilege?(:edit_ticket_properties)
           email_cmds_regex = get_email_cmd_regex(ticket.account)
@@ -311,7 +311,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       build_attachments(ticket, note)
       # ticket.save
       note.notable = ticket
-      note.save
+      note.save_note
     end
     
     def can_be_added_to_ticket?(ticket,user)
@@ -342,6 +342,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       content_ids = params["content-ids"].nil? ? {} : get_content_ids
       content_id_hash = {}
      
+      attachment_info = JSON.parse(params["attachment-info"]) if params["attachment-info"]
       Integer(params[:attachments]).times do |i|
         if content_ids["attachment#{i+1}"]
           description = "content_id"
@@ -349,6 +350,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         begin
           created_attachment = item.attachments.build(:content => params["attachment#{i+1}"], 
             :account_id => ticket.account_id,:description => description)
+          if attachment_info && attachment_info["attachment#{i+1}"] && attachment_info["attachment#{i+1}"]["filename"]
+            attachment_name = attachment_info["attachment#{i+1}"]["filename"] 
+            created_attachment.content.instance_write(:file_name, attachment_name)
+            created_attachment.content_file_name = attachment_name
+          end
         rescue Exception => e
           Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
           break
@@ -439,7 +445,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       cc_emails_val =  parse_cc_email
       cc_emails_val.delete(ticket.account.kbase_email)
       cc_emails_val.delete_if{|email| (email == ticket.requester.email)}
-      cc_email_hash_value[:cc_emails] = cc_emails_val | cc_email_hash_value[:cc_emails]
+      cc_email_hash_value[:cc_emails] = cc_emails_val | cc_email_hash_value[:cc_emails].compact.collect! {|x| (parse_email x)[:email]}
       cc_email_hash_value
     end
 

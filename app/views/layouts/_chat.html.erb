@@ -1,0 +1,142 @@
+<%if(current_account.features?(:chat) && current_account.chat_setting && !(is_assumed_user?))
+    comm_url = ChatConfig['communication_url'][Rails.env]
+    chat_debug = ChatConfig['chat_debug'][Rails.env]
+%>
+<div id="freshchat_layout"></div>
+  <!-- Chat related contents starts -->
+<%= include_cloudfront_css :chat %>
+<script src="/javascripts/sound/soundmanager2-jsmin.js"></script>
+<script language="javascript">
+(function($){
+    $(document).ready(function(){
+        window.playSound = !($.cookie('fd::'+SITE_ID));
+        if(window.playSound){
+            $.cookie('fd::'+SITE_ID,true);
+            $(window).unload(function(){
+                jQuery.cookie('fd::'+SITE_ID,null);
+            });
+        }
+        $.getScript("<%=comm_url%>/socket.io/socket.io.js",function(){
+            $.getScript("<%=comm_url%>/js/chat.js");
+        });        
+    });    
+})(jQuery);
+
+
+var CS_URL = "<%=comm_url%>";
+var WEB_ROOT = "http://<%=current_account.full_domain%>";
+var CHAT_DEBUG = "<%=chat_debug%>";
+
+var USER_LIST = [];
+var CURRENT_USER = {
+    'id':'<%=current_user.id%>',
+    'username':'<%=current_user.name%>'
+};
+
+var SITE_ID = '<%=current_account.chat_setting.display_id%>';
+var IS_TYPING = '<%=current_account.chat_setting.typing_message%>';
+var CHAT_CONSTANTS = <%=ChatSetting::CHAT_CONSTANTS_BY_KEY.to_json.html_safe%>;
+var i18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
+            title:'<%= t("freshchat.title") %>',
+            says:'<%= t("freshchat.says") %>',
+            tag_msg:'<%= t("freshchat.tag_msg") %>',
+            transfer_to_agent:'<%= t("freshchat.transfer_to_agent") %>',
+            block:'<%= t("freshchat.block") %>',
+            unblock: '<%= t("freshchat.unblock") %>',
+            visitor: '<%= t("freshchat.visitor") %>',
+            transfer_agent:'<%= t("freshchat.transfer_agent") %>',
+            agent_transfer_msg: '<%= t("freshchat.agent_transfer_msg") %>',
+            transfer: '<%= t("freshchat.transfer") %>',
+            search_agent: '<%= t("freshchat.search_agent") %>',
+            block_visitor:'<%= t("freshchat.block_visitor") %>',
+            visitor_details:'<%= t("freshchat.visitor_details") %>',
+            visitor_block_msg:'<%= t("freshchat.visitor_block_msg") %>',
+            save:'<%= t("freshchat.save") %>',
+            cancel:'<%= t("freshchat.cancel") %>',
+            enter_tags:'<%= t("freshchat.enter_tags") %>',
+            chat_with: '<%= t("freshchat.chat_with") %>',
+            ticket_success_msg: '<%= t("freshchat.ticket_success_msg").html_safe %>',
+            ticket_error_msg: '<%= t("freshchat.ticket_error_msg") %>',
+            in_conversation:'<%= t("freshchat.in_conversation") %>',
+            available_agents:'<%= t("freshchat.available_agents") %>',
+            returning_visitors:'<%= t("freshchat.returning_visitors") %>',
+            website_visitors_msg:'<%= t("freshchat.website_visitors") %>',
+            message_archives:'<%= t("freshchat.message_archives") %>',
+            connection_error_msg:'<%= t("freshchat.connection_error_msg") %>',
+            connection_success_msg:'<%= t("freshchat.connection_success_msg") %>',
+            website_visitors:'<%= t("freshchat.website_visitors") %>',
+            filter_by: '<%= t("freshchat.filter_by") %>',
+            keyword: '<%= t("freshchat.keyword") %>',
+            visitor_location: '<%= t("freshchat.visitor_location") %>',
+            between: '<%= t("freshchat.between") %>',
+            tags: '<%= t("freshchat.tags") %>',
+            agent: '<%= t("freshchat.agent") %>',
+            back: '<%= t("freshchat.back") %>',
+            select_location: '<%= t("freshchat.select_location") %>',
+            visitors_online: '<%= t("freshchat.visitors_online") %>',
+            ticket_desc: '<%= t("freshchat.ticket_desc") %>',
+            transcript_added_msg: '<%= t("freshchat.transcript_added_msg") %>',
+            and: '<%= t("freshchat.and") %>',
+            on_: '<%= t("freshchat.on_") %>',
+            visitor_disconnect_msg: '<%= t("freshchat.visitor_disconnect_msg") %>',
+            last_message: '<%= t("freshchat.last_message") %>',
+            typing_message: '<%= t("freshchat.typing_message") %>',
+            is_typing_header: '<%= t("freshchat.is_typing_header") %>',
+            chat_recent_empty_tip: '<%= t("freshchat.chat_recent_empty_tip") %>',
+            add_agent_to_chat: '<%= t("freshchat.add_agent_to_chat") %>',
+            accept: '<%= t("freshchat.accept") %>',
+            ignore: '<%= t("freshchat.ignore") %>',
+            transfer_msg: '<%= t("freshchat.transfer_msg") %>',
+            unauthorized_attempt_msg: '<%= t("freshchat.unauthorized_attempt_msg") %>',
+            update_success_msg: '<%= t("freshchat.update_success_msg") %>',
+            update_error_msg: '<%= t("freshchat.update_error_msg") %>',
+            recent_messages: '<%= t("freshchat.recent_messages") %>',
+            agents: '<%= t("freshchat.agents") %>',
+            convert_to_ticket: '<%= t("freshchat.convert_to_ticket") %>',
+            create_ticket_tip: '<%= t("freshchat.create_ticket_tip") %>',
+            error: '<%= t("freshchat.error") %>',
+            existing_tkt_option_tip: '<%= t("freshchat.existing_tkt_option_tip").html_safe %>',
+            select_ticket: '<%= t("freshchat.select_ticket") %>',
+            do_not_convert_tkt: '<%= t("freshchat.do_not_convert_tkt") %>',
+            go_back: '<%= t("freshchat.go_back") %>',
+            id: '<%= t("freshchat.id") %>',
+            subject: '<%= t("freshchat.subject") %>',
+            requested_by: '<%= t("freshchat.requested_by") %>',
+            find_by_id: '<%= t("freshchat.find_by_id") %>',
+            find_by_subject: '<%= t("freshchat.find_by_subject") %>',
+            find_by_requester: '<%= t("freshchat.find_by_requester") %>',
+            info_msg: '<%= t("freshchat.info_msg") %>',
+            join_chat: '<%= t("freshchat.join_chat") %>',
+            chatting_with: '<%= t("freshchat.chatting_with") %>',
+            returning_visitor: '<%= t("freshchat.returning_visitor") %>',
+            new_visitor: '<%= t("freshchat.new_visitor") %>',
+            unknown: '<%= t("freshchat.unknown") %>',
+            no_visitors: '<%= t("freshchat.no_visitors") %>',
+            no_conversation: '<%= t("freshchat.no_conversation") %>',
+            no_return_visitors: '<%= t("freshchat.no_return_visitors") %>',
+            tag_placeholder: '<%= t("freshchat.tag_placeholder") %>',
+            no_visitors_msg: '<%= t("freshchat.no_visitors_msg") %>',
+            options: '<%= t("freshchat.options") %>',
+            edit_visitor_details: '<%= t("freshchat.edit_visitor_details") %>',
+            new_ticket_tip: '<%= t("freshchat.new_ticket_tip").html_safe %>',
+            install_tip: "<%= t('freshchat.install_tip').html_safe %>",
+            nochat: "<%= t('freshchat.nochat') %>",
+            adding_note: "<%= t('freshchat.adding_note') %>",
+            creating_ticket: "<%= t('freshchat.creating_ticket') %>",
+            chat_with_loc: "<%= t('freshchat.chat_with_loc').html_safe %>",
+            chat_with_noloc: "<%= t('freshchat.chat_with_noloc').html_safe %>",
+            chat_loadmore: "<%= t('freshchat.chat_loadmore') %>",
+            ticket_subject: "<%= t('freshchat.ticket_subject').html_safe %>",
+            ticket_description: "<%= t('freshchat.ticket_description').html_safe %>",
+            ticket_title: "<%= t('freshchat.ticket_title') %>",
+            requester_name: "<%= t('freshchat.requester_name') %>",
+            requester_email: "<%= t('freshchat.requester_email') %>",
+            note_success: "<%= t('freshchat.note_success').html_safe %>",
+            note_error: "<%= t('freshchat.note_error') %>",
+            view_details: "<%= t('freshchat.view_details') %>",
+            saving: "<%= t('freshchat.saving') %>",
+            start_chat: "<%= t('freshchat.start_chat') %>"
+        }
+</script>
+    <!-- Chat related contents ends -->
+<%end%>

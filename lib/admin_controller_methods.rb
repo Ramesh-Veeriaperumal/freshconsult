@@ -12,12 +12,11 @@ module AdminControllerMethods
     base.send :skip_before_filter, :check_account_state
     base.send :skip_before_filter, :ensure_proper_protocol
     base.send :skip_before_filter, :check_day_pass_usage
+    base.send :skip_before_filter, :select_shard
     base.send :layout, "subscription_admin"
     base.send :prepend_before_filter, :login_from_basic_auth
     base.send :prepend_before_filter, :set_time_zone
-    base.class_eval do
-      include ReadsToSlave
-    end
+    
   end
   
   protected
@@ -66,8 +65,14 @@ module AdminControllerMethods
       Time.zone = 'Pacific Time (US & Canada)'
     end
     
-    def select_shard(&block)
-      Sharding.select_latest_shard(&block)
+    def cumilative_count(&block)
+      count = 0
+      Sharding.run_on_all_slaves(&block).each { |result| count+=result }
+      count
+    end
+
+    def merge_array_of_hashes(arr)
+      arr.inject{|date, el| date.merge( el ){|k, old_v, new_v| old_v + new_v}}
     end
 
     # Since the default, catch-all routes at the bottom of routes.rb

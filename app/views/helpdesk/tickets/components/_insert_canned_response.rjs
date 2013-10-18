@@ -5,3 +5,12 @@ else
 	page << 'jQuery("#"+msg_body_id+"-body").getEditor().focus();'
 	page << "jQuery(\"#\"+msg_body_id+\"-body\").insertHtml(\"#{escape_javascript(@ca_resp.content_html)}\");"
 end
+if !@attachments.empty?
+  page << "jQuery('.request_panel:visible .attachments').show()"
+  attachment_dom = ""
+  @attachments.each do |a|
+    attachment_dom << (@new_show_page ? attachment_new_view(a) : attachment_classic_view(a))
+  end
+  page << "jQuery('.request_panel:visible .shared_attachment_list').append('#{escape_javascript(attachment_dom)}')"
+  page << 'jQuery(".request_panel:visible .a-count").html(jQuery(".shared_attachment_list").children(":visible").size());'
+end

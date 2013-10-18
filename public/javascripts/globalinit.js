@@ -81,7 +81,7 @@ is_touch_device = function() {
         offset: 5,
         html: true,
         reloadContent: false,
-        template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
+        template: '<div class="arrow"></div><div class="inner"><div class="content"><div></div></div></div>',
         content: function(){
           return $("#" + $(this).attr("data-widget-container")).html();
         }
@@ -95,8 +95,7 @@ is_touch_device = function() {
         html: true,
         reloadContent: false,
         placement: 'belowLeft',
-        // template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
-        template: '<div class="dbl_up arrow"></div><div class="hover_card inner"><div class="content"><p></p></div></div>',
+        template: '<div class="dbl_up arrow"></div><div class="hover_card inner"><div class="content"><div></div></div></div>',
         content: function(){
           return $("#" + $(this).attr("data-widget-container")).html();
         }
@@ -110,7 +109,7 @@ is_touch_device = function() {
         offset: 5,
         html: true,
         reloadContent: false,
-        template: '<div class="arrow"></div><div class="inner"><div class="content"><p></p></div></div>',
+        template: '<div class="arrow"></div><div class="inner"><div class="content"><div></div></div></div>',
         content: function(){
           return $("#" + $(this).attr("data-widget-container")).val();
         }
@@ -123,7 +122,7 @@ is_touch_device = function() {
         offset: 5,
         html: true,
         reloadContent: false,
-        template: '<div class="dbl_left arrow"></div><div class="hover_card inner"><div class="content"><p></p></div></div>',
+        template: '<div class="dbl_left arrow"></div><div class="hover_card inner"><div class="content"><div></div></div></div>',
         content: function(){
           var container_id = "user-info-div-"+$(this).data('contactId');
           return jQuery("#"+container_id).html() || "<div class='sloading loading-small loading-block' id='"+container_id+"' rel='remote-load' data-url='"+$(this).data('contactUrl')+"'></div>";
@@ -138,7 +137,7 @@ is_touch_device = function() {
          offset: 5,
          html: true,
          reloadContent: false,
-         template: '<div class="dbl_left arrow"></div><div class="hover_card inner"><div class="content"><p></p></div></div>',
+         template: '<div class="dbl_left arrow"></div><div class="hover_card inner"><div class="content"><div></div></div></div>',
          content: function(){
            return $(this).data("content") || $("#" + $(this).attr("data-widget-container")).val();
          }
@@ -250,8 +249,7 @@ is_touch_device = function() {
       });
 
       // !PULP to be moved into the pulp framework as a sperate util or plugin function
-      $("[rel=remote]").livequery(function(){
-        $(this).bind("afterShow", function(ev){
+      $('body').on('afterShow', '[rel=remote]', function(ev) {
           var _self = $(this);
           if(_self.data('remoteUrl')) {
             _self.append("<div class='sloading loading-small loading-block'></div>");
@@ -259,7 +257,6 @@ is_touch_device = function() {
                 _self.data('remoteUrl', false);
             });
           }
-        });
       });
       
       // Any object with class custom-tip will be given a different tool tip
@@ -538,27 +535,6 @@ is_touch_device = function() {
       })
 
       // Sticky Header
-      var the_window = $(window),
-          hasScrolled = false;
-      the_window.on('scroll.freshdesk', function() { hasScrolled = true; });
-      var handleScroll = function() {
-        if (the_window.scrollTop() > REAL_TOP) {
-          if (!fixedStrap.hasClass('at_the_top')) {
-
-            at_the_top.addClass('at_the_top');
-            forFixed.show();
-            at_the_top.css({top: -outerHeight}).animate({ top: 0}, 300, 'easeOutExpo');
-            firstchild.addClass('firstchild');
-          }
-
-        } else {
-          at_the_top.removeClass('at_the_top').css({top: ''});
-          forFixed.hide();
-          firstchild.removeClass('firstchild');
-        }
-
-        hasScrolled = false;
-      };
 
       var setupScroll = function() {
         if(!$('#sticky_header').length) return;
@@ -574,7 +550,7 @@ is_touch_device = function() {
           if(the_window.scrollTop() > REAL_TOP) {
             if(!sticky_header.hasClass('stuck')) {
               sticky_header.addClass('stuck');
-              sticky_header.wrap('<div id="sticky_wrap" />');
+              sticky_header.wrap('<div id="sticky_wrap" ><div class="fixed_wrap" ><div class="wrapper">');
               $('#sticky_wrap').height(sticky_header.outerHeight());
               
               $('#scroll-to-top').addClass('visible');
@@ -583,7 +559,7 @@ is_touch_device = function() {
           } else {
             if(sticky_header.hasClass('stuck')) {
               sticky_header.removeClass('stuck');
-              sticky_header.unwrap();
+              sticky_header.unwrap().unwrap().unwrap();
               
               $('#scroll-to-top').removeClass('visible');
             }
@@ -594,8 +570,6 @@ is_touch_device = function() {
         the_window.on('scroll.freshdesk', handleScroll);
 
         $(window).on('resize.freshdesk', function() {
-
-          sticky_header.width($('#Pagearea').width()-1);
           
           var to_collapse = false, extra_buffer = 20;
 

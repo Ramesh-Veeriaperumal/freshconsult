@@ -14,11 +14,14 @@ include Redis::RedisKeys
 include Redis::TicketsRedis
 
   skip_before_filter :check_privilege  
-  before_filter :set_mobile, :only => [:create, :destroy]
   skip_before_filter :require_user, :except => :destroy
   skip_before_filter :check_account_state
   before_filter :check_sso_params, :only => :sso_login
   skip_before_filter :check_day_pass_usage
+  before_filter :set_native_mobile, :only => [:create, :destroy]
+  skip_filter :select_shard, :only => [:openid_google,:opensocial_google]
+  skip_before_filter :set_current_account, :only => [:openid_google,:opensocial_google] 
+  skip_before_filter :set_locale, :only => [:openid_google,:opensocial_google] 
   
   def new
     # Login normal supersets all login access (can be used by agents)
@@ -78,23 +81,27 @@ include Redis::TicketsRedis
       sign = OAuth::Signature::RSA::SHA1.new(req, {:consumer => consumer})
       verified = sign.verify
       if verified
-        account = find_account_by_google_domain(params[:domain])
-        if account.blank?
+        account_id = find_account_by_google_domain(params[:domain])
+        if account_id.blank?
           json = {:verified => :false, :reason=>t("flash.gmail_gadgets.account_not_associated")}
         else
-          google_viewer_id = params['opensocial_viewer_id']
-          google_viewer_id = params['opensocial_owner_id'] if google_viewer_id.blank?
-          if google_viewer_id.blank?
-            json = {:verified => :false, :reason=>t("flash.gmail_gadgets.viewer_id_not_sent_by_gmail")}
-          else
-            agent = account.agents.find_by_google_viewer_id(google_viewer_id)
-            if agent.blank?
-              json = {:user_exists => :false, :t=>generate_random_hash(google_viewer_id, account)}  
-            elsif agent.user.deleted? or !agent.user.active?
-              json = {:verified => :false, :reason=>t("flash.gmail_gadgets.agent_not_active")}
+          Sharding.select_shard_of(account_id) do
+            account = Account.find(account_id)
+            account.make_current
+            google_viewer_id = params['opensocial_viewer_id']
+            google_viewer_id = params['opensocial_owner_id'] if google_viewer_id.blank?
+            if google_viewer_id.blank?
+              json = {:verified => :false, :reason=>t("flash.gmail_gadgets.viewer_id_not_sent_by_gmail")}
             else
-              json = {:user_exists => :true, :t=>agent.user.single_access_token, 
+              agent = account.agents.find_by_google_viewer_id(google_viewer_id)
+              if agent.blank?
+                json = {:user_exists => :false, :t=>generate_random_hash(google_viewer_id, account)}  
+              elsif agent.user.deleted? or !agent.user.active?
+                json = {:verified => :false, :reason=>t("flash.gmail_gadgets.agent_not_active")}
+              else
+                json = {:user_exists => :true, :t=>agent.user.single_access_token, 
                       :url_root=>agent.user.account.full_domain, :ssl_enabled=>agent.user.account.ssl_enabled}
+              end
             end
           end
         end
@@ -133,18 +140,44 @@ include Redis::TicketsRedis
       @current_user = @user_session.record
       #Hack ends here
       
-      remove_old_filters if @current_user.agent?
-
-      redirect_back_or_default('/') if grant_day_pass
+      
+      if grant_day_pass 
+        respond_to do |format|
+          format.html {
+            remove_old_filters if @current_user.agent? # Temporary
+            redirect_back_or_default('/')
+          }
+          format.nmobile {
+            if @current_user.customer? 
+              @current_user_session.destroy 
+              render :json => {:login => 'customer'}.to_json
+            else
+              render :json => {:login => 'success' , :auth_token => @current_user.single_access_token}.to_json
+            end
+          }
+        end
+      end
       #Unable to put 'grant_day_pass' in after_filter due to double render
     else
       note_failed_login
-      if mobile?
-        flash[:error] = I18n.t("mobile.home.sign_in_error")
-        redirect_to root_url
-      else 
-        redirect_to support_login_path
-      end
+        respond_to do |format|
+          # format.mobile{
+          #   flash[:error] = I18n.t("mobile.home.sign_in_error")
+          #   redirect_to root_url
+          # }
+          format.html{
+            redirect_to support_login_path
+          }
+          format.nmobile{
+              json = "{'login':'failed',"
+              @user_session.errors.each_error do |attr,error|
+                json << "'attr' : '#{attr}', 'message' : '#{error.message}'}"
+                break # even if password & email passed here is incorrect, only email is validated first. so this array will always have one element. This break will ensure that if in case...
+              end
+              render :json => json
+          } 
+        end
+      
     end
   end
   
@@ -162,7 +195,14 @@ include Redis::TicketsRedis
       return redirect_to current_account.sso_options[:logout_url]
     end
     
-    redirect_to root_url
+    respond_to do |format|
+        format.html  {
+          redirect_to root_url
+        }
+        format.nmobile{
+          render :json => {:logout => 'success'}.to_json
+        }
+      end
   end
   
   def signup_complete
@@ -188,32 +228,39 @@ include Redis::TicketsRedis
     base_domain = AppConfig['base_domain'][RAILS_ENV]
     domain_name = params[:domain] 
     signup_url = "https://signup."+base_domain+"/account/signup_google?domain="+domain_name unless domain_name.blank?
-    @current_account = find_account_by_google_domain(domain_name)
-    cust_url = @current_account.full_domain unless @current_account.blank?   
-    if @current_account.blank?      
+    account_id = find_account_by_google_domain(domain_name)
+    if account_id.blank?      
       flash[:notice] = "There is no account associated with your domain. You may signup here"
       redirect_to signup_url and return unless signup_url.blank? 
       raise ActiveResource::ResourceNotFound
     end
-    http_s = @current_account.ssl_enabled ? "https" : "http"
-    ##Need to handle the case where google is integrated with a seperate domain-- 2 times we need to authenticate
-    t_url = params[:t] ? "&t="+params[:t] : "" # passed token will be preserved for authentication. 
-    return_url = http_s+"://"+cust_url+"/authdone/google?domain="+params[:domain]+t_url
-    re_alm = http_s+"://"+cust_url
-    logger.debug "domain name is : #{domain_name}, return_url is : #{return_url}, re_alm : #{re_alm}"
-    url = nil
-    url = ("https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]) unless domain_name.blank?
-    authenticate_with_open_id(url,{ :required => ["http://axschema.org/contact/email", :email] , :return_to => return_url, :trust_root =>re_alm}) do |result, identity_url, registration| end
+    Sharding.select_shard_of(account_id) do
+      @current_account = Account.find(account_id)
+      cust_url = @current_account.full_domain    
+      http_s = @current_account.ssl_enabled ? "https" : "http"
+      ##Need to handle the case where google is integrated with a seperate domain-- 2 times we need to authenticate
+      t_url = params[:t] ? "&t="+params[:t] : "" # passed token will be preserved for authentication. 
+      return_url = http_s+"://"+cust_url+"/authdone/google?domain="+params[:domain]+t_url
+      re_alm = http_s+"://"+cust_url
+      logger.debug "domain name is : #{domain_name}, return_url is : #{return_url}, re_alm : #{re_alm}"
+      url = nil
+      url = ("https://www.google.com/accounts/o8/site-xrds?hd=" + params[:domain]) unless domain_name.blank?
+      authenticate_with_open_id(url,{ :required => ["http://axschema.org/contact/email", :email] , :return_to => return_url, :trust_root =>re_alm}) do |result, identity_url, registration| end
+    end
   end
   
   def find_account_by_google_domain(google_domain_name)
     unless google_domain_name.blank?
-      account = Account.find(:first,:conditions=>{:google_domain=>google_domain_name},:order=>"updated_at DESC")
-      if account.blank?
+      account_id = nil
+      gm = GoogleDomain.find_by_domain(google_domain_name)
+      if gm.blank?
         full_domain  = "#{google_domain_name.split('.').first}.#{AppConfig['base_domain'][RAILS_ENV]}"
-        account = Account.find_by_full_domain(full_domain)
+        sm = ShardMapping.fetch_by_domain(full_domain)
+        account_id = sm.account_id if sm
+      else
+        account_id = gm.account_id
       end
-      account
+      account_id
     end
   end
 

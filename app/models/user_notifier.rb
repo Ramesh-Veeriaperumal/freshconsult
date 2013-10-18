@@ -93,4 +93,13 @@ class UserNotifier < ActionMailer::Base
 
   end
 
+  def helpdesk_url_reminder(email_id, helpdesk_urls)
+    subject       "Your Freshdesk Portal Information"
+    recipients    email_id
+    from          AppConfig['from_email'] 
+    body          :helpdesk_urls => helpdesk_urls
+    sent_on       Time.now
+    content_type  "text/html"     
+  end
+
 end

@@ -3,7 +3,8 @@ class PasswordResetsController < SupportController
   skip_before_filter :check_privilege
   before_filter :require_no_user
   before_filter :load_user_using_perishable_token, :only => [:edit, :update]
-  
+  before_filter :set_native_mobile
+ 
   def new
     redirect_to support_login_path(:anchor => "forgot_password")
   end
@@ -12,15 +13,31 @@ class PasswordResetsController < SupportController
     @user = current_account.users.find_by_email(params[:email])
     if @user
       @user.deliver_password_reset_instructions! current_portal
-      flash[:notice] = t(:'flash.password_resets.email.success')
-      redirect_to root_url
+	  message = t(:'flash.password_resets.email.success')
+	    respond_to do |format|
+          format.html {
+          flash[:notice] = message
+          redirect_to root_url
+        }
+        format.nmobile {
+          render :json => {:server_response => message, :reset_password => 'success'}
+        }
+      end	    
     else
-      flash[:warning] = t(:'flash.password_resets.email.user_not_found')      
-      if mobile?
-        redirect_to root_url
-      else
-        # render :action => :new
-        redirect_to support_login_path(:anchor => "forgot_password")
+	  message = t(:'flash.password_resets.email.user_not_found')
+      respond_to do |format|
+        format.html {
+          flash[:notice] = message	  
+	      if mobile?
+    	    redirect_to root_url
+      	  else
+        	# render :action => :new
+	        redirect_to support_login_path(:anchor => "forgot_password")
+		  end
+		}
+        format.nmobile {
+          render :json => {:server_response => message, :reset_password => 'failure'}
+        }
       end
     end
   end

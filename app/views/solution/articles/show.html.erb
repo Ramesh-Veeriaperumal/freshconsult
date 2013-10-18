@@ -19,7 +19,7 @@
 		
 		<%= content_tag(:span, t('private'), :class => "label tooltip", 
 					:title => "This artical is visible only to Agents") if(!@article.folder.visible?(current_user)) %>
-		<span class="label"><%= @article.type_name %></span>
+		<span class="label"><%= t(@article.type_name) %></span>
 	</div> 
 	 
 	
@@ -47,8 +47,8 @@
 			</div>
 	 </div>
 	 <span class="seperator"></span>
-	 <div class="solutions_text">
-		<%= @article.description %>
+	 <div class="solutions_text clearfix">
+		<%= @article.description.html_safe %>
 	 </div>
 	 <ul class="attachment_list">
 	    <%= render :partial => '/helpdesk/shared/attachment', :collection => @article.attachments %>

@@ -1,13 +1,13 @@
 <div id="votes<%= @topic.id %>">
-      <% vote_count = (topic_vote.votes_for == 1) ? 1 : 2 %>
+      <% vote_count = (topic_vote.user_votes == 1) ? 1 : 2 %>
       <% if(topic_vote.voted_by_user? current_user) %>
         <div class="alert alert-info">   
-          <strong><%= t(".#{@forum.type_symbol}.vote_info_include_#{vote_count}", :vote => (vote_count == 2) ? (topic_vote.votes_for - 1) : (topic_vote.votes_for)) %></strong>
+          <strong><%= t(".#{@forum.type_symbol}.vote_info_include_#{vote_count}", :vote => (vote_count == 2) ? (topic_vote.user_votes - 1) : (topic_vote.user_votes)).html_safe %></strong>
         </div>
       <% else %>        
-        <% if (topic_vote.votes_for != 0) %>
+        <% if (topic_vote.user_votes != 0) %>
           <div class="alert alert-info"> 
-            <strong><%= t(".#{@forum.type_symbol}.vote_info_#{vote_count}", :vote => topic_vote.votes_for) %></strong>
+            <strong><%= t(".#{@forum.type_symbol}.vote_info_#{vote_count}", :vote => topic_vote.user_votes).html_safe %></strong>
             <span class="bottom-pointer"></span>
           </div>
         <% end %>
@@ -15,7 +15,7 @@
      <div id="users-voted-list" style="display:none; overflow-y:auto;"></div>
       <div>
         <% unless(topic_vote.voted_by_user? current_user) %>
-          <%= link_to_remote t(".#{@forum.type_symbol}.vote_button"), 
+          <%= link_to_remote t(".#{@forum.type_symbol}.vote_button").html_safe, 
                                         :update => "voting_container",
                                         :url    => {  :action => "vote",
                                                       :id => @topic.id,

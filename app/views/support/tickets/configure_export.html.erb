@@ -5,7 +5,8 @@
 	<fieldset class="row-fluid">
 		<div class="span4">
 			<label class="lead-small"><%=t('export_data.filter_label_customer')%></label>
-			<%= select_tag "date_filter", options_for_select(TicketConstants::CREATED_BY_OPTIONS) %>
+			<%= select_tag "date_filter", options_for_select(TicketConstants::CREATED_BY_OPTIONS), 
+				{ :class => "custom-select" } %>
 		</div>
 		<div id="datepicker" class="hide">
  			<div class="span4">	
@@ -29,12 +30,12 @@
 	 			  	<div class="span4 <%= head[:type] %> <%= cycle("", "", "omega") %>">
 		  				<label class="checkbox nested-parent"> 
 		    				<%= check_box_tag "export_fields[#{head[:value]}]", head[:label], head[:selected] %> 
-							<%= head[:label] %>														
+							<%= head[:label].html_safe %>														
 		  				</label>
 		  				<% head[:levels].each do |level| %>
 			  				<label class="checkbox nested-child"> 
 			    				<%= check_box_tag "export_fields[#{level[:name]}]", level[:label], false  %> 
-								<%= level[:label] %>
+								<%= level[:label].html_safe %>
 			  				</label>
 			  			<% end %>
 	  			    </div>	

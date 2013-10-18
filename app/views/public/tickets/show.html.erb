@@ -22,7 +22,7 @@
 			<div class="request-wrapper">
 		       	<div id="description-full" class="details min_height">
 					<span class="seperator"></span>
-			    	<%= @ticket.description_html %>
+			    	<%= @ticket.description_html.html_safe %>
 			    </div>  
 		 		<% unless @ticket.attachments.empty? %>
 					<span class="seperator"></span>
@@ -60,17 +60,17 @@
 			    <li> 
 					<%= content_tag( :h4, t('ticket.note_form.form_title'), :class => "title" ) %>
 					<% unless current_user %>
-						<%= label_tag :requester_email, t('your_email')+'<span class="required_star">*</span>' %>
+						<%= label_tag :requester_email, (t('your_email')+'<span class="required_star">*</span>').html_safe %>
 						<%= text_field_tag :requester_email, nil, :class => "email required"  %>
 					<% end %>
-					<% f.fields_for (:note_body, Helpdesk::NoteBody.new) do |ff| %>
+					<% f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
             			<%= ff.text_area :body_html, :class => "required",
             			:id=>"portal_ticket_note_public", :value => "" %>
           			<% end %>
 				</li>
 				<li class="attachment-options"  id="attachment-options">
 					<% unless local_assigns[:no_attachments] %>
-						<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note" } %>
+						<%= render :partial => "/helpdesk/shared/attachment_form", :locals => { :nsc_param => "helpdesk_note" } %>
 					<% end %>
 				</li>
 				<li class="alignright">

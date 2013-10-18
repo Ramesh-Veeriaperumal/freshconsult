@@ -3,6 +3,8 @@ class Account < ActiveRecord::Base
   include Mobile::Actions::Account
   include Cache::Memcache::Account
   include ErrorHandle
+
+  has_many_attachments
   
   serialize :sso_options, Hash
 
@@ -12,11 +14,24 @@ class Account < ActiveRecord::Base
   
   attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,
                   :logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain ,
-                  :language, :ssl_enabled
+                  :language, :ssl_enabled, :whitelisted_ip_attributes
+
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
   
   named_scope :active_accounts,
               :conditions => [" subscriptions.state != 'suspended' "], 
+              :joins => [:subscription]
+
+  named_scope :trial_accounts,
+              :conditions => [" subscriptions.state = 'trial' "], 
+              :joins => [:subscription]
+
+  named_scope :free_accounts,
+              :conditions => [" subscriptions.state IN ('free','active') and subscriptions.amount = 0 "], 
+              :joins => [:subscription]
+
+  named_scope :paid_accounts,
+              :conditions => [" subscriptions.state = 'active' and subscriptions.amount > 0 "], 
               :joins => [:subscription]
 
   named_scope :premium_accounts, {:conditions => {:premium => true}}
@@ -231,9 +246,12 @@ class Account < ActiveRecord::Base
     pass_through_enabled
   end
 
-  def es_enabled?
-    es_status = MemcacheKeys.fetch(MemcacheKeys::ES_ENABLED_ACCOUNTS) { EsEnabledAccount.all_es_indices }
-    es_status.key?(self.id) ? es_status[self.id] : false
+  def user_emails_migrated?
+    $redis_others.sismember('user_email_migrated', self.id)
+  end
+
+  def google_account?
+    !google_domain.blank?
   end
   
   protected

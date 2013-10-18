@@ -1,7 +1,7 @@
 namespace :facebook do
   desc 'Check for New facebook feeds..'
 
-  PREMIUM_ACC_IDS = {:staging => [390], :production => [18685]}
+  PREMIUM_ACC_IDS = {:staging => [390], :production => [18685,39190]}
 
   task :fetch => :environment do 
     queue_name = "FacebookWorker"
@@ -10,7 +10,7 @@ namespace :facebook do
       Sharding.execute_on_all_shards do
         Account.active_accounts.each do |account|
           next if check_if_premium?(account) || account.facebook_pages.empty?
-          Resque.enqueue( Social::FacebookWorker ,{:account_id => account.id} )           
+          Resque.enqueue(Social::FacebookWorker ,{:account_id => account.id} )           
         end
       end
     else
@@ -58,6 +58,45 @@ namespace :facebook do
     end
   end
 
+  #intial task to subscribe all the users with realtime
+  task :subscribe => :environment do 
+    Sharding.execute_on_all_shards do
+      Account.active_accounts.each do |account|
+        account.facebook_pages.each do |fb_page|
+          fb_page.register_stream_subscription
+        end
+      end
+    end
+  end
+
+  #migrating existing users from one page_tab app to another
+  task :migrate_users => :environment do
+    valid_accounts = {}
+    valid_accounts[:accounts] = []
+    valid_accounts[:admin_emails] = []
+    Sharding.execute_on_all_shards do
+      Account.active_accounts.each do |account|
+        next unless account.features?(:facebook_page_tab)
+        puts "account id =========> #{account.id} migration strated"
+        account.facebook_pages.each do |fb_page|  
+          begin
+            fb_tab = FBPageTab.new(fb_page)
+            tab = fb_tab.get(FacebookConfig::APP_ID)
+            unless tab.blank?
+              valid_accounts[:accounts] << account.id
+              valid_accounts[:admin_emails] << account.account_managers.first.email
+              fb_page.update_attribute(:page_token_tab,"")
+            end
+          rescue Exception => e
+            puts "call failed for #{fb_page.id} and #{account.id} ==========> #{e.inspect}"
+          end
+        end
+        puts "account id =========> #{account.id} migration ended"
+      end
+      puts "#{valid_accounts.inspect}"
+      puts "#{valid_accounts[:admin_emails].join(',')}"
+    end 
+  end
 
   def queue_empty?(queue_name)
     queue_length = Resque.redis.llen "queue:#{queue_name}"

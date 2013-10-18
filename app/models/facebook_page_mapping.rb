@@ -1,7 +1,5 @@
 class FacebookPageMapping < ActiveRecord::Base
 
-	include MemcacheKeys
-
 	set_primary_key "facebook_page_id"
 
 	not_sharded

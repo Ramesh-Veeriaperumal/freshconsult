@@ -41,13 +41,7 @@ module MemcacheKeys
 
   ACCOUNT_OBSERVER_RULES = "v1/ACCOUNT_OBSERVER_RULES:%{account_id}"
 
-  ACCOUNT_EVENT_FIELDS = "v1/ACCOUNT_EVENT_FIELDS:%{account_id}"
-
-  ACCOUNT_FLEXIFIELDS = "v1/ACCOUNT_FLEXIFIELDS:%{account_id}"
-
-  ACCOUNT_OBSERVER_RULES = "v1/ACCOUNT_OBSERVER_RULES:%{account_id}"
-
-  ES_ENABLED_ACCOUNTS = "ES_ENABLED_ACCOUNTS"
+  # ES_ENABLED_ACCOUNTS = "ES_ENABLED_ACCOUNTS"
 
   # Portal customization related keys
   PORTAL_TEMPLATE = "v2/PORTAL_TEMPLATE:%{account_id}:%{portal_id}"
@@ -60,6 +54,10 @@ module MemcacheKeys
 
   TWITTER_REAUTH_CHECK = "v1/TWITTER_REAUTH_CHECK:%{account_id}"
 
+  WHITELISTED_IP_FIELDS = "v1/WHITELISTED_IP_FIELDS:%{account_id}"
+
+  FEATURES_LIST = "v1/FEATURES_LIST:%{account_id}"
+  
   SHARD_BY_DOMAIN = "v1/SHARD_BY_DOMAIN:%{domain}"
  
   SHARD_BY_ACCOUNT_ID = "v1/SHARD_BY_ACCOUNT_ID:%{account_id}"
@@ -67,6 +65,10 @@ module MemcacheKeys
   AUTO_REFRESH_AGENT_DETAILS = "AGENT_DETAILS:%{account_id}:%{user_id}"
   
   DEFAULT_BUSINESS_CALENDAR = "v1/DEFAULT_BUSINESS_CALENDAR:%{account_id}"
+
+  ACCOUNT_AGENT_NAMES = "AGENT_NAMES:%{account_id}"
+
+  GLOBAL_BLACKLISTED_IPS = "v1/GLOBAL_BLACKLISTED_IPS"
   
   class << self
 

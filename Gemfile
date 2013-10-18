@@ -1,12 +1,15 @@
 # source :gemcutter
-source 'https://rubygems.org'
+source 'http://rubygems.org'
 
 gem "rake", "0.8.7"
 gem "rack", "~> 1.1.6"
 gem "rails","2.3.18"
 
-gem "json", "~> 1.5.5"
-gem "mysql", "2.8.1"
+
+gem "json", "~> 1.7.7"
+# gem "mysql"
+gem "mysql", "2.8.1", :platforms => :ruby_18
+gem "mysql2", "~> 0.2.7", :platforms => :ruby_19
 gem "i18n", "0.4.2"
 
 gem "RedCloth", "4.2.9"
@@ -29,6 +32,7 @@ gem "omniauth-constantcontact2", "~> 1.0.4"
 gem "omniauth-surveymonkey", "0.0.0"
 gem "nori", "1.1.4"
 gem "google-api-client", "~> 0.6.3"
+gem "ipaddress", "0.8.0"
 
 gem "soap4r-ruby1.9", "~> 2.0.5", :platforms => :ruby_19
 gem "jira4r", "0.3.0"
@@ -43,7 +47,6 @@ gem "rubyzip", "0.9.4" , :require => "zip/zip"
 gem "http_accept_language", "1.0.1"
 
 gem "riddle", "1.2.2"
-gem "thinking-sphinx", "1.4.3", :require => "thinking_sphinx"
 gem "delayed_job", "1.8.4"
 
 gem "jammit", "0.6.5"
@@ -54,8 +57,10 @@ gem "lockfile","1.4.3"
 gem "newrelic_rpm","3.5.3.25"
 
 gem "twitter", "~> 4.6.2"
+gem "gnip-rule", "~> 0.4.0"
+gem "curb", "~> 0.8.4"
 gem "sanitize", "2.0.3"
-gem "koala", "~> 1.0.0"
+gem "koala", "~> 1.6.0"
 gem "spreadsheet", "0.6.8"
 
 gem "sax-machine", "~> 0.1.0"
@@ -75,7 +80,7 @@ gem 'after_commit', "1.0.11"
 
 gem 'chargebee', "~> 1.1.7"
 
-gem 'memcache-client', '1.8.5'
+gem 'memcache-client', '1.8.5', :git => "git@github.com:mperham/memcache-client.git"
 gem "deadlock_retry", :git => "git://github.com/freshdesk/deadlock_retry.git"
 gem "lhm", :git => "git://github.com/freshdesk/large-hadron-migrator.git"
 gem "rinku", :git => "git://github.com/freshdesk/rinku.git"
@@ -94,6 +99,10 @@ gem "pg"
 gem "routing-filter", "~> 0.3.1"
 
 gem "cloudfront_asset_host", :git => "git://github.com/freshdesk/cloudfront_asset_host.git"
+
+gem "erubis", "2.7.0"
+gem "rails_xss", "0.4.0"
+
 gem "paperclip", "~> 2.8.0"
 gem "aws-sdk", "~> 1.11.3"
 gem "xml-simple", "~> 1.1.2"

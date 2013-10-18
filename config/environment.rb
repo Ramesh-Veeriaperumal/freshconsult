@@ -15,7 +15,9 @@ require "#{RAILS_ROOT}/lib/facebook_routing.rb"
 
 Rails::Initializer.run do |config|
 
+  config.middleware.use "Middleware::GlobalRestriction"
   config.middleware.use "Middleware::ApiThrottler", :max =>  1000
+  config.middleware.use "Middleware::TrustedIp"
   # Settings in config/environments/* take precedence over those specified here.
   # Application configuration should go into files in config/initializers
   # -- all .rb files in that directory are automatically loaded.
@@ -96,11 +98,12 @@ Rails::Initializer.run do |config|
   config.action_controller.allow_forgery_protection = false
   #config.middleware.use 'ResqueWeb'
 end
+if RUBY_VERSION > "1.9"
+  ActiveRecord::ConnectionAdapters::Mysql2Adapter::NATIVE_DATABASE_TYPES[:primary_key] = "BIGINT UNSIGNED DEFAULT NULL auto_increment PRIMARY KEY" 
+else
+  ActiveRecord::ConnectionAdapters::MysqlAdapter::NATIVE_DATABASE_TYPES[:primary_key] = "BIGINT UNSIGNED DEFAULT NULL auto_increment PRIMARY KEY" 
+end
 
-#ActiveRecord::Base.logger = Logger.new("log/debug.log")
-
-
-ActiveRecord::ConnectionAdapters::MysqlAdapter::NATIVE_DATABASE_TYPES[:primary_key] = "BIGINT UNSIGNED DEFAULT NULL auto_increment PRIMARY KEY"
 
 GC.enable_stats if defined?(GC) && GC.respond_to?(:enable_stats)
 

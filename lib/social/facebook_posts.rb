@@ -35,7 +35,7 @@ class Social::FacebookPosts
      end
   end
   
-  def add_wall_post_as_ticket (feed)
+  def add_wall_post_as_ticket(feed)
     
      group_id = @fb_page.product.primary_email_config.group_id unless @fb_page.product.blank?
      puts "add_wall_post_as_ticket ::post_id::  #{feed[:post_id]} :time: #{feed[:created_time]}"
@@ -53,7 +53,7 @@ class Social::FacebookPosts
           :ticket_body_attributes => {:description => feed[:message], 
                                       :description_html =>get_html_content(feed[:post_id]) }) 
       
-       if @ticket.save
+       if @ticket.save_ticket
         if feed[:comments]["count"] > 0
            puts"ticket is saved and it has more comments :: #{feed[:comments]["count"]}"
            add_comment_as_note feed
@@ -69,19 +69,19 @@ class Social::FacebookPosts
     puts "get_html_content"
     post = @rest.get_object(post_id)
     post.symbolize_keys!
-    html_content =  post[:message]
+    html_content =  CGI.escapeHTML(post[:message])
     if "video".eql?(post[:type]) 
             
      desc = post[:description] || ""
      html_content =  "<div class=\"facebook_post\"><a class=\"thumbnail\" href=\"#{post[:link]}\" target=\"_blank\"><img src=\"#{post[:picture]}\"></a>" +
                      "<div><p><a href=\"#{post[:link]}\" target=\"_blank\">"+post[:name]+"</a></p>"+
-                     "<p><strong>"+post[:message]+"</strong></p>"+
+                     "<p><strong>"+html_content+"</strong></p>"+
                      "<p>"+desc+"</p>"+
                      "</div></div>"
       
     elsif "photo".eql?(post[:type])
       
-      html_content =  "<div class=\"facebook_post\"><p>"+post[:message]+"</p>"+
+      html_content =  "<div class=\"facebook_post\"><p>"+html_content+"</p>"+
                       "<p><a href=\"#{post[:link]}\" target=\"_blank\"><img src=\"#{post[:picture]}\"></a></p></div>"
                       
     end
@@ -139,7 +139,7 @@ class Social::FacebookPosts
 
         begin
           user.make_current
-          if @note.save
+          if @note.save_note
             
           else
             puts "error while saving the note #{@note.errors.to_json}"
@@ -187,7 +187,7 @@ class Social::FacebookPosts
                         )
           begin
             user.make_current
-            unless @note.save
+            unless @note.save_note
               puts "error while saving the note :: #{@note.errors.to_json}"
             end
           rescue

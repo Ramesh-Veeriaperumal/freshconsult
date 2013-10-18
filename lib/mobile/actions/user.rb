@@ -1,5 +1,13 @@
 module Mobile::Actions::User
 	
+	def to_mob_json_search
+    options = { 
+      :methods => [ :avatar_url, :is_agent, :is_customer,  :is_client_manager, :company_name,:user_time_zone,:user_tag],
+      :only => [ :id, :name, :email, :mobile, :phone, :job_title, :twitter_id, :fb_profile_id ]
+    }
+    to_json options
+  end
+  
 	def to_mob_json
     options = { 
       :methods => [ :original_avatar, :medium_avatar, :avatar_url, :is_agent, 

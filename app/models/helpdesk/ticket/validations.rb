@@ -5,6 +5,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   validates_numericality_of :requester_id, :responder_id, :only_integer => true, :allow_nil => true
   validates_inclusion_of :source, :in => 1..SOURCES.size
   validates_inclusion_of :priority, :in => PRIORITY_TOKEN_BY_KEY.keys, :message=>"should be a valid priority" #for api
+  validates_uniqueness_of :display_id, :scope => :account_id
 
   validate_on_create do |ticket|
     req = ticket.requester

@@ -5,7 +5,9 @@
  
 !function( $ ) {
 
-	layoutResize(".main", ".sidebar")
+	if ((portal['preferences']['nonResponsive'] == "true") || Modernizr.mq('only screen and (min-width: 980px)')) {
+		layoutResize(".main", ".sidebar")
+	}
 
 	$(function () {
 
@@ -154,20 +156,16 @@
 			})
     	}
 
-        //mobile search box focus style
-		$(".help-center input[rel='page-search']").focus(function () {
-			$(".hc-search").addClass("onfocus-mobile")
-			$(".hc-search-button").addClass("onfocus-mobile-button")
-			if (Modernizr.mq('only screen and (max-width: 768px)')) {
+        // mobile search box focus style
+        if (Modernizr.mq('only screen and (max-width: 768px)')) {
+			$(".help-center input[rel='page-search']").focus(function () {
+				$(".hc-search").addClass("onfocus-mobile")
 				$(".hc-nav").hide('fast')
-			}
-		}).blur(function(){
-	    	$(".hc-search").removeClass("onfocus-mobile")
-	    	$(".hc-search-button").removeClass("onfocus-mobile-button")
-	    	if (Modernizr.mq('only screen and (max-width: 768px)')) {
-				$(".hc-nav").show()
-			}
-		})
+			}).blur(function(){
+		    	$(".hc-search").removeClass("onfocus-mobile")
+		    	$(".hc-nav").show()
+			})
+		}
 
 
 		// Recapcha fix for multiple forms
@@ -187,8 +185,20 @@
 	    	})
 	    }
 
-	    
 
+	    // Page specific script invocations
+	    switch(portal['current_page_name']){
+	    	case 'ticket_view':
+			    // Tickets quoted text auto adjust
+			    $.each($('.p-desc'), function(i, item){
+			    	$(item).find(".freshdesk_quote").first().before("<span class='btn btn-quoted'></span>")
+				})
+
+				$("body").delegate(".btn-quoted", "click.show.quoted_text", function(){
+					$(this).parent().find(".freshdesk_quote").toggle();
+				})
+			break;
+	    }	    
 	})
 
 }(window.jQuery);

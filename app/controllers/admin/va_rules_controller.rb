@@ -3,6 +3,8 @@ class Admin::VaRulesController < Admin::AutomationsController
   
   skip_before_filter :check_automation_feature
   before_filter :set_filter_data, :only => [ :create, :update ]
+  before_filter :hide_password_in_webhook, :only => [:edit]
+  filter_parameter_logging :action_data, :password
   
   def activate_deactivate
     @va_rule = all_scoper.find(params[:id])
@@ -12,6 +14,16 @@ class Admin::VaRulesController < Admin::AutomationsController
     flash[:highlight] = dom_id(@va_rule)
     flash[:notice] = t("flash.general.#{type}.success", :human_name => human_name)
     redirect_to :action => 'index'
+  end
+
+  def toggle_cascade
+    if feature?(:cascade_dispatchr)
+      current_account.features.cascade_dispatchr.destroy
+    else
+      current_account.features.cascade_dispatchr.create
+    end
+    current_account.reload
+    render :nothing => true
   end
  
   protected
@@ -64,7 +76,7 @@ class Admin::VaRulesController < Admin::AutomationsController
         { :name => "subject", :value => t('ticket.subject'), :domtype => "text",
           :operatortype => "text" },
         { :name => "description", :value => t('description'), :domtype => "text",
-          :operatortype => "text" },
+          :operatortype => "text", :condition => !supervisor_rules_controller? },
         { :name => "subject_or_description", :value =>  t('subject_or_description'), 
           :domtype => "text", :operatortype => "text" },
         { :name => "priority", :value => t('ticket.priority'), :domtype => "dropdown", 
@@ -76,6 +88,12 @@ class Admin::VaRulesController < Admin::AutomationsController
           :choices => Helpdesk::TicketStatus.status_names(current_account), :operatortype => "choicelist"},
         { :name => "source", :value => t('ticket.source'), :domtype => "dropdown", 
           :choices => TicketConstants.source_list.sort, :operatortype => "choicelist" },
+        { :name => "product_id", :value => t('admin.products.product_label_msg'), :domtype => 'dropdown', 
+          :choices => [['', t('none')]]+@products, :operatortype => "choicelist",
+          :condition => multi_product_account? },
+        { :name=> "created_at", :value => t('ticket.created_during.title'), :domtype => "dropdown",
+          :operatortype => "date_time", :choices => VAConfig::CREATED_DURING_NAMES_BY_KEY.sort,
+          :condition => va_rules_controller? },
         { :name => "responder_id", :value => I18n.t('ticket.agent'), :domtype => "dropdown",
           :operatortype => "object_id", :choices => @agents },
         { :name => "group_id", :value => I18n.t('ticket.group'), :domtype => "dropdown",
@@ -85,35 +103,66 @@ class Admin::VaRulesController < Admin::AutomationsController
           :operatortype => "text" },
         { :name => "company_name", :value => t('company_name'), :domtype => "text", 
           :operatortype => "text"}
-        ]
+      ]
 
-      filter_hash.insert(11, { :name => "product_id", :value => t('admin.products.product_label_msg'),:domtype => 'dropdown', 
-        :choices => [['', t('none')]]+@products, :operatortype => "choicelist" }) if current_account.features?(:multi_product)
-
-      filter_hash = filter_hash + additional_filters
-      remove_description_filter filter_hash
-      business_hours_filter filter_hash
+      filter_hash = filter_hash.select{ |filter| filter.fetch(:condition, true) }
+      add_time_based_filters filter_hash
+      add_ticket_state_filters filter_hash
       add_custom_filters filter_hash
+
       @filter_defs  = ActiveSupport::JSON.encode filter_hash
       @op_types     = ActiveSupport::JSON.encode OPERATOR_TYPES
       @op_list      = ActiveSupport::JSON.encode OPERATOR_LIST
     end
-    
-    def additional_actions
-      if current_account.features?(:multi_product)
-      { 9 => { :name => "product_id", :value => t('admin.products.assign_product'),
-          :domtype => 'dropdown', :choices => [['', t('none')]]+@products },
-        16 => { :name => "skip_notification", :value => t('dispatch.skip_notifications')}}
-      else
-        {16 => { :name => "skip_notification", :value => t('dispatch.skip_notifications')}}
+
+    def add_time_based_filters filter_hash
+      if supervisor_rules_controller?
+        filter_hash.push *time_based_filters
       end
     end
-    
-    def additional_filters
-      []
+
+    def time_based_filters
+      [ 
+        { :name => -1, :value => "-----------------------"  },
+        { :name => "created_at", :value => I18n.t('ticket.created_at'), :domtype => "number",
+          :operatortype => "hours" },
+        { :name => "pending_since", :value => I18n.t('ticket.pending_since'), :domtype => "number",
+          :operatortype => "hours" },
+        { :name => "resolved_at", :value => I18n.t('ticket.resolved_at'), :domtype => "number",
+          :operatortype => "hours" },
+        { :name => "closed_at", :value => I18n.t('ticket.closed_at'), :domtype => "number",
+          :operatortype => "hours" },
+        { :name => "opened_at", :value => I18n.t('ticket.opened_at'), :domtype => "number",
+          :operatortype => "hours" },
+        { :name => "first_assigned_at", :value => I18n.t('ticket.first_assigned_at'), 
+          :domtype => "number", :operatortype => "hours" },
+        { :name => "assigned_at", :value => I18n.t('ticket.assigned_at'), :domtype => "number",
+          :operatortype => "hours" },
+        { :name => "requester_responded_at", :value => I18n.t('ticket.requester_responded_at'), 
+          :domtype => "number", :operatortype => "hours" },
+        { :name => "agent_responded_at", :value => I18n.t('ticket.agent_responded_at'), 
+          :domtype => "number", :operatortype => "hours" },
+        { :name => "first_response_time", :value => I18n.t('ticket.first_response_due'), 
+          :domtype => "number", :operatortype => "hours" },
+        { :name => "due_by", :value => I18n.t('ticket.due_by'), :domtype => "number",
+          :operatortype => "hours" }
+      ]
     end
-  
-    def remove_description_filter filter_hash
+
+    def add_ticket_state_filters filter_hash
+      if supervisor_rules_controller? || observer_rules_controller?
+        filter_hash.push *ticket_state_filters
+      end
+    end
+
+    def ticket_state_filters
+      [
+        { :name => -1, :value => "-----------------------"  },
+        { :name => "inbound_count", :value => I18n.t('ticket.inbound_count'), :domtype => "number",
+          :operatortype => "hours" },
+        { :name => "outbound_count", :value => I18n.t('ticket.outbound_count'), :domtype => "number",
+          :operatortype => "hours" }
+      ]
     end
 
     def add_custom_filters filter_hash
@@ -139,9 +188,8 @@ class Admin::VaRulesController < Admin::AutomationsController
       end
     end
 
-    def business_hours_filter filter_hash
-        filter_hash.insert(12,{ :name=> "created_at", :value => t('ticket.created_during.title'), :domtype => "dropdown",
-          :operatortype => "date_time", :choices => VAConfig::CREATED_DURING_NAMES_BY_KEY.sort })
+    def hide_password_in_webhook
+      @va_rule.hide_password!
     end
   
 end

@@ -74,7 +74,7 @@
 
 		// Delegating the click for a submit button
  		this.$dynamicTarget
- 			.delegate('[data-submit="modal"]', 'click.submit.modal', $.proxy(this.formSubmit, this))
+ 			.delegate('[data-submit="modal"]:not([disabled])', 'click.submit.modal', $.proxy(this.formSubmit, this))
 	}
 
 	Freshdialog.prototype = {

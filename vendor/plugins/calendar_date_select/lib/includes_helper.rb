@@ -16,7 +16,7 @@ class CalendarDateSelect
       output << %( <script src="/javascripts/calendar_date_select/locale/#{locale}.js" type="text/javascript"></script> ) if locale
       output << %( <script src="/javascripts/#{CalendarDateSelect.javascript_format_include}.js" type="text/javascript"></script> ) if CalendarDateSelect.javascript_format_include
       output << %( <link href="/stylesheets/#{cds_css_file}.css" media="screen" rel="stylesheet" type="text/css"> )
-      output * "\n"
+      (output * "\n").html_safe
     end
   end
 end

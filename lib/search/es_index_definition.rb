@@ -1,4 +1,7 @@
 class Search::EsIndexDefinition
+
+  CLUSTER_ARR = [DEFAULT_CLUSTER = "fd_es_index_1", "fd_es_index_2"]
+
 	class << self
 		include ErrorHandle
 
@@ -8,11 +11,11 @@ class Search::EsIndexDefinition
     [:customers, :users, :helpdesk_tickets, :solution_articles, :topics, :helpdesk_notes]
   end
 
-  def index_hash(pre_fix = "fd_es_index_1")
+  def index_hash(pre_fix = DEFAULT_CLUSTER)
     Hash[*models.map { |i| [i,"#{i}_#{pre_fix}"] }.flatten]
   end
 
-	def create_es_index(index_name = "fd_es_index_1")
+	def create_es_index(index_name = DEFAULT_CLUSTER)
     index_hash(index_name).each do |key, value|
       create_model_index(value,key)
     end
@@ -179,6 +182,7 @@ class Search::EsIndexDefinition
 
   def create_model_index(index_name,model_mapping)
   	sandbox(0) {
+      Search::EsIndexDefinition.es_cluster_by_prefix(index_name)
       Tire.index(index_name) do
         create(
           :settings => {
@@ -207,10 +211,6 @@ class Search::EsIndexDefinition
   }
   end
 
-  def latest_index_prefix
-    "fd_es_index_1"
-  end
-
   # Will return an array of alias names for the classes provided
   # parameters: search_in (Array of class objects not just names) and account_id
   def searchable_aliases(search_in, account_id)
@@ -223,22 +223,25 @@ class Search::EsIndexDefinition
   
   def create_aliases(account_id)
     sandbox(0) {
-      index_hash.each do |model, index_name|
-        a = Tire::Alias.new
-        a.name("#{model}_#{account_id}")
-        a.index(index_name)
-        a.filter(:term, :account_id => account_id)
-        a.routing(account_id.to_s)
-        a = a.save
-        response  = JSON.parse(a.body)
-        NewRelic::Agent.notice_error(response["error"])  unless response["ok"]
+      pre_fix = Search::EsIndexDefinition.es_cluster(account_id)
+      actions = []
+      index_hash(pre_fix).each do |model, index_name|
+        operation = { :index => index_name, :alias => "#{model}_#{account_id}" }
+        operation.update( { :routing => account_id.to_s } )
+        operation.update( { :filter  => { :term => { :account_id => account_id } } } )
+        actions.push( { :add => operation } )
       end
+      add_actions = { :actions => actions }
+      response = Tire::Configuration.client.post "#{Tire::Configuration.url}/_aliases", add_actions.to_json
+      result = JSON.parse(response.body)
+      result["ok"] || NewRelic::Agent.notice_error(result["error"])
     }
   end
 
   def remove_aliases(account_id)
     sandbox(0) {
-      index_hash.each do |model, index_name|
+      pre_fix = Search::EsIndexDefinition.es_cluster(account_id)
+      index_hash(pre_fix).each do |model, index_name|
         a = Tire::Alias.find("#{model}_#{account_id}")
         es_indices = a.indices
         es_indices.each do |index_name|
@@ -251,8 +254,9 @@ class Search::EsIndexDefinition
     }
   end
 
-  def rebalance_aliases(account_id,new_index_prefix,old_index_prefix = "fd_es_index_1")
+  def rebalance_aliases(account_id,new_index_prefix,old_index_prefix = DEFAULT_CLUSTER)
     sandbox(0) {
+      Search::EsIndexDefinition.es_cluster(account_id)
       old_index_hash = index_hash(old_index_prefix)
       index_hash(new_index_prefix).each do |model, index_name|
         a = Tire::Alias.find("#{model}_#{account_id}")
@@ -264,6 +268,18 @@ class Search::EsIndexDefinition
         NewRelic::Agent.notice_error(response["error"])  unless response["ok"]
       end
     }
+  end
+
+  def es_cluster(account_id)
+    index = (account_id <= 55000) ? 0 : 1
+    Tire.configure { url Es_urls[index] }
+    CLUSTER_ARR[index]
+  end
+
+  def es_cluster_by_prefix(index_prefix)
+    CLUSTER_ARR.each_with_index do |prefix,i|
+      return Tire.configure { url Es_urls[i] } if index_prefix.include? prefix
+    end
   end
 
 end

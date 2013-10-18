@@ -13,12 +13,12 @@ end
 def process
     tweets = twt_handle.last_mention_id.blank? ? twitter.mentions : twitter.mentions({:since_id =>twt_handle.last_mention_id})
  	last_tweet_id = tweets[0].id unless tweets.blank?   
-    create_ticket_from_mention (tweets ,twt_handle )        
+    create_ticket_from_mention(tweets ,twt_handle)        
     twt_handle.update_attribute(:last_mention_id, last_tweet_id) unless last_tweet_id.blank?
 end
  
 
-def create_ticket_from_mention tweets , twt_handle
+def create_ticket_from_mention(tweets, twt_handle)
     tweets.each do |twt|
         @sender = twt.user 
         @account = twt_handle.account

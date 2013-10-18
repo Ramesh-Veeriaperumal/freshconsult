@@ -4,6 +4,24 @@ class Workers::Supervisor
 
   @queue = 'supervisor_worker'
   
+  class TrialAccounts
+    extend Resque::AroundPerform
+    @queue = 'trial_supervisor_worker'
+
+    def self.perform(args)
+     Workers::Supervisor.run
+    end
+  end
+
+  class FreeAccounts
+    extend Resque::AroundPerform
+    @queue = 'free_supervisor_worker'
+
+    def self.perform(args)
+     Workers::Supervisor.run
+    end
+  end
+
   class PremiumSupervisor
     extend Resque::AroundPerform
     @queue = 'premium_supervisor_worker'
@@ -50,6 +68,6 @@ class Workers::Supervisor
     if((end_time - start_time) > 250)
       total_time = Time.at(Time.now.utc - start_time).gmtime.strftime('%R:%S')
       puts "Time total time it took to execute the supervisor rules for, #{account.id}, #{account.full_domain}, #{total_time}"
-  end
+    end
   end
 end

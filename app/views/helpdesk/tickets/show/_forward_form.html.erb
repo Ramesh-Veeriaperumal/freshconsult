@@ -97,7 +97,7 @@
         <div class="email_container">
           <input type="text" id="fwd_bcc_emails_<%=cntid%>" name="helpdesk_note[bcc_emails]" />
           <script type="text/javascript">
-            new Autocompleter.MultiValue("fwd_bcc_emails_<%=cntid%>", cachedLookup, $A(<%= bcc_drop_box_email.to_json unless bcc_drop_box_email.blank? %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
+            new Autocompleter.MultiValue("fwd_bcc_emails_<%=cntid%>", cachedLookup, $A(<%= bcc_drop_box_email.to_json.html_safe unless bcc_drop_box_email.blank? %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
           </script>
         </div>
   </li>
@@ -116,16 +116,20 @@
   </li>
   <li class="inline-field field attachment-options continous" id="attachment-options-reply">
       <% unless local_assigns[:no_attachments] %>
-      <% attachments = {:regular => conv_item.attachments, :dropbox => conv_item.dropboxes } %>
+      <% attached= conv_item.class.name=="Helpdesk::Note" ? conv_item.all_attachments : conv_item.attachments %>
+      <% attachments = {:regular => attached, :dropbox => conv_item.dropboxes } %>
       <%= render :partial => "/helpdesk/tickets/show/attachment_form", :locals => { :attach_id => id , :nsc_param => "helpdesk_note", :original_attachments => attachments} %>
       <% end %>    
-  </li> 
+  </li>
+
+
     <!-- forward will be always private -->
     <%= f.hidden_field :private , :value => true %>
     <%= f.hidden_field :source , :value => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["forward_email"] %>
     <%= f.hidden_field :from_email , :id => "fwd_from_email_#{cntid}", :value => @selected_reply_email %>
     <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
-    
+
+
 </ul>
 
 <div class="btn-toolbar">

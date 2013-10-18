@@ -8,7 +8,7 @@ class Admin::CannedResponses::FoldersController < Admin::AdminController
     @ca_res_folders = scoper.all
     @ca_res_folder = @ca_res_folders.first
     @ca_responses = @ca_res_folder.canned_responses
-    render :index
+     render :index
   end
 
   def show

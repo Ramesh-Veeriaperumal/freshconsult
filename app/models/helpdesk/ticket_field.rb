@@ -21,7 +21,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   before_validation :populate_choices
 
   before_destroy :delete_from_ticket_filter
-  before_update :delete_from_ticket_filter
+  # before_update :delete_from_ticket_filter
   before_save :set_portal_edit
   # xss_terminate
   acts_as_list

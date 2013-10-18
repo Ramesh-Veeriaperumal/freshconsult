@@ -6,13 +6,12 @@
 		portal_name = "#{portal.portal_name.presence} <i>#{portal.host}</i>" %>
 	<div class="fields">
 		<label for="configs_<%=portal.id%>_account_number">
-			<%= t('integrations.google_analytics.form.tracking_id') + portal_name %>
+			<%= (t('integrations.google_analytics.form.tracking_id') + portal_name).html_safe %>
 		</label>
 		<% if portal == portals.first %>
 		<label for="configs_<%=portal.id%>_account_number" class="overlabel"><%= t('integrations.google_analytics.form.tracking_id_example') %></label>
 		<% end %>
-		<input title="<%= t('integrations.google_analytics.inline_help') + portal_name%>" 
-					type="text" id="configs_<%=portal.id%>_account_number" class="analytics_account" 
+		<input type="text" id="configs_<%=portal.id%>_account_number" class="analytics_account" 
 					name="configs[<%=portal.id%>][account_number]" 
 					value="<%=  @installed_application[:configs][:inputs][portal.id.to_s][:account_number] unless @installed_application.blank? || @installed_application[:configs][:inputs][portal.id.to_s].blank? || @installed_application[:configs][:inputs][portal.id.to_s][:account_number].blank? %>" />
 	

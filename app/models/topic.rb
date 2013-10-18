@@ -2,7 +2,7 @@ class Topic < ActiveRecord::Base
   include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
   include ActionController::UrlWriter
-
+  include Mobile::Actions::Topic
   acts_as_voteable 
   validates_presence_of :forum, :user, :title
 
@@ -22,7 +22,7 @@ class Topic < ActiveRecord::Base
   # as a result no callbacks will be triggered and so User.posts_count will not be updated
   has_one  :recent_post, :order => "#{Post.table_name}.created_at DESC", :class_name => 'Post'
   
-  has_one :ticket_topic,:dependent => :destroy
+  has_one :ticket_topic, :dependent => :destroy
   has_one :ticket,:through => :ticket_topic
   
   has_many :voices, :through => :posts, :source => :user, :uniq => true
@@ -31,18 +31,25 @@ class Topic < ActiveRecord::Base
     :class_name => 'Helpdesk::Activity', 
     :as => 'notable'
 
-  named_scope :newest, lambda { |num| { :limit => num, :order => 'replied_at DESC' } }
+  named_scope :newest, :order => 'replied_at DESC'
 
   named_scope :visible, lambda {|user| visiblity_options(user) }
 
   named_scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
+
+  named_scope :find_by_forum_category_id, lambda { |forum_category_id|
+    { :joins => %(INNER JOIN forums ON forums.id = topics.forum_id AND 
+        forums.account_id = topics.account_id),
+      :conditions => ["forums.forum_category_id = ?", forum_category_id],
+    }
+  }
 
   # Popular topics in forums
   # Filtered based on last replied and user_votes
   # !FORUM ENHANCE Removing hits from orderby of popular as it will return all time
   # It would be better if it can be tracked month wise
   # Generally with days before DateTime.now - 30.days
-  named_scope :popular, lambda{ |days_before| 
+  named_scope :popular, lambda { |days_before| 
     { :conditions => ["replied_at >= ?", days_before], 
       :order => 'hits DESC, user_votes DESC, replied_at DESC', 
       :include => :last_post } 
@@ -69,30 +76,6 @@ class Topic < ActiveRecord::Base
       } 
     end
   end
-  
-  #Sphinx configuration starts
-  define_index do
-    indexes :title, :sortable => true
-    indexes posts.body, :as => :comment
-
-    has account_id, user_id
-    has forum.forum_category_id, :as => :category_id
-    has forum.forum_visibility, :as => :visibility
-    has '0', :as => :deleted, :type => :boolean
-    has '2' , :as => :status , :type => :integer
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :responder_id, :type => :integer
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :group_id, :type => :integer
-    has forum.customer_forums(:customer_id), :as => :customer_ids
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :requester_id, :type => :integer
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_id, :type => :integer
-
-    #set_property :delta => :delayed
-    set_property :field_weights => {
-      :title    => 10,
-      :comment  => 4
-    }
-  end
-  #Sphinx configuration ends here..
 
   named_scope :for_forum, lambda { |forum|
     { :conditions => ["forum_id = ? ", forum] 
@@ -223,6 +206,10 @@ class Topic < ActiveRecord::Base
 
   def topic_changes
     @topic_changes ||= self.changes.clone
+  end
+  
+  def topic_desc
+    truncate(self.posts.first.body.gsub(/<\/?[^>]*>/, ""), 300)
   end
 
 end

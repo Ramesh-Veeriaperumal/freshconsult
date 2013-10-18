@@ -19,8 +19,14 @@ class PortalDrop < BaseDrop
 
   # Portal branding related information
   def logo_url
-    @logo_url ||= MemcacheKeys.fetch(["v4","portal","logo_href",source]) do
-      source.logo.present? ? source.logo.content.url(:logo) : "/images/logo.png"
+    @logo_url ||=  MemcacheKeys.fetch(["v6", "portal", "logo_href", source],30.days.to_i) do
+            source.logo.nil? ? 
+              "/images/logo.png" :
+              AwsWrapper::S3Object.url_for(source.logo.content.path(:logo), 
+                            source.logo.content.bucket_name,
+                            :secure => true, 
+                            :expires => 30.days.to_i)
+                
     end
   end
 
@@ -59,6 +65,10 @@ class PortalDrop < BaseDrop
   
   def new_ticket_url
     @new_ticket_url ||= new_support_ticket_path(url_options)
+  end
+
+  def my_topics_url
+    @my_topics_url ||= my_topics_support_discussions_topics_path
   end
 
   def new_topic_url    
@@ -134,6 +144,14 @@ class PortalDrop < BaseDrop
 
   def recent_popular_topics
     @recent_popular_topics ||= @source.recent_popular_topics(portal_user, 30.days.ago).presence
+  end
+
+  def my_topics
+    @my_topics ||= source.my_topics(portal_user, @per_page, @page) if portal_user
+  end
+
+  def my_topics_count
+    @my_topics_count ||= source.my_topics_count(portal_user) if portal_user
   end
 
   def topics_count

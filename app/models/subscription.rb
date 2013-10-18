@@ -166,9 +166,7 @@ class Subscription < ActiveRecord::Base
     # If the discount is changed, set the amount to the discounted
     # plan amount with the new discount.
     def update_amount
-      if agent_limit_changed? || subscription_plan_id_changed? || renewal_period_changed?        
-        total_amount
-      end
+      total_amount
     end
     
     def paid_account?

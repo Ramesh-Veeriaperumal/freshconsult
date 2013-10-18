@@ -3,7 +3,10 @@ class Support::LoginController < SupportController
 	include Redis::RedisKeys
 	include Redis::TicketsRedis
 
+	SUB_DOMAIN = "freshdesk.com"
+	
 	skip_before_filter :check_account_state
+	after_filter :set_domain_cookie, :only => :create
 	
 	def new
 		if current_account.sso_enabled? and check_request_referrer 
@@ -35,7 +38,8 @@ class Support::LoginController < SupportController
 
 	private
 		def note_failed_login
-	      logger.warn "Failed login for '#{params[:user_session][:email]}' from #{request.remote_ip} at #{Time.now.utc}"
+			user_info = params[:user_session][:email] if params[:user_session]
+			logger.warn "Failed login for '#{user_info.to_s}' from #{request.remote_ip} at #{Time.now.utc}"
 	    end
 
 	    def remove_old_filters
@@ -45,4 +49,11 @@ class Support::LoginController < SupportController
       def check_request_referrer
         request.referrer ? (URI(request.referrer).path != "/login/normal") : true
       end
+
+    def set_domain_cookie
+    	if @current_user and @current_user.helpdesk_agent? and current_portal
+     		cookies[:helpdesk_url] = { :value => current_portal.host, :domain => SUB_DOMAIN }
+     	end
+    end      
 end
+

@@ -26,13 +26,14 @@
     	ev.preventDefault();
     	jQuery(this).button("loading")
     	var _o_data = jQuery(this).data(),
+    	    _href = jQuery(this).data("url"),
 			_self = jQuery(this),
 			_post_data = { 
 				"_method" : jQuery(this).data("method")
 			}
 		jQuery.ajax({
 			type: 'POST',
-			url: this.href,
+			url: _href,
 			data: _post_data,
 			dataType: "json",
 			success: function(data){		

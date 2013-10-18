@@ -30,7 +30,7 @@
     jQuery(document).ready(function() {
       var <%=selected%>_lineChart = new lineChart(
         {renderTo: '<%=selected%>_line_chart',
-         chartData:<%=@data_obj.fetch(selected+'_line').to_json%>,
+         chartData:<%=@data_obj.fetch(selected+'_line').to_json.html_safe%>,
          yAxisTitle:'<%=@data_obj.fetch(selected+'_yAxis_label')%>',
          toolTipLabel: 'ticket(s)'}
         );
@@ -38,7 +38,7 @@
 
       var <%=selected%>_barChart = new xaxis_bar_chart(
         {renderTo: '<%=selected%>_bar_chart',
-         chartData:<%=@data_obj.fetch(selected+'_bar').to_json%>,
+         chartData:<%=@data_obj.fetch(selected+'_bar').to_json.html_safe%>,
          yAxis_label:'<%=@data_obj.fetch(selected+'_yAxis_label')%>',
          xAxisLabel:[''],
          toolTipLabel: 'ticket(s)',

@@ -26,7 +26,8 @@ class Helpdesk::MergeTicketsController < ApplicationController
 
 	def merge_search
 		items = []
-		if params[:search_method] == 'with_subject' && current_account.es_enabled?
+		if params[:search_method] == 'with_subject'
+			Search::EsIndexDefinition.es_cluster(current_account.id)
       		options = { :load => { :include => 'requester' }, :size => 1000, :preference => :_primary_first }
       		es_items = Tire.search Search::EsIndexDefinition.searchable_aliases([Helpdesk::Ticket], current_account.id), options do |search|
         		search.query do |query|
@@ -49,36 +50,9 @@ class Helpdesk::MergeTicketsController < ApplicationController
         		end
       		end
       		items = es_items.results
-		else
-			if params[:search_method] == 'with_subject'
-				with_params = { :account_id => current_account.id, :deleted => false }
-				select_str = "*"
-    			if current_user.restricted?
-    				with_params[:restricted] = 1
-    				restriction = "responder_id = #{current_user.id} OR responder_id = #{SearchUtil::DEFAULT_SEARCH_VALUE}"
-	    			if current_user.agent.group_ticket_permission
-	      				restriction += " OR group_id = #{SearchUtil::DEFAULT_SEARCH_VALUE}"
-	      				restriction = current_user.agent_groups.reduce(restriction) do |val, ag|
-	         				"#{val} OR group_id = #{ag.group_id}"
-	      				end
-	    			end
-	    			select_str += ", IF( #{restriction}, 1, 0 ) AS restricted"
-	    		end
-				items = ThinkingSphinx.search :conditions => { :subject => params[:search_string] },
-									  :include => :requester,
-                                      :with => with_params,
-                                      :classes => [ Helpdesk::Ticket ],
-                                      :sphinx_select => select_str,
-                                      :star => true,
-                                      :order => :status,
-                                      :limit => 1000
-			else
-      			scope = current_account.tickets.permissible(current_user)
-				items = scope.send( params[:search_method], params[:search_string] ) if SEARCH_METHODS.include?(params[:search_method])
-			end
 		end
 		r = {:results => items.map{|i| {
-				:display_id => i.display_id, :subject => i.subject, :title => h(i.subject),
+				:display_id => i.display_id, :subject => h(i.subject), :title => h(i.subject),
 				:searchKey => 
 					(params[:key] == 'requester') ? i[:requester_name] : ( i.send(params[:key]).to_s if SEARCH_KEYS.include?(params[:key]) ),  
 			 	:info => t("ticket.merge_ticket_list_status_created_at", 

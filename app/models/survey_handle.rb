@@ -13,6 +13,8 @@ class SurveyHandle < ActiveRecord::Base
   belongs_to :surveyable, :polymorphic => true
   belongs_to :response_note, :class_name => 'Helpdesk::Note'
   belongs_to :survey_result
+
+  delegate :portal, :to => :surveyable
   
   def self.create_handle(ticket, note, specific_include)  	
     create_handle_internal(ticket, 

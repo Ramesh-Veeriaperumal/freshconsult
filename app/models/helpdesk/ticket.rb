@@ -16,8 +16,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include Redis::ReportsRedis
   include Redis::OthersRedis
   include Reports::TicketStats
+  include Helpdesk::TicketsHelperMethods
+  include ActionView::Helpers::TranslationHelper
   include Helpdesk::TicketActivities, Helpdesk::TicketElasticSearchMethods, Helpdesk::TicketCustomFields,
     Helpdesk::TicketNotifications
+  include Helpdesk::Services::Ticket
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed", 
@@ -35,6 +38,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :requester_name, :meta_data, :disable_observer, :highlight_subject, :highlight_description
 
   attr_protected :attachments #by Shan - need to check..
+
+  attr_protected :account_id,:display_id #to avoid update of these properties via api.
 
   named_scope :created_at_inside, lambda { |start, stop|
           { :conditions => [" helpdesk_tickets.created_at >= ? and helpdesk_tickets.created_at <= ?", start, stop] }
@@ -138,10 +143,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     def agent_permission user
       permissions = {:all_tickets => [] , 
-                   :group_tickets => ["group_id in (?) OR responder_id=?", 
-                    user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id] , 
-                   :assigned_tickets =>["responder_id=?", user.id] }
-                  
+                   :group_tickets => ["group_id in (?) OR responder_id=? OR requester_id=?", 
+                    user.agent_groups.collect{|ag| ag.group_id}.insert(0,0), user.id, user.id] , 
+                   :assigned_tickets =>["responder_id=?", user.id]}
+                   
       return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
     end
 
@@ -159,7 +164,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
   end
-  
+ 
   def agent_permission_condition user
      permissions = {:all_tickets => "" , 
                    :group_tickets => " AND (group_id in (
@@ -179,49 +184,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
                    \"value\": \"#{user.id}\"}]"}
                   
      return permissions[Agent::PERMISSION_TOKENS_BY_KEY[user.agent.ticket_permission]]
-  end
-  
-  #Sphinx configuration starts
-  define_index 'without_description' do
-    
-    indexes :display_id, :sortable => true
-    indexes :subject, :sortable => true
-    
-    has account_id, deleted, responder_id, group_id, requester_id, status
-    has sphinx_requester.customer_id, :as => :customer_id
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :visibility, :type => :integer
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_ids, :type => :integer
-
-    where "helpdesk_tickets.spam=0 and helpdesk_tickets.deleted = 0"
-
-    #set_property :delta => Sphinx::TicketDelta
-
-    set_property :field_weights => {
-      :display_id   => 10,
-      :subject      => 10
-     }
-  end
-
-  define_index 'with_description' do
-    
-    indexes :display_id, :sortable => true
-    indexes :subject, :sortable => true
-    indexes description
-    
-    has account_id, deleted, responder_id, group_id, requester_id, status
-    has sphinx_requester.customer_id, :as => :customer_id
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :visibility, :type => :integer
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_ids, :type => :integer
-
-    where "helpdesk_tickets.spam=0 and helpdesk_tickets.deleted = 0 and helpdesk_tickets.id > 5000000"
-
-    #set_property :delta => Sphinx::TicketDelta
-
-    set_property :field_weights => {
-      :display_id   => 10,
-      :subject      => 10,
-      :description  => 5
-     }
   end
 
   def to_param 
@@ -309,7 +271,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def conversation(page = nil, no_of_records = 5, includes=[])
-    notes.visible.exclude_source('meta').newest_first.paginate(:include => includes ,:page => page, :per_page => no_of_records)
+    notes.visible.exclude_source('meta').newest_first(:include => includes).paginate(:page => page, :per_page => no_of_records)
   end
 
   def conversation_since(since_id)
@@ -355,8 +317,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def included_in_cc?(from_email)
-    (cc_email_hash) and  ((cc_email_hash[:cc_emails].any? {|email| email.include?(from_email) }) or 
-                     (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email) }))
+    (cc_email_hash) and  ((cc_email_hash[:cc_emails].any? {|email| email.include?(from_email.downcase) }) or 
+                     (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email.downcase) }))
   end
 
   def ticket_id_delimiter
@@ -427,6 +389,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
   
+  def description_html=(value)
+    warn "[DEPRECATION] This method will be removed soon, please use ticket_body.description_html."
+    write_attribute(:description_html,value)
+  end
+  
   def description_with_attachments
     attachments.empty? ? description_html : 
         "#{description_html}\n\nTicket attachments :\n#{liquidize_attachments(attachments)}\n"
@@ -445,8 +412,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def liquidize_comment(comm)
     if comm
       c_descr = "#{comm.user ? comm.user.name : 'System'} : #{comm.body_html}"
-      unless comm.attachments.empty?
-        c_descr = "#{c_descr}\n\nAttachments :\n#{liquidize_attachments(comm.attachments)}\n"
+      all_attachments = comm.all_attachments
+      unless all_attachments.empty?
+        c_descr = "#{c_descr}\n\nAttachments :\n#{liquidize_attachments(all_attachments)}\n"
       end
       c_descr
     end
@@ -552,9 +520,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
       twt_handles.first.id unless twt_handles.blank?
     end
   end
+
+  def portal
+    (self.product && self.product.portal) || account.main_portal
+  end
   
   def portal_host
     (self.product && !self.product.portal_url.blank?) ? self.product.portal_url : account.host
+  end
+
+  def solution_article_host article
+    (self.product && !self.product.portal_url.blank? && (self.product.solution_category_id == article.folder.category_id)) ? self.product.portal_url : account.host
   end
   
   def portal_name

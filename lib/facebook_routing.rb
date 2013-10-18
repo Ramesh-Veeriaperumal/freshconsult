@@ -17,10 +17,14 @@ module RoutingFilter
     def around_generate(*args, &block)
       source = @support_portal_filter_type
       returning yield do |result|
-        if source
+        if source and !exclude_path?(result)
           result.sub!(%r(^(http.?://[^/]*)?(.*))){ "#{$1}/#{source}#{$2}" }
         end 
       end
+    end
+
+    def exclude_path? result
+      (%r(/profile_image)).match(result)
     end
 
   end

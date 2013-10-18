@@ -25,7 +25,7 @@ class SurveyResult < ActiveRecord::Base
     })
     
     note.account_id = account_id
-    note.save
+    note.save_note
     
     create_survey_remark({
       :account_id => account_id,
@@ -136,6 +136,13 @@ class SurveyResult < ActiveRecord::Base
                                                    }}                                                   
 
                                                      
+                  
+  def as_json(options={})
+    options[:except] = [:account_id]
+    json_str = super options
+    json_str
+  end
+
   private                                                   
 
     def update_ticket_rating

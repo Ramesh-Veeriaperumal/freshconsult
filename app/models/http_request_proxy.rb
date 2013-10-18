@@ -26,6 +26,7 @@ class HttpRequestProxy
       method = params[:method] || method
       ssl_enabled = params[:ssl_enabled]
       rest_url = params[:rest_url]
+      encode_url = params.fetch(:encode_url, true)
       user = params[:username]
       pass = params[:password]
       entity_name = params[:entity_name]
@@ -57,10 +58,11 @@ class HttpRequestProxy
       options[:body] = post_request_body unless post_request_body.blank?  # if the form-data is sent from the integrated widget then set the data in the body of the 3rd party api.
       options[:headers] = {"Authorization" => auth_header, "Accept" => accept_type, "Content-Type" => content_type, "User-Agent" => user_agent}.delete_if{ |k,v| v.blank? }  # TODO: remove delete_if use and find any better way to do it in single line
       options[:headers] = options[:headers].merge(params[:custom_auth_header]) unless params[:custom_auth_header].blank?
-      options[:timeout] = 30 #Returns status code 504 on timeout expiry 
+      options[:timeout] = params[:timeout] || 30 #Returns status code 504 on timeout expiry 
       begin
         net_http_method = HTTP_METHOD_TO_CLASS_MAPPING[method.to_s]
-        proxy_request = HTTParty::Request.new(net_http_method, URI.encode(remote_url), options)
+        final_url       = encode_url ? URI.encode(remote_url) : remote_url
+        proxy_request   = HTTParty::Request.new(net_http_method, final_url, options)
         Rails.logger.debug "Sending request: #{proxy_request.inspect}"
         proxy_response = proxy_request.perform
         Rails.logger.debug "Response Body: #{proxy_response.body}"

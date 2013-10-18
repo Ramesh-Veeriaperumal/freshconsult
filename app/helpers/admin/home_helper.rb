@@ -7,10 +7,10 @@ module Admin::HomeHelper
                     <div class="img-outer"><img width="32px" height="32px" src="/images/spacer.gif" class = "admin-icon-#{ pref[1] }" /></div>
                     <div class="admin-icon-text">#{t(".#{pref[1]}")}</div>
 HTML
-                    content_tag( :li, link_to( link_content, pref[0] ) )
+                    content_tag( :li, link_to( link_content.html_safe, pref[0].html_safe ))
 
                 end
-    link_item
+    link_item.to_s.html_safe
   end
   
   # Defining the Array and constructing the Admin Page links
@@ -32,6 +32,7 @@ HTML
           ['/helpdesk/sla_policies',      'sla',                     privilege?(:admin_tasks) ],  
           ['/admin/business_calendars',   'business-hours',          feature?(:business_hours) && privilege?(:admin_tasks) ],
           ['/admin/products',             'multi-product',           feature?(:multi_product) && privilege?(:admin_tasks) ],
+          ['/admin/chat_setting',          'freshchat' ,              current_account.features?(:chat) && privilege?(:admin_tasks) ],
           ['/social/twitters',            'twitter-setting',         feature?(:twitter) && privilege?(:admin_tasks) ],
           ['/social/facebook',            'facebook-setting',        current_account.features?(:facebook) && privilege?(:admin_tasks) ],
           ['/admin/roles',                'role',                    feature?(:custom_roles) && privilege?(:admin_tasks) ],
@@ -66,14 +67,14 @@ HTML
     admin_html = 
       admin_links.map do |group|
         links = admin_link(group[1])
-        unless links.compact.blank?
+        unless links.blank?
           content_tag( :div, 
-              content_tag(:h3, "<span>#{group[0][0]} #{group[0][1]}</span>", :class => "title") +
-              content_tag(:ul, links, :class => "admin_icons"),
+              content_tag(:h3, "<span>#{group[0][0]} #{group[0][1]}</span>".html_safe, :class => "title") +
+              content_tag(:ul, links, :class => "admin_icons").html_safe,
               :class => "admin #{ cycle('odd', 'even') } #{group[2]} ") 
         end
       end
     
-    admin_html
+    admin_html.to_s.html_safe
   end
 end

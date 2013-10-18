@@ -135,6 +135,10 @@ class User < ActiveRecord::Base
     self.tags.push tag unless tag.blank? or self.tagged?(tag.id)
   end
 
+  def parent_id
+    string_uc02.to_i
+  end
+
   def update_tag_names(csv_tag_names)
     unless csv_tag_names.nil? # Check only nil so that empty string will remove all the tags.
       updated_tag_names = csv_tag_names.split(",")
@@ -166,29 +170,6 @@ class User < ActiveRecord::Base
     end
     return false
   end
-
-  #Sphinx configuration starts
-  define_index do
-    indexes :name, :sortable => true
-    indexes :email, :sortable => true
-    indexes :description
-    indexes :job_title
-    indexes customer.name, :as => :company
-    
-    has account_id, deleted
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :responder_id, :type => :integer
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :group_id, :type => :integer
-
-    #set_property :delta => :delayed
-    set_property :field_weights => {
-      :name         => 10,
-      :email        => 10,
-      :company      => 5,
-      :job_title    => 4,
-      :description  => 3
-    }
-  end
-  #Sphinx configuration ends here..
 
   def signup!(params , portal=nil)   
     self.email = (params[:user][:email]).strip if params[:user][:email]
@@ -283,7 +264,7 @@ class User < ActiveRecord::Base
   def is_client_manager?
     self.privilege?(:client_manager)
   end
-  
+
   def can_assume?(user)
     # => Not himself
     # => User is not deleted
@@ -365,7 +346,7 @@ class User < ActiveRecord::Base
   end
   
   def has_ticket_permission? ticket
-    (can_view_all_tickets?) or (ticket.responder == self ) or (group_ticket_permission && (ticket.group_id && (agent_groups.collect{|ag| ag.group_id}.insert(0,0)).include?( ticket.group_id))) 
+    (can_view_all_tickets?) or (ticket.responder == self ) or (ticket.requester_id == self.id) or (group_ticket_permission && (ticket.group_id && (agent_groups.collect{|ag| ag.group_id}.insert(0,0)).include?( ticket.group_id))) 
   end
   
   def restricted?
@@ -445,6 +426,14 @@ class User < ActiveRecord::Base
   def self.reset_current_user
     User.current = nil
   end
+  
+  def user_time_zone
+    self.time_zone
+  end
+  
+  def user_tag
+    self.tags
+  end
 
   private
     def name_part(part)
@@ -488,5 +477,10 @@ class User < ActiveRecord::Base
     def has_role?
       self.errors.add(:base, I18n.t("activerecord.errors.messages.user_role")) if
         ((@role_change_flag or new_record?) && self.roles.blank?)
+    end
+
+    def user_emails_migrated?
+      # for user email delta
+      self.account.user_emails_migrated?
     end
 end

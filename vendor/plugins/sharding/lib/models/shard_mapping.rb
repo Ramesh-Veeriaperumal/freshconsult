@@ -10,6 +10,7 @@ class ShardMapping < ActiveRecord::Base
 
   has_many :domains,:class_name => 'DomainMapping',:dependent => :destroy,:foreign_key => :account_id
   has_many :facebook_pages, :class_name => 'FacebookPageMapping', :dependent => :destroy, :foreign_key => :account_id
+  has_one :google_domain,:class_name => 'GoogleDomain', :dependent => :destroy, :foreign_key => :account_id
 
   after_update :clear_cache
   after_destroy :clear_cache

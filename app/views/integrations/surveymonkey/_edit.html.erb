@@ -36,27 +36,27 @@
 
 		<div class="send_while_container">
 			<div class="send_while">
-				<%=t('integrations.surveymonkey.edit_form.send_while_title')%> <sup>*</sup>
+				<%=t('integrations.surveymonkey.edit_form.send_while_title').html_safe%> <sup>*</sup>
 			</div>
 			
 			<label>
-			  <%= "<input type=\"radio\" name=\"configs[send_while]\" value=\"#{Survey::CLOSED_NOTIFICATION}\">" %>
-				<%=t('admin.surveys.satisfaction_settings.send_while_option3')%>
+			  <%= "<input type=\"radio\" name=\"configs[send_while]\" value=\"#{Survey::CLOSED_NOTIFICATION}\">".html_safe %>
+				<%=t('admin.surveys.satisfaction_settings.send_while_option3').html_safe%>
 			</label>
 			
 			<label>
-			  <%= "<input type=\"radio\" name=\"configs[send_while]\" value=\"#{Survey::RESOLVED_NOTIFICATION}\">" %>
-			  <%=t('admin.surveys.satisfaction_settings.send_while_option2')%>
+			  <%= "<input type=\"radio\" name=\"configs[send_while]\" value=\"#{Survey::RESOLVED_NOTIFICATION}\">".html_safe %>
+			  <%=t('admin.surveys.satisfaction_settings.send_while_option2').html_safe%>
 			</label>
 			
 			<label>
-				<%= "<input type=\"radio\" name=\"configs[send_while]\" value=\"#{Survey::ANY_EMAIL_RESPONSE}\">" %>
-				<%=t('admin.surveys.satisfaction_settings.send_while_option1')%>
+				<%= "<input type=\"radio\" name=\"configs[send_while]\" value=\"#{Survey::ANY_EMAIL_RESPONSE}\">".html_safe %>
+				<%=t('admin.surveys.satisfaction_settings.send_while_option1').html_safe%>
 			</label>
 			
 			<label>
-				<%= "<input type=\"radio\" name=\"configs[send_while]\" value=\"#{Survey::SPECIFIC_EMAIL_RESPONSE}\">" %>
-				<%=t('admin.surveys.satisfaction_settings.send_while_option4')%>
+				<%= "<input type=\"radio\" name=\"configs[send_while]\" value=\"#{Survey::SPECIFIC_EMAIL_RESPONSE}\">".html_safe %>
+				<%=t('admin.surveys.satisfaction_settings.send_while_option4').html_safe%>
 			</label>		
 		</div>
 
@@ -79,7 +79,7 @@
 	<script type="text/javascript">
 		jQuery("#InstallApplication input[type=\"submit\"]").click(function(e){
 			e.preventDefault();
-			window.location.href = "<%=app.oauth_url(current_account.id)%>";
+			window.location.href = "<%=app.oauth_url({:account_id => current_account.id, :portal_id => current_portal.id})%>";
 		});			
 	</script>
 

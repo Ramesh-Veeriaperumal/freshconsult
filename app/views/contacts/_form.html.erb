@@ -55,7 +55,7 @@
       }
   });
 	jQuery("#user_tags").select2({
-	  	tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',')) %>".split(","),
+	  	tags: "<%= escape_javascript(current_account.tags.most_used(25).collect{|tag| tag.name}.join(',').html_safe) %>".split(","),
 	  	tokenSeparators: [',']
 	}); 
 
@@ -154,7 +154,7 @@
 				<%=t('contacts.info6')%>
 				example - LA Lakers fan etc.
 			</label>
-			<%= text_area(:user, :description, :class => "text", :id => "user_binfo" ) %>
+			<%= text_area(:user, :description, :class => "text", :id => "user_binfo", :rows => 5 ) %>
 		</li>		
 		
 	</ul>	 

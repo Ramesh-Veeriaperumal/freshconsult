@@ -10,7 +10,7 @@ unless Account.current
       :user_name => 'Support',
       :user_password => 'test',
       :user_password_confirmation => 'test', 
-      :user_email => 'sample@freshdesk.com',
+      :user_email => Helpdesk::EMAIL[:sample_email],
       :user_helpdesk_agent => true
     )
     signup.save

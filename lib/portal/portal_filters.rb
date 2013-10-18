@@ -12,7 +12,7 @@ module Portal::PortalFilters
 	end
 	
 	# Ticket info for list view
-	def default_info(ticket)
+	def default_info ticket
 		output = []
 		unless ticket.requester.nil? or User.current.eql?(ticket.requester)
 			output << %(#{I18n.t('ticket.portal_created_on', { :username => h(ticket.requester.name), :date => ticket.created_on })})
@@ -22,7 +22,7 @@ module Portal::PortalFilters
 
 		output << %(#{I18n.t('ticket.assigned_agent')}: <span class='emphasize'> #{ticket.agent.name}</span>) unless ticket.agent.blank?
 		
-		output.join(" ")
+		output.join(" ").html_safe
 	end
 
 	# Pageination filter for generating the pagination links
@@ -31,7 +31,7 @@ module Portal::PortalFilters
 	    if paginate['parts'].size > 0
 		    html << %(<div class="pagination"><ul>)
 		    if paginate['previous']
-		    	html << %(<li class="prev">#{link_to(previous_label, paginate['previous']['url'])}</li>)
+		    	html << %(<li class="prev">#{link_to(previous_label.html_safe, paginate['previous']['url'])}</li>)
 		    else
 		    	html << %(<li class="prev disabled"><a>#{previous_label}</a></li>)
 		    end
@@ -47,14 +47,14 @@ module Portal::PortalFilters
 		    end
 
 		    if paginate['next']
-		    	html << %(<li class="next">#{link_to(next_label, paginate['next']['url'])}</li>)
+		    	html << %(<li class="next">#{link_to(next_label.html_safe, paginate['next']['url'])}</li>)
 		    else
 		    	html << %(<li class="next disabled"><a>#{next_label}</a></li>)
 		   	end
 
 		    html << %(</ul></div>)
 		end		
-	    html.join(' ')
+	    html.join(' ').html_safe
 	end
 
 	def windowed_links
@@ -125,6 +125,6 @@ module Portal::PortalFilters
 		unless ticket['freshness'] == :new
 			_output << %( "#{I18n.t('ticket.assigned_agent')}: <span class='emphasize'> #{ ticket['agent']['name'] } </span>" )
 		end
-		_output.join(" ")
+		_output.join(" ").html_safe
 	end
 end

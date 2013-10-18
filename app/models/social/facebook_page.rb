@@ -32,6 +32,18 @@ class Social::FacebookPage < ActiveRecord::Base
   DM_THREADTIME_NAMES_BY_KEY = Hash[*DM_THREADTIME.map { |i| [i[2], i[1]] }.flatten]
   DM_THREADTIME_KEYS_BY_TOKEN = Hash[*DM_THREADTIME.map { |i| [i[0], i[2]] }.flatten]
 
+  def register_stream_subscription
+    FBClient.new(self).subscribe_for_page if enable_page && company_or_visitor? && !realtime_subscription
+  end
+
+  def company_or_visitor?
+    (import_company_posts || import_visitor_posts)
+  end
+
+  def existing_page_tab_user?
+    self.page_token_tab ? self.page_token_tab.empty? : false
+  end
+
   private
 
     def create_mapping

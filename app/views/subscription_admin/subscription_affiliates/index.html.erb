@@ -1,16 +1,20 @@
 <h1><%= @page_title = 'Affiliates' %></h1>
 <%= link_to('Add a new affiliate', :action => 'new') %>
+<br><br>
 <table id="affiliates" class="table">
   <tr>
     <th>Name</th>
     <th>Rate</th>
-	<th>Commission</th>
+    <th>Commission</th>
+    <th>Discount</th>
   </tr>
   <% @subscription_affiliates.each do |affiliate| %>
     <tr>
       <td><%= link_to("#{affiliate.name} - #{affiliate.token}" , [:admin, affiliate]) %></td>
       <td><%= number_to_percentage(affiliate.rate * 100, :precision => 0) %></td>
-	  <td><%= number_to_currency(affiliate.fees) %></td>
+      <td><%= number_to_currency(affiliate.fees) %></td>
+      <td><%= affiliate.discounts.collect{ 
+              |d| d.description }.join(" and ") if affiliate.discounts %></td>
     </tr>
   <% end %>
 </table>

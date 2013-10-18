@@ -11,11 +11,15 @@ class Workers::Import::ContactsImportWorker < Struct.new(:params)
     disable_user_activation(current_account)
 		mapped_fields.each do |row|
           @params_hash ={ :user => {:name => row[fields["0"].to_i],
-                                :job_title => row[fields["1"].to_i],
-                                :company => row[fields["2"].to_i],
-                                :phone => row[fields["3"].to_i],
-                                :email =>  row[fields["4"].to_i],
-                                :twitter_id => row[fields["5"].to_i], 
+                                    :email =>  row[fields["1"].to_i],
+                                    :job_title => row[fields["2"].to_i],
+                                    :tags => row[fields["3"].to_i],
+                                    :company => row[fields["4"].to_i],
+                                    :address => row[fields["5"].to_i],
+                                    :phone => row[fields["6"].to_i],
+                                    :mobile => row[fields["7"].to_i], 
+                                    :twitter_id => row[fields["8"].to_i],
+                                    :description => row[fields["9"].to_i],
                                 :customer_id => nil
                                  }
                       }

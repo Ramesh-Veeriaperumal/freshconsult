@@ -88,14 +88,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def pass_thro_biz_rules
-     send_later(:delayed_rule_check) unless import_id
+     send_later(:delayed_rule_check, freshdesk_webhook?) unless import_id
   end
   
-  def delayed_rule_check
+  def delayed_rule_check freshdesk_webhook
    begin
-    evaluate_on = check_rules     
+    set_account_time_zone
+    evaluate_on = check_rules unless freshdesk_webhook
+    autoreply 
     assign_tickets_to_agents unless spam? || deleted?
-    autoreply
    rescue Exception => e #better to write some rescue code 
     NewRelic::Agent.notice_error(e)
    end
@@ -120,6 +121,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     evaluate_on = self
     account.va_rules.each do |vr|
       evaluate_on = vr.pass_through(self)
+      next if account.features?(:cascade_dispatchr)
       return evaluate_on unless evaluate_on.nil?
     end
     return evaluate_on
@@ -262,7 +264,7 @@ private
     unless email.blank?
       name_email = parse_email email  #changed parse_email to return a hash
       self.email = name_email[:email]
-      self.name = name_email[:name]
+      self.name ||= name_email[:name]
       @requester_name ||= self.name # for MobiHelp
     end
 
@@ -351,7 +353,10 @@ private
   def publish_to_update_channel
     return unless account.features?(:agent_collision)
     agent_name = User.current ? User.current.name : ""
-    message = HELPDESK_TICKET_UPDATED_NODE_MSG % {:ticket_id => self.id, :agent_name => agent_name, :type => "updated"}
+    message = HELPDESK_TICKET_UPDATED_NODE_MSG % {:account_id => self.account_id, 
+                                                  :ticket_id => self.id, 
+                                                  :agent_name => agent_name, 
+                                                  :type => "updated"}
     publish_to_tickets_channel("tickets:#{self.account.id}:#{self.id}", message)
   end
 

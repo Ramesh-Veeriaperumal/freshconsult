@@ -79,8 +79,7 @@ module TicketsFilter
     [ :created_at , "tickets_filter.sort_fields.date_created"  ],
     [ :updated_at , "tickets_filter.sort_fields.last_modified" ],
     [ :priority   , "tickets_filter.sort_fields.priority"      ],
-    [ :status     , "tickets_filter.sort_fields.status"        ],
-    [ :requester_responded_at, "tickets_filter.sort_fields.customer_response"]
+    [ :status     , "tickets_filter.sort_fields.status"        ]
   ]
 
   def self.sort_fields_options

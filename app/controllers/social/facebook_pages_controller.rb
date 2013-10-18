@@ -3,14 +3,18 @@ class Social::FacebookPagesController < Admin::AdminController
   skip_before_filter :check_privilege, :only => :event_listener
   before_filter { |c| c.requires_feature :facebook }
   
-  before_filter :set_session_state , :only =>[:index , :edit]
-  before_filter :fb_client , :only => [:index,:edit]
+  #This Controller should be refactored
+  before_filter :set_session_state , :only =>[:index, :edit, :update_page_token]
+  before_filter :fb_client , :only => [:index, :edit, :update_page_token]
+  before_filter :fb_client_page_tab , :only => [:index, :update_page_token]
+  before_filter :add_page_tab, :only => [:edit, :update_page_token], :if => :facebook_page_tab?
   before_filter :load_item,  :only => [:edit, :update, :destroy]  
   before_filter :load_tab, :only => [:edit, :destroy], :if => :facebook_page_tab?
   before_filter :handle_tab, :only => :update, :if => [:tab_edited?, :facebook_page_tab?]
   
+  #This is for the callback function for facebook realtime app
   def index
-    @fb_pages = scoper 
+    @fb_pages = enabled_facebook_pages 
     if params[:code]
       begin
         @new_fb_pages = @fb_client.auth(params[:code])
@@ -19,11 +23,19 @@ class Social::FacebookPagesController < Admin::AdminController
       end
     end
   end
- 
+
+  #This is for callback function for facebook page_tab app
+  def update_page_token 
+    @fb_pages = enabled_facebook_pages
+    render "index"
+  end
+
   def enable_pages
-    pages = params[:enable][:pages]
-    pages = pages.reject(&:blank?)   
-    add_to_db pages
+    if params[:enable] && params[:enable][:pages]
+      pages = params[:enable][:pages]
+      pages = pages.reject(&:blank?)   
+      add_to_db pages
+    end
     redirect_to :action => :index
   end
   
@@ -67,13 +79,52 @@ class Social::FacebookPagesController < Admin::AdminController
   end
   
   protected  
+
+    def enabled_facebook_pages
+      page_hash = {}
+      page_token_tab = true
+      scoper.each do |facebook_page|  
+        if page_hash[facebook_page.profile_id.to_s]
+          page_hash[facebook_page.profile_id.to_s]["facebook_pages"] << facebook_page
+          page_hash[facebook_page.profile_id.to_s]["tab"] ||= facebook_page.existing_page_tab_user?
+        else
+          page_hash[facebook_page.profile_id.to_s] = {} 
+          page_hash[facebook_page.profile_id.to_s]["facebook_pages"] = [facebook_page]
+          page_hash[facebook_page.profile_id.to_s]["feature"] = facebook_page_tab?
+          page_hash[facebook_page.profile_id.to_s]["tab"] = facebook_page.existing_page_tab_user?
+        end  
+      end
+      page_hash
+    end
+
+    def  add_page_tab
+      if params[:code]
+        begin
+          @fb_client.auth_page_tab(params[:code])
+          @edit_tab = true
+        rescue Exception => e
+          flash[:error] = t('facebook.not_authorized')
+        end
+      end
+    end
+ 
+
     def scoper
       current_account.facebook_pages
     end
   
-    def fb_client   
-     @fb_client = FBClient.new @item ,{   :current_account => current_account,
-                                          :callback_url => fb_call_back_url}
+    def fb_client
+     callback_url = callback_url ? callback_url : params[:action]
+     @fb_client = fb_client_object(callback_url)
+    end
+
+    def fb_client_page_tab   
+     @fb_client_page_tab = fb_client_object("update_page_token")
+    end
+
+    def fb_client_object(callback_url = nil)
+      FBClient.new @item ,{   :current_account => current_account,
+                                          :callback_url => fb_call_back_url(callback_url)}
     end
 
     def fb_page_tab
@@ -89,7 +140,7 @@ class Social::FacebookPagesController < Admin::AdminController
     end
 
     def load_tab
-      @fb_tab = fb_page_tab.get unless @item.reauth_required?
+      @fb_tab = fb_page_tab.get unless @item.page_token_tab.blank?
     end
 
     def handle_tab
@@ -105,10 +156,12 @@ class Social::FacebookPagesController < Admin::AdminController
       current_account.features?(:facebook_page_tab)
     end
 
+    #This method is not getting used
     def human_name
       'Facebook'
     end
   
+    #This method is not getting used 
     def redirect_url
         edit_social_facebook_url(@item)
     end
@@ -118,12 +171,12 @@ class Social::FacebookPagesController < Admin::AdminController
       fb_posts.fetch    
     end
     
-    def fb_call_back_url
-     url_for(:host => current_account.full_domain, :action => 'index')
+    def fb_call_back_url(action="index") 
+      url_for(:host => current_account.full_domain, :action => action)
     end
 
     def set_session_state
       session[:state] = Digest::MD5.hexdigest(Helpdesk::SECRET_3+ Time.now.to_f.to_s)
     end  
-
+    
 end

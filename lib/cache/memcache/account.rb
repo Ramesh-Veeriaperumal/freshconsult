@@ -51,6 +51,15 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) { self.tags.all }
   end
 
+  def feature_from_cache
+    key = FEATURES_LIST % { :account_id => self.id }
+    MemcacheKeys.fetch(key) { self.features }
+  end
+
+  def features_included?(*feature_names)
+    feature_names.all? { |feature_name| feature_from_cache.send("#{feature_name}?") }
+  end
+
   def customers_from_cache
     key = customers_memcache_key
     MemcacheKeys.fetch(key) { self.customers.all }
@@ -101,45 +110,15 @@ module Cache::Memcache::Account
     end
   end
 
-  def event_flexifields_with_ticket_fields_from_cache
-    key = ACCOUNT_EVENT_FIELDS % { :account_id => self.id }
-    MemcacheKeys.fetch(key) do
-      flexifield_def_entries.event_fields.find(:all, :include => :ticket_field)
-    end
+   def whitelisted_ip_from_cache
+    key = WHITELISTED_IP_FIELDS % { :account_id => self.id }
+    MemcacheKeys.fetch(key) { self.whitelisted_ip }
   end
 
-  def flexifields_with_ticket_fields_from_cache
-    key = ACCOUNT_FLEXIFIELDS % { :account_id => self.id }
+  def agent_names_from_cache
+    key = ACCOUNT_AGENT_NAMES % { :account_id => self.id }
     MemcacheKeys.fetch(key) do
-      flexifield_def_entries.find(:all, :include => :ticket_field)
-    end
-  end
-
-  def observer_rules_from_cache
-    key = ACCOUNT_OBSERVER_RULES % { :account_id => self.id }
-    MemcacheKeys.fetch(key) do
-      observer_rules.find(:all)
-    end
-  end
-
-  def event_flexifields_with_ticket_fields_from_cache
-    key = ACCOUNT_EVENT_FIELDS % { :account_id => self.id }
-    MemcacheKeys.fetch(key) do
-      flexifield_def_entries.event_fields.find(:all, :include => :ticket_field)
-    end
-  end
-
-  def flexifields_with_ticket_fields_from_cache
-    key = ACCOUNT_FLEXIFIELDS % { :account_id => self.id }
-    MemcacheKeys.fetch(key) do
-      flexifield_def_entries.find(:all, :include => :ticket_field)
-    end
-  end
-
-  def observer_rules_from_cache
-    key = ACCOUNT_OBSERVER_RULES % { :account_id => self.id }
-    MemcacheKeys.fetch(key) do
-      observer_rules.find(:all)
+      users.find(:all, :conditions => { :helpdesk_agent => 1 }).map(&:name)
     end
   end
 

@@ -15,6 +15,14 @@ stylesheets:
   plugins:
     - public/stylesheets/plugins.css
 
+  chat:    
+    - public/stylesheets/chat/chat.css
+    - public/stylesheets/chat/structure.css
+    - public/stylesheets/chat/grey-theme.css
+    - public/stylesheets/chat/icomoon.css
+    - public/stylesheets/chat/base.css
+    - public/stylesheets/chat/clean.css
+
   non_pattern:    
     - public/stylesheets/app/app-common.css
     - public/stylesheets/app/app-bootstrap.css
@@ -34,7 +42,7 @@ stylesheets:
   codemirror:
     - public/stylesheets/codemirror.css
 
-  portal:
+  portal_utils:
     - public/stylesheets/portal/portal_utils.css
 
   preview:
@@ -72,6 +80,7 @@ stylesheets:
 
   subscription:
     - public/stylesheets/subscription/subscription.css
+    - public/stylesheets/plugins.css
 
   reports:
     - public/stylesheets/app/reports.css
@@ -100,7 +109,7 @@ javascripts:
     - public/javascripts/controls.js
 
   frameworks:
-    - public/javascripts/jquery-1.7.1.min.js
+    - public/javascripts/jquery-1.7.1.min.js    
     - public/javascripts/jquery.pjax.js
     - public/javascripts/frameworks/sprintf.js
     - public/javascripts/frameworks/plugins/jquery.chosen.js
@@ -121,6 +130,7 @@ javascripts:
     - public/javascripts/frameworks/plugins/moment.js
     - public/javascripts/frameworks/plugins/livestamp.js
     - public/javascripts/frameworks/plugins/jquery.blockUI.js
+    - public/javascripts/frameworks/underscore-min.js
     - public/javascripts/hackz.js
     - public/javascripts/lib/nestedtree.js
     - public/javascripts/helpdesk/multifile.js
@@ -130,6 +140,12 @@ javascripts:
     - public/javascripts/ticket_list.js
     - public/javascripts/AsyncJSLoader.js
     - public/javascripts/lib/detectmobilebrowsers.js
+    - public/javascripts/frameworks/plugins/jquery-ui-timepicker-addon.js
+    - public/javascripts/chat/lib/backbone.js
+    - public/javascripts/chat/lib/tab.overflow.js
+    - public/javascripts/chat/lib/localstore.js
+    - public/javascripts/chat/lib/ticket_search.js
+    - public/javascripts/chat/lib/ui.tabs.closable.js
     - public/javascripts/frameworks/plugins/jquery-ui-timepicker-addon.js
     - public/javascripts/app/ticket_details.js
 
@@ -207,6 +223,8 @@ javascripts:
     - public/javascripts/portal/jquery-1.8.3.js    
     - public/javascripts/modernizr-2.5.3-respond-1.1.0.min.js
     - public/javascripts/portal/portal-utils.js
+    - public/javascripts/lib/nestedtree.js    
+    - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
 
   preview:
     - public/javascripts/portal/jquery-1.8.3.js
@@ -220,8 +238,6 @@ javascripts:
     - public/javascripts/frameworks/plugins/jquery.tmpl.js
     - public/javascripts/hackz.js
     - public/javascripts/portal/multifile.js
-    - public/javascripts/lib/nestedtree.js    
-    - public/javascripts/frameworks/plugins/jquery.nested_select_tag.js
     - public/javascripts/portal/jquery-ui-1.9.2.custom.js
     - public/javascripts/portal/bootstrap.js
     - public/javascripts/portal/bootstrap.dialog.js
@@ -239,6 +255,9 @@ javascripts:
     - public/javascripts/bootstrap.js
     - public/javascripts/frameworks/plugins/jquery.livequery.js
     - public/javascripts/frameworks/plugins/jquery.itoggle.js
+    - public/javascripts/frameworks/plugins/jquery.ui.js
+    - public/javascripts/frameworks/plugins/jquery-ui-timepicker-addon.js
+    - public/javascripts/frameworks/plugins/select2.js
 
   observer_event:
     - public/javascripts/observer_events.js 
@@ -286,7 +305,10 @@ javascripts:
     - public/javascripts/highcharts-more.js
     - public/javascripts/adv_reports/report_charts.js
     - public/javascripts/adv_reports/adv_reports.js
-
+  behaviour:
+    - public/javascripts/chat/views/settings/behaviour_text.js
+  spinner:
+    - public/javascripts/chat/lib/spin.min.js
   merge:
     - public/javascripts/app/merge.js
     - public/javascripts/app/merge_tickets.js

@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<link rel="canonical shortcut icon" href="<%= fav_icon_url %>" />
 	<%= include_cloudfront_css :rating %>
 	<%= include_cloudfront_js :survey  %>
 </head>
 <body>	
-	<div class="top-strip" style="background-color:<%=@account.main_portal.preferences[:header_color]%>">
+	<div class="top-strip">
 		<div class="wrapper">
 			<div class="brand">
-		    	<% link_to (portal_pref(@account.main_portal, :logo_link).empty?) ? "/home" : portal_pref(@account.main_portal, :logo_link), :class => "logo" do %>
-		        <%= image_tag (@account.main_portal.logo.nil? ? "/images/logo.png?722013" : @account.main_portal.logo.content.url(:logo)) %>
+		    	<% link_to (portal_pref(@survey_handle.portal, :logo_link).empty?) ? 
+			    	"/home" : portal_pref(@survey_handle.portal, :logo_link), :class => "logo" do %>
+		        <%= image_tag (@survey_handle.portal.logo.nil? ? "/images/logo.png?722013" : @survey_handle.portal.logo.content.url(:logo)) %>
 
 		        <% end %>
-		        <%= link_to(h(@account.main_portal.name), "/home", :class => "logo_text") %>
+		        <%= link_to(h(@survey_handle.portal.name), "/home", :class => "logo_text") %>
 	    	</div>
     	</div>
 	</div>
@@ -61,4 +63,13 @@
 	</div>	
 	<script> $("#survey_form").validate(); </script>
 </body>
+<% cache ["v1","survey",@survey_handle.portal] do %>
+<% 
+	cssText = render(:partial=>"rating_text")
+	engine = Sass::Engine.new(cssText , :syntax => :scss, :cache => true, :style => :compressed)
+%>
+<style>
+	<%= engine.render %>
+</style>
+<% end %>
 </html>

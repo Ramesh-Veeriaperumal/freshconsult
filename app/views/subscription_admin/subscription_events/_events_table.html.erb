@@ -11,7 +11,7 @@
       
       <% if events.size > 0 %>
         <li> <%= link_to 'Download CSV', export_to_csv_admin_subscription_events_path(
-                                              :data => events, :title => details[1].gsub(",", " ")) %> </li>
+                        :data => events, :title => details[1].gsub(",", " ")) %> </li>
       <% end %>
     </ul>
 
@@ -38,8 +38,12 @@
           </tr>
             
           <% events.each do |record| %>
+
+          <%shard = ShardMapping.find_by_account_id(record.account_id)%>
+
+          <%unless shard.blank?%>
+            <% Sharding.run_on_shard(shard.shard_name) do %>
             
-            <% if record.account %>
               <tr>
                 <td><%= link_to(h(record.account.name), [:admin, record.account]) %></td>
                 <td><%= record.account.full_domain %></td>
@@ -51,14 +55,10 @@
                 <td><%= record.code.eql?(200) ? record.updated_at.strftime("%b %d, %Y") : record.created_at.strftime("%b %d, %Y")%> </td>
                 <td><%= record.account.created_at.strftime("%b %d, %Y") %></td>
               </tr>    
-
-            <% else %>
-              <% deleted_account = DeletedCustomers.find_by_account_id(record.account_id) %>
-
-              <tr>
-              
-                <% if deleted_account.blank? %>
-                    <td style="color:red;">Account id : <%= record.account_id %></td>
+            <%end%>
+          <%else%>
+            <tr>
+             <td style="color:red;">Account id : <%= record.account_id %></td>
                     <td> - </td>
 
                     <% unless details[0].eql?(:free) %>
@@ -67,21 +67,10 @@
 
                     <td><%= record.created_at.strftime("%b %d, %Y") %></td>
                     <td> - </td>
-                  
-                <% else %>
-                  <td style="color:red;"><%= deleted_account.full_domain.split(%r \(|\) ).first %></td>
-                  <td><%= deleted_account.full_domain.split(%r \(|\) ).last %></td>
-
-                  <% unless details[0].eql?(:free) %>
-                    <td><%= record.cmrr.abs %></td>
-                  <% end %>                  
-                  
-                  <td><%= record.created_at.strftime("%b %d, %Y") %></td>
-                  <td><%= deleted_account.account_info[:account_created_on].strftime("%b %d, %Y") %></td>
-                <% end %>
-
-              </tr>
-            <% end %>
+            </tr>
+          <%end%>
+            
+            
           <% end %>  
       </table> 
 

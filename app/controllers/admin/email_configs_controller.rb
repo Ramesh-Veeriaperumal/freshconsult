@@ -44,7 +44,7 @@ class Admin::EmailConfigsController < Admin::AdminController
   def make_primary 
     @email_config = scoper.find(params[:id])
     if @email_config && @email_config.update_attributes(:primary_role => true)
-        flash[:notice] = t(:'flash.email_settings.make_primary.success', :reply_email => @email_config.reply_email)
+        flash[:notice] = t(:'flash.email_settings.make_primary.success', :reply_email => @email_config.reply_email).html_safe
     end
     redirect_back_or_default redirect_url
   end
@@ -89,6 +89,23 @@ class Admin::EmailConfigsController < Admin::AdminController
   def personalized_email_disable
     current_account.features.personalized_email_replies.destroy
     current_account.reload   
+  end
+
+
+  def destroy
+    @email_config = scoper.find(params[:id])
+    if @email_config.primary_role
+      flash[:notice] = t('email_configs.delete_primary_email') 
+      redirect_to :action => 'index' and return
+    end
+    @email_config.destroy
+
+    respond_to do |format|
+      format.html { redirect_to :action => 'index' }
+      format.xml  { head :ok }
+      format.json { head :ok }
+    end
+    
   end
 
   private

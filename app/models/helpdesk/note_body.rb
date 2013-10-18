@@ -4,8 +4,6 @@ class Helpdesk::NoteBody < ActiveRecord::Base
 	belongs_to_account
 	belongs_to :note, :class_name => 'Helpdesk::Note', :foreign_key => 'note_id'
 	attr_protected :account_id
-	unhtml_it :body, :full_text
-	xss_sanitize :only => [:body_html,:full_text_html],  :html_sanitize => [:body_html,:full_text_html]	
 	before_save :load_full_text
 
 

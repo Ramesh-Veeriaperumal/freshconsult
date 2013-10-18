@@ -42,13 +42,14 @@ module Helpdesk::MergeTicketActions
 				:user_id => current_user && current_user.id
 			)
 			add_source_attachments_to_source_description(source_ticket, source_description_note)
-			source_description_note.save
+			source_description_note.save_note
 		end
 
     def build_source_description_body_html source_ticket
-      %{#{I18n.t('helpdesk.merge.bulk_merge.target_merge_description1', :ticket_id => source_ticket.display_id)}<br/><br/>
-      <b>#{I18n.t('Subject')}:</b> #{source_ticket.subject}<br/><br/>
-      <b>#{I18n.t('description')}:</b><br/>#{source_ticket.description_html}}
+      %{#{I18n.t('helpdesk.merge.bulk_merge.target_merge_description1', :ticket_id => source_ticket.display_id, 
+																						      	:full_domain => source_ticket.portal.host)}<br/><br/>
+	    <b>#{I18n.t('Subject')}:</b> #{source_ticket.subject}<br/><br/>
+	    <b>#{I18n.t('description')}:</b><br/>#{source_ticket.description_html}}
     end
 
 		def add_source_attachments_to_source_description( source_ticket , source_description_note )
@@ -114,7 +115,7 @@ module Helpdesk::MergeTicketActions
 
 		def add_note_to_target_ticket
 		  target_pvt_note = @target_ticket.requester_has_email? ? params[:target][:is_private] : true
-			@target_note = @target_ticket.notes.create(
+			@target_note = @target_ticket.notes.build(
 				:note_body_attributes => {:body_html => params[:target][:note]},
 				:private => target_pvt_note  || false,
 				:source => target_pvt_note ? Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'] : 
@@ -125,6 +126,8 @@ module Helpdesk::MergeTicketActions
 				:to_emails => target_pvt_note ? [] : @target_ticket.requester.email.lines.to_a,
 				:cc_emails => target_pvt_note ? [] : @target_ticket.cc_email_hash && @target_ticket.cc_email_hash[:cc_emails]
 			)
+			@target_note.save_note 
+			@target_note
 		end
 
 		# Moving requesters part removed from the feature for now!

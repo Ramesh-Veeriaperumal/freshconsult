@@ -200,70 +200,105 @@ ul.activityfeed li{
 		text-decoration:none;
 	}
 }
-
+.circle-profile{
+	.preview_pic{
+		border:0;
+		img{
+			border-radius: 50%;
+			border: 1px solid #f2f2f2;
+			padding: 2px;
+		}
+	}
+}
 .user_name{ font-weight:bold; color:#527eaa; }
 .ticket_title{ font-weight:bold; color:#527eaa; }
-.popover.topRight { margin-left: -3px;}
 .contact_hover{
-	@include clearfix;
-	.user_name{ font-weight:bold; font-size:1.25em; color:#527eaa; display: inline-block; }
-	.user_desig, .user_email { margin-top:3px;}
-	.user_phone, .user_mobile, .user_fb, .user_twitter{
-		padding: 1px 20px;
-		margin: 5px 5px 0 0;
-		height: 14px;
+	.preview_pic img{
+		height:40px;
+		width:40px;
+	}
+	.contact-append{
+		margin-bottom: 5px;
+		font-size:0;
+		.add-on, .hover-contact-box{
+			font-size: 12px;
+			display: inline-block;
+  			border:1px solid #f9f9f9;
+  			vertical-align: top;
+		}
+  		.add-on{
+  			background-color: #f9f9f9;
+  			text-align: center;
+  			width:auto;
+  			min-width:16px;
+  			@include border-radius(50px 0 0 50px);
+  			margin-right: 1px;
+			padding: 2px 5px 2px 8px;
+			&.recent-tickets{
+				@include border-radius(50px);
+			}
+  		} 
+  		.hover-contact-box{
+  			@include min-width(25px);
+  			color:inherit;
+  			max-width:175px;
+  			@extend .ellipsis;
+  			@include border-radius(0 50px 50px 0);
+  			padding:2px 10px 2px 5px;
+  		}
+  		.recent-tickets{
+  			padding: 2px 15px;
+		}
+  		&:hover{
+  			cursor: pointer;
+  			.add-on,.hover-contact-box{
+  				border:1px solid #e1e1e1;
+  				color:#333;
+  			}
+  			.add-on{ background-color: #e1e1e1; }
+  		}
+  	}
+  	.product-email-logo, .product-call{
+	  	display: inline-block;
+		width: 16px;
+		height: 10px;
+		position: relative;
+		top: 1px;
+	}
+	.product-twitter{
 		display: inline-block;
-		background-color: #ffffff;
+		width: 13px;
+		height: 13px;
+		margin-top: -5px;
+		position: relative;
+		top: 2px;
 	}
-	.user_mobile{ margin-left:10px; }
-	.user_fb, .user_twitter{ padding: 0 20px; height:11px; }
-	.infoblock{ display: inline-block; }
-}
-
-.popover.topRight, .popover.belowLeft {
-	.inner.hover_card {
-		background: #AAA;
-		padding:1px;
+	.product-call{
+		height: 13px;
+		margin-top: -2px;
+		top: 2px;
+		left:2px;
 	}
-	.arrow.dbl_left {
-		border-top: 8px solid transparent;
-		border-bottom: 8px solid transparent;
-		border-right: 8px solid #AAA;
-		left:-2px;
-		&:after {
-			content:" ";
-			display:block;
-			position: absolute;
-			width:0; height:0;
-			top: 0px;
-			left: 2px;
-			margin-top: -14px;
-			border-top: 14px solid transparent;
-			border-bottom: 14px solid transparent;
-			border-right: 14px solid white;
-			z-index: 2000;
-
-		}
-	}
-	.arrow.dbl_up{
-		border-left: 8px solid transparent;
-		border-right: 8px solid transparent;
-		border-bottom: 8px solid #AAA;
-		top: -2px;
-		&:after {
-			content: " ";
-			display: block;
-			position: absolute;
-			width: 0;
-			height: 0;
-			margin-left: -8px;
-			border-left: 8px solid transparent;
-			border-right: 8px solid transparent;
-			border-bottom: 8px solid white;
-			z-index: 2000;
-			top: 2px;
-		}
-	}
+  .user_name{ font-size:1.25em; display: inline-block; font-weight: 200}
+  .user_desig{
+  	margin-bottom:10px;
+  	font-size: 12px;
+	line-height: 14px;
+	margin-top: 4px;
+  	a{
+  		color:#999;
+  	}
+  }
+  .user_phone, .user_mobile, .user_fb, .user_twitter{
+    padding: 1px 20px;
+    margin: 5px 5px 0 0;
+    height: 14px;
+    display: inline-block;
+    background-color: #ffffff;
+  }
+  .user_mobile{ margin-left:10px; }
+  .user_fb, .user_twitter{ padding: 0 20px; height:11px; }
+  .infoblock{ display: inline-block;  }
 }
 
 .pageSeperator{
@@ -5009,6 +5044,7 @@ a.close{
 			display:none;
       	}
 	   	.ff_item{
+	   		@include pie-clearfix;
 			margin:0 6px 0 0;
 			padding:4px 2px 10px;
 		}
@@ -5519,7 +5555,85 @@ a.close{
 		}
 	}
 }
+.select2-fields{
+	width: 95%;
+}
+.salesforce-wrapper{
+	float: right;
+	width: 75%;
+	.select2-choices{
+		background:none;
+		@include border-radius(5px);
+		border: 1px solid #c9c9c9;
+		background: #fff;
+		.select2-search-field{
+			padding: 4px;
+		}
+		.select2-search-choice-close{
+			background:none;
+			float: right;
+			&:after{
+				content: "--";
+				background:#d30000;
+				@include border-radius(100%);
+				color: #fff;
+				position: absolute;
+				bottom: 6px;
+				right: 16px;
+				padding: 2px 7px 4px 5px;
+				font-size: 16px;
+				font-weight: bold;
+				line-height: 14px;
+				@include box-shadow(1px 1px 1px rgba(0,0,0,0.2));
+				letter-spacing: -3px;
 
+			}
+		}
+		.select2-search-choice{
+		    border: 0;
+		    background: 0;
+		    padding: 10px;
+		    border-bottom:1px solid rgba(#ccc, 0.3);
+		    margin:0;
+		}
+	}
+	.int-select{
+		border:0;
+		@include border-radius(0);
+		width:99.8%;
+		&:after{
+			content: "+";
+			background:green;
+			@include border-radius(100%);
+			color: #fff;
+			position: absolute;
+			bottom: 8px;
+			right: 7px;
+			padding: 1px 5px 4px 5px;
+			font-size: 16px;
+			font-weight: bold;
+			line-height: 14px;
+			@include box-shadow(1px 1px 1px rgba(0, 0, 0, 0.2));
+			font-weight: bold;
+
+		}
+	}
+	.contact-fields, .lead-fields{
+		display:inline-block;
+		width:100%;
+		width:46%;
+		margin:5px 1%;
+		h3{
+			font-size: 1.2em;
+			margin-bottom: 5px;
+			font-weight: 200;
+		}
+	}
+	.lead-fields{
+		float:right;
+	}
+
+}
 .list-noinfo{
 	padding:60px 0; 
 	font-size:1.4em;
@@ -10160,7 +10274,7 @@ div.gcal-confirm-modal-content{ width: 100%; }
 .error-text{ color: #D00; }
 
 #footer {
-	margin: 10px auto 40px;
+	margin: 20px auto 30px;
 	clear: both;
 }
 
@@ -10405,6 +10519,60 @@ label.last-label{ margin-bottom: 0px; }
 
 // Surveymonkey Styles End 
 
+//Salesforce 
+
+.salesforce_widget_bg{
+	ul{
+		list-style:disc inside;
+		margin-left:1px;
+		margin-top:5px;
+		color:#ccc;
+		li{
+			padding:5px 0 0;
+			color:inherit;
+		}
+	}
+
+	.sales-title{
+		font-weight: bold;
+		color: inherit;
+	}
+	.search-back{
+		display: inline-block;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		padding: 0px 5px;
+		margin-right: 10px;
+		.arrow-left{
+			font-size: 6px;
+			margin-top: -2px;
+			margin-left: -2px;
+		}
+		&.hide{
+			display: none;
+		}
+	}
+}
+.salesforce-widget{
+	clear: both;
+	div{
+		clear: both;
+		display: block;
+		span{
+			float: left;
+			width:49%;
+			margin-right:1%;
+			font-weight: 500;
+		}
+		label{
+			float: left;
+			width:50%;
+			font-weight: 400;
+		}
+	}
+	&:last-child{margin-bottom:5px;};
+}
+
 .widget_options {
 	margin-top: 8px;
 	div{
@@ -10415,4 +10583,33 @@ label.last-label{ margin-bottom: 0px; }
 
 .code_area_highlight {
 	background-color: #E4E4E4;
+}
+
+// File upload design
+.thumb-file-upload {
+  position: relative;
+  display:inline-block;
+  text-align: left;
+  cursor:pointer;
+  vertical-align:top;
+  >div{
+  	margin:0 5px 18px 0;
+  }
+  input[type='file']{
+  	position:absolute;
+  	top:0;
+    z-index: 999999;
+    width:100%;
+    min-height:30px;
+    @include opacity(0);
+    cursor: pointer;
+    cursor: hand;
+    &::-webkit-file-upload-button { cursor:pointer; }
+  }
+  .file-upload-wrap{
+    .file-upload-text{
+      position: relative;
+      color: #0066cc;
+    }
+  }
 }

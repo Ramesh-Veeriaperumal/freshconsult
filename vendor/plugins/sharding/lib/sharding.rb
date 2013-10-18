@@ -33,6 +33,10 @@ class Sharding
     results.flatten
   end
 
+  def run_on_all_slaves(&block)
+    results = run_on_all_shards { run_on_slave(&block)}
+  end
+
   def execute_on_all_shards(&block)
     ActiveRecord::Base.on_all_shards(&block)
   end

@@ -38,7 +38,9 @@ class Support::FacebookTabsController < SupportController
     end
 
     def fb_page_tab
-      @fb_page_tab ||= FBPageTab.new
+      #if params[:app_id] is present then it means it is new app
+      #remove this code after migration 
+      @fb_page_tab ||= FBPageTab.new(nil,params[:app_id])
     end
 
   	def portal_for_page

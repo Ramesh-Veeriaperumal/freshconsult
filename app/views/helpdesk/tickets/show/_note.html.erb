@@ -10,7 +10,7 @@ minimizable ||= false
 
 <li id="<%= note_view_id %>" class="conversation <%= 'minimized minimizable' if minimizable %>">
 	<% if note.user %>
-	<div class="avatar-wrap" name="note<%= note.id %>"><%= user_avatar(note.user) %></div>
+	<div class="avatar-wrap" name="note<%= note.id %>" id="note<%= note.id %>"><%= user_avatar(note.user) %></div>
 	<% end %>
 	<div class="commentbox 
 					<%= (note.user.blank? or note.user.agent?) ? 'commentbox-gray' : 'commentbox-requester' %> 
@@ -20,7 +20,7 @@ minimizable ||= false
 		<div class="helpdesk_note">
 			<% if note.deleted? %>
 			<div class="tag">
-				<%= t("helpdesk.tickets.note.deleted_note") %>
+				<%= t("helpdesk.tickets.note.deleted_note").html_safe %>
 			</div>
 			<% else %>
 			<div class="actions">
@@ -50,12 +50,16 @@ minimizable ||= false
 		    <% end %>
 			<div class="author-mail-detail cc_bcc_info">
 				<% kind = note.survey_remark.nil? ? note.kind : 'survey' %>
-				<%= t("helpdesk.tickets.note.created_on_live.#{kind}", :user_name => note_responder(note), :note_date => formated_date(note.created_at), :timestamp => note.created_at.to_i ) %>
+				<%= t("helpdesk.tickets.note.created_on_live.#{kind}", 
+						:user_name => link_to_user(note.user), 
+						:note_date => formated_date(note.created_at), 
+						:timestamp => note.created_at.to_i 
+					).html_safe %>
 			</div>
 			<%  if privilege?(:manage_tickets)
 				conv_info = conversation_info(note) %>
 				<div class="author-mail-detail">
-				<%= content_tag :span, truncate(conv_info, :length => 100), 
+				<%= content_tag :span, truncate(conv_info, :length => 100).html_safe, 
 						:rel => "hover-popover",
 						"data-placement" => "below",
 						"data-content" => conv_info.length > 100 ? conversation_popover_details(note) : "" %>
@@ -72,16 +76,16 @@ minimizable ||= false
 			<div class="details" id='<%= notedetails %>'>
 				<%= content_tag(:div, "", :class => "#{note.survey_remark.survey_result.get_small_img_class} smiley") unless note.survey_remark.nil? %>
 				<div class="request_mail <%= 'survey-note' unless note.survey_remark.nil? %>">
-					<%= "<div class='survey-text'>#{note.survey_remark.survey_result.text}</div>" unless note.survey_remark.nil? %>			
-					<%= note.body_html %>
+					<%= "<div class='survey-text'>#{note.survey_remark.survey_result.text}</div>".html_safe unless note.survey_remark.nil? %>			
+					<%= note.body_html.html_safe %>
 				</div>
 			</div>
-			<% unless note.attachments.empty? and note.dropboxes.empty? %>
+			<% unless note.all_attachments.empty? and note.dropboxes.empty? %>
 				<span class="seperator"></span>
 				<div class="attachments-wrap clearfix">
-					<h5><strong><%= pluralize(note.attachments.size + note.dropboxes.size, t('attachment'), t('attachments'))%></strong></h5>
+					<h5><strong><%= pluralize(note.all_attachments.size + note.dropboxes.size, t('attachment'), t('attachments'))%></strong></h5>
 					<ul class="attachment_list">
-					    <%= render :partial => '/helpdesk/tickets/show/attachment.html', :collection => note.attachments, :locals => {:show_delete => true, :url => [@item] } %>
+                      <%= render :partial => '/helpdesk/tickets/show/attachment.html', :collection => note.all_attachments, :locals => {:show_delete => true, :url => [@item] } %>
 
 					    <%note.dropboxes.each do |dropbox| %> 
 							<%= render :partial => '/helpdesk/tickets/show/dropbox.html',:locals => {:dropbox=>dropbox, :show_delete => true, :url => [@item] } %>
@@ -93,23 +97,7 @@ minimizable ||= false
 		</div>
 	</div>
 
-    <% if privilege?(:manage_tickets) and feature?(:gamification)  %>
-	<textarea id="<%= "agent-hovercard_#{note.id}" %>" style="display:none;">
-		<div class="contact_hover" style="min-height:50px;">	
-		  <%= user_avatar(note.user) if note.user.agent? %>
-		  <%= content_tag :div, link_to(h(note.user), note.user), :class => "user_name" %>
-		  <% if feature?(:gamification) %>
-		  		<% if note.user.agent? %>
-		  			<strong><%= content_tag :div, h(note.user.agent.level.name) unless note.user.agent.level.blank? %></strong>
-		  		<% end %>
-		  <% end %>
-          <%= content_tag :div, h(note.user.email), :class => "user_email" unless note.user.email.blank?  %>
-          <div class="clearfix"></div>
-          <%= content_tag :div, h(note.user.phone), :class => "user_phone" unless note.user.phone.blank?  %>
-          <%= content_tag :div, h(note.user.mobile), :class => "user_mobile" unless note.user.mobile.blank?  %>
-		</div>
-	</textarea>
-	<% end %>
+    
 	<script type="text/javascript">
 		if (typeof(TICKET_DETAILS_DATA['last_note_id']) == 'undefined' ||	TICKET_DETAILS_DATA['last_note_id']  == null || TICKET_DETAILS_DATA['last_note_id'] < <%= note.id %>)
 			TICKET_DETAILS_DATA['last_note_id'] = <%= note.id %>;

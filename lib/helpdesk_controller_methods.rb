@@ -32,7 +32,7 @@ module HelpdeskControllerMethods
       format.widget {render :action=>:create_ticket_status, :layout => "widgets/contacts"}
       format.js
       format.mobile {
-        render :json => {:success => true,:item => @item}.to_json
+        render :json => {:success => true,:item => @item , :success_message => I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)}.to_json
       }
       format.json { 
         render :json => @item.to_json(options)
@@ -83,6 +83,12 @@ module HelpdeskControllerMethods
         process_destroy_message  
         redirect_to after_destroy_url
       end
+      expects.mobile{
+        render :json => {:success => true  , :success_message => "#{h(@items.length)} tickets were deleted" }.to_json
+      }
+      expects.nmobile{
+        render :json => {:success => true  , :success_message => "#{h(@items.length)} notes were deleted" }.to_json
+      }
       expects.json  { render :json => :deleted}
       expects.js { 
         process_destroy_message
@@ -106,6 +112,8 @@ module HelpdeskControllerMethods
           :partial => '/helpdesk/shared/flash/restore_notice', :contacts => @items)
         redirect_to after_restore_url 
       }
+      result.mobile { render :json => { :success => true , :success_message => "#{h(@items.length)} tickets were restored" }.to_json}
+      result.nmobile { render :json => { :success => true , :success_message => "#{h(@items.length)} notes were restored" }.to_json}
       result.xml {  render :xml => @items.to_xml(options) }
       result.json {  render :json => @items.to_json(options) }
     end
@@ -210,17 +218,32 @@ protected
   end
 
   def build_attachments item, model_name
-    if item.respond_to?(:dropboxes) #handle dropbox 
+    if item.respond_to?(:dropboxes) #handle dropbox
       (params[:dropbox_url] || []).each do |urls|
         decoded_url =  URI.unescape(urls)
         item.dropboxes.build(:url => decoded_url)
       end
     end
-    return unless item.respond_to?(:attachments) 
+    build_shared_attachments item
+    return unless item.respond_to?(:attachments)
     (params[model_name][:attachments] || []).each do |a|
       item.attachments.build(:content => a[:resource], :description => a[:description], :account_id => item.account_id)
     end
   end
+
+  def build_shared_attachments item
+      (params[:shared_attachments] || []).each do |r|
+        a=Helpdesk::Attachment.find(r)
+        item.shared_attachments.build(:account_id => item.account_id,:attachment=>a )
+      end
+
+      if !params[:admin_canned_responses_response].nil?
+      (params[:admin_canned_responses_response][:attachments]).each do |a|
+        attachment_created=item.account.attachments.create(:content => a[:resource], :description => a[:description],:attachable_type=>"Account", :attachable_id=>current_account.id)
+        item.shared_attachments.build(:attachment=>attachment_created )
+      end
+      end
+ end
 
   def item_url 
     @item

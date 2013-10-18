@@ -19,15 +19,11 @@ module Integrations::SalesforceUtil
 
       available_fields = Array.new
       fields_hash.each{ |field|
-        DEFAULT_FIELDS[sObject].each{|reqField|
-            available_fields.push(reqField) if(field["name"] == reqField)
-        }
+         available_fields.push(field["name"])
       }
-      available_fields.join(",")
+      #Adding an Address field intentionally to group [MailingStreet,City,Country,PostalCode].
+      #If the user selects Address in dropdown,full address will be shown formed by above fields.
+      available_fields.push("Address")
     end
-
-  DEFAULT_FIELDS = {:Contact => ["Id", "MobilePhone", "Phone", "Department", "Email", "Name", "MailingCity", "MailingCountry", "MailingState", "MailingStreet", "Title"], 
-                    :Lead => ["Id", "City", "Company", "IsConverted", "Country", "Name", "Phone", "MobilePhone", "State", "Status", "Street", "Title"] }
-
 
 end

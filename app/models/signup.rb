@@ -58,6 +58,8 @@ class Signup < ActivePresenter::Base
       user.helpdesk_agent = true
       user.build_agent()
       user.agent.account = account
+      # user.build_user_email({:email => user.email, :primary_role => true, :verified => user.active})
+      # user.user_email.account = account
     end
     
     def build_subscription
@@ -100,8 +102,14 @@ class Signup < ActivePresenter::Base
       User.current = user
     end
 
+    # def add_user_email_migrated
+    #   $redis_others.sadd('user_email_migrated', account.id)
+    #   true
+    # end
+
     def populate_seed_data
       PopulateAccountSeed.populate_for(account)
+      Resque.enqueue(Workers::PopulateSecondarySeed, { :account_id => account.id, :user_id => user.id })
     end
   
     def support_email

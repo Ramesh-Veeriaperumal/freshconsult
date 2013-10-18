@@ -8544,7 +8544,7 @@ function(el){
             isIpad = Ext.os.is.iPad;
 
         addMeta('viewport', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no');
-        addMeta('apple-mobile-web-app-capable', 'yes');
+        addMeta('apple-mobile-web-app-capable', 'no');
         addMeta('apple-touch-fullscreen', 'yes');
 
         //status bar style

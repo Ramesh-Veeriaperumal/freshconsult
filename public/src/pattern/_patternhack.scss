@@ -35,7 +35,9 @@ h5{
 strong {
   font-weight: bold;
 }
-
+.lowercase{
+  text-transform:lowercase;
+}
 .top-space-none{
   margin-top:0;
   padding-top:0;
@@ -345,10 +347,17 @@ html.touch .dialog-well .actions {
 }
 
 select{
+  height:20px;
   line-height: 20px;
-  padding:1px;
+  padding: 0;
+  padding-left:2px;
 }
-
+textarea,input[type="text"],input[type="password"],input[type="datetime"],
+input[type="datetime-local"],input[type="date"],input[type="month"],input[type="time"],
+input[type="week"],input[type="number"],input[type="email"],input[type="url"],input[type="search"],
+input[type="tel"],input[type="color"],.uneditable-input {
+  padding: 4px 0px 4px 5px;
+}
 /* Fix for tickets show page data-tabs */
 .ticket_tabs{
   margin-left: 0px;
@@ -656,15 +665,13 @@ ul.inline > li, ol.inline > li {
     margin-left: 0px;
   }
 }
+.btn-primary.btn-mini{
+  padding-left:10px;
+  padding-right:10px;
+}
 .input-prepend{
   .add-on-outer{
     font-size:13px;
     margin-left: 2px;
   }
-}
-select,textarea,input[type="text"],input[type="password"],input[type="datetime"],
-input[type="datetime-local"],input[type="date"],input[type="month"],input[type="time"],
-input[type="week"],input[type="number"],input[type="email"],input[type="url"],input[type="search"],
-input[type="tel"],input[type="color"],.uneditable-input {
-  padding: 4px 0px 4px 5px;
 }

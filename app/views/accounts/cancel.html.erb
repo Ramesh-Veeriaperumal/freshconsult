@@ -4,7 +4,7 @@
 
 <label><%= t(".info_text") %></label>
 
-<% form_tag ({ :action => 'cancel' }, { :id => 'cancel-form', :class => "cancel-form"} ) do %>
+<% form_tag({ :action => 'cancel' }, { :id => 'cancel-form', :class => "cancel-form"} ) do %>
 
 	<div id="feedback-section" class="cancel-form dont-validate form-bordered">
 			<ul id = "account-feedback" class = "cancel-field" >	
@@ -13,7 +13,7 @@
 						<%= radio_button_tag(:account_feedback, "Budget Issue. ", false, :class => "cancel-reason") %>
 						<%= t(".feedback.budget") %>
 					</label>
-					<%= content_tag( :div, t(".feedback.budget_followup"), :class => "reason-followup" ) %>
+					<%= content_tag( :div, t(".feedback.budget_followup").html_safe, :class => "reason-followup" ) %>
 					<%= text_area_tag 'feedback-text', nil, :class => "reason-followup", :placeholder => t(".feedback.budget_extra") %>
 				</li>
 				
@@ -22,7 +22,7 @@
 						<%= radio_button_tag(:account_feedback, "Missing Feature. ", false, :class => "cancel-reason" ) %>
 						<%= t(".feedback.requirement") %>
 					</label>
-					<%= content_tag(:div, t(".feedback.requirement_followup"), :class => "reason-followup" ) %>
+					<%= content_tag(:div, t(".feedback.requirement_followup").html_safe, :class => "reason-followup" ) %>
 					<%= text_area_tag 'feedback-text', nil, :class => "reason-followup", :placeholder => t(".feedback.requirement_extra") %>
 				</li>
 				
@@ -68,7 +68,9 @@
 			</label>
 
 			<div id="confirm-followup" class="hide reason-followup"> 
-				<%= t(".trial_warning_message") %><br>
+				<%= current_account.subscription.active? ? 
+						t(".warning_message", :cancel_date => 14.days.from_now.strftime('%a, %b %d, %Y')).html_safe : 
+									t(".trial_warning_message") %><br>
 			</div>
 		</div>
 

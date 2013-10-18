@@ -5,5 +5,5 @@
   # For edit/delete page append one more parameter 'integrated_resource' in @liquid_values
 %>
 <div id="time_integration">
-	<%= renderTimesheetIntegratedApps(@liquid_values) %>
+	<%= (renderTimesheetIntegratedApps(@liquid_values)).to_s.html_safe %>
 </div>

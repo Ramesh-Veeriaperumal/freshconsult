@@ -1,0 +1,13 @@
+defaults: &defaults
+  service_key: cd8c90fa2dd7448bbe6a3adea18e5801
+  event_url: "http://events.pagerduty.com/generic/2010-04-15/create_event.json"
+
+development:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  service_key: efa2f579218047ec8bb331342acbde02
+  event_url: "http://events.pagerduty.com/generic/2010-04-15/create_event.json"

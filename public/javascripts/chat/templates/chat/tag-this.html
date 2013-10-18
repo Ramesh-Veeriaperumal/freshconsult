@@ -1,0 +1,30 @@
+<div id="tag-this">
+	<div class="closeDialog">x</div>
+	<div class="tag-details">
+		<h3 class="grey"><%=i18n.tag_msg%></h3>
+		<p><input type="hidden" placeholder=<%=i18n.tag_placeholder%> id="e12" style="width:300px" value=""/></p>
+		<div class="visitor-actions">
+			<input type="button" value="<%=i18n.cancel%>" class="cancelBtn btn btn-secondary" />
+			<input type="button" value="<%=i18n.save%>" id="save_tag" class="saveBtn btn btn-primary" />
+		</div>
+	</div>
+</div>
+<script>
+(function($){
+    $(document).ready(function(){
+        var preload_data = [];
+ 	  	var tag="<%=tags%>";
+ 	  	tags=tag.split(",");
+ 	  	for(var t=0; t<tags.length; t++){
+ 	  		if(tags[t]!=""){
+ 	  			preload_data.push({id:tags[t],text:tags[t]});
+ 	  		}
+ 	  	}
+ 	  	
+        $("#e12").select2({
+			tags:[],
+        	tokenSeparators: [",", " "]
+       	}).select2('data', preload_data );
+    });
+})(jQuery)
+</script>

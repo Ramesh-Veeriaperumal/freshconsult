@@ -17,11 +17,13 @@ class Account < ActiveRecord::Base
   has_one  :primary_email_config, :class_name => 'EmailConfig', :conditions => { :primary_role => true, :product_id => nil }
   has_many :products, :order => "name"
   has_many :roles, :dependent => :delete_all, :order => "default_role desc"
-  has_many :portals
+  has_many :portals, :dependent => :destroy
   has_one  :main_portal, :class_name => 'Portal', :conditions => { :main_portal => true}
+  has_one  :whitelisted_ip
 
   accepts_nested_attributes_for :primary_email_config
   accepts_nested_attributes_for :main_portal
+  accepts_nested_attributes_for :whitelisted_ip
 
 
   has_many :survey_results
@@ -188,4 +190,6 @@ class Account < ActiveRecord::Base
 
   has_many :report_filters, :class_name => 'Helpdesk::ReportFilter'
   
+  has_one :chat_setting
+
 end

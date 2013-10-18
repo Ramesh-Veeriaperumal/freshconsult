@@ -28,14 +28,14 @@
 											   "data-rebrand-form" => true, 
 											   :id => "edit_form", :class => "form-horizontal", :rel=> "validate"  } do |f| %>
 
-	<%= link_to "Customize portal >", admin_portal_template_path( @account.main_portal ), 
+	<%= link_to t("admin.products.portal.customize_portal"), admin_portal_template_path( @account.main_portal ), 
 					:rel => "customize-portal", :class => "btn btn-bold pull-right" %>
 	<h1 class="lead"><%=t('account.rebrand')%></h1>
 
 	<%= f.error_messages %>
 	<div class="row-fluid">
 		<% f.fields_for :main_portal do |portal| %>
-			<h3 class="rebrand-head-text top-space-none">Settings</h3>
+			<h3 class="rebrand-head-text top-space-none"><%= t("account.settings") %></h3>
 			<div>
 					<div class="fields">
 						<div class="control-group">
@@ -93,10 +93,10 @@
 						</div>
 					</div>
 			</div>
-	  		<h3 class="rebrand-head-text">Logo and colors</h3>
+	  		<h3 class="rebrand-head-text"><%= t("account.logo_and_colors") %></h3>
 	  		<div class="fields">
 	  			<div class="control-group">
-	  				<label class="control-label">Logo & favicon</label>
+	  				<label class="control-label"><%= t("admin.products.portal.logo_and_favicon") %></label>
 	  				<div class="controls">
 	  					<div class="row-fluid">
 							<div class="span8">
@@ -149,22 +149,20 @@
 					</div>	
 				</div>
 			    <div class="control-group">
-					<label class="control-label">Helpdesk Phone</label>
+					<label class="control-label"><%= t("admin.products.portal.helpdesk_phone") %></label>
 					<div class="controls">
 						<label class="overlabel" for="contact_info_text">eg: +1 (877) 485-0317</label>
 						<input name="account[main_portal_attributes][preferences][contact_info]" id="contact_info_text" value="<%=portal_pref(@account.main_portal, :contact_info) %>" class="text auto" size="50" />
 					</div>
 				</div>
 				<div class="control-group">
-					<label class="control-label">Portal customization</label>
+					<label class="control-label"><%= t("admin.products.portal.portal_customization") %></label>
 					<div class="controls">
-						<%= link_to "Customize portal >", admin_portal_template_path( @account.main_portal ), 
+						<%= link_to t("admin.products.portal.customize_portal"), admin_portal_template_path( @account.main_portal ), 
 							:class => "btn btn-bold", :rel => "customize-portal" %> 
 						
 						<span>
-							Portal was last published
-							<%= distance_of_time_in_words_to_now(@account.main_portal.template.updated_at) %>
-							ago
+							<%= t("account.last_published", :last_published => distance_of_time_in_words_to_now(@account.main_portal.template.updated_at)) %>
 						</span>
 					</div>
 				</div>
@@ -174,7 +172,7 @@
 	<hr>
 	<div class="row-fluid">
   		<input type="hidden" name="redirect_url" id="redirect_url" value="" />
-		<%= link_to "&larr; #{t('account.cancel')}", "/admin/home", :class => "btn floatl" %>
+		<%= link_to "&larr; #{t('account.cancel')}".html_safe, "/admin/home", :class => "btn floatl" %>
 		<%= submit_tag t('account.save'), :class => 'btn btn-primary pull-right', :id => 'account_submit' %>
 	</div>
 

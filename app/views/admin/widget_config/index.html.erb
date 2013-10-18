@@ -15,10 +15,10 @@
 <div>
 	<ul data-tabs="tabs" class="tabs" id="fw-tabs">
 	    <li class="active">      
-	      <a href="#popup" data-toggle="tab" id="popup-tab"><%= t(".feedbackwidget_popup_tab") %></a>
+	      <a href="#popup" data-toggle="tab" id="popup-tab"><%= t(".feedbackwidget_popup_tab").html_safe  %></a>
 	    </li>
 	    <li class="">
-	      <a href="#embedded" id="embedded-tab"><%= t(".feedbackwidget_embedded_tab") %></a>
+	      <a href="#embedded" id="embedded-tab"><%= t(".feedbackwidget_embedded_tab").html_safe  %></a>
 	    </li>
 	</ul>
 </div>
@@ -33,7 +33,7 @@
 </div>
 <script src="/javascripts/freshwidget.js?v=2.1" type="text/javascript"></script>
 <script type="text/javascript">
- wgu = <%= widget_asset_url.to_json %>;
+ wgu = <%= widget_asset_url.to_json.html_safe %>;
 </script>
 <% javascript_tag do %>
 	FreshWidget.init("", {
@@ -63,7 +63,6 @@
 			$("#assetUrl").val(wgu.http);
 			$("#widget_url").val(wgu.http);
 
-
 			$.each(WidgetFormArray, function(index, item){
 				$item = $activeForm.find('[name=' + item['name'] + ']');
 				if(item['value'] != ''){
@@ -87,8 +86,8 @@
 						case "httpsHttp":
 							$("#assetUrl").val(wgu.https);
 							$("#widget_url").val(wgu.https);
-							
 							break;
+						case "assetUrl":
 						case "widget_url":
 						break;
 						case "offset":
@@ -155,9 +154,8 @@
 
 			var buttonTextFocus = $('[name="buttonText"]').is( ":focus" );
 			var buttonColorFocus = $("#TabColor").is( ":focus" );
-			if( !buttonTextFocus && !buttonColorFocus)
-			{
-				$(".ui-form").effect( "highlight", {color:"#E4E4E4"});
+			if( !buttonTextFocus && !buttonColorFocus){
+				$("#popupCode").effect( "highlight", { color:"#F8F8C3" }, 600);
 			}
 
 		}	
@@ -179,5 +177,9 @@
 			});
 
 	  	});
+
+	  	Fjax.afterNextPage = function(){
+	  		FreshWidget.destroy();
+	  	}
 	})(jQuery)
 <% end %>

@@ -14,16 +14,17 @@ module Helpdesk::TicketActions
     return false if need_captcha && !(current_user || verify_recaptcha(:model => @ticket, 
                                                         :message => "Captcha verification failed, try again!"))
     build_ticket_attachments
-    return false unless @ticket.save
+    return false unless @ticket.save_ticket
 
     if params[:meta]
-      @ticket.notes.create(
+      note = @ticket.notes.build(
         :note_body_attributes => {:body => params[:meta].map { |k, v| "#{k}: #{v}" }.join("\n")},
         :private => true,
         :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
         :account_id => current_account.id,
         :user_id => current_user && current_user.id
       )
+      note.save_note
     end
     notify_cc_people cc_emails unless cc_emails.blank? 
     @ticket
@@ -150,7 +151,7 @@ module Helpdesk::TicketActions
   end
   ## Need to test in engineyard--also need to test zendesk import
   def move_attachments   
-    @note.attachments.each do |attachment|      
+    @note.all_attachments.each do |attachment|
       url = attachment.authenticated_s3_get_url
       io = open(url) #Duplicate code from helpdesk_controller_methods. Refactor it!
       if io

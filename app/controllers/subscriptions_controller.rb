@@ -2,7 +2,11 @@ class SubscriptionsController < ApplicationController
 
   skip_before_filter :check_account_state
 
+  include RestrictControllerAction
   
+  CARD_UPDATE_REQUEST_LIMIT = 5
+  restrict_perform :billing
+
   before_filter :load_billing, :only => [ :show, :billing, :payment_info ]
   before_filter :load_subscription, :only => [ :show, :billing, :plan, :plans, :calculate_amount, :free, :convert_subscription_to_free ]
   before_filter :load_plans, :only => [:show, :plans, :free]
@@ -68,6 +72,7 @@ class SubscriptionsController < ApplicationController
           response = billing_subscription.activate_subscription(@subscription)
         end
       rescue Exception => e
+        NewRelic::Agent.notice_error(e)
         flash[:notice] = e.message.match(/[A-Z][\w\W]*\./).to_s if e.message
         redirect_to :action => "billing" and return
       end
@@ -107,6 +112,7 @@ class SubscriptionsController < ApplicationController
           billing_subscription.update_subscription(@subscription, prorate?)
         end
       rescue Exception => e
+        NewRelic::Agent.notice_error(e)
         flash[:notice] = t('error_in_update')
         flash[:notice] = e.message.match(/[A-Z][\w\W]*\./).to_s if e.message
         redirect_to subscription_url and return
@@ -204,4 +210,15 @@ class SubscriptionsController < ApplicationController
       SAAS::SubscriptionActions.new.change_plan(@subscription.account, @cached_subscription)      
     end
 
+    def key
+      SUBSCRIPTIONS_BILLING % { :account_id => current_account.id }
+    end
+
+    def perform_limit
+      CARD_UPDATE_REQUEST_LIMIT
+    end
+
+    def perform_limit_exceeded_message
+      t("subscription.error.card_update_limit_exceeded")
+    end
 end 

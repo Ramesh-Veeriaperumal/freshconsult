@@ -10,6 +10,7 @@ class Solution::Article < ActiveRecord::Base
   belongs_to :user, :class_name => 'User'
   belongs_to_account
   
+  xss_sanitize :only => [:description],  :html_sanitize => [:description]
   has_many_attachments
   
   has_many :activities,
@@ -28,29 +29,6 @@ class Solution::Article < ActiveRecord::Base
   
   include Mobile::Actions::Article
   include Solution::Constants
-
-  define_index do
-    indexes :title, :sortable => true
-    indexes :desc_un_html, :as => :description
-    indexes tags.name , :as => :tags
-
-    has account_id, user_id, status
-    has folder.category_id, :as => :category_id 
-    has '0', :as => :deleted, :type => :boolean    
-    has folder.visibility , :as => :visibility, :type => :integer
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :responder_id, :type => :integer
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :group_id, :type => :integer
-    has folder.customer_folders(:customer_id), :as => :customer_ids,:type => :multi
-
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :requester_id, :type => :integer
-    has SearchUtil::DEFAULT_SEARCH_VALUE, :as => :customer_id, :type => :integer
-
-    #set_property :delta => :delayed
-    set_property :field_weights => {
-      :title        => 10,
-      :description  => 6
-    }
-  end
 
   attr_accessor :highlight_title, :highlight_desc_un_html
 
@@ -101,31 +79,27 @@ class Solution::Article < ActiveRecord::Base
   
   def self.suggest(ticket, search_by)
     return [] if search_by.blank? || (search_by = search_by.gsub(/[\^\$]/, '')).blank?
-      if ticket.account.es_enabled?
-        begin
-          options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }
-          item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], ticket.account.id), options do |search|
-            search.query do |query|
-              query.filtered do |f|
-                f.query { |q| q.string SearchUtil.es_filter_key(search_by), :fields => ['title', 'desc_un_html'], :analyzer => "include_stop" }
-                f.filter :term, { :account_id => ticket.account_id }
-              end
-            end
-            search.from options[:size].to_i * (options[:page].to_i-1)
-            search.highlight :desc_un_html, :title, :options => { :tag => '<strong>', :fragment_size => 50, :number_of_fragments => 4, :encoder => 'html' }
+    begin
+      Search::EsIndexDefinition.es_cluster(ticket.account.id)
+      options = { :load => true, :page => 1, :size => 10, :preference => :_primary_first }
+      item = Tire.search Search::EsIndexDefinition.searchable_aliases([Solution::Article], ticket.account.id), options do |search|
+        search.query do |query|
+          query.filtered do |f|
+            f.query { |q| q.string SearchUtil.es_filter_key(search_by), :fields => ['title', 'desc_un_html'], :analyzer => "include_stop" }
+            f.filter :term, { :account_id => ticket.account_id }
           end
-
-          item.results.each_with_hit do |result,hit|
-            SearchUtil.highlight_results(result, hit) unless hit['highlight'].blank?
-          end
-          item.results
-        rescue Exception => e
-          NewRelic::Agent.notice_error(e)
-          []
         end
-    else
-      ThinkingSphinx.search(search_by, :with => { :account_id => ticket.account.id },
-       :classes => [ Solution::Article ], :match_mode => :any, :per_page => 10 )
+        search.from options[:size].to_i * (options[:page].to_i-1)
+        search.highlight :desc_un_html, :title, :options => { :tag => '<strong>', :fragment_size => 50, :number_of_fragments => 4, :encoder => 'html' }
+      end
+
+      item.results.each_with_hit do |result,hit|
+        SearchUtil.highlight_results(result, hit) unless hit['highlight'].blank?
+      end
+      item.results
+    rescue Exception => e
+      NewRelic::Agent.notice_error(e)
+      []
     end
   end
   
@@ -172,6 +146,14 @@ class Solution::Article < ActiveRecord::Base
 
   def article_changes
     @article_changes ||= self.changes.clone
+  end
+
+  def self.article_type_option
+    TYPES.map { |i| [I18n.t(i[1]), i[2]] }
+  end
+
+  def self.article_status_option
+    STATUSES.map { |i| [I18n.t(i[1]), i[2]] }
   end
 
 end

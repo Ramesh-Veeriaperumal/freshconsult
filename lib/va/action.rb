@@ -1,9 +1,11 @@
 class Va::Action
   
+  include Va::Webhook::Trigger
+  
   EVENT_PERFORMER = -2
   ASSIGNED_AGENT = ASSIGNED_GROUP = 0
 
-  attr_accessor :action_key, :act_hash, :doer
+  attr_accessor :action_key, :act_hash, :doer, :triggered_event
 
   ACTION_PRIVILEGE =
     {  
@@ -28,10 +30,11 @@ class Va::Action
     act_hash[:value]
   end
   
-  def trigger(act_on, doer=nil)
+  def trigger(act_on, doer=nil, triggered_event=nil)
     begin
       Rails.logger.debug "INSIDE trigger of Va::Action with act_on : #{act_on.inspect} action_key : #{action_key} value: #{value}"
       @doer = doer
+      @triggered_event = triggered_event
       return send(action_key, act_on) if respond_to?(action_key)
       if act_on.respond_to?("#{action_key}=")
         act_on.send("#{action_key}=", value)
@@ -73,7 +76,7 @@ class Va::Action
   end
   
   def add_activity(log_mesg)
-    Thread.current[:scenario_action_log] << log_mesg
+    Thread.current[:scenario_action_log] << log_mesg.html_safe
   end
   
   def self.activities
@@ -144,8 +147,9 @@ class Va::Action
 
     def send_email_to_requester(act_on)
       if act_on.requester_has_email?
-        Helpdesk::TicketNotifier.send_later(:deliver_email_to_requester, 
-                act_on, substitute_placeholders_for_requester(act_on, :email_body),
+        act_on.account.make_current
+        Helpdesk::TicketNotifier.deliver_email_to_requester(act_on, 
+          substitute_placeholders_for_requester(act_on, :email_body),
                         substitute_placeholders_for_requester(act_on, :email_subject)) 
         add_activity("Sent an email to the requester") 
       end
@@ -170,8 +174,7 @@ class Va::Action
     def delete_ticket(act_on)
       act_on.deleted = true
       add_activity("Deleted the ticket <b>#{act_on} </b>")
-       
-   end
+    end
     
     def mark_as_spam(act_on)
       act_on.spam = true 
@@ -214,13 +217,15 @@ class Va::Action
     end
 
     def send_internal_email act_on, receipients
-      Helpdesk::TicketNotifier.send_later(:deliver_internal_email,
-        act_on, receipients, substitute_placeholders(act_on, :email_body),
+      act_on.account.make_current
+      Helpdesk::TicketNotifier.deliver_internal_email(act_on, 
+        receipients, substitute_placeholders(act_on, :email_body),
           substitute_placeholders(act_on, :email_subject))
     end
 
     def substitute_placeholders_for_requester act_on, content_key
-      act_hash[content_key] = act_hash[content_key].to_s.gsub("{{ticket.status}}","{{ticket.requester_status_name}}")
+      act_hash[content_key] = act_hash[content_key].to_s.gsub("{{ticket.status}}",
+                                                                "{{ticket.requester_status_name}}")
       substitute_placeholders act_on, content_key
     end
 

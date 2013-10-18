@@ -67,7 +67,7 @@
         </li>
         <li class="inline-field field hide" id="fwd-cc-form-container-<%=cntid%>" style='display:none'>
             <label class="caption">
-                <%= t(".cc") %>:
+                <%= t(".cc").html_safe %>:
             </label>
             <div class="fields" id="fwd_cc_emails_id" rel="fwd_cc_div" data-button="#add_fwd_cc_btn" data-parent="#fwd-cc-form-container"> 
                 
@@ -79,24 +79,24 @@
         </li>
         <li class="inline-field field" id="fwd-bcc-form-container-<%=cntid%>" style='display:<%= bcc_drop_box_email.blank? ? "none": "block" %>;'>
           <label class="caption">
-            <%= t(".bcc") %>:
+            <%= t(".bcc").html_safe %>:
           </label>
 
           <div class="fields">
             
             <input type="text" id="bcc_emails_<%=cntid%>" name="helpdesk_note[bcc_emails]" />
             <% javascript_tag do -%>
-              new Autocompleter.MultiValue("bcc_emails_<%=cntid%>", cachedLookup, $A(<%= bcc_drop_box_email.to_json unless bcc_drop_box_email.blank? %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
+              new Autocompleter.MultiValue("bcc_emails_<%=cntid%>", cachedLookup, $A(<%= bcc_drop_box_email.to_json.html_safe unless bcc_drop_box_email.blank? %>), {frequency: 0.1, acceptNewValues: true,separatorRegEx:/;|,/});
             <% end %>
           </div>
         </li>
         <li class="inline-field field">
             <label class="caption">
-                <%= t("message") %>:
+                <%= t("message").html_safe %>:
             </label>
             <div class="fields">
               <% conv_item = conv_id.nil? ? @ticket : @note %>
-                <% f.fields_for (:note_body, Helpdesk::NoteBody.new) do |ff| %>
+                <% f.fields_for(:note_body, Helpdesk::NoteBody.new) do |ff| %>
                 <%= ff.text_area :body_html, :class => "required", :id => "#{cntid}-body", :value => bind_last_conv(conv_item, @signature, true) %>
                 <%= ff.text_area :full_text_html, :id => "#{cntid}-body-fulltext", :value => "", 
                                   :style => "display:none;"%>
@@ -110,7 +110,7 @@
         <%= hidden_field_tag(:page , params[:page], :id=>:page  ) unless params[:page].nil? %>
         <li class="inline-field field">
             <div class="attachment-options fields" id="attachment-options-forward-<%=cntid%>">
-              <% attachments = conv_item.attachments %>
+              <% attachments = conv_item.class.name=="Helpdesk::Note" ? conv_item.all_attachments : conv_item.attachments  %>
               <% if(attachments.length > 0) %>
                 Attachments
                 <div class="attachments">
@@ -146,7 +146,7 @@
     </ul>
     <div class="button-container">         
       <%= submit_tag(t('forward'), :class => "uiButton special" ) %>
-      <%= button_to_function(t('cancel'), "jQuery('##{cntid}').hide();jQuery('##{cntid}-body').destroyEditor();", :class => "uiButton" ) %>
+      <%= button_to_function(t('cancel'), "jQuery('##{cntid}').hide();jQuery('##{cntid}-body').destroyEditor();", :class => "uiButton cancel" ) %>
     </div>
 
     <% end %>

@@ -20,6 +20,12 @@
       :title => :name, :container_id => "va_rules_sort", 
       :reorder_id => "va_rules_reorder_button", :list_id => "va_rules_list"} %>
   </div>
+  <div class="row-fluid list-page-subheader">
+    <span class="vertical-alignment">
+      <img alt="" src="/images/down-arrow-automation.png">
+    </span>
+    <span class="vertical-alignment"><%= t('admin.supervisor_rules.info_help').html_safe %></span>
+  </div>
 
   <div class="list-page-body va_rule-index" id="va_rules_list">
     <table class="table table-striped">
@@ -40,7 +46,7 @@
           <td>
             <div class="item_actions" align="right">
                 <%= link_to(t('edit'), edit_admin_supervisor_rule_path(va_rule), :class => "btn btn-mini") %>
-                <%= link_to "<i class='icon-trash'></i>", admin_supervisor_rule_path(va_rule), :confirm => t('confirm_delete_message', :human_name => t('.human_name')), :method => :delete, :class => "btn btn-mini" %>
+                <%= link_to "<i class='icon-trash'></i>".html_safe, admin_supervisor_rule_path(va_rule), :confirm => t('confirm_delete_message', :human_name => t('.human_name')), :method => :delete, :class => "btn btn-mini" %>
             </div>
           </td>
         </tr>
