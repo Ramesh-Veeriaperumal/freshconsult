@@ -1938,7 +1938,7 @@ ru-RU:
     welcome: "Добро пожаловать"
     new_ticket: "Новая заявка"
     submit_a_ticket: "Создать заявку"
-    login: "&lt;b&gt;Войти&lt;/b&gt;"
+    login: "<b>Войти</b>"
     guest: Гость
     signout: Выйти
     edit_profile: "Редактировать профиль"
