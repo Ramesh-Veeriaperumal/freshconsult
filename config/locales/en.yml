@@ -665,10 +665,7 @@ en:
         feedbackwidget_screenshot: Take Screenshot
         feedbackwidget_search_area: Search Articles
         feedbackwidget_use_https: Use https
-<<<<<<< HEAD
         feedbackwidget_mobile_view: Mobile View
-=======
->>>>>>> refs/heads/pre_staging
     supervisor_rules:
       info_help: For <b>each tickets</b> updated within 30 days, Execute all matching rules.
       index:
@@ -1605,10 +1602,7 @@ en:
   set_type_as: Set Type as
   change_my_plan: Choose this plan...
   add_new_email: Add new email
-<<<<<<< HEAD
-=======
   chatwidget_title: Chat Settings
->>>>>>> refs/heads/pre_staging
   feedbackwidget_title: Feedback widget
   errors_in_your_address: "Errors encountered with your address:"
   set_priority_as: Set Priority as
@@ -1638,11 +1632,8 @@ en:
   edit_forum_category: Edit Forum Category
   agent_assigned_title: Recently assigned tickets (Open &amp; Pending)
   send_email_to_requester: Send Email to Requester
-<<<<<<< HEAD
-=======
   feedbackwidget_btcustomize: Button customization
   chatwidget_agentsonline: When agents are online
->>>>>>> refs/heads/pre_staging
   solution_category: 
     name: Category name
     new: New solution category
@@ -3870,11 +3861,8 @@ en:
         feedback_widgets_search_our: "Search our "
         feedback_widgets_knowledge_base: "Knowledge base "
         feedback_widgets_help_articles: "or Browse help articles"
-<<<<<<< HEAD
-=======
         show_all_results: "Show all results"
         no_results_for: "No results for %{term}"
->>>>>>> refs/heads/pre_staging
   reorder: "Reorder"
   reports:
       no_data: No data to display!
