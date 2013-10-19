@@ -409,7 +409,8 @@ class AccountsController < ApplicationController
 
     def add_to_crm
       Resque.enqueue(Marketo::AddLead, { :account_id => @signup.account.id, 
-                            :cookie => ThirdCRM.fetch_cookie_info(request.cookies) })
+                            :cookie => ThirdCRM.fetch_cookie_info(request.cookies),
+                            :signup_id => params[:signup_id] })
     end  
 
     def perform_account_cancel(feedback)
@@ -417,7 +418,13 @@ class AccountsController < ApplicationController
       deliver_mail(feedback)
       create_deleted_customers_info
 
-      current_account.subscription.active? ? schedule_cleanup : clear_account_data
+      if current_account.subscription.active? or current_account.subscription_payments.present?
+        add_churn
+        schedule_cleanup
+      else
+        clear_account_data
+      end
+
       redirect_to "http://www.freshdesk.com"
     end
 
@@ -432,12 +439,16 @@ class AccountsController < ApplicationController
     
     def create_deleted_customers_info
       DeletedCustomers.create(customer_details) if current_account.subscription.active?
-    end     
+    end
+
+    def add_churn
+      Resque.enqueue(Subscription::Events::AddDeletedEvent, { :account_id => current_account.id }) 
+    end   
 
     def schedule_cleanup
       current_account.subscription.update_attributes(:state => "suspended")
 
-      Resque.enqueue_at(2.days.from_now, Workers::ClearAccountData, 
+      Resque.enqueue_at(14.days.from_now, Workers::ClearAccountData, 
                                     { :account_id => current_account.id })
     end
 

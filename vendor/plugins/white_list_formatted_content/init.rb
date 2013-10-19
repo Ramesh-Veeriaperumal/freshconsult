@@ -4,6 +4,7 @@ ActiveRecord::Base.class_eval do
   include ActionView::Helpers::TextHelper
   include ActionView::Helpers::UrlHelper
   include WhiteListHelper
+  include Utils::Unhtml
 
   def self.format_attribute(*attr_names)
     prepare(*attr_names)
@@ -30,25 +31,7 @@ ActiveRecord::Base.class_eval do
   def create_content
     list = self.class.send(:class_variable_get,'@@unhtmlable_attributes')
     Rails.logger.debug ":::::create_content"
-    list.each do |body|
-      if send(:read_attribute,body).blank? && !send(:read_attribute , "#{body}_html").blank?
-        Rails.logger.debug ":::::Its still comming inside"
-        self.send(:write_attribute , body, Helpdesk::HTMLSanitizer.plain(send(:read_attribute,"#{body}_html")))
-      elsif send(:read_attribute , "#{body}_html").blank? && !send(:read_attribute,body).blank?
-        Rails.logger.debug ":::::Its still comming inside 2"
-        self.send(:write_attribute , "#{body}_html",  body_html_with_formatting(CGI.escapeHTML(send(:read_attribute,body))))
-      elsif send(:read_attribute,body).blank? && send(:read_attribute , "#{body}_html").blank?
-        Rails.logger.debug ":::::Its still comming inside 3"
-        self.send(:write_attribute , "#{body}_html", I18n.t('not_given'))
-        self.send(:write_attribute , body,I18n.t('not_given'))
-      end
-      text = Nokogiri::HTML(send(:read_attribute,"#{body}_html"))
-      unless text.at_css("body").blank?
-        text.xpath("//del").each { |div|  div.name= "span";}
-        text.xpath("//p").each { |div|  div.name= "div";}
-        self.send(:write_attribute , "#{body}_html", Rinku.auto_link(text.at_css("body").inner_html, :urls))
-      end
-    end
+    populate_content_create(self,list)
   end
 
 
@@ -60,15 +43,6 @@ ActiveRecord::Base.class_eval do
         self.send(:write_attribute , "#{body}_html", send(:read_attribute,body).blank? ? '' : body_html_with_formatting(send(:read_attribute,body)))
       end
     end
-
-    def body_html_with_formatting(body)
-      body_html = auto_link(body) { |text| truncate(text, 100) }
-      textilized = RedCloth.new(body_html.gsub(/\n/, '<br />'), [ :hard_breaks ])
-      textilized.hard_breaks = true if textilized.respond_to?("hard_breaks=")
-      white_list(textilized.to_html)
-    end
-    
-    
     
     def update_content # To do :: need to use changed_body_html?
       list = self.class.send(:class_variable_get,'@@unhtmlable_attributes')

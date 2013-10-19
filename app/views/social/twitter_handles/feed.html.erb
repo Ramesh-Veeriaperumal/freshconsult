@@ -60,7 +60,8 @@
 						        <%= t('social.twitter_handles.index.reply') %>
 					        </a>
                 <% end %>
-  						    <a href="#" data-text="${text}" data-user="${user.screen_name}" data-id="${id_str}" class="button convert_as_ticket">
+  						    <a href="#" data-text="${text}" data-user="${user.screen_name}" data-id="${id_str}" 
+                          data-img-url="${user.profile_image_url}" class="button convert_as_ticket">
   							    <%= t('social.twitter_handles.index.convert_to_ticket') %>
   						    </a>
   						  </span>
@@ -192,6 +193,7 @@
 	    e.preventDefault(); 
 	    var screen_name = this.getAttribute("data-user"),
 	        tweet_text  = this.getAttribute("data-text"), 
+          image_url   = { "url" : this.getAttribute("data-img-url")},
 	        json_data   = { "subject"          : screen_name + ' - ' + tweet_text,
 	                        "product_id"       : current_product_id, 
 	                        "twitter_id"       : screen_name,
@@ -201,12 +203,18 @@
                         					
       link = jQuery(this);
        
+      //Disable the button to avoid multiple clicks
+      link.addClass("disabled");
+       
       jQuery.ajax({
       	type: 'POST',
       	url : 'create_twicket',
-      	data: {	helpdesk_tickets: json_data },
+      	data: {	helpdesk_tickets: json_data , profile_image : image_url },
       	datatype:'json',
-      	success: function(data){}
+      	success: function(data){
+          //Enable the button again
+          link.removeClass("disabled");
+        }
       });
 	  });
 

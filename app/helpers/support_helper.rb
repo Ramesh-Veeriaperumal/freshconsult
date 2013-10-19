@@ -19,14 +19,14 @@ module SupportHelper
 					  # "Helvetica Neue" => "Helvetica+Neue:regular,italic,700,700italic" 
 					}
 
-    def time_ago date_time 
+    def time_ago(date_time)
 		%( <span class='timeago' data-timeago='#{date_time}' data-livestamp='#{date_time}'> 
 			#{distance_of_time_in_words_to_now date_time} #{I18n.t('date.ago')} 
-		   </span> ).html_safe
+		   </span> ).html_safe unless date_time.nil?
 	end
 
-	def short_day_with_time date_time
-		date_time.to_s(:short_day_with_time)
+	def short_day_with_time(date_time)
+		date_time.to_s(:short_day_with_time) unless date_time.nil?
 	end
 
 	# Top page login, signup and user welcome information

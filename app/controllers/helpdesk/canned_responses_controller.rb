@@ -1,8 +1,11 @@
 class Helpdesk::CannedResponsesController < ApplicationController
-  
+
+  include Helpdesk::ShowVersion
+
   before_filter :load_canned_response, :set_mobile, :only => :show
   before_filter :set_native_mobile,:only => [:show,:index]
   before_filter :load_ticket , :if => :ticket_present?
+  before_filter :set_show_version, :only => :show
 
   def index
     respond_to do |format|

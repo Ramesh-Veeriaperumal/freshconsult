@@ -68,7 +68,9 @@
 			</label>
 
 			<div id="confirm-followup" class="hide reason-followup"> 
-				<%= t(".trial_warning_message") %><br>
+				<%= current_account.subscription.active? ? 
+						t(".warning_message", :cancel_date => 14.days.from_now.strftime('%a, %b %d, %Y')).html_safe : 
+									t(".trial_warning_message") %><br>
 			</div>
 		</div>
 

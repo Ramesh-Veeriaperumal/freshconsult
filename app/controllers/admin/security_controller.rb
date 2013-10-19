@@ -22,7 +22,7 @@ class Admin::SecurityController <  Admin::AdminController
    						@account.whitelisted_ip.enabled : params[:account][:whitelisted_ip_attributes][:enabled])
    		@account.whitelisted_ip_attributes = params[:account][:whitelisted_ip_attributes]
 			@whitelisted_ips = @account.whitelisted_ip
-			@whitelisted_ips.load_ip_info(request.remote_addr)
+			@whitelisted_ips.load_ip_info(request.env['CLIENT_IP'])
    end
 
    if params[:ssl_type].present?

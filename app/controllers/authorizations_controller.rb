@@ -61,8 +61,8 @@ class AuthorizationsController < ApplicationController
       @app_name = origin['app_name'][0].to_s if origin.has_key?('app_name')
       @app_name ||= Integrations::Constants::APP_NAMES[@provider.to_sym] unless @provider.blank?
       if origin.has_key?('id') 
-        origin = origin['id'][0].to_i
-        @account_id = origin.to_i
+        @account_id = origin['id'][0].to_i
+        @portal_id = origin['portal_id'][0].to_i if origin.has_key?('portal_id') 
       elsif origin.has_key?('pid') # Fallback
         origin = origin['pid'][0].to_i
         portal = Portal.find(origin.to_i)
@@ -211,6 +211,7 @@ class AuthorizationsController < ApplicationController
 
   def create_for_sso(hash, user_account = nil)
     account = (user_account.blank?) ? current_account : user_account
+    account.make_current
     if !@current_user.blank? and !@auth.blank?
       if @current_user.deleted?
         show_deleted_message
@@ -256,7 +257,7 @@ class AuthorizationsController < ApplicationController
 
   def portal_url account=nil
       account ||= Account.find(@account_id || DomainMapping.find_by_domain(request.host).account_id)
-      portal = account.main_portal
+      portal = (@portal_id ? Portal.find(@portal_id) : account.main_portal)
       protocol  = portal.ssl_enabled? ? 'https://' : 'http://'
       return (protocol + portal.host)
   end

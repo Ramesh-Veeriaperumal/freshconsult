@@ -222,7 +222,7 @@
 <% end %>
 
 
-<% content_for :onload_script do -%> 	
+<% content_for :onload_script do -%>
 	validateOptions = {
 		onkeyup: false,
 		focusCleanup: true,
@@ -230,7 +230,12 @@
 		ignore:":not(:visible)"
     };
 	jQuery('#custom_ticket_form').validate(validateOptions);
-	
+
+    jQuery(".request_panel .cancel").on("click", function(e){
+        jQuery(".shared_attachment_list").empty();
+        jQuery(".attachments").css("display","none");
+    });
+
 	<% unless @draft.nil? %>
 		jQuery("#ReplyButton").trigger('click');
 		var isDirty= false;

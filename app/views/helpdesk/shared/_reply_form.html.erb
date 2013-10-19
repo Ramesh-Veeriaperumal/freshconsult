@@ -159,7 +159,7 @@
       <% if privilege?(:edit_ticket_properties) %>
         <%= submit_tag(t('ticket.reply_form.send_and_resolve'), :onclick => "jQuery('#reply_ticket_status_#{cntid}').val('4');" , :class => "uiButton", :id => "send_resolve_btn") %>
       <% end %>
-      <%= button_to_function(t('cancel'), "jQuery('##{cntid}').hide().trigger('visibility');jQuery('##{note_details_id}').show();cleardraft();jQuery('##{cntid}-body').destroyEditor();", :class => "uiButton" ) %>
+      <%= button_to_function(t('cancel'), "jQuery('##{cntid}').hide().trigger('visibility');jQuery('##{note_details_id}').show();cleardraft();jQuery('##{cntid}-body').destroyEditor();", :class => "uiButton cancel" ) %>
     </div>
 
 

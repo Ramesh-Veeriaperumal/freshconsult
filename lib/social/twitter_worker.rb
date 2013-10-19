@@ -22,10 +22,8 @@ class Social::TwitterWorker
     twitter_handles = account.twitter_handles.active   
     twitter_handles.each do |twt_handle|
       @twt_handle = twt_handle 
-      if twt_handle.capture_dm_as_ticket
-        fetch_direct_msgs twt_handle
-      end
-      if twt_handle.capture_mention_as_ticket
+      fetch_direct_msgs twt_handle  if twt_handle.capture_dm_as_ticket
+      if twt_handle.capture_mention_as_ticket && !realtime_enabled?(account)
         fetch_twt_mentions twt_handle
       end
     end
@@ -48,7 +46,7 @@ class Social::TwitterWorker
       end
     end
   end
-
+  
   def self.sandbox(return_value = nil)
       begin
         return_value = yield
@@ -77,5 +75,10 @@ class Social::TwitterWorker
       return return_value   
   end
    
+   private
+   
+      def self.realtime_enabled?(account)
+        account.subscription.trial?
+      end
 
 end

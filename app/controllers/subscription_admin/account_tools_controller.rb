@@ -3,7 +3,7 @@ class SubscriptionAdmin::AccountToolsController < ApplicationController
   include AdminControllerMethods
   include Redis::RedisKeys
 	include Redis::ReportsRedis
-  include Cache::Memcache::GlobalBlacklistedIp
+  include Cache::Memcache::GlobalBlacklistIp
 
   before_filter :set_selected_tab , :load_global_blacklisted_ips 
 

@@ -14,16 +14,17 @@ module Helpdesk::TicketActions
     return false if need_captcha && !(current_user || verify_recaptcha(:model => @ticket, 
                                                         :message => "Captcha verification failed, try again!"))
     build_ticket_attachments
-    return false unless @ticket.save
+    return false unless @ticket.save_ticket
 
     if params[:meta]
-      @ticket.notes.create(
+      note = @ticket.notes.build(
         :note_body_attributes => {:body => params[:meta].map { |k, v| "#{k}: #{v}" }.join("\n")},
         :private => true,
         :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
         :account_id => current_account.id,
         :user_id => current_user && current_user.id
       )
+      note.save_note
     end
     notify_cc_people cc_emails unless cc_emails.blank? 
     @ticket
@@ -140,7 +141,7 @@ module Helpdesk::TicketActions
     build_item
     move_attachments   
     move_dropboxes
-    if @item.save
+    if @item.save_ticket
       @note.destroy
       flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
     else

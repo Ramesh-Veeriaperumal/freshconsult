@@ -52,7 +52,7 @@ module Social::Gnip::DbUtil
 	    if action == RULE_ACTION[:add] && response
 	      handle.update_attribute(:gnip_rule_state, (handle.gnip_rule_state | rule_state))
 	    elsif action == RULE_ACTION[:delete]
-	      if handle.gnip_rule_state & rule_state
+	      if (handle.gnip_rule_state & rule_state > 0)
 	        handle.update_attribute(:gnip_rule_state, (handle.gnip_rule_state - rule_state))
 	      end
 	    end

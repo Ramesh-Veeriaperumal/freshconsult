@@ -76,7 +76,7 @@ module FreshdeskCore::Model
                           "sla_details", 
 
                         "social_facebook_pages", 
-                          "social_fb_posts", 
+                          "social_fb_posts",
 
                         "social_twitter_handles",
                           "social_tweets", 
@@ -98,7 +98,8 @@ module FreshdeskCore::Model
                         "users",
                           "admin_user_accesses",
                           "agents", 
-                          "customers", 
+                          "customers",
+                          "user_emails", 
                         
                         "votes", 
                         "va_rules", 
@@ -115,7 +116,6 @@ module FreshdeskCore::Model
     }            
 
   def perform_destroy(account)
-    add_churn(account) unless account.subscription_payments.blank?
     delete_jira_webhooks(account)
     clear_attachments(account)
     $redis_others.srem('user_email_migrated', account.id) #for contact merge delta
@@ -125,27 +125,6 @@ module FreshdeskCore::Model
   end
 
   private
-
-    def add_churn(account)
-      subscription = account.subscription
-      event = subscription_info(subscription).merge(deleted_event_info(subscription))
-
-      SubscriptionEvent.create(event)
-    end
-
-    def subscription_info(subscription)
-      SUBCRIPTION_INFO.inject({}) { |h, (k, v)| h[k] = subscription.send(v); h }
-    end
-
-    def deleted_event_info(subscription)
-      {
-        :account_id => subscription.account_id,
-        :code => CODES[:deleted],
-        :cmrr => (subscription.amount/subscription.renewal_period)
-      }
-    end
-
-
     def jira_enabled?(account)
       app_id = Integrations::Application.find_by_name('jira').id
       account.installed_applications.find_by_application_id(app_id)

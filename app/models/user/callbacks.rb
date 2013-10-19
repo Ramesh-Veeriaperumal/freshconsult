@@ -16,6 +16,7 @@ class User < ActiveRecord::Base
   after_commit_on_update :clear_agent_list_cache, :if => :agent?
   after_commit_on_destroy :clear_agent_list_cache, :if => :agent?
   after_commit_on_update :clear_agent_list_cache, :if => :helpdesk_agent_updated?
+  after_commit :clear_agent_name_cache
   
   before_update :bakcup_user_changes, :clear_redis_for_agent
   after_commit_on_update :update_search_index, :if => :customer_id_updated?

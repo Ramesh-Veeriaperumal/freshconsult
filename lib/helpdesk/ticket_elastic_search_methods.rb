@@ -34,12 +34,12 @@ module Helpdesk::TicketElasticSearchMethods
        
       def delete_from_es_notes
         Resque.enqueue(Search::Notes::DeleteNotesIndex, { :ticket_id => id, 
-                    :account_id => account_id}) if es_available? and ES_ENABLED
+                    :account_id => account_id}) if ES_ENABLED
       end
 
       def restore_es_notes
         Resque.enqueue(Search::Notes::RestoreNotesIndex, { :ticket_id => id, 
-                    :account_id => account_id}) if es_available? and ES_ENABLED
+                    :account_id => account_id}) if ES_ENABLED
       end
 
     end

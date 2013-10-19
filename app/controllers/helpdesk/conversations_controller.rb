@@ -13,7 +13,7 @@ class Helpdesk::ConversationsController < ApplicationController
   include Redis::RedisKeys
   include Redis::TicketsRedis
   
-  before_filter :build_note_body_attributes, :build_conversation, :sanitize_conversation
+  before_filter :build_note_body_attributes, :build_conversation
   before_filter :validate_fwd_to_email, :only => [:forward]
   before_filter :check_for_kbase_email, :set_quoted_text, :only => [:reply]
   before_filter :set_default_source, :set_mobile, :prepare_mobile_note,
@@ -28,7 +28,7 @@ class Helpdesk::ConversationsController < ApplicationController
     build_attachments @item, :helpdesk_note
     @item.send_survey = params[:send_survey]
     @item.include_surveymonkey_link = params[:include_surveymonkey_link]
-    if @item.save
+    if @item.save_note
       clear_saved_draft
       add_forum_post if params[:post_forums]
       begin
@@ -45,7 +45,7 @@ class Helpdesk::ConversationsController < ApplicationController
   
   def forward
     build_attachments @item, :helpdesk_note
-    if @item.save
+    if @item.save_note
       add_forum_post if params[:post_forums]
       flash[:notice] = t(:'fwd_success_msg')
       process_and_redirect
@@ -56,7 +56,7 @@ class Helpdesk::ConversationsController < ApplicationController
 
   def note
     build_attachments @item, :helpdesk_note
-    if @item.save
+    if @item.save_note
       flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
       process_and_redirect
     else
@@ -65,7 +65,7 @@ class Helpdesk::ConversationsController < ApplicationController
   end
 
   def twitter
-    if @item.save
+    if @item.save_note
       twt_type = params[:tweet_type] || :mention.to_s
       if send("send_tweet_as_#{twt_type}")
         flash[:notice] = t(:'flash.tickets.reply.success') 
@@ -79,7 +79,7 @@ class Helpdesk::ConversationsController < ApplicationController
   end
 
   def facebook
-    if @item.save
+    if @item.save_note
       send_facebook_reply
       process_and_redirect
     else
@@ -197,13 +197,6 @@ class Helpdesk::ConversationsController < ApplicationController
           activity_records = @parent.activities.activity_since(params[:since_id])
           @activities = stacked_activities(activity_records.reverse)
         end
-      end
-
-      def sanitize_conversation
-        Rails.logger.debug "::::::sanitize conversation start"
-        @item.note_body.load_full_text
-        @item.note_body.create_content
-        Rails.logger.debug "::::::sanitize conversation end"
       end
 
       def clear_saved_draft
