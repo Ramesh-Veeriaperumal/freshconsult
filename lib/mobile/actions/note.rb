@@ -26,7 +26,8 @@ module Mobile::Actions::Note
       }
     }
     options = {
-      :include => json_include
+      :include => json_include,
+      :methods => [ :formatted_created_at ]
     }
     to_json(options)
   end

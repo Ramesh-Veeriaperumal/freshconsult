@@ -44,7 +44,7 @@ module Mobile::Controllers::Ticket
         { :id => "deleted",      :name => t("helpdesk.tickets.views.deleted"),         :default => true }
       ]
       top_views_array = [].concat(default_views).concat(dynamic_views)
-      top_views_array.to_json;
+      top_views_array;
     end
     
     def get_summary_count
@@ -55,7 +55,7 @@ module Mobile::Controllers::Ticket
         { :id => "due_today",  :value => filter_count(:due_today),    :name => t("helpdesk.dashboard.summary.due_today")},
         { :id => "new",        :value => filter_count(:new),          :name => t("helpdesk.dashboard.summary.unassigned")}
       ]
-      summary_count_array.to_json;
+      summary_count_array;
     end
 
   private
