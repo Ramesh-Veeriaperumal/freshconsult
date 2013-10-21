@@ -11,7 +11,7 @@ class CustomersController < ApplicationController
   def index
     respond_to do |format|
       format.html  do
-        @customers =current_account.customers.filter(params[:letter],params[:page])
+        @customers =current_account.customers.filter(params[:letter],params[:page], 10)
       end
      format.xml  do
         @customers =current_account.customers.all

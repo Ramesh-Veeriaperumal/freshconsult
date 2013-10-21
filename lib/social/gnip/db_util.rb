@@ -11,22 +11,19 @@ module Social::Gnip::DbUtil
         :account_id => tag.account_id,
         :twitter_handle_id => tag.handle_id
       }
-      Sharding.select_shard_of(tag.account_id) do
-        account = Account.find_by_id(tag.account_id)
-        account.make_current if account
-      end
-      account = Account.current
-      handle = account.twitter_handles.find_by_id(tag.handle_id)
-      unless response
-        params = {
-          :handle => handle,
-          :action => RULE_ACTION[:delete],
-          :response => false
-        }
-        update_db(params)
-        requeue(args)
-      else
-        handle.update_attribute(:rule_tag, new_rule_tag) if handle
+      select_shard_and_account(args[:account_id]) do |account|
+        handle = account.twitter_handles.find_by_id(args[:twitter_handle_id])
+        unless response
+          params = {
+            :handle => handle,
+            :action => RULE_ACTION[:delete],
+            :response => false
+          }
+          update_db(params)
+          requeue(args)
+        else
+          handle.update_attribute(:rule_tag, new_rule_tag) if handle
+        end
       end
     end
   end
@@ -39,6 +36,22 @@ module Social::Gnip::DbUtil
    
    
   private
+  
+  
+    def select_shard_and_account(account_id)
+      begin
+        Sharding.select_shard_of(account_id) do
+          account = Account.find_by_id(account_id)
+          account.make_current if account
+        end
+        account = Account.current
+        yield(account)
+      rescue ActiveRecord::RecordNotFound => e
+        puts "Could not find account with id #{account_id}"
+        NewRelic::Agent.notice_error(e, :custom_params => {:account_id => account_id,
+          :description => "Could not find valid account id in DbUtil"})
+      end
+    end
    
 	  def update_rule(handle, value, tag)
 	    handle.update_attributes(:rule_value => value, :rule_tag => tag) if handle && !@replay

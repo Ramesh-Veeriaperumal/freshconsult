@@ -76,12 +76,6 @@ strong {
   padding-right: 20px;
   padding-left:20px;
 }
-.pagination ul > li > a:hover{ 
-        .arrow-up {border-bottom-color: #fff;}
-        .arrow-right {border-left-color: #fff;}         
-        .arrow-down {border-top-color: #fff;}
-        .arrow-left {border-right-color: #fff;}    
-}
 .vertical-alignment{
   display: inline-block;
   vertical-align: middle;
@@ -321,15 +315,6 @@ html.touch .dialog-well .actions {
 
 
 /*  End of Button overriding */
-.pagination{
-  border-bottom:0 ;
-  a{
-   font-weight:normal;
-   &:hover, &:focus{
-    text-decoration:none;
-   }
-  }
-}
 
 /* This class overriding app-bootstrap css. */
 

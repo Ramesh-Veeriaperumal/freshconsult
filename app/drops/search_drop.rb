@@ -26,29 +26,15 @@ class SearchDrop < BaseDrop
 	end
 
 	def filters
-		def_list = []
+		def_list = [
+			[:solutions, solutions_support_search_path(:term => term), @portal.has_solutions],
+			[:topics, topics_support_search_path(:term => term), @portal.has_forums],
+			[:tickets, tickets_support_search_path(:term => term), @portal.has_user_signed_in]
+		].map{ |t| {:name => t[0], :url => t[1]} if(t[2]) }.compact
 
-		def_list.push({ :name => :solutions,
-	    			 	:url => h(solutions_support_search_path(:term => term)) }) if
-				( allowed_in_portal? :open_solutions )
-
-		def_list.push({ :name => :topics,
-	    			 		:url => h(topics_support_search_path(:term => term)) }) if
-				( allowed_in_portal? :open_forums )			
-
-		if(portal_user)
-			def_list.push({ :name => :tickets,
-	    			  		:url => h(tickets_support_search_path(:term => term)) })
-        end
-
-        if(def_list.size > 1)
-			def_list.unshift({ :name => :all, 
-		    			  	:url => h(support_search_path(:term => term)) })
-
-			def_list
-		else
-			[]
-		end		
+		(def_list.size > 1) ?
+			def_list.unshift({  :name => :all, 
+		    			  		:url => h(support_search_path(:term => term)) }) : []
 	end
 
 end

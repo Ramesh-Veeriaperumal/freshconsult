@@ -50,6 +50,7 @@
                     &:hover{
                         td{
                             background-color: #f6f6f6;
+                            @extend .hover-color-animation;
                         }
                     }
                 }
@@ -58,6 +59,7 @@
                 &:hover{
                     td{
                         background-color: #FEFDEE;
+                        @extend .hover-color-animation;
                     }
                 }
             }
@@ -72,11 +74,10 @@
             padding-right: 5px;
         }
         .pagination{
-            background:#f6f6f6;
-            border-top:1px solid $tableBorder; 
+            //border-top:1px solid $tableBorder; 
             margin:0px;  
             padding:10px; 
-            padding-bottom:0;
+            padding-bottom:0px;
             line-height:0;    
         }  
         .list-page-avatar 
