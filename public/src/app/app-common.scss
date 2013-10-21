@@ -2304,36 +2304,7 @@ a.page_title{
 	}
 }
 
-.pagination{
-   background:#f1f1f1;
-   padding:5px 8px 8px 0;
-	border-bottom:1px solid #dfdfdf;
-	border-top:1px solid #ffffff;
-   text-align: center;
-   padding: 1em;
-   cursor: default;
-   a, span { padding: 0.2em 0.3em; }
-   .disabled { color: #aaaaaa; }
-   .current {
-       font-style: normal;
-       font-weight: bold;
-       background-color: #bebebe;
-       display: inline-block;
-       width: 1.4em;
-       height: 1.4em;
-       line-height: 1.5;
-       -moz-border-radius: 1em;
-       -webkit-border-radius: 1em;
-       border-radius: 1em;
-       text-shadow: rgba(255, 255, 255, 0.8) 1px 1px 1px; 
-   }
-	a{
-		@include link-colors(#336699, $default_txt_color, #336699, #336699);
-		font-weight:bold;
-		text-decoration:none;
-	}	
-	a:hover, a:focus { text-decoration: underline; }
-}
+
 
 .meta_info{
 	font-size:10px;
