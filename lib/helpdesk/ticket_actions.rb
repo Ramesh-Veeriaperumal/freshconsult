@@ -141,7 +141,7 @@ module Helpdesk::TicketActions
     build_item
     move_attachments   
     move_dropboxes
-    if @item.save
+    if @item.save_ticket
       @note.destroy
       flash[:notice] = I18n.t(:'flash.general.create.success', :human_name => cname.humanize.downcase)
     else

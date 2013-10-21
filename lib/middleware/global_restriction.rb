@@ -8,8 +8,9 @@ class Middleware::GlobalRestriction
 
   def call(env)
     ip = blacklisted_ips.ip_list
-    request_ip = env['REMOTE_ADDR']
-    if ip && ip.include?(request_ip)
+    req = Rack::Request.new(env)
+    env['CLIENT_IP'] = req.ip()
+    if ip && ip.include?(env['CLIENT_IP'])
   		@status, @headers, @response = [302, {"Location" => "/unauthorized.html"}, 
                                       'Your IPAddress is bocked by the administrator']
       return [@status, @headers, @response]

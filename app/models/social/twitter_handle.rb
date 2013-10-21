@@ -6,10 +6,16 @@ class Social::TwitterHandle < ActiveRecord::Base
   serialize  :search_keys, Array
   belongs_to :product
   belongs_to :account 
+  
+  has_one :avatar, 
+    :as => :attachable, 
+    :class_name => 'Helpdesk::Attachment', 
+    :dependent => :destroy
 
   before_create :add_default_search
   before_save :set_default_state
   before_update :cache_old_model
+  after_commit_on_create :construct_avatar
   after_commit_on_create :subscribe_to_gnip, :if => :capture_mention_as_ticket?
   after_commit_on_update :update_gnip_subscription
   after_commit_on_destroy :unsubscribe_from_gnip, :if => :capture_mention_as_ticket?
@@ -55,6 +61,7 @@ class Social::TwitterHandle < ActiveRecord::Base
   named_scope :active, :conditions => { :state => TWITTER_STATE_KEYS_BY_TOKEN[:active] }
   named_scope :disabled, :conditions => {:state => TWITTER_STATE_KEYS_BY_TOKEN[:disabled] }
   named_scope :reauth_required, :conditions => {:state => TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required]}
+  named_scope :capture_mentions, :conditions => {:capture_mention_as_ticket => true}
 
   def search_keys_string
     search_keys.blank? ? "" : search_keys.join(",")
@@ -82,6 +89,12 @@ class Social::TwitterHandle < ActiveRecord::Base
 
   def cache_old_model
     @old_handle = Social::TwitterHandle.find id
+  end
+    
+  def construct_avatar
+    args = {:account_id => self.account_id,
+            :twitter_handle_id => self.id}
+    Resque.enqueue(Social::UploadAvatarWorker,args)
   end
 
  # Gnip related functions starts here

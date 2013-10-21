@@ -1,0 +1,7 @@
+<p>
+  SQS threshold has been reached at <%= Time.zone.now.utc %>. Please look into it immediately.
+  
+  <p> Queue Name :   <%= @params[:queue_name].inspect %> </p>
+  <p> Msgs in queue: <%= @params[:msgs_in_queue].inspect %> </p>
+  
+</p>

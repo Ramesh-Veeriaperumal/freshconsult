@@ -6,7 +6,7 @@ module Conversations::Twitter
         twitter =  TwitterWrapper.new(@reply_twitter).get_twitter
         latest_comment = ticket.notes.latest_twitter_comment.first
         status_id = latest_comment.nil? ? ticket.tweet.tweet_id : latest_comment.tweet.tweet_id
-        twt = twitter.update(validate_tweet(note.body, ticket), {:in_reply_to_status_id => status_id})
+        twt = twitter.update(validate_tweet(note.body.strip, ticket), {:in_reply_to_status_id => status_id})
         process_tweet note, twt, reply_twitter_handle(ticket)
       end
     }
@@ -21,7 +21,7 @@ module Conversations::Twitter
         latest_comment = ticket.notes.latest_twitter_comment.first
         status_id = latest_comment.nil? ? ticket.tweet.tweet_id : latest_comment.tweet.tweet_id    
         req_twt_id = latest_comment.nil? ? ticket.requester.twitter_id : latest_comment.user.twitter_id
-        resp = twitter.direct_message_create(req_twt_id, note.body)
+        resp = twitter.direct_message_create(req_twt_id, note.body.strip)
         process_tweet note, resp, reply_twitter_handle(ticket)
       end
     }

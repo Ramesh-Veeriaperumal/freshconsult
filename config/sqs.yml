@@ -1,0 +1,8 @@
+development:
+  twitter_realtime_queue: social_gnip_tweet_dev
+staging:
+  twitter_realtime_queue: social_gnip_tweet_staging
+production:
+  twitter_realtime_queue: social_gnip_tweet_production
+test:
+  twitter_realtime_queue: social_gnip_tweet_test
