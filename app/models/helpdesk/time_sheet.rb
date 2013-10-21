@@ -1,6 +1,7 @@
 class Helpdesk::TimeSheet < ActiveRecord::Base
 
   include Va::Observer::Util
+  include ApplicationHelper
 
   set_table_name "helpdesk_time_sheets"
   
@@ -137,7 +138,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     if deep
       self[:ticket_id] = self.workable.display_id
       self[:agent_name] = self.agent_name
-      self[:timespent] = sprintf( "%0.02f", self.time_spent.to_f/3600) # converting to hours as in UI
+      self[:timespent] = get_time_in_hours(self.time_spent) # converting to hours as in UI
       self[:agent_email] = user.email
       self[:customer_name] = self.customer_name
       self[:contact_email] = workable.requester.email

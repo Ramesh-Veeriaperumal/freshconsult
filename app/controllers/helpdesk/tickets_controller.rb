@@ -155,23 +155,16 @@ class Helpdesk::TicketsController < ApplicationController
         unless @response_errors.nil?
           render :json => {:errors => @response_errors}.to_json
         else
-          json = "{ticket:["; sep=""
-          @items.each { |tic| 
+           tickets = Array.new
+           @items.each do |tic| 
             #Removing the root node, so that it conforms to JSON REST API standards
             # 19..-2 will remove "{helpdesk_ticket:" and the last "}"
-            json << sep+"#{tic.to_mob_json_index[19..-2]}"
-            sep = ","
-          }
-          json << "]"
-          json <<  ",summary:"
-          json << get_summary_count
-          json << ",top_view:"
-          json << top_view
-		      json << ", can_delete_ticket:" 
-		      json << "#{current_user.can_delete_ticket}"
-          json << ", agent_portal_name:"
-          json << "\"#{current_account.portal_name.to_s}\""
-          render :json => json + "}"
+            tickets <<  JSON.parse(tic.to_mob_json_index[19..-2]).as_json(false)
+           end
+
+          response = "{#{{:ticket => tickets}.to_json[1..-2]},#{current_account.to_json(:only=>[:id],:methods=>[:portal_name])[1..-2]},#{current_user.to_json(:only=>[:id], :methods=>[:display_name, :can_delete_ticket])[1..-2]},#{{:summary => get_summary_count}.to_json[1..-2]},#{{:top_view => top_view}.to_json[1..-2]}"
+          response << "}"
+          render :json => response
         end
       end
     end
@@ -278,6 +271,7 @@ class Helpdesk::TicketsController < ApplicationController
         response = "{#{@item.to_mob_json(false,false)[1..-2]},#{current_user.to_json(:only=>[:id], :methods=>[:can_reply_ticket, :can_edit_ticket_properties, :can_delete_ticket])[1..-2]},#{{:subscription => !@subscription.nil?}.to_json[1..-2]},#{{:last_reply => last_reply}.to_json[1..-2]},#{{:last_forward => last_forward}.to_json[1..-2]},#{{:ticket_properties => ticket_props}.to_json[1..-2]}"
         response << ",#{@ticket_notes[0].to_mob_json[1..-2]}" unless @ticket_notes[0].nil?
         response << "}";
+
         render :json => response
       }
       format.mobile {
@@ -351,9 +345,6 @@ class Helpdesk::TicketsController < ApplicationController
         }
         format.json { 
             render :json => request.xhr? ? { :success => true, :redirect => (params[:redirect] && params[:redirect].to_bool) }.to_json  : @item.to_json({:basic => true}) 
-        }
-        format.mobile { 
-          render :json => { :success => true, :item => @item }.to_json 
         }
       end
     else

@@ -21,10 +21,12 @@ module Social::Gnip::Constants
 		:production => "production"
 	}
 	
-	TIME_IN_SEC = {
-		:max_time_in_sqs => 300,
-		:gnip_timeout => 60,
-		:replay_stream_wait_time => 30
+	# time in sec
+	TIME = { 
+		:max_time_in_sqs => 240,
+		:replay_stream_timeout => 60,
+		:reconnect_timeout => 30,
+		:replay_stream_wait_time => 1800
 	}
 
 	MSG_COUNT_FOR_UPDATING_REDIS = 15

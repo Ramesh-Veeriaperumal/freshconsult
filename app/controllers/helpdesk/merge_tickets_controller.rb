@@ -50,6 +50,9 @@ class Helpdesk::MergeTicketsController < ApplicationController
         		end
       		end
       		items = es_items.results
+		else
+			scope = current_account.tickets.permissible(current_user)
+			items = scope.send( params[:search_method], params[:search_string] ) if SEARCH_METHODS.include?(params[:search_method])
 		end
 		r = {:results => items.map{|i| {
 				:display_id => i.display_id, :subject => h(i.subject), :title => h(i.subject),

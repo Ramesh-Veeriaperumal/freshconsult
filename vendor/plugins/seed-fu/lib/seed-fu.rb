@@ -1,8 +1,8 @@
 module SeedFu
   
   class PopulateSeed
-    def self.populate(fixture_path=nil)
-      fixture_path = ENV["FIXTURE_PATH"] ? ENV["FIXTURE_PATH"] : "db/fixtures" unless fixture_path
+    def self.populate
+      fixture_path = ENV["FIXTURE_PATH"] ? ENV["FIXTURE_PATH"] : "db/fixtures"
   
       seed_files = (
         ( Dir[File.join(RAILS_ROOT, fixture_path, '*.rb')] +

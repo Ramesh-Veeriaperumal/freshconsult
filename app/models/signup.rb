@@ -109,7 +109,6 @@ class Signup < ActivePresenter::Base
 
     def populate_seed_data
       PopulateAccountSeed.populate_for(account)
-      Resque.enqueue(Workers::PopulateSecondarySeed, { :account_id => account.id, :user_id => user.id })
     end
   
     def support_email

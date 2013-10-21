@@ -55,7 +55,7 @@ GIT
       rest-client (~> 1.6)
 
 GIT
-  remote: git@github.com:mperham/memcache-client.git
+  remote: git://github.com/mperham/memcache-client.git
   revision: a014dc272d7cb79306961c0806e2da09acb6d002
   specs:
     memcache-client (1.8.5)

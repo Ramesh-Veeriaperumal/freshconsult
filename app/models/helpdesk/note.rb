@@ -24,6 +24,7 @@ class Helpdesk::Note < ActiveRecord::Base
   named_scope :newest_first, :order => "created_at DESC"
   named_scope :visible, :conditions => { :deleted => false } 
   named_scope :public, :conditions => { :private => false } 
+  named_scope :private, :conditions => { :private => true } 
   
   named_scope :latest_twitter_comment,
               :conditions => [" incoming = 1 and social_tweets.tweetable_type =

@@ -118,6 +118,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
             :conditions => ["helpdesk_tags.name in (?)",tag_names] } 
   }            
 
+  
+  named_scope :twitter_dm_tickets,
+              :joins => "INNER JOIN social_tweets on helpdesk_tickets.id = social_tweets.tweetable_id and 
+                  helpdesk_tickets.account_id = social_tweets.account_id",
+              :conditions => ["social_tweets.tweetable_type = ? and social_tweets.tweet_type = ? ",
+                      'Helpdesk::Ticket','dm']
+              
   named_scope :spam_created_in, lambda { |user| { :conditions => [ 
     "helpdesk_tickets.created_at > ? and helpdesk_tickets.spam = true and requester_id = ?", user.deleted_at, user.id ] } }
 
@@ -407,6 +414,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   def latest_public_comment
     notes.visible.public.newest_first.first
+  end
+
+  def latest_private_comment
+    notes.visible.private.newest_first.first
   end
   
   def liquidize_comment(comm)

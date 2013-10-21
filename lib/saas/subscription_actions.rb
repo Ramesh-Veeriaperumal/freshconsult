@@ -62,6 +62,11 @@ class SAAS::SubscriptionActions
    end
    
    def drop_twitter_handles(account)
+
+    account.twitter_handles.capture_mentions.each do |twt_handle|
+      twt_handle.unsubscribe_from_gnip
+    end
+    
      account.twitter_handles.destroy_all
    end
 

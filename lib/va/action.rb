@@ -129,7 +129,7 @@ class Va::Action
       note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]
       note.incoming = false
       note.private = "true".eql?(act_hash[:private])
-      note.save!
+      note.save_note!
       
       add_activity(note.private ? "Added a <b>private note</b>" : "Added a <b>note</b>")
     end

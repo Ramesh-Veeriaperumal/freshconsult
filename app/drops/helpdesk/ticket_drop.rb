@@ -112,7 +112,11 @@ class Helpdesk::TicketDrop < BaseDrop
 	end
 
 	def latest_public_comment
-		@source.liquidize_comment(@source.latest_public_comment)
+		@last_public_comment ||= @source.liquidize_comment(@source.latest_public_comment)
+	end
+
+	def latest_private_comment
+		@last_private_comment ||= @source.liquidize_comment(@source.latest_private_comment)
 	end
 
 	def public_comments
