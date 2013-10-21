@@ -31,7 +31,12 @@ class Mobile::TicketsController < ApplicationController
     end
     render :json => json + "]"
   end
-  
+
+  def load_reply_emails
+    reply_emails = current_account.features?(:personalized_email_replies) ? current_account.reply_personalize_emails(current_user.name) : current_account.reply_emails
+    render :json => reply_emails
+  end
+
   private
 
   def customer_view_list
