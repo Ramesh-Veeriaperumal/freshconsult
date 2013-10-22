@@ -1,7 +1,4 @@
 class Subscription::AddAffiliateSubscription
-  extend Resque::AroundPerform
-
-  @queue = "add_affiliate_subscription"
 
   class << self
 

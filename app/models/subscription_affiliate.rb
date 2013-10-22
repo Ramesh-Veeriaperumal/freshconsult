@@ -36,6 +36,12 @@ class SubscriptionAffiliate < ActiveRecord::Base
       :name => "Huddle Buy",
       :affiliate_param => "huddlebuy.co.uk/goldcard",
       :token => "huddlebuy"
+    },
+
+    :flexjobs => {
+      :name => "Flexjobs",
+      :affiliate_param => "flexjobs.com/members/savings",
+      :token => "flexjobs"
     }
   }
   
@@ -75,6 +81,8 @@ class SubscriptionAffiliate < ActiveRecord::Base
           find_by_token(AFFILIATES[:grasshopper][:token])
         when huddlebuy_subscription?(affiliate_param)
           find_by_token(AFFILIATES[:huddlebuy][:token])
+        when flexjobs_subscription?(affiliate_param)
+          find_by_token(AFFILIATES[:flexjobs][:token])
         else
           nil
       end
