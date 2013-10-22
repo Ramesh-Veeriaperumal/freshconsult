@@ -53,7 +53,11 @@ body, .feedback-wrapper{
 		background:#fff;
 		border-right: 1px solid #e8e8e8;
 		border-radius: 0;
+		text-align:left;
 		border-bottom-left-radius: 6px;
+		.btn{
+			margin-top: 5px;
+		}
 	}
 	.modal-body{
 		overflow-x:hidden; 
@@ -165,9 +169,10 @@ body, .feedback-wrapper{
 .panel-content{ 
 	padding:0 1em; 
 	.help-text{ 
-		margin-bottom: 5px;  
-		max-height: 60px;
+		margin-bottom: 2px;  
+		max-height: 52px;
 		overflow: hidden;
+		line-height: 18px;
 	}
 }
 
@@ -254,9 +259,10 @@ body, .feedback-wrapper{
 
 .copyright{
 	float: left;
-	margin-top: 5px;
-	margin-left: 5px;
+	margin-top: 2px;
 	font-size: 12px;
+	line-height:18px;
+	text-align: left;
 	a{ text-decoration: underline; }
 	a:hover{ text-decoration: none; }
 	a, a:hover{ color: inherit;  }

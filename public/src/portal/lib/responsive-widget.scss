@@ -124,6 +124,7 @@ $animation-type: ease-in;
 					}			
 					h3{
 						font-weight: 700;
+						line-height: 1.5em;
 					}
 				}
 				.modal-footer{
@@ -132,6 +133,13 @@ $animation-type: ease-in;
 					@include box-shadow(none);
 					padding-top: 10px;
 					padding-bottom:10px; 
+					.btn{margin-top:0;}
+					.copyright{
+						width: 65%;
+						.fw-privacy-policy{
+							display: none;
+						}
+					}
 				}
 				.modal-panel{
 					display: block; 
