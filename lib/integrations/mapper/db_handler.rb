@@ -17,7 +17,7 @@ class Integrations::Mapper::DBHandler
   end
 
   def save(data, config)
-    data.save!
+    data.is_a?(Helpdesk::Ticket) ? data.save_ticket! :  data.save_note!
   end
 
   def create(data, config)
