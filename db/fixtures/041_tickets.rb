@@ -14,5 +14,6 @@ end
 Helpdesk::TicketBody.seed(:account_id, :ticket_id) do |s|
 	s.ticket_id = ticket.id
 	s.account_id = account.id
+  s.description = 'This is a sample ticket, feel free to delete it.'
 	s.description_html = '<div>This is a sample ticket, feel free to delete it.</div>'
 end
