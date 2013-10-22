@@ -175,7 +175,7 @@ es:
       desc: "Puede ver la Información de contacto desde SugarCRM en Freshdesk."
       form: 
         domain: "URL de la cuenta de SugarCRM"
-        domain_info: "Por ejemplo, si su URL de SugarCRM es &lt;strong&gt;http://mycompany.xyz/sugar/index.php?module=Administration&amp;action=index&lt;/strong&gt;, introduzca &lt;strong&gt; http://mycompany.xyz/sugar &lt;/strong&gt;&lt;br /&gt;&lt;br /&gt; Nota: La variante en las instalaciones de SugarCRM debe estar conectada a Internet. &lt;/span&gt;"
+        domain_info: "Por ejemplo, si su URL de SugarCRM es <strong>http://mycompany.xyz/sugar/index.php?module=Administration&action=index</strong>, introduzca <strong> http://mycompany.xyz/sugar </strong><br /><br /> Nota: La variante en las instalaciones de SugarCRM debe estar conectada a Internet. </span>"
         widget_title: "Título del widget"
         username: "Nombre de usuario"
         password: Contraseña
@@ -192,15 +192,15 @@ es:
       detect_error: "Imposible de detectar version de Batchbook, Porfavor verifique el dominio"
       form: 
         domain: "Dominio de Batchbook"
-        domain_info: "Por ejemplo, si la URL de tu Batchbook es &lt;strong&gt;http://micompañís.batchbook.com/&lt;/strong&gt; , introducir &lt;strong&gt; micompañía &lt;/strong&gt;. &lt;/span&gt;"
+        domain_info: "Por ejemplo, si la URL de tu Batchbook es <strong>http://micompañís.batchbook.com/</strong> , introducir <strong> micompañía </strong>. </span>"
         api_key: "API Key"
-        api_key_info: "Tu API de Batchbook puedes encontrarla siguiendo el enlace &lt;i&gt; tu cuenta &lt;/i&gt; en Batchbook"
+        api_key_info: "Tu API de Batchbook puedes encontrarla siguiendo el enlace <i> tu cuenta </i> en Batchbook"
         version: 
           label: Version
           classic: Clasica
           new: Nueva
           auto_detect: "Detectar automaticamente"
-        version_info: "En los campos puedes escoger la version entre &lt;i&gt;Batchbook Clasico &lt;/i&gt; y &lt;i&gt;Batchbook nuevo&lt;/i&gt;"
+        version_info: "En los campos puedes escoger la version entre <i>Batchbook Clasico </i> y <i>Batchbook nuevo</i>"
         widget_title: "Titulo del Widget"
     surveymonkey: 
       enable_integration_text: "Pulsa sobre el botón Activar para conectar con tu cuenta SurveyMonkey y configurar la integración."
@@ -224,7 +224,7 @@ es:
       desc: "Ver la información de contacto de Highrise CRM dentro Freshdesk al resolver ticket"
       form: 
         domain: "Dominio Highrise:"
-        domain_info: "Por ejemplo, si la URL de tu Highrise URL es &lt;strong&gt;http://micompañía.highrisehq.com/&lt;/strong&gt; , introducir &lt;strong&gt; micompañía &lt;/strong&gt;. &lt;/span&gt;"
+        domain_info: "Por ejemplo, si la URL de tu Highrise URL es <strong>http://micompañía.highrisehq.com/</strong> , introducir <strong> micompañía </strong>. </span>"
         api_key: "API KEY"
         api_key_info: "Su API Key de Highrise debe encontrarla en Highrise, por favor copie y pegue esta API aqui"
         widget_title: "Titulo de Widget"
@@ -396,11 +396,11 @@ es:
   signup_up_with_us: "Regístrate con nosotros"
   signup_help_information: "Una vez te hayas registrado, tendrás acceso total a nuestras soluciones y preguntas frecuentes, podrás hacer preguntas y aprender de nuestra comunidad de usuarios. También puedes resaltar problemas de ayuda y seguir su estado."
   trial_expired_on: "Su prueba expiró el "
-  trial_will_expire_in: "Su prueba terminará en &lt;b&gt;%{no_of_days}&lt;/b&gt; "
+  trial_will_expire_in: "Su prueba terminará en <b>%{no_of_days}</b> "
   trial_one_more_day: "Le queda 1 día de prueba"
   trail_expiry_during_trial: "Actualize a una cuenta de pago o use Freshdesk gratis seleccionando un plan en cualquier momento"
   trail_expiry_one_more_day: "Seleccione un plan de pago o gratuito para disfrutar de su acceso a Freshdesk de forma ininterrumpida"
-  trail_expiry_after_trial: "Su periodo de prueba sera anulado en &lt;b&gt;%{no_of_days}&lt;/b&gt;. Elija un plan para continuar usando Freshdesk.\n"
+  trail_expiry_after_trial: "Su periodo de prueba sera anulado en <b>%{no_of_days}</b>. Elija un plan para continuar usando Freshdesk.\n"
   hard_pressed_for_time: "¿No tiene tiempo? Obtenga avisos, trucos y mejores prácticas de un experto en Freshdesk"
   schedule_a_complimentary_session: "Programar una reunión de cortesía"
   choose_a_plan: "Elija un plan"
@@ -642,8 +642,8 @@ es:
       master: Master
       guru: Gurú
     notifications: 
-      newlevel: "&lt;b&gt;Hurra! &lt;/b&gt;&lt;br/&gt;Ahora te has convertido en &lt;b&gt;%{name}&lt;/b&gt;."
-      achieved_quest: "&lt;b&gt;Hurra!&lt;/b&gt;&lt;br/&gt;Has alcanzado el &lt;b&gt;%{name}&lt;/b&gt;"
+      newlevel: "<b>Hurra! </b><br/>Ahora te has convertido en <b>%{name}</b>."
+      achieved_quest: "<b>Hurra!</b><br/>Has alcanzado el <b>%{name}</b>"
     leaderboard: 
       mvp_trophie_label: "Jugador más valioso"
       mvp_trophie_info: "Agente con mayor puntuacion general del mes"
@@ -692,7 +692,7 @@ es:
       fcr_count: "Resolución al primer contacto"
       fcr_percent: FCR%
       avg_1st_response_time: "Tiempo medio de primera respuesta"
-      avg_response_time: "Tiempo medio de respuesta &lt;br&gt;"
+      avg_response_time: "Tiempo medio de respuesta <br>"
       helptext: "Las estadísticas calculadas en el informe son con respecto al número de tickets resueltos. <br /> Los tickets resueltos en SLA se resumen en &quot;Resolución a tiempo&quot;. <br /> La columna &quot;Resolución al primer contacto&quot; muestra los tickets que se han resuelto en la primera respuesta.<br /> El &quot;Tiempo medio de primera respuesta&quot; muestra el tiempo transcurrido entre el momento que el ticket se creó y el momento en el que el agente respondió por primera vez."
     date_ranges: 
       today: Hoy
@@ -853,9 +853,9 @@ es:
         save: "Guardar misión"
         pick_badge: "Elegir insignia"
         change: Cambiar
-        ticket: "Resolviendo&lt;br /&gt;&lt;strong&gt;Tickets&lt;/strong&gt;"
-        solution: "Publicando&lt;br /&gt;&lt;strong&gt;Soluciones&lt;/strong&gt;"
-        forum: "Conecta la&lt;br /&gt;&lt;strong&gt;Comunidad&lt;/strong&gt;"
+        ticket: "Resolviendo<br /><strong>Tickets</strong>"
+        solution: "Publicando<br /><strong>Soluciones</strong>"
+        forum: "Conecta la<br /><strong>Comunidad</strong>"
     gamification: 
       new_quest: "Nueva misión"
       fresh_arcade: "¿Qué es la galería Freshdesk?"
@@ -871,7 +871,7 @@ es:
         quest: Búsquedas
         quest_info1: "Los retos representan el estado de las metas que tu has puesto a tus agentes, completando las cuales tus agentes serán premiados con medallas de honor."
         quest_info2: "Todos los retos estan activados por defecto. Puedes elegir desactivar los que no quieras.Si quieres añadir mas retos o crear retos especificos a tus metas, pincha en 'Nuevo reto', y podrás crear un nuevo reto con las condiciones que tu quieras."
-        quest_form_info1: "Elije el tipo de reto para tus agentes. Puede ser uno de estos tres:&lt;br /&gt; a) Resolviendo Tickets &lt;br /&gt; b) Publicando soluciones y &lt;br /&gt; c) Contribuyendo en foros"
+        quest_form_info1: "Elije el tipo de reto para tus agentes. Puede ser uno de estos tres:<br /> a) Resolviendo Tickets <br /> b) Publicando soluciones y <br /> c) Contribuyendo en foros"
         quest_form_info2: "Cuando este hecho, elige el criterio del reto (Que tiene que hacer el agente) y añade las condiciones, especificando cual le hará ganar la condecoración,"
         quest_form_info3: "Elige los puntos que ganará tu agente y la insignia con la que será recompensado. Finalmente, dale un nombre a tu reto y da una pequeña descripción de el."
         quest_form_info4: "Pulsa en 'Guardar reto\" para guardar tu configuración"
@@ -891,9 +891,9 @@ es:
         enable_label: "Jueguificacion de Agentes"
         title_points_configuration: "Configuración de Puntos"
         title_ticket_points: "Puntos de Ticket"
-        fast_resolution: "Rápido &lt;span&gt;(&lt; 1 hr)&lt;/span&gt;"
+        fast_resolution: "Rápido <span>(< 1 hr)</span>"
         ontime_resolution: "A tiempo <span>(Sin SLA)</span>"
-        late_resolution: "Demora &lt;span&gt;(Atrasado)&lt;/span&gt;"
+        late_resolution: "Demora <span>(Atrasado)</span>"
         bonus_points: "Puntos de bonificación"
         firstcall_resolution: "Resolución primer llamada"
         happy_customer: "Cliente Satisfecho"
@@ -937,7 +937,7 @@ es:
         send_test_mail_confirm_yes: "Sí, lo recibí."
         send_test_mail_confirm_no: "No, no veo ningún ticket."
         send_test_mail_yes_response: "¡Muy bien! Has configurado con éxito tu ayuda por email con Freshdesk. ¡Qué todo vaya bien!"
-        send_test_mail_response_no1: "Parece que se produjo un problema -&gt;"
+        send_test_mail_response_no1: "Parece que se produjo un problema ->"
         send_test_mail_response_no2: "Aprenda cómo"
         send_test_mail_response_no_3: "<strong>¡Vaya! Parece que hay un problema </strong><br>Revisa tu regla de reenvio para asegurarte de que está bien. Si no recibes un ticket de prueba en un par de minutos, <a href=\"https://support.freshdesk.com/\" target=\"_blank\">ponte en contacto con nosotros</a>."
       index: 
@@ -945,16 +945,16 @@ es:
         send_test_mail_info2: "Así es<a href='https://support.google.com/mail/bin/answer.py?hl=en&answer=10957' target='_blank'>cómo puedes hacerlo</a>."
         title_message: "Inaugura tu ayuda al cliente en cuatro pasos..."
         support_email_title: "e-mail <br> de soporte"
-        agents_title_1: "Añadiendo&lt;br&gt; agentes"
-        rebrand_title: "Logo&lt;br&gt;y colores"
-        social_title_1: "Vuélvete &lt;br&gt; social"
+        agents_title_1: "Añadiendo<br> agentes"
+        rebrand_title: "Logo<br>y colores"
+        social_title_1: "Vuélvete <br> social"
         skip_text: "No gracias, llévame a mi propio servicio de asistencia."
         back_link: Atrás
         next_link: Sig.
         next_alt_text: "¡A por ello!"
         next_please_wait: "Por favor espere..."
         support_email_subtitle: "Agregar tu principal dirección de correo de ayuda"
-        support_email_submsg: "Está será también la dirección de respuesta por defecto cuando respondas a &lt;br&gt;dudas desde Freshdesk."
+        support_email_submsg: "Está será también la dirección de respuesta por defecto cuando respondas a <br>dudas desde Freshdesk."
         save_text: Guardar
         agents_subtitle: "Invita a tu equipo a unirse a la diversión"
         agent_title_info: "Agregar emails de tus compañeros de equipo para invitarles a Freshdesk. Separar las direcciones con una coma."
@@ -1014,7 +1014,7 @@ es:
         rebrand_header_empty: "El código de colores del encabezado es obligatorio."
         rebrand_tab_empty: "El código de colores de la pestaña es obligatorio."
         rebrand_bg_empty: "El código de colores del fondo es obligatorio."
-        agent_email_taken: "El siguiente correo electrónico ya está tomado:&lt;br&gt; %{emails}"
+        agent_email_taken: "El siguiente correo electrónico ya está tomado:<br> %{emails}"
         agent_email_exist: "El correo electrónico ya está tomado."
         agent_email_partial: "Parcialmente correcto."
         agent_email_sending: "Enviando invitaciones..."
@@ -1106,7 +1106,7 @@ es:
       edit: 
         title: "Observador - Editar Regla"
       add_new_event: "Agregue un nuevo evento"
-      events: "Cuando &lt;b&gt;alguno&lt;/b&gt; de estos eventos ocurre"
+      events: "Cuando <b>alguno</b> de estos eventos ocurre"
       conditions: "en Tickets con estas propiedades"
       actions: "realice estas acciones"
       performed_by: "y los eventos son realizados por"
@@ -1142,7 +1142,7 @@ es:
         simple_layout: Simple
         advanced_layout: Avanzado
         webhook_usecase_tooltip: "Echa un vistazo a alguno de los ejemplos de cómo puedes usar webhooks con el Observer."
-        how_to_use_webhook: "Como usar Webhooks &gt;"
+        how_to_use_webhook: "Como usar Webhooks >"
         api_key?: "¿Tengo clave API?"
         user_pass?: "¿Tengo Usuario y Contraseña?"
         insert_placeholder: "Insertar marcador"
@@ -1181,19 +1181,19 @@ es:
         click_to_disable: "Haga clic para deshabilitar SSL"
         security_title: Seguridad
         request_custom_ssl: "Desea utilizar conexión segura (SSL) personalizada para el portal de soporte?"
-        ssl_info: "Para configurar SSL personalizada, deberá configurar su dominio con un registro DNS único facilitado por Freshdesk. &lt;br /&gt; Introduzca su dirección URL Helpdesk y envíe su solicitud a continuación. La certificación suele durar 5-6 días laborables. &lt;br /&gt; &lt;br /&gt;"
+        ssl_info: "Para configurar SSL personalizada, deberá configurar su dominio con un registro DNS único facilitado por Freshdesk. <br /> Introduzca su dirección URL Helpdesk y envíe su solicitud a continuación. La certificación suele durar 5-6 días laborables. <br /> <br />"
         helpdesk_url: "URL del HelpDesk"
         submit_request: "Solicitud de ejecución"
-        thanks_message: "&lt;span class=\\&quot;thanks_message\\&quot;&gt; Gracias por solicitar un certificado SSL personalizado &lt;/span&gt; &lt;br /&gt;"
+        thanks_message: "<span class=\\\"thanks_message\\\"> Gracias por solicitar un certificado SSL personalizado </span> <br />"
         success_message: "Su solicitud de un certificado SSL personalizado se ha iniciado y será procesada dentro de poco. Usted recibirá un correo de confirmación de nuestro proveedor antes de su aprobación. Por favor revise su bandeja de entrada para las actualizaciones."
         default_ssl: "SSL por defecto"
         custom_ssl: "SSL personalizada"
-        dns_name: "&lt;b&gt;Importante:&lt;/b&gt; Por favor, actualice el registro DNS CNAME en el archivo de zona DNS para apuntar su nombre de dominio para el siguiente ELB nombre DNS. &lt;br /&gt; &lt;br /&gt;El ELB nombre DNS para %{url} es"
+        dns_name: "<b>Importante:</b> Por favor, actualice el registro DNS CNAME en el archivo de zona DNS para apuntar su nombre de dominio para el siguiente ELB nombre DNS. <br /> <br />El ELB nombre DNS para %{url} es"
       helpnote: 
         title: "Configuración de Seguridad"
         info: "La configuración de las opciones de seguridad ayudan a optimizar y controlar el acceso de visitantes a su portal de soporte."
-        info1: "&lt;b&gt;Permitiendo un acceso con inicio de sesión único &lt;/b&gt;&lt;br /&gt;Si los usuarios ya tienen credenciales de inicio de sesión con usted, como a través de Active Directory o sus propias aplicaciones Web, puede permitirles acceder a su portal de soporte con estas credenciales mediante un inicio de sesión único. Obtenga más información sobre la configuración de inicio de sesión único en Freshdesk &lt;a href=&quot;https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk&quot;&gt; aquí &lt;/a&gt;."
-        info2: "&lt;b&gt; Permitiendo seguridad SSL &lt;/b&gt;&lt;br /&gt;Ud. puede proteger las comunicaciones a través de su portal de soporte al permitir encriptación SSL. Freshdesk ofrece un certificado SSL comodín por defecto para todas las cuentas del dominio freshdesk.com. &lt;b&gt; Tenga en cuenta que Ud. no será capaz de utilizar el comodín SSL , si Ud. está utilizando su propia dirección URL de soporte de marca.&lt;/b&gt; Si Ud. está en el plan de sucesión, puede solicitar un certificado SSL personalizado para tu URL soporte vanidad."
+        info1: "<b>Permitiendo un acceso con inicio de sesión único </b><br />Si los usuarios ya tienen credenciales de inicio de sesión con usted, como a través de Active Directory o sus propias aplicaciones Web, puede permitirles acceder a su portal de soporte con estas credenciales mediante un inicio de sesión único. Obtenga más información sobre la configuración de inicio de sesión único en Freshdesk <a href=\"https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk\"> aquí </a>."
+        info2: "<b> Permitiendo seguridad SSL </b><br />Ud. puede proteger las comunicaciones a través de su portal de soporte al permitir encriptación SSL. Freshdesk ofrece un certificado SSL comodín por defecto para todas las cuentas del dominio freshdesk.com. <b> Tenga en cuenta que Ud. no será capaz de utilizar el comodín SSL , si Ud. está utilizando su propia dirección URL de soporte de marca.</b> Si Ud. está en el plan de sucesión, puede solicitar un certificado SSL personalizado para tu URL soporte vanidad."
     products: 
       helpnote: 
         tour: "ayuda para soporte de multiples productos"
@@ -1221,7 +1221,7 @@ es:
         portal_language_info: "Este será el idioma predeterminado cuando los clientes visiten su portal"
         portal_customization: "Diseño del Portal"
         customize_portal: "Personaliza el portal"
-        save_and_customize: "Guarde y Diseñe el portal&gt;"
+        save_and_customize: "Guarde y Diseñe el portal>"
         save_and_continue: "No ha guardado los cambios en su formulario.¿Quiere guardar y continuar?"
         helpdesk_phone: "Telefono Helpdesk"
         ago: hace
@@ -1579,8 +1579,8 @@ es:
     reset_all_changes: "Restablecer TODOS los cambios"
     reset_all_confirm_message: "Esta acción restablecerá todas las personalizaciones por Freshdesk por defecto. ¿Estás seguro de querer continuar?"
     publish_changes: "Guardar y publicar"
-    title: "Personalización del portal &quot;%{portal}&quot;"
-    color_and_font_header: "Color &amp;amp; de fuente"
+    title: "Personalización del portal \"%{portal}\""
+    color_and_font_header: "Color &amp; de fuente"
     css_header: "Hoja de estilo"
     layout_and_pages_header: "Distribución &amp; de páginas"
     editing: Editar
@@ -1653,7 +1653,7 @@ es:
     available_quests: "Misiones disponibles"
     all: Todo
     un_achieved: "No conseguido"
-    back_to_dashboard: "&lt; Volver al panel"
+    back_to_dashboard: "< Volver al panel"
     quests: Misiones
   close_this_ticket: "Cerrar este ticket"
   ticket_deleted: "Este ticket ha sido eliminado"
@@ -1866,7 +1866,7 @@ es:
       select_company: "Selecciona Compañias"
   password_reset_email: "Correo de restablecimiento de contraseña"
   default_reply_template: "Plantilla de respuesta de agente"
-  import_user_org: "Usuarios &amp;amp; Organizaciones"
+  import_user_org: "Usuarios &amp; Organizaciones"
   to_do: Tareas
   does_not_contain: "No contiene"
   flash: 
@@ -1943,9 +1943,9 @@ es:
         not_allowed: "Ud. no puede editar este agente"
     roles: 
       create: 
-        success: "El rol &quot;%{name}&quot; ha sido creado"
+        success: "El rol \"%{name}\" ha sido creado"
       update: 
-        success: "El rol &quot;%{name}&quot; ha sido actualizado"
+        success: "El rol \"%{name}\" ha sido actualizado"
       default_roles: "Ud. no puede modificar roles"
       delete: 
         not_allowed: "Ud. no puede borrar este Rol. Existen otros usuarios asociados al mismo."
@@ -1960,7 +1960,7 @@ es:
       no_file: "Por favor suba un archivo"
       success: "Su importación CSV ha comenzado y Ud. recibirá un correo electrónico cuando se complete. El proceso de importación puede tardar varios minutos, dependiendo del volumen de los datos"
       thank_user: "Gracias por enviar una solicitud de importación."
-      details: "Su archivo CSV ha sido procesado y la importación se ha realizado correctamente. Ud. puede abrir su Helpdesk (Mesa de Ayuda) y vaya a %{customer}--&gt;%{users} para revisar la nueva información. "
+      details: "Su archivo CSV ha sido procesado y la importación se ha realizado correctamente. Ud. puede abrir su Helpdesk (Mesa de Ayuda) y vaya a %{customer}-->%{users} para revisar la nueva información. "
       help_desk: "No dude en ponerse en contacto con nosotros si necesitas algo más por favor."
       regards: Saludos
       freshdesk: "Equipo Freshdesk"
@@ -2093,7 +2093,7 @@ es:
   import_topics: Tópicos
   assigned_to: "Asignado a"
   change: Cambiar
-  back_plans_billing: "Regresar a Planes &amp;amp; Facturación"
+  back_plans_billing: "Regresar a Planes &amp; Facturación"
   choose_different_plan: "Elegir un plan diferente"
   downgrade_plan: "Nota: Si bajas el plan de categoría podrías perder algunas de las características actuales."
   f_request: "Solicitud de función"
@@ -2193,11 +2193,11 @@ es:
         without_user: "asignado a <strong>'Nadie'</strong>"
       reassigned: 
         long: "{{user_path}} reasignó el ticket {{notable_path}} a {{responder_path}}"
-        without_user: "reasignar el ticket &lt;strong&gt;{{responder_path}}&lt;/strong&gt;"
+        without_user: "reasignar el ticket <strong>{{responder_path}}</strong>"
       priority_change: 
         short: "{{user_path}} cambió la prioridad a {{priority_name}}"
         long: "{{user_path}} cambió la prioridad del ticket de {{notable_path}} a {{priority_name}}"
-        without_user: "prioridad del ticket actualizada a &lt;strong&gt;{{priority_name}}&lt;/strong&gt;"
+        without_user: "prioridad del ticket actualizada a <strong>{{priority_name}}</strong>"
       new_ticket: 
         short: "{{user_path}} envió el ticket"
         long: "{{user_path}} envió un ticket nuevo {{notable_path}}"
@@ -2232,11 +2232,11 @@ es:
           long: "{{user_path}} detuvo un temporizador el {{timesheet_path}} al ticket {{notable_path}}"
       assigned: 
         short: "Asignado a {{responder_path}} por {{user_path}}"
-        without_user: "asignado a &lt;strong&gt;{{responder_path}}&lt;/strong&gt;"
+        without_user: "asignado a <strong>{{responder_path}}</strong>"
         long: "{{user_path}} asignó el ticket {{notable_path}} a {{responder_path}}"
       execute_scenario: 
         short: "{{user_path}} ejecutó el escenario '{{scenario_name}}"
-        without_user: "ejecutar el escenario &lt;strong&gt;{{scenario_name}}&lt;/strong&gt;"
+        without_user: "ejecutar el escenario <strong>{{scenario_name}}</strong>"
         long: "{{user_path}} ejecutó el escenario '{{scenario_name}}' en {{notable_path}}"
       ticket_merge: 
         short: "{{user_path}} combinó el ticket {{notable_path}} con {{merge_ticket_path}} "
@@ -2248,7 +2248,7 @@ es:
         without_user: "Dividir el ticket de {{split_ticket_path}}"
       status_change: 
         short: "{{user_path}} cambió el estado a {{status_name}}"
-        without_user: "actualizar estado a &lt;strong&gt;{{status_name}}&lt;/strong&gt;"
+        without_user: "actualizar estado a <strong>{{status_name}}</strong>"
         long: "{{user_path}} cambió el estado del ticket {{notable_path}} a {{status_name}}"
       deleted: 
         short: "{{user_path}} borró este ticket"
@@ -2260,7 +2260,7 @@ es:
         long: "{{user_path}} ha restaurado el ticket {{notable_path}}"
       product_change: 
         short: "{{user_path}} cambió el producto a {{product_name}}"
-        without_user: "producto actualizado a &lt;strong&gt;{{product_name}}&lt;/strong&gt;"
+        without_user: "producto actualizado a <strong>{{product_name}}</strong>"
         long: "{{user_path}} cambió el producto de {{notable_path}} a {{product_name}}"
       product_change_none: 
         short: "{{user_path}} cambió el producto a 'ninguno'"
@@ -2268,11 +2268,11 @@ es:
         long: "{{user_path}} cambió el producto de {{notable_path}} a 'ninguno'"
       ticket_type_change: 
         short: "{{user_path}} cambió el tipo de ticket a {{ticket_type}}"
-        without_user: "tipo de ticket actualizado a &lt;strong&gt;{{ticket_type}}&lt;/strong&gt;"
+        without_user: "tipo de ticket actualizado a <strong>{{ticket_type}}</strong>"
         long: "{{user_path}} cambió el tipo de ticket de {{notable_path}} a {{ticket_type}}"
       group_change: 
         short: "{{user_path}} cambió el grupo a {{group_name}}"
-        without_user: "grupo actualizado a &lt;strong&gt;{{group_name}}&lt;/strong&gt;"
+        without_user: "grupo actualizado a <strong>{{group_name}}</strong>"
         long: "{{user_path}} cambió el grupo de {{notable_path}} a {{group_name}}"
       group_change_none: 
         short: "{{user_path}} cambió el grupo a 'ninguno'"
@@ -2280,7 +2280,7 @@ es:
         long: "{{user_path}} cambió el grupo de {{notable_path}} a 'ninguno'"
       source_change: 
         short: "{{user_path}} cambió el origen a {{source_name}}"
-        without_user: "fuente actualizada a &lt;strong&gt;{{source_name}}&lt;/strong&gt;"
+        without_user: "fuente actualizada a <strong>{{source_name}}</strong>"
         long: "{{user_path}} cambió el origen del ticket de {{notable_path}} a {{source_name}}"
   credit_card_info: "Información de la tarjeta de crédito"
   zendesk_backup_info: "Seleccione el archivo de backup descargado de Zendesk"
@@ -2324,10 +2324,10 @@ es:
       trial_warning_message: "Una vez que usted cancela su cuenta, sus clientes y agentes no tendrán acceso a su portal de apoyo. Asegúrese de que esto es lo que realmente quiere hacer."
       feedback: 
         budget: "Yo no tengo más presupuesto"
-        budget_followup: "Usted puede bajar a un plan inferior en Freshdesk, sin afectar las entradas existentes. De hecho, si el presupuesto es muy ajustado, se puede mover con el plan Sprout con 3 agentes libres de por vida. &lt;a href=&quot;http://www.freshdesk.com/free-support-software&quot;&gt;Averigüe más sobre el plan gratuito&lt;/a&gt;"
+        budget_followup: "Usted puede bajar a un plan inferior en Freshdesk, sin afectar las entradas existentes. De hecho, si el presupuesto es muy ajustado, se puede mover con el plan Sprout con 3 agentes libres de por vida. <a href=\"http://www.freshdesk.com/free-support-software\">Averigüe más sobre el plan gratuito</a>"
         budget_extra: "Tal vez le gustaría mantener esta cuenta por algún tiempo, hasta tener presupuesto?"
         requirement: "Freshdesk no maneja algunas de mis necesidades"
-        requirement_followup: "Estamos constantemente añadiendo más características y mejoras a Freshdesk. ¿Ha tratado de sugerir su idea característica en nuestros foros? O tal vez lo que estás buscando es tan sólo unas semanas de tiempo? &lt;a href=&quot;https://support.freshdesk.com/support/discussions/forums/6&quot;&gt;Navegue en nuestro Foro&lt;/a&gt;"
+        requirement_followup: "Estamos constantemente añadiendo más características y mejoras a Freshdesk. ¿Ha tratado de sugerir su idea característica en nuestros foros? O tal vez lo que estás buscando es tan sólo unas semanas de tiempo? <a href=\"https://support.freshdesk.com/support/discussions/forums/6\">Navegue en nuestro Foro</a>"
         requirement_extra: "Le envíanos un par de líneas sobre lo que estaba buscando, y vamos a tratar el tema y moverlo hacia arriba rapidamente en nuestra lista de prioridades"
         moving: "Estamos optando por otro producto"
         moving_followup: "Nosotros no nos gusta que te vayas. Fueron las características? ¿El precio? Muy mala la comercialización que lo mantiene a Ud. sin decisión? Pero bueno, si Ud. ha tomado una decisión por otro, sólo podemos tener la esperanza de volver a ayudarlo pronto."
@@ -2361,7 +2361,7 @@ es:
       restore_account: "Su cuenta se canceló y los datos se eliminarán en <strong>%{delete_at}</strong>. Para restaurarla comuniquese con su contacto de cuenta <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>."
   success_msg: "¡La configuración de la cuenta se ha actualizado con éxito!"
   failure_msg: "No se ha podido actualizar la configuración de la cuenta"
-  domain_not_available_msg: "El dominio &lt;strong&gt;%{domain_name}&lt;/strong&gt; no está disponible."
+  domain_not_available_msg: "El dominio <strong>%{domain_name}</strong> no está disponible."
   long_company_name_error: "El nombre de la empresa no debería superar los 100 caracteres"
   short_company_name_error: "El nombre de la empresa debería tener como mínimo 3 caracteres"
   forum_key: Foro
@@ -2463,7 +2463,7 @@ es:
     description: Descripción
     info2: "Todos los tickets relacionados con suscripciones se asignarán a Susan"
     new_rule: "Nueva regla"
-    event_note: "Cuando &lt;b&gt;Alguno&lt;/b&gt; de estos eventos ocurre"
+    event_note: "Cuando <b>Alguno</b> de estos eventos ocurre"
     condition_note: "Con las siguientes condiciones"
     action_note: "Realice estas acciones"
     info3: "Cuándo debe aplicarse esta regla"
@@ -2506,7 +2506,7 @@ es:
     search: 
       placeholder: "Buscar %{name}"
   auto_suggest_solutions: 
-    info: "&lt;b&gt;Sabes que? Podríamos tener ya una respuesta a tu pregunta.&lt;/b&gt;&lt;br/&gt;Comprueba si alguna de estas coincide."
+    info: "<b>Sabes que? Podríamos tener ya una respuesta a tu pregunta.</b><br/>Comprueba si alguna de estas coincide."
   requester_reopens: "El solicitante reabrió el ticket"
   reset_password_title: "Resetear Contraseña"
   import_ignore_first_row: "Ignorar la primera línea (encabezados)"
@@ -2643,7 +2643,7 @@ es:
     info7: "si un ticket no ha sido asignado después de más de "
     tour: "Ayuda para crear un nuevo grupo de agentes"
     helptext: "Puede organizar sus agentes en grupos específicos como \"Ventas\" y \"Gestión de Producto\". La segmentación de ellos en divisiones te permite asignar Tickets, crear respuestas específicas o respuestas tipo, configurar las notificaciones de correo electrónico, crear reglas de negocio y generar informes a nivel de grupo. Tenga en cuenta que el mismo agente puede ser un miembro de varios grupos también."
-    automatic_assignment: "Una vez creado grupos de agentes homogéneos, puede optarse por asignar automáticamente nuevos Tickets en este grupo al próximo  agente en Round Robin.&lt;a href=&quot;https://support.freshdesk.com/support/solutions/articles/77157&quot; target=&quot;_blank&quot;&gt;Más información&lt;/a&gt;"
+    automatic_assignment: "Una vez creado grupos de agentes homogéneos, puede optarse por asignar automáticamente nuevos Tickets en este grupo al próximo  agente en Round Robin.<a href=\"https://support.freshdesk.com/support/solutions/articles/77157\" target=\"_blank\">Más información</a>"
     automatic_assignment_header: "Auto asignación del Ticket"
     working_hours_header: "Horas laborables"
     working_hours: "Ud. puede asignar un conjunto diferente de horas hábiles y feriados a cada Grupo. Por ejemplo, puede separar los agentes por turnos y asignarles diferentes horas hábiles, o crear grupos separados para cada zona horaria en la cual sus agentes trabajan"
@@ -2928,8 +2928,8 @@ es:
   import: Importar
   contains: Contiene
   import_solution_article_info: "Nota: No grabaremos los comentarios del foro"
-  no_anonymous_tickets: "Para enviar un ticket, &lt;a href={{signup}}&gt;&lt;b&gt;Registrate&lt;/b&gt;&lt;/a&gt; como nuevo usuario o &lt;a href={{login}}&gt;&lt;b&gt;Inicia sesión&lt;/b&gt;&lt;/a&gt;."
-  no_signup: "Para enviar un ticket &lt;a href={{login}}&gt;&lt;b&gt;Iniciar sesión&lt;/b&gt;&lt;/a&gt;."
+  no_anonymous_tickets: "Para enviar un ticket, <a href={{signup}}><b>Registrate</b></a> como nuevo usuario o <a href={{login}}><b>Inicia sesión</b></a>."
+  no_signup: "Para enviar un ticket <a href={{login}}><b>Iniciar sesión</b></a>."
   register: Registrar
   by: por
   portal: 
@@ -2944,7 +2944,7 @@ es:
     reported: declarado
     said: dicho
     solutions_home: "Soluciones, inicio"
-    attach_file: "Adjunto a &lt;b&gt;archivo&lt;/b&gt;"
+    attach_file: "Adjunto a <b>archivo</b>"
     header: 
       preview_message: "<b>Modo preliminar</b> - <a href='javascript:window.close()'>Pulsar aquí</a> para volver."
     new_support_ticket: "Nuevo ticket de ayuda"
@@ -3077,13 +3077,13 @@ es:
     title: Soluciones
     title_singular: Solución
     info1: "Las soluciones en Freshdesk son su base de conocimientos"
-    info2: "Las soluciones pueden ser &lt;b&gt;públicas&lt;/b&gt; o &lt;b&gt;privadas&lt;/b&gt;. Las soluciones públicas son visibles en el portal de autoservicio y también aparecen en los resultados de búsqueda"
+    info2: "Las soluciones pueden ser <b>públicas</b> o <b>privadas</b>. Las soluciones públicas son visibles en el portal de autoservicio y también aparecen en los resultados de búsqueda"
     info3: "Las soluciones privadas son soluciones sólo de los agentes utilizadas sólo para compartir conocimiento interno"
     no_solutions_info: "No hay soluciones en esta carpeta"
     info4: "Las soluciones tienen una jerarquía de 3 niveles - <b>Categoría --> Carpeta --> Artículo</b>"
     type: "Tipo de solución"
-    info5: "Las soluciones pueden ser de dos tipos - Soluciones &lt;b&gt;provisionales&lt;/b&gt; o &lt;b&gt;permanentes&lt;/b&gt;"
-    info6: "Una solución puede tener un estado de &lt;b&gt;Borrador&lt;/b&gt; cuando está trabajando en ella y puede cambiarse al estado &lt;b&gt;Publicada&lt;/b&gt; una vez finalizada y revisada"
+    info5: "Las soluciones pueden ser de dos tipos - Soluciones <b>provisionales</b> o <b>permanentes</b>"
+    info6: "Una solución puede tener un estado de <b>Borrador</b> cuando está trabajando en ella y puede cambiarse al estado <b>Publicada</b> una vez finalizada y revisada"
     visibility: Visibilidad
     info7: "No hay soluciones en esta carpeta"
     status: "Estado de la solución"
@@ -3172,8 +3172,8 @@ es:
     help_center: "¿Cómo podemos ayudarte?"
     new_support_ticket: "Nuevo Ticket de Soporte"
     check_ticket_status: "Revisar el estado del ticket"
-    user_available: "Nuevos Tickets serán &lt;br&gt;auto-asignados a Ud."
-    user_not_available: "Nuevos Tickets no serán &lt;br&gt;auto-asignados a Ud."
+    user_available: "Nuevos Tickets serán <br>auto-asignados a Ud."
+    user_not_available: "Nuevos Tickets no serán <br>auto-asignados a Ud."
     tabs: 
       reports: Reportes
       dashboard: "Tablero de mando"
@@ -3222,7 +3222,7 @@ es:
   activate_and_login: "Activar e Iniciar sesión"
   password: Contraseña
   enter_payment: "Digitar detalles de pago..."
-  downgrade_confirm: "&lt;span class=&quot;label label-important&quot;&gt;Importante&lt;/span&gt;&amp;nbsp;&amp;nbsp;Estás bajando de categoría del plan &lt;b&gt;{{from}}&lt;/b&gt; al plan &lt;b&gt;{{to}}&lt;/b&gt; plan. Toda la información y configuraciones asociadas a las opciones disponibles en el plan {{from}} se perderán de forma permanente.&lt;br /&gt;&lt;br /&gt; Para ver la lista completa de planes y opciones, visita &lt;a target=&quot;_blank&quot; href=&quot;http://freshdesk.com/pricing&quot;&gt;Planes y Precios&lt;/a&gt;. &lt;br /&gt;¿Aun no estás seguro? &lt;a href = &quot;mailto:support@freshdesk.com&quot; &gt;Deja que te ayudemos a decidir&lt;/a&gt;"
+  downgrade_confirm: "<span class=\"label label-important\">Importante</span>&nbsp;&nbsp;Estás bajando de categoría del plan <b>{{from}}</b> al plan <b>{{to}}</b> plan. Toda la información y configuraciones asociadas a las opciones disponibles en el plan {{from}} se perderán de forma permanente.<br /><br /> Para ver la lista completa de planes y opciones, visita <a target=\"_blank\" href=\"http://freshdesk.com/pricing\">Planes y Precios</a>. <br />¿Aun no estás seguro? <a href = \"mailto:support@freshdesk.com\" >Deja que te ayudemos a decidir</a>"
   errors_in_payment: "Se presentaron errores con su pago:"
   email_configs: 
     title: "Configuraciones de correo"
@@ -3292,7 +3292,7 @@ es:
     Personalized_email_replies_no: "No"
     Personalized_email_replies_message: "Tu configuración ha sido guardada."
   step2: "Paso 2"
-  import_users_contacts: "Usuarios &amp;rarr; Contactos"
+  import_users_contacts: "Usuarios &rarr; Contactos"
   linkback_info: "Ud puede seleccionar regresar a su propio sitio web cuando el cliente dá click en el logo"
   twitter: 
     associate_twitter: "Asocie una cuenta de twitter a su Helpdesk, para que pueda empezar a brindar el soporte a sus clientes via twitter"
@@ -3342,7 +3342,7 @@ es:
     expand: Expandir
     insert: Introducir
     switch_view: 
-      new_view: "Probar la &lt;strong&gt;Vista de nuevo ticket&lt;/strong&gt;"
+      new_view: "Probar la <strong>Vista de nuevo ticket</strong>"
       whats_new: Novedad
       revert_view: "Cambiar a Vista clásica"
       submit_feedback: "Enviar comentario"
@@ -3380,7 +3380,7 @@ es:
     requester_placeholder: "Encontrar tickets por solicitante"
     default_note_text: "La nota por defecto será añadida"
     note_saved: "Nota guardada"
-    edit_note: "&lt;b&gt;Editar Nota&lt;/b&gt;"
+    edit_note: "<b>Editar Nota</b>"
     thanks: "Gracias por enviarnos su opinión"
     portal_created_on: "Creado por <span class='emphasize'>%{username}</span>sobre<span class='emphasize'>%{date}</span>"
     portal_created_on_same_user: "Creado en <span class='emphasize'>%{date}</span>"
@@ -3469,7 +3469,7 @@ es:
       form_title: "Responder a la conversación"
       reply_email_id: "Enviar respuesta desde el siguiente ID de correo"
       send_and_resolve: "Enviar y resolver"
-      send_and_set_as: "Enviar y marcar como &lt;strong&gt;%{status}&lt;/strong&gt;"
+      send_and_set_as: "Enviar y marcar como <strong>%{status}</strong>"
       send: Enviar
       send_satisfaction_survey: "Incluir encuesta de satisfaccion"
     facebook_form: 
@@ -3486,13 +3486,13 @@ es:
       add_tag: "Añadir una etiqueta"
     type: Tipo
     execute_scenario: "Ejecutar situación"
-    conv_form_status_set_as: "y configurado como &lt;strong&gt;%{status}&lt;/strong&gt;"
+    conv_form_status_set_as: "y configurado como <strong>%{status}</strong>"
     note_form: 
       private_note: "Agregar como anotación privada y no informar al solicitante"
       description_note: "El tema y la descripción de los tickets combinados se agregarán al ticket original como notas"
       form_title: "Agregar nota"
       add_and_resolve: "Añadir y resolver"
-      add_and_set_as: "Agregado y configurado como &lt;strong&gt;%{status}&lt;/strong&gt;"
+      add_and_set_as: "Agregado y configurado como <strong>%{status}</strong>"
       add_public_note: "Agregar una Nota Pública"
       add_private_note: "Agregar una Nota Privada"
       notify_agents: "Notificar agentes"
@@ -3638,7 +3638,7 @@ es:
   lead: Líder
   comments: Comentarios
   forum_confirm_msg1: "¿Está seguro de que desea eliminar esta categoría?"
-  plans_billing: "Planes &amp; facturación"
+  plans_billing: "Planes & facturación"
   portal_customizer_open_forums: "Cualquiera puede ver los foros"
   portal_customizer_option_forums: "Los usuarios pueden ver los Foros sin conectarse"
   business_hours: 
@@ -3656,7 +3656,7 @@ es:
     title: "Horario hábil"
     info1: "Setting up your Business Hours in Freshdesk allows you to get more control on your SLAs.For eg. If you helpdesk works 9AM - 6PM Mon-Fri and a customer sends a high priority ticket at 4 PM on Tuesday with a SLA target resolution time of 4 hours, then the ticket Due By time is set as 11 AM on Wednesday.You can configure your SLAs to either respect or ignore business hours"
     info2: "Holidays work exactly like Business hours. For eg. If you helpdesk works 9AM - 6PM Mon-Fri and a customer sends a medium priority ticket at 8 PM on Friday with a SLA target resolution time of 24 hours, then the ticket Due By time is set as 9AM on Tuesday.(not 8PM on Sat)"
-    multiple_info: "También Ud. puede crear varios conjuntos de las horarios hábiles y feriados, y aplicarlos a grupos específicos. Si Ud. tiene un equipo de soporte que trabaja en PST y otro en GMT, puede dejar que cada grupo tenga su propio conjunto de horas hábiles y feriados. &lt;a href=&quot;https://support.freshdesk.com/solution/articles/98945&quot; target=&quot;_blank&quot;&gt;Learn more&lt;/a&gt;"
+    multiple_info: "También Ud. puede crear varios conjuntos de las horarios hábiles y feriados, y aplicarlos a grupos específicos. Si Ud. tiene un equipo de soporte que trabaja en PST y otro en GMT, puede dejar que cada grupo tenga su propio conjunto de horas hábiles y feriados. <a href=\"https://support.freshdesk.com/solution/articles/98945\" target=\"_blank\">Learn more</a>"
     holiday_added: "Día no laborable ya añadido"
     invalid_holiday: "Se agregó un feriado inválido"
     import_holiday_info: "<b>Importante:</b> La Importación sólo añade los feriados del presente año a la lista. La lista no se actualizará de forma automática para el próximo año."
@@ -3669,13 +3669,13 @@ es:
     multiple: "Horarios hábiles multiples"
     helpdesk_hours: "Horario de asistencia"
     select_time_zone: "Seleccione Zona Horaria"
-  import_org_companies: "Organizaciones &amp;rarr; Companías"
+  import_org_companies: "Organizaciones &rarr; Companías"
   add: Añadir
   portal_customizer_title: "Personalizar su portal público del cliente"
   your_trial_account: "Su cuenta de prueba"
   reply_comment: "Agregar comentarios"
   import_step2_info: "Relacione los campos CSV con los campos de la base de datos e importe."
-  feedbackwidget_defaulttitle: "Ayuda &amp;amp; Soporte"
+  feedbackwidget_defaulttitle: "Ayuda &amp; Soporte"
   two: "2 Horas"
   set_status_as: "Cambiar estado a"
   trigger_webhook: "Disparador Webhook"
@@ -3692,7 +3692,7 @@ es:
   undo: Deshacer
   total: Total
   export_to_CSV: "Exportar a CSV"
-  back_to_reports: "&amp;larr; Volver a informes"
+  back_to_reports: "&larr; Volver a informes"
   helpdesk: 
     ticket_notifier: 
       reply: 
@@ -3868,7 +3868,7 @@ es:
           visible_to: "Esta vista es visible para"
       execute_scenario_notice: 
         view_details: "Ver detalles"
-        execute_the_scenario: "Se ejecutó el escenario &lt;b&gt;%{rule_name}&lt;/b&gt;"
+        execute_the_scenario: "Se ejecutó el escenario <b>%{rule_name}</b>"
         actions_performed: "Acciones realizadas"
       close_notice: 
         ticket_has_been_cloased: "El ticket se ha cerrado"
@@ -4148,14 +4148,14 @@ es:
       signin_info: 
         title: "Registrarse usando twitter"
         engage_customers: "Haga participar a sus clientes directamente en Twitter"
-        associate_account: "Asocie una cuenta de twitter a &lt;b&gt;  %{product_name} &lt;/b&gt; y responda a sus clientes con un tweet o mensaje desde Freshdesk."
+        associate_account: "Asocie una cuenta de twitter a <b>  %{product_name} </b> y responda a sus clientes con un tweet o mensaje desde Freshdesk."
         add_twitter: "Añadir una cuenta de Twitter"
       form: 
         search_keywords: "Buscar Palabras"
         info_data: "Ayuda a controlar rapidamente la busquedas relativas a su producto/marca/servicio en twitter.<br /><strong>Nota:</strong> usted puede agregar multiples palabras en la busqueda separadas por coma "
-        capture_mentions_msg: "captura&lt;strong&gt;&quot;@mentions&quot;&lt;/strong&gt;como ticket"
+        capture_mentions_msg: "captura<strong>\"@mentions\"</strong>como ticket"
         capture_mentions_info: "Freshdesk convertira automaticamente cualquier @mentions de esta cuenta de twitter en ticket "
-        capture_dm_msg: "capturar&lt;strong&gt;&quot;Direct menssages&quot;&lt;/strong&gt; como ticket"
+        capture_dm_msg: "capturar<strong>\"Direct menssages\"</strong> como ticket"
         capture_dm_info: "Freshdesk convertira automaticamente cualquier mensaje directo de esta cuenta de Twitter en un ticket "
         dm_time_msg: "DM Tiempo de enlace"
         dm_time_info: "tiempo maximo para revisar mensajes directos desde el mismo usuario y considerarlos enlazados "
@@ -4175,7 +4175,7 @@ es:
     filter: 
       index: 
         title: "Gestionar las vistas personalizadas"
-        back: "&amp;larr; Volver a los tickets"
+        back: "&larr; Volver a los tickets"
         no_custom_view: "No hay vistas personalizadas disponibles."
       view: 
         delete: "¿Está seguro de que desea eliminar esta vista?"
