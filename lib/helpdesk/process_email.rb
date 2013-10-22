@@ -265,8 +265,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def ticket_from_email_body(account)
-      display_span = Nokogiri::HTML(params[:html]).css("span#fd_tkt_identifier")
-      if display_span
+      display_span = Nokogiri::HTML(params[:html]).css("span[rel='fd_tkt_identifier']")
+      unless display_span.blank?
         display_id = display_span.last.inner_html
         return account.tickets.find_by_display_id(display_id.to_i) unless display_id.blank?
       end
@@ -438,7 +438,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def remove_identifier_span msg
-      id_span = msg.css('span#fd_tkt_identifier')
+      id_span = msg.css("span[rel='fd_tkt_identifier']")
       id_span.remove if id_span
     end
 
