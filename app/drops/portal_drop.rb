@@ -127,7 +127,7 @@ class PortalDrop < BaseDrop
 
   # Access to Discussions
   def has_forums
-    (feature?(:forums) && allowed_in_portal?(:open_forums) && forums.present?)
+    @has_forums ||= (feature?(:forums) && allowed_in_portal?(:open_forums) && forums.present?)
   end
 
   def forum_categories
@@ -160,7 +160,7 @@ class PortalDrop < BaseDrop
 
   # Access to Solution articles
   def has_solutions
-    (allowed_in_portal?(:open_solutions) && folders.present?)
+    @has_solutions ||= (allowed_in_portal?(:open_solutions) && folders.present?)
   end
 
   def solution_categories
@@ -182,7 +182,7 @@ class PortalDrop < BaseDrop
   end
 
   def url_options
-    { :host => source.host }    
+    @url_options ||= { :host => source.host }    
   end
 
   def paid_account
@@ -196,7 +196,7 @@ class PortalDrop < BaseDrop
 				        [ support_discussions_path, :forums, 	    has_forums ],
 				        [ support_tickets_path,     :tickets,     portal_user ]]
 
-			tabs.map { |s|
+			@load_tabs ||= tabs.map { |s|
   	    HashDrop.new( :name => s[1].to_s, :url => s[0], 
           :label => (s[3] || I18n.t("header.tabs.#{s[1].to_s}")), :tab_type => s[1].to_s ) if s[2]
       }.reject(&:blank?)

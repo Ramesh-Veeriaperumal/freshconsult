@@ -324,5 +324,11 @@ if RUBY_VERSION > "1.9"
     end
   end
 
+  class String
+    def map
+      [self]
+    end
+  end
+
 end
 

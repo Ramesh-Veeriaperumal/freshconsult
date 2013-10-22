@@ -159,7 +159,7 @@ class Social::Gnip::Rule
         requeue(args)
       end
     else
-      unless db_sanity
+      unless db_sanity(matching_rule)
         params = params.merge({
             :rule_tag => matching_rule.tag,
             :response => true

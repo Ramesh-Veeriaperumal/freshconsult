@@ -4,6 +4,7 @@ module Helpdesk
       include Utils::Sanitizer
 
       def save_note
+        build_note_body unless note_body
         if note_body
           note_body.load_full_text
           sanitize_body_and_unhtml_it(note_body,"body","full_text")
@@ -12,6 +13,7 @@ module Helpdesk
       end
 
       def save_note!
+        build_note_body unless note_body
         if note_body
           note_body.load_full_text
           sanitize_body_and_unhtml_it(note_body,"body","full_text")

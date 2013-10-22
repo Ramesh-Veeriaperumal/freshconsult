@@ -20,3 +20,9 @@
     height: auto;
   }
 }
+
+.hover-color-animation{
+  @include transition-property(border-color, background-color);
+  @include transition-duration(500ms);
+  @include transition-timing-function(ease-out);
+}
