@@ -10,7 +10,7 @@ class Helpdesk::CannedResponsesController < ApplicationController
   def index
     respond_to do |format|
       format.html { render :partial => "helpdesk/tickets/components/canned_responses"}
-      format.nmobile { render :json => current_account.canned_responses.to_json}
+      format.nmobile { render :json => current_account.canned_responses.to_json(:include=> :folder)}
     end
   end
  
@@ -55,7 +55,7 @@ class Helpdesk::CannedResponsesController < ApplicationController
     end
     
     def render_parsed_content
-      content    = mobile? ? @ca_resp.content : @ca_resp.content_html 
+      content = @ca_resp.content_html
       @a_template = Liquid::Template.parse(content).render('ticket' => @ticket, 
                                 'helpdesk_name' => @ticket.account.portal_name)    
     end
