@@ -43,6 +43,7 @@ module Users
         subj_template = e_notification.requester_subject_template
         user_key = 'contact'
       else
+        return unless e_notification.agent_notification?
         template = e_notification.agent_template
         subj_template = e_notification.agent_subject_template
       end
