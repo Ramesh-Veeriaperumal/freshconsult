@@ -4,7 +4,7 @@ class Support::SignupsController < SupportController
   before_filter :chk_for_logged_in_usr
   
   def chk_for_logged_in_usr
-    if logged_in?
+    if !preview? && logged_in?
       redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
   end
