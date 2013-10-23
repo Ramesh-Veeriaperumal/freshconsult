@@ -19,15 +19,15 @@ Ext.application({
         'plugin.ux.Iscroll', 'plugin.ux.TitleDoubleTap'
     ],
 
-    controllers : ['Dashboard', 'Filters', 'Tickets', 'Contacts'],
+    controllers : ['Dashboard', 'Filters', 'Tickets', 'Contacts','Timers'],
     views       : ['Home','DashboardContainer', 'FiltersListContainer', 'FiltersList', 'TicketsListContainer',
                     'TicketsList', 'ContactsListContainer', 'ContactsList','ContactInfo', 'TicketDetailsContainer',
                     'TicketDetails', 'TicketReply', 'TicketForm', 'ContactDetails', 'ContactsFormContainer',
                     'ContactForm', 'TicketProperties', 'EmailForm','CannedResponses','Solutions','NoteForm',
                     'TicketNote','Scenarioies','NewTicketContainer','FlashMessageBox','TicketTweetForm','TweetForm',
-                    'FacebookForm','TicketFacebookForm','MultiSelect'],
-    stores      :['Init','Filters','Tickets','Contacts','AutoTechnician'],
-    models      :['Portal','Filter','Ticket','Contact','AutoSuggestion'],
+                    'FacebookForm','TicketFacebookForm','MultiSelect','Timer','TicketTimer','TimerContainer','TimerForm'],
+    stores      :['Init','Filters','Tickets','Contacts','AutoTechnician','Timers'],
+    models      :['Portal','Filter','Ticket','Contact','AutoSuggestion','Timer'],
 
     icon: {
         57: 'resources/icons/Icon.png',
@@ -82,12 +82,21 @@ Ext.application({
             xtype:'ticketTweetForm'
         },ticketFacebookForm = {
             xtype:'ticketFacebookForm'
+        },timer = {
+            xtype:'timer'
+        },ticketTimer={
+            xtype:'ticketTimer'
+        },timerContainer={
+            xtype:'timerContainer'
+        },timerForm={
+            xtype:'timerForm'
         };
 
         Ext.Viewport.add([
                         filtersListContainer,home,ticketsListContainer,contactsListContainer,
                         ticketDetailsContainer,ticketReply,contactDetails,contactsFormContainer,cannedResponses,
-                        solutions,ticketNote,scenarioies,newTicketContainer,flashMessageBox,ticketTweetForm,ticketFacebookForm
+                        solutions,ticketNote,scenarioies,newTicketContainer,flashMessageBox,ticketTweetForm,ticketFacebookForm,timer,ticketTimer,
+                        timerContainer
         ]);
 
         Ext.getStore('Init').load({callback:function(data, operation, success){

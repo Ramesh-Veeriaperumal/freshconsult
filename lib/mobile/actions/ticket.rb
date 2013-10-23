@@ -4,7 +4,7 @@ module Mobile::Actions::Ticket
   include ActionView::Helpers::DateHelper
 
   NOTES_OPTION = {
-      :only => [ :created_at, :user_id, :id, :private ],
+      :only => [ :created_at, :user_id, :id, :private, :deleted ],
       :include => {
         :user => {
           :only => [ :name, :email, :id ],
@@ -58,7 +58,7 @@ module Mobile::Actions::Ticket
             :only => [ :id, :page_name ]
           }
         }
-       }
+      }
     }
     if only_public_notes
      json_inlcude[:public_notes] = NOTES_OPTION 
