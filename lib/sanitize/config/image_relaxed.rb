@@ -47,7 +47,6 @@ class Sanitize
         'time'       => ['datetime', 'pubdate'],
         'ul'         => ['type'],
         'div'        => ['class'],
-        'span'       => ['rel'],
         'iframe'     => ['src', 'width', 'height', 'frameborder', 'allowfullscreen']
       },
 
