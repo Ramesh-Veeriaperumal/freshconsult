@@ -341,7 +341,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       content_ids = params["content-ids"].nil? ? {} : get_content_ids
       content_id_hash = {}
      
-      attachment_info = JSON.parse(params["attachment-info"]) if params["attachment-info"]
       Integer(params[:attachments]).times do |i|
         if content_ids["attachment#{i+1}"]
           description = "content_id"
@@ -349,11 +348,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         begin
           created_attachment = item.attachments.build(:content => params["attachment#{i+1}"], 
             :account_id => ticket.account_id,:description => description)
-          if attachment_info && attachment_info["attachment#{i+1}"] && attachment_info["attachment#{i+1}"]["filename"]
-            attachment_name = attachment_info["attachment#{i+1}"]["filename"] 
-            created_attachment.content.instance_write(:file_name, attachment_name)
-            created_attachment.content_file_name = attachment_name
-          end
         rescue Exception => e
           Rails.logger.error("Error while adding item attachments for ::: #{e.message}")
           break
