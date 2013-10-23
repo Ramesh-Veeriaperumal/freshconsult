@@ -38,6 +38,15 @@ class Social::TwitterWorker
     end
   end
 
+  def self.fetch_twt_mentions twt_handle
+    sandbox do
+      Timeout.timeout(60) do
+        twt_mention = Social::TwitterMention.new(twt_handle)
+        twt_mention.process
+      end
+    end
+  end
+  
   def self.sandbox(return_value = nil)
       begin
         return_value = yield

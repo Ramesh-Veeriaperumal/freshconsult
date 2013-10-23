@@ -33,16 +33,10 @@ module Redis::GnipRedisMethods
 	
 	
 	def sandbox(time,&block) # time format "2012-03-19T22:10:56.000Z"
-		begin
-			updated_time = parse_time(time)
-			last_entry = redis_last_entry
-			block.call(last_entry,updated_time)
-			return true
-		rescue Redis::BaseConnectionError => e
-			NewRelic::Agent.notice_error(e.to_s, :custom_params => {
-        		:description => "Redis connection error in updating time for gnip" })
-			return false
-		end
+		updated_time = parse_time(time)
+		last_entry = redis_last_entry
+		block.call(last_entry,updated_time)
+		return true
 	end
 	
 	private

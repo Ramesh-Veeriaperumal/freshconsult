@@ -31,7 +31,14 @@ end
 #   end
 # end
 
+on_utilities(all_instances_of('reports_app_')) do
+  run "sudo /etc/init.d/nginx restart" 
+end
 
 on_utilities(all_instances_of('resque')) do
 	run "sudo monit restart all -g helpkit_resque" 
+end
+
+on_utilities(all_instances_of('social_utility')) do
+  run "sudo monit restart all -g helpkit_gnip_poll"
 end

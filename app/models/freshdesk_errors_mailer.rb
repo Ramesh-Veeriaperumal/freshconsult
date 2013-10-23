@@ -3,8 +3,8 @@ class FreshdeskErrorsMailer < ActionMailer::Base
   layout "email_font"
   
   def error_email(object, params, e, options={}) 
-    recipients    (options[:recipients] || (Rails.env.production? ? "dev-ops@freshdesk.com" : "dev-ops@freshpo.com") )
-    from          "rachel@freshdesk.com"
+    recipients    (options[:recipients] || (Rails.env.production? ? Helpdesk::EMAIL[:production_dev_ops_email] : "dev-ops@freshpo.com") )
+    from          Helpdesk::EMAIL[:default_requester_email]
     subject       (options[:subject] || "Error in #{object.class.name}")
     sent_on       Time.now
     body(:object => object, :params => params, :error => e, :additional_info => options[:additional_info], :query => options[:query])

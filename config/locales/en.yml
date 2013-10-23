@@ -800,8 +800,8 @@ en:
         custom_ssl: Custom SSL
         dns_name: <b>Important:</b> Please update the CNAME DNS record in your DNS Zone file to point your domain name to the below ELB DNS name. <br /> <br />The ELB DNS name for %{url} is
         whitelisted_ips_enabled: Trusted IP Address
-        whitelisted_ips_enabled_info: Restrict your support portal to only trusted locations and networks by defining a range of allowed IP addresses.
-        current_ip_info: Your current IP is %{current_ip}
+        whitelisted_ips_enabled_info: Restrict access to your support portal to only trusted locations and networks by defining the range of allowed IP addresses.
+        current_ip_info: Your current IP is <b>%{current_ip}</b> . Access from this IP addresses is allowed by default.
         applies_to: Applies to
         only_agents: Agents
         agents_customers: Agents and Customers
@@ -814,9 +814,9 @@ en:
         current_ip_not_in_range: Your current IP is not in the list of Ranges
       helpnote:
         title: Security Settings
-        info: Configuring security options help you streamline and control the accessibility of visitors to your support portal.
-        info1: <b>Allowing Single Sign On access </b><br />If your users already have login credentials with you, such as through Active Directory or your own web applications, you can allow them to login to your support portal with these credentials using Single Sign On. Learn more about setting up single sign on in Freshdesk<a href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk"> here</a>.
-        info2: <b>Enabling SSL security </b><br />You can ensure secure communication through your support portal by enabling SSL encryption. Freshdesk offers a default wildcard SSL certificate to all accounts on the freshdesk.com domain. <b> Note that you will not be able to use the wildcard SSL if you are using your own branded support URL. </b> If you are on the Estate Plan, you can request for a custom SSL certificate for your vanity support URL.
+        info1: <b>Allowing Single Sign On access </b><br>If your users already have login credentials with you, such as through Active Directory or your own web applications, you can allow them to login to your support portal with these credentials using Single Sign On (SSO). Learn more about SSO<a href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk"> here</a>.
+        info2: <b>Enabling SSL security </b><br>If you are not using a custom domain for your support portal, Freshdesk offers a default wildcard SSL certificate to accounts on the freshdesk.com domain. <b>SSL option for custom domains are only available on the Estate Plan.</b> You can <a href="https://support.freshdesk.com/support/tickets/new">request for a custom SSL certificate for your vanity support URL here</a>.
+        info3: <b>Restricting access by IP address</b><br>You can restrict access to your support portal to IP addresses from your company or organization. You can add unlimited number of IP ranges that have access, as well as define whether you want to control access for customers as well, or only for your agents.
     products:
       helpnote:
         tour: Help me support multiple products
@@ -2324,6 +2324,17 @@ en:
   import_added_newly: Added Newly
   select_a_plan_gain_access: Select a plan from below to regain access to your account.
   import_warning_info: If we encounter an already existing contact's email during import, then the other details of the contact will be updated.
+  contact_import:
+    name: Name
+    job_title: Job Title
+    company: Company
+    work_phone: Work Phone
+    email: Email
+    twitter_id: Twitter Id
+    mobile_phone: Mobile Phone
+    address: Address
+    background_info: Background Information
+    tags: Tags
   import_example_title: Following is the example of a CSV file
   change_my_password: Change My Password
   answered: Answered
@@ -2383,7 +2394,7 @@ en:
     title: Freshchat
     info1: Freshchat lets you view and chat with users on your wesbite, online software, or support portal directly from within Freshdesk. You can customize the look, feel and default messages that users should see when you chat with them, and even proactively initiate chat sessions when visitors spend more time on your site.
     info2: Each chat session will also capture meta information about where visitors are chatting with you from, their device, and their support history with you. Once you finish a chat session, you can choose to convert the conversation into a ticket and continue following up with the visitor over email, or archive the chat transcript. 
-    info3: <a href="https://support.freshdesk.com/support/solutions" target="_blank" >Learn more about using Freshchat inside Freshdesk</a>
+    info3: <a href="https://support.freshdesk.com/support/solutions/folders/246519" target="_blank" >Learn more about using Freshchat inside Freshdesk</a>
   low: Low
   agents: Agents
   header: 
@@ -4342,36 +4353,30 @@ en:
     title: "Freshchat"
     widget: "Widget"
     messages: "Messages"
-    online: "When agents are online"
-    chat_title: "Chat Title"
-    minimized: "Minimized"
-    maximized: "Maximized"
-    chatmin_tip: "Text will appear when chat window is minimized"
-    chatmax_tip: "Text will appear when chat window is maximized"
+    set_default_msgs: "Set default messages"
+    minimize_chat_title: "Title when chat is minimized"
+    maximize_chat_title: "Title when chat is maximized"
     welcome: "Welcome Message"
-    welcome_tip: "Text will appear at the top of chat window"
-    thank_title: "Thank You Message"
-    thank_tip: "Text will appear in chat window when agent closes the chat"
-    wait_title: "Wait/on hold Message"
-    wait_tip: "Text will appear in chat window when visitor waits"
-    is_typing_header: "Is Typing..."
-    is_typing_tip: "This text appears when visitor/agents starts typing"
+    thank_title: "Thank you/Closure Message"
+    wait_title: "Wait/On hold Message"
+    is_typing_header: "When agent/visitor <br> starts typing"
     prechat_title: "Pre-Chat Form"
-    prechat_desc: "All visitors needs to fill a pre-chat form"
+    prechat_desc: "Visitors need to share additional information before the chat"
     prechat_msg: "Pre-Chat Message"
+    welcome_tip: "Text will appear at the top of chat window"
     proactive_title: "Proactive chat"
-    minimized_title: "Chat Now!"
-    maximized_title: "Welcome to Freshchat"
-    welcome_message: "Hi! How can we help you today?"
-    thank_message: "Agent has left the chat. If you have any more questions, ping us!"
-    wait_message: "We are sorry our agents are unable to get to you right now, but we would still love to hear from you!"
+    minimized_title: "Let's talk!"
+    maximized_title: "This chat is so on!"
+    welcome_message: "Hi! How may I assist you?"
+    thank_message: "Thank you for chatting with us. If you have additional questions, feel free to ping us!"
+    wait_message: "All our agents are busy chatting right now. Please hang on for a couple of minutes."
     typing_message: "is typing..."
-    prechat_message: "Hello, great to see you! Please fill out the below details before we can begin your chat!"
+    prechat_message: "We can't wait to talk to you. But first, please take a couple of moments to tell us a bit about yourself."
     showform: "Show Pre-chat form"
     enable_proactive: "Enable proactive chat"
-    proactive_note: "Note: Pre-chat form will not be shown for Proactive chats"
-    proactive_time: "Automatically greet visitor when they spend more than %{seconds} seconds on same page"
-    procative_info: "Greet visitors proactively based on time spend on a page"
+    proactive_note: "Note: Pre-chat form will be skipped for Proactive chats."
+    proactive_time: "Greet visitor when they spend more than %{seconds} seconds on a page"
+    procative_info: "Automatically greet visitors on your website."
     show: "Show"
     required: "Required field"
     name: "Name"
@@ -4379,20 +4384,18 @@ en:
     mail: "Email"
     cancel: "Cancel"
     save: "Save"
-    chat_with_us: "Chat with us"
     me: "Me"
-    hai: "Hai"
     window_position: "Window Position"
     window_offset: "Window Offset"
     align_to: "Align to"
     bottom_left: "Bottom Left"
     bottom_right: "Bottom Right"
-    install_msg: "Copy & paste this code above the last </body> tag on your site."
-    setup_link: "How-to set up chat"
-    install_freshchat: "Install Freshchat on your website"
+    integrate_msg: "Copy & paste the code above the last </body> tag on your website or applications."
+    integrate_freshchat_title: "Integrate Freshchat into your website and applications"
     custom_chat_window: "Customize your chat window"
     text_placeholder: "Your Message"
     chatbox_bgcolor: "Window Color"
+    proactive_time: "Automatically greet visitor when they spend more than %{seconds} seconds on same page"
     in_conversation: "In-conversation"
     available_agents: "Available Agents"
     visitors_online: "Visitors Online"
@@ -4418,7 +4421,7 @@ en:
     ticket_success_msg: "New ticket has been created."
     ticket_error_msg: "Error while creating ticket"
     website_visitors: "Website Visitors"
-    connection_error_msg: "Can\'t connect to chat server. Retrying..."
+    connection_error_msg: "Can't connect to chat server. Retrying..."
     connection_success_msg: "Connection established"
     filter_by: "Filter by"
     keyword: "Keyword"
@@ -4429,11 +4432,9 @@ en:
     back: "Back"
     select_location:  "Select Location"
     valid_code: "Please enter a valid color value"
-    and: "and"
-    on_: "on"
     visitor_disconnect_msg: "Visitor has left the chat"
     last_message: "Last Message..."
-    chat_recent_empty_tip: "You didn\'t chat with anyone recently"
+    chat_recent_empty_tip: "You didn't chat with anyone recently"
     add_agent_to_chat: "No agents available"
     url_error_msg: "No such url exists"
     accept: "Accept"
@@ -4446,7 +4447,6 @@ en:
     agents: "Agents"
     convert_to_ticket: "Convert to Ticket"
     create_ticket_tip: "Save chat transcript and details to a ticket.All Chat transcript will be saved in chat history."
-    tkt_success_note_error: "Ticket has been created and error while adding note!"
     note_success: "New note has been added to the ticket"
     note_error: "Error while adding note!"
     error: Error 
@@ -4477,8 +4477,6 @@ en:
     install_tip: <a href='/admin/chat_setting' id='visitor-list-install'>Install the script</a> on your site to see your visitors
     window_offset_error_msg: "Please enter a valid offset value(< 500px)."
     nochat: "No chat available"
-    adding_note: "Adding Note..."
-    creating_ticket: "Creating Ticket..."
     chat_with_loc: "Chat with <b>$1</b> from $3 and <b>$2</b>"
     chat_with_noloc: "Chat with <b>$1</b> and <b>$2</b>"
     chat_loadmore: "Load More..."
@@ -4490,6 +4488,10 @@ en:
     view_details: "View details"
     saving: "Saving..."
     start_chat: "Start chat"
+    chatsettings_save: "Your changes have not been saved. Save changes?"
+    transfer_accepted_msg: "Visitor transfer accepted"
+    transfer_request_timeout_msg: "Transfer request timed out"
+    integrate_freshchat_info: "Note: Chat window will appear when agents are online."
   date_invalid: Invalid date  
   facebook_tab:
     remove_tab: "Remove page Tab"

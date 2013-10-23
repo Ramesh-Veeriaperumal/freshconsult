@@ -5,7 +5,7 @@
 <div id="freshchat_layout"></div>
   <!-- Chat related contents starts -->
 <%= include_cloudfront_css :chat %>
-<script src="/javascripts/sound/soundmanager2-jsmin.js"></script>
+<script src="<%=comm_url%>/js/chat.js"></script>
 <script language="javascript">
 (function($){
     $(document).ready(function(){
@@ -16,9 +16,6 @@
                 jQuery.cookie('fd::'+SITE_ID,null);
             });
         }
-        $.getScript("<%=comm_url%>/socket.io/socket.io.js",function(){
-            $.getScript("<%=comm_url%>/js/chat.js");
-        });        
     });    
 })(jQuery);
 
@@ -60,7 +57,7 @@ var i18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
             in_conversation:'<%= t("freshchat.in_conversation") %>',
             available_agents:'<%= t("freshchat.available_agents") %>',
             returning_visitors:'<%= t("freshchat.returning_visitors") %>',
-            website_visitors_msg:'<%= t("freshchat.website_visitors") %>',
+            website_visitors_msg:'<%= t("freshchat.website_visitors_msg") %>',
             message_archives:'<%= t("freshchat.message_archives") %>',
             connection_error_msg:'<%= t("freshchat.connection_error_msg") %>',
             connection_success_msg:'<%= t("freshchat.connection_success_msg") %>',
@@ -74,8 +71,6 @@ var i18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
             back: '<%= t("freshchat.back") %>',
             select_location: '<%= t("freshchat.select_location") %>',
             visitors_online: '<%= t("freshchat.visitors_online") %>',
-            ticket_desc: '<%= t("freshchat.ticket_desc") %>',
-            transcript_added_msg: '<%= t("freshchat.transcript_added_msg") %>',
             and: '<%= t("freshchat.and") %>',
             on_: '<%= t("freshchat.on_") %>',
             visitor_disconnect_msg: '<%= t("freshchat.visitor_disconnect_msg") %>',
@@ -121,8 +116,6 @@ var i18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
             new_ticket_tip: '<%= t("freshchat.new_ticket_tip").html_safe %>',
             install_tip: "<%= t('freshchat.install_tip').html_safe %>",
             nochat: "<%= t('freshchat.nochat') %>",
-            adding_note: "<%= t('freshchat.adding_note') %>",
-            creating_ticket: "<%= t('freshchat.creating_ticket') %>",
             chat_with_loc: "<%= t('freshchat.chat_with_loc').html_safe %>",
             chat_with_noloc: "<%= t('freshchat.chat_with_noloc').html_safe %>",
             chat_loadmore: "<%= t('freshchat.chat_loadmore') %>",
@@ -135,7 +128,19 @@ var i18n  = { portal_name:'<%=h(current_portal.portal_name)%>',
             note_error: "<%= t('freshchat.note_error') %>",
             view_details: "<%= t('freshchat.view_details') %>",
             saving: "<%= t('freshchat.saving') %>",
-            start_chat: "<%= t('freshchat.start_chat') %>"
+            start_chat: "<%= t('freshchat.start_chat') %>",
+            min_title: "<%= t('freshchat.minimized_title') %>",
+            max_title: "<%= t('freshchat.maximized_title') %>",
+            wel_msg: "<%= t('freshchat.welcome_message') %>",
+            thank_msg: "<%= t('freshchat.thank_message') %>",
+            wait_msg: "<%= t('freshchat.wait_message') %>",
+            typ_msg: "<%= t('freshchat.typing_message') %>",
+            pre_msg: "<%= t('freshchat.prechat_message') %>",
+            settings_save: "<%= t('freshchat.chatsettings_save')%>",
+            transfer_accepted_msg: "<%= t('freshchat.transfer_accepted_msg') %>",
+            transfer_request_timeout_msg: "<%= t('freshchat.transfer_request_timeout_msg') %>",
+            integrate_freshchat_title: "<%= t('freshchat.integrate_freshchat_title') %>",
+            integrate_freshchat_info: "<%= t('freshchat.integrate_freshchat_info') %>"
         }
 </script>
     <!-- Chat related contents ends -->
