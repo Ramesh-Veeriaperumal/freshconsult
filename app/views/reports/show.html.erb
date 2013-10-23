@@ -1,5 +1,5 @@
 <%
-date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} - #{Time.now.strftime("%d %B %Y")}" :  h(params[:date_range])
+date_range = params[:date_range].blank? ? "#{31.days.ago.strftime("%d %B %Y")} -#{1.days.ago.strftime("%d %B %Y")}" :  h(params[:date_range])
 %>
 <script src="/javascripts/report/date.js" type="text/javascript"></script>
 <script src="/javascripts/report/daterangepicker.jQuery.js" type="text/javascript"></script>
@@ -40,10 +40,9 @@ date_range = params[:date_range].blank? ? "#{30.days.ago.strftime("%d %B %Y")} -
 <% javascript_tag do %>
 jQuery(document).ready(function() {
 	jQuery("#date_range").daterangepicker({
-		earliestDate: Date.parse('1/1/2009'),
-		latestDate: new Date(),
+		earliestDate:Date.parse('04/01/2013'),
+		latestDate:Date.parse('Today-1'),
 		presetRanges: [
-			{text: '<%= t('reports.date_ranges.today') %>', dateStart: 'Today', dateEnd: 'Today' },
 			{text: '<%= t('reports.date_ranges.yesterday') %>', dateStart: 'Today-1', dateEnd: 'Today-1' },
 			{text: '<%= t('reports.date_ranges.last_7_days') %>', dateStart: 'Today-8', dateEnd: 'Today-1' },
 			{text: '<%= t('reports.date_ranges.last_30_days') %>',dateStart: 'Today-31', dateEnd: 'Today-1'},
