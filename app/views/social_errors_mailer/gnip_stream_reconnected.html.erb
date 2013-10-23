@@ -1,4 +1,5 @@
 <p>
   
-  There has been a disconnect in gnip stream at <%= Time.zone.now.utc %>. It has reconnected again at <%= @params[:reconnect_time] %>
+  There has been a disconnect in gnip stream in <%= Rails.env%> environment at
+   <%= Time.zone.now.utc %>. It has reconnected again at <%= @params[:reconnect_time] %>
 </p>
