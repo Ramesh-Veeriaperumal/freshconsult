@@ -1967,6 +1967,8 @@ en:
   footer: 
     helpdesk_software: Help Desk Software
     by_freshdesk: by Freshdesk
+    submit_feedback: Submit Feedback
+    browse_community: Browse Community
   tkt_unattended_in_grp: Ticket unattended in Group
   agent_solves_tkt: Agent solves the Ticket
   zendesk_url_info: e.g:- http://acme.zendesk.com
