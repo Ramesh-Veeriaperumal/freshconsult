@@ -1,5 +1,5 @@
 class Helpdesk::KbaseArticles
-  include Helpdesk::Utils::Attachment
+  extend Helpdesk::Utils::Attachment
   def self.create_article_from_email(article_params)  
     account = Account.find(article_params[:account])
     user = account.users.find(article_params[:user])
