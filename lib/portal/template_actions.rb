@@ -49,7 +49,7 @@ module Portal::TemplateActions
     if current_portal == @portal
       redirect_url = support_preview_path 
     else
-      redirect_url = support_preview_url(:host => @portal.portal_url) unless @portal.portal_url.blank?
+      redirect_url = support_preview_url(:host => @portal.host)
     end
     redirect_to redirect_url and return
   end
